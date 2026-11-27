@@ -57,7 +57,7 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 {
 	/* The caller spawns the fragment and places it. */
 	if(fragment != NULL) {
-		fragment->motionFlg = ACTOR_FALLS;
+		fragment->motionFlags = ACTOR_FALLS;
 		fragment->gravity = toFIXED(1) / 10;
 		fdActorSelectAnimationStub(fragment, 0);
 		fragment->wait = 12;

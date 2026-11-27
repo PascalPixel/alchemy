@@ -109,9 +109,9 @@ typedef enum KOLIMA_ROOM_ACTOR_ID {
    turning. */
 static void scLogRoomsCTurnVillagersIntoTrees(ACTOR_PLACE *placement)
 {
-	Uint32 villagerIdx;
+	Uint32 villagerIndex;
 
-	villagerIdx = 0;
+	villagerIndex = 0;
 	{
 		Uint8  talkFacing = TALK_FACING_KEEP;
 		Sint32 behavior = MOVEMENT_TYPE_STAND;
@@ -119,18 +119,18 @@ static void scLogRoomsCTurnVillagersIntoTrees(ACTOR_PLACE *placement)
 		do {
 			placement->talkFacing = talkFacing;
 			placement->movement = behavior;
-			placement->spr = SPRITE_TREE;
+			placement->sprite = SPRITE_TREE;
 			/* The two residents drawn as SPRITE_BOY_WITH_FAIR_HAIR take the
 			   small tree. */
-			if(villagerIdx ==
+			if(villagerIndex ==
 					ACTOR_CHILD_TOLD_THE_SECRET - ACTOR_FIRST_VILLAGER ||
-				villagerIdx ==
+				villagerIndex ==
 					ACTOR_LUMBERJACKS_HUNGRY_SON - ACTOR_FIRST_VILLAGER) {
-				placement->spr = SPRITE_SMALL_TREE;
+				placement->sprite = SPRITE_SMALL_TREE;
 			}
-			villagerIdx++;
+			villagerIndex++;
 			placement++;
-		} while(villagerIdx < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
+		} while(villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 	}
 }
 
@@ -255,7 +255,7 @@ Sint32 scInit(void)
 			actorId++) {
 			ACTOR *actor = fdActorGet(actorId);
 
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 		}
 	}
 

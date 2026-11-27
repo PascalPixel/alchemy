@@ -13,10 +13,10 @@ struct SPR_ANIMATION;
 
 struct FIELD_SPR;
 
-void fdSprSetAnimationColModesStub(struct SPR *spr, Uint32 colMode);
+void fdSpriteSetAnimationColorModesStub(struct SPR *sprite, Uint32 colorMode);
 
-void fdActorSetSprFlagsStub(ACTOR *actor, Uint32 flg);
-void fdActorSetSprColModeStub(ACTOR *actor, Uint32 colMode);
+void fdActorSetSpriteFlagsStub(ACTOR *actor, Uint32 flags);
+void fdActorSetSpriteColorModeStub(ACTOR *actor, Uint32 colorMode);
 
 extern const Sint32 ActorCameraScript[];
 extern const Sint32 ActorScriptEndScript[];

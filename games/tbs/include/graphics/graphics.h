@@ -33,14 +33,14 @@
    border's top edge. */
 extern Uint8 PageArrowTiles[];
 /* A one-entry table of sprite tiles: the pointing hand cursor
-   (PointingHandTiles), returned by mnWindowSprGetPointerTiles. */
+   (PointingHandTiles), returned by mnWindowSpriteGetPointerTiles. */
 extern Sint32 WindowSpritePointerTiles[];
 /* The compressed item icons, indexed by an item's icon field. */
 extern Uint8 *ItemIcons[];
 /* The end of ItemIcons, so mnIconCountItemIcons can count them. */
 extern Uint8 *ItemIconsEnd[];
 /* The other compressed icons, among them the Status screen's status icons. */
-extern Uint8 *IconMiscIconPointers[];
+extern Uint8 *IconMiscellaneousIconPointers[];
 /* The compressed Psynergy icons, drawn over the shared icon base. */
 extern Uint8 *PsynergyIcons[];
 /* The end of PsynergyIcons, for mnIconCountPsynergyIcons. */
@@ -146,7 +146,7 @@ extern Uint8 TileExpandOpaqueCodeSize[];
 /* The title screen's "Press Start" prompt, byte-LZ compressed, in each
    language. */
 extern const Uint8 TitlePromptTiles[];
-/* The eight scales, in 1/65536, that mnWindowSprPulse pulses the settings
+/* The eight scales, in 1/65536, that mnWindowSpritePulse pulses the settings
    menu's selected icon through. */
 extern const Sint32 WindowSpritePulseScales[];
 /* The pixel offsets mnTitleBob moves a sprite pair up and down by. */
@@ -189,6 +189,6 @@ extern const Sint8 WindowPartyColumnOffsets[];
    reaches its first stub, btEffectBuildBlitterStub; nothing in this game calls
    it by this name. */
 Sint32 btStubsBattleEffect(Sint32 slot, Sint32 width_shift, Sint32 height_shift,
-	Sint32 flg, Uint32 mode);
+	Sint32 flags, Uint32 mode);
 
 #endif

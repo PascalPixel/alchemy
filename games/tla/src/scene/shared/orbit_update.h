@@ -13,9 +13,9 @@ Bool syOrbitUpdate(ORBIT *object)
 {
 	FIXED z;
 
-	object->ang += object->speed;
-	object->x = syIWRAMMulFX(syCos(object->ang), object->orbitRadius);
-	z = syIWRAMMulFX(syMathSin(object->ang), object->orbitRadius);
+	object->angle += object->speed;
+	object->x = syIWRAMMulFX(syCos(object->angle), object->orbitRadius);
+	z = syIWRAMMulFX(syMathSin(object->angle), object->orbitRadius);
 	object->x += object->centreX;
 	object->z = (z >> 1) + object->centreZ;
 	if(object->growth != ORBIT_GROWTH_FULL && (TickCount & 1)) {

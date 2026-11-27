@@ -8,7 +8,7 @@
 
 extern const Uint8 TitleFlareColumns[];
 extern const Uint8 TitlePromptBlendLevels[60];
-void			   mnTitleUpdateIntroSprs(void);
+void			   mnTitleUpdateIntroSprites(void);
 void			   mnTitleLoadIntroBackgrounds(void);
 /* The title module's functions in the order of its stub table
    (src/menu/title_stubs.s). */
@@ -21,11 +21,11 @@ void   mnTitleBeforeLogosNoOperation(void);
 Sint32 mnTitleShowPublisherLogo(Sint32 fadeOut);
 Sint32 mnTitleShowCamelotLogo(void);
 
-void mnTitlePaletteFadeCalcSteps(Sint16 *srcComponents, Sint16 *tgtComponents,
-	Sint16 *componentSteps, Sint32 ticks);
+void mnTitlePaletteFadeCalculateSteps(Sint16 *srcComponents,
+	Sint16 *targetComponents, Sint16 *componentSteps, Sint32 ticks);
 void mnTitlePaletteFadeUpdate(void);
-void mnTitlePaletteFadeBuildCols(
-	Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 selectedPalettes);
+void mnTitlePaletteFadeBuildColors(
+	Uint32 mode, Uint16 *src, Uint16 *dest, Sint32 selectedPalettes);
 void mnTitlePaletteFadeInit(void);
 void mnTitlePaletteFadeRelease(void);
 void mnTitlePaletteFadeSetTarget(Sint32 mode, Sint32 selectedPalettes);
@@ -35,7 +35,7 @@ void mnTitlePaletteFadeSetTarget(Sint32 mode, Sint32 selectedPalettes);
 #if FIX_FUNCTION_SIGNATURES
 void mnTitlePaletteFadeSetCurrent(Sint32 mode, Sint32 selectedPalettes);
 #endif
-void   mnTitlePaletteFadeSetBackdrop(Sint32 col);
+void   mnTitlePaletteFadeSetBackdrop(Sint32 color);
 void   mnTitlePaletteFadeStart(Sint32 ticks);
 Sint32 mnTitlePaletteFadeClampChannel(Sint32 value);
 Sint32 mnTitlePaletteFadeClampShiftedChannel(Sint32 value);

@@ -168,34 +168,34 @@ extern Sint16 LemuriaPalaceGlowColors[];
 /* An event: every sixth tick the glow palette's rotating colours move along by
    one; every tick its glow colour takes the glow's step for the tick, each
    step four ticks long. */
-void scLemuriaPalaceCycleGlowCols(void)
+void scLemuriaPalaceCycleGlowColors(void)
 {
-	Sint32 col;
+	Sint32 color;
 
 	if(TickCount % 6 == 0) {
-		Sint32 idx;
+		Sint32 index;
 
-		col = (Sint16)BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_LAST_COLOR);
-		idx = ROTATING_LAST_COLOR;
+		color = (Sint16)BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_LAST_COLOR);
+		index = ROTATING_LAST_COLOR;
 		do {
-			BG_PLTT_COLOR(GLOW_PALETTE, idx) =
-				BG_PLTT_COLOR(GLOW_PALETTE, idx - 1);
-		} while(--idx != ROTATING_FIRST_COLOR);
-		BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_FIRST_COLOR) = col;
+			BG_PLTT_COLOR(GLOW_PALETTE, index) =
+				BG_PLTT_COLOR(GLOW_PALETTE, index - 1);
+		} while(--index != ROTATING_FIRST_COLOR);
+		BG_PLTT_COLOR(GLOW_PALETTE, ROTATING_FIRST_COLOR) = color;
 	}
-	col = LemuriaPalaceGlowColors[(TickCount >> 2) % GLOW_STEPS];
-	BG_PLTT_COLOR(GLOW_PALETTE, GLOW_COLOR) = col;
+	color = LemuriaPalaceGlowColors[(TickCount >> 2) % GLOW_STEPS];
+	BG_PLTT_COLOR(GLOW_PALETTE, GLOW_COLOR) = color;
 }
 
 /* The room's setup: it schedules the palette cycle
-   scLemuriaPalaceCycleGlowCols. */
+   scLemuriaPalaceCycleGlowColors. */
 Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	sySetTickEvent(scLemuriaPalaceCycleGlowCols, EVENT_PASS_VBLANK);
-	scFieldActorSetSprPriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
+	sySetTickEvent(scLemuriaPalaceCycleGlowColors, EVENT_PASS_VBLANK);
+	scFieldActorSetSpritePriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
 	if(MainRoutineStateWork.entrance == WAY_DRESSER_ROOM_DOOR)
-		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 	if(fdScriptGetFlag(FLAG_MET_KING_HYDROS)) {
 		fdActorSetPos(ACTOR_PIERS, 0, 0);
@@ -219,19 +219,19 @@ void scLemuriaPalaceCastMapSparks(Sint32 actorId)
 
 	fdActorSetAnimation(ACTOR_HYDROS, 5);
 	syFieldScriptWait(28);
-	fdScriptPlaySnd(SE_MENU_CONFIRM);
+	fdScriptPlaySound(SE_MENU_CONFIRM);
 	first = fdActorSpawn(SPRITE_GLINT, actor->x.fixed + toFIXED(10),
 		actor->y.fixed + toFIXED(16), actor->z.fixed);
 	first->speedLimit = toFIXED(2);
 	first->acceleration = toFIXED(2);
-	first->motionFlg = 0;
+	first->motionFlags = 0;
 	scFieldActorSetMoveTargetFX(first, first->x.fixed + toFIXED(6),
 		first->y.fixed + toFIXED(8), first->z.fixed);
 	second = fdActorSpawn(SPRITE_GLINT, actor->x.fixed + toFIXED(10),
 		actor->y.fixed + toFIXED(16), actor->z.fixed);
 	second->speedLimit = toFIXED(2);
 	second->acceleration = toFIXED(2);
-	second->motionFlg = 0;
+	second->motionFlags = 0;
 	scFieldActorSetMoveTargetFX(second, first->x.fixed + toFIXED(8),
 		first->y.fixed - toFIXED(4), first->z.fixed);
 	scFieldActorWaitForMove(first);
@@ -269,12 +269,12 @@ void scLemuriaPalaceDrawMaps(void)
 		if(step == 0) {
 			LemuriaPalaceFirstMapShown = 1;
 			LemuriaPalaceSecondMapShown = step;
-			fdScriptPlaySnd(SE_HIGH_JUMP);
+			fdScriptPlaySound(SE_HIGH_JUMP);
 		}
 		if(step == MAP_BLEND_STEPS / 2) {
 			LemuriaPalaceFirstMapShown = 0;
 			LemuriaPalaceSecondMapShown = 1;
-			fdScriptPlaySnd(SE_HIGH_JUMP);
+			fdScriptPlaySound(SE_HIGH_JUMP);
 		}
 		(*time)++;
 	}
@@ -285,12 +285,12 @@ void scLemuriaPalaceDrawMaps(void)
 	if(LemuriaPalaceFirstMapShown != 0) {
 		LemuriaPalaceFirstMapSprite.x = pos.x;
 		LemuriaPalaceFirstMapSprite.y = pos.z;
-		fdEffectSprDraw(&LemuriaPalaceFirstMapSprite);
+		fdEffectSpriteDraw(&LemuriaPalaceFirstMapSprite);
 	}
 	if(LemuriaPalaceSecondMapShown != 0) {
 		LemuriaPalaceSecondMapSprite.x = pos.x;
 		LemuriaPalaceSecondMapSprite.y = pos.z;
-		fdEffectSprDraw(&LemuriaPalaceSecondMapSprite);
+		fdEffectSpriteDraw(&LemuriaPalaceSecondMapSprite);
 	}
 }
 
@@ -298,7 +298,7 @@ void scLemuriaPalaceDrawMaps(void)
    Lunpa's, and starts drawing them. */
 void scLemuriaPalaceLoadMaps(void)
 {
-	void   *buf = syHeapCallAlternatePool(syHeapAlloc, MAP_PICTURE_BYTES);
+	void   *buf = syHeapCallAlternatePool(syHeapAllocate, MAP_PICTURE_BYTES);
 	Sint32 *firstSlot;
 	Sint32 *firstTile;
 	Sint32 *secondSlot;
@@ -311,26 +311,26 @@ void scLemuriaPalaceLoadMaps(void)
 	*firstSlot = syVRAMCacheFindFreeEntry();
 	firstTile = &LemuriaPalaceFirstMapTile;
 	*firstTile = mnVRAMLoad(LemuriaPalaceFirstMapVram, MAP_PICTURE_BYTES, buf);
-	fdEffectSprInit(&LemuriaPalaceFirstMapSprite, 0, 0, OBJ_SIZE_64X64,
+	fdEffectSpriteInit(&LemuriaPalaceFirstMapSprite, 0, 0, OBJ_SIZE_64X64,
 		LemuriaPalaceFirstMapTile);
 	LemuriaPalaceFirstMapSprite.depth = 1;
-	LemuriaPalaceFirstMapSprite.oam.pri = 2;
-	LemuriaPalaceFirstMapSprite.oam.objMode = 1;
-	LemuriaPalaceFirstMapSprite.oam.fullCol = 1;
-	LemuriaPalaceFirstMapSprite.oam.pal = 0;
+	LemuriaPalaceFirstMapSprite.oam.priority = 2;
+	LemuriaPalaceFirstMapSprite.oam.objectMode = 1;
+	LemuriaPalaceFirstMapSprite.oam.fullColor = 1;
+	LemuriaPalaceFirstMapSprite.oam.palette = 0;
 	syDecompressTaggedLZ(LemuriaPalaceSecondMapTiles, buf);
 	secondSlot = &LemuriaPalaceSecondMapVram;
 	*secondSlot = syVRAMCacheFindFreeEntry();
 	secondTile = &LemuriaPalaceSecondMapTile;
 	*secondTile =
 		mnVRAMLoad(LemuriaPalaceSecondMapVram, MAP_PICTURE_BYTES, buf);
-	fdEffectSprInit(&LemuriaPalaceSecondMapSprite, 0, 0, OBJ_SIZE_64X64,
+	fdEffectSpriteInit(&LemuriaPalaceSecondMapSprite, 0, 0, OBJ_SIZE_64X64,
 		LemuriaPalaceSecondMapTile);
 	LemuriaPalaceSecondMapSprite.depth = 2;
-	LemuriaPalaceSecondMapSprite.oam.pri = 2;
-	LemuriaPalaceSecondMapSprite.oam.objMode = 1;
-	LemuriaPalaceSecondMapSprite.oam.fullCol = 1;
-	LemuriaPalaceSecondMapSprite.oam.pal = 0;
+	LemuriaPalaceSecondMapSprite.oam.priority = 2;
+	LemuriaPalaceSecondMapSprite.oam.objectMode = 1;
+	LemuriaPalaceSecondMapSprite.oam.fullColor = 1;
+	LemuriaPalaceSecondMapSprite.oam.palette = 0;
 	LemuriaPalaceFirstMapShown = 0;
 	LemuriaPalaceSecondMapShown = 0;
 	LemuriaPalaceMapTime = 0;
@@ -383,8 +383,8 @@ void scLemuriaPalaceFadeMapsOut(void)
    spoke of. */
 Sint32 scLemuriaPalaceMeetKingHydros(void)
 {
-	Sint32 answer, frm, growFrm;
-	ACTOR *tgt;
+	Sint32 answer, frame, growFrame;
+	ACTOR *target;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -546,10 +546,10 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptShowMessageThenWait(ACTOR_PIERS, 0, 5);
 	fdActorFaceDirection(ACTOR_LUNPA, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirectionAndWait(ACTOR_HYDROS, FACING_SOUTH_SOUTHEAST);
-	fdActorGetById(ACTOR_KRADEN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_KRADEN, 0, -8);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_KRADEN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
 	fdScriptWait(10);
@@ -634,13 +634,13 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdActorSetAnimationAndWait(ACTOR_HYDROS, 3);
 	fdScriptWait(10);
 	scLemuriaPalaceCastMapSparks(ACTOR_HYDROS);
-	fdScriptStartColTransition(32, RGB(8, 8, 8));
+	fdScriptStartColorTransition(32, RGB(8, 8, 8));
 	fdScriptWait(32);
 	fdScriptWait(20);
 	scLemuriaPalaceLoadMaps();
 	LemuriaPalaceFirstMapShown = 1;
 	LemuriaPalaceSecondMapShown = 0;
-	fdScriptPlaySnd(SE_HIGH_JUMP);
+	fdScriptPlaySound(SE_HIGH_JUMP);
 	scLemuriaPalaceFadeMapsIn();
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -657,7 +657,7 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptWait(30);
 	LemuriaPalaceFirstMapShown = 0;
 	LemuriaPalaceSecondMapShown = 1;
-	fdScriptPlaySnd(SE_HIGH_JUMP);
+	fdScriptPlaySound(SE_HIGH_JUMP);
 	scLemuriaPalaceFadeMapsIn();
 	/* "And this...is the map Lunpa had with him when he arrived in
 	   Lemuria..." */
@@ -665,10 +665,10 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 		SPEAKER_PORTRAIT_RIGHT | ACTOR_HYDROS, 0, 10);
 	/* "I used this map to sail around the world. It is quite accurate." */
 	fdScriptShowMessageThenWait(ACTOR_LUNPA, 0, 5);
-	fdActorGetById(ACTOR_KRADEN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_KRADEN, 0, -16);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_KRADEN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(25);
 	fdActorStartRepeatedMotion(ACTOR_KRADEN, 3);
 	fdActorSetAttachedEffect(
@@ -748,10 +748,10 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdActorFaceDirectionAndWait(ACTOR_HYDROS, FACING_SOUTH_SOUTHEAST);
 	fdScriptWait(10);
 	scLemuriaPalaceCastMapSparks(ACTOR_HYDROS);
-	fdScriptPlaySnd(SE_HIGH_JUMP);
+	fdScriptPlaySound(SE_HIGH_JUMP);
 	/* Waits, two seconds at most, for the alternation to come round to a
 	   map. */
-	for(frm = 0; frm < 120; frm++) {
+	for(frame = 0; frame < 120; frame++) {
 		sySynch(1);
 		if((LemuriaPalaceMapTime >> 2) % (MAP_BLEND_STEPS / 2) == 0)
 			break;
@@ -923,10 +923,10 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptShowMessageThenWait(ACTOR_HYDROS, 0, 5);
 	fdActorSetAnimationAndWait(ACTOR_CONSERVATO, 4);
 	fdActorSetSpeed(ACTOR_CONSERVATO, 0.5);
-	fdActorGetById(ACTOR_CONSERVATO)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_CONSERVATO)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_CONSERVATO, 32, 0);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_CONSERVATO)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_CONSERVATO)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_PIERS, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_LUNPA, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_HYDROS, FACING_EAST, 0);
@@ -1081,7 +1081,7 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptWait(10);
 	fdActorJump(ACTOR_LUNPA, 4, 20);
 	/* What Lunpa brings out grows to its height over 16 ticks. */
-	for(growFrm = 0; growFrm < 16; growFrm++) {
+	for(growFrame = 0; growFrame < 16; growFrame++) {
 		fdActorGetById(FIELD_TREASURE_ACTOR)->scaleY += toFIXED(1) / 16;
 		sySynch(1);
 	}
@@ -1224,28 +1224,28 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdActorSetSpeed(ACTOR_KRADEN, 1.2);
 	fdActorSetAnimation(ACTOR_KRADEN, ANIM_WALK);
-	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(tgt != 0) {
+	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(target != 0) {
 		fdActorSetDestination(
-			ACTOR_KRADEN, tgt->x.part[0].integer, tgt->z.part[0].integer);
+			ACTOR_KRADEN, target->x.part[0].integer, target->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorSetPos(ACTOR_KRADEN, 0, 0);
 	fdActorSetSpeed(ACTOR_JENNA, 1.2);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_WALK);
-	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(tgt != 0) {
+	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(target != 0) {
 		fdActorSetDestination(
-			ACTOR_JENNA, tgt->x.part[0].integer, tgt->z.part[0].integer);
+			ACTOR_JENNA, target->x.part[0].integer, target->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_JENNA);
 	fdActorSetPos(ACTOR_JENNA, 0, 0);
 	fdActorSetSpeed(ACTOR_SHEBA, 1.2);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_WALK);
-	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(tgt != 0) {
+	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(target != 0) {
 		fdActorSetDestination(
-			ACTOR_SHEBA, tgt->x.part[0].integer, tgt->z.part[0].integer);
+			ACTOR_SHEBA, target->x.part[0].integer, target->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_SHEBA);
 	fdActorSetPos(ACTOR_SHEBA, 0, 0);
@@ -1261,10 +1261,10 @@ Sint32 scLemuriaPalaceMeetKingHydros(void)
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_PIERS, 1.2);
 	fdActorSetAnimation(ACTOR_PIERS, ANIM_WALK);
-	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	if(tgt != 0) {
+	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	if(target != 0) {
 		fdActorSetDestination(
-			ACTOR_PIERS, tgt->x.part[0].integer, tgt->z.part[0].integer);
+			ACTOR_PIERS, target->x.part[0].integer, target->z.part[0].integer);
 	}
 	fdActorWaitForMoveById(ACTOR_PIERS);
 	fdActorSetPos(ACTOR_PIERS, 0, 0);

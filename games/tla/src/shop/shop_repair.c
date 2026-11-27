@@ -54,7 +54,8 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 		return;
 	}
 	/* useType is ITEM_USE_MAY_BREAK here, so this tests ITEM_CANNOT_UNEQUIP. */
-	if((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flg)) {
+	if((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
+		(useType & item->flags)) {
 		mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 		mnShopShowKeeperMessageHidingCursor((Sint32)MsgRepairStuckOn);
 		return;
@@ -76,7 +77,7 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	/* Hide the item while it is repaired, without compacting its slot. */
 	savedEntry = unit->inventory[slot];
 	unit->inventory[slot] = 0;
-	mnShopDrawMemberItems(shop->itemWin, unitId);
+	mnShopDrawMemberItems(shop->itemWindow, unitId);
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	/* "Yes, sir! I'll take your <item>, then." */
 	mnShopShowKeeperMessageHidingCursor(msgBase + 2);
@@ -84,19 +85,19 @@ void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 	/* The hammer blows are 110 ticks apart; the item stays hidden
 	   throughout. */
 	sySynch(10);
-	sySndPlayStub(SE_BELL);
+	sySoundPlayStub(SE_BELL);
 	sySynch(110);
-	sySndPlayStub(SE_BELL);
+	sySoundPlayStub(SE_BELL);
 	sySynch(110);
-	sySndPlayStub(SE_BELL);
+	sySoundPlayStub(SE_BELL);
 	sySynch(110);
-	sySndPlayStub(SE_MENU_CONFIRM);
+	sySoundPlayStub(SE_MENU_CONFIRM);
 	sySynch(20);
 	unit->inventory[slot] = savedEntry;
 	gmInventoryRepairStub(unitId, slot);
 	gmPartyAdjustCoinsStub(-repairCost);
 	mnShopDrawMoney();
-	mnShopDrawMemberItems(shop->itemWin, unitId);
+	mnShopDrawMemberItems(shop->itemWindow, unitId);
 	mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 	/* "I've repaired your <item>. Here it is." */
 	mnShopShowKeeperMessageHidingCursor(msgBase + 3);

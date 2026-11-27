@@ -7,11 +7,11 @@ void scActorRaiseFromMetatile(Sint32 id)
 	Sint32 height;
 
 	actor = fdActorGet(id);
-	actor->motionFlg = ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FLOATS;
 	height = actor->groundHeight;
 	actor->bounce = 0;
 	actor->y.fixed = height + toFIXED(32);
-	actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	height =
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 	fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0,

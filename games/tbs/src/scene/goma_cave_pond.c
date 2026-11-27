@@ -68,13 +68,14 @@ Sint32 scInit(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	state->transitionFrm = 24;
+	state->transitionFrame = 24;
 	if(gmFlagGet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
 		fdActorSetPos(ACTOR_FALLEN_STUMP, 216, 136);
 		fdActorSetAnimation(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FALLEN_STUMP), 0);
-		fdActorGet(ACTOR_FALLEN_STUMP)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_FALLEN_STUMP)->collisionFlg = 0;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FALLEN_STUMP), 0);
+		fdActorGet(ACTOR_FALLEN_STUMP)->priorityFlags =
+			ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_FALLEN_STUMP)->collisionFlags = 0;
 		fdMapGridCopyMetatileAttributes(11, 36, 5, 5, 11, 6);
 	}
 	return 0;

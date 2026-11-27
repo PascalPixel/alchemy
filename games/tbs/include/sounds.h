@@ -7,11 +7,11 @@
    which plays nothing, has no name, and the next named row's number is written
    after it. A sound effect is named for what it sounds like; one that no code
    or table in the game plays has UNUSED in its name, and only the sound test
-   (sySndTestRun), which nothing calls, can start it. Music takes the title of
+   (sySoundTestRun), which nothing calls, can start it. Music takes the title of
    its track where the two are matched (MUS_A_LONG_JOURNEY), the titles as
    Miketendo64's track guide lists them, and otherwise the place or moment the
    player knows it from (MUS_DUNGEON); a sound effect by what it sounds like or
-   the moment it marks. Three rows are controls no sound plays from. sySndPlay
+   the moment it marks. Three rows are controls no sound plays from. sySoundPlay
    tests the controls SOUND_FADE_OUT_BGM and SOUND_FADE_OUT_ACTION_SE first,
    then the ranges: from SOUND_SE_FIRST on the player its SongTable row names,
    from SOUND_JINGLE_FIRST jingles, below that music, where SOUND_KEEP_BGM is
@@ -230,7 +230,7 @@ typedef enum SND_ID {
 	/* The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
 	   under 5,000 coins, and one level from the debug level editor; also an
 	   item or Psynergy used from the menu whose effect has no jingle of its
-	   own, such as the stat items (mnAbilityPlayUseSnd). The row before it is
+	   own, such as the stat items (mnAbilityPlayUseSound). The row before it is
 	   the empty song: scColossoShowMatchResult plays this one minus 1 plus the
 	   match's result, which lands there for a result of 0. */
 	MUS_LUCKY = 91,
@@ -399,8 +399,8 @@ typedef enum SND_ID {
 	SE_CRASH,
 	/* An enemy falling, for defeat-sound kind 0, which most enemies have, the
 	   Djinn included: each kind's sound is SE_ENEMY_CRY plus it
-	   (btSprGetDefeatSnd). A mimic chest leaping up and the monsters on the
-	   Tolbi-bound ship use it too. */
+	   (btSpriteGetDefeatSound). A mimic chest leaping up and the monsters on
+	   the Tolbi-bound ship use it too. */
 	SE_ENEMY_CRY,
 	/* An enemy falling, for defeat-sound kind 1, the beasts' (rats, harpies,
 	   gargoyles, gryphons, golems, hounds and the like); also a battle starting

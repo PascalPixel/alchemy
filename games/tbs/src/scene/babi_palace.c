@@ -176,7 +176,7 @@ enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
 enum { FLAG_BABI_PALACE_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
 /* The palace map's tileset animations that open its doors, for
-   fdTilesetAnimResume (play) and fdTilesetAnimPause (pause).
+   fdTilesetAnimationResume (play) and fdTilesetAnimationPause (pause).
 
    Each scene entry pauses them, so every door is drawn shut. The recording of
    scBabiPalaceLeaveThroughDoor shows one swing open
@@ -240,9 +240,9 @@ typedef enum BABI_PALACE_METATILE_BEHAVIOR {
 /* Pauses the tileset animations of the palace's doors as the leader leaves. */
 static inline void scBabiPalacePauseDoorAnimations(void)
 {
-	fdTilesetAnimPause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
-	fdTilesetAnimPause(BABI_PALACE_OTHER_DOORS_ANIMATION);
-	fdTilesetAnimPause(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
+	fdTilesetAnimationPause(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
+	fdTilesetAnimationPause(BABI_PALACE_OTHER_DOORS_ANIMATION);
+	fdTilesetAnimationPause(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
 }
 
 /* After a night in the palace's beds, the party's HP and PP are full, Garet,
@@ -251,11 +251,11 @@ static inline void scBabiPalaceRestorePartyAndInventory(void)
 {
 	Sint16 members[8];
 	UNIT  *state;
-	Sint32 memberCnt;
+	Sint32 memberCount;
 	Sint32 i;
 
-	memberCnt = syFieldPartyListMembers(members);
-	for(i = 0; i < memberCnt; i++) {
+	memberCount = syFieldPartyListMembers(members);
+	for(i = 0; i < memberCount; i++) {
 		state = gmUnitGet(members[i]);
 		state->hp = state->hpMax;
 		state->pp = state->ppMax;
@@ -585,28 +585,28 @@ static void scBabiPalaceWakeFromFinalsDream(void)
 {
 	fdScriptStart();
 	fdScriptSetMessageId(MsgTolbiGetUp);
-	fdActorGet(ACTOR_PARTY_LEADER)->sprStorageKind = ACTOR_SPRITE_NONE;
-	fdActorGet(ACTOR_FINALS_ATTENDANT)->sprStorageKind = ACTOR_SPRITE_NONE;
+	fdActorGet(ACTOR_PARTY_LEADER)->spriteStorageKind = ACTOR_SPRITE_NONE;
+	fdActorGet(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = ACTOR_SPRITE_NONE;
 	sySynch(1);
 	REG_DISPCNT = DISPCNT_OBJ_ON | DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
 	/* "Isaac! Get up, Isaac!" */
 	fdScriptShowMessage(-1, 0);
 	REG_DISPCNT = DISPCNT_BG0_ON | DISPCNT_OBJ_1D_MAP;
-	fdActorGet(ACTOR_PARTY_LEADER)->sprStorageKind = ACTOR_SPRITE_ONE;
-	fdActorGet(ACTOR_FINALS_ATTENDANT)->sprStorageKind = ACTOR_SPRITE_ONE;
+	fdActorGet(ACTOR_PARTY_LEADER)->spriteStorageKind = ACTOR_SPRITE_ONE;
+	fdActorGet(ACTOR_FINALS_ATTENDANT)->spriteStorageKind = ACTOR_SPRITE_ONE;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetPos(ACTOR_GARET, 120, 104);
 	fdActorSetPos(ACTOR_MIA, 104, 80);
 	fdActorSetPos(ACTOR_IVAN, 120, 120);
 	fdActorFaceDirection(ACTOR_GARET, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-	FieldStateWork->transitionFrm = 60;
+	FieldStateWork->transitionFrame = 60;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	fdActorSetSpeed(ACTOR_MIA, 1);
 	fdActorWalkByAndWait(ACTOR_MIA, 16, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -617,7 +617,7 @@ static void scBabiPalaceWakeFromFinalsDream(void)
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdScriptWait(10);
 	fdActorGet(ACTOR_PARTY_LEADER)->z.fixed -= toFIXED(3);
-	fdActorGet(ACTOR_PARTY_LEADER)->tgtZ -= toFIXED(3);
+	fdActorGet(ACTOR_PARTY_LEADER)->targetZ -= toFIXED(3);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -692,7 +692,7 @@ static void scBabiPalaceWakeFromFinalsDream(void)
 	fdActorJump(ACTOR_PARTY_LEADER, 6, 0);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.9);
 	fdActorWalkByAndWait(ACTOR_PARTY_LEADER, -32, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdActorFaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	fdScriptWait(40);
@@ -1198,7 +1198,7 @@ static void scBabiPalaceWakeAfterFinals(void)
 	fdScriptStart();
 	fdScriptSetMessageId(MsgTolbiCallsName);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_LYING);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetPos(ACTOR_GARET, 104, 104);
 	fdActorSetPos(ACTOR_MIA, 88, 120);
 	fdActorSetPos(ACTOR_IVAN, 120, 120);
@@ -1207,7 +1207,7 @@ static void scBabiPalaceWakeAfterFinals(void)
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 0);
 	fieldState = FieldStateWork;
 	fieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fieldState->transitionFrm = 12;
+	fieldState->transitionFrame = 12;
 	sySynch(1);
 	fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_LEADER);
 	state = ScreenTransitionStateWork;
@@ -1231,7 +1231,7 @@ static void scBabiPalaceWakeAfterFinals(void)
 	fieldState = FieldStateWork;
 	fieldState->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fieldState->transitionFrm = 24;
+	fieldState->transitionFrame = 24;
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 40);
@@ -1258,7 +1258,7 @@ static void scBabiPalaceWakeAfterFinals(void)
 	/* "You've awakened." */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	fdActorGet(ACTOR_PARTY_LEADER)->z.fixed -= toFIXED(3);
-	fdActorGet(ACTOR_PARTY_LEADER)->tgtZ -= toFIXED(3);
+	fdActorGet(ACTOR_PARTY_LEADER)->targetZ -= toFIXED(3);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
 	fdScriptWait(40);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -1416,7 +1416,7 @@ static void scBabiPalaceWakeAfterFinals(void)
 	fdActorJump(ACTOR_PARTY_LEADER, 6, 0);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.9);
 	fdActorWalkByAndWait(ACTOR_PARTY_LEADER, -32, -8);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
@@ -1462,7 +1462,7 @@ static void scBabiPalaceWakeAfterFinals(void)
    done, and sends Iodem with them, to meet at Gondowan Passage. */
 static void scBabiPalaceMeetBabiAfterColosso(void)
 {
-	sySndPlay(MUS_BABIS_THEME);
+	sySoundPlay(MUS_BABIS_THEME);
 	fdScriptStart();
 	fdScriptSetMessageId(MsgTolbiWaitingCompanions);
 	fdScriptStartScreenTransition();
@@ -1541,9 +1541,9 @@ static void scBabiPalaceMeetBabiAfterColosso(void)
 		fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
 		fdScriptWait(20);
 		fdActorSetSpeed(ACTOR_IODEM, 0.8);
-		fdActorGet(ACTOR_IODEM)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkByAndWait(ACTOR_IODEM, 0, -16);
-		fdActorGet(ACTOR_IODEM)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
 		fdScriptWait(40);
 		fdActorSetSpeed(ACTOR_BABI, 0.8);
@@ -2493,7 +2493,7 @@ static void scBabiPalaceMeetBabiAfterColosso(void)
 	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(30);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetSpeed(ACTOR_GARET, 1.2);
 	fdActorSetSpeed(ACTOR_IVAN, 1.2);
 	fdActorSetSpeed(ACTOR_MIA, 1.2);
@@ -2521,20 +2521,20 @@ static void scBabiPalaceLeaveThroughDoor(void)
 
 	state = FieldStateWork;
 	fdScriptStart();
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	if(state->stepCue == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
-		fdTilesetAnimResume(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
+		fdTilesetAnimationResume(BABI_PALACE_MEETING_ROOM_DOOR_ANIMATION);
 		fdScriptWait(10);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	} else {
 		if(state->stepCue == BABI_PALACE_CARPET_ROOM_TO_OVEN_ROOM) {
-			fdTilesetAnimResume(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
+			fdTilesetAnimationResume(BABI_PALACE_OVEN_ROOM_DOOR_ANIMATION);
 			fdScriptWait(10);
 			fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 		} else {
-			fdTilesetAnimResume(BABI_PALACE_OTHER_DOORS_ANIMATION);
+			fdTilesetAnimationResume(BABI_PALACE_OTHER_DOORS_ANIMATION);
 			fdScriptWait(10);
 			fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 		}
@@ -2551,7 +2551,7 @@ static void scBabiPalaceLeaveThroughAnimatedDoor(void)
 {
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(BabiPalaceDoorMetatiles, 36, 10);
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	fdScriptWait(16);
@@ -2686,7 +2686,7 @@ const CUE *scGetCues(void)
 Sint32 scInit(void)
 {
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *glyph;
 	Sint32		   set;
 
@@ -2712,18 +2712,18 @@ Sint32 scInit(void)
 				fdActorSetPos(ACTOR_CLOAK_BALL, 0, 0);
 			} else {
 				actor = fdActorGet(ACTOR_CLOAK_BALL);
-				actor->retainSprCache = 1;
-				actor->motionFlg = set;
-				spr = actor->spr;
+				actor->retainSpriteCache = 1;
+				actor->motionFlags = set;
+				sprite = actor->sprite;
 				actor->y.fixed = toFIXED(4);
-				spr->cnt = set;
-				spr->image.fullCol = 0;
-				spr->image.pal = 0;
+				sprite->count = set;
+				sprite->image.fullColor = 0;
+				sprite->image.palette = 0;
 				/* The icon's tiles are the 128 bytes of a 16 by 16 sprite. */
-				glyph = syHeapSlotAlloc(
+				glyph = syHeapSlotAllocate(
 					HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 				gmItemLoadIcon(ITEM_CLOAK_BALL);
-				mnVRAMLoad(spr->slot, 128, glyph->tiles);
+				mnVRAMLoad(sprite->slot, 128, glyph->tiles);
 				syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 			}
 			if(MainRoutineStateWork.entrance ==
@@ -2737,7 +2737,7 @@ Sint32 scInit(void)
 			   (https://alchemy.pascalpixel.com/places/babi-palace_colosso-over/map-18.png).
 			 */
 			fdActorSetAnimation(ACTOR_BABI, BABI_ANIMATION_IN_BED);
-			fdActorSetSprFlags(fdActorGet(ACTOR_BABI), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_BABI), 0);
 		} else if(gmFlagGet(FLAG_BABI_SAVED) &&
 			!gmFlagGet(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {
 			fdActorSetPos(ACTOR_FINALS_ATTENDANT, 120, 72);
@@ -2746,7 +2746,7 @@ Sint32 scInit(void)
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 		/* The attendant before the rescue and after Colosso; during the finals
 		   ACTOR_FINALS_HURRYING_WARRIORS_ALONG has this number. */
-		fdActorGet(ACTOR_BED_ATTENDANT)->collisionFlg |= ACTOR_NEAR_TALK;
+		fdActorGet(ACTOR_BED_ATTENDANT)->collisionFlags |= ACTOR_NEAR_TALK;
 		if(MainRoutineStateWork.entrance ==
 			BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
 			scBabiPalaceRestorePartyAndInventory();

@@ -69,17 +69,17 @@ typedef struct ACTOR {
 	/* ACTOR_PRIORITY_FLAG bits, read by the scrolling camera:
 	   ACTOR_PRIORITY_AUTOMATIC for placed actors, ACTOR_PRIORITY_UNDERFOOT for
 	   footprints. */
-	Uint8 priFlg;
-	FIXED velX;		  /* 16.16 fixed-point pixels per tick */
-	FIXED velY;		  /* 16.16 fixed-point pixels per tick */
-	FIXED velZ;		  /* 16.16 fixed-point pixels per tick */
+	Uint8 priorityFlags;
+	FIXED velocityX;  /* 16.16 fixed-point pixels per tick */
+	FIXED velocityY;  /* 16.16 fixed-point pixels per tick */
+	FIXED velocityZ;  /* 16.16 fixed-point pixels per tick */
 	FIXED speedLimit; /* 16.16 fixed-point pixels per tick */
 	/* Added toward the target each tick, or taken off the speed when there is
 	   none, in 16.16 fixed-point pixels per tick; toFIXED(1) when created. */
 	FIXED acceleration;
-	FIXED tgtX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
-	FIXED tgtY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
-	FIXED tgtZ; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetZ; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
 	/* The share of its falling speed kept as it bounces on landing, 16.16 fixed
 	   point (a quarter when created); a floating actor's phase instead. */
 	FIXED bounce;
@@ -92,24 +92,24 @@ typedef struct ACTOR {
 	Sint32 sceneWord;
 	/* Its sprite, by spriteStorageKind: one sprite for ACTOR_SPRITE_ONE; for
 	   ACTOR_SPRITE_GROUP four, empty ones null, read as void **. */
-	SPR *spr;
+	SPR *sprite;
 	/* Zero hides sprites; one draws a single sprite, two draws a group. */
-	Uint8 sprStorageKind;
+	Uint8 spriteStorageKind;
 	/* ACTOR_MOTION_FLAG bits; none is free flight in 3D, and
 	   ACTOR_FOLLOWS_TERRAIN and ACTOR_FALLS are set on creation. */
-	Uint8 motionFlg;
+	Uint8 motionFlags;
 	Uint8 arrivalAxis;	   /* the ARRIVAL_AXIS_* watched for arrival */
 	Uint8 conditionResult; /* the actor script's last flag test */
-	Uint8 snapToTgt; /* nonzero lands it exactly on its target on arrival */
+	Uint8 snapToTarget; /* nonzero lands it exactly on its target on arrival */
 	/* ACTOR_COLLISION_FLAG bits; placed actors take ACTOR_SOLID. */
-	Uint8 collisionFlg;
-	Uint8 steeringFlg; /* ACTOR_STEERING_FLAG bits */
-	Uint8 paused;	   /* nonzero skips its script and motion, not its update */
+	Uint8 collisionFlags;
+	Uint8 steeringFlags; /* ACTOR_STEERING_FLAG bits */
+	Uint8 paused; /* nonzero skips its script and motion, not its update */
 	/* Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
-	   or it is off screen (fdActorSystemPlaceSprs). */
-	Uint8  retainSprCache;
-	Uint8  repeatCnt; /* the actor script's SC_LOOP count */
-	Sint16 wait;	  /* the actor script's wait, in ticks */
+	   or it is off screen (fdActorSystemPlaceSprites). */
+	Uint8  retainSpriteCache;
+	Uint8  repeatCount; /* the actor script's SC_LOOP count */
+	Sint16 wait;		/* the actor script's wait, in ticks */
 	/* Ticks in a row a solid actor has refused its move; SC_SYNC stops waiting
 	   after 60. */
 	Uint8 refused;
@@ -117,7 +117,7 @@ typedef struct ACTOR {
 	   moves it. */
 	Uint8 frozen;
 	/* not read by the field engine; scene code's own counter */
-	Uint8 sceneCnt;
+	Uint8 sceneCount;
 	Uint8 sceneByte; /* not read by the field engine; scene code's own state */
 
 	/* Two halfwords whose meaning depends on what runs the actor. */
@@ -126,7 +126,7 @@ typedef struct ACTOR {
 			/* The parameter its actor script reads (a follow distance or an
 			   angle to face), the player's ticks to its next footprint, or
 			   scene scratch. */
-			Sint16 tmr;
+			Sint16 timer;
 			/* The side of the player's next footprint (2 after a stop), or
 			   scene scratch. */
 			Sint16 userValue;
@@ -142,26 +142,26 @@ typedef struct ACTOR {
 		/* Avoid's caster (fdEffectUpdateAvoidCaster). */
 		struct {
 			Sint16 arcPhase; /* 1 spins the caster 3/64 turn a tick */
-			Sint16 arcFrm;	 /* ticks since the arcs started */
+			Sint16 arcFrame; /* ticks since the arcs started */
 		};
 
 		/* A Venus Djinni's falling motes
 		   (fdEffectUpdateDescendingOrbitActor). */
 		struct {
-			Uint16 orbitFrm; /* ticks left of the spiral, 100 at the start */
-			Sint16 orbitAng; /* its start on the circle, 1/65536 turns */
+			Uint16 orbitFrame; /* ticks left of the spiral, 100 at the start */
+			Sint16 orbitAngle; /* its start on the circle, 1/65536 turns */
 		};
 
 		/* A Whirlwind particle (fdEffectCircleAnchor,
 		   fdEffectWanderAroundAnchor). */
 		struct {
-			Uint16 swirlFrm; /* ticks it has circled or wandered so far */
-			Sint16 turnFrm;	 /* ticks left of a sharp turn */
+			Uint16 swirlFrame; /* ticks it has circled or wandered so far */
+			Sint16 turnFrame;  /* ticks left of a sharp turn */
 		};
 
-		/* A spin that speeds up (fdEffectAdvanceAngWithRamp). */
+		/* A spin that speeds up (fdEffectAdvanceAngleWithRamp). */
 		struct {
-			Sint16 spinRampFrm; /* ticks the spin has been speeding up for */
+			Sint16 spinRampFrame; /* ticks the spin has been speeding up for */
 		};
 	};
 	/* The object (an actor or a field effect) its actor script follows or
@@ -179,20 +179,20 @@ typedef struct ACTOR {
 STATIC_ASSERT(sizeof(ACTOR) == 112);
 STATIC_ASSERT(offsetof(ACTOR, arrivalAxis) == 86);
 STATIC_ASSERT(offsetof(ACTOR, conditionResult) == 87);
-STATIC_ASSERT(offsetof(ACTOR, snapToTgt) == 88);
+STATIC_ASSERT(offsetof(ACTOR, snapToTarget) == 88);
 STATIC_ASSERT(offsetof(ACTOR, userValue) == 102);
 STATIC_ASSERT(offsetof(ACTOR, facing) == 6);
 STATIC_ASSERT(offsetof(ACTOR, x) == 8);
 STATIC_ASSERT(offsetof(ACTOR, z) == 16);
 STATIC_ASSERT(offsetof(ACTOR, groundHeight) == 20);
 STATIC_ASSERT(offsetof(ACTOR, scaleY) == 28);
-STATIC_ASSERT(offsetof(ACTOR, priFlg) == 35);
-STATIC_ASSERT(offsetof(ACTOR, motionFlg) == 85);
-STATIC_ASSERT(offsetof(ACTOR, collisionFlg) == 89);
-STATIC_ASSERT(offsetof(ACTOR, steeringFlg) == 90);
+STATIC_ASSERT(offsetof(ACTOR, priorityFlags) == 35);
+STATIC_ASSERT(offsetof(ACTOR, motionFlags) == 85);
+STATIC_ASSERT(offsetof(ACTOR, collisionFlags) == 89);
+STATIC_ASSERT(offsetof(ACTOR, steeringFlags) == 90);
 STATIC_ASSERT(offsetof(ACTOR, paused) == 91);
-STATIC_ASSERT(offsetof(ACTOR, retainSprCache) == 92);
-STATIC_ASSERT(offsetof(ACTOR, repeatCnt) == 93);
+STATIC_ASSERT(offsetof(ACTOR, retainSpriteCache) == 92);
+STATIC_ASSERT(offsetof(ACTOR, repeatCount) == 93);
 STATIC_ASSERT(offsetof(ACTOR, wait) == 94);
 STATIC_ASSERT(offsetof(ACTOR, refused) == 96);
 STATIC_ASSERT(offsetof(ACTOR, frozen) == 97);
@@ -200,10 +200,10 @@ STATIC_ASSERT(offsetof(ACTOR, sceneByte) == 99);
 STATIC_ASSERT(offsetof(ACTOR, bounce) == 68);
 STATIC_ASSERT(offsetof(ACTOR, gravity) == 72);
 STATIC_ASSERT(offsetof(ACTOR, sceneWord) == 76);
-STATIC_ASSERT(offsetof(ACTOR, velY) == 40);
+STATIC_ASSERT(offsetof(ACTOR, velocityY) == 40);
 STATIC_ASSERT(offsetof(ACTOR, speedLimit) == 48);
-STATIC_ASSERT(offsetof(ACTOR, tgtX) == 56);
-STATIC_ASSERT(offsetof(ACTOR, spr) == 80);
+STATIC_ASSERT(offsetof(ACTOR, targetX) == 56);
+STATIC_ASSERT(offsetof(ACTOR, sprite) == 80);
 STATIC_ASSERT(offsetof(ACTOR, update) == 108);
 
 /* Preserves the current action and motion when assigning a watched actor. */
@@ -211,7 +211,7 @@ typedef enum ACTOR_WATCH_FLAG {
 	ACTOR_WATCH_KEEP_MOTION = 0x10000
 } ACTOR_WATCH_FLAG;
 
-/* ACTOR.priFlg bits. */
+/* ACTOR.priorityFlags bits. */
 typedef enum ACTOR_PRIORITY_FLAG {
 	/* The sprite takes its priority from the map metatile under it. */
 	ACTOR_PRIORITY_AUTOMATIC = 0x01,
@@ -221,7 +221,7 @@ typedef enum ACTOR_PRIORITY_FLAG {
 	ACTOR_PRIORITY_OVERHEAD = 0x04
 } ACTOR_PRIORITY_FLAG;
 
-/* ACTOR.collisionFlg bits. */
+/* ACTOR.collisionFlags bits. */
 typedef enum ACTOR_COLLISION_FLAG {
 	ACTOR_SOLID = 0x01,			/* blocks other actors and the player */
 	ACTOR_PUSHABLE = 0x02,		/* the player pushes it */
@@ -242,17 +242,17 @@ enum {
 typedef struct ACTOR_SNAPSHOT {
 	/* actor ids, or ACTOR_SNAPSHOT_EMPTY */
 	Uint8 slots[ACTOR_SNAPSHOT_CAPACITY];
-	ACTOR actors[ACTOR_SNAPSHOT_CAPACITY]; /* copied by DMA */
-	Uint8 anms[ACTOR_SNAPSHOT_CAPACITY];   /* each sprite's lastNo */
+	ACTOR actors[ACTOR_SNAPSHOT_CAPACITY];	   /* copied by DMA */
+	Uint8 animations[ACTOR_SNAPSHOT_CAPACITY]; /* each sprite's lastNo */
 	/* restored through the dispatcher */
-	Uint8 sprFlg[ACTOR_SNAPSHOT_CAPACITY];
+	Uint8 spriteFlags[ACTOR_SNAPSHOT_CAPACITY];
 	/* both image and shadow priority */
 	Uint8 priorities[ACTOR_SNAPSHOT_CAPACITY];
 } ACTOR_SNAPSHOT;
 
 STATIC_ASSERT(offsetof(ACTOR_SNAPSHOT, actors) == 32);
-STATIC_ASSERT(offsetof(ACTOR_SNAPSHOT, anms) == 3616);
-STATIC_ASSERT(offsetof(ACTOR_SNAPSHOT, sprFlg) == 3648);
+STATIC_ASSERT(offsetof(ACTOR_SNAPSHOT, animations) == 3616);
+STATIC_ASSERT(offsetof(ACTOR_SNAPSHOT, spriteFlags) == 3648);
 STATIC_ASSERT(offsetof(ACTOR_SNAPSHOT, priorities) == 3680);
 STATIC_ASSERT(sizeof(ACTOR_SNAPSHOT) == 3712);
 
@@ -261,9 +261,9 @@ STATIC_ASSERT(sizeof(ACTOR_SNAPSHOT) == 3712);
 extern ACTOR_SNAPSHOT ActorSnapshotWork;
 
 /* Sets bits in one of an actor's flag bytes. */
-static inline void syActorFlagsSet(Uint8 *flg, Uint8 bits)
+static inline void syActorFlagsSet(Uint8 *flags, Uint8 bits)
 {
-	*flg |= bits;
+	*flags |= bits;
 }
 
 #endif

@@ -9,7 +9,8 @@
 #include "stubs.h"
 
 /* A battle sprite id's low twelve bits, the sprite. The bits above hold the
-   enemy sprite slot its pictures are loaded into (btEnemySprLoadIntoSlots). */
+   enemy sprite slot its pictures are loaded into (btEnemySpriteLoadIntoSlots).
+ */
 #define SPRITE_ID_MASK	   0xfff
 /* What the Kraken's and the Fusion Dragon's second part adds to their first:
    the next sprite, its pictures two slots on, past the two slots a large

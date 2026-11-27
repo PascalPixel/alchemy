@@ -6,11 +6,12 @@
 
 enum {
 	/* The copies of the sprite and their places on the ring; a facing kind uses
-	   4, 6, 8 or 10 of them (fdSprViewerLayOutRing). */
+	   4, 6, 8 or 10 of them (fdSpriteViewerLayOutRing). */
 	SPRITE_VIEWER_COPY_COUNT = 10,
 	SPRITE_VIEWER_SPRITE_LIMIT = 512,	 /* sprite ids 0 to 511 are offered */
 	SPRITE_VIEWER_ANIMATION_LIMIT = 100, /* animations 0 to 99 */
-	/* A sprite animation priority above 3, which fdSprComposePicture skips. */
+	/* A sprite animation priority above 3, which fdSpriteComposePicture skips.
+	 */
 	SPRITE_VIEWER_HIDDEN_PRIORITY = 8,
 	/* The sprites with an image L and R step over while Start is held. */
 	SPRITE_VIEWER_FAST_STEP = 10
@@ -31,29 +32,29 @@ typedef enum SPR_VIEWER_EDIT_MODE {
 
 /* One sprite animation the sprite viewer edits. */
 typedef struct SPR_VIEWER_LAYER {
-	Sint16 sprId;	/* the animation id (the sprite number) it shows */
-	Sint16 anmIdx;	/* which of that sprite's animations plays */
-	Uint8  enabled; /* shown; hidden by a priority above the drawn range */
-	Sint8  pri;		/* drawing order, 0 to 3 */
-	Sint8  colMode; /* SPR_COL_MODE; the viewer cycles through 0 to 15 */
+	Sint16 spriteId;	   /* the animation id (the sprite number) it shows */
+	Sint16 animationIndex; /* which of that sprite's animations plays */
+	Uint8  enabled;	  /* shown; hidden by a priority above the drawn range */
+	Sint8  priority;  /* drawing order, 0 to 3 */
+	Sint8  colorMode; /* SPR_COL_MODE; the viewer cycles through 0 to 15 */
 } SPR_VIEWER_LAYER;
 
 /* A debug sprite viewer, which never returns. It shows a sprite (with up to
    three more sprite animations) once for each of its facings, in a ring. */
-void fdSprViewerRun(void)
+void fdSpriteViewerRun(void)
 {
 	SPR_VIEWER_LAYER	layers[ANIM_LAYER_COUNT];
-	ANIMATION_METADATA *sprMetadata;
-	SPR				   *sprs;
+	ANIMATION_METADATA *spriteMetadata;
+	SPR				   *sprites;
 	volatile Sint32		fillWord;
-	Sint32				sprId;
+	Sint32				spriteId;
 	Sint32				x;
 	Sint32				y;
 	Uint32				editMode;
 	Sint32				shadowsEnabled;
 	SPR_PLACEMENT	   *ring;
 	Sint32				selectedLayer;
-	Uint32				sprSteps;
+	Uint32				spriteSteps;
 	Sint32				changed;
 	/* The edit loop reads the held and repeated keys through these pointers. */
 	volatile Uint32 *heldKeys;
@@ -66,28 +67,29 @@ void fdSprViewerRun(void)
 	editMode = SPRITE_VIEWER_EDIT_SPRITE;
 	shadowsEnabled = 1;
 	selectedLayer = 0;
-	ring = syHeapSlotAllocEWRAM(
+	ring = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_BATTLE, SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
 	/* A sprite animation in SPRITE_COLOR_FILL is painted in colour 3. */
 	DecodeFillByte = 3;
 
-	/* Only the ring's first word is cleared; fdSprViewerLayOutRing fills it. */
+	/* Only the ring's first word is cleared; fdSpriteViewerLayOutRing fills it.
+	 */
 	DMA_FILL32_CELL(fillWord, 0, ring, 4);
 	DMA_FILL32_CELL(fillWord, 0, layers, sizeof(layers));
 
 	/* All four sprite animations start on the first sprite with an image,
 	   animation 1, priority 1; only sprite animation 0 is shown. */
-	sprId = fdSprViewerStepSprId(-1, 1);
+	spriteId = fdSpriteViewerStepSpriteId(-1, 1);
 	for(i = 0; i < ANIM_LAYER_COUNT; i++) {
-		layers[i].anmIdx = 1;
-		layers[i].pri = 1;
-		layers[i].sprId = sprId;
+		layers[i].animationIndex = 1;
+		layers[i].priority = 1;
+		layers[i].spriteId = spriteId;
 	}
 	layers[0].enabled = 1;
 	/* Any nonzero value turns the debug mode on. */
 	DebugMode = 2;
 	/* Nothing visible comes of this blend: BG1 is never turned on below, and
-	   the viewer's sprites are all in normal mode (fdSprCreate); only a
+	   the viewer's sprites are all in normal mode (fdSpriteCreate); only a
 	   semi-transparent sprite blends whatever BLDCNT's first target is (GBATEK,
 	   "Semi-Transparent OBJs"). */
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -101,56 +103,57 @@ void fdSprViewerRun(void)
 restart:
 	syHeapInit();
 	syInitEvent();
-	ring = syHeapSlotAllocEWRAM(
+	ring = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_BATTLE, SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
 	syVRAMCacheReset();
 	fdActorSystemInit(ACTOR_SYSTEM_MAP);
 	/* With no map loaded, the map metatile buffer holds sprite animation 0's
 	   pictures; a two-part sprite (ANIM_FACING_TWO_PART) puts its second part
 	   in the actor sprite buffer, as sprite picture cache 1. */
-	fdSprPictureCacheLoad(
-		0, (Uint32 *)RamMapGridMetatileBuffer, layers[0].sprId, 0);
-	sprMetadata = syResourceGetMetadataRecordStub(layers[0].sprId);
-	if(sprMetadata->drawKind == ANIM_FACING_TWO_PART) {
-		fdSprPictureCacheLoad(
-			1, (Uint32 *)RamEnemySpriteSlots, layers[0].sprId + 1, 0);
+	fdSpritePictureCacheLoad(
+		0, (Uint32 *)RamMapGridMetatileBuffer, layers[0].spriteId, 0);
+	spriteMetadata = syResourceGetMetadataRecordStub(layers[0].spriteId);
+	if(spriteMetadata->drawKind == ANIM_FACING_TWO_PART) {
+		fdSpritePictureCacheLoad(
+			1, (Uint32 *)RamEnemySpriteSlots, layers[0].spriteId + 1, 0);
 	}
 
 	/* Ten copies of the sprite; for a two-part sprite every other copy shows
 	   its second part, number + 1, from sprite picture cache 1. */
 	for(i = 0; i < SPRITE_VIEWER_COPY_COUNT; i++) {
-		SPR	  *spr;
+		SPR	  *sprite;
 		Sint32 part = 0;
 
-		sprMetadata = syResourceGetMetadataRecordStub(layers[0].sprId);
-		if(sprMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
+		spriteMetadata = syResourceGetMetadataRecordStub(layers[0].spriteId);
+		if(spriteMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
 			part = 1;
 		}
-		spr = fdSprCreate(SPRITE_PICTURE_TAG(part, layers[0].sprId + part));
+		sprite =
+			fdSpriteCreate(SPRITE_PICTURE_TAG(part, layers[0].spriteId + part));
 		/* Sprite animations 1 to 3 are added to every copy whether shown or
 		   not; a hidden sprite animation is kept out of the drawing by its
 		   priority below. */
-		fdSprAddAnimation(spr, layers[1].sprId);
-		fdSprAddAnimation(spr, layers[2].sprId);
-		fdSprAddAnimation(spr, layers[3].sprId);
-		spr->flg = shadowsEnabled;
+		fdSpriteAddAnimation(sprite, layers[1].spriteId);
+		fdSpriteAddAnimation(sprite, layers[2].spriteId);
+		fdSpriteAddAnimation(sprite, layers[3].spriteId);
+		sprite->flags = shadowsEnabled;
 	}
 
-	/* Priority 8 hides a sprite animation: fdSprComposePicture draws only
+	/* Priority 8 hides a sprite animation: fdSpriteComposePicture draws only
 	   priorities 0 to 3. */
 	for(i = 0; i < ANIM_LAYER_COUNT; i++) {
 		if(layers[i].enabled != 0) {
-			fdSprViewerSetLayerPriority(i, layers[i].pri);
+			fdSpriteViewerSetLayerPriority(i, layers[i].priority);
 		} else {
-			fdSprViewerSetLayerPriority(i, SPRITE_VIEWER_HIDDEN_PRIORITY);
+			fdSpriteViewerSetLayerPriority(i, SPRITE_VIEWER_HIDDEN_PRIORITY);
 		}
-		fdSprViewerSetLayerColMode(i, layers[i].colMode);
-		fdSprViewerStartStaggeredAnimations(i, layers[i].anmIdx);
+		fdSpriteViewerSetLayerColorMode(i, layers[i].colorMode);
+		fdSpriteViewerStartStaggeredAnimations(i, layers[i].animationIndex);
 	}
 	/* The copies are drawn each tick by the event below, from the ring's
 	   positions. */
-	fdSprViewerLayOutRing(x, y, ring);
-	sySetEvent(fdSprViewerPlaceRing, EVENT_PASS_TICK);
+	fdSpriteViewerLayOutRing(x, y, ring);
+	sySetEvent(fdSpriteViewerPlaceRing, EVENT_PASS_TICK);
 
 next:
 	sySynch(1);
@@ -173,7 +176,7 @@ next:
 			if((*heldKeys & KEY_DOWN) != 0) {
 				y++;
 			}
-			fdSprViewerLayOutRing(x, y, ring);
+			fdSpriteViewerLayOutRing(x, y, ring);
 		} else {
 			/* DEAD: a read of PerRepeat whose value goes unused; the ROM keeps
 			   the load. */
@@ -196,11 +199,11 @@ next:
 		/* A press of Start also toggles the shadows (SPRITE_FLAG_SHADOW) of the
 		   ten copies. */
 		if((PerPush & KEY_START) != 0) {
-			sprs = SpritesWork;
+			sprites = SpritesWork;
 			shadowsEnabled ^= 1;
 			for(i = 0; i < SPRITE_VIEWER_COPY_COUNT; i++) {
-				sprs->flg = shadowsEnabled;
-				sprs++;
+				sprites->flags = shadowsEnabled;
+				sprites++;
 			}
 		}
 
@@ -212,25 +215,26 @@ next:
 				break;
 			}
 			if((PerRepeat & KEY_L) != 0) {
-				layers[selectedLayer].anmIdx--;
-				if(layers[selectedLayer].anmIdx < 0) {
-					layers[selectedLayer].anmIdx = 0;
+				layers[selectedLayer].animationIndex--;
+				if(layers[selectedLayer].animationIndex < 0) {
+					layers[selectedLayer].animationIndex = 0;
 				}
 				if(selectedLayer == 0) {
-					layers[1].anmIdx = layers[0].anmIdx;
+					layers[1].animationIndex = layers[0].animationIndex;
 				}
 				goto next;
 			}
 			if((PerRepeat & KEY_R) == 0) {
 				break;
 			}
-			layers[selectedLayer].anmIdx++;
-			if(layers[selectedLayer].anmIdx >= SPRITE_VIEWER_ANIMATION_LIMIT) {
-				layers[selectedLayer].anmIdx =
+			layers[selectedLayer].animationIndex++;
+			if(layers[selectedLayer].animationIndex >=
+				SPRITE_VIEWER_ANIMATION_LIMIT) {
+				layers[selectedLayer].animationIndex =
 					SPRITE_VIEWER_ANIMATION_LIMIT - 1;
 			}
 			if(selectedLayer == 0) {
-				layers[1].anmIdx = layers[0].anmIdx;
+				layers[1].animationIndex = layers[0].animationIndex;
 			}
 			goto next;
 
@@ -238,21 +242,21 @@ next:
 		   Start held. */
 		case SPRITE_VIEWER_EDIT_SPRITE:
 			changed = 0;
-			sprSteps = 1;
+			spriteSteps = 1;
 			if((*heldKeys & KEY_START) != 0) {
-				sprSteps = SPRITE_VIEWER_FAST_STEP;
+				spriteSteps = SPRITE_VIEWER_FAST_STEP;
 			}
 			if((*repeatedKeys & KEY_L) != 0) {
-				for(i = 0; i < sprSteps; i++) {
-					layers[selectedLayer].sprId =
-						fdSprViewerStepSprId(layers[selectedLayer].sprId, -1);
+				for(i = 0; i < spriteSteps; i++) {
+					layers[selectedLayer].spriteId = fdSpriteViewerStepSpriteId(
+						layers[selectedLayer].spriteId, -1);
 				}
 				changed = 1;
 			}
 			if((*repeatedKeys & KEY_R) != 0) {
-				for(i = 0; i < sprSteps; i++) {
-					layers[selectedLayer].sprId =
-						fdSprViewerStepSprId(layers[selectedLayer].sprId, 1);
+				for(i = 0; i < spriteSteps; i++) {
+					layers[selectedLayer].spriteId = fdSpriteViewerStepSpriteId(
+						layers[selectedLayer].spriteId, 1);
 				}
 				changed = 1;
 			}
@@ -268,14 +272,14 @@ next:
 			/* A hidden sprite animation only remembers the number until it is
 			   shown again. */
 			if(layers[selectedLayer].enabled != 0) {
-				fdSprViewerSetLayerSpr(
-					selectedLayer, layers[selectedLayer].sprId);
-				fdSprViewerSetLayerPriority(
-					selectedLayer, layers[selectedLayer].pri);
-				fdSprViewerSetLayerColMode(
-					selectedLayer, layers[selectedLayer].colMode);
-				fdSprViewerStartStaggeredAnimations(
-					selectedLayer, layers[selectedLayer].anmIdx);
+				fdSpriteViewerSetLayerSprite(
+					selectedLayer, layers[selectedLayer].spriteId);
+				fdSpriteViewerSetLayerPriority(
+					selectedLayer, layers[selectedLayer].priority);
+				fdSpriteViewerSetLayerColorMode(
+					selectedLayer, layers[selectedLayer].colorMode);
+				fdSpriteViewerStartStaggeredAnimations(
+					selectedLayer, layers[selectedLayer].animationIndex);
 			}
 			goto next;
 
@@ -283,16 +287,16 @@ next:
 		case SPRITE_VIEWER_EDIT_PRIORITY:
 			changed = 0;
 			if((*repeatedKeys & KEY_L) != 0) {
-				layers[selectedLayer].pri--;
-				if(layers[selectedLayer].pri < 0) {
-					layers[selectedLayer].pri = 3;
+				layers[selectedLayer].priority--;
+				if(layers[selectedLayer].priority < 0) {
+					layers[selectedLayer].priority = 3;
 				}
 				changed = 1;
 			}
 			if((*repeatedKeys & KEY_R) != 0) {
-				layers[selectedLayer].pri++;
-				if(layers[selectedLayer].pri > 3) {
-					layers[selectedLayer].pri = 0;
+				layers[selectedLayer].priority++;
+				if(layers[selectedLayer].priority > 3) {
+					layers[selectedLayer].priority = 0;
 				}
 				changed = 1;
 			}
@@ -300,27 +304,27 @@ next:
 				break;
 			}
 			if(layers[selectedLayer].enabled != 0) {
-				fdSprViewerSetLayerPriority(
-					selectedLayer, layers[selectedLayer].pri);
+				fdSpriteViewerSetLayerPriority(
+					selectedLayer, layers[selectedLayer].priority);
 			}
 			goto next;
 
 		/* The draw parameter (SPR_COL_MODE), 0 to 15 and wrapping;
-		   SPRITE_COLOR_HIDDEN is the value fdSprSetAnimationColModes leaves
-		   alone. */
+		   SPRITE_COLOR_HIDDEN is the value fdSpriteSetAnimationColorModes
+		   leaves alone. */
 		case SPRITE_VIEWER_EDIT_COLOR:
 			changed = 0;
 			if((*repeatedKeys & KEY_L) != 0) {
-				layers[selectedLayer].colMode--;
-				if(layers[selectedLayer].colMode < 0) {
-					layers[selectedLayer].colMode = SPRITE_COLOR_HIDDEN;
+				layers[selectedLayer].colorMode--;
+				if(layers[selectedLayer].colorMode < 0) {
+					layers[selectedLayer].colorMode = SPRITE_COLOR_HIDDEN;
 				}
 				changed = 1;
 			}
 			if((*repeatedKeys & KEY_R) != 0) {
-				layers[selectedLayer].colMode++;
-				if(layers[selectedLayer].colMode > SPRITE_COLOR_HIDDEN) {
-					layers[selectedLayer].colMode = 0;
+				layers[selectedLayer].colorMode++;
+				if(layers[selectedLayer].colorMode > SPRITE_COLOR_HIDDEN) {
+					layers[selectedLayer].colorMode = 0;
 				}
 				changed = 1;
 			}
@@ -328,8 +332,8 @@ next:
 				break;
 			}
 			if(layers[selectedLayer].enabled != 0) {
-				fdSprViewerSetLayerColMode(
-					selectedLayer, layers[selectedLayer].colMode);
+				fdSpriteViewerSetLayerColorMode(
+					selectedLayer, layers[selectedLayer].colorMode);
 			}
 			goto next;
 
@@ -344,20 +348,20 @@ next:
 			if(editMode == SPRITE_VIEWER_EDIT_ANIMATION) {
 				if(selectedLayer != 1) {
 					if(layers[selectedLayer].enabled != 0) {
-						fdSprViewerStartStaggeredAnimations(
-							selectedLayer, layers[selectedLayer].anmIdx);
+						fdSpriteViewerStartStaggeredAnimations(selectedLayer,
+							layers[selectedLayer].animationIndex);
 						if(selectedLayer == 0) {
-							fdSprViewerStartStaggeredAnimations(
-								1, layers[1].anmIdx);
+							fdSpriteViewerStartStaggeredAnimations(
+								1, layers[1].animationIndex);
 						}
 					}
 					goto next;
 				}
 			} else if(selectedLayer != 0) {
 				layers[selectedLayer].enabled ^= 1;
-				fdSprViewerSetLayerPriority(selectedLayer,
+				fdSpriteViewerSetLayerPriority(selectedLayer,
 					layers[selectedLayer].enabled != 0
-						? layers[selectedLayer].pri
+						? layers[selectedLayer].priority
 						: SPRITE_VIEWER_HIDDEN_PRIORITY);
 				goto next;
 			}
@@ -379,27 +383,27 @@ next:
 	}
 }
 
-/* Returns the next sprite id after sprId, stepping by direction (1 or -1)
+/* Returns the next sprite id after spriteId, stepping by direction (1 or -1)
    and wrapping within 0-511, whose metadata has an image (a nonzero width). */
-Sint32 fdSprViewerStepSprId(Sint32 sprId, Sint32 direction)
+Sint32 fdSpriteViewerStepSpriteId(Sint32 spriteId, Sint32 direction)
 {
 	for(;;) {
-		sprId += direction;
+		spriteId += direction;
 		/* Past either end, jump to just beyond the other, so the next step
 		   lands on 511 or 0. */
-		if(sprId < 0) {
-			sprId = SPRITE_VIEWER_SPRITE_LIMIT;
+		if(spriteId < 0) {
+			spriteId = SPRITE_VIEWER_SPRITE_LIMIT;
 			continue;
 		}
 		{
-			Sint32 sprLimit = SPRITE_VIEWER_SPRITE_LIMIT;
-			if(sprId >= sprLimit) {
-				sprId = -1;
+			Sint32 spriteLimit = SPRITE_VIEWER_SPRITE_LIMIT;
+			if(spriteId >= spriteLimit) {
+				spriteId = -1;
 				continue;
 			}
 		}
-		if(syResourceGetMetadataRecordStub(sprId)->width) {
-			return sprId;
+		if(syResourceGetMetadataRecordStub(spriteId)->width) {
+			return spriteId;
 		}
 	}
 }
@@ -408,258 +412,263 @@ Sint32 fdSprViewerStepSprId(Sint32 sprId, Sint32 direction)
    position per facing of the first sprite's facing kind (6, 8, 10 or 4, or two
    opposite pairs for ANIM_FACING_TWO_PART), 56 pixels out (40 for a two-part
    sprite). */
-void fdSprViewerLayOutRing(
+void fdSpriteViewerLayOutRing(
 	Sint32 centerX, Sint32 centerY, SPR_PLACEMENT *positions)
 {
 	SPR_PLACEMENT *pairedPositions;
-	Sint32		   ang;
-	Sint32		   facingIdx;
+	Sint32		   angle;
+	Sint32		   facingIndex;
 	Uint16		   initHeading;
 	Uint8		   facingKind;
 
-	ang = 0;
+	angle = 0;
 	facingKind = SpritesWork->entries[0]->kind;
 	/* With B held the ring starts at an angle that turns with the tick
 	   counter, a full turn every 256 ticks. */
 	if((PerData & KEY_B) != 0)
-		ang = (Sint16)(FrameCount << 8);
+		angle = (Sint16)(FrameCount << 8);
 	/* The steps are a sixth, an eighth, a tenth and a quarter of a turn. */
 	switch((Uint32)facingKind) {
 	case ANIM_FACING_THREE_PICTURES:
-		for(facingIdx = 0; facingIdx < 6; facingIdx++) {
-			ang = (Uint32)ang << ANGLE_BITS;
+		for(facingIndex = 0; facingIndex < 6; facingIndex++) {
+			angle = (Uint32)angle << ANGLE_BITS;
 			positions->x = toFIXED(centerX);
-			ang = (Uint32)ang >> ANGLE_BITS;
+			angle = (Uint32)angle >> ANGLE_BITS;
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
 			syVectorAddPolarOffset(
-				toFIXED(56), (Uint16)ang, sySprPlacementValues(positions));
+				toFIXED(56), (Uint16)angle, sySpritePlacementValues(positions));
 			positions++;
-			ang = (Sint16)(ang + DEGtoANG(60));
+			angle = (Sint16)(angle + DEGtoANG(60));
 		}
-		for(; facingIdx < SPRITE_VIEWER_COPY_COUNT; facingIdx++)
+		for(; facingIndex < SPRITE_VIEWER_COPY_COUNT; facingIndex++)
 			positions++;
 		break;
 	case ANIM_FACING_FIVE_PICTURES:
 	case ANIM_FACING_EIGHT_PICTURES:
 	case ANIM_FACING_EIGHT_NO_TABLE:
 	case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
-		for(facingIdx = 0; facingIdx < 8; facingIdx++) {
-			ang = (Uint32)ang << ANGLE_BITS;
+		for(facingIndex = 0; facingIndex < 8; facingIndex++) {
+			angle = (Uint32)angle << ANGLE_BITS;
 			positions->x = toFIXED(centerX);
-			ang = (Uint32)ang >> ANGLE_BITS;
+			angle = (Uint32)angle >> ANGLE_BITS;
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
 			syVectorAddPolarOffset(
-				toFIXED(56), (Uint16)ang, sySprPlacementValues(positions));
+				toFIXED(56), (Uint16)angle, sySpritePlacementValues(positions));
 			positions++;
-			ang = (Sint16)(ang + DEGtoANG(45));
+			angle = (Sint16)(angle + DEGtoANG(45));
 		}
-		for(; facingIdx < SPRITE_VIEWER_COPY_COUNT; facingIdx++)
+		for(; facingIndex < SPRITE_VIEWER_COPY_COUNT; facingIndex++)
 			positions++;
 		break;
 	case ANIM_FACING_FOUR_PICTURES:
 	case ANIM_FACING_SIX_PICTURES:
-		for(facingIdx = 0; facingIdx < SPRITE_VIEWER_COPY_COUNT; facingIdx++) {
-			ang = (Uint32)ang << ANGLE_BITS;
+		for(facingIndex = 0; facingIndex < SPRITE_VIEWER_COPY_COUNT;
+			facingIndex++) {
+			angle = (Uint32)angle << ANGLE_BITS;
 			positions->x = toFIXED(centerX);
-			ang = (Uint32)ang >> ANGLE_BITS;
+			angle = (Uint32)angle >> ANGLE_BITS;
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
 			syVectorAddPolarOffset(
-				toFIXED(56), (Uint16)ang, sySprPlacementValues(positions));
+				toFIXED(56), (Uint16)angle, sySpritePlacementValues(positions));
 			positions++;
-			ang = (Sint16)(ang + DEGtoANG(36));
+			angle = (Sint16)(angle + DEGtoANG(36));
 		}
 		break;
 	/* Two places 40 pixels out, a quarter turn round and then opposite it, each
 	   holding both of the sprite's parts. */
 	case ANIM_FACING_TWO_PART:
-		initHeading = ang;
-		ang = (Sint16)(initHeading + DEGtoANG(90));
-		facingIdx = 0;
+		initHeading = angle;
+		angle = (Sint16)(initHeading + DEGtoANG(90));
+		facingIndex = 0;
 		pairedPositions = positions;
-		while(facingIdx < 2) {
-			pairedPositions[facingIdx * 2].x = toFIXED(centerX);
-			pairedPositions[facingIdx * 2].height = 0;
-			pairedPositions[facingIdx * 2].y = toFIXED(centerY);
-			ang = (Uint32)ang << ANGLE_BITS;
-			ang = (Uint32)ang >> ANGLE_BITS;
+		while(facingIndex < 2) {
+			pairedPositions[facingIndex * 2].x = toFIXED(centerX);
+			pairedPositions[facingIndex * 2].height = 0;
+			pairedPositions[facingIndex * 2].y = toFIXED(centerY);
+			angle = (Uint32)angle << ANGLE_BITS;
+			angle = (Uint32)angle >> ANGLE_BITS;
 			syVectorAddPolarOffset(
-				toFIXED(40), ang, sySprPlacementValues(&positions[0]));
-			pairedPositions[facingIdx * 2 + 1].x = toFIXED(centerX);
+				toFIXED(40), angle, sySpritePlacementValues(&positions[0]));
+			pairedPositions[facingIndex * 2 + 1].x = toFIXED(centerX);
 			{
-				Sint32 *point = sySprPlacementValues(&positions[1]);
-				pairedPositions[facingIdx * 2 + 1].height = 0;
-				pairedPositions[facingIdx * 2 + 1].y = toFIXED(centerY);
-				syVectorAddPolarOffset(toFIXED(40), (Uint16)ang, point);
+				Sint32 *point = sySpritePlacementValues(&positions[1]);
+				pairedPositions[facingIndex * 2 + 1].height = 0;
+				pairedPositions[facingIndex * 2 + 1].y = toFIXED(centerY);
+				syVectorAddPolarOffset(toFIXED(40), (Uint16)angle, point);
 			}
-			ang = ((Uint32)ang + DEGtoANG(180)) << ANGLE_BITS;
-			facingIdx++;
+			angle = ((Uint32)angle + DEGtoANG(180)) << ANGLE_BITS;
+			facingIndex++;
 			positions += 2;
-			ang >>= ANGLE_BITS;
+			angle >>= ANGLE_BITS;
 		}
 		break;
 	/* Any other kind: four places, starting an eighth of a turn round. */
 	default:
-		ang = (Sint32)(((Uint32)ang << ANGLE_BITS) +
-				  ((Uint32)DEGtoANG(45) << ANGLE_BITS)) >>
+		angle = (Sint32)(((Uint32)angle << ANGLE_BITS) +
+					((Uint32)DEGtoANG(45) << ANGLE_BITS)) >>
 			ANGLE_BITS;
-		for(facingIdx = 0; facingIdx < 4; facingIdx++) {
-			ang = (Uint32)ang << ANGLE_BITS;
-			ang = (Uint32)ang >> ANGLE_BITS;
+		for(facingIndex = 0; facingIndex < 4; facingIndex++) {
+			angle = (Uint32)angle << ANGLE_BITS;
+			angle = (Uint32)angle >> ANGLE_BITS;
 			positions->x = toFIXED(centerX);
 			positions->height = 0;
 			positions->y = toFIXED(centerY);
 			syVectorAddPolarOffset(
-				toFIXED(56), (Uint16)ang, sySprPlacementValues(positions));
+				toFIXED(56), (Uint16)angle, sySpritePlacementValues(positions));
 			positions++;
-			ang = (Sint16)(ang + DEGtoANG(90));
+			angle = (Sint16)(angle + DEGtoANG(90));
 		}
-		for(facingIdx = 4; facingIdx < SPRITE_VIEWER_COPY_COUNT; facingIdx++)
+		for(facingIndex = 4; facingIndex < SPRITE_VIEWER_COPY_COUNT;
+			facingIndex++)
 			positions++;
 		break;
 	}
 }
 
-/* Defines name(layerIdx, value), which sets `field` of sprite animation
-   layerIdx (0 to 3) of each of the viewer's ten sprites to value. */
+/* Defines name(layerIndex, value), which sets `field` of sprite animation
+   layerIndex (0 to 3) of each of the viewer's ten sprites to value. */
 #define SPRITE_VIEWER_DEFINE_SET_LAYER(name, field) \
-	void name(Sint32 layerIdx, Sint32 value) \
+	void name(Sint32 layerIndex, Sint32 value) \
 	{ \
 		SPR	  *spriteGroup = SpritesWork; \
-		Sint32 sprIdx; \
+		Sint32 spriteIndex; \
 \
-		layerIdx &= ANIM_LAYER_COUNT - 1; \
-		for(sprIdx = 0; sprIdx < SPRITE_VIEWER_COPY_COUNT; sprIdx++) { \
-			spriteGroup->entries[layerIdx]->field = value; \
+		layerIndex &= ANIM_LAYER_COUNT - 1; \
+		for(spriteIndex = 0; spriteIndex < SPRITE_VIEWER_COPY_COUNT; \
+			spriteIndex++) { \
+			spriteGroup->entries[layerIndex]->field = value; \
 			spriteGroup++; \
 		} \
 	}
 
 /* Sets the colour mode (SPR_COL_MODE, the sprite animation's draw parameter) or
    the priority of one sprite animation of the viewer's ten sprites. */
-SPRITE_VIEWER_DEFINE_SET_LAYER(fdSprViewerSetLayerColMode, colMode)
-SPRITE_VIEWER_DEFINE_SET_LAYER(fdSprViewerSetLayerPriority, pri)
+SPRITE_VIEWER_DEFINE_SET_LAYER(fdSpriteViewerSetLayerColorMode, colorMode)
+SPRITE_VIEWER_DEFINE_SET_LAYER(fdSpriteViewerSetLayerPriority, priority)
 
-/* Starts anmIdx on layerIdx of each of the viewer's ten sprites, each
+/* Starts animationIndex on layerIndex of each of the viewer's ten sprites, each
    one a tick (16 timer units) behind the last, so the copies are staggered.
    Also sets each copy's offsetY and clears its rotation. */
-void fdSprViewerStartStaggeredAnimations(Sint32 layerIdx, Sint32 anmIdx)
+void fdSpriteViewerStartStaggeredAnimations(
+	Sint32 layerIndex, Sint32 animationIndex)
 {
-	Sint32 sprIdx;
-	SPR	  *sprGroup;
+	Sint32 spriteIndex;
+	SPR	  *spriteGroup;
 
-	sprGroup = SpritesWork;
-	sprIdx = 0;
+	spriteGroup = SpritesWork;
+	spriteIndex = 0;
 	do {
 		SPR_ANIMATION *entry =
-			sprGroup->entries[layerIdx & (ANIM_LAYER_COUNT - 1)];
+			spriteGroup->entries[layerIndex & (ANIM_LAYER_COUNT - 1)];
 		ANIMATION_METADATA *metadata;
 		Sint32				start = 0;
 
 		if(entry->scripts != 0) {
-			metadata = syResourceGetMetadataRecordStub(entry->anmId);
-			if(anmIdx < metadata->anmCnt) {
+			metadata = syResourceGetMetadataRecordStub(entry->animationId);
+			if(animationIndex < metadata->animationCount) {
 				/* Copy n starts n ticks (16 timer units each) late, at normal
 				   speed, with no tick drawn yet. */
 				entry->kind = metadata->drawKind;
-				entry->script = entry->scripts[anmIdx];
-				entry->tmr = sprIdx * SPRITE_ANIMATION_NORMAL_STEP;
+				entry->script = entry->scripts[animationIndex];
+				entry->timer = spriteIndex * SPRITE_ANIMATION_NORMAL_STEP;
 				entry->step = SPRITE_ANIMATION_NORMAL_STEP;
-				entry->scriptOfs = start;
+				entry->scriptOffset = start;
 				entry->pictureBase = start;
 				entry->picture = SPRITE_PICTURE_NONE;
 			}
-			sprGroup->ofsY = metadata->adjustY;
-			sprGroup->rotation = start;
+			spriteGroup->offsetY = metadata->adjustY;
+			spriteGroup->rotation = start;
 		}
-		sprIdx++;
-		sprGroup++;
-	} while(sprIdx < SPRITE_VIEWER_COPY_COUNT);
+		spriteIndex++;
+		spriteGroup++;
+	} while(spriteIndex < SPRITE_VIEWER_COPY_COUNT);
 }
 
-/* Sets sprId on layerIdx of each of the viewer's ten sprites. Resets each
+/* Sets spriteId on layerIndex of each of the viewer's ten sprites. Resets each
    sprite animation from its new metadata. */
-void fdSprViewerSetLayerSpr(Sint32 layerIdx, Sint32 sprId)
+void fdSpriteViewerSetLayerSprite(Sint32 layerIndex, Sint32 spriteId)
 {
 	SPR	  *spriteGroup = SpritesWork;
-	Sint32 sprIdx;
+	Sint32 spriteIndex;
 
 	/* DEAD: the sprite's metadata looked up and not used; the ROM keeps the
 	   call. */
-	syResourceGetMetadataRecordStub(sprId);
-	layerIdx &= ANIM_LAYER_COUNT - 1;
-	for(sprIdx = 0; sprIdx < SPRITE_VIEWER_COPY_COUNT; sprIdx++) {
-		SPR_ANIMATION *entry = spriteGroup->entries[layerIdx];
+	syResourceGetMetadataRecordStub(spriteId);
+	layerIndex &= ANIM_LAYER_COUNT - 1;
+	for(spriteIndex = 0; spriteIndex < SPRITE_VIEWER_COPY_COUNT;
+		spriteIndex++) {
+		SPR_ANIMATION *entry = spriteGroup->entries[layerIndex];
 
-		entry->anmId = sprId;
-		fdSprAnimationReset(entry);
+		entry->animationId = spriteId;
+		fdSpriteAnimationReset(entry);
 		spriteGroup++;
 	}
 }
 
 /* Each tick in the sprite viewer: places each copy of the sprite at its ring
    position, facing the way that position stands for. */
-void fdSprViewerPlaceRing(void)
+void fdSpriteViewerPlaceRing(void)
 {
 	SPR			  *sprite = SpritesWork;
 	Uint32		   facingKind = sprite->entries[0]->kind;
 	SPR_SCALE	   scale;
 	SPR_PLACEMENT *facingPositions;
-	Uint16		   ang;
+	Uint16		   angle;
 	Uint16		   step;
 	Uint16		   pairedFacingStep = 0;
-	Uint32		   cnt;
-	Uint32		   sprIdx;
+	Uint32		   count;
+	Uint32		   spriteIndex;
 
 	scale = SpriteViewerScale;
 	facingPositions = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 
 	switch(facingKind) {
 	case ANIM_FACING_THREE_PICTURES:
-		ang = 0;
+		angle = 0;
 		step = DEGtoANG(60);
-		cnt = 6;
+		count = 6;
 		break;
 	case ANIM_FACING_FIVE_PICTURES:
 	case ANIM_FACING_EIGHT_PICTURES:
 	case ANIM_FACING_EIGHT_NO_TABLE:
 	case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
-		ang = 0;
+		angle = 0;
 		step = DEGtoANG(45);
-		cnt = 8;
+		count = 8;
 		break;
 	case ANIM_FACING_FOUR_PICTURES:
 	case ANIM_FACING_SIX_PICTURES:
-		ang = 0;
+		angle = 0;
 		step = DEGtoANG(36);
-		cnt = SPRITE_VIEWER_COPY_COUNT;
+		count = SPRITE_VIEWER_COPY_COUNT;
 		break;
 	/* The two parts at each place face the same way; the second place faces
 	   half a turn from the first. */
 	case ANIM_FACING_TWO_PART:
-		ang = 0;
+		angle = 0;
 		step = 0;
 		pairedFacingStep = DEGtoANG(180);
-		cnt = 4;
+		count = 4;
 		break;
-	/* The eighth-turn start matches fdSprViewerLayOutRing's default ring. */
+	/* The eighth-turn start matches fdSpriteViewerLayOutRing's default ring. */
 	default:
-		ang = DEGtoANG(45);
+		angle = DEGtoANG(45);
 		step = DEGtoANG(90);
-		cnt = 4;
+		count = 4;
 		break;
 	}
 
 	/* Copy n faces n steps round, the way its ring position lies. */
-	for(sprIdx = 0; sprIdx < cnt; sprIdx++) {
+	for(spriteIndex = 0; spriteIndex < count; spriteIndex++) {
 		fdRenderApplyProjectedPlacement(
-			sprite, &facingPositions[sprIdx], &scale, ang);
+			sprite, &facingPositions[spriteIndex], &scale, angle);
 		sprite++;
-		ang += step;
-		if(sprIdx & 1)
-			ang += pairedFacingStep;
+		angle += step;
+		if(spriteIndex & 1)
+			angle += pairedFacingStep;
 	}
 }
 

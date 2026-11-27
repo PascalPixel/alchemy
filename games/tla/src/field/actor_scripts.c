@@ -8,9 +8,9 @@
 /* Each SC_CALL function takes the actor and returns nonzero to go on with the
    script this tick. They take different views of the actor, so the
    declarations leave the parameters unspecified. */
-Sint32 fdActorStepAng();
-Sint32 fdActorClearSprAndCollisionFlags();
-Sint32 fdActorClearSprFlags();
+Sint32 fdActorStepAngle();
+Sint32 fdActorClearSpriteAndCollisionFlags();
+Sint32 fdActorClearSpriteFlags();
 Sint32 fdActorIgnoreRises();
 Sint32 fdActorMoveTowardTarget();
 Sint32 fdActorTurnTowardWatchedActor();
@@ -68,13 +68,13 @@ const Sint32 ActorLaunchScript[] = {
 	SC_SYNC,
 	SC_WAIT(1),
 	SC_ANIMATION(ANIM_STAND),
-	SC_CALL(fdActorStepAng),
+	SC_CALL(fdActorStepAngle),
 	SC_END,
 };
 
 /* Turns the actor a step toward the facing in its timer. */
 const Sint32 ActorStepAngleScript[] = {
-	SC_CALL(fdActorStepAng),
+	SC_CALL(fdActorStepAngle),
 	SC_END,
 };
 
@@ -158,13 +158,13 @@ const Sint32 MovementTypeStandScript[] = {
 /* MOVEMENT_TYPE_CLEAR_COLLISION: clears the actor's sprite and collision
    flags. */
 const Sint32 MovementTypeClearCollisionScript[] = {
-	SC_CALL(fdActorClearSprAndCollisionFlags),
+	SC_CALL(fdActorClearSpriteAndCollisionFlags),
 	SC_END,
 };
 
 /* MOVEMENT_TYPE_CLEAR_SPRITE_FLAGS: clears the actor's sprite flags. */
 const Sint32 MovementTypeClearSpriteFlagsScript[] = {
-	SC_CALL(fdActorClearSprFlags),
+	SC_CALL(fdActorClearSpriteFlags),
 	SC_END,
 };
 

@@ -35,7 +35,7 @@ Sint32 fdModeRun(Sint32 entrance)
 	Sint32		 code;
 
 	/* Set up the scene. */
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	DMA_FILL32(0, state, sizeof(FIELD_STATE));
 	gmFlagClearStub(FLAG_IN_BATTLE);
 	MainRoutineStateWork.returnScene = MainRoutineStateWork.next;
@@ -80,7 +80,7 @@ Sint32 fdModeRun(Sint32 entrance)
 	/* The default fade is from the backdrop colour over 16 ticks; the scene's
 	   initialization may choose another. */
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = MAP_TRANSITION_TICKS;
+	state->transitionFrame = MAP_TRANSITION_TICKS;
 	state->transitionActive = 0;
 	/* fdUpdateWalking scales the leader's speed by this (16.16) into the
 	   distance counted towards PP, Djinn recovery and poison: toFIXED(1) / 160
@@ -104,7 +104,7 @@ Sint32 fdModeRun(Sint32 entrance)
 		MainRoutineStateWork.cloaked = 0;
 	}
 	fdPsynergyResumeCloakCheck();
-	state->queuedSnd = -1;
+	state->queuedSound = -1;
 	OverlayArea.initialize();
 
 	/* The scene's initialization may already have taken an exit. */
@@ -118,13 +118,13 @@ Sint32 fdModeRun(Sint32 entrance)
 		if(fdCountRequests() == 0) {
 			if(state->transitionActive == 0) {
 				fdScreenTransitionStart(
-					state->transition, state->transitionFrm);
+					state->transition, state->transitionFrame);
 				state->transitionActive = 1;
 				PLTT_BACKDROP = 0;
 				/* An arrival the last scene asked for (fdEntrancePlayArrival)
 				   plays through the fade; with none, wait out half of it. */
 				if(fdEntrancePlayArrival() == 0)
-					sySynch((state->transitionFrm + 1) / 2);
+					sySynch((state->transitionFrame + 1) / 2);
 			}
 			if(gmFlagGetStub(FLAG_SHOW_AREA_NAME) != 0) {
 				gmFlagClearStub(FLAG_SHOW_AREA_NAME);
@@ -172,7 +172,7 @@ Sint32 fdModeRun(Sint32 entrance)
 
 						fdLeaderStopMoving();
 						fdWorldMapFreeze();
-						for(i = 0; i < state->fallenCnt; i++) {
+						for(i = 0; i < state->fallenCount; i++) {
 							fdActorSelectAnimationStub(
 								actor, ANIM_LEADER_LEAN_BACK);
 							mnMessageArgumentPushStub(
@@ -181,7 +181,7 @@ Sint32 fdModeRun(Sint32 entrance)
 							mnFieldMessageShowStub(
 								MsgFieldStrengthExhausted, FIELD_MESSAGE_ZOOM);
 						}
-						if(state->survivorCnt == 0) {
+						if(state->survivorCount == 0) {
 							/* The whole party fell: back to the last sanctum
 							   with 1 HP. */
 							UNIT *vitals;
@@ -197,7 +197,7 @@ Sint32 fdModeRun(Sint32 entrance)
 								fdActorSelectAnimationStub(
 									actor, ANIM_COLLAPSE);
 							}
-							sySndPlayStub(MUS_DEFEATED);
+							sySoundPlayStub(MUS_DEFEATED);
 							/* "Isaac's party has been annihilated..." */
 							mnFieldMessageShowStub(
 								MsgFieldPartyAnnihilated, FIELD_MESSAGE_ZOOM);
@@ -279,7 +279,7 @@ Sint32 fdModeRun(Sint32 entrance)
 					   flag editor). */
 					mnAreaNameWindowHideStub();
 					fdLeaderStopMoving();
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					fdWorldMapFreeze();
 					gmFlagSetStub(FLAG_MENU_OPEN);
 					if(DebugMode != 0 && (PerData & KEY_B) != 0 &&
@@ -288,9 +288,9 @@ Sint32 fdModeRun(Sint32 entrance)
 					} else if(gmFlagGetStub(FLAG_MENUS_RAISE_CUE) != 0) {
 						state->raisedCue = FIELD_RAISED_CUE_MENUS;
 					} else {
-						state->effTmrRunning = 0;
+						state->effectTimerRunning = 0;
 						mnFieldMenuRunStub();
-						state->effTmrRunning = 1;
+						state->effectTimerRunning = 1;
 					}
 					fdWorldMapUnfreeze();
 					gmFlagClearStub(FLAG_MENU_OPEN);
@@ -320,7 +320,7 @@ Sint32 fdModeRun(Sint32 entrance)
 				} else if(state->pauseMenu != 0) {
 					/* The Pause menu (in debug mode, B opens the debug scene
 					   select and L the palette editor). */
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					fdLeaderStopMoving();
 					fdWorldMapFreeze();
 					gmFlagSetStub(FLAG_MENU_OPEN);
@@ -335,7 +335,7 @@ Sint32 fdModeRun(Sint32 entrance)
 						fdEndBusyAndReveal();
 						mnAreaNameWindowHideStub();
 						MainRoutineStateWork.returnMusic =
-							sySndGetCurrentBGMStub();
+							sySoundGetCurrentBGMStub();
 						if(gmFlagGetStub(FLAG_IN_BATTLE_ARENA) == 0) {
 							/* With fewer than PAUSE_MENU_VRAM_BLOCKS of the
 							   sprite VRAM blocks free, sprite drawing stays
@@ -382,9 +382,9 @@ Sint32 fdModeRun(Sint32 entrance)
 					LEADER_MOVEMENT_CLIMB)
 					fdActorStartMoveByKeysStub(actor);
 				else if(state->mode == ACTOR_SYSTEM_WORLD_MAP)
-					fdActorStartWorldMapCtrlStub(actor);
+					fdActorStartWorldMapControlStub(actor);
 				else
-					fdActorStartPlayerCtrlStub(actor);
+					fdActorStartPlayerControlStub(actor);
 			}
 			do {
 				sySynch(1);
@@ -398,9 +398,9 @@ Sint32 fdModeRun(Sint32 entrance)
 
 done:
 	if(state->transitionActive != 0) {
-		fdScreenTransitionFinish(state->transition, state->transitionFrm);
+		fdScreenTransitionFinish(state->transition, state->transitionFrame);
 		state->transitionActive = 0;
-		sySynch(state->transitionFrm);
+		sySynch(state->transitionFrame);
 	}
 	syHeapSlotRelease(HEAP_SLOT_FIELD);
 	return result;
@@ -477,8 +477,8 @@ void fdApplyEntrance(void)
 
 	for(; entranceEntry->entrance != -1; entranceEntry++) {
 		if(entranceEntry->entrance == entrance &&
-			(entranceEntry->requiredFlg == -1 ||
-				gmFlagGetStub(entranceEntry->requiredFlg))) {
+			(entranceEntry->requiredFlag == -1 ||
+				gmFlagGetStub(entranceEntry->requiredFlag))) {
 			foundEntrance = 1;
 			break;
 		}

@@ -1,7 +1,7 @@
 @ A stub, 8 bytes: it loads target's address into r4 and jumps to
 @ it. Code calls a function of another module or overlay through its stub. A
 @ stub is usually named for its target with Far added:
-@ mnTextDrawNumAtOffsetStub reaches mnTextDrawNumAtOffset.
+@ mnTextDrawNumberAtOffsetStub reaches mnTextDrawNumberAtOffset.
 .macro unnamed_stub target
     ldr r4, .Lstub_target\@
     bx r4

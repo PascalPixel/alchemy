@@ -60,7 +60,7 @@ const Uint8 AnimationFacingEightPictures[8] = {
 };
 
 /* The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve; */
-/* read by fdSprDissolveStep. */
+/* read by fdSpriteDissolveStep. */
 const Uint8 SpriteDissolvePixelOrder[64] = {
 	4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
 	50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,

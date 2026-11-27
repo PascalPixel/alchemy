@@ -100,7 +100,8 @@ Sint32 scInit(void)
 	{
 		ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
-		leader->priFlg = ACTOR_PRIORITY_IGNORES_RISES | leader->priFlg;
+		leader->priorityFlags =
+			ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
 	}
 	fdRopeInit();
 	fdRopeTie(0, ACTOR_SECOND_ROPE_POST, ACTOR_FIRST_ROPE_POST);
@@ -124,20 +125,20 @@ Sint32 scInit(void)
 void scOseniaCliffsCyclePalette(void)
 {
 	if((TickCount & 15) == 0) {
-		volatile Uint16 *cols;
+		volatile Uint16 *colors;
 		Sint32			 i;
 
 		if(OseniaCliffsPaletteCycleStep[0] == CYCLE_SOURCE_COLORS)
 			OseniaCliffsPaletteCycleStep[0] = 0;
 		i = OseniaCliffsPaletteCycleStep[0]++;
-		cols = (Uint16 *)&BG_PLTT_COLOR(CYCLE_SOURCE_PALETTE, 0);
-		BG_PLTT_COLOR(SHORELINE_PALETTE, 1) = cols[i];
+		colors = (Uint16 *)&BG_PLTT_COLOR(CYCLE_SOURCE_PALETTE, 0);
+		BG_PLTT_COLOR(SHORELINE_PALETTE, 1) = colors[i];
 		BG_PLTT_COLOR(SHORELINE_PALETTE, 2) =
-			cols[(i + 1) & (CYCLE_SOURCE_COLORS - 1)];
+			colors[(i + 1) & (CYCLE_SOURCE_COLORS - 1)];
 		BG_PLTT_COLOR(SHORELINE_PALETTE, 3) =
-			cols[(i + 2) & (CYCLE_SOURCE_COLORS - 1)];
+			colors[(i + 2) & (CYCLE_SOURCE_COLORS - 1)];
 		BG_PLTT_COLOR(SHORELINE_PALETTE, 4) =
-			cols[(i + 3) & (CYCLE_SOURCE_COLORS - 1)];
+			colors[(i + 3) & (CYCLE_SOURCE_COLORS - 1)];
 	}
 }
 

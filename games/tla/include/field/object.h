@@ -28,9 +28,9 @@ typedef enum CYCLONE_METATILE_KIND {
 
 /* The actors' sprites: their depth and priority, a silhouette, a sprite id and
    graphics copied from another actor. */
-void fdActorSetTargetPosFromMagnitudeAng(
-	struct ACTOR *actor, Sint32 magnitude, Sint32 ang);
-void		  fdActorSetSprPriorityDirectStub(struct ACTOR *actor, Sint32 pri);
+void fdActorSetTargetPosFromMagnitudeAngle(
+	struct ACTOR *actor, Sint32 magnitude, Sint32 angle);
+void fdActorSetSpritePriorityDirectStub(struct ACTOR *actor, Sint32 priority);
 struct ACTOR *fdActorCreateSilhouette(
 	Sint32 x, Sint32 y, Sint32 z, Sint32 type);
 
@@ -79,14 +79,14 @@ typedef enum ROPE_SLOT_STATE {
 	ROPE_THROWN	 /* thrown or laid tied from post to post */
 } ROPE_SLOT_STATE;
 
-Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *idx);
-void   fdRopeSwingBetween(Sint32 idx, Sint32 fromId, Sint32 toId, FIXED height);
-Bool   fdRopeIsLeaderAtEnd(Sint32 firstId, Sint32 secondId);
-Sint32 fdRopeLayTied(Sint32 idx, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
+Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *index);
+void fdRopeSwingBetween(Sint32 index, Sint32 fromId, Sint32 toId, FIXED height);
+Bool fdRopeIsLeaderAtEnd(Sint32 firstId, Sint32 secondId);
+Sint32 fdRopeLayTied(Sint32 index, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
 	Sint32 y2, Sint32 z2);
-Sint32 fdRopeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ);
-Sint32 fdRopeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeLayBowed(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, FIXED height);
 void   fdRopeDraw(void);
 void   fdRopeUpdate(void);
@@ -94,13 +94,13 @@ void   fdRopeUpdate(void);
 /* The tightropes the party walks across, laid between two points or two posts
    as the ropes are. */
 void fdTightropeWobbleBetween(
-	Sint32 idx, Sint32 fromId, Sint32 toId, FIXED height);
-Sint32 fdTightropeLay(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+	Sint32 index, Sint32 fromId, Sint32 toId, FIXED height);
+Sint32 fdTightropeLay(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ);
-Sint32 fdTightropeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
-	Sint32 toY, Sint32 toZ, FIXED height);
-Sint32 fdTightropeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
-	Sint32 toY, Sint32 toZ);
+Sint32 fdTightropeLayBowed(Sint32 index, Sint32 x, Sint32 y, Sint32 z,
+	Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height);
+Sint32 fdTightropeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z,
+	Sint32 toX, Sint32 toY, Sint32 toZ);
 Sint32 fdTightropeRecoil(Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1,
 	Sint32 x2, Sint32 y2, Sint32 z2, Sint32 wave);
 void   fdTightropeDraw(void);
@@ -115,17 +115,17 @@ Sint32 fdPsynergyCheckOverlap(
 	Sint32 *a, Sint32 radiusA, Sint32 *b, Sint32 radiusB);
 void fdPsynergyGrowFromCaster(
 	struct ACTOR *actor, Sint32 x, Sint32 y, Sint32 z);
-void		  fdPsynergyDrawCanvasSpr(void);
-void		  fdPsynergyReleaseSceneSpr(void);
+void		  fdPsynergyDrawCanvasSprite(void);
+void		  fdPsynergyReleaseSceneSprite(void);
 struct ACTOR *fdBattleEffectSpawnScatterParticle(Sint32 x, Sint32 y, Sint32 z);
 void		  fdEffectSpawnRevealMarkers(void);
-void		  fdEffectShrinkActorAndDestroyFast(void *obj);
-void		  fdEffectShrinkActorAndDestroySlow(void *obj);
+void		  fdEffectShrinkActorAndDestroyFast(void *object);
+void		  fdEffectShrinkActorAndDestroySlow(void *object);
 void		  fdEffectUpdateRadialSpread(struct FIELD_PARTICLE *effect);
 void		  fdEffectPulseActorScale(struct ACTOR *actor);
-void		  fdEffectAdvanceAngWithRamp(struct ACTOR *actor);
+void		  fdEffectAdvanceAngleWithRamp(struct ACTOR *actor);
 void		  fdEffectUpdateMarsSpark(struct FIELD_PARTICLE *effect);
-void		  fdItemDispEmitSparkles(struct ACTOR *emitter);
+void		  fdItemDisplayEmitSparkles(struct ACTOR *emitter);
 
 /* The weather and the ground's particles, each tick. */
 void fdGroundParticlesUpdate(void);
@@ -134,7 +134,7 @@ void fdWeatherUpdateRain(void);
 
 /* A Djinni's hop as its battle starts, and its spin. */
 void fdDjinnRunBattleStartHop(Sint32 djinniId);
-void fdDjinnAdvanceSpinAng();
+void fdDjinnAdvanceSpinAngle();
 
 Sint32 fdPaletteFadeClampComponent(Sint32 value);
 Sint32 fdPaletteFadeClampShiftedComponent(Sint32 value);

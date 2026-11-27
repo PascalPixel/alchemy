@@ -238,13 +238,13 @@ void scGarohWavePathLayer(void)
 	Uint16	  *line = GarohWaveLines;
 
 	if(FieldStateWork->revealActive == 0) {
-		Uint32			 frm;
+		Uint32			 frame;
 		Sint32			 z;
 		Sint32			 i;
 		volatile Uint16 *dma;
 
 		layer->speedY = 0;
-		frm = (Uint8)TickCount;
+		frame = (Uint8)TickCount;
 		i = 0;
 		/* FAKEMATCH(barrier): i and line held through an empty asm; as no
 		 * asm. */
@@ -258,8 +258,8 @@ void scGarohWavePathLayer(void)
 			   line turns them on by. */
 			Sint32 stepA = TRIG_TURN * 51 / 256;
 			Sint32 stepB = TRIG_TURN * 153 / 2048;
-			Sint32 a = z * stepA + frm * (TRIG_TURN / 64);
-			Sint32 b = z * stepB - frm * (TRIG_TURN / 64);
+			Sint32 a = z * stepA + frame * (TRIG_TURN / 64);
+			Sint32 b = z * stepB - frame * (TRIG_TURN / 64);
 
 			for(; i != DISPLAY_HEIGHT;) {
 				Sint32 s1 = sine(a);
@@ -293,26 +293,27 @@ extern Uint16 GarohPathNightColors[];
 #define DEFINE_GAROH_LOAD_PALETTE(name, components, first, count) \
 	void name(void) \
 	{ \
-		PALETTE_FADE *buffers = RamHeapSlots->palFade; \
+		PALETTE_FADE *buffers = RamHeapSlots->paletteFade; \
 		Uint32		  i; \
 \
 		for(i = 0; i < count; i++) { \
 			BG_PLTT[first + i] = components[i * 3 + 2] << 10 | \
 				components[i * 3 + 1] << 5 | components[i * 3]; \
-			buffers->pal[first + i] = BG_PLTT[first + i]; \
+			buffers->palette[first + i] = BG_PLTT[first + i]; \
 		} \
 	}
 
 /* By day the path's colours: BG palette 1's colours 8 to 15. */
-DEFINE_GAROH_LOAD_PALETTE(scGarohLoadPathDayCols, GarohPathDayColors, 24, 8)
+DEFINE_GAROH_LOAD_PALETTE(scGarohLoadPathDayColors, GarohPathDayColors, 24, 8)
 
 /* By night the path's colours: BG palette 6's colours 1 to 9. */
-DEFINE_GAROH_LOAD_PALETTE(scGarohLoadPathNightCols, GarohPathNightColors, 97, 9)
+DEFINE_GAROH_LOAD_PALETTE(
+	scGarohLoadPathNightColors, GarohPathNightColors, 97, 9)
 
 /* A script's call: clears the actor's sprite flags. */
-Sint32 scGarohClearScriptedActorSprFlags(ACTOR *actor)
+Sint32 scGarohClearScriptedActorSpriteFlags(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -373,7 +374,7 @@ const void *scGetActorPlacements(void)
 void scGarohOpenDoorAndEnter(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Sint32		 idx;
+	Sint32		 index;
 	Sint32		 i;
 
 	fdScriptStart();
@@ -383,14 +384,14 @@ void scGarohOpenDoorAndEnter(void)
 			ACTOR *actor = fdActorGet(i);
 
 			if(actor != NULL)
-				actor->motionFlg = 0;
+				actor->motionFlags = 0;
 		}
 	}
-	idx = state->stepCue;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	idx--;
+	index = state->stepCue;
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	index--;
 	fdMapGridAnimateMetatiles(
-		GarohDoors[idx].steps, GarohDoors[idx].x, GarohDoors[idx].y);
+		GarohDoors[index].steps, GarohDoors[index].x, GarohDoors[index].y);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	{
@@ -398,7 +399,7 @@ void scGarohOpenDoorAndEnter(void)
 
 		/* The sanctum's tall door is entered straight on, the others from the
 		   centre of their metatile. */
-		if(idx == GAROH_TO_GAROH_ROOMS_SANCTUM - 1)
+		if(index == GAROH_TO_GAROH_ROOMS_SANCTUM - 1)
 			fdActorSetDestinationOffset(owner, 0, -4);
 		else
 			fdActorCenterAndWalk(owner, 2, -4);
@@ -494,14 +495,14 @@ void scGarohHowlOutLoud(Sint32 actor)
    rooms sets that flag, so the player always hears all three lines. */
 void scGarohHowlForDog(Sint32 actor)
 {
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 msg;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	flg = fdScriptGetFlag(FLAG_AREA_TEMP_00);
+	flag = fdScriptGetFlag(FLAG_AREA_TEMP_00);
 	msg = (Sint32)MsgGarohGaaarooooooForDog;
-	if(flg) {
+	if(flag) {
 		syFieldScriptSetMessageId(msg);
 	} else {
 		syFieldScriptSetMessageId(msg);
@@ -557,7 +558,7 @@ void scGarohLittleWerewolfThanks(void)
    Once a visit. */
 void scGarohWerewolfPeersFromCave(void)
 {
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 facing;
 
 	void scGarohOpenCaveEntrance(Sint32 id)
@@ -578,12 +579,12 @@ void scGarohWerewolfPeersFromCave(void)
 		fdPsynergyEnd();
 	}
 
-	flg = fdScriptGetFlag(FLAG_WEREWOLF_PEERED_OUT);
-	if(flg == 0) {
+	flag = fdScriptGetFlag(FLAG_WEREWOLF_PEERED_OUT);
+	if(flag == 0) {
 		fdScriptSetFlag(FLAG_WEREWOLF_PEERED_OUT);
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_CAVE_ENTRANCE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_CAVE_ENTRANCE), 0);
 		facing = FACING_SOUTH;
 		fdActorSetPosAndFacing(
 			ACTOR_CAVE_ENTRANCE, toFIXED(360), toFIXED(199), facing);
@@ -606,14 +607,14 @@ void scGarohWerewolfPeersFromCave(void)
 			ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, 10);
 		scFieldActorShowEmote(
 			ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-		fdActorGet(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE)->steeringFlg &=
+		fdActorGet(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE)->steeringFlags &=
 			~ACTOR_FACES_MOTION;
 		fdActorFaceDirection(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, facing, 0);
 		syFieldScriptWait(30);
 		scGarohOpenCaveEntrance(ACTOR_CAVE_ENTRANCE);
 		syFieldScriptWait(20);
 		fdActorWalkByAndWait(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, -16);
-		fdActorGet(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE)->motionFlg = flg;
+		fdActorGet(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE)->motionFlags = flag;
 		fdActorWalkByAndWait(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, -16);
 		fdActorSetPos(ACTOR_MAHA_AT_THE_CAVE_ENTRANCE, 0, 0);
 		syFieldScriptWait(10);
@@ -641,7 +642,7 @@ void scGarohEnterOpening(void)
 {
 	FIELD_STATE *event = RamHeapSlots->fieldState;
 
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -695,7 +696,7 @@ void scGarohHowlAtNight(void)
 		fdScriptGetFlag(FLAG_GAROH_NIGHT)) {
 		GarohHowlTicks++;
 		if((GarohHowlTicks & HOWL_PERIOD_MASK) == 0)
-			fdScriptPlaySnd(SE_HOWL);
+			fdScriptPlaySound(SE_HOWL);
 	}
 }
 
@@ -713,8 +714,8 @@ Sint32 scInit(void)
 		FieldStateWork->transition = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	} else if(MainRoutineStateWork.next == SCENE_GAROH_WEREWOLF_CAVE) {
-		scFieldActorSetSprPriority(ACTOR_FIRE_A, 1);
-		scFieldActorSetSprPriority(ACTOR_FIRE_B, 1);
+		scFieldActorSetSpritePriority(ACTOR_FIRE_A, 1);
+		scFieldActorSetSpritePriority(ACTOR_FIRE_B, 1);
 		if(fdScriptGetFlag(FLAG_GAROH_HEARD_MAHA)) {
 			fdActorSetPosAndFacing(
 				ACTOR_MAHA, toFIXED(328), toFIXED(162), FACING_SOUTH);
@@ -774,10 +775,10 @@ void scGarohInitVillage(void)
 		fdScriptWaitTransitionTicks();
 		fdPaletteFadePackTarget();
 		{
-			PALETTE_FADE *fade = RamHeapSlots->palFade;
+			PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 
 			*(volatile Uint16 *)&BG_PLTT_COLOR(1, WINDOW_LIGHT) = RGB_WHITE;
-			fade->pal[PALETTE_COLORS + WINDOW_LIGHT] =
+			fade->palette[PALETTE_COLORS + WINDOW_LIGHT] =
 				*(volatile Uint16 *)&BG_PLTT_COLOR(1, WINDOW_LIGHT);
 		}
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 1);
@@ -819,14 +820,14 @@ void scGarohInitPath(void)
 		fdPaletteFadeInterpolate(1);
 		fdScriptWaitTransitionTicks();
 		fdPaletteFadePackTarget();
-		scGarohLoadPathNightCols();
+		scGarohLoadPathNightColors();
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 1);
 		sySetTickEvent((Sint32)scGarohWavePathLayer, EVENT_PASS_VBLANK);
 	} else {
 		fdMapGridCopyMetatilesTo(20, 7, 9, 7, 5, 5);
 		fdMapGridCopyMetatilesTo(20, 71, 9, 71, 5, 5);
 		fdMapGridCopyMetatilesTo(84, 7, 73, 7, 5, 5);
-		scGarohLoadPathDayCols();
+		scGarohLoadPathDayColors();
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 1);
 		scGarohMatchSecondLayer();
 	}
@@ -873,13 +874,13 @@ void scGarohSinkPillar(Sint32 id, ACTOR *actor)
 	Sint32 i;
 	Sint32 saved;
 
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	saved = id;
 	for(i = 16; i > 0; i--) {
 		actor->y.fixed -= toFIXED(2);
 		syFieldScriptWait(1);
 	}
-	fdScriptPlaySnd(SE_WHOOSH);
+	fdScriptPlaySound(SE_WHOOSH);
 	scGarohScatterDustRing(saved);
 }
 
@@ -1118,37 +1119,38 @@ void scGarohCrossUpperTwilightLine(void)
 #undef EFFECT_SET_SCRIPT
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_CUE_AT_METATILE
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* A ring of puffs of dust spreads out from the actor, one every eighth of a
    turn: nine, the first and last both to the east. */
 void scGarohScatterDustRing(Sint32 objectId)
 {
 	ACTOR		  *actor;
-	VECTOR3		   vec;
+	VECTOR3		   vector;
 	EFFECT_OPTIONS params;
-	Uint32		   angStep;
-	Sint32		   ang;
+	Uint32		   angleStep;
+	Sint32		   angle;
 	Sint32		   x;
 	FIXED		   z;
 
 	actor = fdActorGet(objectId);
 	params.update = fdEffectAdvanceMotion;
-	angStep = 0;
+	angleStep = 0;
 	do {
-		ang = angStep * (TRIG_TURN / DUST_RING_PUFFS);
-		vec.x = syCos(ang);
-		vec.y = 0;
-		z = syMathSin(ang);
-		x = vec.x;
-		vec.z = z;
+		angle = angleStep * (TRIG_TURN / DUST_RING_PUFFS);
+		vector.x = syCos(angle);
+		vector.y = 0;
+		z = syMathSin(angle);
+		x = vector.x;
+		vector.z = z;
 		x += x / 3;
-		vec.x = x;
+		vector.x = x;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x,
-			vec.y, z, EFFECT_USE_UPDATE | 1, &params);
-		angStep += 2;
-	} while(angStep <= DUST_RING_PUFFS);
+			vector.y, z, EFFECT_USE_UPDATE | 1, &params);
+		angleStep += 2;
+	} while(angleStep <= DUST_RING_PUFFS);
 }
 
 extern Uint32 GarohQuestionMarkScript[];
@@ -1175,17 +1177,17 @@ Sint16 rotation;
 Sint32 ticks;
 {
 	ACTOR *object;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	object = scFieldActorCreate(SPRITE_EMOTE, x, y, z);
 	if(object != NULL) {
-		spr = object->spr;
+		sprite = object->sprite;
 		fdActorSelectAnimation(object, EMOTE_QUESTION);
 		fdActorStartScript(object, GarohQuestionMarkScript);
-		object->motionFlg = 0;
+		object->motionFlags = 0;
 		object->wait = ticks;
-		spr->flg = 0;
-		spr->rotation = rotation;
+		sprite->flags = 0;
+		sprite->rotation = rotation;
 	}
 }
 
@@ -1197,11 +1199,11 @@ void scGarohPopQuestionMarks(Sint32 id)
 
 	scGarohPopQuestionMark(actor->x.fixed + toFIXED(8),
 		actor->y.fixed + toFIXED(28), actor->z.fixed, TRIG_TURN / 16, 20);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(20);
 	scGarohPopQuestionMark(actor->x.fixed - toFIXED(8),
 		actor->y.fixed + toFIXED(28), actor->z.fixed, TRIG_TURN * 15 / 16, 20);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(20);
 }
 
@@ -1391,10 +1393,10 @@ void scGarohWerewolfRunsPast(void)
 	syFieldScriptWait(30);
 	fdActorShowEmote(ACTOR_WEREWOLF, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
 	fdActorSetSpeed(ACTOR_WEREWOLF, 0.6);
-	fdActorGet(ACTOR_WEREWOLF)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_WEREWOLF, 128, 148);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_WEREWOLF)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_WEREWOLF, 2.5);
 	fdActorWalkByAndWait(ACTOR_WEREWOLF, 0, 4);
 	syFieldScriptWait(20);
@@ -1583,10 +1585,10 @@ void scGarohWerewolfRunsPast(void)
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 	syFieldScriptWait(10);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.4);
-	fdActorGet(ACTOR_KRADEN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_KRADEN, 0, -16);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_KRADEN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(20);
 	fdActorSetAttachedEffect(
 		ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1734,10 +1736,10 @@ void scGarohFollowWerewolfIntoCave(void)
 	fdActorRunRepeatedMotion(ACTOR_WEREWOLF, 2);
 	syFieldScriptWait(10);
 	fdActorSetSpeed(ACTOR_WEREWOLF, 0.6);
-	fdActorGet(ACTOR_WEREWOLF)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_WEREWOLF, 296, 712);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_WEREWOLF)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(15);
 	fdActorFaceDirection(ACTOR_WEREWOLF, FACING_WEST_NORTHWEST, 0);
 	syFieldScriptWait(25);
@@ -1902,7 +1904,7 @@ void scGarohWerewolvesRevealThemselves(void)
 	fdCameraWaitForArrival();
 	syFieldScriptWait(20);
 	fdActorSetPos(ACTOR_CAVE_PASSAGE, 328, 136);
-	fdActorSetSprFlags(fdActorGet(ACTOR_CAVE_PASSAGE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_CAVE_PASSAGE), 0);
 	scGarohOpenCavePassage(ACTOR_CAVE_PASSAGE);
 	syFieldScriptWait(20);
 	/* "Look... He's using Psynergy." */
@@ -2167,12 +2169,12 @@ void scGarohWerewolvesRevealThemselves(void)
 	syFieldScriptWait(20);
 	fdActorWalkByAndWait(ACTOR_MAHA, 8, 0);
 	scFieldActorJump(ACTOR_WEREWOLF, 4, 0);
-	fdActorGet(ACTOR_MAHA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MAHA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_MAHA, -8, 0);
-	fdActorGet(ACTOR_WEREWOLF)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_WEREWOLF)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_WEREWOLF, 16, 0);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_WEREWOLF)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_WEREWOLF)->steeringFlags |= ACTOR_FACES_MOTION;
 	scFieldActorSetAnimation(ACTOR_WEREWOLF, ANIM_WEREWOLF_SIT);
 	syFieldScriptWait(20);
 	fdActorSetSpeed(ACTOR_WEREWOLF, 1.3);
@@ -2368,7 +2370,7 @@ void scGarohMahaTellsTheLegend(void)
 	Sint32 ticks;
 	FIXED  total;
 	ACTOR *ether;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	fdScriptSetFlag(FLAG_GAROH_HEARD_MAHA);
 	fdScriptStart();
@@ -2393,7 +2395,7 @@ void scGarohMahaTellsTheLegend(void)
 	fdCameraWaitForArrival();
 	syFieldScriptWait(20);
 	fdActorSetPos(ACTOR_CAVE_PASSAGE, 328, 136);
-	fdActorSetSprFlags(fdActorGet(ACTOR_CAVE_PASSAGE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_CAVE_PASSAGE), 0);
 	scGarohOpenCavePassage(ACTOR_CAVE_PASSAGE);
 	syFieldScriptWait(30);
 	fdActorSetSpeed(ACTOR_MAHA, 0.7);
@@ -2981,22 +2983,22 @@ void scGarohMahaTellsTheLegend(void)
 	fdActorAnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
 	syFieldScriptWait(5);
 	ether = fdActorGet(ACTOR_ETHER);
-	spr = ether->spr;
-	spr->scale = toFIXED(2) / 5;
-	scFieldActorSetSprPriority(ACTOR_ETHER, 1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ETHER), 0);
+	sprite = ether->sprite;
+	sprite->scale = toFIXED(2) / 5;
+	scFieldActorSetSpritePriority(ACTOR_ETHER, 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ETHER), 0);
 	fdActorSetPos(ACTOR_ETHER, 328, 160);
 	scFieldActorJump(ACTOR_ETHER, 9, 0);
 	total = 0;
 	for(ticks = 0; ticks <= ETHER_GROW_STEPS; ticks++) {
-		spr->scale = syMathDivide(total, ETHER_GROW_STEPS) + toFIXED(2) / 5;
+		sprite->scale = syMathDivide(total, ETHER_GROW_STEPS) + toFIXED(2) / 5;
 		ether->facing += FACING_STEP;
 		syWait(1);
 		total += toFIXED(3) / 5;
 	}
 	ether->facing = FACING_SOUTH;
 	fdActorWalkByAndWait(ACTOR_ETHER, 0, 8);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ETHER), 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ETHER), 1);
 	syFieldScriptWait(5);
 	fdActorWalkByAndWait(ACTOR_ETHER, 0, 8);
 	syFieldScriptWait(5);
@@ -3057,12 +3059,12 @@ void scGarohMahaTellsTheLegend(void)
 	   will." */
 	syFieldScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAHA, 0, 0);
 	fdActorSetSpeed(ACTOR_MAHA, 2.4);
-	fdActorGet(ACTOR_MAHA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MAHA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorWalkByAndWait(ACTOR_MAHA, 0, 8);
 	fdActorWalkByAndWait(ACTOR_MAHA, 0, -8);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_MAHA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MAHA)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(1);
 	fdActorSetSpeed(ACTOR_MAHA, 0.7);
 	fdActorFaceDirection(ACTOR_MAHA, FACING_SOUTH_SOUTHWEST, 0);
@@ -3209,7 +3211,7 @@ Sint32 GarohShrunkSpriteScript[] = {
 	SC_ADD(SW_X, toFIXED(6)),
 	SC_SET(SW_SCALE_X, toFIXED(0.8)),
 	SC_SET(SW_SCALE_Y, toFIXED(0.8)),
-	SC_CALL(scGarohClearScriptedActorSprFlags),
+	SC_CALL(scGarohClearScriptedActorSpriteFlags),
 	SC_END,
 };
 

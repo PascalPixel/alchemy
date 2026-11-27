@@ -3,7 +3,7 @@
 
 /* Shows the battle background, as dark as the canvas's fade left it, behind a
    cleared canvas, and fades out the action's sound effects. */
-void btEffectSetupBlendedDisp(void)
+void btEffectSetupBlendedDisplay(void)
 {
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Uint8		 *canvas = RamHeapSlots->battleCanvas;
@@ -20,7 +20,7 @@ void btEffectSetupBlendedDisp(void)
 		BLDCNT_TGT2_ALL;
 	REG_DISPCNT = EFFECT_DISPCNT;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
-	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 }
 
 /* Tints one unit's battle object and sets its pose, for every sprite it is made
@@ -28,45 +28,47 @@ void btEffectSetupBlendedDisp(void)
 
    palette: a SPR_COL_MODE, SPRITE_COLOR_NORMAL for the unit's own palette,
 			or TINT_KEEP.
-   animation: the pose to start, or TINT_KEEP. tmrSlot: the state->actorTmrs
-   entry to set to tmrTicks, or TINT_KEEP. */
-void btEffectTintBattler(
-	Sint32 unitId, Sint32 palette, Sint32 anm, Sint32 tmrSlot, Sint32 tmrTicks)
+   animation: the pose to start, or TINT_KEEP. timerSlot: the state->actorTimers
+   entry to set to timerTicks, or TINT_KEEP. */
+void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
+	Sint32 timerSlot, Sint32 timerTicks)
 {
 	BATTLE_OBJECT		*slot;
 	SPR					*group;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 groupIdx;
+	Sint32				 groupIndex;
 
 	slot = btObjectGetStub(unitId);
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 
-	for(groupIdx = 0; (group = btActorGetSprStub(slot->obj, groupIdx)) != NULL;
-		groupIdx++) {
-		if(tmrSlot != TINT_KEEP)
-			state->actorTmrs[tmrSlot] = tmrTicks;
+	for(groupIndex = 0;
+		(group = btActorGetSpriteStub(slot->object, groupIndex)) != NULL;
+		groupIndex++) {
+		if(timerSlot != TINT_KEEP)
+			state->actorTimers[timerSlot] = timerTicks;
 		if(slot->fading == 0) {
 			if(palette != TINT_KEEP) {
-				Sint32 partIdx;
+				Sint32 partIndex;
 
-				for(partIdx = 0; partIdx != group->cnt; partIdx++) {
-					SPR_ANIMATION *part = group->entries[partIdx];
+				for(partIndex = 0; partIndex != group->count; partIndex++) {
+					SPR_ANIMATION *part = group->entries[partIndex];
 
 					if(part != NULL && part != slot->shadowEntry &&
-						part != slot->anmEntry) {
-						Uint8 oldPalette = part->colMode;
+						part != slot->animationEntry) {
+						Uint8 oldPalette = part->colorMode;
 
 						if(palette == SPRITE_COLOR_NORMAL)
-							part->colMode = btMotionGetSlotPaletteStub(unitId);
+							part->colorMode =
+								btMotionGetSlotPaletteStub(unitId);
 						else
-							part->colMode = palette;
-						if(part->colMode != oldPalette)
+							part->colorMode = palette;
+						if(part->colorMode != oldPalette)
 							part->picture = SPRITE_PICTURE_NONE;
 					}
 				}
 			}
-			if(anm != TINT_KEEP)
-				fdSprStartAnimationStub(group, anm);
+			if(animation != TINT_KEEP)
+				fdSpriteStartAnimationStub(group, animation);
 		}
 	}
 }

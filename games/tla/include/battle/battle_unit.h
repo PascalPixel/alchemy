@@ -62,7 +62,7 @@ typedef enum ELEMENT {
    each as if aimed at. */
 #define ABILITY_RANGE_ALL 255
 
-/* The low four bits of ABILITY_DEFINITION.flg: the ability kind (enum
+/* The low four bits of ABILITY_DEFINITION.flags: the ability kind (enum
    ABILITY_FORMULA). */
 #define ABILITY_FORMULA_MASK 15
 
@@ -88,14 +88,14 @@ typedef enum ABILITY_FORMULA {
 	ABILITY_FORMULA_HEAL_PP = 11
 } ABILITY_FORMULA;
 
-/* ABILITY_DEFINITION.flg: where an ability can be used. */
+/* ABILITY_DEFINITION.flags: where an ability can be used. */
 typedef enum ABILITY_USE {
 	ABILITY_USABLE_IN_FIELD = 0x40, /* can be used outside battle */
 	/* can be used in battle; else greyed there */
 	ABILITY_USABLE_IN_BATTLE = 0x80
 } ABILITY_USE;
 
-/* ABILITY_DEFINITION.tgtMode: whom an ability may target, from its user's
+/* ABILITY_DEFINITION.targetMode: whom an ability may target, from its user's
    view. */
 typedef enum ABILITY_TARGET {
 	ABILITY_TARGET_ONE = 0,	   /* the aimed unit alone, whatever its range */
@@ -104,9 +104,9 @@ typedef enum ABILITY_TARGET {
 	ABILITY_TARGET_SELF = 4	   /* the user alone, whatever the range */
 } ABILITY_TARGET;
 
-/* ABILITY_DEFINITION.eff: what an ability does besides its damage or healing,
-   applied by btAbilityApplyToTarget unless noted. Each is named for the
-   abilities that have it (actions.tsv, with their English names and
+/* ABILITY_DEFINITION.effect: what an ability does besides its damage or
+   healing, applied by btAbilityApplyToTarget unless noted. Each is named for
+   the abilities that have it (actions.tsv, with their English names and
    descriptions). Sidestep (48), Crazy Voice (52) and Vengeance (89) have
    effects no code here reads. */
 typedef enum ABILITY_EFFECT {
@@ -224,12 +224,12 @@ typedef enum ABILITY_EFFECT {
 /* An ability's definition, a row of AbilityDefinitions: its targeting, kind,
    element, effect, range, PP cost and power. */
 typedef struct ABILITY_DEFINITION {
-	Uint8 tgtMode; /* ABILITY_TARGET */
+	Uint8 targetMode; /* ABILITY_TARGET */
 	/* bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
 	   row | 3..0 kind (ABILITY_FORMULA_MASK, ABILITY_FORMULA). */
-	Uint8  flg;
+	Uint8  flags;
 	Uint8  element;					   /* ELEMENT */
-	Uint8  eff;						   /* ABILITY_EFFECT */
+	Uint8  effect;					   /* ABILITY_EFFECT */
 	Uint16 icon;					   /* the ability's icon */
 	Uint8  fieldPsynergy;			   /* FIELD_PSY, or 0 for none */
 	Uint8  reservedAfterFieldPsynergy; /* 0 in every row */
@@ -244,8 +244,8 @@ typedef struct ABILITY_DEFINITION {
 typedef enum CURSE_FLAG {
 	CURSE_BOUND = 0x01,		 /* the unit is bound: one action in four is lost */
 	CURSE_ITEM = 0x02,		 /* a cursed item is equipped */
-	CURSE_KEEP_BOUND = 0x04, /* keeps CURSE_BOUND through gmUnitCalc */
-	/* EQUIP_EFFECT_CURSE_REMOVABLE: gmUnitCalc clears it again with
+	CURSE_KEEP_BOUND = 0x04, /* keeps CURSE_BOUND through gmUnitCalculate */
+	/* EQUIP_EFFECT_CURSE_REMOVABLE: gmUnitCalculate clears it again with
 	   CURSE_BOUND. */
 	CURSE_REMOVABLE = 0x08
 } CURSE_FLAG;
@@ -307,7 +307,7 @@ typedef struct BATTLE_AI_STATE {
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL	 (1 << UNIT_GAUGE_SHIFT)
 
-/* The bits of UNIT.baseActionCnt that count the unit's actions a turn. */
+/* The bits of UNIT.baseActionCount that count the unit's actions a turn. */
 #define UNIT_ACTION_COUNT_MASK 0xf
 
 /* A unit's name buffer: 14 characters and the 0 that ends them. */
@@ -330,38 +330,38 @@ typedef struct BATTLE_AI_STATE {
 typedef struct UNIT {
 	Uint8  name[UNIT_NAME_SIZE]; /* one byte a character, ending in 0 */
 	Uint8  level;				 /* 1 to 99 for a character */
-	Sint16 baseHp; /* before equipment, Djinn and class (gmUnitCalc) */
-	Sint16 basePp; /* before equipment, Djinn and class (gmUnitCalc) */
+	Sint16 baseHp; /* before equipment, Djinn and class (gmUnitCalculate) */
+	Sint16 basePp; /* before equipment, Djinn and class (gmUnitCalculate) */
 	/* hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains */
 	Sint16 hpGauge;
 	/* pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains */
 	Sint16 ppGauge;
-	Uint16 baseAttack;	  /* before equipment, Djinn, class and stages */
-	Uint16 baseDefense;	  /* before equipment, Djinn, class and stages */
-	Uint16 baseAgility;	  /* before equipment, Djinn, class and stages */
-	Uint8  baseLuck;	  /* before equipment, Djinn and class */
-	Uint8  baseActionCnt; /* actions a turn before equipment */
-	Uint8  baseHpRegen;	  /* HP regained each turn before equipment */
-	Uint8  basePpRegen;	  /* PP regained each turn before equipment */
-	Uint8  baseUnused[2]; /* no code names it */
+	Uint16 baseAttack;		/* before equipment, Djinn, class and stages */
+	Uint16 baseDefense;		/* before equipment, Djinn, class and stages */
+	Uint16 baseAgility;		/* before equipment, Djinn, class and stages */
+	Uint8  baseLuck;		/* before equipment, Djinn and class */
+	Uint8  baseActionCount; /* actions a turn before equipment */
+	Uint8  baseHpRegen;		/* HP regained each turn before equipment */
+	Uint8  basePpRegen;		/* PP regained each turn before equipment */
+	Uint8  baseUnused[2];	/* no code names it */
 	/* Power and resistance before equipment and stages: an enemy's from its
 	   element preset, a character's from its element levels
-	   (gmUnitCalcBaseElements). */
+	   (gmUnitCalculateBaseElements). */
 	BATTLE_ELEMENT_STATS baseElement[ELEMENT_COUNT];
-	Sint16				 hpMax;			 /* maximum HP (gmUnitCalc) */
-	Sint16				 ppMax;			 /* maximum PP (gmUnitCalc) */
-	Sint16				 hp;			 /* current HP, 0 when downed */
-	Sint16				 pp;			 /* current PP */
-	Uint16				 attack;		 /* Attack (gmUnitCalc) */
-	Uint16				 defense;		 /* Defense (gmUnitCalc) */
-	Uint16				 agility;		 /* Agility (gmUnitCalc) */
-	Uint8				 luck;			 /* Luck (gmUnitCalc) */
-	Uint8				 actionsPerTurn; /* actions each turn (gmUnitCalc) */
-	Uint8				 hpRegen;		 /* HP regained at each turn's end */
-	Uint8				 ppRegen;		 /* PP regained at each turn's end */
-	Uint8				 unused[2];		 /* no code names it, as baseUnused */
+	Sint16				 hpMax;	  /* maximum HP (gmUnitCalculate) */
+	Sint16				 ppMax;	  /* maximum PP (gmUnitCalculate) */
+	Sint16				 hp;	  /* current HP, 0 when downed */
+	Sint16				 pp;	  /* current PP */
+	Uint16				 attack;  /* Attack (gmUnitCalculate) */
+	Uint16				 defense; /* Defense (gmUnitCalculate) */
+	Uint16				 agility; /* Agility (gmUnitCalculate) */
+	Uint8				 luck;	  /* Luck (gmUnitCalculate) */
+	Uint8 actionsPerTurn;		  /* actions each turn (gmUnitCalculate) */
+	Uint8 hpRegen;				  /* HP regained at each turn's end */
+	Uint8 ppRegen;				  /* PP regained at each turn's end */
+	Uint8 unused[2];			  /* no code names it, as baseUnused */
 	/* Power and resistance in each element after equipment, element levels and
-	   Resistance stages (gmUnitCalc). */
+	   Resistance stages (gmUnitCalculate). */
 	BATTLE_ELEMENT_STATS element[ELEMENT_COUNT];
 	/* The action list: Psynergy taught for good, then the class's and the
 	   equipment's. An empty entry is 0. */
@@ -375,8 +375,8 @@ typedef struct UNIT {
 	Uint32 djinnHeld[ELEMENT_COUNT];
 	/* The Djinn set, one bit per Djinni. */
 	Uint32 djinnSet[ELEMENT_COUNT];
-	Uint8  djinnHeldCnts[ELEMENT_COUNT]; /* the Djinn held in each element */
-	Uint8  djinnSetCnts[ELEMENT_COUNT];	 /* the Djinn set in each element */
+	Uint8  djinnHeldCounts[ELEMENT_COUNT]; /* the Djinn held in each element */
+	Uint8  djinnSetCounts[ELEMENT_COUNT];  /* the Djinn set in each element */
 	/* Cleared when an enemy is set up. During a battle the enemy's action
 	   choice keeps its place in its action list here (btAIChooseAction). */
 	BATTLE_AI_STATE aiState;
@@ -422,7 +422,7 @@ typedef struct UNIT {
 	Sint8 reflect;	  /* Reflect's turns left, 7 when cast */
 	Uint8 haunt;	  /* set while an evil spirit grips the unit */
 	Uint8 grimReaper; /* the Grim Reaper's countdown, 7 when cursed */
-	/* [0] the EQUIP_EFFECT_ADD_UNLEASH_CHANCE total gmUnitCalc sums, which
+	/* [0] the EQUIP_EFFECT_ADD_UNLEASH_CHANCE total gmUnitCalculate sums, which
 	   nothing reads (gmEquipmentGetUnleashRateBonus sums it afresh); [1] set by
 	   ABILITY_EFFECT_COUNTER while the unit is ready to counterattack, for the
 	   rest of the turn. */
@@ -442,7 +442,7 @@ typedef struct UNIT {
 	Uint16 enemyId;
 } UNIT;
 
-STATIC_ASSERT(offsetof(ABILITY_DEFINITION, eff) == 3);
+STATIC_ASSERT(offsetof(ABILITY_DEFINITION, effect) == 3);
 STATIC_ASSERT(offsetof(ABILITY_DEFINITION, power) == 10);
 STATIC_ASSERT(sizeof(ABILITY_DEFINITION) == 12);
 
@@ -461,8 +461,8 @@ STATIC_ASSERT(offsetof(UNIT, level) == 15);
 STATIC_ASSERT(offsetof(UNIT, element) == 72);
 STATIC_ASSERT(offsetof(UNIT, ready) == 324);
 STATIC_ASSERT(offsetof(UNIT, inventory) == 216);
-STATIC_ASSERT(offsetof(UNIT, djinnHeldCnts) == 280);
-STATIC_ASSERT(offsetof(UNIT, djinnSetCnts) == 284);
+STATIC_ASSERT(offsetof(UNIT, djinnHeldCounts) == 280);
+STATIC_ASSERT(offsetof(UNIT, djinnSetCounts) == 284);
 STATIC_ASSERT(offsetof(UNIT, defendLevel) == 299);
 STATIC_ASSERT(offsetof(UNIT, charm) == 314);
 STATIC_ASSERT(offsetof(UNIT, haunt) == 320);
@@ -511,11 +511,11 @@ typedef struct BATTLE_BASE_STATS {
 	Uint16 baseAttack;
 	Uint16 baseDefense;
 	Uint16 baseAgility;
-	Uint8  baseLuck;  /* copied, not read */
-	Uint8  actionCnt; /* copied, not read */
-	Uint8  hpRegen;	  /* copied, not read */
-	Uint8  ppRegen;	  /* copied, not read */
-	Uint8  unused[2]; /* Unit's baseUnused */
+	Uint8  baseLuck;	/* copied, not read */
+	Uint8  actionCount; /* copied, not read */
+	Uint8  hpRegen;		/* copied, not read */
+	Uint8  ppRegen;		/* copied, not read */
+	Uint8  unused[2];	/* Unit's baseUnused */
 	BATTLE_ELEMENT_STATS
 	element[ELEMENT_COUNT]; /* the base power is read */
 } BATTLE_BASE_STATS;

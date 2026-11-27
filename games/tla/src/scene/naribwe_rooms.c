@@ -330,7 +330,7 @@ void scNaribweRoomsReadShiningItem(void);
 /* The fortune-teller steps sideways behind his table to x, still facing the
    party, and dances on. */
 #define DANCE_TO(x) \
-	(fdActorGet(ACTOR_FORTUNE_TELLER)->steeringFlg &= ~ACTOR_FACES_MOTION, \
+	(fdActorGet(ACTOR_FORTUNE_TELLER)->steeringFlags &= ~ACTOR_FACES_MOTION, \
 		fdActorWalkTo(ACTOR_FORTUNE_TELLER, x, 96), \
 		fdActorSetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE))
 
@@ -422,7 +422,7 @@ void scNaribweRoomsReadFortune(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
 	fdPaletteFadeInterpolate(30);
 	syFieldScriptWait(120);
-	fdScriptPlaySnd(MUS_RITUALS);
+	fdScriptPlaySound(MUS_RITUALS);
 	fdActorSetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE);
 	fdActorWaitForAnimationChange(ACTOR_FORTUNE_TELLER);
 	DANCE_TO(664);
@@ -438,11 +438,11 @@ void scNaribweRoomsReadFortune(void)
 	scFieldActorJump(ACTOR_FORTUNE_TELLER, 4, 30);
 	fdActorSetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE);
 	fdActorSetAnimation(ACTOR_FORTUNE_TELLER, ANIM_STILL);
-	fdScriptPlaySnd(MUS_RITUALS);
+	fdScriptPlaySound(MUS_RITUALS);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	fdPaletteFadeInterpolate(30);
 	fdActorSetPos(ACTOR_SMOKE_CLOUD, 672, 104);
-	fdScriptPlaySnd(SE_CLATTER);
+	fdScriptPlaySound(SE_CLATTER);
 	fdActorSetAnimation(ACTOR_SMOKE_CLOUD, 2);
 	fdActorWaitForAnimationChange(ACTOR_SMOKE_CLOUD);
 	fdActorSetPos(ACTOR_SMOKE_CLOUD, 0, 0);
@@ -456,7 +456,7 @@ void scNaribweRoomsReadFortune(void)
 	fdActorShowEmote(
 		MainRoutineStateWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(MUS_KIBOMBO);
+	fdScriptPlaySound(MUS_KIBOMBO);
 	fdActorShowEmote(
 		ACTOR_FORTUNE_TELLER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	/* "I see..." */
@@ -836,14 +836,14 @@ Sint32 scNaribweRoomsDjinniHintLimit(Sint32 group)
    many. */
 Sint32 scNaribweRoomsListMissingDjinn(Sint32 limit, Sint32 group, Sint32 *out)
 {
-	Sint32 cnt = 0;
+	Sint32 count = 0;
 	Sint32 i = TRANSFERRED_DJINN_PER_ELEMENT;
 
 	if(i < limit) {
 		Sint32 *cursor = out;
 
 		for(; i < limit; i++) {
-			Sint32 flg;
+			Sint32 flag;
 
 			if(group == ELEMENT_VENUS && i == DJINNI_INDEX(DJINNI_ECHO))
 				continue;
@@ -853,14 +853,14 @@ Sint32 scNaribweRoomsListMissingDjinn(Sint32 limit, Sint32 group, Sint32 *out)
 				if(i == DJINNI_INDEX(DJINNI_SHADE))
 					continue;
 			}
-			flg = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
-			if(fdScriptGetFlag(flg) == 0) {
-				*cursor++ = flg;
-				cnt++;
+			flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
+			if(fdScriptGetFlag(flag) == 0) {
+				*cursor++ = flag;
+				count++;
 			}
 		}
 	}
-	return cnt;
+	return count;
 }
 
 /* Higher than any element's hint limit, so that the first one is lower. */
@@ -874,15 +874,15 @@ Sint32 scNaribweRoomsListMissingDjinn(Sint32 limit, Sint32 group, Sint32 *out)
    found of the element it has found the fewest of. */
 Uint8 *scNaribweRoomsGetDjinniHint(void)
 {
-	Sint32 *hints = (Sint32 *)Value2((Sint32 (*)())syHeapSlotAllocEWRAM,
+	Sint32 *hints = (Sint32 *)Value2((Sint32 (*)())syHeapSlotAllocateEWRAM,
 		HEAP_SLOT_DJINNI_HINTS,
 		ELEMENT_COUNT * DJINN_PER_ELEMENT * sizeof(Sint32));
 	Sint32	limits[ELEMENT_COUNT];
-	Sint32	cnt = 0;
+	Sint32	count = 0;
 	Sint32	lowest = HINT_LIMIT_ABOVE_ALL;
 	Sint32	lowestGroup = 0;
 	Uint32	group;
-	Sint32	idx;
+	Sint32	index;
 	Uint8  *msg;
 
 	for(group = 0; group < ELEMENT_COUNT; group++) {
@@ -896,23 +896,24 @@ Uint8 *scNaribweRoomsGetDjinniHint(void)
 			lowestGroup = group;
 		}
 		if(limit != -1)
-			cnt += scNaribweRoomsListMissingDjinn(limit, group, hints + cnt);
+			count +=
+				scNaribweRoomsListMissingDjinn(limit, group, hints + count);
 	}
-	if(cnt == 0) {
+	if(count == 0) {
 		for(group = 0; group < ELEMENT_COUNT; group++)
-			cnt += scNaribweRoomsListMissingDjinn(
-				DJINNI_INDEX(DJINNI_CRYSTAL) + 1, group, hints + cnt);
-		if(cnt == 0) {
+			count += scNaribweRoomsListMissingDjinn(
+				DJINNI_INDEX(DJINNI_CRYSTAL) + 1, group, hints + count);
+		if(count == 0) {
 			syHeapSlotRelease(HEAP_SLOT_DJINNI_HINTS);
 			return MsgNaribweRoomsInItemYouHavePlaced;
 		}
 		scNaribweRoomsListMissingDjinn(
 			DJINNI_INDEX(DJINNI_CRYSTAL) + 1, lowestGroup, hints);
-		idx = 0;
+		index = 0;
 	} else {
-		idx = syRandom() % cnt;
+		index = syRandom() % count;
 	}
-	switch(hints[idx]) {
+	switch(hints[index]) {
 	case FLAG_DJINNI(DJINNI_IRON):
 		msg = MsgNaribweRoomsToEastLiesContinentMoved;
 		break;
@@ -1052,42 +1053,45 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorDisableById(ACTOR_FORTUNE_TABLE);
 	fdActorDisableById(ACTOR_PLACED_ITEM);
-	scFieldActorSetSprPriority(ACTOR_FORTUNE_TELLER, 2);
-	fdActorGet(ACTOR_VILLAGER_ON_BODY_PAINT)->collisionFlg |= ACTOR_NEAR_TALK;
-	scFieldActorSetSprPriority(ACTOR_INNKEEPER, 2);
-	fdActorGet(ACTOR_INNKEEPER)->collisionFlg |= ACTOR_NEAR_TALK;
+	scFieldActorSetSpritePriority(ACTOR_FORTUNE_TELLER, 2);
+	fdActorGet(ACTOR_VILLAGER_ON_BODY_PAINT)->collisionFlags |= ACTOR_NEAR_TALK;
+	scFieldActorSetSpritePriority(ACTOR_INNKEEPER, 2);
+	fdActorGet(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
 
 	actor = fdActorGet(ACTOR_PLACED_ITEM);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = -toFIXED(4);
 	actor->groundHeight = -toFIXED(4);
-	fdActorGet(ACTOR_PLACED_ITEM)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	scFieldActorSetSprPriority(ACTOR_PLACED_ITEM, 1);
+	fdActorGet(ACTOR_PLACED_ITEM)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	scFieldActorSetSpritePriority(ACTOR_PLACED_ITEM, 1);
 	fdActorSetPos(ACTOR_PLACED_ITEM, 0, 0);
 
 	actor = fdActorGet(ACTOR_RISING_SMOKE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(12);
 	actor->groundHeight = toFIXED(12);
-	fdActorGet(ACTOR_RISING_SMOKE)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	scFieldActorSetSprPriority(ACTOR_RISING_SMOKE, 1);
+	fdActorGet(ACTOR_RISING_SMOKE)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	scFieldActorSetSpritePriority(ACTOR_RISING_SMOKE, 1);
 	fdActorSetPos(ACTOR_RISING_SMOKE, 0, 0);
 
 	actor = fdActorGet(ACTOR_SMOKE_CLOUD);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(12);
 	actor->groundHeight = toFIXED(12);
-	fdActorGet(ACTOR_SMOKE_CLOUD)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	scFieldActorSetSprPriority(ACTOR_SMOKE_CLOUD, 1);
+	fdActorGet(ACTOR_SMOKE_CLOUD)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	scFieldActorSetSpritePriority(ACTOR_SMOKE_CLOUD, 1);
 	fdActorSetPos(ACTOR_SMOKE_CLOUD, 0, 0);
 
-	fdActorSetSprFlags(fdActorGet(ACTOR_RISING_SMOKE), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SMOKE_CLOUD), 0);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_SMOKE_CLOUD), SPRITE_COLOR_GBR);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_RISING_SMOKE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SMOKE_CLOUD), 0);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_SMOKE_CLOUD), SPRITE_COLOR_GBR);
 	return 0;
 }
 

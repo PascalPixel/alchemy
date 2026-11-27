@@ -53,7 +53,7 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*sparkles;
 	BLITTER_PAIR		 draw;
 	PARTICLE			*shard;
@@ -69,7 +69,7 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_ICE_SHARD_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkles, 0, 0);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
 		WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -133,8 +133,9 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 		state->transferValue = CANVAS_FADE_HALF;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
-	for(frm = 0; frm != IceCounts[state->args->variant][ICE_TICKS]; frm++) {
-		if(frm == IceCounts[state->args->variant][ICE_TICKS] - 16)
+	for(frame = 0; frame != IceCounts[state->args->variant][ICE_TICKS];
+		frame++) {
+		if(frame == IceCounts[state->args->variant][ICE_TICKS] - 16)
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 
 		/* Shards fall down the slant, and on landing shatter, kicking up
@@ -157,11 +158,11 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 				} else {
 					/* Every target flashes blue as the shards land. */
 					if((i & 3) == 0)
-						sySndPlayStub(SE_ICE);
-					state->shakeFrm = 2;
+						sySoundPlayStub(SE_ICE);
+					state->shakeFrame = 2;
 					shard->variant = 0;
 					EFFECT_FOR_EACH_TARGET(k, state->args)
-						btEffectTintBattler(state->args->tgts[k],
+						btEffectTintBattler(state->args->targets[k],
 							SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, k, 8);
 				}
 			}
@@ -228,7 +229,7 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectArmWin0HBlankDMA);
 	EFFECT_RELEASE_BLITTERS();
 	btEffectEndCanvasLayer();
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 }
 
 /* RamMapGridMetatileBuffer as Douse uses it: window 0's table, then the drops'
@@ -262,7 +263,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 drawDroplet;
 	DRAW_RECTANGLE		 drawDrop;
 	PARTICLE			*drop;
@@ -278,7 +279,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(
 		RESOURCE_BLUE_BEAM_SHEET, state->sheet + DOUSE_FALLING_PICTURE, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, state->sheet, 0, 0);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
 		WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -333,8 +334,9 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
-	for(frm = 0; frm != DouseCounts[state->args->variant][DOUSE_TICKS]; frm++) {
-		if(frm == DouseCounts[state->args->variant][DOUSE_TICKS] - 64)
+	for(frame = 0; frame != DouseCounts[state->args->variant][DOUSE_TICKS];
+		frame++) {
+		if(frame == DouseCounts[state->args->variant][DOUSE_TICKS] - 64)
 			EFFECT_SHOW_DAMAGE(SE_WATER);
 
 		/* Drops fall down the slant, then splash. */
@@ -368,18 +370,20 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 							k];
 						droplet->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
 						droplet->y = toFIXED(y);
-						droplet->velX = ((syRandom() & 255) - 128) << 9;
+						droplet->velocityX = ((syRandom() & 255) - 128) << 9;
 						if(state->args->variant == EFFECT_VARIANT_STRONGEST)
-							droplet->velY = ((syRandom() & 0x1ff) - 384) << 10;
+							droplet->velocityY = ((syRandom() & 0x1ff) - 384)
+								<< 10;
 						else
-							droplet->velY = ((syRandom() & 255) - 255) << 10;
+							droplet->velocityY = ((syRandom() & 255) - 255)
+								<< 10;
 						droplet->variant = (syRandom() & 15) + 16;
 					}
 					/* Every target flashes white as the drops land. */
 					if((i & 3) == 0)
-						sySndPlayStub(SE_WATER);
+						sySoundPlayStub(SE_WATER);
 					EFFECT_FOR_EACH_TARGET(k, state->args)
-						btEffectTintBattler(state->args->tgts[k],
+						btEffectTintBattler(state->args->targets[k],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
 				}
 			} else {
@@ -417,7 +421,7 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 
 	syCloseEvent(btEffectArmWin0HBlankDMA);
 	EFFECT_FINISH_CANVAS();
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 }
 
 #undef FALLING_BUILD_SLANTED_WINDOW

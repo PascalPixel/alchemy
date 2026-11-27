@@ -7,8 +7,8 @@
 #include "render_input.h"
 #include "system.h"
 
-WINDOW_SPR *mnWindowSprAcquireFree(void);
-void		mnWindowSprReleaseFree(WINDOW_SPR *spr);
-void		mnWindowSprAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *spr);
+WINDOW_SPR *mnWindowSpriteAcquireFree(void);
+void		mnWindowSpriteReleaseFree(WINDOW_SPR *sprite);
+void mnWindowSpriteAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *sprite);
 
 #endif

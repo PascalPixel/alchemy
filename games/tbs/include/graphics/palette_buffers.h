@@ -25,12 +25,12 @@
    packed colours. */
 typedef struct TITLE_PALETTE_FADE {
 	/* The source palette, RGB555: the BG colours, then the sprite colours. */
-	Uint16 pal[PLTT_COLORS];
+	Uint16 palette[PLTT_COLORS];
 	/* The shown colours, as B, G and R channels shifted up 10 bits, three a
 	   colour. */
-	Uint16 cur[TITLE_PALETTE_FADE_CHANNELS];
+	Uint16 current[TITLE_PALETTE_FADE_CHANNELS];
 	/* the colours current moves toward, as current */
-	Uint16 tgt[TITLE_PALETTE_FADE_CHANNELS];
+	Uint16 target[TITLE_PALETTE_FADE_CHANNELS];
 	/* added to each current channel each tick */
 	Uint16 delta[TITLE_PALETTE_FADE_CHANNELS];
 	/* Two pages of RGB555 colours: one is built while the other is queued. */
@@ -42,8 +42,8 @@ typedef struct TITLE_PALETTE_FADE {
 } TITLE_PALETTE_FADE;
 
 STATIC_ASSERT(sizeof(TITLE_PALETTE_FADE) == 12292);
-STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, cur) == 1024);
-STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, tgt) == 4096);
+STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, current) == 1024);
+STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, target) == 4096);
 STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, delta) == 7168);
 STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, packed) == 10240);
 STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, page) == 12288);
@@ -54,12 +54,12 @@ STATIC_ASSERT(offsetof(TITLE_PALETTE_FADE, page) == 12288);
 typedef struct PALETTE_FADE {
 	/* The source palette, RGB555: the BG colours, then as many sprite colours;
 	   palette[0] is the backdrop. */
-	Uint16 pal[2 * PALETTE_FADE_BG_COLORS];
+	Uint16 palette[2 * PALETTE_FADE_BG_COLORS];
 	/* The shown colours, as B, G and R channels shifted up 10 bits, three a
 	   colour. */
-	Uint16 cur[PALETTE_FADE_CHANNELS];
+	Uint16 current[PALETTE_FADE_CHANNELS];
 	/* the colours current moves toward, as current */
-	Uint16 tgt[PALETTE_FADE_CHANNELS];
+	Uint16 target[PALETTE_FADE_CHANNELS];
 	/* added to each current channel each tick */
 	Uint16 delta[PALETTE_FADE_CHANNELS];
 	/* Two pages of RGB555 colours: one is built while the other is queued. */
@@ -71,8 +71,8 @@ typedef struct PALETTE_FADE {
 } PALETTE_FADE;
 
 STATIC_ASSERT(sizeof(PALETTE_FADE) == 10756);
-STATIC_ASSERT(offsetof(PALETTE_FADE, cur) == 896);
-STATIC_ASSERT(offsetof(PALETTE_FADE, tgt) == 3584);
+STATIC_ASSERT(offsetof(PALETTE_FADE, current) == 896);
+STATIC_ASSERT(offsetof(PALETTE_FADE, target) == 3584);
 STATIC_ASSERT(offsetof(PALETTE_FADE, delta) == 6272);
 STATIC_ASSERT(offsetof(PALETTE_FADE, packed) == 8960);
 STATIC_ASSERT(offsetof(PALETTE_FADE, page) == 10752);
@@ -152,7 +152,7 @@ typedef enum PALETTE_TINT {
 #define MUTED_BLUE_MIN	16
 #define MUTED_BLUE_MAX	26
 
-/* Which palettes mnTitlePaletteFadeBuildCols builds. */
+/* Which palettes mnTitlePaletteFadeBuildColors builds. */
 typedef enum PALETTE_SELECTION {
 	PALETTES_ALL = 0,
 	PALETTES_BG = 1,

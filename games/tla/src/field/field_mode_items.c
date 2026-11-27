@@ -86,21 +86,21 @@ const CUE *fdFindItemCue(Sint32 item)
 	item &= INVENTORY_ITEM_ID_MASK;
 	tileAhead = fdGetCollisionAheadOfLeader();
 
-	for(; cue->ctrl != -1; cue++) {
+	for(; cue->control != -1; cue++) {
 		Sint32 eventFacing = (Sint16)(Uint16)cue->subject & CUE_SUBJECT_FACING;
 		Sint16 requiresFacing = (Uint16)cue->subject & CUE_SUBJECT_NEEDS_FACING;
 		Sint32 eventTarget = (Uint16)cue->subject & CUE_SUBJECT_TARGET;
 
-		if((cue->ctrl & CUE_KIND_MASK) == CUE_ITEM &&
+		if((cue->control & CUE_KIND_MASK) == CUE_ITEM &&
 			fdGameFlagIsConditionActive(cue->condition) != 0 &&
 			(requiresFacing == 0 ||
 				(Uint16)(eventFacing - facing + (TRIG_TURN * 3 / 32 - 1)) <=
 					TRIG_TURN * 3 / 16 - 2)) {
 			/* The item, as USE_ITEM packs it above the cue's kind. */
-			Sint32 eventItem = (Uint16)((Sint32)cue->ctrl / 256);
+			Sint32 eventItem = (Uint16)((Sint32)cue->control / 256);
 
 			if(item == 0 || fdItemMatchesFilter(eventItem, item)) {
-				if((cue->ctrl & CUE_ITEM_ON_ACTOR) != 0) {
+				if((cue->control & CUE_ITEM_ON_ACTOR) != 0) {
 					if(eventTarget == actorAhead)
 						return cue;
 				} else if(eventTarget == tileAhead) {
@@ -126,10 +126,10 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 	UNIT		*unit;
 	const CUE	*cue;
 	Sint32		 inventorySlot;
-	Sint32		 partyIdx;
+	Sint32		 partyIndex;
 	Sint32		 mostMatchingSlots;
 	Sint32		 matchingSlots;
-	Sint32		 partyCnt;
+	Sint32		 partyCount;
 	FIELD_STATE *state;
 
 	result = -1;
@@ -139,12 +139,12 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 	   whoever holds it in the most slots, the earlier on a tie. */
 	{
 		mostMatchingSlots = 0;
-		partyCnt = gmPartyCountMembersStub();
+		partyCount = gmPartyCountMembersStub();
 
 		if(actorId == UNIT_NONE) {
 			actorId = 0;
-			for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
-				unit = syUnitGet(MainRoutineStateWork.party[partyIdx]);
+			for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+				unit = syUnitGet(MainRoutineStateWork.party[partyIndex]);
 				matchingSlots = 0;
 				for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
 					inventorySlot++) {
@@ -155,7 +155,7 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 
 				if(mostMatchingSlots < matchingSlots) {
 					mostMatchingSlots = matchingSlots;
-					actorId = MainRoutineStateWork.party[partyIdx];
+					actorId = MainRoutineStateWork.party[partyIndex];
 				}
 			}
 		} else {
@@ -219,10 +219,10 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 				mnFieldMessageShowStub((Sint32)&MsgUseItemQuestion,
 					FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
 						FIELD_MESSAGE_LOWER);
-				/* partyIdx now holds the answer: 0 is yes. */
-				partyIdx = fdYesNoAsk(TRUE);
+				/* partyIndex now holds the answer: 0 is yes. */
+				partyIndex = fdYesNoAsk(TRUE);
 				mnMessageCloseFinishedWindowsStub();
-				if(partyIdx != 0)
+				if(partyIndex != 0)
 					return 0;
 
 				MainRoutineStateWork.next = MainRoutineStateWork.retreatScene;
@@ -276,15 +276,16 @@ Sint32 fdSelectPsynergyTarget(Sint32 kind)
 	Sint32 nearby = -1;
 	Sint32 fallback = -1;
 
-	for(; event->ctrl != CUE_TABLE_END; event++) {
+	for(; event->control != CUE_TABLE_END; event++) {
 		Sint32 eventFacing = event->subject & CUE_SUBJECT_FACING;
 		Sint16 requiresFacing =
 			(Uint16)event->subject & CUE_SUBJECT_NEEDS_FACING;
 		Sint32 eventTarget = (Uint16)event->subject & CUE_SUBJECT_TARGET;
 		Sint32 eventKind =
-			gmAbilityGetDirectStub((Uint16)event->ctrl >> 8)->fieldPsynergy;
+			gmAbilityGetDirectStub((Uint16)event->control >> 8)->fieldPsynergy;
 
-		if((event->ctrl & CUE_KIND_MASK) == CUE_PSYNERGY && eventKind == kind &&
+		if((event->control & CUE_KIND_MASK) == CUE_PSYNERGY &&
+			eventKind == kind &&
 			fdGameFlagIsConditionActive(event->condition)) {
 			if(requiresFacing) {
 				Sint32 distance = (Sint16)(eventFacing - facing);
@@ -294,9 +295,9 @@ Sint32 fdSelectPsynergyTarget(Sint32 kind)
 				if(distance > TRIG_TURN * 3 / 32 - 1)
 					continue;
 			}
-			if(event->ctrl & CUE_PSYNERGY_ANYWHERE) {
+			if(event->control & CUE_PSYNERGY_ANYWHERE) {
 				fallback = PSYNERGY_TARGET_ANYWHERE;
-			} else if(event->ctrl & CUE_PSYNERGY_ON_ACTOR) {
+			} else if(event->control & CUE_PSYNERGY_ON_ACTOR) {
 				Sint32 distance = fdMeasurePsynergyReach(
 					kind, fdPartyGetLeaderActor(), eventTarget);
 
@@ -337,15 +338,16 @@ CUE *fdFindPsynergyCue(Sint32 filter, Sint32 kind, Sint32 selector)
 
 	if(selector == -1)
 		return NULL;
-	for(; event->ctrl != CUE_TABLE_END; event++) {
+	for(; event->control != CUE_TABLE_END; event++) {
 		Sint32 eventFacing = event->subject & CUE_SUBJECT_FACING;
 		Sint16 requiresFacing =
 			(Uint16)event->subject & CUE_SUBJECT_NEEDS_FACING;
 		Sint32 eventTarget = (Uint16)event->subject & CUE_SUBJECT_TARGET;
 		Sint32 eventKind =
-			gmAbilityGetDirectStub((Uint16)event->ctrl >> 8)->fieldPsynergy;
+			gmAbilityGetDirectStub((Uint16)event->control >> 8)->fieldPsynergy;
 
-		if((event->ctrl & CUE_KIND_MASK) == CUE_PSYNERGY && eventKind == kind &&
+		if((event->control & CUE_KIND_MASK) == CUE_PSYNERGY &&
+			eventKind == kind &&
 			fdGameFlagIsConditionActive(event->condition)) {
 			if(requiresFacing) {
 				Sint32 distance = (Sint16)(eventFacing - facing);
@@ -356,13 +358,14 @@ CUE *fdFindPsynergyCue(Sint32 filter, Sint32 kind, Sint32 selector)
 					continue;
 			}
 			if(filter != PSYNERGY_CUE_ANY &&
-				(event->ctrl & (PSYNERGY_PHASE_MASK | CUE_KIND_MASK)) != filter)
+				(event->control & (PSYNERGY_PHASE_MASK | CUE_KIND_MASK)) !=
+					filter)
 				continue;
-			if(event->ctrl & CUE_PSYNERGY_ANYWHERE) {
+			if(event->control & CUE_PSYNERGY_ANYWHERE) {
 				if((selector & PSYNERGY_TARGET_KIND) ==
 					PSYNERGY_TARGET_ANYWHERE)
 					return event;
-			} else if(event->ctrl & CUE_PSYNERGY_ON_ACTOR) {
+			} else if(event->control & CUE_PSYNERGY_ON_ACTOR) {
 				if((selector & PSYNERGY_TARGET_KIND) == PSYNERGY_TARGET_ACTOR &&
 					(selector & PSYNERGY_TARGET_ID) == eventTarget)
 					return event;
@@ -381,7 +384,7 @@ CUE *fdFindPsynergyCue(Sint32 filter, Sint32 kind, Sint32 selector)
    Psynergy (bits 0 to 9) and its user (bits 10 to 13). */
 Sint32 fdRunPsynergyEndScripts(Uint32 packed)
 {
-	Sint32		 action, user, kind, selector, tgt;
+	Sint32		 action, user, kind, selector, target;
 	PENDING_CUE *beforeEnd, *afterEnd;
 
 	action = ABILITY_ID(packed);
@@ -392,17 +395,17 @@ Sint32 fdRunPsynergyEndScripts(Uint32 packed)
 		PSYNERGY_CUE(PSYNERGY_PHASE_BEFORE_END), kind, selector);
 	afterEnd = (PENDING_CUE *)fdFindPsynergyCue(
 		PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_END), kind, selector);
-	tgt = -1;
+	target = -1;
 	if(beforeEnd != NULL || afterEnd != NULL) {
 		if(selector != -1 && (selector & PSYNERGY_TARGET_ACTOR))
-			tgt = selector & PSYNERGY_TARGET_ID;
+			target = selector & PSYNERGY_TARGET_ID;
 	}
 	fdPsynergyLoadResources(action, 0);
-	fdPsynergySetupActorPair(fdPartyGetLeaderActor(), tgt);
-	fdRunPsynergyScript(beforeEnd, user, tgt);
+	fdPsynergySetupActorPair(fdPartyGetLeaderActor(), target);
+	fdRunPsynergyScript(beforeEnd, user, target);
 	fdPsynergyRunExtraHandler();
 	fdBattleEffectStopMainActor();
-	fdRunPsynergyScript(afterEnd, user, tgt);
+	fdRunPsynergyScript(afterEnd, user, target);
 	fdPsynergyEnd();
 	return 0;
 }

@@ -9,18 +9,18 @@
    while its sprite rocks from side to side, once every 16 ticks. */
 Sint32 scActorBob(ACTOR *actor)
 {
-	Sint32	   frm = actor->sceneCnt & (BOB_CYCLE_TICKS - 1);
-	FIELD_SPR *spr = actor->spr;
+	Sint32	   frame = actor->sceneCount & (BOB_CYCLE_TICKS - 1);
+	FIELD_SPR *sprite = actor->sprite;
 
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	if(frm == 0)
-		actor->velY = toFIXED(3);
-	if(frm == 16)
-		actor->velY = toFIXED(2);
-	if(frm == 24)
-		actor->velY = toFIXED(3);
-	spr->rotation = syCos(frm * (TRIG_TURN / 16)) / BOB_ROCK_DIVISOR;
-	actor->sceneCnt++;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	if(frame == 0)
+		actor->velocityY = toFIXED(3);
+	if(frame == 16)
+		actor->velocityY = toFIXED(2);
+	if(frame == 24)
+		actor->velocityY = toFIXED(3);
+	sprite->rotation = syCos(frame * (TRIG_TURN / 16)) / BOB_ROCK_DIVISOR;
+	actor->sceneCount++;
 	return -1;
 }
 

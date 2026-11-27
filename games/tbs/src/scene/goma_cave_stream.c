@@ -103,9 +103,9 @@ static void scGomaCaveStreamMoveStump(void)
 {
 	if(fdActorGet(ACTOR_STUMP)->x.fixed / toFIXED(16) == 24) {
 		scLeapStump(ACTOR_STUMP);
-		fdActorGet(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(19, 74, 9, 3, 19, 17);
-		fdActorSetSprFlags(fdActorGet(ACTOR_STUMP), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_STUMP), 0);
 		gmFlagSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
 	}
 }
@@ -129,11 +129,12 @@ Sint32 scInit(void)
 			GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA) {
 			gmFlagClear(FLAG_SHOW_AREA_NAME);
 		} else {
-			fdActorGet(ACTOR_STUMP)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+			fdActorGet(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 			if(gmFlagGet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
 				fdActorSetPos(ACTOR_STUMP, 346, 292);
-				fdActorSetSprFlags(fdActorGet(ACTOR_STUMP), 0);
-				fdActorGet(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_STUMP), 0);
+				fdActorGet(ACTOR_STUMP)->priorityFlags |=
+					ACTOR_PRIORITY_UNDERFOOT;
 				fdActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
 				fdMapGridCopyMetatileAttributes(19, 74, 9, 3, 19, 17);
 			}

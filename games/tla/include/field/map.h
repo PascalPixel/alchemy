@@ -45,7 +45,7 @@ typedef struct WORLD_MAP_BLOCKS {
 
 /* The map's animation each tick: its tiles, its blend scripts and the World
    Map's tints and tile blocks. */
-void   fdTilesetAnimUpdate(void);
+void   fdTilesetAnimationUpdate(void);
 void   fdWorldMapUpdateRegionTint(Sint32 region, Sint32 gradual);
 void   fdWorldMapPreloadCurrentTileBlock(void);
 Sint32 fdScreenTransitionIsScanlineActiveStub(void);

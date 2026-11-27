@@ -3,7 +3,7 @@
 void syStatueFlashUnderBurst(ACTOR *actor)
 {
 	if(TickCount & actor->flashMask)
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
 	else
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }

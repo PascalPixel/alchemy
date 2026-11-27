@@ -13,16 +13,16 @@ void scMercuryLighthouseRestoreLights(
 {
 	ACTOR			  *actor;
 	ACTOR			  *light;
-	SPR				  *spr;
+	SPR				  *sprite;
 	MAP_GRID_METATILE *metatile;
 	FIXED			   z;
-	Sint32			   flg;
+	Sint32			   flag;
 
-	*(MERCURY_LIGHTHOUSE_LIGHTS **)syHeapSlotAllocEWRAM(
+	*(MERCURY_LIGHTHOUSE_LIGHTS **)syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(lights)) = lights;
-	flg = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
-	if(flg == 0) {
-		DMA_FILL32(flg, lights, sizeof(*lights));
+	flag = gmFlagGet(FLAG_KEEP_PARTY_POSITION);
+	if(flag == 0) {
+		DMA_FILL32(flag, lights, sizeof(*lights));
 		lights->poolBehavior = region;
 		return;
 	}
@@ -35,40 +35,40 @@ void scMercuryLighthouseRestoreLights(
 			actor->y.fixed + toFIXED(24), z);
 		if(light != NULL) {
 			light->groundHeight = actor->groundHeight;
-			spr = light->spr;
+			sprite = light->sprite;
 			fdActorStartScript(light, MercuryLighthousePillarScript);
 			light->watchedActor = (ACTOR_OR_EFFECT *)actor;
-			light->motionFlg = ACTOR_FLOATS;
+			light->motionFlags = ACTOR_FLOATS;
 			light->y.fixed -= toFIXED(1) / 2;
-			if(spr != NULL) {
-				fdSprStartAnimation(
-					spr, GOLDEN_RINGS_ANIMATION_COLUMN(lights->levels));
-				spr->flg = 0;
-				spr->image.pri = 1;
+			if(sprite != NULL) {
+				fdSpriteStartAnimation(
+					sprite, GOLDEN_RINGS_ANIMATION_COLUMN(lights->levels));
+				sprite->flags = 0;
+				sprite->image.priority = 1;
 			}
 			lights->pillar = light;
 		}
 	} else {
 		lights->pillar = 0;
 	}
-	if(metatile->behavior == region && lights->stepEff != 0) {
+	if(metatile->behavior == region && lights->stepEffect != 0) {
 		light = syFieldActorCreate(SPRITE_GOLDEN_RINGS, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed);
 		if(light == NULL)
 			return;
 		light->groundHeight = actor->groundHeight;
-		spr = light->spr;
+		sprite = light->sprite;
 		fdActorStartScript(light, MercuryLighthouseGrowLightScript);
-		light->motionFlg = 0;
-		light->tmr = 0;
-		light->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		light->motionFlags = 0;
+		light->timer = 0;
+		light->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		light->speedLimit = toFIXED(4);
-		if(spr != NULL) {
-			fdSprStartAnimation(spr, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
-			spr->flg = 0;
+		if(sprite != NULL) {
+			fdSpriteStartAnimation(sprite, GOLDEN_RINGS_ANIMATION_POOL_LIGHT);
+			sprite->flags = 0;
 		}
-		lights->stepEff = light;
+		lights->stepEffect = light;
 	} else {
-		lights->stepEff = 0;
+		lights->stepEffect = 0;
 	}
 }

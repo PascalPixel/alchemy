@@ -1,11 +1,11 @@
 /* Finds the room's cracked tiles: every metatile whose script is `kind` (whole)
-   or `kind + 1` (cracked), each given the next flag from `flg`; returns how
+   or `kind + 1` (cracked), each given the next flag from `flags`; returns how
    many. */
 Sint32 scCrackedTileFind(
-	Uint32 kind, Sint32 flg, Sint32 flgByte, Sint32 x, Sint32 z)
+	Uint32 kind, Sint32 flag, Sint32 flagByte, Sint32 x, Sint32 z)
 {
-	METATILE_TARGET		  *tbl = &CrackedTiles;
-	METATILE_TARGET_ENTRY *entry = tbl->entries;
+	METATILE_TARGET		  *table = &CrackedTiles;
+	METATILE_TARGET_ENTRY *entry = table->entries;
 	MAP_STATE			  *map;
 	MAP_LAYER			  *layer;
 	MAP_METATILE		  *metatiles;
@@ -16,19 +16,19 @@ Sint32 scCrackedTileFind(
 	Sint32				   cx, cz;
 	Sint32				   k;
 
-	syWordsClearEntry(tbl, 4);
-	tbl->kind = kind;
-	tbl->firstFlg = flg;
-	tbl->flgByte = flgByte;
-	tbl->x = x;
-	tbl->z = z;
-	tbl->cur = -1;
-	tbl->cnt = 0;
+	syWordsClearEntry(table, 4);
+	table->kind = kind;
+	table->firstFlag = flag;
+	table->flagByte = flagByte;
+	table->x = x;
+	table->z = z;
+	table->current = -1;
+	table->count = 0;
 	map = RamHeapSlots->mapGrid;
 	layer = &map->layers[0];
 	metatiles = layer->metatiles;
-	x0 = FIELD_METATILE(layer->ofsX + map->minX);
-	z0 = FIELD_METATILE(layer->ofsY + map->minZ);
+	x0 = FIELD_METATILE(layer->offsetX + map->minX);
+	z0 = FIELD_METATILE(layer->offsetY + map->minZ);
 	width = FIELD_METATILE(map->maxX - map->minX);
 	height = FIELD_METATILE(map->maxZ - map->minZ);
 	metatiles +=
@@ -44,18 +44,18 @@ Sint32 scCrackedTileFind(
 					entry->x = cx;
 					cz = j + z0;
 					entry->z = cz;
-					entry->flg = flg;
-					flg++;
+					entry->flags = flag;
+					flag++;
 					if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 						if(event == last)
-							fdScriptSetFlag(entry->flg);
-					} else if(fdScriptGetFlag(entry->flg)) {
-						fdMapGridCopyMetatiles(tbl->x, tbl->z + 1, 1, 1,
-							cx | (Sint16)(tbl->x & 64),
-							cz | (Sint16)(tbl->z & 64));
+							fdScriptSetFlag(entry->flags);
+					} else if(fdScriptGetFlag(entry->flags)) {
+						fdMapGridCopyMetatiles(table->x, table->z + 1, 1, 1,
+							cx | (Sint16)(table->x & 64),
+							cz | (Sint16)(table->z & 64));
 					}
 					entry++;
-					tbl->cnt++;
+					table->count++;
 				}
 			}
 		}
@@ -65,25 +65,25 @@ Sint32 scCrackedTileFind(
 		Sint32 leaderX = FIELD_METATILE(leader->x.fixed);
 		Sint32 leaderZ = FIELD_METATILE(leader->z.fixed);
 
-		entry = tbl->entries;
-		for(k = 0; k < tbl->cnt; k++) {
+		entry = table->entries;
+		for(k = 0; k < table->count; k++) {
 			if(entry->x == leaderX && entry->z == leaderZ)
-				tbl->cur = k;
+				table->current = k;
 			entry++;
 		}
 	}
 	/* The hole mask fdCrackedTileUpdate draws into the OBJ window: a 16 by 32
 	   sprite whose every pixel is colour 1. */
-	buf = syHeapAlloc(HOLE_MASK_BYTES);
+	buf = syHeapAllocate(HOLE_MASK_BYTES);
 	{
 		Uint32 *word = buf;
 
 		for(k = 0; k < HOLE_MASK_BYTES / 4; k++)
 			*word++ = PIXELS_4BPP(1);
 	}
-	tbl->tile = syVRAMCacheFindFreeEntry();
-	mnVRAMLoad(tbl->tile, HOLE_MASK_BYTES, buf);
+	table->tile = syVRAMCacheFindFreeEntry();
+	mnVRAMLoad(table->tile, HOLE_MASK_BYTES, buf);
 	syHeapRelease(buf);
 	sySetTickEvent(fdCrackedTileUpdate, EVENT_PASS_TICK);
-	return tbl->cnt;
+	return table->count;
 }

@@ -47,7 +47,7 @@ Sint32 mnIconLoadResourceIntoSlot(Sint32 resourceId, Sint32 slot)
 	ICON_TRANSFER *allocation;
 
 	allocation =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	selectedSlot = slot;
 	mnAbilityBuildIconTilesStub(resourceId, 0, &selectedSlot, &resourceInfo, 1);
 	buf = syVRAMCacheReload(slot, (Sint32)allocation->tiles);
@@ -59,21 +59,21 @@ Sint32 mnIconLoadResourceIntoSlot(Sint32 resourceId, Sint32 slot)
    ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
    preview's Psynergy lists. */
 void mnIconCreatePsynergyIcon(
-	WINDOW *win, Sint32 x, Sint32 y, Sint32 resourceId)
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 resourceId)
 {
 	Sint32 slot;
 
 	slot = syVRAMCacheFindFreeEntry();
 	if(slot != VRAM_CACHE_ENTRY_COUNT) {
 		mnIconLoadResourceIntoSlot(resourceId, slot);
-		mnWindowSprCreateStub(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+		mnWindowSpriteCreateStub(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 	}
 }
 
 /* Shows a stat change arrow, up or down (STAT_ARROW), at (x, y) of window.
    Returns 1, or -1 when no window sprite is free. */
 Sint32 mnIconCreateStatChangeArrow(
-	WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 variant)
 {
 	WINDOW_SPR		*arrow;
 	Uint32			 resource;
@@ -83,8 +83,8 @@ Sint32 mnIconCreateStatChangeArrow(
 		resource = menu->resourceSlots[0];
 	else
 		resource = menu->resourceSlots[1];
-	arrow =
-		mnWindowSprCreateStub(resource, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+	arrow = mnWindowSpriteCreateStub(
+		resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 	if(arrow == 0) {
 		/* FAKEMATCH(dead): a test whose two arms are alike. */
 		if(variant || x)
@@ -93,14 +93,15 @@ Sint32 mnIconCreateStatChangeArrow(
 			return -1;
 	}
 	arrow->kind = 0;
-	arrow->anmStep = 0;
+	arrow->animationStep = 0;
 	arrow->motion = ICON_SHOWN;
 	return 1;
 }
 
 /* As mnIconCreateStatChangeArrow, with the arrow raised 3 pixels for variant 0
    and 4 for any other. Returns 1, or -1 when no window sprite is free. */
-Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
+Sint32 mnIconCreateDjinnArrow(
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 variant)
 {
 	WINDOW_SPR		*arrow;
 	Uint32			 resource;
@@ -113,8 +114,8 @@ Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
 		resource = menu->resourceSlots[1];
 		y -= 4;
 	}
-	arrow =
-		mnWindowSprCreateStub(resource, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+	arrow = mnWindowSpriteCreateStub(
+		resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 	if(arrow == 0) {
 		/* FAKEMATCH(dead): a test whose two arms are alike. */
 		if(variant || x)
@@ -123,16 +124,16 @@ Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
 			return -1;
 	}
 	arrow->kind = 0;
-	arrow->anmStep = 0;
+	arrow->animationStep = 0;
 	arrow->motion = ICON_SHOWN;
 	return 1;
 }
 
-/* Moves the selection *cursor among `cnt` entries in rows of `columns`: left
+/* Moves the selection *cursor among `count` entries in rows of `columns`: left
    and right step and wrap, up and down move a row, the last row ending at the
    last entry. Returns 0 when it stays, 1 when it moves within its row and 2
    when it reaches another row (another page of the party members). */
-Sint32 mnMoveGridCursor(Sint32 *cursor, Sint32 cnt, Sint32 columns)
+Sint32 mnMoveGridCursor(Sint32 *cursor, Sint32 count, Sint32 columns)
 {
 	INPUT_STATE *input = &PerWork;
 	Sint32		 result = 0;
@@ -141,24 +142,24 @@ Sint32 mnMoveGridCursor(Sint32 *cursor, Sint32 cnt, Sint32 columns)
 
 	if(input->repeat & KEY_LEFT) {
 		pos--;
-		pos = (pos + cnt) % cnt;
+		pos = (pos + count) % count;
 	}
 	if(input->repeat & KEY_RIGHT) {
 		pos++;
-		pos = (pos + cnt) % cnt;
+		pos = (pos + count) % count;
 	}
 	if(input->repeat & KEY_UP) {
 		if(pos - columns >= 0)
 			pos -= columns;
 	}
 	if(input->repeat & KEY_DOWN) {
-		if(pos + columns < (columns + cnt - 1) / columns * columns)
+		if(pos + columns < (columns + count - 1) / columns * columns)
 			pos += columns;
-		if(pos > cnt - 1)
-			pos = cnt - 1;
+		if(pos > count - 1)
+			pos = count - 1;
 	}
 	if(old != pos) {
-		sySndPlayStub(SE_MENU_CURSOR_MOVE);
+		sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 		result = 1;
 	}
 	if(old / columns * columns != pos / columns * columns)
@@ -167,62 +168,62 @@ Sint32 mnMoveGridCursor(Sint32 *cursor, Sint32 cnt, Sint32 columns)
 	return result;
 }
 
-/* Shows the up arrow when the page of four starting at `idx`'s page has one
-   above it and the down arrow when one follows, among `cnt` entries. */
-void mnSetPageArrowsUpDown(Sint32 idx, Sint32 cnt)
+/* Shows the up arrow when the page of four starting at `index`'s page has one
+   above it and the down arrow when one follows, among `count` entries. */
+void mnSetPageArrowsUpDown(Sint32 index, Sint32 count)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	WINDOW_SPR		*arrow;
-	Sint32			 top = idx / 4 * 4;
+	Sint32			 top = index / 4 * 4;
 
 	arrow = menu->pageArrows[0];
 	arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
 	if(top != 0) {
 		arrow->motion = WINDOW_SPRITE_MOTION_HOP_UP;
-		arrow->anmStep = 0;
+		arrow->animationStep = 0;
 	}
 	arrow = menu->pageArrows[1];
 	arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-	if(top + 4 < cnt) {
+	if(top + 4 < count) {
 		arrow->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE;
-		arrow->anmStep = 0;
+		arrow->animationStep = 0;
 	}
 }
 
 /* As mnSetPageArrowsUpDown, with the arrows hopping left and right: the Djinn
    menu's columns of party members. */
-void mnSetPageArrowsLeftRight(Sint32 idx, Sint32 cnt)
+void mnSetPageArrowsLeftRight(Sint32 index, Sint32 count)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	WINDOW_SPR		*arrow;
-	Sint32			 top = idx / 4 * 4;
+	Sint32			 top = index / 4 * 4;
 
 	arrow = menu->pageArrows[0];
 	arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
 	if(top != 0) {
 		arrow->motion = WINDOW_SPRITE_MOTION_HOP_LEFT;
-		arrow->anmStep = 0;
+		arrow->animationStep = 0;
 	}
 	arrow = menu->pageArrows[1];
 	arrow->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-	if(top + 4 < cnt) {
+	if(top + 4 < count) {
 		arrow->motion = WINDOW_SPRITE_MOTION_HOP_RIGHT;
-		arrow->anmStep = 0;
+		arrow->animationStep = 0;
 	}
 }
 
-/* Sets the page arrows for `idx` and sets the chosen party member's figure
+/* Sets the page arrows for `index` and sets the chosen party member's figure
    apart from the others on its page of four: its y MENU_MEMBER_CHOSEN_Y, theirs
    MENU_MEMBER_Y. */
-void mnMarkChosenMember(Sint32 unused, Sint32 idx, Sint32 cnt)
+void mnMarkChosenMember(Sint32 unused, Sint32 index, Sint32 count)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
-	Sint32			 top = idx / 4 * 4;
+	Sint32			 top = index / 4 * 4;
 	Sint32			 i;
 
-	mnSetPageArrowsUpDown(idx, cnt);
+	mnSetPageArrowsUpDown(index, count);
 	for(i = 0; i <= 3; i++) {
-		if(top + i == idx)
+		if(top + i == index)
 			menu->memberY[i] = MENU_MEMBER_CHOSEN_Y;
 		else
 			menu->memberY[i] = MENU_MEMBER_Y;
@@ -238,27 +239,28 @@ void mnUpdatePartyFigures(void)
 	FIXED			 transform[4];
 	Sint32			 i;
 
-	if(menu->memberSprsShown != 0) {
+	if(menu->memberSpritesShown != 0) {
 		for(i = 0; i <= 7; i++) {
 			/* 114.5 less half the figure's screen y, in 16.16. */
 			FIXED top = toFIXED(229) / 2 - menu->memberY[i] * (toFIXED(1) / 2);
 
-			if(menu->memberSprs[i] != NULL) {
+			if(menu->memberSprites[i] != NULL) {
 				scale[0] = menu->memberScale[i];
 				scale[1] = menu->memberScale[i];
 				transform[0] = toFIXED(menu->memberX[i]);
 				transform[1] = top;
 				transform[2] = toFIXED(menu->memberY[i]) + top;
 				transform[3] = 0;
-				fdRenderApplyProjectedPlacementAtDepthStub(menu->memberSprs[i],
-					transform, scale, FACING_SOUTH, MENU_FIGURE_DEPTH);
+				fdRenderApplyProjectedPlacementAtDepthStub(
+					menu->memberSprites[i], transform, scale, FACING_SOUTH,
+					MENU_FIGURE_DEPTH);
 			}
 		}
 	}
 }
 
 /* Returns the sprite party member id's figure shows. */
-Sint32 fdPartyGetCharacterSprStub(Sint32 id);
+Sint32 fdPartyGetCharacterSpriteStub(Sint32 id);
 
 /* mnCreatePartyFigures for two characters (-1 for none): their figures in
    entries 0 and 1, as the Djinn preview shows the pair a Djinni passes
@@ -271,11 +273,11 @@ void mnCreatePairFigures(Sint32 first, Sint32 second)
 	Sint32			 i;
 
 	for(i = 0; i < 8; i++) {
-		figure = menu->memberSprs[i];
+		figure = menu->memberSprites[i];
 		if(figure != NULL) {
-			fdSprDestroyStub(figure);
-			menu->memberSprs[i] = NULL;
-			menu->memberSprIds[i] = -1;
+			fdSpriteDestroyStub(figure);
+			menu->memberSprites[i] = NULL;
+			menu->memberSpriteIds[i] = -1;
 		}
 	}
 	for(i = 0; i < 2; i++) {
@@ -283,14 +285,14 @@ void mnCreatePairFigures(Sint32 first, Sint32 second)
 		if(i != 0)
 			id = second;
 		if(id != -1) {
-			menu->memberSprIds[i] = id;
-			figure = fdSprCreateStub(fdPartyGetCharacterSprStub(id));
+			menu->memberSpriteIds[i] = id;
+			figure = fdSpriteCreateStub(fdPartyGetCharacterSpriteStub(id));
 			if(figure != NULL) {
-				fdSprStartAnimationStub(figure, ANIM_STAND);
-				figure->image.pri = 0;
-				figure->flg = 0;
+				fdSpriteStartAnimationStub(figure, ANIM_STAND);
+				figure->image.priority = 0;
+				figure->flags = 0;
 			}
-			menu->memberSprs[i] = figure;
+			menu->memberSprites[i] = figure;
 		}
 	}
 }
@@ -305,45 +307,46 @@ void mnCreatePartyFigures(Sint32 first)
 	Sint32			 i;
 
 	for(i = 0; i < 8; i++) {
-		object = menu->memberSprs[i];
+		object = menu->memberSprites[i];
 		if(object != NULL) {
-			fdSprDestroyStub(object);
-			menu->memberSprs[i] = NULL;
-			menu->memberSprIds[i] = -1;
+			fdSpriteDestroyStub(object);
+			menu->memberSprites[i] = NULL;
+			menu->memberSpriteIds[i] = -1;
 		}
 	}
-	menu->sideCnt[0] = gmPartyListMembersStub(owners);
+	menu->sideCount[0] = gmPartyListMembersStub(owners);
 	for(i = 0; i < 4 && owners[first + i] != BATTLE_UNIT_LIST_END; i++) {
-		menu->memberSprIds[i] = owners[first + i];
-		object = fdSprCreateStub(fdPartyGetCharacterSprStub(owners[first + i]));
+		menu->memberSpriteIds[i] = owners[first + i];
+		object = fdSpriteCreateStub(
+			fdPartyGetCharacterSpriteStub(owners[first + i]));
 		if(object != NULL) {
-			fdSprStartAnimationStub(object, ANIM_STAND);
-			object->image.pri = 0;
-			object->flg = 0;
+			fdSpriteStartAnimationStub(object, ANIM_STAND);
+			object->image.priority = 0;
+			object->flags = 0;
 		}
-		menu->memberSprs[i] = object;
+		menu->memberSprites[i] = object;
 	}
 }
 
 /* Creates the first four party members' figures in a row from tile (originX,
    originY) inside window, three tiles apart, and starts placing them each tick
    (mnUpdatePartyFigures). */
-void mnShowPartyFigures(WINDOW *win, Sint32 originX, Sint32 originY)
+void mnShowPartyFigures(WINDOW *window, Sint32 originX, Sint32 originY)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 i;
 
 	for(i = 0; i < 8; i++)
-		menu->memberSprs[i] = NULL;
+		menu->memberSprites[i] = NULL;
 	mnCreatePartyFigures(0);
 	for(i = 0; i <= 3; i++) {
-		if(menu->memberSprs[i] != NULL) {
-			menu->memberX[i] = (i * 3 + (win->x + originX)) * 8;
-			menu->memberY[i] = (win->y + originY) * 8 + 16;
+		if(menu->memberSprites[i] != NULL) {
+			menu->memberX[i] = (i * 3 + (window->x + originX)) * 8;
+			menu->memberY[i] = (window->y + originY) * 8 + 16;
 			menu->memberScale[i] = toFIXED(1);
 		}
 	}
-	menu->memberSprsShown = ICON_SHOWN;
+	menu->memberSpritesShown = ICON_SHOWN;
 	sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
 }
 
@@ -351,14 +354,14 @@ void mnShowPartyFigures(WINDOW *win, Sint32 originX, Sint32 originY)
 void mnReleasePartyFigures(void)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
-	void		   **objects = menu->memberSprs;
+	void		   **objects = menu->memberSprites;
 	Sint32			 i;
 
 	for(i = 0; i < 8; i++) {
 		void *object = *objects++;
 
 		if(object != NULL)
-			fdSprDestroyStub(object);
+			fdSpriteDestroyStub(object);
 	}
 	syCloseEvent(mnUpdatePartyFigures);
 }
@@ -433,15 +436,15 @@ void mnDjinnFiguresInitTopRow(void)
 
 	for(i = 0; i < 4; i++) {
 		if(menu->figures[i] != NULL) {
-			fdSprDestroyStub(menu->figures[i]);
+			fdSpriteDestroyStub(menu->figures[i]);
 			menu->figures[i] = NULL;
 		}
 	}
 	for(i = 0; i < 4; i++) {
-		object = fdSprCreateStub(DjinnFiguresSpriteIds[i]);
+		object = fdSpriteCreateStub(DjinnFiguresSpriteIds[i]);
 		if(object != NULL) {
-			fdSprStartAnimationStub(object, ANIM_WALK);
-			object->image.pri = 0;
+			fdSpriteStartAnimationStub(object, ANIM_WALK);
+			object->image.priority = 0;
 		}
 		menu->figures[i] = object;
 		menu->figureX[i] = FIGURE_START_X;
@@ -461,7 +464,7 @@ void mnDjinnFiguresReleaseTopRow(void)
 
 	for(i = 0; i < 4; i++) {
 		if(menu->figures[i] != NULL) {
-			fdSprDestroyStub(menu->figures[i]);
+			fdSpriteDestroyStub(menu->figures[i]);
 			menu->figures[i] = NULL;
 		}
 	}
@@ -470,51 +473,51 @@ void mnDjinnFiguresReleaseTopRow(void)
 
 /* Replaces Djinn figure index with a Djinni of element kind
    (DjinnFiguresSpriteIds) playing animation. */
-void mnDjinnFiguresReplaceSlot(Sint32 idx, Sint32 kind, Sint32 anm)
+void mnDjinnFiguresReplaceSlot(Sint32 index, Sint32 kind, Sint32 animation)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	SPR				*object;
 
-	if(menu->figures[idx] != NULL) {
-		fdSprDestroyStub(menu->figures[idx]);
-		menu->figures[idx] = NULL;
+	if(menu->figures[index] != NULL) {
+		fdSpriteDestroyStub(menu->figures[index]);
+		menu->figures[index] = NULL;
 	}
-	object = fdSprCreateStub(DjinnFiguresSpriteIds[kind]);
+	object = fdSpriteCreateStub(DjinnFiguresSpriteIds[kind]);
 	if(object != NULL) {
-		fdSprStartAnimationStub(object, anm);
-		object->image.pri = 0;
+		fdSpriteStartAnimationStub(object, animation);
+		object->image.priority = 0;
 	}
-	menu->figures[idx] = object;
+	menu->figures[index] = object;
 }
 
 /* Moves Djinn figure index to screen pixel (x, y), if it exists. */
-void mnDjinnFiguresSetSlotPos(Sint32 idx, Sint32 x, Sint32 y)
+void mnDjinnFiguresSetSlotPos(Sint32 index, Sint32 x, Sint32 y)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
-	if(menu->figures[idx] != NULL) {
-		menu->figureX[idx] = x;
-		menu->figureY[idx] = y;
+	if(menu->figures[index] != NULL) {
+		menu->figureX[index] = x;
+		menu->figureY[index] = y;
 	}
 }
 
 /* Turns Djinn figure index to face facing (FACING), if it exists. */
-void mnDjinnFiguresSetSlotFacing(Sint32 idx, Sint32 facing)
+void mnDjinnFiguresSetSlotFacing(Sint32 index, Sint32 facing)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
-	if(menu->figures[idx] != NULL)
-		menu->figureFacings[idx] = facing;
+	if(menu->figures[index] != NULL)
+		menu->figureFacings[index] = facing;
 }
 
 /* Sets Djinn figure index's scale, if it exists: positive grows towards full
    size, negative holds at its size. */
-void mnDjinnFiguresSetSlotPhase(Sint32 idx, Sint32 scale)
+void mnDjinnFiguresSetSlotPhase(Sint32 index, Sint32 scale)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
-	if(menu->figures[idx] != NULL)
-		menu->figureScales[idx] = scale;
+	if(menu->figures[index] != NULL)
+		menu->figureScales[index] = scale;
 }
 
 /* An event: queues the five status icons for drawing while they show. */
@@ -527,7 +530,7 @@ void mnIconPushSlots(void)
 	if(menu->menuIconsShown != 0) {
 		slot = menu->menuIcons;
 		for(i = 0; i < CHARACTER_AILMENT_COUNT; i++) {
-			syOAMAddSprAtDepth(slot, OAM_DEPTH_WINDOW);
+			syOAMAddSpriteAtDepth(slot, OAM_DEPTH_WINDOW);
 			slot++;
 		}
 	}
@@ -553,10 +556,10 @@ void mnIconLoadSlots(void)
 
 			mnSelectionIconLoadIntoSlotStub(
 				ICON_KIND_PATTERN, StatusScreenStatusIcons[i], entry, 0);
-			attributes = (Uint32 *)&slot->attr;
+			attributes = (Uint32 *)&slot->attribute;
 			*attributes++ = WINDOW_SPRITE_SIZE_16X16;
 			*attributes = 0;
-			slot->attr.tile = VramCacheEntries[entry].ofs >> 5;
+			slot->attribute.tile = VramCacheEntries[entry].offset >> 5;
 		}
 		menu->menuIconSlots[i] = entry;
 		slot++;
@@ -579,12 +582,12 @@ void mnIconReleaseSlots(void)
 }
 
 /* Moves status icon index to screen position (x, y). */
-void mnIconSetSlot(Sint32 idx, Uint32 x, Sint32 y)
+void mnIconSetSlot(Sint32 index, Uint32 x, Sint32 y)
 {
 	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
-	menu->menuIcons[idx].attr.x = x;
-	menu->menuIcons[idx].attr.y = y;
+	menu->menuIcons[index].attribute.x = x;
+	menu->menuIcons[index].attribute.y = y;
 }
 
 /* Shows the five status icons (1) or hides them (0). */
@@ -601,7 +604,7 @@ void mnIconSetActive(Sint32 active)
 void mnPanelDrawEntryList(
 	WINDOW *panel, Sint32 x, Sint32 y, const Uint8 *enabled)
 {
-	Sint32 cnt = 0;
+	Sint32 count = 0;
 	Sint32 iconX = panel->x * 8 + x + 8;
 	Sint32 iconY = panel->y * 8 + y + 8;
 	Sint32 i;
@@ -613,33 +616,34 @@ void mnPanelDrawEntryList(
 				(Sint32)MsgStatusNameDown + i, panel, x + 16, y);
 			y += 16;
 			iconY += 16;
-			cnt++;
+			count++;
 		} else {
 			mnIconSetSlot(i, -16, -16);
 		}
 	}
-	if(cnt == 0)
+	if(count == 0)
 		mnTextDrawMessageAsTilesStub((Sint32)MsgStatusNameNormal, panel, x, y);
 }
 
 /* Fills ailments (UNIT_STAT) with party member memberId's statuses, down only
    when requested is 1, and returns how many they have. */
-Sint32 mnStatScreenListStatuses(
+Sint32 mnStatusScreenListStatuses(
 	Uint8 *ailments, Sint32 requested, Sint32 memberId)
 {
 	UNIT  *unit;
-	Sint32 ailmentIdx;
-	Sint32 cnt;
+	Sint32 ailmentIndex;
+	Sint32 count;
 	Sint32 poison;
 
 	unit = syUnitGet(memberId);
-	for(ailmentIdx = 0; ailmentIdx < CHARACTER_AILMENT_COUNT; ailmentIdx++)
-		ailments[ailmentIdx] = 0;
+	for(ailmentIndex = 0; ailmentIndex < CHARACTER_AILMENT_COUNT;
+		ailmentIndex++)
+		ailments[ailmentIndex] = 0;
 
-	cnt = 0;
+	count = 0;
 	if(unit->hp == 0 && requested == 1) {
 		ailments[CHARACTER_DOWN] = requested;
-		cnt = 1;
+		count = 1;
 	}
 
 	poison = unit->poison;
@@ -648,15 +652,15 @@ Sint32 mnStatScreenListStatuses(
 			ailments[CHARACTER_POISON] = poison;
 		else
 			ailments[CHARACTER_VENOM] = 1;
-		cnt++;
+		count++;
 	}
 	if(unit->curse != 0) {
 		ailments[CHARACTER_CURSE] = 1;
-		cnt++;
+		count++;
 	}
 	if(unit->haunt != 0) {
 		ailments[CHARACTER_HAUNT] = 1;
-		cnt++;
+		count++;
 	}
-	return cnt;
+	return count;
 }

@@ -458,7 +458,7 @@ void scYallamRoomsTalkToSunshine(void)
 			   me..." */
 			fdScriptShowMessage(ACTOR_SUNSHINE, 0);
 			fdActorFallOverById(ACTOR_SUNSHINE, DEGtoANG(270));
-			fdActorSetSprFlags(
+			fdActorSetSpriteFlags(
 				fdActorGetById(ACTOR_SUNSHINE), SPRITE_FLAG_SHADOW);
 			fdActorSetDestination(MainRoutineStateWork.leaderActorId, 488, 408);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
@@ -482,12 +482,12 @@ void scYallamRoomsTalkToSunshine(void)
 				fdActorWaitForMoveById(ACTOR_SUNSHINE);
 				fdActorSetAnimation(ACTOR_SUNSHINE, ANIM_STILL);
 				fdActorFaceDirection(ACTOR_SUNSHINE, FACING_SOUTH, 0);
-				fdActorGetById(ACTOR_SUNSHINE)->collisionFlg =
+				fdActorGetById(ACTOR_SUNSHINE)->collisionFlags =
 					ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID;
-				fdActorGetById(ACTOR_SUNSHINE)->priFlg =
+				fdActorGetById(ACTOR_SUNSHINE)->priorityFlags =
 					ACTOR_PRIORITY_AUTOMATIC;
-				fdActorSetSprPriority(ACTOR_SUNSHINE, 1);
-				fdActorGetById(ACTOR_SUNSHINE)->priFlg |=
+				fdActorSetSpritePriority(ACTOR_SUNSHINE, 1);
+				fdActorGetById(ACTOR_SUNSHINE)->priorityFlags |=
 					ACTOR_PRIORITY_AUTOMATIC;
 #if SUNSHINE_BED_SILENT_WHILE_FORGING
 				/* The bed no longer answers for him while he works. */
@@ -498,7 +498,7 @@ void scYallamRoomsTalkToSunshine(void)
 				fdActorSetDestination(ACTOR_SUNSHINE, 491, 398);
 				fdActorWaitForMoveById(ACTOR_SUNSHINE);
 				fdActorFaceDirection(ACTOR_SUNSHINE, FACING_SOUTH, 0);
-				fdActorSetSprFlags(fdActorGetById(ACTOR_SUNSHINE), 0);
+				fdActorSetSpriteFlags(fdActorGetById(ACTOR_SUNSHINE), 0);
 				fdActorFallOverById(ACTOR_SUNSHINE, 0);
 			}
 		} else {
@@ -557,7 +557,7 @@ void scYallamRoomsTalkToSunshinesWife(Sint32 actor)
 			fdScriptSetMessageId(msg + 4);
 			/* "OK, here you go!" */
 			fdScriptShowMessage(actor, 0);
-			fdItemDispShowItem(
+			fdItemDisplayShowItem(
 				item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 			gmPartyGiveItem(item, 0);
 			mnForgeSetItem(0);
@@ -595,17 +595,18 @@ Sint32 scInit(void)
 		} else {
 			fdActorFallOverById(ACTOR_SUNSHINE, 0);
 		}
-		fdActorSetSprFlags(fdActorGetById(ACTOR_SUNSHINES_BED), 0);
-		fdActorSetSprPriority(ACTOR_RAINY_SEASON_VILLAGER, 2);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_SUNSHINES_BED), 0);
+		fdActorSetSpritePriority(ACTOR_RAINY_SEASON_VILLAGER, 2);
 	}
 	if(MainRoutineStateWork.next == SCENE_YALLAM_ROOMS_SHOPS) {
 		fdEffectStartBlankOverlay(0);
-		fdActorSetSprPriority(ACTOR_ITEM_MERCHANT, 2);
-		fdActorGetById(ACTOR_ITEM_MERCHANT)->collisionFlg |= ACTOR_NEAR_TALK;
-		fdActorSetSprPriority(ACTOR_WEAPON_MERCHANT, 2);
-		fdActorGetById(ACTOR_WEAPON_MERCHANT)->collisionFlg |= ACTOR_NEAR_TALK;
-		fdActorSetSprPriority(ACTOR_ARMOR_MERCHANT, 2);
-		fdActorGetById(ACTOR_ARMOR_MERCHANT)->collisionFlg |= ACTOR_NEAR_TALK;
+		fdActorSetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
+		fdActorGetById(ACTOR_ITEM_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
+		fdActorSetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
+		fdActorGetById(ACTOR_WEAPON_MERCHANT)->collisionFlags |=
+			ACTOR_NEAR_TALK;
+		fdActorSetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
+		fdActorGetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
 	}
 	return 0;
 }

@@ -10,25 +10,28 @@ void scLeaderRiseFromWater(void)
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		fdCameraMoveToFX(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		fdActorSetPosFX(MainRoutineStateWork.leaderActorId,
 			toFIXED(leader->x.part[0].integer),
 			toFIXED(leader->z.part[0].integer) - toFIXED(16));
-		scFieldActorSetSprCol(fdActorGet(MainRoutineStateWork.leaderActorId),
+		scFieldActorSetSpriteColor(
+			fdActorGet(MainRoutineStateWork.leaderActorId),
 			SPRITE_COLOR_BLUE_TINT);
-		fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+		fdActorSetSpriteFlags(
+			fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 		fdScriptStartScreenTransition();
-		fdScriptPlaySnd(SE_SPARKLING_PASSAGE);
+		fdScriptPlaySound(SE_SPARKLING_PASSAGE);
 		leader->update = (OBJECT_UPDATE)scActorEmitMist;
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.4);
 		fdActorWalkByAndWait(MainRoutineStateWork.leaderActorId, 0, 8);
-		scFieldActorSetSprCol(fdActorGet(MainRoutineStateWork.leaderActorId),
+		scFieldActorSetSpriteColor(
+			fdActorGet(MainRoutineStateWork.leaderActorId),
 			SPRITE_COLOR_NORMAL);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
-		((FIELD_SPR *)leader->spr)->pri = 1;
+		((FIELD_SPR *)leader->sprite)->priority = 1;
 		fdActorWalkByAndWait(MainRoutineStateWork.leaderActorId, 0, 10);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		leader->update = NULL;
 		fdScriptNoOperation();
 		fdScriptWaitTransitionTicks();

@@ -27,8 +27,8 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 	Sint32		  markCode;
 #else
 	const Uint8 *glyph;
-	Sint32		 firstIdx;
-	Sint32		 secondIdx;
+	Sint32		 firstIndex;
+	Sint32		 secondIndex;
 	Uint16		 secondWidth;
 #endif
 	Sint32 width;
@@ -52,23 +52,24 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 	}
 	code &= (1 << TEXT_MARK_SHIFT) - 1;
 	if((Uint32)code < KANJI_FIRST_CODE) {
-		Sint32 idx = code - TEXT_SPACE;
+		Sint32 index = code - TEXT_SPACE;
 
 		/* The width, then the rows after it. */
-		glyph = &FontGlyphs[idx].width;
+		glyph = &FontGlyphs[index].width;
 		width = *glyph++;
 	} else {
-		Sint32 idx = code - KANJI_FIRST_CODE;
+		Sint32 index = code - KANJI_FIRST_CODE;
 
-		glyph = (const Uint16 *)(FontKanjiGlyphs + idx * (FONT_GLYPH_ROWS * 2));
+		glyph =
+			(const Uint16 *)(FontKanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
 		width = KANJI_WIDTH;
 	}
 	syWordsClearEntry(pixels, GLYPH_PIXELS_SIZE);
 #else
-	secondIdx = GLYPH_PAIR_SECOND(code);
+	secondIndex = GLYPH_PAIR_SECOND(code);
 	code &= TEXT_LAST_FONT_CODE;
-	firstIdx = code - TEXT_SPACE;
-	glyph = (const Uint8 *)FontGlyphs + firstIdx * sizeof(GLYPH);
+	firstIndex = code - TEXT_SPACE;
+	glyph = (const Uint8 *)FontGlyphs + firstIndex * sizeof(GLYPH);
 	width = ((const GLYPH *)glyph)->width;
 	syWordsClearEntry(pixels, GLYPH_PIXELS_SIZE);
 	glyph = (const Uint8 *)((const GLYPH *)glyph)->rows;
@@ -120,23 +121,23 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
 	}
-	if((Uint16)secondIdx != 0) {
-		glyph = (const Uint8 *)(&FontGlyphs[-TEXT_SPACE] + (Uint16)secondIdx);
+	if((Uint16)secondIndex != 0) {
+		glyph = (const Uint8 *)(&FontGlyphs[-TEXT_SPACE] + (Uint16)secondIndex);
 		secondWidth = *(const Uint16 *)glyph;
 		glyph += 2;
 		if(state->outline == TEXT_STYLE_OUTLINED) {
-			Uint8 *dst = pixels + width;
-			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(1, 3), shadowColour);
-			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(2, 3), shadowColour);
-			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(0, 2), colour);
-			syDecompressBitRuns(glyph, dst + GLYPH_PIXEL(1, 2), colour);
+			Uint8 *dest = pixels + width;
+			syDecompressBitRuns(glyph, dest + GLYPH_PIXEL(1, 3), shadowColour);
+			syDecompressBitRuns(glyph, dest + GLYPH_PIXEL(2, 3), shadowColour);
+			syDecompressBitRuns(glyph, dest + GLYPH_PIXEL(0, 2), colour);
+			syDecompressBitRuns(glyph, dest + GLYPH_PIXEL(1, 2), colour);
 			secondWidth += 1;
 		} else {
-			Uint8 *dst = pixels + width;
+			Uint8 *dest = pixels + width;
 			Uint8 *p;
-			p = dst + GLYPH_PIXEL(1, 3);
+			p = dest + GLYPH_PIXEL(1, 3);
 			syDecompressBitRuns(glyph, p, shadowColour);
-			p = dst + GLYPH_PIXEL(0, 2);
+			p = dest + GLYPH_PIXEL(0, 2);
 			syDecompressBitRuns(glyph, p, colour);
 		}
 		width += secondWidth;
@@ -193,7 +194,7 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 	Uint16 *cursor;
 	Uint32	code;
 #if !defined(WIDE_WIDTH_FIXED)
-	Uint32 glyphIdx;
+	Uint32 glyphIndex;
 #endif
 
 	code = *text;
@@ -206,11 +207,11 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 #if defined(WIDE_WIDTH_FIXED)
 			width += 10;
 #else
-			glyphIdx = code - TEXT_MARK_VOICED;
-			if(glyphIdx > 1U) {
+			glyphIndex = code - TEXT_MARK_VOICED;
+			if(glyphIndex > 1U) {
 				/* The font starts at the space. */
-				glyphIdx += TEXT_MARK_VOICED - TEXT_SPACE;
-				width += FONT_GLYPH(glyphIdx)->width;
+				glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
+				width += FONT_GLYPH(glyphIndex)->width;
 			}
 		} else {
 			width += KANJI_WIDTH;
@@ -225,7 +226,8 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 /* Draws a zero-terminated string of 16-bit character codes into a text canvas
    window at pixel (x, y), running its colour, outline, line spacing and new
    line codes; other control codes are skipped with their arguments. */
-void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
+void mnTextDrawWideStringAtOffset(
+	Uint16 *text, WINDOW *window, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state;
 	Uint32	   c;
@@ -306,7 +308,7 @@ void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 #else
 			/* Two characters narrow enough to share a glyph's 16-pixel cell are
 			   drawn as one sprite. */
-			if((win->flg & WINDOW_FLAG_TEXT_CANVAS) == 0) {
+			if((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
 				next = *text;
 #if OUTLINED_GLYPH_PAIRS_FIT_CELL
 				if(c > TEXT_SPACE && next > TEXT_SPACE) {
@@ -334,17 +336,17 @@ void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 #endif
 			}
 #endif
-			x += mnGlyphDraw(win, c, x, y, GLYPH_DRAW_CHARACTER);
+			x += mnGlyphDraw(window, c, x, y, GLYPH_DRAW_CHARACTER);
 		}
 	}
 }
 
 /* Unused: draws a string of 16-bit character codes straight into the UI
-   tilemap, as tiles, inside a window at tile (ofsX, ofsY) of its
+   tilemap, as tiles, inside a window at tile (offsetX, offsetY) of its
    interior, writing both the window state's copy and VRAM. A NULL buffer draws
    the decoded text in WIN_STATE.textBuf. */
 UNUSED void mnTextDrawWideStringAsTiles(
-	Uint16 *buf, const WINDOW *win, Sint32 ofsX, Sint32 ofsY)
+	Uint16 *buf, const WINDOW *window, Sint32 offsetX, Sint32 offsetY)
 {
 	WIN_STATE *canvas = WINDOW_STATE;
 	Uint32	   cell;
@@ -355,23 +357,25 @@ UNUSED void mnTextDrawWideStringAsTiles(
 		canvas->textBufEnd = (canvas->textBufEnd + 1) & TEXT_BUFFER_MASK;
 	}
 
-	cell = ((win->y + ofsY + 1) << 5) + (win->x + ofsX) + 1;
+	cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
 	if(cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) { /* inside the tilemap */
 		Sint32 src;
-		Sint32 dst;
+		Sint32 dest;
 
 		cell *= 2;
-		dst = (Sint32)WINDOW_TILEMAP_VRAM + cell;
+		dest = (Sint32)WINDOW_TILEMAP_VRAM + cell;
 		src = (Sint32)canvas->tilemap + cell;
 
-		mnTextDrawStringAsTiles(buf, (Uint16 *)src, (Uint16 *)dst, ofsX & 7);
+		mnTextDrawStringAsTiles(
+			buf, (Uint16 *)src, (Uint16 *)dest, offsetX & 7);
 	}
 }
 
 /* Draws a string of wide (16-bit) codes into the window, one glyph per cell,
    skipping the control codes and their arguments; TEXT_NEWLINE starts a new
    line. With no text, the decoded text in WIN_STATE.textBuf is drawn. */
-void mnTextDrawWideStringInWindow(Sint16 *text, WINDOW *win, Sint32 x, Sint32 y)
+void mnTextDrawWideStringInWindow(
+	Sint16 *text, WINDOW *window, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state;
 	Uint16	   c;
@@ -416,7 +420,7 @@ void mnTextDrawWideStringInWindow(Sint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 					break;
 				}
 			} else {
-				mnWindowPutGlyph(win, c, x, y, GLYPH_DRAW_CHARACTER);
+				mnWindowPutGlyph(window, c, x, y, GLYPH_DRAW_CHARACTER);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || \
 	(LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 				x++;
@@ -430,16 +434,16 @@ void mnTextDrawWideStringInWindow(Sint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 	state->dirty = 1;
 }
 
-/* The digits mnStringFormatNum writes, in buffer[1] to [12]. */
+/* The digits mnStringFormatNumber writes, in buffer[1] to [12]. */
 #define NUMBER_DIGITS 12
 
 /* Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
    returns where the text starts. With width 0 the number has no padding and a
    minus sign when negative; otherwise it is right-aligned in width characters
    (up to NUMBER_DIGITS) and unsigned. */
-Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width)
+Uint8 *mnStringFormatNumber(Uint8 *buf, Sint32 input, Sint32 width)
 {
-	Sint32 ofs;
+	Sint32 offset;
 	Sint32 value;
 	Sint32 negative;
 	Sint32 spaceCharacter;
@@ -458,20 +462,20 @@ Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width)
 	/* The digits, then spaces for the leading zeros (the last digit stays) and
 	   the sign in front; the byte after them ends the text. */
 	buf[0] = ' ';
-	for(ofs = NUMBER_DIGITS; ofs != 0; ofs--) {
-		buf[ofs] =
-			syMathUnsignedMulHighAdd(value, RECIPROCAL_OF(10), -10) + '0';
-		value = syMathUnsignedMulHigh(value, RECIPROCAL_OF(10));
+	for(offset = NUMBER_DIGITS; offset != 0; offset--) {
+		buf[offset] =
+			syMathUnsignedMultiplyHighAdd(value, RECIPROCAL_OF(10), -10) + '0';
+		value = syMathUnsignedMultiplyHigh(value, RECIPROCAL_OF(10));
 	}
 
-	ofs = 0;
-	buf[NUMBER_DIGITS + 1] = ofs;
+	offset = 0;
+	buf[NUMBER_DIGITS + 1] = offset;
 	spaceCharacter = ' ';
-	ofs = 1;
+	offset = 1;
 	minusCharacter = '-';
-	for(leading = buf; ofs != NUMBER_DIGITS + 1; leading++, ofs++) {
+	for(leading = buf; offset != NUMBER_DIGITS + 1; leading++, offset++) {
 		if(leading[1] == '0') {
-			if(ofs != NUMBER_DIGITS)
+			if(offset != NUMBER_DIGITS)
 				leading[1] = spaceCharacter;
 		} else {
 			if(negative != 0)
@@ -481,17 +485,17 @@ Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width)
 	}
 
 	if(width == 0) {
-		ofs = 0;
+		offset = 0;
 		if(buf[0] == ' ') {
 			trim = buf;
 			do {
-				ofs++;
-				if(ofs == NUMBER_DIGITS)
+				offset++;
+				if(offset == NUMBER_DIGITS)
 					break;
 				trim++;
 			} while(*trim == ' ');
 		}
-		return buf + ofs;
+		return buf + offset;
 	}
 
 	if((Uint32)width > NUMBER_DIGITS)

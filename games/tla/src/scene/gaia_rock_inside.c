@@ -282,7 +282,7 @@ typedef struct {
 /* One step of the path: its number, then the step found below, to the left, to
    the right and above it. */
 typedef struct {
-	Uint8 num;
+	Uint8 number;
 	Uint8 spare;
 	Uint8 next[4]; /* the step each way leads to, by MAZE_WAY */
 	Uint8 padding[2];
@@ -299,7 +299,7 @@ typedef enum MAZE_WAY { MAZE_SOUTH, MAZE_WEST, MAZE_EAST, MAZE_NORTH } MAZE_WAY;
 /* The maze's path: the step the party stands on, set to the first once the path
    is laid, and the steps, from 1 to MAZE_STEPS. */
 typedef struct {
-	Sint32	  cur;
+	Sint32	  current;
 	PATH_STEP steps[MAZE_STEPS + 1];
 } PATH;
 
@@ -322,7 +322,7 @@ typedef struct METATILE_POINT {
 
 /* The platforms' sway (scGaiaRockInsideSwayPlatforms). */
 typedef struct SWAY_STATE {
-	Uint16 frm;		/* ticks into the sway's 240 */
+	Uint16 frame;	/* ticks into the sway's 240 */
 	Uint16 pending; /* ticks still to run, which a push holds back */
 } SWAY_STATE;
 
@@ -405,7 +405,7 @@ static __inline__ void scGaiaRockInsideJumpDownLedge(
    empty pit the same way. */
 void scGaiaRockInsideJumpDownCobwebPit(void)
 {
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
 	fdActorCreateSilhouette(toFIXED(712), 0, toFIXED(468), SPRITE_CRATE);
 	fdActorCreateSilhouette(toFIXED(712), 0, toFIXED(490), SPRITE_CRATE);
 	/* 0x800 is no colour the dust's byte keeps, and not the bit that skips the
@@ -413,7 +413,7 @@ void scGaiaRockInsideJumpDownCobwebPit(void)
 	   this one pass: the jump goes as with 0. */
 	scGaiaRockInsideJumpDownLedge(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_SPRING, 0x800);
-	fdScriptPlaySnd(SE_FALL);
+	fdScriptPlaySound(SE_FALL);
 	fdScriptSetFlag(FLAG_ARRIVE_FALLING);
 	syFieldScriptSetExitRequest(
 		GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_B);
@@ -445,36 +445,36 @@ void scGaiaRockInsideRaiseDust(void)
 	actor->y.fixed = toFIXED(130);
 	actor->gravity = toFIXED(1) / 2;
 	actor->bounce = 0;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SE_DUST_PUFF);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdScriptPlaySound(SE_DUST_PUFF);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(16) / 25;
 	options.startScaleY = toFIXED(16) / 25;
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
-		Sint32 ang;
-		FIXED  vel[3];
+		Sint32 angle;
+		FIXED  velocity[3];
 		FIXED  cosine;
 
-		ang = i * FACING_STEP;
-		cosine = syCos(ang);
-		vel[0] = cosine;
-		vel[1] = 0;
-		vel[2] = syMathSin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
-		vel[2] += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
+		angle = i * FACING_STEP;
+		cosine = syCos(angle);
+		velocity[0] = cosine;
+		velocity[1] = 0;
+		velocity[2] = syMathSin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
+		velocity[2] += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
-	fdScriptPlaySnd(SE_THUMP);
+	fdScriptPlaySound(SE_THUMP);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_SIT);
@@ -521,7 +521,7 @@ Sint32 scGaiaRockInsideCaskTips(void)
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_CASK);
-	((FIELD_SPR *)actor->spr)->rotation += TRIG_TURN * 3 / 256;
+	((FIELD_SPR *)actor->sprite)->rotation += TRIG_TURN * 3 / 256;
 	return 0;
 }
 
@@ -530,9 +530,9 @@ extern Uint32 GaiaRockInsidePourScript[];
 /* The cask rights itself a step. */
 Sint32 scGaiaRockInsideCaskRights(void)
 {
-	FIELD_SPR *spr = fdActorGet(ACTOR_CASK)->spr;
+	FIELD_SPR *sprite = fdActorGet(ACTOR_CASK)->sprite;
 
-	spr->rotation -= TRIG_TURN * 3 / 256;
+	sprite->rotation -= TRIG_TURN * 3 / 256;
 	return 0;
 }
 
@@ -564,17 +564,17 @@ Sint32 scGaiaRockInsideCaskPours(void)
 {
 	ACTOR	  *src = fdActorGet(ACTOR_CASK);
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	actor = (scFieldActorCreate(SPRITE_WADING_SPLASH, src->x.fixed + toFIXED(8),
 		src->y.fixed - toFIXED(2), src->z.fixed));
-	actor->motionFlg = 0;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = 0;
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorStartScript(actor, GaiaRockInsidePourScript);
 	actor->scaleX = toFIXED(2) / 5;
 	actor->scaleY = toFIXED(2) / 5;
-	spr = actor->spr;
-	spr->pri = 1;
+	sprite = actor->sprite;
+	sprite->priority = 1;
 	actor->bounce = 0;
 	actor->sceneWord = 0;
 	actor->update = (OBJECT_UPDATE)scGaiaRockInsideFlickerPour;
@@ -640,23 +640,23 @@ Sint32 scGaiaRockInsideCaskBursts(void)
 	ACTOR *src = fdActorGet(ACTOR_CASK);
 	Sint32 i;
 
-	fdScriptPlaySnd(SE_FLAME_FLARE);
+	fdScriptPlaySound(SE_FLAME_FLARE);
 	for(i = 0; i < 4; i++) {
 		{
 			ACTOR *dust = (scFieldActorCreate(
 				SPRITE_DUST_CLOUD, src->x.fixed, src->y.fixed, src->z.fixed));
 
 			if(dust != 0) {
-				dust->motionFlg = 0;
-				dust->collisionFlg = 0;
-				fdActorSetSprFlags(dust, 0);
+				dust->motionFlags = 0;
+				dust->collisionFlags = 0;
+				fdActorSetSpriteFlags(dust, 0);
 				fdActorSelectAnimation(dust, 1);
 				fdActorStartScript(dust, GaiaRockInsideBurstScript);
-				((FIELD_SPR *)dust->spr)->pri = 1;
+				((FIELD_SPR *)dust->sprite)->priority = 1;
 				dust->bounce = syCos(syRandomBelow(8) << 14) >> 1;
 				dust->sceneWord = syMathSin(syRandomBelow(8) << 14) >> 1;
 				dust->gravity = 0;
-				dust->tmr = syRandomBelow(512) - 256;
+				dust->timer = syRandomBelow(512) - 256;
 				dust->speedLimit = 0;
 				dust->acceleration = 0;
 				dust->update = fdEffectAdvanceMotionAtLeaderPriority;
@@ -705,9 +705,9 @@ void scGaiaRockInsideCheckBlocked(ACTOR *actor)
 		fdScriptSetFlag(FLAG_CASK_WAITS_FOR_SUSA);
 	}
 	{
-		Uint8 *otherCnt = &other->refused;
+		Uint8 *otherCount = &other->refused;
 
-		if(*otherCnt > 2 && !fdScriptGetFlag(FLAG_CASK_WAITS_FOR_SUSA) &&
+		if(*otherCount > 2 && !fdScriptGetFlag(FLAG_CASK_WAITS_FOR_SUSA) &&
 			other->script != GaiaRockInsideCaskTossedLeftScript &&
 			other->script != GaiaRockInsideCaskTossedRightScript) {
 			actor->paused = 1;
@@ -717,14 +717,14 @@ void scGaiaRockInsideCheckBlocked(ACTOR *actor)
 			other->paused = 0;
 			fdScriptClearFlag(FLAG_CASK_WAITS_FOR_SUSA);
 		}
-		if(*otherCnt == 0) {
+		if(*otherCount == 0) {
 			actor->paused = 0;
 			fdScriptClearFlag(FLAG_SUSA_WAITS_FOR_CASK);
 		}
 		if(actor->refused > SUSA_BLOCKED_TICKS_MAX)
 			actor->refused = SUSA_BLOCKED_TICKS_MAX;
-		if(*otherCnt > SUSA_BLOCKED_TICKS_MAX)
-			*otherCnt = SUSA_BLOCKED_TICKS_MAX;
+		if(*otherCount > SUSA_BLOCKED_TICKS_MAX)
+			*otherCount = SUSA_BLOCKED_TICKS_MAX;
 	}
 }
 
@@ -761,15 +761,15 @@ const void *scGetActorPlacements(void)
    up and down in scGaiaRockInsidePulseUpDownArrow. */
 void scGaiaRockInsidePulseSidewaysArrow(ACTOR *actor)
 {
-	Sint32 colMode = 0;
+	Sint32 colorMode = 0;
 
 	if((GaiaRockInsideArrowTick & 7) <= 0)
-		colMode = 7;
-	fdActorSetSprColMode(actor, colMode & 7);
+		colorMode = 7;
+	fdActorSetSpriteColorMode(actor, colorMode & 7);
 	if((GaiaRockInsideArrowTick & 31) == 0) {
 		actor->scaleX = toFIXED(1);
 		fdActorStartScript(actor, GaiaRockInsideSquashXScript);
-		fdScriptPlaySnd(SE_DRIP);
+		fdScriptPlaySound(SE_DRIP);
 	}
 	GaiaRockInsideArrowTick++;
 }
@@ -777,15 +777,15 @@ void scGaiaRockInsidePulseSidewaysArrow(ACTOR *actor)
 /* As scGaiaRockInsidePulseSidewaysArrow, for an arrow pointing up or down. */
 void scGaiaRockInsidePulseUpDownArrow(ACTOR *actor)
 {
-	Sint32 colMode = 0;
+	Sint32 colorMode = 0;
 
 	if((GaiaRockInsideArrowTick & 7) <= 0)
-		colMode = 7;
-	fdActorSetSprColMode(actor, colMode & 7);
+		colorMode = 7;
+	fdActorSetSpriteColorMode(actor, colorMode & 7);
 	if((GaiaRockInsideArrowTick & 31) == 0) {
 		actor->scaleY = toFIXED(1);
 		fdActorStartScript(actor, GaiaRockInsideSquashYScript);
-		fdScriptPlaySnd(SE_DRIP);
+		fdScriptPlaySound(SE_DRIP);
 	}
 	GaiaRockInsideArrowTick++;
 }
@@ -801,14 +801,14 @@ void scGaiaRockInsidePlantPointsTheWay(Sint32 unused, Uint32 id)
 	Sint32 *state;
 
 	direction = scGaiaRockInsideGetMazeWayOn();
-	state = &PathWork->cur;
-	actor->collisionFlg = 0;
+	state = &PathWork->current;
+	actor->collisionFlags = 0;
 	fdActorSelectAnimation(actor, ARROW_ANIMATION(direction));
 	if(ARROW_UP_OR_DOWN(direction))
 		actor->update = (OBJECT_UPDATE)scGaiaRockInsidePulseUpDownArrow;
 	else
 		actor->update = (OBJECT_UPDATE)scGaiaRockInsidePulseSidewaysArrow;
-	actor->collisionFlg = 1;
+	actor->collisionFlags = 1;
 	fdScriptSetFlag(FLAG_MAZE_PLANT_POINTED(*state));
 	fdScriptSetFlag(FLAG_PLANT_POINTING);
 	syWait(20);
@@ -836,7 +836,7 @@ void scGaiaRockInsideCycloneClearsTwinAltarsBushes(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, 16, 0);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		}
 		if(!fdScriptGetFlag(FLAG_SERPENT_SLAIN)) {
@@ -852,16 +852,16 @@ void scGaiaRockInsideCycloneClearsTwinAltarsBushes(void)
 	}
 }
 
-static __inline__ Sint32 scGameFlagTest(Sint32 flg)
+static __inline__ Sint32 scGameFlagTest(Sint32 flag)
 {
-	return syGameFlagGet(flg);
+	return syGameFlagGet(flag);
 }
 
 /* A Mad Plant leaps out at the leader (fdMadPlantLeapAtLeader). */
 static __inline__ void scGaiaRockInsideMadPlantLeaps(
-	Sint32 spr, Sint32 x, Sint32 z)
+	Sint32 sprite, Sint32 x, Sint32 z)
 {
-	fdMadPlantLeapAtLeader(spr, x, z);
+	fdMadPlantLeapAtLeader(sprite, x, z);
 }
 
 /* Felix casts Cyclone on the patch of bushes in the platforms' room, metatiles
@@ -920,7 +920,7 @@ void scGaiaRockInsideCycloneClearsCobweb(void)
 {
 	ACTOR *altar;
 	ACTOR *leader;
-	Sint16 cnt;
+	Sint16 count;
 	Sint16 i;
 	Sint32 height = 8;
 	Sint32 srcX = 117;
@@ -929,15 +929,15 @@ void scGaiaRockInsideCycloneClearsCobweb(void)
 	fdCycloneCopyTouchedMetatiles(104, srcY, 1, height, height, srcX, srcY);
 	if(syGameFlagGet(FLAG_ALTAR_FELL))
 		return;
-	cnt = 0;
+	count = 0;
 	for(i = 0; i < (Sint16)ARRAY_COUNT(GaiaRockInsideCobwebMetatiles); i++) {
 		if(fdMapGridGetMetatileBehaviorAt(2,
 			   FIELD_METATILE_ORIGIN(GaiaRockInsideCobwebMetatiles[i].pos[0]),
 			   FIELD_METATILE_ORIGIN(
 				   GaiaRockInsideCobwebMetatiles[i].pos[1])) == 0)
-			cnt++;
+			count++;
 	}
-	if(cnt <= 0)
+	if(count <= 0)
 		return;
 	altar = fdActorGet(ACTOR_FALLING_ALTAR);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
@@ -964,9 +964,9 @@ void scGaiaRockInsideCycloneClearsCobweb(void)
 	fdActorCreateSilhouette(toFIXED(700), 0, toFIXED(490), SPRITE_CRATE);
 	fdActorCreateSilhouette(toFIXED(724), 0, toFIXED(468), SPRITE_CRATE);
 	fdActorCreateSilhouette(toFIXED(724), 0, toFIXED(490), SPRITE_CRATE);
-	fdScriptPlaySnd(SE_DUST_PUFF);
-	altar->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	((FIELD_SPR *)altar->spr)->pri = 3;
+	fdScriptPlaySound(SE_DUST_PUFF);
+	altar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	((FIELD_SPR *)altar->sprite)->priority = 3;
 	syFieldScriptWait(10);
 	fdActorSetPos(ACTOR_FALLING_ALTAR, 0, 0);
 	fdActorTableSnapshot();
@@ -993,12 +993,12 @@ void scGaiaRockInsideSaveSusa(void)
 {
 	ACTOR		  *walker = fdActorGet(ACTOR_CASK);
 	ACTOR		  *actor = fdActorGet(ACTOR_SUSA);
-	FIELD_SPR	  *spr = actor->spr;
-	SPR_ANIMATION *anm = spr->record;
+	FIELD_SPR	  *sprite = actor->sprite;
+	SPR_ANIMATION *animation = sprite->record;
 
 	syWordsCopyEntry(&GaiaRockInsideSavedSusa, actor, sizeof(ACTOR));
-	GaiaRockInsideSavedSusaAnimationStep = anm->step;
-	GaiaRockInsideSavedSusaAnimation = spr->lastNo;
+	GaiaRockInsideSavedSusaAnimationStep = animation->step;
+	GaiaRockInsideSavedSusaAnimation = sprite->lastNo;
 	{
 		FIXED x = actor->x.fixed;
 		FIXED z;
@@ -1007,12 +1007,12 @@ void scGaiaRockInsideSaveSusa(void)
 		z = actor->z.fixed;
 		actor->update = 0;
 		GaiaRockInsideSavedSusaZ = z;
-		actor->velZ = 0;
-		actor->velY = 0;
-		actor->velX = 0;
-		actor->tgtX = x;
-		actor->tgtY = actor->y.fixed;
-		actor->tgtZ = z;
+		actor->velocityZ = 0;
+		actor->velocityY = 0;
+		actor->velocityX = 0;
+		actor->targetX = x;
+		actor->targetY = actor->y.fixed;
+		actor->targetZ = z;
 	}
 	fdActorResetTargetsAndVelocity(ACTOR_SUSA);
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL * 5 / 8);
@@ -1101,9 +1101,9 @@ void scGaiaRockInsideMeetSusa(void)
 	if(actor->script == GaiaRockInsideCaskTossedLeftScript ||
 		actor->script == GaiaRockInsideCaskTossedRightScript) {
 		GaiaRockInsideSavedSusa.x.fixed = GaiaRockInsideSavedSusaX =
-			GaiaRockInsideSavedSusa.tgtX;
+			GaiaRockInsideSavedSusa.targetX;
 		GaiaRockInsideSavedSusa.z.fixed = GaiaRockInsideSavedSusaZ =
-			GaiaRockInsideSavedSusa.tgtZ;
+			GaiaRockInsideSavedSusa.targetZ;
 	}
 	scGaiaRockInsideRestoreSusa();
 	fdScriptEnd();
@@ -1196,8 +1196,9 @@ extern Uint32 OrbitSparkScript[];
 
 #include "shared/actor_step_to_watched.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/actor_emit_sparkles.h"
 
@@ -1217,44 +1218,44 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 	ACTOR  *tablet = fdActorGetById(tabletId);
 	ACTOR  *adept = fdActorGetById(adeptId);
 	Sint32	i;
-	Sint16 *ang;
+	Sint16 *angle;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 unused[3];
 
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptWait(30);
 	fdCameraSetSpeed(0.5);
 	fdCameraMoveWithinMapBounds(toFIXED(tablet->x.part[0].integer),
 		toFIXED(tablet->y.part[0].integer), toFIXED(tablet->z.part[0].integer),
 		1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdMapGridSetShake(2, 2, 1);
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeSetTarget(PALETTE_TINT_WARM, 1);
 	fdPaletteFadeStartInterpolation(60);
-	tablet->motionFlg = 0;
+	tablet->motionFlags = 0;
 	tablet->acceleration = toFIXED(1) / 5;
 	tablet->speedLimit = toFIXED(1) / 5;
 	fdActorSetMovementTypeById(tabletId, LessonTabletRiseScript);
-	sySndPlay(SE_TABLET_RISE);
+	sySoundPlay(SE_TABLET_RISE);
 	fdScriptWait(45);
-	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_BLINK);
+	fdActorConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
 	REG_BLDALPHA = BLEND_ALPHA(8, 16);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	for(i = 0; i != TABLET_RISING_SPARKS; i++) {
 		ACTOR *spark = syImportActorCreate(
 			SPRITE_PARTICLE, tablet->x.fixed, tablet->y.fixed, tablet->z.fixed);
-		sySndPlay(SE_GLITTER);
+		sySoundPlay(SE_GLITTER);
 		spark->x.fixed += toFIXED((syRandom() & 31) - 16);
 		spark->y.fixed += toFIXED((syRandom() & 15) - 8);
 		spark->speedLimit = toFIXED(8);
 		spark->acceleration = toFIXED(1) / 5;
-		spark->motionFlg = 0;
-		fdActorSetSprCol(spark, 2);
-		fdSetActorSprPriority(spark, 1);
+		spark->motionFlags = 0;
+		fdActorSetSpriteColor(spark, 2);
+		fdSetActorSpritePriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
 		fdActorStartScript(spark, GaiaRockInsideRisingSparkScript);
 		REG_BLDALPHA = BLEND_ALPHA(4, 16);
@@ -1271,61 +1272,62 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 	for(i = 0; i != LEARN_SPARKS; i++) {
 		ACTOR *spark = scFieldActorCreate(
 			SPRITE_PARTICLE, adept->x.fixed, adept->y.fixed, adept->z.fixed);
-		sySndPlay(SE_SPARKS);
-		ang = &spark->tmr;
-		*ang = (syRandom() & 0x7fff) + DEGtoANG(180);
+		sySoundPlay(SE_SPARKS);
+		angle = &spark->timer;
+		*angle = (syRandom() & 0x7fff) + DEGtoANG(180);
 		spark->userValue = ((i & 1) * 2 - 1) << ((syRandom() & 3) + 9);
-		spark->motionFlg = 0;
+		spark->motionFlags = 0;
 		spark->sceneWord = toFIXED(122);
 		spark->watchedActor = (FIELD_OBJECT *)adept;
-		spark->sceneCnt =
+		spark->sceneCount =
 			(LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_TICKS;
-		fdActorSetSprCol(spark, 2);
-		fdSetActorSprPriority(spark, 1);
+		fdActorSetSpriteColor(spark, 2);
+		fdSetActorSpritePriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
-		syFieldVectorAddPolarOffsetFX(spark->sceneWord, *ang, &spark->x.fixed);
+		syFieldVectorAddPolarOffsetFX(
+			spark->sceneWord, *angle, &spark->x.fixed);
 		fdActorStartScript(spark, GaiaRockInsideCirclingSparkScript);
 		if(i == 3) {
-			fdActorSetSprColById(adeptId, SPRITE_COLOR_BLINK);
-			adept->motionFlg = 0;
+			fdActorSetSpriteColorById(adeptId, SPRITE_COLOR_BLINK);
+			adept->motionFlags = 0;
 			adept->acceleration = toFIXED(1) / 5;
 			adept->speedLimit = toFIXED(1) / 5;
 			fdActorSetMovementTypeById(adeptId, LessonAdeptRiseScript);
 		}
 		sySynch(LEARN_SPARK_INTERVAL);
 	}
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(16);
 	for(i = 2; i != ORBIT_HALF_TURN; i += 2) {
 		ACTOR *spark = scFieldActorCreate(SPRITE_PARTICLE, adept->x.fixed,
 			adept->y.fixed + toFIXED(i) - toFIXED(8), adept->z.fixed);
-		spark->tmr = syRandom();
+		spark->timer = syRandom();
 		spark->userValue = TRIG_TURN / 32;
-		spark->sceneCnt = i;
+		spark->sceneCount = i;
 		spark->sceneByte = 1;
 		spark->bounce = spark->x.fixed;
 		spark->sceneWord = 0;
 		spark->gravity = spark->z.fixed;
 		spark->watchedActor = (FIELD_OBJECT *)adept;
-		spark->motionFlg = 0;
-		spark->priFlg = 1;
-		fdActorSetSprCol(spark, 2);
+		spark->motionFlags = 0;
+		spark->priorityFlags = 1;
+		fdActorSetSpriteColor(spark, 2);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
 		fdActorStartScript(spark, LessonSeekingSparkScript);
 	}
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(50);
 	fdPaletteFadeSetTarget(RGB_WHITE, 0);
 	fdPaletteFadeStartInterpolation(8);
 	sySynch(16);
 	fdMapGridSetShake(0, 0, 0);
-	fdActorConfigureSprCol(tabletId, 0);
-	fdActorConfigureSprCol(adeptId, 0);
-	sySndPlay(SE_FLASH);
+	fdActorConfigureSpriteColor(tabletId, 0);
+	fdActorConfigureSpriteColor(adeptId, 0);
+	sySoundPlay(SE_FLASH);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeStartInterpolation(80);
 	fdActorSetMovementTypeById(tabletId, LessonTabletSettleScript);
@@ -1333,7 +1335,7 @@ void scGaiaRockInsideFelixLearnsSand(Sint32 tabletId, Sint32 adeptId)
 	adept->update = scActorEmitSparkles;
 	sySynch(120);
 	adept->update = 0;
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmPlayMusic();
 	sySynch(1);
 }
@@ -1428,36 +1430,37 @@ void scGaiaRockInsideReadSandTablet(void)
    tick, and grows and spins. */
 void scEffectAdvanceMotionLocal(FIELD_OBJECT *object)
 {
-	FIELD_EFFECT *effect = &object->eff;
-	Sint32		  velX;
-	Sint32		  velZ;
+	FIELD_EFFECT *effect = &object->effect;
+	Sint32		  velocityX;
+	Sint32		  velocityZ;
 	Sint32		  scaleRateX;
-	FIELD_SPR	 *spr;
+	FIELD_SPR	 *sprite;
 
-	velX = effect->vel.x;
-	effect->x += velX;
-	effect->y += effect->vel.y;
-	velZ = effect->vel.z;
-	effect->z += velZ;
+	velocityX = effect->velocity.x;
+	effect->x += velocityX;
+	effect->y += effect->velocity.y;
+	velocityZ = effect->velocity.z;
+	effect->z += velocityZ;
 
-	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
+	effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+	effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 
 	scaleRateX = effect->scaleRateX;
 	effect->scaleX += scaleRateX;
-	spr = effect->spr;
+	sprite = effect->sprite;
 	effect->scaleY += effect->scaleRateY;
-	spr->rotation += effect->spin;
+	sprite->rotation += effect->spin;
 }
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* A ring of dust spreads from where the slate rises, one puff every eighth of a
    turn. */
 void scGaiaRockInsideRingOfDust(void)
 {
-	FIXED		   vel[3];
+	FIXED		   velocity[3];
 	EFFECT_OPTIONS options;
 	Uint32		   i;
 
@@ -1465,14 +1468,15 @@ void scGaiaRockInsideRingOfDust(void)
 	i = 0;
 	do {
 		{
-			Sint32 ang = i * FACING_STEP;
+			Sint32 angle = i * FACING_STEP;
 
-			vel[0] = syCos(ang);
-			vel[1] = 0;
-			vel[2] = syMathSin(ang);
-			vel[0] += vel[0] / 3;
-			scFieldEffectSpawn(toFIXED(464), toFIXED(-32), toFIXED(328), vel[0],
-				vel[1], vel[2], EFFECT_USE_UPDATE | 1, &options);
+			velocity[0] = syCos(angle);
+			velocity[1] = 0;
+			velocity[2] = syMathSin(angle);
+			velocity[0] += velocity[0] / 3;
+			scFieldEffectSpawn(toFIXED(464), toFIXED(-32), toFIXED(328),
+				velocity[0], velocity[1], velocity[2], EFFECT_USE_UPDATE | 1,
+				&options);
 			i += 2;
 		}
 	} while(i <= TRIG_TURN / FACING_STEP);
@@ -1505,7 +1509,7 @@ void scGaiaRockInsideRaiseSandTablet(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdMapGridSetShake(10, 10, 1);
-	fdScriptPlaySnd(SE_TREMOR);
+	fdScriptPlaySound(SE_TREMOR);
 	fdBlendScriptSuspend();
 	level &= BLEND_ALPHA_TOP_MASK;
 	while(level != 0) {
@@ -1531,7 +1535,7 @@ void scGaiaRockInsideRaiseSandTablet(void)
 	actor->z.fixed = 0;
 	syFieldScriptWait(1);
 	fdActorRelease(actor);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	syFieldScriptWait(30);
 	REG_DISPCNT |=
 		DISPCNT_BG0_ON | DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON;
@@ -1557,7 +1561,7 @@ void scGaiaRockInsideRaiseSandTablet(void)
    almost alive". */
 void scGaiaRockInsideChallengeSerpent(void)
 {
-	Sint32 cnt;
+	Sint32 count;
 
 	if(fdScriptGetFlag(FLAG_SERPENT_SLAIN)) {
 		/* "The serpent, with its eyes closed, looks almost alive." */
@@ -1569,19 +1573,19 @@ void scGaiaRockInsideChallengeSerpent(void)
 		Sint32 eastAltarBeam = fdScriptGetFlag(FLAG_EAST_ALTAR_SUNBEAM);
 		Sint32 scene;
 
-		cnt = altarRoomBeam + westAltarBeam + eastAltarBeam +
+		count = altarRoomBeam + westAltarBeam + eastAltarBeam +
 			fdScriptGetFlag(FLAG_BUSHES_SUNBEAM);
 		SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 		scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
 		syFieldScriptSetAfterBattleDestination(scene, ENTRANCE_SERPENT_BEATEN);
 		if(syFieldPartyInventoryFindMember(ITEM_DANCING_IDOL) != -1) {
-			if(cnt == 0)
+			if(count == 0)
 				fdScriptSetDefeatDestination(
 					scene, ENTRANCE_BEATEN_HOLDING_IDOL);
 		} else {
 			fdScriptSetDefeatDestination(scene, ENTRANCE_BEATEN_BY_SERPENT);
 		}
-		fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT, cnt);
+		fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SERPENT, count);
 	}
 }
 
@@ -1668,18 +1672,18 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 	syFieldScriptEndLastingPsynergy(0);
 	/* "Felix placed a doll on the altar." */
 	mnMessageShowCentered((Sint32)&MsgGaiaRockInsidePlacedADollOnThe, 1);
-	fdScriptPlaySnd(SE_DOLL_PLACED);
-	fdActorSetSprPriorityDirect(doll, 1);
+	fdScriptPlaySound(SE_DOLL_PLACED);
+	fdActorSetSpritePriorityDirect(doll, 1);
 	state = &MainRoutineStateWork;
 	leaderId = &state->leaderActorId;
 	fdActorPlaceOnActor(ACTOR_FIRST_ALTAR_DOLL, *leaderId);
 	fdActorSetDestination(ACTOR_FIRST_ALTAR_DOLL, 496, 712);
-	doll->velY = toFIXED(6);
+	doll->velocityY = toFIXED(6);
 	scFieldActorWaitForMoveById(ACTOR_FIRST_ALTAR_DOLL);
 	syFieldScriptWait(45);
 	fdActorFaceActor(ACTOR_FIRST_ALTAR_WEST_FACE, *leaderId, 0);
 	fdActorFaceActor(ACTOR_FIRST_ALTAR_EAST_FACE, *leaderId, 0);
-	fdScriptPlaySnd(SE_STATUE_STIRS);
+	fdScriptPlaySound(SE_STATUE_STIRS);
 	fdActorSetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 5);
 	fdActorSetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 5);
 	syWait(30);
@@ -1689,11 +1693,11 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 	fdActorSetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 3);
 	fdActorSetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 3);
 	syFieldScriptWait(40);
-	fdScriptPlaySnd(SE_TABLET_RISE_HIGH);
+	fdScriptPlaySound(SE_TABLET_RISE_HIGH);
 	if(!fdScriptGetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
 		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
-			westFace->velY = syRandom();
-			eastFace->velY = syRandom();
+			westFace->velocityY = syRandom();
+			eastFace->velocityY = syRandom();
 			syWait(1);
 		}
 		fdActorSetSpeedAndAcceleration(ACTOR_FIRST_ALTAR_WEST_FACE, 0.25, 0.05);
@@ -1702,13 +1706,13 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 		fdActorSetDestinationOffset(ACTOR_FIRST_ALTAR_EAST_FACE, -24, 0);
 		for(i = 0; i < FACE_SLIDE_TICKS_MAX && westFace->arrivalAxis != 0;
 			i++) {
-			westFace->velY = syRandom();
-			eastFace->velY = syRandom();
+			westFace->velocityY = syRandom();
+			eastFace->velocityY = syRandom();
 			syWait(1);
 		}
 		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
-			westFace->velY = syRandom();
-			eastFace->velY = syRandom();
+			westFace->velocityY = syRandom();
+			eastFace->velocityY = syRandom();
 			syWait(1);
 		}
 		fdMapGridCopyMetatiles(119, 31, 1, 2, 89, 40);
@@ -1716,8 +1720,8 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 		fdScriptSetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
 	} else {
 		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
-			westFace->velY = syRandom();
-			eastFace->velY = syRandom();
+			westFace->velocityY = syRandom();
+			eastFace->velocityY = syRandom();
 			syWait(1);
 		}
 		syFieldScriptWait(30);
@@ -1729,7 +1733,7 @@ void scGaiaRockInsidePlaceDollOnFirstAltar(void)
 	if(leader != NULL)
 		fdActorSetDestination(ACTOR_FIRST_ALTAR_DOLL, leader->x.part[0].integer,
 			leader->z.part[0].integer);
-	doll->velY = toFIXED(6);
+	doll->velocityY = toFIXED(6);
 	scFieldActorWaitForMoveById(ACTOR_FIRST_ALTAR_DOLL);
 	fdActorSetPos(ACTOR_FIRST_ALTAR_DOLL, 0, 0);
 	fdScriptEnd();
@@ -1755,27 +1759,27 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 	fdScriptEndLastingPsynergy(0);
 	/* "Felix placed a doll on the altar." */
 	mnFieldMessageShow((Sint32)MsgGaiaRockInsidePlacedADollOnThe, 1);
-	sySndPlay(SE_DOLL_PLACED);
-	fdActorSetSprPriorityDirect(doll, 1);
+	sySoundPlay(SE_DOLL_PLACED);
+	fdActorSetSpritePriorityDirect(doll, 1);
 	fdActorPlaceOnActor(
 		ACTOR_TWIN_ALTARS_DOLL, MainRoutineStateWork.leaderActorId);
 	fdActorSetDestination(ACTOR_TWIN_ALTARS_DOLL, 528, 372);
-	doll->velY = toFIXED(6);
+	doll->velocityY = toFIXED(6);
 	fdActorWaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
 	fdScriptWait(45);
 	fdActorFaceActorById(
 		ACTOR_WEST_FACE, MainRoutineStateWork.leaderActorId, 0);
-	sySndPlay(SE_STATUE_STIRS);
+	sySoundPlay(SE_STATUE_STIRS);
 	fdActorSetAnimationById(ACTOR_WEST_FACE, 5);
 	sySynch(30);
 	fdActorSetAnimationById(ACTOR_WEST_FACE, 2);
 	fdScriptWait(30);
 	fdActorSetAnimationById(ACTOR_WEST_FACE, 3);
 	fdScriptWait(40);
-	sySndPlay(SE_TABLET_RISE_HIGH);
+	sySoundPlay(SE_TABLET_RISE_HIGH);
 	if(!syGameFlagGet(FLAG_WEST_ALTAR_SUNBEAM)) {
 		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
 		fdActorSetSpeedAndAcceleration(ACTOR_WEST_FACE, 0.25, 0.05);
@@ -1785,7 +1789,7 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 		i = 0;
 		if(face->arrivalAxis != 0) {
 			do {
-				face->velY = syRandom();
+				face->velocityY = syRandom();
 				sySynch(1);
 				if(++i >= FACE_SLIDE_TICKS_MAX)
 					break;
@@ -1793,17 +1797,17 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 		}
 		fdMapGridCopyMetatiles(2, 93, 1, 5, 28, 85);
 		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
-		sySndPlay(SE_EYES_GLOW);
+		sySoundPlay(SE_EYES_GLOW);
 		fdActorSetAnimationById(ACTOR_WEST_FACE, 4);
 		fdScriptWait(30);
 		leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 		if(leader != NULL)
 			fdActorSetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
 				leader->x.part[0].integer, leader->z.part[0].integer);
-		doll->velY = toFIXED(6);
+		doll->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
 		fdActorSetPos(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
 		if(!syGameFlagGet(FLAG_SERPENT_SLAIN)) {
@@ -1818,7 +1822,7 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 		}
 	} else {
 		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
 		fdScriptWait(30);
@@ -1828,7 +1832,7 @@ void scGaiaRockInsidePlaceDollOnWestAltar(void)
 		if(leader != NULL)
 			fdActorSetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
 				leader->x.part[0].integer, leader->z.part[0].integer);
-		doll->velY = toFIXED(6);
+		doll->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
 		fdActorSetPos(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
 		fdScriptEnd();
@@ -1852,27 +1856,27 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 	fdScriptEndLastingPsynergy(0);
 	/* "Felix placed a doll on the altar." */
 	mnFieldMessageShow((Sint32)MsgGaiaRockInsidePlacedADollOnThe, 1);
-	sySndPlay(SE_DOLL_PLACED);
-	fdActorSetSprPriorityDirect(doll, 1);
+	sySoundPlay(SE_DOLL_PLACED);
+	fdActorSetSpritePriorityDirect(doll, 1);
 	fdActorPlaceOnActor(
 		ACTOR_TWIN_ALTARS_DOLL, MainRoutineStateWork.leaderActorId);
 	fdActorSetDestination(ACTOR_TWIN_ALTARS_DOLL, 672, 372);
-	doll->velY = toFIXED(6);
+	doll->velocityY = toFIXED(6);
 	fdActorWaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
 	fdScriptWait(45);
 	fdActorFaceActorById(
 		ACTOR_EAST_FACE, MainRoutineStateWork.leaderActorId, 0);
-	sySndPlay(SE_STATUE_STIRS);
+	sySoundPlay(SE_STATUE_STIRS);
 	fdActorSetAnimationById(ACTOR_EAST_FACE, 5);
 	sySynch(30);
 	fdActorSetAnimationById(ACTOR_EAST_FACE, 2);
 	fdScriptWait(30);
 	fdActorSetAnimationById(ACTOR_EAST_FACE, 3);
 	fdScriptWait(40);
-	sySndPlay(SE_TABLET_RISE_HIGH);
+	sySoundPlay(SE_TABLET_RISE_HIGH);
 	if(!syGameFlagGet(FLAG_EAST_ALTAR_SUNBEAM)) {
 		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
 		fdActorSetSpeedAndAcceleration(ACTOR_EAST_FACE, 0.25, 0.05);
@@ -1882,7 +1886,7 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 		i = 0;
 		if(face->arrivalAxis != 0) {
 			do {
-				face->velY = syRandom();
+				face->velocityY = syRandom();
 				sySynch(1);
 				if(++i >= FACE_SLIDE_TICKS_MAX)
 					break;
@@ -1890,17 +1894,17 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 		}
 		fdMapGridCopyMetatiles(2, 93, 1, 5, 36, 85);
 		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
-		sySndPlay(SE_EYES_GLOW);
+		sySoundPlay(SE_EYES_GLOW);
 		fdActorSetAnimationById(ACTOR_EAST_FACE, 4);
 		fdScriptWait(30);
 		leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 		if(leader != NULL)
 			fdActorSetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
 				leader->x.part[0].integer, leader->z.part[0].integer);
-		doll->velY = toFIXED(6);
+		doll->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
 		fdActorSetPos(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
 		if(!syGameFlagGet(FLAG_SERPENT_SLAIN)) {
@@ -1915,7 +1919,7 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 		}
 	} else {
 		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
 		fdScriptWait(30);
@@ -1925,7 +1929,7 @@ void scGaiaRockInsidePlaceDollOnEastAltar(void)
 		if(leader != NULL)
 			fdActorSetDestinationById(ACTOR_TWIN_ALTARS_DOLL,
 				leader->x.part[0].integer, leader->z.part[0].integer);
-		doll->velY = toFIXED(6);
+		doll->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
 		fdActorSetPos(ACTOR_TWIN_ALTARS_DOLL, 0, 0);
 		fdScriptEnd();
@@ -1949,26 +1953,26 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 	fdScriptEndLastingPsynergy(0);
 	/* "Felix placed a doll on the altar." */
 	mnFieldMessageShow((Sint32)MsgGaiaRockInsidePlacedADollOnThe, 1);
-	sySndPlay(SE_DOLL_PLACED);
-	fdActorSetSprPriorityDirect(doll, 1);
+	sySoundPlay(SE_DOLL_PLACED);
+	fdActorSetSpritePriorityDirect(doll, 1);
 	fdActorPlaceOnActor(ACTOR_ALTAR_DOLL, MainRoutineStateWork.leaderActorId);
 	fdActorSetDestination(ACTOR_ALTAR_DOLL, 336, 396);
-	doll->velY = toFIXED(6);
+	doll->velocityY = toFIXED(6);
 	fdActorWaitForMoveById(ACTOR_ALTAR_DOLL);
 	fdScriptWait(45);
 	fdActorFaceActorById(
 		ACTOR_ALTAR_FACE, MainRoutineStateWork.leaderActorId, 0);
-	sySndPlay(SE_STATUE_STIRS);
+	sySoundPlay(SE_STATUE_STIRS);
 	fdActorSetAnimationById(ACTOR_ALTAR_FACE, 5);
 	sySynch(30);
 	fdActorSetAnimationById(ACTOR_ALTAR_FACE, 2);
 	fdScriptWait(30);
 	fdActorSetAnimationById(ACTOR_ALTAR_FACE, 3);
 	fdScriptWait(40);
-	sySndPlay(SE_TABLET_RISE_HIGH);
+	sySoundPlay(SE_TABLET_RISE_HIGH);
 	if(!syGameFlagGet(FLAG_ALTAR_ROOM_SUNBEAM)) {
 		for(i = 0; i < FACE_TREMBLE_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
 		fdActorSetSpeedAndAcceleration(ACTOR_ALTAR_FACE, 0.25, 0.05);
@@ -1978,7 +1982,7 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 		i = 0;
 		if(face->arrivalAxis != 0) {
 			do {
-				face->velY = syRandom();
+				face->velocityY = syRandom();
 				sySynch(1);
 				if(++i >= FACE_SLIDE_TICKS_MAX)
 					break;
@@ -1986,17 +1990,17 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 		}
 		fdMapGridCopyMetatiles(1, 85, 1, 4, 25, 85);
 		for(i = 0; i < FACE_SETTLE_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
-		sySndPlay(SE_EYES_GLOW);
+		sySoundPlay(SE_EYES_GLOW);
 		fdActorSetAnimationById(ACTOR_ALTAR_FACE, 4);
 		fdScriptWait(30);
 		leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 		if(leader != NULL)
 			fdActorSetDestinationById(ACTOR_ALTAR_DOLL,
 				leader->x.part[0].integer, leader->z.part[0].integer);
-		doll->velY = toFIXED(6);
+		doll->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(ACTOR_ALTAR_DOLL);
 		fdActorSetPos(ACTOR_ALTAR_DOLL, 0, 0);
 		if(!syGameFlagGet(FLAG_SERPENT_SLAIN)) {
@@ -2011,7 +2015,7 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 		}
 	} else {
 		for(i = 0; i < FACE_TREMBLE_LONG_TICKS; i++) {
-			face->velY = syRandom();
+			face->velocityY = syRandom();
 			sySynch(1);
 		}
 		fdScriptWait(30);
@@ -2021,7 +2025,7 @@ void scGaiaRockInsidePlaceDollOnAltarAltar(void)
 		if(leader != NULL)
 			fdActorSetDestinationById(ACTOR_ALTAR_DOLL,
 				leader->x.part[0].integer, leader->z.part[0].integer);
-		doll->velY = toFIXED(6);
+		doll->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(ACTOR_ALTAR_DOLL);
 		fdActorSetPos(ACTOR_ALTAR_DOLL, 0, 0);
 		fdScriptEnd();
@@ -2041,9 +2045,9 @@ extern Sint16 GaiaRockInsideStumpSpots[][2];
 Sint32 scGaiaRockInsideRecordStumpSpots(void)
 {
 	ACTOR *first = fdActorGet(ACTOR_STUMP_A);
-	Sint8  firstIdx = 0;
+	Sint8  firstIndex = 0;
 	Sint32 firstX = FIELD_HALF_METATILE(first->x.fixed);
-	Sint8  secondIdx = 0;
+	Sint8  secondIndex = 0;
 	Sint32 firstZ = FIELD_HALF_METATILE(first->z.fixed);
 	ACTOR *second = fdActorGet(ACTOR_STUMP_B);
 	Sint32 secondX = FIELD_HALF_METATILE(second->x.fixed);
@@ -2053,13 +2057,13 @@ Sint32 scGaiaRockInsideRecordStumpSpots(void)
 	for(i = 1; i <= STUMP_SPOTS; i++) {
 		if(firstX == GaiaRockInsideStumpSpots[i][0] &&
 			firstZ == GaiaRockInsideStumpSpots[i][1])
-			firstIdx = i;
+			firstIndex = i;
 		if(secondX == GaiaRockInsideStumpSpots[i][0] &&
 			secondZ == GaiaRockInsideStumpSpots[i][1])
-			secondIdx = i;
+			secondIndex = i;
 	}
 	{
-		Sint8 spots = firstIdx | secondIdx << 4;
+		Sint8 spots = firstIndex | secondIndex << 4;
 
 		return syGameFlagSetByte(FLAG_STUMP_SPOTS, spots);
 	}
@@ -2128,10 +2132,10 @@ void scGaiaRockInsideTurnFaceToAltar(Sint32 faceId, Sint32 altarId)
 
 	fdActorFaceActorById(faceId, altarId, 0);
 	if(face != NULL) {
-		eyes =
-			(SPR_ANIMATION *)fdSprAddAnimation(face->spr, SPRITE_GLOWING_EYES);
-		eyes->colMode = SPRITE_COLOR_NORMAL;
-		eyes->pri = 0;
+		eyes = (SPR_ANIMATION *)fdSpriteAddAnimation(
+			face->sprite, SPRITE_GLOWING_EYES);
+		eyes->colorMode = SPRITE_COLOR_NORMAL;
+		eyes->priority = 0;
 		fdActorSelectAnimation(face, 0);
 		fdActorSelectAnimation(face, 4);
 	}
@@ -2143,12 +2147,12 @@ void scGaiaRockInsideSetPlatformMode(Uint32 id, Sint8 mode)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	actor->acceleration = toFIXED(1) / 16;
 	actor->speedLimit = toFIXED(1);
 	actor->y.fixed = toFIXED(16);
-	actor->tmr = FIXEDtoINT(actor->x.fixed);
+	actor->timer = FIXEDtoINT(actor->x.fixed);
 	actor->userValue = FIXEDtoINT(actor->z.fixed);
 	fdActorSetAnimation(id, mode);
 }
@@ -2158,7 +2162,7 @@ void scGaiaRockInsidePlacePlatform(Sint32 id, Sint32 dx, Sint32 dz)
 {
 	ACTOR *platform = fdActorGetById(id);
 
-	scFieldActorSetMoveTargetFX(platform, toFIXED((dx << 4) + platform->tmr),
+	scFieldActorSetMoveTargetFX(platform, toFIXED((dx << 4) + platform->timer),
 		platform->y.fixed, toFIXED((dz << 4) + platform->userValue));
 }
 
@@ -2172,7 +2176,7 @@ void scGaiaRockInsideSwayPlatforms(void)
 {
 	SWAY_STATE	*state = &SceneStateWork;
 	Uint16		*pending = &state->pending;
-	Uint16		*frm = &state->frm;
+	Uint16		*frame = &state->frame;
 	FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 	Sint32		 stopped = fdScriptGetFlag(FLAG_MENU_OPEN);
 	Sint32		 id;
@@ -2191,7 +2195,7 @@ void scGaiaRockInsideSwayPlatforms(void)
 	if(*pending == 0)
 		return;
 	do {
-		switch(*frm) {
+		switch(*frame) {
 		case 60:
 			scGaiaRockInsidePlacePlatform(ACTOR_FIRST_PLATFORM, 0, 3);
 			scGaiaRockInsidePlacePlatform(ACTOR_FIRST_PLATFORM + 1, 3, 0);
@@ -2209,8 +2213,8 @@ void scGaiaRockInsideSwayPlatforms(void)
 			}
 			break;
 		}
-		if(++*frm == 240)
-			*frm = 0;
+		if(++*frame == 240)
+			*frame = 0;
 	} while(--*pending != 0);
 }
 
@@ -2220,16 +2224,16 @@ extern Sint16 GaiaRockInsidePlatformPlaces[][2];
    sway's tick and places each platform, then starts the sway's event. */
 void scGaiaRockInsideStartPlatforms(Uint8 mode)
 {
-	Uint16 *frm = &SceneStateWork.frm;
+	Uint16 *frame = &SceneStateWork.frame;
 	Uint16 *pending = &SceneStateWork.pending;
 
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		Sint32 i;
 		Sint32 id;
 
-		*frm = 0;
+		*frame = 0;
 		*pending = 0;
-		fdActorGet(syFieldPartyGetLeaderActor())->priFlg |=
+		fdActorGet(syFieldPartyGetLeaderActor())->priorityFlags |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 		for(i = 0, id = ACTOR_FIRST_PLATFORM; id <= ACTOR_LAST_PLATFORM;
 			i++, id++) {
@@ -2343,7 +2347,7 @@ Sint32 scInit(void)
 	if(state->next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
 		early = &state->entrance;
 		if(state->entrance >= ENTRANCE_LAIR) {
-			fdActorSetSprFlags(fdActorGetById(ACTOR_SERPENT), 0);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_SERPENT), 0);
 			scGaiaRockInsideDrawSunbeams();
 		}
 		if(*early ==
@@ -2384,11 +2388,11 @@ Sint32 scInit(void)
 					ending =
 						GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_D;
 				}
-				sySndPlay(SE_EYES_GLOW);
+				sySoundPlay(SE_EYES_GLOW);
 				scGaiaRockInsideDrawSunbeams();
 				fdScriptWait(15);
 				fdActorSetAnimationById(ACTOR_SERPENT, 3);
-				sySndPlay(SE_SEA_OF_TIME_OPENS);
+				sySoundPlay(SE_SEA_OF_TIME_OPENS);
 				fdMapGridSetShake(2, 2, 1);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				fdScriptWait(120);
@@ -2416,10 +2420,10 @@ Sint32 scInit(void)
 			Sint32 found;
 
 			if(!Test(FLAG_SERPENT_SLAIN)) {
-				sySndPlay(MUS_BATTLE_WITH_FLAME_DRAGON);
+				sySoundPlay(MUS_BATTLE_WITH_FLAME_DRAGON);
 				found = syFieldPartyInventoryFindMember(ITEM_DANCING_IDOL);
 				if(found != -1) {
-					Sint32 flg;
+					Sint32 flag;
 					ACTOR *susa;
 					ACTOR *serpent;
 					Sint32 width;
@@ -2433,18 +2437,18 @@ Sint32 scInit(void)
 					ACTOR *actor;
 					ACTOR *shards[4];
 
-					flg = Test(FLAG_SUSA_ATTACKED_SERPENT);
-					if(flg != 0) {
+					flag = Test(FLAG_SUSA_ATTACKED_SERPENT);
+					if(flag != 0) {
 						fdActorSetAnimationById(ACTOR_SERPENT, 2);
 						fdActorSetPos(ACTOR_CASK, 0, 0);
 						fdActorSetPos(ACTOR_SUSA, 432, 320);
-						fdActorSetSprPriority(ACTOR_SUSA, 3);
+						fdActorSetSpritePriority(ACTOR_SUSA, 3);
 						fdMapGridCopyMetatileAttributes(30, 19, 1, 1, 27, 19);
 						fdActorSetAnimationById(ACTOR_SUSA, 5);
 					} else {
 						susa = fdActorGetById(ACTOR_SUSA);
 						serpent = fdActorGetById(ACTOR_SERPENT);
-						sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+						sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 						syGameFlagSet(FLAG_SUSA_ATTACKED_SERPENT);
 						syGameFlagSet(FLAG_MET_SUSA);
 						fdScriptStart();
@@ -2484,19 +2488,19 @@ Sint32 scInit(void)
 						fdScriptWait(5);
 						fdActorSetAnimationById(ACTOR_SUSA, 6);
 						fdScriptWait(10);
-						susa->velY = toFIXED(6);
+						susa->velocityY = toFIXED(6);
 						fdScriptWait(10);
 						susa->paused = 1;
 						serpent->paused = 1;
 						fdActorSetAnimationSpeed(susa, 0);
 						fdActorSetAnimationSpeed(serpent, 0);
-						fdActorSetSprColMode(susa, 6);
-						fdActorSetSprColMode(serpent, 6);
+						fdActorSetSpriteColorMode(susa, 6);
+						fdActorSetSpriteColorMode(serpent, 6);
 						width = 30;
 						height = 19;
 						fdMapGridCopyMetatileTilesMetatilesRect(
 							85, 76, 5, 2, width, height);
-						sySndPlay(SE_CRUMBLE);
+						sySoundPlay(SE_CRUMBLE);
 						fdPaletteFadeSetTarget(RGB_WHITE, 0);
 						fdPaletteFadeStartInterpolation(10);
 						fdScriptWait(10);
@@ -2504,8 +2508,8 @@ Sint32 scInit(void)
 						fdPaletteFadeStartInterpolation(10);
 						fdScriptWait(10);
 						fdScriptWait(60);
-						fdActorSetSprColMode(susa, 0);
-						fdActorSetSprColMode(serpent, 0);
+						fdActorSetSpriteColorMode(susa, 0);
+						fdActorSetSpriteColorMode(serpent, 0);
 						fdMapGridCopyMetatileTilesMetatilesRect(
 							85, 74, 5, 2, width, height);
 						susa->paused = 0;
@@ -2513,10 +2517,10 @@ Sint32 scInit(void)
 						fdActorSetAnimationSpeed(susa, ANIM_STEP_NORMAL);
 						fdActorSetAnimationSpeed(serpent, ANIM_STEP_NORMAL);
 						mask = (Uint8)~ACTOR_FACES_MOTION;
-						fdActorGetById(ACTOR_SUSA)->steeringFlg &= mask;
+						fdActorGetById(ACTOR_SUSA)->steeringFlags &= mask;
 						fdActorWalkTo(ACTOR_SUSA, 456, 360);
 						fast = toFIXED(4);
-						susa->velY = fast;
+						susa->velocityY = fast;
 						fdActorSetAttachedEffect(ACTOR_SUSA,
 							ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 						fdActorWaitForMoveById(ACTOR_SUSA);
@@ -2528,17 +2532,17 @@ Sint32 scInit(void)
 						susa->speedLimit = toFIXED(3) / 2;
 						fdActorSetDestinationById(ACTOR_SUSA, 488, 328);
 						fdScriptWait(14);
-						susa->velY = toFIXED(6);
+						susa->velocityY = toFIXED(6);
 						fdActorSetAnimationById(ACTOR_SUSA, 6);
 						fdScriptWait(10);
-						sySndPlay(SE_CRUMBLE);
+						sySoundPlay(SE_CRUMBLE);
 						{
 							ACTOR *a = fdActorGetById(ACTOR_SUSA);
-							mask &= a->steeringFlg;
-							a->steeringFlg = mask;
+							mask &= a->steeringFlags;
+							a->steeringFlags = mask;
 						}
 						fdActorWalkToById(ACTOR_SUSA, 456, 360);
-						susa->velY = fast;
+						susa->velocityY = fast;
 						fdActorSetAttachedEffect(ACTOR_SUSA,
 							ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 						fdActorWaitForMoveById(ACTOR_SUSA);
@@ -2547,38 +2551,38 @@ Sint32 scInit(void)
 						fdScriptWait(15);
 						fdActorSetAnimationSpeed(serpent, 0);
 						fdScriptWait(15);
-						sySndPlay(SE_SPLASH_SMALL);
+						sySoundPlay(SE_SPLASH_SMALL);
 						actor = scFieldActorCreate(SPRITE_DUST_CLOUD,
 							toFIXED(488), -toFIXED(16), toFIXED(345));
-						fdActorSetSprFlags(actor, 0);
+						fdActorSetSpriteFlags(actor, 0);
 						fdActorStartScript(
 							actor, GaiaRockInsideSerpentSmokeScript);
 						fdActorSelectAnimation(actor, 1);
-						fdActorSetSprColMode(actor, 6);
+						fdActorSetSpriteColorMode(actor, 6);
 						fdActorJump(ACTOR_SUSA, 2, 0);
 						fdScriptWait(5);
 						fdActorShowEmoteById(
 							ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 						fdScriptWait(55);
 						fdScriptWait(5);
-						sySndPlay(SE_WHOOSH);
+						sySoundPlay(SE_WHOOSH);
 						actor = scFieldActorCreate(SPRITE_FIREBALL,
 							toFIXED(488), -toFIXED(16), toFIXED(345));
-						fdActorSetSprFlags(actor, 0);
+						fdActorSetSpriteFlags(actor, 0);
 						fdActorStartScript(
 							actor, GaiaRockInsideSerpentGlowScript);
-						((FIELD_SPR *)actor->spr)->rotation = DEGtoANG(45);
+						((FIELD_SPR *)actor->sprite)->rotation = DEGtoANG(45);
 						actor->speedLimit = toFIXED(3) / 2;
-						*(Uint8 *)&actor->motionFlg = 0;
-						actor->tgtX = toFIXED(456);
-						actor->tgtY = -toFIXED(32);
-						actor->tgtZ = toFIXED(358);
+						*(Uint8 *)&actor->motionFlags = 0;
+						actor->targetX = toFIXED(456);
+						actor->targetY = -toFIXED(32);
+						actor->targetZ = toFIXED(358);
 						actor->scaleX = toFIXED(3) / 8;
 						actor->scaleY = toFIXED(3) / 8;
 						fdScriptWait(10);
 						fdActorSetAnimationSpeed(serpent, ANIM_STEP_NORMAL);
 						fdScriptWait(10);
-						sySndPlay(SE_IMPACT);
+						sySoundPlay(SE_IMPACT);
 						actor->x.fixed = 0;
 						actor->z.fixed = 0;
 						fdMapGridSetScreenShake(fast, fast, toFIXED(1));
@@ -2593,12 +2597,12 @@ Sint32 scInit(void)
 								SPRITE_FLAME_PUFF, toFIXED(456) + toFIXED(dx),
 								-toFIXED(32), toFIXED(358) + toFIXED(dz));
 							fdActorSelectAnimation(shards[i], 2);
-							fdActorSetSprFlags(shards[i], 0);
+							fdActorSetSpriteFlags(shards[i], 0);
 							fdActorStartScript(
 								shards[i], GaiaRockInsideSerpentSmokeScript);
 						}
-						susa->velY = toFIXED(10);
-						fdActorGetById(ACTOR_SUSA)->steeringFlg &=
+						susa->velocityY = toFIXED(10);
+						fdActorGetById(ACTOR_SUSA)->steeringFlags &=
 							~ACTOR_FACES_MOTION;
 						fdActorWalkToById(ACTOR_SUSA, 432, 320);
 						fdScriptWait(10);
@@ -2621,7 +2625,7 @@ Sint32 scInit(void)
 						fdCameraFollowActor(
 							MainRoutineStateWork.leaderActorId, 1);
 						fdCameraWaitForArrival();
-						fdActorSetSprPriority(ACTOR_SUSA, 3);
+						fdActorSetSpritePriority(ACTOR_SUSA, 3);
 						fdMapGridCopyMetatileAttributes(30, 19, 1, 1, 27, 19);
 						fdScriptEnd();
 					}
@@ -2634,7 +2638,7 @@ Sint32 scInit(void)
 				}
 			}
 		} else if(*entrance == ENTRANCE_SERPENT_BEATEN) {
-			Sint32			flg;
+			Sint32			flag;
 			ACTOR		   *susa;
 			Sint32			slow;
 			Sint32		   *owner;
@@ -2643,9 +2647,9 @@ Sint32 scInit(void)
 			volatile Uint16 alpha;
 			Sint32			i;
 
-			sySndPlay(MUS_IZUMO);
-			flg = Test(FLAG_SERPENT_SLAIN);
-			if(flg == 0) {
+			sySoundPlay(MUS_IZUMO);
+			flag = Test(FLAG_SERPENT_SLAIN);
+			if(flag == 0) {
 				fdScriptStart();
 				fdScriptEndLastingPsynergy(0);
 				syGameFlagSet(FLAG_SERPENT_SLAIN);
@@ -2667,11 +2671,11 @@ Sint32 scInit(void)
 				fdScriptWaitTransitionTicks();
 				fdActorShowEmoteById(
 					ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-				fdScriptPlaySnd(SE_SEA_OF_TIME_OPENS);
+				fdScriptPlaySound(SE_SEA_OF_TIME_OPENS);
 				/* "It looks like the dragon is in bad shape, but it doesn't
 				   seem..." */
 				fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-				fdScriptPlaySnd(SE_SEA_OF_TIME_OPENS);
+				fdScriptPlaySound(SE_SEA_OF_TIME_OPENS);
 				/* "Even though the serpent's been defeated, I can't rest!" */
 				fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
 				fdActorShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2703,14 +2707,14 @@ Sint32 scInit(void)
 				fdScriptWait(5);
 				fdActorSetAnimationById(ACTOR_SUSA, 6);
 				fdScriptWait(10);
-				susa->velY = toFIXED(6);
+				susa->velocityY = toFIXED(6);
 				fdScriptWait(10);
-				sySndPlay(SE_CRUMBLE);
+				sySoundPlay(SE_CRUMBLE);
 				susa->paused = 1;
 				fdPaletteFadeApplyTarget(RGB_WHITE, 0);
 				fdPaletteFadeStartInterpolation(10);
 				fdScriptWait(10);
-				sySndPlay(SE_SEA_OF_TIME_OPENS);
+				sySoundPlay(SE_SEA_OF_TIME_OPENS);
 				fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
 				fdPaletteFadeStartInterpolation(10);
 				fdScriptWait(10);
@@ -2726,7 +2730,7 @@ Sint32 scInit(void)
 				fdActorSetAnimationById(ACTOR_SERPENT, 4);
 				fdMapGridCopyMetatilesLayered(85, 72, 5, 2, 30, 19);
 				susa->y.fixed = -toFIXED(32);
-				susa->velY = 0;
+				susa->velocityY = 0;
 				susa->speedLimit = slow;
 				fdActorSetPos(ACTOR_SUSA, 456, 360);
 				fdActorSetAnimationById(ACTOR_SUSA, ANIM_STAND);
@@ -2777,7 +2781,7 @@ Sint32 scInit(void)
 				fdActorWalkToById(*owner, 488, 376);
 				fdActorWaitForMoveById(*owner);
 				fdMapGridSetShakeFX(toFIXED(5), toFIXED(5), toFIXED(1));
-				sySndPlay(SE_TREMOR);
+				sySoundPlay(SE_TREMOR);
 				fdScriptWait(30);
 				fdActorShowEmoteById(
 					*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2787,7 +2791,7 @@ Sint32 scInit(void)
 				other = fdActorGetById(ACTOR_SAND_TABLET);
 				alpha = REG_BLDALPHA;
 				fdMapGridSetShakeFX(toFIXED(10), toFIXED(10), toFIXED(1));
-				sySndPlay(SE_TREMOR);
+				sySoundPlay(SE_TREMOR);
 				fdBlendScriptSuspend();
 				alpha = *(Uint8 *)&alpha;
 				while(alpha != 0) {
@@ -2812,7 +2816,7 @@ Sint32 scInit(void)
 				actor->z.fixed = 0;
 				fdScriptWait(1);
 				fdActorRelease(actor);
-				sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+				sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 				fdScriptWait(30);
 				REG_DISPCNT |= DISPCNT_BG0_ON | DISPCNT_BG1_ON |
 					DISPCNT_BG2_ON | DISPCNT_BG3_ON;
@@ -2883,11 +2887,11 @@ Sint32 scInit(void)
 		Sint32 high;
 		ACTOR *actor = fdActorGet(ACTOR_FIRST_ALTAR_WEST_FACE);
 
-		actor->priFlg |= mask;
-		fdActorSetSprPriorityDirect(actor, 3);
+		actor->priorityFlags |= mask;
+		fdActorSetSpritePriorityDirect(actor, 3);
 		actor = fdActorGet(ACTOR_FIRST_ALTAR_EAST_FACE);
-		actor->priFlg |= mask;
-		fdActorSetSprPriorityDirect(actor, 3);
+		actor->priorityFlags |= mask;
+		fdActorSetSpritePriorityDirect(actor, 3);
 		scGaiaRockInsideTurnFaceToAltar(
 			ACTOR_FIRST_ALTAR_WEST_FACE, ACTOR_FIRST_ALTAR);
 		scGaiaRockInsideTurnFaceToAltar(
@@ -2921,7 +2925,7 @@ Sint32 scInit(void)
 		ACTOR *other;
 
 		actor = fdActorGetById(ACTOR_WEST_ALTAR);
-		fdActorSetSprPriorityDirect(actor, 3);
+		fdActorSetSpritePriorityDirect(actor, 3);
 		scGaiaRockInsideTurnFaceToAltar(ACTOR_WEST_FACE, ACTOR_WEST_ALTAR);
 		scGaiaRockInsideTurnFaceToAltar(ACTOR_EAST_FACE, ACTOR_EAST_ALTAR);
 		if(!Test(FLAG_ALTAR_ROOM_SUNBEAM))
@@ -2964,27 +2968,27 @@ Sint32 scInit(void)
 			fdScriptStartScreenTransition();
 			fdScriptWait(15);
 			fdActorSetPos(ACTOR_EAST_ALTAR, 672, 384);
-			fdActorSetSprFlags(fdActorGetById(ACTOR_EAST_ALTAR), 0);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_EAST_ALTAR), 0);
 			actor = fdActorGetById(ACTOR_EAST_ALTAR);
 			other = scFieldActorCreate(
 				SPRITE_LIGHT, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			if(other != NULL) {
-				fdActorSetSprFlags(other, 0);
+				fdActorSetSpriteFlags(other, 0);
 				fdActorStartScript(other, GaiaRockInsideAltarShadowScript);
 				fdActorSelectAnimation(other, 1);
-				fdActorSetSprColMode(other, SPRITE_COLOR_BLACK);
+				fdActorSetSpriteColorMode(other, SPRITE_COLOR_BLACK);
 				/* The high byte of its OAM attribute 2: drawn at priority 3. */
-				((FIELD_SPR *)other->spr)->pri = 3;
+				((FIELD_SPR *)other->sprite)->priority = 3;
 				other->scaleX = toFIXED(6) / 5;
 				other->scaleY = toFIXED(6) / 5;
 			}
 			actor->y.fixed += toFIXED(128);
 			for(; ticks != 0; ticks--) {
 				sySynch(1);
-				if(actor->velY > -1)
+				if(actor->velocityY > -1)
 					break;
 			}
-			sySndPlay(SE_THUMP);
+			sySoundPlay(SE_THUMP);
 			fdScriptWait(30);
 			syGameFlagSet(FLAG_KEEP_PARTY_POSITION);
 			syImportScriptSetExitRequest(
@@ -3025,7 +3029,7 @@ Sint32 scInit(void)
 			fdMapCopyMetatileAttributeRect(27, 15, 2, 1, height, height);
 			fdMapCopyMetatileAttributeRect(25, 25, 1, 1, width, height);
 		}
-		fdActorSetSprFlags(fdActorGetById(ACTOR_FALLING_ALTAR), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_FALLING_ALTAR), 0);
 		if(Test(FLAG_ALTAR_FELL)) {
 			Sint32 height = 20;
 
@@ -3079,7 +3083,7 @@ Sint32 scPrepareMap(void)
 			for(i = 0; i < UNIT_NAME_SIZE - 1; i++)
 				total += unit->name[i];
 			scGaiaRockInsideLayMaze(total);
-			fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+			fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
 			((MAP_STATE *)map)->enabled[1] = 1;
 			{
@@ -3089,27 +3093,27 @@ Sint32 scPrepareMap(void)
 				syIOWrite16(control | 1, &REG_BG2CNT);
 			}
 			scGaiaRockInsideDrawMazeRoom();
-			stage = &PathWork->cur;
+			stage = &PathWork->current;
 			if(*stage == 3 && !syGameFlagGet(FLAG_MIMIC_CHEST_LEFT_OUT))
 				fdActorSetPos(ACTOR_MIMIC_CHEST, 104, 88);
 			if(*stage == 9)
 				fdActorSetPos(ACTOR_RUSTY_MACE_CHEST, 104, 72);
 			if(syGameFlagGet(FLAG_MAZE_PLANT_POINTED(*stage))) {
 				ACTOR *plant = fdActorGetById(ACTOR_ARROW_PLANT);
-				Uint32 ang = scGaiaRockInsideGetMazeWayOn();
+				Uint32 angle = scGaiaRockInsideGetMazeWayOn();
 
-				plant->collisionFlg = 0;
-				fdActorSelectAnimation(plant, ARROW_ANIMATION(ang));
-				plant->update = ARROW_UP_OR_DOWN(ang) != 0
+				plant->collisionFlags = 0;
+				fdActorSelectAnimation(plant, ARROW_ANIMATION(angle));
+				plant->update = ARROW_UP_OR_DOWN(angle) != 0
 					? (void *)scGaiaRockInsidePulseUpDownArrow
 					: (void *)scGaiaRockInsidePulseSidewaysArrow;
-				plant->collisionFlg = 1;
+				plant->collisionFlags = 1;
 				syGameFlagSet(FLAG_PLANT_POINTING);
 			}
 		} else if(MainRoutineStateWork.entrance >= ENTRANCE_LAIR) {
 			MAP_LAYER *layer;
 
-			PathWork->cur = 1;
+			PathWork->current = 1;
 			layer = &((MAP_STATE *)map)->layers[2];
 			layer->maskX = MAPGRID_SIZE - 1;
 			layer->speedX = 0;
@@ -3120,9 +3124,9 @@ Sint32 scPrepareMap(void)
 			layer->scaleY = toFIXED(1);
 			layer->maskY = MAPGRID_ROW_MASK;
 			layer->x = syMulFX(((MAP_STATE *)map)->view[0], layer->scaleX) +
-				layer->ofsX;
+				layer->offsetX;
 			layer->y = syMulFX(((MAP_STATE *)map)->view[1], layer->scaleY) +
-				layer->ofsY;
+				layer->offsetY;
 			fdMapGridCenterOnFollowedPoint();
 			syWait(1);
 			syWordsCopy(MAPGRID_BLEND_SCRIPT, GaiaRockInsideLairBlendScript,
@@ -3194,7 +3198,7 @@ void scGaiaRockInsideLayMaze(Sint32 seed)
 	PATH		  *path;
 	PATH_STEP	  *steps;
 	PATH_METATILE *metatile;
-	Sint32		   x, y, nx, ny, step, tries, dir, v, next;
+	Sint32		   x, y, nx, ny, step, tries, direction, v, next;
 	Uint32		   saved;
 
 	saved = RandomSeed;
@@ -3206,7 +3210,7 @@ void scGaiaRockInsideLayMaze(Sint32 seed)
 		return;
 	RandomSeed = seed;
 restart:
-	grid = syHeapCallAlternatePool(syHeapAllocEWRAM, sizeof *grid);
+	grid = syHeapCallAlternatePool(syHeapAllocateEWRAM, sizeof *grid);
 	syWordsClearEntry(grid, sizeof *grid);
 	/* BUG: this runs 29 times, so row 28 and column 28 lie past the 28 by 28
 	   metatiles and the last row's marks land after the block. */
@@ -3244,10 +3248,10 @@ restart:
 				goto restart;
 			nx = x;
 			ny = y;
-			dir = syRandomBelow(4);
-			if(dir == MAZE_SOUTH && (step == 1 || step == MAZE_STEPS - 1))
+			direction = syRandomBelow(4);
+			if(direction == MAZE_SOUTH && (step == 1 || step == MAZE_STEPS - 1))
 				continue;
-			switch(dir) {
+			switch(direction) {
 			case MAZE_SOUTH:
 				if(AT(x, y + 1).step != 0 || AT(x, y + 2).step != 0 ||
 					AT(x - 1, y + 1).step != 0 || AT(x + 1, y + 1).step != 0)
@@ -3392,12 +3396,12 @@ restart:
 		}
 		steps[step].next[MAZE_EAST] = v;
 		x = metatile->nextX;
-		steps[step].num = step;
+		steps[step].number = step;
 		y = metatile->nextY;
 	}
 	steps[MAZE_STEPS].next[MAZE_NORTH] = MAZE_EXIT;
 	steps[1].next[MAZE_SOUTH] = MAZE_BACK;
-	path->cur = 1;
+	path->current = 1;
 	syHeapRelease(grid);
 	fdScriptSetFlag(FLAG_MAZE_LAID);
 	RandomSeed = saved;
@@ -3412,7 +3416,7 @@ restart:
    Serpent's lair. */
 void scGaiaRockInsideTakeMazeExit(Sint32 direction)
 {
-	Sint32 *state = &PathWork->cur;
+	Sint32 *state = &PathWork->current;
 	/* The step's PATH_STEP.next, read by its offset from the path's start. */
 	Uint8 *row = (Uint8 *)state + *state * sizeof(PATH_STEP);
 	Sint32 next = row[((direction - 1) & 3) + offsetof(PATH, steps[0].next)];
@@ -3429,7 +3433,7 @@ void scGaiaRockInsideTakeMazeExit(Sint32 direction)
 		syFieldScriptSetExitRequest(direction);
 		break;
 	}
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 }
 
 extern Sint8 GaiaRockInsideMazeOrigins[][2];
@@ -3439,7 +3443,7 @@ extern Sint8 GaiaRockInsideMazeOrigins[][2];
    layers; the first room is drawn where it stands. */
 void scGaiaRockInsideDrawMazeRoom(void)
 {
-	Sint32	   state = PathWork->cur;
+	Sint32	   state = PathWork->current;
 	Sint8	  *origin = GaiaRockInsideMazeOrigins[state];
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 
@@ -3450,8 +3454,8 @@ void scGaiaRockInsideDrawMazeRoom(void)
 		Sint32	   i;
 
 		for(i = 0; i < 2; i++, layer++) {
-			Sint32 x = FIELD_METATILE(layer->ofsX);
-			Sint32 z = FIELD_METATILE(layer->ofsY);
+			Sint32 x = FIELD_METATILE(layer->offsetX);
+			Sint32 z = FIELD_METATILE(layer->offsetY);
 
 			scMapGridCopyRawMetatiles(
 				originX + x, originZ + z, 15, 10, x + 1, z + 1);
@@ -3464,7 +3468,7 @@ void scGaiaRockInsideDrawMazeRoom(void)
 Sint32 scGaiaRockInsideGetMazeWayOn(void)
 {
 	PATH	  *path = PathWork;
-	Sint32	   step = path->cur;
+	Sint32	   step = path->current;
 	PATH_STEP *node = &path->steps[step];
 	Uint32	   link;
 

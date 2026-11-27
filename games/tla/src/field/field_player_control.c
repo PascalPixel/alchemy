@@ -1,5 +1,5 @@
 /* Player control: the configured keys, and SC_PLAYER, the leader moved by the
-   pad (fdActorUpdatePlayerCtrl). Part of field.c. */
+   pad (fdActorUpdatePlayerControl). Part of field.c. */
 
 #include "edition.h"
 #include "scene/ground_effects.h"
@@ -14,7 +14,7 @@ typedef enum FIELD_SHORTCUT_KIND {
 /* A shortcut assignment's request, bits 13..0, and its kind above them. */
 #define FIELD_SHORTCUT_ID_MASK		   0x3fff
 #define FIELD_SHORTCUT_KIND_SHIFT	   14
-/* MAP_STATE.groundEffs' footprints, its bits 1..0: whether the leader leaves
+/* MAP_STATE.groundEffects' footprints, its bits 1..0: whether the leader leaves
    them. */
 #define GROUND_EFFECTS_FOOTPRINTS_MASK 0x03
 
@@ -59,57 +59,57 @@ typedef enum FIELD_SHORTCUT_KIND {
 
 /* SC_WALK (LEADER_MOVEMENT_WALKING): the leader's control at one pace, a pixel
    a tick whatever the keys. Unused: nothing sets LEADER_MOVEMENT_WALKING. It
-   is SC_PLAYER (fdActorUpdatePlayerCtrl) without the run, the wading, the
+   is SC_PLAYER (fdActorUpdatePlayerControl) without the run, the wading, the
    footprints or the steered velocity, a script command of its own, so both
    stay. */
-Sint32 fdActorUpdateWalkingCtrl(ACTOR *actor)
+Sint32 fdActorUpdateWalkingControl(ACTOR *actor)
 {
 	POS			 pos;
 	POS			 testPos;
 	POS			 contact;
-	Sint16		 angOffsets[22];
+	Sint16		 angleOffsets[22];
 	Sint32		 collision;
 	Sint32		 pushed;
-	Sint32		 movementAnm;
-	Uint16		 ang;
+	Sint32		 movementAnimation;
+	Uint16		 angle;
 	Sint16		 heading;
-	Sint32		 angIdx;
-	Sint32		 headingCnt;
+	Sint32		 angleIndex;
+	Sint32		 headingCount;
 	Bool		 onPlatform;
 	ACTOR		*other;
 	FIELD_STATE *state;
 
-	movementAnm = ANIM_WALK;
+	movementAnimation = ANIM_WALK;
 	collision = 0;
 	pushed = 0;
-	headingCnt = 0;
+	headingCount = 0;
 	if(PerWork.data & MainRoutineStateWork.dashKeys) {
 		actor->speedLimit = toFIXED(1);
 		actor->acceleration = toFIXED(1) / 20;
-		movementAnm = ANIM_LEADER_RUN;
+		movementAnimation = ANIM_LEADER_RUN;
 	} else {
 		actor->speedLimit = toFIXED(1);
 		actor->acceleration = toFIXED(1) / 20;
 	}
 
-	ang = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
-	if(ang == WORLD_MAP_KEY_HEADING_NONE) {
+	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	if(angle == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
 		goto counted;
 	}
 	/* DEAD: collision is already 0 here; the ROM keeps its clearing. */
 	collision = 0;
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	syVectorAddPolarOffset(toFIXED(8), ang, &pos);
-	if(actor->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
+	syVectorAddPolarOffset(toFIXED(8), angle, &pos);
+	if(actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
 		onPlatform = FALSE;
 		other = (ACTOR *)RamHeapSlots->actors;
-		for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
+		for(angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
 			FIXED dy;
 
 			if(other->script == NULL)
 				continue;
-			if(!(other->priFlg & ACTOR_PRIORITY_PLATFORM))
+			if(!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
 				continue;
 			if(other == actor)
 				continue;
@@ -137,18 +137,18 @@ Sint32 fdActorUpdateWalkingCtrl(ACTOR *actor)
 	}
 	if(!fdMapGridCheckCollision(actor, &pos) &&
 		SIDE_PROBES_CLEAR(
-			fdMapGridCheckCollision, actor, toFIXED(8), ang, &testPos)) {
-		heading = ang;
+			fdMapGridCheckCollision, actor, toFIXED(8), angle, &testPos)) {
+		heading = angle;
 		goto push_objects;
 	}
-	angOffsets[headingCnt++] = ang + FIELD_PROBE_ANGLE;
-	angOffsets[headingCnt++] = ang - FIELD_PROBE_ANGLE;
-	angOffsets[headingCnt++] = ang + DEGtoANG(45);
-	angOffsets[headingCnt++] = ang - DEGtoANG(45);
-	angOffsets[headingCnt++] = ang + FIELD_PROBE_ANGLE * 3;
-	angOffsets[headingCnt++] = ang - FIELD_PROBE_ANGLE * 3;
-	for(angIdx = 0; angIdx < headingCnt; angIdx++) {
-		heading = angOffsets[angIdx];
+	angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE;
+	angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE;
+	angleOffsets[headingCount++] = angle + DEGtoANG(45);
+	angleOffsets[headingCount++] = angle - DEGtoANG(45);
+	angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE * 3;
+	angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE * 3;
+	for(angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+		heading = angleOffsets[angleIndex];
 		if(PROBE_CLEAR(fdMapGridCheckCollision, actor, toFIXED(8),
 			   (Uint16)heading, &pos) &&
 			SIDE_PROBES_CLEAR(fdMapGridCheckCollision, actor, toFIXED(8),
@@ -171,20 +171,20 @@ push_objects:
 	SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
 	other = (ACTOR *)RamHeapSlots->actors;
-	for(angIdx = ACTOR_COUNT - 1; angIdx >= 0; angIdx--, other++) {
+	for(angleIndex = ACTOR_COUNT - 1; angleIndex >= 0; angleIndex--, other++) {
 		Sint32 radius;
 
 		radius = actor->radius - 2;
 		if(other->script == NULL)
 			continue;
-		if(!(other->collisionFlg & ACTOR_SOLID))
+		if(!(other->collisionFlags & ACTOR_SOLID))
 			continue;
 		if(other == actor)
 			continue;
 		if(fdCheckSpheresOverlap(
 			   &other->x.fixed, radius, &contact.x, other->radius - 2) < 0)
 			continue;
-		if((other->collisionFlg & ACTOR_PUSHABLE) && other->paused == 0) {
+		if((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0) {
 			Uint16 direction;
 
 			direction = syAtan(other->z.fixed - actor->z.fixed,
@@ -211,9 +211,9 @@ push_objects:
 						if(!fdMapGridCheckCollision(other, &testPos)) {
 							syVectorAddPolarOffset(toFIXED(1) / 4, direction,
 								(POS *)&other->x.fixed);
-							other->tgtX = ACTOR_NO_TARGET;
-							other->tgtY = ACTOR_NO_TARGET;
-							other->tgtZ = ACTOR_NO_TARGET;
+							other->targetX = ACTOR_NO_TARGET;
+							other->targetY = ACTOR_NO_TARGET;
+							other->targetZ = ACTOR_NO_TARGET;
 							pushed |= 1;
 							continue;
 						}
@@ -246,29 +246,29 @@ counted:
 			action = ANIM_LEADER_LEAN_BACK;
 		fdActorSelectAnimation(actor, action);
 	} else {
-		fdActorSelectAnimation(actor, movementAnm);
+		fdActorSelectAnimation(actor, movementAnimation);
 	}
 
 	if(collision != 0) {
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtY = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 		if(collision & PLAYER_STEP_BLOCKED) {
 			Sint32 difference;
 
-			difference = (Sint16)(ang - actor->facing);
+			difference = (Sint16)(angle - actor->facing);
 			if(difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
 			if(difference < -FIELD_BLOCKED_TURN_MAX)
 				difference = -FIELD_BLOCKED_TURN_MAX;
 			actor->facing += difference;
 		}
-		actor->tmr = 0;
+		actor->timer = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
 	} else {
 		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
-		if(actor->tmr != 0)
-			actor->tmr--;
+		if(actor->timer != 0)
+			actor->timer--;
 	}
 	fdCheckConfiguredKeys();
 	actor->scriptCursor++;
@@ -376,26 +376,26 @@ Sint32 fdCheckSpheresOverlap(
 void fdActorSpawnWaterSplash(ACTOR *actor, Sint32 mode)
 {
 	ACTOR		   *created;
-	SPR_LAYER_VIEW *spr;
+	SPR_LAYER_VIEW *sprite;
 
 	created = fdActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
 		actor->y.fixed + toFIXED(4), actor->z.fixed);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	if(!(actor->userValue & 1))
-		sySndPlayStub(SE_WADE);
+		sySoundPlayStub(SE_WADE);
 	if(created != NULL) {
-		SPR_LAYER_VIEW *child = created->spr;
+		SPR_LAYER_VIEW *child = created->sprite;
 
 		created->groundHeight = actor->groundHeight;
 		fdActorStartScript(created, ActorSplashScript);
-		created->motionFlg = 0;
+		created->motionFlags = 0;
 		if(child != NULL) {
-			fdSprStartAnimation((SPR *)child, 1);
-			child->flg = 0;
-			child->layer = spr->layer;
+			fdSpriteStartAnimation((SPR *)child, 1);
+			child->flags = 0;
+			child->layer = sprite->layer;
 			if(mode == MAP_WADING_MUD) {
-				fdSprSetAnimationColModes((SPR *)child, SPRITE_COLOR_FILL);
-				fdSprSetAnimationSpeed((SPR *)child, ANIM_STEP_NORMAL / 2);
+				fdSpriteSetAnimationColorModes((SPR *)child, SPRITE_COLOR_FILL);
+				fdSpriteSetAnimationSpeed((SPR *)child, ANIM_STEP_NORMAL / 2);
 			}
 		}
 	}
@@ -406,31 +406,31 @@ extern MAP_METATILE MapGridMetatileBuffer[];
 /* SC_PLAYER: moves the player on the field by the direction pad: walking or
    running, sliding around walls, pushing movable actors, turning, playing the
    matching animation and leaving footprints. */
-Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
+Sint32 fdActorUpdatePlayerControl(ACTOR *actor)
 {
 	POS			 pos;
 	POS			 testPos;
 	POS			 contact;
-	Sint16		 angOffsets[22];
+	Sint16		 angleOffsets[22];
 	Sint32		 collision;
 	Sint32		 pushed;
-	PLAYER_SPR	*spr;
+	PLAYER_SPR	*sprite;
 	Sint16		 heading;
-	Sint32		 angIdx;
-	Sint32		 movementAnm;
-	Sint32		 headingCnt;
-	Sint32		 footprintAng;
+	Sint32		 angleIndex;
+	Sint32		 movementAnimation;
+	Sint32		 headingCount;
+	Sint32		 footprintAngle;
 	Bool		 onPlatform;
 	FIELD_STATE *state;
 	MAP_STATE	*map;
-	Uint16		 ang;
+	Uint16		 angle;
 	Uint16		 direction;
 	ACTOR		*other;
-	Sint32		 oldFlg;
+	Sint32		 oldFlags;
 	Uint32		 attribute;
 
-	spr = actor->spr;
-	movementAnm = ANIM_WALK;
+	sprite = actor->sprite;
+	movementAnimation = ANIM_WALK;
 	onPlatform = FALSE;
 	state = RamHeapSlots->fieldState;
 	map = RamHeapSlots->mapGrid;
@@ -439,40 +439,40 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 	if(PerWork.data & MainRoutineStateWork.dashKeys) {
 		actor->speedLimit = FIELD_RUN_SPEED;
 		actor->acceleration = FIELD_ACCELERATION;
-		movementAnm = ANIM_LEADER_RUN;
+		movementAnimation = ANIM_LEADER_RUN;
 	} else {
 		actor->speedLimit = FIELD_WALK_SPEED;
 		actor->acceleration = FIELD_ACCELERATION;
 	}
 
-	ang = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
-	if((Uint16)ang == WORLD_MAP_KEY_HEADING_NONE) {
+	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
 		goto counted;
 	}
 	collision = 0;
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	syVectorAddPolarOffset(toFIXED(8), (Uint16)ang, &pos);
-	if(actor->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
+	syVectorAddPolarOffset(toFIXED(8), (Uint16)angle, &pos);
+	if(actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
 		/* Standing on another actor a metatile below: the step is clear when
 		   the actor under the step (and, after Japanese, both its sides) is a
 		   still one. */
 #if PLATFORM_STEP_TESTS_BOTH_SIDES
 		SET_POSITION(&testPos, pos.x, pos.y, pos.z);
 		syVectorAddPolarOffset(
-			toFIXED(2), (Uint16)ang + DEGtoANG(90), &testPos);
+			toFIXED(2), (Uint16)angle + DEGtoANG(90), &testPos);
 		SET_POSITION(&contact, pos.x, pos.y, pos.z);
 		syVectorAddPolarOffset(
-			toFIXED(2), (Uint16)ang - DEGtoANG(90), &contact);
+			toFIXED(2), (Uint16)angle - DEGtoANG(90), &contact);
 #endif
-		angIdx = 0;
+		angleIndex = 0;
 		other = (ACTOR *)RamHeapSlots->actors;
-		for(; angIdx < ACTOR_COUNT; angIdx++, other++) {
+		for(; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
 			FIXED dy;
 
 			if(other->script == NULL)
 				continue;
-			if(!(other->priFlg & ACTOR_PRIORITY_PLATFORM))
+			if(!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
 				continue;
 			if(other == actor)
 				continue;
@@ -491,36 +491,37 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 				SAME_METATILE(contact.x, other->x.fixed) &&
 				SAME_METATILE(contact.z, other->z.fixed) &&
 #endif
-				other->tgtX == ACTOR_NO_TARGET && other->tgtZ == other->tgtX)
+				other->targetX == ACTOR_NO_TARGET &&
+				other->targetZ == other->targetX)
 				goto clear;
 		}
 		if(onPlatform && !fdMapGridCheckCollision(actor, &pos)) {
 			collision = 0;
-			heading = ang;
+			heading = angle;
 			goto push_objects;
 		}
 	}
 	if(DebugMode != 0 && (PerWork.data & KEY_L)) {
 		collision = 0;
-		heading = ang;
+		heading = angle;
 		goto counted;
 	}
 	if(!fdMapGridCheckCollision(actor, &pos) &&
 		SIDE_PROBES_CLEAR(fdMapGridCheckCollision, actor, toFIXED(8),
-			(Uint16)ang, &testPos)) {
-		heading = ang;
+			(Uint16)angle, &testPos)) {
+		heading = angle;
 		goto push_objects;
 	}
-	direction = ang;
-	headingCnt = 0;
-	angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE;
-	angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE;
-	angOffsets[headingCnt++] = direction + DEGtoANG(45);
-	angOffsets[headingCnt++] = direction - DEGtoANG(45);
-	angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE * 3;
-	angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE * 3;
-	for(angIdx = 0; angIdx < headingCnt; angIdx++) {
-		heading = angOffsets[angIdx];
+	direction = angle;
+	headingCount = 0;
+	angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
+	angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
+	angleOffsets[headingCount++] = direction + DEGtoANG(45);
+	angleOffsets[headingCount++] = direction - DEGtoANG(45);
+	angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
+	angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
+	for(angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+		heading = angleOffsets[angleIndex];
 		if(PROBE_CLEAR(fdMapGridCheckCollision, actor, toFIXED(8),
 			   (Uint16)heading, &pos) &&
 			SIDE_PROBES_CLEAR(fdMapGridCheckCollision, actor, toFIXED(8),
@@ -533,7 +534,7 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 
 clear:
 	collision = 0;
-	heading = ang;
+	heading = angle;
 
 push_objects:
 	/* Push the movable actors just ahead a quarter pixel further, when they
@@ -541,20 +542,20 @@ push_objects:
 	SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
 	other = (ACTOR *)RamHeapSlots->actors;
-	for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
+	for(angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
 		Sint32 radius;
 
 		radius = actor->radius - 2;
 		if(other->script == NULL)
 			continue;
-		if(!(other->collisionFlg & ACTOR_SOLID))
+		if(!(other->collisionFlags & ACTOR_SOLID))
 			continue;
 		if(other == actor)
 			continue;
 		if(fdCheckSpheresOverlap(
 			   &other->x.fixed, radius, &contact.x, other->radius - 2) < 0)
 			continue;
-		if((other->collisionFlg & ACTOR_PUSHABLE) && other->paused == 0) {
+		if((other->collisionFlags & ACTOR_PUSHABLE) && other->paused == 0) {
 			direction = syAtan(other->z.fixed - actor->z.fixed,
 				other->x.fixed - actor->x.fixed);
 			SET_POSITION(
@@ -580,9 +581,9 @@ push_objects:
 						if(!fdMapGridCheckCollision(other, &testPos)) {
 							syVectorAddPolarOffset(toFIXED(1) / 4, direction,
 								(POS *)&other->x.fixed);
-							other->tgtX = ACTOR_NO_TARGET;
-							other->tgtY = ACTOR_NO_TARGET;
-							other->tgtZ = ACTOR_NO_TARGET;
+							other->targetX = ACTOR_NO_TARGET;
+							other->targetY = ACTOR_NO_TARGET;
+							other->targetZ = ACTOR_NO_TARGET;
 							pushed |= 1;
 							continue;
 						}
@@ -615,43 +616,44 @@ counted:
 			action = ANIM_LEADER_LEAN_BACK;
 		fdActorSelectAnimation(actor, action);
 	} else {
-		fdActorSelectAnimation(actor, movementAnm);
+		fdActorSelectAnimation(actor, movementAnimation);
 	}
 
 	if(collision != 0) {
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtY = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
-		actor->velX = 0;
-		actor->velZ = 0;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
+		actor->velocityX = 0;
+		actor->velocityZ = 0;
 		if(collision & PLAYER_STEP_BLOCKED) {
 			Sint32 difference;
 
-			difference = (Sint16)((Uint16)ang - actor->facing);
+			difference = (Sint16)((Uint16)angle - actor->facing);
 			if(difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
 			if(difference < -FIELD_BLOCKED_TURN_MAX)
 				difference = -FIELD_BLOCKED_TURN_MAX;
 			actor->facing += difference;
 		}
-		actor->tmr = 0;
+		actor->timer = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
 	} else {
 		FIXED speed;
 
 		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
-		speed = sySquartFX(syMulFX(actor->velX, actor->velX) +
-			syMulFX(actor->velZ, actor->velZ));
-		actor->velX = collision;
-		actor->velZ = collision;
-		syVectorAddPolarOffset(speed, (Uint16)heading, (POS *)&actor->velX);
-		if(actor->tmr != 0)
-			actor->tmr--;
+		speed = sySquartFX(syMulFX(actor->velocityX, actor->velocityX) +
+			syMulFX(actor->velocityZ, actor->velocityZ));
+		actor->velocityX = collision;
+		actor->velocityZ = collision;
+		syVectorAddPolarOffset(
+			speed, (Uint16)heading, (POS *)&actor->velocityX);
+		if(actor->timer != 0)
+			actor->timer--;
 	}
 
 	/* Ground that wades: hide the lower half of the sprite while on it, and
 	   leave the wading effect as the leader moves. */
-	if(map->groundEffs & GROUND_EFFECTS_WADING_MASK) {
+	if(map->groundEffects & GROUND_EFFECTS_WADING_MASK) {
 		MAP_METATILE *metatiles;
 
 		if(actor->layer <= 2)
@@ -661,62 +663,62 @@ counted:
 		metatiles += actor->x.fixed / toFIXED(16) +
 			(actor->z.fixed / toFIXED(16)) * MAPGRID_SIZE;
 		attribute = metatiles->attributeB;
-		oldFlg = spr->flg;
+		oldFlags = sprite->flags;
 		if(attribute & MAP_METATILE_WATER) {
-			if(!(oldFlg & SPRITE_FLAG_SUNK)) {
-				spr->sunkRows = 4;
-				spr->flg =
-					((Uint8)oldFlg | SPRITE_FLAG_SHADED) & ~SPRITE_FLAG_SHADOW;
+			if(!(oldFlags & SPRITE_FLAG_SUNK)) {
+				sprite->sunkRows = 4;
+				sprite->flags = ((Uint8)oldFlags | SPRITE_FLAG_SHADED) &
+					~SPRITE_FLAG_SHADOW;
 			}
-			if(actor->tmr == 0 && collision == 0 && !onPlatform) {
+			if(actor->timer == 0 && collision == 0 && !onPlatform) {
 				fdActorSpawnWaterSplash(
-					actor, GROUND_EFFECTS_WADING(map->groundEffs));
-				if(movementAnm == ANIM_LEADER_RUN)
-					actor->tmr = 8;
+					actor, GROUND_EFFECTS_WADING(map->groundEffects));
+				if(movementAnimation == ANIM_LEADER_RUN)
+					actor->timer = 8;
 				else
-					actor->tmr = 12;
+					actor->timer = 12;
 				actor->userValue ^= 1;
 			}
-		} else if(!(oldFlg & SPRITE_FLAG_SUNK)) {
-			spr->flg =
-				((Uint8)oldFlg | SPRITE_FLAG_SHADOW) & ~SPRITE_FLAG_SHADED;
+		} else if(!(oldFlags & SPRITE_FLAG_SUNK)) {
+			sprite->flags =
+				((Uint8)oldFlags | SPRITE_FLAG_SHADOW) & ~SPRITE_FLAG_SHADED;
 		}
-		if(oldFlg != spr->flg)
-			spr->dirty = 1;
+		if(oldFlags != sprite->flags)
+			sprite->dirty = 1;
 	}
 
 	/* Footprints on maps that show them, alternating left and right. */
-	footprintAng = (Uint16)ang;
-	if((map->groundEffs & GROUND_EFFECTS_FOOTPRINTS_MASK) && actor->tmr == 0 &&
-		collision == 0) {
+	footprintAngle = (Uint16)angle;
+	if((map->groundEffects & GROUND_EFFECTS_FOOTPRINTS_MASK) &&
+		actor->timer == 0 && collision == 0) {
 		ACTOR *effect;
 
 		effect = fdActorCreate(
 			SPRITE_FOOTPRINTS, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		if(effect != 0) {
-			PLAYER_SPR *effectSpr;
+			PLAYER_SPR *effectSprite;
 
 			effect->groundHeight = actor->groundHeight;
-			effectSpr = effect->spr;
+			effectSprite = effect->sprite;
 			fdActorStartScript(effect, ActorFootprintScript);
-			effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			effect->motionFlg = collision;
-			if(effectSpr != NULL) {
-				fdSprStartAnimation(effectSpr, FOOTPRINT_ONE_FOOT);
-				effectSpr->flg = collision;
-				effectSpr->rotation = footprintAng + DEGtoANG(90);
-				effectSpr->pri = 3;
+			effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			effect->motionFlags = collision;
+			if(effectSprite != NULL) {
+				fdSpriteStartAnimation(effectSprite, FOOTPRINT_ONE_FOOT);
+				effectSprite->flags = collision;
+				effectSprite->rotation = footprintAngle + DEGtoANG(90);
+				effectSprite->priority = 3;
 			}
 			if(actor->userValue == FOOTPRINT_BOTH_FEET) {
-				fdSprStartAnimation(effectSpr, FOOTPRINT_BOTH_FEET);
+				fdSpriteStartAnimation(effectSprite, FOOTPRINT_BOTH_FEET);
 				actor->userValue = collision;
 			}
 			if(actor->userValue != 0)
 				effect->facing = DEGtoANG(180);
-			if(movementAnm == ANIM_LEADER_RUN)
-				actor->tmr = 12;
+			if(movementAnimation == ANIM_LEADER_RUN)
+				actor->timer = 12;
 			else
-				actor->tmr = 18;
+				actor->timer = 18;
 			actor->userValue ^= 1;
 		}
 	}

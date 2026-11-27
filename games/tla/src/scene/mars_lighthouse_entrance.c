@@ -204,7 +204,7 @@ typedef enum MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_ACTOR_ID {
 /* An urn torch's script call: the torches stand without a shadow. */
 Sint32 scMarsLighthouseEntranceSetUpTorch(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -323,7 +323,7 @@ METATILE_TARGET CrackedTiles	  BSS_DATA;
 
 Sint32 fdMapMetatileGetAttributes();
 Sint32 fdMapGetTerrainHeight();
-void   fdSetActorSprPriority();
+void   fdSetActorSpritePriority();
 
 /* Sets the metatiles under an ice cone: standing, it blocks the way, the ground
    there is raised and it is drawn in front; flattened (its flag, kept in its
@@ -342,7 +342,7 @@ void scMarsLighthouseEntranceSetIceConeMetatiles(ACTOR *actor)
 	layer = &cone->layer;
 	height = METATILE_HEIGHT_STEPS(
 		fdMapGetTerrainHeight(cone->layer, cone->x.fixed, cone->z.fixed));
-	if(fdScriptGetFlag(cone->tmr)) {
+	if(fdScriptGetFlag(cone->timer)) {
 		upperMetatile &= ~METATILE_CODE_BITS;
 		groundMetatile &= ~MAP_METATILE_JUMP;
 		if(METATILE_HEIGHT_STEPS(cone->groundHeight) != height)
@@ -352,7 +352,7 @@ void scMarsLighthouseEntranceSetIceConeMetatiles(ACTOR *actor)
 		upperMetatile |= METATILE_ATTRIBUTES(METATILE_BEHAVIOR_WALL, 0);
 		groundMetatile |= MAP_METATILE_JUMP;
 		height += 4;
-		fdSetActorSprPriority(cone, 2);
+		fdSetActorSpritePriority(cone, 2);
 	}
 	scMapMetatileSetAttributes(0, x, z, groundMetatile);
 	scMapMetatileSetAttributes(2, x, z, upperMetatile);
@@ -363,26 +363,26 @@ void scMarsLighthouseEntranceSetIceConeMetatiles(ACTOR *actor)
 /* Places the ice cones of a list ended by ACTOR_LIST_END, each row three
    halfwords: the cone, its standing pose and the flag set once Pound has
    flattened it, which picks the flattened pose after it. */
-void scMarsLighthouseEntrancePlaceIceCones(Uint16 *tbl)
+void scMarsLighthouseEntrancePlaceIceCones(Uint16 *table)
 {
 	Uint16		*row;
 	FIELD_ACTOR *object;
-	Sint16		 flg;
-	Sint16		 anm;
+	Sint16		 flag;
+	Sint16		 animation;
 
-	if(tbl[0] == ACTOR_LIST_END)
+	if(table[0] == ACTOR_LIST_END)
 		return;
-	for(row = tbl; row[0] != ACTOR_LIST_END; row += 3) {
+	for(row = table; row[0] != ACTOR_LIST_END; row += 3) {
 		object = (FIELD_ACTOR *)fdActorGet(row[0]);
-		anm = row[1];
-		flg = row[2];
+		animation = row[1];
+		flag = row[2];
 
-		fdActorSetSprFlags(object, 0);
+		fdActorSetSpriteFlags(object, 0);
 		fdActorSelectAnimation(
-			object, (Uint16)anm + fdScriptGetFlag((Uint16)flg));
-		object->motionFlg = 0;
-		object->collisionFlg &= ~ACTOR_SOLID;
-		object->tmr = flg;
+			object, (Uint16)animation + fdScriptGetFlag((Uint16)flag));
+		object->motionFlags = 0;
+		object->collisionFlags &= ~ACTOR_SOLID;
+		object->timer = flag;
 		scMarsLighthouseEntranceSetIceConeMetatiles(object);
 	}
 }
@@ -392,22 +392,22 @@ void scMarsLighthouseEntrancePlaceIceCones(Uint16 *tbl)
    done the cone is gone, its flag set and its metatiles cleared
    (scMarsLighthouseEntranceSetIceConeMetatiles), so Felix can walk over the
    spot. */
-void scMarsLighthouseEntrancePoundIceCone(Sint32 mode, Sint32 idx)
+void scMarsLighthouseEntrancePoundIceCone(Sint32 mode, Sint32 index)
 {
-	FIELD_EFFECT_STATE *holder = RamHeapSlots->fieldEffState;
-	ACTOR			   *actor = fdActorGet(holder->tgtId);
+	FIELD_EFFECT_STATE *holder = RamHeapSlots->fieldEffectState;
+	ACTOR			   *actor = fdActorGet(holder->targetId);
 
-	if(idx <= 7) {
+	if(index <= 7) {
 		EFFECT_OPTIONS options;
 
-		options.pri = 0;
+		options.priority = 0;
 		options.type = SPRITE_BLUE_CRYSTAL;
 		options.startScaleX = options.startScaleY = toFIXED(1);
-		options.tgtScaleX = options.tgtScaleY = toFIXED(1) / 2;
+		options.targetScaleX = options.targetScaleY = toFIXED(1) / 2;
 		options.rotation = (syRandom() & 15) << 12;
 		scFieldEffectSpawn(actor->x.fixed,
-			actor->y.fixed - idx * 3 * toFIXED(1) + toFIXED(16), actor->z.fixed,
-			((syRandom() & 15) - 8) << 13, 0, 0,
+			actor->y.fixed - index * 3 * toFIXED(1) + toFIXED(16),
+			actor->z.fixed, ((syRandom() & 15) - 8) << 13, 0, 0,
 			EFFECT_USE_ROTATION | EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
 				EFFECT_USE_PRIORITY,
 			&options);
@@ -415,8 +415,9 @@ void scMarsLighthouseEntrancePoundIceCone(Sint32 mode, Sint32 idx)
 	}
 	if(mode == 1) {
 		actor->scaleY = toFIXED(1);
-		fdScriptSetFlag(actor->tmr);
-		scMarsLighthouseEntranceSetIceConeMetatiles(fdActorGet(holder->tgtId));
+		fdScriptSetFlag(actor->timer);
+		scMarsLighthouseEntranceSetIceConeMetatiles(
+			fdActorGet(holder->targetId));
 		actor->x.fixed = actor->y.fixed = actor->z.fixed = 0;
 	}
 }
@@ -457,16 +458,16 @@ void scMarsLighthouseEntranceScatterIceChips(Sint32 id)
 			speed = syRandom();
 			scale = (syRandom() >> 1) + toFIXED(1) / 4;
 			fdActorStartScript(actor, DebrisScript);
-			fdActorSetSprFlags(actor, 0);
-			actor->velY = heading * 4 + toFIXED(2);
-			actor->velZ = syMulFX(speed * 8, syCos(heading));
-			actor->velX = syMulFX(speed * 8, syMathSin(heading));
+			fdActorSetSpriteFlags(actor, 0);
+			actor->velocityY = heading * 4 + toFIXED(2);
+			actor->velocityZ = syMulFX(speed * 8, syCos(heading));
+			actor->velocityX = syMulFX(speed * 8, syMathSin(heading));
 			actor->acceleration = 0;
 			actor->gravity = toFIXED(33) / 100;
 			actor->scaleX = scale;
 			actor->scaleY = scale;
 			actor->bounce = toFIXED(1) / 2;
-			fdActorSetSprColMode(actor, SPRITE_COLOR_GRB);
+			fdActorSetSpriteColorMode(actor, SPRITE_COLOR_GRB);
 		}
 	}
 }
@@ -479,11 +480,11 @@ void scMarsLighthouseEntranceScatterIceChips(Sint32 id)
 void scMarsLighthouseEntranceGrindIce(void)
 {
 	Sint32 x;
-	Sint32 cnt;
+	Sint32 count;
 
-	fdScriptPlaySnd(SE_CRUMBLE);
+	fdScriptPlaySound(SE_CRUMBLE);
 	x = 32;
-	for(cnt = 0; cnt < 7; cnt++) {
+	for(count = 0; count < 7; count++) {
 		fdMapGridCopyMetatilesLayered(x, 125, 3, 3, 39, 85);
 		scMarsLighthouseEntranceScatterIceChips(ACTOR_ICE_SHAFT);
 		syWait(10);
@@ -521,7 +522,8 @@ void scMarsLighthouseEntranceTeleportFromLapisNorthCircle(void)
 		syFieldScriptEndLastingPsynergy(0);
 		fdTeleportPlaySparks();
 		fdActorGet(MainRoutineStateWork.leaderActorId)->update = NULL;
-		scFieldActorSetSprCol(fdActorGet(MainRoutineStateWork.leaderActorId),
+		scFieldActorSetSpriteColor(
+			fdActorGet(MainRoutineStateWork.leaderActorId),
 			SPRITE_COLOR_NORMAL);
 		fdActorSetPosFX(
 			MainRoutineStateWork.leaderActorId, toFIXED(688), toFIXED(360));
@@ -530,7 +532,7 @@ void scMarsLighthouseEntranceTeleportFromLapisNorthCircle(void)
 		fdTeleportPlayWhirl();
 		syFieldScriptWait(40);
 		scTeleportStopShimmer();
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 		syWait(10);
 		fdScriptEnd();
 		fdScriptSetFlag(FLAG_TELEPORTED_ONCE);
@@ -560,10 +562,10 @@ void scMarsLighthouseEntranceTeleportFromLapisSouthCircle(void)
 /* Felix casts Burst on the cracked ice wall in the small room east of the main
    hall (metatiles (51, 41) to (53, 41)): it blows apart in fiery blasts, chips
    of ice flying, and the arched doorway behind it is clear. */
-void scMarsLighthouseEntranceBurstIceSheet(Sint32 state, Sint32 frm)
+void scMarsLighthouseEntranceBurstIceSheet(Sint32 state, Sint32 frame)
 {
 	if(state == 1) {
-		fdScriptPlaySnd(SE_FLASH);
+		fdScriptPlaySound(SE_FLASH);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 		fdPaletteFadeInterpolate(60);
 		fdMapGridCopyMetatilesLayered(47, 94, 10, 6, 47, 100);
@@ -571,9 +573,9 @@ void scMarsLighthouseEntranceBurstIceSheet(Sint32 state, Sint32 frm)
 		fdActorSetPos(ACTOR_ICE_SHEET, 0, 0);
 		fdScriptSetFlag(FLAG_LAPIS_SHEET_BURST);
 	}
-	if(frm > 96 && frm < 272 && frm % 30 == 0)
+	if(frame > 96 && frame < 272 && frame % 30 == 0)
 		scMarsLighthouseEntranceScatterIceChips(ACTOR_ICE_SHEET);
-	if(frm == 276) {
+	if(frame == 276) {
 		fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 		fdPaletteFadeInterpolate(20);
 	}
@@ -623,7 +625,7 @@ void scMarsLighthouseEntranceCrackLapisIceSheet(void)
 	ACTOR *actor = fdActorGet(ACTOR_SECOND_ICE_SHEET);
 
 	if(!fdScriptGetFlag(FLAG_LAPIS_SECOND_SHEET_BURST)) {
-		fdScriptPlaySnd(SE_ICE_CRACK);
+		fdScriptPlaySound(SE_ICE_CRACK);
 		fdScriptSetFlag(FLAG_LAPIS_SECOND_SHEET_SHOWN);
 		actor->x.fixed = toFIXED(actor->homeX);
 		actor->z.fixed = toFIXED(actor->homeZ);
@@ -643,7 +645,7 @@ void scMarsLighthouseEntranceCrackLapisIceSheet(void)
 	void name(Sint32 state, Sint32 tick) \
 	{ \
 		if(state == 1) { \
-			fdScriptPlaySnd(SE_FLASH); \
+			fdScriptPlaySound(SE_FLASH); \
 			fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL); \
 			fdPaletteFadeInterpolate(60); \
 			fdMapGridCopyMetatilesLayered(x, brokenZ, 8, rows, x, z); \
@@ -679,7 +681,7 @@ void scMarsLighthouseEntrancePushStatueIntoFlames(Sint32 unused, Sint32 id)
 		if(FIELD_METATILE(actor->x.fixed) == LAPIS_STATUE_BLOCKING_COLUMN) {
 			syFieldScriptWait(5);
 			actor->z.fixed += toFIXED(1);
-			*(Uint8 *)&actor->sceneCnt = 1;
+			*(Uint8 *)&actor->sceneCount = 1;
 			fdScriptSetFlag(FLAG_LAPIS_STATUE_BLOCKS_FLAMES);
 		}
 	}
@@ -762,7 +764,7 @@ void scMarsLighthouseEntranceCrackHiddenCircleIceSheet(void)
 	ACTOR *actor = fdActorGet(ACTOR_HIDDEN_CIRCLE_ICE_SHEET);
 
 	if(!fdScriptGetFlag(FLAG_HIDDEN_CIRCLE_SHEET_BURST)) {
-		fdScriptPlaySnd(SE_ICE_CRACK);
+		fdScriptPlaySound(SE_ICE_CRACK);
 		fdScriptSetFlag(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN);
 		actor->x.fixed = toFIXED(actor->homeX);
 		actor->z.fixed = toFIXED(actor->homeZ);
@@ -902,9 +904,10 @@ void scMarsLighthouseEntranceDrawHoleMask(void)
 	Sint32	   x = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   cameraZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32	   originY = map->origin[1];
-	Sint32 tile = VramCacheEntries[MarsLighthouseEntranceHoleMaskVram].ofs >> 5;
-	ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 y, z, depth, screenX, screenY;
+	Sint32	   tile =
+		VramCacheEntries[MarsLighthouseEntranceHoleMaskVram].offset >> 5;
+	ACTOR  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
+	Sint32	y, z, depth, screenX, screenY;
 	Uint32 *word;
 
 	x = FIELD_METATILE_ORIGIN(FIELD_METATILE(leader->x.fixed)) - x;
@@ -924,7 +927,7 @@ void scMarsLighthouseEntranceDrawHoleMask(void)
 	*word++ =
 		screenY | OBJ_X(screenX) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
 	*word = tile | OBJ_PRIORITY(1);
-	syOAMAddSprAtDepthClamped(MarsLighthouseEntranceHoleMaskSprite, depth);
+	syOAMAddSpriteAtDepthClamped(MarsLighthouseEntranceHoleMaskSprite, depth);
 }
 
 /* Hides Felix's sprite below the floor as he drops through it: a sprite of
@@ -932,11 +935,11 @@ void scMarsLighthouseEntranceDrawHoleMask(void)
    his metatile (scMarsLighthouseEntranceDrawHoleMask). */
 void scMarsLighthouseEntranceStartHoleMask(void)
 {
-	Uint32 *buf = syHeapAlloc(HOLE_MASK_BYTES);
+	Uint32 *buf = syHeapAllocate(HOLE_MASK_BYTES);
 	Uint32 *word = buf;
-	Sint32	cnt;
+	Sint32	count;
 
-	for(cnt = 0; cnt < HOLE_MASK_BYTES / 4; cnt++) {
+	for(count = 0; count < HOLE_MASK_BYTES / 4; count++) {
 		*word++ = PIXELS_4BPP(1);
 	}
 	MarsLighthouseEntranceHoleMaskVram = syVRAMCacheFindFreeEntry();
@@ -975,7 +978,7 @@ void scMarsLighthouseEntranceFallIntoHole(Sint32 arg)
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	actor->update = NULL;
 	{
 		Sint32 value = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
@@ -986,7 +989,7 @@ void scMarsLighthouseEntranceFallIntoHole(Sint32 arg)
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
 	syWait(30);
 	actor->facing = FACING_SOUTH;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	buf = MapGridMetatileBuffer;
 	x = FIELD_METATILE(actor->x.fixed);
 	z = FIELD_METATILE(actor->z.fixed);
@@ -1006,13 +1009,13 @@ void scMarsLighthouseEntranceFallIntoHole(Sint32 arg)
 	syFieldScriptWait(16);
 	for(i = 0; i < SINK_TICKS; i++) {
 		if(i == 5)
-			fdScriptPlaySnd(SE_DUST_PUFF);
+			fdScriptPlaySound(SE_DUST_PUFF);
 		actor->scaleX -= toFIXED(1) / 64;
 		actor->scaleY -= toFIXED(3) / 256;
 		actor->y.fixed -= toFIXED(6) / 10;
 		syWait(1);
 	}
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
@@ -1040,7 +1043,7 @@ extern CUE	  MarsLighthouseEntranceSolBladeCues[];
    stays at the head of the slide nothing else happens to him. */
 void scMarsLighthouseEntranceWakeDragonFace(void)
 {
-	fdScriptPlaySnd(SE_BUTTON_PRESS);
+	fdScriptPlaySound(SE_BUTTON_PRESS);
 	fdScriptSetFlag(FLAG_NO_PLACE_TO_SAVE);
 	fdActorSetScript(
 		ACTOR_DRAGON_FACE, MarsLighthouseEntranceDragonFaceGoesLeft);
@@ -1056,7 +1059,7 @@ void scMarsLighthouseEntranceSlideFromEdge(void)
 	scMarsLighthouseEntranceRideFireballIfHit();
 }
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 /* Felix drops through a cracked tile of the Sol Blade room: startled, he raises
    his arms and sinks out of sight, and lands in the room below. The metatile he
@@ -1071,7 +1074,7 @@ void scMarsLighthouseEntranceFallThroughCrack(const MAP_METATILE *metatile)
 	syGameFlagSetByte(FLAG_BYTE_FALL_ROW, FIELD_METATILE(z));
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	leader->update = NULL;
 	scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1079,7 +1082,7 @@ void scMarsLighthouseEntranceFallThroughCrack(const MAP_METATILE *metatile)
 	fdActorSetAnimationSpeed(leader, ANIM_STEP_NORMAL * 3);
 	syWait(30);
 	leader->facing = FACING_SOUTH;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	if((metatile->attributeB & MAP_METATILE_FLOOR_HOLE) == 0) {
 		{
 			Uint16 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 |
@@ -1097,13 +1100,13 @@ void scMarsLighthouseEntranceFallThroughCrack(const MAP_METATILE *metatile)
 	syFieldScriptWait(16);
 	for(i = 0; i < SINK_TICKS; i++) {
 		if(i == 5)
-			fdScriptPlaySnd(SE_DUST_PUFF);
+			fdScriptPlaySound(SE_DUST_PUFF);
 		leader->scaleX -= toFIXED(1) / 64;
 		leader->scaleY -= toFIXED(3) / 256;
 		leader->y.fixed -= toFIXED(6) / 10;
 		syWait(1);
 	}
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
@@ -1199,10 +1202,10 @@ void scMarsLighthouseEntranceFlickerDragonFace(ACTOR *actor)
 {
 	switch(TickCount & 7) {
 	case 0:
-		fdActorSetSprColMode(actor, 0);
+		fdActorSetSpriteColorMode(actor, 0);
 		break;
 	case 6:
-		fdActorSetSprColMode(actor, SPRITE_COLOR_RED_TINT);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_RED_TINT);
 		break;
 	}
 }
@@ -1211,17 +1214,17 @@ void scMarsLighthouseEntranceFlickerDragonFace(ACTOR *actor)
    shrinking. */
 void scMarsLighthouseEntranceFlingIceCone(ACTOR *actor)
 {
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
-	spr->rotation += TRIG_TURN / 32;
-	if(++actor->tmr == 8)
-		actor->velY = toFIXED(4);
-	if(actor->tmr > 9) {
+	sprite->rotation += TRIG_TURN / 32;
+	if(++actor->timer == 8)
+		actor->velocityY = toFIXED(4);
+	if(actor->timer > 9) {
 		actor->x.fixed += toFIXED(4);
 		actor->scaleX -= toFIXED(1) / 32;
 		actor->scaleY -= toFIXED(1) / 32;
 	}
-	if(actor->tmr == 32) {
+	if(actor->timer == 32) {
 		actor->x.fixed = 0;
 		actor->z.fixed = 0;
 		actor->update = NULL;
@@ -1234,7 +1237,7 @@ void scMarsLighthouseEntranceWaitForDragonFace(ACTOR *actor)
 {
 	if(ABS(actor->x.fixed - actor->watchedActor->actor.x.fixed) > toFIXED(32))
 		return;
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->update = (OBJECT_UPDATE)scMarsLighthouseEntranceFlingIceCone;
 }
 
@@ -1253,8 +1256,9 @@ void scMarsLighthouseEntranceStopSlideWhileRiding(void)
 void scFlameThrowersStart(
 	Uint16 *targets, Uint16 *stops, Sint32 onStopped, Sint32 hitCue);
 void scFlameThrowerSetPuffsOffScreen(Sint32 index, Sint16 value);
-void scPaletteSetColsFade(Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
-void scMarsLighthouseEntranceShootValkyrieUpperFireball(void);
+void scPaletteSetColorsFade(
+	Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
+void		  scMarsLighthouseEntranceShootValkyrieUpperFireball(void);
 extern Sint32 MarsLighthouseEntranceDragonFaceAtLeft[];
 extern Uint16 MarsLighthouseEntranceFugueIceCones[];
 extern Uint16 MarsLighthouseEntranceLapisBeamTargets[];
@@ -1290,7 +1294,7 @@ Sint32 scInit(void)
 	} else if(scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_FUGUE) {
 		fdEffectStartBlankOverlay(0);
 #if !FUGUE_NEW_POSITION
-		scFieldActorSetSprPriority(ACTOR_FUGUE, 3);
+		scFieldActorSetSpritePriority(ACTOR_FUGUE, 3);
 #endif
 		scActorFreeze(ACTOR_ICE_SHAFT);
 		if(fdScriptGetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
@@ -1314,12 +1318,14 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_ICE_SHEET, 0, 0);
 		} else if(fdScriptGetFlag(FLAG_ICE_SHAFT_GROUND)) {
 			fdScriptSetFlag(FLAG_LAPIS_SHEET_CRACKED);
-			fdActorGet(ACTOR_ICE_SHEET)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_ICE_SHEET)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
 		} else {
 			fdActorSetPos(ACTOR_ICE_SHEET, 0, 0);
 		}
-		fdActorGet(ACTOR_SECOND_ICE_SHEET)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		scFieldActorSetSprPriority(ACTOR_SECOND_ICE_SHEET, 2);
+		fdActorGet(ACTOR_SECOND_ICE_SHEET)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
+		scFieldActorSetSpritePriority(ACTOR_SECOND_ICE_SHEET, 2);
 		if(fdScriptGetFlag(FLAG_LAPIS_SECOND_SHEET_BURST)) {
 			fdMapGridCopyMetatilesLayered(28, 92, 8, 8, 28, 100);
 			fdMapGridCopyMetatileAttributes(92, 38, 8, 8, 28, 38);
@@ -1333,7 +1339,7 @@ Sint32 scInit(void)
 		}
 		if(fdScriptGetFlag(FLAG_LAPIS_STATUE_BLOCKS_FLAMES)) {
 			fdActorSetPos(ACTOR_PUSHED_STATUE, 328, 120);
-			fdActorGet(ACTOR_PUSHED_STATUE)->sceneCnt = 1;
+			fdActorGet(ACTOR_PUSHED_STATUE)->sceneCount = 1;
 		}
 		if(fdScriptGetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
 			fdActorSetPos(ACTOR_UNLIT_TORCH, 0, 0);
@@ -1347,12 +1353,13 @@ Sint32 scInit(void)
 			fdMapGridSetShake(0, 2, 1);
 			fdActorSetPos(MainRoutineStateWork.leaderActorId, 0, 0);
 			fdActorSetPos(ACTOR_ICE_SHEET, 0, 0);
-			fdActorGet(ACTOR_ICE_SHEET)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_ICE_SHEET)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdScriptStartScreenTransition();
 			fdScriptWaitTransitionTicks();
 			actor = fdActorGet(ACTOR_ICE_SHEET);
-			fdActorSetPos(ACTOR_ICE_SHEET, actor->tmr, actor->userValue);
-			fdScriptPlaySnd(SE_ICE_CRACK);
+			fdActorSetPos(ACTOR_ICE_SHEET, actor->timer, actor->userValue);
+			fdScriptPlaySound(SE_ICE_CRACK);
 			for(i = 0; i < 3; i++) {
 				scMarsLighthouseEntranceScatterIceChips(ACTOR_ICE_SHEET);
 				syWait(1);
@@ -1379,7 +1386,7 @@ Sint32 scInit(void)
 			(Sint32)MarsLighthouseEntranceBalmIceCones);
 	} else if(scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE) {
 		fdEffectStartBlankOverlay(0);
-		fdActorGet(ACTOR_HIDDEN_CIRCLE_ICE_SHEET)->priFlg |=
+		fdActorGet(ACTOR_HIDDEN_CIRCLE_ICE_SHEET)->priorityFlags |=
 			ACTOR_PRIORITY_UNDERFOOT;
 		if(fdScriptGetFlag(FLAG_HIDDEN_CIRCLE_SHEET_BURST)) {
 			fdMapGridCopyMetatilesLayered(12, 95, 8, 6, 12, 101);
@@ -1460,7 +1467,7 @@ Sint32 scInit(void)
 			fdActorGet(ACTOR_VALKYRIE_ICE_CONE_F)->watchedActor =
 				(FIELD_OBJECT *)target;
 		}
-		fdActorGet(ACTOR_UPPER_FLAME_THROWER)->priFlg |=
+		fdActorGet(ACTOR_UPPER_FLAME_THROWER)->priorityFlags |=
 			ACTOR_PRIORITY_UNDERFOOT;
 		if(fdScriptGetFlag(FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES))
 			fdActorSetPos(ACTOR_PUSHED_STATUE, 88, 696);
@@ -1470,7 +1477,7 @@ Sint32 scInit(void)
 	if(scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST &&
 		entrance == VALKYRIE_SOUTH_CIRCLE)
 		fdScriptClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
-	scPaletteSetColsFade((Sint32)TeleportCirclePaletteSlots,
+	scPaletteSetColorsFade((Sint32)TeleportCirclePaletteSlots,
 		(Sint32)TeleportCircleColors, (Sint32)TeleportCircleShimmerColors,
 		(Sint32)TeleportCircleShimmerSlots);
 	return 0;
@@ -1612,7 +1619,7 @@ void scFlameThrowersPuff(void);
 /* The flame throwers' counter, which scFlameThrowersAdvanceCounter steps. */
 UNUSED Sint32 scFlameThrowersGetCounter(void)
 {
-	return FLAME_THROWERS_STATE->cnt;
+	return FLAME_THROWERS_STATE->count;
 }
 
 #include "shared/flame_throwers_advance_counter.h"
@@ -1621,12 +1628,12 @@ UNUSED Sint32 scFlameThrowersGetCounter(void)
 
 #include "shared/flame_thrower_set_puffs_off_screen.c"
 
-/* Flame thrower `idx`'s flags: which flame it sends and how far. */
-UNUSED Sint32 scFlameThrowerGetFlags(Sint32 idx)
+/* Flame thrower `index`'s flags: which flame it sends and how far. */
+UNUSED Sint32 scFlameThrowerGetFlags(Sint32 index)
 {
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 
-	return (state->entries + idx)->flg;
+	return (state->entries + index)->flags;
 }
 
 #include "shared/flame_throwers_set_stop.h"
@@ -1657,10 +1664,10 @@ int scMarsLighthouseEntranceRideFireball(void)
 	ACTOR			*leader;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	Sint32 frm[3];
+	Sint32 frame[3];
 
 	if(event->transitionActive == 0) {
-		fdScreenTransitionStart(event->transition, event->transitionFrm);
+		fdScreenTransitionStart(event->transition, event->transitionFrame);
 		event->transitionActive = 1;
 	}
 	fdScriptClearFlag(FLAG_MENU_OPEN);
@@ -1686,7 +1693,7 @@ int scMarsLighthouseEntranceRideFireball(void)
 	leader->update = (OBJECT_UPDATE)fdActorBlink;
 	leader->facing = FACING_SOUTH;
 	fdActorSelectAnimation(leader, ANIM_LEADER_SIT);
-	while(ride->car->tmr == 0) {
+	while(ride->car->timer == 0) {
 		if(fdMapGridGetTerrainKindOrBumpAt(
 			   0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
 			leader->x.fixed += ride->car->stepX;
@@ -1704,7 +1711,7 @@ int scMarsLighthouseEntranceRideFireball(void)
 	}
 	syFieldScriptWait(30);
 	leader->update = NULL;
-	fdActorSetSprColMode(leader, 0);
+	fdActorSetSpriteColorMode(leader, 0);
 	ride->active = 0;
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
@@ -1754,11 +1761,11 @@ Sint32 scActorAttach(Sint32 torchId, Sint32 sparkleId, Sint32 fireballId,
 	scFieldActorSetPosAndResetMotion(
 		actor, src->x.fixed, src->y.fixed, src->z.fixed);
 	fdActorStartScript(actor, path);
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 	fdActorSelectAnimation(actor, 1);
 	actor->watchedActor = (FIELD_OBJECT *)src;
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->userValue = facing;
 	actor->launchedActorId = fireballId;
 	actor->update = (OBJECT_UPDATE)scActorHoldDuringScript;
@@ -1810,15 +1817,16 @@ extern Sint32 FieldEffectDurationScripts[];
 /* Puts a short-lived effect sprite, dust unless `options` names another, at a
    point, moving off at the velocity given and drawn at the leader's priority:
    this overlay's own copy of field_effect_spawn.c. */
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options)
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options)
 {
 	ACTOR		 *party = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	FIELD_SPR	 *spr;
+	FIELD_SPR	 *sprite;
 	const Sint32 *script;
 
-	if((flg & EFFECT_USE_TYPE) != 0 && options != 0)
+	if((flags & EFFECT_USE_TYPE) != 0 && options != 0)
 		effect = (FIELD_EFFECT *)syImportActorCreate(options->type, x, y, z);
 	else
 		effect =
@@ -1826,62 +1834,63 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 	if(effect == 0)
 		return;
 
-	spr = effect->spr;
-	fdActorSelectAnimation(effect, (flg + 1) & EFFECT_SCRIPT_MASK);
+	sprite = effect->sprite;
+	fdActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
 	fdActorStartScript(
-		effect, FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK]);
-	effect->motionFlg = 0;
-	fdActorSetSprFlags(effect, 0);
+		effect, FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]);
+	effect->motionFlags = 0;
+	fdActorSetSpriteFlags(effect, 0);
 	effect->update = fdEffectUpdateMotionScaleAndSpin;
-	effect->vel.x = velX;
-	effect->vel.y = velY;
-	effect->vel.z = velZ;
-	fdEffectSetSprPriority(effect, ((FIELD_SPR *)party->spr)->pri);
+	effect->velocity.x = velocityX;
+	effect->velocity.y = velocityY;
+	effect->velocity.z = velocityZ;
+	fdEffectSetSpritePriority(effect, ((FIELD_SPR *)party->sprite)->priority);
 	effect->scaleRateX = 0;
 	effect->scaleRateY = 0;
 	effect->spin = 0;
 
-	if((flg & EFFECT_OPTION_MASK) == 0 || options == 0)
+	if((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
 		return;
-	if((flg & EFFECT_USE_PALETTE) != 0)
-		scFieldActorSetSprCol(effect, options->pal);
-	if((flg & EFFECT_USE_PRIORITY) != 0) {
-		effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		fdEffectSetSprPriority(effect, options->pri);
+	if((flags & EFFECT_USE_PALETTE) != 0)
+		scFieldActorSetSpriteColor(effect, options->palette);
+	if((flags & EFFECT_USE_PRIORITY) != 0) {
+		effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		fdEffectSetSpritePriority(effect, options->priority);
 	}
-	if((flg & EFFECT_USE_START_SCALE) != 0) {
+	if((flags & EFFECT_USE_START_SCALE) != 0) {
 		effect->scaleX = options->startScaleX;
 		effect->scaleY = options->startScaleY;
 	}
-	if((flg & EFFECT_SCALE_TO_TARGET) != 0) {
-		FIXED  tgt;
+	if((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+		FIXED  target;
 		Sint32 ticks;
 
-		script = FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK];
-		tgt = options->tgtScaleX;
+		script = FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK];
+		target = options->targetScaleX;
 		ticks = script[3];
-		if((flg & EFFECT_USE_START_SCALE) != 0) {
-			effect->scaleRateX = (tgt - effect->scaleX) / ticks;
+		if((flags & EFFECT_USE_START_SCALE) != 0) {
+			effect->scaleRateX = (target - effect->scaleX) / ticks;
 			effect->scaleRateY =
-				(options->tgtScaleY - effect->scaleY) / script[3];
+				(options->targetScaleY - effect->scaleY) / script[3];
 		} else {
-			effect->scaleRateX = (tgt - toFIXED(1)) / ticks;
-			effect->scaleRateY = (options->tgtScaleY - toFIXED(1)) / script[3];
+			effect->scaleRateX = (target - toFIXED(1)) / ticks;
+			effect->scaleRateY =
+				(options->targetScaleY - toFIXED(1)) / script[3];
 		}
 	}
-	if((flg & EFFECT_USE_SCRIPT) != 0) {
+	if((flags & EFFECT_USE_SCRIPT) != 0) {
 		fdActorSelectAnimation(effect, 1);
 		fdActorStartScript(effect, options->script);
 	}
-	if((flg & EFFECT_USE_ROTATION) != 0)
-		spr->rotation = options->rotation;
-	if((flg & EFFECT_USE_SPIN) != 0)
+	if((flags & EFFECT_USE_ROTATION) != 0)
+		sprite->rotation = options->rotation;
+	if((flags & EFFECT_USE_SPIN) != 0)
 		effect->spin = options->spin;
-	if((flg & EFFECT_USE_UPDATE) != 0)
+	if((flags & EFFECT_USE_UPDATE) != 0)
 		effect->update = options->update;
 }
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -1891,7 +1900,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/cracked_tile_crack.h"
 
 /* A cracked tile gives way under Felix, who drops through it. */
-void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry)
+void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry)
 {
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	Sint32 x;
@@ -1900,16 +1909,16 @@ void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry)
 
 	mask = MAPGRID_SIZE / 2;
 	x = FIELD_METATILE(actor->x.fixed);
-	x |= (Sint16)(tbl->x & mask);
+	x |= (Sint16)(table->x & mask);
 	z = FIELD_METATILE(actor->z.fixed);
-	z |= (Sint16)(tbl->z & mask);
+	z |= (Sint16)(table->z & mask);
 	scLeaderCenterInMetatile();
-	fdScriptPlaySnd(SE_SPLASH);
-	fdMapGridCopyMetatiles(tbl->x, tbl->z + 2, 1, 1, x, z);
+	fdScriptPlaySound(SE_SPLASH);
+	fdMapGridCopyMetatiles(table->x, table->z + 2, 1, 1, x, z);
 	syFieldScriptWait(12);
 	actor->facing = FACING_SOUTH;
-	actor->motionFlg = 0;
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	actor->motionFlags = 0;
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	{
 		Uint32 winout = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
 			WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |
@@ -1918,20 +1927,20 @@ void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry)
 		REG_WINOUT = winout;
 	}
 	REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-	tbl->shown = 1;
+	table->shown = 1;
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	syFieldScriptWait(16);
 	for(x = 0; x < SINK_TICKS; x++) {
 		if(x == 5)
-			fdScriptPlaySnd(SE_DUST_PUFF);
+			fdScriptPlaySound(SE_DUST_PUFF);
 		actor->scaleX -= toFIXED(1) / 64;
 		actor->scaleY -= toFIXED(3) / 256;
 		actor->y.fixed -= toFIXED(6) / 10;
 		syWait(1);
 	}
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
-	tbl->shown = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
+	table->shown = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
@@ -1945,7 +1954,7 @@ void fdTeleportPlayWhirl(void);
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 #include "shared/cracked_tile_step.h"
 
 #include "shared/cracked_tile_place_landing.h"

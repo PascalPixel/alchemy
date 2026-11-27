@@ -51,14 +51,14 @@ void btTurnStartNoOperation(void)
 Sint32 btStagingPlanDaedalus(Uint16 *src, BATTLE_PLAN *plan)
 {
 	Uint16 ids[10];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 	Sint32 side = BATTLE_SIDE_MASK_ENEMIES;
 	Sint32 own;
 
 	if(src[0] > ALLY_MAX)
 		side = BATTLE_SIDE_MASK_PARTY;
-	cnt = btUnitListLivingIds(side, ids);
+	count = btUnitListLivingIds(side, ids);
 	/* The plan and BATTLE_STATE.skipPlayback after it. */
 	syWordsClearEntry(plan, sizeof(*plan) + sizeof(Sint32));
 	own = 0;
@@ -73,16 +73,16 @@ Sint32 btStagingPlanDaedalus(Uint16 *src, BATTLE_PLAN *plan)
 		plan->unitId = own;
 		plan->command = command;
 	}
-	for(i = 0; i < cnt; i++) {
-		plan->tgtIds[i] = ids[i];
-		plan->tgtOfs[i] = 0;
-		plan->tgtMultiplier[i] = 1;
-		plan->tgtCritical[i] = 0;
-		plan->tgtHit[i] = 1;
+	for(i = 0; i < count; i++) {
+		plan->targetIds[i] = ids[i];
+		plan->targetOffset[i] = 0;
+		plan->targetMultiplier[i] = 1;
+		plan->targetCritical[i] = 0;
+		plan->targetHit[i] = 1;
 	}
-	plan->tgtCnt = cnt;
+	plan->targetCount = count;
 	plan->abilityId = ABILITY_DAEDALUS_STRIKE;
-	plan->battleEff = EFFECT_SUMMON | SUMMON_EFFECT_DAEDALUS_STRIKE;
+	plan->battleEffect = EFFECT_SUMMON | SUMMON_EFFECT_DAEDALUS_STRIKE;
 }
 
 /* The plan of Megaera's second part (STAGING_MEGAERA): High Impact
@@ -91,23 +91,24 @@ Sint32 btStagingPlanDaedalus(Uint16 *src, BATTLE_PLAN *plan)
 void btStagingPlanHighImpact(BATTLE_PLAN *plan)
 {
 	Uint16 ids[10];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 	Sint32 side = BATTLE_SIDE_MASK_PARTY;
 
 	if(plan->unitId > ALLY_MAX)
 		side = BATTLE_SIDE_MASK_ENEMIES;
-	cnt = btUnitListLivingIds(side, ids);
-	for(i = 0; i < cnt; i++) {
-		plan->tgtIds[i] = ids[i];
-		plan->tgtOfs[i] = 0;
-		plan->tgtMultiplier[i] = 1;
-		plan->tgtCritical[i] = 0;
-		plan->tgtHit[i] = 1;
+	count = btUnitListLivingIds(side, ids);
+	for(i = 0; i < count; i++) {
+		plan->targetIds[i] = ids[i];
+		plan->targetOffset[i] = 0;
+		plan->targetMultiplier[i] = 1;
+		plan->targetCritical[i] = 0;
+		plan->targetHit[i] = 1;
 	}
-	plan->tgtCnt = cnt;
+	plan->targetCount = count;
 	plan->abilityId = ABILITY_HIGH_IMPACT;
-	plan->battleEff = 1 << EFFECT_VARIANT_SHIFT | BATTLE_EFFECT_CRUCIBLE_FIRE;
+	plan->battleEffect =
+		1 << EFFECT_VARIANT_SHIFT | BATTLE_EFFECT_CRUCIBLE_FIRE;
 }
 
 /* The plan of Iris's second part (STAGING_IRIS): Aurora Field
@@ -116,25 +117,25 @@ void btStagingPlanHighImpact(BATTLE_PLAN *plan)
 void btStagingPlanAuroraField(BATTLE_PLAN *plan)
 {
 	Uint16 ids[10];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
 	if(plan->unitId <= ALLY_MAX) {
-		cnt = btPartyPrepareMembers(ids);
-		cnt += btPartyPrepareReserveOwners(&ids[cnt]);
+		count = btPartyPrepareMembers(ids);
+		count += btPartyPrepareReserveOwners(&ids[count]);
 	} else {
-		cnt = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids);
+		count = btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids);
 	}
-	for(i = 0; i < cnt; i++) {
-		plan->tgtIds[i] = ids[i];
-		plan->tgtOfs[i] = 0;
-		plan->tgtMultiplier[i] = 1;
-		plan->tgtCritical[i] = 0;
-		plan->tgtHit[i] = 1;
+	for(i = 0; i < count; i++) {
+		plan->targetIds[i] = ids[i];
+		plan->targetOffset[i] = 0;
+		plan->targetMultiplier[i] = 1;
+		plan->targetCritical[i] = 0;
+		plan->targetHit[i] = 1;
 	}
-	plan->tgtCnt = cnt;
+	plan->targetCount = count;
 	plan->abilityId = ABILITY_AURORA_FIELD;
-	plan->battleEff = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT |
+	plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT |
 		BATTLE_EFFECT_REVERSE_STAR;
 	plan->hauntDamage = 0;
 }
@@ -143,10 +144,10 @@ void btStagingPlanAuroraField(BATTLE_PLAN *plan)
 void btPartyReturnAllToSpots(void)
 {
 	Uint16 ids[UNIT_MAX];
-	Sint32 cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, ids);
+	Sint32 count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, ids);
 	Sint32 i;
 
-	for(i = 0; i < cnt; i++)
+	for(i = 0; i < count; i++)
 		btMotionReturnToSpot(ids[i]);
 }
 
@@ -171,7 +172,7 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 	unit = syUnitGet(request->unitId);
 	if(unit->hp == 0)
 		return -1;
-	battle->actingAnm = POSE_CAST;
+	battle->actingAnimation = POSE_CAST;
 	/* An enemy settles its ability now, as it acts. */
 	if(unit->classId == CLASS_NONE)
 		btAIChooseAction(request, 1);
@@ -191,7 +192,7 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 		sySetScreenDist(BATTLE_CAMERA_DISTANCE, ratio, BATTLE_FAR_DEPTH);
 	}
 	if(delay != 0) {
-		view->tgtYaw = YAW_PARTY_ACTION;
+		view->targetYaw = YAW_PARTY_ACTION;
 		sySynch(delay);
 	}
 	/* Build the action, with the acting unit highlighted, and stage it. */
@@ -242,25 +243,25 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 			btStagingRunItem(&battle->plan, 0, request);
 			break;
 		case STAGING_TEAM_STRIKE: {
-			Uint8 swap = battle->plan.tgtIds[0];
+			Uint8 swap = battle->plan.targetIds[0];
 
-			battle->events.keepPendingSnd = 1;
-			battle->plan.tgtIds[0] = battle->plan.partnerId;
+			battle->events.keepPendingSound = 1;
+			battle->plan.targetIds[0] = battle->plan.partnerId;
 			battle->skipPlayback = 1;
 			btStagingRunPsynergyCast(&battle->plan, CAST_DJINNI);
 			battle->skipPlayback = 0;
-			battle->plan.tgtIds[0] = swap;
+			battle->plan.targetIds[0] = swap;
 			swap = battle->plan.unitId;
 			battle->plan.unitId = battle->plan.partnerId;
 			battle->plan.partnerId = swap;
-			battle->plan.battleEff = btUnitGetPartyAttackEffect(
+			battle->plan.battleEffect = btUnitGetPartyAttackEffect(
 				syUnitGet(battle->plan.unitId)->enemyId);
 			/* A partner striking its own side: "<partner>, stop hitting
 			   yourself!" at itself, "<partner> attacks an ally!" at another. */
-			if(((battle->plan.unitId ^ battle->plan.tgtIds[0]) >> 7) == 0) {
+			if(((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
 				mnMessageArgumentPushStub(
 					battle->plan.unitId, MESSAGE_ARGUMENT_ACTOR);
-				if(battle->plan.unitId == battle->plan.tgtIds[0])
+				if(battle->plan.unitId == battle->plan.targetIds[0])
 					mnBattleMessageShowAndWaitStub(
 						(Sint32)&MsgStopHittingYourself);
 				else
@@ -282,8 +283,8 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 			battle->skipPlayback = 0;
 			/* "Djinn are recovering more quickly!" */
 			mnBattleMessageShowAndWaitStub((Sint32)&MsgDjinnRecoverFaster);
-			kept =
-				btDjinnRecoveryCountDownSide(battle->plan.tgtIds[0] > ALLY_MAX);
+			kept = btDjinnRecoveryCountDownSide(
+				battle->plan.targetIds[0] > ALLY_MAX);
 			/* "But no Djinn are in Recovery!" */
 			if(kept == 0)
 				mnBattleMessageShowAndWaitStub(
@@ -332,7 +333,7 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 finish:
 	btBackgroundSetMode(
 		BATTLE_BACKGROUND_ZOOMED, (RamHeapSlots->battleState)->bg, 0);
-	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	return fled;
 }
 
@@ -342,39 +343,39 @@ finish:
 void btStagingBuildTargetList(
 	BATTLE_PLAN *plan, BATTLE_PRESENTATION_STATE *effect)
 {
-	Sint16 *outputTgt;
-	Uint32	flg;
-	Sint32	livingTgts;
-	Sint32	tgtIdx;
-	Uint8  *inputTgt;
+	Sint16 *outputTarget;
+	Uint32	flags;
+	Sint32	livingTargets;
+	Sint32	targetIndex;
+	Uint8  *inputTarget;
 
-	livingTgts = 0;
+	livingTargets = 0;
 	effect->prelude = 0;
-	flg = plan->battleEff;
-	effect->kind = flg & EFFECT_ID_MASK;
-	effect->variant = (flg & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
+	flags = plan->battleEffect;
+	effect->kind = flags & EFFECT_ID_MASK;
+	effect->variant = (flags & EFFECT_VARIANT_MASK) >> EFFECT_VARIANT_SHIFT;
 	effect->actor = plan->unitId;
-	tgtIdx = 0;
-	if(tgtIdx < plan->tgtCnt) {
-		inputTgt = plan->tgtIds;
-		outputTgt = effect->actors;
+	targetIndex = 0;
+	if(targetIndex < plan->targetCount) {
+		inputTarget = plan->targetIds;
+		outputTarget = effect->actors;
 		do {
-			if(btUnitIsListed(*inputTgt) &&
-				(syUnitGet(*inputTgt)->hp != 0 ||
-					(plan->battleEff & EFFECT_ON_DOWNED))) {
-				*outputTgt++ = *inputTgt;
-				livingTgts++;
+			if(btUnitIsListed(*inputTarget) &&
+				(syUnitGet(*inputTarget)->hp != 0 ||
+					(plan->battleEffect & EFFECT_ON_DOWNED))) {
+				*outputTarget++ = *inputTarget;
+				livingTargets++;
 			}
-			tgtIdx++;
-			inputTgt++;
-		} while(tgtIdx < plan->tgtCnt);
+			targetIndex++;
+			inputTarget++;
+		} while(targetIndex < plan->targetCount);
 	}
-	if(livingTgts == 0) {
-		effect->actors[0] = plan->tgtIds[0];
-		livingTgts = 1;
+	if(livingTargets == 0) {
+		effect->actors[0] = plan->targetIds[0];
+		livingTargets = 1;
 	}
-	effect->firstTgt = plan->tgtIds[0];
-	effect->cnt = livingTgts;
+	effect->firstTarget = plan->targetIds[0];
+	effect->count = livingTargets;
 	effect->range = 1;
 }
 
@@ -390,7 +391,7 @@ Sint32 btStagingRunFlee(BATTLE_PLAN *plan)
 	Sint32					 escaped = 0;
 
 	completed = FALSE;
-	view->tgtYaw = YAW_PARTY_ACTION;
+	view->targetYaw = YAW_PARTY_ACTION;
 	view->busy = 1;
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
 
@@ -406,17 +407,17 @@ Sint32 btStagingRunFlee(BATTLE_PLAN *plan)
 			btMessageWaitForAdvance();
 		} else {
 			Sint16 unitIds[UNIT_MAX];
-			Sint32 idx =
+			Sint32 index =
 				btUnitListLiving(BATTLE_SIDE_MASK_PARTY, (Uint16 *)unitIds) - 1;
 
-			while(idx != -1) {
-				UNIT *unit = syUnitGet(unitIds[idx]);
+			while(index != -1) {
+				UNIT *unit = syUnitGet(unitIds[index]);
 
 				if(unit->stun == 0 && unit->sleep == 0) {
-					btMotionSetupEscapeObject(unitIds[idx]);
+					btMotionSetupEscapeObject(unitIds[index]);
 					sySynch(8);
 				}
-				idx--;
+				index--;
 			}
 			completed = TRUE;
 		}
@@ -446,8 +447,8 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	Uint16					  units[UNIT_MAX];
 	BATTLE_PRESENTATION_STATE state;
 	Uint32					  actor;
-	Uint32					  tgt;
-	Uint32					  cnt;
+	Uint32					  target;
+	Uint32					  count;
 	Uint32					  i;
 	Uint32					  kept;
 	MOTION_OBJECT			 *object;
@@ -456,14 +457,14 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	   usual view. */
 	btStagingBuildTargetList(plan, &state);
 	actor = plan->unitId;
-	tgt = plan->tgtIds[0];
-	if(plan->battleEff & EFFECT_SUMMON) {
+	target = plan->targetIds[0];
+	if(plan->battleEffect & EFFECT_SUMMON) {
 		BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
 
 		if(actor <= ALLY_MAX)
-			view->tgtYaw = YAW_PARTY_ACTION;
+			view->targetYaw = YAW_PARTY_ACTION;
 		else
-			view->tgtYaw = YAW_BEHIND_ENEMIES;
+			view->targetYaw = YAW_BEHIND_ENEMIES;
 		view->ticks = 60;
 	} else {
 		BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
@@ -472,37 +473,37 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 		yaw = YAW_ENEMY_ACTION;
 		if(actor <= ALLY_MAX)
 			yaw = YAW_PARTY_ACTION;
-		if(view->tgtYaw != yaw)
-			view->tgtYaw = yaw;
+		if(view->targetYaw != yaw)
+			view->targetYaw = yaw;
 	}
 
 	/* The unit raises its hand and glows; the side not targeted fades out. */
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
-	mnPartyStatDrawStub(
-		RamHeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
-	object = btObjectGet(actor)->obj;
+	mnPartyStatusDrawStub(
+		RamHeapSlots->battleState->partyStatus & ~PARTY_STATUS_SHOW_PP);
+	object = btObjectGet(actor)->object;
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
 	i = 0;
-	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
-	for(; i != cnt; i++) {
+	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
+	for(; i != count; i++) {
 		if(units[i] == BATTLE_UNIT_REMOVED)
 			continue;
 		if((mode & STAGING_NO_CAST) || units[i] != actor) {
 			Uint32 unit = units[i];
 
-			if((tgt <= ALLY_MAX) != (unit <= ALLY_MAX))
-				btHighlightSetSprMode(unit, SPRITE_SEMI_TRANSPARENT);
+			if((target <= ALLY_MAX) != (unit <= ALLY_MAX))
+				btHighlightSetSpriteMode(unit, SPRITE_SEMI_TRANSPARENT);
 		} else {
 			fdActorSelectAnimationStub(
-				(ACTOR *)object, RamHeapSlots->battleState->actingAnm);
+				(ACTOR *)object, RamHeapSlots->battleState->actingAnimation);
 		}
 	}
 	if(!(mode & STAGING_NO_CAST)) {
-		sySndPlayStub(SE_CAST);
+		sySoundPlayStub(SE_CAST);
 		btElementGlowPlay(state.actor, plan->element, GLOW_STAR_FIELD, 0);
 	}
 	if(mode & STAGING_HIDE_ACTOR)
-		btHighlightSetSprMode(actor, SPRITE_SEMI_TRANSPARENT);
+		btHighlightSetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
 	for(i = 0; i != BLEND_WEIGHT_MAX; i++) {
 		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
 		sySynch(1);
@@ -521,59 +522,60 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	} else {
 		/* Only the target side stays on the field. */
 		kept = 0;
-		for(i = 0; i < cnt; i++) {
+		for(i = 0; i < count; i++) {
 			Uint32 unit = units[i];
 
 			if(unit == actor) {
 				if(!(mode & STAGING_HIDE_ACTOR))
 					units[kept++] = actor;
-			} else if((tgt <= ALLY_MAX) == (unit <= ALLY_MAX)) {
+			} else if((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
 				units[kept++] = unit;
 			}
 		}
 		units[kept] = BATTLE_UNIT_LIST_END;
 		btActorSpawnObjectsForList((Sint16 *)units, 0);
-		for(i = 0; i < plan->tgtCnt; i++)
-			units[i] = plan->tgtIds[i];
+		for(i = 0; i < plan->targetCount; i++)
+			units[i] = plan->targetIds[i];
 		units[i] = BATTLE_UNIT_LIST_END;
 		/* Each target's colour modes are saved beside the effect command. */
-		for(i = 0; i != state.cnt; i++) {
-			SPR	  *anm = btActorGetSpr(btObjectGet(state.actors[i])->obj, 0);
+		for(i = 0; i != state.count; i++) {
+			SPR *animation =
+				btActorGetSprite(btObjectGet(state.actors[i])->object, 0);
 			Uint32 child;
 
-			for(child = 0; child != anm->cnt - 1; child++)
-				state.params[i][child] = anm->entries[child]->colMode;
+			for(child = 0; child != animation->count - 1; child++)
+				state.params[i][child] = animation->entries[child]->colorMode;
 		}
 		/* The side the battle effect plays on: the targets'. */
-		if(plan->battleEff & EFFECT_SUMMON) {
-			if(tgt <= ALLY_MAX)
+		if(plan->battleEffect & EFFECT_SUMMON) {
+			if(target <= ALLY_MAX)
 				state.side = EFFECT_SIDE_PARTY;
 			else
 				state.side = EFFECT_SIDE_ENEMIES;
 		} else {
-			if(plan->tgtIds[0] <= ALLY_MAX)
+			if(plan->targetIds[0] <= ALLY_MAX)
 				state.side = EFFECT_SIDE_PARTY;
 			else
 				state.side = EFFECT_SIDE_ENEMIES;
 		}
-		if(plan->battleEff & EFFECT_OTHER_SIDE)
+		if(plan->battleEffect & EFFECT_OTHER_SIDE)
 			state.side ^= 1;
 		/* The battle effect runs to its end while playback, an event, plays
 		   each target's outcome from the tick the blow lands. */
 		sySetEvent(btPlaybackRun, EVENT_PASS_TICK);
-		if(plan->battleEff & EFFECT_SUMMON)
+		if(plan->battleEffect & EFFECT_SUMMON)
 			btEffectRunSummonStub((Sint32 *)&state);
 		else
-			BATTLE_EFFECT_RUN(&state, plan->battleEff);
+			BATTLE_EFFECT_RUN(&state, plan->battleEffect);
 		btPlaybackWaitForReady();
 	}
 
 	/* Everyone back: the faded units fade in over 16 ticks and every colour
 	   mode is cleared. */
 	btObjectPut();
-	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
+	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, units);
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		Uint32 unit;
 
 		if(units[i] == BATTLE_UNIT_REMOVED)
@@ -585,15 +587,15 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 			state.kind == BATTLE_EFFECT_GAIA)
 			continue;
 		unit = units[i];
-		if((tgt <= ALLY_MAX) != (unit <= ALLY_MAX))
-			btHighlightSetSprMode(unit, SPRITE_SEMI_TRANSPARENT);
+		if((target <= ALLY_MAX) != (unit <= ALLY_MAX))
+			btHighlightSetSpriteMode(unit, SPRITE_SEMI_TRANSPARENT);
 	}
 	for(i = 0; i != BLEND_WEIGHT_MAX; i++) {
 		REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
 		sySynch(1);
 	}
-	for(i = 0; i != cnt; i++)
-		btHighlightSetSprMode(units[i], SPRITE_OPAQUE);
+	for(i = 0; i != count; i++)
+		btHighlightSetSpriteMode(units[i], SPRITE_OPAQUE);
 	btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 	sySynch(1);
 	return 0;
@@ -604,14 +606,14 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
    waits for the message to advance. */
 UNREAD_RESULT btStagingRunMessages(BATTLE_PLAN *plan, Sint32 unused)
 {
-	Sint32 tgtIdx;
+	Sint32 targetIndex;
 
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
-	if(plan->tgtCnt == 0) {
+	if(plan->targetCount == 0) {
 		btMessageWaitForAdvance();
 	} else {
-		for(tgtIdx = 0; tgtIdx < plan->tgtCnt; tgtIdx++) {
-			btAbilityApplyToTarget(plan, tgtIdx);
+		for(targetIndex = 0; targetIndex < plan->targetCount; targetIndex++) {
+			btAbilityApplyToTarget(plan, targetIndex);
 			btPlaybackRunAll();
 		}
 	}

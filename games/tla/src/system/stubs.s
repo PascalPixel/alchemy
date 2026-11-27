@@ -19,17 +19,17 @@ StubsSystem:
 	stub syVectorAddPolarOffsetStub, syVectorAddPolarOffset
 	stub syIntFunctionStub, syIntFunction
 	stub syHeapInitStub, syHeapInit
-	stub syHeapSlotAllocStub, syHeapSlotAlloc
-	stub syHeapSlotAllocEWRAMStub, syHeapSlotAllocEWRAM
+	stub syHeapSlotAllocateStub, syHeapSlotAllocate
+	stub syHeapSlotAllocateEWRAMStub, syHeapSlotAllocateEWRAM
 	stub syHeapSlotReleaseStub, syHeapSlotRelease
 	stub syHeapGetRemainingIWRAMStub, syHeapGetRemainingIWRAM
 	stub syHeapGetRemainingEWRAMStub, syHeapGetRemainingEWRAM
-	stub syHeapAllocStub, syHeapAlloc
-	stub syHeapAllocEWRAMStub, syHeapAllocEWRAM
+	stub syHeapAllocateStub, syHeapAllocate
+	stub syHeapAllocateEWRAMStub, syHeapAllocateEWRAM
 	stub syHeapReleaseStub, syHeapRelease
 	stub syPrintStub, syPrint
 	stub syPrintHexStub, syPrintHex
-	stub syPrintDecStub, syPrintDec
+	stub syPrintDecimalStub, syPrintDecimal
 	stub syPrintBlanksStub, syPrintBlanks
 	stub syDecompressByteLZStub, syDecompressByteLZ
 	stub syDecompressTaggedLZStub, syDecompressTaggedLZ
@@ -39,10 +39,10 @@ StubsSystem:
 	stub syVRAMCacheLoadStub, syVRAMCacheLoad
 	stub syVRAMCacheFindFreeEntryStub, syVRAMCacheFindFreeEntry
 	stub syPrintClearStub, syPrintClear
-	stub syOAMMatrixAllocFromTransformStub, syOAMMatrixAllocFromTransform
-	stub syOAMAddSprAtDepthClampedStub, syOAMAddSprAtDepthClamped
+	stub syOAMMatrixAllocateFromTransformStub, syOAMMatrixAllocateFromTransform
+	stub syOAMAddSpriteAtDepthClampedStub, syOAMAddSpriteAtDepthClamped
 	stub syWindowLoadGraphicsStub, syWindowLoadGraphics
-	stub syPaletteLoadBasicSprColsStub, syPaletteLoadBasicSprCols
+	stub syPaletteLoadBasicSpriteColorsStub, syPaletteLoadBasicSpriteColors
 	stub syInitMatrixStub, syInitMatrix
 	stub syUnitMatrixCurrentStub, syUnitMatrixCurrent
 	stub syPushMatrixStub, syPushMatrix
@@ -88,9 +88,9 @@ StubsSystem:
 	stub syIOWriteQueueClearBits32Stub, syIOWriteQueueClearBits32
 	stub syInputResetKeyRepeatStub, syInputResetKeyRepeat
 	stub syLookAtStub, syLookAt
-	stub sySerialWaitForStatMaskStub, sySerialWaitForStatMask
+	stub sySerialWaitForStatusMaskStub, sySerialWaitForStatusMask
 	stub sySerialRemoveIRQHandlersStub, sySerialRemoveIRQHandlers
-	stub sySndLoadReverbCodeStub, sySndLoadReverbCode
+	stub sySoundLoadReverbCodeStub, sySoundLoadReverbCode
 	stub sySerialStartSendStub, sySerialStartSend
 	stub sySerialStartReceiveStub, sySerialStartReceive
 	stub sySerialWaitForSendStub, sySerialWaitForSend

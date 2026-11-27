@@ -320,9 +320,9 @@ static void scValeCaveRevealHiddenTile(void)
 static inline void scValeCaveSinkActorWithParticles(
 	Sint32 actorId, Sint32 baseX, Sint32 baseZ, EFFECT_OPTIONS *particleOptions)
 {
-	Uint32 frm;
+	Uint32 frame;
 
-	for(frm = 0; frm < 68; frm++) {
+	for(frame = 0; frame < 68; frame++) {
 		FIXED particleX = toFIXED(syRandomBelow(17)) + baseX;
 		FIXED particleZ = toFIXED(syRandomBelow(14)) + baseZ;
 
@@ -359,16 +359,17 @@ static void scValeCaveMoveWestCratesIntoWater(void)
 			fdActorGet(ACTOR_WEST_CRATES)->x.fixed + toFIXED(16), 0,
 			fdActorGet(ACTOR_WEST_CRATES)->z.fixed + toFIXED(52),
 			SPRITE_CRATES);
-		fdActorGet(ACTOR_WEST_CRATES)->motionFlg = 0;
+		fdActorGet(ACTOR_WEST_CRATES)->motionFlags = 0;
 		/* Surround the sinking crates with one particle per tick. */
 		options.startScaleX = toFIXED(3) / 5;
 		options.startScaleY = toFIXED(3) / 5;
-		options.pal = SPRITE_COLOR_WHITE;
-		sySndPlay(SE_BURST);
+		options.palette = SPRITE_COLOR_WHITE;
+		sySoundPlay(SE_BURST);
 		scValeCaveSinkActorWithParticles(
 			ACTOR_WEST_CRATES, toFIXED(368), toFIXED(624), &options);
 		fdMapGridCopyMetatileAttributes(23, 41, 1, 1, 23, 39);
-		fdActorGet(ACTOR_WEST_CRATES)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_WEST_CRATES)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
 		gmFlagSet(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
 		fdActorGet(ACTOR_WEST_CRATES)->y.fixed = -toFIXED(8);
 		fdActorSetAnimation(ACTOR_WEST_CRATES, CRATES_ANIMATION_SUNK);
@@ -404,16 +405,17 @@ static void scValeCaveMoveEastCratesIntoWater(void)
 		   where scValeCaveMoveWestCratesIntoWater clears its own. These sink
 		   all the same, since the sinking writes their height directly and
 		   nothing pulls them back up, as the recording of this script shows. */
-		fdActorGet(ACTOR_WEST_CRATES)->motionFlg = 0;
+		fdActorGet(ACTOR_WEST_CRATES)->motionFlags = 0;
 		/* Surround the sinking crates with one particle per tick. */
 		options.startScaleX = toFIXED(3) / 5;
 		options.startScaleY = toFIXED(3) / 5;
-		options.pal = SPRITE_COLOR_WHITE;
-		sySndPlay(SE_BURST);
+		options.palette = SPRITE_COLOR_WHITE;
+		sySoundPlay(SE_BURST);
 		scValeCaveSinkActorWithParticles(
 			ACTOR_EAST_CRATES, toFIXED(432), toFIXED(656), &options);
 		fdMapGridCopyMetatileAttributes(31, 39, 2, 1, 27, 41);
-		fdActorGet(ACTOR_EAST_CRATES)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_EAST_CRATES)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
 		gmFlagSet(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
 		fdActorGet(ACTOR_EAST_CRATES)->y.fixed = -toFIXED(8);
 		fdActorSetAnimation(ACTOR_EAST_CRATES, CRATES_ANIMATION_SUNK);
@@ -444,10 +446,10 @@ static Bool scValeCaveLeapOffRidingLog(Sint32 unusedArgument)
 {
 	FIELD_COORDINATE landingPos[3];
 	ACTOR			*leader;
-	Sint32			 savedMotionFlg;
+	Sint32			 savedMotionFlags;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlg = leader->motionFlg;
+	savedMotionFlags = leader->motionFlags;
 #if JUMP_LANDS_ON_CELL_CENTER
 	landingPos[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	landingPos[1].fixed = leader->y.fixed;
@@ -462,18 +464,18 @@ static Bool scValeCaveLeapOffRidingLog(Sint32 unusedArgument)
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(leader, 0);
+		leader->velocityY = toFIXED(4);
+		leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(leader, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER, landingPos[0].part[0].integer,
 			landingPos[2].part[0].integer);
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-		leader->motionFlg = savedMotionFlg;
+		fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+		leader->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -500,8 +502,8 @@ static void scValeCaveKiteRunsOff(void)
 		fdScriptWait(20);
 		fdActorSetSpeed(ACTOR_KITE, 1);
 		fdActorWalkToAndWait(ACTOR_KITE, 792, 248);
-		sySndPlay(SE_JUMP);
-		fdActorGet(ACTOR_KITE)->velY = toFIXED(8);
+		sySoundPlay(SE_JUMP);
+		fdActorGet(ACTOR_KITE)->velocityY = toFIXED(8);
 		fdActorWalkToAndWait(ACTOR_KITE, 792, 280);
 		fdScriptWait(20);
 		fdActorFaceDirection(ACTOR_KITE, FACING_NORTH, 20);
@@ -580,19 +582,20 @@ static void scValeCavePushLogOverEdge(void)
 		/* At the ledge's edge the log slides west and drops. */
 		if(FIELD_METATILE(probe.pos.x) == LEDGE_EDGE_COLUMN) {
 			fdActorSetAnimation(probe.actorSlot, LOG_ANIMATION_ROLL_WEST);
-			fdActorGet(probe.actorSlot)->motionFlg = 0;
+			fdActorGet(probe.actorSlot)->motionFlags = 0;
 			fdActorGet(probe.actorSlot)->bounce = 0;
 			fdActorSetDestinationOffset(probe.actorSlot, -12, 0);
 			fdActorWaitForMoveById(probe.actorSlot);
 			fdActorSetAnimation(probe.actorSlot, LOG_ANIMATION_ROLL_WEST);
-			fdActorSetSprPriority(ACTOR_EAST_LOG, 3);
-			fdActorGet(probe.actorSlot)->motionFlg =
+			fdActorSetSpritePriority(ACTOR_EAST_LOG, 3);
+			fdActorGet(probe.actorSlot)->motionFlags =
 				ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			fdActorSetDestinationOffset(probe.actorSlot, -6, 0);
 			scValeCaveWaitForActorLanding(fdActorGet(probe.actorSlot));
 			fdActorSetAnimation(probe.actorSlot, LOG_ANIMATION_DROP_IN);
 
-			fdActorGet(probe.actorSlot)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(probe.actorSlot)->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT;
 			/* The metatiles it held on the ledge, and its landing, become open
 			   floor. */
 			scMapGridFillCollisionRectangle(0, FIELD_METATILE(probe.pos.x),
@@ -606,7 +609,7 @@ static void scValeCavePushLogOverEdge(void)
 			scMapGridFillCollisionRectangle(
 				0, 16, 16, 1, 4, METATILE_BEHAVIOR_NORMAL);
 			gmFlagSet(FLAG_VALE_CAVE_EAST_LOG_PUSHED_OVER_EDGE);
-			sySndPlay(SE_LOG_FALL);
+			sySoundPlay(SE_LOG_FALL);
 		}
 	}
 	fdScriptEnd();
@@ -623,29 +626,30 @@ static void scValeCavePushLogOffLedge(void)
 	fdScriptWait(15);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
 	fdScriptWait(4);
-	fdScriptPlaySnd(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_MOVE);
+	fdScriptPlaySound(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSetSpeedAndAcceleration(ACTOR_WEST_LOG, 0.5, 0.1);
 	fdActorSetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_ROLL_EAST);
-	fdActorGet(ACTOR_WEST_LOG)->motionFlg = 0;
+	fdActorGet(ACTOR_WEST_LOG)->motionFlags = 0;
 	fdActorGet(ACTOR_WEST_LOG)->bounce = 0;
 	fdActorSetDestinationOffset(ACTOR_WEST_LOG, 12, 0);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorWaitForMoveById(ACTOR_WEST_LOG);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdActorSetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_ROLL_WEST);
-	fdActorGet(ACTOR_WEST_LOG)->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorGet(ACTOR_WEST_LOG)->motionFlags =
+		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdActorSetDestinationOffset(ACTOR_WEST_LOG, 6, 0);
 	scValeCaveWaitForActorLanding(fdActorGet(ACTOR_WEST_LOG));
 	fdActorSetAnimation(ACTOR_WEST_LOG, LOG_ANIMATION_DROP_IN);
-	fdActorSetSprPriority(ACTOR_WEST_LOG, 3);
-	fdActorGet(ACTOR_WEST_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(ACTOR_WEST_LOG, 3);
+	fdActorGet(ACTOR_WEST_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	scMapGridFillCollisionRectangle(0, 12, 16, 1, 4, METATILE_BEHAVIOR_NORMAL);
 	scMapGridFillCollisionRectangle(0, 13, 16, 1, 4, METATILE_BEHAVIOR_NORMAL);
 	gmFlagSet(FLAG_VALE_CAVE_WEST_LOG_PUSHED_OFF_LEDGE);
-	sySndPlay(SE_LOG_FALL);
+	sySoundPlay(SE_LOG_FALL);
 	fdScriptEnd();
 }
 
@@ -663,10 +667,10 @@ static void scValeCavePushLogNorth(void)
 		fdActorSetSpeedAndAcceleration(ACTOR_SOUTH_LOG, 0.25, 0.5);
 		fdActorSetDestinationOffset(ACTOR_SOUTH_LOG, 0, -16);
 		fdScriptWait(45);
-		sySndPlay(SE_LOG_FALL);
+		sySoundPlay(SE_LOG_FALL);
 		fdActorSetAnimation(ACTOR_SOUTH_LOG, LOG_ANIMATION_DROP_IN);
 
-		fdActorGet(ACTOR_SOUTH_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_SOUTH_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		scMapGridFillCollisionRectangle(0, 13,
 			(FIELD_METATILE(probe.pos.z)) - 1, 4, 2, METATILE_BEHAVIOR_NORMAL);
 		if(FIELD_METATILE(probe.pos.z) == SOUTH_LOG_SOUTH_ROW) {
@@ -707,8 +711,8 @@ Sint32 scInit(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 		sySynch(1);
-		fdActorSetSprPriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
-		fdActorSetSprPriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
+		fdActorSetSpritePriority(ACTOR_VALE_CAVE_MOUTH_FIRST_LOG, 3);
+		fdActorSetSpritePriority(ACTOR_VALE_CAVE_MOUTH_SECOND_LOG, 3);
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
 	}
 	scValeCaveApplyEntryState();
@@ -723,10 +727,10 @@ Sint32 scInit(void)
    number. */
 static void scValeCaveLeaveRoom(void)
 {
-	Sint32 exitNum = FieldStateWork->stepCue;
+	Sint32 exitNumber = FieldStateWork->stepCue;
 
-	sySndPlay(SE_MAP_EXIT);
-	syImportScriptSetExitRequest(exitNum);
+	sySoundPlay(SE_MAP_EXIT);
+	syImportScriptSetExitRequest(exitNumber);
 }
 
 /* Puts the riding log at the end of its pool where it was left, and makes that
@@ -754,26 +758,26 @@ static void scValeCaveUpdateRidingLogPassage(void)
    east side, where a post leads to the passage into the room of logs. */
 static void scValeCaveRideLogEast(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_RIDING_LOG, 112, 0);
 	scActorFloatLogWithLeader(ACTOR_RIDING_LOG, 80, 0);
 	gmFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
 	sySynch(2);
 	scValeCaveUpdateRidingLogPassage();
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 }
 
 /* Walking west onto the riding log at the east end of its pool (metatile (35,
    35)) has it float back west along the north wall with Isaac on it. */
 static void scValeCaveRideLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_RIDING_LOG, -112, 0);
 	scActorFloatLogWithLeader(ACTOR_RIDING_LOG, -80, 0);
 	gmFlagClear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
 	sySynch(2);
 	scValeCaveUpdateRidingLogPassage();
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 }
 
 /* Centers an actor on a map metatile and gives it underfoot priority. */
@@ -783,9 +787,9 @@ static void scValeCaveCenterActorOnMetatile(
 	ACTOR *actor = fdActorGet(actorId);
 
 	if(actor != NULL) {
-		fdActorSetSprPriority(actorId, 3);
+		fdActorSetSpritePriority(actorId, 3);
 		actor->layer = 2;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		actor->x.fixed = FIELD_METATILE_CENTER(column);
 		actor->z.fixed = FIELD_METATILE_CENTER(row);
 	}
@@ -804,8 +808,8 @@ static void scValeCaveApplyEntryState(void)
 		case VALE_CAVE_KITE_WEST_FROM_EAST:
 		case VALE_CAVE_KITE_WEST_FROM_SOUTH:
 		case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
-			fdActorSetSprPriority(ACTOR_SECOND_STANDING_LOG, 3);
-			fdActorSetSprPriority(ACTOR_SECOND_STANDING_CRATES, 3);
+			fdActorSetSpritePriority(ACTOR_SECOND_STANDING_LOG, 3);
+			fdActorSetSpritePriority(ACTOR_SECOND_STANDING_CRATES, 3);
 			/* A still actor of sprite 223 (crate.png, a wooden crate) that
 			   shows nothing. XXX (no evidence): what it and the chest below
 			   were meant to show; the sprites alone hold neither, and neither
@@ -889,7 +893,7 @@ static void scValeCaveApplyEntryState(void)
 				fdMapGridCopyMetatileAttributes(14, 13, 1, 1, 14, 15);
 			} else {
 				scPushedActorBlockFootprint(ACTOR_SOUTH_LOG);
-				fdActorSetSprPriority(ACTOR_SOUTH_LOG, 3);
+				fdActorSetSpritePriority(ACTOR_SOUTH_LOG, 3);
 			}
 			break;
 		}

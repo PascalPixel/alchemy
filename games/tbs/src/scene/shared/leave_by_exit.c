@@ -8,5 +8,5 @@ static void scLeaveByExit(void)
 	Sint16		*cue = (Sint16 *)&state->stepCue;
 
 	syImportScriptSetExitRequest(*cue);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 }

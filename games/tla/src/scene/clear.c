@@ -49,11 +49,11 @@ Sint32 scClearEnterPassword(void);
 
 extern Sint8 ClearCursorBob[];
 void		 scClearApplyImportedData(Sint32 mode, Uint8 *data);
-/* Decodes length symbols of an entered password (src) into dst, undoing The
+/* Decodes length symbols of an entered password (src) into dest, undoing The
    Broken Seal's FileScreenEncodePassword: each symbol less its place, the
    checksum symbols skipped, six bits a symbol, then every byte but the last
    XORed with the last. Returns the bytes written. */
-Sint32		  scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst);
+Sint32		  scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dest);
 extern Uint16 ClearImportedFlags[];
 
 struct WINDOW;
@@ -134,19 +134,19 @@ void scClearLoadBackground(void)
 	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
 	((MAP_STATE *)RamHeapSlots->mapGrid)->dispcnt =
 		DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 }
 
 /* The event that fades BG0 and the sprites in over the logo, a step of the
    blend every second tick. */
 void scClearFadeInBlend(void)
 {
-	Sint32 frm;
+	Sint32 frame;
 	Uint32 level;
 
-	frm = ClearBlendTick[0] + 1;
-	ClearBlendTick[0] = frm;
-	level = (Uint16)frm >> 1;
+	frame = ClearBlendTick[0] + 1;
+	ClearBlendTick[0] = frame;
+	level = (Uint16)frame >> 1;
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
 		BLDCNT_TGT1_BG0 | BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND |
 			BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -174,7 +174,7 @@ void scClearCheckButtonCodes(void)
 				ClearCodeHeld = 1;
 				if(ClearButtonCode[ClearCodeProgress] == 0) {
 					ClearCodeUnlocked = 1;
-					fdScriptPlaySnd(SE_CHIME);
+					fdScriptPlaySound(SE_CHIME);
 				}
 			} else {
 				ClearCodeProgress = 0;
@@ -191,7 +191,7 @@ void scClearCheckButtonCodes(void)
 				ClearExtraCodeHeld = 1;
 				if(ClearExtraButtonCode[ClearExtraCodeProgress] == 0) {
 					ClearExtraCodeUnlocked = 1;
-					fdScriptPlaySnd(SE_CHIME);
+					fdScriptPlaySound(SE_CHIME);
 				}
 			} else {
 				ClearExtraCodeProgress = 0;
@@ -268,7 +268,7 @@ Sint32 scInit(void)
 {
 	Bool   started = FALSE;
 	Uint32 mask;
-	Sint32 result, i, limit, stat, msg, recovery;
+	Sint32 result, i, limit, status, msg, recovery;
 
 	scClearLoadBackground();
 	sySetEvent(scClearCheckButtonCodes, EVENT_PASS_TICK);
@@ -289,8 +289,8 @@ Sint32 scInit(void)
 			}
 			/* "You cannot resume your adventure with this data." */
 			mnFieldMessageShow(msg + 1, FIELD_MESSAGE_ZOOM);
-			/* Marks the file cleared (BupFileSummary's sendFlg). */
-			MainRoutineStateWork.sendFlg = 1;
+			/* Marks the file cleared (BupFileSummary's sendFlag). */
+			MainRoutineStateWork.sendFlag = 1;
 			gmPartyAddMember(JENNA);
 			gmPartyAddMember(SHEBA);
 			gmPartyAddMember(PIERS);
@@ -301,7 +301,7 @@ Sint32 scInit(void)
 		} while(i == -1);
 		fdScriptWait(60);
 		fdScriptFinishScreenTransition();
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		fdScriptWait(300);
 		fdScriptSetDestination(SCENE_TITLE, TITLE_START);
 		return 0;
@@ -328,8 +328,8 @@ top:
 	if(result == SAVE_ACTION_NEW_GAME) {
 		/* Felix is named, and with either code Jenna, Sheba and Piers too. */
 		gmMainRoutineStateInitDefaults();
-		mnWindowColApply(
-			MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+		mnWindowColorApply(MainRoutineStateWork.windowHue,
+			MainRoutineStateWork.windowBrightness);
 		i = FELIX;
 		limit = FELIX + 1;
 		for(;;) {
@@ -364,12 +364,12 @@ top:
 				}
 				if(result == TRANSFER_METHOD_CABLE) {
 					KEEP_SAVE_IMAGE();
-					stat = scClearReceiveByLink();
-					if(stat != -1) {
-						mnStatScreenRun();
+					status = scClearReceiveByLink();
+					if(status != -1) {
+						mnStatusScreenRun();
 					}
 					RESTORE_SAVE_IMAGE()
-					if(stat == -1) {
+					if(status == -1) {
 						continue;
 					}
 					Call3((void (*)())gmDataTransferApply,
@@ -378,9 +378,9 @@ top:
 					KEEP_SAVE_IMAGE();
 					gmMainRoutineStateInitDefaults();
 #if !NEW_GAME_IGNORES_PASSWORD_CANCEL
-					stat = scClearEnterPassword();
+					status = scClearEnterPassword();
 					RESTORE_SAVE_IMAGE()
-					if(stat == -1) {
+					if(status == -1) {
 						continue;
 					}
 #else
@@ -435,7 +435,8 @@ top:
 					{
 						MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
-						mnWindowColApply(party->winHue, party->winBrightness);
+						mnWindowColorApply(
+							party->windowHue, party->windowBrightness);
 						RESTORE_SAVE_IMAGE()
 						gmClearDataApply(TRANSFERRED_SAVE);
 						party->difficulty = DIFFICULTY_EASY;
@@ -471,7 +472,7 @@ top:
 		{
 			MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
-			mnWindowColApply(party->winHue, party->winBrightness);
+			mnWindowColorApply(party->windowHue, party->windowBrightness);
 			if(party->buildStamp != gmBuildStampGetTime()) {
 				RETURN_TO_SAVED(party)
 			} else if(mask = KEY_L | KEY_START, (PerWork.data & mask) == mask) {
@@ -526,7 +527,7 @@ top:
 			party->leaderActorId = ACTOR_FELIX;
 			if(fdScriptGetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT))
 				gmInventorySnapshotRestore();
-			mnWindowColApply(party->winHue, party->winBrightness);
+			mnWindowColorApply(party->windowHue, party->windowBrightness);
 			fdScriptClearFlag(FLAG_KEEP_PARTY_POSITION);
 			fdScriptClearFlag(FLAG_MENU_OPEN);
 			party->ownerOverride = 0;
@@ -541,8 +542,8 @@ link:
 	result = mnSaveChooseAndLoadFile(FILE_LIST_UPDATE);
 	if(result == -1)
 		goto top;
-	mnWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	for(;;) {
 		/* The menu reads only its mode's lowest bit: the transfer method. */
 		result = mnIconMenuChooseSendOption(2);
@@ -551,12 +552,12 @@ link:
 		}
 		if(result == TRANSFER_METHOD_CABLE) {
 			KEEP_SAVE_IMAGE();
-			stat = scClearReceiveByLink();
-			if(stat != -1) {
-				mnStatScreenRun();
+			status = scClearReceiveByLink();
+			if(status != -1) {
+				mnStatusScreenRun();
 			}
 			RESTORE_SAVE_IMAGE()
-			if(stat == -1) {
+			if(status == -1) {
 				continue;
 			}
 			Call3((void (*)())gmDataTransferApply, (Sint32)TRANSFERRED_SAVE, 0,
@@ -564,9 +565,9 @@ link:
 		} else if(result == TRANSFER_METHOD_PASSWORD) {
 			KEEP_SAVE_IMAGE();
 			gmMainRoutineStateInitDefaults();
-			stat = scClearEnterPassword();
+			status = scClearEnterPassword();
 			RESTORE_SAVE_IMAGE()
-			if(stat == -1) {
+			if(status == -1) {
 				continue;
 			}
 			Call3((void (*)())gmDataTransferApply, (Sint32)TRANSFERRED_SAVE, 1,
@@ -601,7 +602,7 @@ link:
 finish:
 	FieldStateWork->exit = EXIT_KEEP_DESTINATION;
 	fdScriptWait(30);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(60);
@@ -629,7 +630,7 @@ Sint32 scPrepareMap(void)
 /* A place of the entered password that holds no symbol yet. */
 #define PASSWORD_SYMBOL_EMPTY	  99
 /* The checksum's two bytes at the end of each level's
-   (scClearCalcPasswordCrc16). */
+   (scClearCalculatePasswordCrc16). */
 #define PASSWORD_CRC_BYTES		  2
 #define PASSWORD_CRC_SEED		  0xffff
 #define PASSWORD_CRC_POLYNOMIAL	  0x1021
@@ -666,7 +667,7 @@ Sint32 scPrepareMap(void)
 #define PASSWORD_LEVEL_MASK	   0x7f
 /* A password glyph's sprite: four tiles, 16 pixels square. */
 #define GLYPH_SPRITE_BYTES	   (4 * TILE_SIZE_4BPP)
-/* A unit's Djinn, djinnHeld to djinnSetCnts. */
+/* A unit's Djinn, djinnHeld to djinnSetCounts. */
 #define UNIT_DJINN_BYTES	   40
 
 /* The password as entered, a symbol a byte: a Gold password is 260 symbols,
@@ -810,20 +811,20 @@ void scClearGetPasswordCharacter(Sint32 metatile, Uint16 *text)
    game's state. Returns 1, or -1 when B gives up or the link is lost. */
 Sint32 scClearReceiveByLink(void)
 {
-	void   *win;
+	void   *window;
 	Sint32	i, idle, ok, shown;
 	Sint32	mask, linkMask;
 	Sint32	msg;
-	Uint8  *flg;
+	Uint8  *flags;
 	Uint16 *request;
 
-	win = mnWindowCreate(
+	window = mnWindowCreate(
 		RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, WINDOW_FLAG_INSTANT);
 	/* "Preparing to receive", "saved Clear Data" and "B Button: Quit". */
 	msg = (Sint32)MsgFieldPreparingToReceive;
-	mnTextDrawMessage(msg, win, 0, 4);
-	mnTextDrawMessage(msg + 1, win, 0, 16);
-	mnTextDrawMessage(msg + 3, win, 0, 36);
+	mnTextDrawMessage(msg, window, 0, 4);
+	mnTextDrawMessage(msg + 1, window, 0, 16);
+	mnTextDrawMessage(msg + 3, window, 0, 36);
 	sySerialInit();
 	syWait(10);
 restart:
@@ -848,7 +849,7 @@ scan:
 poll:
 	if(!(PerWork.push & KEY_B))
 		goto scan;
-	fdScriptPlaySnd(SE_MENU_CANCEL);
+	fdScriptPlaySound(SE_MENU_CANCEL);
 	goto close;
 receive:
 	syWait(10);
@@ -862,10 +863,10 @@ receive:
 transfer:
 	if(!shown && SerialReceivedSize != 0) {
 		shown = 1;
-		mnWindowClose(win, 2);
-		win = mnWindowCreate(
+		mnWindowClose(window, 2);
+		window = mnWindowCreate(
 			STATUS_WINDOW_X, 10, STATUS_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
-		mnTextDrawMessage((Sint32)MsgFieldTransferringData, win, 0, 4);
+		mnTextDrawMessage((Sint32)MsgFieldTransferringData, window, 0, 4);
 	}
 	if(i == 9 && SerialReceivedSize == 0) {
 		request = (Uint16 *)SerialTransfer.payload;
@@ -894,40 +895,40 @@ transfer:
 	}
 done:
 	if(!ok) {
-		mnWindowSprPrepareForRedraw(win);
+		mnWindowSpritePrepareForRedraw(window);
 		mnTextDrawMessage(
-			(Sint32)MsgFieldDataTransferWasInterrupted, win, 0, 4);
+			(Sint32)MsgFieldDataTransferWasInterrupted, window, 0, 4);
 		do {
 			syWait(1);
 		} while(!(PerWork.push & KEY_A));
 	close:
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		return -1;
 	}
 	syWait(10);
 	sySerialRemoveIRQHandlers();
 	syWait(10);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	/* The flags and the fields before the Djinn recovery list come over in
 	   place, as both games keep them; then The Broken Seal's main routine's
 	   state and units, moved on by as much as this game's list is longer, so
 	   that its units land on this game's. */
-	flg = GameFlagBytes;
-	syWordsCopy(flg, TRANSFERRED_FLAGS,
+	flags = GameFlagBytes;
+	syWordsCopy(flags, TRANSFERRED_FLAGS,
 		BUP_IMAGE_MAIN_ROUTINE_STATE - BUP_IMAGE_GAME_FLAGS +
 			offsetof(MAIN_ROUTINE_STATE, djinnRecovery));
-	syWordsCopy(flg + (BUP_IMAGE_MAIN_ROUTINE_STATE - BUP_IMAGE_GAME_FLAGS) +
+	syWordsCopy(flags + (BUP_IMAGE_MAIN_ROUTINE_STATE - BUP_IMAGE_GAME_FLAGS) +
 			(BUP_IMAGE_UNITS - BROKEN_SEAL_SAVE_IMAGE_UNITS),
 		TRANSFERRED_MAIN_ROUTINE_STATE,
 		BROKEN_SEAL_SAVE_IMAGE_UNITS + sizeof(CharacterUnits) -
 			BUP_IMAGE_MAIN_ROUTINE_STATE);
-	gmUnitCalc(0);
-	gmUnitCalc(1);
-	gmUnitCalc(2);
-	gmUnitCalc(3);
-	syWordsCopy(TRANSFERRED_FLAGS, flg, BUP_IMAGE_STATE_BYTES);
-	syFieldWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	gmUnitCalculate(0);
+	gmUnitCalculate(1);
+	gmUnitCalculate(2);
+	gmUnitCalculate(3);
+	syWordsCopy(TRANSFERRED_FLAGS, flags, BUP_IMAGE_STATE_BYTES);
+	syFieldWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	return 1;
 }
 
@@ -937,7 +938,7 @@ extern Uint8 ClearFourthPasswordRow[];
 
 extern Uint8 MsgFieldPasswordKana[];
 
-Uint16 scClearCalcPasswordCrc16(Uint32 length, Uint8 *p);
+Uint16 scClearCalculatePasswordCrc16(Uint32 length, Uint8 *p);
 /* The ROM's caller here is compiled against this form, which takes no argument
    where the definition takes the slot. */
 void mnPointingHandLoadIntoSlot(void);
@@ -946,9 +947,9 @@ void mnPointingHandLoadIntoSlot(void);
 void mnNameCaretLoadIntoSlot(void);
 
 /* Gives a cursor its sprite. */
-static inline void scCursorAttach(MENU_CURSOR *cursor, WINDOW_SPR *spr)
+static inline void scCursorAttach(MENU_CURSOR *cursor, WINDOW_SPR *sprite)
 {
-	cursor->anchor = spr;
+	cursor->anchor = sprite;
 }
 
 /* Sets a cursor where it starts. */
@@ -1072,22 +1073,22 @@ Sint32 scClearEnterPassword(void)
 	Sint32			cursorY;
 	Sint32			state;
 	Sint32			advance;
-	WINDOW		   *win;
+	WINDOW		   *window;
 	Sint32			action;
-	Sint32			cnt;
+	Sint32			count;
 	Sint32			page;
 	Sint32			i;
 	Sint32			msg;
-	Sint32			frm;
+	Sint32			frame;
 	Sint32			crcLength;
 	Sint32			entry;
-	WINDOW_SPR	   *spr;
+	WINDOW_SPR	   *sprite;
 	Uint16		   *palette;
 	Sint32			height;
 
 	syWindowLoadGraphics();
-	mnWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	/* The highlight is the window palette with a grey background. */
 	palette = (Uint16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
 	syDMAXCopy((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
@@ -1096,13 +1097,13 @@ Sint32 scClearEnterPassword(void)
 	mode = mnIconMenuChooseSendOption(SEND_OPTION_PASSWORD_LEVEL);
 	if(mode == -1)
 		return -1;
-	sySndPlay(MUS_PASSWORD_ENTRY);
+	sySoundPlay(MUS_PASSWORD_ENTRY);
 	cursor = 0;
 	column = 0;
 	row = 0;
-	passwordState = syHeapAllocEWRAM(sizeof(PASSWORD_STATE));
+	passwordState = syHeapAllocateEWRAM(sizeof(PASSWORD_STATE));
 	advance = 0;
-	mnGraphicsExpandVRAMTilesByColTable(
+	mnGraphicsExpandVRAMTilesByColorTable(
 		BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP);
 	if(mode == PASSWORD_LEVEL_GOLD) {
 		length = PASSWORD_GOLD_LENGTH;
@@ -1112,62 +1113,62 @@ Sint32 scClearEnterPassword(void)
 			length = PASSWORD_BRONZE_LENGTH;
 	}
 	pages = length / PASSWORD_SYMBOLS_PER_PAGE + 1;
-	win = mnWindowCreate(1, 13, 29, 6, WINDOW_FLAG_INSTANT);
-	DRAW_KEYS(win)
+	window = mnWindowCreate(1, 13, 29, 6, WINDOW_FLAG_INSTANT);
+	DRAW_KEYS(window)
 	grid = mnWindowCreate(5, 1, 20, 12, WINDOW_FLAG_INSTANT);
 	for(i = 0; i != ARRAY_COUNT(passwordState->unused); i++)
 		passwordState->unused[i] = 0;
 	for(i = 0; i != PASSWORD_GOLD_LENGTH; i++)
 		ClearPasswordText[i] = PASSWORD_SYMBOL_EMPTY;
 	for(i = 0; i != PASSWORD_SYMBOLS_PER_PAGE; i++) {
-		Sint32 col = i % PASSWORD_SYMBOLS_PER_ROW;
+		Sint32 symbolColumn = i % PASSWORD_SYMBOLS_PER_ROW;
 		Sint32 y;
 		Sint32 x;
 
 		/* Ten places a row, 12 pixels apart, with a gap after the fifth. */
-		x = col * 12 + 8;
+		x = symbolColumn * 12 + 8;
 		y = i / PASSWORD_SYMBOLS_PER_ROW * 16 + 2;
-		if(col > 4)
-			x = col * 12 + 18;
+		if(symbolColumn > 4)
+			x = symbolColumn * 12 + 18;
 		passwordState->metatiles[i] =
-			mnGlyphAddBlankSpr(grid, passwordState->glyphs[i], x, y);
+			mnGlyphAddBlankSprite(grid, passwordState->glyphs[i], x, y);
 		passwordState->shown[i] = PASSWORD_SYMBOL_EMPTY;
 		syWordsClearEntry(passwordState->metatiles[i], GLYPH_SPRITE_BYTES);
 	}
 	entry = syVRAMCacheFindFreeEntry();
 	if(entry < VRAM_CACHE_ENTRY_COUNT) {
 		mnPointingHandLoadIntoSlot();
-		spr = mnWindowSprCreate(
-			entry, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)win, 0, 0);
-		scCursorAttach(&cursorStore, spr);
-		scCursorPlace(&cursorStore, win->x * 8 - 2, win->y * 8 + 12);
+		sprite = mnWindowSpriteCreate(
+			entry, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)window, 0, 0);
+		scCursorAttach(&cursorStore, sprite);
+		scCursorPlace(&cursorStore, window->x * 8 - 2, window->y * 8 + 12);
 	}
 	entry = syVRAMCacheFindFreeEntry();
 	if(entry < VRAM_CACHE_ENTRY_COUNT) {
 		mnNameCaretLoadIntoSlot();
-		spr = mnWindowSprCreate(
-			entry, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)win, 0, 0);
-		scCursorAttach(&gridStore, spr);
-		spr->depth = OAM_DEPTH_FRONT;
-		spr->spr.oam.pri = 0;
+		sprite = mnWindowSpriteCreate(
+			entry, WINDOW_SPRITE_SIZE_16X16, (WINDOW *)window, 0, 0);
+		scCursorAttach(&gridStore, sprite);
+		sprite->depth = OAM_DEPTH_FRONT;
+		sprite->sprite.oam.priority = 0;
 		scCursorPlace(&gridStore, grid->x * 8 - 4, grid->y * 8 + 12);
 	}
 	height = 1;
 	drawColumn = 0;
 	drawRow = 0;
 	drawMode = 1;
-	cursorX = win->x * 8 - 8;
-	cursorY = win->y * 8 + 11;
+	cursorX = window->x * 8 - 8;
+	cursorY = window->y * 8 + 11;
 	state = PASSWORD_STATE_ENTERING;
 	for(;;) {
 		action = PASSWORD_ACTION_NONE;
 		if(state == PASSWORD_STATE_LAST_ENTERED)
 			state = PASSWORD_STATE_CHECK;
 		mnWindowSetTextTileRect(
-			win, drawColumn, drawRow, drawMode, height, WINDOW_PALETTE);
+			window, drawColumn, drawRow, drawMode, height, WINDOW_PALETTE);
 		if(state == PASSWORD_STATE_ENTERING) {
 			if(PerWork.repeat & KEY_RIGHT) {
-				sySndPlay(SE_MENU_CURSOR_MOVE);
+				sySoundPlay(SE_MENU_CURSOR_MOVE);
 				{
 					Sint32 next = column + 1;
 
@@ -1178,20 +1179,20 @@ Sint32 scClearEnterPassword(void)
 				}
 			}
 			if(PerWork.repeat & KEY_LEFT) {
-				sySndPlay(SE_MENU_CURSOR_MOVE);
+				sySoundPlay(SE_MENU_CURSOR_MOVE);
 				if(row == KEY_ROW_WITHOUT_SIDE_KEY)
 					column = (column + SIDE_COLUMN - 1) % SIDE_COLUMN;
 				else
 					column = (column + SIDE_COLUMN) % (SIDE_COLUMN + 1);
 			}
 			if(PerWork.repeat & KEY_DOWN) {
-				sySndPlay(SE_MENU_CURSOR_MOVE);
+				sySoundPlay(SE_MENU_CURSOR_MOVE);
 				row = (row + 1) % KEY_ROWS;
 				if(column == SIDE_COLUMN && row == KEY_ROW_WITHOUT_SIDE_KEY)
 					row = KEY_ROW_FINISH;
 			}
 			if(PerWork.repeat & KEY_UP) {
-				sySndPlay(SE_MENU_CURSOR_MOVE);
+				sySoundPlay(SE_MENU_CURSOR_MOVE);
 				row = (row + KEY_ROWS - 1) % KEY_ROWS;
 				if(column == SIDE_COLUMN && row == KEY_ROW_WITHOUT_SIDE_KEY)
 					row = KEY_ROW_RETURN;
@@ -1214,13 +1215,13 @@ Sint32 scClearEnterPassword(void)
 		if(column > SIDE_COLUMN - 1)
 			drawColumn++;
 		mnWindowSetTextTileRect(
-			win, drawColumn, row, drawMode, height, HIGHLIGHT_PALETTE);
+			window, drawColumn, row, drawMode, height, HIGHLIGHT_PALETTE);
 		{
-			Sint32 x = (win->x + column) * 8 - 8;
-			Sint32 y = (win->y + row) * 8 + 11;
+			Sint32 x = (window->x + column) * 8 - 8;
+			Sint32 y = (window->y + row) * 8 + 11;
 
 			if(column > 4)
-				x = (win->x + column) * 8;
+				x = (window->x + column) * 8;
 			if(column > 9)
 				x += 8;
 			if(column > 14)
@@ -1235,17 +1236,17 @@ Sint32 scClearEnterPassword(void)
 			Sint32 metatile = cursor % PASSWORD_SYMBOLS_PER_PAGE;
 			Sint32 y =
 				(metatile / PASSWORD_SYMBOLS_PER_ROW * 2 + grid->y) * 8 - 2;
-			Sint32 col;
+			Sint32 symbolColumn;
 			Sint32 x;
 
-			frm = (FrameCount >> 1) & 7;
-			col = metatile % PASSWORD_SYMBOLS_PER_ROW;
-			x = col * 12 + grid->x * 8 + 16;
+			frame = (FrameCount >> 1) & 7;
+			symbolColumn = metatile % PASSWORD_SYMBOLS_PER_ROW;
+			x = symbolColumn * 12 + grid->x * 8 + 16;
 
-			if(col > 4)
+			if(symbolColumn > 4)
 				x += 10;
-			x += ClearCursorBob[frm];
-			y += ClearCursorBob[(frm + 5) & 7];
+			x += ClearCursorBob[frame];
+			y += ClearCursorBob[(frame + 5) & 7];
 			scCursorShow(&gridStore, x, y);
 		}
 		if(advance > 0 && ++advance == 8) {
@@ -1276,7 +1277,7 @@ Sint32 scClearEnterPassword(void)
 					Sint32 code = ClearPasswordGrid[column + row * SIDE_COLUMN];
 
 					if(code <= PASSWORD_SYMBOL_MASK) {
-						sySndPlay(SE_MENU_CONFIRM);
+						sySoundPlay(SE_MENU_CONFIRM);
 						ClearPasswordText[cursor] = code;
 						/* DEAD: a remainder nothing reads; the ROM keeps the
 						   call. */
@@ -1307,7 +1308,7 @@ Sint32 scClearEnterPassword(void)
 					decodedLength = scClearDecodePassword(
 						ClearPasswordText, length, ClearDecodedPassword);
 					crcLength = decodedLength - PASSWORD_CRC_BYTES;
-					check = scClearCalcPasswordCrc16(
+					check = scClearCalculatePasswordCrc16(
 						crcLength, ClearDecodedPassword);
 
 					state = PASSWORD_STATE_ENTERING;
@@ -1319,11 +1320,11 @@ Sint32 scClearEnterPassword(void)
 							(Uint16)crc % 256) {
 						mnTextDrawMessageAsTiles(
 							(Sint32)MsgFieldPasswordAccepted, box, 0, 0);
-						sySndPlay(SE_MENU_CONFIRM);
+						sySoundPlay(SE_MENU_CONFIRM);
 						do {
 							syWait(1);
 						} while(!(PerWork.push & KEY_A));
-						sySndPlay(SE_MENU_CONFIRM);
+						sySoundPlay(SE_MENU_CONFIRM);
 						gmMainRoutineStateInitDefaults();
 						party = &MainRoutineStateWork;
 						party->leaderActorId = ACTOR_ISAAC;
@@ -1338,12 +1339,13 @@ Sint32 scClearEnterPassword(void)
 						scClearApplyImportedData(mode, ClearDecodedPassword);
 						mnWindowClose(box, 2);
 						mnWindowClose(grid, 2);
-						mnWindowClose(win, 2);
-						mnWindowColApply(party->winHue, party->winBrightness);
-						sySndPlay(MUS_THE_ADVENTURE_RESUMES);
+						mnWindowClose(window, 2);
+						mnWindowColorApply(
+							party->windowHue, party->windowBrightness);
+						sySoundPlay(MUS_THE_ADVENTURE_RESUMES);
 						syWait(6);
 						mnNameEntryEditMemberName(0);
-						mnStatScreenRun();
+						mnStatusScreenRun();
 						/* DEAD: the flags and party copied where
 						   RESTORE_SAVE_IMAGE copies the whole state next; the
 						   ROM keeps the copy. */
@@ -1351,43 +1353,43 @@ Sint32 scClearEnterPassword(void)
 							BUP_IMAGE_STATE_BYTES);
 						return 0;
 					}
-					sySndPlay(SE_MENU_CANCEL);
+					sySoundPlay(SE_MENU_CANCEL);
 					mnTextDrawMessageAsTiles(
 						(Sint32)MsgFieldInvalidPassword, box, 0, 0);
 					do {
 						syWait(1);
 					} while(!(PerWork.push & KEY_A) && !(PerWork.push & KEY_B));
 					mnWindowClose(box, 2);
-					mnWindowSprRedrawSavedRect(win);
-					DRAW_KEYS(win)
+					mnWindowSpriteRedrawSavedRect(window);
+					DRAW_KEYS(window)
 				} else if(PerWork.repeat & KEY_L ||
 					action == PASSWORD_ACTION_RETURN) {
 					if(cursor > 0) {
-						sySndPlay(SE_MENU_CURSOR_MOVE);
+						sySoundPlay(SE_MENU_CURSOR_MOVE);
 						cursor--;
 					}
 				} else if(PerWork.repeat & KEY_R ||
 					action == PASSWORD_ACTION_SPACE) {
 					if(cursor < length - 1) {
-						sySndPlay(SE_MENU_CURSOR_MOVE);
+						sySoundPlay(SE_MENU_CURSOR_MOVE);
 						cursor++;
 					}
 				} else if(PerWork.push & KEY_B) {
 					if(cursor > 0) {
-						sySndPlay(SE_MENU_CURSOR_MOVE);
+						sySoundPlay(SE_MENU_CURSOR_MOVE);
 						cursor--;
 					} else {
-						sySndPlay(SE_MENU_CANCEL);
+						sySoundPlay(SE_MENU_CANCEL);
 						mnWindowClose(grid, 2);
-						mnWindowClose(win, 2);
-						sySndPlay(MUS_THE_ADVENTURE_RESUMES);
+						mnWindowClose(window, 2);
+						sySoundPlay(MUS_THE_ADVENTURE_RESUMES);
 						return -1;
 					}
 				}
 			}
 		}
 		page = cursor / PASSWORD_SYMBOLS_PER_PAGE;
-		mnWindowSprRedrawSavedRect(grid);
+		mnWindowSpriteRedrawSavedRect(grid);
 		{
 			Sint32 y;
 
@@ -1402,15 +1404,15 @@ Sint32 scClearEnterPassword(void)
 			mnWindowSetTilemapEntry(grid, tile, i - pages + 18, 10, 0);
 		}
 		if(length < PASSWORD_SYMBOLS_PER_PAGE)
-			cnt = length;
+			count = length;
 		else if(pages - 1 == page)
-			cnt = length % PASSWORD_SYMBOLS_PER_PAGE;
+			count = length % PASSWORD_SYMBOLS_PER_PAGE;
 		else
-			cnt = PASSWORD_SYMBOLS_PER_PAGE;
-		for(i = 0; i != cnt; i++) {
+			count = PASSWORD_SYMBOLS_PER_PAGE;
+		for(i = 0; i != count; i++) {
 			Uint8 *entered = ClearPasswordText;
-			Sint32 idx = i + page * PASSWORD_SYMBOLS_PER_PAGE;
-			Sint32 raw = entered[idx];
+			Sint32 index = i + page * PASSWORD_SYMBOLS_PER_PAGE;
+			Sint32 raw = entered[index];
 			Uint8  code = raw;
 
 			if(code != passwordState->shown[i]) {
@@ -1419,7 +1421,7 @@ Sint32 scClearEnterPassword(void)
 					syWordsClearEntry(
 						passwordState->metatiles[i], GLYPH_SPRITE_BYTES);
 				} else {
-					scClearGetPasswordCharacter(entered[idx], glyph);
+					scClearGetPasswordCharacter(entered[index], glyph);
 					mnGlyphDrawToTiles(glyph[0], passwordState->metatiles[i]);
 				}
 			}
@@ -1444,24 +1446,24 @@ Sint32 scClearEnterPassword(void)
 /* Unused: unpacks the tiles into a scratch buffer, then fills a grid of the
    window tilemap, in VRAM and in its shadow, at the window's metatile: each
    metatile's tile the row times the window's width plus the column. */
-UNUSED void scClearFillTileGrid(WINDOW *win, const void *compressedTiles)
+UNUSED void scClearFillTileGrid(WINDOW *window, const void *compressedTiles)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
 	Uint16	  *shadow;
 	Uint16	  *vram;
 	void	  *decodedTiles;
 	Sint32	   row;
-	Sint32	   col;
+	Sint32	   column;
 	Sint32	   metatile;
 
-	decodedTiles = syHeapAllocEWRAM(768);
+	decodedTiles = syHeapAllocateEWRAM(768);
 	syDecompressTaggedLZ(compressedTiles, decodedTiles);
-	metatile = win->y * BG_SCREEN_WIDTH + win->x;
+	metatile = window->y * BG_SCREEN_WIDTH + window->x;
 	vram = (Uint16 *)WINDOW_TILEMAP_VRAM + metatile;
 	shadow = &state->tilemap[0][metatile];
 	for(row = 0; row < TILE_GRID_ROWS; row++) {
-		for(col = 0; col < TILE_GRID_COLUMNS; col++) {
-			Sint16 tile = WINDOW_TILE(win->width * row + col);
+		for(column = 0; column < TILE_GRID_COLUMNS; column++) {
+			Sint16 tile = WINDOW_TILE(window->width * row + column);
 
 			*vram++ = tile;
 			*shadow++ = tile;
@@ -1474,24 +1476,24 @@ UNUSED void scClearFillTileGrid(WINDOW *win, const void *compressedTiles)
 
 /* Unused: fills a grid of the window tilemap with the tiles from
    TILE_GRID_FIRST_TILE on. */
-UNUSED void scClearFillTileGridInOrder(WINDOW *win)
+UNUSED void scClearFillTileGridInOrder(WINDOW *window)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
 	Uint16	  *shadow;
 	Uint16	  *vram;
 	void	  *buf;
 	Sint32	   row;
-	Sint32	   col;
+	Sint32	   column;
 	Sint32	   metatile;
 
-	buf = syHeapAllocEWRAM(768);
-	metatile = win->y * BG_SCREEN_WIDTH + win->x;
+	buf = syHeapAllocateEWRAM(768);
+	metatile = window->y * BG_SCREEN_WIDTH + window->x;
 	vram = (Uint16 *)WINDOW_TILEMAP_VRAM + metatile;
 	shadow = &state->tilemap[0][metatile];
 	for(row = 0; row < TILE_GRID_ROWS; row++) {
-		for(col = 0; col < TILE_GRID_COLUMNS; col++) {
+		for(column = 0; column < TILE_GRID_COLUMNS; column++) {
 			Sint16 tile = WINDOW_TILE(
-				row * TILE_GRID_COLUMNS + col + TILE_GRID_FIRST_TILE);
+				row * TILE_GRID_COLUMNS + column + TILE_GRID_FIRST_TILE);
 
 			*vram++ = tile;
 			*shadow++ = tile;
@@ -1512,7 +1514,7 @@ void scClearApplyImportedData(Sint32 mode, Uint8 *in)
 {
 	Uint32 levelBits;
 	Uint32 djinnBits;
-	Uint8  flgBits;
+	Uint8  flagBits;
 	Uint8  keyItemBits;
 	Uint32 packedStats[8];
 	Sint32 i;
@@ -1526,29 +1528,30 @@ void scClearApplyImportedData(Sint32 mode, Uint8 *in)
 	   bit each, sharing byte 3. */
 	levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
 	djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
-	flgBits = in[PASSWORD_FLAGS_BYTE];
+	flagBits = in[PASSWORD_FLAGS_BYTE];
 	keyItemBits = in[PASSWORD_KEY_ITEMS_BYTE];
 
 	/* Silver and Gold carry the stats rows. Each packs two party members in
 	   PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of
 	   its second, whose low four bits are always 0. */
 	if(mode != PASSWORD_LEVEL_BRONZE) {
-		Sint32 statsOfs =
+		Sint32 statsOffset =
 			PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
 		for(i = 0; i != 2; i++) {
-			packedStats[i * 4] = in[statsOfs] << 24 | in[statsOfs + 1] << 16 |
-				in[statsOfs + 2] << 8 | in[statsOfs + 3];
-			packedStats[i * 4 + 1] = in[statsOfs + 4] << 24 |
-				in[statsOfs + 5] << 16 | in[statsOfs + 6] << 8 |
-				in[statsOfs + 7];
-			packedStats[i * 4 + 2] = in[statsOfs + 7] << 28 |
-				in[statsOfs + 8] << 20 | in[statsOfs + 9] << 12 |
-				in[statsOfs + 10] << 4 | in[statsOfs + 11] >> 4;
-			packedStats[i * 4 + 3] = in[statsOfs + 11] << 28 |
-				in[statsOfs + 12] << 20 | in[statsOfs + 13] << 12 |
-				in[statsOfs + 14] << 4;
-			statsOfs += PASSWORD_STATS_ROW_BYTES;
+			packedStats[i * 4] = in[statsOffset] << 24 |
+				in[statsOffset + 1] << 16 | in[statsOffset + 2] << 8 |
+				in[statsOffset + 3];
+			packedStats[i * 4 + 1] = in[statsOffset + 4] << 24 |
+				in[statsOffset + 5] << 16 | in[statsOffset + 6] << 8 |
+				in[statsOffset + 7];
+			packedStats[i * 4 + 2] = in[statsOffset + 7] << 28 |
+				in[statsOffset + 8] << 20 | in[statsOffset + 9] << 12 |
+				in[statsOffset + 10] << 4 | in[statsOffset + 11] >> 4;
+			packedStats[i * 4 + 3] = in[statsOffset + 11] << 28 |
+				in[statsOffset + 12] << 20 | in[statsOffset + 13] << 12 |
+				in[statsOffset + 14] << 4;
+			statsOffset += PASSWORD_STATS_ROW_BYTES;
 		}
 		for(i = 0; i != 4; i++) {
 			BATTLE_BASE_STATS *stats =
@@ -1572,7 +1575,7 @@ void scClearApplyImportedData(Sint32 mode, Uint8 *in)
 	}
 
 	for(i = 0; i != 6; i++) {
-		if((flgBits >> i) & 1)
+		if((flagBits >> i) & 1)
 			syGameFlagSet(ClearImportedFlags[i]);
 		else
 			syGameFlagClear(ClearImportedFlags[i]);
@@ -1587,7 +1590,7 @@ void scClearApplyImportedData(Sint32 mode, Uint8 *in)
 #endif
 	}
 
-	gmDjinnGetRecoveryTable(0)->list.cnt = 0;
+	gmDjinnGetRecoveryTable(0)->list.count = 0;
 	for(i = 0; i != 4; i++) {
 		UNIT *unit = syUnitGet(ClearImportedMembers[i]);
 
@@ -1669,7 +1672,7 @@ void scClearApplyImportedData(Sint32 mode, Uint8 *in)
 
 	for(i = 0; i != 4; i++) {
 		gmUnitUpdateClass(ClearImportedMembers[i]);
-		gmUnitCalc(ClearImportedMembers[i]);
+		gmUnitCalculate(ClearImportedMembers[i]);
 	}
 }
 
@@ -1687,11 +1690,11 @@ UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 	Uint32 levelBits;
 	Uint32 djinnBits;
 	Uint8  keyItemBits;
-	Uint8  flgBits;
+	Uint8  flagBits;
 	Uint32 packedStats[8];
 	Sint32 i;
-	Sint32 outputIdx;
-	Sint32 bitOfs;
+	Sint32 outputIndex;
+	Sint32 bitOffset;
 	Sint32 j;
 	Sint32 k;
 	Sint32 n;
@@ -1714,15 +1717,15 @@ UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 	levelBits = 0;
 	djinnBits = 0;
 	keyItemBits = 0;
-	flgBits = 0;
+	flagBits = 0;
 	for(i = 0; i != 8; i++)
 		packedStats[i] = 0;
 	for(i = 0; i != 6; i++) {
 		if(syGameFlagGet(ClearPasswordFlags[i]))
-			flgBits |= 1 << i;
+			flagBits |= 1 << i;
 	}
 	i = 0;
-	outputIdx = 4;
+	outputIndex = 4;
 	for(; i != 4; i++) {
 		UNIT			  *unit = syUnitGet(ClearPasswordMembers[i]);
 		BATTLE_BASE_STATS *base = (BATTLE_BASE_STATS *)&unit->baseHp;
@@ -1764,7 +1767,7 @@ UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 		base->baseLuck = value;
 		packedStats[i * 2] = (Uint32)base->baseHp << PASSWORD_HP_SHIFT |
 			base->basePp << PASSWORD_PP_SHIFT | base->baseAttack;
-		*(Uint32 *)((Uint8 *)packedStats + outputIdx) =
+		*(Uint32 *)((Uint8 *)packedStats + outputIndex) =
 			(Uint32)base->baseDefense << PASSWORD_DEFENSE_SHIFT |
 			base->baseAgility << PASSWORD_AGILITY_SHIFT |
 			base->baseLuck << PASSWORD_LUCK_SHIFT;
@@ -1786,54 +1789,54 @@ UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 					keyItemBits |= 1 << k;
 			}
 		}
-		outputIdx += 8;
+		outputIndex += 8;
 	}
 	/* The largest password also carries inventories, stack counts and coins. */
 	if(mode == PASSWORD_LEVEL_GOLD) {
-		outputIdx = PASSWORD_ITEMS_BYTE;
-		bitOfs = 0;
+		outputIndex = PASSWORD_ITEMS_BYTE;
+		bitOffset = 0;
 		for(i = 0; i != 4; i++) {
 			UNIT *unit = syUnitGet(ClearPasswordMembers[i]);
 
 			for(n = 0; n != INVENTORY_SLOTS; n++) {
 				Uint16 item = unit->inventory[n] & INVENTORY_ITEM_ID_MASK;
 
-				out[outputIdx] += item >> (bitOfs + 1);
-				out[outputIdx + 1] += item << (7 - bitOfs);
-				outputIdx++;
-				bitOfs++;
-				if(bitOfs == 7) {
-					bitOfs = 0;
-					outputIdx++;
+				out[outputIndex] += item >> (bitOffset + 1);
+				out[outputIndex + 1] += item << (7 - bitOffset);
+				outputIndex++;
+				bitOffset++;
+				if(bitOffset == 7) {
+					bitOffset = 0;
+					outputIndex++;
 				}
 			}
 		}
-		outputIdx = PASSWORD_QUANTITIES_BYTE;
-		bitOfs = -1;
+		outputIndex = PASSWORD_QUANTITIES_BYTE;
+		bitOffset = -1;
 		for(i = 0; i != 4; i++) {
 			UNIT *unit = syUnitGet(ClearPasswordMembers[i]);
 
 			for(m = 0; m != PASSWORD_STACK_ITEMS; m++) {
-				Sint32 cnt = 0;
+				Sint32 count = 0;
 				Uint16 quantity;
 				/* FAKEMATCH(dead): the form kept; as no quantity copy. */
 
 				for(n = 0; n != INVENTORY_SLOTS; n++) {
 					if((unit->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
 						ClearPasswordStackItems[m])
-						cnt = unit->inventory[n] >> INVENTORY_QUANTITY_SHIFT;
+						count = unit->inventory[n] >> INVENTORY_QUANTITY_SHIFT;
 				}
-				quantity = cnt;
-				if(bitOfs < 0) {
-					out[outputIdx] += (Uint16)cnt >> -bitOfs;
-					bitOfs += 8;
-					outputIdx++;
+				quantity = count;
+				if(bitOffset < 0) {
+					out[outputIndex] += (Uint16)count >> -bitOffset;
+					bitOffset += 8;
+					outputIndex++;
 				}
-				out[outputIdx] += (Uint16)cnt << bitOfs;
-				bitOfs -= 5;
-				if(bitOfs == -5) {
-					outputIdx++;
-					bitOfs = 3;
+				out[outputIndex] += (Uint16)count << bitOffset;
+				bitOffset -= 5;
+				if(bitOffset == -5) {
+					outputIndex++;
+					bitOffset = 3;
 				}
 			}
 		}
@@ -1845,28 +1848,28 @@ UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 	   PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of
 	   its second, whose low four bits are always 0. */
 	if(mode != PASSWORD_LEVEL_BRONZE) {
-		Sint32 statsOfs =
+		Sint32 statsOffset =
 			PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
 		for(i = 0; i != 2; i++) {
-			out[statsOfs] = packedStats[i * 4] >> 24;
-			out[statsOfs + 1] = packedStats[i * 4] >> 16;
-			out[statsOfs + 2] = packedStats[i * 4] >> 8;
-			out[statsOfs + 3] = packedStats[i * 4];
-			out[statsOfs + 4] = packedStats[i * 4 + 1] >> 24;
-			out[statsOfs + 5] = packedStats[i * 4 + 1] >> 16;
-			out[statsOfs + 6] = packedStats[i * 4 + 1] >> 8;
-			out[statsOfs + 7] = packedStats[i * 4 + 1];
-			out[statsOfs + 7] |= packedStats[i * 4 + 2] >> 28;
-			out[statsOfs + 8] = packedStats[i * 4 + 2] >> 20;
-			out[statsOfs + 9] = packedStats[i * 4 + 2] >> 12;
-			out[statsOfs + 10] = packedStats[i * 4 + 2] >> 4;
-			out[statsOfs + 11] = packedStats[i * 4 + 2] << 4;
-			out[statsOfs + 11] |= packedStats[i * 4 + 3] >> 28;
-			out[statsOfs + 12] = packedStats[i * 4 + 3] >> 20;
-			out[statsOfs + 13] = packedStats[i * 4 + 3] >> 12;
-			out[statsOfs + 14] = packedStats[i * 4 + 3] >> 4;
-			statsOfs += PASSWORD_STATS_ROW_BYTES;
+			out[statsOffset] = packedStats[i * 4] >> 24;
+			out[statsOffset + 1] = packedStats[i * 4] >> 16;
+			out[statsOffset + 2] = packedStats[i * 4] >> 8;
+			out[statsOffset + 3] = packedStats[i * 4];
+			out[statsOffset + 4] = packedStats[i * 4 + 1] >> 24;
+			out[statsOffset + 5] = packedStats[i * 4 + 1] >> 16;
+			out[statsOffset + 6] = packedStats[i * 4 + 1] >> 8;
+			out[statsOffset + 7] = packedStats[i * 4 + 1];
+			out[statsOffset + 7] |= packedStats[i * 4 + 2] >> 28;
+			out[statsOffset + 8] = packedStats[i * 4 + 2] >> 20;
+			out[statsOffset + 9] = packedStats[i * 4 + 2] >> 12;
+			out[statsOffset + 10] = packedStats[i * 4 + 2] >> 4;
+			out[statsOffset + 11] = packedStats[i * 4 + 2] << 4;
+			out[statsOffset + 11] |= packedStats[i * 4 + 3] >> 28;
+			out[statsOffset + 12] = packedStats[i * 4 + 3] >> 20;
+			out[statsOffset + 13] = packedStats[i * 4 + 3] >> 12;
+			out[statsOffset + 14] = packedStats[i * 4 + 3] >> 4;
+			statsOffset += PASSWORD_STATS_ROW_BYTES;
 		}
 	}
 	out[0] = levelBits;
@@ -1876,13 +1879,13 @@ UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 	out[4] = djinnBits >> 4;
 	out[5] = djinnBits >> 12;
 	out[6] = djinnBits >> 20;
-	out[PASSWORD_FLAGS_BYTE] = flgBits;
+	out[PASSWORD_FLAGS_BYTE] = flagBits;
 	if(mode != PASSWORD_LEVEL_GOLD)
 		out[PASSWORD_KEY_ITEMS_BYTE] = keyItemBits;
 	return length;
 }
 
-Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst)
+Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dest)
 {
 	Uint8  saved[PASSWORD_GOLD_LENGTH];
 	Sint32 i;
@@ -1899,7 +1902,7 @@ Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst)
 			size = PASSWORD_GOLD_BYTES;
 	}
 	for(i = 0; i != size; i++)
-		dst[i] = 0;
+		dest[i] = 0;
 	for(i = 0; i != length; i++) {
 		saved[i] = src[i];
 		src[i] = (saved[i] - i) & PASSWORD_SYMBOL_MASK;
@@ -1911,13 +1914,13 @@ Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst)
 			continue;
 		c = src[k];
 		if(shift < 0) {
-			dst[n] += c >> -shift;
+			dest[n] += c >> -shift;
 			n++;
 			if(n == size)
 				break;
 			shift += 8;
 		}
-		dst[n] += c << shift;
+		dest[n] += c << shift;
 		shift -= 6;
 		if(shift == -6) {
 			shift = 2;
@@ -1926,9 +1929,9 @@ Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst)
 				break;
 		}
 	}
-	last = dst[n - 1];
+	last = dest[n - 1];
 	for(i = 0; i != n - 1; i++)
-		dst[i] ^= last;
+		dest[i] ^= last;
 	for(i = 0; i != length; i++)
 		src[i] = saved[i];
 	return n;
@@ -1939,7 +1942,7 @@ Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst)
    bit at a time from PASSWORD_CRC_SEED, PASSWORD_CRC_POLYNOMIAL subtracted when
    the top bit falls out, and the result complemented. The password screen
    checks it against a decoded password's last PASSWORD_CRC_BYTES. */
-Uint16 scClearCalcPasswordCrc16(Uint32 length, Uint8 *p)
+Uint16 scClearCalculatePasswordCrc16(Uint32 length, Uint8 *p)
 {
 	Uint32 crc;
 	Uint32 i;

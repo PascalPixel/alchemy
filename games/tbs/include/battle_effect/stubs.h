@@ -5,7 +5,7 @@
    effects a battle plays. */
 
 Sint32 btEffectBuildBlitterStub(Sint32 slot, Sint32 widthShift,
-	Sint32 heightShift, Sint32 flg, Uint32 mode);
+	Sint32 heightShift, Sint32 flags, Uint32 mode);
 void   btEffectRunByIdRangeStub(struct BATTLE_EFFECT_PARM *args);
 void   btEffectRunSummonStub(struct BATTLE_EFFECT_PARM *args);
 void   btEffectRunFromTableStub(struct BATTLE_EFFECT_PARM *args);

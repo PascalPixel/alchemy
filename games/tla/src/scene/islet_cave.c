@@ -140,9 +140,9 @@ void scIsletCaveFightSerac(void)
 
 /* The last step of each fire's script in the Sentinel's room: clears its sprite
    flags. */
-Sint32 scIsletCaveClearScriptedActorSprFlags(ACTOR *actor)
+Sint32 scIsletCaveClearScriptedActorSpriteFlags(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -157,17 +157,17 @@ Sint32 scIsletCaveClearScriptedActorSprFlags(ACTOR *actor)
    sprite through the first half of each hop. */
 Sint32 scIsletCaveHopWingedStatue(ACTOR *actor)
 {
-	Sint32	   step = actor->sceneCnt & (STATUE_HOP_TICKS - 1);
-	FIELD_SPR *spr = actor->spr;
+	Sint32	   step = actor->sceneCount & (STATUE_HOP_TICKS - 1);
+	FIELD_SPR *sprite = actor->sprite;
 
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(step < STATUE_HOP_TICKS / 2) {
 		if(step == 0)
-			actor->velY = toFIXED(1);
-		spr->rotation =
+			actor->velocityY = toFIXED(1);
+		sprite->rotation =
 			syCos(step * (TRIG_TURN / STATUE_ROCK_TICKS)) / STATUE_ROCK_SHRINK;
 	}
-	actor->sceneCnt++;
+	actor->sceneCount++;
 	return -1;
 }
 
@@ -232,7 +232,7 @@ void scIsletCaveFinishTeleport(void)
 	sySynch(16);
 
 	MainRoutineStateWork.teleportState = TELEPORT_NONE;
-	fdActorConfigureSprCol(MainRoutineStateWork.leaderActorId, 0);
+	fdActorConfigureSpriteColor(MainRoutineStateWork.leaderActorId, 0);
 	state->transition = effect;
 }
 
@@ -273,17 +273,17 @@ DEFINE_ISLET_CAVE_ARRIVE_AT(scIsletCaveTeleportToIslandCircle, 240, 480)
    well as darker. */
 void scIsletCaveDarkenPalette(Sint32 scale)
 {
-	PALETTE_FADE *fade = RamHeapSlots->palFade;
-	Uint16		 *src = fade->pal;
-	Uint16		 *channel = fade->tgt;
-	Uint32		  cnt = ARRAY_COUNT(fade->pal) / 2;
+	PALETTE_FADE *fade = RamHeapSlots->paletteFade;
+	Uint16		 *src = fade->palette;
+	Uint16		 *channel = fade->target;
+	Uint32		  count = ARRAY_COUNT(fade->palette) / 2;
 	Uint32		  i = 0;
-	Uint32		  col, value, mask;
+	Uint32		  color, value, mask;
 
 	do {
-		col = *src++;
+		color = *src++;
 		mask = ~(FADE_CHANNEL_LEVEL - 1);
-		value = RGB_BLUE(col);
+		value = RGB_BLUE(color);
 #if FIX_ISLET_CAVE_BLUE_NEVER_DIMS
 		value *= scale;
 #else
@@ -295,20 +295,20 @@ void scIsletCaveDarkenPalette(Sint32 scale)
 		if(value > RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL)
 			value = RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL;
 		*channel++ = value;
-		value = RGB_GREEN(col);
+		value = RGB_GREEN(color);
 		value *= scale;
 		value &= mask;
 		if(value > RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL)
 			value = RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL;
 		*channel++ = value;
-		value = RGB_RED(col);
+		value = RGB_RED(color);
 		value *= scale;
 		value &= mask;
 		if(value > RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL)
 			value = RGB_LEVEL_MAX * FADE_CHANNEL_LEVEL;
 		*channel++ = value;
 		i++;
-	} while(i < cnt);
+	} while(i < count);
 }
 
 extern MAP_GRID_METATILE_ANIMATION IsletCaveDoors[];
@@ -326,7 +326,7 @@ void scIsletCaveOpenDoorAndEnter(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 i;
-	Uint32		 idx;
+	Uint32		 index;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -334,16 +334,16 @@ void scIsletCaveOpenDoorAndEnter(void)
 		ACTOR *actor = fdActorGetById(i);
 
 		if(actor != 0)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
-	idx = state->stepCue - 1;
-	sySndPlay(SE_DOOR_OPEN);
-	idx >>= 1;
+	index = state->stepCue - 1;
+	sySoundPlay(SE_DOOR_OPEN);
+	index >>= 1;
 	{
-		Sint32 x = IsletCaveDoors[idx].x;
-		Sint32 y = IsletCaveDoors[idx].y;
+		Sint32 x = IsletCaveDoors[index].x;
+		Sint32 y = IsletCaveDoors[index].y;
 
-		fdMapGridAnimateMetatiles(IsletCaveDoors[idx].steps, x, y);
+		fdMapGridAnimateMetatiles(IsletCaveDoors[index].steps, x, y);
 	}
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
@@ -374,10 +374,10 @@ Sint32 scInit(void)
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next == SCENE_ISLET_CAVE_HALLS) {
 		scIsletCavePlaceLogs();
-		scPaletteSetColsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
+		scPaletteSetColorsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
 			TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
 	} else if(MainRoutineStateWork.next == SCENE_ISLET_CAVE_SENTINEL) {
-		fdActorSetSprFlags(fdActorGetById(ACTOR_FIRST_FIRE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_FIRST_FIRE), 0);
 		if(MainRoutineStateWork.entrance == ENTRANCE_AFTER_SENTINEL_BATTLE) {
 			fdActorSetPos(ACTOR_SENTINEL, 0, 0);
 			syGameFlagSet(FLAG_SENTINEL_DEFEATED);
@@ -465,15 +465,15 @@ enum {
    stored row at (srcColumn, srcRow). Its metatile behaviour is passed and
    not used. */
 void scIsletCavePlaceWestEastLog(Sint32 actorId, Sint32 srcColumn,
-	Sint32 srcRow, Sint32 x, Sint32 z, Sint32 metatileBehavior, Sint32 flg)
+	Sint32 srcRow, Sint32 x, Sint32 z, Sint32 metatileBehavior, Sint32 flag)
 {
 	ACTOR *actor = fdActorGetById(actorId);
 
 	if(actor != NULL) {
-		if(syGameFlagGet(flg))
+		if(syGameFlagGet(flag))
 			fdActorSetPos(actorId, x, z);
-		fdActorSetSprPriority(actorId, 3);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpritePriority(actorId, 3);
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(srcColumn, srcRow, 3, 1,
 			FIELD_METATILE(actor->x.fixed) - 1, FIELD_METATILE(actor->z.fixed));
 	}
@@ -482,16 +482,16 @@ void scIsletCavePlaceWestEastLog(Sint32 actorId, Sint32 srcColumn,
 /* As scIsletCavePlaceWestEastLog, for a log lying north to south, three
    metatiles tall. */
 void scIsletCavePlaceNorthSouthLog(Sint32 actorId, Sint32 srcColumn,
-	Sint32 srcRow, Sint32 x, Sint32 z, Sint32 metatileBehavior, Sint32 flg)
+	Sint32 srcRow, Sint32 x, Sint32 z, Sint32 metatileBehavior, Sint32 flag)
 {
 	ACTOR *actor;
 
 	if(fdActorGetById(actorId) != 0) {
-		fdActorSetSprPriority(actorId, 3);
-		if(syGameFlagGet(flg))
+		fdActorSetSpritePriority(actorId, 3);
+		if(syGameFlagGet(flag))
 			fdActorSetPos(actorId, x, z);
 		actor = fdActorGetById(actorId);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(srcColumn, srcRow, 1, 3,
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed) - 1);
 	}
@@ -614,10 +614,10 @@ void scIsletCaveRideLog(Sint32 actorId, Sint32 dx, Sint32 dz)
 		fdActorSelectAnimation(
 			actor, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
 	}
-	sySndPlay(SE_LOG_PUSH);
+	sySoundPlay(SE_LOG_PUSH);
 	fdActorWaitForMove(leader);
 	fdActorSelectAnimation(actor, FLOATING_LOG_ANIMATION_SETTLE);
-	sySndPlay(SE_STOP_EXIT_SE);
+	sySoundPlay(SE_STOP_EXIT_SE);
 	fdScriptEnd();
 }
 
@@ -801,7 +801,7 @@ void scIsletCaveRideSeventhLogSouth(void)
    from. Beating it leaves the Catastrophe tablet free behind its spot. */
 void scIsletCaveSentinelAwaits(void)
 {
-	Sint32 snd;
+	Sint32 sound;
 	ACTOR *actor;
 
 	fdScriptStart();
@@ -843,7 +843,7 @@ void scIsletCaveTremorRevealsSerac(void)
 		fdScriptSetFlag(FLAG_SERAC_REVEALED);
 		fdActorSetPos(ACTOR_SERAC, 296, 160);
 		actor->speedLimit = toFIXED(3) / 2;
-		actor->velY = toFIXED(15);
+		actor->velocityY = toFIXED(15);
 		fdActorMoveToAndWait(
 			ACTOR_SERAC, 344, FIELD_HALF_METATILE(owner->z.fixed) * 8 + 24);
 		fdActorStop(ACTOR_WINGED_STATUE);
@@ -871,7 +871,7 @@ Sint32 IsletCaveShrunkFireScript[] = {
 	SC_ADD(SW_Y, toFIXED(-4)),
 	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
 	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
-	SC_CALL(scIsletCaveClearScriptedActorSprFlags),
+	SC_CALL(scIsletCaveClearScriptedActorSpriteFlags),
 	SC_END,
 };
 

@@ -52,7 +52,7 @@ typedef enum ELEMENT {
    twelve; range n takes icon n - 1. */
 #define RANGE_ICON_ALL	  11
 
-/* The low four bits of ABILITY_DEFINITION.flg: the ability kind (enum
+/* The low four bits of ABILITY_DEFINITION.flags: the ability kind (enum
    ABILITY_FORMULA). */
 #define ABILITY_FORMULA_MASK 15
 
@@ -93,9 +93,9 @@ typedef enum ABILITY_FORMULA {
 	ABILITY_FORMULA_HEAL_PP = 11 /* Ember, Psy Crystal, Adept Ring */
 } ABILITY_FORMULA;
 
-/* ABILITY_DEFINITION.eff: what an ability does besides its damage or healing,
-   applied by btAbilityApplyToTarget unless noted. Each is named for the
-   abilities that have it (ability_table.c, with their English names and
+/* ABILITY_DEFINITION.effect: what an ability does besides its damage or
+   healing, applied by btAbilityApplyToTarget unless noted. Each is named for
+   the abilities that have it (ability_table.c, with their English names and
    descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are
    read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
    ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_SHARPLY` moves
@@ -181,9 +181,9 @@ typedef enum ABILITY_EFFECT {
 	ABILITY_EFFECT_PSY_LEECH = 69
 } ABILITY_EFFECT;
 
-/* ABILITY_DEFINITION.tgtMode: whom an ability may target, from its user's view.
-   The party's cursor (mnBattleTargetRunSelection) shows the enemies for every
-   mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
+/* ABILITY_DEFINITION.targetMode: whom an ability may target, from its user's
+   view. The party's cursor (mnBattleTargetRunSelection) shows the enemies for
+   every mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
    ability_table.c has a mode above ABILITY_TARGET_SELF; btActionRunSetTargets
    would walk such a mode's range as it does ABILITY_TARGET_FOES'. */
 typedef enum ABILITY_TARGET {
@@ -205,8 +205,8 @@ typedef enum ABILITY_TARGET {
 typedef enum CURSE_FLAG {
 	CURSE_BOUND = 0x01,		 /* the unit is bound */
 	CURSE_ITEM = 0x02,		 /* a cursed item is equipped */
-	CURSE_KEEP_BOUND = 0x04, /* keeps CURSE_BOUND through gmUnitCalc */
-	/* EQUIP_EFFECT_CURSE_REMOVABLE: gmUnitCalc clears it again with
+	CURSE_KEEP_BOUND = 0x04, /* keeps CURSE_BOUND through gmUnitCalculate */
+	/* EQUIP_EFFECT_CURSE_REMOVABLE: gmUnitCalculate clears it again with
 	   CURSE_BOUND. */
 	CURSE_REMOVABLE = 0x08
 } CURSE_FLAG;
@@ -214,12 +214,12 @@ typedef enum CURSE_FLAG {
 /* An ability's definition, a row of AbilityDefinitions: its targeting, ability
    kind, element, effect, range, PP cost and power. */
 typedef struct ABILITY_DEFINITION {
-	Uint8 tgtMode; /* ABILITY_TARGET */
+	Uint8 targetMode; /* ABILITY_TARGET */
 	/* bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
 	   row | 3..0 ability kind (ABILITY_FORMULA_MASK). */
-	Uint8 flg;
+	Uint8 flags;
 	Uint8 element;				/* ELEMENT */
-	Uint8 eff;					/* ABILITY_EFFECT */
+	Uint8 effect;				/* ABILITY_EFFECT */
 	Uint8 icon;					/* the icon the menus draw */
 	Uint8 reservedAfterIcon[3]; /* 0 in every row */
 	Uint8
@@ -241,7 +241,7 @@ typedef struct ABILITY_DEFINITION {
 	Uint8 reservedAfterType[3]; /* 0 in every row */
 } ABILITY_DEFINITION;
 
-/* ABILITY_DEFINITION.flg: where an ability, or the ability an item calls, can
+/* ABILITY_DEFINITION.flags: where an ability, or the ability an item calls, can
    be used, as the Status screen's Psynergy list says ("Can be used in
    Towns/Dungeons", "Can be used in Battle"). */
 typedef enum ABILITY_USE {
@@ -271,17 +271,17 @@ typedef enum ABILITY_USE {
 #define UNIT_MAX (PARTY_UNIT_COUNT + ENEMY_BATTLE_SIZE)
 
 /* A full HP or PP gauge (UNIT.hpGauge, UNIT.ppGauge): the gauge is the current
-   value over the maximum in 2.14 fixed point, as gmUnitCalc multiplies a
+   value over the maximum in 2.14 fixed point, as gmUnitCalculate multiplies a
    maximum by it and divides by this, and the cap gmUnitClampGauge puts on hp /
    hpMax shifted up UNIT_GAUGE_SHIFT bits. */
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL	 (1 << UNIT_GAUGE_SHIFT)
 
-/* The bits of UNIT.baseActionCnt that count the unit's actions a turn. */
+/* The bits of UNIT.baseActionCount that count the unit's actions a turn. */
 #define UNIT_ACTION_COUNT_MASK 0xf
 
 /* What a Resistance stage adds to the resistance to every element
-   (gmUnitCalc). */
+   (gmUnitCalculate). */
 #define RESISTANCE_PER_STAGE 20
 
 /* UNIT.poison: the poison takes a tenth of the maximum HP at the end of each of
@@ -328,8 +328,8 @@ typedef struct UNIT {
 	   given (a digit in Japanese); its last byte is always 0. */
 	Uint8  name[UNIT_NAME_SIZE];
 	Uint8  level;  /* 1 to 99 for a character */
-	Sint16 baseHp; /* before equipment, Djinn and class (gmUnitCalc) */
-	Sint16 basePp; /* before equipment, Djinn and class (gmUnitCalc) */
+	Sint16 baseHp; /* before equipment, Djinn and class (gmUnitCalculate) */
+	Sint16 basePp; /* before equipment, Djinn and class (gmUnitCalculate) */
 	/* hp / hpMax in 0..UNIT_GAUGE_FULL; 1 while any HP remains */
 	Sint16 hpGauge;
 	/* pp / ppMax in 0..UNIT_GAUGE_FULL; 1 while any PP remains */
@@ -341,7 +341,7 @@ typedef struct UNIT {
 	/* Actions a turn before equipment: the low four bits are read. An enemy's
 	   comes from its definition's actionCount; a level up sets a character's to
 	   1. */
-	Uint8 baseActionCnt;
+	Uint8 baseActionCount;
 	/* HP regained each turn before equipment; 0 for a * character */
 	Uint8 baseHpRegen;
 	/* PP regained each turn before equipment and lighthouses */
@@ -349,29 +349,29 @@ typedef struct UNIT {
 	Uint8 baseUnused[2]; /* no code names it */
 	/* Power and resistance before equipment and stages: an enemy's from its
 	   element preset, a character's from its element levels
-	   (gmUnitCalcBaseElements). */
+	   (gmUnitCalculateBaseElements). */
 	BATTLE_ELEMENT_STATS baseElement[ELEMENT_COUNT];
-	/* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalc) */
+	/* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalculate) */
 	Sint16 hpMax;
-	/* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalc) */
+	/* 0 to 1999 for a character, 9999 for an enemy (gmUnitCalculate) */
 	Sint16 ppMax;
 	Sint16 hp;		/* current HP, 0 when downed */
 	Sint16 pp;		/* current PP */
-	Uint16 attack;	/* Attack, 0 to 999 (gmUnitCalc) */
-	Uint16 defense; /* Defense, 0 to 999 (gmUnitCalc) */
+	Uint16 attack;	/* Attack, 0 to 999 (gmUnitCalculate) */
+	Uint16 defense; /* Defense, 0 to 999 (gmUnitCalculate) */
 	Uint16 agility; /* Agility, 0 to 999: the order of the turn's actions */
-	Uint8  luck;	/* 0 to 99 (gmUnitCalc) */
-	/* Actions each turn, 0 to 2: baseActionCnt, one more while ready, and the
-	   equipment's extra actions (gmUnitCalc). Each gives the unit a place in
-	   the turn's queue. */
+	Uint8  luck;	/* 0 to 99 (gmUnitCalculate) */
+	/* Actions each turn, 0 to 2: baseActionCount, one more while ready, and the
+	   equipment's extra actions (gmUnitCalculate). Each gives the unit a place
+	   in the turn's queue. */
 	Uint8 actionsPerTurn;
-	Uint8 hpRegen; /* HP regained at each turn's end (gmUnitCalc) */
-	/* PP regained at each turn's end, 0 to 200 (gmUnitCalc): 4 more once the
-	   lighthouse of the character's element is lit. */
+	Uint8 hpRegen; /* HP regained at each turn's end (gmUnitCalculate) */
+	/* PP regained at each turn's end, 0 to 200 (gmUnitCalculate): 4 more once
+	   the lighthouse of the character's element is lit. */
 	Uint8 ppRegen;
 	Uint8 unused[2]; /* no code names it, as baseUnused */
 	/* Power and resistance in each element, 0 to 200, after equipment, a
-	   summon's boost and Resistance stages (gmUnitCalc). */
+	   summon's boost and Resistance stages (gmUnitCalculate). */
 	BATTLE_ELEMENT_STATS element[ELEMENT_COUNT];
 	/* The action list: Psynergy taught for good, then the class's and the
 	   equipment's (gmUnitRefreshPsynergy). An empty entry is 0. */
@@ -386,8 +386,9 @@ typedef struct UNIT {
 	/* The Djinn set, one bit per Djinni; only these add their stat bonuses. */
 	Uint32 djinnSet[ELEMENT_COUNT];
 	/* the Djinn held in each element, at most 10 */
-	Uint8 djinnHeldCnts[ELEMENT_COUNT];
-	Uint8 djinnSetCnts[ELEMENT_COUNT]; /* the Djinn set in each element; the */
+	Uint8 djinnHeldCounts[ELEMENT_COUNT];
+	Uint8
+		djinnSetCounts[ELEMENT_COUNT]; /* the Djinn set in each element; the */
 	/* class's element levels are read from these Copied from the enemy's
 	   definition, where it is 0 in every row. During a battle the enemy's
 	   action choice keeps its place in its action list here
@@ -410,19 +411,19 @@ typedef struct UNIT {
 	/* A summon's boost to its summoner's power in each element: at the end of
 	   the summoner's action, the element the summon spent the most Djinn of
 	   rises to that many (btUnitProcessActionEnd), and n adds (n * n + n) * 5
-	   power (gmUnitCalc). Cleared at the battle's start, on going down and by
-	   Break. */
+	   power (gmUnitCalculate). Cleared at the battle's start, on going down and
+	   by Break. */
 	Sint8 summonBoost[ELEMENT_COUNT];
-	/* The curse: CURSE_FLAG bits. gmUnitCalc rebuilds CURSE_BOUND and
+	/* The curse: CURSE_FLAG bits. gmUnitCalculate rebuilds CURSE_BOUND and
 	   CURSE_ITEM from the equipment. A bound unit loses one action in four,
 	   except Defend (btActionRunBuild); any bit set shows the curse in the
 	   Status screens and lets the sanctum remove it. */
 	Sint8 curse;
 	Sint8 poison; /* POISON_NORMAL or POISON_VENOM, 0 for none */
-	/* Each stat change: the turns it has left, and its stage (gmUnitCalc: an
-	   eighth of Attack, Defense or Agility, or 20 Resistance, a stage). Stages
-	   run -4 to 4 and last 7 turns; a lowered one may recover sooner at the end
-	   of a turn. */
+	/* Each stat change: the turns it has left, and its stage (gmUnitCalculate:
+	   an eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
+	   Stages run -4 to 4 and last 7 turns; a lowered one may recover sooner at
+	   the end of a turn. */
 	Uint8 attackTurns;
 	Sint8 attackStage;
 	Uint8 defenseTurns;
@@ -447,11 +448,11 @@ typedef struct UNIT {
 	   of the unit's own actions (btUnitProcessActionEnd); at 0 it falls. */
 	Uint8 grimReaper;
 	/* The totals of EQUIP_EFFECT_ADD_UNLEASH_CHANCE and
-	   EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE that gmUnitCalc sums; nothing reads
-	   them back. */
+	   EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE that gmUnitCalculate sums; nothing
+	   reads them back. */
 	Uint8 equipBonus[2];
 	/* Kite's extra action: 2 when cast, down one at each turn's end; while
-	   nonzero gmUnitCalc gives the unit one more action a turn. */
+	   nonzero gmUnitCalculate gives the unit one more action a turn. */
 	Uint8 ready;
 	Uint8 immobile; /* set by ABILITY_EFFECT_GROUND: the next action is lost */
 	Uint8 agilityTurns; /* the Agility change's turns left, 5 when cast */
@@ -465,7 +466,7 @@ typedef struct UNIT {
 } UNIT;
 
 STATIC_ASSERT(sizeof(ABILITY_DEFINITION) == ABILITY_DEFINITION_SIZE);
-STATIC_ASSERT(offsetof(ABILITY_DEFINITION, eff) == 3);
+STATIC_ASSERT(offsetof(ABILITY_DEFINITION, effect) == 3);
 STATIC_ASSERT(offsetof(ABILITY_DEFINITION, power) == 10);
 STATIC_ASSERT(offsetof(ABILITY_DEFINITION, fieldPsynergy) == 12);
 
@@ -484,8 +485,8 @@ STATIC_ASSERT(offsetof(UNIT, level) == 15);
 STATIC_ASSERT(offsetof(UNIT, element) == 72);
 STATIC_ASSERT(offsetof(UNIT, ready) == 324);
 STATIC_ASSERT(offsetof(UNIT, inventory) == 216);
-STATIC_ASSERT(offsetof(UNIT, djinnHeldCnts) == 280);
-STATIC_ASSERT(offsetof(UNIT, djinnSetCnts) == 284);
+STATIC_ASSERT(offsetof(UNIT, djinnHeldCounts) == 280);
+STATIC_ASSERT(offsetof(UNIT, djinnSetCounts) == 284);
 STATIC_ASSERT(offsetof(UNIT, defendLevel) == 299);
 STATIC_ASSERT(offsetof(UNIT, charm) == 314);
 STATIC_ASSERT(offsetof(UNIT, haunt) == 320);

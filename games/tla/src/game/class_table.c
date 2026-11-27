@@ -40,7 +40,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURE_WELL, .level = 10},
 			{.ability = ABILITY_POTENT_CURE, .level = 26},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
 	/* Knight */
 	{
@@ -68,7 +68,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURE_WELL, .level = 10},
 			{.ability = ABILITY_POTENT_CURE, .level = 26},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
 	/* Gallant */
 	{
@@ -97,7 +97,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_POTENT_CURE, .level = 26},
 			{.ability = ABILITY_REVIVE, .level = 19},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
 	/* Lord */
 	{
@@ -126,7 +126,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_POTENT_CURE, .level = 26},
 			{.ability = ABILITY_REVIVE, .level = 19},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
 	/* Slayer */
 	{
@@ -155,7 +155,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_POTENT_CURE, .level = 26},
 			{.ability = ABILITY_REVIVE, .level = 19},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
 	},
 	/* ? */
 	{0},
@@ -188,7 +188,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_ERUPTION, .level = 22},
 			{.ability = ABILITY_PYROCLASM, .level = 48},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Soldier */
 	{
@@ -213,7 +213,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_ERUPTION, .level = 22},
 			{.ability = ABILITY_PYROCLASM, .level = 48},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Warrior */
 	{
@@ -242,7 +242,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 9},
 			{.ability = ABILITY_DEBILITATE, .level = 26},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Champion */
 	{
@@ -271,7 +271,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 9},
 			{.ability = ABILITY_DEBILITATE, .level = 26},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Hero */
 	{
@@ -300,7 +300,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 9},
 			{.ability = ABILITY_DEBILITATE, .level = 26},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* ? */
 	{0},
@@ -339,7 +339,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_SLEEP, .level = 12},
 			{.ability = ABILITY_BIND, .level = 17},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Magician */
 	{
@@ -368,7 +368,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_SLEEP, .level = 12},
 			{.ability = ABILITY_BIND, .level = 17},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Mage */
 	{
@@ -397,7 +397,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_SLEEP, .level = 12},
 			{.ability = ABILITY_BIND, .level = 17},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Magister */
 	{
@@ -426,7 +426,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_SLEEP, .level = 12},
 			{.ability = ABILITY_BIND, .level = 17},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Sorcerer */
 	{
@@ -455,7 +455,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_SLEEP, .level = 12},
 			{.ability = ABILITY_BIND, .level = 17},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* ? */
 	{0},
@@ -948,7 +948,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Templar */
 	{
@@ -978,7 +978,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Paladin */
 	{
@@ -1008,7 +1008,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_AVOID, .level = 6},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* ? */
 	{0},
@@ -1052,7 +1052,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Illusionist */
 	{
@@ -1082,7 +1082,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Enchanter */
 	{
@@ -1112,7 +1112,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Conjurer */
 	{
@@ -1142,7 +1142,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* War Adept */
 	{
@@ -1172,7 +1172,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* ? */
 	{0},
@@ -1212,7 +1212,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Illusionist */
 	{
@@ -1242,7 +1242,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Enchanter */
 	{
@@ -1272,7 +1272,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Conjurer */
 	{
@@ -1302,7 +1302,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* War Adept */
 	{
@@ -1332,7 +1332,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* ? */
 	{0},
@@ -1372,7 +1372,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_THUNDERHEAD, .level = 50},
 			{.ability = ABILITY_MIST, .level = 7},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Disciple */
 	{
@@ -1402,7 +1402,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_THUNDERHEAD, .level = 50},
 			{.ability = ABILITY_MIST, .level = 7},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Master */
 	{
@@ -1432,7 +1432,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_THUNDERHEAD, .level = 50},
 			{.ability = ABILITY_MIST, .level = 7},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* ? */
 	{0},
@@ -1476,7 +1476,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Diviner */
 	{
@@ -1506,7 +1506,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Shaman */
 	{
@@ -1536,7 +1536,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Druid */
 	{
@@ -1566,7 +1566,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Oracle */
 	{
@@ -1596,7 +1596,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* ? */
 	{0},
@@ -1635,7 +1635,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Diviner */
 	{
@@ -1664,7 +1664,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Shaman */
 	{
@@ -1693,7 +1693,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Druid */
 	{
@@ -1722,7 +1722,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* Oracle */
 	{
@@ -1751,7 +1751,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_SLEEP},
+		.weakEffects = {ABILITY_EFFECT_SLEEP},
 	},
 	/* ? */
 	{0},
@@ -1790,7 +1790,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 36},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 	/* Conjurer */
 	{
@@ -1819,7 +1819,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 36},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 	/* Dark Mage */
 	{
@@ -1848,7 +1848,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 36},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 	/* ? */
 	{0},
@@ -1891,7 +1891,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Wanderer */
 	{
@@ -1920,7 +1920,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Ascetic */
 	{
@@ -1949,7 +1949,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Water Monk */
 	{
@@ -1978,7 +1978,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Guru */
 	{
@@ -2007,7 +2007,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_RESTORE, .level = 13},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* ? */
 	{0},
@@ -2045,7 +2045,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 33},
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Wanderer */
 	{
@@ -2073,7 +2073,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 33},
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Ascetic */
 	{
@@ -2101,7 +2101,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 33},
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Fire Monk */
 	{
@@ -2129,7 +2129,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 33},
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Guru */
 	{
@@ -2157,7 +2157,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 33},
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* ? */
 	{0},
@@ -2196,7 +2196,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Bard */
 	{
@@ -2225,7 +2225,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* Warlock */
 	{
@@ -2254,7 +2254,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 41},
 			{.ability = ABILITY_BREAK, .level = 34},
 		},
-		.weakEffs = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
+		.weakEffects = {ABILITY_EFFECT_DELUSION, ABILITY_EFFECT_DAZZLE},
 	},
 	/* ? */
 	{0},
@@ -2298,7 +2298,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURSE, .level = 24},
 			{.ability = ABILITY_CONDEMN, .level = 29},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* Ruffian */
 	{
@@ -2328,7 +2328,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURSE, .level = 24},
 			{.ability = ABILITY_CONDEMN, .level = 29},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* Savage */
 	{
@@ -2358,7 +2358,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURSE, .level = 24},
 			{.ability = ABILITY_CONDEMN, .level = 29},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* Barbarian */
 	{
@@ -2388,7 +2388,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURSE, .level = 24},
 			{.ability = ABILITY_CONDEMN, .level = 29},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* Berserker */
 	{
@@ -2418,7 +2418,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURSE, .level = 24},
 			{.ability = ABILITY_CONDEMN, .level = 29},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* Chaos Lord */
 	{
@@ -2448,7 +2448,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURSE, .level = 24},
 			{.ability = ABILITY_CONDEMN, .level = 29},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* ? */
 	{0},
@@ -2486,7 +2486,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_MAGIC_SHELL, .level = 10},
 			{.ability = ABILITY_MAGIC_SHIELD, .level = 27},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* Ronin */
 	{
@@ -2516,7 +2516,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_MAGIC_SHELL, .level = 10},
 			{.ability = ABILITY_MAGIC_SHIELD, .level = 27},
 		},
-		.weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+		.weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
 	},
 	/* ? */
 	{0},
@@ -2561,7 +2561,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Elder */
 	{
@@ -2590,7 +2590,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Scholar */
 	{
@@ -2619,7 +2619,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Savant */
 	{
@@ -2648,7 +2648,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Sage */
 	{
@@ -2677,7 +2677,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* Wizard */
 	{
@@ -2706,7 +2706,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 			{.ability = ABILITY_BREAK, .level = 30},
 		},
-		.weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+		.weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
 	},
 	/* ? */
 	{0},
@@ -2816,7 +2816,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 10},
 			{.ability = ABILITY_DEBILITATE, .level = 23},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Witch */
 	{
@@ -2844,7 +2844,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 10},
 			{.ability = ABILITY_DEBILITATE, .level = 23},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Hex */
 	{
@@ -2872,7 +2872,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 10},
 			{.ability = ABILITY_DEBILITATE, .level = 23},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Fire Master */
 	{
@@ -2900,7 +2900,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 10},
 			{.ability = ABILITY_DEBILITATE, .level = 23},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* Justice */
 	{
@@ -2928,7 +2928,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_IMPAIR, .level = 10},
 			{.ability = ABILITY_DEBILITATE, .level = 23},
 		},
-		.weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+		.weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
 	},
 	/* ? */
 	{0},
@@ -3233,7 +3233,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURE_POISON, .level = 5},
 			{.ability = ABILITY_RESTORE, .level = 13},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Trainer */
 	{
@@ -3262,7 +3262,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURE_POISON, .level = 5},
 			{.ability = ABILITY_RESTORE, .level = 13},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Beastkeeper */
 	{
@@ -3291,7 +3291,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURE_POISON, .level = 5},
 			{.ability = ABILITY_RESTORE, .level = 13},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* Beast Lord */
 	{
@@ -3320,7 +3320,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_CURE_POISON, .level = 5},
 			{.ability = ABILITY_RESTORE, .level = 13},
 		},
-		.weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+		.weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
 	},
 	/* ? */
 	{0},
@@ -3359,7 +3359,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 	/* Crypt Lord */
 	{
@@ -3387,7 +3387,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 	/* Necrolyte */
 	{
@@ -3415,7 +3415,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 	/* Necromage */
 	{
@@ -3443,7 +3443,7 @@ const CLASS_DEFINITION ClassDefinitionTable[] = {
 			{.ability = ABILITY_DRAIN, .level = 31},
 			{.ability = ABILITY_PSY_DRAIN, .level = 39},
 		},
-		.weakEffs = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
+		.weakEffects = {ABILITY_EFFECT_STUN, ABILITY_EFFECT_STUN_THREE_ROLLS},
 	},
 };
 /* clang-format on */

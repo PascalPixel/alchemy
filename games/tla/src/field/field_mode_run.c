@@ -61,7 +61,7 @@ Sint32 fdModeRun(void)
 	Sint32				packed;
 
 	/* Set up the scene. */
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	syWordsClearEntry(state, sizeof(FIELD_STATE));
 	syGameFlagClear(FLAG_IN_BATTLE);
 	MainRoutineStateWork.returnScene = MainRoutineStateWork.next;
@@ -85,7 +85,7 @@ Sint32 fdModeRun(void)
 	}
 	state->mode = mode;
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
-		TouchCopiesWork.cnt = 0;
+		TouchCopiesWork.count = 0;
 	else
 		fdTileCopiesRestore();
 	mnWindowSystemInitFieldStub();
@@ -99,7 +99,7 @@ Sint32 fdModeRun(void)
 		fdActorRestore();
 	if(MainRoutineStateWork.pendingDjinni != 0)
 		fdDjinnRestoreActorAfterBattle();
-	state->queuedSnd = -1;
+	state->queuedSound = -1;
 	if(mode == ACTOR_SYSTEM_WORLD_MAP) {
 		fdWorldMapUpdateCurrentTileBlockStub();
 		fdWorldMapLoadGraphicsStub(
@@ -118,7 +118,7 @@ Sint32 fdModeRun(void)
 	/* The default fade is from the backdrop colour over 16 ticks; the scene's
 	   initialization may choose another. */
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = MAP_TRANSITION_TICKS;
+	state->transitionFrame = MAP_TRANSITION_TICKS;
 	state->transitionActive = 0;
 	/* fdUpdateWalking scales the leader's speed by this (16.16) into the
 	   distance counted towards PP, Djinn recovery and poison: toFIXED(1) / 160
@@ -148,7 +148,7 @@ Sint32 fdModeRun(void)
 
 	if(MainRoutineStateWork.teleportState == TELEPORT_ARRIVING) {
 		fdActorGetById(fdPartyGetLeaderActor())->scaleX = 0;
-		fdActorSetSprFlagsStub(fdActorGetById(fdPartyGetLeaderActor()), 0);
+		fdActorSetSpriteFlagsStub(fdActorGetById(fdPartyGetLeaderActor()), 0);
 	}
 	fdUpdateHoverReady();
 	sySynch(2);
@@ -173,14 +173,14 @@ Sint32 fdModeRun(void)
 			   Teleport chosen on the map screen, which no render here stages,
 			   would settle it. */
 			if(MainRoutineStateWork.teleportState == TELEPORT_CHOSEN) {
-				syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
+				syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, 6584);
 				sySynch(20);
 				syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 			}
-			fdScreenTransitionStart(state->transition, state->transitionFrm);
+			fdScreenTransitionStart(state->transition, state->transitionFrame);
 			state->transitionActive = 1;
 			if(MainRoutineStateWork.teleportState == TELEPORT_CHOSEN) {
-				syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, 6584);
+				syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, 6584);
 				sySynch(20);
 				syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 			}
@@ -188,7 +188,7 @@ Sint32 fdModeRun(void)
 			/* An arrival the last scene asked for (fdEntrancePlayArrival) plays
 			   through the fade; with none, wait out half of it. */
 			if(!fdEntrancePlayArrival())
-				sySynch((state->transitionFrm + 1) / 2);
+				sySynch((state->transitionFrame + 1) / 2);
 		}
 		arrivalState = MainRoutineStateWork.teleportState;
 		if(arrivalState == TELEPORT_CHOSEN) {
@@ -259,7 +259,7 @@ Sint32 fdModeRun(void)
 					/* Characters fell to poison or hazardous ground. */
 					fdLeaderStopMoving();
 					fdWorldMapFreeze();
-					for(value = 0; value < state->fallenCnt; value++) {
+					for(value = 0; value < state->fallenCount; value++) {
 						fdActorSelectAnimationStub(
 							leader, ANIM_LEADER_LEAN_BACK);
 						mnMessageArgumentPushStub(
@@ -268,7 +268,7 @@ Sint32 fdModeRun(void)
 							(Sint32)MsgFieldStrengthExhausted,
 							FIELD_MESSAGE_ZOOM);
 					}
-					if(state->survivorCnt == 0) {
+					if(state->survivorCount == 0) {
 						/* The whole party fell: back to the restart point with
 						   1 HP. */
 						if(*leaderId == ACTOR_FELIX)
@@ -276,7 +276,7 @@ Sint32 fdModeRun(void)
 								leader, ANIM_LEADER_FALL_ON_FACE);
 						else
 							fdActorSelectAnimationStub(leader, ANIM_COLLAPSE);
-						sySndPlayStub(MUS_DEFEATED);
+						sySoundPlayStub(MUS_DEFEATED);
 						mnFieldMessageShowStub((Sint32)MsgFieldPartyAnnihilated,
 							FIELD_MESSAGE_ZOOM);
 						unit = syUnitGet(*leaderId);
@@ -402,7 +402,7 @@ Sint32 fdModeRun(void)
 				   editor). */
 				mnAreaNameWindowHideStub();
 				fdLeaderStopMoving();
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				fdWorldMapFreeze();
 				syGameFlagSet(FLAG_MENU_OPEN);
 				if(DebugMode && (PerWork.data & KEY_B) != 0 &&
@@ -411,9 +411,9 @@ Sint32 fdModeRun(void)
 				} else if(syGameFlagGet(FLAG_MENUS_RAISE_CUE)) {
 					state->raisedCue = FIELD_RAISED_CUE_MENUS;
 				} else {
-					state->effTmrRunning = 0;
+					state->effectTimerRunning = 0;
 					mnFieldMenuRunStub();
-					state->effTmrRunning = 1;
+					state->effectTimerRunning = 1;
 					fdUpdateHoverReady();
 				}
 				fdWorldMapReloadPendingAreaGraphics();
@@ -450,7 +450,7 @@ Sint32 fdModeRun(void)
 			} else if(state->pauseMenu != 0) {
 				/* The Pause menu (in debug mode, B opens the scene select and L
 				   the palette editor). */
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				fdLeaderStopMoving();
 				fdWorldMapFreeze();
 				syGameFlagSet(FLAG_MENU_OPEN);
@@ -464,7 +464,7 @@ Sint32 fdModeRun(void)
 				} else {
 					fdScriptEndAllLastingPsynergy();
 					mnAreaNameWindowHideStub();
-					party->returnMusic = sySndGetCurrentBGMStub();
+					party->returnMusic = sySoundGetCurrentBGMStub();
 					if(!syGameFlagGet(FLAG_IN_BATTLE_ARENA)) {
 						/* With fewer than PAUSE_MENU_VRAM_BLOCKS of the sprite
 						   VRAM blocks free, sprite drawing stays suspended
@@ -509,7 +509,7 @@ Sint32 fdModeRun(void)
 			leader = fdGetPartyActor();
 			if(DebugMode == 0 || !syGameFlagGet(FLAG_DEBUG_STEPS_OFF)) {
 				if(*pending == 0 ||
-					(leader->tmr == 0 && *(Sint16 *)&leader->userValue == 0))
+					(leader->timer == 0 && *(Sint16 *)&leader->userValue == 0))
 					fdUpdateWalking(leader->layer, leader->x.fixed,
 						leader->y.fixed, leader->z.fixed);
 			}
@@ -518,9 +518,9 @@ Sint32 fdModeRun(void)
 
 done:
 	if(state->transitionActive != 0) {
-		fdScreenTransitionFinish(state->transition, state->transitionFrm);
+		fdScreenTransitionFinish(state->transition, state->transitionFrame);
 		state->transitionActive = 0;
-		sySynch(state->transitionFrm);
+		sySynch(state->transitionFrame);
 	}
 	sySynch(1);
 	syHeapSlotRelease(HEAP_SLOT_FIELD);
@@ -616,8 +616,8 @@ Bool fdPlaceAtEntranceRow(Sint32 findEntrance)
 	if(findEntrance) {
 		for(; entranceEntry->entrance != -1; entranceEntry++) {
 			if(entranceEntry->entrance == entrance &&
-				(entranceEntry->requiredFlg == -1 ||
-					syGameFlagGet(entranceEntry->requiredFlg))) {
+				(entranceEntry->requiredFlag == -1 ||
+					syGameFlagGet(entranceEntry->requiredFlag))) {
 				foundEntrance = TRUE;
 				break;
 			}
@@ -667,7 +667,7 @@ Bool fdPlaceAtEntrance(void)
 	MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 	FIXED				xFixed;
 	Uint8			   *cursor = MapScene;
-	Sint32			   *ang;
+	Sint32			   *angle;
 	Uint16			   *layer;
 	Sint32				entrance = state->entrance;
 	Sint32				height;
@@ -675,7 +675,7 @@ Bool fdPlaceAtEntrance(void)
 	Sint32				z;
 	FIXED				zFixed;
 	Sint32				base;
-	Sint32				flg;
+	Sint32				flags;
 	Sint32				left;
 	Sint32				top;
 	Sint32				bottom;
@@ -683,11 +683,11 @@ Bool fdPlaceAtEntrance(void)
 	Sint32				leftEdge, topEdge, rightEdge, bottomEdge;
 
 	cursor = MapScene + (Uint16)fdStreamReadU16(&cursor);
-	ang = &MainRoutineStateWork.heading;
+	angle = &MainRoutineStateWork.heading;
 	layer = &MainRoutineStateWork.layer;
 	for(;; cursor += MAP_ENTRANCE_ROW_BYTES) {
 		if(*(Sint8 *)cursor == -1) {
-			*ang = FACING_SOUTH;
+			*angle = FACING_SOUTH;
 			{
 				Uint32 cleared = 0;
 
@@ -703,17 +703,17 @@ Bool fdPlaceAtEntrance(void)
 			zFixed = toFIXED(z);
 			height =
 				FIXEDtoINT(fdMapGridGetTerrainHeightStub(0, xFixed, zFixed));
-			flg = *cursor;
+			flags = *cursor;
 			base = (Sint32)MapScene;
 			if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 				MainRoutineStateWork.x = xFixed;
 				MainRoutineStateWork.z = zFixed;
-				*ang = (flg & MAP_ENTRANCE_FACING_MASK) * (TRIG_TURN / 16);
+				*angle = (flags & MAP_ENTRANCE_FACING_MASK) * (TRIG_TURN / 16);
 				*layer = 0;
-				if(flg & MAP_ENTRANCE_RAISED)
+				if(flags & MAP_ENTRANCE_RAISED)
 					MainRoutineStateWork.y = toFIXED(8);
 			}
-			if(flg & MAP_ENTRANCE_KEEP_BOUNDS)
+			if(flags & MAP_ENTRANCE_KEEP_BOUNDS)
 				return TRUE;
 
 			cursor = MapSceneBoundsOffset;

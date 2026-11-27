@@ -2,7 +2,7 @@
    copy of: the seven background palette entries the circle is drawn in, its
    colours and its shimmer's (teleport_circle_colors.c), and the entries each
    step of the shimmer paints those colours into, so that they run round the
-   circle (scPaletteSetColsFade).
+   circle (scPaletteSetColorsFade).
 
    An includer defines TELEPORT_CIRCLE_FIRST_ENTRY, the first of its circle's
    seven entries, first. */

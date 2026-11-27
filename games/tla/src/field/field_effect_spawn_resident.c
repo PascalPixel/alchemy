@@ -13,8 +13,9 @@ extern const Sint32 *FieldEffectDurationScripts[];
    options' type when EFFECT_USE_TYPE asks for it, its script one of
    FieldEffectDurationScripts and its options chosen by the EFFECT_USE_
    flags. */
-void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
-	Sint32 velY, Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options)
+void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options)
 {
 	/* UB: actor 0 is Isaac's, on stage only while he leads; with Felix leading
 	   fdActorGetById returns NULL, and the sprite priority below is read
@@ -25,10 +26,10 @@ void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
 	ACTOR *party = fdActorGetById(ACTOR_ISAAC);
 #endif
 	FIELD_EFFECT *effect;
-	FIELD_SPR	 *spr;
+	FIELD_SPR	 *sprite;
 	const Sint32 *script;
 
-	if((flg & EFFECT_USE_TYPE) != 0 && options != 0)
+	if((flags & EFFECT_USE_TYPE) != 0 && options != 0)
 		effect = (FIELD_EFFECT *)fdActorCreateStub(options->type, x, y, z);
 	else
 		effect =
@@ -36,55 +37,56 @@ void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
 	if(effect == 0)
 		return;
 
-	spr = effect->spr;
-	fdActorSelectAnimationStub((ACTOR *)effect, (flg + 1) & EFFECT_SCRIPT_MASK);
+	sprite = effect->sprite;
+	fdActorSelectAnimationStub(
+		(ACTOR *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);
 	fdActorStartScriptStub(
-		(void *)effect, FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK]);
-	effect->motionFlg = 0;
-	spr->flg = 0;
+		(void *)effect, FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]);
+	effect->motionFlags = 0;
+	sprite->flags = 0;
 	effect->update = fdEffectUpdateMotionScaleAndSpin;
-	effect->vel.x = velX;
-	effect->vel.y = velY;
-	effect->vel.z = velZ;
-	spr->pri = ((SPR *)party->spr)->image.pri;
+	effect->velocity.x = velocityX;
+	effect->velocity.y = velocityY;
+	effect->velocity.z = velocityZ;
+	sprite->priority = ((SPR *)party->sprite)->image.priority;
 	effect->scaleRateX = 0;
 	effect->scaleRateY = 0;
 	effect->spin = 0;
 
-	if((flg & EFFECT_OPTION_MASK) == 0 || options == 0)
+	if((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
 		return;
-	if((flg & EFFECT_USE_PALETTE) != 0)
-		fdActorSetSprCol((ACTOR *)effect, options->pal);
-	if((flg & EFFECT_USE_PRIORITY) != 0) {
-		effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		spr->pri = options->pri;
+	if((flags & EFFECT_USE_PALETTE) != 0)
+		fdActorSetSpriteColor((ACTOR *)effect, options->palette);
+	if((flags & EFFECT_USE_PRIORITY) != 0) {
+		effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite->priority = options->priority;
 	}
-	if((flg & EFFECT_USE_START_SCALE) != 0) {
+	if((flags & EFFECT_USE_START_SCALE) != 0) {
 		effect->scaleX = options->startScaleX;
 		effect->scaleY = options->startScaleY;
 	}
-	if((flg & EFFECT_SCALE_TO_TARGET) != 0) {
-		script = FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK];
-		if((flg & EFFECT_USE_START_SCALE) != 0) {
-			effect->scaleRateX = (options->tgtScaleX - effect->scaleX) /
+	if((flags & EFFECT_SCALE_TO_TARGET) != 0) {
+		script = FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK];
+		if((flags & EFFECT_USE_START_SCALE) != 0) {
+			effect->scaleRateX = (options->targetScaleX - effect->scaleX) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (options->tgtScaleY - effect->scaleY) /
+			effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
 		} else {
-			effect->scaleRateX = (options->tgtScaleX - toFIXED(1)) /
+			effect->scaleRateX = (options->targetScaleX - toFIXED(1)) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (options->tgtScaleY - toFIXED(1)) /
+			effect->scaleRateY = (options->targetScaleY - toFIXED(1)) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
 		}
 	}
-	if((flg & EFFECT_USE_SCRIPT) != 0) {
+	if((flags & EFFECT_USE_SCRIPT) != 0) {
 		fdActorSelectAnimationStub((ACTOR *)effect, 1);
 		fdActorStartScriptStub((void *)effect, options->script);
 	}
-	if((flg & EFFECT_USE_ROTATION) != 0)
-		spr->rotation = options->rotation;
-	if((flg & EFFECT_USE_SPIN) != 0)
+	if((flags & EFFECT_USE_ROTATION) != 0)
+		sprite->rotation = options->rotation;
+	if((flags & EFFECT_USE_SPIN) != 0)
 		effect->spin = options->spin;
-	if((flg & EFFECT_USE_UPDATE) != 0)
+	if((flags & EFFECT_USE_UPDATE) != 0)
 		effect->update = options->update;
 }

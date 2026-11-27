@@ -8,7 +8,7 @@ void scDustScatter(Sint32 spread)
 {
 	ACTOR		 *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	void		 *frm = 0;
+	void		 *frame = 0;
 	Uint32		  i;
 	FIXED		  y;
 
@@ -18,23 +18,24 @@ void scDustScatter(Sint32 spread)
 			i * toFIXED(2) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
 			leader->z.fixed);
 		if(effect != 0) {
-			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
-			effect->motionFlg = 0;
-			effect->collisionFlg = 0;
-			fdActorSetSprFlags((ACTOR *)effect, 0);
+			frame = fdSpriteShareVRAMCacheEntry(effect->sprite, frame);
+			effect->motionFlags = 0;
+			effect->collisionFlags = 0;
+			fdActorSetSpriteFlags((ACTOR *)effect, 0);
 			fdActorSelectAnimation((ACTOR *)effect, 2);
 			fdActorStartScript(effect, DustScatterScript);
 			effect->scaleY = effect->scaleX = toFIXED(7) / 10;
-			effect->spr->pri = 1;
+			effect->sprite->priority = 1;
 			if(spread != 0) {
-				effect->vel.x =
+				effect->velocity.x =
 					syMulFX(syCos(i * DEGtoANG(45)), toFIXED(6) / 5);
-				effect->vel.z = syMathSin(i * DEGtoANG(45));
+				effect->velocity.z = syMathSin(i * DEGtoANG(45));
 			} else {
-				effect->vel.x = spread;
-				effect->vel.z = spread;
+				effect->velocity.x = spread;
+				effect->velocity.z = spread;
 			}
-			effect->vel.y = -(syRandomBelow(toFIXED(1) / 4) + toFIXED(3) / 8);
+			effect->velocity.y =
+				-(syRandomBelow(toFIXED(1) / 4) + toFIXED(3) / 8);
 			effect->spin = syRandomBelow(TRIG_TURN / 128) - TRIG_TURN / 256;
 			effect->scaleRateX = -(toFIXED(1) / 32);
 			effect->scaleRateY = -(toFIXED(3) / 128);
@@ -51,33 +52,35 @@ void scDustBurst(void)
 {
 	ACTOR		 *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	void		 *frm;
+	void		 *frame;
 	Uint32		  i;
 
 	if(leader == 0)
 		return;
-	frm = 0;
+	frame = 0;
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
 		effect = (FIELD_EFFECT *)scFieldActorCreate(SPRITE_DUST_CLOUD,
 			leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		if(effect != 0) {
-			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
-			effect->motionFlg = 0;
-			effect->collisionFlg = 0;
-			fdActorSetSprFlags((ACTOR *)effect, 0);
+			frame = fdSpriteShareVRAMCacheEntry(effect->sprite, frame);
+			effect->motionFlags = 0;
+			effect->collisionFlags = 0;
+			fdActorSetSpriteFlags((ACTOR *)effect, 0);
 			fdActorSelectAnimation((ACTOR *)effect, 2);
 			fdActorStartScript(effect, DustBurstScript);
-			effect->vel.x = syCos(i * (TRIG_TURN / DUST_RING_PUFFS));
-			effect->vel.y = 0;
-			effect->vel.z = syMathSin(i * (TRIG_TURN / DUST_RING_PUFFS));
-			effect->vel.x += effect->vel.x >> 1;
-			effect->vel.x += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
-			effect->vel.z += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
+			effect->velocity.x = syCos(i * (TRIG_TURN / DUST_RING_PUFFS));
+			effect->velocity.y = 0;
+			effect->velocity.z = syMathSin(i * (TRIG_TURN / DUST_RING_PUFFS));
+			effect->velocity.x += effect->velocity.x >> 1;
+			effect->velocity.x +=
+				syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
+			effect->velocity.z +=
+				syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 			effect->spin = syRandomBelow(TRIG_TURN / 16) - TRIG_TURN / 32;
 			effect->scaleRateX = 0;
 			effect->scaleRateY = 0;
 			effect->update = fdEffectAdvanceMotionAtLeaderPriority;
-			effect->spr->pri = ((FIELD_SPR *)leader->spr)->pri;
+			effect->sprite->priority = ((FIELD_SPR *)leader->sprite)->priority;
 		}
 	}
 }

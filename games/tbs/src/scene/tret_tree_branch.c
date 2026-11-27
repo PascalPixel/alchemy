@@ -138,21 +138,21 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    ground of the metatile it lands on. Between a branch and its hidden copy the
    metatiles south are as much higher, so the picture does not change. */
 static void scTretTreeBranchShiftLeaderAndCameraByMetatiles(
-	Sint32 metatileOfsX, Sint32 metatileOfsZ)
+	Sint32 metatileOffsetX, Sint32 metatileOffsetZ)
 {
 	FIELD_STATE *state = FieldStateWork;
 	ACTOR		*actor;
-	Sint32		 ofsX = metatileOfsX;
-	Sint32		 ofsZ = metatileOfsZ;
+	Sint32		 offsetX = metatileOffsetX;
+	Sint32		 offsetZ = metatileOffsetZ;
 	FIXED		 groundHeight;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	ofsX *= toFIXED(16);
-	ofsZ *= toFIXED(16);
+	offsetX *= toFIXED(16);
+	offsetZ *= toFIXED(16);
 
 	if(actor != NULL) {
-		actor->x.fixed += ofsX;
-		actor->z.fixed += ofsZ;
+		actor->x.fixed += offsetX;
+		actor->z.fixed += offsetZ;
 		groundHeight = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);
 		actor->y.fixed = groundHeight;
@@ -161,8 +161,8 @@ static void scTretTreeBranchShiftLeaderAndCameraByMetatiles(
 
 	actor = state->camera;
 	if(actor != NULL) {
-		actor->x.fixed += ofsX;
-		actor->z.fixed += ofsZ;
+		actor->x.fixed += offsetX;
+		actor->z.fixed += offsetZ;
 		groundHeight = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);
 		actor->y.fixed = groundHeight;
@@ -226,7 +226,7 @@ static void scTretTreeBranchEnterTretTreeRooms(void)
 {
 	FIELD_STATE *state = FieldStateWork;
 
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(state->stepCue);
 }
 
@@ -319,15 +319,15 @@ Sint32 scInit(void)
    clouds' above the split, the map's below it. */
 static void scTretTreeBranchApplyBg3ScrollAtScanline(void)
 {
-	Uint16 *scrollOfs;
+	Uint16 *scrollOffset;
 	Uint32	horizontalScroll;
 
 	if(REG_VCOUNT >= SplitLine) {
-		scrollOfs = &HofsAtOrAfterSplit;
+		scrollOffset = &HofsAtOrAfterSplit;
 	} else {
-		scrollOfs = &HofsBeforeSplit;
+		scrollOffset = &HofsBeforeSplit;
 	}
-	horizontalScroll = *scrollOfs;
+	horizontalScroll = *scrollOffset;
 	REG_BG3HOFS = horizontalScroll;
 }
 
@@ -338,11 +338,11 @@ static void scTretTreeBranchUpdateBg3ScrollSplit(void)
 {
 	MAP_GRID_LAYER_SCROLL *layer = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])
 										->layers[MAPGRID_LAYER_GROUND];
-	Sint32 horizontalOfs;
+	Sint32 horizontalOffset;
 
 	SplitLine = BG3_SPLIT_Y - (Sint16)(FIXEDtoINT(layer->y));
-	HofsAtOrAfterSplit = horizontalOfs = (Sint16)(FIXEDtoINT(layer->x));
-	HofsBeforeSplit = horizontalOfs - (TickCount >> 2);
+	HofsAtOrAfterSplit = horizontalOffset = (Sint16)(FIXEDtoINT(layer->x));
+	HofsBeforeSplit = horizontalOffset - (TickCount >> 2);
 }
 
 /* Starts the clouds drifting: the split is chosen at every scanline and moved

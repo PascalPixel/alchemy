@@ -23,10 +23,10 @@
    terms, whose rotation terms stay cached while the yaw (ScanlineAngle) is
    unchanged; affine receives each line's parameters twice, for BG2 and then
    BG3, as the HBlank DMA writes both. */
-void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
+void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *target,
 	WORLD_MAP_SCANLINE *line, WORLD_MAP_AFFINE_LINE *affine)
 {
-	Uint32 ang;
+	Uint32 angle;
 	FIXED  originX;
 	FIXED  originZ;
 	Sint32 sinYaw;
@@ -36,35 +36,36 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 	Sint32 depth;
 
 	{
-		Sint32 tgtDeltaX = tgt->x;
-		Sint32 tgtZ = tgt->z;
+		Sint32 targetDeltaX = target->x;
+		Sint32 targetZ = target->z;
 		Sint32 eyeZ = eye->z;
 		Sint32 eyeX = eye->x;
 
-		depth = tgtZ - eyeZ;
-		tgtDeltaX -= eyeX;
-		ang = (Uint16)StubsSystem.arcTan2.tgt(tgtDeltaX >> 4, depth >> 4);
+		depth = targetZ - eyeZ;
+		targetDeltaX -= eyeX;
+		angle =
+			(Uint16)StubsSystem.arcTan2.target(targetDeltaX >> 4, depth >> 4);
 	}
 	/* The texture origin: the target at half scale. */
-	originX = syMulFXArm(tgt->x, toFIXED(1) / 2);
-	originZ = syMulFXArm(tgt->z, toFIXED(1) / 2);
-	if(ang != ScanlineAngle) {
+	originX = syMulFXArm(target->x, toFIXED(1) / 2);
+	originZ = syMulFXArm(target->z, toFIXED(1) / 2);
+	if(angle != ScanlineAngle) {
 		/* The camera turned: recompute every scanline's rotation terms. */
-		ScanlineAngle = ang;
-		sinYaw = StubsSystem.sin.tgt(ang);
-		cosYaw = StubsSystem.cos.tgt(ang);
+		ScanlineAngle = angle;
+		sinYaw = StubsSystem.sin.target(angle);
+		cosYaw = StubsSystem.cos.target(angle);
 		negativeSinYaw = -sinYaw;
 		for(scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
 			FIXED  widthScale = line->scale;
 			Sint32 centerX;
-			Sint32 horizontalOfs;
-			Sint32 depthOfs;
+			Sint32 horizontalOffset;
+			Sint32 depthOffset;
 			Sint32 affinePa;
 			Sint32 affinePc;
 
 			depth = line->depth;
 			affinePa = -FIXEDtoQ_8_8(syMulFXArm(widthScale, cosYaw));
-			horizontalOfs = (Sint16)affinePa;
+			horizontalOffset = (Sint16)affinePa;
 			line->pa = affinePa;
 			affine->pa = affinePa;
 			affinePc = FIXEDtoQ_8_8(syMulFXArm(widthScale, sinYaw));
@@ -76,18 +77,19 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 			/* UB: affine coefficients can be negative, and shifting a negative
 			   value left is undefined; UBFIX multiplies. */
 #if FIX_UNDEFINED_SHIFT
-			horizontalOfs = syQ88toFIXED(horizontalOfs) * centerX;
-			depthOfs = syQ88toFIXED((Sint16)affinePc) * -centerX;
+			horizontalOffset = syQ88toFIXED(horizontalOffset) * centerX;
+			depthOffset = syQ88toFIXED((Sint16)affinePc) * -centerX;
 #else
-			horizontalOfs = (horizontalOfs << 8) * centerX;
-			depthOfs = ((Sint16)affinePc << 8) * -centerX;
+			horizontalOffset = (horizontalOffset << 8) * centerX;
+			depthOffset = ((Sint16)affinePc << 8) * -centerX;
 #endif
 			/* The line's start: back from its centre by centerX pixels of the
 			   line's step, then along the view by its depth. */
-			line->ofsX = -(horizontalOfs + syMulFXArm(negativeSinYaw, depth));
-			line->ofsY = depthOfs + syMulFXArm(cosYaw, depth);
-			affine->x = (originX + line->ofsX) >> 8;
-			affine->y = (originZ + line->ofsY) >> 8;
+			line->offsetX =
+				-(horizontalOffset + syMulFXArm(negativeSinYaw, depth));
+			line->offsetY = depthOffset + syMulFXArm(cosYaw, depth);
+			affine->x = (originX + line->offsetX) >> 8;
+			affine->y = (originZ + line->offsetY) >> 8;
 			affine[1] = affine[0];
 			line++;
 			affine += 2;
@@ -99,18 +101,18 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 				/* On odd ticks the sample point shifts by half a pixel step
 				   along the line and a quarter step across it, so alternate
 				   ticks sample between each other's texels. */
-				Sint32 sampleOfs;
+				Sint32 sampleOffset;
 
-				sampleOfs =
-					((originX + line->ofsX) >> 8) + line->pc / 4 + line->pa / 2;
-				affine->x = sampleOfs;
-				/* FAKEMATCH(dead): sampleOfs set to line->pa, never read. */
-				sampleOfs = line->pa;
-				affine->y =
-					((originZ + line->ofsY) >> 8) + line->pa / 4 + line->pc / 2;
+				sampleOffset = ((originX + line->offsetX) >> 8) + line->pc / 4 +
+					line->pa / 2;
+				affine->x = sampleOffset;
+				/* FAKEMATCH(dead): sampleOffset set to line->pa, never read. */
+				sampleOffset = line->pa;
+				affine->y = ((originZ + line->offsetY) >> 8) + line->pa / 4 +
+					line->pc / 2;
 			} else {
-				affine->x = (originX + line->ofsX) >> 8;
-				affine->y = (originZ + line->ofsY) >> 8;
+				affine->x = (originX + line->offsetX) >> 8;
+				affine->y = (originZ + line->offsetY) >> 8;
 			}
 			affine->pa = line->pa;
 			affine->pc = line->pc;

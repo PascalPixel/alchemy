@@ -7,10 +7,10 @@
    ticks. */
 void fdEffectSwayParticle(ACTOR *actor)
 {
-	actor->x.fixed = actor->tgtX +
-		syMulFX(toFIXED(4), sySin(actor->tmr * (TRIG_TURN / 128)));
-	actor->tmr++;
-	actor->tmr = (actor->tmr + 128) % 128;
+	actor->x.fixed = actor->targetX +
+		syMulFX(toFIXED(4), sySin(actor->timer * (TRIG_TURN / 128)));
+	actor->timer++;
+	actor->timer = (actor->timer + 128) % 128;
 }
 
 /* Per-tick update: spirals in on a point 10 pixels above the Psynergy's
@@ -24,8 +24,8 @@ void fdEffectUpdateShrinkingOrbitActor(ACTOR *particle)
 	Sint32				decrementedTimer;
 
 	if(particle != NULL) {
-		decrementedTimer = (Uint16)particle->tmr - 1;
-		particle->tmr = decrementedTimer;
+		decrementedTimer = (Uint16)particle->timer - 1;
+		particle->timer = decrementedTimer;
 		remainingTicks = decrementedTimer;
 		if(remainingTicks != 0) {
 			pos.x = effectState->x;
@@ -53,13 +53,13 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 	Sint32				pos[3];
 
 	effectState = FieldEffectStateWork;
-	if(emitter->tmr != -1) {
+	if(emitter->timer != -1) {
 		SET_ACTOR_POSITION(emitter,
 			effectState->x +
-				syMulFX(toFIXED(6), sySin(emitter->tmr * (TRIG_TURN / 64))),
+				syMulFX(toFIXED(6), sySin(emitter->timer * (TRIG_TURN / 64))),
 			effectState->y + PSYNERGY_EFFECT_HEIGHT, effectState->z);
-		emitter->tmr++;
-		emitter->tmr = (emitter->tmr + 64) % 64;
+		emitter->timer++;
+		emitter->timer = (emitter->timer + 64) % 64;
 	}
 	if(TickCount % 3 == 0) {
 		/* From 2 pixels up, 0 to 6 pixels in a random direction. */
@@ -72,11 +72,11 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 		if(spark != 0) {
 			spark->update = fdEffectSwayParticle;
 			spark->scaleX = spark->scaleY = toFIXED(3) / 5;
-			spark->motionFlg = ACTOR_FALLS;
+			spark->motionFlags = ACTOR_FALLS;
 			spark->gravity = toFIXED(0.007);
-			spark->tmr = syRandom() >> 9;
-			spark->tgtX = spark->x.fixed;
-			fdActorSetSprColModeStub(spark, SPRITE_COLOR_BLUE_TINT);
+			spark->timer = syRandom() >> 9;
+			spark->targetX = spark->x.fixed;
+			fdActorSetSpriteColorModeStub(spark, SPRITE_COLOR_BLUE_TINT);
 			spark->wait = 72;
 			fdActorStartScriptStub(spark, FieldEffectSharedParticleScript);
 		}
@@ -104,7 +104,7 @@ void fdPsynergyPly(void)
 	Uint8				resourceSlot;
 	Sint32				i;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 
 	/* The spiralling particles: one a tick, each 1/8 turn on from the last. */
 	last = 0;
@@ -115,10 +115,10 @@ void fdPsynergyPly(void)
 			actor->scaleY = toFIXED(7) / 10;
 			actor->scaleX = toFIXED(7) / 10;
 			actor->update = fdEffectUpdateShrinkingOrbitActor;
-			actor->tmr = 120;
+			actor->timer = 120;
 			actor->userValue = i * (TRIG_TURN / 8);
-			actor->motionFlg = ACTOR_FLOATS;
-			last = fdSprShareVRAMCacheEntry(actor->spr, last);
+			actor->motionFlags = ACTOR_FLOATS;
+			last = fdSpriteShareVRAMCacheEntry(actor->sprite, last);
 		}
 		sySynch(1);
 	}
@@ -126,7 +126,7 @@ void fdPsynergyPly(void)
 	/* The particles share one sprite cache; keep its slot to free at the end.
 	   last is read with no check that any particle spawned. */
 	resourceSlot = last->slot;
-	sySndPlayStub(SE_PSYNERGY_START);
+	sySoundPlayStub(SE_PSYNERGY_START);
 	/* The last particle spawned 7 ticks ago with 120 ticks to live: wait
 	   until the spiral is nearly closed. */
 	sySynch(110);
@@ -142,11 +142,11 @@ void fdPsynergyPly(void)
 		target->x.fixed = effectState->x;
 		target->y.fixed = effectState->y + toFIXED(16);
 		target->z.fixed = effectState->z;
-		target->motionFlg = ACTOR_FLOATS;
-		fdActorSetSprColModeStub(target, SPRITE_COLOR_WHITE);
+		target->motionFlags = ACTOR_FLOATS;
+		fdActorSetSpriteColorModeStub(target, SPRITE_COLOR_WHITE);
 	}
 
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	sySynch(12);
 	if(target != 0) {
 		/* Blue every 2 ticks, red one time in 4. */
@@ -154,19 +154,19 @@ void fdPsynergyPly(void)
 			/* FAKEMATCH(dead): target set again to actor. */
 			target = actor;
 			if(i & 3)
-				fdActorSetSprColModeStub(actor, SPRITE_COLOR_BLUE_TINT);
+				fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_BLUE_TINT);
 			else
-				fdActorSetSprColModeStub(actor, SPRITE_COLOR_RED_TINT);
+				fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_RED_TINT);
 			sySynch(2);
 		}
 	}
 
 	/* Sparks. */
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
-	sySndPlayStub(MUS_POISON_CURED);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
+	sySoundPlayStub(MUS_POISON_CURED);
 	if(actor != 0) {
 		target->update = fdEffectRunSparkEmitter;
-		target->tmr = 0;
+		target->timer = 0;
 		/* Cast on a target (enabled cleared by fdPsynergyDispatch), the sparks
 		   fall for 192 ticks instead of 128. */
 		if(effectState->aimAhead != 0)
@@ -178,11 +178,11 @@ void fdPsynergyPly(void)
 	/* Fly away: 192 pixels at angle TRIG_TURN * 29 / 32, and release it once it
 	   arrives. */
 	if(target != 0) {
-		target->tmr = -1;
+		target->timer = -1;
 		target->speedLimit = toFIXED(5);
 		target->acceleration = toFIXED(2) / 5;
-		target->steeringFlg = 0;
-		fdActorSetTargetPosFromMagnitudeAng(
+		target->steeringFlags = 0;
+		fdActorSetTargetPosFromMagnitudeAngle(
 			target, toFIXED(192), TRIG_TURN * 29 / 32);
 		fdActorWaitForMoveStub(target);
 		fdActorReleaseStub(target);
@@ -190,9 +190,9 @@ void fdPsynergyPly(void)
 	/* syVRAMCacheFindFreeEntry returns VRAM_CACHE_ENTRY_COUNT for no entry. */
 	if(resourceSlot != VRAM_CACHE_ENTRY_COUNT)
 		syVRAMCacheFreeEntry(resourceSlot);
-	if(effectState->finishFunc != 0)
-		effectState->finishFunc();
-	fdPsynergyFadeFromCastCol();
+	if(effectState->finishCallback != 0)
+		effectState->finishCallback();
+	fdPsynergyFadeFromCastColor();
 }
 
 #undef PLY_FLASH_STEPS

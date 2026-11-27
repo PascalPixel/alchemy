@@ -313,11 +313,11 @@ static inline void scCrossboneIsleKeysRaiseScript(
    column, and makes its top ground level with the back ledge, so that Isaac can
    walk onto it from there. */
 static inline void scCrossboneIsleKeysLiftFirstPillar(
-	Sint32 column, Uint8 motionFlg)
+	Sint32 column, Uint8 motionFlags)
 {
 	fdMapGridCopyMetatileAttributes(
 		RAISED_PILLAR_TOP_COLUMN, RAISED_PILLAR_TOP_ROW, 1, 1, column, 42);
-	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlg = motionFlg;
+	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
 	fdActorGet(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(32);
 }
 
@@ -416,8 +416,8 @@ static void scCrossboneIsleKeysBaneFirstEscape(void)
 		fdActorRunRepeatedMotion(ACTOR_BANE, 2);
 		fdScriptWait(20);
 		fdActorSetSpeed(ACTOR_BANE, 1);
-		sySndPlay(SE_JUMP);
-		fdActorGet(ACTOR_BANE)->velY = toFIXED(8);
+		sySoundPlay(SE_JUMP);
+		fdActorGet(ACTOR_BANE)->velocityY = toFIXED(8);
 		fdActorWalkToAndWait(ACTOR_BANE, 584, 680);
 		fdActorFaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
 		fdScriptEnd();
@@ -450,8 +450,8 @@ static void scCrossboneIsleKeysBaneSecondEscape(void)
 			fdActorRunRepeatedMotion(ACTOR_BANE, 2);
 			fdScriptWait(20);
 			fdActorSetSpeed(ACTOR_BANE, 1);
-			sySndPlay(SE_JUMP);
-			fdActorGet(ACTOR_BANE)->velY = toFIXED(10);
+			sySoundPlay(SE_JUMP);
+			fdActorGet(ACTOR_BANE)->velocityY = toFIXED(10);
 			fdActorWalkToAndWait(ACTOR_BANE, 584, 664);
 			fdActorFaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
 			fdActorSetAttachedEffect(
@@ -464,7 +464,7 @@ static void scCrossboneIsleKeysBaneSecondEscape(void)
 			fdActorWalkToAndWait(ACTOR_BANE, 744, 664);
 			fdActorWalkToAndWait(ACTOR_BANE, 824, 664);
 			fdScriptWait(10);
-			sySndPlay(SE_BANE_ESCAPE);
+			sySoundPlay(SE_BANE_ESCAPE);
 			fdMapGridSetShake(4, 2, 1);
 			fdScriptWait(20);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -472,7 +472,7 @@ static void scCrossboneIsleKeysBaneSecondEscape(void)
 
 			fdActorSetPos(ACTOR_BANE, 888, 664);
 			spinningDjinni = fdActorGet(ACTOR_BANE);
-			spinningDjinni->spr->rotation = TRIG_TURN * 31 / 32;
+			spinningDjinni->sprite->rotation = TRIG_TURN * 31 / 32;
 			spinningDjinni->facing = FACING_EAST;
 			fdActorSetAnimationSpeed(spinningDjinni, 0);
 			fdActorStartScript(
@@ -500,18 +500,18 @@ static void scCrossboneIsleKeysBaneLastEscape(void)
 		fdScriptStart();
 
 		djinni = fdActorGet(ACTOR_BANE);
-		djinni->spr->rotation = 0;
+		djinni->sprite->rotation = 0;
 		fdActorSetAnimationSpeed(djinni, ANIM_STEP_NORMAL);
-		sySndPlay(SE_JUMP);
-		fdActorGet(ACTOR_BANE)->velY = toFIXED(8);
+		sySoundPlay(SE_JUMP);
+		fdActorGet(ACTOR_BANE)->velocityY = toFIXED(8);
 		fdActorFaceDirection(ACTOR_BANE, FACING_WEST, 30);
 		fdActorSetAttachedEffect(
 			ACTOR_BANE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdActorRunRepeatedMotion(ACTOR_BANE, 2);
 		fdScriptWait(20);
 		fdActorSetSpeed(ACTOR_BANE, 1);
-		sySndPlay(SE_JUMP);
-		fdActorGet(ACTOR_BANE)->velY = toFIXED(4);
+		sySoundPlay(SE_JUMP);
+		fdActorGet(ACTOR_BANE)->velocityY = toFIXED(4);
 		fdActorWalkToAndWait(ACTOR_BANE, 880, 680);
 		fdScriptWait(10);
 		fdActorSetAttachedEffect(
@@ -547,20 +547,21 @@ static void scCrossboneIsleKeysBaneLastEscape(void)
 static void scCrossboneIsleKeysBaneKeepsAway(void)
 {
 	ACTOR		*djinni;
-	Sint32		 tgt;
+	Sint32		 target;
 	FIELD_STATE *state;
 
 	state = FieldStateWork;
 	if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
 		if(MainRoutineStateWork.haltedActor != ACTOR_BANE) {
-			tgt = state->stepCue;
+			target = state->stepCue;
 			djinni = fdActorGet(ACTOR_BANE);
 			djinni->speedLimit = fdActorGet(ACTOR_PARTY_LEADER)->speedLimit;
 			djinni = fdActorGet(ACTOR_BANE);
 			djinni->acceleration = fdActorGet(ACTOR_PARTY_LEADER)->speedLimit;
-			tgt -= METATILE_BEHAVIOR_BANE_CORNER_FIRST;
-			fdActorWalkTo(ACTOR_BANE, CrossboneIsleKeysBaneWalkTargets[tgt][0],
-				CrossboneIsleKeysBaneWalkTargets[tgt][1]);
+			target -= METATILE_BEHAVIOR_BANE_CORNER_FIRST;
+			fdActorWalkTo(ACTOR_BANE,
+				CrossboneIsleKeysBaneWalkTargets[target][0],
+				CrossboneIsleKeysBaneWalkTargets[target][1]);
 		}
 	}
 }
@@ -610,12 +611,12 @@ static void scCrossboneIsleKeysUnusedJumpOntoPost(void)
    door is simply drawn open. */
 static void scCrossboneIsleKeysOpenBlueDoor(Sint32 passageInfo)
 {
-	Sint32 columnOfs = (passageInfo & PASSAGE_INDEX_MASK) * 4;
-	Sint32 metatileColumn = columnOfs + 77;
-	Sint32 attributeColumn = columnOfs + 13;
+	Sint32 columnOffset = (passageInfo & PASSAGE_INDEX_MASK) * 4;
+	Sint32 metatileColumn = columnOffset + 77;
+	Sint32 attributeColumn = columnOffset + 13;
 
 	if(passageInfo & PASSAGE_PLAY_OPENING) {
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdMapGridSetShake(2, 2, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdMapGridCopyMetatiles(BLUE_DOOR_HALF_OPEN_COLUMN, DOOR_PICTURE_ROW, 1,
@@ -635,7 +636,7 @@ static void scCrossboneIsleKeysOpenBlueDoor(Sint32 passageInfo)
 static void scCrossboneIsleKeysOpenRedDoor(Sint32 passageInfo)
 {
 	if((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdMapGridSetShake(2, 2, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdMapGridCopyMetatiles(
@@ -672,23 +673,23 @@ static void scCrossboneIsleKeysUseRedKey(void)
 
    Without a key, facing any other way, or once the door is open, nothing
    happens. */
-static void scCrossboneIsleKeysUseBlueKey(Sint32 doorIdx)
+static void scCrossboneIsleKeysUseBlueKey(Sint32 doorIndex)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32 flg;
+	Sint32 flag;
 
 	if(leader->facing != FACING_NORTH) {
 		return;
 	}
-	flg = doorIdx + FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN;
-	if(gmFlagGet(flg) != 0) {
+	flag = doorIndex + FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN;
+	if(gmFlagGet(flag) != 0) {
 		return;
 	}
 	if(gmPartyInventoryFindMember(ITEM_BLUE_KEY) == -1) {
 		return;
 	}
-	gmFlagSet(flg);
-	scCrossboneIsleKeysOpenBlueDoor(PASSAGE_PLAY_OPENING | doorIdx);
+	gmFlagSet(flag);
+	scCrossboneIsleKeysOpenBlueDoor(PASSAGE_PLAY_OPENING | doorIndex);
 	gmPartyInventoryRemove(ITEM_BLUE_KEY);
 }
 
@@ -778,13 +779,13 @@ static void scCrossboneIsleKeysHideRedKey(void)
 /* Gives the party a key that Catch has pulled in: "Isaac got the Blue Key." (or
    the Red Key), and the key's icon is gone from its post for good. */
 static inline void scCrossboneIsleKeysGetKey(
-	Sint32 actorId, Sint32 itemId, Sint32 collectedFlg)
+	Sint32 actorId, Sint32 itemId, Sint32 collectedFlag)
 {
 	gmItemShowFound(itemId, 3);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	gmPartyGiveItem(itemId, 0);
 	fdActorSetPos(actorId, 0, 0);
-	gmFlagSet(collectedFlg);
+	gmFlagSet(collectedFlag);
 }
 
 /* Catch on the Blue Key on the post just north of where Isaac comes into the
@@ -861,7 +862,7 @@ static void scCrossboneIsleKeysFirstStatuePushesLeaderBack(void)
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.9);
 	fdActorSetSpeed(ACTOR_FIRST_STATUE, 1.9);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL) {
 		fdActorSetDestination(ACTOR_FIRST_STATUE, leader->x.part[0].integer,
@@ -871,7 +872,7 @@ static void scCrossboneIsleKeysFirstStatuePushesLeaderBack(void)
 	fdActorSetDestinationOffset(
 		ACTOR_PARTY_LEADER, 0, FIRST_STATUE_SHOVE_PIXELS);
 	fdScriptWait(4);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdActorSetDestinationOffset(
 		ACTOR_FIRST_STATUE, 0, FIRST_STATUE_FOLLOW_PIXELS);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
@@ -912,7 +913,7 @@ static void scCrossboneIsleKeysSecondStatuePushesLeaderBack(void)
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.7);
 	fdActorSetSpeed(ACTOR_SECOND_STATUE, 1.7);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL) {
 		fdActorSetDestination(ACTOR_SECOND_STATUE, leader->x.part[0].integer,
@@ -920,7 +921,7 @@ static void scCrossboneIsleKeysSecondStatuePushesLeaderBack(void)
 	}
 	fdActorWaitForMoveById(ACTOR_SECOND_STATUE);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdScriptWait(4);
 	fdActorSetDestinationOffset(ACTOR_SECOND_STATUE, 0, 16);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
@@ -935,23 +936,23 @@ static void scCrossboneIsleKeysSecondStatuePushesLeaderBack(void)
    8 pixels south if he has got into the alcove's row.
 
    CrossboneIsleKeysStatueColumns keeps the column each statue stands in. */
-static void scCrossboneIsleKeysTrackStatueColumn(Sint32 statueIdx)
+static void scCrossboneIsleKeysTrackStatueColumn(Sint32 statueIndex)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 	Sint32 column = leader->x.fixed / toFIXED(16);
 	Sint32 row = leader->z.fixed / toFIXED(16);
-	Sint32 statueId = statueIdx + ACTOR_THIRD_STATUE;
+	Sint32 statueId = statueIndex + ACTOR_THIRD_STATUE;
 
 	if(MainRoutineStateWork.haltedActor == statueId)
 		return;
-	if(column == CrossboneIsleKeysStatueColumns[statueIdx])
+	if(column == CrossboneIsleKeysStatueColumns[statueIndex])
 		return;
 
 	fdActorSetSpeed(statueId, 4.5);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdActorSetDestination(statueId, (column << 4) + 8, 360);
 
-	CrossboneIsleKeysStatueColumns[statueIdx] = column;
+	CrossboneIsleKeysStatueColumns[statueIndex] = column;
 
 	if(row <= 22) {
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
@@ -998,7 +999,7 @@ static void scCrossboneIsleKeysThirdStatuePushesLeaderBack(void)
 		fdScriptStart();
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.7);
 		fdActorSetSpeed(ACTOR_THIRD_STATUE, 1.7);
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		leader = fdActorGet(ACTOR_PARTY_LEADER);
 		if(leader != NULL) {
 			fdActorSetDestination(ACTOR_THIRD_STATUE, leader->x.part[0].integer,
@@ -1007,7 +1008,7 @@ static void scCrossboneIsleKeysThirdStatuePushesLeaderBack(void)
 		fdActorWaitForMoveById(ACTOR_THIRD_STATUE);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
 		fdScriptWait(4);
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		fdActorSetDestinationOffset(ACTOR_THIRD_STATUE, 0, 16);
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 		fdActorSetDestination(ACTOR_THIRD_STATUE, 264, 360);
@@ -1029,7 +1030,7 @@ static void scCrossboneIsleKeysFourthStatuePushesLeaderBack(void)
 		fdScriptStart();
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.7);
 		fdActorSetSpeed(ACTOR_FOURTH_STATUE, 1.7);
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		if(fdActorGet(ACTOR_PARTY_LEADER)->x.fixed / toFIXED(16) >
 			fdActorGet(ACTOR_FOURTH_STATUE)->x.fixed / toFIXED(16)) {
 			fdActorSetDestinationOffset(ACTOR_FOURTH_STATUE, 8, 0);
@@ -1047,7 +1048,7 @@ static void scCrossboneIsleKeysFourthStatuePushesLeaderBack(void)
 		fdActorWaitForMoveById(ACTOR_FOURTH_STATUE);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
 		fdScriptWait(4);
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		fdActorSetDestinationOffset(ACTOR_FOURTH_STATUE, 0, 16);
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 		fdActorSetDestination(ACTOR_FOURTH_STATUE, 344, 360);
@@ -1090,7 +1091,7 @@ static void scCrossboneIsleKeysFifthStatuePushesLeaderBack(void)
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.7);
 	fdActorSetSpeed(ACTOR_FIFTH_STATUE, 1.7);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL) {
 		fdActorSetDestination(ACTOR_FIFTH_STATUE, leader->x.part[0].integer,
@@ -1098,7 +1099,7 @@ static void scCrossboneIsleKeysFifthStatuePushesLeaderBack(void)
 	}
 	fdActorWaitForMoveById(ACTOR_FIFTH_STATUE);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, STATUE_SHOVE_PIXELS);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdActorSetDestinationOffset(ACTOR_FIFTH_STATUE, 0, 16);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorSetDestination(ACTOR_FIFTH_STATUE, 312, 232);
@@ -1149,11 +1150,11 @@ static void scCrossboneIsleKeysUseLadder(void)
 	if(facing == FACING_NORTH) {
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER) != 0) {
 			{
-				Sint32 dstColumn = 45;
-				Sint32 dstRow = 43;
+				Sint32 destColumn = 45;
+				Sint32 destRow = 43;
 				/* The plain ledge beside it, (46, 43). */
 				fdMapGridCopyMetatileAttributes(
-					46, 43, 1, 1, dstColumn, dstRow);
+					46, 43, 1, 1, destColumn, destRow);
 			}
 		}
 		gmFlagClear(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
@@ -1163,10 +1164,10 @@ static void scCrossboneIsleKeysUseLadder(void)
 	} else if(facing == FACING_EAST) {
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER) != 0) {
 			{
-				Sint32 dstColumn = 45;
-				Sint32 dstRow = 43;
+				Sint32 destColumn = 45;
+				Sint32 destRow = 43;
 				fdMapGridCopyMetatileAttributes(DEMON_AXE_CHEST_COLUMN,
-					DEMON_AXE_CHEST_ROW, 1, 1, dstColumn, dstRow);
+					DEMON_AXE_CHEST_ROW, 1, 1, destColumn, destRow);
 			}
 		}
 		gmFlagSet(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
@@ -1194,11 +1195,11 @@ static void scCrossboneIsleKeysFreezePuddle(void)
 
 	fdMapGridCopyMetatileAttributes(40, 54, 1, 1, 40, 55);
 	if(puddle != NULL) {
-		Uint8 *motionFlg = &fdActorGet(ACTOR_PUDDLE)->motionFlg;
-		Uint8 *priFlg = &puddle->priFlg;
+		Uint8 *motionFlags = &fdActorGet(ACTOR_PUDDLE)->motionFlags;
+		Uint8 *priorityFlags = &puddle->priorityFlags;
 
-		*motionFlg = 0;
-		*priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		*motionFlags = 0;
+		*priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN);
 }
@@ -1230,7 +1231,7 @@ static void scCrossboneIsleKeysRestoreFirstPillarTerrain(void)
 	fdMapGridCopyMetatileAttributes(
 		LOW_LEDGE_COLUMN, LOW_LEDGE_ROW, 3, 1, 37, 42);
 
-	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlg = ACTOR_FOLLOWS_TERRAIN;
+	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
 }
 
 /* The first pillar stands in the gap's east metatile, at the foot of the west
@@ -1240,7 +1241,7 @@ static void scCrossboneIsleKeysRestoreEastUnderfootMetatile(void)
 {
 	fdMapGridCopyMetatileAttributes(
 		RAISED_LADDER_FOOT_COLUMN, RAISED_LADDER_FOOT_ROW, 1, 1, 42, 42);
-	fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* The first pillar stands in the middle of the gap, metatile (41, 42): its top
@@ -1249,7 +1250,7 @@ static void scCrossboneIsleKeysRestoreMiddleUnderfootMetatile(void)
 {
 	/* The hop square beside the gap, (44, 42). */
 	fdMapGridCopyMetatileAttributes(44, 42, 1, 1, 41, 42);
-	fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* The first pillar stands in the gap's west metatile, metatile (40, 42), its
@@ -1258,7 +1259,7 @@ static void scCrossboneIsleKeysRestoreWestUnderfootMetatile(void)
 {
 	/* The ledge's metatile east of the pillar's home, (39, 42). */
 	fdMapGridCopyMetatileAttributes(39, 42, 1, 1, 40, 42);
-	fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* Move on the first pillar, on the low ledge in the north-west of Bane's room,
@@ -1276,10 +1277,11 @@ static void scCrossboneIsleKeysMoveFirstPillar(void)
 	Sint32 column = x / toFIXED(16);
 
 	if(height == 0) {
-		fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_FIRST_PILLAR)->priorityFlags =
+			ACTOR_PRIORITY_UNDERFOOT;
 	}
 	scCrossboneIsleKeysRestoreFirstPillarTerrain();
-	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlg =
+	fdActorGet(ACTOR_FIRST_PILLAR)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(column == 40) {
 		scCrossboneIsleKeysRestoreWestUnderfootMetatile();
@@ -1380,7 +1382,7 @@ static void scCrossboneIsleKeysRestoreThirdPillarTerrain(void)
 static void scCrossboneIsleKeysRestoreThirdPillarWestMetatile(void)
 {
 	fdMapGridCopyMetatileAttributes(40, 54, 1, 1, 38, 55);
-	fdActorGet(ACTOR_THIRD_PILLAR)->motionFlg = 0;
+	fdActorGet(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /* The third pillar has come down at the east end of the floor below its
@@ -1389,7 +1391,7 @@ static void scCrossboneIsleKeysRestoreThirdPillarWestMetatile(void)
 static void scCrossboneIsleKeysRestoreThirdPillarEastMetatile(void)
 {
 	fdMapGridCopyMetatileAttributes(40, 54, 1, 1, 42, 55);
-	fdActorGet(ACTOR_THIRD_PILLAR)->motionFlg = 0;
+	fdActorGet(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
 /* Move on the third pillar, on the raised platform in the south-west of Bane's
@@ -1512,21 +1514,21 @@ UNUSED static void scCrossboneIsleKeysPushFifthPillar(void)
    tick. */
 static void scCrossboneIsleKeysFollowSecondPillar(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_SECOND_PILLAR_CHEST);
+	ACTOR *target = fdActorGet(ACTOR_SECOND_PILLAR_CHEST);
 	ACTOR *src = fdActorGet(ACTOR_SECOND_PILLAR);
 
-	tgt->y.fixed = toFIXED(32);
-	tgt->x.fixed = src->x.fixed;
-	tgt->z.fixed = src->z.fixed + toFIXED(1);
+	target->y.fixed = toFIXED(32);
+	target->x.fixed = src->x.fixed;
+	target->z.fixed = src->z.fixed + toFIXED(1);
 }
 
 /* Puts the Demon Axe chest's examine cue where the second pillar stands. */
 static void scCrossboneIsleKeysPosSecondPillarMarker(void)
 {
-	ACTOR *frm = fdActorGet(ACTOR_SECOND_PILLAR);
+	ACTOR *frame = fdActorGet(ACTOR_SECOND_PILLAR);
 
 	fdTreasureSpotSetActorPos(
-		TREASURE_SPOT_DEMON_AXE, frm->x.fixed, frm->z.fixed + toFIXED(1));
+		TREASURE_SPOT_DEMON_AXE, frame->x.fixed, frame->z.fixed + toFIXED(1));
 }
 
 /* Draws the pillars in front of Isaac or behind him, every tick, by how high
@@ -1534,26 +1536,27 @@ static void scCrossboneIsleKeysPosSecondPillarMarker(void)
 static void scCrossboneIsleKeysUpdatePillarPriorities(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Uint8  pri;
+	Uint8  priority;
 
 	if(leader->y.fixed > toFIXED(16)) {
-		pri = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_FIRST_PILLAR)->priFlg = pri;
+		priority = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_FIRST_PILLAR)->priorityFlags = priority;
 		if(fdActorGet(ACTOR_THIRD_PILLAR)->y.fixed == 0)
-			fdActorGet(ACTOR_THIRD_PILLAR)->priFlg = pri;
-		fdActorGet(ACTOR_FOURTH_PILLAR)->priFlg = pri;
+			fdActorGet(ACTOR_THIRD_PILLAR)->priorityFlags = priority;
+		fdActorGet(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
 	} else {
 		if(fdActorGet(ACTOR_THIRD_PILLAR)->y.fixed == 0 &&
 			fdActorGet(ACTOR_PARTY_LEADER)->z.fixed / toFIXED(16) > 56) {
-			fdActorSetSprPriority(ACTOR_THIRD_PILLAR, 3);
+			fdActorSetSpritePriority(ACTOR_THIRD_PILLAR, 3);
 		} else {
-			fdActorSetSprPriority(ACTOR_THIRD_PILLAR, 1);
-			fdActorGet(ACTOR_THIRD_PILLAR)->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+			fdActorSetSpritePriority(ACTOR_THIRD_PILLAR, 1);
+			fdActorGet(ACTOR_THIRD_PILLAR)->priorityFlags =
+				ACTOR_PRIORITY_AUTOMATIC;
 		}
-		pri = 0;
-		fdActorGet(ACTOR_FOURTH_PILLAR)->priFlg = pri;
+		priority = 0;
+		fdActorGet(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
 	}
-	fdActorGet(ACTOR_FIFTH_PILLAR)->priFlg = pri;
+	fdActorGet(ACTOR_FIFTH_PILLAR)->priorityFlags = priority;
 }
 
 /* Sets up whichever of the three rooms the party enters: the keys and doors of
@@ -1668,10 +1671,10 @@ static void scCrossboneIsleKeysInitKeys(void)
    lays the darkness over the hall, half see-through. */
 static void scCrossboneIsleKeysInitStatues(void)
 {
-	fdActorGet(ACTOR_FIRST_STATUE)->collisionFlg = ACTOR_SOLID;
-	fdActorGet(ACTOR_SECOND_STATUE)->collisionFlg = ACTOR_SOLID;
-	fdActorGet(ACTOR_THIRD_STATUE)->collisionFlg = ACTOR_SOLID;
-	fdActorGet(ACTOR_FOURTH_STATUE)->collisionFlg = ACTOR_SOLID;
+	fdActorGet(ACTOR_FIRST_STATUE)->collisionFlags = ACTOR_SOLID;
+	fdActorGet(ACTOR_SECOND_STATUE)->collisionFlags = ACTOR_SOLID;
+	fdActorGet(ACTOR_THIRD_STATUE)->collisionFlags = ACTOR_SOLID;
+	fdActorGet(ACTOR_FOURTH_STATUE)->collisionFlags = ACTOR_SOLID;
 	fdActorGet(ACTOR_FIRST_STATUE)->scaleX = toFIXED(7) / 10;
 	fdActorGet(ACTOR_SECOND_STATUE)->scaleX = toFIXED(7) / 10;
 	fdActorGet(ACTOR_THIRD_STATUE)->scaleX = toFIXED(7) / 10;
@@ -1696,7 +1699,7 @@ static void scCrossboneIsleKeysInitBane(void)
 {
 	ACTOR *djinni;
 
-	fdActorGet(ACTOR_SECOND_PILLAR_CHEST)->motionFlg = 0;
+	fdActorGet(ACTOR_SECOND_PILLAR_CHEST)->motionFlags = 0;
 	sySetOrUpdateTickEvent(
 		scCrossboneIsleKeysFollowSecondPillar, EVENT_PASS_TICK);
 	sySetTickEvent(scCrossboneIsleKeysUpdatePillarPriorities, EVENT_PASS_TICK);
@@ -1711,10 +1714,10 @@ static void scCrossboneIsleKeysInitBane(void)
 	scCrossboneIsleKeysMoveFourthPillar();
 	scCrossboneIsleKeysMoveFifthPillar();
 #if BANE_FIRST_PILLAR_LOWEST_SPRITE_PRIORITY
-	fdActorSetSprPriority(ACTOR_FIRST_PILLAR, 3);
+	fdActorSetSpritePriority(ACTOR_FIRST_PILLAR, 3);
 #endif
-	fdActorGet(ACTOR_FOURTH_PILLAR)->motionFlg = 0;
-	fdActorGet(ACTOR_FIFTH_PILLAR)->motionFlg = 0;
+	fdActorGet(ACTOR_FOURTH_PILLAR)->motionFlags = 0;
+	fdActorGet(ACTOR_FIFTH_PILLAR)->motionFlags = 0;
 	scCrossboneIsleKeysRepaintFourthAndFifthPillarMetatiles();
 	if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN) != 0) {
 		scCrossboneIsleKeysFreezePuddle();
@@ -1729,7 +1732,7 @@ static void scCrossboneIsleKeysInitBane(void)
 		} else if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
 			fdActorSetPos(ACTOR_BANE, 888, 664);
 			djinni = fdActorGet(ACTOR_BANE);
-			djinni->spr->rotation = 0;
+			djinni->sprite->rotation = 0;
 			fdActorSetAnimationSpeed(djinni, ANIM_STEP_NORMAL);
 		} else if(gmFlagGet(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
 			fdActorSetPos(ACTOR_BANE, 584, 680);

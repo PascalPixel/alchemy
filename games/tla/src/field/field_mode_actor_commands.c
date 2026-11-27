@@ -15,7 +15,7 @@ ACTOR *fdActorGetById(Uint32 actorId)
 
 /* The script command "set actor speed": its top speed and acceleration, 16.16
    pixels per tick. Writes the actor's speedLimit and acceleration. */
-void fdActorSetSpeedParms(Sint32 actorId, FIXED speedLimit, FIXED acceleration)
+void fdActorSetSpeedParams(Sint32 actorId, FIXED speedLimit, FIXED acceleration)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
@@ -32,7 +32,7 @@ void fdActorSetMovementTypeById(Sint32 actorId, const void *script)
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		actor->steeringFlg |= ACTOR_FACES_MOTION;
+		actor->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorSetMovementType(actor, (Sint32)script);
 	}
 }
@@ -44,7 +44,7 @@ void fdActorStop(Sint32 actorId)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 	if(actor != NULL) {
-		actor->steeringFlg |= ACTOR_FACES_MOTION;
+		actor->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorStartIdleStub(actor);
 	}
 }
@@ -56,11 +56,11 @@ void fdActorResetTargetsAndVelocity(Uint32 actorId)
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		actor->steeringFlg |= ACTOR_FACES_MOTION;
+		actor->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorStartIdleStub(actor);
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtY = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 		SET_VELOCITY(actor, 0, 0, 0);
 		actor->arrivalAxis = 0;
 	}
@@ -96,7 +96,7 @@ void fdActorSetMovementTypeAndWaitById(Sint32 actorId, const void *script)
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		actor->steeringFlg |= ACTOR_FACES_MOTION;
+		actor->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorSetMovementType(actor, (Sint32)script);
 		fdActorWaitForScriptEndStub(actor);
 	}
@@ -161,13 +161,13 @@ void fdActorWalkToAndWaitById(Sint32 actorId, Sint32 x, Sint32 z)
 
 /* The script command "center actor and walk": walks the actor sideways to the
    middle of its 16-pixel column, sets its sprite priority to priority
-   (fdActorSetSprPriority), then sends it zOfs pixels along z. */
-void fdActorCenterOnColumn(Uint32 actorId, Sint32 pri, Sint32 zOfs)
+   (fdActorSetSpritePriority), then sends it zOffset pixels along z. */
+void fdActorCenterOnColumn(Uint32 actorId, Sint32 priority, Sint32 zOffset)
 {
 	ACTOR *actor;
 	Sint16 pixelX;
 	Sint32 columnX;
-	Sint16 ofsInColumn;
+	Sint16 offsetInColumn;
 
 	actor = fdActorLookup(actorId);
 	if(actor != NULL) {
@@ -176,37 +176,38 @@ void fdActorCenterOnColumn(Uint32 actorId, Sint32 pri, Sint32 zOfs)
 		   pixels in. */
 		pixelX = actor->x.part[0].integer;
 		columnX = pixelX / 16 * 16;
-		ofsInColumn = pixelX - columnX;
+		offsetInColumn = pixelX - columnX;
 		actor->paused = 0;
 		fdActorStartIdleStub(actor);
 		fdActorSelectAnimationStub(actor, ANIM_WALK);
 		fdActorSetMoveTargetStub(actor,
-			actor->x.fixed + toFIXED(8 - ofsInColumn), actor->y.fixed,
+			actor->x.fixed + toFIXED(8 - offsetInColumn), actor->y.fixed,
 			actor->z.fixed);
 		fdActorWaitForMoveStub(actor);
-		fdActorSetSprPriority(actorId, pri);
+		fdActorSetSpritePriority(actorId, priority);
 		fdActorSetMoveTargetStub(actor, actor->x.fixed, actor->y.fixed,
-			actor->z.fixed + toFIXED(zOfs));
+			actor->z.fixed + toFIXED(zOffset));
 	}
 }
 
-/* The script command "set actor destination offset": the actor heads (xOfs,
-   zOfs) pixels from where it stands. */
-void fdActorSetDestinationOffsetById(Sint32 actorId, Sint32 xOfs, Sint32 zOfs)
+/* The script command "set actor destination offset": the actor heads (xOffset,
+   zOffset) pixels from where it stands. */
+void fdActorSetDestinationOffsetById(
+	Sint32 actorId, Sint32 xOffset, Sint32 zOffset)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
 		actor->paused = 0;
 		fdActorStartIdleStub(actor);
-		fdActorSetMoveTargetStub(actor, actor->x.fixed + toFIXED(xOfs),
-			actor->y.fixed, actor->z.fixed + toFIXED(zOfs));
+		fdActorSetMoveTargetStub(actor, actor->x.fixed + toFIXED(xOffset),
+			actor->y.fixed, actor->z.fixed + toFIXED(zOffset));
 	}
 }
 
-/* Walks the actor (xOfs, zOfs) pixels from where it stands, through the
+/* Walks the actor (xOffset, zOffset) pixels from where it stands, through the
    offset script. */
-void fdActorWalkByById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs)
+void fdActorWalkByById(Uint32 actorId, Sint32 xOffset, Sint32 zOffset)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
@@ -214,18 +215,18 @@ void fdActorWalkByById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs)
 		actor->paused = 0;
 		fdActorStartScriptStub(actor, (Uint32)ActorOffsetScript);
 		fdActorSelectAnimationStub(actor, ANIM_WALK);
-		fdActorSetMoveTargetStub(actor, actor->x.fixed + toFIXED(xOfs),
-			actor->y.fixed, actor->z.fixed + toFIXED(zOfs));
+		fdActorSetMoveTargetStub(actor, actor->x.fixed + toFIXED(xOffset),
+			actor->y.fixed, actor->z.fixed + toFIXED(zOffset));
 	}
 }
 
-/* Walks the actor (xOfs, zOfs) pixels, waits for it to arrive and stands
+/* Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and stands
    it still. */
-void fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs)
+void fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOffset, Sint32 zOffset)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
-	fdActorWalkByById(actorId, xOfs, zOfs);
+	fdActorWalkByById(actorId, xOffset, zOffset);
 	if(actor != NULL) {
 		fdActorWaitForMoveStub(actor);
 		fdActorSelectAnimationStub(actor, ANIM_STAND);
@@ -233,23 +234,23 @@ void fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs)
 }
 
 /* Places an actor on the leader, a pixel nearer the back, and sends it walking
-   (xOfs, zOfs) pixels away at speed 0.8 and acceleration 0.4, through the
+   (xOffset, zOffset) pixels away at speed 0.8 and acceleration 0.4, through the
    launch script; the actor then takes movement type action. */
 void fdActorLaunchFromLeader(
-	Sint32 actorId, Sint32 xOfs, Sint32 zOfs, Sint32 action)
+	Sint32 actorId, Sint32 xOffset, Sint32 zOffset, Sint32 action)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL) {
-		fdActorSetSpeedParms(actorId, toFIXED(4) / 5, toFIXED(2) / 5);
+		fdActorSetSpeedParams(actorId, toFIXED(4) / 5, toFIXED(2) / 5);
 		fdActorPlaceOnActor(actorId, MainRoutineStateWork.leaderActorId);
 		fdActorSetPosAndResetMotionStub(
 			actor, actor->x.fixed, actor->y.fixed, actor->z.fixed - toFIXED(1));
 		actor->paused = 0;
 		fdActorSelectAnimationStub(actor, ANIM_WALK);
-		fdActorSetDestinationOffsetById(actorId, xOfs, zOfs);
+		fdActorSetDestinationOffsetById(actorId, xOffset, zOffset);
 		fdActorStartScriptStub(actor, ActorLaunchScript);
-		actor->tmr = action;
+		actor->timer = action;
 	}
 }
 
@@ -278,7 +279,7 @@ void fdActorSetHorizontalPosWithTerrain(Uint32 actorId, FIXED x, FIXED z)
 		fdActorSetPosAndResetMotionStub(actor, x, actor->y.fixed, z);
 		/* Swap the old ground's height for the new one, so the actor's height
 		   above the ground is kept. */
-		if(actor->motionFlg & ACTOR_FOLLOWS_TERRAIN) {
+		if(actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
 			terrainHeight = fdMapGridGetTerrainHeightStub(
 				actor->layer, actor->x.fixed, actor->z.fixed);
 			actor->y.fixed =
@@ -292,11 +293,11 @@ void fdActorSetHorizontalPosWithTerrain(Uint32 actorId, FIXED x, FIXED z)
 /* As fdActorSetHorizontalPosWithTerrain, and turns the actor to angle. */
 /* Written in the old style: the angle arrives as a word and is taken as a */
 /* halfword. */
-void fdActorSetHorizontalPosAndAngWithTerrain(actorId, x, z, ang)
+void fdActorSetHorizontalPosAndAngleWithTerrain(actorId, x, z, angle)
   Sint32 actorId;
   Sint32 x;
   Sint32 z;
-  Sint16 ang;
+  Sint16 angle;
 {
 	/* clang-format on */
 	ACTOR *actor = fdActorLookup(actorId);
@@ -305,8 +306,8 @@ void fdActorSetHorizontalPosAndAngWithTerrain(actorId, x, z, ang)
 	if(actor != NULL) {
 		fdActorStartIdleStub(actor);
 		fdActorSetPosAndResetMotionStub(actor, x, actor->y.fixed, z);
-		actor->facing = ang;
-		if(actor->motionFlg & ACTOR_FOLLOWS_TERRAIN) {
+		actor->facing = angle;
+		if(actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
 			terrainHeight = fdMapGridGetTerrainHeightStub(
 				actor->layer, actor->x.fixed, actor->z.fixed);
 			actor->y.fixed =
@@ -327,7 +328,7 @@ void fdActorSetPosWithTerrain(Uint32 actorId, FIXED x, FIXED y, FIXED z)
 	if(actor != NULL) {
 		fdActorStartIdleStub(actor);
 		fdActorSetPosAndResetMotionStub(actor, x, y, z);
-		if(actor->motionFlg & ACTOR_FOLLOWS_TERRAIN) {
+		if(actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
 			terrainHeight = fdMapGridGetTerrainHeightStub(
 				actor->layer, actor->x.fixed, actor->z.fixed);
 			actor->y.fixed =
@@ -353,12 +354,12 @@ void fdActorPlaceOnActor(Uint32 actorId, Uint32 otherId)
 
 /* The script command "set actor animation" (an ACTOR_ANIMATION: ANIM_STAND,
    ANIM_WALK, ANIM_NOD, ANIM_SHAKE_HEAD and so on). */
-void fdActorSetAnimationById(Uint32 actorId, Sint32 anm)
+void fdActorSetAnimationById(Uint32 actorId, Sint32 animation)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
 	if(actor != NULL)
-		fdActorSelectAnimationStub(actor, anm);
+		fdActorSelectAnimationStub(actor, animation);
 }
 
 /* Sets the animation timer steps of each of an actor's sprites. */
@@ -376,21 +377,22 @@ void fdActorSetAnimationSpeedById(Sint32 actorId, Sint32 steps)
 void fdActorWaitForAnimationChange(Uint32 actorId)
 {
 	ACTOR *actor = fdActorLookup(actorId);
-	SPR	  *spr;
+	SPR	  *sprite;
 	/* DEAD: saved lives in a word on the stack, which nothing here needs; the
 	   ROM keeps its str and the ldr of each compare. */
 	volatile Uint32 saved;
 	Sint32			elapsedTicks;
 
-	if(actor != NULL && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		spr = actor->spr;
-		saved = spr->lastNo;
+	if(actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+		sprite = actor->sprite;
+		saved = sprite->lastNo;
 		for(elapsedTicks = 0; elapsedTicks < 90; elapsedTicks++) {
 			sySynch(1);
-			if(saved != spr->lastNo)
+			if(saved != sprite->lastNo)
 				break;
-			if(spr->entries[0] != NULL && spr->entries[0]->script != NULL &&
-				spr->entries[0]->script[spr->entries[0]->scriptOfs] ==
+			if(sprite->entries[0] != NULL &&
+				sprite->entries[0]->script != NULL &&
+				sprite->entries[0]->script[sprite->entries[0]->scriptOffset] ==
 					ANIMCMD_HOLD)
 				break;
 		}
@@ -399,9 +401,9 @@ void fdActorWaitForAnimationChange(Uint32 actorId)
 
 /* The script command "set actor animation and wait": plays the animation and
    waits for it to end. */
-void fdActorSetAnimationAndWait(Sint32 actorId, Sint32 anm)
+void fdActorSetAnimationAndWait(Sint32 actorId, Sint32 animation)
 {
-	fdActorSetAnimationById(actorId, anm);
+	fdActorSetAnimationById(actorId, animation);
 	fdActorWaitForAnimationChange(actorId);
 }
 
@@ -413,12 +415,12 @@ void fdActorJump(Sint32 actorId, Sint32 speed, Sint32 ticks)
 
 	actor = fdActorLookup(actorId);
 	if(actor != NULL) {
-		actor->motionFlg |= ACTOR_FALLS;
-		actor->velY = toFIXED(speed);
+		actor->motionFlags |= ACTOR_FALLS;
+		actor->velocityY = toFIXED(speed);
 		if(speed > 5) {
-			sySndPlayStub(SE_HIGH_JUMP);
+			sySoundPlayStub(SE_HIGH_JUMP);
 		} else {
-			sySndPlayStub(SE_JUMP);
+			sySoundPlayStub(SE_JUMP);
 		}
 		fdScriptWait(ticks);
 	}
@@ -431,27 +433,27 @@ void fdActorJump(Sint32 actorId, Sint32 speed, Sint32 ticks)
 
 /* The script command "start repeated motion": the actor squashes and springs
    back count times (1 to REPEATED_MOTION_MAX), through ActorVariantScripts. */
-void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 cnt)
+void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 count)
 {
 	ACTOR *actor;
 
 	actor = fdActorLookup(actorId);
-	if(actor != NULL && cnt > 0) {
-		if(cnt > REPEATED_MOTION_MAX) {
-			cnt = REPEATED_MOTION_MAX;
+	if(actor != NULL && count > 0) {
+		if(count > REPEATED_MOTION_MAX) {
+			count = REPEATED_MOTION_MAX;
 		}
 		/* Start count motions from the script's end. */
 		fdActorStartScriptStub(actor,
 			(const Sint32 *)(ActorVariantScripts +
-				(REPEATED_MOTION_MAX - cnt) * REPEATED_MOTION_SCRIPT_BYTES));
+				(REPEATED_MOTION_MAX - count) * REPEATED_MOTION_SCRIPT_BYTES));
 	}
 }
 
 /* The script command "run repeated motion": as fdActorStartRepeatedMotion, then
    waits for it to end. */
-void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 cnt)
+void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 count)
 {
-	fdActorStartRepeatedMotion(actorId, cnt);
+	fdActorStartRepeatedMotion(actorId, count);
 	fdActorWaitForScriptEndById(actorId);
 }
 
@@ -460,20 +462,20 @@ void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 cnt)
    rises 1/64 pixel a tick. */
 void fdEffectUpdateDustPuff(ACTOR *particle)
 {
-	FIXED velX = particle->speedLimit;
-	FIXED velZ = particle->acceleration;
+	FIXED velocityX = particle->speedLimit;
+	FIXED velocityZ = particle->acceleration;
 
-	particle->x.fixed += velX;
-	particle->z.fixed += velZ;
+	particle->x.fixed += velocityX;
+	particle->z.fixed += velocityZ;
 	particle->y.fixed += toFIXED(1) / 64;
-	particle->speedLimit = velX - velX / FIELD_EFFECT_DRAG_X;
-	particle->acceleration = velZ - velZ / FIELD_EFFECT_DRAG_Z;
+	particle->speedLimit = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+	particle->acceleration = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 }
 
 /* Kicks up a dust puff (SPRITE_DUST_CLOUD) where source stands: it flies off
    toward the back at 0.5 to 1.4 pixels a tick and sideways at up to 1.4, with
-   one of two animations, drawn at source's priority, in colMode unless 0. */
-void fdEffectSpawnDustPuff(ACTOR *src, Sint32 colMode)
+   one of two animations, drawn at source's priority, in colorMode unless 0. */
+void fdEffectSpawnDustPuff(ACTOR *src, Sint32 colorMode)
 {
 	ACTOR *actor;
 	SPR	  *child;
@@ -483,7 +485,7 @@ void fdEffectSpawnDustPuff(ACTOR *src, Sint32 colMode)
 	actor = fdActorCreateStub(
 		SPRITE_DUST_CLOUD, src->x.fixed, src->y.fixed, src->z.fixed);
 	if(actor != NULL) {
-		child = actor->spr;
+		child = actor->sprite;
 		switch(syRandom() & 1) {
 		case 1:
 			fdActorSelectAnimationStub(actor, 2);
@@ -495,24 +497,24 @@ void fdEffectSpawnDustPuff(ACTOR *src, Sint32 colMode)
 			break;
 		}
 
-		if(colMode != 0)
-			fdActorSetSprCol(actor, colMode);
+		if(colorMode != 0)
+			fdActorSetSpriteColor(actor, colorMode);
 
 		/* speed and acceleration hold the puff's x and z velocity, in steps of
 		   toFIXED(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in
 		   steps of 0.2. */
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		speed = syRandom() % 10 + 5;
 		actor->acceleration = backStep * speed;
 		speed = syRandom() % 15 - 7;
 		speed <<= 1;
 		actor->speedLimit = toFIXED(1) / 10 * speed;
-		actor->tmr = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->timer = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		actor->frozen = 1;
 		actor->update = (OBJECT_UPDATE)fdEffectUpdateDustPuff;
-		child->flg = 0;
-		child->image.pri = ((SPR *)src->spr)->image.pri;
+		child->flags = 0;
+		child->image.priority = ((SPR *)src->sprite)->image.priority;
 	}
 }
 
@@ -532,34 +534,34 @@ void fdActorJumpDownLedge(Sint32 actorId, Sint32 pose, Sint32 dust)
 
 	if(actor == NULL)
 		return;
-	spriteFlags = ((SPR *)actor->spr)->flg;
+	spriteFlags = ((SPR *)actor->sprite)->flags;
 	fdActorSelectAnimationStub(actor, pose);
 	sySynch(10);
 
 	/* Hop up and forward 12 pixels. */
 	fdActorSelectAnimationStub(actor, ANIM_STAND);
-	fdActorSetSprFlagsStub(actor, 0);
-	actor->motionFlg |= ACTOR_FALLS;
-	actor->velY = toFIXED(4);
+	fdActorSetSpriteFlagsStub(actor, 0);
+	actor->motionFlags |= ACTOR_FALLS;
+	actor->velocityY = toFIXED(4);
 	fdActorSetMoveTargetStub(actor, x, actor->y.fixed, startZ + toFIXED(12));
 	sySynch(6);
 
 	/* Turn and sink 2 pixels a tick for 14 ticks, raising dust, in free
 	   flight: no motion flags, so it neither falls nor follows the ground. */
-	sySndPlayStub(SE_FLOOR_SWITCH);
+	sySoundPlayStub(SE_FLOOR_SWITCH);
 	fdActorFaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	for(tick = 0; tick < 14; tick++) {
 		actor->y.fixed -= toFIXED(2);
-		actor->tgtY = actor->y.fixed;
+		actor->targetY = actor->y.fixed;
 		sySynch(1);
 		if(dust != -1 && (tick & 1))
 			fdEffectSpawnDustPuff(actor, dust);
 	}
 
 	/* Jump 16 pixels forward, following the ground and falling again. */
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	actor->velY = toFIXED(3);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->velocityY = toFIXED(3);
 	fdActorSetMoveTargetStub(actor, x, actor->y.fixed, startZ + toFIXED(16));
 	fdActorWaitForMoveStub(actor);
 	if(dust & LEDGE_JUMP_NO_LANDING_WAIT) {
@@ -574,7 +576,7 @@ void fdActorJumpDownLedge(Sint32 actorId, Sint32 pose, Sint32 dust)
 				break;
 		} while(actor->y.fixed > actor->groundHeight);
 	}
-	fdActorSetSprFlagsStub(actor, spriteFlags);
+	fdActorSetSpriteFlagsStub(actor, spriteFlags);
 	sySynch(2);
 	fdScriptNoOperation();
 }
@@ -612,39 +614,39 @@ void fdActorTurnToFaceEachOther(Sint32 firstId, Sint32 secondId, Sint32 ticks)
    both do (at most 60 ticks). */
 void fdActorTurnPairToFaceEachOther(ACTOR *first, ACTOR *second)
 {
-	Sint32 firstTgtAng;
-	Sint32 secondTgtAng;
-	Sint32 frm;
+	Sint32 firstTargetAngle;
+	Sint32 secondTargetAngle;
+	Sint32 frame;
 	Sint32 actorsTurning;
-	Sint32 angDifference;
+	Sint32 angleDifference;
 
 	if(first == NULL || second == NULL)
 		return;
-	firstTgtAng = (Uint16)syAtan(
+	firstTargetAngle = (Uint16)syAtan(
 		second->z.fixed - first->z.fixed, second->x.fixed - first->x.fixed);
 	/* The second actor faces the opposite way, half a turn round. */
-	secondTgtAng = firstTgtAng + DEGtoANG(180);
-	for(frm = 0; frm < 60; frm++) {
+	secondTargetAngle = firstTargetAngle + DEGtoANG(180);
+	for(frame = 0; frame < 60; frame++) {
 		/* Each actor that already faces its way takes one off the count; both
 		   facing ends the turn early. */
 		actorsTurning = 2;
-		angDifference = (Sint16)(firstTgtAng - first->facing);
-		if(angDifference != 0) {
-			if(angDifference > FACING_STEP)
-				angDifference = FACING_STEP;
-			if(angDifference < -FACING_STEP)
-				angDifference = -FACING_STEP;
-			first->facing += angDifference;
+		angleDifference = (Sint16)(firstTargetAngle - first->facing);
+		if(angleDifference != 0) {
+			if(angleDifference > FACING_STEP)
+				angleDifference = FACING_STEP;
+			if(angleDifference < -FACING_STEP)
+				angleDifference = -FACING_STEP;
+			first->facing += angleDifference;
 		} else {
 			actorsTurning = 1;
 		}
-		angDifference = (Sint16)(secondTgtAng - second->facing);
-		if(angDifference != 0) {
-			if(angDifference > FACING_STEP)
-				angDifference = FACING_STEP;
-			if(angDifference < -FACING_STEP)
-				angDifference = -FACING_STEP;
-			second->facing += angDifference;
+		angleDifference = (Sint16)(secondTargetAngle - second->facing);
+		if(angleDifference != 0) {
+			if(angleDifference > FACING_STEP)
+				angleDifference = FACING_STEP;
+			if(angleDifference < -FACING_STEP)
+				angleDifference = -FACING_STEP;
+			second->facing += angleDifference;
 		} else {
 			actorsTurning--;
 		}
@@ -668,20 +670,20 @@ void fdActorReleaseById(Sint32 actorId)
 }
 
 /* The script command "set actor sprite colour": gives every sprite animation of
-   the actor the colour mode (fdActorSetSprCol); with SPRITE_COLOR_BLINK the
-   actor blinks instead (fdActorUpdateBlink). */
-void fdActorConfigureSprCol(Sint32 actorId, Sint32 colMode)
+   the actor the colour mode (fdActorSetSpriteColor); with SPRITE_COLOR_BLINK
+   the actor blinks instead (fdActorUpdateBlink). */
+void fdActorConfigureSpriteColor(Sint32 actorId, Sint32 colorMode)
 {
 	ACTOR *actor;
 
 	actor = fdActorLookup(actorId);
 	if(actor != NULL) {
-		if(colMode & SPRITE_COLOR_BLINK) {
+		if(colorMode & SPRITE_COLOR_BLINK) {
 			actor->update = fdActorUpdateBlink;
 			return;
 		}
 		actor->update = NULL;
-		fdActorSetSprCol(actor, colMode);
+		fdActorSetSpriteColor(actor, colorMode);
 	}
 }
 
@@ -689,42 +691,44 @@ void fdActorConfigureSprCol(Sint32 actorId, Sint32 colMode)
    colour mode from ActorBlinkSpriteColors, each entry lasting two ticks. */
 void fdActorUpdateBlink(ACTOR *actor)
 {
-	SPR			  *spr;
-	SPR_ANIMATION *anm;
-	Sint32		   colMode;
+	SPR			  *sprite;
+	SPR_ANIMATION *animation;
+	Sint32		   colorMode;
 	Sint32		   i;
 
-	if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		spr = actor->spr;
-		colMode = ActorBlinkSpriteColors[(TickCount >> 1) & 3];
-		for(i = 0; i < spr->cnt; i++) {
-			anm = spr->entries[i];
-			if(anm != 0 && anm->script != 0) {
-				anm->colMode = colMode;
+	if((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+		ACTOR_SPRITE_ONE) {
+		sprite = actor->sprite;
+		colorMode = ActorBlinkSpriteColors[(TickCount >> 1) & 3];
+		for(i = 0; i < sprite->count; i++) {
+			animation = sprite->entries[i];
+			if(animation != 0 && animation->script != 0) {
+				animation->colorMode = colorMode;
 			}
 		}
-		spr->dirty = 1;
+		sprite->dirty = 1;
 	}
 }
 
 /* Sets the colour mode (SPR_COL_MODE) of every running sprite animation of an
    actor's sprite. Scripts set SPRITE_COLOR_NORMAL or SPRITE_COLOR_HIDDEN, and
    alternate the two to make an actor flash. */
-void fdActorSetSprCol(ACTOR *actor, Sint32 colMode)
+void fdActorSetSpriteColor(ACTOR *actor, Sint32 colorMode)
 {
-	SPR			  *spr;
-	SPR_ANIMATION *anm;
+	SPR			  *sprite;
+	SPR_ANIMATION *animation;
 	Sint32		   i;
 
-	if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		spr = actor->spr;
-		for(i = 0; i < spr->cnt; i++) {
-			anm = spr->entries[i];
-			if(anm != 0 && anm->script != 0) {
-				anm->colMode = colMode;
+	if((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+		ACTOR_SPRITE_ONE) {
+		sprite = actor->sprite;
+		for(i = 0; i < sprite->count; i++) {
+			animation = sprite->entries[i];
+			if(animation != 0 && animation->script != 0) {
+				animation->colorMode = colorMode;
 			}
 		}
-		spr->dirty = 1;
+		sprite->dirty = 1;
 	}
 }
 
@@ -739,23 +743,23 @@ typedef enum ACTOR_WATCH_FLAG {
    (fdActorMoveTowardTarget reads it from the follower's timer). */
 #define FOLLOW_DISTANCE		   40
 
-/* Makes an actor follow the actor in tgtId's ACTOR_WATCH_ACTOR_MASK bits and
-   starts script on it. Unless tgtId has ACTOR_WATCH_KEEP_MOTION it keeps
+/* Makes an actor follow the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits and
+   starts script on it. Unless targetId has ACTOR_WATCH_KEEP_MOTION it keeps
    FOLLOW_DISTANCE, takes the target's top speed with twice its acceleration, to
    keep up with it, and no collision flags, so it cannot block the target. */
 void fdActorWatchAndStartScript(
-	Uint32 actorId, Sint32 tgtId, const void *script)
+	Uint32 actorId, Sint32 targetId, const void *script)
 {
 	ACTOR *follower = fdActorLookup(actorId);
-	ACTOR *tgt = fdActorLookup(tgtId & ACTOR_WATCH_ACTOR_MASK);
+	ACTOR *target = fdActorLookup(targetId & ACTOR_WATCH_ACTOR_MASK);
 
-	if(follower != NULL && tgt != NULL) {
-		follower->watchedActor = (FIELD_OBJECT *)tgt;
-		if(!(tgtId & ACTOR_WATCH_KEEP_MOTION)) {
-			follower->tmr = FOLLOW_DISTANCE;
-			follower->acceleration = tgt->acceleration * 2;
-			follower->speedLimit = tgt->speedLimit;
-			follower->collisionFlg = 0;
+	if(follower != NULL && target != NULL) {
+		follower->watchedActor = (FIELD_OBJECT *)target;
+		if(!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
+			follower->timer = FOLLOW_DISTANCE;
+			follower->acceleration = target->acceleration * 2;
+			follower->speedLimit = target->speedLimit;
+			follower->collisionFlags = 0;
 		}
 		fdActorStartScriptStub(follower, script);
 	}

@@ -4,25 +4,25 @@
 void fdActorLaunchAhead(ACTOR *self)
 {
 	ACTOR	  *actor = fdActorGet(self->launchedActorId);
-	Sint32	   ang = self->userValue;
-	FIELD_SPR *spr = actor->spr;
+	Sint32	   angle = self->userValue;
+	FIELD_SPR *sprite = actor->sprite;
 	FIXED	   pos[3];
 
 	pos[0] = self->x.fixed;
 	pos[1] = self->y.fixed - toFIXED(12);
 	pos[2] = self->z.fixed;
-	syFieldVectorAddPolarOffset(32, ang, pos);
-	actor->facing = ang;
-	actor->motionFlg = 0;
+	syFieldVectorAddPolarOffset(32, angle, pos);
+	actor->facing = angle;
+	actor->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(actor, pos[0], pos[1], pos[2]);
 	actor->update = (OBJECT_UPDATE)scActorRollAndCrumble;
-	actor->steeringFlg = 0;
+	actor->steeringFlags = 0;
 	actor->speedLimit = toFIXED(8);
 	actor->acceleration = toFIXED(1) / 8;
-	spr->rotation = ang - DEGtoANG(90);
+	sprite->rotation = angle - DEGtoANG(90);
 	actor->scaleX = 0;
 	actor->scaleY = 0;
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->watchedActor = self->watchedActor;
-	fdScriptPlaySnd(SE_LAUNCH);
+	fdScriptPlaySound(SE_LAUNCH);
 }

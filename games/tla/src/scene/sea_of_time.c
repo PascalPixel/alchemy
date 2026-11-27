@@ -33,10 +33,11 @@ extern Uint32		   SeaOfTimeWaveState;
 #define SceneStateWork ((Uint32 *)SceneStateWork)
 extern MAP_METATILE MapGridMetatileBuffer[];
 
-void fdSetActorSprPriority(ACTOR *actor, Sint32 pri);
+void fdSetActorSpritePriority(ACTOR *actor, Sint32 priority);
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void   scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	  Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	  const EFFECT_OPTIONS *options);
 Sint32 fdMapMetatileGetAttributes(Uint32 layer, Sint32 x, Sint32 y);
 Sint32 scMapMetatileSetAttributes(
 	Uint32 layer, Sint32 x, Sint32 y, Sint32 value);
@@ -45,9 +46,9 @@ void   scSeaOfTimeRemoveRock(Sint32 x, Sint32 z, Sint32 actor);
 void   scSeaOfTimePlaceRock(Sint32 x, Sint32 z, Sint32 actor);
 
 /* syCos, through an inline as the swirl's turn calls it. */
-static inline Sint32 scSeaOfTimeCos(Sint32 ang)
+static inline Sint32 scSeaOfTimeCos(Sint32 angle)
 {
-	return syCos(ang);
+	return syCos(angle);
 }
 
 #include "shared/scene_create_imported_actor.h"
@@ -320,7 +321,7 @@ void scSeaOfTimeRideCurrent(void)
 	Sint32		   x;
 	Sint32		   z;
 	Sint32		   phase;
-	Sint32		   frm;
+	Sint32		   frame;
 	Sint32		  *counter;
 	FIXED		   c;
 	FIXED		   s;
@@ -401,14 +402,14 @@ void scSeaOfTimeRideCurrent(void)
 	actor->z.fixed = z;
 
 	counter = &TickCount;
-	frm = *counter;
+	frame = *counter;
 	phase = 3;
-	phase &= frm;
+	phase &= frame;
 	if(phase == 0) {
-		if((frm & 10) == 0)
-			fdScriptPlaySnd(SE_CURRENT);
-		spark.pri = 2;
-		spark.pal = SPRITE_COLOR_WHITE;
+		if((frame & 10) == 0)
+			fdScriptPlaySound(SE_CURRENT);
+		spark.priority = 2;
+		spark.palette = SPRITE_COLOR_WHITE;
 		spark.startScaleX = toFIXED(4) / 5;
 		spark.startScaleY = toFIXED(4) / 5;
 		c = syCos(actor->facing);
@@ -466,54 +467,54 @@ void scSeaOfTimeFollowChannel(void)
 	EFFECT_OPTIONS spark;
 	FIELD_STATE	  *state;
 	ACTOR		  *actor;
-	Sint16		   ang;
+	Sint16		   angle;
 	Sint32		   x, z, dx, dz;
-	FIXED		   tgtX, tgtZ;
+	FIXED		   targetX, targetZ;
 	FIXED		   cosine, sine;
 	FIXED		   x0, y0, z0;
 	Sint32		   flip;
 
 	state = RamHeapSlots->fieldState;
 	actor = fdActorGetById(ACTOR_SHIP);
-	ang = QUARTER_TURNS(state->stepCue - METATILE_BEHAVIOR_CHANNEL_EAST);
+	angle = QUARTER_TURNS(state->stepCue - METATILE_BEHAVIOR_CHANNEL_EAST);
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	x = FIELD_METATILE(actor->x.fixed);
 	z = FIELD_METATILE(actor->z.fixed);
-	dx = FIXEDtoINT(syCos(ang));
-	dz = FIXEDtoINT(sySin(ang));
+	dx = FIXEDtoINT(syCos(angle));
+	dz = FIXEDtoINT(sySin(angle));
 	actor->speedLimit = toFIXED(4);
 	actor->acceleration = toFIXED(4);
-	tgtZ = 0;
-	tgtX = 0;
+	targetZ = 0;
+	targetX = 0;
 	if(fdMapMetatileGetAttributes(MAPGRID_LAYER_MIDDLE, x + (dz < 0 ? -dz : dz),
 		   z + (dx < 0 ? -dx : dx)) >>
 			8 ==
 		state->stepCue) {
-		tgtX = (dz < 0 ? -dz : dz) * toFIXED(15);
-		tgtZ = (dx < 0 ? -dx : dx) * toFIXED(15);
+		targetX = (dz < 0 ? -dz : dz) * toFIXED(15);
+		targetZ = (dx < 0 ? -dx : dx) * toFIXED(15);
 	}
-	tgtX += FIELD_METATILE_ORIGIN(x);
-	tgtZ += FIELD_METATILE_ORIGIN(z);
+	targetX += FIELD_METATILE_ORIGIN(x);
+	targetZ += FIELD_METATILE_ORIGIN(z);
 	while(fdMapMetatileGetAttributes(MAPGRID_LAYER_MIDDLE, x, z) >> 8 ==
 		state->stepCue) {
 		x += dx;
 		z += dz;
-		tgtX += FIELD_METATILE_ORIGIN(dx);
-		tgtZ += FIELD_METATILE_ORIGIN(dz);
-		fdActorSetMoveTarget(actor, tgtX, actor->y.fixed, tgtZ);
+		targetX += FIELD_METATILE_ORIGIN(dx);
+		targetZ += FIELD_METATILE_ORIGIN(dz);
+		fdActorSetMoveTarget(actor, targetX, actor->y.fixed, targetZ);
 		while(fdActorHasArrived(actor) == 0) {
 			Sint32 phase = 3;
 			phase &= TickCount;
 			if(phase == 0) {
 				if((TickCount & 10) == 0) {
-					sySndPlay(SE_CURRENT);
+					sySoundPlay(SE_CURRENT);
 				}
 				/* The current's spray (scSeaOfTimeRideCurrent), larger, from
 				   further out and thrown 4 pixels wide; each function writes
 				   its own. */
-				spark.pri = 2;
-				spark.pal = SPRITE_COLOR_WHITE;
+				spark.priority = 2;
+				spark.palette = SPRITE_COLOR_WHITE;
 				spark.startScaleX = toFIXED(7) / 5;
 				spark.startScaleY = toFIXED(6) / 5;
 				cosine = syCos(actor->facing);
@@ -593,23 +594,23 @@ void scSeaOfTimeCountLaps(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(ACTOR_SHIP);
-	Sint16		 idx;
+	Sint16		 index;
 	Sint32		 now;
 	Sint32		 last;
 	Sint32		 nowRaw;
 	Uint32		 phase;
-	Uint32		*frm;
+	Uint32		*frame;
 	Uint32		*stamp;
 
-	idx =
+	index =
 		(fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 			 FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed)) >>
 			8) -
 		1;
-	frm = &TickCount;
+	frame = &TickCount;
 	stamp = &SeaOfTimeLastLapTick;
 
-	if(*frm - *stamp > LAP_STEP_TICKS) {
+	if(*frame - *stamp > LAP_STEP_TICKS) {
 		SeaOfTimeLapCount = 0;
 		SeaOfTimeLapTurn = 0;
 	}
@@ -619,8 +620,8 @@ void scSeaOfTimeCountLaps(void)
 	if(last != now) {
 		Sint16 *delta = &SeaOfTimeLapTurn;
 		Sint32	raw;
-		Sint32	diff;
-		Uint16 *cnt;
+		Sint32	difference;
+		Uint16 *count;
 		Sint32	step;
 
 		if(*delta == 0) {
@@ -633,15 +634,15 @@ void scSeaOfTimeCountLaps(void)
 		if((Sint16)raw == -(LAP_METATILES - 1)) {
 			*delta = 1;
 		}
-		diff = last - now;
+		difference = last - now;
 		raw = (Uint16)*delta;
 		step = (Sint16)raw;
-		cnt = &SeaOfTimeLapCount;
-		if(diff == step || now - last == step * (LAP_METATILES - 1)) {
-			(*cnt)++;
-			*stamp = *frm;
+		count = &SeaOfTimeLapCount;
+		if(difference == step || now - last == step * (LAP_METATILES - 1)) {
+			(*count)++;
+			*stamp = *frame;
 		} else {
-			*cnt = 0;
+			*count = 0;
 			*delta = 0;
 		}
 	}
@@ -655,19 +656,19 @@ void scSeaOfTimeCountLaps(void)
 			Uint32		   x;
 
 			params.type = SPRITE_SPARKLE;
-			params.pri = 2;
+			params.priority = 2;
 			x = syRandom() & (SPARKLE_SPREAD - 1);
 			z = syRandom() & (SPARKLE_SPREAD - 1);
-			fdScriptPlaySnd(SE_GLITTER);
+			fdScriptPlaySound(SE_GLITTER);
 			x <<= 16;
 			z <<= 16;
-			scFieldEffectSpawn(spots.spot[(Uint16)idx].x + x, 0,
-				spots.spot[(Uint16)idx].z + z, 0, toFIXED(1.2), phase,
+			scFieldEffectSpawn(spots.spot[(Uint16)index].x + x, 0,
+				spots.spot[(Uint16)index].z + z, 0, toFIXED(1.2), phase,
 				EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM,
 				&params);
 		}
 	}
-	if(SeaOfTimeLapCount == SeaOfTimeLapsNeeded[(Uint16)idx]) {
+	if(SeaOfTimeLapCount == SeaOfTimeLapsNeeded[(Uint16)index]) {
 
 		state->raisedCue = RAISED_START_WAVES;
 		SeaOfTimeLapCount = 0;
@@ -714,10 +715,10 @@ extern Uint32 SeaOfTimeWaveState;
 #define STEP_SEA_TOWARD_WAVES(palette, i, changed) \
 	for(i = 1, palette = &BG_PLTT_COLOR(SEA_PALETTE, 1); i != SEA_COLORS; \
 		i++, palette++) { \
-		Uint16 col = *palette; \
-		Uint16 r = RGB_RED(col); \
-		Uint16 g = RGB_GREEN(col); \
-		Uint16 b = RGB_BLUE(col); \
+		Uint16 color = *palette; \
+		Uint16 r = RGB_RED(color); \
+		Uint16 g = RGB_GREEN(color); \
+		Uint16 b = RGB_BLUE(color); \
 \
 		STEP_TOWARD(r, WAVE_RED, changed); \
 		STEP_TOWARD(g, WAVE_GREEN, changed); \
@@ -731,14 +732,14 @@ extern Uint32 SeaOfTimeWaveState;
 	palette = &BG_PLTT_COLOR(SEA_PALETTE, 0); \
 	for(i = 1, saved = &SeaOfTimeSavedColors, j = 0; i != SEA_COLORS + 1; \
 		i++, j++) { \
-		Uint16 col = palette[i]; \
-		Uint16 tgt = saved->cols[j]; \
-		Uint16 r = RGB_RED(col); \
-		Uint16 g = RGB_GREEN(col); \
-		Uint16 b = RGB_BLUE(col); \
-		Uint16 tr = RGB_RED(tgt); \
-		Uint16 tg = RGB_GREEN(tgt); \
-		Uint16 tb = RGB_BLUE(tgt); \
+		Uint16 color = palette[i]; \
+		Uint16 target = saved->colors[j]; \
+		Uint16 r = RGB_RED(color); \
+		Uint16 g = RGB_GREEN(color); \
+		Uint16 b = RGB_BLUE(color); \
+		Uint16 tr = RGB_RED(target); \
+		Uint16 tg = RGB_GREEN(target); \
+		Uint16 tb = RGB_BLUE(target); \
 \
 		STEP_TOWARD(r, tr, changed); \
 		STEP_TOWARD(g, tg, changed); \
@@ -759,21 +760,21 @@ void scSeaOfTimeStartWaves(void)
 	volatile Uint16 *palette;
 	Sint32			 changed;
 	Sint32			 i;
-	Sint32			 frm;
+	Sint32			 frame;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetFlag(FLAG_WAVES_RUNNING);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_LOW);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_LOW);
 	do {
 		sySynch(10);
 		changed = 0;
 		STEP_SEA_TOWARD_WAVES(palette, i, changed);
-		frm = TickCount;
-		SeaOfTimeWaveState += frm & 1;
+		frame = TickCount;
+		SeaOfTimeWaveState += frame & 1;
 	} while(changed);
 	SeaOfTimeWaveState = WAVE_COLOR_STEP_TICKS;
-	SeaOfTimeWaveStartTick = frm;
+	SeaOfTimeWaveStartTick = frame;
 	sySetEvent(scSeaOfTimeTimeWaves, EVENT_PASS_TICK);
 	fdScriptEnd();
 }
@@ -795,7 +796,7 @@ void scSeaOfTimeStopWaves(void)
 	syCloseEvent(scSeaOfTimeTimeWaves);
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_RISE_WITH_SPARKS_HIGH);
+	sySoundPlay(SE_RISE_WITH_SPARKS_HIGH);
 	SeaOfTimeWaveState = 1;
 	/* Each of the sea's colours steps one unit per channel toward its saved
 	   colour every 10 ticks, until none changes. */
@@ -809,8 +810,9 @@ void scSeaOfTimeStopWaves(void)
 	fdScriptEnd();
 }
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* The Lemurian ship sails into the rough water of the great sea's north, the
    band along the north edge at metatiles (46, 1) to (61, 3) or the one at (18,
@@ -823,7 +825,7 @@ void scSeaOfTimePushBackInRoughWater(void)
 	ACTOR		  *actor;
 	FIXED		   cosine, sine;
 	FIXED		   x, y, z;
-	FIXED		   vel, reverseVel;
+	FIXED		   velocity, reverseVelocity;
 	Sint32		   alternate;
 
 	actor = fdActorGetById(ACTOR_SHIP);
@@ -835,8 +837,8 @@ void scSeaOfTimePushBackInRoughWater(void)
 		if((TickCount & 3) == 0) {
 			/* The channels' spray (scSeaOfTimeFollowChannel), written out again
 			   here. */
-			options.pri = 2;
-			options.pal = SPRITE_COLOR_WHITE;
+			options.priority = 2;
+			options.palette = SPRITE_COLOR_WHITE;
 			options.startScaleX = toFIXED(7) / 5;
 			options.startScaleY = toFIXED(6) / 5;
 			cosine = syCos(actor->facing);
@@ -849,33 +851,33 @@ void scSeaOfTimePushBackInRoughWater(void)
 			sides[1] += actor->z.fixed;
 			sides[2] += actor->x.fixed;
 			sides[3] += actor->z.fixed;
-			vel = toFIXED(1) / 2;
+			velocity = toFIXED(1) / 2;
 			if(sides[1] != actor->z.fixed) {
 				sides[1] -= toFIXED(12);
 				sides[3] -= toFIXED(12);
 			}
 			alternate = TickCount & 4;
-			reverseVel = -vel;
+			reverseVelocity = -velocity;
 			x = sides[0];
 			y = actor->y.fixed;
 			z = sides[1];
 			if(alternate) {
-				scFieldEffectSpawn(x + toFIXED(4), y, z, vel, 0, 0,
+				scFieldEffectSpawn(x + toFIXED(4), y, z, velocity, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
 				scFieldEffectSpawn(sides[2] - toFIXED(4), actor->y.fixed,
-					sides[3], reverseVel, 0, 0,
+					sides[3], reverseVelocity, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
 			} else {
-				scFieldEffectSpawn(x - toFIXED(4), y, z, reverseVel, 0, 0,
+				scFieldEffectSpawn(x - toFIXED(4), y, z, reverseVelocity, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
 				scFieldEffectSpawn(sides[2] + toFIXED(4), actor->y.fixed,
-					sides[3], vel, 0, 0,
+					sides[3], velocity, 0, 0,
 					EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
 						EFFECT_USE_START_SCALE,
 					&options);
@@ -919,8 +921,8 @@ void scSeaOfTimeUpdateWater(ACTOR *actor)
 
 		spark.startScaleX = toFIXED(7) / 10;
 		spark.startScaleY = toFIXED(7) / 10;
-		spark.pal = SPRITE_COLOR_WHITE;
-		spark.pri = 1;
+		spark.palette = SPRITE_COLOR_WHITE;
+		spark.priority = 1;
 		scFieldEffectSpawn(actor->x.fixed + dx, 0, actor->z.fixed + toFIXED(16),
 			0, even, even,
 			EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
@@ -959,8 +961,8 @@ void scSeaOfTimeFacePoseidon(void)
 	fdCameraMoveTo(352, CAMERA_KEEP, 196, 1);
 	fdCameraWaitForArrival();
 	fdActorWaitForMoveById(ACTOR_SHIP);
-	sySndPlay(SOUND_FADE_OUT_BGM);
-	sySndPlay(SE_RISE_WITH_SPARKS_HIGH);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SE_RISE_WITH_SPARKS_HIGH);
 	/* The sea's colours all take the waves' colour at once. */
 	fill = RGB(WAVE_RED, WAVE_GREEN, WAVE_BLUE);
 	syDMAXCopy((const void *)&fill, (void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
@@ -977,7 +979,7 @@ void scSeaOfTimeFacePoseidon(void)
 	/* The shower of water, with SE_SCATTER every 64 ticks. */
 	for(i = 0; i != PUFF_SHOWER_TICKS; i++) {
 		if(i % 64 == 0)
-			sySndPlay(SE_SCATTER);
+			sySoundPlay(SE_SCATTER);
 		if(i < PUFF_SHOWER_FASTER) {
 			if(i % 16)
 				continue;
@@ -991,7 +993,7 @@ void scSeaOfTimeFacePoseidon(void)
 			Sint32 mask = PUFF_SPREAD - 1;
 			Sint32 z = syRandom();
 
-			burst.pal = SPRITE_COLOR_WHITE;
+			burst.palette = SPRITE_COLOR_WHITE;
 			scFieldEffectSpawn(toFIXED(x & mask) + toFIXED(336), 0,
 				toFIXED(z & mask) + toFIXED(176), 0, 0, 0, EFFECT_USE_PALETTE,
 				&burst);
@@ -1009,8 +1011,8 @@ void scSeaOfTimeFacePoseidon(void)
 
 			rain.startScaleX = toFIXED(3) / 2;
 			rain.startScaleY = toFIXED(3) / 2;
-			rain.pal = SPRITE_COLOR_WHITE;
-			rain.pri = 1;
+			rain.palette = SPRITE_COLOR_WHITE;
+			rain.priority = 1;
 			scFieldEffectSpawn(offsetX + toFIXED(336), 0,
 				offsetZ + toFIXED(176), 0, toFIXED(1), 0,
 				EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
@@ -1129,10 +1131,10 @@ void scSeaOfTimeAnimateSea(void)
 {
 	Uint16		 *line = SeaOfTimeRippleLines;
 	MAP_LAYER	 *layer = fdMapGridGetLayer(2);
-	PALETTE_FADE *fade = RamHeapSlots->palFade;
+	PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 	FIELD_STATE	 *event = RamHeapSlots->fieldState;
 	Sint32		  i;
-	Sint16		  col;
+	Sint16		  color;
 
 	if(event->psynergy != 0)
 		return;
@@ -1142,10 +1144,10 @@ void scSeaOfTimeAnimateSea(void)
 		return;
 
 	if(TickCount - SeaOfTimeWaveStartTick > SeaOfTimeWaveState) {
-		Sint16 tgt;
+		Sint16 target;
 
-		col = BG_PLTT_COLOR(SEA_PALETTE, SEA_COLORS);
-		tgt = SeaOfTimeSavedColors.cols[SEA_COLORS - 1];
+		color = BG_PLTT_COLOR(SEA_PALETTE, SEA_COLORS);
+		target = SeaOfTimeSavedColors.colors[SEA_COLORS - 1];
 
 		for(i = SEA_COLORS; i != 0; i--) {
 			BG_PLTT_COLOR(SEA_PALETTE, i) = BG_PLTT_COLOR(SEA_PALETTE, i - 1);
@@ -1154,26 +1156,26 @@ void scSeaOfTimeAnimateSea(void)
 #if FIX_SEA_SAVED_COLORS_READ_BEFORE_ARRAY
 			if(i != 1)
 #endif
-				SeaOfTimeSavedColors.cols[i - 1] =
-					SeaOfTimeSavedColors.cols[i - 2];
+				SeaOfTimeSavedColors.colors[i - 1] =
+					SeaOfTimeSavedColors.colors[i - 2];
 		}
-		BG_PLTT_COLOR(SEA_PALETTE, 1) = col;
-		SeaOfTimeSavedColors.cols[0] = tgt;
+		BG_PLTT_COLOR(SEA_PALETTE, 1) = color;
+		SeaOfTimeSavedColors.colors[0] = target;
 		SeaOfTimeWaveStartTick = TickCount;
 	}
 
 	if((TickCount & 1) == 0) {
-		col = BG_PLTT_COLOR(FLOW_PALETTE, SEA_COLORS);
+		color = BG_PLTT_COLOR(FLOW_PALETTE, SEA_COLORS);
 
 		for(i = SEA_COLORS; i != 0; i--)
 			BG_PLTT_COLOR(FLOW_PALETTE, i) = BG_PLTT_COLOR(FLOW_PALETTE, i - 1);
-		BG_PLTT_COLOR(FLOW_PALETTE, 1) = col;
+		BG_PLTT_COLOR(FLOW_PALETTE, 1) = color;
 
 		if((TickCount & 3) == 0) {
-			Uint16 col = PULSE_COLOR;
-			Uint16 red = RGB_RED(col);
-			Uint16 green = RGB_GREEN(col);
-			Uint16 blue = RGB_BLUE(col);
+			Uint16 color = PULSE_COLOR;
+			Uint16 red = RGB_RED(color);
+			Uint16 green = RGB_GREEN(color);
+			Uint16 blue = RGB_BLUE(color);
 
 			if(syGameFlagGet(FLAG_WAVES_RUNNING) == 0) {
 				red += SeaOfTimeRedPulseStep[0];
@@ -1195,7 +1197,7 @@ void scSeaOfTimeAnimateSea(void)
 		}
 	}
 
-	syDMAXCopy((const void *)BG_PLTT, RamHeapSlots->palFade,
+	syDMAXCopy((const void *)BG_PLTT, RamHeapSlots->paletteFade,
 		DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	layer->speedY = 0;
@@ -1218,7 +1220,7 @@ void scSeaOfTimeAnimateSea(void)
    covers the 2 by 2 metatiles round that point. */
 void scSeaOfTimePlaceRock(Sint32 x, Sint32 z, Sint32 actor)
 {
-	fdActorGetById(actor)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+	fdActorGetById(actor)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 	fdActorSetPosFX(actor, FIELD_HALF_METATILE_ORIGIN(x) + toFIXED(8),
 		FIELD_HALF_METATILE_ORIGIN(z) + toFIXED(8));
 	x >>= 1;
@@ -1247,12 +1249,12 @@ void scSeaOfTimeRaiseRock(Sint32 x, Sint32 z, Sint32 actor)
 	pz = FIELD_HALF_METATILE_ORIGIN(z) + toFIXED(8);
 	fdCameraMoveToFX(px, CAMERA_KEEP, pz, 1);
 	fdCameraWaitForArrival();
-	fdScriptPlaySnd(SE_CLATTER);
+	fdScriptPlaySound(SE_CLATTER);
 	fdMapGridSetShake(0, 16, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	spark.startScaleX = toFIXED(6) / 5;
 	spark.startScaleY = toFIXED(3) / 2;
-	spark.pri = 1;
+	spark.priority = 1;
 	spark.type = SPRITE_SPLASH;
 	scFieldEffectSpawn(px, 0, pz, 0, 0, 0,
 		EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &spark);
@@ -1281,7 +1283,7 @@ void scSeaOfTimeOpen(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(MUS_SILENCE);
+	fdScriptPlaySound(MUS_SILENCE);
 	fdMapGridCopyMetatilesTo(49, 70, 19, 73, 6, 6);
 	actor = scFieldActorCreate(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));
 	actor->update = (OBJECT_UPDATE)scSeaOfTimeUpdateWater;
@@ -1300,11 +1302,11 @@ void scSeaOfTimeOpen(void)
 	fdCameraWaitForArrival();
 	fdScriptSetFlag(FLAG_WAVES_RUNNING);
 	FieldStateWork->raisedCue = RAISED_START_WAVES;
-	fdScriptPlaySnd(SE_SEA_OF_TIME_OPENS);
+	fdScriptPlaySound(SE_SEA_OF_TIME_OPENS);
 	fdScriptWait(40);
 	for(i = 0; i != PUFF_SHOWER_TICKS; i++) {
 		if(i % 32 == 0)
-			fdScriptPlaySnd(SE_SCATTER);
+			fdScriptPlaySound(SE_SCATTER);
 		if(i < PUFF_SHOWER_FASTER) {
 			if(i % 16)
 				continue;
@@ -1320,8 +1322,8 @@ void scSeaOfTimeOpen(void)
 
 			params.startScaleX = toFIXED(4) / 5;
 			params.startScaleY = toFIXED(4) / 5;
-			params.pri = 1;
-			params.pal = SPRITE_COLOR_WHITE;
+			params.priority = 1;
+			params.palette = SPRITE_COLOR_WHITE;
 			x &= mask;
 			x <<= 16;
 			x += toFIXED(336);
@@ -1339,8 +1341,8 @@ void scSeaOfTimeOpen(void)
 
 		burst.startScaleX = toFIXED(3) / 2;
 		burst.startScaleY = toFIXED(3) / 2;
-		burst.pal = SPRITE_COLOR_WHITE;
-		burst.pri = 1;
+		burst.palette = SPRITE_COLOR_WHITE;
+		burst.priority = 1;
 		x &= mask;
 		x <<= 16;
 		x += toFIXED(336);
@@ -1351,7 +1353,7 @@ void scSeaOfTimeOpen(void)
 		sySynch(1);
 	}
 	fdActorRelease(actor);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_LOW);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_LOW);
 	do {
 		sySynch(10);
 		changed = 0;
@@ -1377,23 +1379,23 @@ Sint32 scInit(void)
 		SeaOfTimeWaveStartTick = TickCount;
 		SeaOfTimeWaveState = 1;
 		syDMAXCopy((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
-			SeaOfTimeSavedColors.cols, DMA_COPY_HALFWORDS(SEA_COLORS),
+			SeaOfTimeSavedColors.colors, DMA_COPY_HALFWORDS(SEA_COLORS),
 			REG_DMA3);
 		if(syGameFlagGet(FLAG_WAVES_RUNNING)) {
 			Uint32 *state = SceneStateWork;
-			Uint32	ofs, i;
+			Uint32	offset, i;
 
 			SeaOfTimeWaveStartTick = *state++;
 			SeaOfTimeWaveState = *state++;
 			TickCount = *state;
 			/* The sea's colours but the last, by their byte offsets. */
 			i = 1;
-			ofs = (SEA_PALETTE * PALETTE_COLORS + 1) * sizeof(Uint16);
+			offset = (SEA_PALETTE * PALETTE_COLORS + 1) * sizeof(Uint16);
 			do {
-				*(volatile Uint16 *)((Uint32)BG_PLTT + ofs) =
+				*(volatile Uint16 *)((Uint32)BG_PLTT + offset) =
 					RGB(WAVE_RED, WAVE_GREEN, WAVE_BLUE);
 				i++;
-				ofs += 2;
+				offset += 2;
 			} while(i != SEA_COLORS);
 			sySetEvent(scSeaOfTimeTimeWaves, EVENT_PASS_TICK);
 		}
@@ -1403,7 +1405,7 @@ Sint32 scInit(void)
 		if(MainRoutineStateWork.entrance <= NORTH_PART_LAST_ENTRANCE) {
 			if(!syGameFlagGet(FLAG_SEA_OF_TIME_OPENED)) {
 				syDMAXCopy((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
-					SeaOfTimeSavedColors.cols, DMA_COPY_HALFWORDS(SEA_COLORS),
+					SeaOfTimeSavedColors.colors, DMA_COPY_HALFWORDS(SEA_COLORS),
 					REG_DMA3);
 			} else {
 				if(!syGameFlagGet(FLAG_ROCK_A_CLEARED))
@@ -1415,7 +1417,7 @@ Sint32 scInit(void)
 				if(!syGameFlagGet(FLAG_ROCK_E_CLEARED))
 					scSeaOfTimePlaceRock(59, 19, ACTOR_ROCK_E);
 				{
-					void *block = RamHeapSlots->palFade;
+					void *block = RamHeapSlots->paletteFade;
 
 					PULSE_COLOR &= ~RGB(RGB_LEVEL_MAX, 0, 0);
 					syDMAXCopy((const void *)BG_PLTT, block,
@@ -1441,7 +1443,7 @@ Sint32 scInit(void)
 
 Sint32 scPrepareMap(void)
 {
-	void *block = RamHeapSlots->palFade;
+	void *block = RamHeapSlots->paletteFade;
 
 	DMA_FILL32(-1, block, PALETTE_FADE_BG_COLORS * sizeof(Uint16));
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);

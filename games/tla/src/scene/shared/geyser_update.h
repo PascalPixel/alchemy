@@ -16,19 +16,19 @@ void scGeyserUpdate(void)
 		ACTOR		 *actor;
 		ACTOR		 *rider;
 		MAP_METATILE *metatile;
-		Sint32		  idx;
+		Sint32		  index;
 
 		if(entry->id == 0)
 			continue;
 		actor = fdActorGetById(entry->id);
 		if(actor->x.fixed == 0 && actor->z.fixed == 0)
 			continue;
-		if(entry->tmr == entry->riseAt) {
-			sySndPlay(SE_CURSE_FALL);
+		if(entry->timer == entry->riseAt) {
+			sySoundPlay(SE_CURSE_FALL);
 			entry->step = 4;
 		}
-		if(entry->tmr == entry->fallAt) {
-			sySndPlay(SOUND_FADE_OUT_EXIT_SE);
+		if(entry->timer == entry->fallAt) {
+			sySoundPlay(SOUND_FADE_OUT_EXIT_SE);
 			entry->step = -8;
 		}
 		if(entry->step != 0) {
@@ -45,14 +45,14 @@ void scGeyserUpdate(void)
 			}
 		}
 		if(!syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS)) {
-			if(++entry->tmr >= entry->period)
-				entry->tmr = 0;
+			if(++entry->timer >= entry->period)
+				entry->timer = 0;
 		}
-		idx = FIELD_METATILE(actor->x.fixed) +
+		index = FIELD_METATILE(actor->x.fixed) +
 			FIELD_METATILE(actor->z.fixed) * MAPGRID_SIZE;
-		terrain[idx] = (Uint8)state->firstTerrain + i;
+		terrain[index] = (Uint8)state->firstTerrain + i;
 		*collision = ((actor->y.part[0].integer + entry->height) / 8) << 8;
-		metatile = &metatiles[idx];
+		metatile = &metatiles[index];
 		if(entry->step != 0)
 			metatile->attributeB = 0;
 		else

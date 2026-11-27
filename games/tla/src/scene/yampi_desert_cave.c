@@ -186,7 +186,7 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGetById(id);
-	Sint16	   spr = ((SPR *)actor->spr)->entries[0]->anmId;
+	Sint16	   sprite = ((SPR *)actor->sprite)->entries[0]->animationId;
 	Sint16	   i;
 	Uint32	   kind;
 	Sint32	   w, h, x, z;
@@ -194,7 +194,7 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 	Sint32	   bx, bz;
 
 	i = 0;
-	if((Uint16)spr != PushKinds[i]) {
+	if((Uint16)sprite != PushKinds[i]) {
 		do {
 			/* FAKEMATCH(dead): the counter's halfword step written out by hand;
 			 * as a Uint16 counter in for (i = 0; i < PUSH_KINDS; i++) with the
@@ -202,7 +202,7 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 			 * own, 22 lines off. */
 			kind = (Uint16)NEXT_HALFWORD(i);
 			i = kind;
-		} while(kind < PUSH_KINDS && (Uint16)spr != PushKinds[kind]);
+		} while(kind < PUSH_KINDS && (Uint16)sprite != PushKinds[kind]);
 	}
 	kind = (Uint16)i;
 	if(kind == PUSH_KINDS)
@@ -214,10 +214,10 @@ Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 	h = (ABS(i) + ABS(PushRectangles[kind][3])) >> 4;
 	x = FIELD_METATILE(actor->x.fixed + toFIXED(PushRectangles[kind][0]));
 	z = FIELD_METATILE(actor->z.fixed + toFIXED(i));
-	i = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
-	az = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
-	bx = map->layers[MAPGRID_LAYER_OVERHEAD].ofsX;
-	bz = map->layers[MAPGRID_LAYER_OVERHEAD].ofsY;
+	i = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
+	az = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
+	bx = map->layers[MAPGRID_LAYER_OVERHEAD].offsetX;
+	bz = map->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
 	fdMapGridCopyMetatileAttributes(x, z, w, h, (Uint16)i + x, (Uint16)az + z);
 	fdMapGridCopyMetatileAttributes((Uint16)FIELD_METATILE(bx) + x,
 		(Uint16)FIELD_METATILE(bz) + z, w, h, x + 64, z + 64);
@@ -264,7 +264,7 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 	ACTOR *actor;
 	Sint32 kind, w, h, dx;
 	FIXED  dz;
-	Sint32 cnt, i, j;
+	Sint32 count, i, j;
 	Uint8 *layer;
 
 	actor =
@@ -276,7 +276,7 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 		dx = PushLeaderSteps[direction] & FIELD_PIXEL_MASK;
 		dz = toFIXED(PushLeaderSteps[direction]);
 		roll->onPushed = NULL;
-		cnt = 0;
+		count = 0;
 		layer = &actor->layer;
 		*layer = MAPGRID_LAYER_OVERHEAD;
 		roll->x = actor->x.fixed + dx;
@@ -295,16 +295,16 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 				probe[2] += toFIXED(MAPGRID_METATILE_PIXELS);
 			}
 			roll->x += dx;
-			cnt++;
+			count++;
 			roll->z += dz;
 		} while(1);
 	blocked:
 		*layer = MAPGRID_LAYER_GROUND;
-		if(cnt == 0)
+		if(count == 0)
 			return FALSE;
-		roll->x = actor->x.fixed + dx * cnt;
+		roll->x = actor->x.fixed + dx * count;
 		roll->y = actor->y.fixed;
-		roll->z = actor->z.fixed + dz * cnt;
+		roll->z = actor->z.fixed + dz * count;
 		return TRUE;
 	} else {
 		return FALSE;
@@ -327,7 +327,8 @@ ACTOR *scYampiDesertCaveFindPushedLog(
 	for(; i < FIELD_TREASURE_ACTOR; i++) {
 		actor = *entry;
 		for(k = 0; k < PUSH_KINDS; k++) {
-			if(((SPR *)actor->spr)->entries[0]->anmId == PushKinds[k]) {
+			if(((SPR *)actor->sprite)->entries[0]->animationId ==
+				PushKinds[k]) {
 				x = (leader->x.part[0].integer +
 						PUSH_STEP_X(PushLeaderSteps[*direction])) >>
 					4;
@@ -375,7 +376,7 @@ void   scTeleportStartShimmer(void);
 void   scTeleportStopShimmer(void);
 Sint32 syListCountEntries(Uint16 *list);
 void   fdPaletteCycleFade(void);
-void   fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
+void   fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
 void   fdTeleportPlaySparks(void);
 
 void scYampiDesertCavePushLog(LOG_ROLL roll)
@@ -426,7 +427,7 @@ void scYampiDesertCavePushLog(LOG_ROLL roll)
 		fdActorSelectAnimation(actor, 3);
 	else
 		fdActorSelectAnimation(actor, 2);
-	fdScriptPlaySnd(SE_HEAVY_MOVE);
+	fdScriptPlaySound(SE_HEAVY_MOVE);
 	fdActorSetSpeedAndAcceleration(roll.slot, 0.5, 0.1);
 	fdActorSetMoveTarget(actor, roll.x, roll.y, roll.z);
 	fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
@@ -455,16 +456,16 @@ void scYampiDesertCavePushLog(LOG_ROLL roll)
 	leader->speedLimit = speed;
 	leader->acceleration = acceleration;
 	scFieldActorWaitForMove(actor);
-	fdScriptPlaySnd(SE_STOP_EXIT_SE);
-	fdScriptPlaySnd(SE_HEAVY_STOP);
+	fdScriptPlaySound(SE_STOP_EXIT_SE);
+	fdScriptPlaySound(SE_HEAVY_STOP);
 	fdActorSetPosAndResetMotion(actor, roll.x, actor->y.fixed, roll.z);
 	fdActorSelectAnimation(actor, 1);
 	roll.x = FIELD_METATILE(roll.x + toFIXED(PushRectangles[kind][0]));
 	roll.z = FIELD_METATILE(roll.z + toFIXED(PushRectangles[kind][1]));
-	ax = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
-	az = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
-	bx = FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].ofsX);
-	bz = FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].ofsY);
+	ax = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
+	az = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
+	bx = FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].offsetX);
+	bz = FIELD_METATILE(map->layers[MAPGRID_LAYER_OVERHEAD].offsetY);
 	fdMapGridCopyMetatileAttributes(
 		roll.x, roll.z, w, h, ax + roll.x, az + roll.z);
 	fdMapGridCopyMetatileAttributes(
@@ -501,7 +502,7 @@ void scYampiDesertCaveStopLeaderAtLog(ACTOR *actor)
 	hit = fdActorFindAtMetatile(pos, 1);
 	if(hit != NULL) {
 		for(i = 0; i < PUSH_KINDS; i++) {
-			if(((SPR *)hit->spr)->entries[0]->anmId == PushKinds[i])
+			if(((SPR *)hit->sprite)->entries[0]->animationId == PushKinds[i])
 				return;
 		}
 		fdActorSetPosAndResetMotion(
@@ -517,7 +518,7 @@ void scYampiDesertCaveStopLeaderAtLog(ACTOR *actor)
 
 #include "shared/teleport_shimmer.c"
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 
 #include "shared/pillar_place.h"
 
@@ -663,7 +664,7 @@ void scYampiDesertCaveFinishMovingPillar(Sint32 unused, Sint32 id)
 		Sint32 row = FIELD_METATILE(actor->z.fixed);
 
 		if(row == 13) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			fdScriptSetFlag(FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED);
 			fdMapGridCopyMetatileAttributes(32, 13, 1, 1, 34, row);
 			fdMapGridCopyMetatileAttributes(95, 3, 3, 3, 97, 12);
@@ -733,9 +734,9 @@ void scYampiDesertCaveEndSand(void)
 
 /* Pound on the wooden stake in Crystal's room hammers it into the ground and
    opens the way past it. */
-void scYampiDesertCavePoundStake(Sint32 mode, Sint32 cnt)
+void scYampiDesertCavePoundStake(Sint32 mode, Sint32 count)
 {
-	fdPoundSinkTarget(YampiDesertCaveCrystalStakes, mode, cnt);
+	fdPoundSinkTarget(YampiDesertCaveCrystalStakes, mode, count);
 	fdMapGridCopyMetatileAttributes(47, 12, 1, 1, 46, 12);
 }
 
@@ -748,9 +749,9 @@ void scYampiDesertCaveMoveSandRipple(void)
 {
 	Sint32 step =
 		scFieldGameFlagGetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP);
-	Sint32 idx = (step / RIPPLE_STEPS_PER_POINT) * 2;
-	Sint32 column = YampiDesertCaveRipplePath[idx];
-	Sint32 row = YampiDesertCaveRipplePath[idx + 1];
+	Sint32 index = (step / RIPPLE_STEPS_PER_POINT) * 2;
+	Sint32 column = YampiDesertCaveRipplePath[index];
+	Sint32 row = YampiDesertCaveRipplePath[index + 1];
 
 	if(fdActorGetById(ACTOR_SAND_RIPPLE)->paused == 0) {
 		fdActorSetPosFX(ACTOR_SAND_RIPPLE, FIELD_HALF_METATILE_ORIGIN(column),
@@ -767,17 +768,17 @@ void scYampiDesertCaveMoveSandRipple(void)
    as she comes up (SCOOP_STAGE_DUG_UP). */
 void scYampiDesertCaveScoopDjinni(Sint32 mode)
 {
-	Sint32 idx =
+	Sint32 index =
 		(((Sint32)syGameFlagGetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) /
 			RIPPLE_STEPS_PER_POINT) *
 		2;
-	Sint16		 column = YampiDesertCaveRipplePath[idx];
+	Sint16		 column = YampiDesertCaveRipplePath[index];
 	Sint32		 px = column * (MAPGRID_METATILE_PIXELS / 2);
-	Sint16		 row = YampiDesertCaveRipplePath[idx + 1];
+	Sint16		 row = YampiDesertCaveRipplePath[index + 1];
 	Sint32		 pz = row * (MAPGRID_METATILE_PIXELS / 2);
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	/* The Scoop's hand, where it digs. */
-	ACTOR *scoopHand = ((SCOOP_STATE *)RamHeapSlots->battleEff)->actor;
+	ACTOR *scoopHand = ((SCOOP_STATE *)RamHeapSlots->battleEffect)->actor;
 	Sint32 x = 0, z = 0;
 
 	if(scoopHand != NULL) {
@@ -796,7 +797,7 @@ void scYampiDesertCaveScoopDjinni(Sint32 mode)
 		fdActorSetPosFX(ACTOR_CRYSTAL, FIELD_HALF_METATILE_ORIGIN(column),
 			FIELD_HALF_METATILE_ORIGIN(row));
 		crystal->y.fixed = toFIXED(32);
-		crystal->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		crystal->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		crystal->gravity = toFIXED(0.09);
 		sySynch(50);
 		/* Felix speaks to Crystal at once, which starts its battle
@@ -879,7 +880,7 @@ Sint32 scInit(void)
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next ==
 		SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
-		scPaletteSetColsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
+		scPaletteSetColorsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
 			TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
 		fdActorDisableById(ACTOR_CHEST_ROOM_FIRST_LOG);
 		fdActorDisableById(ACTOR_CHEST_ROOM_SECOND_LOG);
@@ -923,7 +924,7 @@ Sint32 scInit(void)
 			fdMapGridCopyMetatileAttributes(32, 13, 1, 1, 34, 12);
 		}
 		if(!fdScriptGetFlag(FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP))
-			fdActorSetWideSpr(ACTOR_MYTHRIL_SILVER, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(ACTOR_MYTHRIL_SILVER, TREASURE_SPOT_WIDE);
 	}
 	if(MainRoutineStateWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
 		/* In the room of fallen columns, by any of its three ways in, the
@@ -990,8 +991,8 @@ Sint32 scInit(void)
 						FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP, 0);
 				sySetEvent(scYampiDesertCaveMoveSandRipple, EVENT_PASS_TICK);
 				fdScriptSetFlag(FLAG_YAMPI_DESERT_CAVE_RIPPLE_RUNNING);
-				fdActorSetSprPriority(ACTOR_SAND_RIPPLE, 3);
-				fdActorGetById(ACTOR_SAND_RIPPLE)->collisionFlg = 0;
+				fdActorSetSpritePriority(ACTOR_SAND_RIPPLE, 3);
+				fdActorGetById(ACTOR_SAND_RIPPLE)->collisionFlags = 0;
 			}
 		}
 	}

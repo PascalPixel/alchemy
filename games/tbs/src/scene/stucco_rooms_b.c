@@ -288,7 +288,7 @@ UNUSED static void scStuccoRoomsBExitThroughWindow(void)
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	state->transitionFrm = 24;
+	state->transitionFrame = 24;
 	syImportScriptSetExitRequest();
 }
 
@@ -304,22 +304,22 @@ static void scStuccoRoomsBEnterDoor(void)
 	ACTOR		*actor;
 	FIELD_STATE *state;
 	Sint16		*cue;
-	Sint32		 doorIdx;
+	Sint32		 doorIndex;
 
 	state = FieldStateWork;
 	for(actorId = ACTOR_FIRST_PLACED; actorId < ACTOR_ID_COUNT; actorId++) {
 		actor = fdActorGet(actorId);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 	cue = &state->stepCue;
-	doorIdx = *cue - METATILE_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR;
-	sySndPlay(SE_DOOR_OPEN);
-	fdMapGridAnimateMetatiles(StuccoRoomsBDoors[doorIdx].steps,
-		StuccoRoomsBDoors[doorIdx].x, StuccoRoomsBDoors[doorIdx].y);
+	doorIndex = *cue - METATILE_BEHAVIOR_STUCCO_ROOMS_B_FIRST_DOOR;
+	sySoundPlay(SE_DOOR_OPEN);
+	fdMapGridAnimateMetatiles(StuccoRoomsBDoors[doorIndex].steps,
+		StuccoRoomsBDoors[doorIndex].x, StuccoRoomsBDoors[doorIndex].y);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	syImportScriptSetExitRequest(*cue);
 }
@@ -340,7 +340,7 @@ static void scStuccoRoomsBWatchWomanHideMedal(void)
 	fdScriptWait(40);
 	sparkle =
 		syFieldActorCreate(SPRITE_PARTICLE, toFIXED(600), 0, toFIXED(824));
-	fdActorSetSprFlags(sparkle, 0);
+	fdActorSetSpriteFlags(sparkle, 0);
 	fdActorSelectAnimation(sparkle, PARTICLE_ANIMATION_GROW_AND_FLICKER);
 	fdScriptWait(10);
 	fdActorSelectAnimation(sparkle, PARTICLE_ANIMATION_SHRINK);
@@ -463,11 +463,11 @@ Sint32 scInit(void)
 		   metatiles under them. */
 		fdMapGridCopyMetatileAttributes(51, 47, 3, 1, 51, 45);
 		actor = fdActorGet(ACTOR_STUCCO_ROOMS_B_ANGRY_PASSENGER);
-		actor->priFlg = 0;
-		actor->spr->image.pri = 2;
+		actor->priorityFlags = 0;
+		actor->sprite->image.priority = 2;
 		actor = fdActorGet(ACTOR_STUCCO_ROOMS_B_PASSENGER_WIFE);
-		actor->priFlg = 0;
-		actor->spr->image.pri = 2;
+		actor->priorityFlags = 0;
+		actor->sprite->image.priority = 2;
 		if(fdScriptGetFlag(FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN) != 0) {
 			fdActorSetPos(ACTOR_STUCCO_ROOMS_B_MEDAL_WOMAN, 560, 680);
 			fdActorFaceDirection(

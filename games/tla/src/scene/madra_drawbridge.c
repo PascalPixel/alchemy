@@ -93,13 +93,13 @@ void scMadraDrawbridgeBlockBridge(void)
 			fdCameraMoveTo(164, CAMERA_KEEP, 260, 1);
 			fdActorWalkTo(MainRoutineStateWork.leaderActorId, 158, 316);
 		}
-		fdActorGetById(ACTOR_EAST_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
-		fdActorGetById(ACTOR_WEST_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkTo(ACTOR_WEST_GUARD, 148, 252);
 		fdActorWalkToAndWait(ACTOR_EAST_GUARD, 170, 252);
 		fdActorWaitForMoveById(ACTOR_WEST_GUARD);
-		fdActorGetById(ACTOR_EAST_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
-		fdActorGetById(ACTOR_WEST_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_WEST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
 		fdActorFaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);

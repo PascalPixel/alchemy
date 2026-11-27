@@ -19,8 +19,8 @@ typedef struct BATTLE_CAMERA {
 	   focus along the turned view. */
 	FIXED eye[3];
 	FIXED focus[3]; /* the focus, 16.16 fixed-point pixels */
-	/* When set, fdActorSystemProjectSprs faces the sprites from it instead of
-	   eye; every camera setup clears it and nothing sets it. */
+	/* When set, fdActorSystemProjectSprites faces the sprites from it instead
+	   of eye; every camera setup clears it and nothing sets it. */
 	Sint32 *followEye;
 	Sint32 *followPos; /* when set, followed instead of focus */
 	FIXED	distance;  /* eye to focus, 16.16 fixed-point pixels */
@@ -47,9 +47,9 @@ STATIC_ASSERT(offsetof(BATTLE_CAMERA, yaw) == 54);
    toward and the ticks left to ease it, and how the battle background is
    shown. */
 typedef struct BATTLE_BACKGROUND_STATE {
-	Sint32 tgtYaw; /* 1/65536 turns */
-	Sint32 ticks;  /* ticks left to ease the yaw, a sixteenth a tick */
-	Sint32 mode;   /* BATTLE_BACKGROUND_MODE */
+	Sint32 targetYaw; /* 1/65536 turns */
+	Sint32 ticks;	  /* ticks left to ease the yaw, a sixteenth a tick */
+	Sint32 mode;	  /* BATTLE_BACKGROUND_MODE */
 	/* BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
 	   battle effects' canvas layers set it. */
 	Sint32 secondMode;
@@ -66,18 +66,18 @@ typedef struct BATTLE_BACKGROUND_STATE {
    steps of battle_staging.c and battle_auto_battle.c, btTransitionRun and
    btElementGlowPlay keep one as a local. */
 typedef struct BATTLE_STAGING_STATE {
-	BATTLE_EFFECT_PARM eff;
-	/* Each target's sprite animations' SPR_COL_MODE (SPR_ANIMATION.colMode),
+	BATTLE_EFFECT_PARM effect;
+	/* Each target's sprite animations' SPR_COL_MODE (SPR_ANIMATION.colorMode),
 	   all but its last, saved before the effect; no code reads them back by
 	   name. */
-	Uint8 savedAnmPrms[8][4];
+	Uint8 savedAnimationParams[8][4];
 } BATTLE_STAGING_STATE;
 
 STATIC_ASSERT(sizeof(BATTLE_BACKGROUND_STATE) == 32);
 STATIC_ASSERT(offsetof(BATTLE_BACKGROUND_STATE, mode) == 8);
 STATIC_ASSERT(offsetof(BATTLE_BACKGROUND_STATE, busy) == 16);
 STATIC_ASSERT(sizeof(BATTLE_STAGING_STATE) == 84);
-STATIC_ASSERT(offsetof(BATTLE_STAGING_STATE, eff.tgts) == 36);
+STATIC_ASSERT(offsetof(BATTLE_STAGING_STATE, effect.targets) == 36);
 
 /* BATTLE_BACKGROUND_STATE.mode and secondMode: how the battle background is
    shown. */

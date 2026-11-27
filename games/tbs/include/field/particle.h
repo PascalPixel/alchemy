@@ -26,9 +26,9 @@ typedef struct PARTICLE {
 	FIXED y; /* 16.16 fixed-point pixels */
 	FIXED z; /* 16.16 fixed-point pixels */
 #endif
-	FIXED  velX;	/* 16.16 fixed-point pixels per tick */
-	FIXED  velY;	/* 16.16 fixed-point pixels per tick */
-	FIXED  velZ;	/* 16.16 fixed-point pixels per tick */
+	FIXED  velocityX; /* 16.16 fixed-point pixels per tick */
+	FIXED  velocityY; /* 16.16 fixed-point pixels per tick */
+	FIXED  velocityZ; /* 16.16 fixed-point pixels per tick */
 	Sint32 variant; /* each animation's own: a size, a countdown, -1 for idle */
 } PARTICLE;
 
@@ -80,9 +80,9 @@ static inline Sint32 *syScreenPointCoordinates(SCREEN_POINT *pos)
 STATIC_ASSERT(offsetof(PARTICLE, x) == 0);
 STATIC_ASSERT(offsetof(PARTICLE, y) == 4);
 STATIC_ASSERT(offsetof(PARTICLE, z) == 8);
-STATIC_ASSERT(offsetof(PARTICLE, velX) == 12);
-STATIC_ASSERT(offsetof(PARTICLE, velY) == 16);
-STATIC_ASSERT(offsetof(PARTICLE, velZ) == 20);
+STATIC_ASSERT(offsetof(PARTICLE, velocityX) == 12);
+STATIC_ASSERT(offsetof(PARTICLE, velocityY) == 16);
+STATIC_ASSERT(offsetof(PARTICLE, velocityZ) == 20);
 STATIC_ASSERT(offsetof(PARTICLE, variant) == 24);
 STATIC_ASSERT(sizeof(PARTICLE) == 28);
 STATIC_ASSERT(sizeof(SCREEN_POINT) == 12);

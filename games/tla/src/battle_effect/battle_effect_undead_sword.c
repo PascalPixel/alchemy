@@ -37,29 +37,29 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	void				*sprs;
+	void				*sprites;
 	DRAW_RECTANGLE		 draw[2];
 	SCREEN_POINT		 screenPos;
 	PARTICLE			*spark;
 	PARTICLE			*particle;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	Sint32				 height;
 	Sint32				 mode;
 	Sint32				 x;
 	Uint8				*src;
 	Sint32				 speed;
-	Sint32				 ang;
+	Sint32				 angle;
 	Sint32				 picture;
 	Sint32				 size;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 
 	/* Open the canvas and load the pictures. */
 	EFFECT_START_NARROW_CANVAS(0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(
 		RESOURCE_BLAST_SHEET, state->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
@@ -67,39 +67,39 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	/* Slide the canvas so that its middle is under the target. */
-	btEffectPosProjectBattler(args->tgts[0], &screenPos);
+	btEffectPosProjectBattler(args->targets[0], &screenPos);
 	REG_BG2X = (CANVAS_SIZE / 2 - screenPos.x) << 8;
 
 	/* The sparks start together at the columns' foot and fly apart, upward
 	   faster than sideways. */
 	for(i = 0, spark = state->particles; i != UNDEAD_SWORD_SPARK_COUNT; i++) {
 		speed = (syRandom() & 0x1ff) + 128;
-		ang = syRandom() & TRIG_ANGLE_MASK;
+		angle = syRandom() & TRIG_ANGLE_MASK;
 		spark->x = toFIXED(CANVAS_SIZE / 2);
 		spark->y = toFIXED(UNDEAD_SWORD_GROUND);
-		spark->velX = (sySin(ang) * speed) >> 8;
-		spark->velY = (syCos(ang) * speed) >> 9;
+		spark->velocityX = (sySin(angle) * speed) >> 8;
+		spark->velocityY = (syCos(angle) * speed) >> 9;
 		spark->variant = syRandom() & 7;
 		spark++;
 	}
-	state->shakeFrm = 8;
+	state->shakeFrame = 8;
 
-	for(frm = 0; frm != UNDEAD_SWORD_TICKS; frm++) {
+	for(frame = 0; frame != UNDEAD_SWORD_TICKS; frame++) {
 		/* The hit: the damage shown, a shake, knock-back and a flash. */
-		if(frm == UNDEAD_SWORD_HIT_TICK) {
-			state->shakeFrm = 8;
+		if(frame == UNDEAD_SWORD_HIT_TICK) {
+			state->shakeFrame = 8;
 			EFFECT_SHOW_DAMAGE(SE_POWER_UP);
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_NUDGE);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 		}
 
 		/* The columns: up 12 pixels a tick until tick 31, then down 6. */
-		if(frm >= UNDEAD_SWORD_RISE_TICK) {
-			if(frm <= UNDEAD_SWORD_PEAK_TICK)
-				height = (frm - UNDEAD_SWORD_RISE_TICK) * 12;
+		if(frame >= UNDEAD_SWORD_RISE_TICK) {
+			if(frame <= UNDEAD_SWORD_PEAK_TICK)
+				height = (frame - UNDEAD_SWORD_RISE_TICK) * 12;
 			else
-				height = 272 - frm * 6;
+				height = 272 - frame * 6;
 			if(height > 0) {
 				if(height > LIME_COLUMN_HEIGHT) {
 					height = LIME_COLUMN_HEIGHT;
@@ -129,7 +129,7 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
 		btEffectBuildCanvasBlitters(args->side, draw);
 		for(i = 0, particle = state->particles; i != UNDEAD_SWORD_SPARK_COUNT;
 			i++) {
-			if(frm >= i / 2 + UNDEAD_SWORD_RISE_TICK &&
+			if(frame >= i / 2 + UNDEAD_SWORD_RISE_TICK &&
 				particle->variant <= UNDEAD_SWORD_SPARK_LIFE) {
 				Sint32 drawX;
 				Sint32 drawY;
@@ -151,7 +151,7 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
 		}
 		EFFECT_RELEASE_BLITTERS();
 
-		if(frm < UNDEAD_SWORD_RISE_TICK)
+		if(frame < UNDEAD_SWORD_RISE_TICK)
 			btCameraShake(4, 4);
 		else
 			btCameraShake(16, 16);
@@ -195,23 +195,23 @@ void btEffectRunPlumeEdge(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*sheet;
-	MOTION_OBJECT		*tgt;
+	MOTION_OBJECT		*target;
 	Sint32				 geyserY;
 	DRAW_RECTANGLE		 draw[2];
 	SCREEN_POINT		 pos;
 	PARTICLE			*particle;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, draw);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	tgt = btObjectGetStub(args->tgts[0])->obj;
+	target = btObjectGetStub(args->targets[0])->object;
 	geyserY = 0;
 	/* DEAD: nothing here draws BillowTexture; the ROM keeps the call. */
 	btResourceLoadAndDecompress(
@@ -226,63 +226,64 @@ void btEffectRunPlumeEdge(BATTLE_EFFECT_PARM *args)
 		state->sheet + PLUME_EDGE_FOAM_PICTURES, 1, 0);
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 
-	for(frm = 0; frm != PLUME_EDGE_TICKS; frm++) {
-		btEffectPosProjectBattler(args->tgts[0], &pos);
+	for(frame = 0; frame != PLUME_EDGE_TICKS; frame++) {
+		btEffectPosProjectBattler(args->targets[0], &pos);
 
 		/* Tick 0: the puffs of foam are set to fan out upward from the target,
 		   one more each tick, and the target takes its damage pose, its
 		   gravity turned off. */
-		if(frm == 0) {
+		if(frame == 0) {
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				Sint32 speed = (syRandom() & 0x3ff) + 32;
-				Sint32 ang = (syRandom() & 0x7fff) - DEGtoANG(90);
+				Sint32 angle = (syRandom() & 0x7fff) - DEGtoANG(90);
 
 				particle = &state->particles[i];
 				particle->x = toFIXED(pos.x / 2);
 				particle->y = toFIXED(pos.y);
-				particle->velX = (sySin(ang) * speed) >> 8;
-				particle->velY = -(syCos(ang) * speed * 2) >> 8;
+				particle->velocityX = (sySin(angle) * speed) >> 8;
+				particle->velocityY = -(syCos(angle) * speed * 2) >> 8;
 				particle->variant = -i;
 			}
-			tgt->verticalMotionStrength = 0;
-			tgt->y = 0;
+			target->verticalMotionStrength = 0;
+			target->y = 0;
 			geyserY = pos.y;
-			btEffectTintBattler(args->tgts[0], TINT_KEEP, POSE_DAMAGE, 0, -1);
-			state->shakeFrm = 4;
-			sySndPlayStub(SE_CLATTER);
+			btEffectTintBattler(
+				args->targets[0], TINT_KEEP, POSE_DAMAGE, 0, -1);
+			state->shakeFrame = 4;
+			sySoundPlayStub(SE_CLATTER);
 		}
 
 		/* The burst: the geyser bursts into its drops, the target is knocked
 		   back and flashes, and the whole canvas flashes white. */
-		if(frm == PLUME_EDGE_BURST_TICK) {
+		if(frame == PLUME_EDGE_BURST_TICK) {
 			for(i = 0; i != PLUME_EDGE_DROPS; i++) {
 				Sint32 speed = (syRandom() & 0x3ff) + 32;
-				Sint32 ang = syRandom();
+				Sint32 angle = syRandom();
 
 				particle = &PARTICLES[PLUME_EDGE_FIRST_DROP + i];
 				particle->x = toFIXED(pos.x / 2);
 				particle->y = INTtoFIXED(pos.y - 16);
-				particle->velX = (sySin(ang) * speed) >> 7;
-				particle->velY = -(syCos(ang) * speed * 2) >> 7;
+				particle->velocityX = (sySin(angle) * speed) >> 7;
+				particle->velocityY = -(syCos(angle) * speed * 2) >> 7;
 				particle->variant = (syRandom() & 7) + 48;
 			}
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HURL);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
-			state->shakeFrm = 8;
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+			state->shakeFrame = 8;
 			EFFECT_SHOW_DAMAGE(SE_CRASH);
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
 
 		/* The geyser lifts the target while the user dashes in and leaps. */
-		if(frm >= 0 && frm < PLUME_EDGE_LIFT_TICKS)
-			tgt->y += toFIXED(2);
-		if(frm == 18)
-			btEffectSetApproachMotion(args->user, args->tgts[0], 8, 80);
-		if(frm == 21)
+		if(frame >= 0 && frame < PLUME_EDGE_LIFT_TICKS)
+			target->y += toFIXED(2);
+		if(frame == 18)
+			btEffectSetApproachMotion(args->user, args->targets[0], 8, 80);
+		if(frame == 21)
 			btMotionApproachTargetStub(
-				args->user, args->tgts[0], 12, toFIXED(8));
+				args->user, args->targets[0], 12, toFIXED(8));
 
 		/* The drops fall and shrink: a drop is drawn at its life / 6 pixels
 		   wide, two pixels at the least. */
@@ -322,9 +323,9 @@ void btEffectRunPlumeEdge(BATTLE_EFFECT_PARM *args)
 
 		/* The geyser: its picture scrolls up from its foot, the part that has
 		   risen drawn again below it. */
-		if(frm >= 0 && frm < PLUME_EDGE_BURST_TICK) {
+		if(frame >= 0 && frame < PLUME_EDGE_BURST_TICK) {
 			Sint32 scroll =
-				(frm * PLUME_EDGE_GEYSER_SPEED) % FIRE_PILLAR_HEIGHT;
+				(frame * PLUME_EDGE_GEYSER_SPEED) % FIRE_PILLAR_HEIGHT;
 
 			draw[0](canvas, state->sheet, pos.x / 2 - FIRE_PILLAR_WIDTH / 2,
 				geyserY + PLUME_EDGE_GEYSER_FOOT - scroll - FIRE_PILLAR_HEIGHT,
@@ -346,7 +347,7 @@ void btEffectRunPlumeEdge(BATTLE_EFFECT_PARM *args)
 /* Copies a width by height picture into a picture twice its size, mirrored into
    all four quadrants. */
 void btPictureMirrorIntoQuadrants(
-	Uint8 *src, Uint8 *dst, Sint32 width, Sint32 height)
+	Uint8 *src, Uint8 *dest, Sint32 width, Sint32 height)
 {
 	Sint32 x;
 	Sint32 y;
@@ -355,10 +356,10 @@ void btPictureMirrorIntoQuadrants(
 		for(x = 0; x != width; x++) {
 			Uint8 c = src[y * width + x];
 
-			dst[y * width * 2 + x] = c;
-			dst[y * 2 * width + (width * 2 - 1 - x)] = c;
-			dst[(height * 2 - 1 - y) * 2 * width + x] = c;
-			dst[(height * 2 - 1 - y) * 2 * width + (width * 2 - 1 - x)] = c;
+			dest[y * width * 2 + x] = c;
+			dest[y * 2 * width + (width * 2 - 1 - x)] = c;
+			dest[(height * 2 - 1 - y) * 2 * width + x] = c;
+			dest[(height * 2 - 1 - y) * 2 * width + (width * 2 - 1 - x)] = c;
 		}
 	}
 }
@@ -454,7 +455,7 @@ typedef struct WATER_TRIANGLE {
 void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frm;
+	Sint32				 frame;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
@@ -463,7 +464,7 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint16		   savedYaw;
 	Sint32		   ticks;
 	SCREEN_POINT   screen;
-	SCREEN_POINT   tgt;
+	SCREEN_POINT   target;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	PARTICLE	  *puff;
@@ -474,9 +475,9 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8		  *mesh;
 	Sint32		   i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	mesh = RamMapMetatileBuffer + WATER_MESH_OFFSET;
 	if(mode == WATER_SHEET_DREAMTIDE) {
@@ -573,12 +574,12 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		ticks = WATERY_GRAVE_TICKS;
 	}
 
-	for(frm = 0; frm != ticks; frm++) {
+	for(frame = 0; frame != ticks; frame++) {
 		void  *vertices;
 		Sint32 shade;
-		Sint32 ang;
+		Sint32 angle;
 
-		if(frm == 0) {
+		if(frame == 0) {
 			camera->yaw = savedYaw;
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				state->particles[i].variant = -1;
@@ -593,79 +594,80 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		if(mode == WATER_SHEET_DREAMTIDE) {
-			if(frm == 17) {
+			if(frame == 17) {
 				EFFECT_SHOW_DAMAGE(SE_CLATTER);
 				btEffectStartActorMotion(
-					args->tgts[0], 1, 0, 0, toFIXED(8), 100);
+					args->targets[0], 1, 0, 0, toFIXED(8), 100);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
-				state->shakeFrm = 8;
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+				state->shakeFrame = 8;
 			}
 		} else {
-			if(frm == 17) {
-				sySndPlayStub(SE_CRASH);
-				for(i = 0; i != args->tgtCnt; i++) {
-					btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_NUDGE);
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+			if(frame == 17) {
+				sySoundPlayStub(SE_CRASH);
+				for(i = 0; i != args->targetCount; i++) {
+					btMotionApplyKnockbackStub(
+						args->targets[i], KNOCKBACK_NUDGE);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 16);
 				}
-				state->shakeFrm = 8;
+				state->shakeFrame = 8;
 			}
-			if(frm == 46) {
+			if(frame == 46) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-				for(i = 0; i != args->tgtCnt; i++) {
+				for(i = 0; i != args->targetCount; i++) {
 					btEffectStartActorMotion(
-						args->tgts[i], 1, 0, 0, toFIXED(8), 100);
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+						args->targets[i], 1, 0, 0, toFIXED(8), 100);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 16);
 				}
-				state->shakeFrm = 8;
+				state->shakeFrame = 8;
 			}
 		}
 		if(mode == WATER_SHEET_DREAMTIDE) {
-			if((Uint32)(frm - 33) <= 14) {
-				REG_BLDALPHA = BLEND_ALPHA(48 - frm, BLEND_WEIGHT_MAX);
+			if((Uint32)(frame - 33) <= 14) {
+				REG_BLDALPHA = BLEND_ALPHA(48 - frame, BLEND_WEIGHT_MAX);
 			}
-		} else if((Uint32)(frm - 65) <= 14) {
-			REG_BLDALPHA = BLEND_ALPHA(80 - frm, BLEND_WEIGHT_MAX);
+		} else if((Uint32)(frame - 65) <= 14) {
+			REG_BLDALPHA = BLEND_ALPHA(80 - frame, BLEND_WEIGHT_MAX);
 		}
 
-		vertices = syHeapAllocEWRAM(1024);
+		vertices = syHeapAllocateEWRAM(1024);
 		model = btRenderAllocateModelList(1);
 		shade = 0;
 
 		/* The waves rise, then ebb. */
 		if(mode == WATER_SHEET_DREAMTIDE) {
-			if(frm <= 31) {
-				height = frm * 4;
+			if(frame <= 31) {
+				height = frame * 4;
 				if(height > 64) {
 					height = 64;
 				}
 			} else {
-				height = 320 - frm * 8;
+				height = 320 - frame * 8;
 				if(height < 0) {
 					height = 0;
 				}
 			}
-		} else if(frm <= 63) {
-			height = frm * 2;
+		} else if(frame <= 63) {
+			height = frame * 2;
 			if(height > 64) {
 				height = 64;
 			}
 		} else {
-			height = 576 - frm * 8;
+			height = 576 - frame * 8;
 			if(height < 0) {
 				height = 0;
 			}
 		}
-		phase = frm * 2;
+		phase = frame * 2;
 		row = 1;
-		ang = frm * (TRIG_TURN / 32);
+		angle = frame * (TRIG_TURN / 32);
 		for(; row != WATER_ROWS - 1; row++) {
 			for(column = 0; column != WATER_COLUMNS; column++) {
 				Sint32 amplitude = (16 - column) * height / 32;
 				Sint32 y =
-					(FIXEDtoINT(sySin(ang + column * WATER_WAVE_COLUMN_PHASE +
+					(FIXEDtoINT(sySin(angle + column * WATER_WAVE_COLUMN_PHASE +
 									sySin(row * WATER_WAVE_ROW_PHASE)) *
 						amplitude)) -
 					amplitude;
@@ -681,8 +683,8 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			if(puff->variant == 0) {
 				puff->y = INTtoFIXED(
 					(FIXEDtoINT(
-						sySin(
-							ang + sySin((i + 4) * (WATER_WAVE_ROW_PHASE / 4))) *
+						sySin(angle +
+							sySin((i + 4) * (WATER_WAVE_ROW_PHASE / 4))) *
 						height)) -
 					height + 64);
 			}
@@ -701,7 +703,7 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			syRotY(camera->yaw + DEGtoANG(180));
 		}
 		{
-			Sint32 shift = WATER_SHEET_START_X - frm * 8;
+			Sint32 shift = WATER_SHEET_START_X - frame * 8;
 
 			if(shift < WATER_SHEET_END_X) {
 				shift = WATER_SHEET_END_X;
@@ -713,13 +715,13 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		model->mesh = mesh;
 		model->vertices = vertices;
 		model->shade = shade;
-		model->scrollU = (frm + phase) & TEXTURE_SCROLL_MASK;
-		model->scrollV = TEXTURE_SCROLL_MASK & ~frm;
+		model->scrollU = (frame + phase) & TEXTURE_SCROLL_MASK;
+		model->scrollV = TEXTURE_SCROLL_MASK & ~frame;
 		btRenderTransformVertices(
 			MapGridMetatileBuffer, vertices, WATER_ROWS * WATER_COLUMNS);
 		btRenderDrawModelList(model);
 
-		if(frm == 0) {
+		if(frame == 0) {
 			FIXED puffZ = -toFIXED(60);
 
 			for(i = 0, puff = state->particles; i != WATERY_GRAVE_PUFFS;
@@ -727,9 +729,9 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				puff->variant = syRandom() % WATER_SHEET_SMOKE_PICTURE_COUNT;
 				puff->z = puffZ;
 				puff->x = -toFIXED(60);
-				puff->velX = 0;
-				puff->velY = 0;
-				puff->velZ = 0;
+				puff->velocityX = 0;
+				puff->velocityY = 0;
+				puff->velocityZ = 0;
 				puffZ += toFIXED(6);
 			}
 		}
@@ -765,7 +767,7 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		} else {
 			Sint32 t;
 
-			btEffectPosProjectBattler(args->tgts[0], &tgt);
+			btEffectPosProjectBattler(args->targets[0], &target);
 			texture.logWidth = 6;
 			texture.logHeight = 6;
 			model->mesh = BattleEffectSquareMesh;
@@ -773,7 +775,7 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			model->scrollU = 0;
 			model->scrollV = 0;
 			for(i = 0; i != 2; i++) {
-				t = frm - 16 - i * 4;
+				t = frame - 16 - i * 4;
 				if(t < 0) {
 					continue;
 				}
@@ -786,12 +788,12 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					continue;
 				}
 				syInitMatrix();
-				syTranslate(
-					INTtoFIXED(tgt.x / 2 - 64), INTtoFIXED(tgt.y - 64), 0);
+				syTranslate(INTtoFIXED(target.x / 2 - 64),
+					INTtoFIXED(target.y - 64), 0);
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 				syRotZ(i * (DEGtoANG(90)) + DEGtoANG(45));
 				syRotX(TRIG_TURN / 16);
-				syRotY(ang);
+				syRotY(angle);
 				syMatrixScaleUniform(t * (toFIXED(3) / 16));
 				btRenderTransformVertices(
 					BattleEffectGroundSquareCorners, vertices, 4);
@@ -863,7 +865,7 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
@@ -873,7 +875,7 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	Sint32		   yaw;
-	Sint32		   frm;
+	Sint32		   frame;
 	Sint32		   ticks;
 	Sint32		   i;
 	Sint32		   k;
@@ -881,10 +883,10 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8		  *funnel;
 	void (*transfer)(void);
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	/* The funnel's corners, two to a segment, from its head. */
 	funnel = MapGridMetatileBuffer;
 	btEffectStartCanvasLayer(0);
@@ -915,24 +917,24 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	sySetEvent(transfer, EVENT_PASS_VBLANK);
 	yaw = 0; /* Default: set again at tick 0 before it is read. */
 	ticks = 36;
-	if(mode == WIND_FUNNEL_AROMA && args->tgtCnt > 4) {
-		ticks = args->tgtCnt * 6 + 12;
+	if(mode == WIND_FUNNEL_AROMA && args->targetCount > 4) {
+		ticks = args->targetCount * 6 + 12;
 	}
 	btResourceLoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET,
 		state->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
 	btRenderBuildQuadStrip(WIND_FUNNEL_MESH, 4, 32, WIND_FUNNEL_QUADS);
 
-	for(frm = 0; frm != ticks; frm++) {
+	for(frame = 0; frame != ticks; frame++) {
 		Sint32		  shade;
 		Sint32		  height;
 		Sint32		  y;
-		Sint32		  ang;
+		Sint32		  angle;
 		MODEL_VERTEX *corner;
 		Sint32		  x; /* The Djinni's x; at tick 0, the funnel's height. */
 
-		if(frm == 0) {
+		if(frame == 0) {
 			MODEL_VERTEX *head;
 			Sint32		  row;
 			Sint32		  radius;
@@ -956,9 +958,9 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					head->z = radius;
 				}
 			}
-			sySndPlayStub(SE_WIND_FUNNEL);
+			sySoundPlayStub(SE_WIND_FUNNEL);
 		}
-		if(frm > 19) {
+		if(frame > 19) {
 			if(mode == WIND_FUNNEL_WAFT) {
 				btEffectStepPaletteToResource(RESOURCE_CYAN_PALETTE);
 			} else if(mode == WIND_FUNNEL_AROMA) {
@@ -967,15 +969,16 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* The Djinni, bobbing over the caster and rising from tick 8. */
-		if(frm <= 79) {
+		if(frame <= 79) {
 			Sint32 y;
 
-			x = (FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) * 8)) + screen.x / 2 -
-				SMALL_DJINNI_WIDTH / 2;
-			y = (FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4)) + screen.y - 24;
+			x = (FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) * 8)) +
+				screen.x / 2 - SMALL_DJINNI_WIDTH / 2;
+			y = (FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4)) + screen.y -
+				24;
 
-			if(frm > 7) {
-				y -= (frm - 8) * 4;
+			if(frame > 7) {
+				y -= (frame - 8) * 4;
 			}
 			blit[0](canvas,
 				state->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, x, y,
@@ -984,7 +987,7 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* The funnel's tail follows its head: each segment takes the corners of
 		   the one before, every tick but the even ones from 32 to 47. */
-		if((frm & 1) || frm > 47 || frm <= 31) {
+		if((frame & 1) || frame > 47 || frame <= 31) {
 			MODEL_VERTEX *corner;
 			Sint32		  i;
 			for(i = WIND_FUNNEL_QUADS; i != 0; i--) {
@@ -999,50 +1002,52 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 		/* The funnels turn a 32nd of a turn a tick, slowing from tick 24. */
-		if(frm > 23) {
-			yaw += TRIG_TURN / 32 - (frm - 24) * 16;
+		if(frame > 23) {
+			yaw += TRIG_TURN / 32 - (frame - 24) * 16;
 		} else {
 			yaw += TRIG_TURN / 32;
 		}
 		if(mode == WIND_FUNNEL_WAFT) {
-			ang = frm * (TRIG_TURN / 16);
+			angle = frame * (TRIG_TURN / 16);
 			height = WAFT_FUNNEL_HEIGHT -
 				(FIXEDtoINT(
-					sySin(frm * WIND_FUNNEL_DIP_SPEED) * WAFT_FUNNEL_HEIGHT));
+					sySin(frame * WIND_FUNNEL_DIP_SPEED) * WAFT_FUNNEL_HEIGHT));
 		} else {
-			ang = yaw;
+			angle = yaw;
 			height = AROMA_FUNNEL_HEIGHT -
 				(FIXEDtoINT(
-					sySin(frm * WIND_FUNNEL_DIP_SPEED) * AROMA_FUNNEL_DIP));
+					sySin(frame * WIND_FUNNEL_DIP_SPEED) * AROMA_FUNNEL_DIP));
 		}
 		k = 0;
 		corner = (MODEL_VERTEX *)funnel;
 		y = -height;
 		for(; k != 2; k++) {
 			/* The (Uint32) casts make each division round down, as a shift. */
-			corner->x = (Uint32)sySin(ang) / (toFIXED(1) / WIND_FUNNEL_RADIUS);
+			corner->x =
+				(Uint32)sySin(angle) / (toFIXED(1) / WIND_FUNNEL_RADIUS);
 			corner->y = y;
-			corner->z = (Uint32)syCos(ang) / (toFIXED(1) / WIND_FUNNEL_RADIUS);
+			corner->z =
+				(Uint32)syCos(angle) / (toFIXED(1) / WIND_FUNNEL_RADIUS);
 			y -= WIND_FUNNEL_BAND;
 			corner++;
 		}
 
 		if(mode == WIND_FUNNEL_WAFT) {
-			if(frm == 28) {
-				state->shakeFrm = 6;
+			if(frame == 28) {
+				state->shakeFrame = 6;
 				EFFECT_SHOW_DAMAGE(SE_IMPACT);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 			}
 		} else {
-			if(frm == 12) {
+			if(frame == 12) {
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 			}
-			for(k = 0; k != args->tgtCnt; k++) {
-				if(frm == k * 4 + 12) {
-					sySndPlayStub(SE_RECOVERY);
+			for(k = 0; k != args->targetCount; k++) {
+				if(frame == k * 4 + 12) {
+					sySoundPlayStub(SE_RECOVERY);
 					btEffectTintBattler(
-						args->tgts[k], SPRITE_COLOR_WHITE, TINT_KEEP, k, 8);
+						args->targets[k], SPRITE_COLOR_WHITE, TINT_KEEP, k, 8);
 				}
 			}
 		}
@@ -1052,13 +1057,13 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		vertices = WIND_FUNNEL_VERTICES;
 		model = btRenderAllocateModelList(1);
 		shade = 0;
-		if(frm <= 15) {
-			shade = frm * 4 + MODEL_SHADE_INVISIBLE;
+		if(frame <= 15) {
+			shade = frame * 4 + MODEL_SHADE_INVISIBLE;
 			if(shade > 0) {
 				shade = 0;
 			}
-		} else if(frm > 27) {
-			shade = (28 - frm) * 8;
+		} else if(frame > 27) {
+			shade = (28 - frame) * 8;
 			if(shade < MODEL_SHADE_INVISIBLE) {
 				shade = MODEL_SHADE_INVISIBLE;
 			}
@@ -1083,10 +1088,10 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				syRotX(k * (TRIG_TURN / 32));
 				syRotY(k * WIND_FUNNEL_SPREAD + yaw);
 				scale =
-					WAFT_FUNNEL_SCALE - sySin(frm * WAFT_FUNNEL_PULSE_SPEED);
+					WAFT_FUNNEL_SCALE - sySin(frame * WAFT_FUNNEL_PULSE_SPEED);
 				/* From tick 28 the funnels widen as they fade. */
-				if(frm > 27) {
-					scale += (frm - 28) * (toFIXED(1) / 32);
+				if(frame > 27) {
+					scale += (frame - 28) * (toFIXED(1) / 32);
 				}
 				syScale(scale * 3 / 2, toFIXED(1), scale * 3 / 2);
 			} else {
@@ -1096,9 +1101,10 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					toFIXED(k * AROMA_FUNNEL_SPACING) + toFIXED(16), 0);
 				syRotX(k * (TRIG_TURN / 16) - TRIG_TURN / 32);
 				syRotY(k * WIND_FUNNEL_SPREAD + yaw);
-				scale = toFIXED(1) - sySin(frm * AROMA_FUNNEL_PULSE_SPEED) / 4;
-				if(frm > 27) {
-					scale += (frm - 28) * (toFIXED(1) / 32);
+				scale =
+					toFIXED(1) - sySin(frame * AROMA_FUNNEL_PULSE_SPEED) / 4;
+				if(frame > 27) {
+					scale += (frame - 28) * (toFIXED(1) / 32);
 				}
 				syScale(scale * 2, toFIXED(1), scale * 2);
 			}
@@ -1163,27 +1169,27 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
 	SCREEN_POINT   pos;
-	SCREEN_POINT   tgt;
+	SCREEN_POINT   target;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	Sint32		   centerX;
 	Sint32		   top;
-	Sint32		   frm;
+	Sint32		   frame;
 	Sint32		   i;
 	Sint32		   k;
 	Uint8		  *cells;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	btEffectPosProjectBattler(args->tgts[0], &pos);
+	btEffectPosProjectBattler(args->targets[0], &pos);
 	centerX = pos.x / 2;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = RamHeapSlots->ramCode;
@@ -1196,7 +1202,7 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 	   rows before it; the ROM keeps the call. */
 	btResourceLoadAndDecompress(
 		RESOURCE_BILLOW_TEXTURE, cells + DIAMOND_BERG_BILLOW, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
 		state->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1204,50 +1210,50 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 	   store. */
 	top = -128;
 
-	for(frm = 0; frm != DIAMOND_BERG_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != DIAMOND_BERG_TICKS; frame++) {
+		if(frame == 0) {
 			top = -DIAMOND_BERG_HEIGHT;
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				state->particles[i].variant = -1;
 			}
 		}
-		if(frm <= 63) {
-			btEffectPosProjectBattler(args->tgts[0], &tgt);
+		if(frame <= 63) {
+			btEffectPosProjectBattler(args->targets[0], &target);
 		}
-		if(frm == 20) {
-			btEffectSetApproachMotion(args->user, args->tgts[0], 8, 60);
+		if(frame == 20) {
+			btEffectSetApproachMotion(args->user, args->targets[0], 8, 60);
 		}
-		if(frm == 2) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 2) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
 
 		/* The berg: it drops, then each blow drives it further down. */
-		if(frm <= 127) {
+		if(frame <= 127) {
 			Sint32 height = DIAMOND_BERG_HEIGHT;
 
-			if(frm <= 8) {
+			if(frame <= 8) {
 				top += DIAMOND_BERG_DROP_SPEED;
-			} else if((Uint32)(frm - 24) <= 64) {
-				Sint32 t = frm - 24;
+			} else if((Uint32)(frame - 24) <= 64) {
+				Sint32 t = frame - 24;
 
 				if(t % 8 == 4) {
-					sySndPlayStub(SE_POWER_UP);
+					sySoundPlayStub(SE_POWER_UP);
 				}
 				if(t % 8 == 7) {
-					state->shakeFrm = 4;
-					if(frm <= 79) {
-						sySndPlayStub(SE_CLATTER);
+					state->shakeFrame = 4;
+					if(frame <= 79) {
+						sySoundPlayStub(SE_CLATTER);
 						btEffectSetApproachMotion(
-							args->user, args->tgts[0], 16, 70);
+							args->user, args->targets[0], 16, 70);
 					} else {
 						btMotionApplyKnockbackStub(
-							args->tgts[0], KNOCKBACK_HURL);
+							args->targets[0], KNOCKBACK_HURL);
 						EFFECT_SHOW_DAMAGE(SE_CLATTER);
 						syWordsFillEntry(canvas, CANVAS_BYTES,
 							CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 					}
-					btEffectTintBattler(
-						args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 6);
+					btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, 0, 6);
 					top += DIAMOND_BERG_BLOW_DEPTH;
 					for(k = 0; k != DIAMOND_BERG_BLOW_SHARDS; k++) {
 						PARTICLE *shard;
@@ -1258,8 +1264,8 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 										 (ARRAY_COUNT(state->particles) - 1)];
 						shard->y = toFIXED(96);
 						shard->x = toFIXED(centerX);
-						shard->velX = ((syRandom() & 127) - 64) << 11;
-						shard->velY = -((syRandom() & 127) + 64) << 11;
+						shard->velocityX = ((syRandom() & 127) - 64) << 11;
+						shard->velocityY = -((syRandom() & 127) + 64) << 11;
 						shard->z = 32;
 						shard->variant = 0;
 					}
@@ -1277,24 +1283,24 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 					height);
 			}
 		}
-		if(frm == 7) {
+		if(frame == 7) {
 			PARTICLE *shard;
 
-			state->shakeFrm = 8;
-			sySndPlayStub(SE_CRASH);
+			state->shakeFrame = 8;
+			sySoundPlayStub(SE_CRASH);
 			for(k = 0, shard = state->particles; k != DIAMOND_BERG_CRASH_SHARDS;
 				k++, shard++) {
 				shard->y = toFIXED(96);
 				shard->x = toFIXED(centerX);
-				shard->velX = ((syRandom() & 127) - 64) << 12;
-				shard->velY = -((syRandom() & 127) + 64) << 12;
+				shard->velocityX = ((syRandom() & 127) - 64) << 12;
+				shard->velocityY = -((syRandom() & 127) + 64) << 12;
 				shard->z = 32;
 				shard->variant = 0;
 			}
 		}
 
 		/* The shards tumble and bounce; z is their spin. */
-		if(frm > 6) {
+		if(frame > 6) {
 			PARTICLE *shard;
 
 			for(i = 0, shard = state->particles;
@@ -1321,26 +1327,26 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 				btParticleAdvanceWithGravity2D(
 					shard, PARTICLE_DAMPING_NONE, toFIXED(1) / 4);
 				if(FIXED_INTEGER_PART(shard->y) > DIAMOND_BERG_SHARD_GROUND) {
-					shard->velY = -shard->velY / 2;
+					shard->velocityY = -shard->velocityY / 2;
 				}
 				shard->variant += shard->z;
-				if(shard->z > 1 && (frm & 1)) {
+				if(shard->z > 1 && (frame & 1)) {
 					shard->z--;
 				}
 			}
 		}
 
-		if(frm > 5) {
+		if(frame > 5) {
 			void *vertices;
 
-			vertices = syHeapAllocEWRAM(1024);
+			vertices = syHeapAllocateEWRAM(1024);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 7;
 			texture.logHeight = 7;
 			texture.pixels = cells;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->texture = &texture;
-			model->flg = 0;
+			model->flags = 0;
 			model->mesh = BattleEffectCylinderMesh;
 			model->vertices = vertices;
 			model->scrollU = 0;
@@ -1352,13 +1358,13 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 				Sint32 scale;
 				Sint32 shade;
 
-				if(frm <= start) {
+				if(frame <= start) {
 					continue;
 				}
-				scale = (frm - start) * DiamondBergRingGrowth[k] *
+				scale = (frame - start) * DiamondBergRingGrowth[k] *
 						DIAMOND_BERG_RIPPLE_GROWTH +
 					DIAMOND_BERG_RIPPLE_START_SCALE;
-				shade = (start - frm) * 8 + 56;
+				shade = (start - frame) * 8 + 56;
 				if(shade > 0) {
 					shade = 0;
 				}
@@ -1370,7 +1376,7 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 				syTranslate(INTtoFIXED(centerX - 64),
 					toFIXED(DiamondBergRingHeights[k]), 0);
 				syScale(scale, scale, scale);
-				model->scrollU = ((frm + k * 5) & 7) << 4;
+				model->scrollU = ((frame + k * 5) & 7) << 4;
 				syRotX(DIAMOND_BERG_RIPPLE_TILT);
 				btRenderTransformVertices(
 					BattleEffectCylinderCorners, vertices, 32);
@@ -1386,7 +1392,7 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 			model->scrollU = 0;
 			model->scrollV = 0;
 			for(k = 0; k != DIAMOND_BERG_BLOWS; k++) {
-				Sint32 t = frm - 31 - k * 8;
+				Sint32 t = frame - 31 - k * 8;
 				Sint32 scale;
 				Sint32 shade;
 
@@ -1404,8 +1410,8 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 					continue;
 				}
 				syInitMatrix();
-				syTranslate(
-					INTtoFIXED(tgt.x / 2 - 64), INTtoFIXED(tgt.y - 80), 0);
+				syTranslate(INTtoFIXED(target.x / 2 - 64),
+					INTtoFIXED(target.y - 80), 0);
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 				syRotY(args->side * DEGtoANG(180) + DEGtoANG(180));
 				syRotZ(DiamondBergShardRolls[k]);

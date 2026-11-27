@@ -5,13 +5,13 @@ void scActorWaitToLand(Sint32 id)
 	Sint32 remainingTicks = 60;
 	ACTOR *actor = fdActorGet(id);
 
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	while(remainingTicks != 0) {
 		syWait(1);
-		if(actor->velY == 0)
+		if(actor->velocityY == 0)
 			break;
 		remainingTicks--;
 	}
 	syWait(10);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 }

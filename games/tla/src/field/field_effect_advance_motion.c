@@ -8,24 +8,24 @@
    rates. */
 void fdEffectAdvanceMotion(FIELD_OBJECT *object)
 {
-	FIELD_EFFECT *effect = &object->eff;
-	Sint32		  velX;
-	Sint32		  velZ;
+	FIELD_EFFECT *effect = &object->effect;
+	Sint32		  velocityX;
+	Sint32		  velocityZ;
 	Sint32		  scaleRateX;
-	FIELD_SPR	 *spr;
+	FIELD_SPR	 *sprite;
 
-	velX = effect->vel.x;
-	effect->x += velX;
-	effect->y += effect->vel.y;
-	velZ = effect->vel.z;
-	effect->z += velZ;
+	velocityX = effect->velocity.x;
+	effect->x += velocityX;
+	effect->y += effect->velocity.y;
+	velocityZ = effect->velocity.z;
+	effect->z += velocityZ;
 
-	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
+	effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+	effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 
 	scaleRateX = effect->scaleRateX;
 	effect->scaleX += scaleRateX;
-	spr = effect->spr;
+	sprite = effect->sprite;
 	effect->scaleY += effect->scaleRateY;
-	spr->rotation += effect->spin;
+	sprite->rotation += effect->spin;
 }

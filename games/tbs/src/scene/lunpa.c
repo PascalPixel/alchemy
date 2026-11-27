@@ -316,9 +316,9 @@ static void scLunpaFreezeHiddenPuddle(void)
 	fdActorGet(ACTOR_PARTY_LEADER);
 	scLunpaApplyFrozenPuddleCollision();
 	if(pillar != NULL) {
-		fdActorSetSprFlags(pillar, 0);
-		pillar->motionFlg = ACTOR_FALLS;
-		pillar->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpriteFlags(pillar, 0);
+		pillar->motionFlags = ACTOR_FALLS;
+		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 	gmFlagSet(FLAG_LUNPA_PUDDLE_FROZEN);
 }
@@ -328,9 +328,11 @@ static void scLunpaFreezeHiddenPuddle(void)
 static void scLunpaUpdateIcePillarDrawOrder(void)
 {
 	if(fdActorGet(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
-		fdActorGet(ACTOR_HIDDEN_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_HIDDEN_PUDDLE)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
 	} else {
-		fdActorGet(ACTOR_HIDDEN_PUDDLE)->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_HIDDEN_PUDDLE)->priorityFlags =
+			ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
 
@@ -385,12 +387,12 @@ static void scLunpaRevealSecrets(void)
 		scLunpaDrawHiddenPassagePicture(41, 49);
 	} else {
 		fdActorSetPos(ACTOR_SWITCH_SPARKLE, 56, 268);
-		fdActorSetSprFlags(fdActorGet(ACTOR_SWITCH_SPARKLE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_SWITCH_SPARKLE), 0);
 		actor = fdActorGet(ACTOR_SWITCH_SPARKLE);
 		if(actor != NULL) {
-			actor->motionFlg = ACTOR_FLOATS_HIGH;
+			actor->motionFlags = ACTOR_FLOATS_HIGH;
 			actor->y.fixed = toFIXED(16);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			actor->scaleX = SPARKLE_SCALE_X;
 			actor->scaleY = SPARKLE_SCALE_Y;
 		}
@@ -423,7 +425,7 @@ static void scLunpaHideSecrets(void)
 	gmFlagClear(FLAG_LUNPA_PUDDLE_FROZEN);
 	fdActorSetAnimation(ACTOR_HIDDEN_PUDDLE, ANIM_STAND);
 	fdActorGet(ACTOR_HIDDEN_PUDDLE)->update = NULL;
-	fdActorSetColMode(fdActorGet(ACTOR_HIDDEN_PUDDLE), 0);
+	fdActorSetColorMode(fdActorGet(ACTOR_HIDDEN_PUDDLE), 0);
 	syCloseEvent(scLunpaUpdateIcePillarDrawOrder);
 	gmFlagSet(FLAG_LUNPA_SECRETS_HIDDEN);
 }
@@ -723,7 +725,7 @@ static void scLunpaEnterDoor(void)
 	FIELD_STATE *state;
 	ACTOR		*placedActor;
 	Uint32		 actorId;
-	Sint32		 doorIdx;
+	Sint32		 doorIndex;
 
 	state = FieldStateWork;
 	fdScriptStart();
@@ -731,17 +733,17 @@ static void scLunpaEnterDoor(void)
 	for(actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
 		placedActor = fdActorGet(actorId);
 		if(placedActor != NULL) {
-			placedActor->motionFlg = 0;
+			placedActor->motionFlags = 0;
 		}
 	}
-	sySndPlay(SE_DOOR_OPEN);
-	doorIdx = state->stepCue - METATILE_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
-	fdMapGridAnimateMetatiles(LunpaDoors[doorIdx].steps, LunpaDoors[doorIdx].x,
-		LunpaDoors[doorIdx].y);
+	sySoundPlay(SE_DOOR_OPEN);
+	doorIndex = state->stepCue - METATILE_BEHAVIOR_LUNPA_FIRST_HOME_DOOR;
+	fdMapGridAnimateMetatiles(LunpaDoors[doorIndex].steps,
+		LunpaDoors[doorIndex].x, LunpaDoors[doorIndex].y);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-	if(doorIdx != DOOR_TEMPLE) {
+	if(doorIndex != DOOR_TEMPLE) {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
 		fdScriptWait(10);
 	}
@@ -759,7 +761,7 @@ static void scLunpaEnterHiddenPassage(void)
 	if(gmFlagGet(FLAG_LUNPA_HIDDEN_PASSAGE_OPEN) != 0) {
 		if(gmFlagGet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
 			fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
-			fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+			fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 			fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 			fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
 			fdScriptWait(13);
@@ -776,10 +778,10 @@ static void scLunpaEnterFortress(void)
 	gmFlagSet(FLAG_LUNPA_FORTRESS_GATES_ENTERING_FORTRESS);
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -8);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridCopyMetatiles(53, 4, 2, 2, 41, 4);
 	fdScriptWait(10);
 	fdMapGridCopyMetatiles(53, 6, 2, 2, 41, 4);
@@ -798,10 +800,10 @@ static void UNUSED scLunpaTryJumpForward(void)
 
 /* Unused: plays the treasure jingle while Reveal is shining. Nothing calls
    it. */
-UNUSED static void scLunpaPlayRevealSnd(void)
+UNUSED static void scLunpaPlayRevealSound(void)
 {
 	if(gmFlagGet(FLAG_LUNPA_SECRETS_HIDDEN) == 0) {
-		sySndPlay(MUS_TREASURE_FOUND);
+		sySoundPlay(MUS_TREASURE_FOUND);
 	}
 }
 
@@ -817,7 +819,7 @@ static void scLunpaPressHiddenSwitch(void)
 		return;
 	}
 	fdActorSetPos(ACTOR_SWITCH_SPARKLE, 0, 0);
-	sySndPlay(SE_HIDDEN_PASSAGE_OPEN);
+	sySoundPlay(SE_HIDDEN_PASSAGE_OPEN);
 	sySynch(1);
 	scLunpaDrawHiddenPassagePicture(32, 45);
 	sySynch(10);
@@ -1005,15 +1007,15 @@ static void scLunpaWatchForUncloakedParty(void)
 static void scLunpaKickUpLeaderDust(void)
 {
 	ACTOR *leader;
-	Sint32 dustAng;
-	Sint32 dustVel[3];
+	Sint32 dustAngle;
+	Sint32 dustVelocity[3];
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if((TickCount & 15) == 0) {
-		dustAng = (syRandomBelow(52)) * 64 + 230;
-		SET_VECTOR(dustVel, syCos(dustAng) / 4, 0, sySin(dustAng) / 2);
+		dustAngle = (syRandomBelow(52)) * 64 + 230;
+		SET_VECTOR(dustVelocity, syCos(dustAngle) / 4, 0, sySin(dustAngle) / 2);
 		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			dustVel[0], dustVel[1], dustVel[2], 0, NULL);
+			dustVelocity[0], dustVelocity[1], dustVelocity[2], 0, NULL);
 	}
 }
 
@@ -1049,37 +1051,37 @@ static void scLunpaGuardsThrowIsaacOut(void)
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 160, 296);
 	sySetTickEvent(scLunpaKickUpLeaderDust, EVENT_PASS_TICK);
 	fdScriptWait(1);
-	sySndPlay(SE_SCUFFLE);
+	sySoundPlay(SE_SCUFFLE);
 	fdScriptWait(20);
-	fdActorSetSprPriority(ACTOR_LEFT_GUARD, 3);
-	fdActorSetSprPriority(ACTOR_RIGHT_GUARD, 3);
-	sySndPlay(SE_SCUFFLE);
+	fdActorSetSpritePriority(ACTOR_LEFT_GUARD, 3);
+	fdActorSetSpritePriority(ACTOR_RIGHT_GUARD, 3);
+	sySoundPlay(SE_SCUFFLE);
 	fdScriptWait(30);
-	fdActorGet(ACTOR_LEFT_GUARD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_RIGHT_GUARD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
-	sySndPlay(SE_SCUFFLE);
+	sySoundPlay(SE_SCUFFLE);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorSetAnimation(ACTOR_LEFT_GUARD, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_RIGHT_GUARD, ANIM_STAND);
 	syCloseEvent(scLunpaKickUpLeaderDust);
 	/* Throw the leader down the steps, then wait for the first landing. */
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg |= ACTOR_FALLS;
-	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(6);
-	fdActorGet(ACTOR_PARTY_LEADER)->velZ = toFIXED(6);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FALLS;
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityZ = toFIXED(6);
 	fdScriptWait(1);
 	while(fdActorGet(ACTOR_PARTY_LEADER)->y.fixed != 0) {
 		fdScriptWait(1);
 	}
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_SPRAWLED);
-	sySndPlay(SE_LANDING_THUD);
+	sySoundPlay(SE_LANDING_THUD);
 	fdActorSetAttachedEffect(
 		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	sySetTickEvent(scLunpaKickUpLeaderDust, EVENT_PASS_TICK);
 	fdScriptWait(2);
 	/* A smaller second bounce ends with the guards' final warning. */
-	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(3);
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityY = toFIXED(3);
 	fdScriptWait(1);
 	while(fdActorGet(ACTOR_PARTY_LEADER)->y.fixed != 0) {
 		fdScriptWait(1);
@@ -1093,8 +1095,8 @@ static void scLunpaGuardsThrowIsaacOut(void)
 	fdScriptSetMessageId(MsgLunpaGuardForbidsReturn);
 	/* "And don't come back!" */
 	fdScriptShowMessage(ACTOR_LEFT_GUARD, 0);
-	fdActorGet(ACTOR_LEFT_GUARD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_RIGHT_GUARD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_LEFT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_RIGHT_GUARD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetSpeed(ACTOR_LEFT_GUARD, 1);
 	fdActorSetSpeed(ACTOR_RIGHT_GUARD, 1);
 	fdActorWalkTo(ACTOR_LEFT_GUARD, 144, 200);
@@ -1156,7 +1158,7 @@ Sint32 scInit(void)
 		}
 		puddle = fdActorGet(ACTOR_HIDDEN_PUDDLE);
 		if(puddle != NULL) {
-			fdActorSetSprFlags(puddle, 0);
+			fdActorSetSpriteFlags(puddle, 0);
 		}
 		gmFlagSet(FLAG_LUNPA_SECRETS_HIDDEN);
 	}

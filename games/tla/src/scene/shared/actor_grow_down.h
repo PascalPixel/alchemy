@@ -4,14 +4,14 @@
 void scActorGrowDown(ACTOR *actor)
 {
 	ACTOR *anchor = (ACTOR *)actor->watchedActor;
-	Sint32 frm = ++actor->tmr;
+	Sint32 frame = ++actor->timer;
 	FIXED  amplitude;
 
-	if(frm > 31) {
+	if(frame > 31) {
 		fdActorRelease(actor);
 		return;
 	}
-	amplitude = syMathSin(frm * (DEGtoANG(180) / 32));
+	amplitude = syMathSin(frame * (DEGtoANG(180) / 32));
 	actor->scaleX = amplitude;
 	actor->scaleY = -amplitude;
 

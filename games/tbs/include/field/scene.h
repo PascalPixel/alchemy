@@ -27,7 +27,7 @@ typedef struct SCENE {
 	Sint8 sceneType;
 	Uint16
 		/* the map loaded for it, copied to MainRoutineStateWork.mapId */
-		   mapIdx;
+		   mapIndex;
 	Uint16 reserved; /* 0 in every row; not read */
 } SCENE;
 

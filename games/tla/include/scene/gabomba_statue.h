@@ -102,11 +102,11 @@ Sint32 scGabombaStatueLayChannel(Sint32 value);
 
 void scGabombaStatueCountDownShowingClock(void);
 void scGabombaStatueCountDown(void);
-void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
 
 void scGabombaStatueFadeByDepth(void);
 
-void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 cnt);
+void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 count);
 
 void scGabombaStatueLandFromFall(void);
 
@@ -117,10 +117,10 @@ extern Uint32 GabombaStatueCogShapes[];
 
 /* Coils a rope at its first post (fdRopeCoil, through the overlay's own import
    row). */
-void scGabombaStatueCoilRope(Sint32 idx, Sint32 firstPost, Sint32 secondPost);
+void scGabombaStatueCoilRope(Sint32 index, Sint32 firstPost, Sint32 secondPost);
 /* Places a rope between its posts, tied when its flag is set, else coiled
    (fdRopePlace, through the overlay's own import row). */
 void scGabombaStatuePlaceRope(
-	Sint32 idx, Sint32 flg, Sint32 firstPost, Sint32 secondPost);
+	Sint32 index, Sint32 flag, Sint32 firstPost, Sint32 secondPost);
 
 #endif

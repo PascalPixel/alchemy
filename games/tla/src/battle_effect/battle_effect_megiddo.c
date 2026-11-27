@@ -93,14 +93,14 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 doubled;
 	Sint32				 k;
 	/* FAKEMATCH(temporary): 0 held in a local for the stores below; as 0. */
 	Sint32					 zero;
 	MODEL_VERTEX			*coronaCorners;
 	DRAW_RECTANGLE			 blit[2];
-	Uint8					*sprs;
+	Uint8					*sprites;
 	BATTLE_BACKGROUND_STATE *background;
 	BATTLE_CAMERA			*camera;
 	Sint16					 savedYaw;
@@ -122,15 +122,15 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	PARTICLE				*p;
 	SCREEN_POINT			 pos;
 	Sint16					 list[UNIT_MAX];
-	Sint16					 tgtList[UNIT_MAX];
+	Sint16					 targetList[UNIT_MAX];
 	FIXED					 place[4];
 	Sint32					 screen[3];
 	MODEL_TEXTURE			 scratchTexture;
 	Sint32					 twice;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	background = RamHeapSlots->battleBg;
 	camera = RamHeapSlots->cameraState;
 	savedYaw = 0;
@@ -143,13 +143,13 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	btMotionApproachTargetStub(args->user, args->user, 150, toFIXED(5));
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = RamHeapSlots->ramCode;
 	flameCorners = (MODEL_VERTEX *)(state->sheet + MEGIDDO_FLAME_CORNERS);
 	flameMesh = state->sheet + MEGIDDO_FLAME_MESH;
-	caster = btObjectGetStub(args->user)->obj;
+	caster = btObjectGetStub(args->user)->object;
 	x = 0;
 	z = 0;
 	scale = toFIXED(1);
@@ -158,9 +158,9 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	btRenderBuildQuadStrip(
 		flameMesh, 2, MEGIDDO_DUST_BLOB_SIZE, MEGIDDO_FLAME_ROWS - 1);
 	for(j = 0; j != MEGIDDO_FLAME_ROWS; j++) {
-		Sint32 ang = j * (DEGtoANG(90) / (MEGIDDO_FLAME_ROWS - 1));
-		Sint32 y = FIXEDtoINT(-syCos(ang) * MEGIDDO_FLAME_RADIUS);
-		Sint32 r = FIXEDtoINT(sySin(ang) * MEGIDDO_FLAME_RADIUS);
+		Sint32 angle = j * (DEGtoANG(90) / (MEGIDDO_FLAME_ROWS - 1));
+		Sint32 y = FIXEDtoINT(-syCos(angle) * MEGIDDO_FLAME_RADIUS);
+		Sint32 r = FIXEDtoINT(sySin(angle) * MEGIDDO_FLAME_RADIUS);
 
 		for(m = 0; m != 2; m++) {
 			MODEL_VERTEX *v = &flameCorners[j * 2 + m];
@@ -173,33 +173,33 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	/* The caster hangs in the air, still. */
 	casterVerticalMotion = caster->verticalMotionStrength;
 	fdActorSetAnimationSpeedStub(caster, 0);
-	caster->velX = 0;
-	caster->velY = 0;
-	caster->velZ = 0;
+	caster->velocityX = 0;
+	caster->velocityY = 0;
+	caster->velocityZ = 0;
 	caster->acceleration = 0;
 	caster->verticalMotionStrength = 0;
 
-	for(frm = 0; frm != MEGIDDO_TICKS; frm++) {
-		if(frm == 4) {
-			sySndPlayStub(SE_POWER_UP);
+	for(frame = 0; frame != MEGIDDO_TICKS; frame++) {
+		if(frame == 4) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
-		if(frm == 28) {
-			sySndPlayStub(SE_SPIN);
+		if(frame == 28) {
+			sySoundPlayStub(SE_SPIN);
 		}
-		if(frm == 84) {
-			sySndPlayStub(SE_LAUNCH);
+		if(frame == 84) {
+			sySoundPlayStub(SE_LAUNCH);
 		}
-		if(frm == 143) {
-			sySndPlayStub(SE_TABLET_RISE_HIGH);
+		if(frame == 143) {
+			sySoundPlayStub(SE_TABLET_RISE_HIGH);
 		}
-		if(frm == 171) {
-			sySndPlayStub(SE_CRASH);
+		if(frame == 171) {
+			sySoundPlayStub(SE_CRASH);
 		}
 		/* A or B skips to the sun's fall. */
-		if((PerWork.repeat & (KEY_A | KEY_B)) && frm > 3 && frm <= 142) {
-			frm = 143;
+		if((PerWork.repeat & (KEY_A | KEY_B)) && frame > 3 && frame <= 142) {
+			frame = 143;
 		}
-		if(frm == 0) {
+		if(frame == 0) {
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
@@ -227,7 +227,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 				IO_WRITE_HALFWORD);
 		}
 		/* The caster alone before the red haze, and the sun's sprite. */
-		if(frm == 1) {
+		if(frame == 1) {
 			background->busy = 1;
 			list[0] = args->user;
 			list[1] = BATTLE_UNIT_LIST_END;
@@ -237,13 +237,13 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 			btEffectBuildRepeatingTilemap();
 			btPaletteBrightenBattleBg(
 				MEGIDDO_HAZE_FADE_RED, MEGIDDO_HAZE_FADE, MEGIDDO_HAZE_FADE);
-			btEffectCreateSprs(1, SPRITE_SUN, 2);
+			btEffectCreateSprites(1, SPRITE_SUN, 2);
 		}
 		btEffectPosProjectScaledBattler(args->user, &pos);
-		if(frm == 3) {
+		if(frame == 3) {
 			savedYaw = camera->yaw;
 		}
-		if((Uint32)(frm - 16) <= 61) {
+		if((Uint32)(frame - 16) <= 61) {
 			if(args->side == EFFECT_SIDE_ENEMIES) {
 				camera->yaw -= TRIG_TURN / 256;
 			} else {
@@ -259,7 +259,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 
 				if(i != 1) {
 					r = (FIXEDtoINT(
-							sySin((frm + k * 4) * (TRIG_TURN / 16)) * 2)) +
+							sySin((frame + k * 4) * (TRIG_TURN / 16)) * 2)) +
 						MEGIDDO_CORONA_OUTER_RADIUS;
 				}
 				SET_POSITION(v,
@@ -283,20 +283,20 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 			if(y > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
 				y -= BG_SCROLL_WRAP;
 			}
-			if(frm <= 63) {
+			if(frame <= 63) {
 				d = -MEGIDDO_HAZE_SPEED;
-			} else if((Uint32)(frm - 64) <= 7) {
-				twice = frm * 2;
+			} else if((Uint32)(frame - 64) <= 7) {
+				twice = frame * 2;
 				d = twice - 2 * MEGIDDO_HAZE_REST_TICK;
-			} else if((Uint32)(frm - MEGIDDO_HAZE_REST_TICK) <= 11) {
+			} else if((Uint32)(frame - MEGIDDO_HAZE_REST_TICK) <= 11) {
 				d = 0;
-			} else if(frm > 154) {
-				d = MEGIDDO_HAZE_SPEED - (frm - 155) / 2;
+			} else if(frame > 154) {
+				d = MEGIDDO_HAZE_SPEED - (frame - 155) / 2;
 				if(d < 0) {
 					d = 0;
 				}
 			} else {
-				d = frm - 84;
+				d = frame - 84;
 				if(d > MEGIDDO_HAZE_SPEED) {
 					d = MEGIDDO_HAZE_SPEED;
 				}
@@ -311,12 +311,12 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 			}
 			BgScrollWork[1].y = y;
 		}
-		if((Uint32)(frm - 42) <= 37) {
+		if((Uint32)(frame - 42) <= 37) {
 			z += toFIXED(2);
 			btEffectStepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
 		}
 		/* The sun sweeps down across the sky. */
-		if((Uint32)(frm - 84) <= 58) {
+		if((Uint32)(frame - 84) <= 58) {
 			if(args->side == EFFECT_SIDE_ENEMIES) {
 				x -= toFIXED(2);
 			} else {
@@ -326,33 +326,33 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 		}
 		/* The fall: the camera comes back, and the sun falls on the target,
 		   alone at the middle of the field. */
-		if(frm == 143) {
-			MOTION_OBJECT *tgt;
+		if(frame == 143) {
+			MOTION_OBJECT *target;
 
 			btPaletteBrightenBattleBg(-MEGIDDO_HAZE_FALL_FADE_RED,
 				-MEGIDDO_HAZE_FADE, -MEGIDDO_HAZE_FADE);
 			camera->yaw = savedYaw;
 			x = toFIXED(120);
 			z = toFIXED(48);
-			tgtList[0] = args->tgts[0];
-			tgtList[1] = BATTLE_UNIT_LIST_END;
-			btActorSpawnObjectsForListStub(tgtList, 0);
+			targetList[0] = args->targets[0];
+			targetList[1] = BATTLE_UNIT_LIST_END;
+			btActorSpawnObjectsForListStub(targetList, 0);
 			ProjectionWork.centerY = 556;
-			tgt = btObjectGetStub(args->tgts[0])->obj;
-			tgt->x = zero;
-			tgt->z = zero;
+			target = btObjectGetStub(args->targets[0])->object;
+			target->x = zero;
+			target->z = zero;
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 		}
-		if(frm > 154) {
-			Sint32 d = MEGIDDO_HAZE_SPEED - (frm - 155) / 2;
+		if(frame > 154) {
+			Sint32 d = MEGIDDO_HAZE_SPEED - (frame - 155) / 2;
 
 			if(d < 0) {
 				d = 0;
 			}
 			ProjectionWork.centerY -= d;
 		}
-		if(frm == 84) {
+		if(frame == 84) {
 			IO_WRITE_QUEUE_PUSH((Uint32)&REG_BG2CNT,
 				BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 					BGCNT_SCREEN_BASE(7),
@@ -364,51 +364,51 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
 		}
 		/* The sun strikes. */
-		if(frm == 171) {
-			state->shakeFrm = 8;
-			sySndPlayStub(SE_CRASH);
+		if(frame == 171) {
+			state->shakeFrame = 8;
+			sySoundPlayStub(SE_CRASH);
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_NUDGE);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 				CANVAS_FILL_WORD(MEGIDDO_STRIKE_FILL_LEVEL));
 		}
-		if(frm > 174) {
+		if(frame > 174) {
 			btPaletteBrightenBgEntries(2, 2, 2);
 		}
 
 		/* The sun's sprite, at twice its scale, while it is on screen. */
-		if(frm > 1) {
-			SPR	 *obj;
-			FIXED req[2];
+		if(frame > 1) {
+			SPR	 *object;
+			FIXED request[2];
 
-			if(frm > 142) {
-				Sint32 n = frm - 143;
+			if(frame > 142) {
+				Sint32 n = frame - 143;
 
 				scale = n * MEGIDDO_SUN_GROWTH + toFIXED(1) / 4;
 				if(scale > toFIXED(3) / 4) {
 					scale = toFIXED(3) / 4;
 				}
 			}
-			req[1] = scale * 2;
-			req[0] = scale * 2;
+			request[1] = scale * 2;
+			request[0] = scale * 2;
 			place[3] = zero;
 			place[1] = toFIXED(255);
 			place[0] = x;
 			place[2] = z;
-			obj = state->sprs[0];
-			obj->ofsY = 32;
-			obj->ofsX = 0;
+			object = state->sprites[0];
+			object->offsetY = 32;
+			object->offsetX = 0;
 			if((Uint32)(place[2] + toFIXED(52)) < toFIXED(252)) {
-				fdRenderApplyProjectedPlacementStub(obj, place, req, 0);
+				fdRenderApplyProjectedPlacementStub(object, place, request, 0);
 			}
 		}
 		/* FAKEMATCH(dead): a product nothing reads, between the two blocks that
 		 * test tick > 1. */
-		doubled = frm * 2;
-		if(frm > 1) {
+		doubled = frame * 2;
+		if(frame > 1) {
 			MODEL_TEXTURE texture;
 			/* FAKEMATCH(temporary): t, a pointer standing in for the texture's
 			 * own address; as texture. */
@@ -432,7 +432,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 			 * the plain store. */
 			do {
 				t->pixels = state->sheet + MEGIDDO_FIRE_STRIPES +
-					((frm / 2) % MEGIDDO_FIRE_STRIPES_PICTURES) *
+					((frame / 2) % MEGIDDO_FIRE_STRIPES_PICTURES) *
 						PICTURE_BYTES(MEGIDDO_FIRE_STRIPES);
 			} while(0);
 			model->mesh = coronaMesh;
@@ -451,8 +451,8 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 
 			/* The flames that wrap the sun as it falls. */
 			/* FAKEMATCH(dead): updates of t that cancel out. */
-			t += frm;
-			t -= frm;
+			t += frame;
+			t -= frame;
 			t->logWidth = 5;
 			t->logHeight = 5;
 			t->pixels = state->sheet + MEGIDDO_DUST_BLOB;
@@ -461,14 +461,14 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 			{
 				Sint32 shade = -24;
 
-				model->flg = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
+				model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
 				model->shade = shade;
 			}
 			model->scrollV = zero;
-			if(frm > 142) {
-				Sint32 n = frm - 143;
+			if(frame > 142) {
+				Sint32 n = frame - 143;
 				Sint32 scroll;
-				Sint32 ang;
+				Sint32 angle;
 				Sint32 tilt;
 
 				if(n > MEGIDDO_FALL_TILT_TICKS) {
@@ -476,10 +476,10 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 				}
 				i = 0;
 				/* FAKEMATCH(temporary): twice, tick * 2 kept apart. */
-				twice = frm * 2;
-				ang = -DEGtoANG(90);
+				twice = frame * 2;
+				angle = -DEGtoANG(90);
 				tilt = n * (MEGIDDO_FALL_TILT / MEGIDDO_FALL_TILT_TICKS);
-				scroll = twice + frm;
+				scroll = twice + frame;
 				for(; i != MEGIDDO_FLAMES; i++) {
 					model->scrollU = ~scroll & MEGIDDO_FLAME_SCROLL_MASK;
 					syInitMatrix();
@@ -489,18 +489,18 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 					syRotZ(DEGtoANG(180));
 					scroll += MEGIDDO_FLAME_SCROLL_STEP;
 					syRotX(tilt - MEGIDDO_FALL_TILT);
-					syRotY(ang);
+					syRotY(angle);
 					btRenderTransformVertices(
 						flameCorners, transformed, MEGIDDO_FLAME_VERTICES);
 					btRenderDrawModelList(model);
-					ang += TRIG_TURN * 3 / 32;
+					angle += TRIG_TURN * 3 / 32;
 				}
 			}
 			syHeapRelease(model);
 		}
 
 		/* Sparks rise over the canvas while the rays shoot. */
-		if(frm == 8) {
+		if(frame == 8) {
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			p = state->particles;
@@ -509,8 +509,8 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 				p->y = syRandom() & 127;
 			}
 		}
-		if((Uint32)(frm - 8) <= 79) {
-			Sint32 off = (frm * 2 - 16) & 127;
+		if((Uint32)(frame - 8) <= 79) {
+			Sint32 off = (frame * 2 - 16) & 127;
 
 			p = state->particles;
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++, p++) {
@@ -525,19 +525,20 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 					if(y < 0) {
 						y += 128;
 					}
-					blit[0](canvas, sprs + BattleEffectMotePictures[size - 1],
-						mx, y, size, 2);
+					blit[0](canvas,
+						sprites + BattleEffectMotePictures[size - 1], mx, y,
+						size, 2);
 				}
 			}
 		}
 		/* Sparks rise about the falling sun. */
-		if(frm > 142) {
-			Sint32 n = frm - 143;
+		if(frame > 142) {
+			Sint32 n = frame - 143;
 
 			if(n > MEGIDDO_FALL_TILT_TICKS) {
 				n = MEGIDDO_FALL_TILT_TICKS;
 			}
-			if(frm == 143) {
+			if(frame == 143) {
 				p = state->particles;
 				for(i = 0; i != ARRAY_COUNT(state->particles); i++, p++) {
 					SET_POSITION(p, syRandom() & 127, syRandom() % 192 - 64,
@@ -552,14 +553,14 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 				Sint32 size = 1;
 
 				syConvert3Dto2D((const FIXED *)p, screen);
-				blit[0](canvas, sprs + BattleEffectMotePictures[size - 1],
+				blit[0](canvas, sprites + BattleEffectMotePictures[size - 1],
 					screen[0], screen[1], size, 4);
 				p->y -= 2;
 			}
 		}
 
 		/* The rings of light. */
-		verts = syHeapAllocEWRAM(32);
+		verts = syHeapAllocateEWRAM(32);
 		model = btRenderAllocateModelList(1);
 		scratchTexture.logWidth = 7;
 		scratchTexture.logHeight = 7;
@@ -571,8 +572,8 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != MEGIDDO_FLASHES; i++) {
 			Sint32 start = MegiddoFlashStarts[i];
 
-			if(frm >= start && frm < start + 20) {
-				Sint32 t = frm - start;
+			if(frame >= start && frame < start + 20) {
+				Sint32 t = frame - start;
 				Sint32 shade = MEGIDDO_FLASH_SHINE_TICKS * 8 - t * 8;
 				Sint32 s;
 
@@ -607,9 +608,9 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != MEGIDDO_RAYS; i++) {
 			Sint32 start = MEGIDDO_RAYS_START + i * 2;
 
-			if(frm >= start &&
-				frm < i * 2 + MEGIDDO_RAYS_START + MEGIDDO_RAY_TICKS) {
-				Sint32 t = frm - start;
+			if(frame >= start &&
+				frame < i * 2 + MEGIDDO_RAYS_START + MEGIDDO_RAY_TICKS) {
+				Sint32 t = frame - start;
 				Sint32 shade = MODEL_SHADE_INVISIBLE + t * 8;
 				Sint32 s = t * (toFIXED(1) / 32);
 
@@ -656,7 +657,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 		EFFECT_END_TICK(state);
 	}
 
-	fdSprDestroyStub(state->sprs[0]);
+	fdSpriteDestroyStub(state->sprites[0]);
 	caster->verticalMotionStrength = casterVerticalMotion;
 	btObjectPutStub();
 	background->busy = 0;

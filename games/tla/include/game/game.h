@@ -91,7 +91,7 @@ extern const ENEMY_DEFINITION	EnemyDefinitions[];
    of a party member with HP (btDjinnRecoveryCountDownTwenty). */
 void btDjinnRecoveryCountDownTwentyStub(void);
 /* Gives a Djinni to a unit. */
-Sint32 gmDjinnGiveStub(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32 gmDjinnGiveStub(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Clears each button shortcut whose Psynergy can no longer be cast
    (fdPartyClearUnusableShortcuts). */
 void fdPartyClearUnusableShortcutsStub(void);
@@ -100,7 +100,7 @@ void fdPartyClearUnusableShortcutsStub(void);
 Sint32 gmInventoryAddItemStub(Sint32 unitId, Sint32 itemId);
 /* Takes one item out of slot, closing up the inventory when it was the last. */
 Sint32 gmInventoryRemoveStub(Sint32 owner, Sint32 slot);
-void   gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst);
+void   gmUnitCalculateBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dest);
 Sint32 gmClassDetermine(Sint32 character, Uint32 *djinn, Sint32 item);
 Sint32 gmUnitGetElementLevels(Sint32 enemyId, const Uint8 *src, Sint32 *output);
 Sint32 gmUnitRebuildPsynergyList(Sint32 owner);

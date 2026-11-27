@@ -147,7 +147,7 @@ static void scSanctumReceiveWiseOnesMission(void);
 static void scSanctumShowHealerAfterimage(void);
 static void scSanctumHideHealerAfterimage(void);
 static void scSanctumUpdateHealerAfterimage(ACTOR *actor);
-static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angStep);
+static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angleStep);
 
 /* How far each sparkle circling the Great Healer goes around him in a tick. */
 #define SANCTUM_SPARKLE_ORBIT_STEP (TRIG_TURN * 9 / 128)
@@ -166,11 +166,11 @@ static void scSanctumRemoveCounter(void);
    timer holds. */
 static UNREAD_RESULT scSanctumFaceActorNamedByTimer(ACTOR *actor)
 {
-	ACTOR *tgt;
+	ACTOR *target;
 
-	tgt = fdActorGet(actor->tmr);
-	actor->facing =
-		syAtan(tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
+	target = fdActorGet(actor->timer);
+	actor->facing = syAtan(
+		target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
 	RETURN_UNREAD(0);
 }
 
@@ -334,11 +334,12 @@ static void scSanctumAskQuestAgain(void)
 					fdActorSetSpeed(ACTOR_HEALER, 0.5);
 					fdActorFaceDirection(ACTOR_HEALER, FACING_EAST, 0);
 					fdScriptWait(10);
-					fdActorGet(ACTOR_HEALER)->steeringFlg &=
+					fdActorGet(ACTOR_HEALER)->steeringFlags &=
 						~ACTOR_FACES_MOTION;
 					fdActorWalkToAndWait(ACTOR_HEALER, 152, 120);
 					fdScriptWait(1);
-					fdActorGet(ACTOR_HEALER)->steeringFlg |= ACTOR_FACES_MOTION;
+					fdActorGet(ACTOR_HEALER)->steeringFlags |=
+						ACTOR_FACES_MOTION;
 					fdScriptWait(20);
 					fdActorSetAnimationAndWait(ACTOR_HEALER, ANIM_NOD);
 					fdScriptWait(20);
@@ -360,8 +361,8 @@ static void scSanctumAskQuestAgain(void)
 				fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 				fdPaletteFadeStartInterpolation(120);
 				fdScriptWait(120);
-				sySndPlay(MUS_OVERNIGHT_AT_THE_INN);
-				sySndWaitForBGMRestore();
+				sySoundPlay(MUS_OVERNIGHT_AT_THE_INN);
+				sySoundWaitForBGMRestore();
 				gmFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
 				syImportScriptSetExitRequest(SANCTUM_TO_VALE_PLAZA);
 			}
@@ -523,9 +524,11 @@ static void scSanctumLeaveAfterRefusing(void)
 	paletteState = PaletteFadeState;
 	/* ROOM_PALEST_COLOR fades to white rather than sepia: its blue, green and
 	   red channels, each held in blue's place. */
-	paletteState->tgt[3 * ROOM_PALEST_COLOR] = RGB_LEVEL_MAX << BLUE_SHIFT;
-	paletteState->tgt[3 * ROOM_PALEST_COLOR + 1] = RGB_LEVEL_MAX << BLUE_SHIFT;
-	paletteState->tgt[3 * ROOM_PALEST_COLOR + 2] = RGB_LEVEL_MAX << BLUE_SHIFT;
+	paletteState->target[3 * ROOM_PALEST_COLOR] = RGB_LEVEL_MAX << BLUE_SHIFT;
+	paletteState->target[3 * ROOM_PALEST_COLOR + 1] = RGB_LEVEL_MAX
+		<< BLUE_SHIFT;
+	paletteState->target[3 * ROOM_PALEST_COLOR + 2] = RGB_LEVEL_MAX
+		<< BLUE_SHIFT;
 	paletteState->page = 0;
 	paletteState->duration = 1;
 	paletteState->step = 1;
@@ -549,8 +552,10 @@ static void scSanctumLeaveAfterRefusing(void)
 /* Keeps this actor at the party leader's drawing priority. */
 static UNREAD_RESULT scSanctumMatchLeaderPriority(ACTOR *actor)
 {
-	actor->spr->image.pri = fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
-	actor->spr->shadow.pri = fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
+	actor->sprite->image.priority =
+		fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority;
+	actor->sprite->shadow.priority =
+		fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority;
 	RETURN_UNREAD(0);
 }
 
@@ -597,7 +602,7 @@ static inline void scSanctumShowAllEmotes(void)
    leaves Isaac free to walk out. */
 static void scSanctumAskToAcceptQuest(void)
 {
-	Uint32 effectIdx;
+	Uint32 effectIndex;
 
 	fdScriptStart();
 	/* A repeat visit skips the account of Sol Sanctum. */
@@ -612,7 +617,7 @@ static void scSanctumAskToAcceptQuest(void)
 		fdCameraWaitForMove();
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-		FieldStateWork->transitionFrm = 64;
+		FieldStateWork->transitionFrame = 64;
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		fdScriptWait(120);
@@ -835,14 +840,14 @@ static void scSanctumAskToAcceptQuest(void)
 		fdScriptWait(40);
 		fdActorRunRepeatedMotion(ACTOR_HEALER, 2);
 		fdActorSetAnimation(ACTOR_HEALER, ANIM_STILL);
-		fdActorSetSprColById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
+		fdActorSetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
 		scSanctumShowHealerAfterimage();
-		sySndPlay(SE_WISE_ONE_QUEST);
+		sySoundPlay(SE_WISE_ONE_QUEST);
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 		fdScriptWait(32);
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 		fdScriptWait(16);
-		for(effectIdx = 0; effectIdx < 6; effectIdx++) {
+		for(effectIndex = 0; effectIndex < 6; effectIndex++) {
 			scSanctumSpawnOrbitingEffect(
 				ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 			fdScriptWait(8);
@@ -853,7 +858,7 @@ static void scSanctumAskToAcceptQuest(void)
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 		fdScriptWait(96);
 		fdScriptWait(32);
-		fdActorSetSprColById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
 		fdScriptWait(30);
 		scSanctumHideHealerAfterimage();
 		fdActorSetAnimation(ACTOR_HEALER, ANIM_STAND);
@@ -912,9 +917,9 @@ static void scSanctumAskToAcceptQuest(void)
 		fdScriptWait(60);
 		fdActorRunRepeatedMotion(ACTOR_HEALER, 2);
 		fdActorSetAnimation(ACTOR_HEALER, ANIM_STILL);
-		fdActorSetSprColById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
+		fdActorSetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_BLINK);
 		scSanctumShowHealerAfterimage();
-		sySndPlay(SE_WISE_ONE_QUEST);
+		sySoundPlay(SE_WISE_ONE_QUEST);
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 		fdScriptWait(32);
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
@@ -931,7 +936,7 @@ static void scSanctumAskToAcceptQuest(void)
 		fdActorStartRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 1);
 		fdActorStartRepeatedMotion(ACTOR_WEST_HEALER, 1);
 		fdActorStartRepeatedMotion(ACTOR_EAST_HEALER, 1);
-		for(effectIdx = 0; effectIdx < 6; effectIdx++) {
+		for(effectIndex = 0; effectIndex < 6; effectIndex++) {
 			scSanctumSpawnOrbitingEffect(
 				ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 			fdScriptWait(8);
@@ -941,7 +946,7 @@ static void scSanctumAskToAcceptQuest(void)
 		fdScriptWait(32);
 		scSanctumSpawnOrbitingEffect(ACTOR_HEALER, SANCTUM_SPARKLE_ORBIT_STEP);
 		fdScriptWait(128);
-		fdActorSetSprColById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorById(ACTOR_HEALER, SPRITE_COLOR_NORMAL);
 		fdScriptWait(30);
 		scSanctumHideHealerAfterimage();
 		fdActorSetAnimation(ACTOR_HEALER, ANIM_STAND);
@@ -1179,8 +1184,8 @@ static void scSanctumAskToAcceptQuest(void)
 		fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 		fdPaletteFadeStartInterpolation(120);
 		fdScriptWait(120);
-		sySndPlay(MUS_OVERNIGHT_AT_THE_INN);
-		sySndWaitForBGMRestore();
+		sySoundPlay(MUS_OVERNIGHT_AT_THE_INN);
+		sySoundWaitForBGMRestore();
 		gmFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
 		syImportScriptSetExitRequest(SANCTUM_TO_VALE_PLAZA);
 	} else {
@@ -1191,7 +1196,8 @@ static void scSanctumAskToAcceptQuest(void)
 		/* "I can't blame you... I couldn't do it if I were in your shoes." */
 		fdScriptShowMessage(ACTOR_GARETS_GRANDFATHER, 0);
 		fdScriptWait(20);
-		fdActorGet(ACTOR_EAST_HEALER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_EAST_HEALER)->priorityFlags &=
+			~ACTOR_PRIORITY_AUTOMATIC;
 		fdActorGet(ACTOR_EAST_HEALER)->update =
 			(void (*)(ACTOR *))scSanctumMatchLeaderPriority;
 	}
@@ -1204,7 +1210,7 @@ static void scSanctumAskToAcceptQuest(void)
    the Great Healer and sparkles circle him. */
 static void scSanctumReceiveWiseOnesMission(void)
 {
-	Uint32 sparkIdx;
+	Uint32 sparkIndex;
 
 	fdActorSetAttachedEffect(
 		ACTOR_GARET, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1272,20 +1278,20 @@ static void scSanctumReceiveWiseOnesMission(void)
 	/* "O, Wise One, these two have accepted your quest. Give us..." */
 	fdScriptShowMessage(ACTOR_HEALER, 0);
 	fdScriptWait(80);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	fdScriptWait(40);
 	fdCameraSetSpeed(0.4);
 	fdCameraMoveTo(192, CAMERA_KEEP, 104, 1);
 	fdScriptWait(120);
-	sySndPlay(MUS_FOREST_THEME);
-	fdScriptPlaySnd(SE_MATERIALIZE);
+	sySoundPlay(MUS_FOREST_THEME);
+	fdScriptPlaySound(SE_MATERIALIZE);
 	/* The Wise One enters while the healer's afterimages appear. */
 	fdActorSetPos(ACTOR_WISE_ONE, 200, 8);
 	fdActorSetSpeed(ACTOR_WISE_ONE, 0.4);
 	fdActorMoveToAndWait(ACTOR_WISE_ONE, 200, 72);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_HEALER, 2);
 	fdActorSetAnimation(ACTOR_HEALER, ANIM_STILL);
@@ -1310,17 +1316,17 @@ static void scSanctumReceiveWiseOnesMission(void)
 	/* "I shall be watching you. Choose your destiny wisely, young ones." */
 	fdScriptShowMessage(ACTOR_WISE_ONE, 0);
 	fdScriptWait(60);
-	fdActorSetSprColById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
-	sySndPlay(SOUND_FADE_OUT_BGM);
-	sySndPlay(SE_MATERIALIZE);
-	for(sparkIdx = 0; sparkIdx < WISE_ONE_VANISH_SPARKS; sparkIdx++) {
+	fdActorSetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SE_MATERIALIZE);
+	for(sparkIndex = 0; sparkIndex < WISE_ONE_VANISH_SPARKS; sparkIndex++) {
 		scSanctumSpawnActorSpark(ACTOR_WISE_ONE);
 		fdScriptWait(4);
 		fdActorGet(ACTOR_WISE_ONE)->scaleX -= toFIXED(1) / 100;
 		fdActorGet(ACTOR_WISE_ONE)->scaleY -= toFIXED(1) / 100;
 	}
-	sySndPlay(SE_STOP_ACTION_SE);
-	fdActorSetSprColById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	fdActorSetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_WISE_ONE, 0, 0);
 	fdScriptWait(40);
 	fdCameraMoveTo(192, CAMERA_KEEP, 160, 1);
@@ -1330,7 +1336,7 @@ static void scSanctumReceiveWiseOnesMission(void)
 	fdScriptWait(120);
 	scSanctumHideHealerAfterimage();
 	fdActorSetAnimation(ACTOR_HEALER, ANIM_STAND);
-	sySndPlay(MUS_AN_UNSETTLING_FEELING);
+	sySoundPlay(MUS_AN_UNSETTLING_FEELING);
 	fdScriptWait(60);
 	fdActorRunRepeatedMotion(ACTOR_HEALER, 2);
 	fdScriptWait(20);
@@ -1613,10 +1619,10 @@ static void scSanctumReceiveWiseOnesMission(void)
    Psynergy. */
 static void scSanctumShowHealerAfterimage(void)
 {
-	Uint32 entryIdx;
+	Uint32 entryIndex;
 	ACTOR *afterimage;
 	ACTOR *actor;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	actor = fdActorGet(ACTOR_HEALER);
 	if(actor != NULL) {
@@ -1628,17 +1634,18 @@ static void scSanctumShowHealerAfterimage(void)
 	afterimage->facing = fdActorGet(ACTOR_HEALER)->facing;
 	fdActorGet(ACTOR_HEALER_AFTERIMAGE)->update =
 		scSanctumUpdateHealerAfterimage;
-	spr = fdActorGet(ACTOR_HEALER_AFTERIMAGE)->spr;
-	for(entryIdx = 0; entryIdx < spr->cnt; entryIdx++) {
-		SPR_ANIMATION *entry = spr->entries[entryIdx];
+	sprite = fdActorGet(ACTOR_HEALER_AFTERIMAGE)->sprite;
+	for(entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
+		SPR_ANIMATION *entry = sprite->entries[entryIndex];
 
 		if(entry != NULL && entry->script != 0) {
-			entry->colMode = SPRITE_COLOR_RED_TINT;
+			entry->colorMode = SPRITE_COLOR_RED_TINT;
 		}
 	}
-	spr->dirty = 1;
-	fdActorGet(ACTOR_HEALER_AFTERIMAGE)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 2;
+	sprite->dirty = 1;
+	fdActorGet(ACTOR_HEALER_AFTERIMAGE)->priorityFlags &=
+		~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 2;
 }
 
 /* Takes the Great Healer's red glow away. */
@@ -1656,21 +1663,21 @@ static void scSanctumUpdateHealerAfterimage(ACTOR *actor)
 	ACTOR *healer;
 
 	healer = fdActorGet(ACTOR_HEALER);
-	actor->tgtX = actor->x.fixed = healer->x.fixed;
-	actor->tgtY = actor->y.fixed = healer->y.fixed;
-	actor->tgtZ = actor->z.fixed = healer->z.fixed - toFIXED(2);
+	actor->targetX = actor->x.fixed = healer->x.fixed;
+	actor->targetY = actor->y.fixed = healer->y.fixed;
+	actor->targetZ = actor->z.fixed = healer->z.fixed - toFIXED(2);
 	switch(TickCount & 3) {
 	case 0:
-		actor->tgtX = actor->x.fixed = healer->x.fixed - toFIXED(7) / 2;
+		actor->targetX = actor->x.fixed = healer->x.fixed - toFIXED(7) / 2;
 		break;
 	case 1:
-		actor->tgtX = actor->x.fixed = healer->x.fixed + toFIXED(3);
+		actor->targetX = actor->x.fixed = healer->x.fixed + toFIXED(3);
 		break;
 	case 2:
-		actor->tgtY = actor->y.fixed = healer->y.fixed + toFIXED(2);
+		actor->targetY = actor->y.fixed = healer->y.fixed + toFIXED(2);
 		break;
 	case 3:
-		actor->tgtZ = actor->z.fixed = healer->z.fixed;
+		actor->targetZ = actor->z.fixed = healer->z.fixed;
 		break;
 	}
 }
@@ -1679,21 +1686,21 @@ static void scSanctumUpdateHealerAfterimage(ACTOR *actor)
 static void scSanctumUpdateOrbitingEffect(ACTOR *effect)
 {
 	ACTOR *anchor = (ACTOR *)effect->watchedActor;
-	Uint16 orbitAng = effect->tmr;
+	Uint16 orbitAngle = effect->timer;
 	FIXED  x;
 	FIXED  z;
-	FIXED  curX;
+	FIXED  currentX;
 
-	x = anchor->x.fixed + syCos(orbitAng) * 14;
+	x = anchor->x.fixed + syCos(orbitAngle) * 14;
 	effect->x.fixed = x;
 
-	z = anchor->z.fixed + sySin(orbitAng) * 10;
-	curX = effect->x.fixed;
+	z = anchor->z.fixed + sySin(orbitAngle) * 10;
+	currentX = effect->x.fixed;
 	effect->z.fixed = z;
-	effect->tgtZ = z;
-	effect->tgtX = curX;
+	effect->targetZ = z;
+	effect->targetX = currentX;
 
-	effect->tmr += effect->userValue;
+	effect->timer += effect->userValue;
 }
 
 /* Starts a sparkle circling the actor, high above his feet, going around by the
@@ -1710,16 +1717,16 @@ static void scSanctumSpawnOrbitingEffect(Sint32 actorId, Sint32 angleStep)
 		effect = syFieldActorCreate(SPRITE_SPARKLE, center->x.fixed,
 			center->y.fixed + toFIXED(45), center->z.fixed);
 		if(effect != NULL) {
-			sprite = effect->spr;
+			sprite = effect->sprite;
 			fdActorStartScript(effect, SanctumOrbitingSparkleScript);
-			effect->motionFlg = 0;
-			effect->tmr = 0;
+			effect->motionFlags = 0;
+			effect->timer = 0;
 			effect->userValue = angleStep;
 			effect->update = scSanctumUpdateOrbitingEffect;
-			sprite->flg = 0;
-			sourceSprite = center->spr;
+			sprite->flags = 0;
+			sourceSprite = center->sprite;
 			effect->watchedActor = (ACTOR_OR_EFFECT *)center;
-			sprite->image.pri = sourceSprite->image.pri;
+			sprite->image.priority = sourceSprite->image.priority;
 		}
 	}
 }
@@ -1792,16 +1799,16 @@ static void scSanctumActOutSolSanctum(void)
 	fdScriptWait(15);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_GARET, 0);
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 184, 168);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 200, 168);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorJump(ACTOR_GARET, 2, 0);
 	fdScriptWait(15);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_HEALER, 0);
@@ -1882,10 +1889,10 @@ static void scSanctumActOutSolSanctum(void)
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 	fdScriptWait(10);
-	fdActorGet(ACTOR_HEALER)->tmr = ACTOR_GARET;
+	fdActorGet(ACTOR_HEALER)->timer = ACTOR_GARET;
 	fdActorGet(ACTOR_HEALER)->update =
 		(void (*)(ACTOR *))scSanctumFaceActorNamedByTimer;
-	fdActorGet(ACTOR_GARETS_GRANDFATHER)->tmr = ACTOR_GARET;
+	fdActorGet(ACTOR_GARETS_GRANDFATHER)->timer = ACTOR_GARET;
 	fdActorGet(ACTOR_GARETS_GRANDFATHER)->update =
 		(void (*)(ACTOR *))scSanctumFaceActorNamedByTimer;
 	fdActorWalkToAndWait(ACTOR_GARET, 196, 180);
@@ -2015,9 +2022,9 @@ static void scSanctumRaiseItemIcon(
 	Sint32 item, FIXED fixedX, FIXED fixedY, FIXED fixedZ)
 {
 	ACTOR		  *icon;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *glyph;
-	Uint32		   frm;
+	Uint32		   frame;
 
 	icon = syFieldActorCreate(SPRITE_BLANK, fixedX, fixedY, fixedZ);
 	{
@@ -2025,22 +2032,22 @@ static void scSanctumRaiseItemIcon(
 
 		if(icon != NULL) {
 			fdActorStartScript(icon, ItemIconGrowScript);
-			spr = icon->spr;
-			spr->flg = cleared;
-			spr->cnt = cleared;
-			spr->image.fullCol = 0;
-			spr->image.pal = 0;
-			icon->velY = toFIXED(2);
+			sprite = icon->sprite;
+			sprite->flags = cleared;
+			sprite->count = cleared;
+			sprite->image.fullColor = 0;
+			sprite->image.palette = 0;
+			icon->velocityY = toFIXED(2);
 			icon->gravity = toFIXED(1) / 4;
-			glyph =
-				syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+			glyph = syHeapSlotAllocate(
+				HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 			mnIconDrawItem(item);
-			syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+			syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 			syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-			for(frm = 0; frm < 60; frm++) {
-				if(icon->velY > -toFIXED(1) / 256 &&
-					icon->velY < toFIXED(1) / 256)
-					icon->motionFlg = 0;
+			for(frame = 0; frame < 60; frame++) {
+				if(icon->velocityY > -toFIXED(1) / 256 &&
+					icon->velocityY < toFIXED(1) / 256)
+					icon->motionFlags = 0;
 				sySynch(1);
 			}
 			fdActorStartScript(icon, SanctumItemIconEndScript);
@@ -2055,8 +2062,8 @@ static void scSanctumUpdateRisingSpark(ACTOR *spark)
 	FIXED scale;
 
 	/* The timer holds the upward step in sixteenths of a pixel. */
-	spark->y.fixed += spark->tmr * (toFIXED(1) / 16);
-	spark->tgtY = spark->y.fixed;
+	spark->y.fixed += spark->timer * (toFIXED(1) / 16);
+	spark->targetY = spark->y.fixed;
 	scale = 0;
 	switch((spark->userValue >> 2) & 3) {
 	case 0:
@@ -2097,13 +2104,13 @@ static void scSanctumSpawnActorSpark(Sint32 id)
 		actor->z.fixed);
 	if(spark == NULL)
 		return;
-	sprite = spark->spr;
-	spark->motionFlg = 0;
-	spark->tmr = syMathRemainderUnsigned(syRandomNext(), 10) + 5;
+	sprite = spark->sprite;
+	spark->motionFlags = 0;
+	spark->timer = syMathRemainderUnsigned(syRandomNext(), 10) + 5;
 	spark->userValue = syMathRemainderUnsigned(syRandomNext(), 60) + 30;
 	spark->update = scSanctumUpdateRisingSpark;
-	sprite->flg = 0;
-	sprite->image.pri = actor->spr->image.pri;
+	sprite->flags = 0;
+	sprite->image.priority = actor->sprite->image.priority;
 }
 
 /* Takes away the small stone counter before the altar for the quest's visits:

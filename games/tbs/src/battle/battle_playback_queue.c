@@ -40,8 +40,8 @@ UNREAD_RESULT btUnitClearStatuses(Sint32 unitId)
 	unit->agilityStage = 0;
 	unit->challenge = 0;
 
-	gmUnitCalcStub(unitId);
-	btUnitBuildStatFlags(unitId, btObjectGet(unitId));
+	gmUnitCalculateStub(unitId);
+	btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
 }
 
 /* Shows the bobbing arrow at the message window and waits for the player to go
@@ -50,24 +50,24 @@ UNREAD_RESULT btMessageWaitForAdvance(void)
 {
 	MENU_SPR			  *prompt;
 	MENU_SPR			   promptStorage;
-	Sint32				   frm;
+	Sint32				   frame;
 	Sint32				   tileSlot;
 	Sint32				   pictureTiles;
-	WINDOW				  *win;
-	BATTLE_MESSAGE_OFFSET *ofs;
+	WINDOW				  *window;
+	BATTLE_MESSAGE_OFFSET *offset;
 
 	while(!mnMessageAllTypedStub())
 		sySynch(1);
 	/* FAKEMATCH(temporary): prompt holds &promptStorage; as promptStorage's
 	 * members at its uses. */
 	prompt = &promptStorage;
-	tileSlot = syVRAMCacheAllocEntry(128);
-	for(frm = 0;; frm++) {
+	tileSlot = syVRAMCacheAllocateEntry(128);
+	for(frame = 0;; frame++) {
 		/* Cycle the eight pictures, one every four ticks. */
 		pictureTiles = ((TickCount >> 2) & 7) * 128 +
 			(Sint32)BattleMessageAdvanceArrowTiles;
-		win = BattleMessageStateWork->win;
-		ofs = BattleMessageStateWork->ofs;
+		window = BattleMessageStateWork->window;
+		offset = BattleMessageStateWork->offset;
 		/* Outside the windows, sprites show and BG2 does not. */
 		syIOWriteQueueClearBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_BG2);
 		syIOWriteQueueSetBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_OBJ);
@@ -78,18 +78,18 @@ UNREAD_RESULT btMessageWaitForAdvance(void)
 			OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
 		prompt->oam.word.attr23 = 0;
 		prompt->oam.f.tile = syVRAMCacheReload(tileSlot, pictureTiles);
-		prompt->oam.f.x = win->x * 8 + (ofs->x >> 8) + 4;
-		prompt->oam.f.y = CURSOR_BOB_Y() + win->y * 8 + (ofs->y >> 8) + 6;
-		syOAMAddSprAtDepth(prompt, OAM_DEPTH_WINDOW);
+		prompt->oam.f.x = window->x * 8 + (offset->x >> 8) + 4;
+		prompt->oam.f.y = CURSOR_BOB_Y() + window->y * 8 + (offset->y >> 8) + 6;
+		syOAMAddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
 		/* A held advance key counts only after 16 ticks, so one still held
 		   from the previous message does not skip this one; B held goes on at
 		   once. */
 		if((PerData & KEY_B) || (PerPush & KEY_ADVANCE) ||
-			(frm > 15 && (PerData & KEY_ADVANCE)))
+			(frame > 15 && (PerData & KEY_ADVANCE)))
 			break;
 		sySynch(1);
 	}
-	sySndPlayStub(SE_MENU_CURSOR_MOVE);
+	sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 	syVRAMCacheFreeEntry(tileSlot);
 	sySynch(1);
 }
@@ -103,7 +103,7 @@ UNREAD_RESULT btMessageWaitForAdvanceAt(Sint32 x, Sint32 y)
 	MENU_SPR  *prompt;
 	Sint32	   tileSlot;
 
-	ptrTiles = mnWindowSprGetPointerTilesStub(0);
+	ptrTiles = mnWindowSpriteGetPointerTilesStub(0);
 	pos.x = x;
 	pos.y = y;
 	while(!mnMessageAllTypedStub())
@@ -111,7 +111,7 @@ UNREAD_RESULT btMessageWaitForAdvanceAt(Sint32 x, Sint32 y)
 	/* FAKEMATCH(temporary): prompt holds &promptStorage; as promptStorage's
 	 * members at its uses. */
 	prompt = &promptStorage;
-	tileSlot = syVRAMCacheAllocEntry(128);
+	tileSlot = syVRAMCacheAllocateEntry(128);
 	while(1) {
 		syIOWriteQueueClearBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_BG2);
 		syIOWriteQueueSetBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_OBJ);
@@ -122,7 +122,7 @@ UNREAD_RESULT btMessageWaitForAdvanceAt(Sint32 x, Sint32 y)
 		/* Nudge it up and right every four ticks. */
 		prompt->oam.f.x = pos.x + ((TickCount & 4) >> 1) - 4;
 		prompt->oam.f.y = pos.y - ((TickCount & 4) >> 2) - 8;
-		syOAMAddSprAtDepth(prompt, OAM_DEPTH_WINDOW);
+		syOAMAddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
 		if(PerPush & KEY_ADVANCE)
 			break;
 		sySynch(1);
@@ -177,35 +177,35 @@ Uint32 btPlaybackRunAll(void)
 #endif
 	BATTLE_PLAYBACK_STATE *runtime = &BattleStateWork->playback;
 	BATTLE_PLAYBACK_QUEUE *queue = &runtime->queue;
-	Sint32				   eventIdx;
+	Sint32				   eventIndex;
 
-	for(eventIdx = 0; eventIdx < queue->cnt; eventIdx++) {
-		Uint8 opcode = queue->opcodes[eventIdx];
+	for(eventIndex = 0; eventIndex < queue->count; eventIndex++) {
+		Uint8 opcode = queue->opcodes[eventIndex];
 		/* A queue played at once makes no sounds but a hit's. */
 		if(opcode <= PLAYBACK_DJINN_BONUS)
 			switch(opcode) {
 			case PLAYBACK_DJINN_BONUS:
-				btPlaybackGrantDjinnBonus(runtime, queue->operands[eventIdx]);
+				btPlaybackGrantDjinnBonus(runtime, queue->operands[eventIndex]);
 				break;
 			case PLAYBACK_REMOVE_UNIT:
-				btUnitRemoveEnemy(queue->operands[eventIdx]);
+				btUnitRemoveEnemy(queue->operands[eventIndex]);
 				break;
 			case PLAYBACK_UNIT_NAME:
 				mnMessageArgumentPushStub(
-					queue->operands[eventIdx], MESSAGE_ARGUMENT_ACTOR);
+					queue->operands[eventIndex], MESSAGE_ARGUMENT_ACTOR);
 				break;
 			case PLAYBACK_NUMBER:
 				mnMessageArgumentPushStub(
-					queue->operands[eventIdx], MESSAGE_ARGUMENT_NUMBER);
+					queue->operands[eventIndex], MESSAGE_ARGUMENT_NUMBER);
 				break;
 			case PLAYBACK_ITEM_NAME:
 				mnMessageArgumentPushStub(
-					queue->operands[eventIdx] & INVENTORY_ITEM_ID_MASK,
+					queue->operands[eventIndex] & INVENTORY_ITEM_ID_MASK,
 					MESSAGE_ARGUMENT_ITEM);
 				break;
 			case PLAYBACK_ABILITY_NAME:
 				mnMessageArgumentPushStub(
-					queue->operands[eventIdx] & PSYNERGY_ABILITY_MASK,
+					queue->operands[eventIndex] & PSYNERGY_ABILITY_MASK,
 					MESSAGE_ARGUMENT_ABILITY);
 				break;
 			case PLAYBACK_MARK:
@@ -216,34 +216,34 @@ Uint32 btPlaybackRunAll(void)
 				break;
 			/* A message of MESSAGE_NONE only waits for the player. */
 			case PLAYBACK_MESSAGE:
-				if((Sint32)queue->operands[eventIdx] >= 0)
-					mnBattleMessageShowAndWaitStub(queue->operands[eventIdx]);
+				if((Sint32)queue->operands[eventIndex] >= 0)
+					mnBattleMessageShowAndWaitStub(queue->operands[eventIndex]);
 				btMessageWaitForAdvance();
 				mnMessageArgumentClearAllStub();
 				break;
 			case PLAYBACK_MESSAGE_NO_WAIT:
-				if((Sint32)queue->operands[eventIdx] >= 0)
-					mnBattleMessageShowAndWaitStub(queue->operands[eventIdx]);
+				if((Sint32)queue->operands[eventIndex] >= 0)
+					mnBattleMessageShowAndWaitStub(queue->operands[eventIndex]);
 				mnMessageArgumentClearAllStub();
 				break;
 			case PLAYBACK_HIT:
-				if(runtime->pendingSnd > 0)
-					sySndPlayStub(runtime->pendingSnd);
-				btMotionFlashHit(queue->operands[eventIdx], 0, 0);
+				if(runtime->pendingSound > 0)
+					sySoundPlayStub(runtime->pendingSound);
+				btMotionFlashHit(queue->operands[eventIndex], 0, 0);
 				break;
 			case PLAYBACK_DEFEAT:
 				btEnemyRecordDefeat(
-					queue->operands[eventIdx], runtime->djinnBonus);
-				btUnitClearStatuses(queue->operands[eventIdx]);
-				btMotionShowDowned(queue->operands[eventIdx]);
+					queue->operands[eventIndex], runtime->djinnBonus);
+				btUnitClearStatuses(queue->operands[eventIndex]);
+				btMotionShowDowned(queue->operands[eventIndex]);
 				break;
 			case PLAYBACK_DRAW_STATUS:
-				mnPartyStatDrawStub(BattleStateWork->partyStat);
+				mnPartyStatusDrawStub(BattleStateWork->partyStatus);
 				break;
 			case PLAYBACK_REFRESH_UNIT:
-				btUnitBuildStatFlags(queue->operands[eventIdx],
-					btObjectGet(queue->operands[eventIdx]));
-				btObjectUpdatePose(queue->operands[eventIdx]);
+				btUnitBuildStatusFlags(queue->operands[eventIndex],
+					btObjectGet(queue->operands[eventIndex]));
+				btObjectUpdatePose(queue->operands[eventIndex]);
 				break;
 			}
 	}
@@ -255,10 +255,10 @@ Uint32 btPlaybackRunAll(void)
 Uint32 btPlaybackPush(Uint32 opcode, Uint32 operand)
 {
 	BATTLE_PLAYBACK_QUEUE *queue = &BattleStateWork->playback.queue;
-	Uint32				   idx = queue->cnt;
+	Uint32				   index = queue->count;
 
-	queue->opcodes[idx] = opcode;
-	queue->operands[idx] = operand;
-	queue->cnt = idx + 1;
+	queue->opcodes[index] = opcode;
+	queue->operands[index] = operand;
+	queue->count = index + 1;
 	return opcode;
 }

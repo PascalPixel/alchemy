@@ -22,7 +22,7 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 		return;
 
 	fdEffectInitSlots();
-	effectState = RamHeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffectState;
 	/* Tint the screen red. */
 	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
 	sySynch(30);
@@ -30,17 +30,17 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 	   note on each. */
 	fdActorFaceDirectionById(djinniId, FACING_SOUTH, 0);
 	sySynch(20);
-	sySndPlayStub(SE_NOTE_LOW);
+	sySoundPlayStub(SE_NOTE_LOW);
 	fdActorRunRepeatedMotion(djinniId, 1);
-	sySndPlayStub(SE_NOTE_MID);
+	sySoundPlayStub(SE_NOTE_MID);
 	fdActorRunRepeatedMotion(djinniId, 1);
-	sySndPlayStub(SE_NOTE_HIGH);
+	sySoundPlayStub(SE_NOTE_HIGH);
 	fdActorRunRepeatedMotion(djinniId, 1);
 	/* Spin up for 80 ticks, then spin and shrink away. */
 	sySynch(20);
-	sySndPlayStub(SE_SPIN);
-	djinni->update = (OBJECT_UPDATE)fdEffectAdvanceAngWithRamp;
-	djinni->tmr = 0;
+	sySoundPlayStub(SE_SPIN);
+	djinni->update = (OBJECT_UPDATE)fdEffectAdvanceAngleWithRamp;
+	djinni->timer = 0;
 	sySynch(80);
 	djinni->update = (OBJECT_UPDATE)fdEffectShrinkActorAndDestroySlow;
 	fdActorSelectAnimationStub(djinni, DJINNI_ANIMATION_EXCITED);
@@ -58,7 +58,8 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateMarsSpark);
 		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
-		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_RED_TINT);
+		fdSpriteSetAnimationColorModesStub(
+			effect->sprite, SPRITE_COLOR_RED_TINT);
 		scale = syRandom() / 3 + toFIXED(1); /* 1.0 to 1.33 */
 		effect->scaleY = scale;
 		effect->scaleX = scale;
@@ -105,20 +106,20 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 
 /* Spins an actor 1/8 turn and shrinks it by 1/64 a tick, releasing it once its
    scale falls below 3/16: 53 ticks from full size. */
-void fdEffectShrinkActorAndDestroyFast(void *obj)
+void fdEffectShrinkActorAndDestroyFast(void *object)
 {
-	ACTOR *actor = obj;
+	ACTOR *actor = object;
 	Sint32 step = -(toFIXED(1) / 64);
 	Sint32 scaleY;
 	Sint32 scale;
-	Sint32 ang;
+	Sint32 angle;
 
 	scaleY = actor->scaleY + step;
 	scale = actor->scaleX;
 	actor->scaleY = scaleY;
-	ang = actor->facing;
+	angle = actor->facing;
 	scale += step;
-	actor->facing = ang + DEGtoANG(45);
+	actor->facing = angle + DEGtoANG(45);
 	actor->scaleX = scale;
 	if(scale < toFIXED(3) / 16)
 		fdActorReleaseStub(actor);
@@ -132,18 +133,18 @@ void fdEffectUpdateDescendingOrbitActor(ACTOR *mote)
 {
 	VECTOR3 pos;
 	ACTOR  *leader;
-	Sint32	tmr;
+	Sint32	timer;
 	Sint16	ticks;
 	FIXED	y;
 
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	tmr = mote->orbitFrm - 1;
-	mote->orbitFrm = tmr;
-	ticks = mote->orbitFrm;
+	timer = mote->orbitFrame - 1;
+	mote->orbitFrame = timer;
+	ticks = mote->orbitFrame;
 	pos.x = leader->x.fixed;
 	pos.z = leader->z.fixed;
 	syVectorAddPolarOffset(ticks * (toFIXED(2) / 5),
-		ticks * (TRIG_TURN / 32) + mote->orbitAng, &pos);
+		ticks * (TRIG_TURN / 32) + mote->orbitAngle, &pos);
 	mote->x.fixed = pos.x;
 	mote->z.fixed = pos.z;
 	y = mote->y.fixed - toFIXED(1);
@@ -183,15 +184,15 @@ void fdEffectUpdateRadialSpread(FIELD_PARTICLE *effect)
 		pos.z = effect->z;
 
 		syVectorAddPolarOffset(toFIXED(120), FACING_NORTH, &pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(1);
 		effect->speedMax = toFIXED(5);
 		effect->turnStepLimited = state;
 		effect->state++;
 
 		if((FrameCount & 1) != 0)
-			sySndPlayStub(SE_CLATTER);
+			sySoundPlayStub(SE_CLATTER);
 	} else if(state == VENUS_PARTICLE_RISING) {
 		if(fdParticleHasPendingTarget(effect) == 0)
 			effect->state--;

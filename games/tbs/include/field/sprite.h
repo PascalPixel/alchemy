@@ -10,7 +10,8 @@
 #include "types.h"
 #include "graphics/render_placement.h"
 
-/* SPR_ANIMATION.colMode: how fdRenderDecodePicture colours a layer's pixels. */
+/* SPR_ANIMATION.colorMode: how fdRenderDecodePicture colours a layer's pixels.
+ */
 typedef enum SPR_COL_MODE {
 	SPRITE_COLOR_NORMAL = 0,
 	SPRITE_COLOR_GRB = 1,		  /* red and green swapped */
@@ -28,13 +29,13 @@ typedef enum SPR_COL_MODE {
 	SPRITE_COLOR_HIDDEN = 15	  /* solid colour 0, transparent */
 } SPR_COL_MODE;
 
-/* Passed to fdActorConfigureSprCol in place of a SPR_COL_MODE:
+/* Passed to fdActorConfigureSpriteColor in place of a SPR_COL_MODE:
    the actor blinks white every few ticks (fdActorUpdateBlink) until it is
    given a mode again. */
 #define SPRITE_COLOR_BLINK 0x100
 
 /* A sprite animation's picture or pictureBase when it shows none:
-   fdSprComposePicture skips it until an animation is selected. */
+   fdSpriteComposePicture skips it until an animation is selected. */
 #define SPRITE_PICTURE_NONE 255
 
 /* An animation number's bit 7: keep the place and timer of the script already
@@ -45,24 +46,24 @@ typedef enum SPR_COL_MODE {
 /* One of a sprite's four sprite animations: its animation id, pictures, running
    script and timer. */
 typedef struct SPR_ANIMATION {
-	Sint16 anmId; /* the sprite id whose metadata and pictures it uses */
+	Sint16 animationId; /* the sprite id whose metadata and pictures it uses */
 	/* Time left on the current picture in sixteenths of a tick, read signed:
 	   each timed command adds its argument times 16, each tick takes off
 	   step. */
-	Uint16 tmr;
+	Uint16 timer;
 	/* The facing table its pictures follow (from the metadata, or
 	   ANIMCMD_SET_KIND); zero marks a free sprite animation. */
 	Uint8 kind;
-	Uint8 colMode; /* SPR_COL_MODE its pixels are drawn with; 0 when taken */
+	Uint8 colorMode; /* SPR_COL_MODE its pixels are drawn with; 0 when taken */
 	/* drawing order 0 to 3 among the animations; above 3 not drawn */
-	Uint8 pri;
+	Uint8 priority;
 	Uint8 mode; /* an SPR_PICTURE_CODEC; anything else is raw */
 	/* picture pointers, from the metadata or a picture cache */
 	void **pictures;
 	/* the metadata's command scripts, one per animation number */
 	Uint8 **scripts;
-	Uint8  *script;	   /* the running script; null when stopped (ANIMCMD_END) */
-	Uint8	scriptOfs; /* byte offset of the next command in script */
+	Uint8  *script; /* the running script; null when stopped (ANIMCMD_END) */
+	Uint8	scriptOffset; /* byte offset of the next command in script */
 	/* taken off timer each tick; ANIM_STEP_NORMAL is normal speed */
 	Uint8 step;
 	/* picture shown, pictureBase plus the facing offset; SPRITE_PICTURE_NONE
@@ -100,14 +101,14 @@ typedef struct ACTOR_SYSTEM_STATE {
 	Uint8  edge; /* outline edge colour; 15 when the field engine sets up */
 	Uint8  fill; /* outline fill colour; 0 when the field engine sets up */
 	/* The sprite group tables, taken in turn by count. */
-	struct SPR *sprGroups[4];
-	Sint32		cnt; /* sprite group tables taken from sprGroups */
+	struct SPR *spriteGroups[4];
+	Sint32		count; /* sprite group tables taken from spriteGroups */
 	SPR_PICTURE_CACHE
-	pictureCaches[8]; /* found by tag (fdSprPictureCacheFindByTag) */
+	pictureCaches[8]; /* found by tag (fdSpritePictureCacheFindByTag) */
 } ACTOR_SYSTEM_STATE;
 
 STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, suspended) == 4);
-STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, cnt) == 24);
+STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, count) == 24);
 STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, pictureCaches) == 28);
 STATIC_ASSERT(sizeof(ACTOR_SYSTEM_STATE) == 92);
 
@@ -115,21 +116,22 @@ STATIC_ASSERT(sizeof(ACTOR_SYSTEM_STATE) == 92);
    its shadow) is drawn with. */
 typedef struct ANIMATION_SPR_PART {
 	/* The link to the next part queued in the same depth slot this tick
-	   (syOAMAddSprAtDepth). */
+	   (syOAMAddSpriteAtDepth). */
 	struct SPR *link;
 	/* The OAM entry's attributes 0 to 2. */
-	Uint16 y : 8;		/* screen pixels */
-	Uint16 affine : 2;	/* 0 plain, 1 affine, 3 affine at double size */
-	Uint16 objMode : 2; /* an SPR_MODE */
+	Uint16 y : 8;		   /* screen pixels */
+	Uint16 affine : 2;	   /* 0 plain, 1 affine, 3 affine at double size */
+	Uint16 objectMode : 2; /* an SPR_MODE */
 	Uint16 mosaic : 1;
-	Uint16 fullCol : 1;	  /* 256 colours; set for both parts when created */
+	Uint16 fullColor : 1; /* 256 colours; set for both parts when created */
 	Uint16 shape : 2;	  /* 0 square, 1 wide, 2 tall */
 	Uint16 x : 9;		  /* screen pixels */
-	Uint16 affineIdx : 5; /* affine matrix, or 8 for a mirrored plain sprite */
-	Uint16 size : 2;	  /* with shape, the sprite's size */
-	Uint16 tile : 10;	  /* first sprite tile in VRAM */
-	Uint16 pri : 2;		  /* 2 when created */
-	Uint16 pal : 4;		  /* 16-colour palette; unused at 256 colours */
+	Uint16
+		affineIndex : 5; /* affine matrix, or 8 for a mirrored plain sprite */
+	Uint16 size : 2;	 /* with shape, the sprite's size */
+	Uint16 tile : 10;	 /* first sprite tile in VRAM */
+	Uint16 priority : 2; /* 2 when created */
+	Uint16 palette : 4;	 /* 16-colour palette; unused at 256 colours */
 	/* the OAM entry's fourth halfword, an affine parameter's place; zero when
 	   created, not named */
 	Uint8 attr3[2];
@@ -147,19 +149,19 @@ typedef struct SPR {
 	Uint8 retainCacheEntry : 1;
 	/* Drawn at its own scale, not scaled by distance (fixed camera). */
 	Uint8  useOwnScale : 1;
-	Uint8  unusedFlg : 6; /* no code names them */
-	Uint16 rotation;	  /* 1/65536 turns */
-	Uint8  width;		  /* pixels; zero marks a free sprite */
-	Uint8  height;		  /* pixels */
-	Sint8  ofsX;		  /* pixels */
-	Sint8  ofsY;		  /* pixels */
+	Uint8  unusedFlags : 6; /* no code names them */
+	Uint16 rotation;		/* 1/65536 turns */
+	Uint8  width;			/* pixels; zero marks a free sprite */
+	Uint8  height;			/* pixels */
+	Sint8  offsetX;			/* pixels */
+	Sint8  offsetY;			/* pixels */
 	/* The animation number last selected, which selecting again skips. */
 	Uint8 lastNo;
 	Uint8 dirty; /* nonzero redraws its pixels into VRAM when next drawn */
 	/* SPR_FLAG bits: SPRITE_FLAG_OUTLINED and SPRITE_FLAG_SHADOW (set when
 	   created). */
-	Uint8		   flg;
-	Uint8		   cnt;		   /* layers in use, up to the last one present */
+	Uint8		   flags;
+	Uint8		   count;	   /* layers in use, up to the last one present */
 	SPR_ANIMATION *entries[4]; /* its layers; empty ones null */
 } SPR;
 
@@ -172,7 +174,7 @@ STATIC_ASSERT(sizeof(SPR) == 56);
 STATIC_ASSERT(offsetof(SPR, entries) == 40);
 
 /* Animation numbers of an actor's sprite, for syImportActorSetAnimation and
-   fdSprStartAnimation. */
+   fdSpriteStartAnimation. */
 typedef enum ACTOR_ANIMATION {
 	/* Standing still: nearly every sprite's first frame held, without the
 	   blinks and small gestures of ANIM_STAND. */

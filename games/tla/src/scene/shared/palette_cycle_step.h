@@ -4,7 +4,7 @@
    Psynergy but Hover holds the field. */
 void fdPaletteCycleStep(void)
 {
-	Uint16 cols[16];
+	Uint16 colors[16];
 	Sint32 phase = (PaletteCycleTick / CYCLE_STEP_TICKS) % CYCLE_PLACES;
 	Sint32 i;
 
@@ -20,9 +20,9 @@ void fdPaletteCycleStep(void)
 			return;
 	}
 	for(i = 0; i <= CYCLE_PLACES - 1; i++)
-		cols[(phase + i) % CYCLE_PLACES] =
+		colors[(phase + i) % CYCLE_PLACES] =
 			PaletteCycleColors[i + CYCLE_FIRST_COLOR];
-	syDMAXCopy(cols, (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
+	syDMAXCopy(colors, (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
 		DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2), REG_DMA3);
 	PaletteCycleTick++;
 }

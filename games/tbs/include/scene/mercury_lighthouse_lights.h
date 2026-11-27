@@ -35,15 +35,15 @@ typedef struct MERCURY_LIGHTHOUSE_LIGHTS {
 	/* Ticks to the next ripple in
 	   METATILE_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, 10 to 39; a hop zeroes
 	   it. */
-	Sint32 rippleTmr;
+	Sint32 rippleTimer;
 	/* 16.16 fixed-point pixels: the centre of the column's metatile, where a
 	   sinking leader is put back. */
-	FIXED		  tgtX;
-	FIXED		  tgtZ;
+	FIXED		  targetX;
+	FIXED		  targetZ;
 	struct ACTOR *pillar; /* the column of light over the leader, or null */
 	/* The light holding the leader up where they landed in the pool, or
 	   null. */
-	struct ACTOR *stepEff;
+	struct ACTOR *stepEffect;
 } MERCURY_LIGHTHOUSE_LIGHTS;
 
 STATIC_ASSERT(sizeof(MERCURY_LIGHTHOUSE_LIGHTS) == 28);

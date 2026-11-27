@@ -145,10 +145,10 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 struct ACTOR;
 struct EFFECT_OPTIONS;
 
-/* MAP_STATE.groundEffs read as its bit-fields: the footprints, and the kind of
-   wading (1 in rooms with a second level). */
+/* MAP_STATE.groundEffects read as its bit-fields: the footprints, and the kind
+   of wading (1 in rooms with a second level). */
 typedef struct MAP_GROUND_EFFECTS {
-	Uint8 unusedBeforeGroundEffs[23]; /* MAP_STATE's fields before it */
+	Uint8 unusedBeforeGroundEffects[23]; /* MAP_STATE's fields before it */
 	Uint8 footprints : 2;
 	Uint8 wading : 2;
 	Uint8 unusedHighBits : 4; /* no code names them */
@@ -158,7 +158,7 @@ typedef struct MAP_GROUND_EFFECTS {
    platform at its top, as Yampi Desert's geyser does. */
 typedef struct GEYSER {
 	Sint16 id;			   /* its actor; 0 for a free entry */
-	Sint16 tmr;			   /* ticks into its period */
+	Sint16 timer;		   /* ticks into its period */
 	Sint16 height;		   /* pixels it has risen */
 	Sint16 period;		   /* ticks in one rise and fall */
 	Sint16 riseAt;		   /* the timer it starts to rise at */
@@ -185,16 +185,17 @@ typedef struct GEYSER_WORK {
 
 void scGondowanCliffsFreezeSecondPuddle(void);
 void scGondowanCliffsBlowAwayWeeds(void);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 void scGeyserStart(Sint32 unused, Sint32 firstTerrain);
 
 /* The leaping stump's update: its sprite turns a 32nd of a turn a tick. */
 void scGondowanCliffsSpinStump(ACTOR *actor)
 {
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
-	spr->rotation -= TRIG_TURN / 32;
+	sprite->rotation -= TRIG_TURN / 32;
 }
 
 /* Waits until the actor has come down to height (16.16), a second at most. */
@@ -225,7 +226,7 @@ void scGondowanCliffsLeapStumpIntoWater(Sint32 mode, Sint32 id)
 	 * touches. */
 	Sint32		   unused[3];
 	EFFECT_OPTIONS options;
-	FIELD_SPR	  *spr;
+	FIELD_SPR	  *sprite;
 	Uint32		   i;
 
 	if(FIELD_METATILE(actor->x.fixed) != 76)
@@ -234,42 +235,42 @@ void scGondowanCliffsLeapStumpIntoWater(Sint32 mode, Sint32 id)
 	fdScriptEndLastingPsynergy(0);
 	fdMapGridCopyMetatileAttributes(74, 31, 1, 1, 74, 33);
 	if(FIELD_METATILE(fdActorGetById(ACTOR_STUMP)->x.fixed) == 76) {
-		actor->motionFlg = 0;
-		actor->collisionFlg = 0;
+		actor->motionFlags = 0;
+		actor->collisionFlags = 0;
 		for(i = 0; i <= 17; i++) {
 			syWait(1);
-			spr = actor->spr;
-			spr->rotation -= TRIG_TURN / 256;
-			actor->x.fixed -= syCos(((FIELD_SPR *)actor->spr)->rotation) / 2;
-			actor->tgtX = ACTOR_NO_TARGET;
+			sprite = actor->sprite;
+			sprite->rotation -= TRIG_TURN / 256;
+			actor->x.fixed -= syCos(((FIELD_SPR *)actor->sprite)->rotation) / 2;
+			actor->targetX = ACTOR_NO_TARGET;
 		}
 		actor->update = scGondowanCliffsSpinStump;
 		fdActorSetSpeed(id, 3);
 		fdActorSetDestination(id, 1193, 530);
 		actor->gravity = toFIXED(4) / 5;
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		actor->layer = 0;
 		scFieldActorWaitForMoveById(id);
 		scGondowanCliffsWaitToLand(actor, 0);
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 		fdMapGridSetShake(5, 5, 1);
-		fdScriptPlaySnd(SE_RUMBLE);
+		fdScriptPlaySound(SE_RUMBLE);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-		((FIELD_SPR *)actor->spr)->rotation = TRIG_TURN / 16;
+		((FIELD_SPR *)actor->sprite)->rotation = TRIG_TURN / 16;
 		actor->update = NULL;
 		options.type = SPRITE_SPLASH;
 		options.startScaleX = toFIXED(1) / 2;
-		options.tgtScaleX = toFIXED(3) / 2;
-		options.tgtScaleY = toFIXED(6) / 5;
+		options.targetScaleX = toFIXED(3) / 2;
+		options.targetScaleY = toFIXED(6) / 5;
 		options.startScaleY = toFIXED(4) / 5;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0,
 			0,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
 			&options);
-		fdScriptPlaySnd(SE_CAST);
+		fdScriptPlaySound(SE_CAST);
 		fdActorSetAnimation(id, STUMP_ANIMATION_SPLASH);
 		syFieldMapGridWaitForShakeToSettle();
-		fdActorGetById(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGetById(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER);
 	}
 	fdScriptEnd();
@@ -285,8 +286,8 @@ void scGondowanCliffsFreezeFirstPuddle(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_FIRST_PUDDLE);
 
-	actor->priFlg = 0;
-	actor->motionFlg = 0;
+	actor->priorityFlags = 0;
+	actor->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(79, 28, 1, 1, 81, 28);
 	fdScriptSetFlag(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN);
 }
@@ -301,8 +302,8 @@ void scGondowanCliffsFreezeSecondPuddle(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_SECOND_PUDDLE);
 
-	actor->priFlg = 0;
-	actor->motionFlg = 0;
+	actor->priorityFlags = 0;
+	actor->motionFlags = 0;
 	actor->groundHeight = toFIXED(32);
 	actor->y.fixed = toFIXED(32);
 	fdMapGridCopyMetatileAttributes(115, 35, 1, 1, 117, 35);
@@ -326,11 +327,11 @@ void scGondowanCliffsBlowAwayWeeds(void)
    The Scoop row runs the script every tick of the dig; at `SCOOP_DUG_TICK` it
    redraws the dug ground from a spare metatile of the map and moves the
    geyser's unseen point onto it. */
-void scGondowanCliffsScoopUpGeyser(Sint32 stage, Sint32 frm)
+void scGondowanCliffsScoopUpGeyser(Sint32 stage, Sint32 frame)
 {
 	ACTOR *actor;
 
-	if(frm == SCOOP_DUG_TICK) {
+	if(frame == SCOOP_DUG_TICK) {
 		actor = fdActorGet(ACTOR_GEYSER);
 		fdMapGridCopyMetatilesLayered(124, 1, 1, 1, 119, 43);
 		fdActorSetPos(ACTOR_GEYSER, 1912, 728);
@@ -397,17 +398,17 @@ const CUE *scGetCues(void)
 Uint16 GondowanCliffsSavedWaterColors[WATER_COLORS] BSS_DATA;
 
 /* Makes the water shimmer: its four colours turn one step every 16 ticks. */
-void scGondowanCliffsCycleWaterCols(void)
+void scGondowanCliffsCycleWaterColors(void)
 {
 	Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR);
 	Uint32	phase = TickCount >> 4;
 	Sint32	i;
 
 	for(i = 0; i < WATER_COLORS; i++) {
-		Uint32 idx = 3;
+		Uint32 index = 3;
 
-		idx &= phase;
-		*color++ = GondowanCliffsSavedWaterColors[idx];
+		index &= phase;
+		*color++ = GondowanCliffsSavedWaterColors[index];
 		phase++;
 	}
 }
@@ -428,7 +429,7 @@ void scGondowanCliffsSetUpPass(void)
 	syWordsCopy((Sint32)GondowanCliffsSavedWaterColors,
 		(Sint32)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
 		sizeof(GondowanCliffsSavedWaterColors));
-	sySetTickEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_TICK);
+	sySetTickEvent(scGondowanCliffsCycleWaterColors, EVENT_PASS_TICK);
 }
 
 /* Coming back to the cliffs after meeting Piers in Kibombo, before the ceremony
@@ -490,14 +491,14 @@ void scGondowanCliffsTurnBackToHelpPiers(void)
 	fdActorSetPos(ACTOR_JENNA, 0, 0);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 528, 488);
 	fdScriptFinishScreenTransition();
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 512, 488);
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(GONDOWAN_CLIFFS_TO_WORLD_MAP_A);
 }
 
 GEYSER *scGeyserAdd(
-	Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high);
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high);
 
 /* Sets up the scene being entered. The river channel has its own set-up; the
    cliffs turn the party back while Piers still needs their help, and otherwise
@@ -520,7 +521,7 @@ Sint32 scInit(void)
 		scGondowanCliffsTurnBackToHelpPiers();
 		return 0;
 	}
-	fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+	fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS) {
 		fdRopeInit();
@@ -552,16 +553,17 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER)) {
 			fdMapGridCopyMetatileAttributes(74, 31, 1, 1, 74, 33);
 			fdActorSetPos(ACTOR_STUMP, 1193, 530);
-			fdActorGetById(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-			fdActorGetById(ACTOR_STUMP)->collisionFlg = 0;
+			fdActorGetById(ACTOR_STUMP)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGetById(ACTOR_STUMP)->collisionFlags = 0;
 			fdActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
 		} else {
-			fdActorGetById(ACTOR_STUMP)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+			fdActorGetById(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 		}
 		syWordsCopyEntry(((Uint8 *)GondowanCliffsSavedWaterColors),
 			(void *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
 			sizeof(GondowanCliffsSavedWaterColors));
-		sySetTickEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_TICK);
+		sySetTickEvent(scGondowanCliffsCycleWaterColors, EVENT_PASS_TICK);
 		((MAP_GROUND_EFFECTS *)RamHeapSlots->mapGrid)->wading = 1;
 	}
 	return 0;
@@ -585,7 +587,8 @@ Sint32 scPrepareMap(void)
 
 /* Makes actor id the geyser of entry slot, rising from low to high pixels every
    six seconds, with an unseen platform at its top for the leader. */
-GEYSER *scGeyserAdd(Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high)
+GEYSER *scGeyserAdd(
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high)
 {
 	GEYSER_WORK *state = GEYSER_STATE;
 	GEYSER		*entry = &state->entries[slot];
@@ -593,7 +596,7 @@ GEYSER *scGeyserAdd(Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high)
 	ACTOR		*rider;
 
 	fdActorGet(id);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		if(high < low) {
 			Sint32 swap = low;
@@ -603,25 +606,25 @@ GEYSER *scGeyserAdd(Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high)
 		}
 		entry->id = id;
 		entry->height = 0;
-		entry->tmr = tmr;
+		entry->timer = timer;
 		entry->period = GEYSER_PERIOD_TICKS;
 		entry->max = high;
 		entry->riseAt = GEYSER_RISE_TICK;
 		entry->fallAt = GEYSER_FALL_TICK;
 		entry->min = low;
 		entry->unreadSetToOne = 1;
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
 		entry->step = 0;
 		entry->phase = 0;
 		entry->unreadCleared = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	}
 	rider = (scFieldActorCreate(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
 		actor->x.fixed, actor->y.fixed, actor->z.fixed));
-	rider->collisionFlg = 0;
-	rider->motionFlg = 0;
-	rider->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	rider->collisionFlags = 0;
+	rider->motionFlags = 0;
+	rider->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	entry->rider = rider;
 	return entry;
 }
@@ -635,7 +638,7 @@ GEYSER *scGeyserAdd(Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high)
 extern Sint32 GondowanCliffsResetTileSpriteScript[];
 
 LATE_DATA Sint32 GondowanCliffsResetTileSpriteScript[] = {
-	SC_CALL(scTileSprReset),
+	SC_CALL(scTileSpriteReset),
 	SC_END,
 };
 

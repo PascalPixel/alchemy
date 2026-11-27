@@ -41,13 +41,13 @@ typedef enum FLAME_SHEET_B_PICTURE {
 void btPaletteBrightenBgEntries(
 	Sint32 blueStep, Sint32 greenStep, Sint32 redStep)
 {
-	Uint16 *col = (Uint16 *)&BG_PLTT[1];
+	Uint16 *color = (Uint16 *)&BG_PLTT[1];
 	Sint32	i;
 
 	for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
-		Sint32 blue = RGB_BLUE(*col);
-		Sint32 green = RGB_GREEN(*col);
-		Sint32 red = RGB_RED(*col);
+		Sint32 blue = RGB_BLUE(*color);
+		Sint32 green = RGB_GREEN(*color);
+		Sint32 red = RGB_RED(*color);
 
 		blue += blueStep;
 		green += greenStep;
@@ -58,7 +58,7 @@ void btPaletteBrightenBgEntries(
 			green = RGB_LEVEL_MAX;
 		if(red > RGB_LEVEL_MAX)
 			red = RGB_LEVEL_MAX;
-		*col++ = RGB(red, green, blue);
+		*color++ = RGB(red, green, blue);
 	}
 }
 
@@ -159,7 +159,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				landing->variant = 0;
 				landing->x = x;
 				landing->y = y;
-				landing->velX = velocityX;
+				landing->velocityX = velocityX;
 				break;
 			}
 		}
@@ -187,7 +187,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	SCREEN_POINT  spot;
 	SCREEN_POINT  screen;
 	SPR_SCALE	  scale;
-	Sint32		  frm;
+	Sint32		  frame;
 	Sint32		  i;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -200,15 +200,15 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	if(direction == STARFIELD_FALL_OUTER_SPACE) {
 		ACTOR *actor = btObjectGetStub(state->args->user)->actor;
 
-		actor->velY = toFIXED(10);
+		actor->velocityY = toFIXED(10);
 		actor->gravity = toFIXED(57) / 100;
 		btEffectTintBattler(state->args->user, -1, POSE_LEAP, -1, 0);
-		sySndPlayStub(SE_CRASH);
+		sySoundPlayStub(SE_CRASH);
 		direction = state->args->side == EFFECT_SIDE_PARTY ? 1 : -1;
 	} else {
 		direction = -1;
 	}
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	/* The backdrop and colour 1 go black for the wipe. */
 	PLTT_BACKDROP = 0;
 	BG_PLTT_COLOR(0, 1) = 0;
@@ -218,18 +218,18 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	syCloseEvent(btEffectTransferCanvas);
 	if(mode == STARFIELD_FALL_OUTER_SPACE) {
 		for(i = 0; i != 2; i++) {
-			SPR *spr = fdSprCreateStub(
+			SPR *sprite = fdSpriteCreateStub(
 				SPRITE_BATTLE_FUSION_DRAGON + i * SPRITE_SECOND_PART);
 
-			state->sprs[i] = spr;
-			if(spr != 0) {
-				spr->flg = 0;
-				fdSprStartAnimationStub(spr, 2);
-				state->sprs[i]->image.pri = 3;
+			state->sprites[i] = sprite;
+			if(sprite != 0) {
+				sprite->flags = 0;
+				fdSpriteStartAnimationStub(sprite, 2);
+				state->sprites[i]->image.priority = 3;
 			}
 		}
 	} else {
-		btEffectCreateSprs(1, SPRITE_METEOR, 3);
+		btEffectCreateSprites(1, SPRITE_METEOR, 3);
 	}
 	/* The starfield. */
 	btResourceLoadAndDecompress(RESOURCE_FLAME_SHEET_B, state->sheet, 1, 1);
@@ -273,7 +273,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectShowLivingTargets(state->args);
 	state->bg2x = 0;
 	state->bg2y = 0;
-	state->scrollTmr = 0;
+	state->scrollTimer = 0;
 	state->scrollInterval = 2;
 	state->scrollStepX = direction * Q_8_8(0.5);
 	state->scrollStepY = Q_8_8(1);
@@ -329,11 +329,11 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		EFFECT_FREE_PARTICLES(
 			i, state->particles, ARRAY_COUNT(state->particles));
 		view->busy = 1;
-		state->frm = 0;
-		frm = 0;
+		state->frame = 0;
+		frame = 0;
 		do {
-			Sint32	growth = frm << 8;
-			Sint32	value = state->frm;
+			Sint32	growth = frame << 8;
+			Sint32	value = state->frame;
 			Sint32	dividend;
 			Sint32	glow;
 			Uint16 *line;
@@ -358,14 +358,14 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			__asm__("" : "=r"(hold) : "r"(value) : "r1", "r6");
 			line = (Uint16 *)(state->sheet + STARFIELD_FALL_BACKDROP_LINES);
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
-				if((PerRepeat & (KEY_A | KEY_B)) && frm > 16)
+				if((PerRepeat & (KEY_A | KEY_B)) && frame > 16)
 					break;
 			} else {
-				if((PerRepeat & (KEY_A | KEY_B)) && frm > 4)
+				if((PerRepeat & (KEY_A | KEY_B)) && frame > 4)
 					break;
 			}
-			if(frm == 0)
-				sySndPlayStub(SE_RUMBLE);
+			if(frame == 0)
+				sySoundPlayStub(SE_RUMBLE);
 			/* FAKEMATCH(dead): updates of hold that cancel out. */
 			if(hold) {
 				hold++;
@@ -391,10 +391,10 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			for(; i != DISPLAY_HEIGHT; i++)
 				*line++ = 0;
 			if(direction == 1)
-				x = frm / 4;
+				x = frame / 4;
 			else
-				x = 64 - frm / 4;
-			y = 96 - frm;
+				x = 64 - frame / 4;
+			y = 96 - frame;
 			/* The falling sprite drifts with the stream and grows. */
 			pos.groundHeight = 0;
 			pos.height = toFIXED(255);
@@ -405,9 +405,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				pos.x = toFIXED(x) + toFIXED(80);
 				pos.y = toFIXED(64 - y);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[0], &pos, &scale, 0);
+					state->sprites[0], &pos, &scale, 0);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[1], &pos, &scale, 0);
+					state->sprites[1], &pos, &scale, 0);
 			} else {
 				size = growth + toFIXED(1);
 				scale.x = size;
@@ -415,7 +415,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				pos.x = toFIXED(x) + toFIXED(96);
 				pos.y = toFIXED(96 - y);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[0], &pos, &scale, 0);
+					state->sprites[0], &pos, &scale, 0);
 			}
 			/* A new flame below the falling sprite. */
 			for(i = 0, y = 32 - y; i != STARFIELD_FALL_FLAME_COUNT; i++) {
@@ -441,10 +441,10 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			syInitMatrix();
 			syMatrixTranslateVector(syScreenPointCoordinates(&screen));
 			syRotZ(TRIG_TURN / 32);
-			syRotY(frm << 8);
+			syRotY(frame << 8);
 			for(i = 0; i != 7; i++) {
 				SET_VECTOR(vector, toFIXED(StarfieldFallOrbitPoints[i][0] / 2),
-					toFIXED(StarfieldFallOrbitPoints[i][1] + frm),
+					toFIXED(StarfieldFallOrbitPoints[i][1] + frame),
 					toFIXED(StarfieldFallOrbitPoints[i][2] / 2));
 				btProjectionPoint(vector, &spot);
 				spot.x = FIXEDtoINT(spot.x) + 128;
@@ -457,12 +457,12 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					STARFIELD_FALL_SMALL_GLOW_SIZE);
 			}
 			if(direction == 1)
-				x = frm / 4 - 16;
+				x = frame / 4 - 16;
 			else
-				x = 16 - frm / 4;
+				x = 16 - frame / 4;
 			/* Seven fireballs fall; one that reaches the ground becomes a
 			   landing. */
-			y = frm - 96;
+			y = frame - 96;
 			for(i = 0; i != 7; i++) {
 				Sint32 fireballY = StarfieldFallFireballPoints[i][1] + y;
 
@@ -500,9 +500,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
-			frm++;
-			state->frm++;
-		} while(frm != STARFIELD_FALL_FALL_TICKS);
+			frame++;
+			state->frame++;
+		} while(frame != STARFIELD_FALL_FALL_TICKS);
 		sySynch(1);
 		view->busy = 0;
 		syCloseEvent(btEffectAdvanceBg2OnInterval);
@@ -513,7 +513,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	/* The burst: embers, rising motes and growing flashes from the impact. */
-	btEffectSetupBlendedDisp();
+	btEffectSetupBlendedDisplay();
 	REG_BG2PA = Q_8_8(0.5);
 	REG_BG2X = 0;
 	REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
@@ -548,10 +548,10 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
 
-	for(frm = 0; frm != STARFIELD_FALL_BURST_TICKS; frm++) {
-		FIXED		   dragonScale = (frm + 464) << 8;
+	for(frame = 0; frame != STARFIELD_FALL_BURST_TICKS; frame++) {
+		FIXED		   dragonScale = (frame + 464) << 8;
 		BATTLE_CAMERA *camera = BattleCameraWork;
-		Sint32		   elapsed = frm - STARFIELD_FALL_FLASH_TICK;
+		Sint32		   elapsed = frame - STARFIELD_FALL_FLASH_TICK;
 		SPR_SCALE	   scale;
 		Sint32		   x;
 		Sint32		   y;
@@ -559,14 +559,14 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		if(elapsed >= STARFIELD_FALL_BRIGHTEN_DELAY)
 			btPaletteBrightenBgEntries(2, 2, 2);
-		if(frm == 0)
-			sySndPlayStub(SE_SWITCH_MECHANISM);
-		if(frm == 40)
-			sySndPlayStub(SE_CRASH);
-		if(frm == 48) {
+		if(frame == 0)
+			sySoundPlayStub(SE_SWITCH_MECHANISM);
+		if(frame == 40)
+			sySoundPlayStub(SE_CRASH);
+		if(frame == 48) {
 			if(mode == STARFIELD_FALL_OUTER_SPACE) {
-				fdSprDestroyStub(state->sprs[0]);
-				fdSprDestroyStub(state->sprs[1]);
+				fdSpriteDestroyStub(state->sprites[0]);
+				fdSpriteDestroyStub(state->sprites[1]);
 				btObjectPutStub();
 			}
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -657,11 +657,11 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 		if(direction == 1)
-			x = frm / 2 + 24;
+			x = frame / 2 + 24;
 		else
-			x = 56 - frm / 2;
-		y = 64 - frm * 2;
-		meteorScale = (frm << 8) + toFIXED(2);
+			x = 56 - frame / 2;
+		y = 64 - frame * 2;
+		meteorScale = (frame << 8) + toFIXED(2);
 		pos.groundHeight = 0;
 		pos.height = toFIXED(255);
 		if(mode == STARFIELD_FALL_OUTER_SPACE) {
@@ -670,25 +670,25 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			pos.x = toFIXED(x) + toFIXED(96);
 			pos.y = toFIXED(96 - y);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[0], &pos, &scale, 0);
+				state->sprites[0], &pos, &scale, 0);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[1], &pos, &scale, 0);
+				state->sprites[1], &pos, &scale, 0);
 		} else {
 			scale.x = meteorScale;
 			scale.y = meteorScale;
 			pos.x = toFIXED(x) + toFIXED(96);
 			pos.y = toFIXED(96 - y);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[0], &pos, &scale, 0);
+				state->sprites[0], &pos, &scale, 0);
 		}
-		state->shakeFrm = 1;
+		state->shakeFrame = 1;
 		btCameraShake(8, 8);
 		EFFECT_PRESENT_CANVAS(state);
 	}
 	syCloseEvent(btEffectTransferCanvas);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	if(mode == STARFIELD_FALL_METEOR)
-		fdSprDestroyStub(state->sprs[0]);
+		fdSpriteDestroyStub(state->sprites[0]);
 	btEffectEndCanvasLayer();
 }
 

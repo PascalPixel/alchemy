@@ -54,7 +54,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 drift;
 	Sint8				*path;
 	Sint32				 x;
@@ -139,25 +139,25 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	}
 	path = syResourceGetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);
 
-	for(frm = 0; frm != DRAGON_CLOUD_TICKS; frm++) {
+	for(frame = 0; frame != DRAGON_CLOUD_TICKS; frame++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		if(frm == DRAGON_CLOUD_STRIKE_TICK)
+		if(frame == DRAGON_CLOUD_STRIKE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frm == 0)
-			sySndPlayStub(SE_WHOOSH);
-		if(frm == 50)
-			sySndPlayStub(SE_WHOOSH);
+		if(frame == 0)
+			sySoundPlayStub(SE_WHOOSH);
+		if(frame == 50)
+			sySoundPlayStub(SE_WHOOSH);
 		if(state->args->side == EFFECT_SIDE_ENEMIES) {
-			if(frm <= 63)
+			if(frame <= 63)
 				camera->yaw -= TRIG_TURN / 256;
 		} else {
-			if(frm <= 63)
+			if(frame <= 63)
 				camera->yaw += TRIG_TURN / 256;
 		}
 		btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
-		if(frm <= 17) {
-			Sint32 picture = frm / 3;
+		if(frame <= 17) {
+			Sint32 picture = frame / 3;
 
 			DRAGON_CLOUD_DRAW_PUFF(draw[0], canvas, state->sheet, picture, 48,
 				BattleEffectPuffArcPictureBiasY[picture] + 60);
@@ -165,8 +165,8 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				BattleEffectPuffArcPictureBiasY[picture] + 60);
 		}
 		/* The flame flies along its path. */
-		if(frm >= 18 && frm <= 58) {
-			if(frm == 18) {
+		if(frame >= 18 && frame <= 58) {
+			if(frame == 18) {
 				x = (path[0] << 8) + (Uint8)path[1];
 				y = (path[2] << 8) + (Uint8)path[3] + 16;
 				path += 4;
@@ -176,8 +176,8 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				path += 2;
 			}
 		}
-		if(frm >= 78 && frm <= 118) {
-			if(frm == 78) {
+		if(frame >= 78 && frame <= 118) {
+			if(frame == 78) {
 				x = -56;
 				y = 48;
 			} else {
@@ -185,7 +185,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		for(j = DRAGON_CLOUD_TRAIL_LENGTH - 1; j != 0; j--) {
-			if(frm > j + 18 && frm <= j + 83) {
+			if(frame > j + 18 && frame <= j + 83) {
 				trail[j].x = trail[j - 1].x;
 				trail[j].y = trail[j - 1].y;
 				if(j > DRAGON_CLOUD_TRAIL_BRIGHT)
@@ -203,7 +203,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* The flame leans as it rises and falls. */
-		if(frm >= 18 && frm <= DRAGON_CLOUD_STRIKE_TICK) {
+		if(frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_TICK) {
 			Sint32 lift;
 
 			if(state->args->side == EFFECT_SIDE_PARTY)
@@ -229,14 +229,14 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				trail[0].x - 6, trail[0].y - 2, DRAGON_CLOUD_FLAME_WIDTH,
 				DRAGON_CLOUD_FLAME_HEIGHT);
 		}
-		if(frm == DRAGON_CLOUD_STRIKE_TICK) {
-			state->shakeFrm = 8;
+		if(frame == DRAGON_CLOUD_STRIKE_TICK) {
+			state->shakeFrame = 8;
 			btEffectTintBattler(
-				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_HOP);
+				state->args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+			btMotionApplyKnockbackStub(state->args->targets[0], KNOCKBACK_HOP);
 		}
 		/* After the strike the embers rise and fall back. */
-		if(frm > DRAGON_CLOUD_STRIKE_TICK) {
+		if(frame > DRAGON_CLOUD_STRIKE_TICK) {
 			for(i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
 				PARTICLE *ember =
 					&state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
@@ -268,20 +268,20 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 						EFFECT_DRAW_MOTE(
 							draw[0], canvas, sheet, pos.x, pos.y, size);
 					}
-					ember->x += ember->velX;
-					ember->y += ember->velY;
-					ember->z += ember->velZ;
-					ember->velY -= toFIXED(1) / 8;
+					ember->x += ember->velocityX;
+					ember->y += ember->velocityY;
+					ember->z += ember->velocityZ;
+					ember->velocityY -= toFIXED(1) / 8;
 				}
 			}
 		}
-		if(frm == 50) {
-			state->shakeFrm = 12;
+		if(frame == 50) {
+			state->shakeFrame = 12;
 			btEffectTintBattler(
-				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				state->args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 		}
 		/* The puffs. */
-		if(frm > 49) {
+		if(frame > 49) {
 			for(i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
 				PARTICLE *puff = &state->particles[i];
 

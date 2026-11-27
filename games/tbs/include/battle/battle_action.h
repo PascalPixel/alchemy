@@ -12,25 +12,26 @@ struct ACTOR;
 struct SPR_ANIMATION;
 
 /* A unit's place on the battlefield: its actor, resources and animations, its
-   anchor spot and scale, and the statuses it shows. BATTLE_STATE.objs holds the
-   14, reached by unit id through btObjectGet; btObjectMake fills one in when
-   the unit is placed. */
+   anchor spot and scale, and the statuses it shows. BATTLE_STATE.objects holds
+   the 14, reached by unit id through btObjectGet; btObjectMake fills one in
+   when the unit is placed. */
 typedef struct BATTLE_OBJECT {
 	struct ACTOR *actor;	/* NULL once released */
 	Uint16		  resource; /* the unit's sprite */
 	Uint16 overlay; /* a second sprite drawn over it, the weapon; 0 for none */
-	Uint16 anm;		/* the status icon's animation shown; 0 for none */
+	Uint16 animation; /* the status icon's animation shown; 0 for none */
 	Uint16 shadow; /* the shadow sprite under the unit (SPRITE_BATTLE_SHADOW) */
 	FIXED  anchorX; /* 16.16 fixed-point pixels */
 	FIXED  anchorZ; /* 16.16 fixed-point pixels */
 	/* The unit sprite's SPR_COL_MODE: an enemy's own, 1 for a character on the
 	   enemy side (a link opponent), else 0. */
-	Sint32 pal;
+	Sint32 palette;
 	FIXED  scale;		   /* 16.16 fixed point, toFIXED(1) full size */
 	Sint16 activeStatuses; /* a bit per status with an icon (ICON_) */
-	Uint8  shownStat;	   /* the status whose icon is shown */
-	Sint8  cycleTmr;	   /* ticks until the next status icon */
-	struct SPR_ANIMATION *anmEntry;	   /* the status icon's sprite, or NULL */
+	Uint8  shownStatus;	   /* the status whose icon is shown */
+	Sint8  cycleTimer;	   /* ticks until the next status icon */
+	struct SPR_ANIMATION
+		*animationEntry;			   /* the status icon's sprite, or NULL */
 	struct SPR_ANIMATION *shadowEntry; /* the shadow's sprite, or NULL */
 	/* Set by btObjectMarkForRelease: its actor is released with the others by
 	   btObjectDestroyAll. */
@@ -65,12 +66,12 @@ typedef enum BATTLE_COMMAND {
    BATTLE_STATE.actions holds the turn's actions. */
 typedef struct BATTLE_ACTION {
 	Sint16 unitId;
-	Uint16 slot;	/* in a link battle, unitId as the opponent knows it */
-	Sint16 pri;		/* from the unit's Agility; higher acts first */
-	Sint16 command; /* BATTLE_COMMAND */
+	Uint16 slot;	 /* in a link battle, unitId as the opponent knows it */
+	Sint16 priority; /* from the unit's Agility; higher acts first */
+	Sint16 command;	 /* BATTLE_COMMAND */
 	/* an ability id, or COMMAND_ITEM's inventory index (-1 gone) */
-	Sint16 prm;
-	Sint16 tgt;	   /* the aimed unit's id */
+	Sint16 param;
+	Sint16 target; /* the aimed unit's id */
 	Sint16 range;  /* the action's range */
 	Sint16 unused; /* no code names it */
 } BATTLE_ACTION;
@@ -90,14 +91,14 @@ typedef struct BATTLE_SPOILS {
 STATIC_ASSERT(sizeof(BATTLE_OBJECT) == 44);
 STATIC_ASSERT(offsetof(BATTLE_OBJECT, anchorX) == 12);
 STATIC_ASSERT(offsetof(BATTLE_OBJECT, activeStatuses) == 28);
-STATIC_ASSERT(offsetof(BATTLE_OBJECT, cycleTmr) == 31);
+STATIC_ASSERT(offsetof(BATTLE_OBJECT, cycleTimer) == 31);
 STATIC_ASSERT(offsetof(BATTLE_OBJECT, active) == 40);
 
 STATIC_ASSERT(sizeof(BATTLE_ACTION) == 16);
-STATIC_ASSERT(offsetof(BATTLE_ACTION, pri) == 4);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, priority) == 4);
 STATIC_ASSERT(offsetof(BATTLE_ACTION, command) == 6);
-STATIC_ASSERT(offsetof(BATTLE_ACTION, prm) == 8);
-STATIC_ASSERT(offsetof(BATTLE_ACTION, tgt) == 10);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, param) == 8);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, target) == 10);
 STATIC_ASSERT(sizeof(BATTLE_SPOILS) == 20);
 
 #endif

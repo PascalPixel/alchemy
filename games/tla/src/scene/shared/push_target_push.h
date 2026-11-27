@@ -1,10 +1,10 @@
 /* The leader pushes the object to its resting place: the metatiles it leaves
    are floor again and the metatiles it comes to are walls. */
-void scPushTargetPush(PUSH_TARGET tgt)
+void scPushTargetPush(PUSH_TARGET target)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	ACTOR	  *actor = fdActorGet(tgt.id);
+	ACTOR	  *actor = fdActorGet(target.id);
 	Sint32	   metatile[3];
 	FIXED	   from[3];
 	Sint32	   rectangle;
@@ -26,7 +26,7 @@ void scPushTargetPush(PUSH_TARGET tgt)
 #else
 	direction = FIXEDtoINT(leader->facing);
 #endif
-	rectangle = tgt.rectangle;
+	rectangle = target.rectangle;
 	speed = leader->speedLimit;
 	acceleration = leader->acceleration;
 	from[0] = actor->x.fixed;
@@ -49,8 +49,8 @@ void scPushTargetPush(PUSH_TARGET tgt)
 	syWait(15);
 	/* The leader follows the object half its way. */
 	{
-		Sint32 deltaX = FIXEDtoINT(tgt.x - from[0]) >> 1;
-		Sint32 deltaZ = FIXEDtoINT(tgt.z - from[2]) >> 1;
+		Sint32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
+		Sint32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
 
 		fdActorSetDestinationOffset(
 			MainRoutineStateWork.leaderActorId, deltaX, deltaZ);
@@ -63,9 +63,9 @@ void scPushTargetPush(PUSH_TARGET tgt)
 		fdActorSelectAnimation(actor, 3);
 	else
 		fdActorSelectAnimation(actor, 2);
-	fdScriptPlaySnd(SE_HEAVY_MOVE);
-	fdActorSetSpeedAndAcceleration(tgt.id, 0.5, 0.1);
-	scFieldActorSetMoveTargetFX(actor, tgt.x, tgt.y, tgt.z);
+	fdScriptPlaySound(SE_HEAVY_MOVE);
+	fdActorSetSpeedAndAcceleration(target.id, 0.5, 0.1);
+	scFieldActorSetMoveTargetFX(actor, target.x, target.y, target.z);
 	scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeedAndAcceleration(
@@ -84,30 +84,30 @@ void scPushTargetPush(PUSH_TARGET tgt)
 			toFIXED(step) >> 31, FIXEDtoINT(toFIXED(step)) >> 1);
 #endif
 	}
-	if(tgt.func != 0)
-		((void (*)(void))tgt.func)();
+	if(target.callback != 0)
+		((void (*)(void))target.callback)();
 	scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
 	leader->update = NULL;
 	leader->speedLimit = speed;
 	leader->acceleration = acceleration;
 	scFieldActorWaitForMove(actor);
-	fdScriptPlaySnd(SE_STOP_EXIT_SE);
-	fdScriptPlaySnd(SE_HEAVY_STOP);
-	scFieldActorSetPosAndResetMotion(actor, tgt.x, actor->y.fixed, tgt.z);
+	fdScriptPlaySound(SE_STOP_EXIT_SE);
+	fdScriptPlaySound(SE_HEAVY_STOP);
+	scFieldActorSetPosAndResetMotion(actor, target.x, actor->y.fixed, target.z);
 	fdActorSelectAnimation(actor, 1);
-	tgt.x = tgt.x + toFIXED(PushRectangles[rectangle][0]);
-	tgt.z = tgt.z + toFIXED(PushRectangles[rectangle][1]);
-	tgt.x >>= 20;
-	tgt.z >>= 20;
-	originX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
-	originZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
-	fdMapGridCopyMetatileAttributes(
-		tgt.x, tgt.z, width, height, originX + tgt.x, originZ + tgt.z);
-	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_GROUND, tgt.x, tgt.z, width,
-		height, METATILE_BEHAVIOR_WALL);
-	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, tgt.x, tgt.z, width,
-		height, METATILE_BEHAVIOR_WALL);
+	target.x = target.x + toFIXED(PushRectangles[rectangle][0]);
+	target.z = target.z + toFIXED(PushRectangles[rectangle][1]);
+	target.x >>= 20;
+	target.z >>= 20;
+	originX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
+	originZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
+	fdMapGridCopyMetatileAttributes(target.x, target.z, width, height,
+		originX + target.x, originZ + target.z);
+	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_GROUND, target.x, target.z,
+		width, height, METATILE_BEHAVIOR_WALL);
+	fdMapGridFillCollisionRectangle(MAPGRID_LAYER_OVERHEAD, target.x, target.z,
+		width, height, METATILE_BEHAVIOR_WALL);
 	metatile[0] =
 		FIELD_METATILE(from[0] + toFIXED(PushRectangles[rectangle][0]));
 	metatile[2] =

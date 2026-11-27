@@ -1,7 +1,7 @@
 @ A stub, 8 bytes: it loads target's address into r4 and jumps to
 @ it. Code calls a function of another module or overlay through its stub. A
 @ stub is usually named for its target with Far added:
-@ mnTextDrawNumAtOffsetStub reaches mnTextDrawNumAtOffset. It may use r4
+@ mnTextDrawNumberAtOffsetStub reaches mnTextDrawNumberAtOffset. It may use r4
 @ freely because every game C file is compiled with -fcall-used-r4, so no
 @ caller expects r4 to survive a call, and bx switches to ARM for the IWRAM
 @ functions.

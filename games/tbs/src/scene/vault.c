@@ -134,17 +134,17 @@ static void scVaultFaceEachOtherAndWait(
    or while he talks to someone or reads a mind. */
 static UNREAD_RESULT scVaultUpdateWomanWantingRoofFixed(ACTOR *woman)
 {
-	WIN_STATE	*win = (WIN_STATE *)WindowStateWork[0];
+	WIN_STATE	*window = (WIN_STATE *)WindowStateWork[0];
 	FIELD_STATE *state = FieldStateWork;
 	Sint32		 force = 0;
 	Sint32		 range = STOP_RANGE;
 	ACTOR		*leader;
 
-	if(woman->tgtX == ACTOR_NO_TARGET)
+	if(woman->targetX == ACTOR_NO_TARGET)
 		RETURN_UNREAD(0);
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if((Sint16)state->talk != 0 || win->mindRead != 0) {
+	if((Sint16)state->talk != 0 || window->mindRead != 0) {
 		range = TALK_STOP_RANGE;
 		force = 1;
 	}
@@ -177,7 +177,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 /* Counts the Venus Djinn that must leave Ivan before he leaves the party. */
 static int scVaultGetIvanVenusDjinnCount(void)
 {
-	return gmUnitGet(IVAN)->djinnHeldCnts[ELEMENT_VENUS];
+	return gmUnitGet(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
 #include "shared/vault_djinn.c"
@@ -356,7 +356,7 @@ static void scVaultPityIvan(void)
 	ACTOR *actor = fdActorGet(ACTOR_BOY_ROUND_THE_WELL);
 	Sint16 savedFacing = actor->facing;
 
-	actor->tmr |= VILLAGER_TALKED_TO;
+	actor->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultPoorGuyLeft);
 	fdActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
@@ -366,7 +366,7 @@ static void scVaultPityIvan(void)
 	actor->facing = savedFacing;
 	sySynch(1);
 	fdScriptEnd();
-	actor->tmr &= VILLAGER_IS_BOY;
+	actor->timer &= VILLAGER_IS_BOY;
 }
 
 /* While the rod is missing, the girl walking round the well stops: Master
@@ -376,7 +376,7 @@ static void scVaultTalkOfHammetsCaravan(void)
 	ACTOR *actor = fdActorGet(ACTOR_GIRL_ROUND_THE_WELL);
 	Sint16 savedFacing = actor->facing;
 
-	actor->tmr |= VILLAGER_TALKED_TO;
+	actor->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultMasterHammetsCaravan);
 	fdActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
@@ -386,7 +386,7 @@ static void scVaultTalkOfHammetsCaravan(void)
 	actor->facing = savedFacing;
 	sySynch(1);
 	fdScriptEnd();
-	actor->tmr &= VILLAGER_IS_BOY;
+	actor->timer &= VILLAGER_IS_BOY;
 }
 
 /* Once the suspects' minds are read, the woman pacing in front of the inn turns
@@ -472,7 +472,7 @@ static void scVaultAskWhetherIvanWentToLunpa(void)
 	ACTOR *actor = fdActorGet(ACTOR_BOY_ROUND_THE_WELL);
 	Sint16 savedFacing = actor->facing;
 
-	actor->tmr |= VILLAGER_TALKED_TO;
+	actor->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultDidntGoLunpa);
 	if(gmFlagGet(FLAG_IN_PARTY(IVAN)) != 0)
@@ -484,7 +484,7 @@ static void scVaultAskWhetherIvanWentToLunpa(void)
 	actor->facing = savedFacing;
 	sySynch(1);
 	fdScriptEnd();
-	actor->tmr &= VILLAGER_IS_BOY;
+	actor->timer &= VILLAGER_IS_BOY;
 }
 
 /* Once the thieves are jailed, the girl walking round the well stops: everyone
@@ -494,7 +494,7 @@ static void scVaultThankForCapturingThieves(void)
 	ACTOR *actor = fdActorGet(ACTOR_GIRL_ROUND_THE_WELL);
 	Sint16 savedFacing = actor->facing;
 
-	actor->tmr |= VILLAGER_TALKED_TO;
+	actor->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultEveryoneGratefulCaptured);
 	fdActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
@@ -504,7 +504,7 @@ static void scVaultThankForCapturingThieves(void)
 	actor->facing = savedFacing;
 	sySynch(1);
 	fdScriptEnd();
-	actor->tmr &= VILLAGER_IS_BOY;
+	actor->timer &= VILLAGER_IS_BOY;
 }
 
 /* Once the thieves are jailed, the strongman by the rope bridge asks about the
@@ -600,7 +600,7 @@ static void scVaultReadMindOnTravelers(void)
    Ivan?" */
 static void scVaultReadMindOnIvan(void)
 {
-	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->tmr |= VILLAGER_TALKED_TO;
+	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	if(gmFlagGet(FLAG_VAULT_THIEVES_JAILED) == 0) {
 		fdScriptSetMessageId(MsgVaultBetWasThoseThreeCreeps);
@@ -611,7 +611,7 @@ static void scVaultReadMindOnIvan(void)
 	}
 	scVaultShowThought(ACTOR_BOY_ROUND_THE_WELL);
 	fdScriptEnd();
-	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->tmr &= VILLAGER_IS_BOY;
+	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->timer &= VILLAGER_IS_BOY;
 }
 
 /* Mind Read on the girl walking round the well: it doesn't matter how rich you
@@ -619,7 +619,7 @@ static void scVaultReadMindOnIvan(void)
    party must be stronger than they look. */
 static void scVaultReadMindOnWealth(void)
 {
-	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->tmr |= VILLAGER_TALKED_TO;
+	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	if(gmFlagGet(FLAG_VAULT_THIEVES_JAILED) == 0)
 		fdScriptSetMessageId(MsgVaultSupposeDoesntMatterHowRich);
@@ -627,7 +627,7 @@ static void scVaultReadMindOnWealth(void)
 		fdScriptSetMessageId(MsgVaultMustStrongerThanLookHave);
 	scVaultShowThought(ACTOR_GIRL_ROUND_THE_WELL);
 	fdScriptEnd();
-	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->tmr &= VILLAGER_IS_BOY;
+	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->timer &= VILLAGER_IS_BOY;
 }
 
 /* Mind Read on the strongman by the rope bridge: everyone knows the three at
@@ -703,7 +703,7 @@ static void scVaultReadWomanWantingTheRoofFixedMind(void)
    the suspects' minds have been read. */
 static void scVaultClimbIntoInnLoft(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scVaultWalkThroughExit(152, 264, VAULT_TO_LOG_ROOMS_A_WEST);
 }
 
@@ -717,16 +717,16 @@ static void scVaultJumpActorToAndWait(
 	fdActorSetSpeed(actorId, 3);
 	actor->gravity = toFIXED(1) / 2;
 	actor->bounce = 0;
-	actor->velY = verticalSpeed;
-	fdActorSetSprFlags(actor, 0);
+	actor->velocityY = verticalSpeed;
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorMoveToAndWait(actorId, x, z);
 	fdActorSetPos(actorId, x, z);
 	for(ticks = 60; ticks != 0; --ticks) {
 		sySynch(1);
-		if((FIXEDtoINT(actor->velY)) == 0)
+		if((FIXEDtoINT(actor->velocityY)) == 0)
 			break;
 	}
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	actor->gravity = toFIXED(1);
 }
 
@@ -737,7 +737,7 @@ static void scVaultJumpActorToAndWait(
 static void scVaultRingBell(void)
 {
 	fdScriptStart();
-	sySndPlay(SE_BELL);
+	sySoundPlay(SE_BELL);
 	fdScriptWait(40);
 	if(fdScriptGetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
 		fdActorSetAttachedEffect(
@@ -800,10 +800,10 @@ Sint32 scInit(void)
 	   what it is for is asked. */
 	fdActorCreateConfigured(128, 0, 420, SPRITE_CRATE);
 	actor = fdActorGet(ACTOR_BOY_ROUND_THE_WELL);
-	actor->tmr = VILLAGER_IS_BOY;
+	actor->timer = VILLAGER_IS_BOY;
 	actor->update = (void (*)(ACTOR *))scVaultUpdateWalkingVillager;
 	actor = fdActorGet(ACTOR_GIRL_ROUND_THE_WELL);
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->update = (void (*)(ACTOR *))scVaultUpdateWalkingVillager;
 	if(gmFlagGet(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
 		fdActorSetPos(ACTOR_VAULT_DOG, 216, 392);
@@ -927,16 +927,16 @@ static void scVaultUpdateDriftingEffect(ACTOR *effect)
 	Sint32 verticalRate;
 
 	effect->x.fixed += effect->speedLimit;
-	effect->tgtX = effect->x.fixed;
+	effect->targetX = effect->x.fixed;
 
-	if(effect->tmr != 0) {
+	if(effect->timer != 0) {
 		effect->y.fixed += effect->acceleration;
-		effect->tgtY = effect->y.fixed;
+		effect->targetY = effect->y.fixed;
 	} else {
 		effect->z.fixed += effect->acceleration;
-		effect->tgtZ = effect->z.fixed;
+		effect->targetZ = effect->z.fixed;
 		effect->y.fixed += toFIXED(1) / 64;
-		effect->tgtY = effect->y.fixed;
+		effect->targetY = effect->y.fixed;
 	}
 
 	horizontalRate = effect->speedLimit;
@@ -948,11 +948,11 @@ static void scVaultUpdateDriftingEffect(ACTOR *effect)
 }
 
 /* Spawns a drifting sprite near the dog, sharing its drawing priority. */
-UNUSED static void scVaultSpawnDriftingEffect(Sint32 flg)
+UNUSED static void scVaultSpawnDriftingEffect(Sint32 flags)
 {
 	ACTOR *anchor;
 	ACTOR *effect;
-	SPR	  *spr;
+	SPR	  *sprite;
 	Sint32 x;
 	FIXED  y;
 	Sint32 z;
@@ -980,11 +980,11 @@ UNUSED static void scVaultSpawnDriftingEffect(Sint32 flg)
 	effect = fdActorCreate(SPRITE_NO_IMAGE, x, y, z);
 	if(effect == NULL)
 		return;
-	spr = effect->spr;
-	/* UB: fdSprCreate makes no sprite for SPRITE_NO_IMAGE, so sprite is NULL
+	sprite = effect->sprite;
+	/* UB: fdSpriteCreate makes no sprite for SPRITE_NO_IMAGE, so sprite is NULL
 	   and the two stores through it below write near address 0. */
 #if FIX_NULL_DEREFERENCE
-	if(spr == NULL)
+	if(sprite == NULL)
 		return;
 #endif
 	switch(syRandomNext() & 1) {
@@ -997,36 +997,36 @@ UNUSED static void scVaultSpawnDriftingEffect(Sint32 flg)
 		fdActorStartScript(effect, VaultDriftScriptB);
 		break;
 	}
-	effect->motionFlg = 0;
-	if(flg & 2) {
+	effect->motionFlags = 0;
+	if(flags & 2) {
 		Sint32 driftMultiplier;
 		Sint32 directionBias;
 
 		driftMultiplier = (Uint32)syRandomNext() % 10 + 5;
 		/* x, done with once the effect is placed, carries the 1. */
 		x = 1;
-		flg &= x;
-		directionBias = flg ^ x;
+		flags &= x;
+		directionBias = flags ^ x;
 		directionBias <<= 2;
 		driftMultiplier += directionBias;
 		effect->acceleration =
-			(2 * VAULT_DRIFT_RATE * flg - VAULT_DRIFT_RATE) * driftMultiplier;
+			(2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
 		driftMultiplier = (Uint32)syRandomNext() % 15 - 7;
 		effect->speedLimit = VAULT_DRIFT_RATE * driftMultiplier;
-		effect->tmr = 0;
+		effect->timer = 0;
 	} else {
 		Sint32 driftMultiplier;
 
 		driftMultiplier = (Uint32)syRandomNext() % 10 + 8;
 		effect->speedLimit =
-			(2 * VAULT_DRIFT_RATE * flg - VAULT_DRIFT_RATE) * driftMultiplier;
+			(2 * VAULT_DRIFT_RATE * flags - VAULT_DRIFT_RATE) * driftMultiplier;
 		driftMultiplier = (Uint32)syRandomNext() % 14 + 1;
 		effect->acceleration = VAULT_DRIFT_RATE * driftMultiplier;
-		effect->tmr = 1;
+		effect->timer = 1;
 	}
 	effect->update = scVaultUpdateDriftingEffect;
-	spr->flg = 0;
-	spr->image.pri = anchor->spr->image.pri;
+	sprite->flags = 0;
+	sprite->image.priority = anchor->sprite->image.priority;
 }
 
 #include "shared/field_effect_duration_scripts.c"

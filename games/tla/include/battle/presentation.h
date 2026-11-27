@@ -24,7 +24,7 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId);
 void btBackgroundInit(void);
 
 /* Opens the battle: the curtain, then the enemies announced. */
-void btTransitionRun(Sint32 enemyCnt, Sint32 kind);
+void btTransitionRun(Sint32 enemyCount, Sint32 kind);
 
 /* Does nothing, at the end of each turn and of the battle. */
 void btTurnEndNoOperation(void);
@@ -32,8 +32,8 @@ void btTurnEndNoOperation(void);
 void btBackgroundFree(void);
 
 /* An enemy kind's battle sprite and its palette. */
-Sint32 btSprGetSpr(Sint32 idx);
-Sint32 btSprGetPalette(Sint32 idx);
+Sint32 btSpriteGetSprite(Sint32 index);
+Sint32 btSpriteGetPalette(Sint32 index);
 
 /* Announces an action and lays it out target by target; 0 stages it. */
 Sint32 btActionRunBuild(
@@ -50,8 +50,8 @@ Sint32 btAIChooseAction(BATTLE_ACTION_RECORD *request, Sint32 retry);
 
 /* The battle effect an enemy kind's plain attack shows, and its defeat
    sound. */
-Uint32 btSprGetAttackEffect(Uint32 idx);
-Uint32 btSprGetDefeatSnd(Sint32 idx);
+Uint32 btSpriteGetAttackEffect(Uint32 index);
+Uint32 btSpriteGetDefeatSound(Sint32 index);
 
 /* Picks a random living target on the party's side or the enemies'. */
 Sint32 btAIChooseRandomTarget(Sint32 party);
@@ -65,7 +65,7 @@ typedef const Uint8 *(*MODEL_DECODER)(const Uint8 *source, void *destination);
 /* What btMotionCallBeast saves of the battle object a called beast borrows, for
    btMotionDismissBeast to put back. */
 typedef struct SAVED_BATTLE_OBJECT {
-	BATTLE_OBJECT obj; /* the borrowed object, copied whole */
+	BATTLE_OBJECT object; /* the borrowed object, copied whole */
 	/* The beast's pictures: a heap block of its own, or ActorSpriteSlots when
 	   the object borrowed is another side's. */
 	Uint32 *buf;
@@ -98,15 +98,15 @@ extern Uint8	   ModelDecodeCodeSize[]; /* btModelDecodeCode's bytes */
 /* The field engine's sprite functions the battle's motion calls: a sprite run
    on to its animation's stop, one of its animations removed, and an animation's
    length in ticks. */
-void   fdSprSkipToStopStub(void *record);
-void   fdSprRemoveAnimationAtStub(void *record, Sint32 slot);
-Sint32 fdSprAnimationSumCommandLengthsStub(
-	Sint32 id, Sint32 anm, Sint32 timedCnt);
+void   fdSpriteSkipToStopStub(void *record);
+void   fdSpriteRemoveAnimationAtStub(void *record, Sint32 slot);
+Sint32 fdSpriteAnimationSumCommandLengthsStub(
+	Sint32 id, Sint32 animation, Sint32 timedCount);
 
 /* Starts a message in the battle's message window. */
 void mnBattleMessageOpenStub(Sint32 msg);
 /* One step of dissolving a sprite pixel by pixel. */
-void fdSprDissolveStepStub(void *record, Sint32 step);
+void fdSpriteDissolveStepStub(void *record, Sint32 step);
 /* Levels the unit up once if its experience reaches the next level, filling
    gains, a LEVEL_UP_RESULT read as halfwords (LEVEL_UP_GAIN); its address, or 0
    when the unit did not level up. */

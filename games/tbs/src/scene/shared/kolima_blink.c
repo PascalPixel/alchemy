@@ -7,9 +7,9 @@
 static Sint32 scKolimaFlickerCurseDust(ACTOR *speck)
 {
 	if((TickCount >> 1) & 1) {
-		fdActorSetSprCol(speck, SPRITE_COLOR_RED_TINT);
+		fdActorSetSpriteColor(speck, SPRITE_COLOR_RED_TINT);
 	} else {
-		fdActorSetSprCol(speck, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColor(speck, SPRITE_COLOR_WHITE);
 	}
 	return 0;
 }

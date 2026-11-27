@@ -40,7 +40,7 @@
    24 events. */
 void fdPaletteCycleStart(void);
 
-void   syCopyEventWords(Uint32 *dst, Uint32 *src, Uint32 byteCnt);
+void   syCopyEventWords(Uint32 *dest, Uint32 *src, Uint32 byteCount);
 void   sySortEvents(void);
 void   syEventNoOperationA(void);
 void   syEventNoOperationB(void);
@@ -65,33 +65,33 @@ struct UNIT;
    (src/system/stubs.s). */
 void   sySynch(Sint32 ticks);
 void   syInitEvent(void);
-Sint32 sySetEvent(EVENT_FUNC func, Sint32 pri);
-Sint32 syCloseEvent(EVENT_FUNC func);
-Sint32 sySuspendEvent(EVENT_FUNC func);
-Sint32 syResumeEvent(EVENT_FUNC func);
+Sint32 sySetEvent(EVENT_FUNC callback, Sint32 priority);
+Sint32 syCloseEvent(EVENT_FUNC callback);
+Sint32 sySuspendEvent(EVENT_FUNC callback);
+Sint32 syResumeEvent(EVENT_FUNC callback);
 void   syExecuteEvent(Sint32 pass);
 Uint32 syRandom(void);
 ANGLE  syAtan(FIXED x, FIXED y);
 /* Returns the integer square root of `value`, rounded down. */
 Sint32 sySquart(Sint32 value);
 FIXED  sySquartFX(FIXED value);
-/* The sine of `ang`, a whole turn being TRIG_TURN, in 16.16. */
-FIXED sySin(ANGLE ang);
-/* The cosine of `ang`, a whole turn being TRIG_TURN, in 16.16; it falls
+/* The sine of `angle`, a whole turn being TRIG_TURN, in 16.16. */
+FIXED sySin(ANGLE angle);
+/* The cosine of `angle`, a whole turn being TRIG_TURN, in 16.16; it falls
    through into sySin a quarter turn on. */
-FIXED syCos(ANGLE ang);
-void  syVectorAddPolarOffset(FIXED radius, ANGLE ang, POINT pos);
+FIXED syCos(ANGLE angle);
+void  syVectorAddPolarOffset(FIXED radius, ANGLE angle, POINT pos);
 void  syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler);
 void  syHeapInit(void);
-void *syHeapSlotAlloc(Sint32 slot, Sint32 size);
-void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size);
+void *syHeapSlotAllocate(Sint32 slot, Sint32 size);
+void *syHeapSlotAllocateEWRAM(Sint32 slot, Sint32 size);
 /* Releases heap slot `slot`'s block, and with it every later block of the same
    pool, by setting the pool's next free address back to the block's start. */
 void syHeapSlotRelease(Sint32 slot);
 /* Returns the EWRAM bytes left to allocate, up to the end of EWRAM. */
 Sint32 syHeapGetRemainingEWRAM(void);
-void  *syHeapAlloc(Sint32 size);
-void  *syHeapAllocEWRAM(Sint32 size);
+void  *syHeapAllocate(Sint32 size);
+void  *syHeapAllocateEWRAM(Sint32 size);
 /* Releases `buf`, a block taken with no heap slot, and every later block of
    its pool, as syHeapSlotRelease does. */
 void syHeapRelease(void *buf);
@@ -99,22 +99,22 @@ void syPrint(const Uint8 *src);
 /* Prints the last `digits` hexadecimal digits of `value`. */
 void syPrintHex(Uint32 value, Sint32 digits);
 /* Prints the last `digits` characters of `value` in signed decimal. */
-void syPrintDec(Sint32 value, Sint32 digits);
-/* Writes `cnt` blank characters at the debug text cursor and moves it on. */
-void syPrintBlanks(Uint32 cnt);
+void syPrintDecimal(Sint32 value, Sint32 digits);
+/* Writes `count` blank characters at the debug text cursor and moves it on. */
+void syPrintBlanks(Uint32 count);
 /* As syDecompressTaggedLZ, with the byte LZ decoder. */
-Sint32 syDecompressByteLZ(const void *src, void *dst);
-Sint32 syDecompressTaggedLZ(const void *src, void *dst);
+Sint32 syDecompressByteLZ(const void *src, void *dest);
+Sint32 syDecompressTaggedLZ(const void *src, void *dest);
 void   syVRAMCacheReset(void);
 Sint32 syVRAMCacheFreeEntry(Uint32 no);
 Sint32 syVRAMCacheReleaseVRAM(Uint32 no);
 Sint32 syVRAMCacheLoad(Uint32 no, Uint32 size, const void *src);
 Sint32 syVRAMCacheFindFreeEntry(void);
 void   syPrintClear(void);
-Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src);
-void   syOAMAddSprAtDepthClamped(void *entry, Sint32 slot);
+Sint32 syOAMMatrixAllocateFromTransform(AFFINE_TRANSFORM *src);
+void   syOAMAddSpriteAtDepthClamped(void *entry, Sint32 slot);
 void   syWindowLoadGraphics(void);
-void   syPaletteLoadBasicSprCols(void);
+void   syPaletteLoadBasicSpriteColors(void);
 /* Sets up the one-level matrix stack and makes the current matrix the unit
    matrix. */
 void syInitMatrix(void);
@@ -124,9 +124,9 @@ void syPopMatrix(void);
 /* Rotates CurrentMatrix about the X, Y and Z axes by `angles`, in that
    order. */
 void syMatrixRotate(Sint32 *angles);
-void syRotX(ANGLE ang);
-void syRotY(ANGLE ang);
-void syRotZ(ANGLE ang);
+void syRotX(ANGLE angle);
+void syRotY(ANGLE angle);
+void syRotZ(ANGLE angle);
 void syMatrixTranslateVector(const POINT pos);
 /* Scales CurrentMatrix by `scale` (x, y, z factors in 16.16). */
 void syMatrixScaleVector(const VECTOR scale);
@@ -134,17 +134,17 @@ void syMatrixScaleVector(const VECTOR scale);
 void syMatrixRotateTranslate(Sint32 *angles, POINT pos);
 /* Rotates by `angles`, scales the rows by `scale`, translates by `pos`. */
 void syMatrixRotateTranslateScale(Sint32 *angles, POINT pos, VECTOR scale);
-void syLookAtLoad(POINT eye, POINT tgt);
+void syLookAtLoad(POINT eye, POINT target);
 /* Projects `point` through CurrentMatrix into `screen`; returns its scale. */
 Sint32 syConvert3Dto2D(const POINT point, struct PROJECTED_POINT *screen);
 /* Sets the projection from a vertical field of view (1/65536 turns). */
 void   syPerspective(Sint32 fieldOfView, FIXED nearDepth, FIXED farDepth);
 void   sySetScreenDist(Uint32 focal, Uint32 nearDepth, Uint32 farDepth);
 void   syCopyBuildStamp(void);
-Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *tbl);
+Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *table);
 void  *syResourceGetTableEntry(Sint32 resourceId);
 void   syResourceReservedNoOperation(Sint32 unused);
-void   syOverlayLoad(Uint32 idx, void *dst);
+void   syOverlayLoad(Uint32 index, void *dest);
 void   syScreenFadeToBlack(Sint32 frames);
 void   syScreenFadeFromBlack(Sint32 frames);
 void   syScreenFadeToWhite(Sint32 frames);
@@ -152,7 +152,7 @@ void   syScreenFadeFromWhite(Sint32 frames);
 /* Starts a fade of any layers, toward white when `bright` is 1, black when
    0. */
 void syScreenFadeStart(
-	Sint8 bright, Sint32 layer, Uint32 start, Sint32 tgt, Sint32 frames);
+	Sint8 bright, Sint32 layer, Uint32 start, Sint32 target, Sint32 frames);
 void syScreenFadeWait(void);
 /* Unused: five empty exports the stub table reserves. */
 void syDummyReservedNoOperationA(void);
@@ -163,41 +163,41 @@ void syDummyReservedNoOperationE(void);
 void sySerialInit(void);
 /* Looks for the link partner and, once connected, does one exchange. */
 Sint32 sySerialPollAndTransfer(void *send, void *receive);
-void   syIOWriteQueueStore8(Uint32 adr, Uint32 value);
-void   syIOWriteQueueStore16(Uint32 adr, Uint32 value);
-void   syIOWriteQueueStore32(Uint32 adr, Uint32 value);
-void   syIOWriteQueueSetBits8(Uint32 adr, Uint32 value);
-void   syIOWriteQueueSetBits16(Uint32 adr, Uint32 value);
-void   syIOWriteQueueSetBits32(Uint32 adr, Uint32 value);
-void   syIOWriteQueueClearBits8(Uint32 adr, Uint32 value);
-void   syIOWriteQueueClearBits16(Uint32 adr, Uint32 value);
-void   syIOWriteQueueClearBits32(Uint32 adr, Uint32 value);
+void   syIOWriteQueueStore8(Uint32 addr, Uint32 value);
+void   syIOWriteQueueStore16(Uint32 addr, Uint32 value);
+void   syIOWriteQueueStore32(Uint32 addr, Uint32 value);
+void   syIOWriteQueueSetBits8(Uint32 addr, Uint32 value);
+void   syIOWriteQueueSetBits16(Uint32 addr, Uint32 value);
+void   syIOWriteQueueSetBits32(Uint32 addr, Uint32 value);
+void   syIOWriteQueueClearBits8(Uint32 addr, Uint32 value);
+void   syIOWriteQueueClearBits16(Uint32 addr, Uint32 value);
+void   syIOWriteQueueClearBits32(Uint32 addr, Uint32 value);
 void   syInputResetKeyRepeat(void);
-void   syLookAt(POINT eye, POINT tgt);
+void   syLookAt(POINT eye, POINT target);
 /* Waits for the status bits in `mask`; returns this console's multiplayer
    id. */
-Uint32 sySerialWaitForStatMask(Sint32 mask);
+Uint32 sySerialWaitForStatusMask(Sint32 mask);
 void   sySerialRemoveIRQHandlers(void);
 /* Checks reverb code `code`'s range and returns 0, loading nothing. */
-Sint32		 sySndLoadReverbCode(Sint32 code);
+Sint32		 sySoundLoadReverbCode(Sint32 code);
 Sint32		 sySerialStartSend(void *src, Sint32 size);
-Sint32		 sySerialStartReceive(void *dst);
+Sint32		 sySerialStartReceive(void *dest);
 void		 sySerialWaitForSend(void);
 void		 sySerialWaitForReceive(void);
 void		 sySerialWaitForTransfers(void);
 Sint32		 sySerialGetActiveTransfers(void);
 void		 sySerialStepBlockTransfer(void);
-Sint32		 sySetEventFlags(EVENT_FUNC func, Uint32 mask);
+Sint32		 sySetEventFlags(EVENT_FUNC callback, Uint32 mask);
 struct UNIT *syUnitGet(Uint32 unitId);
-Sint32		 syGameFlagGet(Sint32 flg);
-void		 syGameFlagClear(Sint32 flg);
-Uint32		 syGameFlagToggle(Sint32 flg);
-Sint32		 syGameFlagGetByte(Sint32 flg);
-Uint8		 syGameFlagIncrementByte(Sint32 flg);
-Uint8		 syGameFlagDecrementByte(Sint32 flg);
-Sint32		 syGameFlagGetNibble(Uint32 flg);
-void		 syGameFlagSetNibble(Sint32 flg, Sint32 value);
-Sint32		 syFindEvent(EVENT_FUNC func);
+Sint32		 syGameFlagGet(Sint32 flag);
+void		 syGameFlagClear(Sint32 flag);
+Uint32		 syGameFlagToggle(Sint32 flag);
+Sint32		 syGameFlagGetByte(Sint32 flag);
+Uint8		 syGameFlagIncrementByte(Sint32 flag);
+Uint8		 syGameFlagDecrementByte(Sint32 flag);
+Sint32		 syGameFlagGetNibble(Uint32 flag);
+void		 syGameFlagSetNibble(Sint32 flag, Sint32 value);
+Sint32		 syFindEvent(EVENT_FUNC callback);
 /* Counts the free blocks of the sprite VRAM cache. */
 Sint32 syVRAMCacheCountFreeBlocks(void);
 
@@ -209,12 +209,12 @@ Sint32 syVRAMCacheCountFreeBlocks(void);
    enemy's. */
 struct UNIT *syUnitGetStub(Uint32 unitId);
 /* Returns whether a game flag is set. */
-Sint32 syGameFlagGetStub(Sint32 flg);
+Sint32 syGameFlagGetStub(Sint32 flag);
 /* Sets a game flag and returns its old state, as syGameFlagSet. */
-Sint32 syGameFlagSetStub(Sint32 flg);
+Sint32 syGameFlagSetStub(Sint32 flag);
 /* Clears the flag, returning nothing where syGameFlagSetStub returns its
    byte. */
-void syGameFlagClearStub(Sint32 flg);
+void syGameFlagClearStub(Sint32 flag);
 
 /* The system library's own functions and globals, by the part each belongs to:
    the tick, random numbers, events, sequences and overlays, sprites, matrices,
@@ -311,9 +311,9 @@ Sint32 _call_via_r3(Sint32, Uint8 *, Uint8, Sint32);
 void syOAMResetTick(void);
 /* Queues a sprite at a depth slot of this tick's OAM list (the OAM_DEPTH_
    slots below). A unit whose ROM code is compiled against another form defines
-   OWN_syOAMAddSprAtDepth and declares that form itself. */
-#ifndef OWN_syOAMAddSprAtDepth
-void syOAMAddSprAtDepth(void *entry, Sint32 slot);
+   OWN_syOAMAddSpriteAtDepth and declares that form itself. */
+#ifndef OWN_syOAMAddSpriteAtDepth
+void syOAMAddSpriteAtDepth(void *entry, Sint32 slot);
 #endif
 /* Builds this tick's OAM list in buffer, a scratch block of OAM_SIZE bytes,
    running its ARM function from a copy on the stack. */
@@ -322,9 +322,9 @@ void syRenderBuildOAMList(void *buf);
    a slot; syOAMResetTick clears it. */
 extern Uint8 OamDepthMasks[];
 /* The 256 depth slots' list heads that every drawn sprite is linked into
-   (syOAMAddSprAtDepth); syOAMResetTick empties them each tick. */
+   (syOAMAddSpriteAtDepth); syOAMResetTick empties them each tick. */
 extern void *OamDepthLists[];
-/* Depth slots of syOAMAddSprAtDepth: a higher slot is drawn in front. The
+/* Depth slots of syOAMAddSpriteAtDepth: a higher slot is drawn in front. The
    windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
    in front of the field engine's and the battle engine's, and OAM_DEPTH_FRONT
    is in front of everything. */
@@ -335,25 +335,25 @@ extern void *OamDepthLists[];
    sprites' slots. */
 #define EFFECT_SPRITE_FRONT_DEPTH 250
 struct SPR_ANIMATION;
-struct SPR_ANIMATION *fdSprAnimationAlloc(Sint32 id);
-Sint32				  fdSprPictureCacheFindByTag(Sint32 key);
+struct SPR_ANIMATION *fdSpriteAnimationAllocate(Sint32 id);
+Sint32				  fdSpritePictureCacheFindByTag(Sint32 key);
 /* Five tables that map a picture's 256 colour indices onto a sprite's palette,
    one for each palette a field sprite can take
    (field/sprite_color_tables.c). */
 extern Uint8 SpriteColorTables[][256];
-Sint32		 syPaletteGetBasicSprCols(void);
+Sint32		 syPaletteGetBasicSpriteColors(void);
 /* Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as colour
    10, the second leaves every colour as it is. */
 extern Uint16 GraphicsExpandNibbleTable[];
 Sint32		  syVRAMCacheAllocateBlocks(Uint32 id, Uint32 size);
 Sint32		  syVRAMCacheFreeBlocks(Sint32 id);
-Sint32		  syVRAMCacheAllocEntry(Sint32 size);
+Sint32		  syVRAMCacheAllocateEntry(Sint32 size);
 Sint32		  syVRAMCacheReload(Sint32 id, Sint32 src);
 
 /* Matrices and the projection. */
-void syMatrixSetRotateY(ANGLE ang);
+void syMatrixSetRotateY(ANGLE angle);
 /* The basic sprite palettes, loaded for the debug text
-   (syPaletteGetBasicSprCols). */
+   (syPaletteGetBasicSpriteColors). */
 extern const Uint8 SystemBasicColorPalette[];
 
 void syTranslate(FIXED x, FIXED y, FIXED z);
@@ -374,14 +374,14 @@ void syScreenFadeUpdate(void);
 /* Resources and decompression. Each resource's ROM address by resource id
    (syResourceGetTableEntry). */
 extern void *syResourceDirectoryTable[];
-void		 syDecompressHalfwords(const void *src, void *dst);
+void		 syDecompressHalfwords(const void *src, void *dest);
 /* The halfword LZ decoder that syDecompressHalfwords runs from its stack. */
 extern const Uint8 syDecompressHalfwordLZ[];
 /* The size of syDecompressHalfwordLZ, copied onto the stack by
    syDecompressHalfwords. */
 extern Uint8 syDecompressHalfwordsCodeSize[];
-Sint32		 syDecompressMoveToFrontLZ(const void *src, void *dst);
-Sint32		 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 idx);
+Sint32		 syDecompressMoveToFrontLZ(const void *src, void *dest);
+Sint32		 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 index);
 
 /* Windows and their text. The window font's 16 colours, loaded as BG palette 15
    (syWindowLoadGraphics). */
@@ -407,8 +407,8 @@ void syStringFormatDecimal(Sint32);
 void syStringFormatHex(Uint32);
 /* The hexadecimal digits 0 to F, which syStringFormatHex writes from. */
 extern const Uint8 StringHexDigits[];
-/* The end of syStringFormatDecimal's digits: syPrintDec prints the last places
-   before it. */
+/* The end of syStringFormatDecimal's digits: syPrintDecimal prints the last
+   places before it. */
 extern Uint8 NumberTextDecimalEnd[];
 /* The end of syStringFormatHex's digits: syPrintHex prints the last places
    before it. */
@@ -426,18 +426,18 @@ struct ACTOR;
 /* An empty function, reached only through an unnamed stub in the object
    module's stub table. */
 void   fdActorNoOperation(void);
-Sint32 fdTilesetAnimResumeAllStub(void);
-Sint32 fdTilesetAnimSuspendAllStub(void);
+Sint32 fdTilesetAnimationResumeAllStub(void);
+Sint32 fdTilesetAnimationSuspendAllStub(void);
 
 /* The system library's groups. */
 
 /* The affine group. Sprite rotation and scaling: a sprite's transform and the
    OAM matrices this tick hands out for it. */
-Sint32 syAffineMatrixBuild(Sint32 ang, Sint32 xScale, Sint32 yScale);
+Sint32 syAffineMatrixBuild(Sint32 angle, Sint32 xScale, Sint32 yScale);
 
 /* The dma group. DMA and the BIOS copy service: fills, and one transfer on a
    channel. The BIOS CpuSet service (bios.s). */
-void BiosCpuSet(const void *src, void *dst, Uint32 control);
+void BiosCpuSet(const void *src, void *dest, Uint32 control);
 
 /* Stops DMA 0, which a scene may have left copying a line each HBlank: drops
    its start timing and repeat, then its enable, and reads the control back. */
@@ -488,19 +488,19 @@ void BiosCpuSet(const void *src, void *dst, Uint32 control);
 /* Starts a transfer on DMA channel `channel`: its source, destination and
    control written in one store. */
 static __inline__ void syDMAXCopy(
-	const void *src, void *dst, Uint32 control, volatile Uint32 *channel)
+	const void *src, void *dest, Uint32 control, volatile Uint32 *channel)
 {
 	ASM_REGISTER(volatile Uint32 *dma, "r3") = channel;
 	ASM_REGISTER(Uint32 srcReg, "r0") = (Uint32)src;
-	ASM_REGISTER(Uint32 dstReg, "r1") = (Uint32)dst;
-	ASM_REGISTER(Uint32 cnt, "r2") = control;
-	ASM_DMA_STORE(srcReg, cnt, dma, dstReg);
+	ASM_REGISTER(Uint32 destReg, "r1") = (Uint32)dest;
+	ASM_REGISTER(Uint32 count, "r2") = control;
+	ASM_DMA_STORE(srcReg, count, dma, destReg);
 }
 
 /* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags, which sySynch() (system/system_frame.c)
    and the VBlank handler share. Stops the sound DMA and its timer. */
-void sySndSuspendDirectSndStub(void);
+void sySoundSuspendDirectSoundStub(void);
 /* The resident mixer in IWRAM, which the tick wait runs after
    SoundDriverEnterVBlankUpdate returns 0. It never reads its argument; the
    callers pass 8. */
@@ -510,8 +510,8 @@ void IwramSoundRenderVBlank(Sint32) __attribute__((long_call));
    (system/system_heap.c). */
 void syHeapFillFreeWords(Uint32 value);
 
-/* A block of size bytes from the allocator given (syHeapAlloc or
-   syHeapAllocEWRAM), with no heap slot. */
+/* A block of size bytes from the allocator given (syHeapAllocate or
+   syHeapAllocateEWRAM), with no heap slot. */
 static __inline__ void *syHeapCallAlternatePool(
 	void *(*allocate)(Sint32), Sint32 size)
 {
@@ -522,9 +522,9 @@ static __inline__ void *syHeapCallAlternatePool(
 
    The VBlank handler reads the keypad into PerWork, and
    syInputUpdateKeyRepeatAndDirection turns it into repeats after each tick
-   (system/system_frame.c). data, push, repeat and repeatTmr are volatile
+   (system/system_frame.c). data, push, repeat and repeatTimer are volatile
    because the VBlank handler sets them while the code it interrupts reads them;
-   direction and prevDir the key repeat rebuilds and reads each tick. */
+   direction and prevDirection the key repeat rebuilds and reads each tick. */
 void syInputUpdateKeyRepeatAndDirection(void);
 /* The keypad interrupt's handler. */
 void syInputHandleKeyInterrupt(void);
@@ -617,14 +617,14 @@ void syIOWriteQueueFlushPending(void);
 	{ \
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork; \
 		Uint32			saved; \
-		Sint32			cnt; \
+		Sint32			count; \
 \
 		IRQ_LOCK(saved); \
-		cnt = *&q->cnt; \
-		if(cnt < IO_WRITE_QUEUE_SIZE) { \
-			Uint32 *entry = q->entries[cnt]; \
+		count = *&q->count; \
+		if(count < IO_WRITE_QUEUE_SIZE) { \
+			Uint32 *entry = q->entries[count]; \
 \
-			*&q->cnt = cnt + 1; \
+			*&q->count = count + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -638,16 +638,16 @@ void syIOWriteQueueFlushPending(void);
 	{ \
 		IO_WRITE_QUEUE *q; \
 		Uint32			saved; \
-		Sint32			cnt; \
+		Sint32			count; \
 \
 		q = &IoWriteQueueWork; \
 		IME_SAVE(ime, saved); \
 		IME_DISABLE(ime); \
-		cnt = *&q->cnt; \
-		if(cnt < IO_WRITE_QUEUE_SIZE) { \
-			Uint32 *entry = q->entries[cnt]; \
+		count = *&q->count; \
+		if(count < IO_WRITE_QUEUE_SIZE) { \
+			Uint32 *entry = q->entries[count]; \
 \
-			*&q->cnt = cnt + 1; \
+			*&q->count = count + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -707,29 +707,29 @@ static inline Uint32 syIntegerDivideUnsigned(Uint32 dividend, Uint32 divisor)
    223 leaving that many less 223 bytes there untouched, and returns NULL; one
    whose first halfword is 0 is not packed, and comes back as the data after
    that halfword for the caller to decode. */
-static inline void *syDecompressSprPicture(const void *src, void *dst)
+static inline void *syDecompressSpritePicture(const void *src, void *dest)
 {
-	return syDecompressSprPictureEntry(src, dst);
+	return syDecompressSpritePictureEntry(src, dest);
 }
 
 /* Clears size bytes, rounded down to whole words, from destination. Returns the
    address after the last word. */
-static inline Sint32 syWordsClear(void *dst, Sint32 size)
+static inline Sint32 syWordsClear(void *dest, Sint32 size)
 {
-	return syWordsClearEntry(dst, size);
+	return syWordsClearEntry(dest, size);
 }
 
 /* As syWordsClear, filling with value. */
-static inline Sint32 syWordsFill(void *dst, Sint32 size, Uint32 value)
+static inline Sint32 syWordsFill(void *dest, Sint32 size, Uint32 value)
 {
-	return syWordsFillEntry(dst, size, value);
+	return syWordsFillEntry(dest, size, value);
 }
 
 /* Copies size bytes, rounded down to whole words, from source to
    destination. */
-static inline void syWordsCopy(void *dst, const void *src, Sint32 size)
+static inline void syWordsCopy(void *dest, const void *src, Sint32 size)
 {
-	syWordsCopyEntry(dst, src, size);
+	syWordsCopyEntry(dest, src, size);
 }
 
 /* syWordsFill as a statement of its own, as twelve fills in the battle engine,
@@ -759,9 +759,9 @@ Sint32 __modsi3(Sint32 numerator, Sint32 denominator);
 /* The matrix group. The current 3D matrix, its one-deep stack, and the unit
    matrix. */
 void syMatrixRewindStack(void);
-void syGetMatrix(MATRIX dst);
+void syGetMatrix(MATRIX dest);
 void syLoadMatrix(const MATRIX src);
-void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out);
+void syMatrixBuildLookAt(POINT eye, POINT target, MATRIX out);
 
 /* Sets a twelve-word matrix to the unit matrix: toFIXED(1) (1.0) on the
    rotation's diagonal, the rest 0. */
@@ -775,7 +775,7 @@ static __inline__ void syUnitMatrix(MATRIX matrix)
 /* The ram_code group. Copying an ARM function to RAM to run it there: the
    decoders, the overlay loader's branch patcher and the battle effects' canvas
    functions. Copies the function `code`, `bytes` long (its linked size), into a
-   block taken with syHeapAlloc and points `to` at it; syHeapRelease frees
+   block taken with syHeapAllocate and points `to` at it; syHeapRelease frees
    it. */
 #define RAM_CODE_LOAD(to, code, bytes) \
 	do { \
@@ -783,7 +783,7 @@ static __inline__ void syUnitMatrix(MATRIX matrix)
 \
 		size_ = (Uint32)(bytes); \
 \
-		(to) = syHeapAlloc(size_); \
+		(to) = syHeapAllocate(size_); \
 		syDMAXCopy( \
 			(const void *)(code), (to), DMA_COPY_WORDS(size_ >> 2), REG_DMA3); \
 	} while(0)
@@ -796,44 +796,46 @@ static __inline__ void syUnitMatrix(MATRIX matrix)
 \
 		size_ = (Uint32)(bytes); \
 \
-		syDMAXCopy((const void *)(code), syHeapSlotAlloc((slot), size_), \
+		syDMAXCopy((const void *)(code), syHeapSlotAllocate((slot), size_), \
 			DMA_COPY_WORDS(size_ >> 2), REG_DMA3); \
 	} while(0)
 
 /* The colour buffer functions (system/decompress_byte_lz.s), each of which
    copies its ARM kernel onto the stack by DMA and runs it there. Copies `size`
    bytes of colour levels, halving each. */
-void syColBufferHalve(void *src, void *dst, Sint32 size);
+void syColorBufferHalve(void *src, void *dest, Sint32 size);
 /* Copies `size` bytes of colour levels at three quarters of each, returning
    what the kernel leaves in r0. */
-Sint32 syColBufferScaleThreeQuarters(void *src, void *dst, Sint32 size);
+Sint32 syColorBufferScaleThreeQuarters(void *src, void *dest, Sint32 size);
 /* Copies `size` bytes of colour levels, each lowered by `amount`. */
-void syColBufferDarken(void *src, Sint32 amount, void *dst, Sint32 size);
+void syColorBufferDarken(void *src, Sint32 amount, void *dest, Sint32 size);
 /* Copies `size` bytes of colour levels, each raised by `amount`. */
-void syColBufferBrighten(void *src, Sint32 amount, void *dst, Sint32 size);
+void syColorBufferBrighten(void *src, Sint32 amount, void *dest, Sint32 size);
 /* Copies size bytes of 8-bit pixels from source to destination, then halves
    each colour number left in source, so a drawing fades as it is shown: Lucky
    Wheels' trails (CANVAS_FADE_HALF). */
-void syColBufferHalveNonzero(Uint8 *src, Uint8 *dst, Sint32 size);
-/* syColBufferHalveNonzero, taking each colour number to three quarters, for the
-   trails that fade more slowly. */
-void syColBufferScaleNonzeroThreeQuarters(Uint8 *src, Uint8 *dst, Sint32 size);
+void syColorBufferHalveNonzero(Uint8 *src, Uint8 *dest, Sint32 size);
+/* syColorBufferHalveNonzero, taking each colour number to three quarters, for
+   the trails that fade more slowly. */
+void syColorBufferScaleNonzeroThreeQuarters(
+	Uint8 *src, Uint8 *dest, Sint32 size);
 /* The high word of value times magic, plus value times multiplier: a division
    by a constant (system/trig.s). */
-Sint32 syMathUnsignedMulHighAdd(Sint32 value, Uint32 magic, Sint32 multiplier);
+Sint32 syMathUnsignedMultiplyHighAdd(
+	Sint32 value, Uint32 magic, Sint32 multiplier);
 
 /* The save group. The save in flash: its sectors, parts and summaries, and the
    save's state. */
 Uint32 syBupFindLatestSector(Sint32 partId);
-Uint32 syBupReadPart(Sint32 partId, void *dst);
+Uint32 syBupReadPart(Sint32 partId, void *dest);
 Uint32 syBupDeletePart(Sint32 partId);
 
 /* The save in flash. */
-Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 cnt);
+Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 count);
 Sint32 syBupChecksumSector(void);
-Sint32 syBupReadSector(Sint32 idx);
+Sint32 syBupReadSector(Sint32 index);
 Uint32 syBupWriteSector(Sint32 sector);
-Bool   syBupInvalidateSector(Sint32 idx);
+Bool   syBupInvalidateSector(Sint32 index);
 Uint32 syBupSelectWriteSector(Sint32 partId);
 Uint32 syBupGetLatestCounter(Sint32 partId);
 void   syBupSetProgressCallback(void (*progress)(Sint32 step));
@@ -854,11 +856,11 @@ Sint32 fdAreaGetNameIndexStub(Sint32 scene, Sint32 entrance);
 #define START_DMA(source_, destination_, control_) \
 	do { \
 		DMA3->src = (Uint32)(source_); \
-		DMA3->dst = (Uint32)(destination_); \
-		DMA3->ctrl = (control_); \
+		DMA3->dest = (Uint32)(destination_); \
+		DMA3->control = (control_); \
 	} while(0)
 
-Sint32 sySerialPollStat(void);
+Sint32 sySerialPollStatus(void);
 Sint32 sySerialExchangePayloads(void *send, void *receive);
 void   sySerialPrepareSendPacket(void *payload);
 Uint8  sySerialCollectReceivedPayloads(void *payload);

@@ -306,7 +306,7 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /* A piece Felix cannot push: a pillar weeds hold down, a frozen puddle, a
    stake, or a log (logs roll by their own scripts). fdLeaderCanPushObjectAhead
    refuses a target with this byte set. */
-#define PUSH_BLOCKED(object)   *(Uint8 *)&object->sceneCnt
+#define PUSH_BLOCKED(object)   *(Uint8 *)&object->sceneCount
 /* The height in pixels of a pillar's top (scTrialRoadAddPillarTop) above the
    pillar: PILLAR_HEIGHT standing, -PILLAR_HEIGHT lowered. */
 #define PILLAR_TOP_HEIGHT(top) *(Uint8 *)&top->sceneByte
@@ -357,8 +357,8 @@ Sint32 scTrialRoadSettleOnGround(ACTOR *actor)
 
 	actor->groundHeight = height;
 	actor->y.fixed = height;
-	actor->motionFlg = 0;
-	actor->collisionFlg = 0;
+	actor->motionFlags = 0;
+	actor->collisionFlags = 0;
 	actor->scaleY = toFIXED(3) / 2;
 	return 0;
 }
@@ -390,7 +390,7 @@ Sint32 scTrialRoadRivalIsAhead(Sint32 fallback)
 		return 0;
 	if(fdScriptGetFlag(FLAG_STAGE_CHESTS_OPENED))
 		return 0;
-	if(state->rivalTmr != 0)
+	if(state->rivalTimer != 0)
 		return 1;
 	return fallback;
 }
@@ -427,7 +427,7 @@ void scTrialRoadTakeStairs(Sint32 direction)
 			state->stage[0]--;
 			syImportScriptSetExitRequest(direction);
 		}
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 	}
 	if(direction == METATILE_LEFT_PATH_DOOR ||
 		direction == METATILE_RIGHT_PATH_DOOR) {
@@ -436,14 +436,14 @@ void scTrialRoadTakeStairs(Sint32 direction)
 			if(fdScriptGetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT) &&
 				scTrialRoadRivalIsAhead(0) == 0)
 				fdScriptSetFlag(FLAG_PARTY_FIRST_AT_PEAK);
-			fdScriptPlaySnd(SE_STAIRS_UP);
+			fdScriptPlaySound(SE_STAIRS_UP);
 			fdExitStartStairsUp();
 			/* Up to the summit, by the exits numbered four on from the
 			   doors'. */
 			syImportScriptSetExitRequest(direction + 4);
 		} else {
 			syImportScriptSetExitRequest(direction);
-			fdScriptPlaySnd(SE_MAP_EXIT);
+			fdScriptPlaySound(SE_MAP_EXIT);
 		}
 		if(state->stage[0] > state->leaderBest)
 			state->leaderBest = state->stage[0];
@@ -458,7 +458,7 @@ union FIELD_OBJECT;
 /* The sprite's priority bits, read as the byte that holds them. */
 typedef struct EFFECT_SPR_BITS {
 	Uint8 tileHigh : 2; /* the tile number's top two bits */
-	Uint8 pri : 2;
+	Uint8 priority : 2;
 } __attribute__((packed)) EFFECT_SPR_BITS;
 
 /* A sprite's attribute 2, as the byte bits view reaches it. */
@@ -487,7 +487,7 @@ typedef struct TRIAL_ROAD_REPLAY {
 	Sint16 resource; /* the recording's resource */
 } TRIAL_ROAD_REPLAY;
 
-/* One queued sprite: the three words syOAMAddSprAtDepth adds to OAM. */
+/* One queued sprite: the three words syOAMAddSpriteAtDepth adds to OAM. */
 typedef struct TRIAL_ROAD_SPR {
 	Uint32 words[3];
 } TRIAL_ROAD_SPR;
@@ -517,7 +517,7 @@ typedef enum TRIAL_ROAD_RACE_MAP_TILE {
 /* The heap slot scTrialRoadShowRaceMap takes for the race map of both parties
    and the rival's recorded path. */
 typedef struct TRIAL_ROAD_LINK_STATE {
-	TRIAL_ROAD_SPR sprs[18]; /* the display's queued sprites */
+	TRIAL_ROAD_SPR sprites[18]; /* the display's queued sprites */
 	Sint16		   vramEntry;
 	Sint16		   fade; /* 0 hidden to 2 shown, a step a tick */
 	Sint16		   scrollX;
@@ -527,7 +527,7 @@ typedef struct TRIAL_ROAD_LINK_STATE {
 	Sint16 rivalId; /* the second marker's, which the recording replays */
 	/* The rival's timer in the link race, beside the far and the near side;
 	   nothing in the overlay writes them. */
-	Uint16 rivalTmrs[2];
+	Uint16 rivalTimers[2];
 	Sint16 resource; /* the recorded path's resource, once decoded */
 	Sint32 originX;	 /* the course's corner the markers measure from */
 	Sint32 originZ;
@@ -543,11 +543,12 @@ void scTrialRoadSetPillarTopLift(Sint32 id, Sint32 value);
 void scTrialRoadOpenVentMetatile(Sint32 id);
 void scTrialRoadCheckLeaderOnPillars(void);
 void scTrialRoadCheckStakesCovered(Sint32 unused, Sint32 id);
-void scTrialRoadPoundStake(Sint32 id, Sint32 phase, Sint32 frm);
-void scTrialRoadStepOntoStake(Sint32 id, Sint32 other, Sint32 flg, Sint32 side);
+void scTrialRoadPoundStake(Sint32 id, Sint32 phase, Sint32 frame);
+void scTrialRoadStepOntoStake(
+	Sint32 id, Sint32 other, Sint32 flag, Sint32 side);
 void scTrialRoadPushLog(Sint32 id, Sint32 dx, Sint32 dz, Sint32 axis);
-void scTrialRoadUncoverVent(Sint32 id, Sint32 phase, Sint32 frm);
-void scLeaderCheckCrumblingStep(const Uint16 *tbl);
+void scTrialRoadUncoverVent(Sint32 id, Sint32 phase, Sint32 frame);
+void scLeaderCheckCrumblingStep(const Uint16 *table);
 void scTrialRoadCrumblePillar(const void *data, Sint32 id);
 
 void scTrialRoadClearGiveUpAsked(void);
@@ -674,7 +675,7 @@ extern Uint32 TrialRoadRightKnightToChestsScript[];
 extern Uint32 TrialRoadRightKnightLeavesScript[];
 
 void scDustScatter(Sint32 value);
-void fdLeaderSetMetatileShapeAt(Sint32 ofs, Sint32 layer);
+void fdLeaderSetMetatileShapeAt(Sint32 offset, Sint32 layer);
 void scMagmaRockInsideSpawnDustRing(void);
 void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 id);
 
@@ -747,7 +748,7 @@ Bool scTrialRoadOfferToGiveUp(void)
 		fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId,
 			((FIELD_METATILE(leader->x.fixed)) << 4) + 8,
 			((FIELD_METATILE(leader->z.fixed)) << 4) + 8);
-		fdScriptPlaySnd(SE_SPLASH);
+		fdScriptPlaySound(SE_SPLASH);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
 		msg = (Sint32)&MsgTrialRoadGiveUpPrompt;
@@ -803,7 +804,7 @@ void scTrialRoadOpenChests(void)
 	found = scTrialRoadRivalIsAhead(0);
 	if(found != 0)
 		fdScriptSetFlag(state->stage[0] + FLAG_RIVAL_FIRST_AT_DOOR_BASE);
-	fdScriptPlaySnd(SE_CHEST_OPEN);
+	fdScriptPlaySound(SE_CHEST_OPEN);
 	if(state->mirrored == 0) {
 		fdActorSetAnimation(ACTOR_LEFT_INNER_CHEST, 6);
 		fdScriptSetFlag(FLAG_INNER_CHEST_OPEN);
@@ -838,7 +839,7 @@ void scTrialRoadPutItemInChest(Sint32 item, Sint32 owner, Sint32 slot)
 	mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 	/* "Felix put ...'s ... in the chest." */
 	mnFieldMessageShow((Sint32)&MsgTrialRoadStoredItem, FIELD_MESSAGE_ZOOM);
-	fdScriptPlaySnd(SE_CHEST_CLOSE);
+	fdScriptPlaySound(SE_CHEST_CLOSE);
 	fdActorSetAnimationAndWait(chest, 5);
 	if(chest == ACTOR_LEFT_INNER_CHEST || chest == ACTOR_RIGHT_INNER_CHEST)
 		fdScriptClearFlag(FLAG_INNER_CHEST_OPEN);
@@ -847,7 +848,7 @@ void scTrialRoadPutItemInChest(Sint32 item, Sint32 owner, Sint32 slot)
 	if(!fdScriptGetFlag(FLAG_INNER_CHEST_OPEN) &&
 		!fdScriptGetFlag(FLAG_OUTER_CHEST_OPEN)) {
 		scTrialRoadOpenLeaderDoor(state->mirrored, state->stage[0]);
-		fdScriptPlaySnd(SE_ITEM_BREAK);
+		fdScriptPlaySound(SE_ITEM_BREAK);
 		fdScriptSetFlag(FLAG_STAGE_DOOR_OPEN);
 	}
 	gmInventoryClearSlot(owner, slot);
@@ -859,13 +860,13 @@ void scTrialRoadPutItemInChest(Sint32 item, Sint32 owner, Sint32 slot)
    asked "Place this item in the chest?", and Yes opens the item menu. */
 void scTrialRoadExamineChest(Sint32 id)
 {
-	Sint32 flg;
+	Sint32 flag;
 
 	if(id == ACTOR_LEFT_INNER_CHEST || id == ACTOR_RIGHT_INNER_CHEST)
-		flg = FLAG_INNER_CHEST_OPEN;
+		flag = FLAG_INNER_CHEST_OPEN;
 	else
-		flg = FLAG_OUTER_CHEST_OPEN;
-	if(!fdScriptGetFlag(flg)) {
+		flag = FLAG_OUTER_CHEST_OPEN;
+	if(!fdScriptGetFlag(flag)) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		/* "The chest won't open. There's something keeping it shut tight." */
@@ -946,12 +947,12 @@ void scTrialRoadAddPillarTop(Sint32 id)
 		actor = scFieldActorCreate(SPRITE_UNSEEN_MARKER, owner->x.fixed,
 			owner->y.fixed, owner->z.fixed);
 		if(actor != NULL) {
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 			fdActorStartScript(actor, TrialRoadPillarTopScript);
 			actor->watchedActor = (FIELD_OBJECT *)owner;
-			actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
-			actor->motionFlg = 0;
-			actor->collisionFlg = 0;
+			actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+			actor->motionFlags = 0;
+			actor->collisionFlags = 0;
 			PILLAR_TOP_HEIGHT(actor) = PILLAR_HEIGHT;
 			owner->watchedActor = (FIELD_OBJECT *)actor;
 		}
@@ -1076,16 +1077,16 @@ void scTrialRoadMeltIceBesideTorch(Sint32 unused, Sint32 id)
 	if(x == 19)
 		id = ACTOR_PILLAR_F;
 	if(id != 0) {
-		Sint32 flg = id + FLAG_PUDDLE_MELTED_BASE;
+		Sint32 flag = id + FLAG_PUDDLE_MELTED_BASE;
 
-		if(fdScriptGetFlag(flg) == 0) {
+		if(fdScriptGetFlag(flag) == 0) {
 			ACTOR *actor = fdActorGetById(id);
 
 			actor->update = NULL;
-			fdActorSetSprColMode(actor, 0);
+			fdActorSetSpriteColorMode(actor, 0);
 			fdActorSetAnimation(id, 6);
 			scTrialRoadSetPillarTopLift(id, -PILLAR_HEIGHT);
-			fdScriptSetFlag(flg);
+			fdScriptSetFlag(flag);
 		}
 	}
 }
@@ -1109,7 +1110,7 @@ void scTrialRoadFreezePuddle(Sint32 unused, Sint32 id)
 	scTrialRoadSetPillarTopLift(id, PILLAR_HEIGHT);
 	fdScriptClearFlag(id + FLAG_PUDDLE_MELTED_BASE);
 	if(actor != NULL)
-		actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* Whirlwind on the weeds at the foot of one of the two overgrown pillars in the
@@ -1127,8 +1128,8 @@ void scTrialRoadLowerStake(Sint32 id)
 
 	if(actor != NULL) {
 		scTrialRoadSetPillarTopLift(id, -PILLAR_HEIGHT);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSelectAnimation(actor, 6);
 	}
 }
@@ -1140,8 +1141,8 @@ void scTrialRoadRaiseStake(Sint32 id)
 
 	if(actor != NULL) {
 		scTrialRoadSetPillarTopLift(id, PILLAR_HEIGHT);
-		actor->collisionFlg = ACTOR_SOLID;
-		actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = ACTOR_SOLID;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSelectAnimation(actor, 5);
 	}
 }
@@ -1188,15 +1189,15 @@ void scTrialRoadCheckStakesCovered(Sint32 unused, Sint32 pushedId)
 /* Pound on a raised stake in the Pound stage squashes it into the ground and
    pops its partner up (TrialRoadPoundPartners); Felix, standing where the
    partner rises, is thrown up onto it. */
-void scTrialRoadPoundStake(Sint32 id, Sint32 phase, Sint32 frm)
+void scTrialRoadPoundStake(Sint32 id, Sint32 phase, Sint32 frame)
 {
 	Sint32 other = TrialRoadPoundPartners[(id - ACTOR_WEST_STAKE) & 3];
 	ACTOR *actor = fdActorGetById(id);
 	ACTOR *partner = fdActorGetById(other);
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
-	if(frm <= 10)
-		actor->scaleY = toFIXED(1) - frm * (toFIXED(1) / 16);
+	if(frame <= 10)
+		actor->scaleY = toFIXED(1) - frame * (toFIXED(1) / 16);
 	else
 		actor->scaleY = toFIXED(1);
 	if(phase == POUND_STAGE_LANDED) {
@@ -1220,16 +1221,16 @@ void scTrialRoadPoundStake(Sint32 id, Sint32 phase, Sint32 frm)
 				FIELD_METATILE(leader->x.fixed) &&
 			FIELD_METATILE(partner->z.fixed) ==
 				FIELD_METATILE(leader->z.fixed)) {
-			leader->velY = toFIXED(8);
+			leader->velocityY = toFIXED(8);
 			leader->x.fixed = (leader->x.fixed & -toFIXED(16)) + toFIXED(8);
 			leader->z.fixed = (leader->z.fixed & -toFIXED(16)) + toFIXED(8);
 		}
 	}
-	if(frm == 9)
+	if(frame == 9)
 		partner->scaleY = toFIXED(12) / 10;
-	else if(frm == 11)
+	else if(frame == 11)
 		partner->scaleY = toFIXED(11) / 10;
-	else if(frm == 13)
+	else if(frame == 13)
 		partner->scaleY = toFIXED(105) / 100;
 	else
 		partner->scaleY = toFIXED(1);
@@ -1237,36 +1238,36 @@ void scTrialRoadPoundStake(Sint32 id, Sint32 phase, Sint32 frm)
 
 /* Pound on the west stake, metatile (13, 26), drives it down and raises the
    inner west stake. */
-void scTrialRoadPoundWestStake(Sint32 phase, Sint32 frm)
+void scTrialRoadPoundWestStake(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadPoundStake(ACTOR_WEST_STAKE, phase, frm);
+	scTrialRoadPoundStake(ACTOR_WEST_STAKE, phase, frame);
 }
 
 /* Pound on the inner west stake, metatile (15, 26), drives it down and raises
    the west stake. */
-void scTrialRoadPoundInnerWestStake(Sint32 phase, Sint32 frm)
+void scTrialRoadPoundInnerWestStake(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadPoundStake(ACTOR_INNER_WEST_STAKE, phase, frm);
+	scTrialRoadPoundStake(ACTOR_INNER_WEST_STAKE, phase, frame);
 }
 
 /* Pound on the inner east stake, metatile (17, 26), drives it down and raises
    the east stake. */
-void scTrialRoadPoundInnerEastStake(Sint32 phase, Sint32 frm)
+void scTrialRoadPoundInnerEastStake(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadPoundStake(ACTOR_INNER_EAST_STAKE, phase, frm);
+	scTrialRoadPoundStake(ACTOR_INNER_EAST_STAKE, phase, frame);
 }
 
 /* Pound on the east stake, metatile (19, 26), drives it down and raises the
    inner east stake. */
-void scTrialRoadPoundEastStake(Sint32 phase, Sint32 frm)
+void scTrialRoadPoundEastStake(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadPoundStake(ACTOR_EAST_STAKE, phase, frm);
+	scTrialRoadPoundStake(ACTOR_EAST_STAKE, phase, frame);
 }
 
 /* Stepping onto a raised stake in the Pound stage sinks it slowly under Felix's
    weight while its partner grows out of the ground, unless a pillar stands on
    the partner. */
-void scTrialRoadStepOntoStake(Sint32 id, Sint32 other, Sint32 flg, Sint32 side)
+void scTrialRoadStepOntoStake(Sint32 id, Sint32 other, Sint32 flag, Sint32 side)
 {
 	ACTOR *actor = fdActorGetById(id);
 	ACTOR *partner = fdActorGetById(other);
@@ -1290,11 +1291,11 @@ void scTrialRoadStepOntoStake(Sint32 id, Sint32 other, Sint32 flg, Sint32 side)
 	} while(t <= toFIXED(1));
 	actor->scaleY = toFIXED(1);
 	scTrialRoadLowerStake(id);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	if(side != 0)
-		fdScriptSetFlag(flg);
+		fdScriptSetFlag(flag);
 	else
-		fdScriptClearFlag(flg);
+		fdScriptClearFlag(flag);
 	fdScriptEnd();
 }
 
@@ -1371,16 +1372,16 @@ void scTrialRoadBlockLogMetatiles(Sint32 id, Sint32 mode)
 {
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor = fdActorGetById(id);
-	Sint32		  idx;
+	Sint32		  index;
 	MAP_METATILE *low;
 	MAP_METATILE *high;
 
 	if(actor == 0)
 		return;
-	idx = (FIELD_METATILE(actor->x.fixed)) +
+	index = (FIELD_METATILE(actor->x.fixed)) +
 		((FIELD_METATILE(actor->z.fixed)) << 7);
-	low = map->layers[0].metatiles + idx;
-	high = map->layers[2].metatiles + idx;
+	low = map->layers[0].metatiles + index;
+	high = map->layers[2].metatiles + index;
 	if(mode == 0) {
 		low[-MAPGRID_SIZE].collisionCode = METATILE_BEHAVIOR_WALL;
 		low->collisionCode = METATILE_BEHAVIOR_WALL;
@@ -1485,7 +1486,7 @@ void scTrialRoadPushLog(Sint32 id, Sint32 dx, Sint32 dz, Sint32 axis)
 	fdScriptWait(6);
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 5;
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	if(dx < 0 || dz < 0)
 		mode = 3;
 	fdActorSelectAnimation(actor, mode);
@@ -1502,8 +1503,8 @@ void scTrialRoadPushLog(Sint32 id, Sint32 dx, Sint32 dz, Sint32 axis)
 	fdActorWaitForMove(actor);
 	if(toX <= 17) {
 		fdActorSelectAnimation(actor, 1);
-		sySndPlay(SE_STOP_EXIT_SE);
-		sySndPlay(SE_HEAVY_STOP);
+		sySoundPlay(SE_STOP_EXIT_SE);
+		sySoundPlay(SE_HEAVY_STOP);
 	} else {
 		fdActorSelectAnimation(actor, 3);
 		fdActorSetMoveTarget(
@@ -1512,12 +1513,12 @@ void scTrialRoadPushLog(Sint32 id, Sint32 dx, Sint32 dz, Sint32 axis)
 		fdActorSelectAnimation(actor, 8);
 		fdActorWaitForMove(actor);
 		/* FAKEMATCH(dead): the flags stored through their taken address; as
-		 * actor->priFlg. */
+		 * actor->priorityFlags. */
 		/* FAKEMATCH(temporary): mode reused to hold ACTOR_PRIORITY_UNDERFOOT
 		 * for the store; as the constant stored. */
-		*&actor->priFlg = mode = ACTOR_PRIORITY_UNDERFOOT;
-		sySndPlay(SE_STOP_EXIT_SE);
-		sySndPlay(SE_LOG_FALL);
+		*&actor->priorityFlags = mode = ACTOR_PRIORITY_UNDERFOOT;
+		sySoundPlay(SE_STOP_EXIT_SE);
+		sySoundPlay(SE_LOG_FALL);
 		syGameFlagSet(id + FLAG_LOG_IN_WATER_BASE);
 	}
 	fdScriptWait(15);
@@ -1576,13 +1577,13 @@ void scTrialRoadPushEastLogSouthOrClimbDown(void)
 /* Scoop over one of the fountain stage's three buried vents, at metatiles (13,
    23), (16, 23) and (19, 23), digs it out: the vent shows in the ground, Felix
    can step onto it, and its fountain rises and falls with the others. */
-void scTrialRoadUncoverVent(Sint32 id, Sint32 phase, Sint32 frm)
+void scTrialRoadUncoverVent(Sint32 id, Sint32 phase, Sint32 frame)
 {
-	if(frm == 30) {
+	if(frame == 30) {
 		ACTOR *actor = fdActorGetById(id);
 		Sint32 height;
 
-		actor->x.fixed = toFIXED(actor->tmr);
+		actor->x.fixed = toFIXED(actor->timer);
 		actor->z.fixed = toFIXED(actor->userValue);
 		height = fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 		actor->groundHeight = height;
@@ -1593,21 +1594,21 @@ void scTrialRoadUncoverVent(Sint32 id, Sint32 phase, Sint32 frm)
 }
 
 /* Scoop over the west vent digs it out. */
-void scTrialRoadUncoverWestVent(Sint32 phase, Sint32 frm)
+void scTrialRoadUncoverWestVent(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadUncoverVent(ACTOR_WEST_VENT, phase, frm);
+	scTrialRoadUncoverVent(ACTOR_WEST_VENT, phase, frame);
 }
 
 /* Scoop over the middle vent digs it out. */
-void scTrialRoadUncoverMiddleVent(Sint32 phase, Sint32 frm)
+void scTrialRoadUncoverMiddleVent(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadUncoverVent(ACTOR_MIDDLE_VENT, phase, frm);
+	scTrialRoadUncoverVent(ACTOR_MIDDLE_VENT, phase, frame);
 }
 
 /* Scoop over the east vent digs it out. */
-void scTrialRoadUncoverEastVent(Sint32 phase, Sint32 frm)
+void scTrialRoadUncoverEastVent(Sint32 phase, Sint32 frame)
 {
-	scTrialRoadUncoverVent(ACTOR_EAST_VENT, phase, frm);
+	scTrialRoadUncoverVent(ACTOR_EAST_VENT, phase, frame);
 }
 
 /* Stepping onto the fountain stage's block from above leaves Felix standing on
@@ -1674,25 +1675,25 @@ void scTrialRoadDriftWithStream(void)
 {
 	ACTOR		  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	EFFECT_OPTIONS options;
-	Sint32		   vel[3];
+	Sint32		   velocity[3];
 
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_TIGHTROPE)
 		return;
 	leader->z.fixed += toFIXED(1);
 	if((TickCount & 7) != 0)
 		return;
-	if(leader->velZ == 0 && leader->velX == 0)
+	if(leader->velocityZ == 0 && leader->velocityX == 0)
 		return;
 	options.update = fdEffectAdvanceMotionAtLeaderPriority;
 	options.startScaleX = toFIXED(8) / 10;
 	options.startScaleY = toFIXED(8) / 10;
-	vel[1] = 0;
-	vel[2] = toFIXED(1);
-	vel[0] = 0;
-	vel[0] += (Uint16)(syRandom() * 2) - toFIXED(1);
-	vel[2] += (Uint16)syRandom() - toFIXED(0.5);
+	velocity[1] = 0;
+	velocity[2] = toFIXED(1);
+	velocity[0] = 0;
+	velocity[0] += (Uint16)(syRandom() * 2) - toFIXED(1);
+	velocity[2] += (Uint16)syRandom() - toFIXED(0.5);
 	scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-		vel[0], vel[1], vel[2], EFFECT_USE_UPDATE | 1, &options);
+		velocity[0], velocity[1], velocity[2], EFFECT_USE_UPDATE | 1, &options);
 }
 
 /* Lift on the rock in the cave beyond the summit raises it out of the way to
@@ -1761,7 +1762,7 @@ DEFINE_TRIAL_ROAD_SET_POOL_TILES(scTrialRoadHidePoolTiles, 34, 36)
    metatile (77, 18) (or (82, 18) on the right) the walking rules of the
    metatile beside it. Coming back to the summit while the race is on, the door
    is shut again, without the sound. */
-void scTrialRoadShutSummitDoorway(Sint32 snd)
+void scTrialRoadShutSummitDoorway(Sint32 sound)
 {
 	if(fdScriptGetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
 		if(TrialRoadStateWork->mirrored == 0) {
@@ -1771,8 +1772,8 @@ void scTrialRoadShutSummitDoorway(Sint32 snd)
 			fdMapGridCopyMetatilesLayered(26, 79, 1, 2, 18, 79);
 			fdMapGridCopyMetatileAttributes(81, 18, 1, 1, 82, 18);
 		}
-		if(snd)
-			fdScriptPlaySnd(SE_ITEM_BREAK);
+		if(sound)
+			fdScriptPlaySound(SE_ITEM_BREAK);
 	}
 	fdScriptSetFlag(FLAG_SUMMIT_DOORWAY_SHUT);
 }
@@ -1785,11 +1786,11 @@ void scTrialRoadShutSummitDoorway(Sint32 snd)
    19), are the two dark openings in the cliff under the top.) */
 void scTrialRoadChallengeMoapa(void)
 {
-	Sint32 cnt = fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE);
+	Sint32 count = fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE);
 
-	cnt += fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 1);
-	cnt += fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 2);
-	cnt += fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 3);
+	count += fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 1);
+	count += fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 2);
+	count += fdScriptGetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 3);
 	if(fdScriptGetFlag(FLAG_PARTY_FIRST_AT_PEAK))
 		scTrialRoadReachPeakFirst();
 	else
@@ -1799,7 +1800,7 @@ void scTrialRoadChallengeMoapa(void)
 		SCENE_TRIAL_ROAD_SUMMIT, TRIAL_ROAD_SUMMIT_AFTER_WIN);
 	fdScriptSetDefeatDestination(
 		SCENE_TRIAL_ROAD_SUMMIT, TRIAL_ROAD_SUMMIT_AFTER_DEFEAT);
-	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_MOAPA, 4 - cnt);
+	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_MOAPA, 4 - count);
 }
 
 /* Moving or pushing the summit's stone pillar, at metatile (7, 20), one
@@ -1810,7 +1811,7 @@ void scTrialRoadSetSummitPillar(Sint32 unused, Sint32 id)
 
 	if(FIELD_METATILE(actor->x.fixed) == 8) {
 		fdScriptSetFlag(FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed -= toFIXED(1);
 	}
 }
@@ -1957,7 +1958,7 @@ void scTrialRoadSetUpPoundStage(void)
 	}
 }
 
-void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *tbl);
+void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *table);
 
 /* Readies the crumbling stage: the cracked pillars already crumbled stay
    gone. */
@@ -1973,12 +1974,12 @@ void scTrialRoadSetUpLogStage(void)
 {
 	fdMapGridCopyMetatileAttributes(11, 22, 11, 8, 11, 64);
 	fdMapGridCopyMetatileAttributes(79, 22, 11, 8, 79, 64);
-	fdActorGetById(ACTOR_UPPER_LOG)->sceneCnt = 1;
-	fdActorGetById(ACTOR_LOWER_LOG)->sceneCnt = 1;
-	fdActorGetById(ACTOR_EAST_LOG)->sceneCnt = 1;
-	fdActorGetById(ACTOR_UPPER_LOG)->collisionFlg = 0;
-	fdActorGetById(ACTOR_LOWER_LOG)->collisionFlg = 0;
-	fdActorGetById(ACTOR_EAST_LOG)->collisionFlg = 0;
+	fdActorGetById(ACTOR_UPPER_LOG)->sceneCount = 1;
+	fdActorGetById(ACTOR_LOWER_LOG)->sceneCount = 1;
+	fdActorGetById(ACTOR_EAST_LOG)->sceneCount = 1;
+	fdActorGetById(ACTOR_UPPER_LOG)->collisionFlags = 0;
+	fdActorGetById(ACTOR_LOWER_LOG)->collisionFlags = 0;
+	fdActorGetById(ACTOR_EAST_LOG)->collisionFlags = 0;
 	scTrialRoadBlockLogs();
 	scTrialRoadAddPillarTop(ACTOR_PILLAR_A);
 	scTrialRoadSetJumpMetatileUnder(ACTOR_PILLAR_A);
@@ -1987,12 +1988,12 @@ void scTrialRoadSetUpLogStage(void)
 /* One of the fountain stage's fountains: the vent its water rises from, and the
    platform the leader rides on top of it. */
 typedef struct TRIAL_ROAD_FOUNTAIN {
-	Sint16 id;		  /* its vent; 0 for an empty slot */
-	Sint16 phase;	  /* ticks into its period */
-	Sint16 height;	  /* how far it has risen, in pixels */
-	Sint16 periodFrm; /* ticks in one rise and fall */
-	Sint16 riseFrm;	  /* the phase it starts to rise at */
-	Sint16 fallFrm;	  /* the phase it starts to fall at */
+	Sint16 id;			/* its vent; 0 for an empty slot */
+	Sint16 phase;		/* ticks into its period */
+	Sint16 height;		/* how far it has risen, in pixels */
+	Sint16 periodFrame; /* ticks in one rise and fall */
+	Sint16 riseFrame;	/* the phase it starts to rise at */
+	Sint16 fallFrame;	/* the phase it starts to fall at */
 	Sint16 high;
 	Sint16 low;
 	Sint16
@@ -2020,7 +2021,7 @@ typedef struct TRIAL_FOUNTAINS_WORK {
 	Sint16 vramEntry;
 	Sint16 shape; /* the first of the shape grid's values for the fountains */
 	TRIAL_ROAD_FOUNTAIN fountains[FOUNTAIN_COUNT];
-	Uint32			   *sprs;
+	Uint32			   *sprites;
 } TRIAL_FOUNTAINS_WORK;
 
 /* The fountain stage's fountains, kept in the inventory snapshot's spare
@@ -2046,29 +2047,29 @@ void scTrialRoadSetUpFountainStage(void)
 	scTrialRoadStartFountains(0, FOUNTAIN_PERIOD);
 	fountain =
 		scTrialRoadAddFountain(0, ACTOR_WEST_VENT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
-	fountain->periodFrm = FOUNTAIN_PERIOD;
-	fountain->riseFrm = FOUNTAIN_RISE_AT;
-	fountain->fallFrm = FOUNTAIN_FALL_AT;
+	fountain->periodFrame = FOUNTAIN_PERIOD;
+	fountain->riseFrame = FOUNTAIN_RISE_AT;
+	fountain->fallFrame = FOUNTAIN_FALL_AT;
 	fountain = scTrialRoadAddFountain(
 		1, ACTOR_MIDDLE_VENT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
-	fountain->periodFrm = FOUNTAIN_PERIOD;
-	fountain->riseFrm = FOUNTAIN_RISE_AT;
-	fountain->fallFrm = FOUNTAIN_FALL_AT;
+	fountain->periodFrame = FOUNTAIN_PERIOD;
+	fountain->riseFrame = FOUNTAIN_RISE_AT;
+	fountain->fallFrame = FOUNTAIN_FALL_AT;
 	fountain =
 		scTrialRoadAddFountain(2, ACTOR_EAST_VENT, 0, 0, NORTH_FOUNTAIN_HEIGHT);
-	fountain->periodFrm = FOUNTAIN_PERIOD;
-	fountain->riseFrm = FOUNTAIN_RISE_AT;
-	fountain->fallFrm = FOUNTAIN_FALL_AT;
+	fountain->periodFrame = FOUNTAIN_PERIOD;
+	fountain->riseFrame = FOUNTAIN_RISE_AT;
+	fountain->fallFrame = FOUNTAIN_FALL_AT;
 	fountain = scTrialRoadAddFountain(
 		3, ACTOR_SOUTHWEST_VENT, 0, 0, SOUTH_FOUNTAIN_HEIGHT);
-	fountain->periodFrm = FOUNTAIN_PERIOD;
-	fountain->riseFrm = FOUNTAIN_RISE_AT;
-	fountain->fallFrm = FOUNTAIN_FALL_AT;
+	fountain->periodFrame = FOUNTAIN_PERIOD;
+	fountain->riseFrame = FOUNTAIN_RISE_AT;
+	fountain->fallFrame = FOUNTAIN_FALL_AT;
 	fountain = scTrialRoadAddFountain(
 		4, ACTOR_SOUTHEAST_VENT, 0, 0, SOUTH_FOUNTAIN_HEIGHT);
-	fountain->periodFrm = FOUNTAIN_PERIOD;
-	fountain->riseFrm = FOUNTAIN_RISE_AT;
-	fountain->fallFrm = FOUNTAIN_FALL_AT;
+	fountain->periodFrame = FOUNTAIN_PERIOD;
+	fountain->riseFrame = FOUNTAIN_RISE_AT;
+	fountain->fallFrame = FOUNTAIN_FALL_AT;
 	if(!fdScriptGetFlag(FLAG_VENT_UNCOVERED_BASE + ACTOR_WEST_VENT))
 		fdActorSetPos(ACTOR_WEST_VENT, 0, 0);
 	else
@@ -2130,14 +2131,14 @@ void scTrialRoadGaspFlees(void)
 			gasp, toFIXED(296 - dx), gasp->y.fixed, toFIXED(248 - dz));
 	if(spotDistanceSquared >= 4 * 4)
 		return;
-	fdScriptPlaySnd(SE_ENEMY_CRY);
-	fdScriptPlaySnd(SE_DJINNI_FLEES);
+	fdScriptPlaySound(SE_ENEMY_CRY);
+	fdScriptPlaySound(SE_DJINNI_FLEES);
 	gasp->speedLimit = toFIXED(2);
 	gasp->acceleration = toFIXED(2);
-	gasp->motionFlg = ACTOR_FALLS;
+	gasp->motionFlags = ACTOR_FALLS;
 	gasp->groundHeight = 0;
-	gasp->collisionFlg = ACTOR_SOLID;
-	gasp->velY = toFIXED(10);
+	gasp->collisionFlags = ACTOR_SOLID;
+	gasp->velocityY = toFIXED(10);
 	fdActorSetScript(ACTOR_GASP, TrialRoadGaspHopScript);
 	y = gasp->y.fixed;
 	fdActorSetMoveTarget(gasp, toFIXED(344), y, toFIXED(264));
@@ -2155,13 +2156,13 @@ void scTrialRoadSetUpPoolRoom(void)
 	if(!fdScriptGetFlag(FLAG_DJINNI(DJINNI_GASP))) {
 		ACTOR *actor = fdActorGetById(ACTOR_GASP);
 		Sint32 started = fdScriptGetFlag(FLAG_GASP_FLED);
-		Uint8 *flg = &actor->motionFlg;
+		Uint8 *flags = &actor->motionFlags;
 
 		if(!started) {
-			*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
+			*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 			actor->y.fixed += toFIXED(17) / 2;
 		} else {
-			*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			actor->y.fixed = 0;
 		}
 		sySetEvent(scTrialRoadGaspFlees, EVENT_PASS_TICK);
@@ -2189,10 +2190,10 @@ static inline void scPaletteCycleSetTick(Sint32 value)
    while a Psynergy other than Hover, Reveal or the menu is up. */
 void scTrialRoadStepPaletteCycle(void)
 {
-	Uint16	cols[16];
+	Uint16	colors[16];
 	Sint32	phase = (TrialRoadPaletteCycleTick / 4) % 5;
 	Sint32	i;
-	Sint32	ofs;
+	Sint32	offset;
 	Uint16 *p;
 
 	if(TrialRoadPaletteCycleRunning != 0) {
@@ -2207,17 +2208,17 @@ void scTrialRoadStepPaletteCycle(void)
 			return;
 	}
 	i = 0;
-	ofs = 4;
+	offset = 4;
 	do {
-		p = cols;
+		p = colors;
 		{
 			Sint32 slot = (phase + i) % 5;
-			Uint8 *tbl = (Uint8 *)TrialRoadPaletteCycleColors;
+			Uint8 *table = (Uint8 *)TrialRoadPaletteCycleColors;
 
-			cols[slot] = *(Uint16 *)(tbl + ofs);
+			colors[slot] = *(Uint16 *)(table + offset);
 		}
 		i++;
-		ofs += 2;
+		offset += 2;
 	} while(i <= 4);
 	syDMAXCopy(p, (void *)&BG_PLTT_COLOR(5, 2), DMA_COPY_WORDS(2), REG_DMA3);
 	TrialRoadPaletteCycleTick++;
@@ -2266,7 +2267,7 @@ void scTrialRoadSetUpPeak(void)
 		else
 			scTrialRoadPlaceMoapaAtPeak();
 	}
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	scTrialRoadStartPaletteCycle(1);
 	scTrialRoadAddPillarTop(ACTOR_PEAK_PILLAR);
@@ -2288,7 +2289,7 @@ Sint32 scInit(void)
 	if(scene == SCENE_TRIAL_ROAD_STAGES) {
 		if(entrance <= 7) {
 			fdScriptSetFlag(FLAG_RETREAT_BLOCKED);
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 			Value0((Sint32 (*)())TrialRoadStageSetUps[pattern & 7]);
 		} else if(entrance == TRIAL_ROAD_RULES_COURSE) {
@@ -2309,28 +2310,28 @@ Sint32 scInit(void)
 /* Copies a rectangle of map metatiles and their shapes, last row first, so that
    overlapping rectangles copy whole. */
 void scTrialRoadCopyMetatilesBackward(Sint32 srcX, Sint32 srcY, Sint32 width,
-	Sint32 height, Sint32 dstX, Sint32 dstY)
+	Sint32 height, Sint32 destX, Sint32 destY)
 {
 	Uint32 *metatiles = (Uint32 *)RamMapMetatileBuffer;
-	Sint32	dst = (dstY << 7) + dstX;
-	Uint8  *dstShapes = MapShapeGrid + dst;
+	Sint32	dest = (destY << 7) + destX;
+	Uint8  *destShapes = MapShapeGrid + dest;
 	Sint32	src = (srcY << 7) + srcX;
 	Uint8  *srcShapes = MapShapeGrid + src;
-	Uint32 *dstMetatiles = metatiles + dst;
+	Uint32 *destMetatiles = metatiles + dest;
 	Sint16	row;
-	Sint16	col;
+	Sint16	column;
 
 	metatiles += src;
 	for(row = height - 1; row >= 0; row--) {
-		Uint32 *dstMetatile = dstMetatiles + ((row << 7) + width) - 1;
+		Uint32 *destMetatile = destMetatiles + ((row << 7) + width) - 1;
 		Uint32 *srcMetatile = metatiles + ((row << 7) + width) - 1;
-		Uint8  *dstShape = dstShapes + (row << 7) + width - 1;
+		Uint8  *destShape = destShapes + (row << 7) + width - 1;
 		Uint8  *srcShape = srcShapes + (row << 7) + width - 1;
 
-		for(col = width - 1; col >= 0; col--) {
-			*dstMetatile-- = *srcMetatile--;
-			*dstShape = *srcShape;
-			dstShape--;
+		for(column = width - 1; column >= 0; column--) {
+			*destMetatile-- = *srcMetatile--;
+			*destShape = *srcShape;
+			destShape--;
 			srcShape--;
 		}
 	}
@@ -2349,13 +2350,13 @@ void scTrialRoadUpdateRival(void)
 	if(state->stage[1] > 3)
 		return;
 	if(scTrialRoadRivalIsWaiting() != 0) {
-		if(state->rivalTmr == 0) {
+		if(state->rivalTimer == 0) {
 			side = scTrialRoadRivalIsAhead(1) ^ 1;
 			scTrialRoadPlayRivalRecording(TrialRoadRivalRecordings[side + 8]);
 			/* Moapa's time at the chests counts from 1 when he reached the
 			   switch first, with one chest to fill, and from 601 when Felix
 			   did, with two. */
-			state->rivalTmr = side * 5 * 120 + 1;
+			state->rivalTimer = side * 5 * 120 + 1;
 		} else {
 			if(state->stage[1] >= state->rivalBest)
 				state->rivalBest = state->stage[1] + 1;
@@ -2370,38 +2371,38 @@ void scTrialRoadUpdateRival(void)
 			} else {
 				fdActorSetPos(ACTOR_MOAPA, 0, 0);
 			}
-			state->rivalTmr = 0;
+			state->rivalTimer = 0;
 		}
 	}
 	{
-		Uint8 *kind = &fdActorGetById(ACTOR_MOAPA)->sprStorageKind;
+		Uint8 *kind = &fdActorGetById(ACTOR_MOAPA)->spriteStorageKind;
 
 		if(state->stage[0] == state->stage[1])
 			*kind = 1;
 		else
 			*kind = 0;
 	}
-	if(state->rivalTmr == 0)
+	if(state->rivalTimer == 0)
 		return;
 	if(syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS))
 		return;
 	if(state->stage[0] == state->stage[1]) {
-		switch(state->rivalTmr) {
+		switch(state->rivalTimer) {
 		case 1:
 		case 601:
-			sySndPlay(SE_CHEST_OPEN);
+			sySoundPlay(SE_CHEST_OPEN);
 			if(state->mirrored != 0) {
 				fdActorSetAnimationById(ACTOR_LEFT_INNER_CHEST, 6);
-				if(state->rivalTmr > 600)
+				if(state->rivalTimer > 600)
 					fdActorSetAnimationById(ACTOR_LEFT_OUTER_CHEST, 6);
 			} else {
 				fdActorSetAnimationById(ACTOR_RIGHT_INNER_CHEST, 6);
-				if(state->rivalTmr > 600)
+				if(state->rivalTimer > 600)
 					fdActorSetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 6);
 			}
 			break;
 		case 655:
-			sySndPlay(SE_CHEST_CLOSE);
+			sySoundPlay(SE_CHEST_CLOSE);
 			if(state->mirrored != 0)
 				fdActorSetAnimationById(ACTOR_LEFT_OUTER_CHEST, 5);
 			else
@@ -2413,7 +2414,7 @@ void scTrialRoadUpdateRival(void)
 			break;
 		case 50:
 		case 710:
-			sySndPlay(SE_CHEST_CLOSE);
+			sySoundPlay(SE_CHEST_CLOSE);
 			if(state->mirrored != 0)
 				fdActorSetAnimationById(ACTOR_LEFT_INNER_CHEST, 5);
 			else
@@ -2422,11 +2423,11 @@ void scTrialRoadUpdateRival(void)
 		case 70:
 		case 730:
 			scTrialRoadOpenRivalDoor(state->mirrored, state->stage[1]);
-			sySndPlay(SE_ITEM_BREAK);
+			sySoundPlay(SE_ITEM_BREAK);
 			break;
 		}
 	}
-	road->rivalTmr++;
+	road->rivalTimer++;
 }
 
 extern Sint16 TrialRoadStageMapMetatiles[][2];
@@ -2557,10 +2558,14 @@ Sint32 scPrepareMap(void)
 				SET_LAYER(34, x1);
 				layer = &map->layers[2];
 				SET_LAYER(68, x2);
-				fdActorSetSprCol(fdActorGetById(ACTOR_LEFT_INNER_CHEST), 3);
-				fdActorSetSprCol(fdActorGetById(ACTOR_LEFT_OUTER_CHEST), 3);
-				fdActorSetSprCol(fdActorGetById(ACTOR_RIGHT_INNER_CHEST), 3);
-				fdActorSetSprCol(fdActorGetById(ACTOR_RIGHT_OUTER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_LEFT_INNER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_LEFT_OUTER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_RIGHT_INNER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_RIGHT_OUTER_CHEST), 3);
 				/* The course Moapa shows: the arena is cleared, each copy of
 				   the blank metatile at its west edge carried across it, and
 				   the dealt pattern drawn from column 1. */
@@ -2584,7 +2589,7 @@ Sint32 scPrepareMap(void)
 			} else {
 				Sint32 x1;
 				Sint32 x2;
-				Sint32 dstY;
+				Sint32 destY;
 
 				row = 0;
 				layer = &map->layers[1];
@@ -2622,19 +2627,23 @@ Sint32 scPrepareMap(void)
 					fdActorSetPos(ACTOR_RIGHT_INNER_CHEST, 184, 152);
 					fdActorSetPos(ACTOR_RIGHT_OUTER_CHEST, 200, 152);
 				}
-				fdActorSetSprCol(fdActorGetById(ACTOR_LEFT_INNER_CHEST), 3);
-				fdActorSetSprCol(fdActorGetById(ACTOR_LEFT_OUTER_CHEST), 3);
-				fdActorSetSprCol(fdActorGetById(ACTOR_RIGHT_INNER_CHEST), 3);
-				fdActorSetSprCol(fdActorGetById(ACTOR_RIGHT_OUTER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_LEFT_INNER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_LEFT_OUTER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_RIGHT_INNER_CHEST), 3);
+				fdActorSetSpriteColor(
+					fdActorGetById(ACTOR_RIGHT_OUTER_CHEST), 3);
 				/* The stage's own pattern fills the arena from column 10, and
 				   the other stages' treasures are put away. */
-				dstY = 13;
+				destY = 13;
 				value = state->pattern;
 				px = TrialRoadStageMapMetatiles[value][0];
 				row = TrialRoadStageMapMetatiles[value][1];
-				fdMapCopyRawMetatilesRect(px, row, 13, 21, 10, dstY);
-				fdMapCopyRawMetatilesRect(px + 42, row, 13, 21, 44, dstY);
-				fdMapCopyRawMetatilesRect(px + 84, row, 13, 21, 78, dstY);
+				fdMapCopyRawMetatilesRect(px, row, 13, 21, 10, destY);
+				fdMapCopyRawMetatilesRect(px + 42, row, 13, 21, 44, destY);
+				fdMapCopyRawMetatilesRect(px + 84, row, 13, 21, 78, destY);
 				for(i = 0; i <= 9; i++) {
 					if(TrialRoadTreasureStages[i] != value)
 						fdActorSetPos(i + FIELD_TREASURE_ACTOR, 0, 0);
@@ -2697,10 +2706,10 @@ void scTrialRoadDealStageOrder(Uint32 seed)
 {
 	Sint16 *order = (Sint16 *)TrialRoadStateWork;
 	Uint32	saved = RandomSeed;
-	Sint32	cnts[2];
+	Sint32	counts[2];
 	Sint32	i;
 	Sint32	k;
-	Sint32	ofs;
+	Sint32	offset;
 	Sint8	value;
 
 	RandomSeed = seed;
@@ -2709,20 +2718,20 @@ void scTrialRoadDealStageOrder(Uint32 seed)
 			order[i] = -1;
 		for(i = 0; i <= 7; i++) {
 			do {
-				ofs = syRandomBelow(8) * 2;
-			} while(*(Sint16 *)((Uint8 *)order + ofs) != -1);
-			*(Sint16 *)((Uint8 *)order + ofs) = i;
+				offset = syRandomBelow(8) * 2;
+			} while(*(Sint16 *)((Uint8 *)order + offset) != -1);
+			*(Sint16 *)((Uint8 *)order + offset) = i;
 		}
-		cnts[1] = 0;
-		cnts[0] = 0;
+		counts[1] = 0;
+		counts[0] = 0;
 		for(i = 0; i <= 7; i++) {
 			for(k = 0; k <= 3; k++) {
 				value = TrialRoadKeyStages[k];
 				if(order[i] == value)
-					cnts[i & 1]++;
+					counts[i & 1]++;
 			}
 		}
-	} while(cnts[0] == 0 || cnts[1] == 0);
+	} while(counts[0] == 0 || counts[1] == 0);
 	RandomSeed = saved;
 }
 
@@ -2767,19 +2776,19 @@ Sint32 scTrialRoadMirrorOffset(Sint32 x)
 }
 
 /* An angle on the mirrored road, turned round when it is. */
-Sint32 scTrialRoadMirrorAng(Sint32 ang)
+Sint32 scTrialRoadMirrorAngle(Sint32 angle)
 {
 	if(scTrialRoadIsMirrored())
-		return (DEGtoANG(180) - ang) & TRIG_ANGLE_MASK;
-	return ang & TRIG_ANGLE_MASK;
+		return (DEGtoANG(180) - angle) & TRIG_ANGLE_MASK;
+	return angle & TRIG_ANGLE_MASK;
 }
 
 /* Places an actor at a pixel position and facing, mirrored when the leader took
    the right path. */
-void scTrialRoadPlaceActor(Sint32 id, Sint32 x, Sint32 z, Sint32 ang)
+void scTrialRoadPlaceActor(Sint32 id, Sint32 x, Sint32 z, Sint32 angle)
 {
 	fdActorSetPosAndFacing(id, toFIXED(scTrialRoadMirrorX(x)), toFIXED(z),
-		(Uint16)scTrialRoadMirrorAng(ang));
+		(Uint16)scTrialRoadMirrorAngle(angle));
 }
 
 /* Felix got to the summit first, so Moapa is not placed yet; he arrives when
@@ -2816,13 +2825,13 @@ static inline void scTrialRoadGatherAtPeak(void)
 	fdActorWalkTo(ACTOR_JENNA, scTrialRoadMirrorMetatileX(27), 248);
 	fdActorWalkTo(ACTOR_SHEBA, scTrialRoadMirrorMetatileX(27), 280);
 	fdActorWaitForMoveById(ACTOR_FELIX);
-	fdActorFaceDirection(ACTOR_FELIX, scTrialRoadMirrorAng(FACING_EAST), 0);
+	fdActorFaceDirection(ACTOR_FELIX, scTrialRoadMirrorAngle(FACING_EAST), 0);
 	fdActorWaitForMoveById(ACTOR_PIERS);
-	fdActorFaceDirection(ACTOR_PIERS, scTrialRoadMirrorAng(FACING_EAST), 0);
+	fdActorFaceDirection(ACTOR_PIERS, scTrialRoadMirrorAngle(FACING_EAST), 0);
 	fdActorWaitForMoveById(ACTOR_JENNA);
-	fdActorFaceDirection(ACTOR_JENNA, scTrialRoadMirrorAng(FACING_EAST), 0);
+	fdActorFaceDirection(ACTOR_JENNA, scTrialRoadMirrorAngle(FACING_EAST), 0);
 	fdActorWaitForMoveById(ACTOR_SHEBA);
-	fdActorFaceDirection(ACTOR_SHEBA, scTrialRoadMirrorAng(FACING_EAST), 0);
+	fdActorFaceDirection(ACTOR_SHEBA, scTrialRoadMirrorAngle(FACING_EAST), 0);
 	fdCameraWaitForArrival();
 }
 
@@ -2834,21 +2843,21 @@ void scTrialRoadReachPeakFirst(void)
 
 	scTrialRoadGatherAtPeak();
 	sySynch(20);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	sySynch(20);
 	scTrialRoadPlaceActor(ACTOR_MOAPA, 344, 296, FACING_NORTH);
 	actor = fdActorGetById(ACTOR_MOAPA);
 	actor->speedLimit = toFIXED(1);
 	actor->acceleration = toFIXED(1) / 2;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSetMoveTarget(
 		actor, actor->x.fixed, actor->y.fixed + toFIXED(88), actor->z.fixed);
 	fdActorSelectAnimation(actor, 2);
 	scFieldActorWaitForMove(actor);
 	fdActorSelectAnimation(actor, 1);
-	actor->motionFlg = ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FALLS;
 	actor->groundHeight = toFIXED(128);
-	actor->velY = toFIXED(4);
+	actor->velocityY = toFIXED(4);
 	actor->speedLimit = toFIXED(3);
 	actor->acceleration = toFIXED(2);
 	fdActorSetMoveTarget(
@@ -2861,8 +2870,8 @@ void scTrialRoadReachPeakFirst(void)
 		actor->y.fixed, toFIXED(264));
 	scFieldActorWaitForMove(actor);
 	sySynch(6);
-	fdScriptPlaySnd(SE_JUMP);
-	actor->velY = toFIXED(6);
+	fdScriptPlaySound(SE_JUMP);
+	actor->velocityY = toFIXED(6);
 	actor->speedLimit = toFIXED(3);
 	actor->acceleration = toFIXED(2);
 	fdActorSetMoveTarget(actor, toFIXED(scTrialRoadMirrorMetatileX(37)),
@@ -2878,13 +2887,13 @@ void scTrialRoadReachPeakFirst(void)
 	fdActorWalkTo(ACTOR_LEFT_KNIGHT, scTrialRoadMirrorMetatileX(37), 248);
 	fdActorWalkTo(ACTOR_RIGHT_KNIGHT, scTrialRoadMirrorMetatileX(37), 280);
 	fdActorWaitForMoveById(ACTOR_MOAPA);
-	fdActorFaceDirection(ACTOR_MOAPA, scTrialRoadMirrorAng(FACING_WEST), 0);
+	fdActorFaceDirection(ACTOR_MOAPA, scTrialRoadMirrorAngle(FACING_WEST), 0);
 	fdActorWaitForMoveById(ACTOR_LEFT_KNIGHT);
 	fdActorFaceDirection(
-		ACTOR_LEFT_KNIGHT, scTrialRoadMirrorAng(FACING_WEST), 0);
+		ACTOR_LEFT_KNIGHT, scTrialRoadMirrorAngle(FACING_WEST), 0);
 	fdActorWaitForMoveById(ACTOR_RIGHT_KNIGHT);
 	fdActorFaceDirection(
-		ACTOR_RIGHT_KNIGHT, scTrialRoadMirrorAng(FACING_WEST), 0);
+		ACTOR_RIGHT_KNIGHT, scTrialRoadMirrorAngle(FACING_WEST), 0);
 	fdScriptSetMessageId((Sint32)MsgTrialRoadSwiftChallenge);
 	scFieldActorShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
 	/* "You were quite swift! You may prove a challenge yet!" */
@@ -3002,15 +3011,15 @@ void scTrialRoadBeatMoapa(void)
 	fdScriptWait(5);
 	fdActorSetAnimation(ACTOR_MOAPA, 1);
 	fdScriptWait(15);
-	fdActorFaceDirection(ACTOR_MOAPA, scTrialRoadMirrorAng(FACING_WEST), 0);
+	fdActorFaceDirection(ACTOR_MOAPA, scTrialRoadMirrorAngle(FACING_WEST), 0);
 	fdActorSetAnimation(ACTOR_LEFT_KNIGHT, 1);
 	fdScriptWait(10);
 	fdActorFaceDirection(
-		ACTOR_LEFT_KNIGHT, scTrialRoadMirrorAng(FACING_WEST), 0);
+		ACTOR_LEFT_KNIGHT, scTrialRoadMirrorAngle(FACING_WEST), 0);
 	fdActorSetAnimation(ACTOR_RIGHT_KNIGHT, 1);
 	fdScriptWait(5);
 	fdActorFaceDirection(
-		ACTOR_RIGHT_KNIGHT, scTrialRoadMirrorAng(FACING_WEST), 0);
+		ACTOR_RIGHT_KNIGHT, scTrialRoadMirrorAngle(FACING_WEST), 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_MOAPA, 3);
 	/* "As we promised, you will receive the Hover Jade, and we will take..." */
@@ -3028,15 +3037,16 @@ void scTrialRoadBeatMoapa(void)
 	gmPartyInventoryDiscard(ITEM_SHAMANS_ROD);
 	gmPartyGiveItem(ITEM_HOVER_JADE, 0);
 	fdActorFaceActor(ACTOR_FELIX, ACTOR_MOAPA, 0);
-	fdActorGetById(ACTOR_MOAPA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_MOAPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_MOAPA, scTrialRoadMirrorMetatileX(35), 264);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_MOAPA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_MOAPA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	scFieldActorShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
 	/* "After many years, the vow that Hoabna made to Yegelos has at last..." */
 	fdScriptShowMessage(ACTOR_MOAPA, 0);
-	fdActorFaceDirectionAndWait(ACTOR_MOAPA, scTrialRoadMirrorAng(FACING_EAST));
+	fdActorFaceDirectionAndWait(
+		ACTOR_MOAPA, scTrialRoadMirrorAngle(FACING_EAST));
 	fdActorFaceActor(ACTOR_LEFT_KNIGHT, ACTOR_MOAPA, 0);
 	fdActorFaceActor(ACTOR_RIGHT_KNIGHT, ACTOR_MOAPA, 0);
 	fdActorSetAnimationAndWait(ACTOR_MOAPA, 3);
@@ -3080,11 +3090,11 @@ void scTrialRoadLoseToMoapa(void)
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
 	fdActorSetAnimation(ACTOR_PIERS, ANIM_COLLAPSE);
-	scFieldActorSetSprRotationById(ACTOR_PIERS, DEGtoANG(90));
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FELIX), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_JENNA), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_SHEBA), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_PIERS), 0);
+	scFieldActorSetSpriteRotationById(ACTOR_PIERS, DEGtoANG(90));
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_JENNA), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHEBA), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_PIERS), 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
@@ -3153,23 +3163,23 @@ void scTrialRoadShowTraps(void)
 	fdActorSetAnimationById(ACTOR_LEFT_KNIGHT, 1);
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_LEFT_KNIGHT, 0.25);
-	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWaitById(ACTOR_LEFT_KNIGHT, 0, 8);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_LEFT_KNIGHT, 2);
 	fdActorSetAnimationById(ACTOR_LEFT_KNIGHT, 5);
 	fdActorSetDestinationOffset(ACTOR_LEFT_KNIGHT, 0, -40);
 	fdActorWaitForMoveById(ACTOR_LEFT_KNIGHT);
-	sySndPlay(SE_CURSE);
+	sySoundPlay(SE_CURSE);
 	fdMapGridSetShake(2, 4, 1);
-	fdActorGetById(ACTOR_LEFT_KNIGHT)->velY = toFIXED(4);
+	fdActorGetById(ACTOR_LEFT_KNIGHT)->velocityY = toFIXED(4);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWaitById(ACTOR_LEFT_KNIGHT, 0, 16);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LEFT_KNIGHT)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(60);
 	fdActorFaceDirectionById(ACTOR_LEFT_KNIGHT, FACING_SOUTH, 0);
 	fdScriptWait(20);
@@ -3182,7 +3192,7 @@ void scTrialRoadShowTraps(void)
 	fdActorSetSpeed(ACTOR_LEFT_KNIGHT, 1);
 	fdActorWalkByAndWait(ACTOR_LEFT_KNIGHT, -16, -16);
 	fdActorFaceDirection(ACTOR_LEFT_KNIGHT, FACING_WEST, 0);
-	sySndPlay(SE_CHEST_OPEN);
+	sySoundPlay(SE_CHEST_OPEN);
 	fdActorSetAnimationById(ACTOR_LEFT_INNER_CHEST, 6);
 	fdScriptWait(30);
 	/* "Try putting heavier items, like weapons and tools, into the
@@ -3191,17 +3201,17 @@ void scTrialRoadShowTraps(void)
 	fdActorWalkToAndWaitById(ACTOR_LEFT_KNIGHT, 200, 168);
 	fdActorFaceDirection(ACTOR_LEFT_KNIGHT, FACING_NORTH, 0);
 	fdScriptWait(40);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetAnimationById(ACTOR_LEFT_INNER_CHEST, 5);
 	fdScriptWait(20);
-	sySndPlay(SE_ITEM_BREAK);
+	sySoundPlay(SE_ITEM_BREAK);
 	fdMapGridCopyMetatilesLayered(127, 3, 1, 2, 48, 3);
 	fdMapCopyMetatileAttributeRect(0, 127, 1, 1, 14, 8);
 	fdScriptWait(20);
 	fdActorSetMovementTypeById(
 		ACTOR_LEFT_KNIGHT, TrialRoadLeftKnightLeavesScript);
 	fdActorWaitForScriptEndById(ACTOR_LEFT_KNIGHT);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	/* "If you reach the door after your opponents do, you will be at a..." */
 	fdScriptShowMessageAndWait(ACTOR_MOAPA, 0);
 	fdActorSetMovementTypeById(
@@ -3219,23 +3229,23 @@ void scTrialRoadShowTraps(void)
 	fdActorSetSpeed(ACTOR_RIGHT_KNIGHT, 1);
 	fdActorWalkByAndWait(ACTOR_RIGHT_KNIGHT, 16, -16);
 	fdActorFaceDirectionById(ACTOR_RIGHT_KNIGHT, FACING_EAST, 0);
-	sySndPlay(SE_CHEST_OPEN);
+	sySoundPlay(SE_CHEST_OPEN);
 	fdActorSetAnimationById(ACTOR_RIGHT_INNER_CHEST, 6);
 	fdActorSetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 6);
 	fdScriptWait(30);
 	fdActorWalkToAndWait(ACTOR_RIGHT_KNIGHT, 350, 168);
 	fdActorFaceDirection(ACTOR_RIGHT_KNIGHT, FACING_NORTH, 0);
 	fdScriptWait(40);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetAnimationById(ACTOR_RIGHT_INNER_CHEST, 5);
 	fdScriptWait(40);
 	fdActorWalkToAndWait(ACTOR_RIGHT_KNIGHT, 364, 168);
 	fdActorFaceDirectionById(ACTOR_RIGHT_KNIGHT, FACING_NORTH, 0);
 	fdScriptWait(40);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 5);
 	fdScriptWait(20);
-	sySndPlay(SE_ITEM_BREAK);
+	sySoundPlay(SE_ITEM_BREAK);
 	fdMapGridCopyMetatilesLayered(127, 3, 1, 2, 53, 3);
 	fdMapCopyMetatileAttributeRect(0, 127, 1, 1, 19, 8);
 	fdScriptWait(30);
@@ -3288,12 +3298,12 @@ void scTrialRoadUpdateFountains(void)
 		actor = fdActorGetById(fountain->id);
 		if(actor->x.fixed == 0 && actor->z.fixed == 0)
 			continue;
-		if(fountain->phase == fountain->riseFrm) {
-			sySndPlay(SE_CURSE_FALL);
+		if(fountain->phase == fountain->riseFrame) {
+			sySoundPlay(SE_CURSE_FALL);
 			fountain->speed = 4;
 		}
-		if(fountain->phase == fountain->fallFrm) {
-			sySndPlay(SOUND_FADE_OUT_EXIT_SE);
+		if(fountain->phase == fountain->fallFrame) {
+			sySoundPlay(SOUND_FADE_OUT_EXIT_SE);
 			fountain->speed = -8;
 		}
 		if(fountain->speed != 0) {
@@ -3310,7 +3320,7 @@ void scTrialRoadUpdateFountains(void)
 			}
 		}
 		if(!syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS)) {
-			if(++fountain->phase >= fountain->periodFrm)
+			if(++fountain->phase >= fountain->periodFrame)
 				fountain->phase = 0;
 		}
 		metatile = (FIELD_METATILE(actor->x.fixed)) +
@@ -3359,8 +3369,8 @@ void scTrialRoadDrawFountains(void)
 	TRIAL_ROAD_FOUNTAIN	 *fountain = base->fountains;
 	Sint32				  i;
 	Sint32				  tile;
-	Sint32				  frm;
-	Sint32				  cnt;
+	Sint32				  frame;
+	Sint32				  count;
 	Sint32				  viewX;
 	Sint32				  viewZ;
 	Sint32				  viewY;
@@ -3377,9 +3387,9 @@ void scTrialRoadDrawFountains(void)
 	Sint32				  depth;
 	FIXED				  bob;
 
-	tile = VramCacheEntries[base->vramEntry].ofs >> 5;
-	entry = base->sprs;
-	cnt = 0;
+	tile = VramCacheEntries[base->vramEntry].offset >> 5;
+	entry = base->sprites;
+	count = 0;
 	rise = -toFIXED(2);
 	map = RamHeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
@@ -3390,11 +3400,11 @@ void scTrialRoadDrawFountains(void)
 		if(fountain->id == 0 || fountain->height == 0)
 			continue;
 		actor = fdActorGetById(fountain->id);
-		frm = ((TickCount % 12) / 3) * 8 + 32;
+		frame = ((TickCount % 12) / 3) * 8 + 32;
 		segmentHeight = 0;
 		if(segmentHeight < fountain->height) {
 			do {
-				if(cnt >= FOUNTAIN_SPRITE_COUNT)
+				if(count >= FOUNTAIN_SPRITE_COUNT)
 					continue;
 				x = actor->x.fixed - viewX;
 				height = actor->y.fixed + toFIXED(segmentHeight) - viewY;
@@ -3411,13 +3421,13 @@ void scTrialRoadDrawFountains(void)
 				*cursor++ = 0;
 				*cursor++ =
 					screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-				*cursor = (tile + frm) | OBJ_PRIORITY(2);
-				syOAMAddSprAtDepth(entry, depth);
+				*cursor = (tile + frame) | OBJ_PRIORITY(2);
+				syOAMAddSpriteAtDepth(entry, depth);
 				entry += 3;
-				cnt++;
+				count++;
 			} while((segmentHeight += 16) < fountain->height);
 		}
-		if(cnt >= FOUNTAIN_SPRITE_COUNT)
+		if(count >= FOUNTAIN_SPRITE_COUNT)
 			continue;
 		x = actor->x.fixed - viewX;
 		height = actor->y.fixed + toFIXED(fountain->height) - viewY;
@@ -3434,17 +3444,17 @@ void scTrialRoadDrawFountains(void)
 		cursor = entry;
 		*cursor++ = 0;
 		*cursor++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-		*cursor = (tile + frm - 32) | OBJ_PRIORITY(2);
-		syOAMAddSprAtDepth(entry, depth);
+		*cursor = (tile + frame - 32) | OBJ_PRIORITY(2);
+		syOAMAddSpriteAtDepth(entry, depth);
 		entry += 3;
-		cnt++;
+		count++;
 	}
 }
 
 /* Allocates the fountains' working buffer. */
-static __inline__ void *scPoolAlloc(Sint32 size)
+static __inline__ void *scPoolAllocate(Sint32 size)
 {
-	return syHeapAllocEWRAM(size);
+	return syHeapAllocateEWRAM(size);
 }
 
 /* Starts the fountains' state and their event. */
@@ -3455,23 +3465,23 @@ void scTrialRoadStartFountains(Sint32 unused, Sint32 shape)
 
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION))
 		syWordsClear(state, sizeof(*state));
-	buf = scPoolAlloc(2048);
+	buf = scPoolAllocate(2048);
 	syDecompressTaggedLZ(FieldGeyserTiles, buf);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, 2048, buf);
 	syHeapRelease(buf);
-	state->sprs =
-		syHeapAllocEWRAM(FOUNTAIN_SPRITE_COUNT * sizeof(TRIAL_ROAD_SPR));
+	state->sprites =
+		syHeapAllocateEWRAM(FOUNTAIN_SPRITE_COUNT * sizeof(TRIAL_ROAD_SPR));
 	state->shape = shape;
 	sySetEvent(scTrialRoadUpdateFountains, EVENT_PASS_TICK + 13);
 	sySetEvent(scTrialRoadDrawFountains, EVENT_PASS_TICK);
-	fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+	fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 }
 
 /* Sets up one fountain on its vent, with its timer and height. */
 TRIAL_ROAD_FOUNTAIN *scTrialRoadAddFountain(
-	Sint32 slot, Sint32 id, Sint32 tmr, Sint32 low, Sint32 high)
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 low, Sint32 high)
 {
 	TRIAL_FOUNTAINS_WORK *state = TRIAL_ROAD_FOUNTAINS;
 	TRIAL_ROAD_FOUNTAIN	 *fountain = &state->fountains[slot];
@@ -3479,7 +3489,7 @@ TRIAL_ROAD_FOUNTAIN *scTrialRoadAddFountain(
 	ACTOR				 *top;
 
 	fdActorGetById(id);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		if(high < low) {
 			Sint32 swap = low;
@@ -3489,26 +3499,26 @@ TRIAL_ROAD_FOUNTAIN *scTrialRoadAddFountain(
 		}
 		fountain->id = id;
 		fountain->height = 0;
-		fountain->phase = tmr;
-		fountain->periodFrm = 360;
+		fountain->phase = timer;
+		fountain->periodFrame = 360;
 		fountain->high = high;
-		fountain->riseFrm = 60;
-		fountain->fallFrm = 240;
+		fountain->riseFrame = 60;
+		fountain->fallFrame = 240;
 		fountain->low = low;
 		fountain->unusedAfterLow = 1;
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
 		fountain->speed = 0;
 		fountain->bob = 0;
 		fountain->unusedAfterSpeed = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	}
 	top =
 		((ACTOR *)syImportActorCreate(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
 			actor->x.fixed, actor->y.fixed, actor->z.fixed));
-	top->collisionFlg = 0;
-	top->motionFlg = 0;
-	top->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	top->collisionFlags = 0;
+	top->motionFlags = 0;
+	top->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	fountain->top = top;
 	return fountain;
 }
@@ -3523,7 +3533,7 @@ void scTrialRoadCrumblePillar(const void *data, Sint32 id)
 {
 	const TRAP_ENTRY *entry = data;
 	ACTOR			 *actor = fdActorGetById(id);
-	Sint32			  flg;
+	Sint32			  flag;
 
 	while(entry->actor != ACTOR_LIST_END) {
 		if(entry->actor != id) {
@@ -3531,10 +3541,10 @@ void scTrialRoadCrumblePillar(const void *data, Sint32 id)
 			continue;
 		}
 		{
-			flg = entry->flg;
+			flag = entry->flags;
 			fdScriptStart();
-			if(!fdScriptGetFlag(flg + 1)) {
-				fdScriptPlaySnd(SE_PUSH);
+			if(!fdScriptGetFlag(flag + 1)) {
+				fdScriptPlaySound(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
 				sySynch(8);
@@ -3546,11 +3556,11 @@ void scTrialRoadCrumblePillar(const void *data, Sint32 id)
 				sySynch(8);
 				fdActorSetPosAndResetMotion(actor, 0, 0, 0);
 				sySynch(2);
-				fdScriptPlaySnd(SE_THUMP);
+				fdScriptPlaySound(SE_THUMP);
 				scMagmaRockInsideSpawnDustRing();
 				sySynch(20);
-				fdScriptSetFlag(flg);
-				fdScriptSetFlag(flg + 1);
+				fdScriptSetFlag(flag);
+				fdScriptSetFlag(flag + 1);
 			}
 			fdScriptEnd();
 			break;
@@ -3568,14 +3578,14 @@ void scTrialRoadCrumblePillar(const void *data, Sint32 id)
    stepped on flashes the first time and gives way under Felix the second, with
    Moapa's actor standing in for the trap's picture. The crumbling stage uses
    scLeaderCheckCrumblingStep instead. */
-UNUSED void scTrialRoadStepOnTrap(const Uint16 *tbl)
+UNUSED void scTrialRoadStepOnTrap(const Uint16 *table)
 {
 	ACTOR *leader;
 	ACTOR *partner;
 	ACTOR *trap;
 	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 second;
 	Uint8 *motion;
 
@@ -3588,41 +3598,41 @@ UNUSED void scTrialRoadStepOnTrap(const Uint16 *tbl)
 	pos[2] = leader->z.fixed;
 	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap != 0) {
-		while(*tbl != ACTOR_LIST_END) {
-			id = tbl[0];
+		while(*table != ACTOR_LIST_END) {
+			id = table[0];
 			if(fdActorGetById(id) != trap) {
-				tbl += 2;
+				table += 2;
 				continue;
 			}
-			flg = tbl[1];
+			flag = table[1];
 			fdScriptStart();
-			if(!syGameFlagGet(flg)) {
+			if(!syGameFlagGet(flag)) {
 				fdActorSelectAnimation(partner, 1);
 				scActorTakePlaceOf(partner, trap);
 				sySynch(1);
-				sySndPlay(SE_CHEST_CLOSE);
-				fdActorSetSprCol(fdActorGetById(ACTOR_MOAPA), 7);
+				sySoundPlay(SE_CHEST_CLOSE);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_MOAPA), 7);
 				sySynch(2);
 				fdActorSelectAnimation(partner, 0);
 				fdActorCopyGraphics(id, 9);
-				fdActorSetSprCol(fdActorGetById(ACTOR_MOAPA), 0);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_MOAPA), 0);
 				sySynch(2);
-				fdActorSetSprCol(fdActorGetById(ACTOR_MOAPA), 7);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_MOAPA), 7);
 				sySynch(4);
-				fdActorSetSprCol(fdActorGetById(ACTOR_MOAPA), 0);
+				fdActorSetSpriteColor(fdActorGetById(ACTOR_MOAPA), 0);
 				scDustScatter(0);
 				scActorTakePlaceOf(trap, partner);
 				sySynch(1);
-				syGameFlagSet(flg);
+				syGameFlagSet(flag);
 			} else {
-				second = flg + 1;
+				second = flag + 1;
 				if(!syGameFlagGet(second)) {
 					fdActorSelectAnimation(partner, 0);
 					scActorTakePlaceOf(partner, trap);
-					motion = &leader->motionFlg;
+					motion = &leader->motionFlags;
 					sySynch(1);
 					*motion = 0;
-					sySndPlay(SE_PUSH);
+					sySoundPlay(SE_PUSH);
 					fdMapGridSetShake(1, 4, 1);
 					scDustScatter(0);
 					sySynch(8);
@@ -3638,7 +3648,7 @@ UNUSED void scTrialRoadStepOnTrap(const Uint16 *tbl)
 					sySynch(5);
 					fdActorSetPosAndResetMotion(partner, 0, 0, 0);
 					sySynch(2);
-					sySndPlay(SE_THUMP);
+					sySoundPlay(SE_THUMP);
 					scMagmaRockInsideSpawnDustRing();
 					sySynch(20);
 					syGameFlagSet(second);
@@ -3654,36 +3664,36 @@ UNUSED void scTrialRoadStepOnTrap(const Uint16 *tbl)
    drifts, slows, grows and spins, drawn at the leader's sprite priority. */
 void scTrialRoadDriftDust(FIELD_OBJECT *object)
 {
-	FIELD_EFFECT	   *effect = &object->eff;
-	Sint32				velX = effect->vel.x;
-	Sint32				velZ;
+	FIELD_EFFECT	   *effect = &object->effect;
+	Sint32				velocityX = effect->velocity.x;
+	Sint32				velocityZ;
 	MAIN_ROUTINE_STATE *party;
-	FIELD_SPR		   *spr;
+	FIELD_SPR		   *sprite;
 	FIELD_OBJECT	   *leader;
 	EFFECT_SPR_ATTR	   *to;
 	EFFECT_SPR_ATTR	   *from;
 	EFFECT_SPR_BITS		src;
 	EFFECT_SPR_BITS		bits;
 
-	effect->x += velX;
-	effect->y += effect->vel.y;
-	velZ = effect->vel.z;
-	effect->z += velZ;
-	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
+	effect->x += velocityX;
+	effect->y += effect->velocity.y;
+	velocityZ = effect->velocity.z;
+	effect->z += velocityZ;
+	effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+	effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 	effect->scaleX += effect->scaleRateX;
-	spr = effect->spr;
+	sprite = effect->sprite;
 	effect->scaleY += effect->scaleRateY;
-	spr->rotation += effect->spin;
+	sprite->rotation += effect->spin;
 
 	party = &MainRoutineStateWork;
 
 	leader = fdActorGetById(party->leaderActorId);
-	to = (EFFECT_SPR_ATTR *)effect->spr;
-	from = (EFFECT_SPR_ATTR *)leader->eff.spr;
+	to = (EFFECT_SPR_ATTR *)effect->sprite;
+	from = (EFFECT_SPR_ATTR *)leader->effect.sprite;
 	src = from->bits;
 	bits = to->bits;
-	bits.pri = src.pri;
+	bits.priority = src.priority;
 	to->bits = bits;
 }
 
@@ -3695,7 +3705,7 @@ void scDustScatter(Sint32 spread)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	Uint32		  frm = 0;
+	Uint32		  frame = 0;
 	Uint32		  i;
 
 	for(i = 0; i <= 7; i++) {
@@ -3708,23 +3718,23 @@ void scDustScatter(Sint32 spread)
 				leader->z.fixed);
 		}
 		if(effect != 0) {
-			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
-			effect->motionFlg = 0;
-			effect->collisionFlg = 0;
-			fdActorSetSprFlags(effect, 0);
+			frame = fdSpriteShareVRAMCacheEntry(effect->sprite, frame);
+			effect->motionFlags = 0;
+			effect->collisionFlags = 0;
+			fdActorSetSpriteFlags(effect, 0);
 			fdActorSelectAnimation(effect, 2);
 			fdActorStartScript((ACTOR *)effect, DustScatterScript);
 			effect->scaleY = effect->scaleX = toFIXED(7) / 10;
-			effect->spr->pri = 1;
+			effect->sprite->priority = 1;
 			if(spread != 0) {
-				effect->vel.x =
+				effect->velocity.x =
 					syMulFX(syCos(i * (TRIG_TURN / 8)), toFIXED(12) / 10);
-				effect->vel.z = sySin(i * (TRIG_TURN / 8));
+				effect->velocity.z = sySin(i * (TRIG_TURN / 8));
 			} else {
-				effect->vel.x = spread;
-				effect->vel.z = spread;
+				effect->velocity.x = spread;
+				effect->velocity.z = spread;
 			}
-			effect->vel.y = -(syRandomBelow(16384) + (toFIXED(3) / 8));
+			effect->velocity.y = -(syRandomBelow(16384) + (toFIXED(3) / 8));
 			effect->spin = syRandomBelow(512) - (TRIG_TURN / 256);
 			effect->scaleRateX = -(toFIXED(1) / 32);
 			effect->scaleRateY = -(toFIXED(3) / 128);
@@ -3743,33 +3753,35 @@ void scMagmaRockInsideSpawnDustRing(void)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	Uint32		  frm;
+	Uint32		  frame;
 	Uint32		  i;
 
 	if(leader == 0)
 		return;
-	frm = 0;
+	frame = 0;
 	for(i = 0; i < DUST_RING_PIECES; i++) {
 		effect = (FIELD_EFFECT *)syImportActorCreate(SPRITE_DUST_CLOUD,
 			leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		if(effect != 0) {
-			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
-			effect->motionFlg = 0;
-			effect->collisionFlg = 0;
-			fdActorSetSprFlags(effect, 0);
+			frame = fdSpriteShareVRAMCacheEntry(effect->sprite, frame);
+			effect->motionFlags = 0;
+			effect->collisionFlags = 0;
+			fdActorSetSpriteFlags(effect, 0);
 			fdActorSelectAnimation(effect, 2);
 			fdActorStartScript((ACTOR *)effect, DustBurstScript);
-			effect->vel.x = syCos(i * (TRIG_TURN / 16));
-			effect->vel.y = 0;
-			effect->vel.z = sySin(i * (TRIG_TURN / 16));
-			effect->vel.x += effect->vel.x >> 1;
-			effect->vel.x += syRandomBelow(toFIXED(3) / 4) - (toFIXED(3) / 8);
-			effect->vel.z += syRandomBelow(toFIXED(3) / 8) - (toFIXED(3) / 16);
+			effect->velocity.x = syCos(i * (TRIG_TURN / 16));
+			effect->velocity.y = 0;
+			effect->velocity.z = sySin(i * (TRIG_TURN / 16));
+			effect->velocity.x += effect->velocity.x >> 1;
+			effect->velocity.x +=
+				syRandomBelow(toFIXED(3) / 4) - (toFIXED(3) / 8);
+			effect->velocity.z +=
+				syRandomBelow(toFIXED(3) / 8) - (toFIXED(3) / 16);
 			effect->spin = syRandomBelow(4096) - (TRIG_TURN / 32);
 			effect->scaleRateX = 0;
 			effect->scaleRateY = 0;
 			effect->update = scTrialRoadDriftDust;
-			effect->spr->pri = ((FIELD_SPR *)leader->spr)->pri;
+			effect->sprite->priority = ((FIELD_SPR *)leader->sprite)->priority;
 		}
 	}
 }
@@ -3867,7 +3879,7 @@ void scTrialRoadMoveRival(void)
 	} else if(state->mode == RIVAL_LINKED) {
 		Sint32	player;
 		Sint16 *signature;
-		Sint32	ang, link, anm, partner;
+		Sint32	angle, link, animation, partner;
 		Sint16	packed;
 
 		player = ((Sint32)syGameFlagGetByte(FLAG_LINK_PLAYER)) ^ 1;
@@ -3876,10 +3888,10 @@ void scTrialRoadMoveRival(void)
 			return;
 		x = *signature++;
 		z = *signature++;
-		ang = *signature++;
+		angle = *signature++;
 		packed = *signature++;
 		link = packed >> 8;
-		anm = packed & 0xff;
+		animation = packed & 0xff;
 		if(syGameFlagGet(dz = FLAG_LINKED_RIVAL_HALTS) && link != 0) {
 			state->mode = RIVAL_WAITING;
 			fdActorSelectAnimation(rival, 1);
@@ -3889,10 +3901,10 @@ void scTrialRoadMoveRival(void)
 				x = trialRoadLinkState->originX - toFIXED(12);
 			if(!syGameFlagGet(FLAG_LINKED_RIVAL_ON_FAR_SIDE)) {
 				z = trialRoadLinkState->originZ + toFIXED(16);
-				rival->tmr = trialRoadLinkState->rivalTmrs[1];
+				rival->timer = trialRoadLinkState->rivalTimers[1];
 			} else {
 				z = trialRoadLinkState->originZ - toFIXED(16);
-				rival->tmr = trialRoadLinkState->rivalTmrs[0];
+				rival->timer = trialRoadLinkState->rivalTimers[0];
 			}
 			rival->acceleration = toFIXED(1) / 4;
 			rival->speedLimit = toFIXED(1);
@@ -3901,25 +3913,25 @@ void scTrialRoadMoveRival(void)
 		} else {
 			x <<= 16;
 			z <<= 16;
-			rival->facing = ang;
+			rival->facing = angle;
 			rival->x.fixed = x;
 			rival->z.fixed = z;
-			fdActorSelectAnimation(rival, anm);
+			fdActorSelectAnimation(rival, animation);
 		}
 		partner = *signature++;
 		x = *signature++;
 		z = *signature++;
-		ang = *signature++;
-		anm = *signature++;
+		angle = *signature++;
+		animation = *signature++;
 		if(partner == 0)
 			return;
 		rival = fdActorGetById(partner);
 		if(rival == 0)
 			return;
 		rival->x.fixed = toFIXED(x);
-		rival->facing = ang;
+		rival->facing = angle;
 		rival->z.fixed = toFIXED(z);
-		fdActorSelectAnimation(rival, anm);
+		fdActorSelectAnimation(rival, animation);
 	} else if(state->mode == RIVAL_REPLAY) {
 		if(state->resource != trialRoadLinkState->resource) {
 			syDecompressTaggedLZ(syResourceGetTableEntry(state->resource),
@@ -3985,9 +3997,9 @@ void scTrialRoadMoveRival(void)
 extern const Uint8 TrialRoadRaceMapPicture[];
 
 /* The picture's buffer in EWRAM, the size syVRAMCacheLoad copies. */
-static inline void *scTrialRoadLinkAllocPicture(void)
+static inline void *scTrialRoadLinkAllocatePicture(void)
 {
-	return syHeapAllocEWRAM(RACE_MAP_PICTURE_BYTES);
+	return syHeapAllocateEWRAM(RACE_MAP_PICTURE_BYTES);
 }
 
 /* Where an actor's marker stands on the race map: its place in metatiles, moved
@@ -4016,7 +4028,7 @@ static inline void *scTrialRoadLinkAllocPicture(void)
 		*cursor++ = y; \
 		*cursor++ = (tile + (tileAdd)) | \
 			(OBJ_PALETTE(RACE_MAP_PALETTE) | OBJ_PRIORITY(1)); \
-		syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT); \
+		syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT); \
 	} while(0)
 
 /* Draws the race map each tick, once scTrialRoadShowRaceMap starts it: the
@@ -4031,7 +4043,7 @@ void scTrialRoadDrawRaceMap(void)
 	TRIAL_ROAD_SPR		  *entry = (TRIAL_ROAD_SPR *)state;
 	Sint16				  *vramEntry = &state->vramEntry;
 	Uint32				   row, i;
-	Sint32				   tile = VramCacheEntries[*vramEntry].ofs >> 5;
+	Sint32				   tile = VramCacheEntries[*vramEntry].offset >> 5;
 	Uint32				   flip, word;
 	Sint32				   x;
 	Sint32				   y;
@@ -4050,7 +4062,7 @@ void scTrialRoadDrawRaceMap(void)
 			syDMAXCopy(TrialRoadRaceMapPalette,
 				(void *)&OBJ_PLTT_COLOR(RACE_MAP_PALETTE, 0),
 				DMA_COPY_HALFWORDS(16), REG_DMA3);
-			buf = scTrialRoadLinkAllocPicture();
+			buf = scTrialRoadLinkAllocatePicture();
 			syDecompressTaggedLZ(TrialRoadRaceMapPicture, buf);
 			syVRAMCacheLoad(*vramEntry, RACE_MAP_PICTURE_BYTES, buf);
 			syHeapRelease(buf);
@@ -4076,13 +4088,13 @@ void scTrialRoadDrawRaceMap(void)
 			*cursor++ = y | OBJ_X(x) | flip | OBJ_SIZE_16X32;
 			*cursor++ = (tile + RACE_MAP_TILE_STAGE) |
 				(OBJ_PALETTE(RACE_MAP_PALETTE) | OBJ_PRIORITY(1));
-			syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+			syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 			word = y + 32;
 			*cursor++ = 0;
 			*cursor++ = word | OBJ_X(x) | flip | OBJ_SIZE_16X8;
 			*cursor++ = (tile + RACE_MAP_TILE_STAGE_FOOT) |
 				(OBJ_PALETTE(RACE_MAP_PALETTE) | OBJ_PRIORITY(1));
-			syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+			syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 			y += RACE_MAP_STAGE_SPACING;
 		}
 	}
@@ -4108,9 +4120,9 @@ void scTrialRoadDrawRaceMap(void)
 /* Shows the race map for both sides. */
 void scTrialRoadShowRaceMap(Sint32 leaderId, Sint32 rivalId)
 {
-	TRIAL_ROAD_LINK_STATE *state = syHeapSlotAllocEWRAM(
+	TRIAL_ROAD_LINK_STATE *state = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(TRIAL_ROAD_LINK_STATE));
-	void *buf = syHeapAllocEWRAM(RACE_MAP_PICTURE_BYTES);
+	void *buf = syHeapAllocateEWRAM(RACE_MAP_PICTURE_BYTES);
 
 	state->leaderId = leaderId;
 	state->rivalId = rivalId;
@@ -4384,7 +4396,7 @@ void scTrialRoadOpenChests(void);
 void scTrialRoadJumpForward(void);
 void scTrialRoadBlowAwayPoundStageWeeds(void);
 void scTrialRoadStandOnBlock(void);
-void scTrialRoadShutSummitDoorway(Sint32 snd);
+void scTrialRoadShutSummitDoorway(Sint32 sound);
 void scTrialRoadStepOffSwitch(void);
 
 /* Unused: the digits 0 to 9 and A to F, four to a word. */

@@ -13,7 +13,7 @@ extern const Uint8 ActionRunEffectChance[];
 /* Each ability's outcome staging (BATTLE_PLAN.staging), 0 for the default, by
    ability id. */
 extern const Uint8 AbilityStaging[];
-/* Each ability's staging bits (BATTLE_PLAN.battleEff), by ability id. */
+/* Each ability's staging bits (BATTLE_PLAN.battleEffect), by ability id. */
 extern const Uint32 AbilityBattleEffects[];
 
 /* BATTLE_PLAN.staging: how btStagingDispatchAction shows the action, set by
@@ -52,7 +52,7 @@ typedef enum BATTLE_STAGING {
 	STAGING_BEAST_PSYNERGY = 17
 } BATTLE_STAGING;
 
-/* BATTLE_PLAN.battleEff: the effect kind in the low twelve bits and its
+/* BATTLE_PLAN.battleEffect: the effect kind in the low twelve bits and its
    strength (a double or triple blow) above them; then how the effect is
    staged. */
 #define EFFECT_ID_MASK		  0xfff

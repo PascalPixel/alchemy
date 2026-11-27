@@ -34,7 +34,7 @@ void scDehkanPlateauStepOnFullMetalVestChestPillars(void);
 void scDehkanPlateauStepOnThemisAxeChestPillars(void);
 void scDehkanPlateauStepOnTightropesPillars(void);
 void scDehkanPlateauStepOnCannonPillar(void);
-void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flg);
+void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flag);
 void scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles(void);
 void scDehkanPlateauSetTightropesStandingPillarMetatiles(void);
 
@@ -99,17 +99,18 @@ extern Uint16 DehkanPlateauTightropesHolePictures[];
 extern Uint16 DehkanPlateauPoundCubeHolePictures[];
 
 /* Functions and scripts other scenes keep a copy of. */
-void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
+void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
 void fdActorDropAndWait(struct ACTOR *actor);
 void syCrumblingPillarPrepare(Sint32 id);
 void syCrumblingPillarPlace(Uint16 *list);
 void scDustScatter(Sint32 spread);
 void scDustBurst(void);
 void fdLeaderSetMetatileShapeAt(Sint32 level, Sint32 layer);
-void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
 void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 owner);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const struct EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const struct EFFECT_OPTIONS *options);
 extern Uint32 FieldEffectShortScript[];
 extern Uint32 FieldEffectMediumScript[];
 

@@ -36,7 +36,7 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 	SPR_SCALE			 scale;
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*sheet;
 	POINT2_D			 base;
 	POINT2_D			 fist;
@@ -44,10 +44,10 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 	Sint32				 k;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	PLTT_BACKDROP = 0;
 	BG_PLTT_COLOR(0, 1) = 0;
 	state->transferMode = CANVAS_COPY;
@@ -55,15 +55,16 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 	btEffectWipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
 	btEffectShowLivingTargets(state->args);
 	/* The statue, its fist and wrist, then six rocks. */
-	btEffectCreateSprs(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
+	btEffectCreateSprites(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
 	for(i = 0; i != RAMSES_ROCKS; i++) {
-		SPR *spr = fdSprCreateStub(SPRITE_BATTLE_ROCKS);
+		SPR *sprite = fdSpriteCreateStub(SPRITE_BATTLE_ROCKS);
 
-		state->sprs[RAMSES_FIRST_ROCK_SPRITE + i] = spr;
-		if(spr != 0) {
-			spr->flg = 0;
-			fdSprStartAnimationStub(spr, i % 3);
-			((SPR *)state->sprs[RAMSES_FIRST_ROCK_SPRITE + i])->image.pri = 1;
+		state->sprites[RAMSES_FIRST_ROCK_SPRITE + i] = sprite;
+		if(sprite != 0) {
+			sprite->flags = 0;
+			fdSpriteStartAnimationStub(sprite, i % 3);
+			((SPR *)state->sprites[RAMSES_FIRST_ROCK_SPRITE + i])
+				->image.priority = 1;
 		}
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -91,84 +92,84 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 
 		rock->x = toFIXED(syRandom() & 127);
 		rock->y = i * -toFIXED(16);
-		rock->velX = 0;
-		rock->velY = 0;
+		rock->velocityX = 0;
+		rock->velocityY = 0;
 		rock->variant = 0;
 	}
 	for(i = 0; i != ARRAY_COUNT(state->particles) - RAMSES_FIRST_PUFF; i++)
 		state->particles[RAMSES_FIRST_PUFF + i].variant = RAMSES_PUFF_TICKS;
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+	state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 
-	for(frm = 0; frm != RAMSES_TICKS && !(PerWork.repeat & (KEY_A | KEY_B));
-		frm++) {
-		if(frm == 94)
-			sySndPlayStub(SE_SWITCH_MECHANISM);
-		if(frm == 136)
-			sySndPlayStub(SE_SWITCH_MECHANISM);
-		if(frm == 178)
-			sySndPlayStub(SE_SWITCH_MECHANISM);
-		if(frm == RAMSES_STRIKE_TICK)
-			sySndPlayStub(SE_CRASH);
+	for(frame = 0; frame != RAMSES_TICKS && !(PerWork.repeat & (KEY_A | KEY_B));
+		frame++) {
+		if(frame == 94)
+			sySoundPlayStub(SE_SWITCH_MECHANISM);
+		if(frame == 136)
+			sySoundPlayStub(SE_SWITCH_MECHANISM);
+		if(frame == 178)
+			sySoundPlayStub(SE_SWITCH_MECHANISM);
+		if(frame == RAMSES_STRIKE_TICK)
+			sySoundPlayStub(SE_CRASH);
 		scale = RamsesUnitScale;
-		if(frm >= 96 && frm <= 251)
-			state->shakeFrm = 1;
-		else if(frm >= RAMSES_STRIKE_TICK && frm <= 263)
-			state->shakeFrm = 1;
+		if(frame >= 96 && frame <= 251)
+			state->shakeFrame = 1;
+		else if(frame >= RAMSES_STRIKE_TICK && frame <= 263)
+			state->shakeFrame = 1;
 		pos.groundHeight = 0;
 		pos.height = 0;
 		for(i = 0; i != RAMSES_STATUE_SPRITES; i++) {
 			pos.x = toFIXED(RamsesStatueColumns[i]) + base.x - toFIXED(32);
 			pos.y = toFIXED(RamsesStatueRows[i]) + base.y - toFIXED(32);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[i], &pos, &scale.x, 0);
+				state->sprites[i], &pos, &scale.x, 0);
 		}
 		/* The fist circles. */
-		if(frm < RAMSES_FIRST_SLAM) {
-			fist.x = sySin(frm * (TRIG_TURN / 128)) * 16 + toFIXED(156);
-			fist.y = syCos(frm * (TRIG_TURN / 128)) * 16 + toFIXED(92);
+		if(frame < RAMSES_FIRST_SLAM) {
+			fist.x = sySin(frame * (TRIG_TURN / 128)) * 16 + toFIXED(156);
+			fist.y = syCos(frame * (TRIG_TURN / 128)) * 16 + toFIXED(92);
 		}
 		/* Then it slams down three times, throwing up dust. */
-		if(frm <= 196) {
+		if(frame <= 196) {
 			Sint32 start;
 
 			for(i = 0, start = RAMSES_FIRST_SLAM; i != RAMSES_SLAMS;
 				start += RAMSES_SLAM_INTERVAL, i++) {
-				if(frm >= start && frm < start + 4)
+				if(frame >= start && frame < start + 4)
 					fist.y += toFIXED(8);
-				if(frm == start + 3) {
+				if(frame == start + 3) {
 					for(k = 0; k != 4; k++) {
 						PARTICLE *puff =
 							&state->particles[RAMSES_FIRST_PUFF + i * 8 + k];
 
 						puff->x = toFIXED(64);
 						puff->y = toFIXED(96);
-						puff->velX = ((syRandom() & 255) - 127) << 10;
-						puff->velY = ((syRandom() & 255) - 127) << 10;
+						puff->velocityX = ((syRandom() & 255) - 127) << 10;
+						puff->velocityY = ((syRandom() & 255) - 127) << 10;
 						puff->variant = syRandom() & 15;
 					}
 				}
-				if(frm >= start + 20 && frm < start + 36)
+				if(frame >= start + 20 && frame < start + 36)
 					fist.y -= toFIXED(2);
 			}
 		}
 		/* Then it flies off to the left at the targets. */
-		if(frm >= 244 && frm <= 251)
+		if(frame >= 244 && frame <= 251)
 			fist.x -= toFIXED(1);
-		if(frm >= 252 && frm <= 275)
-			fist.x -= INTtoFIXED(frm - 250);
+		if(frame >= 252 && frame <= 275)
+			fist.x -= INTtoFIXED(frame - 250);
 		/* The fist's two sprites stand deep below the ground and as far up,
 		   which cancel on the screen but put them in front. */
-		if(frm <= 259) {
+		if(frame <= 259) {
 			pos.x = fist.x;
 			pos.height = -toFIXED(256);
 			pos.y = fist.y - toFIXED(256);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[RAMSES_FIST_SPRITE], &pos, &scale.x, 0);
+				state->sprites[RAMSES_FIST_SPRITE], &pos, &scale.x, 0);
 			pos.x = fist.x + toFIXED(32);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[RAMSES_FIST_SPRITE + 1], &pos, &scale.x, 0);
+				state->sprites[RAMSES_FIST_SPRITE + 1], &pos, &scale.x, 0);
 		}
 		pos.height = 0;
 		/* The rocks fall. */
@@ -179,16 +180,16 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 				pos.x = rock->x;
 				pos.y = rock->y;
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[RAMSES_FIRST_ROCK_SPRITE + i], &pos, &scale.x,
-					0);
-				rock->x += rock->velX;
-				rock->y += rock->velY;
-				if(frm > 96)
-					rock->velY += toFIXED(1) / 4;
+					state->sprites[RAMSES_FIRST_ROCK_SPRITE + i], &pos,
+					&scale.x, 0);
+				rock->x += rock->velocityX;
+				rock->y += rock->velocityY;
+				if(frame > 96)
+					rock->velocityY += toFIXED(1) / 4;
 				if(rock->y > toFIXED(120)) {
 					rock->variant++;
 					if(rock->variant == 1) {
-						rock->velY = -rock->velY / 2;
+						rock->velocityY = -rock->velocityY / 2;
 						for(k = 0; k != 2; k++) {
 							PARTICLE *puff =
 								&state->particles[RAMSES_FIRST_ROCK_PUFF +
@@ -196,13 +197,13 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 
 							puff->x = rock->x / 2;
 							puff->y = rock->y - toFIXED(32);
-							puff->velX = ((syRandom() & 255) - 127) << 10;
-							puff->velY = ((syRandom() & 255) - 127) << 10;
+							puff->velocityX = ((syRandom() & 255) - 127) << 10;
+							puff->velocityY = ((syRandom() & 255) - 127) << 10;
 							puff->variant = syRandom() & 15;
 						}
-					} else if(frm <= 199) {
+					} else if(frame <= 199) {
 						rock->y = 0;
-						rock->velY = 0;
+						rock->velocityY = 0;
 						rock->variant = 0;
 					}
 				}
@@ -227,30 +228,30 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 				puff->variant++;
 			}
 		}
-		if(frm == RAMSES_STRIKE_TICK) {
+		if(frame == RAMSES_STRIKE_TICK) {
 			/* The strike: every target recoils and flashes white. */
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_HURL);
+				btMotionApplyKnockbackStub(args->targets[i], KNOCKBACK_HURL);
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
+					args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 			}
-			state->shakeFrm = 8;
+			state->shakeFrame = 8;
 		}
 		/* DEAD: the strike tick tested a second time; the ROM keeps the second
 		   compare. */
-		if(frm == RAMSES_STRIKE_TICK) {
+		if(frame == RAMSES_STRIKE_TICK) {
 			/* Sparks fly from the strike. */
 			for(i = 0; i != RAMSES_SPARKS; i++) {
 				PARTICLE *spark = &PARTICLES[i];
 				Sint32	  speed;
-				Sint32	  ang;
+				Sint32	  angle;
 
 				speed = (syRandom() & 0x3ff) + 32;
-				ang = syRandom() & TRIG_ANGLE_MASK;
+				angle = syRandom() & TRIG_ANGLE_MASK;
 				spark->x = toFIXED(32);
 				spark->y = toFIXED(92);
-				spark->velX = sySin(ang) * speed >> 7;
-				spark->velY = -(syCos(ang) * speed << 1) >> 7;
+				spark->velocityX = sySin(angle) * speed >> 7;
+				spark->velocityY = -(syCos(angle) * speed << 1) >> 7;
 				spark->variant = (syRandom() & 15) + 32;
 			}
 		}
@@ -273,9 +274,9 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 	}
 
 	EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-	btEffectSetupBlendedDisp();
+	btEffectSetupBlendedDisplay();
 	for(i = 0; i != RAMSES_FIRST_ROCK_SPRITE + RAMSES_ROCKS; i++)
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	EFFECT_FINISH_CANVAS();
 }
 

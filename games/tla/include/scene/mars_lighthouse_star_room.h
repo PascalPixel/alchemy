@@ -26,7 +26,7 @@ void scActorRollAndCrumble(struct ACTOR *actor);
 void fdLeaderStopIfPending(void);
 void fdActorSteerByPad(struct ACTOR *actor);
 
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 void scMarsLighthouseStarRoomStartBlazeOnEastTorch(void);
 

@@ -3,18 +3,18 @@
 	.global StubsSound
 StubsSound:
 	stub m4aSoundMainStub, m4aSoundMain
-	stub sySndInitStub, sySndInit
-	stub sySndPlayStub, sySndPlay
-	stub sySndUpdateBGMRampsStub, sySndUpdateBGMRamps
-	stub sySndSetBGMTempoStub, sySndSetBGMTempo
-	unnamed_stub sySndSetBGMPitch
-	unnamed_stub sySndSetBGMTempoPitchTarget
-	unnamed_stub sySndSetBGMVolume
-	unnamed_stub sySndSetBGMVolumeTarget
-	stub sySndGetBGMRestoreDelayStub, sySndGetBGMRestoreDelay
-	unnamed_stub sySndTestRun
-	unnamed_stub sySndStopAllMusicPlayers
-	unnamed_stub sySndResumeAllMusicPlayers
-	unnamed_stub sySndUpdateCommandMask
-	stub sySndGetCurrentBGMStub, sySndGetCurrentBGM
-	stub sySndWaitForBGMRestoreStub, sySndWaitForBGMRestore
+	stub sySoundInitStub, sySoundInit
+	stub sySoundPlayStub, sySoundPlay
+	stub sySoundUpdateBGMRampsStub, sySoundUpdateBGMRamps
+	stub sySoundSetBGMTempoStub, sySoundSetBGMTempo
+	unnamed_stub sySoundSetBGMPitch
+	unnamed_stub sySoundSetBGMTempoPitchTarget
+	unnamed_stub sySoundSetBGMVolume
+	unnamed_stub sySoundSetBGMVolumeTarget
+	stub sySoundGetBGMRestoreDelayStub, sySoundGetBGMRestoreDelay
+	unnamed_stub sySoundTestRun
+	unnamed_stub sySoundStopAllMusicPlayers
+	unnamed_stub sySoundResumeAllMusicPlayers
+	unnamed_stub sySoundUpdateCommandMask
+	stub sySoundGetCurrentBGMStub, sySoundGetCurrentBGM
+	stub sySoundWaitForBGMRestoreStub, sySoundWaitForBGMRestore

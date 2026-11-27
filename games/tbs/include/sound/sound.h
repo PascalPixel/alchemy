@@ -15,28 +15,28 @@ extern Uint8 BgmFadeRequested;
    IwramSoundNormalizeChannels saturates the samples and stores the clip mask
    (0x80008000) here. Only the unused sound test reads it. */
 extern Sint32 SoundMixerClipped;
-/* An EWRAM byte sySndInit clears and nothing else names. */
+/* An EWRAM byte sySoundInit clears and nothing else names. */
 extern Uint8 SoundUnreadByte;
 
 /* The sound module's functions in the order of its stub table
    (src/sound/stubs.s). */
 void   m4aSoundMain(void);
-void   sySndInit(void);
-void   sySndPlay(Sint32 id);
-void   sySndUpdateBGMRamps(void);
-void   sySndSetBGMTempo(Uint16 tempoScale);
-void   sySndSetBGMPitch(Uint16 pitch);
-void   sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step);
-void   sySndSetBGMVolume(Sint16 volume);
-void   sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step);
-Sint32 sySndGetBGMRestoreDelay(void);
-void   sySndTestRun(void);
-void   sySndStopAllMusicPlayers(void);
-void   sySndResumeAllMusicPlayers(void);
-void   sySndUpdateCommandMask(Uint32 command);
-Sint32 sySndGetCurrentBGM(void);
-void   sySndWaitForBGMRestore(void);
+void   sySoundInit(void);
+void   sySoundPlay(Sint32 id);
+void   sySoundUpdateBGMRamps(void);
+void   sySoundSetBGMTempo(Uint16 tempoScale);
+void   sySoundSetBGMPitch(Uint16 pitch);
+void   sySoundSetBGMTempoPitchTarget(Uint16 targetScale, Uint16 step);
+void   sySoundSetBGMVolume(Sint16 volume);
+void   sySoundSetBGMVolumeTarget(Uint16 targetVolume, Uint16 step);
+Sint32 sySoundGetBGMRestoreDelay(void);
+void   sySoundTestRun(void);
+void   sySoundStopAllMusicPlayers(void);
+void   sySoundResumeAllMusicPlayers(void);
+void   sySoundUpdateCommandMask(Uint32 command);
+Sint32 sySoundGetCurrentBGM(void);
+void   sySoundWaitForBGMRestore(void);
 
-Sint32 sySndGetReverbCode(Sint32 command);
+Sint32 sySoundGetReverbCode(Sint32 command);
 
 #endif

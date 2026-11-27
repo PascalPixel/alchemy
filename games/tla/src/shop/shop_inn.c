@@ -15,18 +15,18 @@ typedef enum INN_MESSAGE_ID {
 Sint32 mnInnRoomPrice(Sint32 innId)
 {
 	SHOP_STATE *shop;
-	Sint32		guestCnt;
+	Sint32		guestCount;
 	Sint32		pricePerGuest;
-	Sint32		memberIdx;
+	Sint32		memberIndex;
 
 	shop = RamHeapSlots->menuState;
-	guestCnt = 0;
+	guestCount = 0;
 	pricePerGuest = InnPricesPerGuest[innId];
-	for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
-		if(syUnitGet(shop->partyMemberIds[memberIdx])->hp != 0)
-			guestCnt++;
+	for(memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+		if(syUnitGet(shop->partyMemberIds[memberIndex])->hp != 0)
+			guestCount++;
 	}
-	return pricePerGuest * guestCnt;
+	return pricePerGuest * guestCount;
 }
 
 /* Returns the night's price at inn `innId` with the shop's state opened for it,
@@ -50,7 +50,7 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 {
 	SHOP_STATE *shop;
 	ACTOR	   *innkeeper;
-	WINDOW	   *innkeeperWin;
+	WINDOW	   *innkeeperWindow;
 	Sint32		roomPrice;
 	Sint32		msgBase;
 
@@ -59,36 +59,38 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 	shop->shopType = SHOP_TYPE_WEAPONS;
 
 	innkeeper = fdActorGetByIdStub(actorId);
-	shop->keeperGraphics = ((SPR *)innkeeper->spr)->entries[0]->anmId;
-	innkeeperWin = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	shop->keeperGraphics = ((SPR *)innkeeper->sprite)->entries[0]->animationId;
+	innkeeperWindow = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
 
 	roomPrice = mnInnRoomPrice(innId);
 	mnMessageArgumentPushStub(roomPrice, MESSAGE_ARGUMENT_NUMBER);
 	msgBase = (Sint32)MsgInnWelcome;
 	mnShopShowKeeperMessage(msgBase);
-	shop->moneyWin = mnWindowCreateStub(
+	shop->moneyWindow = mnWindowCreateStub(
 		0, 16, SHOP_COIN_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 
 	if(mnShopAskYesNo(0) != 0) {
 		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_COME_AGAIN);
-		mnWindowCloseStub(shop->moneyWin, 2);
+		mnWindowCloseStub(shop->moneyWindow, 2);
 	} else if((Uint32)roomPrice > MainRoutineStateWork.coins) {
 		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_NOT_ENOUGH_COINS);
-		mnWindowCloseStub(shop->moneyWin, 2);
+		mnWindowCloseStub(shop->moneyWindow, 2);
 	} else {
-		mnWindowCloseStub(shop->moneyWin, 2);
+		mnWindowCloseStub(shop->moneyWindow, 2);
 		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_ENJOY_STAY);
-		mnWindowCloseStub(innkeeperWin, 2);
+		mnWindowCloseStub(innkeeperWindow, 2);
 		mnInnPlaySleep(roomPrice);
 
 		innkeeper = fdActorGetByIdStub(actorId);
-		shop->keeperGraphics = ((SPR *)innkeeper->spr)->entries[0]->anmId;
-		innkeeperWin = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+		shop->keeperGraphics =
+			((SPR *)innkeeper->sprite)->entries[0]->animationId;
+		innkeeperWindow =
+			mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
 		mnShopShowKeeperMessage(msgBase + INN_MESSAGE_SLEPT_WELL);
 	}
 
-	mnWindowCloseStub(innkeeperWin, 2);
+	mnWindowCloseStub(innkeeperWindow, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -98,20 +100,20 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 void mnInnPlaySleep(Sint32 roomPrice)
 {
 	Sint16		 partyMemberIds[8];
-	Sint32		 memberCnt;
-	Sint32		 memberIdx;
+	Sint32		 memberCount;
+	Sint32		 memberIndex;
 	UNIT		*unit;
 	FIELD_STATE *state;
 
-	memberCnt = gmPartyListMembersStub(partyMemberIds);
+	memberCount = gmPartyListMembersStub(partyMemberIds);
 	gmPartyAdjustCoinsStub(-roomPrice);
 
-	for(memberIdx = 0; memberIdx < memberCnt; memberIdx++) {
-		unit = syUnitGet(partyMemberIds[memberIdx]);
+	for(memberIndex = 0; memberIndex < memberCount; memberIndex++) {
+		unit = syUnitGet(partyMemberIds[memberIndex]);
 		if(unit->hp != 0) {
 			unit->hp = unit->hpMax;
 			unit->pp = unit->ppMax;
-			gmUnitRecalculateGaugesStub(partyMemberIds[memberIdx]);
+			gmUnitRecalculateGaugesStub(partyMemberIds[memberIndex]);
 		}
 	}
 
@@ -120,15 +122,15 @@ void mnInnPlaySleep(Sint32 roomPrice)
 	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	state->transitionFrm = 60;
+	state->transitionFrame = 60;
 	sySynch(20);
 	fdScriptFinishScreenTransitionStub();
 	fdScriptWaitTransitionTicksStub();
-	sySndPlayStub(MUS_OVERNIGHT_AT_THE_INN);
-	mnSndWaitForJingle();
+	sySoundPlayStub(MUS_OVERNIGHT_AT_THE_INN);
+	mnSoundWaitForJingle();
 	sySynch(10);
 	fdScriptStartScreenTransitionStub();
 	fdScriptWaitTransitionTicksStub();
 	sySynch(30);
-	FieldStateWork->transitionFrm = 16;
+	FieldStateWork->transitionFrame = 16;
 }

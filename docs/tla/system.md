@@ -135,7 +135,7 @@ line the code has reached is the memory.
 
 An [event](glossary.md#event) is a function on a short list, which holds 24,
 four more than The Broken Seal's. Each trip round the loop calls every event
-on it once, highest rank first (the code calls the rank `pri`). A
+on it once, highest rank first (its `priority`). A
 event does one tick's worth of something and returns at once: move the
 actors a step, type the next letters into a window.
 

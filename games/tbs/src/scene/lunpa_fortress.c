@@ -617,9 +617,9 @@ static void scLunpaFortressLowerCrates(void)
 	fdMapGridCopyMetatileAttributes(17, 23, 1, 3, 15, 23);
 	cratesActor = fdActorGet(ACTOR_CAVE_CRATES);
 	if(cratesActor != NULL) {
-		fdActorSetSprFlags(cratesActor, 0);
-		cratesActor->motionFlg = 0;
-		cratesActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(cratesActor, 0);
+		cratesActor->motionFlags = 0;
+		cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 
@@ -643,7 +643,7 @@ static void scLunpaFortressCratesSink(void)
 	fdActorSetSpeed(ACTOR_CAVE_CRATES, 1);
 	fdActorSetDestination(ACTOR_CAVE_CRATES, 248, 376);
 	fdActorWaitForMoveById(ACTOR_CAVE_CRATES);
-	sySndPlay(SE_SPLASH_SMALL);
+	sySoundPlay(SE_SPLASH_SMALL);
 	fdScriptWait(60);
 	scLunpaFortressLowerCrates();
 	gmFlagSet(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
@@ -662,13 +662,13 @@ static void scLunpaFortressMoveCrates(void)
 	if(FIELD_METATILE(fdActorGet(ACTOR_CAVE_CRATES)->z.fixed) > 22) {
 		fdMapGridSetShake(4, 4, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-		sySndPlay(SE_CLATTER);
+		sySoundPlay(SE_CLATTER);
 		fdMapGridCopyMetatileAttributes(15, 20, 1, 1, 15, 22);
 		fdMapGridCopyMetatileAttributes(17, 23, 1, 3, 15, 23);
 		cratesActor = fdActorGet(ACTOR_CAVE_CRATES);
 		if(cratesActor != NULL) {
-			fdActorSetSprFlags(cratesActor, 0);
-			cratesActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(cratesActor, 0);
+			cratesActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		}
 		gmFlagSet(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
 	}
@@ -683,10 +683,11 @@ static void scLunpaFortressRestoreLoweredCrates(void)
 }
 
 /* Draws one of the metatiles' doors open. */
-static void scLunpaFortressOpenToadonpaDoor(Sint32 doorIdx)
+static void scLunpaFortressOpenToadonpaDoor(Sint32 doorIndex)
 {
-	Sint32 doorMetatileX = LunpaFortressToadonpaDoorMetatiles[doorIdx * 2];
-	Sint32 doorMetatileY = LunpaFortressToadonpaDoorMetatiles[doorIdx * 2 + 1];
+	Sint32 doorMetatileX = LunpaFortressToadonpaDoorMetatiles[doorIndex * 2];
+	Sint32 doorMetatileY =
+		LunpaFortressToadonpaDoorMetatiles[doorIndex * 2 + 1];
 
 	fdMapGridCopyMetatiles(0, 77, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(1, 77, 1, 1, doorMetatileX + 1, doorMetatileY);
@@ -706,15 +707,15 @@ static void scLunpaFortressUnlockToadonpaDoor(void)
 {
 	FIELD_STATE *state;
 	Sint32		 doorCue;
-	Sint32		 doorIdx;
+	Sint32		 doorIndex;
 
 	state = FieldStateWork;
 	if(gmPartyInventoryFindMember(ITEM_CELL_KEY) != -1) {
 		doorCue = state->stepCue;
-		doorIdx = doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
-		if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) == 0 || doorIdx != 4) {
-			scLunpaFortressOpenToadonpaDoor(doorIdx);
-			sySndPlay(SE_GATE_MOVE);
+		doorIndex = doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR;
+		if(gmFlagGet(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
+			scLunpaFortressOpenToadonpaDoor(doorIndex);
+			sySoundPlay(SE_GATE_MOVE);
 			fdMapGridSetShake(3, 3, 1);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			gmFlagSet(doorCue +
@@ -726,20 +727,20 @@ static void scLunpaFortressUnlockToadonpaDoor(void)
 
 /* Draws one of the cave's metatile doors open and lets the party through. The
    middle door, to the crates' nook, opens two metatiles. */
-static void scLunpaFortressOpenCaveDoor(Sint32 doorIdx)
+static void scLunpaFortressOpenCaveDoor(Sint32 doorIndex)
 {
 	Sint32 doorMetatileX;
 	Sint32 doorMetatileY;
 	Sint32 attributeMetatileY;
 
-	doorMetatileX = LunpaFortressCaveDoorMetatiles[doorIdx * 2];
-	doorMetatileY = LunpaFortressCaveDoorMetatiles[doorIdx * 2 + 1];
+	doorMetatileX = LunpaFortressCaveDoorMetatiles[doorIndex * 2];
+	doorMetatileY = LunpaFortressCaveDoorMetatiles[doorIndex * 2 + 1];
 	fdMapGridCopyMetatiles(0, 77, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(1, 77, 1, 1, doorMetatileX + 1, doorMetatileY);
 	attributeMetatileY = doorMetatileY - 44;
 	fdMapGridCopyMetatileAttributes(doorMetatileX, doorMetatileY - 45, 1, 1,
 		doorMetatileX, attributeMetatileY);
-	if(doorIdx == 1)
+	if(doorIndex == 1)
 		fdMapGridCopyMetatileAttributes(doorMetatileX, attributeMetatileY, 1, 1,
 			doorMetatileX, doorMetatileY - 43);
 }
@@ -759,7 +760,7 @@ static void scLunpaFortressUnlockCaveDoor(void)
 		doorCue = state->stepCue;
 		scLunpaFortressOpenCaveDoor(
 			doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdMapGridSetShake(3, 3, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		gmFlagSet(doorCue +
@@ -768,11 +769,11 @@ static void scLunpaFortressUnlockCaveDoor(void)
 }
 
 /* Draws one of the upper floor's two metatile doors open. */
-static void scLunpaFortressOpenUpperFloorDoor(Sint32 doorIdx)
+static void scLunpaFortressOpenUpperFloorDoor(Sint32 doorIndex)
 {
-	Sint32 doorMetatileX = LunpaFortressUpperFloorDoorMetatiles[doorIdx * 2];
+	Sint32 doorMetatileX = LunpaFortressUpperFloorDoorMetatiles[doorIndex * 2];
 	Sint32 doorMetatileY =
-		LunpaFortressUpperFloorDoorMetatiles[doorIdx * 2 + 1];
+		LunpaFortressUpperFloorDoorMetatiles[doorIndex * 2 + 1];
 
 	fdMapGridCopyMetatiles(55, 121, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(56, 121, 1, 1, doorMetatileX + 1, doorMetatileY);
@@ -794,7 +795,7 @@ static void scLunpaFortressUnlockUpperFloorDoor(void)
 		doorCue = state->stepCue;
 		scLunpaFortressOpenUpperFloorDoor(
 			doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdMapGridSetShake(3, 3, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		gmFlagSet(doorCue +
@@ -805,14 +806,14 @@ static void scLunpaFortressUnlockUpperFloorDoor(void)
 
 /* Draws one of the ground floor's metatile doors open and lets the party
    through. */
-static void scLunpaFortressOpenGroundFloorDoor(Sint32 doorIdx)
+static void scLunpaFortressOpenGroundFloorDoor(Sint32 doorIndex)
 {
 	/* BUG: the third door's cue and flag (GROUND_FLOOR_DOOR_FLAG + 2) ask for
 	   index 2, past the two doors LunpaFortressGroundFloorDoorMetatiles
 	   holds. */
-	Sint32 doorMetatileX = LunpaFortressGroundFloorDoorMetatiles[doorIdx * 2];
+	Sint32 doorMetatileX = LunpaFortressGroundFloorDoorMetatiles[doorIndex * 2];
 	Sint32 doorMetatileY =
-		LunpaFortressGroundFloorDoorMetatiles[doorIdx * 2 + 1];
+		LunpaFortressGroundFloorDoorMetatiles[doorIndex * 2 + 1];
 
 	fdMapGridCopyMetatiles(1, 80, 1, 3, doorMetatileX, doorMetatileY);
 	fdMapGridCopyMetatiles(2, 80, 1, 1, doorMetatileX + 1, doorMetatileY);
@@ -835,7 +836,7 @@ static void scLunpaFortressUnlockGroundFloorDoor(void)
 		doorCue = state->stepCue;
 		scLunpaFortressOpenGroundFloorDoor(
 			doorCue - METATILE_BEHAVIOR_LUNPA_FORTRESS_FIRST_DOOR);
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdMapGridSetShake(3, 3, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		gmFlagSet(doorCue +
@@ -924,7 +925,7 @@ static Sint32 scLunpaFortressTryTakeChestItem(Sint32 actorId, Sint32 itemId)
 		fdActorSetAnimation(actorId, CHEST_ANIMATION_OPEN_EMPTY);
 		itemGiven = TRUE;
 	} else {
-		sySndPlay(SE_CHEST_CLOSE);
+		sySoundPlay(SE_CHEST_CLOSE);
 		fdActorSetAnimation(actorId, CHEST_ANIMATION_PEEK_AND_SHUT);
 	}
 	fdActorRelease((ACTOR *)itemEffect);
@@ -1675,7 +1676,7 @@ static void scLunpaFortressCallPartyScoundrel(Sint32 actorId)
 static void scLunpaFortressFightMetatileKeyRoomGuard(void)
 {
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	sySndPlay(SE_MENU_CANCEL);
+	sySoundPlay(SE_MENU_CANCEL);
 	fdActorShowEmote(ACTOR_UPPER_FLOOR_METATILE_KEY_ROOM_GUARD,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	scLunpaFortressGuardChallengesParty(
@@ -1695,7 +1696,7 @@ static void scLunpaFortressFightMetatileKeyRoomGuard(void)
 static void scLunpaFortressFightMiddleHallGuard(void)
 {
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	sySndPlay(SE_MENU_CANCEL);
+	sySoundPlay(SE_MENU_CANCEL);
 	fdActorShowEmote(ACTOR_UPPER_FLOOR_MIDDLE_HALL_GUARD,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	scLunpaFortressGuardChallengesParty(ACTOR_UPPER_FLOOR_MIDDLE_HALL_GUARD);
@@ -1723,7 +1724,7 @@ static void scLunpaFortressFightThreeGuards(void)
 	fdActorSetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_MIDDLE, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_UPPER_FLOOR_THREE_GUARDS_EAST, ANIM_STAND);
-	sySndPlay(SE_MENU_CANCEL);
+	sySoundPlay(SE_MENU_CANCEL);
 	fdActorShowEmote(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdScriptWait(30);
@@ -1821,7 +1822,7 @@ static void scLunpaFortressPlaceThreeBeatenGuards(void)
 static void scLunpaFortressFightDonpasDoorGuard(void)
 {
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	sySndPlay(SE_MENU_CANCEL);
+	sySoundPlay(SE_MENU_CANCEL);
 	fdActorShowEmote(ACTOR_UPPER_FLOOR_DONPAS_DOOR_GUARD,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	scLunpaFortressGuardChallengesParty(ACTOR_UPPER_FLOOR_DONPAS_DOOR_GUARD);
@@ -1847,7 +1848,7 @@ static void scLunpaFortressEntranceGuardThrowsPartyOut(void)
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorFaceActor(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD, ACTOR_PARTY_LEADER, 0);
-	sySndPlay(SE_MENU_CANCEL);
+	sySoundPlay(SE_MENU_CANCEL);
 	fdActorShowEmote(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	{
@@ -1881,7 +1882,7 @@ static void scLunpaFortressSentriesThrowPartyOut(void)
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
 	fdActorSetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	sySndPlay(SE_MENU_CANCEL);
+	sySoundPlay(SE_MENU_CANCEL);
 	fdActorShowEmote(ACTOR_GROUND_FLOOR_SECOND_SENTRY,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_GROUND_FLOOR_FIRST_SENTRY,
@@ -1950,7 +1951,7 @@ static void scLunpaFortressFlipFirstSwitch(void)
 	if(FieldStateWork->revealActive != 0) {
 		if(fdScriptGetFlag(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-			sySndPlay(SE_THUMP);
+			sySoundPlay(SE_THUMP);
 			fdScriptWait(1);
 			scLunpaFortressFlipHiddenSwitch(
 				17, 82, scLunpaFortressOpenFirstSwitchPassage);
@@ -1968,7 +1969,7 @@ static void scLunpaFortressFlipSecondSwitch(void)
 	if(FieldStateWork->revealActive != 0) {
 		if(fdScriptGetFlag(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-			sySndPlay(SE_THUMP);
+			sySoundPlay(SE_THUMP);
 			fdScriptWait(1);
 			scLunpaFortressFlipHiddenSwitch(
 				3, 55, scLunpaFortressOpenSecondSwitchPassage);
@@ -2061,11 +2062,11 @@ static void scLunpaFortressGatherPartyAroundHammet(void)
 static void scLunpaFortressActivateLeverTrap(void)
 {
 	fdMapGridSetShake(4, 4, 1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdScriptWait(80);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdScriptWait(5);
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdMapGridCopyMetatiles(16, 75, 7, 4, 26, 55);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2143,7 +2144,7 @@ static void scLunpaFortressFindHammet(void)
 			ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 		fdActorFaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
 		fdActorJump(ACTOR_TOADONPA_HAMMET, 4, 0);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGet(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
 		fdScriptWait(30);
 		fdActorSetSpeed(ACTOR_IVAN, 0.7);
@@ -2168,7 +2169,7 @@ static void scLunpaFortressFindHammet(void)
 		fdActorSetDestinationOffset(ACTOR_TOADONPA_DODONPA, -8, 8);
 		fdActorWaitForMoveById(ACTOR_TOADONPA_DODONPA);
 		fdScriptWait(60);
-		sySndPlay(SE_SWITCH);
+		sySoundPlay(SE_SWITCH);
 		/* "Dodonpa pulled a lever." */
 		mnFieldMessageShow(msgBase + 1, 1);
 		fdActorSetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
@@ -2195,7 +2196,7 @@ static void scLunpaFortressFindHammet(void)
 		fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
 	} else {
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		fdScriptWait(30);
 		/* Ivan recognizes Hammet before Dodonpa interrupts the reunion. */
 		msgBase = MsgLunpaTimeEat;
@@ -2206,7 +2207,7 @@ static void scLunpaFortressFindHammet(void)
 		fdScriptWait(140);
 		fdActorFaceDirection(ACTOR_TOADONPA_HAMMET, FACING_WEST, 0);
 		fdActorJump(ACTOR_TOADONPA_HAMMET, 4, 0);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGet(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
 		fdScriptSetMessageId(msgBase + REUNION_HAMMET_ASKS_WHO);
 		/* "...Who are you?" */
@@ -2225,7 +2226,7 @@ static void scLunpaFortressFindHammet(void)
 		fdActorShowEmote(
 			ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 		fdScriptWait(110);
-		sySndPlay(MUS_WIND_ADEPTS);
+		sySoundPlay(MUS_WIND_ADEPTS);
 		fdScriptSetMessageId(msgBase + REUNION_HAMMET_KNOWS_IVAN);
 		/* "Ivan, is that you?" */
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
@@ -2278,7 +2279,7 @@ static void scLunpaFortressFindHammet(void)
 		fdScriptShowMessage(ACTOR_TOADONPA_HAMMET, 0);
 		/* Dodonpa approaches from the south, then springs the lever trap. */
 		fdActorSetPos(ACTOR_TOADONPA_DODONPA, 456, 320);
-		sySndPlay(MUS_SILENCE);
+		sySoundPlay(MUS_SILENCE);
 		fdScriptSetMessageId(msgBase + REUNION_DODONPA_HALTS_PARTY);
 		/* "Hold it right there!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
@@ -2289,7 +2290,7 @@ static void scLunpaFortressFindHammet(void)
 		fdActorFaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
 		fdActorFaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
 		fdScriptWait(30);
-		sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
+		sySoundPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 		fdCameraSetSpeed(2);
 		fdCameraMoveToActorById(ACTOR_TOADONPA_DODONPA, 1);
 		fdCameraWaitForMove();
@@ -2398,12 +2399,12 @@ static void scLunpaFortressFindHammet(void)
 		fdActorSetDestinationOffset(ACTOR_TOADONPA_DODONPA, -8, 8);
 		fdActorWaitForMoveById(ACTOR_TOADONPA_DODONPA);
 		fdScriptWait(60);
-		sySndPlay(SE_SWITCH);
+		sySoundPlay(SE_SWITCH);
 		mnFieldMessageShow(MsgLunpaDodonpaPulledLever, 1);
 		fdActorSetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
 		fdActorFaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_BOSS, 0);
 		scLunpaFortressActivateLeverTrap();
-		sySndPlay(MUS_BATTLING_A_POWERFUL_FOE);
+		sySoundPlay(MUS_BATTLING_A_POWERFUL_FOE);
 		fdScriptSetMessageId(msgBase + REUNION_DODONPA_SPRINGS_TRAP);
 		/* "This little trap here marks the end of your good fortune!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DODONPA, 0);
@@ -2449,7 +2450,8 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdMapGridCopyMetatiles(16, 75, 7, 4, 26, 55);
 	scLunpaFortressOpenToadonpaDoor(4);
 	fdScriptStart();
-	fdActorSetSprFlags(fdActorGet(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(
+		fdActorGet(ACTOR_TOADONPA_HAMMET), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 456, 184);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	fdActorSetPos(ACTOR_GARET, 440, 192);
@@ -2463,7 +2465,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetPos(ACTOR_TOADONPA_BOSS, 448, 237);
 	fdActorFaceDirection(ACTOR_TOADONPA_BOSS, FACING_WEST, 0);
 	fdActorSetPos(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, 448, 238);
-	fdActorSetSprPriority(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, 3);
+	fdActorSetSpritePriority(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, 3);
 	fdActorSetAnimation(ACTOR_TOADONPA_BOSS, ANIM_TOADONPA_FALLEN);
 	fdActorSetPos(ACTOR_TOADONPA_DODONPA, 458, 243);
 	fdActorFaceDirection(ACTOR_TOADONPA_DODONPA, FACING_SOUTH, 0);
@@ -2612,7 +2614,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(100);
-	sySndPlay(SE_LOG_PUSH);
+	sySoundPlay(SE_LOG_PUSH);
 	fdActorSetAnimation(ACTOR_TOADONPA_DODONPA, ANIM_DODONPA_PRONE);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.1);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, -24, 0);
@@ -2627,7 +2629,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetDestinationOffset(ACTOR_TOADONPA_BOSS, -24, 0);
 	fdActorSetDestinationOffset(ACTOR_INVISIBLE_TOADONPA_BOSS_PART, -24, 0);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdScriptWait(60);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
@@ -2832,12 +2834,12 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorSetPos(ACTOR_TOADONPA_DONPA, 456, 304);
 	fdActorSetSpeed(ACTOR_TOADONPA_DONPA, 0.5);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
-		sySndPlay(MUS_SILENCE);
+		sySoundPlay(MUS_SILENCE);
 		fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DONPA_APPROVES);
 		/* "Serves the little punk right!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
 	} else {
-		sySndPlay(MUS_SILENCE);
+		sySoundPlay(MUS_SILENCE);
 		fdScriptSetMessageId(punishmentMsg + PUNISHMENT_DONPA_LEAVES_DODONPA);
 		/* "Just leave him here like this for a while!" */
 		fdScriptShowMessage(ACTOR_TOADONPA_DONPA, 0);
@@ -2851,7 +2853,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdCameraMoveTo(456, CAMERA_KEEP, 240, 1);
 	fdActorStartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
 	fdScriptWait(60);
-	sySndPlay(MUS_COLOSSEUM);
+	sySoundPlay(MUS_COLOSSEUM);
 	/* Donpa takes charge and orders his son to remain imprisoned. */
 	donpaMsg = MsgLunpaDad;
 	fdScriptSetMessageId(donpaMsg + JUDGMENT_DODONPA_CALLS_FATHER);
@@ -3154,8 +3156,8 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdCameraFollowActor(ACTOR_PARTY_LEADER, 1);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 480, 248);
 	fdScriptWait(40);
-	fdActorSetSprPriority(ACTOR_TOADONPA_HAMMET, 0);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 0);
+	fdActorSetSpritePriority(ACTOR_TOADONPA_HAMMET, 0);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
 	fdActorWalkTo(ACTOR_TOADONPA_HAMMET, 480, 216);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_TOADONPA_DONPA, 0);
@@ -3181,7 +3183,7 @@ static void scLunpaFortressDonpaJudgesDodonpa(void)
 	fdActorWaitForMoveById(ACTOR_TOADONPA_HAMMET);
 	fdActorWalkTo(ACTOR_TOADONPA_HAMMET, 352, 360);
 	fdScriptWait(20);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 	fdScriptFinishScreenTransition();
@@ -3679,22 +3681,22 @@ Sint32 scInit(void)
 	if(MainRoutineStateWork.next == SCENE_LUNPA_FORTRESS_TOADONPA) {
 		FieldStateWork->transition = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-		fdActorSetSprFlags(fdActorGet(ACTOR_TOADONPA_HAMMET), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_TOADONPA_HAMMET), 0);
 		fdActorFaceDirection(ACTOR_TOADONPA_HAMMET, FACING_EAST, 0);
 		fdActorSetAnimation(ACTOR_TOADONPA_HAMMET, ANIM_STILL);
 		scLunpaFortressRestoreToadonpaDoors();
 		mapActor = fdActorGet(ACTOR_INVISIBLE_TOADONPA_WEST_JAR);
 		if(mapActor != NULL)
-			fdActorSetSprFlags(mapActor, 0);
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(mapActor, 0);
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		mapActor = fdActorGet(ACTOR_INVISIBLE_TOADONPA_CHEST);
 		if(mapActor != NULL)
-			fdActorSetSprFlags(mapActor, 0);
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(mapActor, 0);
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		mapActor = fdActorGet(ACTOR_INVISIBLE_TOADONPA_EAST_JAR);
 		if(mapActor != NULL)
-			fdActorSetSprFlags(mapActor, 0);
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(mapActor, 0);
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 		if(MainRoutineStateWork.entrance ==
 			LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE) {
@@ -3713,14 +3715,14 @@ Sint32 scInit(void)
 				fdActorFaceDirection(
 					ACTOR_TOADONPA_DODONPA, FACING_SOUTH_SOUTHWEST, 0);
 				fdActorSetPos(ACTOR_INVISIBLE_TOADONPA_DODONPA, 456, 320);
-				fdActorSetSprFlags(
+				fdActorSetSpriteFlags(
 					fdActorGet(ACTOR_INVISIBLE_TOADONPA_DODONPA), 0);
 			}
 		}
 		mapActor = fdActorGet(ACTOR_INVISIBLE_TOADONPA_BOSS_PART);
 		if(mapActor != NULL)
-			fdActorSetSprFlags(mapActor, 0);
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(mapActor, 0);
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		mapActor->scaleX = toFIXED(4) / 5;
 	}
 	return 0;
@@ -3780,12 +3782,16 @@ static void scLunpaFortressInitGroundFloor(void)
 		fdMapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 		break;
 	}
-	fdActorSetSprColById(ACTOR_GROUND_FLOOR_PATROL_GUARD, SPRITE_COLOR_GRB);
-	fdActorSetSprColById(
+	fdActorSetSpriteColorById(
+		ACTOR_GROUND_FLOOR_PATROL_GUARD, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(
 		ACTOR_GROUND_FLOOR_NORTHEAST_HALL_GUARD, SPRITE_COLOR_GRB);
-	fdActorSetSprColById(ACTOR_GROUND_FLOOR_SECOND_SENTRY, SPRITE_COLOR_GRB);
-	fdActorSetSprColById(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD, SPRITE_COLOR_GRB);
-	fdActorSetSprColById(ACTOR_GROUND_FLOOR_FIRST_SENTRY, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(
+		ACTOR_GROUND_FLOOR_SECOND_SENTRY, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(
+		ACTOR_GROUND_FLOOR_ENTRANCE_GUARD, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(
+		ACTOR_GROUND_FLOOR_FIRST_SENTRY, SPRITE_COLOR_GRB);
 	sySynch(1);
 }
 
@@ -3798,9 +3804,10 @@ static void scLunpaFortressInitUpperFloor(void)
 	ACTOR *keyActor;
 
 	scLunpaFortressRestoreUpperFloorDoors();
-	fdActorSetSprColById(ACTOR_UPPER_FLOOR_FIRST_PATROL, SPRITE_COLOR_GRB);
-	fdActorSetSprColById(ACTOR_UPPER_FLOOR_SECOND_PATROL, SPRITE_COLOR_GRB);
-	fdActorSetSprColById(ACTOR_UPPER_FLOOR_HALL_PATROL, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(ACTOR_UPPER_FLOOR_FIRST_PATROL, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(
+		ACTOR_UPPER_FLOOR_SECOND_PATROL, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(ACTOR_UPPER_FLOOR_HALL_PATROL, SPRITE_COLOR_GRB);
 	if(gmFlagGet(FLAG_LUNPA_FORTRESS_METATILE_KEY_ROOM_GUARD_BEATEN)) {
 		fdActorSetPos(ACTOR_UPPER_FLOOR_METATILE_KEY_ROOM_GUARD, 0, 0);
 	}
@@ -3833,7 +3840,7 @@ static void scLunpaFortressInitUpperFloor(void)
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 		fdMapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
-		fdActorSetSprFlags(fdActorGet(ACTOR_UPPER_FLOOR_DONPA), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_UPPER_FLOOR_DONPA), 0);
 		if(gmFlagGet(FLAG_LUNPA_FORTRESS_REWARD_SHOWN)) {
 			fdActorSetPos(ACTOR_UPPER_FLOOR_ATTENDANT, 872, 120);
 		}
@@ -3874,8 +3881,8 @@ static void scLunpaFortressInitUpperFloor(void)
 		break;
 	}
 	keyActor = fdActorGet(ACTOR_UPPER_FLOOR_METATILE_KEY);
-	fdActorSetSprFlags(fdActorGet(ACTOR_UPPER_FLOOR_METATILE_KEY), 0);
-	fdActorSetSprPriority(ACTOR_UPPER_FLOOR_METATILE_KEY, 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_UPPER_FLOOR_METATILE_KEY), 0);
+	fdActorSetSpritePriority(ACTOR_UPPER_FLOOR_METATILE_KEY, 1);
 	keyActor->scaleX = toFIXED(3) / 4;
 	keyActor->scaleY = toFIXED(3) / 4;
 }
@@ -3915,26 +3922,26 @@ static void scLunpaFortressInitCave(void)
 	fdScriptStart();
 	mapActor = fdActorGet(ACTOR_CAVE_FIRST_SWITCH_IVY);
 	if(mapActor != NULL) {
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	mapActor = fdActorGet(ACTOR_CAVE_PASSAGE_IVY);
 	if(mapActor != NULL) {
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	mapActor = fdActorGet(ACTOR_CAVE_SECOND_SWITCH_IVY);
 	if(mapActor != NULL) {
-		mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	mapActor = fdActorGet(ACTOR_INVISIBLE_CAVE_JAR);
 	if(mapActor != NULL) {
-		fdActorSetSprFlags(mapActor, 0);
+		fdActorSetSpriteFlags(mapActor, 0);
 	}
-	mapActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	mapActor = fdActorGet(ACTOR_CAVE_CRATES);
 	if(mapActor != NULL) {
-		mapActor->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+		mapActor->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_INVISIBLE_CAVE_JAR), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_INVISIBLE_CAVE_JAR), 0);
 	fdScriptEnd();
 	fdMapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }

@@ -146,7 +146,7 @@
 #define FLAG_DEBUG_BATTLE_KEYS		   0x16d
 /* The highest of these that is set picks the tint a field Psynergy fades
    toward, FieldPsynergyCastColors[n], in place of the tick counter's pick
-   (fdPsynergyFadeToCastCol). */
+   (fdPsynergyFadeToCastColor). */
 #define FLAG_PSYNERGY_TINT(n)		   (0x148 + (n))
 /* Holds the field's palette blend still (fdPaletteFadeUpdate), while a menu is
    open (mnSuspendFieldEvents). */
@@ -189,7 +189,7 @@
    no effect and the Pause menu offers only Change settings. */
 #define FLAG_IN_BATTLE_ARENA		   0x17e
 /* With it set, holding B on the field walks the leader at 4 pixels a tick
-   (fdActorUpdatePlayerCtrl). Nothing in the game sets it. */
+   (fdActorUpdatePlayerControl). Nothing in the game sets it. */
 #define FLAG_FAST_WALK				   0x17f
 /* The areas the party has visited, one flag for each, set by gmArrive as the
    party enters the area; the map screen shows a marker for each. */

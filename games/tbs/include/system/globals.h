@@ -62,13 +62,13 @@ extern Uint8 IwramHeap[];
 
 /* The affine group. Sprite rotation and scale, and the affine matrices handed
    out each tick. Matrices handed out this tick
-   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetTick sets it back to 0
-   after each VBlank. */
+   (syOAMMatrixAllocateFromTransform), up to 32; syOAMResetTick sets it back to
+   0 after each VBlank. */
 extern Uint8 OamMatrixCount;
 /* This tick's 32 matrices, copied into OAM with the sprites. */
 extern OAM_MATRIX OamMatrices[];
 /* The 256 depth slots' list heads that every drawn sprite is linked into
-   (syOAMAddSprAtDepth); syOAMResetTick empties them each tick. */
+   (syOAMAddSpriteAtDepth); syOAMResetTick empties them each tick. */
 extern void *OamDepthLists[];
 
 /* The decompress group. The decoders and canvas fades that the system library
@@ -193,7 +193,7 @@ extern volatile Uint8 IdleSleepEnabled;
    down and reads it each tick. */
 extern volatile Uint8 SleepRequested;
 /* Debug builds: Start+Select pauses the tick loop. volatile:
-   fdActorUpdatePlayerCtrl and fdModeRun each read it again after an earlier
+   fdActorUpdatePlayerControl and fdModeRun each read it again after an earlier
    test. */
 extern volatile Uint8 DebugMode;
 extern Uint8		  DebugPaused; /* The debug pause is on. */
@@ -348,7 +348,7 @@ extern volatile Uint8 SerialBlockNumber;
    reads it. */
 extern Uint8 LinkExchangeState;
 /* Link status, updated by the VBlank exchange handler. volatile: the VBlank
-   handler writes it while sySerialWaitForStatMask and the link screens poll
+   handler writes it while sySerialWaitForStatusMask and the link screens poll
    it. */
 extern volatile Uint16 LinkStatusWork;
 

@@ -7,20 +7,20 @@ UNUSED void scLeaderSpinAway(Sint32 entrance)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	leader->motionFlg = 0;
-	leader->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdScriptPlaySnd(SE_SPLASH_SMALL);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	leader->motionFlags = 0;
+	leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdScriptPlaySound(SE_SPLASH_SMALL);
 	fdActorSelectAnimation(leader, ANIM_LEADER_TUMBLE_IN_WATER);
-	fdScriptPlaySnd(SE_SPIN_AWAY);
+	fdScriptPlaySound(SE_SPIN_AWAY);
 	for(i = 0; i < 60; i++) {
-		Sint32 ang;
+		Sint32 angle;
 
 		if(i == 30)
 			fdScriptFinishScreenTransition();
 		leader->y.fixed -= toFIXED(1) / 4;
-		ang = leader->facing;
-		leader->facing = ang + TRIG_TURN / 16;
+		angle = leader->facing;
+		leader->facing = angle + TRIG_TURN / 16;
 		if((i & 7) == 0)
 			scActorSpawnWadingSplash(fdActorGet(ACTOR_VIAL_CHEST_PUDDLE_C));
 		syWait(1);

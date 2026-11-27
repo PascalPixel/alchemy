@@ -150,7 +150,7 @@ typedef enum BATTLE_ARENA_ACTOR_ID {
 	ACTOR_TRAVELING_WARRIOR,
 	ACTOR_FINALS_VISITOR,
 	ACTOR_OLD_MANS_ARENA_VISITOR,
-	/* Loads a debug parameter set (scBattleArenaChooseDebugParmSet). */
+	/* Loads a debug parameter set (scBattleArenaChooseDebugParamSet). */
 	ACTOR_DEBUG_PARAMETERS_MAN,
 	/* Explains the linked finals' limit of three allies, then the party
 	   order. */
@@ -354,9 +354,9 @@ static Bool scBattleArenaPeerSlotMatches(Sint32 slot)
    opponent's scBattleArenaPeerSlotMatches reads it. */
 static void scBattleArenaWriteSlotValue(Sint32 slot)
 {
-	Sint32		 *dst = (Sint32 *)SerialTransfer.payload;
+	Sint32		 *dest = (Sint32 *)SerialTransfer.payload;
 	const Sint32 *src = &BattleArenaSlotValues[slot];
-	dst[BattleArenaSlotColumns[slot]] = *src;
+	dest[BattleArenaSlotColumns[slot]] = *src;
 }
 
 /* The event that watches the opponent each tick in the Battle Arena. */
@@ -521,7 +521,7 @@ static Sint32 scBattleArenaReceivePartyRecords(void)
 	Sint32 i;
 
 	size = BATTLE_ARENA_UNIT_RECORD_BYTES;
-	buf = syHeapAllocEWRAM(size);
+	buf = syHeapAllocateEWRAM(size);
 	result = 0;
 	timeout = BATTLE_ARENA_RECEIVE_TIMEOUT_TICKS;
 	slot = 0;
@@ -618,7 +618,7 @@ recovery:
 	/* Then the opponent's Djinn recovery table, as the enemy side's. */
 	syHeapRelease(buf);
 	size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
-	buf = syHeapAllocEWRAM(size);
+	buf = syHeapAllocateEWRAM(size);
 	tries = 0;
 	if((started = sySerialStartReceive(
 			gmDjinnGetRecoveryTable(DJINN_RECOVERY_OPPONENT))) != -1) {
@@ -636,12 +636,12 @@ done:
    null destination only counts them. */
 static Sint32 scBattleArenaCopyPartyOwnerIds(Uint16 *memberIds)
 {
-	Sint32 memberCnt = gmPartyCountMembers();
-	if(memberCnt > BATTLE_ARENA_UNIT_RECORD_COUNT)
-		memberCnt = BATTLE_ARENA_UNIT_RECORD_COUNT;
-	if(memberCnt > 0) {
+	Sint32 memberCount = gmPartyCountMembers();
+	if(memberCount > BATTLE_ARENA_UNIT_RECORD_COUNT)
+		memberCount = BATTLE_ARENA_UNIT_RECORD_COUNT;
+	if(memberCount > 0) {
 #if !FIX_POINTER_OUTSIDE_OBJECT
-		Sint16 *partyAdr = (Sint16 *)&MainRoutineStateWork;
+		Sint16 *partyAddr = (Sint16 *)&MainRoutineStateWork;
 #endif
 		const Uint8 *src;
 		Sint32		 remaining;
@@ -650,10 +650,10 @@ static Sint32 scBattleArenaCopyPartyOwnerIds(Uint16 *memberIds)
 		   array. */
 		src = MainRoutineStateWork.party;
 #else
-		partyAdr += offsetof(MAIN_ROUTINE_STATE, party) / sizeof(Sint16);
-		src = (const Uint8 *)partyAdr;
+		partyAddr += offsetof(MAIN_ROUTINE_STATE, party) / sizeof(Sint16);
+		src = (const Uint8 *)partyAddr;
 #endif
-		remaining = memberCnt;
+		remaining = memberCount;
 		do {
 			Uint8 memberId = *src++;
 			if(memberIds != 0) {
@@ -665,7 +665,7 @@ static Sint32 scBattleArenaCopyPartyOwnerIds(Uint16 *memberIds)
 	}
 	if(memberIds != 0)
 		*memberIds = BATTLE_UNIT_LIST_END;
-	return memberCnt;
+	return memberCount;
 }
 
 /* Sends the first three party members' records, marked side 2
@@ -680,7 +680,7 @@ static Sint32 scBattleArenaSendPartyRecords(void)
 	Uint8				 peerSlots[8];
 	Sint32				 started;
 	Uint8				*buf;
-	Sint32				 memberCnt;
+	Sint32				 memberCount;
 	Sint32				 timeout;
 	Sint32				 tries;
 	Sint32				 i;
@@ -690,10 +690,10 @@ static Sint32 scBattleArenaSendPartyRecords(void)
 	DJINN_RECOVERY_LIST *list;
 
 	size = BATTLE_ARENA_UNIT_RECORD_BYTES;
-	buf = syHeapAllocEWRAM(size);
+	buf = syHeapAllocateEWRAM(size);
 	result = 0;
 	timeout = BATTLE_ARENA_SEND_TIMEOUT_TICKS;
-	memberCnt = scBattleArenaCopyPartyOwnerIds(memberIds);
+	memberCount = scBattleArenaCopyPartyOwnerIds(memberIds);
 	for(i = 7; i >= 0; i--) {
 		peerSlots[i] = 0;
 	}
@@ -703,7 +703,7 @@ static Sint32 scBattleArenaSendPartyRecords(void)
 	   does not start breaks out to the release; the waits inside leave by
 	   done. */
 	do {
-		for(i = 0; i < memberCnt; i++) {
+		for(i = 0; i < memberCount; i++) {
 			syWordsCopy(buf, gmUnitGet(memberIds[i]), size);
 			((UNIT *)buf)->side = BATTLE_SIDE_PARTY;
 			/* As a Uint8, i - FIRST_ENEMY_UNIT wraps round to FIRST_ENEMY_UNIT
@@ -756,7 +756,7 @@ static Sint32 scBattleArenaSendPartyRecords(void)
 
 		/* Then the recovery table. */
 		size = BATTLE_ARENA_RECOVERY_RECORD_BYTES;
-		buf = syHeapAllocEWRAM(size);
+		buf = syHeapAllocateEWRAM(size);
 		IWRAM_COPY_WORDS(
 			buf, gmDjinnGetRecoveryTable(DJINN_RECOVERY_PARTY), size);
 		{
@@ -769,13 +769,13 @@ static Sint32 scBattleArenaSendPartyRecords(void)
 			/* Give each Djinni on the list its party member's number on the
 			   opponent's side, and drop those of party members not sent
 			   (peerSlots 0). */
-			for(j = 0; j < list->cnt; j++) {
+			for(j = 0; j < list->count; j++) {
 				list->entries[j].unitId = peerSlots[list->entries[j].unitId];
 				if(list->entries[j].unitId == 0) {
-					for(k = j; k < list->cnt - 1; k++) {
+					for(k = j; k < list->count - 1; k++) {
 						list->entries[k] = list->entries[k + 1];
 					}
-					list->cnt--;
+					list->count--;
 					j--;
 				}
 			}
@@ -808,7 +808,7 @@ done:
 static Sint32 scBattleArenaExchangePartyRecords(void)
 {
 	Sint32 result;
-	Sint32 receivedMemberCnt;
+	Sint32 receivedMemberCount;
 	Sint32 receiveFirst;
 
 	result = 0;
@@ -824,11 +824,11 @@ static Sint32 scBattleArenaExchangePartyRecords(void)
 		if(result < 0)
 			goto fail;
 		sySynch(5);
-		receivedMemberCnt = result = scBattleArenaReceivePartyRecords();
+		receivedMemberCount = result = scBattleArenaReceivePartyRecords();
 		if(result < 0)
 			goto check;
 	} else {
-		receivedMemberCnt = result = scBattleArenaReceivePartyRecords();
+		receivedMemberCount = result = scBattleArenaReceivePartyRecords();
 		if(result < 0)
 			goto fail;
 		sySynch(10);
@@ -836,12 +836,12 @@ static Sint32 scBattleArenaExchangePartyRecords(void)
 		if(result < 0)
 			goto fail;
 	}
-	syFieldGameFlagSetByte(FLAG_LINK_PARTY_COUNT, receivedMemberCnt);
-	result = receivedMemberCnt;
+	syFieldGameFlagSetByte(FLAG_LINK_PARTY_COUNT, receivedMemberCount);
+	result = receivedMemberCount;
 check:
 	/* Any failure resets the link; the count received is never negative
 	   here. */
-	if(receivedMemberCnt < 0) {
+	if(receivedMemberCount < 0) {
 	fail:
 		sySerialResetTransferState();
 	}
@@ -861,17 +861,17 @@ static Sint32 scBattleArenaEnterBattle(void)
 {
 	FIELD_STATE *state;
 	Bool		 failed;
-	WINDOW		*win;
+	WINDOW		*window;
 	Sint32		 missedTicks;
 	Bool		 cancelEntry;
 	Uint8		*savedState;
 	Uint8		*src;
-	Uint8		*dst;
+	Uint8		*dest;
 	Uint16		*signature;
 	Uint32		 i;
 
 	failed = FALSE;
-	win = 0;
+	window = 0;
 	state = FieldStateWork;
 	missedTicks = 0;
 	if(gmFlagGet(FLAG_MONSTER_BATTLE)) {
@@ -885,7 +885,7 @@ static Sint32 scBattleArenaEnterBattle(void)
 		gmFlagSet(FLAG_BATTLE_ARENA_ENTERING_BATTLE);
 		scBattleArenaWriteSlotValue(BATTLE_ARENA_SLOT_IN_CIRCLE);
 		if(!scBattleArenaPeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE))
-			win = mnMessageOpenWindow(
+			window = mnMessageOpenWindow(
 				MsgLobbyAwaitingOpponent, 5, 4, MESSAGE_WINDOW_ZOOM);
 		while(!scBattleArenaPeerSlotMatches(BATTLE_ARENA_SLOT_IN_CIRCLE)) {
 			sySynch(1);
@@ -912,8 +912,8 @@ static Sint32 scBattleArenaEnterBattle(void)
 				break;
 			}
 		}
-		if(win)
-			mnWindowClose(win, 1);
+		if(window)
+			mnWindowClose(window, 1);
 		sySynch(5);
 	}
 	/* Stop watching the opponent while the parties are traded and the battle
@@ -925,12 +925,12 @@ static Sint32 scBattleArenaEnterBattle(void)
 		   units FIRST_ENEMY_UNIT to FIRST_ENEMY_UNIT + 3. The copy to
 		   ActorSpriteSlots (32 KB into MapGridMetatileBuffer) hands them to
 		   btRun, which copies them back. */
-		savedState =
-			syHeapSlotAllocEWRAM(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
+		savedState = syHeapSlotAllocateEWRAM(
+			HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
 		syCloseEvent((EVENT_FUNC)scBattleArenaWatchOpponent);
-		fdTilesetAnimResume(BATTLE_ARENA_GATE_ANIMATION);
+		fdTilesetAnimationResume(BATTLE_ARENA_GATE_ANIMATION);
 		sySynch(8);
-		fdTilesetAnimPause(BATTLE_ARENA_GATE_ANIMATION);
+		fdTilesetAnimationPause(BATTLE_ARENA_GATE_ANIMATION);
 		if(gmFlagGet(FLAG_MONSTER_BATTLE)) {
 			fdActorFaceActor(
 				ACTOR_ATTENDANT, MainRoutineStateWork.leaderActorId, 0);
@@ -956,9 +956,9 @@ static Sint32 scBattleArenaEnterBattle(void)
 			if(scBattleArenaExchangePartyRecords() < 0) {
 				fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 				fdActorWalkTo(ACTOR_PARTY_LEADER, 216, 200);
-				fdTilesetAnimResume(BATTLE_ARENA_GATE_ANIMATION);
+				fdTilesetAnimationResume(BATTLE_ARENA_GATE_ANIMATION);
 				sySynch(8);
-				fdTilesetAnimPause(BATTLE_ARENA_GATE_ANIMATION);
+				fdTilesetAnimationPause(BATTLE_ARENA_GATE_ANIMATION);
 				fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 				syHeapSlotRelease(HEAP_SLOT_ENEMY_UNITS);
 				scBattleArenaWriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
@@ -1003,9 +1003,9 @@ static Sint32 scBattleArenaEnterBattle(void)
 		signature[3] = 'C';
 		i = 0;
 		src = savedState;
-		dst = ActorSpriteSlots;
+		dest = ActorSpriteSlots;
 		for(; i < 6 * BATTLE_UNIT_SIZE; i++) {
-			*dst++ = *src++;
+			*dest++ = *src++;
 		}
 		syHeapSlotRelease(HEAP_SLOT_ENEMY_UNITS);
 	}
@@ -1196,14 +1196,14 @@ static Sint32 scBattleArenaTellLinkedWins(Sint32 actorId)
 /* A developers' leftover: the white-bearded man in green stands south of the
    hall's wall, where the player can never walk. Talking to him shows "Choose
    your parameters here." and a number picked with Left and Right; A loads that
-   numbered set of levels and equipment for testing (`btDebugParmSetLoad`) and B
-   gives up. The muscleman behind the east counter answers: "The settings are
+   numbered set of levels and equipment for testing (`btDebugParamSetLoad`) and
+   B gives up. The muscleman behind the east counter answers: "The settings are
    made. The rest is up to you.", "There's no such parameter. Ask Mr. Sugimoto."
    or "What is this, just a tease?". */
-static Sint32 scBattleArenaChooseDebugParmSet(Sint32 actorId)
+static Sint32 scBattleArenaChooseDebugParamSet(Sint32 actorId)
 {
-	WINDOW *win;
-	Sint32	setIdx;
+	WINDOW *window;
+	Sint32	setIndex;
 	Sint32	displayedSet;
 	Sint32	loadResult;
 
@@ -1212,38 +1212,38 @@ static Sint32 scBattleArenaChooseDebugParmSet(Sint32 actorId)
 	fdScriptSetMessageId(MsgLobbyChooseParameters);
 	/* "Choose your parameters here." */
 	fdScriptShowMessage(actorId, 0);
-	win = mnWindowCreate(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
-	setIdx = 0;
+	window = mnWindowCreate(0, 0, 6, 4, WINDOW_FLAG_INSTANT);
+	setIndex = 0;
 	displayedSet = -1;
 	for(;;) {
-		if(setIdx != displayedSet) {
-			mnWindowSprPrepareForRedraw(win);
-			mnTextDrawNum(setIdx, 3, win, 0, 0);
-			displayedSet = setIdx;
+		if(setIndex != displayedSet) {
+			mnWindowSpritePrepareForRedraw(window);
+			mnTextDrawNumber(setIndex, 3, window, 0, 0);
+			displayedSet = setIndex;
 		}
 		if(PerRepeat & KEY_LEFT) {
-			setIdx--;
+			setIndex--;
 		}
 		if(PerRepeat & KEY_RIGHT) {
-			setIdx++;
+			setIndex++;
 		}
-		if(setIdx < 0) {
-			setIdx = 0;
+		if(setIndex < 0) {
+			setIndex = 0;
 		}
 		if(PerPush & KEY_A) {
 			break;
 		}
 		if(PerPush & KEY_B) {
-			setIdx = -1;
+			setIndex = -1;
 			break;
 		}
 		sySynch(1);
 	}
-	mnWindowClose(win, 1);
-	if(setIdx >= 0) {
-		loadResult = btDebugParmSetLoad(setIdx);
+	mnWindowClose(window, 1);
+	if(setIndex >= 0) {
+		loadResult = btDebugParamSetLoad(setIndex);
 	}
-	if(setIdx < 0) {
+	if(setIndex < 0) {
 		fdScriptSetMessageId(MsgLobbyTease);
 		/* "What is this, just a tease?" */
 		fdScriptShowMessage(ACTOR_LINKED_WINS_TELLER, 0);
@@ -1280,19 +1280,19 @@ static Sint32 scBattleArenaOpenSanctum(Sint32 actorId)
    four otherwise. Returns 0 when not. */
 static Bool scBattleArenaPartyContains(Sint32 memberId)
 {
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 memberLimit;
 	Sint32 i;
 
-	cnt = gmPartyCountMembers();
+	count = gmPartyCountMembers();
 	memberLimit = 3;
 	if(gmFlagGet(FLAG_LINK_BATTLE_ARRANGED) == 0) {
 		memberLimit = 4;
 	}
-	if(cnt > memberLimit) {
-		cnt = memberLimit;
+	if(count > memberLimit) {
+		count = memberLimit;
 	}
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		if(MainRoutineStateWork.party[i] == BATTLE_UNIT_LIST_END) {
 			return FALSE;
 		}
@@ -1363,7 +1363,7 @@ static Sint32 scBattleArenaTalkByProgress(Sint32 actorId)
 static Sint32 scBattleArenaLeaveArena(void)
 {
 	sySerialRemoveIRQHandlers();
-	sySndLoadReverbCode(SOUND_REVERB_NORMAL);
+	sySoundLoadReverbCode(SOUND_REVERB_NORMAL);
 	fdScriptSetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_SANCTUM);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
@@ -1469,21 +1469,21 @@ Uint8 *scGetCues(void)
    "Battle results were saved.". */
 static Sint32 scBattleArenaSaveBattleResults(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 
-	sySndPlay(MUS_SAVED);
-	win = mnMessageOpenWindow(
+	sySoundPlay(MUS_SAVED);
+	window = mnMessageOpenWindow(
 		MsgLobbySavingBattleResults, 5, 4, MESSAGE_WINDOW_ZOOM);
 	while(mnMessageAllTyped() == 0)
 		sySynch(1);
 	mnSaveWriteLinkTallies();
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	sySynch(1);
-	win = mnMessageOpenWindow(
+	window = mnMessageOpenWindow(
 		MsgLobbyBattleResultsSaved, 5, 4, MESSAGE_WINDOW_ZOOM);
 	while(mnMessageAllTyped() == 0)
 		sySynch(1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
 #endif
@@ -1496,21 +1496,21 @@ static Sint32 scBattleArenaSaveBattleResults(void)
    for its messages. */
 static Sint32 scBattleArenaSaveMonsterBattleResults(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 
-	sySndPlay(MUS_SAVED);
-	win = mnMessageOpenWindow(
+	sySoundPlay(MUS_SAVED);
+	window = mnMessageOpenWindow(
 		MsgLobbySavingMonsterBattle, 5, 4, MESSAGE_WINDOW_ZOOM);
 	while(mnMessageAllTyped() == 0)
 		sySynch(1);
 	mnSaveWriteLinkTallies();
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	sySynch(1);
-	win = mnMessageOpenWindow(
+	window = mnMessageOpenWindow(
 		MsgLobbyMonsterBattleResults, 5, 4, MESSAGE_WINDOW_ZOOM);
 	while(mnMessageAllTyped() == 0)
 		sySynch(1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
 #endif
@@ -1546,19 +1546,19 @@ Sint32 scInit(void)
 {
 	Sint32		 i;
 	FIELD_STATE *state;
-	void (*func)(void);
+	void (*callback)(void);
 
 	BattleArenaCallTicks = 0;
 	BattleArenaWaitTicks = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	sySndLoadReverbCode(SOUND_REVERB_NORMAL);
+	sySoundLoadReverbCode(SOUND_REVERB_NORMAL);
 	scBattleArenaDrawThreeDigitValue(
 		MainRoutineStateWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
 	fdMapGridCopyMetatileAttributes(11, 11, 1, 1, 13, 10);
 	scBattleArenaWriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
 	sySynch(1);
-	fdTilesetAnimPause(BATTLE_ARENA_GATE_ANIMATION);
+	fdTilesetAnimationPause(BATTLE_ARENA_GATE_ANIMATION);
 
 	/* The payload's halfwords 4 to 7 hold the link battle's phase word ("VSST",
 	   "EDVS", "TUrn"); the Battle Arena puts TALK there. */
@@ -1579,8 +1579,8 @@ Sint32 scInit(void)
 	}
 	/* A monster battle won: offer the next one. */
 	if(MainRoutineStateWork.entrance == BATTLE_ARENA_AFTER_MONSTER_WIN) {
-		Sint32 wins;
-		Sint32 msgOfs;
+		Sint32 windows;
+		Sint32 msgOffset;
 		Sint32 v;
 
 		fdScriptStart();
@@ -1594,28 +1594,28 @@ Sint32 scInit(void)
 		   MONSTER_OFFER_LAST_NEXT. FLAG_AREA_TEMP_E8's byte counts the
 		   victories 0 to 2; the third raises the level and takes the line
 		   after, which promises a stronger monster. */
-		wins = (Sint8)syFieldGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
-		msgOfs = wins * 2 + 2;
-		if(msgOfs > MONSTER_OFFER_LAST_NEXT) {
-			msgOfs = MONSTER_OFFER_LAST_NEXT;
+		windows = (Sint8)syFieldGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
+		msgOffset = windows * 2 + 2;
+		if(msgOffset > MONSTER_OFFER_LAST_NEXT) {
+			msgOffset = MONSTER_OFFER_LAST_NEXT;
 		}
 		v = syFieldGameFlagGetByte(FLAG_AREA_TEMP_E8);
 		if(v == 2) {
 			syFieldGameFlagSetByte(FLAG_AREA_TEMP_E8, 0);
-			wins++;
-			msgOfs++;
+			windows++;
+			msgOffset++;
 		} else {
 			syFieldGameFlagSetByte(FLAG_AREA_TEMP_E8, v + 1);
 		}
 		fdActorFaceActor(
 			ACTOR_ATTENDANT, MainRoutineStateWork.leaderActorId, 0);
-		fdScriptSetMessageId(MsgLobbyNotBadNextMonster + msgOfs);
+		fdScriptSetMessageId(MsgLobbyNotBadNextMonster + msgOffset);
 		fdScriptOpenMessage(ACTOR_ATTENDANT, 0);
 		if(fdScriptAskYesNoWithActorAnimation(0, 0) == YES) {
-			if(wins > LEVEL_BONUS_MAX) {
-				wins = LEVEL_BONUS_MAX;
+			if(windows > LEVEL_BONUS_MAX) {
+				windows = LEVEL_BONUS_MAX;
 			}
-			syFieldGameFlagSetByte(FLAG_MONSTER_BATTLE_WINS, wins);
+			syFieldGameFlagSetByte(FLAG_MONSTER_BATTLE_WINS, windows);
 		} else {
 			/* No: the series ends, and a new best run is saved. */
 			gmFlagClear(FLAG_MONSTER_BATTLE);
@@ -1750,9 +1750,9 @@ Sint32 scInit(void)
 		scBattleArenaWriteSlotValue(BATTLE_ARENA_SLOT_SIGNATURE);
 		scBattleArenaWriteSlotValue(BATTLE_ARENA_SLOT_IDLE);
 	}
-	func = (EVENT_FUNC)scBattleArenaWatchOpponent;
-	sySetTickEvent(func, EVENT_PASS_TICK);
-	sySetEventFlags(func, EVENT_FLAG_KEEP_RUNNING);
+	callback = (EVENT_FUNC)scBattleArenaWatchOpponent;
+	sySetTickEvent(callback, EVENT_PASS_TICK);
+	sySetEventFlags(callback, EVENT_FLAG_KEEP_RUNNING);
 	if(MainRoutineStateWork.entrance != BATTLE_ARENA_AFTER_MONSTER_WIN ||
 		!gmFlagGet(FLAG_MONSTER_BATTLE)) {
 		gmPartyRestoreHpPp(1);
@@ -1900,7 +1900,7 @@ CUE BattleArenaCues[] = {
 	{CUE_TALK, ACTOR_OLD_MANS_ARENA_VISITOR, CONDITION_ALWAYS,
 		SCRIPT_REF(scBattleArenaTalkToVisitor)},
 	{CUE_TALK, ACTOR_DEBUG_PARAMETERS_MAN, CONDITION_ALWAYS,
-		SCRIPT_REF(scBattleArenaChooseDebugParmSet)},
+		SCRIPT_REF(scBattleArenaChooseDebugParamSet)},
 	{CUE_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
 		SCRIPT_REF(scBattleArenaExplainPartyOrder)},
 	{CUE_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,

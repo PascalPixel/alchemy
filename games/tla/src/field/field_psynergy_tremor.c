@@ -39,13 +39,13 @@ enum {
 typedef struct TREMOR_STATE {
 	VIEW_MOVE_STATE			view;
 	Uint8					picture[PICTURE_SIZE];
-	EFFECT_SPR				sprs[SHAKE_SPRITE_COUNT];
+	EFFECT_SPR				sprites[SHAKE_SPRITE_COUNT];
 	FIELD_PSYNERGY_PARTICLE particles[SHAKE_SPRITE_COUNT];
 } TREMOR_STATE;
 
 /* Sets the step of each of a sprite's layers: 0 stops its animation,
    ANIM_STEP_NORMAL runs it at normal speed. */
-void fdSprSetAnimationSpeedStub(void *spr, Sint32 value);
+void fdSpriteSetAnimationSpeedStub(void *sprite, Sint32 value);
 
 /* Tremor ("Shake objects left and right.") on the chosen object: sways the view
    from side to side, as fdPsynergyTremor does with no object: the swing grows
@@ -57,16 +57,16 @@ void fdSprSetAnimationSpeedStub(void *spr, Sint32 value);
 void fdPsynergyTremorOnTarget(void)
 {
 	TREMOR_STATE *tremorState =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*tremorState));
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(*tremorState));
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE				*field = RamHeapSlots->fieldState;
-	ACTOR					*tgt = scene->tgt;
-	SPR						*tgtSpr = tgt->spr;
+	ACTOR					*target = scene->target;
+	SPR						*targetSprite = target->sprite;
 	Sint32					 tiles;
 	Sint32					 shown;
 	Sint32					 width;
 	Sint32					 showing;
-	Sint32					 frmCnt;
+	Sint32					 frameCount;
 	Sint32					 phase;
 	Sint32					 i;
 	Sint32					 tile;
@@ -75,59 +75,60 @@ void fdPsynergyTremorOnTarget(void)
 	Sint32					 ticks;
 	FIELD_PSYNERGY_PARTICLE *particle;
 
-	if(tgt == NULL || tgtSpr == NULL ||
-		tgtSpr->width * tgtSpr->height <= PICTURE_MAX_PIXELS) {
-		fdPsynergyFadeToCastCol();
+	if(target == NULL || targetSprite == NULL ||
+		targetSprite->width * targetSprite->height <= PICTURE_MAX_PIXELS) {
+		fdPsynergyFadeToCastColor();
 		syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_SHAKE_TILES),
 			tremorState->picture);
 		tiles = syVRAMCacheFindFreeEntry();
 		tile = syVRAMCacheLoad(tiles, 64, tremorState->picture);
 		for(i = 0, particle = tremorState->particles; i < SHAKE_SPRITE_COUNT;
 			i++, particle++) {
-			EFFECT_SPR *spr = &tremorState->sprs[i];
+			EFFECT_SPR *sprite = &tremorState->sprites[i];
 
-			fdEffectSprInit(spr, 4, 4, 0, tile + (i & 1));
-			spr->oam.fullCol = 0;
-			spr->oam.pal = SHAKE_SPRITE_PALETTE;
-			spr->oam.pri = 0;
-			spr->depth = OAM_DEPTH_WINDOW;
-			particle->tmr = -1;
+			fdEffectSpriteInit(sprite, 4, 4, 0, tile + (i & 1));
+			sprite->oam.fullColor = 0;
+			sprite->oam.palette = SHAKE_SPRITE_PALETTE;
+			sprite->oam.priority = 0;
+			sprite->depth = OAM_DEPTH_WINDOW;
+			particle->timer = -1;
 		}
 		fdBattleEffectSetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
-		if(tgt != NULL && tgtSpr != NULL) {
-			fdSprSetAnimationSpeedStub(tgtSpr, 0);
-			fdPsynergyDecodePicture((PICTURE_SOURCE *)tgtSpr->entries[0],
-				tremorState->picture, tgtSpr->width * tgtSpr->height);
+		if(target != NULL && targetSprite != NULL) {
+			fdSpriteSetAnimationSpeedStub(targetSprite, 0);
+			fdPsynergyDecodePicture((PICTURE_SOURCE *)targetSprite->entries[0],
+				tremorState->picture,
+				targetSprite->width * targetSprite->height);
 		}
 		fdViewMoveStart(VIEW_MOVE_X);
-		fdViewMoveSaveNearbySprs();
+		fdViewMoveSaveNearbySprites();
 		sySynch(10);
 
 		shown = -1;
-		width = tgtSpr->width;
+		width = targetSprite->width;
 		showing = 0;
 		phase = 0;
-		frmCnt = 0;
+		frameCount = 0;
 		amplitude = SWAY_START;
 		state = SWAY_GROW;
 		ticks = 0;
 		do {
-			if((frmCnt & 15) == 15)
-				sySndPlayStub(SE_JUMP);
+			if((frameCount & 15) == 15)
+				sySoundPlayStub(SE_JUMP);
 
 			/* Shake the gathered objects' sprites with the view. */
 			if(field->mode == ACTOR_SYSTEM_MAP) {
-				for(i = 0; i < tremorState->view.cnt; i++) {
-					SPR	  *spr = tremorState->view.actors[i]->spr;
-					Sint32 rotation = tremorState->view.sprRotations[i];
+				for(i = 0; i < tremorState->view.count; i++) {
+					SPR	  *sprite = tremorState->view.actors[i]->sprite;
+					Sint32 rotation = tremorState->view.spriteRotations[i];
 
 					if(amplitude > SWAY_SHAKE)
-						spr->rotation = rotation +
+						sprite->rotation = rotation +
 							syMulFX(sySin(phase * SHAKE_STEP),
 								(amplitude - SWAY_SHAKE) /
 									STRONG_SHAKE_PIXELS_PER_TURN);
 					else
-						spr->rotation = rotation;
+						sprite->rotation = rotation;
 				}
 			}
 
@@ -172,17 +173,17 @@ void fdPsynergyTremorOnTarget(void)
 
 			sySynch(1);
 			ticks++;
-			frmCnt++;
+			frameCount++;
 		} while(state != SWAY_DONE);
 
-		if(tgt != NULL && tgtSpr != NULL) {
-			fdSprSetAnimationSpeedStub(tgtSpr, ANIM_STEP_NORMAL);
-			((SPR *)tgt->spr)->dirty = 1;
+		if(target != NULL && targetSprite != NULL) {
+			fdSpriteSetAnimationSpeedStub(targetSprite, ANIM_STEP_NORMAL);
+			((SPR *)target->sprite)->dirty = 1;
 		}
 		fdViewMoveEnd();
-		fdViewMoveRestoreNearbySprs();
+		fdViewMoveRestoreNearbySprites();
 		syVRAMCacheFreeEntry(tiles);
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 	}
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
@@ -210,43 +211,43 @@ void fdPsynergyTremor(void)
 {
 	/* Tremor's state's size, though the sway holds only the view move. */
 	VIEW_MOVE_STATE *viewMoveState =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(TREMOR_STATE));
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(TREMOR_STATE));
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
-	Sint32				frmCnt;
+	Sint32				frameCount;
 	Sint32				phase;
 	Sint32				i;
 	Sint32				amplitude;
 	Sint32				state;
 	Sint32				ticks;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	fdBattleEffectSetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
 	fdViewMoveStart(VIEW_MOVE_X);
-	fdViewMoveSaveNearbySprs();
+	fdViewMoveSaveNearbySprites();
 	sySynch(10);
 
 	phase = 0;
-	frmCnt = 0;
+	frameCount = 0;
 	amplitude = SWAY_START;
 	state = SWAY_GROW;
 	ticks = 0;
 	do {
-		if((frmCnt & 15) == 15)
-			sySndPlayStub(SE_JUMP);
+		if((frameCount & 15) == 15)
+			sySoundPlayStub(SE_JUMP);
 
 		/* Shake the gathered objects' sprites with the view. */
 		if(field->mode == ACTOR_SYSTEM_MAP) {
-			for(i = 0; i < viewMoveState->cnt; i++) {
-				SPR	  *spr = viewMoveState->actors[i]->spr;
-				Sint32 rotation = viewMoveState->sprRotations[i];
+			for(i = 0; i < viewMoveState->count; i++) {
+				SPR	  *sprite = viewMoveState->actors[i]->sprite;
+				Sint32 rotation = viewMoveState->spriteRotations[i];
 
 				if(amplitude > 0)
-					spr->rotation = rotation +
+					sprite->rotation = rotation +
 						syMulFX(sySin(phase * SHAKE_STEP),
 							amplitude / SHAKE_PIXELS_PER_TURN);
 				else
-					spr->rotation = rotation;
+					sprite->rotation = rotation;
 			}
 		}
 
@@ -260,7 +261,7 @@ void fdPsynergyTremor(void)
 			}
 			break;
 		case SWAY_HOLD:
-			if(viewMoveState->cnt != 0) {
+			if(viewMoveState->count != 0) {
 				if(ticks == SWAY_SHAKE_TICKS) {
 					state = SWAY_SHRINK;
 					ticks = -1;
@@ -285,12 +286,12 @@ void fdPsynergyTremor(void)
 		}
 		sySynch(1);
 		ticks++;
-		frmCnt++;
+		frameCount++;
 	} while(state != SWAY_DONE);
 
 	fdViewMoveEnd();
-	fdViewMoveRestoreNearbySprs();
-	fdPsynergyFadeFromCastCol();
+	fdViewMoveRestoreNearbySprites();
+	fdPsynergyFadeFromCastColor();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -299,13 +300,13 @@ void fdPsynergyTremor(void)
 void fdBattleEffectShiftRowsDown(Uint8 *base, Sint32 stride, Sint32 rows)
 {
 	Uint8 *src = base + (rows - 2) * stride;
-	Uint8 *dst = base + (rows - 1) * stride;
+	Uint8 *dest = base + (rows - 1) * stride;
 	Sint32 i;
 
 	for(i = rows - 1; i != 1; i--) {
-		syDMAXCopy(src, dst, DMA_COPY_WORDS(stride / 4), REG_DMA3);
+		syDMAXCopy(src, dest, DMA_COPY_WORDS(stride / 4), REG_DMA3);
 		src -= stride;
-		dst -= stride;
+		dest -= stride;
 	}
 	syWordsFillEntry(base, stride, 0);
 }

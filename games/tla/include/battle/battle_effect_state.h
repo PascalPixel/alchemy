@@ -55,19 +55,19 @@ typedef struct BATTLE_EFFECT_STATE {
 	   CANVAS_FADE_SHARE) or the darken or brighten amount. */
 	Sint32 transferValue;
 	Sint32 unused;		   /* never read or written in either game */
-	Sint32 frm;			   /* tick counter some effects keep, from 0 */
-	Sint32 scrollTmr;	   /* ticks since the last interval scroll step */
+	Sint32 frame;		   /* tick counter some effects keep, from 0 */
+	Sint32 scrollTimer;	   /* ticks since the last interval scroll step */
 	Sint32 scrollInterval; /* ticks between interval scroll steps */
 	Sint32 scrollStepX;	   /* added to BG1 or BG2 x at each step */
 	Sint32 scrollStepY;	   /* added to BG1 or BG2 y at each step */
 	Sint32 savedBg1X;	   /* BG1 scroll restored when a shake ends */
 	Sint32 savedBg1Y;	   /* BG1 scroll restored when a shake ends */
-	Sint32 shakeFrm;	   /* shake ticks left; CameraApplyShake counts down */
+	Sint32 shakeFrame;	   /* shake ticks left; CameraApplyShake counts down */
 	Sint32 cameraDelta;	   /* camera yaw turned per effect tick */
 	/* The effect sets 1 after a tick; btCameraApplyPhasedDelta then turns the
 	   whole cameraDelta and sets 0, else turns half and toggles 0 and 2. */
 	Sint32 cameraPhase;
-	Sint32 fadeFrm; /* backdrop fade ticks left */
+	Sint32 fadeFrame; /* backdrop fade ticks left */
 	/* (btEffectDarkenBackgroundStep) */
 	Sint32 fadeStep; /* steps the backdrop has darkened so far */
 	/* Window, display and blend registers, which
@@ -83,19 +83,19 @@ typedef struct BATTLE_EFFECT_STATE {
 	Uint16 bldalpha;
 	Uint16 padding; /* aligns bg2x */
 	/* BG2's reference point, written to BG2X and BG2Y by
-	   btEffectApplyBg2Reference and btDispApplyBg2Affine. Volatile, as the
+	   btEffectApplyBg2Reference and btDisplayApplyBg2Affine. Volatile, as the
 	   scale below. */
 	volatile Sint32 bg2x;
 	volatile Sint32 bg2y;
-	/* BG2's scale, written to BG2PA and BG2PD by btDispApplyBg2Affine.
-	   Volatile: btDispApplyBg2Affine copies them out from the VBlank handler
+	/* BG2's scale, written to BG2PA and BG2PD by btDisplayApplyBg2Affine.
+	   Volatile: btDisplayApplyBg2Affine copies them out from the VBlank handler
 	   (EVENT_PASS_VBLANK). */
 	volatile Uint16 bg2pa;
 	volatile Uint16 bg2pd;
-	void		   *sprs[64]; /* the effect's sprites */
-	/* Each target's flash timer in ticks, for args->tgts[n]: set by
+	void		   *sprites[64]; /* the effect's sprites */
+	/* Each target's flash timer in ticks, for args->targets[n]: set by
 	   btEffectTintBattler, counted down by btEffectCountDownBattlerTints. */
-	Uint8 actorTmrs[8];
+	Uint8 actorTimers[8];
 	/* 1 on a canvas copy's VBlank, then counts up. Volatile and unsigned: the
 	   VBlank handler counts it while an effect waits on it, each wait reads it
 	   afresh and compares it unsigned. */
@@ -112,13 +112,13 @@ STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, sheet) == 1792);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, bg2xLines) == 28800);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, backdropLines) == 30272);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, transferMode) == 30592);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, shakeFrm) == 30632);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, shakeFrame) == 30632);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, fadeStep) == 30648);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, win0h) == 30652);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, bg2x) == 30672);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, bg2pa) == 30680);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, sprs) == 30684);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, actorTmrs) == 30940);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, sprites) == 30684);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, actorTimers) == 30940);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, transferPending) == 30952);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, args) == 30960);
 

@@ -20,7 +20,7 @@
 
 /* The heap_release group. Releasing heap blocks, and the two pools' space.
    Takes `size` bytes from another pool through its allocator, such as
-   syHeapAllocEWRAM. */
+   syHeapAllocateEWRAM. */
 static __inline__ void *syHeapCallAlternatePool(
 	void *(*allocate)(Sint32), Sint32 size)
 {
@@ -33,79 +33,79 @@ struct AFFINE_TRANSFORM;
    (src/system/stubs.s). */
 void   sySynch(Sint32 ticks);
 void   syInitEvent(void);
-Sint32 sySetEvent(EVENT_FUNC func, Sint32 pri);
-Sint32 syCloseEvent(EVENT_FUNC func);
-Sint32 sySuspendEvent(EVENT_FUNC func);
-Sint32 syResumeEvent(EVENT_FUNC func);
+Sint32 sySetEvent(EVENT_FUNC callback, Sint32 priority);
+Sint32 syCloseEvent(EVENT_FUNC callback);
+Sint32 sySuspendEvent(EVENT_FUNC callback);
+Sint32 syResumeEvent(EVENT_FUNC callback);
 void   syExecuteEvent(Sint32 pass);
 Uint32 syRandom(void);
 ANGLE  syAtan(FIXED x, FIXED y);
 Sint32 sySquart(Sint32 value);
 FIXED  sySquartFX(FIXED value);
-/* The sine of `ang`, a whole turn being TRIG_TURN, in 16.16, read from
+/* The sine of `angle`, a whole turn being TRIG_TURN, in 16.16, read from
    TrigSineTable, 256 entries for the first quarter turn. */
-FIXED sySin(ANGLE ang);
-/* The cosine of `ang`, a whole turn being TRIG_TURN, in 16.16; it falls
+FIXED sySin(ANGLE angle);
+/* The cosine of `angle`, a whole turn being TRIG_TURN, in 16.16; it falls
    through into sySin a quarter turn on. */
-FIXED syCos(ANGLE ang);
-void  syVectorAddPolarOffset(FIXED radius, ANGLE ang, POINT pos);
+FIXED syCos(ANGLE angle);
+void  syVectorAddPolarOffset(FIXED radius, ANGLE angle, POINT pos);
 void  syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler);
 void  syHeapInit(void);
-void *syHeapSlotAlloc(Sint32 slot, Sint32 size);
-void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size);
+void *syHeapSlotAllocate(Sint32 slot, Sint32 size);
+void *syHeapSlotAllocateEWRAM(Sint32 slot, Sint32 size);
 /* Releases heap slot `slot`'s block, and with it every later block of the same
    pool, by setting the pool's next free address back to the block's start. */
 void   syHeapSlotRelease(Sint32 slot);
 Sint32 syHeapGetRemainingIWRAM(void);
 Sint32 syHeapGetRemainingEWRAM(void);
-void  *syHeapAlloc(Sint32 size);
-void  *syHeapAllocEWRAM(Sint32 size);
+void  *syHeapAllocate(Sint32 size);
+void  *syHeapAllocateEWRAM(Sint32 size);
 /* Releases `buf`, a block taken with no heap slot, and every later block of
    its pool, as syHeapSlotRelease does. */
 void   syHeapRelease(void *buf);
 void   syPrint(const Uint8 *src);
 void   syPrintHex(Uint32 value, Sint32 digits);
-void   syPrintDec(Sint32 value, Sint32 digits);
-void   syPrintBlanks(Uint32 cnt);
-Sint32 syDecompressByteLZ(const void *src, void *dst);
-Sint32 syDecompressTaggedLZ(const void *src, void *dst);
+void   syPrintDecimal(Sint32 value, Sint32 digits);
+void   syPrintBlanks(Uint32 count);
+Sint32 syDecompressByteLZ(const void *src, void *dest);
+Sint32 syDecompressTaggedLZ(const void *src, void *dest);
 void   syVRAMCacheReset(void);
 Sint32 syVRAMCacheFreeEntry(Uint32 id);
 Sint32 syVRAMCacheReleaseVRAM(Uint32 id);
 Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src);
 Sint32 syVRAMCacheFindFreeEntry(void);
 void   syPrintClear(void);
-Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src);
-void   syOAMAddSprAtDepth(void *slotEntry, Sint32 slot);
+Sint32 syOAMMatrixAllocateFromTransform(AFFINE_TRANSFORM *src);
+void   syOAMAddSpriteAtDepth(void *slotEntry, Sint32 slot);
 void   syWindowLoadGraphics(void);
-void   syPaletteLoadBasicSprCols(void);
+void   syPaletteLoadBasicSpriteColors(void);
 void   syInitMatrix(void);
 void   syUnitMatrixCurrent(void);
 void   syPushMatrix(void);
 void   syPopMatrix(void);
 void   syMatrixRotate(Sint32 *angles);
-void   syRotX(ANGLE ang);
-void   syRotY(ANGLE ang);
-void   syRotZ(ANGLE ang);
+void   syRotX(ANGLE angle);
+void   syRotY(ANGLE angle);
+void   syRotZ(ANGLE angle);
 void   syMatrixTranslateVector(const POINT pos);
 void   syMatrixScaleVector(const VECTOR scale);
 void   syMatrixRotateTranslate(Sint32 *angles, POINT pos);
 void   syMatrixRotateTranslateScale(Sint32 *angles, POINT pos, VECTOR scale);
-void   syLookAtLoad(POINT eye, POINT tgt);
+void   syLookAtLoad(POINT eye, POINT target);
 Sint32 syConvert3Dto2D(const POINT point, Sint32 *screen);
 void   syPerspective(Uint32 fieldOfView, FIXED nearDepth, FIXED farDepth);
 void   sySetScreenDist(Uint32 focal, Uint32 nearDepth, Uint32 farDepth);
 void   syCopyBuildStamp(void);
-Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *tbl);
-void  *syResourceGetTableEntry(Sint32 idx);
+Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *table);
+void  *syResourceGetTableEntry(Sint32 index);
 void   syDummyNoOperationHook(Sint32 unused);
-void   syOverlayLoad(Uint32 idx, void *dst);
+void   syOverlayLoad(Uint32 index, void *dest);
 void   syScreenFadeToBlack(Sint32 frames);
 void   syScreenFadeFromBlack(Sint32 frames);
 void   syScreenFadeToWhite(Sint32 frames);
 void   syScreenFadeFromWhite(Sint32 frames);
 void   syScreenFadeStart(
-	  Sint8 bright, Sint32 layer, Uint32 start, Sint32 tgt, Sint32 frames);
+	  Sint8 bright, Sint32 layer, Uint32 start, Sint32 target, Sint32 frames);
 void   syScreenFadeWait(void);
 void   syDummyReservedNoOperationA(void);
 void   syDummyReservedNoOperationB(void);
@@ -116,28 +116,28 @@ void   sySerialInit(void);
 Sint32 sySerialPollAndTransfer(void *send, void *receive);
 /* Queue one register write of a width (8, 16 or 32 bits): a store, or the
    value's bits set or cleared (system/system_io_write_queue.c). */
-void   syIOWriteQueueStore8(Uint32 adr, Uint32 value);
-void   syIOWriteQueueStore16(Uint32 adr, Uint32 value);
-void   syIOWriteQueueStore32(Uint32 adr, Uint32 value);
-void   syIOWriteQueueSetBits8(Uint32 adr, Uint32 value);
-void   syIOWriteQueueSetBits16(Uint32 adr, Uint32 value);
-void   syIOWriteQueueSetBits32(Uint32 adr, Uint32 value);
-void   syIOWriteQueueClearBits8(Uint32 adr, Uint32 value);
-void   syIOWriteQueueClearBits16(Uint32 adr, Uint32 value);
-void   syIOWriteQueueClearBits32(Uint32 adr, Uint32 value);
+void   syIOWriteQueueStore8(Uint32 addr, Uint32 value);
+void   syIOWriteQueueStore16(Uint32 addr, Uint32 value);
+void   syIOWriteQueueStore32(Uint32 addr, Uint32 value);
+void   syIOWriteQueueSetBits8(Uint32 addr, Uint32 value);
+void   syIOWriteQueueSetBits16(Uint32 addr, Uint32 value);
+void   syIOWriteQueueSetBits32(Uint32 addr, Uint32 value);
+void   syIOWriteQueueClearBits8(Uint32 addr, Uint32 value);
+void   syIOWriteQueueClearBits16(Uint32 addr, Uint32 value);
+void   syIOWriteQueueClearBits32(Uint32 addr, Uint32 value);
 void   syInputResetKeyRepeat(void);
-void   syLookAt(POINT eye, POINT tgt);
-Uint32 sySerialWaitForStatMask(Sint32 mask);
+void   syLookAt(POINT eye, POINT target);
+Uint32 sySerialWaitForStatusMask(Sint32 mask);
 void   sySerialRemoveIRQHandlers(void);
-Sint32 sySndLoadReverbCode(Sint32 code);
+Sint32 sySoundLoadReverbCode(Sint32 code);
 Sint32 sySerialStartSend(void *src, Sint32 size);
-Sint32 sySerialStartReceive(void *dst);
+Sint32 sySerialStartReceive(void *dest);
 void   sySerialWaitForSend(void);
 void   sySerialWaitForReceive(void);
 void   sySerialWaitForTransfers(void);
 Sint32 sySerialGetActiveTransfers(void);
 void   sySerialStepBlockTransfer(void);
-Sint32 sySetEventFlags(EVENT_FUNC func, Uint32 mask);
+Sint32 sySetEventFlags(EVENT_FUNC callback, Uint32 mask);
 
 /* The system library's functions and globals that the stub table does not
    list. */
@@ -150,7 +150,7 @@ void BiosSoundBiasOn(void);
 extern Uint16 SleepActive;
 
 /* NumberBuffer + 10, the decimal form's units digit (the form ends at + 11);
-   syPrintDec starts n characters before it, so it prints n + 1. */
+   syPrintDecimal starts n characters before it, so it prints n + 1. */
 extern Uint8 NumberBufferDecimalEnd[];
 /* The end of the hexadecimal form in NumberBuffer. */
 extern Uint8 NumberBufferHexEnd[];
@@ -169,11 +169,11 @@ struct SPR_ANIMATION;
 struct SPR;
 
 /* The 152 bytes of IWRAM-resident sound code (0x03000bd8, not the mixer at
-   0x03007000) that sySndLoadReverbCode overwrites with a reverb code from
+   0x03007000) that sySoundLoadReverbCode overwrites with a reverb code from
    IwramSoundReverbCodes. */
 extern Uint8 IwramSoundReverbCode[];
 /* HEAP_SLOT_SPRITE_ANIMATIONS: the sprite animations (struct */
-/* SPR_ANIMATION) that fdSprAnimationAlloc takes from. */
+/* SPR_ANIMATION) that fdSpriteAnimationAllocate takes from. */
 #define SpriteAnimations \
 	((struct SPR_ANIMATION **)&HeapSlots[HEAP_SLOT_SPRITE_ANIMATIONS])
 /* Where the debug text writes next on its 32 by 20 screen in BG0. */
@@ -201,7 +201,7 @@ extern const Uint8 syResourcePatchThumbBranch[];
    `D`, `F`, `S` or `I` (syGetLanguage). */
 extern const Uint8 RomLanguageCode;
 /* The basic sprite palettes 0 to 13, 224 colours
-   (syPaletteLoadBasicSprCols). */
+   (syPaletteLoadBasicSpriteColors). */
 extern const Uint8 BasicSpritePalettes[];
 /* The sprite tile uploader, run from HEAP_SLOT_PICTURE_UPLOADER. */
 extern Uint8 fdTileCopyStrided[];
@@ -234,16 +234,16 @@ void   syIRQIgnore(void);
 void   syInstallIWRAMAndIRQs(void);
 void   syInputUpdateKeyRepeatAndDirection(void);
 void   syVBlankHandler(void);
-void   sySndReservedNoOperationA(void);
-void   sySndReservedNoOperationB(void);
+void   sySoundReservedNoOperationA(void);
+void   sySoundReservedNoOperationB(void);
 void   syInputHandleKeyInterrupt(void);
-Sint32 syDecompressMoveToFrontLZ(const void *src, void *dst);
+Sint32 syDecompressMoveToFrontLZ(const void *src, void *dest);
 
 void syIOWriteQueueFlushPending(void);
 
 void syScreenFadeUpdate(void);
 
-/* Depth slots of syOAMAddSprAtDepth: a higher slot is drawn in front. The
+/* Depth slots of syOAMAddSpriteAtDepth: a higher slot is drawn in front. The
    windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
    in front of the field's and the battle's, and OAM_DEPTH_FRONT is in front of
    everything. */
@@ -256,12 +256,12 @@ void syOAMBuildBuffer(void *work);
 Sint32 syVRAMCacheAllocateBlocks(Uint32 id, Uint32 size);
 Sint32 syVRAMCacheGetLongestFreeRun(void);
 Sint32 syVRAMCacheFreeBlocks(Sint32 id);
-Sint32 syVRAMCacheAllocEntry(Sint32 size);
+Sint32 syVRAMCacheAllocateEntry(Sint32 size);
 Sint32 syVRAMCacheReload(Sint32 id, Sint32 src);
 
-void   syCopyEventWords(Uint32 *dst, Uint32 *src, Uint32 byteCnt);
+void   syCopyEventWords(Uint32 *dest, Uint32 *src, Uint32 byteCount);
 void   sySortEvents(void);
-Sint32 syFindEvent(EVENT_FUNC func);
+Sint32 syFindEvent(EVENT_FUNC callback);
 void   syEventNoOperationA(void);
 void   syEventNoOperationB(void);
 Sint32 sySuspendOverlayEvents(void);
@@ -270,52 +270,53 @@ Sint32 syResumeOverlayEvents(void);
 /* A random whole number from 0 to count - 1, from syRandom. */
 #define syRandom16Below(count) ((syRandom() * (count)) >> 16)
 
-const Uint8 *syPaletteGetBasicSprCols(void);
+const Uint8 *syPaletteGetBasicSpriteColors(void);
 void		 syStringFormatHex(Uint32 value);
-void		 syStringFormatDecimal(Sint32 num);
-void		*memcpy(void *dst, const void *src, unsigned long size);
+void		 syStringFormatDecimal(Sint32 number);
+void		*memcpy(void *dest, const void *src, unsigned long size);
 
 void syHeapReservedNoOperation(void);
 
-void syGetMatrix(MATRIX dst);
+void syGetMatrix(MATRIX dest);
 void syLoadMatrix(const MATRIX src);
-void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out);
+void syMatrixBuildLookAt(POINT eye, POINT target, MATRIX out);
 /* The far depth well past everything drawn, the largest whole 16.16 number: the
    battle's, Thor's and Lucky Dice's projections. */
 #define PROJECTION_FAR_DEPTH_MAX toFIXED(32767)
 
-void syDecompressHalfwords(const void *src, void *dst);
+void syDecompressHalfwords(const void *src, void *dest);
 void syCanvasCopyAndBrighten(
-	Uint8 *buf, Uint32 amount, Uint8 *dst, Uint32 bytes);
-void syCanvasCopyAndDarken(Uint8 *buf, Uint32 amount, Uint8 *dst, Uint32 bytes);
-void syCanvasCopyAndScaleThreeQuarters(Uint8 *buf, Uint8 *dst, Uint32 bytes);
-void syCanvasCopyAndHalve(Uint8 *buf, Uint8 *dst, Uint32 bytes);
+	Uint8 *buf, Uint32 amount, Uint8 *dest, Uint32 bytes);
+void syCanvasCopyAndDarken(
+	Uint8 *buf, Uint32 amount, Uint8 *dest, Uint32 bytes);
+void syCanvasCopyAndScaleThreeQuarters(Uint8 *buf, Uint8 *dest, Uint32 bytes);
+void syCanvasCopyAndHalve(Uint8 *buf, Uint8 *dest, Uint32 bytes);
 void syCanvasCopyAndBrightenPartial(
-	Uint8 *buf, Uint32 amount, Uint8 *dst, Uint32 bytes);
+	Uint8 *buf, Uint32 amount, Uint8 *dest, Uint32 bytes);
 void syCanvasCopyAndDarkenPartial(
-	Uint8 *buf, Uint32 amount, Uint8 *dst, Uint32 bytes);
+	Uint8 *buf, Uint32 amount, Uint8 *dest, Uint32 bytes);
 void syCanvasCopyAndScaleNonzeroThreeQuarters(
-	Uint8 *buf, Uint8 *dst, Uint32 bytes);
-void   syCanvasCopyAndHalveNonzero(Uint8 *buf, Uint8 *dst, Uint32 bytes);
+	Uint8 *buf, Uint8 *dest, Uint32 bytes);
+void   syCanvasCopyAndHalveNonzero(Uint8 *buf, Uint8 *dest, Uint32 bytes);
 Bool   syBupInitState(void);
 Uint32 syBupSelectWriteSector(Sint32 partId);
 Uint32 syBupWriteSector(Sint32 sector);
-Sint32 syBupReadSector(Sint32 idx);
+Sint32 syBupReadSector(Sint32 index);
 Uint16 syBupEraseSector(Uint16 sector);
 Bool   syBupWritePart(Sint32 partId, void *src);
-Uint32 syBupReadPart(Sint32 partId, void *dst);
+Uint32 syBupReadPart(Sint32 partId, void *dest);
 Uint32 syBupDeletePart(Sint32 partId);
 Sint32 syBupChecksumSector(void);
 Uint32 syBupFindLatestSector(Sint32 partId);
-Bool   syBupInvalidateSector(Sint32 idx);
-Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 cnt);
+Bool   syBupInvalidateSector(Sint32 index);
+Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 count);
 Uint32 syBupGetLatestCounter(Sint32 partId);
 Sint32 syBupLoadFileSummaries(void);
 Uint32 syBupReleaseState(void);
 
 void   sySerialEnableTransferTimer(void);
 void   sySerialDisableTransfer(void);
-Sint32 sySerialPollStat(void);
+Sint32 sySerialPollStatus(void);
 Sint32 sySerialExchangePayloads(void *send, void *receive);
 void   sySerialPrepareSendPacket(void *payload);
 Uint8  sySerialCollectReceivedPayloads(void *payload);
@@ -380,20 +381,20 @@ extern Uint32 RandomSeed;
 
 /* Starts a DMA transfer: stores the source, destination and control words into
    `channel`'s registers with one stmia. */
-static __inline__ void syDMAXCopy(const volatile void *src, volatile void *dst,
+static __inline__ void syDMAXCopy(const volatile void *src, volatile void *dest,
 	Uint32 control, volatile Uint32 *channel)
 {
 	ASM_REGISTER(volatile Uint32 *dma, "r3") = channel;
 	ASM_REGISTER(Uint32 srcReg, "r0") = (Uint32)src;
-	ASM_REGISTER(Uint32 dstReg, "r1") = (Uint32)dst;
-	ASM_REGISTER(Uint32 cnt, "r2") = control;
-	ASM_DMA_STORE(srcReg, cnt, dma, dstReg);
+	ASM_REGISTER(Uint32 destReg, "r1") = (Uint32)dest;
+	ASM_REGISTER(Uint32 count, "r2") = control;
+	ASM_DMA_STORE(srcReg, count, dma, destReg);
 }
 
 /* Waits until `channel`'s transfer is done: SGL's slDMAWait. */
 static __inline__ void syDMAWait(DMA_REGISTERS volatile *channel)
 {
-	while((channel->ctrl & DMA_BUSY) != 0) {
+	while((channel->control & DMA_BUSY) != 0) {
 	}
 }
 
@@ -485,14 +486,14 @@ static inline void syIRQUnlock(volatile Uint32 *saved)
 	{ \
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork; \
 		Uint32			saved; \
-		Sint32			cnt; \
+		Sint32			count; \
 \
 		IRQ_LOCK(saved); \
-		cnt = *&q->cnt; \
-		if(cnt <= 31) { \
-			Uint32 *entry = q->entries[cnt]; \
+		count = *&q->count; \
+		if(count <= 31) { \
+			Uint32 *entry = q->entries[count]; \
 \
-			*&q->cnt = cnt + 1; \
+			*&q->count = count + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -506,16 +507,16 @@ static inline void syIRQUnlock(volatile Uint32 *saved)
 	{ \
 		IO_WRITE_QUEUE *q; \
 		Uint32			saved; \
-		Sint32			cnt; \
+		Sint32			count; \
 \
 		q = &IoWriteQueueWork; \
 		IME_SAVE(ime, saved); \
 		IME_DISABLE(ime); \
-		cnt = *&q->cnt; \
-		if(cnt <= 31) { \
-			Uint32 *entry = q->entries[cnt]; \
+		count = *&q->count; \
+		if(count <= 31) { \
+			Uint32 *entry = q->entries[count]; \
 \
-			*&q->cnt = cnt + 1; \
+			*&q->count = count + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -554,7 +555,7 @@ static __inline__ void syUnitMatrixCurrentInline(void)
 \
 		size_ = (Uint32)(bytes); \
 \
-		(to) = syHeapAlloc(size_); \
+		(to) = syHeapAllocate(size_); \
 		syDMAXCopy( \
 			(const void *)(code), (to), DMA_COPY_WORDS(size_ >> 2), REG_DMA3); \
 	} while(0)
@@ -566,18 +567,18 @@ static __inline__ void syUnitMatrixCurrentInline(void)
 \
 		size_ = (Uint32)(bytes); \
 \
-		syDMAXCopy((const void *)(code), syHeapSlotAlloc((slot), size_), \
+		syDMAXCopy((const void *)(code), syHeapSlotAllocate((slot), size_), \
 			DMA_COPY_WORDS(size_ >> 2), REG_DMA3); \
 	} while(0)
 
 /* The serial group. The link cable's runtime: serial packets, registers and
    transfer state. Adds LINK_STATUS_ERROR to a link status once a transfer has
    failed. */
-static inline Sint32 sySerialAddErrorFlag(Sint32 stat)
+static inline Sint32 sySerialAddErrorFlag(Sint32 status)
 {
 	if(SerialStateWork.transferError != 0)
-		stat |= LINK_STATUS_ERROR;
-	return stat;
+		status |= LINK_STATUS_ERROR;
+	return status;
 }
 
 /* Abandons any send or receive and clears the block transfer's state, with
@@ -593,11 +594,11 @@ static __inline__ void sySerialResetTransferState(void)
 	{
 		Uint32 clear = 0;
 
-		IO_WRITE8(SERIAL_STATUS_RUNNING, &state->stat);
+		IO_WRITE8(SERIAL_STATUS_RUNNING, &state->status);
 		SerialSendSource = clear;
 		SerialSendSize = clear;
-		state->peerFlg = clear;
-		state->flg = clear;
+		state->peerFlags = clear;
+		state->flags = clear;
 		SerialReceiveDestination = clear;
 		SerialReceivedSize = clear;
 	}

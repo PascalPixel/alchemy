@@ -62,7 +62,7 @@ typedef struct MAP_MUSIC_RULE {
 	Sint16 id;
 	Sint16 entrance : 15;
 	Uint16 byScene : 1;
-	Sint16 flg;
+	Sint16 flags;
 	Sint16 music;
 } MAP_MUSIC_RULE;
 
@@ -72,7 +72,7 @@ typedef struct AREA_NAME_RULE {
 	Sint16 id;
 	Sint16 entrance : 15;
 	Uint16 useSceneId : 1;
-	Sint32 areaNameIdx;
+	Sint32 areaNameIndex;
 } AREA_NAME_RULE;
 
 /* A distance beyond any field Psynergy's reach, where the search for its
@@ -83,7 +83,7 @@ typedef struct AREA_NAME_RULE {
    fdFindActorPlacement reads it: its sprite unsigned and its spot in plain
    words. */
 typedef struct ACTION_DESCRIPTOR {
-	Uint16 spr;
+	Uint16 sprite;
 	Sint16 condition;
 	Sint32 behavior;
 	Sint32 x;
@@ -91,7 +91,7 @@ typedef struct ACTION_DESCRIPTOR {
 	Sint32 z;
 	Uint16 facing;
 	Uint8  talkFacing;
-	Uint8  flg;
+	Uint8  flags;
 } ACTION_DESCRIPTOR;
 
 /* What the map screen is shown for (fdMapScreenShow). */
@@ -111,13 +111,13 @@ void  *fdFindActorTalkCue(Sint32 id);
 Sint32 fdUseItem(Sint32 arg, Sint32 slot);
 void   fdActorReleaseIfPresent(ACTOR *actor);
 
-/* How fdItemDispShowItem and fdItemDispShowPicture show a found item. */
+/* How fdItemDisplayShowItem and fdItemDisplayShowPicture show a found item. */
 typedef enum ITEM_DISPLAY_FLAG {
 	ITEM_DISPLAY_SPARKLES = 1, /* sparkles rise from it */
 	ITEM_DISPLAY_RAISED = 2	   /* the leader raises it overhead */
 } ITEM_DISPLAY_FLAG;
 
-void fdItemDispRaiseAboveLeader(ACTOR *actor);
+void fdItemDisplayRaiseAboveLeader(ACTOR *actor);
 void fdPsynergyLift(void);
 
 /* A field Psynergy or item use, packed into one value, as FIELD_STATE.psynergy

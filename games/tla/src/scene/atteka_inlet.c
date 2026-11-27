@@ -268,7 +268,7 @@ void scAttekaInletShipwrightsStopTheParty(void)
 		fdActorWalkToAndWaitById(ACTOR_SECOND_SHIPWRIGHT, 80, 316);
 		fdActorFaceDirectionAndRefreshById(
 			ACTOR_SECOND_SHIPWRIGHT, FACING_EAST);
-		fdActorGetById(ACTOR_SHIPWRIGHT)->velY = toFIXED(4);
+		fdActorGetById(ACTOR_SHIPWRIGHT)->velocityY = toFIXED(4);
 		fdScriptWait(10);
 		fdScriptSetMessageId((Sint32)MsgWhereDoYouThink);
 		/* "Where do you think you're going?" */
@@ -322,7 +322,7 @@ void scAttekaInletHammaShowsTheWings(void)
 		fdActorFaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHWEST);
 		/* "Take a look at your ship." */
 		fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_HAMMA, 0);
-		fdCameraGetActor()->motionFlg = 0;
+		fdCameraGetActor()->motionFlags = 0;
 		fdCameraSetSpeed(4.8);
 		fdCameraMoveTo(440, 32, 368, 1);
 		fdCameraWaitForArrival();
@@ -376,10 +376,10 @@ void scAttekaInletHammaShowsTheWings(void)
 		/* "Now, be confident and set sail!" */
 		fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
 		fdActorSetSpeed(ACTOR_HAMMA, 0.8);
-		fdActorGetById(ACTOR_HAMMA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_HAMMA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWaitById(ACTOR_HAMMA, 504, 360);
 		fdScriptWait(1);
-		fdActorGetById(ACTOR_HAMMA)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_HAMMA)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST);
 		fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
 		/* "All of Contigo is watching... Show them your power, and make
@@ -556,13 +556,13 @@ void scAttekaInletCycloneNinthWeeds(void)
    (FLAG_HAMMETS_GIFT_DELIVERED). */
 void scAttekaInletHammetsMessengerArrives(void)
 {
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	ang = FACING_NORTH_NORTHEAST;
-	fdActorSetHorizontalPosAndAngWithTerrain(
-		ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), ang);
+	angle = FACING_NORTH_NORTHEAST;
+	fdActorSetHorizontalPosAndAngleWithTerrain(
+		ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), angle);
 	sySynch(1);
 	fdScriptSetMessageId((Sint32)MsgAttekaInletHeyWait);
 	/* "Hey, wait!" */
@@ -571,7 +571,7 @@ void scAttekaInletHammetsMessengerArrives(void)
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
 	fdCameraSetSpeed(1.6);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(512, CAMERA_KEEP, 380, 1);
 	fdActorSetSpeed(ACTOR_HAMMETS_MESSENGER, 1.6);
 	fdActorWalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 432);
@@ -588,18 +588,22 @@ void scAttekaInletHammetsMessengerArrives(void)
 	/* "I'm supposed to deliver this to Isaac... It's not too late, is it?" */
 	fdScriptShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
 	fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
-	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMETS_MESSENGER, ang);
-	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMETS_MESSENGER, angle);
+	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags &=
+		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 384);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags |=
+		ACTOR_FACES_MOTION;
 	fdActorRunRepeatedMotion(ACTOR_HAMMETS_MESSENGER, 2);
 	fdActorSetPos(ACTOR_HAMMETS_GIFT_CHEST, 520, 380);
 	sySynch(1);
-	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags &=
+		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_HAMMETS_MESSENGER, 520, 388);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_HAMMETS_MESSENGER)->steeringFlags |=
+		ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_HAMMETS_MESSENGER, FACING_NORTH_NORTHWEST, 10);
 	fdActorSetAnimationAndWait(ACTOR_HAMMETS_MESSENGER, ANIM_NOD);
@@ -607,7 +611,7 @@ void scAttekaInletHammetsMessengerArrives(void)
 	fdCameraMoveTo(512, CAMERA_KEEP, 348, 1);
 	fdActorWalkToAndWait(ACTOR_HAMMETS_MESSENGER, 504, 460);
 	fdActorSetPos(ACTOR_HAMMETS_MESSENGER, 0, 0);
-	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, ang);
+	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, angle);
 	/* "On my way here, I stopped in Kalay briefly to speak with Master
 	   Hammet." */
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
@@ -633,12 +637,13 @@ void scAttekaInletHammetsMessengerArrives(void)
 void scAttekaInletShareLeadersPriority(void)
 {
 	Sint32 variant =
-		((FIELD_SPR *)fdActorGetById(MainRoutineStateWork.leaderActorId)->spr)
-			->pri;
+		((FIELD_SPR *)fdActorGetById(MainRoutineStateWork.leaderActorId)
+				->sprite)
+			->priority;
 
-	fdActorSetSprPriority(ACTOR_BOY_ON_THE_WINGS, variant);
-	fdActorSetSprPriority(ACTOR_GLOWING_POST_A, variant);
-	fdActorSetSprPriority(ACTOR_GLOWING_POST_C, variant);
+	fdActorSetSpritePriority(ACTOR_BOY_ON_THE_WINGS, variant);
+	fdActorSetSpritePriority(ACTOR_GLOWING_POST_A, variant);
+	fdActorSetSpritePriority(ACTOR_GLOWING_POST_C, variant);
 }
 
 /* Nothing visible happens: each tick on the heights, the round boulder is
@@ -646,33 +651,35 @@ void scAttekaInletShareLeadersPriority(void)
    priority. */
 void scAttekaInletShareLeadersPriorityWithBoulder(void)
 {
-	fdActorSetSprPriority(ACTOR_ROUND_BOULDER,
-		((FIELD_SPR *)fdActorGetById(MainRoutineStateWork.leaderActorId)->spr)
-			->pri);
+	fdActorSetSpritePriority(ACTOR_ROUND_BOULDER,
+		((FIELD_SPR *)fdActorGetById(MainRoutineStateWork.leaderActorId)
+				->sprite)
+			->priority);
 }
 
 /* Turns the blues of the band along the ship's hull and the surf's colours on
    one step every eight ticks. */
-void scAttekaInletRotateHullBandAndSurfCols(void)
+void scAttekaInletRotateHullBandAndSurfColors(void)
 {
 	if((*RamTickCount & 7) == 0) {
 		Sint16 saved;
-		Sint32 idx;
+		Sint32 index;
 
 		saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_LAST_COLOR);
-		for(idx = HULL_BAND_LAST_COLOR; idx != HULL_BAND_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx) =
-				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx - 1);
+		for(index = HULL_BAND_LAST_COLOR; index != HULL_BAND_FIRST_COLOR;
+			index--)
+			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index) =
+				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index - 1);
 		BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
 	}
 	if((*RamTickCount & 7) == 0) {
 		Sint16 saved;
-		Sint32 idx;
+		Sint32 index;
 
 		saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_LAST_COLOR);
-		for(idx = SURF_LAST_COLOR; idx != SURF_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx) =
-				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx - 1);
+		for(index = SURF_LAST_COLOR; index != SURF_FIRST_COLOR; index--)
+			BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index) =
+				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index - 1);
 		BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_FIRST_COLOR) = saved;
 	}
 }
@@ -686,7 +693,7 @@ void scAttekaInletOpenDoorAndEnter(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridCopyMetatilesTo(51, 38, 70, 22, 1, 2);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
@@ -737,13 +744,13 @@ void scAttekaInletSetUpTheHarbor(void)
 		fdActorSetPos(ACTOR_HAMMETS_GIFT_CHEST, 0, 0);
 	map->wading = MAP_WADING_UPPER_LEVEL;
 	party = &MainRoutineStateWork;
-	fdActorGetById(party->leaderActorId)->priFlg |=
+	fdActorGetById(party->leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	syFieldSetTickEvent(
-		scAttekaInletRotateHullBandAndSurfCols, EVENT_PASS_TICK);
+		scAttekaInletRotateHullBandAndSurfColors, EVENT_PASS_TICK);
 	syFieldSetTickEvent(scAttekaInletShareLeadersPriority, EVENT_PASS_TICK);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), 0);
-	fdActorGetById(ACTOR_CANNON)->motionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
+	fdActorGetById(ACTOR_CANNON)->motionFlags = 0;
 	if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS)) {
 		fdActorSetPos(ACTOR_MAN_AWAITING_THE_LEGEND, 0, 0);
 		fdActorSetPos(ACTOR_MAN_ON_HAMMAS_REQUEST, 0, 0);

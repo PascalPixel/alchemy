@@ -17,10 +17,11 @@ void scWhirlwindUpdate(ACTOR *self)
 		return;
 	}
 	fdActorSetAnimationSpeed(self, ANIM_STEP_NORMAL);
-	self->tmr++;
-	if((self->tmr & 31) == 31)
-		fdScriptPlaySnd(SE_WATER_LEVEL);
-	((FIELD_SPR *)self->spr)->pri = ((FIELD_SPR *)leader->spr)->pri;
+	self->timer++;
+	if((self->timer & 31) == 31)
+		fdScriptPlaySound(SE_WATER_LEVEL);
+	((FIELD_SPR *)self->sprite)->priority =
+		((FIELD_SPR *)leader->sprite)->priority;
 	if(fdMapGridGetMetatileBehavior(self->x.fixed, self->z.fixed,
 		   MAPGRID_LAYER_OVERHEAD) != METATILE_BEHAVIOR_WALL) {
 		pos[0] = self->x.fixed;
@@ -29,7 +30,7 @@ void scWhirlwindUpdate(ACTOR *self)
 		fdCameraWorldToScreen(pos);
 		if(pos[0] <= toFIXED(DISPLAY_WIDTH + 32)) {
 			if(pos[0] >= -toFIXED(32)) {
-				if(self->sceneCnt == 0) {
+				if(self->sceneCount == 0) {
 					distance = leader->y.fixed - self->y.fixed;
 					if(distance < 0)
 						distance = self->y.fixed - leader->y.fixed;
@@ -41,11 +42,11 @@ void scWhirlwindUpdate(ACTOR *self)
 					if(near && !fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
 						leader->facing = self->facing;
 						leader->watchedActor = (FIELD_OBJECT *)self;
-						leader->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+						leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 						state->raisedCue = RAISED_RIDE_WHIRLWIND;
 						MainRoutineStateWork.movementMode =
 							LEADER_MOVEMENT_WALK;
-						self->sceneCnt = 1;
+						self->sceneCount = 1;
 						self->sceneByte = 1;
 					}
 				}
@@ -60,7 +61,7 @@ void scWhirlwindUpdate(ACTOR *self)
 	self->sceneByte = 0;
 	self->update = NULL;
 	fdActorStartScript(self, WhirlwindEndScript);
-	fdScriptPlaySnd(SE_SPARKLING_PASSAGE);
+	fdScriptPlaySound(SE_SPARKLING_PASSAGE);
 	WhirlwindRiding = 0;
 }
 

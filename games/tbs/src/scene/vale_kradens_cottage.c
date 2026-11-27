@@ -546,7 +546,7 @@ static void scValeKradensCottageKradenPlansSanctumVisit(void)
 		/* Kraden opens his door and goes in to prepare; the screen closes and
 		   the party follows him through
 		   VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG. */
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridAnimateMetatiles(ValeKradensCottageDoorOpens, 43, 8);
 		fdActorSetSpeed(ACTOR_KRADEN, 1);
 		fdActorWalkToAndWait(ACTOR_KRADEN, 232, 218);
@@ -636,7 +636,7 @@ static void scValeKradensCottageKradenSetsOff(void)
 static void scValeKradensCottageEnterCottage(void)
 {
 	if(gmFlagGet(FLAG_VALE_KRADENS_DOOR_OPEN) == 0) {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(ValeKradensCottageDoorOpens, 43, 8);
 	}
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 229, 217);
@@ -655,7 +655,7 @@ static void scValeKradensCottageMeetSaturosAndMenardi(void)
 	}
 
 	fdScriptStart();
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	gmFlagSet(FLAG_MET_SATUROS_AND_MENARDI);
 
 	/* Saturos is overheard: the villagers know little of Sol Sanctum. */
@@ -694,7 +694,7 @@ static void scValeKradensCottageMeetSaturosAndMenardi(void)
 	fdCameraMoveTo(215, CAMERA_KEEP, 345, 1);
 	fdCameraWaitForMove();
 	fdScriptWait(20);
-	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
+	sySoundPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 
 	/* Saturos and Menardi talk of the elders and of using Kraden, stubborn and
 	   cunning as he is. */
@@ -849,18 +849,18 @@ static void scValeKradensCottageMeetSaturosAndMenardi(void)
 
 	/* The pair back away south without turning round. */
 	actor = fdActorGet(ACTOR_SATUROS);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_MENARDI);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 
 	fdActorWalkTo(ACTOR_SATUROS, 392, 376);
 	fdActorWalkToAndWait(ACTOR_MENARDI, 376, 376);
 	fdScriptWait(6);
 
 	actor = fdActorGet(ACTOR_SATUROS);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_MENARDI);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_STILL);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_STILL);
@@ -874,7 +874,7 @@ static void scValeKradensCottageMeetSaturosAndMenardi(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST + 1, 20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 
 	scValeKradensCottageWalkTowardLeader(ACTOR_GARET);
 	fdActorWaitForMoveById(ACTOR_GARET);
@@ -999,7 +999,7 @@ Sint32 scInit(void)
 		fdActorSetPos(ACTOR_SATUROS, 0, 0);
 		fdActorSetPos(ACTOR_MENARDI, 0, 0);
 		fdActorSetPos(ACTOR_JENNA, 0, 0);
-		fdActorGet(ACTOR_FENCE_BOULDER)->collisionFlg |= ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_FENCE_BOULDER)->collisionFlags |= ACTOR_NOT_TARGETED;
 		fdActorSetPos(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
 		fdActorWalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
 		fdActorSetAnimation(
@@ -1162,7 +1162,7 @@ static void scValeKradensCottageFightFirstMonster(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	state->transitionFrm = 64;
+	state->transitionFrame = 64;
 
 	gmFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 0);
@@ -1180,7 +1180,7 @@ static void scValeKradensCottageFightSecondMonster(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	state->transitionFrm = 64;
+	state->transitionFrame = 64;
 
 	gmFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 1);

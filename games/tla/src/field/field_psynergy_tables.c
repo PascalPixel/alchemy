@@ -16,7 +16,7 @@ const Uint16 ScoopDugItems[16] = {
 	ITEM_NUT, ITEM_NUT,
 };
 
-/* Hover's glow level by tick (fdHoverGlowGetCol): 32 steps down from 31, */
+/* Hover's glow level by tick (fdHoverGlowGetColor): 32 steps down from 31, */
 /* 32 ticks of 0 and 32 steps back up. */
 const Uint8 HoverGlowLevels[96] = {
 	31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,

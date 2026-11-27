@@ -20,13 +20,13 @@ typedef struct BLEND_SCRIPT_STATE {
 	Uint16	paused;
 } BLEND_SCRIPT_STATE;
 
-/* One of a map's 16 tile animations (fdTilesetAnimStartAll): the start of its
-   script, where it is, the ticks left before its next step, and whether it is
-   paused. */
+/* One of a map's 16 tile animations (fdTilesetAnimationStartAll): the start of
+   its script, where it is, the ticks left before its next step, and whether it
+   is paused. */
 typedef struct MAP_ANIMATION {
 	const Uint16 *start;
 	const Uint16 *cursor;
-	Uint16		  tmr;
+	Uint16		  timer;
 	Uint16		  paused;
 } MAP_ANIMATION;
 
@@ -134,9 +134,10 @@ typedef enum MAP_METATILE_ATTR {
 typedef struct MAP_METATILE {
 	Uint16 picture : 12;   /* its metatile tiles */
 	Uint16 actorLayer : 2; /* the map layer an actor here takes, plus one */
-	Uint16 actorPri : 2;   /* the sprite priority an actor here is drawn at */
-	Uint8  collisionCode;
-	Uint8  attributeB;
+	Uint16
+		  actorPriority : 2; /* the sprite priority an actor here is drawn at */
+	Uint8 collisionCode;
+	Uint8 attributeB;
 } MAP_METATILE;
 
 /* A MAP_METATILE read as one word, as code that ORs bits into a metatile writes
@@ -146,7 +147,7 @@ typedef struct MAP_METATILE {
 	((Uint32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 /* The flags of a metatile's tiles for an actor standing on the metatile: the
    sprite priority it is drawn at and the map layer it takes, which the actors'
-   placement reads (MAP_METATILE's actorPri and actorLayer). */
+   placement reads (MAP_METATILE's actorPriority and actorLayer). */
 #define METATILE_DRAWS_ACTOR(priority, layer) \
 	((priority) << 14 | ((layer) + 1) << 12)
 
@@ -154,9 +155,9 @@ typedef struct MAP_METATILE {
    ResourceIdEmptyMap. */
 typedef struct MAP_RESOURCES {
 	Uint16 header;
-	Uint16 pal;
-	Uint16 tiles[3]; /* for char blocks 1, 2 and 3 */
-	Uint16 anmTiles; /* into MapGridAnimTiles */
+	Uint16 palette;
+	Uint16 tiles[3];	   /* for char blocks 1, 2 and 3 */
+	Uint16 animationTiles; /* into MapGridAnimationTiles */
 } MAP_RESOURCES;
 
 /* Every layout's resources, by map number (field/map_resources.s). */
@@ -165,8 +166,8 @@ extern const MAP_RESOURCES MapsWork[];
 /* One background layer of the field map: its scroll position, origin, parallax
    against the view, drift and wrap, and its window of metatiles. */
 typedef struct MAP_LAYER {
-	FIXED x, y;		  /* 16.16 fixed-point pixels */
-	FIXED ofsX, ofsY; /* 16.16 fixed-point pixels */
+	FIXED x, y;				/* 16.16 fixed-point pixels */
+	FIXED offsetX, offsetY; /* 16.16 fixed-point pixels */
 	/* 16.16 fixed point, toFIXED(1) moves with the view */
 	FIXED scaleX, scaleY;
 	FIXED speedX, speedY; /* 16.16 fixed-point pixels per tick */
@@ -199,8 +200,8 @@ typedef struct MAP_STATE {
 	Uint8  wideTiles;
 	/* The ground's marks: bits 1..0 footprints, 3..2 the kind of wading (rooms
 	   with a second level set 1). */
-	Uint8			   groundEffs;
-	MAP_ANIMATION	   anim[16];
+	Uint8			   groundEffects;
+	MAP_ANIMATION	   animation[16];
 	BLEND_SCRIPT_STATE blend;
 	FIXED view[2]; /* the view's top left, x then z, 16.16 fixed-point pixels */
 	Sint32 minX;
@@ -213,23 +214,23 @@ typedef struct MAP_STATE {
 	const Sint16 *cameraBoxes;
 	/* Set while a BG1 animation runs; the tileset animations are then neither
 	   suspended nor resumed. */
-	Sint8 anmActive;
+	Sint8 animationActive;
 	/* The sprites' base priority; the scrolling camera draws one above it. */
-	Sint8 basePri;
-	Uint8 unusedAfterBasePri[2];
+	Sint8 basePriority;
+	Uint8 unusedAfterBasePriority[2];
 	/* Each layer's BG priority, written into its BGCNT; zero hides the
 	   layer. */
 	Uint8 enabled[3];
 	/* The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
 	   values go to BLDALPHA, else to BLDY. */
-	Uint8	  blendCtrl;
+	Uint8	  blendControl;
 	MAP_LAYER layers[4];
 	Uint8	  unusedAfterLayers[1908]; /* no code names it */
 	Sint32	  farPlane;
 	Sint32	  zoom;
 	Sint32	  zoomFrom;
 	Sint32	  zoomTo;
-	Sint16	  zoomFrm;
+	Sint16	  zoomFrame;
 	Sint16	  zoomStep;
 } MAP_STATE;
 
@@ -251,7 +252,7 @@ static inline MAP_LAYER *fdMapGridGetLayer(Sint32 layer)
    field scrolls. */
 #define MAPGRID_FIELD_STATE_SIZE offsetof(MAP_STATE, layers[3])
 
-/* MAP_STATE.groundEffs' kind of wading, its bits 3..2; none where nothing
+/* MAP_STATE.groundEffects' kind of wading, its bits 3..2; none where nothing
    wades. */
 #define GROUND_EFFECTS_WADING_MASK	   (3 << 2)
 #define GROUND_EFFECTS_WADING(effects) ((Uint32)((effects) << 28) >> 30)
@@ -263,10 +264,10 @@ typedef struct MAP_VIEW_STATE {
 	Uint32	unused[5]; /* map state fields no window view names */
 	Uint16	dispcnt;   /* display control bits ORed into DISPCNT */
 	Uint8	unusedAfterDispcnt[234]; /* no code names it */
-	Sint8	anmActive;
-	Uint8	unusedAfterAnmActive[3]; /* no code names it */
-	Uint16	winTop;
-	Uint16	winBottom;
+	Sint8	animationActive;
+	Uint8	unusedAfterAnimationActive[3]; /* no code names it */
+	Uint16	windowTop;
+	Uint16	windowBottom;
 	Uint16	irqFirstLine;
 	Uint16	irqSecondLine;
 	Uint16	irqPhase;
@@ -353,14 +354,14 @@ STATIC_ASSERT(sizeof(MAP_LAYER) == 56);
 STATIC_ASSERT(offsetof(MAP_STATE, layers) == 264);
 
 STATIC_ASSERT(sizeof(MAP_ANIMATION) == 12);
-STATIC_ASSERT(offsetof(MAP_STATE, anim) == 24);
+STATIC_ASSERT(offsetof(MAP_STATE, animation) == 24);
 STATIC_ASSERT(offsetof(MAP_STATE, blend) == 216);
-STATIC_ASSERT(offsetof(MAP_STATE, blendCtrl) == 263);
+STATIC_ASSERT(offsetof(MAP_STATE, blendControl) == 263);
 STATIC_ASSERT(offsetof(MAP_STATE, minX) == 236);
 STATIC_ASSERT(offsetof(MAP_STATE, farPlane) == 2396);
 STATIC_ASSERT(offsetof(MAP_STATE, zoomStep) == 2414);
 STATIC_ASSERT(offsetof(MAP_VIEW_STATE, dispcnt) == 20);
-STATIC_ASSERT(offsetof(MAP_VIEW_STATE, winTop) == 260);
+STATIC_ASSERT(offsetof(MAP_VIEW_STATE, windowTop) == 260);
 STATIC_ASSERT(offsetof(MAP_VIEW_STATE, irqPhase) == 268);
 
 /* A metatile animation step's source column that ends the steps. */

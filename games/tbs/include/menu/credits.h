@@ -14,15 +14,15 @@ void mnCreditsClearBuffer(Sint32 alternate);
 /* The battle backgrounds shown in turn, ending with 0, which clears. */
 extern const Uint32 CreditsBackgrounds[];
 void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate);
-void mnCreditsBuildBackgroundTilemap(Uint32 *dst);
+void mnCreditsBuildBackgroundTilemap(Uint32 *dest);
 void mnCreditsScrollBackgrounds(void);
 /* The credits' lines, one per 8 pixels of scroll, ending with NULL. */
 extern const void *CreditsLines[];
 /* The credits font's widths in pixels, for characters 32 to 127. */
 extern const Uint8 CreditsGlyphWidths[96];
-void			   mnCreditsUpdateTextSprs(void);
+void			   mnCreditsUpdateTextSprites(void);
 void			   mnCreditsDrawEnteringLine(void);
-void			   mnCreditsInitTextSprs(void);
+void			   mnCreditsInitTextSprites(void);
 Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment);
 
 #endif

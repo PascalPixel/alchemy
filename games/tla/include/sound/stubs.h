@@ -6,12 +6,12 @@
 
 #include "types.h"
 
-/* Returns the music sySndPlay last chose. */
-Sint32 sySndGetCurrentBGMStub(void);
+/* Returns the music sySoundPlay last chose. */
+Sint32 sySoundGetCurrentBGMStub(void);
 /* Brings the music back after a jingle and steps its volume, tempo and pitch
    ramps; called once a VBlank. */
-void sySndUpdateBGMRampsStub(void);
+void sySoundUpdateBGMRampsStub(void);
 /* Starts the sound driver and resets the music's ramps. */
-void sySndInitStub(void);
+void sySoundInitStub(void);
 
 #endif

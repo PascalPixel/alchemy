@@ -44,14 +44,14 @@
 #define TITAN_BLADE_LIGHT_DUST(dust, originX) \
 	{ \
 		Sint32 radius; \
-		Sint32 ang; \
+		Sint32 angle; \
 \
 		radius = syRandom() & 63; \
-		ang = syRandom() & TRIG_ANGLE_MASK; \
-		(dust)->x = ((sySin(ang) * radius) >> 3) + (originX); \
-		(dust)->y = ((syCos(ang) * radius) >> 2) + toFIXED(96); \
-		(dust)->velX = ((syRandom() & 63) - 32) << 14; \
-		(dust)->velY = (-(syRandom() & 63) - 8) << 13; \
+		angle = syRandom() & TRIG_ANGLE_MASK; \
+		(dust)->x = ((sySin(angle) * radius) >> 3) + (originX); \
+		(dust)->y = ((syCos(angle) * radius) >> 2) + toFIXED(96); \
+		(dust)->velocityX = ((syRandom() & 63) - 32) << 14; \
+		(dust)->velocityY = (-(syRandom() & 63) - 8) << 13; \
 		(dust)->variant = 0; \
 	}
 
@@ -68,9 +68,9 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE		 blitters[2];
 	Uint8				*sheet;
 	SCREEN_POINT		 screenPos;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 canvasCenterX;
-	Sint32				 riseFrm;
+	Sint32				 riseFrame;
 	FIXED				 sparkOriginX;
 	Sint32				 i;
 
@@ -84,7 +84,7 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 	state->args = args;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	btProjectionUnit(state->args->tgts[0], &screenPos);
+	btProjectionUnit(state->args->targets[0], &screenPos);
 	canvasCenterX = screenPos.x / 2;
 
 	EFFECT_LOAD_BLITTER(
@@ -111,10 +111,10 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		PARTICLE *flash = &state->particles[i];
 
 		Sint32 distance = i * 2;
-		Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
+		Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
 
-		flash->x = sySin(ang) * distance;
-		flash->y = -(syCos(ang) * distance);
+		flash->x = sySin(angle) * distance;
+		flash->y = -(syCos(angle) * distance);
 		flash->variant = i / 2 + TITAN_BLADE_FLASH_START;
 	}
 
@@ -128,51 +128,51 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		PARTICLE *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
 		Sint32 speed;
-		Sint32 ang;
+		Sint32 angle;
 
 		speed = (syRandom() & 0x1ff) + 32;
-		ang = syRandom() & TRIG_ANGLE_MASK;
+		angle = syRandom() & TRIG_ANGLE_MASK;
 		spark->x = sparkOriginX;
 		spark->y = toFIXED(88);
-		spark->velX = (sySin(ang) * speed) >> 5;
-		spark->velY = -(syCos(ang) * speed) >> 6;
+		spark->velocityX = (sySin(angle) * speed) >> 5;
+		spark->velocityY = -(syCos(angle) * speed) >> 6;
 		spark->variant = (syRandom() & 7) + 32;
 	}
 
-	for(frm = 0; frm != TITAN_BLADE_TICKS; frm++) {
+	for(frame = 0; frame != TITAN_BLADE_TICKS; frame++) {
 		/* The colours step from the sword's toward the blast's golds as the
 		   dust rises, then toward the lightning bolt's violets as the sword
 		   strikes. */
-		if(frm >= 25 && frm <= 47) {
+		if(frame >= 25 && frame <= 47) {
 			btEffectStepPaletteToResource(RESOURCE_BLAST_SHEET);
 		}
-		if(frm > 56) {
+		if(frame > 56) {
 			btEffectStepPaletteToResource(RESOURCE_LIGHTNING_BOLT_SHEET);
 		}
 
-		if(frm == 8) {
-			state->shakeFrm = 8;
+		if(frame == 8) {
+			state->shakeFrame = 8;
 		}
-		if(frm == 48) {
-			state->shakeFrm = 8;
+		if(frame == 48) {
+			state->shakeFrame = 8;
 		}
-		if(frm == TITAN_BLADE_STRIKE_TICK) {
-			state->shakeFrm = 16;
+		if(frame == TITAN_BLADE_STRIKE_TICK) {
+			state->shakeFrame = 16;
 		}
 
-		if(frm == 4) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 4) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
-		if(frm == TITAN_BLADE_RISE_START) {
-			sySndPlayStub(SE_SCATTER);
+		if(frame == TITAN_BLADE_RISE_START) {
+			sySoundPlayStub(SE_SCATTER);
 		}
-		if(frm == TITAN_BLADE_STRIKE_TICK) {
-			sySndPlayStub(SE_CRASH);
+		if(frame == TITAN_BLADE_STRIKE_TICK) {
+			sySoundPlayStub(SE_CRASH);
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 
 		/* The flashes light in turn, each further out from the sword. */
-		if(frm > 55) {
+		if(frame > 55) {
 			for(i = 0; i != TITAN_BLADE_DRAWN_FLASHES; i++) {
 				PARTICLE *flash = &state->particles[i];
 
@@ -200,7 +200,7 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Dust rises at the target's feet. */
-		if(frm == 28) {
+		if(frame == 28) {
 			for(i = 0; i != TITAN_BLADE_FIRST_DUST; i++) {
 				PARTICLE *dust = &PARTICLES[i];
 
@@ -210,8 +210,8 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		riseFrm = frm - TITAN_BLADE_RISE_START;
-		if(riseFrm >= 0 && riseFrm < TITAN_BLADE_RISE_TICKS) {
+		riseFrame = frame - TITAN_BLADE_RISE_START;
+		if(riseFrame >= 0 && riseFrame < TITAN_BLADE_RISE_TICKS) {
 			Sint32 lit;
 
 			lit = 0;
@@ -230,8 +230,8 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 
 		/* The fire pillar stands on the ground, its picture scrolling up and
 		   wrapping round. */
-		if(riseFrm >= 0 && riseFrm < TITAN_BLADE_RISE_TICKS) {
-			Sint32		   phase = frm * TITAN_BLADE_PILLAR_SPEED;
+		if(riseFrame >= 0 && riseFrame < TITAN_BLADE_RISE_TICKS) {
+			Sint32		   phase = frame * TITAN_BLADE_PILLAR_SPEED;
 			Sint32		   x = canvasCenterX - FIRE_PILLAR_WIDTH / 2;
 			Sint32		   width = FIRE_PILLAR_WIDTH;
 			DRAW_RECTANGLE blit = blitters[0];
@@ -248,7 +248,7 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 				scroll);
 		}
 
-		if(frm <= 71) {
+		if(frame <= 71) {
 			for(i = 0; i != TITAN_BLADE_DRAWN_DUST; i++) {
 				PARTICLE *dust = &PARTICLES[i];
 
@@ -256,21 +256,21 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 					Sint32 size;
 
 					size = i % 3 + 2;
-					if(dust->velY > 0) {
+					if(dust->velocityY > 0) {
 						size += 2;
 					}
-					EFFECT_SWELL_MOTE(size, frm);
+					EFFECT_SWELL_MOTE(size, frame);
 					EFFECT_DRAW_MOTE(blitters[0], canvas, sheet,
 						FIXEDtoINT(dust->x), FIXEDtoINT(dust->y), size);
 
-					dust->x += dust->velX;
-					dust->y += dust->velY;
+					dust->x += dust->velocityX;
+					dust->y += dust->velocityY;
 					EFFECT_FALL_MOTE(
-						dust->velY, TitanBladeDustGravity[i & 3], frm);
-					dust->velX = dust->velX * 62 / DAMPING_SCALE;
-					dust->velY = dust->velY * 62 / DAMPING_SCALE;
+						dust->velocityY, TitanBladeDustGravity[i & 3], frame);
+					dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
+					dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
 					dust->variant++;
-					if(dust->velY > 0 &&
+					if(dust->velocityY > 0 &&
 						FIXEDtoINT(dust->y) > TITAN_BLADE_GROUND_Y) {
 						dust->variant = -1;
 					}
@@ -279,20 +279,20 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The sword drops in, holds, sinks and plunges. */
-		if(frm <= 95) {
+		if(frame <= 95) {
 			Sint32 x;
 			Sint32 height;
 			Sint32 top;
 
 			x = canvasCenterX - TITAN_BLADE_SWORD_WIDTH / 2;
 			height = TITAN_BLADE_SWORD_HEIGHT;
-			if(frm > TITAN_BLADE_STRIKE_TICK) {
-				top = frm * 8 - 450;
-			} else if(frm > TITAN_BLADE_RISE_START) {
-				top = riseFrm / 2 + TITAN_BLADE_SWORD_HOLD_TOP;
-			} else if(frm <= 9) {
+			if(frame > TITAN_BLADE_STRIKE_TICK) {
+				top = frame * 8 - 450;
+			} else if(frame > TITAN_BLADE_RISE_START) {
+				top = riseFrame / 2 + TITAN_BLADE_SWORD_HOLD_TOP;
+			} else if(frame <= 9) {
 				/* It drops 16 pixels a tick, onto its hold at tick 9. */
-				top = frm * 16 - 128;
+				top = frame * 16 - 128;
 			} else {
 				top = TITAN_BLADE_SWORD_HOLD_TOP;
 			}
@@ -308,7 +308,7 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Sparks fly and bounce. */
-		if(frm > 59) {
+		if(frame > 59) {
 			for(i = 0; i != TITAN_BLADE_SPARKS; i++) {
 				PARTICLE *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
@@ -322,7 +322,7 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 					y = spark->y;
 					spark->variant--;
 					if(y > toFIXED(TITAN_BLADE_GROUND_Y)) {
-						spark->velY = -spark->velY / 2;
+						spark->velocityY = -spark->velocityY / 2;
 					} else {
 						x = spark->x;
 						if((x >= 0 && x <= toFIXED(127) - 1) && y >= 0) {
@@ -343,21 +343,21 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Every target flashes and recoils. */
-		if(frm == 68) {
+		if(frame == 68) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_WHITE,
+				btEffectTintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, i, 16);
 				btMotionApplyKnockbackStub(
-					state->args->tgts[i], KNOCKBACK_JOLT);
+					state->args->targets[i], KNOCKBACK_JOLT);
 			}
 		}
 
 		/* The canvas flashes as the sword lands and as it strikes. */
-		if(frm == 9) {
+		if(frame == 9) {
 			syWordsFill(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
-		if(frm == TITAN_BLADE_STRIKE_TICK) {
+		if(frame == TITAN_BLADE_STRIKE_TICK) {
 			syWordsFill(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}

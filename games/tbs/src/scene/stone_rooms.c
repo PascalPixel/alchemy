@@ -207,7 +207,7 @@ static void scStoneRoomsReadRightThiefMind(void)
 /* The party steps out of Vault's jail into Vault, with the exit sound. */
 static void scStoneRoomsLeaveForVault(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(STONE_ROOMS_TO_VAULT);
 }
 
@@ -228,11 +228,12 @@ Sint32 scInit(void)
 		   the flag keeps that banner from showing. */
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
 	} else if(entrance == STONE_ROOMS_FROM_VAULT_REVISIT) {
-		fdActorGet(ACTOR_PRISONER)->collisionFlg |= JAIL_REACH_ACROSS_BARS;
+		fdActorGet(ACTOR_PRISONER)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
 	} else {
-		fdActorGet(ACTOR_THIEF_LEADER)->collisionFlg |= JAIL_REACH_ACROSS_BARS;
-		fdActorGet(ACTOR_LEFT_THIEF)->collisionFlg |= JAIL_REACH_ACROSS_BARS;
-		fdActorGet(ACTOR_RIGHT_THIEF)->collisionFlg |= JAIL_REACH_ACROSS_BARS;
+		fdActorGet(ACTOR_THIEF_LEADER)->collisionFlags |=
+			JAIL_REACH_ACROSS_BARS;
+		fdActorGet(ACTOR_LEFT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
+		fdActorGet(ACTOR_RIGHT_THIEF)->collisionFlags |= JAIL_REACH_ACROSS_BARS;
 	}
 
 	return 0;

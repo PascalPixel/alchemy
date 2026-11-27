@@ -34,12 +34,12 @@ typedef struct MIND_READ_STATE {
 	Sint8  blue;
 	Uint16 hue;
 	Uint16 srcId;
-	Uint16 tgtId;
+	Uint16 targetId;
 	Uint8  delay;
-	Uint8  cnt;
+	Uint8  count;
 } MIND_READ_STATE;
 
-/* MIND_READ_STATE.cnt held still: the wave sends no particles and plays no
+/* MIND_READ_STATE.count held still: the wave sends no particles and plays no
    sound, as while Lonesome George carries the party. */
 #define MIND_READ_QUIET 99
 
@@ -71,15 +71,15 @@ typedef struct TOUCH_COPY {
 typedef struct TOUCH_COPIES {
 	Uint32 savedPlayTime;
 	Uint8  snapshotSlots[ACTOR_SNAPSHOT_CAPACITY];
-	ACTOR  snapshotObjs[ACTOR_SNAPSHOT_CAPACITY];
+	ACTOR  snapshotObjects[ACTOR_SNAPSHOT_CAPACITY];
 	/* the snapshot's sprite state, RareItemStock, SceneStateWork and the start
 	   of InventorySnapshot */
 	Uint8	   untilCopies[1832];
 	TOUCH_COPY copies[64];
-	Sint8	   cnt;
+	Sint8	   count;
 } TOUCH_COPIES;
 
-STATIC_ASSERT(offsetof(TOUCH_COPIES, snapshotObjs) == 36);
+STATIC_ASSERT(offsetof(TOUCH_COPIES, snapshotObjects) == 36);
 STATIC_ASSERT(offsetof(TOUCH_COPIES, copies) == 5964);
 
 /* The metatiles Psynergy moved, kept in the scene's own state
@@ -105,12 +105,12 @@ typedef struct BURST_PARTICLE {
    particles, its VRAM cache entry, a flash on tick 30 and its tick count. */
 typedef struct PARTICLE_BURST_STATE {
 	Uint8		   tiles[384];
-	EFFECT_SPR	   sprs[PARTICLE_BURST_COUNT];
+	EFFECT_SPR	   sprites[PARTICLE_BURST_COUNT];
 	BURST_PARTICLE particles[PARTICLE_BURST_COUNT];
 	Sint16 cacheEntry; /* the VRAM cache entry holding the leaves' tiles */
 	Sint16 tile;	   /* their first tile in OBJ VRAM */
 	Sint16 flash;	   /* set on tick 30 only */
-	Sint16 frm;
+	Sint16 frame;
 	Sint16 active;
 } PARTICLE_BURST_STATE;
 
@@ -136,9 +136,9 @@ Sint32 mnItemPickerRunToDropStub(Sint32 *member, Sint32 *slot);
 /* fdActorScriptCheckOverlap through its stub call: -1 when the actor at
    position would overlap a solid actor, otherwise 0. */
 Sint32 fdActorScriptCheckOverlapStub(ACTOR *actor, VECTOR3 *pos);
-/* fdActorGetSprId through its stub call: the sprite id the actor is drawn with,
-   or 0 for none. */
-Sint32 fdActorGetSprIdStub(ACTOR *actor);
+/* fdActorGetSpriteId through its stub call: the sprite id the actor is drawn
+   with, or 0 for none. */
+Sint32 fdActorGetSpriteIdStub(ACTOR *actor);
 /* fdMapGridCopyMetatileTilesMetatilesRect through its stub call: copies width
    by height metatiles as they are from (fromX, fromZ) to (toX, toZ). */
 void fdMapGridCopyMetatileTilesMetatilesRectStub(Sint32 toX, Sint32 toZ,
@@ -149,7 +149,7 @@ ACTOR *fdActorScriptFindOverlappingActorStub(ACTOR *actor, VECTOR3 *pos);
 
 void   fdPsynergyMove(void);
 void   fdPsynergyCarry(void);
-void   fdPsynergySteerLiftedTarget(Sint32 tgtId);
+void   fdPsynergySteerLiftedTarget(Sint32 targetId);
 void   fdPsynergyForce(void);
 void   fdPsynergyLash(void);
 void   fdPsynergyLashOnTarget(Sint32 value);
@@ -198,8 +198,8 @@ void fdMindReadAdvanceTint(void);
 void fdMindReadUpdateCrescent(ACTOR *actor);
 void fdMindReadStartRipple(void);
 
-ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
-ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
+ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
+ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
 Sint32 fdEffectSpawnHeavyImpact(ACTOR *src);
 void   fdEffectSpawnBurstParticleField(void);
 void   fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect);
@@ -239,24 +239,25 @@ typedef struct BURST_PARTICLE_VECTOR {
    image's attributes to its shadow: a byte at a time, under the OAM attributes'
    names. */
 typedef struct BURST_PARTICLE_VISUAL {
-	Uint8 unused[5];			/* the part's link and attribute 0's y */
-	Uint8 affineModeMosaic : 5; /* attribute 0's affine, objMode and mosaic */
-	Uint8 fullCol : 1;			/* 256 colours */
-	Uint8 shape : 2;			/* 0 square, 1 wide, 2 tall */
-	Uint8 unusedAfterShape;		/* attribute 1's x, low byte */
-	Uint8 xHighAffineIdx : 6;	/* x bit 8 and the affine matrix */
+	Uint8 unused[5]; /* the part's link and attribute 0's y */
+	Uint8
+		affineModeMosaic : 5; /* attribute 0's affine, objectMode and mosaic */
+	Uint8 fullColor : 1;	  /* 256 colours */
+	Uint8 shape : 2;		  /* 0 square, 1 wide, 2 tall */
+	Uint8 unusedAfterShape;	  /* attribute 1's x, low byte */
+	Uint8 xHighAffineIndex : 6; /* x bit 8 and the affine matrix */
 	Uint8 size : 2;				/* with shape, the sprite's size */
 
 	union {
 		struct {
 			Uint16 tile : 10; /* first sprite tile in VRAM */
-			Uint16 priPal : 6;
+			Uint16 priorityPalette : 6;
 		} bits;
 
 		struct {
 			Uint8 tileLow;
-			Uint8 tileHighPri : 4;
-			Uint8 pal : 4;
+			Uint8 tileHighPriority : 4;
+			Uint8 palette : 4;
 		} bytes;
 	} attributes; /* attribute 2 */
 } BURST_PARTICLE_VISUAL;
@@ -276,9 +277,9 @@ typedef struct EFFECT_CHILD {
 	Uint8  unused[12]; /* no code names them */
 	Sint32 y;
 	Uint8  unusedAfterY[69]; /* no code names them */
-	Uint8  flg;
-	Uint8  unusedAfterFlg[22]; /* no code names them */
-	void (*func)(void);
+	Uint8  flags;
+	Uint8  unusedAfterFlags[22]; /* no code names them */
+	void (*callback)(void);
 } EFFECT_CHILD;
 
 /* The Djinn: what each element's join effect shows, and settling a Djinni after
@@ -372,10 +373,10 @@ typedef enum HIDDEN_BOSS {
 	HIDDEN_BOSS_ANEMOS
 } HIDDEN_BOSS;
 
-/* fdActorSetLayersColMode's value that cycles the actor's colours
+/* fdActorSetLayersColorMode's value that cycles the actor's colours
    (MindReadCasterColorCycle); any other is a colour mode plus one. */
 #define LAYERS_COLOR_CYCLING 0
-void fdActorSetLayersColMode(void *actor, Sint32 value);
+void fdActorSetLayersColorMode(void *actor, Sint32 value);
 void fdActorSetOthersPaused(
 	ACTOR *excludedObject, Sint32 groupMode, Sint32 action);
 void fdWeatherUpdateLightning(void);
@@ -383,7 +384,7 @@ void fdWeatherUpdateLightning(void);
 /* fdActorJumpDownLedge's mode bit that skips the wait for the landing. */
 #define LEDGE_JUMP_NO_LANDING_WAIT (1 << 12)
 
-/* What fdInputGetDpadAngEightWay returns when no direction is held, or right
+/* What fdInputGetDpadAngleEightWay returns when no direction is held, or right
    and left or up and down together: the blank entries of
    InputDpadAnglesEightWay. */
 #define DPAD_ANGLE_NONE 65535

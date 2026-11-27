@@ -168,14 +168,15 @@ Sint32 scLemuriaNoticeLeader(ACTOR *self)
 	Uint32		 mode;
 	ACTOR		*other;
 
-	fdActorSetSprPriorityDirect(self,
-		fdActorGetSprPriority(fdActorGet(MainRoutineStateWork.leaderActorId)));
+	fdActorSetSpritePriorityDirect(self,
+		fdActorGetSpritePriority(
+			fdActorGet(MainRoutineStateWork.leaderActorId)));
 	mode = ABILITY_ID(event->psynergy);
 	state = &self->paused;
 	if(mode != ABILITY_MIND_READ ||
-		(Sint8)((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->msgShown ==
-			0) {
-		if(self->tmr != 1) {
+		(Sint8)((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)
+				->msgShown == 0) {
+		if(self->timer != 1) {
 			other = fdActorGet(MainRoutineStateWork.leaderActorId);
 			if(scPosDistance(&self->x.fixed, &other->x.fixed) <=
 					CHILD_WALKS_ON_RANGE ||
@@ -228,7 +229,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 void scLemuriaRestoreGirl(void)
 {
 	fdActorSetPos(ACTOR_KRADEN_STAND_IN, 488, 1256);
-	fdActorSetFirstSprAnimation(
+	fdActorSetFirstSpriteAnimation(
 		fdActorGet(ACTOR_KRADEN_STAND_IN), SPRITE_LEMURIAN_GIRL);
 	fdActorSetAnimation(ACTOR_KRADEN_STAND_IN, 3);
 	fdActorFaceDirection(ACTOR_KRADEN_STAND_IN, FACING_WEST, 0);
@@ -243,9 +244,9 @@ void scLemuriaOpenDoorAndEnter(
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(door->steps, door->x, door->y);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	id = MainRoutineStateWork.leaderActorId;
@@ -321,9 +322,9 @@ void scLemuriaTalkToSpoiledChild(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_SPOILED_CHILD);
-	Sint16		 ang = actor->facing;
+	Sint16		 angle = actor->facing;
 
-	actor->tmr = 1;
+	actor->timer = 1;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	if(state->psynergy == 0) {
@@ -339,8 +340,8 @@ void scLemuriaTalkToSpoiledChild(void)
 	   up!" */
 	syFieldScriptShowMessageThenWait(ACTOR_SPOILED_CHILD, 0, 10);
 	fdScriptEnd();
-	actor->tmr = 0;
-	actor->facing = ang;
+	actor->timer = 0;
+	actor->facing = angle;
 	syWait(1);
 }
 
@@ -354,7 +355,7 @@ void scLemuriaTalkToLonelyChild(void)
 	ACTOR		*actor = fdActorGet(ACTOR_LONELY_CHILD);
 	Sint16		 angle = actor->facing;
 
-	actor->tmr = 1;
+	actor->timer = 1;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	if(state->psynergy == 0) {
@@ -370,7 +371,7 @@ void scLemuriaTalkToLonelyChild(void)
 	   of..." */
 	syFieldScriptShowMessageThenWait(ACTOR_LONELY_CHILD, 0, 10);
 	fdScriptEnd();
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->facing = angle;
 	syWait(1);
 }
@@ -431,7 +432,7 @@ void scLemuriaCycloneHardNutWeeds(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, 16, 0);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -563,7 +564,7 @@ void scLemuriaTryStuckDoor(void)
 	syFieldScriptSetMessageId((Sint32)&MsgLemuriaAreYouKidsPierssTraveling);
 	fdActorSetPos(ACTOR_KRADEN_STAND_IN, 872, 880);
 	actor = fdActorGet(ACTOR_KRADEN_STAND_IN);
-	fdActorSetFirstSprAnimation(actor, SPRITE_LUNPA);
+	fdActorSetFirstSpriteAnimation(actor, SPRITE_LUNPA);
 	fdActorSetAnimation(ACTOR_KRADEN_STAND_IN, 3);
 	fdActorFaceDirection(ACTOR_KRADEN_STAND_IN, FACING_SOUTH_SOUTHWEST, 0);
 	/* "Are you kids Piers's traveling companions?" */
@@ -644,7 +645,7 @@ void scLemuriaDrinkFromSpring(void)
 		/* "Felix and the others drank of the spring. Their HP and PP
 		   were..." */
 		mnMessageShowCentered((Sint32)MsgAndTheOthers, 1);
-		fdScriptPlaySnd(SE_RECOVERY);
+		fdScriptPlaySound(SE_RECOVERY);
 		gmPartyRestoreHpPp(1);
 	} else {
 		FieldStateWork->fieldMenu = 1;
@@ -725,7 +726,7 @@ enum { WATER_CYCLE_FIRST_COLOR = 1, WATER_CYCLE_LAST_COLOR = 14 };
 
 /* Every fourth tick rotates the water's colours of background palettes 7 and 8
    by one place. */
-void scLemuriaCycleWaterCols(void)
+void scLemuriaCycleWaterColors(void)
 {
 	if((TickCount & 3) == 0) {
 		Sint16 saved;
@@ -769,14 +770,15 @@ void scLemuriaFillRippleLines(void)
 	MAP_LAYER *layer = fdMapGridGetLayer(1);
 	Sint16	  *lines = LemuriaRippleLines[LemuriaRippleBuffer ^ 1];
 	FIXED	   v[2];
-	Sint32	  *cnt = &v[1];
+	Sint32	  *count = &v[1];
 	FIXED	   sine;
 
-	for(*cnt = 0; *cnt != DISPLAY_HEIGHT; (*cnt)++) {
-		sine = syMathSin((*cnt + (Uint8)TickCount + FIXEDtoINT(layer->y)) << 9);
+	for(*count = 0; *count != DISPLAY_HEIGHT; (*count)++) {
+		sine =
+			syMathSin((*count + (Uint8)TickCount + FIXEDtoINT(layer->y)) << 9);
 		v[0] = sine;
 		*lines++ =
-			FIXEDtoINT(layer->x) + (sine >> RIPPLE_SWAY_SHIFT) + *cnt % 3 - 1;
+			FIXEDtoINT(layer->x) + (sine >> RIPPLE_SWAY_SHIFT) + *count % 3 - 1;
 	}
 	LemuriaRippleBuffer ^= 1;
 }
@@ -785,12 +787,12 @@ void scLemuriaFillRippleLines(void)
    tick. */
 void scLemuriaStartRipple(void)
 {
-	Sint32 pri;
+	Sint32 priority;
 
-	pri = EVENT_PASS_TICK;
-	sySetTickEvent(scLemuriaFillRippleLines, pri);
-	pri = EVENT_PASS_VBLANK;
-	sySetTickEvent(scLemuriaStartRippleDMA, pri);
+	priority = EVENT_PASS_TICK;
+	sySetTickEvent(scLemuriaFillRippleLines, priority);
+	priority = EVENT_PASS_VBLANK;
+	sySetTickEvent(scLemuriaStartRippleDMA, priority);
 }
 
 /* Sets up the town: the water's colours cycling, the two children walking
@@ -802,11 +804,11 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	syFieldSetTickEvent((Sint32)scLemuriaCycleWaterCols, EVENT_PASS_VBLANK);
+	syFieldSetTickEvent((Sint32)scLemuriaCycleWaterColors, EVENT_PASS_VBLANK);
 	fdEffectStartBlankOverlay(0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SIGN), 0);
-	scFieldActorSetSprPriority(ACTOR_ROPE_HIGH_POST, 3);
-	scFieldActorSetSprPriority(ACTOR_GIRL_BY_THE_SPRING, 3);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SIGN), 0);
+	scFieldActorSetSpritePriority(ACTOR_ROPE_HIGH_POST, 3);
+	scFieldActorSetSpritePriority(ACTOR_GIRL_BY_THE_SPRING, 3);
 	fdActorGet(ACTOR_DOG)->update = scLemuriaTakeLeaderLayer;
 	fdActorSetAnimation(ACTOR_COW, 3);
 	fdActorSetPos(ACTOR_SPOILED_CHILD, 40, 952);
@@ -840,17 +842,19 @@ Sint32 scInit(void)
 	fdRopeInit();
 	fdRopePlace(
 		0, FLAG_LEMURIA_ROPE_TIED, ACTOR_ROPE_LOW_POST, ACTOR_ROPE_HIGH_POST);
-	fdActorGet(ACTOR_ROPE_LOW_POST)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_ROPE_HIGH_POST)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_ROPE_LOW_POST)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_ROPE_HIGH_POST)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
 	if(fdScriptGetFlag(FLAG_LEMURIA_ROPE_LET_DOWN)) {
-		scFieldActorSetSprPriority(ACTOR_LET_DOWN_ROPE_HIGH_POST, 2);
-		scFieldActorSetSprPriority(ACTOR_LET_DOWN_ROPE_LOW_END, 2);
+		scFieldActorSetSpritePriority(ACTOR_LET_DOWN_ROPE_HIGH_POST, 2);
+		scFieldActorSetSpritePriority(ACTOR_LET_DOWN_ROPE_LOW_END, 2);
 		fdActorSetPos(ACTOR_LET_DOWN_ROPE_HIGH_POST, 840, 920);
 		fdActorSetPos(ACTOR_LET_DOWN_ROPE_LOW_END, 840, 936);
 		Call4(fdRopePlace, 1, FLAG_LEMURIA_ROPE_LET_DOWN,
 			ACTOR_LET_DOWN_ROPE_HIGH_POST, ACTOR_LET_DOWN_ROPE_LOW_END);
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_LET_DOWN_ROPE_HIGH_POST), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_LET_DOWN_ROPE_HIGH_POST), 0);
 	if(fdScriptGetFlag(FLAG_LEMURIA_VINE_GROWN)) {
 		fdHangingVinePlace(ACTOR_SPROUT, 1);
 		scLemuriaGrowVine();
@@ -858,23 +862,23 @@ Sint32 scInit(void)
 	/* Each treasure still buried has its actor taken off to the map's corner
 	   and marked as standing for a map metatile instead. */
 	if(!fdScriptGetFlag(FLAG_LUCKY_MEDAL_DUG_UP)) {
-		fdActorSetWideSpr(ACTOR_BURIED_LUCKY_MEDAL, TREASURE_SPOT_PUT_AWAY);
+		fdActorSetWideSprite(ACTOR_BURIED_LUCKY_MEDAL, TREASURE_SPOT_PUT_AWAY);
 	}
 	if(!fdScriptGetFlag(FLAG_RUSTY_SWORD_DUG_UP)) {
-		fdActorSetWideSpr(ACTOR_BURIED_RUSTY_SWORD, TREASURE_SPOT_PUT_AWAY);
+		fdActorSetWideSprite(ACTOR_BURIED_RUSTY_SWORD, TREASURE_SPOT_PUT_AWAY);
 	}
 	if(!fdScriptGetFlag(FLAG_BONE_DUG_UP)) {
-		fdActorSetWideSpr(ACTOR_BURIED_BONE, TREASURE_SPOT_PUT_AWAY);
+		fdActorSetWideSprite(ACTOR_BURIED_BONE, TREASURE_SPOT_PUT_AWAY);
 	}
 	if(!fdScriptGetFlag(FLAG_STAR_DUST_DUG_UP)) {
-		fdActorSetWideSpr(ACTOR_BURIED_STAR_DUST, TREASURE_SPOT_PUT_AWAY);
+		fdActorSetWideSprite(ACTOR_BURIED_STAR_DUST, TREASURE_SPOT_PUT_AWAY);
 	}
 	/* Lunpa has opened the window above his door. */
 	if(fdScriptGetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
 		fdMapGridCopyMetatilesLayered(3, 1, 1, 1, 54, 45);
 	}
 	actor = fdActorGet(ACTOR_SPRING);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->groundHeight = toFIXED(64);
 	actor->y.fixed = toFIXED(64);
 	return 0;
@@ -902,7 +906,7 @@ void scLemuriaAdmirePalace(Sint32 id)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptSetMessageId((Sint32)MsgLemuriaOh);
-	fdActorSetFirstSprAnimation(
+	fdActorSetFirstSpriteAnimation(
 		fdActorGet(ACTOR_KRADEN_STAND_IN), SPRITE_KRADEN);
 	if(id == METATILE_BEHAVIOR_LEMURIA_WEST_PATH) {
 		fdActorWalkToAndWait(ACTOR_FELIX, 376, 968);
@@ -949,7 +953,7 @@ void scLemuriaAdmirePalace(Sint32 id)
 	/* "Felix! Look over here! This palace is magnificient!" */
 	syFieldScriptShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 5);
 	syFieldScriptWait(20);
-	scFieldActorSetSprPriority(ACTOR_FELIX, 1);
+	scFieldActorSetSpritePriority(ACTOR_FELIX, 1);
 	fdActorSetPos(ACTOR_FELIX, 464, 856);
 	fdActorWalkToAndWait(ACTOR_FELIX, 464, 796);
 	syFieldScriptWait(10);
@@ -964,7 +968,7 @@ void scLemuriaAdmirePalace(Sint32 id)
 	scFieldActorWaitForMoveById(ACTOR_KRADEN_STAND_IN);
 	fdActorSetPos(ACTOR_KRADEN_STAND_IN, 0, 0);
 	syFieldScriptWait(10);
-	fdActorGet(ACTOR_FELIX)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorWalkToAndWait(ACTOR_FELIX, 464, 776);
 	scLemuriaRestoreGirl();
 	fdScriptEnd();
@@ -981,10 +985,10 @@ void scLemuriaKeepLookingAround(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptSetMessageId((Sint32)MsgLemuriaWhereAreYouGoingFelix);
-	fdActorSetFirstSprAnimation(
+	fdActorSetFirstSpriteAnimation(
 		fdActorGet(ACTOR_KRADEN_STAND_IN), SPRITE_KRADEN);
 	fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
-	scFieldActorSetSprPriority(ACTOR_KRADEN_STAND_IN, 1);
+	scFieldActorSetSpritePriority(ACTOR_KRADEN_STAND_IN, 1);
 	scFieldActorLaunchFromLeader(
 		ACTOR_KRADEN_STAND_IN, 0, 16, FACING_NORTH_NORTHEAST);
 	scFieldActorWaitForMoveById(ACTOR_KRADEN_STAND_IN);
@@ -1021,7 +1025,7 @@ void scLemuriaMarvelAtCity(void)
 	syFieldScriptSetMessageId((Sint32)MsgLemuriaThisPlaceIsRemarkableTruly);
 	fdActorSetSpeed(ACTOR_WEST_PALACE_GUARD, 1);
 	fdActorSetSpeed(ACTOR_EAST_PALACE_GUARD, 1);
-	fdActorSetFirstSprAnimation(
+	fdActorSetFirstSpriteAnimation(
 		fdActorGet(ACTOR_KRADEN_STAND_IN), SPRITE_KRADEN);
 	fdActorWalkToAndWait(ACTOR_FELIX, 472, 568);
 	scFieldActorLaunchFromLeader(
@@ -1058,7 +1062,7 @@ void scLemuriaMarvelAtCity(void)
 	fdActorSetAttachedEffect(
 		ACTOR_FELIX, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(40);
-	scFieldActorSetSprPriority(ACTOR_EAST_PALACE_GUARD, 2);
+	scFieldActorSetSpritePriority(ACTOR_EAST_PALACE_GUARD, 2);
 	fdActorWalkByAndWait(ACTOR_EAST_PALACE_GUARD, 16, 0);
 	fdActorFaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
 	syFieldScriptWait(30);
@@ -1218,7 +1222,7 @@ void scLemuriaMarvelAtCity(void)
 	scFieldActorWatchAndSetScript(ACTOR_KRADEN_STAND_IN, ACTOR_PIERS);
 	scFieldActorWatchAndSetScript(ACTOR_WEST_PALACE_GUARD, ACTOR_PIERS);
 	scFieldActorWatchAndSetScript(ACTOR_EAST_PALACE_GUARD, ACTOR_PIERS);
-	scFieldActorSetSprPriority(ACTOR_PIERS, 2);
+	scFieldActorSetSpritePriority(ACTOR_PIERS, 2);
 	fdActorWalkByAndWait(ACTOR_PIERS, 32, 0);
 	fdActorFaceDirection(ACTOR_WEST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_EAST_PALACE_GUARD, FACING_SOUTH_SOUTHEAST, 0);

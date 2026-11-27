@@ -48,9 +48,9 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 	MOTION_OBJECT		*object;
 	PARTICLE			*point;
 	PARTICLE			*seat;
-	PARTICLE			*tgt;
+	PARTICLE			*target;
 	BATTLE_CAMERA		*camera;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 y;
 	Sint32				 i;
 	Sint8				*landed;
@@ -58,7 +58,7 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 	/* Set up: the canvas layer, the vortex sprite sheet and two blitters, the
 	   one on the right mirrored. landed is nonzero once a bubble has struck. */
 	landed = (Sint8 *)RamMapMetatileBuffer;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_VORTEX_SHEET, state->sheet, 1, 1);
@@ -70,7 +70,7 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 	draw[1] = RamHeapSlots->ramCodePaired;
 
 	/* The bubbles start at the top of the user, at random velocities. */
-	src = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->object;
 	y = src->y + btUnitGetEffectHeightStub(args->user);
 	for(i = 0; i != FROTH_BUBBLE_SLOTS; i++) {
 		point = &state->particles[i];
@@ -85,7 +85,7 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 	/* Each target's seat on the ground. */
 	EFFECT_FOR_EACH_TARGET(i, args) {
 		seat = &state->particles[FROTH_FIRST_TARGET + i];
-		object = btObjectGetStub(args->tgts[i])->obj;
+		object = btObjectGetStub(args->targets[i])->object;
 		SET_POSITION(seat, object->x, 0, object->z);
 	}
 
@@ -94,16 +94,17 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btCameraApplyPhasedDelta, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	sySndPlayStub(SE_SCATTER);
+	sySoundPlayStub(SE_SCATTER);
 
-	for(frm = 0; frm != VorticesCounts[args->variant][FROTH_TICKS]; frm++) {
+	for(frame = 0; frame != VorticesCounts[args->variant][FROTH_TICKS];
+		frame++) {
 		/* The camera turns between ticks 17 and 63. */
 		camera = RamHeapSlots->cameraState;
-		if(frm >= 17 && frm < 64)
+		if(frame >= 17 && frame < 64)
 			state->cameraDelta = TRIG_TURN * 3 / 512;
 		else
 			state->cameraDelta = 0;
-		if(frm == VorticesCounts[args->variant][FROTH_TICKS] - 16)
+		if(frame == VorticesCounts[args->variant][FROTH_TICKS] - 16)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -112,7 +113,7 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 			point = &state->particles[i];
 
 			/* A bubble leaves the user two ticks after the one before it. */
-			if(frm > i * 2 && landed[i] == 0) {
+			if(frame > i * 2 && landed[i] == 0) {
 				btEffectPosProjectPoint((Sint32 *)point, &pos);
 				pos.x >>= 1;
 				/* DEAD: the clamped depth is never read; the ROM keeps the
@@ -123,22 +124,23 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 					pos.x - FROTH_BUBBLE_PICTURE_WIDTH / 2,
 					pos.y - FROTH_BUBBLE_PICTURE_HEIGHT / 2,
 					FROTH_BUBBLE_PICTURE_WIDTH, FROTH_BUBBLE_PICTURE_HEIGHT);
-				point->x += point->velX;
-				point->y += point->velY;
-				point->z += point->velZ;
+				point->x += point->velocityX;
+				point->y += point->velocityY;
+				point->z += point->velocityZ;
 			}
 
 			/* After 48 ticks it steers toward its target's seat, damped for
 			   the first 37 of them, and lands. */
-			if(frm > i * 2 + 48 && landed[i] == 0) {
-				tgt = &state->particles[FROTH_FIRST_TARGET + i % args->tgtCnt];
-				point->velX += (tgt->x - point->x) >> 9;
-				point->velY += (tgt->y - point->y) >> 9;
-				point->velZ += (tgt->z - point->z) >> 9;
-				if(frm < i * 2 + 85) {
-					SET_VELOCITY(point, point->velX * 60 / DAMPING_SCALE,
-						point->velY * 60 / DAMPING_SCALE,
-						point->velZ * 60 / DAMPING_SCALE);
+			if(frame > i * 2 + 48 && landed[i] == 0) {
+				target = &state->particles[FROTH_FIRST_TARGET +
+					i % args->targetCount];
+				point->velocityX += (target->x - point->x) >> 9;
+				point->velocityY += (target->y - point->y) >> 9;
+				point->velocityZ += (target->z - point->z) >> 9;
+				if(frame < i * 2 + 85) {
+					SET_VELOCITY(point, point->velocityX * 60 / DAMPING_SCALE,
+						point->velocityY * 60 / DAMPING_SCALE,
+						point->velocityZ * 60 / DAMPING_SCALE);
 				}
 				/* On the ground it strikes. */
 				if(point->y < 0) {
@@ -146,12 +148,13 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 					point->variant = 0;
 					point->x = pos.x;
 					point->y = pos.y + (syRandom() & 31) - 16;
-					btEffectTintBattler(args->tgts[i % args->tgtCnt],
-						SPRITE_COLOR_WHITE, POSE_DAMAGE, i % args->tgtCnt, 4);
+					btEffectTintBattler(args->targets[i % args->targetCount],
+						SPRITE_COLOR_WHITE, POSE_DAMAGE, i % args->targetCount,
+						4);
 					btMotionApplyKnockbackStub(
-						args->tgts[i % args->tgtCnt], KNOCKBACK_NUDGE);
-					state->shakeFrm = 4;
-					sySndPlayStub(SE_WATER);
+						args->targets[i % args->targetCount], KNOCKBACK_NUDGE);
+					state->shakeFrame = 4;
+					sySoundPlayStub(SE_WATER);
 				}
 			}
 
@@ -196,7 +199,7 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args)
 	void				*canvas;
 	FIXED				 wave;
 	PARTICLE			*glint;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 x;
 	Sint32				 y;
 	Sint32				 segment;
@@ -206,7 +209,7 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args)
 
 	/* Set up: the canvas layer, the tornado sprite sheet and two max blitters,
 	   the second mirrored. */
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -227,16 +230,16 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(0); /* invisible to start with */
 	sySynch(1);
-	sySndPlayStub(SE_RUMBLE);
+	sySoundPlayStub(SE_RUMBLE);
 
-	for(frm = 0; frm != WHIRLWIND_TICKS; frm++) {
-		wave = sySin(frm * (TRIG_TURN / 64)) * WHIRLWIND_SWEEP_SWAY;
-		if(frm == 32)
+	for(frame = 0; frame != WHIRLWIND_TICKS; frame++) {
+		wave = sySin(frame * (TRIG_TURN / 64)) * WHIRLWIND_SWEEP_SWAY;
+		if(frame == 32)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		/* The canvas flashes every eight ticks from tick 16. */
 		for(i = 0; i != 7; i++) {
-			if(frm == i * 8 + 16)
+			if(frame == i * 8 + 16)
 				syWordsFillEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(8));
 		}
 
@@ -246,22 +249,22 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args)
 			wave += toFIXED(32);
 		else
 			wave -= toFIXED(32);
-		if(frm <= 16)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frm);
-		if(frm > 63)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(79 - frm);
+		if(frame <= 16)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame);
+		if(frame > 63)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(79 - frame);
 
 		for(i = 0; i != VorticesShapes[args->variant][WHIRLWIND_TORNADOES];
 			i++) {
 			/* Each tornado circles its own phase, a quarter turn from the
 			   next. */
 			x = FIXEDtoINT(VorticesShapes[args->variant][WHIRLWIND_SWAY] *
-						sySin(frm * (TRIG_TURN / 32) + i * DEGtoANG(90)) +
+						sySin(frame * (TRIG_TURN / 32) + i * DEGtoANG(90)) +
 					wave) +
 				40;
 			y = FIXEDtoINT(
-				syCos(frm * (TRIG_TURN / 32) + i * DEGtoANG(90)) * 2);
-			segment = (frm / 2) % 3;
+				syCos(frame * (TRIG_TURN / 32) + i * DEGtoANG(90)) * 2);
+			segment = (frame / 2) % 3;
 			draw[0](canvas,
 				state->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
 					WHIRLWIND_TORNADO_PICTURES,
@@ -300,13 +303,13 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args)
 		   after the target before it. */
 		EFFECT_FOR_EACH_TARGET(j, args) {
 			for(i = 0; i != 7; i++) {
-				if(frm == i * 8 + j * 3 + 16) {
+				if(frame == i * 8 + j * 3 + 16) {
 					EFFECT_STRIKE_TARGET(args, j, 4, KNOCKBACK_BOUNCE);
 				}
 			}
 		}
 
-		state->shakeFrm = 1;
+		state->shakeFrame = 1;
 		btCameraShake(VorticesShapes[args->variant][WHIRLWIND_SHAKE],
 			VorticesShapes[args->variant][WHIRLWIND_SHAKE] * 2);
 		EFFECT_END_TICK(state);

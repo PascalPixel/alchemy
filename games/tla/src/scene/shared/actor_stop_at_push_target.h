@@ -18,7 +18,7 @@ void scActorStopAtPushTarget(ACTOR *actor)
 	hit = fdActorFindAtMetatile(pos, 1);
 	if(hit != 0) {
 		for(i = 0; i <= PUSH_KINDS - 1; i++) {
-			if(((SPR *)hit->spr)->entries[0]->anmId == PushKinds[i])
+			if(((SPR *)hit->sprite)->entries[0]->animationId == PushKinds[i])
 				return;
 		}
 		scFieldActorSetPosAndResetMotion(

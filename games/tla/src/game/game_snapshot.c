@@ -73,7 +73,7 @@ void gmInventorySnapshotSave(void)
 			inventory = (Sint16 *)unit->inventory;
 			gmInventoryCompactSlots(inventory);
 			gmUnitUpdateClass(unitId);
-			gmUnitCalc(unitId);
+			gmUnitCalculate(unitId);
 		}
 		/* Keep shortcuts and party order with the inventory snapshot. */
 		*save++ = firstShortcut;
@@ -100,13 +100,13 @@ void gmInventorySnapshotRestore(void)
 
 	if(*src++ == INVENTORY_SNAPSHOT_SENTINEL) {
 		for(unitId = FELIX; unitId <= PIERS; unitId++) {
-			Uint16 *dst = syUnitGet(unitId)->inventory;
+			Uint16 *dest = syUnitGet(unitId)->inventory;
 			Sint32	slot;
 
 			for(slot = 0; slot < INVENTORY_SLOTS; slot++)
-				*dst++ = *src++;
+				*dest++ = *src++;
 			gmUnitUpdateClass(unitId);
-			gmUnitCalc(unitId);
+			gmUnitCalculate(unitId);
 		}
 		MainRoutineStateWork.firstShortcut = *src++;
 		MainRoutineStateWork.secondShortcut = *src++;

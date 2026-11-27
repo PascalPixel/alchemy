@@ -132,7 +132,7 @@ void gmUnitUpdateClassStub(Sint32 owner);
 /* Debug: replaces the party with parameter set number set, each member at its
    level with its Djinn, abilities and equipped items. Returns 1 when the table
    ends before that set. */
-Sint32 btDebugParmSetLoad(Sint32 set)
+Sint32 btDebugParamSetLoad(Sint32 set)
 {
 	/* The next Djinni number of each element to hand out. */
 	Sint32 nextDjinn[ELEMENT_COUNT];
@@ -140,8 +140,8 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	Sint32 unitId;
 	Bool   notFound;
 	Sint32 row;
-	Sint32 djinnIdx;
-	Sint32 curSet;
+	Sint32 djinnIndex;
+	Sint32 currentSet;
 	Sint32 i;
 
 	notFound = FALSE;
@@ -155,9 +155,9 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	gmPartyRemoveMemberStub(FELIX);
 	gmPartyRemoveMemberStub(SHEBA);
 	gmPartyRemoveMemberStub(PIERS);
-	gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->list.cnt = notFound;
+	gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->list.count = notFound;
 
-	curSet = 0;
+	currentSet = 0;
 	for(i = 0; i < ELEMENT_COUNT; i++)
 		nextDjinn[i] = 0;
 
@@ -171,16 +171,16 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 			break;
 		}
 		if(unitId == DEBUG_PARAMETER_SET_END) {
-			if(curSet < DEBUG_PAIRED_SETS_FIRST) {
-				if(curSet == set)
+			if(currentSet < DEBUG_PAIRED_SETS_FIRST) {
+				if(currentSet == set)
 					break;
-			} else if(curSet == (set | 1)) {
+			} else if(currentSet == (set | 1)) {
 				break;
 			}
-			curSet++;
+			currentSet++;
 			continue;
 		}
-		if(curSet < set)
+		if(currentSet < set)
 			continue;
 
 		gmPartyAddMemberStub(unitId);
@@ -189,8 +189,8 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		/* Start from no Djinn and no abilities. */
 		member = syUnitGet(unitId);
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			member->djinnHeldCnts[i] = 0;
-			member->djinnSetCnts[i] = 0;
+			member->djinnHeldCounts[i] = 0;
+			member->djinnSetCounts[i] = 0;
 			member->djinnHeld[i] = 0;
 			member->djinnSet[i] = 0;
 		}
@@ -206,8 +206,9 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		   same: from this game's own first Djinni of each element, wrapping
 		   within its eighteen. */
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			for(djinnIdx = 0; djinnIdx < DebugParameterSets[row].djinnCnts[i];
-				djinnIdx++) {
+			for(djinnIndex = 0;
+				djinnIndex < DebugParameterSets[row].djinnCounts[i];
+				djinnIndex++) {
 				gmDjinnGiveStub(unitId, i,
 					(nextDjinn[i] + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST);
 				gmDjinnSetStub(unitId, i,
@@ -300,13 +301,13 @@ restart:
 			}
 			if(set != loadedSet) {
 				gmMainRoutineStateInitDefaultsStub();
-				btDebugParmSetLoad(set);
+				btDebugParamSetLoad(set);
 				loadedSet = set;
 			}
 			/* A fights; Down still held makes it a link battle. */
 			if(input->data & KEY_DOWN)
 				syGameFlagSet(FLAG_LINK_BATTLE);
-			gmUnitCalcStub(ISAAC);
+			gmUnitCalculateStub(ISAAC);
 			*backdropId = RESOURCE_COLOSSO_BACKDROP;
 			mainState = &MainRoutineStateWork;
 			if(encounter == DJINN_TUTORIAL_ENCOUNTER)

@@ -1,11 +1,11 @@
 /* Stops an actor and starts its script. */
 void scActorResetScripted(struct ACTOR *actor)
 {
-	actor->motionFlg = 0;
-	actor->collisionFlg = 0;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = 0;
+	actor->collisionFlags = 0;
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorStartScript(actor, ScriptedPartScript);
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->speedLimit = 0;
 	actor->acceleration = 0;
 }

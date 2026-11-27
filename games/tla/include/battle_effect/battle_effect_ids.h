@@ -1,9 +1,9 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_IDS_H
 #define ALCHEMY_BATTLE_EFFECT_IDS_H
 
-/* The kinds of battle effect, by BATTLE_PLAN.battleEff's low twelve bits: the
-   large effects btEffectRunSummon runs, and the effects the table of handlers
-   plays. */
+/* The kinds of battle effect, by BATTLE_PLAN.battleEffect's low twelve bits:
+   the large effects btEffectRunSummon runs, and the effects the table of
+   handlers plays. */
 
 /* The large effects btEffectRunSummon runs, by kind: the summons, Ramses to
    Iris, and the scenes of Daedalus's second strike, Trident, Cruel Ruin and

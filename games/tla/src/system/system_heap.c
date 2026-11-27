@@ -31,12 +31,12 @@ Sint32 syHeapGetRemainingEWRAM(void)
 
 /* Returns heap slot `slot`'s block, first allocating `size` bytes for it
    (rounded up to words), from IWRAM when they fit and EWRAM otherwise. */
-void *syHeapSlotAlloc(Sint32 slot, Sint32 size)
+void *syHeapSlotAllocate(Sint32 slot, Sint32 size)
 {
 	HEAP_SLOTS *state;
 	Sint32		alignedSize;
-	Uint32		adr;
-	Uint32		nextAdr;
+	Uint32		addr;
+	Uint32		nextAddr;
 	Uint32		next;
 	Uint32		block;
 
@@ -48,14 +48,14 @@ void *syHeapSlotAlloc(Sint32 slot, Sint32 size)
 		next = block + alignedSize;
 		/* A block ending exactly at the pool's end is refused too. */
 		if(next >= (Uint32)RamIwramHeapEnd) {
-			adr = (Uint32)state->nextEwram;
-			nextAdr = adr + alignedSize;
-			if(nextAdr >= (Uint32)EWRAM_END) {
+			addr = (Uint32)state->nextEwram;
+			nextAddr = addr + alignedSize;
+			if(nextAddr >= (Uint32)EWRAM_END) {
 				return NULL;
 			}
-			state->nextEwram = (void *)nextAdr;
-			HEAP_SLOT_AT(state, slot) = (void *)adr;
-			return (void *)adr;
+			state->nextEwram = (void *)nextAddr;
+			HEAP_SLOT_AT(state, slot) = (void *)addr;
+			return (void *)addr;
 		}
 		state->nextIwram = (void *)next;
 		HEAP_SLOT_AT(state, slot) = (void *)block;
@@ -64,37 +64,37 @@ void *syHeapSlotAlloc(Sint32 slot, Sint32 size)
 	return (void *)block;
 }
 
-/* As syHeapSlotAlloc, but tries EWRAM first, for blocks that need room more
+/* As syHeapSlotAllocate, but tries EWRAM first, for blocks that need room more
    than speed: the battle, shop and save state, among others. */
-void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
+void *syHeapSlotAllocateEWRAM(Sint32 slot, Sint32 size)
 {
 	HEAP_SLOTS *state;
 	Uint32		alignedSize;
 	Uint32		next;
-	Uint32		adr;
-	Uint32		nextAdr;
+	Uint32		addr;
+	Uint32		nextAddr;
 	Uint32		block;
 
 	state = RamHeapSlots;
 	block = (Uint32)HEAP_SLOT_AT(state, slot);
 	if(block == 0) {
 		alignedSize = (Uint32)size + 3;
-		adr = (Uint32)state->nextEwram;
+		addr = (Uint32)state->nextEwram;
 		alignedSize = (alignedSize >> 2) * 4;
-		next = adr + alignedSize;
+		next = addr + alignedSize;
 		if(next >= (Uint32)EWRAM_END) {
-			adr = (Uint32)state->nextIwram;
-			nextAdr = adr + alignedSize;
-			if(nextAdr > (Uint32)(RamIwramHeapEnd - 1)) {
+			addr = (Uint32)state->nextIwram;
+			nextAddr = addr + alignedSize;
+			if(nextAddr > (Uint32)(RamIwramHeapEnd - 1)) {
 				return NULL;
 			}
-			state->nextIwram = (void *)nextAdr;
-			HEAP_SLOT_AT(state, slot) = (void *)adr;
-			return (void *)adr;
+			state->nextIwram = (void *)nextAddr;
+			HEAP_SLOT_AT(state, slot) = (void *)addr;
+			return (void *)addr;
 		}
 		state->nextEwram = (void *)next;
-		HEAP_SLOT_AT(state, slot) = (void *)adr;
-		return (void *)adr;
+		HEAP_SLOT_AT(state, slot) = (void *)addr;
+		return (void *)addr;
 	}
 	return (void *)block;
 }
@@ -104,67 +104,67 @@ void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
 void syHeapFillFreeWords(Uint32 value)
 {
 	HEAP_SLOTS *state = RamHeapSlots;
-	Uint32		adr;
+	Uint32		addr;
 
-	adr = (Uint32)state->nextIwram;
-	syWordsFillEntry((void *)adr, (Uint32)RamIwramHeapEnd - adr, value);
-	adr = (Uint32)state->nextEwram;
-	syWordsFillEntry((void *)adr, (Uint32)EWRAM_END - adr, value);
+	addr = (Uint32)state->nextIwram;
+	syWordsFillEntry((void *)addr, (Uint32)RamIwramHeapEnd - addr, value);
+	addr = (Uint32)state->nextEwram;
+	syWordsFillEntry((void *)addr, (Uint32)EWRAM_END - addr, value);
 }
 
 /* Allocates `size` bytes (rounded up to words) with no heap slot, from IWRAM
    when they fit and EWRAM otherwise, and advances that pool's next address. */
-void *syHeapAlloc(Sint32 size)
+void *syHeapAllocate(Sint32 size)
 {
 	HEAP_SLOTS *state = RamHeapSlots;
-	Uint32		nextAdr;
+	Uint32		nextAddr;
 	Uint32		next;
-	Uint32		adr;
+	Uint32		addr;
 	Uint32		words;
 	Uint32		limit;
 
 	words = (Uint32)size + 3;
-	adr = (Uint32)state->nextIwram;
+	addr = (Uint32)state->nextIwram;
 	words >>= 2;
 	limit = (Uint32)(RamIwramHeapEnd - 1);
 	size = (Sint32)(words << 2);
-	next = adr + (Uint32)size;
+	next = addr + (Uint32)size;
 	if(next > limit) {
-		adr = (Uint32)state->nextEwram;
-		nextAdr = adr + (Uint32)size;
-		if(nextAdr >= (Uint32)EWRAM_END) {
+		addr = (Uint32)state->nextEwram;
+		nextAddr = addr + (Uint32)size;
+		if(nextAddr >= (Uint32)EWRAM_END) {
 			return NULL;
 		}
-		state->nextEwram = (void *)nextAdr;
+		state->nextEwram = (void *)nextAddr;
 	} else {
 		state->nextIwram = (void *)next;
 	}
-	return (void *)adr;
+	return (void *)addr;
 }
 
-/* As syHeapAlloc, but tries EWRAM first. Called mostly by the battle engine and
-   the credits for buffers too large to want IWRAM. */
-void *syHeapAllocEWRAM(Sint32 size)
+/* As syHeapAllocate, but tries EWRAM first. Called mostly by the battle engine
+   and the credits for buffers too large to want IWRAM. */
+void *syHeapAllocateEWRAM(Sint32 size)
 {
 	HEAP_SLOTS *state = RamHeapSlots;
-	Uint32		nextAdr;
+	Uint32		nextAddr;
 	Uint32		next;
-	Uint32		adr;
+	Uint32		addr;
 	Uint32		words;
 
 	words = (Uint32)size + 3;
-	adr = (Uint32)state->nextEwram;
+	addr = (Uint32)state->nextEwram;
 	size = (Sint32)((words >> 2) << 2);
-	next = adr + (Uint32)size;
+	next = addr + (Uint32)size;
 	if(next >= (Uint32)EWRAM_END) {
-		adr = (Uint32)state->nextIwram;
-		nextAdr = adr + (Uint32)size;
-		if(nextAdr > (Uint32)(RamIwramHeapEnd - 1)) {
+		addr = (Uint32)state->nextIwram;
+		nextAddr = addr + (Uint32)size;
+		if(nextAddr > (Uint32)(RamIwramHeapEnd - 1)) {
 			return NULL;
 		}
-		state->nextIwram = (void *)nextAdr;
+		state->nextIwram = (void *)nextAddr;
 	} else {
 		state->nextEwram = (void *)next;
 	}
-	return (void *)adr;
+	return (void *)addr;
 }

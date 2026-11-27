@@ -104,21 +104,21 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	BLITTER_PAIR		 draw;
 	SCREEN_POINT		 origin;
-	SCREEN_POINT		 tgtSpots[8];
+	SCREEN_POINT		 targetSpots[8];
 	Sint32				 aim[3];
-	Uint16				*col;
-	Sint32				 frm;
+	Uint16				*color;
+	Sint32				 frame;
 	Sint32				 i;
-	Sint32				 tgt;
+	Sint32				 target;
 	Sint32				 level;
 	Sint32				 paletteId;
 
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	sprs = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+	sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 	state->args = args;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -144,14 +144,14 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	} else {
 		btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 			(state->sheet + BURST_SHOWER_PICTURES), 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 		/* The grey mode: a ramp of greys, with blending off. */
 		if(mode == BURST_SHOWER_MODE_GREY) {
-			for(i = 0, col = (Uint16 *)BG_PLTT; i != SHEET_PALETTE_COLORS;
+			for(i = 0, color = (Uint16 *)BG_PLTT; i != SHEET_PALETTE_COLORS;
 				i++) {
 				level = i / 4;
-				*col = RGB(level, level, level);
-				col++;
+				*color = RGB(level, level, level);
+				color++;
 			}
 			REG_BLDCNT = 0;
 		} else {
@@ -190,7 +190,7 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		state->particles[i].variant = -1;
 	}
 
-	btProjectionSpr(state->args->user, &origin);
+	btProjectionSprite(state->args->user, &origin);
 	if(mode == BURST_SHOWER_MODE_PINK) {
 		origin.y -= 16;
 	}
@@ -213,21 +213,21 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		REG_BG2PA = Q_8_8(1.0 / 3); /* three times the width */
 	}
 
-	for(i = 0; i != state->args->tgtCnt; i++) {
-		btProjectionScaledUnit(state->args->tgts[i], &tgtSpots[i]);
+	for(i = 0; i != state->args->targetCount; i++) {
+		btProjectionScaledUnit(state->args->targets[i], &targetSpots[i]);
 	}
 
-	for(frm = 0; frm != BURST_SHOWER_TICKS; frm++) {
-		tgt = frm % state->args->tgtCnt;
-		if(frm == 4) {
-			sySndPlayStub(SE_WHOOSH);
+	for(frame = 0; frame != BURST_SHOWER_TICKS; frame++) {
+		target = frame % state->args->targetCount;
+		if(frame == 4) {
+			sySoundPlayStub(SE_WHOOSH);
 		}
 		if(mode != BURST_SHOWER_MODE_GREY) {
-			if(frm == 24) {
+			if(frame == 24) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 		} else {
-			if(frm == 60) {
+			if(frame == 60) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
 		}
@@ -238,31 +238,31 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			if(state->args->side == EFFECT_SIDE_PARTY) {
 				draw[0](canvas,
 					(state->sheet + BURST_SHOWER_PICTURES) +
-						frm / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
+						frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
 					origin.x - 2, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
 					VIOLET_LIGHTNING_HEIGHT);
 			} else {
 				draw[0](canvas,
 					(state->sheet + BURST_SHOWER_PICTURES) +
-						frm / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
+						frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
 					origin.x - (VIOLET_LIGHTNING_WIDTH - 2), origin.y - 32,
 					VIOLET_LIGHTNING_WIDTH, VIOLET_LIGHTNING_HEIGHT);
 			}
 		} else {
-			aim[0] = (tgtSpots[tgt].x + (syRandom() & 31)) - 16;
-			aim[1] = (tgtSpots[tgt].y + (syRandom() & 63)) - 16;
-			if(frm < BURST_SHOWER_BURSTS) {
+			aim[0] = (targetSpots[target].x + (syRandom() & 31)) - 16;
+			aim[1] = (targetSpots[target].y + (syRandom() & 63)) - 16;
+			if(frame < BURST_SHOWER_BURSTS) {
 				/* A burst moves a 32nd of the way to its aim a tick for
 				   BURST_SHOWER_BURST_LIFE ticks: three quarters of the way
 				   down, and across the half-width canvas half again as far,
 				   past the targets. */
-				state->particles[frm].x = origin.x * (toFIXED(1) / 2);
-				state->particles[frm].y = toFIXED(origin.y);
-				state->particles[frm].velX =
+				state->particles[frame].x = origin.x * (toFIXED(1) / 2);
+				state->particles[frame].y = toFIXED(origin.y);
+				state->particles[frame].velocityX =
 					(aim[0] - origin.x) * (toFIXED(1) / 32);
-				state->particles[frm].velY =
+				state->particles[frame].velocityY =
 					(aim[1] - origin.y) * (toFIXED(1) / 32);
-				state->particles[frm].variant = 0;
+				state->particles[frame].variant = 0;
 			}
 		}
 
@@ -299,8 +299,8 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 					}
 				}
-				burst->x += burst->velX;
-				burst->y += burst->velY;
+				burst->x += burst->velocityX;
+				burst->y += burst->velocityY;
 				burst->variant++;
 				if(burst->variant == BURST_SHOWER_BURST_LIFE) {
 					burst->variant = -1;
@@ -310,27 +310,27 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* Each target is hit in turn. */
 		if(mode == BURST_SHOWER_MODE_LIGHTNING) {
-			for(i = 0; i != state->args->tgtCnt; i++) {
+			for(i = 0; i != state->args->targetCount; i++) {
 				/* The bolt strikes target i without knocking it back. */
-				if((frm >= (i * 4) + 2) && ((frm & 7) == i)) {
-					state->shakeFrm = 8;
-					btEffectTintBattler(state->args->tgts[i],
+				if((frame >= (i * 4) + 2) && ((frame & 7) == i)) {
+					state->shakeFrame = 8;
+					btEffectTintBattler(state->args->targets[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
 				}
 			}
 		} else {
-			for(i = 0; i != state->args->tgtCnt; i++) {
-				if((frm >= (i * 4) + 16) && ((frm & 7) == i)) {
-					state->shakeFrm = 8;
+			for(i = 0; i != state->args->targetCount; i++) {
+				if((frame >= (i * 4) + 16) && ((frame & 7) == i)) {
+					state->shakeFrame = 8;
 					if(mode == BURST_SHOWER_MODE_GREY) {
-						btEffectTintBattler(state->args->tgts[i],
+						btEffectTintBattler(state->args->targets[i],
 							SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 4);
 					} else {
-						btEffectTintBattler(state->args->tgts[i],
+						btEffectTintBattler(state->args->targets[i],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
 					}
 					btMotionApplyKnockbackStub(
-						state->args->tgts[i], KNOCKBACK_HURL);
+						state->args->targets[i], KNOCKBACK_HURL);
 				}
 			}
 		}

@@ -24,20 +24,20 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *battleEffectState;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 column;
 	DRAW_RECTANGLE		 draw;
 	BATTLE_CAMERA		*camera;
-	Sint32				 xOfs;
+	Sint32				 xOffset;
 	ROCK_WALL_HEIGHTS	 heights;
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
 	Sint32				 member;
 	Sint32				 row;
-	Sint32				 col;
+	Sint32				 sheetColumn;
 	Sint32				 y;
 
-	battleEffectState = RamHeapSlots->battleEff;
+	battleEffectState = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
 	/* The canvas at its own width, opaque: the pillars hide what is behind
@@ -53,19 +53,19 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 		RamMapMetatileBuffer, (void *)BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
 	for(row = 0; row != QUAKE_STRIP_HEIGHT; row++) {
 		y = row + QUAKE_GROUND_Y - QUAKE_STRIP_HEIGHT;
-		for(col = 0; col != QUAKE_PILLAR_WIDTH; col++) {
-			Sint32 pixel = BACKGROUND_PIXEL_OFFSET(col + 32, y);
+		for(sheetColumn = 0; sheetColumn != QUAKE_PILLAR_WIDTH; sheetColumn++) {
+			Sint32 pixel = BACKGROUND_PIXEL_OFFSET(sheetColumn + 32, y);
 
-			battleEffectState->sheet[row * QUAKE_PILLAR_WIDTH + col] =
+			battleEffectState->sheet[row * QUAKE_PILLAR_WIDTH + sheetColumn] =
 				RamMapMetatileBuffer[pixel];
 		}
 	}
 
 	if(args->side == EFFECT_SIDE_PARTY) {
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
-		xOfs = -NARROW_CANVAS_PARTY_X;
+		xOffset = -NARROW_CANVAS_PARTY_X;
 	} else {
-		xOfs = 0;
+		xOffset = 0;
 	}
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
@@ -74,24 +74,24 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 		battleEffectState->particles[member].variant = 0;
 	EFFECT_START_TRANSFER(battleEffectState, CANVAS_COPY_AND_CLEAR, 0);
 	heights = RockWallHeights;
-	battleEffectState->shakeFrm = 128;
-	sySndPlayStub(SE_RUMBLE);
+	battleEffectState->shakeFrame = 128;
+	sySoundPlayStub(SE_RUMBLE);
 
-	for(frm = 0; frm != QuakeTimings[args->variant][QUAKE_TIMING_TICKS];
-		frm++) {
+	for(frame = 0; frame != QuakeTimings[args->variant][QUAKE_TIMING_TICKS];
+		frame++) {
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frm == QuakeTimings[args->variant][QUAKE_TIMING_TICKS] - 16)
+		if(frame == QuakeTimings[args->variant][QUAKE_TIMING_TICKS] - 16)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		for(column = 0; column != QUAKE_PILLARS; column++) {
-			Sint32 riseFrm = column * 4 + 16;
+			Sint32 riseFrame = column * 4 + 16;
 
-			/* DEAD: never true, as the left side is 32 or more and riseFrm at
+			/* DEAD: never true, as the left side is 32 or more and riseFrame at
 			   most 24; the ROM keeps the test and its store. */
-			if((frm & 31) + 32 == riseFrm)
+			if((frame & 31) + 32 == riseFrame)
 				heights.column[column] += 32;
-			if(frm >= riseFrm &&
-				frm < riseFrm +
+			if(frame >= riseFrame &&
+				frame < riseFrame +
 						QuakeTimings[args->variant][QUAKE_TIMING_RISE_TICKS]) {
 				Sint32 height;
 				Sint32 top;
@@ -99,7 +99,7 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 				/* A pillar rises and sinks along a sine, once, twice or three
 				   times by variant. */
 				height = FIXEDtoINT(heights.column[column] *
-					sySin((frm - riseFrm) * (TRIG_TURN / 64)));
+					sySin((frame - riseFrame) * (TRIG_TURN / 64)));
 				if(height < 0)
 					height = -height;
 				top = QUAKE_GROUND_Y - height;
@@ -115,20 +115,20 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 				EFFECT_FOR_EACH_TARGET(member, args) {
 					MOTION_OBJECT *object;
 
-					object = btObjectGetStub(args->tgts[member])->obj;
+					object = btObjectGetStub(args->targets[member])->object;
 					SET_VECTOR(point, object->x, object->y, object->z);
 					btEffectPosProjectPoint(point, &screen);
-					screen.x += xOfs;
+					screen.x += xOffset;
 					if(screen.x >=
 							column * QUAKE_PILLAR_WIDTH + QUAKE_PILLARS_LEFT &&
 						screen.x <= column * QUAKE_PILLAR_WIDTH +
 								QUAKE_PILLARS_LEFT + QUAKE_PILLAR_WIDTH &&
 						screen.y >= top) {
-						object->velY = toFIXED(12);
+						object->velocityY = toFIXED(12);
 						object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 					}
 					if(object->y < 0)
-						btEffectTintBattler(args->tgts[member],
+						btEffectTintBattler(args->targets[member],
 							SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP, 0);
 				}
 			}
@@ -139,11 +139,11 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 			MOTION_OBJECT *object;
 			PARTICLE	  *state;
 
-			object = btObjectGetStub(args->tgts[member])->obj;
+			object = btObjectGetStub(args->targets[member])->object;
 			state = &battleEffectState->particles[member];
-			if(state->variant == 0 && object->y <= 0 && object->velY < 0) {
+			if(state->variant == 0 && object->y <= 0 && object->velocityY < 0) {
 				state->variant = 1;
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, member, 5);
 			}
 		}

@@ -12,8 +12,8 @@
 /* One background layer of the field map: its scroll position, origin, parallax
    against the view, drift and wrap, and its first map metatile. */
 typedef struct MAP_GRID_LAYER_SCROLL {
-	FIXED x, y;		  /* 16.16 fixed-point pixels */
-	FIXED ofsX, ofsY; /* 16.16 fixed-point pixels */
+	FIXED x, y;				/* 16.16 fixed-point pixels */
+	FIXED offsetX, offsetY; /* 16.16 fixed-point pixels */
 	/* 16.16 fixed point, toFIXED(1) moves with the view */
 	FIXED  scaleX, scaleY;
 	FIXED  speedX, speedY; /* 16.16 fixed-point pixels per tick */
@@ -33,23 +33,23 @@ typedef struct MAP_GRID_SCROLL_STATE {
 	   that scales them each tick. */
 	FIXED  shakeX, shakeY, shakeDecay;
 	Uint8 *markers; /* the layout's treasure spots, for fdPlaceTreasureSpots */
-	Uint16 flg;		/* REG_DISPCNT bits: sprites and the BG1 to BG3 shown */
+	Uint16 flags;	/* REG_DISPCNT bits: sprites and the BG1 to BG3 shown */
 	Uint8  wideTiles;  /* nonzero: tileset animations copy 64-byte tiles */
 	Uint8  footprints; /* nonzero: the leader leaves footprints */
-	TILESET_ANIM	   anms[16];
+	TILESET_ANIM	   animations[16];
 	BLEND_SCRIPT_STATE blend;
 	FIXED view[2]; /* the view's top left, x then y, 16.16 fixed-point pixels */
 	FIXED minX, minY, maxX, maxY; /* 16.16 fixed-point pixels */
 	/* Set while a BG1 animation runs; the tileset animations are then neither
 	   suspended nor resumed. */
-	Sint8 anmActive;
+	Sint8 animationActive;
 	Uint8 unused[3];
 	/* Each layer's BG priority, written into its BGCNT; zero hides the
 	   layer. */
 	Uint8 enabled[3];
 	/* The last BLDCNT the blend script set; with mode 1 in bits 7..6 its values
 	   go to BLDALPHA, else to BLDY. */
-	Uint8				  blendCtrl;
+	Uint8				  blendControl;
 	MAP_GRID_LAYER_SCROLL layers[3]; /* BG3, BG2 and BG1, in that order */
 } MAP_GRID_SCROLL_STATE;
 
@@ -65,10 +65,10 @@ static inline FIXED *syMapGridScrollStateView(MAP_GRID_SCROLL_STATE *grid)
 STATIC_ASSERT(sizeof(MAP_GRID_LAYER_SCROLL) == 48);
 STATIC_ASSERT(offsetof(MAP_GRID_LAYER_SCROLL, metatiles) == 44);
 STATIC_ASSERT(sizeof(MAP_GRID_SCROLL_STATE) == 404);
-STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, anms) == 24);
+STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, animations) == 24);
 STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, blend) == 216);
 STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, view) == 228);
-STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, anmActive) == 252);
+STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, animationActive) == 252);
 STATIC_ASSERT(offsetof(MAP_GRID_SCROLL_STATE, layers) == 260);
 
 /* A background's hardware scroll offsets. */

@@ -12,18 +12,18 @@ typedef struct SCENE_STATE_VIEW {
 	ACTOR_SNAPSHOT actorSnapshot;		  /* ActorSnapshotWork */
 } SCENE_STATE_VIEW;
 
-/* The running totals gmUnitCalc builds a unit's stats in. */
+/* The running totals gmUnitCalculate builds a unit's stats in. */
 typedef struct STAT_STATE {
-	Sint32 hp;		  /* maximum HP */
-	Sint32 pp;		  /* maximum PP */
-	Sint32 attack;	  /* Attack, 0 to UNIT_STAT_MAX once clamped */
-	Sint32 defense;	  /* Defense, 0 to UNIT_STAT_MAX once clamped */
-	Sint32 agility;	  /* Agility, 0 to UNIT_STAT_MAX once clamped */
-	Sint32 unused;	  /* never written; a gap between Agility and Luck */
-	Sint32 luck;	  /* Luck, 0 to UNIT_LUCK_MAX once clamped */
-	Sint32 actionCnt; /* actions a turn, 0 to 2 */
-	Sint32 hpRegen;	  /* HP regained each turn */
-	Sint32 ppRegen;	  /* PP regained each turn */
+	Sint32 hp;			/* maximum HP */
+	Sint32 pp;			/* maximum PP */
+	Sint32 attack;		/* Attack, 0 to UNIT_STAT_MAX once clamped */
+	Sint32 defense;		/* Defense, 0 to UNIT_STAT_MAX once clamped */
+	Sint32 agility;		/* Agility, 0 to UNIT_STAT_MAX once clamped */
+	Sint32 unused;		/* never written; a gap between Agility and Luck */
+	Sint32 luck;		/* Luck, 0 to UNIT_LUCK_MAX once clamped */
+	Sint32 actionCount; /* actions a turn, 0 to 2 */
+	Sint32 hpRegen;		/* HP regained each turn */
+	Sint32 ppRegen;		/* PP regained each turn */
 
 	struct {
 		Sint32 power;
@@ -130,18 +130,18 @@ const ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId)
 	return &EnemyDefinitions[row];
 }
 
-/* Unused: copies `cnt` bytes from `first` to `second` when `direction` is
+/* Unused: copies `count` bytes from `first` to `second` when `direction` is
    set, and from `second` to `first` otherwise. */
 UNUSED void gmMemoryCopyBytesDirectional(
-	Uint8 *first, Uint8 *second, Sint32 cnt, Sint32 direction)
+	Uint8 *first, Uint8 *second, Sint32 count, Sint32 direction)
 {
 	Sint32 i;
 
 	if(direction != 0) {
-		for(i = 0; i < cnt; i++)
+		for(i = 0; i < count; i++)
 			*second++ = *first++;
 	} else {
-		for(i = 0; i < cnt; i++)
+		for(i = 0; i < count; i++)
 			*first++ = *second++;
 	}
 }
@@ -154,11 +154,11 @@ UNUSED void gmMemoryCopyBytesDirectional(
 
 /* Works out a unit's stats from its base stats, equipment, set Djinn, class and
    battle stat levels; its HP and PP keep their share of a new maximum. */
-void gmUnitCalc(Sint32 unitId)
+void gmUnitCalculate(Sint32 unitId)
 {
 	STAT_STATE *stats;
 	UNIT	   *unit;
-	Sint32		idx, effectIdx, elementIdx;
+	Sint32		index, effectIndex, elementIndex;
 	Sint32		value;
 	Sint32		inOwnLighthouse;
 	Sint32		effectKind;
@@ -167,7 +167,7 @@ void gmUnitCalc(Sint32 unitId)
 	Sint16		prevMaximum;
 
 	/* Start with the unit's base stats and elemental power/resistance. */
-	stats = syHeapAllocEWRAM(sizeof(STAT_STATE));
+	stats = syHeapAllocateEWRAM(sizeof(STAT_STATE));
 	unit = gmUnitGet(unitId);
 	stats->hp = unit->baseHp;
 	stats->pp = unit->basePp;
@@ -175,12 +175,12 @@ void gmUnitCalc(Sint32 unitId)
 	stats->defense = unit->baseDefense;
 	stats->agility = unit->baseAgility;
 	stats->luck = unit->baseLuck;
-	stats->actionCnt = unit->baseActionCnt & UNIT_ACTION_COUNT_MASK;
+	stats->actionCount = unit->baseActionCount & UNIT_ACTION_COUNT_MASK;
 	stats->hpRegen = unit->baseHpRegen;
 	stats->ppRegen = unit->basePpRegen;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
-		stats->element[idx].power = unit->baseElement[idx].power;
-		stats->element[idx].resistance = unit->baseElement[idx].resistance;
+	for(index = 0; index < ELEMENT_COUNT; index++) {
+		stats->element[index].power = unit->baseElement[index].power;
+		stats->element[index].resistance = unit->baseElement[index].resistance;
 	}
 
 	/* HP and PP keep their share of the maximum; gauges that no longer match
@@ -201,24 +201,25 @@ void gmUnitCalc(Sint32 unitId)
 	if(unit->curse & CURSE_KEEP_BOUND)
 		unit->curse |= CURSE_BOUND;
 	if(unit->ready)
-		stats->actionCnt++;
+		stats->actionCount++;
 	unit->equipBonus[0] = 0;
 	unit->equipBonus[1] = 0;
 
 	/* Apply additive equipment and set-Djinn bonuses before class scaling. An
 	   enemy (CLASS_NONE) skips equipment, Djinn and class entirely. */
 	if(unit->classId != CLASS_NONE) {
-		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
-			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
+		for(index = 0; index < INVENTORY_SLOTS; index++) {
+			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[idx]);
-			if(stats->item->flg & ITEM_CURSED)
+			stats->item = gmItemGetDirect(unit->inventory[index]);
+			if(stats->item->flags & ITEM_CURSED)
 				unit->curse |= CURSE_BOUND | CURSE_ITEM;
 			stats->attack += stats->item->attack;
 			stats->defense += stats->item->defense;
-			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
-				effectKind = stats->item->effs[effectIdx].kind;
-				effectAmount = stats->item->effs[effectIdx].amount;
+			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
+				effectIndex++) {
+				effectKind = stats->item->effects[effectIndex].kind;
+				effectAmount = stats->item->effects[effectIndex].amount;
 				stats->kind = effectKind;
 				stats->amount = effectAmount;
 				switch(effectKind) {
@@ -276,7 +277,7 @@ void gmUnitCalc(Sint32 unitId)
 					unit->curse |= CURSE_REMOVABLE;
 					break;
 				case EQUIP_EFFECT_ADD_ACTIONS:
-					stats->actionCnt += stats->amount;
+					stats->actionCount += stats->amount;
 					break;
 				}
 			}
@@ -285,13 +286,13 @@ void gmUnitCalc(Sint32 unitId)
 			unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
 		/* Only set Djinn contribute their stat bonuses. */
-		for(elementIdx = 0; elementIdx < ELEMENT_COUNT; elementIdx++) {
-			Uint32 activeDjinn = unit->djinnSet[elementIdx];
+		for(elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
+			Uint32 activeDjinn = unit->djinnSet[elementIndex];
 
-			for(idx = 0; idx < DJINN_PER_ELEMENT; idx++) {
-				if(activeDjinn & (1 << idx)) {
+			for(index = 0; index < DJINN_PER_ELEMENT; index++) {
+				if(activeDjinn & (1 << index)) {
 					const DJINN_DEFINITION *djinn =
-						gmDjinnGetDefinition(elementIdx, idx);
+						gmDjinnGetDefinition(elementIndex, index);
 
 					stats->hp += djinn->hp;
 					stats->pp += djinn->pp;
@@ -322,13 +323,14 @@ void gmUnitCalc(Sint32 unitId)
 
 		/* Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
 		   EQUIP_EFFECT_SCALE_LUCK, also in tenths. */
-		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
-			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
+		for(index = 0; index < INVENTORY_SLOTS; index++) {
+			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[idx]);
-			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
-				effectKind = stats->item->effs[effectIdx].kind;
-				effectAmount = stats->item->effs[effectIdx].amount;
+			stats->item = gmItemGetDirect(unit->inventory[index]);
+			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
+				effectIndex++) {
+				effectKind = stats->item->effects[effectIndex].kind;
+				effectAmount = stats->item->effects[effectIndex].amount;
 				stats->kind = effectKind;
 				effectKind = SCALE_EFFECT(effectKind);
 				stats->amount = effectAmount;
@@ -372,13 +374,13 @@ void gmUnitCalc(Sint32 unitId)
 	stats->attack = stats->attack * (unit->attackStage + 8) / 8;
 	stats->defense = stats->defense * (unit->defenseStage + 8) / 8;
 	stats->agility = stats->agility * (unit->agilityStage + 8) / 8;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++)
-		stats->element[idx].power +=
-			(unit->summonBoost[idx] * unit->summonBoost[idx] +
-				unit->summonBoost[idx]) *
+	for(index = 0; index < ELEMENT_COUNT; index++)
+		stats->element[index].power +=
+			(unit->summonBoost[index] * unit->summonBoost[index] +
+				unit->summonBoost[index]) *
 			5;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++)
-		stats->element[idx].resistance +=
+	for(index = 0; index < ELEMENT_COUNT; index++)
+		stats->element[index].resistance +=
 			unit->resistanceStage * RESISTANCE_PER_STAGE;
 
 	if(unit->classId != CLASS_NONE) {
@@ -410,24 +412,24 @@ void gmUnitCalc(Sint32 unitId)
 	CLAMP(stats->defense, 0, UNIT_STAT_MAX);
 	CLAMP(stats->agility, 0, UNIT_STAT_MAX);
 	CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
-	CLAMP(stats->actionCnt, 0, 2);
+	CLAMP(stats->actionCount, 0, 2);
 	CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
 	CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
-	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
-		CLAMP(stats->element[idx].power, 0, UNIT_ELEMENT_MAX);
-		CLAMP(stats->element[idx].resistance, 0, UNIT_ELEMENT_MAX);
+	for(index = 0; index < ELEMENT_COUNT; index++) {
+		CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
+		CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
 	}
 
 	unit->attack = stats->attack;
 	unit->defense = stats->defense;
 	unit->agility = stats->agility;
 	unit->luck = stats->luck;
-	unit->actionsPerTurn = stats->actionCnt;
+	unit->actionsPerTurn = stats->actionCount;
 	unit->hpRegen = stats->hpRegen;
 	unit->ppRegen = stats->ppRegen;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
-		unit->element[idx].power = stats->element[idx].power;
-		unit->element[idx].resistance = stats->element[idx].resistance;
+	for(index = 0; index < ELEMENT_COUNT; index++) {
+		unit->element[index].power = stats->element[index].power;
+		unit->element[index].resistance = stats->element[index].resistance;
 	}
 
 	statLimit = UNIT_HP_MAX;
@@ -480,7 +482,7 @@ void gmFlagRefreshLureCap(void)
 				continue;
 			item = gmItemGetDirect(unit->inventory[slot]);
 			for(effect = 0; effect < EQUIP_EFFECT_SLOTS; effect++) {
-				if(item->effs[effect].kind == EQUIP_EFFECT_LURE)
+				if(item->effects[effect].kind == EQUIP_EFFECT_LURE)
 					gmFlagSet(FLAG_LURE_CAP);
 			}
 		}
@@ -555,8 +557,8 @@ void gmMainRoutineStateInitDefaults(void)
 	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;
 	MainRoutineStateWork.speech = NEW_GAME_SPEECH;
 	MainRoutineStateWork.unusedAfterSpeech = 1;
-	MainRoutineStateWork.winHue = 0;
-	MainRoutineStateWork.winBrightness = NEW_GAME_WINDOW_BRIGHTNESS;
+	MainRoutineStateWork.windowHue = 0;
+	MainRoutineStateWork.windowBrightness = NEW_GAME_WINDOW_BRIGHTNESS;
 	MainRoutineStateWork.buildStamp = 0;
 	MainRoutineStateWork.startStamp = gmBuildStampGetTime();
 	PlayTimeTicks = 0;
@@ -592,9 +594,9 @@ void gmPartyStartChildhood(void)
 	gmUnitUpdateClass(ISAAC);
 	gmUnitUpdateClass(GARET);
 	gmUnitUpdateClass(JENNA);
-	gmUnitCalc(ISAAC);
-	gmUnitCalc(GARET);
-	gmUnitCalc(JENNA);
+	gmUnitCalculate(ISAAC);
+	gmUnitCalculate(GARET);
+	gmUnitCalculate(JENNA);
 }
 
 /* The coins the party sets out with after the prologue. */
@@ -611,7 +613,7 @@ void gmPartyEndChildhood(void)
 	gmFlagClear(FLAG_ISAAC_WEARS_TUNIC);
 	gmFlagSet(FLAG_VALE_THREE_YEARS_LATER);
 	gmUnitUpdateClass(JENNA);
-	gmUnitCalc(JENNA);
+	gmUnitCalculate(JENNA);
 	gmFlagClear(FLAG_KEEP_MUSIC_HELD);
 	gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
 
@@ -633,7 +635,7 @@ void gmPartyEndChildhood(void)
 		}
 
 		gmUnitUpdateClass(unitId);
-		gmUnitCalc(unitId);
+		gmUnitCalculate(unitId);
 	}
 
 	gmUnitLearnPsynergy(ISAAC, ABILITY_MOVE);
@@ -649,12 +651,12 @@ void gmPartyEndChildhood(void)
 void gmPartyRestoreHpPp(Sint32 cureConditions)
 {
 	Sint32 partySize;
-	Sint32 partyIdx;
+	Sint32 partyIndex;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
-		unit = gmUnitGet(MainRoutineStateWork.party[partyIdx]);
+	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
+		unit = gmUnitGet(MainRoutineStateWork.party[partyIndex]);
 
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
@@ -673,15 +675,15 @@ void gmPartyRestoreHpPp(Sint32 cureConditions)
 void gmPartyRestorePpInLighthouse(void)
 {
 	Sint32 partySize;
-	Sint32 partyIdx;
+	Sint32 partyIndex;
 	Uint8  unitId;
 	Sint32 lighthouseGroup;
 	Sint32 restorePp;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
-		unitId = MainRoutineStateWork.party[partyIdx];
+	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
+		unitId = MainRoutineStateWork.party[partyIndex];
 		lighthouseGroup = CharacterLighthouseGroupTable[unitId];
 		restorePp = 0;
 		if(lighthouseGroup == LIGHTHOUSE_GROUP_VENUS_MARS) {
@@ -712,7 +714,7 @@ UNUSED void gmUnitGaugeNoOperation(void)
 }
 
 /* Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
-   that gmUnitCalc keeps the same fractions. */
+   that gmUnitCalculate keeps the same fractions. */
 void gmUnitRecalculateGauges(Sint32 unitId)
 {
 	UNIT *unit;
@@ -761,9 +763,9 @@ UNIT_DEFINE_SET(gmUnitSetPp, pp, ppMax)
 	type name(Sint32 unitId, Sint32 delta) \
 	{ \
 		UNIT  *unit = gmUnitGet(unitId); \
-		Sint32 cur = unit->field; \
+		Sint32 current = unit->field; \
 		Sint32 limit = unit->maximum; \
-		Sint32 value = cur + delta; \
+		Sint32 value = current + delta; \
 		Sint32 result; \
 \
 		result = gmUnitClampGaugeValue(value, limit); \

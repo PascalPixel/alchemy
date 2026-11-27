@@ -26,7 +26,7 @@
 @ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
 @ a mode switch inside a function; the halfword after bx pc is never run.
 @ push {r5-r9} saves callee-saved registers without lr.
-@ Why syColBufferScaleThreeQuarters to syColBufferDarken are assembly:
+@ Why syColorBufferScaleThreeQuarters to syColorBufferDarken are assembly:
 @ each reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
 @ {r4, r5, r7}).
@@ -47,7 +47,7 @@
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push {r5-r9} saves callee-saved registers without lr.
-@ Why syColBufferScaleNonzeroThreeQuarters to ColorBufferDarkenPartial are assembly:
+@ Why syColorBufferScaleNonzeroThreeQuarters to ColorBufferDarkenPartial are assembly:
 @ each reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
 @ {r4, r5, r7}).
@@ -567,9 +567,9 @@ AlchemyUncreditedEnd08001c0a:
 
 .syntax unified
 	.thumb
-	.global syColBufferScaleThreeQuarters
+	.global syColorBufferScaleThreeQuarters
 	.thumb_func
-syColBufferScaleThreeQuarters:
+syColorBufferScaleThreeQuarters:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -583,9 +583,9 @@ syColBufferScaleThreeQuarters:
 	.4byte	0x040000d4
 	.4byte	ColorBufferScaleThreeQuartersKernelCode
 	.4byte	0x84000030
-	.global syColBufferHalve
+	.global syColorBufferHalve
 	.thumb_func
-syColBufferHalve:
+syColorBufferHalve:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -599,9 +599,9 @@ syColBufferHalve:
 	.4byte	0x040000d4
 	.4byte	ColorBufferHalveKernelCode
 	.4byte	0x84000020
-	.global syColBufferBrighten
+	.global syColorBufferBrighten
 	.thumb_func
-syColBufferBrighten:
+syColorBufferBrighten:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -615,9 +615,9 @@ syColBufferBrighten:
 	.4byte	0x040000d4
 	.4byte	ColorBufferBrightenKernelCode
 	.4byte	0x84000022
-	.global syColBufferDarken
+	.global syColorBufferDarken
 	.thumb_func
-syColBufferDarken:
+syColorBufferDarken:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -859,9 +859,9 @@ AlchemyUncreditedEnd08001ea6:
 	.balign 2
 .syntax unified
 	.thumb
-	.global syColBufferScaleNonzeroThreeQuarters
+	.global syColorBufferScaleNonzeroThreeQuarters
 	.thumb_func
-syColBufferScaleNonzeroThreeQuarters:
+syColorBufferScaleNonzeroThreeQuarters:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -874,9 +874,9 @@ syColBufferScaleNonzeroThreeQuarters:
 	.4byte	0x040000d4
 	.4byte	ColorBufferScaleNonzeroThreeQuartersKernelCode
 	.4byte	0x84000018
-	.global syColBufferHalveNonzero
+	.global syColorBufferHalveNonzero
 	.thumb_func
-syColBufferHalveNonzero:
+syColorBufferHalveNonzero:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}

@@ -95,19 +95,19 @@ typedef struct BATTLE_EFFECT_STATE {
 	   percent) or the darken or brighten amount. */
 	Sint32 transferValue;
 	Sint32 unused;		   /* never read or written in either game */
-	Sint32 frm;			   /* tick counter some effects keep, from 0 */
-	Sint32 scrollTmr;	   /* ticks since the last interval scroll step */
+	Sint32 frame;		   /* tick counter some effects keep, from 0 */
+	Sint32 scrollTimer;	   /* ticks since the last interval scroll step */
 	Sint32 scrollInterval; /* ticks between interval scroll steps */
 	Sint32 scrollStepX;	   /* added to BG1 or BG2 x at each step */
 	Sint32 scrollStepY;	   /* added to BG1 or BG2 y at each step */
 	Sint32 savedBg1X;	   /* BG1 scroll restored when a shake ends */
 	Sint32 savedBg1Y;	   /* BG1 scroll restored when a shake ends */
-	Sint32 shakeFrm;	   /* shake ticks left; btCameraShake counts down */
+	Sint32 shakeFrame;	   /* shake ticks left; btCameraShake counts down */
 	Sint32 cameraDelta;	   /* camera yaw turned per tick of the effect */
 	/* The effect sets 1 after a tick; btCameraApplyPhasedDelta then turns the
 	   whole cameraDelta and sets 0, else turns half and toggles 0 and 2. */
 	Sint32 cameraPhase;
-	Sint32 fadeFrm; /* battle background fade ticks left */
+	Sint32 fadeFrame; /* battle background fade ticks left */
 	/* (btEffectDarkenBackgroundStep) */
 	Sint32 fadeStep; /* CANVAS_FADE_STEPs the background has darkened so far */
 	/* Window, display and blend registers, which
@@ -126,10 +126,10 @@ typedef struct BATTLE_EFFECT_STATE {
 	   btEffectApplyBg2Reference and btEffectAdvanceBg2OnInterval. */
 	Sint32		bg2x;
 	Sint32		bg2y;
-	struct SPR *sprs[16]; /* the effect's sprites */
-	/* Each target's flash timer in ticks, for args->tgts[n]: set by
+	struct SPR *sprites[16]; /* the effect's sprites */
+	/* Each target's flash timer in ticks, for args->targets[n]: set by
 	   btEffectTintBattler, counted down by btEffectCountDownBattlerTints. */
-	Uint8 actorTmrs[8];
+	Uint8 actorTimers[8];
 	/* 1 on a canvas copy's VBlank, then counts up */
 	Sint32 framesSinceTransfer;
 	/* 1 once the effect has presented its canvas (EFFECT_PRESENT_CANVAS); the
@@ -144,18 +144,18 @@ STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, trackedCanvas.origin) == 5060);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, particles) == 28800);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, transferMode) == 30592);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, transferValue) == 30596);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, frm) == 30604);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, scrollTmr) == 30608);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, frame) == 30604);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, scrollTimer) == 30608);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, scrollStepX) == 30616);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, savedBg1X) == 30624);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, shakeFrm) == 30632);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, shakeFrame) == 30632);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, cameraDelta) == 30636);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, fadeFrm) == 30644);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, fadeFrame) == 30644);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, fadeStep) == 30648);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, win0h) == 30652);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, bg2x) == 30672);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, sprs) == 30680);
-STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, actorTmrs) == 30744);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, sprites) == 30680);
+STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, actorTimers) == 30744);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, framesSinceTransfer) == 30752);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, transferPending) == 30756);
 STATIC_ASSERT(offsetof(BATTLE_EFFECT_STATE, args) == 30760);

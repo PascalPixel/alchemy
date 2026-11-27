@@ -235,10 +235,10 @@ static void scSuhallaDesertFightFlash(void)
 
 /* The first step of a storm's actor script: the storm casts no shadow and
    nothing bumps into it. */
-static Sint32 scSuhallaDesertClearActorSprAndCollisionFlags(ACTOR *actor)
+static Sint32 scSuhallaDesertClearActorSpriteAndCollisionFlags(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
-	actor->collisionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->collisionFlags = 0;
 	return 0;
 }
 
@@ -247,7 +247,7 @@ static Sint32 scSuhallaDesertClearActorSprAndCollisionFlags(ACTOR *actor)
    the whirlwind flickers, half there. */
 static Sint32 scSuhallaDesertFlickerStorm(ACTOR *actor)
 {
-	actor->sprStorageKind ^= 1;
+	actor->spriteStorageKind ^= 1;
 	return 1;
 }
 
@@ -348,14 +348,14 @@ static void scSuhallaDesertCatchInStorm(Sint32 stormId)
 				leaderId, storm->x.part[0].integer, storm->z.part[0].integer);
 		}
 		fdActorWaitForMoveById(leaderId);
-		sySndPlay(SE_SANDSTORM);
+		sySoundPlay(SE_SANDSTORM);
 		sySetTickEvent(scSuhallaDesertUpdateCaptureTimer, EVENT_PASS_TICK);
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		syFieldActorSetMoveTargetFX(leader, leader->x.fixed,
 			leader->y.fixed + toFIXED(32), leader->z.fixed);
 		fdActorWaitForMoveById(leaderId);
-		leader->velY = 0;
-		leader->motionFlg = ACTOR_FLOATS;
+		leader->velocityY = 0;
+		leader->motionFlags = ACTOR_FLOATS;
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
 		gmFlagSet(FLAG_SUHALLA_DESERT_CAUGHT_IN_SANDSTORM);
 		syFieldGameFlagSetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM, stormId);
@@ -419,7 +419,7 @@ static void scSuhallaDesertCaughtByFifthStorm(void)
    out, cries "A sandstorm!", and warns that they must step carefully. */
 static void scSuhallaDesertRaiseStorm(Sint32 stormId)
 {
-	Sint32 frm;
+	Sint32 frame;
 	Sint32 weight;
 	Sint32 leaderX;
 	Sint32 leaderZ;
@@ -434,12 +434,12 @@ static void scSuhallaDesertRaiseStorm(Sint32 stormId)
 	leaderX = leader->x.part[0].integer;
 	leaderZ = leader->z.part[0].integer;
 	fdScriptStart();
-	sySndPlay(SE_SANDSTORM);
-	for(frm = 0; frm < 16; frm++) {
-		storm->scaleX = frm * (toFIXED(1) / 32) + toFIXED(1) / 32;
-		storm->scaleY = frm * (toFIXED(1) / 16) + toFIXED(1) / 16;
+	sySoundPlay(SE_SANDSTORM);
+	for(frame = 0; frame < 16; frame++) {
+		storm->scaleX = frame * (toFIXED(1) / 32) + toFIXED(1) / 32;
+		storm->scaleY = frame * (toFIXED(1) / 16) + toFIXED(1) / 16;
 		if(hazeShown == 0) {
-			weight = frm + 1;
+			weight = frame + 1;
 			IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA,
 				BLEND_ALPHA(weight, BLEND_WEIGHT_MAX - weight),
 				IO_WRITE_HALFWORD);
@@ -465,12 +465,12 @@ static void scSuhallaDesertRaiseStorm(Sint32 stormId)
 		/* BUG: a heading where fdActorFaceActor takes an actor id. */
 		fdActorFaceActor(ACTOR_IODEM, FACING_SOUTH, 0);
 #endif
-		fdActorGet(ACTOR_IODEM)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkTo(ACTOR_IODEM, leaderX, leaderZ - 16);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, leaderX + 8, leaderZ - 40);
 		fdScriptWait(1);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorSetAnimation(ACTOR_IODEM, ANIM_STAND);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 		fdScriptSetMessageId(MsgSuhallaSandstorm);
@@ -617,46 +617,46 @@ static Sint32 scSuhallaDesertChaseLeader(ACTOR *actor)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *leader;
-	Sint32		   sparkFrm;
+	Sint32		   sparkFrame;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	actor->acceleration = toFIXED(1) / 4;
 	actor->speedLimit = toFIXED(3) / 2;
-	actor->motionFlg = 0;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = 0;
+	fdActorSetSpriteFlags(actor, 0);
 	/* Drawn every other tick, as scSuhallaDesertFlickerStorm draws the
 	   others. */
-	actor->sprStorageKind ^= 1;
+	actor->spriteStorageKind ^= 1;
 	if(gmFlagGet(FLAG_FIELD_HANDLING_REQUESTS)) {
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtY = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 	} else {
-		actor->tgtX = leader->x.fixed;
-		actor->tgtY = leader->groundHeight;
-		actor->tgtZ = leader->z.fixed;
+		actor->targetX = leader->x.fixed;
+		actor->targetY = leader->groundHeight;
+		actor->targetZ = leader->z.fixed;
 		if(GAP(actor->x.fixed, leader->x.fixed) +
 				GAP(actor->z.fixed, leader->z.fixed) <
 			toFIXED(8)) {
 			FIELD_STATE *state = FieldStateWork;
 
-			if(leader->motionFlg != 0) {
+			if(leader->motionFlags != 0) {
 				state->raisedCue = RAISED_CHASING_SANDSTORM_CATCHES;
 			}
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-			actor->tgtX = leader->x.fixed;
-			actor->tgtY = leader->y.fixed;
-			actor->tgtZ = leader->z.fixed;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->targetX = leader->x.fixed;
+			actor->targetY = leader->y.fixed;
+			actor->targetZ = leader->z.fixed;
 		}
 	}
 	/* Sand every eight ticks, with a random spin. */
-	sparkFrm = TickCount & 7;
-	if(sparkFrm == 0) {
+	sparkFrame = TickCount & 7;
+	if(sparkFrame == 0) {
 		options.startScaleX = toFIXED(4) / 5;
 		options.startScaleY = toFIXED(4) / 5;
 		options.spin = FIELD_EFFECT_RANDOM_SPIN();
 		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
-			sparkFrm, sparkFrm,
+			sparkFrame, sparkFrame,
 			EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
@@ -726,7 +726,7 @@ static void scSuhallaDesertDouseStorm(Sint32 unused, Sint32 stormId)
 			}
 		}
 	}
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg =
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
@@ -742,29 +742,29 @@ static void scSuhallaDesertStormCarriesPartyAway(void)
 	Sint32 stormId;
 	ACTOR *leader;
 	ACTOR *storm;
-	Sint32 frm;
+	Sint32 frame;
 
 	stormId = syFieldGameFlagGetByte(FLAG_SUHALLA_DESERT_CATCHING_SANDSTORM);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	storm = fdActorGet(stormId);
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	sySndPlay(SE_GUSH);
+	sySoundPlay(SE_GUSH);
 	/* BUG: this passes an actor id where the sprite helper needs a pointer. */
 #if FIX_SANDSTORM_LEADER_SHADOW
-	fdActorSetSprFlags(leader, 0);
+	fdActorSetSpriteFlags(leader, 0);
 #else
-	fdActorSetSprFlags((ACTOR *)MainRoutineStateWork.leaderActorId, 0);
+	fdActorSetSpriteFlags((ACTOR *)MainRoutineStateWork.leaderActorId, 0);
 #endif
-	storm->motionFlg = 0;
-	leader->motionFlg = 0;
-	leader->velY = 0;
+	storm->motionFlags = 0;
+	leader->motionFlags = 0;
+	leader->velocityY = 0;
 	leader->frozen = 1;
 	storm->frozen = 1;
 	/* Both rise faster and faster for a second. */
-	for(frm = 0; frm < 60; frm++) {
-		leader->velY += toFIXED(1) / 5;
-		storm->velY += toFIXED(1) / 5;
+	for(frame = 0; frame < 60; frame++) {
+		leader->velocityY += toFIXED(1) / 5;
+		storm->velocityY += toFIXED(1) / 5;
 		sySynch(1);
 	}
 	fdScriptFinishScreenTransition();
@@ -785,12 +785,12 @@ static void scSuhallaDesertStormCarriesPartyAway(void)
    brightening and dimming about once a second. */
 static void scSuhallaDesertPulseRevealPalette(void)
 {
-	Uint16 brightnessFrm = TickCount & 63;
+	Uint16 brightnessFrame = TickCount & 63;
 	Uint16 grey;
 
-	if(brightnessFrm > 31)
-		brightnessFrm = 64 - brightnessFrm;
-	grey = (brightnessFrm >> 1) + 7;
+	if(brightnessFrame > 31)
+		brightnessFrame = 64 - brightnessFrame;
+	grey = (brightnessFrame >> 1) + 7;
 	grey = RGB(grey, grey, grey);
 	IO_WRITE16(grey, &SUHALLA_REVEAL_PALETTE_COLOR);
 }
@@ -818,8 +818,9 @@ static Sint32 scSuhallaDesertRevealEnds(void)
 	Sint32 removalResult;
 #endif
 	if(MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
-		fdActorGet(ACTOR_REVEALED_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_REVEALED_PILLAR)->motionFlg =
+		fdActorGet(ACTOR_REVEALED_PILLAR)->priorityFlags =
+			ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_REVEALED_PILLAR)->motionFlags =
 			ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdActorSetPos(ACTOR_REVEALED_PILLAR, 0, 0);
 		fdMapGridCopyMetatileAttributes(16, 44, 1, 1, 15, 44);
@@ -847,8 +848,9 @@ static Sint32 scSuhallaDesertRevealEnds(void)
 static UNREAD_RESULT scSuhallaDesertRevealStarts(void)
 {
 	if(MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
-		fdActorGet(ACTOR_REVEALED_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_REVEALED_PILLAR)->motionFlg = 0;
+		fdActorGet(ACTOR_REVEALED_PILLAR)->priorityFlags =
+			ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_REVEALED_PILLAR)->motionFlags = 0;
 		fdActorSetPos(ACTOR_REVEALED_PILLAR, 248, 712);
 		fdMapGridCopyMetatileAttributes(31, 95, 1, 1, 15, 44);
 		fdTreasureSpotSetPos(TREASURE_SPOT_PSYNERGY_STONE, -1, -1);
@@ -898,10 +900,10 @@ Sint32 scInit(void)
 	} else if(MainRoutineStateWork.next == SCENE_SUHALLA_DESERT_SOUTH) {
 		scSuhallaDesertSetUpSecondMapStorms();
 	} else {
-		sySndPlay(SE_STOP_ACTION_SE);
+		sySoundPlay(SE_STOP_ACTION_SE);
 	}
 	if(MainRoutineStateWork.entrance == ENTRANCE_DEFAULT) {
-		grid->flg &= ~DISPCNT_BG1_ON; /* no haze on a fresh arrival */
+		grid->flags &= ~DISPCNT_BG1_ON; /* no haze on a fresh arrival */
 	}
 	return 0;
 }
@@ -938,7 +940,7 @@ static void scSuhallaDesertSetUpFirstMapStorms(void)
 				actor->scaleX = toFIXED(1) / 32;
 				actor->scaleY = toFIXED(1) / 32;
 			}
-			actor->spr->flg = 0;
+			actor->sprite->flags = 0;
 		}
 	}
 	IO_WRITE_QUEUE_PUSH(
@@ -959,7 +961,7 @@ static void scSuhallaDesertSetUpFirstMapStorms(void)
 static void scSuhallaDesertSetUpSecondMapStorms(void)
 {
 	ACTOR *actor;
-	SPR	  *spr;
+	SPR	  *sprite;
 	Sint32 stormId;
 	Sint32 hazeWeight = 0;
 
@@ -980,21 +982,21 @@ static void scSuhallaDesertSetUpSecondMapStorms(void)
 				actor->scaleX = toFIXED(1) / 32;
 				actor->scaleY = toFIXED(1) / 32;
 			}
-			spr = actor->spr;
-			spr->flg = 0;
+			sprite = actor->sprite;
+			sprite->flags = 0;
 		}
 	}
 	actor = fdActorGet(ACTOR_FOURTH_SANDSTORM);
 	if(actor != NULL) {
 		SPR_ANIMATION *part;
 
-		spr = actor->spr;
-		part = spr->entries[0];
+		sprite = actor->sprite;
+		part = sprite->entries[0];
 		if(part != NULL) {
-			part->colMode = SPRITE_COLOR_RED_TINT;
+			part->colorMode = SPRITE_COLOR_RED_TINT;
 		}
-		spr->dirty = 1;
-		spr->flg = 0;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 	}
 	if(gmFlagGet(FLAG_SUHALLA_DESERT_SECOND_MAP_SANDSTORM_DOUSED + 4)) {
 		gmFlagSet(FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED);
@@ -1021,13 +1023,13 @@ const Sint32 *FieldEffectDurationScripts[] = {
 };
 
 Sint32 SuhallaDesertStormScript[] = {
-	SC_CALL(scSuhallaDesertClearActorSprAndCollisionFlags),
+	SC_CALL(scSuhallaDesertClearActorSpriteAndCollisionFlags),
 	SC_CALL(scSuhallaDesertFlickerStorm),
 	SC_END,
 };
 
 Sint32 SuhallaDesertFourthStormScript[] = {
-	SC_CALL(scSuhallaDesertClearActorSprAndCollisionFlags),
+	SC_CALL(scSuhallaDesertClearActorSpriteAndCollisionFlags),
 	SC_CALL(scSuhallaDesertFlickerStorm),
 	SC_END,
 };

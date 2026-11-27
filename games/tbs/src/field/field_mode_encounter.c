@@ -29,7 +29,7 @@ void fdEncounterSelectMapZones(Sint32 useRules)
 		for(; rule->sceneId != -1; rule++) {
 			if(rule->sceneId == sceneId &&
 				(rule->entrance == -1 || rule->entrance == entrance)) {
-				if(rule->flg == -1 || gmFlagGetStub(rule->flg) == 0) {
+				if(rule->flags == -1 || gmFlagGetStub(rule->flags) == 0) {
 					zone = rule->firstZone;
 					firstZoneOnGround = rule->firstZoneOnGround;
 					break;
@@ -70,7 +70,7 @@ Sint32 fdEncounterResolveWorldMapZoneAndBackdrop(void *pos)
 	for(; rule->region != -1; rule++) {
 		if(rule->region == region &&
 			(rule->environment == -1 || rule->environment == environment) &&
-			(rule->flg == -1 || gmFlagGetStub(rule->flg) == 0)) {
+			(rule->flags == -1 || gmFlagGetStub(rule->flags) == 0)) {
 			zone = rule->zone;
 			break;
 		}
@@ -236,7 +236,7 @@ Sint16 fdEncounterGetDjinnFormation(Sint32 djinni)
 #endif
 }
 
-/* Chooses the current scene's field music (MainRoutineStateWork.snd) from the
+/* Chooses the current scene's field music (MainRoutineStateWork.sound) from the
    first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
    when none does. */
 void fdChooseMusic(void)
@@ -253,7 +253,7 @@ void fdChooseMusic(void)
 				continue;
 			if(rule->entrance != -1 && rule->entrance != entrance)
 				continue;
-			if(rule->flg != -1 && gmFlagGetStub(rule->flg) == 0)
+			if(rule->flags != -1 && gmFlagGetStub(rule->flags) == 0)
 				continue;
 			music = rule->music;
 			break;
@@ -262,7 +262,7 @@ void fdChooseMusic(void)
 			continue;
 		if(rule->entrance != -1 && rule->entrance != entrance)
 			continue;
-		if(rule->flg != -1 && gmFlagGetStub(rule->flg) == 0)
+		if(rule->flags != -1 && gmFlagGetStub(rule->flags) == 0)
 			continue;
 		music = rule->music;
 		break;
@@ -283,14 +283,14 @@ Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance)
 		if(rule->useMapId) {
 			if(rule->id == sceneId) {
 				if(rule->entrance == -1 || rule->entrance == entrance) {
-					name = rule->areaNameIdx;
+					name = rule->areaNameIndex;
 					break;
 				}
 			}
 		} else {
 			if(rule->id == area) {
 				if(rule->entrance == -1 || rule->entrance == entrance) {
-					name = rule->areaNameIdx;
+					name = rule->areaNameIndex;
 					break;
 				}
 			}
@@ -330,17 +330,17 @@ Sint16 fdBattleBackgroundGetSelected(void)
    listed last before it, and a scene not listed takes the last one. */
 void fdBattleBackgroundSelectForMap(void)
 {
-	Sint32	tgt = MainRoutineStateWork.next;
-	Sint32 *tbl = SceneBattleBackgroundRules;
-	Sint32	entry = *tbl++;
+	Sint32	target = MainRoutineStateWork.next;
+	Sint32 *table = SceneBattleBackgroundRules;
+	Sint32	entry = *table++;
 	/* The first battle_background_rules.c word names a battle background. */
 	Sint32 backdrop;
 
-	while(entry != 0 && entry != tgt) {
+	while(entry != 0 && entry != target) {
 		if(entry & BATTLE_BACKGROUND_RULE) {
 			backdrop = entry & BATTLE_BACKGROUND_RULE_RESOURCE;
 		}
-		entry = *tbl++;
+		entry = *table++;
 	}
 	MainRoutineStateWork.battleBg = backdrop;
 }
@@ -382,7 +382,7 @@ void fdBattleBackgroundSelectForEnvironment(Sint32 environment)
 void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 {
 	Uint16		  key = ENCOUNTER_KEY(zone, slot);
-	const Uint16 *tbl = EncounterBattleMusic;
+	const Uint16 *table = EncounterBattleMusic;
 	/* EncounterBattleMusic opens with a music marker, so the loop assigns
 	   music before either stopping test holds. */
 	Uint16 music;
@@ -392,7 +392,7 @@ void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 		music = SOUND_KEEP_BGM;
 	} else {
 		for(;;) {
-			value = *tbl++;
+			value = *table++;
 			if(value == 0)
 				break;
 			if(value == key)

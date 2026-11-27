@@ -432,7 +432,7 @@ Sint32 scInit(void)
 	Sint32 turn;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next == SCENE_GAROH_ROOMS_HOUSES) {
@@ -447,28 +447,30 @@ Sint32 scInit(void)
 			fdActorSetPosAndFacing(
 				ACTOR_DISAPPOINTED_TRAVELER, toFIXED(306), toFIXED(335), turn);
 			{
-				Sint32 ang = FACING_SOUTHWEST;
+				Sint32 angle = FACING_SOUTHWEST;
 				FIXED  z = toFIXED(336);
 
-				fdActorSetHorizontalPosAndAngWithTerrain(
-					ACTOR_STUBBORN_TRAVELER, toFIXED(345), z, ang);
+				fdActorSetHorizontalPosAndAngleWithTerrain(
+					ACTOR_STUBBORN_TRAVELER, toFIXED(345), z, angle);
 			}
-			fdActorSetSprFlags(
+			fdActorSetSpriteFlags(
 				fdActorGetById(ACTOR_DISAPPOINTED_TRAVELERS_BED), 0);
-			fdActorSetSprFlags(fdActorGetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);
-			fdActorGetById(ACTOR_DISAPPOINTED_TRAVELER)->motionFlg = 0;
+			fdActorSetSpriteFlags(
+				fdActorGetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);
+			fdActorGetById(ACTOR_DISAPPOINTED_TRAVELER)->motionFlags = 0;
 			fdActorGetById(ACTOR_DISAPPOINTED_TRAVELER)->y.fixed = 0;
-			fdActorGetById(ACTOR_STUBBORN_TRAVELER)->motionFlg = 0;
+			fdActorGetById(ACTOR_STUBBORN_TRAVELER)->motionFlags = 0;
 			fdActorGetById(ACTOR_STUBBORN_TRAVELER)->y.fixed = 0;
-			fdActorGetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->motionFlg = 0;
+			fdActorGetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->motionFlags = 0;
 			fdActorGetById(ACTOR_DISAPPOINTED_TRAVELERS_BED)->y.fixed = 0;
-			fdActorGetById(ACTOR_STUBBORN_TRAVELERS_BED)->motionFlg = 0;
+			fdActorGetById(ACTOR_STUBBORN_TRAVELERS_BED)->motionFlags = 0;
 			fdActorGetById(ACTOR_STUBBORN_TRAVELERS_BED)->y.fixed = 0;
-			fdActorSetSprRotationById(
+			fdActorSetSpriteRotationById(
 				ACTOR_DISAPPOINTED_TRAVELER, DEGtoANG(315));
-			fdActorSetSprFlags(fdActorGetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
-			fdActorSetSprRotationById(ACTOR_STUBBORN_TRAVELER, turn);
-			fdActorSetSprFlags(fdActorGetById(ACTOR_STUBBORN_TRAVELER), 0);
+			fdActorSetSpriteFlags(
+				fdActorGetById(ACTOR_DISAPPOINTED_TRAVELER), 0);
+			fdActorSetSpriteRotationById(ACTOR_STUBBORN_TRAVELER, turn);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_STUBBORN_TRAVELER), 0);
 		}
 		if(MainRoutineStateWork.entrance == ENTRANCE_WAKE_AT_INN &&
 			!syGameFlagGet(FLAG_GAROH_SECRET_SHARED))
@@ -496,8 +498,8 @@ void scGarohRoomsWakeAtInn(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptWait(30);
-	fdActorSystemSuspendProjectionAndShowSprs();
-	sySndPlay(MUS_OVERNIGHT_AT_THE_INN);
+	fdActorSystemSuspendProjectionAndShowSprites();
+	sySoundPlay(MUS_OVERNIGHT_AT_THE_INN);
 	/* "Felix and party stayed the night at the inn." */
 	mnFieldMessageShowCentered(
 		(Sint32)MsgGarohRoomsAndPartyStayedTheNight, 0, 0);

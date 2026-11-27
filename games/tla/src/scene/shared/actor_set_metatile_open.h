@@ -8,16 +8,16 @@ typedef enum STAKE_KIND {
 /* A stake as its flag leaves it: driven down by Pound, its metatile is open
    ground and it is drawn underfoot, sunk to its top; still standing, its
    metatile is a wall. `kind` is its look (STAKE_KIND). */
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer)
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer)
 {
 	ACTOR		 *actor = fdActorGetById(id);
 	MAP_METATILE *metatile =
 		((MAP_STATE *)RamHeapSlots->mapGrid)->layers[layer].metatiles;
 
 	metatile += fdActorGetMetatileIndex(actor);
-	if(syGameFlagGet(flg)) {
+	if(syGameFlagGet(flag)) {
 		metatile->collisionCode = METATILE_BEHAVIOR_NORMAL;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		switch(kind) {
 		case STAKE_WOOD:
 			fdActorSelectAnimation(actor, 2);

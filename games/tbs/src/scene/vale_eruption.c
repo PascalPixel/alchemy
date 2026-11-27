@@ -152,7 +152,7 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdMapGridCenterOnFollowedPoint();
 	state = FieldStateWork;
 	state->transition = 0;
-	state->transitionFrm = 32;
+	state->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 
 	/* The camera pans up to the villagers as the ground shakes. */
@@ -161,14 +161,14 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdScriptWait(20);
 	fdMapGridSetShake(1, 2, 1);
 	fdWeatherLastLightning();
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdScriptWait(30);
 	fdWeatherLastLightning();
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdCameraWaitForArrival();
 	fdMapGridSetShake(2, 3, 1);
 	fdWeatherLastLightning();
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(60);
@@ -220,7 +220,7 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdScriptWait(60);
 	fdMapGridSetShake(2, 3, 1);
 	fdWeatherLastLightning();
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdScriptWait(60);
 	fdActorTurnToFaceEachOther(ACTOR_GREAT_HEALER, ACTOR_GARETS_GRANDFATHER, 0);
 	fdActorTurnToFaceEachOther(ACTOR_DORA, ACTOR_GARETS_SISTER, 0);
@@ -452,7 +452,7 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdActorWalkToAndWait(ACTOR_GREAT_HEALER, 255, 445);
 	fdScriptWait(40);
 	fdMapGridAnimateMetatiles(ValeEruptionSanctumDoorOpens, 45, 11);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdScriptWait(30);
 	fdActorWalkTo(ACTOR_GREAT_HEALER, 255, 390);
 	fdScriptWait(20);
@@ -478,11 +478,11 @@ static void scValeEruptionReturnFromMtAleph(void)
 	fdScriptWait(40);
 	fdMapGridSetShake(2, 3, 1);
 	fdWeatherLastLightning();
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdScriptWait(30);
 	state = FieldStateWork;
 	state->transition = 0;
-	state->transitionFrm = 64;
+	state->transitionFrame = 64;
 	fdScriptFinishScreenTransition();
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdMapGridWaitForShakeToSettle();

@@ -28,34 +28,34 @@ typedef struct SCRIPT_OPERANDS {
 	Uint32 scaleY;
 	Uint16 radius;
 	Uint8  unusedAfterRadius[2]; /* no code names them */
-	Uint32 velX;
-	Uint32 velY;
-	Uint32 velZ;
+	Uint32 velocityX;
+	Uint32 velocityY;
+	Uint32 velocityZ;
 	Uint32 speedLimit;
 	Uint32 acceleration;
-	Uint32 tgtX;
-	Uint32 tgtY;
-	Uint32 tgtZ;
+	Uint32 targetX;
+	Uint32 targetY;
+	Uint32 targetZ;
 	Uint32 bounce;
 	Uint32 gravity;
 	Uint32 sceneWord;
-	Uint32 spr;
-	Uint8  sprStorageKind; /* ACTOR.sprStorageKind */
-	Uint8  motionFlg;
+	Uint32 sprite;
+	Uint8  spriteStorageKind; /* ACTOR.spriteStorageKind */
+	Uint8  motionFlags;
 	Uint8  arrivalAxis;
 	Uint8  conditionResult; /* the last test; every compare sets it */
-	Uint8  snapToTgt;
-	Uint8  collisionFlg;
-	Uint8  steeringFlg;
+	Uint8  snapToTarget;
+	Uint8  collisionFlags;
+	Uint8  steeringFlags;
 	Uint8  paused;
-	Uint8  retainSprCache;
-	Uint8  repeatCnt; /* the SC_LOOP count */
-	Sint16 wait;	  /* SC_WAIT's ticks left */
-	Uint8  refused;	  /* ACTOR.refused, the blocked ticks */
+	Uint8  retainSpriteCache;
+	Uint8  repeatCount; /* the SC_LOOP count */
+	Sint16 wait;		/* SC_WAIT's ticks left */
+	Uint8  refused;		/* ACTOR.refused, the blocked ticks */
 	Uint8  frozen;
-	Uint8  sceneCnt;
+	Uint8  sceneCount;
 	Uint8  sceneByte;
-	Sint16 tmr;
+	Sint16 timer;
 	Sint16 userValue;
 	Uint32 watchedActor;
 	Uint32 update;
@@ -64,12 +64,12 @@ typedef struct SCRIPT_OPERANDS {
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, script) == 0);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, cursor) == 4);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, facing) == 6);
-STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, sprStorageKind) == 84);
-STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, repeatCnt) == 93);
+STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, spriteStorageKind) == 84);
+STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, repeatCount) == 93);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, refused) == 96);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, conditionResult) == 87);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, wait) == 94);
-STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, tmr) == 100);
+STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, timer) == 100);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, watchedActor) == 104);
 STATIC_ASSERT(offsetof(SCRIPT_OPERANDS, update) == 108);
 STATIC_ASSERT(sizeof(SCRIPT_OPERANDS) == 112);
@@ -127,9 +127,9 @@ void fdActorScriptSetOrCompareTerrainHeight(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
 void fdActorScriptSetOrCompareSceneWord(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
-void fdActorScriptSetOrCompareSpr(
+void fdActorScriptSetOrCompareSprite(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
-void fdActorScriptSetOrCompareSprStorageKind(
+void fdActorScriptSetOrCompareSpriteStorageKind(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
 void fdActorScriptSetOrCompareMotionFlags(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
@@ -163,7 +163,7 @@ void fdActorScriptSetOrCompareSceneByte(
 	SCRIPT_OPERANDS *operands, Sint32 operation, Sint32 value);
 
 Sint32 fdActorScriptGoto(struct ACTOR *interpreter);
-Sint32 fdActorScriptHideSprs(struct ACTOR *interpreter);
-Sint32 fdActorScriptShowSpr(struct ACTOR *interpreter);
+Sint32 fdActorScriptHideSprites(struct ACTOR *interpreter);
+Sint32 fdActorScriptShowSprite(struct ACTOR *interpreter);
 
 #endif

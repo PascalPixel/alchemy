@@ -219,8 +219,8 @@ static void scLaliveroEnterDoor(void)
 	Sint32 x = LaliveroDoorMetatiles[door][0];
 	Sint32 y = LaliveroDoorMetatiles[door][1];
 
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = ACTOR_FALLS;
-	sySndPlay(SE_DOOR_OPEN);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = ACTOR_FALLS;
+	sySoundPlay(SE_DOOR_OPEN);
 	if(door == METATILE_BEHAVIOR_LALIVERO_SANCTUM_GATE) {
 		fdMapGridAnimateMetatiles(LaliveroGateOpenSteps, (Uint16)x, (Uint16)y);
 		fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -16);
@@ -229,7 +229,7 @@ static void scLaliveroEnterDoor(void)
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	}
 	fdScriptWait(10);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(door);
 }
 
@@ -242,7 +242,7 @@ static void scLaliveroEnterDoorway(void)
 	Sint16		*cue = (Sint16 *)&state->stepCue;
 	Sint32		 exit = *cue;
 
-	state->transitionFrm = MAP_TRANSITION_TICKS;
+	state->transitionFrame = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exit);
 }
 
@@ -534,14 +534,14 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	/* Iodem comes out: the door opens (metatiles 34, 0 drawn at 4, 18) and
 	   closes behind him (metatiles 32, 0). */
 	fdActorSetSpeed(ACTOR_IODEM, 0.8);
-	fdActorGet(ACTOR_IODEM)->motionFlg = ACTOR_FALLS;
-	fdActorSetSprPriority(ACTOR_IODEM, 2);
+	fdActorGet(ACTOR_IODEM)->motionFlags = ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_IODEM, 2);
 	fdMapGridCopyMetatilesLayered(34, 0, 1, 2, 4, 18);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_IODEM, 72, 312);
 #if IODEM_DOOR_WALK_RESET
-	fdActorGet(ACTOR_IODEM)->tgtZ = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_IODEM)->targetZ = ACTOR_NO_TARGET;
 	fdActorSetPos(ACTOR_IODEM, 72, 312);
 #endif
 	fdScriptWait(20);
@@ -552,7 +552,7 @@ static void scLaliveroIodemGivesBlackOrb(void)
 #endif
 	/* The door shuts. */
 	fdMapGridCopyMetatilesLayered(32, 0, 1, 2, 4, 18);
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	fdScriptWait(20);
 	/* "Thank you for waiting for me." */
 	fdScriptShowMessage(ACTOR_IODEM, 0);
@@ -708,9 +708,9 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	FieldStateWork->msg += 1;
 	gmPartyGiveItem(ITEM_BLACK_ORB, 0);
 	fdScriptWait(10);
-	fdActorGet(ACTOR_IODEM)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_IODEM, 0, -16);
-	fdActorGet(ACTOR_IODEM)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IODEM)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_IODEM, FACING_SOUTH + TRIG_TURN / 256, 0);
 	fdScriptWait(30);
 	fdScriptWait(10);
@@ -736,14 +736,14 @@ static void scLaliveroIodemGivesBlackOrb(void)
 	fdActorFaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
 	fdScriptWait(20);
 	fdMapGridCopyMetatilesLayered(34, 0, 1, 2, 4, 18);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdScriptWait(10);
 	fdActorWalkByAndWait(ACTOR_IODEM, 0, -16);
 	fdActorSetPos(ACTOR_IODEM, 0, 0);
 	fdScriptWait(10);
 	/* The door shuts. */
 	fdMapGridCopyMetatilesLayered(32, 0, 1, 2, 4, 18);
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	fdScriptWait(50);
 	/* The others are eager to sail, then walk back into the leader. */
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -880,7 +880,7 @@ const CUE *scGetCues(void)
 Sint32 scInit(void)
 {
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *icon;
 
 	/* Coming back from the lighthouse switches the town to its later state. */
@@ -893,40 +893,40 @@ Sint32 scInit(void)
 		gmFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
 	}
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 
 	/* The three plants stand half grown and block nothing. */
 	fdActorSetAnimation(ACTOR_FIRST_PLANT, SPROUT_ANIMATION_HALF_GROWN);
-	fdActorGet(ACTOR_FIRST_PLANT)->collisionFlg = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_PLANT), 0);
+	fdActorGet(ACTOR_FIRST_PLANT)->collisionFlags = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_PLANT), 0);
 	fdActorSetAnimation(ACTOR_FIRST_PLANT + 1, SPROUT_ANIMATION_HALF_GROWN);
-	fdActorGet(ACTOR_FIRST_PLANT + 1)->collisionFlg = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_PLANT + 1), 0);
+	fdActorGet(ACTOR_FIRST_PLANT + 1)->collisionFlags = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_PLANT + 1), 0);
 	fdActorSetAnimation(ACTOR_FIRST_PLANT + 2, SPROUT_ANIMATION_HALF_GROWN);
-	fdActorGet(ACTOR_FIRST_PLANT + 2)->collisionFlg = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_PLANT + 2), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLACK_ORB), 0);
+	fdActorGet(ACTOR_FIRST_PLANT + 2)->collisionFlags = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_PLANT + 2), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLACK_ORB), 0);
 
 	/* The Black Orb Iodem hands over is drawn from its item icon, floating 10
 	   pixels up. */
 	actor = fdActorGet(ACTOR_BLACK_ORB);
-	actor->retainSprCache = 1;
-	actor->motionFlg = 0;
-	spr = actor->spr;
+	actor->retainSpriteCache = 1;
+	actor->motionFlags = 0;
+	sprite = actor->sprite;
 	actor->y.fixed = toFIXED(10);
-	spr->cnt = 0;
-	spr->image.fullCol = 0;
-	spr->image.pal = 0;
-	icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	sprite->count = 0;
+	sprite->image.fullColor = 0;
+	sprite->image.palette = 0;
+	icon = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItem(ITEM_BLACK_ORB);
-	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, icon->tiles);
+	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 
 	if(gmFlagGet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
 		/* A sign now stands at the north exit, and the three open metatiles of
 		   the gap in the north wall become wall, closing the way north. */
-		fdActorSetSprFlags(fdActorGet(ACTOR_NORTH_EXIT_SIGN), 0);
-		fdActorGet(ACTOR_NORTH_EXIT_SIGN)->collisionFlg = 0;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_NORTH_EXIT_SIGN), 0);
+		fdActorGet(ACTOR_NORTH_EXIT_SIGN)->collisionFlags = 0;
 		fdMapGridCopyMetatileAttributes(
 			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 14, 4);
 		fdMapGridCopyMetatileAttributes(
@@ -943,15 +943,15 @@ Sint32 scInit(void)
 		   the town's 32 columns, where the camera never goes, and changes
 		   nothing. */
 		actor = fdActorGet(ACTOR_WEST_SOLDIER);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->spr->flg = 0;
-		actor->spr->rotation = FACING_NORTH;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->sprite->flags = 0;
+		actor->sprite->rotation = FACING_NORTH;
 		actor = fdActorGet(ACTOR_EAST_SOLDIER);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->spr->flg = 0;
-		actor->spr->rotation = FACING_SOUTH;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->sprite->flags = 0;
+		actor->sprite->rotation = FACING_SOUTH;
 		fdMapGridCopyMetatileAttributes(
 			WALL_METATILE_X, WALL_METATILE_Y, 1, 1, 13, 23);
 		fdMapGridCopyMetatileAttributes(

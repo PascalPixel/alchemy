@@ -114,15 +114,15 @@ void scStaffCreditBlendBeacon(void)
 
 /* Adds a red, green and blue step to each colour of a palette, clamped to 0 to
    31. */
-void scStaffCreditStepPaletteCols(
-	Uint16 *cols, Sint32 cnt, Sint32 red, Sint32 green, Sint32 blue)
+void scStaffCreditStepPaletteColors(
+	Uint16 *colors, Sint32 count, Sint32 red, Sint32 green, Sint32 blue)
 {
 	Sint32 i;
 
-	for(i = 0; i != cnt; i++) {
-		Sint32 r = RGB_RED(*cols) + red;
-		Sint32 g = RGB_GREEN(*cols) + green;
-		Sint32 b = RGB_BLUE(*cols) + blue;
+	for(i = 0; i != count; i++) {
+		Sint32 r = RGB_RED(*colors) + red;
+		Sint32 g = RGB_GREEN(*colors) + green;
+		Sint32 b = RGB_BLUE(*colors) + blue;
 
 		if(r > RGB_LEVEL_MAX)
 			r = RGB_LEVEL_MAX;
@@ -136,13 +136,13 @@ void scStaffCreditStepPaletteCols(
 			b = RGB_LEVEL_MAX;
 		if(b < 0)
 			b = 0;
-		*cols++ = RGB(r, g, b);
+		*colors++ = RGB(r, g, b);
 	}
 }
 
 /* Draws the beacon's glow as rings of light about a corner, brightest at the
    middle. */
-void scStaffCreditDrawGlowRings(Uint8 *grid, Sint32 cnt, Sint32 scale)
+void scStaffCreditDrawGlowRings(Uint8 *grid, Sint32 count, Sint32 scale)
 {
 	Sint32 i = 0;
 	/* The corner the rings are centred on. */
@@ -150,11 +150,11 @@ void scStaffCreditDrawGlowRings(Uint8 *grid, Sint32 cnt, Sint32 scale)
 	Sint32 cornerRow = GLOW_GRID_SIZE - 1;
 
 	syWordsFill(grid, GLOW_GRID_SIZE * GLOW_GRID_SIZE, PIXELS_8BPP(1));
-	if(cnt == 1)
+	if(count == 1)
 		return;
 	do {
 		Sint32 y = 0;
-		Sint32 last = cnt - 1;
+		Sint32 last = count - 1;
 		Sint32 level;
 		Sint32 x = i;
 		Sint32 error = i;
@@ -188,7 +188,7 @@ void scStaffCreditDrawGlowRings(Uint8 *grid, Sint32 cnt, Sint32 scale)
 			}
 		}
 		i++;
-	} while(i != cnt - 1);
+	} while(i != count - 1);
 }
 
 extern Sint16 StaffCreditFlightStarts[][2];
@@ -229,7 +229,7 @@ void scStaffCreditShowBeacon(Sint32 stage)
 	Sint32			x;
 	Sint32			y;
 	Sint32			i;
-	Sint32			frm;
+	Sint32			frame;
 
 	fdActorSetPos(ACTOR_BEACON, 0, 0);
 	StaffCreditBlendSteady = 0;
@@ -237,8 +237,8 @@ void scStaffCreditShowBeacon(Sint32 stage)
 	fdScriptClearFlag(FLAG_KEEP_PARTY_POSITION);
 	FieldStateWork->transition = 0;
 	palette = stage;
-	buf = syHeapAllocEWRAM(BEACON_BUFFER_SIZE);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_BEACON), 0);
+	buf = syHeapAllocateEWRAM(BEACON_BUFFER_SIZE);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_BEACON), 0);
 	if(stage == BEACON_BEAMS_MEET)
 		palette = 0;
 	BgScrollWork[0].y = 0;
@@ -252,20 +252,20 @@ void scStaffCreditShowBeacon(Sint32 stage)
 	syWordsClearEntry(
 		(void *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0), PALETTE_COLORS * 2);
 	sySynch(1);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
-	FieldStateWork->transitionFrm = 64;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
+	FieldStateWork->transitionFrame = 64;
 	fdScriptStartScreenTransition();
 	fdCameraMoveToFX(toFIXED(StaffCreditFlightEnds[stage][0]), CAMERA_KEEP,
 		toFIXED(StaffCreditFlightEnds[stage][1]), 1);
-	for(frm = 0; frm != StaffCreditFlightTicks[stage]; frm++) {
+	for(frame = 0; frame != StaffCreditFlightTicks[stage]; frame++) {
 		{
 			Sint32 length = StaffCreditFlightTicks[stage];
 
-			map->yaw = (length - frm) * FLIGHT_TURN_STEP;
-			if(frm == length - 59)
+			map->yaw = (length - frame) * FLIGHT_TURN_STEP;
+			if(frame == length - 59)
 				syFieldWorldMapStartZoom(StaffCreditEndZooms[stage], 60);
 		}
-		if(frm >= StaffCreditFlightTicks[stage] - 64) {
+		if(frame >= StaffCreditFlightTicks[stage] - 64) {
 			Uint16 *turn = &map->pitch;
 			Uint8  *step = StaffCreditFlightTurns + 1;
 
@@ -323,12 +323,12 @@ void scStaffCreditShowBeacon(Sint32 stage)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	sySetEvent(scStaffCreditBlendBeacon, EVENT_PASS_TICK);
-	fdScriptPlaySnd(SE_GLITTER);
-	for(frm = 0; frm != 172; frm++) {
-		if(frm == 0) {
+	fdScriptPlaySound(SE_GLITTER);
+	for(frame = 0; frame != 172; frame++) {
+		if(frame == 0) {
 			if(stage == BEACON_BEAMS_MEET) {
 				BgScrollWork[0].x = 8;
-				BgScrollWork[0].y = frm;
+				BgScrollWork[0].y = frame;
 				IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
 					(Uint32)StaffCreditBeamsPalette,
 					DMA_COPY_HALFWORDS(PALETTE_COLORS));
@@ -351,30 +351,30 @@ void scStaffCreditShowBeacon(Sint32 stage)
 				Sint16 *flightEnds = (Sint16 *)StaffCreditFlightEnds;
 				Sint32	endX;
 				Sint32	endZ;
-				FIXED	ofsZ;
-				FIXED	ofsX;
+				FIXED	offsetZ;
+				FIXED	offsetX;
 				endX = flightEnds[BEACON_BEAMS_MEET * 2];
 				endZ = flightEnds[BEACON_BEAMS_MEET * 2 + 1];
-				ofsZ = toFIXED(BEAM_MEET_OFFSET_Z);
-				ofsX = toFIXED(BEAM_MEET_OFFSET_X);
+				offsetZ = toFIXED(BEAM_MEET_OFFSET_Z);
+				offsetX = toFIXED(BEAM_MEET_OFFSET_X);
 
-				fdActorSetPosFX(
-					ACTOR_BEACON, toFIXED(endX) + ofsX, toFIXED(endZ) + ofsZ);
+				fdActorSetPosFX(ACTOR_BEACON, toFIXED(endX) + offsetX,
+					toFIXED(endZ) + offsetZ);
 			}
 			fdActorSetBlendMode(fdActorGetById(ACTOR_BEACON), 1);
 			fdActorSetAnimation(ACTOR_BEACON, 0);
 			fdActorGetById(ACTOR_BEACON)->scaleX = 0;
 			fdActorGetById(ACTOR_BEACON)->scaleY = 0;
-			if(frm > 22) {
-				Sint32 scale = (frm - 21) * (toFIXED(1) / 64);
+			if(frame > 22) {
+				Sint32 scale = (frame - 21) * (toFIXED(1) / 64);
 
 				if(scale > toFIXED(1))
 					scale = toFIXED(1);
 				fdActorGetById(ACTOR_BEACON)->scaleX = scale;
 				fdActorGetById(ACTOR_BEACON)->scaleY = scale;
 			}
-			if(frm <= 31) {
-				Sint32 step = frm / 4;
+			if(frame <= 31) {
+				Sint32 step = frame / 4;
 
 				if(step <= 6)
 					IO_WRITE_QUEUE_PUSH(PICTURE_MAP,
@@ -382,62 +382,62 @@ void scStaffCreditShowBeacon(Sint32 stage)
 						DMA_COPY_WORDS(PICTURE_MAP_BYTES / 4));
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 10);
 			}
-			if(frm == 32) {
+			if(frame == 32) {
 				StaffCreditBlendSteady = 1;
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 10);
 			}
-			if(frm == 36)
+			if(frame == 36)
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 11);
-			if(frm == 40)
+			if(frame == 40)
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 12);
-			if(frm == 44)
+			if(frame == 44)
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 13);
-			if(frm == 48)
+			if(frame == 48)
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 14);
-			if(frm == 52)
+			if(frame == 52)
 				StaffCreditBlendLevel = BLEND_ALPHA(0, 15);
-			if(frm == 56)
+			if(frame == 56)
 				StaffCreditBlendLevel = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
-			if(frm == 70)
+			if(frame == 70)
 				IO_WRITE_QUEUE_PUSH(PICTURE_MAP,
 					(Uint32)(buf + BEACON_MAPS + 7 * PICTURE_MAP_BYTES),
 					DMA_COPY_WORDS(PICTURE_MAP_BYTES / 4));
-			if(frm == 72)
+			if(frame == 72)
 				IO_WRITE_QUEUE_PUSH(PICTURE_MAP,
 					(Uint32)(buf + BEACON_MAPS + 8 * PICTURE_MAP_BYTES),
 					DMA_COPY_WORDS(PICTURE_MAP_BYTES / 4));
-			if(frm == 74)
+			if(frame == 74)
 				IO_WRITE_QUEUE_PUSH(PICTURE_MAP,
 					(Uint32)(buf + BEACON_MAPS + 9 * PICTURE_MAP_BYTES),
 					DMA_COPY_WORDS(PICTURE_MAP_BYTES / 4));
-			if(frm == 76)
+			if(frame == 76)
 				IO_WRITE_QUEUE_PUSH(PICTURE_MAP,
 					(Uint32)(buf + BEACON_MAPS + 10 * PICTURE_MAP_BYTES),
 					DMA_COPY_WORDS(PICTURE_MAP_BYTES / 4));
-			if(frm > 153) {
+			if(frame > 153) {
 				StaffCreditBlendLevel = 0;
-				scStaffCreditStepPaletteCols(
+				scStaffCreditStepPaletteColors(
 					(Uint16 *)&BG_PLTT_COLOR(0, 0), 256, -2, -2, -2);
-				scStaffCreditStepPaletteCols(
+				scStaffCreditStepPaletteColors(
 					(Uint16 *)&OBJ_PLTT_COLOR(0, 0), 256, -2, -2, -2);
-			} else if(frm > 79 && (frm & 1)) {
-				scStaffCreditStepPaletteCols(
+			} else if(frame > 79 && (frame & 1)) {
+				scStaffCreditStepPaletteColors(
 					(Uint16 *)&BG_PLTT_COLOR(0, 0), 256, 1, 1, 1);
-				scStaffCreditStepPaletteCols(
+				scStaffCreditStepPaletteColors(
 					(Uint16 *)&OBJ_PLTT_COLOR(0, 0), 256, 1, 1, 1);
 			}
-		} else if(frm >= 0) {
+		} else if(frame >= 0) {
 			grid = buf + BEACON_MAPS;
 
-			if(frm + 8 <= 63) {
-				Sint32 ofs = 0;
+			if(frame + 8 <= 63) {
+				Sint32 offset = 0;
 				Sint32 by, bx, row;
 				Sint32 rowBase;
 				Sint32 base;
 				Uint8 *out;
 				Uint8 *fill;
 
-				scStaffCreditDrawGlowRings(grid, frm + 8, toFIXED(1));
+				scStaffCreditDrawGlowRings(grid, frame + 8, toFIXED(1));
 				/* The 64-pixel grid into tiles, one row of tiles at a time
 				   (by): eight blank tiles, then the row's eight tiles of the
 				   glow (bx), each eight lines of four bytes, two pixels to a
@@ -447,11 +447,11 @@ void scStaffCreditShowBeacon(Sint32 stage)
 				goto blockRowTest;
 			blockRow:
 				bx = 0;
-				fill = (Uint8 *)ofs + (Sint32)buf;
+				fill = (Uint8 *)offset + (Sint32)buf;
 				do {
 					*fill = GLOW_BLANK_PAIR;
 					bx++;
-					ofs++;
+					offset++;
 					fill++;
 				} while(bx != 8 * TILE_SIZE_4BPP);
 				bx = 0;
@@ -462,14 +462,14 @@ void scStaffCreditShowBeacon(Sint32 stage)
 				i = 0;
 				do {
 					x = 0;
-					out = (Uint8 *)ofs + (Sint32)buf;
+					out = (Uint8 *)offset + (Sint32)buf;
 					do {
 						Uint8 *pair = grid + (x * 2 + (base + i));
 
 						x++;
 						*out = pair[1] << 4;
 						*out |= pair[0];
-						ofs++;
+						offset++;
 						out++;
 					} while(x != 4);
 					row++;
@@ -491,20 +491,20 @@ void scStaffCreditShowBeacon(Sint32 stage)
 		}
 		if(stage != BEACON_BEAMS_MEET) {
 			Uint16 *alpha = &StaffCreditBlendLevel;
-			Uint32	scrollTicks = frm - 32;
+			Uint32	scrollTicks = frame - 32;
 
 			/* DEAD: the fade-in's level, at once overwritten with full
 			   strength; the ROM keeps the table read and its store. */
-			*alpha = frm <= 6 ? StaffCreditGlowFadeIn[frm % 6]
-							  : BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+			*alpha = frame <= 6 ? StaffCreditGlowFadeIn[frame % 6]
+								: BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
 			StaffCreditBlendLevel = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
-			if(frm == 138)
+			if(frame == 138)
 				StaffCreditBlendSteady = 1;
-			if(frm > 64 && (frm & 1))
-				scStaffCreditStepPaletteCols(
+			if(frame > 64 && (frame & 1))
+				scStaffCreditStepPaletteColors(
 					(Uint16 *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0), 16, 1, 1, 1);
-			if(frm > 140)
-				scStaffCreditStepPaletteCols(
+			if(frame > 140)
+				scStaffCreditStepPaletteColors(
 					(Uint16 *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0), 16, -2, -2,
 					-2);
 			if(scrollTicks <= 95)
@@ -519,13 +519,13 @@ void scStaffCreditShowBeacon(Sint32 stage)
 		fdCameraMoveToFX(toFIXED(StaffCreditFlightReturns[stage][0]),
 			CAMERA_KEEP, toFIXED(StaffCreditFlightReturns[stage][1]), 1);
 		syFieldWorldMapStartZoom(toFIXED(7) / 10, 60);
-		for(frm = 0; frm != 124;) {
+		for(frame = 0; frame != 124;) {
 			map->yaw -= FLIGHT_TURN_STEP;
-			if(frm == 60) {
-				FieldStateWork->transitionFrm = 64;
+			if(frame == 60) {
+				FieldStateWork->transitionFrame = 64;
 				fdScriptFinishScreenTransition();
 			}
-			frm++;
+			frame++;
 			sySynch(1);
 		}
 		fdScriptWaitTransitionTicks();
@@ -570,7 +570,7 @@ Sint32 scInit(void)
 	fdScriptSetFlag(FLAG_RETREAT_BLOCKED);
 	state = RamHeapSlots->fieldState;
 	state->transition = 0;
-	state->transitionFrm = 16;
+	state->transitionFrame = 16;
 	syWait(1);
 	fdCameraSetSpeed(8);
 	fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
@@ -632,9 +632,9 @@ Sint32 scPrepareMap(void)
 void scStaffCreditFlashPoweringUp(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scWorldMapSpawnSparkPair(actor);
@@ -648,7 +648,7 @@ extern Sint32 StaffCreditGlowColorStep;
 void scStaffCreditGlowInFlight(ACTOR *actor)
 {
 	if(TickCount & 1) {
-		fdActorSetSprColMode(
+		fdActorSetSpriteColorMode(
 			actor, StaffCreditGlowColorModes[StaffCreditGlowColorStep]);
 		StaffCreditGlowColorStep = (StaffCreditGlowColorStep + 1) & 3;
 	}
@@ -662,13 +662,13 @@ void scActorSetFlightMode(ACTOR *actor, Sint32 mode)
 {
 	if(mode == SHIP_LANDED) {
 		actor->update = 0;
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
-		fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
+		fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	} else if(mode == SHIP_POWERING_UP) {
 		actor->update = (OBJECT_UPDATE)scStaffCreditFlashPoweringUp;
 	} else {
 		actor->update = (OBJECT_UPDATE)scStaffCreditGlowInFlight;
-		fdScriptPlaySnd(SE_TAKE_FLIGHT);
+		fdScriptPlaySound(SE_TAKE_FLIGHT);
 	}
 }
 
@@ -707,16 +707,16 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 	syWait(1);
 	fdScriptClearFlag(FLAG_KEEP_PARTY_POSITION);
 	FieldStateWork->transition = 0;
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
-	FieldStateWork->transitionFrm = 16;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
+	FieldStateWork->transitionFrame = 16;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	if(mode == 2) {
 		fdMapGridSetShake(2, 3, 1);
-		fdScriptPlaySnd(SE_RUMBLE);
+		fdScriptPlaySound(SE_RUMBLE);
 	}
 	fdWorldMapFreeze();
-	buf = syHeapAllocEWRAM(16384);
+	buf = syHeapAllocateEWRAM(16384);
 	syDecompressTaggedLZ(WorldMapPackedTiles, buf);
 	syDecompressTaggedLZ(
 		WorldMapPackedPictures, buf + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
@@ -726,15 +726,15 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 	{
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork;
 		Uint32			saved;
-		Sint32			cnt;
+		Sint32			count;
 
 		IRQ_LOCK(saved);
-		cnt = q->cnt;
-		if(cnt < (Sint32)ARRAY_COUNT(q->entries)) {
-			Uint32 *entry = q->entries[cnt];
+		count = q->count;
+		if(count < (Sint32)ARRAY_COUNT(q->entries)) {
+			Uint32 *entry = q->entries[count];
 
 			*entry++ = (Uint32)buf;
-			q->cnt = cnt + 1;
+			q->count = count + 1;
 			*entry++ = PICTURE_TILES;
 			*entry = DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4);
 		}
@@ -743,7 +743,7 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 	sySetTickEvent(scStaffCreditUpdateTransitionBlend, EVENT_PASS_TICK);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_GLITTER);
+	fdScriptPlaySound(SE_GLITTER);
 	StaffCreditTransitionBlend = BLEND_ALPHA(0, 14);
 	PUSH_PICTURE(6);
 	syFieldScriptWait(2);
@@ -784,7 +784,7 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 	PUSH_PICTURE(7);
 	if(mode == 1) {
 		fdMapGridSetShake(2, 2, 1);
-		fdScriptPlaySnd(SE_RUMBLE);
+		fdScriptPlaySound(SE_RUMBLE);
 		StaffCreditTransitionBlend = BLEND_ALPHA(0, 13);
 		syFieldScriptWait(4);
 		StaffCreditTransitionBlend = BLEND_ALPHA(0, 14);
@@ -820,9 +820,9 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 UNUSED void scStaffCreditFlashWithSparks(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scStaffCreditSpawnGrowingPair(actor);
@@ -833,10 +833,10 @@ UNUSED void scStaffCreditFlashWithSparks(ACTOR *actor)
    sixteenth tick. */
 void scActorAnimateAndEmit(ACTOR *actor)
 {
-	Uint32 frm = TickCount;
+	Uint32 frame = TickCount;
 
-	if(frm & 1)
-		fdActorSetSprColMode(actor, (frm >> 1) % 6);
+	if(frame & 1)
+		fdActorSetSpriteColorMode(actor, (frame >> 1) % 6);
 	if((TickCount & 15) == 0)
 		scStaffCreditSpawnGrowingPair(actor);
 }
@@ -852,8 +852,8 @@ void scStaffCreditSpawnGrowingPair(ACTOR *parent)
 {
 	ACTOR				*pair[2];
 	ACTOR				*child;
-	SPR					*spr;
-	LINKED_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	SPR					*sprite;
+	LINKED_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	Sint32				 i;
 
 	for(i = 0; i < 2; i++) {
@@ -862,40 +862,40 @@ void scStaffCreditSpawnGrowingPair(ACTOR *parent)
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			spr = child->spr;
-			child->motionFlg = 0;
-			child->tmr = 0;
+			sprite = child->sprite;
+			child->motionFlags = 0;
+			child->timer = 0;
 			child->watchedActor = (union FIELD_OBJECT *)parent;
-			if(spr != NULL) {
-				fdSprStartAnimation(spr, 0);
-				spr->flg = 0;
-				syVRAMCacheFreeEntry(spr->slot);
-				spr->slot = state->vramBlock;
-				spr->retainCacheEntry = 1;
-				spr->image.tile =
-					VramCacheEntries[spr->slot].ofs / TILE_SIZE_4BPP &
+			if(sprite != NULL) {
+				fdSpriteStartAnimation(sprite, 0);
+				sprite->flags = 0;
+				syVRAMCacheFreeEntry(sprite->slot);
+				sprite->slot = state->vramBlock;
+				sprite->retainCacheEntry = 1;
+				sprite->image.tile =
+					VramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP &
 					OBJ_TILE_MASK;
-				spr->image.fullCol = 0;
-				spr->image.shape = 1;
-				spr->image.size = 2;
-				spr->entries[0]->picture = 0;
+				sprite->image.fullColor = 0;
+				sprite->image.shape = 1;
+				sprite->image.size = 2;
+				sprite->entries[0]->picture = 0;
 			}
 		}
 	}
 	{
 		ACTOR	  *p = pair[0];
-		FIELD_SPR *sp = p->spr;
+		FIELD_SPR *sp = p->sprite;
 
 		p->update = (void *)scActorGrowDown;
-		sp->pri = 1;
+		sp->priority = 1;
 	}
 	{
 		ACTOR	  *p = pair[1];
-		FIELD_SPR *sp = p->spr;
+		FIELD_SPR *sp = p->sprite;
 
-		sp->pri = 1;
+		sp->priority = 1;
 		p->update = (void *)scActorGrowUp;
-		p->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		p->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 
@@ -1077,7 +1077,7 @@ LATE_DATA Sint8 StaffCreditGlowPositions[][2] = {
 };
 
 LATE_DATA Sint32 WorldMapPlacedActorScript[] = {
-	SC_CALL(scTileSprReset),
+	SC_CALL(scTileSpriteReset),
 	SC_END,
 	0,
 };

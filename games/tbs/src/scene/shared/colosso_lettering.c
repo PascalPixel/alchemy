@@ -54,7 +54,7 @@ static void scColossoShowOpeningLettering(Sint32 match)
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		fdScriptWait(30);
-		sySndPlay(MUS_LEVEL_UP);
+		sySoundPlay(MUS_LEVEL_UP);
 		scColossoLoadLettering(COLOSSO_PICTURE_LEND_A_HAND);
 		scColossoStartLettering(COLOSSO_SHAPE_TITLE, 0);
 		fdScriptWait(120);
@@ -62,7 +62,7 @@ static void scColossoShowOpeningLettering(Sint32 match)
 		return;
 	}
 
-	sySndPlay(SE_COLOSSO_LETTERING);
+	sySoundPlay(SE_COLOSSO_LETTERING);
 	fdScriptStart();
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -70,28 +70,28 @@ static void scColossoShowOpeningLettering(Sint32 match)
 	fdScriptWait(30);
 	/* The 1st to 3rd Match play MUS_LUCKY, MUS_VERY_LUCKY and
 	   MUS_SUPER_LUCKY. */
-	sySndPlay(match + (MUS_LUCKY - COLOSSO_PICTURE_MATCH_TITLE_FIRST));
+	sySoundPlay(match + (MUS_LUCKY - COLOSSO_PICTURE_MATCH_TITLE_FIRST));
 	scColossoLoadLettering(match);
 	scColossoStartLettering(COLOSSO_SHAPE_TITLE, 0);
 	fdScriptWait(120);
-	while(sySndGetBGMRestoreDelay() != 0) {
+	while(sySoundGetBGMRestoreDelay() != 0) {
 		sySynch(1);
 	}
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	scColossoLoadLettering(COLOSSO_PICTURE_COUNTDOWN_START);
 	scColossoStartLettering(COLOSSO_SHAPE_DIGIT, 0);
-	sySndPlay(SE_COLOSSO_COUNTDOWN);
+	sySoundPlay(SE_COLOSSO_COUNTDOWN);
 	fdScriptWait(60);
 	scColossoStartLettering(COLOSSO_SHAPE_DIGIT, 1);
-	sySndPlay(SE_COLOSSO_COUNTDOWN);
+	sySoundPlay(SE_COLOSSO_COUNTDOWN);
 	fdScriptWait(60);
 	scColossoLoadLettering(COLOSSO_PICTURE_COUNTDOWN_END);
 	scColossoStartLettering(COLOSSO_SHAPE_DIGIT, 0);
-	sySndPlay(SE_COLOSSO_COUNTDOWN);
+	sySoundPlay(SE_COLOSSO_COUNTDOWN);
 	fdScriptWait(60);
 	scColossoLoadLettering(COLOSSO_PICTURE_GO);
 	scColossoStartLettering(COLOSSO_SHAPE_GO, 0);
-	sySndPlay(SE_COLOSSO_GO);
+	sySoundPlay(SE_COLOSSO_GO);
 	gmPlayMusic();
 	fdScriptEnd();
 	gmFlagSet(FLAG_IN_TOWN);
@@ -111,7 +111,7 @@ static void scColossoShowMatchResult(Sint32 result)
 {
 	Sint32 loser;
 
-	sySndPlay(SE_COLOSSO_LETTERING);
+	sySoundPlay(SE_COLOSSO_LETTERING);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	ColossoLetteringWin[LETTERING_RESULT_HOLD] = result * TICKS_PER_SECOND;
@@ -119,7 +119,7 @@ static void scColossoShowMatchResult(Sint32 result)
 		(result < 0 ? -result : result) * TICKS_PER_SECOND;
 	if(result < 0) {
 		fdScriptWait(30);
-		sySndPlay(MUS_OVERNIGHT_AT_THE_INN);
+		sySoundPlay(MUS_OVERNIGHT_AT_THE_INN);
 		scColossoLoadLettering(COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS);
 		COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 1);
 		fdScriptWait(-result * TICKS_PER_SECOND + TICKS_PER_SECOND);
@@ -128,19 +128,19 @@ static void scColossoShowMatchResult(Sint32 result)
 		fdScriptWait(30);
 		/* The 1st to 3rd match play MUS_LUCKY, MUS_VERY_LUCKY and
 		   MUS_SUPER_LUCKY. */
-		sySndPlay(result + (MUS_LUCKY - 1));
+		sySoundPlay(result + (MUS_LUCKY - 1));
 		scColossoLoadLettering(COLOSSO_PICTURE_WIN_LOSE);
 		COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 0);
 		fdScriptWait(result * TICKS_PER_SECOND + TICKS_PER_SECOND);
 		loser = ACTOR_OPPONENT;
 	}
 	fdActorShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-	while(sySndGetBGMRestoreDelay() != 0) {
+	while(sySoundGetBGMRestoreDelay() != 0) {
 		sySynch(1);
 	}
-	sySndPlay(MUS_SILENCE);
+	sySoundPlay(MUS_SILENCE);
 	fdScriptWait(30);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 }

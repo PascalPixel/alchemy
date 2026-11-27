@@ -37,8 +37,8 @@ typedef enum SPR_COL_MODE {
 	SPRITE_COLOR_HIDDEN = 15 /* solid colour 0, transparent */
 } SPR_COL_MODE;
 
-/* Passed to fdActorConfigureSprCol in place of a SPR_COL_MODE: the actor blinks
-   white every few ticks (fdActorUpdateBlink) until it is given a mode
+/* Passed to fdActorConfigureSpriteColor in place of a SPR_COL_MODE: the actor
+   blinks white every few ticks (fdActorUpdateBlink) until it is given a mode
    again. */
 #define SPRITE_COLOR_BLINK 0x100
 
@@ -57,24 +57,25 @@ typedef enum SPR_COL_MODE {
 /* One animation layer of a sprite: its animation id, pictures, running script
    and timer. */
 typedef struct SPR_ANIMATION {
-	Sint16 anmId; /* the sprite id whose metadata and pictures it uses */
+	Sint16 animationId; /* the sprite id whose metadata and pictures it uses */
 	/* Time left on the current picture in sixteenths of a tick, read signed:
 	   each timed command adds its argument times 16, each tick takes off
 	   step. */
-	Uint16 tmr;
+	Uint16 timer;
 	/* The facing table its pictures follow (from the metadata, or animation
 	   command 240). */
 	Uint8 kind;
-	Uint8 colMode; /* SPR_COL_MODE its pixels are drawn with */
-	Uint8 pri;	/* drawing order 0 to 3 among the layers; above 3 not drawn */
-	Uint8 mode; /* picture codec: 1 type-01, 3 LZ, anything else raw */
+	Uint8 colorMode; /* SPR_COL_MODE its pixels are drawn with */
+	Uint8
+		priority; /* drawing order 0 to 3 among the layers; above 3 not drawn */
+	Uint8 mode;	  /* picture codec: 1 type-01, 3 LZ, anything else raw */
 	/* picture pointers, from the metadata or a picture cache */
 	void **pictures;
 	/* the metadata's command scripts, one per animation number */
 	Uint8 **scripts;
-	Uint8  *script;	   /* the running script; null once command 239 ends it */
-	Uint8	scriptOfs; /* byte offset of the next command in script */
-	Uint8	step;	   /* taken off timer each tick; ANIM_STEP_NORMAL */
+	Uint8  *script; /* the running script; null once command 239 ends it */
+	Uint8	scriptOffset; /* byte offset of the next command in script */
+	Uint8	step;		  /* taken off timer each tick; ANIM_STEP_NORMAL */
 	Uint8
 		/* picture shown, pictureBase plus the facing offset; 255 none */
 		  picture;
@@ -101,14 +102,15 @@ typedef struct ACTOR_SYSTEM_STATE {
 	Uint16 suspended; /* nonzero while a menu has suspended sprite projection */
 	Uint8  edge;	  /* outline edge colour; 15 when the field sets up */
 	Uint8  fill;	  /* outline fill colour; 0 when the field sets up */
-	Uint8  sprGroups[16]; /* the sprite group tables, taken in turn by count */
-	Sint32 cnt;			  /* sprite group tables taken from sprGroups */
+	Uint8
+		spriteGroups[16]; /* the sprite group tables, taken in turn by count */
+	Sint32 count;		  /* sprite group tables taken from spriteGroups */
 	SPR_PICTURE_CACHE
-	pictureCaches[8]; /* found by tag (fdSprPictureCacheFindByTag) */
+	pictureCaches[8]; /* found by tag (fdSpritePictureCacheFindByTag) */
 } ACTOR_SYSTEM_STATE;
 
 STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, suspended) == 4);
-STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, cnt) == 24);
+STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, count) == 24);
 STATIC_ASSERT(offsetof(ACTOR_SYSTEM_STATE, pictureCaches) == 28);
 STATIC_ASSERT(sizeof(ACTOR_SYSTEM_STATE) == 92);
 
@@ -119,26 +121,26 @@ typedef struct ANIMATION_SPR_PART {
 	Uint8  unused[4]; /* no code names it */
 	Uint16 y : 8;
 	Uint16 affine : 2;
-	Uint16 objMode : 2;
+	Uint16 objectMode : 2;
 	Uint16 mosaic : 1;
-	Uint16 fullCol : 1;
+	Uint16 fullColor : 1;
 	Uint16 shape : 2;
 	Uint16 x : 9;
-	Uint16 affineIdx : 5;
+	Uint16 affineIndex : 5;
 	Uint16 size : 2;
 	Uint16 tile : 10;
-	Uint16 pri : 2;
-	Uint16 pal : 4;
-	Uint8  unusedAfterPal[2]; /* no code names it */
+	Uint16 priority : 2;
+	Uint16 palette : 4;
+	Uint8  unusedAfterPalette[2]; /* no code names it */
 } ANIMATION_SPR_PART;
 
-/* SPR.flg. */
+/* SPR.flags. */
 typedef enum SPR_FLAG {
 	SPRITE_FLAG_SHADOW = 1 << 0, /* its shadow is drawn; set when created */
 	/* Drawn as an outline, in the actor system's edge and fill colours. */
 	SPRITE_FLAG_OUTLINED = 1 << 1,
 	/* Its bottom sunkRows rows drawn in shade, as the leader wading
-	   (fdActorUpdatePlayerCtrl). */
+	   (fdActorUpdatePlayerControl). */
 	SPRITE_FLAG_SHADED = 1 << 2,
 	/* Drawn sunkRows rows lower, its bottom cut off, as sinking in Taopo
 	   Swamp's mud; it takes the place of SPRITE_FLAG_SHADED. */
@@ -172,13 +174,13 @@ typedef struct SPR {
 	Uint16 rotation; /* 1/65536 turns */
 	Uint8  width;	 /* pixels; zero marks a free sprite */
 	Uint8  height;	 /* pixels */
-	Sint8  ofsX;	 /* pixels */
-	Sint8  ofsY;	 /* pixels */
+	Sint8  offsetX;	 /* pixels */
+	Sint8  offsetY;	 /* pixels */
 	/* The animation number last selected, which selecting again skips. */
 	Uint8 lastNo;
 	Uint8 dirty; /* nonzero redraws its pixels into VRAM when next drawn */
-	Uint8 flg;	 /* SPR_FLAG */
-	Uint8 cnt;	 /* layers in use, up to the last one present */
+	Uint8 flags; /* SPR_FLAG */
+	Uint8 count; /* layers in use, up to the last one present */
 	/* Its shadow, shown while SPRITE_FLAG_SHADOW is set. */
 	ANIMATION_SPR_PART shadow;
 	SPR_ANIMATION	  *entries[4]; /* its layers; empty ones null */
@@ -204,20 +206,20 @@ STATIC_ASSERT(offsetof(SPR, entries) == 40);
 typedef struct PLACED_SPR {
 	Uint8  unused[9];	 /* no code names it */
 	Uint8  tileHigh : 2; /* tile number bits 9..8 */
-	Uint8  pri : 2;
-	Uint8  pal : 4;
-	Uint8  unusedAfterPal[2]; /* no code names it */
-	FIXED  scale;			  /* 16.16 fixed point */
+	Uint8  priority : 2;
+	Uint8  palette : 4;
+	Uint8  unusedAfterPalette[2]; /* no code names it */
+	FIXED  scale;				  /* 16.16 fixed point */
 	Uint8  slot;
 	Uint8  retainCacheEntry; /* bit 0 */
 	Uint16 rotation;
 	Uint8  unusedAfterRotation[5]; /* no code names it */
 	Uint8  dirty;
-	Uint8  flg;
-	Uint8  unusedAfterFlg[10]; /* no code names it */
+	Uint8  flags;
+	Uint8  unusedAfterFlags[10]; /* no code names it */
 	Uint8  shadowTileHigh : 2;
-	Uint8  shadowPri : 2;
-	Uint8  shadowPal : 4;
+	Uint8  shadowPriority : 2;
+	Uint8  shadowPalette : 4;
 } PLACED_SPR;
 
 /* SPR_ANIMATION.step at normal speed, as fdActorSetAnimationSpeed sets it:
@@ -258,7 +260,7 @@ typedef enum ACTOR_ANIMATION {
 	ANIM_LEADER_SPRING = 6, /* leaning back for a moment before a jump */
 	ANIM_LEADER_LEAP = 7,	/* in mid-stride, leaning forward */
 	/* The leader leaning into what it pushes, as when it walks into a pushable
-	   actor (fdActorUpdatePlayerCtrl). */
+	   actor (fdActorUpdatePlayerControl). */
 	ANIM_PUSH = 8,
 	/* ANIM_STAND's idle with more glances to each side, as when the leader's
 	   step is blocked. */

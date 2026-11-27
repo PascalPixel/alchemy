@@ -21,7 +21,7 @@ typedef enum DJINNI_LIGHT_STATE {
 } DJINNI_LIGHT_STATE;
 
 /* Per-tick update: spins an actor 1/8 turn a tick. */
-void fdEffectAdvanceSpinAng(ACTOR *actor)
+void fdEffectAdvanceSpinAngle(ACTOR *actor)
 {
 	actor->facing += DEGtoANG(45);
 }
@@ -30,19 +30,19 @@ void fdEffectAdvanceSpinAng(ACTOR *actor)
    and z. */
 void fdActorMoveHalfwayTowardTarget(ACTOR *actor)
 {
-	ACTOR *tgt = (ACTOR *)actor->watchedActor;
+	ACTOR *target = (ACTOR *)actor->watchedActor;
 
-	actor->x.fixed += (tgt->x.fixed - actor->x.fixed) / 2;
+	actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
 	{
 		Sint32 pos = actor->y.fixed;
 
-		pos += (tgt->y.fixed - pos) / 2;
+		pos += (target->y.fixed - pos) / 2;
 		actor->y.fixed = pos;
 	}
 	{
 		FIXED pos = actor->z.fixed;
 
-		pos += (tgt->z.fixed - pos) / 2;
+		pos += (target->z.fixed - pos) / 2;
 		actor->z.fixed = pos;
 	}
 }
@@ -62,48 +62,48 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 	ACTOR		 *leader;
 	ACTOR		 *copy;
 	ACTOR		 *prev;
-	void		 *sharedSpr;
-	Sint32		  dir;
+	void		 *sharedSprite;
+	Sint32		  direction;
 	Sint32		  back;
-	Sint32		  spr;
+	Sint32		  sprite;
 	Sint32		  tint;
 	Sint32		  i;
 	UNUSED ACTOR *copies[DJINNI_AFTERIMAGES];
 
 	djinni = fdActorGetById(djinniId);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	dir = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+	direction = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
 	fdScriptStart();
 	sySynch(10);
-	sySndPlayStub(SE_NOTE_LOW);
+	sySoundPlayStub(SE_NOTE_LOW);
 	fdActorRunRepeatedMotion(djinniId, 1);
-	sySndPlayStub(SE_NOTE_HIGH);
+	sySoundPlayStub(SE_NOTE_HIGH);
 	fdActorRunRepeatedMotion(djinniId, 1);
 	sySynch(10);
-	back = dir + DEGtoANG(180);
+	back = direction + DEGtoANG(180);
 	fdActorFaceDirectionById(djinniId, back, 0);
 	sySynch(10);
 	djinni->facing = back;
 	fdActorShowEmoteById(djinniId, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
-	fdActorGetById(djinniId)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	djinni->motionFlg = ACTOR_FALLS;
-	djinni->update = (OBJECT_UPDATE)fdEffectAdvanceSpinAng;
+	fdActorGetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	djinni->motionFlags = ACTOR_FALLS;
+	djinni->update = (OBJECT_UPDATE)fdEffectAdvanceSpinAngle;
 #if DJINNI_SPIN_JUMP_SOUNDS
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 #endif
 	djinni->gravity = toFIXED(1) / 4;
-	djinni->velY = toFIXED(9) / 2;
+	djinni->velocityY = toFIXED(9) / 2;
 	sySynch(33);
-	((SPR *)djinni->spr)->image.pri = 0;
+	((SPR *)djinni->sprite)->image.priority = 0;
 #if DJINNI_SPIN_JUMP_SOUNDS
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 #endif
-	djinni->velY = toFIXED(4.8);
+	djinni->velocityY = toFIXED(4.8);
 	sySynch(35);
 #if DJINNI_SPIN_JUMP_SOUNDS
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 #endif
-	djinni->velY = toFIXED(4.9);
+	djinni->velocityY = toFIXED(4.9);
 	sySynch(38);
 
 	djinni->update = NULL;
@@ -111,36 +111,37 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 	/* Afterimages of the same sprite at AFTERIMAGE_SCALE, each closing half the
 	   distance to the one before it every tick, tinted by the Djinni's
 	   sprite. */
-	spr = ((SPR *)djinni->spr)->entries[0]->anmId;
+	sprite = ((SPR *)djinni->sprite)->entries[0]->animationId;
 	tint = SPRITE_COLOR_BLUE_TINT;
-	if(spr == SPRITE_VENUS_DJINNI)
+	if(sprite == SPRITE_VENUS_DJINNI)
 		tint = SPRITE_COLOR_RBG;
-	if(spr == SPRITE_MARS_DJINNI)
+	if(sprite == SPRITE_MARS_DJINNI)
 		tint = SPRITE_COLOR_RED_TINT;
 	/* DEAD: tint is already SPRITE_COLOR_BLUE_TINT for SPRITE_MERCURY_DJINNI;
 	   the ROM keeps the test and the store. */
-	if(spr == SPRITE_MERCURY_DJINNI)
+	if(sprite == SPRITE_MERCURY_DJINNI)
 		tint = SPRITE_COLOR_BLUE_TINT;
-	sharedSpr = NULL;
+	sharedSprite = NULL;
 	prev = djinni;
 	for(i = 0; i < DJINNI_AFTERIMAGES; i++) {
 		copy = fdActorCreateStub(
-			spr, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+			sprite, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
 		/* DEAD: nothing reads copies; the ROM keeps the store and its slot. */
 		copies[i] = copy;
 		if(copy != NULL) {
 			copy->scaleY = AFTERIMAGE_SCALE;
 			copy->scaleX = AFTERIMAGE_SCALE;
-			copy->motionFlg = 0;
-			copy->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			copy->steeringFlg |= ACTOR_FACES_MOTION;
+			copy->motionFlags = 0;
+			copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			copy->steeringFlags |= ACTOR_FACES_MOTION;
 			copy->update = fdActorMoveHalfwayTowardTarget;
 			copy->facing = djinni->facing;
-			((SPR *)copy->spr)->image.pri = 0;
-			fdActorSetSprColModeStub(copy, tint);
+			((SPR *)copy->sprite)->image.priority = 0;
+			fdActorSetSpriteColorModeStub(copy, tint);
 			fdActorSelectAnimationStub(copy, ANIM_STILL);
-			fdActorSetSprFlagsStub(copy, 0);
-			sharedSpr = fdSprShareVRAMCacheEntry(copy->spr, sharedSpr);
+			fdActorSetSpriteFlagsStub(copy, 0);
+			sharedSprite =
+				fdSpriteShareVRAMCacheEntry(copy->sprite, sharedSprite);
 			copy->watchedActor = (union FIELD_OBJECT *)prev;
 			prev = copy;
 		}
@@ -148,9 +149,9 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 
 	djinni->speedLimit = toFIXED(0.3);
 	djinni->acceleration = toFIXED(0.3);
-	fdActorSetTargetPosFromMagnitudeAng(
-		djinni, toFIXED(16), dir + DEGtoANG(180));
-	sySndPlayStub(LEAP_SOUND);
+	fdActorSetTargetPosFromMagnitudeAngle(
+		djinni, toFIXED(16), direction + DEGtoANG(180));
+	sySoundPlayStub(LEAP_SOUND);
 	fdActorJump(djinniId, 6, 5);
 	sySynch(24);
 	for(i = 0; i < 120; i++) {
@@ -158,15 +159,15 @@ void fdDjinnRunBattleStartHop(Sint32 djinniId)
 			break;
 		sySynch(1);
 	}
-	djinni->motionFlg = 0;
-	djinni->velX = 0;
-	djinni->velZ = 0;
-	djinni->velY = 0;
-	djinni->tgtX = ACTOR_NO_TARGET;
-	djinni->tgtZ = ACTOR_NO_TARGET;
-	djinni->tgtY = ACTOR_NO_TARGET;
+	djinni->motionFlags = 0;
+	djinni->velocityX = 0;
+	djinni->velocityZ = 0;
+	djinni->velocityY = 0;
+	djinni->targetX = ACTOR_NO_TARGET;
+	djinni->targetZ = ACTOR_NO_TARGET;
+	djinni->targetY = ACTOR_NO_TARGET;
 	fdActorSelectAnimationStub(djinni, ANIM_STILL);
-	((SPR *)djinni->spr)->image.pri = 2;
+	((SPR *)djinni->sprite)->image.priority = 2;
 #if DJINNI_HOP_RESTORES_GRAVITY
 	djinni->gravity = toFIXED(1);
 #endif
@@ -259,7 +260,7 @@ void fdDjinnRestoreActorAfterBattle(void)
 					continue;
 				if(flags == 0) {
 					actor->groundHeight = flags;
-					actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+					actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 					fdActorSetPosAndResetMotionStub(
 						actor, placement->x, placement->y, placement->z);
 				} else {
@@ -341,7 +342,7 @@ void fdEffectUpdateAllSlots(void)
 	FIELD_EFFECT_STATE *scene;
 	Sint32				i;
 
-	scene = RamHeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffectState;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
 		fdParticleUpdate(&scene->particles[i]);
 }
@@ -352,7 +353,8 @@ void fdEffectInitSlots(void)
 {
 	void *state;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_FIELD_EFFECT, sizeof(FIELD_EFFECT_STATE));
+	state =
+		syHeapSlotAllocate(HEAP_SLOT_FIELD_EFFECT, sizeof(FIELD_EFFECT_STATE));
 	DMA_FILL32(0, state, sizeof(FIELD_EFFECT_STATE));
 	sySetEvent((Sint32)fdEffectUpdateAllSlots, EVENT_PASS_TICK);
 }
@@ -361,7 +363,7 @@ void fdEffectInitSlots(void)
    in use and releases their heap block, the field Psynergy's state with it. */
 void fdEffectReleaseSlots(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	FIELD_PARTICLE	   *slot;
 	Sint32				i;
 
@@ -376,8 +378,8 @@ void fdEffectReleaseSlots(void)
 }
 
 /* Per-tick update of a joining Venus or Jupiter Djinni: spins it an eighth of
-   a turn, as fdEffectAdvanceSpinAng does. */
-void fdDjinnAdvanceSpinAng(ACTOR *djinni)
+   a turn, as fdEffectAdvanceSpinAngle does. */
+void fdDjinnAdvanceSpinAngle(ACTOR *djinni)
 {
 	djinni->facing += DEGtoANG(45);
 }
@@ -390,27 +392,27 @@ void fdDjinnAdvanceSpinAng(ACTOR *djinni)
    (fdCameraWorldToScreen). */
 void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle)
 {
-	ACTOR  *tgt;
+	ACTOR  *target;
 	VECTOR3 pos;
 
-	tgt = fdActorGetById(MainRoutineStateWork.leaderActorId);
+	target = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	if(particle->state == DJINNI_LIGHT_WIDENING) {
 		particle->orbitRadius += 1;
-		particle->orbitAng += 1;
+		particle->orbitAngle += 1;
 		if((Sint16)particle->age == DJINNI_LIGHT_RADIUS_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
 		}
 	} else if(particle->state == DJINNI_LIGHT_CIRCLING) {
-		particle->orbitAng += 1;
+		particle->orbitAngle += 1;
 		if((Sint16)particle->age == DJINNI_LIGHT_CIRCLING_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
 		}
 	} else if(particle->state == DJINNI_LIGHT_DRIFTING) {
-		particle->orbitAng += 1;
-		SET_POSITION(
-			&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(20), tgt->z.fixed);
+		particle->orbitAngle += 1;
+		SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(20),
+			target->z.fixed);
 		/* The centre moves 1/8 of the way to the leader's screen point a
 		   tick. */
 		fdCameraWorldToScreen(&pos);
@@ -422,7 +424,7 @@ void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle)
 		}
 	} else if(particle->state == DJINNI_LIGHT_CLOSING) {
 		particle->orbitRadius -= 1;
-		particle->orbitAng += 1;
+		particle->orbitAngle += 1;
 		if((Sint16)particle->age == DJINNI_LIGHT_RADIUS_TICKS) {
 			particle->age = 0;
 			particle->state += 1;
@@ -433,7 +435,7 @@ void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle)
 	pos.x = particle->originX;
 	pos.z = particle->originZ;
 	syVectorAddPolarOffset(toFIXED(particle->orbitRadius),
-		particle->orbitAng * (TRIG_TURN / 32), &pos);
+		particle->orbitAngle * (TRIG_TURN / 32), &pos);
 	particle->x = pos.x;
 	particle->z = pos.z;
 }

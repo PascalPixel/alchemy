@@ -53,7 +53,7 @@ extern char ResourceIdGoldenSunLogo;
    script; it loads this one whatever picture it's passed. */
 extern char ResourceIdWorldMapPicture;
 #define RESOURCE_WORLD_MAP_PICTURE ((Sint32)&ResourceIdWorldMapPicture)
-/* The lettering sprites scTitleLoadSprs loads: 40 tiles of 16 colours in
+/* The lettering sprites scTitleLoadSprites loads: 40 tiles of 16 colours in
    English and Japanese, a whole 224-colour screen in the other editions, of
    which it keeps the bottom 32 rows. */
 extern char ResourceIdToBeContinuedLettering;
@@ -396,7 +396,7 @@ extern char ResourceIdDefaultGridMetatiles;
 /* Colosso's first opponent's recorded path, played by the Azart match. */
 extern char ResourceIdAzartOpponentPath;
 #define RESOURCE_AZART_OPPONENT_PATH ((Sint32)&ResourceIdAzartOpponentPath)
-/* The world map's tileset animations (fdTilesetAnimStartAll). */
+/* The world map's tileset animations (fdTilesetAnimationStartAll). */
 extern char ResourceIdDefaultTileAnimation;
 #define RESOURCE_DEFAULT_TILE_ANIMATION \
 	((Sint32)&ResourceIdDefaultTileAnimation)
@@ -408,7 +408,7 @@ extern char ResourceIdDefaultMetatileTilesAttributes;
 
 /* The world map's two graphics sets (WorldMapGraphicsResources), each a
    palette and five tilesets: fdWorldMapLoadGraphics decodes the first four into
-   char blocks 2 and 3 and the fifth into MapGridAnimTiles for the tileset
+   char blocks 2 and 3 and the fifth into MapGridAnimationTiles for the tileset
    animation. The second set is for WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD. */
 
 extern char ResourceIdWorldMapPaletteA; /* The first set's colours. */

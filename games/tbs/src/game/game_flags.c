@@ -5,118 +5,118 @@
    numbering. Bits above the twelfth are dropped (GAME_FLAG_BYTE), so a number
    past 4095 wraps onto a flag below it rather than reaching other memory. */
 
-/* Returns 1 when `flg` is set. Every module tests flags through it, as
+/* Returns 1 when `flags` is set. Every module tests flags through it, as
    gmFlagGetStub, and the scripts directly or through script.h. */
-Bool gmFlagGet(Sint32 flg)
+Bool gmFlagGet(Sint32 flag)
 {
-	Sint32 bit = GAME_FLAG_BIT(flg);
+	Sint32 bit = GAME_FLAG_BIT(flag);
 
-	flg = GAME_FLAG_BYTE(flg);
-	if(GameFlagBytes[flg] & bit)
+	flag = GAME_FLAG_BYTE(flag);
+	if(GameFlagBytes[flag] & bit)
 		return TRUE;
 	return FALSE;
 }
 
-/* Sets `flg` and returns its byte number. */
-Sint32 gmFlagSet(Sint32 flg)
+/* Sets `flags` and returns its byte number. */
+Sint32 gmFlagSet(Sint32 flag)
 {
-	Sint32 bit = GAME_FLAG_BIT(flg);
-	Uint8 *flgBytes = GameFlagBytes;
-	flg = GAME_FLAG_BYTE(flg);
+	Sint32 bit = GAME_FLAG_BIT(flag);
+	Uint8 *flagsBytes = GameFlagBytes;
+	flag = GAME_FLAG_BYTE(flag);
 
-	flgBytes[flg] |= bit;
-	return flg;
+	flagsBytes[flag] |= bit;
+	return flag;
 }
 
-/* Clears `flg`. */
-void gmFlagClear(Sint32 flg)
+/* Clears `flags`. */
+void gmFlagClear(Sint32 flag)
 {
-	Sint32 bit = GAME_FLAG_BIT(flg);
-	Uint8 *flgBytes = GameFlagBytes;
-	flg = GAME_FLAG_BYTE(flg);
+	Sint32 bit = GAME_FLAG_BIT(flag);
+	Uint8 *flagsBytes = GameFlagBytes;
+	flag = GAME_FLAG_BYTE(flag);
 
-	flgBytes[flg] &= ~bit;
+	flagsBytes[flag] &= ~bit;
 }
 
-/* Flips `flg` and returns its new value. Only game.s's bare stub reaches it;
+/* Flips `flags` and returns its new value. Only game.s's bare stub reaches it;
    nothing calls it by name. */
-Uint32 gmFlagToggle(Sint32 flg)
+Uint32 gmFlagToggle(Sint32 flag)
 {
-	Sint32 bit = GAME_FLAG_BIT(flg);
-	Uint8 *flgBytes = GameFlagBytes;
-	flg = GAME_FLAG_BYTE(flg);
+	Sint32 bit = GAME_FLAG_BIT(flag);
+	Uint8 *flagsBytes = GameFlagBytes;
+	flag = GAME_FLAG_BYTE(flag);
 
-	flgBytes[flg] ^= bit;
-	if(flgBytes[flg] & bit)
+	flagsBytes[flag] ^= bit;
+	if(flagsBytes[flag] & bit)
 		return 1;
 	return 0;
 }
 
-/* Returns the whole byte `flg` is in, a counter kept among the flags. */
-Sint32 gmFlagGetByte(Sint32 flg)
+/* Returns the whole byte `flags` is in, a counter kept among the flags. */
+Sint32 gmFlagGetByte(Sint32 flag)
 {
-	flg = GAME_FLAG_BYTE(flg);
+	flag = GAME_FLAG_BYTE(flag);
 
-	return GameFlagBytes[flg];
+	return GameFlagBytes[flag];
 }
 
-/* Sets the whole byte `flg` is in. */
-void gmFlagSetByte(Sint32 flg, Sint32 value)
+/* Sets the whole byte `flags` is in. */
+void gmFlagSetByte(Sint32 flag, Sint32 value)
 {
-	flg = GAME_FLAG_BYTE(flg);
+	flag = GAME_FLAG_BYTE(flag);
 
-	GameFlagBytes[flg] = value;
+	GameFlagBytes[flag] = value;
 }
 
 /* The most a counter byte among the flags holds. */
 #define GAME_FLAG_BYTE_MAX 255
 
-/* Adds 1 to the byte `flg` is in, stopping at GAME_FLAG_BYTE_MAX, and returns
+/* Adds 1 to the byte `flags` is in, stopping at GAME_FLAG_BYTE_MAX, and returns
    it. Only game.s's bare stub reaches it; nothing calls it by name. */
-Uint8 gmFlagIncrementByte(Sint32 flg)
+Uint8 gmFlagIncrementByte(Sint32 flag)
 {
-	Uint8 *flgBytes = GameFlagBytes;
-	flg = GAME_FLAG_BYTE(flg);
+	Uint8 *flagsBytes = GameFlagBytes;
+	flag = GAME_FLAG_BYTE(flag);
 
-	if(flgBytes[flg] < GAME_FLAG_BYTE_MAX)
-		flgBytes[flg]++;
-	return flgBytes[flg];
+	if(flagsBytes[flag] < GAME_FLAG_BYTE_MAX)
+		flagsBytes[flag]++;
+	return flagsBytes[flag];
 }
 
-/* Takes 1 from the byte `flg` is in, stopping at 0, and returns it. Only
+/* Takes 1 from the byte `flags` is in, stopping at 0, and returns it. Only
    game.s's bare stub reaches it; nothing calls it by name. */
-Uint8 gmFlagDecrementByte(Sint32 flg)
+Uint8 gmFlagDecrementByte(Sint32 flag)
 {
-	Uint8 *flgBytes = GameFlagBytes;
-	flg = GAME_FLAG_BYTE(flg);
+	Uint8 *flagsBytes = GameFlagBytes;
+	flag = GAME_FLAG_BYTE(flag);
 
-	if(flgBytes[flg] != 0)
-		flgBytes[flg]--;
-	return flgBytes[flg];
+	if(flagsBytes[flag] != 0)
+		flagsBytes[flag]--;
+	return flagsBytes[flag];
 }
 
 /* The bits of a nibble flag, low or high in its byte by its number's bit 2. */
 #define GAME_FLAG_NIBBLE_MASK 0xf
 
 /* Returns the four bits a flag is in, 0 to 15. */
-Sint32 gmFlagGetNibble(Uint32 flg)
+Sint32 gmFlagGetNibble(Uint32 flag)
 {
-	Sint32 shift = flg & 4;
+	Sint32 shift = flag & 4;
 	Sint32 mask = GAME_FLAG_NIBBLE_MASK << shift;
-	flg = GAME_FLAG_BYTE(flg);
+	flag = GAME_FLAG_BYTE(flag);
 
-	return (GameFlagBytes[flg] & mask) >> shift;
+	return (GameFlagBytes[flag] & mask) >> shift;
 }
 
-/* Sets the four bits `flg` is in. Only game.s's bare stub reaches it; nothing
+/* Sets the four bits `flags` is in. Only game.s's bare stub reaches it; nothing
    calls it by name. */
-void gmFlagSetNibble(Sint32 flg, Sint32 value)
+void gmFlagSetNibble(Sint32 flag, Sint32 value)
 {
 	Sint32 nibble = GAME_FLAG_NIBBLE_MASK;
-	Sint32 shift = flg & 4;
+	Sint32 shift = flag & 4;
 	Sint32 mask = nibble << shift;
-	Uint8 *flgBytes = GameFlagBytes;
-	flg = GAME_FLAG_BYTE(flg);
+	Uint8 *flagsBytes = GameFlagBytes;
+	flag = GAME_FLAG_BYTE(flag);
 
-	flgBytes[flg] = (flgBytes[flg] & ~mask) | ((value & nibble) << shift);
+	flagsBytes[flag] = (flagsBytes[flag] & ~mask) | ((value & nibble) << shift);
 }

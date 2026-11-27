@@ -78,7 +78,7 @@ void scEpiloguePlacePortraitFrame(void)
 	if(EpiloguePortraitShown != 0) {
 		EpiloguePortraitFrame.x = toFIXED(EpiloguePortraitX);
 		EpiloguePortraitFrame.y = toFIXED(EpiloguePortraitY);
-		fdEffectSprDraw(&EpiloguePortraitFrame);
+		fdEffectSpriteDraw(&EpiloguePortraitFrame);
 	}
 }
 
@@ -101,8 +101,8 @@ CUE SceneCues[] = {
    scEpiloguePlacePortraitFrame. */
 void scEpilogueLoadPortraitFrame(void)
 {
-	void	   *buf = syHeapCallAlternatePool(syHeapAlloc, 64 * 64 / 2);
-	EFFECT_SPR *spr;
+	void	   *buf = syHeapCallAlternatePool(syHeapAllocate, 64 * 64 / 2);
+	EFFECT_SPR *sprite;
 	Sint32	   *slot;
 	Sint32	   *tileSlot;
 	Sint32		value;
@@ -110,7 +110,7 @@ void scEpilogueLoadPortraitFrame(void)
 	syDMAXCopy(EpilogueNamePanelPalette,
 		(void *)&OBJ_PLTT_COLOR(PORTRAIT_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-	spr = &EpiloguePortraitFrame;
+	sprite = &EpiloguePortraitFrame;
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GREEN_PANEL), buf);
 	slot = &EpiloguePortraitFrameEntry;
 	value = syVRAMCacheFindFreeEntry();
@@ -118,11 +118,11 @@ void scEpilogueLoadPortraitFrame(void)
 	tileSlot = &EpiloguePortraitFrameTile;
 	value = mnVRAMLoad(value, 64 * 64 / 2, buf);
 	*tileSlot = value;
-	syFieldEffectSprInit(spr, 0, 0, OBJ_SIZE_64X64, value);
-	spr->depth = OAM_DEPTH_WINDOW;
-	spr->oam.pri = 0;
-	spr->oam.fullCol = 0;
-	spr->oam.pal = PORTRAIT_PALETTE;
+	syFieldEffectSpriteInit(sprite, 0, 0, OBJ_SIZE_64X64, value);
+	sprite->depth = OAM_DEPTH_WINDOW;
+	sprite->oam.priority = 0;
+	sprite->oam.fullColor = 0;
+	sprite->oam.palette = PORTRAIT_PALETTE;
 	syHeapRelease(buf);
 	EpiloguePortraitShown = 0;
 	syFieldSetTickEvent(scEpiloguePlacePortraitFrame, EVENT_PASS_TICK);
@@ -149,13 +149,13 @@ void scEpilogueShowLineAt(Sint32 speaker, Sint32 x, Sint32 y, Sint32 portraitX,
 	Sint32 portraitY, Sint32 ticks, Sint32 mode)
 {
 	Sint32	noPortrait;
-	WINDOW *win;
+	WINDOW *window;
 	WINDOW *portrait;
 
 	portrait = 0;
 	noPortrait = EPILOGUE_NO_PORTRAIT & speaker;
 	speaker &= EPILOGUE_NO_PORTRAIT - 1;
-	win = mnMessageOpenWindow(EpilogueMessage, x, y,
+	window = mnMessageOpenWindow(EpilogueMessage, x, y,
 		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(speaker)) |
 			EPILOGUE_WINDOW_OPTIONS);
 	if(!noPortrait) {
@@ -165,14 +165,14 @@ void scEpilogueShowLineAt(Sint32 speaker, Sint32 x, Sint32 y, Sint32 portraitX,
 		EpiloguePortraitY = portraitY << 3;
 	}
 	if(mode == EPILOGUE_TALL_LINE_AT_FOOT) {
-		win->y++;
-		win->width = 0;
-		win->height = 0;
+		window->y++;
+		window->width = 0;
+		window->height = 0;
 	}
 	while(!mnMessageAllTyped())
 		syWait(1);
 	syWait(1);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	if(!noPortrait) {
 		mnWindowClose(portrait, 2);
 		EpiloguePortraitShown = noPortrait;
@@ -253,21 +253,21 @@ Sint32 scInit(void)
 {
 	MAIN_ROUTINE_STATE *state;
 	Sint32				savedSpeed;
-	Sint32				cnt;
+	Sint32				count;
 	ACTOR			   *leader;
-	WIN_STATE		   *winState;
+	WIN_STATE		   *windowState;
 	BG_SCROLL		   *scroll;
 
 	state = &MainRoutineStateWork;
 	savedSpeed = state->msgSpeed;
 	leader = fdActorGet(state->leaderActorId);
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	state->msgSpeed = MESSAGE_SPEED_NORMAL;
 	mnEndingImageStart();
 	mnWindowSystemInitField();
-	winState = (WIN_STATE *)RamHeapSlots->winState;
-	winState->holdTilemapUpload = 1;
-	winState->textMode = 1;
+	windowState = (WIN_STATE *)RamHeapSlots->windowState;
+	windowState->holdTilemapUpload = 1;
+	windowState->textMode = 1;
 	EpilogueMessage = (Sint32)MsgFinallyWeVe;
 	scEpilogueLoadPortraitFrame();
 	syFieldScriptWait(30);
@@ -290,7 +290,7 @@ Sint32 scInit(void)
 	scEpilogueShowLine(SPRITE_JENNA, LINE_IN_MIDDLE, 40);
 	scEpilogueShowLine(SPRITE_FELIX, LINE_AT_TOP, 30);
 	scEpilogueShowLine(SPRITE_GARET, LINE_IN_MIDDLE, 30);
-	fdScriptPlaySnd(MUS_EPILOGUE);
+	fdScriptPlaySound(MUS_EPILOGUE);
 	scroll = BgScrollWork;
 	scroll[3].y = 16;
 	scroll[2].y = 16;
@@ -340,7 +340,7 @@ Sint32 scInit(void)
 	scEpilogueShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
 #endif
 	scEpilogueShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	scEpilogueShowLine(
 		EPILOGUE_NO_PORTRAIT | SPRITE_MAN_IN_TEAL_SHIRT, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_ISAAC, LINE_AT_FOOT, 30);
@@ -353,7 +353,7 @@ Sint32 scInit(void)
 	scFieldEndingImageShow(
 		RESOURCE_ENDING_VILLAGERS_PICTURE_A, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(MUS_EPILOGUE_VILLAGERS);
+	fdScriptPlaySound(MUS_EPILOGUE_VILLAGERS);
 	syFieldScriptWait(30);
 	scEpilogueShowLine(SPRITE_MAN_IN_TEAL_SHIRT, LINE_AT_FOOT, 30);
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -403,16 +403,16 @@ Sint32 scInit(void)
 	scFieldEndingImageShow(
 		RESOURCE_ENDING_THE_END_PICTURE, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(180);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	MainRoutineStateWork.msgSpeed = savedSpeed;
 	syFieldScriptWait(300);
 	/* The End stays until a button is pressed, or for three minutes. */
-	cnt = 0;
+	count = 0;
 	if(PerWork.push == 0) {
 		do {
 			syWait(1);
-			cnt++;
-			if(cnt >= 3 * 60 * TICKS_PER_SECOND)
+			count++;
+			if(count >= 3 * 60 * TICKS_PER_SECOND)
 				break;
 		} while(PerWork.push == 0);
 	}

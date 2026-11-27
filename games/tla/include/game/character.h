@@ -58,7 +58,7 @@ typedef struct DJINN_DEFINITION {
 
 STATIC_ASSERT(sizeof(DJINN_DEFINITION) == 12);
 
-/* ENEMY_DEFINITION.tgtStrategy: a single-target attacker favours the target
+/* ENEMY_DEFINITION.targetStrategy: a single-target attacker favours the target
    with the most HP left, the most maximum HP, or no one. The same column steers
    the action choice: with any strategy but TARGET_STRATEGY_MOST_HP an enemy
    skips Psynergy it lacks the PP for, and with TARGET_STRATEGY_RANDOM any
@@ -96,21 +96,21 @@ typedef struct ENEMY_DEFINITION {
 	Uint16 defense;
 	Uint16 agility;
 	Uint8  luck;
-	Uint8  actionCnt;	   /* actions a turn */
+	Uint8  actionCount;	   /* actions a turn */
 	Uint8  hpRegen;		   /* HP restored at each turn's end */
 	Uint8  ppRegen;		   /* PP restored at each turn's end */
 	Uint16 items[4];	   /* items the enemy carries, 0 for none */
-	Uint8  cnts[4];		   /* how many of each item it carries */
+	Uint8  counts[4];	   /* how many of each item it carries */
 	Uint8  elementPreset;  /* row of EnemyElementPresetTable */
-	Sint8  tgtStrategy;	   /* whom a single-target attack favours */
+	Sint8  targetStrategy; /* whom a single-target attack favours */
 	Sint8  actionStrategy; /* how the action is chosen from abilities */
 	/* One bit per place in `abilities` (ITEM_ACTION): use an item held
 	   instead. */
 	Uint8  itemActions;
-	Uint16 abilities[8]; /* the abilities the enemy chooses from */
-	Uint8  weakEffs[4];	 /* the ability effects the enemy is weak to */
-	Uint16 coins;		 /* coins won */
-	Sint16 item;		 /* the item it may leave, 0 for none */
+	Uint16 abilities[8];   /* the abilities the enemy chooses from */
+	Uint8  weakEffects[4]; /* the ability effects the enemy is weak to */
+	Uint16 coins;		   /* coins won */
+	Sint16 item;		   /* the item it may leave, 0 for none */
 	/* The chance of the item, as a power of two: 1 in 2 to the power n - 1 (1
 	   always, 6 one in 32); 0 for none. */
 	Sint16 itemChance;
@@ -135,8 +135,8 @@ typedef struct ENEMY_ELEMENT_PRESET {
 	/* Its level in each element; gmUnitGetElementLevels returns ten times
 	   each. */
 	Uint8 elementLevels[4];
-	/* Its base power and resistance in each element, as gmUnitCalcBaseElements
-	   gives them to the unit. */
+	/* Its base power and resistance in each element, as
+	   gmUnitCalculateBaseElements gives them to the unit. */
 	BATTLE_ELEMENT_STATS stats[4];
 } ENEMY_ELEMENT_PRESET;
 

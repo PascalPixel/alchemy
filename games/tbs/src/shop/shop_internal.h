@@ -108,7 +108,7 @@ enum {
 #define SHOP_EMPTY_GRID_X ITALIAN_OR(20, 8)
 #define SHOP_EMPTY_GRID_Y ITALIAN_OR(12, 20)
 
-/* Outside Japan the coins window (SHOP_STATE.moneyWin) is a tile wider, and
+/* Outside Japan the coins window (SHOP_STATE.moneyWindow) is a tile wider, and
    every counter's item description (mnShopDrawMessage, shop_buy.c) is drawn as
    tiles (mnTextDrawMessageAsTilesStub) rather than into a text canvas. */
 #define SHOP_MONEY_WINDOW_WIDTH JAPANESE_OR(11, 12)

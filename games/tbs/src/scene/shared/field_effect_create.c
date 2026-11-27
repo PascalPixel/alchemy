@@ -4,9 +4,9 @@
 
 /* Sets the actor's sprite priority (0 in front of the backgrounds, 3
    behind). */
-UNUSED static void scSetActorSprPriority(ACTOR *actor, Sint32 pri)
+UNUSED static void scSetActorSpritePriority(ACTOR *actor, Sint32 priority)
 {
-	actor->spr->image.pri = pri;
+	actor->sprite->image.priority = priority;
 }
 
 /* A still, translucent black actor in front of the backgrounds (sprite priority
@@ -16,11 +16,11 @@ UNUSED static void *scActorPrepareFX(FIXED x, FIXED y, FIXED z, Sint32 type)
 	ACTOR *actor = syFieldActorCreate(type, x, y, z);
 
 	if(actor != NULL) {
-		actor->spr->image.pri = 0;
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetSprCol(actor, SPRITE_COLOR_BLACK);
+		actor->sprite->image.priority = 0;
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_BLACK);
 		fdActorSetBlendMode(actor, ACTOR_BLEND_TRANSLUCENT);
 		return actor;
 	}
@@ -40,12 +40,13 @@ UNUSED static void *scActorCreateConfiguredFX(
 	ACTOR *actor = syFieldActorCreate(type, x, y, z);
 
 	if(actor != NULL) {
-		actor->spr->image.pri = 1;
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
-		actor->priFlg = (actor->priFlg & ~ACTOR_PRIORITY_AUTOMATIC) |
+		actor->sprite->image.priority = 1;
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
+		actor->priorityFlags =
+			(actor->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |
 			ACTOR_PRIORITY_UNDERFOOT;
 		return actor;
 	}

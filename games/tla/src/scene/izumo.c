@@ -150,7 +150,7 @@ void fdMapGridCopyMetatileTilesIndicesRect(
 	Sint32 a, Sint32 b, Sint32 c, Sint32 d, Sint32 e, Sint32 f);
 /* Leaves Izumo by one of its exits, as fdScriptSetExitRequest does. */
 void scIzumoSetExitRequest(Sint32 value);
-void scIzumoRotateWaterCols(void);
+void scIzumoRotateWaterColors(void);
 void scIzumoStopThePartyToThankThem(void);
 void scIzumoTellTheCloudBrandLegend(void);
 
@@ -176,7 +176,7 @@ void scIzumoFinishMovingStone(void)
 	Sint32 z = FIELD_METATILE(actor->z.fixed);
 
 	fdActorPlaceMovedBlock();
-	sySndPlay(SE_WATER);
+	sySoundPlay(SE_WATER);
 	if(x == STONE_IN_PLACE_METATILE_X && z == STONE_METATILE_Z) {
 		if(syFlagIsSet(FLAG_REVEALING)) {
 			fdMapGridCopyMetatileTilesIndicesRect(36, 12, 22, 8, 3, 3);
@@ -274,7 +274,7 @@ void scIzumoScatterWeedsOverFirstAntidote(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffsetById(
 				MainRoutineStateWork.leaderActorId, -16, 0);
-			actor->velY = toFIXED(6);
+			actor->velocityY = toFIXED(6);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -303,7 +303,7 @@ void scIzumoScatterWeedsOverSecondAntidote(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			Call3((void (*)())fdActorSetDestinationOffsetById,
 				MainRoutineStateWork.leaderActorId, 0, -16);
-			actor->velY = toFIXED(6);
+			actor->velocityY = toFIXED(6);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -358,7 +358,7 @@ void scIzumoScatterWeedsOverLuckyMedal(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffsetById(
 				MainRoutineStateWork.leaderActorId, 16, 0);
-			actor->velY = toFIXED(6);
+			actor->velocityY = toFIXED(6);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -390,11 +390,11 @@ void scIzumoEnterDoor(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdActorSetSpeedParms(
+	fdActorSetSpeedParams(
 		MainRoutineStateWork.leaderActorId, toFIXED(1) / 2, toFIXED(1) / 4);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
-	sySndPlay(SE_MAP_EXIT);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
+	sySoundPlay(SE_MAP_EXIT);
 	scIzumoSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -496,28 +496,28 @@ void scIzumoTellOfUzumesFamily(Sint32 actor)
 
 /* The river shimmers: every fourth tick the shifting colours of each of its
    palettes move along by one. */
-void scIzumoRotateWaterCols(void)
+void scIzumoRotateWaterColors(void)
 {
 	Sint16 saved;
-	Sint32 idx;
+	Sint32 index;
 
 	if((TickCount & 3) == 0) {
 		saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_LAST_COLOR);
-		for(idx = WATER_LAST_COLOR; idx != WATER_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(FIRST_WATER_PALETTE, idx) =
-				BG_PLTT_COLOR(FIRST_WATER_PALETTE, idx - 1);
+		for(index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+			BG_PLTT_COLOR(FIRST_WATER_PALETTE, index) =
+				BG_PLTT_COLOR(FIRST_WATER_PALETTE, index - 1);
 		BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_FIRST_COLOR) = saved;
 
 		saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_LAST_COLOR);
-		for(idx = WATER_LAST_COLOR; idx != WATER_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, idx) =
-				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, idx - 1);
+		for(index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index) =
+				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index - 1);
 		BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_FIRST_COLOR) = saved;
 
 		saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, WATER_LAST_COLOR);
-		for(idx = WATER_LAST_COLOR; idx != WATER_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, idx) =
-				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, idx - 1);
+		for(index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
+			BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, index) =
+				BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, index - 1);
 		BG_PLTT_COLOR(FIRST_WATER_PALETTE + 2, WATER_FIRST_COLOR) = saved;
 	}
 }
@@ -566,7 +566,7 @@ void scIzumoStopThePartyToThankThem(void)
 	if(fdScriptAskYesNoWithActorAnimation(
 		   MainRoutineStateWork.leaderActorId, 0) == 1) {
 		syFieldScriptWait(90);
-		Call3((void (*)())fdActorSetSpeedParms, ACTOR_SUSA, toFIXED(2) / 5,
+		Call3((void (*)())fdActorSetSpeedParams, ACTOR_SUSA, toFIXED(2) / 5,
 			toFIXED(1) / 5);
 		fdActorWalkToById(ACTOR_SUSA, 200, 216);
 		fdActorWaitForMoveById(ACTOR_SUSA);
@@ -578,8 +578,8 @@ void scIzumoStopThePartyToThankThem(void)
 		/* "Are you sure about that? I was only hoping to show you my
 		   appreciation." */
 		fdScriptShowMessageAndWait(ACTOR_SUSA, 0);
-		fdActorSetSprPriority(ACTOR_SUSA, 3);
-		fdActorGetById(ACTOR_SUSA)->motionFlg |= ACTOR_FALLS;
+		fdActorSetSpritePriority(ACTOR_SUSA, 3);
+		fdActorGetById(ACTOR_SUSA)->motionFlags |= ACTOR_FALLS;
 		syGameFlagSet(FLAG_SUSA_WAITS);
 	} else {
 		scIzumoTellTheCloudBrandLegend();
@@ -628,9 +628,9 @@ void scIzumoTellTheCloudBrandLegend(void)
 	syFieldScriptWait(15);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	syFieldScriptWait(30);
-	fdActorSetSpeedParms(ACTOR_SUSA, toFIXED(1) / 5, toFIXED(1) / 10);
-	fdActorGetById(ACTOR_SUSA)->motionFlg = 0;
-	fdActorSetSprPriority(ACTOR_SUSA, 3);
+	fdActorSetSpeedParams(ACTOR_SUSA, toFIXED(1) / 5, toFIXED(1) / 10);
+	fdActorGetById(ACTOR_SUSA)->motionFlags = 0;
+	fdActorSetSpritePriority(ACTOR_SUSA, 3);
 	fdActorWalkToById(ACTOR_SUSA, 200, 208);
 	fdActorWaitForMoveById(ACTOR_SUSA);
 	fdActorSetHorizontalPosWithTerrain(ACTOR_SUSA, 0, 0);
@@ -678,10 +678,10 @@ Sint32 scInit(void)
 {
 	syGameFlagClear(FLAG_SUSA_WAITS);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	sySetEvent(scIzumoRotateWaterCols, EVENT_PASS_VBLANK);
+	sySetEvent(scIzumoRotateWaterColors, EVENT_PASS_VBLANK);
 	fdActorPlaceBlocks(IzumoStonesToMove);
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN)) {
-		fdActorGetById(ACTOR_OKUNI)->steeringFlg = STEERING_KEEP_FACING;
+		fdActorGetById(ACTOR_OKUNI)->steeringFlags = STEERING_KEEP_FACING;
 		fdActorSetAnimationById(ACTOR_DANCER_A, ANIM_DANCE);
 		fdActorSetAnimationById(ACTOR_DANCER_B, ANIM_DANCE);
 		fdActorSetAnimationById(ACTOR_DANCER_C, ANIM_DANCE);
@@ -700,13 +700,13 @@ Sint32 scInit(void)
 			!syGameFlagGet(FLAG_TOKEN_OFFERED)) {
 			Call3((void (*)())fdActorSetHorizontalPosWithTerrain, ACTOR_SUSA,
 				toFIXED(200), toFIXED(216));
-			fdActorSetSprPriority(ACTOR_SUSA, 3);
-			fdActorGetById(ACTOR_SUSA)->motionFlg |= ACTOR_FALLS;
+			fdActorSetSpritePriority(ACTOR_SUSA, 3);
+			fdActorGetById(ACTOR_SUSA)->motionFlags |= ACTOR_FALLS;
 			syGameFlagSet(FLAG_SUSA_WAITS);
 		}
 	}
-	fdActorSetSprPriority(ACTOR_PORCH_WOMAN, 3);
-	fdActorGetById(ACTOR_PORCH_WOMAN)->motionFlg |= ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_PORCH_WOMAN, 3);
+	fdActorGetById(ACTOR_PORCH_WOMAN)->motionFlags |= ACTOR_FALLS;
 	return 0;
 }
 
@@ -755,12 +755,12 @@ void scIzumoDescendIntoTheRuins(void)
 
 	fdActorFaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
 	syFieldScriptWait(10);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestinationOffsetById(ACTOR_FELIX, 0, 4);
 	fdActorWaitForMoveById(ACTOR_FELIX);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FELIX), 0);
 #if IZUMO_RUINS_DESCENT_SOUND
-	sySndPlay(SE_STAIRS_DOWN);
+	sySoundPlay(SE_STAIRS_DOWN);
 #endif
 	fdActorSetDestinationOffsetById(ACTOR_FELIX, 0, 16);
 	fdActorWaitForMoveById(ACTOR_FELIX);

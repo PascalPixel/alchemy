@@ -1,6 +1,6 @@
-/* The game's own sound code over the sound driver: sySndPlay, which takes every
-   sound number, the music's volume and tempo ramps, the music's return after a
-   jingle, and a sound test nothing in the game names. */
+/* The game's own sound code over the sound driver: sySoundPlay, which takes
+   every sound number, the music's volume and tempo ramps, the music's return
+   after a jingle, and a sound test nothing in the game names. */
 
 #include "sound/sound.h"
 #include "battle/battle.h"
@@ -20,7 +20,7 @@ enum {
 	MUSIC_PLAYER_COUNT = 8, /* MusicPlayerLastSound' entries, one a player. */
 	/* Frames after a jingle starts before the music waits for it to end. */
 	BGM_RESTORE_DELAY_FRAMES = 10,
-	/* sySndWaitForBGMRestore gives up after this many ticks, about five
+	/* sySoundWaitForBGMRestore gives up after this many ticks, about five
 	   seconds. */
 	BGM_WAIT_TIMEOUT_TICKS = 300,
 	/* CurrentBgm before any music: an id no music has, so the first music
@@ -34,12 +34,12 @@ enum {
 /* Plays a sound number, the game's one way of playing a sound: a fade control,
    a sound effect, a jingle or music, as the README's "What a sound number
    means" describes. */
-void sySndPlay(Sint32 id)
+void sySoundPlay(Sint32 id)
 {
-	Sint32 flg;
+	Sint32 flags;
 	Sint32 player;
 
-	flg = id & SOUND_FLAGS_MASK;
+	flags = id & SOUND_FLAGS_MASK;
 	id &= SOUND_NUM_MASK;
 
 	if(id == SOUND_FADE_OUT_BGM) {
@@ -74,7 +74,7 @@ void sySndPlay(Sint32 id)
 	} else if(id >= SOUND_JINGLE_FIRST) {
 		/* A jingle, on its own player (MUSIC_PLAYER_JINGLE): the music's tracks
 		   0 to 7 go silent at once but keep playing, and fade back in once the
-		   jingle has ended (sySndUpdateBGMRamps). */
+		   jingle has ended (sySoundUpdateBGMRamps). */
 		m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, 0);
 		BgmVolumeTarget = 0;
 		BgmVolume = 0;
@@ -89,14 +89,14 @@ void sySndPlay(Sint32 id)
 		if(id == CurrentBgm)
 			return;
 		CurrentBgm = id;
-		sySndLoadReverbCode(
+		sySoundLoadReverbCode(
 			(id == MUS_MAIN_THEME_TITLE || id == MUS_TO_BE_CONTINUED ||
 				id == MUS_THE_BROKEN_SEAL_ENDING)
 				? SOUND_REVERB_LONG
 				: SOUND_REVERB_NORMAL);
 		m4aSongNumStart(id);
 		/* A silent start fades the new music in over 64 frames. */
-		if(flg & SOUND_FLAG_FADE_IN)
+		if(flags & SOUND_FLAG_FADE_IN)
 			BgmVolume = 0;
 		else
 			BgmVolume = BGM_UNITY_SCALE;
@@ -108,7 +108,7 @@ void sySndPlay(Sint32 id)
 
 /* Runs once a VBlank: brings the music back after a jingle and steps its volume
    and its tempo and pitch toward their targets, stopping on each. */
-void sySndUpdateBGMRamps(void)
+void sySoundUpdateBGMRamps(void)
 {
 	Sint32 delta;
 
@@ -169,42 +169,42 @@ void sySndUpdateBGMRamps(void)
    10, A plays it, B silences the music, Start fades it out, and Select fades
    the action sounds and moves to the next reverb code. Only a bare stub call
    stub, which no code names, leads here. */
-void sySndTestRun(void)
+void sySoundTestRun(void)
 {
 	/* One row each for music, jingles and sound effects. */
-	Sint32 snds[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
+	Sint32 sounds[3] = {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST};
 	Sint32 reverbCode;
 	Sint32 row;
-	Sint32 clipTmr;
+	Sint32 clipTimer;
 
 	row = 0;
 	reverbCode = SOUND_REVERB_NORMAL;
 	IO_WRITE32(0, &BuildStampWork[0]);
-	clipTmr = 20;
+	clipTimer = 20;
 
 	for(;;) {
 		/* A 20-tick countdown, restarted whenever the mixer has clipped a
 		   sample since the last tick; nothing reads it. */
-		if(clipTmr != 0)
-			clipTmr--;
+		if(clipTimer != 0)
+			clipTimer--;
 
 		if(SoundMixerClipped != 0) {
 			SoundMixerClipped = 0;
-			clipTmr = 20;
+			clipTimer = 20;
 		}
 
 		if(PerRepeat & KEY_SELECT) {
 			reverbCode = (reverbCode + 1) % (SOUND_REVERB_NONE + 1);
-			sySndLoadReverbCode(reverbCode);
+			sySoundLoadReverbCode(reverbCode);
 		}
 		if(PerRepeat & KEY_R)
-			snds[row] += 10;
+			sounds[row] += 10;
 		if(PerRepeat & KEY_L)
-			snds[row] -= 10;
+			sounds[row] -= 10;
 		if(PerRepeat & KEY_RIGHT)
-			snds[row] += 1;
+			sounds[row] += 1;
 		if(PerRepeat & KEY_LEFT)
-			snds[row] -= 1;
+			sounds[row] -= 1;
 		if(PerRepeat & KEY_UP) {
 			if(row > 0)
 				row--;
@@ -214,13 +214,13 @@ void sySndTestRun(void)
 				row++;
 		}
 		if(PerRepeat & KEY_A)
-			sySndPlay(snds[row]);
+			sySoundPlay(sounds[row]);
 		if(PerRepeat & KEY_B)
-			sySndPlay(MUS_SILENCE);
+			sySoundPlay(MUS_SILENCE);
 		if(PerRepeat & KEY_START)
-			sySndPlay(SOUND_FADE_OUT_BGM);
+			sySoundPlay(SOUND_FADE_OUT_BGM);
 		if(PerRepeat & KEY_SELECT)
-			sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+			sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 
 		sySynch(1);
 	}
@@ -228,7 +228,7 @@ void sySndTestRun(void)
 
 /* Starts the sound driver at power-on, with the music at full volume and its
    own tempo, and no music chosen yet. */
-void sySndInit(void)
+void sySoundInit(void)
 {
 	Sint32 i;
 
@@ -250,61 +250,62 @@ void sySndInit(void)
 
 /* Plays the music at a tempo scale at once, BGM_UNITY_SCALE its own; its pitch
    stays. The Lemurian ship slows it to fifteen sixteenths. */
-void sySndSetBGMTempo(Uint16 tempoScale)
+void sySoundSetBGMTempo(Uint16 tempoScale)
 {
 	m4aMPlayTempoControl(&MPlayInfoBGM, tempoScale);
 }
 
 /* Unused: transposes the music's tracks 0 to 7 by `pitch`, in 1/256 semitone.
    Only a bare stub, which no code names, leads here. */
-void sySndSetBGMPitch(Uint16 pitch)
+void sySoundSetBGMPitch(Uint16 pitch)
 {
 	m4aMPlayPitchControl(&MPlayInfoBGM, TRACKS_ALL, pitch);
 }
 
-/* Unused: ramps the music's tempo and pitch together toward `tgtScale`
+/* Unused: ramps the music's tempo and pitch together toward `targetScale`
    (BGM_UNITY_SCALE its own) by `step` a frame. Only a bare stub, which no code
    names, leads here. */
-void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step)
+void sySoundSetBGMTempoPitchTarget(Uint16 targetScale, Uint16 step)
 {
-	BgmTempoPitchTarget = tgtScale;
+	BgmTempoPitchTarget = targetScale;
 	BgmTempoPitchStep = step;
 }
 
 /* Unused: sets the music's volume at once (BGM_UNITY_SCALE full), ending any
    fade toward another. Only a bare stub, which no code names, leads here. */
-void sySndSetBGMVolume(Sint16 volume)
+void sySoundSetBGMVolume(Sint16 volume)
 {
 	m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, volume);
 	BgmVolumeTarget = volume;
 	BgmVolume = volume;
 }
 
-/* Unused: fades the music toward `tgtVolume` (BGM_UNITY_SCALE full) by
+/* Unused: fades the music toward `targetVolume` (BGM_UNITY_SCALE full) by
    `step` a frame. Only a bare stub, which no code names, leads here. */
-void sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step)
+void sySoundSetBGMVolumeTarget(Uint16 targetVolume, Uint16 step)
 {
-	BgmVolumeTarget = tgtVolume;
+	BgmVolumeTarget = targetVolume;
 	BgmVolumeStep = step;
 }
 
 /* Returns nonzero while a jingle holds the music: from its start until its
    player falls silent and the music begins to fade back in. */
-Sint32 sySndGetBGMRestoreDelay(void)
+Sint32 sySoundGetBGMRestoreDelay(void)
 {
 	return BgmRestoreDelay;
 }
 
-/* Unused: stops every music player where it is, for sySndResumeAllMusicPlayers
-   to go on from. Only a bare stub, which no code names, leads here. */
-void sySndStopAllMusicPlayers(void)
+/* Unused: stops every music player where it is, for
+   sySoundResumeAllMusicPlayers to go on from. Only a bare stub, which no code
+   names, leads here. */
+void sySoundStopAllMusicPlayers(void)
 {
 	m4aMPlayAllStop();
 }
 
-/* Unused: resumes every music player from where sySndStopAllMusicPlayers
+/* Unused: resumes every music player from where sySoundStopAllMusicPlayers
    stopped it. Only a bare stub, which no code names, leads here. */
-void sySndResumeAllMusicPlayers(void)
+void sySoundResumeAllMusicPlayers(void)
 {
 	m4aMPlayAllContinue();
 }
@@ -312,7 +313,7 @@ void sySndResumeAllMusicPlayers(void)
 /* Unused: sets SoundCommandMaskWork, or with SOUND_COMMAND_MASK_TOGGLE flips
    the bits given; nothing reads the mask. Only a bare stub, which no code
    names, leads here. */
-void sySndUpdateCommandMask(Uint32 command)
+void sySoundUpdateCommandMask(Uint32 command)
 {
 	Uint32 toggle = command & SOUND_COMMAND_MASK_TOGGLE;
 
@@ -323,16 +324,16 @@ void sySndUpdateCommandMask(Uint32 command)
 		SoundCommandMaskWork = command;
 }
 
-/* Returns the music sySndPlay last chose: BGM_NONE before any, MUS_SILENCE
+/* Returns the music sySoundPlay last chose: BGM_NONE before any, MUS_SILENCE
    after a fade. */
-Sint32 sySndGetCurrentBGM(void)
+Sint32 sySoundGetCurrentBGM(void)
 {
 	return CurrentBgm;
 }
 
 /* Waits until the music has begun to come back after a jingle, giving up after
    BGM_WAIT_TIMEOUT_TICKS. */
-void sySndWaitForBGMRestore(void)
+void sySoundWaitForBGMRestore(void)
 {
 	Sint32 ticksWaited = 0;
 
@@ -344,10 +345,10 @@ void sySndWaitForBGMRestore(void)
 	} while(ticksWaited < BGM_WAIT_TIMEOUT_TICKS);
 }
 
-/* Unused: returns the reverb code sySndPlay gives music `command`:
+/* Unused: returns the reverb code sySoundPlay gives music `command`:
    SOUND_REVERB_LONG for MUS_THE_BROKEN_SEAL_ENDING, MUS_MAIN_THEME_TITLE and
    MUS_TO_BE_CONTINUED, SOUND_REVERB_NORMAL for the rest. */
-UNUSED Sint32 sySndGetReverbCode(Sint32 command)
+UNUSED Sint32 sySoundGetReverbCode(Sint32 command)
 {
 	if(command == MUS_MAIN_THEME_TITLE || command == MUS_TO_BE_CONTINUED ||
 		command == MUS_THE_BROKEN_SEAL_ENDING)

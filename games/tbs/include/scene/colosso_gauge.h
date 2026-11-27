@@ -8,8 +8,10 @@
 /* One sprite of the race gauge's list: a link word, its position and shape
    attributes, and its tile. */
 typedef struct COLOSSO_GAUGE_SPR {
-	Sint32 link; /* written 0; syOAMAddSprAtDepth links the queue through it */
-	Sint32 attr; /* OAM attributes 0 and 1: y | x << 16 | shape and size bits */
+	Sint32
+		link; /* written 0; syOAMAddSpriteAtDepth links the queue through it */
+	Sint32 attribute; /* OAM attributes 0 and 1: y | x << 16 | shape and size
+						 bits */
 	Sint32 tile; /* OAM attribute 2: the tile, with palette 14 and priority 1 */
 } COLOSSO_GAUGE_SPR;
 
@@ -19,7 +21,7 @@ typedef struct COLOSSO_GAUGE_SPR {
 typedef struct COLOSSO_GAUGE_STATE {
 	/* The bar, its ends and the racers' marks: 2 * segments + 6 sprites, all 18
 	   for Colosseum Final 3's six segments. */
-	COLOSSO_GAUGE_SPR sprs[18];
+	COLOSSO_GAUGE_SPR sprites[18];
 	/* The VRAM cache entry holding the gauge's tiles: released while the gauge
 	   is hidden, and loaded again when it slides back down. */
 	Sint16 vramBlock;

@@ -6,7 +6,7 @@
 #include "edition.h"
 #include "battle_action.h"
 
-void btUnitBuildStatFlags(Sint32 id, BATTLE_OBJECT *slot);
-void btStatIconCycle(BATTLE_OBJECT *slot);
+void btUnitBuildStatusFlags(Sint32 id, BATTLE_OBJECT *slot);
+void btStatusIconCycle(BATTLE_OBJECT *slot);
 
 #endif

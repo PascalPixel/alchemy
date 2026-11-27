@@ -125,7 +125,7 @@ void scJupiterLighthouseStepOnSingleCrackedTile(Sint32 value)
 void scJupiterLighthouseOpenDoor(Sint32 how)
 {
 	if(how == DOOR_GRINDS_OPEN) {
-		fdScriptPlaySnd(SE_IMPACT);
+		fdScriptPlaySound(SE_IMPACT);
 		fdMapGridCopyMetatilesLayered(84, 36, 2, 3, 78, 40);
 		syWait(6);
 	}
@@ -136,7 +136,7 @@ void scJupiterLighthouseOpenDoor(Sint32 how)
 /* Closes the door with a thud. */
 void scJupiterLighthouseCloseDoor(void)
 {
-	fdScriptPlaySnd(SE_HEAVY_IMPACT);
+	fdScriptPlaySound(SE_HEAVY_IMPACT);
 	fdMapGridCopyMetatilesLayered(84, 36, 2, 3, 78, 40);
 	syWait(6);
 	fdMapGridCopyMetatilesLayered(84, 42, 2, 3, 78, 40);
@@ -234,7 +234,7 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
@@ -250,11 +250,11 @@ UNUSED void scJupiterLighthouseFloatAboveGround(Sint32 id)
 	Sint32 height;
 
 	actor = fdActorGet(id);
-	actor->motionFlg = ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FLOATS;
 	height = actor->groundHeight;
 	actor->bounce = 0;
 	actor->y.fixed = height + toFIXED(32);
-	actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	height =
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 	fdMapGridSetMetatileHeight(
@@ -271,8 +271,9 @@ extern Sint32 WhirlwindEndScript[];
 
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -291,7 +292,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add_counted.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Uint16 value)
+void scLightSpritesSetPriority(Uint16 value)
 {
 	LightSpritePriority = value;
 }
@@ -394,7 +395,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"

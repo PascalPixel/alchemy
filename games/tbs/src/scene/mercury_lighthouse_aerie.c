@@ -211,38 +211,38 @@ Sint32 scInit(void)
 	if(MainRoutineStateWork.next == SCENE_MERCURY_LIGHTHOUSE_AERIE) {
 		gmFlagSet(FLAG_RETREAT_BLOCKED);
 		sySetTickEvent(scMercuryLighthouseAerieFlickerBeacon, EVENT_PASS_TICK);
-		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
-		fdActorSetSprPriority(ACTOR_GARET, 1);
-		fdActorSetSprPriority(ACTOR_IVAN, 1);
-		fdActorSetSprPriority(ACTOR_MIA, 1);
-		fdActorSetSprPriority(ACTOR_JENNA, 1);
-		fdActorSetSprPriority(ACTOR_KRADEN, 1);
-		fdActorSetSprPriority(ACTOR_FELIX, 1);
-		fdActorSetSprPriority(ACTOR_SATUROS, 1);
-		fdActorSetSprPriority(ACTOR_MENARDI, 1);
-		fdActorSetSprPriority(ACTOR_ALEX, 1);
-		fdActorSetSprPriority(ACTOR_BEACON, 1);
-		fdActorSetSprPriority(ACTOR_LIFT_STATUE, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_BEACON_STATUE, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_BEACON_STATUE + 1, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_BEACON_STATUE + 2, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_BEACON_STATUE + 3, 1);
+		fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
+		fdActorSetSpritePriority(ACTOR_GARET, 1);
+		fdActorSetSpritePriority(ACTOR_IVAN, 1);
+		fdActorSetSpritePriority(ACTOR_MIA, 1);
+		fdActorSetSpritePriority(ACTOR_JENNA, 1);
+		fdActorSetSpritePriority(ACTOR_KRADEN, 1);
+		fdActorSetSpritePriority(ACTOR_FELIX, 1);
+		fdActorSetSpritePriority(ACTOR_SATUROS, 1);
+		fdActorSetSpritePriority(ACTOR_MENARDI, 1);
+		fdActorSetSpritePriority(ACTOR_ALEX, 1);
+		fdActorSetSpritePriority(ACTOR_BEACON, 1);
+		fdActorSetSpritePriority(ACTOR_LIFT_STATUE, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 1, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 2, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 3, 1);
 		for(i = ACTOR_FIRST_PLATFORM; i < ACTOR_FIRST_PLATFORM + 6; i++) {
-			fdActorSetSprPriority(i, 1);
-			fdActorGet(i)->motionFlg = ACTOR_FLOATS;
-			fdActorGet(i)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpritePriority(i, 1);
+			fdActorGet(i)->motionFlags = ACTOR_FLOATS;
+			fdActorGet(i)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			fdActorGet(i)->y.fixed = -(toFIXED(50) + toFIXED(1) / 2);
 		}
 		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) &&
 			(actorId = scActorFindNearestFloatingPlatform()) != 0 &&
 			(actor = fdActorGet(actorId)) != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
-		fdActorSetSprFlags(fdActorGet(ACTOR_LIFT_STATUE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE + 1), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE + 2), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE + 3), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_LIFT_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE + 1), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE + 2), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_BEACON_STATUE + 3), 0);
 		fdActorGet(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -toFIXED(1);
 		fdActorGet(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -toFIXED(1);
 		if(MainRoutineStateWork.entrance ==
@@ -257,7 +257,7 @@ Sint32 scInit(void)
 					MAP_GRID_LAYER_SCROLL *lift =
 						&((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
 
-					lift->ofsY = toFIXED(1024);
+					lift->offsetY = toFIXED(1024);
 				}
 				fdMapGridCenterOnFollowedPoint();
 				sySynch(1);
@@ -288,24 +288,24 @@ static void scMercuryLighthouseAeriePartyArrives(void)
 
 	fdScriptStart();
 	gmPartyRestorePpInLighthouse();
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MIA), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MIA), 0);
 	fdCameraMoveTo(304, CAMERA_KEEP, 120, 0);
 	sySynch(1);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdMapGridSetShake(5, 5, 1);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(30);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(512, -24, 160, 1);
 	fdCameraWaitForArrival();
@@ -329,14 +329,14 @@ static void scMercuryLighthouseAeriePartyArrives(void)
 	fdPaletteFadeStartInterpolation(30);
 	fdScriptWait(30);
 	fdScriptWait(80);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdScriptWait(30);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdScriptWait(60);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
@@ -344,11 +344,11 @@ static void scMercuryLighthouseAeriePartyArrives(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_GARET, FACING_EAST, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
 	fdScriptWait(40);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MIA), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MIA), SPRITE_FLAG_SHADOW);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_STAND);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
@@ -396,32 +396,32 @@ static void scMercuryLighthouseAerieJumpToNextPlatform(void)
 {
 	ACTOR	 *actor;
 	FIELD_POS pos;
-	Sint32	  ang;
-	Uint8	  flg;
+	Sint32	  angle;
+	Uint8	  flags;
 
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
-	ang = FACING_NEAREST_EIGHTH(actor->facing);
-	flg = actor->motionFlg;
+	angle = FACING_NEAREST_EIGHTH(actor->facing);
+	flags = actor->motionFlags;
 	SET_POSITION(&pos, (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
 		actor->y.fixed, (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
-	syVectorAddPolarOffset(toFIXED(32), ang, (FIXED *)&pos);
+	syVectorAddPolarOffset(toFIXED(32), angle, (FIXED *)&pos);
 	if(syFieldActorCheckMovementCollision(actor, &pos) == 0) {
 		gmFlagClear(FLAG_ON_PLATFORM);
 		scMercuryLighthouseAerieFloatPlatforms();
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(actor, ANIM_LEADER_LEAP);
 		actor->speedLimit = toFIXED(3);
 		actor->acceleration = toFIXED(2);
-		actor->velY = toFIXED(4);
-		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(actor, 0);
+		actor->velocityY = toFIXED(4);
+		actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorMoveToAndWait(
 			ACTOR_PARTY_LEADER, FIXEDtoINT(pos.x), FIXEDtoINT(pos.z));
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
-		actor->motionFlg = flg;
+		fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+		actor->motionFlags = flags;
 	}
 }
 
@@ -445,8 +445,8 @@ static void scMercuryLighthouseAerieLandOnPlatform(void)
 	if(platformId != 0) {
 		gmFlagSet(FLAG_ON_PLATFORM);
 		platform = fdActorGet(MercuryLighthouseAerieLandedPlatform);
-		platform->motionFlg = 0;
-		leader->motionFlg &= ~ACTOR_FOLLOWS_TERRAIN;
+		platform->motionFlags = 0;
+		leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
 		platform->y.fixed -= toFIXED(3);
 		leader->y.fixed -= toFIXED(3);
 		leader->groundHeight -= toFIXED(3);
@@ -479,14 +479,14 @@ static void scMercuryLighthouseAerieLandOnPlatform(void)
    The leap from one platform to the next calls it too. */
 static void scMercuryLighthouseAerieFloatPlatforms(void)
 {
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorGet(ACTOR_FIRST_PLATFORM)->motionFlg = ACTOR_FLOATS;
-	fdActorGet(ACTOR_FIRST_PLATFORM + 1)->motionFlg = ACTOR_FLOATS;
-	fdActorGet(ACTOR_FIRST_PLATFORM + 2)->motionFlg = ACTOR_FLOATS;
-	fdActorGet(ACTOR_FIRST_LIFT_PLATFORM)->motionFlg = ACTOR_FLOATS;
-	fdActorGet(ACTOR_SECOND_LIFT_PLATFORM)->motionFlg = ACTOR_FLOATS;
-	fdActorGet(ACTOR_FIRST_PLATFORM + 5)->motionFlg = ACTOR_FLOATS;
+	fdActorGet(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
+	fdActorGet(ACTOR_FIRST_PLATFORM + 1)->motionFlags = ACTOR_FLOATS;
+	fdActorGet(ACTOR_FIRST_PLATFORM + 2)->motionFlags = ACTOR_FLOATS;
+	fdActorGet(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
+	fdActorGet(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
+	fdActorGet(ACTOR_FIRST_PLATFORM + 5)->motionFlags = ACTOR_FLOATS;
 }
 
 /* Climbing the wide stairs up to the beacon, at metatiles (20, 14) and (21,
@@ -502,7 +502,7 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	ACTOR *actor;
 
 	fdScriptStart();
-	fdActorGet(ACTOR_FIRST_LIFT_PLATFORM)->motionFlg &=
+	fdActorGet(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags &=
 		~(ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
@@ -538,7 +538,7 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdScriptWait(20);
 	fdCameraSetSpeed(1.5);
 	fdCameraMoveTo(328, 40, 176, 1);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdActorSetSpeed(ACTOR_GARET, 1.5);
 	fdActorWalkToAndWait(ACTOR_GARET, 328, 216);
 	fdCameraWaitForArrival();
@@ -626,7 +626,7 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdActorSetAnimation(ACTOR_MIA, ANIM_MIA_HEAD_BOWED);
 	/* "I have failed in the one duty placed upon me... This is..." */
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 60);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetPos(ACTOR_JENNA, 216, 200);
 	/* "Isaac! Garet!" */
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 20);
@@ -653,7 +653,7 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_FELIX, 1);
 	fdScriptWait(20);
-	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
+	sySoundPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 	/* "So it's you, Isaac!" */
 	fdScriptShowMessageThenWait(ACTOR_FELIX, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_MENARDI, 1);
@@ -773,12 +773,12 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	/* "Besides, I want to see how much their powers have developed." */
 	fdScriptShowMessage(ACTOR_SATUROS, 0);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_GARET, 328, 224);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 344, 224);
 	fdActorWalkTo(ACTOR_IVAN, 344, 232);
 	fdActorWaitForMoveById(ACTOR_GARET);
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
@@ -852,22 +852,23 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdActorWaitForMoveById(ACTOR_JENNA);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_EAST, 20);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 20);
-	fdActorGet(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_FELIX, 88, 152);
-	fdActorGet(ACTOR_FELIX)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_MENARDI, FACING_NORTH_NORTHWEST, 20);
 	fdActorSetAnimation(ACTOR_MENARDI, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
 	fdScriptWait(40);
 	fdActorSetSpeedAndAcceleration(ACTOR_MENARDI, 3, 2);
-	fdActorGet(ACTOR_MENARDI)->velY = toFIXED(4);
-	sySndPlay(SE_JUMP);
-	fdActorGet(ACTOR_MENARDI)->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-	fdActorSetSprFlags(fdActorGet(ACTOR_MENARDI), 0);
-	fdActorGet(ACTOR_FIRST_LIFT_PLATFORM)->motionFlg = ACTOR_FLOATS;
+	fdActorGet(ACTOR_MENARDI)->velocityY = toFIXED(4);
+	sySoundPlay(SE_JUMP);
+	fdActorGet(ACTOR_MENARDI)->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MENARDI), 0);
+	fdActorGet(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = ACTOR_FLOATS;
 	fdActorMoveToAndWait(ACTOR_MENARDI, 104, 168);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
-	fdActorGet(ACTOR_MENARDI)->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
+	fdActorGet(ACTOR_MENARDI)->motionFlags =
+		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdActorFaceDirection(ACTOR_MENARDI, FACING_EAST, 30);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_EAST, 10);
 	/* "Isaac and Garet shouldn't have come after us..." */
@@ -879,11 +880,11 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdScriptShowMessageThenWait(ACTOR_JENNA, 0, 20);
 	/* "I'm counting on you!" */
 	fdScriptShowMessageThenWait(ACTOR_MENARDI, 0, 20);
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
 	scMercuryLighthouseAerieLowerLift();
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
@@ -913,10 +914,10 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	fdActorSetSpeed(ACTOR_GARET, 2);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 328, 224);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 1);
 	fdActorStartRepeatedMotion(ACTOR_IVAN, 1);
@@ -963,10 +964,10 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 	fdActorWalkToAndWait(ACTOR_SATUROS, 328, 200);
 	fdActorRunRepeatedMotion(ACTOR_SATUROS, 2);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 20);
-	fdActorGet(ACTOR_SATUROS)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SATUROS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SATUROS, 336, 208);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_SATUROS)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SATUROS)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	/* "What happened? Saturos is moving strangely." */
@@ -996,7 +997,7 @@ static void scMercuryLighthouseAerieConfrontSaturos(void)
 static void scMercuryLighthouseAerieAlexAppears(void)
 {
 	fdScriptStart();
-	fdActorGet(ACTOR_LIFT_STATUE)->motionFlg = 0;
+	fdActorGet(ACTOR_LIFT_STATUE)->motionFlags = 0;
 	fdActorSetPos(ACTOR_PARTY_LEADER, 344, 224);
 	fdActorSetPos(ACTOR_GARET, 328, 224);
 	fdActorSetPos(ACTOR_IVAN, 344, 232);
@@ -1007,7 +1008,7 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
 	fdActorSetPos(ACTOR_SATUROS, 336, 176);
 	fdActorSetAnimation(ACTOR_SATUROS, SATUROS_ANIMATION_LIE);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SATUROS), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SATUROS), 0);
 	fdCameraMoveTo(336, CAMERA_KEEP, 208, 0);
 	sySynch(1);
 	fdMapGridCenterOnFollowedPoint();
@@ -1040,15 +1041,15 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	/* "I... I meant nothing..." */
 	fdScriptShowMessageThenWait(ACTOR_SATUROS, 0, 30);
 	fdActorSetPos(ACTOR_ALEX, 312, 112);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	/* "I shall tell you what he means..." */
 	fdScriptShowMessageThenWait(ACTOR_ALEX, 0, 20);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
 	/* "That voice! Could it be?" */
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 30);
-	sySndPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
+	sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
 	fdCameraSetSpeed(0.8);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(336, CAMERA_KEEP, 168, 1);
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_ALEX, 0.8);
@@ -1205,7 +1206,7 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	fdActorSetAnimation(ACTOR_SATUROS, 8);
 	fdScriptWait(45);
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
 	fdScriptWait(40);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 	/* "Saturos is up again!? But we beat him!" */
@@ -1294,11 +1295,11 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 5);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 5);
 	fdActorFaceDirection(ACTOR_MIA, FACING_EAST, 5);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(280, CAMERA_KEEP, 232, 1);
 	fdCameraWaitForArrival();
-	fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_SATUROS, 240, 208);
 	fdActorSetPos(ACTOR_ALEX, 232, 208);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 0);
@@ -1343,19 +1344,19 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 		MAP_GRID_LAYER_SCROLL *lift;
 		fdCameraMoveTo(152, CAMERA_KEEP, 216, 1);
 		lift = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
-		lift->ofsY = toFIXED(896);
+		lift->offsetY = toFIXED(896);
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
-		fdActorGet(ACTOR_LIFT_STATUE)->motionFlg = 0;
+		fdActorGet(ACTOR_LIFT_STATUE)->motionFlags = 0;
 		fdActorSetPos(ACTOR_LIFT_STATUE, 104, 264);
 		fdActorGet(ACTOR_LIFT_STATUE)->y.fixed = -toFIXED(32);
-		fdActorGet(ACTOR_LIFT_STATUE)->tgtY = -toFIXED(32);
+		fdActorGet(ACTOR_LIFT_STATUE)->targetY = -toFIXED(32);
 		fdMapGridCopyMetatilesTo(29, 74, 4, 74, 5, 4);
-		fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-		fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+		fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+		fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
 		scMercuryLighthouseAerieRaiseLift();
-		fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-		fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+		fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
 		fdCameraWaitForArrival();
 		fdScriptWait(30);
 		fdActorFaceDirection(ACTOR_ALEX, FACING_WEST, 20);
@@ -1425,8 +1426,8 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	fdCameraWaitForArrival();
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_ALEX, ANIM_STAND);
-	fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_SATUROS, 120, 152);
 	fdActorSetPos(ACTOR_ALEX, 112, 160);
 	fdActorFaceDirection(ACTOR_SATUROS, FACING_SOUTH_SOUTHWEST, 0);
@@ -1458,12 +1459,12 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	fdScriptShowMessageThenWait(ACTOR_SATUROS, 0, 20);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_EAST, 20);
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
 	scMercuryLighthouseAerieLowerLift();
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdCameraMoveTo(336, CAMERA_KEEP, 216, 1);
 	fdCameraWaitForArrival();
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
@@ -1543,7 +1544,7 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
 	fdActorWalkToAndWait(ACTOR_MIA, 328, 216);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_GARET, 312, 200);
 	fdActorWalkTo(ACTOR_MIA, 280, 216);
 	fdActorWaitForMoveById(ACTOR_GARET);
@@ -1617,7 +1618,7 @@ static void scMercuryLighthouseAerieAlexAppears(void)
 		MAP_GRID_LAYER_SCROLL *lift =
 			&((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
 
-		lift->ofsY = toFIXED(1024);
+		lift->offsetY = toFIXED(1024);
 	}
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
@@ -1639,24 +1640,24 @@ static void scMercuryLighthouseAerieCallLift(void)
 
 	lift = &((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
 	fdScriptStart();
-	lift->ofsY = toFIXED(896);
+	lift->offsetY = toFIXED(896);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	fdActorGet(ACTOR_LIFT_STATUE)->motionFlg = 0;
+	fdActorGet(ACTOR_LIFT_STATUE)->motionFlags = 0;
 	fdActorSetPos(ACTOR_LIFT_STATUE, 104, 264);
 	fdActorGet(ACTOR_LIFT_STATUE)->y.fixed = -toFIXED(32);
-	fdActorGet(ACTOR_LIFT_STATUE)->tgtY = -toFIXED(32);
-	fdCameraGetActor()->motionFlg = 0;
+	fdActorGet(ACTOR_LIFT_STATUE)->targetY = -toFIXED(32);
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(128, CAMERA_KEEP, 184, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(30);
 	fdMapGridCopyMetatilesTo(29, 74, 4, 74, 5, 4);
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
 	scMercuryLighthouseAerieRaiseLift();
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
 	fdScriptWait(20);
 	gmFlagSet(FLAG_LIFT_UP);
 	fdScriptEnd();
@@ -1674,8 +1675,8 @@ static void scMercuryLighthouseAerieRideLiftDown(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 104, 152);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 60);
-	fdActorSetSprPriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-	fdActorSetSprPriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
+	fdActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
 	scMercuryLighthouseAerieLowerLift();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	syImportScriptSetExitRequest(
@@ -1689,25 +1690,25 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpOut(void)
 	EFFECT_OPTIONS options;
 	ACTOR		  *left;
 	ACTOR		  *right;
-	Uint32		   frm;
+	Uint32		   frame;
 	FIXED		   x;
 	FIXED		   r;
 
 	left = fdActorGet(ACTOR_SATUROS);
 	right = fdActorGet(ACTOR_ALEX);
-	sySndPlay(SE_WARP);
-	fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SATUROS), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
-	options.pri = 1;
-	options.pal = SPRITE_COLOR_BRG;
+	sySoundPlay(SE_WARP);
+	fdActorSetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SATUROS), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
+	options.priority = 1;
+	options.palette = SPRITE_COLOR_BRG;
 	options.type = SPRITE_PARTICLE;
 	options.startScaleX = toFIXED(2) / 5;
 	options.startScaleY = toFIXED(3);
-	for(frm = 0; frm < WARP_TICKS; frm++) {
+	for(frame = 0; frame < WARP_TICKS; frame++) {
 		fdScriptWait(1);
-		if(frm & 1) {
+		if(frame & 1) {
 			r = toFIXED(syRandomBelow(24));
 			x = left->x.fixed;
 			x += r;
@@ -1742,23 +1743,23 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpIn(void)
 	EFFECT_OPTIONS options;
 	ACTOR		  *left;
 	ACTOR		  *right;
-	Uint32		   frm;
+	Uint32		   frame;
 	FIXED		   x;
 	FIXED		   r;
 
 	left = fdActorGet(ACTOR_SATUROS);
 	right = fdActorGet(ACTOR_ALEX);
-	sySndPlay(SE_WARP);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SATUROS), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
-	options.pri = 1;
-	options.pal = SPRITE_COLOR_BRG;
+	sySoundPlay(SE_WARP);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SATUROS), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
+	options.priority = 1;
+	options.palette = SPRITE_COLOR_BRG;
 	options.type = SPRITE_PARTICLE;
 	options.startScaleX = toFIXED(2) / 5;
 	options.startScaleY = toFIXED(3);
-	for(frm = 0; frm < WARP_TICKS; frm++) {
+	for(frame = 0; frame < WARP_TICKS; frame++) {
 		fdScriptWait(1);
-		if(frm & 1) {
+		if(frame & 1) {
 			r = toFIXED(syRandomBelow(24));
 			x = left->x.fixed;
 			x += r;
@@ -1781,15 +1782,15 @@ static void scMercuryLighthouseAerieSaturosAndAlexWarpIn(void)
 					EFFECT_USE_PALETTE,
 				&options);
 		}
-		if(frm == WARP_IN_BLINK_TICK) {
-			fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
-			fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
+		if(frame == WARP_IN_BLINK_TICK) {
+			fdActorSetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
+			fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
 		}
 	}
-	fdActorSetSprColById(ACTOR_SATUROS, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
 /* Writes to out the ids of the actors standing on the lift, columns 4 to 8 and
@@ -1838,19 +1839,19 @@ static void scMercuryLighthouseAerieLowerLift(void)
 	n = 0;
 	for(i = 0; i <= 4; i++)
 		ids[i] = ACTOR_ID_COUNT;
-	scMercuryLighthouseAerieFindActorsOnLift(ids, lift->ofsY);
+	scMercuryLighthouseAerieFindActorsOnLift(ids, lift->offsetY);
 	for(i = 0; i <= 4; i++) {
 		if(ids[i] == ACTOR_ID_COUNT)
 			break;
-		fdActorGet(ids[i])->motionFlg = 0;
+		fdActorGet(ids[i])->motionFlags = 0;
 		n++;
 	}
-	sySndPlay(SE_LIFT);
+	sySoundPlay(SE_LIFT);
 	for(i = 0; i < LIFT_DOWN_TICKS; i++) {
-		lift->ofsY -= speed;
+		lift->offsetY -= speed;
 		for(j = 0; j < n; j++) {
 			fdActorGet(ids[j])->z.fixed += speed;
-			fdActorGet(ids[j])->tgtZ = fdActorGet(ids[j])->z.fixed;
+			fdActorGet(ids[j])->targetZ = fdActorGet(ids[j])->z.fixed;
 		}
 		if((i & 3) == 3)
 			speed += toFIXED(1) / 10;
@@ -1859,7 +1860,7 @@ static void scMercuryLighthouseAerieLowerLift(void)
 		sySynch(1);
 	}
 	for(i = 0; i < n; i++)
-		fdActorGet(ids[i])->motionFlg = 0;
+		fdActorGet(ids[i])->motionFlags = 0;
 }
 
 /* The lift rises with everything standing on it, slowing at the top. */
@@ -1877,19 +1878,19 @@ static void scMercuryLighthouseAerieRaiseLift(void)
 	n = 0;
 	for(i = 0; i <= 4; i++)
 		ids[i] = ACTOR_ID_COUNT;
-	scMercuryLighthouseAerieFindActorsOnLift(ids, lift->ofsY);
+	scMercuryLighthouseAerieFindActorsOnLift(ids, lift->offsetY);
 	for(i = 0; i <= 4; i++) {
 		if(ids[i] == ACTOR_ID_COUNT)
 			break;
-		fdActorGet(ids[i])->motionFlg = 0;
+		fdActorGet(ids[i])->motionFlags = 0;
 		n++;
 	}
-	sySndPlay(SE_LIFT);
+	sySoundPlay(SE_LIFT);
 	for(i = 0; i < LIFT_UP_TICKS; i++) {
-		lift->ofsY += speed;
+		lift->offsetY += speed;
 		for(j = 0; j < n; j++) {
 			fdActorGet(ids[j])->z.fixed -= speed;
-			fdActorGet(ids[j])->tgtZ = fdActorGet(ids[j])->z.fixed;
+			fdActorGet(ids[j])->targetZ = fdActorGet(ids[j])->z.fixed;
 		}
 		if((i & 3) == 3 && i >= LIFT_UP_TICKS - LIFT_SLOWING_TICKS)
 			speed -= toFIXED(1) / 5;
@@ -1897,7 +1898,7 @@ static void scMercuryLighthouseAerieRaiseLift(void)
 			speed = toFIXED(1) / 20;
 		sySynch(1);
 	}
-	lift->ofsY = toFIXED(1024);
+	lift->offsetY = toFIXED(1024);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(2);
 }
@@ -1931,16 +1932,16 @@ UNUSED static void scMercuryLighthouseAerieUnusedAlexCastsPly(void)
 static void scMercuryLighthouseAerieUpdateBeaconSpark(ACTOR *spark)
 {
 	ACTOR *beacon;
-	Uint16 ang;
+	Uint16 angle;
 
 	beacon = (ACTOR *)spark->watchedActor;
-	ang = spark->tmr;
-	spark->x.fixed =
-		beacon->x.fixed + syCos(ang) * (spark->speedLimit + SPARK_ORBIT_RADIUS);
-	spark->z.fixed = (sySin(ang) << 4) + toFIXED(144);
-	spark->tgtX = spark->x.fixed;
-	spark->tgtZ = spark->z.fixed;
-	spark->tmr -= 512;
+	angle = spark->timer;
+	spark->x.fixed = beacon->x.fixed +
+		syCos(angle) * (spark->speedLimit + SPARK_ORBIT_RADIUS);
+	spark->z.fixed = (sySin(angle) << 4) + toFIXED(144);
+	spark->targetX = spark->x.fixed;
+	spark->targetZ = spark->z.fixed;
+	spark->timer -= 512;
 }
 
 /* Flickers the beacon and sheds its sparks, every tick. */
@@ -1986,19 +1987,19 @@ static void scMercuryLighthouseAerieFlickerBeacon(void)
 	if(spark == NULL) {
 		return;
 	}
-	sprite = spark->spr;
+	sprite = spark->sprite;
 	fdActorStartScript(spark, BeaconSparkScript);
-	fdActorSetSprCol(spark, SPRITE_COLOR_BGR);
-	spark->motionFlg = cycleTick;
+	fdActorSetSpriteColor(spark, SPRITE_COLOR_BGR);
+	spark->motionFlags = cycleTick;
 	angle = syRandomNext() & 0x0ffff000;
-	spark->tmr = angle;
+	spark->timer = angle;
 	spark->userValue = cycleTick;
 	spark->watchedActor = (ACTOR_OR_EFFECT *)beacon;
 	spark->update = scMercuryLighthouseAerieUpdateBeaconSpark;
 	spark->speedLimit =
 		FIXEDtoINT(sySin((height & 0xfffff) >> 4) * SPARK_ORBIT_BULGE);
-	sprite->flg = 0;
-	sprite->image.pri = beacon->spr->image.pri;
+	sprite->flags = 0;
+	sprite->image.priority = beacon->sprite->image.priority;
 }
 
 #include "shared/field_effect_duration_scripts.c"

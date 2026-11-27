@@ -21,11 +21,11 @@ void fdPsynergyUpdateMindReadWave(void)
 	VECTOR3				from;
 	VECTOR3				to;
 	ACTOR_PLACE		   *descriptor;
-	Sint32				sprId;
+	Sint32				spriteId;
 	ANIMATION_METADATA *metadata;
-	PLACED_SPR		   *spr;
+	PLACED_SPR		   *sprite;
 	ACTOR			   *src;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	ACTOR			   *actor;
 	Uint16			   *line;
 	Sint32				i;
@@ -47,62 +47,63 @@ void fdPsynergyUpdateMindReadWave(void)
 			1);
 		fdPaletteFadeStartInterpolation(1);
 	}
-	fdActorSetLayersColMode(fdActorGetById(state->srcId), LAYERS_COLOR_CYCLING);
+	fdActorSetLayersColorMode(
+		fdActorGetById(state->srcId), LAYERS_COLOR_CYCLING);
 
-	if(state->cnt == 0 || state->cnt == MIND_READ_PARTICLE_GAP ||
-		state->cnt == 2 * MIND_READ_PARTICLE_GAP) {
+	if(state->count == 0 || state->count == MIND_READ_PARTICLE_GAP ||
+		state->count == 2 * MIND_READ_PARTICLE_GAP) {
 		src = fdActorGetById(state->srcId);
-		tgt = fdActorGetById(state->tgtId);
-		if(src != NULL && tgt != NULL) {
+		target = fdActorGetById(state->targetId);
+		if(src != NULL && target != NULL) {
 			descriptor = (ACTOR_PLACE *)fdFindActorPlacement(state->srcId);
-			sprId = descriptor->spr;
+			spriteId = descriptor->sprite;
 			from.x = src->x.fixed;
-			metadata = fdResourceGetMetadataRecordStubStub(sprId);
+			metadata = fdResourceGetMetadataRecordStubStub(spriteId);
 			from.y =
-				src->y.fixed + toFIXED((Sint8)metadata->sprTop) - toFIXED(2);
+				src->y.fixed + toFIXED((Sint8)metadata->spriteTop) - toFIXED(2);
 			from.z = src->z.fixed;
-			spr = tgt->spr;
-			descriptor = (ACTOR_PLACE *)fdFindActorPlacement(state->tgtId);
-			sprId = descriptor->spr;
-			to.x = tgt->x.fixed;
-			metadata = fdResourceGetMetadataRecordStubStub(sprId);
+			sprite = target->sprite;
+			descriptor = (ACTOR_PLACE *)fdFindActorPlacement(state->targetId);
+			spriteId = descriptor->sprite;
+			to.x = target->x.fixed;
+			metadata = fdResourceGetMetadataRecordStubStub(spriteId);
 			{
-				Sint32 box = (Sint8)metadata->sprTop;
-				FIXED  y = tgt->y.fixed;
+				Sint32 box = (Sint8)metadata->spriteTop;
+				FIXED  y = target->y.fixed;
 
 				y += toFIXED(box);
 				to.y = y - toFIXED(2);
 			}
-			to.z = tgt->z.fixed;
-			if(spr->rotation == DEGtoANG(180)) {
+			to.z = target->z.fixed;
+			if(sprite->rotation == DEGtoANG(180)) {
 				to.y -= toFIXED(24);
-			} else if(spr->rotation == DEGtoANG(90)) {
+			} else if(sprite->rotation == DEGtoANG(90)) {
 				to.x += toFIXED(6);
 				to.y -= toFIXED(12);
-			} else if(spr->rotation == TRIG_TURN * 3 / 4) {
+			} else if(sprite->rotation == TRIG_TURN * 3 / 4) {
 				to.x -= toFIXED(6);
 				to.y -= toFIXED(12);
 			}
 			actor = fdActorCreateStub(SPRITE_CRESCENT, to.x, to.y, to.z);
 			if(actor != NULL) {
-				spr = actor->spr;
-				actor->motionFlg = 0;
+				sprite = actor->sprite;
+				actor->motionFlags = 0;
 				actor->speedLimit = toFIXED(16) / 25; /* 0.64 pixels a tick */
 				actor->acceleration = toFIXED(16) / 25;
 				actor->facing = syAtan(from.z - to.z, from.x - to.x);
 				actor->update = (OBJECT_UPDATE)fdMindReadUpdateCrescent;
-				spr->flg = 0;
-				spr->pri = 1;
+				sprite->flags = 0;
+				sprite->priority = 1;
 				fdActorSetMoveTargetStub(actor, from.x, from.y, from.z);
 			}
 		}
 	}
 
-	if(state->cnt != MIND_READ_QUIET) {
-		if(state->cnt == 0)
-			sySndPlayStub(SE_PSYNERGY_START);
-		if(++state->cnt > MIND_READ_CYCLE_LAST)
-			state->cnt = 0;
+	if(state->count != MIND_READ_QUIET) {
+		if(state->count == 0)
+			sySoundPlayStub(SE_PSYNERGY_START);
+		if(++state->count > MIND_READ_CYCLE_LAST)
+			state->count = 0;
 	}
 }
 
@@ -127,15 +128,16 @@ void fdMindReadStartRipple(void)
 Sint32 fdEffectHueChannelRamp(Sint16 hue)
 {
 	Sint32 level = 0;
-	Sint16 ang = hue;
+	Sint16 angle = hue;
 
-	ang = (ang + HUE_DEGREES) % HUE_DEGREES;
-	if(ang < HUE_DEGREES / 6) {
-		level = ang * RGB_LEVEL_MAX / (HUE_DEGREES / 6);
-	} else if(ang < HUE_DEGREES / 2) {
+	angle = (angle + HUE_DEGREES) % HUE_DEGREES;
+	if(angle < HUE_DEGREES / 6) {
+		level = angle * RGB_LEVEL_MAX / (HUE_DEGREES / 6);
+	} else if(angle < HUE_DEGREES / 2) {
 		level = RGB_LEVEL_MAX;
-	} else if(ang < HUE_DEGREES * 2 / 3) {
-		level = (HUE_DEGREES * 2 / 3 - ang) * RGB_LEVEL_MAX / (HUE_DEGREES / 6);
+	} else if(angle < HUE_DEGREES * 2 / 3) {
+		level =
+			(HUE_DEGREES * 2 / 3 - angle) * RGB_LEVEL_MAX / (HUE_DEGREES / 6);
 	}
 	return level;
 }
@@ -163,17 +165,17 @@ void fdMindReadAdvanceTint(void)
 }
 
 /* A Mind Read crescent's update: once it has reached the caster, it goes. */
-void fdMindReadUpdateCrescent(ACTOR *tgt)
+void fdMindReadUpdateCrescent(ACTOR *target)
 {
 	Sint32 tx;
 	Sint32 ty;
 
-	tx = tgt->tgtX;
+	tx = target->targetX;
 	if(tx == ACTOR_NO_TARGET) {
-		ty = tgt->tgtY;
-		if((ty == tx) && (tgt->tgtZ == ty)) {
+		ty = target->targetY;
+		if((ty == tx) && (target->targetZ == ty)) {
 			fdActorStartScriptStub(
-				(ACTOR *)tgt, (Uint32)MindReadCrescentEndScript);
+				(ACTOR *)target, (Uint32)MindReadCrescentEndScript);
 		}
 	}
 }
@@ -181,25 +183,25 @@ void fdMindReadUpdateCrescent(ACTOR *tgt)
 /* Gives an actor's sprite colour mode value - 1 (SPR_COL_MODE), or for
    LAYERS_COLOR_CYCLING the next of MindReadCasterColorCycle's swapped colours,
    a step every 2 ticks, as Mind Read's wave does to its caster. */
-void fdActorSetLayersColMode(void *object, Sint32 value)
+void fdActorSetLayersColorMode(void *object, Sint32 value)
 {
 	Sint32 child = value - 1;
 
 	if(value == LAYERS_COLOR_CYCLING)
 		child = MindReadCasterColorCycle[(TickCount >> 1) & 7];
-	fdActorSetSprColModeStub(object, child);
+	fdActorSetSpriteColorModeStub(object, child);
 }
 
 /* The way the +Control Pad points, in four ways: FACING_EAST to FACING_NORTH,
    or DPAD_ANGLE_NONE when none or a diagonal is held. */
-Sint32 fdInputGetDpadAng(Uint32 unused)
+Sint32 fdInputGetDpadAngle(Uint32 unused)
 {
 	/* Indexed by the right, left, up and down bits. */
 	return InputDpadAngles[DPAD_INDEX(PerWork.data)];
 }
 
 /* The way the +Control Pad points, in eight ways, or DPAD_ANGLE_NONE. */
-Uint16 fdInputGetDpadAngEightWay(void)
+Uint16 fdInputGetDpadAngleEightWay(void)
 {
 	INPUT_STATE	 *input = &PerWork;
 	const Uint16 *words = InputDpadAnglesEightWay;
@@ -211,16 +213,16 @@ Uint16 fdInputGetDpadAngEightWay(void)
    most 1/16 turn a tick, and sheds a particle (SPRITE_SPARKLE) round it. */
 void fdEffectUpdateMoveHand(ACTOR *src)
 {
-	ACTOR  *tgt;
+	ACTOR  *target;
 	VECTOR3 pos;
 	ACTOR  *fragment;
 	Sint32	turn;
 	Sint32	radius;
 
-	tgt = (ACTOR *)src->watchedActor;
-	if(tgt != 0) {
-		FIXED dx = tgt->x.fixed - src->x.fixed;
-		FIXED dz = tgt->z.fixed - src->z.fixed;
+	target = (ACTOR *)src->watchedActor;
+	if(target != 0) {
+		FIXED dx = target->x.fixed - src->x.fixed;
+		FIXED dz = target->z.fixed - src->z.fixed;
 
 		if(dx != 0 || dz != 0) {
 			turn = (Sint16)(syAtan(dz, dx) - src->facing);
@@ -231,7 +233,7 @@ void fdEffectUpdateMoveHand(ACTOR *src)
 			src->facing += turn;
 		}
 		/* ACTOR_FACES_MOTION off: its motion must not undo the turn. */
-		src->steeringFlg = 0;
+		src->steeringFlags = 0;
 	}
 
 	/* The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
@@ -256,98 +258,100 @@ void fdPsynergySteerPushedTarget(Sint32 unused)
 {
 	VECTOR3				pos;
 	VECTOR3				beyond;
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	ACTOR			   *user = scene->caster;
-	ACTOR			   *tgt = scene->tgt;
+	ACTOR			   *target = scene->target;
 	ACTOR			   *pusher;
 	ACTOR			   *hit;
 	FIXED				x;
 	FIXED				z;
-	Sint32				angle = (Uint16)scene->ang + DEGtoANG(180);
+	Sint32				angle = (Uint16)scene->angle + DEGtoANG(180);
 	Sint32				moved = 0;
 	Sint32				direction;
 	Sint32				metatileX;
 	Sint32				metatileZ;
-	Sint32 (*func)(void);
-	Uint8		 savedLayer = tgt->layer;
+	Sint32 (*callback)(void);
+	Uint8		 savedLayer = target->layer;
 	PENDING_CUE *event;
 	Sint32		 pushed = 0;
 	const Uint8 *modes;
 
-	if(tgt == NULL)
+	if(target == NULL)
 		return;
-	fdPsynergyFadeToCastCol();
-	user->watchedActor = (union FIELD_OBJECT *)tgt;
+	fdPsynergyFadeToCastColor();
+	user->watchedActor = (union FIELD_OBJECT *)target;
 	fdActorStartScriptStub(user, FieldEffectSourceHoldScript);
 	pusher = fdEffectSpawnMoveHand(user);
 	if(pusher == NULL) {
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 		return;
 	}
 
 	event = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_ACTS),
 		scene->fieldPsynergy, fdSelectPsynergyTarget(scene->fieldPsynergy));
-	pusher->watchedActor = (union FIELD_OBJECT *)tgt;
-	SET_POSITION(&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(16), tgt->z.fixed);
+	pusher->watchedActor = (union FIELD_OBJECT *)target;
+	SET_POSITION(
+		&pos, target->x.fixed, target->y.fixed + toFIXED(16), target->z.fixed);
 	syVectorAddPolarOffset(toFIXED(16), angle, &pos);
 	fdActorSetMoveTargetStub(pusher, pos.x, pos.y, pos.z);
 	fdEffectGrowHandAndWait(pusher);
 	pusher->speedLimit = toFIXED(4);
 	pusher->acceleration = toFIXED(1) / 2;
-	pusher->motionFlg = ACTOR_FLOATS;
-	tgt->update = (OBJECT_UPDATE)fdActorCycleSprCols;
-	tgt->speedLimit = toFIXED(2) / 5;
-	tgt->acceleration = toFIXED(1) / 5;
-	tgt->steeringFlg = moved;
-	tgt->layer = 2;
+	pusher->motionFlags = ACTOR_FLOATS;
+	target->update = (OBJECT_UPDATE)fdActorCycleSpriteColors;
+	target->speedLimit = toFIXED(2) / 5;
+	target->acceleration = toFIXED(1) / 5;
+	target->steeringFlags = moved;
+	target->layer = 2;
 	while(1) {
 		sySynch(1);
 		if((Sint8)scene->mode == 0 &&
 			(PerWork.push & (KEY_A | KEY_B | KEYS_SHOULDERS)))
 			break;
 
-		direction = (Uint16)fdInputGetDpadAng(PerWork.data);
+		direction = (Uint16)fdInputGetDpadAngle(PerWork.data);
 		/* A scene's hook gives the way to push in place of the d-pad, or
 		   DPAD_ANGLE_NONE to stop. */
-		func = (Sint32 (*)(void))scene->finishFunc;
-		if(func != NULL) {
-			direction = func();
+		callback = (Sint32 (*)(void))scene->finishCallback;
+		if(callback != NULL) {
+			direction = callback();
 			if(direction == DPAD_ANGLE_NONE)
 				break;
 		} else if(direction == DPAD_ANGLE_NONE) {
-			SET_POSITION(
-				&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(16), tgt->z.fixed);
+			SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(16),
+				target->z.fixed);
 			syVectorAddPolarOffset(toFIXED(16), angle, &pos);
 			fdActorSetMoveTargetStub(pusher, pos.x, pos.y, pos.z);
 			fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_OPEN);
-			pusher->velX = 0;
-			pusher->velY = 0;
-			pusher->velZ = 0;
+			pusher->velocityX = 0;
+			pusher->velocityY = 0;
+			pusher->velocityZ = 0;
 			continue;
 		}
 
-		SET_POSITION(
-			&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(16), tgt->z.fixed);
+		SET_POSITION(&pos, target->x.fixed, target->y.fixed + toFIXED(16),
+			target->z.fixed);
 		syVectorAddPolarOffset(toFIXED(16), angle, &pos);
 		syVectorAddPolarOffset(toFIXED(2), direction, &pos);
 		fdActorSetMoveTargetStub(pusher, pos.x, pos.y, pos.z);
 		fdActorWaitForMoveStub(pusher);
-		SET_POSITION(&pos, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+		SET_POSITION(&pos, target->x.fixed, target->y.fixed, target->z.fixed);
 		syVectorAddPolarOffset(toFIXED(16), direction, &pos);
-		SET_POSITION(&beyond, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+		SET_POSITION(
+			&beyond, target->x.fixed, target->y.fixed, target->z.fixed);
 		syVectorAddPolarOffset(toFIXED(32), direction, &beyond);
-		if(fdMapGridCheckCollisionStub(tgt, &pos) > 0) {
+		if(fdMapGridCheckCollisionStub(target, &pos) > 0) {
 			fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
 			if((TickCount & 15) == 0)
-				sySndPlayStub(SE_MENU_ERROR);
+				sySoundPlayStub(SE_MENU_ERROR);
 			continue;
 		}
-		hit = fdActorScriptFindOverlappingActorStub(tgt, &pos);
+		hit = fdActorScriptFindOverlappingActorStub(target, &pos);
 		if(hit != NULL) {
 			if(hit != user) {
 				fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
 				if((TickCount & 15) == 0)
-					sySndPlayStub(SE_MENU_ERROR);
+					sySoundPlayStub(SE_MENU_ERROR);
 				continue;
 			}
 			metatileX = user->x.fixed & FIELD_METATILE_MASK;
@@ -356,7 +360,7 @@ void fdPsynergySteerPushedTarget(Sint32 unused)
 				metatileZ == (pos.z & FIELD_METATILE_MASK)) {
 				fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
 				if((TickCount & 15) == 0)
-					sySndPlayStub(SE_MENU_ERROR);
+					sySoundPlayStub(SE_MENU_ERROR);
 				continue;
 			}
 			if(metatileX == (beyond.x & FIELD_METATILE_MASK) &&
@@ -366,14 +370,14 @@ void fdPsynergySteerPushedTarget(Sint32 unused)
 					fdActorSelectAnimationStub(
 						pusher, MOVE_HAND_ANIMATION_FLEX);
 					if((TickCount & 15) == 0)
-						sySndPlayStub(SE_MENU_ERROR);
+						sySoundPlayStub(SE_MENU_ERROR);
 					continue;
 				}
 				moved = 1;
 			}
 		}
 
-		sySndPlayStub(SE_NOTE_HIGH);
+		sySoundPlayStub(SE_NOTE_HIGH);
 		pushed = 1;
 		x = pos.x;
 		z = pos.z;
@@ -383,47 +387,48 @@ void fdPsynergySteerPushedTarget(Sint32 unused)
 		fdActorSelectAnimationStub(
 			pusher, modes[(Uint16)(angle - direction) / (TRIG_TURN / 4)]);
 		sySynch(15);
-		tgt->paused = 0;
-		tgt->speedLimit = toFIXED(1) / 5;
-		tgt->acceleration = toFIXED(1) / 5;
-		fdActorSetMoveTargetStub(tgt, pos.x, pos.y, pos.z);
-		pusher->motionFlg = 0;
+		target->paused = 0;
+		target->speedLimit = toFIXED(1) / 5;
+		target->acceleration = toFIXED(1) / 5;
+		fdActorSetMoveTargetStub(target, pos.x, pos.y, pos.z);
+		pusher->motionFlags = 0;
 		pusher->speedLimit = toFIXED(1) / 5;
 		pusher->acceleration = toFIXED(1) / 5;
 		syVectorAddPolarOffset(toFIXED(16), direction, &pos);
 		fdActorSetMoveTargetStub(pusher, pos.x, pos.y + toFIXED(16), pos.z);
 		if(moved == 1) {
-			fdActorGetById(scene->casterId)->steeringFlg &= ~ACTOR_FACES_MOTION;
+			fdActorGetById(scene->casterId)->steeringFlags &=
+				~ACTOR_FACES_MOTION;
 			user->speedLimit = toFIXED(1) / 5;
 			user->acceleration = toFIXED(1) / 5;
 			fdActorSetMoveTargetStub(user, beyond.x, beyond.y, beyond.z);
 		}
-		fdActorWaitForMoveStub(tgt);
+		fdActorWaitForMoveStub(target);
 		if(event == NULL) {
-			tgt->x.fixed = x;
-			tgt->z.fixed = z;
-			tgt->velX = 0;
-			tgt->velZ = 0;
+			target->x.fixed = x;
+			target->z.fixed = z;
+			target->velocityX = 0;
+			target->velocityZ = 0;
 		}
 		break;
 	}
 
-	tgt->layer = savedLayer;
-	fdActorSetSprColModeStub(tgt, scene->savedPal);
-	fdActorStartScriptStub(tgt, scene->savedScript);
-	tgt->update = (OBJECT_UPDATE)scene->savedFunc;
+	target->layer = savedLayer;
+	fdActorSetSpriteColorModeStub(target, scene->savedPalette);
+	fdActorStartScriptStub(target, scene->savedScript);
+	target->update = (OBJECT_UPDATE)scene->savedCallback;
 	if(pushed) {
 		pusher->update = NULL;
 		fdActorSelectAnimationStub(pusher, MOVE_HAND_ANIMATION_FLEX);
 		fdActorSetPosAndResetMotionStub(
 			pusher, pusher->x.fixed, pusher->y.fixed, pusher->z.fixed);
-		fdRunPsynergyScript(event, scene->casterId, scene->tgtId);
+		fdRunPsynergyScript(event, scene->casterId, scene->targetId);
 	}
 	fdBattleEffectStopMainActor();
 	if(moved == 1) {
-		fdActorGetById(scene->casterId)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(scene->casterId)->steeringFlags |= ACTOR_FACES_MOTION;
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	fdEffectBurstHand(pusher);
 }
 
@@ -437,14 +442,14 @@ void fdEffectUpdateOutAndBack(FIELD_PARTICLE *effect)
 next_state:
 	state = effect->state;
 	if(state == OUT_AND_BACK_AIM_OUT) {
-		Uint32 ang;
+		Uint32 angle;
 
 		pos.x = effect->originX;
 		pos.z = effect->originZ;
-		ang = syRandom();
-		syVectorAddPolarOffset(toFIXED(30), (Uint16)ang, &pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		angle = syRandom();
+		syVectorAddPolarOffset(toFIXED(30), (Uint16)angle, &pos);
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(4);
 		effect->speedMax = toFIXED(4);
 		effect->turnStepLimited = state;
@@ -461,8 +466,8 @@ next_state:
 	}
 
 	if(state == OUT_AND_BACK_AIM_BACK) {
-		effect->tgtX = effect->originX;
-		effect->tgtZ = effect->originZ;
+		effect->targetX = effect->originX;
+		effect->targetZ = effect->originZ;
 		effect->turnStepMax = TRIG_TURN / 64;
 		effect->turnStepLimited = 1;
 		effect->state++;
@@ -484,17 +489,17 @@ void fdPsynergyMove(void)
 	FIELD_EFFECT_STATE *scene;
 	void			   *object;
 
-	scene = RamHeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffectState;
 	object = scene->caster;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	object = fdEffectSpawnMoveHand(object);
 	fdEffectGrowHandAndWait(object);
 	if(object != 0) {
 		fdActorSelectAnimationStub(object, MOVE_HAND_ANIMATION_FLEX);
 		sySynch(30);
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	fdEffectBurstHand(object);
 }
 
@@ -506,14 +511,14 @@ void *fdEffectSpawnMoveHand(void *object)
 	ACTOR *src = object;
 	ACTOR *parent;
 	ACTOR *child;
-	Sint32 ang;
+	Sint32 angle;
 	FIXED  radius;
 	FIXED  speed;
-	Sint32 fragmentIdx;
+	Sint32 fragmentIndex;
 	Uint32 spread;
 	Uint32 jitter;
 
-	ang = (src->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+	angle = (src->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
 	parent = fdActorSpawn(SPRITE_MOVE_HAND, src->x.fixed,
 		src->y.fixed + toFIXED(16), src->z.fixed);
 	if(parent == 0)
@@ -523,11 +528,11 @@ void *fdEffectSpawnMoveHand(void *object)
 	parent->update = fdEffectUpdateMoveHand;
 	parent->speedLimit = toFIXED(2);
 	parent->acceleration = toFIXED(2);
-	parent->motionFlg = 0;
+	parent->motionFlags = 0;
 	fdActorSelectAnimationStub(parent, MOVE_HAND_ANIMATION_GRIP);
-	fdActorSetTargetPosFromMagnitudeAng(parent, toFIXED(16), ang);
+	fdActorSetTargetPosFromMagnitudeAngle(parent, toFIXED(16), angle);
 
-	for(fragmentIdx = 0; fragmentIdx < 8; fragmentIdx++) {
+	for(fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
 		child = fdActorSpawn(SPRITE_SPARKLE, src->x.fixed,
 			src->y.fixed + toFIXED(16), src->z.fixed);
 		if(child != 0) {
@@ -535,17 +540,17 @@ void *fdEffectSpawnMoveHand(void *object)
 			speed = syRandom() + toFIXED(1);
 			child->acceleration = toFIXED(1);
 			child->speedLimit = speed;
-			child->motionFlg = ACTOR_FALLS;
+			child->motionFlags = ACTOR_FALLS;
 			child->gravity = toFIXED(1) / 50;
 			spread = syRandom();
-			child->velY = spread - syRandom();
+			child->velocityY = spread - syRandom();
 			radius = syRandom() * 24 + toFIXED(8);
 			jitter = syRandom();
-			fdActorSetTargetPosFromMagnitudeAng(
+			fdActorSetTargetPosFromMagnitudeAngle(
 				child, radius, ((jitter - syRandom()) >> 3) + src->facing);
 		}
 	}
-	sySndPlayStub(SE_ITEM_BREAK);
+	sySoundPlayStub(SE_ITEM_BREAK);
 	return parent;
 }
 
@@ -580,10 +585,10 @@ void fdEffectBurstHand(void *object)
 	ACTOR *src = object;
 	ACTOR *child;
 	Sint32 i;
-	Sint32 dist;
+	Sint32 distance;
 	Uint32 spread;
 
-	sySndPlayStub(SE_CAST);
+	sySoundPlayStub(SE_CAST);
 	for(i = 0; i < BURST_RISE_TICKS; i++) {
 		src->y.fixed += toFIXED(1);
 		src->facing += DEGtoANG(45);
@@ -602,23 +607,23 @@ void fdEffectBurstHand(void *object)
 			speed = syRandom();
 			child->acceleration = unit;
 			child->speedLimit = speed + unit;
-			child->motionFlg = ACTOR_FALLS;
+			child->motionFlags = ACTOR_FALLS;
 			child->gravity = toFIXED(1) / 25;
 			spread = syRandom();
-			child->velY = spread - syRandom();
-			dist = syRandom() * 24;
-			dist += toFIXED(8);
-			fdActorSetTargetPosFromMagnitudeAng(child, dist, syRandom());
+			child->velocityY = spread - syRandom();
+			distance = syRandom() * 24;
+			distance += toFIXED(8);
+			fdActorSetTargetPosFromMagnitudeAngle(child, distance, syRandom());
 		}
 	}
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	fdActorReleaseStub(src);
 }
 
 /* Reveal's colour for the rocks it shows (sprite 200), given at its start and
    taken back at its end. Only the loop over the actors is left; value goes
    unused. */
-void fdActorSetRevealSprCol(Sint32 value)
+void fdActorSetRevealSpriteColor(Sint32 value)
 {
 	ACTOR *actors = RamHeapSlots->actors;
 	Sint32 i;
@@ -630,7 +635,7 @@ void fdActorSetRevealSprCol(Sint32 value)
 		ACTOR *actor = &actors[i];
 
 		if(actor->script != NULL) {
-			Uint8 kind = actor->sprStorageKind;
+			Uint8 kind = actor->spriteStorageKind;
 
 			if(kind == ACTOR_SPRITE_ONE) {
 			}
@@ -655,9 +660,9 @@ void fdPsynergyWatchLeaderDistance(void)
 
 	state = FieldStateWork;
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	if(state->effTmrRunning != 0) {
-		if(state->revealFrm != 0)
-			state->revealFrm--;
+	if(state->effectTimerRunning != 0) {
+		if(state->revealFrame != 0)
+			state->revealFrame--;
 	}
 
 	/* In screen pixels: y is z less the height. */
@@ -667,7 +672,7 @@ void fdPsynergyWatchLeaderDistance(void)
 		state->revealCenterY - (actor->z.fixed - actor->y.fixed) / toFIXED(1);
 	if(distanceX * distanceX + distanceZ * distanceZ >=
 			REVEAL_RADIUS * REVEAL_RADIUS ||
-		state->revealFrm == 0) {
+		state->revealFrame == 0) {
 		/* Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED |
 		   ABILITY_REVEAL), which runs its ending scripts. */
 		Uint16 *slot = (Uint16 *)&state->psynergy;
@@ -684,14 +689,14 @@ void fdPsynergyWatchLeaderDistance(void)
    how far the leader walks. */
 void fdPsynergyReveal(void)
 {
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE				*event;
 	SCREEN_TRANSITION_STATE *state;
 	ACTOR					*caster;
 	void					*pending;
-	Sint32					 frm;
+	Sint32					 frame;
 
-	fdActorSetRevealSprCol(6);
+	fdActorSetRevealSpriteColor(6);
 	event = RamHeapSlots->fieldState;
 	fdScreenTransitionStartWindowHeld(FIELD_PSYNERGY_REVEAL);
 	state = RamHeapSlots->screenTransition;
@@ -707,17 +712,17 @@ void fdPsynergyReveal(void)
 	pending = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_ACTS),
 		FIELD_PSYNERGY_REVEAL, fdSelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
 	if(pending != 0)
-		fdRunPsynergyScript(pending, scene->casterId, scene->tgtId);
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+		fdRunPsynergyScript(pending, scene->casterId, scene->targetId);
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	syIOWrite8(1, &event->revealActive);
 	event->revealCenterX = state->centerX / toFIXED(1);
 	event->revealCenterY = state->centerY / toFIXED(1);
-	event->revealFrm = REVEAL_TICKS;
-	event->effTmrRunning = 1;
+	event->revealFrame = REVEAL_TICKS;
+	event->effectTimerRunning = 1;
 	fdEffectSpawnRevealMarkers();
-	for(frm = 0; frm <= 18; frm++) {
+	for(frame = 0; frame <= 18; frame++) {
 		sySynch(1);
-		state->value = frm;
+		state->value = frame;
 	}
 	if((Sint8)scene->mode == 0)
 		sySetEvent(fdPsynergyWatchLeaderDistance, EVENT_PASS_TICK);
@@ -727,17 +732,17 @@ void fdPsynergyReveal(void)
    black over 30 ticks and runs the scene's PSYNERGY_PHASE_FADES script. */
 void fdPsynergyEndReveal(void)
 {
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffectState;
 	SCREEN_TRANSITION_STATE *state = RamHeapSlots->screenTransition;
 	FIELD_STATE				*event = RamHeapSlots->fieldState;
 	void					*pending;
 
 	if(event->revealActive != 0) {
-		sySndPlayStub(SE_MAP_TRANSITION);
+		sySoundPlayStub(SE_MAP_TRANSITION);
 		syCloseEvent(fdPsynergyWatchLeaderDistance);
 		event->revealActive = 0;
-		event->revealFrm = 0;
-		fdActorSetRevealSprCol(0);
+		event->revealFrame = 0;
+		fdActorSetRevealSpriteColor(0);
 		fdPaletteFadeSetTarget(toFIXED(1), 1);
 		fdPaletteFadeStartInterpolation(1);
 		fdPaletteFadeSetSource(0, 0);
@@ -748,7 +753,7 @@ void fdPsynergyEndReveal(void)
 			FIELD_PSYNERGY_REVEAL,
 			fdSelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
 		if(pending != NULL)
-			fdRunPsynergyScript(pending, scene->casterId, scene->tgtId);
+			fdRunPsynergyScript(pending, scene->casterId, scene->targetId);
 		if(scene->sceneVariant == 0) {
 			state->nextMode = 0;
 			state->duration = 1;
@@ -773,26 +778,26 @@ typedef enum GROWTH_TARGET_KIND {
    (scGaiaRockInsidePlantPointsTheWay). */
 void fdPsynergyGrowthOnTarget(Sint32 unused)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
-	ACTOR			   *tgt = scene->tgt;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
+	ACTOR			   *target = scene->target;
 	Sint32				kind = GROWTH_ON_PLANT;
 
-	if(tgt == 0)
+	if(target == 0)
 		return;
 
 	fdEffectSpawnBurstParticleField();
-	if(fdActorGetSprIdStub(tgt) == SPRITE_SPROUTING_LEAVES)
+	if(fdActorGetSpriteIdStub(target) == SPRITE_SPROUTING_LEAVES)
 		kind = GROWTH_ON_SPROUTING_LEAVES;
-	if(fdActorGetSprIdStub(tgt) == SPRITE_ARROW_PLANT)
+	if(fdActorGetSpriteIdStub(target) == SPRITE_ARROW_PLANT)
 		kind = GROWTH_ON_ARROW_PLANT;
 
 	if(kind == GROWTH_ON_PLANT) {
-		fdActorSelectAnimationStub(tgt, 2);
-		fdActorSetSprFlagsStub(tgt, 0);
-		tgt->collisionFlg = 0;
-		tgt->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSelectAnimationStub(target, 2);
+		fdActorSetSpriteFlagsStub(target, 0);
+		target->collisionFlags = 0;
+		target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		sySynch(10);
-		sySndPlayStub(SE_RECOVERY);
+		sySoundPlayStub(SE_RECOVERY);
 		sySynch(40);
 	} else if(kind == GROWTH_ON_SPROUTING_LEAVES) {
 		BURST_PARTICLE_VECTOR pos;
@@ -811,16 +816,16 @@ void fdPsynergyGrowthOnTarget(Sint32 unused)
 				SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
 			if(piece != 0) {
 				fdActorStartScriptStub(piece, GrowthLeafScript);
-				piece->motionFlg = ACTOR_FALLS;
+				piece->motionFlags = ACTOR_FALLS;
 			}
 			sySynch((syRandomBelow(2)) + 2);
 		}
-		fdHangingVineHang(scene->tgtId, 1);
+		fdHangingVineHang(scene->targetId, 1);
 	} else {
 		sySynch(10);
-		sySndPlayStub(SE_RECOVERY);
+		sySoundPlayStub(SE_RECOVERY);
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* When Growth is cast with no target, particles fly out from in front of the
@@ -828,13 +833,13 @@ void fdPsynergyGrowthOnTarget(Sint32 unused)
    position. */
 void fdPsynergyGrowth(void)
 {
-	FIELD_EFFECT_STATE	 *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE	 *state = RamHeapSlots->fieldEffectState;
 	BURST_PARTICLE_VECTOR pos;
-	Sint32				  entryCnt;
+	Sint32				  entryCount;
 
 	fdEffectSpawnBurstParticleField();
-	sySndPlayStub(SE_HEAVY_IMPACT);
-	for(entryCnt = 0; entryCnt < 5; entryCnt++) {
+	sySoundPlayStub(SE_HEAVY_IMPACT);
+	for(entryCount = 0; entryCount < 5; entryCount++) {
 		void  *object;
 		Sint32 randomValue;
 
@@ -847,12 +852,12 @@ void fdPsynergyGrowth(void)
 			SPRITE_VINE, pos.values[0], pos.values[1], pos.values[2]);
 		if(object != 0) {
 			fdActorStartScriptStub(object, GrowthLeafScript);
-			((ACTOR *)object)->motionFlg = ACTOR_FALLS;
+			((ACTOR *)object)->motionFlags = ACTOR_FALLS;
 		}
 		sySynch((syRandomBelow(2)) + 2);
 	}
 	sySynch(30);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 #define BURST_FIELD_PARTICLES 24
@@ -867,22 +872,22 @@ void fdEffectSpawnBurstParticleField(void)
 	Sint32				n;
 	Sint32			   *p;
 
-	state = RamHeapSlots->fieldEffState;
+	state = RamHeapSlots->fieldEffectState;
 	user = state->caster;
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 
 	p = pos;
 	for(n = 0; n < BURST_FIELD_PARTICLES; n++) {
-		ACTOR				  *obj;
+		ACTOR				  *object;
 		BURST_PARTICLE_VISUAL *visual;
 		BURST_PARTICLE_VISUAL *child;
-		FIXED				   dist;
+		FIXED				   distance;
 
-		if(*(Uint16 *)&state->ang == DEGtoANG(90)) {
+		if(*(Uint16 *)&state->angle == DEGtoANG(90)) {
 			pos[0] = user->x.fixed;
 			pos[1] = user->y.fixed + toFIXED(10);
 			pos[2] = user->z.fixed;
-		} else if(*(Uint16 *)&state->ang == TRIG_TURN * 3 / 4) {
+		} else if(*(Uint16 *)&state->angle == TRIG_TURN * 3 / 4) {
 			pos[0] = user->x.fixed;
 			pos[1] = user->y.fixed + toFIXED(24);
 			pos[2] = user->z.fixed;
@@ -890,40 +895,41 @@ void fdEffectSpawnBurstParticleField(void)
 			pos[0] = user->x.fixed;
 			pos[1] = user->y.fixed + toFIXED(10);
 			pos[2] = user->z.fixed;
-			syVectorAddPolarOffset(toFIXED(10), *(Uint16 *)&state->ang, pos);
+			syVectorAddPolarOffset(toFIXED(10), *(Uint16 *)&state->angle, pos);
 		}
 
-		obj = fdActorSpawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
-		visual = &((BURST_PARTICLE_VISUAL_GROUP *)obj->spr)->primary;
-		child = &((BURST_PARTICLE_VISUAL_GROUP *)obj->spr)->child;
-		child->fullCol = visual->fullCol;
+		object = fdActorSpawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
+		visual = &((BURST_PARTICLE_VISUAL_GROUP *)object->sprite)->primary;
+		child = &((BURST_PARTICLE_VISUAL_GROUP *)object->sprite)->child;
+		child->fullColor = visual->fullColor;
 		child->size = visual->size;
 		child->shape = visual->shape;
 		child->attributes.bits.tile = visual->attributes.bits.tile;
-		child->attributes.bytes.pal = visual->attributes.bytes.pal;
+		child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
-		if(obj != 0) {
-			obj->scaleY = toFIXED(0.7);
-			obj->scaleX = toFIXED(0.7);
-			obj->acceleration = toFIXED(3) / 2;
-			obj->speedLimit = toFIXED(3) / 2;
-			obj->motionFlg = 0;
-			fdActorSetSprColModeStub(obj, SPRITE_COLOR_GREEN_TINT);
-			fdActorSelectAnimationStub(obj, ANIM_PARTICLE_TWINKLE);
-			fdActorStartScriptStub(obj, FieldEffectReleaseScript + 1);
+		if(object != 0) {
+			object->scaleY = toFIXED(0.7);
+			object->scaleX = toFIXED(0.7);
+			object->acceleration = toFIXED(3) / 2;
+			object->speedLimit = toFIXED(3) / 2;
+			object->motionFlags = 0;
+			fdActorSetSpriteColorModeStub(object, SPRITE_COLOR_GREEN_TINT);
+			fdActorSelectAnimationStub(object, ANIM_PARTICLE_TWINKLE);
+			fdActorStartScriptStub(object, FieldEffectReleaseScript + 1);
 
-			fdActorSetSprFlagsStub(obj, SPRITE_FLAG_SHADOW);
+			fdActorSetSpriteFlagsStub(object, SPRITE_FLAG_SHADOW);
 
 			p[0] = state->x;
 			p[1] = state->y;
 			p[2] = state->z;
-			if(*(Uint16 *)&state->ang == TRIG_TURN * 3 / 4)
-				syVectorAddPolarOffset(toFIXED(14), *(Uint16 *)&state->ang, p);
-			dist = syRandom() * 6 + toFIXED(4);
-			syVectorAddPolarOffset(dist, syRandom(), p);
-			fdActorSetMoveTargetStub(obj, p[0], p[1], p[2]);
+			if(*(Uint16 *)&state->angle == TRIG_TURN * 3 / 4)
+				syVectorAddPolarOffset(
+					toFIXED(14), *(Uint16 *)&state->angle, p);
+			distance = syRandom() * 6 + toFIXED(4);
+			syVectorAddPolarOffset(distance, syRandom(), p);
+			fdActorSetMoveTargetStub(object, p[0], p[1], p[2]);
 		}
-		sySndPlayStub(SE_PSYNERGY_SPARKLE);
+		sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 		sySynch(2);
 	}
 	sySynch(8);
@@ -941,16 +947,16 @@ void fdPsynergyLiftOnTarget(void)
 	Sint32				x;
 	FIXED				y;
 	Sint32				z;
-	Sint32				idx;
+	Sint32				index;
 	Sint32				startY;
 
-	effectState = RamHeapSlots->fieldEffState;
-	child = effectState->tgt;
+	effectState = RamHeapSlots->fieldEffectState;
+	child = effectState->target;
 	caster = effectState->caster;
 	if(child == 0)
 		return;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	caster->watchedActor = child;
 	fdActorStartScriptStub(caster, FieldEffectSourceHoldScript);
 
@@ -965,17 +971,18 @@ void fdPsynergyLiftOnTarget(void)
 		pos[0] - toFIXED(32), pos[1], pos[2], FACING_EAST);
 
 	sySynch(15);
-	for(idx = 0; idx < 2; idx++) {
-		void *anchor = anchors[idx];
+	for(index = 0; index < 2; index++) {
+		void *anchor = anchors[index];
 		if(anchor != 0)
-			fdActorSetTargetPosFromMagnitudeAng(
+			fdActorSetTargetPosFromMagnitudeAngle(
 				anchor, toFIXED(14), ((ACTOR *)anchor)->facing);
 	}
 
 	fdActorWaitForMoveStub(anchors[0]);
-	((EFFECT_CHILD *)child)->func = (void (*)(void))fdActorCycleSprCols;
-	sySndPlayStub(SE_PSYNERGY_START);
-	((EFFECT_CHILD *)child)->flg = 4;
+	((EFFECT_CHILD *)child)->callback =
+		(void (*)(void))fdActorCycleSpriteColors;
+	sySoundPlayStub(SE_PSYNERGY_START);
+	((EFFECT_CHILD *)child)->flags = 4;
 
 	startY = ((EFFECT_CHILD *)child)->y;
 	if(anchors[0] != 0 && anchors[1] != 0 && startY <= startY + toFIXED(32)) {
@@ -989,7 +996,7 @@ void fdPsynergyLiftOnTarget(void)
 
 	fdEffectBurstHand(anchors[0]);
 	fdEffectBurstHand(anchors[1]);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Lift cast with no target: two hands appear 32 pixels to either side of the
@@ -998,15 +1005,15 @@ void fdPsynergyLiftOnTarget(void)
 void fdPsynergyLift(void)
 {
 	FIELD_EFFECT_STATE *state;
-	ACTOR			   *obj;
+	ACTOR			   *object;
 	ACTOR			   *pair[2];
 	VECTOR3				pos;
 	ACTOR			  **walk;
 	Sint32				n;
-	FIXED				dist;
+	FIXED				distance;
 
-	state = RamHeapSlots->fieldEffState;
-	fdPsynergyFadeToCastCol();
+	state = RamHeapSlots->fieldEffectState;
+	fdPsynergyFadeToCastColor();
 	SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
 	pair[0] =
 		fdEffectSpawnLiftHand(pos.x + toFIXED(32), pos.y, pos.z, DEGtoANG(180));
@@ -1015,44 +1022,45 @@ void fdPsynergyLift(void)
 	sySynch(15);
 	walk = pair;
 	for(n = 0; n < 2; n++) {
-		obj = *walk++;
-		if(obj != 0)
-			fdActorSetTargetPosFromMagnitudeAng(obj, toFIXED(24), obj->facing);
+		object = *walk++;
+		if(object != 0)
+			fdActorSetTargetPosFromMagnitudeAngle(
+				object, toFIXED(24), object->facing);
 	}
 
 	fdActorWaitForMoveStub(pair[0]);
-	sySndPlayStub(SE_HEAVY_IMPACT);
+	sySoundPlayStub(SE_HEAVY_IMPACT);
 	for(n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {
 		SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
-		obj = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-		if(obj != 0) {
-			fdActorStartScriptStub(obj, FieldEffectFragmentScript);
-			obj->speedLimit = syRandom() + toFIXED(2);
-			obj->acceleration = toFIXED(2);
-			obj->motionFlg = 0;
-			dist = syRandom() * 24 + toFIXED(8);
-			fdActorSetTargetPosFromMagnitudeAng(obj, dist, syRandom());
+		object = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
+		if(object != 0) {
+			fdActorStartScriptStub(object, FieldEffectFragmentScript);
+			object->speedLimit = syRandom() + toFIXED(2);
+			object->acceleration = toFIXED(2);
+			object->motionFlags = 0;
+			distance = syRandom() * 24 + toFIXED(8);
+			fdActorSetTargetPosFromMagnitudeAngle(object, distance, syRandom());
 		}
 	}
 
 	fdActorReleaseStub(pair[0]);
 	fdActorReleaseStub(pair[1]);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Spawns one of Lift's hands (SPRITE_MOVE_HAND) and grows it from a quarter to
    full size, an eighth of a turn a tick, then faces it to angle. */
-ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
+ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
 {
 	ACTOR *actor;
 	Sint32 scale;
 
-	sySndPlayStub(SE_ITEM_BREAK);
+	sySoundPlayStub(SE_ITEM_BREAK);
 	actor = fdActorSpawn(SPRITE_MOVE_HAND, x, y, z);
 	if(actor != NULL) {
 		actor->scaleX = actor->scaleY = toFIXED(1) / 4;
 		actor->acceleration = actor->speedLimit = toFIXED(3);
-		((SPR *)actor->spr)->image.pri = 0;
+		((SPR *)actor->sprite)->image.priority = 0;
 		fdActorSelectAnimationStub(actor, MOVE_HAND_ANIMATION_GRIP);
 		scale = actor->scaleX;
 		if(scale < toFIXED(1)) {
@@ -1065,7 +1073,7 @@ ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 				scale = actor->scaleX;
 			} while(scale < toFIXED(1));
 		}
-		actor->facing = ang;
+		actor->facing = angle;
 	}
 	return actor;
 }
@@ -1077,7 +1085,7 @@ ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 void fdEffectUpdateRadialBurst(FIELD_PARTICLE *effect)
 {
 	/* OUT_AND_BACK_FLYING_OUT must enter OUT_AND_BACK_AIM_BACK immediately. */
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	VECTOR3				pos;
 	Sint32				state;
 
@@ -1088,8 +1096,8 @@ again:
 		pos.x = effect->originX;
 		pos.z = effect->originZ;
 		syVectorAddPolarOffset(toFIXED(25), (Uint16)syRandom(), &pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(3);
 		effect->speedMax = toFIXED(3);
 		effect->turnStepLimited = 0;
@@ -1107,18 +1115,18 @@ again:
 	}
 
 	if(state == OUT_AND_BACK_AIM_BACK) {
-		/* 8 pixels toward effectState->ang from 16 pixels above the main actor,
-		   on screen, give or take 4 pixels. */
+		/* 8 pixels toward effectState->angle from 16 pixels above the main
+		   actor, on screen, give or take 4 pixels. */
 		ACTOR *caster = effectState->caster;
 
 		pos.x = caster->x.fixed;
 		pos.y = caster->y.fixed + toFIXED(16);
 		pos.z = caster->z.fixed;
-		syVectorAddPolarOffset(toFIXED(8), effectState->ang, &pos);
+		syVectorAddPolarOffset(toFIXED(8), effectState->angle, &pos);
 		fdCameraWorldToScreen(&pos);
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), &pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->turnStepMax = TRIG_TURN / 32;
 		effect->turnStepLimited = 1;
 		effect->state++;
@@ -1139,28 +1147,28 @@ Sint32 fdEffectSpawnHeavyImpact(ACTOR *src)
 	VECTOR3 pos;
 	ACTOR  *impact;
 	ACTOR  *fragment;
-	Sint32	fragmentIdx;
+	Sint32	fragmentIndex;
 
-	sySndPlayStub(SE_HEAVY_IMPACT);
+	sySoundPlayStub(SE_HEAVY_IMPACT);
 	pos.x = src->x.fixed;
 	pos.y = src->y.fixed;
 	pos.z = src->z.fixed;
 	impact = fdActorSpawn(SPRITE_STAR_BURST, pos.x, pos.y - toFIXED(32), pos.z);
 	if(impact != NULL) {
-		impact->motionFlg = 0;
+		impact->motionFlags = 0;
 		impact->wait = 20;
 		fdActorStartScriptStub(impact, FieldEffectReleaseScript);
 	}
 
 	/* Shards: 1 to 2 pixels a tick, 8 to 32 pixels in a random direction. */
-	for(fragmentIdx = 0; fragmentIdx < IMPACT_SHARDS; fragmentIdx++) {
+	for(fragmentIndex = 0; fragmentIndex < IMPACT_SHARDS; fragmentIndex++) {
 		fragment = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
 		if(fragment != NULL) {
 			fdActorStartScriptStub(fragment, FieldEffectFragmentScript);
 			fragment->speedLimit = syRandom() + toFIXED(1);
 			fragment->acceleration = toFIXED(1);
-			fragment->motionFlg = 0;
-			fdActorSetTargetPosFromMagnitudeAng(
+			fragment->motionFlags = 0;
+			fdActorSetTargetPosFromMagnitudeAngle(
 				fragment, syRandom() * 24 + toFIXED(8), syRandom());
 		}
 	}
@@ -1187,7 +1195,7 @@ void fdPsynergyForce(void)
 	ACTOR			   *copies[4];
 	VECTOR3				pos;
 	FIELD_EFFECT_STATE *scene;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	ACTOR			   *src;
 	ACTOR			   *actor;
 	ACTOR			   *copy;
@@ -1198,10 +1206,10 @@ void fdPsynergyForce(void)
 	Sint32				i;
 	Uint8				marker;
 
-	scene = RamHeapSlots->fieldEffState;
-	tgt = scene->tgt;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_PSYNERGY_START);
+	scene = RamHeapSlots->fieldEffectState;
+	target = scene->target;
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_PSYNERGY_START);
 	slot = scene->particles;
 
 	for(i = 0; i < FORCE_RING_PARTICLES; i++) {
@@ -1212,7 +1220,8 @@ void fdPsynergyForce(void)
 		fdParticleInit(slot, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(slot, fdEffectUpdateRadialBurst);
 		fdParticleSetAnimation(slot, ANIM_PARTICLE_TWINKLE);
-		fdSprSetAnimationColModesStub(slot->spr, SPRITE_COLOR_BLUE_TINT);
+		fdSpriteSetAnimationColorModesStub(
+			slot->sprite, SPRITE_COLOR_BLUE_TINT);
 		slot->scaleY = toFIXED(7) / 10;
 		slot->scaleX = toFIXED(7) / 10;
 		sySynch(2);
@@ -1221,20 +1230,20 @@ void fdPsynergyForce(void)
 
 	src = scene->caster;
 	SET_POSITION(&pos, src->x.fixed, src->y.fixed + toFIXED(16), src->z.fixed);
-	syVectorAddPolarOffset(toFIXED(8), scene->ang, &pos);
+	syVectorAddPolarOffset(toFIXED(8), scene->angle, &pos);
 	actor = fdActorSpawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
 	if(actor == NULL) {
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 		return;
 	}
 	actor->scaleY = toFIXED(1) / 4;
 	actor->scaleX = toFIXED(1) / 4;
-	actor->facing = scene->ang;
+	actor->facing = scene->angle;
 	actor->speedLimit = toFIXED(4);
 	actor->acceleration = toFIXED(4);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSelectAnimationStub(actor, MOVE_HAND_ANIMATION_FIST);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_BGR);
 	scale = actor->scaleX;
 	if(scale < toFIXED(1)) {
 		do {
@@ -1254,13 +1263,13 @@ void fdPsynergyForce(void)
 		if(copy != NULL) {
 			copy->scaleY = AFTERIMAGE_SCALE;
 			copy->scaleX = AFTERIMAGE_SCALE;
-			copy->facing = scene->ang;
+			copy->facing = scene->angle;
 			copy->speedLimit = toFIXED(4);
 			copy->acceleration = toFIXED(4);
-			copy->motionFlg = 0;
+			copy->motionFlags = 0;
 			fdActorSelectAnimationStub(copy, MOVE_HAND_ANIMATION_FIST);
-			fdActorSetSprColModeStub(copy, SPRITE_COLOR_RBG);
-			resource = fdSprShareVRAMCacheEntry(copy->spr, resource);
+			fdActorSetSpriteColorModeStub(copy, SPRITE_COLOR_RBG);
+			resource = fdSpriteShareVRAMCacheEntry(copy->sprite, resource);
 		}
 	}
 	marker = resource->slot;
@@ -1269,7 +1278,7 @@ void fdPsynergyForce(void)
 		src = scene->caster;
 		SET_POSITION(
 			&pos, src->x.fixed, src->y.fixed + toFIXED(16), src->z.fixed);
-		syVectorAddPolarOffset(toFIXED(56), scene->ang, &pos);
+		syVectorAddPolarOffset(toFIXED(56), scene->angle, &pos);
 	} else {
 		SET_POSITION(&pos, scene->x, scene->y + toFIXED(16), scene->z);
 	}
@@ -1287,25 +1296,25 @@ void fdPsynergyForce(void)
 	for(i = 0; i < FORCE_STRIKE_TICKS && actor->script != NULL; i++)
 		sySynch(1);
 
-	if(tgt != NULL && scene->childMode == 0) {
+	if(target != NULL && scene->childMode == 0) {
 		if(scene->sceneVariant != 0)
-			tgt->velY = toFIXED(8);
-		SET_POSITION(&pos, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
-		syVectorAddPolarOffset(toFIXED(16), scene->ang, &pos);
-		if(fdMapGridCheckCollisionStub(tgt, &pos) == 0 &&
-			fdActorScriptCheckOverlapStub(tgt, &pos) == 0) {
-			tgt->acceleration = toFIXED(1);
-			tgt->speedLimit = toFIXED(1);
-			fdActorSetMoveTargetStub(tgt, pos.x, pos.y, pos.z);
+			target->velocityY = toFIXED(8);
+		SET_POSITION(&pos, target->x.fixed, target->y.fixed, target->z.fixed);
+		syVectorAddPolarOffset(toFIXED(16), scene->angle, &pos);
+		if(fdMapGridCheckCollisionStub(target, &pos) == 0 &&
+			fdActorScriptCheckOverlapStub(target, &pos) == 0) {
+			target->acceleration = toFIXED(1);
+			target->speedLimit = toFIXED(1);
+			fdActorSetMoveTargetStub(target, pos.x, pos.y, pos.z);
 		}
 	}
 
 	event = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_ACTS),
 		FIELD_PSYNERGY_FORCE, fdSelectPsynergyTarget(FIELD_PSYNERGY_FORCE));
 	if(event != NULL)
-		fdRunPsynergyScript(event, scene->casterId, scene->tgtId);
+		fdRunPsynergyScript(event, scene->casterId, scene->targetId);
 	sySynch(10);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	sySynch(20);
 	/* VRAM_CACHE_ENTRY_COUNT: no afterimage took a cache entry. */
 	if(marker != VRAM_CACHE_ENTRY_COUNT)
@@ -1321,9 +1330,9 @@ Sint32 fdEffectUpdateFrostGlint(struct ORBITING_PARTICLE *particle)
 	Sint32 phase = TickCount & 7;
 
 	if(phase == 0) {
-		fdActorSetSprColModeStub((ACTOR *)particle, SPRITE_COLOR_RBG);
+		fdActorSetSpriteColorModeStub((ACTOR *)particle, SPRITE_COLOR_RBG);
 	} else if(phase == 2) {
-		fdActorSetSprColModeStub((ACTOR *)particle, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorModeStub((ACTOR *)particle, SPRITE_COLOR_NORMAL);
 	}
 	return 0;
 }
@@ -1347,14 +1356,15 @@ void fdEffectUpdateOrbitingParticleLeft(ACTOR *particle)
 {
 	VECTOR3 pos;
 	Sint16	life;
-	Sint32	cnt;
+	Sint32	count;
 
 	if(particle != NULL) {
-		cnt = (Uint16)particle->tmr - 1;
-		particle->tmr = cnt;
-		life = cnt;
+		count = (Uint16)particle->timer - 1;
+		particle->timer = count;
+		life = count;
 		if(life != 0) {
-			SET_POSITION(&pos, particle->tgtX, particle->tgtY, particle->tgtZ);
+			SET_POSITION(
+				&pos, particle->targetX, particle->targetY, particle->targetZ);
 			syVectorAddPolarOffset(life * toFIXED(2),
 				particle->userValue + life * (TRIG_TURN / 32), &pos);
 			SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
@@ -1370,14 +1380,15 @@ void fdEffectUpdateOrbitingParticleRight(ACTOR *particle)
 {
 	VECTOR3 pos;
 	Sint16	life;
-	Sint32	cnt;
+	Sint32	count;
 
 	if(particle != NULL) {
-		cnt = (Uint16)particle->tmr - 1;
-		particle->tmr = cnt;
-		life = cnt;
+		count = (Uint16)particle->timer - 1;
+		particle->timer = count;
+		life = count;
 		if(life != 0) {
-			SET_POSITION(&pos, particle->tgtX, particle->tgtY, particle->tgtZ);
+			SET_POSITION(
+				&pos, particle->targetX, particle->targetY, particle->targetZ);
 			syVectorAddPolarOffset(life * toFIXED(2),
 				particle->userValue - life * (TRIG_TURN / 32), &pos);
 			SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
@@ -1392,14 +1403,14 @@ void fdEffectUpdateOrbitingParticleRight(ACTOR *particle)
    and its flash and freezing are left to the scene. */
 void fdPsynergyFrostOnTarget(Sint32 unused)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
-	ACTOR			   *tgt = effectState->tgt;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
+	ACTOR			   *target = effectState->target;
 
-	if(tgt != 0) {
+	if(target != 0) {
 		if(effectState->childMode != 0) {
 			effectState->aimAhead = 1;
 		}
-		tgt->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdPsynergyFrost();
 	}
 }
@@ -1414,20 +1425,20 @@ void fdPsynergyFrost(void)
 {
 	VECTOR3				pos;
 	FIELD_EFFECT_STATE *scene;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	ACTOR			   *particle;
 	PENDING_CUE		   *event;
 	Sint32				i;
 
-	scene = RamHeapSlots->fieldEffState;
-	tgt = scene->tgt;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_ICE);
+	scene = RamHeapSlots->fieldEffectState;
+	target = scene->target;
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_ICE);
 	for(i = 0; i < FROST_SNOWFLAKES; i++) {
 		particle = fdActorSpawn(SPRITE_SNOWFLAKE, 0, 0, 0);
 		if(particle != NULL) {
 			Uint32 scale;
-			FIXED  dist;
+			FIXED  distance;
 
 			scale = (syRandom() >> 1) + toFIXED(1) / 2;
 			particle->scaleY = scale;
@@ -1440,49 +1451,50 @@ void fdPsynergyFrost(void)
 					(OBJECT_UPDATE)fdEffectUpdateOrbitingParticleRight;
 
 			particle->facing = syRandom();
-			particle->tmr = 60;
+			particle->timer = 60;
 			particle->userValue = syRandom();
-			fdActorSetSprColModeStub((ACTOR *)particle, SPRITE_COLOR_BLUE_TINT);
+			fdActorSetSpriteColorModeStub(
+				(ACTOR *)particle, SPRITE_COLOR_BLUE_TINT);
 
 			SET_POSITION(&pos, scene->x, scene->y, scene->z);
-			dist = (syRandom() << 2) + toFIXED(2);
-			syVectorAddPolarOffset(dist, syRandom(), &pos);
-			particle->tgtX = pos.x;
-			particle->tgtY = pos.y;
-			particle->tgtZ = pos.z;
+			distance = (syRandom() << 2) + toFIXED(2);
+			syVectorAddPolarOffset(distance, syRandom(), &pos);
+			particle->targetX = pos.x;
+			particle->targetY = pos.y;
+			particle->targetZ = pos.z;
 		}
 
 		sySynch(3);
 	}
 
 	sySynch(10);
-	sySndPlayStub(SE_ICE);
+	sySoundPlayStub(SE_ICE);
 	sySynch(50);
 
-	if(tgt != NULL && scene->aimAhead == 0) {
-		sySndPlayStub(SE_POWER_UP);
+	if(target != NULL && scene->aimAhead == 0) {
+		sySoundPlayStub(SE_POWER_UP);
 
 		for(i = 0; i < 8; i++) {
-			fdActorSetSprColModeStub((ACTOR *)tgt, SPRITE_COLOR_WHITE);
+			fdActorSetSpriteColorModeStub((ACTOR *)target, SPRITE_COLOR_WHITE);
 			sySynch(1);
-			fdActorSetSprColModeStub((ACTOR *)tgt, SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColorModeStub((ACTOR *)target, SPRITE_COLOR_NORMAL);
 			sySynch(4);
 		}
 
 		if(scene->sceneVariant == 0) {
-			sySndPlayStub(SE_SHIMMER);
-			fdActorSelectAnimationStub(tgt, 2);
+			sySoundPlayStub(SE_SHIMMER);
+			fdActorSelectAnimationStub(target, 2);
 		}
 
-		tgt->update = (OBJECT_UPDATE)fdEffectUpdateFrostGlint;
+		target->update = (OBJECT_UPDATE)fdEffectUpdateFrostGlint;
 		event = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_ACTS),
 			FIELD_PSYNERGY_FROST, fdSelectPsynergyTarget(FIELD_PSYNERGY_FROST));
 		if(event != NULL)
-			fdRunPsynergyScript(event, scene->casterId, scene->tgtId);
+			fdRunPsynergyScript(event, scene->casterId, scene->targetId);
 		sySynch(20);
 	}
 
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Per-tick update: sways 4 pixels either side of targetX, once every 128
@@ -1491,24 +1503,24 @@ void fdEffectSwayParticle(ACTOR *actor)
 {
 	FIXED amplitude = toFIXED(4);
 
-	actor->x.fixed =
-		actor->tgtX + syMulFX(amplitude, sySin(actor->tmr * (TRIG_TURN / 128)));
-	actor->tmr++;
-	actor->tmr = (actor->tmr + 128) % 128;
+	actor->x.fixed = actor->targetX +
+		syMulFX(amplitude, sySin(actor->timer * (TRIG_TURN / 128)));
+	actor->timer++;
+	actor->timer = (actor->timer + 128) % 128;
 }
 
 /* The particle circles 10 pixels above the scene's position, its radius in
    pixels the ticks it has left; at 0 it runs the shared particle script. */
 void fdEffectUpdateShrinkingOrbitActor(ACTOR *particle)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	VECTOR3				pos;
 	Sint16				remainingTicks;
 	Sint32				decrementedTimer;
 
 	if(particle != NULL) {
-		decrementedTimer = (Uint16)particle->tmr - 1;
-		particle->tmr = decrementedTimer;
+		decrementedTimer = (Uint16)particle->timer - 1;
+		particle->timer = decrementedTimer;
 		remainingTicks = decrementedTimer;
 		if(remainingTicks != 0) {
 			/* The angle is 1/32 turn further round for each tick left. */
@@ -1535,16 +1547,16 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 	ACTOR			   *spark;
 	FIXED				pos[3];
 
-	effectState = RamHeapSlots->fieldEffState;
-	if(emitter->tmr != -1) {
+	effectState = RamHeapSlots->fieldEffectState;
+	if(emitter->timer != -1) {
 		FIXED amplitude = toFIXED(6);
 
 		SET_ACTOR_POSITION(emitter,
 			effectState->x +
-				syMulFX(amplitude, sySin(emitter->tmr * (TRIG_TURN / 64))),
+				syMulFX(amplitude, sySin(emitter->timer * (TRIG_TURN / 64))),
 			effectState->y + toFIXED(16), effectState->z);
-		emitter->tmr++;
-		emitter->tmr = (emitter->tmr + 64) % 64;
+		emitter->timer++;
+		emitter->timer = (emitter->timer + 64) % 64;
 	}
 	if(TickCount % 3 == 0) {
 		/* From 2 pixels up, 0 to 6 pixels in a random direction. */
@@ -1557,11 +1569,11 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 		if(spark != 0) {
 			spark->update = (OBJECT_UPDATE)fdEffectSwayParticle;
 			spark->scaleX = spark->scaleY = toFIXED(3) / 5;
-			spark->motionFlg = ACTOR_FALLS;
+			spark->motionFlags = ACTOR_FALLS;
 			spark->gravity = toFIXED(0.007);
-			spark->tmr = syRandom() >> 9;
-			spark->tgtX = spark->x.fixed;
-			fdActorSetSprColModeStub(spark, SPRITE_COLOR_BLUE_TINT);
+			spark->timer = syRandom() >> 9;
+			spark->targetX = spark->x.fixed;
+			fdActorSetSpriteColorModeStub(spark, SPRITE_COLOR_BLUE_TINT);
 			spark->wait = 72;
 			fdActorStartScriptStub(spark, FieldEffectReleaseScript);
 		}
@@ -1582,14 +1594,14 @@ void fdPsynergyPlyOnTarget(void)
    then one in the centre flashes for 60 ticks, sheds sparks and flies off. */
 void fdPsynergyPly(void)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	ACTOR			   *target = effectState->caster;
 	ACTOR			   *actor;
 	SPR				   *last;
 	Uint8				resourceSlot;
 	Sint32				i;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 
 	/* The spiralling particles: one a tick, each 1/8 turn on from the last. */
 	last = 0;
@@ -1600,10 +1612,10 @@ void fdPsynergyPly(void)
 			actor->scaleY = toFIXED(7) / 10;
 			actor->scaleX = toFIXED(7) / 10;
 			actor->update = (OBJECT_UPDATE)fdEffectUpdateShrinkingOrbitActor;
-			actor->tmr = 120;
+			actor->timer = 120;
 			actor->userValue = i * (TRIG_TURN / 8);
-			actor->motionFlg = ACTOR_FLOATS;
-			last = fdSprShareVRAMCacheEntry(actor->spr, last);
+			actor->motionFlags = ACTOR_FLOATS;
+			last = fdSpriteShareVRAMCacheEntry(actor->sprite, last);
 		}
 		sySynch(1);
 	}
@@ -1611,7 +1623,7 @@ void fdPsynergyPly(void)
 	/* The particles share one sprite cache; keep its slot to free at the end.
 	   last is read with no check that any particle spawned. */
 	resourceSlot = last->slot;
-	sySndPlayStub(SE_PSYNERGY_START);
+	sySoundPlayStub(SE_PSYNERGY_START);
 	/* The last particle spawned 7 ticks ago with 120 ticks to live: wait
 	   until the spiral is nearly closed. */
 	sySynch(110);
@@ -1627,11 +1639,11 @@ void fdPsynergyPly(void)
 		target->x.fixed = effectState->x;
 		target->y.fixed = effectState->y + toFIXED(16);
 		target->z.fixed = effectState->z;
-		target->motionFlg = ACTOR_FLOATS;
-		fdActorSetSprColModeStub(target, SPRITE_COLOR_WHITE);
+		target->motionFlags = ACTOR_FLOATS;
+		fdActorSetSpriteColorModeStub(target, SPRITE_COLOR_WHITE);
 	}
 
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	sySynch(12);
 	if(target != 0) {
 		/* Red one step in four, else blue, a step each 2 ticks. */
@@ -1640,19 +1652,19 @@ void fdPsynergyPly(void)
 			 * loop without it. */
 			target = actor;
 			if(i & 3)
-				fdActorSetSprColModeStub(actor, SPRITE_COLOR_BLUE_TINT);
+				fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_BLUE_TINT);
 			else
-				fdActorSetSprColModeStub(actor, SPRITE_COLOR_RED_TINT);
+				fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_RED_TINT);
 			sySynch(2);
 		}
 	}
 
 	/* Sparks. */
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
-	sySndPlayStub(MUS_POISON_CURED);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
+	sySoundPlayStub(MUS_POISON_CURED);
 	if(actor != 0) {
 		target->update = (OBJECT_UPDATE)fdEffectRunSparkEmitter;
-		target->tmr = 0;
+		target->timer = 0;
 		/* Cast on a target (enabled cleared by fdPsynergyDispatch), the sparks
 		   fall for 192 ticks instead of 128. */
 		if(effectState->aimAhead != 0)
@@ -1664,11 +1676,11 @@ void fdPsynergyPly(void)
 	/* Fly away: 192 pixels at angle TRIG_TURN * 29 / 32, and release it once it
 	   arrives. */
 	if(target != 0) {
-		target->tmr = -1;
+		target->timer = -1;
 		target->speedLimit = toFIXED(5);
 		target->acceleration = toFIXED(2) / 5;
-		target->steeringFlg = 0;
-		fdActorSetTargetPosFromMagnitudeAng(
+		target->steeringFlags = 0;
+		fdActorSetTargetPosFromMagnitudeAngle(
 			target, toFIXED(192), TRIG_TURN * 29 / 32);
 		fdActorWaitForMoveStub(target);
 		fdActorReleaseStub(target);
@@ -1676,9 +1688,9 @@ void fdPsynergyPly(void)
 	/* syVRAMCacheFindFreeEntry returns VRAM_CACHE_ENTRY_COUNT for no entry. */
 	if(resourceSlot != VRAM_CACHE_ENTRY_COUNT)
 		syVRAMCacheFreeEntry(resourceSlot);
-	if(effectState->finishFunc != 0)
-		effectState->finishFunc();
-	fdPsynergyFadeFromCastCol();
+	if(effectState->finishCallback != 0)
+		effectState->finishCallback();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* An event of Cloak: when the controlled character does not stand on a tile
@@ -1698,39 +1710,40 @@ void fdEffectCheckCloakTile(void)
    (fdPsynergyRunExtraHandler). */
 void fdPsynergyEndCloak(void)
 {
-	ACTOR *caster = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
-	SPR	  *spr = caster->spr;
-	SPR_ANIMATION *entry = spr->entries[0];
+	ACTOR *caster =
+		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->caster;
+	SPR			  *sprite = caster->sprite;
+	SPR_ANIMATION *entry = sprite->entries[0];
 	Uint32		   i;
 
-	sySndPlayStub(SE_CAST);
+	sySoundPlayStub(SE_CAST);
 	syCloseEvent(fdEffectCheckCloakTile);
 	fdActorSelectAnimationStub(caster, ANIM_STILL);
 	caster->update = 0;
 
 	/* Blink between the flicker palette half transparent and solid... */
 	for(i = 0; i < 5; ++i) {
-		entry->colMode = SPRITE_COLOR_WHITE;
-		spr->flg = SPRITE_FLAG_OUTLINED;
-		spr->dirty = 1;
+		entry->colorMode = SPRITE_COLOR_WHITE;
+		sprite->flags = SPRITE_FLAG_OUTLINED;
+		sprite->dirty = 1;
 		sySynch(2);
-		spr->dirty = 1;
-		spr->flg = 0;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 		sySynch(2);
 	}
 
 	/* ...then between the flicker palette and the caster's own. */
 	for(i = 0; i < 5; ++i) {
-		entry->colMode = SPRITE_COLOR_WHITE;
-		spr->flg = 0;
-		spr->dirty = 1;
+		entry->colorMode = SPRITE_COLOR_WHITE;
+		sprite->flags = 0;
+		sprite->dirty = 1;
 		sySynch(2);
-		entry->colMode = SPRITE_COLOR_NORMAL;
-		spr->dirty = 1;
+		entry->colorMode = SPRITE_COLOR_NORMAL;
+		sprite->dirty = 1;
 		sySynch(2);
 	}
 
-	spr->flg = SPRITE_FLAG_SHADOW;
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	MainRoutineStateWork.cloaked = 0;
 }
 

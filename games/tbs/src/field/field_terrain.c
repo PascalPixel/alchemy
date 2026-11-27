@@ -224,7 +224,7 @@ FIXED fdTerrainGetBendYHeight(
 	Uint32		 metatileY = pixelY;
 	Sint32		 endpointHeight;
 	Sint32		 middleHeight;
-	Sint32		 ofsPastMiddle;
+	Sint32		 offsetPastMiddle;
 	Sint32		 heightDelta;
 	Sint32		 tailDelta;
 
@@ -237,10 +237,10 @@ FIXED fdTerrainGetBendYHeight(
 	}
 
 	endpointHeight = CURVE_HEIGHT_FIXED(*samples);
-	ofsPastMiddle = metatileY;
+	offsetPastMiddle = metatileY;
 	endpointHeight -= middleHeight;
-	ofsPastMiddle -= CURVE_HALF_STEPS;
-	tailDelta = endpointHeight * ofsPastMiddle;
+	offsetPastMiddle -= CURVE_HALF_STEPS;
+	tailDelta = endpointHeight * offsetPastMiddle;
 	return middleHeight + tailDelta / CURVE_HALF_STEPS;
 }
 
@@ -394,7 +394,7 @@ UNUSED Sint32 fdMapGridGetMetatileHighFlags(Sint32 x, Sint32 y)
 
 	/* The high byte of the metatile tiles halfword; its top two bits are
 	   flags. */
-	return ((Uint8 *)&metatile->metatileTilesAndFlg)[1] >> 6;
+	return ((Uint8 *)&metatile->metatileTilesAndFlags)[1] >> 6;
 }
 
 /* Returns whether an actor can step to position, an COLLISION: whether the
@@ -407,7 +407,7 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *pos)
 	Sint32				   pixelZ;
 	MAP_GRID_METATILE	  *metatile;
 	Uint8				  *heightBytes;
-	Sint32				   tgtGround;
+	Sint32				   targetGround;
 	Sint32				   stepHeight;
 
 	pixelX = ((FIELD_COORDINATE *)&pos->x)->part[0].integer;
@@ -432,18 +432,18 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *pos)
 	{
 		Uint32 kind = *heightBytes++ & MAPGRID_SHAPE_KIND_MASK;
 
-		tgtGround = MapGridTerrainHeightFunctions[kind](heightBytes,
+		targetGround = MapGridTerrainHeightFunctions[kind](heightBytes,
 			pixelX & (MAPGRID_METATILE_PIXELS - 1),
 			pixelZ & (MAPGRID_METATILE_PIXELS - 1));
 	}
 #else
-	tgtGround =
+	targetGround =
 		MapGridTerrainHeightFunctions[*heightBytes++ & MAPGRID_SHAPE_KIND_MASK](
 			heightBytes, pixelX & (MAPGRID_METATILE_PIXELS - 1),
 			pixelZ & (MAPGRID_METATILE_PIXELS - 1));
 #endif
 	/* Up to 8 pixels up or 12 down is a step the actor can take. */
-	stepHeight = tgtGround - actor->groundHeight;
+	stepHeight = targetGround - actor->groundHeight;
 	if(stepHeight > toFIXED(8))
 		return COLLISION_TOO_HIGH;
 	if(stepHeight < -toFIXED(12))
@@ -507,7 +507,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 	Sint32 y = pos->y;
 	Sint32 halfPixelY = FIXEDtoINT(y) >> 1;
 	Uint32 collisionMetatile;
-	Uint32 pixelOfs;
+	Uint32 pixelOffset;
 	Uint8  collisionTile;
 	Uint8  packedCollisions;
 	Uint32 result;
@@ -515,12 +515,12 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 	/* Coordinates in 2-pixel units. */
 	collisionMetatile =
 		(((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
-	pixelOfs = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
+	pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
 	/* The upper layer first. */
 	collisionTile = WORLD_MAP_UPPER_COLLISION_MAP[collisionMetatile];
 	packedCollisions = *(RamMapGridShapes + WORLD_MAP_UPPER_COLLISION_TILES +
-		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
+		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
 			result = packedCollisions >> WORLD_MAP_COLLISION_BITS;
@@ -533,7 +533,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 	/* Then the lower layer. */
 	collisionTile = WORLD_MAP_LOWER_COLLISION_MAP[collisionMetatile];
 	packedCollisions = *(RamMapGridShapes +
-		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
+		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
 			result = packedCollisions >> WORLD_MAP_COLLISION_BITS;
@@ -571,18 +571,18 @@ Sint32 fdWorldMapGetBattleEnvironment(WORLD_POS *pos, Sint32 *region)
 	Sint32	y;
 	Sint32	environmentBank = 0;
 	Uint32	blockX;
-	Uint32	idx;
+	Uint32	index;
 	Uint32 *blockWord;
 
 	blockX =
 		(x / toFIXED(WORLD_MAP_BLOCK_PIXELS)) & (WORLD_MAP_BLOCKS_ACROSS - 1);
 	y = pos->y;
 
-	idx = blockX +
+	index = blockX +
 		((y / toFIXED(WORLD_MAP_BLOCK_PIXELS)) &
 			(WORLD_MAP_BLOCKS_ACROSS - 1)) *
 			WORLD_MAP_BLOCKS_ACROSS;
-	blockWord = MetatileTiles + idx;
+	blockWord = MetatileTiles + index;
 	/* Bit 31 of the block word selects the second bank; the snowfield the
 	   third, whatever bit 31 says. */
 	if(((Uint8 *)blockWord)[3] & WORLD_MAP_BLOCK_SECOND_BANK)

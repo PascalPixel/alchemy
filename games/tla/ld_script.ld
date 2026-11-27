@@ -855,7 +855,7 @@ SECTIONS
         "*/games/tla/src/system/overlay/overlays.list.o"(.rodata)
     } > ROM
     IwramResidentRom = LOADADDR(.iwram_resident);
-    sySndMainRAMRom = LOADADDR(.iwram_mixer) + 1;
+    sySoundMainRAMRom = LOADADDR(.iwram_mixer) + 1;
     MixerCallViaR3Rom = LOADADDR(.iwram_mixer) + (MixerCallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

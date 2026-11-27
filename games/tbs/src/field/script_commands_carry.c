@@ -15,7 +15,7 @@ void fdEffectSpawnFallingParticles(void)
 	ACTOR  *fragment;
 	Uint32	radius;
 
-	liftedActor = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
+	liftedActor = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->target;
 	pos.x = liftedActor->x.fixed;
 	pos.y = liftedActor->y.fixed - syRandom() * 16 + toFIXED(24);
 	pos.z = liftedActor->z.fixed;
@@ -34,40 +34,40 @@ void fdEffectSpawnFallingParticles(void)
    target passes over ground up to 24 pixels above its own (a step allows 8).
    Restores the height before returning the collision result. */
 static __inline__ Sint32 fdEffectCheckRaisedTargetCollision(
-	ACTOR *tgt, VECTOR3 *pos)
+	ACTOR *target, VECTOR3 *pos)
 {
 	Sint32 collision;
 
-	tgt->groundHeight += toFIXED(16);
-	collision = fdMapGridCheckCollisionStub(tgt, (FIELD_POS *)pos);
-	tgt->groundHeight -= toFIXED(16);
+	target->groundHeight += toFIXED(16);
+	collision = fdMapGridCheckCollisionStub(target, (FIELD_POS *)pos);
+	target->groundHeight -= toFIXED(16);
 	return collision;
 }
 
 /* When Carry is cast on a target, two hands lift it to 24 pixels above the
    ground; the d-pad moves it 16 pixels at a time and A, B, L or R drops it
    where it is. */
-void fdPsynergySteerLiftedTarget(Sint32 tgtId)
+void fdPsynergySteerLiftedTarget(Sint32 targetId)
 {
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *caster;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	ACTOR			   *sparkles[CARRY_SPARKLE_COUNT];
 	VECTOR3				pos;
 	ACTOR			   *hands[2];
 	ACTOR			   *actor;
 	ACTOR			   *westHand;
 	Sint32				i;
-	Sint32				ang;
-	FIXED				dist;
+	Sint32				angle;
+	FIXED				distance;
 
 	effectState = FieldEffectStateWork;
 	caster = effectState->caster;
-	tgt = effectState->tgt;
-	if(tgt == NULL)
+	target = effectState->target;
+	if(target == NULL)
 		return;
-	fdPsynergyFadeToCastCol();
-	caster->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
+	fdPsynergyFadeToCastColor();
+	caster->watchedActor = (union ACTOR_OR_EFFECT *)target;
 	fdActorStartScriptStub(caster, FieldEffectSourceHoldScript);
 
 	/* The hands appear 32 pixels to either side and move to 16 pixels: the east
@@ -81,32 +81,33 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 		fdEffectSpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z, FACING_EAST);
 	hands[1] = westHand;
 	if(hands[0] == NULL || westHand == NULL) {
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 		return;
 	}
 	sySynch(15);
-	SET_POSITION(&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(16), tgt->z.fixed);
+	SET_POSITION(
+		&pos, target->x.fixed, target->y.fixed + toFIXED(16), target->z.fixed);
 	fdActorSetMoveTargetStub(actor, pos.x + toFIXED(16), pos.y, pos.z);
 	fdActorSetMoveTargetStub(westHand, pos.x - toFIXED(16), pos.y, pos.z);
 	fdActorWaitForMoveStub(actor);
 	fdActorWaitForMoveStub(westHand);
 	actor->x.fixed = pos.x + toFIXED(16);
-	actor->velX = 0;
+	actor->velocityX = 0;
 	westHand->x.fixed = pos.x - toFIXED(16);
-	westHand->velX = 0;
+	westHand->velocityX = 0;
 
 	/* Lift to 24 pixels above the ground, 3/8 pixel a tick, floating with no
 	   shadow and its colours cycling. */
-	tgt->update = fdActorCycleSprCols;
+	target->update = fdActorCycleSpriteColors;
 	sySetEvent(fdEffectSpawnFallingParticles, EVENT_PASS_TICK);
-	sySndPlayStub(SE_PSYNERGY_START);
-	tgt->motionFlg = ACTOR_FLOATS;
-	fdActorSetSprFlagsStub(tgt, 0);
+	sySoundPlayStub(SE_PSYNERGY_START);
+	target->motionFlags = ACTOR_FLOATS;
+	fdActorSetSpriteFlagsStub(target, 0);
 	if(hands[0] != NULL && hands[1] != NULL) {
-		while(tgt->y.fixed - tgt->groundHeight <= toFIXED(24)) {
+		while(target->y.fixed - target->groundHeight <= toFIXED(24)) {
 			actor->y.fixed += toFIXED(3) / 8;
 			westHand->y.fixed += toFIXED(3) / 8;
-			tgt->y.fixed += toFIXED(3) / 8;
+			target->y.fixed += toFIXED(3) / 8;
 			sySynch(1);
 		}
 	}
@@ -116,10 +117,10 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 	hands[1]->acceleration = toFIXED(1) / 2;
 	/* As in Move: the target keeps its facing and reads its ground from the
 	   overhead layer while it is carried. */
-	tgt->speedLimit = toFIXED(2) / 5;
-	tgt->acceleration = toFIXED(1) / 5;
-	tgt->steeringFlg = 0;
-	tgt->layer = MAPGRID_LAYER_OVERHEAD;
+	target->speedLimit = toFIXED(2) / 5;
+	target->acceleration = toFIXED(1) / 5;
+	target->steeringFlags = 0;
+	target->layer = MAPGRID_LAYER_OVERHEAD;
 
 	/* Move with the d-pad. */
 	for(;;) {
@@ -128,11 +129,11 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 			break;
 
 		/* No direction held: the hands go back to the target's sides. */
-		ang = (Uint16)fdInputGetDpadAng(PerData);
-		if(ang == DPAD_ANGLE_NONE) {
-			pos.x = tgt->x.fixed;
-			pos.y = tgt->y.fixed + toFIXED(16);
-			pos.z = tgt->z.fixed;
+		angle = (Uint16)fdInputGetDpadAngle(PerData);
+		if(angle == DPAD_ANGLE_NONE) {
+			pos.x = target->x.fixed;
+			pos.y = target->y.fixed + toFIXED(16);
+			pos.z = target->z.fixed;
 			fdActorSetMoveTargetStub(
 				hands[0], pos.x + toFIXED(16), pos.y, pos.z);
 			fdActorSetMoveTargetStub(
@@ -143,33 +144,33 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 		}
 
 		/* The hands lean 2 pixels that way; check the ground 16 pixels on. */
-		pos.x = tgt->x.fixed;
-		pos.y = tgt->y.fixed + toFIXED(16);
-		pos.z = tgt->z.fixed;
-		syVectorAddPolarOffset(toFIXED(2), ang, (FIXED *)&pos);
+		pos.x = target->x.fixed;
+		pos.y = target->y.fixed + toFIXED(16);
+		pos.z = target->z.fixed;
+		syVectorAddPolarOffset(toFIXED(2), angle, (FIXED *)&pos);
 		fdActorSetMoveTargetStub(hands[0], pos.x + toFIXED(16), pos.y, pos.z);
 		fdActorSetMoveTargetStub(hands[1], pos.x - toFIXED(16), pos.y, pos.z);
 		fdActorWaitForMoveStub(hands[0]);
 		fdActorWaitForMoveStub(hands[1]);
-		pos.x = tgt->x.fixed;
-		pos.y = tgt->groundHeight;
-		pos.z = tgt->z.fixed;
-		syVectorAddPolarOffset(toFIXED(16), ang, (FIXED *)&pos);
-		i = fdActorScriptCheckOverlapStub(tgt, (Sint32 *)&pos);
+		pos.x = target->x.fixed;
+		pos.y = target->groundHeight;
+		pos.z = target->z.fixed;
+		syVectorAddPolarOffset(toFIXED(16), angle, (FIXED *)&pos);
+		i = fdActorScriptCheckOverlapStub(target, (Sint32 *)&pos);
 		/* A solid actor or raised ground in the way: a buzzer every 16
 		   ticks. */
 		if(i != 0) {
 			fdActorSelectAnimationStub(hands[0], MOVE_HAND_ANIMATION_FLEX);
 			fdActorSelectAnimationStub(hands[1], MOVE_HAND_ANIMATION_FLEX);
 			if((TickCount & 15) == 0)
-				sySndPlayStub(SE_MENU_ERROR);
+				sySoundPlayStub(SE_MENU_ERROR);
 			continue;
 		}
-		if(fdEffectCheckRaisedTargetCollision(tgt, &pos) > 0) {
+		if(fdEffectCheckRaisedTargetCollision(target, &pos) > 0) {
 			fdActorSelectAnimationStub(hands[0], MOVE_HAND_ANIMATION_FLEX);
 			fdActorSelectAnimationStub(hands[1], MOVE_HAND_ANIMATION_FLEX);
 			if((TickCount & 15) == 0)
-				sySndPlayStub(SE_MENU_ERROR);
+				sySoundPlayStub(SE_MENU_ERROR);
 			continue;
 		}
 		/* The way is free: move the target there. */
@@ -178,7 +179,7 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 			FIXED  x;
 			FIXED  z;
 
-			sySndPlayStub(SE_NOTE_HIGH);
+			sySoundPlayStub(SE_NOTE_HIGH);
 			x = pos.x;
 			z = pos.z;
 			fdActorSelectAnimationStub(hands[0], MOVE_HAND_ANIMATION_FLEX);
@@ -187,10 +188,10 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 			/* i is the overlap test's 0 here: unpause the target and, once it
 			   is on the metatile, stop it dead. It moves at 0.2 pixels a
 			   tick. */
-			tgt->paused = i;
-			tgt->speedLimit = toFIXED(1) / 5;
-			tgt->acceleration = toFIXED(1) / 5;
-			fdActorSetMoveTargetStub(tgt, pos.x, pos.y, pos.z);
+			target->paused = i;
+			target->speedLimit = toFIXED(1) / 5;
+			target->acceleration = toFIXED(1) / 5;
+			fdActorSetMoveTargetStub(target, pos.x, pos.y, pos.z);
 			hands[0]->speedLimit = toFIXED(1) / 5;
 			hands[0]->acceleration = toFIXED(1) / 5;
 			second = hands[1];
@@ -199,11 +200,11 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 			fdActorSetMoveTargetStub(
 				hands[0], pos.x + toFIXED(16), pos.y, pos.z);
 			fdActorSetMoveTargetStub(second, pos.x - toFIXED(16), pos.y, pos.z);
-			fdActorWaitForMoveStub(tgt);
-			tgt->x.fixed = x;
-			tgt->z.fixed = z;
-			tgt->velX = i;
-			tgt->velZ = i;
+			fdActorWaitForMoveStub(target);
+			target->x.fixed = x;
+			target->z.fixed = z;
+			target->velocityX = i;
+			target->velocityZ = i;
 			sySynch(10);
 			break;
 		}
@@ -214,11 +215,12 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 	fdActorSelectAnimationStub(hands[0], MOVE_HAND_ANIMATION_FLEX);
 	fdActorSelectAnimationStub(hands[1], MOVE_HAND_ANIMATION_FLEX);
 	syCloseEvent(fdEffectSpawnFallingParticles);
-	sySndPlayStub(SE_CLICK);
+	sySoundPlayStub(SE_CLICK);
 	sySynch(15);
-	sySndPlayStub(SE_CLICK);
+	sySoundPlayStub(SE_CLICK);
 	sySynch(15);
-	SET_POSITION(&pos, tgt->x.fixed, tgt->y.fixed + toFIXED(16), tgt->z.fixed);
+	SET_POSITION(
+		&pos, target->x.fixed, target->y.fixed + toFIXED(16), target->z.fixed);
 	/* Sparkles: 2 to 3 pixels a tick, 8 to 32 pixels in a random direction.
 	   actor, the east hand until now, holds each sparkle in turn. */
 	for(i = 0; i < CARRY_SPARKLE_COUNT; i++) {
@@ -229,41 +231,41 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 			fdActorStartScriptStub(actor, FieldEffectFragmentScript);
 			actor->speedLimit = syRandom() + toFIXED(2);
 			actor->acceleration = toFIXED(2);
-			actor->motionFlg = 0;
-			dist = syRandom() * 24 + toFIXED(8);
-			fdActorSetTargetPosFromMagnitudeAng(actor, dist, syRandom());
+			actor->motionFlags = 0;
+			distance = syRandom() * 24 + toFIXED(8);
+			fdActorSetTargetPosFromMagnitudeAngle(actor, distance, syRandom());
 		}
 	}
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	fdActorReleaseStub(hands[0]);
 	fdActorReleaseStub(hands[1]);
 
 	/* Restore the target's look and motion, and throw it up at 10 pixels a
 	   tick: it falls and follows the ground again, keeping 0.2 of its speed as
 	   it bounces, and reads its ground from the ground layer. */
-	fdActorSetSprColModeStub(tgt, effectState->savedPal);
-	fdActorStartScriptStub(tgt, effectState->savedScript);
-	tgt->update = effectState->savedFunc;
-	tgt->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	tgt->velY = toFIXED(10);
-	tgt->bounce = toFIXED(1) / 5;
-	tgt->layer = MAPGRID_LAYER_GROUND;
+	fdActorSetSpriteColorModeStub(target, effectState->savedPalette);
+	fdActorStartScriptStub(target, effectState->savedScript);
+	target->update = effectState->savedCallback;
+	target->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	target->velocityY = toFIXED(10);
+	target->bounce = toFIXED(1) / 5;
+	target->layer = MAPGRID_LAYER_GROUND;
 	caster->update = 0;
-	fdActorSetSprColModeStub(caster, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorModeStub(caster, SPRITE_COLOR_NORMAL);
 	if(effectState->sceneVariant != 0) {
 		/* As the Road to Babi Lighthouse asks for its grey pillar: wait for it
 		   to rise and land (at most 90 ticks each), then a ring of dust
 		   puffs. */
-		for(i = 0; i < 90 && tgt->velY >= 0; i++)
+		for(i = 0; i < 90 && target->velocityY >= 0; i++)
 			sySynch(1);
 		sySynch(1);
-		for(i = 0; i < 90 && tgt->velY < 0; i++)
+		for(i = 0; i < 90 && target->velocityY < 0; i++)
 			sySynch(1);
-		fdEffectSpawnRadialParticleRing(tgt);
-		fdPsynergyFadeFromCastCol();
+		fdEffectSpawnRadialParticleRing(target);
+		fdPsynergyFadeFromCastColor();
 		sySynch(30);
 	} else {
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 	}
 }
 
@@ -275,19 +277,19 @@ DEFINE_CLAPPING_HANDS_CAST(fdPsynergyCarry, fdEffectSpawnCarryHand)
 /* Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
    spinning 1/8 turn a tick, from a quarter to full size over 24 ticks; angle
    is the way it faces once grown. */
-ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
+ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
 {
 	ACTOR *hand;
 	FIXED  scale;
 
-	sySndPlayStub(SE_ITEM_BREAK);
+	sySoundPlayStub(SE_ITEM_BREAK);
 	hand = fdActorSpawn(SPRITE_MOVE_HAND, x, y, z);
 	if(hand != NULL) {
 		hand->scaleY = toFIXED(1) / 4;
 		hand->scaleX = toFIXED(1) / 4;
 		hand->speedLimit = toFIXED(3);
 		hand->acceleration = toFIXED(3);
-		hand->steeringFlg = 0;
+		hand->steeringFlags = 0;
 		fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_OPEN);
 		scale = hand->scaleX;
 		if(scale < toFIXED(1)) {
@@ -300,7 +302,7 @@ ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 				scale = hand->scaleX;
 			} while(scale < toFIXED(1));
 		}
-		hand->facing = ang;
+		hand->facing = angle;
 	}
 	return hand;
 }

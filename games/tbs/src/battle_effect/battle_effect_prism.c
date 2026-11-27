@@ -34,7 +34,7 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	PARTICLE			*seed;
 	PARTICLE			*crystal;
 	PARTICLE			*shards;
@@ -65,40 +65,41 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 		seed->y = -toFIXED(64);
 		if(state->args->side == EFFECT_SIDE_PARTY) {
 			x = INTtoFIXED((syRandom() & 31) + 80);
-			seed->velX = (syRandom() & 63) << 12;
+			seed->velocityX = (syRandom() & 63) << 12;
 		} else {
 			x = INTtoFIXED((syRandom() & 31) + 8);
-			seed->velX = -(syRandom() & 63) << 12;
+			seed->velocityX = -(syRandom() & 63) << 12;
 		}
-		seed->x = x - seed->velX * 18;
-		seed->velY = 0;
+		seed->x = x - seed->velocityX * 18;
+		seed->velocityY = 0;
 		seed->z = 0;
 		seed->variant = j * 8;
 	}
 
-	for(frm = 0; frm != PrismCounts[state->args->variant][PRISM_TICKS]; frm++) {
+	for(frame = 0; frame != PrismCounts[state->args->variant][PRISM_TICKS];
+		frame++) {
 		if(state->args->variant == EFFECT_VARIANT_STRONGEST &&
-			frm < PRISM_TURN_TICKS) {
+			frame < PRISM_TURN_TICKS) {
 			BATTLE_CAMERA *camera = BattleCameraWork;
 			Sint32		   speed;
 
-			if(frm < PRISM_TURN_TICKS - PRISM_TURN_SLOWING_TICKS)
+			if(frame < PRISM_TURN_TICKS - PRISM_TURN_SLOWING_TICKS)
 				speed = PRISM_TURN_SPEED;
 			else
 				speed = PRISM_TURN_TICKS * PRISM_TURN_SLOWDOWN -
-					frm * PRISM_TURN_SLOWDOWN;
+					frame * PRISM_TURN_SLOWDOWN;
 			if(state->args->side == EFFECT_SIDE_ENEMIES)
 				camera->yaw -= speed;
 			else
 				camera->yaw += speed;
 		}
-		if(frm == PrismCounts[state->args->variant][PRISM_TICKS] - 80)
+		if(frame == PrismCounts[state->args->variant][PRISM_TICKS] - 80)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frm == PrismCounts[state->args->variant][PRISM_TICKS] - 8) {
+		if(frame == PrismCounts[state->args->variant][PRISM_TICKS] - 8) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
 		}
-		if(frm <= PrismCounts[state->args->variant][PRISM_TICKS] - 8) {
+		if(frame <= PrismCounts[state->args->variant][PRISM_TICKS] - 8) {
 			for(i = 0;
 				i != PrismCounts[state->args->variant][PRISM_CRYSTAL_COUNT];
 				i++) {
@@ -129,10 +130,10 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 						btParticleAdvanceWithGravity2D(
 							shard, PARTICLE_DAMPING_NONE, toFIXED(1) / 8);
 						shard->variant += shard->z;
-						if(shard->z > 1 && (frm & 1))
+						if(shard->z > 1 && (frame & 1))
 							shard->z--;
 					}
-				} else if(frm >= crystal->variant) {
+				} else if(frame >= crystal->variant) {
 					/* A falling crystal. */
 					draw[i & 1](canvas, state->sheet,
 						FIXEDtoINT(crystal->x) - CRYSTAL_WIDTH / 2,
@@ -152,19 +153,19 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 								crystal->x;
 							shard->y = toFIXED(
 								PrismShardStarts[j][PRISM_SHARD_START_Y]);
-							shard->velX = ((syRandom() & 127) - 64) << 11;
-							shard->velY = -(syRandom() & 127) << 11;
+							shard->velocityX = ((syRandom() & 127) - 64) << 11;
+							shard->velocityY = -(syRandom() & 127) << 11;
 							if(i & 1) {
-								shard->velX *= 2;
-								shard->velY *= 2;
+								shard->velocityX *= 2;
+								shard->velocityY *= 2;
 							}
 							shard->z = 32;
 							shard->variant = 0;
 						}
-						state->shakeFrm = 8;
-						sySndPlayStub(SE_CLATTER);
+						state->shakeFrame = 8;
+						sySoundPlayStub(SE_CLATTER);
 						EFFECT_FOR_EACH_TARGET(j, state->args)
-							btEffectTintBattler(state->args->tgts[j],
+							btEffectTintBattler(state->args->targets[j],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);
 					}
 				}
@@ -181,33 +182,34 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 /* Rebuilds the background palette's first ramp as a grey whose channels sway
    with the tick, so the effect shimmers through colours. */
 void btEffectUpdatePhasePalette(
-	Sint32 frm, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase)
+	Sint32 frame, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase)
 {
 	Uint16	palette[CANVAS_LEVEL_BRIGHTEST + 1];
 	Uint16 *output;
 	Sint32	phase;
-	Sint32	redOfs;
-	Sint32	greenOfs;
-	Sint32	blueOfs;
-	Sint32	idx;
+	Sint32	redOffset;
+	Sint32	greenOffset;
+	Sint32	blueOffset;
+	Sint32	index;
 
-	phase = frm * (TRIG_TURN / 64);
+	phase = frame * (TRIG_TURN / 64);
 	/* Each channel's sway, in the half levels the ramp's index counts. */
-	redOfs = FIXEDtoINT_TWICE(sySin(phase + redPhase) * PHASE_SWAY_LEVELS);
-	greenOfs = FIXEDtoINT_TWICE(sySin(phase + greenPhase) * PHASE_SWAY_LEVELS);
-	blueOfs = FIXEDtoINT_TWICE(sySin(phase + bluePhase) * PHASE_SWAY_LEVELS);
+	redOffset = FIXEDtoINT_TWICE(sySin(phase + redPhase) * PHASE_SWAY_LEVELS);
+	greenOffset =
+		FIXEDtoINT_TWICE(sySin(phase + greenPhase) * PHASE_SWAY_LEVELS);
+	blueOffset = FIXEDtoINT_TWICE(sySin(phase + bluePhase) * PHASE_SWAY_LEVELS);
 
 	palette[0] = 0;
-	idx = 1;
+	index = 1;
 	output = &palette[1];
-	for(; idx != CANVAS_LEVEL_BRIGHTEST + 1; idx++) {
+	for(; index != CANVAS_LEVEL_BRIGHTEST + 1; index++) {
 		Sint32 red;
 		Sint32 green;
 		Sint32 blue;
 
-		red = (idx + redOfs) / 2;
-		green = (idx + greenOfs) / 2;
-		blue = (idx + blueOfs) / 2;
+		red = (index + redOffset) / 2;
+		green = (index + greenOffset) / 2;
+		blue = (index + blueOffset) / 2;
 
 		CLAMP(red, 0, RGB_LEVEL_MAX);
 		CLAMP(green, 0, RGB_LEVEL_MAX);

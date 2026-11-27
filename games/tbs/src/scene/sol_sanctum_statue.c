@@ -42,11 +42,11 @@
    Retreat does not work here.
 
    An event draws three rows of sprites that drift sideways at different speeds
-   (scSolSanctumStatueUpdateScrollingSprs). They are the clouds of the sky seen
-   between the pillars of the colonnade along the room's north wall. They sit 80
-   pixels down the map at the lowest priority, so they pass in front of the sky
-   and behind the pillars. The rows move an eighth, a quarter and a half of a
-   pixel a tick, the fastest drawn lowest
+   (scSolSanctumStatueUpdateScrollingSprites). They are the clouds of the sky
+   seen between the pillars of the colonnade along the room's north wall. They
+   sit 80 pixels down the map at the lowest priority, so they pass in front of
+   the sky and behind the pillars. The rows move an eighth, a quarter and a half
+   of a pixel a tick, the fastest drawn lowest
    (https://alchemy.pascalpixel.com/places/sol-sanctum-statue/sky-rows.gif: the
    top of the screen twice its size, above the sprites alone and the backgrounds
    alone, the clouds drifting behind the pillars).
@@ -107,7 +107,7 @@ extern Sint32		  SolSanctumStatueScrollOffset;
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH		32
 
-/* The basic sprite palettes (syPaletteLoadBasicSprCols) the three rows of
+/* The basic sprite palettes (syPaletteLoadBasicSpriteColors) the three rows of
    clouds are drawn in, back to front. */
 enum {
 	BACK_CLOUD_ROW_PALETTE = 10,
@@ -150,7 +150,7 @@ typedef enum SOL_SANCTUM_STATUE_BEAM_TRACK {
 	METATILE_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_BOTTOM
 } SOL_SANCTUM_STATUE_BEAM_TRACK;
 
-static void scSolSanctumStatueInitScrollingSprs(void);
+static void scSolSanctumStatueInitScrollingSprites(void);
 /* Isaac uses Move to draw the sun-disc statue one metatile south from its place
    at the north of the west hall (metatiles (17, 7) and (18, 7)). Once both beam
    statues shine on it, it slides on south into the hole that has opened in the
@@ -179,16 +179,17 @@ static void scSolSanctumStatueSayThenWait(Sint32 speaker, Sint32 ticks);
 typedef struct METATILE_COPY {
 	Sint32 srcX;   /* map metatiles */
 	Sint32 srcY;   /* map metatiles */
-	Sint32 dstX;   /* map metatiles */
-	Sint32 dstY;   /* map metatiles */
+	Sint32 destX;  /* map metatiles */
+	Sint32 destY;  /* map metatiles */
 	Sint32 width;  /* map metatiles */
 	Sint32 height; /* map metatiles */
 } METATILE_COPY;
 
 /* Sets a metatile copy: columns by rows metatiles from (x, y) to (toX, toY). */
 #define METATILE_COPY_SET(copy, x, y, toX, toY, columns, rows) \
-	((copy).srcX = (x), (copy).srcY = (y), (copy).dstX = (toX), \
-		(copy).dstY = (toY), (copy).width = (columns), (copy).height = (rows))
+	((copy).srcX = (x), (copy).srcY = (y), (copy).destX = (toX), \
+		(copy).destY = (toY), (copy).width = (columns), \
+		(copy).height = (rows))
 
 /* The seal being opened.
 
@@ -200,10 +201,10 @@ typedef struct SEAL_OPENING {
 	METATILE_COPY pulseA;
 	METATILE_COPY pulseB;
 	METATILE_COPY opened;
-	Sint32		  flg;
+	Sint32		  flags;
 	Sint32		  facing; /* 1/65536 turns */
-	Sint32		  dstX;	  /* pixels */
-	Sint32		  dstZ;	  /* pixels */
+	Sint32		  destX;  /* pixels */
+	Sint32		  destZ;  /* pixels */
 	METATILE_COPY closed[3];
 	Sint32		  actorId;
 	Sint32		  actorX; /* pixels */
@@ -308,7 +309,7 @@ static void scSolSanctumStatueOpenCenterHole(void)
 	Sint32 flash;
 
 	DRAW_CENTER_HOLE();
-	sySndPlay(SE_SPARKLE_FALL);
+	sySoundPlay(SE_SPARKLE_FALL);
 	for(flash = 0; flash != CENTER_HOLE_FLASHES; flash++) {
 		/* The crossed beams' lower metatiles flash as the floor opens. */
 		fdMapGridCopyMetatilesTo(10, 61, 17, 40, 2, 1);
@@ -330,7 +331,7 @@ static void scSolSanctumStatueExplainTrapDisarmed(void)
 {
 	fdScriptStart();
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
@@ -376,7 +377,7 @@ static void scSolSanctumStatueExplainTrapDisarmed(void)
 	   come from?" Then back to the party. */
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdCameraMoveTo(287, CAMERA_KEEP, 176, 0);
@@ -465,7 +466,7 @@ static void scSolSanctumStatueExplainTrapDisarmed(void)
 	fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptEnd();
 }
 
@@ -478,7 +479,7 @@ static void scSolSanctumStatueExplainStatuePuzzle(void)
 	fdScriptStart();
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = 32;
+	state->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
@@ -656,7 +657,7 @@ static void scSolSanctumStatueExplainStatuePuzzle(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	state->transitionFrm = MAP_TRANSITION_TICKS;
+	state->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptEnd();
 }
 
@@ -669,7 +670,7 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 	Sint32				  *savedOrigin;
 	FIXED				   cameraPos[3];
 	Sint32				   approachSide;
-	Sint32				   frm;
+	Sint32				   frame;
 
 	grid = MapGridState[0];
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -683,7 +684,7 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 		SET_VECTOR(
 			cameraPos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		grid->origin = cameraPos;
-		for(frm = 0; frm != 30; frm++) {
+		for(frame = 0; frame != 30; frame++) {
 			cameraPos[2] += toFIXED(1);
 			fdScriptWait(1);
 		}
@@ -697,26 +698,26 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 			cameraPos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		savedOrigin = grid->origin;
 		grid->origin = cameraPos;
-		for(frm = 0; frm != 30; frm++) {
+		for(frame = 0; frame != 30; frame++) {
 			cameraPos[2] -= toFIXED(1);
 			fdScriptWait(1);
 		}
 		fdScriptWait(40);
 		approachSide = 2;
 	}
-	for(frm = 0; frm != 6; frm++) {
+	for(frame = 0; frame != 6; frame++) {
 		fdMapGridCopyMetatilesTo(2, 28, 34, 10, 4, 2);
 		fdScriptWait(8);
 		fdMapGridCopyMetatilesTo(2, 30, 34, 10, 4, 2);
 		fdScriptWait(8);
 	}
-	for(frm = 0; frm != 10; frm++) {
+	for(frame = 0; frame != 10; frame++) {
 		fdMapGridCopyMetatilesTo(2, 28, 34, 10, 4, 2);
 		fdScriptWait(4);
 		fdMapGridCopyMetatilesTo(2, 30, 34, 10, 4, 2);
 		fdScriptWait(4);
 	}
-	for(frm = 0; frm != 12; frm++) {
+	for(frame = 0; frame != 12; frame++) {
 		fdMapGridCopyMetatilesTo(2, 28, 34, 10, 4, 2);
 		fdScriptWait(2);
 		fdMapGridCopyMetatilesTo(2, 30, 34, 10, 4, 2);
@@ -727,12 +728,12 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 	fdScriptWait(60);
 	/* Reverse the pan before restoring the caller's camera target. */
 	if(approachSide == 1) {
-		for(frm = 0; frm != 30; frm++) {
+		for(frame = 0; frame != 30; frame++) {
 			cameraPos[2] -= toFIXED(1);
 			fdScriptWait(1);
 		}
 	} else if(approachSide == 2) {
-		for(frm = 0; frm != 30; frm++) {
+		for(frame = 0; frame != 30; frame++) {
 			cameraPos[2] += toFIXED(1);
 			fdScriptWait(1);
 		}
@@ -746,10 +747,10 @@ static void scSolSanctumStatueUnusedPutOutSeals(void)
 #define SCROLL_OFFSET_STEP 128
 
 /* Draws the three rows of sky clouds while they overlap the screen. */
-static void scSolSanctumStatueUpdateScrollingSprs(void)
+static void scSolSanctumStatueUpdateScrollingSprites(void)
 {
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
-	ANIMATION_SPR_PART	  *spr = ScrollingSprites.parts;
+	ANIMATION_SPR_PART	  *sprite = ScrollingSprites.parts;
 	Sint32 cameraX = syMapGridScrollStateView(grid)[0] / toFIXED(1);
 	Sint32 screenY = 80 - syMapGridScrollStateView(grid)[1] / toFIXED(1);
 	Sint32 scrollX;
@@ -760,31 +761,31 @@ static void scSolSanctumStatueUpdateScrollingSprs(void)
 			-SOL_SANCTUM_STATUE_SPRITE_WIDTH;
 		for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT;
 			column++) {
-			spr->x = scrollX;
-			spr->y = screenY;
-			syOAMAddSprAtDepth(spr, 0);
+			sprite->x = scrollX;
+			sprite->y = screenY;
+			syOAMAddSpriteAtDepth(sprite, 0);
 			scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
-			spr++;
+			sprite++;
 		}
 		scrollX = ((SolSanctumStatueScrollOffset >> 9) - cameraX) |
 			-SOL_SANCTUM_STATUE_SPRITE_WIDTH;
 		for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT;
 			column++) {
-			spr->x = scrollX;
-			spr->y = screenY;
-			syOAMAddSprAtDepth(spr, 0);
+			sprite->x = scrollX;
+			sprite->y = screenY;
+			syOAMAddSpriteAtDepth(sprite, 0);
 			scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
-			spr++;
+			sprite++;
 		}
 		scrollX = ((SolSanctumStatueScrollOffset >> 8) - cameraX) |
 			-SOL_SANCTUM_STATUE_SPRITE_WIDTH;
 		for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT;
 			column++) {
-			spr->x = scrollX;
-			spr->y = screenY + SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET;
-			syOAMAddSprAtDepth(spr, 0);
+			sprite->x = scrollX;
+			sprite->y = screenY + SOL_SANCTUM_STATUE_FRONT_CLOUD_ROW_Y_OFFSET;
+			syOAMAddSpriteAtDepth(sprite, 0);
 			scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
-			spr++;
+			sprite++;
 		}
 	}
 	SolSanctumStatueScrollOffset += SCROLL_OFFSET_STEP;
@@ -834,18 +835,19 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	scSolSanctumStatueInitScrollingSprs();
+	scSolSanctumStatueInitScrollingSprites();
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
 	centerEffect = fdActorGet(ACTOR_MOVED_CENTER_STATUE);
-	centerEffect->collisionFlg = 0;
+	centerEffect->collisionFlags = 0;
 	{
-		Uint8 flg = centerEffect->priFlg | ACTOR_PRIORITY_UNDERFOOT;
+		Uint8 flags = centerEffect->priorityFlags | ACTOR_PRIORITY_UNDERFOOT;
 
-		centerEffect->priFlg = flg;
+		centerEffect->priorityFlags = flags;
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOVED_CENTER_STATUE), 0);
-	fdActorGet(ACTOR_MOVED_CENTER_STATUE)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_MOVED_CENTER_STATUE, 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOVED_CENTER_STATUE), 0);
+	fdActorGet(ACTOR_MOVED_CENTER_STATUE)->priorityFlags &=
+		~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_MOVED_CENTER_STATUE, 1);
 	/* Only the returns with the trap disarmed or triggered keep Jenna and Garet
 	   staged for their conversations. */
 	if(MainRoutineStateWork.entrance !=
@@ -949,51 +951,51 @@ Sint32 scInit(void)
 #define ROW_SPRITE_BYTES (4 * TILE_SIZE_4BPP)
 
 /* Loads the three strips of graphics and fills in a row of sprites for each. */
-static void scSolSanctumStatueInitScrollingSprs(void)
+static void scSolSanctumStatueInitScrollingSprites(void)
 {
 	Uint32	column;
 	Sint32	tile;
-	Sint32 *sprWords;
+	Sint32 *spriteWords;
 	Uint8  *pixels;
 
-	sprWords = ScrollingSprites.words;
-	pixels = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	spriteWords = ScrollingSprites.words;
+	pixels = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(SolSanctumStatueSpriteRowsGraphics, pixels);
 	tile =
 		syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES, pixels);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
-		Sint32 *attributeWords = sprWords;
+		Sint32 *attributeWords = spriteWords;
 
 		*attributeWords++ = 0;
 		*attributeWords++ = OBJ_SIZE_32X8;
-		sprWords += 3;
+		spriteWords += 3;
 		*attributeWords =
 			tile | OBJ_PRIORITY(3) | OBJ_PALETTE(BACK_CLOUD_ROW_PALETTE);
 	}
 	tile = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES,
 		pixels + ROW_SPRITE_BYTES);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
-		Sint32 *attributeWords = sprWords;
+		Sint32 *attributeWords = spriteWords;
 
 		*attributeWords++ = 0;
 		*attributeWords++ = OBJ_SIZE_32X8;
-		sprWords += 3;
+		spriteWords += 3;
 		*attributeWords =
 			tile | OBJ_PRIORITY(3) | OBJ_PALETTE(MIDDLE_CLOUD_ROW_PALETTE);
 	}
 	tile = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES,
 		pixels + 2 * ROW_SPRITE_BYTES);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
-		Sint32 *attributeWords = sprWords;
+		Sint32 *attributeWords = spriteWords;
 
 		*attributeWords++ = 0;
 		*attributeWords++ = OBJ_SIZE_32X8;
-		sprWords += 3;
+		spriteWords += 3;
 		*attributeWords =
 			tile | OBJ_PRIORITY(3) | OBJ_PALETTE(FRONT_CLOUD_ROW_PALETTE);
 	}
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
-	sySetTickEvent(scSolSanctumStatueUpdateScrollingSprs, EVENT_PASS_TICK);
+	sySetTickEvent(scSolSanctumStatueUpdateScrollingSprites, EVENT_PASS_TICK);
 }
 
 /* Isaac moves the northwest statue of the east hall with Move; if it now stands
@@ -1150,18 +1152,18 @@ static void scSolSanctumStatueCenterStatueMoved(void)
 				fdCameraSetSpeed(2);
 				fdCameraMoveTo(286, CAMERA_KEEP, 146, 1);
 				fdCameraWaitForMove();
-				fdActorGet(ACTOR_CENTER_STATUE)->steeringFlg &=
+				fdActorGet(ACTOR_CENTER_STATUE)->steeringFlags &=
 					~ACTOR_FACES_MOTION;
 				fdActorSetSpeedAndAcceleration(ACTOR_CENTER_STATUE, 3, 1);
-				statue->motionFlg = 0;
-				fdActorSetSprPriority(ACTOR_CENTER_STATUE, 3);
-				sySndPlay(SE_STONE_GRIND);
+				statue->motionFlags = 0;
+				fdActorSetSpritePriority(ACTOR_CENTER_STATUE, 3);
+				sySoundPlay(SE_STONE_GRIND);
 				fdActorSetDestination(ACTOR_CENTER_STATUE, 288, 178);
 				fdScriptWait(8);
 				fdActorSetPos(ACTOR_MOVED_CENTER_STATUE, 288, 178);
-				statue->tgtX = ACTOR_NO_TARGET;
-				statue->tgtY = ACTOR_NO_TARGET;
-				statue->tgtZ = ACTOR_NO_TARGET;
+				statue->targetX = ACTOR_NO_TARGET;
+				statue->targetY = ACTOR_NO_TARGET;
+				statue->targetZ = ACTOR_NO_TARGET;
 				statue->x.fixed = 0;
 				statue->y.fixed = 0;
 				statue->z.fixed = 0;
@@ -1169,7 +1171,7 @@ static void scSolSanctumStatueCenterStatueMoved(void)
 				fdActorSetPos(ACTOR_CENTER_STATUE, 0, 0);
 				fdMapGridSetShake(1, 1, 1);
 				fdScriptWait(10);
-				sySndPlay(SE_RUMBLE);
+				sySoundPlay(SE_RUMBLE);
 				fdMapGridSetShake(3, 3, 1);
 				fdScriptWait(10);
 				fdMapGridSetShake(5, 5, 1);
@@ -1180,12 +1182,12 @@ static void scSolSanctumStatueCenterStatueMoved(void)
 				fdScriptWait(30);
 				fdMapGridSetShake(2, 2, 1);
 				fdScriptWait(40);
-				sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+				sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 				fdMapGridSetShake(1, 1, 1);
 				fdScriptWait(10);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				fdScriptWait(60);
-				sySndPlay(SE_THUMP);
+				sySoundPlay(SE_THUMP);
 				if(gmFlagGet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
 					gmFlagGet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
 					gmFlagGet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
@@ -1212,10 +1214,11 @@ static void scSolSanctumStatuePushCenterStatueNorth(void)
 	if(movingActor != NULL) {
 		if(FIELD_METATILE(movingActor->z.fixed) == 8) {
 			fdScriptStart();
-			sySndPlay(SE_PUSH);
+			sySoundPlay(SE_PUSH);
 			fdActorSetSpeed(ACTOR_CENTER_STATUE, 0.2);
 			fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
-			fdActorGet(ACTOR_CENTER_STATUE)->steeringFlg &= ~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_CENTER_STATUE)->steeringFlags &=
+				~ACTOR_FACES_MOTION;
 			fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
 			fdActorSetDestination(ACTOR_PARTY_LEADER,
 				fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer, 136);
@@ -1334,10 +1337,10 @@ static void scSolSanctumStatuePushStatue(Sint32 statueId, Sint32 statueColumn,
 	Sint32 statueZ;
 
 	fdScriptStart();
-	sySndPlay(SE_PUSH);
+	sySoundPlay(SE_PUSH);
 	fdActorSetSpeed(statueId, 0.2);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
-	fdActorGet(statueId)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(statueId)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
 	fdActorSetDestination(
 		ACTOR_PARTY_LEADER, (leaderColumn << 4) + 8, (leaderRow << 4) + 8);
@@ -1373,10 +1376,10 @@ static void scSolSanctumStatueOpenNorthwestSeal(void)
 	METATILE_COPY_SET(seal->pulseA, 2, 30, 34, 10, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 2, 28, 34, 10, 2, 1);
 	METATILE_COPY_SET(seal->opened, 2, 30, 16, 10, 2, 1);
-	seal->flg = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
+	seal->flags = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
 	seal->facing = FACING_SOUTH;
-	seal->dstX = 500;
-	seal->dstZ = 132;
+	seal->destX = 500;
+	seal->destZ = 132;
 	METATILE_COPY_SET(seal->closed[0], 8, 55, 32, 40, 4, 3);
 	METATILE_COPY_SET(seal->closed[1], 2, 30, 34, 10, 2, 1);
 	METATILE_COPY_SET(seal->closed[2], 2, 28, 16, 10, 2, 1);
@@ -1396,10 +1399,10 @@ static void scSolSanctumStatueOpenNortheastSeal(void)
 	METATILE_COPY_SET(seal->pulseA, 4, 30, 36, 10, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 4, 28, 36, 10, 2, 1);
 	METATILE_COPY_SET(seal->opened, 4, 30, 18, 10, 2, 1);
-	seal->flg = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
+	seal->flags = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
 	seal->facing = FACING_SOUTH;
-	seal->dstX = 654;
-	seal->dstZ = 132;
+	seal->destX = 654;
+	seal->destZ = 132;
 	METATILE_COPY_SET(seal->closed[0], 12, 55, 36, 40, 4, 3);
 	METATILE_COPY_SET(seal->closed[1], 4, 30, 36, 10, 2, 1);
 	METATILE_COPY_SET(seal->closed[2], 4, 28, 18, 10, 2, 1);
@@ -1419,10 +1422,10 @@ static void scSolSanctumStatueOpenSouthwestSeal(void)
 	METATILE_COPY_SET(seal->pulseA, 2, 31, 34, 11, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 2, 29, 34, 11, 2, 1);
 	METATILE_COPY_SET(seal->opened, 2, 31, 16, 11, 2, 1);
-	seal->flg = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
+	seal->flags = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
 	seal->facing = FACING_NORTH;
-	seal->dstX = 500;
-	seal->dstZ = 216;
+	seal->destX = 500;
+	seal->destZ = 216;
 	METATILE_COPY_SET(seal->closed[0], 8, 58, 32, 43, 4, 1);
 	METATILE_COPY_SET(seal->closed[1], 2, 31, 34, 11, 2, 1);
 	METATILE_COPY_SET(seal->closed[2], 2, 29, 16, 11, 2, 1);
@@ -1442,10 +1445,10 @@ static void scSolSanctumStatueOpenSoutheastSeal(void)
 	METATILE_COPY_SET(seal->pulseA, 4, 31, 36, 11, 2, 1);
 	METATILE_COPY_SET(seal->pulseB, 4, 29, 36, 11, 2, 1);
 	METATILE_COPY_SET(seal->opened, 4, 31, 18, 11, 2, 1);
-	seal->flg = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
+	seal->flags = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
 	seal->facing = FACING_NORTH;
-	seal->dstX = 654;
-	seal->dstZ = 216;
+	seal->destX = 654;
+	seal->destZ = 216;
 	METATILE_COPY_SET(seal->closed[0], 12, 58, 36, 43, 4, 1);
 	METATILE_COPY_SET(seal->closed[1], 4, 31, 36, 11, 2, 1);
 	METATILE_COPY_SET(seal->closed[2], 4, 29, 18, 11, 2, 1);
@@ -1457,8 +1460,8 @@ static void scSolSanctumStatueOpenSoutheastSeal(void)
 
 /* Copies a seal's metatile copy (METATILE_COPY) onto the map. */
 #define COPY_METATILES(copy) \
-	fdMapGridCopyMetatilesTo((copy).srcX, (copy).srcY, (copy).dstX, \
-		(copy).dstY, (copy).width, (copy).height)
+	fdMapGridCopyMetatilesTo((copy).srcX, (copy).srcY, (copy).destX, \
+		(copy).destY, (copy).width, (copy).height)
 
 /* The opened seal pulses this many times, a glitter at each. */
 #define SEAL_PULSES 20
@@ -1476,38 +1479,38 @@ static void scSolSanctumStatueOpenSeal(void)
 		fdCameraSetSpeed(2);
 		fdCameraMoveTo(576, CAMERA_KEEP, 172, 1);
 		fdCameraWaitForMove();
-		sySndPlay(SE_SOL_SANCTUM_LIGHT_UP);
+		sySoundPlay(SE_SOL_SANCTUM_LIGHT_UP);
 		COPY_METATILES(SealOpening.open);
 		for(pulse = 0; pulse != SEAL_PULSES; pulse++) {
-			sySndPlay(SE_GLITTER);
+			sySoundPlay(SE_GLITTER);
 			COPY_METATILES(SealOpening.pulseA);
 			fdScriptWait(4);
-			sySndPlay(SE_GLITTER);
+			sySoundPlay(SE_GLITTER);
 			COPY_METATILES(SealOpening.pulseB);
 			fdScriptWait(4);
 		}
 		seal = &SealOpening;
 		COPY_METATILES(seal->opened);
-		gmFlagSet(seal->flg);
+		gmFlagSet(seal->flags);
 		exitResult = scSolSanctumStatueSelectStoryExit();
 		if(exitResult == -1) {
 			if(!gmFlagGet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
 				fdCameraFollowActor(ACTOR_PARTY_LEADER, 1);
 				fdActorGet(ACTOR_PARTY_LEADER)->facing = seal->facing;
 				fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
-				fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &=
+				fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &=
 					~ACTOR_FACES_MOTION;
 				fdActorJump(ACTOR_PARTY_LEADER, 4, 0);
 				fdActorSetDestination(
-					ACTOR_PARTY_LEADER, seal->dstX, seal->dstZ);
+					ACTOR_PARTY_LEADER, seal->destX, seal->destZ);
 				COPY_METATILES(seal->closed[0]);
 				COPY_METATILES(seal->closed[1]);
 				COPY_METATILES(seal->closed[2]);
-				fdActorGet(seal->actorId)->steeringFlg &= ~ACTOR_FACES_MOTION;
+				fdActorGet(seal->actorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
 				fdActorMoveToAndWait(seal->actorId, seal->actorX, seal->actorZ);
-				fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |=
+				fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |=
 					ACTOR_FACES_MOTION;
-				gmFlagClear(seal->flg);
+				gmFlagClear(seal->flags);
 			}
 		} else if(exitResult == 0 &&
 			gmFlagGet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
@@ -1543,7 +1546,7 @@ static void scSolSanctumStatueShineLeftBeam(void)
 			fdCameraSetSpeed(2);
 			fdCameraMoveTo(286, CAMERA_KEEP, 146, 1);
 			fdCameraWaitForMove();
-			sySndPlay(SE_SOL_SANCTUM_LIGHT_UP);
+			sySoundPlay(SE_SOL_SANCTUM_LIGHT_UP);
 			DRAW_LEFT_BEAM();
 			/* With the other beam already shining, the two now cross. */
 			if(fdScriptGetFlag(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
@@ -1569,7 +1572,7 @@ static void scSolSanctumStatueShineRightBeam(void)
 			fdCameraSetSpeed(2);
 			fdCameraMoveTo(286, CAMERA_KEEP, 146, 1);
 			fdCameraWaitForMove();
-			sySndPlay(SE_SOL_SANCTUM_LIGHT_UP);
+			sySoundPlay(SE_SOL_SANCTUM_LIGHT_UP);
 			DRAW_RIGHT_BEAM();
 			/* With the other beam already shining, the two now cross. */
 			if(fdScriptGetFlag(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {

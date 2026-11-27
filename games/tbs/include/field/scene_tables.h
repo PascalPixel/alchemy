@@ -80,7 +80,7 @@ enum {
 typedef struct SCENE_ENTRANCE {
 	/* The entrance number the main routine's state names; -1 ends the table. */
 	Sint16 entrance;
-	Sint16 requiredFlg;		  /* a flag that must be set, or -1 for none */
+	Sint16 requiredFlag;	  /* a flag that must be set, or -1 for none */
 	Sint16 x;				  /* pixels */
 	Sint16 y;				  /* pixels */
 	Sint16 z;				  /* pixels */
@@ -152,7 +152,7 @@ enum {
 typedef struct ACTOR_PLACE {
 	/* The actor's sprite; 0 to 7 are the party's characters, each in its own
 	   actor slot, and -1 ends the table. */
-	Sint16 spr;
+	Sint16 sprite;
 	/* CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else the flag
 	   clear. */
 	Sint16 condition;
@@ -164,7 +164,7 @@ typedef struct ACTOR_PLACE {
 	FIXED  z;		   /* 16.16 fixed-point pixels */
 	Uint16 facing;	   /* 1/65536 turns (FACING) */
 	Uint8  talkFacing; /* ACTOR_TALK_FACING */
-	Uint8  flg;		   /* ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE */
+	Uint8  flags;	   /* ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE */
 } ACTOR_PLACE;
 
 /* One row of a scene's actor placements, its spot in plain pixels. */
@@ -202,8 +202,8 @@ typedef enum ACTOR_TALK_FACING {
 	TALK_FACING_PARTY_THEN_WATCH = 3
 } ACTOR_TALK_FACING;
 
-/* ACTOR_PLACE.flg: the actor takes the previous actor's sprite resource instead
-   of loading its own, when both are single sprites. */
+/* ACTOR_PLACE.flags: the actor takes the previous actor's sprite resource
+   instead of loading its own, when both are single sprites. */
 #define ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
 
 /* Actor ids: 0 to 7 the party's characters, the placed actors from 8. */

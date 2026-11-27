@@ -49,7 +49,7 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 k;
 	BATTLE_CAMERA		*camera;
 	Sint32				 paletteId;
@@ -92,15 +92,15 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	sySndPlayStub(SE_ENEMY_CRY);
+	sySoundPlayStub(SE_ENEMY_CRY);
 
-	for(frm = 0; frm !=
+	for(frame = 0; frame !=
 		GatheringLightsCounts[mode][GATHERING_LIGHTS_TICKS] +
-			state->args->tgtCnt * GATHERING_LIGHTS_TARGET_TICKS;
-		frm++) {
+			state->args->targetCount * GATHERING_LIGHTS_TARGET_TICKS;
+		frame++) {
 		Sint32 *row;
 
-		if(frm == 80) {
+		if(frame == 80) {
 			if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			else
@@ -112,32 +112,34 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		row = state->bg2xLines;
 		for(i = 0; i != DISPLAY_HEIGHT; i++)
 			*row++ = CANVAS_WAVE_BG2X(toFIXED(GATHERING_LIGHTS_RIPPLE) -
-				sySin((frm + i) * (TRIG_TURN / 64)) * GATHERING_LIGHTS_RIPPLE);
+				sySin((frame + i) * (TRIG_TURN / 64)) *
+					GATHERING_LIGHTS_RIPPLE);
 
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
-			ACTOR *tgt = btObjectGetStub(state->args->tgts[k])->actor;
-			Sint32 half = btUnitGetEffectHeightStub(state->args->tgts[k]) / 2;
+			ACTOR *target = btObjectGetStub(state->args->targets[k])->actor;
+			Sint32 half =
+				btUnitGetEffectHeightStub(state->args->targets[k]) / 2;
 
-			if(frm ==
+			if(frame ==
 				k * GATHERING_LIGHTS_TARGET_TICKS + GATHERING_LIGHTS_HIT_TICK +
 					1) {
 				if(mode == GATHERING_LIGHTS_DEMON_NIGHT)
-					sySndPlayStub(SE_HEAVY_IMPACT);
+					sySoundPlayStub(SE_HEAVY_IMPACT);
 				else
-					sySndPlayStub(SE_IMPACT);
+					sySoundPlayStub(SE_IMPACT);
 			}
-			if(frm ==
+			if(frame ==
 				k * GATHERING_LIGHTS_TARGET_TICKS + GATHERING_LIGHTS_HIT_TICK)
-				btEffectTintBattler(state->args->tgts[k], SPRITE_COLOR_WHITE,
+				btEffectTintBattler(state->args->targets[k], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, k, 26);
-			if(frm > k * GATHERING_LIGHTS_TARGET_TICKS) {
+			if(frame > k * GATHERING_LIGHTS_TARGET_TICKS) {
 				for(i = 0;
 					i != GatheringLightsCounts[mode][GATHERING_LIGHTS_COUNT];
 					i++) {
 					PARTICLE *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
 					/* Each light leaves two ticks after the one before it. */
-					if(frm >
+					if(frame >
 							(k * (GATHERING_LIGHTS_TARGET_TICKS / 2) + i) * 2 &&
 						mote->variant >= 0) {
 						btProjectionPoint(mote, &screenPos);
@@ -153,14 +155,14 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						   middle of its target's body, its speed gaining a
 						   512th of the distance a tick, and is gone once
 						   within 32 pixels of it across and in depth. */
-						if(frm > k * GATHERING_LIGHTS_TARGET_TICKS + i + 30) {
-							Sint32 dx = (tgt->x.fixed - mote->x) >> 9;
-							Sint32 dy = (tgt->y.fixed + half - mote->y) >> 9;
-							Sint32 dz = (tgt->z.fixed - mote->z) >> 9;
+						if(frame > k * GATHERING_LIGHTS_TARGET_TICKS + i + 30) {
+							Sint32 dx = (target->x.fixed - mote->x) >> 9;
+							Sint32 dy = (target->y.fixed + half - mote->y) >> 9;
+							Sint32 dz = (target->z.fixed - mote->z) >> 9;
 
-							mote->velX += dx;
-							mote->velY += dy;
-							mote->velZ += dz;
+							mote->velocityX += dx;
+							mote->velocityY += dy;
+							mote->velocityZ += dz;
 							if((dx >= -4095 && dx <= 4095) &&
 								(dz >= -4095 && dz <= 4095))
 								mote->variant = -1;

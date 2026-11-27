@@ -161,7 +161,7 @@ extern Uint16 IsletsNoDoorFrames[];
 
 void   fdMapGridFillCollisionRectangle(Sint32 layer, Sint32 x, Sint32 z,
 	  Uint32 width, Uint32 height, Sint32 value);
-ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *num, Sint32 *kind);
+ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *number, Sint32 *kind);
 
 void scIsletsSetDeckBlocksByHeight(void);
 
@@ -303,7 +303,7 @@ typedef struct PUSH_TARGET {
 	Sint32 z;
 	Sint32 rectangle; /* index into the rectangle table */
 	Sint32 id;
-	void  *func;
+	void  *callback;
 } PUSH_TARGET;
 
 extern ACTOR_PLACE IsletsPlacements[];
@@ -330,8 +330,8 @@ enum {
 
 void scIsletsFinishPushingCrate(void);
 void scIsletsSetSonsTargetedByHeight(void);
-Bool scPushTargetFindStop(PUSH_TARGET *tgt);
-void scPushTargetPush(PUSH_TARGET tgt);
+Bool scPushTargetFindStop(PUSH_TARGET *target);
+void scPushTargetPush(PUSH_TARGET target);
 
 void scIsletsPlayFootsteps(void);
 void scIsletsRideOnLonesomeGeorge(ACTOR *actor);
@@ -366,21 +366,21 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    there. */
 void scIsletsPushLogIntoWater(void)
 {
-	PUSH_TARGET tgt;
+	PUSH_TARGET target;
 	ACTOR	   *actor = fdActorGet(ACTOR_LOG);
 
-	if(scPushTargetFindStop(&tgt)) {
-		scPushTargetPush(tgt);
+	if(scPushTargetFindStop(&target)) {
+		scPushTargetPush(target);
 		syWait(5);
 		actor->gravity = toFIXED(1) / 2;
 		fdActorSetAnimation(ACTOR_LOG, LOG_ANIM_ROLL);
 		fdActorSetDestinationOffset(ACTOR_LOG, 0, 8);
 		syFieldScriptWait(22);
-		fdScriptPlaySnd(SE_LOG_FALL);
+		fdScriptPlaySound(SE_LOG_FALL);
 		fdActorSetAnimation(ACTOR_LOG, LOG_ANIM_SPLASH_DOWN);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->motionFlg = 0;
-		actor->velY = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = 0;
+		actor->velocityY = 0;
 		actor->y.fixed = toFIXED(-8);
 		actor->groundHeight = toFIXED(-8);
 		fdMapGridCopyMetatileAttributes(9, 1, 4, 1, 9, 10);
@@ -640,8 +640,8 @@ void scIsletsTradeWithBird(void)
 			fdActorSetAnimation(
 				MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 			scFieldActorSetItemIcon(spawned, ITEM_RED_CLOTH);
-			fdActorSetSprFlags(spawned, 0);
-			spawned->motionFlg = 0;
+			fdActorSetSpriteFlags(spawned, 0);
+			spawned->motionFlags = 0;
 		}
 		syFieldScriptWait(10);
 		fdPsynergyRestoreMindReadPalette();
@@ -663,9 +663,9 @@ void scIsletsTradeWithBird(void)
 /* An actor walks to (x, z) without turning to its way, and stops facing as it
    was. */
 #define STEP(actor, x, z) \
-	(fdActorGetById(actor)->steeringFlg &= ~ACTOR_FACES_MOTION, \
+	(fdActorGetById(actor)->steeringFlags &= ~ACTOR_FACES_MOTION, \
 		fdActorWalkToAndWait(actor, x, z), fdScriptWait(1), \
-		fdActorGetById(actor)->steeringFlg |= ACTOR_FACES_MOTION)
+		fdActorGetById(actor)->steeringFlags |= ACTOR_FACES_MOTION)
 
 /* The cow walks round to Felix, he holds the Milk it gives him over his head,
    and the neckerchief is traded for it. */
@@ -682,7 +682,7 @@ void scIsletsTradeWithBird(void)
 		if(given != 0) { \
 			fdActorSetAnimationById( \
 				MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED); \
-			given->motionFlg = off; \
+			given->motionFlags = off; \
 			fdActorSetItemIcon(given, ITEM_MILK); \
 			fdScriptWait(20); \
 		} \
@@ -741,9 +741,9 @@ void scIsletsTradeWithCow(void)
 				given = 0;
 				if(item != 0) {
 					fdActorSetItemIcon(item, ITEM_RED_CLOTH);
-					fdActorSetSprFlags(item, 0);
-					item->motionFlg = 0;
-					item->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+					fdActorSetSpriteFlags(item, 0);
+					item->motionFlags = 0;
+					item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 				}
 				fdScriptWait(10);
 				fdPsynergyGreyMindReadPalette();
@@ -779,9 +779,9 @@ void scIsletsTradeWithCow(void)
 				SPRITE_UNSEEN_MARKER, toFIXED(140), 0, toFIXED(190));
 			if(item != 0) {
 				fdActorSetItemIcon(item, ITEM_RED_CLOTH);
-				fdActorSetSprFlags(item, 0);
-				item->motionFlg = 0;
-				item->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+				fdActorSetSpriteFlags(item, 0);
+				item->motionFlags = 0;
+				item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 			}
 			STEP(MainRoutineStateWork.leaderActorId, 120, 190);
 			fdActorFaceDirectionById(ACTOR_COW, FACING_SOUTH_SOUTHEAST, 0);
@@ -863,10 +863,10 @@ ACTOR *scIsletsShowItemAbove(ACTOR *actor, Sint32 value)
 	if(spawned != 0) {
 		fdActorSetAnimation(
 			MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
-		spawned->motionFlg = 0;
+		spawned->motionFlags = 0;
 		scFieldActorSetItemIcon(spawned, value);
-		fdActorSetSprFlags(spawned, 0);
-		spawned->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+		fdActorSetSpriteFlags(spawned, 0);
+		spawned->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 	}
 	return spawned;
 }
@@ -881,7 +881,7 @@ void scActorEmitWadingSplashes(ACTOR *actor)
 		spawned = scFieldActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed);
 		if(spawned != 0) {
-			fdActorSetSprFlags(spawned, 0);
+			fdActorSetSpriteFlags(spawned, 0);
 			fdActorSelectAnimation(spawned, 1);
 			fdActorStartScript(spawned, IsletsWadingSplashScript);
 		}
@@ -892,9 +892,9 @@ extern Sint32 IsletsDogHopsFacingEastScript[];
 extern Sint32 IsletsDogHopsFacingWestScript[];
 
 #define STEP(actor, x, z) \
-	(fdActorGetById(actor)->steeringFlg &= ~ACTOR_FACES_MOTION, \
+	(fdActorGetById(actor)->steeringFlags &= ~ACTOR_FACES_MOTION, \
 		fdActorWalkToAndWait(actor, x, z), syFieldScriptWait(1), \
-		fdActorGetById(actor)->steeringFlg |= ACTOR_FACES_MOTION)
+		fdActorGetById(actor)->steeringFlags |= ACTOR_FACES_MOTION)
 
 /* Mind Read on the dog paddling among West Indra Islet's piers, with Milk in
    the party: "Sniff! Sniff! I smell fresh milk!" It splashes round Felix, he
@@ -953,7 +953,7 @@ void scIsletsTradeWithDog(void)
 			ACTOR_DOG, MainRoutineStateWork.leaderActorId);
 		if(item != 0) {
 			void (*splash)(void);
-			item->collisionFlg = ACTOR_NOT_TARGETED | ACTOR_SOLID;
+			item->collisionFlags = ACTOR_NOT_TARGETED | ACTOR_SOLID;
 			scFieldActorSetPosAndResetMotion(
 				item, toFIXED(104), 0, toFIXED(840));
 			splash = scActorEmitWadingSplashes;
@@ -1091,9 +1091,9 @@ void scIsletsLonesomeGeorgeThanks(ACTOR *gift)
 	gmPartyInventoryRemove(ITEM_LIL_TURTLE);
 	/* "Hop on my back!" */
 	fdScriptShowMessage(ACTOR_LONESOME_GEORGE, 0);
-	((MIND_READ_STATE *)syHeapSlotAllocEWRAM(
+	((MIND_READ_STATE *)syHeapSlotAllocateEWRAM(
 		 HEAP_SLOT_MIND_READ, sizeof(MIND_READ_STATE)))
-		->cnt = MIND_READ_QUIET;
+		->count = MIND_READ_QUIET;
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 	leader->update = scActorEmitWadingSplashes;
@@ -1102,7 +1102,7 @@ void scIsletsLonesomeGeorgeThanks(ACTOR *gift)
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 6, 0);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 296, 452);
 	leader->update = scIsletsRideOnLonesomeGeorge;
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
 	fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
 	syFieldScriptWait(20);
@@ -1136,12 +1136,12 @@ void scIsletsLonesomeGeorgeThanks(ACTOR *gift)
 		b = scFieldActorCreate( \
 			SPRITE_WADING_SPLASH, toFIXED(296), 0, toFIXED(424)); \
 		if(a != 0) { \
-			a->motionFlg = answer; \
-			fdActorSetSprFlags(a, 0); \
+			a->motionFlags = answer; \
+			fdActorSetSpriteFlags(a, 0); \
 		} \
 		if(b != 0) { \
 			b->scaleY = toFIXED(2); \
-			fdActorSetSprFlags(b, 0); \
+			fdActorSetSpriteFlags(b, 0); \
 			fdActorSelectAnimation(b, 1); \
 			fdActorStartScript(b, IsletsWadingSplashScript); \
 		} \
@@ -1278,9 +1278,9 @@ void scIsletsGiveTurtle(void)
 			(FieldStateWork->msg)++;
 			/* "Then hop on my back!" */
 			fdScriptShowMessage(ACTOR_LONESOME_GEORGE, 0);
-			((MIND_READ_STATE *)syHeapSlotAllocEWRAM(
+			((MIND_READ_STATE *)syHeapSlotAllocateEWRAM(
 				 HEAP_SLOT_MIND_READ, sizeof(MIND_READ_STATE)))
-				->cnt = MIND_READ_QUIET;
+				->count = MIND_READ_QUIET;
 			scFieldActorSetAnimationAndWait(
 				MainRoutineStateWork.leaderActorId, ANIM_NOD);
 			fdActorFaceDirectionAndWait(
@@ -1289,7 +1289,7 @@ void scIsletsGiveTurtle(void)
 			scFieldActorJump(MainRoutineStateWork.leaderActorId, 6, 0);
 			fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 296, 452);
 			leader->update = scIsletsRideOnLonesomeGeorge;
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGetById(MainRoutineStateWork.leaderActorId),
 				SPRITE_COLOR_HIDDEN);
 			fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
@@ -1357,14 +1357,15 @@ void scIsletsRideBackToIsland(void)
 	if(result == 0) {
 		fdPsynergyGreyMindReadPalette();
 		fdScriptShowMessage(ACTOR_LONESOME_GEORGE, 0);
-		((MIND_READ_STATE *)syHeapSlotAllocEWRAM(
+		((MIND_READ_STATE *)syHeapSlotAllocateEWRAM(
 			 HEAP_SLOT_MIND_READ, sizeof(MIND_READ_STATE)))
-			->cnt = MIND_READ_QUIET;
+			->count = MIND_READ_QUIET;
 		scFieldActorJump(MainRoutineStateWork.leaderActorId, 6, 0);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 		fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 152, 768);
 		leader->update = (OBJECT_UPDATE)scIsletsRideOnLonesomeGeorge;
-		scFieldActorSetSprCol(fdActorGet(MainRoutineStateWork.leaderActorId),
+		scFieldActorSetSpriteColor(
+			fdActorGet(MainRoutineStateWork.leaderActorId),
 			SPRITE_COLOR_HIDDEN);
 		fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
 		syFieldScriptWait(20);
@@ -1430,11 +1431,11 @@ void scIsletsOpenFieldMenu(void)
 void scIsletsSetDeckBlocksByHeight(void)
 {
 	if(fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed < toFIXED(40)) {
-		fdActorGet(ACTOR_DECK_BLOCK_A)->collisionFlg |= ACTOR_NOT_TARGETED;
-		fdActorGet(ACTOR_DECK_BLOCK_B)->collisionFlg |= ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_DECK_BLOCK_A)->collisionFlags |= ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_DECK_BLOCK_B)->collisionFlags |= ACTOR_NOT_TARGETED;
 	} else {
-		fdActorGet(ACTOR_DECK_BLOCK_A)->collisionFlg &= ~ACTOR_NOT_TARGETED;
-		fdActorGet(ACTOR_DECK_BLOCK_B)->collisionFlg &= ~ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_DECK_BLOCK_A)->collisionFlags &= ~ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_DECK_BLOCK_B)->collisionFlags &= ~ACTOR_NOT_TARGETED;
 	}
 }
 
@@ -1479,13 +1480,15 @@ void scIsletsFillWaveLines(void)
 	MAP_LAYER *layer = fdMapGridGetLayer(2);
 	Sint16	  *lines = IsletsWaveLines[IsletsWaveTableIndex ^ 1];
 	FIXED	   v[2];
-	Sint32	  *cnt = &v[1];
+	Sint32	  *count = &v[1];
 	FIXED	   sine;
 
-	for(*cnt = 0; *cnt != DISPLAY_HEIGHT; (*cnt)++) {
-		sine = syMathSin((*cnt + (Uint8)TickCount + FIXEDtoINT(layer->y)) << 9);
+	for(*count = 0; *count != DISPLAY_HEIGHT; (*count)++) {
+		sine =
+			syMathSin((*count + (Uint8)TickCount + FIXEDtoINT(layer->y)) << 9);
 		v[0] = sine;
-		*lines++ = FIXEDtoINT(layer->x) + FIXEDtoINT_TWICE(sine) + *cnt % 3 - 1;
+		*lines++ =
+			FIXEDtoINT(layer->x) + FIXEDtoINT_TWICE(sine) + *count % 3 - 1;
 	}
 	IsletsWaveTableIndex ^= 1;
 }
@@ -1528,21 +1531,21 @@ void scIsletsPengusGivesPrettyStone(void)
 	fdActorFaceDirection(ACTOR_PENGUS, FACING_WEST, 10);
 	/* "Thank you so much for saving my sweet Pengulina. Allow me to give..." */
 	fdScriptShowMessage(ACTOR_PENGUS, 0);
-	fdActorGetById(ACTOR_PENGUS)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_PENGUS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_PENGUS, 222, 186);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_PENGUS)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGetById(ACTOR_PENGUS)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_PENGUS)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_PENGUS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_PENGUS, 232, 186);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_PENGUS)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_PENGUS)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirectionAndWait(
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	item = fdActorGetById(ACTOR_PRETTY_STONE_ICON);
-	item->motionFlg = 0;
+	item->motionFlags = 0;
 	scFieldActorSetItemIcon(item, ITEM_PRETTY_STONE);
 	scFieldActorSetPosAndResetMotion(
 		item, leader->x.fixed, leader->y.fixed + toFIXED(24), leader->z.fixed);
@@ -1563,7 +1566,7 @@ void scIsletsPengusGivesPrettyStone(void)
 void scIsletsPlayFootsteps(void)
 {
 	if((TickCount & 15) == 0)
-		fdScriptPlaySnd(SE_FOOTSTEP);
+		fdScriptPlaySound(SE_FOOTSTEP);
 }
 
 /* When Felix climbs up near the bird's nest on SE Angara Islet's cliff top
@@ -1577,7 +1580,7 @@ void scIsletsBirdReturnsToNest(void)
 	syFieldScriptEndLastingPsynergy(0);
 	scFieldActorStop(ACTOR_BIRD);
 	syWait(1);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSetSpeed(ACTOR_BIRD, 1.6);
 	scFieldActorSetPosAndResetMotion(
 		actor, toFIXED(268), toFIXED(64), toFIXED(390));
@@ -1591,14 +1594,14 @@ void scIsletsBirdReturnsToNest(void)
 	scFieldActorWaitForMove(actor);
 	syFieldCloseEvent(scIsletsPlayFootsteps);
 	fdActorSetAnimation(ACTOR_BIRD, BIRD_ANIM_PERCH);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	scFieldActorSetSprPriority(ACTOR_BIRD, 2);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	scFieldActorSetSpritePriority(ACTOR_BIRD, 2);
 	fdActorFaceActor(ACTOR_BIRD, MainRoutineStateWork.leaderActorId, 0);
 	syFieldScriptWait(10);
 	scFieldActorJump(ACTOR_BIRD, 4, 0);
 	fdActorMoveToAndWait(ACTOR_BIRD, 120, 312);
 	fdActorSetAnimation(ACTOR_BIRD, BIRD_ANIM_PERCH);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorFaceDirectionAndWait(ACTOR_BIRD, FACING_EAST);
 	fdScriptSetFlag(FLAG_BIRD_ON_NEST);
 	syWait(1);
@@ -1743,11 +1746,11 @@ void scIsletsFinishPushingCrate(void)
 			fdMapGridCopyMetatileAttributes(7, 2, 1, 1, firstX, firstZ);
 			both = 1;
 		}
-		first->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		first->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		syWait(10);
-		fdScriptPlaySnd(SE_RATTLE);
+		fdScriptPlaySound(SE_RATTLE);
 		syWait(10);
-		first->motionFlg = 0;
+		first->motionFlags = 0;
 		fdScriptSetFlag(FLAG_CRATE_A_DROPPED);
 		if(both) {
 			scIsletsSetMetatileCollision(
@@ -1756,8 +1759,8 @@ void scIsletsFinishPushingCrate(void)
 				second->x.fixed, second->z.fixed, ISLETS_BOTH_LAYERS, 0);
 			fdMapGridCopyMetatileAttributes(7, 3, 1, 1, 12, 26);
 			fdScriptSetFlag(FLAG_CRATES_IN_ONE_METATILE);
-			first->sceneCnt = 1;
-			second->sceneCnt = 1;
+			first->sceneCount = 1;
+			second->sceneCount = 1;
 		}
 		fdScriptEnd();
 	}
@@ -1770,11 +1773,11 @@ void scIsletsFinishPushingCrate(void)
 			fdMapGridCopyMetatileAttributes(7, 2, 1, 1, firstX, firstZ);
 			both = 1;
 		}
-		second->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		second->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		syWait(10);
-		fdScriptPlaySnd(SE_RATTLE);
+		fdScriptPlaySound(SE_RATTLE);
 		syWait(10);
-		second->motionFlg = 0;
+		second->motionFlags = 0;
 		fdScriptSetFlag(FLAG_CRATE_B_DROPPED);
 		if(both) {
 			scIsletsSetMetatileCollision(
@@ -1783,8 +1786,8 @@ void scIsletsFinishPushingCrate(void)
 				second->x.fixed, second->z.fixed, ISLETS_BOTH_LAYERS, 0);
 			fdMapGridCopyMetatileAttributes(7, 3, 1, 1, 7, 29);
 			fdScriptSetFlag(FLAG_CRATES_IN_ONE_METATILE);
-			first->sceneCnt = 1;
-			second->sceneCnt = 1;
+			first->sceneCount = 1;
+			second->sceneCount = 1;
 		}
 		fdScriptEnd();
 	}
@@ -1809,7 +1812,7 @@ void scIsletsPushCrateOffLedge(void)
 		FIELD_METATILE(IsletsFirstCrateZ) == 29 &&
 		FIELD_METATILE(IsletsSecondCrateX) == 7 &&
 		FIELD_METATILE(IsletsSecondCrateZ) == 28) {
-		first->sceneCnt = 0;
+		first->sceneCount = 0;
 		/* XXX: no behaviour is passed, so the upper metatile takes whatever the
 		   fourth argument's register holds; the call's disassembly would settle
 		   which. */
@@ -1841,9 +1844,9 @@ void scIsletsStepUpOntoShore(void)
 		actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 72, 280);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdScriptEnd();
 	}
 }
@@ -1855,17 +1858,17 @@ void scIsletsStepUpOntoShore(void)
 void scIsletsStepDownOntoIceberg(void)
 {
 	ACTOR  *actor;
-	Uint16 *frm;
+	Uint16 *frame;
 
 	if(PerWork.data & KEY_DOWN) {
-		frm = SceneStateWork;
+		frame = SceneStateWork;
 		actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-		if((Uint16)(*frm - 10) > 200) {
+		if((Uint16)(*frame - 10) > 200) {
 			fdScriptStart();
 			syFieldScriptEndLastingPsynergy(0);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 72, 296);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			fdScriptEnd();
 		}
 	}
@@ -1949,7 +1952,7 @@ void scIsletsOpenDoorAndEnter(void)
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	ACTOR			   *actor;
 	Sint16			   *exit;
-	Sint32				idx;
+	Sint32				index;
 
 	actor = fdActorGet(party->leaderActorId);
 	fdScriptStart();
@@ -1965,14 +1968,14 @@ void scIsletsOpenDoorAndEnter(void)
 	scFieldActorWaitForMove(actor);
 	actor->facing = FACING_NORTH;
 	exit = &state->stepCue;
-	idx = *exit;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	idx--;
+	index = *exit;
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	index--;
 	fdMapGridAnimateMetatiles(
-		IsletsDoors[idx].ticks, IsletsDoors[idx].x, IsletsDoors[idx].z);
+		IsletsDoors[index].ticks, IsletsDoors[index].x, IsletsDoors[index].z);
 	fdActorSetScript(party->leaderActorId, LeaderWalkThroughDoorScript);
 	syWait(12);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(*exit);
@@ -1990,7 +1993,7 @@ void scIsletsLeaveByStep(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	scPaletteCycleStop();
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(state->stepCue);
@@ -2020,7 +2023,7 @@ void scIsletsEnterDoor(void)
 	actor->facing = FACING_NORTH;
 	fdActorSetScript(party->leaderActorId, LeaderWalkThroughDoorScript);
 	syWait(12);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(state->stepCue);
@@ -2042,7 +2045,7 @@ void scIsletsArriveBackAtIsland(void)
 	syWait(1);
 	actor->facing = FACING_NORTH;
 	owner->update = (OBJECT_UPDATE)scIsletsRideOnLonesomeGeorge;
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
 	fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
 	syWait(1);
@@ -2068,7 +2071,7 @@ void scIsletsArriveBackAtIsland(void)
 	fdScriptShowMessage(ACTOR_LONESOME_GEORGE, 0);
 	fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_NORMAL);
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 6, 0);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 312, 440);
@@ -2102,7 +2105,7 @@ void scIsletsArriveAtSecretSpot(void)
 	syWait(1);
 	guide->facing = FACING_SOUTH;
 	leader->update = scIsletsRideOnLonesomeGeorge;
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
 	fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
 	syWait(1);
@@ -2134,7 +2137,7 @@ void scIsletsArriveAtSecretSpot(void)
 	fdScriptShowMessage(ACTOR_LONESOME_GEORGE, 0);
 	fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_STAND);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_NORMAL);
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 6, 0);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 152, 742);
@@ -2177,12 +2180,13 @@ Sint32 scInit(void)
 void scIsletsSetSonsTargetedByHeight(void)
 {
 	if(fdActorGet(MainRoutineStateWork.leaderActorId)->y.fixed > toFIXED(8)) {
-		fdActorGet(ACTOR_SAILORS_SON)->collisionFlg &= ~ACTOR_NOT_TARGETED;
-		fdActorGet(ACTOR_SAILORS_OTHER_SON)->collisionFlg &=
+		fdActorGet(ACTOR_SAILORS_SON)->collisionFlags &= ~ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_SAILORS_OTHER_SON)->collisionFlags &=
 			~ACTOR_NOT_TARGETED;
 	} else {
-		fdActorGet(ACTOR_SAILORS_SON)->collisionFlg |= ACTOR_NOT_TARGETED;
-		fdActorGet(ACTOR_SAILORS_OTHER_SON)->collisionFlg |= ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_SAILORS_SON)->collisionFlags |= ACTOR_NOT_TARGETED;
+		fdActorGet(ACTOR_SAILORS_OTHER_SON)->collisionFlags |=
+			ACTOR_NOT_TARGETED;
 	}
 }
 
@@ -2198,18 +2202,19 @@ void scIsletsInitWestIndra(void)
 	if(MainRoutineStateWork.entrance == WEST_INDRA_ISLET_FROM_CHAMPA_ROOMS)
 		fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 	map->wading = MAP_WADING_UPPER_LEVEL;
-	fdActorSetSprFlags(fdActorGet(ACTOR_DOG), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_DOG), 0);
 	fdActorSetSpeed(ACTOR_SAILORS_OTHER_SON, 0.8);
-	fdActorGet(ACTOR_SAILORS_OTHER_SON)->collisionFlg |= ACTOR_BLOCKED_BY_SOLID;
+	fdActorGet(ACTOR_SAILORS_OTHER_SON)->collisionFlags |=
+		ACTOR_BLOCKED_BY_SOLID;
 	if(fdScriptGetFlag(FLAG_DOG_TRADED)) {
 		spawned = scFieldActorCreate(
 			SPRITE_UNSEEN_MARKER, toFIXED(280), 0, toFIXED(840));
 		if(spawned != 0) {
-			spawned->motionFlg = 0;
+			spawned->motionFlags = 0;
 			scFieldActorSetItemIcon(spawned, ITEM_MILK);
-			fdActorSetSprFlags(spawned, 0);
-			spawned->collisionFlg = ACTOR_NOT_TARGETED | ACTOR_SOLID;
-			spawned->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+			fdActorSetSpriteFlags(spawned, 0);
+			spawned->collisionFlags = ACTOR_NOT_TARGETED | ACTOR_SOLID;
+			spawned->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 		}
 		fdActorGet(ACTOR_DOG)->facing = FACING_NORTH_NORTHEAST;
 	} else {
@@ -2223,10 +2228,11 @@ void scIsletsStartIceberg(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	fdActorSetSprFlags(actor, 0);
-	actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->retainSpriteCache =
+		ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	actor->acceleration = toFIXED(3) / 20;
 	actor->speedLimit = toFIXED(3) / 10;
 }
@@ -2236,7 +2242,7 @@ void scIsletsStartIceberg(Sint32 id)
 void scIsletsMoveIceberg(Sint32 id, Sint32 column, Sint32 row)
 {
 	ACTOR *actor = fdActorGet(id);
-	FIXED  x = toFIXED(column * 32 + actor->tmr);
+	FIXED  x = toFIXED(column * 32 + actor->timer);
 	FIXED  z = toFIXED(row * 32 + actor->userValue);
 
 	scFieldActorSetMoveTargetFX(actor, x, actor->y.fixed, z);
@@ -2250,11 +2256,11 @@ void scIsletsMoveIceberg(Sint32 id, Sint32 column, Sint32 row)
    CUE_SINK_IN_SEA. */
 void scIsletsDriftIcebergs(void)
 {
-	Uint16		*frm = &SceneStateWork[0];
+	Uint16		*frame = &SceneStateWork[0];
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint16		*owed = &SceneStateWork[1];
 	Sint32		 i;
-	Sint32		 cnt;
+	Sint32		 count;
 
 	if(state->psynergy != 0 || syGameFlagGet(FLAG_REVEAL_SHOWN)) {
 		for(i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
@@ -2276,12 +2282,12 @@ void scIsletsDriftIcebergs(void)
 		}
 		return;
 	}
-	cnt = *owed + 1;
-	*owed = cnt;
-	if(state->pushMetatile != 0 || (Uint16)cnt == 0)
+	count = *owed + 1;
+	*owed = count;
+	if(state->pushMetatile != 0 || (Uint16)count == 0)
 		return;
 	do {
-		switch(*frm) {
+		switch(*frame) {
 		case 0:
 			for(i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
 				fdActorSetAnimation(i, ICEBERG_ANIM_DRIFT);
@@ -2306,8 +2312,8 @@ void scIsletsDriftIcebergs(void)
 			}
 			break;
 		}
-		if(++*frm == 260)
-			*frm = 0;
+		if(++*frame == 260)
+			*frame = 0;
 	} while(--*owed != 0);
 }
 
@@ -2324,7 +2330,7 @@ void scIsletsInitEastTundaria(void)
 	Uint16 *next;
 	Sint32	i;
 
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	if(MainRoutineStateWork.entrance ==
 		EAST_TUNDARIA_ISLET_FROM_MIKASALLA_ROOMS_HOUSES)
@@ -2344,8 +2350,8 @@ void scIsletsInitEastTundaria(void)
 		actor = fdActorGet(ACTOR_LOG);
 		fdActorSetPos(ACTOR_LOG, 176, 168);
 		fdActorSetAnimation(ACTOR_LOG, LOG_ANIM_FLOAT);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->motionFlg = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(-8);
 		actor->groundHeight = toFIXED(-8);
 		fdMapGridCopyMetatileAttributes(9, 1, 4, 1, 9, 10);
@@ -2356,14 +2362,14 @@ void scIsletsInitEastTundaria(void)
 	if(!fdScriptGetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
 		scFieldActorWatchAndSetScript(ACTOR_PENGUS, ACTOR_PENGULINA);
 		fdActorSetAnimation(ACTOR_PENGULINA, ANIM_STILL);
-		fdActorGet(ACTOR_PENGULINA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_PENGULINA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	} else if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		other = fdActorGet(ACTOR_PENGUS);
 		other->facing = FACING_SOUTH_SOUTHWEST;
-		other->collisionFlg |= ACTOR_BLOCKED_BY_SOLID;
+		other->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
 		fdActorSetPosAndFacing(ACTOR_PENGULINA, toFIXED(234), toFIXED(204),
 			FACING_SOUTH_SOUTHEAST);
-		fdActorGet(ACTOR_PENGULINA)->collisionFlg |= ACTOR_BLOCKED_BY_SOLID;
+		fdActorGet(ACTOR_PENGULINA)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
 		fdActorSetSpeed(ACTOR_PENGUS, 2);
 		fdActorSetSpeed(ACTOR_PENGULINA, 1.6);
 		fdActorSetScript(ACTOR_PENGUS, IsletsPengusChasesPengulinaScript);
@@ -2381,22 +2387,22 @@ void scIsletsInitNorthOsenia(void)
 	if(MainRoutineStateWork.entrance ==
 		NORTH_OSENIA_ISLET_FROM_DAILA_ROOMS_HOUSES)
 		fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
-	fdActorSetSprFlags(fdActorGet(ACTOR_COW), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_COW), 0);
 	fdActorSetAnimation(ACTOR_COW, COW_ANIM_GRAZE);
 	if(fdScriptGetFlag(FLAG_COW_TRADED)) {
 		spawned = scFieldActorCreate(
 			SPRITE_UNSEEN_MARKER, toFIXED(104), toFIXED(24), toFIXED(160));
 		if(spawned != 0) {
-			spawned->motionFlg = 0;
+			spawned->motionFlags = 0;
 			scFieldActorSetItemIcon(spawned, ITEM_RED_CLOTH);
-			fdActorSetSprFlags(spawned, 0);
-			spawned->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+			fdActorSetSpriteFlags(spawned, 0);
+			spawned->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 		}
 		fdActorSetPos(ACTOR_COW, 104, 204);
 	}
-	scFieldActorSetSprPriority(ACTOR_BLUE_ORB, 1);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BLUE_ORB), SPRITE_COLOR_HIDDEN);
-	fdActorGet(ACTOR_BLUE_ORB)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(ACTOR_BLUE_ORB, 1);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_BLUE_ORB), SPRITE_COLOR_HIDDEN);
+	fdActorGet(ACTOR_BLUE_ORB)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* Sets up SE Angara Islet: the bird, the crates (stacked in one metatile once
@@ -2415,8 +2421,8 @@ void scIsletsInitSoutheastAngara(void)
 		SOUTHEAST_ANGARA_ISLET_FROM_CHAMPA_ROOMS)
 		fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
-		actor->motionFlg = 0;
-		scFieldActorSetSprPriority(ACTOR_BIRD, 1);
+		actor->motionFlags = 0;
+		scFieldActorSetSpritePriority(ACTOR_BIRD, 1);
 	}
 	fdActorSetPos(ACTOR_UNSEEN_MARKER, 0, 0);
 	fdActorDisableById(ACTOR_CRATE_A);
@@ -2426,17 +2432,17 @@ void scIsletsInitSoutheastAngara(void)
 		ACTOR *first = fdActorGet(ACTOR_CRATE_A);
 		ACTOR *second = fdActorGet(ACTOR_CRATE_B);
 
-		first->motionFlg = 0;
-		second->motionFlg = 0;
-		first->sceneCnt = 1;
-		second->sceneCnt = 1;
+		first->motionFlags = 0;
+		second->motionFlags = 0;
+		first->sceneCount = 1;
+		second->sceneCount = 1;
 		fdMapGridCopyMetatileAttributes(7, 3, 1, 1, 7, 29);
 	} else {
 		ACTOR *first = fdActorGet(ACTOR_CRATE_A);
 		ACTOR *second = fdActorGet(ACTOR_CRATE_B);
 
-		first->motionFlg = 0;
-		second->motionFlg = 0;
+		first->motionFlags = 0;
+		second->motionFlags = 0;
 		scIsletsSetMetatileCollision(first->x.fixed, first->z.fixed,
 			ISLETS_BOTH_LAYERS, METATILE_BEHAVIOR_WALL);
 		scIsletsSetMetatileCollision(second->x.fixed, second->z.fixed,
@@ -2444,8 +2450,8 @@ void scIsletsInitSoutheastAngara(void)
 	}
 	fdActorDisableById(ACTOR_PUDDLE);
 	last = fdActorGet(ACTOR_PUDDLE);
-	last->sceneCnt = 1;
-	last->motionFlg = 0;
+	last->sceneCount = 1;
+	last->motionFlags = 0;
 	scIsletsSetMetatileCollision(last->x.fixed, last->z.fixed,
 		ISLETS_GROUND_LAYER, METATILE_BEHAVIOR_WALL);
 	if(fdScriptGetFlag(FLAG_SOUTHEAST_ANGARA_ISLET_PUDDLE_FROZEN))
@@ -2484,16 +2490,16 @@ void scIsletsInitSeaOfTime(void)
 	if(fdScriptGetFlag(FLAG_GEORGE_HAS_THE_TURTLE) &&
 		(done = fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
 		fdActorSetPos(ACTOR_LIL_TURTLE, 280, 468);
-		fdActorGet(ACTOR_LIL_TURTLE)->motionFlg = done;
+		fdActorGet(ACTOR_LIL_TURTLE)->motionFlags = done;
 		{
 			FIXED x = toFIXED(296);
 
 			fdActorSetPosFX(ACTOR_LONESOME_GEORGE, x, toFIXED(452));
 		}
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_LONESOME_GEORGE), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_DECK_BLOCK_A), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_DECK_BLOCK_B), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_LONESOME_GEORGE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_DECK_BLOCK_A), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_DECK_BLOCK_B), 0);
 	syFieldSetTickEvent(scIsletsSetDeckBlocksByHeight, EVENT_PASS_TICK);
 	/* At the secret spot, by the ride or from the Islet Cave. */
 	if(MainRoutineStateWork.entrance >= ENTRANCE_AT_SECRET_SPOT &&
@@ -2563,16 +2569,16 @@ void fdPaletteCycleStep(void)
 		FieldStateWork->pauseMenu == 0) {
 		PALETTE_CYCLE_STATE *state = PaletteState;
 		Uint8				 i;
-		Uint16				 cnt = state->cnt & 3;
+		Uint16				 count = state->count & 3;
 		Uint16				 buf[16];
 
-		for(i = 0; i < cnt; i++) {
+		for(i = 0; i < count; i++) {
 			PALETTE_CYCLE *cycle = &state->entries[i];
-			if(cycle->tmr == 0) {
+			if(cycle->timer == 0) {
 				Uint16	start = cycle->pos;
-				Uint16	len = cycle->cnt;
+				Uint16	len = cycle->count;
 				void   *dest = cycle->src;
-				Uint16 *src = cycle->cols;
+				Uint16 *src = cycle->colors;
 				Uint8	j;
 				for(j = len - start; j < len; j++)
 					buf[j] = *src++;
@@ -2583,9 +2589,9 @@ void fdPaletteCycleStep(void)
 				if(start >= len)
 					start = 0;
 				cycle->pos = start;
-				cycle->tmr = cycle->delay;
+				cycle->timer = cycle->delay;
 			} else {
-				cycle->tmr--;
+				cycle->timer--;
 			}
 		}
 	}
@@ -2603,9 +2609,9 @@ void scIsletsSinkInSea(void)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_DROP_THROUGH_HOLE);
+	fdScriptPlaySound(SE_DROP_THROUGH_HOLE);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	fdActorSetSprFlags(leader, 0);
+	fdActorSetSpriteFlags(leader, 0);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_TUMBLE_IN_WATER);
 	syFieldScriptWait(40);

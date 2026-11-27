@@ -212,7 +212,7 @@ void scJupiterLighthouseStepOnLowerCrackedTile(Sint32 metatileBehavior)
    tiles lie just north of the great white wind-face statues carved into the
    hall's walls, metatile (18, 34) against the east wall and metatile (8, 39)
    against the west; on those he is drawn behind the statue's head
-   (`scFieldActorSetSprPriority`) as he sinks through the hole. */
+   (`scFieldActorSetSpritePriority`) as he sinks through the hole. */
 void scJupiterLighthouseStepOnUpperCrackedTile(Sint32 metatileBehavior)
 {
 	ACTOR *leader;
@@ -224,9 +224,11 @@ void scJupiterLighthouseStepOnUpperCrackedTile(Sint32 metatileBehavior)
 		x = FIELD_METATILE(leader->x.fixed);
 		z = FIELD_METATILE(leader->z.fixed);
 		if(x == 18 && z == 34)
-			scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+			scFieldActorSetSpritePriority(
+				MainRoutineStateWork.leaderActorId, 3);
 		if(x == 8 && z == 39)
-			scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+			scFieldActorSetSpritePriority(
+				MainRoutineStateWork.leaderActorId, 3);
 		if(scCrackedTileStep(metatileBehavior) != 0)
 			syFieldScriptSetExitRequest(THROUGH_UPPER_CRACKED_TILE);
 	}
@@ -274,17 +276,17 @@ const CUE *scGetCues(void)
 }
 
 /* Sets up the rooms: the Phaeton's Blade's chest set back in the drawing order
-   (`scFieldActorSetSprPriority`), the cracked tiles, and the landing when the
-   party fell through a crack from the hall above. */
+   (`scFieldActorSetSpritePriority`), the cracked tiles, and the landing when
+   the party fell through a crack from the hall above. */
 Sint32 scInit(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	scFieldActorSetSprPriority(FIELD_TREASURE_ACTOR, 3);
+	scFieldActorSetSpritePriority(FIELD_TREASURE_ACTOR, 3);
 	WhirlwindRiding = 0;
-	fdActorGet(ACTOR_WHIRLWIND_SOURCE)->motionFlg = 0;
+	fdActorGet(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
 	if(MainRoutineStateWork.entrance >= ENTRANCE_HOVER_HALL_SOUTH &&
 		MainRoutineStateWork.entrance <= ENTRANCE_HOVER_HALL_NORTH) {
 		scCrackedTileFind(METATILE_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
@@ -321,7 +323,7 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
@@ -352,8 +354,9 @@ extern Sint32 WhirlwindEndScript[];
 Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -372,7 +375,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -486,7 +489,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -501,13 +504,13 @@ extern const Sint32 *FieldEffectDurationScripts[];
 
 #undef METATILE_PUSH_SLOT_ENTRY
 
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 extern Uint32 FieldEffectShortScript[];
 extern Uint32 FieldEffectMediumScript[];
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 

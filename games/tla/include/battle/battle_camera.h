@@ -40,9 +40,9 @@ STATIC_ASSERT(offsetof(BATTLE_CAMERA, yaw) == 54);
    toward and the ticks left to ease it, and how the battle background is
    shown. */
 typedef struct BATTLE_BACKGROUND_STATE {
-	Sint32 tgtYaw; /* 1/65536 turns */
-	Sint32 ticks;  /* ticks left to ease the yaw, a sixteenth a tick */
-	Sint32 mode;   /* BATTLE_BACKGROUND_MODE */
+	Sint32 targetYaw; /* 1/65536 turns */
+	Sint32 ticks;	  /* ticks left to ease the yaw, a sixteenth a tick */
+	Sint32 mode;	  /* BATTLE_BACKGROUND_MODE */
 	/* BATTLE_BACKGROUND_FIXED also sets BG1's scroll whatever the mode; the
 	   battle effects' canvas layers set it. */
 	Sint32 bg1ScrollMode;
@@ -60,9 +60,9 @@ typedef struct BATTLE_PRESENTATION_STATE {
 	Sint32 kind;		 /* the effect's index in the handler table */
 	Sint32 side;		 /* 1 when the targets are the party, 0 for enemies */
 	Sint32 actor;		 /* the user's unit id */
-	Sint32 firstTgt;	 /* the action's first target */
+	Sint32 firstTarget;	 /* the action's first target */
 	Sint32 range;		 /* as BATTLE_EFFECT_PARM's: the action's, or 1 */
-	Sint32 cnt;			 /* targets in actors */
+	Sint32 count;		 /* targets in actors */
 	Sint32 variant;		 /* the ability's size, from 0 */
 	Sint32 prelude;		 /* as BATTLE_EFFECT_PARM's: 1 plays a prelude */
 	Uint8  unused[4];	 /* no code names it */
@@ -123,7 +123,7 @@ void btStagingBuildTargetList(
 void btCameraSetRange(FIXED cx, FIXED cy, Sint32 ox, Sint32 oy, FIXED scale);
 
 Sint32 btObjectIsValidId(Uint32 objectId);
-void   btHighlightSetSprMode(Sint32 actor, Sint32 mode);
+void   btHighlightSetSpriteMode(Sint32 actor, Sint32 mode);
 /* Runs one of the large battle effects, the summons and the scenes of a few
    abilities. */
 void btEffectRunSummonStub(Sint32 *context);

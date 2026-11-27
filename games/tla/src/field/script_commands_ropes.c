@@ -45,8 +45,9 @@ typedef enum POST_ANIMATION {
    and fdRopeUpdate. A scene with ropes to lash calls it first. */
 void fdRopeInit(void)
 {
-	ROPE_WORK *state = syHeapSlotAllocEWRAM(HEAP_SLOT_ROPE, sizeof(ROPE_WORK));
-	void	  *buf = syHeapAlloc(256);
+	ROPE_WORK *state =
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_ROPE, sizeof(ROPE_WORK));
+	void *buf = syHeapAllocate(256);
 
 	DMA_FILL32(0, state, sizeof(ROPE_WORK));
 	state->vramEntry = syVRAMCacheFindFreeEntry();
@@ -68,20 +69,20 @@ void fdRopeDraw(void)
 	Sint32	   i;
 	Sint32	   prevX = 0;
 	Sint32	   prevY = 0;
-	Uint32	   tile = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
-	Sint32	   prevZ = 0;
-	Sint32	   started = 0;
-	MAP_STATE *map = RamHeapSlots->mapGrid;
-	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
-	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
-	Sint32	   originY = map->origin[1];
+	Uint32 tile = VramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
+	Sint32 prevZ = 0;
+	Sint32 started = 0;
+	MAP_STATE		*map = RamHeapSlots->mapGrid;
+	Sint32			 viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
+	Sint32			 viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
+	Sint32			 originY = map->origin[1];
 	AFFINE_TRANSFORM transform;
 	ROPE_NODE		*node;
-	Uint32			 ang;
+	Uint32			 angle;
 
 	for(i = 0; i < ROPE_SLOT_COUNT; i++, slot++) {
 		for(node = slot->head; node != NULL; node = node->next) {
-			Sint32 pri = slot->pri;
+			Sint32 priority = slot->priority;
 			FIXED  y = node->y;
 			Sint32 x = node->x;
 			Sint32 z = node->z;
@@ -93,8 +94,8 @@ void fdRopeDraw(void)
 				Sint32 depth;
 				Sint32 screenY;
 
-				ang = ((Uint16)syAtan(prevX - x, (z - prevZ) + (prevY - y)) +
-						  DEGtoANG(90)) &
+				angle = ((Uint16)syAtan(prevX - x, (z - prevZ) + (prevY - y)) +
+							DEGtoANG(90)) &
 					TRIG_ANGLE_MASK;
 				screenX = (prevX + x) / 2 - viewX;
 				prevY = (prevY + y) / 2 - originY;
@@ -106,26 +107,26 @@ void fdRopeDraw(void)
 					screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
 					Sint32 spriteX = (FIXEDtoINT(screenX) - 4) & OBJ_X_MASK;
 					Sint32 spriteY = (FIXEDtoINT(screenY) - 4) & OBJ_Y_MASK;
-					ANIMATION_SPR_PART *spr;
+					ANIMATION_SPR_PART *sprite;
 
 					prevY = FIXEDtoINT(prevY + depth) + ROPE_DEPTH;
-					spr = &node->spr;
+					sprite = &node->sprite;
 
-					((Uint32 *)spr)[0] = 0;
-					((Uint32 *)&node->spr)[1] =
+					((Uint32 *)sprite)[0] = 0;
+					((Uint32 *)&node->sprite)[1] =
 						spriteY | OBJ_X(spriteX) | OBJ_256_COLORS;
-					((Uint32 *)&node->spr)[2] = OBJ_PRIORITY(2) | tile;
-					if(ang != 0) {
-						transform.ang = ang;
+					((Uint32 *)&node->sprite)[2] = OBJ_PRIORITY(2) | tile;
+					if(angle != 0) {
+						transform.angle = angle;
 						transform.scaleX = AFFINE_SCALE_ONE;
 						transform.scaleY = AFFINE_SCALE_ONE;
-						node->spr.affine = 1;
-						node->spr.affineIdx =
-							syOAMMatrixAllocFromTransform(&transform);
+						node->sprite.affine = 1;
+						node->sprite.affineIndex =
+							syOAMMatrixAllocateFromTransform(&transform);
 					}
-					node->spr.pri = pri;
-					node->ang = ang;
-					syOAMAddSprAtDepthClamped(spr, prevY);
+					node->sprite.priority = priority;
+					node->angle = angle;
+					syOAMAddSpriteAtDepthClamped(sprite, prevY);
 				}
 			}
 			prevX = x;
@@ -138,7 +139,7 @@ void fdRopeDraw(void)
 		prevZ = 0;
 		started = 0;
 		if(slot->head != NULL)
-			slot->head->ang = ang;
+			slot->head->angle = angle;
 	}
 }
 
@@ -156,13 +157,13 @@ void fdRopeUpdate(void)
 	if(!syGameFlagGet(FLAG_FIELD_HANDLING_REQUESTS) &&
 		event->blockedSteps > ROPE_PUSH_STEPS) {
 		if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
-			Sint32 tgt =
+			Sint32 target =
 				fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId);
 
-			if(tgt != -1) {
+			if(target != -1) {
 				for(i = 0; i < ROPE_SLOT_COUNT; i++)
-					if(state->slots[i].first == tgt ||
-						state->slots[i].second == tgt)
+					if(state->slots[i].first == target ||
+						state->slots[i].second == target)
 						break;
 				if(i < ROPE_SLOT_COUNT &&
 					fdRopeIsLeaderAtEnd(
@@ -190,13 +191,13 @@ void fdRopeUpdate(void)
 }
 
 /* Returns the first unused of the ropes' 128 nodes, or NULL. */
-ROPE_NODE *fdRopeAllocNode(void)
+ROPE_NODE *fdRopeAllocateNode(void)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	ROPE_NODE *node = state->nodes;
-	Sint32	   idx;
+	Sint32	   index;
 
-	for(idx = 0; idx < ROPE_NODE_COUNT; idx++) {
+	for(index = 0; index < ROPE_NODE_COUNT; index++) {
 		if(node->kind == ROPE_NODE_FREE)
 			return node;
 		node++;
@@ -206,23 +207,23 @@ ROPE_NODE *fdRopeAllocNode(void)
 
 /* Lays rope index tied between posts id and other, and shows both posts with
    the rope wound round them. */
-void fdRopeTie(Sint32 idx, Sint32 id, Sint32 other)
+void fdRopeTie(Sint32 index, Sint32 id, Sint32 other)
 {
 	ROPE_WORK *state = ROPE_STATE;
-	Sint32	   pri = 2;
+	Sint32	   priority = 2;
 	ACTOR	  *first = fdActorLookup(id);
 	ACTOR	  *second = fdActorLookup(other);
 
 	if(first != NULL && second != NULL) {
 		ROPE_SLOT *slot;
 
-		if(first->sprStorageKind == ACTOR_SPRITE_ONE)
-			pri = ((SPR *)first->spr)->image.pri;
-		slot = &state->slots[idx];
+		if(first->spriteStorageKind == ACTOR_SPRITE_ONE)
+			priority = ((SPR *)first->sprite)->image.priority;
+		slot = &state->slots[index];
 		slot->first = id;
 		slot->second = other;
-		slot->pri = pri;
-		fdRopeLayTied(idx, first->x.fixed, first->y.fixed + toFIXED(8),
+		slot->priority = priority;
+		fdRopeLayTied(index, first->x.fixed, first->y.fixed + toFIXED(8),
 			first->z.fixed, second->x.fixed, second->y.fixed + toFIXED(8),
 			second->z.fixed);
 	}
@@ -233,7 +234,7 @@ void fdRopeTie(Sint32 idx, Sint32 id, Sint32 other)
 /* Builds rope index's nodes on the line between two points, one for each 6
    pixels, waved a pixel either way by one whole sine; marks it tied and
    swinging and sets its flag. */
-Sint32 fdRopeLayTied(Sint32 idx, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
+Sint32 fdRopeLayTied(Sint32 index, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
 	Sint32 y2, Sint32 z2)
 {
 	ROPE_WORK  *state = ROPE_STATE;
@@ -244,37 +245,37 @@ Sint32 fdRopeLayTied(Sint32 idx, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
 	Sint32		sy = dy >> 8;
 	Sint32		dz = z2 - z1;
 	Sint32		sz = dz >> 8;
-	Sint32		cnt;
+	Sint32		count;
 	ROPE_SLOT  *slot;
 	ROPE_NODE **link;
 	ROPE_NODE  *node;
-	Uint16		ang;
+	Uint16		angle;
 	FIXED		sin;
 	FIXED		cos;
 	Sint32		i;
 
-	cnt =
+	count =
 		sySquartIWRAM(syMulFX(sx, sx) + syMulFX(sy, sy) + syMulFX(sz, sz)) / 6 +
 		1;
-	slot = &state->slots[idx];
+	slot = &state->slots[index];
 	link = &slot->head;
-	ang = syAtan(sx, sy);
-	sin = sySin(ang);
-	cos = syCos(ang);
-	slot->segments = cnt;
-	for(i = 0; i <= cnt; i++) {
+	angle = syAtan(sx, sy);
+	sin = sySin(angle);
+	cos = syCos(angle);
+	slot->segments = count;
+	for(i = 0; i <= count; i++) {
 		FIXED bow;
 
-		node = fdRopeAllocNode();
+		node = fdRopeAllocateNode();
 		if(node == NULL) {
 			result = -1;
 			break;
 		}
-		bow = syMulFX(sySin(i * TRIG_TURN / cnt), toFIXED(1));
-		SET_POSITION(node, x1 + i * dx / cnt + syMulFX(bow, cos),
-			y1 + i * dy / cnt + syMulFX(bow, sin), z1 + i * dz / cnt);
-		node->slot = idx + 1;
-		if(i == cnt)
+		bow = syMulFX(sySin(i * TRIG_TURN / count), toFIXED(1));
+		SET_POSITION(node, x1 + i * dx / count + syMulFX(bow, cos),
+			y1 + i * dy / count + syMulFX(bow, sin), z1 + i * dz / count);
+		node->slot = index + 1;
+		if(i == count)
 			node->kind = ROPE_NODE_UNCROSSABLE;
 		else
 			node->kind = ROPE_NODE_CROSSABLE;
@@ -286,20 +287,20 @@ Sint32 fdRopeLayTied(Sint32 idx, Sint32 x1, Sint32 y1, Sint32 z1, Sint32 x2,
 	slot->swinging = 1;
 	slot->amplitude = toFIXED(1);
 	slot->phase = DEGtoANG(90);
-	if(slot->flg != 0)
-		syGameFlagSet(slot->flg);
+	if(slot->flags != 0)
+		syGameFlagSet(slot->flags);
 	return result;
 }
 
 /* Lays rope index again between posts from and to, its middle bowed height
    pixels (16.16) aside. */
-void fdRopeSwingBetween(Sint32 idx, Sint32 from, Sint32 to, FIXED height)
+void fdRopeSwingBetween(Sint32 index, Sint32 from, Sint32 to, FIXED height)
 {
 	ACTOR *a = fdActorLookup(from);
 	ACTOR *b = fdActorLookup(to);
 
 	if(a != NULL && b != NULL)
-		fdRopeLayBowed(idx, a->x.fixed, a->y.fixed + toFIXED(8), a->z.fixed,
+		fdRopeLayBowed(index, a->x.fixed, a->y.fixed + toFIXED(8), a->z.fixed,
 			b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed, height);
 }
 
@@ -309,18 +310,18 @@ extern Sint16 syTrigAtanHalfword(Sint32 x, Sint32 y);
 
 /* Lays a rope's nodes along the line between two points again, bowed by half a
    sine height pixels (16.16) high. */
-Sint32 fdRopeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeLayBowed(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, FIXED height)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	Sint32	   dx = toX - x;
 	Sint32	   ax = dx >> 8;
 	Sint32	   dy = toY - y;
-	ROPE_SLOT *slot = &state->slots[idx];
+	ROPE_SLOT *slot = &state->slots[index];
 	ROPE_NODE *node = slot->head;
-	Uint16	   ang = syTrigAtanHalfword(ax, dy >> 8);
-	FIXED	   sin = sySin(ang);
-	FIXED	   cos = syCos(ang);
+	Uint16	   angle = syTrigAtanHalfword(ax, dy >> 8);
+	FIXED	   sin = sySin(angle);
+	FIXED	   cos = syCos(angle);
 	Sint32	   segments = slot->segments;
 	Sint32	   i;
 	Sint32	   kind = ROPE_NODE_CROSSABLE;
@@ -339,23 +340,23 @@ Sint32 fdRopeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 
 /* Coils rope index at post firstId, its length reaching post secondId: the rope
    as it waits to be lashed. */
-void fdRopeCoil(Sint32 idx, Sint32 firstId, Sint32 secondId)
+void fdRopeCoil(Sint32 index, Sint32 firstId, Sint32 secondId)
 {
 	ROPE_WORK *state = ROPE_STATE;
-	Sint32	   pri = 2;
+	Sint32	   priority = 2;
 	ACTOR	  *first = fdActorLookup(firstId);
 	ACTOR	  *second = fdActorLookup(secondId);
 
 	if(first != NULL && second != NULL) {
 		ROPE_SLOT *slot;
 
-		if(first->sprStorageKind == ACTOR_SPRITE_ONE)
-			pri = ((SPR *)first->spr)->image.pri;
-		slot = &state->slots[idx];
+		if(first->spriteStorageKind == ACTOR_SPRITE_ONE)
+			priority = ((SPR *)first->sprite)->image.priority;
+		slot = &state->slots[index];
 		slot->first = firstId;
 		slot->second = secondId;
-		slot->pri = pri;
-		fdRopeLayCoil(idx, first->x.fixed, first->y.fixed + toFIXED(8),
+		slot->priority = priority;
+		fdRopeLayCoil(index, first->x.fixed, first->y.fixed + toFIXED(8),
 			first->z.fixed, second->x.fixed, second->y.fixed + toFIXED(8),
 			second->z.fixed);
 	}
@@ -363,7 +364,7 @@ void fdRopeCoil(Sint32 idx, Sint32 firstId, Sint32 secondId)
 
 /* Builds rope index's nodes, one for each 6 pixels between two points, as a
    flat spiral around the first point: the rope coiled at its post. */
-Sint32 fdRopeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ)
 {
 	ROPE_WORK *state = ROPE_STATE;
@@ -374,28 +375,28 @@ Sint32 fdRopeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32	   length =
 		sySquartEntry(syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz));
 	Sint32		segments = length / 6 + 1;
-	ROPE_SLOT  *slot = &state->slots[idx];
+	ROPE_SLOT  *slot = &state->slots[index];
 	ROPE_NODE **link = &slot->head;
-	Sint32		ang = 0;
+	Sint32		angle = 0;
 	FIXED		radius = toFIXED(4);
 	Sint32		i;
 	Sint32		kind = ROPE_NODE_UNCROSSABLE;
 
 	slot->segments = segments;
 	for(i = 0; i <= segments; i++) {
-		ROPE_NODE *node = fdRopeAllocNode();
+		ROPE_NODE *node = fdRopeAllocateNode();
 		Uint16	   step;
 
 		if(node == NULL) {
 			result = -1;
 			break;
 		}
-		SET_POSITION(node, x + syMulFX(syCos(ang), radius), y,
-			z + syMulFX(sySin(ang), radius));
+		SET_POSITION(node, x + syMulFX(syCos(angle), radius), y,
+			z + syMulFX(sySin(angle), radius));
 		node->kind = kind;
 		*link = node;
 		step = syAtan(toFIXED(6), radius);
-		ang += step;
+		angle += step;
 		link = &node->next;
 		radius += step * 4;
 	}
@@ -404,10 +405,10 @@ Sint32 fdRopeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 }
 
 /* Writes where rope index's last node is, its far end, into position. */
-void fdRopeGetEndNodePos(Sint32 idx, Sint32 *pos)
+void fdRopeGetEndNodePos(Sint32 index, Sint32 *pos)
 {
 	ROPE_WORK *state = ROPE_STATE;
-	ROPE_SLOT *slot = &state->slots[idx];
+	ROPE_SLOT *slot = &state->slots[index];
 	ROPE_NODE *node = slot->head;
 	Sint32	   remaining;
 
@@ -423,14 +424,14 @@ void fdRopeGetEndNodePos(Sint32 idx, Sint32 *pos)
 
 extern Sint32 RopeLashPhase;
 
-Sint32 fdRopeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeThrow(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, Sint32 wave);
-Sint32 fdRopeRecoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeRecoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, Sint32 wave);
 
 /* Lash: throws rope index from post fromId to post toId and winds it round
    both. A rope coiled too short to reach falls back to its post. */
-void fdRopeLash(Sint32 idx, Sint32 fromId, Sint32 toId)
+void fdRopeLash(Sint32 index, Sint32 fromId, Sint32 toId)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	ACTOR	  *from = fdActorLookup(fromId);
@@ -440,9 +441,9 @@ void fdRopeLash(Sint32 idx, Sint32 fromId, Sint32 toId)
 		FIXED	   toX = to->x.fixed;
 		FIXED	   toY = to->y.fixed;
 		FIXED	   toZ = to->z.fixed;
-		ROPE_SLOT *slot = &state->slots[idx];
+		ROPE_SLOT *slot = &state->slots[index];
 		Sint32	   x, y = 0, z; /* Default: y. */
-		Sint32	   xx, yy, length, segments, cnt;
+		Sint32	   xx, yy, length, segments, count;
 		Sint32 (*mul)(Sint32, Sint32);
 
 		if(to->sceneByte == ROPE_POST_HOOKED)
@@ -455,21 +456,21 @@ void fdRopeLash(Sint32 idx, Sint32 fromId, Sint32 toId)
 		yy = mul(y, y);
 		length = xx + yy + mul(z, z);
 		segments = sySquartEntry(length) / 6 + 1;
-		cnt = slot->segments;
-		if(segments > cnt) {
-			cnt++;
-			x = from->x.fixed + (toX - from->x.fixed) * cnt / segments;
+		count = slot->segments;
+		if(segments > count) {
+			count++;
+			x = from->x.fixed + (toX - from->x.fixed) * count / segments;
 			y = toY;
-			z = from->z.fixed + (toZ - from->z.fixed) * cnt / segments;
+			z = from->z.fixed + (toZ - from->z.fixed) * count / segments;
 
-			fdRopeThrow(idx, from->x.fixed, from->y.fixed + toFIXED(8),
+			fdRopeThrow(index, from->x.fixed, from->y.fixed + toFIXED(8),
 				from->z.fixed, x, y + toFIXED(8), z, sySin(RopeLashPhase) << 2);
 			slot->swinging = 0;
 			sySynch(1);
-			fdRopeRecoil(idx, from->x.fixed, from->y.fixed + toFIXED(8),
+			fdRopeRecoil(index, from->x.fixed, from->y.fixed + toFIXED(8),
 				from->z.fixed, x, y + toFIXED(8), z, sySin(RopeLashPhase) << 2);
 		} else {
-			fdRopeThrow(idx, from->x.fixed, from->y.fixed + toFIXED(8),
+			fdRopeThrow(index, from->x.fixed, from->y.fixed + toFIXED(8),
 				from->z.fixed, to->x.fixed, to->y.fixed + toFIXED(8),
 				to->z.fixed, sySin(RopeLashPhase) << 2);
 			RopeLashPhase += TRIG_TURN / 16;
@@ -486,7 +487,7 @@ void fdRopeLash(Sint32 idx, Sint32 fromId, Sint32 toId)
    already thrown. The callers pass the wobble fdTightropeRecoil takes, which a
    rope leaves unused, and read no result: 0, or nothing for a rope already
    thrown. */
-Sint32 fdRopeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeThrow(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, Sint32 wave)
 {
 	ROPE_WORK  *state = ROPE_STATE;
@@ -496,43 +497,43 @@ Sint32 fdRopeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32		ey = dy >> 8;
 	Sint32		dz = toZ - z;
 	Sint32		segments;
-	Sint32		frm;
+	Sint32		frame;
 	FIXED		sine;
 	FIXED		cosine;
 	Sint32		lastX;
 	Sint32		lastY;
 	Sint32		lastZ;
-	ROPE_SLOT  *slot = &state->slots[idx];
+	ROPE_SLOT  *slot = &state->slots[index];
 	ROPE_NODE  *node = slot->head;
 	void	  **cursor;
 	Sint32		i;
-	Uint16		ang;
+	Uint16		angle;
 	ROPE_NODE **nodes;
 
 	if(slot->state == ROPE_THROWN)
 		return;
 	slot->state = ROPE_THROWN;
 	segments = slot->segments;
-	cursor = nodes = syHeapAlloc(512);
+	cursor = nodes = syHeapAllocate(512);
 	for(i = 0; i <= segments; i++) {
 		*cursor++ = node;
 		node = node->next;
 	}
-	ang = syAtan(ex, ey);
-	sine = sySin(ang);
-	cosine = syCos(ang);
-	for(frm = 1; frm <= segments * 2; frm++) {
+	angle = syAtan(ex, ey);
+	sine = sySin(angle);
+	cosine = syCos(angle);
+	for(frame = 1; frame <= segments * 2; frame++) {
 		for(i = segments; i >= 0; i--) {
 			node = nodes[i];
-			node->slot = idx + 1;
+			node->slot = index + 1;
 			if(i == segments) {
-				ex = syMulFX(sySin(frm * (TRIG_TURN / 4) / i), toFIXED(8));
+				ex = syMulFX(sySin(frame * (TRIG_TURN / 4) / i), toFIXED(8));
 
-				node->x = x + dx * frm / 2 / i + syMulFX(ex, cosine);
+				node->x = x + dx * frame / 2 / i + syMulFX(ex, cosine);
 				lastX = node->x;
-				node->y = y + dy * frm / 2 / i + syMulFX(ex, sine);
+				node->y = y + dy * frame / 2 / i + syMulFX(ex, sine);
 				lastY = node->y;
-				node->z = z + dz * frm / 2 / i;
+				node->z = z + dz * frame / 2 / i;
 				lastZ = node->z;
 			} else {
 				Sint32 ez;
@@ -556,12 +557,12 @@ Sint32 fdRopeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 		}
 		sySynch(1);
 	}
-	slot = &state->slots[idx];
+	slot = &state->slots[index];
 	slot->swinging = 1;
 	slot->amplitude = toFIXED(4);
 	slot->phase = DEGtoANG(90);
-	if(slot->flg != 0)
-		syGameFlagSet(slot->flg);
+	if(slot->flags != 0)
+		syGameFlagSet(slot->flags);
 	syHeapRelease(nodes);
 	return 0;
 }
@@ -569,7 +570,7 @@ Sint32 fdRopeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 extern Sint32 RopeUntiePhase;
 
 /* Unties rope index between posts fromId and toId (fdRopeRecoil). */
-void fdRopeUntie(Sint32 idx, Sint32 fromId, Sint32 toId)
+void fdRopeUntie(Sint32 index, Sint32 fromId, Sint32 toId)
 {
 	ROPE_WORK *state;
 	ACTOR	  *from;
@@ -582,7 +583,7 @@ void fdRopeUntie(Sint32 idx, Sint32 fromId, Sint32 toId)
 	if(from != NULL && to != NULL) {
 		state->recoilFrom = from;
 		state->recoilTo = to;
-		fdRopeRecoil(idx, from->x.fixed, from->y.fixed + toFIXED(8),
+		fdRopeRecoil(index, from->x.fixed, from->y.fixed + toFIXED(8),
 			from->z.fixed, to->x.fixed, to->y.fixed + toFIXED(8), to->z.fixed,
 			sySin(RopeUntiePhase) * 4);
 		RopeUntiePhase += TRIG_TURN / 16;
@@ -593,20 +594,20 @@ void fdRopeUntie(Sint32 idx, Sint32 fromId, Sint32 toId)
    clearing its flag, starting four ticks after both posts start to unwind. The
    far end and the wobble are fdTightropeRecoil's arguments, which a rope leaves
    unused; as with fdRopeThrow, no caller reads the result. */
-Sint32 fdRopeRecoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdRopeRecoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ, Sint32 wave)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	/* Default: each count below sets it again. */
 	Sint32	   i = 0;
-	ROPE_SLOT *slot = &state->slots[idx];
+	ROPE_SLOT *slot = &state->slots[index];
 	ROPE_NODE *node = slot->head;
 	void	 **cursor;
-	Sint32	   ang;
+	Sint32	   angle;
 	Sint32	   radius;
 	Sint32	   lastZ;
 	Sint32	   segments;
-	Sint32	   frm;
+	Sint32	   frame;
 	Sint32	   lastX;
 	Sint32	   lastY;
 	void	 **nodes;
@@ -615,10 +616,10 @@ Sint32 fdRopeRecoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 		return;
 	slot->state = ROPE_COILED;
 	segments = slot->segments;
-	cursor = nodes = syHeapAlloc(512);
+	cursor = nodes = syHeapAllocate(512);
 	slot->swinging = 0;
-	if(slot->flg != 0)
-		syGameFlagClear(slot->flg);
+	if(slot->flags != 0)
+		syGameFlagClear(slot->flags);
 	if(segments >= 0) {
 		i = segments + 1;
 		do {
@@ -630,24 +631,24 @@ Sint32 fdRopeRecoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	fdActorSelectAnimationStub(state->recoilFrom, ANIM_POST_UNTIE);
 	fdActorSelectAnimationStub(state->recoilTo, ANIM_POST_UNTIE);
 	sySynch(4);
-	for(frm = 0; frm <= segments; frm++) {
-		ang = frm * (TRIG_TURN / 16);
+	for(frame = 0; frame <= segments; frame++) {
+		angle = frame * (TRIG_TURN / 16);
 		radius = toFIXED(4);
 		for(i = 0; i <= segments; i++) {
 			node = nodes[i];
 			node->slot = 0;
-			if(i <= frm) {
+			if(i <= frame) {
 				Uint16 step;
 
-				node->x = x + syMulFX(syCos(ang), radius);
+				node->x = x + syMulFX(syCos(angle), radius);
 				lastX = node->x;
 				node->y = y;
 				lastY = node->y;
-				node->z = z + syMulFX(sySin(ang), radius);
+				node->z = z + syMulFX(sySin(angle), radius);
 				lastZ = node->z;
 				node->kind = ROPE_NODE_UNCROSSABLE;
 				step = syAtan(toFIXED(6), radius);
-				ang += step;
+				angle += step;
 				radius += step * 4;
 			} else {
 				Sint32 dx = (lastX - node->x) >> 8;
@@ -685,10 +686,10 @@ extern Sint32 RopeDebugSwinging;
    rope 0 again between DEBUG_FIRST_POST and DEBUG_SECOND_POST every tick. */
 UNUSED void fdRopeDebugSwing(ACTOR *actor)
 {
-	SPR *spr = actor->spr;
+	SPR *sprite = actor->sprite;
 
-	spr->ofsX = -3;
-	spr->ofsY = 12;
+	sprite->offsetX = -3;
+	sprite->offsetY = 12;
 	if(PerWork.repeat & KEY_L)
 		RopeDebugSwinging = 1;
 	if(RopeDebugSwinging != 0)
@@ -735,7 +736,7 @@ Bool fdRopeIsLeaderAtEnd(Sint32 firstId, Sint32 secondId)
 
 /* Finds the rope whose first post is id: writes its other post and its index
    and returns 0, or returns -1. */
-Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *idx)
+Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *index)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	ROPE_SLOT *slot = state->slots;
@@ -744,7 +745,7 @@ Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *idx)
 	for(i = 0; i < ROPE_SLOT_COUNT; i++) {
 		if(slot->head != NULL && slot->first == id) {
 			*value = slot->second;
-			*idx = i;
+			*index = i;
 			return 0;
 		}
 		slot++;
@@ -753,31 +754,31 @@ Sint32 fdRopeFindById(Sint32 id, Sint32 *value, Sint32 *idx)
 }
 
 /* Returns rope index's ROPE_SLOT_STATE, or -1 while the ropes have no state. */
-Sint32 fdRopeGetState(Sint32 idx)
+Sint32 fdRopeGetState(Sint32 index)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	ROPE_SLOT *slot;
 
 	if(state == NULL)
 		return -1;
-	slot = &state->slots[idx];
+	slot = &state->slots[index];
 	return slot->state;
 }
 
 /* Gives rope index its flag and places it between posts firstId and secondId:
    tied when the flag is set, else coiled at the first. A scene places each of
    its ropes with it. */
-void fdRopePlace(Sint32 idx, Sint32 flg, Sint32 firstId, Sint32 secondId)
+void fdRopePlace(Sint32 index, Sint32 flag, Sint32 firstId, Sint32 secondId)
 {
 	ROPE_WORK *state = ROPE_STATE;
 	ROPE_SLOT *slot;
 
-	slot = &state->slots[idx];
-	slot->flg = flg;
-	if(!syGameFlagGet(flg))
-		fdRopeCoil(idx, firstId, secondId);
+	slot = &state->slots[index];
+	slot->flags = flag;
+	if(!syGameFlagGet(flag))
+		fdRopeCoil(index, firstId, secondId);
 	else
-		fdRopeTie(idx, firstId, secondId);
+		fdRopeTie(index, firstId, secondId);
 }
 
 /* The tightropes (HEAP_SLOT_TIGHTROPE), as in Champa: ropes stretched straight
@@ -790,8 +791,8 @@ void fdRopePlace(Sint32 idx, Sint32 flg, Sint32 firstId, Sint32 secondId)
 void fdTightropeInit(void)
 {
 	TIGHTROPE_WORK *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_TIGHTROPE, sizeof(TIGHTROPE_WORK));
-	void *buf = syHeapAlloc(2304);
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_TIGHTROPE, sizeof(TIGHTROPE_WORK));
+	void *buf = syHeapAllocate(2304);
 
 	DMA_FILL32(0, state, sizeof(TIGHTROPE_WORK));
 	state->vramEntry = syVRAMCacheFindFreeEntry();
@@ -813,25 +814,25 @@ void fdTightropeDraw(void)
 	FIXED			prevY = 0;
 	Sint32			prevZ = 0;
 	Sint32			started = 0;
-	Uint32	   tile = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
-	MAP_STATE *map = RamHeapSlots->mapGrid;
-	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
-	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
-	Sint32	   originY = map->origin[1];
+	Uint32 tile = VramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
+	MAP_STATE		*map = RamHeapSlots->mapGrid;
+	Sint32			 viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
+	Sint32			 viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
+	Sint32			 originY = map->origin[1];
 	AFFINE_TRANSFORM transform;
 
 	for(i = 0; i < ROPE_SLOT_COUNT; i++) {
-		Uint32			ang = state->slots[i].dir;
+		Uint32			angle = state->slots[i].direction;
 		TIGHTROPE_NODE *node = state->slots[i].head;
 		Sint32			affine;
 		Sint32			matrix;
 
-		if(ang != 0) {
-			transform.ang = ang;
+		if(angle != 0) {
+			transform.angle = angle;
 			transform.scaleX = AFFINE_SCALE_ONE;
 			transform.scaleY = AFFINE_SCALE_ONE;
 			affine = 1;
-			matrix = syOAMMatrixAllocFromTransform(&transform);
+			matrix = syOAMMatrixAllocateFromTransform(&transform);
 		} else {
 			affine = 0;
 			matrix = 0;
@@ -859,13 +860,13 @@ void fdTightropeDraw(void)
 					Sint32 top = (FIXEDtoINT(screenY) - 4) & OBJ_Y_MASK;
 					Sint32 key = FIXEDtoINT(prevY + prevZ) + ROPE_DEPTH;
 
-					((Uint32 *)&node->spr)[0] = 0;
-					((Uint32 *)&node->spr)[1] =
+					((Uint32 *)&node->sprite)[0] = 0;
+					((Uint32 *)&node->sprite)[1] =
 						top | OBJ_X(left) | OBJ_256_COLORS;
-					((Uint32 *)&node->spr)[2] = tile | OBJ_PRIORITY(2);
-					node->spr.affine = affine;
-					node->spr.affineIdx = matrix;
-					syOAMAddSprAtDepthClamped(&node->spr, key);
+					((Uint32 *)&node->sprite)[2] = tile | OBJ_PRIORITY(2);
+					node->sprite.affine = affine;
+					node->sprite.affineIndex = matrix;
+					syOAMAddSpriteAtDepthClamped(&node->sprite, key);
 				}
 			}
 			prevX = x;
@@ -895,12 +896,12 @@ void fdTightropeUpdate(void)
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
 		if(party->movementMode == LEADER_MOVEMENT_WALK) {
-			Sint32 tgt = fdFindNearbyTalkTarget(party->leaderActorId);
+			Sint32 target = fdFindNearbyTalkTarget(party->leaderActorId);
 
-			if(tgt != -1) {
+			if(target != -1) {
 				for(i = 0; i < ROPE_SLOT_COUNT; i++) {
-					if(state->slots[i].first == tgt ||
-						state->slots[i].second == tgt)
+					if(state->slots[i].first == target ||
+						state->slots[i].second == target)
 						break;
 				}
 				if(i < ROPE_SLOT_COUNT &&
@@ -930,13 +931,13 @@ void fdTightropeUpdate(void)
 }
 
 /* Returns the first unused of the tightropes' 128 nodes, or NULL. */
-TIGHTROPE_NODE *fdTightropeAllocNode(void)
+TIGHTROPE_NODE *fdTightropeAllocateNode(void)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	TIGHTROPE_NODE *node = state->nodes;
-	Sint32			idx;
+	Sint32			index;
 
-	for(idx = 0; idx < ROPE_NODE_COUNT; idx++) {
+	for(index = 0; index < ROPE_NODE_COUNT; index++) {
 		if(node->kind == ROPE_NODE_FREE)
 			return node;
 		node++;
@@ -968,7 +969,7 @@ Sint32 fdTightropePlace(Sint32 slotNo, Sint32 firstId, Sint32 secondId)
 
 /* Builds tightrope index's nodes on the straight line between two points, one
    for each 6 pixels. */
-Sint32 fdTightropeLay(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdTightropeLay(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
@@ -982,18 +983,18 @@ Sint32 fdTightropeLay(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32			segments =
 		sySquartEntry(syMulFX(sx, sx) + syMulFX(sy, sy) + syMulFX(sz, sz)) / 6 +
 		1;
-	TIGHTROPE_NODE **link = &state->slots[idx].head;
+	TIGHTROPE_NODE **link = &state->slots[index].head;
 	Sint32			 i;
 
-	state->slots[idx].dir = (Uint16)syAtan(sz, sx);
+	state->slots[index].direction = (Uint16)syAtan(sz, sx);
 	for(i = 0; i <= segments; i++) {
-		TIGHTROPE_NODE *node = fdTightropeAllocNode();
+		TIGHTROPE_NODE *node = fdTightropeAllocateNode();
 
 		if(node == NULL) {
 			result = -1;
 			break;
 		}
-		node->slot = idx + 1;
+		node->slot = index + 1;
 		SET_POSITION(node, x + i * dx / segments, y + i * dy / segments,
 			z + i * dz / segments);
 		if(i == segments)
@@ -1004,27 +1005,28 @@ Sint32 fdTightropeLay(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 		link = &node->next;
 	}
 	*link = NULL;
-	state->slots[idx].wobbling = 1;
+	state->slots[index].wobbling = 1;
 	return result;
 }
 
 /* Lays tightrope index again between posts from and to, its middle raised
    height pixels (16.16). */
-void fdTightropeWobbleBetween(Sint32 idx, Sint32 from, Sint32 to, FIXED height)
+void fdTightropeWobbleBetween(
+	Sint32 index, Sint32 from, Sint32 to, FIXED height)
 {
 	ACTOR *a = fdActorLookup(from);
 	ACTOR *b = fdActorLookup(to);
 
 	if(a != NULL && b != NULL)
-		fdTightropeLayBowed(idx, a->x.fixed, a->y.fixed + toFIXED(8),
+		fdTightropeLayBowed(index, a->x.fixed, a->y.fixed + toFIXED(8),
 			a->z.fixed, b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed,
 			height);
 }
 
 /* fdRopeLayBowed for a tightrope: lays its nodes along the line between two
    points again, raised by half a sine height pixels (16.16) high. */
-Sint32 fdTightropeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
-	Sint32 toY, Sint32 toZ, FIXED height)
+Sint32 fdTightropeLayBowed(Sint32 index, Sint32 x, Sint32 y, Sint32 z,
+	Sint32 toX, Sint32 toY, Sint32 toZ, FIXED height)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	Sint32			dx = toX - x;
@@ -1037,7 +1039,7 @@ Sint32 fdTightropeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 								   syIWRAMMulFX(sy, sy) + syIWRAMMulFX(sz, sz)) /
 			6 +
 		1;
-	TIGHTROPE_NODE *node = state->slots[idx].head;
+	TIGHTROPE_NODE *node = state->slots[index].head;
 	Sint32			i;
 	Sint32			kind = ROPE_NODE_CROSSABLE;
 
@@ -1053,26 +1055,26 @@ Sint32 fdTightropeLayBowed(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 }
 
 /* Unused: nothing refers to it. fdRopeCoil for a tightrope. */
-UNUSED void fdTightropeCoil(Sint32 idx, Sint32 from, Sint32 to)
+UNUSED void fdTightropeCoil(Sint32 index, Sint32 from, Sint32 to)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	ACTOR		   *a = fdActorLookup(from);
 	ACTOR		   *b = fdActorLookup(to);
 
 	if(a != NULL && b != NULL) {
-		TIGHTROPE_SLOT *slot = &state->slots[idx];
+		TIGHTROPE_SLOT *slot = &state->slots[index];
 
 		slot->first = from;
 		slot->second = to;
-		fdTightropeLayCoil(idx, a->x.fixed, a->y.fixed + toFIXED(8), a->z.fixed,
-			b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed);
+		fdTightropeLayCoil(index, a->x.fixed, a->y.fixed + toFIXED(8),
+			a->z.fixed, b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed);
 	}
 }
 
 /* fdRopeLayCoil for a tightrope. Only the unused fdTightropeCoil calls it, and
    it takes its nodes from the ropes' pool. */
-Sint32 fdTightropeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
-	Sint32 toY, Sint32 toZ)
+Sint32 fdTightropeLayCoil(Sint32 index, Sint32 x, Sint32 y, Sint32 z,
+	Sint32 toX, Sint32 toY, Sint32 toZ)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	Sint32			result = 0;
@@ -1082,26 +1084,26 @@ Sint32 fdTightropeLayCoil(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32			length =
 		sySquartEntry(syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz));
 	Sint32			 segments = length / 6 + 1;
-	TIGHTROPE_NODE **link = &state->slots[idx].head;
-	Sint32			 ang = 0;
+	TIGHTROPE_NODE **link = &state->slots[index].head;
+	Sint32			 angle = 0;
 	FIXED			 radius = toFIXED(4);
 	Sint32			 i;
 	Sint32			 kind = ROPE_NODE_UNCROSSABLE;
 
 	for(i = 0; i <= segments; i++) {
-		TIGHTROPE_NODE *node = (TIGHTROPE_NODE *)fdRopeAllocNode();
+		TIGHTROPE_NODE *node = (TIGHTROPE_NODE *)fdRopeAllocateNode();
 		Uint16			step;
 
 		if(node == NULL) {
 			result = -1;
 			break;
 		}
-		SET_POSITION(node, x + syMulFX(syCos(ang), radius), y,
-			z + syMulFX(sySin(ang), radius));
+		SET_POSITION(node, x + syMulFX(syCos(angle), radius), y,
+			z + syMulFX(sySin(angle), radius));
 		node->kind = kind;
 		*link = node;
 		step = syAtan(toFIXED(6), radius);
-		ang += step;
+		angle += step;
 		link = &node->next;
 		radius += step * 4;
 	}
@@ -1113,13 +1115,13 @@ extern Sint32 TightropeLashPhase;
 
 /* Unused: nothing refers to it. fdRopeLash for a tightrope, without the short
    rope's fall. */
-UNUSED void fdTightropeLash(Sint32 idx, Sint32 firstId, Sint32 secondId)
+UNUSED void fdTightropeLash(Sint32 index, Sint32 firstId, Sint32 secondId)
 {
 	ACTOR *first = fdActorLookup(firstId);
 	ACTOR *second = fdActorLookup(secondId);
 
 	if(first != NULL && second != NULL) {
-		fdTightropeThrow(idx, first->x.fixed, first->y.fixed + toFIXED(8),
+		fdTightropeThrow(index, first->x.fixed, first->y.fixed + toFIXED(8),
 			first->z.fixed, second->x.fixed, second->y.fixed + toFIXED(8),
 			second->z.fixed, sySin(TightropeLashPhase) << 2);
 		TightropeLashPhase += TRIG_TURN / 16;
@@ -1130,7 +1132,7 @@ UNUSED void fdTightropeLash(Sint32 idx, Sint32 firstId, Sint32 secondId)
 }
 
 /* fdRopeThrow for a tightrope. */
-Sint32 fdTightropeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
+Sint32 fdTightropeThrow(Sint32 index, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32 toY, Sint32 toZ)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
@@ -1143,8 +1145,8 @@ Sint32 fdTightropeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	Sint32			segments =
 		sySquartEntry(syMulFX(ex, ex) + syMulFX(ey, ey) + syMulFX(ez, ez)) / 6 +
 		1;
-	Sint32			frm;
-	TIGHTROPE_NODE *node = state->slots[idx].head;
+	Sint32			frame;
+	TIGHTROPE_NODE *node = state->slots[index].head;
 	FIXED			sine;
 	Sint32			height;
 	FIXED			cosine;
@@ -1153,9 +1155,9 @@ Sint32 fdTightropeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 	void		  **cursor;
 	TIGHTROPE_SLOT *slot;
 	Sint32			i;
-	Uint16			ang;
+	Uint16			angle;
 
-	cursor = nodes = syHeapAlloc(512);
+	cursor = nodes = syHeapAllocate(512);
 	if(segments >= 0) {
 		i = segments + 1;
 		do {
@@ -1164,23 +1166,24 @@ Sint32 fdTightropeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 			node = node->next;
 		} while(i != 0);
 	}
-	ang = syAtan(ex, ey);
-	sine = sySin(ang);
-	cosine = syCos(ang);
-	for(frm = 1; frm <= segments * 2; frm++) {
+	angle = syAtan(ex, ey);
+	sine = sySin(angle);
+	cosine = syCos(angle);
+	for(frame = 1; frame <= segments * 2; frame++) {
 		for(i = segments; i >= 0; i--) {
 			node = nodes[i];
-			node->slot = idx + 1;
+			node->slot = index + 1;
 			if(i == segments) {
-				FIXED ofsX;
-				FIXED ofsY;
+				FIXED offsetX;
+				FIXED offsetY;
 
-				height = syMulFX(sySin(frm * (TRIG_TURN / 4) / i), toFIXED(8));
-				ofsX = syMulFX(height, cosine);
-				lastX = node->x = x + dx * frm / 2 / i + ofsX;
-				ofsY = syMulFX(height, sine);
-				lastY = node->y = y + dy * frm / 2 / i + ofsY;
-				lastZ = node->z = z + dz * frm / 2 / i;
+				height =
+					syMulFX(sySin(frame * (TRIG_TURN / 4) / i), toFIXED(8));
+				offsetX = syMulFX(height, cosine);
+				lastX = node->x = x + dx * frame / 2 / i + offsetX;
+				offsetY = syMulFX(height, sine);
+				lastY = node->y = y + dy * frame / 2 / i + offsetY;
+				lastZ = node->z = z + dz * frame / 2 / i;
 			} else {
 				ex = (lastX - node->x) >> 8;
 				ey = (lastY - node->y) >> 8;
@@ -1198,7 +1201,7 @@ Sint32 fdTightropeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 		}
 		sySynch(1);
 	}
-	slot = &state->slots[idx];
+	slot = &state->slots[index];
 	slot->wobbling = 1;
 	slot->amplitude = toFIXED(4);
 	slot->phase = DEGtoANG(90);
@@ -1209,7 +1212,7 @@ Sint32 fdTightropeThrow(Sint32 idx, Sint32 x, Sint32 y, Sint32 z, Sint32 toX,
 extern Sint32 TightropeUntiePhase;
 
 /* Unused: nothing refers to it. fdRopeUntie for a tightrope. */
-UNUSED void fdTightropeUntie(Sint32 idx, Sint32 firstId, Sint32 secondId)
+UNUSED void fdTightropeUntie(Sint32 index, Sint32 firstId, Sint32 secondId)
 {
 	TIGHTROPE_WORK *state;
 	ACTOR		   *first;
@@ -1222,7 +1225,7 @@ UNUSED void fdTightropeUntie(Sint32 idx, Sint32 firstId, Sint32 secondId)
 	if(first != NULL && second != NULL) {
 		state->recoilFrom = first;
 		state->recoilTo = second;
-		fdTightropeRecoil(idx, first->x.fixed, first->y.fixed + toFIXED(8),
+		fdTightropeRecoil(index, first->x.fixed, first->y.fixed + toFIXED(8),
 			first->z.fixed, second->x.fixed, second->y.fixed + toFIXED(8),
 			second->z.fixed, sySin(TightropeUntiePhase) << 2);
 		TightropeUntiePhase += TRIG_TURN / 16;
@@ -1237,11 +1240,11 @@ Sint32 fdTightropeRecoil(Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1,
 	Sint32			wobbling = 0;
 	TIGHTROPE_NODE *node;
 	Sint32			dx, dy, dz;
-	Sint32			dist;
-	Sint32			cnt;
-	Sint32			frm;
+	Sint32			distance;
+	Sint32			count;
+	Sint32			frame;
 	Sint32			i;
-	Sint32			ang;
+	Sint32			angle;
 	Sint32			x, y, z;
 	void		  **nodes;
 	void		  **entry;
@@ -1249,13 +1252,13 @@ Sint32 fdTightropeRecoil(Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1,
 	dx = (x2 - x1) >> 8;
 	dy = (y2 - y1) >> 8;
 	dz = (z2 - z1) >> 8;
-	dist = syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz);
-	cnt = sySquartIWRAM(dist) / 6 + 1;
+	distance = syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz);
+	count = sySquartIWRAM(distance) / 6 + 1;
 	node = state->slots[slot].head;
-	entry = nodes = syHeapAlloc(512);
+	entry = nodes = syHeapAllocate(512);
 	state->slots[slot].wobbling = wobbling;
-	if(cnt >= 0) {
-		i = cnt + 1;
+	if(count >= 0) {
+		i = count + 1;
 		do {
 			i += -1;
 			*entry++ = node;
@@ -1265,34 +1268,34 @@ Sint32 fdTightropeRecoil(Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1,
 	fdActorSelectAnimationStub(state->recoilFrom, ANIM_POST_UNTIE);
 	fdActorSelectAnimationStub(state->recoilTo, ANIM_POST_UNTIE);
 	sySynch(4);
-	for(frm = 0; frm <= cnt; frm++) {
-		ang = frm * (TRIG_TURN / 16);
-		dist = toFIXED(4);
-		for(i = 0; i <= cnt; i++) {
+	for(frame = 0; frame <= count; frame++) {
+		angle = frame * (TRIG_TURN / 16);
+		distance = toFIXED(4);
+		for(i = 0; i <= count; i++) {
 			node = nodes[i];
 			node->slot = 0;
-			if(i <= frm) {
-				x = node->x = x1 + syMulFX(syCos(ang), dist);
+			if(i <= frame) {
+				x = node->x = x1 + syMulFX(syCos(angle), distance);
 				y = node->y = y1;
-				z = node->z = z1 + syMulFX(sySin(ang), dist);
+				z = node->z = z1 + syMulFX(sySin(angle), distance);
 				node->kind = ROPE_NODE_UNCROSSABLE;
 				{
-					Uint16 step = syAtan(toFIXED(6), dist);
+					Uint16 step = syAtan(toFIXED(6), distance);
 
-					ang += step;
-					dist += step * 4;
+					angle += step;
+					distance += step * 4;
 				}
 			} else {
 				dx = (x - node->x) >> 8;
 				dy = (y - node->y) >> 8;
 				dz = (z - node->z) >> 8;
-				dist = syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz);
-				dist = sySquartIWRAM(dist);
-				if(dist <= 6)
+				distance = syMulFX(dx, dx) + syMulFX(dy, dy) + syMulFX(dz, dz);
+				distance = sySquartIWRAM(distance);
+				if(distance <= 6)
 					break;
-				x = node->x = x + (node->x - x) * 6 / dist;
-				y = node->y = y + (node->y - y) * 6 / dist;
-				node->z = z + (node->z - z) * 6 / dist;
+				x = node->x = x + (node->x - x) * 6 / distance;
+				y = node->y = y + (node->y - y) * 6 / distance;
+				node->z = z + (node->z - z) * 6 / distance;
 				node->kind = ROPE_NODE_UNCROSSABLE;
 				z = node->z;
 			}
@@ -1306,34 +1309,34 @@ Sint32 fdTightropeRecoil(Sint32 slot, Sint32 x1, Sint32 y1, Sint32 z1,
 extern Sint32 TightropeDebugSwinging;
 
 /* Frees tightrope index's nodes; it is no longer drawn. */
-void fdTightropeRelease(Sint32 idx)
+void fdTightropeRelease(Sint32 index)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	TIGHTROPE_NODE *node;
 
-	for(node = state->slots[idx].head; node != NULL; node = node->next)
+	for(node = state->slots[index].head; node != NULL; node = node->next)
 		node->kind = ROPE_NODE_FREE;
-	state->slots[idx].head = NULL;
+	state->slots[index].head = NULL;
 }
 
 /* Stops tightrope index's wobble and marks its nodes not to be walked. */
-void fdTightropeSettle(Sint32 idx)
+void fdTightropeSettle(Sint32 index)
 {
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	TIGHTROPE_NODE *node;
 
-	for(node = state->slots[idx].head; node != NULL; node = node->next)
+	for(node = state->slots[index].head; node != NULL; node = node->next)
 		node->kind = ROPE_NODE_UNCROSSABLE;
-	state->slots[idx].wobbling = 0;
+	state->slots[index].wobbling = 0;
 }
 
 /* Unused: nothing refers to it. fdRopeDebugSwing for a tightrope. */
 UNUSED void fdTightropeDebugSwing(ACTOR *actor)
 {
-	SPR *spr = actor->spr;
+	SPR *sprite = actor->sprite;
 
-	spr->ofsX = -3;
-	spr->ofsY = 12;
+	sprite->offsetX = -3;
+	sprite->offsetY = 12;
 	if(PerWork.repeat & KEY_L)
 		TightropeDebugSwinging = 1;
 	if(TightropeDebugSwinging != 0)
@@ -1384,19 +1387,19 @@ typedef enum HANGING_VINE_LINK_KIND {
 /* Starts the hanging vines: takes and clears their state, loads the vine's
    pictures for an anchor of SPRITE_SPROUTING_LEAVES, else the chain's, and adds
    the events fdHangingVineDraw and fdHangingVineUpdate. */
-HANGING_VINE_WORK *fdHangingVineInit(Sint32 sprId)
+HANGING_VINE_WORK *fdHangingVineInit(Sint32 spriteId)
 {
 	HANGING_VINE_WORK *state;
 	Uint8			  *pictures;
 	Sint32			   size;
 
-	state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_HANGING_VINE, sizeof(HANGING_VINE_WORK));
+	state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_HANGING_VINE, sizeof(HANGING_VINE_WORK));
 	size = 4 * VINE_LINK_PICTURE_SIZE;
-	pictures = syHeapAlloc(size);
+	pictures = syHeapAllocate(size);
 	DMA_FILL32(0, state, sizeof(HANGING_VINE_WORK));
 	state->vramEntry = syVRAMCacheFindFreeEntry();
-	if(sprId == SPRITE_SPROUTING_LEAVES) {
+	if(spriteId == SPRITE_SPROUTING_LEAVES) {
 		syDecompressTaggedLZ(HangingVineVineTopPicture, pictures);
 		syDecompressTaggedLZ(
 			HangingVineVineUpperPicture, pictures + VINE_LINK_PICTURE_SIZE);
@@ -1427,15 +1430,15 @@ void fdHangingVineDraw(void)
 {
 	HANGING_VINE_WORK *state = HANGING_VINE_STATE;
 	Sint32			   i;
-	Uint32			   ang;
+	Uint32			   angle;
 	Sint32			   prevX = 0;
 	Sint32			   prevY = 0;
-	Uint32	   tiles = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
-	Sint32	   prevZ = 0;
-	MAP_STATE *map = RamHeapSlots->mapGrid;
-	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
-	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
-	Sint32	   height = map->origin[1];
+	Uint32 tiles = VramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
+	Sint32 prevZ = 0;
+	MAP_STATE		  *map = RamHeapSlots->mapGrid;
+	Sint32			   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
+	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
+	Sint32			   height = map->origin[1];
 	AFFINE_TRANSFORM   transform;
 	HANGING_VINE_LINK *link;
 
@@ -1447,15 +1450,15 @@ void fdHangingVineDraw(void)
 
 			if(link->kind > VINE_LINK_ANCHOR) {
 				Sint32 dz = prevZ - z;
-				Sint32 absZ = dz >= 0 ? dz : z - prevZ;
+				Sint32 absoluteZ = dz >= 0 ? dz : z - prevZ;
 				Sint32 dy = prevY - y;
 				Sint32 screenX, screenY;
 				Uint32 tile;
 
-				if(dy >= 0 ? absZ < dy : absZ < y - prevY)
-					ang = (Uint16)syAtan(prevX - x, dy);
+				if(dy >= 0 ? absoluteZ < dy : absoluteZ < y - prevY)
+					angle = (Uint16)syAtan(prevX - x, dy);
 				else
-					ang = (Uint16)syAtan(prevX - x, dz);
+					angle = (Uint16)syAtan(prevX - x, dz);
 				tile = tiles +
 					(link->kind - VINE_LINK_TOP) *
 						(VINE_LINK_PICTURE_SIZE / TILE_SIZE_4BPP);
@@ -1471,22 +1474,22 @@ void fdHangingVineDraw(void)
 					Sint32 sy = (FIXEDtoINT(screenY) - 8) & OBJ_Y_MASK;
 					Sint32 depth =
 						FIXEDtoINT(prevY + prevZ) + HANGING_VINE_DEPTH;
-					ANIMATION_SPR_PART *spr = &link->spr;
+					ANIMATION_SPR_PART *sprite = &link->sprite;
 
-					((Uint32 *)spr)[0] = 0;
-					((Uint32 *)&link->spr)[1] =
+					((Uint32 *)sprite)[0] = 0;
+					((Uint32 *)&link->sprite)[1] =
 						sy | OBJ_X(sx) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-					((Uint32 *)&link->spr)[2] = tile | OBJ_PRIORITY(2);
-					if(ang != 0) {
-						transform.ang = ang;
+					((Uint32 *)&link->sprite)[2] = tile | OBJ_PRIORITY(2);
+					if(angle != 0) {
+						transform.angle = angle;
 						transform.scaleX = AFFINE_SCALE_ONE;
 						transform.scaleY = AFFINE_SCALE_ONE;
-						link->spr.affine = 1;
-						link->spr.affineIdx =
-							syOAMMatrixAllocFromTransform(&transform);
+						link->sprite.affine = 1;
+						link->sprite.affineIndex =
+							syOAMMatrixAllocateFromTransform(&transform);
 					}
-					link->ang = ang;
-					syOAMAddSprAtDepthClamped(spr, depth);
+					link->angle = angle;
+					syOAMAddSpriteAtDepthClamped(sprite, depth);
 				}
 			}
 			prevX = x;
@@ -1498,7 +1501,7 @@ void fdHangingVineDraw(void)
 		link = state->slots[i].root;
 		prevZ = 0;
 		if(link != NULL)
-			link->ang = ang;
+			link->angle = angle;
 	}
 }
 
@@ -1515,18 +1518,18 @@ void fdHangingVineUpdate(void)
 	Sint32			   x, y, z;
 	HANGING_VINE_LINK *link;
 	Sint32			   i;
-	Sint32			   tgt;
+	Sint32			   target;
 	Sint32			   swing;
 	Sint32			   sway;
 	Sint32			   radius;
-	Sint32			   ang;
+	Sint32			   angle;
 #if FIX_VINE_SLOT_COUNTER
 	Sint32 slotIndex;
 #endif
 
 	i = 0;
 	leader = fdActorGetById(fdPartyGetLeaderActor());
-	tgt = VINE_SWING_ALONE;
+	target = VINE_SWING_ALONE;
 	for(slot = state->slots; i < ROPE_SLOT_COUNT; i++, slot++) {
 		if(slot->root == 0 || slot->active == 0)
 			continue;
@@ -1546,7 +1549,7 @@ void fdHangingVineUpdate(void)
 				toFIXED(16) - 2 &&
 			y + toFIXED(8) > leader->y.fixed &&
 			y - toFIXED(80) < leader->y.fixed)
-			tgt = VINE_SWING_BESIDE;
+			target = VINE_SWING_BESIDE;
 
 		/* Hang the five links below the top one. */
 		/* BUG: the link loop reuses the slot counter and leaves it at 6, so
@@ -1558,11 +1561,11 @@ void fdHangingVineUpdate(void)
 #endif
 		for(i = 1, sway = swing; i <= 5; i++) {
 			radius = i * slot->spacing;
-			ang = syMulFX(
+			angle = syMulFX(
 				sySin(slot->phase - i * VINE_LINK_LAG), swing + sway / 2);
-			link->x = x - syMulFX(sySin(ang), radius);
+			link->x = x - syMulFX(sySin(angle), radius);
 			sway += swing;
-			link->y = y - syMulFX(syCos(ang), radius);
+			link->y = y - syMulFX(syCos(angle), radius);
 			link->z = z;
 			link = link->next;
 		}
@@ -1571,7 +1574,7 @@ void fdHangingVineUpdate(void)
 #endif
 
 		/* Ease the swing towards the target. */
-		if(slot->swing > tgt)
+		if(slot->swing > target)
 			slot->swing = syMulFX(slot->swing, toFIXED(99) / 100);
 		else
 			slot->swing = syMulFX(slot->swing, toFIXED(111) / 100);
@@ -1584,11 +1587,11 @@ HANGING_VINE_SLOT *fdHangingVineFindFreeSlot(void)
 {
 	HANGING_VINE_WORK *state = HANGING_VINE_STATE;
 	HANGING_VINE_SLOT *found = NULL;
-	Sint32			   idx = 0;
+	Sint32			   index = 0;
 
-	for(idx = 0; idx < ROPE_SLOT_COUNT; idx++) {
-		if(state->slots[idx].root == NULL) {
-			found = &state->slots[idx];
+	for(index = 0; index < ROPE_SLOT_COUNT; index++) {
+		if(state->slots[index].root == NULL) {
+			found = &state->slots[index];
 			break;
 		}
 	}
@@ -1601,11 +1604,11 @@ HANGING_VINE_SLOT *fdHangingVineFindSlot(Sint32 id)
 {
 	HANGING_VINE_WORK *state = HANGING_VINE_STATE;
 	HANGING_VINE_SLOT *found = NULL;
-	Sint32			   idx = 0;
+	Sint32			   index = 0;
 
-	for(idx = 0; idx < ROPE_SLOT_COUNT; idx++) {
-		if(state->slots[idx].id == id) {
-			found = &state->slots[idx];
+	for(index = 0; index < ROPE_SLOT_COUNT; index++) {
+		if(state->slots[index].id == id) {
+			found = &state->slots[index];
 			break;
 		}
 	}
@@ -1613,13 +1616,13 @@ HANGING_VINE_SLOT *fdHangingVineFindSlot(Sint32 id)
 }
 
 /* Returns the first unused of the vines' 128 links, or NULL. */
-HANGING_VINE_LINK *fdHangingVineAllocLink(void)
+HANGING_VINE_LINK *fdHangingVineAllocateLink(void)
 {
 	HANGING_VINE_WORK *state = HANGING_VINE_STATE;
 	HANGING_VINE_LINK *link = state->links;
-	Sint32			   idx;
+	Sint32			   index;
 
-	for(idx = 0; idx < ROPE_NODE_COUNT; idx++) {
+	for(index = 0; index < ROPE_NODE_COUNT; index++) {
 		if(link->kind == VINE_LINK_FREE)
 			return link;
 		link++;
@@ -1644,19 +1647,19 @@ void fdHangingVineHang(Sint32 objectId, Sint32 grow)
 	FIXED				top;
 	Sint32				z;
 	Sint32				y;
-	Sint32				frm;
+	Sint32				frame;
 	Sint32				last;
-	Sint32				sprId;
+	Sint32				spriteId;
 	Sint32				running;
 
 	actor = fdActorGetById(objectId);
 	running = RamHeapSlots->hangingVine;
-	sprId = SPRITE_SPROUTING_LEAVES;
+	spriteId = SPRITE_SPROUTING_LEAVES;
 	map = RamHeapSlots->mapGrid;
 	if(running == 0) {
-		if(actor->spr != 0 && ((SPR *)actor->spr)->entries[0] != 0)
-			sprId = ((SPR *)actor->spr)->entries[0]->anmId;
-		fdHangingVineInit(sprId);
+		if(actor->sprite != 0 && ((SPR *)actor->sprite)->entries[0] != 0)
+			spriteId = ((SPR *)actor->sprite)->entries[0]->animationId;
+		fdHangingVineInit(spriteId);
 	}
 	if(fdHangingVineFindSlot(objectId) != 0)
 		return;
@@ -1680,17 +1683,17 @@ void fdHangingVineHang(Sint32 objectId, Sint32 grow)
 	top = y + toFIXED(8);
 	z = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(16);
 	fdActorSelectAnimationStub((ACTOR *)actor, 0);
-	actor->motionFlg = 0;
-	actor->collisionFlg = 0;
+	actor->motionFlags = 0;
+	actor->collisionFlags = 0;
 	actor->z.fixed += toFIXED(16);
 	actor->y.fixed -= toFIXED(64);
-	fdActorSetSprFlagsStub(actor, 0);
+	fdActorSetSpriteFlagsStub(actor, 0);
 
 	/* Hang the links 14 pixels apart, the upper and lower pictures taking turns
 	   between the top and the bottom. */
 	last = 6;
 	tail = (HANGING_VINE_LINK **)&slot->root;
-	for(i = 0; i <= last && (link = fdHangingVineAllocLink()) != 0; i++) {
+	for(i = 0; i <= last && (link = fdHangingVineAllocateLink()) != 0; i++) {
 		SET_POSITION(link, x, y + toFIXED(15) - i * toFIXED(14), z);
 		if(i == 0)
 			link->kind = VINE_LINK_ANCHOR;
@@ -1708,15 +1711,15 @@ void fdHangingVineHang(Sint32 objectId, Sint32 grow)
 		for(i = 0, link = slot->root; i <= last && link != 0; i++)
 			link = link->next;
 	} else {
-		for(frm = 1; frm <= 28; frm++) {
+		for(frame = 1; frame <= 28; frame++) {
 			i = 0;
 			link = slot->root;
 			if(i <= last && link != 0) {
-				Sint32 drop = -(frm * toFIXED(0.5));
+				Sint32 drop = -(frame * toFIXED(0.5));
 
 				do {
 					SET_POSITION(link, x, top - drop / 2, z);
-					drop += toFIXED(frm);
+					drop += toFIXED(frame);
 					i++;
 					link = link->next;
 				} while(i <= last && link != 0);
@@ -1753,27 +1756,27 @@ void fdHangingVineHang(Sint32 objectId, Sint32 grow)
 void fdHangingVineSwing(Sint32 id)
 {
 	Sint32			   rootX, rootY;
-	Sint32			   motionFlg;
-	SPR				  *heldSpr;
+	Sint32			   motionFlags;
+	SPR				  *heldSprite;
 	Sint32			   side = 0;
 	ACTOR			  *leader = fdActorGetById(fdPartyGetLeaderActor());
 	ACTOR			  *anchor = fdActorGetById(id);
 	HANGING_VINE_SLOT *slot;
-	SPR				  *spr;
+	SPR				  *sprite;
 	Sint32			   swing;
 	Sint32			   start;
-	Sint32			   dir;
+	Sint32			   direction;
 	Uint16			   letGo;
 	FIXED			   radius;
 	Sint32			   steps;
-	Sint32			   ang;
+	Sint32			   angle;
 	FIXED			   sine;
 	Sint32			   i;
 
 	if(leader == NULL || anchor == NULL)
 		return;
-	motionFlg = leader->motionFlg;
-	heldSpr = leader->spr;
+	motionFlags = leader->motionFlags;
+	heldSprite = leader->sprite;
 	if(leader->x.fixed < anchor->x.fixed)
 		side = 1;
 	slot = fdHangingVineFindSlot(id);
@@ -1799,11 +1802,11 @@ void fdHangingVineSwing(Sint32 id)
 		sySynch(1);
 	}
 
-	spr = leader->spr;
-	dir = 1;
+	sprite = leader->sprite;
+	direction = 1;
 	if(side) {
 		letGo = KEY_DOWN | KEY_LEFT | KEY_B;
-		dir -= 2;
+		direction -= 2;
 	} else
 		letGo = KEY_DOWN | KEY_RIGHT | KEY_B;
 	slot->active = 1;
@@ -1816,7 +1819,7 @@ void fdHangingVineSwing(Sint32 id)
 		case 16:
 			slot->swing = VINE_SWING_HELD + TRIG_TURN / 2048;
 			slot->spacing = toFIXED(29) / 2;
-			spr->rotation = dir * (TRIG_TURN / 64);
+			sprite->rotation = direction * (TRIG_TURN / 64);
 			break;
 		case 1:
 		case 2:
@@ -1824,7 +1827,7 @@ void fdHangingVineSwing(Sint32 id)
 		case 18:
 			slot->swing += TRIG_TURN / 4096;
 			slot->spacing += toFIXED(1) / 4;
-			spr->rotation += dir * (TRIG_TURN / 128);
+			sprite->rotation += direction * (TRIG_TURN / 128);
 			break;
 		default:
 			if(slot->swing > VINE_SWING_HELD)
@@ -1833,12 +1836,12 @@ void fdHangingVineSwing(Sint32 id)
 				slot->swing = VINE_SWING_HELD;
 			if(slot->spacing > toFIXED(14))
 				slot->spacing -= toFIXED(1) / 32;
-			if(spr->rotation != 0)
-				spr->rotation -= dir * (TRIG_TURN / 512);
+			if(sprite->rotation != 0)
+				sprite->rotation -= direction * (TRIG_TURN / 512);
 			break;
 		}
 		if(PerWork.push & letGo) {
-			spr->rotation = 0;
+			sprite->rotation = 0;
 			slot->active = 1;
 			return;
 		}
@@ -1847,20 +1850,20 @@ void fdHangingVineSwing(Sint32 id)
 		sySynch(1);
 	}
 
-	spr->rotation = 0;
+	sprite->rotation = 0;
 	slot->active = 0;
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 	sySynch(6);
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAP);
 	leader->speedLimit = toFIXED(3);
 	leader->acceleration = toFIXED(2);
-	leader->velY = toFIXED(4);
-	leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-	fdActorSetSprFlagsStub(leader, 0);
+	leader->velocityY = toFIXED(4);
+	leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+	fdActorSetSpriteFlagsStub(leader, 0);
 	sySynch(5);
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_SWING);
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	rootX = ((HANGING_VINE_LINK *)slot->root)->next->x;
 	rootY = ((HANGING_VINE_LINK *)slot->root)->next->y;
 	radius = toFIXED(65);
@@ -1876,27 +1879,27 @@ void fdHangingVineSwing(Sint32 id)
 		slot->active = 1;
 		/* The leader hangs where the bottom link sways. */
 		sine = sySin(slot->phase - 5 * VINE_LINK_LAG);
-		ang = syIWRAMMulFX(sine, slot->swing + slot->swing * 5 / 2);
-		leader->x.fixed = rootX - syIWRAMMulFX(sySin(ang), radius);
-		leader->y.fixed = rootY - syIWRAMMulFX(syCos(ang), radius);
-		leader->tgtX = leader->x.fixed;
-		leader->tgtY = leader->y.fixed;
-		heldSpr->rotation = ang;
+		angle = syIWRAMMulFX(sine, slot->swing + slot->swing * 5 / 2);
+		leader->x.fixed = rootX - syIWRAMMulFX(sySin(angle), radius);
+		leader->y.fixed = rootY - syIWRAMMulFX(syCos(angle), radius);
+		leader->targetX = leader->x.fixed;
+		leader->targetY = leader->y.fixed;
+		heldSprite->rotation = angle;
 		sySynch(1);
 	}
 	slot->active = 1;
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAP);
-	leader->motionFlg = motionFlg & ~ACTOR_FOLLOWS_TERRAIN;
-	leader->velY = toFIXED(4);
+	leader->motionFlags = motionFlags & ~ACTOR_FOLLOWS_TERRAIN;
+	leader->velocityY = toFIXED(4);
 	for(i = 0; i < 8; i++) {
 		slot->spacing -= toFIXED(1) / 16;
 		sySynch(1);
 	}
 	slot->spacing = toFIXED(14);
-	heldSpr->rotation = 0;
+	heldSprite->rotation = 0;
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
-	fdActorSetSprFlagsStub(leader, SPRITE_FLAG_SHADOW);
-	leader->motionFlg = motionFlg;
+	fdActorSetSpriteFlagsStub(leader, SPRITE_FLAG_SHADOW);
+	leader->motionFlags = motionFlags;
 	sySynch(6);
 	slot->active = 1;
 }
@@ -1910,7 +1913,7 @@ void fdHangingVinePlace(Sint32 id, Sint32 force)
 	ACTOR *actor = fdActorGetById(id);
 
 	if(actor != NULL) {
-		if(actor->motionFlg == 0) {
+		if(actor->motionFlags == 0) {
 			actor->z.fixed -= toFIXED(16);
 			actor->y.fixed += toFIXED(64);
 			fdHangingVineHang(id, 0);

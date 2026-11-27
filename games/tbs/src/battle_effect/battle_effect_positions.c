@@ -10,24 +10,24 @@
 void btParticleAdvanceWithGravity3D(
 	PARTICLE *particle, Sint32 damping, Sint32 gravity)
 {
-	particle->x += particle->velX;
-	particle->y += particle->velY;
-	particle->z += particle->velZ;
-	particle->velY += gravity;
-	SET_VELOCITY(particle, particle->velX * damping / DAMPING_SCALE,
-		particle->velY * damping / DAMPING_SCALE,
-		particle->velZ * damping / DAMPING_SCALE);
+	particle->x += particle->velocityX;
+	particle->y += particle->velocityY;
+	particle->z += particle->velocityZ;
+	particle->velocityY += gravity;
+	SET_VELOCITY(particle, particle->velocityX * damping / DAMPING_SCALE,
+		particle->velocityY * damping / DAMPING_SCALE,
+		particle->velocityZ * damping / DAMPING_SCALE);
 }
 
 /* Moves a particle one tick on the screen. */
 void btParticleAdvanceWithGravity2D(
 	PARTICLE *particle, Sint32 damping, Sint32 gravity)
 {
-	particle->x += particle->velX;
-	particle->y += particle->velY;
-	particle->velY += gravity;
-	particle->velX = particle->velX * damping / DAMPING_SCALE;
-	particle->velY = particle->velY * damping / DAMPING_SCALE;
+	particle->x += particle->velocityX;
+	particle->y += particle->velocityY;
+	particle->velocityY += gravity;
+	particle->velocityX = particle->velocityX * damping / DAMPING_SCALE;
+	particle->velocityY = particle->velocityY * damping / DAMPING_SCALE;
 }
 
 /* Projects a point in the current transform onto the screen, 16 pixels higher,
@@ -41,7 +41,7 @@ Sint32 btProjectionPoint(const void *point, SCREEN_POINT *pos)
 
 /* The screen position of a unit's sprite, at its scaled height, 16 pixels
    higher. */
-void btProjectionSpr(Sint32 id, SCREEN_POINT *pos)
+void btProjectionSprite(Sint32 id, SCREEN_POINT *pos)
 {
 	btUnitProjectToScreen(id, syScreenPointCoordinates(pos));
 	pos->y -= 16;
@@ -68,16 +68,16 @@ Sint32 btUnitProjectToScreen(Sint32 unit, Sint32 *screen)
 {
 	BATTLE_CAMERA *camera = BattleCameraWork;
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	FIXED		   scale;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 unused[3];
 
 	actor = btObjectGetStub(unit)->actor;
-	spr = btActorGetSprStub(actor, 0);
+	sprite = btActorGetSpriteStub(actor, 0);
 	EFFECT_VIEW_FROM_CAMERA(camera);
-	scale = syMulFX(syConvert3Dto2D(&actor->x.fixed, screen), spr->scale);
+	scale = syMulFX(syConvert3Dto2D(&actor->x.fixed, screen), sprite->scale);
 	screen[1] -=
 		syMulFX(scale, FIXEDtoINT(btUnitGetEffectHeightStub(unit)) >> 1);
 	return 0;
@@ -92,7 +92,7 @@ UNUSED void btEffectReadKeysForEnemyTarget(void)
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	BATTLE_EFFECT_PARM	*args = state->args;
 
-	if(args->tgts[0] >= FIRST_ENEMY_UNIT)
+	if(args->targets[0] >= FIRST_ENEMY_UNIT)
 		(void)PerData;
 }
 
@@ -102,9 +102,9 @@ void btEffectRunByIdRange(BATTLE_EFFECT_PARM *args)
 {
 	Sint32 kind;
 
-	syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_SHEET, GLOW_SHEET_ROOM);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	kind = args->kind;
 	if(kind >= EFFECT_RANGE_CASTING_IMPACT && kind < EFFECT_RANGE_BEAM) {
 		btEffectRunCastingImpact(args, kind - EFFECT_RANGE_CASTING_IMPACT);

@@ -57,10 +57,10 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 	Uint8				*mesh;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*motes;
 	BATTLE_CAMERA		*camera;
-	MOTION_OBJECT		*tgt;
+	MOTION_OBJECT		*target;
 	SCREEN_POINT		 caster;
 	MODEL_TEXTURE		 texture;
 	RENDER_MODEL		*model;
@@ -69,7 +69,7 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 
 	mesh = PUPPET_STRIP_MESH;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
 	motes = RamHeapSlots->battleSheet;
@@ -83,16 +83,16 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 	}
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	tgt = btObjectGetStub(args->tgts[0])->obj;
+	target = btObjectGetStub(args->targets[0])->object;
 	/* The skull's place, set at the trail's last segment. */
 	endX = 0;
 	endY = 0;
 	/* DEAD: nothing reads the copy; the ROM keeps the stores. */
-	PUPPET_TARGET_COPY.x = tgt->x;
-	PUPPET_TARGET_COPY.y = tgt->y;
-	PUPPET_TARGET_COPY.z = tgt->z;
-	PUPPET_TARGET_COPY.velX = tgt->scaleX;
-	PUPPET_TARGET_COPY.velY = tgt->scaleY;
+	PUPPET_TARGET_COPY.x = target->x;
+	PUPPET_TARGET_COPY.y = target->y;
+	PUPPET_TARGET_COPY.z = target->z;
+	PUPPET_TARGET_COPY.velocityX = target->scaleX;
+	PUPPET_TARGET_COPY.velocityY = target->scaleY;
 	btResourceLoadAndDecompress(RESOURCE_STREAK_TEXTURE, state->sheet, 0, 0);
 	/* DEAD: Fire Puppet draws none of these motes; the ROM keeps the load. */
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
@@ -105,35 +105,35 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 	REG_BG2PA = Q_8_8(0.5);
 	btRenderBuildQuadStrip(mesh, 4, 32, PUPPET_QUADS);
 
-	for(frm = 0; frm != FIRE_PUPPET_TICKS; frm++) {
+	for(frame = 0; frame != FIRE_PUPPET_TICKS; frame++) {
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frm == 0) {
+		if(frame == 0) {
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_GREY, POSE_PARTY_HELD, 0, -1);
 		}
-		if(frm == 8) {
-			sySndPlayStub(SE_CURSE);
+		if(frame == 8) {
+			sySoundPlayStub(SE_CURSE);
 		}
 		/* The caster takes its own colours and its first animation, a party
 		   member's stance between turns: it stands again. */
-		if(frm == PUPPET_CASTER_RISE_TICK) {
+		if(frame == PUPPET_CASTER_RISE_TICK) {
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, POSE_STILL, 0, -1);
 		}
-		if(frm == PUPPET_STRIKE_TICK) {
+		if(frame == PUPPET_STRIKE_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-			sySndPlayStub(SE_POWER_UP);
+			sySoundPlayStub(SE_POWER_UP);
 			EFFECT_SHOW_DAMAGE(SE_POWER_UP);
-			state->shakeFrm = 8;
-			for(i = 0; i != args->tgtCnt; i++) {
-				btEffectStartActorMotion(
-					args->tgts[i], 1, toFIXED(2), toFIXED(4), toFIXED(4), 150);
+			state->shakeFrame = 8;
+			for(i = 0; i != args->targetCount; i++) {
+				btEffectStartActorMotion(args->targets[i], 1, toFIXED(2),
+					toFIXED(4), toFIXED(4), 150);
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
+					args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
 			}
 		}
-		if(frm >= PUPPET_RISE_TICK) {
+		if(frame >= PUPPET_RISE_TICK) {
 			Sint32 curl;
 			Sint32 j;
 			MODEL_VERTEX(*corners)
@@ -141,13 +141,13 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 			Uint8 *projected = PUPPET_STRIP_VERTICES;
 			Sint32 shade;
 
-			curl = (frm - PUPPET_RISE_TICK) * PUPPET_CURL_SPEED;
+			curl = (frame - PUPPET_RISE_TICK) * PUPPET_CURL_SPEED;
 			if(curl > PUPPET_CURL_MAX) {
 				curl = PUPPET_CURL_MAX;
 			}
-			if(frm >= PUPPET_RETURN_TICK) {
+			if(frame >= PUPPET_RETURN_TICK) {
 				curl = PUPPET_CURL_MAX -
-					(frm - PUPPET_RETURN_TICK) * PUPPET_CURL_SPEED;
+					(frame - PUPPET_RETURN_TICK) * PUPPET_CURL_SPEED;
 			}
 
 			/* The trail curls about a point beside its root: segment j lies j *
@@ -157,8 +157,9 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 					(FIXEDtoINT(
 						sySin(j * PUPPET_PINCH_STEP + PUPPET_PINCH_START) *
 						PUPPET_PINCH));
-				Sint32 sway = (FIXEDtoINT(sySin((frm + j) * (TRIG_TURN / 32)) *
-								  PUPPET_SWAY)) *
+				Sint32 sway =
+					(FIXEDtoINT(
+						sySin((frame + j) * (TRIG_TURN / 32)) * PUPPET_SWAY)) *
 					j / (PUPPET_SEGMENTS - 1);
 				Sint32 outer;
 
@@ -195,7 +196,7 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 			model->texture = &texture;
 			btEffectPosProjectScaledBattler(args->user, &caster);
 			model->scrollV = 0;
-			model->scrollU = TEXTURE_SCROLL_MASK & ~(frm << 2);
+			model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 2);
 			syInitMatrix();
 			syTranslate(INTtoFIXED(caster.x / 2 - CANVAS_SIZE / 2),
 				toFIXED(caster.y) - toFIXED(42), 0);
@@ -204,9 +205,9 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 				syRotY(DEGtoANG(180));
 			}
 			syRotZ(DEGtoANG(90));
-			if(frm >= PUPPET_RETURN_TICK) {
+			if(frame >= PUPPET_RETURN_TICK) {
 				syMatrixScaleUniform(toFIXED(1) -
-					(frm - PUPPET_RETURN_TICK) *
+					(frame - PUPPET_RETURN_TICK) *
 						(toFIXED(1) / PUPPET_RETURN_TICKS));
 			}
 			btRenderTransformVertices(
@@ -275,7 +276,7 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*canvas;
 	SCREEN_POINT		 caster;
-	Sint32				 frm;
+	Sint32				 frame;
 	PARTICLE			*mote;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
@@ -284,7 +285,7 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 	Sint32		   i;
 
 	heap = RamHeapSlots;
-	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
+	state = (BATTLE_EFFECT_STATE *)heap->battleEffect;
 	canvas = heap->battleCanvas;
 	motes = heap->battleSheet;
 
@@ -305,11 +306,11 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 		SHEET_PALETTE_BYTES);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != WHIPLASH_TICKS; frm++) {
+	for(frame = 0; frame != WHIPLASH_TICKS; frame++) {
 		/* The lash, its pictures placed by the caster. */
 		btEffectPosProjectBattler(args->user, &caster);
 		if(args->side == EFFECT_SIDE_ENEMIES) {
-			switch(frm / WHIPLASH_LASH_PICTURE_TICKS) {
+			switch(frame / WHIPLASH_LASH_PICTURE_TICKS) {
 			case 0:
 				EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 					WHIPLASH_LASH_A, caster.x / 2 - 48, caster.y - 120);
@@ -332,7 +333,7 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 				break;
 			}
 		} else {
-			switch(frm / WHIPLASH_LASH_PICTURE_TICKS) {
+			switch(frame / WHIPLASH_LASH_PICTURE_TICKS) {
 			case 0:
 				EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 					WHIPLASH_LASH_A, caster.x / 2, caster.y - 120);
@@ -358,14 +359,14 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 
 		/* The hit, and the motes sprayed from 48 pixels out, towards the
 		   target. */
-		if(frm == WHIPLASH_HIT_TICK) {
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HOP);
+		if(frame == WHIPLASH_HIT_TICK) {
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HOP);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-			state->shakeFrm = 8;
+			state->shakeFrame = 8;
 			for(i = 0; i != WHIPLASH_MOTES; i++) {
-				Sint32 ang;
+				Sint32 angle;
 				Sint32 speed;
 
 				mote = &((PARTICLE *)RamMapMetatileBuffer)[i];
@@ -374,17 +375,19 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 				else
 					mote->x = INTtoFIXED(caster.x / 2 + 48);
 				mote->y = toFIXED(caster.y - (syRandom() & 7));
-				ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+				angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 				speed = syRandom() & 255;
 				if(args->side == EFFECT_SIDE_ENEMIES)
-					mote->velX = ((sySin(ang) * speed) >> 4) - toFIXED(8);
+					mote->velocityX =
+						((sySin(angle) * speed) >> 4) - toFIXED(8);
 				else
-					mote->velX = ((sySin(ang) * speed) >> 4) + toFIXED(8);
-				mote->velY = (syCos(ang) * (speed + 64)) >> 5;
+					mote->velocityX =
+						((sySin(angle) * speed) >> 4) + toFIXED(8);
+				mote->velocityY = (syCos(angle) * (speed + 64)) >> 5;
 				mote->variant = (syRandom() & 15) + 16;
 			}
 		}
-		if(frm >= WHIPLASH_HIT_TICK) {
+		if(frame >= WHIPLASH_HIT_TICK) {
 			for(i = 0; i != WHIPLASH_MOTES; i++) {
 				mote = &((PARTICLE *)RamMapMetatileBuffer)[i];
 				if(mote->variant >= 0) {

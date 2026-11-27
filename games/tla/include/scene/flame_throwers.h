@@ -30,10 +30,10 @@ typedef enum FLAME_THROWER_FLAGS {
 /* One of the state's four flame throwers. */
 typedef struct FLAME_THROWER {
 	Sint16 active;
-	Sint16 tmr; /* ticks to the next puff, 8 after each */
+	Sint16 timer; /* ticks to the next puff, 8 after each */
 	/* FLAME_THROWER_FLAGS in the high nibble (the FlameThrowerSend function
 	   each picks), the reach in the low. */
-	Sint16 flg;
+	Sint16 flags;
 	Sint16 offScreen; /* puffs off screen and keeps the flames' sprites */
 	struct ACTOR *actor;
 	FIXED		  reach; /* 16.16, the low nibble of flags << 16 */
@@ -57,7 +57,7 @@ typedef struct FLAME_STOP {
    throwers and the actors they stop at, and the fireball carrying the
    leader. */
 typedef struct FLAME_HIT_STATE {
-	Sint32 cnt;	   /* scFlameThrowersAdvanceCounter's count */
+	Sint32 count;  /* scFlameThrowersAdvanceCounter's count */
 	Sint16 active; /* set once a flame or fireball has hit the leader */
 	/* Set when a flame met a blocked slot's actor, and called back once for. */
 	Sint16 blocked;
@@ -71,7 +71,7 @@ typedef struct FLAME_HIT_STATE {
 	FLAME_THROWER		 entries[4];
 	FLAME_STOP			 slots[4];
 	Uint8				 unusedAfterSlots[4]; /* no code names it */
-	KNOCK_BACK_DIRECTION dir;
+	KNOCK_BACK_DIRECTION direction;
 	struct ACTOR		*car; /* the fireball carrying the hurt leader */
 	/* the flame whose sprite the crumbs share (scFlameThrowersCreate) */
 	void *sharedFlame;

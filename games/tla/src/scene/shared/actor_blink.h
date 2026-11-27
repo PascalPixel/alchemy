@@ -4,10 +4,10 @@ void fdActorBlink(ACTOR *actor)
 {
 	switch(TickCount & 7) {
 	case 0:
-		fdActorSetSprColMode(actor, SPRITE_COLOR_RED_TINT);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_RED_TINT);
 		break;
 	case 4:
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 		break;
 	}
 }

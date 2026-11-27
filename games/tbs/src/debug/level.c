@@ -125,7 +125,7 @@ static void dbIncreaseItemAndLevelRaiseMemberLevel(
 	UNIT *unit = gmUnitGet(memberId);
 
 	gmUnitLevelUpTo(memberId, unit->level + levels);
-	gmUnitCalc(memberId);
+	gmUnitCalculate(memberId);
 }
 
 /* Raises everyone in the party the given number of levels. */
@@ -133,13 +133,13 @@ static void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 levels)
 {
 	Uint16	memberIds[16];
 	Uint16 *member;
-	Sint32	memberCnt;
+	Sint32	memberCount;
 
-	memberCnt = syFieldPartyListMembers(memberIds);
-	if(memberCnt > 0) {
+	memberCount = syFieldPartyListMembers(memberIds);
+	if(memberCount > 0) {
 		Sint32 remaining;
 		member = memberIds;
-		remaining = memberCnt;
+		remaining = memberCount;
 		do {
 			dbIncreaseItemAndLevelRaiseMemberLevel(*member++, levels);
 		} while(--remaining != 0);
@@ -152,53 +152,54 @@ static void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 levels)
 static void dbIncreaseItemAndLevelRunLevelEditor(void)
 {
 	UNIT   *unit;
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	redraw;
 	Sint32	msgId;
 
 	unit = gmUnitGet(MainRoutineStateWork.leaderActorId);
-	win = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
+	window = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
 	/* "Raise everyone's level.", the A and Start help, and "B Button: End". */
 	msgId = MsgDebugRaiseEveryonesLevel;
-	mnTextDrawMessage(msgId, win, 0, 0);
-	mnTextDrawMessage(msgId + 1, win, 0, 16);
+	mnTextDrawMessage(msgId, window, 0, 0);
+	mnTextDrawMessage(msgId + 1, window, 0, 16);
 	msgId += 2;
 	redraw = 1;
-	mnTextDrawMessage(msgId, win, 0, 32);
+	mnTextDrawMessage(msgId, window, 0, 32);
 
 	for(;;) {
 		if(redraw != 0) {
-			mnWindowSprRedrawSavedRect(win);
-			mnTextDrawStringAtOffset(unit->name, win, 0, 48);
-			mnTextDrawStringInWindow(IncreaseItemAndLevelLvLabel, win, 48, 48);
+			mnWindowSpriteRedrawSavedRect(window);
+			mnTextDrawStringAtOffset(unit->name, window, 0, 48);
+			mnTextDrawStringInWindow(
+				IncreaseItemAndLevelLvLabel, window, 48, 48);
 			redraw = 0;
-			mnTextDrawNumInWindow(unit->level, 0, win, 72, 48);
+			mnTextDrawNumberInWindow(unit->level, 0, window, 72, 48);
 		}
 
 		/* Start or Select adds five levels, A one. */
 		if((PerPush & KEY_START) != 0 || (PerPush & KEY_SELECT) != 0) {
 			dbIncreaseItemAndLevelRaisePartyLevels(5);
-			sySndPlay(MUS_SUPER_LUCKY);
+			sySoundPlay(MUS_SUPER_LUCKY);
 			redraw = 1;
 		}
 
 		if((PerPush & KEY_A) != 0) {
 			dbIncreaseItemAndLevelRaisePartyLevels(1);
-			sySndPlay(MUS_LUCKY);
+			sySoundPlay(MUS_LUCKY);
 			redraw = 1;
 		}
 
 		if((PerPush & KEY_B) != 0) {
-			sySndPlay(SE_MENU_CANCEL);
-			mnWindowSprRedrawSavedRect(win);
+			sySoundPlay(SE_MENU_CANCEL);
+			mnWindowSpriteRedrawSavedRect(window);
 			sySynch(1);
-			mnWindowClose(win, 1);
+			mnWindowClose(window, 1);
 
-			gmUnitCalc(ISAAC);
-			gmUnitCalc(GARET);
-			gmUnitCalc(MIA);
-			gmUnitCalc(IVAN);
+			gmUnitCalculate(ISAAC);
+			gmUnitCalculate(GARET);
+			gmUnitCalculate(MIA);
+			gmUnitCalculate(IVAN);
 			return;
 		}
 
@@ -211,20 +212,20 @@ static void dbIncreaseItemAndLevelRunLevelEditor(void)
    the party, and B, or A once the bags are full, leaves. */
 static void dbIncreaseItemAndLevelSelectItem(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 	WINDOW *details;
 	Sint32	selectedItemId;
 	Sint32	redraw;
 	Sint32	itemId;
-	Sint32	entryCnt;
+	Sint32	entryCount;
 	Sint8	seekDirection;
 
-	entryCnt = DEBUG_ITEM_COUNT;
+	entryCount = DEBUG_ITEM_COUNT;
 	seekDirection = 0;
 	selectedItemId = 1;
-	sySndPlay(SE_MENU_CONFIRM);
+	sySoundPlay(SE_MENU_CONFIRM);
 	redraw = 1;
-	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 	details =
 		mnWindowCreate(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, WINDOW_FLAG_INSTANT);
 	/* Lend HIGHLIGHT_PALETTE to the item icons, as
@@ -242,91 +243,94 @@ static void dbIncreaseItemAndLevelSelectItem(void)
 		if(redraw) {
 			redraw = 0;
 			/* Wrap the number into 0 to 269 (a step back from 0 is 269). */
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCnt;
-			mnWindowSprRedrawSavedRect(win);
-			mnWindowSprClearList(win);
-			mnTextDrawStringInWindow(IncreaseItemAndLevelItemPrompt, win, 0, 0);
-			mnTextDrawNumAtOffset(selectedItemId, 0, win, 80, 0);
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
+			mnWindowSpriteRedrawSavedRect(window);
+			mnWindowSpriteClearList(window);
+			mnTextDrawStringInWindow(
+				IncreaseItemAndLevelItemPrompt, window, 0, 0);
+			mnTextDrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevelItemHelp, win, 0, 32);
+					IncreaseItemAndLevelItemHelp, window, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
 				/* DEAD: the item's definition is looked up and not used; the
 				   ROM keeps the call. */
 				gmItemGetDirect(itemId);
-				mnTextDrawMessageAsTiles(itemId + MsgItemName, win, 120, 0);
+				mnTextDrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
 				ITEM_DEBUG_DRAW_ITEM_NAME(
-					itemId + MsgItemPlainName, win, 0, 16);
-				mnWindowSprRedrawSavedRect(details);
+					itemId + MsgItemPlainName, window, 0, 16);
+				mnWindowSpriteRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
 			} else {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevelItemFull, win, 0, 32);
+					IncreaseItemAndLevelItemFull, window, 0, 32);
 			}
 		}
 		if(PerPush & KEY_A) {
 			if(gmPartyInventoryAdd(selectedItemId) == -1) {
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				break;
 			}
-			sySndPlay(SE_NOTE_HIGH);
+			sySoundPlay(SE_NOTE_HIGH);
 		}
 		if(PerPush & KEY_B) {
-			sySndPlay(SE_MENU_CANCEL);
+			sySoundPlay(SE_MENU_CANCEL);
 			break;
 		}
 		if(PerRepeat & KEY_UP) {
 			seekDirection = -1;
 			selectedItemId--;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_DOWN) {
 			seekDirection = 1;
 			selectedItemId++;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_RIGHT) {
 			seekDirection = 1;
 			selectedItemId += DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_LEFT) {
 			seekDirection = -1;
 			selectedItemId -= DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_R) {
 			seekDirection = 1;
 			selectedItemId += DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_L) {
 			seekDirection = -1;
 			selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		/* Step on past numbers with no item, in the direction moved. */
 		if(seekDirection == -1) {
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCnt;
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
 			goto check_back;
 		back:
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT - 1) % entryCnt;
+			selectedItemId =
+				(selectedItemId + DEBUG_ITEM_COUNT - 1) % entryCount;
 		check_back:
 			if(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon ==
 				0)
 				goto back;
 		}
 		if(seekDirection == 1) {
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCnt;
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
 			goto check_ahead;
 		ahead:
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT + 1) % entryCnt;
+			selectedItemId =
+				(selectedItemId + DEBUG_ITEM_COUNT + 1) % entryCount;
 		check_ahead:
 			if(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon ==
 				0)
@@ -335,9 +339,9 @@ static void dbIncreaseItemAndLevelSelectItem(void)
 		seekDirection = 0;
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(win);
+	mnWindowSpriteRedrawSavedRect(window);
 	sySynch(1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	mnWindowClose(details, 1);
 }
 
@@ -347,22 +351,22 @@ static void dbIncreaseItemAndLevelSelectItem(void)
    ability; B leaves. */
 UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 #if !FIX_UNINITIALIZED_READ
 	WINDOW *details;
 #endif
 	Sint32 selectedAbilityId;
 	Sint32 redraw;
 	Sint32 abilityId;
-	Sint32 entryCnt;
+	Sint32 entryCount;
 	Sint8  seekDirection;
 
-	entryCnt = DEBUG_ABILITY_COUNT;
+	entryCount = DEBUG_ABILITY_COUNT;
 	seekDirection = 0;
 	selectedAbilityId = 1;
-	sySndPlay(SE_MENU_CONFIRM);
+	sySoundPlay(SE_MENU_CONFIRM);
 	redraw = 1;
-	win = mnWindowCreate(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
+	window = mnWindowCreate(0, 0, 30, 12, WINDOW_FLAG_INSTANT);
 	/* Lend HIGHLIGHT_PALETTE to the icons, as the item browser does. */
 	syDMAXCopy((const void *)OBJ_PLTT,
 		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
@@ -376,67 +380,70 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		if(redraw) {
 			redraw = 0;
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCnt;
-			mnWindowSprRedrawSavedRect(win);
-			mnWindowSprClearList(win);
-			mnTextDrawStringInWindow(IncreaseItemAndLevelPsyPrompt, win, 0, 0);
-			mnTextDrawNumAtOffset(selectedAbilityId, 0, win, 80, 0);
-			mnTextDrawStringInWindow(IncreaseItemAndLevelPsyHelp, win, 0, 72);
+				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
+			mnWindowSpriteRedrawSavedRect(window);
+			mnWindowSpriteClearList(window);
+			mnTextDrawStringInWindow(
+				IncreaseItemAndLevelPsyPrompt, window, 0, 0);
+			mnTextDrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
+			mnTextDrawStringInWindow(
+				IncreaseItemAndLevelPsyHelp, window, 0, 72);
 			abilityId = selectedAbilityId & ACTION_ID_MASK;
-			mnTextDrawMessageAsTiles(abilityId + MsgAbilityName, win, 120, 0);
+			mnTextDrawMessageAsTiles(
+				abilityId + MsgAbilityName, window, 120, 0);
 			/* The description twice: as tiles, and below it into the canvas. */
 			mnTextDrawMessageAsTiles(
-				abilityId + MsgAbilityDescription, win, 0, 24);
-			mnTextDrawMessage(abilityId + MsgAbilityDescription, win, 0, 48);
+				abilityId + MsgAbilityDescription, window, 0, 24);
+			mnTextDrawMessage(abilityId + MsgAbilityDescription, window, 0, 48);
 		}
 		if(PerPush & KEY_B) {
-			sySndPlay(SE_MENU_CANCEL);
+			sySoundPlay(SE_MENU_CANCEL);
 			break;
 		}
 		if(PerRepeat & KEY_UP) {
 			seekDirection = -1;
 			selectedAbilityId--;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_DOWN) {
 			seekDirection = 1;
 			selectedAbilityId++;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_RIGHT) {
 			seekDirection = 1;
 			selectedAbilityId += DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_LEFT) {
 			seekDirection = -1;
 			selectedAbilityId -= DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_R) {
 			seekDirection = 1;
 			selectedAbilityId += DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_L) {
 			seekDirection = -1;
 			selectedAbilityId -= DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		/* Step on past numbers with no ability, in the direction moved. */
 		if(seekDirection == -1) {
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCnt;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
 			goto check_back;
 		back:
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT - 1) % entryCnt;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT - 1) % entryCount;
 		check_back:
 			if(gmAbilityGetDirect(selectedAbilityId & ACTION_ID_MASK)->icon ==
 				0)
@@ -444,11 +451,11 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		}
 		if(seekDirection == 1) {
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCnt;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
 			goto check_ahead;
 		ahead:
 			selectedAbilityId =
-				(selectedAbilityId + DEBUG_ABILITY_COUNT + 1) % entryCnt;
+				(selectedAbilityId + DEBUG_ABILITY_COUNT + 1) % entryCount;
 		check_ahead:
 			if(gmAbilityGetDirect(selectedAbilityId & ACTION_ID_MASK)->icon ==
 				0)
@@ -457,9 +464,9 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 		seekDirection = 0;
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(win);
+	mnWindowSpriteRedrawSavedRect(window);
 	sySynch(1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 #if !FIX_UNINITIALIZED_READ
 	/* UB: details is never created, but the browser closes it. */
 	mnWindowClose(details, 1);
@@ -472,7 +479,7 @@ UNUSED static void dbIncreaseItemAndLevelSelectAbility(void)
 UNUSED static void dbIncreaseItemAndLevelRequestExit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	syImportScriptSetExitRequest();
 }
 
@@ -481,7 +488,7 @@ UNUSED static void dbIncreaseItemAndLevelRequestExit(void)
 Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	fdActorGetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
 	fdActorGetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
 #if DEBUG_ABILITY_BROWSER_AND_EMOTE_BUBBLES
@@ -511,27 +518,27 @@ static void dbIncreaseItemAndLevelRunMotionTest(void)
    of the screen with three rows of the font's letters and marks, left open. */
 static void dbIncreaseItemAndLevelShowGlyphCaptions(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Uint8 text[32];
 
-	win = mnWindowCreate(0, 13, 30, 6, WINDOW_FLAG_INSTANT);
-	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsUpper, win, 0, 0);
-	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsLower, win, 0, 8);
-	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsMarks, win, 0, 16);
+	window = mnWindowCreate(0, 13, 30, 6, WINDOW_FLAG_INSTANT);
+	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsUpper, window, 0, 0);
+	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsLower, window, 0, 8);
+	mnTextDrawStringInWindow(IncreaseItemAndLevelGlyphsMarks, window, 0, 16);
 }
 #endif
 
 /* Keeps Force from pushing ACTOR_PORTRAIT_BROWSER: run as Force is cast at it,
-   before the shot, this sets the effect's leaveTgt, and the shot then leaves
+   before the shot, this sets the effect's leaveTarget, and the shot then leaves
    its target where it is (field/script_commands_force.c). */
 static void dbIncreaseItemAndLevelKeepPortraitBrowserInPlace(void)
 {
 	FIELD_EFFECT_STATE *effectState =
 		(FIELD_EFFECT_STATE *)FieldEffectStateWork;
 
-	effectState->leaveTgt = 1;
+	effectState->leaveTarget = 1;
 }
 
 /* Talking to ACTOR_ICON_BROWSER: the icon browser. */

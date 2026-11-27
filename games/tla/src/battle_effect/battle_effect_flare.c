@@ -18,7 +18,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 draw;
 	Sint32				 i;
 	Sint32				 picture;
@@ -28,7 +28,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*arcFlame;
 	PARTICLE			*flame;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
@@ -43,7 +43,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	/* The arc of flames, from the canvas's left edge over the enemies and back
 	   from its right half over the party, each flame starting four ticks after
 	   the one before. */
-	if(args->tgts[0] >= FIRST_ENEMY_UNIT) {
+	if(args->targets[0] >= FIRST_ENEMY_UNIT) {
 		originX = 0;
 		direction = 1;
 	} else {
@@ -68,9 +68,9 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	else
 		state->transferValue = CANVAS_FADE_HALF;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	sySndPlayStub(SE_WHOOSH);
-	for(frm = 0; frm != FLARE_TICKS; frm++) {
-		if(frm == 24)
+	sySoundPlayStub(SE_WHOOSH);
+	for(frame = 0; frame != FLARE_TICKS; frame++) {
+		if(frame == 24)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		/* Each flame plays its pictures and goes out; Flare Wall's and Flare
@@ -150,9 +150,9 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 
 		/* The targets flash red, eight ticks apart. */
 		EFFECT_FOR_EACH_TARGET(i, args) {
-			if(frm == (i * 8) + 16)
-				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 12);
+			if(frame == (i * 8) + 16)
+				btEffectTintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
+					POSE_DAMAGE, i, 12);
 		}
 		EFFECT_END_TICK(state);
 	}
@@ -161,30 +161,30 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-/* Lists the indices within idxRadius of where curValue sits in values, up to
-   entryLimit, and returns how many. */
+/* Lists the indices within indexRadius of where currentValue sits in values, up
+   to entryLimit, and returns how many. */
 UNUSED Sint32 btEffectBuildCenteredIndexList(
-	BATTLE_EFFECT_INDEX_WINDOW *win, Sint16 *output)
+	BATTLE_EFFECT_INDEX_WINDOW *window, Sint16 *output)
 {
-	Sint32 winLength = win->idxRadius * 2 + 1;
-	Sint32 outputCnt = 0;
-	Sint32 centerIdx = 0;
-	Sint32 winIdx;
+	Sint32 windowLength = window->indexRadius * 2 + 1;
+	Sint32 outputCount = 0;
+	Sint32 centerIndex = 0;
+	Sint32 windowIndex;
 
-	for(winIdx = 0; winIdx != winLength; winIdx++) {
-		if(win->curValue == win->values[winIdx]) {
-			centerIdx = winIdx;
+	for(windowIndex = 0; windowIndex != windowLength; windowIndex++) {
+		if(window->currentValue == window->values[windowIndex]) {
+			centerIndex = windowIndex;
 			break;
 		}
 	}
-	for(winIdx = 0; winIdx != winLength; winIdx++) {
-		Sint32 idx = centerIdx + winIdx - win->idxRadius;
+	for(windowIndex = 0; windowIndex != windowLength; windowIndex++) {
+		Sint32 index = centerIndex + windowIndex - window->indexRadius;
 
-		if(idx >= 0 && idx < win->entryLimit) {
-			output[outputCnt++] = idx;
+		if(index >= 0 && index < window->entryLimit) {
+			output[outputCount++] = index;
 		}
 	}
-	return outputCnt;
+	return outputCount;
 }
 
 #undef FLARE_TICKS

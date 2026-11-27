@@ -96,8 +96,8 @@ static inline void btDMAStop(volatile Uint16 *channel)
    by `motion`. */
 #define EFFECT_STRIKE_TARGET(effect, i, ticks, motion) \
 	(btEffectTintBattler( \
-		 (effect)->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks), \
-		btMotionApplyKnockbackStub((effect)->tgts[i], motion))
+		 (effect)->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks), \
+		btMotionApplyKnockbackStub((effect)->targets[i], motion))
 
 /* The canvas life cycle, shared by every canvas effect. */
 
@@ -135,7 +135,7 @@ static inline void btDMAStop(volatile Uint16 *channel)
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /* The ticks the battle background darkens behind an effect's canvas
-   (state->fadeFrm, btEffectDarkenBackgroundStep). */
+   (state->fadeFrame, btEffectDarkenBackgroundStep). */
 #define BACKGROUND_DARKEN_TICKS	  24
 /* The level a canvas darkens the battle background to, a level a tick. */
 #define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_TICKS
@@ -455,11 +455,11 @@ typedef enum RED_CRESCENT_PICTURE {
 /* Writes one row of BG2's map for the canvas, two tiles at a time. */
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset) \
 	for((column) = 0; (column) != 8; (column)++, (offset) += 2) { \
-		Sint32 tileIdx; \
+		Sint32 tileIndex; \
 		Sint16 pair; \
 \
-		tileIdx = (row) * 16 + (column) * 2; \
-		pair = ((tileIdx + 1) << 8) | tileIdx; \
+		tileIndex = (row) * 16 + (column) * 2; \
+		pair = ((tileIndex + 1) << 8) | tileIndex; \
 		*(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair; \
 	}
 
@@ -502,7 +502,7 @@ typedef enum CANVAS_FILL {
 	CANVAS_WIPE_CLEAR /* colour 0: the canvas cleared */
 } CANVAS_FILL;
 
-/* The summons' sprite formations (btEffectPlaceFormationSprs and
+/* The summons' sprite formations (btEffectPlaceFormationSprites and
    btEffectRunImpactBurst), each named for the summon that keeps it. */
 typedef enum SUMMON_FORMATION {
 	SUMMON_FORMATION_THOR, /* nine in a 3x3 grid at 32-pixel spacing */

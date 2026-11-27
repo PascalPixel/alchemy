@@ -7,7 +7,7 @@
 
 struct ACTOR;
 
-/* A footprint of the Shrine of the Sea God (ShrineOfTheSeaGodFootprintsTbl):
+/* A footprint of the Shrine of the Sea God (ShrineOfTheSeaGodFootprintsTable):
    where it lies in 16.16 pixels, its scale and its turn. */
 typedef struct SHRINE_OF_THE_SEA_GOD_SPOT {
 	Sint32 x;

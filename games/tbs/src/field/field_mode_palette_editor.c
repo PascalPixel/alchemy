@@ -32,10 +32,10 @@ void fdPaletteEditorRun(void)
 {
 	Sint32	palette = 0;
 	Sint32	channel = EDITOR_RED;
-	Sint32	col = 1;
+	Sint32	color = 1;
 	Uint16 *swatchColumn;
 	Uint16 *tileEntry;
-	Uint16 *paletteCol;
+	Uint16 *paletteColor;
 	Uint32	tile;
 	Uint32	rgb555;
 	Uint32	red;
@@ -50,7 +50,7 @@ redraw:
 	   colour's swatch, drawn in the palette being edited, and its three
 	   channels. */
 	tile = BG_TILE_PALETTE(palette) + EDITOR_SWATCH_TILE + 1;
-	paletteCol = &EDITOR_PALETTE[palette * PALETTE_COLORS + 1];
+	paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + 1];
 	swatchColumn = EDITOR_MAP;
 	tileEntry = swatchColumn;
 	*tileEntry = EDITOR_NUMBER_TILE + palette;
@@ -64,7 +64,7 @@ redraw:
 	for(i = 1; i < PALETTE_COLORS; i++) {
 		tileEntry = swatchColumn;
 		*tileEntry = tile++;
-		rgb555 = *paletteCol++;
+		rgb555 = *paletteColor++;
 		tileEntry += BG_SCREEN_WIDTH;
 		*tileEntry = RGB_RED(rgb555) + EDITOR_NUMBER_TILE;
 		tileEntry += BG_SCREEN_WIDTH;
@@ -86,14 +86,14 @@ redraw:
 				channel = EDITOR_RED;
 		}
 		if(PerRepeat & KEY_LEFT) {
-			col--;
-			if(col <= 0)
-				col = PALETTE_COLORS - 1;
+			color--;
+			if(color <= 0)
+				color = PALETTE_COLORS - 1;
 		}
 		if(PerRepeat & KEY_RIGHT) {
-			col++;
-			if(col > PALETTE_COLORS - 1)
-				col = 1;
+			color++;
+			if(color > PALETTE_COLORS - 1)
+				color = 1;
 		}
 		if(PerRepeat & KEY_L) {
 			palette--;
@@ -108,8 +108,8 @@ redraw:
 			goto redraw;
 		}
 		if(PerRepeat & KEY_A) {
-			paletteCol = &EDITOR_PALETTE[palette * PALETTE_COLORS + col];
-			rgb555 = *paletteCol;
+			paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + color];
+			rgb555 = *paletteColor;
 			red = RGB_RED(rgb555);
 			green = RGB_GREEN(rgb555);
 			blue = RGB_BLUE(rgb555);
@@ -119,12 +119,12 @@ redraw:
 				green++;
 			if(channel == EDITOR_BLUE && blue < RGB_LEVEL_MAX)
 				blue++;
-			*paletteCol = RGB(red, green, blue);
+			*paletteColor = RGB(red, green, blue);
 			goto redraw;
 		}
 		if(PerRepeat & KEY_B) {
-			paletteCol = &EDITOR_PALETTE[palette * PALETTE_COLORS + col];
-			rgb555 = *paletteCol;
+			paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + color];
+			rgb555 = *paletteColor;
 			red = RGB_RED(rgb555);
 			green = RGB_GREEN(rgb555);
 			blue = RGB_BLUE(rgb555);
@@ -134,30 +134,30 @@ redraw:
 				green--;
 			if(channel == EDITOR_BLUE && blue != 0)
 				blue--;
-			*paletteCol = RGB(red, green, blue);
+			*paletteColor = RGB(red, green, blue);
 			goto redraw;
 		}
 		if(PerRepeat & KEY_START) {
 			/* red counts the ticks here. */
-			paletteCol = &EDITOR_PALETTE[palette * PALETTE_COLORS + col];
-			rgb555 = *paletteCol;
+			paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + color];
+			rgb555 = *paletteColor;
 			red = 0;
 			for(;;) {
 				sySynch(1);
 				if(!(PerData & KEY_START))
 					break;
 				if(red == 0)
-					*paletteCol = RGB_WHITE;
+					*paletteColor = RGB_WHITE;
 				if(red == EDITOR_BLINK_TICKS)
-					*paletteCol = rgb555;
+					*paletteColor = rgb555;
 				if(red == EDITOR_BLINK_TICKS * 2)
-					*paletteCol = 0;
+					*paletteColor = 0;
 				if(red == EDITOR_BLINK_TICKS * 3)
-					*paletteCol = rgb555;
+					*paletteColor = rgb555;
 				if(++red >= EDITOR_BLINK_TICKS * 4)
 					red = 0;
 			}
-			*paletteCol = rgb555;
+			*paletteColor = rgb555;
 		}
 		if(PerRepeat & KEY_SELECT)
 			break;

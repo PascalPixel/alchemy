@@ -21,7 +21,7 @@ StubsOverworld:
 	stub fdPartyLearnAbilityStub, fdPartyLearnAbility
 	stub fdActorGetByIdStub, fdActorGetById
 	stub fdActorReleaseByIdStub, fdActorReleaseById
-	stub fdActorSetSpeedParmsStub, fdActorSetSpeedParms
+	stub fdActorSetSpeedParamsStub, fdActorSetSpeedParams
 	stub fdActorSetMovementTypeByIdStub, fdActorSetMovementTypeById
 	stub fdActorWaitForScriptEndByIdStub, fdActorWaitForScriptEndById
 	stub fdActorStopStub, fdActorStop
@@ -46,8 +46,8 @@ StubsOverworld:
 	stub fdActorJumpDownLedgeStub, fdActorJumpDownLedge
 	stub fdActorFaceActorByIdStub, fdActorFaceActorById
 	stub fdActorTurnToFaceEachOtherStub, fdActorTurnToFaceEachOther
-	stub fdActorConfigureSprColStub, fdActorConfigureSprCol
-	stub fdActorSetSprColStub, fdActorSetSprCol
+	stub fdActorConfigureSpriteColorStub, fdActorConfigureSpriteColor
+	stub fdActorSetSpriteColorStub, fdActorSetSpriteColor
 	stub fdActorWatchAndStartScriptStub, fdActorWatchAndStartScript
 	stub fdScriptSetMessageIdStub, fdScriptSetMessageId
 	stub fdMessageShowAtActorStub, fdMessageShowAtActor
@@ -63,12 +63,12 @@ StubsOverworld:
 	unnamed_stub fdActorClosePortrait
 	stub fdScriptShowTwoMessagesAndWaitStub, fdScriptShowTwoMessagesAndWait
 	stub fdMessageSetVoiceFromActorStub, fdMessageSetVoiceFromActor
-	stub fdActorSetSprPriorityStub, fdActorSetSprPriority
+	stub fdActorSetSpritePriorityStub, fdActorSetSpritePriority
 	stub fdActorShowEmoteByIdStub, fdActorShowEmoteById
 	stub fdEffectSetAttachedStub, fdEffectSetAttached
 	stub fdActorCopyGraphicsStub, fdActorCopyGraphics
 	stub fdCameraFollowActorStub, fdCameraFollowActor
-	stub fdCameraSetSpeedParmsStub, fdCameraSetSpeedParms
+	stub fdCameraSetSpeedParamsStub, fdCameraSetSpeedParams
 	stub fdCameraMoveWithinMapBoundsStub, fdCameraMoveWithinMapBounds
 	stub fdCameraWaitForArrivalStub, fdCameraWaitForArrival
 	stub fdCameraMoveToActorByIdStub, fdCameraMoveToActorById
@@ -84,7 +84,7 @@ StubsOverworld:
 	stub fdScriptLeaveForStub, fdScriptLeaveFor
 	stub fdActorGetScreenPosStub, fdActorGetScreenPos
 	stub fdActorGetCueMetatileAheadOfCurrentStub, fdActorGetCueMetatileAheadOfCurrent
-	stub fdPartyGetCharacterSprStub, fdPartyGetCharacterSpr
+	stub fdPartyGetCharacterSpriteStub, fdPartyGetCharacterSprite
 	unnamed_stub fdPsynergySteerPushedTarget
 	unnamed_stub fdPsynergyStartCloak
 	stub fdTryJumpForwardStub, fdTryJumpForward
@@ -107,7 +107,7 @@ StubsOverworld:
 	unnamed_stub fdPaletteFadeInit
 	stub fdPaletteFadeSetTargetStub, fdPaletteFadeSetTarget
 	stub fdPaletteFadeSetSourceStub, fdPaletteFadeSetSource
-	unnamed_stub fdPaletteFadeCalcSteps
+	unnamed_stub fdPaletteFadeCalculateSteps
 	stub fdPaletteFadeStartInterpolationStub, fdPaletteFadeStartInterpolation
 	unnamed_stub fdPaletteFadeRelease
 	unnamed_stub fdPaletteFadeSetBackdrop
@@ -117,8 +117,8 @@ StubsOverworld:
 	stub scLineScrollInitWaveStub, scLineScrollInitWave
 	stub fdLineScrollStopStub, fdLineScrollStop
 	stub fdChestOpenAndShowItemStub, fdChestOpenAndShowItem
-	stub fdItemDispShowPictureStub, fdItemDispShowPicture
-	stub fdItemDispShowItemStub, fdItemDispShowItem
+	stub fdItemDisplayShowPictureStub, fdItemDisplayShowPicture
+	stub fdItemDisplayShowItemStub, fdItemDisplayShowItem
 	unnamed_stub fdTreasureSpotGetActor
 	unnamed_stub fdTreasureSpotOpenChest
 	unnamed_stub fdTreasureSpotCloseChest
@@ -141,8 +141,8 @@ StubsOverworld:
 	stub fdPsynergyStopCasterUpdateStub, fdPsynergyStopCasterUpdate
 	stub fdPsynergyEndStub, fdPsynergyEnd
 	stub fdPsynergyStartCastStub, fdPsynergyStartCast
-	unnamed_stub fdPsynergyFadeToCastCol
-	unnamed_stub fdPsynergyFadeFromCastCol
+	unnamed_stub fdPsynergyFadeToCastColor
+	unnamed_stub fdPsynergyFadeFromCastColor
 	stub fdEndBusyAndRevealStub, fdEndBusyAndReveal
 	stub fdPsynergyStartMindReadWaveStub, fdPsynergyStartMindReadWave
 	stub fdPsynergyStopMindReadWaveStub, fdPsynergyStopMindReadWave
@@ -150,7 +150,7 @@ StubsOverworld:
 	stub fdPsynergyRestoreMindReadPaletteStub, fdPsynergyRestoreMindReadPalette
 	stub fdHasPsynergyCueStub, fdHasPsynergyCue
 	stub fdHasItemCueStub, fdHasItemCue
-	stub fdSprShareVRAMCacheEntryStub, fdSprShareVRAMCacheEntry
+	stub fdSpriteShareVRAMCacheEntryStub, fdSpriteShareVRAMCacheEntry
 	stub fdBattleBackgroundGetSelectedStub, fdBattleBackgroundGetSelected
 	unnamed_stub fdEffectSpawnMoveHand
 	unnamed_stub fdEffectGrowHandAndWait
@@ -183,8 +183,8 @@ StubsOverworld:
 	stub fdActorWatchAndSetScriptStub, fdActorWatchAndSetScript
 	stub fdPsynergyHaltActorStub, fdPsynergyHaltActor
 	unnamed_stub fdPsynergyResumeHaltedActor
-	unnamed_stub fdActorFindBySpr
-	unnamed_stub fdActorGetSprById
+	unnamed_stub fdActorFindBySprite
+	unnamed_stub fdActorGetSpriteById
 	stub fdActorSnapshotStub, fdActorSnapshot
 	stub fdActorRestoreStub, fdActorRestore
 	stub fdWorldMapStartZoomStub, fdWorldMapStartZoom
@@ -193,7 +193,7 @@ StubsOverworld:
 	stub fdActorSetMovementTypeStub, fdActorSetMovementType
 	stub fdQueueMusicStub, fdQueueMusic
 	stub fdPlayQueuedMusicStub, fdPlayQueuedMusic
-	stub fdPartyGetCharacterSprForChildhoodStub, fdPartyGetCharacterSprForChildhood
+	stub fdPartyGetCharacterSpriteForChildhoodStub, fdPartyGetCharacterSpriteForChildhood
 	@ German, French, Spanish and Italian
 	.if FIELD_MENU_STOPS_REVEAL_SPARKLES
 	stub fdEffectReleaseRevealSparklesStub, fdEffectReleaseRevealSparkles

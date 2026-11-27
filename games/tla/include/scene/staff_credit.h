@@ -11,9 +11,9 @@ struct ACTOR;
 
 /* Queues a halfword register write for the next VBlank: the picture layer's own
    call of syIOWriteQueueStore16, an inline over it as script.h's are. */
-static inline void scQueueIOWrite16(Uint32 adr, Uint32 value)
+static inline void scQueueIOWrite16(Uint32 addr, Uint32 value)
 {
-	syIOWriteQueueStore16(adr, value);
+	syIOWriteQueueStore16(addr, value);
 }
 
 /* The picture layer drawn over the map on background 0: its tiles start at tile

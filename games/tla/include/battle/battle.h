@@ -61,16 +61,16 @@ void btBackgroundLoad(Sint32 mode, Sint32 resource, Sint32 level);
 void btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level);
 /* Returns the height an animation is drawn at over a class, in pixels, or 0 for
    its size's default; 0 out of range. */
-Uint32 btSprGetEffectHeight(Uint32 idx);
+Uint32 btSpriteGetEffectHeight(Uint32 index);
 /* Returns 1 for a class whose blow lands with a heavier impact; 0 out of
    range. */
-Sint32 btSprHasHeavyImpact(Sint32 idx);
+Sint32 btSpriteHasHeavyImpact(Sint32 index);
 /* Returns how high a class hops as it runs up to attack, in pixels; 0 out of
    range. */
-Uint32 btSprGetAttackHop(Uint32 idx);
+Uint32 btSpriteGetAttackHop(Uint32 index);
 /* Returns 1 for a small class, which takes one enemy sprite slot instead of two
    and stands closer to its neighbours; 0 out of range. */
-Sint32 btSprIsSmall(Sint32 idx);
+Sint32 btSpriteIsSmall(Sint32 index);
 /* Returns the height above a unit where its battle effects play, in 16.16
    pixels: its class's own, else EFFECT_HEIGHT_SMALL for a small enemy and
    EFFECT_HEIGHT_LARGE for others. */
@@ -78,7 +78,7 @@ FIXED btUnitGetEffectHeight(Sint32 unitId);
 /* Sends one unit leaping three quarters of the way to another, arriving in
    travelTicks ticks. */
 void btMotionApproachTarget(
-	Sint32 actorId, Sint32 tgtId, Sint32 travelTicks, Sint32 initVelY);
+	Sint32 actorId, Sint32 targetId, Sint32 travelTicks, Sint32 initVelocityY);
 /* Unused: sends unitId leaping back to 1.3 times its spot's distance from the
    centre, in POSE_DAMAGE. */
 void btMotionLeapBack(Sint32 unitId);
@@ -111,21 +111,22 @@ Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds);
    it is not null, and returns how many. */
 Sint32 btPartyPrepareMembers(Uint16 *owners);
 /* Sets the camera up for the fixed view the battle shows while commands are
-   chosen, raised by verticalOfs pixels. */
-void btCameraSetCommandView(Sint32 verticalOfs);
-/* Returns sprite recordIdx of an actor (0 only, for a single sprite), or null
+   chosen, raised by verticalOffset pixels. */
+void btCameraSetCommandView(Sint32 verticalOffset);
+/* Returns sprite recordIndex of an actor (0 only, for a single sprite), or null
    when it has no such sprite. */
-void *btActorGetSpr(struct MOTION_OBJECT *object, Sint32 recordIdx);
+void *btActorGetSprite(struct MOTION_OBJECT *object, Sint32 recordIndex);
 /* Highlights the units in actors (up to UNIT_MAX, ended by
    BATTLE_UNIT_LIST_END), the others taking the other blend, or with
    HIGHLIGHT_OFF stops the highlight. */
 void btHighlightSetModes(Uint16 *actors, Sint32 mode);
 /* Starts playback of the action's targets when the effect's blow lands, with
-   snd as the hit's sound (0 keeps the one set); later calls change nothing. */
-void btPlaybackStart(Sint32 snd);
+   sound as the hit's sound (0 keeps the one set); later calls change nothing.
+ */
+void btPlaybackStart(Sint32 sound);
 /* Writes size BGR555 colours of source to destination scaled by value / 256, at
    most 1.0: a palette dimmed toward black. */
-void btColBufferScale(Uint16 *src, Uint32 dst, Sint32 value, Sint32 size);
+void btColorBufferScale(Uint16 *src, Uint32 dest, Sint32 value, Sint32 size);
 /* Brings the party's recovering Djinn one turn nearer, setting each that is
    ready, and returns 1 when any was set. */
 Sint32 btDjinnRecoveryCountDown(void);
@@ -137,18 +138,18 @@ Sint32 btDjinnRecoveryCountDownTwenty(void);
 /* Debug: replaces the party with parameter set number set, each member at its
    level with its Djinn, abilities and equipped items. Returns 1 when the table
    ends before that set. */
-Sint32 btDebugParmSetLoad(Sint32 set);
+Sint32 btDebugParamSetLoad(Sint32 set);
 /* Readies every unit's sprites, destroying those of units no longer in the
    battle, and sets each unit's pose again. */
 void btObjectPut(void);
 /* Destroys a unit's sprites, its status icon and shadow with them, leaving its
    battle object with none. */
-void btObjectDestroySprs(Sint32 unitId);
+void btObjectDestroySprites(Sint32 unitId);
 /* Shows the cursor bobbing at (x, y) and waits for the player to go on with A,
    B, L or R; returns 1. */
 Sint32 btMessageWaitForAdvanceAt(Sint32 x, Sint32 y);
 /* Counts the standby Djinn on a unit's side, by element into counts. */
-Sint32 btDjinnCountStandby(Uint32 unitId, Uint8 *cnts);
+Sint32 btDjinnCountStandby(Uint32 unitId, Uint8 *counts);
 /* Lists the party's reserve members, those past the fourth (none in a link
    battle), into owners when it is not null, puts each on the party's side and
    returns how many there are. */
@@ -168,9 +169,9 @@ void btObjectSpawnObjectsForList(
    The form change's battle effect calls it through its stub call. */
 void btChangeEnemyForm(Sint32 id);
 /* Works out which of the summons up to SUMMON_THOR the party can call: those
-   whose Djinn of every element the party holds (djinnHeldCnts, set or not), all
-   members together, and stores them in the party's summon mask beside the ones
-   learned. Whether enough are on standby is checked as a summon is chosen
+   whose Djinn of every element the party holds (djinnHeldCounts, set or not),
+   all members together, and stores them in the party's summon mask beside the
+   ones learned. Whether enough are on standby is checked as a summon is chosen
    (mnBattleSummonMenuRun) and built (btActionRunBuild). btRun calls it as the
    battle is set up and at the start of each turn. */
 void btSummonUpdateAvailability(void);
@@ -191,7 +192,7 @@ struct CUE;
 struct UNIT;
 struct WORLD_MAP_STATE;
 
-/* A battle unit's sprites' OBJ mode, as btHighlightSetSprMode sets it: faded
+/* A battle unit's sprites' OBJ mode, as btHighlightSetSpriteMode sets it: faded
    units are semi-transparent, and the battle's blends act on them. */
 typedef enum BATTLE_SPR_MODE {
 	SPRITE_OPAQUE,
@@ -249,8 +250,8 @@ typedef enum BATTLE_POSE {
    gmBattleGetElementMultiplier returns it for no element difference. */
 #define BATTLE_MULTIPLIER_ONE 256
 /* The element power at which healing is neither stronger nor weaker
-   (gmBattleCalcRecovery): each point above it counts as two points of element
-   difference. */
+   (gmBattleCalculateRecovery): each point above it counts as two points of
+   element difference. */
 #define HEALING_BASE_POWER	  100
 
 /* The tables other modules lend the battle, in the order they are declared. */
@@ -270,7 +271,7 @@ extern const Uint8	ColorBufferDarkenFourLevelsMap[32];
 
 /* The battle's run and turn: the battle itself, the actions gathered and
    sorted, the turn's end and the spoils. */
-void   btIntroAnnounceEncounter(Sint32 enemyCnt);
+void   btIntroAnnounceEncounter(Sint32 enemyCount);
 void   btTurnStartNoOperation(void);
 Sint32 btGatherActions(struct BATTLE_ACTION_RECORD *actions);
 #ifndef OWN_btBuildEnemyActions
@@ -280,8 +281,9 @@ Sint32 btBuildEnemyActions(struct BATTLE_ACTION_RECORD *entries);
 Sint32 btBuildUnitActions(struct BATTLE_ACTION_RECORD *entries);
 #endif
 Sint32 btLinkBattleWaitSync(void);
-Sint32 btAppendLinkedActions(struct BATTLE_ACTION_RECORD *actions, Sint32 cnt);
-void   btActionOrderSort(struct BATTLE_ACTION_RECORD *actions, Sint32 cnt);
+Sint32 btAppendLinkedActions(
+	struct BATTLE_ACTION_RECORD *actions, Sint32 count);
+void   btActionOrderSort(struct BATTLE_ACTION_RECORD *actions, Sint32 count);
 Sint32 btFindUnitPlace(Uint32 id);
 void   btUnitResetGuardLevels(void);
 void   btUnitProcessActionEnd(BATTLE_PLAN *plan);
@@ -323,19 +325,19 @@ void btObjectMake(
 	struct BATTLE_OBJECT *battleObject, Sint32 unitId, Sint32 x, Sint32 y);
 #endif
 Sint32 btObjectRemoveFromLists(Sint32 id);
-void   btObjectReleaseSprSlots(Sint32 objectId);
-void   btObjectSetColMode(struct MOTION_OBJECT *object, Sint32 value);
+void   btObjectReleaseSpriteSlots(Sint32 objectId);
+void   btObjectSetColorMode(struct MOTION_OBJECT *object, Sint32 value);
 void   btObjectUpdatePose(Sint32 id);
 void   btObjectPutKeepingPoses(void);
-void   btObjectUpdateSprPriorities(void);
-Sint32 btEnemySprLoadIntoSlots(Sint32 unit);
+void   btObjectUpdateSpritePriorities(void);
+Sint32 btEnemySpriteLoadIntoSlots(Sint32 unit);
 void   btMotionHopBack(Sint32 objectId);
 void   btMotionPlayFall(Sint32 unitId);
 void   btMotionSetupEscapeObject(Sint32 objectId);
 void   btMotionReturnObjectToSpot(struct BATTLE_OBJECT *slot);
 void   btMotionDestroyAllSlotObjects(void);
 void   btMotionApproachTargetStub(
-	  Sint32 actorId, Sint32 tgtId, Sint32 travelTicks, Sint32 initVelY);
+	  Sint32 actorId, Sint32 targetId, Sint32 travelTicks, Sint32 initVelocityY);
 
 /* The camera, the background and the units' highlight. */
 void btCameraSetDefaultView(void);
@@ -372,8 +374,8 @@ void fdAdvanceWithGravity2D(Sint32 *vector, Sint32 damping, Sint32 gravity);
    / 64. */
 void fdAdvanceWithGravity3D(Sint32 *vector, Sint32 damping, Sint32 gravity);
 void fdActorSnapToTerrain(void *actor);
-struct ACTOR *fdItemDispShowItemInFront(Sint32 actor, Sint32 item);
-void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 half);
+struct ACTOR *fdItemDisplayShowItemInFront(Sint32 actor, Sint32 item);
+void fdPaletteFadeBuild(Uint32 mode, Uint16 *src, Uint16 *dest, Sint32 half);
 void fdPaletteFadeUpdate(void);
 
 /* The scene's cues and encounters, as field Psynergy and the battle's start
@@ -390,18 +392,18 @@ Sint32		fdEncounterResolveWorldMapZoneAndBackdrop(void *pos);
 /* The game logic: units, Djinn, flags and elements. */
 Sint32 gmBattleGetElementMultiplier(Sint32 selector, Sint32 mode);
 Sint32 gmEnemyGetAttackElement(UNIT *unit);
-#ifndef OWN_gmUnitCalcStub
+#ifndef OWN_gmUnitCalculateStub
 /* Works a unit's stats out again from its base stats, equipment, set Djinn,
    class and battle stat levels, keeping its HP and PP at the same fraction. */
-void gmUnitCalcStub(Sint32 unitId);
+void gmUnitCalculateStub(Sint32 unitId);
 #endif
 /* Sets the unit's HP, kept between 0 and its maximum, and updates its
    gauges. */
 void   gmUnitSetHpStub(UNIT *unit, Sint32 hp);
 Sint32 gmPartyCountMembersStub(void);
-Sint32 gmDjinnSetStub(Sint32 unitId, Sint32 element, Sint32 idx);
+Sint32 gmDjinnSetStub(Sint32 unitId, Sint32 element, Sint32 index);
 struct DJINN_RECOVERY_TABLE *gmDjinnGetRecoveryTableStub(Sint32 owner);
-Sint32 gmDjinnRecoveryRemoveStub(Sint32 unitId, Sint32 element, Sint32 idx);
+Sint32 gmDjinnRecoveryRemoveStub(Sint32 unitId, Sint32 element, Sint32 index);
 
 /* The main image's actors, sprites and windows. */
 void fdActorSetPosAndResetMotionStub(
@@ -410,14 +412,14 @@ void fdActorSetPosAndResetMotionStub(
 void fdActorSetAnimationSpeedStub(struct ACTOR *actor, Sint32 value);
 void fdActorReleaseStub(struct ACTOR *actor);
 void fdRenderApplyProjectedPlacementStub(
-	SPR *spr, Sint32 *pos, Sint32 *scale, Sint32 mode);
-Sint32 fdSprDissolveRunStub(void *object);
-void   fdSprDissolveRunManyStub(void **, Sint32);
+	SPR *sprite, Sint32 *pos, Sint32 *scale, Sint32 mode);
+Sint32 fdSpriteDissolveRunStub(void *object);
+void   fdSpriteDissolveRunManyStub(void **, Sint32);
 void   mnMessageArgumentClearAllStub(void);
 void   mnMessageArgumentPushStub(Sint32 value, Sint32 kind);
 void   mnBattleMessageShowAndWaitStub(Sint32 msgId);
 void   mnBattleMessageCloseStub(void);
-void   mnPartyStatDrawStub(Sint32 mode);
-void   mnPartyStatHighlightMembersStub(Uint16 *);
+void   mnPartyStatusDrawStub(Sint32 mode);
+void   mnPartyStatusHighlightMembersStub(Uint16 *);
 
 #endif

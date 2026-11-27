@@ -20,7 +20,7 @@ typedef struct WORLD_MAP_VIEW {
 		  shownLayers;
 	Uint8 wideTiles; /* MAP_STATE's wideTiles, 0x80 at load */
 	/* As MAP_STATE: footprints, tileset animations and blend script. */
-	Uint8 anmsAndBlend[205];
+	Uint8 animationsAndBlend[205];
 	FIXED view[2]; /* the view's top left, x then y, 16.16 fixed-point pixels */
 	FIXED scaleX;  /* 32 in 16.16 at load */
 	FIXED scaleY;  /* 64 in 16.16 at load */
@@ -29,17 +29,17 @@ typedef struct WORLD_MAP_VIEW {
 	Uint8 unusedAfterLimitY[4]; /* no code names it */
 	/* Set by fdWorldMapStartStillImage while BG1 shows the drawn map; the
 	   tileset animations are then neither suspended nor resumed. */
-	Sint8 anmActive;
+	Sint8 animationActive;
 	Uint8 unused[3];
 	/* Screen rows, 0 and 159 at load and 200 and 255 from
 	   fdWorldMapStartStillImage; each tick copies them to shownTop and
 	   shownBottom and picks BG mode 2 or 0 from them. */
-	Uint16 winTop;
-	Uint16 winBottom;
-	Uint16 shownTop;	/* windowTop as the tick update last applied it */
-	Uint16 shownBottom; /* winBottom as the tick update last applied it */
-	Uint16 winPending;	/* cleared by the tick update; not set by name */
-	Uint8  unusedAfterWin[6];
+	Uint16 windowTop;
+	Uint16 windowBottom;
+	Uint16 shownTop;	  /* windowTop as the tick update last applied it */
+	Uint16 shownBottom;	  /* windowBottom as the tick update last applied it */
+	Uint16 windowPending; /* cleared by the tick update; not set by name */
+	Uint8  unusedAfterWindow[6];
 	/* The world map's tile offsets (ResourceIdPerspectiveDataA), each tile
 	   LZ-compressed. */
 	void  *tiles;
@@ -57,12 +57,12 @@ typedef struct WORLD_MAP_VIEW {
 	/* Steps left of reloading the area's graphics after the region changed, one
 	   a tick from 12 (fdWorldMapPreloadCurrentTileBlock). */
 	Sint32 reloadSteps;
-	Sint32 farPlane;		   /* 510 pixels at load */
-	Sint32 distance;		   /* farPlane scaled by the zoom */
-	Sint32 prevZoom;		   /* the zoom a transition starts from */
-	FIXED  zoom;			   /* 16.16 fixed point, toFIXED(1) full size */
-	Uint16 zoomTransitionFrm;  /* a zoom transition's length; 0 when none */
-	Sint16 zoomTransitionStep; /* ticks of the transition done */
+	Sint32 farPlane;			/* 510 pixels at load */
+	Sint32 distance;			/* farPlane scaled by the zoom */
+	Sint32 prevZoom;			/* the zoom a transition starts from */
+	FIXED  zoom;				/* 16.16 fixed point, toFIXED(1) full size */
+	Uint16 zoomTransitionFrame; /* a zoom transition's length; 0 when none */
+	Sint16 zoomTransitionStep;	/* ticks of the transition done */
 	/* Set when a field Psynergy cast on the World Map has used the second half
 	   of the BG tile buffer; the still image then decodes it again. */
 	Sint8 tileBufUsed;
@@ -73,13 +73,13 @@ typedef struct WORLD_MAP_VIEW {
 	Sint8 viewHeld;
 	Sint8 tintRegion; /* the encounter region the tint was chosen for */
 	Sint8 tint;		  /* brightness steps, darker when negative */
-	Sint8 tintTgt;	  /* the tint the region asks for */
+	Sint8 tintTarget; /* the tint the region asks for */
 	Sint8 fixedEye;	  /* set: the tick update leaves the eye where it is */
 } WORLD_MAP_VIEW;
 
 STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, view) == 228);
-STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, anmActive) == 256);
-STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, winTop) == 260);
+STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, animationActive) == 256);
+STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, windowTop) == 260);
 STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, tiles) == 276);
 STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, pitch) == 284);
 STATIC_ASSERT(offsetof(WORLD_MAP_VIEW, resources) == 288);

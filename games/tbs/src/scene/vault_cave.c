@@ -250,7 +250,8 @@ static ACTOR *scVaultCaveFindCollidableActorAtMetatile(
 			actor != NULL &&
 #endif
 			column == FIELD_METATILE(actor->x.fixed) &&
-			row == FIELD_METATILE(actor->z.fixed) && actor->collisionFlg != 0) {
+			row == FIELD_METATILE(actor->z.fixed) &&
+			actor->collisionFlags != 0) {
 			return actor;
 		}
 	}
@@ -265,8 +266,8 @@ static void scVaultCavePushPillarAhead(void)
 	Sint32	  direction = FACING_INDEX(leader->facing);
 	ACTOR	 *pillar;
 	ACTOR	 *beyond;
-	FIELD_POS dst;
-	Sint32	  fallingIdx;
+	FIELD_POS dest;
+	Sint32	  fallingIndex;
 	Sint32	  column;
 	Sint32	  row;
 
@@ -279,16 +280,16 @@ static void scVaultCavePushPillarAhead(void)
 	pillar = scVaultCaveFindCollidableActorAtMetatile(column, row);
 	/* UB: the pillar's collisionFlags is read before the test for no pillar. */
 #if FIX_NULL_DEREFERENCE
-	if(pillar == NULL || pillar->collisionFlg == 0) {
+	if(pillar == NULL || pillar->collisionFlags == 0) {
 #else
-	if(pillar->collisionFlg == 0 || pillar == NULL) {
+	if(pillar->collisionFlags == 0 || pillar == NULL) {
 #endif
 		return;
 	}
 	/* SceneIdVaultCaveMouth's water drops are never pushed; in
 	   SceneIdVaultCaveVambrace these slots hold water drops too. */
-	for(fallingIdx = 0; fallingIdx <= 3; fallingIdx++) {
-		if(pillar == fdActorGet(fallingIdx + ACTOR_FIRST_TIMED_WATER_DROP)) {
+	for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
+		if(pillar == fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP)) {
 			return;
 		}
 	}
@@ -299,33 +300,33 @@ static void scVaultCavePushPillarAhead(void)
 			  (Sint16)PushedActorDirectionSteps[direction]) >>
 		4;
 	beyond = scVaultCaveFindCollidableActorAtMetatile(column, row);
-	if(beyond != NULL && (beyond->collisionFlg & ACTOR_SOLID)) {
+	if(beyond != NULL && (beyond->collisionFlags & ACTOR_SOLID)) {
 		return;
 	}
 	pillar->layer = 2;
-	fdActorStepFrom(&dst, pillar, PushedActorDirectionSteps[direction]);
-	if(syFieldActorCheckMovementCollision(pillar, &dst) > 0) {
+	fdActorStepFrom(&dest, pillar, PushedActorDirectionSteps[direction]);
+	if(syFieldActorCheckMovementCollision(pillar, &dest) > 0) {
 		return;
 	}
 	fdActorSelectAnimation(leader, ANIM_PUSH);
 	sySynch(15);
-	sySndPlay(SE_PUSH_STEP);
+	sySoundPlay(SE_PUSH_STEP);
 	pillar->speedLimit = toFIXED(1) / 5;
 	pillar->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(pillar, dst.x, dst.y, dst.z);
+	syFieldActorSetMoveTargetFX(pillar, dest.x, dest.y, dest.z);
 	leader->speedLimit = toFIXED(1) / 5;
 	leader->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
+	syFieldActorSetMoveTargetFX(leader, dest.x, dest.y, dest.z);
 	fdActorWaitForMove(pillar);
-	sySndPlay(SE_STOP_ACTION_SE);
-	pillar->x.fixed = dst.x;
-	pillar->z.fixed = dst.z;
-	pillar->velX = 0;
-	pillar->velZ = 0;
-	leader->velX = 0;
-	leader->velZ = 0;
-	leader->tgtX = ACTOR_NO_TARGET;
-	leader->tgtZ = ACTOR_NO_TARGET;
+	sySoundPlay(SE_STOP_ACTION_SE);
+	pillar->x.fixed = dest.x;
+	pillar->z.fixed = dest.z;
+	pillar->velocityX = 0;
+	pillar->velocityZ = 0;
+	leader->velocityX = 0;
+	leader->velocityZ = 0;
+	leader->targetX = ACTOR_NO_TARGET;
+	leader->targetZ = ACTOR_NO_TARGET;
 	fdActorSelectAnimation(leader, ANIM_STAND);
 }
 
@@ -380,7 +381,7 @@ static inline void scVaultCaveCompleteSouthernSwitch(void)
 {
 	if(scVaultCaveIsSouthernPillarOnSwitch() != 0) {
 		gmFlagSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
-		sySndPlay(MUS_PUZZLE_SOLVED);
+		sySoundPlay(MUS_PUZZLE_SOLVED);
 		scVaultCaveApplySouthernSwitchMetatiles();
 	}
 }
@@ -450,7 +451,7 @@ static inline void scVaultCaveCompleteNorthernSwitch(void)
 	if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
 		if(scVaultCaveIsNorthernPillarOnSwitch() != 0) {
 			if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
-				sySndPlay(MUS_PUZZLE_SOLVED);
+				sySoundPlay(MUS_PUZZLE_SOLVED);
 				scVaultCaveApplyNorthernSwitchMetatiles();
 				gmFlagSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
 			}
@@ -490,13 +491,13 @@ static void scVaultCaveMoveNorthernPillar(void)
    can leap across. */
 static void scVaultCaveFreezeWestUpperPuddle(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_WEST_UPPER_PUDDLE);
+	ACTOR *target = fdActorGet(ACTOR_WEST_UPPER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 23, 32);
 
-	if(tgt != NULL) {
-		fdActorGet(ACTOR_WEST_UPPER_PUDDLE)->motionFlg = 0;
-		tgt->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	if(target != NULL) {
+		fdActorGet(ACTOR_WEST_UPPER_PUDDLE)->motionFlags = 0;
+		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN);
@@ -507,13 +508,13 @@ static void scVaultCaveFreezeWestUpperPuddle(void)
    can leap across. */
 static void scVaultCaveFreezeWestLowerPuddle(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_WEST_LOWER_PUDDLE);
+	ACTOR *target = fdActorGet(ACTOR_WEST_LOWER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 23, 34);
 
-	if(tgt != NULL) {
-		fdActorGet(ACTOR_WEST_LOWER_PUDDLE)->motionFlg = 0;
-		tgt->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	if(target != NULL) {
+		fdActorGet(ACTOR_WEST_LOWER_PUDDLE)->motionFlags = 0;
+		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN);
@@ -524,13 +525,13 @@ static void scVaultCaveFreezeWestLowerPuddle(void)
    whose top Isaac can leap across. */
 static void scVaultCaveFreezeInnerWestLowerPuddle(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_INNER_WEST_LOWER_PUDDLE);
+	ACTOR *target = fdActorGet(ACTOR_INNER_WEST_LOWER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 24, 34);
 
-	if(tgt != NULL) {
-		fdActorGet(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlg = 0;
-		tgt->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	if(target != NULL) {
+		fdActorGet(ACTOR_INNER_WEST_LOWER_PUDDLE)->motionFlags = 0;
+		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN);
@@ -541,15 +542,15 @@ static void scVaultCaveFreezeInnerWestLowerPuddle(void)
    can leap across. */
 static void scVaultCaveFreezeEastUpperPuddle(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_EAST_UPPER_PUDDLE);
+	ACTOR *target = fdActorGet(ACTOR_EAST_UPPER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 26, 32);
 
-	if(tgt != NULL) {
-		fdActorSetSprFlags(tgt, 0);
+	if(target != NULL) {
+		fdActorSetSpriteFlags(target, 0);
 
-		fdActorGet(ACTOR_EAST_UPPER_PUDDLE)->motionFlg = 0;
-		tgt->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_EAST_UPPER_PUDDLE)->motionFlags = 0;
+		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN);
@@ -560,15 +561,15 @@ static void scVaultCaveFreezeEastUpperPuddle(void)
    can leap across. */
 static void scVaultCaveFreezeEastLowerPuddle(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_EAST_LOWER_PUDDLE);
+	ACTOR *target = fdActorGet(ACTOR_EAST_LOWER_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 26, 34);
 
-	if(tgt != NULL) {
-		fdActorSetSprFlags(tgt, 0);
+	if(target != NULL) {
+		fdActorSetSpriteFlags(target, 0);
 
-		fdActorGet(ACTOR_EAST_LOWER_PUDDLE)->motionFlg = 0;
-		tgt->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_EAST_LOWER_PUDDLE)->motionFlags = 0;
+		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN);
@@ -579,15 +580,15 @@ static void scVaultCaveFreezeEastLowerPuddle(void)
    can leap across. */
 static void scVaultCaveFreezeFarEastPuddle(void)
 {
-	ACTOR *tgt = fdActorGet(ACTOR_FAR_EAST_PUDDLE);
+	ACTOR *target = fdActorGet(ACTOR_FAR_EAST_PUDDLE);
 
 	fdMapGridCopyMetatileAttributes(26, 30, 1, 1, 28, 33);
 
-	if(tgt != NULL) {
-		fdActorSetSprFlags(tgt, 0);
+	if(target != NULL) {
+		fdActorSetSpriteFlags(target, 0);
 
-		fdActorGet(ACTOR_FAR_EAST_PUDDLE)->motionFlg = 0;
-		tgt->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_FAR_EAST_PUDDLE)->motionFlags = 0;
+		target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 
 	gmFlagSet(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN);
@@ -608,12 +609,12 @@ static void scVaultCaveUpdatePuddlePriorities(void)
 /* Keeps all six puddles beneath the leader's feet. */
 static void scVaultCaveUseUnderfootFrostPriorities(void)
 {
-	Sint32 tgtIdx;
+	Sint32 targetIndex;
 	Sint32 actorSlot;
 
 	actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-	for(tgtIdx = 0; tgtIdx < 6; tgtIdx++) {
-		fdActorGet(actorSlot)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	for(targetIndex = 0; targetIndex < 6; targetIndex++) {
+		fdActorGet(actorSlot)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		actorSlot++;
 	}
 }
@@ -621,12 +622,12 @@ static void scVaultCaveUseUnderfootFrostPriorities(void)
 /* Restores automatic draw priority for the same six puddles. */
 static void scVaultCaveUseAutomaticFrostPriorities(void)
 {
-	Sint32 tgtIdx;
+	Sint32 targetIndex;
 	Sint32 actorSlot;
 
 	actorSlot = ACTOR_WEST_UPPER_PUDDLE;
-	for(tgtIdx = 0; tgtIdx < 6; tgtIdx++) {
-		fdActorGet(actorSlot)->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	for(targetIndex = 0; targetIndex < 6; targetIndex++) {
+		fdActorGet(actorSlot)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 		actorSlot++;
 	}
 }
@@ -637,7 +638,7 @@ static void scVaultCaveRunRumble(void)
 {
 	MAP_GRID_LAYER_SCROLL *layer =
 		&((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers[2];
-	Sint32 frm;
+	Sint32 frame;
 	Sint32 fadeLevel;
 	Sint32 lowFadeLevel;
 	Sint32 upperFadeBits;
@@ -652,10 +653,10 @@ static void scVaultCaveRunRumble(void)
 	}
 	fdMapGridSetShake(3, 3, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	sySndPlay(SE_RUSH);
+	sySoundPlay(SE_RUSH);
 	/* The water churns, its layer drifting by 0.04 to 0.07 of a pixel a
 	   tick. */
-	for(frm = 0; frm < 480; frm++) {
+	for(frame = 0; frame < 480; frame++) {
 		Uint32 scrollDrift = syRandomBelow(2048);
 
 		layer->phaseY =
@@ -664,24 +665,24 @@ static void scVaultCaveRunRumble(void)
 	}
 	fadeLevel = 6;
 	lowFadeLevel = 6;
-	frm = 0;
+	frame = 0;
 	/* The water fades off the floor in four steps, one every 20 ticks. The
 	   blend is packed as if it were a colour, the levels in RGB's three fields:
 	   REG_BLDALPHA reads lowFadeLevel as the water's weight and the first
 	   level, in the blue field, as the floor's, 24, above full; the green field
 	   falls in unused bits. */
 	upperFadeBits = fadeLevel << BLUE_SHIFT;
-	for(; frm <= 69; frm++) {
+	for(; frame <= 69; frame++) {
 		syIOWriteQueueStore16((Uint32)&REG_BLDALPHA,
 			upperFadeBits | (fadeLevel << GREEN_SHIFT) | lowFadeLevel);
 		fdScriptWait(1);
-		if(frm % 20 == 0) {
+		if(frame % 20 == 0) {
 			lowFadeLevel--;
 			fadeLevel--;
 		}
 	}
 	fdMapGridCopyMetatiles(19, 83, 15, 8, 19, 91);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdMapGridCenterOnFollowedPoint();
 	fdMapGridWaitForShakeToSettle();
 	fdScriptEnd();
@@ -696,22 +697,22 @@ static void scVaultCaveRunRumble(void)
    Vault. */
 static void scVaultCaveFlipSwitch(void)
 {
-	Sint32 dstColumn;
+	Sint32 destColumn;
 
 	if(fdScriptGetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
 		mnFieldMessageShow(MSGNO(MsgFieldFlippedSwitch), 1);
 		gmFlagSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
-		dstColumn = 92;
-		sySndPlay(SE_SWITCH);
-		fdMapGridCopyMetatiles(107, 27, 1, 1, dstColumn, 27);
+		destColumn = 92;
+		sySoundPlay(SE_SWITCH);
+		fdMapGridCopyMetatiles(107, 27, 1, 1, destColumn, 27);
 		fdScriptWait(39);
-		fdMapGridCopyMetatiles(108, 27, 1, 1, dstColumn, 27);
+		fdMapGridCopyMetatiles(108, 27, 1, 1, destColumn, 27);
 		fdScriptWait(50);
-		dstColumn = 25;
-		sySndPlay(SE_SWITCH_MECHANISM);
-		fdMapGridCopyMetatiles(1, 24, 1, 2, dstColumn, 27);
+		destColumn = 25;
+		sySoundPlay(SE_SWITCH_MECHANISM);
+		fdMapGridCopyMetatiles(1, 24, 1, 2, destColumn, 27);
 		fdScriptWait(40);
-		fdMapGridCopyMetatiles(2, 24, 1, 2, dstColumn, 27);
+		fdMapGridCopyMetatiles(2, 24, 1, 2, destColumn, 27);
 		fdScriptWait(40);
 		scVaultCaveRunRumble();
 	}
@@ -722,11 +723,11 @@ static void scVaultCaveFlipSwitch(void)
 static Sint32 scVaultCaveResetFallingActorAtActorMetatile(Sint32 subjectActorId)
 {
 	ACTOR *subject = fdActorGet(subjectActorId);
-	Sint32 fallingIdx;
+	Sint32 fallingIndex;
 
-	for(fallingIdx = 0; fallingIdx <= 3; fallingIdx++) {
+	for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
 		ACTOR *fallingActor =
-			fdActorGet(fallingIdx + ACTOR_FIRST_TIMED_WATER_DROP);
+			fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
 		if(fallingActor->y.fixed > 0 && fallingActor->y.fixed < toFIXED(16)) {
 			Sint32 fallingRow = METATILE_OF(fallingActor->z.fixed);
@@ -739,7 +740,7 @@ static Sint32 scVaultCaveResetFallingActorAtActorMetatile(Sint32 subjectActorId)
 			if(xDelta == 0 && zDelta == 0) {
 				fallingActor->y.fixed = toFIXED(255);
 				fallingActor->gravity = 0;
-				fallingActor->velY = 0;
+				fallingActor->velocityY = 0;
 				return 1;
 			}
 		}
@@ -753,36 +754,36 @@ static Sint32 scVaultCaveResetFallingActorAtActorMetatile(Sint32 subjectActorId)
    if one lands on it. */
 static void scVaultCaveUpdateTimedFallingActors(void)
 {
-	Sint32 fallingIdx;
+	Sint32 fallingIndex;
 	ACTOR *fallingActor;
 	Sint32 paused;
-	Sint32 scheduleIdx;
+	Sint32 scheduleIndex;
 
 	paused = fdActorGet(ACTOR_NORTHERN_PILLAR)->paused;
 	if(paused == 0) {
 		if(++VaultCaveScheduleTimer > 190) {
 			VaultCaveScheduleTimer = 0;
 		}
-		scheduleIdx = VaultCaveScheduleIndex;
-		if(VaultCaveScheduleTicks[scheduleIdx] == VaultCaveScheduleTimer) {
+		scheduleIndex = VaultCaveScheduleIndex;
+		if(VaultCaveScheduleTicks[scheduleIndex] == VaultCaveScheduleTimer) {
 			fallingActor =
-				fdActorGet((scheduleIdx + ACTOR_FIRST_TIMED_WATER_DROP));
+				fdActorGet((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
 			fallingActor->gravity = toFIXED(1) / 25;
 			if(++VaultCaveScheduleIndex > 3) {
 				VaultCaveScheduleIndex = 0;
 			}
 		}
-		for(fallingIdx = 0; fallingIdx <= 3; fallingIdx++) {
+		for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
 			fallingActor =
-				fdActorGet((fallingIdx + ACTOR_FIRST_TIMED_WATER_DROP));
-			if(fallingActor->velY >= 0) {
+				fdActorGet((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
+			if(fallingActor->velocityY >= 0) {
 				if(fallingActor->y.fixed < toFIXED(1)) {
 					scVaultCaveSpawnSplash(fallingActor);
 					fallingActor->y.fixed = toFIXED(255);
 					fallingActor->gravity = 0;
-					fallingActor->velY = 0;
+					fallingActor->velocityY = 0;
 					fallingActor->paused = 0;
-					sySndPlay(SE_DRIP);
+					sySoundPlay(SE_DRIP);
 				}
 			}
 		}
@@ -793,14 +794,14 @@ static void scVaultCaveUpdateTimedFallingActors(void)
 				ACTOR_NORTHERN_PILLAR, FLAME_PILLAR_ANIMATION_UNLIT);
 			if(fdScriptGetFlag(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK) == 0) {
 				gmFlagSet(FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK);
-				sySndPlay(SE_DUST_PUFF);
+				sySoundPlay(SE_DUST_PUFF);
 			} else {
-				sySndPlay(SE_DRIP);
+				sySoundPlay(SE_DRIP);
 			}
 		}
 		if(scVaultCaveResetFallingActorAtActorMetatile(
 			   ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
-			sySndPlay(SE_DRIP);
+			sySoundPlay(SE_DRIP);
 		}
 	}
 }
@@ -809,7 +810,7 @@ static void scVaultCaveUpdateTimedFallingActors(void)
    64 ticks, onto its puddle or onto the top of its ice pillar. */
 static void scVaultCaveUpdateFrostControlledFallingActors(void)
 {
-	Sint32 fallingIdx;
+	Sint32 fallingIndex;
 	ACTOR *fallingActor;
 	Sint32 frozen;
 
@@ -823,31 +824,31 @@ static void scVaultCaveUpdateFrostControlledFallingActors(void)
 		}
 		/* A drop goes back up once it reaches its puddle, or the top of the ice
 		   pillar 32 pixels up when the puddle is frozen. */
-		for(fallingIdx = 0; fallingIdx <= 5; fallingIdx++) {
-			fallingActor = fdActorGet((fallingIdx + ACTOR_FIRST_WATER_DROP));
+		for(fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
+			fallingActor = fdActorGet((fallingIndex + ACTOR_FIRST_WATER_DROP));
 			frozen = gmFlagGet(
-				(fallingIdx + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
+				(fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
 			if(frozen != 0) {
-				if(fallingActor->velY <= 0) {
+				if(fallingActor->velocityY <= 0) {
 					if(fallingActor->y.fixed >= toFIXED(33)) {
 						continue;
 					}
 				}
 				fallingActor->y.fixed = toFIXED(255);
 				fallingActor->gravity = 0;
-				fallingActor->velY = 0;
-				sySndPlay(SE_DRIP);
+				fallingActor->velocityY = 0;
+				sySoundPlay(SE_DRIP);
 			} else {
-				if(fallingActor->velY <= 0) {
+				if(fallingActor->velocityY <= 0) {
 					if(fallingActor->y.fixed >= toFIXED(1)) {
 						continue;
 					}
 				}
 				/* Both stop: frozen is 0 here. */
 				fallingActor->gravity = frozen;
-				fallingActor->velY = frozen;
+				fallingActor->velocityY = frozen;
 				fallingActor->y.fixed = toFIXED(255);
-				sySndPlay(SE_DRIP);
+				sySoundPlay(SE_DRIP);
 			}
 		}
 	}
@@ -855,35 +856,35 @@ static void scVaultCaveUpdateFrostControlledFallingActors(void)
 
 /* Offsets an actor's current position by a polar displacement. */
 static void scVaultCaveOffsetActorRadially(
-	ACTOR *actor, Sint32 radius, Sint32 ang)
+	ACTOR *actor, Sint32 radius, Sint32 angle)
 {
-	Sint32 dst[3];
+	Sint32 dest[3];
 
 	if(actor == NULL) {
 		return;
 	}
-	SET_VECTOR(dst, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	syVectorAddPolarOffset(radius, ang, dst);
-	syFieldActorSetMoveTargetFX(actor, dst[0], dst[1], dst[2]);
+	SET_VECTOR(dest, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+	syVectorAddPolarOffset(radius, angle, dest);
+	syFieldActorSetMoveTargetFX(actor, dest[0], dest[1], dest[2]);
 }
 
 /* Splashes up to four little drops around a drop of water where it lands. */
 static void scVaultCaveSpawnSplash(ACTOR *src)
 {
 	ACTOR *drop;
-	Sint32 dropIdx;
+	Sint32 dropIndex;
 
-	for(dropIdx = 0; dropIdx < 4; dropIdx++) {
+	for(dropIndex = 0; dropIndex < 4; dropIndex++) {
 		drop = syFieldActorCreate(
 			SPRITE_DROPLET, src->x.fixed, src->y.fixed, src->z.fixed);
 		if(drop == NULL)
 			break;
 		drop->scaleY = toFIXED(11) / 20;
 		drop->scaleX = toFIXED(11) / 20;
-		drop->motionFlg = ACTOR_FALLS;
-		drop->velY = -toFIXED(1);
+		drop->motionFlags = ACTOR_FALLS;
+		drop->velocityY = -toFIXED(1);
 		drop->speedLimit = syRandomNext() + toFIXED(4) / 5;
-		drop->collisionFlg = ACTOR_SOLID;
+		drop->collisionFlags = ACTOR_SOLID;
 		scVaultCaveOffsetActorRadially(drop, toFIXED(32), syRandomNext());
 		drop->wait = 8;
 		fdActorStartScript(drop, VaultCaveSplashScript);
@@ -899,7 +900,7 @@ static void scVaultCaveStartFrostControlledFalls(void)
 	for(i = 0; i < 6; i++) {
 		ACTOR *fallingActor;
 
-		fdActorSetSprFlags(fdActorGet(actorSlot), 0);
+		fdActorSetSpriteFlags(fdActorGet(actorSlot), 0);
 		fallingActor = fdActorGet(actorSlot);
 		fallingActor->bounce = toFIXED(1) / 10;
 		fallingActor->gravity = 0;
@@ -915,20 +916,21 @@ static void scVaultCaveStartFrostControlledFalls(void)
 static void scVaultCaveStartTimedFalls(void)
 {
 	Sint32 actorSlot = ACTOR_FIRST_TIMED_WATER_DROP;
-	Sint32 fallingIdx = 0;
+	Sint32 fallingIndex = 0;
 
 	do {
 		ACTOR *fallingActor;
 
-		fdActorSetSprFlags(fdActorGet(actorSlot), 0);
+		fdActorSetSpriteFlags(fdActorGet(actorSlot), 0);
 		fallingActor = fdActorGet(actorSlot);
 		fallingActor->bounce = toFIXED(1) / 10;
 		fallingActor->gravity = 0;
 		fallingActor->y.fixed = toFIXED(255);
-		fdActorSetSprPriority(fallingIdx + ACTOR_FIRST_TIMED_WATER_DROP, 1);
-		fallingIdx++;
+		fdActorSetSpritePriority(
+			fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP, 1);
+		fallingIndex++;
 		actorSlot++;
-	} while(fallingIdx <= 3);
+	} while(fallingIndex <= 3);
 
 	sySetTickEvent(scVaultCaveUpdateTimedFallingActors, EVENT_PASS_TICK);
 }
@@ -1021,7 +1023,7 @@ Sint32 scInit(void)
 				scVaultCaveApplySouthernSwitchMetatiles();
 				fdActorSetPos(ACTOR_SOUTHERN_PILLAR, 248, 876);
 			}
-			fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH)->priFlg =
+			fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH)->priorityFlags =
 				ACTOR_PRIORITY_UNDERFOOT;
 			break;
 		}
@@ -1029,9 +1031,10 @@ Sint32 scInit(void)
 			FLAME_PILLAR_ANIMATION_BURNING);
 		fdActorSetAnimation(
 			ACTOR_SOUTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
-		fdActorSetSprFlags(fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_SOUTHERN_PILLAR), 0);
-		fdActorGet(ACTOR_SOUTHERN_PILLAR)->collisionFlg = ACTOR_SOLID;
+		fdActorSetSpriteFlags(
+			fdActorGet(ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_SOUTHERN_PILLAR), 0);
+		fdActorGet(ACTOR_SOUTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
 	}
 	if(MainRoutineStateWork.next == SCENE_VAULT_CAVE_MOUTH) {
 		fdActorSetAnimation(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH,
@@ -1040,30 +1043,31 @@ Sint32 scInit(void)
 			fdActorSetAnimation(
 				ACTOR_NORTHERN_PILLAR, FLAME_PILLAR_ANIMATION_BURNING);
 		}
-		fdActorSetSprFlags(fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_NORTHERN_PILLAR), 0);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
+			fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_NORTHERN_PILLAR), 0);
+		fdActorSetSpriteFlags(
 			fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH), 0);
-		fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlg |=
+		fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlags |=
 			ACTOR_BLOCKED_BY_SOLID;
-		fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlg |=
+		fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags |=
 			ACTOR_BLOCKED_BY_SOLID;
 		switch(MainRoutineStateWork.entrance) {
 		case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
 		case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
 			scVaultCaveStartTimedFalls();
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlg =
+			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP)->collisionFlags =
 				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlg =
+			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 1)->collisionFlags =
 				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlg =
+			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 2)->collisionFlags =
 				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlg =
+			fdActorGet(ACTOR_FIRST_TIMED_WATER_DROP + 3)->collisionFlags =
 				ACTOR_PUSHABLE;
-			fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlg =
+			fdActorGet(ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH)->collisionFlags =
 				ACTOR_SOLID;
-			fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlg = ACTOR_SOLID;
-			fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlg =
+			fdActorGet(ACTOR_NORTHERN_PILLAR)->collisionFlags = ACTOR_SOLID;
+			fdActorGet(ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH)->collisionFlags =
 				ACTOR_SOLID;
 			if(gmFlagGet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
 				scVaultCaveApplyNorthernSwitchMetatiles();

@@ -37,14 +37,14 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	Sint32				 red;
 	Sint32				 green;
 	Sint32				 blue;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 wave;
 	Sint32				 level;
 	Uint16				*ramp;
-	Sint32				 ang;
+	Sint32				 angle;
 	Sint32				*line;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_WRAP);
 	btEffectRunDjinniEntrance(args,
@@ -116,36 +116,36 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 
 	/* Fade the disc in, ripple the display, then fade it out. */
-	for(frm = 0; frm != TORCH_TICKS; frm++) {
-		if(frm <= TORCH_FADE_TICKS) {
-			level = frm * 2;
+	for(frame = 0; frame != TORCH_TICKS; frame++) {
+		if(frame <= TORCH_FADE_TICKS) {
+			level = frame * 2;
 			wave = level;
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
 		} else {
-			wave = frm * 2;
+			wave = frame * 2;
 		}
-		if(frm > TORCH_TICKS - TORCH_FADE_TICKS)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_TICKS * 2 - frm * 2);
+		if(frame > TORCH_TICKS - TORCH_FADE_TICKS)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_TICKS * 2 - frame * 2);
 
-		if(frm == TORCH_STRIKE_TICK) {
+		if(frame == TORCH_STRIKE_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-			state->shakeFrm = 8;
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
+			state->shakeFrame = 8;
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_NUDGE);
 		}
 
 		/* Each line starts one canvas pixel further along than the one above,
 		   swayed either way by up to TORCH_SWAY. */
 		line = state->bg2xLines;
-		for(i = 0, ang = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
+		for(i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
 			*line++ = CANVAS_WAVE_BG2X(
-				i * toFIXED(4) - sySin(ang) * TORCH_SWAY + toFIXED(4));
-			ang += TRIG_TURN / 128;
+				i * toFIXED(4) - sySin(angle) * TORCH_SWAY + toFIXED(4));
+			angle += TRIG_TURN / 128;
 		}
 
 		/* Rotate the colours so the rings run outward. */
 		/* DEAD: never true, as tick stays below TORCH_TICKS; the ROM keeps
 		   the compare and the store. */
-		if(frm > 127) {
+		if(frame > 127) {
 			state->transferPending = 1;
 		} else {
 			ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];

@@ -621,15 +621,15 @@ typedef void (*EVENT_FUNC)(void);
 /* An event: its function's address, its priority (see EVENT_PASS_TICK) and its
    flags (EVENT_FLAG_KEEP_RUNNING). */
 typedef struct EVENT {
-	Uint32 func;
-	Uint16 pri;
-	Uint8  flg;
+	Uint32 callback;
+	Uint16 priority;
+	Uint8  flags;
 	Uint8  reserved;
 } EVENT;
 
 STATIC_ASSERT(sizeof(EVENT) == 8);
-STATIC_ASSERT(offsetof(EVENT, pri) == 4);
-STATIC_ASSERT(offsetof(EVENT, flg) == 6);
+STATIC_ASSERT(offsetof(EVENT, priority) == 4);
+STATIC_ASSERT(offsetof(EVENT, flags) == 6);
 
 /* An event's priority: the high byte picks the pass that runs it, the low byte
    ranks it within the pass (higher runs first). An odd high byte means the
@@ -648,7 +648,7 @@ STATIC_ASSERT(offsetof(EVENT, flg) == 6);
 #define EVENT_PRIORITY_REMOVED 0x7fff
 
 /* An event's priority's high byte: the pass it runs in. */
-#define EVENT_STATE_HIGH(task)	(((Uint8 *)&(task)->pri)[1])
+#define EVENT_STATE_HIGH(task)	(((Uint8 *)&(task)->priority)[1])
 /* The bit of an event's high priority byte (EVENT_STATE_HIGH) that suspends
    it. */
 #define EVENT_SUSPENDED			1
@@ -656,7 +656,7 @@ STATIC_ASSERT(offsetof(EVENT, flg) == 6);
    sySuspendOverlayEvents suspends the others. */
 #define EVENT_FLAG_KEEP_RUNNING 1
 /* Whether the event's function is in EWRAM, where a scene's overlay runs. */
-#define EVENT_IN_OVERLAY(task)	(((task)->func >> 24) == EWRAM_START >> 24)
+#define EVENT_IN_OVERLAY(task)	(((task)->callback >> 24) == EWRAM_START >> 24)
 
 /* The irq group. The interrupt sources, their handler table and the resident
    IWRAM code the interrupts enter through. The hardware's interrupt sources:
@@ -699,9 +699,9 @@ typedef void (*INTERRUPT_HANDLER)(void);
    Broken Seal; the system library README's "The heap" gives the allocators and
    the lifetime rule. Every scene change resets both pools and clears every slot
    (syHeapInit), so no block outlives the scene, battle or minigame that took
-   it. The Lost Age's slot functions (syHeapSlotAlloc, syHeapSlotAllocEWRAM,
-   syHeapSlotRelease) take a slot by its byte offset into HeapSlotsWork, so each
-   HEAP_SLOT_ name below is that offset. */
+   it. The Lost Age's slot functions (syHeapSlotAllocate,
+   syHeapSlotAllocateEWRAM, syHeapSlotRelease) take a slot by its byte offset
+   into HeapSlotsWork, so each HEAP_SLOT_ name below is that offset. */
 struct BATTLE_BACKGROUND_STATE;
 struct BATTLE_STATE;
 struct BATTLE_MESSAGE_STATE;
@@ -718,9 +718,9 @@ typedef struct HEAP_SLOTS {
 	void		 *nextEwram;   /* the EWRAM pool's next free byte */
 	void		 *nextIwram;   /* the IWRAM pool's next free byte */
 	Uint8		 *matrixStack; /* syPushMatrix's save area, one matrix deep */
-	void		 *sprAnms;	   /* the actor system's sprite animations */
-	void		 *sprs;		   /* the actor system's sprite pool */
-	struct ACTOR *actors;	   /* the 64 actors */
+	void		 *spriteAnimations; /* the actor system's sprite animations */
+	void		 *sprites;			/* the actor system's sprite pool */
+	struct ACTOR *actors;			/* the 64 actors */
 	struct ACTOR_SYSTEM_STATE *actorSystem; /* the actor system's state */
 	void *worldMapAffine;					/* the world map's affine state */
 	/* The field map's scrolling state, or on the world map its perspective view
@@ -738,22 +738,22 @@ typedef struct HEAP_SLOTS {
 	/* A scratch buffer, usually 1 KB, that a picture is decoded into and
 	   released as soon as its tiles are in VRAM. */
 	void  *tileScratch;
-	Uint8 *winState;  /* the window renderer's state (WIN_STATE) */
-	void  *partyStat; /* the party status window's layout */
+	Uint8 *windowState; /* the window renderer's state (WIN_STATE) */
+	void  *partyStatus; /* the party status window's layout */
 	/* the buffers an icon or portrait is decoded through */
 	void *glyphTransfer;
 	void *selectionMenu;			/* the selection screen's state */
 	void *unusedAfterSelectionMenu; /* no code allocates or reads this slot */
 	/* Lives for one tick: sySynch() builds the OAM list in it, and the field
 	   sprite decoder keeps its code there between its own uses. */
-	void *frmScratch;
+	void *frameScratch;
 	/* A RAM copy of fdRenderCopyStrided, which uploads field sprite pictures to
 	   VRAM. */
 	void *pictureUploader;
 	void *mindRead; /* Mind Read's wave state */
 	/* The running battle effect's own state. The dice games keep their own
 	   state in this slot and the next two. */
-	void *battleEff;
+	void *battleEffect;
 	void *battleCanvas; /* the running battle effect's pixel canvas */
 	void *battleSheet;	/* the running battle effect's tile sheet */
 	/* A function run from RAM: the canvas drawing function btEffectBuildBlitter
@@ -761,27 +761,27 @@ typedef struct HEAP_SLOTS {
 	   fdWorldMapUpdateAffineLines, which the world map calls as its own. */
 	Sint32 (*ramCode)(void *destination, const void *source, Sint32 x, Sint32 y,
 		Sint32 width, Sint32 height);
-	void *fieldState; /* a field scene's FIELD_STATE */
-	void *palCycles;  /* the palette cycles */
-	void *weather;	  /* the running ground particles, motes or sparkles */
-	void *fieldBlend; /* the field's colour blend state */
+	void *fieldState;	 /* a field scene's FIELD_STATE */
+	void *paletteCycles; /* the palette cycles */
+	void *weather;		 /* the running ground particles, motes or sparkles */
+	void *fieldBlend;	 /* the field's colour blend state */
 	/* The screen transition: the window edges and dissolve of a scene
 	   change. */
 	struct SCREEN_TRANSITION_STATE *screenTransition;
 	/* The palette fade that moves the BG and sprite palettes toward target
 	   colours (PALETTE_FADE). */
-	void *palFade;
-	void *unusedAfterPalFade;	 /* no code allocates or reads this slot */
-	void *lineScroll;			 /* the line scroll's state */
-	void *unusedAfterLineScroll; /* no code allocates or reads this slot */
-	void *fadeOverlay;			 /* the fade overlay's state */
+	void *paletteFade;
+	void *unusedAfterPaletteFade; /* no code allocates or reads this slot */
+	void *lineScroll;			  /* the line scroll's state */
+	void *unusedAfterLineScroll;  /* no code allocates or reads this slot */
+	void *fadeOverlay;			  /* the fade overlay's state */
 	struct BATTLE_MESSAGE_STATE *battleMsg; /* the battle message window */
 	void *unusedAfterBattleMsg;		  /* no code allocates or reads this slot */
 	struct ROPE_WORK	  *rope;	  /* a rope's state */
 	struct TIGHTROPE_WORK *tightrope; /* a tightrope's state */
-	void *hangingVine;	  /* a hanging vine's state (HANGING_VINE_WORK) */
-	void *battleEntryTmr; /* the battle's entry transition timer, in ticks */
-	void *titleIntro;	  /* the title intro's state */
+	void *hangingVine;		/* a hanging vine's state (HANGING_VINE_WORK) */
+	void *battleEntryTimer; /* the battle's entry transition timer, in ticks */
+	void *titleIntro;		/* the title intro's state */
 	/* The battle background's view and entry transition (32 bytes), from
 	   btRun. */
 	struct BATTLE_BACKGROUND_STATE *battleBg;
@@ -804,13 +804,13 @@ typedef struct HEAP_SLOTS {
 	/* The menu state shared by the field menu's screens and the shop; each
 	   takes it on opening and releases it on closing. */
 	void *menuState;
-	void *fieldEffState;		/* the Psynergy effect's state */
-	void *battleMenuState;		/* the battle menus' BATTLE_MENU_STATE */
-	void *iconMenu;				/* a command icon menu's state */
-	void *trialRoadLink;		/* the Trial Road's link state */
-	void *canvasSpr;			/* a field Psynergy's canvas sprite */
-	void *unusedAfterCanvasSpr; /* no code allocates or reads this slot */
-	void *arcEff;				/* a field Psynergy's arc state */
+	void *fieldEffectState;		   /* the Psynergy effect's state */
+	void *battleMenuState;		   /* the battle menus' BATTLE_MENU_STATE */
+	void *iconMenu;				   /* a command icon menu's state */
+	void *trialRoadLink;		   /* the Trial Road's link state */
+	void *canvasSprite;			   /* a field Psynergy's canvas sprite */
+	void *unusedAfterCanvasSprite; /* no code allocates or reads this slot */
+	void *arcEffect;			   /* a field Psynergy's arc state */
 	/* The Djinn the Naribwe fortune teller may hint at, 320 bytes, while she
 	   picks one (naribwe_rooms.c). */
 	Sint32 *djinniHints;
@@ -823,8 +823,8 @@ STATIC_ASSERT(offsetof(HEAP_SLOTS, menuState) == 55 * 4);
 /* The heap slots shared across folders, by byte offset into HeapSlotsWork. */
 typedef enum HEAP_SLOT {
 	HEAP_SLOT_MATRIX_STACK = offsetof(HEAP_SLOTS, matrixStack),
-	HEAP_SLOT_SPRITE_ANIMATIONS = offsetof(HEAP_SLOTS, sprAnms),
-	HEAP_SLOT_SPRITES = offsetof(HEAP_SLOTS, sprs),
+	HEAP_SLOT_SPRITE_ANIMATIONS = offsetof(HEAP_SLOTS, spriteAnimations),
+	HEAP_SLOT_SPRITES = offsetof(HEAP_SLOTS, sprites),
 	HEAP_SLOT_ACTORS = offsetof(HEAP_SLOTS, actors),
 	HEAP_SLOT_ACTOR_SYSTEM = offsetof(HEAP_SLOTS, actorSystem),
 	HEAP_SLOT_WORLD_MAP_AFFINE = offsetof(HEAP_SLOTS, worldMapAffine),
@@ -834,30 +834,30 @@ typedef enum HEAP_SLOT {
 	HEAP_SLOT_BATTLE_UNUSED = offsetof(HEAP_SLOTS, battleUnused),
 	HEAP_SLOT_CAMERA = offsetof(HEAP_SLOTS, cameraState),
 	HEAP_SLOT_TILE_SCRATCH = offsetof(HEAP_SLOTS, tileScratch),
-	HEAP_SLOT_WINDOW = offsetof(HEAP_SLOTS, winState),
-	HEAP_SLOT_PARTY_STATUS = offsetof(HEAP_SLOTS, partyStat),
+	HEAP_SLOT_WINDOW = offsetof(HEAP_SLOTS, windowState),
+	HEAP_SLOT_PARTY_STATUS = offsetof(HEAP_SLOTS, partyStatus),
 	HEAP_SLOT_ICON_TRANSFER = offsetof(HEAP_SLOTS, glyphTransfer),
 	HEAP_SLOT_SELECTION_MENU = offsetof(HEAP_SLOTS, selectionMenu),
-	HEAP_SLOT_TICK_SCRATCH = offsetof(HEAP_SLOTS, frmScratch),
+	HEAP_SLOT_TICK_SCRATCH = offsetof(HEAP_SLOTS, frameScratch),
 	HEAP_SLOT_PICTURE_UPLOADER = offsetof(HEAP_SLOTS, pictureUploader),
 	HEAP_SLOT_MIND_READ = offsetof(HEAP_SLOTS, mindRead),
-	HEAP_SLOT_BATTLE_EFFECT = offsetof(HEAP_SLOTS, battleEff),
+	HEAP_SLOT_BATTLE_EFFECT = offsetof(HEAP_SLOTS, battleEffect),
 	HEAP_SLOT_BATTLE_CANVAS = offsetof(HEAP_SLOTS, battleCanvas),
 	HEAP_SLOT_BATTLE_SHEET = offsetof(HEAP_SLOTS, battleSheet),
 	HEAP_SLOT_RAM_CODE = offsetof(HEAP_SLOTS, ramCode),
 	HEAP_SLOT_FIELD = offsetof(HEAP_SLOTS, fieldState),
-	HEAP_SLOT_PALETTE_CYCLES = offsetof(HEAP_SLOTS, palCycles),
+	HEAP_SLOT_PALETTE_CYCLES = offsetof(HEAP_SLOTS, paletteCycles),
 	HEAP_SLOT_WEATHER = offsetof(HEAP_SLOTS, weather),
 	HEAP_SLOT_FIELD_BLEND = offsetof(HEAP_SLOTS, fieldBlend),
 	HEAP_SLOT_SCREEN_TRANSITION = offsetof(HEAP_SLOTS, screenTransition),
-	HEAP_SLOT_PALETTE_FADE = offsetof(HEAP_SLOTS, palFade),
+	HEAP_SLOT_PALETTE_FADE = offsetof(HEAP_SLOTS, paletteFade),
 	HEAP_SLOT_LINE_SCROLL = offsetof(HEAP_SLOTS, lineScroll),
 	HEAP_SLOT_FADE_OVERLAY = offsetof(HEAP_SLOTS, fadeOverlay),
 	HEAP_SLOT_BATTLE_MESSAGE = offsetof(HEAP_SLOTS, battleMsg),
 	HEAP_SLOT_ROPE = offsetof(HEAP_SLOTS, rope),
 	HEAP_SLOT_TIGHTROPE = offsetof(HEAP_SLOTS, tightrope),
 	HEAP_SLOT_HANGING_VINE = offsetof(HEAP_SLOTS, hangingVine),
-	HEAP_SLOT_BATTLE_ENTRY_TIMER = offsetof(HEAP_SLOTS, battleEntryTmr),
+	HEAP_SLOT_BATTLE_ENTRY_TIMER = offsetof(HEAP_SLOTS, battleEntryTimer),
 	HEAP_SLOT_TITLE_INTRO = offsetof(HEAP_SLOTS, titleIntro),
 	HEAP_SLOT_BATTLE_BACKGROUND = offsetof(HEAP_SLOTS, battleBg),
 	HEAP_SLOT_CANVAS_MAP = offsetof(HEAP_SLOTS, canvasMap),
@@ -867,12 +867,12 @@ typedef enum HEAP_SLOT {
 	HEAP_SLOT_SETTINGS_MENU = offsetof(HEAP_SLOTS, settingsMenu),
 	HEAP_SLOT_ENEMY_UNITS = offsetof(HEAP_SLOTS, enemyUnits),
 	HEAP_SLOT_MENU = offsetof(HEAP_SLOTS, menuState),
-	HEAP_SLOT_FIELD_EFFECT = offsetof(HEAP_SLOTS, fieldEffState),
+	HEAP_SLOT_FIELD_EFFECT = offsetof(HEAP_SLOTS, fieldEffectState),
 	HEAP_SLOT_BATTLE_MENU = offsetof(HEAP_SLOTS, battleMenuState),
 	HEAP_SLOT_ICON_MENU = offsetof(HEAP_SLOTS, iconMenu),
 	HEAP_SLOT_TRIAL_ROAD_LINK = offsetof(HEAP_SLOTS, trialRoadLink),
-	HEAP_SLOT_CANVAS_SPRITE = offsetof(HEAP_SLOTS, canvasSpr),
-	HEAP_SLOT_ARC_EFFECT = offsetof(HEAP_SLOTS, arcEff),
+	HEAP_SLOT_CANVAS_SPRITE = offsetof(HEAP_SLOTS, canvasSprite),
+	HEAP_SLOT_ARC_EFFECT = offsetof(HEAP_SLOTS, arcEffect),
 	HEAP_SLOT_DJINNI_HINTS = offsetof(HEAP_SLOTS, djinniHints)
 } HEAP_SLOT;
 
@@ -892,7 +892,7 @@ typedef enum HEAP_SLOT {
 typedef struct AFFINE_TRANSFORM {
 	Uint16 scaleX;	/* 8.8 fixed point, read signed */
 	Uint16 scaleY;	/* 8.8 fixed point, read signed */
-	Uint16 ang;		/* 1/65536 turns */
+	Uint16 angle;	/* 1/65536 turns */
 	Uint16 padding; /* never read; keeps the struct 8 bytes */
 } AFFINE_TRANSFORM;
 
@@ -907,7 +907,7 @@ typedef union AFFINE_MATRIX {
 
 STATIC_ASSERT(sizeof(AFFINE_TRANSFORM) == 8);
 STATIC_ASSERT(offsetof(AFFINE_TRANSFORM, scaleY) == 2);
-STATIC_ASSERT(offsetof(AFFINE_TRANSFORM, ang) == 4);
+STATIC_ASSERT(offsetof(AFFINE_TRANSFORM, angle) == 4);
 STATIC_ASSERT(sizeof(AFFINE_MATRIX) == 8);
 
 /* The bg_scroll group. The four backgrounds' scroll offsets, written to the
@@ -920,8 +920,8 @@ typedef struct BG_SCROLL {
    channel. DMA channel registers (DMAxSAD, DMAxDAD, DMAxCNT). */
 typedef struct DMA_REGISTERS {
 	Uint32 src;
-	Uint32 dst;
-	Uint32 ctrl;
+	Uint32 dest;
+	Uint32 control;
 } DMA_REGISTERS;
 
 /* DMA channel 0's control halfword (DMA0CNT_H) among REG_DMA0's halfwords. */
@@ -935,21 +935,21 @@ typedef struct DMA_REGISTERS {
    holds the ldr/bx instructions and a target word. */
 typedef struct STUB {
 	Uint32 stub;
-	Uint32 tgt;
+	Uint32 target;
 } STUB;
 
 /* A system module table entry whose two-argument target the world map's tilt
    calls, the arctangent. */
 typedef struct ARC_TAN_STUB {
 	Uint32 stub;
-	Sint32 (*tgt)(Sint32 x, Sint32 y);
+	Sint32 (*target)(Sint32 x, Sint32 y);
 } ARC_TAN_STUB;
 
 /* A system module table entry whose one-argument target the world map's tilt
    calls, the sine or the cosine. */
 typedef struct TRIG_STUB {
 	Uint32 stub;
-	Sint32 (*tgt)(Sint32 angle);
+	Sint32 (*target)(Sint32 angle);
 } TRIG_STUB;
 
 /* The start of the system module's stub table, as far as syCos. */
@@ -977,20 +977,20 @@ typedef struct INPUT_STATE {
 	/* Pressed keys, repeating while held: after 19 ticks, then every 6. */
 	volatile Uint32 repeat;
 	/* repeat with at most one D-pad direction. */
-	volatile Uint32 dir;
+	volatile Uint32 direction;
 	/* The D-pad direction kept: of several held, the one added last. */
-	volatile Uint32 prevDir;
+	volatile Uint32 prevDirection;
 	Uint32			prevData;	 /* held when the tick loop last read it */
 	Uint32			pendingPush; /* presses since a reader last cleared it */
 	/* Ticks until the held keys repeat; -1 makes them repeat at once. */
-	volatile Sint32 repeatTmr;
+	volatile Sint32 repeatTimer;
 } INPUT_STATE;
 
 STATIC_ASSERT(sizeof(INPUT_STATE) == 36);
 STATIC_ASSERT(offsetof(INPUT_STATE, data) == 0);
 STATIC_ASSERT(offsetof(INPUT_STATE, push) == 4);
 STATIC_ASSERT(offsetof(INPUT_STATE, repeat) == 12);
-STATIC_ASSERT(offsetof(INPUT_STATE, repeatTmr) == 32);
+STATIC_ASSERT(offsetof(INPUT_STATE, repeatTimer) == 32);
 
 /* The io_write_queue group. The I/O write queue: register writes held until
    VBlank. The writes the queue holds. */
@@ -1000,7 +1000,7 @@ STATIC_ASSERT(offsetof(INPUT_STATE, repeatTmr) == 32);
    tick, each its value, address and control word; syIOWriteQueueFlushPending
    empties it. */
 typedef struct IO_WRITE_QUEUE {
-	Uint16 cnt;
+	Uint16 count;
 	Uint16 padding;
 	Uint32 entries[IO_WRITE_QUEUE_SIZE][3];
 } IO_WRITE_QUEUE;
@@ -1026,9 +1026,9 @@ typedef struct IO_WRITE_QUEUE {
    the functions resident in IWRAM. */
 #define syWordsClearEntry \
 	FIXED_ADDRESS( \
-		(Sint32 (*)(void *dst, Sint32 size)), 0x03000258, syIWRAMWordsClear)
+		(Sint32 (*)(void *dest, Sint32 size)), 0x03000258, syIWRAMWordsClear)
 #define syWordsFillEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *dst, Sint32 size, Uint32 value)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dest, Sint32 size, Uint32 value)), \
 		0x03000260, syIWRAMWordsFill)
 /* (left * right) >> 16 with a 64-bit product: the 16.16 product of two 16.16
    numbers. */
@@ -1064,11 +1064,11 @@ typedef struct IO_WRITE_QUEUE {
 #define syIntegerDivideUnsignedEntry \
 	FIXED_ADDRESS((Uint32 (*)(Uint32 dividend, Uint32 divisor)), 0x03000534, \
 		syIWRAMUnsignedDivide)
-#define syDecompressSprPictureEntry \
-	FIXED_ADDRESS((void *(*)(const void *src, void *dst)), 0x03000694, \
+#define syDecompressSpritePictureEntry \
+	FIXED_ADDRESS((void *(*)(const void *src, void *dest)), 0x03000694, \
 		syIWRAMDecompress)
 #define syWordsCopyEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *dst, const void *src, Sint32 size)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dest, const void *src, Sint32 size)), \
 		0x03000730, syIWRAMWordsCopy)
 
 /* syWordsCopy's offset from syIWRAMIRQMain, for the callers that reach it from
@@ -1250,8 +1250,8 @@ typedef struct MAIN_ROUTINE_STATE {
 	Sint32 leaderActorId; /* the leader */
 	Uint8  party[8];	  /* the party in order */
 	Uint8  unusedAfterParty[5]; /* no code names it */
-	Uint8  winHue;				/* the "Window color" setting (option 0) */
-	Uint8  winBrightness;		/* the "Window brightness" setting (option 1) */
+	Uint8  windowHue;			/* the "Window color" setting (option 0) */
+	Uint8  windowBrightness;	/* the "Window brightness" setting (option 1) */
 	Uint8  unusedAfterBrightness[3];
 	Uint8  speech;			  /* option 3, on or off; 1 on a new game */
 	Uint8  unusedAfterSpeech; /* 1 on a new game; nothing reads it */
@@ -1260,8 +1260,8 @@ typedef struct MAIN_ROUTINE_STATE {
 	Uint8 msgSpeed;
 	Uint8 unusedAfterMsgSpeed[2];
 	/* Set on saving at the end of the game, marking the file cleared: its data
-	   can be sent. Copied to the file's summary as sendFlg. */
-	Uint8 sendFlg;
+	   can be sent. Copied to the file's summary as sendFlag. */
+	Uint8 sendFlag;
 	/* The buttons for each field command, as KEY_ masks, set on a new game;
 	   read with PerWork.push except dashKeys, held. */
 	Uint16 aKeys;	   /* examine; KEY_A */
@@ -1305,7 +1305,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	Sint16 retreatEntrance; /* where Retreat goes; the group's first entrance */
 	FIXED  avoidDistance; /* distance left of Avoid, 16.16 pixels; 0 when off */
 	Sint8  avoidByItem; /* Avoid came from an item (FLAG_PSYNERGY_FROM_ITEM) */
-	Uint8  pausedColMode; /* the paused object's first animation param */
+	Uint8  pausedColorMode; /* the paused object's first animation param */
 	Sint16 haltedActor; /* the object field Psynergy has stopped, -1 for none */
 	/* Nonzero while the leader is sand (fdPsynergySand): ending the pending
 	   actions ends Sand too, and the field's push and button handler idles. */
@@ -1371,31 +1371,31 @@ typedef struct WORLD_MAP_MARKER {
 	Uint8  unused[4]; /* no code names it */
 	Uint16 y : 8;
 	Uint16 affine : 2;
-	Uint16 objMode : 2;
+	Uint16 objectMode : 2;
 	Uint16 mosaic : 1;
-	Uint16 fullCol : 1;
+	Uint16 fullColor : 1;
 	Uint16 shape : 2;
 	Uint16 x : 9;
-	Uint16 affineIdx : 5;
+	Uint16 affineIndex : 5;
 	Uint16 size : 2;
 	Uint16 tile : 10;
-	Uint16 pri : 2;
-	Uint16 pal : 4;
-	Uint8  unusedAfterPal[2]; /* no code names it */
+	Uint16 priority : 2;
+	Uint16 palette : 4;
+	Uint8  unusedAfterPalette[2]; /* no code names it */
 } WORLD_MAP_MARKER;
 
 /* WorldMapStateWork, the map screen's state while it is open: its resources,
    the cursor and the marker sprites. */
 typedef struct WORLD_MAP_STATE {
 	Uint16 vramBlock;		/* owns the marker tiles */
-	Uint16 winSlot;			/* the resource slot of the name window's tiles */
+	Uint16 windowSlot;		/* the resource slot of the name window's tiles */
 	FIXED  x;				/* the cursor's screen column, 16.16 pixels */
 	FIXED  z;				/* the cursor's screen row, 16.16 pixels */
 	Uint8  unusedAfterZ[6]; /* no code names them */
 	Sint16 shown; /* the WORLD_MAP_PLACE whose name is drawn; -1 for none */
 	Uint8  unusedAfterShown[4]; /* no code names them */
 	FIXED  speed;				/* the cursor's speed, 16.16 pixels per tick */
-	void  *win;					/* the name window */
+	void  *window;				/* the name window */
 	WORLD_MAP_MARKER markers[129]; /* the marker sprites */
 	Sint32			*cursor;	   /* the cursor the picture scrolls to */
 	FIXED			 scrollX;	   /* the picture's scroll, 16.16 pixels */
@@ -1419,7 +1419,7 @@ typedef struct WORLD_MAP_STATE {
 	FIXED searchZ;
 } WORLD_MAP_STATE;
 
-STATIC_ASSERT(offsetof(WORLD_MAP_STATE, win) == 28);
+STATIC_ASSERT(offsetof(WORLD_MAP_STATE, window) == 28);
 STATIC_ASSERT(offsetof(WORLD_MAP_STATE, cursor) == 1580);
 STATIC_ASSERT(offsetof(WORLD_MAP_STATE, mode) == 1602);
 STATIC_ASSERT(offsetof(WORLD_MAP_STATE, searchZ) == 1608);
@@ -1428,7 +1428,7 @@ STATIC_ASSERT(offsetof(WORLD_MAP_STATE, searchZ) == 1608);
    the destination last chosen on the map screen. Written through the member,
    fdMapScreenShow compiles otherwise. */
 typedef struct WORLD_MAP_CHOICE {
-	Sint16 flg; /* the chosen WORLD_MAP_PLACE's flag; -1 when cancelled */
+	Sint16 flags; /* the chosen WORLD_MAP_PLACE's flag; -1 when cancelled */
 } WORLD_MAP_CHOICE;
 
 /* The save group. The save in flash: its sectors, parts and summaries, and the
@@ -1463,14 +1463,14 @@ typedef struct BUP_SUMMARY {
 	Uint16 area;		   /* area name number (fdAreaGetNameIndex) */
 	Uint32 playTime;	   /* ticks */
 	Uint32 coins;
-	Sint8  djinn[4]; /* the party's Djinn of each element */
-	Sint8  party[5]; /* up to four party members, ended by -1 */
-	Sint8  sendFlg;	 /* MainRoutineStateWork.sendFlg: the file is cleared */
-	Sint8  djinnCnt; /* the Djinn found: their flags from FLAG_DJINN_FIRST */
-	Sint8  reunited; /* FLAG_REUNION is set */
-	Uint8  winHue;	 /* MainRoutineStateWork.winHue */
-	Uint8  winBrightness; /* MainRoutineStateWork.winBrightness */
-	Uint16 buildStamp;	  /* low half of the build stamp saved with the game */
+	Sint8  djinn[4];   /* the party's Djinn of each element */
+	Sint8  party[5];   /* up to four party members, ended by -1 */
+	Sint8  sendFlag;   /* MainRoutineStateWork.sendFlag: the file is cleared */
+	Sint8  djinnCount; /* the Djinn found: their flags from FLAG_DJINN_FIRST */
+	Sint8  reunited;   /* FLAG_REUNION is set */
+	Uint8  windowHue;  /* MainRoutineStateWork.windowHue */
+	Uint8  windowBrightness; /* MainRoutineStateWork.windowBrightness */
+	Uint16 buildStamp; /* low half of the build stamp saved with the game */
 	/* The play time saved at the start of the file's next sector (offset 0x10,
 	   or 0x110 for the extra summary), filled on reading; a file whose playTime
 	   differs from it was not written whole. */
@@ -1484,14 +1484,14 @@ typedef struct BUP_WORKSPACE {
 	/* 1 for a sector holding the current copy of a part */
 	Uint8  occupied[BUP_SECTOR_COUNT];
 	Uint8  partId[BUP_SECTOR_COUNT]; /* each sector's part */
-	Uint16 cnt[BUP_SECTOR_COUNT];	 /* each sector's counter */
+	Uint16 count[BUP_SECTOR_COUNT];	 /* each sector's counter */
 	/* one part's sectors, read from or written to flash */
 	Uint8 slot[BUP_SECTORS_PER_PART * BUP_SECTOR_SIZE];
 	BUP_SUMMARY
 	summary[BUP_FILE_COUNT];	   /* each file's, from parts 0 to 2 */
 	BUP_SUMMARY extra;			   /* part 3's summary */
 	void (*progress)(Sint32 step); /* called between sector writes, if set */
-	Uint16 sectorCnt;			   /* 0 when a write starts */
+	Uint16 sectorCount;			   /* 0 when a write starts */
 	/* Sectors to write: a part's, and as many again when an old copy is
 	   invalidated. */
 	Uint16 sectorTotal;
@@ -1503,7 +1503,7 @@ typedef struct BUP_SECTOR_HEADER {
 	Uint8  signature[7]; /* `CAMELOT`, unterminated */
 	Uint8  partId;
 	Uint16 checksum;
-	Uint16 cnt;
+	Uint16 count;
 	Uint8  reserved[4]; /* no code names it */
 } BUP_SECTOR_HEADER;
 
@@ -1520,7 +1520,7 @@ typedef struct BUP_SECTOR_HEADER {
 #define BROKEN_SEAL_SAVE_IMAGE_UNITS 1280
 
 STATIC_ASSERT(sizeof(BUP_SUMMARY) == 64);
-STATIC_ASSERT(offsetof(BUP_WORKSPACE, cnt) == 30);
+STATIC_ASSERT(offsetof(BUP_WORKSPACE, count) == 30);
 STATIC_ASSERT(offsetof(BUP_WORKSPACE, summary) == 12348);
 STATIC_ASSERT(offsetof(BUP_WORKSPACE, extra) == 12540);
 STATIC_ASSERT(sizeof(BUP_WORKSPACE) == 12612);
@@ -1531,7 +1531,7 @@ STATIC_ASSERT(sizeof(BUP_SECTOR_HEADER) == 16);
    heard from, its checksum and a 24-byte payload. */
 typedef struct SERIAL_PACKET {
 	/* SERIAL_STATE's packet number when the packet was built */
-	Uint8 packetNum;
+	Uint8 packetNumber;
 	/* The consoles heard from before but not this tick (receivedMask ^
 	   currentMask); a receiver complements it once the checksum is good. */
 	Uint8 missingMask;
@@ -1543,7 +1543,7 @@ typedef struct SERIAL_PACKET {
 } SERIAL_PACKET;
 
 STATIC_ASSERT(sizeof(SERIAL_PACKET) == 32);
-STATIC_ASSERT(offsetof(SERIAL_PACKET, packetNum) == 0);
+STATIC_ASSERT(offsetof(SERIAL_PACKET, packetNumber) == 0);
 STATIC_ASSERT(offsetof(SERIAL_PACKET, missingMask) == 1);
 STATIC_ASSERT(offsetof(SERIAL_PACKET, checksum) == 2);
 STATIC_ASSERT(offsetof(SERIAL_PACKET, payload) == 4);
@@ -1591,10 +1591,10 @@ typedef struct SERIAL_STATE {
 	Uint8 mode;
 	Uint8 phase;		/* an SERIAL_PHASE */
 	Uint8 receivedMask; /* the consoles heard from since the link began */
-	Uint8 curMask;		/* the consoles heard from this tick */
+	Uint8 currentMask;	/* the consoles heard from this tick */
 	/* Each console's SERIAL_CHANNEL_FLAG bits, set by the transfer interrupt
 	   and cleared each tick. */
-	Uint8 channelFlg[4];
+	Uint8 channelFlags[4];
 	/* Nonzero lets a new packet restart timer 3. */
 	Uint8 transferEnabled;
 	/* SIOCNT's error bit (SIO_ERROR), which multiplayer mode sets when a
@@ -1604,16 +1604,16 @@ typedef struct SERIAL_STATE {
 	Uint8 transferError;
 	Uint8 reserved0a;
 	/* The packet number, counted up each tick once connected. */
-	Uint8 packetNum;
+	Uint8 packetNumber;
 	Uint8 reserved0c[8];
 	/* The halfword of sendBuf[1] sent next; -1 between packets, when
 	   system_serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers
 	   swap. */
-	Sint32 sendIdx;
+	Sint32 sendIndex;
 	/* Each console's next halfword in its incomingBuf; -1 after an idle
 	   system_serial.c's SERIAL_IDLE_HALFWORD. */
-	Sint32 receiveIdx[2];
-	Uint8  reservedAfterReceiveIdx[8];
+	Sint32 receiveIndex[2];
+	Uint8  reservedAfterReceiveIndex[8];
 	/* The packet being built ([0]) and the packet being sent ([1]). */
 	Uint16 *sendBuf[2];
 	/* Each console's packet being received; two are used. */
@@ -1631,10 +1631,10 @@ typedef struct SERIAL_STATE {
 STATIC_ASSERT(sizeof(SERIAL_STATE) == 352);
 STATIC_ASSERT(offsetof(SERIAL_STATE, mode) == 0);
 STATIC_ASSERT(offsetof(SERIAL_STATE, transferEnabled) == 8);
-STATIC_ASSERT(offsetof(SERIAL_STATE, sendIdx) == 20);
+STATIC_ASSERT(offsetof(SERIAL_STATE, sendIndex) == 20);
 STATIC_ASSERT(offsetof(SERIAL_STATE, storage) == 96);
 
-/* SERIAL_STATE.channelFlg: what the transfer interrupts saw of a console's
+/* SERIAL_STATE.channelFlags: what the transfer interrupts saw of a console's
    packets since the last tick. */
 typedef enum SERIAL_CHANNEL_FLAG {
 	SERIAL_CHANNEL_PACKET_COMPLETE = 1, /* its fourteenth halfword arrived */
@@ -1642,14 +1642,14 @@ typedef enum SERIAL_CHANNEL_FLAG {
 	SERIAL_CHANNEL_ERROR = 2
 } SERIAL_CHANNEL_FLAG;
 
-/* SERIAL_TRANSFER_STATE.flg: how far this console's receive has got. */
+/* SERIAL_TRANSFER_STATE.flags: how far this console's receive has got. */
 typedef enum SERIAL_RECEIVE_STATE {
 	SERIAL_RECEIVE_IDLE = 0,
 	SERIAL_RECEIVE_ACTIVE = 1,
 	SERIAL_RECEIVE_DONE = 2 /* the last block taken */
 } SERIAL_RECEIVE_STATE;
 
-/* SERIAL_TRANSFER_STATE.peerFlg: the kind of block this console sends. */
+/* SERIAL_TRANSFER_STATE.peerFlags: the kind of block this console sends. */
 typedef enum SERIAL_SEND_STATE {
 	SERIAL_SEND_IDLE = 0,
 	SERIAL_SEND_MORE = 1, /* a block with more to follow */
@@ -1661,7 +1661,7 @@ typedef enum SERIAL_SEND_STATE {
    set, asks the sender to rewind to that block (sySerialStepBlockTransfer). */
 #define SERIAL_BLOCK_NUMBER_MASK 0x7f
 #define SERIAL_BLOCK_REWIND		 0x80 /* bit 7: rewind to the block number */
-/* SERIAL_TRANSFER_STATE.stat's bit 7, set when a send or receive starts; the
+/* SERIAL_TRANSFER_STATE.status's bit 7, set when a send or receive starts; the
    receiver counts its blocks in the low bits (sySerialStepBlockTransfer). */
 #define SERIAL_STATUS_RUNNING	 0x80
 
@@ -1673,17 +1673,17 @@ typedef struct SERIAL_TRANSFER_STATE {
 	Uint8 active;
 	/* SERIAL_STATUS_RUNNING when started, plus 1 for a receive; the receiver
 	   counts blocks (status + 1, with bit 7) and sets 0 after the last. */
-	Uint8 stat;
-	Uint8 flg;		   /* the receive state, an SERIAL_RECEIVE_STATE */
-	Uint8 peerFlg;	   /* the send state, an SERIAL_SEND_STATE */
+	Uint8 status;
+	Uint8 flags;	   /* the receive state, an SERIAL_RECEIVE_STATE */
+	Uint8 peerFlags;   /* the send state, an SERIAL_SEND_STATE */
 	Uint8 payload[20]; /* one block of the data sent */
 } SERIAL_TRANSFER_STATE;
 
 STATIC_ASSERT(sizeof(SERIAL_TRANSFER_STATE) == 24);
 STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, active) == 0);
-STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, stat) == 1);
-STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, flg) == 2);
-STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, peerFlg) == 3);
+STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, status) == 1);
+STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, flags) == 2);
+STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, peerFlags) == 3);
 STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, payload) == 4);
 
 #define SERIAL_RUNTIME (&SerialStateWork)
@@ -1699,34 +1699,34 @@ typedef struct ANIMATION_METADATA {
 	Uint16 scale;
 	/* The ANIMATION_FACING_KIND: which facing table turns its pictures. */
 	Uint8 drawKind;
-	Uint8 anmCnt;  /* scripts in animation */
-	Sint8 adjustX; /* pixels the sprite is drawn off its position */
-	Sint8 adjustY; /* pixels the sprite is drawn off its position */
+	Uint8 animationCount; /* scripts in animation */
+	Sint8 adjustX;		  /* pixels the sprite is drawn off its position */
+	Sint8 adjustY;		  /* pixels the sprite is drawn off its position */
 	/* Pixels from the actor's feet up to the top of its sprite, read signed:
 	   where Mind Read's line starts, and what an actor carried on top of
 	   another is raised by. */
-	Uint8 sprTop;
+	Uint8 spriteTop;
 	Uint8 footprint; /* pixels across the actor stands on, twice its radius */
 	/* How its pictures are packed: 1 type-01, 3 LZ, anything else raw. */
 	Uint8	pictureCodec;
-	void  **pictures; /* null for a sprite whose pictures a cache loads */
-	Uint8 **anm;	  /* its command scripts, one per animation number */
+	void  **pictures;  /* null for a sprite whose pictures a cache loads */
+	Uint8 **animation; /* its command scripts, one per animation number */
 } ANIMATION_METADATA;
 
 STATIC_ASSERT(sizeof(ANIMATION_METADATA) == 20);
 STATIC_ASSERT(offsetof(ANIMATION_METADATA, scale) == 2);
-STATIC_ASSERT(offsetof(ANIMATION_METADATA, anmCnt) == 5);
-STATIC_ASSERT(offsetof(ANIMATION_METADATA, sprTop) == 8);
+STATIC_ASSERT(offsetof(ANIMATION_METADATA, animationCount) == 5);
+STATIC_ASSERT(offsetof(ANIMATION_METADATA, spriteTop) == 8);
 STATIC_ASSERT(offsetof(ANIMATION_METADATA, footprint) == 9);
 STATIC_ASSERT(offsetof(ANIMATION_METADATA, pictureCodec) == 10);
 STATIC_ASSERT(offsetof(ANIMATION_METADATA, pictures) == 12);
-STATIC_ASSERT(offsetof(ANIMATION_METADATA, anm) == 16);
+STATIC_ASSERT(offsetof(ANIMATION_METADATA, animation) == 16);
 
 /* Looks up animation metadata using the descriptor ID in the low twelve bits:
    that row of SpriteAnimationMetadata (graphics/sprite/sprites.s), with no
    bounds check. */
-ANIMATION_METADATA *syResourceGetMetadataRecord(Uint32 num);
-ANIMATION_METADATA *fdResourceGetMetadataRecordStubStub(Uint32 num);
+ANIMATION_METADATA *syResourceGetMetadataRecord(Uint32 number);
+ANIMATION_METADATA *fdResourceGetMetadataRecordStubStub(Uint32 number);
 
 /* The vram_cache group. The VRAM cache: numbered entries, each holding a run of
    64-byte blocks of sprite VRAM for a sprite or a loaded picture. The VRAM
@@ -1749,11 +1749,11 @@ typedef enum VRAM_BLOCK_LIMITS {
    starts in sprite VRAM. */
 typedef struct VRAM_CACHE_ENTRY {
 	Uint16 size;
-	Uint16 ofs;
+	Uint16 offset;
 } VRAM_CACHE_ENTRY;
 
 STATIC_ASSERT(sizeof(VRAM_CACHE_ENTRY) == 4);
-STATIC_ASSERT(offsetof(VRAM_CACHE_ENTRY, ofs) == 2);
+STATIC_ASSERT(offsetof(VRAM_CACHE_ENTRY, offset) == 2);
 
 /* The vector3 group. Three coordinates as one value, and their array view.
    Three coordinates, x, y and z: a position, a velocity or a direction. */

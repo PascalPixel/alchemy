@@ -46,7 +46,7 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	BLITTER_PAIR		 rectangle;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 start;
 	DUAL_COLUMN			*setup;
 	Sint32				 x;
@@ -58,14 +58,14 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 reach;
 	Sint8				 pillarHeight;
 	Sint32				 n;
-	Sint32				 reactFrm;
+	Sint32				 reactFrame;
 	Sint32				 i;
 	PARTICLE			*flare;
 	Sint32				 flareAge;
 	Sint32				 picture;
 	Sint32				 duration;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
@@ -106,34 +106,34 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
-	for(frm = 0; frm != duration; frm++) {
-		Sint32 damageFrm = duration - 64;
+	for(frame = 0; frame != duration; frame++) {
+		Sint32 damageFrame = duration - 64;
 		Sint32 fadeStart = duration - 20;
 		Sint32 fadeEnd = duration - 4;
 
-		if(frm == damageFrm) {
+		if(frame == damageFrame) {
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
-		if(frm >= fadeStart && frm < fadeEnd) {
+		if(frame >= fadeStart && frame < fadeEnd) {
 			/* Fade out over the last 16 ticks. */
 			REG_BLDCNT =
 				BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frm) - 5);
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frame) - 5);
 		}
-		if(frm < fadeEnd) {
+		if(frame < fadeEnd) {
 			for(i = 0; i != GrowthColumnCounts[args->variant]; i++) {
 				column = &((DUAL_COLUMN *)state->particles)[i];
 				start = i * COLUMN_INTERVAL + 8;
-				if(frm == i * COLUMN_INTERVAL + 9) {
-					state->shakeFrm = 2;
+				if(frame == i * COLUMN_INTERVAL + 9) {
+					state->shakeFrame = 2;
 				}
 
 				/* A column grows from its root. */
-				if(frm > start) {
+				if(frame > start) {
 					Uint32 shape = i % 3;
 					Sint32 side;
 
-					length = (frm - start) * 8;
+					length = (frame - start) * 8;
 					reach = column->height;
 					if(length > reach) {
 						length = reach;
@@ -170,24 +170,24 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				/* The targets react as it grows. */
 				n = 0;
-				if(args->tgtCnt != 0) {
-					reactFrm = start + 4;
+				if(args->targetCount != 0) {
+					reactFrame = start + 4;
 					do {
-						if(frm == reactFrm) {
+						if(frame == reactFrame) {
 							if(!(i & 1)) {
-								sySndPlayStub(SE_IMPACT);
+								sySoundPlayStub(SE_IMPACT);
 							}
-							btEffectTintBattler(args->tgts[n],
+							btEffectTintBattler(args->targets[n],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, n, 3);
 						}
 						n++;
-					} while(n != args->tgtCnt);
+					} while(n != args->targetCount);
 				} else {
-					reactFrm = start + 4;
+					reactFrame = start + 4;
 				}
 
 				/* Impact flares at the root. */
-				if((frm == reactFrm) || (frm == (start + 8))) {
+				if((frame == reactFrame) || (frame == (start + 8))) {
 					for(n = 0, flare = PARTICLES; n != GROWTH_FLARES;
 						flare++, n++) {
 						if(flare->variant == -1) {
@@ -261,15 +261,15 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 first;
 	SCREEN_POINT		 last;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 picture;
 	Sint32				 height;
-	Sint32				 ofs;
+	Sint32				 offset;
 	Sint32				 middle;
 	PARTICLE			*column;
 
 	heap = RamHeapSlots;
-	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
+	state = (BATTLE_EFFECT_STATE *)heap->battleEffect;
 	canvas = heap->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btEffectRunDjinniEntrance(args,
@@ -283,8 +283,9 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_GREEN_VINE_SHEET, state->sheet, 1, 1);
 
 	/* Centre the vines between the first and last targets. */
-	btEffectPosProjectScaledBattler(args->tgts[0], &first);
-	btEffectPosProjectScaledBattler(args->tgts[args->tgtCnt - 1], &last);
+	btEffectPosProjectScaledBattler(args->targets[0], &first);
+	btEffectPosProjectScaledBattler(
+		args->targets[args->targetCount - 1], &last);
 	middle = first.x;
 	middle += (last.x - middle) / 2;
 	first.x = middle;
@@ -300,28 +301,28 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 		column[i].x = VineColumnOffsets[i] + CANVAS_SIZE / 2;
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	for(frm = 0; frm != VINE_TICKS; frm++) {
-		if(frm == VINE_REACH_TICK) {
-			sySndPlayStub(SE_CRACK);
-			for(i = 0; i != args->tgtCnt; i++)
+	for(frame = 0; frame != VINE_TICKS; frame++) {
+		if(frame == VINE_REACH_TICK) {
+			sySoundPlayStub(SE_CRACK);
+			for(i = 0; i != args->targetCount; i++)
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+					args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
 		}
 		for(i = 0, column = state->particles; i != VINE_COLUMNS;
 			i++, column++) {
-			if(frm == i * 4 + 5)
-				state->shakeFrm = 2;
+			if(frame == i * 4 + 5)
+				state->shakeFrame = 2;
 
 			/* Each vine grows, then shrinks back. */
-			ofs = i * 2;
-			if(frm > ofs + 4) {
-				picture = (frm / 4 + i) % GREEN_VINE_PICTURES;
-				if(frm < ofs + 32) {
-					height = (frm - ofs) * 4 - 16;
+			offset = i * 2;
+			if(frame > offset + 4) {
+				picture = (frame / 4 + i) % GREEN_VINE_PICTURES;
+				if(frame < offset + 32) {
+					height = (frame - offset) * 4 - 16;
 					if(height > GREEN_VINE_HEIGHT)
 						height = GREEN_VINE_HEIGHT;
 				} else {
-					height = 160 - (frm - ofs) * 4;
+					height = 160 - (frame - offset) * 4;
 				}
 				if(height > 0)
 					draw[i & 1](canvas,
@@ -354,10 +355,10 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 {
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 drawFlip;
 	DRAW_RECTANGLE		 draw;
-	Sint32				 frmCnt;
+	Sint32				 frameCount;
 	HEAP_SLOTS			*heap;
 	BATTLE_EFFECT_STATE *state;
 	Sint32				 i;
@@ -368,7 +369,7 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 	/* FAKEMATCH(dead): heap set through its own address; as heap =
 	 * RamHeapSlots. */
 	*&heap = RamHeapSlots;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
@@ -384,25 +385,25 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 	drawFlip = heap->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	frmCnt = ThornCounts[args->variant] * THORN_INTERVAL + 56;
+	frameCount = ThornCounts[args->variant] * THORN_INTERVAL + 56;
 
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
 
-	for(frm = 0; frm != frmCnt; frm++) {
-		if(frm == frmCnt - 64) {
+	for(frame = 0; frame != frameCount; frame++) {
+		if(frame == frameCount - 64) {
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
-		if(frm >= frmCnt - 16) {
+		if(frame >= frameCount - 16) {
 			/* Fade out over the last 16 ticks. */
 			REG_BLDCNT =
 				BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frmCnt - frm - 1);
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(frameCount - frame - 1);
 		}
 
 		for(i = 0; i != ThornCounts[args->variant]; i++) {
 			start = i * THORN_INTERVAL + 8;
-			age = frm - start;
-			if(frm > start) {
+			age = frame - start;
+			if(frame > start) {
 				Sint32 height;
 				Sint32 lean;
 
@@ -442,12 +443,12 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 							THORN_SMALL_PICTURE_WIDTH, height);
 					}
 				}
-				if(frm == start + 1) {
-					state->shakeFrm = 3;
+				if(frame == start + 1) {
+					state->shakeFrame = 3;
 				}
 
 				/* Impact flares beside the thorn. */
-				if(frm < start + 3) {
+				if(frame < start + 3) {
 					Sint32	  y = (syRandom() & 31) + 72;
 					PARTICLE *flare;
 
@@ -467,11 +468,11 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 			}
 
 			/* The targets react as the thorn reaches them. */
-			for(j = 0; j != args->tgtCnt; j++) {
-				if(frm == start + 4) {
-					sySndPlayStub(SE_IMPACT);
-					btEffectTintBattler(
-						args->tgts[j], SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 3);
+			for(j = 0; j != args->targetCount; j++) {
+				if(frame == start + 4) {
+					sySoundPlayStub(SE_IMPACT);
+					btEffectTintBattler(args->targets[j], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, j, 3);
 				}
 			}
 		}

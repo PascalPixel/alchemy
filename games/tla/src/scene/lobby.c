@@ -43,12 +43,12 @@ const SCENE_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
-/* Stores a byte in the eight game flags from `flg`. */
-static inline void scFieldGameFlagSetByte(Sint32 flg, Sint32 value)
+/* Stores a byte in the eight game flags from `flags`. */
+static inline void scFieldGameFlagSetByte(Sint32 flag, Sint32 value)
 {
-	syGameFlagSetByte(flg, value);
+	syGameFlagSetByte(flag, value);
 }
 
 /* Restarts the link with interrupts locked. */
@@ -254,9 +254,9 @@ Bool scLinkLobbyPeerSlotMatches(Sint32 slot)
    partner's scLinkLobbyPeerSlotMatches reads it. */
 void scLinkLobbyWriteSlotValue(Sint32 slot)
 {
-	Sint32		 *dst = (Sint32 *)SerialTransfer.payload;
+	Sint32		 *dest = (Sint32 *)SerialTransfer.payload;
 	const Sint32 *src = &LinkLobbySlotValues[slot];
-	dst[LinkLobbySlotColumns[slot]] = *src;
+	dest[LinkLobbySlotColumns[slot]] = *src;
 }
 
 Sint32 LinkLobbyWaitTicks BSS_DATA; /* ticks without the partner */
@@ -411,7 +411,7 @@ Sint32 scLinkLobbyReceivePartyRecords(void)
 	UNIT  *unit;
 
 	size = LOBBY_UNIT_RECORD_BYTES;
-	heap = syHeapAllocEWRAM(size);
+	heap = syHeapAllocateEWRAM(size);
 	result = 0;
 	timeout = LOBBY_RECEIVE_TIMEOUT_TICKS;
 	slot = 0;
@@ -495,7 +495,7 @@ tableTest:
 table:
 	syHeapRelease(heap);
 	size = LOBBY_RECOVERY_RECORD_BYTES;
-	heap = syHeapAllocEWRAM(size);
+	heap = syHeapAllocateEWRAM(size);
 	transfer = sySerialStartReceive(gmDjinnGetRecoveryTable(1));
 	tries = 0;
 	if(transfer != -1)
@@ -511,12 +511,12 @@ done:
    PARTY_SLOT_EMPTY. */
 Sint32 scLinkLobbyCopyPartyOwnerIds(Uint16 *out)
 {
-	Sint32 cnt = gmPartyCountMembers();
+	Sint32 count = gmPartyCountMembers();
 	Sint32 i;
 
-	if(cnt > 3)
-		cnt = 3;
-	for(i = 0; i < cnt; i++) {
+	if(count > 3)
+		count = 3;
+	for(i = 0; i < count; i++) {
 		Uint8 owner = MainRoutineStateWork.party[i];
 
 		if(out != NULL)
@@ -524,7 +524,7 @@ Sint32 scLinkLobbyCopyPartyOwnerIds(Uint16 *out)
 	}
 	if(out != NULL)
 		*out = PARTY_SLOT_EMPTY;
-	return cnt;
+	return count;
 }
 
 /* The Broken Seal's BattleArenaSendPartyRecords: sends the party's records to
@@ -536,7 +536,7 @@ Sint32 scLinkLobbySendPartyRecords(void)
 	Uint8				 peerSlots[8];
 	Sint32				 transferResult;
 	Uint8				*heap;
-	Sint32				 memberCnt;
+	Sint32				 memberCount;
 	Sint32				 timeout;
 	Sint32				 tries;
 	Sint32				 i;
@@ -546,10 +546,10 @@ Sint32 scLinkLobbySendPartyRecords(void)
 	DJINN_RECOVERY_LIST *list;
 
 	size = LOBBY_UNIT_RECORD_BYTES;
-	heap = syHeapAllocEWRAM(size);
+	heap = syHeapAllocateEWRAM(size);
 	result = 0;
 	timeout = LOBBY_SEND_TIMEOUT_TICKS;
-	memberCnt = scLinkLobbyCopyPartyOwnerIds(memberIds);
+	memberCount = scLinkLobbyCopyPartyOwnerIds(memberIds);
 	for(i = 0; i <= 7; i++)
 		peerSlots[i] = 0;
 	/* Each send waits a tick at a time to finish. Once the timeout has run
@@ -557,7 +557,7 @@ Sint32 scLinkLobbySendPartyRecords(void)
 	   LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that cannot
 	   start leaves the block. */
 	do {
-		for(i = 0; i < memberCnt; i++) {
+		for(i = 0; i < memberCount; i++) {
 			Sint32 tries = 0;
 
 			syWordsCopyEntry(heap, syUnitGet(memberIds[i]), size);
@@ -605,7 +605,7 @@ Sint32 scLinkLobbySendPartyRecords(void)
 		/* Then the recovery table. */
 		syHeapRelease(heap);
 		size = LOBBY_RECOVERY_RECORD_BYTES;
-		heap = syHeapAllocEWRAM(size);
+		heap = syHeapAllocateEWRAM(size);
 		IWRAM_COPY_WORDS(heap, gmDjinnGetRecoveryTable(0), size);
 		{
 			Sint32 timeout;
@@ -616,12 +616,12 @@ Sint32 scLinkLobbySendPartyRecords(void)
 			timeout = LOBBY_SEND_TIMEOUT_TICKS;
 			/* Give each Djinni on the list its party member's number on the
 			   partner's side, and drop those of party members not sent. */
-			for(j = 0; j < list->cnt; j++) {
+			for(j = 0; j < list->count; j++) {
 				list->entries[j].unitId = peerSlots[list->entries[j].unitId];
 				if(list->entries[j].unitId == 0) {
-					for(k = j; k < list->cnt - 1; k++)
+					for(k = j; k < list->count - 1; k++)
 						list->entries[k] = list->entries[k + 1];
-					list->cnt--;
+					list->count--;
 					j--;
 				}
 			}
@@ -657,10 +657,10 @@ static __inline__ void scLobbyResetTransferState(void)
 
 	state = &SerialTransfer;
 	IRQ_LOCK(saved);
-	state->stat = SERIAL_STATUS_RUNNING;
-	*(Uint8 *)&state->peerFlg = 0;
+	state->status = SERIAL_STATUS_RUNNING;
+	*(Uint8 *)&state->peerFlags = 0;
 	SerialSendSource = 0;
-	*(Uint8 *)&state->flg = 0;
+	*(Uint8 *)&state->flags = 0;
 	SerialSendSize = 0;
 	SerialReceiveDestination = 0;
 	SerialReceivedSize = 0;
@@ -677,15 +677,15 @@ Sint32 scLinkLobbyExchangePartyRecords(void)
 {
 	Sint32 result;
 	Sint32 first;
-	Sint32 flg;
+	Sint32 flag;
 
 	/* FAKEMATCH(dead): the result's zero in a once-only block. */
 	do {
 		result = 0;
 	} while(0);
-	flg = fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_CHILD);
+	flag = fdScriptGetFlag(FLAG_LINK_LOBBY_LINK_CHILD);
 	LinkExchangeState = result;
-	if(!flg) {
+	if(!flag) {
 		sySynch(5);
 		result = scLinkLobbySendPartyRecords();
 		if(result < 0)
@@ -723,15 +723,15 @@ Sint32 scLinkLobbyEnterBattle(void)
 {
 	FIELD_STATE *state;
 	Bool		 failed;
-	WINDOW		*win;
+	WINDOW		*window;
 	Sint32		 ticksUnanswered;
 	Bool		 stop;
 	Uint8		*savedUnits;
-	Uint16		*tbl;
+	Uint16		*table;
 	Uint32		 i;
 
 	failed = FALSE;
-	win = 0;
+	window = 0;
 	state = RamHeapSlots->fieldState;
 	ticksUnanswered = 0;
 	if(fdScriptGetFlag(FLAG_MONSTER_BATTLE)) {
@@ -748,8 +748,8 @@ Sint32 scLinkLobbyEnterBattle(void)
 		scLinkLobbyWriteSlotValue(LOBBY_SLOT_IN_CIRCLE);
 		if(!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_IN_CIRCLE))
 			/* "Awaiting your opponent..." */
-			win = mnMessageOpenWindow((Sint32)MsgLobbyAwaitingYourOpponent, 5,
-				4, MESSAGE_WINDOW_ZOOM);
+			window = mnMessageOpenWindow((Sint32)MsgLobbyAwaitingYourOpponent,
+				5, 4, MESSAGE_WINDOW_ZOOM);
 		while(!scLinkLobbyPeerSlotMatches(LOBBY_SLOT_IN_CIRCLE)) {
 			sySynch(1);
 			stop = FALSE;
@@ -775,20 +775,20 @@ Sint32 scLinkLobbyEnterBattle(void)
 				break;
 			}
 		}
-		if(win)
-			mnWindowClose(win, 1);
+		if(window)
+			mnWindowClose(window, 1);
 		sySynch(5);
 	}
 	if(!failed) {
 		/* The exchange below receives the opponent's party members and Djinn
 		   into units FIRST_ENEMY_UNIT on; what those units held is kept here
 		   meanwhile. */
-		savedUnits =
-			syHeapSlotAllocEWRAM(HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
+		savedUnits = syHeapSlotAllocateEWRAM(
+			HEAP_SLOT_ENEMY_UNITS, 6 * BATTLE_UNIT_SIZE);
 		syCloseEvent(scLinkLobbyPollPeerReady);
-		fdTilesetAnimResume(BATTLE_ARENA_GATE_ANIMATION);
+		fdTilesetAnimationResume(BATTLE_ARENA_GATE_ANIMATION);
 		sySynch(8);
-		fdTilesetAnimPause(BATTLE_ARENA_GATE_ANIMATION);
+		fdTilesetAnimationPause(BATTLE_ARENA_GATE_ANIMATION);
 		if(fdScriptGetFlag(FLAG_MONSTER_BATTLE)) {
 			fdActorFaceActor(
 				ACTOR_ATTENDANT, MainRoutineStateWork.leaderActorId, 0);
@@ -810,9 +810,9 @@ Sint32 scLinkLobbyEnterBattle(void)
 			if(scLinkLobbyExchangePartyRecords() < 0) {
 				fdActorSetSpeed(ACTOR_FELIX, 1);
 				fdActorWalkTo(ACTOR_FELIX, 216, 200);
-				fdTilesetAnimResume(BATTLE_ARENA_GATE_ANIMATION);
+				fdTilesetAnimationResume(BATTLE_ARENA_GATE_ANIMATION);
 				sySynch(8);
-				fdTilesetAnimPause(BATTLE_ARENA_GATE_ANIMATION);
+				fdTilesetAnimationPause(BATTLE_ARENA_GATE_ANIMATION);
 				fdActorWaitForMoveById(ACTOR_FELIX);
 				syHeapSlotRelease(HEAP_SLOT_ENEMY_UNITS);
 				scLinkLobbyWriteSlotValue(LOBBY_SLOT_SIGNATURE);
@@ -846,11 +846,11 @@ Sint32 scLinkLobbyEnterBattle(void)
 			ENCOUNTER_ZONE_VENUS_DJINN, LINK_BATTLE_ENCOUNTER_SLOT);
 		/* EXEC fills the payload's first four halfwords, where the link
 		   battle's command entry looks for it in the partner's. */
-		tbl = (Uint16 *)SerialTransfer.payload;
-		tbl[0] = 'E';
-		tbl[1] = 'X';
-		tbl[2] = 'E';
-		tbl[3] = 'C';
+		table = (Uint16 *)SerialTransfer.payload;
+		table[0] = 'E';
+		table[1] = 'X';
+		table[2] = 'E';
+		table[3] = 'C';
 		/* The six units go to the battle's actor sprite slots, where the battle
 		   takes them from. */
 		for(i = 0; i < 6 * BATTLE_UNIT_SIZE; i++)
@@ -1026,9 +1026,9 @@ Sint32 scLinkLobbyReportWinTallies(Sint32 actor)
    at the right counter answers, "The settings are made. The rest is up to
    you.", or for a set that does not exist, "There's no such parameter. Ask Mr.
    Sugimoto." */
-Sint32 scLinkLobbyChooseDebugParmSet(Sint32 actorId)
+Sint32 scLinkLobbyChooseDebugParamSet(Sint32 actorId)
 {
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	choice;
 	Sint32	shown;
 	Sint32	ok;
@@ -1039,13 +1039,13 @@ Sint32 scLinkLobbyChooseDebugParmSet(Sint32 actorId)
 	fdScriptSetMessageId((Sint32)MsgLobbyChooseYourParametersHere);
 	/* "Choose your parameters here." */
 	fdScriptShowMessage(actorId, 0);
-	win = mnWindowCreate(0, 0, 6, 4, 2);
+	window = mnWindowCreate(0, 0, 6, 4, 2);
 	choice = 0;
 	shown = -1;
 	for(;;) {
 		if(choice != shown) {
-			mnWindowSprPrepareForRedraw(win);
-			mnTextDrawNum(choice, 3, win, 0, 0);
+			mnWindowSpritePrepareForRedraw(window);
+			mnTextDrawNumber(choice, 3, window, 0, 0);
 			shown = choice;
 		}
 		if(PerWork.repeat & KEY_LEFT) {
@@ -1066,9 +1066,9 @@ Sint32 scLinkLobbyChooseDebugParmSet(Sint32 actorId)
 		}
 		sySynch(1);
 	}
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	if(choice >= 0) {
-		ok = btDebugParmSetLoad(choice);
+		ok = btDebugParamSetLoad(choice);
 	} else {
 		fdScriptSetMessageId((Sint32)MsgLobbyWhatIsThisJustTease);
 		/* "What is this, just a tease?" */
@@ -1104,15 +1104,15 @@ void scLinkLobbyOpenSanctum(Sint32 actor)
    while FLAG_LINK_BATTLE_ARRANGED is clear; an 0xff entry ends the list. */
 Bool scLinkLobbyPartyContains(Sint32 owner)
 {
-	Sint32 cnt = gmPartyCountMembers();
+	Sint32 count = gmPartyCountMembers();
 	Sint32 limit = 3;
 	Sint32 i;
 
 	if(!fdScriptGetFlag(FLAG_LINK_BATTLE_ARRANGED))
 		limit = 4;
-	if(cnt > limit)
-		cnt = limit;
-	for(i = 0; i < cnt; i++) {
+	if(count > limit)
+		count = limit;
+	for(i = 0; i < count; i++) {
 		if(MainRoutineStateWork.party[i] == PARTY_SLOT_EMPTY)
 			return FALSE;
 		if(MainRoutineStateWork.party[i] == owner)
@@ -1143,7 +1143,7 @@ extern Uint16 LinkLobbySongRequestSounds[SONG_REQUEST_SOUNDS];
    below the hall where the player cannot walk. */
 void scLinkLobbyTakeSongRequest(Sint32 actor)
 {
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	song;
 	Sint32	shown;
 	Sint32	step;
@@ -1160,14 +1160,14 @@ void scLinkLobbyTakeSongRequest(Sint32 actor)
 	if((PerWork.data & (KEY_START | KEY_UP | KEY_L)) ==
 		(KEY_START | KEY_UP | KEY_L))
 		all = 1;
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	for(;;) {
-		win = mnWindowCreate(12, 8, 6, 3, 2);
+		window = mnWindowCreate(12, 8, 6, 3, 2);
 		shown = -1;
 		for(;;) {
 			if(song != shown) {
-				mnWindowSprPrepareForRedraw(win);
-				mnTextDrawNum(song, 3, win, 0, 0);
+				mnWindowSpritePrepareForRedraw(window);
+				mnTextDrawNumber(song, 3, window, 0, 0);
 				shown = song;
 			}
 			step = 0;
@@ -1181,10 +1181,10 @@ void scLinkLobbyTakeSongRequest(Sint32 actor)
 					song = SONG_REQUEST_SOUNDS - 1;
 				if((Uint32)song > SONG_REQUEST_SOUNDS - 1)
 					song = 0;
-				if(all != 0 || MainRoutineStateWork.sendFlg != 0 ||
+				if(all != 0 || MainRoutineStateWork.sendFlag != 0 ||
 					AnyFileCleared != 0)
 					break;
-				if(sySndFlagTest(LinkLobbySongRequestSounds[song]) != 0)
+				if(sySoundFlagTest(LinkLobbySongRequestSounds[song]) != 0)
 					break;
 			}
 			if(PerWork.push & KEY_A)
@@ -1195,13 +1195,13 @@ void scLinkLobbyTakeSongRequest(Sint32 actor)
 			}
 			sySynch(1);
 		}
-		mnWindowClose(win, 1);
+		mnWindowClose(window, 1);
 		if(song >= 0) {
-			fdScriptPlaySnd(LinkLobbySongRequestSounds[song]);
+			fdScriptPlaySound(LinkLobbySongRequestSounds[song]);
 		} else {
-			fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+			fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 			sySynch(120);
-			fdScriptPlaySnd(MUS_TRY_YOUR_LUCK);
+			fdScriptPlaySound(MUS_TRY_YOUR_LUCK);
 			fdScriptSetMessageId((Sint32)MsgLobbyComeBackWhenYoureReady);
 			/* "Come back when you're ready to rock!" */
 			fdScriptShowMessage(actor, 0);
@@ -1266,7 +1266,7 @@ Sint32 scLinkLobbyTalkByProgress(Sint32 actor)
 Sint32 scLinkLobbyLeaveArena(void)
 {
 	sySerialRemoveIRQHandlers();
-	sySndLoadReverbCode(SOUND_REVERB_NORMAL);
+	sySoundLoadReverbCode(SOUND_REVERB_NORMAL);
 	syImportScriptSetDestination(SCENE_CLEAR, 1);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
@@ -1427,7 +1427,7 @@ void scLinkLobbyDrawThreeDigitValue(Sint32 value)
 Sint32 scLinkLobbyInit(void)
 {
 	Sint32 i;
-	Sint32 wins;
+	Sint32 windows;
 
 	fdScriptSetFlag(FLAG_IN_BATTLE_ARENA);
 	MainRoutineStateWork.firstShortcut = 0;
@@ -1436,13 +1436,13 @@ Sint32 scLinkLobbyInit(void)
 	LinkLobbyWaitTicks = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	sySndLoadReverbCode(SOUND_REVERB_NORMAL);
+	sySoundLoadReverbCode(SOUND_REVERB_NORMAL);
 	scLinkLobbyDrawThreeDigitValue(
 		MainRoutineStateWork.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
 	fdMapGridCopyMetatileAttributes(11, 11, 1, 1, 13, 10);
 	scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 	sySynch(1);
-	fdTilesetAnimPause(BATTLE_ARENA_GATE_ANIMATION);
+	fdTilesetAnimationPause(BATTLE_ARENA_GATE_ANIMATION);
 	{
 		/* The payload's halfwords, as every signature's writer holds them. */
 		Uint16 *name = (Uint16 *)SerialTransfer.payload;
@@ -1473,14 +1473,14 @@ Sint32 scLinkLobbyInit(void)
 		   FLAG_AREA_TEMP_E8's byte counts the victories 0 to 2; the third
 		   raises the level and takes the next, odd line, which promises a
 		   stronger monster. */
-		wins = (Sint8)syGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
-		msg = wins * 2 + 2;
+		windows = (Sint8)syGameFlagGetByte(FLAG_MONSTER_BATTLE_WINS);
+		msg = windows * 2 + 2;
 		if(msg > MONSTER_OFFER_UNBELIEVABLE)
 			msg = MONSTER_OFFER_UNBELIEVABLE;
 		v = scFieldGameFlagGetByte(FLAG_AREA_TEMP_E8);
 		if(v == 2) {
 			scFieldGameFlagSetByte(FLAG_AREA_TEMP_E8, 0);
-			wins++;
+			windows++;
 			msg++;
 		} else {
 			scFieldGameFlagSetByte(FLAG_AREA_TEMP_E8, v + 1);
@@ -1490,9 +1490,9 @@ Sint32 scLinkLobbyInit(void)
 		fdScriptSetMessageId((Sint32)MsgLobbyNotBadWouldYouLike + msg);
 		fdScriptOpenMessage(ACTOR_ATTENDANT, 0);
 		if(fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
-			if(wins > LEVEL_BONUS_MAX)
-				wins = LEVEL_BONUS_MAX;
-			scFieldGameFlagSetByte(FLAG_MONSTER_BATTLE_WINS, wins);
+			if(windows > LEVEL_BONUS_MAX)
+				windows = LEVEL_BONUS_MAX;
+			scFieldGameFlagSetByte(FLAG_MONSTER_BATTLE_WINS, windows);
 		} else {
 			fdScriptClearFlag(FLAG_MONSTER_BATTLE);
 			scFieldGameFlagSetByte(FLAG_MONSTER_BATTLE_WINS, -1);
@@ -1881,7 +1881,7 @@ CUE SceneCues[] = {
 	{CUE_TALK, ACTOR_MACHO_LOVING_VISITOR, CONDITION_ALWAYS,
 		SCRIPT_REF(scLinkLobbyTalkToVisitor)},
 	{CUE_TALK, ACTOR_DEBUG_HELPER, CONDITION_ALWAYS,
-		SCRIPT_REF(scLinkLobbyChooseDebugParmSet)},
+		SCRIPT_REF(scLinkLobbyChooseDebugParamSet)},
 	{CUE_TALK, ACTOR_PARTY_ORDER_VISITOR, CONDITION_ALWAYS,
 		SCRIPT_REF(scLinkLobbyExplainPartyOrder)},
 	{CUE_TALK, ACTOR_COMMAND_TIME_VISITOR, CONDITION_ALWAYS,

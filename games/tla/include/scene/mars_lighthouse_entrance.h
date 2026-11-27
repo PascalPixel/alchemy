@@ -67,13 +67,13 @@ void scFlameThrowerSendWest(Sint32 *pos, Sint32 speed, Sint32 offScreen);
 
 void scActorRollAndCrumble(struct ACTOR *actor);
 
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 void scTeleportArriveWhirling(void);
 
 Sint32 syListCountEntries(Uint16 *list);
 void   fdPaletteCycleFade(void);
-void   fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 
 void scMarsLighthouseEntranceCrackLapisIceSheet(void);
 
@@ -83,7 +83,7 @@ void scMarsLighthouseEntranceMeltIceInPath(void);
 
 void scMarsLighthouseEntranceClearFireballRow(void);
 
-void scMarsLighthouseEntranceStartPoundIceCone(Sint32 mode, Sint32 idx);
+void scMarsLighthouseEntranceStartPoundIceCone(Sint32 mode, Sint32 index);
 
 void scMarsLighthouseEntranceCheckIce(void);
 

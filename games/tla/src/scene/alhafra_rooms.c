@@ -372,18 +372,18 @@ const CUE *scGetCues(void)
 /* The old houseguest's update: draws his head and upper body again, 12 pixels
    above him, over the stack of crates he stands in front of; without it the
    crates cover him from the waist up and only his legs show. */
-Sint32 scAlhafraRoomsDrawFirstGuestSpr(ACTOR *guest)
+Sint32 scAlhafraRoomsDrawFirstGuestSprite(ACTOR *guest)
 {
-	fdEffectSprDrawAtWorldXYZ(&AlhafraRoomsFirstGuestSprite, guest->x.fixed,
+	fdEffectSpriteDrawAtWorldXYZ(&AlhafraRoomsFirstGuestSprite, guest->x.fixed,
 		guest->y.fixed + toFIXED(12), guest->z.fixed);
 	return 0;
 }
 
 /* His wife's: the same, 8 pixels above her, so she too shows whole in front of
    the crates. */
-Sint32 scAlhafraRoomsDrawSecondGuestSpr(ACTOR *guest)
+Sint32 scAlhafraRoomsDrawSecondGuestSprite(ACTOR *guest)
 {
-	fdEffectSprDrawAtWorldXYZ(&AlhafraRoomsSecondGuestSprite, guest->x.fixed,
+	fdEffectSpriteDrawAtWorldXYZ(&AlhafraRoomsSecondGuestSprite, guest->x.fixed,
 		guest->y.fixed + toFIXED(8), guest->z.fixed);
 	return 0;
 }
@@ -398,21 +398,22 @@ Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorGet(ACTOR_INNKEEPER)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_INNKEEPER)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
-	scFieldActorSetSprPriority(ACTOR_PRIEST, 3);
-	scFieldActorSetSprPriority(ACTOR_ALEX, 3);
-	scFieldActorSetSprPriority(ACTOR_DEMANDING_GUEST, 3);
-	scFieldActorSetSprPriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
+	fdActorGet(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+	scFieldActorSetSpritePriority(ACTOR_PRIEST, 3);
+	scFieldActorSetSpritePriority(ACTOR_ALEX, 3);
+	scFieldActorSetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
+	scFieldActorSetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
 	fdFadeOverlayFillTiles(0);
-	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
+	Call4((void (*)())fdEffectSpriteInitWithFadeOverlay,
 		(Sint32)&AlhafraRoomsFirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
-	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
+	Call4((void (*)())fdEffectSpriteInitWithFadeOverlay,
 		(Sint32)&AlhafraRoomsSecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
 	AlhafraRoomsSecondGuestSprite.scaleY = toFIXED(3) / 2;
-	fdActorGet(ACTOR_DEMANDING_GUEST)->update = scAlhafraRoomsDrawFirstGuestSpr;
+	fdActorGet(ACTOR_DEMANDING_GUEST)->update =
+		scAlhafraRoomsDrawFirstGuestSprite;
 	fdActorGet(ACTOR_DEMANDING_GUESTS_WIFE)->update =
-		scAlhafraRoomsDrawSecondGuestSpr;
+		scAlhafraRoomsDrawSecondGuestSprite;
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
 		if(fdActorGet(MainRoutineStateWork.leaderActorId)->x.fixed >=
 			toFIXED(512))
@@ -432,10 +433,10 @@ Sint32 scInit(void)
 		if(fdScriptGetFlag(FLAG_CHAMPA_MET_ALEX))
 			fdActorSetPos(ACTOR_ALEX, 0, 0);
 	} else {
-		scFieldActorSetSprPriority(ACTOR_CHILD_MISSING_MEAT, 2);
-		scFieldActorSetSprPriority(ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, 3);
-		scFieldActorSetSprPriority(ACTOR_CHILD_COOPED_UP, 2);
-		scFieldActorSetSprPriority(ACTOR_MAN_ANGRY_AT_THE_MAYOR, 3);
+		scFieldActorSetSpritePriority(ACTOR_CHILD_MISSING_MEAT, 2);
+		scFieldActorSetSpritePriority(ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, 3);
+		scFieldActorSetSpritePriority(ACTOR_CHILD_COOPED_UP, 2);
+		scFieldActorSetSpritePriority(ACTOR_MAN_ANGRY_AT_THE_MAYOR, 3);
 	}
 	return 0;
 }
@@ -446,21 +447,22 @@ Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorGet(ACTOR_INNKEEPER)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_INNKEEPER)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
-	scFieldActorSetSprPriority(ACTOR_PRIEST, 3);
-	scFieldActorSetSprPriority(ACTOR_ALEX, 3);
-	scFieldActorSetSprPriority(ACTOR_DEMANDING_GUEST, 3);
-	scFieldActorSetSprPriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
+	fdActorGet(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
+	scFieldActorSetSpritePriority(ACTOR_PRIEST, 3);
+	scFieldActorSetSpritePriority(ACTOR_ALEX, 3);
+	scFieldActorSetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
+	scFieldActorSetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
 	fdFadeOverlayFillTiles(0);
-	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
+	Call4((void (*)())fdEffectSpriteInitWithFadeOverlay,
 		(Sint32)&AlhafraRoomsFirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
-	Call4((void (*)())fdEffectSprInitWithFadeOverlay,
+	Call4((void (*)())fdEffectSpriteInitWithFadeOverlay,
 		(Sint32)&AlhafraRoomsSecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
 	AlhafraRoomsSecondGuestSprite.scaleY = toFIXED(3) / 2;
-	fdActorGet(ACTOR_DEMANDING_GUEST)->update = scAlhafraRoomsDrawFirstGuestSpr;
+	fdActorGet(ACTOR_DEMANDING_GUEST)->update =
+		scAlhafraRoomsDrawFirstGuestSprite;
 	fdActorGet(ACTOR_DEMANDING_GUESTS_WIFE)->update =
-		scAlhafraRoomsDrawSecondGuestSpr;
+		scAlhafraRoomsDrawSecondGuestSprite;
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
 		if(!fdScriptGetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) ||
 			fdScriptGetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
@@ -471,10 +473,10 @@ Sint32 scInit(void)
 		if(fdScriptGetFlag(FLAG_CHAMPA_MET_ALEX))
 			fdActorSetPos(ACTOR_ALEX, 0, 0);
 	} else {
-		scFieldActorSetSprPriority(ACTOR_CHILD_MISSING_MEAT, 2);
-		scFieldActorSetSprPriority(ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, 3);
-		scFieldActorSetSprPriority(ACTOR_CHILD_COOPED_UP, 2);
-		scFieldActorSetSprPriority(ACTOR_MAN_ANGRY_AT_THE_MAYOR, 3);
+		scFieldActorSetSpritePriority(ACTOR_CHILD_MISSING_MEAT, 2);
+		scFieldActorSetSpritePriority(ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, 3);
+		scFieldActorSetSpritePriority(ACTOR_CHILD_COOPED_UP, 2);
+		scFieldActorSetSpritePriority(ACTOR_MAN_ANGRY_AT_THE_MAYOR, 3);
 	}
 	return 0;
 }
@@ -583,8 +585,8 @@ void scAlhafraRoomsOverhearCrossboneIsleTale(void)
 	syFieldScriptWait(20);
 	fdActorSetSpeed(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
 	fdActorSetSpeed(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
-	scFieldActorSetSprPriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
-	scFieldActorSetSprPriority(ACTOR_SAILOR_EAGER_TO_JOIN, 2);
+	scFieldActorSetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
+	scFieldActorSetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 2);
 	syScriptCameraFollowActor(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
 	fdActorWalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 394, 342);
 	syFieldScriptWait(10);
@@ -615,16 +617,16 @@ void scAlhafraRoomsOverhearCrossboneIsleTale(void)
 	syFieldScriptWait(10);
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_SAILOR_EAGER_TO_JOIN);
 	syFieldScriptWait(60);
-	scFieldActorSetSprPriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
-	scFieldActorSetSprPriority(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
+	scFieldActorSetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
+	scFieldActorSetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
 	scFieldActorWaitForScriptEndById(ACTOR_SAILOR_EAGER_TO_JOIN);
 	scFieldActorStop(ACTOR_FELIX);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdActorSetPos(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	scFieldActorWaitForScriptEndById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
 	fdActorSetPos(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 0);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syFieldScriptWait(10);
 	fdScriptEnd();
 }

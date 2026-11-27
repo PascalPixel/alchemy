@@ -1,12 +1,12 @@
 /* The register write queue that VBlank carries out after each finished tick.
    Part of system.c. */
 
-/* The queued register writers: each adds a write of `value` to `adr` that
+/* The queued register writers: each adds a write of `value` to `addr` that
    the VBlank handler carries out once the tick loop has finished the tick. */
 #define IO_QUEUE_DEFINE_WRITE(name, control) \
-	void name(Uint32 adr, Uint32 value) \
+	void name(Uint32 addr, Uint32 value) \
 	{ \
-		IO_WRITE_QUEUE_PUSH(adr, value, control); \
+		IO_WRITE_QUEUE_PUSH(addr, value, control); \
 	}
 
 /* Queues a byte store. */
@@ -34,11 +34,11 @@ IO_QUEUE_DEFINE_WRITE(syIOWriteQueueClearBits32, IO_WRITE_CLEAR | IO_WRITE_WORD)
 void syIOWriteQueueFlushPending(void)
 {
 	IO_WRITE_QUEUE *queue;
-	Uint32			cnt;
+	Uint32			count;
 
 	queue = &IoWriteQueueWork;
-	cnt = queue->cnt;
-	if(cnt != 0) {
+	count = queue->count;
+	if(count != 0) {
 		QUEUE_FLUSH_ROUTINE routine;
 
 		{
@@ -49,8 +49,8 @@ void syIOWriteQueueFlushPending(void)
 			routine = (QUEUE_FLUSH_ROUTINE)routineBytes;
 			syDMAXCopy(ResourceExecuteTransferCode, (void *)routine,
 				DMA_COPY_WORDS(sizeof(routineBytes) / 4), REG_DMA3);
-			routine(queue, cnt);
-			queue->cnt = 0;
+			routine(queue, count);
+			queue->count = 0;
 		}
 	}
 }

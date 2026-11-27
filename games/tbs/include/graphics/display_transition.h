@@ -49,7 +49,7 @@ typedef struct WINDOW_LINE {
 /* A page of the screen transition's window edges
    (SCREEN_TRANSITION_STATE.pages): WININ and WINOUT, then each line's edges. */
 typedef struct WINDOW_BUFFER {
-	Uint8		winInOut[4]; /* WININ and WINOUT, not touched here */
+	Uint8		windowInOut[4]; /* WININ and WINOUT, not touched here */
 	WINDOW_LINE lines[DISPLAY_HEIGHT];
 } WINDOW_BUFFER;
 

@@ -388,26 +388,27 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 static void scCrossboneIsleSpawnPillarMovedBurst(Sint32 actorId)
 {
 	ACTOR		  *actor;
-	VECTOR3		   vel;
+	VECTOR3		   velocity;
 	EFFECT_OPTIONS options;
-	Uint32		   angStep;
-	Sint32		   ang;
-	Sint32		   velX;
-	FIXED		   velZ;
+	Uint32		   angleStep;
+	Sint32		   angle;
+	Sint32		   velocityX;
+	FIXED		   velocityZ;
 
 	actor = fdActorGet(actorId);
 	options.update = scFieldEffectAdvanceMotion;
-	for(angStep = 0; angStep <= TRIG_TURN / FACING_STEP; angStep += 2) {
-		ang = angStep * FACING_STEP;
-		vel.x = syCos(ang);
-		vel.y = 0;
-		velZ = sySin(ang);
-		velX = vel.x;
-		vel.z = velZ;
-		velX += syMathDivide(velX, 3);
-		vel.x = velX;
-		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velX,
-			vel.y, velZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
+	for(angleStep = 0; angleStep <= TRIG_TURN / FACING_STEP; angleStep += 2) {
+		angle = angleStep * FACING_STEP;
+		velocity.x = syCos(angle);
+		velocity.y = 0;
+		velocityZ = sySin(angle);
+		velocityX = velocity.x;
+		velocity.z = velocityZ;
+		velocityX += syMathDivide(velocityX, 3);
+		velocity.x = velocityX;
+		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velocityX,
+			velocity.y, velocityZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
+			&options);
 	}
 }
 
@@ -467,7 +468,7 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 	Sint32 sceneId;
-	Sint32 cur;
+	Sint32 current;
 	Sint32 first;
 
 	FieldStateWork->transition =
@@ -498,45 +499,45 @@ Sint32 scInit(void)
 			return 0;
 		}
 	}
-	cur = MainRoutineStateWork.next;
-	if(cur == SCENE_CROSSBONE_ISLE) {
+	current = MainRoutineStateWork.next;
+	if(current == SCENE_CROSSBONE_ISLE) {
 		scCrossboneIsleRestoreIvy();
-		fdActorGet(ACTOR_ISLE_NUT)->tgtX = toFIXED(129);
+		fdActorGet(ACTOR_ISLE_NUT)->targetX = toFIXED(129);
 		scPushedActorBlockFootprint(ACTOR_FIRST_ISLE_LOG);
 		scPushedActorBlockFootprint(ACTOR_FIRST_ISLE_LOG + 1);
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
 			actor = fdActorGet(ACTOR_FIRST_PLANT);
 			if(actor != NULL) {
-				actor->collisionFlg = 0;
+				actor->collisionFlags = 0;
 				fdActorSelectAnimation(actor, SPROUT_ANIMATION_GROWN);
-				fdActorSetSprFlags(actor, 0);
+				fdActorSetSpriteFlags(actor, 0);
 			}
 			fdSetMetatileBehaviorAt(0, 304, 368, METATILE_BEHAVIOR_CLIMB);
 		}
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1) != 0) {
 			actor = fdActorGet(ACTOR_FIRST_PLANT + 1);
 			if(actor != NULL) {
-				actor->collisionFlg = 0;
+				actor->collisionFlags = 0;
 				fdActorSelectAnimation(actor, SPROUT_ANIMATION_GROWN);
-				fdActorSetSprFlags(actor, 0);
+				fdActorSetSpriteFlags(actor, 0);
 			}
 			fdSetMetatileBehaviorAt(0, 80, 368, METATILE_BEHAVIOR_CLIMB);
 		}
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2) != 0) {
 			actor = fdActorGet(ACTOR_FIRST_PLANT + 2);
 			if(actor != NULL) {
-				actor->collisionFlg = 0;
+				actor->collisionFlags = 0;
 				fdActorSelectAnimation(actor, SPROUT_ANIMATION_GROWN);
-				fdActorSetSprFlags(actor, 0);
+				fdActorSetSpriteFlags(actor, 0);
 			}
 			fdSetMetatileBehaviorAt(0, 96, 336, METATILE_BEHAVIOR_CLIMB);
 		}
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3) != 0) {
 			actor = fdActorGet(ACTOR_FIRST_PLANT + 3);
 			if(actor != NULL) {
-				actor->collisionFlg = 0;
+				actor->collisionFlags = 0;
 				fdActorSelectAnimation(actor, SPROUT_ANIMATION_GROWN);
-				fdActorSetSprFlags(actor, 0);
+				fdActorSetSpriteFlags(actor, 0);
 			}
 			fdSetMetatileBehaviorAt(0, 144, 320, METATILE_BEHAVIOR_CLIMB);
 			fdSetMetatileBehaviorAt(0, 752, 320, METATILE_BEHAVIOR_CLIMB);
@@ -549,16 +550,16 @@ Sint32 scInit(void)
 	}
 	/* The nine floors share their door battle, pillar and return entrance. */
 	first = SCENE_CROSSBONE_ISLE_FIRST_FLOOR;
-	if(cur == first) {
+	if(current == first) {
 		if(gmFlagGet(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
 			fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 37, 10);
 			fdTreasureSpotSetPos(TREASURE_SPOT_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC,
 				toFIXED(600), toFIXED(168));
 		}
 	}
-	cur = MainRoutineStateWork.next;
-	if(cur >= first) {
-		if(cur <= SCENE_CROSSBONE_ISLE_NINTH_FLOOR) {
+	current = MainRoutineStateWork.next;
+	if(current >= first) {
+		if(current <= SCENE_CROSSBONE_ISLE_NINTH_FLOOR) {
 			scCrossboneIsleRestorePillar();
 			if(MainRoutineStateWork.entrance == ENTRANCE_AFTER_BATTLE) {
 				scCrossboneIsleOpenEastDoorAfterBattle();
@@ -583,13 +584,13 @@ static void scCrossboneIsleRestorePillar(void)
 	if(cleared != 0) {
 		fdActorSetPos(ACTOR_PILLAR, 650, 168);
 		actor->y.fixed = -toFIXED(32);
-		fdActorSetSprFlags(fdActorGet(ACTOR_PILLAR), 0);
-		fdActorSetSprPriority(ACTOR_PILLAR, 3);
-		actor->motionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_PILLAR), 0);
+		fdActorSetSpritePriority(ACTOR_PILLAR, 3);
+		actor->motionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(42, 10, 1, 1, 40, 10);
 	} else {
-		fdActorGet(ACTOR_PILLAR)->motionFlg = 0;
+		fdActorGet(ACTOR_PILLAR)->motionFlags = 0;
 	}
 }
 
@@ -621,18 +622,18 @@ static void scCrossboneIsleMovePillar(void)
 	}
 #endif
 
-	pillar->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	pillar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 
 	fdScriptWait(8);
 	scCrossboneIsleSpawnPillarMovedBurst(ACTOR_PILLAR);
-	sySndPlay(SE_WHOOSH);
+	sySoundPlay(SE_WHOOSH);
 	fdScriptWait(40);
 
-	fdActorSetSprFlags(fdActorGet(ACTOR_PILLAR), 0);
-	fdActorSetSprPriority(ACTOR_PILLAR, 3);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PILLAR), 0);
+	fdActorSetSpritePriority(ACTOR_PILLAR, 3);
 
-	pillar->motionFlg = 0;
-	pillar->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	pillar->motionFlags = 0;
+	pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 
 	fdMapGridCopyMetatileAttributes(42, 10, 1, 1, column, 10);
 
@@ -658,7 +659,7 @@ static void scCrossboneIslePushPillar(void)
 static void scCrossboneIsleOpenWestDoor(void)
 {
 	fdMapGridPlayMapEdit(CrossboneIsleDoorOpens, 37, 7);
-	sySndPlay(SE_STONE_RUMBLE);
+	sySoundPlay(SE_STONE_RUMBLE);
 	syImportScriptSetExitRequest(FLOOR_TO_SIDE_ROOM_WEST);
 }
 
@@ -720,7 +721,7 @@ static void scCrossboneIsleOpenEastDoor(void)
 		fdScriptEnd();
 	} else {
 		fdMapGridPlayMapEdit(CrossboneIsleDoorOpens, 44, 7);
-		sySndPlay(SE_STONE_RUMBLE);
+		sySoundPlay(SE_STONE_RUMBLE);
 		syImportScriptSetExitRequest(FLOOR_TO_SIDE_ROOM_EAST);
 	}
 }
@@ -756,9 +757,9 @@ static inline void scCrossboneIsleGrowPlant(
 	ACTOR *actor = fdActorGet(ACTOR_FIRST_PLANT + plant);
 
 	if(actor != NULL) {
-		actor->collisionFlg = 0;
+		actor->collisionFlags = 0;
 	}
-	fdActorSetSprFlags(fdActorGet(actorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(actorId), 0);
 	fdMapGridSetMetatileBehaviorAt(
 		0, toFIXED(x), toFIXED(z), METATILE_BEHAVIOR_CLIMB);
 }
@@ -921,9 +922,9 @@ static void scCrossboneIsleRideLog(Sint32 actorId, Sint32 dx, Sint32 dz)
 	} else {
 		fdActorSelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
 	}
-	sySndPlay(SE_LOG_PUSH);
+	sySoundPlay(SE_LOG_PUSH);
 	fdActorWaitForMove(leader);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdScriptEnd();
 }
 
@@ -937,8 +938,8 @@ static void scCrossboneIslePlaceWestEastLog(
 
 	if(actor != NULL) {
 
-		fdActorSetSprPriority(actorId, 3);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpritePriority(actorId, 3);
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		{
 			Sint32 row = FIELD_METATILE(actor->z.fixed);
 			Sint32 column = FIELD_METATILE(actor->x.fixed) - 1;
@@ -957,8 +958,8 @@ static void scCrossboneIslePlaceNorthSouthLog(
 
 	if(actor != NULL) {
 
-		fdActorSetSprPriority(actorId, 3);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpritePriority(actorId, 3);
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		{
 			Sint32 column = FIELD_METATILE(actor->x.fixed);
 			Sint32 row = FIELD_METATILE(actor->z.fixed) - 1;
@@ -1096,35 +1097,35 @@ static void scCrossboneIsleStepOnLogI(void)
    others at the middle of the metatile 32 pixels ahead. */
 static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 {
-	Sint32 savedMotionFlg = actor->motionFlg;
+	Sint32 savedMotionFlags = actor->motionFlags;
 #if JUMP_LANDS_ON_CELL_CENTER
-	FIELD_POS dst;
+	FIELD_POS dest;
 
-	dst.x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	dst.y = actor->y.fixed;
-	dst.z = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	dest.x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	dest.y = actor->y.fixed;
+	dest.z = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	{
 		Sint32 direction = FACING_NEAREST_CARDINAL(actor->facing);
 
-		syVectorAddPolarOffset(toFIXED(32), direction, (FIXED *)&dst);
+		syVectorAddPolarOffset(toFIXED(32), direction, (FIXED *)&dest);
 	}
-	if(syFieldActorCheckMovementCollision(actor, &dst) == 0) {
+	if(syFieldActorCheckMovementCollision(actor, &dest) == 0) {
 #else
 	if(syFieldActorCheckMovementCollision(actor, requested) == 0) {
 #endif
 		fdScriptStart();
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(actor, ANIM_LEADER_LEAP);
 		actor->speedLimit = toFIXED(3);
 		actor->acceleration = toFIXED(2);
-		actor->velY = toFIXED(4);
-		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(actor, 0);
+		actor->velocityY = toFIXED(4);
+		actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(actor, 0);
 #if JUMP_LANDS_ON_CELL_CENTER
 		fdActorMoveToAndWait(
-			ACTOR_PARTY_LEADER, FIXEDtoINT(dst.x), FIXEDtoINT(dst.z));
+			ACTOR_PARTY_LEADER, FIXEDtoINT(dest.x), FIXEDtoINT(dest.z));
 #else
 		{
 			Sint16 *pixelCoordinates = (Sint16 *)requested;
@@ -1134,8 +1135,8 @@ static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 		}
 #endif
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
-		actor->motionFlg = savedMotionFlg;
+		fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+		actor->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -1148,12 +1149,12 @@ static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 static Sint32 scCrossboneIsleHopNorth(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS dst;
+	FIELD_POS dest;
 
-	dst.x = actor->x.fixed;
-	dst.y = actor->y.fixed;
-	dst.z = actor->z.fixed + -toFIXED(32);
-	return scCrossboneIsleTryHop(actor, &dst);
+	dest.x = actor->x.fixed;
+	dest.y = actor->y.fixed;
+	dest.z = actor->z.fixed + -toFIXED(32);
+	return scCrossboneIsleTryHop(actor, &dest);
 }
 
 /* Walking south off the side of a floating log, or off the west pool's north
@@ -1163,12 +1164,12 @@ static Sint32 scCrossboneIsleHopNorth(void)
 static Sint32 scCrossboneIsleHopSouth(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS dst;
+	FIELD_POS dest;
 
-	dst.x = actor->x.fixed;
-	dst.y = actor->y.fixed;
-	dst.z = actor->z.fixed + toFIXED(32);
-	return scCrossboneIsleTryHop(actor, &dst);
+	dest.x = actor->x.fixed;
+	dest.y = actor->y.fixed;
+	dest.z = actor->z.fixed + toFIXED(32);
+	return scCrossboneIsleTryHop(actor, &dest);
 }
 
 /* Walking west off the side of a floating log, or off the east shore of either
@@ -1177,12 +1178,12 @@ static Sint32 scCrossboneIsleHopSouth(void)
 static Sint32 scCrossboneIsleHopWest(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS dst;
+	FIELD_POS dest;
 
-	dst.x = actor->x.fixed + -toFIXED(32);
-	dst.y = actor->y.fixed;
-	dst.z = actor->z.fixed;
-	return scCrossboneIsleTryHop(actor, &dst);
+	dest.x = actor->x.fixed + -toFIXED(32);
+	dest.y = actor->y.fixed;
+	dest.z = actor->z.fixed;
+	return scCrossboneIsleTryHop(actor, &dest);
 }
 
 /* Walking east off the side of a floating log, or off the west pool's west
@@ -1191,12 +1192,12 @@ static Sint32 scCrossboneIsleHopWest(void)
 static Sint32 scCrossboneIsleHopEast(void)
 {
 	ACTOR	 *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	FIELD_POS dst;
+	FIELD_POS dest;
 
-	dst.x = actor->x.fixed + toFIXED(32);
-	dst.y = actor->y.fixed;
-	dst.z = actor->z.fixed;
-	return scCrossboneIsleTryHop(actor, &dst);
+	dest.x = actor->x.fixed + toFIXED(32);
+	dest.y = actor->y.fixed;
+	dest.z = actor->z.fixed;
+	return scCrossboneIsleTryHop(actor, &dest);
 }
 
 /* Moves the metatiles of a log lying west-east from row `row` to the row it now

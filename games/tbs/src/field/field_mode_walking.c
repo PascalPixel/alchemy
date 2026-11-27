@@ -142,7 +142,7 @@ void fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ)
 			fixedX >= toFIXED(minX) && fixedX < toFIXED(maxX) &&
 			fixedZ >= toFIXED(minZ) && fixedZ < toFIXED(maxZ)) {
 			state->exit = exitValue;
-			sySndPlayStub(SE_MAP_EXIT);
+			sySoundPlayStub(SE_MAP_EXIT);
 			fdLeaderStopMoving();
 			return;
 		}
@@ -167,7 +167,7 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 	Sint16				   prevHp[8];
 	MAP_GRID_METATILE	  *tile;
 	UNIT				  *unitVitals;
-	Uint32				   partyCnt;
+	Uint32				   partyCount;
 	Sint32				   partyHurt;
 	Uint32				   i;
 	Uint32				   event;
@@ -182,8 +182,8 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 		return;
 
 	/* Note each character's HP, to see who falls. */
-	partyCnt = gmPartyCountMembersStub();
-	for(i = 0; i < partyCnt; i++)
+	partyCount = gmPartyCountMembersStub();
+	for(i = 0; i < partyCount; i++)
 		prevHp[i] = gmUnitGetStub(MainRoutineStateWork.party[i])->hp;
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -199,8 +199,8 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 			(z / toFIXED(MAPGRID_METATILE_PIXELS)) * MAPGRID_SIZE];
 	}
 	event = tile->behavior;
-	state->prevMetatile = state->curMetatile;
-	state->curMetatile = tile;
+	state->prevMetatile = state->currentMetatile;
+	state->currentMetatile = tile;
 	/* Exit regions are checked on any marked metatile; the behavior then picks
 	   the request it raises. */
 	if(event != 0)
@@ -214,7 +214,7 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 
 	/* Only while walking (not climbing) towards a target. */
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK &&
-		leader != NULL && leader->tgtX != ACTOR_NO_TARGET) {
+		leader != NULL && leader->targetX != ACTOR_NO_TARGET) {
 		/* Encounters: the zone comes from the World Map's encounter region and
 		   battle environment, or from the ground the leader stands on. */
 		encounterSpeed = leader->speedLimit;
@@ -250,7 +250,7 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 			state->walkingDistance = accumulatedDistance & (toFIXED(1) - 1);
 			fdPartyAddPp(amount, 0);
 			if(btDjinnRecoveryCountDownStub())
-				sySndPlayStub(SE_DJINNI_SET);
+				sySoundPlayStub(SE_DJINNI_SET);
 			fdPartyClearUnusableShortcuts();
 			partyHurt = fdPartyApplyPoisonDamage();
 		}
@@ -310,17 +310,17 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 	   tick is listed, loses its poison and raises FIELD_RAISED_CUE_PARTY_FELL,
 	   which fdModeRun handles. */
 	if(partyHurt) {
-		state->fallenCnt = 0;
-		state->survivorCnt = 0;
-		leader->velY = toFIXED(4);
+		state->fallenCount = 0;
+		state->survivorCount = 0;
+		leader->velocityY = toFIXED(4);
 		fdEffectSetAttached(
 			leaderId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		for(i = 0; i < partyCnt; i++) {
+		for(i = 0; i < partyCount; i++) {
 			unitVitals = gmUnitGetStub(MainRoutineStateWork.party[i]);
 			if(unitVitals->hp > 0) {
-				state->survivorCnt++;
+				state->survivorCount++;
 			} else if(prevHp[i] != 0) {
-				state->fallenOwners[state->fallenCnt++] =
+				state->fallenOwners[state->fallenCount++] =
 					MainRoutineStateWork.party[i];
 				state->raisedCue = FIELD_RAISED_CUE_PARTY_FELL;
 				unitVitals->poison = 0;
@@ -333,11 +333,11 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
    walks). */
 void fdPartyAddPp(Sint32 amount, Sint32 unused)
 {
-	Sint32 partyCnt = gmPartyCountMembersStub();
-	Sint32 partyIdx;
+	Sint32 partyCount = gmPartyCountMembersStub();
+	Sint32 partyIndex;
 
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
-		gmUnitAddPpStub(MainRoutineStateWork.party[partyIdx], amount);
+	for(partyIndex = 0; partyIndex < partyCount; partyIndex++)
+		gmUnitAddPpStub(MainRoutineStateWork.party[partyIndex], amount);
 }
 
 /* Damage past this plays SE_HEAVY_IMPACT rather than SE_IMPACT. */
@@ -347,8 +347,8 @@ void fdPartyAddPp(Sint32 amount, Sint32 unused)
    when percent is set. */
 void fdPartyAddHp(Sint32 amount, Sint32 percent)
 {
-	Sint32 partyCnt;
-	Sint32 partyIdx;
+	Sint32 partyCount;
+	Sint32 partyIndex;
 	Sint32 hpDelta;
 	UNIT  *unit;
 
@@ -357,16 +357,16 @@ void fdPartyAddHp(Sint32 amount, Sint32 percent)
 		fdPaletteFadeSetSource(RGB(31, 15, 0), PALETTES_ALL);
 		fdPaletteFadeStartInterpolation(4);
 		if(amount < -HEAVY_DAMAGE)
-			sySndPlayStub(SE_HEAVY_IMPACT);
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 		else
-			sySndPlayStub(SE_IMPACT);
+			sySoundPlayStub(SE_IMPACT);
 	} else {
-		sySndPlayStub(SE_RECOVERY);
+		sySoundPlayStub(SE_RECOVERY);
 	}
 
-	partyCnt = gmPartyCountMembersStub();
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
-		unit = gmUnitGetStub(MainRoutineStateWork.party[partyIdx]);
+	partyCount = gmPartyCountMembersStub();
+	for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+		unit = gmUnitGetStub(MainRoutineStateWork.party[partyIndex]);
 		if(!percent) {
 			hpDelta = amount;
 		} else {
@@ -379,7 +379,7 @@ void fdPartyAddHp(Sint32 amount, Sint32 percent)
 					hpDelta = -hpDelta;
 			}
 		}
-		gmUnitAddHpStub(MainRoutineStateWork.party[partyIdx], hpDelta);
+		gmUnitAddHpStub(MainRoutineStateWork.party[partyIndex], hpDelta);
 	}
 }
 
@@ -394,11 +394,11 @@ void fdPartyAddHp(Sint32 amount, Sint32 percent)
 Sint32 fdPartyApplyPoisonDamage(void)
 {
 	Sint32 worstPoison = 0;
-	Sint32 partyCnt = gmPartyCountMembersStub();
-	Sint32 partyIdx;
+	Sint32 partyCount = gmPartyCountMembersStub();
+	Sint32 partyIndex;
 
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
-		UNIT  *unit = gmUnitGetStub(MainRoutineStateWork.party[partyIdx]);
+	for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+		UNIT  *unit = gmUnitGetStub(MainRoutineStateWork.party[partyIndex]);
 		Sint32 hpDelta;
 
 		switch(unit->poison) {
@@ -420,13 +420,13 @@ Sint32 fdPartyApplyPoisonDamage(void)
 			hpDelta = 0;
 			break;
 		}
-		gmUnitAddHpStub(MainRoutineStateWork.party[partyIdx], hpDelta);
+		gmUnitAddHpStub(MainRoutineStateWork.party[partyIndex], hpDelta);
 	}
 
 	if(worstPoison != 0) {
 		fdPaletteFadeSetSource(RGB(31, 15, 0), PALETTES_ALL);
 		fdPaletteFadeStartInterpolation(4);
-		sySndPlayStub(SE_IMPACT);
+		sySoundPlayStub(SE_IMPACT);
 	}
 
 	return worstPoison;
@@ -439,9 +439,9 @@ void fdWorldMapFreeze(void)
 	FIELD_STATE				*fieldState;
 	SCREEN_TRANSITION_STATE *state;
 
-	fieldState = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(*fieldState));
+	fieldState = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(*fieldState));
 	if(fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
-		state = syHeapSlotAllocEWRAM(
+		state = syHeapSlotAllocateEWRAM(
 			HEAP_SLOT_SCREEN_TRANSITION, sizeof(SCREEN_TRANSITION_STATE));
 		if((state != NULL) && (state->step != 0)) {
 			state->start = 0;
@@ -460,7 +460,7 @@ void fdWorldMapUnfreeze(void)
 {
 	FIELD_STATE *state;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(*state));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(*state));
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		fdWorldMapLoadAreaGraphicsStub();
 		state->camera->paused = 0;

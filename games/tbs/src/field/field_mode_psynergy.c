@@ -13,7 +13,7 @@ Sint32 fdUsePsynergy(Uint32 code)
 	const CUE	*after;
 	const CUE	*during;
 	Sint32		 userId;
-	Sint32		 tgt;
+	Sint32		 target;
 	Bool		 retreat;
 	Sint32		 abilityGroup;
 	Sint32		 ppCost;
@@ -89,16 +89,16 @@ Sint32 fdUsePsynergy(Uint32 code)
 
 	/* Find the scene's scripts, and choose how the Psynergy plays. */
 	before = fdFindPsynergyCue(
-		PSYNERGY_CUE(PSYNERGY_PHASE_BEFORE_CAST), abilityGroup, &tgt);
+		PSYNERGY_CUE(PSYNERGY_PHASE_BEFORE_CAST), abilityGroup, &target);
 	after = fdFindPsynergyCue(
-		PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_CAST), abilityGroup, &tgt);
+		PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_CAST), abilityGroup, &target);
 	during = fdFindPsynergyCue(
-		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), abilityGroup, &tgt);
-	tgt = -1;
+		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), abilityGroup, &target);
+	target = -1;
 	gmFlagSetStub(FLAG_PLAY_PSYNERGY_CAST);
 	gmFlagSetStub(FLAG_PSYNERGY_TARGET);
 	if(before || after || during) {
-		tgt = fdFindNearbyPsynergyTarget(
+		target = fdFindNearbyPsynergyTarget(
 			MainRoutineStateWork.leaderActorId, abilityGroup);
 		/* The after script plays the Psynergy itself. */
 		if(after && (after->subject & CUE_SUBJECT_OWN_EFFECT)) {
@@ -113,10 +113,10 @@ Sint32 fdUsePsynergy(Uint32 code)
 		fdActorClearOutOfBounds();
 	fdPsynergyLoadResources(abilityId, 0);
 	fieldState->psynergyActing = 1;
-	fdPsynergySetupActorPair(MainRoutineStateWork.leaderActorId, tgt);
+	fdPsynergySetupActorPair(MainRoutineStateWork.leaderActorId, target);
 	fdPsynergyStartCast();
 
-	fdRunPsynergyScript(before, userId, tgt);
+	fdRunPsynergyScript(before, userId, target);
 	if(gmFlagGetStub(FLAG_PLAY_PSYNERGY_CAST)) {
 		if(gmFlagGetStub(FLAG_PSYNERGY_TARGET))
 			fdPsynergyDispatch();
@@ -124,7 +124,7 @@ Sint32 fdUsePsynergy(Uint32 code)
 			fdPsynergyRun();
 	}
 	fdPsynergyStopCasterUpdate();
-	fdRunPsynergyScript(after, userId, tgt);
+	fdRunPsynergyScript(after, userId, target);
 	if(gmFlagGetStub(FLAG_PLAY_PSYNERGY_CAST))
 		fdPsynergyFinishMindRead();
 	gmFlagClearStub(FLAG_PLAY_PSYNERGY_CAST);
@@ -140,9 +140,9 @@ Sint32 fdUsePsynergy(Uint32 code)
    group and what the leader faces. */
 Bool fdHasPsynergyCue(Sint32 group)
 {
-	Sint32 tgt;
+	Sint32 target;
 
-	if(fdFindPsynergyCue(PSYNERGY_CUE_ANY, (Uint16)group, &tgt))
+	if(fdFindPsynergyCue(PSYNERGY_CUE_ANY, (Uint16)group, &target))
 		return TRUE;
 	return FALSE;
 }

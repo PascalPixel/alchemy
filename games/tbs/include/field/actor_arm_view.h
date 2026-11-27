@@ -12,14 +12,14 @@
 
 struct ACTOR;
 
-/* The values of ACTOR.tgtX, targetY and targetZ (and ACTOR_ARM_VIEW's) that are
-   not coordinates. */
+/* The values of ACTOR.targetX, targetY and targetZ (and ACTOR_ARM_VIEW's) that
+   are not coordinates. */
 typedef enum ACTOR_TARGET {
 	/* A target coordinate that is not set: the actor has no target. */
 	ACTOR_NO_TARGET = (Sint32)0x80000000
 } ACTOR_TARGET;
 
-/* ACTOR.motionFlg bits. */
+/* ACTOR.motionFlags bits. */
 typedef enum ACTOR_MOTION_FLAG {
 	ACTOR_FOLLOWS_TERRAIN = 0x01, /* moves with the ground height under it */
 	ACTOR_FALLS = 0x02,			  /* falls by its gravity and bounces */
@@ -36,7 +36,7 @@ typedef enum ACTOR_MOTION_FLAG {
 		(Uint8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE)
 } ACTOR_MOTION_FLAG;
 
-/* ACTOR.steeringFlg bits. */
+/* ACTOR.steeringFlags bits. */
 typedef enum ACTOR_STEERING_FLAG {
 	ACTOR_FACES_MOTION = 0x01 /* turns toward its velocity, 1/16 turn a tick */
 } ACTOR_STEERING_FLAG;
@@ -68,18 +68,18 @@ typedef struct ACTOR_ARM_VIEW {
 	Sint32 scaleX;
 	Sint32 scaleY;
 	Uint16 radius;
-	Uint8  layer;	   /* the map layer whose ground height it follows */
-	Uint8  priFlg;	   /* Actor's; not named here */
-	FIXED  velX;	   /* 16.16 fixed-point pixels per tick */
-	FIXED  velY;	   /* 16.16 fixed-point pixels per tick */
-	FIXED  velZ;	   /* 16.16 fixed-point pixels per tick */
-	FIXED  speedLimit; /* 16.16 fixed-point pixels per tick */
+	Uint8  layer;		  /* the map layer whose ground height it follows */
+	Uint8  priorityFlags; /* Actor's; not named here */
+	FIXED  velocityX;	  /* 16.16 fixed-point pixels per tick */
+	FIXED  velocityY;	  /* 16.16 fixed-point pixels per tick */
+	FIXED  velocityZ;	  /* 16.16 fixed-point pixels per tick */
+	FIXED  speedLimit;	  /* 16.16 fixed-point pixels per tick */
 	/* Added toward the target each tick, or taken off the speed when there is
 	   none, in 16.16 fixed-point pixels per tick. */
 	FIXED acceleration;
-	FIXED tgtX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
-	FIXED tgtY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
-	FIXED tgtZ; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetZ; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
 
 	union {
 		/* The share of the falling speed kept on landing, 16.16 fixed point. */
@@ -94,30 +94,30 @@ typedef struct ACTOR_ARM_VIEW {
 	FIXED gravity;
 	/* Actor's sceneWord, sprite and sprite kind; not named here. */
 	Sint32 sceneWord;
-	void  *spr;
-	Uint8  sprStorageKind;
+	void  *sprite;
+	Uint8  spriteStorageKind;
 	/* ACTOR_MOTION_FLAG bits; zero is free flight in 3D. */
-	Uint8 motionFlg;
+	Uint8 motionFlags;
 	Uint8 arrivalAxis; /* the ARRIVAL_AXIS_* that decides arrival */
 	/* the actor script's last flag test; not named here */
 	Uint8 conditionResult;
-	Uint8 snapToTgt;	/* nonzero lands it exactly on its target */
-	Uint8 collisionFlg; /* bit 7: a solid actor refuses its move */
-	Uint8 steeringFlg;	/* ACTOR_STEERING_FLAG bits */
+	Uint8 snapToTarget;	  /* nonzero lands it exactly on its target */
+	Uint8 collisionFlags; /* bit 7: a solid actor refuses its move */
+	Uint8 steeringFlags;  /* ACTOR_STEERING_FLAG bits */
 	/* nonzero skips its script and motion, not its update function */
 	Uint8 paused;
 	/* Actor's flag that keeps its sprite's VRAM, and the actor script's SC_LOOP
 	   count; not named here. */
-	Uint8  retainSprCache;
-	Uint8  repeatCnt;
+	Uint8  retainSpriteCache;
+	Uint8  repeatCount;
 	Sint16 wait;	/* ticks left before its script runs again */
 	Uint8  refused; /* ticks in a row a solid actor refused its move */
 	Uint8  frozen;	/* nonzero skips steering, terrain, gravity and floating */
 	/* Actor's two bytes scene code uses, and its timer (the actor script's
 	   parameter), footprint side and watched actor; not named here. */
-	Uint8				   sceneCnt;
+	Uint8				   sceneCount;
 	Uint8				   sceneByte;
-	Sint16				   tmr;
+	Sint16				   timer;
 	Sint16				   userValue;
 	struct ACTOR_ARM_VIEW *watchedActor;
 	/* Called each tick before its script. */

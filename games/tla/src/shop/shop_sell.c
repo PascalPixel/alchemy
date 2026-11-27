@@ -7,46 +7,46 @@ Sint32 mnShopChooseMember(void)
 {
 	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		unitId = 0;
-	Sint32		memberIdx = 0;
-	WINDOW	   *listWin;
+	Sint32		memberIndex = 0;
+	WINDOW	   *listWindow;
 	Sint32		redraw = 1;
 	Sint32		result;
 
-	shop->moneyWin = mnWindowCreateStub(
+	shop->moneyWindow = mnWindowCreateStub(
 		0, 9, SHOP_COIN_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
-	shop->itemWin = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
-	listWin = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-	shop->listWin = listWin;
+	shop->itemWindow = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
+	listWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
+	shop->listWindow = listWindow;
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
-	mnShowPartyFiguresStub(listWin, 2, 0);
+	shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
+	mnShowPartyFiguresStub(listWindow, 2, 0);
 	while(1) {
 		/* FAKEMATCH(dead): updates of unitId that cancel out. */
 		unitId++;
 		unitId--;
 		if(redraw != 0) {
-			unitId = shop->partyMemberIds[memberIdx];
-			mnCursorPlace(
-				listWin, (memberIdx % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
-			shop->cursorFrm = 3;
+			unitId = shop->partyMemberIds[memberIndex];
+			mnCursorPlace(listWindow,
+				(memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
+			shop->cursorFrame = 3;
 			if(redraw == MENU_GRID_CHANGED_PAGE) {
-				mnCreatePartyFiguresStub(memberIdx / SHOP_PARTY_PAGE_MEMBERS *
+				mnCreatePartyFiguresStub(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
 					SHOP_PARTY_PAGE_MEMBERS);
 				sySynch(1);
 			}
-			mnShopDrawParty(listWin, memberIdx, 0);
-			mnShopDrawMemberItems(shop->itemWin, unitId);
+			mnShopDrawParty(listWindow, memberIndex, 0);
+			mnShopDrawMemberItems(shop->itemWindow, unitId);
 			redraw = 0;
 		}
 		if(PerWork.push & KEY_A) {
 			sySynch(1);
 			if(gmInventoryCountStub(unitId) == 0) {
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 				continue;
 			}
-			mnWindowSprPrepareForRedrawStub(listWin);
-			sySndPlayStub(SE_MENU_CONFIRM);
+			mnWindowSpritePrepareForRedrawStub(listWindow);
+			sySoundPlayStub(SE_MENU_CONFIRM);
 			if(shop->action == SHOP_ACTION_SELL) {
 				mnShopSelectSell(unitId);
 			} else if(shop->action == SHOP_ACTION_REPAIR) {
@@ -57,23 +57,23 @@ Sint32 mnShopChooseMember(void)
 					break;
 			}
 			shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-			shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+			shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
 			redraw = MENU_GRID_CHANGED_PAGE;
 		} else if(PerWork.push & KEY_B) {
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			result = -1;
 			break;
 		} else {
 			redraw = mnGridMoveCursor(
-				&memberIdx, shop->partyMemberCnt, SHOP_PARTY_PAGE_MEMBERS);
+				&memberIndex, shop->partyMemberCount, SHOP_PARTY_PAGE_MEMBERS);
 			sySynch(1);
 		}
 	}
 	mnItemIconGridSetVisible(0);
 	mnReleasePartyFiguresStub();
-	mnWindowCloseStub(listWin, 2);
-	mnWindowCloseStub(shop->itemWin, 2);
-	mnWindowCloseStub(shop->moneyWin, 2);
+	mnWindowCloseStub(listWindow, 2);
+	mnWindowCloseStub(shop->itemWindow, 2);
+	mnWindowCloseStub(shop->moneyWindow, 2);
 	sySynch(1);
 	return result;
 }
@@ -90,78 +90,80 @@ Sint32 mnShopChooseMember(void)
 Sint32 mnShopSelectSell(Sint32 unitId)
 {
 	SHOP_STATE *shop;
-	WINDOW	   *descriptionWin;
-	WINDOW	   *priceWin;
+	WINDOW	   *descriptionWindow;
+	WINDOW	   *priceWindow;
 	UNIT	   *unit;
-	Sint32		inventoryCnt;
+	Sint32		inventoryCount;
 	Sint32		slot;
-	WINDOW	   *win;
+	WINDOW	   *window;
 	Bool		redraw;
 	Sint32		itemId;
 	Sint32		result;
-	Sint32		cnt;
+	Sint32		count;
 
 	shop = RamHeapSlots->menuState;
 	unit = syUnitGet(unitId);
 	slot = 0;
-	inventoryCnt = 1;
-	priceWin = mnWindowCreateStub(
+	inventoryCount = 1;
+	priceWindow = mnWindowCreateStub(
 		PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	do {
-		descriptionWin = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+		descriptionWindow =
+			mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-		shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+		shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
 		redraw = TRUE;
 		while(1) {
 			if(redraw != 0) {
 				redraw = FALSE;
-				inventoryCnt = gmInventoryCountStub(unitId);
-				if(slot > inventoryCnt - 1)
-					slot = inventoryCnt - 1;
+				inventoryCount = gmInventoryCountStub(unitId);
+				if(slot > inventoryCount - 1)
+					slot = inventoryCount - 1;
 				itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
-				mnCursorPlace(shop->itemWin, slot % SHOP_INVENTORY_COLUMNS * 16,
+				mnCursorPlace(shop->itemWindow,
+					slot % SHOP_INVENTORY_COLUMNS * 16,
 					slot / SHOP_INVENTORY_COLUMNS * 16 + 8);
-				shop->cursorFrm = 3;
+				shop->cursorFrame = 3;
 				if(shop->action == SHOP_ACTION_SELL)
-					mnShopDrawItemPrice(priceWin, itemId,
+					mnShopDrawItemPrice(priceWindow, itemId,
 						mnShopSalePrice(unit->inventory[slot]),
 						SHOP_PRICE_KIND_SELL);
 				else if(shop->action == SHOP_ACTION_REPAIR)
-					mnShopDrawItemPrice(priceWin, itemId,
+					mnShopDrawItemPrice(priceWindow, itemId,
 						mnShopRepairPrice(unit->inventory[slot]),
 						SHOP_PRICE_KIND_REPAIR);
 				else
-					mnShopDrawItemPrice(priceWin, itemId,
+					mnShopDrawItemPrice(priceWindow, itemId,
 						mnForgeGetItemCondition(itemId), SHOP_PRICE_KIND_FORGE);
 				mnShopDrawMessage(
-					descriptionWin, itemId + (Sint32)MsgItemDescription);
+					descriptionWindow, itemId + (Sint32)MsgItemDescription);
 			}
 			if(PerWork.push & KEY_A) {
-				sySndPlayStub(SE_MENU_CONFIRM);
+				sySoundPlayStub(SE_MENU_CONFIRM);
 				result = 0;
 				break;
 			}
 			if(PerWork.push & KEY_B) {
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 				result = -1;
 				break;
 			}
 			if(PerWork.data & KEY_SELECT) {
 				Uint32 inventoryEntry = unit->inventory[slot];
 
-				sySndPlayStub(SE_RECOVERY);
-				win = mnWindowCreateStub(
+				sySoundPlayStub(SE_RECOVERY);
+				window = mnWindowCreateStub(
 					0, 9, DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
-				mnItemMenuDrawItemDetailsStub(win, inventoryEntry);
-				*(Uint8 *)&shop->memberSprsShown = 0;
+				mnItemMenuDrawItemDetailsStub(window, inventoryEntry);
+				*(Uint8 *)&shop->memberSpritesShown = 0;
 				while(PerWork.data & KEY_SELECT)
 					sySynch(1);
-				shop->memberSprsShown = 1;
-				mnWindowCloseStub(win, 2);
+				shop->memberSpritesShown = 1;
+				mnWindowCloseStub(window, 2);
 				mnShopDrawMoney();
-				mnWindowSprPrepareForRedrawStub(shop->listWin);
+				mnWindowSpritePrepareForRedrawStub(shop->listWindow);
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-				mnShopDrawMemberItems(shop->itemWin, unitId);
+				mnShopDrawMemberItems(shop->itemWindow, unitId);
 #endif
 				sySynch(1);
 				/* The Japanese release goes on to the next tick without
@@ -172,46 +174,46 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 #endif
 			} else {
 				if(PerWork.repeat & KEY_LEFT) {
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					slot--;
-					slot = (inventoryCnt + slot) % inventoryCnt;
+					slot = (inventoryCount + slot) % inventoryCount;
 					redraw = TRUE;
 				}
 				if(PerWork.repeat & KEY_RIGHT) {
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					slot++;
-					slot = (inventoryCnt + slot) % inventoryCnt;
+					slot = (inventoryCount + slot) % inventoryCount;
 					redraw = TRUE;
 				}
 				if(PerWork.repeat & KEY_UP) {
 					slot -= SHOP_INVENTORY_COLUMNS;
 					if(slot < 0)
 						slot += INVENTORY_SLOTS;
-					while(slot >= inventoryCnt)
+					while(slot >= inventoryCount)
 						slot -= SHOP_INVENTORY_COLUMNS;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw = TRUE;
 				}
 				if(PerWork.repeat & KEY_DOWN) {
 					slot += SHOP_INVENTORY_COLUMNS;
-					if(slot >= inventoryCnt)
+					if(slot >= inventoryCount)
 						slot -= INVENTORY_SLOTS;
 					while(slot < 0)
 						slot += SHOP_INVENTORY_COLUMNS;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw = TRUE;
 				}
 				sySynch(1);
 			}
 		}
-		mnWindowCloseStub(descriptionWin, 2);
+		mnWindowCloseStub(descriptionWindow, 2);
 		sySynch(1);
 		if(result != 0)
 			break;
 		if(shop->action == SHOP_ACTION_SELL) {
-			cnt = mnShopSelectSellCount(unitId, slot);
-			if(cnt != -1)
-				mnShopSellItem(unitId, slot, cnt);
+			count = mnShopSelectSellCount(unitId, slot);
+			if(count != -1)
+				mnShopSellItem(unitId, slot, count);
 			mnShopShowKeeperMessage((Sint32)MsgSellAnythingElse);
 		} else if(shop->action == SHOP_ACTION_REPAIR) {
 			mnShopRepairItem(unitId, slot);
@@ -223,7 +225,7 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 			mnShopShowKeeperMessage((Sint32)MsgWhichItemNeedsAttention);
 		}
 	} while(gmInventoryCountStub(unitId) != 0);
-	mnWindowCloseStub(priceWin, 2);
+	mnWindowCloseStub(priceWindow, 2);
 	return result;
 }
 
@@ -238,13 +240,13 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 
 /* Draws the party member's items as icons in rows of five, or a line saying it
    has none. */
-void mnShopDrawMemberItems(WINDOW *win, Sint32 unitId)
+void mnShopDrawMemberItems(WINDOW *window, Sint32 unitId)
 {
-	if(win != NULL) {
-		mnWindowSprPrepareForRedrawStub(win);
-		mnItemIconGridShowInventory(win, 8, 0, unitId);
+	if(window != NULL) {
+		mnWindowSpritePrepareForRedrawStub(window);
+		mnItemIconGridShowInventory(window, 8, 0, unitId);
 		if(gmInventoryCountStub(unitId) == 0)
-			mnTextDrawMessageStub((Sint32)MsgNoItems, (Sint32)win,
+			mnTextDrawMessageStub((Sint32)MsgNoItems, (Sint32)window,
 				SHOP_EMPTY_GRID_X, SHOP_EMPTY_GRID_Y);
 	}
 }
@@ -260,7 +262,7 @@ Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
 	Sint16			 savedX;
 	Sint16			 savedY;
 	Sint32			 price;
-	Sint32			 cnt;
+	Sint32			 count;
 	Sint32			 selection;
 	ITEM_DEFINITION *item;
 	SHOP_STATE		*shop;
@@ -271,14 +273,14 @@ Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
 	item = gmItemGetDirectStub(unit->inventory[slot]);
 	result = 1;
 	price = mnShopSalePrice(unit->inventory[slot]);
-	cnt = gmInventoryGetQuantityStub(unitId, slot);
-	selection = cnt;
-	if((item->flg & ITEM_STACKABLE) && cnt > 1) {
+	count = gmInventoryGetQuantityStub(unitId, slot);
+	selection = count;
+	if((item->flags & ITEM_STACKABLE) && count > 1) {
 		mnShopShowKeeperMessage((Sint32)MsgHowManyToSell);
-		savedX = shop->cursor.tgtX;
-		savedY = shop->cursor.tgtY;
+		savedX = shop->cursor.targetX;
+		savedY = shop->cursor.targetY;
 		shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-		shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+		shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
 		mnCursorPlace(NULL, SHOP_QUANTITY_CURSOR_X, 48);
 		result = mnShopSelectQuantity(0, selection, price);
 		sySynch(1);
@@ -288,12 +290,12 @@ Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
 	return result;
 }
 
-/* Sells `cnt` of the item in `slot` once the player accepts the shopkeeper's
-   offer, worded for a broken item, for several or for a rare one. A `cnt` of
+/* Sells `count` of the item in `slot` once the player accepts the shopkeeper's
+   offer, worded for a broken item, for several or for a rare one. A `count` of
    -1 is the offer for the equipment a purchase replaced, and sells one. The
    shop refuses an item it pays nothing for and one its wearer cannot take
    off. */
-void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt)
+void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count)
 {
 	SHOP_STATE *shop;
 
@@ -302,24 +304,24 @@ void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt)
 		UNIT  *unit = syUnitGet(unitId);
 		Sint32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 		ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
-		Uint8			 rare = item->flg & ITEM_RARE;
+		Uint8			 rare = item->flags & ITEM_RARE;
 		Sint32			 all = 0;
 		Sint32			 total;
 		Sint32			 msg;
 		Sint32			 i;
 
-		if(cnt == -1) {
+		if(count == -1) {
 			all = 1;
-			cnt = 1;
+			count = 1;
 		}
-		total = mnShopSalePrice(unit->inventory[slot]) * cnt;
+		total = mnShopSalePrice(unit->inventory[slot]) * count;
 		if(total == 0) {
 			mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 			mnShopShowKeeperMessageHidingCursor((Sint32)MsgWeDoNotBuy);
 			return;
 		}
 		if((unit->inventory[slot] & INVENTORY_EQUIPPED) &&
-			(item->flg & ITEM_CANNOT_UNEQUIP)) {
+			(item->flags & ITEM_CANNOT_UNEQUIP)) {
 			mnMessageArgumentPushStub(itemId, MESSAGE_ARGUMENT_ITEM);
 			mnShopShowKeeperMessageHidingCursor((Sint32)MsgCannotSellEquipped);
 			return;
@@ -328,7 +330,7 @@ void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt)
 			msg = (Sint32)MsgOldItemSellOffer;
 		else if(unit->inventory[slot] & INVENTORY_BROKEN)
 			msg = (Sint32)MsgDamagedSellOffer;
-		else if(cnt > 1)
+		else if(count > 1)
 			msg = (Sint32)MsgSellTotal;
 		else if(rare)
 			msg = (Sint32)MsgRareSellOffer;
@@ -345,14 +347,14 @@ void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt)
 			mnShopShowKeeperMessageHidingCursor(msg);
 			return;
 		}
-		sySndPlayStub(SE_SHOP_SELL);
-		for(i = 0; i < cnt; i++)
+		sySoundPlayStub(SE_SHOP_SELL);
+		for(i = 0; i < count; i++)
 			gmInventoryDiscardStub(unitId, slot);
 		gmUnitRefreshPsynergyStub(unitId);
-		gmUnitCalcStub(unitId);
+		gmUnitCalculateStub(unitId);
 		gmPartyAdjustCoinsStub(total);
 		mnShopDrawMoney();
-		mnShopDrawMemberItems(shop->itemWin, unitId);
+		mnShopDrawMemberItems(shop->itemWindow, unitId);
 		if(rare || all)
 			msg = (Sint32)MsgSold;
 		else

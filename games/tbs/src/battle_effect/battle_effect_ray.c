@@ -28,7 +28,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*motes;
 	Sint32				 bolt;
 	Sint32				 thrown;
@@ -66,35 +66,36 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 	for(i = 0; i != RAY_SPARK_COUNT; i++) {
 		PARTICLE *spark = &PARTICLES[i];
 		Sint32	  speed;
-		Sint32	  ang;
+		Sint32	  angle;
 
 		speed = (syRandom() & 0x3ff) + 256;
-		ang = (syRandom() & 0x7fff) - DEGtoANG(90);
-		SET_POSITION(spark, 64 << 8, 112 << 8, FIXEDtoINT(sySin(ang) * speed));
-		spark->velZ = FIXEDtoINT(-(syCos(ang) * speed * 2));
+		angle = (syRandom() & 0x7fff) - DEGtoANG(90);
+		SET_POSITION(
+			spark, 64 << 8, 112 << 8, FIXEDtoINT(sySin(angle) * speed));
+		spark->velocityZ = FIXEDtoINT(-(syCos(angle) * speed * 2));
 		spark->variant = 0;
 	}
 
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	sySndPlayStub(SE_ITEM_BREAK);
+	sySoundPlayStub(SE_ITEM_BREAK);
 
-	for(frm = 0; frm != RAY_TICKS; frm++) {
-		if(frm == 20)
+	for(frame = 0; frame != RAY_TICKS; frame++) {
+		if(frame == 20)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		/* The bolts, over the first 16 ticks. */
-		if(frm < 16) {
-			if(frm % 5 == 2)
+		if(frame < 16) {
+			if(frame % 5 == 2)
 				syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
 			for(bolt = 0; bolt != RAY_COUNT; bolt++) {
-				Sint32 ang;
+				Sint32 angle;
 				Sint32 x;
 				Sint32 y;
 
 				thrown = 0;
-				ang = (frm * RAY_BOLT_TURN + DEGtoANG(90)) * bolt;
-				x = FIXEDtoINT((32 - frm) * sySin(ang)) + 64;
-				y = -FIXEDtoINT(syCos(ang) * 8) - 8;
+				angle = (frame * RAY_BOLT_TURN + DEGtoANG(90)) * bolt;
+				x = FIXEDtoINT((32 - frame) * sySin(angle)) + 64;
+				y = -FIXEDtoINT(syCos(angle) * 8) - 8;
 				if(state->args->variant == EFFECT_VARIANT_BASIC)
 					draw[0](canvas,
 						state->sheet +
@@ -122,8 +123,8 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 						spread = (syRandom() & 0x7fff) - DEGtoANG(90);
 						spark->x = toFIXED(x);
 						spark->y = INTtoFIXED(y + 112);
-						spark->velX = (sySin(spread) * speed) >> 9;
-						spark->velY = -(syCos(spread) * speed * 2) >> 7;
+						spark->velocityX = (sySin(spread) * speed) >> 9;
+						spark->velocityY = -(syCos(spread) * speed * 2) >> 7;
 						spark->variant = (syRandom() & 7) + 32;
 						thrown++;
 						if(thrown ==
@@ -133,7 +134,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			state->shakeFrm = 1;
+			state->shakeFrame = 1;
 		}
 
 		/* Sparks bounce off the bottom. */
@@ -144,7 +145,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 				spark->variant--;
 				btParticleAdvanceWithGravity2D(spark, 60, -toFIXED(1) / 32);
 				if(spark->y > toFIXED(120)) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else if(spark->x >= 0 && spark->x < toFIXED(127) &&
 					spark->y >= 0) {
 					Sint32 x = FIXEDtoINT(spark->x);
@@ -157,10 +158,10 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The targets are hit 4 ticks apart. */
-		if(frm >= 4 && frm < 96) {
+		if(frame >= 4 && frame < 96) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frm == i * 4 + 4)
-					btEffectTintBattler(state->args->tgts[i],
+				if(frame == i * 4 + 4)
+					btEffectTintBattler(state->args->targets[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 			}
 		}

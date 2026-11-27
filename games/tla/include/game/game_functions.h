@@ -25,7 +25,7 @@ struct UNIT;
 struct DJINN_RECOVERY_TABLE *gmDjinnGetRecoveryTable(Sint32 enemySide);
 /* Works out a unit's stats from its base stats, equipment, set Djinn, class and
    battle stat levels; its HP and PP keep their share of a new maximum. */
-void gmUnitCalc(Sint32 unitId);
+void gmUnitCalculate(Sint32 unitId);
 /* Returns an item's definition; an inventory entry's other bits are ignored. */
 struct ITEM_DEFINITION *gmItemGetDirect(Sint32 item);
 /* Returns how many of the item in `slot` the unit carries (0 for an empty
@@ -106,7 +106,7 @@ Sint32 gmUnitAddHp(Sint32 unitId, Sint32 delta);
    gauges and returns the new PP. */
 Sint16 gmUnitAddPp(Sint32 unitId, Sint32 delta);
 /* Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
-   that gmUnitCalc keeps the same fractions. */
+   that gmUnitCalculate keeps the same fractions. */
 void gmUnitRecalculateGauges(Sint32 unitId);
 /* Sets the unit's HP, clamped to 0 and its maximum, and recomputes its HP and
    PP gauges. */
@@ -136,7 +136,7 @@ Sint32 gmPartyRemoveMember(Sint32 unitId);
 /* Returns the element the unit attacks with (ELEMENT_NONE for none): an enemy's
    comes from its kind, a character's from its equipped weapon. */
 Sint32 gmUnitGetAttackElement(Sint32 unitId);
-/* Rolls whether effect `effectId` takes hold on `tgt`: it fails at once when
+/* Rolls whether effect `effectId` takes hold on `target`: it fails at once when
    there is nothing for it to do. The chance is the base rate, plus three times
    the caster's lead over the target in `element`'s level less half the target's
    luck (so every two points of luck take off three), plus WEAKNESS_BONUS
@@ -147,18 +147,18 @@ Sint32 gmUnitGetAttackElement(Sint32 unitId);
    and the Trident take hold only on a dragon or a sea creature; a target with
    LUCK_IMMUNITY Luck or more shrugs off poison, haunting, instant death, the
    curse, Leave One HP, Gasp and Gale, and a character Gale too. */
-Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 tgt, Sint32 element,
+Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 target, Sint32 element,
 	Sint32 effectId, Sint32 successScale);
 /* Scales max(attack - defense, 0) plus twice the added power by half the
    element multiplier, then halves it. */
-Sint32 gmBattleCalcAttackDamage(
+Sint32 gmBattleCalculateAttackDamage(
 	Sint32 attack, Sint32 defense, Sint32 addedPower, Sint32 elementDifference);
 /* Returns Psynergy's power times the element multiplier and powerMultiplier. */
-Sint32 gmBattleCalcPsynergyPower(
+Sint32 gmBattleCalculatePsynergyPower(
 	Sint32 power, Sint32 elementDifference, Sint32 powerMultiplier);
 /* Returns the amount healed: power times powerMultiplier and the multiplier for
    the healer's element power above HEALING_BASE_POWER. */
-Sint32 gmBattleCalcRecovery(
+Sint32 gmBattleCalculateRecovery(
 	Sint32 power, Sint32 elementPower, Sint32 powerMultiplier);
 /* Returns the row of enemy_table.c for `enemyId` (see ENEMY_ROW). */
 const struct ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId);
@@ -167,23 +167,24 @@ const struct ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId);
 Uint32 gmBattleRandom(void);
 /* Gives a Djinni to a unit. Returns -1 when the unit holds
    DJINN_HELD_PER_ELEMENT_MAX of the element or has it already. */
-Sint32 gmDjinnGive(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32 gmDjinnGive(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Sets a ready Djinni on the unit, counts it and works out the unit's class
    again. Returns 1 when it was set. */
-Sint32 gmDjinnSet(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32 gmDjinnSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Takes a set Djinni off the unit and works out its class again. Returns 1 when
    it was set. */
-Uint32 gmDjinnPutOnStandby(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Uint32 gmDjinnPutOnStandby(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Takes the Djinni off its side's standby and recovery list, closing the gap.
    Returns 1 when it was there. */
-Sint32 gmDjinnRecoveryRemove(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32 gmDjinnRecoveryRemove(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Puts a unit's Djinni at the end of its side's list on standby. Nothing checks
    the list's capacity. */
 Uint32 *gmDjinnRecoveryAddStandby(
-	Uint32 unitId, Uint32 element, Uint32 djinnIdx);
+	Uint32 unitId, Uint32 element, Uint32 djinnIndex);
 /* Moves a Djinni from one unit to another, set or on standby as it was. Returns
    -1 when it cannot. */
-Sint32 gmDjinnTransfer(Sint32 src, Sint32 element, Sint32 djinnIdx, Sint32 tgt);
+Sint32 gmDjinnTransfer(
+	Sint32 src, Sint32 element, Sint32 djinnIndex, Sint32 target);
 /* Writes the summons the party can call to `output`, in menu order, ending with
    SUMMON_END, and returns how many. */
 Sint32 gmSummonListLearned(Uint8 *output);
@@ -191,20 +192,20 @@ Sint32 gmSummonListLearned(Uint8 *output);
 const struct SUMMON_DEFINITION *gmSummonDefinitionGetNear(Uint32 summonId);
 /* Returns the ability the Djinni performs when it is unleashed. */
 Uint16 gmDjinnGetAbilityId(Uint32 element, Uint32 djinn);
-/* Levels character `unitId` up one level at a time until `tgtLevel`, then
+/* Levels character `unitId` up one level at a time until `targetLevel`, then
    recomputes its stats. */
-void gmUnitLevelUpTo(Sint32 unitId, Sint32 tgtLevel);
+void gmUnitLevelUpTo(Sint32 unitId, Sint32 targetLevel);
 /* Returns how strongly a unit is attuned to `element`, its whole element level
    (a tenth of what gmUnitGetElementLevels counts), and 0 for `ELEMENT_NONE`. */
 Sint32 gmUnitGetElementLevel(Sint32 unitId, Sint32 element);
-/* Counts the party's Djinn on standby, and by element into `cnts` when it is
+/* Counts the party's Djinn on standby, and by element into `counts` when it is
    given. */
-Sint32 gmDjinnRecoveryCountStandby(Uint8 *cnts);
+Sint32 gmDjinnRecoveryCountStandby(Uint8 *counts);
 /* Returns 1 when the Djinni is set on the unit. */
-Uint32 gmDjinnIsSet(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Uint32 gmDjinnIsSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Returns 1 when the unit holds the Djinni and it can be set: not set, not
    recovering and not held by a summon. */
-Bool gmDjinnCanSet(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Bool gmDjinnCanSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Returns whether the character can equip the item: the bit of its equipMask
    for who the unit is, and 0 for anyone past PIERS. */
 Sint32 gmItemCanUnitEquipDirect(Sint32 unitId, Sint32 itemId);
@@ -337,8 +338,8 @@ void gmDjinnSetAllForParty(void);
 /* gmInventoryClearSlot through its stub call: empties an inventory slot and
    returns 2. */
 Sint32 gmInventoryClearSlot(Sint32 unitId, Sint32 slot);
-/* Takes `cnt` PP from the party, one at a time from the fullest member. */
-void gmPartyDrainPp(Sint32 cnt);
+/* Takes `count` PP from the party, one at a time from the fullest member. */
+void gmPartyDrainPp(Sint32 count);
 /* Returns the party's PP over its maximum PP, in 16.16; 0 with no members. */
 FIXED gmPartyGetPpRatio(void);
 /* Stands in for transferred data when the player transfers none: unless the

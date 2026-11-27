@@ -2,7 +2,7 @@
    out of play. */
 void scPillarTakeOutOfPlay(Sint32 id)
 {
-	fdActorGet(id)->retainSprCache =
+	fdActorGet(id)->retainSpriteCache =
 		ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
 	fdActorDisableById(id);
 }

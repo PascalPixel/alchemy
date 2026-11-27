@@ -11,10 +11,10 @@ Sint32 scActorEmitSmoke(ACTOR *actor)
 		FIXED y;
 		FIXED speed;
 
-		puff.pri = 3;
+		puff.priority = 3;
 		puff.startScaleX = toFIXED(7) / 10;
 		puff.startScaleY = toFIXED(7) / 10;
-		puff.pal = SPRITE_COLOR_BLACK;
+		puff.palette = SPRITE_COLOR_BLACK;
 		x = actor->x.fixed + toFIXED(syRandomBelow(9) - 4);
 		y = actor->y.fixed + toFIXED(32 - syRandomBelow(20));
 		speed = toFIXED(syRandomBelow(5) + 5) / 10;

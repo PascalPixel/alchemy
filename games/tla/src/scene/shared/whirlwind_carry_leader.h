@@ -8,17 +8,17 @@ void fdWhirlwindCarryLeader(void)
 	ACTOR		*linked = &actor->watchedActor->actor;
 	ACTOR		*shadow;
 	Uint8		*p;
-	Sint32		 ang;
+	Sint32		 angle;
 	Sint32		 rise;
-	Sint32		 frm;
+	Sint32		 frame;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	rise = 0;
 	state->glowHeld = rise;
 
-	actor->motionFlg = ACTOR_FLOATS;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = ACTOR_FLOATS;
+	fdActorSetSpriteFlags(actor, 0);
 
 	while(*(Uint8 *)&linked->sceneByte != 0) {
 		actor->x.fixed = linked->x.fixed;
@@ -28,52 +28,52 @@ void fdWhirlwindCarryLeader(void)
 			rise += toFIXED(0.1);
 		actor->facing = (Uint8)TickCount * FACING_STEP;
 		/* As he spins he is drawn now under the wind, now over it. */
-		p = &actor->priFlg;
+		p = &actor->priorityFlags;
 		*p ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		sySynch(1);
 	}
 	state->glow = 1;
 	state->glowHeld = 1;
-	ang = linked->facing;
+	angle = linked->facing;
 	actor->x.fixed =
 		FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(linked->x.fixed) & ~1) +
-			FACING_EIGHTH_INDEX(ang) - 1);
+			FACING_EIGHTH_INDEX(angle) - 1);
 	actor->z.fixed =
 		FIELD_HALF_METATILE_ORIGIN((FIELD_HALF_METATILE(linked->z.fixed) & ~1) -
-			(FACING_EIGHTH_INDEX(ang) & 2) + 1);
-	actor->velY = toFIXED(6);
-	actor->priFlg = ACTOR_PRIORITY_AUTOMATIC;
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprFlags(actor, 1);
+			(FACING_EIGHTH_INDEX(angle) & 2) + 1);
+	actor->velocityY = toFIXED(6);
+	actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(actor, 1);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	shadow = syScriptCameraGetActor();
 	shadow->speedLimit = toFIXED(8);
 	shadow->acceleration = toFIXED(1);
-	shadow->motionFlg = 0;
+	shadow->motionFlags = 0;
 	scFieldActorSetMoveTargetFX(shadow, actor->x.fixed,
 		fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed),
 		actor->z.fixed);
-	frm = 0;
+	frame = 0;
 	if(actor->y.fixed > actor->groundHeight + toFIXED(16)) {
 		do {
 			sySynch(1);
-			frm++;
-			if(frm >= 60)
+			frame++;
+			if(frame >= 60)
 				break;
 		} while(actor->y.fixed > actor->groundHeight + toFIXED(16));
 	}
-	fdScriptPlaySnd(SE_LANDING_THUD);
-	frm = 0;
-	if(actor->velY != 0) {
+	fdScriptPlaySound(SE_LANDING_THUD);
+	frame = 0;
+	if(actor->velocityY != 0) {
 		do {
 			sySynch(1);
-			frm++;
-			if(frm >= 60)
+			frame++;
+			if(frame >= 60)
 				break;
-		} while(actor->velY != 0);
+		} while(actor->velocityY != 0);
 	}
 	scFieldActorWaitForMove(shadow);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
 	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
 	state->glowHeld = 1;

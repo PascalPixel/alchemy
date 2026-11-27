@@ -25,29 +25,29 @@ typedef struct ICON_ATTR {
 /* An icon's sprite: its link in the sprite list and its OAM attributes. */
 typedef struct ICON_SPR {
 	Uint32	  link;
-	ICON_ATTR attr;
+	ICON_ATTR attribute;
 } ICON_SPR;
 
 void mnItemIconLoadLayersIntoSlotStub(
 	Sint32 item, Sint32 mode, Sint32 resource);
 
 void mnItemIconGridDraw(void);
-void mnItemIconGridSetPos(Sint32 idx, Sint32 x, Sint32 y);
+void mnItemIconGridSetPos(Sint32 index, Sint32 x, Sint32 y);
 void mnItemIconGridSetVisible(Sint32 active);
-void mnItemIconGridLoadItems(Uint16 *items, Sint32 cnt, Sint32 mode);
+void mnItemIconGridLoadItems(Uint16 *items, Sint32 count, Sint32 mode);
 
 /* The compressed item icons, indexed by an item's icon field. */
 extern Uint8 *ItemIcons[];
 /* The end of ItemIcons, so mnIconCountItemIcons can count them. */
 extern Uint8 *ItemIconsEnd[];
 /* The other compressed icons, among them the Status screen's status icons. */
-extern Uint8 *IconMiscIconPointers[];
+extern Uint8 *IconMiscellaneousIconPointers[];
 /* The compressed Psynergy icons, drawn over the shared icon base. */
 extern Uint8 *PsynergyIcons[];
 /* The end of PsynergyIcons, for mnIconCountPsynergyIcons. */
 extern Uint8 *PsynergyIconsEnd[];
 /* Draws one of the other icons into the glyph buffer. */
-void mnIconDrawMisc(Uint32 idx);
+void mnIconDrawMiscellaneous(Uint32 index);
 /* Builds a command icon, overlayIcon over baseIcon, and loads it into a sprite
    tile slot: *slot, or a free one when reuse is 0. */
 void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 baseIcon,

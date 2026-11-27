@@ -24,7 +24,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
 	Sint32				 member;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -47,57 +47,58 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	/* Scatter the shards around the middle of each body. */
 	EFFECT_FOR_EACH_TARGET(member, state->args) {
 		ACTOR	 *actor;
-		Sint32	  ofs;
+		Sint32	  offset;
 		Sint32	  height;
 		PARTICLE *shard;
 
-		ofs = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
-		actor = btObjectGetStub(state->args->tgts[member])->actor;
-		height = btUnitGetEffectHeightStub(state->args->tgts[member]) / 2;
+		offset = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
+		actor = btObjectGetStub(state->args->targets[member])->actor;
+		height = btUnitGetEffectHeightStub(state->args->targets[member]) / 2;
 		SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
 		btProjectionPoint(point, &screen);
 		screen.x >>= 1;
-		for(i = 0, shard = (PARTICLE *)(RamMapGridMetatileBuffer + ofs);
+		for(i = 0, shard = (PARTICLE *)(RamMapGridMetatileBuffer + offset);
 			i != BREAK_SHARDS_PER_TARGET; i++) {
 			Sint32 radius;
-			Sint32 ang;
+			Sint32 angle;
 			Sint32 lift;
 
 			radius = syRandom() & 0xff;
-			ang = syRandom() & TRIG_ANGLE_MASK;
-			shard->x = ((sySin(ang) * radius) >> 7) + toFIXED(screen.x);
-			shard->y = ((syCos(ang) * radius) >> 3) + toFIXED(screen.y);
+			angle = syRandom() & TRIG_ANGLE_MASK;
+			shard->x = ((sySin(angle) * radius) >> 7) + toFIXED(screen.x);
+			shard->y = ((syCos(angle) * radius) >> 3) + toFIXED(screen.y);
 			/* Thrown up at 2 to 6 pixels a tick, and up to a pixel a tick
 			   aside. */
-			shard->velX = (128 - (syRandom() & 0xff)) << 9;
+			shard->velocityX = (128 - (syRandom() & 0xff)) << 9;
 			lift = syRandom() & 0xff;
 			shard->variant = 0;
-			shard->velY = (-lift - 128) << 10;
+			shard->velocityY = (-lift - 128) << 10;
 			shard++;
 		}
 	}
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0;
-		frm != state->args->tgtCnt * DRAIN_TARGET_TICKS + BREAK_FALL_TICKS;
-		frm++) {
-		if(frm == BREAK_HIT_TICK)
+	for(frame = 0; frame !=
+		state->args->targetCount * DRAIN_TARGET_TICKS + BREAK_FALL_TICKS;
+		frame++) {
+		if(frame == BREAK_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		EFFECT_FOR_EACH_TARGET(member, state->args) {
-			Sint32 ofs;
+			Sint32 offset;
 
-			ofs = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
-			if(frm == member * DRAIN_TARGET_TICKS) {
-				sySndPlayStub(SE_CRACK);
-				btEffectTintBattler(state->args->tgts[member],
+			offset = member * BREAK_SHARDS_PER_TARGET * sizeof(PARTICLE);
+			if(frame == member * DRAIN_TARGET_TICKS) {
+				sySoundPlayStub(SE_CRACK);
+				btEffectTintBattler(state->args->targets[member],
 					SPRITE_COLOR_WHITE, TINT_KEEP, member, 20);
 			}
 			/* A shard falls and goes out below the ground. */
-			if(frm > member * DRAIN_TARGET_TICKS) {
+			if(frame > member * DRAIN_TARGET_TICKS) {
 				PARTICLE *shard;
 
-				for(i = 0, shard = (PARTICLE *)(RamMapGridMetatileBuffer + ofs);
+				for(i = 0,
+				shard = (PARTICLE *)(RamMapGridMetatileBuffer + offset);
 					i != BREAK_SHARDS_PER_TARGET; i++) {
 					if(shard->variant >= 0) {
 						Sint32 size;
@@ -108,7 +109,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 						btParticleAdvanceWithGravity2D(
 							shard, 62, DrainGravities[i & 3]);
 						shard->variant++;
-						if(shard->velY > 0 &&
+						if(shard->velocityY > 0 &&
 							FIXEDtoINT(shard->y) > BREAK_SHARD_GROUND)
 							shard->variant = -1;
 					}
@@ -154,7 +155,7 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 screen;
 	Sint32				 alternate;
 	Sint32				 member;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -180,8 +181,9 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 		ACTOR *actor;
 		Sint32 halfHeight;
 
-		actor = btObjectGetStub(state->args->tgts[member])->actor;
-		halfHeight = btUnitGetEffectHeightStub(state->args->tgts[member]) / 2;
+		actor = btObjectGetStub(state->args->targets[member])->actor;
+		halfHeight =
+			btUnitGetEffectHeightStub(state->args->targets[member]) / 2;
 		for(i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
 			PARTICLE *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 
@@ -198,32 +200,32 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 	draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0;
-		frm != state->args->tgtCnt * DRAIN_TARGET_TICKS + DRAIN_END_TICKS;
-		frm++) {
+	for(frame = 0; frame !=
+		state->args->targetCount * DRAIN_TARGET_TICKS + DRAIN_END_TICKS;
+		frame++) {
 		ACTOR *user;
 		Sint32 halfHeight;
 
 		user = btObjectGetStub(state->args->user)->actor;
 		halfHeight = btUnitGetEffectHeightStub(state->args->user) / 2;
-		if(frm == DRAIN_HIT_TICK)
+		if(frame == DRAIN_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frm == DRAIN_GLOW_TICK)
+		if(frame == DRAIN_GLOW_TICK)
 			btEffectTintBattler(
 				state->args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frm ==
-			state->args->tgtCnt * DRAIN_TARGET_TICKS + DRAIN_END_TICKS -
+		if(frame ==
+			state->args->targetCount * DRAIN_TARGET_TICKS + DRAIN_END_TICKS -
 				DRAIN_GLOW_END_TICKS)
 			btEffectTintBattler(state->args->user, SPRITE_COLOR_NORMAL,
 				TINT_KEEP, TINT_KEEP, 0);
 		EFFECT_FOR_EACH_TARGET(member, state->args) {
-			if(frm == member * DRAIN_TARGET_TICKS)
-				btEffectTintBattler(state->args->tgts[member],
+			if(frame == member * DRAIN_TARGET_TICKS)
+				btEffectTintBattler(state->args->targets[member],
 					SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 42);
-			if(frm > member * DRAIN_TARGET_TICKS) {
+			if(frame > member * DRAIN_TARGET_TICKS) {
 				for(i = 0; i != DRAIN_DRAWN; i++) {
 					PARTICLE *mote =
 						&PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
@@ -238,7 +240,7 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 						btParticleAdvanceWithGravity3D(mote, 62, 0);
 
 						/* After a moment a mote is pulled into the user. */
-						if(frm > member * DRAIN_TARGET_TICKS + i +
+						if(frame > member * DRAIN_TARGET_TICKS + i +
 								DRAIN_PULL_DELAY) {
 							Sint32 dx;
 							Sint32 dy;
@@ -248,9 +250,9 @@ void btEffectRunDrain(BATTLE_EFFECT_PARM *args)
 							dy = DRAIN_PULL(
 								user->y.fixed + halfHeight - mote->y);
 							dz = DRAIN_PULL(user->z.fixed - mote->z);
-							mote->velX += dx;
-							mote->velY += dy;
-							mote->velZ += dz;
+							mote->velocityX += dx;
+							mote->velocityY += dy;
+							mote->velocityZ += dz;
 							if((dx > -DRAIN_PULL(
 										 toFIXED(DRAIN_ARRIVAL_DISTANCE)) &&
 								   dx < DRAIN_PULL(

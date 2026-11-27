@@ -18,8 +18,9 @@ typedef struct PREVIEW_SPR {
 		Uint32 word;
 
 		struct {
-			unsigned y : 8;	   /* screen pixels */
-			unsigned flg : 8;  /* attribute 0's high byte: its mode and shape */
+			unsigned y : 8; /* screen pixels */
+			unsigned
+				flags : 8;	   /* attribute 0's high byte: its mode and shape */
 			unsigned x : 9;	   /* screen pixels */
 			unsigned high : 7; /* attribute 1's flip and size bits: 16 by 16 */
 		} bits;

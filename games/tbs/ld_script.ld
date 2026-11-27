@@ -102,13 +102,13 @@ DecompressMoveToFrontLzCommandsCodeSize = syResourceExecuteTransfer - syDecompre
 RenderDecodePictureCodeSize = fdTileMapDrawRows - fdRenderDecodePicture;
 TileDecompress4bppCodeSize = mnTileExpandMasked - mnTileDecompress4bpp;
 TileExpandMaskedCodeSize = mnTileExpandOpaque - mnTileExpandMasked;
-TileExpandOpaqueCodeSize = mnWindowSprAcquireFree - mnTileExpandOpaque;
+TileExpandOpaqueCodeSize = mnWindowSpriteAcquireFree - mnTileExpandOpaque;
 CreditsDecodeBackgroundCodeSize = mnCreditsClearBuffer - mnCreditsDecodeBackground;
 fdActorUpdateAllCodeSize = fdDecompressLZ - fdActorUpdateAll;
 mnScanlineWindowBuildEdgesCodeSize = mnTileDecompress4bpp - mnScanlineWindowBuildEdges;
 fdWorldMapUpdateAffineLinesCodeSize = fdTileConvertMapGrid - fdWorldMapUpdateAffineLines;
 mnGlyphDrawCodeSize = mnScanlineWindowBuildEdges - mnGlyphDrawArm;
-BitDecoderSize = btDebugParmSetLoad - btBitDecoderDecodeImage;
+BitDecoderSize = btDebugParamSetLoad - btBitDecoderDecodeImage;
 
 MEMORY
 {
@@ -726,7 +726,7 @@ SECTIONS
         "*/games/tbs/src/system/overlay/overlays.list.o"(.data .overlays)
     } > ROM
     IwramResidentRom = LOADADDR(.iwram_resident);
-    sySndMainRAMRom = LOADADDR(.iwram_mixer) + 1;
+    sySoundMainRAMRom = LOADADDR(.iwram_mixer) + 1;
     MixerCallViaR3Rom = LOADADDR(.iwram_mixer) + (MixerCallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -8,7 +8,7 @@ Sint32 gmBattleGetElementMultiplier(Sint32 difference, Sint32 halve)
 {
 	Sint32 minimumDifference;
 	Sint32 maximumDifference;
-	Sint32 pointIdx;
+	Sint32 pointIndex;
 	Sint32 multiplier;
 	Sint32 differenceSpan;
 	Sint32 multiplierSpan;
@@ -16,26 +16,26 @@ Sint32 gmBattleGetElementMultiplier(Sint32 difference, Sint32 halve)
 	maximumDifference = ElementPowerResistCurve[0][0];
 	minimumDifference = ElementPowerResistCurve[4][0];
 	{
-		Sint32 pointCnt = 5;
+		Sint32 pointCount = 5;
 
 		if(difference > maximumDifference)
 			difference = maximumDifference;
 		else if(difference < minimumDifference)
 			difference = minimumDifference;
-		for(pointIdx = 0; pointIdx < pointCnt; pointIdx++) {
-			if(difference > ElementPowerResistCurve[pointIdx][0])
+		for(pointIndex = 0; pointIndex < pointCount; pointIndex++) {
+			if(difference > ElementPowerResistCurve[pointIndex][0])
 				break;
 		}
-		if(pointIdx == pointCnt) {
-			multiplier = ElementPowerResistCurve[pointIdx - 1][1];
+		if(pointIndex == pointCount) {
+			multiplier = ElementPowerResistCurve[pointIndex - 1][1];
 		} else {
-			differenceSpan = ElementPowerResistCurve[pointIdx - 1][0] -
-				ElementPowerResistCurve[pointIdx][0];
-			multiplierSpan = ElementPowerResistCurve[pointIdx - 1][1] -
-				ElementPowerResistCurve[pointIdx][1];
-			multiplier = (difference - ElementPowerResistCurve[pointIdx][0]) *
+			differenceSpan = ElementPowerResistCurve[pointIndex - 1][0] -
+				ElementPowerResistCurve[pointIndex][0];
+			multiplierSpan = ElementPowerResistCurve[pointIndex - 1][1] -
+				ElementPowerResistCurve[pointIndex][1];
+			multiplier = (difference - ElementPowerResistCurve[pointIndex][0]) *
 					multiplierSpan / differenceSpan +
-				ElementPowerResistCurve[pointIdx][1];
+				ElementPowerResistCurve[pointIndex][1];
 		}
 		switch(halve) {
 		case 0:
@@ -67,7 +67,7 @@ Uint32 gmBattleRandomPercent(void)
 
 /* Scales max(attack - defense, 0) plus twice the added power by half the
    element multiplier, then halves it. */
-Sint32 gmBattleCalcAttackDamage(
+Sint32 gmBattleCalculateAttackDamage(
 	Sint32 attack, Sint32 defense, Sint32 addedPower, Sint32 elementDifference)
 {
 	Sint32 damage;
@@ -86,7 +86,7 @@ Sint32 gmBattleCalcAttackDamage(
 }
 
 /* Returns Psynergy's power times the element multiplier and powerMultiplier. */
-Sint32 gmBattleCalcPsynergyPower(
+Sint32 gmBattleCalculatePsynergyPower(
 	Sint32 power, Sint32 elementDifference, Sint32 powerMultiplier)
 {
 	Sint32 scaledPower;
@@ -98,7 +98,7 @@ Sint32 gmBattleCalcPsynergyPower(
 
 /* Returns the amount healed: power times powerMultiplier and the multiplier for
    the healer's element power above HEALING_BASE_POWER. */
-Sint32 gmBattleCalcRecovery(
+Sint32 gmBattleCalculateRecovery(
 	Sint32 power, Sint32 elementPower, Sint32 powerMultiplier)
 {
 	Sint32 signedProduct;
@@ -134,17 +134,18 @@ Sint32 gmEquipmentGetUnleashRateBonus(UNIT *unit)
 {
 	Sint32				   chanceBonus;
 	Sint32				   inventorySlot;
-	Sint32				   effectIdx;
+	Sint32				   effectIndex;
 	const ITEM_DEFINITION *item;
 
 	chanceBonus = 0;
 	for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
 		if(unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
 			item = gmItemGetDirect(unit->inventory[inventorySlot]);
-			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
-				if(item->effs[effectIdx].kind ==
+			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
+				effectIndex++) {
+				if(item->effects[effectIndex].kind ==
 					EQUIP_EFFECT_ADD_UNLEASH_CHANCE)
-					chanceBonus += item->effs[effectIdx].amount;
+					chanceBonus += item->effects[effectIndex].amount;
 			}
 		}
 	}
@@ -234,21 +235,21 @@ Sint32 gmBattleGetEffectBaseSuccessRate(Sint32 effectId)
 
 /* Returns 1 when the unit is weak to the effect: one of the three its enemy
    kind or class lists. */
-Bool gmBattleAbilityIsWeakToEffect(const UNIT *tgt, Sint32 effectId)
+Bool gmBattleAbilityIsWeakToEffect(const UNIT *target, Sint32 effectId)
 {
 	const Uint8 *weakEffects;
-	Sint32		 weaknessIdx;
+	Sint32		 weaknessIndex;
 
-	if(tgt->classId == CLASS_NONE) {
-		weakEffects = gmEnemyGetDefinition(tgt->id)->weakEffs;
-		for(weaknessIdx = 0; weaknessIdx < 3; weaknessIdx++) {
+	if(target->classId == CLASS_NONE) {
+		weakEffects = gmEnemyGetDefinition(target->id)->weakEffects;
+		for(weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
 			if(*weakEffects == effectId)
 				return TRUE;
 			weakEffects++;
 		}
 	} else {
-		weakEffects = gmClassGetDefinition(tgt->classId)->weakEffs;
-		for(weaknessIdx = 0; weaknessIdx < 3; weaknessIdx++) {
+		weakEffects = gmClassGetDefinition(target->classId)->weakEffects;
+		for(weaknessIndex = 0; weaknessIndex < 3; weaknessIndex++) {
 			if(*weakEffects++ == effectId)
 				return TRUE;
 		}
@@ -275,10 +276,10 @@ Bool gmBattleIsReviveEffect(Sint32 effectId)
    the caster's lead in `element`'s level, less half the target's luck, plus
    WEAKNESS_BONUS against a weakness, times successScale percent. Luff's seal
    (ABILITY_EFFECT_SEAL_2_TURNS) gets three tries. */
-Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 tgt, Sint32 element,
+Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 target, Sint32 element,
 	Sint32 effectId, Sint32 successScale)
 {
-	UNIT  *unit = gmUnitGet(tgt);
+	UNIT  *unit = gmUnitGet(target);
 	Sint32 attempts = 1;
 	Sint32 score;
 	Sint32 attempt;
@@ -337,7 +338,7 @@ restore_checked:
 	score = gmBattleGetEffectBaseSuccessRate(effectId);
 	if(score > 0) {
 		Sint32 difference = gmUnitGetElementLevel(caster, element) -
-			gmUnitGetElementLevel(tgt, element) - (unit->luck >> 1);
+			gmUnitGetElementLevel(target, element) - (unit->luck >> 1);
 
 		score += difference * 3;
 		if(gmBattleAbilityIsWeakToEffect(unit, effectId) != 0) {

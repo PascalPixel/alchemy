@@ -18,7 +18,7 @@
 #include "field_psynergy_radial_effects.c"
 
 #undef fdActorCreateStub
-#undef fdEffectSprDrawAtWorldPos
+#undef fdEffectSpriteDrawAtWorldPos
 
 #include "field_psynergy_tile_copies.c"
 
@@ -38,7 +38,7 @@
 #include "field_psynergy_summon_tablet.c"
 #include "field_psynergy_shape_entries.c"
 
-#undef fdEffectSprDrawAtWorldPos
+#undef fdEffectSpriteDrawAtWorldPos
 #undef fdResourceGetMetadataRecordStubStub
 
 #include "field_psynergy_actor_metatiles.c"

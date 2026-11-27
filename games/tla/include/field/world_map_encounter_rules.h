@@ -15,8 +15,8 @@ typedef struct WORLD_MAP_ENCOUNTER_RULE {
 	/* The battle environment (BATTLE_ENVIRONMENT), which also picks the battle
 	   background, or -1 for any. */
 	Sint16 environment;
-	Sint16 flg;	 /* -1, or a flag the rule needs set */
-	Sint16 zone; /* a row of EncounterZones */
+	Sint16 flags; /* -1, or a flag the rule needs set */
+	Sint16 zone;  /* a row of EncounterZones */
 } WORLD_MAP_ENCOUNTER_RULE;
 
 extern const WORLD_MAP_ENCOUNTER_RULE WorldMapEncounterRules[];

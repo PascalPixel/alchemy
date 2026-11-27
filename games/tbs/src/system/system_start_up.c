@@ -23,10 +23,10 @@ void syInit(void)
 	syInstallIWRAMAndIRQs();
 	/* UB: count and its padding are cleared as one word. */
 #if FIX_TYPE_PUNNING
-	IoWriteQueueWork.cnt = 0;
+	IoWriteQueueWork.count = 0;
 	IoWriteQueueWork.pad = 0;
 #else
-	*(Uint32 *)&IoWriteQueueWork.cnt = 0;
+	*(Uint32 *)&IoWriteQueueWork.count = 0;
 #endif
 	DebugTextEnabled = 0;
 	DebugMode = 0;
@@ -42,7 +42,7 @@ void syInit(void)
 	IO_WRITE16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
 	/* Start audio and tick services only after the interrupt handlers are
 	   ready. */
-	sySndInitStub();
+	sySoundInitStub();
 	syVRAMCacheReset();
 	syInitEvent();
 	CartridgeResetMarker = 0;
@@ -113,7 +113,7 @@ UNUSED void syDummyReservedNoOperationE(void)
 }
 
 /* An exported stub that ignores its arguments and reports 0. */
-Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *tbl)
+Sint32 syDummyReturnZero(Sint32 resourceId, const Uint8 *table)
 {
 	return 0;
 }
@@ -144,10 +144,10 @@ void syDummyNoOperationHook(Sint32 unused)
 {
 }
 
-/* Returns the ROM address of resource `idx` from the resource directory. */
-void *syResourceGetTableEntry(Sint32 idx)
+/* Returns the ROM address of resource `index` from the resource directory. */
+void *syResourceGetTableEntry(Sint32 index)
 {
-	return syResourceDirectoryTable[idx];
+	return syResourceDirectoryTable[index];
 }
 
 /* A Thumb long branch (BL) is two halfwords: the first carries the marker
@@ -167,13 +167,13 @@ void *syResourceGetTableEntry(Sint32 idx)
    function that does the same. */
 UNUSED void syCodeResolveLongBranches(Uint16 *pair, Sint32 byteLength)
 {
-	Sint32 entryCnt = byteLength >> 1;
+	Sint32 entryCount = byteLength >> 1;
 	Sint32 i = 1;
 
 	pair++;
-	if(i < entryCnt) {
+	if(i < entryCount) {
 		Uint32 lowMarker = THUMB_BL_LOW;
-		Uint32 ofsBits = THUMB_BL_OFFSET_BITS;
+		Uint32 offsetBits = THUMB_BL_OFFSET_BITS;
 		Uint32 highMarker = THUMB_BL_HIGH;
 
 #if !FIX_POINTER_OUTSIDE_OBJECT
@@ -181,7 +181,7 @@ UNUSED void syCodeResolveLongBranches(Uint16 *pair, Sint32 byteLength)
 		pair -= 2;
 #endif
 		/* Each halfword from the second on is tried as the second of a pair. */
-		for(; i < entryCnt; i++) {
+		for(; i < entryCount; i++) {
 			Uint16 first, second;
 			Uint32 secondMarker, firstMarker;
 
@@ -204,12 +204,15 @@ UNUSED void syCodeResolveLongBranches(Uint16 *pair, Sint32 byteLength)
 				firstMarker = first & secondMarker;
 
 				if(firstMarker == highMarker) {
-					Uint32 ofs = (((first & ofsBits) << THUMB_BL_HIGH_SHIFT) |
-									 ((second & ofsBits) * 2)) -
+					Uint32 offset =
+						(((first & offsetBits) << THUMB_BL_HIGH_SHIFT) |
+							((second & offsetBits) * 2)) -
 						i * 2;
 					Uint32 newFirst =
-						((ofs >> THUMB_BL_HIGH_SHIFT) & ofsBits) | firstMarker;
-					Uint32 newSecond = ((ofs >> 1) & ofsBits) | secondMarker;
+						((offset >> THUMB_BL_HIGH_SHIFT) & offsetBits) |
+						firstMarker;
+					Uint32 newSecond =
+						((offset >> 1) & offsetBits) | secondMarker;
 
 #if FIX_POINTER_OUTSIDE_OBJECT
 					pair[-1] = newFirst;
@@ -227,18 +230,18 @@ UNUSED void syCodeResolveLongBranches(Uint16 *pair, Sint32 byteLength)
 	}
 }
 
-/* Decodes the compressed code resource `idx` to `dst` and resolves
+/* Decodes the compressed code resource `index` to `dest` and resolves
    its long branches there, with a RAM copy of the ARM function that does what
    syCodeResolveLongBranches does; the copy is allocated and freed again. */
-void syOverlayLoad(Uint32 idx, void *dst)
+void syOverlayLoad(Uint32 index, void *dest)
 {
 	void (*patchBranches)(void *, Sint32);
 	Sint32 codeSize;
 
-	codeSize = syDecompressTaggedLZ(syResourceGetTableEntry(idx), dst);
+	codeSize = syDecompressTaggedLZ(syResourceGetTableEntry(index), dest);
 	RAM_CODE_LOAD(patchBranches, syResourcePatchThumbBranch,
 		syResourcePatchThumbBranchCodeSize);
-	patchBranches(dst, codeSize);
+	patchBranches(dest, codeSize);
 	syHeapRelease(patchBranches);
 }
 

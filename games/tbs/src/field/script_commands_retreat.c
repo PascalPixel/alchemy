@@ -5,15 +5,15 @@
 
 /* Per-tick update: spins by FACING_STEP + timer * 80 a tick, speeding up
    (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
-   tick to just over 1/8 in 52 ticks, as fdEffectAdvanceAngWithRamp. */
-void fdEffectUpdateSpinAng(ACTOR *actor)
+   tick to just over 1/8 in 52 ticks, as fdEffectAdvanceAngleWithRamp. */
+void fdEffectUpdateSpinAngle(ACTOR *actor)
 {
 	Uint32 step;
 
-	step = actor->tmr * 80;
+	step = actor->timer * 80;
 	actor->facing = actor->facing + step + FACING_STEP;
 	if(step < FACING_STEP)
-		actor->tmr = actor->tmr + 1;
+		actor->timer = actor->timer + 1;
 }
 
 /* Per-tick update: spins 1/8 turn a tick as it shrinks by 5/512 of its full
@@ -30,7 +30,7 @@ void fdEffectUpdateRetreatCaster(ACTOR *actor)
 	actor->y.fixed += toFIXED(1);
 	actor->scaleX = scale;
 	if((Sint32)scale < toFIXED(3) / 16)
-		actor->sprStorageKind = ACTOR_SPRITE_NONE;
+		actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
 /* The states of a Retreat particle (fdRetreatUpdateSpark). */
@@ -75,15 +75,15 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 				syRandom16Below(TRIG_TURN / 8) + FACING_NORTH,
 			(FIXED *)&pos);
 
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(5);
 		effect->speedMax = toFIXED(5);
 		effect->turnStepLimited = state;
 		effect->state++;
 
 		if((TickCount & 2) != 0)
-			sySndPlayStub(SE_GLITTER);
+			sySoundPlayStub(SE_GLITTER);
 	} else if(state == RETREAT_PARTICLE_FLYING) {
 		if(fdParticleHasPendingTarget(effect) == 0)
 			effect->state--;
@@ -105,28 +105,28 @@ void fdPsynergyRetreat(void)
 
 	fdScriptStart();
 	fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	sySynch(10);
 	fdActorFaceDirectionById(effectState->casterId, FACING_SOUTH, 0);
 	sySynch(30);
-	actor->update = fdActorCycleSprCols;
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+	actor->update = fdActorCycleSpriteColors;
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	fdActorSelectAnimationStub(actor, ANIM_LEADER_ARMS_RAISED);
 	sySynch(40);
 
 	/* Start spinning. */
-	sySndPlayStub(SE_SHIMMER);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+	sySoundPlayStub(SE_SHIMMER);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	fdActorSelectAnimationStub(actor, ANIM_NOD);
-	actor->update = fdEffectUpdateSpinAng;
-	actor->tmr = 0;
+	actor->update = fdEffectUpdateSpinAngle;
+	actor->timer = 0;
 	sySynch(70);
 
 	/* Start shrinking, and send particles from where it is on screen. */
-	fdActorSetSprFlagsStub(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlagsStub(actor, 0);
+	actor->motionFlags = 0;
 	actor->update = fdEffectUpdateRetreatCaster;
-	actor->tgtX = ACTOR_NO_TARGET;
+	actor->targetX = ACTOR_NO_TARGET;
 	pos.x = actor->x.fixed;
 	pos.y = actor->y.fixed;
 	pos.z = actor->z.fixed;
@@ -138,7 +138,7 @@ void fdPsynergyRetreat(void)
 		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdRetreatUpdateSpark);
 		fdParticleSetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
-		fdSprSetAnimationColModesStub(effect->spr, syRandom16Below(7));
+		fdSpriteSetAnimationColorModesStub(effect->sprite, syRandom16Below(7));
 		scale = (syRandom() >> 1) + toFIXED(6) / 5; /* 1.2 to 1.7 */
 		effect->scaleY = scale;
 		effect->scaleX = scale;
@@ -154,7 +154,7 @@ void fdPsynergyRetreat(void)
 			effectState->particles[i].state = RETREAT_PARTICLE_LAST_FLIGHT;
 	}
 	sySynch(40);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	sySynch(10);
 }
 
@@ -229,39 +229,39 @@ void fdEffectSpawnDescendingArcParticles(ACTOR *src)
 	ACTOR			   *leader = effectState->caster;
 	ACTOR			   *actors[2];
 	ACTOR			   *actor;
-	SPR				   *spr;
-	Sint32				arcIdx;
+	SPR				   *sprite;
+	Sint32				arcIndex;
 
-	for(arcIdx = 0; arcIdx <= 1; arcIdx++) {
+	for(arcIndex = 0; arcIndex <= 1; arcIndex++) {
 		actor = fdActorCreateStub(SPRITE_GOLDEN_RINGS, src->x.fixed,
 			src->y.fixed + toFIXED(64), src->z.fixed);
-		actors[arcIdx] = actor;
+		actors[arcIndex] = actor;
 		if(actor == NULL)
 			continue;
 		actor->groundHeight = src->groundHeight;
-		spr = actor->spr;
-		actor->motionFlg = 0;
-		actor->tmr = 0;
+		sprite = actor->sprite;
+		actor->motionFlags = 0;
+		actor->timer = 0;
 		actor->watchedActor = (union ACTOR_OR_EFFECT *)src;
 		actor->scaleY = toFIXED(2) / 5;
 		actor->scaleX = toFIXED(2) / 5;
-		if(spr == NULL)
+		if(sprite == NULL)
 			continue;
-		fdSprStartAnimationStub(spr, 0);
-		spr->flg = 0;
-		syVRAMCacheFreeEntry(spr->slot);
-		spr->slot = effectState->arcTileSlot;
-		spr->retainCacheEntry = 1;
-		spr->image.tile = VramCacheEntries[spr->slot].ofs >> 5;
+		fdSpriteStartAnimationStub(sprite, 0);
+		sprite->flags = 0;
+		syVRAMCacheFreeEntry(sprite->slot);
+		sprite->slot = effectState->arcTileSlot;
+		sprite->retainCacheEntry = 1;
+		sprite->image.tile = VramCacheEntries[sprite->slot].offset >> 5;
 		/* In 16 colours, 32 by 16 pixels. */
-		spr->image.fullCol = 0;
-		spr->image.shape = RING_HALF_SHAPE;
-		spr->image.size = RING_HALF_SIZE;
-		spr->entries[0]->picture = 0;
+		sprite->image.fullColor = 0;
+		sprite->image.shape = RING_HALF_SHAPE;
+		sprite->image.size = RING_HALF_SIZE;
+		sprite->entries[0]->picture = 0;
 	}
 	/* BUG: failed allocations above leave a missing arc or sprite here. */
 	actors[0]->update = fdEffectUpdateDescendingParticleNegativeArc;
-	actors[0]->spr->image.pri = 0;
+	actors[0]->sprite->image.priority = 0;
 	actors[1]->update = fdEffectUpdateDescendingParticlePositiveArc;
-	actors[1]->spr->image.pri = leader->spr->image.pri;
+	actors[1]->sprite->image.priority = leader->sprite->image.priority;
 }

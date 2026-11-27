@@ -24,7 +24,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 	PARTICLE *sparks;
 	PARTICLE *spark;
-	Sint32	  frm;
+	Sint32	  frame;
 	Sint32	  i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -45,13 +45,13 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 	{
 		ACTOR *actor = btObjectGetStub(state->args->user)->actor;
-		ACTOR *tgt = btObjectGetStub(state->args->tgts[0])->actor;
-		FIXED  diffX = tgt->x.fixed - actor->x.fixed;
+		ACTOR *target = btObjectGetStub(state->args->targets[0])->actor;
+		FIXED  differenceX = target->x.fixed - actor->x.fixed;
 		FIXED  startX = actor->x.fixed;
-		FIXED  deltaX = diffX * 80 / 100;
-		FIXED  diffZ = tgt->z.fixed - actor->z.fixed;
+		FIXED  deltaX = differenceX * 80 / 100;
+		FIXED  differenceZ = target->z.fixed - actor->z.fixed;
 		FIXED  startZ = actor->z.fixed;
-		FIXED  deltaZ = diffZ * 80 / 100;
+		FIXED  deltaZ = differenceZ * 80 / 100;
 		FIXED  x = startX + deltaX;
 		FIXED  z = startZ + deltaZ;
 		Sint32 shortX = deltaX >> 8;
@@ -62,22 +62,22 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 		distance = (distance << 8) / 20;
 		actor->acceleration = distance;
 		actor->speedLimit = distance;
-		actor->snapToTgt = 1;
-		actor->velY = toFIXED(7);
+		actor->snapToTarget = 1;
+		actor->velocityY = toFIXED(7);
 		actor->gravity = toFIXED(87) / 100;
 		actor->bounce = 0;
-		actor->steeringFlg = 1;
+		actor->steeringFlags = 1;
 		fdActorStartIdleStub(actor);
 		fdActorSetMoveTargetStub(actor, x, 0, z);
 		fdActorSelectAnimationStub(actor, POSE_LEAP);
 	}
 
 	/* Play the swirl and impact, then let the sparks bounce and fade. */
-	for(frm = 0; frm != HELM_SPLITTER_TICKS; frm++) {
+	for(frame = 0; frame != HELM_SPLITTER_TICKS; frame++) {
 		btProjectionUnit(state->args->user, &pos);
 		REG_BG2X = (80 - pos.x) << 8;
-		if(frm >= 8 && frm <= 23) {
-			Sint32 picture = (frm - 8) / 2;
+		if(frame >= 8 && frame <= 23) {
+			Sint32 picture = (frame - 8) / 2;
 
 			if(picture > 6)
 				picture = 6;
@@ -97,12 +97,13 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* The strike. */
-		if(frm == HELM_SPLITTER_STRIKE_TICK) {
+		if(frame == HELM_SPLITTER_STRIKE_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectTintBattler(
-				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_BOUNCE);
-			state->shakeFrm = 4;
+				state->args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+			btMotionApplyKnockbackStub(
+				state->args->targets[0], KNOCKBACK_BOUNCE);
+			state->shakeFrame = 4;
 			for(i = 0; i != HELM_SPLITTER_SPARKS; i++) {
 				Sint32 force = (syRandom() & 63) + 256;
 				Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
@@ -110,8 +111,8 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				spark = &sparks[i];
 				spark->x = toFIXED(64);
 				spark->y = toFIXED(80);
-				spark->velX = (sySin(angle) * force) >> 7;
-				spark->velY = -(syCos(angle) * force) >> 6;
+				spark->velocityX = (sySin(angle) * force) >> 7;
+				spark->velocityY = -(syCos(angle) * force) >> 6;
 				spark->variant = (syRandom() & 15) + 16;
 			}
 		}
@@ -121,7 +122,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				spark->variant--;
 				btParticleAdvanceWithGravity2D(spark, 60, 0);
 				if(spark->y > toFIXED(104)) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else if((spark->x >= 0 && spark->x <= toFIXED(127) - 1) &&
 					spark->y >= 0) {
 					Sint32 sx = FIXEDtoINT(spark->x);
@@ -129,7 +130,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 					draw[0](canvas,
 						state->sheet + HELM_SPLITTER_STAR_PICTURES +
-							(frm + i) / 4 % 6 *
+							(frame + i) / 4 % 6 *
 								(HELM_SPLITTER_STAR_SIZE *
 									HELM_SPLITTER_STAR_SIZE),
 						sx - HELM_SPLITTER_STAR_SIZE / 2,
@@ -152,9 +153,9 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 #define FORMATION_TWELVE	   12
 #define FORMATION_EIGHT		   8
 
-/* Places a summon's figure, the sprites in state->sprs, in its formation; x and
-   z are its origin in 16.16 pixels. */
-void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
+/* Places a summon's figure, the sprites in state->sprites, in its formation; x
+   and z are its origin in 16.16 pixels. */
+void btEffectPlaceFormationSprites(Sint32 formation, FIXED x, FIXED z)
 {
 	static SPR_SCALE	 normalScale = {{{toFIXED(1), toFIXED(1)}}};
 	static SPR_SCALE	 largeScale = {{{toFIXED(5) / 4, toFIXED(5) / 4}}};
@@ -178,7 +179,7 @@ void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
 				toFIXED(i / FORMATION_GRID_COLUMNS * FORMATION_GRID_SPACING) +
 				z;
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[i], &pos, &normal, 0);
+				state->sprites[i], &pos, &normal, 0);
 		}
 		break;
 	case SUMMON_FORMATION_NEREID:
@@ -186,7 +187,7 @@ void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
 			pos.x = toFIXED(SummonFormationNereidX[i]) + x - toFIXED(16);
 			pos.y = toFIXED(SummonFormationNereidZ[i]) + z - toFIXED(32);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[i], &pos, &normal, 0);
+				state->sprites[i], &pos, &normal, 0);
 		}
 		break;
 	case SUMMON_FORMATION_CYBELE:
@@ -194,14 +195,15 @@ void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z)
 			pos.x = toFIXED(SummonFormationCybeleX[i]) + x + toFIXED(16);
 			pos.y = toFIXED(SummonFormationCybeleZ[i]) + z;
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[i], &pos, &normal, 0);
+				state->sprites[i], &pos, &normal, 0);
 		}
 		break;
 	case SUMMON_FORMATION_TIAMAT:
 		for(i = 0; i != FORMATION_EIGHT; i++) {
 			pos.x = toFIXED(SummonFormationTiamatX[i]) + x;
 			pos.y = toFIXED(SummonFormationTiamatZ[i]) + z;
-			fdRenderApplyProjectedPlacementStub(state->sprs[i], &pos, &big, 0);
+			fdRenderApplyProjectedPlacementStub(
+				state->sprites[i], &pos, &big, 0);
 		}
 		break;
 	}
@@ -239,7 +241,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	Uint8				*sheet;
 	FIXED				 originX;
 	PARTICLE			*particle;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 
 	slots = &HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
@@ -274,8 +276,8 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 
 		state->particles[i].x = x;
 		state->particles[i].y = y;
-		state->particles[i].velX = (sySin(angle) * speed) >> 7;
-		state->particles[i].velY = -((syCos(angle) * speed) >> 6);
+		state->particles[i].velocityX = (sySin(angle) * speed) >> 7;
+		state->particles[i].velocityY = -((syCos(angle) * speed) >> 6);
 		state->particles[i].variant = (syRandom() & 15) + 16;
 	}
 
@@ -283,9 +285,9 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	for(i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
 		state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
 		state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
-		state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velX =
+		state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
 			(sySin(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 6;
-		state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velY =
+		state->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
 			-((syCos(i * (DEGtoANG(120))) * IMPACT_BURST_FRAGMENT_SPEED) >> 5);
 	}
 
@@ -296,19 +298,19 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 
 		PARTICLES[i].x = x;
 		PARTICLES[i].y = y;
-		PARTICLES[i].velX = (sySin(angle) * speed) >> 6;
-		PARTICLES[i].velY = -((syCos(angle) * speed) >> 5);
+		PARTICLES[i].velocityX = (sySin(angle) * speed) >> 6;
+		PARTICLES[i].velocityY = -((syCos(angle) * speed) >> 5);
 		PARTICLES[i].variant = (syRandom() & 15) + 20;
 	}
 
-	for(frm = 0; frm != IMPACT_BURST_TICKS; frm++) {
-		if(frm == 4)
-			sySndPlayStub(SE_CAST);
-		if(frm == 32)
-			sySndPlayStub(SE_POWER_UP);
+	for(frame = 0; frame != IMPACT_BURST_TICKS; frame++) {
+		if(frame == 4)
+			sySoundPlayStub(SE_CAST);
+		if(frame == 32)
+			sySoundPlayStub(SE_POWER_UP);
 
-		if(frm <= 47) {
-			Sint32 picture = (frm - 8) / 5;
+		if(frame <= 47) {
+			Sint32 picture = (frame - 8) / 5;
 			Uint32 width;
 			Uint32 height;
 
@@ -333,7 +335,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 
 		for(i = 0; i != IMPACT_BURST_DRAWN_LARGE; i++) {
 			particle = &state->particles[i];
-			if(frm > i / 2 && particle->variant > 0) {
+			if(frame > i / 2 && particle->variant > 0) {
 				Sint32 size;
 				Sint32 drawX;
 				Sint32 drawY;
@@ -349,7 +351,7 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 
 		for(i = 0, particle = PARTICLES; i != IMPACT_BURST_DRAWN_SMALL;
 			i++, particle++) {
-			if(frm > 35 && particle->variant > 0) {
+			if(frame > 35 && particle->variant > 0) {
 				Sint32 size;
 				Sint32 drawX;
 				Sint32 drawY;
@@ -367,14 +369,14 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 			PARTICLE *fragment =
 				&state->particles[IMPACT_BURST_FIRST_FRAGMENT + i];
 
-			if(frm >= 36 && frm <= 63) {
+			if(frame >= 36 && frame <= 63) {
 				Sint32 picture;
 				Sint32 drawX;
 				Sint32 drawY;
 
 				btParticleAdvanceWithGravity2D(
 					fragment, PARTICLE_DAMPING_NONE, 0);
-				picture = (frm - 36) / 7;
+				picture = (frame - 36) / 7;
 				drawX = FIXED_INTEGER_PART(fragment->x);
 				drawY = FIXED_INTEGER_PART(fragment->y);
 				maxBlend(canvas,
@@ -387,8 +389,8 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 			}
 		}
 
-		if(frm <= 35)
-			btEffectPlaceFormationSprs(formation, originX, y);
+		if(frame <= 35)
+			btEffectPlaceFormationSprites(formation, originX, y);
 		EFFECT_PRESENT_CANVAS(state);
 	}
 

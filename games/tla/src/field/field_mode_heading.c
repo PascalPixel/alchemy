@@ -35,7 +35,7 @@ void fdHeadingShow(Sint32 heading)
 	tile = HEADING_FIRST_TILE;
 	fdScriptWaitTransitionTicks();
 	metatile = (Uint16 *)BG_SCREEN_BLOCK(4);
-	tiles = syHeapAllocEWRAM(HEADING_TILE_BYTES);
+	tiles = syHeapAllocateEWRAM(HEADING_TILE_BYTES);
 	headings += headings[heading] / 4;
 	syDecompressByteLZ(headings, tiles);
 	syDMAXCopy(

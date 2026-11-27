@@ -48,31 +48,31 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 col;
+	Sint32				 column;
 	Uint8				*cells;
 	MOTION_OBJECT		*user;
 	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	Sint32				 baseX;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	cells = RamHeapSlots->battleSheet;
 
 	/* Open the canvas, pose the user and place the columns. */
-	user = btObjectGetStub(args->user)->obj;
+	user = btObjectGetStub(args->user)->object;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(args->side, draw);
 	fdActorSelectAnimationStub(user, POSE_LEAP);
 	fdActorSetAnimationSpeedStub(user, ANIM_STEP_NORMAL * 3);
-	btEffectPosProjectBattler(args->tgts[0], &tgt);
+	btEffectPosProjectBattler(args->targets[0], &target);
 	if(args->side == EFFECT_SIDE_ENEMIES)
-		baseX = tgt.x / 2 - 24;
+		baseX = target.x / 2 - 24;
 	else
-		baseX = tgt.x / 2 - 92;
+		baseX = target.x / 2 - 92;
 
 	btResourceLoadAndDecompress(RESOURCE_FLAME_BLADE_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
@@ -82,29 +82,29 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 	/* Each column's flashes (a ring, 2 pixels apart, living 25 to 32 ticks)
 	   and sparks (from y = 88, at random speeds and angles, living 32 to
 	   39). */
-	for(col = 0; col != RAGNAROK_SEEDED; col++) {
+	for(column = 0; column != RAGNAROK_SEEDED; column++) {
 		for(i = 0; i != RAGNAROK_FLASHES; i++) {
-			PARTICLE *flash = &state->particles[col * RAGNAROK_FLASHES + i];
+			PARTICLE *flash = &state->particles[column * RAGNAROK_FLASHES + i];
 			Sint32	  radius = i * 2;
-			Sint32	  ang = syRandom() & TRIG_ANGLE_MASK;
+			Sint32	  angle = syRandom() & TRIG_ANGLE_MASK;
 
-			flash->x = sySin(ang) * radius;
-			flash->y = -(syCos(ang) * radius);
+			flash->x = sySin(angle) * radius;
+			flash->y = -(syCos(angle) * radius);
 			flash->variant = i / 2 + FLASH_LIFE;
 		}
 
 		for(i = 0; i != RAGNAROK_SPARKS; i++) {
-			PARTICLE *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
+			PARTICLE *spark = &PARTICLES[column * RAGNAROK_SPARKS + i];
 			Sint32	  speed;
-			Sint32	  ang;
+			Sint32	  angle;
 
 			speed = (syRandom() & 0x1ff) + 32;
-			ang = syRandom() & TRIG_ANGLE_MASK;
+			angle = syRandom() & TRIG_ANGLE_MASK;
 			spark->x =
-				toFIXED(RagnarokStrikeColumns[col + args->side * 3] + baseX);
+				toFIXED(RagnarokStrikeColumns[column + args->side * 3] + baseX);
 			spark->y = toFIXED(88);
-			spark->velX = (sySin(ang) * speed) >> 6;
-			spark->velY = -(syCos(ang) * speed * 2) >> 6;
+			spark->velocityX = (sySin(angle) * speed) >> 6;
+			spark->velocityY = -(syCos(angle) * speed * 2) >> 6;
 			spark->variant = (syRandom() & 7) + 32;
 		}
 	}
@@ -112,42 +112,42 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != RAGNAROK_TICKS; frm++) {
-		if(frm == 4)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == 8)
-			state->shakeFrm = frm;
-		if(frm == 18)
-			sySndPlayStub(SE_CRASH);
-		if(frm == RESULT_TICK)
+	for(frame = 0; frame != RAGNAROK_TICKS; frame++) {
+		if(frame == 4)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == 8)
+			state->shakeFrame = frame;
+		if(frame == 18)
+			sySoundPlayStub(SE_CRASH);
+		if(frame == RESULT_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
 		/* The blade: down 16 pixels a tick from above the canvas, held, then
 		   creeping on. */
-		if(frm <= BLADE_LAST_TICK) {
+		if(frame <= BLADE_LAST_TICK) {
 			Sint32 height;
 			Sint32 x;
 			Sint32 top;
 
 			height = RAGNAROK_BLADE_HEIGHT;
 			if(args->side == EFFECT_SIDE_PARTY) {
-				if(frm < BLADE_SWING_TICKS) {
-					x = frm * 10 - 8;
-					top = frm * 16 - RAGNAROK_BLADE_HEIGHT;
-				} else if(frm > BLADE_HOLD_TICK) {
-					x = frm + 62;
-					top = frm * 2 - 24;
+				if(frame < BLADE_SWING_TICKS) {
+					x = frame * 10 - 8;
+					top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
+				} else if(frame > BLADE_HOLD_TICK) {
+					x = frame + 62;
+					top = frame * 2 - 24;
 				} else {
 					x = 82;
 					top = RAGNAROK_BLADE_HOLD_TOP;
 				}
 			} else {
-				if(frm < BLADE_SWING_TICKS) {
-					x = 128 - frm * 10;
-					top = frm * 16 - RAGNAROK_BLADE_HEIGHT;
-				} else if(frm > BLADE_HOLD_TICK) {
-					x = 58 - frm;
-					top = frm * 2 - 24;
+				if(frame < BLADE_SWING_TICKS) {
+					x = 128 - frame * 10;
+					top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
+				} else if(frame > BLADE_HOLD_TICK) {
+					x = 58 - frame;
+					top = frame * 2 - 24;
 				} else {
 					x = 38;
 					top = RAGNAROK_BLADE_HOLD_TOP;
@@ -162,32 +162,32 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 					RAGNAROK_BLADE_WIDTH, height);
 		}
 
-		if(frm > FIRST_STRIKE_TICK)
+		if(frame > FIRST_STRIKE_TICK)
 			btEffectStepPaletteToResource(RESOURCE_BLAST_SHEET);
 
-		for(col = 0; col != RAGNAROK_COLUMNS; col++) {
-			Sint32 start = col * 8 + FIRST_STRIKE_TICK;
+		for(column = 0; column != RAGNAROK_COLUMNS; column++) {
+			Sint32 start = column * 8 + FIRST_STRIKE_TICK;
 
 			/* The strike: a shake, two ticks of the big flash, then the
 			   ring. */
-			if(frm == start)
-				state->shakeFrm = 12;
-			if(frm >= start) {
-				if(frm < start + 2)
+			if(frame == start)
+				state->shakeFrame = 12;
+			if(frame >= start) {
+				if(frame < start + 2)
 					draw[0](canvas, state->sheet + RAGNAROK_FLASH_PICTURES,
-						RagnarokStrikeColumns[col + args->side * 3] + baseX -
+						RagnarokStrikeColumns[column + args->side * 3] + baseX -
 							FLASH_BURST_WIDTH / 2,
 						56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 				for(i = 0; i != RAGNAROK_RING; i++) {
 					PARTICLE *flash =
-						&state->particles[col * RAGNAROK_FLASHES + i];
+						&state->particles[column * RAGNAROK_FLASHES + i];
 					Sint32 x;
 					Sint32 life;
 					Sint32 y;
 
 					y = FIXED_INTEGER_PART(flash->y);
 					x = FIXED_INTEGER_PART(flash->x) +
-						RagnarokStrikeColumns[col + args->side * 3] + baseX;
+						RagnarokStrikeColumns[column + args->side * 3] + baseX;
 					life = flash->variant;
 					if(life >= 0 && life < FLASH_BURN_TICKS)
 						draw[0](canvas,
@@ -204,9 +204,9 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 
 			/* The sparks, from six ticks after the strike, bouncing on the
 			   ground. */
-			if(frm > start + 5) {
+			if(frame > start + 5) {
 				for(i = 0; i != RAGNAROK_DRAWN_SPARKS; i++) {
-					PARTICLE *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
+					PARTICLE *spark = &PARTICLES[column * RAGNAROK_SPARKS + i];
 
 					if(spark->variant > 0) {
 						Sint32 x;
@@ -218,7 +218,7 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 						spark->variant--;
 						y = spark->y;
 						if(y > toFIXED(SWORD_GROUND_Y)) {
-							spark->velY = -spark->velY / 2;
+							spark->velocityY = -spark->velocityY / 2;
 						} else {
 							x = spark->x;
 							if((x >= 0 && x <= toFIXED(127) - 1) && y >= 0) {
@@ -243,11 +243,11 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 
 			/* The column's targets flash at the strike and are struck by its
 			   sparks. */
-			for(i = 0; i != args->tgtCnt; i++) {
-				if(frm == start)
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
-				if(frm == start + 6) {
+			for(i = 0; i != args->targetCount; i++) {
+				if(frame == start)
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 10);
+				if(frame == start + 6) {
 					EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_HURL);
 				}
 			}
@@ -334,24 +334,24 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*cells;
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	Sint32				 centerX;
 	Sint32				 step;
 	FIXED				 origin;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	cells = RamHeapSlots->battleSheet;
 
 	/* Open the canvas on BG1 over the target and build the blitters. */
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	btEffectPosProjectBattler(args->tgts[0], &tgt);
-	centerX = tgt.x / 2;
+	btEffectPosProjectBattler(args->targets[0], &target);
+	centerX = target.x / 2;
 
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	draw[0] = RamHeapSlots->ramCode;
@@ -390,10 +390,10 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	for(i = 0; i != TITAN_BLADE_FLASHES; i++) {
 		PARTICLE *flash = &state->particles[i];
 		Sint32	  scale = i * 2;
-		Sint32	  ang = syRandom() & TRIG_ANGLE_MASK;
+		Sint32	  angle = syRandom() & TRIG_ANGLE_MASK;
 
-		flash->x = sySin(ang) * scale;
-		flash->y = -(syCos(ang) * scale);
+		flash->x = sySin(angle) * scale;
+		flash->y = -(syCos(angle) * scale);
 		flash->variant = i / 2 + FLASH_LIFE;
 	}
 
@@ -407,42 +407,42 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	for(; i != TITAN_BLADE_SPARKS; i++) {
 		PARTICLE *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 		Sint32	  speed;
-		Sint32	  ang;
+		Sint32	  angle;
 
 		speed = (syRandom() & 0x1ff) + 32;
-		ang = syRandom() & TRIG_ANGLE_MASK;
+		angle = syRandom() & TRIG_ANGLE_MASK;
 		spark->x = origin;
 		spark->y = toFIXED(88);
-		spark->velX = (sySin(ang) * speed) >> 5;
-		spark->velY = -(syCos(ang) * speed) >> 6;
+		spark->velocityX = (sySin(angle) * speed) >> 5;
+		spark->velocityY = -(syCos(angle) * speed) >> 6;
 		spark->variant = (syRandom() & 7) + 32;
 	}
 
-	for(frm = 0; frm != TITAN_BLADE_TICKS; frm++) {
+	for(frame = 0; frame != TITAN_BLADE_TICKS; frame++) {
 		if(mode == FALLING_SWORD_TITAN_BLADE) {
-			if(frm >= 41 && frm <= 63)
+			if(frame >= 41 && frame <= 63)
 				btEffectStepPaletteToResource(RESOURCE_BLAST_SHEET);
 		} else if(mode == FALLING_SWORD_ACHERONS_GRIEF) {
-			if(frm == 61) {
+			if(frame == 61) {
 				syWordsCopyEntry((void *)BG_PLTT,
 					syResourceGetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
 					SHEET_PALETTE_BYTES);
-				btPaletteMirrorBgCols();
+				btPaletteMirrorBgColors();
 			}
 		}
 
-		if(frm == 8)
-			state->shakeFrm = frm;
-		if(frm == 48)
-			state->shakeFrm = 8;
-		if(frm == TITAN_BLADE_STRIKE_TICK)
-			state->shakeFrm = 16;
+		if(frame == 8)
+			state->shakeFrame = frame;
+		if(frame == 48)
+			state->shakeFrame = 8;
+		if(frame == TITAN_BLADE_STRIKE_TICK)
+			state->shakeFrame = 16;
 
-		if(frm == 4)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == TITAN_BLADE_PILLAR_TICK)
-			sySndPlayStub(SE_SCATTER);
-		if(frm == TITAN_BLADE_STRIKE_TICK) {
+		if(frame == 4)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == TITAN_BLADE_PILLAR_TICK)
+			sySoundPlayStub(SE_SCATTER);
+		if(frame == TITAN_BLADE_STRIKE_TICK) {
 			if(mode == FALLING_SWORD_ACHERONS_GRIEF)
 				EFFECT_SHOW_DAMAGE(SE_CLATTER);
 			else
@@ -450,7 +450,7 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* The flashes, from tick 56. */
-		if(frm > 55) {
+		if(frame > 55) {
 			for(i = 0; i != TITAN_BLADE_RING; i++) {
 				PARTICLE *flash = &state->particles[i];
 				Sint32	  x;
@@ -475,26 +475,26 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* The dust: a fountain at tick 28, then more each tick while the
 		   pillar rises. */
-		if(frm == 28) {
+		if(frame == 28) {
 			for(i = 0; i != TITAN_BLADE_FIRST_DUST; i++) {
 				PARTICLE *dust = &PARTICLES[i];
 
 				if(dust->variant == -1) {
 					Sint32 speed;
-					Sint32 ang;
+					Sint32 angle;
 
 					speed = syRandom() & 63;
-					ang = syRandom() & TRIG_ANGLE_MASK;
-					dust->x = ((sySin(ang) * speed) >> 3) + origin;
-					dust->y = ((syCos(ang) * speed) >> 2) + toFIXED(96);
-					dust->velX = ((syRandom() & 63) - 32) << 14;
-					dust->velY = (-(syRandom() & 63) - 8) << 13;
+					angle = syRandom() & TRIG_ANGLE_MASK;
+					dust->x = ((sySin(angle) * speed) >> 3) + origin;
+					dust->y = ((syCos(angle) * speed) >> 2) + toFIXED(96);
+					dust->velocityX = ((syRandom() & 63) - 32) << 14;
+					dust->velocityY = (-(syRandom() & 63) - 8) << 13;
 					dust->variant = 0;
 				}
 			}
 		}
 
-		step = frm - TITAN_BLADE_PILLAR_TICK;
+		step = frame - TITAN_BLADE_PILLAR_TICK;
 		if(step >= 0 && step < TITAN_BLADE_PILLAR_TICKS) {
 			Sint32 spawned;
 
@@ -504,14 +504,14 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				if(dust->variant == -1) {
 					Sint32 speed;
-					Sint32 ang;
+					Sint32 angle;
 
 					speed = syRandom() & 63;
-					ang = syRandom() & TRIG_ANGLE_MASK;
-					dust->x = ((sySin(ang) * speed) >> 3) + origin;
-					dust->y = ((syCos(ang) * speed) >> 2) + toFIXED(96);
-					dust->velX = ((syRandom() & 63) - 32) << 14;
-					dust->velY = (-(syRandom() & 63) - 8) << 13;
+					angle = syRandom() & TRIG_ANGLE_MASK;
+					dust->x = ((sySin(angle) * speed) >> 3) + origin;
+					dust->y = ((syCos(angle) * speed) >> 2) + toFIXED(96);
+					dust->velocityX = ((syRandom() & 63) - 32) << 14;
+					dust->velocityY = (-(syRandom() & 63) - 8) << 13;
 					dust->variant = 0;
 					spawned++;
 					if(spawned == TITAN_BLADE_DUST_PER_TICK)
@@ -522,7 +522,7 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* The pillar of fire, its flames climbing 16 pixels a tick. */
 		if(step >= 0 && step < TITAN_BLADE_PILLAR_TICKS) {
-			Sint32		   rise = frm * 16;
+			Sint32		   rise = frame * 16;
 			Sint32		   height = FIRE_PILLAR_HEIGHT;
 			Uint8		  *src = state->sheet;
 			Sint32		   x = centerX - FIRE_PILLAR_WIDTH / 2;
@@ -538,7 +538,7 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		/* The dust grows as it falls and toward the end. It stops at tick 71,
 		   so only the first two of the later sizes, and never the lift from
 		   tick 80, are reached. */
-		if(frm <= 71) {
+		if(frame <= 71) {
 			for(i = 0; i != TITAN_BLADE_DRAWN_DUST; i++) {
 				PARTICLE *dust = &PARTICLES[i];
 
@@ -546,32 +546,32 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Sint32 size;
 
 					size = i % 3 + 2;
-					if(dust->velY > 0)
+					if(dust->velocityY > 0)
 						size += 2;
-					if(frm > 68 && size <= 5)
+					if(frame > 68 && size <= 5)
 						size = 6;
-					if(frm > 70 && size <= 6)
+					if(frame > 70 && size <= 6)
 						size = 7;
-					if(frm > 72 && size <= 7)
+					if(frame > 72 && size <= 7)
 						size = 8;
-					if(frm > 74 && size <= 8)
+					if(frame > 74 && size <= 8)
 						size = 9;
-					if(frm > 76)
+					if(frame > 76)
 						size = MOTE_PICTURES;
 					draw[0](canvas, cells + BattleEffectMotePictures[size - 1],
 						FIXED_INTEGER_PART(dust->x) - size / 2,
 						FIXED_INTEGER_PART(dust->y) - size, size, size * 2);
 
-					dust->x += dust->velX;
-					dust->y += dust->velY;
-					if(frm > 80)
-						dust->velY -= toFIXED(1) / 2;
+					dust->x += dust->velocityX;
+					dust->y += dust->velocityY;
+					if(frame > 80)
+						dust->velocityY -= toFIXED(1) / 2;
 					else
-						dust->velY += TitanBladeDustGravity[i & 3];
-					dust->velX = dust->velX * 62 / DAMPING_SCALE;
-					dust->velY = dust->velY * 62 / DAMPING_SCALE;
+						dust->velocityY += TitanBladeDustGravity[i & 3];
+					dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
+					dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
 					dust->variant++;
-					if(dust->velY > 0 &&
+					if(dust->velocityY > 0 &&
 						FIXED_INTEGER_PART(dust->y) > SWORD_GROUND_Y)
 						dust->variant = -1;
 				}
@@ -581,19 +581,19 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		/* The sword: down 16 pixels a tick, held, sinking while the pillar
 		   rises, plunging after the strike; it is not drawn below the
 		   ground. */
-		if(frm <= 95) {
+		if(frame <= 95) {
 			Sint32 x;
 			Sint32 high;
 			Sint32 top;
 
 			x = centerX - TITAN_BLADE_SWORD_WIDTH / 2;
 			high = TITAN_BLADE_SWORD_HEIGHT;
-			if(frm > TITAN_BLADE_STRIKE_TICK)
-				top = frm * 8 - 450;
-			else if(frm > TITAN_BLADE_PILLAR_TICK)
+			if(frame > TITAN_BLADE_STRIKE_TICK)
+				top = frame * 8 - 450;
+			else if(frame > TITAN_BLADE_PILLAR_TICK)
 				top = step / 2 + TITAN_BLADE_SWORD_HOLD_TOP;
-			else if(frm <= 9)
-				top = frm * 16 - 128;
+			else if(frame <= 9)
+				top = frame * 16 - 128;
 			else
 				top = TITAN_BLADE_SWORD_HOLD_TOP;
 			if(top + TITAN_BLADE_SWORD_HEIGHT > SWORD_GROUND_Y)
@@ -604,7 +604,7 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* The sparks bounce on the ground. */
-		if(frm > 59) {
+		if(frame > 59) {
 			for(i = 0; i != TITAN_BLADE_SPARKS; i++) {
 				PARTICLE *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
@@ -618,7 +618,7 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					y = spark->y;
 					spark->variant--;
 					if(y > toFIXED(SWORD_GROUND_Y)) {
-						spark->velY = -spark->velY / 2;
+						spark->velocityY = -spark->velocityY / 2;
 					} else {
 						x = spark->x;
 						if((x >= 0 && x <= toFIXED(127) - 1) && y >= 0) {
@@ -639,19 +639,19 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		/* The hit, and the canvas flooded as the sword arrives and as it
 		   strikes. */
-		if(frm == 68) {
-			for(i = 0; i != args->tgtCnt; i++) {
+		if(frame == 68) {
+			for(i = 0; i != args->targetCount; i++) {
 				EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_JOLT);
 			}
 		}
 
-		if(frm == 9) {
+		if(frame == 9) {
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
-		if(frm == TITAN_BLADE_STRIKE_TICK)
+		if(frame == TITAN_BLADE_STRIKE_TICK)
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 

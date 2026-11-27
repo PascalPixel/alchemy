@@ -38,23 +38,23 @@ enum {
 void fdEffectSpawnRadialParticleRing(MOTION_OBJECT *origin)
 {
 	EFFECT_OPTIONS options;
-	FIXED		   vel[3];
+	FIXED		   velocity[3];
 	FIXED		   sine;
-	Sint32		   ang;
+	Sint32		   angle;
 	Uint32		   i;
 
-	options.pal = 0;
+	options.palette = 0;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	for(i = 0; i <= RADIAL_RING_STEPS; i++) {
-		ang = i * (TRIG_TURN / RADIAL_RING_STEPS);
-		vel[0] = syCos(ang) * 3 / 2;
-		vel[1] = 0;
-		sine = sySin(ang);
-		vel[2] = sine;
-		fdEffectSpawnResident(origin->x, origin->y, origin->z, vel[0], vel[1],
-			sine,
+		angle = i * (TRIG_TURN / RADIAL_RING_STEPS);
+		velocity[0] = syCos(angle) * 3 / 2;
+		velocity[1] = 0;
+		sine = sySin(angle);
+		velocity[2] = sine;
+		fdEffectSpawnResident(origin->x, origin->y, origin->z, velocity[0],
+			velocity[1], sine,
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
@@ -66,25 +66,25 @@ void fdEffectSpawnRadialParticleRing(MOTION_OBJECT *origin)
 void fdEffectWanderAroundAnchor(ACTOR *effect)
 {
 	FIXED  radius;
-	Sint32 ang;
+	Sint32 angle;
 	FIXED  dx;
 	FIXED  dz;
 
 	radius = syRandom() + toFIXED(2);
-	ang = effect->facing;
-	dx = syMulFX(radius, syCos(ang));
-	dz = syMulFX(radius, sySin(ang));
+	angle = effect->facing;
+	dx = syMulFX(radius, syCos(angle));
+	dz = syMulFX(radius, sySin(angle));
 	effect->x.fixed += dx;
 	effect->z.fixed += dz;
 	/* A small backwards drift, a 4096th of a turn a tick. */
 	effect->facing += -(TRIG_TURN / 4096);
-	if(effect->turnFrm != 0) {
-		effect->turnFrm--;
+	if(effect->turnFrame != 0) {
+		effect->turnFrame--;
 		effect->facing += TRIG_TURN / 32;
-	} else if(syRandomBelow(32) == 0) {			 /* one chance in 32 */
-		effect->turnFrm = syRandomBelow(16) + 8; /* 8 to 23 ticks */
+	} else if(syRandomBelow(32) == 0) {			   /* one chance in 32 */
+		effect->turnFrame = syRandomBelow(16) + 8; /* 8 to 23 ticks */
 	}
-	if(++effect->swirlFrm == WHIRLWIND_WANDER_TICKS)
+	if(++effect->swirlFrame == WHIRLWIND_WANDER_TICKS)
 		fdActorStartScriptStub(effect, FieldEffectReleaseScript);
 }
 
@@ -108,12 +108,12 @@ void fdEffectCircleAnchor(ACTOR *effect)
 	effect->x.fixed = anchor->x.fixed + dx;
 	effect->z.fixed = anchor->z.fixed + dz;
 	effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
-	if(++effect->swirlFrm == WHIRLWIND_ORBIT_TICKS) {
+	if(++effect->swirlFrame == WHIRLWIND_ORBIT_TICKS) {
 		effect->update = (OBJECT_UPDATE)fdEffectWanderAroundAnchor;
-		effect->swirlFrm = 0;
-		effect->turnFrm = 0;
+		effect->swirlFrame = 0;
+		effect->turnFrame = 0;
 		effect->gravity = toFIXED(1) / 10;
-		effect->velY = toFIXED(3);
+		effect->velocityY = toFIXED(3);
 		effect->facing = syRandom();
 	}
 }
@@ -149,10 +149,10 @@ void fdWhirlwindUpdateSpentOrb(ACTOR *actor);
    (fdHangingVineSwing). */
 void fdPsynergyWhirlwind(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	ACTOR			   *caster = scene->caster;
-	ACTOR			   *tgt = scene->tgt;
-	SPR				   *spr = tgt->spr;
+	ACTOR			   *target = scene->target;
+	SPR				   *sprite = target->sprite;
 	VECTOR3				pos;
 	VECTOR3				from;
 	VECTOR3				to;
@@ -166,13 +166,13 @@ void fdPsynergyWhirlwind(void)
 	if(scene->sceneVariant != 0)
 		return;
 	if(scene->aimAhead == 0) {
-		Sint32 anm;
+		Sint32 animation;
 
 		kind = ORB_ORBITING;
-		anm = spr->entries[0]->anmId;
-		if(anm == SPRITE_SPROUTING_LEAVES)
+		animation = sprite->entries[0]->animationId;
+		if(animation == SPRITE_SPROUTING_LEAVES)
 			kind = ORB_WANDER;
-		if(anm == SPRITE_SEEDLING)
+		if(animation == SPRITE_SEEDLING)
 			kind = ORB_HANDOFF;
 	}
 
@@ -182,7 +182,7 @@ void fdPsynergyWhirlwind(void)
 	if(orb == 0)
 		return;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	fdActorSelectAnimationStub(orb, 2);
 	step = 0;
 	do {
@@ -202,12 +202,12 @@ void fdPsynergyWhirlwind(void)
 	} while(step < ticks);
 	orb->scaleX = toFIXED(17) / 10;
 	orb->scaleY = toFIXED(13) / 10;
-	sySndPlayStub(SE_RUSH);
+	sySoundPlayStub(SE_RUSH);
 
 	if(kind == ORB_PLAIN) {
 		fdActorSelectAnimationStub(orb, 1);
 		sySynch(30);
-		sySndPlayStub(SE_WHOOSH);
+		sySoundPlayStub(SE_WHOOSH);
 		fdActorWaitForTrackEndStub(orb);
 		fdActorReleaseStub(orb);
 	} else if(kind == ORB_ORBITING) {
@@ -215,8 +215,8 @@ void fdPsynergyWhirlwind(void)
 		   higher each, 3 to 8 pixels out, circle it while the target
 		   shrinks. */
 		sySynch(20);
-		if(tgt != 0)
-			tgt->update = (OBJECT_UPDATE)fdWhirlwindUpdateTarget;
+		if(target != 0)
+			target->update = (OBJECT_UPDATE)fdWhirlwindUpdateTarget;
 		for(i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
 			Sint32 distance;
 
@@ -228,8 +228,8 @@ void fdPsynergyWhirlwind(void)
 			if(leaf != 0) {
 				leaf->update = (OBJECT_UPDATE)fdEffectCircleAnchor;
 				leaf->watchedActor = (FIELD_OBJECT *)orb;
-				leaf->swirlFrm = 0;
-				leaf->turnFrm = 0;
+				leaf->swirlFrame = 0;
+				leaf->turnFrame = 0;
 				leaf->facing = syRandom();
 			}
 			sySynch(6);
@@ -238,7 +238,7 @@ void fdPsynergyWhirlwind(void)
 		sySynch(120);
 		fdActorSelectAnimationStub(orb, 1);
 		sySynch(30);
-		sySndPlayStub(SE_WHOOSH);
+		sySoundPlayStub(SE_WHOOSH);
 		fdActorWaitForTrackEndStub(orb);
 		fdActorReleaseStub(orb);
 	} else if(kind == ORB_WANDER || kind == ORB_HANDOFF) {
@@ -259,34 +259,34 @@ void fdPsynergyWhirlwind(void)
 				leaf = fdActorSpawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
 				if(leaf != 0) {
 					leaf->update = (OBJECT_UPDATE)fdEffectWanderAroundAnchor;
-					leaf->swirlFrm = 20 + i * -2;
-					leaf->turnFrm = 0;
+					leaf->swirlFrame = 20 + i * -2;
+					leaf->turnFrame = 0;
 					leaf->gravity = toFIXED(1) / 10;
-					leaf->velY = toFIXED(3);
+					leaf->velocityY = toFIXED(3);
 					leaf->facing = syRandom();
 				}
 			}
 		}
 		fdBattleEffectSetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
-		fdPsynergyFadeFromCastCol();
-		orb->tmr = 0;
+		fdPsynergyFadeFromCastColor();
+		orb->timer = 0;
 		orb->update = (OBJECT_UPDATE)fdWhirlwindUpdateSpentOrb;
-		fdHangingVineSwing(scene->tgtId);
+		fdHangingVineSwing(scene->targetId);
 		fdActorWaitForTrackEndStub(orb);
 		fdActorReleaseStub(orb);
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Per-tick update of Whirlwind's orb once it has done its work: it whooshes on
    its 80th tick. */
 void fdWhirlwindUpdateSpentOrb(ACTOR *actor)
 {
-	if(actor->tmr == 80) {
+	if(actor->timer == 80) {
 		actor->update = 0;
-		sySndPlayStub(SE_WHOOSH);
+		sySoundPlayStub(SE_WHOOSH);
 	}
-	actor->tmr++;
+	actor->timer++;
 }
 
 /* Field effect sprite callback (OUT_AND_BACK_STATE): the particle heads for a
@@ -299,7 +299,7 @@ void fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect)
 	Sint16				angle;
 	Sint32				state;
 
-	effectState = RamHeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffectState;
 top:
 	state = effect->state;
 	if(state == OUT_AND_BACK_AIM_OUT) {
@@ -308,8 +308,8 @@ top:
 		angle = syRandom();
 		syVectorAddPolarOffset(
 			syRandom() * 30 + toFIXED(40), (Uint16)angle, &pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(4);
 		effect->speedMax = toFIXED(4);
 		effect->turnStepLimited = state;
@@ -328,8 +328,8 @@ top:
 		pos.z = effectState->z;
 		fdCameraWorldToScreen(&pos);
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), &pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->turnStepMax = TRIG_TURN / 16;
 		effect->turnStepLimited = 1;
 		effect->state++;
@@ -343,9 +343,10 @@ top:
 /* Pauses the target (effectState->child) and runs fdPsynergyHalt. */
 void fdPsynergyHaltOnTarget(Sint32 unused)
 {
-	ACTOR *tgt = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgt;
+	ACTOR *target =
+		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->target;
 
-	tgt->paused = 1;
+	target->paused = 1;
 	fdPsynergyHalt();
 }
 
@@ -359,7 +360,7 @@ void fdPsynergyHaltOnTarget(Sint32 unused)
    and scatters it into HALT_PARTICLES particles. */
 void fdPsynergyHalt(void)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	ACTOR			   *caster = effectState->caster;
 	ACTOR			   *orb;
 	FIELD_PARTICLE	   *effect;
@@ -378,7 +379,7 @@ void fdPsynergyHalt(void)
 
 	/* From 16 pixels above the caster to 8 pixels above the Psynergy's
 	   position. */
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	from.x = caster->x.fixed;
 	from.y = caster->y.fixed + toFIXED(16);
 	from.z = caster->z.fixed;
@@ -408,13 +409,13 @@ void fdPsynergyHalt(void)
 	   its second animation. */
 	sySynch(5);
 	fdActorSelectAnimationStub(orb, 1);
-	sySndPlayStub(SE_TRIPLE_TONE_LOW);
+	sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 	sySynch(10);
-	sySndPlayStub(SE_TRIPLE_TONE_LOW);
+	sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 	sySynch(10);
-	sySndPlayStub(SE_TRIPLE_TONE_LOW);
+	sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 	sySynch(10);
-	sySndPlayStub(SE_TRIPLE_TONE_HIGH);
+	sySoundPlayStub(SE_TRIPLE_TONE_HIGH);
 
 	/* Particles 4 pixels round it fly out, then come back to the Psynergy's
 	   position. */
@@ -427,7 +428,7 @@ void fdPsynergyHalt(void)
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), &pos.x);
 		fdParticleInit(effect, SPRITE_SPARKLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateHaltParticle);
-		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_WHITE);
+		fdSpriteSetAnimationColorModesStub(effect->sprite, SPRITE_COLOR_WHITE);
 		effect++;
 	}
 
@@ -438,16 +439,16 @@ void fdPsynergyHalt(void)
 	fdActorReleaseStub(orb);
 	sySynch(4);
 	sySynch(30);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Per-tick update of an actor held by Halt: its sprite flickers through the
    colour modes of HaltFlickerColorModes at random. */
 void fdPsynergyUpdateHaltedActor(ACTOR *actor)
 {
-	const Sint8 *tbl = HaltFlickerColorModes;
+	const Sint8 *table = HaltFlickerColorModes;
 	Sint32		 random = syRandom();
-	fdActorSetSprColModeStub(actor, tbl[(Uint32)(random * 8) >> 16]);
+	fdActorSetSpriteColorModeStub(actor, table[(Uint32)(random * 8) >> 16]);
 }
 
 /* Holds an actor still under Halt, keeping its per-tick update and its first
@@ -461,11 +462,11 @@ void fdPsynergyHaltActor(Sint32 actorId)
 	actor = fdActorLookup(actorId);
 	if(actor != NULL) {
 		MainRoutineStateWork.pausedUpdate = actor->update;
-		MainRoutineStateWork.pausedColMode = 0;
-		if(actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-			entry = ((SPR *)actor->spr)->entries[0];
+		MainRoutineStateWork.pausedColorMode = 0;
+		if(actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+			entry = ((SPR *)actor->sprite)->entries[0];
 			if(entry != NULL) {
-				MainRoutineStateWork.pausedColMode = entry->colMode;
+				MainRoutineStateWork.pausedColorMode = entry->colorMode;
 			}
 		}
 		actor->update = (OBJECT_UPDATE)fdPsynergyUpdateHaltedActor;
@@ -484,8 +485,8 @@ void fdPsynergyResumeHaltedActor(Sint32 actorId)
 		if(actor->update == (OBJECT_UPDATE)fdPsynergyUpdateHaltedActor) {
 			actor->update = MainRoutineStateWork.pausedUpdate;
 			MainRoutineStateWork.pausedUpdate = NULL;
-			fdActorSetSprColModeStub(
-				actor, (Sint8)MainRoutineStateWork.pausedColMode);
+			fdActorSetSpriteColorModeStub(
+				actor, (Sint8)MainRoutineStateWork.pausedColorMode);
 		}
 		actor->paused = 0;
 		fdActorSetAnimationSpeedStub(actor, ANIM_STEP_NORMAL);
@@ -525,45 +526,45 @@ static __inline__ Sint32 Interpolate(Sint32 from, Sint32 to, Sint32 step)
    pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back. */
 void fdPsynergyCatch(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	ACTOR			   *mainActor = scene->caster;
-	ACTOR			   *secondary = scene->tgt;
+	ACTOR			   *secondary = scene->target;
 	ACTOR			   *actor;
 	VECTOR3				spawn;
 	VECTOR3				origin;
-	VECTOR3				tgt;
+	VECTOR3				target;
 	Sint32				step;
-	Sint32				idx;
+	Sint32				index;
 	Sint32				steps = CAST_THROW_STEPS + 1;
 
 	SET_POSITION(&origin, mainActor->x.fixed, mainActor->y.fixed + toFIXED(16),
 		mainActor->z.fixed);
 	if(scene->aimAhead) {
-		SET_POSITION(&tgt, mainActor->x.fixed, mainActor->y.fixed + toFIXED(32),
-			mainActor->z.fixed);
-		syVectorAddPolarOffset(toFIXED(32), scene->ang, &tgt.x);
+		SET_POSITION(&target, mainActor->x.fixed,
+			mainActor->y.fixed + toFIXED(32), mainActor->z.fixed);
+		syVectorAddPolarOffset(toFIXED(32), scene->angle, &target.x);
 	} else {
-		SET_POSITION(&tgt, scene->x, scene->y + toFIXED(32), scene->z);
+		SET_POSITION(&target, scene->x, scene->y + toFIXED(32), scene->z);
 	}
 	SET_POSITION(&spawn, scene->x, scene->y + toFIXED(32), scene->z);
 	actor = fdActorSpawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
 	if(actor == 0)
 		return;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_ITEM_BREAK);
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_ITEM_BREAK);
 	actor->facing = mainActor->facing;
 	actor->speedLimit = toFIXED(13) / 10;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSelectAnimationStub(actor, MOVE_HAND_ANIMATION_FIST);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_GRB);
 	step = 0;
 	do {
 		Sint32 scale;
 
 		SET_ACTOR_POSITION(actor,
-			origin.x + (tgt.x - origin.x) * step / CAST_THROW_STEPS,
-			origin.y + (tgt.y - origin.y) * step / CAST_THROW_STEPS,
-			origin.z + (tgt.z - origin.z) * step / CAST_THROW_STEPS);
+			origin.x + (target.x - origin.x) * step / CAST_THROW_STEPS,
+			origin.y + (target.y - origin.y) * step / CAST_THROW_STEPS,
+			origin.z + (target.z - origin.z) * step / CAST_THROW_STEPS);
 		scale = Interpolate(toFIXED(1) / 4, toFIXED(1), step);
 		actor->scaleX = scale;
 		actor->scaleY = scale;
@@ -573,30 +574,30 @@ void fdPsynergyCatch(void)
 	sySynch(10);
 	fdActorSelectAnimationStub(actor, MOVE_HAND_ANIMATION_CLENCH);
 	sySynch(15);
-	for(idx = 0; idx < CATCH_PRESS_TICKS; idx++) {
+	for(index = 0; index < CATCH_PRESS_TICKS; index++) {
 		actor->y.fixed -= toFIXED(2);
 		sySynch(1);
 	}
 	fdActorSelectAnimationStub(actor, MOVE_HAND_ANIMATION_FIST);
-	sySndPlayStub(SE_WATER);
+	sySoundPlayStub(SE_WATER);
 	if(secondary != 0)
 		fdActorSetPosAndResetMotionStub(
 			secondary, -toFIXED(9), secondary->y.fixed, -toFIXED(9));
 	sySynch(20);
-	for(idx = 0; idx < CATCH_RISE_TICKS; idx++) {
+	for(index = 0; index < CATCH_RISE_TICKS; index++) {
 		actor->y.fixed += toFIXED(3) / 2;
 		sySynch(1);
 	}
 	sySynch(10);
-	sySndPlayStub(SE_MENU_ERROR);
+	sySoundPlayStub(SE_MENU_ERROR);
 	step = 0;
 	do {
 		Sint32 scale;
 
 		SET_ACTOR_POSITION(actor,
-			tgt.x + (origin.x - tgt.x) * step / CAST_THROW_STEPS,
-			tgt.y + (origin.y - tgt.y) * step / CAST_THROW_STEPS,
-			tgt.z + (origin.z - tgt.z) * step / CAST_THROW_STEPS);
+			target.x + (origin.x - target.x) * step / CAST_THROW_STEPS,
+			target.y + (origin.y - target.y) * step / CAST_THROW_STEPS,
+			target.z + (origin.z - target.z) * step / CAST_THROW_STEPS);
 		scale = Interpolate(toFIXED(1), toFIXED(1) / 4, step);
 		actor->scaleX = scale;
 		actor->scaleY = scale;
@@ -604,10 +605,10 @@ void fdPsynergyCatch(void)
 		step++;
 	} while(step < steps);
 	fdActorReleaseStub(actor);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
-void fdRopeGetEndNodePos(Sint32 tgt, VECTOR3 *pos);
+void fdRopeGetEndNodePos(Sint32 target, VECTOR3 *pos);
 
 /* The stages of Lash's hand on a rope (SCATTER_STATE.phase). */
 typedef enum LASH_PHASE {
@@ -622,17 +623,17 @@ typedef enum LASH_PHASE {
    rises away, scattering sparkles all the while. */
 void fdPsynergyUpdateLash(void)
 {
-	SCATTER_STATE			*state = (SCATTER_STATE *)RamHeapSlots->battleEff;
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
-	FIELD_STATE				*field = RamHeapSlots->fieldState;
-	ACTOR					*actor = state->actor;
-	VECTOR3					 pos;
-	EFFECT_SPR				*spr;
+	SCATTER_STATE	   *state = (SCATTER_STATE *)RamHeapSlots->battleEffect;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
+	ACTOR			   *actor = state->actor;
+	VECTOR3				pos;
+	EFFECT_SPR		   *sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	Sint32					 i;
 
 	state->flash = 0;
-	for(i = 0; i < state->spawnCnt; i++) {
+	for(i = 0; i < state->spawnCount; i++) {
 		FIXED  distance;
 		Sint32 speed;
 
@@ -640,30 +641,30 @@ void fdPsynergyUpdateLash(void)
 		SET_POSITION(particle, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		distance = syRandom() * 12 + toFIXED(4);
 		syVectorAddPolarOffset(distance, syRandom(), particle);
-		particle->velX = 0;
-		particle->velY = toFIXED(2) - syRandom() * 2;
-		particle->velZ = 0;
+		particle->velocityX = 0;
+		particle->velocityY = toFIXED(2) - syRandom() * 2;
+		particle->velocityZ = 0;
 		speed = syRandom() + toFIXED(3) / 2;
-		syVectorAddPolarOffset(speed, syRandom(), &particle->velX);
-		particle->tmr = 0;
+		syVectorAddPolarOffset(speed, syRandom(), &particle->velocityX);
+		particle->timer = 0;
 		state->next++;
 		state->next &= SCATTER_PARTICLE_COUNT - 1;
 	}
 
 	for(i = 0, particle = state->particles; i < SCATTER_PARTICLE_COUNT;
 		i++, particle++) {
-		Sint32 tmr = particle->tmr;
+		Sint32 timer = particle->timer;
 
-		if(tmr >= 0) {
-			spr = &state->sprs[i];
+		if(timer >= 0) {
+			sprite = &state->sprites[i];
 			if(i & 1)
-				spr->oam.idx = state->tileA + (tmr & 3) * 2;
+				sprite->oam.index = state->tileA + (timer & 3) * 2;
 			else
-				spr->oam.idx = state->tileB + (tmr & 3) * 2;
-			fdEffectSprDrawAtWorldPos(spr, particle);
+				sprite->oam.index = state->tileB + (timer & 3) * 2;
+			fdEffectSpriteDrawAtWorldPos(sprite, particle);
 			fdAdvanceWithGravity3D(particle, 63, -(toFIXED(5) / 64));
-			if(++particle->tmr == 32)
-				particle->tmr = -1;
+			if(++particle->timer == 32)
+				particle->timer = -1;
 		}
 	}
 
@@ -679,50 +680,50 @@ void fdPsynergyUpdateLash(void)
 		pos.y = scene->y + c * 3 - d * 3;
 		pos.z = scene->z;
 		fdActorSetPosAndResetMotionStub(actor, pos.x, pos.y, pos.z);
-		if(state->tmr == 20) {
+		if(state->timer == 20) {
 			state->phase++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	}
 	case LASH_HAND_STILL:
 		fdActorSetPosAndResetMotionStub(actor, scene->x, scene->y, scene->z);
-		if(state->tmr == 6) {
+		if(state->timer == 6) {
 			state->phase++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	case LASH_HAND_PULLS:
-		if(state->tmr == 0)
+		if(state->timer == 0)
 			state->flash = 1;
-		fdRopeGetEndNodePos(field->tgtX, &pos);
+		fdRopeGetEndNodePos(field->targetX, &pos);
 		SET_ACTOR_POSITION(actor, pos.x, pos.y - toFIXED(4), pos.z);
 		if(state->hit != 0) {
 			state->phase++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
-		if(state->tmr == 90) {
+		if(state->timer == 90) {
 			state->phase++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	case LASH_HAND_RISES:
 		fdActorSelectAnimationStub(actor, 3);
-		state->spawnCnt = 3;
-		actor->y.fixed += state->tmr * toFIXED(2);
-		if(state->tmr == 10) {
+		state->spawnCount = 3;
+		actor->y.fixed += state->timer * toFIXED(2);
+		if(state->timer == 10) {
 			state->phase++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	case LASH_HAND_GONE:
 		actor->scaleX = 0;
-		state->spawnCnt = 0;
-		if(state->tmr == 30)
+		state->spawnCount = 0;
+		if(state->timer == 30)
 			state->phase = FIELD_PSYNERGY_FINISHED;
 		break;
 	}
-	state->tmr++;
+	state->timer++;
 }
 
 /* Lash cast on a target: finds the rope's two ends (fdRopeFindById); with none,
@@ -731,16 +732,16 @@ void fdPsynergyUpdateLash(void)
 void fdPsynergyLashOnTarget(Sint32 value)
 {
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	Sint32				second;
 	Sint32				first;
 
 	if(fdRopeFindById(value, &first, &second)) {
 		state->aimAhead = 1;
 	} else {
-		field->tgtY = value;
-		field->tgtZ = first;
-		field->tgtX = second;
+		field->targetY = value;
+		field->targetZ = first;
+		field->targetX = second;
 	}
 	fdPsynergyLash();
 }
@@ -756,31 +757,31 @@ void fdPsynergyLashOnTarget(Sint32 value)
 void fdPsynergyLash(void)
 {
 	SCATTER_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(SCATTER_STATE));
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(SCATTER_STATE));
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*caster = scene->caster;
 	ACTOR					*actor;
-	EFFECT_SPR				*spr;
+	EFFECT_SPR				*sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	Sint32					 slotA;
 	Sint32					 slotB;
 	Sint32					 tileA;
 	Sint32					 i;
 
-	if(scene->tgt != 0) {
+	if(scene->target != 0) {
 		scene->y += toFIXED(4);
 		scene->z += toFIXED(4);
 	}
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	actor = fdActorSpawn(SPRITE_LASH_HAND, 0, 0, 0);
 	if(actor != 0) {
 		actor->facing = caster->facing;
-		actor->motionFlg = 0;
-		if(caster->priFlg & ACTOR_PRIORITY_IGNORES_RISES)
-			actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+		actor->motionFlags = 0;
+		if(caster->priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)
+			actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 		fdActorSelectAnimationStub(actor, 0);
-		sySndPlayStub(SE_ITEM_BREAK);
+		sySoundPlayStub(SE_ITEM_BREAK);
 		syDecompressTaggedLZ(
 			syResourceGetTableEntry(RESOURCE_SPARKLE_FADE), state);
 		slotA = syVRAMCacheFindFreeEntry();
@@ -792,18 +793,18 @@ void fdPsynergyLash(void)
 		state->tileB = syVRAMCacheLoad(slotB, 256, state);
 
 		particle = state->particles;
-		spr = state->sprs;
+		sprite = state->sprites;
 		for(i = 0; i < SCATTER_PARTICLE_COUNT; i++) {
-			fdEffectSprInit(spr, 4, 4, 0, tileA);
-			spr->depth = EFFECT_SPRITE_FRONT_DEPTH;
-			spr->oam.pri = 0;
-			spr->oam.fullCol = 1;
-			spr->oam.pal = 0;
+			fdEffectSpriteInit(sprite, 4, 4, 0, tileA);
+			sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
+			sprite->oam.priority = 0;
+			sprite->oam.fullColor = 1;
+			sprite->oam.palette = 0;
 			SET_POSITION(
 				particle, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			syVectorAddPolarOffset(toFIXED(12), syRandom(), particle);
-			particle->tmr = -1;
-			spr++;
+			particle->timer = -1;
+			sprite++;
 			particle++;
 		}
 
@@ -815,7 +816,7 @@ void fdPsynergyLash(void)
 			actor->y.fixed += -toFIXED(2);
 			sySynch(1);
 		}
-		sySndPlayStub(SE_WATER);
+		sySoundPlayStub(SE_WATER);
 		if(scene->aimAhead != 0) {
 			for(i = 0; i < LASH_SPARKLES; i++)
 				fdBattleEffectSpawnScatterParticle(
@@ -825,17 +826,17 @@ void fdPsynergyLash(void)
 			sySynch(6);
 			state->actor = actor;
 			state->phase = LASH_HAND_SHAKES;
-			state->tmr = 0;
+			state->timer = 0;
 			state->next = 0;
-			state->spawnCnt = 1;
+			state->spawnCount = 1;
 			state->hit = 0;
 			sySetEvent(fdPsynergyUpdateLash, EVENT_PASS_TICK);
 			while(state->phase != FIELD_PSYNERGY_FINISHED) {
 				if(state->flash == 1) {
-					sySndPlayStub(SE_LASH);
-					fdRopeLash(field->tgtX, field->tgtY, field->tgtZ);
+					sySoundPlayStub(SE_LASH);
+					fdRopeLash(field->targetX, field->targetY, field->targetZ);
 					state->hit = 1;
-					sySndPlayStub(SOUND_FADE_OUT_EXIT_SE);
+					sySoundPlayStub(SOUND_FADE_OUT_EXIT_SE);
 				}
 				sySynch(1);
 			}
@@ -845,21 +846,21 @@ void fdPsynergyLash(void)
 		syVRAMCacheFreeEntry(slotB);
 		fdActorReleaseStub(actor);
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
 /* Per-tick update: spins by FACING_STEP + timer * 80 a tick, speeding up
    (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
-   tick to just over 1/8 in 52 ticks, as fdEffectAdvanceAngWithRamp. */
-void fdEffectUpdateSpinAng(ACTOR *actor)
+   tick to just over 1/8 in 52 ticks, as fdEffectAdvanceAngleWithRamp. */
+void fdEffectUpdateSpinAngle(ACTOR *actor)
 {
 	Uint32 step;
 
-	step = actor->tmr * 80;
+	step = actor->timer * 80;
 	actor->facing = actor->facing + step + FACING_STEP;
 	if(step < FACING_STEP)
-		actor->tmr = actor->tmr + 1;
+		actor->timer = actor->timer + 1;
 }
 
 /* Per-tick update: spins 1/8 turn a tick as it shrinks, rising a pixel a
@@ -874,7 +875,7 @@ void fdEffectUpdateRetreatCaster(ACTOR *actor)
 	actor->y.fixed += toFIXED(1);
 	actor->scaleX = scale;
 	if((Sint32)scale < toFIXED(3) / 16)
-		actor->sprStorageKind = ACTOR_SPRITE_NONE;
+		actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
 /* Field effect sprite callback: a particle flies 120 pixels from the main
@@ -888,7 +889,7 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 	Sint32	state;
 	Uint32	spread;
 
-	main = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
+	main = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->caster;
 	state = effect->state;
 
 	if(state == RETREAT_PARTICLE_AIM) {
@@ -907,15 +908,15 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 				syRandomBelow(TRIG_TURN / 8) + FACING_NORTH,
 			&pos);
 
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(5);
 		effect->speedMax = toFIXED(5);
 		effect->turnStepLimited = state;
 		effect->state++;
 
 		if((TickCount & 2) != 0)
-			sySndPlayStub(SE_GLITTER);
+			sySoundPlayStub(SE_GLITTER);
 	} else if(state == RETREAT_PARTICLE_FLYING) {
 		if(fdParticleHasPendingTarget(effect) == 0)
 			effect->state--;
@@ -930,7 +931,7 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
    sparks fly up the screen, one a tick. */
 void fdPsynergyRetreat(void)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	ACTOR			   *actor = effectState->caster;
 	VECTOR3				pos;
 	FIELD_PARTICLE	   *effect;
@@ -939,28 +940,28 @@ void fdPsynergyRetreat(void)
 
 	fdScriptStart();
 	fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	sySynch(10);
 	fdActorFaceDirectionById(effectState->casterId, FACING_SOUTH, 0);
 	sySynch(30);
-	actor->update = (OBJECT_UPDATE)fdActorCycleSprCols;
-	sySndPlayStub(SE_PSYNERGY_SPARKLE);
+	actor->update = (OBJECT_UPDATE)fdActorCycleSpriteColors;
+	sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 	fdActorSelectAnimationStub(actor, ANIM_LEADER_ARMS_RAISED);
 	sySynch(40);
 
 	/* Start spinning. */
-	sySndPlayStub(SE_SHIMMER);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+	sySoundPlayStub(SE_SHIMMER);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	fdActorSelectAnimationStub(actor, 3);
-	actor->update = (OBJECT_UPDATE)fdEffectUpdateSpinAng;
-	actor->tmr = 0;
+	actor->update = (OBJECT_UPDATE)fdEffectUpdateSpinAngle;
+	actor->timer = 0;
 	sySynch(70);
 
 	/* Start shrinking, and send particles from where it is on screen. */
-	fdActorSetSprFlagsStub(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlagsStub(actor, 0);
+	actor->motionFlags = 0;
 	actor->update = (OBJECT_UPDATE)fdEffectUpdateRetreatCaster;
-	actor->tgtX = ACTOR_NO_TARGET;
+	actor->targetX = ACTOR_NO_TARGET;
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	fdCameraWorldToScreen(&pos);
 	i = 0;
@@ -972,7 +973,7 @@ void fdPsynergyRetreat(void)
 		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdRetreatUpdateSpark);
 		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
-		fdSprSetAnimationColModesStub(effect->spr, syRandomBelow(7));
+		fdSpriteSetAnimationColorModesStub(effect->sprite, syRandomBelow(7));
 		scale = (syRandom() >> 1) + toFIXED(6) / 5; /* 1.2 to 1.7 */
 		effect->scaleY = scale;
 		effect->scaleX = scale;
@@ -992,7 +993,7 @@ void fdPsynergyRetreat(void)
 		effect++;
 	} while(i < PSYNERGY_EFFECT_SLOT_COUNT);
 	sySynch(40);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	actor->scaleX = 0;
 	actor->y.fixed = actor->groundHeight;
 	sySynch(10);
@@ -1066,45 +1067,46 @@ void fdAvoidUpdateRingFrontHalf(ACTOR *particle)
    (FIELD_EFFECT_STATE.arcTileSlot), the front half over every sprite. */
 void fdAvoidDropRing(ACTOR *src)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	ACTOR			   *leader = effectState->caster;
 	ACTOR			   *actors[2];
 	ACTOR			   *actor;
-	DESCENDING_ARC_SPR *spr;
-	Sint32				arcIdx;
+	DESCENDING_ARC_SPR *sprite;
+	Sint32				arcIndex;
 
-	for(arcIdx = 0; arcIdx <= 1; arcIdx++) {
+	for(arcIndex = 0; arcIndex <= 1; arcIndex++) {
 		actor = fdActorCreateStub(SPRITE_GOLDEN_RINGS, src->x.fixed,
 			src->y.fixed + toFIXED(64), src->z.fixed);
-		actors[arcIdx] = actor;
+		actors[arcIndex] = actor;
 		if(actor == NULL)
 			continue;
 		actor->groundHeight = src->groundHeight;
-		spr = (DESCENDING_ARC_SPR *)actor->spr;
-		actor->motionFlg = 0;
-		actor->tmr = 0;
+		sprite = (DESCENDING_ARC_SPR *)actor->sprite;
+		actor->motionFlags = 0;
+		actor->timer = 0;
 		actor->watchedActor = (FIELD_OBJECT *)src;
 		actor->scaleY = toFIXED(2) / 5;
 		actor->scaleX = toFIXED(2) / 5;
-		if(spr == NULL)
+		if(sprite == NULL)
 			continue;
-		fdSprStartAnimationStub((SPR *)spr, 0);
-		spr->flg = 0;
-		syVRAMCacheFreeEntry(spr->slot);
-		spr->slot = effectState->arcTileSlot;
-		spr->retainCacheEntry = 1;
-		spr->attr.half.tile = VramCacheEntries[spr->slot].ofs >> 5;
-		spr->fullCol = 0;
-		spr->shape = 1;
-		spr->size = 2;
-		spr->firstEntry->picture = 0;
+		fdSpriteStartAnimationStub((SPR *)sprite, 0);
+		sprite->flags = 0;
+		syVRAMCacheFreeEntry(sprite->slot);
+		sprite->slot = effectState->arcTileSlot;
+		sprite->retainCacheEntry = 1;
+		sprite->attribute.half.tile =
+			VramCacheEntries[sprite->slot].offset >> 5;
+		sprite->fullColor = 0;
+		sprite->shape = 1;
+		sprite->size = 2;
+		sprite->firstEntry->picture = 0;
 	}
 	/* BUG: failed allocations above leave a missing arc or sprite here. */
 	actors[0]->update = (OBJECT_UPDATE)fdAvoidUpdateRingFrontHalf;
-	((DESCENDING_ARC_SPR *)actors[0]->spr)->attr.byte.pri = 0;
+	((DESCENDING_ARC_SPR *)actors[0]->sprite)->attribute.byte.priority = 0;
 	actors[1]->update = (OBJECT_UPDATE)fdAvoidUpdateRingBackHalf;
-	((DESCENDING_ARC_SPR *)actors[1]->spr)->attr.byte.pri =
-		((DESCENDING_ARC_SPR *)leader->spr)->attr.byte.pri;
+	((DESCENDING_ARC_SPR *)actors[1]->sprite)->attribute.byte.priority =
+		((DESCENDING_ARC_SPR *)leader->sprite)->attribute.byte.priority;
 }
 
 /* The caster during Avoid (fdPsynergyAvoid): drops a ring onto itself every 5
@@ -1115,7 +1117,7 @@ void fdEffectUpdateAvoidCaster(ACTOR *caster)
 	Sint32 elapsedTicks;
 
 	phase = caster->arcPhase;
-	elapsedTicks = caster->arcFrm++;
+	elapsedTicks = caster->arcFrame++;
 
 	if(MainRoutineStateWork.mapId == SCENE_CLEAR) {
 		if(elapsedTicks % 7 == 0)
@@ -1163,18 +1165,18 @@ void fdPsynergyAvoid(void)
 	SPR				   *group;
 	SPR_ANIMATION	   *entry;
 	const Uint8		   *tiles;
-	Uint32				ang;
-	Sint32				flg;
+	Uint32				angle;
+	Sint32				flags;
 	Sint32				slot;
-	Sint32				cnt;
+	Sint32				count;
 	Sint32				phase;
 
-	effectState = RamHeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffectState;
 	actor = effectState->caster;
-	group = actor->spr;
+	group = actor->sprite;
 	entry = group->entries[0];
-	ang = actor->facing;
-	flg = group->flg;
+	angle = actor->facing;
+	flags = group->flags;
 	slot = syVRAMCacheFindFreeEntry();
 	/* The arcs' tiles (256 bytes) stay loaded until the Psynergy's end, and
 	   monsters stay away for the next 2,400 pixels the leader walks. */
@@ -1183,48 +1185,48 @@ void fdPsynergyAvoid(void)
 	syVRAMCacheLoad((Sint16)slot, 256, tiles);
 	MainRoutineStateWork.avoidDistance = toFIXED(2400);
 	MainRoutineStateWork.avoidByItem = syGameFlagGet(FLAG_PSYNERGY_FROM_ITEM);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	actor->update = (OBJECT_UPDATE)fdEffectUpdateAvoidCaster;
 	actor->arcPhase = 0;
-	actor->arcFrm = 0;
-	sySndPlayStub(SE_SPIN);
+	actor->arcFrame = 0;
+	sySoundPlayStub(SE_SPIN);
 	sySynch(15);
 	actor->arcPhase = 1;
 	sySynch(10);
 	/* Flash white for 2 ticks in every 5. */
-	for(cnt = 0; cnt < AVOID_FLASHES; cnt++) {
-		entry->colMode = SPRITE_COLOR_WHITE;
+	for(count = 0; count < AVOID_FLASHES; count++) {
+		entry->colorMode = SPRITE_COLOR_WHITE;
 		group->dirty = 1;
 		sySynch(2);
-		entry->colMode = SPRITE_COLOR_NORMAL;
+		entry->colorMode = SPRITE_COLOR_NORMAL;
 		group->dirty = 1;
-		group->flg = SPRITE_FLAG_SHADOW;
+		group->flags = SPRITE_FLAG_SHADOW;
 		sySynch(3);
 	}
 	actor->update = NULL;
-	actor->facing = ang;
+	actor->facing = angle;
 
 	/* Blink its outline beside its own flags on a five-tick cycle. */
-	for(cnt = 0; cnt < AVOID_BLINK_TICKS; cnt++) {
-		phase = cnt % 5;
+	for(count = 0; count < AVOID_BLINK_TICKS; count++) {
+		phase = count % 5;
 		if(phase == 0) {
 			group->dirty = 1;
-			group->flg = flg | SPRITE_FLAG_OUTLINED;
+			group->flags = flags | SPRITE_FLAG_OUTLINED;
 		} else if(phase == 2) {
 			group->dirty = 1;
-			group->flg = flg;
-			entry->colMode = SPRITE_COLOR_NORMAL;
+			group->flags = flags;
+			entry->colorMode = SPRITE_COLOR_NORMAL;
 		}
-		if(cnt == AVOID_CHIME_TICK)
-			sySndPlayStub(SE_NOTE_MID);
+		if(count == AVOID_CHIME_TICK)
+			sySoundPlayStub(SE_NOTE_MID);
 		sySynch(1);
 	}
-	group->flg = flg;
+	group->flags = flags;
 	group->dirty = 1;
 	{
 		Uint32 cleared = SPRITE_COLOR_NORMAL;
 
-		entry->colMode = cleared;
+		entry->colorMode = cleared;
 	}
 	sySynch(1);
 
@@ -1238,7 +1240,7 @@ void fdPsynergyAvoid(void)
    run their 32 ticks. */
 void fdBattleEffectWaitForArcGroups(void)
 {
-	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEffect;
 	Sint32			  i = 0;
 
 	while(state->age[0] < ARC_GROUP_TICKS || state->age[1] < ARC_GROUP_TICKS) {
@@ -1254,9 +1256,9 @@ void fdBattleEffectWaitForArcGroups(void)
 void fdEffectFlickerActorAndSpawnArcs(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetSprColModeStub(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		fdBattleEffectSpawnScaledArcObjects(actor);
@@ -1268,7 +1270,7 @@ void fdEffectFlickerActorAndSpawnArcs(ACTOR *actor)
 void fdEffectCycleActorAndSpawnArcs(ACTOR *actor)
 {
 	if(TickCount & 1)
-		fdActorSetSprColModeStub(actor, (TickCount >> 1) % 6);
+		fdActorSetSpriteColorModeStub(actor, (TickCount >> 1) % 6);
 	if((TickCount & 15) == 0)
 		fdBattleEffectSpawnScaledArcObjects(actor);
 }
@@ -1278,7 +1280,7 @@ void fdBattleEffectSetObjectUpdateMode(ACTOR *actor, Sint32 mode)
 {
 	if(mode == CASTER_LOOK_NORMAL) {
 		actor->update = 0;
-		fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	} else if(mode == CASTER_LOOK_FLASHING_WHITE) {
 		actor->update = (OBJECT_UPDATE)fdEffectFlickerActorAndSpawnArcs;
 	} else {
@@ -1289,23 +1291,23 @@ void fdBattleEffectSetObjectUpdateMode(ACTOR *actor, Sint32 mode)
 /* Sets up the current group's two arc sprites from the effect's tiles, at the
    target's priority, then restarts that group's age, records the target and
    switches to the other group. */
-void fdBattleEffectSpawnScaledArcObjects(ACTOR *tgt)
+void fdBattleEffectSpawnScaledArcObjects(ACTOR *target)
 {
-	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
-	Sint32			  tiles = VramCacheEntries[state->resource].ofs >> 5;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEffect;
+	Sint32			  tiles = VramCacheEntries[state->resource].offset >> 5;
 	Sint32			  group = state->group;
-	EFFECT_SPR		 *spr;
+	EFFECT_SPR		 *sprite;
 	Sint32			  i;
 
 	for(i = 0; i < 2; i++) {
-		spr = &state->sprs[group][i];
-		fdEffectSprInit(spr, 16, 16, OBJ_SIZE_32X16, tiles);
-		spr->oam.fullCol = 0;
-		spr->oam.pal = 0;
-		spr->oam.pri = fdActorGetSprPriority(tgt);
+		sprite = &state->sprites[group][i];
+		fdEffectSpriteInit(sprite, 16, 16, OBJ_SIZE_32X16, tiles);
+		sprite->oam.fullColor = 0;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = fdActorGetSpritePriority(target);
 	}
 	state->age[group] = 0;
-	state->tgt = tgt;
+	state->target = target;
 	state->group ^= 1;
 }
 
@@ -1315,8 +1317,8 @@ void fdBattleEffectSpawnScaledArcObjects(ACTOR *tgt)
    one behind. */
 void fdBattleEffectUpdateArcEffect(void)
 {
-	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
-	ACTOR			 *tgt = state->tgt;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEffect;
+	ACTOR			 *target = state->target;
 	Sint32			  group;
 	FIXED			  pos[3];
 	Sint32			  i;
@@ -1327,29 +1329,29 @@ void fdBattleEffectUpdateArcEffect(void)
 		if(state->age[group] < 0)
 			continue;
 		if(state->age[group] < ARC_GROUP_TICKS) {
-			EFFECT_SPR *spr;
+			EFFECT_SPR *sprite;
 			FIXED		x, y;
 
-			pos[0] = tgt->x.fixed;
-			pos[1] = tgt->y.fixed + toFIXED(state->age[group]);
-			pos[2] = tgt->z.fixed;
+			pos[0] = target->x.fixed;
+			pos[1] = target->y.fixed + toFIXED(state->age[group]);
+			pos[2] = target->z.fixed;
 			fdCameraWorldToScreen(pos);
 			x = pos[0];
 			y = pos[2];
 			for(i = 0; i < 2; i++) {
-				spr = &state->sprs[group][i];
-				spr->x = x;
-				spr->y = y;
-				spr->scaleX = scale;
-				spr->scaleY = scale;
+				sprite = &state->sprites[group][i];
+				sprite->x = x;
+				sprite->y = y;
+				sprite->scaleX = scale;
+				sprite->scaleY = scale;
 				if(i == 0) {
-					spr->depth = fdActorGetSprDepth(state->tgt) - 1;
+					sprite->depth = fdActorGetSpriteDepth(state->target) - 1;
 				} else {
-					spr->depth = fdActorGetSprDepth(state->tgt) + 1;
-					spr->y -= toFIXED(1);
-					spr->scaleY = -spr->scaleY;
+					sprite->depth = fdActorGetSpriteDepth(state->target) + 1;
+					sprite->y -= toFIXED(1);
+					sprite->scaleY = -sprite->scaleY;
 				}
-				fdEffectSprDraw(spr);
+				fdEffectSpriteDraw(sprite);
 			}
 			state->age[group]++;
 		}
@@ -1361,14 +1363,14 @@ void fdBattleEffectUpdateArcEffect(void)
 void fdBattleEffectStartArcEffect(void)
 {
 	ARC_EFFECT_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_ARC_EFFECT, sizeof(*state));
+		syHeapSlotAllocate(HEAP_SLOT_ARC_EFFECT, sizeof(*state));
 
 	state->resource = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->resource, 256, FieldEffectSparkTiles);
 	state->group = 0;
 	state->age[0] = ARC_GROUP_UNSPAWNED;
 	state->age[1] = ARC_GROUP_UNSPAWNED;
-	state->tgt = 0;
+	state->target = 0;
 	sySetEvent((Sint32)fdBattleEffectUpdateArcEffect, EVENT_PASS_TICK);
 }
 
@@ -1376,7 +1378,7 @@ void fdBattleEffectStartArcEffect(void)
    event. */
 void fdBattleEffectEndArcEffect(void)
 {
-	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEffect;
 
 	syVRAMCacheFreeEntry(state->resource);
 	syCloseEvent((Uint32)fdBattleEffectUpdateArcEffect);
@@ -1384,7 +1386,7 @@ void fdBattleEffectEndArcEffect(void)
 }
 
 /* Moves the state on to its next phase, its timer restarted. */
-#define BOW_NEXT_PHASE(state) ((state)->phase++, (state)->tmr = -1)
+#define BOW_NEXT_PHASE(state) ((state)->phase++, (state)->timer = -1)
 /* Of the BOW_SPARK_COUNT sparks, those the bow throws off. */
 #define BOW_SPARKS_THROWN	  10
 /* While the thrown sparks repeat, each starts again after this many ticks. */
@@ -1405,15 +1407,15 @@ typedef enum ARROW_PHASE {
    arrow. */
 void fdPsynergyUpdateArrow(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
-	BOW_STATE		   *state = (BOW_STATE *)RamHeapSlots->battleEff;
-	CANVAS_SPR_STATE   *canvas = RamHeapSlots->canvasSpr;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
+	BOW_STATE		   *state = (BOW_STATE *)RamHeapSlots->battleEffect;
+	CANVAS_SPR_STATE   *canvas = RamHeapSlots->canvasSprite;
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	ACTOR			   *actor;
 	BOW_MOTION		   *motion;
-	EFFECT_SPR		   *spr;
+	EFFECT_SPR		   *sprite;
 	Sint32				pos[3];
-	Sint32				objectIdx;
+	Sint32				objectIndex;
 	Sint32				i;
 	Sint32				dx;
 	Sint32				dz;
@@ -1421,51 +1423,51 @@ void fdPsynergyUpdateArrow(void)
 again:
 	switch(state->phase) {
 	case ARROW_BOW_GROWS:
-		if(state->tmr == 0) {
+		if(state->timer == 0) {
 			state->sparking = 0;
 			state->sparksRepeat = 1;
 			state->arrowMoving = 0;
 			state->bowGrowing = 1;
-			state->frm = BOW_TICK_IDLE;
+			state->frame = BOW_TICK_IDLE;
 		} else if(state->bowGrowing == 0) {
-			state->frm = 0;
+			state->frame = 0;
 			BOW_NEXT_PHASE(state);
 		}
 		break;
 	case ARROW_BOW_DRAWN:
-		if(state->tmr == 0) {
-			spr = &state->arrow;
-			spr->scaleX = spr->scaleY = toFIXED(1);
+		if(state->timer == 0) {
+			sprite = &state->arrow;
+			sprite->scaleX = sprite->scaleY = toFIXED(1);
 			motion = &state->arrowMotion;
 			pos[0] = pos[1] = pos[2] = 0;
 			syVectorAddPolarOffset(
-				toFIXED(3) / 20, scene->ang8 + DEGtoANG(180), pos);
-			motion->velX = pos[0];
-			motion->velY = pos[1];
-			motion->velZ = pos[2];
+				toFIXED(3) / 20, scene->angle8 + DEGtoANG(180), pos);
+			motion->velocityX = pos[0];
+			motion->velocityY = pos[1];
+			motion->velocityZ = pos[2];
 			state->arrowMoving = 1;
 		}
-		if(state->tmr == 20)
+		if(state->timer == 20)
 			state->sparking = 1;
-		if(state->tmr == 56) {
+		if(state->timer == 56) {
 			motion = &state->arrowMotion;
 			pos[0] = pos[1] = pos[2] = 0;
-			syVectorAddPolarOffset(toFIXED(5), scene->ang8, pos);
-			motion->velX = pos[0];
-			motion->velY = pos[1];
-			motion->velZ = pos[2];
+			syVectorAddPolarOffset(toFIXED(5), scene->angle8, pos);
+			motion->velocityX = pos[0];
+			motion->velocityY = pos[1];
+			motion->velocityZ = pos[2];
 			BOW_NEXT_PHASE(state);
 		}
 		break;
 	case ARROW_FLIES:
 		motion = &state->arrowMotion;
-		if(state->tmr == 90) {
+		if(state->timer == 90) {
 			BOW_NEXT_PHASE(state);
 			break;
 		}
-		dx = state->tgt[0] - state->start[0];
+		dx = state->target[0] - state->start[0];
 		if(dx < 0)
-			dx = state->start[0] - state->tgt[0];
+			dx = state->start[0] - state->target[0];
 		dz = motion->x - state->start[0];
 		if(dz < 0)
 			dz = state->start[0] - motion->x;
@@ -1473,9 +1475,9 @@ again:
 			BOW_NEXT_PHASE(state);
 			goto again;
 		}
-		dx = state->tgt[2] - state->start[2];
+		dx = state->target[2] - state->start[2];
 		if(dx < 0)
-			dx = state->start[2] - state->tgt[2];
+			dx = state->start[2] - state->target[2];
 		dz = motion->z - state->start[2];
 		if(dz < 0)
 			dz = state->start[2] - motion->z;
@@ -1490,17 +1492,18 @@ again:
 			state->done = 1;
 			state->result = -1;
 			state->phase++;
-			state->tmr = -1;
+			state->timer = -1;
 			goto again;
 		}
-		for(objectIdx = 0; objectIdx < FIELD_ACTOR_COUNT; objectIdx++) {
-			actor = field->actors[objectIdx];
+		for(objectIndex = 0; objectIndex < FIELD_ACTOR_COUNT; objectIndex++) {
+			actor = field->actors[objectIndex];
 			if(actor != NULL && actor->script != NULL &&
-				(actor->collisionFlg & ACTOR_SOLID) && actor != scene->caster &&
+				(actor->collisionFlags & ACTOR_SOLID) &&
+				actor != scene->caster &&
 				fdPsynergyCheckOverlap(
 					&motion->x, 2, &actor->x.fixed, actor->radius - 2) >= 0) {
 				state->done = 1;
-				state->result = objectIdx;
+				state->result = objectIndex;
 				BOW_NEXT_PHASE(state);
 				goto again;
 			}
@@ -1515,38 +1518,39 @@ again:
 		}
 		motion = &state->arrowMotion;
 		pos[0] = pos[1] = pos[2] = 0;
-		syVectorAddPolarOffset(toFIXED(2), scene->ang8, pos);
-		motion->velX = pos[0];
-		motion->velY = pos[1];
-		motion->velZ = pos[2];
+		syVectorAddPolarOffset(toFIXED(2), scene->angle8, pos);
+		motion->velocityX = pos[0];
+		motion->velocityY = pos[1];
+		motion->velocityZ = pos[2];
 		BOW_NEXT_PHASE(state);
 		break;
 	case ARROW_FALLS:
-		spr = &state->arrow;
+		sprite = &state->arrow;
 		if(state->done != 0) {
-			if(state->tmr < 32) {
+			if(state->timer < 32) {
 				Sint32 wobble[8];
 				Sint32 fade[4];
 				Sint32 w;
 
 				memcpy(wobble, ArrowWobbleAngles, sizeof(wobble));
 				memcpy(fade, ArrowWobbleFades, sizeof(fade));
-				w = wobble[state->tmr & 7];
-				spr->ang = scene->ang8 + w * fade[state->tmr / 8] / (TRIG_TURN);
+				w = wobble[state->timer & 7];
+				sprite->angle =
+					scene->angle8 + w * fade[state->timer / 8] / (TRIG_TURN);
 			}
-			if(state->tmr == 32)
+			if(state->timer == 32)
 				state->bowShrinking = 1;
-			if(state->tmr == 50) {
-				spr->scaleX = spr->scaleY = 0;
+			if(state->timer == 50) {
+				sprite->scaleX = sprite->scaleY = 0;
 				state->arrowMoving = 1;
 				state->sparksRepeat = 0;
 				BOW_NEXT_PHASE(state);
 			}
 		} else {
-			spr->scaleX += -(toFIXED(3) / 16);
-			spr->scaleY = spr->scaleX;
-			if(spr->scaleX < 0) {
-				spr->scaleX = spr->scaleY = 0;
+			sprite->scaleX += -(toFIXED(3) / 16);
+			sprite->scaleY = sprite->scaleX;
+			if(sprite->scaleX < 0) {
+				sprite->scaleX = sprite->scaleY = 0;
 				BOW_NEXT_PHASE(state);
 			}
 		}
@@ -1558,57 +1562,57 @@ again:
 	}
 
 	if(state->bowGrowing != 0) {
-		spr = &state->bow;
-		spr->scaleX += toFIXED(1) / 64;
-		spr->scaleY = spr->scaleX;
-		spr->ang += DEGtoANG(45);
-		if(spr->scaleX >= toFIXED(1)) {
-			spr->scaleX = spr->scaleY = toFIXED(1);
-			spr->ang = scene->ang8;
+		sprite = &state->bow;
+		sprite->scaleX += toFIXED(1) / 64;
+		sprite->scaleY = sprite->scaleX;
+		sprite->angle += DEGtoANG(45);
+		if(sprite->scaleX >= toFIXED(1)) {
+			sprite->scaleX = sprite->scaleY = toFIXED(1);
+			sprite->angle = scene->angle8;
 			state->bowGrowing = 0;
 		}
 	}
 	if(state->bowShrinking != 0) {
-		spr = &state->bow;
-		spr->scaleX += -(toFIXED(1) / 64);
-		spr->scaleY = spr->scaleX;
-		spr->ang += DEGtoANG(45);
-		if(spr->scaleX <= toFIXED(0.4) - 1) {
-			spr->scaleX = spr->scaleY = 0;
+		sprite = &state->bow;
+		sprite->scaleX += -(toFIXED(1) / 64);
+		sprite->scaleY = sprite->scaleX;
+		sprite->angle += DEGtoANG(45);
+		if(sprite->scaleX <= toFIXED(0.4) - 1) {
+			sprite->scaleX = sprite->scaleY = 0;
 			state->bowShrinking = 0;
 		}
 	}
 
 	/* The bow's drawing pose, by tick: drawn back, then loosed and
 	   recovered. */
-	if(state->frm != BOW_TICK_IDLE) {
-		state->frm++;
-		spr = &state->bow;
-		switch(state->frm) {
+	if(state->frame != BOW_TICK_IDLE) {
+		state->frame++;
+		sprite = &state->bow;
+		switch(state->frame) {
 		case 10:
-			spr->oam.idx = state->bowTile + BOW_POSE_TILES;
+			sprite->oam.index = state->bowTile + BOW_POSE_TILES;
 			break;
 		case 20:
-			spr->oam.idx = state->bowTile + BOW_POSE_TILES * 2;
+			sprite->oam.index = state->bowTile + BOW_POSE_TILES * 2;
 			break;
 		case 54:
-			spr->oam.idx = state->bowTile + BOW_POSE_TILES;
+			sprite->oam.index = state->bowTile + BOW_POSE_TILES;
 			break;
 		case 62:
-			spr->oam.idx = state->bowTile + BOW_POSE_TILES * 3;
+			sprite->oam.index = state->bowTile + BOW_POSE_TILES * 3;
 			break;
 		case 65:
-			spr->oam.idx = state->bowTile + BOW_POSE_TILES * 4;
+			sprite->oam.index = state->bowTile + BOW_POSE_TILES * 4;
 			break;
 		case 68:
-			spr->oam.idx = state->bowTile + BOW_POSE_TILES * 5;
+			sprite->oam.index = state->bowTile + BOW_POSE_TILES * 5;
 			break;
 		case 58:
 		case 71:
-			spr->oam.idx = state->bowTile;
+			sprite->oam.index = state->bowTile;
 			break;
 		case 72:
-			state->frm = BOW_TICK_IDLE;
+			state->frame = BOW_TICK_IDLE;
 			break;
 		}
 	}
@@ -1617,20 +1621,20 @@ again:
 	pos[0] = motion->x;
 	pos[1] = motion->y;
 	pos[2] = motion->z;
-	spr = &state->bow;
+	sprite = &state->bow;
 	fdCameraWorldToScreen(pos);
-	spr->x = pos[0];
-	spr->y = pos[2];
-	fdEffectSprDraw(spr);
+	sprite->x = pos[0];
+	sprite->y = pos[2];
+	fdEffectSpriteDraw(sprite);
 	motion = &state->arrowMotion;
 	pos[0] = motion->x;
 	pos[1] = motion->y;
 	pos[2] = motion->z;
 	fdCameraWorldToScreen(pos);
-	spr = &state->arrow;
-	spr->x = pos[0];
-	spr->y = pos[2];
-	fdEffectSprDraw(spr);
+	sprite = &state->arrow;
+	sprite->x = pos[0];
+	sprite->y = pos[2];
+	fdEffectSpriteDraw(sprite);
 	if(state->arrowMoving != 0)
 		fdAdvanceWithGravity3D(&motion->x, 64, 0);
 
@@ -1639,14 +1643,14 @@ again:
 		for(i = 0; i < BOW_SPARKS_THROWN; i++) {
 			if(motion->delay == 0) {
 				Sint32 speed;
-				Sint32 ang;
+				Sint32 angle;
 
 				speed = (syRandom() & 255) + 256;
-				ang = (syRandom() & 0x1fff) + TRIG_TURN * 7 / 16;
+				angle = (syRandom() & 0x1fff) + TRIG_TURN * 7 / 16;
 				motion->x = toFIXED(60);
 				motion->y = toFIXED(28);
-				motion->velX = syCos(ang) * speed >> 6;
-				motion->velY = sySin(ang) * speed >> 6;
+				motion->velocityX = syCos(angle) * speed >> 6;
+				motion->velocityY = sySin(angle) * speed >> 6;
 			}
 			if(motion->delay > 0) {
 				Sint32 x = (Sint16)FIXEDtoINT(motion->x);
@@ -1667,12 +1671,12 @@ again:
 	pos[0] = motion->x;
 	pos[1] = motion->y;
 	pos[2] = motion->z;
-	syVectorAddPolarOffset(-toFIXED(36), scene->ang8, pos);
+	syVectorAddPolarOffset(-toFIXED(36), scene->angle8, pos);
 	fdCameraWorldToScreen(pos);
 	canvas->x = (Sint16)FIXEDtoINT(pos[0]);
 	canvas->y = (Sint16)FIXEDtoINT(pos[2]);
 	canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
-	state->tmr++;
+	state->timer++;
 }
 
 /* The Arrow cast on a target: runs fdPsynergyArrow. Nothing calls it, as the
@@ -1684,15 +1688,15 @@ void fdPsynergyArrowOnTarget(void)
 
 /* The Arrow: a bow grows in front of the caster and draws, throwing off glints,
    and looses a flaming arrow that flies up to 80 pixels; an actor it strikes
-   becomes the field state's psynergyHitObj. */
+   becomes the field state's psynergyHitObject. */
 void fdPsynergyArrow(void)
 {
 	BOW_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BOW_STATE));
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BOW_STATE));
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	CANVAS_SPR_STATE   *canvas;
-	EFFECT_SPR		   *spr;
+	EFFECT_SPR		   *sprite;
 	BOW_MOTION		   *motion;
 	FIXED				pos[3];
 	Sint32				arrowSlot;
@@ -1703,70 +1707,70 @@ void fdPsynergyArrow(void)
 	Sint32				shade;
 	Sint32				i;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	/* The spark pointer and the sprite pointer are one variable. */
-	spr = (EFFECT_SPR *)state->sparks;
+	sprite = (EFFECT_SPR *)state->sparks;
 	for(i = 0; i < BOW_SPARK_COUNT; i++) {
-		((BOW_MOTION *)spr)->delay = -i;
-		spr = (EFFECT_SPR *)((BOW_MOTION *)spr + 1);
+		((BOW_MOTION *)sprite)->delay = -i;
+		sprite = (EFFECT_SPR *)((BOW_MOTION *)sprite + 1);
 	}
 
-	state->tiles = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, BOW_TILE_BYTES);
+	state->tiles = syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, BOW_TILE_BYTES);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_BOW_DRAW), state->tiles);
 	bowSlot = syVRAMCacheFindFreeEntry();
 	tile = syVRAMCacheLoad(bowSlot, BOW_TILE_BYTES, state->tiles);
 	state->bowTile = tile;
-	spr = &state->bow;
-	fdEffectSprInit(spr, 16, 16, OBJ_SIZE_32X32, tile);
-	spr->oam.fullCol = 1;
-	spr->oam.pal = 0;
-	spr->oam.pri = fdActorGetSprPriority(scene->caster);
-	spr->depth = fdActorGetSprDepth(scene->caster) + 1;
-	spr->scaleX = toFIXED(2) / 5;
-	spr->scaleY = toFIXED(2) / 5;
-	spr->ang = scene->ang8;
+	sprite = &state->bow;
+	fdEffectSpriteInit(sprite, 16, 16, OBJ_SIZE_32X32, tile);
+	sprite->oam.fullColor = 1;
+	sprite->oam.palette = 0;
+	sprite->oam.priority = fdActorGetSpritePriority(scene->caster);
+	sprite->depth = fdActorGetSpriteDepth(scene->caster) + 1;
+	sprite->scaleX = toFIXED(2) / 5;
+	sprite->scaleY = toFIXED(2) / 5;
+	sprite->angle = scene->angle8;
 	pos[0] = scene->caster->x.fixed;
 	pos[2] = scene->caster->z.fixed;
 	motion = &state->bowMotion;
-	syVectorAddPolarOffset(toFIXED(8), scene->ang8, pos);
+	syVectorAddPolarOffset(toFIXED(8), scene->angle8, pos);
 	SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
 
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_FLAMING_ARROW), state->tiles);
 	arrowSlot = syVRAMCacheFindFreeEntry();
 	tile = syVRAMCacheLoad(arrowSlot, 256, state->tiles);
-	spr = &state->arrow;
-	fdEffectSprInit(spr, 12, 8, OBJ_SIZE_16X16, tile);
-	spr->oam.fullCol = 1;
-	spr->oam.pal = 0;
-	spr->oam.pri = fdActorGetSprPriority(scene->caster);
-	spr->depth = fdActorGetSprDepth(scene->caster) + 2;
-	spr->scaleX = 0;
-	spr->scaleY = 0;
-	spr->ang = scene->ang8;
+	sprite = &state->arrow;
+	fdEffectSpriteInit(sprite, 12, 8, OBJ_SIZE_16X16, tile);
+	sprite->oam.fullColor = 1;
+	sprite->oam.palette = 0;
+	sprite->oam.priority = fdActorGetSpritePriority(scene->caster);
+	sprite->depth = fdActorGetSpriteDepth(scene->caster) + 2;
+	sprite->scaleX = 0;
+	sprite->scaleY = 0;
+	sprite->angle = scene->angle8;
 	pos[0] = scene->caster->x.fixed;
 	pos[2] = scene->caster->z.fixed;
 	motion = &state->arrowMotion;
-	syVectorAddPolarOffset(toFIXED(18), scene->ang8, pos);
+	syVectorAddPolarOffset(toFIXED(18), scene->angle8, pos);
 	SET_POSITION(motion, pos[0], toFIXED(16), pos[2]);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_CANVAS);
 
-	fdBattleEffectStartCanvasSpr();
-	canvas = RamHeapSlots->canvasSpr;
-	canvas->pri = fdActorGetSprPriority(scene->caster);
-	canvas->depth = fdActorGetSprDepth(scene->caster) + 3;
+	fdBattleEffectStartCanvasSprite();
+	canvas = RamHeapSlots->canvasSprite;
+	canvas->priority = fdActorGetSpritePriority(scene->caster);
+	canvas->depth = fdActorGetSpriteDepth(scene->caster) + 3;
 	canvas->mode = CANVAS_SPRITE_256_COLORS;
 	canvas->command = 0;
-	canvas->ang = scene->ang8;
+	canvas->angle = scene->angle8;
 	state->start[0] = scene->caster->x.fixed;
 	state->start[1] = scene->caster->y.fixed;
 	state->start[2] = scene->caster->z.fixed;
 	blue = RGB(0, 0, RGB_LEVEL_MAX);
-	state->tgt[0] = scene->caster->x.fixed;
-	state->tgt[1] = scene->caster->y.fixed;
-	state->tgt[2] = scene->caster->z.fixed;
-	syVectorAddPolarOffset(toFIXED(80), scene->ang8, state->tgt);
+	state->target[0] = scene->caster->x.fixed;
+	state->target[1] = scene->caster->y.fixed;
+	state->target[2] = scene->caster->z.fixed;
+	syVectorAddPolarOffset(toFIXED(80), scene->angle8, state->target);
 
 	/* The canvas palette: blue full, red and green rising from half to full. */
 	palette = (Uint16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
@@ -1776,24 +1780,24 @@ void fdPsynergyArrow(void)
 		palette++;
 	}
 
-	sySndPlayStub(SE_PSYNERGY_START);
+	sySoundPlayStub(SE_PSYNERGY_START);
 	sySynch(1);
 	state->bowGrowing = 0;
 	state->bowShrinking = 0;
 	state->done = 0;
 	state->result = -1;
 	state->phase = ARROW_BOW_GROWS;
-	state->tmr = 0;
+	state->timer = 0;
 	sySetEvent(fdPsynergyUpdateArrow, EVENT_PASS_TICK);
 	while(state->phase != FIELD_PSYNERGY_FINISHED)
 		sySynch(1);
 	syCloseEvent(fdPsynergyUpdateArrow);
 	if(state->done != 0 && state->result != -1)
-		field->psynergyHitObj = state->result;
+		field->psynergyHitObject = state->result;
 	syVRAMCacheFreeEntry(arrowSlot);
 	syVRAMCacheFreeEntry(bowSlot);
-	fdPsynergyFadeFromCastCol();
-	fdBattleEffectEndCanvasSpr();
+	fdPsynergyFadeFromCastColor();
+	fdBattleEffectEndCanvasSprite();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -1806,18 +1810,18 @@ void fdPsynergyArrow(void)
    and cycloneLiftX, Z. */
 void fdPsynergyGatherNearbyMetatiles(void)
 {
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 	POINT_STATE		   *field = RamHeapSlots->fieldState;
-	CYCLONE_STATE	   *state = RamHeapSlots->battleEff;
+	CYCLONE_STATE	   *state = RamHeapSlots->battleEffect;
 	Sint16			   *points = field->points;
 	ACTOR			   *owner = effect->caster;
 	FIXED				pos[3];
 	FIXED				x, z;
 	Sint32				kind;
 	Uint32				i;
-	Sint32				cnt = 0;
+	Sint32				count = 0;
 
-	state->kind = cnt;
+	state->kind = count;
 	field->cycloneCarryX = -1;
 	field->cycloneCarryZ = -1;
 	field->cycloneLiftX = -1;
@@ -1835,9 +1839,9 @@ void fdPsynergyGatherNearbyMetatiles(void)
 		pos[2] = z;
 		if(kind == CYCLONE_METATILE_BURST &&
 			fdMeasurePsynergyHeight(effect->fieldPsynergy, owner, pos) != -1) {
-			points[cnt * 2] = x / toFIXED(16);
-			points[cnt * 2 + 1] = z / toFIXED(16);
-			cnt++;
+			points[count * 2] = x / toFIXED(16);
+			points[count * 2 + 1] = z / toFIXED(16);
+			count++;
 			state->kind = kind;
 		}
 		if(kind == CYCLONE_METATILE_CARRY &&
@@ -1850,9 +1854,9 @@ void fdPsynergyGatherNearbyMetatiles(void)
 			field->cycloneCarryZ =
 				(field->cycloneCarryZ & ~(MAPGRID_METATILE_PIXELS - 1)) +
 				MAPGRID_METATILE_PIXELS / 2;
-			points[cnt * 2] = x / toFIXED(16);
-			points[cnt * 2 + 1] = z / toFIXED(16);
-			cnt++;
+			points[count * 2] = x / toFIXED(16);
+			points[count * 2 + 1] = z / toFIXED(16);
+			count++;
 		}
 		if(kind == CYCLONE_METATILE_LIFT &&
 			fdMeasurePsynergyHeight(effect->fieldPsynergy, owner, pos) != -1) {
@@ -1864,13 +1868,13 @@ void fdPsynergyGatherNearbyMetatiles(void)
 			field->cycloneLiftZ =
 				(field->cycloneLiftZ & ~(MAPGRID_METATILE_PIXELS - 1)) +
 				MAPGRID_METATILE_PIXELS / 2;
-			points[cnt * 2] = x / toFIXED(16);
-			points[cnt * 2 + 1] = z / toFIXED(16);
-			cnt++;
+			points[count * 2] = x / toFIXED(16);
+			points[count * 2 + 1] = z / toFIXED(16);
+			count++;
 		}
 	}
-	points[cnt * 2] = -1;
-	points[cnt * 2 + 1] = -1;
+	points[count * 2] = -1;
+	points[count * 2 + 1] = -1;
 }
 
 /* The ROM's callers here are compiled against this form, which returns an
@@ -1881,11 +1885,11 @@ Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
    touched (FIELD_STATE.psynergyMetatiles), lowest metatile behaviour first. */
 void fdPsynergyRunTouchedScripts(void)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 	TOUCH_METATILE	   *metatiles =
 		(TOUCH_METATILE *)FieldStateWork->psynergyMetatiles;
 	ACTOR *caster = effectState->caster;
-	Sint32 cnt = 0;
+	Sint32 count = 0;
 	Sint16 ids[24];
 	Sint32 i, j;
 
@@ -1894,18 +1898,18 @@ void fdPsynergyRunTouchedScripts(void)
 			fdMapGridGetMetatileBehavior(FIELD_METATILE_ORIGIN(metatiles[i].x),
 				FIELD_METATILE_ORIGIN(metatiles[i].z), caster->layer);
 
-		for(j = 0; j < cnt; j++) {
+		for(j = 0; j < count; j++) {
 			if(ids[j] == id)
 				break;
 		}
-		if(j == cnt)
-			ids[cnt++] = id;
+		if(j == count)
+			ids[count++] = id;
 	}
-	ids[cnt] = -1;
+	ids[count] = -1;
 
-	if(cnt > 1) {
-		for(i = 0; i < cnt - 1; i++) {
-			for(j = i + 1; j < cnt; j++) {
+	if(count > 1) {
+		for(i = 0; i < count - 1; i++) {
+			for(j = i + 1; j < count; j++) {
 				if(ids[i] > ids[j]) {
 					Sint16 swap = ids[i];
 
@@ -1923,52 +1927,52 @@ void fdPsynergyRunTouchedScripts(void)
 
 		if(event != 0)
 			fdRunPsynergyScript(
-				event, effectState->casterId, effectState->tgtId);
+				event, effectState->casterId, effectState->targetId);
 	}
 }
 
 MAP_METATILE *fdMapGridGetMetatileAt(Sint32 x, Sint32 z, Sint32 layer);
 
 /* Clears what Cyclone blew away: each metatile of FIELD_STATE.psynergyMetatiles
-   that falls in the width by height window at (winX, winZ) of layerIdx
+   that falls in the width by height window at (windowX, windowZ) of layerIndex
    (counted from the layer's scroll and the leader's height) takes the metatile
    picture from the same place of the window at (srcX, srcZ), is opened on
    layer 2, and is recorded (up to 64) in TouchCopiesWork to be made again. */
 void fdTileCopiesCopyTouchedMetatiles(Sint32 srcX, Sint32 srcZ, Sint32 width,
-	Sint32 height, Sint32 winX, Sint16 winZ, Sint32 layerIdx)
+	Sint32 height, Sint32 windowX, Sint16 windowZ, Sint32 layerIndex)
 {
 	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*owner = fdActorGetById(fdPartyGetLeaderActor());
 	Sint16		*metatile = field->psynergyMetatiles;
 	Sint32		 ownerHeight = FIELD_METATILE(owner->groundHeight);
 	MAP_STATE	*map = RamHeapSlots->mapGrid;
-	MAP_LAYER	*layer = &map->layers[layerIdx];
+	MAP_LAYER	*layer = &map->layers[layerIndex];
 	Sint32		 i;
 
 	for(i = 0; metatile[i * 2] != -1; i++) {
-		Sint32 x = metatile[i * 2] - winX;
-		Sint32 z = metatile[i * 2 + 1] - winZ - ownerHeight;
+		Sint32 x = metatile[i * 2] - windowX;
+		Sint32 z = metatile[i * 2 + 1] - windowZ - ownerHeight;
 
-		x += FIELD_METATILE(layer->ofsX);
-		z += FIELD_METATILE(layer->ofsY);
+		x += FIELD_METATILE(layer->offsetX);
+		z += FIELD_METATILE(layer->offsetY);
 
 		if(x >= 0 && x < width && z >= 0 && z < height) {
 			Sint32 n;
 
 			fdMapGridCopyMetatileTilesMetatilesRectStub(
-				srcX + x, srcZ + z, 1, 1, winX + x, winZ + z);
+				srcX + x, srcZ + z, 1, 1, windowX + x, windowZ + z);
 			fdMapGridGetMetatileAt(FIELD_METATILE_ORIGIN(metatile[i * 2]),
 				FIELD_METATILE_ORIGIN(metatile[i * 2 + 1]), 2)
 				->collisionCode = 0;
-			n = TouchCopiesWork.cnt;
+			n = TouchCopiesWork.count;
 			if(n < (Sint32)ARRAY_COUNT(TouchCopiesWork.copies)) {
 				TouchCopiesWork.copies[n].toX = srcX + x;
 				TouchCopiesWork.copies[n].toZ = srcZ + z;
-				TouchCopiesWork.copies[n].fromX = winX + x;
-				TouchCopiesWork.copies[n].fromZ = winZ + z;
+				TouchCopiesWork.copies[n].fromX = windowX + x;
+				TouchCopiesWork.copies[n].fromZ = windowZ + z;
 				TouchCopiesWork.copies[n].metatileX = metatile[i * 2];
 				TouchCopiesWork.copies[n].metatileZ = metatile[i * 2 + 1];
-				TouchCopiesWork.cnt++;
+				TouchCopiesWork.count++;
 			}
 		}
 	}
@@ -1983,7 +1987,7 @@ void fdTileCopiesRestore(void)
 	TOUCH_COPIES *base = &TouchCopiesWork;
 	Sint32		  i;
 
-	for(i = 0; i < TouchCopiesWork.cnt; i++) {
+	for(i = 0; i < TouchCopiesWork.count; i++) {
 		TOUCH_COPY *entry = &base->copies[i];
 
 		fdMapGridCopyMetatileTilesMetatilesRectStub(

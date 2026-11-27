@@ -188,9 +188,9 @@ void scSuhallaGateSetUpCliffs(void)
 		fdActorFallOverById(ACTOR_MIDDLE_RUFFIAN, FACING_EAST);
 		fdActorGetById(ACTOR_EAST_RUFFIAN)->facing = FACING_NORTH;
 		fdActorFallOverById(ACTOR_EAST_RUFFIAN, FACING_EAST);
-		fdActorGetById(ACTOR_WEST_RUFFIAN)->collisionFlg = ACTOR_SOLID;
-		fdActorGetById(ACTOR_MIDDLE_RUFFIAN)->collisionFlg = ACTOR_SOLID;
-		fdActorGetById(ACTOR_EAST_RUFFIAN)->collisionFlg = ACTOR_SOLID;
+		fdActorGetById(ACTOR_WEST_RUFFIAN)->collisionFlags = ACTOR_SOLID;
+		fdActorGetById(ACTOR_MIDDLE_RUFFIAN)->collisionFlags = ACTOR_SOLID;
+		fdActorGetById(ACTOR_EAST_RUFFIAN)->collisionFlags = ACTOR_SOLID;
 	}
 	fdActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
 	fdActorSetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
@@ -244,14 +244,14 @@ void scSuhallaGateEnterRockDoor(void)
 {
 	Sint32 exit = FieldStateWork->stepCue;
 
-	fdActorGetById(ACTOR_ISAAC)->motionFlg = 0;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdActorGetById(ACTOR_ISAAC)->motionFlags = 0;
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridCopyMetatilesTo(66, 36, 71, 8, 2, 2);
 	sySynch(4);
 	fdMapGridCopyMetatilesTo(68, 36, 71, 8, 2, 2);
 	sySynch(4);
 	fdActorCenterAndWalk(ACTOR_ISAAC, 3, -16);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(exit);
 }
 
@@ -262,7 +262,7 @@ void scSuhallaGateLeaveForIdejima(void)
 	Sint32 exit = FieldStateWork->stepCue;
 
 	MainRoutineStateWork.leaderActorId = ACTOR_FELIX;
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(exit);
 }
 
@@ -328,7 +328,7 @@ void scSuhallaGateRuffiansAmbushParty(void)
 	owner = &state->leaderActorId;
 	fdActorWalkByAndWait(*owner, 0, -4);
 	syFieldScriptWait(30);
-	fdActorGetById(*owner)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(*owner)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(*owner, 0, 12);
 	syFieldScriptWait(10);
 	fdActorWalkByAndWait(*owner, 0, 16);

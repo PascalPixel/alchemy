@@ -5,12 +5,12 @@
    ticks. */
 static Sint32 scLookAboutRandomly(ACTOR *actor)
 {
-	Uint32 nextTmr;
+	Uint32 nextTimer;
 
 	if(actor->userValue == 0) {
 		actor->facing += syRandomBelow(32768);
-		nextTmr = syRandomBelow(80);
-		actor->userValue = nextTmr;
+		nextTimer = syRandomBelow(80);
+		actor->userValue = nextTimer;
 	}
 	if(actor->userValue != 0) {
 		actor->userValue--;

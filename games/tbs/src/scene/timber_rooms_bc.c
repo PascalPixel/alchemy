@@ -854,17 +854,17 @@ Sint32 scInit(void)
 		   nearer to talk to (ACTOR_NEAR_TALK) so that the leader reaches it
 		   across the counter. */
 		actor = fdActorGet(ACTOR_ITEM_MERCHANT);
-		actor->priFlg = 0;
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
-		actor->spr->image.pri = 2;
+		actor->priorityFlags = 0;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
+		actor->sprite->image.priority = 2;
 		actor = fdActorGet(ACTOR_WEAPON_MERCHANT);
-		actor->priFlg = 0;
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
-		actor->spr->image.pri = 2;
+		actor->priorityFlags = 0;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
+		actor->sprite->image.priority = 2;
 		actor = fdActorGet(ACTOR_ARMOR_MERCHANT);
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
-		actor->priFlg = 0;
-		actor->spr->image.pri = 2;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
+		actor->priorityFlags = 0;
+		actor->sprite->image.priority = 2;
 		fdActorSetAnimation(ACTOR_NAPPING_WORKER, ANIM_WORKER_LIE_ASLEEP);
 		entrance = MainRoutineStateWork.entrance;
 		if(entrance == TIMBER_ROOMS_B_SANCTUM) {
@@ -874,9 +874,9 @@ Sint32 scInit(void)
 	}
 	if(MainRoutineStateWork.next == SCENE_TIMBER_ROOMS_C) {
 		actor = fdActorGet(ACTOR_INNKEEPER);
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
-		actor->priFlg = 0;
-		actor->spr->image.pri = 2;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
+		actor->priorityFlags = 0;
+		actor->sprite->image.priority = 2;
 		if(gmFlagGet(FLAG_LALIVERO_INN_WORKER_APOLOGIZED) != 0) {
 			fdActorSetScript(ACTOR_INN_WORKER, TimberRoomsBCInnWorkerChores);
 		}

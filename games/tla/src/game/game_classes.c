@@ -14,23 +14,23 @@ Sint32 gmUnitGetElementLevels(
 	Sint32 enemyId, const Uint8 *src, Sint32 output[ELEMENT_COUNT])
 {
 	if(enemyId > PIERS) {
-		const ENEMY_ELEMENT_PRESET *tbl;
+		const ENEMY_ELEMENT_PRESET *table;
 		const ENEMY_ELEMENT_PRESET *preset;
-		Uint32						idx;
+		Uint32						index;
 		Sint32						i;
 
-		idx = gmEnemyGetDefinition(enemyId)->elementPreset;
-		if(idx >= ENEMY_ELEMENT_PRESET_COUNT)
-			idx = 0;
-		tbl = EnemyElementPresetTable;
-		preset = &tbl[idx];
+		index = gmEnemyGetDefinition(enemyId)->elementPreset;
+		if(index >= ENEMY_ELEMENT_PRESET_COUNT)
+			index = 0;
+		table = EnemyElementPresetTable;
+		preset = &table[index];
 		for(i = 0; i < ELEMENT_COUNT; i++)
 			output[i] = preset->elementLevels[i] * ELEMENT_LEVEL_SCALE;
 	} else {
 		Sint32 i;
 
 		for(i = 0; i < ELEMENT_COUNT; i++)
-			output[i] = src[offsetof(UNIT, djinnSetCnts) -
+			output[i] = src[offsetof(UNIT, djinnSetCounts) -
 							offsetof(UNIT, djinnHeld) + i] *
 				ELEMENT_LEVEL_SCALE;
 		if(enemyId <= PIERS) {
@@ -73,25 +73,25 @@ Sint32 gmEnemyGetAttackElement(UNIT *unit)
 
 /* Writes a unit's base power and resistance in each element: an enemy's from
    its preset, a character's from its element levels. */
-void gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
+void gmUnitCalculateBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dest)
 {
 	UNIT  *unit = syUnitGet(unitId);
-	Uint32 idx;
+	Uint32 index;
 	Sint32 levels[ELEMENT_COUNT];
 	Sint32 i;
 	extern const ELEMENT_LEVEL_BONUS
 		ElementPowerResistByLevel[ELEMENT_LEVEL_MAX + 1];
 
 	if(unit->classId == CLASS_NONE) {
-		idx = gmEnemyGetDefinition(unit->enemyId)->elementPreset;
-		if(idx >= ENEMY_ELEMENT_PRESET_COUNT)
-			idx = 0;
+		index = gmEnemyGetDefinition(unit->enemyId)->elementPreset;
+		if(index >= ENEMY_ELEMENT_PRESET_COUNT)
+			index = 0;
 
 		/* The copy returns from inside its loop, as the last element is
 		   written. */
 		i = 0;
 		for(;;) {
-			dst[i] = EnemyElementPresetTable[idx].stats[i];
+			dest[i] = EnemyElementPresetTable[index].stats[i];
 			i++;
 			if(i >= ELEMENT_COUNT)
 				return;
@@ -107,7 +107,7 @@ void gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
 		Sint32 level;
 
 		/* levels[i] / ELEMENT_LEVEL_SCALE, as a multiply by the reciprocal. */
-		level = syMathUnsignedMulHigh(
+		level = syMathUnsignedMultiplyHigh(
 			levels[i], RECIPROCAL_OF(ELEMENT_LEVEL_SCALE));
 		tenths = levels[i] - level * ELEMENT_LEVEL_SCALE;
 
@@ -117,15 +117,15 @@ void gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
 			level = 0;
 
 #if FIX_TYPE_PUNNING
-		dst[i].power = ElementPowerResistByLevel[level].power + tenths;
-		dst[i].resistance =
+		dest[i].power = ElementPowerResistByLevel[level].power + tenths;
+		dest[i].resistance =
 			ElementPowerResistByLevel[level].resistance + tenths;
 #else
 		/* UB: the stats are stored through an Sint16 [4][2] view of the four
 		   structs. */
-		((Sint16 (*)[2])dst)[i][0] =
+		((Sint16 (*)[2])dest)[i][0] =
 			ElementPowerResistByLevel[level].power + tenths;
-		((Sint16 (*)[2])dst)[i][1] =
+		((Sint16 (*)[2])dest)[i][1] =
 			(ElementPowerResistByLevel + level)->resistance + tenths;
 #endif
 	}
@@ -226,7 +226,7 @@ void gmUnitUpdateClass(Sint32 unitId)
 	unit->classId = gmClassDetermine(unit->enemyId, unit->djinnHeld,
 		gmInventoryGetEquippedItem(unit, ITEM_TYPE_CLASS_CHANGE));
 	gmUnitRebuildPsynergyList(unitId);
-	gmUnitCalcBaseElements(unitId, unit->baseElement);
+	gmUnitCalculateBaseElements(unitId, unit->baseElement);
 }
 
 /* Works out a character's class, Psynergy and base elements again. */

@@ -55,7 +55,7 @@ const Uint8 AnimationFacingSixPictures[64] = {
 };
 
 /* The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve; */
-/* read by fdSprDissolveStep (actors.c). */
+/* read by fdSpriteDissolveStep (actors.c). */
 const Uint8 SpriteDissolvePixelOrder[64] = {
 	4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
 	50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
@@ -67,7 +67,7 @@ const Uint8 SpriteDissolvePixelOrder[64] = {
 const Uint16 SpriteDissolvePixelOrderTail = 511;
 
 /* The fixed camera's view matrix (16.16): identity with a -0.8 shear of y by x. */
-/* fdActorSystemProjectSprs applies it while battle commands are chosen. */
+/* fdActorSystemProjectSprites applies it while battle commands are chosen. */
 const FIXED CameraFixedViewMatrix[12] = {
 	toFIXED(1), 0, 0,
 	-(toFIXED(4) / 5), toFIXED(1), 0,

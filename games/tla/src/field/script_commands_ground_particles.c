@@ -22,12 +22,12 @@ void fdGroundParticlesStart(void)
 	Uint32	i;
 	Uint32	fill = 0;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
 	leader = ((MAP_STATE *)RamHeapSlots->mapGrid)->origin;
 	fdQueueMusic(SE_AMBIENT_WATER);
 	particle = state->particles;
 	DMA_FILL32(fill, state, sizeof(WEATHER_STATE));
-	words = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	words = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(WeatherParticleTiles, words);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase =
@@ -47,7 +47,7 @@ void fdGroundParticlesStart(void)
 		particle->posZ = z;
 		particle->posY =
 			fdMapGridGetTerrainHeightStub(MAPGRID_LAYER_GROUND, x, z);
-		particle->tmr = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
+		particle->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
 		particle++;
 	}
 	syIOWrite16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -71,14 +71,14 @@ void fdRisingParticlesUpdate(void)
 	Sint32				   y;
 
 	for(i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
-		if(particle->tmr == 0) {
+		if(particle->timer == 0) {
 			x = syRandom() * 200 + toFIXED(288);
 			y = toFIXED(80) - syRandom() * 20;
 			particle->posX = x;
 			particle->posZ = y;
 			particle->posY =
 				fdMapGridGetTerrainHeightStub(MAPGRID_LAYER_GROUND, x, y);
-			particle->tmr = 120;
+			particle->timer = 120;
 			particle->drift = 0;
 		}
 		screen[0].fixed = particle->posX + particle->drift;
@@ -86,30 +86,30 @@ void fdRisingParticlesUpdate(void)
 		screen[2].fixed = particle->posZ;
 		fdCameraWorldToScreen(screen);
 		x = screen[0].part[0].integer;
-		y = screen[2].part[0].integer - particle->tmr - 8;
+		y = screen[2].part[0].integer - particle->timer - 8;
 		particle->drift += syRandom() + toFIXED(1) / 2;
 		if(x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
-			if(particle->tmr < 60)
-				particle->spr.attributes.tile =
+			if(particle->timer < 60)
+				particle->sprite.attributes.tile =
 					state->tile + MOTE_SMALL * MOTE_PICTURE_TILES;
-			else if(particle->tmr < 90)
-				particle->spr.attributes.tile =
+			else if(particle->timer < 90)
+				particle->sprite.attributes.tile =
 					state->tile + MOTE_MEDIUM * MOTE_PICTURE_TILES;
 			else
-				particle->spr.attributes.tile =
+				particle->sprite.attributes.tile =
 					state->tile + MOTE_LARGE * MOTE_PICTURE_TILES;
-			particle->spr.attributes.tile =
+			particle->sprite.attributes.tile =
 				((TickCount >> 3) & 1) * MOTE_PICTURE_TILES +
-				particle->spr.attributes.tile;
-			particle->spr.attributes.x = x;
-			particle->spr.attributes.shape = OBJ_SHAPE_SQUARE;
-			particle->spr.attributes.size = OAM_SIZE_16X16;
-			particle->spr.attributes.pri = 3;
-			particle->spr.attributes.objMode = OBJ_MODE_SEMI_TRANSPARENT;
-			particle->spr.attributes.y = y;
-			syOAMAddSprAtDepthClamped(particle, OAM_DEPTH_WINDOW);
+				particle->sprite.attributes.tile;
+			particle->sprite.attributes.x = x;
+			particle->sprite.attributes.shape = OBJ_SHAPE_SQUARE;
+			particle->sprite.attributes.size = OAM_SIZE_16X16;
+			particle->sprite.attributes.priority = 3;
+			particle->sprite.attributes.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+			particle->sprite.attributes.y = y;
+			syOAMAddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
 		}
-		particle->tmr--;
+		particle->timer--;
 	}
 }
 
@@ -121,7 +121,7 @@ void fdRisingParticlesUpdate(void)
 void fdRisingParticlesStart(void)
 {
 	RISING_PARTICLE_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
 	RISING_PARTICLE *particle = state->particles;
 	volatile Uint32	 fill;
 	Uint8			*tiles;
@@ -132,19 +132,19 @@ void fdRisingParticlesStart(void)
 	 * z; as 0 in the fill. */
 	z = 0;
 	DMA_FILL32_CELL(fill, z, state, sizeof(WEATHER_STATE));
-	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	tiles = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(FieldEffectMoteTiles, tiles);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	state->tile =
 		syVRAMCacheLoad(state->vramEntry, 6 * WEATHER_PICTURE_BYTES, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	for(i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
-		Uint32 *spr = particle->spr.words;
+		Uint32 *sprite = particle->sprite.words;
 		Sint32	x;
 
-		*spr++ = 0;
-		*spr++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-		*spr = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
+		*sprite++ = 0;
+		*sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+		*sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(WEATHER_PALETTE);
 		x = syRandom() * 200 + toFIXED(288);
 		z = toFIXED(80) - syRandom() * 20;
 		particle->posX = x;
@@ -152,7 +152,7 @@ void fdRisingParticlesStart(void)
 		particle->posY =
 			fdMapGridGetTerrainHeightStub(MAPGRID_LAYER_GROUND, x, z);
 		particle->drift = 0;
-		particle->tmr = i * 2;
+		particle->timer = i * 2;
 	}
 	sySetEvent(fdRisingParticlesUpdate, EVENT_PASS_TICK);
 }
@@ -174,15 +174,15 @@ void fdMotesUpdate(void)
 		Sint32 x;
 		Sint32 y;
 
-		if(--mote->tmr != GROUND_PARTICLE_FREED) {
+		if(--mote->timer != GROUND_PARTICLE_FREED) {
 			Sint32 cameraX = syMapStateView(map)[0];
 			Sint32 cameraZ = syMapStateView(map)[1];
-			Sint16 age = mote->tmr;
+			Sint16 age = mote->timer;
 			Uint32 firstJitterDraw;
 			Uint32 secondJitterDraw;
 
 			if(syGameFlagGet(FLAG_WEATHER_HELD)) {
-				mote->tmr++;
+				mote->timer++;
 				mote->delay--;
 			}
 			/* x jitters by -1 or 0, and y is the ticks left in pixels above
@@ -195,11 +195,11 @@ void fdMotesUpdate(void)
 			y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - (Uint16)age;
 			if(x >= -16 && x < DISPLAY_WIDTH && y >= -32 &&
 				y < DISPLAY_HEIGHT) {
-				if(mote->tmr < 60) {
+				if(mote->timer < 60) {
 					mote->tile =
 						state->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
 					mote->delay += 3;
-				} else if(mote->tmr < 90) {
+				} else if(mote->timer < 90) {
 					mote->tile =
 						state->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
 					mote->delay++;
@@ -213,12 +213,12 @@ void fdMotesUpdate(void)
 				mote->y = y - (mote->delay >> 2);
 				mote->shape = OBJ_SHAPE_SQUARE;
 				mote->size = OAM_SIZE_16X16;
-				syOAMAddSprAtDepthClamped(mote, OAM_DEPTH_WINDOW);
+				syOAMAddSpriteAtDepthClamped(mote, OAM_DEPTH_WINDOW);
 			} else {
-				mote->tmr = 0;
+				mote->timer = 0;
 			}
 		}
-		if(spawned < 8 && mote->tmr == 0) {
+		if(spawned < 8 && mote->timer == 0) {
 			Sint32 *leader = map->origin;
 
 			x = leader[0] + (syRandom() << 8) - toFIXED(128);
@@ -227,7 +227,7 @@ void fdMotesUpdate(void)
 			mote->posZ = y;
 			mote->posY =
 				fdMapGridGetTerrainHeightStub(MAPGRID_LAYER_GROUND, x, y);
-			mote->tmr = 120;
+			mote->timer = 120;
 			mote->delay = 0;
 			spawned++;
 		}

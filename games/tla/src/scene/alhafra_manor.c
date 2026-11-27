@@ -431,7 +431,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorFaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
 	fdScriptWait(30);
 	fdCameraMoveTo(344, CAMERA_KEEP, 120, 0);
-	FieldStateWork->transitionFrm = 60;
+	FieldStateWork->transitionFrame = 60;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -535,7 +535,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorJump(ACTOR_FELIX, 6, 23);
 	fdScriptWait(15);
 	fdActorShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 70);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdPaletteFadeSetSource(PALETTE_TINT_SEPIA, PALETTES_ALL);
 	fdPaletteFadeSetTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(60);
@@ -562,7 +562,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(10);
 	/* "Milord, these things take time..." */
 	fdScriptShowMessageThenWait(ACTOR_JIYA, 0, 20);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetPos(ACTOR_JAIL_GUARD, 344, 176);
 	fdActorWalkByAndWait(ACTOR_JAIL_GUARD, 0, -16);
 	/* "Sir, there's a problem!" */
@@ -589,7 +589,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdActorShowEmote(ACTOR_JAIL_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
 	/* "Briggs destroyed the prison and escaped with his pirates!" */
 	fdScriptShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
-	sySndPlay(MUS_BATTLE_JENNA);
+	sySoundPlay(MUS_BATTLE_JENNA);
 	fdActorShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmoteById(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -755,7 +755,7 @@ void scAlhafraManorBriggsEscapes(void)
 	fdScriptWait(20);
 	/* "Let's go see the boat." */
 	fdScriptShowMessageThenWait(ACTOR_MAYOR, 0, 10);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorFaceDirectionById(ACTOR_JIYA, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_JIYA, 3);
@@ -831,7 +831,7 @@ void scAlhafraManorBriggsEscapes(void)
 	WALK_TO_LEADER(ACTOR_KRADEN);
 	fdCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
 	fdScriptEnd();
-	FieldStateWork->transitionFrm = 16;
+	FieldStateWork->transitionFrame = 16;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	syGameFlagClear(FLAG_SHOW_AREA_NAME);

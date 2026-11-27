@@ -2,29 +2,29 @@
    colours on the fourth, redrawn each tick. */
 void scActorCyclePictures(ACTOR *actor)
 {
-	ANIMATED_SPR  *spr = (ANIMATED_SPR *)actor->spr;
-	SPR_ANIMATION *anm = spr->anm;
+	ANIMATED_SPR  *sprite = (ANIMATED_SPR *)actor->sprite;
+	SPR_ANIMATION *animation = sprite->animation;
 
-	switch(actor->tmr & 3) {
+	switch(actor->timer & 3) {
 	case 0:
-		anm->colMode = SPRITE_COLOR_WHITE;
-		spr->dirty = 1;
-		spr->flg = 2;
+		animation->colorMode = SPRITE_COLOR_WHITE;
+		sprite->dirty = 1;
+		sprite->flags = 2;
 		break;
 	case 1:
-		spr->dirty = 1;
-		spr->flg = 0;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 		break;
 	case 2:
-		anm->colMode = SPRITE_COLOR_WHITE;
-		spr->dirty = 1;
-		spr->flg = 0;
+		animation->colorMode = SPRITE_COLOR_WHITE;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 		break;
 	case 3:
-		anm->colMode = SPRITE_COLOR_NORMAL;
-		spr->dirty = 1;
-		spr->flg = 0;
+		animation->colorMode = SPRITE_COLOR_NORMAL;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 		break;
 	}
-	actor->tmr++;
+	actor->timer++;
 }

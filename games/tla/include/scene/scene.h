@@ -40,7 +40,7 @@ typedef struct SPR_ATTR2_HIGH {
 	Uint8 attr1[2];
 	Uint8 tileLow; /* attribute 2's low byte */
 	Uint8 tileHigh : 2;
-	Uint8 pri : 2;
+	Uint8 priority : 2;
 } SPR_ATTR2_HIGH;
 
 /* An actor spiralling round its anchor (syOrbiterSpiral): the circle it keeps
@@ -57,35 +57,35 @@ typedef struct ORBITER {
 	FIXED		  scaleY;
 	Uint16		  radius;
 	Uint8		  layer;
-	Uint8		  priFlg;
-	FIXED		  velX;
-	FIXED		  velY;
-	FIXED		  velZ;
+	Uint8		  priorityFlags;
+	FIXED		  velocityX;
+	FIXED		  velocityY;
+	FIXED		  velocityZ;
 	FIXED		  speedLimit;
 	FIXED		  acceleration;
-	FIXED		  tgtX;
-	FIXED		  tgtY;
-	FIXED		  tgtZ;
+	FIXED		  targetX;
+	FIXED		  targetY;
+	FIXED		  targetZ;
 	FIXED		  bounce;
 	FIXED		  gravity;
 	FIXED		  orbitRadius; /* 16.16 fixed-point pixels, in sceneWord */
-	void		 *spr;
-	Uint8		  sprStorageKind;
-	Uint8		  motionFlg;
+	void		 *sprite;
+	Uint8		  spriteStorageKind;
+	Uint8		  motionFlags;
 	Uint8		  arrivalAxis;
 	Uint8		  conditionResult;
-	Uint8		  snapToTgt;
-	Uint8		  collisionFlg;
-	Uint8		  steeringFlg;
+	Uint8		  snapToTarget;
+	Uint8		  collisionFlags;
+	Uint8		  steeringFlags;
 	Uint8		  paused;
-	Uint8		  retainSprCache;
-	Uint8		  repeatCnt;
+	Uint8		  retainSpriteCache;
+	Uint8		  repeatCount;
 	Sint16		  wait;
 	Uint8		  refused;
 	Uint8		  frozen;
 	Uint8		  countdown; /* ticks left of the spiral */
 	Uint8		  sceneByte;
-	Sint16		  ang;	  /* its place on the circle, 1/65536 turns */
+	Sint16		  angle;  /* its place on the circle, 1/65536 turns */
 	Uint16		  speed;  /* twice its turn a tick, 1/65536 turns */
 	struct ACTOR *anchor; /* the actor it circles, in watchedActor */
 } ORBITER;
@@ -104,35 +104,35 @@ typedef struct ORBIT {
 	FIXED		  scaleY;
 	Uint16		  radius;
 	Uint8		  layer;
-	Uint8		  priFlg;
-	FIXED		  velX;
-	FIXED		  velY;
-	FIXED		  velZ;
+	Uint8		  priorityFlags;
+	FIXED		  velocityX;
+	FIXED		  velocityY;
+	FIXED		  velocityZ;
 	FIXED		  speedLimit;
 	FIXED		  acceleration;
-	FIXED		  tgtX;
-	FIXED		  tgtY;
-	FIXED		  tgtZ;
+	FIXED		  targetX;
+	FIXED		  targetY;
+	FIXED		  targetZ;
 	FIXED		  centreX;	   /* 16.16 fixed-point pixels, in bounce */
 	FIXED		  centreZ;	   /* 16.16 fixed-point pixels, in gravity */
 	FIXED		  orbitRadius; /* 16.16 fixed-point pixels, in sceneWord */
-	void		 *spr;
-	Uint8		  sprStorageKind;
-	Uint8		  motionFlg;
+	void		 *sprite;
+	Uint8		  spriteStorageKind;
+	Uint8		  motionFlags;
 	Uint8		  arrivalAxis;
 	Uint8		  conditionResult;
-	Uint8		  snapToTgt;
-	Uint8		  collisionFlg;
-	Uint8		  steeringFlg;
+	Uint8		  snapToTarget;
+	Uint8		  collisionFlags;
+	Uint8		  steeringFlags;
 	Uint8		  paused;
-	Uint8		  retainSprCache;
-	Uint8		  repeatCnt;
+	Uint8		  retainSpriteCache;
+	Uint8		  repeatCount;
 	Sint16		  wait;
 	Uint8		  refused;
 	Uint8		  frozen;
 	Uint8		  phase;  /* where the circle's growth starts, 1/64 turns */
 	Uint8		  growth; /* grows by 10 every other tick up to 141 */
-	Sint16		  ang;	  /* its place on the circle, 1/65536 turns */
+	Sint16		  angle;  /* its place on the circle, 1/65536 turns */
 	Sint16		  speed;  /* its turn a tick, slowed by 128 a tick once grown */
 } ORBIT;
 
@@ -168,13 +168,13 @@ typedef struct LIGHT_OAM {
 	Uint32 link;
 	Uint32 attr01;
 	Uint16 tile : 10;
-	Uint16 pri : 2;
-	Uint16 pal : 4;
+	Uint16 priority : 2;
+	Uint16 palette : 4;
 	Uint16 attr3; /* no code names it */
 } LIGHT_OAM;
 
 /* One of the eight sprites the sand draws: where it starts, how the level moves
-   it, and its OAM entry as syOAMAddSprAtDepthClamped takes it. */
+   it, and its OAM entry as syOAMAddSpriteAtDepthClamped takes it. */
 typedef struct ANKOHL_RUINS_SPR {
 	Sint32 x;
 	Sint32 z;
@@ -193,9 +193,9 @@ typedef struct ANKOHL_RUINS_SPR_STATE {
 	Sint32 level; /* 16.16 pixels the sand has risen */
 	/* Map layer 1's offset when the sand started, which the level is added
 	   to. */
-	FIXED			 baseOfsX;
-	FIXED			 baseOfsY;
-	ANKOHL_RUINS_SPR sprs[8];
+	FIXED			 baseOffsetX;
+	FIXED			 baseOffsetY;
+	ANKOHL_RUINS_SPR sprites[8];
 } ANKOHL_RUINS_SPR_STATE;
 
 /* A block of metatiles the sand fills in Ankohl Ruins once its level reaches
@@ -237,16 +237,16 @@ typedef struct PUZZLE_METATILE {
 	Uint8 occupied;
 } PUZZLE_METATILE;
 
-/* The palette fade's state (heap slot palFade) as 256 colours. */
+/* The palette fade's state (heap slot paletteFade) as 256 colours. */
 typedef struct FADE_PALETTE {
-	Uint16 cols[256];
+	Uint16 colors[256];
 } FADE_PALETTE;
 
 /* A row of a scene's trap table, ended by an actor of 0xffff: an actor and its
    flag. */
 typedef struct TRAP_ENTRY {
 	Uint16 actor;
-	Uint16 flg;
+	Uint16 flags;
 } TRAP_ENTRY;
 
 /* An actor's coordinate read as its word or its low halfword, through a union
@@ -282,11 +282,11 @@ typedef struct BEAM_SPARK {
    still draws it in. */
 typedef struct SPRING_TOSS_MOTION {
 	Uint8	unused[2];
-	Sint16	launchFrm;
+	Sint16	launchFrame;
 	VECTOR3 trail[4];
 	VECTOR3 shadow;
-	VECTOR3 vel;
-	Sint32	attractionFrm;
+	VECTOR3 velocity;
+	Sint32	attractionFrame;
 } SPRING_TOSS_MOTION;
 
 /* One of the spring's moving obstacles: its position and heading, and the
@@ -296,8 +296,8 @@ typedef struct SPRING_OBSTACLE {
 	Sint16	heading;
 	Sint16	pauseOrPhase;
 	Sint16	speedMode;
-	Sint16	reactionFrm;
-	Sint16	hitCooldownFrm;
+	Sint16	reactionFrame;
+	Sint16	hitCooldownFrame;
 } SPRING_OBSTACLE;
 
 /* A door of the Lemurian ship: the step cue it answers, its opening's metatile
@@ -335,7 +335,7 @@ typedef struct SPOTS {
    copied from palette RAM by scInit and rotated by scSeaOfTimeAnimateSea in
    step with BG palette entries 49 to 62. */
 typedef struct SAVED_COL {
-	Uint16 cols[14];
+	Uint16 colors[14];
 } SAVED_COL;
 
 /* The field effect state as the Golden Rings read it: the VRAM cache entry
@@ -350,8 +350,8 @@ typedef struct TREASURE_ISLE_METATILE {
 	Sint32 x;			 /* in 16-pixel metatiles */
 	Sint32 z;			 /* in 16-pixel metatiles */
 	Sint32 unusedAfterZ; /* no code names it; 12 onwards, one a rock */
-	Uint16 flg; /* set once the rock has risen (scTreasureIsleSetSpikyRock) */
-	Uint16 unusedAfterFlg; /* no code names it */
+	Uint16 flags; /* set once the rock has risen (scTreasureIsleSetSpikyRock) */
+	Uint16 unusedAfterFlags; /* no code names it */
 } TREASURE_ISLE_METATILE;
 
 /* A spark of Venus Lighthouse's entrance: its position and velocity in 16.16
@@ -360,10 +360,10 @@ typedef struct SPARK_STATE {
 	Sint32 x;
 	Sint32 y;
 	Sint32 z;
-	Sint32 velX;
-	Sint32 velY;
-	Sint32 velZ;
-	Sint32 frm;
+	Sint32 velocityX;
+	Sint32 velocityY;
+	Sint32 velocityZ;
+	Sint32 frame;
 } SPARK_STATE;
 
 /* The World Map's Echo (scWorldMapCircleEcho), which circles and bobs where it
@@ -380,36 +380,36 @@ typedef struct BOBBING_MARKER {
 	FIXED			scaleY;
 	Uint16			radius;
 	Uint8			layer;
-	Uint8			priFlg;
-	FIXED			velX;
-	FIXED			velY;
-	FIXED			velZ;
+	Uint8			priorityFlags;
+	FIXED			velocityX;
+	FIXED			velocityY;
+	FIXED			velocityZ;
 	FIXED			speedLimit;
 	FIXED			acceleration;
-	FIXED			tgtX;
-	FIXED			tgtY;
-	FIXED			tgtZ;
+	FIXED			targetX;
+	FIXED			targetY;
+	FIXED			targetZ;
 	FIXED			bounce;
 	FIXED			gravity;
 	Sint32			sceneWord;
-	void		   *spr;
-	Uint8			sprStorageKind;
-	Uint8			motionFlg;
+	void		   *sprite;
+	Uint8			spriteStorageKind;
+	Uint8			motionFlags;
 	Uint8			arrivalAxis;
 	Uint8			conditionResult;
-	Uint8			snapToTgt;
-	Uint8			collisionFlg;
-	Uint8			steeringFlg;
+	Uint8			snapToTarget;
+	Uint8			collisionFlags;
+	Uint8			steeringFlags;
 	Uint8			paused;
-	Uint8			retainSprCache;
-	Uint8			repeatCnt;
+	Uint8			retainSpriteCache;
+	Uint8			repeatCount;
 	Sint16			wait;
 	Uint8			refused;
 	Uint8			frozen;
-	Uint8			sceneCnt;
+	Uint8			sceneCount;
 	Uint8			sceneByte;
-	Sint16			ang; /* its place on the circle, 1/65536 turns, in timer */
-	Sint16			stopped; /* nonzero holds it still, in userValue */
+	Sint16 angle;	/* its place on the circle, 1/65536 turns, in timer */
+	Sint16 stopped; /* nonzero holds it still, in userValue */
 } BOBBING_MARKER;
 
 /* A field sprite (FIELD_SPR) read a byte at a time, as Yampi Desert's scorpion
@@ -426,13 +426,13 @@ typedef struct YAMPI_DESERT_VISUAL {
 	Uint8 attr3[2];
 	Uint8 scale[4];
 	Uint8 vramBlock; /* VRAM cache entry holding its tiles */
-	Uint8 cacheFlg;
+	Uint8 cacheFlags;
 	Uint8 rotation[2];
-	Uint8 size[4]; /* width, height and the x and y offsets */
-	Uint8 lastAnm; /* the animation number last selected */
-	Uint8 dirty;   /* nonzero redraws its pixels */
-	Uint8 flg;	   /* the sprite flags (SPR_FLAG) */
-	Uint8 layerCnt;
+	Uint8 size[4];		 /* width, height and the x and y offsets */
+	Uint8 lastAnimation; /* the animation number last selected */
+	Uint8 dirty;		 /* nonzero redraws its pixels */
+	Uint8 flags;		 /* the sprite flags (SPR_FLAG) */
+	Uint8 layerCount;
 } YAMPI_DESERT_VISUAL;
 
 /* Compressed tiles the scenes unpack into the VRAM cache
@@ -551,7 +551,7 @@ extern char MapIndexMarsLighthouseOutsideThawed;
 #define SURF_LAST_COLOR		  15
 /* The same run of four as Gondowan Cliffs (background palette 0) and SW Atteka
    Islet (palette 3) turn their water's colours in place
-   (scGondowanCliffsCycleWaterCols, scSettlementsCycleWaterCols): its first
+   (scGondowanCliffsCycleWaterColors, scSettlementsCycleWaterColors): its first
    colour and how many. */
 #define FIRST_WATER_COLOR	  12
 #define WATER_COLORS		  4
@@ -597,7 +597,7 @@ enum {
    gust's speed, in 16.16 pixels a tick. */
 typedef struct VENT_ENTRY {
 	Sint16 active;
-	Sint16 tmr;
+	Sint16 timer;
 	FIXED  x;
 	FIXED  y;
 	FIXED  z;
@@ -608,7 +608,7 @@ typedef struct VENT_ENTRY {
    their tick counter, the room's hook run each tick, its vents and the actors
    their puffs land on, besides the leader. */
 typedef struct VENT_WORK {
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 (*hook)(void);
 	VENT_ENTRY entries[VENT_MAX];
 	Uint16	   ids[VENT_IDS_MAX];

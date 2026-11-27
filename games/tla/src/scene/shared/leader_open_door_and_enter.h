@@ -6,9 +6,9 @@ void scLeaderOpenDoorAndEnter(
 {
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(door->steps, door->x, door->y);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -8);

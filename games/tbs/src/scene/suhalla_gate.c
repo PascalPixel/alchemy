@@ -282,8 +282,8 @@ static void scSuhallaGateEnterHouse(void)
 	Sint32 exitCue;
 
 	exitCue = FieldStateWork->stepCue;
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
-	sySndPlay(SE_DOOR_OPEN);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridCopyMetatilesTo(66, 36, 71, 8, 2, 2);
 	sySynch(4);
 	fdMapGridCopyMetatilesTo(68, 36, 71, 8, 2, 2);
@@ -300,7 +300,7 @@ static void scSuhallaGateLeaveForWorldMap(void)
 {
 	Sint16 exitCue = FieldStateWork->stepCue;
 
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	gmFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
 	gmFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
 	syImportScriptSetExitRequest(exitCue);
@@ -519,24 +519,24 @@ static void scSuhallaGateSoldierVanishes(void)
 
 	beat = 0;
 	do {
-		fdActorSetSprColById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
-		fdActorSetSprFlags(
+		fdActorSetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteFlags(
 			fdActorGet(ACTOR_VANISHING_SOLDIER), SPRITE_FLAG_SHADOW);
 		sySynch(4);
 
-		fdActorSetSprColById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
-		fdActorSetSprFlags(fdActorGet(ACTOR_VANISHING_SOLDIER), 0);
+		fdActorSetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_VANISHING_SOLDIER), 0);
 		beat++;
 		sySynch(4);
 	} while(beat < SOLDIER_SLOW_BLINKS);
 
 	for(beat = 0; beat < SOLDIER_FAST_BLINKS; beat++) {
-		fdActorSetSprColById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
-		fdActorSetSprFlags(
+		fdActorSetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteFlags(
 			fdActorGet(ACTOR_VANISHING_SOLDIER), SPRITE_FLAG_SHADOW);
 		sySynch(2);
-		fdActorSetSprColById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
-		fdActorSetSprFlags(fdActorGet(ACTOR_VANISHING_SOLDIER), 0);
+		fdActorSetSpriteColorById(ACTOR_VANISHING_SOLDIER, SPRITE_COLOR_HIDDEN);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_VANISHING_SOLDIER), 0);
 		sySynch(2);
 	}
 

@@ -11,10 +11,10 @@ Sint32 scActorFindNearestFloatingPlatform(void)
 	ACTOR	   **slot;
 	ACTOR		*origin;
 	Sint32		 nearestActorId = 0;
-	Sint32		 minDist;
+	Sint32		 minDistance;
 	Uint32		 actorId;
 
-	minDist = FLOATING_PLATFORM_SEARCH_DISTANCE;
+	minDistance = FLOATING_PLATFORM_SEARCH_DISTANCE;
 	origin = fdActorGetById(ACTOR_PARTY_LEADER);
 	actorId = ACTOR_FIRST_PLACED;
 	slot = &state->actors[ACTOR_FIRST_PLACED];
@@ -22,10 +22,11 @@ Sint32 scActorFindNearestFloatingPlatform(void)
 		actorId++) {
 		ACTOR *actor = *slot++;
 		if(actor != NULL) {
-			if(actor->spr->entries[0]->anmId == SPRITE_FLOATING_PLATFORM) {
-				Sint32 dist = fdActorDistance(origin, actor);
-				if(dist < minDist) {
-					minDist = dist;
+			if(actor->sprite->entries[0]->animationId ==
+				SPRITE_FLOATING_PLATFORM) {
+				Sint32 distance = fdActorDistance(origin, actor);
+				if(distance < minDistance) {
+					minDistance = distance;
 					nearestActorId = actorId;
 				}
 			}

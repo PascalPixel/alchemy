@@ -1259,11 +1259,11 @@
 #endif
 
 /* On Air's Rock's whirlwind lift (scAirsRockInsideRiseOnLift, the leader's
-   80-pixel ride up), the leader's priority flags (priFlg: draw priority taken
-   from the cells underfoot, depth-sort and platform bits) are saved before the
-   ride and restored after it. The ride flickers those flags and then sets them
-   to ACTOR_PRIORITY_AUTOMATIC. In Japanese the leader keeps AUTOMATIC alone
-   after the ride. */
+   80-pixel ride up), the leader's priority flags (priorityFlags: draw priority
+   taken from the cells underfoot, depth-sort and platform bits) are saved
+   before the ride and restored after it. The ride flickers those flags and then
+   sets them to ACTOR_PRIORITY_AUTOMATIC. In Japanese the leader keeps AUTOMATIC
+   alone after the ride. */
 #ifndef LIFT_RESTORES_LEADER_PRIORITY
 #define LIFT_RESTORES_LEADER_PRIORITY 0
 #endif
@@ -1671,12 +1671,12 @@
 #endif
 
 /* The transfer method menu's help (Password or Cable/Link) releases its
-   window's text sprites with mnWindowSprClearList without first redrawing the
-   window empty, as mnWindowSprPrepareForRedraw does in the other editions. It
-   draws Password's help when the selection moves onto Password and the other
-   method's only when it moves off Password, setting the shown selection after
-   drawing. With the menu's two icons that is every move, and the text is window
-   sprites, so the help looks the same. */
+   window's text sprites with mnWindowSpriteClearList without first redrawing
+   the window empty, as mnWindowSpritePrepareForRedraw does in the other
+   editions. It draws Password's help when the selection moves onto Password and
+   the other method's only when it moves off Password, setting the shown
+   selection after drawing. With the menu's two icons that is every move, and
+   the text is window sprites, so the help looks the same. */
 #ifndef TRANSFER_HELP_SKIPS_EMPTY_WINDOW_REDRAW
 #define TRANSFER_HELP_SKIPS_EMPTY_WINDOW_REDRAW 0
 #endif

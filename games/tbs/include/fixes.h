@@ -180,10 +180,10 @@
 #define FIX_FIRST_TREASURE_SPOT_IN_ACTOR_LOOPS 0
 #endif
 
-/* Frost's ice chips get a sideways velocity (velX) of 0 when they burst, so
-   they fall straight. The original never sets it, so each chip drifts sideways
-   by whatever word its PARTICLES slot last held: the field's map grid cells, or
-   an earlier effect's particles. */
+/* Frost's ice chips get a sideways velocity (velocityX) of 0 when they burst,
+   so they fall straight. The original never sets it, so each chip drifts
+   sideways by whatever word its PARTICLES slot last held: the field's map grid
+   cells, or an earlier effect's particles. */
 #ifndef FIX_FROST_CHIP_DRIFT
 #define FIX_FROST_CHIP_DRIFT 0
 #endif
@@ -308,9 +308,9 @@
 #endif
 
 /* Procne's strike sparks keep their up-and-down speed and move in depth by
-   their own random depth speed, kept in velZ. The original writes the depth
-   speed over velY, so the up-and-down speed is lost and each spark's height and
-   depth move together. */
+   their own random depth speed, kept in velocityZ. The original writes the
+   depth speed over velocityY, so the up-and-down speed is lost and each spark's
+   height and depth move together. */
 #ifndef FIX_PROCNE_SPARK_DEPTH
 #define FIX_PROCNE_SPARK_DEPTH 0
 #endif
@@ -401,9 +401,9 @@
 #define FIX_SLEEP_SHEEP_BOUNCE 0
 #endif
 
-/* In The Broken Seal, fdActorGetSprById returns -1 (no sprite) for a speaker id
-   whose low 12 bits fall past the 66-slot actor table. That includes the -1 'no
-   speaker' key, which masks to 4095. Before, it read a word far beyond the
+/* In The Broken Seal, fdActorGetSpriteById returns -1 (no sprite) for a speaker
+   id whose low 12 bits fall past the 66-slot actor table. That includes the -1
+   'no speaker' key, which masks to 4095. Before, it read a word far beyond the
    field state as an actor pointer. */
 #ifndef FIX_SPEAKER_SPRITE_PAST_TABLE
 #define FIX_SPEAKER_SPRITE_PAST_TABLE 0
@@ -463,7 +463,7 @@
 #define FIX_UNINITIALIZED_READ 0
 #endif
 
-/* The Djinn menu's preview no longer redraws unopenedWin, a window it never
+/* The Djinn menu's preview no longer redraws unopenedWindow, a window it never
    makes, which the original redraws through a null pointer. */
 #ifndef FIX_UNOPENED_WINDOW_REDRAW
 #define FIX_UNOPENED_WINDOW_REDRAW 0

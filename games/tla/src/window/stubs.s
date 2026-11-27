@@ -16,7 +16,7 @@ StubsWindow:
 	stub mnMessageAllTypedStub, mnMessageAllTyped
 	stub mnWindowIsClosedStub, mnWindowIsClosed
 	stub mnMessageSetDecodeFlagsStub, mnMessageSetDecodeFlags
-	stub mnWindowSprPrepareForRedrawStub, mnWindowSprPrepareForRedraw
+	stub mnWindowSpritePrepareForRedrawStub, mnWindowSpritePrepareForRedraw
 	stub mnWindowClearInteriorTilesStub, mnWindowClearInteriorTiles
 	stub mnWindowDrawDividerLineStub, mnWindowDrawDividerLine
 	stub mnTextDrawMessageStub, mnTextDrawMessage
@@ -24,26 +24,26 @@ StubsWindow:
 	stub mnTextDrawStringStub, mnTextDrawString
 	stub mnTextDrawStringAtOffsetStub, mnTextDrawStringAtOffset
 	stub mnTextDrawStringInWindowStub, mnTextDrawStringInWindow
-	stub mnTextDrawNumStub, mnTextDrawNum
-	stub mnTextDrawNumAtOffsetStub, mnTextDrawNumAtOffset
-	stub mnTextDrawNumInWindowStub, mnTextDrawNumInWindow
-	stub mnTextSetColStub, mnTextSetCol
+	stub mnTextDrawNumberStub, mnTextDrawNumber
+	stub mnTextDrawNumberAtOffsetStub, mnTextDrawNumberAtOffset
+	stub mnTextDrawNumberInWindowStub, mnTextDrawNumberInWindow
+	stub mnTextSetColorStub, mnTextSetColor
 	stub mnTextSetStyleStub, mnTextSetStyle
-	stub mnWindowSprCreateStub, mnWindowSprCreate
-	stub mnWindowSprCreateFromResourceStub, mnWindowSprCreateFromResource
+	stub mnWindowSpriteCreateStub, mnWindowSpriteCreate
+	stub mnWindowSpriteCreateFromResourceStub, mnWindowSpriteCreateFromResource
 	stub mnPortraitCreateStub, mnPortraitCreate
 	stub mnPortraitReloadStub, mnPortraitReload
-	stub mnWindowSprSetMotionStub, mnWindowSprSetMotion
-	stub mnWindowSprSetPriorityStub, mnWindowSprSetPriority
+	stub mnWindowSpriteSetMotionStub, mnWindowSpriteSetMotion
+	stub mnWindowSpriteSetPriorityStub, mnWindowSpriteSetPriority
 	stub mnPortraitOpenWindowStub, mnPortraitOpenWindow
 	stub mnPortraitCloseWindowStub, mnPortraitCloseWindow
 	stub mnTextGetMessageSizeStub, mnTextGetMessageSize
 	stub mnTextGetMessageSizeAllPagesStub, mnTextGetMessageSizeAllPages
 	stub mnMessageArgumentClearAllStub, mnMessageArgumentClearAll
 	stub mnMessageArgumentPushStub, mnMessageArgumentPush
-	stub mnPartyStatCreateWindowStub, mnPartyStatCreateWindow
-	stub mnPartyStatDrawStub, mnPartyStatDraw
-	stub mnPartyStatCloseStub, mnPartyStatClose
+	stub mnPartyStatusCreateWindowStub, mnPartyStatusCreateWindow
+	stub mnPartyStatusDrawStub, mnPartyStatusDraw
+	stub mnPartyStatusCloseStub, mnPartyStatusClose
 	stub mnMessageCloseFinishedWindowsStub, mnMessageCloseFinishedWindows
 	stub mnWindowCloseAllStub, mnWindowCloseAll
 	stub mnSelectionMenuCreateStub, mnSelectionMenuCreate
@@ -80,18 +80,18 @@ StubsWindow:
 	stub mnIconDrawItemStub, mnIconDrawItem
 	stub mnTextDrawWideStringAtOffsetStub, mnTextDrawWideStringAtOffset
 	stub mnScanlineWindowFillSpansStub, mnScanlineWindowFillSpans
-	stub mnWindowSprRedrawSavedRectStub, mnWindowSprRedrawSavedRect
-	stub mnWindowSprClearListStub, mnWindowSprClearList
+	stub mnWindowSpriteRedrawSavedRectStub, mnWindowSpriteRedrawSavedRect
+	stub mnWindowSpriteClearListStub, mnWindowSpriteClearList
 	stub mnWindowSetTilemapEntryStub, mnWindowSetTilemapEntry
 	stub mnDebugSceneSelectRunStub, mnDebugSceneSelectRun
 	stub mnDebugFlagEditorRunStub, mnDebugFlagEditorRun
 	stub mnSelectionIconLoadIntoSlotStub, mnSelectionIconLoadIntoSlot
 	stub mnWindowMarkVisibleTextTilesStub, mnWindowMarkVisibleTextTiles
 	stub mnItemIconComposeStub, mnItemIconCompose
-	stub mnPartyStatHighlightMembersStub, mnPartyStatHighlightMembers
+	stub mnPartyStatusHighlightMembersStub, mnPartyStatusHighlightMembers
 	stub mnIconBuildItemIconTilesStub, mnIconBuildItemIconTiles
 	stub mnIconBuildAbilityIconTilesStub, mnIconBuildAbilityIconTiles
-	stub mnWindowSprCreateLoadedStub, mnWindowSprCreateLoaded
+	stub mnWindowSpriteCreateLoadedStub, mnWindowSpriteCreateLoaded
 	stub mnSaveToChosenFileStub, mnSaveToChosenFile
 	stub mnSaveChooseAndLoadFileStub, mnSaveChooseAndLoadFile
 	stub mnSaveCopyFileStub, mnSaveCopyFile
@@ -109,10 +109,10 @@ StubsWindow:
 	stub mnPartyShowJoinedMessageStub, mnPartyShowJoinedMessage
 	stub mnPartyShowPairJoinedMessageStub, mnPartyShowPairJoinedMessage
 	stub mnSummonShowLearnedMessageStub, mnSummonShowLearnedMessage
-	stub mnWindowColApplyStub, mnWindowColApply
+	stub mnWindowColorApplyStub, mnWindowColorApply
 	stub mnSettingsMenuRunStub, mnSettingsMenuRun
 	stub mnPauseMenuRunStub, mnPauseMenuRun
-	stub mnBgScrFillRectStub, mnBgScrFillRect
+	stub mnBgScreenFillRectStub, mnBgScreenFillRect
 	stub mnSelectShopCommandStub, mnSelectShopCommand
 	stub mnSelectSanctumServiceStub, mnSelectSanctumService
 	stub mnYesNoMenuRunStub, mnYesNoMenuRun
@@ -123,10 +123,10 @@ StubsWindow:
 	stub mnTextMeasureMessageStub, mnTextMeasureMessage
 	stub mnWindowHighlightRectStub, mnWindowHighlightRect
 	stub mnAbilityBuildIconTilesStub, mnAbilityBuildIconTiles
-	stub mnGraphicsExpandVRAMTilesByColTableStub, mnGraphicsExpandVRAMTilesByColTable
+	stub mnGraphicsExpandVRAMTilesByColorTableStub, mnGraphicsExpandVRAMTilesByColorTable
 	stub mnTextUseExtraTilesStub, mnTextUseExtraTiles
 	stub mnAnimateSelectionToEntryStub, mnAnimateSelectionToEntry
-	stub mnWindowSprGetPointerTilesStub, mnWindowSprGetPointerTiles
+	stub mnWindowSpriteGetPointerTilesStub, mnWindowSpriteGetPointerTiles
 	stub mnMessageOpenDecodedStub, mnMessageOpenDecoded
 	stub mnSaveCountFilesExcludingSentStub, mnSaveCountFilesExcludingSent
 	stub mnWindowDrawBorderStub, mnWindowDrawBorder
@@ -136,6 +136,6 @@ StubsWindow:
 	stub mnSaveToFileStub, mnSaveToFile
 	stub mnItemIconLoadLayersIntoSlotStub, mnItemIconLoadLayersIntoSlot
 	stub mnTextDrawMessageToCanvasStub, mnTextDrawMessageToCanvas
-	stub mnGlyphDrawAsSprStub, mnGlyphDrawAsSpr
+	stub mnGlyphDrawAsSpriteStub, mnGlyphDrawAsSprite
 	stub mnGlyphDrawToTilesStub, mnGlyphDrawToTiles
-	stub mnGlyphAddBlankSprStub, mnGlyphAddBlankSpr
+	stub mnGlyphAddBlankSpriteStub, mnGlyphAddBlankSprite

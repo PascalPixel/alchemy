@@ -10,8 +10,8 @@
    included here in link order, one group to a part. README.md in this folder
    gives the words, prefixes and spellings the parts use. Where to start:
 
-	 Party status    screens_party_status.c: mnPartyStatCreateWindow,
-					 mnPartyStatDraw
+	 Party status    screens_party_status.c: mnPartyStatusCreateWindow,
+					 mnPartyStatusDraw
 	 Saving          screens_save.c: mnFileListSelectFile, mnSaveToChosenFile
 	 Battle menus    mnBattleCollectPartyCommands
 					 (screens_battle_party_commands.c), which runs

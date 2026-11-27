@@ -45,42 +45,42 @@ UNUSED void mnWindowOverlayTilePattern(
 	Uint8	  *sheet = syResourceGetTableEntry(RESOURCE_WINDOW_TILES);
 	Uint32	   tile = *(Uint8 *)entry;
 	Uint8	  *src;
-	Uint8	  *dst;
+	Uint8	  *dest;
 	Uint32	   n;
 	Uint32	   i;
 
-	dst = pixels;
+	dest = pixels;
 	src = BG_CHAR_BLOCK(0) + TILE_SIZE_4BPP * tile;
 	for(i = 0; i < TILE_SIZE_4BPP; i++) {
 		n = *src++;
-		*dst++ = n & PIXEL_4BPP_MASK;
-		*dst++ = n >> 4;
+		*dest++ = n & PIXEL_4BPP_MASK;
+		*dest++ = n >> 4;
 	}
 
-	dst = pixels;
+	dest = pixels;
 	src = sheet + pattern * TILE_SIZE_4BPP;
 	for(i = 0; i < TILE_SIZE_4BPP; i++) {
 		Uint32 value = *src++;
-		Uint32 col = remap[value & PIXEL_4BPP_MASK];
+		Uint32 color = remap[value & PIXEL_4BPP_MASK];
 
-		if(col != 0)
-			*dst = col;
-		dst++;
-		col = remap[value >> 4];
-		if(col != 0)
-			*dst = col;
-		dst++;
+		if(color != 0)
+			*dest = color;
+		dest++;
+		color = remap[value >> 4];
+		if(color != 0)
+			*dest = color;
+		dest++;
 	}
 
 	{
 		Uint8 *p;
 
-		dst = pixels;
-		for(i = 0, p = dst; i < TILE_SIZE_4BPP; i++) {
+		dest = pixels;
+		for(i = 0, p = dest; i < TILE_SIZE_4BPP; i++) {
 			Uint32 value = p[0] | p[1] << 4;
 
 			p += 2;
-			*dst++ = value;
+			*dest++ = value;
 		}
 	}
 
@@ -118,19 +118,19 @@ Sint32 mnTextDrawStringAsTiles(
 	Uint8		 *glyphs;
 	Uint32		  paletteBits;
 	Uint32		 *src;
-	Uint8		 *dst;
+	Uint8		 *dest;
 	Uint32		  glyphCode;
 	Uint32		  code;
-	Sint32		  tileCnt;
+	Sint32		  tileCount;
 	Uint32		  glyphWidth;
-	Sint32		  idx;
+	Sint32		  index;
 	Sint32		  column;
 	Uint32		  bits;
 
 	state = WINDOW_STATE;
-	canvas = syHeapAlloc(TILE_TEXT_CANVAS_SIZE);
+	canvas = syHeapAllocate(TILE_TEXT_CANVAS_SIZE);
 	glyphs = syResourceGetTableEntry(RESOURCE_WINDOW_TILES);
-	paletteBits = BG_TILE_PALETTE(state->textPal);
+	paletteBits = BG_TILE_PALETTE(state->textPalette);
 	syWordsClear(pens, 16);
 	/* pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
 	   leaves the background. */
@@ -201,28 +201,28 @@ Sint32 mnTextDrawStringAsTiles(
 				/* Each glyph is an 8x8 tile of the window tiles, a word a
 				   row. */
 				src = (Uint32 *)(glyphs + glyphCode * TILE_SIZE_4BPP);
-				dst = canvas + x;
-				for(idx = 0; idx < 8; idx++) {
+				dest = canvas + x;
+				for(index = 0; index < 8; index++) {
 					bits = *src++;
 					for(column = 0; column < 4; column++) {
 						Uint8 pen = pens[bits & PIXEL_4BPP_MASK];
 
 						if(pen != 0)
-							*dst = pen;
-						dst++;
+							*dest = pen;
+						dest++;
 						bits >>= 4;
 						pen = pens[bits & PIXEL_4BPP_MASK];
 						if(pen != 0)
-							*dst = pen;
-						dst++;
+							*dest = pen;
+						dest++;
 						bits >>= 4;
 					}
-					dst += TILE_TEXT_CANVAS_WIDTH - 8;
+					dest += TILE_TEXT_CANVAS_WIDTH - 8;
 				}
-				/* The sign tiles mnTextDrawPrefixedNumAtOffset writes (the HP
-				   and PP labels' tiles) advance 8 for a first tile and 3 for a
-				   second, in pixels; a character its font width, and any other
-				   tile below 32 one. */
+				/* The sign tiles mnTextDrawPrefixedNumberAtOffset writes (the
+				   HP and PP labels' tiles) advance 8 for a first tile and 3 for
+				   a second, in pixels; a character its font width, and any
+				   other tile below 32 one. */
 				if(code == WINDOW_TILE_HP_LABEL || code == WINDOW_TILE_PP_LABEL)
 					x += 8;
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH || \
@@ -255,11 +255,11 @@ Sint32 mnTextDrawStringAsTiles(
 
 	/* Pack each eight-pixel span back into the tile's four-bit colour
 	   fields. */
-	tileCnt = (Uint32)(x + 7) >> 3;
+	tileCount = (Uint32)(x + 7) >> 3;
 	src = (Uint32 *)canvas;
-	dst = canvas;
-	for(idx = 0; idx < 8; idx++) {
-		for(column = 0; column < tileCnt; column++) {
+	dest = canvas;
+	for(index = 0; index < 8; index++) {
+		for(column = 0; column < tileCount; column++) {
 			glyphCode = src[0];
 			bits = src[1];
 			glyphCode |= glyphCode << 4;
@@ -269,16 +269,16 @@ Sint32 mnTextDrawStringAsTiles(
 			glyphCode |= glyphCode << 8;
 			bits |= bits >> 8;
 			src += 2;
-			*(Uint32 *)dst = (glyphCode << 4) >> 16 | bits << 16;
-			dst += 4;
+			*(Uint32 *)dest = (glyphCode << 4) >> 16 | bits << 16;
+			dest += 4;
 		}
-		dst = dst - tileCnt * 4 + TILE_TEXT_CANVAS_WIDTH;
-		src = (Uint32 *)((Uint8 *)src - tileCnt * 8 + TILE_TEXT_CANVAS_WIDTH);
+		dest = dest - tileCount * 4 + TILE_TEXT_CANVAS_WIDTH;
+		src = (Uint32 *)((Uint8 *)src - tileCount * 8 + TILE_TEXT_CANVAS_WIDTH);
 	}
 
 	/* Reuse private text tiles, allocate any new ones, then upload each
 	   tile. */
-	for(idx = 0; idx < tileCnt; idx++) {
+	for(index = 0; index < tileCount; index++) {
 		Uint32	mask = TEXT_TILES - 1;
 		Uint32	tile;
 		Uint32 *vramTile;
@@ -306,19 +306,19 @@ Sint32 mnTextDrawStringAsTiles(
 			*mirror = paletteBits | tile;
 		}
 		vramTile = (Uint32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 0);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 1);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 2);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 3);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 4);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 5);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 6);
-		*vramTile++ = TILE_TEXT_PACKED_ROW(idx, 7);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 0);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 1);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 2);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 3);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 4);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 5);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 6);
+		*vramTile++ = TILE_TEXT_PACKED_ROW(index, 7);
 		tiles++;
 		mirror++;
 	}
 	syHeapRelease(canvas);
-	return tileCnt;
+	return tileCount;
 }
 
 /* Frees the text tiles under a tilemap rectangle (x, y, width and height in
@@ -340,8 +340,8 @@ void mnWindowClearTextTilesInRect(
 			if((tileId - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
 				(alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
 					tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-				Uint32 attributeIdx = TEXT_TILE_STATE_INDEX(tileId);
-				((WIN_STATE *)base)->textTileState[attributeIdx] &=
+				Uint32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
+				((WIN_STATE *)base)->textTileState[attributeIndex] &=
 					~(TEXT_TILE_TAKEN | TEXT_TILE_SHOWN);
 			}
 		}
@@ -372,9 +372,9 @@ void mnWindowMarkVisibleTextTiles(void)
 			if((tileId - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
 				(alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
 					tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-				Uint32 attributeIdx = TEXT_TILE_STATE_INDEX(tileId);
+				Uint32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
 
-				state->textTileState[attributeIdx] |= TEXT_TILE_SHOWN;
+				state->textTileState[attributeIndex] |= TEXT_TILE_SHOWN;
 			}
 		}
 #if FIX_TEXT_TILE_SCAN_ROW_STRIDE
@@ -416,7 +416,7 @@ UNUSED void mnWindowReservedNoOperation(void)
    horizontal or vertical: its ends join the tick or the lines they meet, and
    it crosses the lines it passes over. */
 void mnWindowDrawDividerLine(
-	WINDOW *win, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2)
+	WINDOW *window, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Uint16	  *cursor;
@@ -431,9 +431,11 @@ void mnWindowDrawDividerLine(
 			y1 = y2;
 			y2 = pos;
 		}
-		mnWindowClearTextTilesInRect(win->x + x2, win->y + y1, 1, y2 - y1);
+		mnWindowClearTextTilesInRect(
+			window->x + x2, window->y + y1, 1, y2 - y1);
 		cursor =
-			(Uint16 *)(((win->y + y1) * BG_SCREEN_WIDTH + win->x + x2) * 2 +
+			(Uint16 *)(((window->y + y1) * BG_SCREEN_WIDTH + window->x + x2) *
+					2 +
 				(Uint32)state->tilemap);
 		for(pos = y1; pos <= y2; pos++) {
 			tile = *cursor;
@@ -506,9 +508,11 @@ void mnWindowDrawDividerLine(
 			x1 = x2;
 			x2 = pos;
 		}
-		mnWindowClearTextTilesInRect(win->x + x1, win->y + y1, x2 - x1, 1);
+		mnWindowClearTextTilesInRect(
+			window->x + x1, window->y + y1, x2 - x1, 1);
 		cursor =
-			(Uint16 *)(((win->y + y1) * BG_SCREEN_WIDTH + win->x + x1) * 2 +
+			(Uint16 *)(((window->y + y1) * BG_SCREEN_WIDTH + window->x + x1) *
+					2 +
 				(Uint32)state->tilemap);
 		for(pos = x1; pos <= x2; pos++) {
 			tile = *cursor;
@@ -577,11 +581,11 @@ void mnWindowDrawDividerLine(
 }
 
 /* Sets the colour (TEXT_COL) text is drawn in. */
-void mnTextSetCol(Sint32 col)
+void mnTextSetColor(Sint32 color)
 {
 	WIN_STATE *state = WINDOW_STATE;
 
-	state->colour = col & (PALETTE_COLORS - 1);
+	state->colour = color & (PALETTE_COLORS - 1);
 }
 
 /* Sets the style (TXT_STYLE) text is drawn in. */
@@ -594,24 +598,24 @@ void mnTextSetStyle(Uint16 style)
 
 /* Decodes a message and draws it into a text canvas window at pixel (x, y), all
    at once. */
-void mnTextDrawMessage(Sint32 msg, WINDOW *win, Sint32 x, Sint32 y)
+void mnTextDrawMessage(Sint32 msg, WINDOW *window, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	state->textBufEnd = 0;
 	mnMessageDecode(msg, 1);
 	state->textBuf[state->textBufEnd] = 0;
 	state->textBufEnd = (state->textBufEnd + 1) & TEXT_BUFFER_MASK;
-	mnTextDrawWideStringAtOffset(state->textBuf, win, x, y);
+	mnTextDrawWideStringAtOffset(state->textBuf, window, x, y);
 }
 
-/* Decodes a message and draws it as tiles in a window at pixel (ofsX,
-   ofsY) of its interior. ofsY is rounded down to a tile row; ofsX
+/* Decodes a message and draws it as tiles in a window at pixel (offsetX,
+   offsetY) of its interior. offsetY is rounded down to a tile row; offsetX
    picks the tile, and its remainder is where the text starts in it. */
 void mnTextDrawMessageAsTiles(
-	Sint32 msg, const WINDOW *win, Uint32 ofsX, Uint32 ofsY)
+	Sint32 msg, const WINDOW *window, Uint32 offsetX, Uint32 offsetY)
 {
-	Sint32	   byteOfs;
-	Sint32	   vramAdr;
+	Sint32	   byteOffset;
+	Sint32	   vramAddr;
 	Uint16	  *text;
 	Uint32	   cell;
 	WIN_STATE *state;
@@ -623,15 +627,16 @@ void mnTextDrawMessageAsTiles(
 	state->textBuf[state->textBufEnd] = 0;
 	state->textBufEnd = (state->textBufEnd + 1) & TEXT_BUFFER_MASK;
 
-	cell = ((win->y + (ofsY >> 3) + 1) << 5) + (win->x + (ofsX >> 3)) + 1;
+	cell = ((window->y + (offsetY >> 3) + 1) << 5) +
+		(window->x + (offsetX >> 3)) + 1;
 	if(cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
 		/* Inside the tilemap. */
-		byteOfs = cell * 2;
-		vramAdr = byteOfs + (Sint32)WINDOW_TILEMAP_VRAM;
+		byteOffset = cell * 2;
+		vramAddr = byteOffset + (Sint32)WINDOW_TILEMAP_VRAM;
 		text = state->textBuf;
 		mnTextDrawStringAsTiles(text,
-			(Uint16 *)((Uint8 *)state->tilemap + byteOfs), (Uint16 *)vramAdr,
-			7 & ofsX);
+			(Uint16 *)((Uint8 *)state->tilemap + byteOffset),
+			(Uint16 *)vramAddr, 7 & offsetX);
 	}
 }
 
@@ -650,44 +655,44 @@ static __inline__ void mnTextWidenByteString(const Uint8 *input, Uint16 *output)
 /* Draws a byte string into a text canvas window at pixel (x, y). The
    256-halfword scratch requires at most 255 input bytes before the
    terminator. */
-void mnTextDrawString(const Uint8 *text, WINDOW *win, Sint32 x, Sint32 y)
+void mnTextDrawString(const Uint8 *text, WINDOW *window, Sint32 x, Sint32 y)
 {
 	Sint16 *buf;
 
-	buf = syHeapAllocEWRAM(TEXT_WIDE_STRING_BUFFER_SIZE);
+	buf = syHeapAllocateEWRAM(TEXT_WIDE_STRING_BUFFER_SIZE);
 	mnTextWidenByteString(text, (Uint16 *)buf);
-	mnTextDrawWideStringAtOffset((Uint16 *)buf, win, x, y);
+	mnTextDrawWideStringAtOffset((Uint16 *)buf, window, x, y);
 	syHeapRelease(buf);
 }
 
-/* Draws a byte string as tiles in a window at pixel (ofsX, ofsY) of its
+/* Draws a byte string as tiles in a window at pixel (offsetX, offsetY) of its
    interior. */
 void mnTextDrawStringAtOffset(
-	const Uint8 *text, const WINDOW *win, Sint32 ofsX, Sint32 ofsY)
+	const Uint8 *text, const WINDOW *window, Sint32 offsetX, Sint32 offsetY)
 {
 	Sint16	  *buf;
 	WIN_STATE *state;
 	Uint32	   cell;
 	Sint32	   vram;
 	Sint32	   src;
-	Sint32	   dst;
+	Sint32	   dest;
 	Sint32	   phase;
 
-	buf = syHeapAllocEWRAM(TEXT_WIDE_STRING_BUFFER_SIZE);
+	buf = syHeapAllocateEWRAM(TEXT_WIDE_STRING_BUFFER_SIZE);
 	state = WINDOW_STATE;
 	mnTextWidenByteString(text, (Uint16 *)buf);
 
-	cell = ((win->y + ((Uint32)ofsY >> 3) + 1) << 5) +
-		(win->x + ((Uint32)ofsX >> 3)) + 1;
+	cell = ((window->y + ((Uint32)offsetY >> 3) + 1) << 5) +
+		(window->x + ((Uint32)offsetX >> 3)) + 1;
 	if(cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
 		/* Inside the tilemap. */
 		vram = (Sint32)WINDOW_TILEMAP_VRAM;
 		cell *= 2;
-		dst = vram + cell;
+		dest = vram + cell;
 		src = (Sint32)state->tilemap + cell;
-		phase = ofsX & 7;
+		phase = offsetX & 7;
 		mnTextDrawStringAsTiles(
-			(Uint16 *)buf, (Uint16 *)src, (Uint16 *)dst, phase);
+			(Uint16 *)buf, (Uint16 *)src, (Uint16 *)dest, phase);
 		/* The scratch is freed only here: a place outside the tilemap leaves it
 		   allocated. */
 		syHeapRelease(buf);
@@ -697,68 +702,70 @@ void mnTextDrawStringAtOffset(
 /* Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
    rounded down to tiles. */
 void mnTextDrawStringInWindow(
-	const Uint8 *text, WINDOW *win, Uint32 x, Uint32 y)
+	const Uint8 *text, WINDOW *window, Uint32 x, Uint32 y)
 {
-	Uint16 *buf = syHeapAllocEWRAM(TEXT_WIDE_STRING_BUFFER_SIZE);
+	Uint16 *buf = syHeapAllocateEWRAM(TEXT_WIDE_STRING_BUFFER_SIZE);
 	mnTextWidenByteString(text, buf);
 	x >>= 3;
 	y >>= 3;
-	mnTextDrawWideStringInWindow((Sint16 *)buf, win, x, y);
+	mnTextDrawWideStringInWindow((Sint16 *)buf, window, x, y);
 	syHeapRelease(buf);
 }
 
-/* Draws a number (width as mnStringFormatNum) into a text canvas window at
+/* Draws a number (width as mnStringFormatNumber) into a text canvas window at
    pixel (x, y). */
-void mnTextDrawNum(Sint32 value, Sint32 width, WINDOW *win, Sint32 x, Sint32 y)
+void mnTextDrawNumber(
+	Sint32 value, Sint32 width, WINDOW *window, Sint32 x, Sint32 y)
 {
-	Uint8 numText[TEXT_NUMBER_BUFFER_SIZE];
+	Uint8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
-	mnTextDrawString(mnStringFormatNum(numText, value, width), win, x, y);
+	mnTextDrawString(
+		mnStringFormatNumber(numberText, value, width), window, x, y);
 }
 
-/* Draws a number (width as mnStringFormatNum) as tiles in a window at pixel (x,
-   y) of its interior. */
-void mnTextDrawNumAtOffset(
-	Sint32 value, Sint32 width, const WINDOW *win, Sint32 x, Sint32 y)
+/* Draws a number (width as mnStringFormatNumber) as tiles in a window at pixel
+   (x, y) of its interior. */
+void mnTextDrawNumberAtOffset(
+	Sint32 value, Sint32 width, const WINDOW *window, Sint32 x, Sint32 y)
 {
-	Uint8 numText[TEXT_NUMBER_BUFFER_SIZE];
+	Uint8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
 	mnTextDrawStringAtOffset(
-		mnStringFormatNum(numText, value, width), win, x, y);
+		mnStringFormatNumber(numberText, value, width), window, x, y);
 }
 
-/* Draws a number (width as mnStringFormatNum) into a window's tilemap at pixel
-   (x, y) of its interior. */
-void mnTextDrawNumInWindow(
-	Sint32 value, Sint32 width, WINDOW *win, Sint32 x, Sint32 y)
+/* Draws a number (width as mnStringFormatNumber) into a window's tilemap at
+   pixel (x, y) of its interior. */
+void mnTextDrawNumberInWindow(
+	Sint32 value, Sint32 width, WINDOW *window, Sint32 x, Sint32 y)
 {
-	Uint8 numText[TEXT_NUMBER_BUFFER_SIZE];
+	Uint8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
 	mnTextDrawStringInWindow(
-		mnStringFormatNum(numText, value, width), win, x, y);
+		mnStringFormatNumber(numberText, value, width), window, x, y);
 }
 
 /* Draws a four-digit number after a two-tile label as tiles in a window at
-   pixel (ofsX, ofsY) of its interior: the HP label (WINDOW_TILE_HP_LABEL
+   pixel (offsetX, offsetY) of its interior: the HP label (WINDOW_TILE_HP_LABEL
    and WINDOW_TILE_HP_LABEL_END) for variant 0, the party status window's HP;
    the PP label (WINDOW_TILE_PP_LABEL and WINDOW_TILE_PP_LABEL_END) for variant
    1, its PP. The number is padded to four places with spaces. */
-void mnTextDrawPrefixedNumAtOffset(
-	Sint32 value, const WINDOW *win, Sint32 ofsX, Sint32 ofsY, Sint32 variant)
+void mnTextDrawPrefixedNumberAtOffset(Sint32 value, const WINDOW *window,
+	Sint32 offsetX, Sint32 offsetY, Sint32 variant)
 {
 	Uint8	   formatted[TEXT_NUMBER_BUFFER_SIZE];
 	Sint16	   output[8];
 	Uint8	  *text;
-	Sint32	   idx;
+	Sint32	   index;
 	Uint32	   cell;
 	WIN_STATE *state;
 	Sint32	   vram;
 	Sint32	   src;
-	Sint32	   dst;
+	Sint32	   dest;
 	Sint32	   phase;
 
 	state = WINDOW_STATE;
-	text = mnStringFormatNum(formatted, value, 4);
+	text = mnStringFormatNumber(formatted, value, 4);
 	/* Each label is two tiles; the PP label's second is the HP label's in
 	   English, German and Japanese (WINDOW_TILE_PP_LABEL_END). */
 	if(variant == 0) {
@@ -768,22 +775,22 @@ void mnTextDrawPrefixedNumAtOffset(
 		output[0] = WINDOW_TILE_PP_LABEL;
 		output[1] = WINDOW_TILE_PP_LABEL_END;
 	}
-	for(idx = 0; idx <= 4; idx++) {
-		output[idx + 2] = text[idx];
+	for(index = 0; index <= 4; index++) {
+		output[index + 2] = text[index];
 	}
 	output[6] = 0;
 
-	cell = ((win->y + ((Uint32)ofsY >> 3) + 1) << 5) +
-		(win->x + ((Uint32)ofsX >> 3)) + 1;
+	cell = ((window->y + ((Uint32)offsetY >> 3) + 1) << 5) +
+		(window->x + ((Uint32)offsetX >> 3)) + 1;
 	if(cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
 		/* Inside the tilemap. */
 		vram = (Sint32)WINDOW_TILEMAP_VRAM;
 		cell *= 2;
-		dst = vram + cell;
+		dest = vram + cell;
 		src = (Sint32)state->tilemap + cell;
-		phase = ofsX & 7;
+		phase = offsetX & 7;
 		mnTextDrawStringAsTiles(
-			(Uint16 *)output, (Uint16 *)src, (Uint16 *)dst, phase);
+			(Uint16 *)output, (Uint16 *)src, (Uint16 *)dest, phase);
 	}
 }
 

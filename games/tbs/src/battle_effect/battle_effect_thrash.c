@@ -25,7 +25,8 @@ typedef enum FLASHING_STRIKE_MODE {
    Abilities: Thrash. */
 void btEffectRunThrash(BATTLE_EFFECT_PARM *args)
 {
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(61) / 5);
+	btMotionApproachTargetStub(
+		args->user, args->targets[0], 24, toFIXED(61) / 5);
 	sySynch(29);
 	args->variant = SPARK_GROUPS_THRASH;
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -36,7 +37,8 @@ void btEffectRunThrash(BATTLE_EFFECT_PARM *args)
    is Severe Blow's effect in The Lost Age. */
 void btEffectRunUnusedSevereBlowLeap(BATTLE_EFFECT_PARM *args)
 {
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(36) / 5);
+	btMotionApproachTargetStub(
+		args->user, args->targets[0], 24, toFIXED(36) / 5);
 	sySynch(12);
 	args->variant = SPARK_GROUPS_SEVERE_BLOW;
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -66,7 +68,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	DRAW_RECTANGLE		 draw[2];
-	Sint32				 frm;
+	Sint32				 frame;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -94,9 +96,10 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	/* The user closes on the target in 16 ticks, Quick Strike with a hop. */
 	if(mode == FLASHING_STRIKE_QUICK_STRIKE)
-		btMotionApproachTargetStub(args->user, args->tgts[0], 16, toFIXED(8));
+		btMotionApproachTargetStub(
+			args->user, args->targets[0], 16, toFIXED(8));
 	else
-		btMotionApproachTargetStub(args->user, args->tgts[0], 16, 0);
+		btMotionApproachTargetStub(args->user, args->targets[0], 16, 0);
 	sySynch(16);
 
 	if(state->args->side == EFFECT_SIDE_PARTY)
@@ -106,31 +109,31 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
 	draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-	sySndPlayStub(SE_POWER_UP);
-	for(frm = 0; frm != FLASHING_STRIKE_TICKS; frm++) {
-		if(frm <= 3)
+	sySoundPlayStub(SE_POWER_UP);
+	for(frame = 0; frame != FLASHING_STRIKE_TICKS; frame++) {
+		if(frame <= 3)
 			draw[0](canvas, state->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
 				SLASH_PICTURE_SIZE);
-		else if(frm <= 7)
+		else if(frame <= 7)
 			draw[0](canvas, state->imageStorage + FLASHING_STRIKE_PICTURE_BYTES,
 				0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
-		else if(frm <= 11)
+		else if(frame <= 11)
 			draw[0](canvas, RamMapGridMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 				SLASH_PICTURE_SIZE);
-		else if(frm <= 15)
+		else if(frame <= 15)
 			draw[0](canvas,
 				RamMapGridMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
 				SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		/* The flood: four ticks of the canvas at its brightest. */
-		if(frm >= FLASHING_STRIKE_FLOOD_TICK &&
-			frm <= FLASHING_STRIKE_FLOOD_TICK + 3)
+		if(frame >= FLASHING_STRIKE_FLOOD_TICK &&
+			frame <= FLASHING_STRIKE_FLOOD_TICK + 3)
 			syWordsFill(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-		if(frm == FLASHING_STRIKE_DAMAGE_TICK)
+		if(frame == FLASHING_STRIKE_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frm == FLASHING_STRIKE_HIT_TICK) {
-			state->shakeFrm = 8;
-			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_HURL);
+		if(frame == FLASHING_STRIKE_HIT_TICK) {
+			state->shakeFrame = 8;
+			btMotionApplyKnockbackStub(state->args->targets[0], KNOCKBACK_HURL);
 		}
 		btCameraShake(16, 16);
 		EFFECT_END_TICK(state);

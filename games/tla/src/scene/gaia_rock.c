@@ -124,7 +124,7 @@ struct ACTOR;
 extern SCENE_REGION GaiaRockSusaExitRegions[];
 extern SCENE_REGION GaiaRockStatueSpotsExitRegions[];
 
-void scStoneHeadBurstOut(Sint32 id, Sint32 flg);
+void scStoneHeadBurstOut(Sint32 id, Sint32 flag);
 
 extern ACTOR_PLACE GaiaRockPlacements[];
 extern ACTOR_PLACE GaiaRockSusaActorPlacements[];
@@ -227,7 +227,7 @@ void scGaiaRockStartMovingPillar(void)
 #if !GAIA_ROCK_PILLAR_LANDS_WITH_BOOM
 #define DROP_PILLAR(id) scActorWaitToLand(id)
 #else
-#define DROP_PILLAR(id) scActorWaitToLandWithSnd(id, SE_BOOM)
+#define DROP_PILLAR(id) scActorWaitToLandWithSound(id, SE_BOOM)
 #endif
 
 /* A pillar of the first cliffs stops after a push or a Move. The pillar on the
@@ -313,7 +313,7 @@ void scGaiaRockRevealIdol(void)
 	done = fdScriptGetFlag(FLAG_DANCING_IDOL_TAKEN);
 	if(done == 0) {
 		fdActorSetPos(FIELD_TREASURE_ACTOR, 657, 246);
-		actor->motionFlg = done;
+		actor->motionFlags = done;
 		actor->y.fixed = toFIXED(80);
 	}
 }
@@ -415,13 +415,13 @@ typedef struct ORBIT_EFFECT {
 	Sint32 y;
 	Sint32 z;
 	Uint8  unusedAfterZ[15];
-	Uint8  priFlg;
-	Uint8  unusedAfterPri[4];
-	Sint32 velY;
-	Uint8  unusedAfterVelY[28];
+	Uint8  priorityFlags;
+	Uint8  unusedAfterPriority[4];
+	Sint32 velocityY;
+	Uint8  unusedAfterVelocityY[28];
 	Sint32 gravity;
 	Uint8  unusedAfterGravity[24];
-	Uint16 tmr;
+	Uint16 timer;
 	Sint16 pause; /* ACTOR.userValue */
 	struct ORBIT_EFFECT *watchedActor;
 	void (*update)(struct ORBIT_EFFECT *);
@@ -432,14 +432,14 @@ typedef struct ORBIT_EFFECT {
 void scGaiaRockCircleLeaf(ORBIT_EFFECT *effect)
 {
 	Sint32 radius;
-	Sint32 ang;
+	Sint32 angle;
 	FIXED  dx;
 	FIXED  dz;
 
 	radius = syRandom() + toFIXED(2);
-	ang = effect->facing;
-	dx = syMulFX(radius, syCos(ang));
-	dz = syMulFX(radius, syMathSin(ang));
+	angle = effect->facing;
+	dx = syMulFX(radius, syCos(angle));
+	dz = syMulFX(radius, syMathSin(angle));
 	effect->x += dx;
 	effect->z += dz;
 	effect->facing -= TRIG_TURN / 4096;
@@ -449,7 +449,7 @@ void scGaiaRockCircleLeaf(ORBIT_EFFECT *effect)
 	} else if(syRandomBelow(32) == 0) {
 		effect->pause = syRandomBelow(16) + 8;
 	}
-	if(++effect->tmr == 71)
+	if(++effect->timer == 71)
 		fdActorStartScript((ACTOR *)effect, GaiaRockLeafScript);
 }
 
@@ -458,10 +458,10 @@ void scGaiaRockCircleLeaf(ORBIT_EFFECT *effect)
 Sint32 scGaiaRockSpawnCirclingLeaves(ORBIT_EFFECT *src)
 {
 	Sint32 i;
-	Sint32 tmr;
+	Sint32 timer;
 
 	i = 0;
-	tmr = 20;
+	timer = 20;
 	for(; i < WHIRLWIND_LEAVES; i++) {
 		{
 			ORBIT_EFFECT *effect;
@@ -478,16 +478,16 @@ Sint32 scGaiaRockSpawnCirclingLeaves(ORBIT_EFFECT *src)
 				SPRITE_LEAF, pos[0], pos[1], pos[2]);
 			if(effect != NULL) {
 				effect->update = scGaiaRockCircleLeaf;
-				effect->tmr = tmr;
+				effect->timer = timer;
 				effect->pause = 0;
 				effect->gravity = toFIXED(1) / 10;
-				effect->velY = toFIXED(3);
+				effect->velocityY = toFIXED(3);
 				effect->facing = syRandom();
-				effect->priFlg = 0;
-				fdActorSetSprPriorityDirect((ACTOR *)effect, 2);
+				effect->priorityFlags = 0;
+				fdActorSetSpritePriorityDirect((ACTOR *)effect, 2);
 			}
 		}
-		tmr -= 2;
+		timer -= 2;
 	}
 	return 0;
 }
@@ -527,7 +527,7 @@ void scGaiaRockWhirlwindBlowsVineHarder(void)
 	slot->swing += TRIG_TURN / 512;
 }
 
-void fdActorPlaySndInView(ACTOR *actor, Sint32 snd);
+void fdActorPlaySoundInView(ACTOR *actor, Sint32 sound);
 
 /* Every 256 ticks the stone statue on the upper ledge of the first cliffs
    blows a whirlwind west at the hanging vine beside it, setting it swinging. */
@@ -537,7 +537,7 @@ void scGaiaRockStatueBlowsWind(void)
 	Uint8  phase = TickCount;
 
 	if(phase == 0) {
-		fdActorPlaySndInView(actor, SE_FLAME_FLARE);
+		fdActorPlaySoundInView(actor, SE_FLAME_FLARE);
 		actor = fdActorSpawn(
 			SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		if(actor != NULL) {
@@ -545,12 +545,12 @@ void scGaiaRockStatueBlowsWind(void)
 			actor->speedLimit = toFIXED(2);
 			actor->scaleX = toFIXED(1) / 2;
 			actor->scaleY = toFIXED(1) / 10;
-			actor->priFlg = phase;
+			actor->priorityFlags = phase;
 			fdActorSelectAnimation(actor, 2);
 			scFieldActorSetMoveTargetFX(actor, actor->x.fixed - toFIXED(32),
 				actor->y.fixed, actor->z.fixed);
 			fdActorStartScript(actor, GaiaRockWindScript);
-			fdActorSetSprPriorityDirect(actor, 2);
+			fdActorSetSpritePriorityDirect(actor, 2);
 		}
 	}
 }
@@ -573,7 +573,7 @@ Sint32 scInit(void)
 	FieldStateWork->transition = SCREEN_EFFECT;
 	MainRoutineStateWork.retreatScene = SCENE_GAIA_ROCK_SUSA;
 	MainRoutineStateWork.retreatEntrance = GAIA_ROCK_SUSA_FROM_WORLD_MAP;
-	fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+	fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_SUSA) {
 		sySetEvent((Sint32)scGaiaRockStatueBlowsWind, EVENT_PASS_TICK);
@@ -587,19 +587,19 @@ Sint32 scInit(void)
 		fdHangingVinePlace(ACTOR_FIRST_VINE + 7, 1);
 		if(syGameFlagGet(FLAG_FIRST_PILLAR_DROPPED)) {
 			actor = fdActorGetById(ACTOR_FIRST_PILLAR);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->x.fixed = toFIXED(88);
 			actor->y.fixed = toFIXED(128);
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 			fdMapGridCopyMetatileAttributes(6, 27, 1, 1, 5, 27);
 		}
 		actor = fdActorGetById(ACTOR_SECOND_PILLAR);
-		actor->priFlg = 0;
+		actor->priorityFlags = 0;
 		if(syGameFlagGet(FLAG_SECOND_PILLAR_DROPPED)) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->x.fixed = toFIXED(648);
 			actor->y.fixed = toFIXED(64);
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 			fdMapGridCopyMetatileAttributes(33, 102, 1, 2, 37, 102);
 			fdMapGridCopyMetatileAttributes(27, 44, 1, 1, 40, 46);
 		} else if(syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
@@ -607,7 +607,7 @@ Sint32 scInit(void)
 				fdMapGridCopyMetatileAttributes(33, 102, 1, 2, 37, 102);
 			}
 			if(FIELD_HALF_METATILE(actor->x.fixed) == 79) {
-				actor->motionFlg = 0;
+				actor->motionFlags = 0;
 				fdMapGridCopyMetatileAttributes(38, 46, 1, 1, 39, 46);
 			}
 		}
@@ -668,7 +668,7 @@ Sint32 scInit(void)
 		actor = state->actors[ACTOR_DANCING_IDOL];
 		state->actors[FIELD_TREASURE_ACTOR] = actor;
 		actor = fdActorGetById(ACTOR_PUSHED_PILLAR);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdMapGridCopyMetatileAttributes(
 			11, 14, 1, 1, 13, FIELD_METATILE(actor->z.fixed));
 	}
@@ -681,8 +681,8 @@ Sint32 scPrepareMap(void)
 		ARRIVES_AT_GREAT_WALL()) {
 		MAP_LAYER *layer = fdMapGridGetLayer(1);
 
-		layer->ofsX = -toFIXED(128);
-		layer->ofsY = toFIXED(1096);
+		layer->offsetX = -toFIXED(128);
+		layer->offsetY = toFIXED(1096);
 	}
 	return 0;
 }

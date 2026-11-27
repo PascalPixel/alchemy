@@ -299,12 +299,12 @@ UNUSED ACTOR *scMagmaRockCreateEffectActor(
 	ACTOR *actor = (scFieldActorCreate(kind, x, y, z));
 
 	if(actor != NULL) {
-		fdSetActorSprPriority(actor, 1);
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(actor, 0);
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
-		actor->priFlg |=
+		fdSetActorSpritePriority(actor, 1);
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(actor, 0);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
+		actor->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
 		return actor;
 	}
@@ -369,9 +369,9 @@ void scMagmaRockSettleBlocks(Uint16 *ids)
 		actor->sceneWord = METATILE_ATTRIBUTE_BITS &
 			fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 				FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
-		actor->motionFlg = 0;
-		actor->collisionFlg = 0;
-		fdActorSetSprFlags(actor, 0);
+		actor->motionFlags = 0;
+		actor->collisionFlags = 0;
+		fdActorSetSpriteFlags(actor, 0);
 		scMagmaRockInsideSetMetatileShape(*terrainId,
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed),
 			METATILE_HEIGHT_STEPS(height) + 4);
@@ -466,7 +466,7 @@ void scMagmaRockStartPushingPillar(void)
 	   stays at the ledge's edge, while from metatile (16, 27) he climbs down
 	   the pegs to the cave mouth above the four cracked pillars. */
 	FIELD_STATE		   *event = RamHeapSlots->fieldState;
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 
 	if(MainRoutineStateWork.next == SCENE_MAGMA_ROCK_SLIDE) {
 		fdMapGridCopyMetatileAttributes(98, 18, 4, 3, 78, 21);
@@ -488,7 +488,7 @@ void scMagmaRockStartPushingPillar(void)
 			fdMapGridCopyMetatileAttributes(79, 46, 2, 1, 79, 36);
 			fdActorLiftTargetBlock(MagmaRockSalamanderTailLowWestPillars);
 		} else {
-			if(state->tgt->z.part[0].integer == 600)
+			if(state->target->z.part[0].integer == 600)
 				fdMapGridCopyMetatileAttributes(104, 38, 1, 1, 103, 38);
 			else
 				fdMapGridCopyMetatileAttributes(94, 44, 5, 1, 99, 38);
@@ -597,9 +597,9 @@ extern Sint32 MagmaRockFlameEmberScript[];
 void scMagmaRockThrowEmbers(ACTOR *actor)
 {
 	ACTOR  *linked = &actor->watchedActor->actor;
-	Sint16 *tmr = &actor->tmr;
+	Sint16 *timer = &actor->timer;
 
-	if(*tmr < 50) {
+	if(*timer < 50) {
 		Uint32 phase = TickCount & 3;
 
 		if(phase == 0) {
@@ -608,7 +608,7 @@ void scMagmaRockThrowEmbers(ACTOR *actor)
 			Sint32		   dy;
 
 			params.type = SPRITE_FLAME_PUFF;
-			params.pri = 1;
+			params.priority = 1;
 			params.script = MagmaRockFlameEmberScript;
 			dx = (syRandom() & 15) - 8;
 			dy = syRandom() & 31;
@@ -619,56 +619,57 @@ void scMagmaRockThrowEmbers(ACTOR *actor)
 				&params);
 		}
 		if(TickCount & 4)
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
 		else
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
-	} else if(*tmr < 100) {
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
+	} else if(*timer < 100) {
 		if(TickCount & 4)
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
 		else
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
-	} else if(*tmr < 140) {
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
+	} else if(*timer < 140) {
 		if(TickCount & 2)
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
 		else
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
-	} else if(*tmr < 144) {
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
+	} else if(*timer < 144) {
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
 	} else {
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 		actor->update = NULL;
 		linked->x.fixed = actor->x.fixed;
 		linked->y.fixed = actor->y.fixed;
 		linked->z.fixed = actor->z.fixed;
 		linked->update = scMagmaRockMoveFireball;
 	}
-	(*tmr)++;
+	(*timer)++;
 }
 
-void fdActorPlaySndInView(ACTOR *actor, Sint32 value);
+void fdActorPlaySoundInView(ACTOR *actor, Sint32 value);
 
 /* The update of a fireball or a statue's fire: every fourth tick it leaves an
    ember near it, drifting a little north or south, and every sixteenth it
    whooshes, unless one has just knocked Felix down. */
 void scMagmaRockLeaveEmbers(ACTOR *actor)
 {
-	Uint32 frm = TickCount;
+	Uint32 frame = TickCount;
 
-	if((frm & 3) == 0) {
+	if((frame & 3) == 0) {
 		EFFECT_OPTIONS config;
 		Sint32		   dz;
-		Sint32		   velZ;
+		Sint32		   velocityZ;
 		FIXED		   z;
 
 		config.type = SPRITE_FLAME_PUFF;
-		config.pri = 2;
+		config.priority = 2;
 		config.script = MagmaRockEmberScript;
-		if((frm & 15) == 0 && !fdScriptGetFlag(FLAG_LEADER_KNOCKED_DOWN))
-			fdActorPlaySndInView(actor, SE_WHOOSH);
+		if((frame & 15) == 0 && !fdScriptGetFlag(FLAG_LEADER_KNOCKED_DOWN))
+			fdActorPlaySoundInView(actor, SE_WHOOSH);
 		dz = ((syRandom() & 15) - 8) * (toFIXED(1) / 2);
-		velZ = ((syRandom() & 31) - 16) * (toFIXED(1) / 16);
+		velocityZ = ((syRandom() & 31) - 16) * (toFIXED(1) / 16);
 		z = actor->z.fixed;
-		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, z + dz, 0, 0, velZ,
+		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, z + dz, 0, 0,
+			velocityZ,
 			EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
 			&config);
 	}
@@ -710,7 +711,7 @@ void scMagmaRockMoveFireball(ACTOR *actor)
 		actor->y.fixed = 0;
 		actor->z.fixed = 0;
 		actor->rollSide ^= 1;
-		partner->tmr = 0;
+		partner->timer = 0;
 		partner->update = (void *)scMagmaRockThrowEmbers;
 		partner->watchedActor = (FIELD_OBJECT *)actor;
 	}
@@ -740,14 +741,14 @@ void scMagmaRockPlaceFireball(Uint16 id, Sint16 first, Sint16 side)
 	actor->x.fixed = fdActorGet(startId)->x.fixed;
 	actor->y.fixed = fdActorGet(startId)->y.fixed;
 	actor->z.fixed = fdActorGet(startId)->z.fixed;
-	fdSetActorSprPriority(actor, 2);
+	fdSetActorSpritePriority(actor, 2);
 	pairFirst = &actor->userValue;
 	*pairFirst = first;
 	rollSide = side ^ 1;
 	actor->rollSide = rollSide;
 	actor->update = (void *)scMagmaRockMoveFireball;
 	secondId = firstId + 1;
-	flags = &actor->motionFlg;
+	flags = &actor->motionFlags;
 	if(startSide != 0) {
 		firstStatue = fdActorGet(firstId);
 		secondStatue = fdActorGet(secondId);
@@ -775,44 +776,44 @@ void scMagmaRockWarnStatue(ACTOR *actor)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	if(actor->tmr > 528) {
-		if(actor->tmr & 2)
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
+	if(actor->timer > 528) {
+		if(actor->timer & 2)
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
 		else
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
-	} else if(actor->tmr > 400) {
-		if(actor->tmr & 16)
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
+	} else if(actor->timer > 400) {
+		if(actor->timer & 16)
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
 		else
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 	} else {
 		actor->update = scMagmaRockBurnStatue;
-		actor->tmr = 1;
+		actor->timer = 1;
 	}
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
 		state->item == 0 && state->transitionActive != 0)
-		actor->tmr--;
+		actor->timer--;
 }
 
 #include "shared/statue_find_under_burst.h"
 
 /* Looks up the metatile at (x, z) in an (actor, metatile, value) table ended by
    ACTOR_LIST_END and returns the value of its row. */
-Sint32 scMagmaRockLookUpMetatileStatue(Sint32 x, Sint32 z, Uint16 *tbl)
+Sint32 scMagmaRockLookUpMetatileStatue(Sint32 x, Sint32 z, Uint16 *table)
 {
 	Sint32 result = 0;
 	Sint32 code = fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 					  FIELD_METATILE(x), FIELD_METATILE(z)) >>
 		8;
 
-	while(*tbl != ACTOR_LIST_END) {
-		tbl++;
-		if(code == *tbl) {
-			result = tbl[1];
+	while(*table != ACTOR_LIST_END) {
+		table++;
+		if(code == *table) {
+			result = table[1];
 			break;
 		}
-		tbl++;
-		result = *tbl++;
+		table++;
+		result = *table++;
 	}
 	return result;
 }
@@ -826,37 +827,37 @@ Sint32 scMagmaRockLookUpMetatileStatue(Sint32 x, Sint32 z, Uint16 *tbl)
    (scMagmaRockFireStatue) or lights (scMagmaRockIgniteStatue). */
 void scMagmaRockTargetStatue(Sint32 stage)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
-	Sint16			   *tbl = MagmaRockSlideStatues;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
+	Sint16			   *table = MagmaRockSlideStatues;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
 	if(party->next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
 		if(party->entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
-			tbl = MagmaRockSalamanderTailHighWestStatues;
+			table = MagmaRockSalamanderTailHighWestStatues;
 		else if(party->entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
-			tbl = MagmaRockSalamanderTailHighEastStatues;
+			table = MagmaRockSalamanderTailHighEastStatues;
 		else if(party->entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
-			tbl = MagmaRockSalamanderTailLowWestStatues;
+			table = MagmaRockSalamanderTailLowWestStatues;
 		else
-			tbl = MagmaRockSalamanderTailLowEastStatues;
+			table = MagmaRockSalamanderTailLowEastStatues;
 	} else if(party->next == SCENE_MAGMA_ROCK_STATUE) {
-		tbl = MagmaRockStatueStatues;
+		table = MagmaRockStatueStatues;
 	}
 	if(stage == BURST_STAGE_SMALL_BLAST) {
-		ACTOR *tgt;
+		ACTOR *target;
 
-		scStatueFindUnderBurst(tbl);
-		tgt = state->tgt;
-		tgt->flashMask = 4;
-		tgt->update = (OBJECT_UPDATE)syStatueFlashUnderBurst;
+		scStatueFindUnderBurst(table);
+		target = state->target;
+		target->flashMask = 4;
+		target->update = (OBJECT_UPDATE)syStatueFlashUnderBurst;
 	}
 	if(stage == BURST_STAGE_GREAT_BLAST) {
-		ACTOR *tgt;
+		ACTOR *target;
 
-		scStatueFindUnderBurst(tbl);
-		tgt = state->tgt;
-		tgt->flashMask = 2;
-		tgt->update = (OBJECT_UPDATE)syStatueFlashUnderBurst;
+		scStatueFindUnderBurst(table);
+		target = state->target;
+		target->flashMask = 2;
+		target->update = (OBJECT_UPDATE)syStatueFlashUnderBurst;
 	}
 }
 
@@ -899,9 +900,9 @@ Sint32 scMagmaRockFireFromStatue(ACTOR *source)
 		actor = scFieldActorCreate(SPRITE_FLAME_PUFF, x, y, z);
 	}
 	step = syCos(source->facing) << 1;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSelectAnimation(actor, 1);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	position[0] = actor->x.fixed;
@@ -931,7 +932,8 @@ Sint32 scMagmaRockFireFromStatue(ACTOR *source)
 				continue;
 			if(FIELD_METATILE(other->y.fixed) != FIELD_METATILE(position[1]))
 				continue;
-			if(((SPR *)other->spr)->entries[0]->anmId == SPRITE_STONE_PILLAR)
+			if(((SPR *)other->sprite)->entries[0]->animationId ==
+				SPRITE_STONE_PILLAR)
 				goto stop;
 			goto hit;
 		}
@@ -957,7 +959,7 @@ stop:
 			/* Each ember flies off at up to 2 pixels a tick across and up or
 			   down. */
 			options.type = SPRITE_FLAME_PUFF;
-			options.pri = 1;
+			options.priority = 1;
 			options.update = (void (*)(FIELD_OBJECT *))scMagmaRockDriftAndSlow;
 			options.script = MagmaRockEmberScript;
 			randomX = syRandom() & 31;
@@ -1006,19 +1008,19 @@ hit:
    explodes on it as Burst does. */
 void scMagmaRockFireStatue(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	ACTOR			   *actor;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptWait(10);
-	actor = state->tgt;
+	actor = state->target;
 	actor->update = NULL;
-	scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
 	syFieldScriptWait(3);
-	scFieldActorSetSprCol(state->tgt, SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(state->target, SPRITE_COLOR_NORMAL);
 	syFieldScriptWait(1);
-	scMagmaRockFireFromStatue(state->tgt);
+	scMagmaRockFireFromStatue(state->target);
 	scMagmaRockEndScript();
 }
 
@@ -1029,13 +1031,13 @@ void scMagmaRockFireStatue(void)
    statue's countdown (scMagmaRockWarnStatue, then scMagmaRockBurnStatue). */
 void scMagmaRockIgniteStatue(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	ACTOR			   *actor;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	actor = state->tgt;
-	actor->tmr = 1024;
+	actor = state->target;
+	actor->timer = 1024;
 	actor->update = scMagmaRockWarnStatue;
 	scMagmaRockEndScript();
 }
@@ -1056,29 +1058,29 @@ void scMagmaRockIgniteStatue(void)
    is the pillar's animation from PILLAR_CRUMBLE_TICK. */
 void scMagmaRockBurstCrackedPillar(Sint32 stage, Sint32 tick)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 
 	if(tick == 0)
 		scMagmaRockStartFallingRocks();
 	if(stage == BURST_STAGE_SMALL_BLAST) {
-		ACTOR *actor = state->tgt;
+		ACTOR *actor = state->target;
 
 		scMagmaRockDropRocks(
 			actor->x.fixed, actor->y.fixed + toFIXED(15), actor->z.fixed, 1);
 	}
 	if(stage == BURST_STAGE_GREAT_BLAST) {
-		ACTOR *actor = state->tgt;
+		ACTOR *actor = state->target;
 		ACTOR *target;
 
 		scMagmaRockDropRocks(
 			actor->x.fixed, actor->y.fixed + toFIXED(15), actor->z.fixed, 8);
-		target = state->tgt;
+		target = state->target;
 		SET_ACTOR_POSITION(target, 0, 0, 0);
 	}
 	if(tick == PSYNERGY_SCRIPT_LAST_TICK)
 		scRockEndFalling();
 	if(tick == PILLAR_CRUMBLE_TICK)
-		fdActorSelectAnimation(state->tgt, 3);
+		fdActorSelectAnimation(state->target, 3);
 }
 
 /* The update of one of the four parts of a statue's flame column
@@ -1088,22 +1090,22 @@ void scMagmaRockRaiseFlamePart(ACTOR *part)
 {
 	ACTOR *owner = &part->watchedActor->actor;
 
-	if(owner->tmr > FLAME_RISE_TICK &&
-		owner->tmr < part->flameLevel * 2 + FLAME_RISE_TICK + 1) {
+	if(owner->timer > FLAME_RISE_TICK &&
+		owner->timer < part->flameLevel * 2 + FLAME_RISE_TICK + 1) {
 		part->y.fixed = owner->y.fixed + toFIXED(32);
 		part->y.fixed +=
-			owner->tmr * FLAME_SPEED - FLAME_RISE_TICK * FLAME_SPEED;
-	} else if(part->flameLevel * 2 + FLAME_RISE_TICK + 1 < owner->tmr &&
-		owner->tmr < FLAME_SINK_TICK) {
+			owner->timer * FLAME_SPEED - FLAME_RISE_TICK * FLAME_SPEED;
+	} else if(part->flameLevel * 2 + FLAME_RISE_TICK + 1 < owner->timer &&
+		owner->timer < FLAME_SINK_TICK) {
 		part->y.fixed = owner->y.fixed + part->flameLevel * FLAME_LEVEL_HEIGHT +
 			toFIXED(32);
-	} else if(owner->tmr > FLAME_SINK_TICK &&
-		owner->tmr < part->flameLevel * 2 + FLAME_SINK_TICK + 1) {
+	} else if(owner->timer > FLAME_SINK_TICK &&
+		owner->timer < part->flameLevel * 2 + FLAME_SINK_TICK + 1) {
 		part->y.fixed = owner->y.fixed + part->flameLevel * FLAME_LEVEL_HEIGHT +
 			toFIXED(32);
 		part->y.fixed -=
-			owner->tmr * FLAME_SPEED - FLAME_SINK_TICK * FLAME_SPEED;
-	} else if(part->flameLevel * 2 + FLAME_SINK_TICK + 1 < owner->tmr) {
+			owner->timer * FLAME_SPEED - FLAME_SINK_TICK * FLAME_SPEED;
+	} else if(part->flameLevel * 2 + FLAME_SINK_TICK + 1 < owner->timer) {
 		fdActorRelease(part);
 	}
 }
@@ -1114,29 +1116,31 @@ void scMagmaRockRaiseFlamePart(ACTOR *part)
    up. */
 void scMagmaRockRaiseFlameTop(FIELD_OBJECT *object)
 {
-	ACTOR		  *watched = (ACTOR *)object->eff.countdown;
+	ACTOR		  *watched = (ACTOR *)object->effect.countdown;
 	EFFECT_OPTIONS config;
 	Sint32		   step;
 	Sint32		   mask;
 
-	if(watched->tmr >= FLAME_RISE_TICK && watched->tmr <= FLAME_RISE_TICK + 7) {
-		object->eff.y = watched->y.fixed + toFIXED(24);
-		object->eff.y = object->eff.y + watched->tmr * FLAME_SPEED -
+	if(watched->timer >= FLAME_RISE_TICK &&
+		watched->timer <= FLAME_RISE_TICK + 7) {
+		object->effect.y = watched->y.fixed + toFIXED(24);
+		object->effect.y = object->effect.y + watched->timer * FLAME_SPEED -
 			(FLAME_RISE_TICK - 1) * FLAME_SPEED;
 	} else {
-		if(watched->tmr >= 9 && watched->tmr < FLAME_SINK_TICK) {
-			object->eff.y = watched->y.fixed +
-				object->eff.sceneCnt * FLAME_LEVEL_HEIGHT + toFIXED(24);
-		} else if(watched->tmr > FLAME_SINK_TICK &&
-			watched->tmr < object->eff.sceneCnt * 2 + FLAME_SINK_TICK + 1) {
-			object->eff.y = watched->y.fixed +
-				object->eff.sceneCnt * FLAME_LEVEL_HEIGHT + toFIXED(24);
-			object->eff.y -=
-				watched->tmr * FLAME_SPEED - FLAME_SINK_TICK * FLAME_SPEED;
-		} else if(object->eff.sceneCnt * 2 + FLAME_SINK_TICK + 1 <
-			watched->tmr) {
-			object->eff.y = object->actor.groundHeight;
-			object->eff.update = 0;
+		if(watched->timer >= 9 && watched->timer < FLAME_SINK_TICK) {
+			object->effect.y = watched->y.fixed +
+				object->effect.sceneCount * FLAME_LEVEL_HEIGHT + toFIXED(24);
+		} else if(watched->timer > FLAME_SINK_TICK &&
+			watched->timer <
+				object->effect.sceneCount * 2 + FLAME_SINK_TICK + 1) {
+			object->effect.y = watched->y.fixed +
+				object->effect.sceneCount * FLAME_LEVEL_HEIGHT + toFIXED(24);
+			object->effect.y -=
+				watched->timer * FLAME_SPEED - FLAME_SINK_TICK * FLAME_SPEED;
+		} else if(object->effect.sceneCount * 2 + FLAME_SINK_TICK + 1 <
+			watched->timer) {
+			object->effect.y = object->actor.groundHeight;
+			object->effect.update = 0;
 		}
 	}
 
@@ -1144,12 +1148,12 @@ void scMagmaRockRaiseFlameTop(FIELD_OBJECT *object)
 	step = TickCount & mask;
 	if(step == 0) {
 		config.type = SPRITE_FLAME_PUFF;
-		config.pal = SPRITE_COLOR_RED_TINT;
-		config.pri = 2;
+		config.palette = SPRITE_COLOR_RED_TINT;
+		config.priority = 2;
 		config.update = (void (*)(FIELD_OBJECT *))scMagmaRockDriftAndSlow;
 		config.script = MagmaRockEmberScript;
-		scFieldEffectSpawn(object->eff.x + toFIXED(1),
-			object->eff.y - toFIXED(4), object->eff.z,
+		scFieldEffectSpawn(object->effect.x + toFIXED(1),
+			object->effect.y - toFIXED(4), object->effect.z,
 			((syRandom() & mask) - 3) << 14, -toFIXED(2), step,
 			EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
 				EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
@@ -1157,10 +1161,10 @@ void scMagmaRockRaiseFlameTop(FIELD_OBJECT *object)
 	}
 	scMagmaRockInsideSetMetatileShape(watched->layer,
 		FIELD_METATILE(watched->x.fixed), FIELD_METATILE(watched->z.fixed),
-		METATILE_HEIGHT_STEPS(object->eff.y) + 1);
+		METATILE_HEIGHT_STEPS(object->effect.y) + 1);
 }
 
-void fdActorPlaySndInView(ACTOR *actor, Sint32 a);
+void fdActorPlaySoundInView(ACTOR *actor, Sint32 a);
 
 /* A statue's update once it burns: embers first, then at tick 33 its flame
    column of four parts rises, and the cap on its top with it
@@ -1171,9 +1175,9 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 	Sint32		 type = SPRITE_STEAM_VENT;
 
 	if((TickCount & 15) == 0)
-		fdActorPlaySndInView(actor, SE_WHOOSH);
-	scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
-	if(actor->tmr <= 31) {
+		fdActorPlaySoundInView(actor, SE_WHOOSH);
+	scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
+	if(actor->timer <= 31) {
 		Uint32 phase = TickCount & 3;
 
 		if(phase == 0) {
@@ -1182,8 +1186,8 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 			Sint32		   randomZ;
 
 			config.type = SPRITE_FLAME_PUFF;
-			config.pal = SPRITE_COLOR_RED_TINT;
-			config.pri = 2;
+			config.palette = SPRITE_COLOR_RED_TINT;
+			config.priority = 2;
 			config.update = (void (*)(FIELD_OBJECT *))scMagmaRockDriftAndSlow;
 			config.script = MagmaRockEmberScript;
 			/* Each ember flies off at up to 2 pixels a tick across the
@@ -1197,29 +1201,29 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 					EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
 				&config);
 		}
-	} else if(actor->tmr == 33) {
+	} else if(actor->timer == 33) {
 		ACTOR *parts[4];
 		ACTOR *fifthPart;
 		Sint32 id;
 		Sint32 i;
 
-		fdActorPlaySndInView(actor, SE_CLATTER);
+		fdActorPlaySoundInView(actor, SE_CLATTER);
 		parts[0] = (scFieldActorCreate(type, actor->x.fixed + toFIXED(1),
 			actor->y.fixed + toFIXED(32), actor->z.fixed));
 		for(i = 1; i != 4; i++) {
-			SPR	  *first = parts[0]->spr;
+			SPR	  *first = parts[0]->sprite;
 			ACTOR *part = (scFieldActorCreate(type, 0, 0, 0));
-			SPR	  *spr;
+			SPR	  *sprite;
 
 			parts[i] = part;
-			spr = part->spr;
-			spr->slot = first->slot;
-			spr->retainCacheEntry = 1;
+			sprite = part->sprite;
+			sprite->slot = first->slot;
+			sprite->retainCacheEntry = 1;
 			part->x.fixed = parts[0]->x.fixed;
 			part->y.fixed = parts[0]->y.fixed;
 			part->z.fixed = parts[0]->z.fixed;
-			part->motionFlg = 0;
-			fdActorSetSprFlags(part, 0);
+			part->motionFlags = 0;
+			fdActorSetSpriteFlags(part, 0);
 			fdActorSelectAnimation(parts[i], 3);
 			{
 				ACTOR *flame = parts[i];
@@ -1227,23 +1231,23 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 				flame->flameLevel = 3 - i;
 				flame->watchedActor = (FIELD_OBJECT *)actor;
 				flame->update = scMagmaRockRaiseFlamePart;
-				scFieldActorSetSprCol(flame, SPRITE_COLOR_BGR);
+				scFieldActorSetSpriteColor(flame, SPRITE_COLOR_BGR);
 			}
 		}
 		{
 			ACTOR *part = parts[0];
 
-			part->motionFlg = 0;
-			fdActorSetSprFlags(part, 0);
+			part->motionFlags = 0;
+			fdActorSetSpriteFlags(part, 0);
 			fdActorSelectAnimation(parts[0], 3);
-			fdSetActorSprPriority(parts[0], 3);
+			fdSetActorSpritePriority(parts[0], 3);
 			{
 				ACTOR *flame = parts[0];
 
 				flame->flameLevel = 3;
 				flame->watchedActor = (FIELD_OBJECT *)actor;
 				flame->update = scMagmaRockRaiseFlamePart;
-				scFieldActorSetSprCol(flame, SPRITE_COLOR_BGR);
+				scFieldActorSetSpriteColor(flame, SPRITE_COLOR_BGR);
 			}
 		}
 		id = 0;
@@ -1273,14 +1277,14 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 		fifthPart->flameLevel = 4;
 		fifthPart->watchedActor = (FIELD_OBJECT *)actor;
 		fifthPart->update = scMagmaRockRaiseFlameTop;
-		actor->tmr++;
-	} else if(actor->tmr > 364) {
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		actor->timer++;
+	} else if(actor->timer > 364) {
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 		actor->update = NULL;
 	}
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
 		state->item == 0 && (Uint16)state->transitionActive != 0)
-		actor->tmr++;
+		actor->timer++;
 }
 
 /* Burst at a cracked pillar on the slide or on the cliff: the pillar breaks
@@ -1290,16 +1294,16 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 	name, slidePillar, cliffPillar, flag) \
 	void name(Sint32 stage, Sint32 tick) \
 	{ \
-		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState; \
+		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState; \
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork; \
 \
 		{ \
 			Sint32 scene = party->next; \
 \
 			if(scene == SCENE_MAGMA_ROCK_SLIDE) \
-				state->tgt = fdActorGet(slidePillar); \
+				state->target = fdActorGet(slidePillar); \
 			else if(scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) \
-				state->tgt = fdActorGet(cliffPillar); \
+				state->target = fdActorGet(cliffPillar); \
 			scMagmaRockBurstCrackedPillar(stage, tick); \
 		} \
 		fdScriptSetFlag(flag); \
@@ -1328,9 +1332,9 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRockBurstCrackedPillarB,
 #define DEFINE_BURST_CRACKED_PILLAR(name, pillar, flag) \
 	void name(Sint32 stage, Sint32 tick) \
 	{ \
-		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState; \
+		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState; \
 \
-		state->tgt = fdActorGet(pillar); \
+		state->target = fdActorGet(pillar); \
 		scMagmaRockBurstCrackedPillar(stage, tick); \
 		fdScriptSetFlag(flag); \
 	}
@@ -1381,10 +1385,10 @@ void scMagmaRockEnterCave(void)
 	if(party->movementMode != LEADER_MOVEMENT_KEYS) {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		fdActorGet(party->leaderActorId)->motionFlg = 0;
+		fdActorGet(party->leaderActorId)->motionFlags = 0;
 		fdActorWalkTo(party->leaderActorId, 264, 440);
 		syFieldScriptWait(5);
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		syFieldScriptSetExitRequest(
 			MAGMA_ROCK_SLIDE_TO_MAGMA_ROCK_INSIDE_EMBER_STONE);
 		scMagmaRockEndScript();
@@ -1447,14 +1451,14 @@ void scMagmaRockKnockLeaderOffWall(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetFlag(FLAG_LEADER_KNOCKED_DOWN);
-	fdScriptPlaySnd(SE_IMPACT);
-	scFieldActorSetSprCol(
+	fdScriptPlaySound(SE_IMPACT);
+	scFieldActorSetSpriteColor(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_GREY);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB);
 	fdActorSetAnimationSpeedById(
 		MainRoutineStateWork.leaderActorId, ANIM_STEP_NORMAL * 2);
-	options.pri = 1;
-	options.pal = SPRITE_COLOR_BLACK;
+	options.priority = 1;
+	options.palette = SPRITE_COLOR_BLACK;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	for(i = 0; i != 8; i++) {
@@ -1468,7 +1472,7 @@ void scMagmaRockKnockLeaderOffWall(void)
 	}
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	leader->gravity = toFIXED(4) / 5;
 	leader->bounce = 0;
 	fdScriptWait(1);
@@ -1489,12 +1493,12 @@ void scMagmaRockKnockLeaderOffWall(void)
 				&options);
 		}
 		sySynch(1);
-		if(leader->velY == 0)
+		if(leader->velocityY == 0)
 			break;
 		i--;
 	} while(i != 0);
-	fdScriptPlaySnd(SE_THUMP);
-	fdActorSetSprFlags(leader, 1);
+	fdScriptPlaySound(SE_THUMP);
+	fdActorSetSpriteFlags(leader, 1);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
 	fdMapGridSetShake(5, 8, 1);
@@ -1503,7 +1507,8 @@ void scMagmaRockKnockLeaderOffWall(void)
 	fdCameraMoveToActor(MainRoutineStateWork.leaderActorId, 1);
 	fdCameraWaitForArrival();
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_SHAKE_HEAD);
-	scFieldActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId),
+	scFieldActorSetSpriteColor(
+		fdActorGetById(MainRoutineStateWork.leaderActorId),
 		SPRITE_COLOR_NORMAL);
 	fdActorWaitForAnimationChange(MainRoutineStateWork.leaderActorId);
 	fdScriptClearFlag(FLAG_LEADER_KNOCKED_DOWN);
@@ -1639,7 +1644,7 @@ void scMagmaRockScatterEmbers(Sint32 x, Sint32 z)
 	config.type = SPRITE_FLAME_PUFF;
 	kind = 1;
 	config.script = MagmaRockEmberScript;
-	config.pri = kind;
+	config.priority = kind;
 	for(i = 0; i != 4; i++) {
 		pos[0] = x + toFIXED(syRandom() & 63) - toFIXED(32);
 		pos[1] = (syRandom() & 15) << 12;
@@ -1657,9 +1662,9 @@ void scMagmaRockScatterEmbers(Sint32 x, Sint32 z)
 void scMagmaRockFlashTarget(ACTOR *actor)
 {
 	if(TickCount & actor->flashMask)
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
 	else
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
 /* The statue's fireball explodes on the great fire on the top of Magma Rock:
@@ -1670,32 +1675,35 @@ void scMagmaRockFlashTarget(ACTOR *actor)
    those metatiles from spare ones below the room. */
 void scMagmaRockBlastWayIn(Sint32 stage, Sint32 tick)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 
 	if(tick == 0) {
 		ACTOR *actor;
 
 		scMagmaRockStartFallingRocks();
-		actor = state->tgt;
+		actor = state->target;
 		actor->flashMask = 4;
 		actor->update = (void *)scMagmaRockFlashTarget;
 	}
 	if(stage == BURST_STAGE_SMALL_BLAST) {
-		scMagmaRockScatterEmbers(state->tgt->x.fixed, state->tgt->z.fixed);
-		scMagmaRockDropRocks(state->tgt->x.fixed,
-			state->tgt->y.fixed + toFIXED(15), state->tgt->z.fixed, 1);
+		scMagmaRockScatterEmbers(
+			state->target->x.fixed, state->target->z.fixed);
+		scMagmaRockDropRocks(state->target->x.fixed,
+			state->target->y.fixed + toFIXED(15), state->target->z.fixed, 1);
 	}
 	if(stage == BURST_STAGE_GREAT_BLAST) {
 		ACTOR *target;
 		Sint32 last = 8;
 
-		scMagmaRockScatterEmbers(state->tgt->x.fixed, state->tgt->z.fixed);
-		scMagmaRockScatterEmbers(state->tgt->x.fixed, state->tgt->z.fixed);
 		scMagmaRockScatterEmbers(
-			state->tgt->x.fixed, state->tgt->z.fixed - toFIXED(32));
-		scMagmaRockDropRocks(state->tgt->x.fixed,
-			state->tgt->y.fixed + toFIXED(15), state->tgt->z.fixed, 16);
-		target = state->tgt;
+			state->target->x.fixed, state->target->z.fixed);
+		scMagmaRockScatterEmbers(
+			state->target->x.fixed, state->target->z.fixed);
+		scMagmaRockScatterEmbers(
+			state->target->x.fixed, state->target->z.fixed - toFIXED(32));
+		scMagmaRockDropRocks(state->target->x.fixed,
+			state->target->y.fixed + toFIXED(15), state->target->z.fixed, 16);
+		target = state->target;
 		SET_ACTOR_POSITION(target, 0, 0, 0);
 		fdMapGridCopyMetatileAttributes(0, 32, 5, 8, 42, 17);
 		fdMapGridCopyMetatileAttributes(0, 96, 5, 8, 42, 81);
@@ -1750,8 +1758,8 @@ void scMagmaRockLaunchLeader(void)
 	ACTOR		  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	EFFECT_OPTIONS options;
 	Uint32		   i;
-	Sint32		   ang;
-	FIXED		   vel[3];
+	Sint32		   angle;
+	FIXED		   velocity[3];
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -1761,31 +1769,31 @@ void scMagmaRockLaunchLeader(void)
 	leader->y.fixed += toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdScriptPlaySound(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
-		ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = syMathSin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
-		vel[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
+		angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = syMathSin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
-	fdScriptPlaySnd(SE_THUMP);
+	fdScriptPlaySound(SE_THUMP);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(
@@ -1818,10 +1826,10 @@ void scMagmaRockLandLeader(void)
 		syWait(1);
 		height =
 			fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
-		actor->velY = 0;
+		actor->velocityY = 0;
 		actor->groundHeight = height;
 		actor->y.fixed = height;
-		actor->tgtY = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
 		syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
 	}
 }
@@ -1833,7 +1841,7 @@ static inline void AttachPart(ACTOR *part, ACTOR *anchor, Uint8 order)
 	part->flameLevel = order;
 	part->watchedActor = (FIELD_OBJECT *)anchor;
 	part->update = scMagmaRockRaiseFlamePart;
-	scFieldActorSetSprCol(part, SPRITE_COLOR_BGR);
+	scFieldActorSetSpriteColor(part, SPRITE_COLOR_BGR);
 }
 
 /* Builds the four parts of a statue's flame column on re-entry, as
@@ -1850,25 +1858,25 @@ static inline void BuildParts(ACTOR *anchor)
 		anchor->x.fixed + toFIXED(1), anchor->y.fixed + toFIXED(32),
 		anchor->z.fixed));
 	for(i = 1; i != 4; i++) {
-		first = parts[0]->spr;
+		first = parts[0]->sprite;
 		part = ((ACTOR *)syImportActorCreate(SPRITE_STEAM_VENT, 0, 0, 0));
 		parts[i] = part;
-		sprite = part->spr;
+		sprite = part->sprite;
 		sprite->slot = first->slot;
 		sprite->retainCacheEntry = 1;
 		part->x.fixed = parts[0]->x.fixed;
 		part->y.fixed = parts[0]->y.fixed;
 		part->z.fixed = parts[0]->z.fixed;
-		part->motionFlg = 0;
-		fdActorSetSprFlags(part, 0);
+		part->motionFlags = 0;
+		fdActorSetSpriteFlags(part, 0);
 		fdActorSelectAnimation(parts[i], 3);
 		AttachPart(parts[i], anchor, i - 1);
 	}
 	part = parts[0];
-	part->motionFlg = 0;
-	fdActorSetSprFlags(part, 0);
+	part->motionFlags = 0;
+	fdActorSetSpriteFlags(part, 0);
 	fdActorSelectAnimation(parts[0], 3);
-	fdSetActorSprPriority(parts[0], 3);
+	fdSetActorSpritePriority(parts[0], 3);
 	AttachPart(parts[0], anchor, 3);
 }
 
@@ -1893,8 +1901,8 @@ Sint32 scInit(void)
 	Sint16			   *entrance;
 	ACTOR			   *actor;
 	FIXED				nudge, rise;
-	FIXED				ofs;
-	Sint32				priBit, dstX, dstColumn, width;
+	FIXED				offset;
+	Sint32				priorityBit, destX, destColumn, width;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1903,10 +1911,10 @@ Sint32 scInit(void)
 	state->retreatEntrance = MAGMA_ROCK_SLIDE_FROM_WORLD_MAP;
 	scene = state->next;
 	if(scene == SCENE_MAGMA_ROCK_SLIDE) {
-		priBit = ACTOR_PRIORITY_IGNORES_RISES;
-		fdActorGetById(state->leaderActorId)->priFlg |= priBit;
-		fdActorGetById(ACTOR_SLIDE_PILLAR_A)->priFlg |= priBit;
-		fdActorGetById(ACTOR_SLIDE_PILLAR_B)->priFlg |= priBit;
+		priorityBit = ACTOR_PRIORITY_IGNORES_RISES;
+		fdActorGetById(state->leaderActorId)->priorityFlags |= priorityBit;
+		fdActorGetById(ACTOR_SLIDE_PILLAR_A)->priorityFlags |= priorityBit;
+		fdActorGetById(ACTOR_SLIDE_PILLAR_B)->priorityFlags |= priorityBit;
 		scMagmaRockInsideRaiseActorMetatiles(MagmaRockSlideStatues);
 		if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
 			scMagmaRockPlaceFireball(
@@ -1915,30 +1923,30 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_SLIDE_PILLAR_A, 264, 360);
 		if(fdScriptGetFlag(FLAG_SLIDE_PILLAR_B_PUSHED))
 			fdActorSetPos(ACTOR_SLIDE_PILLAR_B, 248, 408);
-		dstX = 78;
+		destX = 78;
 		fdActorPlaceBlocks(MagmaRockSlidePillars);
-		fdMapGridCopyMetatileAttributes(98, 21, 4, 3, dstX, 21);
-		fdMapGridCopyMetatileAttributes(98, 27, 4, 3, dstX, 24);
+		fdMapGridCopyMetatileAttributes(98, 21, 4, 3, destX, 21);
+		fdMapGridCopyMetatileAttributes(98, 27, 4, 3, destX, 24);
 		scBlocksMarkMetatiles(MagmaRockSlidePillars);
 		if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
 			actor = fdActorGetById(ACTOR_SLIDE_STATUE_CAP);
 			actor->x.fixed += toFIXED(1);
-			actor->motionFlg = 0;
-			actor->collisionFlg = 0;
+			actor->motionFlags = 0;
+			actor->collisionFlags = 0;
 			actor->groundHeight = actor->y.fixed += toFIXED(24);
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 		}
 		scMagmaRockRebuildFlameParts(ACTOR_SLIDE_STATUE_CAP);
 		switch(state->entrance) {
 		case MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_WEST:
 		case MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST:
-			ofs = toFIXED(16);
+			offset = toFIXED(16);
 			goto move;
 		}
 		goto settle;
 	} else if(scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
 		owner = &state->leaderActorId;
-		fdActorGetById(*owner)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+		fdActorGetById(*owner)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 		entrance = &state->entrance;
 		if(state->entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
 			Sint32 id;
@@ -1971,24 +1979,24 @@ Sint32 scInit(void)
 				Sint32 id;
 
 				if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-					fdActorGetById(ACTOR_STATUE_PAIR_A_WEST)->motionFlg = 0;
+					fdActorGetById(ACTOR_STATUE_PAIR_A_WEST)->motionFlags = 0;
 					rise = toFIXED(80);
 					fdActorGetById(ACTOR_STATUE_PAIR_A_WEST)->y.fixed += rise;
-					fdActorGetById(ACTOR_STATUE_PAIR_A_EAST)->motionFlg = 0;
+					fdActorGetById(ACTOR_STATUE_PAIR_A_EAST)->motionFlags = 0;
 					fdActorGetById(ACTOR_STATUE_PAIR_A_EAST)->y.fixed += rise;
 					scMagmaRockPlaceFireball(
 						ACTOR_FIREBALL_A, ACTOR_STATUE_PAIR_A_WEST, 0);
-					fdActorGetById(ACTOR_STATUE_PAIR_B_WEST)->motionFlg = 0;
+					fdActorGetById(ACTOR_STATUE_PAIR_B_WEST)->motionFlags = 0;
 					rise = toFIXED(160);
 					fdActorGetById(ACTOR_STATUE_PAIR_B_WEST)->y.fixed += rise;
-					fdActorGetById(ACTOR_STATUE_PAIR_B_EAST)->motionFlg = 0;
+					fdActorGetById(ACTOR_STATUE_PAIR_B_EAST)->motionFlags = 0;
 					fdActorGetById(ACTOR_STATUE_PAIR_B_EAST)->y.fixed += rise;
 					scMagmaRockPlaceFireball(
 						ACTOR_FIREBALL_B, ACTOR_STATUE_PAIR_B_WEST, 1);
-					fdActorGetById(ACTOR_STATUE_PAIR_C_WEST)->motionFlg = 0;
+					fdActorGetById(ACTOR_STATUE_PAIR_C_WEST)->motionFlags = 0;
 					rise = toFIXED(240);
 					fdActorGetById(ACTOR_STATUE_PAIR_C_WEST)->y.fixed += rise;
-					fdActorGetById(ACTOR_STATUE_PAIR_C_EAST)->motionFlg = 0;
+					fdActorGetById(ACTOR_STATUE_PAIR_C_EAST)->motionFlags = 0;
 					fdActorGetById(ACTOR_STATUE_PAIR_C_EAST)->y.fixed += rise;
 					scMagmaRockPlaceFireball(
 						ACTOR_FIREBALL_C, ACTOR_STATUE_PAIR_C_WEST, 0);
@@ -2002,16 +2010,16 @@ Sint32 scInit(void)
 					actor = fdActorGetById(ACTOR_HIGH_EAST_STATUE_CAP_A);
 					nudge = toFIXED(1);
 					actor->x.fixed += nudge;
-					actor->motionFlg = 0;
-					actor->collisionFlg = 0;
+					actor->motionFlags = 0;
+					actor->collisionFlags = 0;
 					actor->groundHeight = actor->y.fixed += toFIXED(24);
-					fdActorSetSprFlags(actor, 0);
+					fdActorSetSpriteFlags(actor, 0);
 					actor = fdActorGetById(ACTOR_HIGH_EAST_STATUE_CAP_B);
 					actor->x.fixed += nudge;
-					actor->motionFlg = 0;
-					actor->collisionFlg = 0;
+					actor->motionFlags = 0;
+					actor->collisionFlags = 0;
 					actor->groundHeight = actor->y.fixed += toFIXED(24);
-					fdActorSetSprFlags(actor, 0);
+					fdActorSetSpriteFlags(actor, 0);
 				}
 				scMagmaRockRebuildFlameParts(ACTOR_HIGH_EAST_STATUE_CAP_A);
 				scMagmaRockRebuildFlameParts(ACTOR_HIGH_EAST_STATUE_CAP_B);
@@ -2031,7 +2039,7 @@ Sint32 scInit(void)
 					scLeaderLift(toFIXED(-48));
 				} else if(id ==
 					MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_STATUE_EAST_B) {
-					ofs = toFIXED(104);
+					offset = toFIXED(104);
 					goto move;
 				}
 			} else if(*entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
@@ -2049,22 +2057,22 @@ Sint32 scInit(void)
 					actor = fdActorGetById(ACTOR_LOW_WEST_STATUE_CAP_A);
 					nudge = toFIXED(1);
 					actor->x.fixed += nudge;
-					actor->motionFlg = 0;
-					actor->collisionFlg = 0;
+					actor->motionFlags = 0;
+					actor->collisionFlags = 0;
 					actor->groundHeight = actor->y.fixed += toFIXED(24);
-					fdActorSetSprFlags(actor, 0);
+					fdActorSetSpriteFlags(actor, 0);
 					actor = fdActorGetById(ACTOR_LOW_WEST_STATUE_CAP_B);
 					actor->x.fixed += nudge;
-					actor->motionFlg = 0;
-					actor->collisionFlg = 0;
+					actor->motionFlags = 0;
+					actor->collisionFlags = 0;
 					actor->groundHeight = actor->y.fixed += toFIXED(24);
-					fdActorSetSprFlags(actor, 0);
+					fdActorSetSpriteFlags(actor, 0);
 				}
 				scMagmaRockRebuildFlameParts(ACTOR_LOW_WEST_STATUE_CAP_A);
 				scMagmaRockRebuildFlameParts(ACTOR_LOW_WEST_STATUE_CAP_B);
 				if(*entrance == ENTRANCE_LOW_WEST_FROM_ABOVE_A ||
 					*entrance == ENTRANCE_LOW_WEST_FROM_ABOVE_B) {
-					ofs = toFIXED(48);
+					offset = toFIXED(48);
 					goto move;
 				}
 			} else {
@@ -2073,10 +2081,10 @@ Sint32 scInit(void)
 				if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
 					actor = fdActorGetById(ACTOR_LOW_EAST_STATUE_CAP);
 					actor->x.fixed += toFIXED(1);
-					actor->motionFlg = 0;
-					actor->collisionFlg = 0;
+					actor->motionFlags = 0;
+					actor->collisionFlags = 0;
 					actor->groundHeight = actor->y.fixed += toFIXED(24);
-					fdActorSetSprFlags(actor, 0);
+					fdActorSetSpriteFlags(actor, 0);
 				}
 				scMagmaRockRebuildFlameParts(ACTOR_LOW_EAST_STATUE_CAP);
 				if(fdScriptGetFlag(FLAG_LOW_EAST_PILLAR_A_PUSHED))
@@ -2100,9 +2108,9 @@ Sint32 scInit(void)
 						actor = fdActorGetById(state->leaderActorId);
 						actor->z.fixed += toFIXED(16);
 					}
-					ofs = -toFIXED(32);
+					offset = -toFIXED(32);
 				move:
-					scLeaderLift(ofs);
+					scLeaderLift(offset);
 				}
 			}
 		settle:
@@ -2111,14 +2119,14 @@ Sint32 scInit(void)
 	} else if(scene == SCENE_MAGMA_ROCK_STATUE) {
 		if(fdScriptGetFlag(FLAG_WAY_IN_BLASTED)) {
 			fdActorSetPos(ACTOR_GREAT_FIRE, 0, 0);
-			dstColumn = 42;
-			fdMapGridCopyMetatileAttributes(0, 32, 5, 8, dstColumn, 17);
-			fdMapGridCopyMetatileAttributes(0, 96, 5, 8, dstColumn, 81);
+			destColumn = 42;
+			fdMapGridCopyMetatileAttributes(0, 32, 5, 8, destColumn, 17);
+			fdMapGridCopyMetatileAttributes(0, 96, 5, 8, destColumn, 81);
 			fdMapGridCopyMetatilesTo(0, 32, 42, 17, 5, 8);
 			fdMapGridCopyMetatilesTo(0, 96, 42, 81, 5, 8);
 		}
 		leader = &state->leaderActorId;
-		fdActorGetById(*leader)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+		fdActorGetById(*leader)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 		scMagmaRockInsideRaiseActorMetatiles(MagmaRockStatueStatues);
 		if(state->entrance <=
 			MAGMA_ROCK_STATUE_FROM_MAGMA_ROCK_SALAMANDER_TAIL_CHEST_EAST_B) {
@@ -2139,38 +2147,38 @@ Sint32 scPrepareMap(void)
 
 /* On entry: sets each listed pillar from its two flags (cracked, then fallen),
    then lifts the leader onto the ground under it. */
-void scMagmaRockRestoreCrumblingPillars(const Uint16 *tbl)
+void scMagmaRockRestoreCrumblingPillars(const Uint16 *table)
 {
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
-	Sint32		  flg;
-	Sint32		  nextFlg;
+	Sint32		  flag;
+	Sint32		  nextFlag;
 	MAP_METATILE *metatiles;
 	Uint8		 *shapes;
 	MAP_METATILE *metatile;
-	Sint32		  idx;
+	Sint32		  index;
 	ACTOR		 *leader;
 	Sint32		  ground;
 
-	for(; *tbl != ACTOR_LIST_END; tbl += 2) {
-		id = tbl[0];
+	for(; *table != ACTOR_LIST_END; table += 2) {
+		id = table[0];
 		actor = fdActorGet(id);
-		flg = tbl[1];
-		nextFlg = flg + 1;
+		flag = table[1];
+		nextFlag = flag + 1;
 		metatiles = map->layers[actor->layer].metatiles;
 		shapes =
 			MapShapeGrid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
-		if(fdScriptGetFlag(nextFlg)) {
+		if(fdScriptGetFlag(nextFlag)) {
 			fdActorSetPos(id, 0, 0);
 		} else {
 			Sint32 shape;
 			Uint8 *slot;
 			Sint32 height;
 
-			idx = fdActorGetMetatileIndex(actor);
-			metatile = &metatiles[idx];
-			slot = shapes + idx;
+			index = fdActorGetMetatileIndex(actor);
+			metatile = &metatiles[index];
+			slot = shapes + index;
 			shape = fdMapGridGetTerrainKind(
 				actor->layer, actor->x.fixed, actor->z.fixed);
 			height = fdMapGetTerrainHeight(
@@ -2179,7 +2187,7 @@ void scMagmaRockRestoreCrumblingPillars(const Uint16 *tbl)
 			metatile->attributeB = MAP_METATILE_JUMP;
 			*slot = fdMapShapeFindOrAdd(
 				actor->layer, shape, METATILE_HEIGHT_STEPS(height) + 4);
-			if(fdScriptGetFlag(flg))
+			if(fdScriptGetFlag(flag))
 				fdActorSelectAnimation(actor, 0);
 		}
 	}
@@ -2200,7 +2208,7 @@ void scMagmaRockSpawnDustRing(void);
 void scMagmaRockStepOnCrumblingPillar(Uint16 *list)
 {
 	ACTOR *leader;
-	ACTOR *tgt;
+	ACTOR *target;
 	FIXED  pos[3];
 
 	if(fdTryJumpForward() != 0)
@@ -2209,54 +2217,58 @@ void scMagmaRockStepOnCrumblingPillar(Uint16 *list)
 	pos[0] = leader->x.fixed;
 	pos[1] = leader->y.fixed;
 	pos[2] = leader->z.fixed;
-	tgt = fdActorFindAtMetatile(pos, 0);
-	if(tgt == NULL)
+	target = fdActorFindAtMetatile(pos, 0);
+	if(target == NULL)
 		return;
 	while(list[0] != ACTOR_LIST_END) {
 		Sint32 id = list[0];
 
-		if(fdActorGetById(id) != tgt) {
+		if(fdActorGetById(id) != target) {
 			list += 2;
 			continue;
 		}
 		{
-			Sint32 flg = list[1];
+			Sint32 flag = list[1];
 
 			fdScriptStart();
-			if(!fdScriptGetFlag(flg)) {
-				fdScriptPlaySnd(SE_CHEST_CLOSE);
-				scFieldActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+			if(!fdScriptGetFlag(flag)) {
+				fdScriptPlaySound(SE_CHEST_CLOSE);
+				scFieldActorSetSpriteColor(
+					fdActorGetById(id), SPRITE_COLOR_WHITE);
 				sySynch(2);
-				fdActorSelectAnimation(tgt, 0);
-				scFieldActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+				fdActorSelectAnimation(target, 0);
+				scFieldActorSetSpriteColor(
+					fdActorGetById(id), SPRITE_COLOR_NORMAL);
 				sySynch(2);
-				scFieldActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+				scFieldActorSetSpriteColor(
+					fdActorGetById(id), SPRITE_COLOR_WHITE);
 				sySynch(4);
-				scFieldActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+				scFieldActorSetSpriteColor(
+					fdActorGetById(id), SPRITE_COLOR_NORMAL);
 				scDustScatter(0);
-				fdScriptSetFlag(flg);
-			} else if(!fdScriptGetFlag(flg + 1)) {
-				leader->motionFlg = 0;
-				fdScriptPlaySnd(SE_PUSH);
+				fdScriptSetFlag(flag);
+			} else if(!fdScriptGetFlag(flag + 1)) {
+				leader->motionFlags = 0;
+				fdScriptPlaySound(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
 				sySynch(8);
-				fdActorSelectAnimation(tgt, 2);
-				fdLeaderSetMetatileShapeAt(-2, tgt->layer);
+				fdActorSelectAnimation(target, 2);
+				fdLeaderSetMetatileShapeAt(-2, target->layer);
 				scDustScatter(1);
 				sySynch(16);
-				fdLeaderSetMetatileShapeAt(-2, tgt->layer);
+				fdLeaderSetMetatileShapeAt(-2, target->layer);
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
-				fdActorSetPosAndResetMotion(tgt, 0, 0, 0);
+				fdActorSetPosAndResetMotion(target, 0, 0, 0);
 				sySynch(2);
-				fdScriptPlaySnd(SE_THUMP);
+				fdScriptPlaySound(SE_THUMP);
 				scMagmaRockSpawnDustRing();
 				sySynch(20);
-				fdScriptSetFlag(flg + 1);
+				fdScriptSetFlag(flag + 1);
 			}
 		}
 		scMagmaRockEndScript();
@@ -2269,37 +2281,37 @@ void scMagmaRockStepOnCrumblingPillar(Uint16 *list)
 UNUSED void scMagmaRockCrumblePillar(
 	MAGMA_ROCK_CRUMBLING_PILLAR *entry, Sint32 id)
 {
-	ACTOR *tgt;
-	Sint32 flg;
-	Sint32 nextFlg;
+	ACTOR *target;
+	Sint32 flag;
+	Sint32 nextFlag;
 
-	tgt = fdActorGet(id);
+	target = fdActorGet(id);
 	while(entry->id != ACTOR_LIST_END) {
 		if(entry->id != id) {
 			entry++;
 			continue;
 		}
-		flg = entry->flg;
+		flag = entry->flags;
 		fdScriptStart();
-		nextFlg = flg + 1;
-		if(fdScriptGetFlag(nextFlg) == 0) {
-			fdScriptPlaySnd(SE_PUSH);
+		nextFlag = flag + 1;
+		if(fdScriptGetFlag(nextFlag) == 0) {
+			fdScriptPlaySound(SE_PUSH);
 			fdMapGridSetShake(1, 4, 1);
 			scDustScatter(0);
 			syWait(8);
-			fdActorSelectAnimation(tgt, 2);
-			fdActorSetMetatileShape(-4, tgt->layer, id);
+			fdActorSelectAnimation(target, 2);
+			fdActorSetMetatileShape(-4, target->layer, id);
 			scDustScatter(1);
 			syWait(16);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			syWait(8);
-			scFieldActorSetPosAndResetMotion(tgt, 0, 0, 0);
+			scFieldActorSetPosAndResetMotion(target, 0, 0, 0);
 			syWait(2);
-			fdScriptPlaySnd(SE_THUMP);
+			fdScriptPlaySound(SE_THUMP);
 			scMagmaRockSpawnDustRing();
 			syWait(20);
-			fdScriptSetFlag(flg);
-			fdScriptSetFlag(nextFlg);
+			fdScriptSetFlag(flag);
+			fdScriptSetFlag(nextFlag);
 		}
 		scMagmaRockEndScript();
 		return;
@@ -2318,7 +2330,7 @@ UNUSED void scMagmaRockStepOnTrap(Uint16 *list)
 {
 	ACTOR *leader;
 	ACTOR *firstPlaced;
-	ACTOR *tgt;
+	ACTOR *target;
 	FIXED  pos[3];
 
 	if(fdTryJumpForward() != 0)
@@ -2328,70 +2340,70 @@ UNUSED void scMagmaRockStepOnTrap(Uint16 *list)
 	pos[0] = leader->x.fixed;
 	pos[1] = leader->y.fixed;
 	pos[2] = leader->z.fixed;
-	tgt = fdActorFindAtMetatile(pos, 0);
-	if(tgt == NULL)
+	target = fdActorFindAtMetatile(pos, 0);
+	if(target == NULL)
 		return;
 	while(*list != ACTOR_LIST_END) {
 		Uint32 id = list[0];
 
-		if(fdActorGetById(id) != tgt) {
+		if(fdActorGetById(id) != target) {
 			list += 2;
 			continue;
 		}
 		{
-			Sint32 flg = list[1];
+			Sint32 flag = list[1];
 
 			fdScriptStart();
-			if(!fdScriptGetFlag(flg)) {
+			if(!fdScriptGetFlag(flag)) {
 				fdActorSelectAnimation(firstPlaced, 1);
-				scActorTakePlaceOf(firstPlaced, tgt);
+				scActorTakePlaceOf(firstPlaced, target);
 				sySynch(1);
-				fdScriptPlaySnd(SE_CHEST_CLOSE);
-				scFieldActorSetSprCol(
+				fdScriptPlaySound(SE_CHEST_CLOSE);
+				scFieldActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_WHITE);
 				sySynch(2);
 				fdActorSelectAnimation(firstPlaced, 0);
 				fdActorCopyGraphics(id, ACTOR_FIRST_PLACED + 1);
-				scFieldActorSetSprCol(
+				scFieldActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_NORMAL);
 				sySynch(2);
-				scFieldActorSetSprCol(
+				scFieldActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_WHITE);
 				sySynch(4);
-				scFieldActorSetSprCol(
+				scFieldActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_NORMAL);
 				scDustScatter(0);
-				scActorTakePlaceOf(tgt, firstPlaced);
+				scActorTakePlaceOf(target, firstPlaced);
 				sySynch(1);
-				fdScriptSetFlag(flg);
-			} else if(!fdScriptGetFlag(flg + 1)) {
-				Uint8 *motionFlg;
+				fdScriptSetFlag(flag);
+			} else if(!fdScriptGetFlag(flag + 1)) {
+				Uint8 *motionFlags;
 
 				fdActorSelectAnimation(firstPlaced, 0);
-				scActorTakePlaceOf(firstPlaced, tgt);
+				scActorTakePlaceOf(firstPlaced, target);
 				sySynch(1);
-				motionFlg = &leader->motionFlg;
-				*motionFlg = 0;
-				fdScriptPlaySnd(SE_PUSH);
+				motionFlags = &leader->motionFlags;
+				*motionFlags = 0;
+				fdScriptPlaySound(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
 				sySynch(8);
 				fdActorSelectAnimation(firstPlaced, 2);
-				fdLeaderSetMetatileShapeAt(-2, tgt->layer);
+				fdLeaderSetMetatileShapeAt(-2, target->layer);
 				scDustScatter(1);
 				sySynch(16);
-				fdLeaderSetMetatileShapeAt(-2, tgt->layer);
+				fdLeaderSetMetatileShapeAt(-2, target->layer);
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				*motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				*motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
 				fdActorSetPosAndResetMotion(firstPlaced, 0, 0, 0);
 				sySynch(2);
-				fdScriptPlaySnd(SE_THUMP);
+				fdScriptPlaySound(SE_THUMP);
 				scMagmaRockSpawnDustRing();
 				sySynch(20);
-				fdScriptSetFlag(flg + 1);
+				fdScriptSetFlag(flag + 1);
 			}
 			scMagmaRockEndScript();
 			return;
@@ -2411,7 +2423,7 @@ void scMagmaRockSpawnDustRing(void)
 	FIELD_EFFECT *effect;
 	Sint32		  state;
 	Uint32		  i;
-	Sint32		  ang;
+	Sint32		  angle;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	if(leader == NULL)
@@ -2421,24 +2433,26 @@ void scMagmaRockSpawnDustRing(void)
 		effect = (FIELD_EFFECT *)scFieldActorCreate(SPRITE_DUST_CLOUD,
 			leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		if(effect != NULL) {
-			state = fdSprShareVRAMCacheEntry(effect->spr, state);
-			effect->motionFlg = 0;
-			effect->collisionFlg = 0;
-			fdActorSetSprFlags((ACTOR *)effect, 0);
+			state = fdSpriteShareVRAMCacheEntry(effect->sprite, state);
+			effect->motionFlags = 0;
+			effect->collisionFlags = 0;
+			fdActorSetSpriteFlags((ACTOR *)effect, 0);
 			fdActorSelectAnimation(effect, 2);
 			fdActorStartScript(effect, DustBurstScript);
-			ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-			effect->vel.x = syCos(ang);
-			effect->vel.y = 0;
-			effect->vel.z = syMathSin(ang);
-			effect->vel.x += effect->vel.x >> 1;
-			effect->vel.x += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
-			effect->vel.z += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
+			angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+			effect->velocity.x = syCos(angle);
+			effect->velocity.y = 0;
+			effect->velocity.z = syMathSin(angle);
+			effect->velocity.x += effect->velocity.x >> 1;
+			effect->velocity.x +=
+				(syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
+			effect->velocity.z +=
+				(syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
 			effect->spin = (syRandomBelow(TRIG_TURN / 16)) - TRIG_TURN / 32;
 			effect->scaleRateX = 0;
 			effect->scaleRateY = 0;
 			effect->update = fdEffectAdvanceMotionAtLeaderPriority;
-			effect->spr->pri = ((FIELD_SPR *)leader->spr)->pri;
+			effect->sprite->priority = ((FIELD_SPR *)leader->sprite)->priority;
 		}
 	}
 }
@@ -2452,30 +2466,30 @@ Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 #include "shared/particle_update_falling.h"
 
 /* Drops count rocks from (x, y, z), each flung out at a random angle. */
-void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
+void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count)
 {
 	ROCK_STATE *state;
 	Sint32		i;
 
 	state = RamHeapSlots->menuState;
-	if(cnt > 0) {
-		i = cnt;
+	if(count > 0) {
+		i = count;
 		do {
 			ROCK  *rock;
-			Sint32 ang = syRandom();
+			Sint32 angle = syRandom();
 
 			rock = &state->rocks[state->next];
-			rock->tmr = 0;
+			rock->timer = 0;
 			rock->pos[0] = x;
 			rock->pos[1] = y;
 			rock->pos[2] = z;
 			syFieldVectorAddPolarOffsetFX(
-				syRandom() * 8 + toFIXED(8), ang, rock->pos);
-			rock->vel[0] = 0;
-			rock->vel[1] = toFIXED(5);
-			rock->vel[2] = 0;
+				syRandom() * 8 + toFIXED(8), angle, rock->pos);
+			rock->velocity[0] = 0;
+			rock->velocity[1] = toFIXED(5);
+			rock->velocity[2] = 0;
 			syFieldVectorAddPolarOffsetFX(
-				syRandom() * 2 + toFIXED(2), ang, rock->vel);
+				syRandom() * 2 + toFIXED(2), angle, rock->velocity);
 			{
 				Sint32 mask = ROCK_COUNT - 1;
 
@@ -2487,18 +2501,18 @@ void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 }
 
 /* The overlay's import stub to the tagged LZ decompressor. */
-void syImportDecompressTaggedLZ(void *entry, void *dst);
+void syImportDecompressTaggedLZ(void *entry, void *dest);
 
 /* Starts the falling rocks: loads their picture, prepares a small sprite for
    each rock and adds the event that draws them. */
 void scMagmaRockStartFallingRocks(void)
 {
-	ROCK_STATE *state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
+	ROCK_STATE *state = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
 	Sint32		entry;
 	Sint32		tile;
 	Sint32		i;
 	ROCK	   *rock;
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 
 	syImportDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
@@ -2508,13 +2522,13 @@ void scMagmaRockStartFallingRocks(void)
 	state->resource = entry;
 	rock = state->rocks;
 	for(i = 0; i < ROCK_COUNT; i++) {
-		spr = &state->sprs[i];
-		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = SPRITE_COLOR_NORMAL;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
-		rock->tmr = -1;
+		sprite = &state->sprites[i];
+		fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = SPRITE_COLOR_NORMAL;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		rock->timer = -1;
 		rock++;
 	}
 	state->next = 0;

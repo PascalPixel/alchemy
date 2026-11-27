@@ -9,7 +9,7 @@ static void scActorWaitUntilIdle(ACTOR *actor)
 	ticks = TICKS_PER_SECOND;
 	while(ticks != 0) {
 		sySynch(1);
-		busy = actor->velY;
+		busy = actor->velocityY;
 		ticks--;
 		if(busy == 0)
 			break;

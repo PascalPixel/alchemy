@@ -13,7 +13,7 @@
 	 (system_frame.c), sySetEvent (system_event.c);
    - the screen: syScreenFadeStart (system_screen_fade.c), syOAMBuildBuffer
 	 (system_oam.c), syVRAMCacheLoad (system_vram_cache.c);
-   - memory: syHeapSlotAlloc and syHeapAlloc (system_heap.c);
+   - memory: syHeapSlotAllocate and syHeapAllocate (system_heap.c);
    - 3D: syMatrixRotateTranslate and syConvert3Dto2D (system_matrix.c);
    - saving: syBupWritePart and syBupReadPart (system_bup.c);
    - the link cable: sySerialInit and sySerialExchangePayloads

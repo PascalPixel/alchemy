@@ -117,7 +117,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	/* the battle background chosen for the scene or battle environment */
 	Sint16 battleBg;
 	Uint8  unusedAfterBg[2];
-	/* The scene's map (SCENE.mapIdx); the World Map's is MAP_INDEX_WORLD. */
+	/* The scene's map (SCENE.mapIndex); the World Map's is MAP_INDEX_WORLD. */
 	Sint16 mapId;
 	FIXED  x;			  /* 16.16 fixed-point pixels */
 	FIXED  y;			  /* 16.16 fixed-point pixels */
@@ -130,8 +130,8 @@ typedef struct MAIN_ROUTINE_STATE {
 	Sint32 leaderActorId; /* the leader: its unit and its actor */
 	Uint8  party[8];	  /* the party in order */
 	Uint8  unusedAfterParty[5];
-	Uint8  winHue;		  /* the "Window color" setting, 0 to 23 */
-	Uint8  winBrightness; /* the "Window brightness" setting, 0 to 14 */
+	Uint8  windowHue;		 /* the "Window color" setting, 0 to 23 */
+	Uint8  windowBrightness; /* the "Window brightness" setting, 0 to 14 */
 	Uint8  unusedAfterBrightness[3];
 	/* The voice sound option: 1, as on a new game, plays each speaker's voice
 	   sound as their message types (fdSpeakerGetVoice). */
@@ -140,8 +140,8 @@ typedef struct MAIN_ROUTINE_STATE {
 	Uint8 msgSpeed;			 /* 0 to 2; 1 on a new game */
 	Uint8 unusedAfterMsgSpeed[2];
 	/* Set on saving at the end of the game, marking the file cleared: its data
-	   can be sent. Copied to the file's summary as sendFlg. */
-	Uint8 sendFlg;
+	   can be sent. Copied to the file's summary as sendFlag. */
+	Uint8 sendFlag;
 	/* The buttons for each field command, as KEY_ masks; read with PerPush
 	   except dashKeys, held. */
 	Uint16 aKeys; /* examine; KEY_A */
@@ -185,7 +185,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	Sint8  avoidByItem;	  /* Avoid came from an item (the Sacred Feather) */
 	/* Halt: the stopped actor's sprite colour mode, which Halt flickers and
 	   puts back when the actor resumes. */
-	Sint8  haltedColMode;
+	Sint8  haltedColorMode;
 	Sint16 haltedActor; /* Halt: the stopped actor; -1 for none */
 	Sint16 cloaked;		/* 1 under Cloak, which prevents battles */
 	/* Halt: the stopped actor's per-tick update, put back when it resumes. */

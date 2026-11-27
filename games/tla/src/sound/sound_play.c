@@ -1,5 +1,5 @@
 /* The game's own sound code over the sound driver, as The Broken Seal's:
-   sySndPlay, which takes every sound number, the music's volume and tempo
+   sySoundPlay, which takes every sound number, the music's volume and tempo
    ramps, and the music's return after a jingle. */
 
 #include "sound/sound.h"
@@ -10,16 +10,16 @@
 #define SEMITONES_PER_OCTAVE 12
 
 /* Unused: does nothing; the stub table exports it. */
-void sySndNoOperation(void)
+void sySoundNoOperation(void)
 {
 }
 
 /* Starts the sound driver at power-on: no music, the volume and tempo ramps at
    rest, no player's last sound, and the fixed 31536 Hz output rate. As The
    Broken Seal's, but here no music is MUS_SILENCE, sound 0. */
-void sySndInit(void)
+void sySoundInit(void)
 {
-	Uint16 *lastSnd;
+	Uint16 *lastSound;
 	Sint32	remaining;
 
 	m4aSoundInit();
@@ -34,15 +34,15 @@ void sySndInit(void)
 	BgmFadeRequested = 0;
 	SoundCommandMask = 0;
 	SoundUnreadByte = 0;
-	lastSnd = MusicPlayerLastSound;
+	lastSound = MusicPlayerLastSound;
 	for(remaining = 0; remaining < MUSIC_PLAYER_COUNT; remaining++)
-		*lastSnd++ = 0;
-	sySndSetFixedSampleFreq(SOUND_MODE_FREQ_GAME);
+		*lastSound++ = 0;
+	sySoundSetFixedSampleFrequency(SOUND_MODE_FREQ_GAME);
 }
 
-/* Returns the reverb code sySndPlay gives music `snd`: SOUND_REVERB_LONG for
-   every one, where The Broken Seal's gives it to three. */
-Sint32 sySndGetReverbCode(Sint32 snd)
+/* Returns the reverb code sySoundPlay gives music `sound`: SOUND_REVERB_LONG
+   for every one, where The Broken Seal's gives it to three. */
+Sint32 sySoundGetReverbCode(Sint32 sound)
 {
 	return SOUND_REVERB_LONG;
 }
@@ -50,15 +50,15 @@ Sint32 sySndGetReverbCode(Sint32 snd)
 /* Plays a sound number, the game's one way of playing a sound: a fade control,
    a sound effect, a jingle or music, as The Broken Seal's with this game's
    ranges (enum SoundControl). Every sound is first marked as heard
-   (sySndFlagSet), and none plays while the tick wait runs the driver's
+   (sySoundFlagSet), and none plays while the tick wait runs the driver's
    update. */
-void sySndPlay(Sint32 id)
+void sySoundPlay(Sint32 id)
 {
-	Sint32 flg;
+	Sint32 flags;
 	Sint32 player;
 
-	sySndFlagSet(id);
-	flg = id & SOUND_FLAGS_MASK;
+	sySoundFlagSet(id);
+	flags = id & SOUND_FLAGS_MASK;
 	if(SoundVBlankStateWork.updating != 0)
 		return;
 	id &= SOUND_NUM_MASK;
@@ -100,7 +100,7 @@ void sySndPlay(Sint32 id)
 	} else if(id >= SOUND_JINGLE_FIRST) {
 		/* A jingle, on its own player: the music's tracks 0 to 7 go silent at
 		   once but keep playing, and fade back in once the jingle has ended
-		   (sySndUpdateBGMRamps). */
+		   (sySoundUpdateBGMRamps). */
 		m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, 0);
 		BgmVolumeTarget = 0;
 		BgmVolume = 0;
@@ -115,10 +115,10 @@ void sySndPlay(Sint32 id)
 		if(id == CurrentBgm)
 			return;
 		CurrentBgm = id;
-		sySndLoadReverbCode(sySndGetReverbCode(id));
+		sySoundLoadReverbCode(sySoundGetReverbCode(id));
 		m4aSongNumStart(id);
 		/* A silent start fades the new music in over 64 frames. */
-		if(flg & SOUND_FLAG_FADE_IN)
+		if(flags & SOUND_FLAG_FADE_IN)
 			BgmVolume = 0;
 		else
 			BgmVolume = BGM_UNITY_SCALE;
@@ -130,8 +130,8 @@ void sySndPlay(Sint32 id)
 
 /* Restores BGM after a jingle and steps its volume and combined tempo/pitch
    ramps once per frame, clamping each ramp when it crosses its target, as The
-   Broken Seal's without the DMA restart count (sySndVSync here). */
-void sySndUpdateBGMRamps(void)
+   Broken Seal's without the DMA restart count (sySoundVSync here). */
+void sySoundUpdateBGMRamps(void)
 {
 	Sint32 delta;
 
@@ -179,37 +179,37 @@ void sySndUpdateBGMRamps(void)
 }
 
 /* Runs the sound driver's VBlank work: the DMA restart count The Broken Seal's
-   sySndUpdateBGMRamps ran at its end. Reached through the stub call slot that
+   sySoundUpdateBGMRamps ran at its end. Reached through the stub call slot that
    function had. */
-void sySndVSync(void)
+void sySoundVSync(void)
 {
 	m4aSoundVSync();
 }
 
 /* Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
    tempo. */
-void sySndSetBGMTempo(Uint16 tempoScale)
+void sySoundSetBGMTempo(Uint16 tempoScale)
 {
 	m4aMPlayTempoControl(&MPlayInfoBGM, tempoScale);
 }
 
 /* Applies a pitch offset, in 1/256 semitone, to the music's tracks 0 to 7. */
-void sySndSetBGMPitch(Uint16 pitch)
+void sySoundSetBGMPitch(Uint16 pitch)
 {
 	m4aMPlayPitchControl(&MPlayInfoBGM, TRACKS_ALL, pitch);
 }
 
 /* Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
    (BGM_UNITY_SCALE the music's own). */
-void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step)
+void sySoundSetBGMTempoPitchTarget(Uint16 targetScale, Uint16 step)
 {
-	BgmTempoPitchTarget = tgtScale;
+	BgmTempoPitchTarget = targetScale;
 	BgmTempoPitchStep = step;
 }
 
 /* Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
    outstanding volume ramp. */
-void sySndSetBGMVolume(Sint16 volume)
+void sySoundSetBGMVolume(Sint16 volume)
 {
 	m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, volume);
 	BgmVolumeTarget = volume;
@@ -217,34 +217,34 @@ void sySndSetBGMVolume(Sint16 volume)
 }
 
 /* Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step. */
-void sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step)
+void sySoundSetBGMVolumeTarget(Uint16 targetVolume, Uint16 step)
 {
-	BgmVolumeTarget = tgtVolume;
+	BgmVolumeTarget = targetVolume;
 	BgmVolumeStep = step;
 }
 
 /* Stops every sound player while preserving its state for a later resume. */
-void sySndStopAllMusicPlayers(void)
+void sySoundStopAllMusicPlayers(void)
 {
 	m4aMPlayAllStop();
 }
 
 /* Resumes every player, each from where m4aMPlayAllStop stopped it. */
-void sySndResumeAllMusicPlayers(void)
+void sySoundResumeAllMusicPlayers(void)
 {
 	m4aMPlayAllContinue();
 }
 
 /* Returns nonzero while a jingle holds the music: from its start until its
    player falls silent and the music begins to fade back in. */
-Uint8 sySndGetBGMRestoreDelay(void)
+Uint8 sySoundGetBGMRestoreDelay(void)
 {
 	return BgmRestoreDelay;
 }
 
 /* Waits until a jingle has ended and the music has begun to come back, giving
    up after BGM_WAIT_TIMEOUT_TICKS. */
-void sySndWaitForBGMRestore(void)
+void sySoundWaitForBGMRestore(void)
 {
 	Sint32 ticksWaited = 0;
 
@@ -257,7 +257,7 @@ void sySndWaitForBGMRestore(void)
 }
 
 /* Stops the sound DMA and its timer; the soft reset calls it first. */
-void sySndSuspendDirectSnd(void)
+void sySoundSuspendDirectSound(void)
 {
 	m4aSoundVSyncOff();
 }

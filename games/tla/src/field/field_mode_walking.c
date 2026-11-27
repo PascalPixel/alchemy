@@ -183,7 +183,7 @@ void fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ)
 			y < toFIXED(maxY) && x >= toFIXED(minX) && x < toFIXED(maxX) &&
 			z >= toFIXED(minZ) && z < toFIXED(maxZ)) {
 			state->exit = (Uint16)selectedValue;
-			sySndPlayStub(SE_MAP_EXIT);
+			sySoundPlayStub(SE_MAP_EXIT);
 			fdLeaderStopMoving();
 			return;
 		}
@@ -213,7 +213,7 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	MAP_METATILE *tile;
 	UNIT		 *unit;
 	Sint32		  partyHurt;
-	Uint32		  partyCnt;
+	Uint32		  partyCount;
 	Uint32		  i;
 	Uint32		  event;
 	Uint32		  attributes;
@@ -227,8 +227,8 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	if(state == NULL)
 		return;
 
-	partyCnt = gmPartyCountMembersStub();
-	for(i = 0; i < partyCnt; i++)
+	partyCount = gmPartyCountMembersStub();
+	for(i = 0; i < partyCount; i++)
 		prevHp[i] = syUnitGet(MainRoutineStateWork.party[i])->hp;
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -250,8 +250,8 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 		event = tile->collisionCode;
 		attributes = tile->attributeB;
 	}
-	state->prevMetatile = state->curMetatile;
-	state->curMetatile = tile;
+	state->prevMetatile = state->currentMetatile;
+	state->currentMetatile = tile;
 	if(attributes != 0)
 		fdCheckExitRegions(x, y, z);
 	if(event - METATILE_BEHAVIOR_CUE_FIRST <=
@@ -265,7 +265,7 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	if((MainRoutineStateWork.movementMode <= LEADER_MOVEMENT_WORLD_MAP ||
 		   MainRoutineStateWork.movementMode == LEADER_MOVEMENT_SHIP_ON_MAP ||
 		   MainRoutineStateWork.movementMode == LEADER_MOVEMENT_SHIP) &&
-		leader != NULL && leader->tgtX != ACTOR_NO_TARGET) {
+		leader != NULL && leader->targetX != ACTOR_NO_TARGET) {
 		zone = 0;
 		speed = leader->speedLimit;
 		if(syGameFlagGet(FLAG_LURE_CAP))
@@ -292,7 +292,7 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 			state->walkingDistance = distance & (toFIXED(1) - 1);
 			fdPartyAddPp(amount, 0);
 			if(btDjinnRecoveryCountDownStub())
-				sySndPlayStub(SE_DJINNI_SET);
+				sySoundPlayStub(SE_DJINNI_SET);
 			fdPartyClearUnusableShortcuts();
 			partyHurt = fdPartyApplyPoisonDamage();
 		}
@@ -341,16 +341,16 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 	}
 
 	if(partyHurt) {
-		state->fallenCnt = 0;
-		state->survivorCnt = 0;
+		state->fallenCount = 0;
+		state->survivorCount = 0;
 		fdEffectSetAttached(
 			leaderId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		for(i = 0; i < partyCnt; i++) {
+		for(i = 0; i < partyCount; i++) {
 			unit = syUnitGet(MainRoutineStateWork.party[i]);
 			if(unit->hp > 0) {
-				state->survivorCnt++;
+				state->survivorCount++;
 			} else if(prevHp[i] != 0) {
-				state->fallenOwners[state->fallenCnt++] =
+				state->fallenOwners[state->fallenCount++] =
 					MainRoutineStateWork.party[i];
 				state->raisedCue = FIELD_RAISED_CUE_PARTY_FELL;
 				unit->poison = 0;
@@ -363,18 +363,18 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
    walks). */
 void fdPartyAddPp(Sint32 amount, Sint32 unused)
 {
-	Sint32 partyCnt = gmPartyCountMembersStub();
-	Sint32 partyIdx;
+	Sint32 partyCount = gmPartyCountMembersStub();
+	Sint32 partyIndex;
 
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
-		gmUnitAddPpStub(MainRoutineStateWork.party[partyIdx], amount);
+	for(partyIndex = 0; partyIndex < partyCount; partyIndex++)
+		gmUnitAddPpStub(MainRoutineStateWork.party[partyIndex], amount);
 }
 
 /* Changes each party member's HP by amount, or by that percentage of maximum HP
    when scaled is set; a loss flashes the screen orange. */
 void fdPartyAddHp(Sint32 amount, Sint32 scaled)
 {
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 	Sint32 value;
 	UNIT  *unit;
@@ -382,14 +382,14 @@ void fdPartyAddHp(Sint32 amount, Sint32 scaled)
 		fdPaletteFadeSetSource(RGB(31, 15, 0), 0);
 		fdPaletteFadeStartInterpolation(4);
 		if(amount < -HEAVY_DAMAGE)
-			sySndPlayStub(SE_HEAVY_IMPACT);
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 		else
-			sySndPlayStub(SE_IMPACT);
+			sySoundPlayStub(SE_IMPACT);
 	} else {
-		sySndPlayStub(SE_RECOVERY);
+		sySoundPlayStub(SE_RECOVERY);
 	}
-	cnt = gmPartyCountMembersStub();
-	for(i = 0; i < cnt; i++) {
+	count = gmPartyCountMembersStub();
+	for(i = 0; i < count; i++) {
 		unit = syUnitGet(MainRoutineStateWork.party[i]);
 		if(!scaled) {
 			value = amount;
@@ -414,12 +414,12 @@ void fdPartyAddHp(Sint32 amount, Sint32 scaled)
 Sint32 fdPartyApplyPoisonDamage(void)
 {
 	Sint32 result = 0;
-	Sint32 cnt = gmPartyCountMembersStub();
+	Sint32 count = gmPartyCountMembersStub();
 
-	if(result < cnt) {
+	if(result < count) {
 		MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 		Uint8			   *entry = state->party;
-		Sint32				remaining = cnt;
+		Sint32				remaining = count;
 
 		do {
 			UNIT  *unit = syUnitGet(*entry);
@@ -456,7 +456,7 @@ Sint32 fdPartyApplyPoisonDamage(void)
 	if(result != 0) {
 		fdPaletteFadeSetSource(RGB(31, 15, 0), 0);
 		fdPaletteFadeStartInterpolation(4);
-		sySndPlayStub(SE_IMPACT);
+		sySoundPlayStub(SE_IMPACT);
 	}
 
 	return result;
@@ -469,7 +469,7 @@ Sint32 fdPartyApplyPoisonDamage(void)
 void fdWorldMapFreeze(void)
 {
 	FIELD_STATE *fieldState =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(*fieldState));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(*fieldState));
 
 	/* The mode and areaGraphicsPending read as one halfword. */
 	if(*(Uint16 *)&fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -478,8 +478,8 @@ void fdWorldMapFreeze(void)
 		fieldState->areaGraphicsPending = 1;
 
 		fieldState->camera->paused = 1;
-		state =
-			syHeapSlotAllocEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+		state = syHeapSlotAllocateEWRAM(
+			HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 		if(state != NULL && state->step != 0) {
 			state->start = DISPLAY_HEIGHT / 2;
 			state->end = 0;
@@ -495,7 +495,8 @@ void fdWorldMapFreeze(void)
    lets the camera's actor move again. */
 void fdWorldMapReloadPendingAreaGraphics(void)
 {
-	FIELD_STATE *state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(*state));
+	FIELD_STATE *state =
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(*state));
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP &&
 		state->areaGraphicsPending != 0) {

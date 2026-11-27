@@ -104,13 +104,13 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
-	Sint32				 ofsX;
+	Sint32				 frame;
+	Sint32				 offsetX;
 	Sint32				 i;
 	Sint32				 k;
 	HEAP_SLOTS			*heap = RamHeapSlots;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 
 	btEffectStartCanvasLayer(0);
@@ -141,41 +141,42 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	/* With one target, BG2 is shifted so that it stands in the canvas's
 	   middle. */
 	REG_BG2PA = Q_8_8(1);
-	if(args->tgtCnt == 1) {
-		btEffectPosProjectScaledBattler(args->tgts[0], &one);
-		ofsX = CANVAS_SIZE / 2 - one.x;
+	if(args->targetCount == 1) {
+		btEffectPosProjectScaledBattler(args->targets[0], &one);
+		offsetX = CANVAS_SIZE / 2 - one.x;
 	} else {
 		if(args->side == EFFECT_SIDE_PARTY)
-			ofsX = -NARROW_CANVAS_PARTY_X;
+			offsetX = -NARROW_CANVAS_PARTY_X;
 		else
-			ofsX = 0;
+			offsetX = 0;
 	}
-	REG_BG2X = ofsX << 8;
+	REG_BG2X = offsetX << 8;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != args->tgtCnt * DJINN_BEAMS_TARGET_TICKS + 116; frm++) {
+	for(frame = 0; frame != args->targetCount * DJINN_BEAMS_TARGET_TICKS + 116;
+		frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		if(frm == 64)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == 80)
+		if(frame == 64)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == 80)
 			EFFECT_SHOW_DAMAGE(0);
 
 		/* The Djinni sways, then rises away from tick 32. */
 		if(args->prelude == 1) {
-			Sint32 ang = frm * (TRIG_TURN / 32);
-			Sint32 x = FIXEDtoINT(-sySin(ang) * DJINN_BEAMS_DJINNI_SWAY_X) +
-				djinn[0] + ofsX - DJINNI_WIDTH / 2;
-			Sint32 y = FIXEDtoINT(syCos(ang) * DJINN_BEAMS_DJINNI_SWAY_Y) +
+			Sint32 angle = frame * (TRIG_TURN / 32);
+			Sint32 x = FIXEDtoINT(-sySin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
+				djinn[0] + offsetX - DJINNI_WIDTH / 2;
+			Sint32 y = FIXEDtoINT(syCos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
 				djinn[1] - 24;
 
 			btEffectBuildCanvasBlitters(args->side ^ 1, draw);
-			if(frm > 32)
-				y = y - frm * 2 + 64;
+			if(frame > 32)
+				y = y - frame * 2 + 64;
 			draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
 			/* Added twice in the first ticks, it flashes as it appears. */
-			if(frm <= 3)
+			if(frame <= 3)
 				draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -190,22 +191,22 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 		/* A mote every eight ticks drifts down a pixel a tick, swaying, until
 		   it is 8 pixels from the ground. */
 		EFFECT_FOR_EACH_TARGET(k, args) {
-			MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[k])->obj;
+			MOTION_OBJECT *target = btObjectGetStub(args->targets[k])->object;
 			Sint32		   start = k * DJINN_BEAMS_TARGET_TICKS;
 
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, tgt->x, 0, tgt->z);
+			SET_VECTOR(point, target->x, 0, target->z);
 			syMatrixTranslateVector(point);
-			if(frm > start) {
+			if(frame > start) {
 				for(i = 0; i != DJINN_BEAMS_MOTES_DRAWN; i++) {
 					PARTICLE *mote =
 						&PARTICLES[k * DJINN_BEAMS_TARGET_MOTES + i];
 
-					if(frm > i * 8 + start && mote->y > toFIXED(8)) {
+					if(frame > i * 8 + start && mote->y > toFIXED(8)) {
 						Sint32 sway;
 
 						btEffectPosProjectPoint(mote, &screenPos);
-						screenPos.x += ofsX;
+						screenPos.x += offsetX;
 						sway =
 							FIXEDtoINT(sySin(mote->variant * (TRIG_TURN / 64)) *
 								DJINN_BEAMS_MOTE_SWAY);
@@ -235,41 +236,42 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 		EFFECT_FOR_EACH_TARGET(i, args) {
 			Sint32 start = i * DJINN_BEAMS_TARGET_TICKS;
 
-			if(frm >= start + 72) {
-				MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[i])->obj;
+			if(frame >= start + 72) {
+				MOTION_OBJECT *target =
+					btObjectGetStub(args->targets[i])->object;
 
 				EFFECT_VIEW_FROM_CAMERA(camera);
-				if(frm == start + 72)
-					btEffectTintBattler(args->tgts[i], SPRITE_COLOR_GRB,
+				if(frame == start + 72)
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_GRB,
 						TINT_KEEP, TINT_KEEP, 0);
-				if(frm == start + 88)
-					btEffectTintBattler(args->tgts[i], SPRITE_COLOR_NORMAL,
+				if(frame == start + 88)
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_NORMAL,
 						TINT_KEEP, TINT_KEEP, 0);
-				SET_VECTOR(ground, tgt->x, 0, tgt->z);
+				SET_VECTOR(ground, target->x, 0, target->z);
 				btEffectPosProjectPoint(ground, &screenPos);
-				screenPos.x += ofsX;
-				if(frm < start + 104) {
-					Sint32 pic = frm / 4;
+				screenPos.x += offsetX;
+				if(frame < start + 104) {
+					Sint32 picture = frame / 4;
 					Sint32 width = DJINN_BEAMS_COLUMN_STRIP_WIDTH;
 
-					if(frm > start + 88)
+					if(frame > start + 88)
 						width = DJINN_BEAMS_COLUMN_STRIP_WIDTH -
-							(frm - start - 88) / 3;
-					if(pic > 2)
-						pic = (pic & 1) + 1;
-					if(frm < start + 100) {
+							(frame - start - 88) / 3;
+					if(picture > 2)
+						picture = (picture & 1) + 1;
+					if(frame < start + 100) {
 						draw[0](canvas,
-							state->sheet + DjinnBeamsHeadPictures[pic],
-							screenPos.x - DjinnBeamsHeadWidths[pic],
-							screenPos.y - DjinnBeamsHeadHeights[pic] + 8,
-							DjinnBeamsHeadWidths[pic],
-							DjinnBeamsHeadHeights[pic]);
+							state->sheet + DjinnBeamsHeadPictures[picture],
+							screenPos.x - DjinnBeamsHeadWidths[picture],
+							screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
+							DjinnBeamsHeadWidths[picture],
+							DjinnBeamsHeadHeights[picture]);
 						draw[1](canvas,
-							state->sheet + DjinnBeamsHeadPictures[pic],
+							state->sheet + DjinnBeamsHeadPictures[picture],
 							screenPos.x,
-							screenPos.y - DjinnBeamsHeadHeights[pic] + 8,
-							DjinnBeamsHeadWidths[pic],
-							DjinnBeamsHeadHeights[pic]);
+							screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
+							DjinnBeamsHeadWidths[picture],
+							DjinnBeamsHeadHeights[picture]);
 					}
 					/* Every row of the column, from the top down to the feet,
 					   is the same strip. */
@@ -428,7 +430,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	Sint32				 k;
 	Sint32				 total;
@@ -437,7 +439,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8				*palette;
 	FIXED				 height;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
 
@@ -479,7 +481,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* The shells leave the user at the style's height, each aimed at its target
 	   with a little spread in depth. */
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-	src = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->object;
 	if(mode == LOBBED_SHELLS_MUD)
 		height = toFIXED(40);
 	else if(mode == LOBBED_SHELLS_RISING_VENOM)
@@ -487,16 +489,17 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	else
 		height = toFIXED(4);
 	EFFECT_FOR_EACH_TARGET(k, args) {
-		MOTION_OBJECT *tgt = btObjectGetStub(args->tgts[k % args->tgtCnt])->obj;
+		MOTION_OBJECT *target =
+			btObjectGetStub(args->targets[k % args->targetCount])->object;
 
 		for(i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
 			PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 			FIXED	  aimZ;
 
 			SET_POSITION(shot, src->x, height, src->z);
-			aimZ = tgt->z + toFIXED(((syRandom() & 31) - 16) * 2);
-			SET_VELOCITY(
-				shot, (tgt->x - src->x) >> 4, toFIXED(4), (aimZ - src->z) >> 4);
+			aimZ = target->z + toFIXED(((syRandom() & 31) - 16) * 2);
+			SET_VELOCITY(shot, (target->x - src->x) >> 4, toFIXED(4),
+				(aimZ - src->z) >> 4);
 			shot->variant = 0;
 		}
 	}
@@ -511,10 +514,10 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	total = LOBBED_SHELLS_TICKS(mode) + args->tgtCnt * 8;
-	sySndPlayStub(SE_CURSE);
+	total = LOBBED_SHELLS_TICKS(mode) + args->targetCount * 8;
+	sySoundPlayStub(SE_CURSE);
 
-	for(frm = 0; frm != total; frm++) {
+	for(frame = 0; frame != total; frame++) {
 		PARTICLE *burst;
 		PARTICLE *piece;
 
@@ -526,16 +529,17 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			for(i = 0; i != LOBBED_SHELLS_SHELLS(mode); i++) {
 				Sint32 start = k * 8 + i * 4;
 
-				if(frm >= start) {
+				if(frame >= start) {
 					PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
-					if(frm == start + 17) {
-						btEffectTintBattler(args->tgts[k % args->tgtCnt],
+					if(frame == start + 17) {
+						btEffectTintBattler(
+							args->targets[k % args->targetCount],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
 						EFFECT_SHOW_DAMAGE(SE_IMPACT);
 					}
 					if(shot->variant >= 0) {
-						Sint32 step = (frm - start) / 3;
+						Sint32 step = (frame - start) / 3;
 
 						if(step > LOBBED_SHELL_PICTURES - 1)
 							step = LOBBED_SHELL_PICTURES - 1;
@@ -560,19 +564,19 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							btParticleAdvanceWithGravity3D(
 								shot, 63, -toFIXED(1) / 2);
 						if(shot->y < 0) {
-							Sint32 cnt;
+							Sint32 count;
 							Sint32 n;
 
 							shot->y = 0;
 							shot->variant = 1;
 							if(LOBBED_SHELLS_SHATTER(mode) == 0)
-								cnt = LOBBED_SHELLS_SMOKE_PUFFS;
+								count = LOBBED_SHELLS_SMOKE_PUFFS;
 							else
-								cnt = LOBBED_SHELLS_SHARDS;
+								count = LOBBED_SHELLS_SHARDS;
 							/* Mud's LOBBED_SHELLS_SHARDS share half their slots
 							   with the next shell's burst, and the later burst
 							   takes them. */
-							for(n = 0; n != cnt; n++) {
+							for(n = 0; n != count; n++) {
 								piece = &LOBBED_SHELLS_PIECE(k, i, n);
 								SET_POSITION(piece, shot->x, shot->y, shot->z);
 								if(LOBBED_SHELLS_SHATTER(mode) == 0) {
@@ -616,7 +620,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(i & 1)
 						picture += LOBBED_SHELLS_SMALL_SHARD;
 					flip = args->side;
-					draw[burst->velX > 0 ? flip ^ 1 : flip](canvas,
+					draw[burst->velocityX > 0 ? flip ^ 1 : flip](canvas,
 						state->sheet + LobbedShellsShardPictures[picture] +
 							LOBBED_SHELLS_SHARD_PICTURES,
 						pos.x - LobbedShellsShardWidths[picture] / 2,

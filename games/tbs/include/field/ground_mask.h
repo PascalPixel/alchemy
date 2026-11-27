@@ -44,24 +44,24 @@ typedef struct WEATHER_PARTICLE {
 	Uint16 affine : 2;	  /* Not named by the effects. */
 	Uint16 blendMode : 2; /* 1, semi-transparent; not named by the effects. */
 	Uint16 mosaic : 1;	  /* Not named by the effects. */
-	Uint16 fullCol : 1;	  /* Not named by the effects. */
+	Uint16 fullColor : 1; /* Not named by the effects. */
 	Uint16 shape : 2; /* From the ground particle frame; motes, sparkles: 0. */
 	Uint16 x : 9;	  /* Screen pixels. */
-	Uint16 affineIdx : 5; /* Sparkles: 8 on alternate ticks, else 0. */
+	Uint16 affineIndex : 5; /* Sparkles: 8 on alternate ticks, else 0. */
 	Uint16 size : 2;  /* From the ground particle frame; motes, sparkles: 1. */
 	Uint16 tile : 10; /* The state's tileBase plus the tick's tile. */
-	Uint16 pri : 2;	  /* 1. */
-	Uint16 pal : 4;	  /* 13; not named by the effects. */
+	Uint16 priority : 2; /* 1. */
+	Uint16 palette : 4;	 /* 13; not named by the effects. */
 	/* The OAM entry's fourth halfword, cleared with the others. */
 	Uint8  attr3[2];
 	FIXED  posX;  /* World position, in 16.16 pixels. */
 	Sint32 posY;  /* The ground's height there. */
 	FIXED  posZ;  /* World position, in 16.16 pixels. */
 	Sint32 delay; /* Motes: height risen; sparkles: phase within a burst. */
-	Uint16 tmr;	  /* Ticks left; zero frees the particle. */
+	Uint16 timer; /* Ticks left; zero frees the particle. */
 } WEATHER_PARTICLE;
 
-/* WEATHER_PARTICLE.tmr after the decrement that counts a live particle down,
+/* WEATHER_PARTICLE.timer after the decrement that counts a live particle down,
    when it was already free (0): the Uint16 wraps. */
 #define GROUND_PARTICLE_FREED 65535
 

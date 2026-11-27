@@ -136,21 +136,21 @@ void scEasternAlhafraShipFinishMovingCrate(Sint32 unused, Sint32 id)
 void scEasternAlhafraShipKnockDownTheBread(void)
 {
 	syGameFlagSet(FLAG_BREAD_KNOCKED_DOWN);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->velY = toFIXED(6);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->velocityY = toFIXED(6);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 136, 488);
 	fdScriptWait(10);
 	fdActorSetDestination(ACTOR_LARGE_BREAD, 120, 472);
 	fdActorMoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
-	fdActorGetById(ACTOR_LARGE_BREAD)->velY = toFIXED(6);
-	sySndPlay(SE_POUND);
+	fdActorGetById(ACTOR_LARGE_BREAD)->velocityY = toFIXED(6);
+	sySoundPlay(SE_POUND);
 	fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_STAND);
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	fdScriptWait(20);
 	fdActorWaitForMoveById(ACTOR_LARGE_BREAD);
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	return;
 }
 
@@ -166,11 +166,11 @@ void scEasternAlhafraShipTakeTheBread(Sint32 id)
    Briggs is caught: "Goo goo ga ga!" He lifts the vase of flowers beside him
    with Psynergy and drops it with a splash. The first time, Chaucha says he
    only lately started doing that. The screen is tinted toward yellow
-   (`fdStartColTransition`) while he holds the vase up. */
+   (`fdStartColorTransition`) while he holds the vase up. */
 void scEasternAlhafraShipEoleoLifts(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_VASE);
-	Uint8 *flg;
+	Uint8 *flags;
 	Sint32 i;
 
 	fdScriptStart();
@@ -178,15 +178,15 @@ void scEasternAlhafraShipEoleoLifts(Sint32 id)
 	fdScriptSetMessageId((Sint32)MsgGooGooGa);
 	/* "Goo goo ga ga!" */
 	fdScriptShowMessageAndWait(ACTOR_EOLEO, 0);
-	fdStartColTransition(8, RGB(16, 16, 4));
+	fdStartColorTransition(8, RGB(16, 16, 4));
 	fdBattleEffectStartArcEffect();
 	/* Eoleo cycles through colours with swelling arcs, as a caster does. */
 	fdBattleEffectSetObjectUpdateMode(
 		(Sint32)fdActorGetById(id), CASTER_LOOK_CYCLING_COLORS);
-	sySndPlay(SE_ASCEND);
+	sySoundPlay(SE_ASCEND);
 	fdScriptWait(30);
-	flg = &actor->motionFlg;
-	*flg = ACTOR_FLOATS;
+	flags = &actor->motionFlags;
+	*flags = ACTOR_FLOATS;
 	for(i = 0; i < 40; i++) {
 		actor->y.fixed += toFIXED(1) / 5;
 		fdScriptWait(1);
@@ -197,10 +197,10 @@ void scEasternAlhafraShipEoleoLifts(Sint32 id)
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
 	fdStartPaletteTransition(8);
-	*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->gravity = toFIXED(1) / 2;
 	fdScriptWait(5);
-	sySndPlay(SE_WATER);
+	sySoundPlay(SE_WATER);
 	if(fdScriptGetFlag(FLAG_EOLEO_LIFTED) == 0) {
 		syGameFlagSet(FLAG_EOLEO_LIFTED);
 		fdScriptWait(30);
@@ -257,14 +257,15 @@ Sint32 scInit(void)
 	}
 	if(syGameFlagGet(FLAG_CRATE_MOVED))
 		fdActorSetPos(ACTOR_TALL_CRATE, 392, 648);
-	fdActorGetById(ACTOR_TALL_CRATE)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGetById(ACTOR_TALL_CRATE)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorShowItemIconById(ACTOR_LARGE_BREAD, ITEM_LARGE_BREAD);
 	if(!syGameFlagGet(FLAG_BREAD_KNOCKED_DOWN)) {
 		if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-			fdActorGetById(ACTOR_STACKED_CRATES)->priFlg |=
+			fdActorGetById(ACTOR_STACKED_CRATES)->priorityFlags |=
 				ACTOR_PRIORITY_PLATFORM;
 			actor = fdActorGetById(ACTOR_LARGE_BREAD);
-			actor->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+			actor->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 			actor->y.fixed += toFIXED(16);
 			actor->groundHeight += toFIXED(16);
 		}
@@ -402,7 +403,7 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdActorFaceDirectionById(ACTOR_BRIGGS_MATE, FACING_SOUTH_SOUTHEAST, 0);
 	fdScriptWait(30);
 	scActorPopQuestionMarks(ACTOR_BRIGGS_MATE);
-	sySndPlay(SE_LIGHT_APPEAR);
+	sySoundPlay(SE_LIGHT_APPEAR);
 	fdActorShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 	fdActorFaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHEAST, 0);
 	fdScriptWait(30);
@@ -574,21 +575,21 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgWellThatTakes);
 	fdActorSetPos(ACTOR_BRIGGS, 436, 416);
-	scFieldActorSetSprRotationById(ACTOR_BRIGGS, DEGtoANG(90));
-	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_BRIGGS), 0);
+	scFieldActorSetSpriteRotationById(ACTOR_BRIGGS, DEGtoANG(90));
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_BRIGGS), 0);
 	fdActorSetPos(ACTOR_BRIGGS_MATE, 456, 432);
-	scFieldActorSetSprRotationById(ACTOR_BRIGGS_MATE, DEGtoANG(180));
-	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_BRIGGS_MATE), 0);
+	scFieldActorSetSpriteRotationById(ACTOR_BRIGGS_MATE, DEGtoANG(180));
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_BRIGGS_MATE), 0);
 	fdActorGetById(ACTOR_BRIGGS_MATE)->facing = FACING_SOUTH;
 	fdActorSetPos(ACTOR_FIRST_PIRATE, 456, 460);
-	scFieldActorSetSprRotationById(ACTOR_FIRST_PIRATE, DEGtoANG(180));
-	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_FIRST_PIRATE), 0);
+	scFieldActorSetSpriteRotationById(ACTOR_FIRST_PIRATE, DEGtoANG(180));
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_FIRST_PIRATE), 0);
 	fdActorSetPos(ACTOR_SECOND_PIRATE, 420, 424);
-	fdActorSetSprRotationById(ACTOR_SECOND_PIRATE, TRIG_TURN * 3 / 4);
-	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_SECOND_PIRATE), 0);
+	fdActorSetSpriteRotationById(ACTOR_SECOND_PIRATE, TRIG_TURN * 3 / 4);
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_SECOND_PIRATE), 0);
 	fdActorSetPos(ACTOR_THIRD_PIRATE, 388, 440);
-	fdActorSetSprRotationById(ACTOR_THIRD_PIRATE, DEGtoANG(90));
-	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_THIRD_PIRATE), 0);
+	fdActorSetSpriteRotationById(ACTOR_THIRD_PIRATE, DEGtoANG(90));
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_THIRD_PIRATE), 0);
 	fdActorSetPos(ACTOR_KRADEN, 456, 376);
 	fdActorSetPos(ACTOR_JENNA, 472, 392);
 	fdActorSetPos(ACTOR_SHEBA, 472, 376);
@@ -1129,27 +1130,27 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	briggs = fdActorGetById(ACTOR_BRIGGS);
 	fdActorSetPos(ACTOR_BRIGGS, briggs->x.part[0].integer + 20,
 		briggs->z.part[0].integer + 8);
-	fdActorSetSprRotationById(ACTOR_BRIGGS, 0);
-	fdActorSetSprFlags(
+	fdActorSetSpriteRotationById(ACTOR_BRIGGS, 0);
+	fdActorSetSpriteFlags(
 		(Sint32)fdActorGetById(ACTOR_BRIGGS), SPRITE_FLAG_SHADOW);
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
 	fdActorJump(ACTOR_BRIGGS, 6, 40);
 	fdActorSetAnimationAndWait(ACTOR_BRIGGS, ANIM_SHAKE_HEAD);
 	fdActorSetPos(ACTOR_BRIGGS_MATE, 456, 440);
-	fdActorSetSprRotationById(ACTOR_BRIGGS_MATE, 0);
-	fdActorSetSprFlags(
+	fdActorSetSpriteRotationById(ACTOR_BRIGGS_MATE, 0);
+	fdActorSetSpriteFlags(
 		(Sint32)fdActorGetById(ACTOR_BRIGGS_MATE), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_FIRST_PIRATE, 456, 456);
-	fdActorSetSprRotationById(ACTOR_FIRST_PIRATE, 0);
-	fdActorSetSprFlags(
+	fdActorSetSpriteRotationById(ACTOR_FIRST_PIRATE, 0);
+	fdActorSetSpriteFlags(
 		(Sint32)fdActorGetById(ACTOR_FIRST_PIRATE), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_SECOND_PIRATE, 424, 424);
-	fdActorSetSprRotationById(ACTOR_SECOND_PIRATE, 0);
-	fdActorSetSprFlags(
+	fdActorSetSpriteRotationById(ACTOR_SECOND_PIRATE, 0);
+	fdActorSetSpriteFlags(
 		(Sint32)fdActorGetById(ACTOR_SECOND_PIRATE), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_THIRD_PIRATE, 408, 440);
-	fdActorSetSprRotationById(ACTOR_THIRD_PIRATE, 0);
-	fdActorSetSprFlags(
+	fdActorSetSpriteRotationById(ACTOR_THIRD_PIRATE, 0);
+	fdActorSetSpriteFlags(
 		(Sint32)fdActorGetById(ACTOR_THIRD_PIRATE), SPRITE_FLAG_SHADOW);
 	fdActorFaceDirection(ACTOR_BRIGGS_MATE, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_FIRST_PIRATE, FACING_NORTH, 0);
@@ -1323,10 +1324,10 @@ void scEasternAlhafraShipBriggsIsCaught(void)
 	fdScriptWait(20);
 	fdActorFaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
 	fdScriptWait(10);
-	fdActorGetById(ACTOR_MADRAS_MAYOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_MADRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWaitById(ACTOR_MADRAS_MAYOR, 456, 312);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_MADRAS_MAYOR)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_MADRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	fdActorWalkBy(ACTOR_BRIGGS_MATE, 0, -16);
 	fdActorWalkBy(ACTOR_FIRST_PIRATE, 0, -16);

@@ -14,7 +14,7 @@ void fdCameraFollowActor(Sint32 actorId, Sint32 keepPos)
 	subject = fdActorLookup(actorId);
 	/* The slot already holds the field state, which this returns; the camera
 	   commands here all find it this way. */
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	camera = state->camera;
 	grid = MapGridState[0];
 	if(subject != 0) {
@@ -32,10 +32,10 @@ void fdCameraFollowActor(Sint32 actorId, Sint32 keepPos)
 }
 
 /* Sets the camera's top speed and acceleration, in 16.16 pixels per tick. */
-void fdCameraSetSpeedParms(FIXED speedLimit, FIXED acceleration)
+void fdCameraSetSpeedParams(FIXED speedLimit, FIXED acceleration)
 {
 	FIELD_STATE *fieldState =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	fieldState->camera->speedLimit = speedLimit;
 	fieldState->camera->acceleration = acceleration;
 }
@@ -63,7 +63,7 @@ void fdCameraMoveWithinMapBounds(
 	posY = requestedY;
 	shouldGlide = glide;
 	posZ = requestedZ;
-	fieldState = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	fieldState = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	camera = fieldState->camera;
 	grid = MapGridState[0];
 
@@ -118,7 +118,7 @@ void fdCameraMoveToActorById(Sint32 actorId, Sint32 glide)
 
 	subject = fdActorLookup(actorId);
 	/* The field state, looked up and not used. */
-	syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	if(subject != NULL) {
 		fdCameraMoveWithinMapBounds(
 			subject->x.fixed, CAMERA_KEEP, subject->z.fixed, glide);
@@ -128,7 +128,7 @@ void fdCameraMoveToActorById(Sint32 actorId, Sint32 glide)
 /* Waits (at most 600 ticks) for the camera to arrive, then 2 ticks more. */
 void fdCameraWaitForArrival(void)
 {
-	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 								HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 			->camera);
 	fdScriptWait(2);
@@ -137,26 +137,26 @@ void fdCameraWaitForArrival(void)
 /* Returns the camera actor. */
 ACTOR *fdCameraGetActor(void)
 {
-	return ((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	return ((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 				HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 		->camera;
 }
 
-/* Unused: makes the camera follow target; unless keepCurPos is set it
+/* Unused: makes the camera follow target; unless keepCurrentPos is set it
    jumps there at once. */
-UNUSED void fdCameraFollow(ACTOR *tgt, Sint32 keepCurPos)
+UNUSED void fdCameraFollow(ACTOR *target, Sint32 keepCurrentPos)
 {
 	ACTOR *camera;
 
-	camera = ((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	camera = ((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 				  HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 				 ->camera;
-	if(tgt != NULL) {
+	if(target != NULL) {
 		fdActorStartCameraStub(camera, 0);
-		camera->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
-		if(keepCurPos == 0) {
+		camera->watchedActor = (union ACTOR_OR_EFFECT *)target;
+		if(keepCurrentPos == 0) {
 			SET_ACTOR_POSITION(
-				camera, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+				camera, target->x.fixed, target->y.fixed, target->z.fixed);
 		}
 	}
 }

@@ -17,21 +17,21 @@
 typedef struct BATTLE_PLAYBACK_STATE {
 	BATTLE_PLAYBACK_QUEUE queue;
 	Sint32				  phase; /* BATTLE_PLAYBACK_PHASE, or a message phase */
-	Sint32				  eventIdx; /* the next queued event to play */
-	Sint32				  tmr;		/* ticks to wait */
-	MENU_SPR			  arrow;	/* the advance arrow */
+	Sint32				  eventIndex; /* the next queued event to play */
+	Sint32				  timer;	  /* ticks to wait */
+	MENU_SPR			  arrow;	  /* the advance arrow */
 	Sint32 arrowResource; /* the arrow's resource entry; -1 until it is shown */
 	Sint32 unitId;		  /* the unit of the hit or defeat being played */
-	Sint16 pendingSnd;	  /* hit sound (an SE_ id), played on the next hit */
-	/* while nonzero, a resumed phase keeps pendingSnd */
-	Sint16 keepPendingSnd;
+	Sint16 pendingSound;  /* hit sound (an SE_ id), played on the next hit */
+	/* while nonzero, a resumed phase keeps pendingSound */
+	Sint16 keepPendingSound;
 	/* Set by PLAYBACK_DJINN_BONUS: enemies felled from then on give the Djinn
 	   bonus, cycling their colours and crying as they fall. */
 	Sint32 djinnBonus;
 } BATTLE_PLAYBACK_STATE;
 
 STATIC_ASSERT(sizeof(BATTLE_PLAYBACK_STATE) == 368);
-STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_STATE, pendingSnd) == 360);
+STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_STATE, pendingSound) == 360);
 
 /* The most actions a turn's queue holds. */
 enum { BATTLE_ACTION_CAPACITY = 20 };
@@ -49,12 +49,12 @@ struct MESSAGE;
 /* The battle message window (heap slot battleMsg): its window, its message and
    whether the next message is marked. */
 typedef struct BATTLE_MESSAGE_STATE {
-	struct WINDOW *win; /* the message window */
-	/* Its message, as mnBattleMessageCont returned it: the advance arrow is
+	struct WINDOW *window; /* the message window */
+	/* Its message, as mnBattleMessageContinue returned it: the advance arrow is
 	   drawn at the window's corner plus the message's pen. */
 	struct MESSAGE *msg;
 	/* Set by PLAYBACK_MARK; passed to the next message, which then keeps its
-	   place (mnBattleMessageCont's keepPosition). */
+	   place (mnBattleMessageContinue's keepPosition). */
 	Sint32 marked;
 } BATTLE_MESSAGE_STATE;
 
@@ -72,8 +72,8 @@ STATIC_ASSERT(sizeof(BATTLE_MESSAGE_STATE) == 12);
 /* The battle's own state: its enemies, units and their objects, the turn's
    actions, the background palette and the events. */
 typedef struct BATTLE_STATE {
-	Sint32 formation;	/* the encounter's enemy formation */
-	Sint16 sprSlots[6]; /* the unit in each enemy sprite slot, 0 when free */
+	Sint32 formation;	   /* the encounter's enemy formation */
+	Sint16 spriteSlots[6]; /* the unit in each enemy sprite slot, 0 when free */
 	/* The kinds of enemy in the formation, for the letters that tell two of a
 	   kind apart: five at most, where The Broken Seal keeps six. */
 	Uint16 enemyKinds[5];
@@ -87,13 +87,13 @@ typedef struct BATTLE_STATE {
 	Uint16 firstDefeated;
 	/* DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER */
 	Uint16 defeatState;
-	Uint8  enemyKindCnt; /* kinds of enemy listed, at most 5 */
-	Uint8  partyStat;	 /* how the party status window draws */
+	Uint8  enemyKindCount; /* kinds of enemy listed, at most 5 */
+	Uint8  partyStatus;	   /* how the party status window draws */
 	/* The formation's layout: 0 or 1 lists the enemies in the order they were
 	   drawn. */
 	Uint8 layout;
 	/* bits: 1 a party unit was challenged */
-	Uint8 challengeFlg;
+	Uint8 challengeFlag;
 	Uint8 isLink;	   /* 1 in a link battle */
 	Uint8 firstStrike; /* who strikes first: 1 the party, 2 the enemies */
 	/* Failed tries to flee this battle; each adds 2000 to the chance
@@ -122,7 +122,7 @@ typedef struct BATTLE_STATE {
 	Uint8		  unusedAfterActions[292]; /* no code names it */
 	BATTLE_SPOILS spoils;				   /* what the battle has won so far */
 	/* the backdrop's colours, before scaling */
-	Uint16 pal[BATTLE_BACKGROUND_COLORS];
+	Uint16 palette[BATTLE_BACKGROUND_COLORS];
 	FIXED  brightness; /* the backdrop's brightness, 16.16, toFIXED(1) full */
 	/* Its first halfword is the battle background passed to the palette
 	   fade. */
@@ -141,7 +141,7 @@ typedef struct BATTLE_STATE {
 	/* The unit ready to counterattack (ABILITY_EFFECT_COUNTER) that was just
 	   struck, and the opponent that struck it. */
 	Sint32 counterUnitId;
-	Sint32 counterTgtId;
+	Sint32 counterTargetId;
 	/* Daedalus strikes again at the end of the turns after it is summoned: each
 	   queued strike is a bit, set when an enemy summoned it, and the next
 	   turn's queue is gathered while this one's is played. */
@@ -151,25 +151,26 @@ typedef struct BATTLE_STATE {
 	Uint8  nextDaedalusStrikes;
 	/* Nonzero leaves the battle objects' sprite priorities as they are, while
 	   Flora's effect plays. */
-	Uint8 keepObjPriorities;
+	Uint8 keepObjectPriorities;
 	/* Nonzero keeps the backdrop's palette while a summon (Charon, Atalanta,
 	   Neptune, Moloch) colours the screen. */
-	Uint8 keepBackdropPal;
+	Uint8 keepBackdropPalette;
 	/* Poseidon's force field: 1 when the formation's last enemy is one of
 	   ENEMY_POSEIDON to ENEMY_POSEIDON_3, outside FLAG_MONSTER_BATTLE; until
 	   the Trident lands, MsgFieldProtects turns abilities away. */
 	Uint8 forceField;
 	/* The animation the acting unit takes as it calls up its Psynergy; 3 as its
 	   action starts. */
-	Uint8 actingAnm;
-	Uint8 paddingAfterActingAnm[2]; /* up to the word aiStates starts on */
+	Uint8 actingAnimation;
+	Uint8
+		paddingAfterActingAnimation[2]; /* up to the word aiStates starts on */
 	/* The action choice's memory for the enemies that act more than once a
 	   turn. */
 	BATTLE_AI_STATE aiStates[4];
 } BATTLE_STATE;
 
-STATIC_ASSERT(offsetof(BATTLE_STATE, partyStat) == 65);
-STATIC_ASSERT(offsetof(BATTLE_STATE, challengeFlg) == 67);
+STATIC_ASSERT(offsetof(BATTLE_STATE, partyStatus) == 65);
+STATIC_ASSERT(offsetof(BATTLE_STATE, challengeFlag) == 67);
 STATIC_ASSERT(offsetof(BATTLE_STATE, isLink) == 68);
 STATIC_ASSERT(offsetof(BATTLE_STATE, firstStrike) == 69);
 STATIC_ASSERT(offsetof(BATTLE_STATE, partyUnits) == 88);
@@ -179,14 +180,14 @@ STATIC_ASSERT(offsetof(BATTLE_STATE, slots) == 132);
 STATIC_ASSERT(offsetof(BATTLE_STATE, actions) == 748);
 STATIC_ASSERT(offsetof(BATTLE_STATE, spoils) == 1360);
 STATIC_ASSERT(offsetof(BATTLE_STATE, spoils.queuedSummons) == 1380);
-STATIC_ASSERT(offsetof(BATTLE_STATE, spoils.queueCnt) == 1387);
+STATIC_ASSERT(offsetof(BATTLE_STATE, spoils.queueCount) == 1387);
 STATIC_ASSERT(offsetof(BATTLE_STATE, highlightStep) == 1654);
 STATIC_ASSERT(offsetof(BATTLE_STATE, highlightMode) == 1656);
 STATIC_ASSERT(offsetof(BATTLE_STATE, events) == 1764);
 STATIC_ASSERT(offsetof(BATTLE_STATE, plan) == 1660);
 STATIC_ASSERT(offsetof(BATTLE_STATE, debugValue) == 2132);
 STATIC_ASSERT(offsetof(BATTLE_STATE, daedalusFromEnemies) == 2144);
-STATIC_ASSERT(offsetof(BATTLE_STATE, keepBackdropPal) == 2151);
+STATIC_ASSERT(offsetof(BATTLE_STATE, keepBackdropPalette) == 2151);
 STATIC_ASSERT(offsetof(BATTLE_STATE, forceField) == 2152);
 STATIC_ASSERT(offsetof(BATTLE_STATE, aiStates) == 2156);
 STATIC_ASSERT(sizeof(BATTLE_STATE) == 2172);

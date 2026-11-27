@@ -277,7 +277,7 @@ static void scWestLunpaCaveUnusedFreezePuddle(void)
 
 	puddle = fdActorGet(ACTOR_UNUSED_PUDDLE);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 	}
 }
 
@@ -291,8 +291,8 @@ static void scWestLunpaCaveFreezeSouthPuddle(void)
 
 	puddle = fdActorGet(ACTOR_SOUTH_PUDDLE);
 	if(puddle != NULL) {
-		puddle->priFlg = ACTOR_PRIORITY_AUTOMATIC;
-		puddle->motionFlg = 0;
+		puddle->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		puddle->motionFlags = 0;
 	}
 	/* The pillar's metatile takes the height of the metatiles along the west
 	   wall, (7, 30..34), 64 pixels up: the top of the wall's rock, which no
@@ -310,8 +310,8 @@ static void scWestLunpaCaveGateDrawPropped(void)
 	pillar = fdActorGet(ACTOR_GATE_PUDDLE);
 	fdActorSetAnimation(ACTOR_GATE_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 	if(pillar != NULL) {
-		fdActorSetSprFlags(pillar, 0);
-		pillar->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpriteFlags(pillar, 0);
+		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 	fdMapGridCopyMetatiles(41, 87, 2, 5, 21, 59);
 	sySynch(4);
@@ -337,13 +337,13 @@ static void scWestLunpaCaveFreezeGatePuddle(void)
 	pillar = fdActorGet(ACTOR_GATE_PUDDLE);
 	gmFlagSet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN);
 	if(pillar != NULL) {
-		fdActorSetSprFlags(pillar, 0);
-		pillar->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpriteFlags(pillar, 0);
+		pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 	if(fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		scWestLunpaCaveGateDrawPropped();
-		sySndPlay(MUS_PUZZLE_SOLVED);
+		sySoundPlay(MUS_PUZZLE_SOLVED);
 		gmFlagSet(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
 	}
 }
@@ -378,7 +378,7 @@ static void scWestLunpaCaveGateLower(void)
 	fdMapGridCopyMetatiles(3, 94, 1, 1, 21, 55);
 	fdMapGridCopyMetatiles(43, 86, 2, 6, 21, 59);
 	sySynch(4);
-	fdActorSetSprPriority(ACTOR_GATE_PUDDLE, GATE_PILLAR_PRIORITY);
+	fdActorSetSpritePriority(ACTOR_GATE_PUDDLE, GATE_PILLAR_PRIORITY);
 	fdMapGridCopyMetatileAttributes(19, 17, 1, 1, 22, 15);
 }
 
@@ -391,7 +391,7 @@ static void scWestLunpaCaveFlipLoweringSwitch(void)
 	if(fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) == 0) {
 		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-			sySndPlay(SE_GATE_MOVE);
+			sySoundPlay(SE_GATE_MOVE);
 			scWestLunpaCaveGateLower();
 			gmFlagSet(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
 			gmFlagClear(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
@@ -424,7 +424,7 @@ static void scWestLunpaCaveFlipRaisingSwitch(void)
 	if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_PUDDLE_FROZEN) == 0) {
 		if(fdScriptGetFlag(FLAG_WEST_LUNPA_CAVE_GATE_RAISED) == 0) {
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-			sySndPlay(SE_GATE_MOVE);
+			sySoundPlay(SE_GATE_MOVE);
 			scWestLunpaCaveGateRaise();
 			gmFlagSet(FLAG_WEST_LUNPA_CAVE_GATE_RAISED);
 			gmFlagClear(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED);
@@ -1175,10 +1175,10 @@ Sint32 scInit(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	if(MainRoutineStateWork.next == SCENE_WEST_LUNPA_CAVE) {
-		fdActorSetSprFlags(fdActorGet(ACTOR_UNUSED_PUDDLE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_SOUTH_PUDDLE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_GATE_PUDDLE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_NORTH_PUDDLE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_UNUSED_PUDDLE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_SOUTH_PUDDLE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_GATE_PUDDLE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_NORTH_PUDDLE), 0);
 		fdActorGet(ACTOR_NORTH_PUDDLE)->scaleY = toFIXED(19) / 20;
 		if(gmFlagGet(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
 			scWestLunpaCaveGateLower();

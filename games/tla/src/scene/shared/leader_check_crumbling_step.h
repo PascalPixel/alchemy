@@ -1,13 +1,13 @@
 /* Stepping onto a crumbling pillar of an (actor, flag) list, as
    scCrumblingPillarStep: the first time it flashes and cracks, the second time
    it gives way under the leader with a shake, dust and a thump. */
-void scLeaderCheckCrumblingStep(const Uint16 *tbl)
+void scLeaderCheckCrumblingStep(const Uint16 *table)
 {
 	ACTOR *leader;
 	ACTOR *trap;
 	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 second;
 
 	if(fdTryJumpForward() != 0)
@@ -19,31 +19,31 @@ void scLeaderCheckCrumblingStep(const Uint16 *tbl)
 	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap == 0)
 		return;
-	while(*tbl != ACTOR_LIST_END) {
-		id = tbl[0];
+	while(*table != ACTOR_LIST_END) {
+		id = table[0];
 		if(fdActorGetById(id) != trap) {
-			tbl += 2;
+			table += 2;
 			continue;
 		}
-		flg = tbl[1];
+		flag = table[1];
 		fdScriptStart();
-		if(!syGameFlagGet(flg)) {
-			sySndPlay(SE_CHEST_CLOSE);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+		if(!syGameFlagGet(flag)) {
+			sySoundPlay(SE_CHEST_CLOSE);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 			sySynch(2);
 			fdActorSelectAnimation(trap, 0);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			sySynch(2);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 			sySynch(4);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			scDustScatter(0);
-			syGameFlagSet(flg);
+			syGameFlagSet(flag);
 		} else {
-			second = flg + 1;
+			second = flag + 1;
 			if(!syGameFlagGet(second)) {
-				leader->motionFlg = 0;
-				sySndPlay(SE_PUSH);
+				leader->motionFlags = 0;
+				sySoundPlay(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
 				sySynch(8);
@@ -55,11 +55,11 @@ void scLeaderCheckCrumblingStep(const Uint16 *tbl)
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
 				fdActorSetPosAndResetMotion(trap, 0, 0, 0);
 				sySynch(2);
-				sySndPlay(SE_THUMP);
+				sySoundPlay(SE_THUMP);
 				scMagmaRockInsideSpawnDustRing();
 				sySynch(20);
 				syGameFlagSet(second);

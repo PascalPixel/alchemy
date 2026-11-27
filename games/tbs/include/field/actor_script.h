@@ -154,7 +154,7 @@ typedef enum ACTOR_SCRIPT_VALUE {
 	SW_GROUND = 22,
 	SW_SCENE_WORD = 23,	 /* ACTOR.sceneWord, scene code's own word */
 	SW_SPRITE = 24,		 /* the sprite, or its list of four */
-	SW_SPRITE_KIND = 25, /* ACTOR.sprStorageKind */
+	SW_SPRITE_KIND = 25, /* ACTOR.spriteStorageKind */
 	SW_MOTION = 26,
 	SW_ARRIVAL = 27,
 	SW_RESULT = 28,
@@ -164,15 +164,15 @@ typedef enum ACTOR_SCRIPT_VALUE {
 	SW_PAUSED = 32,
 	SW_REPEAT = 33,
 	SW_WAIT = 34,
-	/* ACTOR.tmr, the parameter an actor script reads; a scene's own scripts set
-	   it to 1 as they end, for the code that waits on them. */
+	/* ACTOR.timer, the parameter an actor script reads; a scene's own scripts
+	   set it to 1 as they end, for the code that waits on them. */
 	SW_TIMER = 35,
 	/* ACTOR.userValue, scene scratch: a script sets it for the scene code that
 	   reads or waits on it. */
 	SW_USER_VALUE = 36,
 	SW_WATCHED_ACTOR = 37, /* the actor it follows or faces */
 	SW_HOOK = 38,
-	SW_SCENE_COUNTER = 39, /* ACTOR.sceneCnt, scene code's own byte */
+	SW_SCENE_COUNTER = 39, /* ACTOR.sceneCount, scene code's own byte */
 	SW_SCENE_BYTE = 40	   /* ACTOR.sceneByte, scene code's own byte */
 } ACTOR_SCRIPT_VALUE;
 

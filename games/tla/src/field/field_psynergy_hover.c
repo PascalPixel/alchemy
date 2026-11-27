@@ -4,7 +4,8 @@
    colours. */
 #define HOVER_GLOW_WAVE_LENGTH	 96
 #define HOVER_GLOW_STEPS		 24
-/* The brightness level at which fdHoverGlowGetCol leaves the wave as it is. */
+/* The brightness level at which fdHoverGlowGetColor leaves the wave as it is.
+ */
 #define HOVER_GLOW_NEUTRAL_LEVEL 7
 
 /* A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31), read a
@@ -15,7 +16,7 @@ extern const Uint8 HoverGlowLevels[];
    cycle and a brightness level (HOVER_GLOW_NEUTRAL_LEVEL leaves it as it is):
    three channels of the wave, each raised or lowered by the level and held to
    0..31, packed as RGB555. */
-Sint32 fdHoverGlowGetCol(Sint32 counter, Sint32 level)
+Sint32 fdHoverGlowGetColor(Sint32 counter, Sint32 level)
 {
 	Sint16		 phase;
 	Sint16		 bias;
@@ -71,7 +72,7 @@ Sint32 fdHoverGlowGetCol(Sint32 counter, Sint32 level)
    hovering leader, its scale, tile and stage. */
 typedef struct HOVER_STATE {
 	Uint8	   tiles[4096]; /* the ring's picture, decoded to be loaded */
-	EFFECT_SPR spr;
+	EFFECT_SPR sprite;
 	Sint32	   scale;
 	Sint16	   resource;
 	Uint16	   tile;
@@ -85,12 +86,12 @@ Sint32 fdMapGridIsHoverMetatile(Sint32 x, Sint32 z, Sint32 layer);
 /* Hover's tick callback: keeps the glow's strength full while the player
    stands where fdMapGridIsHoverMetatile allows, and runs it down otherwise
    (once it is fading, the glow shrinks with it and the script takes its sound
-   when it is spent). It cycles HOVER_GLOW_PALETTE through fdHoverGlowGetCol's
+   when it is spent). It cycles HOVER_GLOW_PALETTE through fdHoverGlowGetColor's
    colours, flickers between two pictures every other tick, and draws the glow
    under the player, flattened to three quarters of its height. */
 void fdHoverGlowUpdate(void)
 {
-	HOVER_STATE *state = RamHeapSlots->battleEff;
+	HOVER_STATE *state = RamHeapSlots->battleEffect;
 	ACTOR		*player = fdActorLookup(fdPartyGetLeaderActor());
 	FIELD_STATE *field = RamHeapSlots->fieldState;
 	Uint16		*palette;
@@ -99,7 +100,7 @@ void fdHoverGlowUpdate(void)
 	Sint32		 i;
 	Sint32		 scaleX;
 	Sint32		 scaleY;
-	EFFECT_SPR	*spr;
+	EFFECT_SPR	*sprite;
 
 	/* The glow's strength. */
 	if(fdMapGridIsHoverMetatile(
@@ -124,7 +125,7 @@ void fdHoverGlowUpdate(void)
 	/* Cycle the glow's colours; the last takes the 15th's level. */
 	palette = HOVER_GLOW_PALETTE;
 	for(i = 0; i < PALETTE_COLORS; i++) {
-		syIOWrite16(fdHoverGlowGetCol((((Sint16)state->phase >> 2) + i / 2) %
+		syIOWrite16(fdHoverGlowGetColor((((Sint16)state->phase >> 2) + i / 2) %
 							HOVER_GLOW_STEPS,
 						i == PALETTE_COLORS - 1 ? PALETTE_COLORS - 2 : i),
 			palette++);
@@ -134,19 +135,19 @@ void fdHoverGlowUpdate(void)
 	/* Draw it under the player. */
 	scaleX = state->scale;
 	scaleY = scaleX * 6 / 8;
-	spr = &state->spr;
-	spr->oam.idx = state->tile + ((TickCount >> 1) & 1) * 32;
-	spr->oam.pri = fdActorGetSprPriority(player);
-	spr->depth = fdActorGetSprDepth(player) - 1;
+	sprite = &state->sprite;
+	sprite->oam.index = state->tile + ((TickCount >> 1) & 1) * 32;
+	sprite->oam.priority = fdActorGetSpritePriority(player);
+	sprite->depth = fdActorGetSpriteDepth(player) - 1;
 	pos[0] = player->x.fixed;
 	pos[1] = player->y.fixed;
 	pos[2] = player->z.fixed;
 	fdCameraWorldToScreen(pos);
-	spr->x = pos[0];
-	spr->y = pos[2];
-	spr->scaleX = scaleX;
-	spr->scaleY = scaleY;
-	fdEffectSprDraw(spr);
+	sprite->x = pos[0];
+	sprite->y = pos[2];
+	sprite->scaleX = scaleX;
+	sprite->scaleY = scaleY;
+	fdEffectSpriteDraw(sprite);
 }
 
 /* Hover cast on a target: runs fdPsynergyHover. */
@@ -165,12 +166,12 @@ void fdPsynergyHoverOnTarget(void)
 void fdPsynergyHover(void)
 {
 	HOVER_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(HOVER_STATE));
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(HOVER_STATE));
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	ACTOR			   *player = scene->caster;
 	PENDING_CUE		   *pending;
-	EFFECT_SPR		   *spr;
+	EFFECT_SPR		   *sprite;
 	ACTOR			   *other;
 	FIXED				pos[3];
 	Sint32				blocked;
@@ -188,15 +189,15 @@ void fdPsynergyHover(void)
 	state->resource = slot;
 	state->tile = tile;
 	state->scale = 0;
-	spr = &state->spr;
-	fdEffectSprInit(spr, 15, 15, OBJ_SIZE_32X32, (Sint16)state->tile);
-	spr->oam.fullCol = 1;
-	spr->oam.pal = 0;
+	sprite = &state->sprite;
+	fdEffectSpriteInit(sprite, 15, 15, OBJ_SIZE_32X32, (Sint16)state->tile);
+	sprite->oam.fullColor = 1;
+	sprite->oam.palette = 0;
 	fdActorSetPosAndResetMotionStub(
 		player, player->x.fixed, player->y.fixed, player->z.fixed);
 	fdBattleEffectSetObjectUpdateMode(player, CASTER_LOOK_NORMAL);
 	fdActorSelectAnimationStub(player, ANIM_LEADER_RUN);
-	sySndPlayStub(SE_PSYNERGY_START);
+	sySoundPlayStub(SE_PSYNERGY_START);
 	sySynch(1);
 	/* DEAD: nothing reads it; the ROM keeps the store. */
 	state->unused = 0;
@@ -212,7 +213,8 @@ void fdPsynergyHover(void)
 		for(n = 0; n < FIELD_ACTOR_COUNT; n++) {
 			other = field->actors[n];
 			if(other != NULL && other->script != NULL &&
-				(other->collisionFlg & ACTOR_SOLID) && other != scene->caster) {
+				(other->collisionFlags & ACTOR_SOLID) &&
+				other != scene->caster) {
 				/* DEAD: the overlap test reads the actors themselves; the ROM
 				   keeps the stores. */
 				pos[0] = other->x.fixed;
@@ -229,14 +231,14 @@ void fdPsynergyHover(void)
 
 	if(blocked) {
 		sySynch(5);
-		sySndPlayStub(SE_GLITTER);
+		sySoundPlayStub(SE_GLITTER);
 		for(i = 0; i < HOVER_RING_GROW_TICKS; i++) {
 			state->scale = toFIXED(1) * i / HOVER_RING_GROW_TICKS;
 			sySynch(1);
 		}
 		sySynch(10);
 		if(pending != NULL)
-			fdRunPsynergyScript(pending, scene->casterId, scene->tgtId);
+			fdRunPsynergyScript(pending, scene->casterId, scene->targetId);
 		for(i = HOVER_RING_GROW_TICKS - 1; i != 0; i--) {
 			state->scale = toFIXED(1) * i / HOVER_RING_GROW_TICKS;
 			sySynch(1);
@@ -246,7 +248,7 @@ void fdPsynergyHover(void)
 		syVRAMCacheFreeEntry(state->resource);
 		syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 	} else {
-		player->motionFlg = 0;
+		player->motionFlags = 0;
 		player->y.fixed = player->groundHeight;
 		state->scale = 0;
 		field->glowHeld = 0;
@@ -256,12 +258,12 @@ void fdPsynergyHover(void)
 		field->glow = GLOW_RISING;
 		for(i = 0; i < HOVER_RING_GROW_TICKS; i++) {
 			if(i == 10)
-				sySndPlayStub(SE_GLITTER);
+				sySoundPlayStub(SE_GLITTER);
 			player->y.fixed += toFIXED(1);
 			state->scale = toFIXED(1) * i / HOVER_RING_GROW_TICKS;
 			sySynch(1);
 		}
-		player->motionFlg = ACTOR_FLOATS;
+		player->motionFlags = ACTOR_FLOATS;
 		player->y.fixed = player->groundHeight + toFIXED(73) / 2;
 		player->gravity = toFIXED(3);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_HOVER;
@@ -279,21 +281,21 @@ void fdPsynergyHover(void)
    freed. */
 void fdPsynergyEndHover(void)
 {
-	HOVER_STATE *state = (HOVER_STATE *)RamHeapSlots->battleEff;
+	HOVER_STATE *state = (HOVER_STATE *)RamHeapSlots->battleEffect;
 	ACTOR		*actor = fdActorGetById(fdPartyGetLeaderActor());
 	Sint32		 i;
 
 	syCloseEvent(fdHoverGlowUpdate);
 	fdActorSetPosAndResetMotionStub(
 		actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
 	for(i = 0; i < 60; i++) {
 		if(actor->y.fixed <= actor->groundHeight)
 			break;
 		sySynch(1);
 	}
-	sySndPlayStub(SE_WATER);
+	sySoundPlayStub(SE_WATER);
 	sySynch(1);
 	for(i = 0; i < 20; i++) {
 		if(actor->y.fixed <= actor->groundHeight)
@@ -308,7 +310,7 @@ void fdPsynergyEndHover(void)
 	}
 	sySynch(1);
 	actor->bounce = 0;
-	actor->velY = 0;
+	actor->velocityY = 0;
 	actor->y.fixed = actor->groundHeight;
 	actor->gravity = toFIXED(1);
 	syVRAMCacheFreeEntry(state->resource);

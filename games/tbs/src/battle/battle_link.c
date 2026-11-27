@@ -25,15 +25,15 @@ Sint32 btLinkBattleReceiveParty(void)
 	Uint16 label[24];
 	void  *buf;
 	UNIT  *opponent;
-	Sint32 memberCnt;
+	Sint32 memberCount;
 	Sint32 partySlot;
 	Sint32 labelLength;
 	Sint32 i;
 
 	/* XXX (no evidence): what the block is for; each party member is received
 	   straight into its enemy unit, and the block is only freed. */
-	buf = syHeapAllocEWRAM(LINK_PARTY_UNIT_BYTES);
-	memberCnt = 0;
+	buf = syHeapAllocateEWRAM(LINK_PARTY_UNIT_BYTES);
+	memberCount = 0;
 	for(partySlot = 0; partySlot < LINK_PARTY_SIZE; partySlot++) {
 		opponent = gmUnitGetStub(partySlot + FIRST_ENEMY_UNIT);
 		if(sySerialStartReceive(opponent) == -1) {
@@ -41,7 +41,7 @@ Sint32 btLinkBattleReceiveParty(void)
 		}
 		sySerialWaitForReceive();
 		if(opponent->side != 0) {
-			memberCnt++;
+			memberCount++;
 		}
 		sySynch(2);
 
@@ -69,14 +69,14 @@ Sint32 btLinkBattleReceiveParty(void)
 	syHeapRelease(buf);
 
 	/* The recovery packet follows all three party places. */
-	buf = syHeapAllocEWRAM(LINK_PARTY_OFFER_BYTES);
+	buf = syHeapAllocateEWRAM(LINK_PARTY_OFFER_BYTES);
 	if(sySerialStartReceive(
 		   gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_OPPONENT)) != -1) {
 		sySerialWaitForReceive();
 		sySynch(2);
 	}
 	syHeapRelease(buf);
-	return memberCnt;
+	return memberCount;
 }
 
 /* BATTLE_STATE.opponentSlots for a party unit the opponent was not sent. */
@@ -91,12 +91,12 @@ UNREAD_RESULT btLinkBattleSendParty(void)
 	Sint32				 j;
 	DJINN_RECOVERY_LIST *list;
 	Sint32				 size;
-	Sint32				 cnt;
+	Sint32				 count;
 	Sint32				 i;
 	Uint16				 unitIds[8];
 
 	size = LINK_PARTY_UNIT_BYTES;
-	buf = syHeapAllocEWRAM(size);
+	buf = syHeapAllocateEWRAM(size);
 	{
 		Sint32 noSlot = OPPONENT_SLOT_NONE;
 
@@ -105,8 +105,8 @@ UNREAD_RESULT btLinkBattleSendParty(void)
 			battle->opponentSlots[i] = noSlot;
 
 		/* The party members, each marked as the opponent's. */
-		cnt = btPartyPrepareMembers(unitIds);
-		for(i = 0; i < cnt; i++) {
+		count = btPartyPrepareMembers(unitIds);
+		for(i = 0; i < count; i++) {
 			syWordsCopy(buf, gmUnitGetStub(unitIds[i]), size);
 			((UNIT *)buf)->side = BATTLE_SIDE_PARTY;
 			/* FIRST_ENEMY_UNIT + i, in a byte. */
@@ -128,11 +128,11 @@ UNREAD_RESULT btLinkBattleSendParty(void)
 		/* The Djinn recovery list, its units renumbered for the opponent. */
 		size = LINK_PARTY_OFFER_BYTES;
 		syHeapRelease(buf);
-		buf = syHeapAllocEWRAM(size);
+		buf = syHeapAllocateEWRAM(size);
 		IWRAM_COPY_WORDS(
 			buf, gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY), size);
 		list = &((DJINN_RECOVERY_TABLE *)buf)->list;
-		for(j = 0; j < list->cnt; j++)
+		for(j = 0; j < list->count; j++)
 			list->entries[j].unitId =
 				battle->opponentSlots[list->entries[j].unitId];
 		if(sySerialStartSend(buf, LINK_PARTY_OFFER_BYTES) != -1) {
@@ -158,24 +158,24 @@ UNUSED Uint8 *btTextCopyFourCharsUnderscored(
 	Uint8 *base = buf;
 #endif
 	Uint32 fill = '_';
-	Uint8 *cur = base;
-	Uint8 *dst = cur;
+	Uint8 *current = base;
+	Uint8 *dest = current;
 	Sint32 i;
 
 	for(i = 0; i < 4; i++) {
 		Uint32 value = *src;
 
-		*dst = value;
+		*dest = value;
 		src++;
-		dst++;
+		dest++;
 		if((Uint8)value == 0)
-			*cur = fill;
-		cur++;
+			*current = fill;
+		current++;
 	}
 	base[4] = 0;
 	/* BUG: the original buffer is on the stack, gone once this returns. UBFIX
 	   keeps the result until the next call in private scratch storage. */
-	return dst;
+	return dest;
 }
 
 /* In a link battle, shows the "EXEC" signature and waits up to 30 ticks for

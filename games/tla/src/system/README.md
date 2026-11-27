@@ -131,7 +131,7 @@ Lost Age's does not: its events run on the caller's stack.
 An [event](../../../../docs/tla/glossary.md#event) is a function put on a list once and
 called every tick until it is taken off. The list holds 24, four more
 than The Broken Seal's. Each event has a rank, which the code calls its
-`pri`, and higher ranks run first. That is how one event gets to see
+`priority`, and higher ranks run first. That is how one event gets to see
 another's finished work in the same tick.
 
 There are two passes. Most events run once a tick from the tick loop. A
@@ -165,7 +165,7 @@ event calls `sySynch()` ([Who may wait](../../../../docs/tla/system.md#who-may-w
 The console draws sprites in the order of one list, and has no idea of
 "in front". So the game rebuilds that list from scratch every tick.
 Whatever wants a sprite shown drops it into one of 256 depth slots
-(`syOAMAddSprAtDepth`), and the list is written from the highest slot
+(`syOAMAddSpriteAtDepth`), and the list is written from the highest slot
 down.
 
 Because the slots are emptied every tick, a sprite shows only while
@@ -186,7 +186,7 @@ A block that other code has to find again is kept in a numbered
 [heap slot](../../../../docs/tla/glossary.md#heap-slot). The game calls such a block a
 [state](../../../../docs/tla/glossary.md#state): the menu's state, the battle's state. Asking
 for a slot that is already filled just returns it, so the code that sets a
-state up and the code that reads it make the same call (`syHeapSlotAlloc`).
+state up and the code that reads it make the same call (`syHeapSlotAllocate`).
 
 ## Memory map
 
@@ -299,7 +299,7 @@ keeps the same functions in the game logic's module.
 | `syGameFlagSetNibble` | sets those four bits; nothing calls it | none |
 | `syFindEvent` | where in the table the event running a function is; nothing calls it | none |
 | `syVRAMCacheCountFreeBlocks` | how many blocks of the sprite VRAM cache are free | none |
-| `syOAMAddSprAtDepthClamped` | puts a sprite in a depth slot, kept behind the windows' sprites | none; it takes the place of `syOAMAddSprAtDepth` in the table |
+| `syOAMAddSpriteAtDepthClamped` | puts a sprite in a depth slot, kept behind the windows' sprites | none; it takes the place of `syOAMAddSpriteAtDepth` in the table |
 | `syResourceReservedNoOperation` | does nothing with the resource number it is given | none; it takes the place of `syDummyNoOperationHook` in the table |
 | `syMatrixSetRotateY` | makes the current matrix a turn about Y, its translation gone | none; `slRotY` multiplies the turn into the current matrix |
 | `syMatrixSetTranslation` | sets the current matrix's translation and keeps its turn | none; only the battle engine's set-up calls it |

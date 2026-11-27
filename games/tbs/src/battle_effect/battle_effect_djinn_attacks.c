@@ -4,14 +4,14 @@
    battle_effect.c. */
 
 /* Copies a byte picture turned 90 degrees clockwise. */
-void btEffectTransposeCopy(const Uint8 *src, Uint8 *dst, Sint32 w, Sint32 h)
+void btEffectTransposeCopy(const Uint8 *src, Uint8 *dest, Sint32 w, Sint32 h)
 {
 	Sint32 x;
 	Sint32 y;
 
 	for(y = 0; y != h; y++) {
 		for(x = 0; x != w; x++)
-			dst[x * h + (h - 1 - y)] = src[y * w + x];
+			dest[x * h + (h - 1 - y)] = src[y * w + x];
 	}
 }
 
@@ -51,7 +51,7 @@ void btEffectRunMercury(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*sheet;
 	BLITTER_PAIR		 blit;
 	PARTICLE			*flame;
@@ -83,9 +83,9 @@ void btEffectRunMercury(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	EFFECT_FREE_PARTICLES(i, state->particles, 8);
 	EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-	sySndPlayStub(SE_WAVE);
-	for(frm = 0; frm != MERCURY_TICKS; frm++) {
-		if(frm == DJINN_ATTACK_DAMAGE_TICK)
+	sySoundPlayStub(SE_WAVE);
+	for(frame = 0; frame != MERCURY_TICKS; frame++) {
+		if(frame == DJINN_ATTACK_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		/* Flames fly left and burst on their 5th tick. */
@@ -98,20 +98,20 @@ void btEffectRunMercury(BATTLE_EFFECT_PARM *args)
 				flame->x -= 12;
 				flame->variant++;
 				if(flame->variant == 5) {
-					sySndPlayStub(SE_IMPACT);
-					state->shakeFrm = 4;
+					sySoundPlayStub(SE_IMPACT);
+					state->shakeFrame = 4;
 					for(j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
-						Sint32 ang;
+						Sint32 angle;
 						Sint32 speed;
 
 						mote =
 							&PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-						ang = syRandom() & TRIG_ANGLE_MASK;
+						angle = syRandom() & TRIG_ANGLE_MASK;
 						speed = (syRandom() & 0x1ff) + 256;
 						mote->x = toFIXED(flame->x);
 						mote->y = toFIXED(flame->y);
-						mote->velX = (sySin(ang) * speed) >> 8;
-						mote->velY = (syCos(ang) * speed) >> 7;
+						mote->velocityX = (sySin(angle) * speed) >> 8;
+						mote->velocityY = (syCos(angle) * speed) >> 7;
 						/* lives 32 to 47 ticks */
 						mote->variant = (syRandom() & 15) + 32;
 					}
@@ -119,32 +119,33 @@ void btEffectRunMercury(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frm <= 95) {
-			Sint32 x =
-				(FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) * (64 - frm * 2)) >>
-					1) +
+		if(frame <= 95) {
+			Sint32 x = (FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) *
+							(64 - frame * 2)) >>
+						   1) +
 				96;
 			Sint32 y =
-				FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * (64 - frm * 2)) + 60;
+				FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * (64 - frame * 2)) +
+				60;
 
 			blit[1](canvas, state->sheet, x - SMALL_DJINNI_WIDTH / 2,
 				y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
 				MERCURY_SMALL_DJINNI_HEIGHT);
 			for(i = 0; i != MERCURY_FLAMES; i++) {
-				if(frm == DjinnAttacksLaunchTicks[i]) {
+				if(frame == DjinnAttacksLaunchTicks[i]) {
 					PARTICLE *shot = &state->particles[i];
 
 					if(shot->variant == -1) {
 						shot->x = x - 8;
 						/* DEAD: velocityX keeps the launch x, which nothing
 						   reads; the ROM keeps the store. */
-						shot->velX = x;
+						shot->velocityX = x;
 						shot->y = y;
 						shot->variant = 0;
 						break;
 					}
 				}
-				if(frm == DjinnAttacksLaunchTicks[i] + 6) {
+				if(frame == DjinnAttacksLaunchTicks[i] + 6) {
 					EFFECT_FOR_EACH_TARGET(j, state->args) {
 						EFFECT_STRIKE_TARGET(
 							state->args, j, 6, KNOCKBACK_BOUNCE);
@@ -192,7 +193,7 @@ void btEffectRunJupiter(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 blit;
 	PARTICLE			*ball;
 	PARTICLE			*mote;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	Sint32				 j;
 
@@ -217,18 +218,18 @@ void btEffectRunJupiter(BATTLE_EFFECT_PARM *args)
 		ball->y = (syRandom() & 63) - 80;
 	}
 	EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-	sySndPlayStub(SE_THUNDER);
-	frm = 0;
+	sySoundPlayStub(SE_THUNDER);
+	frame = 0;
 	{
 		Sint32 angle = DEGtoANG(180);
 
-		for(; frm != JUPITER_TICKS; frm++) {
-			if(frm == DJINN_ATTACK_DAMAGE_TICK)
+		for(; frame != JUPITER_TICKS; frame++) {
+			if(frame == DJINN_ATTACK_DAMAGE_TICK)
 				EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-			if(frm <= 95) {
-				Sint32 x = FIXEDtoINT(sySin(angle) * (64 - frm * 2)) >> 1;
-				Sint32 y = FIXEDtoINT(syCos(angle) * (64 - frm * 2));
+			if(frame <= 95) {
+				Sint32 x = FIXEDtoINT(sySin(angle) * (64 - frame * 2)) >> 1;
+				Sint32 y = FIXEDtoINT(syCos(angle) * (64 - frame * 2));
 
 				blit[0](canvas, state->sheet, x + 86, y + 28,
 					SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
@@ -237,7 +238,7 @@ void btEffectRunJupiter(BATTLE_EFFECT_PARM *args)
 			/* Flameballs fall from the top right, one every 4 ticks. */
 			for(i = 0; i != JUPITER_FLAMEBALLS; i++) {
 				ball = &state->particles[i];
-				if(frm >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
+				if(frame >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
 					blit[0](canvas, state->sheet + JUPITER_FLAMEBALL,
 						ball->x - FLAMEBALL_WIDTH / 2,
 						ball->y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
@@ -256,13 +257,13 @@ void btEffectRunJupiter(BATTLE_EFFECT_PARM *args)
 							speed = (syRandom() & 0x1ff) + 256;
 							mote->x = toFIXED(ball->x);
 							mote->y = toFIXED(ball->y);
-							mote->velX = (sySin(direction) * speed) >> 7;
-							mote->velY = (syCos(direction) * speed) >> 6;
+							mote->velocityX = (sySin(direction) * speed) >> 7;
+							mote->velocityY = (syCos(direction) * speed) >> 6;
 							/* lives 32 to 47 ticks */
 							mote->variant = (syRandom() & 15) + 32;
 						}
-						sySndPlayStub(SE_IMPACT);
-						state->shakeFrm = 4;
+						sySoundPlayStub(SE_IMPACT);
+						state->shakeFrame = 4;
 						EFFECT_FOR_EACH_TARGET(j, state->args) {
 							EFFECT_STRIKE_TARGET(
 								state->args, j, 6, KNOCKBACK_BOUNCE);
@@ -291,11 +292,11 @@ void btEffectRunJupiter(BATTLE_EFFECT_PARM *args)
 	EFFECT_FINISH_CANVAS();
 }
 
-/* Decompresses resource `id` into `dst`. A sheet opens with its palette: a
+/* Decompresses resource `id` into `dest`. A sheet opens with its palette: a
    nonzero `copyPalette` copies it into the first BG colours, and a nonzero
    `skipPalette` steps over it to the pictures. */
 void btResourceLoadAndDecompress(
-	Sint32 id, void *dst, Sint32 skipPalette, Sint32 copyPalette)
+	Sint32 id, void *dest, Sint32 skipPalette, Sint32 copyPalette)
 {
 	Uint8 *data = syResourceGetTableEntry(id);
 
@@ -303,7 +304,7 @@ void btResourceLoadAndDecompress(
 		syWordsCopy(BG_PLTT, data, SHEET_PALETTE_BYTES);
 	if(skipPalette != 0)
 		data += SHEET_PALETTE_BYTES;
-	syDecompressTaggedLZ(data, dst);
+	syDecompressTaggedLZ(data, dest);
 }
 
 #define VENUS_TICKS			   96
@@ -330,14 +331,14 @@ void btEffectRunVenus(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
 	Uint8				*sheet;
 	PARTICLE			*column;
 	PARTICLE			*mote;
 	Sint32				 i;
 	Sint32				 j;
-	Sint32				 ang;
+	Sint32				 angle;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -364,29 +365,29 @@ void btEffectRunVenus(BATTLE_EFFECT_PARM *args)
 		column->y = 104;
 	}
 	EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-	sySndPlayStub(SE_RUMBLE);
-	frm = 0;
-	ang = DEGtoANG(180);
-	for(; frm != VENUS_TICKS; frm++) {
+	sySoundPlayStub(SE_RUMBLE);
+	frame = 0;
+	angle = DEGtoANG(180);
+	for(; frame != VENUS_TICKS; frame++) {
 		/* The Djinni sways from side to side as it drops. */
-		if(frm <= 79) {
-			Sint32 x = FIXEDtoINT(sySin(ang) * VENUS_DJINNI_SWAY);
-			Sint32 y = FIXEDtoINT(syCos(ang) * (64 - frm * 2));
+		if(frame <= 79) {
+			Sint32 x = FIXEDtoINT(sySin(angle) * VENUS_DJINNI_SWAY);
+			Sint32 y = FIXEDtoINT(syCos(angle) * (64 - frame * 2));
 
 			draw[1](canvas, state->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
 				VENUS_SMALL_DJINNI_HEIGHT);
 		}
-		if(frm == DJINN_ATTACK_DAMAGE_TICK)
+		if(frame == DJINN_ATTACK_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		/* Ten flame columns rise, one every 4 ticks. */
 		for(i = 0; i != VENUS_COLUMNS; i++) {
 			column = &state->particles[i];
-			if(frm >= i * 4 + 16) {
+			if(frame >= i * 4 + 16) {
 				draw[0](canvas, state->sheet + VENUS_COLUMN,
 					column->x - BLUE_FLAME_SPLASH_WIDTH / 2,
 					column->y - BLUE_FLAME_SPLASH_HEIGHT / 2,
 					BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
-				if(frm == i * 4 + 16) {
+				if(frame == i * 4 + 16) {
 					for(j = 0; j != VENUS_MOTES_PER_COLUMN; j++) {
 						Sint32 direction;
 						Sint32 speed;
@@ -397,13 +398,13 @@ void btEffectRunVenus(BATTLE_EFFECT_PARM *args)
 						speed = (syRandom() & 0x1ff) + 256;
 						mote->x = toFIXED(column->x);
 						mote->y = INTtoFIXED(column->y + 16);
-						mote->velX = (sySin(direction) * speed) >> 7;
-						mote->velY = (syCos(direction) * speed) >> 6;
+						mote->velocityX = (sySin(direction) * speed) >> 7;
+						mote->velocityY = (syCos(direction) * speed) >> 6;
 						mote->variant = (syRandom() & 15) + 32;
 					}
 					if(i & 1)
-						sySndPlayStub(SE_IMPACT);
-					state->shakeFrm = 4;
+						sySoundPlayStub(SE_IMPACT);
+					state->shakeFrame = 4;
 					EFFECT_FOR_EACH_TARGET(j, state->args) {
 						EFFECT_STRIKE_TARGET(
 							state->args, j, 6, KNOCKBACK_BOUNCE);
@@ -426,7 +427,7 @@ void btEffectRunVenus(BATTLE_EFFECT_PARM *args)
 		}
 		btCameraShake(4, 4);
 		EFFECT_END_TICK(state);
-		ang -= TRIG_TURN / 32;
+		angle -= TRIG_TURN / 32;
 	}
 	EFFECT_FINISH_CANVAS();
 }
@@ -457,8 +458,8 @@ void btEffectRunMars(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 blitters;
 	PARTICLE			*flame;
 	PARTICLE			*ember;
-	Sint32				 idx;
-	Sint32				 frm;
+	Sint32				 index;
+	Sint32				 frame;
 	Sint32				 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -476,64 +477,64 @@ void btEffectRunMars(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	/* Nine flames spread out along the ground, alternately left and right. */
-	idx = 0;
+	index = 0;
 	flame = state->particles;
-	for(; idx != MARS_FLAMES; idx++) {
-		Sint32 ang = idx * (TRIG_TURN / 32);
+	for(; index != MARS_FLAMES; index++) {
+		Sint32 angle = index * (TRIG_TURN / 32);
 
-		flame->x = FIXEDtoINT(sySin(ang) * MARS_ROW_REACH);
-		flame->y = FIXEDtoINT(syCos(ang) * 4) + MARS_ROW_Y;
-		if(idx & 1)
+		flame->x = FIXEDtoINT(sySin(angle) * MARS_ROW_REACH);
+		flame->y = FIXEDtoINT(syCos(angle) * 4) + MARS_ROW_Y;
+		if(index & 1)
 			flame->x = MARS_ROW_X - flame->x;
 		else
 			flame->x += MARS_ROW_X;
-		flame->variant = -(idx * 2);
+		flame->variant = -(index * 2);
 		for(i = 0; i != MARS_EMBERS_PER_FLAME; i++) {
-			ember = &PARTICLES[idx * MARS_EMBERS_PER_FLAME + i];
+			ember = &PARTICLES[index * MARS_EMBERS_PER_FLAME + i];
 			ember->x = toFIXED(((syRandom() & 15) + flame->x) - 8);
 			ember->y = INTtoFIXED((syRandom() & 7) + 96);
-			ember->velX = ((syRandom() & 127) - 64) << 11;
-			ember->velY = ((syRandom() & 127) - 64) << 10;
+			ember->velocityX = ((syRandom() & 127) - 64) << 11;
+			ember->velocityY = ((syRandom() & 127) - 64) << 10;
 			ember->z = syRandom() & TRIG_ANGLE_MASK; /* its sway's angle */
 			/* DEAD: nothing reads velocityZ; the ROM keeps the store. */
-			ember->velZ = syRandom() & 0xffff;
+			ember->velocityZ = syRandom() & 0xffff;
 		}
 		flame++;
 	}
 
-	sySndPlayStub(SE_WHOOSH);
-	for(frm = 0; frm != MARS_TICKS; frm++) {
-		if(frm == DJINN_ATTACK_DAMAGE_TICK)
+	sySoundPlayStub(SE_WHOOSH);
+	for(frame = 0; frame != MARS_TICKS; frame++) {
+		if(frame == DJINN_ATTACK_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		/* A glowing orb flares, then the Djinni shows in it and dives down to
 		   the left. */
-		if(frm <= 23)
+		if(frame <= 23)
 			blitters[0](canvas,
 				state->sheet + MARS_GLOW_ORB +
-					(frm / 4) * PICTURE_BYTES(GLOW_ORB),
+					(frame / 4) * PICTURE_BYTES(GLOW_ORB),
 				40, 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
-		if(frm == 20)
+		if(frame == 20)
 			syWordsCopy(BG_PLTT,
 				syResourceGetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
 				SHEET_PALETTE_BYTES);
-		if(frm >= 20 && frm <= 31) {
-			if(frm > 23)
-				blitters[1](canvas, state->sheet, 146 - frm * 4, frm * 8 - 172,
-					SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+		if(frame >= 20 && frame <= 31) {
+			if(frame > 23)
+				blitters[1](canvas, state->sheet, 146 - frame * 4,
+					frame * 8 - 172, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
 			else
 				blitters[0](canvas, state->sheet, 50, 20, SMALL_DJINNI_WIDTH,
 					SMALL_DJINNI_HEIGHT);
 		}
 		/* It strikes: the screen shakes and the flames erupt. */
-		if(frm == 32) {
-			sySndPlayStub(SE_CRASH);
-			state->shakeFrm = 8;
+		if(frame == 32) {
+			sySoundPlayStub(SE_CRASH);
+			state->shakeFrame = 8;
 			btResourceLoadAndDecompress(
 				RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
 		}
-		if(frm > 31) {
-			for(idx = 0; idx != MARS_FLAMES; idx++) {
-				flame = &state->particles[idx];
+		if(frame > 31) {
+			for(index = 0; index != MARS_FLAMES; index++) {
+				flame = &state->particles[index];
 				if(flame->variant >= 0 && flame->variant < MARS_FLAME_LIFE) {
 					Sint32 picture = flame->variant / 8;
 					Uint32 width;
@@ -562,13 +563,13 @@ void btEffectRunMars(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* Embers rise from the flames, swaying. */
-		for(idx = 0; idx != MARS_FLAMES * MARS_EMBERS_PER_FLAME; idx++) {
-			ember = &PARTICLES[idx];
-			if(frm >= (idx / MARS_EMBERS_PER_FLAME) * 2 + 40) {
+		for(index = 0; index != MARS_FLAMES * MARS_EMBERS_PER_FLAME; index++) {
+			ember = &PARTICLES[index];
+			if(frame >= (index / MARS_EMBERS_PER_FLAME) * 2 + 40) {
 				Sint32 size;
 				Sint32 x;
 
-				size = (idx & 1) + 3;
+				size = (index & 1) + 3;
 				x = FIXEDtoINT(ember->x) + FIXEDtoINT(sySin(ember->z) * 4);
 				EFFECT_DRAW_MOTE(
 					blitters[1], canvas, sheet, x, FIXEDtoINT(ember->y), size);
@@ -580,9 +581,9 @@ void btEffectRunMars(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frm == 38) {
-			EFFECT_FOR_EACH_TARGET(idx, state->args) {
-				EFFECT_STRIKE_TARGET(state->args, idx, 16, KNOCKBACK_BOUNCE);
+		if(frame == 38) {
+			EFFECT_FOR_EACH_TARGET(index, state->args) {
+				EFFECT_STRIKE_TARGET(state->args, index, 16, KNOCKBACK_BOUNCE);
 			}
 		}
 		btCameraShake(8, 8);

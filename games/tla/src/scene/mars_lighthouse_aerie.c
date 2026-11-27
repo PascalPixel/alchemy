@@ -175,12 +175,12 @@ Sint32 syListCountEntries(Uint16 *list);
    way. */
 void scMarsLighthouseAerieLookAround(ACTOR *actor)
 {
-	Uint8 *tmr = &actor->sceneCnt;
+	Uint8 *timer = &actor->sceneCount;
 
-	if(*tmr != 0) {
-		(*tmr)--;
+	if(*timer != 0) {
+		(*timer)--;
 	} else {
-		*tmr = (syRandomBelow(80)) + 60;
+		*timer = (syRandomBelow(80)) + 60;
 		actor->facing = syRandom();
 	}
 }
@@ -189,26 +189,26 @@ void scMarsLighthouseAerieLookAround(ACTOR *actor)
 void scMarsLighthouseAerieFlicker(ACTOR *actor)
 {
 	if((TickCount >> 1) & 1)
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 	else
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
 /* The actor swells now and then and shrinks back, as if breathing. */
 void scMarsLighthouseAerieThrob(ACTOR *actor)
 {
-	Uint8 *tmr;
+	Uint8 *timer;
 	Sint32 scale = actor->scaleX;
 
 	if(scale > toFIXED(1)) {
 		actor->scaleX = scale - toFIXED(1) / 32;
 		actor->scaleY -= toFIXED(1) / 64;
 	}
-	tmr = &actor->sceneCnt;
-	if(*tmr != 0) {
-		(*tmr)--;
+	timer = &actor->sceneCount;
+	if(*timer != 0) {
+		(*timer)--;
 	} else {
-		*tmr = *tmr + syRandomBelow(80) + 40;
+		*timer = *timer + syRandomBelow(80) + 40;
 		actor->scaleX = toFIXED(9) / 8;
 		actor->scaleY = toFIXED(17) / 16;
 	}
@@ -218,23 +218,23 @@ void scMarsLighthouseAerieThrob(ACTOR *actor)
 void scMarsLighthouseAerieOrbitBeaconFire(ACTOR *actor)
 {
 	ACTOR  *anchor = fdActorGetById(ACTOR_BEACON_FIRE);
-	Uint16 *pangle = (Uint16 *)&actor->tmr;
-	Sint32	ang = *pangle;
+	Uint16 *pangle = (Uint16 *)&actor->timer;
+	Sint32	angle = *pangle;
 	FIXED	cosine;
 	FIXED	sine;
 	FIXED	along;
 	FIXED	across;
 	Uint8  *counter;
 
-	cosine = syCos(ang);
-	counter = &actor->sceneCnt;
+	cosine = syCos(angle);
+	counter = &actor->sceneCount;
 	along = anchor->x.fixed + cosine * (actor->speedLimit + *counter + 6);
 	actor->x.fixed = along;
-	sine = syMathSin(ang);
+	sine = syMathSin(angle);
 	across = anchor->z.fixed + sine * (*counter + 4);
 	actor->z.fixed = across;
-	actor->tgtX = actor->x.fixed;
-	actor->tgtZ = across;
+	actor->targetX = actor->x.fixed;
+	actor->targetZ = across;
 	*pangle -= TRIG_TURN / 32;
 }
 
@@ -286,7 +286,8 @@ extern Uint16 TeleportCircleColors[];
 extern Uint16 TeleportCircleShimmerColors[];
 extern Uint16 TeleportCircleShimmerSlots[];
 
-void scPaletteSetColsFade(Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
+void scPaletteSetColorsFade(
+	Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
 void scMarsLighthouseAerieSpawnBeaconFlames(void);
 
 /* The beacon's colours and its fire, burning once the beacon is lit. */
@@ -295,37 +296,37 @@ void scMarsLighthouseAerieSetUpBeacon(void)
 	ACTOR *actor;
 	Sint32 i;
 
-	scPaletteSetColsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
+	scPaletteSetColorsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
 		TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	for(i = ACTOR_FIRST_PLATFORM; i <= ACTOR_LAST_PLATFORM; i++) {
 		actor = fdActorGet(i);
-		actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
-		fdActorSetSprColMode(actor, SPRITE_COLOR_BRG);
+		actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_BRG);
 	}
 	if(!fdScriptGetFlag(FLAG_MARS_BEACON_BURNING))
 		return;
 	fdActorSetPos(ACTOR_BEACON_FIRE, 512, 264);
 	fdActorSetPos(ACTOR_BEACON_GLOW, 512, 271);
 	syWait(1);
-	scFieldActorSetSprPriority(ACTOR_BEACON_FIRE, 1);
+	scFieldActorSetSpritePriority(ACTOR_BEACON_FIRE, 1);
 	actor = fdActorGet(ACTOR_BEACON_FIRE);
-	actor->motionFlg = ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FLOATS;
 	actor->y.fixed = toFIXED(112);
-	fdActorSetSprColMode(actor, SPRITE_COLOR_BRG);
-	fdActorSetSprFlags(actor, 0);
-	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	scFieldActorSetSprPriority(ACTOR_BEACON_GLOW, 2);
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_BRG);
+	fdActorSetSpriteFlags(actor, 0);
+	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+	scFieldActorSetSpritePriority(ACTOR_BEACON_GLOW, 2);
 	actor = fdActorGet(ACTOR_BEACON_GLOW);
-	actor->motionFlg = ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FLOATS;
 	actor->y.fixed = toFIXED(112);
 	actor->scaleX = toFIXED(13) / 10;
 	actor->scaleY = toFIXED(13) / 10;
-	fdActorSetSprColMode(actor, SPRITE_COLOR_BRG);
-	fdActorSetSprFlags(actor, 0);
-	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_BRG);
+	fdActorSetSpriteFlags(actor, 0);
+	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
 	MarsLighthouseAerieBeaconFlameTick = 0;
 	syFieldSetTickEvent(
@@ -357,7 +358,7 @@ Sint32 scInit(void)
 		fdActorSetPos(MainRoutineStateWork.leaderActorId, 506, 280);
 		syWait(1);
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		syScriptCameraGetActor()->motionFlg = 0;
+		syScriptCameraGetActor()->motionFlags = 0;
 		fdCameraMoveTo(512, 96, 312, 1);
 		fdMapGridCenterOnFollowedPoint();
 		syWait(1);
@@ -405,9 +406,9 @@ void scMarsLighthouseAerieSpawnBeaconFlames(void)
 	ACTOR	  *anchor = fdActorGet(ACTOR_BEACON_FIRE);
 	FIXED	   offset = toFIXED(syRandomBelow(48));
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Uint32	   phase;
-	Sint32	   ang;
+	Sint32	   angle;
 
 	if(anchor != NULL &&
 		(phase = MarsLighthouseAerieBeaconFlameTick & 15) == 0) {
@@ -417,19 +418,19 @@ void scMarsLighthouseAerieSpawnBeaconFlames(void)
 		offset = INTtoFIXED(offset / toFIXED(6));
 		if(actor != NULL) {
 
-			spr = actor->spr;
+			sprite = actor->sprite;
 			fdActorStartScript(actor, MarsLighthouseAerieBeaconFlameScript);
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
-			actor->motionFlg = phase;
-			ang = syRandom() & 0xffff000;
-			actor->tmr = ang;
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
+			actor->motionFlags = phase;
+			angle = syRandom() & 0xffff000;
+			actor->timer = angle;
 			actor->userValue = phase;
 			actor->update = scMarsLighthouseAerieSwingBeaconFlame;
 			actor->watchedActor = (union FIELD_OBJECT *)anchor;
 			actor->speedLimit = FIXEDtoINT(
 				syMathSin((offset & 0xfffff) >> 4) * BEACON_FLAME_SWING_SPREAD);
-			spr->flg = 0;
-			spr->pri = ((FIELD_SPR *)anchor->spr)->pri;
+			sprite->flags = 0;
+			sprite->priority = ((FIELD_SPR *)anchor->sprite)->priority;
 		}
 	}
 	MarsLighthouseAerieBeaconFlameTick++;
@@ -438,19 +439,19 @@ void scMarsLighthouseAerieSpawnBeaconFlames(void)
 /* A flame swings round the beacon's fire, behind it and then in front. */
 void scMarsLighthouseAerieSwingBeaconFlame(ACTOR *actor)
 {
-	Uint16 *pangle = (Uint16 *)&actor->tmr;
-	Uint16	ang = *pangle;
+	Uint16 *pangle = (Uint16 *)&actor->timer;
+	Uint16	angle = *pangle;
 	ACTOR  *parent = (ACTOR *)actor->watchedActor;
 
 	actor->x.fixed = parent->x.fixed +
-		syCos(ang) * (actor->speedLimit + BEACON_FLAME_SWING_RADIUS);
-	actor->z.fixed = (syMathSin(ang) << 4) + toFIXED(264);
-	actor->tgtX = actor->x.fixed;
-	actor->tgtZ = actor->z.fixed;
+		syCos(angle) * (actor->speedLimit + BEACON_FLAME_SWING_RADIUS);
+	actor->z.fixed = (syMathSin(angle) << 4) + toFIXED(264);
+	actor->targetX = actor->x.fixed;
+	actor->targetZ = actor->z.fixed;
 	if(actor->z.fixed < toFIXED(264))
-		((FIELD_SPR *)actor->spr)->pri = 2;
+		((FIELD_SPR *)actor->sprite)->priority = 2;
 	else
-		((FIELD_SPR *)actor->spr)->pri = 1;
+		((FIELD_SPR *)actor->sprite)->priority = 1;
 	*pangle -= TRIG_TURN / 128;
 }
 
@@ -460,7 +461,7 @@ void scMarsLighthouseAerieStartLookingAround(Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 
 	scFieldActorStop(id);
-	actor->sceneCnt = (syRandomBelow(40)) + 20;
+	actor->sceneCount = (syRandomBelow(40)) + 20;
 	actor->update = (OBJECT_UPDATE)scMarsLighthouseAerieLookAround;
 }
 
@@ -493,29 +494,29 @@ extern Sint32 MarsLighthouseAerieGaretReadyScript[];
 void scMarsLighthouseAerieFaceDoomDragon(void)
 {
 	MAIN_ROUTINE_STATE *state;
-	Uint16			   *textCol;
+	Uint16			   *textColor;
 	ACTOR			   *actor;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	textCol = (Uint16 *)&CENTERED_TEXT_COLOR;
+	textColor = (Uint16 *)&CENTERED_TEXT_COLOR;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_WISE_ONE, 512, 276);
 	syWait(1);
-	scFieldActorSetSprPriority(ACTOR_SHEBA, 1);
-	scFieldActorSetSprPriority(ACTOR_JENNA, 1);
-	scFieldActorSetSprPriority(ACTOR_KRADEN, 1);
-	scFieldActorSetSprPriority(ACTOR_IVAN, 1);
-	scFieldActorSetSprPriority(ACTOR_MIA, 1);
-	fdScriptPlaySnd(MUS_SILENCE);
+	scFieldActorSetSpritePriority(ACTOR_SHEBA, 1);
+	scFieldActorSetSpritePriority(ACTOR_JENNA, 1);
+	scFieldActorSetSpritePriority(ACTOR_KRADEN, 1);
+	scFieldActorSetSpritePriority(ACTOR_IVAN, 1);
+	scFieldActorSetSpritePriority(ACTOR_MIA, 1);
+	fdScriptPlaySound(MUS_SILENCE);
 	syFieldScriptSetMessageId(
 		(Sint32)MsgMarsLighthouseAerieBetrayersYouHaveArrived);
 	/* "Betrayers, you have arrived!" */
 	fdScriptShowMessage(ACTOR_WISE_ONE, 0);
 	fdActorShowEmote(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(512, CAMERA_KEEP, 304, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
@@ -544,7 +545,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	/* "The wind's too strong! I can't see anything!" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
 	scFieldActorStop(MainRoutineStateWork.leaderActorId);
-	actor->sceneCnt = (syRandomBelow(20)) + 20;
+	actor->sceneCount = (syRandomBelow(20)) + 20;
 	actor->update = (OBJECT_UPDATE)scMarsLighthouseAerieLookAround;
 	scMarsLighthouseAerieStartLookingAround(ACTOR_GARET);
 	scMarsLighthouseAerieStartLookingAround(ACTOR_MIA);
@@ -606,23 +607,23 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeInterpolate(40);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 504, 292);
-	fdScriptPlaySnd(SE_WAVE);
+	fdScriptPlaySound(SE_WAVE);
 	syFieldScriptWait(20);
 	fdActorRunRepeatedMotion(MainRoutineStateWork.leaderActorId, 2);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.2);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 504, 308);
 	fdActorRunRepeatedMotion(MainRoutineStateWork.leaderActorId, 3);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 504, 320);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
-	*textCol = RGB_WHITE;
+	*textColor = RGB_WHITE;
 	syWait(1);
 	/* "So, you are still intent on lighting the beacon of Mars Lighthouse?" */
 	fdScriptShowMessage(ACTOR_WISE_ONE, 0);
@@ -648,7 +649,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
 	fdActorSetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
 	scFieldActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
-	fdScriptPlaySnd(MUS_CONFRONTATION);
+	fdScriptPlaySound(MUS_CONFRONTATION);
 	/* "Then search your heart, boy!" */
 	fdScriptShowMessage(ACTOR_WISE_ONE, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
@@ -677,9 +678,9 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	scMarsLighthouseAerieStopLookingAround(ACTOR_GARET);
 	scMarsLighthouseAerieStopLookingAround(ACTOR_MIA);
 	scMarsLighthouseAerieStopLookingAround(ACTOR_IVAN);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_NORMAL);
 	actor = fdActorGet(ACTOR_WISE_ONE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		fdActorGet(ACTOR_WISE_ONE), toFIXED(512), toFIXED(120), toFIXED(208));
 	syFieldScriptWait(20);
@@ -877,7 +878,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_WEST, 20);
 	scFieldActorSetAnimation(ACTOR_WISE_ONE, 6);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(SE_SWIRL);
+	fdScriptPlaySound(SE_SWIRL);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_PALE, PALETTES_ALL);
 	fdPaletteFadeInterpolate(40);
 	syFieldScriptWait(40);
@@ -1052,17 +1053,17 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
 	fdActorSetSpeed(state->leaderActorId, 0.4);
 	fdActorWalkToAndWait(state->leaderActorId, 504, 308);
-	fdScriptPlaySnd(SE_ASCEND);
+	fdScriptPlaySound(SE_ASCEND);
 	scFieldActorSetAnimation(ACTOR_WISE_ONE, 14);
 	syFieldScriptWait(10);
-	fdActorSetSprColById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
 	fdActorRunRepeatedMotion(state->leaderActorId, 2);
 	fdActorSetSpeed(state->leaderActorId, 1.6);
 	scFieldActorJump(state->leaderActorId, 4, 0);
-	fdActorGet(state->leaderActorId)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(state->leaderActorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(state->leaderActorId, 504, 320);
 	syFieldScriptWait(1);
-	fdActorGet(state->leaderActorId)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(state->leaderActorId)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetAttachedEffect(
 		ACTOR_PIERS, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(20);
@@ -1090,11 +1091,11 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorFaceDirection(state->leaderActorId, FACING_WEST, 40);
 	/* "Miracle? What are you talking about? What kind of miracle?" */
 	fdScriptShowMessage(ACTOR_PIERS, 0);
-	fdScriptPlaySnd(SE_CRUMBLE);
-	fdActorSetSprColById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_WHITE);
+	fdScriptPlaySound(SE_CRUMBLE);
+	fdActorSetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_WHITE);
 	syFieldScriptWait(20);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_WISE_ONE), SPRITE_COLOR_NORMAL);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -1117,7 +1118,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_NOD);
 	scFieldActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	actor->update = (OBJECT_UPDATE)scMarsLighthouseAerieFlicker;
 	fdActorSetScript(ACTOR_WISE_ONE, MarsLighthouseAerieVoiceFadeScript);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
@@ -1141,21 +1142,21 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	actor->scaleY = toFIXED(1) / 16;
 	fdActorSetPos(ACTOR_DOOM_DRAGON, 512, 280);
 	syWait(1);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		actor, toFIXED(512), toFIXED(48), toFIXED(280));
 	syWait(1);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
 	fdPaletteFadeInterpolate(20);
-	fdScriptPlaySnd(MUS_ALEX);
+	fdScriptPlaySound(MUS_ALEX);
 	fdActorRunScriptAndWait(
 		ACTOR_DOOM_DRAGON, MarsLighthouseAerieDoomDragonRiseScript);
 	REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeInterpolate(40);
 	fdActorSetSpeedAndAcceleration(ACTOR_DOOM_DRAGON, 3.2, 0.2);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
 	syWait(1);
@@ -1164,7 +1165,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeInterpolate(10);
 	scFieldActorWaitForMoveById(ACTOR_DOOM_DRAGON);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
 	syWait(1);
@@ -1173,7 +1174,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeInterpolate(10);
 	scFieldActorWaitForMoveById(ACTOR_DOOM_DRAGON);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
 	syWait(1);
@@ -1183,7 +1184,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeInterpolate(10);
 	scFieldActorWaitForMoveById(ACTOR_DOOM_DRAGON);
 	fdActorSetSpeed(ACTOR_DOOM_DRAGON, 6.4);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
 	syWait(1);
@@ -1192,7 +1193,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeInterpolate(10);
 	scFieldActorWaitForMoveById(ACTOR_DOOM_DRAGON);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
 	syWait(1);
@@ -1211,7 +1212,7 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
 	fdPaletteFadeInterpolate(10);
 	syWait(20);
-	fdScriptPlaySnd(SE_ITEM_BREAK);
+	fdScriptPlaySound(SE_ITEM_BREAK);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
 	syWait(1);
@@ -1220,16 +1221,16 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 	fdPaletteFadeInterpolate(40);
 	syWait(40);
 	actor->gravity = toFIXED(1) / 4;
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_BANE_ESCAPE);
+	fdScriptPlaySound(SE_BANE_ESCAPE);
 	fdMapGridSetShake(2, 4, 1);
 	syFieldScriptWait(10);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	syFieldMapGridWaitForShakeToSettle();
 	syFieldScriptWait(20);
 	scFieldActorStartRepeatedMotion(ACTOR_DOOM_DRAGON, 1);
-	fdScriptPlaySnd(SE_BOSS_ROAR);
+	fdScriptPlaySound(SE_BOSS_ROAR);
 	syFieldScriptWait(80);
 	/* "A three-headed dragon? That's your miracle?" */
 	fdScriptShowMessage(ACTOR_SHEBA, 0);
@@ -1291,9 +1292,9 @@ void scMarsLighthouseAerieFaceDoomDragon(void)
 void scMarsLighthouseAerieFlickerDragon(ACTOR *actor)
 {
 	if((MarsLighthouseAerieFlickerTick >> MarsLighthouseAerieFlickerRate) & 1)
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 	else
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 	MarsLighthouseAerieFlickerTick++;
 }
 
@@ -1301,9 +1302,9 @@ void scMarsLighthouseAerieFlickerDragon(ACTOR *actor)
 void scMarsLighthouseAerieFlickerParent(ACTOR *actor)
 {
 	if((MarsLighthouseAerieFlickerTick >> MarsLighthouseAerieFlickerRate) & 1)
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 	else
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 }
 
 extern Sint32 MarsLighthouseAerieShebaToThosePeopleScript[];
@@ -1329,7 +1330,7 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorSetAnimation(ACTOR_DOOM_DRAGON, 2);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->x.fixed -= toFIXED(4);
 	actor->z.fixed += toFIXED(16);
 	fdActorSetAnimation(ACTOR_DRAGON_HEAD_B, 2);
@@ -1346,23 +1347,24 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdPaletteFadeApplySource(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeInterpolate(1);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_JENNAS_MOTHER)), SPRITE_COLOR_HIDDEN);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_JENNAS_FATHER)), SPRITE_COLOR_HIDDEN);
-	scFieldActorSetSprCol((fdActorGet(ACTOR_FREED_KYLE)), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpriteColor(
+		(fdActorGet(ACTOR_FREED_KYLE)), SPRITE_COLOR_HIDDEN);
 	syWait(1);
-	scFieldActorSetSprPriority(ACTOR_SHEBA_STAND_IN, 1);
-	scFieldActorSetSprPriority(ACTOR_JENNA_STAND_IN, 1);
-	scFieldActorSetSprPriority(ACTOR_KRADEN, 1);
-	scFieldActorSetSprPriority(ACTOR_IVAN_STAND_IN, 1);
-	scFieldActorSetSprPriority(ACTOR_MIA_STAND_IN, 1);
+	scFieldActorSetSpritePriority(ACTOR_SHEBA_STAND_IN, 1);
+	scFieldActorSetSpritePriority(ACTOR_JENNA_STAND_IN, 1);
+	scFieldActorSetSpritePriority(ACTOR_KRADEN, 1);
+	scFieldActorSetSpritePriority(ACTOR_IVAN_STAND_IN, 1);
+	scFieldActorSetSpritePriority(ACTOR_MIA_STAND_IN, 1);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	FieldStateWork->transitionFrm = 1;
+	FieldStateWork->transitionFrame = 1;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
 	fdPaletteFadeInterpolate(16);
@@ -1381,15 +1383,15 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	mother->update = (OBJECT_UPDATE)scMarsLighthouseAerieFlickerParent;
 	father->update = (OBJECT_UPDATE)scMarsLighthouseAerieFlickerParent;
 	kyle->update = (OBJECT_UPDATE)scMarsLighthouseAerieFlickerParent;
-	fdScriptPlaySnd(SE_DRAGON_FLICKER);
+	fdScriptPlaySound(SE_DRAGON_FLICKER);
 	syWait(10);
-	fdScriptPlaySnd(SE_DRAGON_FLICKER);
+	fdScriptPlaySound(SE_DRAGON_FLICKER);
 	syWait(10);
-	fdScriptPlaySnd(SE_DRAGON_FLICKER);
+	fdScriptPlaySound(SE_DRAGON_FLICKER);
 	syWait(10);
-	fdScriptPlaySnd(SE_DRAGON_FLICKER);
+	fdScriptPlaySound(SE_DRAGON_FLICKER);
 	syWait(10);
-	fdScriptPlaySnd(SE_DRAGON_FLICKER);
+	fdScriptPlaySound(SE_DRAGON_FLICKER);
 	syWait(40);
 	MarsLighthouseAerieFlickerRate = 3;
 	syWait(30);
@@ -1407,23 +1409,24 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	father->update = NULL;
 	kyle->update = NULL;
 	syWait(1);
-	fdScriptPlaySnd(SE_CURSE);
-	scFieldActorSetSprCol(
+	fdScriptPlaySound(SE_CURSE);
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_JENNAS_MOTHER)), SPRITE_COLOR_BLUE_TINT);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_JENNAS_FATHER)), SPRITE_COLOR_BLUE_TINT);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_KYLE)), SPRITE_COLOR_BLUE_TINT);
 	syFieldScriptWait(20);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_JENNAS_MOTHER)), SPRITE_COLOR_NORMAL);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		(fdActorGet(ACTOR_FREED_JENNAS_FATHER)), SPRITE_COLOR_NORMAL);
-	scFieldActorSetSprCol((fdActorGet(ACTOR_FREED_KYLE)), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(
+		(fdActorGet(ACTOR_FREED_KYLE)), SPRITE_COLOR_NORMAL);
 	syFieldScriptWait(20);
-	mother->sceneCnt = (syRandomBelow(80)) + 40;
-	father->sceneCnt = (syRandomBelow(80)) + 40;
-	kyle->sceneCnt = (syRandomBelow(80)) + 40;
+	mother->sceneCount = (syRandomBelow(80)) + 40;
+	father->sceneCount = (syRandomBelow(80)) + 40;
+	kyle->sceneCount = (syRandomBelow(80)) + 40;
 	mother->update = (OBJECT_UPDATE)scMarsLighthouseAerieThrob;
 	father->update = (OBJECT_UPDATE)scMarsLighthouseAerieThrob;
 	kyle->update = (OBJECT_UPDATE)scMarsLighthouseAerieThrob;
@@ -1447,13 +1450,13 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorFaceDirection(ACTOR_IVAN_STAND_IN, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_MIA_STAND_IN, FACING_SOUTH, 0);
 	fdCameraSetSpeed(1.6);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(512, 80, 340, 1);
 	fdCameraWaitForArrival();
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
 	/* "It wasn't just the dragon you killed..." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
-	fdScriptPlaySnd(MUS_THE_WISE_ONES_TRAP);
+	fdScriptPlaySound(MUS_THE_WISE_ONES_TRAP);
 	fdActorSetAttachedEffect(
 		ACTOR_GARET_STAND_IN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(20);
@@ -1485,9 +1488,9 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 		SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_JENNA_STAND_IN,
 		0);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	scFieldActorSetSprPriority(ACTOR_SHEBA_STAND_IN, 2);
-	fdActorGet(ACTOR_JENNA_STAND_IN)->sceneCnt = 0;
-	fdActorGet(ACTOR_SHEBA_STAND_IN)->sceneCnt = 0;
+	scFieldActorSetSpritePriority(ACTOR_SHEBA_STAND_IN, 2);
+	fdActorGet(ACTOR_JENNA_STAND_IN)->sceneCount = 0;
+	fdActorGet(ACTOR_SHEBA_STAND_IN)->sceneCount = 0;
 	fdActorSetSpeed(ACTOR_SHEBA_STAND_IN, 0.8);
 	fdActorSetSpeed(ACTOR_JENNA_STAND_IN, 0.8);
 	fdActorSetScript(
@@ -1503,13 +1506,13 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	actor = fdActorGet(ACTOR_SHEBA_STAND_IN);
 	do {
 		syWait(1);
-	} while(actor->sceneCnt == 0);
+	} while(actor->sceneCount == 0);
 	fdActorFaceDirection(ACTOR_JENNA_STAND_IN, FACING_SOUTHEAST, 0);
 	fdActorFaceDirectionAndWait(ACTOR_SHEBA_STAND_IN, FACING_SOUTHEAST);
 	/* "What are you talking about, Kraden? They can't hurt us anymore..." */
 	fdScriptShowMessage(ACTOR_SHEBA_STAND_IN, 0);
-	scFieldActorSetSprPriority(ACTOR_JENNA_STAND_IN, 2);
-	scFieldActorSetSprPriority(ACTOR_PIERS_STAND_IN, 2);
+	scFieldActorSetSpritePriority(ACTOR_JENNA_STAND_IN, 2);
+	scFieldActorSetSpritePriority(ACTOR_PIERS_STAND_IN, 2);
 	scFieldActorShowEmote(
 		ACTOR_JENNA_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorSetSpeed(ACTOR_JENNA_STAND_IN, 1.6);
@@ -1518,16 +1521,16 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorFaceDirection(ACTOR_JENNA_STAND_IN, FACING_NORTHWEST, 20);
 	fdActorFaceDirection(ACTOR_JENNA_STAND_IN, FACING_NORTHEAST, 20);
 	fdActorSetSpeed(ACTOR_JENNA_STAND_IN, 0.2);
-	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_JENNA_STAND_IN, 488, 300);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_JENNA_STAND_IN, 2);
-	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_JENNA_STAND_IN, 486, 308);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA_STAND_IN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(512, 96, 320, 1);
 	fdCameraWaitForArrival();
@@ -1622,14 +1625,14 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorWalkToAndWait(ACTOR_PIERS_STAND_IN, 486, 308);
 	fdActorFaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_NORTHWEST);
 	fdActorSetSpeed(ACTOR_SHEBA_STAND_IN, 2.4);
-	fdActorGet(ACTOR_SHEBA_STAND_IN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHEBA_STAND_IN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SHEBA_STAND_IN, 474, 316);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_SHEBA_STAND_IN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHEBA_STAND_IN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_SHEBA_STAND_IN, FACING_NORTHEAST, 0);
 	fdActorWalkToAndWait(ACTOR_PIERS_STAND_IN, 462, 280);
 	fdActorFaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_EAST);
-	scFieldActorSetSprPriority(ACTOR_PIERS_STAND_IN, 1);
+	scFieldActorSetSpritePriority(ACTOR_PIERS_STAND_IN, 1);
 	scMarsLighthouseAerieStartRisingRings(
 		fdActorGet(ACTOR_PIERS_STAND_IN), &MarsLighthouseAerieRisingRingsA);
 	scMarsLighthouseAerieStartRisingRings(
@@ -1638,7 +1641,7 @@ void scMarsLighthouseAerieFindWhoTheDragonWas(void)
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
 	/* "If only... If only I'd realized it sooner..." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeInterpolate(120);
 	syWait(120);
@@ -1654,9 +1657,9 @@ void scMarsLighthouseAerieStandAside(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	actor->collisionFlg = 0;
-	actor->motionFlg = 0;
-	scFieldActorSetSprPriority(id, 1);
+	actor->collisionFlags = 0;
+	actor->motionFlags = 0;
+	scFieldActorSetSpritePriority(id, 1);
 }
 
 /* At the beacon, before it is lit: Piers and Mia can heal the three no longer,
@@ -1672,7 +1675,7 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 	syWait(1);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	scFieldActorSetSprPriority(ACTOR_MIA, 1);
+	scFieldActorSetSpritePriority(ACTOR_MIA, 1);
 	scMarsLighthouseAerieStartRisingRings(
 		fdActorGet(ACTOR_PIERS), &MarsLighthouseAerieRisingRingsA);
 	scMarsLighthouseAerieStartRisingRings(
@@ -1733,7 +1736,7 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 	/* "Mom... Wake up! It's me... It's Jenna! ...Don't leave me..." */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
 	scFieldActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdCameraSetSpeed(0.2);
 	fdCameraMoveTo(512, CAMERA_KEEP, 320, 1);
 	fdCameraWaitForArrival();
@@ -1770,12 +1773,12 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 		MainRoutineStateWork.leaderActorId, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_EAST, 40);
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 542, 328);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdCameraSetSpeed(0.8);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(540, 76, 340, 1);
 	fdCameraWaitForArrival();
 	fdActorFaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
@@ -1883,7 +1886,7 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH);
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdScriptSetFlag(FLAG_MARS_BEACON_LIT);
-	fdScriptPlaySnd(MUS_MARS_LIGHTHOUSE);
+	fdScriptPlaySound(MUS_MARS_LIGHTHOUSE);
 	fdActorSetSpeed(ACTOR_ISAAC, 0.8);
 	fdActorWalkToAndWait(ACTOR_ISAAC, 540, 286);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
@@ -1895,7 +1898,7 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 	scMarsLighthouseAerieStandAside(ACTOR_MIA);
 	scMarsLighthouseAerieStandAside(ACTOR_IVAN);
 	scMarsLighthouseAerieStandAside(ACTOR_GARET);
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 	fdScriptSetFlag(FLAG_ASKED_FOR_MARS_STAR);
 	fdMapGridCopyMetatileAttributes(39, 40, 18, 16, 23, 10);
 	gmPartyRestoreHpPp(1);
@@ -1906,17 +1909,17 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 	fdPartyRemoveMemberRestored(3);
 	fdPartyRemoveMemberRestored(2);
 	fdPartyRemoveMemberRestored(1);
-	fdActorGet(ACTOR_JENNAS_MOTHER)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_JENNAS_FATHER)->collisionFlg |= ACTOR_NOT_TARGETED;
-	scFieldActorSetSprCol(fdActorGet(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
+	fdActorGet(ACTOR_JENNAS_MOTHER)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_JENNAS_FATHER)->collisionFlags |= ACTOR_NOT_TARGETED;
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_HAMMA, 568, 274);
-	fdActorGet(ACTOR_JENNAS_MOTHER_TALK_SPOT)->motionFlg = 0;
+	fdActorGet(ACTOR_JENNAS_MOTHER_TALK_SPOT)->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(fdActorGet(ACTOR_JENNAS_MOTHER_TALK_SPOT),
 		toFIXED(492), toFIXED(96), toFIXED(284));
-	fdActorGet(ACTOR_JENNAS_FATHER_TALK_SPOT)->motionFlg = 0;
+	fdActorGet(ACTOR_JENNAS_FATHER_TALK_SPOT)->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(fdActorGet(ACTOR_JENNAS_FATHER_TALK_SPOT),
 		toFIXED(510), toFIXED(96), toFIXED(295));
-	fdActorGet(ACTOR_KYLE_TALK_SPOT)->motionFlg = 0;
+	fdActorGet(ACTOR_KYLE_TALK_SPOT)->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(fdActorGet(ACTOR_KYLE_TALK_SPOT),
 		toFIXED(540), toFIXED(96), toFIXED(300));
 	syWait(1);
@@ -1929,20 +1932,20 @@ void scMarsLighthouseAerieUrgeOnToBeacon(void)
 void scOrbUpdateRising(ACTOR *self)
 {
 	ACTOR *centre = fdActorGet(ACTOR_BEAM_BOTTOM);
-	Uint16 ang = self->tmr;
+	Uint16 angle = self->timer;
 	FIXED  sine;
 	FIXED  x;
 	FIXED  z;
 
-	self->x.fixed = centre->x.fixed + syCos(ang) * (self->speedLimit + 3);
-	sine = syMathSin(ang);
+	self->x.fixed = centre->x.fixed + syCos(angle) * (self->speedLimit + 3);
+	sine = syMathSin(angle);
 	z = centre->z.fixed;
 	x = self->x.fixed;
 	z += sine * 2;
 	self->z.fixed = z;
-	self->tgtX = x;
-	self->tgtZ = z;
-	self->tmr += -(TRIG_TURN / 32);
+	self->targetX = x;
+	self->targetZ = z;
+	self->timer += -(TRIG_TURN / 32);
 }
 
 /* Every third tick, or every tick once the light has broken through, an orb
@@ -1951,8 +1954,8 @@ void scOrbSpawnRising(void)
 {
 	ACTOR	  *center;
 	ACTOR	  *effect;
-	FIELD_SPR *spr;
-	Sint32	   ang;
+	FIELD_SPR *sprite;
+	Sint32	   angle;
 
 	if(fdScriptGetFlag(FLAG_BEACON_BROKE_THROUGH) == 0 && TickCount % 3 != 0)
 		return;
@@ -1975,18 +1978,18 @@ void scOrbSpawnRising(void)
 			center->z.fixed);
 	}
 	if(effect != 0) {
-		spr = effect->spr;
+		sprite = effect->sprite;
 		fdActorStartScript(effect, OrbRisingScript);
-		scFieldActorSetSprCol(effect, SPRITE_COLOR_GRB);
-		effect->motionFlg = 0;
-		ang = syRandom() & 0xffff000;
-		effect->tmr = ang;
+		scFieldActorSetSpriteColor(effect, SPRITE_COLOR_GRB);
+		effect->motionFlags = 0;
+		angle = syRandom() & 0xffff000;
+		effect->timer = angle;
 		effect->userValue = 0;
 		effect->update = (OBJECT_UPDATE)scOrbUpdateRising;
 		effect->speedLimit =
 			syMathSin((Uint32)(syRandom() * 65535) >> 20) * 24 >> 16;
-		spr->flg = 0;
-		spr->pri = 2;
+		sprite->flags = 0;
+		sprite->priority = 2;
 	}
 }
 
@@ -2003,13 +2006,13 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 	ACTOR					  *anchor = fdActorGetById(ACTOR_BEACON_FIRE);
 	Sint32					   spawn = 0;
 	ACTOR					  *actor;
-	MARS_LIGHTHOUSE_AERIE_SPR *spr;
-	Sint32					   ang;
+	MARS_LIGHTHOUSE_AERIE_SPR *sprite;
+	Sint32					   angle;
 	Uint8					   phase;
 
 	switch(MarsLighthouseAerieBeaconFireTick) {
 	case 0:
-		fdScriptPlaySnd(SE_SHIMMER);
+		fdScriptPlaySound(SE_SHIMMER);
 		fdMapGridSetShake(6, 6, 1);
 		fdPaletteFadeApplyTarget(
 			PALETTE_TINT_CUSTOM | RGB(31, 31, 24), PALETTES_BG);
@@ -2041,7 +2044,7 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 			MarsLighthouseAerieBeaconFireTick++;
 		} else {
 			if((TickCount & 7) == 0)
-				fdScriptPlaySnd(SE_GLITTER);
+				fdScriptPlaySound(SE_GLITTER);
 			spawn = 1;
 			anchor->y.fixed += toFIXED(9) / 4;
 		}
@@ -2053,7 +2056,7 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 			syFieldCloseEvent(scMarsLighthouseAerieRaiseBeaconFire);
 		} else {
 			if((TickCount & 7) == 0)
-				fdScriptPlaySnd(SE_GLITTER);
+				fdScriptPlaySound(SE_GLITTER);
 			anchor->y.fixed += toFIXED(9) / 4;
 			spawn = 1;
 		}
@@ -2064,20 +2067,20 @@ void scMarsLighthouseAerieRaiseBeaconFire(void)
 			anchor->y.fixed - ((syRandomBelow(80)) << 16) - toFIXED(8),
 			anchor->z.fixed);
 		if(actor != NULL) {
-			spr = actor->spr;
+			sprite = actor->sprite;
 			fdActorStartScript(actor, MarsLighthouseAerieBeaconSparkScript);
-			scFieldActorSetSprCol(actor, SPRITE_COLOR_GRB);
-			actor->motionFlg = 0;
-			ang = syRandom() & 0xffff000;
-			actor->tmr = ang;
+			scFieldActorSetSpriteColor(actor, SPRITE_COLOR_GRB);
+			actor->motionFlags = 0;
+			angle = syRandom() & 0xffff000;
+			actor->timer = angle;
 			actor->userValue = 0;
 			phase = syRandom() >> 13;
-			actor->sceneCnt = phase;
+			actor->sceneCount = phase;
 			actor->update = scMarsLighthouseAerieOrbitBeaconFire;
 			actor->speedLimit = syMathSin(syRandom() * 0xffff >> 20) * 24;
 			actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
-			spr->flg = 0;
-			((FIELD_SPR *)spr)->pri = 1;
+			sprite->flags = 0;
+			((FIELD_SPR *)sprite)->priority = 1;
 		}
 	}
 	if(++MarsLighthouseAerieBeaconFireTick > MarsLighthouseAerieBeaconFireTicks)
@@ -2089,7 +2092,7 @@ void scMarsLighthouseAerieStepBackLeft(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	scFieldActorSetSprPriority(id, 1);
+	scFieldActorSetSpritePriority(id, 1);
 	scFieldActorSetPosAndResetMotion(actor, actor->x.fixed - toFIXED(16),
 		actor->y.fixed, actor->z.fixed + toFIXED(32));
 }
@@ -2099,7 +2102,7 @@ void scMarsLighthouseAerieStepBackRight(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	scFieldActorSetSprPriority(id, 1);
+	scFieldActorSetSpritePriority(id, 1);
 	scFieldActorSetPosAndResetMotion(actor, actor->x.fixed + toFIXED(16),
 		actor->y.fixed, actor->z.fixed + toFIXED(32));
 }
@@ -2107,7 +2110,7 @@ void scMarsLighthouseAerieStepBackRight(Sint32 id)
 /* The actor keeps to the ground as the beacon's beam rises. */
 void scMarsLighthouseAerieHoldStill(Sint32 id)
 {
-	fdActorGetById(id)->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorGetById(id)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
 void		  scMarsLighthouseAerieStartLookingAround(Sint32 id);
@@ -2118,7 +2121,7 @@ extern Sint32 MarsLighthouseAerieBeamNarrowScript[];
    and the beacon is lit. */
 void scMarsLighthouseAerieLightBeacon(void)
 {
-	MARS_LIGHTHOUSE_AERIE_SPR *spr;
+	MARS_LIGHTHOUSE_AERIE_SPR *sprite;
 	ACTOR					  *star;
 	ACTOR					  *anchor;
 	ICON_TRANSFER			  *icon;
@@ -2132,7 +2135,7 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdActorSetPos(ACTOR_JENNAS_FATHER_TALK_SPOT, 0, 0);
 	fdActorSetPos(ACTOR_KYLE_TALK_SPOT, 0, 0);
 	fdCameraSetSpeed(1.6);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(512, 96, 312, 1);
 	fdCameraWaitForArrival();
 	syWait(1);
@@ -2159,29 +2162,30 @@ void scMarsLighthouseAerieLightBeacon(void)
 	star = scFieldActorCreate(SPRITE_UNSEEN_MARKER, anchor->x.fixed,
 		anchor->y.fixed + toFIXED(8), anchor->z.fixed);
 	if(star != NULL) {
-		spr = (MARS_LIGHTHOUSE_AERIE_SPR *)star->spr;
-		spr->fullCol = 0;
-		spr->layerCnt = 0;
-		spr->pal = 0;
-		spr->pri = 2;
-		star->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		star->motionFlg = 0;
-		star->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		star->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprFlags(star, 0);
+		sprite = (MARS_LIGHTHOUSE_AERIE_SPR *)star->sprite;
+		sprite->fullColor = 0;
+		sprite->layerCount = 0;
+		sprite->palette = 0;
+		sprite->priority = 2;
+		star->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		star->motionFlags = 0;
+		star->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		star->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(star, 0);
 		star->speedLimit = toFIXED(2) / 5;
 		star->acceleration = toFIXED(1) / 20;
 		star->gravity = toFIXED(1) / 2;
-		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		icon =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_MARS_STAR);
-		mnVRAMLoad(spr->vramBlock, ICON_TILE_BYTES, icon->tiles);
+		mnVRAMLoad(sprite->vramBlock, ICON_TILE_BYTES, icon->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-		star->motionFlg = 0;
+		star->motionFlags = 0;
 		scFieldActorSetMoveTarget(star, 512, 128, 280);
 		scFieldActorWaitForMove(star);
-		star->motionFlg = ACTOR_FLOATS;
+		star->motionFlags = ACTOR_FLOATS;
 		syFieldScriptWait(60);
-		star->motionFlg = 0;
+		star->motionFlags = 0;
 		scFieldActorSetMoveTarget(star, 512, 128, 264);
 		scFieldActorWaitForMove(star);
 		syFieldScriptWait(20);
@@ -2191,25 +2195,27 @@ void scMarsLighthouseAerieLightBeacon(void)
 		fdActorRelease(star);
 	}
 	syFieldScriptWait(40);
-	scFieldActorSetSprPriority(ACTOR_BEAM_BOTTOM, 2);
-	scFieldActorSetSprPriority(ACTOR_BEAM_LOWER, 2);
-	scFieldActorSetSprPriority(ACTOR_BEAM_MIDDLE, 2);
-	scFieldActorSetSprPriority(ACTOR_BEAM_UPPER, 2);
-	scFieldActorSetSprPriority(ACTOR_BEAM_TOP, 2);
-	fdScriptPlaySnd(SE_RUMBLE);
+	scFieldActorSetSpritePriority(ACTOR_BEAM_BOTTOM, 2);
+	scFieldActorSetSpritePriority(ACTOR_BEAM_LOWER, 2);
+	scFieldActorSetSpritePriority(ACTOR_BEAM_MIDDLE, 2);
+	scFieldActorSetSpritePriority(ACTOR_BEAM_UPPER, 2);
+	scFieldActorSetSpritePriority(ACTOR_BEAM_TOP, 2);
+	fdScriptPlaySound(SE_RUMBLE);
 	fdMapGridSetShake(1, 1, 1);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_WHITE);
 	bottomBeam = fdActorGet(ACTOR_BEAM_BOTTOM);
 	bottomBeam->scaleX = toFIXED(1) / 10;
 	bottomBeam->scaleY = -toFIXED(1);
-	bottomBeam->motionFlg = 0;
+	bottomBeam->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		bottomBeam, toFIXED(512), toFIXED(64), toFIXED(204));
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_LOWER), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEAM_LOWER), SPRITE_COLOR_WHITE);
 	lowerBeam = fdActorGet(ACTOR_BEAM_LOWER);
 	lowerBeam->scaleX = toFIXED(1) / 10;
 	lowerBeam->scaleY = -toFIXED(1);
-	lowerBeam->motionFlg = 0;
+	lowerBeam->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		lowerBeam, toFIXED(512), toFIXED(96), toFIXED(204));
 	sySetTickEvent(scOrbSpawnRising, EVENT_PASS_TICK);
@@ -2223,7 +2229,7 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 80);
 	fdActorSetScript(ACTOR_BEAM_BOTTOM, MarsLighthouseAerieBeamWidenScript);
 	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerieBeamWidenScript);
-	fdScriptPlaySnd(SE_CRASH);
+	fdScriptPlaySound(SE_CRASH);
 	fdMapGridSetShake(6, 6, 1);
 	fdPaletteFadeApplyTarget(
 		PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
@@ -2232,29 +2238,31 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(24);
 	syWait(60);
-	fdScriptPlaySnd(SE_RUMBLE);
+	fdScriptPlaySound(SE_RUMBLE);
 	fdScriptSetFlag(FLAG_BEACON_BROKE_THROUGH);
 	fdActorGet(ACTOR_BEAM_BOTTOM)->y.fixed = -toFIXED(56);
 	fdActorGet(ACTOR_BEAM_LOWER)->y.fixed = -toFIXED(24);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_MIDDLE), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEAM_MIDDLE), SPRITE_COLOR_WHITE);
 	middleBeam = fdActorGet(ACTOR_BEAM_MIDDLE);
 	middleBeam->scaleY = -toFIXED(1);
 	middleBeam->scaleX = (fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX);
-	middleBeam->motionFlg = 0;
+	middleBeam->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		middleBeam, toFIXED(512), toFIXED(8), toFIXED(204));
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_UPPER), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEAM_UPPER), SPRITE_COLOR_WHITE);
 	upperBeam = fdActorGet(ACTOR_BEAM_UPPER);
 	upperBeam->scaleY = -toFIXED(1);
 	upperBeam->scaleX = (fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX);
-	upperBeam->motionFlg = 0;
+	upperBeam->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		upperBeam, toFIXED(512), toFIXED(40), toFIXED(204));
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_TOP), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_BEAM_TOP), SPRITE_COLOR_WHITE);
 	topBeam = fdActorGet(ACTOR_BEAM_TOP);
 	topBeam->scaleY = -toFIXED(1);
 	topBeam->scaleX = (fdActorGet(ACTOR_BEAM_BOTTOM)->scaleX);
-	topBeam->motionFlg = 0;
+	topBeam->motionFlags = 0;
 	scFieldActorSetPosAndResetMotion(
 		topBeam, toFIXED(512), toFIXED(72), toFIXED(204));
 	fdMapGridCopyMetatilesTo(106, 36, 87, 7, 17, 23);
@@ -2273,7 +2281,7 @@ void scMarsLighthouseAerieLightBeacon(void)
 	scMarsLighthouseAerieStepBackRight(ACTOR_MIA);
 	fdActorSetPosAndFacing(MainRoutineStateWork.leaderActorId, toFIXED(484),
 		toFIXED(312), FACING_NORTHEAST);
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 	syWait(1);
 	fdMapGridSetShake(4, 4, 1);
 	fdPaletteFadeApplyTarget(
@@ -2295,31 +2303,33 @@ void scMarsLighthouseAerieLightBeacon(void)
 	fdPaletteFadeInterpolate(120);
 	syWait(120);
 	fdMapGridSetShake(1, 1, 1);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdActorGet(ACTOR_BEAM_BOTTOM)->scaleY = toFIXED(1) / 50;
 	fdActorSetScript(ACTOR_BEAM_LOWER, MarsLighthouseAerieBeamShootUpScript);
 	fdActorSetScript(ACTOR_BEAM_MIDDLE, MarsLighthouseAerieBeamShootUpScript);
 	fdActorSetScript(ACTOR_BEAM_UPPER, MarsLighthouseAerieBeamShootUpScript);
 	fdActorRunScriptAndWait(
 		ACTOR_BEAM_TOP, MarsLighthouseAerieBeamShootUpScript);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_HIDDEN);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_HIDDEN);
 	syFieldScriptWait(20);
 	fdActorRunScriptAndWait(
 		ACTOR_BEAM_BOTTOM, MarsLighthouseAerieBeamRiseScript);
 	syFieldCloseEvent(scOrbSpawnRising);
 	actor = fdActorGet(ACTOR_BEACON_FIRE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEACON_FIRE), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprPriority(ACTOR_BEACON_FIRE, 2);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEACON_FIRE), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpritePriority(ACTOR_BEACON_FIRE, 2);
 	MarsLighthouseAerieBeaconFireTick = 0;
 	MarsLighthouseAerieBeaconFireTicks = 240;
 	sySetTickEvent(scMarsLighthouseAerieRaiseBeaconFire, EVENT_PASS_TICK);
 	do {
 		syWait(1);
 	} while(MarsLighthouseAerieBeaconFireTick <= 100);
-	fdScriptPlaySnd(MUS_MERCURY_LIGHTHOUSE);
+	fdScriptPlaySound(MUS_MERCURY_LIGHTHOUSE);
 	syFieldScriptWait(120);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
 	syFieldScriptSetMessageId((Sint32)MsgMarsLighthouseAerieBeaconIsLit);
@@ -2404,7 +2414,7 @@ void scMarsLighthouseAerieLightBeacon(void)
 	scFieldActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	/* "You... You can't be!" */
 	syFieldScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
-	fdScriptPlaySnd(SE_ASCEND);
+	fdScriptPlaySound(SE_ASCEND);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(20);
 	syWait(20);
@@ -2418,7 +2428,7 @@ void scMarsLighthouseAerieSpawnBeaconFlames(void);
 /* All look up as the beam widens and the Golden Sun begins to rise. */
 void scMarsLighthouseAerieWatchGoldenSunRise(void)
 {
-	Sint32 frm;
+	Sint32 frame;
 	ACTOR *actor;
 
 	fdScriptStart();
@@ -2440,7 +2450,7 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 506, 280);
 	syWait(1);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(512, 96, 288, 0);
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
@@ -2503,7 +2513,7 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	/* "Why would he do that!? You saw what he did to us... He can't be
 	   up..." */
 	fdScriptShowMessage(ACTOR_GARET, 0);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_HAMMA, 512, 360);
 	syWait(1);
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -2611,8 +2621,8 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	fdActorWaitForAnimationChange(MainRoutineStateWork.leaderActorId);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_MUTED, PALETTES_BG);
 	fdPaletteFadeInterpolate(40);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
-	fdScriptPlaySnd(SE_RUMBLE);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SE_RUMBLE);
 	fdMapGridSetShake(1, 1, 1);
 	syFieldScriptWait(20);
 	scMarsLighthouseAerieStartLookingAround(MainRoutineStateWork.leaderActorId);
@@ -2629,20 +2639,23 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	fdCameraMoveTo(512, CAMERA_KEEP, 288, 1);
 	fdCameraWaitForArrival();
 	syFieldCloseEvent(scMarsLighthouseAerieSpawnBeaconFlames);
-	fdScriptPlaySnd(SE_SPIN);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEACON_FIRE), SPRITE_COLOR_DARK);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEACON_GLOW), SPRITE_COLOR_DARK);
-	scFieldActorSetSprPriority(ACTOR_BEAM_BOTTOM, 2);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_WHITE);
+	fdScriptPlaySound(SE_SPIN);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEACON_FIRE), SPRITE_COLOR_DARK);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEACON_GLOW), SPRITE_COLOR_DARK);
+	scFieldActorSetSpritePriority(ACTOR_BEAM_BOTTOM, 2);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEAM_BOTTOM), SPRITE_COLOR_WHITE);
 	actor = fdActorGet(ACTOR_BEAM_BOTTOM);
 	actor->scaleY = -toFIXED(1);
 	actor->scaleX = toFIXED(1) / 10;
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	scFieldActorSetPosAndResetMotion(
 		actor, toFIXED(512), toFIXED(64), toFIXED(204));
-	for(frm = 0; (Uint32)frm < 40; frm++) {
-		if(frm == 20) {
+	for(frame = 0; (Uint32)frame < 40; frame++) {
+		if(frame == 20) {
 			fdMapGridSetShake(2, 2, 1);
 			scFieldActorShowEmote(MainRoutineStateWork.leaderActorId,
 				EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2675,7 +2688,7 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 		actor->scaleX += toFIXED(1) / 64;
 		syWait(1);
 	}
-	fdScriptPlaySnd(MUS_ALCHEMY_UNLEASHED);
+	fdScriptPlaySound(MUS_ALCHEMY_UNLEASHED);
 	fdActorSetScript(
 		ACTOR_BEAM_BOTTOM, MarsLighthouseAerieWatchGoldenSunRiseScript);
 	syFieldScriptWait(80);
@@ -2731,10 +2744,11 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 	fdCameraMoveTo(512, CAMERA_KEEP, 312, 1);
 	fdActorSetPos(ACTOR_BEACON_FIRE, 0, 0);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_BEACON_GLOW), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprPriority(ACTOR_BEACON_GLOW, 1);
-	fdActorGet(ACTOR_BEACON_GLOW)->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
-	fdScriptPlaySnd(SE_SPIN);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_BEACON_GLOW), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpritePriority(ACTOR_BEACON_GLOW, 1);
+	fdActorGet(ACTOR_BEACON_GLOW)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+	fdScriptPlaySound(SE_SPIN);
 	fdMapGridSetShake(3, 3, 1);
 	fdPaletteFadeApplyTarget(
 		PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
@@ -2750,10 +2764,10 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 80);
 	scFieldActorJump(ACTOR_GARET, 4, 0);
 	fdActorSetSpeed(ACTOR_GARET, 3.2);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 542, 328);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	/* "Stop it! Let go of my wrist!" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
@@ -2789,10 +2803,10 @@ void scMarsLighthouseAerieWatchGoldenSunRise(void)
 	scFieldActorJump(ACTOR_KRADEN, 4, 10);
 	/* "There's no time for questions! Just carry them! Carry them and go!" */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
-	fdScriptPlaySnd(SE_STOP_EXIT_SE);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SE_STOP_EXIT_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syWait(1);
-	fdScriptPlaySnd(SE_SPIN);
+	fdScriptPlaySound(SE_SPIN);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(20);
 	syWait(240);
@@ -2880,7 +2894,7 @@ void scMarsLighthouseAerieClearCastOffer(void)
    a pause before each character. */
 void scMarsLighthouseAerieStartTalkWhileHalted(Sint32 id)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
 
 	if(MainRoutineStateWork.haltedActor == id)
 		state->haltingSpeech = 1;
@@ -2893,14 +2907,14 @@ void scMarsLighthouseAerieStartTalkWhileHalted(Sint32 id)
    ends, and with it the halting speech. */
 void scMarsLighthouseAerieEndTalkWhileHalted(Sint32 id)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
 	Sint32	   held = MainRoutineStateWork.haltedActor;
 
 	if(held == id) {
 		state->haltingSpeech = 0;
 		MainRoutineStateWork.haltedActor = -1;
 		fdActorGet(held)->update = NULL;
-		scFieldActorSetSprCol(fdActorGet(held), SPRITE_COLOR_NORMAL);
+		scFieldActorSetSpriteColor(fdActorGet(held), SPRITE_COLOR_NORMAL);
 	}
 }
 
@@ -2993,14 +3007,14 @@ void scMarsLighthouseAerieHaltSpeaker(Sint32 spot, Sint32 speaker)
 {
 	ACTOR			   *found = fdActorGet(spot);
 	ACTOR			   *actor;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
-	party->pausedColMode = 0;
+	party->pausedColorMode = 0;
 	actor = found;
 	party->haltedActor = speaker;
-	tgt = fdActorGet(speaker);
-	tgt->update = actor->update;
+	target = fdActorGet(speaker);
+	target->update = actor->update;
 	actor->update = NULL;
 }
 #endif
@@ -3052,29 +3066,29 @@ void scMarsLighthouseAerieUpdateRisingRings(ACTOR *actor)
 	FIXED		   sine;
 	Sint32		   i, j;
 	SPARKLE_STATE *state = (SPARKLE_STATE *)actor->watchedActor;
-	Uint8		  *cnt = &actor->sceneByte;
-	EFFECT_SPR	  *spr;
+	Uint8		  *count = &actor->sceneByte;
+	EFFECT_SPR	  *sprite;
 
 	/* Every other tick, the next of the normal colours and the five swaps. */
-	if(*cnt & 1)
-		fdActorSetSprColMode(actor,
-			(Uint8)((Uint32)((COUNTER_BITS *)cnt)->rest %
+	if(*count & 1)
+		fdActorSetSpriteColorMode(actor,
+			(Uint8)((Uint32)((COUNTER_BITS *)count)->rest %
 				(SPRITE_COLOR_BRG + 1)));
-	if(actor->sceneCnt == 0) {
-		if((*cnt & (RING_INTERVAL - 1)) == 0) {
-			fdScriptPlaySnd(SE_RISING_RINGS);
+	if(actor->sceneCount == 0) {
+		if((*count & (RING_INTERVAL - 1)) == 0) {
+			fdScriptPlaySound(SE_RISING_RINGS);
 			state->heights[state->nextPair] = 0;
 			state->nextPair ^= 1;
 		}
-	} else if(actor->sceneCnt == 1) {
+	} else if(actor->sceneCount == 1) {
 		if(state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
-			fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 			syVRAMCacheFreeEntry(state->vramEntry);
 			actor->update = NULL;
 			return;
 		}
 	}
-	(*cnt)++;
+	(*count)++;
 	for(i = 0; i < 2; i++) {
 		/* Its size: half a turn of sine over the climb. */
 		sine = syMathSin(state->heights[i] * (DEGtoANG(180) / RING_CLIMB));
@@ -3087,21 +3101,21 @@ void scMarsLighthouseAerieUpdateRisingRings(ACTOR *actor)
 				fdCameraWorldToScreen(&pos);
 				x = pos.x;
 				z = pos.z;
-				spr = &state->sprs[i * 2];
+				sprite = &state->sprites[i * 2];
 				for(j = 0; j <= 1; j++) {
-					spr->x = x;
-					spr->y = z;
-					spr->scaleX = sine;
-					spr->scaleY = sine;
+					sprite->x = x;
+					sprite->y = z;
+					sprite->scaleX = sine;
+					sprite->scaleY = sine;
 					if(j == 0) {
-						spr->depth = fdActorGetSprDepth(actor) - 1;
+						sprite->depth = fdActorGetSpriteDepth(actor) - 1;
 					} else {
-						spr->depth = fdActorGetSprDepth(actor) + 1;
-						spr->y -= toFIXED(1);
-						spr->scaleY = -spr->scaleY;
+						sprite->depth = fdActorGetSpriteDepth(actor) + 1;
+						sprite->y -= toFIXED(1);
+						sprite->scaleY = -sprite->scaleY;
 					}
-					fdEffectSprDraw(spr);
-					spr++;
+					fdEffectSpriteDraw(sprite);
+					sprite++;
 				}
 				state->heights[i]++;
 			}
@@ -3113,11 +3127,11 @@ void scMarsLighthouseAerieUpdateRisingRings(ACTOR *actor)
    scMarsLighthouseAerieUpdateRisingRings to the actor. */
 void scMarsLighthouseAerieStartRisingRings(ACTOR *actor, SPARKLE_STATE *state)
 {
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 	Sint32		tile;
 	Sint32		row;
-	Sint32		col;
-	Sint32		ofs;
+	Sint32		column;
+	Sint32		offset;
 
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(state->vramEntry, 8 * TILE_SIZE_4BPP,
@@ -3126,21 +3140,21 @@ void scMarsLighthouseAerieStartRisingRings(ACTOR *actor, SPARKLE_STATE *state)
 	state->heights[0] = RING_NOT_STARTED;
 	state->heights[1] = RING_NOT_STARTED;
 	state->actor = actor;
-	actor->sceneCnt = 0;
+	actor->sceneCount = 0;
 	actor->sceneByte = 0;
 	actor->update = scMarsLighthouseAerieUpdateRisingRings;
-	tile = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
+	tile = VramCacheEntries[state->vramEntry].offset / TILE_SIZE_4BPP;
 	actor->watchedActor = (union FIELD_OBJECT *)state;
 	for(row = 0; row <= 1; row++) {
-		col = 1;
-		ofs = (row * 2) * sizeof(EFFECT_SPR);
-		spr = (EFFECT_SPR *)(ofs + (Sint32)state);
-		for(; col >= 0; col--) {
-			fdEffectSprInit(spr, 16, 16, OBJ_SIZE_32X16, tile);
-			spr->oam.fullCol = 0;
-			spr->oam.pal = 0;
-			spr->oam.pri = fdActorGetSprPriority(actor);
-			spr++;
+		column = 1;
+		offset = (row * 2) * sizeof(EFFECT_SPR);
+		sprite = (EFFECT_SPR *)(offset + (Sint32)state);
+		for(; column >= 0; column--) {
+			fdEffectSpriteInit(sprite, 16, 16, OBJ_SIZE_32X16, tile);
+			sprite->oam.fullColor = 0;
+			sprite->oam.palette = 0;
+			sprite->oam.priority = fdActorGetSpritePriority(actor);
+			sprite++;
 		}
 	}
 }
@@ -3148,7 +3162,7 @@ void scMarsLighthouseAerieStartRisingRings(ACTOR *actor, SPARKLE_STATE *state)
 /* Lets an actor's rings climb out. */
 void scMarsLighthouseAerieEndRisingRings(ACTOR *actor)
 {
-	actor->sceneCnt = 1;
+	actor->sceneCount = 1;
 }
 
 /* clang-format off */

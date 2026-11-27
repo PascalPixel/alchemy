@@ -30,35 +30,36 @@ Sint32 btRun(Sint32 enemyGroup)
 	Uint8					*enemyUnits;
 	BATTLE_BACKGROUND_STATE *view;
 	BATTLE_MESSAGE_STATE	*display;
-	Sint32					 enemyCnt;
-	Uint8					*enemyUnitDst;
-	Sint32					 actionCnt;
+	Sint32					 enemyCount;
+	Uint8					*enemyUnitDest;
+	Sint32					 actionCount;
 	Sint32					 i;
 	Sint32					 result;
-	WINDOW					*tutorialWin;
+	WINDOW					*tutorialWindow;
 	Sint32					 linkWaitTicks;
-	Uint32					 copyIdx;
+	Uint32					 copyIndex;
 	Uint32					 actingUnit;
-	Sint16					 snd;
+	Sint16					 sound;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Uint8	unused[48];
 	volatile Uint32 fill;
 
 	/* The battle's state, all in EWRAM. */
-	camera = syHeapSlotAllocEWRAM(HEAP_SLOT_CAMERA, sizeof(BATTLE_CAMERA));
-	battle = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE, sizeof(BATTLE_STATE));
-	enemyUnits = syHeapSlotAllocEWRAM(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
-	view = syHeapSlotAllocEWRAM(
+	camera = syHeapSlotAllocateEWRAM(HEAP_SLOT_CAMERA, sizeof(BATTLE_CAMERA));
+	battle = syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE, sizeof(BATTLE_STATE));
+	enemyUnits =
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
+	view = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_BATTLE_BACKGROUND, sizeof(BATTLE_BACKGROUND_STATE));
-	syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_UNUSED, 640);
+	syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_UNUSED, 640);
 	focus = camera->focus;
 	result = 0;
 	syWordsClear(enemyUnits, ENEMY_UNITS_SIZE);
 	syInitEvent();
 	/* The opening transition owns the background until it is over. */
 	view->ticks = 0;
-	view->tgtYaw = YAW_PARTY_ACTION;
+	view->targetYaw = YAW_PARTY_ACTION;
 	view->keepRange = 1;
 	view->unusedAfterKeepRange[0] = 0;
 	view->unusedAfterKeepRange[1] = 0;
@@ -74,12 +75,12 @@ Sint32 btRun(Sint32 enemyGroup)
 	DMA_FILL32_CELL(fill, 0, battle, sizeof(BATTLE_STATE));
 	battle->arrowTiles = -1;
 	battle->formation = enemyGroup;
-	display = syHeapSlotAllocEWRAM(
+	display = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_BATTLE_MESSAGE, sizeof(BATTLE_MESSAGE_STATE));
 	DMA_FILL32_CELL(fill, 0, display, sizeof(BATTLE_MESSAGE_STATE));
 	battle->bg = fdBattleBackgroundGetSelectedStub();
-	syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITES, 3584);
-	syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
+	syHeapSlotAllocateEWRAM(HEAP_SLOT_SPRITES, 3584);
+	syHeapSlotAllocateEWRAM(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
 	fdActorSystemInitStub(ACTOR_SYSTEM_BATTLE);
 	if(gmFlagGetStub(FLAG_DJINN_LESSON) != 0)
 		mnWindowSystemInitBattleStub(1);
@@ -92,7 +93,7 @@ Sint32 btRun(Sint32 enemyGroup)
 	camera->yaw = YAW_TURN_START;
 	camera->pitch = TRIG_TURN * 5 / 16;
 	camera->distance = toFIXED(256);
-	enemyCnt = btFormationBuildEnemyList(battle->formation);
+	enemyCount = btFormationBuildEnemyList(battle->formation);
 
 	/* A link battle: the opponent's party, which the Battle Arena left in
 	   ActorSpriteSlots, becomes the enemies, and both consoles start from seed
@@ -114,10 +115,10 @@ Sint32 btRun(Sint32 enemyGroup)
 			}
 		}
 		battle->linkSide = SIO_MULTI_PLAYER_ID();
-		enemyUnitDst = EnemyUnits;
-		for(copyIdx = 0; copyIdx < ENEMY_UNITS_SIZE; copyIdx++)
-			*enemyUnitDst++ = ActorSpriteSlots[copyIdx];
-		enemyCnt = gmFlagGetByteStub(FLAG_LINK_PARTY_COUNT);
+		enemyUnitDest = EnemyUnits;
+		for(copyIndex = 0; copyIndex < ENEMY_UNITS_SIZE; copyIndex++)
+			*enemyUnitDest++ = ActorSpriteSlots[copyIndex];
+		enemyCount = gmFlagGetByteStub(FLAG_LINK_PARTY_COUNT);
 		btPartyAssignOpponentSlots();
 		battle->layout = FORMATION_LAYOUT_SHUFFLED;
 	}
@@ -128,16 +129,16 @@ Sint32 btRun(Sint32 enemyGroup)
 	   where the piece started last replaces the one before within the tick: a
 	   link battle hears Test Your Skills, and a battle with none set hears
 	   Colosseum Finals, never Sworn Enemies Stand in Your Way. */
-	snd = MainRoutineStateWork.battleMusic;
-	if(snd != 0) {
-		sySndPlayStub(snd);
+	sound = MainRoutineStateWork.battleMusic;
+	if(sound != 0) {
+		sySoundPlayStub(sound);
 		if(gmFlagGetStub(FLAG_LINK_BATTLE) != 0) {
-			sySndPlayStub(MUS_TEST_YOUR_SKILLS);
-			sySndLoadReverbCode(SOUND_REVERB_NONE);
+			sySoundPlayStub(MUS_TEST_YOUR_SKILLS);
+			sySoundLoadReverbCode(SOUND_REVERB_NONE);
 		}
 	} else {
-		sySndPlayStub(MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY);
-		sySndPlayStub(MUS_COLOSSEUM_FINALS);
+		sySoundPlayStub(MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY);
+		sySoundPlayStub(MUS_COLOSSEUM_FINALS);
 	}
 
 	/* The units, the windows and the background. */
@@ -146,10 +147,10 @@ Sint32 btRun(Sint32 enemyGroup)
 	btDjinnRecoveryReconcile();
 	btSummonUpdateAvailability();
 	if(gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->summonMask != 0)
-		battle->partyStat = PARTY_STATUS_SUMMONS;
+		battle->partyStatus = PARTY_STATUS_SUMMONS;
 	else
-		battle->partyStat = PARTY_STATUS_NO_SUMMONS;
-	mnPartyStatCreateWindowStub(PARTY_STATUS_CLOSED);
+		battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
+	mnPartyStatusCreateWindowStub(PARTY_STATUS_CLOSED);
 	btCameraSetDefaultView();
 	btObjectPut();
 	btBackgroundInit();
@@ -160,7 +161,7 @@ Sint32 btRun(Sint32 enemyGroup)
 	REG_BLDCNT = 0;
 	btSpoilsClear();
 	/* The advance arrow's tiles, taken again each turn. */
-	battle->arrowTiles = syVRAMCacheAllocEntry(128);
+	battle->arrowTiles = syVRAMCacheAllocateEntry(128);
 
 	/* A random encounter may open with a first strike (1 in 16) or a surprise
 	   (1 in 32 of the rest); the Djinn tutorial always strikes first. */
@@ -175,24 +176,24 @@ Sint32 btRun(Sint32 enemyGroup)
 	}
 	/* After the entry transition the camera event owns the background again,
 	   and the sprite priorities are sorted every tick. */
-	btTransitionRun(enemyCnt, enemyGroup);
+	btTransitionRun(enemyCount, enemyGroup);
 	view->keepRange = 0;
 	CpuLoadDisplayEnabled = 0;
-	sySetEvent(btObjectUpdateSprPriorities, EVENT_PASS_TICK);
+	sySetEvent(btObjectUpdateSpritePriorities, EVENT_PASS_TICK);
 
 	/* The turns. */
 	for(;;) {
 		btTurnStartNoOperation();
 		btSummonUpdateAvailability();
 		if(gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->summonMask != 0)
-			battle->partyStat = PARTY_STATUS_SUMMONS;
+			battle->partyStatus = PARTY_STATUS_SUMMONS;
 		else
-			battle->partyStat = PARTY_STATUS_NO_SUMMONS;
+			battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
 		/* The camera eases back to its starting yaw over 60 ticks, and the
 		   party status window is drawn with or without its Djinn column. */
-		view->tgtYaw = YAW_TURN_START;
+		view->targetYaw = YAW_TURN_START;
 		view->ticks = 60;
-		mnPartyStatDrawStub(battle->partyStat);
+		mnPartyStatusDrawStub(battle->partyStatus);
 
 		/* Every unit's action for the turn, in action order. */
 		syWordsClear(battle->actions, sizeof(battle->actions));
@@ -203,20 +204,20 @@ Sint32 btRun(Sint32 enemyGroup)
 			   the ROM keeps the calls. */
 			syHeapGetRemainingIWRAM();
 			syHeapGetRemainingEWRAM();
-			actionCnt = btGatherActions(battle->actions);
+			actionCount = btGatherActions(battle->actions);
 			syHeapGetRemainingIWRAM();
 			syHeapGetRemainingEWRAM();
 		} else {
-			actionCnt = btAutoBattleBuildActions(battle->actions);
+			actionCount = btAutoBattleBuildActions(battle->actions);
 		}
-		battle->arrowTiles = syVRAMCacheAllocEntry(128);
-		mnPartyStatDrawStub(battle->partyStat);
-		if(actionCnt < 0)
+		battle->arrowTiles = syVRAMCacheAllocateEntry(128);
+		mnPartyStatusDrawStub(battle->partyStatus);
+		if(actionCount < 0)
 			goto aborted;
 
 		/* Each action, until one side is down or the party runs. The turn's
 		   first action waits 10 ticks facing the party first. */
-		for(i = 0; i < actionCnt; i++) {
+		for(i = 0; i < actionCount; i++) {
 			actingUnit = battle->actions[i].unitId;
 			syHeapGetRemainingIWRAM();
 			syHeapGetRemainingEWRAM();
@@ -257,18 +258,18 @@ Sint32 btRun(Sint32 enemyGroup)
 
 		/* The Djinn lesson's two lines after each turn. "See! When you
 		   unleashed me, I attacked with my mighty stone-cleaver!" */
-		tutorialWin = mnMessageOpenWindowStub(
+		tutorialWindow = mnMessageOpenWindowStub(
 			MsgTutorialUnleashed, 0, 4, MESSAGE_WINDOW_ZOOM);
 		while(mnMessageAllTypedStub() == 0)
 			sySynch(1);
-		mnWindowCloseStub(tutorialWin, 1);
+		mnWindowCloseStub(tutorialWindow, 1);
 		sySynch(1);
 		/* "After being unleashed, we Djinn will then stand by to be
 		   summoned..." */
-		tutorialWin = mnMessageOpenWindowStub(
+		tutorialWindow = mnMessageOpenWindowStub(
 			MsgTutorialStandby, 10, 4, MESSAGE_WINDOW_ZOOM);
 		btMessageWaitForAdvanceAt(92, 24);
-		mnWindowCloseStub(tutorialWin, 1);
+		mnWindowCloseStub(tutorialWindow, 1);
 		sySynch(1);
 	}
 
@@ -278,9 +279,9 @@ won:
 	btClearSerialTransferPayload();
 	if(gmFlagGetStub(FLAG_DJINN_LESSON) == 0) {
 		if(battle->isLink != 0)
-			sySndPlayStub(MUS_VICTORY);
+			sySoundPlayStub(MUS_VICTORY);
 		if(battle->spoils.defeated != 0) {
-			sySndPlayStub(MUS_VICTORY);
+			sySoundPlayStub(MUS_VICTORY);
 			if(battle->defeatState <= DEFEAT_SEVERAL) {
 				gmBattleUnitSetStub(FIRST_ENEMY_UNIT,
 					battle->enemyKinds[battle->firstDefeated],
@@ -294,7 +295,7 @@ won:
 		}
 		btAwardSpoils();
 	}
-	sySndPlayStub(SOUND_FADE_OUT_BGM);
+	sySoundPlayStub(SOUND_FADE_OUT_BGM);
 	syScreenFadeToBlack(30);
 	syScreenFadeWait();
 	result = battle->spoils.defeated;
@@ -313,7 +314,7 @@ party_lost:
 	/* "X goes down in defeat..." for a lone party member, else "X's party has
 	   been defeated!". */
 	btClearSerialTransferPayload();
-	sySndPlayStub(MUS_DEFEATED);
+	sySoundPlayStub(MUS_DEFEATED);
 	mnMessageArgumentClearAllStub();
 	mnMessageArgumentPushStub(
 		MainRoutineStateWork.party[0], MESSAGE_ARGUMENT_ACTOR);
@@ -322,14 +323,14 @@ party_lost:
 	else
 		mnBattleMessageShowAndWaitStub(MsgPartyDefeated);
 	btMessageWaitForAdvance();
-	sySndPlayStub(SOUND_FADE_OUT_BGM);
+	sySoundPlayStub(SOUND_FADE_OUT_BGM);
 	syScreenFadeToBlack(30);
 	result = BATTLE_OUTCOME_LOST;
 	syScreenFadeWait();
 	goto finished;
 
 fled:
-	sySndPlayStub(SOUND_FADE_OUT_BGM);
+	sySoundPlayStub(SOUND_FADE_OUT_BGM);
 	syScreenFadeToBlack(30);
 	syScreenFadeWait();
 	result = BATTLE_OUTCOME_FLED;
@@ -341,7 +342,7 @@ finished:
 	btTurnEndNoOperation();
 	btDjinnRecoveryCountDown();
 	SET_BATTLE_TYPE(BATTLE_TYPE_NORMAL);
-	syCloseEvent(btObjectUpdateSprPriorities);
+	syCloseEvent(btObjectUpdateSpritePriorities);
 	btBackgroundFree();
 	return result;
 }
@@ -351,19 +352,19 @@ finished:
 Sint32 btPartyPrepareMembers(Uint16 *unitIds)
 {
 	Sint32 limit;
-	Sint32 cnt;
-	Sint32 idx;
+	Sint32 count;
+	Sint32 index;
 
 	limit = PARTY_BATTLE_SIZE;
 	if(BattleStateWork->isLink != 0)
 		limit = LINK_PARTY_SIZE;
 
-	cnt = gmPartyCountMembersStub();
-	if(cnt > limit)
-		cnt = limit;
+	count = gmPartyCountMembersStub();
+	if(count > limit)
+		count = limit;
 
-	for(idx = 0; idx < cnt; idx++) {
-		Sint32 unitId = MainRoutineStateWork.party[idx];
+	for(index = 0; index < count; index++) {
+		Sint32 unitId = MainRoutineStateWork.party[index];
 
 		if(unitIds != 0)
 			*unitIds++ = unitId;
@@ -372,7 +373,7 @@ Sint32 btPartyPrepareMembers(Uint16 *unitIds)
 
 	if(unitIds != 0)
 		*unitIds = BATTLE_UNIT_LIST_END;
-	return cnt;
+	return count;
 }
 
 /* Lists the enemy units present and returns how many, 0 when unitIds is
@@ -382,7 +383,7 @@ Sint32 btEnemyList(Sint16 *unitIds)
 	Sint16 *output = unitIds;
 	Sint32	listed = 0;
 	Sint32	enemyCapacity = ENEMY_BATTLE_SIZE;
-	Sint32	cnt = 0;
+	Sint32	count = 0;
 	Sint32	unitId;
 
 	if(output != NULL) {
@@ -396,9 +397,9 @@ Sint32 btEnemyList(Sint16 *unitIds)
 			}
 		}
 		*output = BATTLE_UNIT_LIST_END;
-		cnt = listed;
+		count = listed;
 	}
-	return cnt;
+	return count;
 }
 
 /* Lists the units still standing on the sides in sideMask, party first, into
@@ -408,22 +409,22 @@ Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds)
 	Uint16	activeMembers[8];
 	Sint32	i;
 	Uint16 *output;
-	Sint32	livingCnt;
+	Sint32	livingCount;
 	Sint32	enemyCapacity;
 	Sint32	unitId;
 	Sint16	hp;
-	Sint32	activeCnt;
+	Sint32	activeCount;
 	UNIT   *unit;
 
 	output = unitIds;
-	livingCnt = 0;
+	livingCount = 0;
 	enemyCapacity = ENEMY_BATTLE_SIZE;
 	if(gmFlagGetStub(FLAG_LINK_BATTLE) != 0) {
 		enemyCapacity = LINK_PARTY_SIZE;
 	}
 	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
-		activeCnt = btPartyPrepareMembers(activeMembers);
-		for(i = 0; i < activeCnt; i++) {
+		activeCount = btPartyPrepareMembers(activeMembers);
+		for(i = 0; i < activeCount; i++) {
 			unitId = activeMembers[i];
 			hp = gmUnitGetStub(unitId)->hp;
 			if(hp > 0) {
@@ -431,7 +432,7 @@ Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds)
 					*output = unitId;
 					output++;
 				}
-				livingCnt++;
+				livingCount++;
 			}
 		}
 	}
@@ -443,14 +444,14 @@ Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds)
 					*output = i;
 					output++;
 				}
-				livingCnt++;
+				livingCount++;
 			}
 		}
 	}
 	if(output != NULL) {
 		*output = BATTLE_UNIT_LIST_END;
 	}
-	return livingCnt;
+	return livingCount;
 }
 
 /* Lists the units in the battle on the sides in sideMask, standing or not, and
@@ -458,17 +459,17 @@ Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds)
 Sint32 btUnitListIds(Sint32 sideMask, Uint16 *unitIds)
 {
 	BATTLE_STATE *battle;
-	Sint32		  cnt;
+	Sint32		  count;
 	Sint32		  i;
 
 	battle = BattleStateWork;
-	cnt = 0;
+	count = 0;
 	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
 		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
 			if(battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
 				if(unitIds != NULL)
 					*unitIds++ = battle->partyUnits[i];
-				cnt++;
+				count++;
 			}
 		}
 	}
@@ -477,11 +478,11 @@ Sint32 btUnitListIds(Sint32 sideMask, Uint16 *unitIds)
 			if(battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
 				if(unitIds != NULL)
 					*unitIds++ = battle->enemyIds[i];
-				cnt++;
+				count++;
 			}
 		}
 	}
 	if(unitIds != NULL)
 		*unitIds = BATTLE_UNIT_LIST_END;
-	return cnt;
+	return count;
 }

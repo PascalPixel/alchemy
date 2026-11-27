@@ -5,11 +5,11 @@ UNUSED void scMoaiAddWater(Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 
 	if(actor != 0) {
-		SPR_ANIMATION *water =
-			(SPR_ANIMATION *)fdSprAddAnimation(actor->spr, SPRITE_MOAI_WATER);
+		SPR_ANIMATION *water = (SPR_ANIMATION *)fdSpriteAddAnimation(
+			actor->sprite, SPRITE_MOAI_WATER);
 
-		water->colMode = SPRITE_COLOR_NORMAL;
-		water->pri = 0;
+		water->colorMode = SPRITE_COLOR_NORMAL;
+		water->priority = 0;
 		fdActorSelectAnimation(actor, 0);
 		fdActorSelectAnimation(actor, 2);
 	}

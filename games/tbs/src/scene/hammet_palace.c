@@ -244,12 +244,12 @@ static void scHammetPalaceLeaveThroughDoor(void)
 	fdScriptStart();
 	fdScriptWait(10);
 	if(state->stepCue == HAMMET_PALACE_ENTRANCE_ROOM_TO_LAYANAS_ROOM) {
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 	} else {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 	}
-	fdTilesetAnimResume(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
-	fdTilesetAnimResume(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
+	fdTilesetAnimationResume(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
+	fdTilesetAnimationResume(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -260,8 +260,8 @@ static void scHammetPalaceLeaveThroughDoor(void)
 	}
 	fdScriptWait(16);
 	syImportScriptSetExitRequest(state->stepCue);
-	fdTilesetAnimPause(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
-	fdTilesetAnimPause(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
+	fdTilesetAnimationPause(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
+	fdTilesetAnimationPause(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
 	fdScriptEnd();
 }
 
@@ -284,8 +284,8 @@ static void scHammetPalaceSetUpEntrance(void)
 	ACTOR *actor;
 	Sint32 facing;
 
-	fdTilesetAnimPause(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
-	fdTilesetAnimPause(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
+	fdTilesetAnimationPause(HAMMET_PALACE_WIDE_DOORS_ANIMATION);
+	fdTilesetAnimationPause(HAMMET_PALACE_NARROW_DOORS_ANIMATION);
 
 	switch(MainRoutineStateWork.entrance) {
 	case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
@@ -350,7 +350,7 @@ static void scHammetPalaceIvanReportsToLayana(void)
 	fdPaletteFadeStartInterpolation(1);
 	sySynch(1);
 	state = FieldStateWork;
-	state->transitionFrm = 24;
+	state->transitionFrame = 24;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdActorSetPos(ACTOR_LAYANA, 856, 440);
@@ -932,7 +932,7 @@ static void scHammetPalaceIvanReportsToLayana(void)
 	fdActorSetScript(ACTOR_IVAN, partyScript);
 	fdActorRunScriptAndWait(ACTOR_MIA, partyScript);
 	state = FieldStateWork;
-	state->transitionFrm = MAP_TRANSITION_TICKS;
+	state->transitionFrame = MAP_TRANSITION_TICKS;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
@@ -981,7 +981,7 @@ static void scHammetPalaceHammetsHomecoming(void)
 	sySynch(1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 864, 630);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = 40;
+	FieldStateWork->transitionFrame = 40;
 	fdScriptStartScreenTransition();
 	fdCameraSetSpeed(0.4);
 	fdCameraMoveTo(864, CAMERA_KEEP, 472, 1);
@@ -1165,7 +1165,7 @@ static void scHammetPalaceHammetsHomecoming(void)
 	fdActorSetScript(ACTOR_IVAN, partyScript);
 	fdActorRunScriptAndWait(ACTOR_MIA, partyScript);
 	state = FieldStateWork;
-	state->transitionFrm = MAP_TRANSITION_TICKS;
+	state->transitionFrame = MAP_TRANSITION_TICKS;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);

@@ -20,6 +20,6 @@
 
 Sint32 fdMapGetTerrainHeight(Sint32 terrain, Sint32 x, Sint32 z);
 
-Sint32 scFlameThrowerGetFlags(Sint32 idx);
+Sint32 scFlameThrowerGetFlags(Sint32 index);
 
 #endif

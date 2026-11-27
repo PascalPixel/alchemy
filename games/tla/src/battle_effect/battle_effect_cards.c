@@ -77,7 +77,7 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 scroll;
 	Sint32				 overflow;
 	Sint32				 totalTicks;
-	Sint32				 frm;
+	Sint32				 frame;
 	SCREEN_POINT		 card;
 	SCREEN_POINT		 middle;
 	MODEL_TEXTURE		 texture;
@@ -90,7 +90,7 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 first;
 	Sint32				 slot;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 
@@ -168,12 +168,12 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	REG_BG2PA = Q_8_8(1);
 
-	for(frm = 0; frm != totalTicks; frm++) {
+	for(frame = 0; frame != totalTicks; frame++) {
 		/* Tick 0: find the user and the targets' middle (the Death Card's 32
 		   pixels toward the user), and scroll the background to the user. */
-		if(frm == 0) {
-			sySndPlayStub(SE_WARP);
-			btEffectPosProjectSpr(args->user, &card);
+		if(frame == 0) {
+			sySoundPlayStub(SE_WARP);
+			btEffectPosProjectSprite(args->user, &card);
 			btEffectGetTargetsMidpoint(&middle);
 			if(mode == CARD_DEATH) {
 				if(args->side == EFFECT_SIDE_ENEMIES)
@@ -188,18 +188,18 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* The last eight ticks: the screen fades. */
-		if(frm >= totalTicks - 8) {
-			Sint32 fade = frm - totalTicks + 8;
+		if(frame >= totalTicks - 8) {
+			Sint32 fade = frame - totalTicks + 8;
 
 			REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
 		}
-		if(frm == CARD_FLIGHT_TICKS && mode == CARD_BAFFLE)
-			sySndPlayStub(SE_ITEM_BREAK);
+		if(frame == CARD_FLIGHT_TICKS && mode == CARD_BAFFLE)
+			sySoundPlayStub(SE_ITEM_BREAK);
 
 		/* The card flies to the middle, rising and growing; the background
 		   follows it as far as it can scroll. */
-		if(frm < CARD_FLIGHT_TICKS) {
-			Sint32 t = frm * (middle.x - card.x);
+		if(frame < CARD_FLIGHT_TICKS) {
+			Sint32 t = frame * (middle.x - card.x);
 			Sint32 q;
 			Sint32 x;
 
@@ -231,7 +231,7 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				for(i = 0; i != DISPLAY_HEIGHT; i++)
 					*line++ = scroll -
-						CANVAS_WAVE_BG2X(sySin(frm * (TRIG_TURN / 16) +
+						CANVAS_WAVE_BG2X(sySin(frame * (TRIG_TURN / 16) +
 											 i * (TRIG_TURN / 16)) *
 							4);
 			} else {
@@ -241,21 +241,22 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				Uint8 *steps = CARD_DISSOLVE_STEPS;
 
 				if((mode == CARD_DEATH || mode == CARD_SWORD) &&
-					(frm >= CARD_FLIGHT_TICKS - 8 && frm < CARD_FLIGHT_TICKS))
+					(frame >= CARD_FLIGHT_TICKS - 8 &&
+						frame < CARD_FLIGHT_TICKS))
 					btEffectStepPaletteToResource(RESOURCE_SMOKE_SHEET);
-				if(frm >= REAPER_RISE_TICK) {
+				if(frame >= REAPER_RISE_TICK) {
 					if(mode == CARD_DEATH)
 						btEffectStepPaletteToResource(
 							RESOURCE_RED_CRESCENT_SHEET_A);
 					else
 						btEffectStepPaletteToResource(RESOURCE_DAGGER_SHEET);
 				}
-				if(frm == CARD_FLIGHT_TICKS) {
+				if(frame == CARD_FLIGHT_TICKS) {
 					for(i = 0; i != 8 * CARD_WIDTH; i++)
 						steps[i] = syRandom() & (CARD_DISSOLVE_TICKS - 1);
 				}
-				if(frm >= CARD_FLIGHT_TICKS &&
-					frm < CARD_FLIGHT_TICKS + CARD_DISSOLVE_TICKS) {
+				if(frame >= CARD_FLIGHT_TICKS &&
+					frame < CARD_FLIGHT_TICKS + CARD_DISSOLVE_TICKS) {
 					Uint8 *card = CARD;
 
 					for(i = 0; i != CARD_HEIGHT; i++) {
@@ -266,7 +267,7 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							 * or'd into the step; as first = 0 at the top of
 							 * the outer body. */
 							if(steps[(i & 7) * CARD_WIDTH + j] ==
-								((frm - CARD_FLIGHT_TICKS) | (first = 0)))
+								((frame - CARD_FLIGHT_TICKS) | (first = 0)))
 								card[i * CARD_WIDTH + j] = first;
 						}
 					}
@@ -281,8 +282,8 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			cardTicks = mode == CARD_SWORD
 				? CARD_FLIGHT_TICKS + SWORD_CARD_DAGGER_TICKS
 				: CARD_SHOWN_TICKS;
-		if(frm < cardTicks) {
-			vertices = syHeapAllocEWRAM(32);
+		if(frame < cardTicks) {
+			vertices = syHeapAllocateEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 5;
 			texture.logHeight = 6;
@@ -294,12 +295,12 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			syInitMatrix();
 			syScale(toFIXED(1), toFIXED(1), toFIXED(1));
 			syTranslate(toFIXED(overflow), toFIXED(card.y) - toFIXED(64), 0);
-			if(frm < CARD_FLIGHT_TICKS) {
+			if(frame < CARD_FLIGHT_TICKS) {
 				if(args->side == EFFECT_SIDE_ENEMIES)
-					syRotZ((frm - CARD_SQUARE_TICK) * CARD_SPIN);
+					syRotZ((frame - CARD_SQUARE_TICK) * CARD_SPIN);
 				else
-					syRotZ((CARD_SQUARE_TICK - frm) * CARD_SPIN);
-				syRotX((CARD_SQUARE_TICK - frm) * CARD_SPIN);
+					syRotZ((CARD_SQUARE_TICK - frame) * CARD_SPIN);
+				syRotX((CARD_SQUARE_TICK - frame) * CARD_SPIN);
 			} else {
 				if(args->side == EFFECT_SIDE_ENEMIES)
 					syRotZ(-TRIG_TURN / 16);
@@ -319,22 +320,22 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		if(mode == CARD_BAFFLE) {
 			/* The mist pours out, two puffs a tick for 32 ticks; each falls
 			   to the ground and spreads along it. */
-			if(frm == CARD_FLIGHT_TICKS) {
+			if(frame == CARD_FLIGHT_TICKS) {
 				EFFECT_SHOW_DAMAGE(SE_WHOOSH);
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 				REG_BLDALPHA = EFFECT_BLEND_ADD;
 			}
-			if(frm >= CARD_FLIGHT_TICKS && frm < CARD_FLIGHT_TICKS + 32) {
-				Sint32 time = frm - CARD_FLIGHT_TICKS;
+			if(frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + 32) {
+				Sint32 time = frame - CARD_FLIGHT_TICKS;
 
 				slot = time * 2;
 				for(i = 0; i != 2; i++) {
 					step = &state->particles[slot + i];
 					step->x = toFIXED(64);
 					step->y = toFIXED(48);
-					step->velX = ((syRandom() & 127) - 64) << 11;
-					step->velY = ((syRandom() & 127) + 64) << 11;
+					step->velocityX = ((syRandom() & 127) - 64) << 11;
+					step->velocityY = ((syRandom() & 127) + 64) << 11;
 					step->variant = 0;
 				}
 			}
@@ -350,9 +351,9 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
 					btParticleAdvanceWithGravity2D(step, 62, -toFIXED(1) / 16);
 					if(step->y > toFIXED(96)) {
-						step->velY = 0;
+						step->velocityY = 0;
 						step->y = toFIXED(96);
-						step->velX *= 2;
+						step->velocityX *= 2;
 					}
 					step->variant++;
 				}
@@ -361,20 +362,20 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		if(mode == CARD_SLEEP) {
 			/* A sheep a tick for 32 ticks tumbles out of the card. */
-			if(frm == CARD_FLIGHT_TICKS)
-				sySndPlayStub(SE_POWER_UP);
-			if(frm == 64)
+			if(frame == CARD_FLIGHT_TICKS)
+				sySoundPlayStub(SE_POWER_UP);
+			if(frame == 64)
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-			if(frm >= CARD_FLIGHT_TICKS && frm < CARD_FLIGHT_TICKS + 32) {
+			if(frame >= CARD_FLIGHT_TICKS && frame < CARD_FLIGHT_TICKS + 32) {
 				PARTICLE *sheep;
 				Uint32	  mask = 127;
 
-				slot = frm - CARD_FLIGHT_TICKS;
+				slot = frame - CARD_FLIGHT_TICKS;
 				sheep = &state->particles[slot];
 				sheep->x = toFIXED(64);
 				sheep->y = toFIXED(48);
-				sheep->velX = ((syRandom() & mask) - 64) << 11;
-				sheep->velY = ((syRandom() & mask) - 64) << 11;
+				sheep->velocityX = ((syRandom() & mask) - 64) << 11;
+				sheep->velocityY = ((syRandom() & mask) - 64) << 11;
 				sheep->variant = mode;
 			}
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
@@ -393,8 +394,8 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(mode == CARD_SWORD && frm >= CARD_FLIGHT_TICKS) {
-			Sint32 time = frm - CARD_FLIGHT_TICKS;
+		if(mode == CARD_SWORD && frame >= CARD_FLIGHT_TICKS) {
+			Sint32 time = frame - CARD_FLIGHT_TICKS;
 
 			/* The dagger glints. */
 			if(time < SWORD_CARD_DAGGER_TICKS)
@@ -404,13 +405,13 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			/* It strikes: the screen flashes and the shards burst. */
 			if(time == SWORD_CARD_DAGGER_TICKS) {
-				sySndPlayStub(SE_POWER_UP);
+				sySoundPlayStub(SE_POWER_UP);
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-				state->shakeFrm = 4;
+				state->shakeFrame = 4;
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 16);
+					args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 16);
 				for(i = 0; i != SWORD_CARD_PARTICLES; i++) {
 					Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
 					Sint32 force = 127;
@@ -421,9 +422,9 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					step = &state->particles[i];
 					step->x = toFIXED(64);
 					step->y = INTtoFIXED(i + SWORD_CARD_SHARD_TOP);
-					step->velX =
+					step->velocityX =
 						(syCos(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
-					step->velY =
+					step->velocityY =
 						(sySin(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
 					step->variant = syRandom() & 255;
 				}
@@ -465,25 +466,25 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		if(mode == CARD_DEATH) {
 			/* The Reaper rises and swings: his scythe cuts a red crescent that
 			   fades in four pictures. */
-			if(frm == REAPER_SWING_TICK - 4)
-				sySndPlayStub(SE_POWER_UP);
-			if(frm == REAPER_SWING_TICK) {
-				sySndPlayStub(SE_CLATTER);
+			if(frame == REAPER_SWING_TICK - 4)
+				sySoundPlayStub(SE_POWER_UP);
+			if(frame == REAPER_SWING_TICK) {
+				sySoundPlayStub(SE_CLATTER);
 				EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-				btEffectStartActorMotion(
-					args->tgts[0], 1, toFIXED(2), toFIXED(8), toFIXED(2), 110);
+				btEffectStartActorMotion(args->targets[0], 1, toFIXED(2),
+					toFIXED(8), toFIXED(2), 110);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-				state->shakeFrm = 4;
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				state->shakeFrame = 4;
 			}
-			if(frm >= REAPER_RISE_TICK) {
-				if(frm < REAPER_SWING_TICK) {
+			if(frame >= REAPER_RISE_TICK) {
+				if(frame < REAPER_SWING_TICK) {
 					draw[0](canvas, state->sheet,
 						overflow + ReaperPictureX[args->side * 7],
 						ReaperPictureY[0], REAPER_SHEET_RAISED_WIDTH,
 						REAPER_SHEET_RAISED_HEIGHT);
 				} else {
-					if(frm <= REAPER_SWING_TICK + 3)
+					if(frame <= REAPER_SWING_TICK + 3)
 						draw[0](canvas, state->sheet,
 							overflow + ReaperPictureX[args->side * 7],
 							ReaperPictureY[0], REAPER_SHEET_RAISED_WIDTH,
@@ -492,35 +493,36 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						REAPER_SHEET_SWUNG,
 						overflow + ReaperPictureX[args->side * 7 + 1],
 						ReaperPictureY[1]);
-					if(frm >= REAPER_SWING_TICK && frm <= REAPER_SWING_TICK + 1)
+					if(frame >= REAPER_SWING_TICK &&
+						frame <= REAPER_SWING_TICK + 1)
 						syWordsFillEntry(canvas, CANVAS_BYTES,
 							CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-					if(frm >= REAPER_SWING_TICK + 2 &&
-						frm <= REAPER_SWING_TICK + 3)
+					if(frame >= REAPER_SWING_TICK + 2 &&
+						frame <= REAPER_SWING_TICK + 3)
 						EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 							REAPER_SHEET_CRESCENT,
 							overflow + ReaperPictureX[args->side * 7 + 2],
 							ReaperPictureY[2]);
-					if(frm >= REAPER_SWING_TICK + 4 &&
-						frm <= REAPER_SWING_TICK + 5)
+					if(frame >= REAPER_SWING_TICK + 4 &&
+						frame <= REAPER_SWING_TICK + 5)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
 							RamMapMetatileBuffer, RED_CRESCENT_FADE_A,
 							overflow + ReaperPictureX[args->side * 7 + 3],
 							ReaperPictureY[3]);
-					if(frm >= REAPER_SWING_TICK + 6 &&
-						frm <= REAPER_SWING_TICK + 7)
+					if(frame >= REAPER_SWING_TICK + 6 &&
+						frame <= REAPER_SWING_TICK + 7)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
 							RamMapMetatileBuffer, RED_CRESCENT_FADE_B,
 							overflow + ReaperPictureX[args->side * 7 + 4],
 							ReaperPictureY[4]);
-					if(frm >= REAPER_SWING_TICK + 8 &&
-						frm <= REAPER_SWING_TICK + 9)
+					if(frame >= REAPER_SWING_TICK + 8 &&
+						frame <= REAPER_SWING_TICK + 9)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
 							RamMapMetatileBuffer, RED_CRESCENT_FADE_C,
 							overflow + ReaperPictureX[args->side * 7 + 5],
 							ReaperPictureY[5]);
-					if(frm >= REAPER_SWING_TICK + 10 &&
-						frm <= REAPER_SWING_TICK + 11)
+					if(frame >= REAPER_SWING_TICK + 10 &&
+						frame <= REAPER_SWING_TICK + 11)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
 							RamMapMetatileBuffer, RED_CRESCENT_FADE_D,
 							overflow + ReaperPictureX[args->side * 7 + 6],

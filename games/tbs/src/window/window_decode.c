@@ -147,9 +147,9 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 	Uint32 writePos, Uint16 *entries, Sint32 articleForm, Sint32 plural,
 	Sint32 *lastLetter)
 {
-	struct ARTICLE_TABLE tbl;
+	struct ARTICLE_TABLE table;
 #if LANGUAGE == LANGUAGE_SPANISH
-	struct ARTICLE_TABLE indefiniteTbl;
+	struct ARTICLE_TABLE indefiniteTable;
 	Uint16				 form;
 	Sint16				 indefinite;
 #endif
@@ -158,7 +158,7 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 	Uint16 code;
 	Sint8 *p;
 	Sint8  letter;
-	Sint32 letterIdx;
+	Sint32 letterIndex;
 
 #if LANGUAGE == LANGUAGE_SPANISH
 	form = articleForm & ARTICLE_FORM_MASK;
@@ -184,9 +184,9 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 
 	else {
 		kind = 0;
-		tbl = ArticleTable;
+		table = ArticleTable;
 #if LANGUAGE == LANGUAGE_SPANISH
-		indefiniteTbl = ArticleIndefinite;
+		indefiniteTable = ArticleIndefinite;
 #endif
 		if(name[0] == MESSAGE_ARTICLE_CLASS) {
 			kind = name[1];
@@ -194,17 +194,17 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 		}
 #if LANGUAGE == LANGUAGE_SPANISH
 		if(indefinite == 0)
-			p = tbl.text[kind & ARTICLE_KIND_MASK];
+			p = table.text[kind & ARTICLE_KIND_MASK];
 		else
-			p = indefiniteTbl.text[kind & ARTICLE_KIND_MASK];
+			p = indefiniteTable.text[kind & ARTICLE_KIND_MASK];
 #else
-		p = tbl.text[kind & ARTICLE_KIND_MASK];
+		p = table.text[kind & ARTICLE_KIND_MASK];
 #endif
 		/* The first letter is capitalised at the start of a sentence. */
-		for(letterIdx = 0; letterIdx < ARTICLE_MAX_LETTERS; letterIdx++) {
+		for(letterIndex = 0; letterIndex < ARTICLE_MAX_LETTERS; letterIndex++) {
 			if((letter = *p++) == 0)
 				break;
-			if(letterIdx == 0 && *lastLetter == LAST_LETTER_SENTENCE_END)
+			if(letterIndex == 0 && *lastLetter == LAST_LETTER_SENTENCE_END)
 				letter -= 'a' - 'A';
 			TEXT_APPEND(entries, writePos, letter);
 		}
@@ -249,13 +249,13 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 	Uint32 writePos, Uint16 *entries, Sint32 articleForm, Sint32 plural,
 	Sint32 *lastLetter)
 {
-	struct ARTICLE_TABLE tbl;
+	struct ARTICLE_TABLE table;
 	Sint32				 kind;
 	Uint16				 head;
 	Uint16				 code;
 	Uint8				*p;
 	Sint8				 letter;
-	Sint32				 letterIdx;
+	Sint32				 letterIndex;
 
 	if(inBattleMsg != 0) {
 		TEXT_APPEND(entries, writePos, ' ');
@@ -265,7 +265,7 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 	if(articleForm == ARTICLE_FORM_ARTICLE ||
 		(articleForm == ARTICLE_FORM_BY_NUMBER && plural == 0)) {
 		kind = 0;
-		tbl = ArticleTable;
+		table = ArticleTable;
 		head = name[0];
 		/* The class operand is stored one above its value. */
 		if(head == MESSAGE_ARTICLE_CLASS) {
@@ -279,8 +279,8 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
 			else
 				kind = ARTICLE_CLASS_A;
 		}
-		p = tbl.text[kind & 7];
-		for(letterIdx = 0; letterIdx < ARTICLE_MAX_LETTERS; letterIdx++) {
+		p = table.text[kind & 7];
+		for(letterIndex = 0; letterIndex < ARTICLE_MAX_LETTERS; letterIndex++) {
 			if((letter = *p++) == 0)
 				break;
 			TEXT_APPEND(entries, writePos, letter);
@@ -353,7 +353,7 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 #endif
 	Sint32 quote = 0;
 	Uint32 start = state->textBufEnd;
-	Uint32 decodedCnt = 0;
+	Uint32 decodedCount = 0;
 	Sint32 plural = 0;
 #if LANGUAGE != LANGUAGE_GERMAN && LANGUAGE != LANGUAGE_ITALIAN
 	Bool running = TRUE;
@@ -392,12 +392,12 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 #else
 	Sint32 magnitude;
 #endif
-	Uint8		  *numText;
+	Uint8		  *numberText;
 	Uint8		  *nameBytes;
 	Uint16		  *nameOutput;
 	Uint16		  *p;
 	Uint16		   name[MESSAGE_NAME_HALFWORDS];
-	Uint8		   numBuf[TEXT_NUMBER_BUFFER_SIZE];
+	Uint8		   numberBuf[TEXT_NUMBER_BUFFER_SIZE];
 	MESSAGE_READER reader;
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
 	struct ITEM_POSSESSIVE_TABLE possessives;
@@ -414,7 +414,8 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 			HEAP_SLOT_MESSAGE_DECODER);
 		mnMessageFind(&reader, script);
 
-		for(; running != 0 && decodedCnt <= TEXT_BUFFER_MASK; decodedCnt++) {
+		for(; running != 0 && decodedCount <= TEXT_BUFFER_MASK;
+			decodedCount++) {
 #if LANGUAGE == LANGUAGE_ENGLISH
 			prevCode = code;
 #endif
@@ -509,12 +510,12 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 				if(code >= TEXT_SPACE) {
 					if(state->haltingSpeech != 0 &&
 						(code == TEXT_SPACE ||
-							decodedCnt > HALTING_SPEECH_MAX_CODES)) {
+							decodedCount > HALTING_SPEECH_MAX_CODES)) {
 						TEXT_APPEND(entry, writePos, '.');
 						TEXT_APPEND(entry, writePos, '.');
 						TEXT_APPEND(entry, writePos, '.');
 						overflow = TRUE;
-						if(decodedCnt > HALTING_SPEECH_MAX_CODES)
+						if(decodedCount > HALTING_SPEECH_MAX_CODES)
 							code = TEXT_SPACE;
 					}
 					/* Every other double quote, the opening one, becomes
@@ -577,11 +578,11 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 						plural = 1;
 						if(magnitude <= 1)
 							plural = 0;
-						numText = mnStringFormatNum(numBuf, value, 0);
-						for(i = numText - numBuf;
-							i != TEXT_NUMBER_BUFFER_SIZE && numBuf[i] != 0;
+						numberText = mnStringFormatNumber(numberBuf, value, 0);
+						for(i = numberText - numberBuf;
+							i != TEXT_NUMBER_BUFFER_SIZE && numberBuf[i] != 0;
 							i++) {
-							TEXT_APPEND(entry, writePos, numBuf[i]);
+							TEXT_APPEND(entry, writePos, numberBuf[i]);
 						}
 						break;
 					case MESSAGE_ARGUMENT_CLASS_NAME:
@@ -885,7 +886,7 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 	Uint32	   code = 0;
 	Sint32	   lineStart = 1;
 	Uint32	   start = state->textBufEnd;
-	Uint32	   decodedCnt = 0;
+	Uint32	   decodedCount = 0;
 	Bool	   running = TRUE;
 	Uint32	   writePos = start;
 	Uint16	  *entry = state->textBuf;
@@ -899,12 +900,12 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 	Sint32		   argument;
 	Sint32		   msg;
 	Sint32		   value;
-	Uint8		  *numText;
+	Uint8		  *numberText;
 	Uint8		  *nameBytes;
 	Uint16		  *nameOutput;
 	UNIT		  *unit;
 	Uint16		   name[MESSAGE_NAME_HALFWORDS];
-	Uint8		   numBuf[TEXT_NUMBER_BUFFER_SIZE];
+	Uint8		   numberBuf[TEXT_NUMBER_BUFFER_SIZE];
 	MESSAGE_READER reader;
 
 	if(script == -1) {
@@ -916,7 +917,8 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 		decode = (Sint32 (*)(MESSAGE_READER *))HEAP_SLOT_BLOCK(
 			HEAP_SLOT_MESSAGE_DECODER);
 		mnMessageFind(&reader, script);
-		for(; running != 0 && decodedCnt <= TEXT_BUFFER_MASK; decodedCnt++) {
+		for(; running != 0 && decodedCount <= TEXT_BUFFER_MASK;
+			decodedCount++) {
 			prevCode = code;
 			code = (Uint32)decode(&reader);
 			/* Once halting speech has broken off, the rest of the message is
@@ -994,13 +996,13 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 					}
 					if(state->haltingSpeech != 0 &&
 						(code == TEXT_SPACE ||
-							decodedCnt > HALTING_SPEECH_MAX_CODES)) {
+							decodedCount > HALTING_SPEECH_MAX_CODES)) {
 						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_MIDDLE_DOT);
 						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_MIDDLE_DOT);
 						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_MIDDLE_DOT);
 						TEXT_APPEND(entry, writePos, TEXT_JAPANESE_FULL_STOP);
 						overflow = TRUE;
-						if(decodedCnt > HALTING_SPEECH_MAX_CODES)
+						if(decodedCount > HALTING_SPEECH_MAX_CODES)
 							code = TEXT_SPACE;
 					}
 					TEXT_APPEND(entry, writePos, (Uint16)code);
@@ -1023,10 +1025,11 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 					case MESSAGE_ARGUMENT_SIGNED_NUMBER:
 						value = mnMessageArgumentLookup(
 							MESSAGE_ARGUMENT_NUMBER, clear);
-						numText = mnStringFormatNum(numBuf, value, 0);
-						i = numText - numBuf;
-						while(i != TEXT_NUMBER_BUFFER_SIZE && numBuf[i] != 0) {
-							TEXT_APPEND(entry, writePos, numBuf[i]);
+						numberText = mnStringFormatNumber(numberBuf, value, 0);
+						i = numberText - numberBuf;
+						while(
+							i != TEXT_NUMBER_BUFFER_SIZE && numberBuf[i] != 0) {
+							TEXT_APPEND(entry, writePos, numberBuf[i]);
 							i++;
 						}
 						break;

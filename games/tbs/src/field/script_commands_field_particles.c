@@ -9,10 +9,10 @@ void fdParticleUpdate(FIELD_PARTICLE *effect)
 {
 	if(effect->active != 0) {
 		effect->age++;
-		if(effect->funcDelay != 0)
-			effect->funcDelay--;
-		else if(effect->func != 0)
-			effect->func(effect);
+		if(effect->callbackDelay != 0)
+			effect->callbackDelay--;
+		else if(effect->callback != 0)
+			effect->callback(effect);
 		/* A callback may release its own slot; do not move or draw it
 		   afterward. */
 		if(effect->active != 0) {
@@ -29,24 +29,24 @@ void fdParticleUpdate(FIELD_PARTICLE *effect)
    exclusive. */
 void fdEffectDrawScaledActor(FIELD_PARTICLE *particle)
 {
-	SPR			 *spr;
-	FIXED		  ofs;
+	SPR			 *sprite;
+	FIXED		  offset;
 	SPR_SCALE	  scale;
 	SPR_PLACEMENT pos;
 
-	spr = particle->spr;
-	ofs = 0;
-	if(particle->flg & FIELD_PARTICLE_LIFTED_BY_Z)
-		ofs = toFIXED(508) - particle->z;
-	scale.x = syMulFX(particle->scaleX, spr->scale);
-	scale.y = syMulFX(particle->scaleY, spr->scale);
+	sprite = particle->sprite;
+	offset = 0;
+	if(particle->flags & FIELD_PARTICLE_LIFTED_BY_Z)
+		offset = toFIXED(508) - particle->z;
+	scale.x = syMulFX(particle->scaleX, sprite->scale);
+	scale.y = syMulFX(particle->scaleY, sprite->scale);
 	pos.x = particle->x;
-	pos.height = ofs;
-	pos.y = particle->z + ofs;
+	pos.height = offset;
+	pos.y = particle->z + offset;
 	pos.groundHeight = 0;
 	if(particle->x > -toFIXED(32) && particle->x < toFIXED(272) &&
 		particle->z > -toFIXED(32) && particle->z < toFIXED(224))
-		fdRenderApplyProjectedPlacementStub(spr, &pos, &scale, 0);
+		fdRenderApplyProjectedPlacementStub(sprite, &pos, &scale, 0);
 }
 
 /* Moves a field effect sprite toward its target, turning at most turnStepMax a
@@ -60,18 +60,18 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 	Sint32 pixelX;
 	Sint32 pixelZ;
 	Sint32 speed;
-	Sint16 ang;
+	Sint16 angle;
 	Sint32 heading;
 	Sint32 facing;
 	Sint16 turn;
 
-	if(effect->tgtX == FIELD_EFFECT_SPRITE_NO_TARGET)
+	if(effect->targetX == FIELD_EFFECT_SPRITE_NO_TARGET)
 		return;
-	deltaX = effect->tgtX - effect->x;
-	deltaZ = effect->tgtZ - effect->z;
+	deltaX = effect->targetX - effect->x;
+	deltaZ = effect->targetZ - effect->z;
 	/* The distance in whole pixels first; under 128 pixels, the exact 16.16 one
 	   decides whether it is within 8 pixels. */
-	if(effect->stopAtTgt != 0) {
+	if(effect->stopAtTarget != 0) {
 		pixelX = deltaX / toFIXED(1);
 		pixelZ = deltaZ / toFIXED(1);
 		distance = toFIXED(sySquartIWRAM(pixelX * pixelX + pixelZ * pixelZ));
@@ -79,14 +79,14 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 			distance =
 				sySquartFX(syMulFX(deltaX, deltaX) + syMulFX(deltaZ, deltaZ));
 		if(distance <= toFIXED(8)) {
-			fdParticleSetPos(effect, effect->tgtX, effect->tgtZ);
+			fdParticleSetPos(effect, effect->targetX, effect->targetZ);
 			return;
 		}
 	}
-	ang = syAtan(deltaZ, deltaX);
+	angle = syAtan(deltaZ, deltaX);
 	if(effect->turnStepLimited != 0) {
 		heading = effect->heading;
-		turn = ang - heading;
+		turn = angle - heading;
 		if((turn >= 0 ? turn : -turn) >= effect->turnStepMax) {
 			if(turn < 0) {
 				if(-turn > effect->turnStepMax)
@@ -94,28 +94,28 @@ void fdParticleUpdateMotion(FIELD_PARTICLE *effect)
 			} else if(turn > effect->turnStepMax) {
 				turn = effect->turnStepMax;
 			}
-			ang = turn + heading;
+			angle = turn + heading;
 		}
 	}
-	facing = (Uint16)ang;
+	facing = (Uint16)angle;
 	effect->heading = facing;
 	speed = effect->speed + effect->acceleration;
 	if(speed > effect->speedMax)
 		speed = effect->speedMax;
-	ang = facing;
+	angle = facing;
 	effect->speed = speed;
-	effect->x += syMulFX(syCos(ang), speed);
-	effect->z += syMulFX(sySin(ang), speed);
+	effect->x += syMulFX(syCos(angle), speed);
+	effect->z += syMulFX(sySin(angle), speed);
 }
 
 /* Returns 1 while a field effect sprite that stops at its target still has one
    (it has not arrived), 0 once it has arrived or when it never stops. */
 Uint32 fdParticleHasPendingTarget(FIELD_PARTICLE *effect)
 {
-	if(effect->stopAtTgt == 0) {
+	if(effect->stopAtTarget == 0) {
 		return 0;
 	}
-	if(effect->tgtX != FIELD_EFFECT_SPRITE_NO_TARGET)
+	if(effect->targetX != FIELD_EFFECT_SPRITE_NO_TARGET)
 		return 1;
 	return 0;
 }
@@ -123,8 +123,8 @@ Uint32 fdParticleHasPendingTarget(FIELD_PARTICLE *effect)
 /* Places a field effect sprite at (x, z), at rest with no target. */
 void fdParticleSetPos(FIELD_PARTICLE *effect, Sint32 x, Sint32 z)
 {
-	effect->tgtX = FIELD_EFFECT_SPRITE_NO_TARGET;
-	effect->tgtZ = FIELD_EFFECT_SPRITE_NO_TARGET;
+	effect->targetX = FIELD_EFFECT_SPRITE_NO_TARGET;
+	effect->targetZ = FIELD_EFFECT_SPRITE_NO_TARGET;
 	effect->x = x;
 	effect->z = z;
 	effect->speed = 0;
@@ -133,14 +133,14 @@ void fdParticleSetPos(FIELD_PARTICLE *effect, Sint32 x, Sint32 z)
 /* Sets the animation of a field effect sprite. */
 void fdParticleSetAnimation(FIELD_PARTICLE *effect, Sint32 mode)
 {
-	fdSprStartAnimationStub(effect->spr, mode);
+	fdSpriteStartAnimationStub(effect->sprite, mode);
 }
 
 /* Gives a field effect sprite its per-tick callback, starting at state 0. */
-void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func)
+void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback)
 {
-	effect->func = func;
-	effect->funcDelay = 0;
+	effect->callback = callback;
+	effect->callbackDelay = 0;
 	effect->age = 0;
 	effect->state = 0;
 }
@@ -149,13 +149,13 @@ void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func)
    target, top speed 2, acceleration and scale 1, drawn, animation 1. */
 void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, FIXED z)
 {
-	SPR *spr;
+	SPR *sprite;
 
 	DMA_FILL32(0, effect, sizeof *effect);
-	spr = fdSprCreateStub(kind);
-	effect->spr = spr;
-	if(spr != NULL)
-		spr->image.pri = 0;
+	sprite = fdSpriteCreateStub(kind);
+	effect->sprite = sprite;
+	if(sprite != NULL)
+		sprite->image.priority = 0;
 	fdParticleSetPos(effect, x, z);
 	effect->scaleX = toFIXED(1);
 	effect->speedMax = toFIXED(2);
@@ -163,21 +163,21 @@ void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, FIXED z)
 	effect->acceleration = toFIXED(1);
 	effect->originX = x;
 	effect->originZ = z;
-	/* BUG: fdSprCreateStub can return NULL, but this and the animation setup
+	/* BUG: fdSpriteCreateStub can return NULL, but this and the animation setup
 	   below still require a sprite. Callers also immediately use it, so
 	   guarding this store alone would not establish allocation-failure
 	   recovery. */
 	{
-		SPR *created = effect->spr;
-		created->flg = 0;
+		SPR *created = effect->sprite;
+		created->flags = 0;
 	}
-	effect->stopAtTgt = 1;
+	effect->stopAtTarget = 1;
 	effect->turnStepLimited = 1;
 	effect->updateMotion = 1;
 	effect->render = 1;
 	effect->active = 1;
 	effect->randomValue = syRandom();
-	effect->flg = FIELD_PARTICLE_LIFTED_BY_Z;
+	effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
 	fdParticleSetAnimation(effect, 1);
 }
 
@@ -185,7 +185,7 @@ void fdParticleInit(FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, FIXED z)
    (inactive). */
 void fdEffectClearOwnedSlot(FIELD_PARTICLE *effect)
 {
-	if(effect->spr)
-		fdSprDestroyStub(effect->spr);
+	if(effect->sprite)
+		fdSpriteDestroyStub(effect->sprite);
 	DMA_FILL32(0, effect, sizeof *effect);
 }

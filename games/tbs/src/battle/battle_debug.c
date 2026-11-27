@@ -21,7 +21,7 @@
 /* Debug: replaces the party with parameter set number set, each member at its
    level with its Djinn, abilities and equipped items. Returns 1 when the table
    ends before that set. */
-Sint32 btDebugParmSetLoad(Sint32 set)
+Sint32 btDebugParamSetLoad(Sint32 set)
 {
 	/* The next Djinni number of each element to hand out. */
 	Sint32 nextDjinn[ELEMENT_COUNT];
@@ -29,8 +29,8 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	Sint32 unitId;
 	Bool   notFound;
 	Sint32 row;
-	Sint32 djinnIdx;
-	Sint32 curSet;
+	Sint32 djinnIndex;
+	Sint32 currentSet;
 	Sint32 i;
 
 	notFound = FALSE;
@@ -42,7 +42,7 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 	gmPartyRemoveMemberStub(MIA);
 	gmPartyRemoveMemberStub(JENNA);
 
-	curSet = 0;
+	currentSet = 0;
 	for(i = 0; i < ELEMENT_COUNT; i++)
 		nextDjinn[i] = 0;
 
@@ -55,12 +55,12 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 			break;
 		}
 		if(unitId == DEBUG_PARAMETER_SET_END) {
-			if(curSet == set)
+			if(currentSet == set)
 				break;
-			curSet++;
+			currentSet++;
 			continue;
 		}
-		if(curSet != set)
+		if(currentSet != set)
 			continue;
 
 		gmPartyAddMemberStub(unitId);
@@ -69,8 +69,8 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		/* Start from no Djinn and no abilities. */
 		member = gmUnitGetStub(unitId);
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			member->djinnHeldCnts[i] = 0;
-			member->djinnSetCnts[i] = 0;
+			member->djinnHeldCounts[i] = 0;
+			member->djinnSetCounts[i] = 0;
 			member->djinnHeld[i] = 0;
 			member->djinnSet[i] = 0;
 		}
@@ -85,8 +85,9 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 		/* Djinn are numbered across the party, so no two party members get the
 		   same. */
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			for(djinnIdx = 0; djinnIdx < DebugParameterSets[row].djinnCnts[i];
-				djinnIdx++) {
+			for(djinnIndex = 0;
+				djinnIndex < DebugParameterSets[row].djinnCounts[i];
+				djinnIndex++) {
 				gmDjinnGiveStub(unitId, i, nextDjinn[i]);
 				gmDjinnSetStub(unitId, i, nextDjinn[i]);
 				nextDjinn[i]++;
@@ -121,8 +122,8 @@ void btDebugBattleViewMessages(void)
 	Sint32	secondRange = 0;
 	UNIT   *unit = gmUnitGetStub(ISAAC);
 	Sint32	i;
-	Sint32	idx;
-	WINDOW *msgWin;
+	Sint32	index;
+	WINDOW *msgWindow;
 	Sint32	msg;
 
 	/* Party member 0's name is the sample a `<unit>` blank shows. */
@@ -134,9 +135,9 @@ void btDebugBattleViewMessages(void)
 	}
 	unit->name[UNIT_NAME_LENGTH] = 0;
 	mnWindowSystemInitFieldStub();
-	sySndPlayStub(MUS_EMPTY);
+	sySoundPlayStub(MUS_EMPTY);
 	for(;;) {
-		idx = 0;
+		index = 0;
 		IO_WRITE16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
 				DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
 			&REG_DISPCNT);
@@ -156,10 +157,10 @@ void btDebugBattleViewMessages(void)
 			   second. */
 			if(secondRange == 0) {
 				msg = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
-				msgWin = mnMessageOpenWindowStub(idx + msg, 2, 10, 4);
+				msgWindow = mnMessageOpenWindowStub(index + msg, 2, 10, 4);
 			} else {
 				msg = DEBUG_SECOND_RANGE_FIRST;
-				msgWin = mnMessageOpenWindowStub(idx + msg, 2, 2, 4);
+				msgWindow = mnMessageOpenWindowStub(index + msg, 2, 2, 4);
 			}
 			sySynch(10);
 
@@ -170,26 +171,26 @@ void btDebugBattleViewMessages(void)
 					if(secondRange != 0) {
 						secondRange = 0;
 					} else {
-						idx++;
+						index++;
 						secondRange = 1;
 					}
 				}
 				if(PerRepeat & KEY_RIGHT)
-					idx++;
+					index++;
 				if(PerRepeat & KEY_LEFT)
-					idx -= 2;
+					index -= 2;
 				if(PerRepeat & KEY_UP)
 					secondRange = 1;
 				if(PerRepeat & KEY_DOWN)
 					secondRange = 0;
 				if(PerRepeat & KEY_R)
-					idx += DEBUG_LARGE_STEP;
+					index += DEBUG_LARGE_STEP;
 				if(PerRepeat & KEY_L)
-					idx -= DEBUG_LARGE_STEP;
-				if(idx < 0)
-					idx = 0;
-				if(idx >= (Uint32)DEBUG_VIEW_LIMIT)
-					idx = DEBUG_VIEW_LIMIT;
+					index -= DEBUG_LARGE_STEP;
+				if(index < 0)
+					index = 0;
+				if(index >= (Uint32)DEBUG_VIEW_LIMIT)
+					index = DEBUG_VIEW_LIMIT;
 				if(PerRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
 					break;
 				if(mnMessageAllTypedStub() != 0 && (PerRepeat & KEY_A))
@@ -198,7 +199,7 @@ void btDebugBattleViewMessages(void)
 			}
 			mnWindowCloseAllStub(1);
 			/* Close the window and clear its page arrow. */
-			mnWindowCloseStub(msgWin, 1);
+			mnWindowCloseStub(msgWindow, 1);
 			((WIN_STATE *)WindowStateWork[0])->pageArrowShown = 0;
 		}
 	}
@@ -260,7 +261,7 @@ restart:
 				}
 				if(set != loadedSet) {
 					gmMainRoutineStateInitDefaultsStub();
-					btDebugParmSetLoad(set);
+					btDebugParamSetLoad(set);
 					loadedSet = set;
 				}
 				sySynch(1);
@@ -268,7 +269,7 @@ restart:
 			/* A fights; Down still held makes it a link battle. */
 			if(PerData & KEY_DOWN)
 				gmFlagSetStub(FLAG_LINK_BATTLE);
-			gmUnitCalcStub(ISAAC);
+			gmUnitCalculateStub(ISAAC);
 			MainRoutineStateWork.battleBg = RESOURCE_SUHALLA_GATE_BACKDROP;
 			if(encounter == DJINN_TUTORIAL_ENCOUNTER)
 				gmFlagSetStub(FLAG_DJINN_LESSON);

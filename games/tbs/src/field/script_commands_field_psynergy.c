@@ -24,13 +24,13 @@ void fdPsynergyRun(void)
 	FIELD_EFFECT_STATE *effectState;
 	FIELD_STATE		   *fieldState;
 	Sint32				kind;
-	Sint32				tgtId;
-	Sint32				nearestTgtId;
+	Sint32				targetId;
+	Sint32				nearestTargetId;
 
 	effectState = FieldEffectStateWork;
 	fieldState = FieldStateWork;
 	kind = effectState->fieldPsynergy;
-	tgtId = effectState->tgtId;
+	targetId = effectState->targetId;
 
 	switch(kind) {
 	case FIELD_PSYNERGY_MOVE:
@@ -70,15 +70,15 @@ void fdPsynergyRun(void)
 			MainRoutineStateWork.haltedActor = -1;
 		}
 
-		nearestTgtId = fdFindNearbyPsynergyTarget(
+		nearestTargetId = fdFindNearbyPsynergyTarget(
 			MainRoutineStateWork.leaderActorId, kind);
-		nearestTgtId = fdPsynergyFilterHaltTarget(nearestTgtId);
-		if(fdFindActorTalkCue(nearestTgtId) != 0) {
+		nearestTargetId = fdPsynergyFilterHaltTarget(nearestTargetId);
+		if(fdFindActorTalkCue(nearestTargetId) != 0) {
 			fdPsynergySetupActorPair(
-				MainRoutineStateWork.leaderActorId, nearestTgtId);
-			fdPsynergyHaltOnTarget(nearestTgtId);
-			fdPsynergyHaltActor(nearestTgtId);
-			MainRoutineStateWork.haltedActor = nearestTgtId;
+				MainRoutineStateWork.leaderActorId, nearestTargetId);
+			fdPsynergyHaltOnTarget(nearestTargetId);
+			fdPsynergyHaltActor(nearestTargetId);
+			MainRoutineStateWork.haltedActor = nearestTargetId;
 		} else {
 			fdPsynergyHalt();
 		}
@@ -87,7 +87,7 @@ void fdPsynergyRun(void)
 		/* The wave and colour effect, stopping a running Reveal first. */
 		if(fieldState->revealActive != 0)
 			fdPsynergyEndReveal();
-		fdPsynergyStartMindReadWave(effectState->casterId, tgtId);
+		fdPsynergyStartMindReadWave(effectState->casterId, targetId);
 		return;
 	case FIELD_PSYNERGY_REVEAL:
 		fdPsynergyReveal();
@@ -111,56 +111,56 @@ void fdPsynergyDispatch(void)
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	FIELD_STATE		   *fieldState = FieldStateWork;
 	Sint32				kind = effectState->fieldPsynergy;
-	Sint32				tgtId = effectState->tgtId;
+	Sint32				targetId = effectState->targetId;
 
 	effectState->aimAhead = 0;
 	switch(kind) {
 	case FIELD_PSYNERGY_MIND_READ:
 		if(fieldState->revealActive != 0)
 			fdPsynergyEndReveal();
-		if(MainRoutineStateWork.haltedActor != effectState->tgtId)
-			effectState->tgt->paused = 1;
-		fdPsynergyStartMindReadWave(effectState->casterId, tgtId);
+		if(MainRoutineStateWork.haltedActor != effectState->targetId)
+			effectState->target->paused = 1;
+		fdPsynergyStartMindReadWave(effectState->casterId, targetId);
 		break;
 	case FIELD_PSYNERGY_MOVE:
 		/* Push the target with the direction keys. */
-		fdPsynergySteerPushedTarget(tgtId);
+		fdPsynergySteerPushedTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_LIFT:
-		fdPsynergyLiftOnTarget(tgtId);
+		fdPsynergyLiftOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_CARRY:
-		fdPsynergySteerLiftedTarget(tgtId);
+		fdPsynergySteerLiftedTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_FORCE:
-		fdPsynergyForceOnTarget(tgtId);
+		fdPsynergyForceOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_DOUSE:
-		fdPsynergyDouseOnTarget(tgtId);
+		fdPsynergyDouseOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_FROST:
-		fdPsynergyFrostOnTarget(tgtId);
+		fdPsynergyFrostOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_GROWTH:
-		fdPsynergyGrowthOnTarget(tgtId);
+		fdPsynergyGrowthOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_HALT:
 		if(MainRoutineStateWork.haltedActor != -1) {
 			fdPsynergyResumeHaltedActor(MainRoutineStateWork.haltedActor);
 			MainRoutineStateWork.haltedActor = -1;
 		}
-		fdPsynergyHaltActor(tgtId);
-		MainRoutineStateWork.haltedActor = tgtId;
-		fdPsynergyHaltOnTarget(tgtId);
+		fdPsynergyHaltActor(targetId);
+		MainRoutineStateWork.haltedActor = targetId;
+		fdPsynergyHaltOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_PLY:
-		fdPsynergyPlyOnTarget(tgtId);
+		fdPsynergyPlyOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_WHIRLWIND:
-		fdPsynergyWhirlwindOnTarget(tgtId);
+		fdPsynergyWhirlwindOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_CATCH:
-		fdPsynergyCatchOnTarget(tgtId);
+		fdPsynergyCatchOnTarget(targetId);
 		break;
 	case FIELD_PSYNERGY_REVEAL:
 		fdPsynergyReveal();
@@ -185,8 +185,8 @@ void fdPsynergyFinishMindRead(void)
 
 	if(effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
 		fdPsynergyStopMindReadWave();
-		if(MainRoutineStateWork.haltedActor != effectState->tgtId) {
-			effectState->tgt->paused = 0;
+		if(MainRoutineStateWork.haltedActor != effectState->targetId) {
+			effectState->target->paused = 0;
 		}
 	}
 }
@@ -213,7 +213,7 @@ void fdPsynergyRunExtraHandler(void)
 /* Runs the script tied to a field Psynergy: a result below
    CUE_RESULT_MESSAGE_END is a message, shown at target; a larger one is a
    function, called with param and target. */
-Sint32 fdRunPsynergyScript(const void *event, Sint32 param, Sint32 tgt)
+Sint32 fdRunPsynergyScript(const void *event, Sint32 param, Sint32 target)
 {
 	Sint32 script;
 
@@ -225,10 +225,10 @@ Sint32 fdRunPsynergyScript(const void *event, Sint32 param, Sint32 tgt)
 			if(script < CUE_RESULT_MESSAGE_END) {
 				fdScriptStart();
 				fdScriptSetMessageId(((const CUE *)event)->value);
-				fdScriptShowMessageAndWait(tgt, 0);
+				fdScriptShowMessageAndWait(target, 0);
 				fdScriptEnd();
 			} else {
-				((void (*)(Sint32, Sint32))script)(param, tgt);
+				((void (*)(Sint32, Sint32))script)(param, target);
 			}
 		}
 		if(gmFlagGetStub(FLAG_NOTHING_HAPPENS) != 0) {
@@ -242,19 +242,19 @@ Sint32 fdRunPsynergyScript(const void *event, Sint32 param, Sint32 tgt)
 
 /* Per-tick update: cycles an actor's colours through its own and the five with
    channels swapped, a new colour mode every tick. */
-void fdActorCycleSprCols(ACTOR *actor)
+void fdActorCycleSpriteColors(ACTOR *actor)
 {
-	SPR	  *spr;
-	Sint32 cnt;
+	SPR	  *sprite;
+	Sint32 count;
 	Sint32 i;
 
-	if(actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-		spr = actor->spr;
-		if(spr != 0 && spr->retainCacheEntry == 0) {
-			cnt = spr->cnt;
-			for(i = 0; i < cnt; i++)
-				spr->entries[i]->colMode = TickCount % 6;
-			spr->dirty = 1;
+	if(actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+		sprite = actor->sprite;
+		if(sprite != 0 && sprite->retainCacheEntry == 0) {
+			count = sprite->count;
+			for(i = 0; i < count; i++)
+				sprite->entries[i]->colorMode = TickCount % 6;
+			sprite->dirty = 1;
 		}
 	}
 }
@@ -268,37 +268,37 @@ DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(, fdActorSetMoveTargetStub)
 Sint32 fdVRAMCacheCountFreeBlocks(void)
 {
 	Uint8 *marker = VramCacheBlockOwners;
-	Sint32 freeCnt = 0;
+	Sint32 freeCount = 0;
 	Sint32 remaining = VRAM_BLOCK_COUNT;
 
 	do {
 		if(*marker++ == VRAM_BLOCK_OWNER_FREE) {
-			freeCnt++;
+			freeCount++;
 		}
 		remaining--;
 	} while(remaining != 0);
-	return freeCnt;
+	return freeCount;
 }
 
-/* Makes srcSpr share sharedSpr's VRAM block, releasing its own; with
-   no sharedSpr it keeps its block. */
-SPR *fdSprShareVRAMCacheEntry(SPR *srcSpr, SPR *sharedSpr)
+/* Makes srcSprite share sharedSprite's VRAM block, releasing its own; with
+   no sharedSprite it keeps its block. */
+SPR *fdSpriteShareVRAMCacheEntry(SPR *srcSprite, SPR *sharedSprite)
 {
 	SPR *shared;
-	SPR *spr;
+	SPR *sprite;
 
-	spr = srcSpr;
+	sprite = srcSprite;
 	shared = NULL;
-	if(spr != NULL) {
-		if(sharedSpr == NULL) {
-			spr->retainCacheEntry = 1;
+	if(sprite != NULL) {
+		if(sharedSprite == NULL) {
+			sprite->retainCacheEntry = 1;
 		} else {
-			syVRAMCacheFreeEntry(spr->slot);
-			spr->slot = sharedSpr->slot;
-			spr->retainCacheEntry = 1;
-			spr = sharedSpr;
+			syVRAMCacheFreeEntry(sprite->slot);
+			sprite->slot = sharedSprite->slot;
+			sprite->retainCacheEntry = 1;
+			sprite = sharedSprite;
 		}
-		shared = spr;
+		shared = sprite;
 	}
 	return shared;
 }
@@ -312,15 +312,15 @@ ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 
 	actor = fdActorCreateStub(kind, x, y, z);
 	if(actor != NULL) {
-		if(actor->sprStorageKind == ACTOR_SPRITE_NONE) {
+		if(actor->spriteStorageKind == ACTOR_SPRITE_NONE) {
 			fdActorReleaseStub(actor);
 			return NULL;
 		}
 		actor->groundHeight = effectState->caster->groundHeight;
-		actor->motionFlg = ACTOR_FLOATS;
-		actor->priFlg = ACTOR_PRIORITY_OVERHEAD;
-		actor->spr->image.pri = 0;
-		fdActorSetSprFlagsStub(actor, 0);
+		actor->motionFlags = ACTOR_FLOATS;
+		actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
+		actor->sprite->image.priority = 0;
+		fdActorSetSpriteFlagsStub(actor, 0);
 		fdActorSelectAnimationStub(actor, 1);
 	}
 	return actor;
@@ -328,7 +328,7 @@ ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 
 /* Pauses or resumes every actor but the player's and except, and sets their
    animations' speed. */
-void fdActorSetOthersPaused(ACTOR *except, Sint32 paused, Sint32 anmSpeed)
+void fdActorSetOthersPaused(ACTOR *except, Sint32 paused, Sint32 animationSpeed)
 {
 	Sint16 *player;
 	ACTOR  *actor;
@@ -340,7 +340,7 @@ void fdActorSetOthersPaused(ACTOR *except, Sint32 paused, Sint32 anmSpeed)
 		actor = fdActorLookup(actorId);
 		if(actorId != *player && actor != NULL && actor != except) {
 			actor->paused = paused;
-			fdActorSetAnimationSpeedStub(actor, anmSpeed);
+			fdActorSetAnimationSpeedStub(actor, animationSpeed);
 		}
 		actorId++;
 		/* BUG: one past the actor table: fdActorLookup(ACTOR_ID_COUNT) is the

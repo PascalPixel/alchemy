@@ -17,26 +17,26 @@ void syOAMResetTick(void)
 /* Hands out the next OAM affine matrix for a sprite drawn with `src`'s scale
    and rotation and fills it in. Returns the matrix number, or the last
    (OBJ_AFFINE_MATRIX_COUNT - 1) when all are taken. */
-Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
+Sint32 syOAMMatrixAllocateFromTransform(AFFINE_TRANSFORM *src)
 {
 	AFFINE_MATRIX *matrix;
 	Sint16		  *coefficient;
 	Sint32		   xScale;
 	Sint32		   yScale;
-	Sint32		   ang;
-	Uint8		   idx;
+	Sint32		   angle;
+	Uint8		   index;
 
 	xScale = (Sint16)src->scaleX;
-	ang = src->ang;
+	angle = src->angle;
 	yScale = (Sint16)src->scaleY;
-	idx = OamMatrixCount;
-	if(idx >= OBJ_AFFINE_MATRIX_COUNT)
+	index = OamMatrixCount;
+	if(index >= OBJ_AFFINE_MATRIX_COUNT)
 		return OBJ_AFFINE_MATRIX_COUNT - 1;
 
-	matrix = &OamMatrices[idx];
+	matrix = &OamMatrices[index];
 	coefficient = matrix->coefficients;
-	OamMatrixCount = idx + 1;
-	if((xScale == yScale || xScale == -yScale) && ang == 0) {
+	OamMatrixCount = index + 1;
+	if((xScale == yScale || xScale == -yScale) && angle == 0) {
 		/* Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
 		   reciprocals (toFIXED(1) / scale, the 8.8 inverse of an 8.8 scale), pb
 		   and pc 0, two halfwords to a row. */
@@ -56,8 +56,8 @@ Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
 		FIXED sine;
 		FIXED cosine;
 
-		sine = sySin(ang);
-		cosine = syCos(ang);
+		sine = sySin(angle);
+		cosine = syCos(angle);
 		*coefficient = cosine / xScale;
 		coefficient++;
 		*coefficient = sine / xScale;
@@ -67,12 +67,12 @@ Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
 		*coefficient = cosine / yScale;
 	}
 
-	return idx;
+	return index;
 }
 
-/* As syOAMAddSprAtDepth, with the depth clamped below OAM_DEPTH_WINDOW, so that
-   the sprite stays behind the windows' sprites. */
-void syOAMAddSprAtDepthClamped(void *entry, Sint32 slot)
+/* As syOAMAddSpriteAtDepth, with the depth clamped below OAM_DEPTH_WINDOW, so
+   that the sprite stays behind the windows' sprites. */
+void syOAMAddSpriteAtDepthClamped(void *entry, Sint32 slot)
 {
 	Uint8 *mask;
 	void **buckets;
@@ -102,7 +102,7 @@ void syOAMAddSprAtDepthClamped(void *entry, Sint32 slot)
 
 /* Links a sprite entry at the head of depth slot `slot`'s list (clamped to the
    RENDER_DEPTH_SLOT_COUNT slots) for this tick, and marks the slot taken. */
-void syOAMAddSprAtDepth(void *entry, Sint32 slot)
+void syOAMAddSpriteAtDepth(void *entry, Sint32 slot)
 {
 	Uint8 *mask;
 	void **head;

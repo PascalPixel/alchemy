@@ -220,7 +220,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	Sint32 msg;
 
 	fdScriptStart();
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	for(i = 0; i != 6; i++) {
 		fdPaletteFadeApplyTarget(
 			PALETTE_TINT_BLEND | RGB(18, 18, 14), PALETTES_BG);
@@ -240,7 +240,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdCameraWaitForMove();
 	fdScriptWait(20);
 	fdMapGridSetShake(1, 2, 1);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(41), 29);
 	OPEN_RISEN_PILLAR(41, 29);
 	fdScriptWait(40);
@@ -250,7 +250,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(19), 29);
 	OPEN_RISEN_PILLAR(19, 29);
 	fdScriptWait(40);
@@ -259,7 +259,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(41), 10);
 	OPEN_RISEN_PILLAR(41, 10);
 	fdScriptWait(40);
@@ -274,7 +274,7 @@ static void scSolSanctumElementalStarRoomBagVenusStar(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(20);
@@ -326,7 +326,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	Sint32 msg;
 
 	fdScriptStart();
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	for(i = 0; i != 6; i++) {
 		fdPaletteFadeApplyTarget(
 			PALETTE_TINT_BLEND | RGB(14, 18, 18), PALETTES_BG);
@@ -347,7 +347,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(29), 4);
 	OPEN_RISEN_PILLAR(29, 4);
 	fdScriptWait(40);
@@ -356,7 +356,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(21), 21);
 	OPEN_RISEN_PILLAR(21, 21);
 	fdScriptWait(40);
@@ -366,7 +366,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(21), 29);
 	OPEN_RISEN_PILLAR(21, 29);
 	fdScriptWait(40);
@@ -381,7 +381,7 @@ static void scSolSanctumElementalStarRoomBagMercuryStar(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(20);
@@ -451,7 +451,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	Uint32 i;
 	Sint32 member;
 
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	for(i = 0; i != 6; i++) {
 		fdPaletteFadeApplyTarget(
 			PALETTE_TINT_BLEND | RGB(18, 14, 18), PALETTES_BG);
@@ -471,7 +471,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(10), 31);
 	OPEN_RISEN_PILLAR(10, 31);
 	fdScriptWait(40);
@@ -481,7 +481,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(24), 9);
 	OPEN_RISEN_PILLAR(24, 9);
 	fdScriptWait(40);
@@ -491,7 +491,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdCameraWaitForMove();
 	fdMapGridSetShake(1, 2, 1);
 	fdScriptWait(20);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridPlayMapEdit(SolSanctumStarMetatiles, RISEN_PILLAR_LEFT(36), 10);
 	OPEN_RISEN_PILLAR(36, 10);
 	fdScriptWait(40);
@@ -506,7 +506,7 @@ static void scSolSanctumElementalStarRoomBagJupiterStar(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(20);
@@ -526,7 +526,7 @@ static void scSolSanctumElementalStarRoomRevealSaturosAndMenardi(void)
 {
 	ACTOR *leader;
 
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 231, 490);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
@@ -584,10 +584,10 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 {
 	ACTOR *felix;
 	ACTOR *shadow;
-	Sint32 frm;
-	SPR	  *spr;
+	Sint32 frame;
+	SPR	  *sprite;
 
-	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
+	sySoundPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 	fdActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
 	fdScriptSetMessageId(MsgSolSanctumLooksLikeTheyveSpottedUs);
 	/* "It looks like they've spotted us." */
@@ -620,15 +620,15 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_KRADEN, 10);
 	felix = fdActorGet(ACTOR_FELIX_MASKED);
 	shadow = fdActorGet(ACTOR_PLATFORM_SHADOW);
-	spr = felix->spr;
-	spr->flg = 0;
+	sprite = felix->sprite;
+	sprite->flags = 0;
 	felix->scaleX = toFIXED(1) / 10;
 	felix->scaleY = toFIXED(1) / 10;
 	shadow->scaleX = toFIXED(1) / 10;
 	shadow->scaleY = toFIXED(1) / 10;
-	fdActorSetSprColById(ACTOR_FELIX_MASKED, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteColorById(ACTOR_FELIX_MASKED, SPRITE_COLOR_BLINK);
 	fdActorSetPos(ACTOR_FELIX_MASKED, 471, 290);
-	felix->motionFlg = 0;
+	felix->motionFlags = 0;
 	felix->y.fixed = toFIXED(40);
 	fdScriptWait(1);
 	/* "Relax... You will not be hurt." */
@@ -643,9 +643,9 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 	fdCameraMoveTo(471, CAMERA_KEEP, 309, 1);
 	fdCameraWaitForMove();
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 471, 290);
-	sySndPlay(SE_WARP);
-	fdActorSetSprPriority(ACTOR_FELIX_MASKED, 2);
-	for(frm = 0; frm != 90; frm++) {
+	sySoundPlay(SE_WARP);
+	fdActorSetSpritePriority(ACTOR_FELIX_MASKED, 2);
+	for(frame = 0; frame != 90; frame++) {
 		felix->y.fixed -= toFIXED(1) / 10;
 		felix->scaleX += toFIXED(1) / 100;
 		felix->scaleY += toFIXED(1) / 100;
@@ -653,19 +653,19 @@ static void scSolSanctumElementalStarRoomDemandElementalStars(void)
 		shadow->scaleY += toFIXED(1) / 100;
 		fdScriptWait(1);
 	}
-	felix->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
+	felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 	fdScriptWait(80);
-	for(frm = 0; frm != 60; frm++) {
+	for(frame = 0; frame != 60; frame++) {
 		felix->y.fixed -= toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
-	felix->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	felix->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(30);
-	spr->flg = SPRITE_FLAG_SHADOW;
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 0, 0);
-	fdActorSetSprPriority(ACTOR_FELIX_MASKED, 1);
-	fdActorGet(ACTOR_FELIX_MASKED)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprColById(ACTOR_FELIX_MASKED, SPRITE_COLOR_NORMAL);
+	fdActorSetSpritePriority(ACTOR_FELIX_MASKED, 1);
+	fdActorGet(ACTOR_FELIX_MASKED)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpriteColorById(ACTOR_FELIX_MASKED, SPRITE_COLOR_NORMAL);
 	fdActorSetSpeed(ACTOR_FELIX_MASKED, 0.5);
 	fdActorWalkToAndWait(ACTOR_FELIX_MASKED, 471, 306);
 	fdScriptWait(40);
@@ -877,11 +877,11 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 	ACTOR  *other;
 	Uint16 *inventoryEntry;
 	Sint32	slot;
-	Sint32	starCnt;
+	Sint32	starCount;
 	Sint32	msgA;
 	Sint32	msgB;
 
-	sySndPlay(SE_RATTLE);
+	sySoundPlay(SE_RATTLE);
 	fdActorRunRepeatedMotion(ACTOR_FELIX_MASKED, 3);
 	fdScriptWait(40);
 	other = fdActorGet(ACTOR_FELIX_MASKED);
@@ -986,14 +986,14 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
 	fdScriptWait(20);
-	starCnt = 0;
+	starCount = 0;
 	inventoryEntry = gmUnitGet(GARET)->inventory;
 	for(slot = 0; slot < INVENTORY_SLOTS; slot++) {
 		Uint32 item = *inventoryEntry & INVENTORY_ITEM_ID_MASK;
 		inventoryEntry++;
 		if(item == ITEM_VENUS_STAR || item == ITEM_MERCURY_STAR ||
 			item == ITEM_JUPITER_STAR)
-			starCnt++;
+			starCount++;
 	}
 	/* "We don't have any choice..." */
 	fdScriptOpenMessage(ACTOR_GARET, 0);
@@ -1002,7 +1002,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 		fdScriptSetMessageId(msgA);
 		fdActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
 		fdScriptWait(10);
-		if(starCnt <= 2) {
+		if(starCount <= 2) {
 			/* "I guess I should take the Elemental Stars to them." */
 			scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_GARET, 30);
 			fdActorWalkToAndWait(ACTOR_GARET, 252, 486);
@@ -1016,7 +1016,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 			scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_GARET, 30);
 		}
 	} else {
-		if(starCnt <= 2) {
+		if(starCount <= 2) {
 			msgB = MsgSolSanctumDontHandOver;
 			fdScriptSetMessageId(msgB);
 			fdActorRunRepeatedMotion(ACTOR_GARET, 3);
@@ -1027,7 +1027,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 			fdActorRunRepeatedMotion(ACTOR_GARET, 1);
 			fdActorSetSpeed(ACTOR_GARET, 2);
 			actor = fdActorGet(ACTOR_PARTY_LEADER);
-			actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+			actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_GARET, 244, 478);
 			fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.5);
 			fdActorJump(ACTOR_PARTY_LEADER, 6, 0);
@@ -1037,7 +1037,7 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 			mnFieldMessageShowCentered((msgB + 1), 1, 0);
 			fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 			fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 30);
-			actor->steeringFlg |= ACTOR_FACES_MOTION;
+			actor->steeringFlags |= ACTOR_FACES_MOTION;
 		} else {
 			fdScriptSetMessageId(MsgSolSanctumWontLetGo);
 			fdActorRunRepeatedMotion(ACTOR_GARET, 3);
@@ -1055,26 +1055,26 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 	fdActorRunRepeatedMotion(ACTOR_GARET, 2);
 	fdActorSetSpeed(ACTOR_GARET, 0.5);
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 264, 482);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 278, 480);
 	actor->speedLimit = toFIXED(3);
 	actor->acceleration = toFIXED(2);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
 	fdActorMoveToAndWait(ACTOR_GARET, 312, 470);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdScriptWait(30);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
 	fdActorMoveToAndWait(ACTOR_GARET, 342, 470);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdScriptWait(30);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
 	fdActorMoveToAndWait(ACTOR_GARET, 376, 470);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1083,14 +1083,14 @@ static void scSolSanctumElementalStarRoomFelixRemovesMask(void)
 /* Alex appears, takes the three stars from Garet and demands the last one. */
 static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 {
-	Uint32 frm;
+	Uint32 frame;
 	ACTOR *actor;
 
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_ALEX, 392, 454);
 	scSolSanctumElementalStarRoomAlexWarpsIn();
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 10);
@@ -1124,10 +1124,10 @@ static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 	mnFieldMessageShowCentered(MsgSolSanctumPermitRelieveElemental + 4, 1, 10);
 	fdActorSetSpeed(ACTOR_GARET, 0.5);
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 376, 470);
 	fdScriptWait(30);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
 	fdScriptWait(10);
 	fdScriptSetMessageId(MsgSolSanctumPermitRelieveElemental + 5);
@@ -1141,16 +1141,16 @@ static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 	fdActorSetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_NORTH, 20);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
 	actor = fdActorGet(ACTOR_ALEX);
-	actor->motionFlg = 0;
-	sySndPlay(SE_SHIMMER);
-	for(frm = 0; frm != 30; frm++) {
+	actor->motionFlags = 0;
+	sySoundPlay(SE_SHIMMER);
+	for(frame = 0; frame != 30; frame++) {
 		actor->y.fixed += toFIXED(1);
 		fdScriptWait(1);
 	}
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 	fdActorStartRepeatedMotion(ACTOR_GARET, 2);
 	/* "Wait a second!" */
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_GARET, 10);
@@ -1214,12 +1214,12 @@ static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 	fdScriptWait(10);
 	/* "We'll be waiting for the rest." */
 	scSolSanctumElementalStarRoomShowMessageAndWait(ACTOR_ALEX, 30);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSetSpeed(ACTOR_ALEX, 2.4);
 	syFieldActorSetMoveTarget(actor, 460, 0, 360);
 	fdActorWaitForMoveById(ACTOR_ALEX);
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 	fdScriptWait(30);
 	fdCameraFollowActor(ACTOR_GARET, 1);
 	fdCameraWaitForMove();
@@ -1228,23 +1228,23 @@ static void scSolSanctumElementalStarRoomAlexTakesStars(void)
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdScriptWait(20);
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor->speedLimit = toFIXED(3);
 	actor->acceleration = toFIXED(2);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
 	fdActorMoveToAndWait(ACTOR_GARET, 342, 470);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdScriptWait(30);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
 	fdActorMoveToAndWait(ACTOR_GARET, 312, 470);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdScriptWait(30);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_LEADER_LEAP);
 	fdActorMoveToAndWait(ACTOR_GARET, 278, 480);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1289,31 +1289,31 @@ static void scSolSanctumElementalStarRoomStandAroundHostages(void)
 	fdActorSetPos(ACTOR_FELIX, 471, 306);
 	actor = fdActorGet(ACTOR_JENNA);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_KRADEN);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_MENARDI);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_SATUROS);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	alex = fdActorGet(ACTOR_ALEX);
 	alex->watchedActor = (ACTOR_OR_EFFECT *)leader;
-	alex->steeringFlg |= ACTOR_FACES_MOTION;
+	alex->steeringFlags |= ACTOR_FACES_MOTION;
 	alex->scaleX = toFIXED(1);
 	alex->scaleY = toFIXED(1);
-	alex->motionFlg = fdActorGet(ACTOR_MENARDI)->motionFlg;
+	alex->motionFlags = fdActorGet(ACTOR_MENARDI)->motionFlags;
 	alex->y.fixed = 0;
 	fdActorStartScript(alex, SolSanctumElementalStarRoomAngleScript);
 	actor = fdActorGet(ACTOR_FELIX);
 	actor->watchedActor = (ACTOR_OR_EFFECT *)leader;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorStartScript(actor, SolSanctumElementalStarRoomAngleScript);
 	fdScriptEnd();
 }
@@ -1334,7 +1334,7 @@ static void scSolSanctumElementalStarRoomTakeMarsStar(void)
 	Sint32 member;
 
 	fdScriptStart();
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	for(pass = 0; pass != 6; pass++) {
 		fdPaletteFadeApplyTarget(
 			PALETTE_TINT_BLEND | RGB(18, 14, 14), PALETTES_BG);
@@ -1347,7 +1347,7 @@ static void scSolSanctumElementalStarRoomTakeMarsStar(void)
 			fdMapGridSetShake(1, 1, 1);
 		}
 	}
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	PUT_OUT_STAR_LIGHT(13, 6);
 	fdScriptWait(20);
@@ -1370,14 +1370,14 @@ static void scSolSanctumElementalStarRoomTakeMarsStar(void)
 	fdActorWalkToAndWait(ACTOR_GARET, 218, 172);
 	fdActorFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(20);
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdMapGridSetShake(4, 4, 1);
 	fdScriptWait(20);
 	fdMapGridSetShake(1, 1, 1);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 50);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridSetShake(3, 3, 1);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_EAST, 50);
@@ -1386,7 +1386,7 @@ static void scSolSanctumElementalStarRoomTakeMarsStar(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_WEST, 50);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 0);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	fdMapGridSetShake(3, 3, 1);
 	fdScriptWait(30);
 	fdActorJump(ACTOR_PARTY_LEADER, 2, 0);
@@ -1547,9 +1547,9 @@ static inline void scSolSanctumElementalStarRoomShowElementalStar(
    Kraden. */
 static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 {
-	Uint16 frm;
+	Uint16 frame;
 	ACTOR *rising;
-	SPR	  *spr;
+	SPR	  *sprite;
 	ACTOR *shadow;
 
 	fdScriptStart();
@@ -1563,24 +1563,24 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	shadow->scaleX = toFIXED(1) / 10;
 	shadow->scaleY = toFIXED(1) / 10;
 	rising = fdActorGet(ACTOR_PARTY_LEADER);
-	spr = rising->spr;
-	spr->flg = 0;
+	sprite = rising->sprite;
+	sprite->flags = 0;
 	rising->scaleX = toFIXED(1) / 10;
 	rising->scaleY = toFIXED(1) / 10;
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_BLINK);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 471, 290);
-	rising->motionFlg = 0;
+	rising->motionFlags = 0;
 	rising->y.fixed = toFIXED(40);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 471, 290);
-	sySndPlay(SE_WARP);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
-	for(frm = 0; frm != 90; frm++) {
+	sySoundPlay(SE_WARP);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+	for(frame = 0; frame != 90; frame++) {
 		rising->y.fixed -= toFIXED(1) / 10;
 		rising->scaleX += toFIXED(1) / 100;
 		rising->scaleY += toFIXED(1) / 100;
@@ -1588,20 +1588,20 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 		shadow->scaleY += toFIXED(1) / 100;
 		fdScriptWait(1);
 	}
-	rising->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
+	rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 	fdScriptWait(80);
 	fdCameraSetSpeed(0.3);
 	fdCameraMoveTo(471, CAMERA_KEEP, 290, 1);
-	for(frm = 0; frm != 60; frm++) {
+	for(frame = 0; frame != 60; frame++) {
 		rising->y.fixed -= toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
-	rising->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(20);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	spr->flg = SPRITE_FLAG_SHADOW;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 0, 0);
 	fdCameraWaitForMove();
 	fdScriptWait(20);
@@ -1676,15 +1676,15 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 60);
 	/* Materialize Kraden after the companions have explored the chamber. */
 	rising = fdActorGet(ACTOR_KRADEN);
-	spr = rising->spr;
-	spr->flg = 0;
+	sprite = rising->sprite;
+	sprite->flags = 0;
 	rising->scaleX = toFIXED(1) / 10;
 	rising->scaleY = toFIXED(1) / 10;
 	shadow->scaleX = toFIXED(1) / 10;
 	shadow->scaleY = toFIXED(1) / 10;
-	fdActorSetSprColById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
+	fdActorSetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
 	fdActorSetPos(ACTOR_KRADEN, 471, 290);
-	rising->motionFlg = 0;
+	rising->motionFlags = 0;
 	rising->y.fixed = toFIXED(40);
 	fdScriptWait(1);
 	fdScriptSetMessageId(MsgSolSanctumKradenWhereAreWe);
@@ -1700,9 +1700,9 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdCameraMoveTo(471, CAMERA_KEEP, 309, 1);
 	fdCameraWaitForMove();
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 471, 290);
-	sySndPlay(SE_WARP);
-	fdActorSetSprPriority(ACTOR_KRADEN, 2);
-	for(frm = 0; frm != 90; frm++) {
+	sySoundPlay(SE_WARP);
+	fdActorSetSpritePriority(ACTOR_KRADEN, 2);
+	for(frame = 0; frame != 90; frame++) {
 		rising->y.fixed -= toFIXED(1) / 10;
 		rising->scaleX += toFIXED(1) / 100;
 		rising->scaleY += toFIXED(1) / 100;
@@ -1710,18 +1710,18 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 		shadow->scaleY += toFIXED(1) / 100;
 		fdScriptWait(1);
 	}
-	rising->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
+	rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FLOATS;
 	fdScriptWait(80);
-	for(frm = 0; frm != 60; frm++) {
+	for(frame = 0; frame != 60; frame++) {
 		rising->y.fixed -= toFIXED(1) / 2;
 		fdScriptWait(1);
 	}
-	rising->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	rising->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(30);
-	fdActorSetSprPriority(ACTOR_KRADEN, 1);
-	fdActorGet(ACTOR_KRADEN)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprColById(ACTOR_KRADEN, SPRITE_COLOR_NORMAL);
-	spr->flg = SPRITE_FLAG_SHADOW;
+	fdActorSetSpritePriority(ACTOR_KRADEN, 1);
+	fdActorGet(ACTOR_KRADEN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_NORMAL);
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	fdActorSetPos(ACTOR_PLATFORM_SHADOW, 0, 0);
 	fdScriptWait(30);
 	fdActorSetSpeed(ACTOR_KRADEN, 1.2);
@@ -2052,12 +2052,12 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	sySynch(6);
 	rising->speedLimit = toFIXED(3);
 	rising->acceleration = toFIXED(2);
-	sySndPlay(SE_HIGH_JUMP);
-	rising->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	rising->velocityY = toFIXED(6);
 	fdActorMoveToAndWait(ACTOR_KRADEN, 471, 395);
 	sySynch(6);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.3);
-	rising->steeringFlg &= ~ACTOR_FACES_MOTION;
+	rising->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_KRADEN, 473, 395);
 	fdActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -2071,7 +2071,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
 	fdActorWalkToAndWait(ACTOR_KRADEN, 471, 411);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.3);
-	rising->steeringFlg &= ~ACTOR_FACES_MOTION;
+	rising->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_KRADEN, 474, 411);
 	fdActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorRunRepeatedMotion(ACTOR_KRADEN, 3);
@@ -2089,13 +2089,13 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdActorWalkToAndWait(ACTOR_KRADEN, 471, 395);
 	fdActorSetMovementTypeById(ACTOR_KRADEN, MOVEMENT_TYPE_STAND);
 	fdScriptWait(30);
-	rising->steeringFlg |= ACTOR_FACES_MOTION;
+	rising->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
 	sySynch(6);
 	rising->speedLimit = toFIXED(3);
 	rising->acceleration = toFIXED(2);
-	sySndPlay(SE_HIGH_JUMP);
-	rising->velY = toFIXED(6);
+	sySoundPlay(SE_HIGH_JUMP);
+	rising->velocityY = toFIXED(6);
 	fdActorMoveToAndWait(ACTOR_KRADEN, 471, 360);
 	sySynch(6);
 	fdScriptWait(40);
@@ -2173,7 +2173,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	/* "You'll need this, Isaac." */
 	scSolSanctumElementalStarRoomShowMessageAndWait(
 		SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 60);
-	rising->steeringFlg &= ~ACTOR_FACES_MOTION;
+	rising->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_KRADEN, 456, 360);
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_JENNA, 2);
@@ -2222,7 +2222,7 @@ static void scSolSanctumElementalStarRoomEnterStarRoom(void)
 	fdPartyRemoveMemberRestored(JENNA);
 	scSolSanctumElementalStarRoomGiveMythrilBags();
 	fdMapGridCopyMetatileAttributes(8, 0, 5, 1, 27, 17);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
 	fdScriptEnd();
 }
@@ -2236,8 +2236,8 @@ Sint32 scInit(void)
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
 	lightActorId = ACTOR_FIRST_FLOATING_LIGHT;
 	do {
-		fdActorGet(lightActorId)->collisionFlg = 0;
-		fdActorSetSprPriority(lightActorId++, 1);
+		fdActorGet(lightActorId)->collisionFlags = 0;
+		fdActorSetSpritePriority(lightActorId++, 1);
 	} while(lightActorId <= ACTOR_LAST_FLOATING_LIGHT);
 	/* It asks for 16 lights; the event keeps the ten the room places. */
 	scSolSanctumStartFloatingLights(ACTOR_FIRST_FLOATING_LIGHT, 16);
@@ -2287,7 +2287,7 @@ static Sint32 scSolSanctumElementalStarRoomPresentStarFX(
 {
 	ICON_TRANSFER *glyph;
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	Sint32		   member;
 	Sint32		   slot;
 
@@ -2298,19 +2298,20 @@ static Sint32 scSolSanctumElementalStarRoomPresentStarFX(
 	if(actor == NULL)
 		return member;
 	fdActorStartScript(actor, ItemIconGrowScript);
-	spr = actor->spr;
-	spr->flg = 0;
-	spr->cnt = 0;
-	spr->image.fullCol = 0;
-	spr->image.pal = 0;
-	actor->velY = toFIXED(5) / 2;
+	sprite = actor->sprite;
+	sprite->flags = 0;
+	sprite->count = 0;
+	sprite->image.fullColor = 0;
+	sprite->image.palette = 0;
+	actor->velocityY = toFIXED(5) / 2;
 	actor->gravity = toFIXED(1) / 4;
-	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
+	glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
 	mnIconDrawItem(item);
-	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	sySndPlay(MUS_TREASURE_FOUND);
-	fdItemDispShowPicture(actor, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+	sySoundPlay(MUS_TREASURE_FOUND);
+	fdItemDisplayShowPicture(
+		actor, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	gmInventoryDiscard(member, slot);
 	gmInventoryAddItem(member, item);
 	fdActorRelease(actor);
@@ -2328,7 +2329,7 @@ static void scSolSanctumElementalStarRoomGiveMythrilBags(void)
 	Sint32		 itemOwner;
 	Sint32		 freeSlots;
 
-	sySndPlay(MUS_TREASURE_FOUND);
+	sySoundPlay(MUS_TREASURE_FOUND);
 	gmItemShowFound(ITEM_MYTHRIL_BAG, 3);
 	/* "Isaac got four Mythril Bags." */
 	mnFieldMessageShow(MsgSolSanctumGotFourMythrilBags, 1);
@@ -2355,23 +2356,23 @@ static void scSolSanctumElementalStarRoomAlexWarpsIn(void)
 {
 	EFFECT_OPTIONS options;
 	ACTOR		  *alex;
-	Uint32		   frm;
+	Uint32		   frame;
 	FIXED		   x;
-	FIXED		   xOfs;
+	FIXED		   xOffset;
 
 	alex = fdActorGet(ACTOR_ALEX);
-	sySndPlay(SE_WARP);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
-	options.pri = 1;
-	options.pal = SPRITE_COLOR_BRG;
+	sySoundPlay(SE_WARP);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
+	options.priority = 1;
+	options.palette = SPRITE_COLOR_BRG;
 	options.type = SPRITE_PARTICLE;
 	options.startScaleX = toFIXED(2) / 5;
 	options.startScaleY = toFIXED(3);
-	for(frm = 0; frm < WARP_TICKS; frm++) {
+	for(frame = 0; frame < WARP_TICKS; frame++) {
 		fdScriptWait(1);
-		if(!(frm & 1)) {
-			xOfs = toFIXED(syRandomBelow(24));
-			x = alex->x.fixed + xOfs;
+		if(!(frame & 1)) {
+			xOffset = toFIXED(syRandomBelow(24));
+			x = alex->x.fixed + xOffset;
 			x -= toFIXED(12);
 			fdEffectSpawn(x,
 				alex->y.fixed + toFIXED(syRandomBelow(32)) + toFIXED(32),
@@ -2380,11 +2381,11 @@ static void scSolSanctumElementalStarRoomAlexWarpsIn(void)
 					EFFECT_USE_PALETTE,
 				&options);
 		}
-		if(frm == WARP_IN_BLINK_TICK)
-			fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
+		if(frame == WARP_IN_BLINK_TICK)
+			fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
 	}
-	fdActorSetSprColById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
 #include "shared/sol_sanctum_elemental_star_lights.c"

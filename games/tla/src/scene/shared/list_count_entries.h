@@ -2,12 +2,12 @@
    less one. */
 Sint32 syListCountEntries(Uint16 *list)
 {
-	Sint32 cnt = 0;
+	Sint32 count = 0;
 
 	while(*list != PALETTE_LIST_END) {
 		list++;
-		cnt++;
+		count++;
 	}
-	cnt--;
-	return cnt;
+	count--;
+	return count;
 }

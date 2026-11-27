@@ -105,15 +105,15 @@ typedef struct CLASS_DEFINITION {
 	abilities[CLASS_ABILITY_SLOTS]; /* the Psynergy the class teaches */
 	/* [0] to [2]: the ability effects the class is weak to
 	   (gmBattleAbilityIsWeakToEffect); [3] is 0 in every row and not read. */
-	Uint8 weakEffs[4];
+	Uint8 weakEffects[4];
 } CLASS_DEFINITION;
 
 /* A Djinni: its ability and the stat bonuses it gives while set. */
 typedef struct DJINN_DEFINITION {
 	Uint16 abilityId;				/* the action the Djinni unleashes */
 	Uint8  reservedAfterAbility[2]; /* reserved; no code names it */
-	/* Added to the base stats while the Djinni is set (gmUnitCalc), before the
-	   class multiplies them. */
+	/* Added to the base stats while the Djinni is set (gmUnitCalculate), before
+	   the class multiplies them. */
 	Sint8 hp;
 	Sint8 pp;
 	Sint8 attack;
@@ -123,7 +123,7 @@ typedef struct DJINN_DEFINITION {
 	Uint8 reservedAfterStats[2];
 } DJINN_DEFINITION;
 
-/* ENEMY_DEFINITION.tgtStrategy: a single-target attacker favours the target
+/* ENEMY_DEFINITION.targetStrategy: a single-target attacker favours the target
    with the most HP left, the most maximum HP, or no one (btAIChooseTarget). The
    same column steers btAIChooseAction: with any strategy but
    TARGET_STRATEGY_MOST_HP an enemy skips Psynergy it lacks the PP for, and with
@@ -165,18 +165,18 @@ typedef struct ENEMY_DEFINITION {
 	Uint16 defense;
 	Uint16 agility;
 	Uint8  luck;
-	Uint8  actionCnt; /* actions a turn (UNIT.baseActionCnt) */
-	Uint8  hpRegen;	  /* HP restored at each turn's end (UNIT.baseHpRegen) */
-	Uint8  ppRegen;	  /* PP restored at each turn's end (UNIT.basePpRegen) */
+	Uint8  actionCount; /* actions a turn (UNIT.baseActionCount) */
+	Uint8  hpRegen;		/* HP restored at each turn's end (UNIT.baseHpRegen) */
+	Uint8  ppRegen;		/* PP restored at each turn's end (UNIT.basePpRegen) */
 	Uint8  reservedBeforeAiState[2]; /* 0 in every row */
 	/* 0 in every row; the unit's first UNIT.aiState. */
 	BATTLE_AI_STATE aiState;
 	Uint8			reservedAfterAiState[4]; /* 0 in every row */
 	Uint16			items[4];	   /* items the enemy carries, 0 for none */
-	Uint8			cnts[4];	   /* how many of each item it carries */
+	Uint8			counts[4];	   /* how many of each item it carries */
 	Uint8			elementPreset; /* row of EnemyElementPresetTable, 0 to 43 */
 	/* Whom a single-target attack favours: an ENEMY_TARGET_STRATEGY. */
-	Sint8 tgtStrategy;
+	Sint8 targetStrategy;
 	/* How the action is chosen from `abilities` (btAIChooseAction):
 	   an ENEMY_ACTION_STRATEGY. */
 	Sint8 actionStrategy;
@@ -186,7 +186,7 @@ typedef struct ENEMY_DEFINITION {
 	Uint16 abilities[8]; /* the abilities the enemy chooses from */
 	/* [0] to [2]: the ability effects the enemy is weak to
 	   (gmBattleAbilityIsWeakToEffect); [3] is 0 in every row. */
-	Uint8  weakEffs[4];
+	Uint8  weakEffects[4];
 	Uint16 coins; /* coins won */
 	Sint16 item;  /* the item it may leave, 0 for none */
 	/* The chance of the item: 1 in 2 to the power itemChance - 1, two powers

@@ -217,7 +217,7 @@ static void scBabiLighthouseLandWithParticles(void)
 	Uint32		   particle;
 	ACTOR		  *leader;
 	EFFECT_OPTIONS options;
-	Sint32		   vel[3];
+	Sint32		   velocity[3];
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -226,30 +226,30 @@ static void scBabiLighthouseLandWithParticles(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
 	fdActorGet(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 2;
 	fdActorGet(ACTOR_PARTY_LEADER)->bounce = 0;
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
-	sySndPlay(SE_DUST_PUFF);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
+	sySoundPlay(SE_DUST_PUFF);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = (void (*)(ACTOR *))scFieldEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	for(particle = 0; particle <= TRIG_TURN / FACING_STEP; particle++) {
-		SET_VECTOR(vel, syCos(particle * FACING_STEP), 0,
+		SET_VECTOR(velocity, syCos(particle * FACING_STEP), 0,
 			sySin(particle * FACING_STEP));
-		vel[0] += vel[0] / 2;
-		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, vel[0],
-			vel[1], vel[2],
+		velocity[0] += velocity[0] / 2;
+		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdActorSetAttachedEffect(
 		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -275,17 +275,17 @@ static void scBabiLighthouseFallToExit(Sint32 exit)
 	fdActorGet(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
 	fdActorGet(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 4;
 	fdActorGet(ACTOR_PARTY_LEADER)->bounce = 0;
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(10);
-	sySndPlay(SE_DUST_PUFF);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
+	sySoundPlay(SE_DUST_PUFF);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorGet(ACTOR_PARTY_LEADER)->velY = -toFIXED(5);
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityY = -toFIXED(5);
 	scActorWaitUntilIdle(fdActorGet(ACTOR_PARTY_LEADER));
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
 	syImportScriptSetExitRequest(exit);
 	fdScriptEnd();
 }
@@ -363,8 +363,8 @@ static void scBabiLighthouseHopClearOfPillar(void)
 	if((FIELD_METATILE(leader->x.fixed) == HOLE_WEST_COLUMN ||
 		   (FIELD_METATILE(leader->x.fixed)) == HOLE_EAST_COLUMN) &&
 		(FIELD_METATILE(leader->z.fixed)) == HOLE_ROW) {
-		leader->tgtX = ACTOR_NO_TARGET;
-		leader->tgtZ = ACTOR_NO_TARGET;
+		leader->targetX = ACTOR_NO_TARGET;
+		leader->targetZ = ACTOR_NO_TARGET;
 		fdActorShowEmote(
 			ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 2);
@@ -1140,7 +1140,7 @@ static void scBabiLighthouseOpenTruthDoor(void)
 {
 	if(fdScriptGetFlag(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 		gmFlagSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdScriptStart();
 		fdActorSetDestination(ACTOR_LEFT_DOOR, 280, 240);
 		fdActorSetDestination(ACTOR_RIGHT_DOOR, 328, 240);
@@ -1158,7 +1158,7 @@ static void scBabiLighthouseCloseTruthDoor(void)
 {
 	if(fdScriptGetFlag(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
 		gmFlagClear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
-		sySndPlay(SE_GATE_MOVE);
+		sySoundPlay(SE_GATE_MOVE);
 		fdScriptStart();
 		fdActorSetDestination(ACTOR_LEFT_DOOR, 296, 240);
 		fdActorSetDestination(ACTOR_RIGHT_DOOR, 312, 240);
@@ -1186,7 +1186,7 @@ static void scBabiLighthouseInspectTruthDoorSwitch(void)
 	if(state->revealActive != 0) {
 		if(gmFlagGet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 			mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-			sySndPlay(SE_SWITCH);
+			sySoundPlay(SE_SWITCH);
 			fdMapGridCopyMetatilesLayered(35, 78, 1, 2, 17, 78);
 			fdScriptWait(10);
 			fdMapGridCopyMetatilesLayered(34, 78, 1, 2, 17, 78);
@@ -1247,14 +1247,14 @@ static void scBabiLighthouseUpdateMovedPillar(void)
 		Sint32 row = FIELD_METATILE(pillar->z.fixed);
 
 		if(row == 12) {
-			pillar->motionFlg = ACTOR_FALLS;
+			pillar->motionFlags = ACTOR_FALLS;
 			pillar->groundHeight = toFIXED(48);
-			pillar->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			{
-				Sint32 tgtColumn = column, tgtRow = row;
+				Sint32 targetColumn = column, targetRow = row;
 
 				fdMapGridCopyMetatileAttributes(
-					38, 12, 1, 1, tgtColumn, tgtRow);
+					38, 12, 1, 1, targetColumn, targetRow);
 			}
 		}
 	}
@@ -1339,8 +1339,8 @@ static void scBabiLighthouseRedrawPillarMetatiles(void)
 {
 	ACTOR *leftPillar = fdActorGet(ACTOR_LEFT_PILLAR);
 
-	fdActorSetSprPriority(ACTOR_LEFT_PILLAR, 1);
-	fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, 1);
+	fdActorSetSpritePriority(ACTOR_LEFT_PILLAR, 1);
+	fdActorSetSpritePriority(ACTOR_RIGHT_PILLAR, 1);
 	fdMapGridCopyMetatileAttributes(69, 19, 3, 3, 5, 19);
 	fdMapGridCopyMetatileAttributes(69, 19, 3, 3, 17, 19);
 	{
@@ -1364,30 +1364,32 @@ static void scBabiLighthouseRedrawPillarMetatiles(void)
    otherwise, so that he passes behind a pillar south of him. */
 static void scBabiLighthouseMatchLeaderPriority(ACTOR *updated)
 {
-	SPR	  *spr;
+	SPR	  *sprite;
 	ACTOR *actor;
-	Sint32 pri;
+	Sint32 priority;
 
-	spr = fdActorGet(ACTOR_PARTY_LEADER)->spr;
+	sprite = fdActorGet(ACTOR_PARTY_LEADER)->sprite;
 	if(fdActorGet(ACTOR_LEFT_PILLAR)->z.fixed <
 		fdActorGet(ACTOR_PARTY_LEADER)->z.fixed) {
-		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, spr->image.pri);
+		fdActorSetSpritePriority(ACTOR_LEFT_PILLAR, sprite->image.priority);
 	} else {
-		pri = spr->image.pri;
-		if(pri != 1)
-			pri--;
-		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, pri);
-		fdActorGet(ACTOR_LEFT_PILLAR)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+		priority = sprite->image.priority;
+		if(priority != 1)
+			priority--;
+		fdActorSetSpritePriority(ACTOR_LEFT_PILLAR, priority);
+		fdActorGet(ACTOR_LEFT_PILLAR)->priorityFlags |=
+			ACTOR_PRIORITY_AUTOMATIC;
 	}
 	if(fdActorGet(ACTOR_RIGHT_PILLAR)->z.fixed <
 		fdActorGet(ACTOR_PARTY_LEADER)->z.fixed) {
-		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, spr->image.pri);
+		fdActorSetSpritePriority(ACTOR_RIGHT_PILLAR, sprite->image.priority);
 	} else {
-		pri = spr->image.pri;
-		if(pri != 1)
-			pri--;
-		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, pri);
-		fdActorGet(ACTOR_RIGHT_PILLAR)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+		priority = sprite->image.priority;
+		if(priority != 1)
+			priority--;
+		fdActorSetSpritePriority(ACTOR_RIGHT_PILLAR, priority);
+		fdActorGet(ACTOR_RIGHT_PILLAR)->priorityFlags |=
+			ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
 #endif
@@ -1426,8 +1428,8 @@ Sint32 scInit(void)
 			}
 		}
 	} else if(lighthouseSceneId == SCENE_BABI_LIGHTHOUSE_ENTRY) {
-		fdActorSetSprColById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
-		fdActorSetSprColById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
+		fdActorSetSpriteColorById(ACTOR_LEFT_PILLAR, SPRITE_COLOR_GREY);
+		fdActorSetSpriteColorById(ACTOR_RIGHT_PILLAR, SPRITE_COLOR_GREY);
 #if BABI_PILLARS_MATCH_LEADER_PRIORITY
 		/* Through ACTOR_OR_EFFECT: as ACTOR the stores move. */
 		((ACTOR_OR_EFFECT *)fdActorGet(ACTOR_LEFT_PILLAR))->actor.update =
@@ -1445,42 +1447,42 @@ Sint32 scInit(void)
 			fdActorGet(ACTOR_RIGHT_PILLAR)->groundHeight;
 		if(gmFlagGet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
 			fdActorSetAnimation(ACTOR_SPROUT, SPROUT_ANIMATION_GROWN);
-			fdActorGet(ACTOR_SPROUT)->collisionFlg = (Uint8)~ACTOR_SOLID;
+			fdActorGet(ACTOR_SPROUT)->collisionFlags = (Uint8)~ACTOR_SOLID;
 			scBabiLighthouseOpenGrowthPassage();
 		}
 		/* Their script waits stagger the first animations of the four lying on
 		   the ground. */
 		placedActor = fdActorGet(ACTOR_FALLEN_SOLDIER_NO_MATCH);
-		placedActor->collisionFlg = 0;
-		placedActor->priFlg = 0;
+		placedActor->collisionFlags = 0;
+		placedActor->priorityFlags = 0;
 		placedActor->wait = 0;
-		placedActor->spr->image.pri = 3;
-		placedActor->spr->flg = 0;
-		placedActor->spr->rotation = TRIG_TURN * 3 / 4;
+		placedActor->sprite->image.priority = 3;
+		placedActor->sprite->flags = 0;
+		placedActor->sprite->rotation = TRIG_TURN * 3 / 4;
 		fdActorSetAnimation(ACTOR_FALLEN_SOLDIER_NO_MATCH, ANIM_STILL);
 		placedActor = fdActorGet(ACTOR_FALLEN_STRONGMAN_ONLY_TWO);
-		placedActor->collisionFlg = 0;
-		placedActor->priFlg = 0;
+		placedActor->collisionFlags = 0;
+		placedActor->priorityFlags = 0;
 		placedActor->wait = 30;
-		placedActor->spr->image.pri = 3;
-		placedActor->spr->flg = 0;
-		placedActor->spr->rotation = DEGtoANG(90);
+		placedActor->sprite->image.priority = 3;
+		placedActor->sprite->flags = 0;
+		placedActor->sprite->rotation = DEGtoANG(90);
 		fdActorSetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, ANIM_STILL);
 		placedActor = fdActorGet(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
-		placedActor->collisionFlg = 0;
-		placedActor->priFlg = 0;
+		placedActor->collisionFlags = 0;
+		placedActor->priorityFlags = 0;
 		placedActor->wait = 60;
-		placedActor->spr->image.pri = 3;
-		placedActor->spr->flg = 0;
-		placedActor->spr->rotation = DEGtoANG(180);
+		placedActor->sprite->image.priority = 3;
+		placedActor->sprite->flags = 0;
+		placedActor->sprite->rotation = DEGtoANG(180);
 		fdActorSetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, ANIM_STILL);
 		placedActor = fdActorGet(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
-		placedActor->collisionFlg = 0;
-		placedActor->priFlg = 0;
+		placedActor->collisionFlags = 0;
+		placedActor->priorityFlags = 0;
 		placedActor->wait = 90;
-		placedActor->spr->image.pri = 3;
-		placedActor->spr->flg = 0;
-		placedActor->spr->rotation = DEGtoANG(180);
+		placedActor->sprite->image.priority = 3;
+		placedActor->sprite->flags = 0;
+		placedActor->sprite->rotation = DEGtoANG(180);
 		fdActorSetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, ANIM_STILL);
 	} else if(lighthouseSceneId == SCENE_BABI_LIGHTHOUSE_LUFF) {
 		/* Isaac comes in as the way he took drops him: landing from a slide, or
@@ -1523,8 +1525,8 @@ Sint32 scInit(void)
 			break;
 		}
 	} else if(sceneId == SCENE_BABI_LIGHTHOUSE_STONE_DOOR) {
-		fdActorGet(ACTOR_LEFT_DOOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
-		fdActorGet(ACTOR_RIGHT_DOOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorSetSpeed(ACTOR_LEFT_DOOR, 1);
 		fdActorSetSpeed(ACTOR_RIGHT_DOOR, 1);
 		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {

@@ -63,7 +63,7 @@ void gmInventorySnapshotSave(void)
 			inventory = unit->inventory;
 			gmInventoryCompactSlots(inventory);
 			gmUnitUpdateClass(unitId);
-			gmUnitCalc(unitId);
+			gmUnitCalculate(unitId);
 		}
 		*save++ = firstShortcut;
 		*save++ = secondShortcut;
@@ -100,7 +100,7 @@ void gmInventorySnapshotRestore(void)
 			for(slot = 0; slot < INVENTORY_SLOTS; slot++)
 				*inventory++ = *src++;
 			gmUnitUpdateClass(unitId);
-			gmUnitCalc(unitId);
+			gmUnitCalculate(unitId);
 		}
 
 		MainRoutineStateWork.firstShortcut = *src++;

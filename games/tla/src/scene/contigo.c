@@ -430,13 +430,13 @@ Sint32 scContigoPauseWhenFaced(ACTOR *self)
 	FIELD_EFFECT_STATE *effect;
 	ACTOR			   *other;
 
-	fdActorSetSprPriorityDirect(self,
-		fdActorGetSprPriority(
+	fdActorSetSpritePriorityDirect(self,
+		fdActorGetSpritePriority(
 			fdActorGetById(MainRoutineStateWork.leaderActorId)));
 	mode = ABILITY_ID(event->psynergy);
 	state = &self->paused;
 	if(mode == ABILITY_MIND_READ) {
-		effect = RamHeapSlots->fieldEffState;
+		effect = RamHeapSlots->fieldEffectState;
 		if((Sint8)effect->msgShown != 0)
 			goto stand;
 	}
@@ -445,7 +445,7 @@ Sint32 scContigoPauseWhenFaced(ACTOR *self)
 	other = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	if(scPosDistance(&self->x.fixed, &other->x.fixed) <= CHILD_WALKS_ON_RANGE)
 		goto walk;
-	if(self->sceneCnt == 1)
+	if(self->sceneCount == 1)
 		other = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
 	else
 		other = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
@@ -617,26 +617,26 @@ void scContigoAskAboutWindLegend(void)
 void scContigoWhirlLeaf(ACTOR *effect)
 {
 	FIXED  radius;
-	Sint32 ang;
+	Sint32 angle;
 	FIXED  dx;
 	FIXED  dz;
 
 	/* syRandom is 0 to 1 in 16.16, so 2 to 3 pixels. */
 	radius = syRandom() + toFIXED(2);
-	ang = effect->facing;
-	dx = syMulFX(radius, syCos(ang));
-	dz = syMulFX(radius, sySin(ang));
+	angle = effect->facing;
+	dx = syMulFX(radius, syCos(angle));
+	dz = syMulFX(radius, sySin(angle));
 	effect->x.fixed += dx;
 	effect->z.fixed += dz;
 	/* A small backwards drift, a 4096th of a turn a tick. */
 	effect->facing += -(TRIG_TURN / 4096);
-	if(effect->turnFrm != 0) {
-		effect->turnFrm--;
+	if(effect->turnFrame != 0) {
+		effect->turnFrame--;
 		effect->facing += TRIG_TURN / 32;
-	} else if(syRandomBelow(32) == 0) {			 /* one chance in 32 */
-		effect->turnFrm = syRandomBelow(16) + 8; /* 8 to 23 ticks */
+	} else if(syRandomBelow(32) == 0) {			   /* one chance in 32 */
+		effect->turnFrame = syRandomBelow(16) + 8; /* 8 to 23 ticks */
 	}
-	if(++effect->swirlFrm == 101)
+	if(++effect->swirlFrame == 101)
 		fdActorRelease(effect);
 }
 
@@ -649,13 +649,13 @@ void scContigoRaiseLeaves(void)
 			fdActorSpawn(SPRITE_LEAF, toFIXED(706), toFIXED(0.8), toFIXED(116));
 
 		if(actor != NULL) {
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 			actor->update = scContigoWhirlLeaf;
-			actor->motionFlg = 0;
-			actor->swirlFrm = -(Sint32)(syRandomBelow(16)) * 2 + 20;
-			actor->turnFrm = 0;
+			actor->motionFlags = 0;
+			actor->swirlFrame = -(Sint32)(syRandomBelow(16)) * 2 + 20;
+			actor->turnFrame = 0;
 			actor->gravity = toFIXED(1) / 10;
-			actor->velY = toFIXED(3);
+			actor->velocityY = toFIXED(3);
 			actor->facing = syRandom();
 		}
 	}
@@ -690,9 +690,9 @@ void scContigoBabyThinks(void)
 		fdActorGetById(ACTOR_BABY), CASTER_LOOK_CYCLING_COLORS);
 	effect = syImportActorCreate(SPRITE_WHIRLWIND, x, 0, z);
 	if(effect != 0) {
-		fdActorSetSprFlags(effect, 0);
+		fdActorSetSpriteFlags(effect, 0);
 		fdActorSelectAnimation(effect, 2);
-		effect->motionFlg = 0;
+		effect->motionFlags = 0;
 		effect->scaleX = toFIXED(1) / 10;
 		effect->scaleY = toFIXED(1) / 10;
 		for(i = 0; i < 28; i++) {
@@ -1054,7 +1054,7 @@ void scContigoTalkToDoubtingBoy(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
-	Sint16		 ang = actor->facing;
+	Sint16		 angle = actor->facing;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1090,7 +1090,7 @@ void scContigoTalkToDoubtingBoy(void)
 	}
 	fdScriptShowMessageAndWait(ACTOR_BOY_DOUBTING_THE_LEGENDS, 0);
 	if(state->psynergy == 0)
-		actor->facing = ang;
+		actor->facing = angle;
 	actor->sceneByte = 0;
 	fdScriptEnd();
 }
@@ -1174,10 +1174,10 @@ void scContigoScatterWeedsBehindInn(void)
 /* The scene's own name for fdTileCopiesCopyTouchedMetatiles, which the Bramble
    Seed's clump calls. */
 static __inline__ void scContigoCopyTouchedMetatiles(Sint32 srcX, Sint32 srcZ,
-	Sint32 width, Sint32 height, Sint32 winX, Sint32 winZ, Sint32 layer)
+	Sint32 width, Sint32 height, Sint32 windowX, Sint32 windowZ, Sint32 layer)
 {
 	fdTileCopiesCopyTouchedMetatiles(
-		srcX, srcZ, width, height, winX, winZ, layer);
+		srcX, srcZ, width, height, windowX, windowZ, layer);
 }
 
 /* Cyclone scatters the clump of weeds beside the east wall of the house at the
@@ -1199,7 +1199,7 @@ void scContigoScatterWeedsOverBrambleSeed(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, 0, -16);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -1360,31 +1360,31 @@ void scContigoForceFreesDjinni(void)
 	ACTOR		  *actor = fdActorGetById(ACTOR_SHINE);
 	ACTOR		  *leader;
 	EFFECT_OPTIONS options;
-	FIXED		   vel[3];
-	Sint32		   ang;
+	FIXED		   velocity[3];
+	Sint32		   angle;
 	Uint32		   i;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorSetPos(ACTOR_SHINE, 56, 698);
 	sySynch(1);
-	options.pri = 2;
-	sySndPlay(SE_THUMP);
+	options.priority = 2;
+	sySoundPlay(SE_THUMP);
 	fdMapGridSetShake(1, 2, 1);
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
-		ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = sySin(ang);
-		vel[0] += vel[0] / 3;
+		angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = sySin(angle);
+		velocity[0] += velocity[0] / 3;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			vel[0], vel[1] + (toFIXED(1) / 10), vel[2], EFFECT_USE_PRIORITY,
-			&options);
+			velocity[0], velocity[1] + (toFIXED(1) / 10), velocity[2],
+			EFFECT_USE_PRIORITY, &options);
 	}
-	fdActorSetSprCol(fdActorGetById(ACTOR_SHINE), SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_SHINE), 1);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_SHINE), SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHINE), 1);
 	fdActorSetSpeed(ACTOR_SHINE, 3);
-	actor->velY = toFIXED(12);
+	actor->velocityY = toFIXED(12);
 	fdActorMoveToAndWait(ACTOR_SHINE, 40, 680);
 	fdScriptWait(10);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -1423,10 +1423,10 @@ void scContigoPlaceWingPart(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
 
-	fdActorSetSprPriority(id, 3);
-	actor->collisionFlg = ACTOR_NOT_TARGETED;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	actor->motionFlg = 0;
+	fdActorSetSpritePriority(id, 3);
+	actor->collisionFlags = ACTOR_NOT_TARGETED;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(64);
 }
 
@@ -1450,20 +1450,20 @@ void scContigoSetUpWingParts(void)
 	scContigoPlaceWingPart(ACTOR_METAL_FEATHER_C);
 	scContigoPlaceWingPart(ACTOR_METAL_FEATHER_D);
 	scContigoPlaceWingPart(ACTOR_METAL_FEATHER_E);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_A), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_B), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_C), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_D), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_E), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_F), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_LOOSE_PART_G), 0);
-	fdActorGetById(ACTOR_LOOSE_PART_A)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_LOOSE_PART_B)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_LOOSE_PART_C)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_LOOSE_PART_D)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_LOOSE_PART_E)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_LOOSE_PART_F)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_LOOSE_PART_G)->collisionFlg |= ACTOR_NOT_TARGETED;
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_A), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_B), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_C), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_D), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_E), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_F), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_LOOSE_PART_G), 0);
+	fdActorGetById(ACTOR_LOOSE_PART_A)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_LOOSE_PART_B)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_LOOSE_PART_C)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_LOOSE_PART_D)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_LOOSE_PART_E)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_LOOSE_PART_F)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_LOOSE_PART_G)->collisionFlags |= ACTOR_NOT_TARGETED;
 	fdActorSetAnimationById(ACTOR_LOOSE_PART_A, 0);
 	fdActorSetAnimationById(ACTOR_LOOSE_PART_F, 0);
 	fdActorSetAnimationById(ACTOR_LOOSE_PART_G, 0);
@@ -1557,7 +1557,7 @@ Sint32 scContigoSelectLuckyWheelsPrize(Sint32 icon)
 	MAIN_ROUTINE_STATE *state;
 	Sint32				cursor;
 	Sint32				variant;
-	Sint32				idx;
+	Sint32				index;
 
 	if(icon < 0)
 		return 0;
@@ -1568,9 +1568,9 @@ Sint32 scContigoSelectLuckyWheelsPrize(Sint32 icon)
 	variant =
 		(cursor + (Sint32)(syRandomBelow(2)) + 4) % WHEELS_PRIZES_PER_ICON;
 	state->wheelsPrizeCursors[icon] = variant;
-	idx = icon * 2;
+	index = icon * 2;
 
-	return ContigoWheelsPrizes[idx + icon + variant];
+	return ContigoWheelsPrizes[index + icon + variant];
 }
 
 /* The dice games cost 10 coins for each level of the party's average level; a
@@ -1693,7 +1693,7 @@ void scContigoOpenSanctumDoor(
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	{
 		Sint32 width = 1;
 		Sint32 height = 2;
@@ -1708,7 +1708,7 @@ void scContigoOpenSanctumDoor(
 	fdActorSetMovementTypeById(
 		MainRoutineStateWork.leaderActorId, ContigoEnterSanctumDoorScript);
 	sySynch(12);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 }
@@ -1760,12 +1760,12 @@ void scContigoTheReunion(void)
 {
 	ACTOR *actor;
 	Sint32 answer;
-	Sint32 ang;
+	Sint32 angle;
 
 	actor = fdActorGetById(ACTOR_HAMMA);
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdActorWatchAndSetScript(ACTOR_ISAAC, MainRoutineStateWork.leaderActorId);
@@ -1796,7 +1796,7 @@ void scContigoTheReunion(void)
 	fdActorStop(ACTOR_IVAN);
 	fdActorStop(ACTOR_HAMMA);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	sySndPlay(MUS_JOURNEY_TO_SAVE_THE_WORLD);
+	sySoundPlay(MUS_JOURNEY_TO_SAVE_THE_WORLD);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
 	fdScriptSetMessageId((Sint32)MsgGladYouKeptYourPromise);
@@ -2044,11 +2044,11 @@ void scContigoTheReunion(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
 	scFieldActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
 	scFieldActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
-	sySndPlay(MUS_SILENCE);
-	fdActorSetSprCol(fdActorGetById(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
-	ang = FACING_NORTH_NORTHWEST;
-	fdActorSetHorizontalPosAndAngWithTerrain(
-		ACTOR_HAMMA, toFIXED(160), toFIXED(466), ang);
+	sySoundPlay(MUS_SILENCE);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_HAMMA), SPRITE_COLOR_HIDDEN);
+	angle = FACING_NORTH_NORTHWEST;
+	fdActorSetHorizontalPosAndAngleWithTerrain(
+		ACTOR_HAMMA, toFIXED(160), toFIXED(466), angle);
 	sySynch(1);
 	/* "Now that we know all of this, shouldn't we be going?" */
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
@@ -2060,7 +2060,7 @@ void scContigoTheReunion(void)
 	fdActorWatchAndSetScript(ACTOR_GARET, ACTOR_HAMMA);
 	fdActorWatchAndSetScript(ACTOR_MIA, ACTOR_HAMMA);
 	fdActorWatchAndSetScript(ACTOR_IVAN, ACTOR_HAMMA);
-	fdActorSetSprCol(fdActorGetById(ACTOR_HAMMA), SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_HAMMA), SPRITE_COLOR_NORMAL);
 	fdCameraSetSpeed(2.4);
 	fdCameraMoveTo(180, CAMERA_KEEP, 410, 1);
 	fdCameraWaitForArrival();
@@ -2079,7 +2079,7 @@ void scContigoTheReunion(void)
 	fdActorStop(ACTOR_GARET);
 	fdActorStop(ACTOR_MIA);
 	fdActorStop(ACTOR_IVAN);
-	sySndPlay(MUS_REUNITING_WITH_HAMA);
+	sySoundPlay(MUS_REUNITING_WITH_HAMA);
 	fdActorSetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
 	/* "Hello again..." */
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
@@ -2202,7 +2202,7 @@ void scContigoTheReunion(void)
 	fdActorSetAttachedEffect(
 		ACTOR_IVAN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(20);
-	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, ang);
+	fdActorFaceDirectionAndRefreshById(ACTOR_HAMMA, angle);
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
 	/* "You will fail as well...unless you pool your strengths together
 	   and..." */
@@ -2235,7 +2235,7 @@ void scContigoTheReunion(void)
 	fdActorSetAnimationById(ACTOR_HAMMA, ANIM_NOD);
 	/* "I must leave you now, but we will meet at the inlet." */
 	fdScriptShowMessageAndWait(ACTOR_HAMMA, 0);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdCameraMoveTo(180, CAMERA_KEEP, 410, 1);
 	fdActorWalkToAndWait(ACTOR_HAMMA, 160, 466);
 	fdActorSetPos(ACTOR_HAMMA, 0, 0);
@@ -2675,7 +2675,8 @@ void scContigoKeepPriorityWithLeader(void)
 	if(fdActorGetById(ACTOR_CORN) != 0) {
 		ACTOR *owner = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
-		fdActorSetSprPriority(ACTOR_CORN, ((FIELD_SPR *)owner->spr)->pri);
+		fdActorSetSpritePriority(
+			ACTOR_CORN, ((FIELD_SPR *)owner->sprite)->priority);
 	}
 }
 
@@ -2691,7 +2692,7 @@ void scContigoInitVillage(void)
 	ACTOR *actor = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
 
 	sySetEvent(scContigoKeepPriorityWithLeader, EVENT_PASS_TICK);
-	actor->sceneCnt = 1;
+	actor->sceneCount = 1;
 	actor->sceneByte = 0;
 	actor->update = scContigoPauseWhenFaced;
 	if(syGameFlagGet(FLAG_JUPITER_BEACON_LIT) != 0 &&
@@ -2702,7 +2703,7 @@ void scContigoInitVillage(void)
 		scContigoLockDoors();
 	} else {
 		actor = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
-		actor->sceneCnt = 0;
+		actor->sceneCount = 0;
 		actor->sceneByte = 0;
 		actor->update = scContigoPauseWhenFaced;
 	}
@@ -2710,8 +2711,8 @@ void scContigoInitVillage(void)
 		syGameFlagGet(FLAG_SHINE_CAUGHT) == 0) {
 		fdActorSetPos(ACTOR_SHINE, 32, 708);
 	} else {
-		fdActorSetSprCol(fdActorGetById(ACTOR_SHINE), SPRITE_COLOR_HIDDEN);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_SHINE), 0);
+		fdActorSetSpriteColor(fdActorGetById(ACTOR_SHINE), SPRITE_COLOR_HIDDEN);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHINE), 0);
 	}
 	if(syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
 		switch(MainRoutineStateWork.entrance) {
@@ -2732,7 +2733,7 @@ void scContigoInitVillage(void)
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
 	}
-	scPaletteSetColsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
+	scPaletteSetColorsFade(TeleportCirclePaletteSlots, TeleportCircleColors,
 		TeleportCircleShimmerColors, TeleportCircleShimmerSlots);
 }
 
@@ -2797,7 +2798,7 @@ void scContigoInitShops(void)
 		syGameFlagClear(FLAG_SHOW_AREA_NAME);
 	} else {
 		fdActorSetAnimationById(ACTOR_BABY, 2);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_BABY), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_BABY), 0);
 		if(syGameFlagGet(FLAG_SET_OUT_WITH_WINGS) != 0)
 			fdActorSetMovementTypeById(
 				ACTOR_OLD_MAN_ON_HESPERIA, ContigoShiverScript);
@@ -2823,17 +2824,17 @@ static inline void scContigoReportCoinChange(void)
 	fdScriptWaitTransitionTicks();
 	if(coinChange > 0) {
 		if(coinChange >= LUCKY_DICE_LARGE_WIN)
-			sySndPlay(MUS_SUPER_LUCKY);
+			sySoundPlay(MUS_SUPER_LUCKY);
 		else if(coinChange >= LUCKY_DICE_MEDIUM_WIN)
-			sySndPlay(MUS_VERY_LUCKY);
+			sySoundPlay(MUS_VERY_LUCKY);
 		else
-			sySndPlay(MUS_LUCKY);
+			sySoundPlay(MUS_LUCKY);
 		fdScriptWait(20);
 		fdScriptSetMessageId(COIN_WON_MESSAGE);
 		mnMessageArgumentPush(coinChange, MESSAGE_ARGUMENT_NUMBER);
 		/* "Ya won ... coin! Talk about lucky!" */
 		fdScriptShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-		mnSndWaitForJingle();
+		mnSoundWaitForJingle();
 	} else if(coinChange < 0) {
 		fdScriptSetMessageId(COIN_LOST_MESSAGE);
 		mnMessageArgumentPush(-coinChange, MESSAGE_ARGUMENT_NUMBER);
@@ -2858,13 +2859,14 @@ void scContigoInitLuckyDice(void)
 	scContigoShrinkActor(ACTOR_LUCKY_DICE_PAIRS_SIGN);
 	scContigoShrinkActor(ACTOR_LUCKY_WHEELS_RULES_SIGN);
 	scContigoShrinkActor(ACTOR_LUCKY_WHEELS_PRIZE_SIGN);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_LUCKY_DICE_ATTENDANT), SPRITE_COLOR_GRB);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_LUCKY_DICE_RULES_ATTENDANT), SPRITE_COLOR_RBG);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_SUPER_LUCKY_DICE_ATTENDANT), SPRITE_COLOR_NORMAL);
-	fdActorSetSprCol(fdActorGetById(ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT),
+	fdActorSetSpriteColor(
+		fdActorGetById(ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT),
 		SPRITE_COLOR_BGR);
 	if(!fdScriptGetFlag(FLAG_LEFT_FOR_A_GAME))
 		return;
@@ -2905,7 +2907,7 @@ void scContigoInitLuckyDice(void)
 					/* "You won ...! Here you go.", then "And you won ...! Here
 					   you go." */
 					fdScriptShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-					fdItemDispShowItem(
+					fdItemDisplayShowItem(
 						item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 					fdPartyInventoryGiveItem(item, 0);
 					fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
@@ -2931,28 +2933,28 @@ void scContigoRaiseSparkle(ACTOR *actor)
 	FIXED		   sine;
 	Sint32		   i, j;
 	SPARKLE_STATE *state = (SPARKLE_STATE *)actor->watchedActor;
-	Uint8		  *cnt = &actor->sceneByte;
-	EFFECT_SPR	  *spr;
+	Uint8		  *count = &actor->sceneByte;
+	EFFECT_SPR	  *sprite;
 
-	if(*cnt & 1)
-		fdActorSetSprColMode(actor,
-			(Uint8)((Uint32)((COUNTER_BITS *)cnt)->rest %
+	if(*count & 1)
+		fdActorSetSpriteColorMode(actor,
+			(Uint8)((Uint32)((COUNTER_BITS *)count)->rest %
 				(SPRITE_COLOR_BRG + 1)));
-	if(actor->sceneCnt == 0) {
-		if((*cnt & (RING_INTERVAL - 1)) == 0) {
-			sySndPlay(SE_RISING_RINGS);
+	if(actor->sceneCount == 0) {
+		if((*count & (RING_INTERVAL - 1)) == 0) {
+			sySoundPlay(SE_RISING_RINGS);
 			state->heights[state->nextPair] = 0;
 			state->nextPair ^= 1;
 		}
-	} else if(actor->sceneCnt == 1) {
+	} else if(actor->sceneCount == 1) {
 		if(state->heights[0] >= RING_CLIMB && state->heights[1] >= RING_CLIMB) {
-			fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 			syVRAMCacheFreeEntry(state->vramEntry);
 			actor->update = 0;
 			return;
 		}
 	}
-	(*cnt)++;
+	(*count)++;
 	for(i = 0; i < 2; i++) {
 		/* Its size: half a turn of sine over the climb. */
 		sine = sySin(state->heights[i] * (DEGtoANG(180) / RING_CLIMB));
@@ -2964,21 +2966,21 @@ void scContigoRaiseSparkle(ACTOR *actor)
 				fdCameraWorldToScreen(&pos);
 				x = pos.x;
 				z = pos.z;
-				spr = &state->sprs[i * 2];
+				sprite = &state->sprites[i * 2];
 				for(j = 0; j < 2; j++) {
-					spr->x = x;
-					spr->y = z;
-					spr->scaleX = sine;
-					spr->scaleY = sine;
+					sprite->x = x;
+					sprite->y = z;
+					sprite->scaleX = sine;
+					sprite->scaleY = sine;
 					if(j == 0) {
-						spr->depth = fdActorGetSprDepth(actor) - 1;
+						sprite->depth = fdActorGetSpriteDepth(actor) - 1;
 					} else {
-						spr->depth = fdActorGetSprDepth(actor) + 1;
-						spr->y -= toFIXED(1);
-						spr->scaleY = -spr->scaleY;
+						sprite->depth = fdActorGetSpriteDepth(actor) + 1;
+						sprite->y -= toFIXED(1);
+						sprite->scaleY = -sprite->scaleY;
 					}
-					fdEffectSprDraw(spr);
-					spr++;
+					fdEffectSpriteDraw(sprite);
+					sprite++;
 				}
 				state->heights[i]++;
 			}
@@ -2990,10 +2992,10 @@ void scContigoRaiseSparkle(ACTOR *actor)
    hands the object to its update, scContigoRaiseSparkle. */
 void scContigoStartSparkle(ACTOR *actor, SPARKLE_STATE *state)
 {
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 	Sint32		tile;
 	Sint32		row;
-	Sint32		col;
+	Sint32		column;
 
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, 256, LightRingTiles);
@@ -3001,18 +3003,19 @@ void scContigoStartSparkle(ACTOR *actor, SPARKLE_STATE *state)
 	state->heights[0] = RING_NOT_STARTED;
 	state->heights[1] = RING_NOT_STARTED;
 	state->actor = actor;
-	actor->sceneCnt = 0;
+	actor->sceneCount = 0;
 	actor->sceneByte = 0;
 	actor->update = scContigoRaiseSparkle;
-	tile = VramCacheEntries[state->vramEntry].ofs >> 5;
+	tile = VramCacheEntries[state->vramEntry].offset >> 5;
 	actor->watchedActor = (FIELD_OBJECT *)state;
 	for(row = 0; row <= 1; row++) {
-		for(col = 1, spr = state->sprs + row + row; col >= 0; col--) {
-			fdEffectSprInit(spr, 16, 16, OBJ_SIZE_32X16, tile);
-			spr->oam.fullCol = 0;
-			spr->oam.pal = 0;
-			spr->oam.pri = fdActorGetSprPriority(actor);
-			spr++;
+		for(column = 1, sprite = state->sprites + row + row; column >= 0;
+			column--) {
+			fdEffectSpriteInit(sprite, 16, 16, OBJ_SIZE_32X16, tile);
+			sprite->oam.fullColor = 0;
+			sprite->oam.palette = 0;
+			sprite->oam.priority = fdActorGetSpritePriority(actor);
+			sprite++;
 		}
 	}
 }
@@ -3020,7 +3023,7 @@ void scContigoStartSparkle(ACTOR *actor, SPARKLE_STATE *state)
 /* Ends the sparkle: its update finishes once both pairs have risen. */
 void scContigoStopSparkle(ACTOR *actor)
 {
-	actor->sceneCnt = 1;
+	actor->sceneCount = 1;
 }
 
 /* clang-format off */

@@ -14,7 +14,7 @@ void scFlameThrowerSendSpark(Sint32 *pos, Sint32 speed, Sint32 offScreen)
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() << 1) + speed;
 		spin = (Uint16)syRandom() + 0xffff8000;
-		actor->tmr = spin;
+		actor->timer = spin;
 		scActorSetupScriptedFor(actor, 2);
 		actor->update = (OBJECT_UPDATE)scFlameThrowerUpdateSpark;
 		fdActorSetBlendMode(actor, 1);

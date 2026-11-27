@@ -147,18 +147,18 @@ const CUE *scGetCues(void)
 void dbIncreaseItemAndLevelRaiseMemberLevel(Sint32 ownerId, Sint32 amount)
 {
 	gmUnitLevelUpTo(ownerId, syUnitGet(ownerId)->level + amount);
-	gmUnitCalc(ownerId);
+	gmUnitCalculate(ownerId);
 }
 
 /* Raises every party member `amount` levels. */
 void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 amount)
 {
 	Uint16 ownerIds[16];
-	Sint32 ownerCnt;
+	Sint32 ownerCount;
 	Sint32 i;
 
-	ownerCnt = syFieldPartyListMembers(ownerIds);
-	for(i = 0; i < ownerCnt; i++)
+	ownerCount = syFieldPartyListMembers(ownerIds);
+	for(i = 0; i < ownerCount; i++)
 		dbIncreaseItemAndLevelRaiseMemberLevel(ownerIds[i], amount);
 }
 
@@ -170,52 +170,53 @@ void dbIncreaseItemAndLevelRaisePartyLevels(Sint32 amount)
 void dbIncreaseItemAndLevelRunLevelEditor(void)
 {
 	UNIT   *unit;
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	redraw;
 	Sint32	msgId;
 
 	unit = syUnitGet(MainRoutineStateWork.leaderActorId);
-	win = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
+	window = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 
 	msgId = (Sint32)MsgRaiseEveryoneS;
-	mnTextDrawMessage(msgId, win, 0, 0);
-	mnTextDrawMessage(msgId + 1, win, 0, 16);
+	mnTextDrawMessage(msgId, window, 0, 0);
+	mnTextDrawMessage(msgId + 1, window, 0, 16);
 	msgId += 2;
 	redraw = 1;
-	mnTextDrawMessage(msgId, win, 0, 32);
+	mnTextDrawMessage(msgId, window, 0, 32);
 
 	for(;;) {
 		if(redraw != 0) {
-			mnWindowSprRedrawSavedRect(win);
-			mnTextDrawStringAtOffset(unit->name, win, 0, 48);
-			mnTextDrawStringInWindow(IncreaseItemAndLevelLvLabel, win, 48, 48);
+			mnWindowSpriteRedrawSavedRect(window);
+			mnTextDrawStringAtOffset(unit->name, window, 0, 48);
+			mnTextDrawStringInWindow(
+				IncreaseItemAndLevelLvLabel, window, 48, 48);
 			redraw = 0;
-			mnTextDrawNumInWindow(unit->level, 0, win, 72, 48);
+			mnTextDrawNumberInWindow(unit->level, 0, window, 72, 48);
 		}
 
 		if((PerWork.push & KEY_START) != 0 ||
 			(PerWork.push & KEY_SELECT) != 0) {
 			dbIncreaseItemAndLevelRaisePartyLevels(5);
-			sySndPlay(MUS_SUPER_LUCKY);
+			sySoundPlay(MUS_SUPER_LUCKY);
 			redraw = 1;
 		}
 
 		if((PerWork.push & KEY_A) != 0) {
 			dbIncreaseItemAndLevelRaisePartyLevels(1);
-			sySndPlay(MUS_LUCKY);
+			sySoundPlay(MUS_LUCKY);
 			redraw = 1;
 		}
 
 		if((PerWork.push & KEY_B) != 0) {
-			sySndPlay(SE_MENU_CANCEL);
-			mnWindowSprRedrawSavedRect(win);
+			sySoundPlay(SE_MENU_CANCEL);
+			mnWindowSpriteRedrawSavedRect(window);
 			sySynch(1);
-			mnWindowClose(win, 1);
+			mnWindowClose(window, 1);
 
-			gmUnitCalc(ISAAC);
-			gmUnitCalc(GARET);
-			gmUnitCalc(MIA);
-			gmUnitCalc(IVAN);
+			gmUnitCalculate(ISAAC);
+			gmUnitCalculate(GARET);
+			gmUnitCalculate(MIA);
+			gmUnitCalculate(IVAN);
 			return;
 		}
 
@@ -233,20 +234,20 @@ void dbIncreaseItemAndLevelRunLevelEditor(void)
    A with every bag full, closes the browser. */
 void dbIncreaseItemAndLevelSelectItem(void)
 {
-	void  *win;
+	void  *window;
 	void  *details;
 	Sint32 selectedItemId;
 	Sint32 redraw;
 	Sint32 itemId;
-	Sint32 entryCnt;
+	Sint32 entryCount;
 	Sint8  seekDirection;
 
-	entryCnt = ITEM_BROWSER_ITEM_COUNT;
+	entryCount = ITEM_BROWSER_ITEM_COUNT;
 	seekDirection = 0;
-	sySndPlay(SE_MENU_CONFIRM);
+	sySoundPlay(SE_MENU_CONFIRM);
 	selectedItemId = 1;
 	redraw = 1;
-	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 #if LANGUAGE < LANGUAGE_GERMAN
 	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 #else
@@ -268,97 +269,98 @@ void dbIncreaseItemAndLevelSelectItem(void)
 			redraw = 0;
 			/* Wrap the number into 0 to 511 (a step back from 0 is 511). */
 			selectedItemId =
-				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCnt;
-			mnWindowSprRedrawSavedRect(win);
-			mnWindowSprClearList(win);
-			mnTextDrawStringInWindow(IncreaseItemAndLevelItemPrompt, win, 0, 0);
-			mnTextDrawNumAtOffset(selectedItemId, 0, win, 80, 0);
+				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
+			mnWindowSpriteRedrawSavedRect(window);
+			mnWindowSpriteClearList(window);
+			mnTextDrawStringInWindow(
+				IncreaseItemAndLevelItemPrompt, window, 0, 0);
+			mnTextDrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevelItemHelp, win, 0, 32);
+					IncreaseItemAndLevelItemHelp, window, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
 				gmItemGetDirect(itemId);
 				mnTextDrawMessageAsTiles(
-					itemId + (Sint32)MsgItemName, win, 120, 0);
+					itemId + (Sint32)MsgItemName, window, 120, 0);
 				mnTextDrawMessage(
-					itemId + (Sint32)MsgItemDescription, win, 0, 16);
-				mnWindowSprRedrawSavedRect(details);
+					itemId + (Sint32)MsgItemDescription, window, 0, 16);
+				mnWindowSpriteRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
 			} else {
 				mnTextDrawStringInWindow(
-					IncreaseItemAndLevelItemFull, win, 0, 32);
+					IncreaseItemAndLevelItemFull, window, 0, 32);
 			}
 		}
 		if(PerWork.push & KEY_A) {
 			if(gmPartyInventoryAdd(selectedItemId) == -1) {
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				break;
 			}
-			sySndPlay(SE_NOTE_HIGH);
+			sySoundPlay(SE_NOTE_HIGH);
 		}
 		if(PerWork.push & KEY_B) {
-			sySndPlay(SE_MENU_CANCEL);
+			sySoundPlay(SE_MENU_CANCEL);
 			break;
 		}
 		if(PerWork.repeat & KEY_UP) {
 			seekDirection = -1;
 			selectedItemId--;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_DOWN) {
 			seekDirection = 1;
 			selectedItemId++;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_RIGHT) {
 			seekDirection = 1;
 			selectedItemId += DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_LEFT) {
 			seekDirection = -1;
 			selectedItemId -= DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_R) {
 			seekDirection = 1;
 			selectedItemId += DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_L) {
 			seekDirection = -1;
 			selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		/* Skip items with no icon in the chosen direction. */
 		if(seekDirection == -1) {
 			selectedItemId =
-				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCnt;
+				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
 			while(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)
 					  ->icon == 0)
 				selectedItemId =
-					(selectedItemId + ITEM_BROWSER_ITEM_COUNT - 1) % entryCnt;
+					(selectedItemId + ITEM_BROWSER_ITEM_COUNT - 1) % entryCount;
 		}
 		if(seekDirection == 1) {
 			selectedItemId =
-				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCnt;
+				(selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
 			while(gmItemGetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)
 					  ->icon == 0)
 				selectedItemId =
-					(selectedItemId + ITEM_BROWSER_ITEM_COUNT + 1) % entryCnt;
+					(selectedItemId + ITEM_BROWSER_ITEM_COUNT + 1) % entryCount;
 		}
 		seekDirection = 0;
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(win);
+	mnWindowSpriteRedrawSavedRect(window);
 	sySynch(1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	mnWindowClose(details, 1);
 }
 
@@ -673,7 +675,7 @@ void dbIncreaseItemAndLevelRequestExit(Sint32 countdown)
 	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	event->transitionFrm = 24;
+	event->transitionFrame = 24;
 	syImportScriptSetExitRequest(countdown);
 }
 
@@ -685,7 +687,7 @@ Sint32 scInit(void)
 	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-	event->transitionFrm = 24;
+	event->transitionFrame = 24;
 	if(MainRoutineStateWork.entrance <= ENTRANCE_DEBUG_ROOM_LAST) {
 		fdActorGetById(ACTOR_LEVEL_EDITOR)->scaleY = LEVEL_EDITOR_SCALE;
 		fdActorGetById(ACTOR_LEVEL_EDITOR)->scaleX = LEVEL_EDITOR_SCALE;
@@ -714,7 +716,7 @@ void dbIncreaseItemAndLevelRunMotionTest(void)
    target where it is. */
 void dbIncreaseItemAndLevelKeepPortraitBrowserInPlace(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 
 	state->childMode = 1;
 }

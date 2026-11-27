@@ -19,7 +19,7 @@
    past either end go to the other; they step an entrance as far, wrapping by
    DEBUG_ENTRANCE_MAX (95 + 10 gives 6). */
 Sint32 mnDebugSceneSelectHandleRowInput(
-	Sint32 win, Sint16 scene, Sint16 *entrance, Sint16 *field)
+	Sint32 window, Sint16 scene, Sint16 *entrance, Sint16 *field)
 {
 	if(PerWork.repeat & KEY_A)
 		return -1;
@@ -39,7 +39,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(scene > DEBUG_SCENE_MAX)
 			scene = 0;
-		mnDebugSceneSelectDrawRow(win, scene, entrance);
+		mnDebugSceneSelectDrawRow(window, scene, entrance);
 	} else if(PerWork.repeat & KEY_LEFT) {
 		if(*field == 0) {
 			scene--;
@@ -50,7 +50,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(scene < 0)
 			scene = DEBUG_SCENE_MAX;
-		mnDebugSceneSelectDrawRow(win, scene, entrance);
+		mnDebugSceneSelectDrawRow(window, scene, entrance);
 	} else if(PerWork.repeat & KEY_R) {
 		if(*field == 0) {
 			*entrance = 0;
@@ -62,7 +62,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(scene > DEBUG_SCENE_MAX)
 			scene = 0;
-		mnDebugSceneSelectDrawRow(win, scene, entrance);
+		mnDebugSceneSelectDrawRow(window, scene, entrance);
 	} else if(PerWork.repeat & KEY_L) {
 		if(*field == 0) {
 			*entrance = 0;
@@ -74,7 +74,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(scene < 0)
 			scene = DEBUG_SCENE_MAX;
-		mnDebugSceneSelectDrawRow(win, scene, entrance);
+		mnDebugSceneSelectDrawRow(window, scene, entrance);
 	}
 	return scene;
 }
@@ -83,46 +83,46 @@ Sint32 mnDebugSceneSelectHandleRowInput(
    starting on page 8. Returns 0. */
 Sint32 mnDebugFlagEditorRun(void)
 {
-	MENU_SPR cursorSpr;
+	MENU_SPR cursorSprite;
 	Sint32	 cursor[2]; /* column and row */
 	Sint32	 cursorSlot;
 	Sint32	 page;
-	WINDOW	*win;
+	WINDOW	*window;
 	Sint32	 change;
 
 	page = 8;
-	win = 0;
+	window = 0;
 	cursor[0] = 0;
 	cursor[1] = 0;
-	win = mnWindowCreate(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
-	mnDebugFlagEditorDrawTable(win, page);
-	mnArrowCreate(&cursorSpr, &cursorSlot);
+	window = mnWindowCreate(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
+	mnDebugFlagEditorDrawTable(window, page);
+	mnArrowCreate(&cursorSprite, &cursorSlot);
 	for(;;) {
 		sySynch(1);
-		change = mnDebugFlagEditorHandleInput(win, &page, cursor);
+		change = mnDebugFlagEditorHandleInput(window, &page, cursor);
 		/* B closes the table; a change of flag or page redraws it. */
 		if(change == -1)
 			break;
 		if(change == 1)
-			mnDebugFlagEditorDrawTable(win, page);
-		mnArrowSetPos(&cursorSpr, cursor[0] * 8 + 58, cursor[1] * 8 + 20);
+			mnDebugFlagEditorDrawTable(window, page);
+		mnArrowSetPos(&cursorSprite, cursor[0] * 8 + 58, cursor[1] * 8 + 20);
 	}
 	mnArrowRelease(cursorSlot);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	return 0;
 }
 
 /* Writes the lowest count digits of value (up to five), most significant first,
    to out as uppercase hexadecimal, without a terminating zero. */
-void mnStringFormatHexDigits(Uint32 value, Uint32 cnt, Uint8 *out)
+void mnStringFormatHexDigits(Uint32 value, Uint32 count, Uint8 *out)
 {
 	Uint8  digits[8];
 	Uint32 i;
 
-	if(cnt > 5)
-		cnt = 5;
+	if(count > 5)
+		count = 5;
 
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		Uint32 digit = value & 0xf;
 		if(digit <= 9)
 			digits[i] = digit + '0';
@@ -131,18 +131,18 @@ void mnStringFormatHexDigits(Uint32 value, Uint32 cnt, Uint8 *out)
 		value >>= 4;
 	}
 
-	for(i = cnt - 1; (Sint32)i >= 0; i--)
+	for(i = count - 1; (Sint32)i >= 0; i--)
 		*out++ = digits[i];
 }
 
 /* Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
    Each row: its first flag's number in three hex digits, then its 16 flags as 0
    or 1, lowest first, under a heading of hex digits. */
-void mnDebugFlagEditorDrawTable(Sint32 win, Sint32 page)
+void mnDebugFlagEditorDrawTable(Sint32 window, Sint32 page)
 {
 	Sint32 row;
 	Sint32 y;
-	Sint32 flg;
+	Sint32 flag;
 	Uint8  label[5];
 	char   bits[17];
 
@@ -151,13 +151,13 @@ void mnDebugFlagEditorDrawTable(Sint32 win, Sint32 page)
 	   declaration in scope; the cast to an unprototyped function keeps it
 	   so. */
 #if FIX_FUNCTION_SIGNATURES
-	mnWindowSprPrepareForRedraw(win);
+	mnWindowSpritePrepareForRedraw(window);
 #else
-	((void (*)())mnWindowSprPrepareForRedraw)();
+	((void (*)())mnWindowSpritePrepareForRedraw)();
 #endif
-	mnTextDrawStringInWindow((Sint32)MenuHexDigitsString, win, 48, 0);
+	mnTextDrawStringInWindow((Sint32)MenuHexDigitsString, window, 48, 0);
 
-	flg = page << 8;
+	flag = page << 8;
 	for(row = 0; row != DEBUG_FLAG_ROWS; row++) {
 		Sint32 i;
 
@@ -166,17 +166,17 @@ void mnDebugFlagEditorDrawTable(Sint32 win, Sint32 page)
 		for(i = 0; i != 5; i++) {
 			label[i] = 0;
 		}
-		mnStringFormatHexDigits(flg, 3, label);
-		mnTextDrawStringInWindow((Sint32)label, win, 0, y);
-		mnTextDrawStringInWindow((Sint32)MenuColonString, win, 32, y);
+		mnStringFormatHexDigits(flag, 3, label);
+		mnTextDrawStringInWindow((Sint32)label, window, 0, y);
+		mnTextDrawStringInWindow((Sint32)MenuColonString, window, 32, y);
 
 		for(i = 0; i < DEBUG_FLAGS_PER_ROW; i++) {
-			Sint32 set = syGameFlagGet(flg);
+			Sint32 set = syGameFlagGet(flag);
 			bits[i] = (set != 0) + '0';
-			flg++;
+			flag++;
 		}
 		bits[i] = 0;
-		mnTextDrawStringInWindow((Sint32)bits, win, 48, y);
+		mnTextDrawStringInWindow((Sint32)bits, window, 48, y);
 	}
 }
 
@@ -185,17 +185,17 @@ void mnDebugFlagEditorDrawTable(Sint32 win, Sint32 page)
    toggles flag page * 256 + row * 16 + column; B or Select closes. L and R turn
    a page, wrapping at either end; with Start held they jump DEBUG_LARGE_STEP,
    to the other end when that passes it (5 - 10 gives 15). */
-Sint32 mnDebugFlagEditorHandleInput(Sint32 win, Sint32 *page, Sint32 *cursor)
+Sint32 mnDebugFlagEditorHandleInput(Sint32 window, Sint32 *page, Sint32 *cursor)
 {
 	Sint32 *row = &cursor[1];
 
 	if(PerWork.repeat & KEY_A) {
-		Sint32 flg = ((*page << 4) + *row << 4) + cursor[0];
+		Sint32 flag = ((*page << 4) + *row << 4) + cursor[0];
 
-		if(syGameFlagGet(flg))
-			syGameFlagClear(flg);
+		if(syGameFlagGet(flag))
+			syGameFlagClear(flag);
 		else
-			syGameFlagSet(flg);
+			syGameFlagSet(flag);
 		return 1;
 	}
 	if((PerWork.push & KEY_B) || (PerWork.repeat & KEY_SELECT))
@@ -242,8 +242,8 @@ UNUSED void mnReservedNoOperation(void)
 
 /* Sets the Djinni's collected flag, then adds it to the specified party member.
    The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index. */
-void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 idx)
+void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 index)
 {
-	syGameFlagSet((element * DJINN_PER_ELEMENT) + idx + FLAG_DJINN_FIRST);
-	gmDjinnGiveStub(member, element, idx);
+	syGameFlagSet((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
+	gmDjinnGiveStub(member, element, index);
 }

@@ -20,12 +20,12 @@ typedef enum FLEE_CHANCE {
 #define PRIORITY_LOWEST 32768
 
 /* Sets the camera up for the fixed view the battle shows while commands are
-   chosen, raised by verticalOfs pixels. */
-void btCameraSetCommandView(Sint32 verticalOfs)
+   chosen, raised by verticalOffset pixels. */
+void btCameraSetCommandView(Sint32 verticalOffset)
 {
 	BATTLE_CAMERA			*camera = RamHeapSlots->cameraState;
 	BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
-	POINT					 eyeOfs;
+	POINT					 eyeOffset;
 	Uint32					 result;
 
 	/* The focus 5 pixels up, a quarter turn of yaw, a slight downward pitch,
@@ -33,7 +33,7 @@ void btCameraSetCommandView(Sint32 verticalOfs)
 	camera->focus[1] = toFIXED(5);
 	camera->focus[0] = 0;
 	camera->focus[2] = 0;
-	view->tgtYaw = DEGtoANG(90);
+	view->targetYaw = DEGtoANG(90);
 	camera->yaw = DEGtoANG(90);
 	camera->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
 	camera->followPos = 0;
@@ -45,17 +45,17 @@ void btCameraSetCommandView(Sint32 verticalOfs)
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
 
-	SET_VECTOR(eyeOfs, 0, 0, camera->distance);
-	syCalcPoint(eyeOfs, (Sint32 *)camera);
+	SET_VECTOR(eyeOffset, 0, 0, camera->distance);
+	syCalcPoint(eyeOffset, (Sint32 *)camera);
 
 	result = syDivFX(toFIXED(969), toFIXED(3) / 4);
 	sySetScreenDist(0, result, toFIXED(1938));
 
 	/* While the view is busy, btCameraSetRange leaves BG1's scroll alone. */
-	ProjectionWork.centerY = verticalOfs + BATTLE_PROJECTION_CENTER_Y;
+	ProjectionWork.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
 	view->busy = 1;
 	btCameraSetRange(
-		toFIXED(120), toFIXED(118 - verticalOfs), 0, 8 << 8, toFIXED(2));
+		toFIXED(120), toFIXED(118 - verticalOffset), 0, 8 << 8, toFIXED(2));
 	view->keepRange = 1;
 	view->busy = 0;
 }
@@ -64,16 +64,16 @@ void btCameraSetCommandView(Sint32 verticalOfs)
 void btUnitResetGuardLevels(void)
 {
 	Uint16 unitIds[UNIT_MAX];
-	Sint32 cnt;
-	Sint32 unitIdx;
+	Sint32 count;
+	Sint32 unitIndex;
 
-	cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	for(unitIdx = 0; unitIdx < cnt; unitIdx++) {
+	count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	for(unitIndex = 0; unitIndex < count; unitIndex++) {
 		UNIT *unit;
 
-		unit = syUnitGet(unitIds[unitIdx]);
+		unit = syUnitGet(unitIds[unitIndex]);
 		unit->defendLevel = 0;
-		gmUnitCalcStub(unitIds[unitIdx]);
+		gmUnitCalculateStub(unitIds[unitIndex]);
 	}
 }
 
@@ -85,9 +85,9 @@ Sint32 btFleeCheckSuccess(void)
 {
 	Bool		  escaped;
 	Sint16		  livingUnits[UNIT_MAX];
-	Sint32		  livingCnt;
+	Sint32		  livingCount;
 	Sint32		  levelTotal;
-	Sint32		  unitIdx;
+	Sint32		  unitIndex;
 	Sint32		  chance;
 	BATTLE_STATE *battle;
 
@@ -99,17 +99,17 @@ Sint32 btFleeCheckSuccess(void)
 		levelTotal = 0;
 		chance =
 			FLEE_BASE_CHANCE + (battle->fleeFailures * FLEE_CHANCE_PER_FAILURE);
-		livingCnt = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
-		for(unitIdx = 0; unitIdx < livingCnt; unitIdx++) {
-			levelTotal += syUnitGet((Sint32)livingUnits[unitIdx])->level;
+		livingCount = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
+		for(unitIndex = 0; unitIndex < livingCount; unitIndex++) {
+			levelTotal += syUnitGet((Sint32)livingUnits[unitIndex])->level;
 		}
-		chance += levelTotal * FLEE_CHANCE_PER_LEVEL / livingCnt;
-		livingCnt = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
+		chance += levelTotal * FLEE_CHANCE_PER_LEVEL / livingCount;
+		livingCount = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
 		levelTotal = 0;
-		for(unitIdx = 0; unitIdx < livingCnt; unitIdx++) {
-			levelTotal += syUnitGet((Sint32)livingUnits[unitIdx])->level;
+		for(unitIndex = 0; unitIndex < livingCount; unitIndex++) {
+			levelTotal += syUnitGet((Sint32)livingUnits[unitIndex])->level;
 		}
-		chance -= levelTotal * FLEE_CHANCE_PER_LEVEL / livingCnt;
+		chance -= levelTotal * FLEE_CHANCE_PER_LEVEL / livingCount;
 		if((chance > 0) &&
 			((Uint32)((Uint32)(FLEE_ROLL_RANGE * syRandom()) >> 16) <
 				(Uint32)chance)) {
@@ -132,12 +132,12 @@ Sint32 btFleeCheckSuccess(void)
    there are, or -1 when none could be chosen. */
 Sint32 btBuildUnitActions(BATTLE_ACTION_RECORD *entries)
 {
-	void  *buf = syHeapAllocEWRAM(CHOOSER_LIST_BYTES);
-	Sint32 cnt = mnBattleCollectPartyCommandsStub(entries, buf, 0);
+	void  *buf = syHeapAllocateEWRAM(CHOOSER_LIST_BYTES);
+	Sint32 count = mnBattleCollectPartyCommandsStub(entries, buf, 0);
 	Sint32 result = -1;
 
-	if(cnt >= 0)
-		result = cnt;
+	if(count >= 0)
+		result = count;
 	syHeapRelease(buf);
 	return result;
 }
@@ -147,21 +147,21 @@ Sint32 btBuildUnitActions(BATTLE_ACTION_RECORD *entries)
 Sint32 btBuildEnemyActions(BATTLE_ACTION_RECORD *entries)
 {
 	Uint16		  unitIds[UNIT_MAX];
-	Sint32		  entryCnt = 0;
+	Sint32		  entryCount = 0;
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
-	Sint32		  unitCnt;
+	Sint32		  unitCount;
 	Sint32		  i;
 
 	if(battle->firstStrike == FIRST_STRIKE_PARTY)
 		return 0;
 
-	unitCnt = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
-	if(unitCnt == 0)
+	unitCount = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
+	if(unitCount == 0)
 		return 0;
 
 	for(i = 0; i < TURN_ORDER_SWAPS; i++) {
-		Uint32 first = (unitCnt * syRandom()) >> 16;
-		Uint32 second = (unitCnt * syRandom()) >> 16;
+		Uint32 first = (unitCount * syRandom()) >> 16;
+		Uint32 second = (unitCount * syRandom()) >> 16;
 		Sint32 swap = unitIds[first];
 		unitIds[first] = unitIds[second];
 		unitIds[second] = swap;
@@ -173,59 +173,59 @@ Sint32 btBuildEnemyActions(BATTLE_ACTION_RECORD *entries)
 
 		if(limit <= 1)
 			limit = 2;
-		if(limit < unitCnt)
-			unitCnt = limit;
+		if(limit < unitCount)
+			unitCount = limit;
 	}
 
-	for(i = 0; i < unitCnt; i++) {
+	for(i = 0; i < unitCount; i++) {
 		Sint32 unitId = unitIds[i];
 		UNIT  *unit = syUnitGet(unitId);
-		Sint32 copyIdx;
+		Sint32 copyIndex;
 
-		for(copyIdx = 0; copyIdx < unit->actionsPerTurn; copyIdx++) {
-			BATTLE_ACTION_RECORD *entry = &entries[entryCnt];
+		for(copyIndex = 0; copyIndex < unit->actionsPerTurn; copyIndex++) {
+			BATTLE_ACTION_RECORD *entry = &entries[entryCount];
 			Sint32				  agility;
 
 			entry->unitId = unitId;
 			agility = unit->agility;
-			entry->pri = agility;
-			entry->turnAction = copyIdx;
+			entry->priority = agility;
+			entry->turnAction = copyIndex;
 			if(unit->actionsPerTurn == 4) {
-				if(copyIdx == 0)
+				if(copyIndex == 0)
 					;
-				else if(copyIdx == 1)
-					entry->pri = (Sint16)agility * 5 / 6;
-				else if(copyIdx == 2)
-					entry->pri = (Sint16)agility * 4 / 6;
+				else if(copyIndex == 1)
+					entry->priority = (Sint16)agility * 5 / 6;
+				else if(copyIndex == 2)
+					entry->priority = (Sint16)agility * 4 / 6;
 				else
-					entry->pri = (Sint16)agility / 2;
+					entry->priority = (Sint16)agility / 2;
 			} else if(unit->actionsPerTurn == 3) {
-				if(copyIdx == 0)
+				if(copyIndex == 0)
 					;
-				else if(copyIdx == 1)
-					entry->pri = (Sint16)agility * 3 / 4;
+				else if(copyIndex == 1)
+					entry->priority = (Sint16)agility * 3 / 4;
 				else
-					entry->pri = (Sint16)agility / 2;
-			} else if(copyIdx != 0) {
-				entry->pri = (Sint16)agility / 2;
+					entry->priority = (Sint16)agility / 2;
+			} else if(copyIndex != 0) {
+				entry->priority = (Sint16)agility / 2;
 			}
 
 			if(unit->sleep != 0 || unit->stun != 0) {
 				entry->command = COMMAND_NONE;
-				entry->prm = 0;
-				entry->tgt = TARGET_NONE_ENEMY;
+				entry->param = 0;
+				entry->target = TARGET_NONE_ENEMY;
 			} else {
 				btAIChooseAction(entry, 0);
 			}
 
-			entryCnt++;
+			entryCount++;
 
 			if(battle->firstStrike == FIRST_STRIKE_ENEMIES)
 				break;
 		}
 	}
 
-	return entryCnt;
+	return entryCount;
 }
 
 /* Swaps two actions of the turn's order. */
@@ -241,13 +241,13 @@ static inline void btActionSwap(
 
 /* Sorts the actions by descending priority, after putting the Djinn that
    shield, guard or defend ahead of the rest. */
-void btActionOrderSort(BATTLE_ACTION_RECORD *entries, Sint32 cnt)
+void btActionOrderSort(BATTLE_ACTION_RECORD *entries, Sint32 count)
 {
 	Sint32 i;
 	Sint32 j;
 	Sint32 swapped;
 
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		BATTLE_ACTION_RECORD *entry = &entries[i];
 
 		if(entry->command == COMMAND_DJINN) {
@@ -256,28 +256,28 @@ void btActionOrderSort(BATTLE_ACTION_RECORD *entries, Sint32 cnt)
 			/* DEAD: syUnitGet's result is not used; the ROM keeps the call. */
 			syUnitGet(entry->unitId);
 			action = gmAbilityGetDirectStub(
-				gmDjinnGetAbilityIdStub(DJINN_COMMAND_ELEMENT(entry->prm),
-					DJINN_COMMAND_INDEX(entry->prm)));
+				gmDjinnGetAbilityIdStub(DJINN_COMMAND_ELEMENT(entry->param),
+					DJINN_COMMAND_INDEX(entry->param)));
 			/* These Djinn act ahead of the turn order. */
-			if(action->eff == ABILITY_EFFECT_SHIELD ||
-				action->eff == ABILITY_EFFECT_BREATH ||
-				action->eff == ABILITY_EFFECT_VANISH ||
-				action->eff == ABILITY_EFFECT_COUNTER ||
-				action->eff == ABILITY_EFFECT_DEFEND ||
-				action->eff == ABILITY_EFFECT_TOTAL_DEFENSE ||
-				action->eff == ABILITY_EFFECT_GUARD_AURA ||
-				action->eff == ABILITY_EFFECT_GROUND) {
-				Uint32 pri = entry->pri;
+			if(action->effect == ABILITY_EFFECT_SHIELD ||
+				action->effect == ABILITY_EFFECT_BREATH ||
+				action->effect == ABILITY_EFFECT_VANISH ||
+				action->effect == ABILITY_EFFECT_COUNTER ||
+				action->effect == ABILITY_EFFECT_DEFEND ||
+				action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
+				action->effect == ABILITY_EFFECT_GUARD_AURA ||
+				action->effect == ABILITY_EFFECT_GROUND) {
+				Uint32 priority = entry->priority;
 
-				entry->pri = pri + PRIORITY_FIRST_IN_TURN;
+				entry->priority = priority + PRIORITY_FIRST_IN_TURN;
 			}
 		}
 	}
 
 	do {
 		swapped = 0;
-		for(j = cnt - 1; j > 0; j--) {
-			if((Sint16)entries[j].pri > (Sint16)entries[j - 1].pri) {
+		for(j = count - 1; j > 0; j--) {
+			if((Sint16)entries[j].priority > (Sint16)entries[j - 1].priority) {
 				btActionSwap(&entries[j], &entries[j - 1]);
 				swapped++;
 			}
@@ -298,13 +298,13 @@ void btActionOrderSort(BATTLE_ACTION_RECORD *entries, Sint32 cnt)
 /* Link battle: exchanges the turn's actions with the other console and appends
    the opponent's, their units and targets seen from this side. Returns how many
    were received, or -1 when the exchange fails. */
-Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
+Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 count)
 {
 	BATTLE_STATE	   *battle = RamHeapSlots->battleState;
 	Sint32				result = 0;
-	Sint32				allocationSize = LINK_ACTIONS_BYTES(cnt);
-	BATTLE_LINK_HEADER *state = syHeapAllocEWRAM(sizeof(BATTLE_LINK_HEADER));
-	Sint32				idx;
+	Sint32				allocationSize = LINK_ACTIONS_BYTES(count);
+	BATTLE_LINK_HEADER *state = syHeapAllocateEWRAM(sizeof(BATTLE_LINK_HEADER));
+	Sint32				index;
 
 	Sint32 btLinkBattleSendActions(void)
 	{
@@ -372,9 +372,9 @@ Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
 		}
 		if(SerialReceivedSize != LINK_PACKET_BYTES)
 			return -1;
-		result = state->cnt;
-		if(state->cnt) {
-			status = sySerialStartReceive(actions + cnt);
+		result = state->count;
+		if(state->count) {
+			status = sySerialStartReceive(actions + count);
 			if(status == -1)
 				return status;
 			while(sySerialGetActiveTransfers()) {
@@ -397,16 +397,16 @@ Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
 		return 0;
 	}
 
-	for(idx = 0; idx < cnt; idx++) {
-		BATTLE_ACTION_RECORD *action = &actions[idx];
+	for(index = 0; index < count; index++) {
+		BATTLE_ACTION_RECORD *action = &actions[index];
 
 		action->slot = battle->opponentSlots[action->unitId];
 
 		if(battle->linkSide == 0) {
-			if(action->pri & 1)
-				action->pri++;
+			if(action->priority & 1)
+				action->priority++;
 		} else {
-			action->pri |= 1;
+			action->priority |= 1;
 		}
 	}
 
@@ -414,7 +414,7 @@ Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
 		if(battle->linkSide == 0) {
 			Uint32 saved;
 
-			state->cnt = cnt;
+			state->count = count;
 			state->check = gmBattleRandomStub();
 			IRQ_LOCK(saved);
 			SET_RANDOM_SEED(state->seed = RandomSeed);
@@ -422,12 +422,12 @@ Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
 			if(btLinkBattleSendActions() < 0 ||
 				btLinkBattleReceiveActions() < 0)
 				goto fail;
-			result = state->cnt;
+			result = state->count;
 		} else {
 			if(btLinkBattleReceiveActions() < 0)
 				goto fail;
-			result = state->cnt;
-			state->cnt = cnt;
+			result = state->count;
+			state->count = count;
 			if(btLinkBattleSendActions() < 0)
 				goto fail;
 			if(gmBattleRandomStub() != state->check)
@@ -435,11 +435,11 @@ Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
 			SET_RANDOM_SEED(state->seed);
 		}
 
-		for(idx = 0; idx < result; idx++) {
-			BATTLE_ACTION_RECORD *action = &actions[cnt + idx];
+		for(index = 0; index < result; index++) {
+			BATTLE_ACTION_RECORD *action = &actions[count + index];
 
 			action->unitId = action->slot;
-			action->tgt = action->tgt ^ PLACE_ENEMY_SIDE;
+			action->target = action->target ^ PLACE_ENEMY_SIDE;
 		}
 
 		syHeapRelease(state);
@@ -456,7 +456,7 @@ fail:
 /* Fills BG palettes 14 and 4 with palettes 15 and 5 (the windows' and the basic
    colours) with offset added to each colour channel, held within 0 to
    RGB_LEVEL_MAX. */
-void btPaletteCopyWithBrightnessOffset(Sint32 ofs)
+void btPaletteCopyWithBrightnessOffset(Sint32 offset)
 {
 	Sint32 bank;
 	Sint32 source = WINDOW_PALETTE;
@@ -465,16 +465,16 @@ void btPaletteCopyWithBrightnessOffset(Sint32 ofs)
 	/* Palettes 15 and 5, each into the palette before it, 14 and 4. */
 	for(bank = 0; bank < 2; bank++) {
 		for(i = 0; i < PALETTE_COLORS; i++) {
-			Sint32 idx = source * PALETTE_COLORS + i;
-			Uint32 col = ((Uint16 *)BG_PLTT)[idx];
-			Sint32 blue = RGB_BLUE(col);
-			Sint32 green = RGB_GREEN(col);
-			Sint32 red = RGB_RED(col);
+			Sint32 index = source * PALETTE_COLORS + i;
+			Uint32 color = ((Uint16 *)BG_PLTT)[index];
+			Sint32 blue = RGB_BLUE(color);
+			Sint32 green = RGB_GREEN(color);
+			Sint32 red = RGB_RED(color);
 			Sint32 adjusted;
 
-			blue += ofs;
-			green += ofs;
-			red += ofs;
+			blue += offset;
+			green += offset;
+			red += offset;
 			if(blue > RGB_LEVEL_MAX)
 				blue = RGB_LEVEL_MAX;
 			if(green > RGB_LEVEL_MAX)
@@ -488,7 +488,7 @@ void btPaletteCopyWithBrightnessOffset(Sint32 ofs)
 			if(red < 0)
 				red = 0;
 			adjusted = RGB(red, green, blue);
-			((Uint16 *)BG_PLTT)[idx - PALETTE_COLORS] = adjusted;
+			((Uint16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
 		}
 		source = BASIC_COLORS_PALETTE;
 	}
@@ -502,7 +502,7 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 	UNIT		 *unit;
 	BATTLE_STATE *battle;
 	Uint8		 *firstStrike;
-	Sint32		  cnt;
+	Sint32		  count;
 	Sint32		  received;
 	Sint32		  i;
 
@@ -513,7 +513,7 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 
 		for(n = 0; n < BATTLE_ACTION_CAPACITY; n++) {
 			records[n].unitId = BATTLE_UNIT_LIST_END;
-			records[n].pri = PRIORITY_LOWEST;
+			records[n].priority = PRIORITY_LOWEST;
 		}
 	}
 
@@ -526,40 +526,40 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 
 	/* Ally commands (unavailable when enemies strike first). */
 	if(*firstStrike != FIRST_STRIKE_ENEMIES) {
-		cnt = btBuildUnitActions(actions);
-		if(cnt < 0)
+		count = btBuildUnitActions(actions);
+		if(count < 0)
 			goto finish;
 		/* A failed escape gives enemies the same advantage as striking
 		   first. */
-		if(cnt != 0 && actions[0].command == COMMAND_FLEE &&
+		if(count != 0 && actions[0].command == COMMAND_FLEE &&
 			btFleeCheckSuccess() == 0)
 			*firstStrike = FIRST_STRIKE_ENEMIES;
 	} else {
-		cnt = 0;
+		count = 0;
 	}
 
 	/* Link opponent or enemy actions. */
 	if(RamHeapSlots->battleState->isLink != 0) {
-		received = btAppendLinkedActions(actions, cnt);
+		received = btAppendLinkedActions(actions, count);
 		if(btLinkBattleWaitSync() < 0) {
-			cnt = -1;
+			count = -1;
 			goto finish;
 		}
-		cnt += received;
+		count += received;
 		if(received < 0) {
-			cnt = -1;
+			count = -1;
 			goto finish;
 		}
 	} else {
-		cnt += btBuildEnemyActions(actions + cnt);
+		count += btBuildEnemyActions(actions + count);
 	}
 
 	/* Sorted, and every unit that defends this turn guards from its start. */
-	btActionOrderSort(actions, cnt);
-	if(cnt > 0) {
+	btActionOrderSort(actions, count);
+	if(count > 0) {
 		BATTLE_ACTION_RECORD *action = actions;
 
-		i = cnt;
+		i = count;
 		do {
 			if(action->command == COMMAND_DEFEND ||
 				action->command == COMMAND_TOTAL_DEFENSE) {
@@ -576,8 +576,8 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 finish:
 	syGameFlagClear(FLAG_CHOOSING_COMMANDS);
 	btCameraSetDefaultView();
-	RamHeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
-	return cnt;
+	RamHeapSlots->battleBg->targetYaw = YAW_PARTY_ACTION;
+	return count;
 }
 
 /* Returns the unit id at a list place, PLACE_ENEMY_SIDE set for the enemies'
@@ -596,23 +596,23 @@ Sint32 btGetUnitAtPlace(Sint32 taggedPlace)
 Sint32 btFindUnitPlace(Uint32 unitId)
 {
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
-	Sint32		  placeIdx;
+	Sint32		  placeIndex;
 	Sint16		  listedUnit;
 
 	if(unitId <= ALLY_MAX) {
-		for(placeIdx = 0;; placeIdx++) {
-			listedUnit = battle->partyUnits[placeIdx];
+		for(placeIndex = 0;; placeIndex++) {
+			listedUnit = battle->partyUnits[placeIndex];
 			if(listedUnit == BATTLE_UNIT_LIST_END)
 				return -1;
 			if(listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
-				return placeIdx | PLACE_PARTY;
+				return placeIndex | PLACE_PARTY;
 		}
 	}
-	for(placeIdx = 0;; placeIdx++) {
-		listedUnit = battle->enemyIds[placeIdx];
+	for(placeIndex = 0;; placeIndex++) {
+		listedUnit = battle->enemyIds[placeIndex];
 		if(listedUnit == BATTLE_UNIT_LIST_END)
 			return -1;
 		if(listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
-			return placeIdx | PLACE_ENEMY;
+			return placeIndex | PLACE_ENEMY;
 	}
 }

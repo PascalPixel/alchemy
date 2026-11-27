@@ -44,33 +44,33 @@ Uint32 gmPartyGetAverageLevel(void)
    characters', so that one id names any unit. */
 const ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId)
 {
-	Uint32 recordIdx;
+	Uint32 recordIndex;
 
-	recordIdx = enemyId - ENEMY_ID_FIRST;
+	recordIndex = enemyId - ENEMY_ID_FIRST;
 	/* BUG: the table has ENEMY_COUNT rows, but only rows from ENEMY_ID_MAX on
 	   are refused, so those from ENEMY_COUNT read the tables after it.
 	   gmBattleUnitSet takes the first row for them itself. */
 #if FIX_ENEMY_ID_BOUND
-	if(recordIdx > ENEMY_COUNT - 1U)
+	if(recordIndex > ENEMY_COUNT - 1U)
 #else
-	if(recordIdx > ENEMY_ID_MAX - 1U)
+	if(recordIndex > ENEMY_ID_MAX - 1U)
 #endif
-		recordIdx = 0;
-	return &EnemyDefinitions[recordIdx];
+		recordIndex = 0;
+	return &EnemyDefinitions[recordIndex];
 }
 
-/* Copies `cnt` bytes from `first` to `second` when `direction` is set, and
+/* Copies `count` bytes from `first` to `second` when `direction` is set, and
    from `second` to `first` otherwise. */
 void gmMemoryCopyBytesDirectional(
-	Uint8 *first, Uint8 *second, Sint32 cnt, Sint32 direction)
+	Uint8 *first, Uint8 *second, Sint32 count, Sint32 direction)
 {
 	Sint32 i;
 
 	if(direction != 0) {
-		for(i = 0; i < cnt; i++)
+		for(i = 0; i < count; i++)
 			*second++ = *first++;
 	} else {
-		for(i = 0; i < cnt; i++)
+		for(i = 0; i < count; i++)
 			*first++ = *second++;
 	}
 }
@@ -83,11 +83,11 @@ void gmMemoryCopyBytesDirectional(
 
 /* Works out a unit's stats from its base stats, equipment, set Djinn, class and
    battle stat levels; its HP and PP keep their share of a new maximum. */
-void gmUnitCalc(Sint32 unitId)
+void gmUnitCalculate(Sint32 unitId)
 {
 	STAT_STATE *stats;
 	UNIT	   *unit;
-	Sint32		idx, effectIdx, elementIdx;
+	Sint32		index, effectIndex, elementIndex;
 	Sint32		value;
 	Sint32		lighthouse;
 	Sint32		effectKind;
@@ -97,7 +97,7 @@ void gmUnitCalc(Sint32 unitId)
 	Sint16		prevMaximum;
 
 	/* Start with the unit's base stats and elemental power/resistance. */
-	stats = syHeapAllocEWRAM(sizeof(STAT_STATE));
+	stats = syHeapAllocateEWRAM(sizeof(STAT_STATE));
 	unit = syUnitGet(unitId);
 	stats->hp = unit->baseHp;
 	stats->pp = unit->basePp;
@@ -105,12 +105,12 @@ void gmUnitCalc(Sint32 unitId)
 	stats->defense = unit->baseDefense;
 	stats->agility = unit->baseAgility;
 	stats->luck = unit->baseLuck;
-	stats->actionCnt = unit->baseActionCnt & UNIT_ACTION_COUNT_MASK;
+	stats->actionCount = unit->baseActionCount & UNIT_ACTION_COUNT_MASK;
 	stats->hpRegen = unit->baseHpRegen;
 	stats->ppRegen = unit->basePpRegen;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
-		stats->element[idx].power = unit->baseElement[idx].power;
-		stats->element[idx].resistance = unit->baseElement[idx].resistance;
+	for(index = 0; index < ELEMENT_COUNT; index++) {
+		stats->element[index].power = unit->baseElement[index].power;
+		stats->element[index].resistance = unit->baseElement[index].resistance;
 	}
 
 	/* HP and PP keep their share of the maximum; gauges that no longer match
@@ -131,23 +131,24 @@ void gmUnitCalc(Sint32 unitId)
 	if(unit->curse & CURSE_KEEP_BOUND)
 		unit->curse |= CURSE_BOUND;
 	if(unit->ready)
-		stats->actionCnt++;
+		stats->actionCount++;
 	unit->equipBonus[0] = 0;
 
 	/* Apply additive equipment and set-Djinn bonuses before class scaling. An
 	   enemy (CLASS_NONE) skips equipment, Djinn and class entirely. */
 	if(unit->classId != CLASS_NONE) {
-		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
-			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
+		for(index = 0; index < INVENTORY_SLOTS; index++) {
+			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[idx]);
-			if(stats->item->flg & ITEM_CURSED)
+			stats->item = gmItemGetDirect(unit->inventory[index]);
+			if(stats->item->flags & ITEM_CURSED)
 				unit->curse |= CURSE_BOUND | CURSE_ITEM;
 			stats->attack += stats->item->attack;
 			stats->defense += stats->item->defense;
-			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
-				effectKind = stats->item->effs[effectIdx].kind;
-				effectAmount = stats->item->effs[effectIdx].amount;
+			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
+				effectIndex++) {
+				effectKind = stats->item->effects[effectIndex].kind;
+				effectAmount = stats->item->effects[effectIndex].amount;
 				stats->kind = effectKind;
 				stats->amount = effectAmount;
 				switch(effectKind) {
@@ -202,7 +203,7 @@ void gmUnitCalc(Sint32 unitId)
 					unit->curse |= CURSE_REMOVABLE;
 					break;
 				case EQUIP_EFFECT_ADD_ACTIONS:
-					stats->actionCnt += stats->amount;
+					stats->actionCount += stats->amount;
 					break;
 				}
 			}
@@ -211,13 +212,13 @@ void gmUnitCalc(Sint32 unitId)
 			unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
 
 		/* Only set Djinn contribute their stat bonuses. */
-		for(elementIdx = 0; elementIdx < ELEMENT_COUNT; elementIdx++) {
-			Uint32 activeDjinn = unit->djinnSet[elementIdx];
+		for(elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
+			Uint32 activeDjinn = unit->djinnSet[elementIndex];
 
-			for(idx = 0; idx < DJINN_PER_ELEMENT; idx++) {
-				if(activeDjinn & (1 << idx)) {
+			for(index = 0; index < DJINN_PER_ELEMENT; index++) {
+				if(activeDjinn & (1 << index)) {
 					const DJINN_DEFINITION *djinn =
-						gmDjinnGetDefinition(elementIdx, idx);
+						gmDjinnGetDefinition(elementIndex, index);
 
 					stats->hp += djinn->hp;
 					stats->pp += djinn->pp;
@@ -248,13 +249,14 @@ void gmUnitCalc(Sint32 unitId)
 
 		/* Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
 		   EQUIP_EFFECT_SCALE_LUCK, also in tenths, applied after the class. */
-		for(idx = 0; idx < INVENTORY_SLOTS; idx++) {
-			if(!(unit->inventory[idx] & INVENTORY_EQUIPPED))
+		for(index = 0; index < INVENTORY_SLOTS; index++) {
+			if(!(unit->inventory[index] & INVENTORY_EQUIPPED))
 				continue;
-			stats->item = gmItemGetDirect(unit->inventory[idx]);
-			for(effectIdx = 0; effectIdx < EQUIP_EFFECT_SLOTS; effectIdx++) {
-				effectKind = stats->item->effs[effectIdx].kind;
-				effectAmount = stats->item->effs[effectIdx].amount;
+			stats->item = gmItemGetDirect(unit->inventory[index]);
+			for(effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS;
+				effectIndex++) {
+				effectKind = stats->item->effects[effectIndex].kind;
+				effectAmount = stats->item->effects[effectIndex].amount;
 				stats->kind = effectKind;
 				effectKind = SCALE_EFFECT(effectKind);
 				stats->amount = effectAmount;
@@ -298,13 +300,13 @@ void gmUnitCalc(Sint32 unitId)
 	stats->attack = stats->attack * (unit->attackStage + 8) / 8;
 	stats->defense = stats->defense * (unit->defenseStage + 8) / 8;
 	stats->agility = stats->agility * (unit->agilityStage + 8) / 8;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++)
-		stats->element[idx].power +=
-			(unit->summonBoost[idx] * unit->summonBoost[idx] +
-				unit->summonBoost[idx]) *
+	for(index = 0; index < ELEMENT_COUNT; index++)
+		stats->element[index].power +=
+			(unit->summonBoost[index] * unit->summonBoost[index] +
+				unit->summonBoost[index]) *
 			5;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++)
-		stats->element[idx].resistance +=
+	for(index = 0; index < ELEMENT_COUNT; index++)
+		stats->element[index].resistance +=
 			unit->resistanceStage * RESISTANCE_PER_STAGE;
 
 	if(unit->classId != CLASS_NONE) {
@@ -343,27 +345,27 @@ void gmUnitCalc(Sint32 unitId)
 	CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
 	/* An enemy may act up to four times a turn, a character twice. */
 	if(unit->classId == CLASS_NONE) {
-		CLAMP(stats->actionCnt, 0, 4);
+		CLAMP(stats->actionCount, 0, 4);
 	} else {
-		CLAMP(stats->actionCnt, 0, 2);
+		CLAMP(stats->actionCount, 0, 2);
 	}
 	CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
 	CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
-	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
-		CLAMP(stats->element[idx].power, 0, UNIT_ELEMENT_MAX);
-		CLAMP(stats->element[idx].resistance, 0, UNIT_ELEMENT_MAX);
+	for(index = 0; index < ELEMENT_COUNT; index++) {
+		CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
+		CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
 	}
 
 	unit->attack = stats->attack;
 	unit->defense = stats->defense;
 	unit->agility = stats->agility;
 	unit->luck = stats->luck;
-	unit->actionsPerTurn = stats->actionCnt;
+	unit->actionsPerTurn = stats->actionCount;
 	unit->hpRegen = stats->hpRegen;
 	unit->ppRegen = stats->ppRegen;
-	for(idx = 0; idx < ELEMENT_COUNT; idx++) {
-		unit->element[idx].power = stats->element[idx].power;
-		unit->element[idx].resistance = stats->element[idx].resistance;
+	for(index = 0; index < ELEMENT_COUNT; index++) {
+		unit->element[index].power = stats->element[index].power;
+		unit->element[index].resistance = stats->element[index].resistance;
 	}
 
 	if(unit->classId == CLASS_NONE) {
@@ -419,7 +421,7 @@ void gmFlagRefreshLureCap(void)
 				continue;
 			item = gmItemGetDirect(unit->inventory[slot]);
 			for(effect = 0; effect < EQUIP_EFFECT_SLOTS; effect++) {
-				if(item->effs[effect].kind == EQUIP_EFFECT_LURE)
+				if(item->effects[effect].kind == EQUIP_EFFECT_LURE)
 					syGameFlagSet(FLAG_LURE_CAP);
 			}
 		}
@@ -441,12 +443,12 @@ FIXED gmPartyGetPpRatio(void)
 {
 	Sint32 pp = 0;
 	Sint32 max = 0;
-	Sint32 cnt = gmPartyCountMembers();
+	Sint32 count = gmPartyCountMembers();
 	Sint32 i;
 
-	if(cnt == 0)
+	if(count == 0)
 		return 0;
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		UNIT *unit = syUnitGet(MainRoutineStateWork.party[i]);
 
 		pp += unit->pp;
@@ -462,12 +464,12 @@ Sint32 gmPartyDrainPpFromFullest(void)
 {
 	FIXED  best = 0;
 	Sint32 bestOwner = -1;
-	Sint32 cnt = gmPartyCountMembers();
+	Sint32 count = gmPartyCountMembers();
 	Sint32 i;
 
-	if(cnt == 0)
+	if(count == 0)
 		return 0;
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		FIXED ratio = gmOwnerGetPpRatio(MainRoutineStateWork.party[i]);
 
 		if(ratio > best) {
@@ -481,12 +483,12 @@ Sint32 gmPartyDrainPpFromFullest(void)
 	return ((Sint32 (*)(Sint32, Sint32))gmUnitAddPp)(bestOwner, -1);
 }
 
-/* Takes `cnt` PP from the party, one at a time from the fullest member. */
-void gmPartyDrainPp(Sint32 cnt)
+/* Takes `count` PP from the party, one at a time from the fullest member. */
+void gmPartyDrainPp(Sint32 count)
 {
 	Sint32 i;
 
-	for(i = 0; i < cnt; i++)
+	for(i = 0; i < count; i++)
 		gmPartyDrainPpFromFullest();
 	/* The ratio is worked out again and not used. */
 	gmPartyGetPpRatio();
@@ -534,7 +536,7 @@ Uint32 gmBuildStampGetTime(void)
 /* Waits until the DMA channel's transfer is done. */
 static __inline__ void gmWaitDMA(DMA_REGISTERS volatile *channel)
 {
-	while((channel->ctrl & DMA_BUSY) != 0) {
+	while((channel->control & DMA_BUSY) != 0) {
 	}
 }
 
@@ -632,8 +634,8 @@ void gmMainRoutineStateInitDefaults(void)
 	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_NORMAL;
 	MainRoutineStateWork.speech = 1;
 	MainRoutineStateWork.unusedAfterSpeech = 1;
-	MainRoutineStateWork.winHue = 0;
-	MainRoutineStateWork.winBrightness = WINDOW_BRIGHTNESS_NEUTRAL + 1;
+	MainRoutineStateWork.windowHue = 0;
+	MainRoutineStateWork.windowBrightness = WINDOW_BRIGHTNESS_NEUTRAL + 1;
 	MainRoutineStateWork.buildStamp = 0;
 	MainRoutineStateWork.startStamp = gmBuildStampGetTime();
 	PlayTimeTicks = 0;
@@ -698,7 +700,7 @@ void gmPartySetLeaderFelix(void)
 void gmPartyGivePiersDjinn(void)
 {
 	Sint32 i;
-	Sint32 cnt;
+	Sint32 count;
 
 	/* i counts Spring and Shade from 1. */
 	for(i = DJINNI_INDEX(DJINNI_SPRING) + 1;
@@ -709,9 +711,9 @@ void gmPartyGivePiersDjinn(void)
 	}
 	/* Called with an argument it does not take. */
 	((void (*)(Sint32))gmPartyBalanceDjinn)(0);
-	cnt = gmPartyCountMembers();
-	for(i = 0; i < cnt; i++)
-		gmUnitCalc(MainRoutineStateWork.party[i]);
+	count = gmPartyCountMembers();
+	for(i = 0; i < count; i++)
+		gmUnitCalculate(MainRoutineStateWork.party[i]);
 }
 
 /* Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -719,12 +721,12 @@ void gmPartyGivePiersDjinn(void)
 void gmPartyRestoreHpPp(Sint32 cureConditions)
 {
 	Sint32 partySize;
-	Sint32 partyIdx;
+	Sint32 partyIndex;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
-		unit = syUnitGet(MainRoutineStateWork.party[partyIdx]);
+	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
+		unit = syUnitGet(MainRoutineStateWork.party[partyIndex]);
 
 		unit->hp = unit->hpMax;
 		unit->pp = unit->ppMax;
@@ -743,15 +745,15 @@ void gmPartyRestoreHpPp(Sint32 cureConditions)
 void gmPartyRestorePpInLighthouse(void)
 {
 	Sint32 partySize;
-	Sint32 partyIdx;
+	Sint32 partyIndex;
 	Uint8  unitId;
 	Sint32 elementGroup;
 	Sint32 restorePp;
 	UNIT  *unit;
 
 	partySize = gmPartyCountMembers();
-	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
-		unitId = MainRoutineStateWork.party[partyIdx];
+	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
+		unitId = MainRoutineStateWork.party[partyIndex];
 		elementGroup = CharacterElementGroupTable[unitId];
 		restorePp = 0;
 		if(elementGroup == ELEMENT_GROUP_VENUS_MARS) {
@@ -778,11 +780,11 @@ void gmPartyRestorePpInLighthouse(void)
 
 /* Writes the element and index of unit's last Djinni and returns 0, or returns
    -1 when it has none. */
-Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *idxOut)
+Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *indexOut)
 {
 	Uint32 *sets = syUnitGet(unit)->djinnHeld;
 	Sint32	element = -1;
-	Sint32	idx = -1;
+	Sint32	index = -1;
 	Sint32	i;
 	Sint32	j;
 
@@ -790,14 +792,14 @@ Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *idxOut)
 		for(j = 0; j < ELEMENT_COUNT; j++) {
 			if(sets[j] & (1 << i)) {
 				element = j;
-				idx = i;
+				index = i;
 			}
 		}
 	}
 	if(element == -1)
 		return element;
 	*elementOut = element;
-	*idxOut = idx;
+	*indexOut = index;
 	return 0;
 }
 
@@ -809,7 +811,7 @@ Sint32 gmUnitFindLastDjinn(Sint32 unit, Sint32 *elementOut, Sint32 *idxOut)
    Djinni of the owner holding most to the one holding least. */
 void gmPartyBalanceDjinn(void)
 {
-	Sint32 cnt = gmPartyCountMembers();
+	Sint32 count = gmPartyCountMembers();
 
 	for(;;) {
 		Sint32 lowOwner = 0;
@@ -819,19 +821,19 @@ void gmPartyBalanceDjinn(void)
 		Sint32 i;
 		Sint32 sum;
 		Sint32 element;
-		Sint32 idx;
+		Sint32 index;
 
-		for(i = 0; i < cnt; i++) {
+		for(i = 0; i < count; i++) {
 			Sint32 owner = MainRoutineStateWork.party[i];
 			UNIT  *unit = syUnitGet(owner);
-			Uint8 *cnts;
+			Uint8 *counts;
 			Sint32 j;
 
 			sum = 0;
-			cnts = unit->djinnHeldCnts;
+			counts = unit->djinnHeldCounts;
 			for(j = 0; j < ELEMENT_COUNT; j++) {
-				Uint8 value = *cnts;
-				cnts++;
+				Uint8 value = *counts;
+				counts++;
 				sum += value;
 			}
 			if(sum > high) {
@@ -845,22 +847,22 @@ void gmPartyBalanceDjinn(void)
 		}
 		if(high - low <= 1)
 			break;
-		sum = gmUnitFindLastDjinn(highOwner, &element, &idx);
+		sum = gmUnitFindLastDjinn(highOwner, &element, &index);
 		if(sum != 0)
 			break;
-		gmDjinnTransfer(highOwner, element, idx, lowOwner);
+		gmDjinnTransfer(highOwner, element, index, lowOwner);
 	}
 }
 
-/* Returns flag `flg` of flag bytes laid out as GameFlagBytes: another save's
+/* Returns flag `flags` of flag bytes laid out as GameFlagBytes: another save's
    flags, as gmDataTransferApply reads them. */
-Sint32 gmFlagBitsTest(Uint8 *bytes, Sint32 flg)
+Sint32 gmFlagBitsTest(Uint8 *bytes, Sint32 flag)
 {
 	Sint32 bit;
 
-	bit = flg & 7;
-	flg = GAME_FLAG_BYTE(flg);
-	return (bytes[flg] >> bit) & 1;
+	bit = flag & 7;
+	flag = GAME_FLAG_BYTE(flag);
+	return (bytes[flag] >> bit) & 1;
 }
 
 /* The data transfer from Golden Sun ("Transfer data from Golden Sun",
@@ -877,8 +879,8 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 	Uint8				name[16];
 	Sint32				i;
 	Sint32				k;
-	Sint32				idx;
-	Sint32				cnt;
+	Sint32				index;
+	Sint32				count;
 	Sint32				j;
 
 	/* Each element's first seven Djinn, The Broken Seal's, become the
@@ -887,13 +889,13 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 		i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
 
 		for(j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
-			Sint32 flg = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
+			Sint32 flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
 
-			idx = i * DJINN_PER_ELEMENT + j;
-			if(gmFlagBitsTest(flags, FLAG_DJINNI(idx)))
-				syGameFlagSet(flg);
+			index = i * DJINN_PER_ELEMENT + j;
+			if(gmFlagBitsTest(flags, FLAG_DJINNI(index)))
+				syGameFlagSet(flag);
 			else
-				syGameFlagClear(flg);
+				syGameFlagClear(flag);
 		}
 	}
 	for(i = 0; i < TRANSFERRED_FLAG_COUNT; i++) {
@@ -910,12 +912,12 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 	state = &MainRoutineStateWork;
 	state->transferredCoins = party->coins;
 	if(byPassword == 0) {
-		state->winHue = party->winHue;
-		state->winBrightness = party->winBrightness;
+		state->windowHue = party->windowHue;
+		state->windowBrightness = party->windowBrightness;
 		state->msgSpeed = party->msgSpeed;
 		state->speech = party->speech;
 		state->idleSleepEnabled = party->idleSleepEnabled;
-		mnWindowColApplyStub(state->winHue, state->winBrightness);
+		mnWindowColorApplyStub(state->windowHue, state->windowBrightness);
 	}
 
 	/* Isaac's party, the units moved (j reused). */
@@ -930,16 +932,16 @@ void gmDataTransferApply(Uint8 *save, Sint32 byPassword)
 		memcpy(unit, name, sizeof(units->name));
 		if(byPassword == 0)
 			unit->enemyId = unit->id;
-		for(idx = INVENTORY_SLOTS - 1; idx >= 0; idx--) {
-			Sint32 item = unit->inventory[idx];
+		for(index = INVENTORY_SLOTS - 1; index >= 0; index--) {
+			Sint32 item = unit->inventory[index];
 
 			if(item != 0 &&
-				(gmItemGetDirect(item)->flg & ITEM_NOT_TRANSFERRED)) {
-				while(gmInventoryRemove(i, idx) == 1)
+				(gmItemGetDirect(item)->flags & ITEM_NOT_TRANSFERRED)) {
+				while(gmInventoryRemove(i, index) == 1)
 					;
 			}
 		}
-		gmUnitCalc(i);
+		gmUnitCalculate(i);
 	}
 	gmDjinnSetAllForParty();
 	gmPartyRestoreHpPp(1);
@@ -957,25 +959,25 @@ void gmClearDataApply(Uint8 *save)
 	UNIT  *units = (UNIT *)(save + BUP_IMAGE_UNITS);
 	Uint8  unused[16]; /* Unused: gives the stack frame its 16 bytes. */
 	Sint32 i;
-	Sint32 cnt;
+	Sint32 count;
 
-	MainRoutineStateWork.winHue = party->winHue;
-	MainRoutineStateWork.winBrightness = party->winBrightness;
+	MainRoutineStateWork.windowHue = party->windowHue;
+	MainRoutineStateWork.windowBrightness = party->windowBrightness;
 	MainRoutineStateWork.msgSpeed = party->msgSpeed;
 	MainRoutineStateWork.speech = party->speech;
 	MainRoutineStateWork.idleSleepEnabled = party->idleSleepEnabled;
-	mnWindowColApplyStub(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
-	cnt = PIERS + 1;
-	for(i = 0; i < cnt; i++) {
+	mnWindowColorApplyStub(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
+	count = PIERS + 1;
+	for(i = 0; i < count; i++) {
 		UNIT *unit = syUnitGet(i);
 		UNIT *saved = &units[i];
 
 		unit->baseHp = saved->baseHp;
 		unit->basePp = saved->basePp;
 		/* The gauges take the base HP and PP, which are no share of HP or PP;
-		   gmUnitCalc, finding a gauge out of step with its HP or PP, fills both
-		   gauges and sets HP and PP to their maximums. */
+		   gmUnitCalculate, finding a gauge out of step with its HP or PP, fills
+		   both gauges and sets HP and PP to their maximums. */
 		unit->hpGauge = unit->baseHp;
 		unit->ppGauge = unit->basePp;
 		unit->baseAttack = saved->baseAttack;
@@ -984,7 +986,7 @@ void gmClearDataApply(Uint8 *save)
 		unit->baseLuck = saved->baseLuck;
 		unit->level = saved->level;
 		unit->experience = saved->experience;
-		gmUnitCalc(i);
+		gmUnitCalculate(i);
 	}
 	MainRoutineStateWork.coins = party->coins;
 }
@@ -1005,7 +1007,7 @@ void gmPartyAddIsaacsParty(void)
 	Sint32 i;
 	Sint32 djinni;
 	Sint8  missing[8];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 k;
 
 	for(i = 0, k = 0; i < ELEMENT_COUNT;
@@ -1027,20 +1029,20 @@ void gmPartyAddIsaacsParty(void)
 	((void (*)(Sint32))gmPartyBalanceDjinn)(0);
 	gmDjinnSetAllForParty();
 	for(i = 0; i <= PIERS; i++)
-		gmUnitCalc(i);
+		gmUnitCalculate(i);
 	gmPartyRestoreHpPp(1);
 	syGameFlagSet(FLAG_REUNION);
 
 	/* One of The Broken Seal's Djinn of each element the party lacks, picked at
 	   random, plus one; 0 when it has them all. */
 	for(i = 0; i < ELEMENT_COUNT; i++) {
-		cnt = 0;
+		count = 0;
 		for(djinni = 0; djinni < TRANSFERRED_DJINN_PER_ELEMENT; djinni++) {
 			if(!syGameFlagGet(FLAG_DJINNI(i * DJINN_PER_ELEMENT + djinni)))
-				missing[cnt++] = djinni;
+				missing[count++] = djinni;
 		}
-		if(cnt != 0)
-			djinni = missing[(syRandom() * cnt) >> 16] + 1;
+		if(count != 0)
+			djinni = missing[(syRandom() * count) >> 16] + 1;
 		else
 			djinni = 0;
 		SceneLocalState[SCENE_STATE_CHOSEN_DJINN + i] = djinni;
@@ -1067,12 +1069,12 @@ void gmUnitReservedNoOperation(void)
    field. */
 void gmDjinnAddFoundToOwner(Sint32 owner, Sint32 element, Sint32 djinn)
 {
-	Sint32 flg = element * DJINN_PER_ELEMENT + djinn;
+	Sint32 flag = element * DJINN_PER_ELEMENT + djinn;
 
 	gmDjinnGive(owner, element, djinn);
-	flg += FLAG_DJINN_FIRST;
+	flag += FLAG_DJINN_FIRST;
 	gmDjinnRecoveryAddStandby(owner, element, djinn);
-	syGameFlagSet(flg);
+	syGameFlagSet(flag);
 }
 
 /* The Djinn of The Broken Seal handed out at random, besides Flint and Fizz,
@@ -1088,22 +1090,22 @@ void gmDjinnAddFoundToOwner(Sint32 owner, Sint32 element, Sint32 djinn)
 void gmDataTransferGiveDefaultDjinn(void)
 {
 	Sint8  saved[8];
-	Sint8  cnts[ELEMENT_COUNT];
-	Sint32 cnt;
+	Sint8  counts[ELEMENT_COUNT];
+	Sint32 count;
 	Sint32 remaining;
 	Sint32 element;
 	Sint32 djinn;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 i;
 	Sint32 k;
 
 	if(syGameFlagGet(FLAG_TRANSFERRED_DJINN_FIRST))
 		return;
 
-	cnt = gmPartyCountMembers();
-	for(i = 0; i < cnt; i++)
+	count = gmPartyCountMembers();
+	for(i = 0; i < count; i++)
 		saved[i] = MainRoutineStateWork.party[i];
-	for(i = 0; i < cnt; i++)
+	for(i = 0; i < count; i++)
 		gmPartyRemoveMember(saved[i]);
 	for(i = ISAAC; i <= MIA; i++)
 		gmPartyAddMember(i);
@@ -1113,10 +1115,10 @@ void gmDataTransferGiveDefaultDjinn(void)
 	gmDjinnAddFoundToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
 
 	/* Each element's Djinn so far: Flint and Fizz. */
-	cnts[ELEMENT_VENUS] = 1;
-	cnts[ELEMENT_MERCURY] = 1;
-	cnts[ELEMENT_MARS] = 0;
-	cnts[ELEMENT_JUPITER] = 0;
+	counts[ELEMENT_VENUS] = 1;
+	counts[ELEMENT_MERCURY] = 1;
+	counts[ELEMENT_MARS] = 0;
+	counts[ELEMENT_JUPITER] = 0;
 	remaining = DEFAULT_TRANSFER_DJINN;
 	do {
 		element = syRandomBelow(ELEMENT_COUNT);
@@ -1126,21 +1128,21 @@ void gmDataTransferGiveDefaultDjinn(void)
 			Sint8 high;
 
 			/* Would the elements' counts stay within one with this Djinni? */
-			cnts[element]++;
+			counts[element]++;
 			low = 9; /* above any element's count */
 			high = 0;
 			for(i = 0; i < ELEMENT_COUNT; i++) {
-				if(low > cnts[i])
-					low = cnts[i];
-				if(high < cnts[i])
-					high = cnts[i];
+				if(low > counts[i])
+					low = counts[i];
+				if(high < counts[i])
+					high = counts[i];
 			}
-			cnts[element]--;
+			counts[element]--;
 			if(high - low <= 1 &&
 				(syRandomBelow(100)) <
 					DataTransferDjinnChances[element][djinn]) {
 				gmDjinnGiveToParty(element, djinn);
-				cnts[element]++;
+				counts[element]++;
 				remaining--;
 			}
 		}
@@ -1153,20 +1155,20 @@ void gmDataTransferGiveDefaultDjinn(void)
 
 		for(j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
 			djinn = i * DJINN_PER_ELEMENT + j;
-			flg = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
+			flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
 			if(syGameFlagGet(FLAG_DJINNI(djinn)))
-				syGameFlagSet(flg);
+				syGameFlagSet(flag);
 			syGameFlagClear(FLAG_DJINNI(djinn));
 		}
 	}
 	for(i = ISAAC; i <= MIA; i++)
 		gmPartyRemoveMember(i);
-	for(i = 0; i < cnt; i++)
+	for(i = 0; i < count; i++)
 		gmPartyAddMember(saved[i]);
 }
 
 /* Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
-   that gmUnitCalc keeps the same fractions. */
+   that gmUnitCalculate keeps the same fractions. */
 void gmUnitRecalculateGauges(Sint32 unitId)
 {
 	UNIT *unit;
@@ -1211,9 +1213,9 @@ UNIT_DEFINE_SET(gmUnitSetPp, pp, ppMax)
 	type name(Sint32 unitId, Sint32 delta) \
 	{ \
 		UNIT  *unit = syUnitGet(unitId); \
-		Sint32 cur = unit->field; \
+		Sint32 current = unit->field; \
 		Sint32 limit = unit->maximum; \
-		Sint32 value = cur + delta; \
+		Sint32 value = current + delta; \
 		Sint32 result; \
 \
 		result = gmUnitClampGaugeValue(value, limit); \

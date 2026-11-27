@@ -2,12 +2,12 @@
    raised 8 pixels, by its radius. */
 static inline void scOrbiterStep(ORBITER *orbiter, ACTOR *anchor)
 {
-	orbiter->ang += (Sint16)orbiter->speed >> 1;
+	orbiter->angle += (Sint16)orbiter->speed >> 1;
 	orbiter->x = anchor->x.fixed;
 	orbiter->y = anchor->y.fixed + toFIXED(8);
 	orbiter->z = anchor->z.fixed;
 	syFieldVectorAddPolarOffsetFX(
-		orbiter->orbitRadius, orbiter->ang, &orbiter->x);
+		orbiter->orbitRadius, orbiter->angle, &orbiter->x);
 }
 
 /* Steps an orbiting object round its anchor: returns 0 once its countdown runs

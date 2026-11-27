@@ -121,7 +121,7 @@ use is copied aside first and put back when `sySynch()` returns.
 
 An [event](../../../../docs/tbs/glossary.md#event) is a function put on a list once and
 called every tick until it is taken off. The list holds 20. Each event has
-a rank, which the code calls its `pri`, and higher ranks run first.
+a rank, its `priority`, and higher ranks run first.
 That is how one event gets to see another's finished work in the same tick.
 
 There are two passes. Most events run once a tick from the tick loop. A
@@ -426,13 +426,13 @@ everywhere.
 | Call | What it does | SGL |
 | --- | --- | --- |
 | `syHeapInit` | empties both heaps and every heap slot | none |
-| `syHeapSlotAlloc` | a heap slot's block, made on the first call, in fast RAM if it fits | none |
-| `syHeapSlotAllocEWRAM` | the same, trying the large RAM first | none |
+| `syHeapSlotAllocate` | a heap slot's block, made on the first call, in fast RAM if it fits | none |
+| `syHeapSlotAllocateEWRAM` | the same, trying the large RAM first | none |
 | `syHeapSlotRelease` | gives back a heap slot's block and every block after it | none |
 | `syHeapGetRemainingIWRAM` | the bytes left in fast RAM's heap | none |
 | `syHeapGetRemainingEWRAM` | the bytes left in the large RAM's heap | none |
-| `syHeapAlloc` | a block with no slot, in fast RAM if it fits | none |
-| `syHeapAllocEWRAM` | the same, trying the large RAM first | none |
+| `syHeapAllocate` | a block with no slot, in fast RAM if it fits | none |
+| `syHeapAllocateEWRAM` | the same, trying the large RAM first | none |
 | `syHeapRelease` | gives back a block and every block after it | none |
 | `syWordsClear` | clears whole words | none |
 | `syWordsFill` | fills whole words with a value | none |
@@ -488,7 +488,7 @@ start from wherever the last fade ended.
 | `syDecompressTaggedLZ` | unpacks the tagged LZ format, plain or for palettes | none |
 | `syDecompressMoveToFrontLZ` | unpacks the move-to-front LZ format | none |
 | `syDecompressHalfwords` | unpacks the halfword LZ format | none |
-| `syDecompressSprPicture` | unpacks a sprite's picture straight into its pixels | none |
+| `syDecompressSpritePicture` | unpacks a sprite's picture straight into its pixels | none |
 | `syDecompressBitRuns` | draws a glyph's one-bit rows in one colour | none |
 
 ### Sprites and VRAM
@@ -500,11 +500,11 @@ start from wherever the last fade ended.
 | `syVRAMCacheReleaseVRAM` | gives an entry's blocks back but keeps the entry | none |
 | `syVRAMCacheLoad` | gives an entry sprite VRAM and copies tiles into it | none |
 | `syVRAMCacheFindFreeEntry` | the first free cache entry | none |
-| `syVRAMCacheAllocEntry` | takes a free entry and gives it VRAM | none |
+| `syVRAMCacheAllocateEntry` | takes a free entry and gives it VRAM | none |
 | `syVRAMCacheReload` | copies tiles into an entry's VRAM again | none |
-| `syOAMMatrixAllocFromTransform` | hands out the next of 32 sprite matrices and fills it | none |
-| `syOAMAddSprAtDepth` | puts a sprite in one of 256 depth slots for this tick | none; `slDispSprite` takes a position instead |
-| `syPaletteLoadBasicSprCols` | loads the basic sprite palettes | none |
+| `syOAMMatrixAllocateFromTransform` | hands out the next of 32 sprite matrices and fills it | none |
+| `syOAMAddSpriteAtDepth` | puts a sprite in one of 256 depth slots for this tick | none; `slDispSprite` takes a position instead |
+| `syPaletteLoadBasicSpriteColors` | loads the basic sprite palettes | none |
 
 ### Print
 
@@ -512,11 +512,11 @@ start from wherever the last fade ended.
 | --- | --- | --- |
 | `syPrint` | prints a string at the debug text cursor | `slPrint`, at a cursor where SGL takes an address |
 | `syPrintHex` | prints the last few hexadecimal digits of a number | `slPrintHex`, at the cursor |
-| `syPrintDec` | prints a number in decimal | none |
+| `syPrintDecimal` | prints a number in decimal | none |
 | `syPrintBlanks` | prints blanks | none |
 | `syPrintClear` | clears the debug text screen and homes the cursor | none |
 
-`syPrint`, `syPrintHex` and `syPrintDec` print only while debug text is on;
+`syPrint`, `syPrintHex` and `syPrintDecimal` print only while debug text is on;
 `syPrintBlanks` and `syPrintClear` write to the screen either way.
 
 ### Link
@@ -525,7 +525,7 @@ start from wherever the last fade ended.
 | --- | --- | --- |
 | `sySerialInit` | sets the link port up and starts the exchange every tick | none |
 | `sySerialPollAndTransfer` | looks for the partner and, once there, makes one exchange | none |
-| `sySerialWaitForStatMask` | waits for status bits, then returns this console's place in the link | none |
+| `sySerialWaitForStatusMask` | waits for status bits, then returns this console's place in the link | none |
 | `sySerialRemoveIRQHandlers` | stops the exchange and takes the link's interrupts away | none |
 | `sySerialStartSend` | starts sending a block of memory, 20 bytes at a time | none |
 | `sySerialStartReceive` | starts receiving into a block of memory | none |
@@ -554,7 +554,7 @@ start from wherever the last fade ended.
 | `syResourceGetTableEntry` | a resource's address, from the resource directory | none |
 | `syOverlayLoad` | unpacks an overlay and fixes its long branches | none |
 | `syWindowLoadGraphics` | loads the window font and borders, their palette and the basic sprite palettes | none |
-| `sySndLoadReverbCode` | loads the mixer code for one reverb | none |
+| `sySoundLoadReverbCode` | loads the mixer code for one reverb | none |
 | `syGetLanguage` | the cartridge's language, from the header's game code | `slGetLanguage`, which asks the console |
 | `syDummyNoOperationHook` | does nothing with the number it is given | `slNoOperation`, which takes none |
 | `syDummyReturnZero` | does nothing and returns 0 | none |

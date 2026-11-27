@@ -48,7 +48,7 @@ typedef struct FLORA_WORK {
 	Sint32 y[FLORA_PETAL_COUNT];
 	Sint32 vx[FLORA_PETAL_COUNT];
 	Sint32 vy[FLORA_PETAL_COUNT];
-	Uint16 pal[FLORA_COLORS];
+	Uint16 palette[FLORA_COLORS];
 } FLORA_WORK;
 
 /* The petals' state, kept in the particles' memory. */
@@ -130,14 +130,14 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	Uint8					*canvas;
 	BATTLE_EFFECT_STATE		*state;
 	DRAW_RECTANGLE			 draw[2];
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 savedScroll;
 	BATTLE_BACKGROUND_STATE *backdrop;
 	Uint8					*motes;
 	Sint32					 bgX;
 	FIXED					 posX;
 	FIXED					 posY;
-	Sint32					 ang;
+	Sint32					 angle;
 	Sint32					 spin;
 	Sint32					 spread;
 	Sint32					 twist;
@@ -168,26 +168,26 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT			 fadeRingPoint;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	savedScroll = BgScrollWork[1].x;
 	backdrop = RamHeapSlots->battleBg;
 	petals = EffectScratch;
 	src = RamMapMetatileBuffer;
 	motes = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	btEffectFillWhiteBand();
 	state->transferMode = CANVAS_COPY;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	/* The battle flashes away; then the sky, the petals and Flora load. */
 	bgX = -80;
-	for(frm = 0; frm != SUMMON_OPENING_TICKS; frm++) {
-		if(frm == SUMMON_OPENING_LOAD_TICK) {
+	for(frame = 0; frame != SUMMON_OPENING_TICKS; frame++) {
+		if(frame == SUMMON_OPENING_LOAD_TICK) {
 			ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 			btEffectShowLivingTargets(state->args);
 			btBackgroundLoadStub(
 				BATTLE_BACKGROUND_FIXED, RESOURCE_VIOLET_SKY_BACKDROP, 0);
-			state->scrollTmr = 0;
+			state->scrollTimer = 0;
 			state->scrollInterval = 1;
 			state->scrollStepX = -3;
 			state->scrollStepY = 0;
@@ -200,22 +200,23 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			syDecompressTaggedLZ(resource, src);
 			cells = RamMapMetatileBuffer;
 			for(i = 0; i != FLORA_PETAL_PICTURE_COUNT; i++) {
-				SPR *obj = btEffectSprCreateWithTiles(
+				SPR *object = btEffectSpriteCreateWithTiles(
 					16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
-				state->sprs[FLORA_PETAL_SPRITES + i] = obj;
-				obj->image.pri = 2;
-				syWordsCopyEntry((void *)OBJ_TILES(obj),
+				state->sprites[FLORA_PETAL_SPRITES + i] = object;
+				object->image.priority = 2;
+				syWordsCopyEntry((void *)OBJ_TILES(object),
 					cells + i * OBJ_16X16_4BPP_BYTES, OBJ_16X16_4BPP_BYTES);
 				FLORA_STATE->tiles[i] =
-					((SPR *)state->sprs[FLORA_PETAL_SPRITES + i])->image.tile;
+					((SPR *)state->sprites[FLORA_PETAL_SPRITES + i])
+						->image.tile;
 			}
 			for(i = 0; i != FLORA_PETAL_COUNT - FLORA_PETAL_PICTURE_COUNT;
 				i++) {
-				SPR *obj = btEffectSprAcquire(
+				SPR *object = btEffectSpriteAcquire(
 					16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
-				state->sprs[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURE_COUNT +
-					i] = obj;
-				syWordsCopyEntry(obj, state->sprs[FLORA_PETAL_SPRITES],
+				state->sprites[FLORA_PETAL_SPRITES + FLORA_PETAL_PICTURE_COUNT +
+					i] = object;
+				syWordsCopyEntry(object, state->sprites[FLORA_PETAL_SPRITES],
 					offsetof(SPR, lastNo));
 			}
 			/* Each petal starts at a picture of its own. */
@@ -223,7 +224,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			phase = &FLORA_PETAL_PHASE(0);
 			for(; i != FLORA_PETAL_COUNT; i++, phase++) {
 				*phase = (syRandom() % FLORA_PETAL_PICTURE_COUNT) << 8;
-				((SPR *)state->sprs[FLORA_PETAL_SPRITES + i])->image.tile =
+				((SPR *)state->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
 					FLORA_STATE->tiles[*phase / FLORA_PHASE_ONE];
 			}
 			resource =
@@ -232,11 +233,11 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			syDecompressTaggedLZ(resource, src);
 			cells = RamMapMetatileBuffer;
 			for(i = 0; i != FLORA_FIGURE_PIECES; i++) {
-				SPR *obj = btEffectSprCreateWithTiles(
+				SPR *object = btEffectSpriteCreateWithTiles(
 					32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-				obj->image.pri = 2;
-				state->sprs[i] = obj;
-				syWordsCopyEntry((void *)OBJ_TILES(obj),
+				object->image.priority = 2;
+				state->sprites[i] = object;
+				syWordsCopyEntry((void *)OBJ_TILES(object),
 					cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
 			}
 			btResourceLoadAndDecompress(
@@ -273,7 +274,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	   again before they are read; the ROM keeps the stores. */
 	posX = 128;
 	posY = 44;
-	ang = 0;
+	angle = 0;
 	spin = FLORA_RING_SPIN;
 	spread = 0;
 	twist = 0;
@@ -293,14 +294,14 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	draw[0] = RamHeapSlots->ramCode;
-	for(frm = 0; frm != FLORA_TICKS &&
-		(!(PerWork.repeat & (KEY_A | KEY_B)) || frm <= 16);
-		frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != FLORA_TICKS &&
+		(!(PerWork.repeat & (KEY_A | KEY_B)) || frame <= 16);
+		frame++) {
+		if(frame == 0) {
 			syWordsClear((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			syWordsClearEntry(canvas, CANVAS_BYTES);
 			for(i = 0; i != FLORA_COLORS; i++) {
-				FLORA_STATE->pal[i] = RGB_WHITE;
+				FLORA_STATE->palette[i] = RGB_WHITE;
 			}
 			syWordsCopyEntry(
 				(void *)OBJ_PLTT, FloraSpritePalettes, FLORA_COLORS * 2);
@@ -310,14 +311,14 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		}
 		/* The canvas's colours turn a level a tick towards Mars Djinn's, then
 		   tan, then cyan. */
-		if(frm > 285) {
+		if(frame > 285) {
 			btEffectStepPaletteToResource(RESOURCE_CYAN_PALETTE);
-		} else if(frm > 199) {
+		} else if(frame > 199) {
 			btEffectStepPaletteToResource(RESOURCE_TAN_PALETTE);
-		} else if(frm > 180) {
+		} else if(frame > 180) {
 			btEffectStepPaletteToResource(RESOURCE_MARS_DJINN_SHEET);
 		}
-		if(frm == FLORA_WIDE_TICK) {
+		if(frame == FLORA_WIDE_TICK) {
 			REG_BG2PA = Q_8_8(0.5);
 			REG_BG2X = 0;
 			/* A quarter of each of the four glows: 8, 16, 32 and 48 pixels
@@ -335,7 +336,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		}
 		/* A glow of a random size flares by her hand each tick until she
 		   leaves. */
-		if((Uint32)(frm - FLORA_LAUNCH_TICK) <=
+		if((Uint32)(frame - FLORA_LAUNCH_TICK) <=
 			FLORA_LEAVE_TICK - FLORA_LAUNCH_TICK) {
 			Sint32 k = syRandom() & 3;
 			Sint32 n = FloraPetalSizes[k] * 2;
@@ -344,13 +345,13 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 				src + FloraPetalPictures[k], FLORA_GLOW_X, FLORA_GLOW_Y, n);
 		}
 		/* Flora fades in from white, a level a tick. */
-		shown = frm - FLORA_APPEAR_TICK;
+		shown = frame - FLORA_APPEAR_TICK;
 		if(shown < FLORA_FADE_IN_TICKS) {
 			Uint16 *resource =
 				syResourceGetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 
 			for(i = 0; i != FLORA_COLORS; i++, resource++) {
-				Sint32 c = FLORA_STATE->pal[i];
+				Sint32 c = FLORA_STATE->palette[i];
 				Sint32 b = RGB_BLUE((Uint16)c);
 				Sint32 g = RGB_GREEN((Uint16)c);
 				Sint32 r = RGB_RED(c);
@@ -368,7 +369,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 				if(r > tr) {
 					r--;
 				}
-				FLORA_STATE->pal[i] = RGB(r, g, b);
+				FLORA_STATE->palette[i] = RGB(r, g, b);
 			}
 			syWordsCopyEntry(
 				(void *)OBJ_PLTT, FloraSpritePalettes, FLORA_COLORS * 2);
@@ -386,19 +387,19 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		/* Flora circles about (152, 44), 24 pixels out across and 20 up and
 		   down, then drifts left and down; from tick 222 she trembles and the
 		   sky shakes, and as she leaves she flies up and away to the right. */
-		if(frm <= 119) {
+		if(frame <= 119) {
 			posX = sySin(TRIG_TURN * 205 / 256) * 24 + toFIXED(152);
 			posY = syCos(TRIG_TURN * 205 / 256) * 20 + toFIXED(44);
-		} else if(frm <= 179) {
-			Sint32 a = frm * 3 * 256 - TRIG_TURN * 19 / 32;
+		} else if(frame <= 179) {
+			Sint32 a = frame * 3 * 256 - TRIG_TURN * 19 / 32;
 
 			posX = sySin(a) * 24 + toFIXED(152);
 			posY = syCos(a) * 20 + toFIXED(44);
-		} else if(frm <= 221) {
+		} else if(frame <= 221) {
 			posX += -toFIXED(9) / 8;
 			posY += toFIXED(1) / 2;
-		} else if(frm < FLORA_LEAVE_TICK) {
-			Sint32 m = frm % 6;
+		} else if(frame < FLORA_LEAVE_TICK) {
+			Sint32 m = frame % 6;
 
 			if(m == 1) {
 				dx = 1;
@@ -422,16 +423,16 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 				dx = 0;
 				dy = 0;
 			}
-			if(frm % 4 == 0) {
+			if(frame % 4 == 0) {
 				BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
 			}
-			if(frm % 4 == 1) {
+			if(frame % 4 == 1) {
 				BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y - 2;
 			}
-			if(frm % 4 == 2) {
+			if(frame % 4 == 2) {
 				BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y + 2;
 			}
-			if(frm % 4 == 3) {
+			if(frame % 4 == 3) {
 				BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y + 2;
 			}
 		} else {
@@ -439,145 +440,145 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			posX += toFIXED(8);
 			posY += -toFIXED(6);
 		}
-		if(frm >= FLORA_APPEAR_TICK) {
+		if(frame >= FLORA_APPEAR_TICK) {
 			for(i = 0; i != FLORA_FIGURE_PIECES; i++) {
 				place.x = posX + toFIXED(i % FLORA_FIGURE_COLUMNS * 32 + dx);
 				place.y = posY + toFIXED(i / FLORA_FIGURE_COLUMNS * 32 + dy);
-				fdRenderApplyProjectedPlacementStub(state->sprs[i],
-					sySprPlacementValues(&place), (Sint32 *)&floraScale, 0);
+				fdRenderApplyProjectedPlacementStub(state->sprites[i],
+					sySpritePlacementValues(&place), (Sint32 *)&floraScale, 0);
 			}
 		}
 		/* Petals 0 to 5 blow along paths of their own and are put away off the
 		   screen as Flora appears. */
 		for(i = 0; i != FLORA_PETAL_COUNT; i++) {
-			Sint32 launchFrm =
+			Sint32 launchFrame =
 				FLORA_LAUNCH_TICK - FLORA_PATH_PETALS * 2 + i * 2;
 
 			if(i == 0) {
-				if(frm == 0) {
+				if(frame == 0) {
 					FLORA_STATE->x[i] = toFIXED(240);
 					FLORA_STATE->y[i] = toFIXED(48);
-				} else if(frm <= 47) {
+				} else if(frame <= 47) {
 					FLORA_STATE->x[i] += -toFIXED(3);
 					FLORA_STATE->y[i] += toFIXED(3) / 2;
-				} else if(frm <= 79) {
+				} else if(frame <= 79) {
 					FLORA_STATE->x[i] += -toFIXED(1);
 					FLORA_STATE->y[i] += -toFIXED(1);
-				} else if(frm < FLORA_APPEAR_TICK) {
+				} else if(frame < FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] += toFIXED(3);
 					/* DEAD: y moves by 0; the ROM keeps its load and store. */
 					FLORA_STATE->y[i] += 0;
 				}
-				if(frm == FLORA_APPEAR_TICK) {
+				if(frame == FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] = toFIXED(256);
 				}
 			} else if(i == 1) {
-				if(frm <= 27) {
+				if(frame <= 27) {
 					FLORA_STATE->x[i] = toFIXED(256);
 					FLORA_STATE->y[i] = toFIXED(48);
-				} else if(frm == 28) {
+				} else if(frame == 28) {
 					FLORA_STATE->x[i] = toFIXED(16);
 					FLORA_STATE->y[i] = toFIXED(32);
-				} else if(frm <= 62) {
+				} else if(frame <= 62) {
 					FLORA_STATE->x[i] += toFIXED(1.83924);
 					FLORA_STATE->y[i] += toFIXED(1.99183);
-				} else if(frm <= 79) {
+				} else if(frame <= 79) {
 					FLORA_STATE->x[i] += toFIXED(1.61036);
 					FLORA_STATE->y[i] += toFIXED(0.4026);
-				} else if(frm <= 141) {
+				} else if(frame <= 141) {
 					FLORA_STATE->x[i] += toFIXED(3);
 					/* DEAD: y moves by 0; the ROM keeps its load and store. */
 					FLORA_STATE->y[i] += 0;
 				}
-				if(frm == FLORA_APPEAR_TICK) {
+				if(frame == FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] = toFIXED(256);
 				}
 			} else if(i == 2) {
-				if(frm <= 49) {
+				if(frame <= 49) {
 					FLORA_STATE->x[i] = toFIXED(256);
 					FLORA_STATE->y[i] = toFIXED(48);
-				} else if(frm == 50) {
+				} else if(frame == 50) {
 					FLORA_STATE->x[i] = 0;
 					FLORA_STATE->y[i] = toFIXED(124);
-				} else if(frm <= 62) {
+				} else if(frame <= 62) {
 					FLORA_STATE->x[i] += toFIXED(4);
 					FLORA_STATE->y[i] += -toFIXED(5) / 4;
-				} else if(frm <= 93) {
+				} else if(frame <= 93) {
 					FLORA_STATE->x[i] += toFIXED(3);
 					FLORA_STATE->y[i] += toFIXED(3) / 4;
-				} else if(frm <= 125) {
+				} else if(frame <= 125) {
 					FLORA_STATE->x[i] += toFIXED(3);
 					FLORA_STATE->y[i] += -toFIXED(1);
 				}
-				if(frm == FLORA_APPEAR_TICK) {
+				if(frame == FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] = toFIXED(256);
 				}
 			} else if(i == 3) {
-				if(frm <= 49) {
+				if(frame <= 49) {
 					FLORA_STATE->x[i] = toFIXED(256);
 					FLORA_STATE->y[i] = toFIXED(48);
-				} else if(frm == 50) {
+				} else if(frame == 50) {
 					FLORA_STATE->x[i] = 0;
 					FLORA_STATE->y[i] = toFIXED(108);
-				} else if(frm <= 103) {
+				} else if(frame <= 103) {
 					FLORA_STATE->x[i] += toFIXED(3);
 					FLORA_STATE->y[i] += -toFIXED(5) / 4;
-				} else if(frm <= 135) {
+				} else if(frame <= 135) {
 					FLORA_STATE->x[i] += toFIXED(1);
 					FLORA_STATE->y[i] += toFIXED(1);
 				}
-				if(frm == FLORA_APPEAR_TICK) {
+				if(frame == FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] = toFIXED(256);
 				}
 			} else if(i == 4) {
-				if(frm <= 59) {
+				if(frame <= 59) {
 					FLORA_STATE->x[i] = toFIXED(256);
 					FLORA_STATE->y[i] = toFIXED(48);
-				} else if(frm == 60) {
+				} else if(frame == 60) {
 					FLORA_STATE->x[i] = toFIXED(16);
 					FLORA_STATE->y[i] = toFIXED(32);
-				} else if(frm <= 82) {
+				} else if(frame <= 82) {
 					FLORA_STATE->x[i] += toFIXED(4);
 					FLORA_STATE->y[i] += toFIXED(3);
-				} else if(frm <= 135) {
+				} else if(frame <= 135) {
 					FLORA_STATE->x[i] += toFIXED(4);
 				}
-				if(frm == FLORA_APPEAR_TICK) {
+				if(frame == FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] = toFIXED(256);
 				}
 			} else if(i == 5) {
-				if(frm <= 85) {
+				if(frame <= 85) {
 					FLORA_STATE->x[i] = toFIXED(256);
 					FLORA_STATE->y[i] = toFIXED(48);
-				} else if(frm == 86) {
+				} else if(frame == 86) {
 					FLORA_STATE->x[i] = toFIXED(144);
 					FLORA_STATE->y[i] = toFIXED(32);
-				} else if(frm <= 135) {
+				} else if(frame <= 135) {
 					FLORA_STATE->x[i] += toFIXED(1);
 					FLORA_STATE->y[i] += toFIXED(3);
 				}
-				if(frm == FLORA_APPEAR_TICK) {
+				if(frame == FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] = toFIXED(256);
 				}
 			} else if(i < FLORA_BURST_PETAL) {
 				/* Petals 6 to 15 wait off the screen; then each streams down
 				   and to the left from Flora's hand, and starts again from
 				   there each time it leaves the screen, until she leaves. */
-				if(frm == 0) {
+				if(frame == 0) {
 					FLORA_STATE->x[i] = toFIXED(248);
-					FLORA_STATE->y[i] = frm;
-				} else if(frm == launchFrm) {
+					FLORA_STATE->y[i] = frame;
+				} else if(frame == launchFrame) {
 					FLORA_STATE->x[i] = toFIXED(syRandom() & 7) + toFIXED(92);
 					FLORA_STATE->y[i] = toFIXED(syRandom() & 7) + toFIXED(104);
 					FLORA_STATE->vx[i] =
 						(syRandom() & TRIG_ANGLE_MASK) * 12 - toFIXED(12);
 					FLORA_STATE->vy[i] = toFIXED(4);
-				} else if(frm >= launchFrm) {
+				} else if(frame >= launchFrame) {
 					if(FLORA_STATE->x[i] >= -toFIXED(16) &&
 						FLORA_STATE->y[i] <= toFIXED(168)) {
 						FLORA_STATE->x[i] += FLORA_STATE->vx[i];
 						FLORA_STATE->y[i] += FLORA_STATE->vy[i];
-					} else if(frm < FLORA_LEAVE_TICK) {
+					} else if(frame < FLORA_LEAVE_TICK) {
 						FLORA_STATE->x[i] =
 							toFIXED(syRandom() & 7) + toFIXED(92);
 						FLORA_STATE->y[i] =
@@ -589,10 +590,10 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 				   and again from her hand as she leaves, at 1 to 3 pixels a
 				   tick (in 8.8), slowing until they are put away off the
 				   screen. */
-				if(frm == 0) {
+				if(frame == 0) {
 					FLORA_STATE->x[i] = toFIXED(248);
-					FLORA_STATE->y[i] = frm;
-				} else if(frm == FLORA_APPEAR_TICK) {
+					FLORA_STATE->y[i] = frame;
+				} else if(frame == FLORA_APPEAR_TICK) {
 					Uint32 a = syRandom() & TRIG_ANGLE_MASK;
 					Sint32 speed = ((syRandom() & 255) << 1) + Q_8_8(1);
 
@@ -600,7 +601,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 					FLORA_STATE->y[i] = toFIXED(syRandom() & 7) + toFIXED(92);
 					FLORA_STATE->vx[i] = sySin(a) * speed / Q_8_8(1);
 					FLORA_STATE->vy[i] = syCos(a) * speed / Q_8_8(1);
-				} else if(frm == FLORA_LEAVE_TICK) {
+				} else if(frame == FLORA_LEAVE_TICK) {
 					Uint32 a = syRandom() & TRIG_ANGLE_MASK;
 					Sint32 speed = ((syRandom() & 255) << 1) + Q_8_8(1);
 
@@ -608,7 +609,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 					FLORA_STATE->y[i] = toFIXED(syRandom() & 7) + toFIXED(104);
 					FLORA_STATE->vx[i] = sySin(a) * speed / Q_8_8(1);
 					FLORA_STATE->vy[i] = syCos(a) * speed / Q_8_8(1);
-				} else if(frm >= FLORA_APPEAR_TICK) {
+				} else if(frame >= FLORA_APPEAR_TICK) {
 					FLORA_STATE->x[i] += FLORA_STATE->vx[i];
 					FLORA_STATE->y[i] += FLORA_STATE->vy[i];
 					FLORA_STATE->vx[i] =
@@ -635,20 +636,20 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 					(FLORA_PETAL_PHASE(i) + FLORA_PHASE_ONE / 2) %
 					(FLORA_PETAL_PICTURE_COUNT << 8);
 			}
-			((SPR *)state->sprs[FLORA_PETAL_SPRITES + i])->image.tile =
+			((SPR *)state->sprites[FLORA_PETAL_SPRITES + i])->image.tile =
 				FLORA_STATE->tiles[FLORA_PETAL_PHASE(i) >> 8];
 		}
 		for(i = 0; i != FLORA_PETAL_COUNT; i++) {
 			place.x = FLORA_STATE->x[i] - toFIXED(FLORA_PETAL_SIZE / 2);
 			place.y = FLORA_STATE->y[i] - toFIXED(FLORA_PETAL_SIZE / 2);
 			fdRenderApplyProjectedPlacementStub(
-				state->sprs[FLORA_PETAL_SPRITES + i],
-				sySprPlacementValues(&place), (Sint32 *)&floraScale, 0);
+				state->sprites[FLORA_PETAL_SPRITES + i],
+				sySpritePlacementValues(&place), (Sint32 *)&floraScale, 0);
 		}
-		if(frm == 114) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 114) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
-		verts = syHeapAllocEWRAM(512);
+		verts = syHeapAllocateEWRAM(512);
 		model = btRenderAllocateModelList(1);
 		texture.logWidth = 7;
 		texture.logHeight = 7;
@@ -660,7 +661,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		/* Each ring of light grows an eighth of its size a tick as it turns,
 		   and fades from its eighth tick. */
 		for(i = 0; i != FLORA_LIGHT_RINGS; i++) {
-			Sint32 age = frm - FloraBloomTicks[i];
+			Sint32 age = frame - FloraBloomTicks[i];
 
 			if(age >= 0) {
 				Sint32 scale = age * (toFIXED(1) / 8);
@@ -678,7 +679,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 					syRotZ(FloraBloomRolls[i]);
 					syRotX(FloraBloomPitches[i]);
 					syMatrixScaleUniform(scale);
-					syRotY(frm * (TRIG_TURN / 32));
+					syRotY(frame * (TRIG_TURN / 32));
 					btRenderTransformVertices(
 						BattleEffectGroundSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
@@ -690,36 +691,36 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		syInitMatrix();
 		syRotX(TRIG_TURN * 37 / 64);
 		syRotY(TRIG_TURN * 13 / 32);
-		if(frm == FLORA_RING_TICK) {
+		if(frame == FLORA_RING_TICK) {
 			spin = FLORA_RING_SPIN;
-			ang = 0;
+			angle = 0;
 		}
-		syRotZ(ang);
-		if(frm == FLORA_RING_TICK) {
-			sySndPlayStub(SE_SWIRL);
+		syRotZ(angle);
+		if(frame == FLORA_RING_TICK) {
+			sySoundPlayStub(SE_SWIRL);
 		}
-		if(frm == FLORA_LAUNCH_TICK) {
-			sySndPlayStub(SE_LAUNCH);
+		if(frame == FLORA_LAUNCH_TICK) {
+			sySoundPlayStub(SE_LAUNCH);
 		}
-		if(frm == FLORA_LEAVE_TICK) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == FLORA_LEAVE_TICK) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
 		/* The ring of motes closes on its centre as it spins; until tick 194
 		   its arms twist and spread, and from tick 208 the motes of each arm
 		   shrink into the centre one by one, the outermost first. */
-		if((Uint32)(frm - FLORA_RING_TICK) < FLORA_RING_TICKS) {
-			Sint32 ringRadius = 80 - (frm - FLORA_RING_TICK) / 2;
+		if((Uint32)(frame - FLORA_RING_TICK) < FLORA_RING_TICKS) {
+			Sint32 ringRadius = 80 - (frame - FLORA_RING_TICK) / 2;
 
-			if(frm == FLORA_RING_TICK) {
+			if(frame == FLORA_RING_TICK) {
 				spread = 0;
 				twist = 0;
 			}
-			if(frm <= 194) {
+			if(frame <= 194) {
 				twist += TRIG_TURN / 2048;
 				spread += 3;
 			}
 			spin += TRIG_TURN / 4096;
-			ang += spin;
+			angle += spin;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				BLITTER_ADDITIVE);
 			draw[1] = RamHeapSlots->ramCodePaired;
@@ -734,9 +735,9 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 
 				size = 7;
 				for(order = 0; order != FLORA_ARM_MOTES; order++) {
-					if(frm >= 208 + order * 4 &&
+					if(frame >= 208 + order * 4 &&
 						i % FLORA_ARM_MOTES == FLORA_ARM_MOTES - 1 - order) {
-						Sint32 late = frm - order * 4 - 208;
+						Sint32 late = frame - order * 4 - 208;
 
 						radius = ringRadius - late * 4;
 						if(radius < 0) {
@@ -760,8 +761,8 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			}
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 		}
-		if((Uint32)(frm - FLORA_WHEEL_TICK) < FLORA_WHEEL_TICKS) {
-			Sint32 glow = frm - FLORA_WHEEL_TICK;
+		if((Uint32)(frame - FLORA_WHEEL_TICK) < FLORA_WHEEL_TICKS) {
+			Sint32 glow = frame - FLORA_WHEEL_TICK;
 			Sint32 radius;
 			Sint32 level;
 			Sint32 centerX;
@@ -774,8 +775,8 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			Sint32 x2;
 			Sint32 y2;
 
-			if(frm > 247) {
-				glow = 532 - frm * 2;
+			if(frame > 247) {
+				glow = 532 - frame * 2;
 			} else if(glow > FLORA_WHEEL_GLOW) {
 				glow = FLORA_WHEEL_GLOW;
 			}
@@ -785,8 +786,8 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			driftY = FLORA_WHEEL_GLOW - level;
 			dot[0] = level;
 			dot[1] = level;
-			syRotZ(frm * (TRIG_TURN / 64));
-			if(frm <= 221) {
+			syRotZ(frame * (TRIG_TURN / 64));
+			if(frame <= 221) {
 				syRotX(driftY * (TRIG_TURN / 64));
 			}
 			if(driftX < 0) {
@@ -819,14 +820,14 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			}
 			/* An echo of the wheel spreads from it and fades until Flora
 			   leaves. */
-			if((Uint32)(frm - 228) <= FLORA_LEAVE_TICK - 228) {
+			if((Uint32)(frame - 228) <= FLORA_LEAVE_TICK - 228) {
 				Sint32 x1b;
 				Sint32 y1b;
 				Sint32 x2b;
 				Sint32 y2b;
 
-				level = 256 - frm;
-				radius = frm - 204;
+				level = 256 - frame;
+				radius = frame - 204;
 				dot[0] = level;
 				dot[1] = level;
 				for(i = 0; i != FLORA_WHEEL_DOTS; i++) {
@@ -858,11 +859,11 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectAdvanceScrollOnInterval);
 	BgScrollWork[1].x = savedScroll;
 	backdrop->busy = 0;
-	btEffectSetupBlendedDisp();
+	btEffectSetupBlendedDisplay();
 	for(i = 0; i != FLORA_PETAL_SPRITES + FLORA_PETAL_COUNT; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
-	syPaletteLoadBasicSprCols();
+	syPaletteLoadBasicSpriteColors();
 	syDMAXCopy((const void *)OBJ_PLTT,
 		(void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
@@ -896,19 +897,19 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		for(picture = 0; picture != FLORA_PETAL_PICTURE_COUNT; picture++) {
 			for(tileRow = 0; tileRow != 2; tileRow++) {
 				for(tileColumn = 0; tileColumn != 2; tileColumn++) {
-					Sint32 ofs;
+					Sint32 offset;
 
 					t = picture * 2;
 					t += tileRow;
 					t <<= 4;
 					t += tileColumn;
 					k = 0;
-					ofs = t << 3;
-					for(; k != 8; k++, ofs += FLORA_PETAL_SIZE) {
+					offset = t << 3;
+					for(; k != 8; k++, offset += FLORA_PETAL_SIZE) {
 						for(m = 0; m != 4; m++) {
 							hi = state->sheet[i] >> 4 & 0xf;
-							petals[ofs + m * 2] = state->sheet[i] & 0xf;
-							petals[ofs + m * 2 + 1] = hi;
+							petals[offset + m * 2] = state->sheet[i] & 0xf;
+							petals[offset + m * 2 + 1] = hi;
 							i++;
 						}
 					}
@@ -916,48 +917,49 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			}
 		}
 	}
-	for(frm = 0; frm != FLORA_STORM_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != FLORA_STORM_TICKS; frame++) {
+		if(frame == 0) {
 			p = (PARTICLE *)src;
 			for(i = 0; i != FLORA_STORM_PETALS; i++, p++) {
 				p->x = INTtoFIXED((syRandom() & 63) + 96);
 				p->y = toFIXED(-(syRandom() & 63));
-				p->velX = -((syRandom() & 255) + 128) << 7;
-				p->velY = ((syRandom() & 255) + 128) << 9;
+				p->velocityX = -((syRandom() & 255) + 128) << 7;
+				p->velocityY = ((syRandom() & 255) + 128) << 9;
 				p->variant = syRandom() & 31;
 			}
-			for(i = 0; i != args->tgtCnt; i++) {
+			for(i = 0; i != args->targetCount; i++) {
 				state->particles[i].variant = (syRandom() & 15) + 1;
 			}
 		}
 		/* Each petal tumbles a picture every four ticks as it falls. */
 		p = (PARTICLE *)src;
 		for(i = 0; i != FLORA_STORM_DRAWN; i++, p++) {
-			if(frm > i) {
+			if(frame > i) {
 				draw[0](canvas,
 					state->sheet + FLORA_STORM_PICTURES +
 						(p->variant / 4 % FLORA_PETAL_PICTURE_COUNT << 8),
 					FIXED_INTEGER_PART(p->x) - 4, FIXED_INTEGER_PART(p->y),
 					FLORA_PETAL_SIZE, FLORA_PETAL_SIZE);
 				btParticleAdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
-				p->velX += -toFIXED(1) / 16;
+				p->velocityX += -toFIXED(1) / 16;
 				p->variant++;
 			}
 		}
-		if(frm == 56) {
+		if(frame == 56) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
-		if((Uint32)(frm - 57) <= 50) {
-			for(i = 0; i != args->tgtCnt; i++) {
+		if((Uint32)(frame - 57) <= 50) {
+			for(i = 0; i != args->targetCount; i++) {
 				PARTICLE *s = &state->particles[i];
 
 				if(--s->variant == 0) {
 					s->variant = FLORA_HIT_INTERVAL;
-					state->shakeFrm = 4;
-					sySndPlayStub(SE_IMPACT);
-					btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_NUDGE);
+					state->shakeFrame = 4;
+					sySoundPlayStub(SE_IMPACT);
+					btMotionApplyKnockbackStub(
+						args->targets[i], KNOCKBACK_NUDGE);
 					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
+						args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 				}
 			}
 		}
@@ -980,14 +982,14 @@ UNUSED void btEffectStartActorMotionOutward(Sint32 id)
 	FIXED		   x;
 
 	slot = btObjectGetStub(id);
-	object = slot->obj;
+	object = slot->object;
 	enemy = syUnitGet(id)->enemyId;
 	if(enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
 		enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
 		object->acceleration = toFIXED(2);
 		object->speedLimit = toFIXED(8);
 		if(object->y < toFIXED(10))
-			object->velY += toFIXED(5) / 2;
+			object->velocityY += toFIXED(5) / 2;
 		fdActorStartIdleStub(object);
 		if(slot->anchorX > 0)
 			x = object->x + toFIXED(15);
@@ -1019,15 +1021,15 @@ UNUSED void btEffectStartActorMotionOutward(Sint32 id)
    Abilities: Sabre Dance. */
 void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	MODEL_TEXTURE		 texture;
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	PARTICLE			*blade;
 	RENDER_MODEL		*quad;
 	void				*vertices;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
-	Sint32				 strikeFrm;
+	Sint32				 strikeFrame;
 
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(
@@ -1037,15 +1039,15 @@ void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	/* Centre the canvas's x 64 on the target. */
-	btObjectGetStub(args->tgts[0]);
-	btEffectPosProjectBattler(args->tgts[0], &tgt);
+	btObjectGetStub(args->targets[0]);
+	btEffectPosProjectBattler(args->targets[0], &target);
 	REG_BG2PA = Q_8_8(1);
-	REG_BG2X = (64 - tgt.x) << 8;
+	REG_BG2X = (64 - target.x) << 8;
 
-	for(frm = 0; frm != SABRE_DANCE_TICKS; frm++) {
+	for(frame = 0; frame != SABRE_DANCE_TICKS; frame++) {
 		/* The first tick lines the blades up below the canvas, each spinning
 		   the other way from its neighbour. */
-		if(frm == 0) {
+		if(frame == 0) {
 			FIXED  y;
 			Sint32 zero;
 
@@ -1053,11 +1055,11 @@ void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 				i != SABRE_DANCE_PARTICLES; i++, blade++) {
 				SET_POSITION(
 					blade, INTtoFIXED((syRandom() & 63) + 32), y, syRandom());
-				blade->velX = zero;
-				blade->velY = -((syRandom() & 31) + 32) << 10;
-				blade->velZ = (syRandom() & 0x3ff) + toFIXED(1) / 64;
+				blade->velocityX = zero;
+				blade->velocityY = -((syRandom() & 31) + 32) << 10;
+				blade->velocityZ = (syRandom() & 0x3ff) + toFIXED(1) / 64;
 				if(i & 1)
-					blade->velZ = -blade->velZ;
+					blade->velocityZ = -blade->velocityZ;
 				blade->variant = zero;
 				y += toFIXED(8);
 			}
@@ -1065,26 +1067,27 @@ void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 		syInitMatrix();
 		ProjectionWork.centerY = 104;
 
-		for(i = 0, strikeFrm = 20; i != 8; i++, strikeFrm += 6) {
-			if(frm == strikeFrm) {
-				state->shakeFrm = 4;
-				sySndPlayStub(SE_IMPACT);
+		for(i = 0, strikeFrame = 20; i != 8; i++, strikeFrame += 6) {
+			if(frame == strikeFrame) {
+				state->shakeFrame = 4;
+				sySoundPlayStub(SE_IMPACT);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 6);
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 6);
 				btEffectStartActorMotion(
-					args->tgts[0], 1, 0, 0, toFIXED(3), 100);
+					args->targets[0], 1, 0, 0, toFIXED(3), 100);
 			}
 		}
-		if(frm == SABRE_DANCE_LAST_HIT) {
-			state->shakeFrm = 4;
+		if(frame == SABRE_DANCE_LAST_HIT) {
+			state->shakeFrame = 4;
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 10);
-			btEffectStartActorMotion(args->tgts[0], 1, 0, 0, toFIXED(3), 100);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 10);
+			btEffectStartActorMotion(
+				args->targets[0], 1, 0, 0, toFIXED(3), 100);
 		}
 
 		/* One textured quad, drawn once for each pair of blades. */
-		vertices = syHeapAllocEWRAM(32);
+		vertices = syHeapAllocateEWRAM(32);
 		quad = btRenderAllocateModelList(1);
 		quad->shade = 0;
 		texture.logWidth = 5;
@@ -1098,19 +1101,19 @@ void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 			i++, blade++) {
 			/* The fall: from 48 pixels above the canvas, fanned out by angle
 			   and closing on the middle. */
-			if(frm == SABRE_DANCE_FALL_TICK) {
-				Sint32 ang;
+			if(frame == SABRE_DANCE_FALL_TICK) {
+				Sint32 angle;
 				Sint32 drift;
 
 				blade->y = -toFIXED(48);
-				ang = i * (TRIG_TURN / 64) + (syRandom() & 0x3ff) -
+				angle = i * (TRIG_TURN / 64) + (syRandom() & 0x3ff) -
 					TRIG_TURN * 9 / 128;
-				blade->x = ang * (toFIXED(1) / 64) + toFIXED(64);
-				blade->z = ang;
-				drift = -ang << 5;
-				blade->velY = toFIXED(12);
-				blade->velX = drift;
-				blade->velZ = 0;
+				blade->x = angle * (toFIXED(1) / 64) + toFIXED(64);
+				blade->z = angle;
+				drift = -angle << 5;
+				blade->velocityY = toFIXED(12);
+				blade->velocityX = drift;
+				blade->velocityZ = 0;
 			}
 			syInitMatrix();
 			syTranslate(blade->x - toFIXED(64), blade->y - toFIXED(64), 0);
@@ -1118,7 +1121,7 @@ void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 			syRotZ(blade->z);
 			btRenderTransformVertices(SabreDanceDaggerCorners, vertices, 4);
 			btRenderDrawModelList(quad);
-			if(frm >= SABRE_DANCE_FALL_TICK)
+			if(frame >= SABRE_DANCE_FALL_TICK)
 				btParticleAdvanceWithGravity3D(blade, PARTICLE_DAMPING_NONE, 0);
 			else
 				btParticleAdvanceWithGravity3D(
@@ -1139,15 +1142,15 @@ void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 
 /* Sets the OBJ priority of every motion record of the battle object, unless the
    object is fading out. */
-void btObjectSetRecordPriority(Sint32 objectId, Sint32 pri)
+void btObjectSetRecordPriority(Sint32 objectId, Sint32 priority)
 {
 	BATTLE_OBJECT *slot = btObjectGetStub(objectId);
 	PLACED_SPR	  *record;
 	Sint32		   i;
 
-	for(i = 0; (record = btActorGetSprStub(slot->obj, i)) != NULL; i++) {
+	for(i = 0; (record = btActorGetSpriteStub(slot->object, i)) != NULL; i++) {
 		if(slot->fading == 0)
-			record->pri = pri;
+			record->priority = priority;
 	}
 }
 
@@ -1177,18 +1180,18 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*canvas;
 	SCREEN_POINT		 caster;
-	SCREEN_POINT		 tgt;
-	Sint32				 frm;
+	SCREEN_POINT		 target;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
-	MOTION_OBJECT *tgtObject;
+	MOTION_OBJECT *targetObject;
 	MOTION_OBJECT *casterObject;
 	BATTLE_STATE  *battle;
 	PARTICLE	  *particle;
 	Sint32		   i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -1200,42 +1203,42 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	tgtObject = btObjectGetStub(args->tgts[0])->obj;
-	casterObject = btObjectGetStub(args->user)->obj;
+	targetObject = btObjectGetStub(args->targets[0])->object;
+	casterObject = btObjectGetStub(args->user)->object;
 	battle = RamHeapSlots->battleState;
-	battle->keepObjPriorities = 1;
+	battle->keepObjectPriorities = 1;
 
-	for(frm = 0; frm != BACKSTAB_TICKS; frm++) {
+	for(frame = 0; frame != BACKSTAB_TICKS; frame++) {
 		btObjectSetRecordPriority(args->user, 3);
 
 		/* The first tick sends the smoke out from the caster's feet. */
-		if(frm == 0) {
+		if(frame == 0) {
 			btEffectPosProjectBattler(args->user, &caster);
 			for(i = 0; i != SMOKE_COUNT; i++) {
-				Sint32 ang;
+				Sint32 angle;
 				Sint32 speed;
 
 				particle = &state->particles[i];
 				particle->variant = 0;
 				particle->x = toFIXED(caster.x / 2);
 				particle->y = INTtoFIXED(caster.y - 8);
-				ang = syRandom();
+				angle = syRandom();
 				speed = (syRandom() & 255) + 127;
-				particle->velX = (sySin(ang) * speed) >> 5;
-				particle->velY = (syCos(ang) * speed) >> 5;
+				particle->velocityX = (sySin(angle) * speed) >> 5;
+				particle->velocityY = (syCos(angle) * speed) >> 5;
 			}
-			sySndPlayStub(SE_WHOOSH);
+			sySoundPlayStub(SE_WHOOSH);
 		}
 
 		/* The smoke rises through its six 24x48 pictures, slowing; the caster
 		   starts 160 percent of the way out to the target. */
 		/* DEAD: always true, as tick counts up from 0; the ROM keeps the
 		   test. */
-		if(frm >= 0) {
+		if(frame >= 0) {
 			PARTICLE *puff;
 
 			for(i = 0, puff = state->particles; i != SMOKE_DRAWN; i++, puff++) {
-				if(frm >= i / 8 && puff->variant < SMOKE_PUFF_TICKS) {
+				if(frame >= i / 8 && puff->variant < SMOKE_PUFF_TICKS) {
 					draw[0](canvas,
 						state->sheet +
 							(puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
@@ -1246,52 +1249,52 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 					puff->variant++;
 				}
 			}
-			if(frm == 0) {
-				casterObject->z = tgtObject->z;
-				casterObject->x = tgtObject->x * 160 / 100;
-				casterObject->ang = tgtObject->ang;
+			if(frame == 0) {
+				casterObject->z = targetObject->z;
+				casterObject->x = targetObject->x * 160 / 100;
+				casterObject->angle = targetObject->angle;
 			}
 		}
 
-		if(frm == BACKSTAB_LEAP_TICK) {
-			btEffectSetApproachMotion(args->user, args->tgts[0], 16, 120);
-			casterObject->velY = toFIXED(7);
+		if(frame == BACKSTAB_LEAP_TICK) {
+			btEffectSetApproachMotion(args->user, args->targets[0], 16, 120);
+			casterObject->velocityY = toFIXED(7);
 		}
 
 		/* The strike: pink palette, the caster lands at 120 percent and the
 		   target is pushed to 80, and the stars burst upward from it. */
-		if(frm == BACKSTAB_STRIKE_TICK) {
+		if(frame == BACKSTAB_STRIKE_TICK) {
 			syWordsCopyEntry((void *)BG_PLTT,
 				syResourceGetTableEntry(RESOURCE_PINK_STAR_SHEET),
 				SHEET_PALETTE_BYTES);
-			casterObject->z = tgtObject->z;
-			casterObject->x = tgtObject->x * 120 / 100;
-			tgtObject->x = tgtObject->x * 80 / 100;
-			casterObject->ang = tgtObject->ang;
-			btEffectPosProjectScaledBattler(args->tgts[0], &tgt);
+			casterObject->z = targetObject->z;
+			casterObject->x = targetObject->x * 120 / 100;
+			targetObject->x = targetObject->x * 80 / 100;
+			casterObject->angle = targetObject->angle;
+			btEffectPosProjectScaledBattler(args->targets[0], &target);
 			for(i = 0, particle = &state->particles[SMOKE_COUNT];
 				i != STAR_COUNT; i++, particle++) {
-				Sint32 ang;
+				Sint32 angle;
 				Sint32 speed;
 
 				particle->variant = (syRandom() & 15) + 16;
-				particle->x = toFIXED(tgt.x / 2);
-				particle->y = INTtoFIXED(tgt.y - 8);
-				ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+				particle->x = toFIXED(target.x / 2);
+				particle->y = INTtoFIXED(target.y - 8);
+				angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 				speed = (syRandom() & 255) + 127;
-				particle->velX = (sySin(ang) * speed) >> 7;
-				particle->velY = (syCos(ang) * speed) >> 5;
+				particle->velocityX = (sySin(angle) * speed) >> 7;
+				particle->velocityY = (syCos(angle) * speed) >> 5;
 			}
-			state->shakeFrm = 4;
+			state->shakeFrame = 4;
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
 			btEffectStartActorMotion(
-				args->tgts[0], 1, toFIXED(8), toFIXED(20), toFIXED(6), 10);
+				args->targets[0], 1, toFIXED(8), toFIXED(20), toFIXED(6), 10);
 		}
 
 		/* The stars twinkle through their six pictures as they fly. */
-		if(frm >= BACKSTAB_STRIKE_TICK && frm < BACKSTAB_STRIKE_TICK + 24) {
+		if(frame >= BACKSTAB_STRIKE_TICK && frame < BACKSTAB_STRIKE_TICK + 24) {
 			PARTICLE *star;
 
 			for(i = 0, star = &state->particles[SMOKE_COUNT]; i != STAR_COUNT;
@@ -1299,7 +1302,7 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 				if(star->variant >= 0) {
 					draw[0](canvas,
 						state->sheet + STAR_PICTURES +
-							(((frm + i) / 4) % 6) * 256,
+							(((frame + i) / 4) % 6) * 256,
 						FIXED_INTEGER_PART(star->x) - 8,
 						FIXED_INTEGER_PART(star->y) - 8, 16, 16);
 					btParticleAdvanceWithGravity2D(star, 56, 0);
@@ -1312,7 +1315,7 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 		EFFECT_END_TICK(state);
 	}
 
-	battle->keepObjPriorities = 0;
+	battle->keepObjectPriorities = 0;
 	syCloseEvent((Sint32)btEffectTransferCanvas);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	btEffectEndCanvasLayer();

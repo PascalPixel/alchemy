@@ -200,7 +200,7 @@ static void scVaultRevisitGreetWarriorGuy(void)
 	ACTOR *actor = fdActorGet(ACTOR_BOY_ROUND_THE_WELL);
 	Uint16 facing = actor->facing;
 
-	actor->tmr |= VILLAGER_TALKED_TO;
+	actor->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultWarriorGuy);
 	fdActorSetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
@@ -220,7 +220,7 @@ static void scVaultRevisitGreetWarriorGuy(void)
 	actor->facing = facing;
 	sySynch(1);
 	fdScriptEnd();
-	actor->tmr = VILLAGER_IS_BOY;
+	actor->timer = VILLAGER_IS_BOY;
 	gmFlagSet(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
 }
 
@@ -233,7 +233,7 @@ static void scVaultRevisitWishEldersWereBrave(void)
 
 	actor = fdActorGet(ACTOR_GIRL_ROUND_THE_WELL);
 	originalFacing = actor->facing;
-	actor->tmr |= VILLAGER_TALKED_TO;
+	actor->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultWishVaultsElders);
 	fdActorSetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
@@ -244,7 +244,7 @@ static void scVaultRevisitWishEldersWereBrave(void)
 	actor->facing = originalFacing;
 	sySynch(1);
 	fdScriptEnd();
-	actor->tmr = 0;
+	actor->timer = 0;
 }
 
 /* The strongman by the rope bridge asks, "Oh, so did you guys check out the
@@ -323,7 +323,7 @@ static void scVaultRevisitReadMindOnWinter(void)
    If he has not spoken to them yet, he greets them aloud instead. */
 static void scVaultRevisitReadMindOnFeelingBrave(void)
 {
-	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->tmr |= VILLAGER_TALKED_TO;
+	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	if(fdScriptGetFlag(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE) != 0) {
 		fdScriptSetMessageId(MsgVaultWatchingGuysMakes);
@@ -333,19 +333,19 @@ static void scVaultRevisitReadMindOnFeelingBrave(void)
 		gmFlagSet(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
 	}
 	fdScriptEnd();
-	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->tmr = VILLAGER_IS_BOY;
+	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->timer = VILLAGER_IS_BOY;
 }
 
 /* Mind Read on the girl walking round the well: "Grown-ups always get so scared
    whenever anything happens. I get so tired of that..." */
 static void scVaultRevisitReadMindOnScaredGrownUps(void)
 {
-	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->tmr |= VILLAGER_TALKED_TO;
+	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
 	fdScriptStart();
 	fdScriptSetMessageId(MsgVaultGrownUpsAlways);
 	scVaultRevisitShowStandingActorMessage(ACTOR_GIRL_ROUND_THE_WELL);
 	fdScriptEnd();
-	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->tmr = 0;
+	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
 }
 
 /* Mind Read on the strongman by the rope bridge: it's not easy to grab the key
@@ -385,26 +385,26 @@ static void scVaultRevisitReadMindOnJailKey(void)
 	}
 }
 
-/* Jumps the actor to (x, z), launched upward at `velY`, and waits there
+/* Jumps the actor to (x, z), launched upward at `velocityY`, and waits there
    until it lands, a second at most. */
 static void scVaultRevisitJumpActorToAndWait(
-	Sint32 actorId, Sint32 x, Sint32 z, FIXED velY)
+	Sint32 actorId, Sint32 x, Sint32 z, FIXED velocityY)
 {
 	ACTOR *jumpingActor = fdActorGet(actorId);
 	Sint32 ticks;
 	fdActorSetSpeed(actorId, 3);
 	jumpingActor->gravity = toFIXED(1) / 2;
 	jumpingActor->bounce = 0;
-	jumpingActor->velY = velY;
-	fdActorSetSprFlags(jumpingActor, 0);
+	jumpingActor->velocityY = velocityY;
+	fdActorSetSpriteFlags(jumpingActor, 0);
 	fdActorMoveToAndWait(actorId, x, z);
 	fdActorSetPos(actorId, x, z);
 	for(ticks = TICKS_PER_SECOND; ticks != 0; --ticks) {
 		sySynch(1);
-		if((FIXEDtoINT(jumpingActor->velY)) == 0)
+		if((FIXEDtoINT(jumpingActor->velocityY)) == 0)
 			break;
 	}
-	fdActorSetSprFlags(jumpingActor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(jumpingActor, SPRITE_FLAG_SHADOW);
 	jumpingActor->gravity = toFIXED(1);
 }
 
@@ -415,7 +415,7 @@ static void scVaultRevisitJumpActorToAndWait(
 static void scVaultRevisitRingBell(void)
 {
 	fdScriptStart();
-	sySndPlay(SE_BELL);
+	sySoundPlay(SE_BELL);
 	fdScriptWait(40);
 	if(fdScriptGetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
 		fdActorSetAttachedEffect(
@@ -570,10 +570,10 @@ Sint32 scInit(void)
 	sySynch(1);
 	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->update =
 		(void (*)(ACTOR *))scVaultUpdateWalkingVillager;
-	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->tmr = VILLAGER_IS_BOY;
+	fdActorGet(ACTOR_BOY_ROUND_THE_WELL)->timer = VILLAGER_IS_BOY;
 	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->update =
 		(void (*)(ACTOR *))scVaultUpdateWalkingVillager;
-	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->tmr = 0;
+	fdActorGet(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;
 	if(gmFlagGet(FLAG_VAULT_DOG_SHOWN_PASSAGE))
 		fdActorSetPos(ACTOR_VAULT_DOG, 216, 392);
 	if(MainRoutineStateWork.entrance <= VAULT_REVISIT_NORTH_UNUSED &&

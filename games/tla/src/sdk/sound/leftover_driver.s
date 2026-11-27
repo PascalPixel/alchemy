@@ -81,7 +81,7 @@
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sySndUpdateBGMRamps + 0xc4
+	bl	sySoundUpdateBGMRamps + 0xc4
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c0174
@@ -379,7 +379,7 @@ MusicTrackHandleNoteLeftover:
 .L_081c02fe:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	sySndUpdateBGMRamps + 0x40
+	bl	sySoundUpdateBGMRamps + 0x40
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]

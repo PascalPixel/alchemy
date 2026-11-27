@@ -107,11 +107,11 @@ typedef struct PUSH_TARGET {
 	Sint32 z;
 	Sint32 rectangle; /* index into the rectangle table */
 	Sint32 id;
-	void  *func;
+	void  *callback;
 } PUSH_TARGET;
 
-Bool scPushTargetFindStop(PUSH_TARGET *tgt);
-void scPushTargetPush(PUSH_TARGET tgt);
+Bool scPushTargetFindStop(PUSH_TARGET *target);
+void scPushTargetPush(PUSH_TARGET target);
 
 /* Felix steps on a cracked tile in the room above the columns. The first step
    only cracks it further; on the second it gives way and the party falls
@@ -126,10 +126,10 @@ void scJupiterLighthouseStepOnCrackedTile(void)
    it: it rolls until something stops it (scPushTargetFindStop). */
 void scJupiterLighthousePushColumn(void)
 {
-	PUSH_TARGET tgt;
+	PUSH_TARGET target;
 
-	if(scPushTargetFindStop(&tgt))
-		scPushTargetPush(tgt);
+	if(scPushTargetFindStop(&target))
+		scPushTargetPush(target);
 }
 
 /* Nothing visible happens as Move takes hold of the standing pillar in the room
@@ -152,17 +152,18 @@ void scJupiterLighthouseFinishMovingPillar(Sint32 unused, Sint32 id)
 		FIELD_METATILE(actor->z.fixed) == PILLAR_GAP_Z) {
 		fdScriptSetFlag(FLAG_PILLAR_IN_GAP);
 		syWait(10);
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
 		i = 0;
-		if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+		if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 			do {
 				syWait(1);
 				i++;
 				if(i > PILLAR_LANDING_TICKS - 1)
 					break;
-			} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
+			} while(
+				actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
 		}
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
 		fdMapGridSetMetatileAttributesAt(
 			actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
@@ -187,8 +188,8 @@ Sint32 scInit(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	fdActorGet(ACTOR_ARCHER_STATUE)->scaleX = toFIXED(3) / 4;
 	fdActorGet(ACTOR_ARCHER_STATUE)->scaleY = toFIXED(3) / 4;
-	scFieldActorSetSprPriority(ACTOR_FIRST_COLUMN + 1, 3);
-	scFieldActorSetSprPriority(ACTOR_FIRST_COLUMN + 3, 3);
+	scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN + 1, 3);
+	scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN + 3, 3);
 	fdActorDisableById(ACTOR_FIRST_COLUMN);
 	fdActorDisableById(ACTOR_FIRST_COLUMN + 1);
 	fdActorDisableById(ACTOR_FIRST_COLUMN + 2);
@@ -223,7 +224,7 @@ Sint32 scPrepareMap(void)
 	if(fdScriptGetFlag(FLAG_PILLAR_IN_GAP)) {
 		ACTOR *actor = fdActorGet(ACTOR_PILLAR);
 
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
 		actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
 		fdActorSetPos(ACTOR_PILLAR, 104, 232);
@@ -236,7 +237,7 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
@@ -267,8 +268,9 @@ extern Sint32 WhirlwindEndScript[];
 Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -310,7 +312,7 @@ void scActorStopAtPushTarget(ACTOR *actor);
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -326,7 +328,7 @@ void scLightSprsSetPriority(Sint32 value)
 #include "../field/field_effect_move.c"
 
 void scLeaderCenterInMetatile(void);
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 extern const Sint32 *FieldEffectDurationScripts[];
 
@@ -334,7 +336,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"

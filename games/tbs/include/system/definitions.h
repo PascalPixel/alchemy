@@ -402,7 +402,7 @@ typedef enum DISPLAY_CONTROL {
    system.h, so the prototypes are here with the constants they take. The BIOS
    CpuSet call (system/bios.s): copies or fills by halfwords or words, as the
    CPU_SET_ flags above the count say. */
-void BiosCpuSet(const void *src, void *dst, Uint32 control);
+void BiosCpuSet(const void *src, void *dest, Uint32 control);
 /* The C library's signed division and remainder (system/iwram_entry.s), which
    `/` and `%` compile to; declared for the functions that call them by name. */
 Sint32 __divsi3(Sint32 numerator, Sint32 denominator);
@@ -599,15 +599,15 @@ typedef void (*EVENT_FUNC)(void);
    flags, where EVENT_FLAG_KEEP_RUNNING keeps it running while overlay events
    are suspended. */
 typedef struct EVENT {
-	Uint32 func;
-	Uint16 pri;
-	Uint8  flg;
+	Uint32 callback;
+	Uint16 priority;
+	Uint8  flags;
 	Uint8  reserved;
 } EVENT;
 
 STATIC_ASSERT(sizeof(EVENT) == 8);
-STATIC_ASSERT(offsetof(EVENT, pri) == 4);
-STATIC_ASSERT(offsetof(EVENT, flg) == 6);
+STATIC_ASSERT(offsetof(EVENT, priority) == 4);
+STATIC_ASSERT(offsetof(EVENT, flags) == 6);
 
 /* An event's priority: the high byte picks the pass that runs it, the low byte
    ranks it within the pass (higher runs first). An odd high byte means the
@@ -629,7 +629,7 @@ STATIC_ASSERT(offsetof(EVENT, flg) == 6);
 #define EVENT_PRIORITY_REMOVED	0x7fff
 
 /* An event's priority's high byte: the pass it runs in. */
-#define EVENT_STATE_HIGH(task)	(((Uint8 *)&(task)->pri)[1])
+#define EVENT_STATE_HIGH(task)	(((Uint8 *)&(task)->priority)[1])
 /* The bit of an event's high priority byte (EVENT_STATE_HIGH) that suspends
    it. */
 #define EVENT_SUSPENDED			1
@@ -637,7 +637,7 @@ STATIC_ASSERT(offsetof(EVENT, flg) == 6);
    sySuspendOverlayEvents suspends the others. */
 #define EVENT_FLAG_KEEP_RUNNING 1
 /* Whether the event's function is in EWRAM, where a scene's overlay runs. */
-#define EVENT_IN_OVERLAY(task)	(((task)->func >> 24) == EWRAM_START >> 24)
+#define EVENT_IN_OVERLAY(task)	(((task)->callback >> 24) == EWRAM_START >> 24)
 
 /* The irq group. The hardware's interrupt sources and the interrupt handler
    table. The hardware's interrupt sources: each one's bit number in IE and IF,
@@ -880,7 +880,7 @@ typedef struct AFFINE_TRANSFORM {
 	/* 8.8 fixed point, read signed: negative mirrors the sprite */
 	Uint16 scaleX;
 	Uint16 scaleY;	/* 8.8 fixed point, read signed */
-	Uint16 ang;		/* 1/65536 turns */
+	Uint16 angle;	/* 1/65536 turns */
 	Uint16 padding; /* never read; keeps the struct 8 bytes */
 } AFFINE_TRANSFORM;
 
@@ -895,15 +895,15 @@ typedef union OAM_MATRIX {
 
 STATIC_ASSERT(sizeof(AFFINE_TRANSFORM) == 8);
 STATIC_ASSERT(offsetof(AFFINE_TRANSFORM, scaleY) == 2);
-STATIC_ASSERT(offsetof(AFFINE_TRANSFORM, ang) == 4);
+STATIC_ASSERT(offsetof(AFFINE_TRANSFORM, angle) == 4);
 STATIC_ASSERT(sizeof(OAM_MATRIX) == 8);
 
 /* The dma group. DMA channel registers, and the DMA and CPU fills. A DMA
    channel's registers (DMAxSAD, DMAxDAD, DMAxCNT). */
 typedef struct DMA_REGISTERS {
 	Uint32 src;
-	Uint32 dst;
-	Uint32 ctrl; /* The count in the low half, DMAxCNT_H's flags above it. */
+	Uint32 dest;
+	Uint32 control; /* The count in the low half, DMAxCNT_H's flags above it. */
 } DMA_REGISTERS;
 
 /* DMA3, the channel the game copies with, as its three registers. */
@@ -918,21 +918,21 @@ typedef struct DMA_REGISTERS {
    library's stub table: a stub that jumps to its target, and the target. */
 typedef struct STUB {
 	Uint32 stub;
-	Uint32 tgt;
+	Uint32 target;
 } STUB;
 
 /* An entry of the system library's table whose two-argument target the world
    map's tilt calls, the arctangent. */
 typedef struct ARC_TAN_STUB {
 	Uint32 stub;
-	Sint32 (*tgt)(Sint32 x, Sint32 y);
+	Sint32 (*target)(Sint32 x, Sint32 y);
 } ARC_TAN_STUB;
 
 /* An entry of the system library's table whose one-argument target the world
    map's tilt calls, the sine or the cosine. */
 typedef struct TRIG_STUB {
 	Uint32 stub;
-	Sint32 (*tgt)(Sint32 angle);
+	Sint32 (*target)(Sint32 angle);
 } TRIG_STUB;
 
 /* The start of the system library's stub table, as far as syCos. */
@@ -964,7 +964,7 @@ STATIC_ASSERT(offsetof(SYSTEM_STUB_TABLE, cos) == 96);
    after each finished tick. The register writes VBlank carries out once the
    tick loop has finished a tick; syIOWriteQueueFlushPending empties it. */
 typedef struct IO_WRITE_QUEUE {
-	Uint16 cnt; /* Entries waiting, at most 32. */
+	Uint16 count; /* Entries waiting, at most 32. */
 	Uint16 pad;
 	/* Each entry is the value, the address and the control word, in that
 	   order. */
@@ -994,9 +994,9 @@ typedef struct IO_WRITE_QUEUE {
 		(Sint32 (*)(Sint32 divisor, Sint32 value)), 0x0300013c, syIWRAMDivFX)
 #define syWordsClearEntry \
 	FIXED_ADDRESS( \
-		(Sint32 (*)(void *dst, Sint32 size)), 0x03000164, syIWRAMWordsClear)
+		(Sint32 (*)(void *dest, Sint32 size)), 0x03000164, syIWRAMWordsClear)
 #define syWordsFillEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *dst, Sint32 size, Uint32 value)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dest, Sint32 size, Uint32 value)), \
 		0x03000168, syIWRAMWordsFill)
 #define sySquartEntry \
 	FIXED_ADDRESS((Sint32 (*)(Sint32 value)), 0x030001d8, syIWRAMSquart)
@@ -1018,11 +1018,11 @@ typedef struct IO_WRITE_QUEUE {
 #define syIntegerDivideUnsignedEntry \
 	FIXED_ADDRESS((Uint32 (*)(Uint32 dividend, Uint32 divisor)), 0x030003f0, \
 		syIWRAMUnsignedDivide)
-#define syDecompressSprPictureEntry \
-	FIXED_ADDRESS((void *(*)(const void *src, void *dst)), 0x030005c0, \
+#define syDecompressSpritePictureEntry \
+	FIXED_ADDRESS((void *(*)(const void *src, void *dest)), 0x030005c0, \
 		syIWRAMDecompress)
 #define syWordsCopyEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *dst, const void *src, Sint32 size)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dest, const void *src, Sint32 size)), \
 		0x03001388, syIWRAMWordsCopy)
 
 /* Three IWRAM functions' distances in bytes from syIWRAMIRQMain, for code that
@@ -1127,7 +1127,7 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 #define syRamMapGridState	  ((void **)&HeapSlots[HEAP_SLOT_MAP_GRID])
 #define syRamCameraState	  ((void **)&HeapSlots[HEAP_SLOT_CAMERA])
 #define syRamFieldState		  ((void **)&HeapSlots[HEAP_SLOT_FIELD])
-#define syRamDispState		  ((void **)&HeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
+#define syRamDisplayState	  ((void **)&HeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
 #define syRamActorEffectState ((void **)&HeapSlots[HEAP_SLOT_GROUND_MASK])
 #define RamBattleEntryTimer	  ((void **)&HeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define syRamFieldEffectState ((void **)&HeapSlots[HEAP_SLOT_FIELD_EFFECT])
@@ -1143,7 +1143,7 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
    heard from, its checksum and a 24-byte payload. */
 typedef struct SERIAL_PACKET {
 	/* SERIAL_STATE's packet number when the packet was built */
-	Uint8 packetNum;
+	Uint8 packetNumber;
 	/* The consoles heard from before but not this tick (receivedMask ^
 	   currentMask); a receiver complements it once the checksum is good. */
 	Uint8 missingMask;
@@ -1155,7 +1155,7 @@ typedef struct SERIAL_PACKET {
 } SERIAL_PACKET;
 
 STATIC_ASSERT(sizeof(SERIAL_PACKET) == 32);
-STATIC_ASSERT(offsetof(SERIAL_PACKET, packetNum) == 0);
+STATIC_ASSERT(offsetof(SERIAL_PACKET, packetNumber) == 0);
 STATIC_ASSERT(offsetof(SERIAL_PACKET, missingMask) == 1);
 STATIC_ASSERT(offsetof(SERIAL_PACKET, checksum) == 2);
 STATIC_ASSERT(offsetof(SERIAL_PACKET, payload) == 4);
@@ -1196,10 +1196,10 @@ typedef struct SERIAL_STATE {
 	Uint8 mode;
 	Uint8 phase;		/* an SERIAL_PHASE */
 	Uint8 receivedMask; /* the consoles heard from since the link began */
-	Uint8 curMask;		/* the consoles heard from this tick */
+	Uint8 currentMask;	/* the consoles heard from this tick */
 	/* Each console's SERIAL_CHANNEL_FLAG bits, set by the transfer interrupt
 	   and cleared each tick. */
-	Uint8 channelFlg[4];
+	Uint8 channelFlags[4];
 	/* Nonzero lets a new packet restart timer 3. */
 	Uint8 transferEnabled;
 	/* SIOCNT's error bit (SIO_ERROR), which multiplayer mode sets when a
@@ -1209,16 +1209,16 @@ typedef struct SERIAL_STATE {
 	Uint8 transferError;
 	Uint8 reservedAfterError;
 	/* The packet number, counted up each tick once connected. */
-	Uint8 packetNum;
-	Uint8 reservedAfterPacketNum[8];
+	Uint8 packetNumber;
+	Uint8 reservedAfterPacketNumber[8];
 	/* The halfword of sendBuf[1] sent next; -1 between packets, when
 	   system_serial.c's SERIAL_IDLE_HALFWORD is sent and the two send buffers
 	   swap. */
-	Sint32 sendIdx;
+	Sint32 sendIndex;
 	/* Each console's next halfword in its incomingBuf; -1 after an idle
 	   system_serial.c's SERIAL_IDLE_HALFWORD. */
-	Sint32 receiveIdx[2];
-	Uint8  reservedAfterReceiveIdx[8];
+	Sint32 receiveIndex[2];
+	Uint8  reservedAfterReceiveIndex[8];
 	/* The packet being built ([0]) and the packet being sent ([1]). */
 	Uint16 *sendBuf[2];
 	/* Each console's packet being received; two are used. */
@@ -1236,10 +1236,10 @@ typedef struct SERIAL_STATE {
 STATIC_ASSERT(sizeof(SERIAL_STATE) == 352);
 STATIC_ASSERT(offsetof(SERIAL_STATE, mode) == 0);
 STATIC_ASSERT(offsetof(SERIAL_STATE, transferEnabled) == 8);
-STATIC_ASSERT(offsetof(SERIAL_STATE, sendIdx) == 20);
+STATIC_ASSERT(offsetof(SERIAL_STATE, sendIndex) == 20);
 STATIC_ASSERT(offsetof(SERIAL_STATE, storage) == 96);
 
-/* SERIAL_STATE.channelFlg: what the transfer interrupts saw of a console's
+/* SERIAL_STATE.channelFlags: what the transfer interrupts saw of a console's
    packets since the last tick. */
 typedef enum SERIAL_CHANNEL_FLAG {
 	SERIAL_CHANNEL_PACKET_COMPLETE = 1, /* its fourteenth halfword arrived */
@@ -1247,14 +1247,14 @@ typedef enum SERIAL_CHANNEL_FLAG {
 	SERIAL_CHANNEL_ERROR = 2
 } SERIAL_CHANNEL_FLAG;
 
-/* SERIAL_TRANSFER_STATE.flg: how far this console's receive has got. */
+/* SERIAL_TRANSFER_STATE.flags: how far this console's receive has got. */
 typedef enum SERIAL_RECEIVE_STATE {
 	SERIAL_RECEIVE_IDLE = 0,
 	SERIAL_RECEIVE_ACTIVE = 1,
 	SERIAL_RECEIVE_DONE = 2 /* the last block taken */
 } SERIAL_RECEIVE_STATE;
 
-/* SERIAL_TRANSFER_STATE.peerFlg: the kind of block this console sends. */
+/* SERIAL_TRANSFER_STATE.peerFlags: the kind of block this console sends. */
 typedef enum SERIAL_SEND_STATE {
 	SERIAL_SEND_IDLE = 0,
 	SERIAL_SEND_MORE = 1, /* a block with more to follow */
@@ -1266,7 +1266,7 @@ typedef enum SERIAL_SEND_STATE {
    set, asks the sender to rewind to that block (sySerialStepBlockTransfer). */
 #define SERIAL_BLOCK_NUMBER_MASK 0x7f
 #define SERIAL_BLOCK_REWIND		 0x80 /* bit 7: rewind to the block number */
-/* SERIAL_TRANSFER_STATE.stat's bit 7, set when a send or receive starts; the
+/* SERIAL_TRANSFER_STATE.status's bit 7, set when a send or receive starts; the
    receiver counts its blocks in the low bits (sySerialStepBlockTransfer). */
 #define SERIAL_STATUS_RUNNING	 0x80
 
@@ -1278,17 +1278,17 @@ typedef struct SERIAL_TRANSFER_STATE {
 	Uint8 active;
 	/* SERIAL_STATUS_RUNNING when started, plus 1 for a receive; the receiver
 	   counts blocks (status + 1, with bit 7) and sets 0 after the last. */
-	Uint8 stat;
-	Uint8 flg;		   /* the receive state, an SERIAL_RECEIVE_STATE */
-	Uint8 peerFlg;	   /* the send state, an SERIAL_SEND_STATE */
+	Uint8 status;
+	Uint8 flags;	   /* the receive state, an SERIAL_RECEIVE_STATE */
+	Uint8 peerFlags;   /* the send state, an SERIAL_SEND_STATE */
 	Uint8 payload[20]; /* one block of the data sent */
 } SERIAL_TRANSFER_STATE;
 
 STATIC_ASSERT(sizeof(SERIAL_TRANSFER_STATE) == 24);
 STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, active) == 0);
-STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, stat) == 1);
-STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, flg) == 2);
-STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, peerFlg) == 3);
+STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, status) == 1);
+STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, flags) == 2);
+STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, peerFlags) == 3);
 STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, payload) == 4);
 
 /* The vector3 group. Vector3, a three-coordinate vector. Three coordinates, x,
@@ -1327,7 +1327,7 @@ typedef enum VRAM_CACHE_LIMITS {
 	VRAM_BLOCK_COUNT = 512, /* blocks of sprite VRAM */
 	VRAM_BLOCK_BYTES = 64,
 	VRAM_BLOCK_OWNER_FREE = 255, /* VramCacheBlockOwners of a free block */
-	/* VRAM_CACHE_ENTRY.ofs of a free entry. */
+	/* VRAM_CACHE_ENTRY.offset of a free entry. */
 	VRAM_CACHE_OFFSET_FREE = 65535,
 	/* The largest size an entry has while it holds no blocks:
 	   syVRAMCacheReleaseVRAM leaves 1, which keeps the entry taken. */
@@ -1351,12 +1351,12 @@ typedef enum VRAM_CACHE_FIXED_ENTRY {
 /* A sprite slot of the VRAM cache: the size of its block and where the block
    starts in sprite VRAM. */
 typedef struct VRAM_CACHE_ENTRY {
-	Uint16 size; /* bytes */
-	Uint16 ofs;	 /* bytes from the start of sprite VRAM */
+	Uint16 size;   /* bytes */
+	Uint16 offset; /* bytes from the start of sprite VRAM */
 } VRAM_CACHE_ENTRY;
 
 STATIC_ASSERT(sizeof(VRAM_CACHE_ENTRY) == 4);
-STATIC_ASSERT(offsetof(VRAM_CACHE_ENTRY, ofs) == 2);
+STATIC_ASSERT(offsetof(VRAM_CACHE_ENTRY, offset) == 2);
 
 /* syVRAMCacheLoad's source that clears the entry's VRAM instead of copying. */
 #define VRAM_CACHE_CLEAR ((const void *)-1)

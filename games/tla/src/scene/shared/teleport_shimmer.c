@@ -7,27 +7,28 @@
 /* Writes each listed background colour from its red, green and blue, keeps the
    lists for the shimmer, and saves the palettes as the fade's source; arriving
    by Teleport, the party then arrives on the circle. */
-void scPaletteSetColsFade(
-	Uint16 *slots, Uint16 *colours, Uint16 *cycleCols, Uint16 *cycleSlots)
+void scPaletteSetColorsFade(
+	Uint16 *slots, Uint16 *colours, Uint16 *cycleColors, Uint16 *cycleSlots)
 {
-	PALETTE_FADE *fade = RamHeapSlots->palFade;
+	PALETTE_FADE *fade = RamHeapSlots->paletteFade;
 
 	PaletteSlots = slots;
 	PaletteColors = colours;
-	PaletteCycleColors = cycleCols;
+	PaletteCycleColors = cycleColors;
 	PaletteCycleSlots = cycleSlots;
 	while(*slots != PALETTE_LIST_END && *colours != PALETTE_LIST_END) {
-		int idx = *slots++;
+		int index = *slots++;
 		int red = *colours++;
 		int green = *colours++;
 		int blue = *colours++;
 
-		SET_RGB(BG_PLTT[idx], red, green, blue);
+		SET_RGB(BG_PLTT[index], red, green, blue);
 	}
-	syDMAXCopy((const void *)BG_PLTT, fade->pal,
+	syDMAXCopy((const void *)BG_PLTT, fade->palette,
 		DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
-	syDMAXCopy((const void *)OBJ_PLTT, &fade->pal[PALETTE_FADE_BG_COLORS],
-		DMA_COPY_WORDS((ARRAY_COUNT(fade->pal) - PALETTE_FADE_BG_COLORS) / 2),
+	syDMAXCopy((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
+		DMA_COPY_WORDS(
+			(ARRAY_COUNT(fade->palette) - PALETTE_FADE_BG_COLORS) / 2),
 		REG_DMA3);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	if(MainRoutineStateWork.teleportState == TELEPORT_ARRIVING)

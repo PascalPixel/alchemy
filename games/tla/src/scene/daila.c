@@ -173,9 +173,9 @@ void scDailaEnterDoor(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
-	sySndPlay(SE_MAP_EXIT);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
+	sySoundPlay(SE_MAP_EXIT);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -6);
 	fdScriptWait(10);
@@ -645,10 +645,10 @@ Sint32 scInit(void)
 		fdActorFallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
 	else if(MainRoutineStateWork.next == SCENE_DAILA)
 		fdFlagBlockPlaceAll(DailaRoomsPillarFrozenFlags);
-	fdActorSetSprPriority(ACTOR_ITEM_SHOPKEEPER, 1);
+	fdActorSetSpritePriority(ACTOR_ITEM_SHOPKEEPER, 1);
 	if(MainRoutineStateWork.next == SCENE_DAILA &&
 		syGameFlagGet(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
-		fdActorSetWideSpr(ACTOR_PSY_CRYSTAL, TREASURE_SPOT_PUT_AWAY);
+		fdActorSetWideSprite(ACTOR_PSY_CRYSTAL, TREASURE_SPOT_PUT_AWAY);
 	return 0;
 }
 

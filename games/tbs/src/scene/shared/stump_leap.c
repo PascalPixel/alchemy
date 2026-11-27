@@ -8,9 +8,9 @@
 /* Spins the leaping stump a thirty-second of a turn each tick. */
 static void scSpinStump(ACTOR *actor)
 {
-	SPR *spr = actor->spr;
+	SPR *sprite = actor->sprite;
 
-	spr->rotation -= TRIG_TURN / 32;
+	sprite->rotation -= TRIG_TURN / 32;
 }
 
 #include "actor_wait_below_height.c"
@@ -21,54 +21,54 @@ static void scLeapStump(Sint32 stumpId)
 {
 	ACTOR		  *stump;
 	Uint32		   i;
-	VECTOR3		   dir;
+	VECTOR3		   direction;
 	EFFECT_OPTIONS options;
 
 	stump = fdActorGet(stumpId);
-	stump->motionFlg = 0;
+	stump->motionFlags = 0;
 	for(i = 0; i < STUMP_TIP_TICKS; i++) {
 		sySynch(1);
-		stump->spr->rotation -= TRIG_TURN / 256;
-		stump->x.fixed -= syCos(stump->spr->rotation) / 2;
-		stump->tgtX = ACTOR_NO_TARGET;
+		stump->sprite->rotation -= TRIG_TURN / 256;
+		stump->x.fixed -= syCos(stump->sprite->rotation) / 2;
+		stump->targetX = ACTOR_NO_TARGET;
 	}
 	stump->update = scSpinStump;
 	fdActorSetSpeed(stumpId, 3);
 	fdActorSetDestination(stumpId, STUMP_LANDING_X, STUMP_LANDING_Z);
 	stump->gravity = toFIXED(4) / 5;
-	stump->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	stump->layer = 0;
 	fdActorWaitForMoveById(stumpId);
 	scActorWaitBelowHeight(stump, STUMP_FLOOR_HEIGHT);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridSetShake(5, 5, 1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	/* The puffs of dust, one in each of the sixteen facings. */
 	for(i = 0; i < STUMP_LANDING_PUFFS; i++) {
-		dir.x = syCos(i * FACING_STEP);
-		dir.y = 0;
-		dir.z = sySin(i * FACING_STEP);
-		dir.x -= dir.x / 4;
-		dir.z -= dir.z / 2;
-		fdEffectSpawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
-			dir.y, dir.z, 0, NULL);
+		direction.x = syCos(i * FACING_STEP);
+		direction.y = 0;
+		direction.z = sySin(i * FACING_STEP);
+		direction.x -= direction.x / 4;
+		direction.z -= direction.z / 2;
+		fdEffectSpawn(stump->x.fixed, stump->y.fixed, stump->z.fixed,
+			direction.x, direction.y, direction.z, 0, NULL);
 	}
-	stump->velY = toFIXED(5);
+	stump->velocityY = toFIXED(5);
 	fdActorSetDestination(stumpId, STUMP_RESTING_X, STUMP_RESTING_Z);
 	fdActorWaitForMoveById(stumpId);
 	scActorWaitBelowHeight(stump, STUMP_FLOOR_HEIGHT);
 	stump->update = NULL;
-	stump->spr->rotation = TRIG_TURN / 16;
+	stump->sprite->rotation = TRIG_TURN / 16;
 	options.type = SPRITE_SPLASH;
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(4) / 5;
-	options.tgtScaleX = toFIXED(3) / 2;
-	options.tgtScaleY = toFIXED(6) / 5;
+	options.targetScaleX = toFIXED(3) / 2;
+	options.targetScaleY = toFIXED(6) / 5;
 	fdEffectSpawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
 		EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
 		&options);
-	sySndPlay(SE_CAST);
+	sySoundPlay(SE_CAST);
 	fdActorSetAnimation(stumpId, STUMP_ANIMATION_SPLASH);
 	fdMapGridWaitForShakeToSettle();
 }

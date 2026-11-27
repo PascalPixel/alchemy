@@ -6,9 +6,9 @@
    before the parts, and each part includes it too, so that a part read on its
    own still resolves. */
 
-/* The window and screens objects call syOAMAddSprAtDepth in a form of their
+/* The window and screens objects call syOAMAddSpriteAtDepth in a form of their
    own, declared below. */
-#define OWN_syOAMAddSprAtDepth
+#define OWN_syOAMAddSpriteAtDepth
 
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -65,7 +65,7 @@
    screens objects' ROM code is compiled with no declaration in scope, as
    against this form: no parameter list and an Sint32 result, where the
    definition takes the entry and the slot and returns nothing. */
-Sint32 syOAMAddSprAtDepth();
+Sint32 syOAMAddSpriteAtDepth();
 
 /* The window animation a message can start (its window-state code): the
    window's frame flashes as it swells, for the message's countdown. */
@@ -94,7 +94,8 @@ Sint32 syOAMAddSprAtDepth();
 /* A name the decoder writes out into a message, decoded first into a buffer of
    this many halfwords. */
 #define MESSAGE_NAME_HALFWORDS		 24
-#define TEXT_NUMBER_BUFFER_SIZE		 16 /* mnStringFormatNum writes 14 of them */
+/* mnStringFormatNumber writes 14 of them. */
+#define TEXT_NUMBER_BUFFER_SIZE		 16
 /* A byte string widened to codes: 255 bytes and the terminator. */
 #define TEXT_WIDE_STRING_BUFFER_SIZE 512
 #define SELECTION_MENU_ENTRY_LIMIT	 16 /* entries a selection row can list */
@@ -161,7 +162,7 @@ enum {
 };
 
 /* The window system's state, as ☀️'s WINDOW_STATE. */
-#define WINDOW_STATE ((WIN_STATE *)RamHeapSlots->winState)
+#define WINDOW_STATE ((WIN_STATE *)RamHeapSlots->windowState)
 
 /* mnWindowFitOnScreen's flags. */
 typedef enum WINDOW_FIT_FLAG {
@@ -174,10 +175,10 @@ typedef enum WINDOW_FIT_FLAG {
 /* The window object's functions its parts call before their definitions, or
    with declarations of their own that disagree. */
 void   mnTextResetStyle();
-void   mnWindowFitOnScreen(Sint32 msg, Sint32 *winX, Sint32 *winY,
-	  Uint32 *winWidth, Uint32 *winHeight, Uint16 *spacing, Uint32 flg);
+void   mnWindowFitOnScreen(Sint32 msg, Sint32 *windowX, Sint32 *windowY,
+	  Uint32 *windowWidth, Uint32 *windowHeight, Uint16 *spacing, Uint32 flags);
 Sint32 mnGlyphDraw(
-	WINDOW *win, Sint32 character, Sint32 x, Sint32 y, Sint32 mode);
+	WINDOW *window, Sint32 character, Sint32 x, Sint32 y, Sint32 mode);
 Sint32 mnDebugSceneSelectHandleRowInput(
 	Sint32 arg, Sint16 value, Sint16 *sub, Sint16 *mode);
 
@@ -197,7 +198,7 @@ Sint32 mnPsynergyMenuRunStub(void);
 /* The field menu's Item screen; returns 1 when an item is to be used. */
 Sint32 mnItemMenuRunStub(void);
 /* The field menu's Status screen. */
-Sint32 mnStatScreenRunStub(void);
+Sint32 mnStatusScreenRunStub(void);
 /* Moves a menu cursor to (x, y), gliding as mode says. */
 void mnCursorSetStub(void *cursor, Sint32 x, Sint32 y, Sint32 ticks);
 /* Places a menu cursor at (x, y) at once. */
@@ -211,7 +212,7 @@ enum {
 	LIST_TILE_PAGES_LEFT = WINDOW_TILE(820),
 	LIST_TILE_PAGES_RIGHT = WINDOW_TILE(821), /* Right arrow, tile 821 */
 	/* The Status screen's own two arrows, tiles 822 and 823, which
-	   mnBattleStatDrawPageArrows slides. */
+	   mnBattleStatusDrawPageArrows slides. */
 	STATUS_TILE_PAGES_LEFT = WINDOW_TILE(822),
 	STATUS_TILE_PAGES_RIGHT = WINDOW_TILE(823)
 };
@@ -269,7 +270,7 @@ typedef enum BATTLE_TARGET_HINT {
 	TARGET_HINT_CURE_ALL = 6,
 	TARGET_HINT_SET_DJINNI = 7, /* setting a Djinni: "Set Djinni" */
 	/* Switch: starts on the party member the last command was aimed at
-	   (BATTLE_MENU_STATE.lastTgt). */
+	   (BATTLE_MENU_STATE.lastTarget). */
 	TARGET_HINT_LAST_TARGET = 8
 } BATTLE_TARGET_HINT;
 
@@ -312,7 +313,7 @@ typedef enum BATTLE_TARGET_HINT {
 		((entry) & BATTLE_DJINN_NUMBER))
 
 /* What mnSaveScanFileSummaries adds to its count of files when every file is
-   cleared (its sendFlg set by saving at the game's end). */
+   cleared (its sendFlag set by saving at the game's end). */
 #define SAVE_SCAN_ALL_CLEARED 100
 
 /* Places a battle menu's pointing hand at its list window's selected row:

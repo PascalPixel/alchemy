@@ -142,7 +142,7 @@ void scYampiDesertStepOntoStakeTops(void);
 void scYampiDesertOpenLadderPit(void);
 void scYampiDesertSetBlocksShown(Sint32 show);
 void scYampiDesertHideBlocks(void);
-void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 cnt);
+void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 count);
 void scYampiDesertUpdateSandFlow(void);
 void scYampiDesertCheckUpperLevel(void);
 void scYampiDesertOpenScoopHole(void);
@@ -153,7 +153,7 @@ void scYampiDesertClimbDownLadder(
 	ACTOR *actor, Sint32 x, Sint32 z, Sint32 exit);
 void		  scYampiDesertLayerStakesWithLeader(void);
 void		  scYampiDesertPlaceStakes(const void *script);
-void		  fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
+void		  fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
 void		  scYampiDesertElderRefusesToQuit(void);
 void		  scYampiDesertBlockPoundedStakes(Uint16 *list);
 void		  scYampiDesertOpenStakeMetatiles(Uint16 *list);
@@ -165,28 +165,28 @@ void		  scYampiDesertPlayScorpionRumble(void);
 void		  scYampiDesertSetUpPsynergyStoneScorpion(void);
 void		  scYampiDesertSetStakeSunk(Sint32 id);
 void		  scYampiDesertCheckUpperLevelFromLower(void);
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 
 /* Places an actor at (x, z) on the ground, facing a direction. */
 static inline void scYampiDesertSetPosAndFacing(
 	Sint32 actorId, Sint32 x, Sint32 z, Uint16 facing)
 {
-	fdActorSetHorizontalPosAndAngWithTerrain(actorId, x, z, facing);
+	fdActorSetHorizontalPosAndAngleWithTerrain(actorId, x, z, facing);
 }
 
 /* Places a rope between two posts. */
 static inline void scYampiDesertPlaceRope(
-	Sint32 idx, Sint32 flg, Sint32 post, Sint32 otherPost)
+	Sint32 index, Sint32 flag, Sint32 post, Sint32 otherPost)
 {
-	fdRopePlace(idx, flg, post, otherPost);
+	fdRopePlace(index, flag, post, otherPost);
 }
 
 /* Scoop digs up a buried treasure: with `mode` RETURN_HOME_DUG_UP, the hidden
    item comes up at its home and its flag is set (fdActorReturnHome). */
 static inline void scYampiDesertDigUpTreasure(
-	Sint32 mode, Sint32 actorId, Sint32 flg)
+	Sint32 mode, Sint32 actorId, Sint32 flag)
 {
-	fdActorReturnHome(mode, actorId, flg);
+	fdActorReturnHome(mode, actorId, flag);
 }
 
 /* The stakes Pound sinks, the first rows of the rooms that have them (the
@@ -555,27 +555,27 @@ void scYampiDesertReadSign(void)
 /* Pound on one of the wooden stakes of the desert's first room hammers it down
    into the sand; the one before the Guardian Ring's chest in the south-east
    corner opens the way to it. */
-void scYampiDesertPoundGuardianRingChestStake(Sint32 mode, Sint32 cnt)
+void scYampiDesertPoundGuardianRingChestStake(Sint32 mode, Sint32 count)
 {
-	fdPoundSinkTarget(YampiDesertGuardianRingChestStakes, mode, cnt);
+	fdPoundSinkTarget(YampiDesertGuardianRingChestStakes, mode, count);
 }
 
 /* Pound on one of the wooden stakes in Blitz's room hammers it down into the
    sand. The last one stands before the climbable wall that leads up to Blitz;
    the one below the Antidote's chest is best left standing, as its top is the
    way across. */
-void scYampiDesertPoundBlitzStake(Sint32 mode, Sint32 cnt)
+void scYampiDesertPoundBlitzStake(Sint32 mode, Sint32 count)
 {
-	fdPoundSinkTarget(YampiDesertBlitzStakes, mode, cnt);
+	fdPoundSinkTarget(YampiDesertBlitzStakes, mode, count);
 }
 
 /* Defines what Pound on one of a room's stakes does: it sinks
    (fdPoundSinkTarget), and once down it raises the watch for whether the King
    Scorpion is stopped. */
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, stakes) \
-	void name(Sint32 mode, Sint32 cnt) \
+	void name(Sint32 mode, Sint32 count) \
 	{ \
-		fdPoundSinkTarget(stakes, mode, cnt); \
+		fdPoundSinkTarget(stakes, mode, count); \
 		if(mode == POUND_STAGE_LANDED) { \
 			if(YampiDesertRaisedCue == 0) \
 				YampiDesertRaisedCue = RAISED_WATCH_SCORPION_STOP; \
@@ -590,9 +590,9 @@ DEFINE_POUND_STAKE_STOPPING_SCORPION(
 
 /* Pound on the wooden stake that blocks the way to the Blow Mace's chest, in
    the cave of sand slides, hammers it down into the sand. */
-void scYampiDesertPoundBlowMaceChestStake(Sint32 mode, Sint32 cnt)
+void scYampiDesertPoundBlowMaceChestStake(Sint32 mode, Sint32 count)
 {
-	fdPoundSinkTarget(YampiDesertBlowMaceChestStakes, mode, cnt);
+	fdPoundSinkTarget(YampiDesertBlowMaceChestStakes, mode, count);
 }
 
 /* Pound on one of the wooden stakes in the King Scorpion's room hammers it down
@@ -632,15 +632,15 @@ void scYampiDesertStepOntoStakeTops(void)
 				(Uint8 *)((((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >>
 							  2) +
 					(Sint32)grid);
-			Sint32 idx = fdActorGetMetatileIndex(actor);
+			Sint32 index = fdActorGetMetatileIndex(actor);
 			Sint32 shape =
 				fdMapGridGetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
 			Sint32 height = METATILE_HEIGHT_STEPS(
 				fdMapGetTerrainHeight(layer, actor->x.fixed, actor->z.fixed));
 
-			metatiles += idx;
-			shapes += idx;
-			actor->motionFlg = 0;
+			metatiles += index;
+			shapes += index;
+			actor->motionFlags = 0;
 			metatiles->collisionCode = METATILE_BEHAVIOR_NORMAL;
 			metatiles->attributeB |= MAP_METATILE_JUMP;
 			*shapes = fdMapShapeFindOrAdd(layer, shape, height + 4);
@@ -677,15 +677,15 @@ void scYampiDesertStepOffStakeTops(void)
 				(Uint8 *)((((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >>
 							  2) +
 					(Sint32)grid);
-			Sint32 idx = fdActorGetMetatileIndex(actor);
+			Sint32 index = fdActorGetMetatileIndex(actor);
 			Sint32 shape =
 				fdMapGridGetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
 			Sint32 height = METATILE_HEIGHT_STEPS(
 				fdMapGetTerrainHeight(layer, actor->x.fixed, actor->z.fixed));
 
-			metatiles += idx;
-			shapes += idx;
-			actor->motionFlg = 0;
+			metatiles += index;
+			shapes += index;
+			actor->motionFlags = 0;
 			metatiles->collisionCode = METATILE_BEHAVIOR_WALL;
 			metatiles->attributeB &= ~MAP_METATILE_JUMP;
 			*shapes = fdMapShapeFindOrAdd(layer, shape, height - 4);
@@ -798,8 +798,9 @@ void scYampiDesertWatchScorpionStop(void)
 #undef EFFECT_SET_SCRIPT
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* The grains of sand in a burst. */
 #define SAND_BURST_GRAINS 17
@@ -815,15 +816,15 @@ void scYampiDesertBurstSand(Sint32 x, Sint32 y, Sint32 z)
 	options.startScaleX = toFIXED(8) / 10;
 	options.startScaleY = toFIXED(8) / 10;
 	for(i = 0; i < SAND_BURST_GRAINS; i++) {
-		Sint32 vel[3];
+		Sint32 velocity[3];
 
-		vel[0] = syCos(i * DEGtoANG(90));
-		vel[1] = 0;
-		vel[2] = sySin(i * DEGtoANG(90));
-		vel[0] += vel[0] >> 1;
-		vel[0] += (Uint16)(syRandom() << 1) - toFIXED(1);
-		vel[2] += (Uint16)syRandom() - toFIXED(1) / 2;
-		scFieldEffectSpawn(x, y, z, vel[0], vel[1], vel[2],
+		velocity[0] = syCos(i * DEGtoANG(90));
+		velocity[1] = 0;
+		velocity[2] = sySin(i * DEGtoANG(90));
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += (Uint16)(syRandom() << 1) - toFIXED(1);
+		velocity[2] += (Uint16)syRandom() - toFIXED(1) / 2;
+		scFieldEffectSpawn(x, y, z, velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
 	}
 }
@@ -849,18 +850,21 @@ void scYampiDesertStirScorpion(void)
 	fdActorSetPos(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 0, 0);
 	syFieldScriptWait(40);
 	scYampiDesertBurstSand(toFIXED(352), 0, toFIXED(248));
-	sySndPlay(SE_KOLIMA_BRIDGE_HOP);
-	fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->velY = toFIXED(6);
-	fdActorSetSprCol(fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION),
+	sySoundPlay(SE_KOLIMA_BRIDGE_HOP);
+	fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->velocityY =
+		toFIXED(6);
+	fdActorSetSpriteColor(
+		fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION),
 		SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION),
+	fdActorSetSpriteFlags(
+		fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION),
 		SPRITE_FLAG_SHADOW);
 	fdActorMoveToAndWaitById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 380, 248);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	fdActorSetSpeed(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 0.8);
 	fdActorWalkToAndWaitById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 428, 248);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdActorSetPos(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 0, 0);
 	syGameFlagSet(FLAG_YAMPI_DESERT_SCORPION_STIRRED);
 	fdScriptEnd();
@@ -887,19 +891,22 @@ void scYampiDesertStirScorpionAgain(void)
 	fdActorSetPos(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 0, 0);
 	syFieldScriptWait(20);
 	scYampiDesertBurstSand(toFIXED(248), 0, toFIXED(576));
-	sySndPlay(SE_KOLIMA_BRIDGE_HOP);
-	fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->velY = toFIXED(6);
-	fdActorSetSprCol(fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
+	sySoundPlay(SE_KOLIMA_BRIDGE_HOP);
+	fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->velocityY =
+		toFIXED(6);
+	fdActorSetSpriteColor(
+		fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
 		SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
+	fdActorSetSpriteFlags(
+		fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
 		SPRITE_FLAG_SHADOW);
 	fdActorMoveToAndWaitById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 256, 560);
 	syFieldScriptWait(20);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	fdActorSetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 0.8);
 	fdActorWalkToAndWait(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 248, 496);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdActorSetPos(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 0, 0);
 	syGameFlagSet(FLAG_YAMPI_DESERT_SCORPION_STIRRED_AGAIN);
 	fdScriptEnd();
@@ -950,7 +957,7 @@ void scYampiDesertRaiseSandCloud(void)
 			if(actor != NULL) {
 				actor->speedLimit = toFIXED(9) / 8;
 				actor->acceleration = toFIXED(1) / 2;
-				fdActorSetSprFlags((ACTOR *)actor, 0);
+				fdActorSetSpriteFlags((ACTOR *)actor, 0);
 				fdActorSelectAnimation((ACTOR *)actor, 1);
 				fdActorStartScript(actor, YampiDesertSandCloudDrifts);
 			}
@@ -1001,13 +1008,15 @@ void scYampiDesertTrapKingScorpion(void)
 		toFIXED(232), toFIXED(184), FACING_SOUTH);
 	sySynch(1);
 	scYampiDesertBurstSand(toFIXED(232), 0, toFIXED(184));
-	sySndPlay(SE_KOLIMA_BRIDGE_HOP);
-	scorpion->velY = toFIXED(6);
-	scorpion->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 2);
-	fdActorSetSprCol(fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
+	sySoundPlay(SE_KOLIMA_BRIDGE_HOP);
+	scorpion->velocityY = toFIXED(6);
+	scorpion->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 2);
+	fdActorSetSpriteColor(
+		fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
 		SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
+	fdActorSetSpriteFlags(
+		fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION),
 		SPRITE_FLAG_SHADOW);
 	fdActorSetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
 	fdActorMoveToAndWaitById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 216, 184);
@@ -1017,9 +1026,10 @@ void scYampiDesertTrapKingScorpion(void)
 		ACTOR_KING_SCORPION_ROOM_KING_SCORPION, FACING_EAST);
 	syFieldScriptWait(20);
 	scYampiDesertScorpionUsesScoop();
-	sySndPlay(SE_WHOOSH);
+	sySoundPlay(SE_WHOOSH);
 	scYampiDesertRaiseSandCloud();
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	syFieldScriptWait(20);
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1029,22 +1039,22 @@ void scYampiDesertTrapKingScorpion(void)
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	syFieldScriptWait(10);
-	sySndPlay(SE_DUST_PUFF);
+	sySoundPlay(SE_DUST_PUFF);
 	for(i = 0; i < 14; i++) {
 		leader->scaleX -= toFIXED(1) / 64;
 		leader->scaleY -= toFIXED(1) / 64;
 		leader->y.fixed += -toFIXED(2);
 		sySynch(1);
 	}
-	fdActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId),
+	fdActorSetSpriteColor(fdActorGetById(MainRoutineStateWork.leaderActorId),
 		SPRITE_COLOR_HIDDEN);
-	sySndPlay(SE_HIGH_JUMP);
-	scorpion->velY = toFIXED(8);
-	fdActorSetSprFlags(
+	sySoundPlay(SE_HIGH_JUMP);
+	scorpion->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION), 0);
 	fdActorMoveToAndWaitById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 232, 168);
 	syFieldScriptWait(3);
-	sySndPlay(SE_DUST_PUFF);
+	sySoundPlay(SE_DUST_PUFF);
 	for(i = 0; i < 6; i++) {
 		scorpion->scaleX -= toFIXED(1) / 32;
 		scorpion->scaleY -= toFIXED(1) / 32;
@@ -1291,7 +1301,7 @@ void scYampiDesertTravelersLookUp(Sint32 p0)
 	scFieldActorShowEmote(
 		state->leaderActorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorFaceDirection(state->leaderActorId, FACING_WEST, 0);
-	((ACTOR *)fdCameraGetActor())->motionFlg = 0;
+	((ACTOR *)fdCameraGetActor())->motionFlags = 0;
 	fdCameraSetSpeed(1.6);
 	fdCameraMoveTo(212, 0, 212, 1);
 	fdCameraWaitForArrival();
@@ -1433,22 +1443,23 @@ ACTOR *scYampiDesertCreateScoopGem(void)
 	if(actor == NULL)
 		return NULL;
 	{
-		visual = actor->spr;
+		visual = actor->sprite;
 		/* Sixteen colours, palette 0, priority 1. */
 		{
-			Sint32 sixteenCols = ~(OBJ_256_COLORS >> 8);
+			Sint32 sixteenColors = ~(OBJ_256_COLORS >> 8);
 
-			visual->attr0High &= sixteenCols;
+			visual->attr0High &= sixteenColors;
 		}
 		mask = visual->attr2High & 0x0f;
 		mask &= ~(OBJ_PRIORITY(3) >> 8);
 		mask |= OBJ_PRIORITY(1) >> 8;
 		visual->attr2High = mask;
-		actor->motionFlg = 0;
-		actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		visual->flg = 0;
-		visual->layerCnt = 0;
-		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		actor->motionFlags = 0;
+		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		visual->flags = 0;
+		visual->layerCount = 0;
+		icon =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_SCOOP_GEM);
 		syVRAMCacheLoad(visual->vramBlock, ICON_TILE_BYTES, icon->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
@@ -1508,7 +1519,8 @@ void scYampiDesertRippleFollowsScorpion(void)
    metatiles. */
 void scYampiDesertCarryLeader(ACTOR *actor, FIXED dx, FIXED dz)
 {
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	if(MainRoutineStateWork.movementMode != LEADER_MOVEMENT_SAND) {
 		Uint32 odd = TickCount & 1;
 
@@ -1518,15 +1530,15 @@ void scYampiDesertCarryLeader(ACTOR *actor, FIXED dx, FIXED dz)
 				actor->z.fixed);
 
 			if(dust != NULL) {
-				SPR *spr;
+				SPR *sprite;
 
-				dust->motionFlg = odd;
-				dust->collisionFlg = odd;
-				fdActorSetSprFlags(dust, 0);
+				dust->motionFlags = odd;
+				dust->collisionFlags = odd;
+				fdActorSetSpriteFlags(dust, 0);
 				fdActorSelectAnimation(dust, 1);
 				fdActorStartScript(dust, YampiDesertFlowDust);
-				spr = dust->spr;
-				spr->image.pri = 1;
+				sprite = dust->sprite;
+				sprite->image.priority = 1;
 				if(PerWork.data != 0) {
 					dust->bounce = syCos(syRandomBelow(8) << 14) + dx;
 					dust->sceneWord = sySin(syRandomBelow(8) << 14) + dz;
@@ -1539,7 +1551,7 @@ void scYampiDesertCarryLeader(ACTOR *actor, FIXED dx, FIXED dz)
 					dust->sceneWord = (sySin(syRandomBelow(8) << 14) >> 1) + dz;
 				}
 				dust->gravity = 0;
-				dust->tmr = syRandomBelow(512) - 256;
+				dust->timer = syRandomBelow(512) - 256;
 				dust->speedLimit = 0;
 				dust->acceleration = 0;
 				dust->update = fdEffectAdvanceMotionAtLeaderPriority;
@@ -1573,24 +1585,24 @@ void scYampiDesertUpdateSandFlow(void)
 	Sint32		  speed = toFIXED(3) / 2;
 	MAP_STATE	 *map;
 	MAP_METATILE *here, *ahead, *under;
-	Sint32		  idx, column, row;
+	Sint32		  index, column, row;
 	MAP_METATILE *metatiles;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0) {
 		fdActorSetAnimationSpeed(leader, 0);
-		fdTilesetAnimSuspendAll();
+		fdTilesetAnimationSuspendAll();
 		return;
 	}
 	map = RamHeapSlots->mapGrid;
-	idx = fdActorGetMetatileIndex(leader);
+	index = fdActorGetMetatileIndex(leader);
 	column = leader->x.fixed / toFIXED(16);
 	row = (leader->z.fixed + toFIXED(4)) / toFIXED(16);
 	metatiles = map->layers[MAPGRID_LAYER_GROUND].metatiles;
-	here = metatiles + idx;
+	here = metatiles + index;
 	ahead = metatiles + (column + row * MAPGRID_SIZE);
-	under = map->layers[MAPGRID_LAYER_MIDDLE].metatiles + idx;
+	under = map->layers[MAPGRID_LAYER_MIDDLE].metatiles + index;
 	fdActorSetAnimationSpeed(leader, ANIM_STEP_NORMAL);
-	fdTilesetAnimResumeAll();
+	fdTilesetAnimationResumeAll();
 	/* On a stream or its rim, a leader moving as Sand is not carried, and one
 	   on foot has his sprite flags set to show his shadow alone. */
 	if((Uint8)(under->collisionCode -
@@ -1600,7 +1612,7 @@ void scYampiDesertUpdateSandFlow(void)
 		if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_SAND)
 			speed = 0;
 		else
-			fdActorSetSprFlags(
+			fdActorSetSpriteFlags(
 				fdActorGetById(MainRoutineStateWork.leaderActorId),
 				SPRITE_FLAG_SHADOW);
 	}
@@ -1663,8 +1675,8 @@ void scYampiDesertCheckUpperLevel(void)
 	else
 		MainRoutineStateWork.onUpperLevel = 0;
 	if(MainRoutineStateWork.next == SCENE_YAMPI_DESERT_BLITZ) {
-		fdActorSetSprPriority(
-			ACTOR_CLIMBABLE_WALL_STAKE, ((FIELD_SPR *)leader->spr)->pri);
+		fdActorSetSpritePriority(ACTOR_CLIMBABLE_WALL_STAKE,
+			((FIELD_SPR *)leader->sprite)->priority);
 		x = leader->x.fixed;
 		if(x > toFIXED(472)) {
 			z = leader->z.fixed;
@@ -1695,8 +1707,9 @@ UNUSED void scYampiDesertCheckUpperLevelOnRise(void)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
-	Sint32		  idx = fdActorGetMetatileIndex(leader);
-	MAP_METATILE *metatile = map->layers[MAPGRID_LAYER_GROUND].metatiles + idx;
+	Sint32		  index = fdActorGetMetatileIndex(leader);
+	MAP_METATILE *metatile =
+		map->layers[MAPGRID_LAYER_GROUND].metatiles + index;
 	MAIN_ROUTINE_STATE *party;
 	FIXED				y;
 
@@ -1733,7 +1746,7 @@ void scYampiDesertPlayScorpionRumble(void)
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
 		if(party->movementMode != LEADER_MOVEMENT_SAND || PerWork.data == 0)
-			sySndPlay(SE_SAND_MOVE);
+			sySoundPlay(SE_SAND_MOVE);
 	}
 }
 
@@ -1747,14 +1760,14 @@ void scYampiDesertClearRaisedCue(void)
 /* Whether an actor has no move target left. */
 Bool scYampiDesertHasArrived(ACTOR *actor)
 {
-	Sint32 x = actor->tgtX;
+	Sint32 x = actor->targetX;
 
-	if(x == ACTOR_NO_TARGET && actor->tgtZ == x)
+	if(x == ACTOR_NO_TARGET && actor->targetZ == x)
 		return TRUE;
 	return FALSE;
 }
 
-/* A step of the buried King Scorpion's rounds, kept in its sceneCnt: sends it
+/* A step of the buried King Scorpion's rounds, kept in its sceneCount: sends it
    toward a point, in pixels, and goes on to the next step, which waits for it
    there. */
 #define WALK(state_, x, z) \
@@ -1796,7 +1809,7 @@ Bool scYampiDesertHasArrived(ACTOR *actor)
    stake's south side and raises RAISED_STIR_SCORPION. */
 void scYampiDesertScorpionRoamsPsynergyStone(ACTOR *actor)
 {
-	Uint8 *state = &actor->sceneCnt;
+	Uint8 *state = &actor->sceneCount;
 
 	switch(*state) {
 		WALK(0, 280, 200)
@@ -1833,21 +1846,21 @@ void scYampiDesertSetUpPsynergyStoneScorpion(void)
 	syFieldSetTickEvent(scYampiDesertPlayScorpionRumble, EVENT_PASS_TICK);
 	followed = &YampiDesertSandRipple;
 	actor = fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	*followed = (ACTOR *)actor;
 	actor->scaleX = toFIXED(13) / 10;
 	actor->scaleY = toFIXED(13) / 10;
 	fdActorDisableById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
-	(*followed)->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprPriority(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 3);
+	(*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE, 3);
 	fdActorSetSpeed(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 1.6);
-	fdActorSetSprCol((ACTOR *)scorpion, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprPriority(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 3);
+	fdActorSetSpriteColor((ACTOR *)scorpion, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpritePriority(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION, 3);
 	fdActorDisableById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION);
-	fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->motionFlg =
+	fdActorGetById(ACTOR_PSYNERGY_STONE_ROOM_KING_SCORPION)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-		scorpion->sceneCnt = 0;
+		scorpion->sceneCount = 0;
 		scorpion->update = scYampiDesertScorpionRoamsPsynergyStone;
 	}
 	scYampiDesertClearRaisedCue();
@@ -1860,7 +1873,7 @@ void scYampiDesertSetUpPsynergyStoneScorpion(void)
    small loop south of it. */
 void scYampiDesertScorpionRoamsKingScorpion(ACTOR *actor)
 {
-	Uint8 *state = &actor->sceneCnt;
+	Uint8 *state = &actor->sceneCount;
 
 	switch(*state) {
 		WALK(0, 312, 664)
@@ -1921,23 +1934,23 @@ void scYampiDesertSetUpKingScorpionScorpion(void)
 	syFieldSetTickEvent(scYampiDesertPlayScorpionRumble, EVENT_PASS_TICK);
 	followed = &YampiDesertSandRipple;
 	actor = fdActorGetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	*followed = (ACTOR *)actor;
 	actor->scaleX = toFIXED(13) / 10;
 	actor->scaleY = toFIXED(13) / 10;
 	fdActorDisableById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-	(*followed)->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprPriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
+	(*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
 	fdActorSetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
-	fdActorSetSprCol((ACTOR *)scorpion, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprPriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
+	fdActorSetSpriteColor((ACTOR *)scorpion, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
 	fdActorDisableById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
-	fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlg =
+	fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 		scYampiDesertSetPosAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
 			toFIXED(232), toFIXED(664), 0);
-		scorpion->sceneCnt = 0;
+		scorpion->sceneCount = 0;
 		scorpion->update = scYampiDesertScorpionRoamsKingScorpion;
 	}
 	scYampiDesertClearRaisedCue();
@@ -1952,7 +1965,7 @@ void scYampiDesertSetUpKingScorpionScorpion(void)
    cornered and raises RAISED_CORNER_SCORPION. */
 void scYampiDesertScorpionRoamsToTrap(ACTOR *actor)
 {
-	Uint8 *state = &actor->sceneCnt;
+	Uint8 *state = &actor->sceneCount;
 
 	switch(*state) {
 		WALK(0, 312, 264)
@@ -2020,18 +2033,18 @@ void scYampiDesertSetUpTrappedScorpion(void)
 
 	followed = &YampiDesertSandRipple;
 	actor = fdActorGetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	actor->scaleX = toFIXED(13) / 10;
 	actor->scaleY = toFIXED(13) / 10;
 	*followed = (ACTOR *)actor;
 	fdActorDisableById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
-	fdActorSetSprPriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
-	(*followed)->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE, 3);
+	(*followed)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdActorSetSpeed(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 1.6);
-	fdActorSetSprCol((ACTOR *)scorpion, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprPriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
+	fdActorSetSpriteColor((ACTOR *)scorpion, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpritePriority(ACTOR_KING_SCORPION_ROOM_KING_SCORPION, 3);
 	fdActorDisableById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION);
-	fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlg =
+	fdActorGetById(ACTOR_KING_SCORPION_ROOM_KING_SCORPION)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(syGameFlagGet(FLAG_YAMPI_DESERT_SCORPION_CORNERED)) {
 		scYampiDesertSetPosAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
@@ -2041,7 +2054,7 @@ void scYampiDesertSetUpTrappedScorpion(void)
 		if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 			scYampiDesertSetPosAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
 				toFIXED(200), toFIXED(264), 0);
-			scorpion->sceneCnt = 0;
+			scorpion->sceneCount = 0;
 			scorpion->update = scYampiDesertScorpionRoamsToTrap;
 		}
 	}
@@ -2052,7 +2065,7 @@ void scYampiDesertSetUpTrappedScorpion(void)
 /* While the King Scorpion's Scoop runs, opens the hole it digs. */
 void scYampiDesertOpenScoopHole(void)
 {
-	if(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->stage != 0)
+	if(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->stage != 0)
 		fdMapGridCopyMetatileTilesIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
@@ -2110,19 +2123,19 @@ void scYampiDesertClimbDownLadder(ACTOR *actor, Sint32 x, Sint32 z, Sint32 exit)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	party = &MainRoutineStateWork;
 	fdActorSetSpeed(party->leaderActorId, 1);
 	fdActorWalkToAndWaitById(party->leaderActorId, x, z);
 	fdActorFaceDirectionAndRefreshById(party->leaderActorId, FACING_NORTH);
-	fdActorSetSprFlags(fdActorGetById(party->leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGetById(party->leaderActorId), 0);
 	fdActorSetAnimationById(
 		party->leaderActorId, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	fdActorSetMoveTarget(
 		actor, actor->x.fixed, actor->y.fixed - toFIXED(10), actor->z.fixed);
 	fdActorWaitForMove(actor);
 	fdActorSetAnimationById(party->leaderActorId, ANIM_LEADER_CLIMB);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(exit);
@@ -2180,20 +2193,20 @@ void scYampiDesertLandAndFightKingScorpion(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdCameraMoveTo(232, CAMERA_KEEP, 184, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	fdActorSetSprFlags(fdActorGetById(party->leaderActorId), 0);
-	leader->motionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGetById(party->leaderActorId), 0);
+	leader->motionFlags = 0;
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	fdActorSetSprFlags(fdActorGetById(ACTOR_KING_SCORPION), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_KING_SCORPION), 0);
 	scYampiDesertSetPosAndFacing(
 		ACTOR_KING_SCORPION, toFIXED(232), toFIXED(148), FACING_SOUTH);
-	scorpion->motionFlg = 0;
+	scorpion->motionFlags = 0;
 	scorpion->y.fixed = toFIXED(130);
 	scorpion->gravity = toFIXED(1) / 2;
 	scorpion->bounce = 0;
@@ -2202,29 +2215,30 @@ void scYampiDesertLandAndFightKingScorpion(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprFlags(
+	sySoundPlay(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(
 		fdActorGetById(party->leaderActorId), SPRITE_FLAG_SHADOW);
 	syFieldScriptWait(24);
 	scYampiDesertBurstSand(leader->x.fixed, leader->y.fixed, leader->z.fixed);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdEffectSetAttached(party->leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimationAndWait(party->leaderActorId, ANIM_LEADER_SIT);
-	sySndPlay(SE_DUST_PUFF);
-	scorpion->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprFlags(fdActorGetById(ACTOR_KING_SCORPION), SPRITE_FLAG_SHADOW);
+	sySoundPlay(SE_DUST_PUFF);
+	scorpion->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(
+		fdActorGetById(ACTOR_KING_SCORPION), SPRITE_FLAG_SHADOW);
 	syFieldScriptWait(24);
 	scYampiDesertBurstSand(
 		scorpion->x.fixed, scorpion->y.fixed, scorpion->z.fixed);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdActorFaceDirectionById(party->leaderActorId, FACING_NORTH, 0);
 	syFieldScriptWait(40);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdActorSetAnimationById(ACTOR_KING_SCORPION, 3);
 	syFieldScriptWait(20);
-	scorpion->velY = toFIXED(8);
+	scorpion->velocityY = toFIXED(8);
 	scorpion->gravity = toFIXED(9) / 10;
 	fdActorSetSpeed(ACTOR_KING_SCORPION, 1.6);
 	fdActorMoveToAndWaitById(ACTOR_KING_SCORPION, 232, 184);
@@ -2293,8 +2307,8 @@ void scYampiDesertSetUpGuardianRingChest(void)
    they stand about the spring. */
 void scYampiDesertSetUpSpring(void)
 {
-	Sint32 angA;
-	Sint32 angB;
+	Sint32 angleA;
+	Sint32 angleB;
 
 	if(syGameFlagGet(FLAG_ALHAFRA_MADRANS_ARRIVED)) {
 		fdActorSetPos(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0, 0);
@@ -2305,22 +2319,22 @@ void scYampiDesertSetUpSpring(void)
 		fdActorSetPos(ACTOR_ELDER, 0, 0);
 		fdActorSetPos(ACTOR_MAYOR, 0, 0);
 	} else if(syGameFlagGet(FLAG_YAMPI_DESERT_TRAVELERS_MET)) {
-		angA = FACING_NORTH_NORTHWEST;
+		angleA = FACING_NORTH_NORTHWEST;
 		scYampiDesertSetPosAndFacing(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
-			toFIXED(520), toFIXED(242), angA);
+			toFIXED(520), toFIXED(242), angleA);
 		scYampiDesertSetPosAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE,
 			toFIXED(533), toFIXED(271), FACING_WEST);
 		scYampiDesertSetPosAndFacing(ACTOR_DIZZY_TRAVELER, toFIXED(435),
 			toFIXED(232), FACING_SOUTH_SOUTHEAST);
 		scYampiDesertSetPosAndFacing(ACTOR_PARCHED_TRAVELER, toFIXED(467),
 			toFIXED(248), FACING_SOUTH_SOUTHWEST);
-		angB = FACING_NORTH_NORTHEAST;
+		angleB = FACING_NORTH_NORTHEAST;
 		scYampiDesertSetPosAndFacing(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
-			toFIXED(462), toFIXED(340), angB);
+			toFIXED(462), toFIXED(340), angleB);
 		scYampiDesertSetPosAndFacing(
-			ACTOR_ELDER, toFIXED(482), toFIXED(340), angB);
+			ACTOR_ELDER, toFIXED(482), toFIXED(340), angleB);
 		scYampiDesertSetPosAndFacing(
-			ACTOR_MAYOR, toFIXED(489), toFIXED(320), angA);
+			ACTOR_MAYOR, toFIXED(489), toFIXED(320), angleA);
 	}
 	if(syGameFlagGet(FLAG_YAMPI_DESERT_LADDER_DUG_UP))
 		scYampiDesertOpenLadderPit();
@@ -2331,11 +2345,12 @@ void scYampiDesertSetUpSpring(void)
 void scYampiDesertLayerStakesWithLeader(void)
 {
 	Sint32 variant =
-		((FIELD_SPR *)fdActorGetById(MainRoutineStateWork.leaderActorId)->spr)
-			->pri;
+		((FIELD_SPR *)fdActorGetById(MainRoutineStateWork.leaderActorId)
+				->sprite)
+			->priority;
 
-	fdActorSetSprPriority(STAKE(5), variant);
-	fdActorSetSprPriority(STAKE(6), variant);
+	fdActorSetSpritePriority(STAKE(5), variant);
+	fdActorSetSpritePriority(STAKE(6), variant);
 }
 
 /* Sets up Blitz's room: its stakes and the events that layer them. */
@@ -2355,8 +2370,8 @@ void scYampiDesertSetUpBlitz(void)
    moving nor colliding. */
 void scYampiDesertSetStakeSunk(Sint32 id)
 {
-	fdActorGetById(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(id, 3);
+	fdActorGetById(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(id, 3);
 	fdActorDisableById(id);
 	fdActorSetAnimationById(id, 2);
 }
@@ -2445,7 +2460,7 @@ void scYampiDesertSetUpCoinsPuddle(void)
 {
 	fdEffectStartBlankOverlay(0);
 	if(syGameFlagGet(FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP) == 0)
-		fdActorSetWideSpr(ACTOR_HIDDEN_TREASURE, TREASURE_SPOT_PUT_AWAY);
+		fdActorSetWideSprite(ACTOR_HIDDEN_TREASURE, TREASURE_SPOT_PUT_AWAY);
 }
 
 /* Sets up the Trainer's Whip chest's room: its rope, sign and flowing sand, and
@@ -2517,7 +2532,7 @@ void scYampiDesertSetUpHiddenPsynergyStone(void)
    carrying the platform at its top, as Gondowan Cliffs' geysers do. */
 typedef struct GEYSER {
 	Sint16 id;			   /* its actor; 0 for a free entry */
-	Sint16 tmr;			   /* ticks into its period */
+	Sint16 timer;		   /* ticks into its period */
 	Sint16 height;		   /* pixels it has risen */
 	Sint16 period;		   /* ticks in one rise and fall */
 	Sint16 riseAt;		   /* the timer it starts to rise at */
@@ -2544,7 +2559,7 @@ typedef struct GEYSER_WORK {
 
 void	scGeyserStart(Sint32 unused, Sint32 firstTerrain);
 GEYSER *scGeyserAdd(
-	Sint32 slot, Sint32 id, Sint32 tmr, Sint32 minHeight, Sint32 maxHeight);
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 minHeight, Sint32 maxHeight);
 
 /* Sets up the scorpion pit: dropped in, the King Scorpion's battle; back from
    it, the Scoop Gem; and the geyser between the four rocks once dug. */
@@ -2601,11 +2616,11 @@ void scYampiDesertPlaceStakes(const void *script)
 		Sint32 id = entry[0];
 		ACTOR *actor = fdActorGetById(id);
 		Sint32 kind = (Sint16)entry[1];
-		Sint32 flg = (Sint16)entry[2];
+		Sint32 flag = (Sint16)entry[2];
 
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flg, actor->layer);
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flag, actor->layer);
 	}
 }
 
@@ -2629,7 +2644,7 @@ void scYampiDesertPlaceStakes(const void *script)
    pixels every six seconds, starting timer ticks into its round, with an
    unseen platform at its top for the leader. */
 GEYSER *scGeyserAdd(
-	Sint32 slot, Sint32 id, Sint32 tmr, Sint32 minHeight, Sint32 maxHeight)
+	Sint32 slot, Sint32 id, Sint32 timer, Sint32 minHeight, Sint32 maxHeight)
 {
 	GEYSER_WORK *state = GEYSER_STATE;
 	GEYSER		*entry = &state->entries[slot];
@@ -2638,7 +2653,7 @@ GEYSER *scGeyserAdd(
 
 	/* DEAD: the actor looked up again and dropped; the ROM keeps the call. */
 	fdActorGetById(id);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 		if(maxHeight < minHeight) {
 			Sint32 swap = minHeight;
@@ -2648,25 +2663,25 @@ GEYSER *scGeyserAdd(
 		}
 		entry->id = id;
 		entry->height = 0;
-		entry->tmr = tmr;
+		entry->timer = timer;
 		entry->period = GEYSER_PERIOD_TICKS;
 		entry->max = maxHeight;
 		entry->riseAt = GEYSER_RISE_TICK;
 		entry->fallAt = GEYSER_FALL_TICK;
 		entry->min = minHeight;
 		entry->unreadSetToOne = 1;
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
 		entry->step = 0;
 		entry->phase = 0;
 		entry->unreadCleared = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	}
 	rider = syImportActorCreate(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
 		actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	rider->collisionFlg = 0;
-	rider->motionFlg = 0;
-	rider->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	rider->collisionFlags = 0;
+	rider->motionFlags = 0;
+	rider->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	entry->rider = rider;
 	return entry;
 }

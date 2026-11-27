@@ -190,7 +190,7 @@ static Sint32 scTolbiShipMastTurnSparkle(ACTOR *actor)
 		TolbiShipMastCameraCenter[0] + (cameraX - TolbiShipMastCameraOrigin[0]);
 	actor->y.fixed = TolbiShipMastCameraCenter[1] +
 		(cameraY - TolbiShipMastCameraOrigin[1]) / 2;
-	actor->spr->rotation += TRIG_TURN * 3 / 128;
+	actor->sprite->rotation += TRIG_TURN * 3 / 128;
 	return 0;
 }
 
@@ -231,17 +231,17 @@ typedef enum TOLBI_SHIP_MAST_DRIFT {
 static Sint32 scTolbiShipMastDriftBird(ACTOR *actor)
 {
 	/* The drift: sceneWord is the speed added to x each tick. */
-	if(actor->tmr == DRIFT_HELD) {
+	if(actor->timer == DRIFT_HELD) {
 		actor->sceneWord = 0;
-	} else if(actor->tmr != DRIFT_INCREASING) {
+	} else if(actor->timer != DRIFT_INCREASING) {
 		actor->sceneWord -= syRandomBelow(2048);
 		if(actor->sceneWord < -toFIXED(3) / 4) {
-			actor->tmr = DRIFT_INCREASING;
+			actor->timer = DRIFT_INCREASING;
 		}
 	} else {
 		actor->sceneWord += syRandomBelow(2048);
 		if(actor->sceneWord > toFIXED(3) / 4) {
-			actor->tmr = DRIFT_DECREASING;
+			actor->timer = DRIFT_DECREASING;
 		}
 	}
 	if(actor->x.fixed > toFIXED(40) && actor->x.fixed < toFIXED(320)) {
@@ -269,9 +269,9 @@ static Sint32 scTolbiShipMastDriftBird(ACTOR *actor)
    enough it is put away at the origin, standing still. */
 static Sint32 scTolbiShipMastFlyBirdAway(ACTOR *actor)
 {
-	SPR *sprite = actor->spr;
+	SPR *sprite = actor->sprite;
 
-	sprite->image.pri = 3;
+	sprite->image.priority = 3;
 	actor->speedLimit = toFIXED(2);
 	actor->acceleration = toFIXED(1);
 	if(actor->scaleX > toFIXED(1) / 16) {
@@ -416,7 +416,7 @@ static void scTolbiShipMastWatchCourseFirstTime(void)
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(164, 64, 321, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
@@ -431,8 +431,8 @@ static void scTolbiShipMastWatchCourseAgain(void)
 {
 	fdScriptStart();
 	fdActorSetPos(ACTOR_PARTY_LEADER, 164, 321);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	sySynch(1);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
@@ -478,8 +478,8 @@ static void scTolbiShipMastPlayFirstAttack(void)
 	fdScriptStart();
 	fdScriptAppendActorPlacements(TolbiShipMastFirstAttackActorPlacements);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetScript(ACTOR_LOOKOUT, TolbiShipMastLookoutActions);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
@@ -490,12 +490,12 @@ static void scTolbiShipMastPlayFirstAttack(void)
 	TolbiShipMastCameraOrigin[1] = *cameraOrigin;
 	fdActorSetPos(ACTOR_SPARKLE, 80, 210);
 	sparkleX = toFIXED(80);
-	fdActorGet(ACTOR_SPARKLE)->motionFlg = 0;
+	fdActorGet(ACTOR_SPARKLE)->motionFlags = 0;
 	TolbiShipMastCameraCenter[0] = sparkleX;
 	TolbiShipMastCameraCenter[1] = sparkleY;
 	fdActorSetScript(ACTOR_SPARKLE, TolbiShipMastSparkleActions);
 	fdScriptWait(20);
-	sySndPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
+	sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
 	gmFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
 	fdActorStop(ACTOR_LOOKOUT);
 	sySynch(1);
@@ -508,12 +508,14 @@ static void scTolbiShipMastPlayFirstAttack(void)
 	fdActorSetPosFX(ACTOR_FIRST_SIGHTED_MONSTER, sparkleX, toFIXED(210));
 	fdActorSetPosFX(ACTOR_FIRST_SIGHTED_MONSTER + 1, sparkleX, toFIXED(210));
 	fdActorSetPosFX(ACTOR_FIRST_SIGHTED_MONSTER + 2, sparkleX, toFIXED(210));
-	fdActorSetSprPriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
-	fdActorSetSprPriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
-	fdActorSetSprPriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
-	fdActorSetSprColById(ACTOR_FIRST_SIGHTED_MONSTER, SPRITE_COLOR_BGR);
-	fdActorSetSprColById(ACTOR_FIRST_SIGHTED_MONSTER + 1, SPRITE_COLOR_BGR);
-	fdActorSetSprColById(ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
+	fdActorSetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
+	fdActorSetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
+	fdActorSetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
+	fdActorSetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorById(
+		ACTOR_FIRST_SIGHTED_MONSTER + 1, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorById(
+		ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
 	actor = fdActorGet(ACTOR_FIRST_SIGHTED_MONSTER);
 	actor->scaleY = toFIXED(1) / 2;
 	actor->scaleX = toFIXED(1) / 2;
@@ -552,9 +554,9 @@ static void scTolbiShipMastPlayFirstAttack(void)
 /* Stops a bird's drift before it swoops. */
 static inline void scTolbiShipMastStopBirdDrifting(ACTOR *actor)
 {
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtY = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 	SET_VELOCITY(actor, 0, 0, 0);
 	actor->sceneWord = 0;
 }
@@ -597,8 +599,8 @@ static void scTolbiShipMastPlaySecondAttack(void)
 	ACTOR *approachingActor;
 
 	fdScriptStart();
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	sySynch(1);
 	fdScriptAppendActorPlacements(TolbiShipMastBirdActorPlacements);
 	sySynch(1);
@@ -657,7 +659,7 @@ static void scTolbiShipMastPlaySecondAttack(void)
 	/* The lookout jumps, the monsters' theme plays, and Sean cries out. */
 	fdActorJump(ACTOR_LOOKOUT, 4, 20);
 	fdActorJump(ACTOR_LOOKOUT, 6, 40);
-	sySndPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
+	sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
 	gmFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
 	fdScriptSetMessageId(MsgTolbiShipMonstersExclaimed);
 	/* "Monsters!" */
@@ -680,9 +682,9 @@ static void scTolbiShipMastStartBirdDrifting(Sint32 actorId)
 	ACTOR *actor;
 
 	actor = fdActorGet(actorId);
-	fdActorSetSprPriority(actorId, 1);
-	actor->motionFlg = 0;
-	actor->tmr = syRandomBelow(2);
+	fdActorSetSpritePriority(actorId, 1);
+	actor->motionFlags = 0;
+	actor->timer = syRandomBelow(2);
 	actor->userValue = syRandomBelow(2);
 	actor->y.fixed = toFIXED(syRandomBelow(4)) + toFIXED(6);
 	actor->sceneWord = syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
@@ -695,12 +697,12 @@ static void scTolbiShipMastStartBirdDrifting(Sint32 actorId)
    the birds scatter, then ACTOR_LANDING_MONSTER drops in beside the lookout. */
 static void scTolbiShipMastPlayThirdAttack(void)
 {
-	Uint32 frm;
+	Uint32 frame;
 	ACTOR *actor;
 
 	fdScriptStart();
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	sySynch(1);
 	fdScriptAppendActorPlacements(TolbiShipMastBirdActorPlacements);
 	sySynch(1);
@@ -713,7 +715,7 @@ static void scTolbiShipMastPlayThirdAttack(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(300);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdScriptWait(100);
 	/* The birds fly off before the monster lands. */
 	scTolbiShipMastStartBirdsFlyingOff();
@@ -745,11 +747,11 @@ static void scTolbiShipMastPlayThirdAttack(void)
 	sySynch(1);
 	fdActorRunRepeatedMotion(ACTOR_LOOKOUT, 1);
 	fdActorFaceDirection(ACTOR_LOOKOUT, FACING_SOUTH_SOUTHEAST, 0);
-	sySndPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
+	sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
 	gmFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
 	/* ACTOR_LANDING_MONSTER_SHADOW grows for 32 ticks before
 	   ACTOR_LANDING_MONSTER is placed above it. */
-	for(frm = 0; frm < 32; frm++) {
+	for(frame = 0; frame < 32; frame++) {
 		actor->scaleX += toFIXED(1) / 20;
 		actor->scaleY += toFIXED(1) / 20;
 		sySynch(1);
@@ -770,16 +772,16 @@ static void scTolbiShipMastPlayThirdAttack(void)
 	actor->gravity = toFIXED(3);
 	fdScriptWait(20);
 	fdActorJump(ACTOR_LOOKOUT, 6, 20);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdScriptWait(20);
 	fdActorSetScript(ACTOR_LOOKOUT, ActorTrembleScript);
 	fdScriptWait(80);
-	fdActorSetSprPriority(ACTOR_LANDING_MONSTER, 1);
+	fdActorSetSpritePriority(ACTOR_LANDING_MONSTER, 1);
 	fdActorSetSpeed(ACTOR_LANDING_MONSTER, 1);
 	actor->bounce = toFIXED(1) / 10;
 	actor->gravity = toFIXED(7) / 10;
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
 	fdActorSetDestination(ACTOR_LANDING_MONSTER, 132, 360);
 	fdActorSetDestination(ACTOR_LANDING_MONSTER_SHADOW, 132, 360);
 	fdScriptWait(40);
@@ -804,8 +806,8 @@ static void scTolbiShipMastPlayThirdAttack(void)
 static void scTolbiShipMastAnnounceLand(void)
 {
 	fdScriptStart();
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdScriptAppendActorPlacements(TolbiShipMastBirdActorPlacements);
 	sySynch(1);
 	scTolbiShipMastStartBirdsDrifting();
@@ -896,25 +898,25 @@ static Sint32 scTolbiShipMastGetRowingBalance(void)
    empty. */
 static Sint32 scTolbiShipMastGetSeatRowValue(Uint32 seat)
 {
-	Sint32 firstFlg = 0;
+	Sint32 firstFlag = 0;
 	Uint32 passenger;
 
 	switch(seat) {
 	case 0:
-		firstFlg = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
+		firstFlag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
 		break;
 	case 1:
-		firstFlg = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
+		firstFlag = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
 		break;
 	case 2:
-		firstFlg = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
+		firstFlag = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
 		break;
 	case 3:
-		firstFlg = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
+		firstFlag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
 		break;
 	}
 	for(passenger = 0; passenger <= 8; passenger++) {
-		if(gmFlagGet(firstFlg + passenger) != 0)
+		if(gmFlagGet(firstFlag + passenger) != 0)
 			return TolbiShipPassengerRowValues[passenger];
 	}
 	return 0;

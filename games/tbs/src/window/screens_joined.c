@@ -29,7 +29,7 @@
    chosen with a pointing hand. */
 Sint32 mnColossoMenuChoose(Sint32 unused)
 {
-	WINDOW	   *win;
+	WINDOW	   *window;
 	MENU_CURSOR cursor;
 	Sint32		slot;
 	Sint32		row;
@@ -37,18 +37,19 @@ Sint32 mnColossoMenuChoose(Sint32 unused)
 	Uint16	   *palette;
 
 	moved = TRUE;
-	win = mnWindowCreate(
+	window = mnWindowCreate(
 		TALK_WINDOW_X, 13, TALK_WINDOW_WIDTH, 7, WINDOW_FLAG_INSTANT);
-	mnTextDrawMessageAsTiles(MsgTalkChoice, win, 8, 0);
-	mnTextDrawMessageAsTiles(MsgTalkChoice + 1, win, 8, 16);
-	mnTextDrawMessageAsTiles(MsgTalkChoice + 2, win, 8, 32);
+	mnTextDrawMessageAsTiles(MsgTalkChoice, window, 8, 0);
+	mnTextDrawMessageAsTiles(MsgTalkChoice + 1, window, 8, 16);
+	mnTextDrawMessageAsTiles(MsgTalkChoice + 2, window, 8, 32);
 	slot = syVRAMCacheFindFreeEntry();
 	row = 0;
 	if(slot < VRAM_CACHE_ENTRY_COUNT) {
 		syVRAMCacheLoad(slot, 128, PointingHandTiles);
 		cursor.anchor =
-			mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
-		mnCursorSetPosImmediateStub(&cursor, win->x * 8 - 3, win->y * 8 + 9);
+			mnWindowSpriteCreate(slot, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
+		mnCursorSetPosImmediateStub(
+			&cursor, window->x * 8 - 3, window->y * 8 + 9);
 	}
 	/* The choice under the cursor flashes between WINDOW_PALETTE and
 	   HIGHLIGHT_PALETTE, a copy of it with WINDOW_BACKGROUND_COLOR grey. */
@@ -58,41 +59,41 @@ Sint32 mnColossoMenuChoose(Sint32 unused)
 	palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
 	while(1) {
 		mnWindowSetInteriorPalette(
-			win, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, HIGHLIGHT_PALETTE);
+			window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, HIGHLIGHT_PALETTE);
 		sySynch(1);
 		mnWindowSetInteriorPalette(
-			win, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, WINDOW_PALETTE);
+			window, 1, row * 2, TALK_WINDOW_WIDTH - 4, 1, WINDOW_PALETTE);
 		if(moved) {
 			moved = FALSE;
 			mnCursorSetStub(
-				&cursor, win->x * 8 - 3, (win->y + row * 2) * 8 + 9, 3);
+				&cursor, window->x * 8 - 3, (window->y + row * 2) * 8 + 9, 3);
 		}
 		mnCursorAdvanceStub(&cursor);
 		if(PerRepeat & KEY_UP) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			row--;
 			moved = TRUE;
 			if(row == -1)
 				row = 2;
 		}
 		if(PerRepeat & KEY_DOWN) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			row++;
 			moved = TRUE;
 			if(row == 3)
 				row = 0;
 		}
 		if(PerRepeat & KEY_B) {
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			row = -1;
 			break;
 		}
 		if(PerRepeat & KEY_A) {
-			sySndPlayStub(SE_MENU_CONFIRM);
+			sySoundPlayStub(SE_MENU_CONFIRM);
 			break;
 		}
 	}
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	sySynch(1);
 	syVRAMCacheFreeEntry(slot);
 	return row;
@@ -104,20 +105,20 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Sint32	   speaker;
-	WINDOW	  *win;
+	WINDOW	  *window;
 	Sint32	   portrait[3];
 	Sint32	  *entry;
 	Sint32	   palette, handle;
 	Sint32	  *word;
 	Uint16	  *spacing = NULL;
 
-	win = NULL;
+	window = NULL;
 	speaker = DjinnElementSprites[element & 3];
 	entry = portrait;
-	win = mnWindowCreate(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
-	if(win == NULL)
+	window = mnWindowCreate(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+	if(window == NULL)
 		return;
-	mnWindowDrawDividerLine(win, 4, 0, 4, 4);
+	mnWindowDrawDividerLine(window, 4, 0, 4, 4);
 	state->dirty = 1;
 	mnIconLoadWithPalette(mnPortraitGetForSpeaker(speaker), 0, &handle,
 		&palette, PORTRAIT_PALETTE, 0);
@@ -128,22 +129,22 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 	*word++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
 	*word = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 	/* No voice blips while the message types. */
-	state->voiceSnd = 0;
+	state->voiceSound = 0;
 	state->voiceCountdown = 0;
 	mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
 	mnMessageArgumentPush(
 		element * DJINN_PER_ELEMENT + djinn + ABILITY_DJINNI_FIRST,
 		MESSAGE_ARGUMENT_ABILITY);
-	JOINED_QUEUE_TEXT(win,
+	JOINED_QUEUE_TEXT(window,
 		mnMessageDecodeAndClearArguments(element + MsgVenusDjinnJoined), 36, 2,
 		spacing);
-	sySndPlayStub(MUS_A_NEW_ALLY);
+	sySoundPlayStub(MUS_A_NEW_ALLY);
 	do {
-		syOAMAddSprAtDepth(entry, OAM_DEPTH_FRONT - 5);
+		syOAMAddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
 		sySynch(1);
-	} while(sySndGetBGMRestoreDelayStub() != 0 &&
+	} while(sySoundGetBGMRestoreDelayStub() != 0 &&
 		(PerPush & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	sySynch(1);
 	syVRAMCacheFreeEntry(handle);
 }
@@ -151,7 +152,7 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 /* Returns the sprite whose portrait shows party member `member` (0 to 8): from
    CharacterChildSpriteTable during the prologue, from CharacterSpriteTable
    otherwise; 0 for any other party member. */
-Sint32 mnPartyGetMemberPortraitSpr(Uint32 member)
+Sint32 mnPartyGetMemberPortraitSprite(Uint32 member)
 {
 	if(member > 8) {
 		return 0;
@@ -168,8 +169,8 @@ void mnPartyShowJoinedMessage(Sint32 member)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	WINDOW	  *window = NULL;
-	Sint32	   spr[3];
-	Sint32	  *entry = spr;
+	Sint32	   sprite[3];
+	Sint32	  *entry = sprite;
 	Sint32	   palette, handle;
 	Sint32	  *p;
 
@@ -178,7 +179,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
 		mnWindowDrawDividerLine(window, 4, 0, 4, 4);
 		state->dirty = 1;
 		mnIconLoadWithPalette(
-			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(member)), 0,
+			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSprite(member)), 0,
 			&handle, &palette, PORTRAIT_PALETTE, 0);
 		/* The portrait as a bare OAM entry, drawn each tick: a link word,
 		   attributes 0 and 1 and attribute 2. */
@@ -186,16 +187,16 @@ void mnPartyShowJoinedMessage(Sint32 member)
 		*p++ = 0;
 		*p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
 		*p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
-		state->voiceSnd = 0;
+		state->voiceSound = 0;
 		state->voiceCountdown = 0;
 		mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
 		JOINED_QUEUE_TEXT(
 			window, mnMessageDecodeAndClearArguments(MsgJoinedParty), 36, 2, 0);
-		sySndPlayStub(MUS_A_NEW_ALLY);
+		sySoundPlayStub(MUS_A_NEW_ALLY);
 		do {
-			syOAMAddSprAtDepth(entry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
 			sySynch(1);
-		} while(sySndGetBGMRestoreDelayStub() != 0 &&
+		} while(sySoundGetBGMRestoreDelayStub() != 0 &&
 			(PerPush & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 		mnWindowClose(window, 2);
 		sySynch(1);
@@ -208,7 +209,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
 void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 {
 	WIN_STATE *state = WINDOW_STATE;
-	WINDOW	  *win;
+	WINDOW	  *window;
 	Sint32	   secondOam[3];
 	Sint32	   firstOam[3];
 	Sint32	  *firstEntry;
@@ -216,25 +217,25 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 	Sint32	   firstHandle, palette, secondHandle;
 	Sint32	  *p;
 
-	win = NULL;
+	window = NULL;
 	firstEntry = firstOam;
-	win = mnWindowCreate(1, 1, 28, 5, 0);
+	window = mnWindowCreate(1, 1, 28, 5, 0);
 
-	if(win != NULL) {
+	if(window != NULL) {
 		/* BUG: from (8, 0) to (4, 4) is neither across nor down, so
 		   mnWindowDrawDividerLine draws nothing and the window has no divider.
 		   The single joins draw (4, 0, 4, 4), half a tile before their text at
 		   x 36; column 8 is the same place before this one's text at x 68. */
 #if FIX_PAIR_JOINED_DIVIDER
-		mnWindowDrawDividerLine(win, 8, 0, 8, 4);
+		mnWindowDrawDividerLine(window, 8, 0, 8, 4);
 #else
-		mnWindowDrawDividerLine(win, 8, 0, 4, 4);
+		mnWindowDrawDividerLine(window, 8, 0, 4, 4);
 #endif
 
 		state->dirty = 1;
 
 		mnIconLoadWithPalette(
-			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(first)), 0,
+			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSprite(first)), 0,
 			&firstHandle, &palette, PORTRAIT_PALETTE, 0);
 		/* The portrait as a bare OAM entry, drawn each tick: a link word,
 		   attributes 0 and 1 and attribute 2. */
@@ -245,32 +246,32 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 
 		secondEntry = secondOam;
 		mnIconLoadWithPalette(
-			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(second)), 0,
+			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSprite(second)), 0,
 			&secondHandle, &palette, PORTRAIT_PALETTE + 1, 0);
 		p = secondEntry;
 		*p++ = 0;
 		*p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
 		*p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
-		state->voiceSnd = 0;
+		state->voiceSound = 0;
 		state->voiceCountdown = 0;
 
 		mnMessageArgumentPush(first, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(second, MESSAGE_ARGUMENT_ACTOR);
 
-		JOINED_QUEUE_TEXT(win,
+		JOINED_QUEUE_TEXT(window,
 			mnMessageDecodeAndClearArguments(MsgPairJoinedParty), 68, 2, 0);
 
-		sySndPlayStub(MUS_A_NEW_ALLY);
+		sySoundPlayStub(MUS_A_NEW_ALLY);
 
 		do {
-			syOAMAddSprAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
-			syOAMAddSprAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
 			sySynch(1);
-		} while(sySndGetBGMRestoreDelayStub() != 0 &&
+		} while(sySoundGetBGMRestoreDelayStub() != 0 &&
 			(PerPush & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		sySynch(1);
 		syVRAMCacheFreeEntry(firstHandle);
 		syVRAMCacheFreeEntry(secondHandle);

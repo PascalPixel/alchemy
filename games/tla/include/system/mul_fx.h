@@ -27,6 +27,6 @@ static __inline__ FIXED syMulFXArm(FIXED left, FIXED right)
 }
 
 /* The high word of a times b; by RECIPROCAL_OF(d), a quick a / d. */
-Uint32 syMathUnsignedMulHigh(Uint32 a, Uint32 b);
+Uint32 syMathUnsignedMultiplyHigh(Uint32 a, Uint32 b);
 
 #endif

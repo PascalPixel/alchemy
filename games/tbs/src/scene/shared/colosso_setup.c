@@ -17,9 +17,9 @@ void scColossoStartRaceGauge(Sint32 playerActorId, Sint32 opponentActorId,
 	void			   *graphics;
 	Sint32				vramSlot;
 
-	state = syHeapSlotAllocEWRAM(
+	state = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_COLOSSO_RACE, sizeof(COLOSSO_RACE_STATE));
-	graphics = syHeapAllocEWRAM(GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
+	graphics = syHeapAllocateEWRAM(GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
 
 	state->gauge.playerActorId = playerActorId;
 	state->gauge.opponentActorId = opponentActorId;
@@ -65,7 +65,7 @@ void scColossoStartOpponent(Sint32 resource)
 		recorder->mirror = 1;
 		recorder->actorId = state->gauge.opponentActorId;
 		recorder->still = 0;
-		recorder->pathIdx = 0;
+		recorder->pathIndex = 0;
 	}
 	sySetTickEvent(scColossoUpdatePathOpponent, EVENT_PASS_TICK + 5);
 }

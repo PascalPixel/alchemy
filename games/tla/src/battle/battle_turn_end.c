@@ -216,9 +216,9 @@ Bool btUnitCountDownPsynergySeal(Sint32 unitId)
 Bool btUnitCountDownRegenerate(Sint32 id)
 {
 	UNIT  *unit = syUnitGet(id);
-	Uint8 *cnt = &unit->regenerate;
+	Uint8 *count = &unit->regenerate;
 
-	if(*cnt != 0) {
+	if(*count != 0) {
 		Sint32 max;
 		Sint32 before;
 		Sint32 hp;
@@ -228,7 +228,7 @@ Bool btUnitCountDownRegenerate(Sint32 id)
 		hp = unit->hp;
 		max = unit->hpMax;
 		before = hp;
-		hp += max * (*cnt + 1) / 10;
+		hp += max * (*count + 1) / 10;
 		if(hp > max)
 			hp = max;
 		gain = hp - before;
@@ -288,7 +288,7 @@ Sint32 btDjinnRecoveryCountDown(void)
 	Bool   removed = FALSE;
 	Sint32 i;
 
-	for(i = 0; i < list->cnt; i++) {
+	for(i = 0; i < list->count; i++) {
 		DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
 		if(entry->turns > 0 && syUnitGet(entry->unitId)->hp != 0)
@@ -296,15 +296,15 @@ Sint32 btDjinnRecoveryCountDown(void)
 	}
 	/* Removing an entry moves the next one into its place, so i advances only
 	   past entries that stay. */
-	for(i = 0; i < list->cnt;) {
+	for(i = 0; i < list->count;) {
 		DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
 		if(entry->turns == 0) {
 			Uint8 unitId = entry->unitId;
 
-			gmDjinnSetStub(unitId, entry->element, entry->idx);
-			gmDjinnRecoveryRemoveStub(unitId, entry->element, entry->idx);
-			gmUnitCalcStub(unitId);
+			gmDjinnSetStub(unitId, entry->element, entry->index);
+			gmDjinnRecoveryRemoveStub(unitId, entry->element, entry->index);
+			gmUnitCalculateStub(unitId);
 			removed = TRUE;
 		} else {
 			i++;
@@ -340,11 +340,11 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 	DJINN_RECOVERY_ENTRY *entry;
 	Sint32				  result = 0;
 	Sint32				  i;
-	Sint32				  cnt;
+	Sint32				  count;
 
 	list = &gmDjinnGetRecoveryTableStub(side)->list;
 	i = 0;
-	if(i < list->cnt) {
+	if(i < list->count) {
 		timedEntry = list->entries;
 		do {
 			if(timedEntry->turns > 0 && btUnitIsListed(timedEntry->unitId) &&
@@ -352,14 +352,14 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 				timedEntry->turns--;
 				result = 1;
 			}
-			cnt = list->cnt;
+			count = list->count;
 
 			i++;
 			timedEntry++;
-		} while(i < cnt);
+		} while(i < count);
 	}
 	i = 0;
-	if(i < list->cnt) {
+	if(i < list->count) {
 		entry = list->entries;
 		do {
 			if(entry->turns == 0) {
@@ -373,7 +373,7 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 					btPlaybackSchedulePhase(30);
 					btPlaybackPush(PLAYBACK_UNIT_NAME, id);
 					btPlaybackPush(PLAYBACK_ABILITY_NAME,
-						entry->element * DJINN_PER_ELEMENT + entry->idx +
+						entry->element * DJINN_PER_ELEMENT + entry->index +
 							ABILITY_DJINNI_FIRST);
 					btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
 					btPlaybackPush(PLAYBACK_DRAW_STATUS, 0);
@@ -381,15 +381,15 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 					btPlaybackPush(PLAYBACK_REFRESH_UNIT, id);
 					if(btUnitIsListed(id)) {
 						fdActorSelectAnimationStub(
-							(ACTOR *)btObjectGet(id)->obj, POSE_CAST);
+							(ACTOR *)btObjectGet(id)->object, POSE_CAST);
 						fdActorSetAnimationSpeedStub(
-							(ACTOR *)btObjectGet(id)->obj,
+							(ACTOR *)btObjectGet(id)->object,
 							ANIM_STEP_NORMAL * 2);
 					}
 					element = entry->element;
-					gmDjinnSetStub(id, element, entry->idx);
-					gmDjinnRecoveryRemoveStub(id, entry->element, entry->idx);
-					gmUnitCalcStub(id);
+					gmDjinnSetStub(id, element, entry->index);
+					gmDjinnRecoveryRemoveStub(id, entry->element, entry->index);
+					gmUnitCalculateStub(id);
 					if(btUnitIsListed(id))
 						btElementGlowPlay(id, element, GLOW_BURST, 0);
 					btPlaybackWaitForReady();
@@ -398,7 +398,7 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
 				entry++;
 				i++;
 			}
-		} while(i < list->cnt);
+		} while(i < list->count);
 	}
 	return result;
 }
@@ -442,7 +442,7 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
    unit's name, and waits for the player. */
 #define ANNOUNCE_END(test, message) \
 	if(test(unitId) != 0) { \
-		btUnitBuildStatFlags(unitId, btObjectGet(unitId)); \
+		btUnitBuildStatusFlags(unitId, btObjectGet(unitId)); \
 		mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR); \
 		mnBattleMessageShowAndWaitStub(message); \
 		btMessageWaitForAdvance(); \
@@ -452,7 +452,7 @@ Sint32 btDjinnRecoveryCountDownSide(Sint32 side)
    message. */
 #define ANNOUNCE_END_POSE(test, message) \
 	if(test(unitId) != 0) { \
-		btUnitBuildStatFlags(unitId, btObjectGet(unitId)); \
+		btUnitBuildStatusFlags(unitId, btObjectGet(unitId)); \
 		mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR); \
 		btObjectUpdatePose(unitId); \
 		mnBattleMessageShowAndWaitStub(message); \
@@ -470,32 +470,32 @@ void btProcessTurnEnd(void)
 {
 	BATTLE_STATE		 *battle;
 	Sint32				  side;
-	Sint32				  sideCnt;
-	Sint32				  cnt;
-	Sint32				  recoveryIdx;
+	Sint32				  sideCount;
+	Sint32				  count;
+	Sint32				  recoveryIndex;
 	DJINN_RECOVERY_LIST	 *list;
 	DJINN_RECOVERY_ENTRY *timedEntry;
 	DJINN_RECOVERY_ENTRY *expiredEntry;
 
 	battle = RamHeapSlots->battleState;
-	sideCnt = (battle->isLink != 0) + 1;
-	for(side = 0; side < sideCnt; side++) {
+	sideCount = (battle->isLink != 0) + 1;
+	for(side = 0; side < sideCount; side++) {
 		list = &gmDjinnGetRecoveryTableStub(side)->list;
-		recoveryIdx = 0;
+		recoveryIndex = 0;
 		timedEntry = list->entries;
-		if(recoveryIdx < list->cnt) {
+		if(recoveryIndex < list->count) {
 			do {
 				if(timedEntry->turns > 0 &&
 					btObjectGet(timedEntry->unitId) != 0 &&
 					syUnitGet(timedEntry->unitId)->hp != 0) {
 					timedEntry->turns--;
 				}
-				recoveryIdx++;
+				recoveryIndex++;
 				timedEntry++;
-			} while(recoveryIdx < list->cnt);
+			} while(recoveryIndex < list->count);
 		}
-		recoveryIdx = 0;
-		if(recoveryIdx < list->cnt) {
+		recoveryIndex = 0;
+		if(recoveryIndex < list->count) {
 			expiredEntry = list->entries;
 			do {
 				if(expiredEntry->turns == 0) {
@@ -508,34 +508,34 @@ void btProcessTurnEnd(void)
 						btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);
 						btPlaybackPush(PLAYBACK_ABILITY_NAME,
 							expiredEntry->element * DJINN_PER_ELEMENT +
-								expiredEntry->idx + ABILITY_DJINNI_FIRST);
+								expiredEntry->index + ABILITY_DJINNI_FIRST);
 						btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
 						btPlaybackPush(PLAYBACK_DRAW_STATUS, 0);
 						btPlaybackPush(
 							PLAYBACK_MESSAGE, (Uint32)&MsgDjinnIsSet);
 						btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
-						sySndPlayStub(SE_POWER_UP);
+						sySoundPlayStub(SE_POWER_UP);
 						if(btUnitIsListed(unitId)) {
 							fdActorSelectAnimationStub(
-								btObjectGet(unitId)->obj, POSE_CAST);
+								btObjectGet(unitId)->object, POSE_CAST);
 							fdActorSetAnimationSpeedStub(
-								(ACTOR *)btObjectGet(unitId)->obj,
+								(ACTOR *)btObjectGet(unitId)->object,
 								ANIM_STEP_NORMAL * 2);
 						}
 						element = expiredEntry->element;
-						gmDjinnSetStub(unitId, element, expiredEntry->idx);
+						gmDjinnSetStub(unitId, element, expiredEntry->index);
 						gmDjinnRecoveryRemoveStub(
-							unitId, expiredEntry->element, expiredEntry->idx);
-						gmUnitCalcStub(unitId);
+							unitId, expiredEntry->element, expiredEntry->index);
+						gmUnitCalculateStub(unitId);
 						if(btUnitIsListed(unitId))
 							btElementGlowPlay(unitId, element, GLOW_BURST, 0);
 						btPlaybackWaitForReady();
 					}
 				} else {
 					expiredEntry++;
-					recoveryIdx++;
+					recoveryIndex++;
 				}
-			} while(recoveryIdx < list->cnt);
+			} while(recoveryIndex < list->count);
 		}
 	}
 	btBackgroundSetMode(
@@ -545,7 +545,7 @@ void btProcessTurnEnd(void)
 		BATTLE_SIDE_ORDER order = BattleTurnEndSideOrder;
 		Uint16			  unitIds[16];
 		Sint32			  group;
-		Sint32			  unitIdx;
+		Sint32			  unitIndex;
 
 		if(battle->isLink != 0 && battle->linkSide != 0) {
 			order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
@@ -553,13 +553,13 @@ void btProcessTurnEnd(void)
 		}
 		groupList = order.group;
 		for(group = 0; group <= 1; group++) {
-			cnt = btUnitListIds(groupList[group], unitIds);
+			count = btUnitListIds(groupList[group], unitIds);
 			if(groupList[group] == BATTLE_SIDE_MASK_PARTY)
-				cnt += btPartyPrepareReserveOwners(unitIds + cnt);
-			for(unitIdx = 0; unitIdx < cnt; unitIdx++) {
+				count += btPartyPrepareReserveOwners(unitIds + count);
+			for(unitIndex = 0; unitIndex < count; unitIndex++) {
 				Sint32 hpAmount;
 				Sint32 ppAmount;
-				Sint32 unitId = unitIds[unitIdx];
+				Sint32 unitId = unitIds[unitIndex];
 				UNIT  *unit = syUnitGet(unitId);
 
 				/* A readiness to counterattack lasts the one turn. */
@@ -596,7 +596,7 @@ void btProcessTurnEnd(void)
 							mnBattleMessageShowAndWaitStub(
 								(Sint32)&MsgHpRecover);
 						}
-						sySndPlayStub(SE_NOTE_HIGH);
+						sySoundPlayStub(SE_NOTE_HIGH);
 						btMessageWaitForAdvance();
 					}
 					if(unit->ppRegen != 0 && unit->pp != unit->ppMax) {
@@ -615,7 +615,7 @@ void btProcessTurnEnd(void)
 							mnBattleMessageShowAndWaitStub(
 								(Sint32)&MsgPpRecover);
 						}
-						sySndPlayStub(SE_NOTE_HIGH);
+						sySoundPlayStub(SE_NOTE_HIGH);
 						btMessageWaitForAdvance();
 					}
 				}
@@ -651,7 +651,7 @@ void btUnitDrainDjinn(Sint32 unitId, Sint32 all, Sint32 announce)
 	Uint8				 elements[DRAIN_CANDIDATE_MAX];
 	Uint8				 indices[DRAIN_CANDIDATE_MAX];
 	Sint32				 shown;
-	Sint32				 cnt;
+	Sint32				 count;
 	Sint32				 active;
 	Sint32				 element;
 	Sint32				 djinni;
@@ -663,40 +663,40 @@ void btUnitDrainDjinn(Sint32 unitId, Sint32 all, Sint32 announce)
 
 	shown = 0;
 again: {
-	cnt = 0;
+	count = 0;
 	active = 0;
 	for(element = 0; element < ELEMENT_COUNT; element++) {
 		for(djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
 			if(gmDjinnIsSetStub(unitId, element, djinni)) {
-				elements[cnt] = element;
-				indices[cnt] = djinni;
-				cnt++;
+				elements[count] = element;
+				indices[count] = djinni;
+				count++;
 				active = 1;
-				if(cnt == DRAIN_CANDIDATE_MAX)
+				if(count == DRAIN_CANDIDATE_MAX)
 					goto picked;
 			}
 		}
 	}
-	if(cnt == 0) {
+	if(count == 0) {
 		for(element = 0; element < ELEMENT_COUNT; element++) {
 			for(djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
 				if(gmDjinnCanSetStub(unitId, element, djinni)) {
-					elements[cnt] = element;
-					indices[cnt] = djinni;
-					cnt++;
-					if(cnt == DRAIN_CANDIDATE_MAX)
+					elements[count] = element;
+					indices[count] = djinni;
+					count++;
+					if(count == DRAIN_CANDIDATE_MAX)
 						goto picked;
 				}
 			}
 		}
 	}
 picked:
-	if(cnt == 0)
+	if(count == 0)
 		return;
 
-	cnt = ((Uint32)gmBattleRandomStub() * cnt) >> 16;
-	element = elements[cnt];
-	djinni = indices[cnt];
+	count = ((Uint32)gmBattleRandomStub() * count) >> 16;
+	element = elements[count];
+	djinni = indices[count];
 	if(active) {
 		gmDjinnRecoveryAddStandbyStub(unitId, element, djinni);
 		gmDjinnPutOnStandbyStub(unitId, element, djinni);
@@ -712,9 +712,9 @@ picked:
 	}
 
 	list = &gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
-	for(i = 0; i < list->cnt; i++) {
+	for(i = 0; i < list->count; i++) {
 		if(list->entries[i].element == element &&
-			list->entries[i].idx == djinni &&
+			list->entries[i].index == djinni &&
 			list->entries[i].turns == DJINN_RECOVERY_AFTER_BATTLE)
 			list->entries[i].turns = DJINN_RECOVERY_SUMMONED;
 	}
@@ -723,7 +723,7 @@ picked:
 		&gmDjinnGetRecoveryTableStub(unitId < 0 || unitId > ALLY_MAX)->list;
 	for(;;) {
 		owner = -1;
-		for(i = 0; i < pending->cnt; i++) {
+		for(i = 0; i < pending->count; i++) {
 			if(pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
 				owner = pending->entries[i].unitId;
 				break;
@@ -732,7 +732,7 @@ picked:
 		if(owner == -1)
 			break;
 		recoveryTurn = -1;
-		for(i = 0; i < pending->cnt; i++) {
+		for(i = 0; i < pending->count; i++) {
 			if(pending->entries[i].unitId == owner &&
 				pending->entries[i].turns > recoveryTurn)
 				recoveryTurn = pending->entries[i].turns;
@@ -740,7 +740,7 @@ picked:
 		recoveryTurn++;
 		if(recoveryTurn <= 1)
 			recoveryTurn = 2;
-		for(i = 0; i < pending->cnt; i++) {
+		for(i = 0; i < pending->count; i++) {
 			if(pending->entries[i].unitId == owner &&
 				pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
 				pending->entries[i].turns = recoveryTurn;
@@ -778,9 +778,9 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 	Uint32				 unitId;
 	UNIT				*unit;
 	Sint32				 battleContinues;
-	Sint32				 cnts[ELEMENT_COUNT];
+	Sint32				 counts[ELEMENT_COUNT];
 	DJINN_RECOVERY_LIST *list;
-	Sint32				 entryIdx;
+	Sint32				 entryIndex;
 	Sint32				 recoveryTurn;
 
 	unitId = plan->unitId;
@@ -789,11 +789,13 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 	if(unitId <= ALLY_MAX ||
 		((BATTLE_STATE *)RamHeapSlots->battleState)->isLink != 0) {
 		list = &gmDjinnGetRecoveryTableStub(unitId > ALLY_MAX)->list;
-		for(entryIdx = 0; entryIdx < list->cnt; entryIdx++) {
-			if(list->entries[entryIdx].unitId == unitId &&
-				list->entries[entryIdx].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-				gmDjinnPutOnStandbyStub(unitId, list->entries[entryIdx].element,
-					list->entries[entryIdx].idx);
+		for(entryIndex = 0; entryIndex < list->count; entryIndex++) {
+			if(list->entries[entryIndex].unitId == unitId &&
+				list->entries[entryIndex].turns ==
+					DJINN_RECOVERY_AFTER_BATTLE) {
+				gmDjinnPutOnStandbyStub(unitId,
+					list->entries[entryIndex].element,
+					list->entries[entryIndex].index);
 			}
 		}
 	}
@@ -810,11 +812,11 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 			((BATTLE_STATE *)RamHeapSlots->battleState)->isLink != 0)
 					   ->list;
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			cnts[i] = 0;
+			counts[i] = 0;
 		}
 		for(;;) {
 			owner = -1;
-			for(i = 0; i < pending->cnt; i++) {
+			for(i = 0; i < pending->count; i++) {
 				if(pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
 					owner = pending->entries[i].unitId;
 					break;
@@ -824,7 +826,7 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 				break;
 			}
 			recoveryTurn = -1;
-			for(i = 0; i < pending->cnt; i++) {
+			for(i = 0; i < pending->count; i++) {
 				if(pending->entries[i].unitId == owner &&
 					pending->entries[i].turns > recoveryTurn) {
 					recoveryTurn = pending->entries[i].turns;
@@ -834,11 +836,11 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 			if(recoveryTurn <= 1) {
 				recoveryTurn = 2;
 			}
-			for(i = 0; i < pending->cnt; i++) {
+			for(i = 0; i < pending->count; i++) {
 				if(pending->entries[i].unitId == owner &&
 					pending->entries[i].turns == DJINN_RECOVERY_SUMMONED) {
 					pending->entries[i].turns = recoveryTurn;
-					cnts[pending->entries[i].element]++;
+					counts[pending->entries[i].element]++;
 					recoveryTurn++;
 				}
 			}
@@ -848,17 +850,17 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 		UNIT  *before;
 		Sint32 i;
 
-		before = syHeapAllocEWRAM(sizeof(UNIT));
+		before = syHeapAllocateEWRAM(sizeof(UNIT));
 		syWordsCopyEntry(before, unit, sizeof(UNIT));
 		for(i = 0; i < ELEMENT_COUNT; i++) {
 			/* A summon's boost to an element is how many of its Djinn the
 			   summons used, four at most, and never falls during the battle. */
-			if(cnts[i] > 4)
-				cnts[i] = 4;
-			if(unit->summonBoost[i] < cnts[i])
-				unit->summonBoost[i] = cnts[i];
+			if(counts[i] > 4)
+				counts[i] = 4;
+			if(unit->summonBoost[i] < counts[i])
+				unit->summonBoost[i] = counts[i];
 		}
-		gmUnitCalcStub(unitId);
+		gmUnitCalculateStub(unitId);
 		for(i = 0; i < ELEMENT_COUNT; i++) {
 			Sint32 gain = unit->element[i].power - before->element[i].power;
 
@@ -872,17 +874,18 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 				   Wind. */
 				btPlaybackPush(PLAYBACK_MESSAGE, (Uint32)MsgEarthPowerUp + i);
 				btPlaybackPush(PLAYBACK_REFRESH_UNIT, unitId);
-				sySndPlayStub(SE_POWER_UP);
-				fdActorSelectAnimationStub(btObjectGet(unitId)->obj, POSE_CAST);
+				sySoundPlayStub(SE_POWER_UP);
+				fdActorSelectAnimationStub(
+					btObjectGet(unitId)->object, POSE_CAST);
 				fdActorSetAnimationSpeedStub(
-					(ACTOR *)btObjectGet(unitId)->obj, ANIM_STEP_NORMAL * 2);
+					(ACTOR *)btObjectGet(unitId)->object, ANIM_STEP_NORMAL * 2);
 				btElementGlowPlay(unitId, i, GLOW_PILLAR, -1);
 				btPlaybackWaitForReady();
 			}
 		}
 		syHeapRelease(before);
 	}
-	if(battleContinues != 0 && btObjectGet(unitId)->obj != 0) {
+	if(battleContinues != 0 && btObjectGet(unitId)->object != 0) {
 		Sint8 *poison;
 		Uint8 *reaper;
 
@@ -922,9 +925,9 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 			   SE_HEAVY_IMPACT; the ROM keeps the reread of *poison, the compare
 			   and both stores. */
 			if(*poison != 0) {
-				battle->events.pendingSnd = SE_HEAVY_IMPACT;
+				battle->events.pendingSound = SE_HEAVY_IMPACT;
 			} else {
-				battle->events.pendingSnd = SE_IMPACT;
+				battle->events.pendingSound = SE_IMPACT;
 			}
 			if(gmUnitAddHpStub(unitId, -damage) == 0) {
 				if(btUnitKeepsOneHp(unitId)) {
@@ -963,6 +966,6 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 		}
 		btPlaybackRunAll();
 	}
-	if(btObjectGet(unitId)->obj != 0)
-		gmUnitCalcStub(unitId);
+	if(btObjectGet(unitId)->object != 0)
+		gmUnitCalculateStub(unitId);
 }

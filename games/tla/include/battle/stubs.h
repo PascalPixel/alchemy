@@ -17,8 +17,8 @@ void btBackgroundLoadStub(Sint32 mode, Sint32 resource, Sint32 level);
 void btCameraSetViewStub(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom);
 /* Darkens the battle background's palette by level sixtieths; 0 restores it. */
 void btBackgroundSetPaletteLevelStub(Sint32 unused, Sint32 level);
-/* Returns sprite recordIdx of a unit's motion object, or null. */
-void *btActorGetSprStub(void *object, Sint32 recordIdx);
+/* Returns sprite recordIndex of a unit's motion object, or null. */
+void *btActorGetSpriteStub(void *object, Sint32 recordIndex);
 /* Projects the point above a unit, where the target cursor points, onto the
    screen. */
 Sint32 btMotionProjectCursorPointStub(
@@ -26,7 +26,7 @@ Sint32 btMotionProjectCursorPointStub(
 /* Readies the sprites of the listed units and destroys every other unit's. */
 void btActorSpawnObjectsForListStub(Sint16 *list, Sint32 refresh);
 /* Destroys a unit's sprites, its status icon and shadow with them. */
-void btObjectDestroySprsStub(Sint32 unitId);
+void btObjectDestroySpritesStub(Sint32 unitId);
 /* Readies every unit's sprites, destroying those of units no longer in the
    battle, and sets each unit's pose again. */
 void btObjectPutStub(void);
@@ -35,9 +35,9 @@ void btMotionApplyKnockbackStub(Sint32 unitId, Sint32 variant);
 
 /* Plays the action on its targets as the blow lands, with sound as the hit's
    sound (0 keeps the one set). */
-void btPlaybackStartStub(Sint32 snd);
+void btPlaybackStartStub(Sint32 sound);
 /* Writes count colours of source to destination scaled by scale / 256. */
-void btColBufferScaleStub(void *src, void *dst, Sint32 scale, Sint32 cnt);
+void btColorBufferScaleStub(void *src, void *dest, Sint32 scale, Sint32 count);
 /* Switches the battle background's display mode, darkened by fade. */
 void btBackgroundSetModeStub(Sint32 mode, Sint32 background, Sint32 fade);
 /* Replaces the first enemy with the Doom Dragon's next form after formation. */
@@ -52,8 +52,8 @@ Sint32 btUnitListLivingIdsStub(Sint32 sideMask, Uint16 *unitIds);
 /* Works out which summons the party can call. */
 void btSummonUpdateAvailabilityStub(void);
 /* Turns the battle camera to the view the commands are chosen in, raised by
-   verticalOfs pixels. */
-void btCameraSetCommandViewStub(Sint32 verticalOfs);
+   verticalOffset pixels. */
+void btCameraSetCommandViewStub(Sint32 verticalOffset);
 
 /* Lists the units on the sides in sideMask into unitIds, or only counts them
    when it is NULL, and returns how many. */

@@ -169,7 +169,7 @@ void fdTeleportPlaySparks(void);
 
 /* The colours of BG palettes 8 and 9. */
 typedef struct HALL_COL {
-	Uint16 cols[2 * PALETTE_COLORS];
+	Uint16 colors[2 * PALETTE_COLORS];
 } HALL_COL;
 
 /* The teleport circle's shimmer, a palette cycle that fdPaletteCycleFade
@@ -221,19 +221,19 @@ void scTeleportStopShimmer(void);
    stand without a shadow. */
 Sint32 scMarsLighthouseHallSetUpTorch(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
 /* Shows a flame on its torch, 14 pixels up, in its element's animation. */
-Sint32 scMarsLighthouseHallShowFlame(Sint32 id, Sint32 anm)
+Sint32 scMarsLighthouseHallShowFlame(Sint32 id, Sint32 animation)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(14);
-	fdActorSetSprFlags(actor, 0);
-	fdActorSelectAnimation(actor, anm);
+	fdActorSetSpriteFlags(actor, 0);
+	fdActorSelectAnimation(actor, animation);
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
 #endif
@@ -352,7 +352,7 @@ void scMarsLighthouseHallCycleLedgeInscription(void)
    (metatile (31, 17)) takes Felix back into the tower he came up through. */
 void scMarsLighthouseHallLeaveLedge(void)
 {
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syFieldScriptSetExitRequest(MainRoutineStateWork.entrance);
 }
 
@@ -385,7 +385,7 @@ void scMarsLighthouseHallLightFlame(void)
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeInterpolate(30);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_WARP);
+	fdScriptPlaySound(SE_WARP);
 	switch(MainRoutineStateWork.entrance) {
 	case MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_VENUS_TOWER:
 		fdScriptSetFlag(FLAG_VENUS_FLAME_LIT);
@@ -430,48 +430,48 @@ void scMarsLighthouseHallCycleHallInscriptions(void)
 		syWordsCopyEntry(MarsLighthouseHallHallSavedPalette,
 			(void *)&BG_PLTT_COLOR(UNLIT_INSCRIPTION_PALETTE, 0),
 			PALETTE_COLORS * 2);
-		syWordsCopyEntry(MarsLighthouseHallHallElementColors.cols,
+		syWordsCopyEntry(MarsLighthouseHallHallElementColors.colors,
 			(void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
 			sizeof(MarsLighthouseHallHallElementColors));
-		syWordsCopyEntry(MarsLighthouseHallHallPalette.cols,
-			MarsLighthouseHallHallElementColors.cols,
+		syWordsCopyEntry(MarsLighthouseHallHallPalette.colors,
+			MarsLighthouseHallHallElementColors.colors,
 			sizeof(MarsLighthouseHallHallElementColors));
 		MarsLighthouseHallHallCycleTick = 0;
 	}
 	base = MarsLighthouseHallHallCycleTick / INSCRIPTION_GLOW_STEP_TICKS %
 		INSCRIPTION_GLOW_COLORS;
 	for(i = 0; i < INSCRIPTION_GLOW_COLORS; i++) {
-		MarsLighthouseHallHallPalette.cols[JUPITER_GLOW + i] =
+		MarsLighthouseHallHallPalette.colors[JUPITER_GLOW + i] =
 			MarsLighthouseHallHallElementColors
-				.cols[JUPITER_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
-		MarsLighthouseHallHallPalette.cols[VENUS_GLOW + i] =
+				.colors[JUPITER_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
+		MarsLighthouseHallHallPalette.colors[VENUS_GLOW + i] =
 			MarsLighthouseHallHallElementColors
-				.cols[VENUS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
-		MarsLighthouseHallHallPalette.cols[MERCURY_GLOW + i] =
+				.colors[VENUS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
+		MarsLighthouseHallHallPalette.colors[MERCURY_GLOW + i] =
 			MarsLighthouseHallHallElementColors
-				.cols[MERCURY_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
-		MarsLighthouseHallHallPalette.cols[MARS_GLOW + i] =
+				.colors[MERCURY_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
+		MarsLighthouseHallHallPalette.colors[MARS_GLOW + i] =
 			MarsLighthouseHallHallElementColors
-				.cols[MARS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
+				.colors[MARS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
 	}
 	if(!fdScriptGetFlag(FLAG_VENUS_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[VENUS_GLOW],
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.colors[VENUS_GLOW],
 			MarsLighthouseHallUnlitInscriptionColors,
 			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	if(!fdScriptGetFlag(FLAG_MERCURY_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[MERCURY_GLOW],
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.colors[MERCURY_GLOW],
 			MarsLighthouseHallUnlitInscriptionColors,
 			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	if(!fdScriptGetFlag(FLAG_MARS_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[MARS_GLOW],
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.colors[MARS_GLOW],
 			MarsLighthouseHallUnlitInscriptionColors,
 			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	if(!fdScriptGetFlag(FLAG_JUPITER_FLAME_LIT))
-		syWordsCopyEntry(&MarsLighthouseHallHallPalette.cols[JUPITER_GLOW],
+		syWordsCopyEntry(&MarsLighthouseHallHallPalette.colors[JUPITER_GLOW],
 			MarsLighthouseHallUnlitInscriptionColors,
 			sizeof(MarsLighthouseHallUnlitInscriptionColors));
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
-		(Uint32)MarsLighthouseHallHallPalette.cols, DMA_COPY_WORDS(16));
+		(Uint32)MarsLighthouseHallHallPalette.colors, DMA_COPY_WORDS(16));
 	MarsLighthouseHallHallCycleTick++;
 }
 
@@ -532,7 +532,7 @@ void scMarsLighthouseHallStepTowardDoorway(Sint32 state)
 	if(state == MarsLighthouseHallDoorwayStep)
 		return;
 	if((state ^ MarsLighthouseHallDoorwayStep) & 1)
-		fdScriptPlaySnd(SE_MARS_LIGHTHOUSE_DOORWAY);
+		fdScriptPlaySound(SE_MARS_LIGHTHOUSE_DOORWAY);
 	MarsLighthouseHallDoorwayStep = state;
 	odd = state & 1;
 	flash = (Uint16 *)&MarsLighthouseHallDoorwayBlendTarget;
@@ -667,7 +667,8 @@ const CUE *scGetCues(void)
 	return MarsLighthouseHallCues;
 }
 
-void scPaletteSetColsFade(Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
+void scPaletteSetColorsFade(
+	Uint16 *slots, Uint16 *colours, Uint16 *a, Uint16 *b);
 
 extern Uint16 TeleportCirclePaletteSlots[];
 extern Uint16 TeleportCircleColors[];
@@ -684,7 +685,7 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptSetFlag(FLAG_IN_MARS_LIGHTHOUSE);
-	scPaletteSetColsFade((Sint32)TeleportCirclePaletteSlots,
+	scPaletteSetColorsFade((Sint32)TeleportCirclePaletteSlots,
 		(Sint32)TeleportCircleColors, (Sint32)TeleportCircleShimmerColors,
 		(Sint32)TeleportCircleShimmerSlots);
 	if(scene != SCENE_MARS_LIGHTHOUSE_BEACON_LEDGE &&
@@ -712,7 +713,7 @@ Sint32 scInit(void)
 				syFieldScriptEndLastingPsynergy(0);
 				fdScriptStartScreenTransition();
 				fdScriptWaitTransitionTicks();
-				fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+				fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 				fdCameraSetSpeed(2);
 				fdCameraMoveTo(224, 64, 216, 1);
 				fdCameraWaitForArrival();
@@ -735,7 +736,7 @@ Sint32 scInit(void)
 				/* unset is zero here: the mouth stands still and watches
 				   nothing. */
 				actor = fdActorGet(ACTOR_STATUE_MOUTH);
-				actor->motionFlg = unset;
+				actor->motionFlags = unset;
 				actor->y.fixed = toFIXED(16);
 				actor->groundHeight = toFIXED(16);
 				actor->launchedActorId = ACTOR_FIREBALL;
@@ -760,8 +761,8 @@ Sint32 scInit(void)
 				fdMapGridCopyMetatileAttributes(30, 12, 4, 3, 12, 12);
 				syFieldScriptWait(40);
 				fdScriptSetFlag(FLAG_WAY_TO_AERIE_OPEN);
-				fdScriptPlaySnd(MUS_PUZZLE_SOLVED);
-				sySndWaitForBGMRestore();
+				fdScriptPlaySound(MUS_PUZZLE_SOLVED);
+				sySoundWaitForBGMRestore();
 				gmPlayMusic();
 				fdScriptEnd();
 			}
@@ -773,10 +774,11 @@ Sint32 scInit(void)
 /* The line scroll's wave across and down that the rain ledges start with the
    rain. */
 static __inline__ void scMarsLighthouseHallStartRainWave(Sint32 mode,
-	FIXED freqX, Sint32 stepX, FIXED ampX, FIXED freqY, Sint32 stepY,
+	FIXED frequencyX, Sint32 stepX, FIXED ampX, FIXED frequencyY, Sint32 stepY,
 	FIXED ampY)
 {
-	fdLineScrollInitWave(mode, freqX, stepX, ampX, freqY, stepY, ampY);
+	fdLineScrollInitWave(
+		mode, frequencyX, stepX, ampX, frequencyY, stepY, ampY);
 }
 
 Sint32 scPrepareMap(void)
@@ -797,40 +799,40 @@ Sint32 scPrepareMap(void)
 	if(scene == SCENE_MARS_LIGHTHOUSE_BEACON_LEDGE) {
 		switch(entrance) {
 		case MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_VENUS_TOWER:
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGet(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GRB);
 			scMarsLighthouseHallShowFlame(
 				ACTOR_LEDGE_FLAME, FLAME_ANIMATION_VENUS);
-			fdTilesetAnimResume(4);
-			fdTilesetAnimResume(5);
+			fdTilesetAnimationResume(4);
+			fdTilesetAnimationResume(5);
 			break;
 		case MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER:
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGet(ACTOR_LEDGE_TORCH), SPRITE_COLOR_BGR);
 			scMarsLighthouseHallShowFlame(
 				ACTOR_LEDGE_FLAME, FLAME_ANIMATION_MERCURY);
-			fdTilesetAnimResume(6);
-			fdTilesetAnimResume(7);
+			fdTilesetAnimationResume(6);
+			fdTilesetAnimationResume(7);
 			break;
 		case MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_MARS_TOWER:
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGet(ACTOR_LEDGE_TORCH), SPRITE_COLOR_NORMAL);
 			scMarsLighthouseHallShowFlame(
 				ACTOR_LEDGE_FLAME, FLAME_ANIMATION_MARS);
-			fdTilesetAnimResume(0);
-			fdTilesetAnimResume(1);
+			fdTilesetAnimationResume(0);
+			fdTilesetAnimationResume(1);
 			break;
 		case MARS_LIGHTHOUSE_BEACON_LEDGE_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER:
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGet(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GBR);
 			scMarsLighthouseHallShowFlame(
 				ACTOR_LEDGE_FLAME, FLAME_ANIMATION_JUPITER);
-			fdTilesetAnimResume(2);
-			fdTilesetAnimResume(3);
+			fdTilesetAnimationResume(2);
+			fdTilesetAnimationResume(3);
 			break;
 		}
 		actor = fdActorGet(ACTOR_LEDGE_BLAZE_TARGET);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->z.fixed = toFIXED(104);
 		syFieldSetTickEvent(
 			scMarsLighthouseHallCycleLedgeInscription, EVENT_PASS_TICK);
@@ -980,15 +982,15 @@ void scMarsLighthouseHallSpawnFlamePuff(Sint32 x, Sint32 z, Sint32 kind)
 
 	actor = scFieldActorCreate(SPRITE_FLAME_PUFF, toFIXED(x), 0, toFIXED(z));
 	if(actor != 0) {
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorSelectAnimation(actor, 3);
 		if(kind != 0) {
-			((PLACED_SPR *)actor->spr)->pri = 2;
+			((PLACED_SPR *)actor->sprite)->priority = 2;
 			fdActorStartScript(actor, MarsLighthouseHallFlamePuffSwellScript);
 		} else {
-			((PLACED_SPR *)actor->spr)->pri = 1;
-			actor->velX = toFIXED(syRandomBelow(8) - 4);
-			actor->velY = toFIXED(4);
+			((PLACED_SPR *)actor->sprite)->priority = 1;
+			actor->velocityX = toFIXED(syRandomBelow(8) - 4);
+			actor->velocityY = toFIXED(4);
 			fdActorStartScript(actor, MarsLighthouseHallFlamePuffThrownScript);
 		}
 	}
@@ -1004,7 +1006,7 @@ void scMarsLighthouseHallBreakFloorTile(Sint32 x, Sint32 z, Sint32 srcX,
 	Sint32 px;
 	Sint32 pz;
 
-	fdScriptPlaySnd(SE_CLATTER);
+	fdScriptPlaySound(SE_CLATTER);
 	scMarsLighthouseHallSpawnFlamePuff(x, z + 12, 1);
 	for(i = 0; i < 3; i++) {
 		px = x + (syRandomBelow(12)) - 6;
@@ -1076,7 +1078,7 @@ void scMarsLighthouseHallHearDragonStatue(void)
 		fdCameraMoveTo(224, 88, 216, 1);
 		fdCameraWaitForArrival();
 		syFieldScriptWait(20);
-		fdScriptPlaySnd(SE_MARS_LIGHTHOUSE_DOORWAY);
+		fdScriptPlaySound(SE_MARS_LIGHTHOUSE_DOORWAY);
 		scMarsLighthouseHallFlashDoorways();
 		syFieldScriptWait(20);
 		fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
@@ -1124,7 +1126,7 @@ void scFlameThrowerSendForward(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 		scActorResetScriptedFor(actor, 2);
 		actor->update = scFlameUpdateForward;
 		if(offScreen != 0)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1151,7 +1153,7 @@ void scFlameThrowerSendBackward(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 		scActorSetupScriptedPart(actor, 3);
 		actor->update = scFlameUpdateForward;
 		if(offScreen != 0)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1171,7 +1173,7 @@ void scFlameThrowerSendEast(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 		scActorSetupScriptedPart(actor, 3);
 		actor->update = scFlameUpdateSideways;
 		if(offScreen != 0)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1191,7 +1193,7 @@ void scFlameThrowerSendWest(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 		scActorSetupScriptedPart(actor, 3);
 		actor->update = scFlameUpdateSideways;
 		if(offScreen != 0)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1215,7 +1217,7 @@ void scFlameThrowerSendSpark(VECTOR3 *pos, Sint32 speed, Sint32 offScreen)
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() * 2) + speed;
 		spin = (Uint16)syRandom() - DEGtoANG(180);
-		actor->tmr = spin;
+		actor->timer = spin;
 		((void (*)())scActorSetupScripted)(actor, 2);
 		actor->update = scFlameThrowerUpdateSpark;
 		fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
@@ -1243,7 +1245,7 @@ void scFlameThrowersSetMode(Sint16 value)
 /* The flame throwers' counter, which scFlameThrowersAdvanceCounter steps. */
 Sint32 scFlameThrowersGetCounter(void)
 {
-	return FLAME_THROWERS_STATE->cnt;
+	return FLAME_THROWERS_STATE->count;
 }
 
 #include "shared/flame_throwers_advance_counter.h"
@@ -1283,7 +1285,7 @@ Sint32 scFireballCarryLeader(void)
 	UNUSED Sint32 unused[3];
 
 	if(event->transitionActive == 0) {
-		fdScreenTransitionStart(event->transition, event->transitionFrm);
+		fdScreenTransitionStart(event->transition, event->transitionFrame);
 		event->transitionActive = 1;
 	}
 	fdScriptClearFlag(FLAG_MENU_OPEN);
@@ -1309,7 +1311,7 @@ Sint32 scFireballCarryLeader(void)
 	leader->update = (OBJECT_UPDATE)fdActorBlink;
 	leader->facing = FACING_SOUTH;
 	fdActorSelectAnimation(leader, ANIM_LEADER_SIT);
-	while(ride->car->tmr == 0) {
+	while(ride->car->timer == 0) {
 		Sint32 kind = fdMapGridGetTerrainKindOrBumpAt(
 			0, leader->x.fixed, leader->z.fixed);
 
@@ -1329,7 +1331,7 @@ Sint32 scFireballCarryLeader(void)
 	}
 	syFieldScriptWait(30);
 	leader->update = NULL;
-	fdActorSetSprColMode(leader, 0);
+	fdActorSetSpriteColorMode(leader, 0);
 	ride->active = 0;
 #if FIX_FUNCTION_SIGNATURES
 	return 0;

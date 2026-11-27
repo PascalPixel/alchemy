@@ -33,16 +33,16 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR draw;
-	Uint8		*sprs;
+	Uint8		*sprites;
 	SCREEN_POINT screen;
 	Sint32		 j;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-	sprs = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+	sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 	state->args = args;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	EFFECT_LOAD_BLITTER(
@@ -52,38 +52,39 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_LIGHTNING_BOLT_SHEET, state->sheet + BOLT_PICTURES, 1, 1);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	for(j = 0; j != PARTICLE_POOL_COUNT; j++)
 		PARTICLES[j].variant = 0;
 	EFFECT_FREE_PARTICLES(j, state->particles, 64);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	sySndPlayStub(SE_ITEM_BREAK);
-	for(frm = 0; frm != state->args->tgtCnt * BOLT_INTERVAL + 40; frm++) {
-		if(frm == 24)
+	sySoundPlayStub(SE_ITEM_BREAK);
+	for(frame = 0; frame != state->args->targetCount * BOLT_INTERVAL + 40;
+		frame++) {
+		if(frame == 24)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		/* The canvas flashes as each target's turn starts. */
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
-			if(frm == i * BOLT_INTERVAL)
+			if(frame == i * BOLT_INTERVAL)
 				syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
 		}
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
 			Sint32 start = i * BOLT_INTERVAL;
 
-			btProjectionUnit(state->args->tgts[i], &screen);
+			btProjectionUnit(state->args->targets[i], &screen);
 			screen.x /= 2;
-			if(frm == start + 1)
-				state->shakeFrm = 4;
-			if(frm == start + 4) {
-				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_WHITE,
+			if(frame == start + 1)
+				state->shakeFrame = 4;
+			if(frame == start + 4) {
+				btEffectTintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, i, 6);
 				btMotionApplyKnockbackStub(
-					state->args->tgts[i], KNOCKBACK_BOUNCE);
+					state->args->targets[i], KNOCKBACK_BOUNCE);
 			}
 
 			/* The bolt drops from the top. */
-			if(frm >= start && frm < start + 16) {
-				Sint32 height = (frm - start) << 6;
+			if(frame >= start && frame < start + 16) {
+				Sint32 height = (frame - start) << 6;
 
 				if(height > BOLT_GROUND_Y)
 					height = BOLT_GROUND_Y;
@@ -91,7 +92,7 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 					j++) {
 					draw[0](canvas,
 						state->sheet +
-							(((i + frm + j) / 2) & 3) *
+							(((i + frame + j) / 2) & 3) *
 								LIGHTNING_BOLT_PICTURE_BYTES +
 							BOLT_PICTURES,
 						screen.x - LIGHTNING_BOLT_WIDTH / 2, 0,
@@ -99,7 +100,7 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 				}
 
 				/* Sparks fly up from its foot. */
-				if(frm == start + 2) {
+				if(frame == start + 2) {
 					for(j = 0;
 						j != BoltCounts[state->args->variant][BOLT_SPARKS];
 						j++) {
@@ -110,15 +111,15 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 
 						spark->x = toFIXED(screen.x);
 						spark->y = toFIXED(BOLT_GROUND_Y);
-						spark->velX = (sySin(angle) * speed) >> 5;
-						spark->velY = -(syCos(angle) * speed) >> 6;
+						spark->velocityX = (sySin(angle) * speed) >> 5;
+						spark->velocityY = -(syCos(angle) * speed) >> 6;
 						spark->variant = (syRandom() & 7) + 32;
 					}
 				}
 			}
 
 			/* Glints flicker at the foot. */
-			if(frm >= start + 2 && frm < start + 24) {
+			if(frame >= start + 2 && frame < start + 24) {
 				for(j = 0; j != BoltCounts[state->args->variant][BOLT_GLINTS];
 					j++) {
 					Sint32 kind = j & 3;
@@ -156,14 +157,14 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 				spark->variant--;
 				btParticleAdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
 				if(spark->y > toFIXED(BOLT_GROUND_Y)) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else if((spark->x >= 0 && spark->x < toFIXED(127)) &&
 					spark->y >= 0) {
 					Sint32 size = spark->variant / BOLT_SPARK_SHRINK_TICKS + 1;
 					Sint32 x = FIXEDtoINT(spark->x);
 					Sint32 y = FIXEDtoINT(spark->y);
 
-					EFFECT_DRAW_MOTE(draw[0], canvas, sprs, x, y, size);
+					EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, size);
 				}
 			}
 		}

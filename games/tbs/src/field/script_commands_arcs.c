@@ -17,16 +17,16 @@
 void fdEffectUpdateScaledArcActorA(ACTOR *arc)
 {
 	ACTOR *anchor;
-	Sint32 frm;
+	Sint32 frame;
 	FIXED  scale;
 
 	anchor = (ACTOR *)arc->watchedActor;
-	frm = ++arc->tmr;
-	if(frm >= CAST_RING_TICKS) {
+	frame = ++arc->timer;
+	if(frame >= CAST_RING_TICKS) {
 		fdActorStartScriptStub(arc, FieldEffectSharedParticleScript);
 		return;
 	}
-	scale = CAST_RING_SCALE(frm);
+	scale = CAST_RING_SCALE(frame);
 	arc->scaleX = scale;
 	arc->scaleY = scale;
 	arc->x.fixed = anchor->x.fixed;
@@ -40,16 +40,16 @@ void fdEffectUpdateScaledArcActorA(ACTOR *arc)
 void fdEffectUpdateScaledArcActorB(ACTOR *arc)
 {
 	ACTOR *anchor;
-	Sint32 frm;
+	Sint32 frame;
 	FIXED  scale;
 
 	anchor = (ACTOR *)arc->watchedActor;
-	frm = ++arc->tmr;
-	if(frm >= CAST_RING_TICKS) {
+	frame = ++arc->timer;
+	if(frame >= CAST_RING_TICKS) {
 		fdActorStartScriptStub(arc, FieldEffectSharedParticleScript);
 		return;
 	}
-	scale = CAST_RING_SCALE(frm);
+	scale = CAST_RING_SCALE(frame);
 	arc->scaleX = scale;
 	arc->scaleY = -scale;
 	arc->x.fixed = anchor->x.fixed;
@@ -66,44 +66,45 @@ void fdEffectSpawnScaledArcActors(ACTOR *watched)
 	ACTOR			   *src = effectState->caster;
 	ACTOR			   *arcs[2];
 	ACTOR			   *arc;
-	SPR				   *spr;
-	Sint32				arcIdx;
+	SPR				   *sprite;
+	Sint32				arcIndex;
 
-	for(arcIdx = 0; arcIdx <= 1; arcIdx++) {
+	for(arcIndex = 0; arcIndex <= 1; arcIndex++) {
 		arc = fdActorCreateStub(SPRITE_GOLDEN_RINGS, watched->x.fixed,
 			watched->y.fixed, watched->z.fixed);
-		arcs[arcIdx] = arc;
+		arcs[arcIndex] = arc;
 		if(arc == 0)
 			continue;
 		arc->groundHeight = watched->groundHeight;
-		spr = arc->spr;
-		arc->motionFlg = 0;
-		arc->tmr = 0;
+		sprite = arc->sprite;
+		arc->motionFlags = 0;
+		arc->timer = 0;
 		arc->watchedActor = (union ACTOR_OR_EFFECT *)watched;
 		arc->scaleX = arc->scaleY = toFIXED(1) / 10;
-		if(spr == 0)
+		if(sprite == 0)
 			continue;
 		/* A 16-colour sprite 32 by 16 (wide, size 2), drawn from the Psynergy's
 		   tiles. */
-		fdSprStartAnimationStub(spr, 0);
-		spr->flg = 0;
-		syVRAMCacheFreeEntry(spr->slot);
-		spr->slot = effectState->tileSlot;
-		spr->retainCacheEntry = 1;
-		spr->image.tile =
-			(VramCacheEntries[spr->slot].ofs / TILE_SIZE_4BPP) & OBJ_TILE_MASK;
-		spr->image.fullCol = 0;
-		spr->image.shape = RING_HALF_SHAPE;
-		spr->image.size = RING_HALF_SIZE;
-		spr->entries[0]->picture = 0;
+		fdSpriteStartAnimationStub(sprite, 0);
+		sprite->flags = 0;
+		syVRAMCacheFreeEntry(sprite->slot);
+		sprite->slot = effectState->tileSlot;
+		sprite->retainCacheEntry = 1;
+		sprite->image.tile =
+			(VramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &
+			OBJ_TILE_MASK;
+		sprite->image.fullColor = 0;
+		sprite->image.shape = RING_HALF_SHAPE;
+		sprite->image.size = RING_HALF_SIZE;
+		sprite->entries[0]->picture = 0;
 	}
 	/* The front half in front of everything, the back half under the caster. */
 	/* BUG: allocation failures above leave a missing arc or sprite here. */
 	arcs[0]->update = fdEffectUpdateScaledArcActorB;
-	arcs[0]->spr->image.pri = 0;
+	arcs[0]->sprite->image.priority = 0;
 	arcs[1]->update = fdEffectUpdateScaledArcActorA;
-	arcs[1]->spr->image.pri = src->spr->image.pri;
-	arcs[1]->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	arcs[1]->sprite->image.priority = src->sprite->image.priority;
+	arcs[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* Per-tick update: flashes an actor white two ticks in four and sets off a
@@ -111,9 +112,9 @@ void fdEffectSpawnScaledArcActors(ACTOR *watched)
 void fdEffectFlickerActorAndSpawnArcs(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetSprColModeStub(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & (CAST_RING_INTERVAL - 1)) == 0) {
 		fdEffectSpawnScaledArcActors(actor);
@@ -126,9 +127,9 @@ void fdEffectFlickerActorAndSpawnArcs(ACTOR *actor)
 void fdEffectCycleActorAndSpawnArcs(ACTOR *actor)
 {
 	if((TickCount & 1) != 0) {
-		Sint32 colIdx = (TickCount >> 1) % (SPRITE_COLOR_BRG + 1);
+		Sint32 colorIndex = (TickCount >> 1) % (SPRITE_COLOR_BRG + 1);
 
-		fdActorSetSprColModeStub(actor, colIdx);
+		fdActorSetSpriteColorModeStub(actor, colorIndex);
 	}
 	if((TickCount & (CAST_RING_INTERVAL - 1)) == 0) {
 		fdEffectSpawnScaledArcActors(actor);

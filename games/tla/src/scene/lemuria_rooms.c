@@ -281,15 +281,15 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, ROOM_WINDOW_TRANSITION);
-	fdActorSetSprPriority(ACTOR_BIRD, 1);
-	fdActorSetSprPriority(ACTOR_OLD_MAN_ON_ALCHEMYS_ABUSE, 2);
-	fdActorSetSprPriority(ACTOR_PIERS_UNCLE, 2);
+	fdActorSetSpritePriority(ACTOR_BIRD, 1);
+	fdActorSetSpritePriority(ACTOR_OLD_MAN_ON_ALCHEMYS_ABUSE, 2);
+	fdActorSetSpritePriority(ACTOR_PIERS_UNCLE, 2);
 	actor = fdActorGetById(ACTOR_OLD_MAN_ON_THE_RUMORS);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->groundHeight = 0;
 	actor->y.fixed = 0;
 	actor = fdActorGetById(ACTOR_OLD_MAN_DENYING_DECAY);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->groundHeight = 0;
 	actor->y.fixed = 0;
 	if(fdScriptGetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
@@ -495,10 +495,10 @@ void scLemuriaRoomsPiersVisitsUncle(void)
 	fdActorSetAnimation(ACTOR_PIERS, ANIM_STAND);
 	fdScriptWait(30);
 	fdActorSetSpeed(ACTOR_PIERS, 0.3);
-	fdActorGetById(ACTOR_PIERS)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_PIERS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_PIERS, 12, 0);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_PIERS)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_PIERS)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorStartRepeatedMotion(ACTOR_PIERS, 3);
 	fdActorSetAttachedEffect(
@@ -560,11 +560,11 @@ void scLemuriaRoomsPiersVisitsUncle(void)
 void scLemuriaRoomsLeavePiersToMourn(void)
 {
 	ACTOR  *actor;
-	Sint32	startBuf[3], tgtBuf[3], posBuf[3];
-	Sint32 *start, *tgt, *pos;
+	Sint32	startBuf[3], targetBuf[3], posBuf[3];
+	Sint32 *start, *target, *pos;
 	FIXED	radius;
-	Sint32	ang;
-	Sint32	result, frm, phase, sine, answer;
+	Sint32	angle;
+	Sint32	result, frame, phase, sine, answer;
 
 	actor = fdActorGetById(ACTOR_BIRD);
 	result = fdScriptGetFlag(FLAG_PIERS_VISITED_UNCLE);
@@ -573,7 +573,7 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	fdScriptSetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE);
 	{
 		ACTOR *other = fdActorGetById(ACTOR_PIERS_UNCLE);
-		other->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+		other->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	}
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -718,7 +718,7 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	fdActorShowEmote(ACTOR_PIERS_UNCLE, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
 	fdActorSetAnimation(ACTOR_PIERS_UNCLE, ANIM_NOD);
 	syFieldScriptWait(10);
-	fdScriptPlaySnd(SE_BIRD_CALL);
+	fdScriptPlaySound(SE_BIRD_CALL);
 	syFieldScriptWait(60);
 	scFieldActorStartRepeatedMotion(ACTOR_BIRD, 3);
 	fdActorSetAttachedEffect(
@@ -729,32 +729,32 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 		ACTOR_BIRD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(50);
 	fdActorSetAnimation(ACTOR_BIRD, ANIM_WHITE_BIRD_FLAP);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	start = startBuf;
 	start[0] = actor->x.fixed;
 	start[1] = actor->y.fixed;
 	start[2] = actor->z.fixed;
-	tgt = tgtBuf;
-	tgt[0] = toFIXED(116);
-	tgt[1] = 0;
-	tgt[2] = toFIXED(110);
-	ang = FACING_NORTH_NORTHWEST;
-	for(frm = 0; frm < BIRD_FLIGHT_TICKS; frm++) {
-		phase = frm * (DEGtoANG(180)) / BIRD_FLIGHT_TICKS;
+	target = targetBuf;
+	target[0] = toFIXED(116);
+	target[1] = 0;
+	target[2] = toFIXED(110);
+	angle = FACING_NORTH_NORTHWEST;
+	for(frame = 0; frame < BIRD_FLIGHT_TICKS; frame++) {
+		phase = frame * (DEGtoANG(180)) / BIRD_FLIGHT_TICKS;
 		radius = sySin(phase) * 32;
-		ang += TRIG_TURN / 128;
+		angle += TRIG_TURN / 128;
 		pos = posBuf;
-		pos[0] = start[0] + (tgt[0] - start[0]) * frm / BIRD_FLIGHT_TICKS;
+		pos[0] = start[0] + (target[0] - start[0]) * frame / BIRD_FLIGHT_TICKS;
 		sine = sySin(phase);
-		pos[1] = start[1] + (tgt[1] - start[1]) * frm / BIRD_FLIGHT_TICKS +
+		pos[1] = start[1] + (target[1] - start[1]) * frame / BIRD_FLIGHT_TICKS +
 			sine * 56;
-		pos[2] = start[2] + (tgt[2] - start[2]) * frm / BIRD_FLIGHT_TICKS;
-		syVectorAddPolarOffset(radius, ang, pos);
+		pos[2] = start[2] + (target[2] - start[2]) * frame / BIRD_FLIGHT_TICKS;
+		syVectorAddPolarOffset(radius, angle, pos);
 		actor->x.fixed = pos[0];
 		actor->y.fixed = pos[1];
 		actor->z.fixed = pos[2];
-		actor->facing = ang + DEGtoANG(90);
-		if(frm == 128) {
+		actor->facing = angle + DEGtoANG(90);
+		if(frame == 128) {
 			fdActorFaceDirection(ACTOR_PIERS_UNCLE, FACING_SOUTH_SOUTHEAST, 0);
 		}
 		syWait(1);
@@ -776,13 +776,13 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	syFieldScriptWait(20);
 	{
 		ACTOR *other = fdActorGetById(ACTOR_PIERS_UNCLE);
-		other->steeringFlg &= ~ACTOR_FACES_MOTION;
+		other->steeringFlags &= ~ACTOR_FACES_MOTION;
 	}
 	fdActorWalkByAndWait(ACTOR_PIERS_UNCLE, -8, 0);
 	syFieldScriptWait(1);
 	{
 		ACTOR *other = fdActorGetById(ACTOR_PIERS_UNCLE);
-		other->steeringFlg |= ACTOR_FACES_MOTION;
+		other->steeringFlags |= ACTOR_FACES_MOTION;
 	}
 	syFieldScriptWait(10);
 	fdActorFaceDirection(ACTOR_PIERS_UNCLE, FACING_SOUTH_SOUTHEAST, 0);
@@ -795,28 +795,28 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	fdActorShowEmote(ACTOR_PIERS_UNCLE, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
 	fdActorSetAnimation(ACTOR_BIRD, ANIM_WHITE_BIRD_FLAP);
 	syFieldScriptWait(40);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	start[0] = actor->x.fixed;
 	start[1] = actor->y.fixed;
 	start[2] = actor->z.fixed;
-	tgt[0] = toFIXED(132);
-	tgt[1] = toFIXED(32);
-	tgt[2] = toFIXED(100);
-	ang = FACING_SOUTH + TRIG_TURN / 128;
-	for(frm = 0; frm < BIRD_FLIGHT_TICKS; frm++) {
-		radius = sySin(frm * (DEGtoANG(90)) / BIRD_FLIGHT_TICKS) * 40;
-		ang += TRIG_TURN * 3 / 256;
-		pos[0] = start[0] + (tgt[0] - start[0]) * frm / BIRD_FLIGHT_TICKS;
-		sine = sySin(frm * (DEGtoANG(180)) / BIRD_FLIGHT_TICKS);
-		pos[1] = start[1] + (tgt[1] - start[1]) * frm / BIRD_FLIGHT_TICKS +
+	target[0] = toFIXED(132);
+	target[1] = toFIXED(32);
+	target[2] = toFIXED(100);
+	angle = FACING_SOUTH + TRIG_TURN / 128;
+	for(frame = 0; frame < BIRD_FLIGHT_TICKS; frame++) {
+		radius = sySin(frame * (DEGtoANG(90)) / BIRD_FLIGHT_TICKS) * 40;
+		angle += TRIG_TURN * 3 / 256;
+		pos[0] = start[0] + (target[0] - start[0]) * frame / BIRD_FLIGHT_TICKS;
+		sine = sySin(frame * (DEGtoANG(180)) / BIRD_FLIGHT_TICKS);
+		pos[1] = start[1] + (target[1] - start[1]) * frame / BIRD_FLIGHT_TICKS +
 			(sine <<= 5);
-		pos[2] = start[2] + (tgt[2] - start[2]) * frm / BIRD_FLIGHT_TICKS;
-		syVectorAddPolarOffset(radius, ang, pos);
+		pos[2] = start[2] + (target[2] - start[2]) * frame / BIRD_FLIGHT_TICKS;
+		syVectorAddPolarOffset(radius, angle, pos);
 		actor->x.fixed = pos[0];
 		actor->y.fixed = pos[1];
 		actor->z.fixed = pos[2];
-		actor->facing = ang + DEGtoANG(90);
-		if(frm == 153) {
+		actor->facing = angle + DEGtoANG(90);
+		if(frame == 153) {
 			fdActorFaceDirection(ACTOR_PIERS_UNCLE, FACING_WEST_SOUTHWEST, 0);
 		}
 		syWait(1);
@@ -826,13 +826,13 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	start[0] = actor->x.fixed;
 	start[1] = actor->y.fixed;
 	start[2] = actor->z.fixed;
-	tgt[0] = toFIXED(90);
-	tgt[1] = toFIXED(4);
-	tgt[2] = toFIXED(64);
-	for(frm = 0; frm < 16; frm++) {
-		actor->x.fixed = start[0] + (tgt[0] - start[0]) * frm / 16;
-		actor->y.fixed = start[1] + (tgt[1] - start[1]) * frm / 16;
-		actor->z.fixed = start[2] + (tgt[2] - start[2]) * frm / 16;
+	target[0] = toFIXED(90);
+	target[1] = toFIXED(4);
+	target[2] = toFIXED(64);
+	for(frame = 0; frame < 16; frame++) {
+		actor->x.fixed = start[0] + (target[0] - start[0]) * frame / 16;
+		actor->y.fixed = start[1] + (target[1] - start[1]) * frame / 16;
+		actor->z.fixed = start[2] + (target[2] - start[2]) * frame / 16;
 		syWait(1);
 	}
 	fdActorSetPos(ACTOR_BIRD, 0, 0);
@@ -844,7 +844,7 @@ void scLemuriaRoomsLeavePiersToMourn(void)
 	/* "There. You should be able to see him now." */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_WINDOW_ABOVE | ACTOR_PIERS_UNCLE, 0, 10);
-	scFieldActorSetSprPriority(ACTOR_PIERS_UNCLE, 2);
+	scFieldActorSetSpritePriority(ACTOR_PIERS_UNCLE, 2);
 	fdScriptEnd();
 }
 
@@ -862,7 +862,7 @@ void scLemuriaRoomsMeetLunpa(void)
 {
 	ACTOR *leader;
 	ACTOR *actor;
-	ACTOR *tgt;
+	ACTOR *target;
 	Sint32 result;
 
 	fdScriptSetFlag(FLAG_MET_LUNPA);
@@ -1070,7 +1070,7 @@ void scLemuriaRoomsMeetLunpa(void)
 	fdActorFaceDirection(ACTOR_LUNPA, FACING_SOUTH_SOUTHWEST, 0);
 	fdScriptWait(30);
 	scActorPopQuestionMarks(ACTOR_LUNPA);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	fdActorShowEmote(ACTOR_LUNPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
 	fdActorFaceDirection(ACTOR_LUNPA, FACING_NORTH_NORTHWEST, 0);
 	fdScriptWait(25);
@@ -1426,12 +1426,12 @@ void scLemuriaRoomsMeetLunpa(void)
 	fdActorWalkByAndWait(ACTOR_LUNPA, 0, 20);
 	fdMapGridSetShake(1, 1, 1);
 	fdActorSetSpeed(ACTOR_LUNPA, 1.9);
-	fdScriptPlaySnd(SE_IMPACT);
+	fdScriptPlaySound(SE_IMPACT);
 	fdActorJump(ACTOR_LUNPA, 2, 0);
-	fdActorGetById(ACTOR_LUNPA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LUNPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_LUNPA, 0, -12);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_LUNPA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LUNPA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdMapGridSetShake(0, 0, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_LUNPA, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1439,10 +1439,10 @@ void scLemuriaRoomsMeetLunpa(void)
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
 	fdActorSetSpeed(ACTOR_LUNPA, 0.6);
-	fdActorGetById(ACTOR_LUNPA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LUNPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_LUNPA, 0, -24);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_LUNPA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LUNPA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
 	fdScriptWait(20);
@@ -1450,25 +1450,25 @@ void scLemuriaRoomsMeetLunpa(void)
 	fdActorJump(ACTOR_LUNPA, 6, 23);
 	/* Lunpa flashes white as he gathers himself to charge the door. */
 	actor = fdActorGetById(ACTOR_LUNPA);
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->update = (OBJECT_UPDATE)scActorCyclePictures;
 	/* "HAHHH-AHH!" */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
 	fdActorSetSpeed(ACTOR_LUNPA, 2.2);
 	fdActorWalkByAndWait(ACTOR_LUNPA, 0, 32);
-	tgt = fdActorGetById(ACTOR_LUNPA);
-	fdScriptPlaySnd(SE_HEAVY_IMPACT);
+	target = fdActorGetById(ACTOR_LUNPA);
+	fdScriptPlaySound(SE_HEAVY_IMPACT);
 	fdMapGridSetShake(4, 4, 1);
-	fdActorGetById(ACTOR_LUNPA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LUNPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_LUNPA, 0, -16);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_LUNPA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_LUNPA)->steeringFlags |= ACTOR_FACES_MOTION;
 	/* One more flash, back to his own colours, and the flashing stops. */
-	tgt->tmr = 3;
+	target->timer = 3;
 	sySynch(1);
-	tgt->update = NULL;
-	fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_LUNPA), 1);
+	target->update = NULL;
+	fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_LUNPA), 1);
 	fdScriptWait(40);
 	fdMapGridSetShake(0, 0, 0);
 	fdScriptWait(20);

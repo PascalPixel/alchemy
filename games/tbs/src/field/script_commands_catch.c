@@ -17,11 +17,11 @@ void fdPsynergyCatch(void)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	ACTOR			   *caster = effectState->caster;
-	ACTOR			   *caught = effectState->tgt;
+	ACTOR			   *caught = effectState->target;
 	ACTOR			   *hand;
 	POS					spawn;
 	POS					origin;
-	POS					tgt;
+	POS					target;
 	Sint32				step;
 	Sint32				i;
 	Sint32				steps = GROW_STEPS + 1;
@@ -30,14 +30,14 @@ void fdPsynergyCatch(void)
 	origin.y = caster->y.fixed + toFIXED(16);
 	origin.z = caster->z.fixed;
 	if(effectState->aimAhead) {
-		tgt.x = caster->x.fixed;
-		tgt.y = caster->y.fixed + toFIXED(32);
-		tgt.z = caster->z.fixed;
-		syVectorAddPolarOffset(toFIXED(32), effectState->ang, &tgt.x);
+		target.x = caster->x.fixed;
+		target.y = caster->y.fixed + toFIXED(32);
+		target.z = caster->z.fixed;
+		syVectorAddPolarOffset(toFIXED(32), effectState->angle, &target.x);
 	} else {
-		tgt.x = effectState->x;
-		tgt.y = effectState->y + toFIXED(32);
-		tgt.z = effectState->z;
+		target.x = effectState->x;
+		target.y = effectState->y + toFIXED(32);
+		target.z = effectState->z;
 	}
 	spawn.x = effectState->x;
 	spawn.y = effectState->y + toFIXED(32);
@@ -45,13 +45,13 @@ void fdPsynergyCatch(void)
 	hand = fdActorSpawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
 	if(hand == NULL)
 		return;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_ITEM_BREAK);
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_ITEM_BREAK);
 	hand->facing = caster->facing;
 	hand->speedLimit = toFIXED(13) / 10;
-	hand->motionFlg = 0;
+	hand->motionFlags = 0;
 	fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_FIST);
-	fdActorSetSprColModeStub(hand, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorModeStub(hand, SPRITE_COLOR_GRB);
 
 	/* Reach out to the target, a step of the way each tick. */
 	step = 0;
@@ -59,9 +59,9 @@ void fdPsynergyCatch(void)
 		Sint32 scale;
 
 		SET_ACTOR_POSITION(hand,
-			origin.x + (tgt.x - origin.x) * step / GROW_STEPS,
-			origin.y + (tgt.y - origin.y) * step / GROW_STEPS,
-			origin.z + (tgt.z - origin.z) * step / GROW_STEPS);
+			origin.x + (target.x - origin.x) * step / GROW_STEPS,
+			origin.y + (target.y - origin.y) * step / GROW_STEPS,
+			origin.z + (target.z - origin.z) * step / GROW_STEPS);
 		scale = fdEffectInterpolate(toFIXED(1), toFIXED(1) / 4, step);
 		hand->scaleX = scale;
 		hand->scaleY = scale;
@@ -78,7 +78,7 @@ void fdPsynergyCatch(void)
 		sySynch(1);
 	}
 	fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_FIST);
-	sySndPlayStub(SE_WATER);
+	sySoundPlayStub(SE_WATER);
 	/* As the hand presses down, the caught actor vanishes: (-9, -9) pixels is
 	   just off the map's corner, where no view reaches. */
 	if(caught != NULL)
@@ -92,16 +92,17 @@ void fdPsynergyCatch(void)
 		sySynch(1);
 	}
 	sySynch(10);
-	sySndPlayStub(SE_MENU_ERROR);
+	sySoundPlayStub(SE_MENU_ERROR);
 
 	/* Shrink back to the caster. */
 	step = 0;
 	do {
 		Sint32 scale;
 
-		SET_ACTOR_POSITION(hand, tgt.x + (origin.x - tgt.x) * step / GROW_STEPS,
-			tgt.y + (origin.y - tgt.y) * step / GROW_STEPS,
-			tgt.z + (origin.z - tgt.z) * step / GROW_STEPS);
+		SET_ACTOR_POSITION(hand,
+			target.x + (origin.x - target.x) * step / GROW_STEPS,
+			target.y + (origin.y - target.y) * step / GROW_STEPS,
+			target.z + (origin.z - target.z) * step / GROW_STEPS);
 		scale = fdEffectInterpolate(toFIXED(1) / 4, toFIXED(1), step);
 		hand->scaleX = scale;
 		hand->scaleY = scale;
@@ -109,5 +110,5 @@ void fdPsynergyCatch(void)
 		step++;
 	} while(step < steps);
 	fdActorReleaseStub(hand);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }

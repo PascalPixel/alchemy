@@ -86,7 +86,7 @@ m4aSoundInitWorkCopy:
 	pop	{r0}
 	bx	r0
 .L_081c0520:
-	.4byte	0	@ sySndMainRAMRom
+	.4byte	0	@ sySoundMainRAMRom
 .L_081c0524:
 	.4byte	0	@ RamSoundMixer
 .L_081c0528:
@@ -132,7 +132,7 @@ m4aSongNumStartWorkCopy:
 	ldr	r2, [r1]
 	ldr	r1, [r0]
 	adds	r0, r2, #0
-	bl	sySndInit + 0x68	@ 0x081c0c84: MPlayStart in the twin
+	bl	sySoundInit + 0x68	@ 0x081c0c84: MPlayStart in the twin
 	pop	{r0}
 	bx	r0
 .L_081c0574:
@@ -162,7 +162,7 @@ m4aSongNumStartOrChangeWorkCopy:
 	beq	.L_081c05b0
 	adds	r0, r1, #0
 	adds	r1, r2, #0
-	bl	sySndInit + 0x68	@ 0x081c0c84: MPlayStart in the twin
+	bl	sySoundInit + 0x68	@ 0x081c0c84: MPlayStart in the twin
 	b	.L_081c05c4
 	.2byte	0
 .L_081c05a8:
@@ -179,7 +179,7 @@ m4aSongNumStartOrChangeWorkCopy:
 .L_081c05bc:
 	adds	r0, r1, #0
 	adds	r1, r3, #0
-	bl	sySndInit + 0x68	@ 0x081c0c84: MPlayStart in the twin
+	bl	sySoundInit + 0x68	@ 0x081c0c84: MPlayStart in the twin
 .L_081c05c4:
 	pop	{r0}
 	bx	r0

@@ -4,7 +4,7 @@
 
 /* Puts the battle screen back into the display state every effect starts from
    and ends with. */
-void btEffectConfigureEffectDisp(void)
+void btEffectConfigureEffectDisplay(void)
 {
 	REG_BLDCNT = 0;
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
@@ -22,29 +22,29 @@ void btEffectAdvanceScrollOnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	state->scrollTmr++;
-	if(state->scrollTmr == state->scrollInterval) {
+	state->scrollTimer++;
+	if(state->scrollTimer == state->scrollInterval) {
 		BgScrollWork[1].x += state->scrollStepX;
 		BgScrollWork[1].y += state->scrollStepY;
-		state->scrollTmr = 0;
+		state->scrollTimer = 0;
 	}
 }
 
 /* Slides the affine BG2 a step every few frames. */
 void btEffectAdvanceBg2OnInterval(void)
 {
-	Sint32				 tmr;
+	Sint32				 timer;
 	BATTLE_EFFECT_STATE *state;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	tmr = state->scrollTmr + 1;
-	state->scrollTmr = tmr;
-	if(tmr == state->scrollInterval) {
+	timer = state->scrollTimer + 1;
+	state->scrollTimer = timer;
+	if(timer == state->scrollInterval) {
 		REG_BG2X = state->bg2x;
 		REG_BG2Y = state->bg2y;
 		state->bg2x += state->scrollStepX;
 		state->bg2y += state->scrollStepY;
-		state->scrollTmr = 0;
+		state->scrollTimer = 0;
 	}
 }
 

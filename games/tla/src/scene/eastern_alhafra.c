@@ -191,7 +191,7 @@ typedef struct PUSH_TARGET {
 	Sint32 rectangle; /* its footprint, a row of PushRectangles */
 	Sint32 id;		  /* the pushed actor */
 	/* Run as the leader follows it; scPushTargetFindStop leaves none. */
-	void *func;
+	void *callback;
 } PUSH_TARGET;
 
 void scEasternAlhafraPlaceClearedDebris(void);
@@ -212,7 +212,7 @@ static inline void scActorRejoinLeader(Sint32 id)
 	fdActorSetPos(id, 0, 0);
 }
 
-void scRockSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt);
+void scRockSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 count);
 
 void scEasternAlhafraStartFallingRocks(void);
 void scRockEndFalling(void);
@@ -229,18 +229,18 @@ extern Sint32 EasternAlhafraRunOffScript[];
 
 /* Sets up a falling rock's width by height sprite of the given shape at its
    first tile. */
-void scEasternAlhafraInitRockSpr(EFFECT_SPR *spr, Sint32 width, Sint32 height,
-	Uint32 attributes, Sint32 tile);
+void scEasternAlhafraInitRockSprite(EFFECT_SPR *sprite, Sint32 width,
+	Sint32 height, Uint32 attributes, Sint32 tile);
 
 void scParticleUpdateFalling(void);
 
 extern Uint16 PushKinds[];
 
-ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *num, Sint32 *kind);
+ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *number, Sint32 *kind);
 
 void scActorStopAtPushTarget(ACTOR *actor);
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 
 /* fdLeaderPushObjectAhead through this overlay's own stub: pushes the object
    ahead of the leader on by a metatile. */
@@ -279,9 +279,9 @@ void *scGetActorPlacements(void)
    of the mast by the dock (metatile (30, 25)), and it is blasted apart. Each
    small blast (mode 2) throws two chips of rock from it and the great one (mode
    3) thirty; as the blasts die down (mode 1) the mast is clear. */
-void scEasternAlhafraBurstMastBlock(Sint32 mode, Sint32 frm)
+void scEasternAlhafraBurstMastBlock(Sint32 mode, Sint32 frame)
 {
-	if(frm == 0)
+	if(frame == 0)
 		scEasternAlhafraStartFallingRocks();
 	if(mode == 1) {
 		fdScriptSetFlag(FLAG_ALHAFRA_MAST_CLEARED);
@@ -291,7 +291,7 @@ void scEasternAlhafraBurstMastBlock(Sint32 mode, Sint32 frm)
 		scRockSpawn(toFIXED(498), toFIXED(16), toFIXED(412), 2);
 	if(mode == 3)
 		scRockSpawn(toFIXED(498), toFIXED(16), toFIXED(412), 30);
-	if(frm == PSYNERGY_SCRIPT_LAST_TICK)
+	if(frame == PSYNERGY_SCRIPT_LAST_TICK)
 		scRockEndFalling();
 }
 
@@ -299,13 +299,13 @@ void scEasternAlhafraBurstMastBlock(Sint32 mode, Sint32 frm)
    ground, and the two ropes it held taut fall slack onto the sail's east pole.
    The ropes are redrawn each tick, for up to a second, until both their loose
    ends have arrived. */
-void scEasternAlhafraPoundStake(Sint32 mode, Sint32 frm)
+void scEasternAlhafraPoundStake(Sint32 mode, Sint32 frame)
 {
 	ACTOR *firstEnd;
 	ACTOR *secondEnd;
 	Sint32 ticks;
 
-	fdPoundSinkTarget(EasternAlhafraPoundStakes, mode, frm);
+	fdPoundSinkTarget(EasternAlhafraPoundStakes, mode, frame);
 	if(mode == POUND_STAGE_LANDED) {
 		firstEnd = fdActorGet(ACTOR_FIRST_STAKE_ROPE_END);
 		secondEnd = fdActorGet(ACTOR_SECOND_STAKE_ROPE_END);
@@ -354,7 +354,7 @@ void scEasternAlhafraStartPushing(Sint32 unused, Sint32 id)
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	actor = fdActorGet(id);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	if(id == ACTOR_DOCK_CRATE) {
 		leaderX = FIELD_METATILE(leader->x.fixed);
 		x = FIELD_METATILE(actor->x.fixed);
@@ -414,18 +414,18 @@ void scEasternAlhafraFinishPushing(Sint32 mode, Sint32 id)
 	}
 	if(sinks) {
 		if(id != ACTOR_DOCK_CRATE)
-			fdScriptPlaySnd(SE_FALL);
+			fdScriptPlaySound(SE_FALL);
 		actor->gravity = toFIXED(9) / 100;
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		fdActorSetSprFlags(fdActorGet(id), SPRITE_FLAG_SHADOW);
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		fdActorSetSpriteFlags(fdActorGet(id), SPRITE_FLAG_SHADOW);
 		syWait(5);
 		for(i = 0; i < 60 && actor->y.fixed > 0; i++)
 			syWait(1);
-		fdScriptPlaySnd(SE_STOP_EXIT_SE);
+		fdScriptPlaySound(SE_STOP_EXIT_SE);
 		syWait(1);
-		fdScriptPlaySnd(SE_LOG_FALL);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdScriptPlaySound(SE_LOG_FALL);
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSelectAnimation(actor, ANIM_CRATE_SINK);
 		for(i = 0; i <= 2; i++) {
 			splash = (scFieldActorCreate(
@@ -433,8 +433,8 @@ void scEasternAlhafraFinishPushing(Sint32 mode, Sint32 id)
 			splashes[i] = splash;
 			splash->scaleX = toFIXED(13) / 20;
 			fdActorSelectAnimation(splash, 1);
-			fdActorSetSprFlags(splash, 0);
-			fdScriptPlaySnd(SE_CAST);
+			fdActorSetSpriteFlags(splash, 0);
+			fdScriptPlaySound(SE_CAST);
 			syWait(5);
 		}
 		scEasternAlhafraPlaceClearedDebris();
@@ -506,7 +506,7 @@ void scEasternAlhafraFinishPushingRockUnderLog(Sint32 mode, Sint32 id)
 }
 
 void scEasternAlhafraOverhearWorkers(void);
-void scPushTargetPush(PUSH_TARGET tgt);
+void scPushTargetPush(PUSH_TARGET target);
 
 /* Felix walks into the log lying across the sail's west pole from its west end
    (metatiles (19, 27) to (19, 31)). Once the rock under the log has sunk,
@@ -520,7 +520,7 @@ void scEasternAlhafraRollLog(void)
 {
 	ACTOR	   *log;
 	ACTOR	   *rock;
-	PUSH_TARGET tgt;
+	PUSH_TARGET target;
 	Sint32		facing;
 	Sint32		ticks;
 
@@ -533,16 +533,16 @@ void scEasternAlhafraRollLog(void)
 	if(rock != NULL && fdScriptGetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0)
 		fdMapGridSetMetatileBehavior(
 			rock->x.fixed, rock->z.fixed, 2, METATILE_BEHAVIOR_WALL);
-	if(scPushTargetFindStop(&tgt) != 0) {
+	if(scPushTargetFindStop(&target) != 0) {
 		if(fdScriptGetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0 ||
 			facing == FACING_NORTH) {
-			scPushTargetPush(tgt);
+			scPushTargetPush(target);
 		} else {
 			fdScriptSetFlag(FLAG_LOG_ROLLED);
 			fdScriptStart();
 			syFieldScriptEndLastingPsynergy(0);
 			fdCameraMoveTo(336, CAMERA_KEEP, 560, 1);
-			scPushTargetPush(tgt);
+			scPushTargetPush(target);
 			fdMapGridSetMetatileBehavior(
 				log->x.fixed - toFIXED(24), log->z.fixed, 0, 0);
 			fdMapGridSetMetatileBehavior(
@@ -559,7 +559,7 @@ void scEasternAlhafraRollLog(void)
 			fdActorSetDestinationOffset(ACTOR_LOG, 0, 16);
 			syFieldScriptWait(20);
 			log->gravity = toFIXED(1) / 20;
-			log->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			log->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			ticks = 0;
 			if(log->y.fixed > 0) {
 				for(; ticks < 60 && log->y.fixed > 0; ticks++) {
@@ -567,7 +567,7 @@ void scEasternAlhafraRollLog(void)
 				}
 			}
 			scEasternAlhafraPlaceClearedDebris();
-			fdScriptPlaySnd(SE_LOG_FALL);
+			fdScriptPlaySound(SE_LOG_FALL);
 			fdActorSetAnimation(ACTOR_LOG, ANIM_LOG_SPLASH_DOWN);
 			syFieldScriptWait(60);
 			syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
@@ -584,15 +584,15 @@ void scEasternAlhafraRollLog(void)
    (scEasternAlhafraRollLog). */
 void scEasternAlhafraPushAhead(Sint32 mode)
 {
-	Sint32 tgt;
+	Sint32 target;
 
-	tgt = fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId);
-	if(tgt == ACTOR_ROCK_UNDER_LOG) {
+	target = fdFindNearbyTalkTarget(MainRoutineStateWork.leaderActorId);
+	if(target == ACTOR_ROCK_UNDER_LOG) {
 		scEasternAlhafraStartPushingRockUnderLog(mode, ACTOR_ROCK_UNDER_LOG);
 		if(fdLeaderCanPushObjectAhead() != 0)
 			scEasternAlhafraPushObjectAhead();
 		scEasternAlhafraFinishPushingRockUnderLog(mode, ACTOR_ROCK_UNDER_LOG);
-	} else if(tgt == ACTOR_LOG) {
+	} else if(target == ACTOR_LOG) {
 		scEasternAlhafraRollLog();
 	}
 }
@@ -815,11 +815,11 @@ void scPillarPlace(const Uint16 *list);
 Sint32 scInit(void)
 {
 	ACTOR *actor;
-	Sint32 flg;
+	Sint32 flag;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	scEasternAlhafraStartWave();
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
 		if(fdScriptGetFlag(FLAG_WORKERS_TOLD_MAYOR) != 0 &&
@@ -838,12 +838,14 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_JIYA, 176, 408);
 			fdActorSetPos(ACTOR_SECOND_WORKER, 152, 376);
 			fdActorFaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
-			scFieldActorSetSprRotationById(ACTOR_ALHAFRAS_MAYOR, DEGtoANG(90));
-			fdActorSetSprFlags(fdActorGet(ACTOR_ALHAFRAS_MAYOR), 0);
-			scFieldActorSetSprRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
-			fdActorSetSprFlags(fdActorGet(ACTOR_JIYA), 0);
-			scFieldActorSetSprRotationById(ACTOR_SECOND_WORKER, DEGtoANG(90));
-			fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_WORKER), 0);
+			scFieldActorSetSpriteRotationById(
+				ACTOR_ALHAFRAS_MAYOR, DEGtoANG(90));
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_ALHAFRAS_MAYOR), 0);
+			scFieldActorSetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_JIYA), 0);
+			scFieldActorSetSpriteRotationById(
+				ACTOR_SECOND_WORKER, DEGtoANG(90));
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_WORKER), 0);
 			fdActorSetAnimation(ACTOR_ALHAFRAS_MAYOR, ANIM_LYING_DOWN);
 			fdActorSetAnimation(ACTOR_JIYA, ANIM_LYING_DOWN);
 			fdActorSetAnimation(ACTOR_SECOND_WORKER, ANIM_LYING_DOWN);
@@ -867,24 +869,24 @@ Sint32 scInit(void)
 		fdActorSetPos(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 184, 616);
 		fdActorSetPos(ACTOR_MAN_KNOCKED_DOWN, 136, 600);
 		fdActorSetPos(ACTOR_FIRST_WORKER, 160, 584);
-		scFieldActorSetSprRotationById(
+		scFieldActorSetSpriteRotationById(
 			ACTOR_YOUNG_MAN_KNOCKED_DOWN, DEGtoANG(90));
-		fdActorSetSprFlags(fdActorGet(ACTOR_YOUNG_MAN_KNOCKED_DOWN), 0);
-		scFieldActorSetSprRotationById(
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_YOUNG_MAN_KNOCKED_DOWN), 0);
+		scFieldActorSetSpriteRotationById(
 			ACTOR_MAN_KNOCKED_DOWN, TRIG_TURN * 3 / 4);
-		fdActorSetSprFlags(fdActorGet(ACTOR_MAN_KNOCKED_DOWN), 0);
-		scFieldActorSetSprRotationById(ACTOR_FIRST_WORKER, DEGtoANG(90));
-		fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WORKER), 0);
-		scFieldActorSetSprPriority(ACTOR_JIYA, 2);
-		scFieldActorSetSprPriority(ACTOR_ALHAFRAS_MAYOR, 2);
-		scFieldActorSetSprPriority(ACTOR_SECOND_WORKER, 2);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_MAN_KNOCKED_DOWN), 0);
+		scFieldActorSetSpriteRotationById(ACTOR_FIRST_WORKER, DEGtoANG(90));
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_WORKER), 0);
+		scFieldActorSetSpritePriority(ACTOR_JIYA, 2);
+		scFieldActorSetSpritePriority(ACTOR_ALHAFRAS_MAYOR, 2);
+		scFieldActorSetSpritePriority(ACTOR_SECOND_WORKER, 2);
 		fdActorSetPos(ACTOR_ALHAFRAS_MAYOR, 160, 392);
 		fdActorSetPos(ACTOR_JIYA, 176, 408);
 		fdActorSetPos(ACTOR_SECOND_WORKER, 152, 376);
-		scFieldActorSetSprRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
-		fdActorSetSprFlags(fdActorGet(ACTOR_JIYA), 0);
-		scFieldActorSetSprRotationById(ACTOR_SECOND_WORKER, DEGtoANG(90));
-		fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_WORKER), 0);
+		scFieldActorSetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_JIYA), 0);
+		scFieldActorSetSpriteRotationById(ACTOR_SECOND_WORKER, DEGtoANG(90));
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_WORKER), 0);
 		fdActorFaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
 		fdActorFaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
 		fdActorSetAnimation(ACTOR_JIYA, ANIM_LYING_DOWN);
@@ -900,38 +902,39 @@ Sint32 scInit(void)
 	fdRopeInit();
 	fdRopePlace(0, FLAG_EASTERN_ALHAFRA_ROPE_LASHED, ACTOR_ROPE_POST,
 		ACTOR_SECOND_ROPE_POST);
-	fdActorGet(ACTOR_ROPE_POST)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_SECOND_ROPE_POST)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_ROPE_POST)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_SECOND_ROPE_POST)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
 	fdTightropeInit();
 	fdTightropePlace(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
-	fdActorSetSprFlags(fdActorGet(ACTOR_TIGHTROPE_START), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_TIGHTROPE_END), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TIGHTROPE_START), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TIGHTROPE_END), 0);
 	scPillarPlace(EasternAlhafraPoundStakes);
-	fdActorSetSprFlags(fdActorGet(ACTOR_STAKE), 0);
-	flg = fdScriptGetFlag(FLAG_EASTERN_ALHAFRA_STAKE_POUNDED);
-	if(flg == 0) {
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_STAKE), 0);
+	flag = fdScriptGetFlag(FLAG_EASTERN_ALHAFRA_STAKE_POUNDED);
+	if(flag == 0) {
 		actor = fdActorGet(ACTOR_FIRST_STAKE_ROPE_START);
-		actor->collisionFlg |= ACTOR_NOT_TARGETED;
+		actor->collisionFlags |= ACTOR_NOT_TARGETED;
 		actor = fdActorGet(ACTOR_FIRST_STAKE_ROPE_END);
-		actor->motionFlg = flg;
+		actor->motionFlags = flag;
 		actor->y.fixed = toFIXED(16);
 		fdTightropePlace(
 			1, ACTOR_FIRST_STAKE_ROPE_START, ACTOR_FIRST_STAKE_ROPE_END);
 		fdTightropeSettle(1);
 		actor = fdActorGet(ACTOR_SECOND_STAKE_ROPE_START);
-		actor->collisionFlg |= ACTOR_NOT_TARGETED;
+		actor->collisionFlags |= ACTOR_NOT_TARGETED;
 		actor = fdActorGet(ACTOR_SECOND_STAKE_ROPE_END);
-		actor->motionFlg = flg;
+		actor->motionFlags = flag;
 		actor->y.fixed = toFIXED(16);
 		fdTightropePlace(
 			2, ACTOR_SECOND_STAKE_ROPE_START, ACTOR_SECOND_STAKE_ROPE_END);
 	}
 	actor = fdActorGet(ACTOR_ROCK_UNDER_LOG);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	actor = fdActorGet(ACTOR_EAST_POLE_ROCK);
-	fdActorSetSprFlags(actor, 0);
-	scFieldActorSetSprPriority(ACTOR_DOCK_CRATE, 2);
-	fdActorGet(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->sceneCnt = 1;
+	fdActorSetSpriteFlags(actor, 0);
+	scFieldActorSetSpritePriority(ACTOR_DOCK_CRATE, 2);
+	fdActorGet(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->sceneCount = 1;
 	if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
 		fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0) {
 		fdActorSetPos(ACTOR_BRIGGS, 0, 0);
@@ -958,9 +961,9 @@ void scEasternAlhafraPlaceClearedDebris(void)
 		actor = fdActorGet(ACTOR_LOG);
 		fdActorSetPos(ACTOR_LOG, 336, 536);
 		fdActorSetAnimation(ACTOR_LOG, ANIM_LOG_FLOAT);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->motionFlg = ACTOR_FALLS;
-		actor->velY = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = ACTOR_FALLS;
+		actor->velocityY = 0;
 		actor->y.fixed = -toFIXED(4);
 		actor->groundHeight = -toFIXED(4);
 		syFieldMapGridSetMetatileBehavior(toFIXED(336), toFIXED(528), 2, 0);
@@ -977,8 +980,8 @@ void scEasternAlhafraPlaceClearedDebris(void)
 		actor = fdActorGet(ACTOR_DOCK_CRATE);
 		fdActorSetPos(ACTOR_DOCK_CRATE, 504, 520);
 		fdActorSetAnimation(ACTOR_DOCK_CRATE, ANIM_CRATE_SUNK);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		syFieldMapGridSetMetatileBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
 		fdMapGridSetMetatileAttributesAt(
 			actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
@@ -987,8 +990,8 @@ void scEasternAlhafraPlaceClearedDebris(void)
 		actor = fdActorGet(ACTOR_SAIL_CRATE);
 		fdActorSetPos(ACTOR_SAIL_CRATE, 408, 536);
 		fdActorSetAnimation(ACTOR_SAIL_CRATE, ANIM_CRATE_SUNK);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		syFieldMapGridSetMetatileBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
 		fdMapGridSetMetatileAttributesAt(
 			actor->x.fixed, actor->z.fixed, 0, MAP_METATILE_JUMP);
@@ -1313,18 +1316,18 @@ extern Uint32 QuestionMarkScript[];
 void scQuestionMarkPop(FIXED x, FIXED y, FIXED z, Uint16 rotation, Sint32 ticks)
 {
 	ACTOR *mark;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	mark = scFieldActorCreate(SPRITE_EMOTE, x, y, z);
 	if(mark != NULL) {
-		spr = mark->spr;
+		sprite = mark->sprite;
 		fdActorSelectAnimation(mark, EMOTE_QUESTION);
 		fdActorStartScript(mark, QuestionMarkScript);
-		fdActorSetSprPriorityDirect(mark, 1);
-		mark->motionFlg = 0;
+		fdActorSetSpritePriorityDirect(mark, 1);
+		mark->motionFlags = 0;
 		mark->wait = ticks;
-		spr->flg = 0;
-		spr->rotation = rotation;
+		sprite->flags = 0;
+		sprite->rotation = rotation;
 	}
 }
 
@@ -1748,10 +1751,10 @@ void scEasternAlhafraWorkersTellMayor(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
 	fdActorSetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.8);
 	fdActorSetSpeed(ACTOR_JIYA, 0.8);
-	fdActorGetById(ACTOR_FELIX)->motionFlg = 0;
-	fdActorGetById(ACTOR_KRADEN)->motionFlg = 0;
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->motionFlg = 0;
-	fdActorGetById(ACTOR_JIYA)->motionFlg = 0;
+	fdActorGetById(ACTOR_FELIX)->motionFlags = 0;
+	fdActorGetById(ACTOR_KRADEN)->motionFlags = 0;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->motionFlags = 0;
+	fdActorGetById(ACTOR_JIYA)->motionFlags = 0;
 	fdActorWalkBy(ACTOR_FELIX, 0, 120);
 	fdActorWalkBy(ACTOR_KRADEN, 0, 120);
 	fdActorWalkBy(ACTOR_JIYA, 0, 80);
@@ -1759,7 +1762,7 @@ void scEasternAlhafraWorkersTellMayor(void)
 	{
 		FIELD_STATE *event = RamHeapSlots->fieldState;
 
-		event->transitionFrm = 60;
+		event->transitionFrame = 60;
 		event->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	}
 	fdScriptFinishScreenTransition();
@@ -1816,7 +1819,7 @@ void scEasternAlhafraBriggsStealsShip(void)
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(208, CAMERA_KEEP, 168, 1);
 	syFieldScriptWait(50);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdScriptFinishScreenTransition();
 	fdPaletteFadeInterpolate(16);
 	fdScriptWaitTransitionTicks();
@@ -1830,15 +1833,15 @@ void scEasternAlhafraBriggsStealsShip(void)
 			center, center->x.fixed, center->y.fixed, center->z.fixed);
 	}
 	syFieldScriptWait(50);
-	scFieldActorSetSprPriority(ACTOR_BRIGGS, 1);
-	scFieldActorSetSprPriority(ACTOR_CHAUCHA, 1);
+	scFieldActorSetSpritePriority(ACTOR_BRIGGS, 1);
+	scFieldActorSetSpritePriority(ACTOR_CHAUCHA, 1);
 	fdActorSetSpeed(ACTOR_CHAUCHA, 1.2);
 	fdActorSetSpeed(ACTOR_BRIGGS, 1.2);
 	fdActorSetPos(ACTOR_BRIGGS, 792, 856);
 	fdActorSetPos(ACTOR_CHAUCHA, 824, 856);
 	fdActorSetPos(ACTOR_KRADEN, 744, 1016);
 	fdActorSetPos(ACTOR_ALHAFRAS_MAYOR, 744, 1016);
-	fdScriptPlaySnd(MUS_BRIGGS_STEALS_SHIP);
+	fdScriptPlaySound(MUS_BRIGGS_STEALS_SHIP);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1932,7 +1935,7 @@ void scEasternAlhafraBriggsStealsShip(void)
 	fdActorFaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
 	syFieldScriptWait(30);
 	scActorPopQuestionMarks(ACTOR_BRIGGS);
-	fdScriptPlaySnd(SE_CURSE);
+	fdScriptPlaySound(SE_CURSE);
 	scFieldActorShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
 	fdActorFaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
 	syFieldScriptWait(20);
@@ -2032,20 +2035,20 @@ void scEasternAlhafraBriggsStealsShip(void)
 	fdActorSetAnimation(ACTOR_BRIGGS, ANIM_BRIGGS_PULL_FACE_SLOWLY);
 	syFieldScriptWait(70);
 	map = RamHeapSlots->mapGrid;
-	fdActorGetById(ACTOR_BRIGGS)->motionFlg = 0;
-	fdActorGetById(ACTOR_CHAUCHA)->motionFlg = 0;
+	fdActorGetById(ACTOR_BRIGGS)->motionFlags = 0;
+	fdActorGetById(ACTOR_CHAUCHA)->motionFlags = 0;
 	fdMapGridCopyMetatilesLayered(42, 60, 17, 4, 42, 64);
 	fdMapGridCopyMetatilesLayered(42, 60, 17, 4, 42, 68);
 	fdMapGridCopyMetatilesLayered(106, 60, 17, 4, 106, 64);
 	fdMapGridCopyMetatilesLayered(106, 60, 17, 4, 106, 68);
 	for(ticks = 0; ticks < 240; ticks++) {
-		map->layers[0].ofsY += step;
-		map->layers[1].ofsY += toFIXED(1);
+		map->layers[0].offsetY += step;
+		map->layers[1].offsetY += toFIXED(1);
 		fdActorGetById(ACTOR_BRIGGS)->z.fixed -= step;
 		fdActorGetById(ACTOR_CHAUCHA)->z.fixed -= step;
 		syWait(1);
 	}
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syFieldScriptWait(30);
 	fdScriptEnd();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2101,55 +2104,56 @@ void scEasternAlhafraMayorFindsShipGone(void)
 	scFieldActorShowEmote(
 		ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdActorSetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.7);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 8);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
 	syFieldScriptWait(10);
 	fdActorSetSpeed(ACTOR_ALHAFRAS_MAYOR, 2.4);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, -16);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_ALHAFRAS_MAYOR, 0, 8);
-	fdScriptPlaySnd(SE_IMPACT);
+	fdScriptPlaySound(SE_IMPACT);
 	fdActorSetSpeed(ACTOR_SECOND_WORKER, 2.4);
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_SECOND_WORKER)->facing = FACING_WEST;
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_SECOND_WORKER)->facing = FACING_NORTH_NORTHWEST;
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_SECOND_WORKER)->facing = FACING_NORTH_NORTHEAST;
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_SECOND_WORKER)->facing = 0;
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SECOND_WORKER, 0, -4);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SECOND_WORKER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_SECOND_WORKER)->facing = FACING_SOUTH_SOUTHEAST;
 	syFieldScriptWait(20);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
 	/* "Get up!" */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetPos(ACTOR_SECOND_WORKER, 168, 368);
-	scFieldActorSetSprRotationById(ACTOR_SECOND_WORKER, 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_SECOND_WORKER), SPRITE_FLAG_SHADOW);
+	scFieldActorSetSpriteRotationById(ACTOR_SECOND_WORKER, 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(ACTOR_SECOND_WORKER), SPRITE_FLAG_SHADOW);
 	fdActorFaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH_SOUTHWEST, 0);
 	scFieldActorJump(ACTOR_SECOND_WORKER, 6, 40);
 	scFieldActorShowEmote(
@@ -2157,50 +2161,50 @@ void scEasternAlhafraMayorFindsShipGone(void)
 	fdActorFaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
 	syFieldScriptWait(30);
 	fdActorSetSpeed(ACTOR_ALHAFRAS_MAYOR, 0.7);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, -8);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(20);
 	fdActorSetSpeed(ACTOR_ALHAFRAS_MAYOR, 2.4);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 16);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdScriptPlaySnd(SE_IMPACT);
+	fdActorGetById(ACTOR_ALHAFRAS_MAYOR)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdScriptPlaySound(SE_IMPACT);
 	fdActorSetSpeed(ACTOR_SECOND_WORKER, 2.4);
-	fdActorGetById(ACTOR_JIYA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_JIYA, 0, 3);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_JIYA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_JIYA)->facing = 0;
-	fdActorGetById(ACTOR_JIYA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_JIYA, 0, 3);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_JIYA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHEAST;
-	fdActorGetById(ACTOR_JIYA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_JIYA, 0, 3);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_JIYA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
-	fdActorGetById(ACTOR_JIYA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_JIYA, 0, 3);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_JIYA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_JIYA)->facing = FACING_WEST;
-	fdActorGetById(ACTOR_JIYA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_JIYA, 0, 3);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_JIYA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_JIYA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGetById(ACTOR_JIYA)->facing = FACING_SOUTH_SOUTHWEST;
 	syFieldScriptWait(20);
 	/* "They're gone, and you let them escape!" */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR, 0, 10);
 	fdActorSetPos(ACTOR_JIYA, 168, 424);
-	scFieldActorSetSprRotationById(ACTOR_JIYA, 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_JIYA), SPRITE_FLAG_SHADOW);
+	scFieldActorSetSpriteRotationById(ACTOR_JIYA, 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_JIYA), SPRITE_FLAG_SHADOW);
 	fdActorGetById(ACTOR_JIYA)->facing = FACING_NORTH_NORTHWEST;
 	scFieldActorJump(ACTOR_JIYA, 6, 40);
 	scFieldActorShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -2314,19 +2318,20 @@ void scEasternAlhafraMayorFindsShipGone(void)
 	fdActorRunRepeatedMotion(ACTOR_FIRST_WORKER, 2);
 	syFieldScriptWait(20);
 	fdActorSetPos(ACTOR_FIRST_WORKER, 176, 592);
-	scFieldActorSetSprRotationById(ACTOR_FIRST_WORKER, 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FIRST_WORKER), SPRITE_FLAG_SHADOW);
+	scFieldActorSetSpriteRotationById(ACTOR_FIRST_WORKER, 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(ACTOR_FIRST_WORKER), SPRITE_FLAG_SHADOW);
 	scFieldActorJump(ACTOR_FIRST_WORKER, 6, 20);
 	fdActorFaceDirectionById(ACTOR_FIRST_WORKER, FACING_WEST, 0);
 	fdActorSetPos(ACTOR_MAN_KNOCKED_DOWN, 128, 608);
-	scFieldActorSetSprRotationById(ACTOR_MAN_KNOCKED_DOWN, 0);
-	fdActorSetSprFlags(
+	scFieldActorSetSpriteRotationById(ACTOR_MAN_KNOCKED_DOWN, 0);
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_MAN_KNOCKED_DOWN), SPRITE_FLAG_SHADOW);
 	scFieldActorJump(ACTOR_MAN_KNOCKED_DOWN, 6, 20);
 	fdActorFaceDirectionById(ACTOR_MAN_KNOCKED_DOWN, FACING_NORTH_NORTHEAST, 0);
 	fdActorSetPos(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 192, 616);
-	scFieldActorSetSprRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0);
-	fdActorSetSprFlags(
+	scFieldActorSetSpriteRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0);
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_YOUNG_MAN_KNOCKED_DOWN), SPRITE_FLAG_SHADOW);
 	scFieldActorJump(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 6, 20);
 	fdActorFaceDirectionById(
@@ -2441,12 +2446,12 @@ void scEasternAlhafraMayorFindsShipGone(void)
    their update. */
 void scEasternAlhafraStartFallingRocks(void)
 {
-	ROCK_STATE *state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
+	ROCK_STATE *state = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
 	Sint32		entry;
 	Sint32		tile;
 	Sint32		i;
 	ROCK	   *rock;
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
 	entry = syVRAMCacheFindFreeEntry();
@@ -2455,13 +2460,13 @@ void scEasternAlhafraStartFallingRocks(void)
 	state->resource = entry;
 	rock = state->rocks;
 	for(i = 0; i < ROCK_COUNT; i++) {
-		spr = &state->sprs[i];
-		scEasternAlhafraInitRockSpr(spr, 8, 8, OBJ_SIZE_16X16, tile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
-		rock->tmr = -1;
+		sprite = &state->sprites[i];
+		scEasternAlhafraInitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		rock->timer = -1;
 		rock++;
 	}
 	state->next = 0;

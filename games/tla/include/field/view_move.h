@@ -4,9 +4,9 @@
 /* The view's swing as Tremor and Grind shake the ground. Its state sits in
    HEAP_SLOT_BATTLE_EFFECT: fdViewMoveStart opens the map's view bounds and
    keeps the old ones, fdViewMoveSwing swings the view centre each tick, and
-   fdViewMoveEnd puts the bounds back. fdViewMoveSaveNearbySprs gathers the
+   fdViewMoveEnd puts the bounds back. fdViewMoveSaveNearbySprites gathers the
    nearby actors whose sprites rock with the view, and
-   fdViewMoveRestoreNearbySprs sets them back. */
+   fdViewMoveRestoreNearbySprites sets them back. */
 
 #include "fixed_math.h"
 #include "types.h"
@@ -31,18 +31,19 @@ typedef struct VIEW_MOVE_STATE {
 	Sint16 edgeX; /* -1 beside the low edge, 1 beside the high edge, else 0 */
 	Sint16 edgeZ;
 	struct ACTOR *actors[8]; /* the actors near the caster it rocks */
-	Uint16 sprRotations[8];	 /* each one's sprite rotation, given back after */
-	Sint32 cnt;
+	Uint16
+		spriteRotations[8]; /* each one's sprite rotation, given back after */
+	Sint32 count;
 } VIEW_MOVE_STATE;
 
 STATIC_ASSERT(offsetof(VIEW_MOVE_STATE, edgeX) == 28);
 STATIC_ASSERT(offsetof(VIEW_MOVE_STATE, actors) == 32);
-STATIC_ASSERT(offsetof(VIEW_MOVE_STATE, cnt) == 80);
+STATIC_ASSERT(offsetof(VIEW_MOVE_STATE, count) == 80);
 
 void fdViewMoveStart(Sint32 direction);
 void fdViewMoveSwing(Sint32 direction, Sint32 phase, FIXED amplitude);
 void fdViewMoveEnd(void);
-void fdViewMoveSaveNearbySprs(void);
-void fdViewMoveRestoreNearbySprs(void);
+void fdViewMoveSaveNearbySprites(void);
+void fdViewMoveRestoreNearbySprites(void);
 
 #endif

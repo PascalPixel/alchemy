@@ -17,7 +17,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 draw;
 	Sint32				 i;
 	Sint32				 picture;
@@ -41,7 +41,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 
 	/* The arc of flames. */
-	if(state->args->tgts[0] >= FIRST_ENEMY_UNIT) {
+	if(state->args->targets[0] >= FIRST_ENEMY_UNIT) {
 		originX = 0;
 		direction = 1;
 	} else {
@@ -67,9 +67,9 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 		state->transferValue = CANVAS_FADE_HALF;
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	sySndPlayStub(SE_WHOOSH);
-	for(frm = 0; frm != FLARE_TICKS; frm++) {
-		if(frm == 24) {
+	sySoundPlayStub(SE_WHOOSH);
+	for(frame = 0; frame != FLARE_TICKS; frame++) {
+		if(frame == 24) {
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
 
@@ -145,10 +145,10 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The targets flash red. */
-		for(i = 0; i != state->args->tgtCnt; i++) {
-			if(frm == (i * 8) + 16) {
-				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_RED_TINT,
-					POSE_DAMAGE, i, 12);
+		for(i = 0; i != state->args->targetCount; i++) {
+			if(frame == (i * 8) + 16) {
+				btEffectTintBattler(state->args->targets[i],
+					SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 12);
 			}
 		}
 		EFFECT_END_TICK(state);
@@ -158,30 +158,30 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	btEffectEndCanvasLayer();
 }
 
-/* Lists the indices within idxRadius of where curValue sits in values, up to
-   entryLimit, and returns how many. */
+/* Lists the indices within indexRadius of where currentValue sits in values, up
+   to entryLimit, and returns how many. */
 UNUSED Sint32 btEffectBuildCenteredIndexList(
-	BATTLE_EFFECT_INDEX_WINDOW *win, Sint16 *output)
+	BATTLE_EFFECT_INDEX_WINDOW *window, Sint16 *output)
 {
-	Sint32 winLength = win->idxRadius * 2 + 1;
-	Sint32 outputCnt = 0;
-	Sint32 centerIdx = 0;
-	Sint32 winIdx;
+	Sint32 windowLength = window->indexRadius * 2 + 1;
+	Sint32 outputCount = 0;
+	Sint32 centerIndex = 0;
+	Sint32 windowIndex;
 
-	for(winIdx = 0; winIdx != winLength; winIdx++) {
-		if(win->curValue == win->values[winIdx]) {
-			centerIdx = winIdx;
+	for(windowIndex = 0; windowIndex != windowLength; windowIndex++) {
+		if(window->currentValue == window->values[windowIndex]) {
+			centerIndex = windowIndex;
 			break;
 		}
 	}
-	for(winIdx = 0; winIdx != winLength; winIdx++) {
-		Sint32 idx = centerIdx + winIdx - win->idxRadius;
+	for(windowIndex = 0; windowIndex != windowLength; windowIndex++) {
+		Sint32 index = centerIndex + windowIndex - window->indexRadius;
 
-		if(idx >= 0 && idx < win->entryLimit) {
-			output[outputCnt++] = idx;
+		if(index >= 0 && index < window->entryLimit) {
+			output[outputCount++] = index;
 		}
 	}
-	return outputCnt;
+	return outputCount;
 }
 
 #undef FLARE_TICKS

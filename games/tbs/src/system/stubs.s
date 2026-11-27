@@ -19,17 +19,17 @@ StubsSystem:
 	stub syVectorAddPolarOffsetStub, syVectorAddPolarOffset
 	stub syIntFunctionStub, syIntFunction
 	unnamed_stub syHeapInit
-	stub syHeapSlotAllocStub, syHeapSlotAlloc
-	stub syHeapSlotAllocEWRAMStub, syHeapSlotAllocEWRAM
+	stub syHeapSlotAllocateStub, syHeapSlotAllocate
+	stub syHeapSlotAllocateEWRAMStub, syHeapSlotAllocateEWRAM
 	stub syHeapSlotReleaseStub, syHeapSlotRelease
 	unnamed_stub syHeapGetRemainingIWRAM
 	unnamed_stub syHeapGetRemainingEWRAM
-	stub syHeapAllocStub, syHeapAlloc
-	stub syHeapAllocEWRAMStub, syHeapAllocEWRAM
+	stub syHeapAllocateStub, syHeapAllocate
+	stub syHeapAllocateEWRAMStub, syHeapAllocateEWRAM
 	stub syHeapReleaseStub, syHeapRelease
 	unnamed_stub syPrint
 	unnamed_stub syPrintHex
-	unnamed_stub syPrintDec
+	unnamed_stub syPrintDecimal
 	unnamed_stub syPrintBlanks
 	stub syDecompressByteLZStub, syDecompressByteLZ
 	stub syDecompressTaggedLZStub, syDecompressTaggedLZ
@@ -39,10 +39,10 @@ StubsSystem:
 	stub syVRAMCacheLoadStub, syVRAMCacheLoad
 	stub syVRAMCacheFindFreeEntryStub, syVRAMCacheFindFreeEntry
 	unnamed_stub syPrintClear
-	stub syOAMMatrixAllocFromTransformStub, syOAMMatrixAllocFromTransform
-	stub syOAMAddSprAtDepthStub, syOAMAddSprAtDepth
+	stub syOAMMatrixAllocateFromTransformStub, syOAMMatrixAllocateFromTransform
+	stub syOAMAddSpriteAtDepthStub, syOAMAddSpriteAtDepth
 	stub syWindowLoadGraphicsStub, syWindowLoadGraphics
-	unnamed_stub syPaletteLoadBasicSprCols
+	unnamed_stub syPaletteLoadBasicSpriteColors
 	unnamed_stub syInitMatrix
 	unnamed_stub syUnitMatrixCurrent
 	unnamed_stub syPushMatrix
@@ -88,9 +88,9 @@ StubsSystem:
 	unnamed_stub syIOWriteQueueClearBits32
 	unnamed_stub syInputResetKeyRepeat
 	unnamed_stub syLookAt
-	unnamed_stub sySerialWaitForStatMask
+	unnamed_stub sySerialWaitForStatusMask
 	stub sySerialRemoveIRQHandlersStub, sySerialRemoveIRQHandlers
-	stub sySndLoadReverbCodeStub, sySndLoadReverbCode
+	stub sySoundLoadReverbCodeStub, sySoundLoadReverbCode
 	stub sySerialStartSendStub, sySerialStartSend
 	stub sySerialStartReceiveStub, sySerialStartReceive
 	unnamed_stub sySerialWaitForSend

@@ -12,7 +12,7 @@
 Sint32 fdLuckyDiceStart(void);
 
 void				fdCameraResetViewDefaults(void);
-Sint32				fdFixedPointMulQ8(Sint16 left, Sint16 right);
+Sint32				fdFixedPointMultiplyQ8(Sint16 left, Sint16 right);
 Sint16				fdFixedPointDivQ8(Sint16 numerator, Sint16 denominator);
 Sint16				fdFixedPointReciprocal(Sint16 value);
 extern const Sint32 LuckyDiceUnusedSigns[];

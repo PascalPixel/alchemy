@@ -11,29 +11,29 @@ void fdLineScrollArmDMA(void)
 	volatile Uint16	  *dma;
 	LINE_SCROLL_STATE *state;
 	Uint32			  *src;
-	Uint16			   stat;
+	Uint16			   status;
 	Uint32			   control;
-	volatile Uint32	  *dst;
+	volatile Uint32	  *dest;
 
 	state = LineScroll;
 	src = (Uint32 *)state->rows[state->page];
 
 	dma = REG_DMA0;
-	dst = (volatile Uint32 *)&REG_BG1HOFS;
-	stat = dma[DMA_CNT_H_INDEX];
-	control = stat & (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
+	dest = (volatile Uint32 *)&REG_BG1HOFS;
+	status = dma[DMA_CNT_H_INDEX];
+	control = status & (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
 	dma[DMA_CNT_H_INDEX] = control;
-	stat = dma[DMA_CNT_H_INDEX];
-	control = stat & (Uint16)~DMA_ENABLE;
+	status = dma[DMA_CNT_H_INDEX];
+	control = status & (Uint16)~DMA_ENABLE;
 	dma[DMA_CNT_H_INDEX] = control;
 	(void)dma[DMA_CNT_H_INDEX];
 
-	*dst = *src++;
-	*dst = *src++;
-	*dst = *src++;
+	*dest = *src++;
+	*dest = *src++;
+	*dest = *src++;
 
 	control = DMA_HBLANK_WORDS_PER_LINE(3);
-	syDMAXCopy(src, (void *)dst, control, (volatile Uint32 *)dma);
+	syDMAXCopy(src, (void *)dest, control, (volatile Uint32 *)dma);
 }
 
 /* Event for the line scroll: fills the hidden page with each scanline's BG3,
@@ -57,7 +57,7 @@ void fdLineScrollBuildPage(void)
 
 	row = &state->rows[state->page ^ 1][0][0].x;
 	step = state->stepX;
-	phase = (state->frm + (Uint16)y3) * state->freqX;
+	phase = (state->frame + (Uint16)y3) * state->frequencyX;
 	if(step == 0) {
 		for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
 			row[scanline * 6] = x3;
@@ -86,7 +86,7 @@ void fdLineScrollBuildPage(void)
 	}
 	row = &state->rows[state->page ^ 1][0][0].y;
 	step = state->stepY;
-	phase = (state->frm + (Uint16)y3) * state->freqY;
+	phase = (state->frame + (Uint16)y3) * state->frequencyY;
 	if(step == 0) {
 		for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
 			row[scanline * 6] = y3;
@@ -113,7 +113,7 @@ void fdLineScrollBuildPage(void)
 			phase += step;
 		}
 	}
-	state->frm++;
+	state->frame++;
 	state->page ^= 1;
 }
 

@@ -30,7 +30,7 @@ void scFlameThrowersPuff(void)
 	state->blocked = 0;
 	for(i = 0; i < 4; i++, entry++) {
 		ACTOR *actor;
-		Sint32 flg, x, y, offScreen, value;
+		Sint32 flag, x, y, offScreen, value;
 		FIXED  dx, dz;
 		Uint8 *mark;
 
@@ -39,11 +39,11 @@ void scFlameThrowersPuff(void)
 		actor = entry->actor;
 		if(actor == 0)
 			continue;
-		flg = syGameFlagGet(FLAG_MENU_OPEN);
+		flag = syGameFlagGet(FLAG_MENU_OPEN);
 		if(field->psynergy != 0)
-			flg |= 1;
+			flag |= 1;
 		mark = &actor->paused;
-		*mark = flg;
+		*mark = flag;
 		if(state->runsDuringPsynergy != 0)
 			*mark = syGameFlagGet(FLAG_MENU_OPEN);
 		dx = actor->x.fixed - cameraX;
@@ -63,9 +63,9 @@ void scFlameThrowersPuff(void)
 			if(y > 239)
 				continue;
 		}
-		y = (Uint16)entry->tmr;
-		if(entry->tmr <= 0) {
-			y = entry->flg & FLAME_THROWER_FLAG_BITS;
+		y = (Uint16)entry->timer;
+		if(entry->timer <= 0) {
+			y = entry->flags & FLAME_THROWER_FLAG_BITS;
 			switch(y) {
 			case FLAME_SPARK:
 				scFlameThrowerSendSpark(
@@ -92,6 +92,6 @@ void scFlameThrowersPuff(void)
 		} else {
 			value = y - 1;
 		}
-		entry->tmr = value;
+		entry->timer = value;
 	}
 }

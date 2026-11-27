@@ -118,9 +118,9 @@ typedef enum APOJII_ISLANDS_HAZE_ACTOR_ID {
 #include "field/script_inline.h"
 #include "text/msg_ids.h"
 
-void   scApojiiIslandsCycleFallsCols(void);
-void   scApojiiIslandsCycleSeaCols(void);
-void   scApojiiIslandsCycleAquaStoneCols(void);
+void   scApojiiIslandsCycleFallsColors(void);
+void   scApojiiIslandsCycleSeaColors(void);
+void   scApojiiIslandsCycleAquaStoneColors(void);
 void   scApojiiIslandsStopFlashing(ACTOR *actor);
 void   scActorFlashWhite(ACTOR *actor);
 void   scApojiiIslandsFatherSeesTheStone(void);
@@ -162,7 +162,7 @@ typedef struct METATILE_MARKER {
    the markers. */
 typedef struct METATILE_MARKER_SET {
 	Uint16			block;
-	Uint16			cnt;
+	Uint16			count;
 	METATILE_MARKER markers[METATILE_MARKERS];
 } METATILE_MARKER_SET;
 
@@ -268,7 +268,7 @@ extern CUE	  ApojiiIslandsShopsCues[];
 extern CUE	  ApojiiIslandsHazeCues[];
 void		  scApojiiIslandsSinkIntoSand(void);
 void		  scApojiiIslandsRiseFromSand(void);
-void		  scApojiiIslandsResumeSeaCols(void);
+void		  scApojiiIslandsResumeSeaColors(void);
 void		  scApojiiIslandsScatterHazeWeeds(void);
 void		  scApojiiIslandsScatterWeedsOverBrambleSeed(void);
 void		  scApojiiIslandsEnterDoor(void);
@@ -333,10 +333,10 @@ extern Sint32 ApojiiIslandsFallsCycleTick;
 
 /* The islet's falls and their spray cycle their last colours, held while
    Psynergy or Reveal runs. */
-void scApojiiIslandsCycleFallsCols(void)
+void scApojiiIslandsCycleFallsColors(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Sint32		 phase, k, ofs;
+	Sint32		 phase, k, offset;
 	Uint16		*firstCopy, *secondCopy;
 
 	if(state->psynergy != 0)
@@ -361,10 +361,10 @@ void scApojiiIslandsCycleFallsCols(void)
 	firstCopy = ApojiiIslandsFallsCycled;
 	secondCopy = ApojiiIslandsSprayCycled;
 	for(; k < CYCLE_COLORS; k++) {
-		ofs = ((phase + k) % CYCLE_COLORS + CYCLE_FIRST_COLOR) * 2;
-		*(Uint16 *)((Uint8 *)firstCopy + ofs) =
+		offset = ((phase + k) % CYCLE_COLORS + CYCLE_FIRST_COLOR) * 2;
+		*(Uint16 *)((Uint8 *)firstCopy + offset) =
 			ApojiiIslandsFallsColors[CYCLE_FIRST_COLOR + k];
-		*(Uint16 *)((Uint8 *)secondCopy + ofs) =
+		*(Uint16 *)((Uint8 *)secondCopy + offset) =
 			ApojiiIslandsSprayColors[CYCLE_FIRST_COLOR + k];
 	}
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
@@ -378,7 +378,7 @@ extern Sint32 ApojiiIslandsSeaCycleTick;
 
 /* The village's sea and shore cycle their last colours, held while Psynergy or
    Reveal runs. */
-void scApojiiIslandsCycleSeaCols(void)
+void scApojiiIslandsCycleSeaColors(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 busy, phase, k, j;
@@ -417,22 +417,22 @@ void scApojiiIslandsCycleSeaCols(void)
 }
 
 /* Reveal holds the sea's colour cycle as it takes effect. */
-void scApojiiIslandsPauseSeaCols(void)
+void scApojiiIslandsPauseSeaColors(void)
 {
-	sySuspendEvent(scApojiiIslandsCycleSeaCols);
+	sySuspendEvent(scApojiiIslandsCycleSeaColors);
 	syWait(3);
 }
 
 /* The sea's colour cycle runs again as Reveal fades. */
-void scApojiiIslandsResumeSeaCols(void)
+void scApojiiIslandsResumeSeaColors(void)
 {
-	syResumeEvent(scApojiiIslandsCycleSeaCols);
+	syResumeEvent(scApojiiIslandsCycleSeaColors);
 	syWait(3);
 }
 
 /* The woken Aqua Stone's colours turn a step every other tick, in the sprite
    palette the spring's markers take. */
-void scApojiiIslandsCycleAquaStoneCols(void)
+void scApojiiIslandsCycleAquaStoneColors(void)
 {
 	Sint32 base;
 	Sint32 i;
@@ -455,7 +455,7 @@ void scApojiiIslandsCycleAquaStoneCols(void)
 /* A flashing actor's last update: its sprite's colour back to normal. */
 void scApojiiIslandsStopFlashing(ACTOR *actor)
 {
-	fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	actor->update = 0;
 }
 
@@ -475,9 +475,9 @@ void scApojiiIslandsDouseAquaStone(Sint32 unused, Sint32 id)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	actor->update = scActorFlashWhite;
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	sySynch(30);
-	sySndPlay(MUS_AQUA_ROCK);
+	sySoundPlay(MUS_AQUA_ROCK);
 	fdGroundParticlesStart();
 	scGroundParticlesSetAnchor(ACTOR_AQUA_STONE);
 	fdQueueMusic(SE_AMBIENT_WATER);
@@ -496,8 +496,8 @@ void scApojiiIslandsDouseAquaStone(Sint32 unused, Sint32 id)
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDALPHA, BLEND_ALPHA(0, BLEND_WEIGHT_MAX),
 		IO_WRITE_HALFWORD);
 	sySynch(1);
-	syCloseEvent(scApojiiIslandsCycleSeaCols);
-	sySetEvent(scApojiiIslandsCycleAquaStoneCols, EVENT_PASS_TICK);
+	syCloseEvent(scApojiiIslandsCycleSeaColors);
+	sySetEvent(scApojiiIslandsCycleAquaStoneColors, EVENT_PASS_TICK);
 	scApojiiIslandsStartMetatileMarkers();
 	scApojiiIslandsAddMetatileMarkers(METATILE_BEHAVIOR_SPRING, 0, 0);
 	for(i = 1; i <= 6; i++) {
@@ -586,7 +586,7 @@ void scApojiiIslandsScatterWeeds(void)
 					ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE); \
 				fdActorSetDestinationOffset( \
 					MainRoutineStateWork.leaderActorId, 16, 0); \
-				leader->velY = toFIXED(6); \
+				leader->velocityY = toFIXED(6); \
 				scFieldActorWaitForMoveById( \
 					MainRoutineStateWork.leaderActorId); \
 				fdScriptEnd(); \
@@ -629,9 +629,9 @@ void scApojiiIslandsEnterDoor(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -6);
 	syFieldScriptWait(10);
@@ -823,7 +823,7 @@ Sint32 scInit(void)
 	if(scene == SCENE_APOJII_ISLANDS_HAZE) {
 		scApojiiIslandsInitHaze();
 	} else if(scene == SCENE_APOJII_ISLANDS) {
-		syFieldSetTickEvent(scApojiiIslandsCycleSeaCols, EVENT_PASS_TICK);
+		syFieldSetTickEvent(scApojiiIslandsCycleSeaColors, EVENT_PASS_TICK);
 		if(fdScriptGetFlag(FLAG_FATHER_SEES_THE_STONE))
 			scApojiiIslandsFatherSeesTheStone();
 	} else if(scene == SCENE_APOJII_ISLANDS_SHOPS) {
@@ -845,7 +845,7 @@ Sint32 scPrepareMap(void)
    from the cave. */
 void scApojiiIslandsInitHaze(void)
 {
-	sySetTickEvent(scApojiiIslandsCycleFallsCols, EVENT_PASS_TICK);
+	sySetTickEvent(scApojiiIslandsCycleFallsColors, EVENT_PASS_TICK);
 	fdRopeInit();
 	fdRopePlace(
 		0, FLAG_HAZE_ROPE_TIED, ACTOR_FALLS_ROPE_POST, ACTOR_CLIFF_ROPE_POST);
@@ -972,7 +972,7 @@ enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
    VRAM. */
 #define COPY_TILES(fromTile, toTile) \
 	syDMAXCopy((void *)(BG_CHAR_BLOCK(1) + (fromTile) * TILE_SIZE_4BPP), \
-		(void *)(ofs + OBJ_VRAM0 + (toTile) * TILE_SIZE_4BPP), \
+		(void *)(offset + OBJ_VRAM0 + (toTile) * TILE_SIZE_4BPP), \
 		DMA_COPY_WORDS(2 * TILE_SIZE_4BPP / 4), REG_DMA3)
 /* Copies the map's picture `from` to marker picture `to`, upper half first. */
 #define COPY_PICTURE(from, to) \
@@ -992,8 +992,9 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 	/* DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
 	   keeps its load and its store to the stack. */
 	Sint32 viewY = map->origin[1];
-	Uint32 tile = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs >> 5;
-	Uint32 ofs = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs;
+	Uint32 tile =
+		VramCacheEntries[ApojiiIslandsMetatileMarkers.block].offset >> 5;
+	Uint32 offset = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].offset;
 	METATILE_MARKER *record;
 	Sint32			 i;
 
@@ -1018,7 +1019,7 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 			Sint32	left = x - 8;
 			Sint32	top = y - 8;
 			Sint32	flip, kind, picture;
-			Uint32 *attr;
+			Uint32 *attribute;
 
 			if((Uint32)(x + 7) > 334)
 				continue;
@@ -1029,17 +1030,17 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 			 * left's mask. */
 			RamHeapSlots->mapGrid += 0;
 			top &= OBJ_Y_MASK;
-			attr = record->oam;
+			attribute = record->oam;
 			kind = record->kind;
 			picture = kind * MARKER_PICTURE_TILES;
 			flip = 0;
 			if(kind == 2)
 				flip = OBJ_HFLIP;
-			*attr++ = link;
-			*attr++ = top | OBJ_X(left) | flip | OBJ_SIZE_16X16 |
+			*attribute++ = link;
+			*attribute++ = top | OBJ_X(left) | flip | OBJ_SIZE_16X16 |
 				OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-			*attr = palette | (tile + picture);
-			syOAMAddSprAtDepth(record->oam, 0);
+			*attribute = palette | (tile + picture);
+			syOAMAddSpriteAtDepth(record->oam, 0);
 		}
 	}
 }
@@ -1066,14 +1067,14 @@ void scApojiiIslandsAddMetatileMarkers(
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatiles =
 		fdMapGridGetLayer(MAPGRID_LAYER_MIDDLE)->metatiles;
-	Sint32 left = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->ofsX + map->minX;
-	Sint32 top = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->ofsY + map->minZ;
+	Sint32 left = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->offsetX + map->minX;
+	Sint32 top = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->offsetY + map->minZ;
 	/* FAKEMATCH(temporary): markers, a pointer standing in for */
 	/* ApojiiIslandsMetatileMarkers's address; as the table by name. */
 	METATILE_MARKER_SET *markers = &ApojiiIslandsMetatileMarkers;
 	Sint32				 width = FIELD_METATILE(map->maxX - map->minX);
 	Sint32				 height = FIELD_METATILE(map->maxZ - map->minZ);
-	METATILE_MARKER		*entry = &markers->markers[markers->cnt];
+	METATILE_MARKER		*entry = &markers->markers[markers->count];
 	/* FAKEMATCH(temporary): slot, a pointer standing in for the marked shape's
 	 * entry; as the entry written through its cast address. */
 	Sint32 *slot = (Sint32 *)(MapGridShapes + MAP_SHAPE_MARKED * 4);
@@ -1098,7 +1099,7 @@ void scApojiiIslandsAddMetatileMarkers(
 				entry->kind = value - base;
 				entry->state = 1;
 				entry++;
-				markers->cnt++;
+				markers->count++;
 				{
 					Uint8 *terrain = map->layers[0].terrainIds + origin;
 
@@ -1291,8 +1292,8 @@ CUE ApojiiIslandsVillageCues[] = {
 	{PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_AQUA_STONE, FLAG_APOJII_AQUA_STONE_DOUSED, SCRIPT_REF(scApojiiIslandsDouseAquaStone)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsSinkIntoSand)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsRiseFromSand)},
-	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsPauseSeaCols)},
-	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsResumeSeaCols)},
+	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsPauseSeaColors)},
+	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsResumeSeaColors)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsScatterWeeds)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS_OVER_HERB, CONDITION_ALWAYS, SCRIPT_REF(ApojiiIslandsScatterWeedsOverHerb)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS_OVER_MINT, CONDITION_ALWAYS, SCRIPT_REF(ApojiiIslandsScatterWeedsOverMint)},

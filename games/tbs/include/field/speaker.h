@@ -15,7 +15,7 @@
 typedef struct SPEAKER_SPR {
 	Uint8 beforeEntries[40]; /* Sprite's fields before its layers */
 	/* SPR.entries[0], its first layer, whose first halfword is the sprite id it
-	   shows (SPR_ANIMATION.anmId); null for none. */
+	   shows (SPR_ANIMATION.animationId); null for none. */
 	Sint16 *firstEntry;
 } SPEAKER_SPR;
 

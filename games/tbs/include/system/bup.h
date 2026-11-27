@@ -22,7 +22,7 @@ typedef struct BUP_SECTOR_HEADER {
 	   (system/system_bup.c) marks a free sector. */
 	Uint8  partId;
 	Uint16 checksum; /* low half of the payload's checksum */
-	Uint16 cnt;		 /* the highest is the current copy; restarts after 65000 */
+	Uint16 count;	 /* the highest is the current copy; restarts after 65000 */
 	Uint8  reserved[4];
 } BUP_SECTOR_HEADER;
 
@@ -38,15 +38,15 @@ typedef struct BUP_FILE_SUMMARY {
 	Uint32 coins;
 	Sint8  djinn[4]; /* the party's Djinn of each element */
 	Sint8  party[5]; /* up to four party members, ended by -1 */
-	/* Copied from MAIN_ROUTINE_STATE.sendFlg, which saving at the end of the
+	/* Copied from MAIN_ROUTINE_STATE.sendFlag, which saving at the end of the
 	   game sets; the file list for cleared data lists a file without it as not
 	   cleared. */
-	Sint8 sendFlg;
-	Sint8 djinnCnt;	 /* how many Djinn flags (FLAG_DJINN_FIRST on) are set */
-	Sint8 childhood; /* FLAG_CHILDHOOD is set; remaps the party's sprites */
-	/* bits: 15..8 winBrightness | 7..0 winHue */
-	Uint16 winHue : 8;		  /* MAIN_ROUTINE_STATE.winHue */
-	Uint16 winBrightness : 8; /* MAIN_ROUTINE_STATE.winBrightness */
+	Sint8 sendFlag;
+	Sint8 djinnCount; /* how many Djinn flags (FLAG_DJINN_FIRST on) are set */
+	Sint8 childhood;  /* FLAG_CHILDHOOD is set; remaps the party's sprites */
+	/* bits: 15..8 windowBrightness | 7..0 windowHue */
+	Uint16 windowHue : 8;		 /* MAIN_ROUTINE_STATE.windowHue */
+	Uint16 windowBrightness : 8; /* MAIN_ROUTINE_STATE.windowBrightness */
 	/* Low half of MAIN_ROUTINE_STATE.buildStamp; a file below the current stamp
 	   is listed as from an older build. */
 	Uint16 buildStamp;
@@ -61,7 +61,7 @@ typedef struct BUP_FILE_SUMMARY {
 typedef struct BUP_STATE {
 	Uint8  occupied[16]; /* 1 for a sector holding the current copy of a part */
 	Uint8  partId[16];	 /* each sector's part; 16 for none */
-	Uint16 cnt[16];		 /* each sector's counter */
+	Uint16 count[16];	 /* each sector's counter */
 
 	union {
 		struct {
@@ -78,7 +78,7 @@ typedef struct BUP_STATE {
 
 STATIC_ASSERT(sizeof(BUP_FILE_SUMMARY) == 64);
 STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, level) == 28);
-STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, sendFlg) == 49);
+STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, sendFlag) == 49);
 STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, checksum) == 60);
 STATIC_ASSERT(offsetof(BUP_STATE, slot) == 64);
 STATIC_ASSERT(offsetof(BUP_STATE, summary) == 4160);
@@ -86,8 +86,8 @@ STATIC_ASSERT(offsetof(BUP_STATE, summary) == 4160);
 STATIC_ASSERT(sizeof(BUP_SECTOR_HEADER) == 16);
 STATIC_ASSERT(sizeof(BUP_STATE) == 4352);
 STATIC_ASSERT(offsetof(BUP_STATE, partId) == 16);
-STATIC_ASSERT(offsetof(BUP_STATE, cnt) == 32);
-STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, djinnCnt) == 50);
+STATIC_ASSERT(offsetof(BUP_STATE, count) == 32);
+STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, djinnCount) == 50);
 STATIC_ASSERT(offsetof(BUP_FILE_SUMMARY, secondPartPlayTime) == 56);
 
 /* The save state, heap slot HEAP_SLOT_BUP under its own name; null between save

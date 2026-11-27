@@ -31,23 +31,23 @@ enum {
 void fdEffectSpawnRadialParticleRing(ACTOR *origin)
 {
 	EFFECT_OPTIONS opt;
-	FIXED		   vel[3];
+	FIXED		   velocity[3];
 	FIXED		   vz;
-	Sint32		   ang;
+	Sint32		   angle;
 	Uint32		   i;
 
-	opt.pal = 0;
+	opt.palette = 0;
 	opt.update = scFieldEffectAdvanceMotion;
 	opt.startScaleX = toFIXED(4) / 5;
 	opt.startScaleY = toFIXED(4) / 5;
 	for(i = 0; i <= WHIRLWIND_RADIAL_DIRECTIONS; i++) {
-		ang = i * (TRIG_TURN / WHIRLWIND_RADIAL_DIRECTIONS);
-		vel[0] = syCos(ang) * 3 / 2;
-		vel[1] = 0;
-		vz = sySin(ang);
-		vel[2] = vz;
+		angle = i * (TRIG_TURN / WHIRLWIND_RADIAL_DIRECTIONS);
+		velocity[0] = syCos(angle) * 3 / 2;
+		velocity[1] = 0;
+		vz = sySin(angle);
+		velocity[2] = vz;
 		fdEffectSpawnResident(origin->x.fixed, origin->y.fixed, origin->z.fixed,
-			vel[0], vel[1], vz,
+			velocity[0], velocity[1], vz,
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&opt);
@@ -60,26 +60,26 @@ void fdEffectSpawnRadialParticleRing(ACTOR *origin)
 void fdEffectWanderAroundAnchor(ACTOR *effect)
 {
 	FIXED  len;
-	Sint32 ang;
+	Sint32 angle;
 	FIXED  dx;
 	FIXED  dz;
 
 	/* syRandom is 0 to 1 in 16.16, so 2 to 3 pixels. */
 	len = syRandom() + toFIXED(2);
-	ang = effect->facing;
-	dx = syMulFX(len, syCos(ang));
-	dz = syMulFX(len, sySin(ang));
+	angle = effect->facing;
+	dx = syMulFX(len, syCos(angle));
+	dz = syMulFX(len, sySin(angle));
 	effect->x.fixed += dx;
 	effect->z.fixed += dz;
 	/* A small backwards drift, a 4096th of a turn a tick. */
 	effect->facing += -(TRIG_TURN / 4096);
-	if(effect->turnFrm != 0) {
-		effect->turnFrm--;
+	if(effect->turnFrame != 0) {
+		effect->turnFrame--;
 		effect->facing += TRIG_TURN / 32;
 	} else if(syRandom16Below(32) == 0) {
-		effect->turnFrm = syRandom16Below(16) + 8; /* 8 to 23 ticks */
+		effect->turnFrame = syRandom16Below(16) + 8; /* 8 to 23 ticks */
 	}
-	if(++effect->swirlFrm == WHIRLWIND_WANDER_TICKS)
+	if(++effect->swirlFrame == WHIRLWIND_WANDER_TICKS)
 		fdActorStartScriptStub(effect, FieldEffectSharedParticleScript);
 }
 
@@ -102,13 +102,13 @@ void fdEffectCircleAnchor(ACTOR *effect)
 		effect->x.fixed = anchor->x.fixed + dx;
 		effect->z.fixed = anchor->z.fixed + dz;
 		effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
-		if(++effect->swirlFrm == WHIRLWIND_ORBIT_TICKS) {
+		if(++effect->swirlFrame == WHIRLWIND_ORBIT_TICKS) {
 			/* The field engine integrates height after this update function. */
 			effect->update = fdEffectWanderAroundAnchor;
-			effect->swirlFrm = 0;
-			effect->turnFrm = 0;
+			effect->swirlFrame = 0;
+			effect->turnFrame = 0;
 			effect->gravity = toFIXED(1) / 10;
-			effect->velY = toFIXED(3);
+			effect->velocityY = toFIXED(3);
 			effect->facing = syRandom();
 		}
 	}
@@ -144,7 +144,7 @@ void fdPsynergyWhirlwind(void)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	ACTOR			   *caster = effectState->caster;
-	ACTOR			   *tgt = effectState->tgt;
+	ACTOR			   *target = effectState->target;
 	VECTOR3				pos;
 	VECTOR3				from;
 	VECTOR3				to;
@@ -164,7 +164,7 @@ void fdPsynergyWhirlwind(void)
 	if(orb == 0) {
 		return;
 	}
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	fdActorSelectAnimationStub(orb, 2);
 	/* Both ends of the ten-tick flight. */
 	for(; step < steps; step++) {
@@ -181,29 +181,29 @@ void fdPsynergyWhirlwind(void)
 	}
 	orb->scaleX = toFIXED(17) / 10; /* wide */
 	orb->scaleY = toFIXED(13) / 10; /* high */
-	sySndPlayStub(SE_RUSH);
+	sySoundPlayStub(SE_RUSH);
 	sySynch(20);
 	/* Cleared by fdPsynergyDispatch: cast on a target a cue names, the target
 	   is blown away. */
 	if(effectState->aimAhead == 0) {
-		if(tgt != 0)
-			tgt->update = fdWhirlwindUpdateTarget;
+		if(target != 0)
+			target->update = fdWhirlwindUpdateTarget;
 
 		/* Leaves from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
 		   pixels away. */
 		for(step = 0; step < WHIRLWIND_ORBIT_PARTICLES; step++) {
-			FIXED dist;
+			FIXED distance;
 
 			pos.x = orb->x.fixed;
 			pos.y = orb->y.fixed + step * (toFIXED(4) / 5) + toFIXED(4);
 			pos.z = orb->z.fixed;
-			dist = syRandom() * 5 + toFIXED(3);
-			syVectorAddPolarOffset(dist, syRandom(), (FIXED *)&pos);
+			distance = syRandom() * 5 + toFIXED(3);
+			syVectorAddPolarOffset(distance, syRandom(), (FIXED *)&pos);
 			leaf = fdActorSpawn(SPRITE_LEAF, pos.x, pos.y, pos.z);
 			if(leaf != 0) {
 				leaf->update = fdEffectCircleAnchor;
 				leaf->watchedActor = (ACTOR_OR_EFFECT *)orb;
-				leaf->tmr = 0;
+				leaf->timer = 0;
 				leaf->userValue = 0;
 				leaf->facing = syRandom();
 			}
@@ -214,9 +214,9 @@ void fdPsynergyWhirlwind(void)
 	}
 	fdActorSelectAnimationStub(orb, 1);
 	sySynch(30);
-	sySndPlayStub(SE_WHOOSH);
+	sySoundPlayStub(SE_WHOOSH);
 	sySynch(20);
 	/* Every leaf has left its orbit by now. */
 	fdActorReleaseStub(orb);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }

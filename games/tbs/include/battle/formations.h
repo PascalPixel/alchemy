@@ -31,10 +31,10 @@ typedef struct FORMATION {
 	Uint8 layout; /* a FORMATION_LAYOUT_ */
 	/* rows of enemy_table.c (enemy id less ENEMY_ID_FIRST) */
 	Uint8 memberIds[FORMATION_MEMBERS];
-	Uint8 minCnts[FORMATION_MEMBERS]; /* each always appears this often */
+	Uint8 minCounts[FORMATION_MEMBERS]; /* each always appears this often */
 	/* Each may appear up to this often while the six sprite slots hold them; 0
 	   for a member that does not appear. */
-	Uint8 maxCnts[FORMATION_MEMBERS];
+	Uint8 maxCounts[FORMATION_MEMBERS];
 } FORMATION;
 
 /* The rows of Formations. */

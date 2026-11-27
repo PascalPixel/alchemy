@@ -132,21 +132,21 @@ static void scGomaCavePillarUpdateFragment(ACTOR *fragment)
 	switch(plane) {
 	case PLANE_XY:
 		fragment->x.fixed += fragment->speedLimit;
-		fragment->tgtX = fragment->x.fixed;
+		fragment->targetX = fragment->x.fixed;
 		fragment->y.fixed += fragment->acceleration;
-		fragment->tgtY = fragment->y.fixed;
+		fragment->targetY = fragment->y.fixed;
 		break;
 	case PLANE_XZ:
 		fragment->x.fixed += fragment->speedLimit;
-		fragment->tgtX = fragment->x.fixed;
+		fragment->targetX = fragment->x.fixed;
 		fragment->z.fixed += fragment->acceleration;
-		fragment->tgtZ = fragment->z.fixed;
+		fragment->targetZ = fragment->z.fixed;
 		break;
 	case PLANE_YZ:
 		fragment->y.fixed += fragment->speedLimit;
-		fragment->tgtY = fragment->y.fixed;
+		fragment->targetY = fragment->y.fixed;
 		fragment->z.fixed += fragment->acceleration;
-		fragment->tgtZ = fragment->z.fixed;
+		fragment->targetZ = fragment->z.fixed;
 		break;
 	}
 }
@@ -154,7 +154,7 @@ static void scGomaCavePillarUpdateFragment(ACTOR *fragment)
 /* Hides a fragment of dust at the end of its script. */
 static Sint32 scGomaCavePillarFinishFragment(ACTOR *actor)
 {
-	fdActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 	return 0;
 }
 
@@ -182,12 +182,12 @@ static void scGomaCavePillarSpawnFragment(Sint32 x, Sint32 y, Sint32 z,
 	fragment = syFieldActorCreate(SPRITE_DUST_PUFF, x, y, z);
 	if(fragment == NULL)
 		return;
-	sprite = fragment->spr;
+	sprite = fragment->sprite;
 	fdActorSelectAnimation(fragment, FRAGMENT_KIND(style + 1));
 	fdActorStartScript(fragment, table.script[FRAGMENT_KIND(style)]);
-	fdActorSetSprCol(fragment, FRAGMENT_COLOR(style));
-	fragment->motionFlg = 0;
-	sprite->flg = 0;
+	fdActorSetSpriteColor(fragment, FRAGMENT_COLOR(style));
+	fragment->motionFlags = 0;
+	sprite->flags = 0;
 	fragment->update = scGomaCavePillarUpdateFragment;
 	fragment->speedLimit = firstRate;
 	fragment->acceleration = secondRate;
@@ -195,13 +195,13 @@ static void scGomaCavePillarSpawnFragment(Sint32 x, Sint32 y, Sint32 z,
 	priority = FRAGMENT_PRIORITY(place);
 	switch(priority) {
 	case 0:
-		sprite->image.pri = leader->spr->image.pri;
+		sprite->image.priority = leader->sprite->image.priority;
 		break;
 	case 1:
 	case 2:
 	case 3:
-		fragment->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		sprite->image.pri = priority;
+		fragment->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite->image.priority = priority;
 		break;
 	}
 }
@@ -318,18 +318,18 @@ static void scGomaCavePillarPushStumpOver(void)
 	fdScriptStart();
 	if(column == 25) {
 		fdActorGet(ACTOR_MASK_FOR_STUMP)->layer = 1;
-		fdActorSetSprFlags(fdActorGet(ACTOR_MASK_FOR_STUMP), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_MASK_FOR_STUMP), 0);
 		/* XXX (no evidence): why the mask is drawn black and translucent rather
 		   than in SPRITE_COLOR_HIDDEN, which would hide the stump the same
 		   way. */
-		fdActorSetSprColById(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
+		fdActorSetSpriteColorById(ACTOR_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
 		fdActorSetBlendMode(
 			fdActorGet(ACTOR_MASK_FOR_STUMP), ACTOR_BLEND_TRANSLUCENT);
 		fdActorSetPos(ACTOR_MASK_FOR_STUMP, 414, 240);
 		fdScriptWait(10);
 		/* Dust falls while the stump rocks on the edge. */
 		sySetTickEvent(scGomaCavePillarDropStumpFragments, EVENT_PASS_TICK);
-		sySndPlay(SE_RUMBLE);
+		sySoundPlay(SE_RUMBLE);
 		fdActorSetDestinationOffset(ACTOR_STUMP, 1, 0);
 		fdActorWaitForMoveById(ACTOR_STUMP);
 		fdScriptWait(10);
@@ -340,12 +340,12 @@ static void scGomaCavePillarPushStumpOver(void)
 		fdScriptWait(3);
 		/* It tips over the edge. */
 		fdActorSetSpeedAndAcceleration(ACTOR_STUMP, 2.5, 0.25);
-		sySndPlay(SE_STOP_ACTION_SE);
+		sySoundPlay(SE_STOP_ACTION_SE);
 		fdActorSetDestination(ACTOR_STUMP, 416, 200);
-		fdActorSetSprFlags(fdActorGet(ACTOR_STUMP), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_STUMP), 0);
 		syCloseEvent(scGomaCavePillarDropStumpFragments);
 		fdScriptWait(12);
-		sySndPlay(SE_STONE_GRIND);
+		sySoundPlay(SE_STONE_GRIND);
 		fixedX = fdActorGet(ACTOR_STUMP)->x.fixed + toFIXED(syRandomBelow(12));
 		heightSrc = fdActorGet(ACTOR_STUMP);
 		fixedZ = fdActorGet(ACTOR_STUMP)->z.fixed + toFIXED(6);
@@ -358,7 +358,7 @@ static void scGomaCavePillarPushStumpOver(void)
 		fdScriptWait(20);
 		/* It lands below; the shake dies down before the map grid metatiles
 		   change. */
-		sySndPlay(SE_CAST);
+		sySoundPlay(SE_CAST);
 		fdMapGridSetShake(5, 5, 1);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdMapGridWaitForShakeToSettle();
@@ -381,9 +381,9 @@ static void scGomaCavePillarSettleEastPillar(void)
 	z = fdActorGet(ACTOR_EAST_PILLAR)->z.fixed / toFIXED(16);
 	if(x == 38 && z == 14) {
 		fdActorGet(ACTOR_EAST_PILLAR)->y.fixed = -toFIXED(2);
-		fdActorGet(ACTOR_EAST_PILLAR)->tgtY =
+		fdActorGet(ACTOR_EAST_PILLAR)->targetY =
 			fdActorGet(ACTOR_EAST_PILLAR)->y.fixed;
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		scGomaCavePillarSpawnFragment(fdActorGet(ACTOR_EAST_PILLAR)->x.fixed,
 			fdActorGet(ACTOR_EAST_PILLAR)->y.fixed,
 			fdActorGet(ACTOR_EAST_PILLAR)->z.fixed, toFIXED(1) / 2, 0, 0,
@@ -443,33 +443,33 @@ static void scGomaCavePillarJumpGapWest(void)
 	fdTryJumpForward();
 #else
 	ACTOR	 *leader;
-	FIELD_POS tgt;
-	Uint8	 *motionFlg;
-	Uint8	  savedMotionFlg;
+	FIELD_POS target;
+	Uint8	 *motionFlags;
+	Uint8	  savedMotionFlags;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	motionFlg = &leader->motionFlg;
-	savedMotionFlg = *motionFlg;
-	tgt.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
-	tgt.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
-	tgt.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
-	if(syFieldActorCheckMovementCollision(leader, &tgt) == 0) {
+	motionFlags = &leader->motionFlags;
+	savedMotionFlags = *motionFlags;
+	target.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
+	target.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
+	target.z = fdActorGet(ACTOR_PARTY_LEADER)->z.fixed;
+	if(syFieldActorCheckMovementCollision(leader, &target) == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		*motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(leader, 0);
+		leader->velocityY = toFIXED(4);
+		*motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(leader, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
-			(Sint16)(FIXEDtoINT((Uint32)tgt.x)),
-			(Sint16)(FIXEDtoINT((Uint32)tgt.z)));
+			(Sint16)(FIXEDtoINT((Uint32)target.x)),
+			(Sint16)(FIXEDtoINT((Uint32)target.z)));
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-		*motionFlg = savedMotionFlg;
+		fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+		*motionFlags = savedMotionFlags;
 		fdScriptEnd();
 	}
 #endif
@@ -486,11 +486,11 @@ const CUE *scGetCues(void)
 static void scGomaCavePillarWatchForgeJoin(void)
 {
 	FIELD_STATE *state;
-	Sint32		 frm;
+	Sint32		 frame;
 
 	state = FieldStateWork;
-	frm = ++GomaCavePillarWitnessTicks;
-	switch(frm) {
+	frame = ++GomaCavePillarWitnessTicks;
+	switch(frame) {
 	case 60:
 		fdActorFaceDirection(ACTOR_WITNESS, FACING_SOUTHEAST, 0);
 		fdActorShowEmote(ACTOR_WITNESS, EMOTE_WINCE, 0);
@@ -526,13 +526,13 @@ static void scGomaCavePillarWitnessCheersForgeCaught(void)
 	fdScriptShowMessage(ACTOR_WITNESS, 0);
 	fdActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
 	fdScriptWait(30);
-	fdActorGet(ACTOR_EAST_PILLAR)->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetSpeed(ACTOR_WITNESS, 2);
 	fdActorWalkToAndWait(ACTOR_WITNESS, 600, 216);
 	fdActorWalkToAndWait(ACTOR_WITNESS, 600, 248);
 	fdActorWalkToAndWait(ACTOR_WITNESS, 568, 296);
 	fdActorSetPos(ACTOR_WITNESS, 0, 0);
-	fdActorGet(ACTOR_EAST_PILLAR)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_EAST_PILLAR)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	gmFlagSet(FLAG_GOMA_CAVE_WITNESS_LEFT);
 	fdScriptEnd();
 }
@@ -547,8 +547,8 @@ Sint32 scInit(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	state->transitionFrm = 24;
-	fdActorGet(ACTOR_STUMP)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+	state->transitionFrame = 24;
+	fdActorGet(ACTOR_STUMP)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 	if(gmFlagGet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
 		fdActorSetPos(ACTOR_WEST_PILLAR, 344, 104);
 		scGomaCavePillarCopyWestPillarMetatiles(24);
@@ -575,7 +575,8 @@ Sint32 scInit(void)
 			   only a whole function. */
 			fdActorGet(ACTOR_EAST_PILLAR)->layer = 2;
 			fdActorGet(ACTOR_EAST_PILLAR)->y.fixed--;
-			fdActorGet(ACTOR_EAST_PILLAR)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_EAST_PILLAR)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(36, 48, 5, 1, 36, 14);
 		}
 	}

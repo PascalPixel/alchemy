@@ -33,9 +33,9 @@ extern Uint16					   ChampaSanctumDoorOpening[];
 Sint32 mnWindowCloseMatchingId();
 
 /* Sends an actor walking to where another stands, if it is on the map. */
-static inline void scActorHeadToward(Sint32 id, Sint32 tgt)
+static inline void scActorHeadToward(Sint32 id, Sint32 target)
 {
-	ACTOR *actor = fdActorGet(tgt);
+	ACTOR *actor = fdActorGet(target);
 
 	if(actor != NULL)
 		fdActorSetDestination(
@@ -182,8 +182,8 @@ void scChampaOpenDoorAndEnter(
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	id = MainRoutineStateWork.leaderActorId;
@@ -204,16 +204,16 @@ void scChampaOpenDoorAndEnter(
    walks through. */
 void scChampaEnterDoor(Sint32 door)
 {
-	MAP_GRID_METATILE_ANIMATION *tbl = ChampaDoors;
+	MAP_GRID_METATILE_ANIMATION *table = ChampaDoors;
 
 	if((Uint32)(door - CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A) <= 1)
 		fdActorGet(MainRoutineStateWork.leaderActorId)->update =
 			(OBJECT_UPDATE)scChampaShrinkIntoTent;
 	if(door == CHAMPA_TO_CHAMPA_SANCTUM) {
-		fdTilesetAnimResume(SANCTUM_DOOR_ANIMATION);
-		scChampaOpenDoorAndEnter(&tbl[0], CHAMPA_TO_CHAMPA_SANCTUM, 1);
+		fdTilesetAnimationResume(SANCTUM_DOOR_ANIMATION);
+		scChampaOpenDoorAndEnter(&table[0], CHAMPA_TO_CHAMPA_SANCTUM, 1);
 	} else {
-		scChampaOpenDoorAndEnter(&tbl[1], door, 0);
+		scChampaOpenDoorAndEnter(&table[1], door, 0);
 	}
 }
 
@@ -224,7 +224,7 @@ void scChampaRevealTreasureSpot(void)
 {
 
 	fdTreasureSpotSetPos(ACTOR_VIKING_HELM_CHEST, toFIXED(392), toFIXED(568));
-	fdActorGet(ACTOR_VIKING_HELM_CHEST)->motionFlg = 0;
+	fdActorGet(ACTOR_VIKING_HELM_CHEST)->motionFlags = 0;
 	fdActorGet(ACTOR_VIKING_HELM_CHEST)->y.fixed = toFIXED(32);
 }
 
@@ -274,14 +274,14 @@ void scChampaSailorsSpotFelix(void)
 	scFieldActorJump(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 6, 0);
 	fdActorSetSpeed(ACTOR_SAILOR_WHO_SPOTS_FELIX, 1.8);
 	fdActorSetSpeed(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 1.8);
-	fdActorGet(ACTOR_SAILOR_WHO_SPOTS_FELIX)->steeringFlg &=
+	fdActorGet(ACTOR_SAILOR_WHO_SPOTS_FELIX)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, -16);
-	fdActorGet(ACTOR_SAILOR_WHO_WARNS_BRIGGS)->steeringFlg &=
+	fdActorGet(ACTOR_SAILOR_WHO_WARNS_BRIGGS)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, -16);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_SAILOR_WHO_WARNS_BRIGGS)->steeringFlg |=
+	fdActorGet(ACTOR_SAILOR_WHO_WARNS_BRIGGS)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	syFieldScriptWait(15);
 	fdActorShowEmote(
@@ -660,19 +660,19 @@ void scChampaCycleWaterfallPalettes(void)
 {
 	if((TickCount & 1) == 0) {
 		Sint16 saved;
-		Sint32 idx;
+		Sint32 index;
 
 		saved = BG_PLTT_COLOR(3, WATERFALL_LAST_COLOR);
-		for(idx = WATERFALL_LAST_COLOR; idx != 1; idx--)
-			BG_PLTT_COLOR(3, idx) = BG_PLTT_COLOR(3, idx - 1);
+		for(index = WATERFALL_LAST_COLOR; index != 1; index--)
+			BG_PLTT_COLOR(3, index) = BG_PLTT_COLOR(3, index - 1);
 		BG_PLTT_COLOR(3, 1) = saved;
 		saved = BG_PLTT_COLOR(4, WATERFALL_LAST_COLOR);
-		for(idx = WATERFALL_LAST_COLOR; idx != 1; idx--)
-			BG_PLTT_COLOR(4, idx) = BG_PLTT_COLOR(4, idx - 1);
+		for(index = WATERFALL_LAST_COLOR; index != 1; index--)
+			BG_PLTT_COLOR(4, index) = BG_PLTT_COLOR(4, index - 1);
 		BG_PLTT_COLOR(4, 1) = saved;
 		saved = BG_PLTT_COLOR(5, WATERFALL_LAST_COLOR);
-		for(idx = WATERFALL_LAST_COLOR; idx != 1; idx--)
-			BG_PLTT_COLOR(5, idx) = BG_PLTT_COLOR(5, idx - 1);
+		for(index = WATERFALL_LAST_COLOR; index != 1; index--)
+			BG_PLTT_COLOR(5, index) = BG_PLTT_COLOR(5, index - 1);
 		BG_PLTT_COLOR(5, 1) = saved;
 	}
 }
@@ -685,20 +685,20 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	sySetTickEvent((Sint32)scChampaCycleWaterfallPalettes, EVENT_PASS_VBLANK);
-	fdTilesetAnimPause(SANCTUM_DOOR_ANIMATION);
-	fdActorSetSprFlags((Sint32)fdActorGet(ACTOR_WEST_FLAG), 0);
-	fdActorSetSprFlags((Sint32)fdActorGet(ACTOR_EAST_FLAG), 0);
-	scFieldActorSetSprPriority(ACTOR_WOMAN_WAITING_FOR_FOOD, 3);
+	fdTilesetAnimationPause(SANCTUM_DOOR_ANIMATION);
+	fdActorSetSpriteFlags((Sint32)fdActorGet(ACTOR_WEST_FLAG), 0);
+	fdActorSetSpriteFlags((Sint32)fdActorGet(ACTOR_EAST_FLAG), 0);
+	scFieldActorSetSpritePriority(ACTOR_WOMAN_WAITING_FOR_FOOD, 3);
 	fdActorGet(ACTOR_ROCK)->scaleX = toFIXED(1) / 2;
 	fdActorGet(ACTOR_ROCK)->scaleY = toFIXED(1) / 2;
 	fdTightropeInit();
 	fdTightropePlace(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
-	fdTilesetAnimPause(SANCTUM_DOOR_LOOP_ANIMATION);
+	fdTilesetAnimationPause(SANCTUM_DOOR_LOOP_ANIMATION);
 	if(fdScriptGetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
-		scFieldActorSetSprPriority(ACTOR_SAILOR_AT_THE_QUIET_CAVES, 2);
-		scFieldActorSetSprPriority(ACTOR_SAILOR_ON_THE_MATRIARCH, 3);
-		scFieldActorSetSprPriority(ACTOR_SAILOR_ASKING_IF_WELL_LIKED, 3);
-		scFieldActorSetSprPriority(ACTOR_EOLEOS_FRIEND, 3);
+		scFieldActorSetSpritePriority(ACTOR_SAILOR_AT_THE_QUIET_CAVES, 2);
+		scFieldActorSetSpritePriority(ACTOR_SAILOR_ON_THE_MATRIARCH, 3);
+		scFieldActorSetSpritePriority(ACTOR_SAILOR_ASKING_IF_WELL_LIKED, 3);
+		scFieldActorSetSpritePriority(ACTOR_EOLEOS_FRIEND, 3);
 		fdActorSetMovementType(
 			fdActorGet(ACTOR_PRACTICING_BOY), MOVEMENT_TYPE_TAKE_LEADER_LAYER);
 		if(fdScriptGetFlag(FLAG_SAILORS_SPOTTED_FELIX)) {
@@ -727,25 +727,25 @@ Sint32 scPrepareMap(void)
 
 extern Uint32 ChampaQuestionMarkScript[];
 
-/* A question mark over someone's head, the emote sprite's, turned to `ang`,
+/* A question mark over someone's head, the emote sprite's, turned to `angle`,
    for `ticks` ticks. */
 void scChampaSpawnQuestionMark(
-	Sint32 x, Sint32 y, Sint32 z, Sint32 ang, Sint32 ticks)
+	Sint32 x, Sint32 y, Sint32 z, Sint32 angle, Sint32 ticks)
 {
-	Sint16	   value = ang;
+	Sint16	   value = angle;
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	actor = scFieldActorCreate(SPRITE_EMOTE, x, y, z);
 	if(actor != 0) {
-		spr = actor->spr;
+		sprite = actor->sprite;
 		fdActorSelectAnimation(actor, 1);
 		fdActorStartScript(actor, ChampaQuestionMarkScript);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->wait = ticks;
 
-		spr->flg = 0;
-		spr->rotation = value;
+		sprite->flags = 0;
+		sprite->rotation = value;
 	}
 }
 
@@ -765,20 +765,20 @@ void scChampaJennaAndShebaLookPuzzled(Sint32 firstId, Sint32 secondId)
 	y = first->y.fixed;
 	scChampaSpawnQuestionMark(
 		first->x.fixed, y + rise, first->z.fixed, DEGtoANG(22.5), 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 	y = second->y.fixed;
 	scChampaSpawnQuestionMark(
 		second->x.fixed, y + rise, second->z.fixed, DEGtoANG(337.5), 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 	scChampaSpawnQuestionMark(first->x.fixed, first->y.fixed + rise,
 		first->z.fixed, DEGtoANG(22.5), 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 	scChampaSpawnQuestionMark(second->x.fixed, second->y.fixed + rise,
 		second->z.fixed, DEGtoANG(337.5), 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 }
 
@@ -791,19 +791,19 @@ void scChampaShowTwoMessages(Sint32 first, Sint32 firstX, Sint32 firstY,
 	Sint32 delay)
 {
 	FIELD_STATE *event = RamHeapSlots->fieldState;
-	Sint32		 firstSpr = fdActorGetSprById(first);
-	Sint32		 secondSpr = fdActorGetSprById(second);
+	Sint32		 firstSprite = fdActorGetSpriteById(first);
+	Sint32		 secondSprite = fdActorGetSpriteById(second);
 
 	mnMessageOpenWindow((Sint16)event->msg++, firstX, firstY,
-		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(firstSpr)));
-	mnPortraitOpenWindow(firstSpr, 0, firstPortraitX, firstPortraitY);
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(firstSprite)));
+	mnPortraitOpenWindow(firstSprite, 0, firstPortraitX, firstPortraitY);
 	if(delay != 0) {
 		while(!mnMessageAllTyped())
 			syWait(delay);
 	}
 	mnMessageOpenWindow((Sint16)event->msg++, secondX, secondY,
-		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(secondSpr)));
-	mnPortraitOpenWindow(secondSpr, 0, secondPortraitX, secondPortraitY);
+		MESSAGE_WINDOW_VOICE(fdSpeakerGetVoice(secondSprite)));
+	mnPortraitOpenWindow(secondSprite, 0, secondPortraitX, secondPortraitY);
 	while(!mnMessageAllTyped())
 		syWait(1);
 	syWait(1);
@@ -812,13 +812,13 @@ void scChampaShowTwoMessages(Sint32 first, Sint32 firstX, Sint32 firstY,
 /* Closes the two windows scChampaShowTwoMessages opened. */
 void scChampaCloseTwoMessages(Sint32 first, Sint32 second)
 {
-	Sint32 firstSpr;
-	Sint32 secondSpr;
+	Sint32 firstSprite;
+	Sint32 secondSprite;
 
-	firstSpr = fdActorGetSprById(first);
-	secondSpr = fdActorGetSprById(second);
-	mnWindowCloseMatchingId(firstSpr);
-	mnWindowCloseMatchingId(secondSpr);
+	firstSprite = fdActorGetSpriteById(first);
+	secondSprite = fdActorGetSpriteById(second);
+	mnWindowCloseMatchingId(firstSprite);
+	mnWindowCloseMatchingId(secondSprite);
 }
 
 /* Nothing visible happens when the party, coming in from the south, walks up
@@ -831,9 +831,9 @@ void scChampaWalkIntoTheVillage(void)
 }
 
 /* Shows the speaker's message by its actor (fdMessageShowAtActor). */
-static __inline__ void scChampaMessageOpen(Sint32 speaker, Sint32 flg)
+static __inline__ void scChampaMessageOpen(Sint32 speaker, Sint32 flags)
 {
-	fdMessageShowAtActor(speaker, flg);
+	fdMessageShowAtActor(speaker, flags);
 }
 
 /* Walking back south onto the plank bridge out of Champa (metatile (19, 42))
@@ -859,7 +859,7 @@ void scChampaMeetAlex(void)
 	fdActorSetPos(ACTOR_ALEX, 312, 520);
 	fdActorSetPos(ACTOR_KARST, 456, 616);
 	fdActorSetPos(ACTOR_AGATIO, 168, 616);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	/* "I see you've caught up with me again, Felix." */
 	fdScriptShowMessage(ACTOR_ALEX, 0);
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
@@ -867,7 +867,7 @@ void scChampaMeetAlex(void)
 	fdCameraMoveTo(312, CAMERA_KEEP, 600, 1);
 	fdCameraWaitForArrival();
 	syFieldScriptWait(5);
-	fdScriptPlaySnd(MUS_ALEX);
+	fdScriptPlaySound(MUS_ALEX);
 	fdActorWalkToAndWait(ACTOR_ALEX, 304, 576);
 	syFieldScriptWait(5);
 	scFieldActorLaunchFromLeader(ACTOR_PIERS, -16, 0, FACING_NORTH);
@@ -1138,10 +1138,10 @@ void scChampaMeetAlex(void)
 	/* "Isn't that a shame." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	fdActorSetSpeed(ACTOR_ALEX, 1);
-	fdActorGet(ACTOR_ALEX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ALEX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_ALEX, -7, 7);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_ALEX)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ALEX)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(10);
 	fdActorFaceDirectionAndWait(ACTOR_ALEX, FACING_SOUTH_SOUTHWEST);
 	fdActorShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
@@ -1200,10 +1200,10 @@ void scChampaMeetAlex(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 0.6);
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 	syFieldScriptWait(2);
-	fdActorGet(ACTOR_KRADEN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_KRADEN, -8, 8);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_KRADEN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 	fdActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
 	/* "Alex said it clearly enough. We wouldn't terrorize people into
@@ -1482,10 +1482,10 @@ void scChampaMeetAlex(void)
 	fdActorFaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
 	syFieldScriptWait(25);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.4);
-	fdActorGet(ACTOR_KRADEN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_KRADEN, 0, -24);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_KRADEN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(10);
 	fdActorSetAnimation(ACTOR_KRADEN, ANIM_KRADEN_KEEP_SHAKING_HEAD);
 	syFieldScriptWait(30);
@@ -1537,14 +1537,14 @@ void scChampaMeetAlex(void)
 	syFieldScriptWait(10);
 	/* "Very well. May we meet again." */
 	fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdActorWalkByAndWait(ACTOR_ALEX, 0, 80);
 	fdActorSetPos(ACTOR_ALEX, 0, 0);
 	syFieldScriptWait(30);
 	fdCameraMoveTo(304, CAMERA_KEEP, 624, 1);
 	fdCameraWaitForArrival();
 	syFieldScriptWait(10);
-	fdScriptPlaySnd(MUS_CHAMPA);
+	fdScriptPlaySound(MUS_CHAMPA);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
 	/* "So the only reason Alex came here was to threaten us?" */
 	fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);

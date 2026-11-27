@@ -43,7 +43,7 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	PARTICLE			*quad;
 	Sint32				 x;
-	Sint32				 frm;
+	Sint32				 frame;
 	RENDER_MODEL		*model;
 	void				*vertices;
 	void				*canvas;
@@ -54,7 +54,7 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	FIXED		   height;
 	Sint32		   fade;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 
@@ -81,7 +81,7 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btResourceLoadAndDecompress(RESOURCE_FEATHER_SHEET,
 			state->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
 	} else {
-		btEffectPosProjectBattler(args->tgts[0], &pos);
+		btEffectPosProjectBattler(args->targets[0], &pos);
 		anchor[0] = pos.x;
 		btResourceLoadAndDecompress(RESOURCE_FEATHER_SHEET,
 			state->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
@@ -99,14 +99,14 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	draws[0] = RamHeapSlots->ramCode;
 
-	for(frm = 0; frm != TUMBLING_QUADS_TICKS; frm++) {
-		if(frm == 8)
-			sySndPlayStub(SE_GLITTER);
+	for(frame = 0; frame != TUMBLING_QUADS_TICKS; frame++) {
+		if(frame == 8)
+			sySoundPlayStub(SE_GLITTER);
 
 		/* The quads start above the screen, each higher than the last (or, for
 		   Phoenix, low by the targets), each with its own heading, spin and
 		   size. */
-		if(frm == 0) {
+		if(frame == 0) {
 			height = -toFIXED(32);
 			for(i = 0; i != TUMBLING_QUADS_PLACED; i++) {
 				quad = &state->particles[i];
@@ -117,57 +117,59 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					quad->y = toFIXED(32);
 				else
 					quad->y = height;
-				quad->velY = ((syRandom() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
-				quad->velX = syRandom() & TRIG_ANGLE_MASK;
-				quad->velZ = syRandom() & TRIG_ANGLE_MASK;
+				quad->velocityY =
+					((syRandom() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
+				quad->velocityX = syRandom() & TRIG_ANGLE_MASK;
+				quad->velocityZ = syRandom() & TRIG_ANGLE_MASK;
 				quad->variant = (syRandom() & 0x3fff) + toFIXED(1) / 8;
 				height += -toFIXED(4);
 			}
 		}
 
 		/* The heal shows, and every target flashes. */
-		if(frm == TUMBLING_QUADS_FLASH_TICK) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == TUMBLING_QUADS_FLASH_TICK) {
+			sySoundPlayStub(SE_POWER_UP);
 			EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-			for(i = 0; i != args->tgtCnt; i++)
+			for(i = 0; i != args->targetCount; i++)
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
+					args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 		}
 
 		/* With a prelude the Djinni circles over the anchor and climbs away
 		   after tick 32, and a ring of light lines spreads out from the
 		   canvas's middle. */
 		if(args->prelude == 1) {
-			x = (FIXEDtoINT(-sySin(frm * (TRIG_TURN / 32)) *
+			x = (FIXEDtoINT(-sySin(frame * (TRIG_TURN / 32)) *
 					TUMBLING_QUADS_DJINNI_SWAY)) +
 				CANVAS_SIZE / 2 - DJINNI_WIDTH / 2;
-			y = (FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4)) + anchor[1] -
+			y = (FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4)) + anchor[1] -
 				24;
-			if(frm > 32)
-				y = y - frm * 4 + 128;
+			if(frame > 32)
+				y = y - frame * 4 + 128;
 			draws[0](canvas, state->sheet + TUMBLING_QUADS_DJINNI, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frm <= 3)
+			if(frame <= 3)
 				draws[0](canvas, state->sheet + TUMBLING_QUADS_DJINNI, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			/* DEAD: tick never passes 63 here; the ROM keeps the compare and
 			   branch. */
-			if(frm <= 79) {
-				Sint32 ang;
+			if(frame <= 79) {
+				Sint32 angle;
 				Sint32 lineX;
 				Sint32 lineY;
 
 				syWordsFillEntry(state->sheet, TUMBLING_QUADS_LINE_HEIGHT,
 					CANVAS_FILL_WORD(TUMBLING_QUADS_LINE_LEVEL) -
-						frm / 2 * CANVAS_FILL_WORD(1));
+						frame / 2 * CANVAS_FILL_WORD(1));
 				i = 0;
-				ang = frm * (TRIG_TURN / 128);
+				angle = frame * (TRIG_TURN / 128);
 				for(; i != TUMBLING_QUADS_LINES; i++) {
-					lineX = (FIXEDtoINT(sySin(ang) * frm)) + CANVAS_SIZE / 2;
-					lineY = (FIXEDtoINT((syCos(ang) * frm) / 8)) - 16;
+					lineX =
+						(FIXEDtoINT(sySin(angle) * frame)) + CANVAS_SIZE / 2;
+					lineY = (FIXEDtoINT((syCos(angle) * frame) / 8)) - 16;
 					draws[0](canvas, state->sheet, lineX, lineY, 1,
 						TUMBLING_QUADS_LINE_HEIGHT);
-					ang += TRIG_TURN / TUMBLING_QUADS_LINES;
+					angle += TRIG_TURN / TUMBLING_QUADS_LINES;
 				}
 			}
 		}
@@ -178,12 +180,12 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		ProjectionWork.centerY = 104;
 		/* DEAD: tick never passes 63 here; the ROM keeps the compare and
 		   branch. */
-		if(frm <= 63) {
-			vertices = syHeapAllocEWRAM(32);
+		if(frame <= 63) {
+			vertices = syHeapAllocateEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			fade = 0;
-			if(frm >= TUMBLING_QUADS_FLASH_TICK)
-				fade = (TUMBLING_QUADS_FLASH_TICK - frm) * 8;
+			if(frame >= TUMBLING_QUADS_FLASH_TICK)
+				fade = (TUMBLING_QUADS_FLASH_TICK - frame) * 8;
 			model->shade = fade;
 			texture.logWidth = 6;
 			texture.logHeight = 6;
@@ -201,17 +203,17 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				delay = i * TUMBLING_QUADS_DELAY;
 				scale = quad->variant;
 
-				if(frm >= delay) {
+				if(frame >= delay) {
 					FIXED across;
 					FIXED deep;
 
 					syInitMatrix();
 					syRotX(TUMBLING_QUADS_TILT);
 					if(mode == TUMBLING_QUADS_PHOENIX)
-						quad->y -= quad->velY;
+						quad->y -= quad->velocityY;
 					else
-						quad->y += quad->velY;
-					if(quad->velY < -toFIXED(2))
+						quad->y += quad->velocityY;
+					if(quad->velocityY < -toFIXED(2))
 						quad->z += toFIXED(1);
 					else
 						quad->z += toFIXED(3) / 4;
@@ -220,10 +222,10 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					quad->x += TRIG_TURN / 128;
 					syTranslate(across, quad->y, deep);
 					syScale(scale, scale, scale);
-					syRotX(quad->velX);
-					syRotZ(quad->velZ);
-					quad->velX += toFIXED(1) / 64;
-					quad->velZ += toFIXED(1) / 64;
+					syRotX(quad->velocityX);
+					syRotZ(quad->velocityZ);
+					quad->velocityX += toFIXED(1) / 64;
+					quad->velocityZ += toFIXED(1) / 64;
 					btRenderTransformVertices(
 						BattleEffectGroundSquareCorners, vertices, 4);
 					btRenderDrawModelList(model);
@@ -298,7 +300,7 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 	Sint32					 savedScroll;
 	DRAW_RECTANGLE			*blit;
 	POINT2_D				 pos;
-	POINT2_D				 vel;
+	POINT2_D				 velocity;
 	Sint32					 skip;
 	DRAW_RECTANGLE			 blitters[2];
 	SCALE					 zaganScale;
@@ -310,18 +312,18 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 	Uint8					*ringPixels;
 	Sint32					 size;
 	Sint32					 bgX;
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 i;
 	Sint32					 j;
 
 	ringPixels = RamMapMetatileBuffer + ZAGAN_FLAME_BAND;
 	battle = RamHeapSlots->battleState;
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	fadedMotes = RamHeapSlots->battleSheet;
 	backdrop = RamHeapSlots->battleBg;
 	savedScroll = BgScrollWork[1].x;
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	btEffectStartCanvasLayer(0);
 	btEffectFillWhiteBand();
 	state->transferMode = CANVAS_COPY;
@@ -329,8 +331,8 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 
 	/* The battle flashes away as the summons' openings do, stopping while the
 	   white covers the screen. */
-	for(bgX = -80, frm = 0; frm != SUMMON_OPENING_LOAD_TICK + 1; frm++) {
-		if(frm == SUMMON_OPENING_LOAD_TICK) {
+	for(bgX = -80, frame = 0; frame != SUMMON_OPENING_LOAD_TICK + 1; frame++) {
+		if(frame == SUMMON_OPENING_LOAD_TICK) {
 			ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 			btEffectShowLivingTargets(state->args);
 			state->scrollStepX = -8;
@@ -344,8 +346,8 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 			for(j = 0; j != ZAGAN_FAINT_MOTES; j++) {
 				size = 4;
 				for(i = 0; i != size * size * 2; i++) {
-					Sint32 ofs = BattleEffectMotePictures[size - 1] + i;
-					Sint32 value = state->sheet[ofs];
+					Sint32 offset = BattleEffectMotePictures[size - 1] + i;
+					Sint32 value = state->sheet[offset];
 
 					if(value != 0) {
 						value -= j * 7;
@@ -379,47 +381,47 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 		SHEET_PALETTE_BYTES);
 	btEffectShowLivingTargets(state->args);
 	sySynch(1);
-	btEffectCreateSprs(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
+	btEffectCreateSprites(ZAGAN_PARTS, SPRITE_ZAGAN, 1);
 	REG_BG2X = skip;
 	REG_BG2PA = Q_8_8(0.5);
 
-	for(frm = 0; frm != ZAGAN_TICKS; frm++) {
+	for(frame = 0; frame != ZAGAN_TICKS; frame++) {
 		if(PerWork.repeat & (KEY_A | KEY_B)) {
 			skip = 1;
 		}
-		if(frm == 0) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 0) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
-		if(frm == 32) {
-			sySndPlayStub(SE_TABLET_RISE_HIGH);
+		if(frame == 32) {
+			sySoundPlayStub(SE_TABLET_RISE_HIGH);
 		}
-		if((Uint32)(frm - 78) <= 31) {
-			REG_BLDALPHA = BLEND_ALPHA(16 - (frm - 78) / 2, BLEND_WEIGHT_MAX);
+		if((Uint32)(frame - 78) <= 31) {
+			REG_BLDALPHA = BLEND_ALPHA(16 - (frame - 78) / 2, BLEND_WEIGHT_MAX);
 		}
-		if(frm == 140) {
+		if(frame == 140) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 		}
-		if(frm == ZAGAN_BLOW_TICK)
+		if(frame == ZAGAN_BLOW_TICK)
 			EFFECT_SHOW_DAMAGE(SE_CRASH);
-		if(frm == ZAGAN_BLOW_TICK ||
-			frm == ZAGAN_BLOW_TICK + ZAGAN_STRIKE_INTERVAL ||
-			frm == ZAGAN_BLOW_TICK + ZAGAN_STRIKE_INTERVAL * 2 ||
-			frm == ZAGAN_BLOW_TICK + ZAGAN_STRIKE_INTERVAL * 3) {
-			for(i = 0; i != args->tgtCnt; i++) {
-				btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_HURL);
+		if(frame == ZAGAN_BLOW_TICK ||
+			frame == ZAGAN_BLOW_TICK + ZAGAN_STRIKE_INTERVAL ||
+			frame == ZAGAN_BLOW_TICK + ZAGAN_STRIKE_INTERVAL * 2 ||
+			frame == ZAGAN_BLOW_TICK + ZAGAN_STRIKE_INTERVAL * 3) {
+			for(i = 0; i != args->targetCount; i++) {
+				btMotionApplyKnockbackStub(args->targets[i], KNOCKBACK_HURL);
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 4);
+					args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 4);
 			}
 		}
-		if(frm == 0) {
+		if(frame == 0) {
 			backdrop->busy = 1;
 			pos.x = toFIXED(240);
 			pos.y = toFIXED(64);
-			vel.x = -toFIXED(20);
-			vel.y = 0;
+			velocity.x = -toFIXED(20);
+			velocity.y = 0;
 			for(i = 0; i != ZAGAN_PARTS; i++) {
-				fdSprStartAnimationStub(
-					state->sprs[i], i + ZAGAN_GALLOP_PICTURES);
+				fdSpriteStartAnimationStub(
+					state->sprites[i], i + ZAGAN_GALLOP_PICTURES);
 			}
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			syWordsFillEntry((void *)&BG_PLTT_COLOR(6, 0),
@@ -439,7 +441,7 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 		BgScrollWork[1].x += state->scrollStepX;
 
 		/* The field darkens toward the battle background's colours. */
-		if(!(frm & 1) && (Uint32)(frm - 32) <= 111) {
+		if(!(frame & 1) && (Uint32)(frame - 32) <= 111) {
 			Uint16 *from = syResourceGetTableEntry(battle->bg);
 			Uint16 *to = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
@@ -472,56 +474,56 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 				*to = RGB(r, g, b);
 			}
 		}
-		if((Uint32)(frm - 64) <= 35) {
-			vel.x += toFIXED(1) / 2;
-			vel.y += -toFIXED(1) / 16;
+		if((Uint32)(frame - 64) <= 35) {
+			velocity.x += toFIXED(1) / 2;
+			velocity.y += -toFIXED(1) / 16;
 		}
-		if(frm > 177) {
-			vel.x += -toFIXED(2);
-			vel.y += -toFIXED(1);
-		} else if(frm > 139) {
-			vel.x += -toFIXED(0.61036);
-			vel.y += toFIXED(1) / 8;
-		} else if(frm > 99) {
-			vel.x += -toFIXED(1) / 8;
-			vel.y += toFIXED(1) / 32;
+		if(frame > 177) {
+			velocity.x += -toFIXED(2);
+			velocity.y += -toFIXED(1);
+		} else if(frame > 139) {
+			velocity.x += -toFIXED(0.61036);
+			velocity.y += toFIXED(1) / 8;
+		} else if(frame > 99) {
+			velocity.x += -toFIXED(1) / 8;
+			velocity.y += toFIXED(1) / 32;
 		}
-		if(frm == ZAGAN_BLOW_TICK - 1) {
+		if(frame == ZAGAN_BLOW_TICK - 1) {
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
-		if(frm == ZAGAN_BLOW_TICK) {
+		if(frame == ZAGAN_BLOW_TICK) {
 			btResourceLoadAndDecompress(
 				RESOURCE_CRESCENT_ROW_SHEET, state->sheet, 1, 0);
-			state->shakeFrm = 16;
+			state->shakeFrame = 16;
 			for(i = 0; i != ZAGAN_PARTS - 1; i++) {
-				fdSprStartAnimationStub(
-					state->sprs[i], i + ZAGAN_SWING_PICTURES);
+				fdSpriteStartAnimationStub(
+					state->sprites[i], i + ZAGAN_SWING_PICTURES);
 			}
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
 		/* The crescent of light, for eight ticks from the flash. */
-		if((Uint32)(frm - (ZAGAN_BLOW_TICK - 1)) <= 7) {
+		if((Uint32)(frame - (ZAGAN_BLOW_TICK - 1)) <= 7) {
 			blitters[0](canvas, state->sheet, 12, 0, 58, 120);
 		}
 		for(i = 0; i != 8; i++) {
-			if(frm == i * 6 + 114) {
+			if(frame == i * 6 + 114) {
 				state->scrollStepX++;
 			}
 		}
-		if(frm == 163) {
+		if(frame == 163) {
 			BgScrollWork[1].x += -20;
 		}
-		if(frm == 167) {
+		if(frame == 167) {
 			BgScrollWork[1].x += -10;
 		}
-		if(frm == 171) {
+		if(frame == 171) {
 			BgScrollWork[1].x += -10;
 		}
 
 		/* The streaks, a row of the field apart, each one or two lines
 		   thick. */
-		if(frm == 0) {
+		if(frame == 0) {
 			Sint32 row;
 
 			for(i = 0, row = 3, p = state->particles; i != ZAGAN_STREAKS;
@@ -529,37 +531,37 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 				p->x = (syRandom() & 127) - 160;
 				p->y = row;
 				p->variant = syRandom() & 1;
-				p->velX = (syRandom() & 3) + p->variant * 8 + 8;
+				p->velocityX = (syRandom() & 3) + p->variant * 8 + 8;
 			}
 		}
-		if((Uint32)frm <= 119) {
+		if((Uint32)frame <= 119) {
 			Sint32 odd;
 
-			for(i = 0, odd = frm & 1, p = state->particles; i != ZAGAN_STREAKS;
-				i++, p++) {
+			for(i = 0, odd = frame & 1, p = state->particles;
+				i != ZAGAN_STREAKS; i++, p++) {
 				if(!odd || !skip) {
 					blitters[0](canvas, state->sheet + ZAGAN_STREAK, p->x, p->y,
 						ZAGAN_STREAK_WIDTH, p->variant + 1);
 				}
-				p->x += p->velX;
+				p->x += p->velocityX;
 				if(p->x > CANVAS_SIZE) {
 					p->x -= 160;
 				}
 			}
 		}
-		if((Uint32)frm <= 195) {
+		if((Uint32)frame <= 195) {
 			/* Zagan. */
 			zaganScale = ZaganUnitScale;
 			placement[3] = 0;
 			placement[1] = 0;
-			if(!(frm & 1) || !skip) {
-				if(frm >= ZAGAN_BLOW_TICK) {
+			if(!(frame & 1) || !skip) {
+				if(frame >= ZAGAN_BLOW_TICK) {
 					for(i = 0; i != ZAGAN_PARTS - 1; i++) {
 						placement[0] = toFIXED(ZaganChargePoints[i][0]) +
 							pos.x - toFIXED(32);
 						placement[2] = toFIXED(ZaganChargePoints[i][1]) +
 							pos.y + toFIXED(16);
-						fdRenderApplyProjectedPlacementStub(state->sprs[i],
+						fdRenderApplyProjectedPlacementStub(state->sprites[i],
 							placement, (Sint32 *)&zaganScale, 0);
 					}
 				} else {
@@ -567,51 +569,52 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 						placement[0] = toFIXED(ZaganGallopPoints[i][0]) + pos.x;
 						placement[2] = toFIXED(ZaganGallopPoints[i][1]) +
 							pos.y - toFIXED(16);
-						fdRenderApplyProjectedPlacementStub(state->sprs[i],
+						fdRenderApplyProjectedPlacementStub(state->sprites[i],
 							placement, (Sint32 *)&zaganScale, 0);
 					}
 				}
 			}
-			if(frm > 177) {
-				pos.x += vel.x;
-				pos.y += vel.y;
-				vel.x = vel.x * 63 / DAMPING_SCALE;
-				vel.y = vel.y * 63 / DAMPING_SCALE;
-			} else if(frm > 149) {
+			if(frame > 177) {
+				pos.x += velocity.x;
+				pos.y += velocity.y;
+				velocity.x = velocity.x * 63 / DAMPING_SCALE;
+				velocity.y = velocity.y * 63 / DAMPING_SCALE;
+			} else if(frame > 149) {
 				if(pos.y >= toFIXED(56)) {
-					vel.x = 0;
-					vel.y = 0;
+					velocity.x = 0;
+					velocity.y = 0;
 				}
-				pos.x += vel.x;
-				pos.y += vel.y;
-			} else if(frm <= 59) {
-				pos.x += vel.x;
-				pos.y += vel.y;
-				vel.x = vel.x * 58 / DAMPING_SCALE;
-				vel.y = vel.y * 62 / DAMPING_SCALE;
+				pos.x += velocity.x;
+				pos.y += velocity.y;
+			} else if(frame <= 59) {
+				pos.x += velocity.x;
+				pos.y += velocity.y;
+				velocity.x = velocity.x * 58 / DAMPING_SCALE;
+				velocity.y = velocity.y * 62 / DAMPING_SCALE;
 			} else {
-				pos.x += vel.x;
-				pos.y += vel.y;
-				vel.x = vel.x * 58 / DAMPING_SCALE;
-				vel.y = vel.y * 61 / DAMPING_SCALE;
+				pos.x += velocity.x;
+				pos.y += velocity.y;
+				velocity.x = velocity.x * 58 / DAMPING_SCALE;
+				velocity.y = velocity.y * 61 / DAMPING_SCALE;
 			}
 			/* The blaze, a new picture every three ticks. */
-			if((!(frm & 1) || !skip) && frm <= 119) {
+			if((!(frame & 1) || !skip) && frame <= 119) {
 				blit[1](canvas,
-					state->sheet + ((frm / 3) & 3) * PICTURE_BYTES(ZAGAN_BLAZE),
+					state->sheet +
+						((frame / 3) & 3) * PICTURE_BYTES(ZAGAN_BLAZE),
 					(FIXEDtoINT(pos.x / 2)) - 12, (FIXEDtoINT(pos.y)) - 58,
 					ZAGAN_BLAZE_WIDTH, ZAGAN_BLAZE_HEIGHT);
 			}
-			if(frm == ZAGAN_BLOW_TICK) {
+			if(frame == ZAGAN_BLOW_TICK) {
 				btResourceLoadAndDecompress(
 					RESOURCE_FLAME_BAND_TEXTURE, ringPixels, 0, 0);
 			}
-			if(!(frm & 1) || !skip) {
+			if(!(frame & 1) || !skip) {
 				/* Rings of fire from the blow. */
-				if(frm >= ZAGAN_BLOW_TICK) {
+				if(frame >= ZAGAN_BLOW_TICK) {
 					Sint32 k;
 
-					vertices = syHeapAllocEWRAM(1024);
+					vertices = syHeapAllocateEWRAM(1024);
 					model = btRenderAllocateModelList(1);
 					texture.logWidth = 7;
 					texture.logHeight = 7;
@@ -627,13 +630,13 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 						FIXED  scale;
 						Sint32 shade;
 
-						if(frm <= start) {
+						if(frame <= start) {
 							continue;
 						}
-						scale =
-							(((frm - start) * ZaganRingGrowth[k] * 125) << 4) +
+						scale = (((frame - start) * ZaganRingGrowth[k] * 125)
+									<< 4) +
 							toFIXED(1) / 2;
-						shade = (start - frm) * 8 + 56;
+						shade = (start - frame) * 8 + 56;
 						if(shade > 0) {
 							shade = 0;
 						}
@@ -646,7 +649,7 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 							-toFIXED(16), toFIXED(ZaganRingHeights[k]), 0);
 						syScale(scale, scale * 4 / 3, scale);
 						syRotX(ZAGAN_RING_TILT);
-						model->scrollU = ((frm + k * 5) & 7) * 16;
+						model->scrollU = ((frame + k * 5) & 7) * 16;
 						btRenderTransformVertices(
 							BattleEffectCylinderCorners, vertices, 32);
 						btRenderDrawModelList(model);
@@ -656,16 +659,16 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		}
-		if(frm >= ZAGAN_BLOW_TICK) {
-			if(state->shakeFrm > 0) {
-				Sint32 ofsX = (syRandom() & 3) - 8;
+		if(frame >= ZAGAN_BLOW_TICK) {
+			if(state->shakeFrame > 0) {
+				Sint32 offsetX = (syRandom() & 3) - 8;
 				Sint32 randomY = syRandom() & 15;
-				Sint32 ofsY = randomY - 8;
+				Sint32 offsetY = randomY - 8;
 
 				BgScrollWork[1].y = randomY + 24;
-				ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X - ofsX;
-				ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y - ofsY;
-				state->shakeFrm--;
+				ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
+				ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
+				state->shakeFrame--;
 			} else {
 				BgScrollWork[1].y = state->savedBg1Y;
 				ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -673,7 +676,7 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		btEffectCountDownBattlerTints();
-		if(!(frm & 1) || !skip) {
+		if(!(frame & 1) || !skip) {
 			EFFECT_PRESENT_CANVAS(state);
 		}
 	}
@@ -681,7 +684,7 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 	EFFECT_RELEASE_BLITTERS();
 	backdrop->busy = 0;
 	for(i = 0; i != ZAGAN_PARTS; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	btEffectEndCanvasLayer();
 }
@@ -691,7 +694,7 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
    effect. */
 void btCameraApplyPhasedDelta(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	BATTLE_CAMERA		*camera = RamHeapSlots->cameraState;
 
 	if(state->cameraPhase == CAMERA_PHASE_TICK_DONE) {

@@ -50,24 +50,24 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	Sint32				 wallX;
 	Sint32				 rockX;
 	SCALE				 scale;
 	FIXED				 pos[4];
 	Uint8				*src;
-	Uint16				*col;
+	Uint16				*color;
 	void				*palette = (void *)BG_PLTT;
-	Sint32				 sheetIdx;
+	Sint32				 sheetIndex;
 	Sint32				 i;
 	Sint32				 j;
 	Sint32				 k;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 
 	/* The higher the variant, the wider the wall. */
@@ -94,9 +94,9 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	syWordsCopyEntry(palette,
 		syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_A),
 		SHEET_PALETTE_BYTES);
-	col = (Uint16 *)&BG_PLTT_COLOR(0, 1);
+	color = (Uint16 *)&BG_PLTT_COLOR(0, 1);
 	for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
-		Sint32 c = *col;
+		Sint32 c = *color;
 		Sint32 blue = RGB_BLUE((Uint16)c);
 		Sint32 green = RGB_GREEN((Uint16)c);
 		Sint32 red = RGB_LEVEL_MAX;
@@ -112,41 +112,41 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 			green = 0;
 		if(red < 0)
 			red = 0;
-		*col++ = RGB(red, green, blue);
+		*color++ = RGB(red, green, blue);
 	}
 
 	src = RamMapMetatileBuffer;
-	sheetIdx = 0;
+	sheetIndex = 0;
 	for(j = 0; j != GAIA_ROW_PICTURES; j++) {
 		for(i = 0; i != GAIA_ROW_HEIGHT; i++) {
-			for(k = 0; k != GaiaRowWidths[j]; k++, sheetIdx++)
-				state->sheet[sheetIdx] = src[k];
+			for(k = 0; k != GaiaRowWidths[j]; k++, sheetIndex++)
+				state->sheet[sheetIndex] = src[k];
 		}
 		src += GaiaRowWidths[j];
 	}
 	for(j = 0; j != GAIA_ROW_HEIGHT; j++) {
 		for(i = 0; i != GAIA_WALL_TOP_HEIGHT / GAIA_ROW_HEIGHT; i++) {
-			for(k = 0; k != GAIA_WALL_TOP_WIDTH; k++, sheetIdx++)
-				state->sheet[sheetIdx] = src[k];
+			for(k = 0; k != GAIA_WALL_TOP_WIDTH; k++, sheetIndex++)
+				state->sheet[sheetIndex] = src[k];
 		}
 		src += GAIA_WALL_TOP_WIDTH;
 	}
 	for(i = 0; i != GAIA_WALL_FOOT_WIDTH * GAIA_WALL_FOOT_HEIGHT; i++)
-		state->sheet[sheetIdx++] = *src++;
+		state->sheet[sheetIndex++] = *src++;
 	for(i = 0; i != GAIA_FLAME_PICTURES; i++) {
 		for(k = 0; k != GaiaFlameWidths[i] * GaiaFlameHeights[i]; k++)
-			state->sheet[sheetIdx++] = *src++;
+			state->sheet[sheetIndex++] = *src++;
 	}
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
 	for(i = 0; i != GAIA_ROCKS; i++) {
-		SPR *rock = fdSprCreateStub(SPRITE_BATTLE_ROCKS);
+		SPR *rock = fdSpriteCreateStub(SPRITE_BATTLE_ROCKS);
 
-		state->sprs[i] = rock;
+		state->sprites[i] = rock;
 		if(rock != 0) {
-			rock->flg = 0;
-			fdSprStartAnimationStub(rock, i / 4);
-			((SPR *)state->sprs[i])->image.pri = 1;
+			rock->flags = 0;
+			fdSpriteStartAnimationStub(rock, i / 4);
+			((SPR *)state->sprites[i])->image.priority = 1;
 		}
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -181,26 +181,26 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 
 		dust->x = INTtoFIXED((syRandom() & 63) + wallX + 32);
 		dust->y = INTtoFIXED((syRandom() & 7) + 96);
-		dust->velY = ((syRandom() & 63) + 32) << 13;
+		dust->velocityY = ((syRandom() & 63) + 32) << 13;
 		dust->variant = syRandom() & 31;
 	}
 	REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7);
 	/* The screen shakes throughout. */
-	state->shakeFrm = 250;
-	for(frm = 0; frm != GAIA_TICKS; frm++) {
-		if(frm == 0)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == 40)
-			sySndPlayStub(SE_RUMBLE);
-		if(frm == 96)
-			sySndPlayStub(SE_CRASH);
-		if(frm == 120)
+	state->shakeFrame = 250;
+	for(frame = 0; frame != GAIA_TICKS; frame++) {
+		if(frame == 0)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == 40)
+			sySoundPlayStub(SE_RUMBLE);
+		if(frame == 96)
+			sySoundPlayStub(SE_CRASH);
+		if(frame == 120)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
 		/* The flames flicker at the wall's foot. */
-		if(frm <= 81) {
-			Sint32 picture = frm / 4;
+		if(frame <= 81) {
+			Sint32 picture = frame / 4;
 
 			if(picture > 2)
 				picture = (picture & 1) + 1;
@@ -214,8 +214,8 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The rising wall widens a row at a time. */
-		if(frm >= 12 && frm < GAIA_WALL_STAND_TICK) {
-			Sint32 row = (frm - GAIA_WALL_WIDEN_TICK) / 3;
+		if(frame >= 12 && frame < GAIA_WALL_STAND_TICK) {
+			Sint32 row = (frame - GAIA_WALL_WIDEN_TICK) / 3;
 
 			CLAMP(row, 0, 7);
 			for(i = 0; i != 4; i++) {
@@ -229,8 +229,8 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The wall sinks away. */
-		if(frm >= GAIA_WALL_SINK_TICK && frm < GAIA_WALL_SINK_TICK + 24) {
-			Sint32 row = 7 - (frm - GAIA_WALL_SINK_TICK) / 3;
+		if(frame >= GAIA_WALL_SINK_TICK && frame < GAIA_WALL_SINK_TICK + 24) {
+			Sint32 row = 7 - (frame - GAIA_WALL_SINK_TICK) / 3;
 
 			CLAMP(row, 0, 7);
 			for(i = 0; i != 4; i++) {
@@ -244,7 +244,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The standing wall. */
-		if(frm >= GAIA_WALL_STAND_TICK && frm < GAIA_WALL_SINK_TICK) {
+		if(frame >= GAIA_WALL_STAND_TICK && frame < GAIA_WALL_SINK_TICK) {
 			draw[0](canvas, &state->sheet[GAIA_WALL_TOP], wallX + 16, 0,
 				GAIA_WALL_TOP_WIDTH, GAIA_WALL_TOP_HEIGHT);
 			draw[1](canvas, &state->sheet[GAIA_WALL_TOP], wallX + 64, 0,
@@ -258,18 +258,19 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Dust keeps rising up the wall. */
-		if(frm >= GAIA_WALL_STAND_TICK) {
+		if(frame >= GAIA_WALL_STAND_TICK) {
 			for(i = 0; i != GAIA_DUST_SHOWN; i++) {
 				PARTICLE *dust = &PARTICLES[i];
 
 				if(dust->variant == 0) {
 					Sint32 size = (i & 3) + 5;
 
-					draw[0](canvas, sprs + BattleEffectMotePictures[size - 1],
+					draw[0](canvas,
+						sprites + BattleEffectMotePictures[size - 1],
 						FIXED_INTEGER_PART(dust->x) - size / 2,
 						FIXED_INTEGER_PART(dust->y) - size, size, size * 2);
-					dust->y -= dust->velY;
-					if(dust->y < 0 && frm < GAIA_WALL_SINK_TICK)
+					dust->y -= dust->velocityY;
+					if(dust->y < 0 && frame < GAIA_WALL_SINK_TICK)
 						dust->y = toFIXED(96);
 				} else {
 					dust->variant--;
@@ -278,10 +279,10 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Rocks tumble up through the wall, larger with the variant. */
-		if(frm > 4) {
+		if(frame > 4) {
 			Sint32 rocks = GAIA_EARLY_ROCKS;
 
-			if(frm > 71)
+			if(frame > 71)
 				rocks = GAIA_ROCKS;
 			for(k = 0; k != rocks; k++) {
 				PARTICLE *rock = &state->particles[GAIA_FIRST_ROCK + k];
@@ -291,7 +292,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 					/* DEAD: scale copied from GaiaUnitScale before both its
 					   fields are set; the ROM keeps the copy. */
 					scale = GaiaUnitScale;
-					if(frm > 71) {
+					if(frame > 71) {
 						scale.x = k * (toFIXED(1) / 16) + toFIXED(1) / 2;
 						scale.x += args->variant * (toFIXED(1) / 4);
 					} else {
@@ -302,23 +303,23 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 					pos[0] = toFIXED(rock->x + rockX * 2);
 					pos[1] = toFIXED(512) - toFIXED(rock->y);
 					pos[2] = toFIXED(512);
-					slot = (frm / 2 + k) % GAIA_ROCKS;
+					slot = (frame / 2 + k) % GAIA_ROCKS;
 					/* DEAD: slot != -1 always holds, slot being a remainder of
 					   a positive count; the ROM keeps the test. */
 					if(slot != -1)
 						fdRenderApplyProjectedPlacementStub(
-							state->sprs[slot], pos, &scale, 0);
+							state->sprites[slot], pos, &scale, 0);
 					rock->y -= rock->z;
 					/* DEAD: velocityX steps from 1 to 12 by velocityY and
 					   nothing reads it; the ROM keeps the count. */
-					rock->velX += rock->velY;
-					if(rock->velX > 12)
-						rock->velX -= 12;
+					rock->velocityX += rock->velocityY;
+					if(rock->velocityX > 12)
+						rock->velocityX -= 12;
 					if(rock->y < 0) {
-						if(frm >= GAIA_WALL_SINK_TICK) {
+						if(frame >= GAIA_WALL_SINK_TICK) {
 							rock->variant = -1;
 						} else {
-							if(frm >= GAIA_WALL_STAND_TICK) {
+							if(frame >= GAIA_WALL_STAND_TICK) {
 								rock->z = (syRandom() & 7) + 8;
 								if(args->variant == EFFECT_VARIANT_BASIC)
 									rock->x = syRandom() % 96 + 42;
@@ -339,20 +340,20 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The targets flash and recoil. */
-		if(frm <= 158) {
+		if(frame <= 158) {
 			EFFECT_FOR_EACH_TARGET(i, args) {
-				if(frm > 85) {
-					if(frm % 12 == 0)
-						btEffectTintBattler(args->tgts[i], SPRITE_COLOR_WHITE,
-							POSE_DAMAGE, i, 6);
-					if((frm & 3) == 0)
+				if(frame > 85) {
+					if(frame % 12 == 0)
+						btEffectTintBattler(args->targets[i],
+							SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 6);
+					if((frame & 3) == 0)
 						btMotionApplyKnockbackStub(
-							args->tgts[i], KNOCKBACK_SKID);
+							args->targets[i], KNOCKBACK_SKID);
 				}
 			}
 		}
 		/* While the wall stands the screen shakes hard, otherwise softly. */
-		if(frm < 90 || frm > GAIA_WALL_SINK_TICK)
+		if(frame < 90 || frame > GAIA_WALL_SINK_TICK)
 			btCameraShake(2, 2);
 		else
 			btCameraShake(8, 8);
@@ -361,7 +362,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
 	for(i = 0; i != GAIA_ROCKS; i++)
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	btEffectEndCanvasLayer();
 }
 
@@ -369,7 +370,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
    none free it clears the entry at address 0. */
 SPR_ANIMATION *btAnimationObjectAllocateEmpty(void)
 {
-	SPR_ANIMATION *entry = RamHeapSlots->sprAnms;
+	SPR_ANIMATION *entry = RamHeapSlots->spriteAnimations;
 	SPR_ANIMATION *found = NULL;
 	Sint32		   i = 0;
 	void		  *none = NULL;
@@ -382,20 +383,20 @@ SPR_ANIMATION *btAnimationObjectAllocateEmpty(void)
 		i++;
 		entry++;
 	}
-	found->anmId = 0;
+	found->animationId = 0;
 	found->scripts = NULL;
 	found->pictures = NULL;
 	found->script = none;
 	found->mode = 0;
 	found->picture = 0;
-	found->scriptOfs = 0;
+	found->scriptOffset = 0;
 	found->kind = 1;
-	found->colMode = 0;
+	found->colorMode = 0;
 	return found;
 }
 
-/* A SPR as btEffectSprCreateWithTiles searches and fills it: its OAM attributes
-   and its shadow's written as words. */
+/* A SPR as btEffectSpriteCreateWithTiles searches and fills it: its OAM
+   attributes and its shadow's written as words. */
 typedef struct SPR_WORDS {
 	Sint32 link; /* the link to the next part at its depth, as */
 	/* ANIMATION_SPR_PART's */
@@ -418,12 +419,12 @@ typedef struct SPR_WORDS {
 	Uint16 rotation;
 	Uint8  width;
 	Uint8  height;
-	Uint8  ofsX;
-	Uint8  ofsY;
+	Uint8  offsetX;
+	Uint8  offsetY;
 	Uint8  lastNo;
 	Uint8  dirty;
-	Uint8  flg;
-	Uint8  cnt;
+	Uint8  flags;
+	Uint8  count;
 	/* The shadow's link, attributes 0 and 1, and attribute 2. */
 	Sint32		   shadowLink;
 	Sint32		   shadowAttributes;
@@ -433,14 +434,15 @@ typedef struct SPR_WORDS {
 } SPR_WORDS;
 
 /* Makes an effect sprite with tiles of its own in object VRAM: a free VRAM
-   cache entry and the first free effect sprite of the 64, as btEffectSprAcquire
-   takes, set up for fdSprStartAnimationStub. The Lost Age's own. */
-void *btEffectSprCreateWithTiles(
-	Sint32 width, Sint32 height, Sint32 attributes, Sint32 flg)
+   cache entry and the first free effect sprite of the 64, as
+   btEffectSpriteAcquire takes, set up for fdSpriteStartAnimationStub. The Lost
+   Age's own. */
+void *btEffectSpriteCreateWithTiles(
+	Sint32 width, Sint32 height, Sint32 attributes, Sint32 flags)
 {
 	SPR_WORDS		   *found = NULL;
 	Sint32				vramEntry = syVRAMCacheFindFreeEntry();
-	SPR_WORDS		   *spr = RamHeapSlots->sprs;
+	SPR_WORDS		   *sprite = RamHeapSlots->sprites;
 	Sint32				i = 0;
 	ACTOR_SYSTEM_STATE *actorSystem;
 	Sint32				size;
@@ -448,24 +450,24 @@ void *btEffectSprCreateWithTiles(
 	VRAM_CACHE_ENTRY   *entries;
 
 	while(i < ANIM_OBJECT_COUNT) {
-		if(spr->width == 0) {
-			found = spr;
+		if(sprite->width == 0) {
+			found = sprite;
 			break;
 		}
 		i++;
-		spr++;
+		sprite++;
 	}
 	tile = syVRAMCacheLoad(vramEntry, 0, 0);
 	found->slot = vramEntry;
 	found->rotation = 0;
-	found->flg = 0;
+	found->flags = 0;
 	found->retainCacheEntry = 0;
 	{
 		Uint32 *words = (Uint32 *)found;
 
 		*words++ = 0;
 		*words++ = attributes;
-		*words = flg | tile | OBJ_PRIORITY(2);
+		*words = flags | tile | OBJ_PRIORITY(2);
 	}
 	{
 		Sint32 *p = &found->shadowLink;
@@ -480,23 +482,23 @@ void *btEffectSprCreateWithTiles(
 	found->shadowTile =
 		(((Uint16 *)entries)[VRAM_CACHE_ENTRY_ACTOR_SHADOW * 2 + 1] >> 5) |
 		OBJ_PRIORITY(2);
-	spr->entry = btAnimationObjectAllocateEmpty();
-	spr->width = width;
-	spr->scale = toFIXED(1);
-	spr->height = height;
-	spr->ofsY = 0;
-	spr->ofsX = 0;
-	spr->cnt = 1;
-	spr->flg = 0;
-	fdSprStartAnimationStub(spr, 0);
+	sprite->entry = btAnimationObjectAllocateEmpty();
+	sprite->width = width;
+	sprite->scale = toFIXED(1);
+	sprite->height = height;
+	sprite->offsetY = 0;
+	sprite->offsetX = 0;
+	sprite->count = 1;
+	sprite->flags = 0;
+	fdSpriteStartAnimationStub(sprite, 0);
 
 	actorSystem = RamHeapSlots->actorSystem;
-	size = spr->width * spr->height;
+	size = sprite->width * sprite->height;
 	if(!(attributes & OBJ_256_COLORS))
 		size = (Uint32)size >> 1;
-	syVRAMCacheLoad(spr->slot, size, 0);
+	syVRAMCacheLoad(sprite->slot, size, 0);
 	actorSystem->used += size;
-	spr->oam.bits.tile = entries[spr->slot].ofs >> 5;
+	sprite->oam.bits.tile = entries[sprite->slot].offset >> 5;
 	return found;
 }
 

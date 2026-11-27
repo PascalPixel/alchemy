@@ -44,8 +44,9 @@ enum {
 
 struct EFFECT_OPTIONS;
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 Sint32 WhirlwindRiding BSS_DATA;
 Uint16				   PaletteCycleColors[16] BSS_DATA;
@@ -175,16 +176,16 @@ void scJupiterLighthouseRestartSpark(ACTOR *actor)
 	if(syRandom() & 0xff) {
 		FIXED  pos[3];
 		Sint32 radius;
-		Sint32 ang;
+		Sint32 angle;
 
 		SET_VECTOR(pos, toFIXED(200), toFIXED(-32), toFIXED(164));
 		radius = syRandom();
-		ang = syRandom();
-		syFieldVectorAddPolarOffsetFX((radius << 5) + toFIXED(8), ang, pos);
+		angle = syRandom();
+		syFieldVectorAddPolarOffsetFX((radius << 5) + toFIXED(8), angle, pos);
 		SET_ACTOR_POSITION(actor, pos[0], pos[1], pos[2]);
 	}
-	actor->userValue = actor->tmr;
-	if(actor->tmr == PARTICLE_SLOW_LIFETIME)
+	actor->userValue = actor->timer;
+	if(actor->timer == PARTICLE_SLOW_LIFETIME)
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_SLOW_SWELL);
 	else
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
@@ -200,11 +201,11 @@ void scJupiterLighthouseUpdateSpark(ACTOR *actor)
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0) {
 		fdActorSetAnimationSpeed(actor, 0);
-		fdTilesetAnimSuspendAll();
+		fdTilesetAnimationSuspendAll();
 		return;
 	}
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL);
-	fdTilesetAnimResumeAll();
+	fdTilesetAnimationResumeAll();
 	if(actor->sceneByte != 0) {
 		if((TickCount & 7) == 0)
 			actor->sceneByte--;
@@ -230,21 +231,21 @@ void scJupiterLighthouseSpawnSparks(void)
 
 	for(i = 0; i != JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT; i++) {
 		actor = scFieldActorCreate(SPRITE_PARTICLE, 0, 0, 0);
-		actor->motionFlg = 0;
-		actor->priFlg = 0;
+		actor->motionFlags = 0;
+		actor->priorityFlags = 0;
 		actor->speedLimit = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
 		actor->acceleration = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
 		actor->update = (OBJECT_UPDATE)scJupiterLighthouseUpdateSpark;
 		actor->sceneByte = i << 3;
-		fdActorSetSprFlags(actor, 0);
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_RBG);
-		((FIELD_SPR *)actor->spr)->pri = 1;
+		fdActorSetSpriteFlags(actor, 0);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RBG);
+		((FIELD_SPR *)actor->sprite)->priority = 1;
 		fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
 		if(i & 1) {
-			actor->tmr = PARTICLE_SLOW_LIFETIME;
+			actor->timer = PARTICLE_SLOW_LIFETIME;
 			actor->userValue = 0;
 		} else {
-			actor->tmr = PARTICLE_QUICK_LIFETIME;
+			actor->timer = PARTICLE_QUICK_LIFETIME;
 			actor->userValue = 0;
 		}
 	}
@@ -311,11 +312,11 @@ void scActorRaiseFromMetatile(Sint32 id)
 	Sint32 height;
 
 	actor = fdActorGet(id);
-	actor->motionFlg = ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FLOATS;
 	height = actor->groundHeight;
 	actor->bounce = 0;
 	actor->y.fixed = height + toFIXED(32);
-	actor->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	height =
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 	syImportMapGridSetMetatileHeight(
@@ -350,7 +351,7 @@ extern Sint32 WhirlwindEndScript[];
 
 /* Sets the priority the lit actors' sprites are drawn at; -1 takes each one's
    own. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -365,7 +366,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"

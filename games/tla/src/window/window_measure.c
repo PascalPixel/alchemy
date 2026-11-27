@@ -2,9 +2,9 @@
    window.c. */
 
 void mnTextMeasureAllPages(
-	Sint32 entryIdx, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
+	Sint32 entryIndex, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
 void mnTextMeasureDecoded(
-	Sint32 entryIdx, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
+	Sint32 entryIndex, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing);
 
 /* The pixels of a window's two border tiles, left and right. */
 #define WINDOW_BORDER_WIDTH 16
@@ -18,12 +18,12 @@ void mnTextMeasureDecoded(
 #define WINDOW_PAD_X (WINDOW_BORDER_WIDTH + 3)
 #define WINDOW_PAD_Y 15
 
-/* Sizes a window for decoded text entryIdx and moves (*winX, *winY) so
+/* Sizes a window for decoded text entryIndex and moves (*windowX, *windowY) so
    the window fits on the screen, as flags (WINDOW_FIT_FLAG) say. In the
    Japanese release, while a mind-read window is open, a measured window is 2
    tiles wider and kept off the screen's last column. */
-void mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
-	Uint32 *winWidth, Uint32 *winHeight, Uint16 *spacing, Uint32 flg)
+void mnWindowFitOnScreen(Sint32 entryIndex, Sint32 *windowX, Sint32 *windowY,
+	Uint32 *windowWidth, Uint32 *windowHeight, Uint16 *spacing, Uint32 flags)
 {
 #if !MIND_READ_WINDOW_NOT_WIDENED
 	WIN_STATE *state;
@@ -39,27 +39,29 @@ void mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
 #if !MIND_READ_WINDOW_NOT_WIDENED
 	state = WINDOW_STATE;
 #endif
-	x = *winX;
-	y = *winY;
+	x = *windowX;
+	y = *windowY;
 	rightLimit = DISPLAY_TILE_WIDTH;
 
-	if(!(flg & WINDOW_FIT_SIZE_GIVEN)) {
-		if(flg & WINDOW_FIT_ALL_PAGES)
-			mnTextMeasureAllPages(entryIdx, winWidth, winHeight, spacing);
+	if(!(flags & WINDOW_FIT_SIZE_GIVEN)) {
+		if(flags & WINDOW_FIT_ALL_PAGES)
+			mnTextMeasureAllPages(
+				entryIndex, windowWidth, windowHeight, spacing);
 		else
-			mnTextMeasureDecoded(entryIdx, winWidth, winHeight, spacing);
+			mnTextMeasureDecoded(
+				entryIndex, windowWidth, windowHeight, spacing);
 	}
 
-	if(*winWidth == 0 && *winHeight == 0)
+	if(*windowWidth == 0 && *windowHeight == 0)
 		return;
 
 	/* Pixels to tiles, with room for the border and a margin. */
-	if(!(flg & WINDOW_FIT_SIZE_GIVEN)) {
-		*winWidth = (*winWidth + WINDOW_PAD_X) >> 3;
-		*winHeight = (*winHeight + WINDOW_PAD_Y) >> 3;
+	if(!(flags & WINDOW_FIT_SIZE_GIVEN)) {
+		*windowWidth = (*windowWidth + WINDOW_PAD_X) >> 3;
+		*windowHeight = (*windowHeight + WINDOW_PAD_Y) >> 3;
 #if !MIND_READ_WINDOW_NOT_WIDENED
 		if(state->mindRead != 0) {
-			*winWidth += 2;
+			*windowWidth += 2;
 			rightLimit = DISPLAY_TILE_WIDTH - 1;
 		}
 #endif
@@ -67,7 +69,7 @@ void mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
 
 	/* Slide the window back onto the screen, rightLimit columns by
 	   DISPLAY_TILE_HEIGHT rows. */
-	right = x + *winWidth;
+	right = x + *windowWidth;
 	if(right > rightLimit) {
 		overflow = right - rightLimit;
 		fittedPos = x - overflow;
@@ -76,7 +78,7 @@ void mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
 		else
 			x = 0;
 	}
-	bottom = y + *winHeight;
+	bottom = y + *windowHeight;
 	if(bottom > DISPLAY_TILE_HEIGHT) {
 		overflow = bottom - DISPLAY_TILE_HEIGHT;
 		fittedPos = y - overflow;
@@ -89,12 +91,12 @@ void mnWindowFitOnScreen(Sint32 entryIdx, Sint32 *winX, Sint32 *winY,
 		x = 0;
 	if(y < 0)
 		y = 0;
-	if(x > rightLimit - *winWidth)
-		x = rightLimit - *winWidth;
-	if(y > DISPLAY_TILE_HEIGHT - *winHeight)
-		y = DISPLAY_TILE_HEIGHT - *winHeight;
-	*winX = x;
-	*winY = y;
+	if(x > rightLimit - *windowWidth)
+		x = rightLimit - *windowWidth;
+	if(y > DISPLAY_TILE_HEIGHT - *windowHeight)
+		y = DISPLAY_TILE_HEIGHT - *windowHeight;
+	*windowX = x;
+	*windowY = y;
 }
 
 /* Decodes message and returns its text's width and height in pixels. */
@@ -127,25 +129,25 @@ DEFINE_MESSAGE_SIZE(mnTextGetMessageSize, 0)
 /* Sizes a message's window to hold every page. */
 DEFINE_MESSAGE_SIZE(mnTextGetMessageSizeAllPages, WINDOW_FIT_ALL_PAGES)
 
-/* Measures decoded text from entryIdx to its first page's end: returns the
+/* Measures decoded text from entryIndex to its first page's end: returns the
    width of the longest line and the height (TEXT_LINE_HEIGHT a line) in pixels.
    With spacing set, fills one entry per line, MESSAGE_LINE_COUNT at most, with
    the extra gap between characters, in 1/256 pixel, that spreads the line
    across the window. It leaves WIN_STATE.outline at the last style it
    passed. */
 void mnTextMeasureDecoded(
-	Sint32 entryIdx, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing)
+	Sint32 entryIndex, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing)
 {
 	WIN_STATE *state;
 	Uint32	   height;
 	Uint32	   lines;
 	Uint32	   width;
 	Uint32	   lineWidth;
-	Uint32	   cnt;
+	Uint32	   count;
 	Uint32	   code;
 	Uint32	   glyph;
-	Uint32	   lineIdx;
-	Uint16	   lineSpacingCnts[MESSAGE_LINE_COUNT];
+	Uint32	   lineIndex;
+	Uint16	   lineSpacingCounts[MESSAGE_LINE_COUNT];
 	Uint16	   lineWidths[MESSAGE_LINE_COUNT];
 	Sint32	   gap;
 	Uint32	   step;
@@ -156,15 +158,15 @@ void mnTextMeasureDecoded(
 	height = TEXT_LINE_HEIGHT;
 	lines = 0;
 	lineWidth = 0;
-	cnt = 0;
+	count = 0;
 	for(;;) {
-		code = state->textBuf[entryIdx];
-		entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+		code = state->textBuf[entryIndex];
+		entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
 		if(code >= TEXT_SPACE && code != TEXT_EM_DASH) {
 			if(code == TEXT_SPACE) {
 				lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
-				cnt++;
+				count++;
 			} else {
 				glyph = FontGlyphs[code - TEXT_SPACE].width;
 				style = state->outline;
@@ -195,7 +197,7 @@ void mnTextMeasureDecoded(
 					glyph++;
 				lineWidth += glyph;
 			}
-			cnt++;
+			count++;
 			continue;
 		}
 #endif
@@ -204,18 +206,18 @@ void mnTextMeasureDecoded(
 #if LANGUAGE != LANGUAGE_JAPANESE
 			/* Outside Japanese, count is the line's spaces plus one, its
 			   words. */
-			cnt++;
+			count++;
 #endif
 #if LINE_SPACING_COUNTS_ALWAYS_STORED
-			lineSpacingCnts[lines] = cnt;
+			lineSpacingCounts[lines] = count;
 #else
 			/* UB: with FLAG_SPREAD_LINES clear the line's count is never
 			   stored, and the spacing below reads what the stack held there. */
 			if(syGameFlagGet(FLAG_SPREAD_LINES))
-				lineSpacingCnts[lines] = cnt;
+				lineSpacingCounts[lines] = count;
 #if FIX_UNINITIALIZED_READ
 			else
-				lineSpacingCnts[lines] = 0;
+				lineSpacingCounts[lines] = 0;
 #endif
 #endif
 			lineWidths[lines] = lineWidth;
@@ -223,7 +225,7 @@ void mnTextMeasureDecoded(
 				width = lineWidth;
 			if(lines < MESSAGE_LINE_COUNT - 1)
 				lines++;
-			cnt = 0;
+			count = 0;
 			lineWidth = 0;
 			height += TEXT_LINE_HEIGHT;
 			break;
@@ -234,24 +236,24 @@ void mnTextMeasureDecoded(
 			goto done;
 		case 14:
 		case TEXT_ACTOR_NAME_START:
-			entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+			entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 		case TEXT_COLOR:
 		case TEXT_LINE_SPACING:
 		case TEXT_WINDOW_ANIMATION:
 		case TEXT_ACTOR_NAME:
-			entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+			entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 			break;
 		case TEXT_OUTLINE:
-			state->outline = state->textBuf[entryIdx];
-			entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+			state->outline = state->textBuf[entryIndex];
+			entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 			break;
 		}
 	}
 done:
 #if LANGUAGE != LANGUAGE_JAPANESE
-	cnt++;
+	count++;
 #endif
-	lineSpacingCnts[lines] = cnt;
+	lineSpacingCounts[lines] = count;
 	lineWidths[lines] = lineWidth;
 	if(width < lineWidth)
 		width = lineWidth;
@@ -282,19 +284,19 @@ done:
 	width = (width + WINDOW_PAD_X) >> 3;
 	width = (width << 3) - WINDOW_BORDER_WIDTH;
 	if(spacing != NULL) {
-		lineIdx = 0;
-		while(lineIdx <= lines) {
-			if(lineSpacingCnts[lineIdx] <= 1) {
+		lineIndex = 0;
+		while(lineIndex <= lines) {
+			if(lineSpacingCounts[lineIndex] <= 1) {
 				*spacing++ = 0;
 			} else {
-				gap = width - lineWidths[lineIdx];
+				gap = width - lineWidths[lineIndex];
 				gap -= 4;
 				if(gap < 0)
 					gap = 0;
 				/* Outside Japanese a gap over LINE_GAP_MAX pixels falls back to
 				   2; in Japanese one over 8 is dropped and the rest held to at
 				   most 1. */
-				step = (gap << 8) / (lineSpacingCnts[lineIdx] - 1);
+				step = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
 #if LANGUAGE != LANGUAGE_JAPANESE
 				if(step > Q_8_8(LINE_GAP_MAX))
 					step = Q_8_8(2);
@@ -306,35 +308,35 @@ done:
 #endif
 				*spacing++ = step;
 			}
-			lineIdx++;
+			lineIndex++;
 		}
 	}
 	mnTextResetStyle();
 }
 
-/* Measures decoded text from entryIdx over all its pages: the width of the
+/* Measures decoded text from entryIndex over all its pages: the width of the
    first page's longest line and the height of its tallest page, in pixels, with
    each line's extra character gap in spacing as mnTextMeasureDecoded. The text
    must fit 16 pages. Outside Japanese the gaps have no ceiling, and past the
    first page they do not fit their lines; its one caller,
    mnTextGetMessageSizeAllPages, passes no spacing. */
 void mnTextMeasureAllPages(
-	Sint32 entryIdx, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing)
+	Sint32 entryIndex, Uint32 *outWidth, Uint32 *outHeight, Uint16 *spacing)
 {
 	Uint32	   pageHeights[16];
-	Uint16	   lineSpacingCnts[MESSAGE_LINE_COUNT];
+	Uint16	   lineSpacingCounts[MESSAGE_LINE_COUNT];
 	Uint16	   lineWidths[MESSAGE_LINE_COUNT];
 	WIN_STATE *state;
 	Uint32	   maxWidth;
 	Uint32	   line;
 	Uint32	   width;
-	Uint32	   cnt;
+	Uint32	   count;
 	Uint32	   page;
 	Uint32	   code;
 	Uint32	   glyph;
 	Uint32	   outline;
-	Uint32	   pageIdx;
-	Uint32	   lineIdx;
+	Uint32	   pageIndex;
+	Uint32	   lineIndex;
 	Sint32	   gap;
 	Uint32	   step;
 
@@ -364,16 +366,16 @@ void mnTextMeasureAllPages(
 #endif
 	line = 0;
 	width = 0;
-	cnt = 0;
+	count = 0;
 	page = 0;
 	for(;;) {
-		code = state->textBuf[entryIdx];
-		entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+		code = state->textBuf[entryIndex];
+		entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
 		if(code >= TEXT_SPACE && code != TEXT_EM_DASH) {
 			if(code == TEXT_SPACE) {
 				width += WINDOW_SPRITE_SPACE_WIDTH;
-				cnt++;
+				count++;
 			} else {
 				glyph = FontGlyphs[code - TEXT_SPACE].width;
 				outline = state->outline;
@@ -404,7 +406,7 @@ void mnTextMeasureAllPages(
 					glyph++;
 				width += glyph;
 			}
-			cnt++;
+			count++;
 			continue;
 		}
 #endif
@@ -413,23 +415,23 @@ void mnTextMeasureAllPages(
 #if LANGUAGE != LANGUAGE_JAPANESE
 			/* Outside Japanese, count is the line's spaces plus one, its
 			   words. */
-			cnt++;
+			count++;
 #endif
-			lineSpacingCnts[line] = cnt;
+			lineSpacingCounts[line] = count;
 			lineWidths[line] = width;
 			if(page == 0 && maxWidth < width)
 				maxWidth = width;
 			if(line < MESSAGE_LINE_COUNT - 1)
 				line++;
-			cnt = 0;
+			count = 0;
 			width = 0;
 			pageHeights[page] += TEXT_LINE_HEIGHT;
 			break;
 		case TEXT_END:
 #if LANGUAGE != LANGUAGE_JAPANESE
-			cnt++;
+			count++;
 #endif
-			lineSpacingCnts[line] = cnt;
+			lineSpacingCounts[line] = count;
 			lineWidths[line] = width;
 			if(page == 0 && maxWidth < width)
 				maxWidth = width;
@@ -437,9 +439,9 @@ void mnTextMeasureAllPages(
 			goto done;
 		case TEXT_PAGE:
 #if LANGUAGE != LANGUAGE_JAPANESE
-			cnt++;
+			count++;
 #endif
-			lineSpacingCnts[line] = cnt;
+			lineSpacingCounts[line] = count;
 			lineWidths[line] = width;
 			if(page == 0 && maxWidth < width)
 				maxWidth = width;
@@ -448,16 +450,16 @@ void mnTextMeasureAllPages(
 			break;
 		case 14:
 		case TEXT_ACTOR_NAME_START:
-			entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+			entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 		case TEXT_COLOR:
 		case TEXT_LINE_SPACING:
 		case TEXT_WINDOW_ANIMATION:
 		case TEXT_ACTOR_NAME:
-			entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+			entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 			break;
 		case TEXT_OUTLINE:
-			state->outline = state->textBuf[entryIdx];
-			entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+			state->outline = state->textBuf[entryIndex];
+			entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
 			break;
 		}
 	}
@@ -468,26 +470,26 @@ done:
 	if(state->mindRead != 0)
 		maxWidth += 2;
 #endif
-	for(pageIdx = 0; pageIdx < page; pageIdx++) {
-		if(pageIdx == 0)
+	for(pageIndex = 0; pageIndex < page; pageIndex++) {
+		if(pageIndex == 0)
 			*outHeight = pageHeights[0];
-		else if(*outHeight < pageHeights[pageIdx])
-			*outHeight = pageHeights[pageIdx];
+		else if(*outHeight < pageHeights[pageIndex])
+			*outHeight = pageHeights[pageIndex];
 	}
 	*outWidth = maxWidth;
 	maxWidth = (((maxWidth + WINDOW_PAD_X) >> 3) << 3) - WINDOW_BORDER_WIDTH;
 	if(spacing != NULL) {
-		for(lineIdx = 0; lineIdx <= line; lineIdx++) {
-			if(lineSpacingCnts[lineIdx] <= 1) {
+		for(lineIndex = 0; lineIndex <= line; lineIndex++) {
+			if(lineSpacingCounts[lineIndex] <= 1) {
 				*spacing++ = 0;
 			} else {
-				gap = maxWidth - lineWidths[lineIdx];
+				gap = maxWidth - lineWidths[lineIndex];
 				gap -= 4;
 				if(gap < 0)
 					gap = 0;
 				/* The gap between characters, in 1/256 pixel: in Japanese one
 				   over 8 pixels is dropped and the rest held to at most 1. */
-				step = (gap << 8) / (lineSpacingCnts[lineIdx] - 1);
+				step = (gap << 8) / (lineSpacingCounts[lineIndex] - 1);
 #if LANGUAGE == LANGUAGE_JAPANESE
 				if(step > Q_8_8(8))
 					step = 0;

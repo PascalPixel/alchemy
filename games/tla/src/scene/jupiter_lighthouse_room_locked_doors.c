@@ -101,7 +101,7 @@ void						 scJupiterLighthouseHideThePassage(void);
 void						 scJupiterLighthouseLeaveByRedDoorCyclone(void);
 void						 scJupiterLighthouseLeaveByBlueDoorCyclone(void);
 void						 scJupiterLighthouseTryLockedDoor(void);
-void						 scLightSprsInitA(void);
+void						 scLightSpritesInitA(void);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -154,10 +154,10 @@ void scJupiterLighthouseHideThePassage(void)
 
 /* Nothing visible happens as Move takes hold of the grey block in the pit west
    of the beam's row; its sprite's drawing order is set
-   (`fdActorSetSprPriority`) for the slide. */
+   (`fdActorSetSpritePriority`) for the slide. */
 void scJupiterLighthouseStartMovingBlock(Sint32 unused, Sint32 id)
 {
-	fdActorSetSprPriority(id, 2);
+	fdActorSetSpritePriority(id, 2);
 }
 
 /* The grey block in the pit west of the beam's row, Moved one metatile east to
@@ -172,7 +172,7 @@ void scJupiterLighthouseFinishMovingBlock(Sint32 unused, Sint32 id)
 	actor = fdActorGet(id);
 	if(FIELD_METATILE(actor->x.fixed) == BRIDGE_BLOCK_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == BRIDGE_BLOCK_METATILE_Z) {
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		for(i = 0; i < 16; i++) {
 			actor->y.fixed += toFIXED(2);
 			syWait(1);
@@ -221,7 +221,7 @@ void scJupiterLighthouseOpenBlueDoor(void)
 void scJupiterLighthouseUseRedKey(Sint32 item)
 {
 	fdScriptSetFlag(FLAG_RED_DOOR_OPENED);
-	fdScriptPlaySnd(SE_HEAVY_IMPACT);
+	fdScriptPlaySound(SE_HEAVY_IMPACT);
 	scJupiterLighthouseOpenRedDoor();
 	gmPartyInventoryRemove(item);
 }
@@ -231,7 +231,7 @@ void scJupiterLighthouseUseRedKey(Sint32 item)
 void scJupiterLighthouseUseBlueKey(Sint32 item)
 {
 	fdScriptSetFlag(FLAG_BLUE_DOOR_OPENED);
-	fdScriptPlaySnd(SE_HEAVY_IMPACT);
+	fdScriptPlaySound(SE_HEAVY_IMPACT);
 	scJupiterLighthouseOpenBlueDoor();
 	gmPartyInventoryRemove(item);
 }
@@ -258,11 +258,11 @@ const CUE *scGetCues(void)
    front of the beam while the sine is negative and behind it otherwise. */
 void scJupiterLighthouseCircleUpTheBeam(ACTOR *actor)
 {
-	Sint16 ang = actor->tmr;
+	Sint16 angle = actor->timer;
 	Sint16 height = actor->userValue;
 
 	SET_ACTOR_POSITION(actor,
-		syMulFX(syCos(ang), actor->speedLimit) + toFIXED(BEAM_X),
+		syMulFX(syCos(angle), actor->speedLimit) + toFIXED(BEAM_X),
 		(height * toFIXED(3)) - toFIXED(BEAM_DEPTH), toFIXED(BEAM_Z));
 	if(actor->userValue == 1)
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_TWINKLE);
@@ -270,11 +270,11 @@ void scJupiterLighthouseCircleUpTheBeam(ACTOR *actor)
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_FADE);
 	if(actor->y.fixed > 0)
 		actor->userValue = -1;
-	if(syMathSin(ang) < 0)
-		((FIELD_SPR *)actor->spr)->pri = 1;
+	if(syMathSin(angle) < 0)
+		((FIELD_SPR *)actor->sprite)->priority = 1;
 	else
-		((FIELD_SPR *)actor->spr)->pri = 3;
-	actor->tmr += actor->acceleration;
+		((FIELD_SPR *)actor->sprite)->priority = 3;
+	actor->timer += actor->acceleration;
 	actor->userValue++;
 }
 
@@ -289,16 +289,16 @@ void scJupiterLighthouseSendUpBeamLights(void)
 	i = 0;
 	for(phase = 0; i != 7; i++) {
 		actor = (scFieldActorCreate(SPRITE_PARTICLE, 0, 0, 0));
-		actor->motionFlg = 0;
-		actor->priFlg = 0;
+		actor->motionFlags = 0;
+		actor->priorityFlags = 0;
 		actor->speedLimit = (syRandom() << 2) + toFIXED(6);
 		actor->acceleration = syRandomBelow(2048) + DEGtoANG(45) / 4;
 		actor->update = (OBJECT_UPDATE)scJupiterLighthouseCircleUpTheBeam;
-		actor->tmr = syRandom();
+		actor->timer = syRandom();
 		actor->userValue = phase;
-		fdActorSetSprFlags(actor, 0);
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_RBG);
-		((FIELD_SPR *)actor->spr)->pri = 1;
+		fdActorSetSpriteFlags(actor, 0);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RBG);
+		((FIELD_SPR *)actor->sprite)->priority = 1;
 		phase += 5;
 	}
 }
@@ -326,13 +326,13 @@ Sint32 scInit(void)
 		MainRoutineStateWork.entrance ==
 			JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_FROM_JUPITER_LIGHTHOUSE_ROOM_BEAM) {
 		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-		leader->priFlg &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+		leader->priorityFlags &= ~ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+		scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 		fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 		fdActorSetAnimationSpeed(leader, ANIM_STEP_NORMAL * 4);
-		leader->motionFlg = flag;
+		leader->motionFlags = flag;
 		leader->y.fixed = leader->groundHeight = -toFIXED(BEAM_DEPTH);
 		fdScriptStartScreenTransition();
 		syFieldScriptWait(10);
@@ -344,14 +344,14 @@ Sint32 scInit(void)
 		}
 		leader->groundHeight = leader->y.fixed = 0;
 		leader->facing = FACING_SOUTH;
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		leader->velY = toFIXED(3);
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->velocityY = toFIXED(3);
 		leader->gravity = toFIXED(1) / 2;
 		fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
 		syFieldScriptWait(40);
 		leader->gravity = toFIXED(1);
-		leader->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+		leader->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+		fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_AUTOMATIC;
 		fdScriptEnd();
 	}
@@ -369,7 +369,7 @@ Sint32 scPrepareMap(void)
 {
 	scSetArrivalFlags(0);
 	scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
 		scActorRaiseFromMetatile(ACTOR_FIRST_BLOCK);
@@ -384,7 +384,7 @@ Sint32 scPrepareMap(void)
 		scActorRaiseFromMetatile(ACTOR_BEAM_TOP_BLOCK);
 		fdActorGet(ACTOR_BEAM_TOP_BLOCK)->gravity = toFIXED(3);
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_BEAM_TOP_BLOCK), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BEAM_TOP_BLOCK), 0);
 	if(fdScriptGetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
 		fdActorSetPos(ACTOR_BRIDGE_BLOCK, 168, 520);
 		scActorRaiseFromMetatile(ACTOR_BRIDGE_BLOCK);
@@ -394,7 +394,7 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
@@ -425,8 +425,9 @@ Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 
 #include "shared/whirlwind_update.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -447,7 +448,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -546,7 +547,7 @@ const Sint32 *FieldEffectDurationScripts[] = {
 #undef FLAG_BRIDGE_BLOCK_RAISED
 
 void scLeaderCenterInMetatile(void);
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 extern const Sint32 *FieldEffectDurationScripts[];
 
@@ -554,7 +555,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -571,7 +572,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 /* Watches the leader's steps over the cracked tiles: the first step on one
    cracks it, a second step after leaving it drops the party through, saving the
@@ -585,20 +586,20 @@ Bool scCrackedTileStep(void)
 	METATILE_TARGET_ENTRY *tile = puzzle->entries;
 	Sint32				   i;
 
-	for(i = 0; i < puzzle->cnt; i++, tile++) {
+	for(i = 0; i < puzzle->count; i++, tile++) {
 		if(tile->x == x && tile->z == z) {
-			if(!fdScriptGetFlag(tile->flg)) {
+			if(!fdScriptGetFlag(tile->flags)) {
 				scCrackedTileCrack(puzzle, tile);
-				fdScriptSetFlag(tile->flg);
-				puzzle->cur = i;
+				fdScriptSetFlag(tile->flags);
+				puzzle->current = i;
 				break;
 			}
-			if(i == puzzle->cur)
+			if(i == puzzle->current)
 				break;
-			puzzle->cur = i;
+			puzzle->current = i;
 			scCrackedTileFall(puzzle, tile);
-			syGameFlagSetByte(puzzle->flgByte, x);
-			syGameFlagSetByte(puzzle->flgByte + 8, z);
+			syGameFlagSetByte(puzzle->flagByte, x);
+			syGameFlagSetByte(puzzle->flagByte + 8, z);
 			return TRUE;
 		}
 	}
@@ -612,14 +613,14 @@ void scCrackedTilePlaceLanding(Sint32 dx, Sint32 dz, Sint32 transition)
 	ACTOR			*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	METATILE_TARGET *state = &CrackedTiles;
-	Sint32			 x = ((Sint32)scFieldGameFlagGetByte(state->flgByte));
-	Sint32			 z = ((Sint32)scFieldGameFlagGetByte(state->flgByte + 8));
+	Sint32			 x = ((Sint32)scFieldGameFlagGetByte(state->flagByte));
+	Sint32			 z = ((Sint32)scFieldGameFlagGetByte(state->flagByte + 8));
 
 	if(x != 0 || z != 0) {
 		ACTOR *camera;
 
-		syGameFlagSetByte(state->flgByte, 0);
-		syGameFlagSetByte(state->flgByte + 8, 0);
+		syGameFlagSetByte(state->flagByte, 0);
+		syGameFlagSetByte(state->flagByte + 8, 0);
 		actor->x.fixed = FIELD_METATILE_CENTER(x + dx);
 		actor->z.fixed = FIELD_METATILE_CENTER(z + dz);
 		camera = event->camera;

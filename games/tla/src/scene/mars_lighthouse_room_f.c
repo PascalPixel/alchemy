@@ -227,7 +227,7 @@ typedef struct PUSH_TARGET {
 	Sint32 z;
 	Sint32 rectangle; /* index into the rectangle table */
 	Sint32 id;
-	void  *func;
+	void  *callback;
 } PUSH_TARGET;
 
 Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
@@ -236,9 +236,9 @@ Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 /* scFlameThrowerSet, defined below, is called with no prototype in scope. */
 void scFlameThrowerSet(Sint32 index, Sint32 value);
 #endif
-Sint32 scFlameThrowerGetFlags(Sint32 idx);
-Bool   scPushTargetFindStop(PUSH_TARGET *tgt);
-void   scPushTargetPush(PUSH_TARGET tgt);
+Sint32 scFlameThrowerGetFlags(Sint32 index);
+Bool   scPushTargetFindStop(PUSH_TARGET *target);
+void   scPushTargetPush(PUSH_TARGET target);
 
 void scActorSetupScriptedPart(ACTOR *actor, Sint32 part);
 void scMarsLighthouseRoomFFillGapsWithStones(void);
@@ -264,17 +264,17 @@ void scFlameThrowersCreate(void);
 
 void scFlameThrowersReleaseFlame(void);
 
-void scFlameThrowerSetPuffsOffScreen(Sint32 idx, Sint16 value);
+void scFlameThrowerSetPuffsOffScreen(Sint32 index, Sint16 value);
 
 void scCrackedTileDropIn(void);
 
 Bool scPushTargetFillRectangle(Sint32 id);
 
-void scLightSprsInitB(void);
+void scLightSpritesInitB(void);
 
-void scLightSprsAdd(Sint32 id, Sint32 value);
+void scLightSpritesAdd(Sint32 id, Sint32 value);
 
-void scLightSprsSetPriority(Sint32 value);
+void scLightSpritesSetPriority(Sint32 value);
 
 void scMarsLighthouseRoomFShootFireballAtIcebergs(void);
 
@@ -282,8 +282,9 @@ void scMarsLighthouseRoomFDropFireball(void);
 
 void scWhirlwindUpdate(ACTOR *self);
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 Bool fdActorIsTouching(ACTOR *a, ACTOR *b);
 Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
@@ -370,7 +371,7 @@ extern ACTOR_PLACE MarsLighthouseRoomFMercuryTowerPlacements[];
 /* A torch's script call: the towers' torches stand without a shadow. */
 Sint32 scMarsLighthouseRoomFSetUpTorch(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -496,7 +497,7 @@ void scMarsLighthouseRoomFMoveVenusStatueOffLedge(Sint32 unused, Sint32 id)
 
 	if(FIELD_METATILE(actor->x.fixed) == 50) {
 		fdScriptSetFlag(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
 }
 
@@ -510,7 +511,7 @@ void scMarsLighthouseRoomFPushVenusStatueOffLedge(void)
 	fdLeaderPushObjectAhead();
 	if(FIELD_METATILE(actor->x.fixed) == 50) {
 		fdScriptSetFlag(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
 }
 
@@ -519,7 +520,7 @@ void scMarsLighthouseRoomFPushVenusStatueOffLedge(void)
 void scMarsLighthouseRoomFStartMovingStone(Sint32 unused, Sint32 id)
 {
 	if(id == ACTOR_FIRST_STONE)
-		fdActorGet(ACTOR_FIRST_STONE)->motionFlg = 0;
+		fdActorGet(ACTOR_FIRST_STONE)->motionFlags = 0;
 }
 
 /* When a push or Move ends, the robed statue drops if it is at the ledge's end,
@@ -531,7 +532,7 @@ void scMarsLighthouseRoomFStopMovingStone(Sint32 unused, Sint32 id)
 		scMarsLighthouseRoomFMoveVenusStatueOffLedge(
 			unused, ACTOR_PUSHED_STATUE);
 	} else if(id == ACTOR_FIRST_STONE) {
-		fdActorGet(ACTOR_FIRST_STONE)->motionFlg =
+		fdActorGet(ACTOR_FIRST_STONE)->motionFlags =
 			ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 #if MARS_LIGHTHOUSE_FILLED_GAPS_BECOME_FLOOR
 		scMarsLighthouseRoomFFillGapsWithStones();
@@ -562,7 +563,7 @@ void scMarsLighthouseRoomFCoverFlameThrower(Sint32 unused, Sint32 id)
 	x = actor->x.fixed;
 	flameThrower =
 		MarsLighthouseRoomFStatueFlameThrowers[id - ACTOR_TRAP_STATUE_A];
-	if(FIELD_METATILE(x) == actor->tmr >> 4)
+	if(FIELD_METATILE(x) == actor->timer >> 4)
 		fdActorSetPos(flameThrower, 0, 0);
 }
 
@@ -671,7 +672,7 @@ DEFINE_BURST_WALL(
    flame lights the urn torch. */
 void scMarsLighthouseRoomFPressButton(void)
 {
-	fdScriptPlaySnd(SE_BUTTON_PRESS);
+	fdScriptPlaySound(SE_BUTTON_PRESS);
 	scFlameThrowerSet(0, FLAME_FORWARD | 3);
 	fdScriptSetFlag(FLAG_BUTTON_PRESSED);
 }
@@ -685,7 +686,7 @@ void scMarsLighthouseRoomFLightTorch(void)
 	fdActorSetPos(ACTOR_UNLIT_MARS_TORCH, 0, 0);
 	fdActorSetPos(ACTOR_MARS_TORCH, actor->homeX, actor->homeZ);
 	fdScriptSetFlag(FLAG_MARS_TORCH_LIT);
-	fdScriptPlaySnd(SE_WHOOSH);
+	fdScriptPlaySound(SE_WHOOSH);
 }
 
 /* Felix's long Blaze from the lit urn torch in the Mars tower reaches the torch
@@ -728,9 +729,9 @@ void scMarsLighthouseRoomFScatterRubble(Sint32 id)
 				fdActorStartScript(actor, DebrisScript);
 			else
 				fdActorStartScript(actor, MarsLighthouseRoomFRubbleScriptB);
-			fdActorSetSprFlags(actor, 0);
-			actor->velY = (angle << 2) + toFIXED(2);
-			actor->velZ = syMulFX(speed, syCos(angle));
+			fdActorSetSpriteFlags(actor, 0);
+			actor->velocityY = (angle << 2) + toFIXED(2);
+			actor->velocityZ = syMulFX(speed, syCos(angle));
 			{
 				FIXED vx = syMulFX(speed, syMathSin(angle));
 
@@ -738,10 +739,10 @@ void scMarsLighthouseRoomFScatterRubble(Sint32 id)
 				actor->scaleX = scale;
 				actor->scaleY = scale;
 				actor->gravity = toFIXED(33) / 100;
-				actor->velX = vx;
+				actor->velocityX = vx;
 				actor->bounce = toFIXED(1) / 2;
 			}
-			fdActorSetSprColMode(actor, 1);
+			fdActorSetSpriteColorMode(actor, 1);
 		}
 	}
 }
@@ -893,7 +894,7 @@ void scMarsLighthouseRoomFDropBlock(Sint32 unused, Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 
 	if(FIELD_METATILE(actor->x.fixed) == 13) {
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		if(actor->groundHeight !=
 			fdMapGetTerrainHeight(
 				actor->layer, actor->x.fixed, actor->z.fixed)) {
@@ -903,12 +904,12 @@ void scMarsLighthouseRoomFDropBlock(Sint32 unused, Sint32 id)
 			for(ticks = 0; ticks < 30 && actor->y.fixed > actor->groundHeight;
 				ticks++)
 				syWait(1);
-			fdScriptPlaySnd(SE_IMPACT);
+			fdScriptPlaySound(SE_IMPACT);
 		}
 		fdMapGridCopyMetatilesLayered(71, 24, 7, 1, 71, 5);
 		fdMapGridCopyMetatileAttributes(7, 24, 7, 1, 7, 7);
 		fdMapGridCopyMetatileAttributes(7, 88, 7, 1, 7, 71);
-		fdScriptPlaySnd(SE_MAP_TRANSITION);
+		fdScriptPlaySound(SE_MAP_TRANSITION);
 		fdActorSetPos(id, 0, 0);
 		fdScriptSetFlag(FLAG_BLOCK_DROPPED);
 	}
@@ -947,23 +948,23 @@ void scMarsLighthouseRoomFHideSteppingStones(void)
 void scMarsLighthouseRoomFFallIntoHole(void)
 {
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 frm;
+	Sint32 frame;
 
 	fdLeaderStopMoving();
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	syFieldScriptWait(16);
-	for(frm = 0; frm <= 39; frm++) {
-		if(frm == 5)
-			fdScriptPlaySnd(SE_DUST_PUFF);
-		actor->motionFlg = 0;
+	for(frame = 0; frame <= 39; frame++) {
+		if(frame == 5)
+			fdScriptPlaySound(SE_DUST_PUFF);
+		actor->motionFlags = 0;
 		actor->scaleX += -(toFIXED(1) / 64);
 		actor->scaleY += -(toFIXED(3) / 256);
 		actor->y.fixed += -(toFIXED(6) / 10);
 		syWait(1);
 	}
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
@@ -1050,7 +1051,7 @@ void scMarsLighthouseRoomFPushPipeOrJump(void)
 			ACTOR *actor = fdActorGet(ACTOR_CENTER_PUDDLE);
 
 			actor->update = NULL;
-			fdActorSetSprColMode(actor, 0);
+			fdActorSetSpriteColorMode(actor, 0);
 			fdActorSetAnimation(ACTOR_CENTER_PUDDLE, 6);
 			fdScriptClearFlag(FLAG_CENTER_PUDDLE_FROZEN);
 			scMarsLighthouseRoomFMeltPuddle(ACTOR_CENTER_PUDDLE);
@@ -1060,21 +1061,21 @@ void scMarsLighthouseRoomFPushPipeOrJump(void)
 			ACTOR *actor = fdActorGet(ACTOR_UPPER_PUDDLE);
 
 			actor->update = NULL;
-			fdActorSetSprColMode(actor, 0);
+			fdActorSetSpriteColorMode(actor, 0);
 			fdActorSetAnimation(ACTOR_UPPER_PUDDLE, 6);
 			fdScriptClearFlag(FLAG_UPPER_PUDDLE_FROZEN);
 			scMarsLighthouseRoomFMeltPuddle(ACTOR_UPPER_PUDDLE);
 		}
 	} else {
-		Sint32		  ang;
-		const Sint16 *tbl;
+		Sint32		  angle;
+		const Sint16 *table;
 		Uint32		 *keys;
 
 		fdActorGet(MainRoutineStateWork.leaderActorId);
 		keys = &PerWork.data;
-		tbl = &SlideOnIceSteerAngles[STEER_STRAIGHT_ROW];
-		ang = *(Sint16 *)((Uint8 *)tbl + (((*keys >> 4) & 0xf) << 1));
-		if(ang != -1) {
+		table = &SlideOnIceSteerAngles[STEER_STRAIGHT_ROW];
+		angle = *(Sint16 *)((Uint8 *)table + (((*keys >> 4) & 0xf) << 1));
+		if(angle != -1) {
 			MAP_STATE *map = RamHeapSlots->mapGrid;
 			ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 			Sint32	   pos[3];
@@ -1086,7 +1087,7 @@ void scMarsLighthouseRoomFPushPipeOrJump(void)
 				(leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
 				leader->y.fixed,
 				(leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
-			syFieldVectorAddPolarOffset(16, ang, pos);
+			syFieldVectorAddPolarOffset(16, angle, pos);
 			x = FIELD_METATILE(pos[0]);
 			z = FIELD_METATILE(pos[2]);
 			metatiles = RamMapMetatileBuffer;
@@ -1114,11 +1115,11 @@ void scMarsLighthouseRoomFFreezePuddle(Sint32 id)
 	Sint32	   row = FIELD_METATILE(actor->z.fixed) << 7;
 	FIXED	   x = actor->x.fixed;
 	Uint8	  *metatile = (Uint8 *)map->layers[2].metatiles;
-	Sint32	   ofs = FIELD_METATILE(x) + row;
+	Sint32	   offset = FIELD_METATILE(x) + row;
 
-	metatile += ofs << 2;
+	metatile += offset << 2;
 	metatile[2] = METATILE_BEHAVIOR_WALL;
-	fdActorGet(id)->priFlg = 0;
+	fdActorGet(id)->priorityFlags = 0;
 }
 
 /* A thawed puddle is water again. */
@@ -1129,11 +1130,11 @@ void scMarsLighthouseRoomFMeltPuddle(Sint32 id)
 	Sint32	   row = FIELD_METATILE(actor->z.fixed) << 7;
 	FIXED	   x = actor->x.fixed;
 	Uint8	  *metatile = (Uint8 *)map->layers[2].metatiles;
-	Sint32	   ofs = FIELD_METATILE(x) + row;
+	Sint32	   offset = FIELD_METATILE(x) + row;
 
-	metatile += ofs << 2;
+	metatile += offset << 2;
 	metatile[2] = 0;
-	syActorFlagsSet(&fdActorGet(id)->priFlg, ACTOR_PRIORITY_UNDERFOOT);
+	syActorFlagsSet(&fdActorGet(id)->priorityFlags, ACTOR_PRIORITY_UNDERFOOT);
 }
 
 /* Defines what Frost does to a puddle: it freezes and its flag is set; unless
@@ -1148,7 +1149,7 @@ void scMarsLighthouseRoomFMeltPuddle(Sint32 id)
 			ACTOR *actor = fdActorGet(id); \
 \
 			actor->update = NULL; \
-			fdActorSetSprColMode(actor, 0); \
+			fdActorSetSpriteColorMode(actor, 0); \
 			fdActorSetAnimation(id, 6); \
 			fdScriptClearFlag(flag); \
 			scMarsLighthouseRoomFMeltPuddle(id); \
@@ -1291,7 +1292,7 @@ Sint32 scInit(void)
 			fdScriptWait(30);
 			fdActorSetPos(ACTOR_UNLIT_MERCURY_TORCH, 0, 0);
 			fdActorSetPos(ACTOR_MERCURY_TORCH, 264, 520);
-			fdScriptPlaySnd(SE_WHOOSH);
+			fdScriptPlaySound(SE_WHOOSH);
 			fdScriptWait(60);
 			fdScriptSetFlag(FLAG_KEEP_PARTY_POSITION);
 			return Value1((Sint32 (*)())syImportScriptSetExitRequest,
@@ -1310,8 +1311,10 @@ Sint32 scInit(void)
 		scPushTargetFillRectangle(ACTOR_MERCURY_PIPE_A);
 		scPushTargetFillRectangle(ACTOR_MERCURY_PIPE_B);
 		scPushTargetFillRectangle(ACTOR_MERCURY_PIPE_C);
-		fdActorGetById(ACTOR_UPPER_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGetById(ACTOR_CENTER_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGetById(ACTOR_UPPER_PUDDLE)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGetById(ACTOR_CENTER_PUDDLE)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
 		if(fdScriptGetFlag(FLAG_UPPER_PUDDLE_FROZEN))
 			scMarsLighthouseRoomFFreezePuddle(ACTOR_UPPER_PUDDLE);
 		if(fdScriptGetFlag(FLAG_CENTER_PUDDLE_FROZEN))
@@ -1328,9 +1331,9 @@ Sint32 scInit(void)
 		fdEffectStartBlankOverlay(0);
 		((FIELD_STATE *)heap->fieldState)->transition = value;
 		scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_LIT);
-		scLightSprsInitB();
-		scLightSprsSetPriority(2);
-		scLightSprsAdd(ACTOR_DROPPING_BLOCK, 6);
+		scLightSpritesInitB();
+		scLightSpritesSetPriority(2);
+		scLightSpritesAdd(ACTOR_DROPPING_BLOCK, 6);
 		if(fdScriptGetFlag(FLAG_BLOCK_DROPPED)) {
 			fdMapGridCopyMetatilesLayered(71, 24, 7, 1, 71, 5);
 			fdMapGridCopyMetatileAttributes(7, 24, 7, 1, 7, 7);
@@ -1379,8 +1382,8 @@ Sint32 scInit(void)
 		fdTightropeInit();
 		fdTightropePlace(
 			0, ACTOR_TIGHTROPE_NEAR_POST, ACTOR_TIGHTROPE_FAR_POST);
-		fdActorGetById(ACTOR_TIGHTROPE_NEAR_POST)->sceneCnt = 1;
-		fdActorGetById(ACTOR_TIGHTROPE_FAR_POST)->sceneCnt = 1;
+		fdActorGetById(ACTOR_TIGHTROPE_NEAR_POST)->sceneCount = 1;
+		fdActorGetById(ACTOR_TIGHTROPE_FAR_POST)->sceneCount = 1;
 		if(entrance ==
 				MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_BEACON_LEDGE ||
 			entrance == VENUS_TOWER_HALL_WEST_DOORWAY ||
@@ -1406,18 +1409,20 @@ Sint32 scInit(void)
 			if(entrance == VENUS_TOWER_UPPER_DOORWAY)
 				fdActorSetPos(ACTOR_UPPER_DOORWAY_STATUE, 536, 552);
 		}
-		fdActorGetById(ACTOR_PUSHED_STATUE)->motionFlg = 0;
+		fdActorGetById(ACTOR_PUSHED_STATUE)->motionFlags = 0;
 		if(fdScriptGetFlag(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE)) {
 			fdActorSetPos(ACTOR_PUSHED_STATUE, 808, 312);
 			fdActorGetById(ACTOR_PUSHED_STATUE)->y.fixed = 0;
 			fdActorGetById(ACTOR_PUSHED_STATUE)->groundHeight = 0;
 		}
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-		fdActorGetById(ACTOR_FIRST_STONE)->priFlg |=
+		fdActorGetById(ACTOR_FIRST_STONE)->priorityFlags |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS | ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_SECOND_STONE)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_THIRD_STONE)->priFlg |= ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_SECOND_STONE)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_THIRD_STONE)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
 	}
 	return 0;
 }
@@ -1551,7 +1556,7 @@ UNUSED void scFlameThrowersSetMode(Sint16 value)
 
 UNUSED Sint32 scFlameThrowersGetCounter(void)
 {
-	return FLAME_THROWERS_STATE->cnt;
+	return FLAME_THROWERS_STATE->count;
 }
 
 #include "shared/flame_throwers_advance_counter.h"
@@ -1592,7 +1597,7 @@ Sint32 scFireballCarryLeader(void)
 	UNUSED Sint32 unused[3];
 
 	if(event->transitionActive == 0) {
-		fdScreenTransitionStart(event->transition, event->transitionFrm);
+		fdScreenTransitionStart(event->transition, event->transitionFrame);
 		event->transitionActive = 1;
 	}
 	fdScriptClearFlag(FLAG_MENU_OPEN);
@@ -1618,7 +1623,7 @@ Sint32 scFireballCarryLeader(void)
 	leader->update = (OBJECT_UPDATE)fdActorBlink;
 	leader->facing = FACING_SOUTH;
 	fdActorSelectAnimation(leader, ANIM_LEADER_SIT);
-	while(ride->car->tmr == 0) {
+	while(ride->car->timer == 0) {
 		if(fdMapGridGetTerrainKindOrBumpAt(
 			   0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
 			leader->x.fixed += ride->car->stepX;
@@ -1636,7 +1641,7 @@ Sint32 scFireballCarryLeader(void)
 	}
 	syFieldScriptWait(30);
 	leader->update = NULL;
-	fdActorSetSprColMode(leader, 0);
+	fdActorSetSpriteColorMode(leader, 0);
 	ride->active = 0;
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
@@ -1701,7 +1706,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -1718,7 +1723,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 
@@ -1799,7 +1804,7 @@ static inline Sint32 scPushTargetCheckCollision(ACTOR *actor, Sint32 *pos)
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the glow sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }

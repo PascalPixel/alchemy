@@ -6,14 +6,14 @@ void scCrackedTilePlaceLanding(Sint32 x, Sint32 z, Sint32 effect)
 {
 	ACTOR		*leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Sint32		 dx = scFieldGameFlagGetByte(CrackedTiles.flgByte);
-	Sint32		 dz = scFieldGameFlagGetByte(CrackedTiles.flgByte + 8);
+	Sint32		 dx = scFieldGameFlagGetByte(CrackedTiles.flagByte);
+	Sint32		 dz = scFieldGameFlagGetByte(CrackedTiles.flagByte + 8);
 
 	if(dx != 0 || dz != 0) {
 		ACTOR *marker;
 
-		syGameFlagSetByte(CrackedTiles.flgByte, 0);
-		syGameFlagSetByte(CrackedTiles.flgByte + 8, 0);
+		syGameFlagSetByte(CrackedTiles.flagByte, 0);
+		syGameFlagSetByte(CrackedTiles.flagByte + 8, 0);
 		leader->x.fixed = FIELD_METATILE_CENTER(dx + x);
 		leader->z.fixed = FIELD_METATILE_CENTER(dz + z);
 		marker = state->camera;

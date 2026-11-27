@@ -3,8 +3,8 @@
    (fdGroundParticlesDraw); the overlay's copy of fdEffectInitSparkles. */
 void fdGroundParticlesStart(void)
 {
-	GROUND_PARTICLE_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, sizeof(GROUND_PARTICLE_STATE));
+	GROUND_PARTICLE_STATE *state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_WEATHER, sizeof(GROUND_PARTICLE_STATE));
 	WEATHER_PARTICLE *p = state->particles;
 	Uint8			 *buf;
 	Uint32			  i;
@@ -15,7 +15,7 @@ void fdGroundParticlesStart(void)
 	zero = size;
 	syDMAXCopy((const void *)&zero, state,
 		DMA_FILL_WORDS(sizeof(GROUND_PARTICLE_STATE) / 4), REG_DMA3);
-	buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	buf = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(FieldGroundTiles, buf);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = mnVRAMLoad(state->entry, 768, buf);
@@ -32,7 +32,7 @@ void fdGroundParticlesStart(void)
 		p->posX = 0;
 		p->posZ = 0;
 		p->posY = toFIXED(fdMapGetTerrainHeight(0, 0, 0));
-		p->tmr = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
+		p->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
 		i++;
 		p++;
 	} while(i < ARRAY_COUNT(state->particles));

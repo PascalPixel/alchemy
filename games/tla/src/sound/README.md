@@ -32,7 +32,7 @@ for what it plays with (`SE_DOLL_PLACED`) or what it sounds like
 notes higher, lower or on another voice is named for it
 (`SE_RISE_WITH_SPARKS_HIGH`), and one nothing plays says so
 (`SE_UNUSED_WHIRLWIND_LOW_A`). The one function that takes them all is
-`sySndPlay`.
+`sySoundPlay`.
 
 Every sound played is also marked as heard, one bit for each number. In
 the link lobby the player can ask for a tune by number, and only the ones
@@ -102,7 +102,7 @@ drum for the key General MIDI gives its row of the drum kit (`side_stick.pcm8.wa
 ## Where the code is
 
 - `sound_play.c` and `sound_test.c` here are the game's own layer:
-  `sySndPlay`, `sySndUpdateBGMRamps` and their neighbours, the volume ramps
+  `sySoundPlay`, `sySoundUpdateBGMRamps` and their neighbours, the volume ramps
   and the music's return.
 - [`games/common/sdk/sound`](../../../common/sdk/sound) is the driver both
   games build: its C, its handwritten functions and the mixer the game

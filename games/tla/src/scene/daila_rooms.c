@@ -251,7 +251,7 @@ UNUSED void scDailaRoomsStartLeaderScript(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 }
 
 extern CUE DailaRoomsHousesCues[];
@@ -534,20 +534,20 @@ void scDailaRoomsTalkCaughtPracticing(void)
 void scDailaRoomsTakeSeaGodsTear(void)
 {
 	Sint32 savedGravity;
-	Sint32 savedVelY;
+	Sint32 savedVelocityY;
 	FIXED  savedY;
 	Sint32 item;
 
 	savedGravity = fdActorGetById(ACTOR_SEA_GODS_TEAR)->gravity;
 	item = ITEM_SEA_GODS_TEAR;
-	savedVelY = fdActorGetById(ACTOR_SEA_GODS_TEAR)->velY;
+	savedVelocityY = fdActorGetById(ACTOR_SEA_GODS_TEAR)->velocityY;
 	savedY = fdActorGetById(ACTOR_SEA_GODS_TEAR)->y.fixed;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	if(gmPartyInventoryFindRoom(item) >= 0) {
-		fdItemDispShowPicture(fdActorGetById(ACTOR_SEA_GODS_TEAR),
+		fdItemDisplayShowPicture(fdActorGetById(ACTOR_SEA_GODS_TEAR),
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
-		sySndPlay(MUS_TREASURE_FOUND);
+		sySoundPlay(MUS_TREASURE_FOUND);
 		mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 		/* "Felix got ...." */
 		mnFieldMessageShow((Sint32)MsgItemReceived, FIELD_MESSAGE_ZOOM);
@@ -556,9 +556,9 @@ void scDailaRoomsTakeSeaGodsTear(void)
 		fdActorSetPos(ACTOR_TEAR_SPOT, 232, 194);
 		syGameFlagSet(FLAG_SEA_GODS_TEAR_TAKEN);
 	} else {
-		fdItemDispShowPicture(fdActorGetById(ACTOR_SEA_GODS_TEAR),
+		fdItemDisplayShowPicture(fdActorGetById(ACTOR_SEA_GODS_TEAR),
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
-		sySndPlay(MUS_TREASURE_FOUND);
+		sySoundPlay(MUS_TREASURE_FOUND);
 		if(scDailaRoomsGiveItem(item, 0) != -1) {
 			fdActorSetPos(ACTOR_SEA_GODS_TEAR, 0, 0);
 			fdActorSetPos(ACTOR_TEAR_SPOT, 232, 196);
@@ -566,16 +566,16 @@ void scDailaRoomsTakeSeaGodsTear(void)
 		} else {
 			fdActorSetPos(ACTOR_SEA_GODS_TEAR, 0, 0);
 			syFieldScriptWait(1);
-			fdActorGetById(ACTOR_SEA_GODS_TEAR)->velY = savedVelY;
+			fdActorGetById(ACTOR_SEA_GODS_TEAR)->velocityY = savedVelocityY;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->y.fixed = savedY;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->gravity = savedGravity;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->update = NULL;
 			fdActorStartIdle(fdActorGetById(ACTOR_SEA_GODS_TEAR));
-			fdActorSetSprPriority(ACTOR_SEA_GODS_TEAR, 1);
-			fdActorGetById(ACTOR_SEA_GODS_TEAR)->motionFlg = ACTOR_FALLS;
+			fdActorSetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
+			fdActorGetById(ACTOR_SEA_GODS_TEAR)->motionFlags = ACTOR_FALLS;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->scaleY = toFIXED(6) / 5;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->scaleX = toFIXED(6) / 5;
-			fdActorGetById(ACTOR_SEA_GODS_TEAR)->collisionFlg |=
+			fdActorGetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |=
 				ACTOR_NEAR_TALK;
 			fdActorSetPos(ACTOR_SEA_GODS_TEAR, 232, 196);
 		}
@@ -592,7 +592,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 	Sint32		 saved;
 	Sint32		 owner;
 	Sint32		 result;
-	Sint32		 cnt;
+	Sint32		 count;
 	Sint32		 i;
 	Sint32		 member;
 	Sint32		 slot;
@@ -611,7 +611,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 			mnFieldMessageShow((Sint32)MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
 			result = mnItemPickerRunToDrop(&member, &slot);
 			if(result == -1) {
-				if(gmItemGetDirect(item)->flg & ITEM_INDISPENSABLE) {
+				if(gmItemGetDirect(item)->flags & ITEM_INDISPENSABLE) {
 					mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 					/* "That ...'s valuable! You must get it!" */
 					mnFieldMessageShow(
@@ -634,7 +634,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 				return owner;
 			}
 			syUnitGet(member);
-			cnt = gmInventoryGetQuantity(member, slot);
+			count = gmInventoryGetQuantity(member, slot);
 			if(gmInventoryCountItem(member, item) >= INVENTORY_STACK_MAX) {
 				mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
 				mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
@@ -646,12 +646,12 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 			}
 			break;
 		}
-		for(i = 0; i < cnt; i++)
+		for(i = 0; i < count; i++)
 			gmInventoryDiscard(member, slot);
 		gmUnitRefreshPsynergy(member);
-		gmUnitCalc(member);
+		gmUnitCalculate(member);
 		owner = gmPartyInventoryAdd(item);
-		sySndPlay(MUS_TREASURE_FOUND);
+		sySoundPlay(MUS_TREASURE_FOUND);
 		if(owner == MainRoutineStateWork.leaderActorId) {
 			mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 			/* "Felix got ...." */
@@ -667,7 +667,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 		state->msg = saved;
 		return owner;
 	} else {
-		sySndPlay(MUS_TREASURE_FOUND);
+		sySoundPlay(MUS_TREASURE_FOUND);
 		mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 		/* "Felix got ...." */
 		mnFieldMessageShow((Sint32)MsgItemReceived,
@@ -700,40 +700,40 @@ Sint32 scInit(void)
 		} else {
 			if(syGameFlagGet(FLAG_TAVI_RESCUED)) {
 				fdActorSetAnimationById(ACTOR_RIKI, ANIM_EATING);
-				fdActorSetSprFlags(fdActorGetById(ACTOR_RIKI), 0);
+				fdActorSetSpriteFlags(fdActorGetById(ACTOR_RIKI), 0);
 				fdActorSetAnimationById(ACTOR_TAVI, ANIM_EATING);
-				fdActorSetSprFlags(fdActorGetById(ACTOR_TAVI), 0);
+				fdActorSetSpriteFlags(fdActorGetById(ACTOR_TAVI), 0);
 			}
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
-			fdActorGetById(ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE)->priFlg |=
+			fdActorGetById(ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE)
+				->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+			fdActorGetById(ACTOR_ARMOR_MERCHANT)->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
-			fdActorGetById(ACTOR_ARMOR_MERCHANT)->priFlg |=
-				ACTOR_PRIORITY_IGNORES_RISES;
-			fdActorSetSprPriority(ACTOR_ARMOR_MERCHANT, 2);
-			fdActorGetById(ACTOR_ARMOR_MERCHANT)->collisionFlg |=
+			fdActorSetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
+			fdActorGetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |=
 				ACTOR_NEAR_TALK;
 		}
 	} else if(MainRoutineStateWork.next == SCENE_DAILA_ROOMS_SANCTUM) {
 		map = (MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_TEAR_SPOT), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_TEAR_SPOT), 0);
 		fdEffectStartBlankOverlay(0);
 		if(!syGameFlagGet(FLAG_SEA_GODS_TEAR_TAKEN)) {
 			fdActorSetItemIcon(
 				fdActorGetById(ACTOR_SEA_GODS_TEAR), ITEM_SEA_GODS_TEAR);
-			fdActorSetSprFlags(fdActorGetById(ACTOR_SEA_GODS_TEAR), 0);
-			fdActorSetSprPriority(ACTOR_SEA_GODS_TEAR, 1);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_SEA_GODS_TEAR), 0);
+			fdActorSetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->scaleY = toFIXED(6) / 5;
 			fdActorGetById(ACTOR_SEA_GODS_TEAR)->scaleX = toFIXED(6) / 5;
-			fdActorGetById(ACTOR_SEA_GODS_TEAR)->collisionFlg |=
+			fdActorGetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |=
 				ACTOR_NEAR_TALK;
-			fdActorGetById(ACTOR_TEAR_SPOT)->collisionFlg |= ACTOR_NEAR_TALK;
+			fdActorGetById(ACTOR_TEAR_SPOT)->collisionFlags |= ACTOR_NEAR_TALK;
 		} else {
-			fdActorGetById(ACTOR_SEA_GODS_TEAR)->collisionFlg |=
+			fdActorGetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |=
 				ACTOR_NEAR_TALK;
-			fdActorSetSprFlags(fdActorGetById(ACTOR_SEA_GODS_TEAR), 0);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_SEA_GODS_TEAR), 0);
 		}
 		if(!syGameFlagGet(FLAG_TAVI_RESCUED)) {
 			fdActorSetPos(ACTOR_FIRST_PUDDLE, 0, 0);
@@ -754,7 +754,7 @@ Sint32 scPrepareMap(void)
 {
 	if(MainRoutineStateWork.next == SCENE_DAILA_ROOMS_SANCTUM &&
 		syGameFlagGet(FLAG_TAVI_RESCUED)) {
-		fdTilesetAnimPause(0);
+		fdTilesetAnimationPause(0);
 		fdMapGridCopyMetatiles(29, 33, 10, 6, 10, 12);
 	}
 	return 0;

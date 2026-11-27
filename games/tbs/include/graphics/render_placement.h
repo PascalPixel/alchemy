@@ -31,7 +31,7 @@ typedef struct SPR_PLACEMENT {
 /* Returns the placement's values as an array: x, height, y, groundHeight. */
 /* UB: the legacy renderer walks across the scalar members as an array. UBFIX
    supplies a real array; an always-on union changes producer scheduling. */
-static inline const Sint32 *sySprPlacementReadValues(
+static inline const Sint32 *sySpritePlacementReadValues(
 	const SPR_PLACEMENT *placement)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
@@ -42,7 +42,7 @@ static inline const Sint32 *sySprPlacementReadValues(
 }
 
 /* Returns the placement's values as a writable array. */
-static inline Sint32 *sySprPlacementValues(SPR_PLACEMENT *placement)
+static inline Sint32 *sySpritePlacementValues(SPR_PLACEMENT *placement)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
 	return placement->values;

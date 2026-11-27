@@ -28,9 +28,9 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE		 draw[2];
 	PARTICLE			*star;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
@@ -45,30 +45,30 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	SET_VECTOR(center, 0, toFIXED(80), 0);
-	for(frm = 0; frm != SWIRLING_STARS_TICKS; frm++) {
+	for(frame = 0; frame != SWIRLING_STARS_TICKS; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		syMatrixTranslateVector(center);
 		for(i = 0; i != SWIRLING_STARS_COUNT; i++) {
 			star = &PARTICLES[i];
-			if(frm > i / 4 && star->variant == 0) {
+			if(frame > i / 4 && star->variant == 0) {
 				Sint32 size;
 
 				syPushMatrix();
 				switch(i & 3) {
 				case 0:
-					syRotY(frm * SWIRLING_STAR_SPIN(i));
+					syRotY(frame * SWIRLING_STAR_SPIN(i));
 					break;
 				case 1:
-					syRotX(-frm * SWIRLING_STAR_SPIN(i));
+					syRotX(-frame * SWIRLING_STAR_SPIN(i));
 					break;
 				case 2:
-					syRotZ(-frm * SWIRLING_STAR_SPIN(i));
+					syRotZ(-frame * SWIRLING_STAR_SPIN(i));
 					break;
 				case 3:
-					syRotX(-frm * SWIRLING_STAR_SPIN(i));
-					syRotZ(-frm * SWIRLING_STAR_SPIN(i));
+					syRotX(-frame * SWIRLING_STAR_SPIN(i));
+					syRotZ(-frame * SWIRLING_STAR_SPIN(i));
 					break;
 				}
 				btEffectPosProjectPoint(star, &screen);
@@ -86,14 +86,14 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 					screen.x - size / 2, screen.y - size, size, size * 2);
 				btParticleAdvanceWithGravity3D(star, 60, 0);
 				/* After 30 ticks a star springs back towards the centre. */
-				if(frm > i / 4 + 30) {
+				if(frame > i / 4 + 30) {
 					Sint32 dx = -star->x >> 8;
 					Sint32 dy = -star->y >> 8;
 					Sint32 dz = -star->z >> 8;
 
-					star->velX += dx;
-					star->velY += dy;
-					star->velZ += dz;
+					star->velocityX += dx;
+					star->velocityY += dy;
+					star->velocityZ += dz;
 				}
 			}
 		}
@@ -114,7 +114,7 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	void				*palette;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 drawSmoke;
 	DRAW_RECTANGLE		 drawBurst;
 	PARTICLE			*puff;
@@ -122,7 +122,7 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 screen;
 	FIXED				 point[3];
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
@@ -138,39 +138,39 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	drawSmoke = RamHeapSlots->ramCodePaired;
 
 	for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
-		Sint32 ang;
+		Sint32 angle;
 		Sint32 speed;
 
 		puff = &state->particles[i];
-		ang = syRandom() & TRIG_ANGLE_MASK;
+		angle = syRandom() & TRIG_ANGLE_MASK;
 		speed = syRandom() & 0xff;
 		SET_POSITION(puff, 0, 0, 0);
 		if(i % 6 == 5) {
-			puff->velX = 0;
-			puff->velY = 0;
+			puff->velocityX = 0;
+			puff->velocityY = 0;
 		} else {
-			puff->velX = (sySin(ang) * speed) >> 7;
-			puff->velY = (syCos(ang) * speed) >> 9;
+			puff->velocityX = (sySin(angle) * speed) >> 7;
+			puff->velocityY = (syCos(angle) * speed) >> 9;
 		}
-		puff->velZ = 0;
+		puff->velocityZ = 0;
 		puff->variant = 0;
 	}
 
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != TARGET_BURSTS_TICKS; frm++) {
+	for(frame = 0; frame != TARGET_BURSTS_TICKS; frame++) {
 		Sint32		   member;
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		EFFECT_FOR_EACH_TARGET(member, args) {
-			MOTION_OBJECT *tgt;
+			MOTION_OBJECT *target;
 
-			tgt = btObjectGetStub(args->tgts[member])->obj;
+			target = btObjectGetStub(args->targets[member])->object;
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, tgt->x, toFIXED(20), tgt->z);
+			SET_VECTOR(point, target->x, toFIXED(20), target->z);
 			syMatrixTranslateVector(point);
-			if(frm >= member * 8 && frm < member * 8 + 40) {
+			if(frame >= member * 8 && frame < member * 8 + 40) {
 				for(i = 0; i != 6; i++) {
 					Sint32 picture;
 

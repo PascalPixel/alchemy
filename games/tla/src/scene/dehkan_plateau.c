@@ -460,8 +460,8 @@ void scDehkanPlateauStepOnThemisAxeChestPillars(void)
 	scDehkanPlateauSetThemisAxeChestStandingPillarMetatiles();
 	y = fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed;
 	if(y < toFIXED(8)) {
-		fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
@@ -484,8 +484,8 @@ void scDehkanPlateauStepOnTightropesPillars(void)
 	scDehkanPlateauSetTightropesStandingPillarMetatiles();
 	if(fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed <
 		-toFIXED(24)) {
-		fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
@@ -559,37 +559,37 @@ void scDehkanPlateauHideBlocks(void)
 #include "shared/actors_set_hidden.c"
 
 /* Pound on the stake in the first stretch sinks it into the ground. */
-void scDehkanPlateauPoundFullMetalVestChestStake(Sint32 mode, Sint32 frm)
+void scDehkanPlateauPoundFullMetalVestChestStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauFullMetalVestChestStakes, mode, frm);
+	fdPoundSinkTarget(DehkanPlateauFullMetalVestChestStakes, mode, frame);
 }
 
 /* Pound on the stake in the Themis Axe's stretch sinks it into the ground. */
-void scDehkanPlateauPoundThemisAxeChestStake(Sint32 mode, Sint32 frm)
+void scDehkanPlateauPoundThemisAxeChestStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauThemisAxeChestStakes, mode, frm);
+	fdPoundSinkTarget(DehkanPlateauThemisAxeChestStakes, mode, frame);
 }
 
 /* Pound on the stake by the rope bridge, if Cannon has not already sunk it,
    sinks it into the ground. */
-void scDehkanPlateauPoundTightropesStake(Sint32 mode, Sint32 frm)
+void scDehkanPlateauPoundTightropesStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauTightropesStakes, mode, frm);
+	fdPoundSinkTarget(DehkanPlateauTightropesStakes, mode, frame);
 }
 
 /* Pound on the stake in the cave where Cannon drops the Pound Cube sinks it
    into the ground. */
-void scDehkanPlateauPoundPoundCubeStake(Sint32 mode, Sint32 frm)
+void scDehkanPlateauPoundPoundCubeStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauPoundCubeStakes, mode, frm);
+	fdPoundSinkTarget(DehkanPlateauPoundCubeStakes, mode, frame);
 }
 
 /* Pound on the stake in Cannon's cave, from the lower floor below his ledge,
    sinks it into the ground: with it gone Cannon has nothing to leap onto and is
    cornered. */
-void scDehkanPlateauPoundCannonStake(Sint32 mode, Sint32 frm)
+void scDehkanPlateauPoundCannonStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(DehkanPlateauCannonStakes, mode, frm);
+	fdPoundSinkTarget(DehkanPlateauCannonStakes, mode, frame);
 }
 
 #include "shared/actor_drop_and_wait.h"
@@ -661,7 +661,7 @@ void scDehkanPlateauPlaceTightropesPillar(void)
 		sySynch(1);
 		fdActorDropAndWait(actor);
 		fdMapCopyMetatileAttributeRect(50, 16, 1, 1, x, 13);
-		fdActorSetSprPriority(ACTOR_TIGHTROPES_PILLAR, 2);
+		fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
 		fdScriptEnd();
 	} else if(x == 46) {
 		fdMapGridCopyMetatileAttributes(44, 13, 1, 1, 48, 13);
@@ -693,19 +693,20 @@ void scDehkanPlateauMoveTightropesSecondPillar(void)
    column west. */
 void scDehkanPlateauPushTightropesSecondPillar(void)
 {
-	Uint8 *flg;
+	Uint8 *flags;
 
 	if(FIELD_METATILE(
 		   fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->x.fixed) == 38) {
-		flg = &fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg;
+		flags =
+			&fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags;
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		*flg = 0;
+		*flags = 0;
 		sySynch(1);
 		fdLeaderPushObjectAhead();
 		scDehkanPlateauSetTightropesSecondPillarInPlace();
 		sySynch(1);
-		*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdScriptEnd();
 	}
 }
@@ -719,14 +720,14 @@ void scDehkanPlateauStepOffCrack(void)
 /* Forgets which crack the party fell through. */
 void scDehkanPlateauForgetFall(void)
 {
-	Sint32 flg;
+	Sint32 flag;
 
-	flg = FLAG_FELL_THROUGH_FIRST;
+	flag = FLAG_FELL_THROUGH_FIRST;
 	while(1) {
-		syGameFlagClear(flg);
-		if(flg == FLAG_FELL_THROUGH_LAST)
+		syGameFlagClear(flag);
+		if(flag == FLAG_FELL_THROUGH_LAST)
 			return;
-		flg++;
+		flag++;
 	}
 }
 
@@ -832,26 +833,26 @@ void scDehkanPlateauStepOnCrack(void)
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 metatileX = (FIELD_METATILE(leader->x.fixed) << 1) + 1;
 	Sint32		 metatileZ = (FIELD_METATILE(leader->z.fixed) << 1) + 1;
-	Sint32		 n, flg;
+	Sint32		 n, flag;
 	Uint16		*record, *next;
 
 	if(MainRoutineStateWork.next ==
 		SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST) {
 		n = state->stepCue - CUE_FULL_METAL_VEST_CHEST_FIRST_CRACK;
-		flg = FLAG_CRACK_OPENED_FIRST + n;
+		flag = FLAG_CRACK_OPENED_FIRST + n;
 		record = &DehkanPlateauFullMetalVestChestCracks[n][CRACK_X];
 	} else if(MainRoutineStateWork.next ==
 		SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST) {
 		n = state->stepCue - CUE_THEMIS_AXE_CHEST_FIRST_CRACK;
-		flg = FLAG_CRACK_OPENED_FIRST + n;
+		flag = FLAG_CRACK_OPENED_FIRST + n;
 		record = &DehkanPlateauThemisAxeChestCracks[n][CRACK_X];
 	} else if(MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_TIGHTROPES) {
 		n = state->stepCue - CUE_TIGHTROPES_FIRST_CRACK;
-		flg = FLAG_CRACK_OPENED_FIRST + n;
+		flag = FLAG_CRACK_OPENED_FIRST + n;
 		record = &DehkanPlateauTightropesCracks[n][CRACK_X];
 	} else if(MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_POUND_CUBE) {
 		n = state->stepCue - CUE_POUND_CUBE_FIRST_CRACK;
-		flg = FLAG_CRACK_OPENED_FIRST + n;
+		flag = FLAG_CRACK_OPENED_FIRST + n;
 		record = &DehkanPlateauPoundCubeCracks[n][CRACK_X];
 		if(syGameFlagGet(FLAG_FELL_THROUGH(
 			   DEHKAN_PLATEAU_POUND_CUBE_FROM_DEHKAN_PLATEAU_TIGHTROPES_NORTH)))
@@ -872,10 +873,10 @@ void scDehkanPlateauStepOnCrack(void)
 	fdScriptWait(4);
 	fdCameraGetActor()->y.fixed -= toFIXED(8);
 	next = record + 1;
-	if(syGameFlagGet(flg)) {
-		Sint32 x, y, idx, toX, toZ;
+	if(syGameFlagGet(flag)) {
+		Sint32 x, y, index, toX, toZ;
 
-		sySndPlay(SE_SPLASH);
+		sySoundPlay(SE_SPLASH);
 		x = *record;
 		record = next;
 		{
@@ -901,8 +902,8 @@ void scDehkanPlateauStepOnCrack(void)
 		}
 		/* The rest of the crack's record: its hole picture and where it is
 		   drawn. */
-		idx = *record++;
-		metatileX = idx * 2;
+		index = *record++;
+		metatileX = index * 2;
 		toX = record[0];
 		toZ = record[1];
 		{
@@ -967,20 +968,21 @@ void scDehkanPlateauStepOnCrack(void)
 		}
 		fdScriptWait(12);
 		leader->facing = FACING_SOUTH;
-		leader->motionFlg = 0;
-		fdActorSetSprFlags(
+		leader->motionFlags = 0;
+		fdActorSetSpriteFlags(
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 		{
 			Sint16 scene = MainRoutineStateWork.next;
 			if(scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST) {
-				fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
 			} else if(scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST ||
 				scene == SCENE_DEHKAN_PLATEAU_TIGHTROPES) {
-				fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
+				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
 			} else if(scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE) {
 				if(DehkanPlateauPoundCubeWork != NULL)
-					((FIELD_SPR *)DehkanPlateauPoundCubeWork->spr)->pri = 3;
-				fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+					((FIELD_SPR *)DehkanPlateauPoundCubeWork->sprite)
+						->priority = 3;
+				fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
 			}
 		}
 		fdActorSetAnimationById(
@@ -990,7 +992,7 @@ void scDehkanPlateauStepOnCrack(void)
 		   ticks. */
 		for(metatileX = 0; (Uint32)metatileX < FALL_TICKS; metatileX++) {
 			if(metatileX == 5)
-				sySndPlay(SE_DUST_PUFF);
+				sySoundPlay(SE_DUST_PUFF);
 			leader->scaleX += -(toFIXED(1) / 64);
 			leader->scaleY += -(toFIXED(3) / 256);
 			leader->y.fixed += -(toFIXED(3) / 5);
@@ -1004,7 +1006,7 @@ void scDehkanPlateauStepOnCrack(void)
 	} else {
 		Sint32 x, y;
 
-		sySndPlay(SE_RATTLE);
+		sySoundPlay(SE_RATTLE);
 		y = *next;
 		x = *record;
 		{
@@ -1028,7 +1030,7 @@ void scDehkanPlateauStepOnCrack(void)
 					DehkanPlateauPoundCubeCrackPictures[1], x, y, 1, 1);
 		}
 		fdScriptWait(12);
-		syGameFlagSet(flg);
+		syGameFlagSet(flag);
 		syGameFlagSet(FLAG_STANDING_ON_OPENED_CRACK);
 		{
 			Sint16 scene = MainRoutineStateWork.next;
@@ -1200,7 +1202,7 @@ void scDehkanPlateauEnterLowerPath(void)
 	Sint32 set = syGameFlagGet(FLAG_CANNON_ROOM_STAKE_POUNDED);
 
 	if(set == 0) {
-		fdActorGetById(ACTOR_CANNON_ROOM_STAKE)->motionFlg = set;
+		fdActorGetById(ACTOR_CANNON_ROOM_STAKE)->motionFlags = set;
 		fdMapGridCopyMetatileAttributes(51, 12, 1, 1, 47, 12);
 		syGameFlagSet(FLAG_STAKE_METATILE_CHANGED);
 	}
@@ -1234,9 +1236,9 @@ void scDehkanPlateauJoltCamera(void)
 
 /* Places an actor on the ground at a 16.16 position, facing a heading. */
 static __inline__ void scActorPlaceFacing(
-	Sint32 id, FIXED x, FIXED z, Uint16 ang)
+	Sint32 id, FIXED x, FIXED z, Uint16 angle)
 {
-	fdActorSetHorizontalPosAndAngWithTerrain(id, x, z, ang);
+	fdActorSetHorizontalPosAndAngleWithTerrain(id, x, z, angle);
 }
 
 /* Felix comes up into the cracked field of the Themis Axe's stretch (metatiles
@@ -1248,7 +1250,7 @@ void scDehkanPlateauCannonFleesOverCracks(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(658, CAMERA_KEEP, 164, 1);
 	fdCameraWaitForArrival();
 	fdActorFaceActorById(
@@ -1258,12 +1260,12 @@ void scDehkanPlateauCannonFleesOverCracks(void)
 	fdActorSetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
 	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 136);
 	fdMapGridCopyMetatileTilesIndicesRect(68, 33, 105, 6, 1, 1);
-	sySndPlay(SE_RATTLE);
+	sySoundPlay(SE_RATTLE);
 	scDehkanPlateauJoltCamera();
 	syGameFlagSet(FLAG_CRACK_OPENED(7));
 	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 664, 104);
 	fdMapGridCopyMetatileTilesIndicesRect(69, 33, 105, 4, 1, 1);
-	sySndPlay(SE_SPLASH);
+	sySoundPlay(SE_SPLASH);
 	scDehkanPlateauJoltCamera();
 	fdScriptWait(10);
 	fdActorJump(ACTOR_THEMIS_AXE_CHEST_CANNON, 6, 16);
@@ -1287,8 +1289,8 @@ void scDehkanPlateauCannonFleesEast(void)
 		ACTOR_THEMIS_AXE_CHEST_CANNON, MainRoutineStateWork.leaderActorId, 0);
 	fdActorShowEmoteById(
 		ACTOR_THEMIS_AXE_CHEST_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorGetById(ACTOR_THEMIS_AXE_CHEST_CANNON)->motionFlg = 0;
-	fdActorSetSprPriority(ACTOR_THEMIS_AXE_CHEST_CANNON, 1);
+	fdActorGetById(ACTOR_THEMIS_AXE_CHEST_CANNON)->motionFlags = 0;
+	fdActorSetSpritePriority(ACTOR_THEMIS_AXE_CHEST_CANNON, 1);
 	fdActorSetSpeed(ACTOR_THEMIS_AXE_CHEST_CANNON, 1.6);
 	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 940, 168);
 	fdActorWalkToAndWait(ACTOR_THEMIS_AXE_CHEST_CANNON, 984, 152);
@@ -1315,11 +1317,11 @@ void scDehkanPlateauCannonLeapsAway(void)
 	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
 	fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 168, 104);
 	fdScriptWait(10);
-	sySndPlay(SE_HIGH_JUMP);
-	fdActorGetById(ACTOR_TIGHTROPES_CANNON)->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	fdActorGetById(ACTOR_TIGHTROPES_CANNON)->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
 	fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 200, 104);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 294, 104);
 	scActorPlaceFacing(
@@ -1338,7 +1340,7 @@ void scDehkanPlateauCannonPoundsStake(void)
 	fdScriptEndLastingPsynergy(0);
 	fdActorWatchAndSetScript(
 		MainRoutineStateWork.leaderActorId, ACTOR_TIGHTROPES_CANNON);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(424, CAMERA_KEEP, 104, 1);
 	fdCameraWaitForArrival();
 	fdActorFaceActorById(
@@ -1355,7 +1357,7 @@ void scDehkanPlateauCannonPoundsStake(void)
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 184);
 	syGameFlagSet(FLAG_CRACK_OPENED(1));
 	fdMapGridCopyMetatileTilesIndicesRect(69, 51, 92, 11, 1, 1);
-	sySndPlay(SE_RATTLE);
+	sySoundPlay(SE_RATTLE);
 	scDehkanPlateauJoltCamera();
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 216);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 584, 216);
@@ -1369,16 +1371,16 @@ void scDehkanPlateauCannonPoundsStake(void)
    and once the Psynergy ends it is down for good. */
 void scDehkanPlateauSinkPoundedStake(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	ACTOR			   *actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
 
-	if(state->frm != -1 && state->frm <= 7)
+	if(state->frame != -1 && state->frame <= 7)
 		actor->scaleY += -(toFIXED(31) / 256);
 	if(state->stage != 0) {
 		fdMapGridCopyMetatileAttributes(27, 8, 1, 1, 27, 9);
 		fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->collisionFlg &= ~ACTOR_SOLID;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags &= ~ACTOR_SOLID;
 		actor->scaleY = toFIXED(1);
 		syGameFlagSet(FLAG_TIGHTROPES_STAKE_POUNDED);
 	}
@@ -1407,20 +1409,20 @@ extern Uint32 DehkanPlateauDustScript[];
 /* Cracks a crumbling pillar as Cannon lands on it: it flashes white and takes
    its cracked look, and eight puffs of dust rise about the one standing on
    it. */
-void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flg)
+void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flag)
 {
 	ACTOR *standing;
 	Sint32 vramEntry;
 	Uint32 i;
 	FIXED  y;
 
-	sySndPlay(SE_CHEST_CLOSE);
-	fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+	sySoundPlay(SE_CHEST_CLOSE);
+	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 	sySynch(2);
 	fdActorSetAnimationById(id, 0);
-	fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 	sySynch(4);
-	fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 	standing = fdActorGetById(standingId);
 	vramEntry = 0;
 	for(i = 0; i <= 7; i++) {
@@ -1433,25 +1435,25 @@ void scDehkanPlateauCrackPillar(Sint32 id, Sint32 standingId, Sint32 flg)
 			standing->z.fixed));
 		if(actor != NULL) {
 			effect = (FIELD_EFFECT *)actor;
-			vramEntry = fdSprShareVRAMCacheEntry(effect->spr, vramEntry);
-			actor->motionFlg = 0;
-			actor->collisionFlg = 0;
-			fdActorSetSprFlags(actor, 0);
+			vramEntry = fdSpriteShareVRAMCacheEntry(effect->sprite, vramEntry);
+			actor->motionFlags = 0;
+			actor->collisionFlags = 0;
+			fdActorSetSpriteFlags(actor, 0);
 			fdActorSelectAnimation(actor, 2);
 			fdActorStartScript(actor, DehkanPlateauDustScript);
 			actor->scaleX = toFIXED(7) / 10;
 			actor->scaleY = toFIXED(7) / 10;
-			effect->spr->pri = 1;
-			effect->vel.x = 0;
-			effect->vel.z = 0;
-			effect->vel.y = -(syRandomBelow(16384) + toFIXED(3) / 8);
+			effect->sprite->priority = 1;
+			effect->velocity.x = 0;
+			effect->velocity.z = 0;
+			effect->velocity.y = -(syRandomBelow(16384) + toFIXED(3) / 8);
 			effect->spin = syRandomBelow(512) - 256;
 			effect->scaleRateX = -(toFIXED(1) / 32);
 			effect->scaleRateY = -(toFIXED(3) / 128);
 			effect->update = fdEffectAdvanceMotion;
 		}
 	}
-	syGameFlagSet(flg);
+	syGameFlagSet(flag);
 	fdScriptWait(20);
 }
 
@@ -1468,30 +1470,30 @@ void scDehkanPlateauCannonCracksPillars(void)
 	fdScriptEndLastingPsynergy(0);
 	fdActorWatchAndSetScript(
 		MainRoutineStateWork.leaderActorId, ACTOR_TIGHTROPES_CANNON);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(616, CAMERA_KEEP, 280, 1);
 	fdCameraWaitForArrival();
 	fdActorFaceActorById(
 		ACTOR_TIGHTROPES_CANNON, MainRoutineStateWork.leaderActorId, 0);
 	fdActorShowEmoteById(
 		ACTOR_TIGHTROPES_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_CANNON, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
 	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 632, 280);
 	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 664, 280);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
 	scDehkanPlateauCrackPillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR,
 		ACTOR_TIGHTROPES_CANNON, FLAG_PILLAR_CRACKED(0));
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 696, 280);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
 	fdScriptWait(10);
 	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 1.6);
@@ -1499,31 +1501,31 @@ void scDehkanPlateauCannonCracksPillars(void)
 	fdCameraSetSpeed(2.4);
 	fdCameraMoveTo(712, CAMERA_KEEP, 136, 1);
 	fdMapGridCopyMetatileTilesIndicesRect(112, 6, 110, 4, 1, 1);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_CANNON, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_CANNON, 1);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 712, 200);
 	fdActorWalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 712, 168);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
 	fdActorFaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_EAST);
 	fdActorSetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 168);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
 	scDehkanPlateauCrackPillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR + 3,
 		ACTOR_TIGHTROPES_CANNON, FLAG_PILLAR_CRACKED(3));
 	fdActorFaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_NORTH);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TIGHTROPES_CANNON), 0);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 136);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(ACTOR_TIGHTROPES_CANNON), SPRITE_FLAG_SHADOW);
 	fdScriptWait(10);
 	fdActorWalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 72);
 	fdMapGridCopyMetatileTilesIndicesRect(66, 51, 110, 4, 1, 1);
-	sySndPlay(SE_SPLASH);
+	sySoundPlay(SE_SPLASH);
 	scDehkanPlateauJoltCamera();
 	fdScriptWait(10);
 	fdActorJump(ACTOR_TIGHTROPES_CANNON, 6, 16);
@@ -1548,13 +1550,13 @@ void scDehkanPlateauCannonPoundsLeaderThrough(void)
 	{
 		Sint32 facing = FACING_NORTH;
 
-		fdActorSetHorizontalPosAndAngWithTerrain(
+		fdActorSetHorizontalPosAndAngleWithTerrain(
 			MainRoutineStateWork.leaderActorId, toFIXED(248), toFIXED(136),
 			facing);
 	}
 	fdMapGridCopyMetatileTilesIndicesRect(65, 64, 15, 8, 1, 1);
 	syGameFlagSet(FLAG_CRACK_OPENED(5));
-	sySndPlay(SE_RATTLE);
+	sySoundPlay(SE_RATTLE);
 	scDehkanPlateauJoltCamera();
 	fdActorFaceActorById(
 		ACTOR_POUND_CUBE_CANNON, MainRoutineStateWork.leaderActorId, 0);
@@ -1563,15 +1565,15 @@ void scDehkanPlateauCannonPoundsLeaderThrough(void)
 	scDehkanPlateauCannonCastsPoundOnLeader();
 	fdScriptWait(20);
 	leader->facing = FACING_SOUTH;
-	leader->motionFlg = 0;
-	fdActorSetSprPriority(ACTOR_POUND_CUBE_CANNON, 3);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+	leader->motionFlags = 0;
+	fdActorSetSpritePriority(ACTOR_POUND_CUBE_CANNON, 3);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	fdScriptWait(16);
 	for(i = 0; i < FALL_TICKS; i++) {
 		if(i == 5)
-			sySndPlay(SE_DUST_PUFF);
+			sySoundPlay(SE_DUST_PUFF);
 		leader->scaleX -= toFIXED(1) / 64;
 		leader->scaleY -= toFIXED(3) / 256;
 		leader->y.fixed -= toFIXED(3) / 5;
@@ -1587,11 +1589,11 @@ void scDehkanPlateauCannonPoundsLeaderThrough(void)
 /* The event of Cannon's Pound on the leader: the floor under him opens. */
 void scDehkanPlateauPoundLeaderThrough(void)
 {
-	if(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->stage != 0) {
-		sySndPlay(SE_SPLASH);
+	if(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->stage != 0) {
+		sySoundPlay(SE_SPLASH);
 		fdMapGridCopyMetatileTilesIndicesRect(64, 64, 15, 8, 1, 1);
 		fdMapGridCopyMetatileTilesIndicesRect(64, 66, 15, 72, 1, 2);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	}
 }
@@ -1626,14 +1628,14 @@ void scDehkanPlateauCannonDropsPoundCube(void)
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	sySoundPlay(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
-	sySndPlay(SE_KOLIMA_BRIDGE_HOP);
+	sySoundPlay(SE_KOLIMA_BRIDGE_HOP);
 	scDehkanPlateauJoltCamera();
 	if(DehkanPlateauPoundCubeWork != NULL) {
 		scFieldActorSetPosAndResetMotion(
@@ -1641,12 +1643,12 @@ void scDehkanPlateauCannonDropsPoundCube(void)
 		sySynch(1);
 		DehkanPlateauPoundCubeWork->speedLimit = toFIXED(8) / 5;
 		DehkanPlateauPoundCubeWork->acceleration = toFIXED(8) / 5;
-		DehkanPlateauPoundCubeWork->velY = toFIXED(8);
+		DehkanPlateauPoundCubeWork->velocityY = toFIXED(8);
 	}
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 	fdActorSetSpeed(ACTOR_POUND_CUBE_CANNON, 1.6);
-	leader->velY = toFIXED(6);
-	cannon->velY = toFIXED(6);
+	leader->velocityY = toFIXED(6);
+	cannon->velocityY = toFIXED(6);
 	scFieldActorSetMoveTarget(leader, 216, 0, 120);
 	scFieldActorSetMoveTarget(cannon, 280, 0, 120);
 	if(DehkanPlateauPoundCubeWork != NULL)
@@ -1663,7 +1665,7 @@ void scDehkanPlateauCannonDropsPoundCube(void)
 	fdActorSetPos(ACTOR_POUND_CUBE_CANNON, 0, 0);
 	fdScriptWait(20);
 	if(DehkanPlateauPoundCubeWork != NULL) {
-		DehkanPlateauPoundCubeWork->motionFlg = 0;
+		DehkanPlateauPoundCubeWork->motionFlags = 0;
 		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 15, 5);
 		sySynch(1);
 	}
@@ -1682,30 +1684,30 @@ void scDehkanPlateauCannonCracksLastPillar(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_CANNON);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(760, 32, 204, 1);
 	fdCameraWaitForArrival();
 	fdActorFaceActorById(ACTOR_CANNON, MainRoutineStateWork.leaderActorId, 0);
 	fdActorShowEmote(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdActorSetSpeed(ACTOR_CANNON, 2);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
 	fdActorWalkToAndWaitById(ACTOR_CANNON, 760, 200);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
 	fdScriptWait(20);
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
 	fdActorWalkToAndWaitById(ACTOR_CANNON, 792, 200);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
 	scDehkanPlateauCrackPillar(ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, ACTOR_CANNON,
 		FLAG_PILLAR_CRACKED(0));
-	sySndPlay(SE_HIGH_JUMP);
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
 	fdActorWalkToAndWaitById(ACTOR_CANNON, 824, 200);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), SPRITE_FLAG_SHADOW);
 	fdScriptWait(20);
 	fdActorWatchAndSetScript(ACTOR_CANNON, MainRoutineStateWork.leaderActorId);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
@@ -1752,7 +1754,7 @@ void scDehkanPlateauTakePoundCube(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	if(DehkanPlateauPoundCubeWork != 0)
-		fdItemDispShowPicture(DehkanPlateauPoundCubeWork,
+		fdItemDisplayShowPicture(DehkanPlateauPoundCubeWork,
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	fdPartyInventoryGiveItem(ITEM_POUND_CUBE, 0);
 	if(DehkanPlateauPoundCubeWork != 0)
@@ -1774,8 +1776,8 @@ void scDehkanPlateauLeaveRoom(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	if(MainRoutineStateWork.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
-		fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
-	sySndPlay(SE_MAP_EXIT);
+		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
@@ -1806,10 +1808,10 @@ Sint32 scInit(void)
    ground. */
 void scDehkanPlateauKeepPriorityWithLeader(void)
 {
-	fdActorSetSprPriority(ACTOR_FULL_METAL_VEST_CHEST,
+	fdActorSetSpritePriority(ACTOR_FULL_METAL_VEST_CHEST,
 		((SPR_ATTR2_HIGH *)fdActorGetById(MainRoutineStateWork.leaderActorId)
-				->spr)
-			->pri);
+				->sprite)
+			->priority);
 }
 
 /* Sets up the first stretch: its pillars, the stone pillar already in the gap,
@@ -1817,7 +1819,7 @@ void scDehkanPlateauKeepPriorityWithLeader(void)
 void scDehkanPlateauInitFullMetalVestChest(void)
 {
 	syCrumblingPillarPlace(DehkanPlateauFullMetalVestChestCrumblingPillars);
-	fdActorSetSprPriority(
+	fdActorSetSpritePriority(
 		ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR, 3);
 	scPillarPlace(DehkanPlateauFullMetalVestChestStakes);
 	fdActorDisableById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
@@ -1842,12 +1844,12 @@ void scDehkanPlateauInitFullMetalVestChest(void)
 void scDehkanPlateauInitThemisAxeChest(void)
 {
 	if(syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 		if(MainRoutineStateWork.entrance ==
 			ENTRANCE_THEMIS_AXE_CHEST_WEST_SCREEN) {
-			fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_AUTOMATIC;
 		}
 	}
@@ -1866,10 +1868,10 @@ void scDehkanPlateauInitThemisAxeChest(void)
 	}
 	scDehkanPlateauRestoreThemisAxeChestCracks();
 	if(syGameFlagGet(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
-		Sint32 ang = FACING_SOUTH;
+		Sint32 angle = FACING_SOUTH;
 
 		scActorPlaceFacing(
-			ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168), ang);
+			ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168), angle);
 		fdMapGridCopyMetatileTilesIndicesRect(68, 33, 105, 6, 1, 1);
 		fdMapGridCopyMetatileTilesIndicesRect(69, 33, 105, 4, 1, 1);
 		syGameFlagSet(FLAG_CRACK_OPENED(7));
@@ -1890,46 +1892,46 @@ void scDehkanPlateauInitTightropes(void)
 	FIXED  pillarX;
 
 	if(syGameFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
-		fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_AUTOMATIC;
 	}
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST, 1);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST, 1);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST, 1);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST, 1);
 	fdTightropeInit();
 	fdTightropePlace(0, ACTOR_TIGHTROPES_FIRST_TIGHTROPE_WEST_POST,
 		ACTOR_TIGHTROPES_FIRST_TIGHTROPE_EAST_POST);
 	fdTightropePlace(1, ACTOR_TIGHTROPES_SECOND_TIGHTROPE_WEST_POST,
 		ACTOR_TIGHTROPES_SECOND_TIGHTROPE_EAST_POST);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_ROPE_LOW_POST, 1);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_ROPE_HIGH_POST, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_ROPE_LOW_POST, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_ROPE_HIGH_POST, 1);
 	scDehkanPlateauInitRopes();
 	fdRopePlace(0, FLAG_TIGHTROPES_ROPE_LASHED, ACTOR_TIGHTROPES_ROPE_LOW_POST,
 		ACTOR_TIGHTROPES_ROPE_HIGH_POST);
 	fdActorPlaceBlocks(DehkanPlateauTightropesPillars);
 	if(fdActorGetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (Sint32)-toFIXED(8))
-		fdActorSetSprPriority(ACTOR_TIGHTROPES_PILLAR, 1);
+		fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 1);
 	else
-		fdActorSetSprPriority(ACTOR_TIGHTROPES_PILLAR, 2);
+		fdActorSetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
 	fdActorDisableById(ACTOR_TIGHTROPES_SECOND_PILLAR);
-	fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->priFlg |=
+	fdActorGetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_SECOND_PILLAR, 2);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_PILLAR, 2);
 	if(syGameFlagGet(FLAG_TIGHTROPES_SECOND_PILLAR_PLACED) != 0)
 		scDehkanPlateauSetTightropesSecondPillarInPlace();
 	else
 		fdMapGridCopyMetatileAttributes(38, 32, 1, 1, 38, 33);
-	fdActorGetById(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR)->priFlg &=
+	fdActorGetById(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR)->priFlg &=
+	fdActorGetById(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TIGHTROPES_THIRD_VINE_PILLAR)->priFlg &=
+	fdActorGetById(ACTOR_TIGHTROPES_THIRD_VINE_PILLAR)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR)->priFlg &=
+	fdActorGetById(ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
 	scPillarRaise(DehkanPlateauTightropesVinePillars);
 	{
@@ -1945,8 +1947,8 @@ void scDehkanPlateauInitTightropes(void)
 			metatile->collisionCode = CUE_TIGHTROPES_PILLARS_WEST;
 		}
 	}
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, 1);
-	fdActorSetSprPriority(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_FIRST_VINE_PILLAR, 1);
+	fdActorSetSpritePriority(ACTOR_TIGHTROPES_SECOND_VINE_PILLAR, 1);
 	scDehkanPlateauRestoreTightropesCracks();
 	if(syGameFlagGet(FLAG_CANNON_LEAPT_AWAY) != 0) {
 		fdActorSetPosAndFacing(
@@ -1957,8 +1959,8 @@ void scDehkanPlateauInitTightropes(void)
 		actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
 		fdMapGridCopyMetatileAttributes(27, 8, 1, 1, 27, 9);
 		fdActorSetAnimationById(ACTOR_TIGHTROPES_STAKE, ANIM_STONE_STAKE_SUNK);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		actor->collisionFlg &= ~ACTOR_SOLID;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags &= ~ACTOR_SOLID;
 		syGameFlagSet(FLAG_TIGHTROPES_STAKE_POUNDED);
 		syGameFlagSet(FLAG_CRACK_OPENED(1));
 		fdMapGridCopyMetatileTilesIndicesRect(69, 51, 92, 11, 1, 1);
@@ -1978,7 +1980,7 @@ void scDehkanPlateauInitTightropes(void)
 	{
 		ACTOR *block = fdActorGetById(ACTOR_TIGHTROPES_FIRST_BLOCK + 1);
 
-		block->motionFlg = 0;
+		block->motionFlags = 0;
 		block->y.fixed = 0;
 	}
 	DehkanPlateauCrackX = 0;
@@ -2045,7 +2047,7 @@ void scDehkanPlateauInitMintChest(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	scDehkanPlateauHideMintChestBlocks();
 	if(syGameFlagGet(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
@@ -2085,35 +2087,35 @@ void scDehkanPlateauLandFromFall(void)
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	sySoundPlay(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(16) / 25;
 	options.startScaleY = toFIXED(16) / 25;
 	for(i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
-		Sint32 ang;
-		FIXED  vel[3];
+		Sint32 angle;
+		FIXED  velocity[3];
 
-		ang = i * FACING_STEP;
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = sySin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4);
-		vel[0] += -(toFIXED(3) / 8);
-		vel[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
+		angle = i * FACING_STEP;
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = sySin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4);
+		velocity[0] += -(toFIXED(3) / 8);
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimationById(
@@ -2141,7 +2143,7 @@ void scDehkanPlateauInitPoundCube(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	leader->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	if(syGameFlagGet(FLAG_POUND_CUBE_TAKEN) == 0) {
 		scDehkanPlateauCreatePoundCube();
 		if(syGameFlagGet(FLAG_CANNON_DROPPED_POUND_CUBE) != 0) {
@@ -2188,18 +2190,19 @@ void scDehkanPlateauCreatePoundCube(void)
 
 	*slot = actor;
 	if(actor != 0) {
-		FIELD_SPR	  *spr = actor->spr;
+		FIELD_SPR	  *sprite = actor->sprite;
 		ICON_TRANSFER *glyph;
 
-		spr->fullCol = 0;
-		spr->pal = 0;
-		actor->motionFlg = clear;
-		actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		spr->flg = clear;
-		spr->cnt = clear;
-		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		sprite->fullColor = 0;
+		sprite->palette = 0;
+		actor->motionFlags = clear;
+		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		sprite->flags = clear;
+		sprite->count = clear;
+		glyph =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_POUND_CUBE);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 }
@@ -2210,7 +2213,7 @@ void scDehkanPlateauInitCannon(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(syGameFlagGet(FLAG_DJINNI(DJINNI_CANNON)) != 0)
 		syGameFlagSet(FLAG_CANNON_MET);

@@ -44,15 +44,16 @@ Uint8 fdWorldMapGetBattleEnvironment(WORLD_POS *pos, Sint32 *encounterRegion)
 	Sint32	y;
 	Sint32	rows = TERRAIN_ROWS_PLAIN;
 	Uint32	blockX;
-	Uint32	idx;
+	Uint32	index;
 	Uint32 *block;
 	Uint32	region;
 
 	blockX = (x / toFIXED(32)) & (WORLD_MAP_VIEW_METATILES - 1);
 	y = pos->y;
 
-	idx = blockX + (((y / toFIXED(32)) & (WORLD_MAP_VIEW_METATILES - 1)) << 5);
-	block = MetatileTiles + idx;
+	index =
+		blockX + (((y / toFIXED(32)) & (WORLD_MAP_VIEW_METATILES - 1)) << 5);
+	block = MetatileTiles + index;
 	if(((Uint8 *)block)[3] & WORLD_MAP_BLOCK_BEACH)
 		rows = TERRAIN_ROWS_BEACH;
 
@@ -190,8 +191,8 @@ void fdWorldMapBuildScanlineTable(
 			scanline->scale = 0;
 			scanline->depth = 0;
 		}
-		scanline->ofsX = 0;
-		scanline->ofsY = 0;
+		scanline->offsetX = 0;
+		scanline->offsetY = 0;
 		scanline++;
 	}
 }

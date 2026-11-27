@@ -65,7 +65,7 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 x;
 	SCREEN_POINT		 screenPos;
 	BLITTER_PAIR		 draw;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 picture;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -84,7 +84,7 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		syWordsCopy(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 	}
 
-	btProjectionUnit(state->args->tgts[0], &screenPos);
+	btProjectionUnit(state->args->targets[0], &screenPos);
 	if(mode == MIRRORED_WALL_SPASM) {
 		REG_BG2PA = Q_8_8(1);
 		x = CANVAS_SIZE / 2 - screenPos.x;
@@ -104,37 +104,37 @@ void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	if(mode == MIRRORED_WALL_RECOVERY) {
-		state->shakeFrm = 0;
-		sySndPlayStub(SE_POWER_UP);
+		state->shakeFrame = 0;
+		sySoundPlayStub(SE_POWER_UP);
 	} else if(mode == MIRRORED_WALL_BERSERK) {
-		state->shakeFrm = 8;
-		sySndPlayStub(SE_POWER_UP);
+		state->shakeFrame = 8;
+		sySoundPlayStub(SE_POWER_UP);
 	} else {
-		state->shakeFrm = 32;
+		state->shakeFrame = 32;
 	}
 
-	for(frm = 0; frm != MIRRORED_WALL_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != MIRRORED_WALL_TICKS; frame++) {
+		if(frame == 0) {
 			if(mode == MIRRORED_WALL_RECOVERY)
-				btEffectTintBattler(
-					state->args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 32);
-			else
-				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_RED_TINT,
+				btEffectTintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
 					TINT_KEEP, 0, 32);
+			else
+				btEffectTintBattler(state->args->targets[0],
+					SPRITE_COLOR_RED_TINT, TINT_KEEP, 0, 32);
 		}
-		if(frm == 24)
+		if(frame == 24)
 			EFFECT_SHOW_DAMAGE(0);
-		if(frm == 8 && mode == MIRRORED_WALL_SPASM)
-			sySndPlayStub(SE_RECOVERY);
+		if(frame == 8 && mode == MIRRORED_WALL_SPASM)
+			sySoundPlayStub(SE_RECOVERY);
 
 		/* The wall rises through its first three pictures, then flickers
 		   between the top two; each half is drawn mirrored about the canvas's
 		   middle. */
-		if(frm <= 31) {
-			picture = frm / 4;
+		if(frame <= 31) {
+			picture = frame / 4;
 			if(picture > 2)
 				picture = (picture & 1) + 1;
-			if(frm <= 27) {
+			if(frame <= 27) {
 				draw[0](canvas, state->sheet + MirroredWallPictures[picture],
 					CANVAS_SIZE / 2 - MirroredWallPictureWidths[picture],
 					(screenPos.y - MirroredWallPictureHeights[picture]) + 8,

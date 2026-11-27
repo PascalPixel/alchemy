@@ -30,39 +30,39 @@ void scActorScatterCrumbs(ACTOR *actor)
 		y = c * 8 + actor->y.fixed + toFIXED(4);
 		object = (ACTOR *)syImportActorCreate(SPRITE_UNSEEN_MARKER, x, y, z);
 		if(object != NULL) {
-			Sint32 ang, radius;
+			Sint32 angle, radius;
 			Uint32 sum;
 			Sint32 scale;
-			SPR	  *spr;
+			SPR	  *sprite;
 			SPR	  *src;
 
-			ang = syRandom();
+			angle = syRandom();
 			radius = syRandom() * 8;
 			sum = syRandom() + syRandom();
 			scale = (sum >> 2) + toFIXED(1) / 2;
 			fdActorStartScript(object, CrumbsScript);
-			fdActorSetSprFlags(object, 0);
-			object->velY = ang * 4 + toFIXED(2);
-			object->velZ = syMulFX(radius, syCos(ang));
-			object->velX = syMulFX(radius, sySin(ang));
+			fdActorSetSpriteFlags(object, 0);
+			object->velocityY = angle * 4 + toFIXED(2);
+			object->velocityZ = syMulFX(radius, syCos(angle));
+			object->velocityX = syMulFX(radius, sySin(angle));
 			object->gravity = toFIXED(33) / 100;
 			object->scaleX = scale;
 			object->scaleY = scale;
 			object->acceleration = 0;
 			object->bounce = toFIXED(1) / 2;
-			spr = object->spr;
-			src = ((ACTOR *)state->sharedFlame)->spr;
-			syVRAMCacheFreeEntry(spr->slot);
-			spr->retainCacheEntry = 1;
-			spr->slot = state->flameVramBlock;
-			fdSprAnimationClear(spr->entries[0]);
-			spr->entries[0] = NULL;
-			spr->cnt = 0;
-			spr->width = src->width;
-			spr->height = src->height;
-			spr->image.shape = src->image.shape;
-			spr->image.size = src->image.size;
-			spr->image.tile = src->image.tile;
+			sprite = object->sprite;
+			src = ((ACTOR *)state->sharedFlame)->sprite;
+			syVRAMCacheFreeEntry(sprite->slot);
+			sprite->retainCacheEntry = 1;
+			sprite->slot = state->flameVramBlock;
+			fdSpriteAnimationClear(sprite->entries[0]);
+			sprite->entries[0] = NULL;
+			sprite->count = 0;
+			sprite->width = src->width;
+			sprite->height = src->height;
+			sprite->image.shape = src->image.shape;
+			sprite->image.size = src->image.size;
+			sprite->image.tile = src->image.tile;
 		}
 	}
 }

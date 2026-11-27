@@ -48,13 +48,13 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	DRAW_RECTANGLE		 blit[2];
-	Sint32				 frm;
+	Sint32				 frame;
 	BATTLE_CAMERA		*camera;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	void				*caster;
 	Sint32				 arcs[4];
 	SCREEN_POINT		 src;
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	SCREEN_POINT		 hit;
 	MODEL_TEXTURE		 texture;
 	RENDER_MODEL		*model;
@@ -63,10 +63,10 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 j;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		EFFECT_LOAD_BLITTER(
@@ -81,14 +81,14 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	{
 		Sint32 endX[2] = {0, 0};
 		Sint32 endY[2] = {0, 0};
-		caster = btObjectGetStub(args->user)->obj;
+		caster = btObjectGetStub(args->user)->object;
 		fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL * 3);
 		fdActorSelectAnimationStub(caster, POSE_LEAP);
 		btEffectPosProjectBattler(args->user, &src);
-		btEffectPosProjectBattler(args->tgts[0], &tgt);
+		btEffectPosProjectBattler(args->targets[0], &target);
 		btResourceLoadAndDecompress(
 			RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
-		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 		btResourceLoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
 			state->sheet + RISING_DRAGON_FLAME_DRAGON_HEAD_PICTURES, 1, 1);
 		syWordsCopyEntry((void *)BG_PLTT,
@@ -98,9 +98,9 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 		btRenderBuildQuadStrip(MapGridMetatileBuffer + RISING_DRAGON_STRIP, 4,
 			32, DRAGON_SEGMENTS - 1);
 
-		for(frm = 0; frm != args->variant * 10 + 60; frm++) {
+		for(frame = 0; frame != args->variant * 10 + 60; frame++) {
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			if(frm == 0) {
+			if(frame == 0) {
 				arcs[0] = 0;
 				arcs[1] = 0;
 				arcs[2] = 0;
@@ -111,49 +111,50 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 
 			/* Each dragon's strike. */
 			for(i = 0; i != args->variant + 1; i++) {
-				if(frm != i * 10 + 28) {
+				if(frame != i * 10 + 28) {
 					continue;
 				}
-				btEffectPosProjectBattler(args->tgts[0], &hit);
+				btEffectPosProjectBattler(args->targets[0], &hit);
 				for(j = 0; j != DRAGON_SPARKS; j++) {
-					Sint32 ang;
+					Sint32 angle;
 					Sint32 speed;
 
 					spark = &state->particles[i * DRAGON_SPARKS + j];
 
 					spark->x = toFIXED(hit.x / 2);
 					spark->y = INTtoFIXED(hit.y - 16);
-					ang = syRandom();
+					angle = syRandom();
 					speed = (syRandom() & 255) + 127;
-					spark->velX = (sySin(ang) * speed) >> 6;
-					spark->velY = (syCos(ang) * speed) >> 6;
+					spark->velocityX = (sySin(angle) * speed) >> 6;
+					spark->velocityY = (syCos(angle) * speed) >> 6;
 					spark->variant = (syRandom() & 15) + 16;
 				}
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-				state->shakeFrm = 8;
-				if(frm == 28) {
+				state->shakeFrame = 8;
+				if(frame == 28) {
 					if(args->variant == EFFECT_VARIANT_BASIC) {
 						EFFECT_SHOW_DAMAGE(SE_CLATTER);
 					} else {
-						sySndPlayStub(SE_CLATTER);
+						sySoundPlayStub(SE_CLATTER);
 					}
-					btEffectStartActorMotion(args->tgts[0], 1, toFIXED(2),
+					btEffectStartActorMotion(args->targets[0], 1, toFIXED(2),
 						toFIXED(4), toFIXED(4), 150);
 				} else {
 					EFFECT_SHOW_DAMAGE(SE_CLATTER);
-					btEffectStartActorMotion(args->tgts[0], 1, toFIXED(2),
+					btEffectStartActorMotion(args->targets[0], 1, toFIXED(2),
 						toFIXED(4), toFIXED(7), TARGET_ANCHOR_PERCENT);
 				}
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 			}
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				spark = &state->particles[i];
 				if(spark->variant >= 0) {
 					Sint32 size = (spark->variant >> 3) + 2;
 
-					blit[0](canvas, sprs + BattleEffectMotePictures[size - 1],
+					blit[0](canvas,
+						sprites + BattleEffectMotePictures[size - 1],
 						FIXED_INTEGER_PART(spark->x) - size / 2,
 						FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
 					btParticleAdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
@@ -161,7 +162,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 				}
 			}
 
-			if(frm > 15) {
+			if(frame > 15) {
 				STRIP_VERTEX *stripA = (STRIP_VERTEX *)MapGridMetatileBuffer;
 				Sint32		  scale = DRAGON_SCALE;
 				const Uint8	 *stripMesh =
@@ -169,24 +170,24 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 
 				/* The arcs' heads and tails: the first dragon's head sets out
 				   at tick 16 and its tail at 32, the second's at 30 and 46. */
-				arcs[0] = (frm - 16) * DRAGON_ARC_SPEED;
+				arcs[0] = (frame - 16) * DRAGON_ARC_SPEED;
 				if(arcs[0] > DRAGON_ARC_END) {
 					arcs[0] = DRAGON_ARC_END;
 				}
-				if(frm > 31) {
-					arcs[1] = (frm - 32) * DRAGON_ARC_SPEED;
+				if(frame > 31) {
+					arcs[1] = (frame - 32) * DRAGON_ARC_SPEED;
 					if(arcs[1] > DRAGON_ARC_END) {
 						arcs[1] = DRAGON_ARC_END;
 					}
 				}
-				if(frm > 29) {
-					arcs[2] = (frm - 30) * DRAGON_ARC_SPEED;
+				if(frame > 29) {
+					arcs[2] = (frame - 30) * DRAGON_ARC_SPEED;
 					if(arcs[2] > DRAGON_ARC_END) {
 						arcs[2] = DRAGON_ARC_END;
 					}
 				}
-				if(frm > 45) {
-					arcs[3] = (frm - 46) * DRAGON_ARC_SPEED;
+				if(frame > 45) {
+					arcs[3] = (frame - 46) * DRAGON_ARC_SPEED;
 					if(arcs[3] > DRAGON_ARC_END) {
 						arcs[3] = DRAGON_ARC_END;
 					}
@@ -194,8 +195,8 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 
 				/* The first dragon arcs over, the second under. */
 				for(j = 0; j != DRAGON_SEGMENTS; j++) {
-					Sint32 distance = src.x / 4 - tgt.x / 4;
-					Sint32 ang =
+					Sint32 distance = src.x / 4 - target.x / 4;
+					Sint32 angle =
 						j * (arcs[0] - arcs[1]) + arcs[1] * DRAGON_SEGMENTS;
 					Sint32 height;
 					Sint32 width;
@@ -214,22 +215,22 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					for(i = 0; i != 2; i++) {
 						STRIP_VERTEX *corner = stripA + (j * 2 + i);
 
-						corner->x = (FIXEDtoINT(syCos(ang) *
+						corner->x = (FIXEDtoINT(syCos(angle) *
 										(distance + start + i * width))) -
 							distance;
 						corner->y = -(FIXEDtoINT(
-							sySin(ang) * (height + start + i * width)));
+							sySin(angle) * (height + start + i * width)));
 						corner->z = 0;
 					}
 					if(j == DRAGON_SEGMENTS - 1) {
 						endX[0] =
-							(FIXEDtoINT(syCos(ang) * distance)) - distance;
-						endY[0] = -(FIXEDtoINT(sySin(ang) * height));
+							(FIXEDtoINT(syCos(angle) * distance)) - distance;
+						endY[0] = -(FIXEDtoINT(sySin(angle) * height));
 					}
 				}
 				for(j = 0; j != DRAGON_SEGMENTS; j++) {
-					Sint32 distance = src.x / 4 - tgt.x / 4;
-					Sint32 ang =
+					Sint32 distance = src.x / 4 - target.x / 4;
+					Sint32 angle =
 						j * (arcs[2] - arcs[3]) + arcs[3] * DRAGON_SEGMENTS;
 					Sint32 height;
 					Sint32 width;
@@ -251,17 +252,17 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 							DRAGON_CORNERS;
 						STRIP_VERTEX *corner = stripB + (j * 2 + i);
 
-						corner->x = (FIXEDtoINT(syCos(ang) *
+						corner->x = (FIXEDtoINT(syCos(angle) *
 										(distance + start + i * width))) -
 							distance;
 						corner->y = FIXEDtoINT(
-							sySin(ang) * (height + start + i * width));
+							sySin(angle) * (height + start + i * width));
 						corner->z = 0;
 					}
 					if(j == DRAGON_SEGMENTS - 1) {
 						endX[1] =
-							(FIXEDtoINT(syCos(ang) * distance)) - distance;
-						endY[1] = FIXEDtoINT(sySin(ang) * height);
+							(FIXEDtoINT(syCos(angle) * distance)) - distance;
+						endY[1] = FIXEDtoINT(sySin(angle) * height);
 					}
 				}
 
@@ -280,7 +281,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					texture.logHeight = 5;
 					texture.pixels = state->sheet;
 					model->mesh = stripMesh;
-					model->scrollU = TEXTURE_SCROLL_MASK & ~(frm << 3);
+					model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
 					syInitMatrix();
 					if(args->side == EFFECT_SIDE_ENEMIES) {
 						syTranslate(INTtoFIXED(src.x / 2 - 68),
@@ -298,7 +299,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					btRenderTransformVertices(
 						stripA + i * DRAGON_CORNERS, vertices, DRAGON_CORNERS);
 					btRenderDrawModelList(model);
-					if(frm < i * 16 + 40) {
+					if(frame < i * 16 + 40) {
 						texture.logWidth = 6;
 						texture.logHeight = 6;
 						model->scrollU = 0;
@@ -369,13 +370,13 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 	Uint8				*canvas;
 	Uint8				*parts;
 	DRAW_RECTANGLE		 draw[2];
-	SCREEN_POINT		 tgt;
-	Sint32				 frm;
+	SCREEN_POINT		 target;
+	Sint32				 frame;
 	Sint32				 x;
 	Sint32				 y;
 
 	heap = RamHeapSlots;
-	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
+	state = (BATTLE_EFFECT_STATE *)heap->battleEffect;
 	canvas = heap->battleCanvas;
 	parts = RamMapMetatileBuffer;
 	btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
@@ -388,35 +389,35 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 	draw[1] = heap->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	btEffectPosProjectScaledBattler(args->tgts[0], &tgt);
+	btEffectPosProjectScaledBattler(args->targets[0], &target);
 
-	for(frm = 0; frm != FIGURE_TICKS; frm++) {
+	for(frame = 0; frame != FIGURE_TICKS; frame++) {
 		/* It starts 100 pixels above the canvas and to the target's far side,
 		   and comes down at it for 32 ticks. */
-		if(frm == 0) {
+		if(frame == 0) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				state->particles[0].x = INTtoFIXED(tgt.x + 40);
+				state->particles[0].x = INTtoFIXED(target.x + 40);
 			else
-				state->particles[0].x = INTtoFIXED(tgt.x - 168);
+				state->particles[0].x = INTtoFIXED(target.x - 168);
 			state->particles[0].y = -toFIXED(100);
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				state->particles[0].velX = -toFIXED(6);
+				state->particles[0].velocityX = -toFIXED(6);
 			else
-				state->particles[0].velX = toFIXED(6);
-			state->particles[0].velY = toFIXED(8);
+				state->particles[0].velocityX = toFIXED(6);
+			state->particles[0].velocityY = toFIXED(8);
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
 		}
-		if(frm < 32)
+		if(frame < 32)
 			btParticleAdvanceWithGravity2D(&state->particles[0], 60, 0);
 
 		/* In over 32 ticks, out over the last 16, rising away. */
-		if(frm <= 32) {
-			Sint32 level = frm / 2;
+		if(frame <= 32) {
+			Sint32 level = frame / 2;
 
 			REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level / 2) << 8) | level;
 		}
-		if(frm > 91) {
-			Sint32 level = FIGURE_TICKS - frm;
+		if(frame > 91) {
+			Sint32 level = FIGURE_TICKS - frame;
 
 			REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level / 2) << 8) | level;
 			btParticleAdvanceWithGravity2D(
@@ -425,16 +426,16 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 
 		/* The sway, and the canvas moved with the figure. */
 		x = FIXED_INTEGER_PART(state->particles[0].x) +
-			(FIXEDtoINT(sySin(frm * (TRIG_TURN / 256)) * FIGURE_SWAY));
+			(FIXEDtoINT(sySin(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
 		y = FIXED_INTEGER_PART(state->particles[0].y) +
-			(FIXEDtoINT(syCos(frm * (TRIG_TURN / 256)) * FIGURE_SWAY));
+			(FIXEDtoINT(syCos(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
 		REG_BG2X = -x << 8;
 
 		/* The body, and the arm reaching until tick 48, then clenched. */
 		if(args->side == EFFECT_SIDE_ENEMIES) {
 			draw[args->side](canvas, RamMapMetatileBuffer + FIGURE_BODY, 25,
 				y + 2, FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
-			if((Uint32)frm < 48)
+			if((Uint32)frame < 48)
 				draw[args->side](canvas,
 					RamMapMetatileBuffer + FIGURE_ARM_REACHING, 31, y + 22,
 					FIGURE_ARM_REACHING_WIDTH, FIGURE_ARM_REACHING_HEIGHT);
@@ -445,7 +446,7 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 		} else {
 			draw[args->side](canvas, RamMapMetatileBuffer + FIGURE_BODY, 7,
 				y + 2, FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
-			if((Uint32)frm < 48)
+			if((Uint32)frame < 48)
 				draw[args->side](canvas,
 					RamMapMetatileBuffer + FIGURE_ARM_REACHING, 49, y + 22,
 					FIGURE_ARM_REACHING_WIDTH, FIGURE_ARM_REACHING_HEIGHT);
@@ -456,8 +457,8 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The burst of sparks, three ticks a picture from tick 28. */
-		if(frm >= 28 && frm < 40) {
-			Sint32 picture = (frm - 28) / 3;
+		if(frame >= 28 && frame < 40) {
+			Sint32 picture = (frame - 28) / 3;
 
 			if(args->side == EFFECT_SIDE_ENEMIES) {
 				draw[args->side](canvas,
@@ -481,8 +482,8 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 
 		/* The heart: held up until tick 47, then in the closed fist, where
 		   from tick 62 it burns away, a picture every six ticks. */
-		if(frm > 39) {
-			if(frm <= 47) {
+		if(frame > 39) {
+			if(frame <= 47) {
 				if(args->side == EFFECT_SIDE_ENEMIES)
 					draw[args->side](canvas,
 						RamMapMetatileBuffer + FIGURE_HEART, 30, y + 46,
@@ -492,7 +493,7 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 						RamMapMetatileBuffer + FIGURE_HEART, 66, y + 46,
 						FIGURE_HEART_WIDTH, FIGURE_HEART_HEIGHT);
 			} else {
-				Sint32 picture = (frm - 56) / 6;
+				Sint32 picture = (frame - 56) / 6;
 
 				if(picture < 0)
 					picture = 0;
@@ -515,19 +516,19 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frm == FIGURE_HIT_TICK) {
-			state->shakeFrm = 6;
+		if(frame == FIGURE_HIT_TICK) {
+			state->shakeFrame = 6;
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
 		}
-		if(frm == FIGURE_SPARK_BURST_TICK) {
+		if(frame == FIGURE_SPARK_BURST_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-			state->shakeFrm = 3;
-			sySndPlayStub(SE_POWER_UP);
+			state->shakeFrame = 3;
+			sySoundPlayStub(SE_POWER_UP);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
 		}
 
 		btCameraShake(4, 4);

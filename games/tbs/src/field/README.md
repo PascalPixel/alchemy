@@ -32,12 +32,12 @@ the tick.
 | 15 | `fdPaletteFadeUpdate` | moves the colours a step toward their target |
 | 10 | `fdActorUpdateAllOnField` | carries every actor's script on and moves the actor |
 | 5 | `fdMapGridUpdateLayerScroll` | centres the map on the point it follows and scrolls the three layers |
-| 0 | `fdActorSystemPlaceSprs` | places every actor's sprite on the screen |
+| 0 | `fdActorSystemPlaceSprites` | places every actor's sprite on the screen |
 | 0 | `mnWindowSystemUpdate` | grows, shrinks and types into the windows |
 
 On the World Map the events at ranks 5 and 0 are `fdWorldMapUpdateView` and
-`fdActorSystemProjectSprs`. A map with animated tiles adds
-`fdTilesetAnimUpdate` at rank 0, and a scene adds events of its own for
+`fdActorSystemProjectSprites`. A map with animated tiles adds
+`fdTilesetAnimationUpdate` at rank 0, and a scene adds events of its own for
 whatever only it has. One more runs from the VBlank handler,
 `mnWindowSystemUploadTilemap`, which copies the windows to the screen.
 

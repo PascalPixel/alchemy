@@ -481,8 +481,8 @@ MapShapeGrid:
 	.global TitleIntroLogoTileBuffer
 TitleIntroLogoTileBuffer:
 	.space 0x00001800
-	.global MapGridAnimTiles
-MapGridAnimTiles:
+	.global MapGridAnimationTiles
+MapGridAnimationTiles:
 	.space 0x00002000
 	.global WorldMapStateWork
 WorldMapStateWork:

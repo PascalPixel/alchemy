@@ -19,10 +19,10 @@
 /* The SC_CALL function of MOVEMENT_TYPE_RESET_ACTION: clears an actor's sprite
    flags, so it has no shadow, and its collision flags, so nothing collides with
    it. */
-Sint32 fdActorClearSprAndCollisionFlags(ACTOR *actor)
+Sint32 fdActorClearSpriteAndCollisionFlags(ACTOR *actor)
 {
-	fdActorSetSprFlagsStub(actor, 0);
-	actor->collisionFlg = 0;
+	fdActorSetSpriteFlagsStub(actor, 0);
+	actor->collisionFlags = 0;
 	return 0;
 }
 
@@ -31,7 +31,7 @@ Sint32 fdActorClearSprAndCollisionFlags(ACTOR *actor)
 Sint32 fdActorMoveTowardTarget(ACTOR *actor)
 {
 	Sint32 step;
-	ACTOR *tgt;
+	ACTOR *target;
 	FIXED  deltaX;
 	FIXED  deltaZ;
 	Sint32 pixelsX;
@@ -40,15 +40,15 @@ Sint32 fdActorMoveTowardTarget(ACTOR *actor)
 	FIXED  newZ;
 	Sint32 distance;
 
-	tgt = (ACTOR *)actor->watchedActor;
-	if(tgt != NULL) {
+	target = (ACTOR *)actor->watchedActor;
+	if(target != NULL) {
 		/* Whole pixels, rounded toward zero. */
-		deltaX = tgt->x.fixed - actor->x.fixed;
+		deltaX = target->x.fixed - actor->x.fixed;
 		pixelsX = deltaX / toFIXED(1);
-		deltaZ = tgt->z.fixed - actor->z.fixed;
+		deltaZ = target->z.fixed - actor->z.fixed;
 		pixelsZ = deltaZ / toFIXED(1);
 		distance = sySquartIWRAM(pixelsX * pixelsX + pixelsZ * pixelsZ);
-		step = actor->tmr;
+		step = actor->timer;
 		if(distance >= step) {
 			newX = actor->x.fixed +
 				(Sint32)((Uint32)pixelsX * toFIXED(FOLLOW_STRIDE)) / step;
@@ -68,24 +68,24 @@ Sint32 fdActorMoveTowardTarget(ACTOR *actor)
 Sint32 fdActorTurnTowardWatchedActor(ACTOR *actor)
 {
 	Sint16 turnStep;
-	Uint16 curAng;
-	Sint32 tgtAng;
-	ACTOR *tgt;
+	Uint16 currentAngle;
+	Sint32 targetAngle;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
-	if(tgt != NULL) {
+	target = (ACTOR *)actor->watchedActor;
+	if(target != NULL) {
 		/* Clear ACTOR_FACES_MOTION, so moving does not turn it away again. */
-		actor->steeringFlg &= ~ACTOR_FACES_MOTION;
-		tgtAng = (Uint16)syAtan(
-			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
-		curAng = actor->facing;
-		turnStep = tgtAng - curAng;
+		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+		targetAngle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+		currentAngle = actor->facing;
+		turnStep = targetAngle - currentAngle;
 		if(turnStep != 0) {
 			if(turnStep > FACING_STEP)
 				turnStep = FACING_STEP;
 			if(turnStep < -FACING_STEP)
 				turnStep = -FACING_STEP;
-			actor->facing = (curAng + turnStep);
+			actor->facing = (currentAngle + turnStep);
 		}
 	}
 	return 1;
@@ -128,29 +128,29 @@ void fdActorSetMovementType(ACTOR *actor, Sint32 movement)
 /* Finds the nearest animated actor to self within FACING_TARGET_REACH pixels
    and under FACING_TARGET_HEIGHT of height, ignoring actors more than
    FACING_TARGET_ANGLE to either side once they are over FACING_TARGET_NEAR
-   pixels away; returns it if its sprite is `spr` (an SPR_ID), else NULL. */
-ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 spr)
+   pixels away; returns it if its sprite is `sprite` (an SPR_ID), else NULL. */
+ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 sprite)
 {
 	ACTOR *entry;
 	ACTOR *found;
-	Sint32 slotIdx;
+	Sint32 slotIndex;
 	Sint32 nearestDistance;
 	FIXED  heightDifference;
 	Sint32 pixelX;
 	Sint32 pixelZ;
 	Sint32 distance;
-	Sint32 ang;
-	Sint32 angDifference;
+	Sint32 angle;
+	Sint32 angleDifference;
 
 	found = NULL;
 	nearestDistance = FACING_TARGET_REACH;
 	entry = ActorsWork;
-	for(slotIdx = 0; slotIdx < ACTOR_COUNT; slotIdx++, entry++) {
+	for(slotIndex = 0; slotIndex < ACTOR_COUNT; slotIndex++, entry++) {
 		if(entry->script == NULL)
 			continue;
 		if(entry == self)
 			continue;
-		if(entry->sprStorageKind != ACTOR_SPRITE_ONE)
+		if(entry->spriteStorageKind != ACTOR_SPRITE_ONE)
 			continue;
 		heightDifference = entry->y.fixed - self->y.fixed;
 		if(heightDifference >= 0) {
@@ -166,13 +166,13 @@ ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 spr)
 		distance = sySquartIWRAM(pixelX * pixelX + pixelZ * pixelZ);
 		if(distance >= nearestDistance)
 			continue;
-		ang = (Uint16)syAtan(
+		angle = (Uint16)syAtan(
 			entry->z.fixed - self->z.fixed, entry->x.fixed - self->x.fixed);
 		if(distance > FACING_TARGET_NEAR) {
-			angDifference = (Sint16)(ang - self->facing);
-			if(angDifference < -(FACING_TARGET_ANGLE - 1))
+			angleDifference = (Sint16)(angle - self->facing);
+			if(angleDifference < -(FACING_TARGET_ANGLE - 1))
 				continue;
-			if(angDifference > FACING_TARGET_ANGLE - 1)
+			if(angleDifference > FACING_TARGET_ANGLE - 1)
 				continue;
 		}
 		found = entry;
@@ -180,7 +180,7 @@ ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 spr)
 	}
 	if(found == NULL)
 		return NULL;
-	if(found->spr->entries[0]->anmId != spr)
+	if(found->sprite->entries[0]->animationId != sprite)
 		return NULL;
 	return found;
 }

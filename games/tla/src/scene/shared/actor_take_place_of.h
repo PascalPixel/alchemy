@@ -1,8 +1,8 @@
-/* Puts `actor` where `tgt` stands, at rest, and `tgt` away at the
+/* Puts `actor` where `target` stands, at rest, and `target` away at the
    origin. */
-void scActorTakePlaceOf(ACTOR *actor, ACTOR *tgt)
+void scActorTakePlaceOf(ACTOR *actor, ACTOR *target)
 {
 	scFieldActorSetPosAndResetMotion(
-		actor, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
-	scFieldActorSetPosAndResetMotion(tgt, 0, 0, 0);
+		actor, target->x.fixed, target->y.fixed, target->z.fixed);
+	scFieldActorSetPosAndResetMotion(target, 0, 0, 0);
 }

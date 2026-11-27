@@ -13,7 +13,7 @@
    of lines and its WIN_RANGE, or when that is 0 the window edges it moves
    between. */
 typedef struct TRANSITION_SPAN {
-	Uint16 cnt;
+	Uint16 count;
 	Uint16 value;
 	Uint8  x0;
 	Uint8  x1;

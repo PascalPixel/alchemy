@@ -46,7 +46,7 @@ void btEffectRunDew(BATTLE_EFFECT_PARM *args)
    target in turn motes drift down and a column of light falls on it. */
 void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 {
-	SCREEN_POINT		 onlyTgt;
+	SCREEN_POINT		 onlyTarget;
 	SCREEN_POINT		 screenPos;
 	Sint32				 ground[3];
 	Sint32				 point[3];
@@ -55,8 +55,8 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
-	Sint32				 ofsX;
+	Sint32				 frame;
+	Sint32				 offsetX;
 	Uint8				*palette;
 	Sint32				 i;
 	Sint32				 k;
@@ -93,41 +93,42 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	}
 
 	REG_BG2PA = Q_8_8(1);
-	if(state->args->tgtCnt == 1) {
-		btProjectionScaledUnit(state->args->tgts[0], &onlyTgt);
-		ofsX = CANVAS_SIZE / 2 - onlyTgt.x;
+	if(state->args->targetCount == 1) {
+		btProjectionScaledUnit(state->args->targets[0], &onlyTarget);
+		offsetX = CANVAS_SIZE / 2 - onlyTarget.x;
 	} else {
 		if(state->args->side == EFFECT_SIDE_PARTY)
-			ofsX = -NARROW_CANVAS_PARTY_X;
+			offsetX = -NARROW_CANVAS_PARTY_X;
 		else
-			ofsX = 0;
+			offsetX = 0;
 	}
-	REG_BG2X = ofsX << 8;
+	REG_BG2X = offsetX << 8;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != state->args->tgtCnt * DJINN_BEAMS_TARGET_TICKS + 116;
-		frm++) {
+	for(frame = 0;
+		frame != state->args->targetCount * DJINN_BEAMS_TARGET_TICKS + 116;
+		frame++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
-		if(frm == 64)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == 80)
+		if(frame == 64)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == 80)
 			EFFECT_SHOW_DAMAGE(0);
 
 		/* The Djinni sways, then rises away. */
 		if(state->args->prelude == 1) {
-			Sint32 ang = frm * (TRIG_TURN / 32);
-			Sint32 x = FIXEDtoINT(-sySin(ang) * DJINN_BEAMS_DJINNI_SWAY_X) +
-				djinniX + ofsX - DJINNI_WIDTH / 2;
-			Sint32 y = FIXEDtoINT(syCos(ang) * DJINN_BEAMS_DJINNI_SWAY_Y) +
+			Sint32 angle = frame * (TRIG_TURN / 32);
+			Sint32 x = FIXEDtoINT(-sySin(angle) * DJINN_BEAMS_DJINNI_SWAY_X) +
+				djinniX + offsetX - DJINNI_WIDTH / 2;
+			Sint32 y = FIXEDtoINT(syCos(angle) * DJINN_BEAMS_DJINNI_SWAY_Y) +
 				djinniY - 24;
 
 			btEffectBuildCanvasBlitters(state->args->side ^ 1, draw);
-			if(frm > 32)
-				y = y - frm * 2 + 64;
+			if(frame > 32)
+				y = y - frame * 2 + 64;
 			draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frm <= 3)
+			if(frame <= 3)
 				draw[1](canvas, state->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -141,22 +142,22 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 
 		/* Motes sink, swaying. */
 		EFFECT_FOR_EACH_TARGET(k, state->args) {
-			ACTOR *tgt = btObjectGetStub(state->args->tgts[k])->actor;
+			ACTOR *target = btObjectGetStub(state->args->targets[k])->actor;
 			Sint32 start = k * DJINN_BEAMS_TARGET_TICKS;
 
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(point, tgt->x.fixed, 0, tgt->z.fixed);
+			SET_VECTOR(point, target->x.fixed, 0, target->z.fixed);
 			syMatrixTranslateVector(point);
-			if(frm > start) {
+			if(frame > start) {
 				for(i = 0; i != 8; i++) {
 					PARTICLE *mote =
 						&PARTICLES[k * DJINN_BEAMS_TARGET_MOTES + i];
 
-					if(frm > i * 8 + start && mote->y > toFIXED(8)) {
+					if(frame > i * 8 + start && mote->y > toFIXED(8)) {
 						Sint32 sway;
 
 						btProjectionPoint(mote, &screenPos);
-						screenPos.x += ofsX;
+						screenPos.x += offsetX;
 						sway =
 							FIXEDtoINT(sySin(mote->variant * (TRIG_TURN / 64)) *
 								DJINN_BEAMS_MOTE_SWAY);
@@ -183,41 +184,41 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
 			Sint32 start = i * DJINN_BEAMS_TARGET_TICKS;
 
-			if(frm >= start + 72) {
-				ACTOR *tgt = btObjectGetStub(state->args->tgts[i])->actor;
+			if(frame >= start + 72) {
+				ACTOR *target = btObjectGetStub(state->args->targets[i])->actor;
 
 				EFFECT_VIEW_FROM_CAMERA(camera);
-				if(frm == start + 72)
-					btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_GRB,
-						TINT_KEEP, TINT_KEEP, 0);
-				if(frm == start + 88)
-					btEffectTintBattler(state->args->tgts[i],
+				if(frame == start + 72)
+					btEffectTintBattler(state->args->targets[i],
+						SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
+				if(frame == start + 88)
+					btEffectTintBattler(state->args->targets[i],
 						SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
-				SET_VECTOR(ground, tgt->x.fixed, 0, tgt->z.fixed);
+				SET_VECTOR(ground, target->x.fixed, 0, target->z.fixed);
 				btProjectionPoint(ground, &screenPos);
-				screenPos.x += ofsX;
-				if(frm < start + 104) {
-					Sint32 pic = frm / 4;
+				screenPos.x += offsetX;
+				if(frame < start + 104) {
+					Sint32 picture = frame / 4;
 					Sint32 width = DJINN_BEAMS_COLUMN_HALF_WIDTH;
 
-					if(frm > start + 88)
+					if(frame > start + 88)
 						width = DJINN_BEAMS_COLUMN_HALF_WIDTH -
-							(frm - start - 88) / 3;
-					if(pic > 2)
-						pic = (pic & 1) + 1;
-					if(frm < start + 100) {
+							(frame - start - 88) / 3;
+					if(picture > 2)
+						picture = (picture & 1) + 1;
+					if(frame < start + 100) {
 						draw[0](canvas,
-							state->sheet + DjinnBeamsHeadPictures[pic],
-							screenPos.x - DjinnBeamsHeadWidths[pic],
-							screenPos.y - DjinnBeamsHeadHeights[pic] + 8,
-							DjinnBeamsHeadWidths[pic],
-							DjinnBeamsHeadHeights[pic]);
+							state->sheet + DjinnBeamsHeadPictures[picture],
+							screenPos.x - DjinnBeamsHeadWidths[picture],
+							screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
+							DjinnBeamsHeadWidths[picture],
+							DjinnBeamsHeadHeights[picture]);
 						draw[1](canvas,
-							state->sheet + DjinnBeamsHeadPictures[pic],
+							state->sheet + DjinnBeamsHeadPictures[picture],
 							screenPos.x,
-							screenPos.y - DjinnBeamsHeadHeights[pic] + 8,
-							DjinnBeamsHeadWidths[pic],
-							DjinnBeamsHeadHeights[pic]);
+							screenPos.y - DjinnBeamsHeadHeights[picture] + 8,
+							DjinnBeamsHeadWidths[picture],
+							DjinnBeamsHeadHeights[picture]);
 					}
 					for(k = 0; k != screenPos.y; k++) {
 						draw[0](canvas, state->sheet + DJINN_BEAMS_COLUMN_RAMP,

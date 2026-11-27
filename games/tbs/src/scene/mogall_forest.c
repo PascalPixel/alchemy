@@ -284,25 +284,25 @@ static void scMogallForestStartDjinnBattle(void)
 static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *pos)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32 savedMotionFlg = leader->motionFlg;
+	Sint32 savedMotionFlags = leader->motionFlags;
 	Sint32 collision = syFieldActorCheckMovementCollision(leader, pos);
 
 	if(collision == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(leader, 0);
+		leader->velocityY = toFIXED(4);
+		leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(leader, 0);
 		fdActorMoveToAndWait(
 			ACTOR_PARTY_LEADER, FIXEDtoINT(pos->x), FIXEDtoINT(pos->z));
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-		leader->motionFlg = savedMotionFlg;
+		fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+		leader->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -310,16 +310,16 @@ static Bool scMogallForestTryJumpLeaderTo(FIELD_POS *pos)
 }
 
 /* An actor script call: draws the actor in the colour mode its timer holds. */
-static Sint32 scMogallForestSetColFromTimer(ACTOR *actor)
+static Sint32 scMogallForestSetColorFromTimer(ACTOR *actor)
 {
-	fdActorSetSprCol(actor, actor->tmr);
+	fdActorSetSpriteColor(actor, actor->timer);
 	return 0;
 }
 
 /* Clears the actor's sprite flags when its script requests it. */
-static Sint32 scMogallForestClearActorSprFlags(ACTOR *actor)
+static Sint32 scMogallForestClearActorSpriteFlags(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -331,16 +331,16 @@ static void scMogallForestHopActorToWithSpeedFX(
 	ACTOR *actor;
 
 	actor = fdActorGet(actorId);
-	fdActorSetSprPriority(actorId, 1);
+	fdActorSetSpritePriority(actorId, 1);
 	fdActorSetSpeed(actorId, 3);
-	sySndPlay(SE_JUMP);
-	actor->velY = verticalSpeed;
+	sySoundPlay(SE_JUMP);
+	actor->velocityY = verticalSpeed;
 	actor->gravity = toFIXED(1) / 2;
 	actor->bounce = 0;
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorMoveToAndWait(actorId, targetX, targetZ);
 	fdActorSetPos(actorId, targetX, targetZ);
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	actor->gravity = toFIXED(1);
 }
 
@@ -354,36 +354,37 @@ static void scMogallForestHopActorToWithSpeedFX(
    ape makes popping out of a stump or diving back in. */
 static void scMogallForestSpawnPuffRing(Sint32 id)
 {
-	VECTOR3		   vel;
+	VECTOR3		   velocity;
 	EFFECT_OPTIONS options;
 	ACTOR		  *actor;
 	Uint32		   direction;
 
 	actor = fdActorGet(id);
-	sySndPlay(SE_THUMP);
-	options.pri = 1;
+	sySoundPlay(SE_THUMP);
+	options.priority = 1;
 	/* Seventeen puffs a sixteenth of a turn apart, the first and last together,
 	   spread a third wider east to west. */
 	for(direction = 0; direction <= TRIG_TURN / FACING_STEP; direction++) {
-		vel.x = syCos(direction * FACING_STEP);
-		vel.y = 0;
-		vel.z = sySin(direction * FACING_STEP);
-		vel.x += vel.x / 3;
-		fdEffectSpawn(actor->x.fixed, toFIXED(16), actor->z.fixed, vel.x,
-			vel.y + toFIXED(1) / 10, vel.z, EFFECT_USE_PRIORITY, &options);
+		velocity.x = syCos(direction * FACING_STEP);
+		velocity.y = 0;
+		velocity.z = sySin(direction * FACING_STEP);
+		velocity.x += velocity.x / 3;
+		fdEffectSpawn(actor->x.fixed, toFIXED(16), actor->z.fixed, velocity.x,
+			velocity.y + toFIXED(1) / 10, velocity.z, EFFECT_USE_PRIORITY,
+			&options);
 	}
 }
 
 /* Pans the camera to an ape's stump and, half a second later, brings the ape
    out in a puff of dust, drawn in the colour mode given. */
-static void scMogallForestApeComesOut(Sint32 actorId, Sint32 col)
+static void scMogallForestApeComesOut(Sint32 actorId, Sint32 color)
 {
-	fdCameraSetSpeedParms(toFIXED(2), toFIXED(1) / 4);
+	fdCameraSetSpeedParams(toFIXED(2), toFIXED(1) / 4);
 	fdCameraMoveToActorById(actorId, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(30);
 	scMogallForestSpawnPuffRing(actorId);
-	fdActorSetSprColById(actorId, col);
+	fdActorSetSpriteColorById(actorId, color);
 }
 
 /* The ape turns to the leader, hops on the spot and gestures the way on. */
@@ -481,9 +482,9 @@ static void scMogallForestFirstAreaPushLog(void)
 			fdScriptWait(45);
 			fdActorSetAnimation(
 				ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_FALLING_IN);
-			sySndPlay(SE_LOG_FALL);
-			fdActorSetSprPriority(ACTOR_FIRST_AREA_RIVER_LOG, 1);
-			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priFlg =
+			sySoundPlay(SE_LOG_FALL);
+			fdActorSetSpritePriority(ACTOR_FIRST_AREA_RIVER_LOG, 1);
+			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
 				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(38, 27, 4, 2, 31, 25);
 		}
@@ -520,7 +521,7 @@ static void scMogallForestFirstAreaJumpSouth(void)
 {
 	FIELD_POS pos;
 	ACTOR	 *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	Sint32	  savedMotionFlg = leader->motionFlg;
+	Sint32	  savedMotionFlags = leader->motionFlags;
 
 #if JUMP_LANDS_ON_CELL_CENTER
 	pos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
@@ -533,7 +534,7 @@ static void scMogallForestFirstAreaJumpSouth(void)
 #endif
 	if(scMogallForestTryJumpLeaderTo(&pos) != 0) {
 		fdScriptStart();
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		fdActorSetAnimation(
 			ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_STEPPED_ON);
 		leader->y.fixed -= toFIXED(1);
@@ -547,7 +548,7 @@ static void scMogallForestFirstAreaJumpSouth(void)
 		sySynch(4);
 		leader->y.fixed += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
-		leader->motionFlg = savedMotionFlg;
+		leader->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 	}
 }
@@ -627,7 +628,7 @@ static void scMogallForestFirstAreaApeAttacks(void)
 	fdActorStartRepeatedMotion(ACTOR_FIRST_AREA_ATTACKING_APE, 2);
 	fdActorShowEmote(
 		ACTOR_FIRST_AREA_ATTACKING_APE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdScriptWait(60);
 
 	scMogallForestHopActorTo(ACTOR_FIRST_AREA_ATTACKING_APE,
@@ -701,8 +702,8 @@ static void scMogallForestCatchNut(void)
 static void scMogallForestSecondAreaPushLog(void)
 {
 	PUSHED_ACTOR_PROBE probe;
-	Sint32			   dstColumn;
-	Sint32			   dstRow;
+	Sint32			   destColumn;
+	Sint32			   destRow;
 
 	fdScriptStart();
 
@@ -711,9 +712,9 @@ static void scMogallForestSecondAreaPushLog(void)
 
 		if(probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
 			(FIELD_METATILE(probe.pos.z)) == SECOND_AREA_LOG_OPENS_WAY_ROW) {
-			dstColumn = 35;
-			dstRow = 68;
-			fdMapGridCopyMetatileAttributes(35, 67, 4, 1, dstColumn, dstRow);
+			destColumn = 35;
+			destRow = 68;
+			fdMapGridCopyMetatileAttributes(35, 67, 4, 1, destColumn, destRow);
 		} else if(probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG &&
 			(FIELD_METATILE(probe.pos.x)) == SECOND_AREA_RIVER_BANK_COLUMN) {
 			gmFlagSet(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
@@ -724,14 +725,14 @@ static void scMogallForestSecondAreaPushLog(void)
 			fdScriptWait(30);
 			fdActorSetAnimation(
 				ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_FALLING_IN);
-			sySndPlay(SE_LOG_FALL);
+			sySoundPlay(SE_LOG_FALL);
 
-			fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priFlg =
+			fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
 				ACTOR_PRIORITY_UNDERFOOT;
 
-			dstColumn = 34;
-			dstRow = 30;
-			fdMapGridCopyMetatileAttributes(44, 30, 2, 4, dstColumn, dstRow);
+			destColumn = 34;
+			destRow = 30;
+			fdMapGridCopyMetatileAttributes(44, 30, 2, 4, destColumn, destRow);
 			scMapGridFillCollisionRectangle(2, 35, 30, 1, 4, 0);
 		}
 	}
@@ -774,7 +775,7 @@ static void scMogallForestSecondAreaUpdateRock(void)
 	if(column == 36 && row == 24) {
 		ACTOR *rock = fdActorGet(ACTOR_SECOND_AREA_ROCK);
 
-		rock->motionFlg = 0;
+		rock->motionFlags = 0;
 		rock->groundHeight = -toFIXED(2);
 		rock->y.fixed = -toFIXED(2);
 	}
@@ -868,8 +869,8 @@ static void scMogallForestSecondAreaSouthApeHidesAgain(void)
 	scMogallForestHopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480, 7.6);
 	fdScriptWait(2);
 	scMogallForestSpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
-	fdActorSetSprColById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_AREA_SOUTH_APE), 0);
+	fdActorSetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_SOUTH_APE), 0);
 	fdScriptWait(30);
 	gmFlagSet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED);
 	fdActorSetPos(ACTOR_SECOND_AREA_SOUTH_APE_STUMP, 424, 480);
@@ -947,7 +948,8 @@ static void scMogallForestThirdAreaPushLog(void)
 					THIRD_AREA_NORTH_RIVER_BANK_COLUMN) {
 					fdMapGridCopyMetatileAttributes(
 						26, 20, 2, 4, FIELD_METATILE(probe.pos.x), 23);
-					fdActorSetSprPriority(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 1);
+					fdActorSetSpritePriority(
+						ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 1);
 					landed = 1;
 					gmFlagSet(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED);
 				}
@@ -956,7 +958,8 @@ static void scMogallForestThirdAreaPushLog(void)
 					THIRD_AREA_SOUTH_RIVER_BANK_COLUMN) {
 					fdMapGridCopyMetatileAttributes(
 						26, 20, 2, 4, FIELD_METATILE(probe.pos.x), 32);
-					fdActorSetSprPriority(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 1);
+					fdActorSetSpritePriority(
+						ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 1);
 					landed = 1;
 					gmFlagSet(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED);
 				}
@@ -969,8 +972,9 @@ static void scMogallForestThirdAreaPushLog(void)
 			fdActorSetDestinationOffsetById(probe.actorSlot, 18, 6);
 			fdScriptWait(30);
 			fdActorSetAnimation(probe.actorSlot, MOGALL_FOREST_LOG_FALLING_IN);
-			sySndPlay(SE_LOG_FALL);
-			fdActorGet(probe.actorSlot)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			sySoundPlay(SE_LOG_FALL);
+			fdActorGet(probe.actorSlot)->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT;
 		} else {
 			if(probe.actorSlot == ACTOR_THIRD_AREA_LOG)
 				fdMapGridCopyMetatileAttributes(
@@ -986,11 +990,11 @@ static void scMogallForestThirdAreaPushLog(void)
 static void scMogallForestThirdAreaJumpWest(void)
 {
 	ACTOR	 *leader;
-	Uint8	  savedMotionFlg;
+	Uint8	  savedMotionFlags;
 	FIELD_POS pos;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlg = leader->motionFlg;
+	savedMotionFlags = leader->motionFlags;
 
 	pos.x = fdActorGet(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
 	pos.y = fdActorGet(ACTOR_PARTY_LEADER)->y.fixed;
@@ -999,7 +1003,7 @@ static void scMogallForestThirdAreaJumpWest(void)
 	if(scMogallForestTryJumpLeaderTo(&pos) != 0) {
 		fdScriptStart();
 
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		fdActorSetAnimation(
 			ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, MOGALL_FOREST_LOG_STEPPED_ON);
 
@@ -1018,7 +1022,7 @@ static void scMogallForestThirdAreaJumpWest(void)
 		leader->y.fixed += toFIXED(1);
 		leader->groundHeight += toFIXED(1);
 
-		leader->motionFlg = savedMotionFlg;
+		leader->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 	}
 }
@@ -1041,7 +1045,7 @@ static void scMogallForestThirdAreaUpdateNorthRock(void)
 	if(column == 45 && row == 6) {
 		ACTOR *rock = fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK);
 
-		rock->motionFlg = 0;
+		rock->motionFlags = 0;
 		rock->groundHeight = -toFIXED(2);
 		rock->y.fixed = -toFIXED(2);
 	}
@@ -1064,7 +1068,7 @@ static void scMogallForestThirdAreaUpdateSouthRock(void)
 		FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed));
 	if(FIELD_METATILE(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed) == 27) {
 		rock = fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK);
-		rock->motionFlg = 0;
+		rock->motionFlags = 0;
 		rock->groundHeight = -toFIXED(2);
 		rock->y.fixed = -toFIXED(2);
 		gmFlagSet(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
@@ -1098,7 +1102,7 @@ static void scMogallForestThirdAreaApeAttacks(void)
 	fdActorStartRepeatedMotion(ACTOR_THIRD_AREA_ATTACKING_APE, 2);
 	fdActorShowEmote(
 		ACTOR_THIRD_AREA_ATTACKING_APE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdScriptWait(60);
 	leaderX = fdActorGet(ACTOR_PARTY_LEADER)->x.part[0].integer;
 	leaderForZ = fdActorGet(ACTOR_PARTY_LEADER);
@@ -1204,8 +1208,8 @@ static void scMogallForestThirdAreaEastApeHidesAgain(void)
 	fdCameraMoveTo(744, CAMERA_KEEP, 504, 1);
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
 	scMogallForestSpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
-	fdActorSetSprColById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
+	fdActorSetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
 	fdScriptWait(30);
 	gmFlagSet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED);
 	fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);
@@ -1299,16 +1303,16 @@ static void scMogallForestApeLeadsToKillerApe(void)
    blue ape, bursts out, roars, leaps at Isaac and its battle begins. */
 static void scMogallForestKillerApeAttacks(void)
 {
-	VECTOR3 vel;
+	VECTOR3 velocity;
 	ACTOR  *actor;
-	Uint32	directionIdx;
+	Uint32	directionIndex;
 	Sint32	x;
 	FIXED	z;
 
 	actor = fdActorGet(ACTOR_THIRD_AREA_EAST_APE);
 	fdScriptStart();
-	fdActorSetSprColById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
+	fdActorSetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
 	fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE, 136, 360);
 	fdCameraSetSpeed(0.5);
 	fdCameraMoveTo(136, CAMERA_KEEP, 392, 1);
@@ -1329,27 +1333,27 @@ static void scMogallForestKillerApeAttacks(void)
 	scMogallForestSpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
 	actor->scaleX = toFIXED(6) / 5;
 	actor->scaleY = toFIXED(6) / 5;
-	fdActorSetSprColById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
+	fdActorSetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
 	scMogallForestHopActorTo(ACTOR_THIRD_AREA_EAST_APE, 136, 392, 15);
 	fdScriptWait(15);
 	/* The larger reveal uses a wider, level ring of puffs. */
 	fdMapGridSetShake(5, 5, 1);
-	for(directionIdx = 0; directionIdx <= TRIG_TURN / FACING_STEP;
-		directionIdx++) {
-		vel.x = syCos(directionIdx * FACING_STEP);
-		vel.y = 0;
-		z = sySin(directionIdx * FACING_STEP);
-		x = vel.x;
-		vel.z = z;
+	for(directionIndex = 0; directionIndex <= TRIG_TURN / FACING_STEP;
+		directionIndex++) {
+		velocity.x = syCos(directionIndex * FACING_STEP);
+		velocity.y = 0;
+		z = sySin(directionIndex * FACING_STEP);
+		x = velocity.x;
+		velocity.z = z;
 		x += x / 2;
-		vel.x = x;
-		fdEffectSpawn(actor->x.fixed, 0, actor->z.fixed, x, vel.y, z,
+		velocity.x = x;
+		fdEffectSpawn(actor->x.fixed, 0, actor->z.fixed, x, velocity.y, z,
 			EFFECT_SCRIPT_MEDIUM, NULL);
 	}
 	fdScriptWait(30);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdMapGridWaitForShakeToSettle();
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	fdActorRunRepeatedMotion(ACTOR_THIRD_AREA_EAST_APE, 2);
 	fdScriptWait(20);
 	/* It leaps at Isaac, and the battle begins. */
@@ -1406,7 +1410,7 @@ Sint32 scInit(void)
 			if(fdScriptGetFlag(FLAG_MOGALL_FOREST_FIRST_APE_SEEN) == 0) {
 				fdScriptStart();
 				sySynch(1);
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_GRB);
 				fdActorSetPos(ACTOR_FIRST_AREA_NORTH_APE, 92, 120);
 				fdActorFaceDirection(
@@ -1424,9 +1428,10 @@ Sint32 scInit(void)
 				scMogallForestHopActorTo(
 					ACTOR_FIRST_AREA_NORTH_APE, 136, 116, 7);
 				scMogallForestSpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_AREA_NORTH_APE), 0);
+				fdActorSetSpriteFlags(
+					fdActorGet(ACTOR_FIRST_AREA_NORTH_APE), 0);
 				gmFlagSet(FLAG_MOGALL_FOREST_FIRST_APE_SEEN);
 				fdScriptWait(60);
 				fdScriptEnd();
@@ -1437,7 +1442,7 @@ Sint32 scInit(void)
 			if(gmFlagGet(FLAG_MOGALL_FOREST_FIRST_AREA_NORTH_APE_OUT) != 0) {
 				break;
 			}
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_FIRST_AREA_NORTH_APE, SPRITE_COLOR_HIDDEN);
 			fdActorSetPos(ACTOR_FIRST_AREA_NORTH_APE, 136, 116);
 			break;
@@ -1458,12 +1463,13 @@ Sint32 scInit(void)
 			if(gmFlagGet(FLAG_MOGALL_FOREST_NUT_CAUGHT) == 0) {
 				scFloatNut(ACTOR_NUT);
 			}
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_FIRST_AREA_ATTACKING_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_FIRST_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
-			fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_AREA_EAST_APE), 0);
+			fdActorSetSpriteFlags(
+				fdActorGet(ACTOR_FIRST_AREA_ATTACKING_APE), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_AREA_EAST_APE), 0);
 			scPushedActorBlockFootprint(ACTOR_FIRST_AREA_LOG);
 			if(gmFlagGet(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED) == 0) {
 				scPushedActorBlockFootprint(ACTOR_FIRST_AREA_RIVER_LOG);
@@ -1474,7 +1480,7 @@ Sint32 scInit(void)
 			fdActorSetAnimation(
 				ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_IN_RIVER);
 			fdMapGridCopyMetatileAttributes(38, 27, 4, 2, 31, 25);
-			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priFlg =
+			fdActorGet(ACTOR_FIRST_AREA_RIVER_LOG)->priorityFlags =
 				ACTOR_PRIORITY_UNDERFOOT;
 			break;
 		}
@@ -1486,16 +1492,17 @@ Sint32 scInit(void)
 		case MOGALL_FOREST_QUARTZ_STUMPS_FROM_POND:
 		case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHEAST_CLEARING:
 			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_WEST_APE_OUT) == 0) {
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_SECOND_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_AREA_WEST_APE), 0);
+				fdActorSetSpriteFlags(
+					fdActorGet(ACTOR_SECOND_AREA_WEST_APE), 0);
 			}
 			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_EAST_APE_OUT) != 0) {
 				break;
 			}
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_SECOND_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_AREA_EAST_APE), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_EAST_APE), 0);
 			break;
 
 		case MOGALL_FOREST_QUARTZ_RIVER_FROM_NORTHEAST_CLEARING:
@@ -1508,7 +1515,7 @@ Sint32 scInit(void)
 				fdActorSetPos(ACTOR_SECOND_AREA_RIVER_LOG, 552, 510);
 				fdActorSetAnimation(
 					ACTOR_SECOND_AREA_RIVER_LOG, MOGALL_FOREST_LOG_IN_RIVER);
-				fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priFlg =
+				fdActorGet(ACTOR_SECOND_AREA_RIVER_LOG)->priorityFlags =
 					ACTOR_PRIORITY_UNDERFOOT;
 				fdMapGridCopyMetatileAttributes(44, 30, 2, 4, 34, 30);
 #if MOGALL_SECOND_AREA_LOG_PUSH_CELL_CLEARED_ON_RETURN
@@ -1522,15 +1529,16 @@ Sint32 scInit(void)
 				FIELD_METATILE(fdActorGet(ACTOR_SECOND_AREA_ROCK)->z.fixed), 1,
 				1, METATILE_BEHAVIOR_WALL);
 			sySynch(1);
-			fdActorSetSprColById(ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
-			fdActorGet(ACTOR_SECOND_AREA_LOG)->collisionFlg |=
+			fdActorSetSpriteColorById(
+				ACTOR_SECOND_AREA_ROCK, SPRITE_COLOR_GREY);
+			fdActorGet(ACTOR_SECOND_AREA_LOG)->collisionFlags |=
 				ACTOR_NOT_TARGETED;
 			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_OUT) != 0) {
 				break;
 			}
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_AREA_SOUTH_APE), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_AREA_SOUTH_APE), 0);
 			if(gmFlagGet(FLAG_MOGALL_FOREST_SECOND_AREA_SOUTH_APE_MOVED) == 0) {
 				break;
 			}
@@ -1548,27 +1556,29 @@ Sint32 scInit(void)
 			sySynch(1);
 			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_ATTACKING_APE_OUT) ==
 				0) {
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_THIRD_AREA_ATTACKING_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSprFlags(
+				fdActorSetSpriteFlags(
 					fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE), 0);
-				fdActorSetSprFlags(
+				fdActorSetSpriteFlags(
 					fdActorGet(ACTOR_THIRD_AREA_ATTACKING_APE_STUMP), 0);
 			}
 			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_MIDDLE_APE_OUT) == 0) {
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_THIRD_AREA_MIDDLE_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE), 0);
-				fdActorSetSprFlags(
+				fdActorSetSpriteFlags(
+					fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE), 0);
+				fdActorSetSpriteFlags(
 					fdActorGet(ACTOR_THIRD_AREA_MIDDLE_APE_STUMP), 0);
 			}
 			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_WEST_APE_OUT) != 0) {
 				break;
 			}
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_THIRD_AREA_WEST_APE, SPRITE_COLOR_HIDDEN);
-			fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_WEST_APE), 0);
-			fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_WEST_APE), 0);
+			fdActorSetSpriteFlags(
+				fdActorGet(ACTOR_THIRD_AREA_WEST_APE_STUMP), 0);
 			break;
 
 		case MOGALL_FOREST_KILLER_APE_CHEST_FROM_STUMPS:
@@ -1578,10 +1588,10 @@ Sint32 scInit(void)
 				FIELD_METATILE(
 					fdActorGet(ACTOR_THIRD_AREA_NORTH_ROCK)->z.fixed),
 				1, 1, METATILE_BEHAVIOR_WALL);
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_THIRD_AREA_NORTH_ROCK, SPRITE_COLOR_GREY);
 			sySynch(1);
-			fdActorGet(ACTOR_THIRD_AREA_LOG)->collisionFlg |=
+			fdActorGet(ACTOR_THIRD_AREA_LOG)->collisionFlags |=
 				ACTOR_NOT_TARGETED;
 			scPushedActorBlockFootprint(ACTOR_THIRD_AREA_LOG);
 			break;
@@ -1604,12 +1614,13 @@ Sint32 scInit(void)
 				fdActorSetAnimation(ACTOR_THIRD_AREA_NORTH_RIVER_LOG,
 					MOGALL_FOREST_LOG_IN_RIVER);
 				fdActorSetPos(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 698, 398);
-				fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priFlg |=
+				fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->priorityFlags |=
 					ACTOR_PRIORITY_UNDERFOOT;
 				fdMapGridCopyMetatileAttributes(26, 20, 2, 4, 42, 23);
 				gmFlagSet(FLAG_MOGALL_FOREST_SOUTH_ROCK_SETTLED);
 				fdActorSetPos(ACTOR_THIRD_AREA_SOUTH_ROCK, 632, 440);
-				fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
+				fdActorSetSpriteFlags(
+					fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK), 0);
 			}
 			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_SOUTH_LOG_ROLLED) == 0) {
 				scPushedActorBlockFootprint(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG);
@@ -1618,7 +1629,7 @@ Sint32 scInit(void)
 				fdActorSetAnimation(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG,
 					MOGALL_FOREST_LOG_IN_RIVER);
 				fdActorSetPos(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 666, 550);
-				fdActorGet(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priFlg =
+				fdActorGet(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG)->priorityFlags =
 					ACTOR_PRIORITY_UNDERFOOT;
 				fdMapGridCopyMetatileAttributes(26, 20, 2, 4, 40, 32);
 			}
@@ -1628,15 +1639,15 @@ Sint32 scInit(void)
 				FIELD_METATILE(
 					fdActorGet(ACTOR_THIRD_AREA_SOUTH_ROCK)->z.fixed),
 				1, 1, METATILE_BEHAVIOR_WALL);
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_THIRD_AREA_SOUTH_ROCK, SPRITE_COLOR_GREY);
 			sySynch(1);
-			fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlg |=
+			fdActorGet(ACTOR_THIRD_AREA_NORTH_RIVER_LOG)->collisionFlags |=
 				ACTOR_NOT_TARGETED;
 			if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_OUT) == 0) {
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
-				fdActorSetSprFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_THIRD_AREA_EAST_APE), 0);
 				if(gmFlagGet(FLAG_MOGALL_FOREST_THIRD_AREA_EAST_APE_MOVED) !=
 					0) {
 					fdActorSetPos(ACTOR_THIRD_AREA_EAST_APE_STUMP, 744, 504);
@@ -1688,7 +1699,7 @@ const Sint32 *FieldEffectDurationScripts[] = {
 Sint32 MogallForestRockScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_SET(SW_TIMER, SPRITE_COLOR_GREY),
-	SC_CALL(scMogallForestSetColFromTimer),
+	SC_CALL(scMogallForestSetColorFromTimer),
 	SC_END,
 };
 
@@ -1698,8 +1709,8 @@ Sint32 MogallForestActorScript[] = {
 	SC_SET(SW_SCALE_X, toFIXED(4) / 5),
 	SC_SET(SW_SCALE_Y, toFIXED(4) / 5),
 	SC_SET(SW_TIMER, SPRITE_COLOR_HIDDEN),
-	SC_CALL(scMogallForestSetColFromTimer),
-	SC_CALL(scMogallForestClearActorSprFlags),
+	SC_CALL(scMogallForestSetColorFromTimer),
+	SC_CALL(scMogallForestClearActorSpriteFlags),
 	SC_END,
 };
 
@@ -1709,7 +1720,7 @@ Sint32 MogallForestHidingPlaceScript[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_Y, 0),
 	SC_SET(SW_TARGET_Y, ACTOR_NO_TARGET),
-	SC_CALL(scMogallForestClearActorSprFlags),
+	SC_CALL(scMogallForestClearActorSpriteFlags),
 	SC_WAIT(2),
 	SC_END,
 };

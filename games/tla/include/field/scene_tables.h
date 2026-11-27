@@ -20,7 +20,7 @@ typedef struct SCENE {
 	/* an SCENE_TYPE, copied to MainRoutineStateWork.sceneType */
 	Sint8 sceneType;
 	/* the map loaded for it, copied to MainRoutineStateWork.mapId */
-	Uint16 mapIdx;
+	Uint16 mapIndex;
 	/* Two nibbles the field mode reads on arrival
 	   (gmFieldGetSceneAttributes). */
 	Sint16 attributes;
@@ -95,7 +95,7 @@ enum {
    faces, and the camera's bounds there. */
 typedef struct SCENE_ENTRANCE {
 	Sint16 entrance; /* the entrance number; SCENE_TABLE_END ends the table */
-	Sint16 requiredFlg;		  /* a flag that must be set, or -1 for none */
+	Sint16 requiredFlag;	  /* a flag that must be set, or -1 for none */
 	Sint16 x;				  /* pixels */
 	Sint16 y;				  /* pixels */
 	Sint16 z;				  /* pixels */
@@ -146,7 +146,7 @@ typedef struct SCENE_ENTRANCE {
 /* An actor a scene places: its sprite, the condition for placing it, how it
    behaves, where it stands and which way it faces, and how it turns to talk. */
 typedef struct ACTOR_PLACE {
-	Sint16 spr;		  /* the actor's sprite; SCENE_TABLE_END ends the table */
+	Sint16 sprite;	  /* the actor's sprite; SCENE_TABLE_END ends the table */
 	Sint16 condition; /* CONDITION_ALWAYS, or a flag condition */
 	/* A movement type (MOVEMENT_TYPE) or an actor script, for
 	   fdActorSetMovementType. */
@@ -156,14 +156,14 @@ typedef struct ACTOR_PLACE {
 	FIXED  z;		   /* 16.16 fixed-point pixels */
 	Uint16 facing;	   /* 1/65536 turns (FACING) */
 	Uint8  talkFacing; /* ACTOR_TALK_FACING */
-	Uint8  flg;
+	Uint8  flags;
 } ACTOR_PLACE;
 
-/* ACTOR_PLACE.flg: the actor takes the previous actor's sprite resource instead
-   of loading its own, when both are single sprites. */
+/* ACTOR_PLACE.flags: the actor takes the previous actor's sprite resource
+   instead of loading its own, when both are single sprites. */
 #define ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
-/* ACTOR_PLACE.flg: x is the number of a scene point to stand on, not a position
-   (fdFindActorPlacement). */
+/* ACTOR_PLACE.flags: x is the number of a scene point to stand on, not a
+   position (fdFindActorPlacement). */
 #define ACTOR_PLACEMENT_AT_SCENE_POINT		  0x02
 
 /* One row of a scene's actor placements, its spot in plain pixels. */
@@ -182,7 +182,7 @@ typedef enum MOVEMENT_TYPE {
 	MOVEMENT_TYPE_FOLLOW_WATCHED = 5, /* moves toward the watched actor */
 	MOVEMENT_TYPE_FACE_LEADER = 6, /* watches the leader and turns toward it */
 	/* MovementTypeClearCollisionScript: clears the actor's child and collision
-	   flags (fdActorClearSprAndCollisionFlags). */
+	   flags (fdActorClearSpriteAndCollisionFlags). */
 	MOVEMENT_TYPE_CLEAR_COLLISION = 7,
 	/* MovementTypeSquashScript: squashes and stretches for ever. */
 	MOVEMENT_TYPE_SQUASH = 8,
@@ -209,7 +209,7 @@ typedef enum ACTOR_TALK_FACING {
 typedef struct CUE {
 	/* The kind and its detail; CUE_TABLE_END ends the table. Item cues read it
 	   as bits: 15..8 item | 4 on an actor | 3..0 kind (4) */
-	Uint32 ctrl;
+	Uint32 control;
 	/* What the cue answers: an actor id or a tile code. Item cues read it as
 	   bits: 15..12 facing | 11 needs facing | 7..0 target */
 	Sint16 subject;
@@ -254,7 +254,7 @@ typedef struct CUE {
 
 /* A cue as the field reads it while the scene runs: the target is one byte. */
 typedef struct CUE_VIEW {
-	Sint32 flg;	  /* the low 4 bits are the kind (CUE_KIND_MASK) */
+	Sint32 flags; /* the low 4 bits are the kind (CUE_KIND_MASK) */
 	Uint8  value; /* the target (an actor id or a metatile behavior) */
 	Uint8  unusedAfterValue; /* no code names it */
 	Sint16 condition;		 /* as for fdGameFlagIsConditionActive */

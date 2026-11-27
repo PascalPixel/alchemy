@@ -236,7 +236,7 @@ OverlayArea:
 @ writes there: a battle; the Battle Arena, which leaves the partner's party in
 @ ActorSpriteSlots for the link battle; the world map's still image, which
 @ saves BG1's tiles to DecodeBuffer; and the debug sprite viewer. The tileset
-@ animation reads only past DecodeBuffer, from MapGridAnimTiles.
+@ animation reads only past DecodeBuffer, from MapGridAnimationTiles.
 	.global MapGridMetatileBuffer
 	.type MapGridMetatileBuffer, %object
 	.size MapGridMetatileBuffer, 49152
@@ -255,10 +255,10 @@ DecodeBuffer:
 	.size MetatileTiles, 32768
 MetatileTiles:
 	.space 32768
-	.global MapGridAnimTiles
-	.type MapGridAnimTiles, %object
-	.size MapGridAnimTiles, 16384
-MapGridAnimTiles:
+	.global MapGridAnimationTiles
+	.type MapGridAnimationTiles, %object
+	.size MapGridAnimationTiles, 16384
+MapGridAnimationTiles:
 	.space 16384
 	.global MapGridShapes
 	.type MapGridShapes, %object

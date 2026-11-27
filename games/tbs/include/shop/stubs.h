@@ -10,14 +10,14 @@ Sint32 mnInnCheckInStub(Sint32 innId, Sint32 actorId);
 void   mnCursorAdvanceStub(struct MENU_CURSOR *cursor);
 void   mnCursorMoveTowardTargetStub(struct MENU_CURSOR *cursor);
 void   mnCursorSetStub(
-	  struct MENU_CURSOR *cursor, Sint32 tgtX, Sint32 tgtY, Sint32 ticks);
+	  struct MENU_CURSOR *cursor, Sint32 targetX, Sint32 targetY, Sint32 ticks);
 void mnCursorSetPosImmediateStub(
 	struct MENU_CURSOR *cursor, Sint32 x, Sint32 y);
-void   mnQuantityBarFillStub(Sint32 itemCnt, Sint32 col, Uint8 *tileBuf);
+void   mnQuantityBarFillStub(Sint32 itemCount, Sint32 color, Uint8 *tileBuf);
 void   mnShopSaveAndTintFieldPaletteStub(Sint32 tint);
 void   mnShopRestoreFieldPaletteStub(void);
 Sint32 mnItemPickerRunStub(Sint32 *selectedUnit, Sint32 *selectedSlot);
-void   mnSndWaitForJingleStub(void);
+void   mnSoundWaitForJingleStub(void);
 void   mnInnPlaySleepStub(Sint32 roomPrice);
 
 #endif

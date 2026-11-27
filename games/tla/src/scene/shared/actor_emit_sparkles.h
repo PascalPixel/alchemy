@@ -7,9 +7,9 @@ void scActorEmitSparkles(ACTOR *actor)
 		EFFECT_OPTIONS sparkle;
 		FIXED		   pos[3];
 
-		sparkle.pal = SPRITE_COLOR_WHITE;
+		sparkle.palette = SPRITE_COLOR_WHITE;
 		sparkle.type = SPRITE_SPARKLE;
-		sparkle.pri = 1;
+		sparkle.priority = 1;
 		pos[0] = actor->x.fixed + toFIXED((syRandom() & 31) - 16);
 		pos[1] = actor->y.fixed + toFIXED(syRandom() & 31) + toFIXED(8);
 		pos[2] = actor->z.fixed;

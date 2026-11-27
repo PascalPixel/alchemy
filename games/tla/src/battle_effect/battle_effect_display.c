@@ -2,7 +2,7 @@
 
 /* Puts the battle screen back into the display state every effect starts from
    and ends with. */
-void btEffectConfigureEffectDisp(void)
+void btEffectConfigureEffectDisplay(void)
 {
 	REG_BLDCNT = 0;
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
@@ -20,12 +20,12 @@ void btEffectAdvanceScrollOnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 
-	if(++state->scrollTmr == state->scrollInterval) {
+	if(++state->scrollTimer == state->scrollInterval) {
 		BgScrollWork[1].x += state->scrollStepX;
 		BgScrollWork[1].y += state->scrollStepY;
-		state->scrollTmr = 0;
+		state->scrollTimer = 0;
 	}
 }
 
@@ -34,14 +34,14 @@ void btEffectAdvanceBg2OnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 
-	if(++state->scrollTmr == state->scrollInterval) {
+	if(++state->scrollTimer == state->scrollInterval) {
 		REG_BG2X = state->bg2x;
 		REG_BG2Y = state->bg2y;
 		state->bg2x += state->scrollStepX;
 		state->bg2y += state->scrollStepY;
-		state->scrollTmr = 0;
+		state->scrollTimer = 0;
 	}
 }
 

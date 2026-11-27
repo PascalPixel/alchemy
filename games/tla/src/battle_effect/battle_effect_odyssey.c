@@ -72,12 +72,12 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 	RENDER_MODEL			*model;
 	void					*projected;
 	PARTICLE				*step;
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 i;
 	Sint32					 k;
 	Uint8					*pixels;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
@@ -97,15 +97,15 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	draw[0] = RamHeapSlots->ramCode;
-	caster = btObjectGetStub(args->user)->obj;
+	caster = btObjectGetStub(args->user)->object;
 	transition = RamHeapSlots->battleBg;
 	savedScrollX = BgScrollWork[1].x;
 
-	for(frm = 0; frm != ODYSSEY_TICKS; frm++) {
+	for(frame = 0; frame != ODYSSEY_TICKS; frame++) {
 		btEffectPosProjectScaledBattler(args->user, &from);
-		btEffectPosProjectScaledBattler(args->tgts[0], &to);
+		btEffectPosProjectScaledBattler(args->targets[0], &to);
 
-		if(frm == 0) {
+		if(frame == 0) {
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			btResourceLoadAndDecompress(
@@ -124,11 +124,11 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 		   blue:
 		   each colour's red becomes its blue and half its green, and its blue
 		   its red. */
-		if(frm == 2) {
+		if(frame == 2) {
 			Uint16 *palette;
 
 			list[0] = args->user;
-			list[1] = args->tgts[0];
+			list[1] = args->targets[0];
 			list[2] = BATTLE_UNIT_LIST_END;
 			btActorSpawnObjectsForListStub(list, 0);
 			btBackgroundLoadStub(
@@ -155,10 +155,10 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 			}
 			transition->busy = 1;
 		}
-		if(frm > 1)
+		if(frame > 1)
 			BgScrollWork[1].x += 8;
 
-		if(frm == 8) {
+		if(frame == 8) {
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			step = state->particles;
@@ -168,42 +168,42 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 				step++;
 			}
 		}
-		if(frm == 86)
+		if(frame == 86)
 			btResourceLoadAndDecompress(RESOURCE_GIANT_SWORD_BLADE_SHEET,
 				state->sheet + ODYSSEY_COLOSSAL_SWORD, 1, 1);
 
 		/* Tick 84: the caster charges at the target. */
-		if(frm == 84) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 84) {
+			sySoundPlayStub(SE_POWER_UP);
 			fdActorSelectAnimationStub(caster, POSE_LEAP);
 			fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL * 3);
-			btEffectSetApproachMotion(args->user, args->tgts[0], 7, 80);
+			btEffectSetApproachMotion(args->user, args->targets[0], 7, 80);
 		}
 
 		/* Tick 90: the colossal sword's blow, and the shards scatter away from
 		   the caster. */
-		if(frm == 90) {
+		if(frame == 90) {
 			PARTICLE *shard;
 
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-			sySndPlayStub(SE_CLATTER);
+			sySoundPlayStub(SE_CLATTER);
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
-			state->shakeFrm = 8;
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
+			state->shakeFrame = 8;
 			shard = ODYSSEY_SHARDS;
 			for(i = 0; i != ODYSSEY_SHARD_COUNT; i++) {
 				Sint32 speed = (syRandom() & 0x1ff) + 32;
-				Sint32 ang = syRandom() & 0x7fff;
+				Sint32 angle = syRandom() & 0x7fff;
 
 				if(args->side == EFFECT_SIDE_PARTY)
-					ang += DEGtoANG(180);
+					angle += DEGtoANG(180);
 				shard->x = toFIXED(to.x / 2);
 				shard->y = toFIXED(to.y);
-				shard->velX = (sySin(ang) * speed) >> 6;
-				shard->velY = -(syCos(ang) * speed) >> 5;
+				shard->velocityX = (sySin(angle) * speed) >> 6;
+				shard->velocityY = -(syCos(angle) * speed) >> 5;
 				shard->z = syRandom();
-				shard->velZ = (syRandom() & 0x3ff) + toFIXED(1) / 64;
+				shard->velocityZ = (syRandom() & 0x3ff) + toFIXED(1) / 64;
 				shard->variant = (syRandom() & 0x3fff) + toFIXED(1) / 8;
 				shard++;
 			}
@@ -211,15 +211,15 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 
 		/* From tick 86: the colossal sword sweeps across the screen, drawn in
 		   two halves, the lower one mirrored. */
-		if(frm > 85) {
+		if(frame > 85) {
 			Sint32 x;
 
 			if(args->side == EFFECT_SIDE_ENEMIES) {
-				x = 2872 - frm * 32;
+				x = 2872 - frame * 32;
 				if(x < -38)
 					x = -38;
 			} else {
-				x = frm * 32 - 2910;
+				x = frame * 32 - 2910;
 				if(x > 0)
 					x = 0;
 			}
@@ -238,7 +238,7 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Until tick 89: the sparks of the swords' hits, shrinking. */
-		if(frm <= 89) {
+		if(frame <= 89) {
 			for(i = 0, step = state->particles;
 				i != ARRAY_COUNT(state->particles); i++) {
 				if(step->variant >= 0) {
@@ -260,42 +260,42 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != ODYSSEY_SWORDS; i++) {
 			Sint32 start = i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_TICK;
 
-			if(frm ==
+			if(frame ==
 				i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_TICK +
 					ODYSSEY_SWORD_PLUNGE_TICKS / 2)
-				sySndPlayStub(SE_POWER_UP);
-			if(frm == i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_TICK) {
+				sySoundPlayStub(SE_POWER_UP);
+			if(frame == i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_TICK) {
 				for(k = 0; k != ODYSSEY_SWORD_SPARKS; k++) {
 					PARTICLE *spark;
 					Sint32	  speed = (syRandom() & 255) + 128;
-					Sint32	  ang = syRandom() & 0x3fff;
+					Sint32	  angle = syRandom() & 0x3fff;
 
 					if(args->side == EFFECT_SIDE_ENEMIES) {
 						if(i != 0)
-							ang += DEGtoANG(90);
+							angle += DEGtoANG(90);
 					} else if(i == 0) {
-						ang -= DEGtoANG(90);
+						angle -= DEGtoANG(90);
 					} else {
-						ang += DEGtoANG(180);
+						angle += DEGtoANG(180);
 					}
 					spark = &state->particles[i *
 							(ARRAY_COUNT(state->particles) / ODYSSEY_SWORDS) +
 						k];
 					spark->x = toFIXED(to.x / 2);
 					spark->y = toFIXED(to.y);
-					spark->velX = (sySin(ang) * speed) >> 6;
-					spark->velY = -(syCos(ang) * speed) >> 5;
+					spark->velocityX = (sySin(angle) * speed) >> 6;
+					spark->velocityY = -(syCos(angle) * speed) >> 5;
 					spark->variant = (syRandom() & 7) + 17;
 				}
-				sySndPlayStub(SE_IMPACT);
+				sySoundPlayStub(SE_IMPACT);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 64);
-				state->shakeFrm = 4;
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 64);
+				state->shakeFrame = 4;
 			}
 			/* Each sword plunges 16 rows a tick, the first down to row 8 and
 			   the second up to row 40, and stays there. */
-			if(frm >= start && frm <= 89) {
-				Sint32 age = frm - start;
+			if(frame >= start && frame <= 89) {
+				Sint32 age = frame - start;
 				Sint32 x;
 				Sint32 y;
 
@@ -333,7 +333,7 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		projected = syHeapAllocEWRAM(32);
+		projected = syHeapAllocateEWRAM(32);
 		model = btRenderAllocateModelList(1);
 		pixels = MapGridMetatileBuffer;
 		texture.logWidth = 7;
@@ -348,10 +348,10 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 
 			/* Two rings of light flash out from the caster (ticks 2 and 8). */
 			start = i * 6 + 2;
-			if(frm == start)
-				sySndPlayStub(SE_POWER_UP);
-			if(frm >= start && frm < i * 6 + 2 + ODYSSEY_RING_TICKS) {
-				Sint32 age = frm - start;
+			if(frame == start)
+				sySoundPlayStub(SE_POWER_UP);
+			if(frame >= start && frame < i * 6 + 2 + ODYSSEY_RING_TICKS) {
+				Sint32 age = frame - start;
 				Sint32 shade = ODYSSEY_RING_SHINE_TICKS * 8 - age * 8;
 
 				if(shade > 0)
@@ -373,20 +373,20 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 
 			/* Rings of light close in on the caster, who flashes white. */
 			start = i * 8 + ODYSSEY_GATHER_TICK;
-			if(frm == i * 8 + 68)
-				sySndPlayStub(SE_POWER_UP);
-			if(frm == i * 8 + 72) {
+			if(frame == i * 8 + 68)
+				sySoundPlayStub(SE_POWER_UP);
+			if(frame == i * 8 + 72) {
 				/* FAKEMATCH(temporary): none, 0 held in a local; as 0 at its
 				 * uses. */
 				Sint32 none = 0;
 
 				btEffectTintBattler(
 					args->user, SPRITE_COLOR_WHITE, TINT_KEEP, 0, none);
-			} else if(frm == i * 8 + 76)
+			} else if(frame == i * 8 + 76)
 				btEffectTintBattler(
 					args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, 0, 0);
-			if(frm >= start && frm < start + ODYSSEY_GATHER_RING_TICKS) {
-				Sint32 scale = toFIXED(3) - (frm - start) * (toFIXED(1) / 4);
+			if(frame >= start && frame < start + ODYSSEY_GATHER_RING_TICKS) {
+				Sint32 scale = toFIXED(3) - (frame - start) * (toFIXED(1) / 4);
 
 				model->shade = 0;
 				syInitMatrix();
@@ -401,10 +401,10 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 
 			/* A ring of light at the target with each sword's hit. */
 			start = i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_TICK;
-			if(frm >= start &&
-				frm < i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_TICK +
+			if(frame >= start &&
+				frame < i * ODYSSEY_SWORD_INTERVAL + ODYSSEY_SWORD_HIT_TICK +
 						ODYSSEY_RING_TICKS) {
-				Sint32 age = frm - start;
+				Sint32 age = frame - start;
 				Sint32 shade = ODYSSEY_RING_SHINE_TICKS * 8 - age * 8;
 
 				if(shade > 0)
@@ -427,22 +427,22 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 
 		/* From tick 90: the shards, flat triangles in eight shades; from 100
 		   the screen fades to white. */
-		if(frm > 89) {
-			Uint8  col[1];
+		if(frame > 89) {
+			Uint8  color[1];
 			FIXED  center;
 			Sint32 x;
 			Sint32 y;
 
 			model->mesh = BattleEffectTriangleMesh;
 			model->kind = MODEL_SOLID_ADDITIVE;
-			if(frm > 99) {
+			if(frame > 99) {
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(2));
 				btPaletteBrightenBgEntries(2, 2, 2);
 			}
 			for(i = 0, step = ODYSSEY_SHARDS; i != ODYSSEY_SHARD_COUNT; i++) {
-				col[0] = (i & 7) + ODYSSEY_SHARD_LEVEL;
-				model->shade = (long)col;
+				color[0] = (i & 7) + ODYSSEY_SHARD_LEVEL;
+				model->shade = (long)color;
 				syInitMatrix();
 				x = step->x;
 				y = step->y;
@@ -504,7 +504,7 @@ void btEffectRunCloudSwirl(BATTLE_EFFECT_PARM *args)
 	BATTLE_BACKGROUND_STATE *transition;
 	DRAW_RECTANGLE			 draw;
 	const Uint8				*palette;
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 enabled;
 	FIXED					 sine;
 	FIXED					 cosine;
@@ -512,7 +512,7 @@ void btEffectRunCloudSwirl(BATTLE_EFFECT_PARM *args)
 	Uint8					*cells = RamMapMetatileBuffer;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	savedScrollX = BgScrollWork[1].x;
 	transition = RamHeapSlots->battleBg;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(3));
@@ -567,25 +567,25 @@ void btEffectRunCloudSwirl(BATTLE_EFFECT_PARM *args)
 	state->transferPending = enabled;
 	sySynch(1);
 
-	for(frm = 0; frm != SWIRL_MAX_TICKS; frm++) {
+	for(frame = 0; frame != SWIRL_MAX_TICKS; frame++) {
 		if(PerWork.repeat & KEY_B)
-			frm = 0;
+			frame = 0;
 		if(PerWork.repeat & KEY_A)
 			break;
 
-		if(frm == 0)
+		if(frame == 0)
 			syWordsFillEntry(
 				(void *)BG_PLTT, SHEET_PALETTE_BYTES, COLOR_PAIR(RGB_WHITE));
-		if(frm > 119)
+		if(frame > 119)
 			btPaletteBrightenBgEntries(-1, -1, -1);
-		else if((frm & 3) == 1)
+		else if((frame & 3) == 1)
 			btEffectStepPaletteToResource(RESOURCE_BLUE_FLAME_SHEET);
-		BgScrollWork[1].x = frm / 2;
+		BgScrollWork[1].x = frame / 2;
 
 		/* BG2 turns a 1024th of a turn a tick. Its steps are 8.8, so the 16.16
 		   centre is scaled by Q_8_8(1) for the products to come out 16.16. */
-		sine = sySin(frm * (TRIG_TURN / 1024)) / SWIRL_STEP_DIVISOR;
-		cosine = syCos(frm * (TRIG_TURN / 1024)) / SWIRL_STEP_DIVISOR;
+		sine = sySin(frame * (TRIG_TURN / 1024)) / SWIRL_STEP_DIVISOR;
+		cosine = syCos(frame * (TRIG_TURN / 1024)) / SWIRL_STEP_DIVISOR;
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BG2PA, cosine, IO_WRITE_HALFWORD);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BG2PB, sine, IO_WRITE_HALFWORD);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BG2PC, -sine, IO_WRITE_HALFWORD);
@@ -636,7 +636,7 @@ void btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void))
 
 	scrollX = (side & 1) * WIPE_DISTANCE - 64;
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	/* CANVAS_COPY does not read the share. */
@@ -648,19 +648,19 @@ void btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void))
 	for(i = 0; i != CANVAS_SIZE; i++) {
 		for(y = 0; y != CANVAS_SIZE; y++) {
 			Sint32 tileX = i & 7;
-			Sint32 col;
-			Sint32 columnOfs;
+			Sint32 color;
+			Sint32 columnOffset;
 
 			if(i < WIPE_EDGE_WIDTH)
-				col = i * 2;
+				color = i * 2;
 			else {
-				col = CANVAS_LEVEL_BRIGHTEST -
+				color = CANVAS_LEVEL_BRIGHTEST -
 					((i - (CANVAS_SIZE - WIPE_EDGE_WIDTH)) << 1);
 				if(i < CANVAS_SIZE - WIPE_EDGE_WIDTH)
-					col = CANVAS_LEVEL_BRIGHTEST;
+					color = CANVAS_LEVEL_BRIGHTEST;
 			}
-			columnOfs = tileX + (i >> 3) * CANVAS_TILE_BYTES;
-			canvas[columnOfs + ((y & 7) << 3) + ((y >> 3) << 10)] = col;
+			columnOffset = tileX + (i >> 3) * CANVAS_TILE_BYTES;
+			canvas[columnOffset + ((y & 7) << 3) + ((y >> 3) << 10)] = color;
 		}
 	}
 
@@ -688,26 +688,26 @@ void btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void))
 }
 
 /* Unused: sets the colour mode of each running animation layer of a sprite and
-   marks it for redrawing, as fdActorSetSprCol does for an actor's. */
-UNUSED void btSprSetColMode(SPR *spr, Sint32 mode)
+   marks it for redrawing, as fdActorSetSpriteColor does for an actor's. */
+UNUSED void btSpriteSetColorMode(SPR *sprite, Sint32 mode)
 {
 	Sint32 i;
 
-	for(i = 0; i < spr->cnt; i++) {
-		SPR_ANIMATION *part = spr->entries[i];
+	for(i = 0; i < sprite->count; i++) {
+		SPR_ANIMATION *part = sprite->entries[i];
 
 		if(part != NULL && part->script != NULL)
-			part->colMode = mode;
+			part->colorMode = mode;
 	}
-	spr->dirty = 1;
+	sprite->dirty = 1;
 }
 
 /* Unused: nothing calls it. Fills count bytes of table with a rising shade ramp
    (0 to CANVAS_LEVEL_BRIGHTEST, by a step scaled by scale), then repeats it
    seven more times. */
-UNUSED void btEffectBuildShadeRamp(Uint8 *tbl, Uint32 cnt, Sint32 scale)
+UNUSED void btEffectBuildShadeRamp(Uint8 *table, Uint32 count, Sint32 scale)
 {
-	Uint32 step = cnt * 2;
+	Uint32 step = count * 2;
 	Sint32 total = 0;
 	Uint32 i;
 	Sint32 j;
@@ -717,28 +717,28 @@ UNUSED void btEffectBuildShadeRamp(Uint8 *tbl, Uint32 cnt, Sint32 scale)
 	step = CANVAS_LEVEL_BRIGHTEST / step;
 	if(step < 6)
 		step = 6;
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		Sint32 value;
 
 		total += step;
 		value = FIXEDtoINT(scale * total);
 		if(value > CANVAS_LEVEL_BRIGHTEST)
 			value = CANVAS_LEVEL_BRIGHTEST;
-		tbl[i] = value;
+		table[i] = value;
 	}
 	for(j = 1; j != 8; j++) {
-		for(i = 0; i != cnt; i++)
-			tbl[j * cnt + i] = tbl[i];
+		for(i = 0; i != count; i++)
+			table[j * count + i] = table[i];
 	}
 }
 
 /* Unused: nothing calls it. Fills table with a shade ramp that rises over count
    bytes and falls back, repeated repeats times. */
 UNUSED void btEffectBuildShadeRampWave(
-	Uint8 *tbl, Uint32 cnt, Uint32 repeats, Sint32 scale)
+	Uint8 *table, Uint32 count, Uint32 repeats, Sint32 scale)
 {
 	Sint32 total = 0;
-	Uint32 step = cnt * 2;
+	Uint32 step = count * 2;
 	Uint32 i;
 	Uint32 j;
 
@@ -747,29 +747,29 @@ UNUSED void btEffectBuildShadeRampWave(
 	step = CANVAS_LEVEL_BRIGHTEST / step;
 	if(step < 6)
 		step = 6;
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		Sint32 value;
 
 		total += step;
 		value = FIXEDtoINT(scale * total);
 		if(value > CANVAS_LEVEL_BRIGHTEST)
 			value = CANVAS_LEVEL_BRIGHTEST;
-		tbl[i] = value;
+		table[i] = value;
 	}
-	for(i = 0; i != cnt; i++)
-		tbl[cnt + i] = tbl[cnt - 1 - i];
+	for(i = 0; i != count; i++)
+		table[count + i] = table[count - 1 - i];
 	for(j = 1; j != repeats; j++) {
-		for(i = 0; i != cnt * 2; i++)
-			tbl[j * cnt * 2 + i] = tbl[i];
+		for(i = 0; i != count * 2; i++)
+			table[j * count * 2 + i] = table[i];
 	}
 }
 
 /* As btEffectBuildShadeRampWave, at twice the step. */
 void btEffectBuildSteepShadeRampWave(
-	Uint8 *tbl, Uint32 cnt, Uint32 repeats, Sint32 scale)
+	Uint8 *table, Uint32 count, Uint32 repeats, Sint32 scale)
 {
 	Sint32 total = 0;
-	Uint32 step = cnt * 2;
+	Uint32 step = count * 2;
 	Uint32 i;
 	Uint32 j;
 
@@ -779,20 +779,20 @@ void btEffectBuildSteepShadeRampWave(
 	if(step < 6)
 		step = 6;
 	step *= 2;
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		Sint32 value;
 
 		total += step;
 		value = FIXEDtoINT(scale * total);
 		if(value > CANVAS_LEVEL_BRIGHTEST)
 			value = CANVAS_LEVEL_BRIGHTEST;
-		tbl[i] = value;
+		table[i] = value;
 	}
-	for(i = 0; i != cnt; i++)
-		tbl[cnt + i] = tbl[cnt - 1 - i];
+	for(i = 0; i != count; i++)
+		table[count + i] = table[count - 1 - i];
 	for(j = 1; j != repeats; j++) {
-		for(i = 0; i != cnt * 2; i++)
-			tbl[j * cnt * 2 + i] = tbl[i];
+		for(i = 0; i != count * 2; i++)
+			table[j * count * 2 + i] = table[i];
 	}
 }
 
@@ -802,22 +802,23 @@ void btEffectBuildSteepShadeRampWave(
    backdrop. */
 void btIrisRestoreBattle(void)
 {
-	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEffect;
 	BATTLE_BACKGROUND_STATE *transition = RamHeapSlots->battleBg;
 	BATTLE_STATE			*battle = RamHeapSlots->battleState;
 	Sint32					 i;
 
-	for(i = 0; i != state->args->tgtCnt; i++) {
-		MOTION_OBJECT *object = btObjectGetStub(state->args->tgts[i])->obj;
+	for(i = 0; i != state->args->targetCount; i++) {
+		MOTION_OBJECT *object =
+			btObjectGetStub(state->args->targets[i])->object;
 
 		SET_POSITION(object, 0, toFIXED(120), 0);
 		object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
-		btMotionApplyKnockbackStub(state->args->tgts[i], KNOCKBACK_HOP);
+		btMotionApplyKnockbackStub(state->args->targets[i], KNOCKBACK_HOP);
 	}
 	transition->busy = 0;
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
-	syPaletteLoadBasicSprCols();
+	syPaletteLoadBasicSpriteColors();
 	btBackgroundLoadStub(
 		BATTLE_BACKGROUND_FIXED, battle->bg, BACKGROUND_DARKEN_TICKS);
 }

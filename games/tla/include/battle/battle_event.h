@@ -26,14 +26,14 @@ typedef enum BATTLE_PLAYBACK_PHASE {
 typedef struct BATTLE_PLAYBACK_QUEUE {
 	Uint8  opcodes[BATTLE_PLAYBACK_CAPACITY];
 	Uint32 operands[BATTLE_PLAYBACK_CAPACITY];
-	Sint32 tgtIdx; /* the plan's next target to resolve */
-	Sint32 cnt;	   /* events queued */
+	Sint32 targetIndex; /* the plan's next target to resolve */
+	Sint32 count;		/* events queued */
 } BATTLE_PLAYBACK_QUEUE;
 
 STATIC_ASSERT(sizeof(BATTLE_PLAYBACK_QUEUE) == 328);
 STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, operands) == 64);
-STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, tgtIdx) == 320);
-STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, cnt) == 324);
+STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, targetIndex) == 320);
+STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, count) == 324);
 
 /* The battle events btPlaybackPush queues, each with one operand, for
    btPlaybackRun (or btPlaybackRunAll) to play in order. The names, numbers and

@@ -9,24 +9,24 @@ void fdPsynergyLiftOnTarget(Sint32 unused)
 {
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *caster;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	void			   *hands[2]; /* right then left */
 	FIXED				pos[3];
 	Sint32				x;
 	FIXED				y;
 	Sint32				z;
-	Sint32				handIdx;
+	Sint32				handIndex;
 	FIXED				startY;
 
 	effectState = FieldEffectStateWork;
-	tgt = effectState->tgt;
+	target = effectState->target;
 	caster = effectState->caster;
-	if(tgt == NULL)
+	if(target == NULL)
 		return;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	/* The caster faces its target while Lift holds it. */
-	caster->watchedActor = (union ACTOR_OR_EFFECT *)tgt;
+	caster->watchedActor = (union ACTOR_OR_EFFECT *)target;
 	fdActorStartScriptStub(caster, FieldEffectSourceHoldScript);
 
 	x = effectState->x;
@@ -42,25 +42,25 @@ void fdPsynergyLiftOnTarget(Sint32 unused)
 	/* Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
 	   left) and moves 14 pixels that way. */
 	sySynch(15);
-	for(handIdx = 0; handIdx < 2; handIdx++) {
-		ACTOR *hand = hands[handIdx];
+	for(handIndex = 0; handIndex < 2; handIndex++) {
+		ACTOR *hand = hands[handIndex];
 		if(hand != NULL)
-			fdActorSetTargetPosFromMagnitudeAng(
+			fdActorSetTargetPosFromMagnitudeAngle(
 				hand, toFIXED(14), hand->facing);
 	}
 
 	fdActorWaitForMoveStub(hands[0]);
-	tgt->update = fdActorCycleSprCols;
-	sySndPlayStub(SE_PSYNERGY_START);
-	tgt->motionFlg = ACTOR_FLOATS;
+	target->update = fdActorCycleSpriteColors;
+	sySoundPlayStub(SE_PSYNERGY_START);
+	target->motionFlags = ACTOR_FLOATS;
 
 	/* Lift 32 pixels, a quarter pixel at a time. */
-	startY = tgt->y.fixed;
+	startY = target->y.fixed;
 	if(hands[0] != NULL && hands[1] != NULL) {
-		while(tgt->y.fixed <= startY + toFIXED(32)) {
+		while(target->y.fixed <= startY + toFIXED(32)) {
 			((ACTOR *)hands[0])->y.fixed += toFIXED(1) / 4;
 			((ACTOR *)hands[1])->y.fixed += toFIXED(1) / 4;
-			tgt->y.fixed += toFIXED(1) / 4;
+			target->y.fixed += toFIXED(1) / 4;
 			sySynch(1);
 		}
 	}
@@ -68,7 +68,7 @@ void fdPsynergyLiftOnTarget(Sint32 unused)
 	/* The hands burst into particles; the target stays up. */
 	fdEffectBurstHand(hands[0]);
 	fdEffectBurstHand(hands[1]);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Two hands appear 16 pixels above the spot in front of the caster, 32 pixels
@@ -77,17 +77,17 @@ DEFINE_CLAPPING_HANDS_CAST(fdPsynergyLift, fdEffectSpawnLiftHand)
 
 /* Spawns a hand (SPRITE_MOVE_HAND) and grows it, spinning, from a quarter to
    full size over 24 ticks; angle is the way it faces once grown. */
-ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
+ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle)
 {
 	ACTOR *hand;
 	FIXED  scale;
 
-	sySndPlayStub(SE_ITEM_BREAK);
+	sySoundPlayStub(SE_ITEM_BREAK);
 	hand = fdActorSpawn(SPRITE_MOVE_HAND, x, y, z);
 	if(hand != NULL) {
 		hand->scaleX = hand->scaleY = toFIXED(1) / 4;
 		hand->acceleration = hand->speedLimit = toFIXED(3);
-		((SPR *)hand->spr)->image.pri = 0;
+		((SPR *)hand->sprite)->image.priority = 0;
 		fdActorSelectAnimationStub(hand, MOVE_HAND_ANIMATION_GRIP);
 		scale = hand->scaleX;
 		if(scale < toFIXED(1)) {
@@ -100,7 +100,7 @@ ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 				scale = hand->scaleX;
 			} while(scale < toFIXED(1));
 		}
-		hand->facing = ang;
+		hand->facing = angle;
 	}
 	return hand;
 }
@@ -122,8 +122,8 @@ again:
 		pos.x = effect->originX;
 		pos.z = effect->originZ;
 		syVectorAddPolarOffset(toFIXED(25), (Uint16)syRandom(), (FIXED *)&pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(3);
 		effect->speedMax = toFIXED(3);
 		effect->turnStepLimited = 0;
@@ -141,18 +141,18 @@ again:
 	}
 
 	if(state == OUT_AND_BACK_AIM_BACK) {
-		/* 8 pixels toward effectState->ang from 16 pixels above the caster, on
-		   screen, give or take 4 pixels. */
+		/* 8 pixels toward effectState->angle from 16 pixels above the caster,
+		   on screen, give or take 4 pixels. */
 		ACTOR *caster = effectState->caster;
 
 		pos.x = caster->x.fixed;
 		pos.y = caster->y.fixed + toFIXED(16);
 		pos.z = caster->z.fixed;
-		syVectorAddPolarOffset(toFIXED(8), effectState->ang, (FIXED *)&pos);
+		syVectorAddPolarOffset(toFIXED(8), effectState->angle, (FIXED *)&pos);
 		fdCameraWorldToScreen(&pos);
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), (FIXED *)&pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->turnStepMax = TRIG_TURN / 32;
 		effect->turnStepLimited = 1;
 		effect->state++;
@@ -174,28 +174,29 @@ Sint32 fdEffectSpawnHeavyImpact(ACTOR *src)
 	VECTOR3 pos;
 	ACTOR  *impact;
 	ACTOR  *sparkle;
-	Sint32	sparkleIdx;
+	Sint32	sparkleIndex;
 
-	sySndPlayStub(SE_HEAVY_IMPACT);
+	sySoundPlayStub(SE_HEAVY_IMPACT);
 	pos.x = src->x.fixed;
 	pos.y = src->y.fixed;
 	pos.z = src->z.fixed;
 	impact = fdActorSpawn(SPRITE_STAR_BURST, pos.x, pos.y - toFIXED(32), pos.z);
 	if(impact != NULL) {
-		impact->motionFlg = 0;
+		impact->motionFlags = 0;
 		impact->wait = 20;
 		fdActorStartScriptStub(impact, FieldEffectSharedParticleScript);
 	}
 
 	/* Sparkles: 1 to 2 pixels a tick, 8 to 32 pixels in a random direction. */
-	for(sparkleIdx = 0; sparkleIdx < HEAVY_IMPACT_SPARKLES; sparkleIdx++) {
+	for(sparkleIndex = 0; sparkleIndex < HEAVY_IMPACT_SPARKLES;
+		sparkleIndex++) {
 		sparkle = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
 		if(sparkle != NULL) {
 			fdActorStartScriptStub(sparkle, FieldEffectFragmentScript);
 			sparkle->speedLimit = syRandom() + toFIXED(1);
 			sparkle->acceleration = toFIXED(1);
-			sparkle->motionFlg = 0;
-			fdActorSetTargetPosFromMagnitudeAng(
+			sparkle->motionFlags = 0;
+			fdActorSetTargetPosFromMagnitudeAngle(
 				sparkle, syRandom() * 24 + toFIXED(8), syRandom());
 		}
 	}

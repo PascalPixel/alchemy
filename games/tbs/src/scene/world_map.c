@@ -439,8 +439,8 @@ static void scWorldMapMeetHail(void)
    sparkle on its second tick. */
 static void scWorldMapReleaseSparkAfterDelay(ACTOR *actor)
 {
-	if(actor->tmr <= 0) {
-		actor->tmr++;
+	if(actor->timer <= 0) {
+		actor->timer++;
 	} else {
 		fdActorRelease(actor);
 	}
@@ -468,14 +468,14 @@ static void scWorldMapPulseOrbAndSpawnSparks(ACTOR *actor)
 	y = actor->y.fixed;
 	z = actor->z.fixed;
 	spark = syFieldActorCreate(SPRITE_SPARKLE, x, y, z);
-	sySndPlay(SE_GLITTER);
+	sySoundPlay(SE_GLITTER);
 	if(spark == NULL)
 		return;
-	spark->motionFlg = 0;
-	spark->spr->image.pri = 1;
-	fdActorSetSprFlags(spark, 0);
+	spark->motionFlags = 0;
+	spark->sprite->image.priority = 1;
+	fdActorSetSpriteFlags(spark, 0);
 	fdActorSelectAnimation(spark, 1);
-	spark->tmr = 0;
+	spark->timer = 0;
 	spark->update = scWorldMapReleaseSparkAfterDelay;
 }
 
@@ -483,17 +483,17 @@ static void scWorldMapPulseOrbAndSpawnSparks(ACTOR *actor)
 static void scWorldMapCircleFlint(ACTOR *actor)
 {
 	if(TickCount & 2)
-		fdActorSetColMode(actor, SPRITE_COLOR_RED_TINT);
+		fdActorSetColorMode(actor, SPRITE_COLOR_RED_TINT);
 	else
-		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetColorMode(actor, SPRITE_COLOR_WHITE);
 	if(actor->userValue == 0) {
 		actor->x.fixed = toFIXED(5584);
 		actor->y.fixed =
-			syMulFX(sySin(actor->tmr << 3), toFIXED(4)) + toFIXED(16);
+			syMulFX(sySin(actor->timer << 3), toFIXED(4)) + toFIXED(16);
 		actor->z.fixed = toFIXED(1328);
-		syVectorAddPolarOffset(toFIXED(16), actor->tmr, (FIXED *)&actor->x);
-		actor->facing = actor->tmr + FACING_SOUTH;
-		actor->tmr += TRIG_TURN / 64;
+		syVectorAddPolarOffset(toFIXED(16), actor->timer, (FIXED *)&actor->x);
+		actor->facing = actor->timer + FACING_SOUTH;
+		actor->timer += TRIG_TURN / 64;
 	}
 }
 
@@ -508,8 +508,8 @@ static Sint32 scWorldMapSetUpFlint(ACTOR *actor)
 		return 0;
 	}
 	actor->update = scWorldMapCircleFlint;
-	actor->motionFlg = 0;
-	actor->tmr = 0;
+	actor->motionFlags = 0;
+	actor->timer = 0;
 	actor->userValue = 0;
 	actor->scaleX = toFIXED(1) / 2;
 	actor->scaleY = toFIXED(1) / 2;
@@ -546,10 +546,10 @@ static Sint32 scWorldMapSetUpKolimaBridge(ACTOR *actor)
 static Sint32 scWorldMapAlignToMap(ACTOR *actor)
 {
 	WORLD_MAP_VIEW *state = MapGridState[0];
-	SPR			   *spr = actor->spr;
+	SPR			   *sprite = actor->sprite;
 
-	spr->rotation = state->yaw;
-	spr->flg = 0;
+	sprite->rotation = state->yaw;
+	sprite->flags = 0;
 	return 1;
 }
 
@@ -558,19 +558,19 @@ static Sint32 scWorldMapAlignToMap(ACTOR *actor)
 static Sint32 scWorldMapSetUpIodem(ACTOR *actor)
 {
 	WORLD_MAP_VIEW *state = MapGridState[0];
-	SPR			   *spr = actor->spr;
+	SPR			   *sprite = actor->sprite;
 
-	actor->collisionFlg |= ACTOR_SOLID;
-	spr->rotation = state->yaw;
+	actor->collisionFlags |= ACTOR_SOLID;
+	sprite->rotation = state->yaw;
 	return 1;
 }
 
 /* Sets up the storm (ACTOR_STORM) as it is placed. */
 static Sint32 scWorldMapSetUpStorm(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
-	fdActorSetColMode(actor, SPRITE_COLOR_RED_TINT);
-	actor->collisionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	fdActorSetColorMode(actor, SPRITE_COLOR_RED_TINT);
+	actor->collisionFlags = 0;
 	if(gmFlagGet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
 		gmFlagSet(FLAG_WORLD_MAP_STORM_GONE);
 		actor->x.fixed = 0;
@@ -584,8 +584,8 @@ static Sint32 scWorldMapSetUpStorm(ACTOR *actor)
    the same tick, and it is drawn in every tick. */
 static Sint32 scWorldMapHideStormOnOddTicks(ACTOR *actor)
 {
-	if((actor->sprStorageKind & ACTOR_SPRITE_ONE) && (TickCount & 1))
-		actor->sprStorageKind ^= ACTOR_SPRITE_ONE;
+	if((actor->spriteStorageKind & ACTOR_SPRITE_ONE) && (TickCount & 1))
+		actor->spriteStorageKind ^= ACTOR_SPRITE_ONE;
 	return 1;
 }
 
@@ -647,7 +647,7 @@ static void scWorldMapSelectExitByX(
 	} else {
 		state->exit = exitAfter;
 	}
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 }
 
 /* Takes the party into an area with two ways in by the side it walks up from:
@@ -668,7 +668,7 @@ static void scWorldMapSelectExitByZ(
 	} else {
 		state->exit = exitAfter;
 	}
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 }
 
 /* Walking onto the Bilibin Barricade on the World Map enters it by the side the
@@ -734,7 +734,7 @@ static void scWorldMapUpdateAreaContacts(void)
 	Uint32		 i;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	leaderReach = leader->spr->scale * leader->radius;
+	leaderReach = leader->sprite->scale * leader->radius;
 	state = FieldStateWork;
 	actor = state->camera;
 	left = actor->x.fixed - toFIXED(160);
@@ -756,14 +756,14 @@ static void scWorldMapUpdateAreaContacts(void)
 		x = actor->x.fixed;
 		z = actor->z.fixed;
 		if(x < left || x > right || z < top || z > bottom) {
-			actor->sprStorageKind = ACTOR_SPRITE_NONE;
+			actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 			continue;
 		}
-		actor->sprStorageKind = ACTOR_SPRITE_ONE;
+		actor->spriteStorageKind = ACTOR_SPRITE_ONE;
 		if(DebugMode != 0 && gmFlagGet(FLAG_DEBUG_STEPS_OFF) != 0) {
 			continue;
 		}
-		scale = actor->spr->scale;
+		scale = actor->sprite->scale;
 		dx = actor->x.fixed - leader->x.fixed;
 		if(dx < 0) {
 			dx = leader->x.fixed - actor->x.fixed;
@@ -787,7 +787,7 @@ static void scWorldMapEnterVault(void)
 	if(gmFlagGet(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
 		syImportScriptSetExitRequest(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
 	} else {
-		sySndPlay(SE_MAP_EXIT);
+		sySoundPlay(SE_MAP_EXIT);
 		syImportScriptSetExitRequest(WORLD_MAP_TO_VAULT_SOUTH);
 	}
 }
@@ -829,7 +829,7 @@ Sint32 scInit(void)
 		gmFlagSet(FLAG_RETREAT_BLOCKED);
 		FieldStateWork->transition =
 			SCENE_TRANSITION(TRANSITION_CENTER_LINE, CENTER_LINE_STEADY);
-		FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+		FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 		sySynch(1);
 		fdCameraSetSpeed(8);
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
@@ -1017,7 +1017,7 @@ static void scWorldMapBoardBunzasWagon(void)
 static void scWorldMapShowHammetsCaravan(void)
 {
 	ACTOR		 *actor;
-	ACTOR		 *sprActor;
+	ACTOR		 *spriteActor;
 	const Sint32 *action;
 
 	actor = fdActorGet(ACTOR_FALLING_ROCK);
@@ -1035,13 +1035,13 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdActorSetPos(ACTOR_CARAVAN_HAMMET, 5848, 1576);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_CARAVAN_HAMMET), 0);
+	fdActorSetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_CARAVAN_HAMMET), 0);
 	fdActorSetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON, 1.6, 0.4);
 	fdActorSetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 1, 1.6, 0.4);
 	fdActorSetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 2, 1.6, 0.4);
 	fdActorSetSpeedAndAcceleration(ACTOR_CARAVAN_FIRST_WAGON + 3, 1.6, 0.4);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetScript(ACTOR_CARAVAN_FIRST_WAGON, CaravanFirstWagonArrives);
 	fdScriptWait(20);
 	fdActorSetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, CaravanSecondWagonArrives);
@@ -1050,10 +1050,11 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdScriptWait(20);
 	fdActorRunScriptAndWait(
 		ACTOR_CARAVAN_FIRST_WAGON + 3, CaravanFourthWagonArrives);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
-	sprActor = fdActorGet(ACTOR_PARTY_LEADER);
-	if(sprActor != NULL) {
-		fdActorSetPosFX(ACTOR_GARET, sprActor->x.fixed, sprActor->z.fixed);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+	spriteActor = fdActorGet(ACTOR_PARTY_LEADER);
+	if(spriteActor != NULL) {
+		fdActorSetPosFX(
+			ACTOR_GARET, spriteActor->x.fixed, spriteActor->z.fixed);
 	}
 	fdActorWalkToAndWait(ACTOR_GARET, 5892, 1600);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
@@ -1072,7 +1073,7 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTHWEST, 60);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 10);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetScript(ACTOR_CARAVAN_FIRST_WAGON, CaravanFirstWagonDeparts);
 	fdScriptWait(20);
 	fdActorSetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, CaravanSecondWagonDeparts);
@@ -1083,7 +1084,7 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH, 10);
 	fdActorRunScriptAndWait(
 		ACTOR_CARAVAN_FIRST_WAGON + 3, CaravanFourthWagonDeparts);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(20);
 	fdWorldMapUnfreeze();
 	fdActorSetAnimation(ACTOR_CARAVAN_FIRST_WAGON, ANIM_STAND);
@@ -1112,8 +1113,8 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdScriptShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 20);
 	fdActorSetPos(ACTOR_CARAVAN_HAMMET, 5656, 1784);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(ACTOR_CARAVAN_HAMMET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteColorById(ACTOR_CARAVAN_HAMMET, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_CARAVAN_HAMMET), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeed(ACTOR_CARAVAN_HAMMET, 0.8);
 	fdActorWalkToAndWait(ACTOR_CARAVAN_HAMMET, 5640, 1784);
 	fdScriptWait(20);
@@ -1153,11 +1154,11 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdScriptShowMessageThenWait(ACTOR_CARAVAN_MAN, 0, 20);
 	fdActorSetAnimationAndWait(ACTOR_CARAVAN_HAMMET, ANIM_NOD);
 	fdWorldMapUnfreeze();
-	sySndPlay(SE_TREMOR);
+	sySoundPlay(SE_TREMOR);
 	fdCameraSetSpeedAndAcceleration(4, 4);
 	/* The ground shakes, and a rock falls beside Hammet and his man. */
 	scWorldMapShakeCameraOverCaravan();
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdActorShowEmote(
 		ACTOR_CARAVAN_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1178,23 +1179,23 @@ static void scWorldMapShowHammetsCaravan(void)
 	actor->bounce = toFIXED(1) / 10;
 	actor->scaleX = toFIXED(3) / 2;
 	actor->scaleY = toFIXED(3) / 2;
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->y.fixed = toFIXED(64);
-	actor->spr->rotation = TRIG_TURN * 15 / 16;
-	fdActorSetSprFlags(actor, 0);
+	actor->sprite->rotation = TRIG_TURN * 15 / 16;
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorSelectAnimation(actor, FALLING_ROCK_ANIMATION_TUMBLE);
 	sySynch(1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FALLING_ROCK), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FALLING_ROCK), 0);
 	sySetTickEvent(scWorldMapUpdateFallingRock, EVENT_PASS_TICK);
 	do {
 		sySynch(1);
-	} while(actor->tmr == 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FALLING_ROCK), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_INVISIBLE_ROCK_GUIDE), 0);
+	} while(actor->timer == 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FALLING_ROCK), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_INVISIBLE_ROCK_GUIDE), 0);
 	fdScriptWait(10);
-	fdActorGet(ACTOR_CARAVAN_MAN)->velY = toFIXED(6);
-	fdActorGet(ACTOR_CARAVAN_HAMMET)->velY = toFIXED(6);
-	sySndPlay(SE_CRASH);
+	fdActorGet(ACTOR_CARAVAN_MAN)->velocityY = toFIXED(6);
+	fdActorGet(ACTOR_CARAVAN_HAMMET)->velocityY = toFIXED(6);
+	sySoundPlay(SE_CRASH);
 	fdCameraSetSpeedAndAcceleration(4, 4);
 	scWorldMapShakeCameraWhereRockFalls();
 	scWorldMapShakeCameraWhereRockFalls();
@@ -1246,7 +1247,7 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorWalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1736);
 	fdActorWalkToAndWait(ACTOR_CARAVAN_MAN, 5640, 1752);
 	fdActorSetPos(ACTOR_CARAVAN_MAN, 0, 0);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetScript(ACTOR_CARAVAN_FIRST_WAGON, CaravanFirstWagonReturns);
 	fdActorSetScript(ACTOR_CARAVAN_FIRST_WAGON + 1, CaravanSecondWagonReturns);
 	fdScriptWait(40);
@@ -1276,7 +1277,7 @@ static void scWorldMapShowHammetsCaravan(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorWaitForScriptEndById(ACTOR_CARAVAN_FIRST_WAGON + 3);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(5880, CAMERA_KEEP, 1608, 1);
 	fdCameraWaitForMove();
@@ -1352,10 +1353,10 @@ static void scWorldMapUpdateFallingRock(void)
 	if(actor->y.fixed < toFIXED(10)) {
 		actor->y.fixed = toFIXED(10);
 		if(fdScriptGetFlag(FLAG_WORLD_MAP_FALLING_ROCK_LANDED) == 0) {
-			sySndPlay(SE_CRASH);
+			sySoundPlay(SE_CRASH);
 			fdActorSelectAnimation(actor, FALLING_ROCK_ANIMATION_SHATTER);
 			gmFlagSet(FLAG_WORLD_MAP_FALLING_ROCK_LANDED);
-			actor->tmr = 1;
+			actor->timer = 1;
 		}
 	}
 }
@@ -1403,11 +1404,11 @@ static inline void scWorldMapSailCrossingLeg(Sint32 exit)
 	fdCameraFollowActor(ACTOR_CROSSING_SHIP, 1);
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_CROSSING_SHIP, 0.6);
-	actor->tmr = 0;
+	actor->timer = 0;
 	fdActorSetScript(ACTOR_CROSSING_SHIP, CrossingShipSailsWest);
 	do {
 		sySynch(1);
-	} while(actor->tmr == 0);
+	} while(actor->timer == 0);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_TOLBI_SHIP_ROWING);
@@ -1454,7 +1455,7 @@ static void scWorldMapSailUntilLandSighted(void)
 	fdCameraFollowActor(ACTOR_CROSSING_SHIP, 1);
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_CROSSING_SHIP, 0.6);
-	actor->tmr = 0;
+	actor->timer = 0;
 	if(scWorldMapGetRowingBalance() == ROWING_BALANCE_OFF_COURSE) {
 		fdActorSetScript(ACTOR_CROSSING_SHIP, CrossingShipDriftsNorth);
 	} else {
@@ -1462,7 +1463,7 @@ static void scWorldMapSailUntilLandSighted(void)
 	}
 	do {
 		sySynch(1);
-	} while(actor->tmr == 0);
+	} while(actor->timer == 0);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	gmFlagSet(FLAG_TOLBI_SHIP_ROWING);
@@ -1511,7 +1512,7 @@ static void scWorldMapExplainSettingDjinn(void)
 	/* "After bringing a Djinni into your party, you must set it to..." */
 	fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
 	fdScriptWait(30);
-	sySndPlay(SE_MENU_CURSOR_MOVE);
+	sySoundPlay(SE_MENU_CURSOR_MOVE);
 	mnAnimateSelectionToEntry(0, 2);
 	fdScriptClearFlag(FLAG_DJINN_LESSON_PART_A);
 	fdScriptClearFlag(FLAG_DJINN_LESSON_PART_B);
@@ -1550,10 +1551,10 @@ static void scWorldMapMeetFlint(void)
 	ACTOR *leader;
 	FIXED  x;
 	FIXED  z;
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
-	cnt = 0;
+	count = 0;
 	djinni = fdActorGet(ACTOR_VENUS_DJINNI);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	x = (leader->x.fixed - toFIXED(5584)) / 2 + toFIXED(5584);
@@ -1584,11 +1585,11 @@ static void scWorldMapMeetFlint(void)
 		fdWorldMapStartZoom(toFIXED(6) / 5, 6);
 		fdScriptWaitForZoomTransition();
 		fdWorldMapFreeze();
-		djinni->motionFlg = ACTOR_FALLS;
+		djinni->motionFlags = ACTOR_FALLS;
 		djinni->gravity = toFIXED(1) / 4;
 		djinni->speedLimit = toFIXED(1);
 		djinni->acceleration = toFIXED(1);
-		djinni->velY = 0;
+		djinni->velocityY = 0;
 		djinni->groundHeight = 0;
 		syFieldActorSetMoveTarget(djinni, 5584, 0, 1328);
 		/* Flint grows from half size to full as he comes down. */
@@ -1601,23 +1602,23 @@ static void scWorldMapMeetFlint(void)
 		fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
 		sySynch(16);
 		djinni->update = 0;
-		fdActorSetColMode(djinni, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(djinni, SPRITE_COLOR_NORMAL);
 		djinni->gravity = toFIXED(1);
 		/* "A traveling warrior!" */
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
-		sySndPlay(SE_PSYNERGY_SPARKLE);
+		sySoundPlay(SE_PSYNERGY_SPARKLE);
 		fdPsynergyLoadResources(ABILITY_MOVE, 0);
 		for(i = 0; i < 60; i++) {
 			if(TickCount & 2)
-				fdActorSetColMode(djinni, SPRITE_COLOR_WHITE);
+				fdActorSetColorMode(djinni, SPRITE_COLOR_WHITE);
 			else
-				fdActorSetColMode(djinni, SPRITE_COLOR_NORMAL);
+				fdActorSetColorMode(djinni, SPRITE_COLOR_NORMAL);
 			if((TickCount & 15) == 0)
 				scSpawnGoldenRing(djinni);
 			sySynch(1);
 		}
 		fdPsynergyEnd();
-		fdActorSetColMode(djinni, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(djinni, SPRITE_COLOR_NORMAL);
 		fdActorRunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
 		/* "And I see you're an Adept, too!" */
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1649,7 +1650,7 @@ static void scWorldMapMeetFlint(void)
 		   you..." */
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
 		i = 0;
-		djinni->motionFlg = 0;
+		djinni->motionFlags = 0;
 		syFieldActorSetMoveTargetFX(djinni, x, toFIXED(16), z);
 		/* A whole turn as he rises, then half a turn as he drops. */
 		for(; i < TRIG_TURN / FACING_STEP; i++) {
@@ -1660,8 +1661,8 @@ static void scWorldMapMeetFlint(void)
 		/* "Your Psynergy will grow stronger, and your Adept skills will
 		   also..." */
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
-		djinni->motionFlg = ACTOR_FALLS;
-		djinni->velY = 0;
+		djinni->motionFlags = ACTOR_FALLS;
+		djinni->velocityY = 0;
 		djinni->groundHeight = 0;
 		for(i = 0; i < TRIG_TURN / 2 / FACING_STEP; i++) {
 			djinni->facing += FACING_STEP;
@@ -1682,12 +1683,12 @@ static void scWorldMapMeetFlint(void)
 		fdScriptOpenMessage(ACTOR_VENUS_DJINNI, 0);
 		/* Each "No" makes Flint plead again; the seventh time he gives up
 		   asking. */
-		cnt = 0;
+		count = 0;
 	plead:
 		if(fdScriptAskYesNoWithActorAnimation(0, 0) == 1) {
 			fdActorJump(ACTOR_VENUS_DJINNI, 2, 20);
 			fdActorJump(ACTOR_VENUS_DJINNI, 2, 20);
-			if(cnt == 6) {
+			if(count == 6) {
 				fdScriptSetMessageId(MsgWorldMapMeanieDontCare);
 				/* "Meanie! I don't care what you say! I'm coming along with
 				   you!" */
@@ -1696,9 +1697,9 @@ static void scWorldMapMeetFlint(void)
 			}
 			/* "Come on! I promise you won't regret it! Please take me with
 			   you!", and five more pleas, down to "Take me with you!" */
-			fdScriptSetMessageId(cnt + MsgWorldMapComePromiseWont);
+			fdScriptSetMessageId(count + MsgWorldMapComePromiseWont);
 			fdScriptOpenMessage(ACTOR_VENUS_DJINNI, 0);
-			cnt++;
+			count++;
 			goto plead;
 		}
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
@@ -1709,15 +1710,15 @@ static void scWorldMapMeetFlint(void)
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
 	listened:
 		mnMessageArgumentPush(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
-		sySndPlay(MUS_A_NEW_ALLY);
-		cnt = MsgWorldMapAbilityVenusDjinni;
+		sySoundPlay(MUS_A_NEW_ALLY);
+		count = MsgWorldMapAbilityVenusDjinni;
 		/* "Flint, the Venus Djinni, is now Isaac's ally!" */
-		mnMessageShowCentered(cnt++, 3);
-		fdScriptSetMessageId(cnt);
+		mnMessageShowCentered(count++, 3);
+		fdScriptSetMessageId(count);
 		fdActorJump(ACTOR_VENUS_DJINNI, 2, 20);
 		/* "Now, I'll briefly teach you how to use Djinn." */
 		fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
-		sySndPlay(MUS_TRY_YOUR_LUCK);
+		sySoundPlay(MUS_TRY_YOUR_LUCK);
 		scWorldMapExplainSettingDjinn();
 		fdWorldMapUnfreeze();
 		return;
@@ -1726,7 +1727,7 @@ static void scWorldMapMeetFlint(void)
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader != NULL)
 		fdActorSetPosFX(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
-	djinni->velY = toFIXED(10);
+	djinni->velocityY = toFIXED(10);
 	syFieldActorSetMoveTargetFX(djinni, x, 0, z);
 	fdScriptWait(30);
 	fdWorldMapFreeze();
@@ -1742,7 +1743,7 @@ static void scWorldMapMeetFlint(void)
 	fdActorRunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
 	/* "And one more thing..." */
 	fdScriptShowMessage(ACTOR_VENUS_DJINNI, 0);
-	sySndPlay(SE_MENU_CURSOR_MOVE);
+	sySoundPlay(SE_MENU_CURSOR_MOVE);
 	mnAnimateSelectionToEntry(0, 2);
 	gmFlagSet(FLAG_DJINN_LESSON_PART_A);
 	gmFlagClear(FLAG_DJINN_LESSON_PART_B);
@@ -1791,7 +1792,7 @@ static void scWorldMapMeetFlint(void)
 	fdWorldMapUnfreeze();
 	fdDjinnJoinParty(
 		ACTOR_VENUS_DJINNI, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT));
-	sySndPlay(MUS_A_LONG_JOURNEY);
+	sySoundPlay(MUS_A_LONG_JOURNEY);
 	fdScriptEnd();
 	gmFlagClear(FLAG_DJINN_LESSON);
 	gmFlagClear(FLAG_DJINN_LESSON_PART_A);
@@ -1825,7 +1826,7 @@ static void scWorldMapStepDownFromBunzasWagon(void)
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_KALAY_WAGON, 5480, 2104);
 	sySynch(1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetSpeedAndAcceleration(ACTOR_KALAY_WAGON, 1.6, 0.4);
 	fdActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
 	fdActorMoveToAndWait(ACTOR_KALAY_WAGON, 5485, 2136);
@@ -1835,7 +1836,7 @@ static void scWorldMapStepDownFromBunzasWagon(void)
 	fdActorMoveToAndWait(ACTOR_KALAY_WAGON, 5544, 2158);
 	fdActorMoveToAndWait(ACTOR_KALAY_WAGON, 5608, 2168);
 	fdActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_STAND);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 5592, 2168);
 	sySynch(1);
@@ -1843,7 +1844,7 @@ static void scWorldMapStepDownFromBunzasWagon(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 2);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 5576, 2168);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetAnimation(ACTOR_KALAY_WAGON, ANIM_WALK);
 	fdActorMoveToAndWait(ACTOR_KALAY_WAGON, 5624, 2168);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -1855,7 +1856,7 @@ static void scWorldMapStepDownFromBunzasWagon(void)
 	fdActorMoveToAndWait(ACTOR_KALAY_WAGON, 5490, 2136);
 	fdActorMoveToAndWait(ACTOR_KALAY_WAGON, 5480, 2104);
 	fdActorSetPos(ACTOR_KALAY_WAGON, 0, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(40);
 	fdCameraMoveTo(5592, CAMERA_KEEP, 2136, 1);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -1914,7 +1915,7 @@ static void scWorldMapRunBlackOrbScript(void)
 	fdActorRunRepeatedMotion(IodemActor, 1);
 	/* "Babi's ship..." */
 	fdScriptShowMessageThenWait(IodemActor, 0, 10);
-	while(fdActorGet(ACTOR_PARTY_LEADER)->tmr == 0) {
+	while(fdActorGet(ACTOR_PARTY_LEADER)->timer == 0) {
 		sySynch(1);
 	}
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
@@ -1926,15 +1927,15 @@ static void scWorldMapRunBlackOrbScript(void)
 	/* "Isaac, take this... Try to use it." */
 	fdScriptShowMessage(IodemActor, 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-	fdActorGet(IodemActor)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(IodemActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(IodemActor, 6028, 3400);
 	fdScriptWait(1);
-	fdActorGet(IodemActor)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(IodemActor)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
-	fdActorGet(IodemActor)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(IodemActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(IodemActor, 6036, 3400);
 	fdScriptWait(1);
-	fdActorGet(IodemActor)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(IodemActor)->steeringFlags |= ACTOR_FACES_MOTION;
 	gmItemShowFound(ITEM_BLACK_ORB, 3);
 	gmPartyGiveItem(ITEM_BLACK_ORB, 0);
 	fdActorRunRepeatedMotion(IodemActor, 1);
@@ -1971,7 +1972,7 @@ static void scWorldMapBlockGatewayCaveExit(Sint32 actorId)
 		i++;
 	}
 	for(i = 0;; i++) {
-		if(WorldMapActorPlacements[i].spr == SPRITE_IODEM) {
+		if(WorldMapActorPlacements[i].sprite == SPRITE_IODEM) {
 			WorldMapActorPlacements[i].x = toFIXED(6036);
 			WorldMapActorPlacements[i].z = toFIXED(3400);
 			WorldMapActorPlacements[i].facing = FACING_SOUTH_SOUTHEAST;
@@ -2057,7 +2058,7 @@ static void scWorldMapUseBlackOrb(void)
 	ACTOR		  *leader;
 	ACTOR		  *actor;
 	Sint32		   msg;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *icon;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
@@ -2095,18 +2096,19 @@ static void scWorldMapUseBlackOrb(void)
 	orb = syFieldActorCreate(SPRITE_BLANK, leader->x.fixed + toFIXED(2),
 		toFIXED(38), leader->z.fixed);
 	if(orb != NULL) {
-		orb->motionFlg = 0;
-		spr = orb->spr;
-		spr->flg = 0;
-		spr->cnt = 0;
-		spr->image.fullCol = 0;
-		spr->image.pal = 0;
+		orb->motionFlags = 0;
+		sprite = orb->sprite;
+		sprite->flags = 0;
+		sprite->count = 0;
+		sprite->image.fullColor = 0;
+		sprite->image.palette = 0;
 		/* LEFTOVER(template): the motion flags cleared again after the sprite
 		 * resets, as scImilFuchinFallsPlaceDragonsEye clears them. */
-		orb->motionFlg = 0;
-		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		orb->motionFlags = 0;
+		icon =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_BLACK_ORB);
-		mnVRAMLoad(spr->slot, ICON_TILE_BYTES, icon->tiles);
+		mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		fdScriptWait(20);
 		orb->update = scWorldMapPulseOrbAndSpawnSparks;
@@ -2153,7 +2155,7 @@ static void scWorldMapUseBlackOrb(void)
 	/* "I will take that back, for now." */
 	fdScriptShowMessageThenWait(IodemActor | SPEAKER_PORTRAIT_LEFT, 0, 20);
 	fdActorSetSpeed(IodemActor, 1);
-	fdActorGet(ACTOR_IODEM)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IODEM)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
 	syFieldActorSetMoveTarget(iodem, 5997, 0, 3424);
 	fdActorWaitForMove(iodem);
@@ -2230,8 +2232,8 @@ Uint16 WorldMapBlendWork;
    the shore, where Felix and Sheba lie washed up, alive. */
 static void scWorldMapShowEndingScript(void)
 {
-	mnWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	fdScriptStart();
 	fdWorldMapStartZoom(toFIXED(1), 300);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2242,7 +2244,7 @@ static void scWorldMapShowEndingScript(void)
 	fdWorldMapStartZoom(toFIXED(3) / 2, 16);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
 	fdScriptWaitForZoomTransition();
 	fdWorldMapFreeze();
@@ -2327,7 +2329,7 @@ static void scWorldMapShowEndingScript(void)
 		fdActorSetAnimation(ACTOR_FELIX, FELIX_ANIMATION_LIE);
 		fdActorSetAnimation(ACTOR_SHEBA, SHEBA_ANIMATION_LIE);
 		sySynch(1);
-	} while(fdActorGet(ACTOR_JENNA)->tmr == 0);
+	} while(fdActorGet(ACTOR_JENNA)->timer == 0);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_WEST, 20);
 	fdActorSetAttachedEffect(
@@ -2362,7 +2364,7 @@ static void scWorldMapShowEndingScript(void)
 	/* "What is this? Alex, what happened?" */
 	fdScriptShowMessageThenWait(ACTOR_KRADEN, 0, 60);
 	fdWorldMapLoadDefaultMetatilesAndUpdateBlock();
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(120);
 	sySynch(120);
@@ -2375,16 +2377,16 @@ static void scWorldMapShowEndingScript(void)
 static void scWorldMapShakeVenusLighthouse(void)
 {
 	fdScriptStart();
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdPaletteFadeApplySource(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(1);
 	sySynch(2);
-	FieldStateWork->transitionFrm = 1;
+	FieldStateWork->transitionFrame = 1;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	sySynch(1);
 	fdCameraSetSpeed(4);
 	sySetTickEvent(scWorldMapUpdateLighthouseQuake, EVENT_PASS_TICK);
@@ -2412,12 +2414,12 @@ static void scWorldMapUpdateLighthouseQuake(void)
 		toFIXED(x) + toFIXED(QUAKE_DUST_LEFT), 0,
 		toFIXED(z) + toFIXED(QUAKE_DUST_TOP));
 	if(actor != NULL) {
-		SPR	 *spr = actor->spr;
+		SPR	 *sprite = actor->sprite;
 		FIXED scale = syRandomBelow(toFIXED(1) / 2) + toFIXED(6) / 5;
 
-		spr->flg = 0;
-		spr->image.pri = 2;
-		actor->motionFlg = 0;
+		sprite->flags = 0;
+		sprite->image.priority = 2;
+		actor->motionFlags = 0;
 		actor->scaleX = scale;
 		actor->scaleY = scale;
 		fdActorSelectAnimation(actor, 1);
@@ -2495,26 +2497,26 @@ static Sint32 scWorldMapGetRowingBalance(void)
    empty. */
 static Sint32 scWorldMapGetSeatRowValue(Uint32 seat)
 {
-	Sint32 flgBase = 0;
-	Uint32 ofs;
+	Sint32 flagBase = 0;
+	Uint32 offset;
 
 	switch(seat) {
 	case 0:
-		flgBase = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
+		flagBase = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
 		break;
 	case 1:
-		flgBase = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
+		flagBase = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
 		break;
 	case 2:
-		flgBase = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
+		flagBase = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
 		break;
 	case 3:
-		flgBase = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
+		flagBase = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
 		break;
 	}
-	for(ofs = 0; ofs < 9; ofs++) {
-		if(gmFlagGet(flgBase + ofs) != 0)
-			return TolbiShipPassengerRowValues[ofs];
+	for(offset = 0; offset < 9; offset++) {
+		if(gmFlagGet(flagBase + offset) != 0)
+			return TolbiShipPassengerRowValues[offset];
 	}
 	return 0;
 }
@@ -2524,7 +2526,7 @@ static void scWorldMapSpawnIslandWake(void)
 {
 	ACTOR *island;
 	ACTOR *puff;
-	SPR	  *spr;
+	SPR	  *sprite;
 	Sint32 distance;
 
 	if((TickCount & 15) != 0)
@@ -2536,7 +2538,7 @@ static void scWorldMapSpawnIslandWake(void)
 		return;
 	puff->scaleX = toFIXED(1) / 2;
 	puff->scaleY = toFIXED(1) / 2;
-	spr = puff->spr;
+	sprite = puff->sprite;
 	/* Up to 48 pixels behind the island, or up to 32 to the side. */
 	if((syRandomBelow(2)) != 0) {
 		FIXED behind = toFIXED(syRandomBelow(48));
@@ -2549,11 +2551,11 @@ static void scWorldMapSpawnIslandWake(void)
 		distance /= 2;
 		puff->z.fixed += distance;
 	}
-	spr->flg = 0;
-	spr->image.pri = island->spr->image.pri;
-	puff->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	puff->motionFlg = island->motionFlg;
-	fdActorSetSprCol(puff, SPRITE_COLOR_BLUE_TINT);
+	sprite->flags = 0;
+	sprite->image.priority = island->sprite->image.priority;
+	puff->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	puff->motionFlags = island->motionFlags;
+	fdActorSetSpriteColor(puff, SPRITE_COLOR_BLUE_TINT);
 	fdActorSelectAnimation(puff, 2);
 	fdActorStartScript(puff, IslandWakeScript);
 }
@@ -2575,21 +2577,21 @@ static void scWorldMapShowIslandDrifting(void)
 	actor->scaleY = toFIXED(6) / 5;
 	fdCameraFollowActor(ACTOR_DRIFTING_ISLAND, 1);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_DRIFTING_ISLAND), 0);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_DRIFTING_ISLAND), 0);
 	fdActorSetSpeed(ACTOR_DRIFTING_ISLAND, 0.4);
-	actor->tmr = 0;
+	actor->timer = 0;
 	fdActorSetScript(ACTOR_DRIFTING_ISLAND, IslandDriftsEast);
 	sySetTickEvent(scWorldMapSpawnIslandWake, EVENT_PASS_TICK);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdScriptWait(120);
 	fdWorldMapStartZoom(toFIXED(7) / 5, 300);
 	fdScriptWait(270);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	PLTT_BACKDROP = RGB_WHITE;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -2621,7 +2623,7 @@ static void scWorldMapUpdateStormTimer(void)
 }
 
 /* Draws the leader into the storm, lifts him and starts its timer. */
-static void scWorldMapCatchInStorm(Sint32 tgtActorId)
+static void scWorldMapCatchInStorm(Sint32 targetActorId)
 {
 	ACTOR *actor;
 	ACTOR *storm;
@@ -2634,20 +2636,20 @@ static void scWorldMapCatchInStorm(Sint32 tgtActorId)
 		fdActorSetAttachedEffect(
 			id, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 		fdActorSetAnimation(id, ANIM_LEADER_LOOK_AROUND);
-		storm = fdActorGet(tgtActorId);
+		storm = fdActorGet(targetActorId);
 		if(storm != NULL) {
 			fdActorSetDestination(
 				id, storm->x.part[0].integer, storm->z.part[0].integer);
 		}
 		fdActorWaitForMoveById(id);
-		sySndPlay(SE_SANDSTORM);
+		sySoundPlay(SE_SANDSTORM);
 		sySetTickEvent(scWorldMapUpdateStormTimer, EVENT_PASS_TICK);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		syFieldActorSetMoveTargetFX(actor, actor->x.fixed,
 			actor->y.fixed + toFIXED(32), actor->z.fixed);
 		fdActorWaitForMoveById(id);
-		actor->velY = 0;
-		actor->motionFlg = ACTOR_FLOATS;
+		actor->velocityY = 0;
+		actor->motionFlags = ACTOR_FLOATS;
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_AIRBORNE;
 		gmFlagSet(FLAG_WORLD_MAP_CAUGHT_IN_STORM);
 		syFieldGameFlagSetByte(
@@ -2690,7 +2692,7 @@ static void scWorldMapDouseMapStorm(void)
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
 	fdRequestBattleFromEncounterTable(
 		ENCOUNTER_ZONE_SCRIPTED, ENCOUNTER_SLOT_TEMPEST_LIZARD);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = ACTOR_FALLS;
 }
 
 /* If the party is not brought down within three seconds, the whirlwind rises
@@ -2704,16 +2706,16 @@ static void scWorldMapStormDropsParty(void)
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	sySndPlay(SE_GUSH);
-	fdActorSetSprFlags(leader, 0);
-	storm->motionFlg = 0;
-	leader->motionFlg = 0;
-	leader->velY = 0;
+	sySoundPlay(SE_GUSH);
+	fdActorSetSpriteFlags(leader, 0);
+	storm->motionFlags = 0;
+	leader->motionFlags = 0;
+	leader->velocityY = 0;
 	leader->frozen = 1;
 	storm->frozen = 1;
 	for(ticks = 0; ticks < 60; ticks++) {
-		leader->velY += toFIXED(1) / 5;
-		storm->velY += toFIXED(1) / 5;
+		leader->velocityY += toFIXED(1) / 5;
+		storm->velocityY += toFIXED(1) / 5;
 		sySynch(1);
 	}
 	fdScriptFinishScreenTransition();
@@ -2777,9 +2779,9 @@ static void scWorldMapJitterTransitionCamera(void)
 
 /* Queues one picture of the lighthouse transition and waits ticks. */
 static inline void scWorldMapShowTransitionPicture(
-	Uint8 *buf, Sint32 ofs, Sint32 ticks)
+	Uint8 *buf, Sint32 offset, Sint32 ticks)
 {
-	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, ofs);
+	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, offset);
 	fdScriptWait(ticks);
 }
 
@@ -2796,7 +2798,7 @@ static inline void scWorldMapShowTransitionPicture(
    It clears FLAG_KEEP_PARTY_POSITION and sets FLAG_SKIP_SCENE_CHANGE_SOUND. */
 static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 {
-	Uint8 *buf = syHeapAllocEWRAM(16384);
+	Uint8 *buf = syHeapAllocateEWRAM(16384);
 
 	sySynch(1);
 	gmFlagClear(FLAG_KEEP_PARTY_POSITION);
@@ -2814,12 +2816,12 @@ static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 	sySetTickEvent(scWorldMapUpdateTransitionBlend, EVENT_PASS_TICK);
 	fdScriptStart();
 	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, WORLD_MAP_LIGHT_BALL(7));
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind =
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind =
 		ACTOR_SPRITE_NONE;
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_GLITTER);
+	sySoundPlay(SE_GLITTER);
 
 	WorldMapBlendWork = BLEND_ALPHA(0, 14);
 	scWorldMapShowTransitionPicture(buf, WORLD_MAP_LIGHT_BALL(6), 2);
@@ -2849,7 +2851,7 @@ static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 	WORLD_MAP_QUEUE_TRANSITION_PICTURE(buf, WORLD_MAP_LIGHT_BALL(7));
 	fdWorldMapLoadAreaGraphics();
 	sySetTickEvent(scWorldMapJitterTransitionCamera, EVENT_PASS_TICK);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	WorldMapBlendWork = BLEND_ALPHA(0, 13);
 	fdScriptWait(4);
 	WorldMapBlendWork = BLEND_ALPHA(0, 14);
@@ -2869,9 +2871,9 @@ static void scWorldMapPlayLighthouseTransition(WORLD_MAP_LIGHTHOUSE lighthouse)
 UNUSED static void scWorldMapUpdateFlashingLinkedEffects(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scSpawnGoldenRing(actor);
@@ -2883,7 +2885,7 @@ UNUSED static void scWorldMapUpdateFlashingLinkedEffects(ACTOR *actor)
 UNUSED static void scWorldMapUpdateCyclingLinkedEffects(ACTOR *actor)
 {
 	if((TickCount & 1) != 0) {
-		fdActorSetColMode(actor, (TickCount >> 1) % 6);
+		fdActorSetColorMode(actor, (TickCount >> 1) % 6);
 	}
 	if((TickCount & 15) == 0) {
 		scSpawnGoldenRing(actor);

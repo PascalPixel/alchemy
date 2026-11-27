@@ -1,15 +1,15 @@
 @ Why assembly: it reads its three DMA words, the channel's address, the
 @ kernel and the control, with one pc-relative block load (add r4, pc, #16;
 @ ldmia r4, {r4, r5, r7}).
-@ btColBufferScale(source, destination, scale, count): copies the ARM kernel
+@ btColorBufferScale(source, destination, scale, count): copies the ARM kernel
 @ ColorBufferScaleKernelCode by DMA into a buffer on the stack and calls it
 @ there, through lr with a lone BL suffix, as the colour backup loaders in system/decompress_byte_lz.s do.
 
 .syntax unified
 	.thumb
-	.global btColBufferScale
+	.global btColorBufferScale
 	.thumb_func
-btColBufferScale:
+btColorBufferScale:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}

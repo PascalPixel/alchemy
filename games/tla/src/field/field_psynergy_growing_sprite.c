@@ -8,22 +8,22 @@
    the same but for its own age check and fdAdvanceWithGravity2D, so each
    Psynergy keeps its own. */
 void fdScoopDustUpdateGrain(
-	EFFECT_SPR *spr, FIELD_PSYNERGY_PARTICLE *particle, Sint32 tiles)
+	EFFECT_SPR *sprite, FIELD_PSYNERGY_PARTICLE *particle, Sint32 tiles)
 {
 	Sint32 pos[3];
 	FIXED  scale;
 
-	spr->oam.idx = tiles + ((particle->tmr >> 2) & 7) * 8;
-	scale = spr->scaleX + toFIXED(1) / 10;
-	spr->scaleX = scale;
+	sprite->oam.index = tiles + ((particle->timer >> 2) & 7) * 8;
+	scale = sprite->scaleX + toFIXED(1) / 10;
+	sprite->scaleX = scale;
 	if(scale > toFIXED(1))
 		scale = toFIXED(1);
-	spr->scaleX = scale;
-	spr->scaleY = scale;
+	sprite->scaleX = scale;
+	sprite->scaleY = scale;
 	SET_VECTOR(pos, particle->x, particle->y, particle->z);
 	fdCameraWorldToScreen(pos);
-	spr->x = pos[0];
-	spr->y = pos[2];
-	fdEffectSprDraw(spr);
+	sprite->x = pos[0];
+	sprite->y = pos[2];
+	fdEffectSpriteDraw(sprite);
 	fdAdvanceWithGravity3D(particle, 60, 0);
 }

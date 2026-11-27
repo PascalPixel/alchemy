@@ -17,10 +17,10 @@ typedef struct LINK_SIGNATURE {
 
 /* The battle menus' event while the party's commands are chosen
    (mnBattleCollectPartyCommands): eases the battle view a third of the way to
-   BATTLE_MENU_STATE.tgtViewOfs each tick (a pixel at least), draws the sprites
-   of BATTLE_MENU_STATE.icons that are shown (the chosen command's and ability's
-   icons, the party member's portrait) and slides the page arrows. In a link
-   battle it also runs the timer: once the partner has chosen, 15 seconds
+   BATTLE_MENU_STATE.targetViewOffset each tick (a pixel at least), draws the
+   sprites of BATTLE_MENU_STATE.icons that are shown (the chosen command's and
+   ability's icons, the party member's portrait) and slides the page arrows. In
+   a link battle it also runs the timer: once the partner has chosen, 15 seconds
    counted down in a window at the top left, SE_TRIPLE_TONE_LOW playing at each
    second. */
 void mnBattleMenuUpdate(void)
@@ -28,46 +28,46 @@ void mnBattleMenuUpdate(void)
 	BATTLE_MENU_STATE *state = BattleMenuStateWork;
 	BATTLE_STATE	  *runtime;
 	LINK_SIGNATURE	  *signature;
-	Sint32			   tgt;
-	Sint32			   cur;
+	Sint32			   target;
+	Sint32			   current;
 	Sint32			   difference;
 	Sint32			   step;
-	Sint32			   newOfs;
-	Sint32			   tmr;
-	Sint32			   nextTmr;
+	Sint32			   newOffset;
+	Sint32			   timer;
+	Sint32			   nextTimer;
 	Sint32			   seconds;
 	Sint32			   i;
 
 	if(state != 0) {
-		tgt = state->tgtViewOfs;
-		cur = state->viewOfs;
-		if(tgt != cur) {
-			difference = tgt - cur;
+		target = state->targetViewOffset;
+		current = state->viewOffset;
+		if(target != current) {
+			difference = target - current;
 			step = difference / 3;
 			if(step == 0) {
 				step--;
 				if(difference >= 0)
 					step = 1;
 			}
-			newOfs = cur + step;
-			state->viewOfs = newOfs;
-			btCameraSetCommandViewStub(newOfs);
+			newOffset = current + step;
+			state->viewOffset = newOffset;
+			btCameraSetCommandViewStub(newOffset);
 		}
 
 		for(i = 0; i < BATTLE_MENU_ICON_COUNT; i++) {
 			if(state->iconShown[i] != 0)
-				syOAMAddSprAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
+				syOAMAddSpriteAtDepth(&state->icons[i], OAM_DEPTH_WINDOW);
 		}
 		mnPageArrowsDraw(LIST_PAGE_ARROW_VRAM);
 
 		/* Local battles still animate the UI, but do not run the link timer. */
-		if(state->linkTmr == 0)
+		if(state->linkTimer == 0)
 			return;
 
 		runtime = BattleStateWork;
 		if(runtime->linkPaused == 0)
 			goto load_timer;
-		state->tmr = 0;
+		state->timer = 0;
 		return;
 
 	signature_tail:
@@ -75,14 +75,14 @@ void mnBattleMenuUpdate(void)
 			goto signature_done;
 		if(signature->s != 'S')
 			goto signature_done;
-		state->tmr = COUNTDOWN_START_TICKS;
-		tmr = state->tmr;
+		state->timer = COUNTDOWN_START_TICKS;
+		timer = state->timer;
 		goto signature_done;
 
 		/* -1 until the partner's signature reads "EDVS", then the countdown. */
 	load_timer:
-		tmr = state->tmr;
-		if(tmr >= 0)
+		timer = state->timer;
+		if(timer >= 0)
 			goto timer_ready;
 		signature =
 			(LINK_SIGNATURE *)SerialPeerPayloads[runtime->linkSide ^ 1].payload;
@@ -92,44 +92,44 @@ void mnBattleMenuUpdate(void)
 			goto signature_tail;
 
 	signature_done:
-		if(tmr < 0)
+		if(timer < 0)
 			return;
 
 		/* The window opens the first tick the Status screen is not up. */
 	timer_ready:
-		if(state->tmrWin == 0 && state->tmrHidden == 0) {
-			state->tmrWin = mnLinkCreateCountdownLabelWindow();
-			tmr = state->tmr;
+		if(state->timerWindow == 0 && state->timerHidden == 0) {
+			state->timerWindow = mnLinkCreateCountdownLabelWindow();
+			timer = state->timer;
 		}
 
-		if(tmr > 0) {
-			nextTmr = tmr - 1;
-			state->tmr = nextTmr;
-			tmr = nextTmr;
+		if(timer > 0) {
+			nextTimer = timer - 1;
+			state->timer = nextTimer;
+			timer = nextTimer;
 		}
-		if(tmr < 0)
+		if(timer < 0)
 			return;
 
 		/* Round remaining ticks upward so zero appears only after time
 		   expires. */
-		seconds = (tmr + TICKS_PER_SECOND - 1) / TICKS_PER_SECOND;
-		if(seconds != 0 && seconds * TICKS_PER_SECOND == tmr)
-			sySndPlayStub(SE_TRIPLE_TONE_LOW);
+		seconds = (timer + TICKS_PER_SECOND - 1) / TICKS_PER_SECOND;
+		if(seconds != 0 && seconds * TICKS_PER_SECOND == timer)
+			sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 
-		if(state->tmrWin != 0)
-			mnTextDrawNumInWindow(seconds, 2, state->tmrWin, 16, 8);
+		if(state->timerWindow != 0)
+			mnTextDrawNumberInWindow(seconds, 2, state->timerWindow, 16, 8);
 	}
 }
 
 /* Tests whether the party may not run from this battle, and if so says "This is
    no time to be running away!": a battle a script starts
    (BATTLE_TYPE_SCRIPTED), a link battle, and a party once challenged
-   (BATTLE_STATE.challengeFlg). In a BATTLE_TYPE_NO_ESCAPE battle the party may
+   (BATTLE_STATE.challengeFlag). In a BATTLE_TYPE_NO_ESCAPE battle the party may
    try, and always fails (battle/battle_turn.c). */
 Sint32 mnBattleRefuseFlee(void)
 {
 	Sint16		  buf[64];
-	WINDOW		 *win;
+	WINDOW		 *window;
 	Bool		  result;
 	BATTLE_STATE *battle;
 	Sint32		  mode;
@@ -142,23 +142,23 @@ Sint32 mnBattleRefuseFlee(void)
 		result = FALSE;
 	}
 	if(result == 0) {
-		if((Sint8)battle->challengeFlg != 0) {
+		if((Sint8)battle->challengeFlag != 0) {
 			result = TRUE;
 		}
 	}
 	if(result != 0) {
-		win = mnWindowCreate(0, 7, 30, 4,
+		window = mnWindowCreate(0, 7, 30, 4,
 			WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 				WINDOW_FLAG_BORDERED_CANVAS);
 		mnTextFillCanvasBackground();
 		BATTLE_MENU_MESSAGE_COPY(
 			MsgNoTimeToRun, buf, BATTLE_MENU_MESSAGE_CAPACITY);
-		mnTextDrawWideStringAtOffset(buf, win, 0, 4);
+		mnTextDrawWideStringAtOffset(buf, window, 0, 4);
 		do {
 			sySynch(1);
-		} while(
-			(PerPush & (KEY_A | KEY_B)) == 0 && BattleMenuStateWork->tmr != 0);
-		mnWindowClose(win, 1);
+		} while((PerPush & (KEY_A | KEY_B)) == 0 &&
+			BattleMenuStateWork->timer != 0);
+		mnWindowClose(window, 1);
 	}
 	return result;
 }

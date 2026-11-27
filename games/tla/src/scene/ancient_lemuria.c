@@ -105,24 +105,24 @@ void scAncientLemuriaRimeJoins(void)
    starts. */
 void scAncientLemuriaRockTheStatue(ACTOR *actor)
 {
-	FIELD_SPR *spr = actor->spr;
-	Sint16	   time = actor->tmr++;
+	FIELD_SPR *sprite = actor->sprite;
+	Sint16	   time = actor->timer++;
 
-	spr->rotation = syMulFX(
+	sprite->rotation = syMulFX(
 		sySin(time * (TRIG_TURN / RIME_STATUE_ROCK_TICKS)), TRIG_TURN / 256);
 	if((time & (RIME_STATUE_ROCK_TICKS - 1)) == 0)
-		sySndPlay(SE_SWITCH);
+		sySoundPlay(SE_SWITCH);
 }
 
 /* The rocking statue stands still. */
 void scAncientLemuriaStillTheStatue(Sint32 id)
 {
 	ACTOR	  *actor = fdActorGetById(id);
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
 	actor->update = 0;
-	actor->tmr = 0;
-	spr->rotation = 0;
+	actor->timer = 0;
+	sprite->rotation = 0;
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -198,7 +198,7 @@ static inline void Hop(Sint32 dx, Sint32 dz)
 void scAncientLemuriaCycloneRevealsRime(void)
 {
 	ACTOR *actor;
-	Sint32 frm;
+	Sint32 frame;
 
 	syFieldTileCopiesCopyTouchedMetatiles(7, 13, 1, 1, 5, 13, 0);
 	if(fdScriptGetFlag(FLAG_RIME_REVEALED))
@@ -206,12 +206,12 @@ void scAncientLemuriaCycloneRevealsRime(void)
 	actor = fdActorGetById(ACTOR_RIME);
 	fdScriptSetFlag(FLAG_RIME_REVEALED);
 	fdScriptSetFlag(FLAG_RIME_IN_THE_STATUE);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_RIME), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_RIME), 0);
 	fdActorSetPos(ACTOR_RIME, 88, 216);
 	fdActorJump(ACTOR_RIME, 9, 0);
 	actor->scaleY = toFIXED(1) / 2;
 	actor->scaleX = toFIXED(1) / 2;
-	for(frm = 0; frm < 30; frm++) {
+	for(frame = 0; frame < 30; frame++) {
 		actor->facing += TRIG_TURN / 16;
 		if(actor->scaleX < toFIXED(1))
 			actor->scaleX += toFIXED(5) / 128;
@@ -221,12 +221,12 @@ void scAncientLemuriaCycloneRevealsRime(void)
 	actor->facing = FACING_SOUTH_SOUTHEAST;
 	actor->scaleY = toFIXED(1);
 	actor->scaleX = toFIXED(1);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_RIME), 1);
-	fdActorSetSprPriority(ACTOR_RIME, 1);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_RIME), 1);
+	fdActorSetSpritePriority(ACTOR_RIME, 1);
 	fdScriptWait(8);
 	fdActorJump(ACTOR_RIME, 9, 0);
 	fdActorWalkToAndWaitById(ACTOR_RIME, 120, 200);
-	fdActorGetById(ACTOR_RIME)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_RIME)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorWalkToAndWaitById(ACTOR_RIME, 136, 200);
 	fdScriptWait(3);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_STAND);
@@ -249,7 +249,7 @@ void scAncientLemuriaCycloneRevealsRime(void)
 	Hop(16, 0);
 	fdActorSetPos(ACTOR_RIME, 0, 0);
 	fdActorGetById(ACTOR_RIMES_STATUE)->update = scAncientLemuriaRockTheStatue;
-	fdActorGetById(ACTOR_RIMES_STATUE)->tmr = 0;
+	fdActorGetById(ACTOR_RIMES_STATUE)->timer = 0;
 }
 
 /* Felix casts Cyclone on the second patch of weeds (metatile (8, 9)), and they
@@ -338,7 +338,7 @@ void scAncientLemuriaHeadForTheDock(void)
 
 	if(!syGameFlagGet(FLAG_BLUE_STATUE_MOVED) ||
 		syGameFlagGet(FLAG_MET_KING_HYDROS)) {
-		sySndPlay(SE_MAP_EXIT);
+		sySoundPlay(SE_MAP_EXIT);
 		syImportScriptSetExitRequest(ANCIENT_LEMURIA_TO_LEMURIA_DOCK_EAST_A);
 	} else {
 		fdScriptStart();
@@ -380,33 +380,35 @@ const CUE *scGetCues(void)
 /* The water's shine: every four ticks the rotating colours of both water
    palettes move on by one, and the shining colour takes the next of
    AncientLemuriaShiningWaterColors. */
-Sint32 scAncientLemuriaCycleWaterCols(void)
+Sint32 scAncientLemuriaCycleWaterColors(void)
 {
 	if((*RamTickCount & 3) == 0) {
 		Sint16 saved;
-		Sint32 idx;
+		Sint32 index;
 
 		saved =
 			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, SHORE_WATER_LAST_COLOR);
-		for(idx = SHORE_WATER_LAST_COLOR; idx != SHORE_WATER_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, idx) =
-				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, idx - 1);
+		for(index = SHORE_WATER_LAST_COLOR; index != SHORE_WATER_FIRST_COLOR;
+			index--)
+			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, index) =
+				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, index - 1);
 		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, SHORE_WATER_FIRST_COLOR) =
 			saved;
 		saved = BG_PLTT_COLOR(
 			FIRST_SHORE_WATER_PALETTE + 1, SHORE_WATER_LAST_COLOR);
-		for(idx = SHORE_WATER_LAST_COLOR; idx != SHORE_WATER_FIRST_COLOR; idx--)
-			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, idx) =
-				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, idx - 1);
+		for(index = SHORE_WATER_LAST_COLOR; index != SHORE_WATER_FIRST_COLOR;
+			index--)
+			BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, index) =
+				BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, index - 1);
 		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, SHORE_WATER_FIRST_COLOR) =
 			saved;
 	}
 	{
-		Sint16 col = AncientLemuriaShiningWaterColors[(*RamTickCount >> 2) %
+		Sint16 color = AncientLemuriaShiningWaterColors[(*RamTickCount >> 2) %
 			SHINING_WATER_COLORS];
 
-		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, WATER_SHINING_COLOR) = col;
-		return col;
+		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, WATER_SHINING_COLOR) = color;
+		return color;
 	}
 }
 
@@ -417,7 +419,7 @@ Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	sySetEvent(scAncientLemuriaCycleWaterCols, EVENT_PASS_VBLANK);
+	sySetEvent(scAncientLemuriaCycleWaterColors, EVENT_PASS_VBLANK);
 	if(MainRoutineStateWork.entrance != ANCIENT_LEMURIA_AT_NORTHEAST_GATEWAY)
 		syGameFlagClear(FLAG_SHOW_AREA_NAME);
 	else
@@ -434,9 +436,9 @@ Sint32 scInit(void)
 		syGameFlagGet(FLAG_RIME_REVEALED)) {
 		fdActorGetById(ACTOR_RIMES_STATUE)->update =
 			scAncientLemuriaRockTheStatue;
-		fdActorGetById(ACTOR_RIMES_STATUE)->tmr = 0;
+		fdActorGetById(ACTOR_RIMES_STATUE)->timer = 0;
 	}
-	fdActorSetSprFlags(fdActorGetById(ACTOR_RIMES_STATUE), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_RIMES_STATUE), 0);
 	return 0;
 }
 
@@ -690,7 +692,7 @@ void scAncientLemuriaMeetTheLemurians(void)
 	/* "Insolent pup! Do not dishonor the king of Lemuria! We are
 	   peaceful..." */
 	fdScriptShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-	fdActorSetSprPriority(ACTOR_KRADEN, 2);
+	fdActorSetSpritePriority(ACTOR_KRADEN, 2);
 	fdActorJump(ACTOR_KRADEN, 6, 15);
 	fdActorJump(ACTOR_KRADEN, 6, 23);
 	fdActorShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
@@ -830,7 +832,7 @@ void scAncientLemuriaMeetTheLemurians(void)
 	fdActorFaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_KRADEN, FACING_WEST, 0);
 	fdScriptWait(20);
-	fdActorSetSprPriority(ACTOR_FELIX, 2);
+	fdActorSetSpritePriority(ACTOR_FELIX, 2);
 	fdActorWalkByAndWait(ACTOR_FELIX, 8, -20);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(20);

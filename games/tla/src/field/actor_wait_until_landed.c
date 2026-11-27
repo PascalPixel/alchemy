@@ -11,7 +11,7 @@ void fdActorWaitUntilLanded(ACTOR *actor)
 
 	while(remainingTicks != 0) {
 		sySynch(1);
-		busy = actor->velY;
+		busy = actor->velocityY;
 		remainingTicks--;
 		if(busy == 0)
 			break;

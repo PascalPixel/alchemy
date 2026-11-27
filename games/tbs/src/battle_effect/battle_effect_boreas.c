@@ -85,11 +85,11 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	Sint32				 tick;
 	DRAW_RECTANGLE		 draw;
-	DRAW_RECTANGLE		 drawAlt;
+	DRAW_RECTANGLE		 drawAlternate;
 	Uint8				*sparkleSheet;
 	Sint32				 edgeSpeed;
 	Sint32				 row;
-	Sint32				 cnt;
+	Sint32				 count;
 	Sint32				 i;
 	Sint32				 j;
 	Sint32				 shakeX;
@@ -106,7 +106,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	edgeSpeed = 1;
 	state->args = args;
 	btEffectStartCanvasLayer(0);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	PLTT_BACKDROP = 0;
 	BG_PLTT_COLOR(0, 1) = 0;
 	state->transferMode = CANVAS_COPY;
@@ -121,13 +121,13 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	draw = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, COMPOSITE_TRANSPARENT);
-	drawAlt = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
+	drawAlternate = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 	btEffectShowLivingTargets(state->args);
 	sySynch(1);
 	btBackgroundLoadStub(
 		BATTLE_BACKGROUND_FIXED, RESOURCE_VIOLET_SKY_BACKDROP, 0);
-	btEffectCreateSprs(BOREAS_SPRITES, SPRITE_BOREAS, 1);
+	btEffectCreateSprites(BOREAS_SPRITES, SPRITE_BOREAS, 1);
 	EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -150,11 +150,11 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		crystalPoints[i][1] = BOREAS_POINT_Y(i);
 	}
 
-	sySndPlayStub(SE_RUMBLE);
+	sySoundPlayStub(SE_RUMBLE);
 
 	/* First half: the crystals, the big ice block and the spray. */
 	for(tick = 0; tick != BOREAS_OPENING_TICKS; tick++) {
-		cnt = BOREAS_POINTS;
+		count = BOREAS_POINTS;
 		if((PerRepeat & (KEY_A | KEY_B)) && tick > 16) {
 			break;
 		}
@@ -179,11 +179,11 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		}
 
 		if(tick >= BOREAS_CRUMBLE_C_TICK) {
-			cnt = 0;
+			count = 0;
 		} else if(tick >= BOREAS_CRUMBLE_B_TICK) {
-			cnt = BOREAS_CRYSTALS_AFTER_CRUMBLE_B;
+			count = BOREAS_CRYSTALS_AFTER_CRUMBLE_B;
 		} else if(tick >= BOREAS_CRUMBLE_A_TICK) {
-			cnt = BOREAS_CRYSTALS_AFTER_CRUMBLE_A;
+			count = BOREAS_CRYSTALS_AFTER_CRUMBLE_A;
 		}
 
 		if(tick <= 167) {
@@ -205,7 +205,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 			BgScrollWork[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
 		}
 
-		for(i = 0; i != cnt; i++) {
+		for(i = 0; i != count; i++) {
 			Sint32 picture = i % 3;
 			draw(canvas, state->sheet + BoreasCrystalPictures[picture],
 				BOREAS_POINT_X(i) - shakeX,
@@ -218,12 +218,12 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		   block settles behind its head and sinks out of sight into it. */
 		if(tick == BOREAS_BLOCK_LAND_TICK - 2) {
 			for(i = 0; i != BOREAS_SPRITES; i++) {
-				state->sprs[i]->image.pri = 0;
+				state->sprites[i]->image.priority = 0;
 			}
 		}
 		if(tick > BOREAS_BLOCK_SINK_TICK) {
-			fdSprStartAnimationStub(
-				state->sprs[2], BoreasAnimations[(tick / 4) & 3]);
+			fdSpriteStartAnimationStub(
+				state->sprites[2], BoreasAnimations[(tick / 4) & 3]);
 		}
 
 		/* DEAD: stores of the 1.0 the copy of unitScale already holds; the ROM
@@ -237,7 +237,8 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 				pos.x = INTtoFIXED(j * 32 + 144 - shakeX);
 				pos.y = INTtoFIXED(row * 32 + 76 - shakeY);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[row * BOREAS_SPRITE_ROWS + j], &pos, &scale, 0);
+					state->sprites[row * BOREAS_SPRITE_ROWS + j], &pos, &scale,
+					0);
 			}
 		}
 
@@ -253,24 +254,24 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 			} else if(tick > BOREAS_BLOCK_SINK_TICK) {
 				blockY = sinkTick / 4 + 8;
 			}
-			drawAlt(canvas, state->sheet + BOREAS_BIG_BLOCK, blockX, blockY,
-				BOREAS_BIG_BLOCK_WIDTH, BOREAS_BIG_BLOCK_HEIGHT);
+			drawAlternate(canvas, state->sheet + BOREAS_BIG_BLOCK, blockX,
+				blockY, BOREAS_BIG_BLOCK_WIDTH, BOREAS_BIG_BLOCK_HEIGHT);
 		}
 
 		if(tick == BOREAS_CRUMBLE_A_TICK) {
-			sySndPlayStub(SE_HEAVY_IMPACT);
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 		}
 		if(tick == BOREAS_CRUMBLE_B_TICK) {
-			sySndPlayStub(SE_HEAVY_IMPACT);
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 		}
 		if(tick == BOREAS_CRUMBLE_C_TICK) {
-			sySndPlayStub(SE_HEAVY_IMPACT);
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 		}
 		if(tick == BOREAS_BLOCK_LAND_TICK) {
-			sySndPlayStub(SE_HEAVY_IMPACT);
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 		}
 		if(tick == BOREAS_SPRAY_TICK + 2) { /* the spray bursts out */
-			sySndPlayStub(SE_CRASH);
+			sySoundPlayStub(SE_CRASH);
 		}
 		syInitMatrix();
 
@@ -279,8 +280,8 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 			for(i = 0; i != BOREAS_SHARDS / 2; i++) {
 				PARTICLES[i].x = INTtoFIXED((syRandom() & 31) + 68);
 				PARTICLES[i].y = INTtoFIXED((syRandom() & 31) + 8);
-				PARTICLES[i].velX = ((syRandom() & 127) - 63) << 11;
-				PARTICLES[i].velY = ((-syRandom() & 127) - 64) << 11;
+				PARTICLES[i].velocityX = ((syRandom() & 127) - 63) << 11;
+				PARTICLES[i].velocityY = ((-syRandom() & 127) - 64) << 11;
 				PARTICLES[i].variant = (syRandom() & 15) + 32;
 			}
 		}
@@ -290,9 +291,9 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 					INTtoFIXED(syRandom() % 48 + 60);
 				PARTICLES[i + BOREAS_SHARDS / 2].y =
 					INTtoFIXED((syRandom() & 31) + 52);
-				PARTICLES[i + BOREAS_SHARDS / 2].velX =
+				PARTICLES[i + BOREAS_SHARDS / 2].velocityX =
 					((syRandom() & 127) - 63) << 12;
-				PARTICLES[i + BOREAS_SHARDS / 2].velY =
+				PARTICLES[i + BOREAS_SHARDS / 2].velocityY =
 					((-syRandom() & 31) - 32) << 13;
 				PARTICLES[i + BOREAS_SHARDS / 2].variant =
 					(syRandom() & 15) + 32;
@@ -302,8 +303,8 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 			for(i = 0; i != BOREAS_SHARDS / 2; i++) {
 				PARTICLES[i].x = INTtoFIXED((syRandom() & 63) + 52);
 				PARTICLES[i].y = INTtoFIXED((syRandom() & 31) + 72);
-				PARTICLES[i].velX = ((syRandom() & 127) - 63) << 11;
-				PARTICLES[i].velY = ((-syRandom() & 31) - 32) << 13;
+				PARTICLES[i].velocityX = ((syRandom() & 127) - 63) << 11;
+				PARTICLES[i].velocityY = ((-syRandom() & 31) - 32) << 13;
 				PARTICLES[i].variant = (syRandom() & 15) + 32;
 			}
 		}
@@ -317,14 +318,14 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 					} else {
 						picture = i & 3;
 					}
-					drawAlt(canvas,
+					drawAlternate(canvas,
 						state->sheet + BoreasDebrisPictures[picture],
 						FIXEDtoINT(PARTICLES[i].x), FIXEDtoINT(PARTICLES[i].y),
 						BoreasDebrisWidths[picture],
 						BoreasDebrisHeights[picture]);
-					PARTICLES[i].x += PARTICLES[i].velX;
-					PARTICLES[i].y += PARTICLES[i].velY;
-					PARTICLES[i].velY += toFIXED(1) / 8;
+					PARTICLES[i].x += PARTICLES[i].velocityX;
+					PARTICLES[i].y += PARTICLES[i].velocityY;
+					PARTICLES[i].velocityY += toFIXED(1) / 8;
 				}
 			}
 		}
@@ -335,8 +336,8 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 				for(i = 0; i != BOREAS_SPRAY; i++) {
 					PARTICLES[i].x = toFIXED(72);
 					PARTICLES[i].y = toFIXED(56);
-					PARTICLES[i].velX = (-(syRandom() & 127) - 64) << 11;
-					PARTICLES[i].velY = ((syRandom() & 127) + 16) << 11;
+					PARTICLES[i].velocityX = (-(syRandom() & 127) - 64) << 11;
+					PARTICLES[i].velocityY = ((syRandom() & 127) + 16) << 11;
 					PARTICLES[i].variant = syRandom();
 				}
 			}
@@ -351,8 +352,8 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 							BoreasSprayWidths[picture],
 							BoreasSprayHeights[picture]);
 					}
-					PARTICLES[i].x += PARTICLES[i].velX;
-					PARTICLES[i].y += PARTICLES[i].velY;
+					PARTICLES[i].x += PARTICLES[i].velocityX;
+					PARTICLES[i].y += PARTICLES[i].velocityY;
 					if(FIXEDtoINT(PARTICLES[i].x) < -BOREAS_SPRAY_SIZE ||
 						FIXEDtoINT(PARTICLES[i].y) > BATTLE_VIEW_HEIGHT) {
 						PARTICLES[i].x = toFIXED(72);
@@ -397,18 +398,18 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	/* Second half: ice crystals rain down on the targets, and more rise among
 	   them and burst. */
 	for(i = 0; i != BOREAS_SPRITES; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
-	btEffectSetupBlendedDisp();
+	btEffectSetupBlendedDisplay();
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 
 	for(i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
 		state->particles[i].x = INTtoFIXED((syRandom() & 127) + 64);
 		state->particles[i].z = -toFIXED(16);
 		state->particles[i].y = toFIXED(-(syRandom() & 127) - 64);
-		state->particles[i].velX = (-(syRandom() & 63) - 127) << 12;
-		state->particles[i].velY = ((syRandom() & 63) + 127) << 12;
+		state->particles[i].velocityX = (-(syRandom() & 63) - 127) << 12;
+		state->particles[i].velocityY = ((syRandom() & 63) + 127) << 12;
 		state->particles[i].variant = 0;
 	}
 	for(i = 0; i != BOREAS_TORRENT_SPARKLES; i++) {
@@ -418,25 +419,25 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	}
 
 	for(tick = 0; tick != BOREAS_TORRENT_TICKS; tick++) {
-		cnt = 0;
+		count = 0;
 		if(tick == 96) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 		if(tick == BOREAS_TORRENT_RISE_TICK) {
-			state->shakeFrm = 32;
+			state->shakeFrame = 32;
 		}
 		/* Crystals rise among the targets. */
 		if(tick > BOREAS_TORRENT_RISE_TICK) {
-			cnt = (tick - BOREAS_TORRENT_RISE_TICK) / 2;
-			if(cnt > BOREAS_POINTS) {
-				cnt = BOREAS_POINTS;
+			count = (tick - BOREAS_TORRENT_RISE_TICK) / 2;
+			if(count > BOREAS_POINTS) {
+				count = BOREAS_POINTS;
 			}
 		}
 		if(tick >= 9 && tick < BOREAS_TORRENT_CRASH_TICK && (tick & 3) == 0) {
-			sySndPlayStub(SE_WATER);
+			sySoundPlayStub(SE_WATER);
 		}
 		if(tick == BOREAS_TORRENT_CRASH_TICK) {
-			sySndPlayStub(SE_CRASH);
+			sySoundPlayStub(SE_CRASH);
 		}
 		/* A streak of ice falls from the top right. */
 		if(tick > 64) {
@@ -444,7 +445,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 				tick * 14 - 992, BOREAS_STREAK_WIDTH, BOREAS_STREAK_HEIGHT);
 		}
 		if(tick < BOREAS_TORRENT_CRASH_TICK) {
-			for(i = 0; i != cnt; i++) {
+			for(i = 0; i != count; i++) {
 				Sint32 picture = i % 3;
 				draw(canvas,
 					state->sheet + BoreasRisingCrystalPictures[picture],
@@ -461,21 +462,21 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 						BOREAS_TARGETS_X_SHIFT);
 				state->particles[i].y =
 					toFIXED(BOREAS_POINT_Y(i & (BOREAS_POINTS - 1)));
-				state->particles[i].velX = ((syRandom() & 127) - 63) << 13;
-				state->particles[i].velY = (-(syRandom() & 31) - 16) << 14;
+				state->particles[i].velocityX = ((syRandom() & 127) - 63) << 13;
+				state->particles[i].velocityY = (-(syRandom() & 31) - 16) << 14;
 			}
 			/* DEAD: always true inside the crash's test; the ROM keeps the
 			   second compare. */
 			if(tick == BOREAS_TORRENT_CRASH_TICK) {
-				state->shakeFrm = 4;
+				state->shakeFrame = 4;
 			}
 		}
 		if(tick >= BOREAS_TORRENT_CRASH_TICK) {
-			cnt = BOREAS_TORRENT_CRYSTALS / 2;
+			count = BOREAS_TORRENT_CRYSTALS / 2;
 			if(tick != BOREAS_TORRENT_CRASH_TICK) {
-				cnt = BOREAS_TORRENT_CRYSTALS;
+				count = BOREAS_TORRENT_CRYSTALS;
 			}
-			for(i = 0; i != cnt; i++) {
+			for(i = 0; i != count; i++) {
 				PARTICLE *crystal = &state->particles[i];
 				y = FIXEDtoINT(crystal->y);
 				if(y <= 135) {
@@ -487,10 +488,10 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 						crystal, PARTICLE_DAMPING_NONE, toFIXED(1));
 					/* A falling crystal bounces off the battle view's foot. */
 					if(FIXEDtoINT(crystal->y) > BATTLE_VIEW_HEIGHT &&
-						crystal->velY > toFIXED(8)) {
-						crystal->velY = -crystal->velY / 4;
+						crystal->velocityY > toFIXED(8)) {
+						crystal->velocityY = -crystal->velocityY / 4;
 						crystal->y = toFIXED(BATTLE_VIEW_HEIGHT);
-						state->shakeFrm = 1;
+						state->shakeFrame = 1;
 					}
 				}
 			}
@@ -504,8 +505,8 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 					FIXEDtoINT(state->particles[i].y) -
 						BOREAS_CRYSTAL_HEIGHT / 2,
 					BOREAS_CRYSTAL_WIDTH, BOREAS_CRYSTAL_HEIGHT);
-				state->particles[i].x += state->particles[i].velX;
-				state->particles[i].y += state->particles[i].velY;
+				state->particles[i].x += state->particles[i].velocityX;
+				state->particles[i].y += state->particles[i].velocityY;
 				if(FIXEDtoINT(state->particles[i].y) > BATTLE_VIEW_HEIGHT &&
 					tick <= 47) {
 					state->particles[i].x = INTtoFIXED((syRandom() & 127) + 64);
@@ -517,7 +518,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		/* Each target turns blue and flinches in turn. */
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
 			if(tick == i * 8 + 32) {
-				btEffectTintBattler(state->args->tgts[i],
+				btEffectTintBattler(state->args->targets[i],
 					SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, TINT_KEEP, 0);
 			}
 		}

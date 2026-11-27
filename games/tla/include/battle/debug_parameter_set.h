@@ -11,7 +11,7 @@
 typedef struct DEBUG_PARTY_ENTRY {
 	Sint8  owner;
 	Uint8  level;
-	Sint8  djinnCnts[4];
+	Sint8  djinnCounts[4];
 	Uint16 items[6];
 	Uint16 actions[2];
 	Uint16 unused; /* 0 in every row; nothing reads it */
@@ -20,7 +20,7 @@ typedef struct DEBUG_PARTY_ENTRY {
 /* The owner that ends the debug parameter sets. */
 #define DEBUG_PARAMETER_SET_END -1
 
-/* The debug parameter sets btDebugParmSetLoad loads, a party member a row
+/* The debug parameter sets btDebugParamSetLoad loads, a party member a row
    (debug_parameter_sets.c). */
 extern DEBUG_PARTY_ENTRY DebugParameterSets[];
 

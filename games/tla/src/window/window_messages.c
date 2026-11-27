@@ -22,19 +22,20 @@ void mnMessageDecodeRawUnbounded(Sint32 msg, Uint16 *text)
 /* Decodes message into destination as a zero-terminated string of at most
    capacity entries, and returns its length. capacity counts halfwords including
    the terminator and must be at least 1. */
-Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dst, Uint32 capacity)
+Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dest, Uint32 capacity)
 {
 	WIN_STATE *state;
-	Uint32	   cnt;
+	Uint32	   count;
 
 	state = WINDOW_STATE;
 	state->textBufEnd = 0;
 	mnMessageDecode(msg, 1);
-	for(cnt = 0; cnt < capacity - 1 && (dst[cnt] = state->textBuf[cnt]) != 0;
-		cnt++) {
+	for(count = 0;
+		count < capacity - 1 && (dest[count] = state->textBuf[count]) != 0;
+		count++) {
 	}
-	dst[cnt] = 0;
-	return cnt;
+	dest[count] = 0;
+	return count;
 }
 
 /* The German, Spanish, French and Italian editions' text: its operands are
@@ -128,20 +129,20 @@ void mnWindowCloseAll(void)
 {
 	WIN_STATE *state;
 	MESSAGE	  *msg;
-	WINDOW	  *win;
+	WINDOW	  *window;
 	Uint32	   done;
-	WINDOW	  *msgWin;
-	WINDOW	  *pollWin;
+	WINDOW	  *msgWindow;
+	WINDOW	  *pollWindow;
 	Sint32	   i;
 
 	state = WINDOW_STATE;
 	msg = state->msgs;
-	win = state->wins;
+	window = state->windows;
 	i = 0;
 	do {
-		msgWin = msg->win;
-		if(msgWin != 0 && msgWin->flg != 0)
-			mnWindowClose(msgWin, 0);
+		msgWindow = msg->window;
+		if(msgWindow != 0 && msgWindow->flags != 0)
+			mnWindowClose(msgWindow, 0);
 		i++;
 		msg++;
 	} while(i != ARRAY_COUNT(state->msgs));
@@ -153,11 +154,11 @@ void mnWindowCloseAll(void)
 		msg = state->msgs;
 		i = 0;
 		do {
-			pollWin = msg->win;
-			if(pollWin != 0) {
-				if((*(Sint32 *)&pollWin->zoomStage) == 0) {
-					if(pollWin->flg == 0)
-						msg->win = NULL;
+			pollWindow = msg->window;
+			if(pollWindow != 0) {
+				if((*(Sint32 *)&pollWindow->zoomStage) == 0) {
+					if(pollWindow->flags == 0)
+						msg->window = NULL;
 					else
 						done = 0;
 				} else {
@@ -174,9 +175,9 @@ void mnWindowCloseAll(void)
 
 	/* Then the windows opened directly. */
 	for(i = 0; i != WINDOW_COUNT; i++) {
-		if(win->flg != 0)
-			mnWindowClose(win, 0);
-		win++;
+		if(window->flags != 0)
+			mnWindowClose(window, 0);
+		window++;
 	}
 }
 
@@ -184,14 +185,14 @@ void mnWindowCloseAll(void)
 #define FLASH_FRAME_BYTES (8 * TILE_SIZE_4BPP)
 #define FLASH_FRAME_TILES (BG_CHAR_BLOCK(0) + 8 * TILE_SIZE_4BPP)
 
-/* Loads the flash border frame `ofs` bytes into its picture
+/* Loads the flash border frame `offset` bytes into its picture
    (ResourceIdWindowBorderFlash) into tiles 8 to 15 and draws the window's
    rectangle with it. */
-void mnWindowShowFlashFrame(WINDOW **win, Sint32 ofs)
+void mnWindowShowFlashFrame(WINDOW **window, Sint32 offset)
 {
 	Uint8 *src =
-		(Uint8 *)syResourceGetTableEntry(RESOURCE_WINDOW_BORDER_FLASH) + ofs;
-	WINDOW *rect = *win;
+		(Uint8 *)syResourceGetTableEntry(RESOURCE_WINDOW_BORDER_FLASH) + offset;
+	WINDOW *rect = *window;
 	Sint32	x = rect->x;
 	Sint32	y = rect->y;
 	Sint32	width = rect->width;
@@ -208,28 +209,29 @@ void mnWindowShowFlashFrame(WINDOW **win, Sint32 ofs)
    the end. */
 void mnWindowStepSwellEffect(MESSAGE *msg)
 {
-	if(msg->win->anm == WINDOW_ANIMATION_SWELL) {
+	if(msg->window->animation == WINDOW_ANIMATION_SWELL) {
 		if(msg->countdown == 10)
-			mnWindowShowFlashFrame(&msg->win, 3 * FLASH_FRAME_BYTES);
+			mnWindowShowFlashFrame(&msg->window, 3 * FLASH_FRAME_BYTES);
 		else if(msg->countdown == 9)
-			mnWindowShowFlashFrame(&msg->win, 2 * FLASH_FRAME_BYTES);
+			mnWindowShowFlashFrame(&msg->window, 2 * FLASH_FRAME_BYTES);
 		else if(msg->countdown == 8)
-			mnWindowShowFlashFrame(&msg->win, 1 * FLASH_FRAME_BYTES);
+			mnWindowShowFlashFrame(&msg->window, 1 * FLASH_FRAME_BYTES);
 		else if(msg->countdown == 6)
-			mnWindowShowFlashFrame(&msg->win, 2 * FLASH_FRAME_BYTES);
+			mnWindowShowFlashFrame(&msg->window, 2 * FLASH_FRAME_BYTES);
 		else if(msg->countdown == 4)
-			mnWindowShowFlashFrame(&msg->win, 3 * FLASH_FRAME_BYTES);
+			mnWindowShowFlashFrame(&msg->window, 3 * FLASH_FRAME_BYTES);
 		if(msg->countdown == 2) {
-			WINDOW *win = msg->win;
+			WINDOW *window = msg->window;
 
-			mnWindowDrawBorder(win->x, win->y, win->width, win->height);
+			mnWindowDrawBorder(
+				window->x, window->y, window->width, window->height);
 		}
 		msg->countdown--;
 		if(msg->countdown == 0) {
 			syDMAXCopy(syResourceGetTableEntry(RESOURCE_WINDOW_BORDER_FLASH),
 				(void *)FLASH_FRAME_TILES,
 				DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4), REG_DMA3);
-			msg->win->anm = 0;
+			msg->window->animation = 0;
 		}
 	}
 }
@@ -294,7 +296,7 @@ Bool mnTextCheckPauseSkipped(MESSAGE *msg)
 	WIN_STATE *state = WINDOW_STATE;
 	Bool	   cancelKeys = FALSE;
 
-	if(state->waitingForSnd != 0 && sySndGetBGMRestoreDelayStub() == 0)
+	if(state->waitingForSound != 0 && sySoundGetBGMRestoreDelayStub() == 0)
 		cancelKeys = TRUE;
 	if(PerWork.data & (KEY_A | KEY_B | KEYS_SHOULDERS))
 		cancelKeys = TRUE;
@@ -317,7 +319,7 @@ Bool mnTextCheckTextDismissed(MESSAGE *msg)
 	Bool	   cancelKeys = FALSE;
 	Uint32	   pressedKeys;
 
-	if(state->waitingForSnd != 0 && sySndGetBGMRestoreDelayStub() == 0)
+	if(state->waitingForSound != 0 && sySoundGetBGMRestoreDelayStub() == 0)
 		cancelKeys = TRUE;
 	pressedKeys = PerWork.push;
 	if(state->mindRead != 0)
@@ -342,16 +344,16 @@ void mnMessageCloseFinishedWindows(void)
 {
 	Sint32	 i;
 	MESSAGE *msg;
-	WINDOW	*win;
+	WINDOW	*window;
 
 	msg = WINDOW_STATE->msgs;
 	i = 0;
 	do {
-		win = msg->win;
+		window = msg->window;
 		/* The zoom's stage and duration are read as one word: both zero. */
-		if(win != NULL && *(Sint32 *)&win->zoomStage == 0 && win->flg != 0 &&
-			win->state != 0) {
-			mnWindowClose(win, WINDOW_FLAG_INSTANT & win->flg);
+		if(window != NULL && *(Sint32 *)&window->zoomStage == 0 &&
+			window->flags != 0 && window->state != 0) {
+			mnWindowClose(window, WINDOW_FLAG_INSTANT & window->flags);
 		}
 		i++;
 		msg++;
@@ -359,47 +361,47 @@ void mnMessageCloseFinishedWindows(void)
 	sySynch(10);
 }
 
-/* Shows a message centred across the screen and in its top 15 rows (yOfs
+/* Shows a message centred across the screen and in its top 15 rows (yOffset
    tiles lower) and waits until it is typed out, then closes it, in the window
    mode (CENTERED_MESSAGE_) gives. */
-void mnFieldMessageShowCentered(Sint32 msg, Sint32 mode, Sint32 yOfs)
+void mnFieldMessageShowCentered(Sint32 msg, Sint32 mode, Sint32 yOffset)
 {
 	WIN_STATE *state;
-	WINDOW	  *win;
+	WINDOW	  *window;
 	Sint32	   x;
 	Sint32	   y;
 	Sint32	   width;
 	Sint32	   height;
-	Sint32	   entryIdx;
+	Sint32	   entryIndex;
 
 	state = WINDOW_STATE;
 	x = 8;
 	y = 8;
-	win = NULL;
-	entryIdx = mnMessageDecode(msg, 1);
-	if(state->textBuf[entryIdx] != 0) {
+	window = NULL;
+	entryIndex = mnMessageDecode(msg, 1);
+	if(state->textBuf[entryIndex] != 0) {
 		mnTextGetMessageSize(msg, &x, &y, (Uint32 *)&width, (Uint32 *)&height);
 		x = (DISPLAY_TILE_WIDTH - width) >> 1;
-		y = ((15 - height) >> 1) + yOfs;
+		y = ((15 - height) >> 1) + yOffset;
 		if(mode != CENTERED_MESSAGE_BARE)
-			win = mnWindowCreate(x, y, width, height, 0);
+			window = mnWindowCreate(x, y, width, height, 0);
 		else {
-			win = mnWindowCreate(x, y, 0, 0, WINDOW_FLAG_INSTANT);
-			win->width = mode;
-			win->height = mode;
+			window = mnWindowCreate(x, y, 0, 0, WINDOW_FLAG_INSTANT);
+			window->width = mode;
+			window->height = mode;
 		}
-		if(mnMessageStart(win, entryIdx, 0, 0, 0, 0) == 0)
-			mnWindowClose(win, 1);
+		if(mnMessageStart(window, entryIndex, 0, 0, 0, 0) == 0)
+			mnWindowClose(window, 1);
 		else {
 			while(mnMessageAllTyped() == 0)
 				sySynch(1);
 			if(mode != CENTERED_MESSAGE_BARE) {
-				mnWindowClose(win, 0);
-				while(mnWindowIsClosed(win) == 0)
+				mnWindowClose(window, 0);
+				while(mnWindowIsClosed(window) == 0)
 					sySynch(1);
 			} else
-				mnWindowClose(win, 1);
-			state->speakerVoiceSnd = 0;
+				mnWindowClose(window, 1);
+			state->speakerVoiceSound = 0;
 			state->speakerVoiceCountdown = 0;
 		}
 	}
@@ -416,10 +418,10 @@ Sint32 mnMessageDecodeAndClearArguments(Sint32 msg)
 void mnMessageDecodeAppend(Sint32 msg)
 {
 	WIN_STATE *state = WINDOW_STATE;
-	Uint32	   cnt = state->textBufEnd;
+	Uint32	   count = state->textBufEnd;
 
-	cnt = (Uint16)(cnt - 1) & TEXT_BUFFER_MASK;
-	state->textBufEnd = (Uint16)(cnt - 1) & TEXT_BUFFER_MASK;
+	count = (Uint16)(count - 1) & TEXT_BUFFER_MASK;
+	state->textBufEnd = (Uint16)(count - 1) & TEXT_BUFFER_MASK;
 	mnMessageDecode(msg, 1);
 }
 
@@ -431,9 +433,9 @@ void mnMessageDecodeAppend(Sint32 msg)
    the European fonts' fifteen. */
 #define PLOT_GLYPH_ROWS JAPANESE_OR(12, 14)
 
-/* Plots a glyph's rows of bits onto the story crawl's canvas at dst, one byte a
-   pixel in color, leftmost pixel from the high bit; clear bits are left. */
-void mnTextPlotGlyphRows(Uint16 *rows, Uint8 *dst, Sint32 col)
+/* Plots a glyph's rows of bits onto the story crawl's canvas at dest, one byte
+   a pixel in color, leftmost pixel from the high bit; clear bits are left. */
+void mnTextPlotGlyphRows(Uint16 *rows, Uint8 *dest, Sint32 color)
 {
 	Sint32 y;
 	Uint8 *p;
@@ -441,15 +443,15 @@ void mnTextPlotGlyphRows(Uint16 *rows, Uint8 *dst, Sint32 col)
 
 	for(y = 0; y != PLOT_GLYPH_ROWS; y++) {
 		bits = *rows++ & ~3;
-		p = dst;
+		p = dest;
 		bits <<= GLYPH_ROW_BITS;
 		while(bits != 0) {
 			if(bits < 0)
-				*p = col;
+				*p = color;
 			bits <<= 1;
 			p++;
 		}
-		dst += CRAWL_CANVAS_WIDTH;
+		dest += CRAWL_CANVAS_WIDTH;
 	}
 }
 
@@ -471,16 +473,17 @@ Sint32 mnTextDrawGlyphToCanvas(Uint8 *canvas, Uint32 ch, Sint32 x, Sint32 row)
 	}
 	ch &= (1 << TEXT_MARK_SHIFT) - 1;
 	if(ch < KANJI_FIRST_CODE) {
-		Sint32 idx = ch - TEXT_SPACE;
+		Sint32 index = ch - TEXT_SPACE;
 
 		/* The width, then the rows after it. */
-		rows = &FontGlyphs[idx].width;
+		rows = &FontGlyphs[index].width;
 		width = *rows++;
 	} else {
-		Sint32 idx = ch - KANJI_FIRST_CODE;
+		Sint32 index = ch - KANJI_FIRST_CODE;
 
 		width = KANJI_WIDTH;
-		rows = (const Uint16 *)(FontKanjiGlyphs + idx * (FONT_GLYPH_ROWS * 2));
+		rows =
+			(const Uint16 *)(FontKanjiGlyphs + index * (FONT_GLYPH_ROWS * 2));
 	}
 	canvas += x + row * CRAWL_CANVAS_WIDTH;
 	mnTextPlotGlyphRows((Uint16 *)rows, canvas + 3 * CRAWL_CANVAS_WIDTH + 1, 1);
@@ -503,14 +506,14 @@ Sint32 mnTextDrawGlyphToCanvas(Uint8 *canvas, Sint32 ch, Sint32 x, Sint32 row)
 	Uint16 *glyph = (Uint16 *)((Uint8 *)FontGlyphs +
 		(((ch & TEXT_LAST_FONT_CODE) - TEXT_SPACE) << 5));
 	Sint32	width = *glyph;
-	Uint8  *dst = canvas + (x + row * CRAWL_CANVAS_WIDTH);
+	Uint8  *dest = canvas + (x + row * CRAWL_CANVAS_WIDTH);
 	Uint8  *rows;
 
 	glyph++;
-	rows = dst + 3 * CRAWL_CANVAS_WIDTH + 1;
+	rows = dest + 3 * CRAWL_CANVAS_WIDTH + 1;
 	mnTextPlotGlyphRows(glyph, rows, 1);
 	mnTextPlotGlyphRows(
-		glyph, rows = dst + 2 * CRAWL_CANVAS_WIDTH, TEXT_COLOR_WHITE);
+		glyph, rows = dest + 2 * CRAWL_CANVAS_WIDTH, TEXT_COLOR_WHITE);
 	return width;
 }
 #endif
@@ -637,7 +640,7 @@ UNUSED Sint32 mnTextDecodeSymbolInC(TEXT_READER *reader)
 	Sint32		 rank;
 	Sint32		 depth;
 	Sint32		 bit;
-	Uint32		 idx;
+	Uint32		 index;
 	Uint32		 leafNibble;
 
 	code = reader->prevCode;
@@ -698,16 +701,16 @@ UNUSED Sint32 mnTextDecodeSymbolInC(TEXT_READER *reader)
 	/* The leaf's symbol is the rank-th 12-bit entry, three nibbles each, packed
 	   backwards from base - 1: an even rank starts on a byte, an odd one in the
 	   middle of one. */
-	idx = rank * 3;
-	if(((idx * 4) & 7) == 0) {
-		bit = leaves[-(idx >> 1)];
+	index = rank * 3;
+	if(((index * 4) & 7) == 0) {
+		bit = leaves[-(index >> 1)];
 		code = bit << 4;
-		bit = leaves[-(idx >> 1) - 1];
+		bit = leaves[-(index >> 1) - 1];
 		code |= (Uint32)bit >> 4;
 	} else {
-		leafNibble = leaves[-(idx >> 1)];
+		leafNibble = leaves[-(index >> 1)];
 		leafNibble &= 0xf;
-		code = leaves[-(idx >> 1) - 1] | (leafNibble << 8);
+		code = leaves[-(index >> 1) - 1] | (leafNibble << 8);
 	}
 	reader->bits = textBits;
 	reader->prevCode = code;
@@ -723,10 +726,10 @@ extern const Sint16 PortraitSpriteMap[];
 void mnPortraitClearSlots(void)
 {
 	WIN_STATE *state = WINDOW_STATE;
-	Sint32	   idx;
+	Sint32	   index;
 
-	for(idx = 0; idx != ARRAY_COUNT(state->portraitPictures); idx++) {
-		state->portraitPictures[idx] = PORTRAIT_SLOT_EMPTY;
+	for(index = 0; index != ARRAY_COUNT(state->portraitPictures); index++) {
+		state->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
 	}
 }
 
@@ -740,7 +743,7 @@ void mnPortraitClearSlots(void)
 Sint32 mnPortraitGetForSpeaker(Uint32 value)
 {
 	Sint32 result = -1;
-	Sint32 portraitIdx = 0;
+	Sint32 portraitIndex = 0;
 
 	/* The party members' small sprites speak as the party members. */
 	switch(value) {
@@ -772,30 +775,30 @@ Sint32 mnPortraitGetForSpeaker(Uint32 value)
 	/* Both maps are {speaker, portrait} pairs ending in -1. */
 	if(value < PORTRAIT_FIRST_SPRITE_SPEAKER) {
 		for(;;) {
-			Sint32 speakerId = PortraitCharacterMap[portraitIdx];
+			Sint32 speakerId = PortraitCharacterMap[portraitIndex];
 
 			if(speakerId == -1)
 				break;
 			if(speakerId == value) {
-				portraitIdx++;
-				result = PortraitCharacterMap[portraitIdx];
+				portraitIndex++;
+				result = PortraitCharacterMap[portraitIndex];
 				break;
 			}
-			portraitIdx += 2;
+			portraitIndex += 2;
 		}
 	} else {
 		for(;;) {
-			Sint32 speakerId = PortraitSpriteMap[portraitIdx];
+			Sint32 speakerId = PortraitSpriteMap[portraitIndex];
 
 			if(speakerId == -1)
 				break;
 			if(speakerId == value) {
-				portraitIdx++;
-				result = PortraitSpriteMap[portraitIdx];
+				portraitIndex++;
+				result = PortraitSpriteMap[portraitIndex];
 				result += PORTRAIT_FIRST_SPRITE_PORTRAIT;
 				break;
 			}
-			portraitIdx += 2;
+			portraitIndex += 2;
 		}
 	}
 	return result;
@@ -807,7 +810,7 @@ Sint32 mnPortraitGetForSpeaker(Uint32 value)
 WINDOW *mnPortraitOpenWindow(
 	Sint32 speaker, Sint32 portraitOption, Sint32 x, Sint32 y)
 {
-	WINDOW	  *win;
+	WINDOW	  *window;
 	Sint32	   portraitY;
 	Sint32	   portraitX;
 	WIN_STATE *state;
@@ -819,18 +822,18 @@ WINDOW *mnPortraitOpenWindow(
 	portraitY = -4;
 	portraitX = portraitY;
 	if(state->mindRead != 0) {
-		win = mnWindowCreate(x, y, PORTRAIT_WINDOW_TILES + 1,
+		window = mnWindowCreate(x, y, PORTRAIT_WINDOW_TILES + 1,
 			PORTRAIT_WINDOW_TILES, WINDOW_FLAG_INSTANT);
 		portraitX = 0;
 	} else {
-		win = mnWindowCreate(x, y, PORTRAIT_WINDOW_TILES, PORTRAIT_WINDOW_TILES,
-			WINDOW_FLAG_INSTANT);
+		window = mnWindowCreate(x, y, PORTRAIT_WINDOW_TILES,
+			PORTRAIT_WINDOW_TILES, WINDOW_FLAG_INSTANT);
 	}
-	if(win != 0) {
+	if(window != 0) {
 		mnPortraitCreate(
-			speaker, portraitOption, -1, win, portraitX, portraitY);
+			speaker, portraitOption, -1, window, portraitX, portraitY);
 	}
-	return win;
+	return window;
 }
 
 /* Closes at once the portrait window showing the speaker's portrait, if one is
@@ -838,14 +841,14 @@ WINDOW *mnPortraitOpenWindow(
 void mnPortraitCloseWindow(Sint32 speaker)
 {
 	WIN_STATE  *state;
-	WINDOW	   *win;
+	WINDOW	   *window;
 	Sint32		resourceId;
 	Sint32		portraitSlot;
-	Sint32		winIdx;
-	WINDOW_SPR *portraitSpr;
+	Sint32		windowIndex;
+	WINDOW_SPR *portraitSprite;
 
 	state = WINDOW_STATE;
-	win = state->wins;
+	window = state->windows;
 	resourceId = mnPortraitGetForSpeaker(speaker);
 	if(resourceId == -1)
 		return;
@@ -858,20 +861,20 @@ void mnPortraitCloseWindow(Sint32 speaker)
 		return;
 	}
 
-	resourceId = state->portraitSprs[portraitSlot];
+	resourceId = state->portraitSprites[portraitSlot];
 
-	for(winIdx = 0; winIdx != WINDOW_COUNT; winIdx++, win++) {
-		portraitSpr = win->sprs.head;
+	for(windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
+		portraitSprite = window->sprites.head;
 #if FIX_NULL_DEREFERENCE
 		/* mnWindowCreate and the closing update leave empty heads NULL. Skip
 		   them before reading kind: dereferencing that NULL pointer is
 		   undefined. */
-		if(portraitSpr == NULL)
+		if(portraitSprite == NULL)
 			continue;
 #endif
-		if((Uint8)portraitSpr->kind == WINDOW_SPRITE_PORTRAIT &&
-			(Uint8)portraitSpr->idx == resourceId) {
-			mnWindowClose(win, WINDOW_FLAG_INSTANT);
+		if((Uint8)portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
+			(Uint8)portraitSprite->index == resourceId) {
+			mnWindowClose(window, WINDOW_FLAG_INSTANT);
 			return;
 		}
 	}

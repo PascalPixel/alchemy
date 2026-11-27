@@ -209,7 +209,7 @@ extern Uint8 MsgSettlementsDontTellMeYoureHere[];
 extern Sint16 SettlementsFallsObjects[];
 
 void scSmokeSpawn(Sint32 x, Sint32 y, Sint32 z);
-void scSettlementsCycleWaterCols(void);
+void scSettlementsCycleWaterColors(void);
 void scScrollStartHBlank(void);
 void scSettlementsSinkPillar(void);
 void scSettlementsSlideCrateDownFalls(void);
@@ -318,9 +318,9 @@ void scSettlementsMeetLostJupiterDjinni(void)
 }
 
 /* A script call: clears the actor's sprite flags. */
-Sint32 scSettlementsClearSprFlags(ACTOR *actor)
+Sint32 scSettlementsClearSpriteFlags(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -393,7 +393,8 @@ void scSettlementsCatchApple(void)
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorSetPos(ACTOR_APPLE, 0, 0);
 	fdScriptSetFlag(FLAG_KALT_ISLAND_APPLE_TAKEN);
-	fdItemDispShowItem(ITEM_APPLE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+	fdItemDisplayShowItem(
+		ITEM_APPLE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	mode = 0;
 	gmPartyGiveItem(ITEM_APPLE, mode);
 	fdScriptEnd();
@@ -456,17 +457,17 @@ void scSettlementsClimbDownLadder(void)
 
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	syFieldScriptWait(10);
-	fdActorGet(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdMapGridCopyMetatilesTo(96, 14, 72, 14, 2, 1);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 4);
 	scFieldActorWaitForMoveById(ACTOR_FELIX);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FELIX), 0);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 16);
 	scFieldActorWaitForMoveById(ACTOR_FELIX);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB);
 	syFieldScriptWait(10);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syFieldScriptSetExitRequest(next);
 	fdScriptEnd();
 }
@@ -567,14 +568,14 @@ void scSettlementsPuffChimneySmoke(void)
    in its speedLimit and its spot in targetX and targetY. */
 Sint32 scSettlementsFloatApple(ACTOR *apple)
 {
-	FIELD_SPR *spr = (FIELD_SPR *)apple->spr;
+	FIELD_SPR *sprite = (FIELD_SPR *)apple->sprite;
 	FIXED	   dip = syMathSin(apple->speedLimit) * 2;
 
 	if(dip > 0)
 		dip = -dip;
-	apple->x.fixed = apple->tgtX + syCos(apple->speedLimit) * 2;
-	apple->y.fixed = apple->tgtY + dip;
-	spr->rotation = syCos(apple->speedLimit + DEGtoANG(180)) / 8;
+	apple->x.fixed = apple->targetX + syCos(apple->speedLimit) * 2;
+	apple->y.fixed = apple->targetY + dip;
+	sprite->rotation = syCos(apple->speedLimit + DEGtoANG(180)) / 8;
 	/* The pace: a sixty-fourth of a turn and two random steps under 1/128
 	   each. */
 	apple->speedLimit +=
@@ -589,7 +590,7 @@ Sint32 scSettlementsFloatApple(ACTOR *apple)
 void scSettlementsSetUpKaltIsland(void)
 {
 	ACTOR		  *actor;
-	FIELD_SPR	  *spr;
+	FIELD_SPR	  *sprite;
 	ICON_TRANSFER *glyph;
 
 	REG_BLDALPHA = BLEND_ALPHA(8, 12);
@@ -608,26 +609,26 @@ void scSettlementsSetUpKaltIsland(void)
 		return;
 	}
 	actor = fdActorGet(ACTOR_APPLE);
-	spr = (FIELD_SPR *)actor->spr;
-	spr->pri = 1;
-	spr->fullCol = 0;
-	spr->pal = 0;
-	spr->cnt = 0;
-	fdActorSetSprFlags(actor, 0);
-	actor->retainSprCache = 0;
-	actor->motionFlg = 0;
+	sprite = (FIELD_SPR *)actor->sprite;
+	sprite->priority = 1;
+	sprite->fullColor = 0;
+	sprite->palette = 0;
+	sprite->count = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->retainSpriteCache = 0;
+	actor->motionFlags = 0;
 	if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
 		actor->y.fixed += toFIXED(16);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	actor->frozen = 1;
-	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	gmItemLoadIcon(ITEM_APPLE);
-	mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+	mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	actor->tgtX = actor->x.fixed;
+	actor->targetX = actor->x.fixed;
 	actor->speedLimit = 0;
-	actor->tgtY = actor->y.fixed;
-	actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+	actor->targetY = actor->y.fixed;
+	actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 	actor->update = (OBJECT_UPDATE)scSettlementsFloatApple;
 	actor->arrivalAxis = 0;
 }
@@ -646,7 +647,8 @@ Sint32 scInit(void)
 		fdActorPlaceBlocks(SettlementsFallsObjects);
 		if(fdScriptGetFlag(FLAG_FALLS_CRATE_LOST))
 			fdActorSetPos(ACTOR_FALLS_CRATE, 0, 0);
-		fdActorGetById(ACTOR_FALLS_CRATE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGetById(ACTOR_FALLS_CRATE)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSetAnimation(ACTOR_RIVER_STONE_H, 2);
 		fdActorSetAnimation(ACTOR_RIVER_STONE_I, 2);
 		fdActorSetAnimation(ACTOR_RIVER_STONE_K, 2);
@@ -657,7 +659,7 @@ Sint32 scInit(void)
 		if(fdScriptGetFlag(FLAG_PILLAR_SUNK)) {
 			fdActorSetPos(ACTOR_PILLAR, 0, 0);
 			fdActorSetPos(ACTOR_RIVER_STONE_K, 184, 184);
-			fdActorGetById(ACTOR_RIVER_STONE_K)->motionFlg = 0;
+			fdActorGetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
 			fdMapGridCopyMetatileAttributes(9, 11, 1, 1, 11, 12);
 		}
 #endif
@@ -696,7 +698,7 @@ Sint32 scPrepareMap(void)
 		if(fdScriptGetFlag(FLAG_PILLAR_SUNK)) {
 			fdActorSetPos(ACTOR_PILLAR, 0, 0);
 			fdActorSetPos(ACTOR_RIVER_STONE_K, 184, 184);
-			fdActorGetById(ACTOR_RIVER_STONE_K)->motionFlg = 0;
+			fdActorGetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
 			fdMapGridCopyMetatileAttributes(9, 11, 1, 1, 11, 12);
 		}
 #endif
@@ -750,13 +752,13 @@ void scSettlementsEnterHouse(void)
 		ACTOR *actor = fdActorGet(i);
 
 		if(actor != 0)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
 	if(MainRoutineStateWork.next == SCENE_HESPERIA_SETTLEMENT)
 		fdMapGridCopyMetatilesTo(33, 30, 23, 14, 1, 2);
 	else
 		fdMapGridCopyMetatilesTo(27, 29, 40, 16, 1, 2);
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -4);
@@ -780,25 +782,25 @@ extern Sint32 SettlementsWaterColorTick;
 
 /* An event on SW Atteka Islet: the falls' water runs, its four colours moving
    along by one every 8 ticks. */
-void scSettlementsCycleWaterCols(void)
+void scSettlementsCycleWaterColors(void)
 {
 	FIELD_STATE *state = (FIELD_STATE *)RamHeapSlots->fieldState;
-	Sint32		*frm;
+	Sint32		*frame;
 	Sint32		 phase, i;
 
 	if(state->psynergy != 0 || state->revealActive != 0)
 		return;
-	frm = &SettlementsWaterColorTick;
-	if(*frm == -1) {
-		Uint16 *cols = SettlementsLoadedWaterColors;
+	frame = &SettlementsWaterColorTick;
+	if(*frame == -1) {
+		Uint16 *colors = SettlementsLoadedWaterColors;
 
-		syWordsCopy(cols, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
+		syWordsCopy(colors, (void *)&BG_PLTT_COLOR(FALLS_PALETTE, 0),
 			sizeof(SettlementsLoadedWaterColors));
-		syWordsCopy(SettlementsShownWaterColors, cols,
+		syWordsCopy(SettlementsShownWaterColors, colors,
 			sizeof(SettlementsLoadedWaterColors));
-		*frm = 0;
+		*frame = 0;
 	}
-	phase = (*frm / 8) % 4;
+	phase = (*frame / 8) % 4;
 	for(i = 0; i < WATER_COLORS; i++)
 		SettlementsShownWaterColors[FIRST_WATER_COLOR +
 			(phase + i) % WATER_COLORS] =
@@ -806,15 +808,15 @@ void scSettlementsCycleWaterCols(void)
 	{
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork;
 		Uint32			saved;
-		Sint32			cnt;
+		Sint32			count;
 
 		IRQ_LOCK(saved);
-		cnt = q->cnt;
-		if(cnt < IO_WRITE_QUEUE_SIZE) {
-			Uint32 *entry = q->entries[cnt];
+		count = q->count;
+		if(count < IO_WRITE_QUEUE_SIZE) {
+			Uint32 *entry = q->entries[count];
 
 			*entry++ = (Uint32)SettlementsShownWaterColors;
-			q->cnt = cnt + 1;
+			q->count = count + 1;
 			*entry++ = (Uint32)&BG_PLTT_COLOR(FALLS_PALETTE, 0);
 			*entry = DMA_COPY_WORDS(PALETTE_COLORS / 2);
 		}
@@ -829,7 +831,7 @@ void scSettlementsStartWaterfall(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-	syFieldSetTickEvent(scSettlementsCycleWaterCols, EVENT_PASS_TICK);
+	syFieldSetTickEvent(scSettlementsCycleWaterColors, EVENT_PASS_TICK);
 	fdQueueMusic(SE_AMBIENT_WATER);
 	scScrollStartHBlank();
 }
@@ -879,7 +881,7 @@ void scSettlementsUnblockFallsObjects(void)
    front of it. */
 void scSettlementsStartPushingFallsObject(void)
 {
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
 	fdActorLiftTargetBlock(SettlementsFallsObjects);
 }
@@ -897,7 +899,7 @@ void scSettlementsSinkPillar(void)
 	Sint32 i;
 
 	if(!fdScriptGetFlag(FLAG_PILLAR_SUNK) && column == 11 && row == 12) {
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		for(i = 10; i > 0; i--) {
 			actor->y.fixed -= toFIXED(2);
 			fdScriptWait(1);
@@ -905,7 +907,7 @@ void scSettlementsSinkPillar(void)
 		scSettlementsSplashIntoRiver(ACTOR_PILLAR);
 		fdActorSetPos(ACTOR_PILLAR, 0, 0);
 		fdActorSetPos(ACTOR_RIVER_STONE_K, 184, 184);
-		fdActorGetById(ACTOR_RIVER_STONE_K)->motionFlg = 0;
+		fdActorGetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
 		fdActorGetById(ACTOR_RIVER_STONE_K)->y.fixed -= toFIXED(64);
 		fdMapGridCopyMetatileAttributes(9, 11, 1, 1, 11, 12);
 		fdScriptSetFlag(FLAG_PILLAR_SUNK);
@@ -933,10 +935,10 @@ void scSettlementsSlideCrateDownFalls(void)
 	Sint32 column = FIELD_METATILE(actor->x.fixed);
 	Sint32 row = FIELD_METATILE(actor->z.fixed);
 	Sint32 i;
-	Uint8 *flg;
+	Uint8 *flags;
 
 	if(column == 11 && row == 9) {
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		SINK(8);
 		scSettlementsSplashIntoRiver(ACTOR_FALLS_CRATE);
 		syFieldScriptWait(20);
@@ -976,10 +978,10 @@ void scSettlementsSlideCrateDownFalls(void)
 	} else if(!fdScriptGetFlag(FLAG_FALLS_CRATE_DROPPED) && column == 16 &&
 		row == 12) {
 		fdMapGridCopyMetatileAttributes(17, 12, 1, 1, column, row);
-		flg = &actor->motionFlg;
-		*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		flags = &actor->motionFlags;
+		*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		syFieldScriptWait(30);
-		*flg = 0;
+		*flags = 0;
 		fdScriptSetFlag(FLAG_FALLS_CRATE_DROPPED);
 		fdScriptEnd();
 	}
@@ -1007,7 +1009,7 @@ void scSettlementsMoveCrate(void)
 void scSettlementsPushIntoFalls(void)
 {
 	fdActorPlaceMovedBlock();
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg -=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags -=
 		ACTOR_PRIORITY_UNDERFOOT;
 	scSettlementsSinkPillar();
 	scSettlementsSlideCrateDownFalls();
@@ -1113,13 +1115,13 @@ void scSettlementsDropCrate(void)
 	row = FIELD_METATILE(actor->z.fixed);
 	if(column == 12 && row == 15) {
 		fdScriptSetFlag(FLAG_WALL_CRATE_DROPPED);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		SINK(32);
 		scSettlementsSpawnDustRing(ACTOR_WALL_CRATE);
 		syFieldScriptWait(20);
 	} else if(!fdScriptGetFlag(FLAG_WALL_CRATE_ON_GROUND) && column == 16 &&
 		row == 15) {
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdScriptSetFlag(FLAG_WALL_CRATE_ON_GROUND);
 		fdScriptSetFlag(FLAG_WALL_CRATE_DROPPED);
 		SINK(48);
@@ -1127,7 +1129,7 @@ void scSettlementsDropCrate(void)
 		syFieldScriptWait(30);
 	} else if(column == 19 && row == 15) {
 		fdMapGridCopyMetatileAttributes(18, 16, 1, 1, column, row);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdScriptSetFlag(FLAG_WALL_CRATE_DROPPED);
 		SINK(32);
 		scSettlementsSpawnDustRing(ACTOR_WALL_CRATE);
@@ -1141,7 +1143,7 @@ void scSettlementsDropCrate(void)
 		row == 15) {
 		fdMapGridCopyMetatileAttributes(1, 3, 1, 1, 12, row);
 		fdMapGridCopyMetatileAttributes(1, 3, 1, 1, column, row);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		SINK(16);
 		scSettlementsSpawnDustRing(ACTOR_WALL_CRATE);
 		syFieldScriptWait(20);
@@ -1169,17 +1171,17 @@ void scSettlementsSplashIntoRiver(Sint32 id)
 {
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	UNUSED SETTLEMENTS_VECTOR vel;
+	UNUSED SETTLEMENTS_VECTOR velocity;
 	EFFECT_OPTIONS			  spawn;
 	ACTOR					 *actor = fdActorGet(id);
 
 	spawn.type = SPRITE_WATER_SPRAY;
 	spawn.startScaleX = toFIXED(4) / 5;
 	spawn.startScaleY = toFIXED(4) / 5;
-	spawn.tgtScaleX = toFIXED(1);
-	spawn.tgtScaleY = toFIXED(1);
+	spawn.targetScaleX = toFIXED(1);
+	spawn.targetScaleY = toFIXED(1);
 	spawn.script = SettlementsSmokeScript;
-	fdScriptPlaySnd(SE_CAST);
+	fdScriptPlaySound(SE_CAST);
 	scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
 		EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
 		&spawn);
@@ -1190,33 +1192,35 @@ void scSettlementsSplashIntoRiver(Sint32 id)
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef SINK
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* Puffs a ring of dust out from the crate as it lands. */
 void scSettlementsSpawnDustRing(Sint32 actorId)
 {
 	ACTOR		  *actor;
-	VECTOR3		   vel;
+	VECTOR3		   velocity;
 	EFFECT_OPTIONS options;
-	Uint32		   angStep;
-	Sint32		   ang;
-	Sint32		   velX;
-	FIXED		   velZ;
+	Uint32		   angleStep;
+	Sint32		   angle;
+	Sint32		   velocityX;
+	FIXED		   velocityZ;
 
 	actor = fdActorGet(actorId);
 	options.update = fdEffectAdvanceMotion;
-	for(angStep = 0; angStep <= TRIG_TURN / FACING_STEP; angStep += 2) {
-		ang = angStep * FACING_STEP;
-		vel.x = syCos(ang);
-		vel.y = 0;
-		velZ = syMathSin(ang);
-		velX = vel.x;
-		vel.z = velZ;
-		velX += velX / 3;
-		vel.x = velX;
-		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, velX,
-			vel.y, velZ, EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
+	for(angleStep = 0; angleStep <= TRIG_TURN / FACING_STEP; angleStep += 2) {
+		angle = angleStep * FACING_STEP;
+		velocity.x = syCos(angle);
+		velocity.y = 0;
+		velocityZ = syMathSin(angle);
+		velocityX = velocity.x;
+		velocity.z = velocityZ;
+		velocityX += velocityX / 3;
+		velocity.x = velocityX;
+		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+			velocityX, velocity.y, velocityZ,
+			EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
 	}
 }
 
@@ -1288,7 +1292,7 @@ Sint32 SettlementsBobScript[] = {
 	SC_ANIMATION(3),
 	SC_SET(SW_MOTION, 0),
 	SC_ADD(SW_Y, -toFIXED(16)),
-	SC_CALL((Sint32)scSettlementsClearSprFlags),
+	SC_CALL((Sint32)scSettlementsClearSpriteFlags),
 	SC_END,
 };
 

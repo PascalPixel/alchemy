@@ -5,7 +5,7 @@ void scFlameThrowerUpdateSpark(ACTOR *actor)
 	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIXED	   dx = actor->bounce;
 	FIXED	   dz;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Sint32	   rate;
 	Sint32	   scale;
 
@@ -17,10 +17,10 @@ void scFlameThrowerUpdateSpark(ACTOR *actor)
 	actor->sceneWord = dz - dz / 16;
 	rate = actor->speedLimit;
 	scale = actor->scaleX;
-	spr = actor->spr;
+	sprite = actor->sprite;
 	actor->scaleX = scale + rate;
 	actor->scaleY += actor->acceleration;
-	spr->rotation += actor->tmr;
+	sprite->rotation += actor->timer;
 	if(leader->y.fixed == leader->groundHeight &&
 		scActorIsAbove(actor, leader)) {
 		actor->z.fixed -= actor->sceneWord;

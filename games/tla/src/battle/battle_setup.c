@@ -13,7 +13,7 @@ void btCameraUpdate(void)
 {
 	BATTLE_CAMERA			*camera = RamHeapSlots->cameraState;
 	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
-	POS						 eyeOfs;
+	POS						 eyeOffset;
 	Sint32					*focus;
 	Sint16					 delta;
 	Uint32					 linkId;
@@ -36,7 +36,7 @@ void btCameraUpdate(void)
 	}
 
 	if(background->ticks != 0) {
-		delta = background->tgtYaw - camera->yaw;
+		delta = background->targetYaw - camera->yaw;
 		delta /= CAMERA_YAW_EASE;
 		/* The step is added to the yaw read as an unsigned halfword. */
 		camera->yaw = (Uint16)camera->yaw + delta;
@@ -54,8 +54,8 @@ void btCameraUpdate(void)
 	syMatrixSetTranslation(focus);
 
 	/* The eye sits distance behind the focus, along the turned view. */
-	SET_POSITION(&eyeOfs, 0, 0, camera->distance);
-	syCalcPoint(&eyeOfs.x, (Sint32 *)camera);
+	SET_POSITION(&eyeOffset, 0, 0, camera->distance);
+	syCalcPoint(&eyeOffset.x, (Sint32 *)camera);
 
 	if(background->keepRange == 0) {
 		btCameraSetRange(toFIXED(120), toFIXED(120), 0, 0, toFIXED(1));
@@ -64,7 +64,7 @@ void btCameraUpdate(void)
 
 /* Announces the enemies at the start of a battle, "<enemy> appeared!" for each,
    then whether the party strikes first or is caught by surprise. */
-void btIntroAnnounceEncounter(Sint32 enemyCnt)
+void btIntroAnnounceEncounter(Sint32 enemyCount)
 {
 	Sint16		  enemies[8];
 	BATTLE_STATE *battle;
@@ -76,17 +76,17 @@ void btIntroAnnounceEncounter(Sint32 enemyCnt)
 	btEnemyList(enemies);
 
 	announced = 0;
-	if(enemyCnt != 0) {
+	if(enemyCount != 0) {
 		enemy = enemies;
 		do {
 			mnMessageArgumentPushStub((Uint16)*enemy++, MESSAGE_ARGUMENT_ACTOR);
-			if(announced == enemyCnt - 1)
+			if(announced == enemyCount - 1)
 				mnBattleMessageShowAndWaitStub((Sint32)MsgLastEnemyAppeared);
 			else
 				mnBattleMessageShowAndWaitStub((Sint32)MsgEnemyAppeared);
 			announced++;
 			btMessageWaitForAdvance();
-		} while(announced != enemyCnt);
+		} while(announced != enemyCount);
 	}
 
 	mnBattleMessageCloseStub();
@@ -107,34 +107,34 @@ void btUnitCollect(void)
 {
 	Uint16		  unitIds[UNIT_MAX];
 	BATTLE_STATE *battle;
-	Sint32		  cnt;
+	Sint32		  count;
 	Sint32		  i;
 	Sint32		  pos;
 	Sint32		  formation;
 
 	battle = RamHeapSlots->battleState;
-	cnt = btPartyPrepareMembers(unitIds);
-	for(i = 0; i < cnt; i++)
+	count = btPartyPrepareMembers(unitIds);
+	for(i = 0; i < count; i++)
 		battle->partyUnits[i] = unitIds[i];
-	battle->partyUnits[cnt] = BATTLE_UNIT_LIST_END;
+	battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
 	/* The shuffled and interleaved formations keep the enemies in unit order;
 	   the others put the first in the centre and the rest either side of it. */
-	cnt = btEnemyList(unitIds);
+	count = btEnemyList(unitIds);
 	formation = battle->layout;
 	if(formation >= FORMATION_LAYOUT_SHUFFLED) {
 		if(formation <= FORMATION_LAYOUT_INTERLEAVED) {
-			for(i = 0; i < cnt; i++)
+			for(i = 0; i < count; i++)
 				battle->enemyIds[i] = unitIds[i];
 			goto placed;
 		}
 	}
-	for(i = 0; i < cnt; i++) {
-		pos = BattleFormationCenteredOffsets[i] + cnt / 2;
+	for(i = 0; i < count; i++) {
+		pos = BattleFormationCenteredOffsets[i] + count / 2;
 		battle->enemyIds[pos] = unitIds[i];
 	}
 placed:
-	battle->enemyIds[cnt] = BATTLE_UNIT_LIST_END;
+	battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
 /* Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
@@ -164,13 +164,13 @@ void btPartyBattleSetupNoOperation(Sint32 unused)
 UNREAD_RESULT btPartyClearBattleStatuses(void)
 {
 	Uint16 owners[10];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
-	cnt = btPartyPrepareMembers(owners);
-	cnt += btPartyPrepareReserveOwners(owners + cnt);
+	count = btPartyPrepareMembers(owners);
+	count += btPartyPrepareReserveOwners(owners + count);
 
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		UNIT  *unit = syUnitGet(owners[i]);
 		Sint32 element;
 
@@ -200,7 +200,7 @@ UNREAD_RESULT btPartyClearBattleStatuses(void)
 		unit->agilityStage = 0;
 		unit->challenge = 0;
 
-		gmUnitCalcStub(owners[i]);
+		gmUnitCalculateStub(owners[i]);
 	}
 }
 
@@ -211,19 +211,19 @@ void btPartyClearGuards(void)
 {
 	Uint16	ids[16];
 	Uint16 *id = ids;
-	Sint32	cnt;
+	Sint32	count;
 
-	cnt = btPartyPrepareMembers(ids);
-	cnt += btPartyPrepareReserveOwners(ids + cnt);
-	cnt += btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids + cnt);
-	if(cnt > 0) {
+	count = btPartyPrepareMembers(ids);
+	count += btPartyPrepareReserveOwners(ids + count);
+	count += btUnitListIds(BATTLE_SIDE_MASK_ENEMIES, ids + count);
+	if(count > 0) {
 		do {
 			UNIT *unit = syUnitGet(*id++);
 
 			unit->defendLevel = 0;
 			unit->immobile = 0;
-			cnt--;
-		} while(cnt != 0);
+			count--;
+		} while(count != 0);
 	}
 }
 
@@ -233,7 +233,7 @@ void btPartyClearGuards(void)
 void btDjinnRecoveryReconcile(void)
 {
 	Uint16				 owners[10];
-	Sint32				 cnt;
+	Sint32				 count;
 	Sint32				 n;
 	Uint32				 owner;
 	Sint32				 element;
@@ -241,20 +241,20 @@ void btDjinnRecoveryReconcile(void)
 	Sint32				 i;
 	DJINN_RECOVERY_LIST *list;
 
-	cnt = btPartyPrepareMembers(owners);
-	for(n = 0; n < cnt; n++) {
+	count = btPartyPrepareMembers(owners);
+	for(n = 0; n < count; n++) {
 		owner = owners[n];
 		for(element = 0; element < ELEMENT_COUNT; element++) {
 			for(djinn = 0; djinn < DJINN_PER_ELEMENT; djinn++) {
 				if(gmDjinnCanSetStub(owner, element, djinn) != 0) {
 					list =
 						&(gmDjinnGetRecoveryTableStub(owner > ALLY_MAX))->list;
-					for(i = 0; i < list->cnt; i++) {
+					for(i = 0; i < list->count; i++) {
 						if(element == list->entries[i].element &&
-							djinn == list->entries[i].idx)
+							djinn == list->entries[i].index)
 							break;
 					}
-					if(i == list->cnt)
+					if(i == list->count)
 						gmDjinnRecoveryAddStandbyStub(owner, element, djinn);
 				}
 			}
@@ -268,9 +268,9 @@ void btDjinnRecoveryReconcile(void)
 #define SUMMON_MASK_LEARNED (~0u << SUMMON_ZAGAN)
 
 /* Works out which of the summons up to SUMMON_THOR the party can call: those
-   whose Djinn of every element the party holds (djinnHeldCnts, set or not), all
-   members together, and stores them in the party's summon mask beside the ones
-   learned. Whether enough are on standby is checked as a summon is chosen
+   whose Djinn of every element the party holds (djinnHeldCounts, set or not),
+   all members together, and stores them in the party's summon mask beside the
+   ones learned. Whether enough are on standby is checked as a summon is chosen
    (mnBattleSummonMenuRun) and built (btActionRunBuild). btRun calls it as the
    battle is set up and at the start of each turn. */
 void btSummonUpdateAvailability(void)
@@ -294,7 +294,7 @@ void btSummonUpdateAvailability(void)
 			for(partySlot = 0; partySlot < partySize; partySlot++) {
 				UNIT *member = syUnitGet(partyMembers[partySlot]);
 
-				totals[i] += member->djinnHeldCnts[i];
+				totals[i] += member->djinnHeldCounts[i];
 			}
 		}
 	}

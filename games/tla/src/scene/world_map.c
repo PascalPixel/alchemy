@@ -40,7 +40,7 @@ typedef struct WORLD_MAP_OAM {
 	/* FIELD_SPR's unused bytes and attribute 0, not read here */
 	Uint8  filler[6];
 	Uint16 x : 9;
-	Uint16 affineIdx : 5;
+	Uint16 affineIndex : 5;
 	Uint16 size : 2;
 } WORLD_MAP_OAM;
 
@@ -308,29 +308,29 @@ const Uint32 *scGetExits(void)
    scWorldMapCircleEcho. */
 void scWorldMapCircleEcho(BOBBING_MARKER *marker)
 {
-	Sint16 *ang;
+	Sint16 *angle;
 	FIXED	y;
 	FIXED	z;
 	FIXED	radius;
 	FIXED	rise;
 
 	if(TickCount & 2)
-		fdActorSetSprColMode(marker, SPRITE_COLOR_RED_TINT);
+		fdActorSetSpriteColorMode(marker, SPRITE_COLOR_RED_TINT);
 	else
-		fdActorSetSprColMode(marker, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorMode(marker, SPRITE_COLOR_WHITE);
 	if(marker->stopped == 0) {
-		ang = &marker->ang;
+		angle = &marker->angle;
 		marker->x.fixed = toFIXED(10120);
-		y = syMathMulFX(syMathSin(*ang << 3), toFIXED(4));
+		y = syMathMulFX(syMathSin(*angle << 3), toFIXED(4));
 		z = toFIXED(8356);
 
 		rise = toFIXED(16);
 		marker->y.fixed = y + rise;
 		marker->z.fixed = z;
 		radius = rise;
-		syFieldVectorAddPolarOffsetFX(radius, *ang, &marker->x);
-		marker->facing = *ang + DEGtoANG(90);
-		*ang += TRIG_TURN / 64;
+		syFieldVectorAddPolarOffsetFX(radius, *angle, &marker->x);
+		marker->facing = *angle + DEGtoANG(90);
+		*angle += TRIG_TURN / 64;
 	}
 }
 
@@ -345,8 +345,8 @@ Sint32 scWorldMapSetUpEcho(ACTOR *actor)
 		return 0;
 	}
 	actor->update = (OBJECT_UPDATE)scWorldMapCircleEcho;
-	actor->motionFlg = 0;
-	actor->tmr = 0;
+	actor->motionFlags = 0;
+	actor->timer = 0;
 	actor->userValue = 0;
 	actor->scaleX = toFIXED(1) / 2;
 	actor->scaleY = toFIXED(1) / 2;
@@ -357,17 +357,17 @@ Sint32 scWorldMapSetUpEcho(ACTOR *actor)
 Sint32 scWorldMapSetIslandTile(ACTOR *actor)
 {
 	Uint16	  *yaw = &((WORLD_MAP_VIEW *)RamHeapSlots->mapGrid)->yaw;
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
-	spr->rotation = *yaw;
-	spr->flg = 0;
+	sprite->rotation = *yaw;
+	sprite->flags = 0;
 	return 1;
 }
 
 /* Takes the tidal wave's shadow away (its sprite flags cleared). */
 Sint32 scWorldMapSetUpWave(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -379,7 +379,7 @@ Bool scWorldMapSendWaveIn(ACTOR *actor)
 
 	if(!fdScriptGetFlag(FLAG_SCENE_TEMP_00))
 		return TRUE;
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	x = actor->x.fixed;
 	actor->acceleration = toFIXED(1) / 16;
 	actor->speedLimit = toFIXED(1) / 16;
@@ -468,17 +468,17 @@ void scWorldMapSetUpFlyingShip(void)
    with no PP left at all gives the leader 1 back. */
 void scWorldMapSetUpShip(void)
 {
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 pp;
 	Sint32 i;
 
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_SHIP;
 	scWorldMapEndFlight();
 	scGaugeEnd();
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHIP), 0);
-	cnt = gmPartyCountMembers();
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHIP), 0);
+	count = gmPartyCountMembers();
 	pp = 0;
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		/* One member's PP. */
 		pp += syUnitGet(MainRoutineStateWork.party[i])->pp;
 	}
@@ -513,15 +513,15 @@ void scWorldMapBoardShip(void)
 	MainRoutineStateWork.shipX = ship->x.fixed;
 	MainRoutineStateWork.shipZ = ship->z.fixed;
 	MainRoutineStateWork.shipFacing = ship->facing;
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 	syWait(6);
-	fdScriptPlaySnd(SE_JUMP);
-	fdActorSetSprFlags(leader, 0);
+	fdScriptPlaySound(SE_JUMP);
+	fdActorSetSpriteFlags(leader, 0);
 	fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 	leader->speedLimit = toFIXED(3);
 	leader->acceleration = toFIXED(2);
-	leader->velY = toFIXED(4);
+	leader->velocityY = toFIXED(4);
 	leader->groundHeight = toFIXED(4);
 	fdActorStartIdle(leader);
 	scFieldActorSetMoveTargetFX(leader, ship->x.fixed, 0, ship->z.fixed);
@@ -553,7 +553,7 @@ void scWorldMapLeaveShip(void)
 	Sint32		 blocked;
 	WORLD_MAP_BLOCK	 *block;
 	WORLD_MAP_BLOCKS *blocks = (WORLD_MAP_BLOCKS *)MetatileTiles;
-	Uint8			  flg;
+	Uint8			  flags;
 
 	pos[0] = ship->x.fixed;
 	pos[1] = ship->y.fixed;
@@ -590,7 +590,7 @@ void scWorldMapLeaveShip(void)
 		}
 	}
 	if(blocked == 0) {
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		syFieldWorldMapStartZoom(toFIXED(1), 10);
@@ -600,20 +600,20 @@ void scWorldMapLeaveShip(void)
 		MainRoutineStateWork.shipX = ship->x.fixed;
 		MainRoutineStateWork.shipZ = ship->z.fixed;
 		MainRoutineStateWork.shipFacing = ship->facing;
-		flg = leader->motionFlg;
+		flags = leader->motionFlags;
 		leader->x.fixed = ship->x.fixed;
 		leader->y.fixed = toFIXED(4);
 		leader->z.fixed = ship->z.fixed;
-		leader->motionFlg = 0;
-		fdActorSetSprFlags(leader, 0);
+		leader->motionFlags = 0;
+		fdActorSetSpriteFlags(leader, 0);
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		syWait(6);
-		fdScriptPlaySnd(SE_JUMP);
+		fdScriptPlaySound(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		leader->motionFlg = flg;
+		leader->velocityY = toFIXED(4);
+		leader->motionFlags = flags;
 		fdActorStartIdle(leader);
 		scFieldActorSetMoveTargetFX(leader, pos[0], 0, pos[2]);
 		scFieldActorWaitForMove(leader);
@@ -646,7 +646,7 @@ void scWorldMapMoorAtAttekaInlet(void)
 	MainRoutineStateWork.shipFacing = 0;
 	MainRoutineStateWork.ownerOverride = 0;
 	fdScriptClearFlag(FLAG_SAILING);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syFieldScriptSetExitRequest(state->stepCue);
 }
 
@@ -755,7 +755,7 @@ void scWorldMapRefuseToRunAway(void)
 
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		syFieldScriptSetExitRequest(state->stepCue);
 	}
 }
@@ -834,14 +834,14 @@ void scWorldMapPickUpGoldenBoots(void)
 void scWorldMapShowGoldenBoots(void)
 {
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Sint32	   a, id;
 
 	scFieldActorShowItemIconById(ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS);
 	actor = fdActorGet(ACTOR_GOLDEN_BOOTS);
-	spr = actor->spr;
-	spr->retainCacheEntry = 1;
-	fdActorSetSprFlags(fdActorGet(ACTOR_GOLDEN_BOOTS), 0);
+	sprite = actor->sprite;
+	sprite->retainCacheEntry = 1;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GOLDEN_BOOTS), 0);
 	a = FACING_SOUTH;
 	id = ACTOR_GOLDEN_BOOTS;
 	fdActorSetPosAndFacing(id, toFIXED(10168), toFIXED(9648), a);
@@ -893,7 +893,7 @@ Sint32 scInit(void)
 		ship->x.fixed = MainRoutineStateWork.shipX;
 		ship->z.fixed = MainRoutineStateWork.shipZ;
 		ship->facing = MainRoutineStateWork.shipFacing;
-		ship->tmr = 0;
+		ship->timer = 0;
 		ship->userValue = 0;
 	}
 	if(MainRoutineStateWork.ownerOverride != 0)
@@ -902,7 +902,7 @@ Sint32 scInit(void)
 	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_CENTRE_LINE, CENTRE_LINE_STEADY);
-	state->transitionFrm = 16;
+	state->transitionFrame = 16;
 	sySynch(1);
 	fdCameraSetSpeed(8);
 	syGameFlagClear(FLAG_SHOW_AREA_NAME);
@@ -965,7 +965,8 @@ Sint32 scInit(void)
 		break;
 	case WORLD_MAP_JUPITER_BEACON:
 		scWorldMapPlayLighthouseTransition(LIGHTHOUSE_VIEW_JUPITER);
-		scFieldActorSetSprCol(fdActorGetById(ACTOR_PIERS), SPRITE_COLOR_HIDDEN);
+		scFieldActorSetSpriteColor(
+			fdActorGetById(ACTOR_PIERS), SPRITE_COLOR_HIDDEN);
 		fdActorSetPos(ACTOR_PIERS, 7277, 7300);
 		sySynch(1);
 		syFieldScriptSetMessageId((Sint32)MsgIVeHeard);
@@ -1019,17 +1020,17 @@ void scWorldMapExplainGivingDjinn(void)
 		(Sint32)MsgAfterBringingA);
 	fdScriptShowMessage(ACTOR_ECHO, 0);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_MENU_CURSOR_MOVE);
+	fdScriptPlaySound(SE_MENU_CURSOR_MOVE);
 	mnAnimateSelectionToEntry(0, 2);
 	fdScriptClearFlag(FLAG_DJINN_LESSON_PART_A);
 	fdScriptClearFlag(FLAG_DJINN_LESSON_PART_B);
 	mnDjinnMenuRun();
 	scFieldActorJump(ACTOR_ECHO, 4, 30);
 	{
-		Sint32 flg = fdScriptGetFlag(FLAG_ALREADY_KNOWS_DJINN);
+		Sint32 flag = fdScriptGetFlag(FLAG_ALREADY_KNOWS_DJINN);
 		Sint32 base = (Sint32)MsgNextILl;
 
-		syFieldScriptSetMessageId(flg *
+		syFieldScriptSetMessageId(flag *
 				((Sint32)MsgDjinnGiveTutorialB -
 					(Sint32)MsgDjinnGiveTutorialA) +
 			base);
@@ -1181,7 +1182,7 @@ void scWorldMapFightBanditAndThieves(Sint32 entrance)
 		syScriptCameraFollowActor(ACTOR_FELIX, 0);
 		syFieldWorldMapStartZoom(toFIXED(31) / 20, 1);
 		fdActorSetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FELIX), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FELIX), 0);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		fdWorldMapFreeze();
@@ -1408,9 +1409,9 @@ void scWorldMapDeliverLohoCannon(void)
 {
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdActorGet(ACTOR_LOHO_WORKER_A)->motionFlg = ACTOR_FALLS;
-	fdActorGet(ACTOR_LOHO_WORKER_B)->motionFlg = ACTOR_FALLS;
-	fdActorGet(ACTOR_LOHO_WORKER_C)->motionFlg = ACTOR_FALLS;
+	fdActorGet(ACTOR_LOHO_WORKER_A)->motionFlags = ACTOR_FALLS;
+	fdActorGet(ACTOR_LOHO_WORKER_B)->motionFlags = ACTOR_FALLS;
+	fdActorGet(ACTOR_LOHO_WORKER_C)->motionFlags = ACTOR_FALLS;
 	fdActorSetPosAndFacing(
 		ACTOR_LOHO_WORKER_A, toFIXED(8913), toFIXED(5853), FACING_NORTHEAST);
 	fdActorSetPosAndFacing(
@@ -1483,9 +1484,9 @@ void scWorldMapMeetEcho(void)
 	FIXED  x;
 	FIXED  z;
 	Sint32 owner;
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
-	Sint32 flg;
+	Sint32 flag;
 	/* Echo is a Venus Djinni. */
 	Sint32 element = ELEMENT_VENUS;
 
@@ -1493,8 +1494,8 @@ void scWorldMapMeetEcho(void)
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	x = (leader->x.fixed - toFIXED(10120)) / 2 + toFIXED(10120);
 	z = (leader->z.fixed - toFIXED(8356)) / 2 + toFIXED(8356);
-	flg = fdScriptGetFlag(FLAG_DJINN_LESSON);
-	if(flg == 0) {
+	flag = fdScriptGetFlag(FLAG_DJINN_LESSON);
+	if(flag == 0) {
 		if(PerWork.data & KEY_UP)
 			fdScriptSetFlag(FLAG_ALREADY_KNOWS_DJINN);
 		fdScriptStart();
@@ -1527,18 +1528,18 @@ void scWorldMapMeetEcho(void)
 		djinni->userValue = 1;
 		fdActorFaceActorById(ACTOR_ECHO, owner, 0);
 		sySynch(16);
-		flg = fdScriptGetFlag(FLAG_ALREADY_KNOWS_DJINN);
-		fdScriptSetMessageId(TUTORIAL_SET_MESSAGE(flg, MsgHey));
+		flag = fdScriptGetFlag(FLAG_ALREADY_KNOWS_DJINN);
+		fdScriptSetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey));
 		fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
 		fdWorldMapReloadPendingAreaGraphics();
 		syFieldWorldMapStartZoom(toFIXED(12) / 10, 6);
 		fdScriptWaitForZoomTransition();
 		fdWorldMapFreeze();
-		djinni->motionFlg = ACTOR_FALLS;
+		djinni->motionFlags = ACTOR_FALLS;
 		djinni->gravity = toFIXED(1) / 4;
 		djinni->speedLimit = toFIXED(1);
 		djinni->acceleration = toFIXED(1);
-		djinni->velY = 0;
+		djinni->velocityY = 0;
 		djinni->groundHeight = 0;
 		scFieldActorSetMoveTarget(djinni, 10120, 0, 8356);
 		for(i = 0; i < 16; i++) {
@@ -1550,7 +1551,7 @@ void scWorldMapMeetEcho(void)
 		fdActorFaceActorById(owner, ACTOR_ECHO, 0);
 		sySynch(16);
 		djinni->update = 0;
-		fdActorSetSprColMode(djinni, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(djinni, SPRITE_COLOR_NORMAL);
 		djinni->gravity = toFIXED(1);
 		fdMessageShowAtActor(ACTOR_ECHO, 0);
 		if(fdScriptAskYesNoWithActorAnimation(owner, 0) == 1) {
@@ -1583,7 +1584,7 @@ void scWorldMapMeetEcho(void)
 		fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
 		fdActorJump(ACTOR_ECHO, 2, 30);
 		fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
-		djinni->motionFlg = 0;
+		djinni->motionFlags = 0;
 		scFieldActorSetMoveTargetFX(djinni, x, toFIXED(16), z);
 		/* A whole turn as he rises, then half a turn as he drops. */
 		while(i >= 0) {
@@ -1593,8 +1594,8 @@ void scWorldMapMeetEcho(void)
 		}
 		fdActorSetAnimationById(owner, ANIM_STAND);
 		fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
-		djinni->motionFlg = ACTOR_FALLS;
-		djinni->velY = 0;
+		djinni->motionFlags = ACTOR_FALLS;
+		djinni->velocityY = 0;
 		djinni->groundHeight = 0;
 		i = TRIG_TURN / 2 / FACING_STEP - 1;
 		while(i >= 0) {
@@ -1610,11 +1611,11 @@ void scWorldMapMeetEcho(void)
 		fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
 		fdActorJump(ACTOR_ECHO, 2, 30);
 		fdMessageShowAtActor(ACTOR_ECHO, 0);
-		cnt = 0;
+		count = 0;
 	plead: {
 		i = fdScriptAskYesNoWithActorAnimation(owner, 0);
 
-		if(cnt == 7) {
+		if(count == 7) {
 			if(i == 0) {
 				fdActorJump(ACTOR_ECHO, 2, 20);
 				fdActorJump(ACTOR_ECHO, 2, 20);
@@ -1625,9 +1626,9 @@ void scWorldMapMeetEcho(void)
 		} else if(i == 1) {
 			fdActorJump(ACTOR_ECHO, 2, 20);
 			fdActorJump(ACTOR_ECHO, 2, 20);
-			fdScriptSetMessageId(cnt + TUTORIAL_MESSAGE(MsgOhComeOn));
+			fdScriptSetMessageId(count + TUTORIAL_MESSAGE(MsgOhComeOn));
 			fdMessageShowAtActor(ACTOR_ECHO, 0);
-			cnt++;
+			count++;
 			goto plead;
 		}
 	}
@@ -1638,7 +1639,7 @@ void scWorldMapMeetEcho(void)
 		fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
 	joined:
 		mnMessageArgumentPush(ABILITY_ECHO, MESSAGE_ARGUMENT_ABILITY);
-		sySndPlay(MUS_A_NEW_ALLY);
+		sySoundPlay(MUS_A_NEW_ALLY);
 		mnFieldMessageShow(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
 		fdScriptSetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
 		fdActorJump(ACTOR_ECHO, 2, 20);
@@ -1646,9 +1647,9 @@ void scWorldMapMeetEcho(void)
 		if(fdScriptAskYesNoWithActorAnimation(owner, 0) == 1)
 			goto refused;
 		if(fdScriptGetFlag(FLAG_ALREADY_KNOWS_DJINN))
-			sySndPlay(MUS_CHILDRENS_SONG);
+			sySoundPlay(MUS_CHILDRENS_SONG);
 		else
-			sySndPlay(MUS_BRIGGS_STEALS_SHIP);
+			sySoundPlay(MUS_BRIGGS_STEALS_SHIP);
 		goto tutorial;
 	}
 	fdScriptStart();
@@ -1656,7 +1657,7 @@ void scWorldMapMeetEcho(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdActorPlaceOnActor(ACTOR_ECHO, owner);
-	djinni->velY = toFIXED(10);
+	djinni->velocityY = toFIXED(10);
 	scFieldActorSetMoveTargetFX(djinni, x, 0, z);
 	fdScriptWait(30);
 	fdWorldMapFreeze();
@@ -1669,7 +1670,7 @@ void scWorldMapMeetEcho(void)
 	fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
 	fdActorRunRepeatedMotion(ACTOR_ECHO, 2);
 	fdScriptShowMessageAndWait(ACTOR_ECHO, 0);
-	sySndPlay(SE_MENU_CURSOR_MOVE);
+	sySoundPlay(SE_MENU_CURSOR_MOVE);
 	mnAnimateSelectionToEntry(0, 2);
 	fdScriptSetFlag(FLAG_DJINN_LESSON_PART_A);
 	fdScriptClearFlag(FLAG_DJINN_LESSON_PART_B);
@@ -1724,8 +1725,8 @@ extern Uint32 WorldMapCollapseDustScript[];
 void scWorldMapSpawnCollapseDust(void)
 {
 	ACTOR	  *dust;
-	FIELD_SPR *spr;
-	Uint8	  *motionFlg;
+	FIELD_SPR *sprite;
+	Uint8	  *motionFlags;
 	FIXED	   x;
 	FIXED	   z;
 	Sint32	   scale;
@@ -1735,12 +1736,12 @@ void scWorldMapSpawnCollapseDust(void)
 	dust = (scFieldActorCreate(
 		SPRITE_DUST_CLOUD, x + toFIXED(1976), 0, z + toFIXED(7260)));
 	if(dust != NULL) {
-		spr = dust->spr;
+		sprite = dust->sprite;
 		scale = syRandomBelow(32768) + toFIXED(6) / 5;
-		spr->flg = 0;
-		spr->pri = 2;
-		motionFlg = &dust->motionFlg;
-		*motionFlg = 0;
+		sprite->flags = 0;
+		sprite->priority = 2;
+		motionFlags = &dust->motionFlags;
+		*motionFlags = 0;
 		dust->scaleX = scale;
 		dust->scaleY = scale;
 		fdActorSelectAnimation(dust, 1);
@@ -1783,7 +1784,7 @@ void scWorldMapWatchVenusLighthouseCollapse(void)
 	/* "What's happening, Kraden!? Why won't the ground stop shaking?" */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
 	fdWorldMapReloadPendingAreaGraphics();
-	fdScriptPlaySnd(SE_CRASH);
+	fdScriptPlaySound(SE_CRASH);
 	fdPaletteFadeApplySource(RGB_WHITE, 0);
 	fdPaletteFadeApplyTarget(toFIXED(1), 0);
 	fdPaletteFadeInterpolate(60);
@@ -1810,13 +1811,13 @@ void scWorldMapWatchVenusLighthouseCollapse(void)
 	   different?" */
 	fdScriptShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
 	fdWorldMapReloadPendingAreaGraphics();
-	fdScriptPlaySnd(SE_CRASH);
+	fdScriptPlaySound(SE_CRASH);
 	scWorldMapSplitIdejima(0, 128, 0, 0);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
 	fdActorSetAnimation(ACTOR_IDEJIMA_KRADEN, 5);
 	fdActorSetAnimation(ACTOR_ALEX, 7);
 	syWait(4);
-	fdScriptPlaySnd(SE_CRASH);
+	fdScriptPlaySound(SE_CRASH);
 	scWorldMapSplitIdejima(32, 128, 32, 0);
 	syWait(4);
 	scWorldMapSplitIdejima(64, 128, 32, 0);
@@ -1843,8 +1844,8 @@ void scWorldMapWatchVenusLighthouseCollapse(void)
 	fdScriptShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
 	/* "But...what will happen to us?" */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(WORLD_MAP_TO_IDEJIMA_DRIFTING);
@@ -1858,8 +1859,8 @@ void scWorldMapSpawnIdejimaWake(void)
 {
 	ACTOR	  *island;
 	ACTOR	  *spray;
-	FIELD_SPR *spr;
-	Uint32	   ofs;
+	FIELD_SPR *sprite;
+	Uint32	   offset;
 
 	if((TickCount & 15) != 0)
 		return;
@@ -1870,23 +1871,23 @@ void scWorldMapSpawnIdejimaWake(void)
 		return;
 	spray->scaleX = toFIXED(1) / 2;
 	spray->scaleY = toFIXED(1) / 2;
-	spr = spray->spr;
+	sprite = spray->sprite;
 	if(syRandomBelow(2)) {
 		FIXED back = (syRandomBelow(48)) << 16;
 
 		spray->x.fixed -= back >> 1;
 		spray->z.fixed -= back;
 	} else {
-		ofs = syRandomBelow(32) << 16;
-		spray->x.fixed += ofs;
-		ofs = (Sint32)ofs >> 1;
-		spray->z.fixed += ofs;
+		offset = syRandomBelow(32) << 16;
+		spray->x.fixed += offset;
+		offset = (Sint32)offset >> 1;
+		spray->z.fixed += offset;
 	}
-	spr->flg = 0;
-	spr->pri = ((FIELD_SPR *)island->spr)->pri;
-	spray->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	spray->motionFlg = island->motionFlg;
-	scFieldActorSetSprCol(spray, SPRITE_COLOR_BLUE_TINT);
+	sprite->flags = 0;
+	sprite->priority = ((FIELD_SPR *)island->sprite)->priority;
+	spray->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	spray->motionFlags = island->motionFlags;
+	scFieldActorSetSpriteColor(spray, SPRITE_COLOR_BLUE_TINT);
 	fdActorSelectAnimation(spray, 2);
 	fdActorStartScript(spray, WorldMapIdejimaWakeScript);
 }
@@ -1907,22 +1908,22 @@ void scWorldMapShowIdejimaDrifting(void)
 	actor->scaleY = toFIXED(12) / 10;
 	syScriptCameraFollowActor(ACTOR_DRIFTING_IDEJIMA, 1);
 	syWait(1);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_DRIFTING_IDEJIMA), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_DRIFTING_IDEJIMA), 0);
 	fdActorSetSpeed(ACTOR_DRIFTING_IDEJIMA, 0.4);
-	actor->tmr = 0;
+	actor->timer = 0;
 	fdActorSetScript(ACTOR_DRIFTING_IDEJIMA, WorldMapIdejimaDriftScript);
 	sySetTickEvent(scWorldMapSpawnIdejimaWake, EVENT_PASS_TICK);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, 1);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	syFieldScriptWait(120);
 	syFieldWorldMapStartZoom(toFIXED(7) / 5, 300);
 	syFieldScriptWait(270);
-	FieldStateWork->transitionFrm = 16;
+	FieldStateWork->transitionFrame = 16;
 	BG_PLTT_COLOR(0, 0) = RGB_WHITE;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1944,12 +1945,12 @@ void scWorldMapDriftNorthOfContinent(void)
 	island->scaleY = toFIXED(12) / 10;
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	syWait(1);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IDEJIMA), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IDEJIMA), 0);
 	fdActorSetSpeed(ACTOR_IDEJIMA, 0.4);
-	island->tmr = 0;
+	island->timer = 0;
 	island->acceleration = toFIXED(1) / 8;
 	island->speedLimit = toFIXED(1) / 8;
 	scFieldActorSetMoveTargetFX(
@@ -1976,13 +1977,13 @@ void scWorldMapDriftNorthOfContinent(void)
 	fdScriptShowMessage(ACTOR_SHEBA, 0);
 	/* "Oh, Kraden... Felix... What are we going to do?" */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
-	fdScriptPlaySnd(SE_WAVE);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SE_WAVE);
 	/* "???" */
 	fdScriptShowMessage(MainRoutineStateWork.leaderActorId, 0);
 	/* "Oh... This can't be good." */
 	fdScriptShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
-	fdScriptPlaySnd(MUS_FATED_CONNECTION_WITH_SWORN_ENEMIES);
+	fdScriptPlaySound(MUS_FATED_CONNECTION_WITH_SWORN_ENEMIES);
 	fdWorldMapReloadPendingAreaGraphics();
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(10303, CAMERA_KEEP, 7820, 1);
@@ -2017,9 +2018,9 @@ void scWorldMapDriftNorthOfContinent(void)
 	fdActorSetPos(ACTOR_FELIX, 3669, 7664);
 	fdActorSetPos(ACTOR_JENNA, 3657, 7621);
 	fdActorSetPos(ACTOR_SHEBA, 3703, 7651);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 1);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 1);
 	syWait(1);
 	fdWorldMapFreeze();
 	fdActorSetAttachedEffect(
@@ -2041,7 +2042,7 @@ void scWorldMapDriftNorthOfContinent(void)
 	fdScriptShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
 	fdActorSetSpeed(ACTOR_IDEJIMA_KRADEN, 1);
 	fdActorWalkTo(ACTOR_IDEJIMA_KRADEN, 3608, 7695);
-	fdScriptPlaySnd(SE_WAVE_HIGH);
+	fdScriptPlaySound(SE_WAVE_HIGH);
 	scWorldMapLoadTidalWave(0);
 	syFieldScriptSetExitRequest(WORLD_MAP_TO_IDEJIMA_NORTHEAST);
 }
@@ -2052,7 +2053,8 @@ void scWorldMapDriftNorthOfContinent(void)
 void scWorldMapShowAirsRockFromAlhafra(void)
 {
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->scaleX = 0;
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
@@ -2075,7 +2077,7 @@ void scWorldMapTakeTheTiller(void)
 		syFieldScriptEndLastingPsynergy(0);
 		scale = fdActorGetById(MainRoutineStateWork.leaderActorId)->scaleX;
 		fdActorGetById(MainRoutineStateWork.leaderActorId)->scaleX = 0;
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
@@ -2217,18 +2219,18 @@ void scWorldMapTakeOff(void)
 		if(fdActorGet(i) != NULL) {
 			WorldMapHiddenMembers[i] = i;
 			fdActorGet(i)->scaleX = 0;
-			fdActorSetSprFlags(fdActorGet(i), 0);
+			fdActorSetSpriteFlags(fdActorGet(i), 0);
 			fdActorSetPos(i, x, z);
 		} else {
 			WorldMapHiddenMembers[i] = -1;
 		}
 	}
 	fdActorGet(ACTOR_KRADEN)->scaleX = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 0);
 	fdActorSetPos(ACTOR_KRADEN, x, z);
 	fdWorldMapFreeze();
 	syFieldScriptSetMessageId((Sint32)MsgWeDidIt);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	/* "We did it! The ship took off without a hitch!" */
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	fdActorShowEmote(ACTOR_SHIP, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -2246,7 +2248,7 @@ void scWorldMapTakeOff(void)
 	fdScriptShowMessage(ACTOR_SHEBA, 0);
 	/* "You were so secretive! Are you going to tell us now?" */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syFieldScriptWait(50);
 	/* "... ..." */
 	fdScriptShowMessage(ACTOR_SHEBA, 0);
@@ -2254,7 +2256,7 @@ void scWorldMapTakeOff(void)
 	   if..." */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(MUS_SHEBAS_PAST);
+	fdScriptPlaySound(MUS_SHEBAS_PAST);
 	/* "I thought that if I went to Jupiter Lighthouse, I would learn who
 	   I..." */
 	fdScriptShowMessage(ACTOR_SHEBA, 0);
@@ -2323,7 +2325,7 @@ void scWorldMapTakeOff(void)
 	syFieldScriptWait(60);
 	/* "Thank you, Kraden... I feel better now..." */
 	fdScriptShowMessage(ACTOR_SHEBA, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	/* "I'm glad I could help." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
 	syFieldScriptWait(40);
@@ -2333,7 +2335,7 @@ void scWorldMapTakeOff(void)
 	fdWorldMapReloadPendingAreaGraphics();
 	for(i = 0; i <= 7; i++) {
 		if(WorldMapHiddenMembers[i] >= 0) {
-			fdActorSetSprFlags(fdActorGet(WorldMapHiddenMembers[i]), 1);
+			fdActorSetSpriteFlags(fdActorGet(WorldMapHiddenMembers[i]), 1);
 			fdActorGet(WorldMapHiddenMembers[i])->scaleX = toFIXED(1);
 			fdActorSetPos(WorldMapHiddenMembers[i], 0, 0);
 		}
@@ -2344,10 +2346,10 @@ void scWorldMapTakeOff(void)
 
 /* A sparkle of the party's path to Aqua Rock: each tick, one time in four, it
    takes one of the eight colour modes at random. */
-Sint32 scWorldMapChangeSparkleCol(ACTOR *actor)
+Sint32 scWorldMapChangeSparkleColor(ACTOR *actor)
 {
 	if(syRandom() < 16384)
-		fdActorSetSprColMode(actor, syRandomBelow(8));
+		fdActorSetSpriteColorMode(actor, syRandomBelow(8));
 	return 0;
 }
 
@@ -2366,8 +2368,8 @@ void scWorldMapSpawnAquaRockSparkle(ACTOR *parent)
 		if(actor != NULL) {
 			fdActorStartScript(actor, WorldMapAquaRockSparkleScript);
 			fdActorSelectAnimation(actor, 1);
-			fdActorSetSprFlags(actor, 0);
-			actor->motionFlg = 0;
+			fdActorSetSpriteFlags(actor, 0);
+			actor->motionFlags = 0;
 			actor->scaleX = toFIXED(2);
 			actor->scaleY = toFIXED(2);
 		}
@@ -2380,9 +2382,9 @@ void scWorldMapCarryPartyToAquaRock(void)
 {
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	fdActorGet(MainRoutineStateWork.leaderActorId)->update =
 		scWorldMapSpawnAquaRockSparkle;
 	fdActorGet(MainRoutineStateWork.leaderActorId)->acceleration =
@@ -2414,10 +2416,10 @@ void scWorldMapCarryPartyToAquaRock(void)
 Sint32 scWorldMapSetPlacedActorTile(ACTOR *actor)
 {
 	Uint16	  *yaw = &((WORLD_MAP_VIEW *)RamHeapSlots->mapGrid)->yaw;
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
-	spr->rotation = *yaw;
-	spr->flg = 0;
+	sprite->rotation = *yaw;
+	sprite->flags = 0;
 	return 1;
 }
 
@@ -2427,9 +2429,9 @@ Sint32 scWorldMapSetPlacedActorTile(ACTOR *actor)
 void scWorldMapFlashPoweringUp(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scWorldMapSpawnSparkPair(actor);
@@ -2444,7 +2446,7 @@ extern Sint32 WorldMapGlowColorStep;
 void scWorldMapGlowInFlight(ACTOR *actor)
 {
 	if(TickCount & 1) {
-		fdActorSetSprColMode(
+		fdActorSetSpriteColorMode(
 			actor, WorldMapGlowColorModes[WorldMapGlowColorStep]);
 		WorldMapGlowColorStep = (WorldMapGlowColorStep + 1) & 3;
 	}
@@ -2458,13 +2460,13 @@ void scActorSetFlightMode(ACTOR *actor, Sint32 mode)
 {
 	if(mode == SHIP_LANDED) {
 		actor->update = 0;
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
-		fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
+		fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	} else if(mode == SHIP_POWERING_UP) {
 		actor->update = (OBJECT_UPDATE)scWorldMapFlashPoweringUp;
 	} else {
 		actor->update = (OBJECT_UPDATE)scWorldMapGlowInFlight;
-		fdScriptPlaySnd(SE_TAKE_FLIGHT);
+		fdScriptPlaySound(SE_TAKE_FLIGHT);
 	}
 }
 
@@ -2503,16 +2505,16 @@ void scWorldMapPlayLighthouseTransition(Sint32 mode)
 	syWait(1);
 	fdScriptClearFlag(FLAG_KEEP_PARTY_POSITION);
 	FieldStateWork->transition = 0;
-	fdActorGet(MainRoutineStateWork.leaderActorId)->sprStorageKind = 0;
-	FieldStateWork->transitionFrm = 16;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->spriteStorageKind = 0;
+	FieldStateWork->transitionFrame = 16;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	if(mode == LIGHTHOUSE_VIEW_JUPITER) {
 		fdMapGridSetShake(2, 3, 1);
-		fdScriptPlaySnd(SE_RUMBLE);
+		fdScriptPlaySound(SE_RUMBLE);
 	}
 	fdWorldMapFreeze();
-	buf = syHeapAllocEWRAM(16384);
+	buf = syHeapAllocateEWRAM(16384);
 	syDecompressTaggedLZ(WorldMapPackedTiles, buf);
 	syDecompressTaggedLZ(
 		WorldMapPackedPictures, buf + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
@@ -2524,7 +2526,7 @@ void scWorldMapPlayLighthouseTransition(Sint32 mode)
 	sySetTickEvent(scWorldMapUpdateTransitionBlend, EVENT_PASS_TICK);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_GLITTER);
+	fdScriptPlaySound(SE_GLITTER);
 	WorldMapBlend = BLEND_ALPHA(0, 14);
 	PUSH_PICTURE(6);
 	syFieldScriptWait(2);
@@ -2565,7 +2567,7 @@ void scWorldMapPlayLighthouseTransition(Sint32 mode)
 	PUSH_PICTURE(7);
 	if(mode == LIGHTHOUSE_VIEW_VENUS) {
 		fdMapGridSetShake(2, 2, 1);
-		fdScriptPlaySnd(SE_RUMBLE);
+		fdScriptPlaySound(SE_RUMBLE);
 		WorldMapBlend = BLEND_ALPHA(0, 13);
 		syFieldScriptWait(4);
 		WorldMapBlend = BLEND_ALPHA(0, 14);
@@ -2603,7 +2605,7 @@ void scWorldMapPlayLighthouseTransition(Sint32 mode)
    up. */
 void scWorldMapLoadTidalWave(Sint32 unused)
 {
-	Uint8 *buf = syHeapAllocEWRAM(16384);
+	Uint8 *buf = syHeapAllocateEWRAM(16384);
 	Uint8 *ticks;
 	Uint32 x;
 	Sint32 y, i, scrollX;
@@ -2638,7 +2640,7 @@ void scWorldMapLoadTidalWave(Sint32 unused)
 		y += 352;
 		x += 17;
 	}
-	fdScriptPlaySnd(SE_SCATTER);
+	fdScriptPlaySound(SE_SCATTER);
 	syWait(120);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	/* FAKEMATCH(temporary): mode, a local standing for the fade's 0; as the
@@ -2650,16 +2652,16 @@ void scWorldMapLoadTidalWave(Sint32 unused)
 	syWait(1);
 	fdPaletteFadeApplyTarget(0, 0);
 	fdPaletteFadeInterpolate(60);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syWait(60);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	syWait(120);
 	RamHeapSlots->actorSystem->suspended = 1;
 	syWait(1);
 	syWindowLoadGraphics();
 	syPrintClear();
-	syFieldWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	syFieldWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	BgScrollWork[0].x = 0;
 	BgScrollWork[0].y = 0;
 }
@@ -2668,9 +2670,9 @@ void scWorldMapLoadTidalWave(Sint32 unused)
 void scWorldMapFlashWithSparks(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scWorldMapSpawnTwinSparks(actor);
@@ -2681,10 +2683,10 @@ void scWorldMapFlashWithSparks(ACTOR *actor)
    tick. */
 void scActorAnimateAndEmit(ACTOR *actor)
 {
-	Uint32 frm = TickCount;
+	Uint32 frame = TickCount;
 
-	if(frm & 1)
-		fdActorSetSprColMode(actor, (frm >> 1) % 6);
+	if(frame & 1)
+		fdActorSetSpriteColorMode(actor, (frame >> 1) % 6);
 	if((TickCount & 15) == 0)
 		scWorldMapSpawnTwinSparks(actor);
 }
@@ -2700,8 +2702,8 @@ void scWorldMapSpawnTwinSparks(ACTOR *parent)
 {
 	ACTOR				*pair[2];
 	ACTOR				*child;
-	FIELD_SPR			*spr;
-	LINKED_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_SPR			*sprite;
+	LINKED_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	Sint32				 i;
 
 	for(i = 0; i < 2; ++i) {
@@ -2710,39 +2712,39 @@ void scWorldMapSpawnTwinSparks(ACTOR *parent)
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			spr = child->spr;
-			child->motionFlg = 0;
-			child->tmr = 0;
+			sprite = child->sprite;
+			child->motionFlags = 0;
+			child->timer = 0;
 			child->watchedActor = (union FIELD_OBJECT *)parent;
-			if(spr != NULL) {
-				fdSprStartAnimation(spr, 0);
-				spr->flg = 0;
-				syVRAMCacheFreeEntry(spr->slot);
-				spr->slot = state->vramBlock;
-				spr->retainCacheEntry = 1;
-				spr->tile =
-					(VramCacheEntries[spr->slot].ofs >> 5) & OBJ_TILE_MASK;
-				spr->fullCol = 0;
-				spr->shape = 1;
-				((WORLD_MAP_OAM *)spr)->size = 2;
-				((SPR_ANIMATION *)spr->record)->picture = 0;
+			if(sprite != NULL) {
+				fdSpriteStartAnimation(sprite, 0);
+				sprite->flags = 0;
+				syVRAMCacheFreeEntry(sprite->slot);
+				sprite->slot = state->vramBlock;
+				sprite->retainCacheEntry = 1;
+				sprite->tile = (VramCacheEntries[sprite->slot].offset >> 5) &
+					OBJ_TILE_MASK;
+				sprite->fullColor = 0;
+				sprite->shape = 1;
+				((WORLD_MAP_OAM *)sprite)->size = 2;
+				((SPR_ANIMATION *)sprite->record)->picture = 0;
 			}
 		}
 	}
 	{
 		ACTOR	  *p = pair[0];
-		FIELD_SPR *sp = p->spr;
+		FIELD_SPR *sp = p->sprite;
 
 		p->update = (void *)scActorGrowDown;
-		sp->pri = 1;
+		sp->priority = 1;
 	}
 	{
 		ACTOR	  *p = pair[1];
-		FIELD_SPR *sp = p->spr;
+		FIELD_SPR *sp = p->sprite;
 
-		sp->pri = 1;
+		sp->priority = 1;
 		p->update = (void *)scActorGrowUp;
-		p->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		p->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 
@@ -2803,7 +2805,7 @@ Sint32 WorldMapIdejimaWakeScript[] = {
 };
 
 Sint32 WorldMapAquaRockSparkleScript[] = {
-	SC_CALL(scWorldMapChangeSparkleCol),
+	SC_CALL(scWorldMapChangeSparkleColor),
 	SC_WAIT(1),
 	SC_LOOP(120, SC_TOP),
 	SC_RELEASE,
@@ -3162,7 +3164,7 @@ LATE_DATA Uint32 SceneExits[] = {
 };
 
 LATE_DATA Sint32 WorldMapTileSpriteScript[] = {
-	SC_CALL(scTileSprReset),
+	SC_CALL(scTileSpriteReset),
 	SC_END,
 };
 

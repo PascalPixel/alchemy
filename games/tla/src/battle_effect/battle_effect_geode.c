@@ -68,15 +68,15 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 	Sint32					 screenB[3];
 	Sint32					 screenA[3];
 	SCREEN_POINT			 src;
-	SCREEN_POINT			 tgt;
+	SCREEN_POINT			 target;
 	MODEL_TEXTURE			 texture;
 	MODEL_TEXTURE			 billow;
 	RENDER_MODEL			*model;
 	RENDER_MODEL			*rings;
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	backdrop = RamHeapSlots->battleBg;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(2));
@@ -84,7 +84,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 		DJINNI_ENTRANCE(
 			ELEMENT_VENUS, args->side, DJINNI_ANCHOR_CENTRE_BRIGHTENING),
 		screenA, screenB);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
 		WININ_WIN1_OBJ | WININ_WIN1_CLR;
 	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ | WINOUT_WIN01_CLR |
@@ -102,13 +102,13 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 	REG_BLDCNT = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK + 15);
-	sySetEvent(btDispApplyBg2Affine, EVENT_PASS_VBLANK + 127);
+	sySetEvent(btDisplayApplyBg2Affine, EVENT_PASS_VBLANK + 127);
 	projected = state->sheet;
 	vertices = (MODEL_VERTEX *)(state->sheet + GEODE_CLOD_CORNERS);
 	mesh = state->sheet + GEODE_CLOD_MESH;
 	pitch = 0;
 	battle = RamHeapSlots->battleState;
-	caster = btObjectGetStub(args->user)->obj;
+	caster = btObjectGetStub(args->user)->object;
 	BgScrollWork[1].x = -56;
 	/* The battlefield's picture, the clod's texture: BG2's 256-colour tiles
 	   copied a tile's line at a time into plain lines of pixels. */
@@ -140,14 +140,14 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 	btMeshBuildGrid(mesh, GEODE_CLOD_RING_VERTICES, GEODE_CLOD_RINGS,
 		BATTLE_BACKGROUND_WIDTH / GEODE_CLOD_RING_VERTICES, GEODE_RING_SPACING);
 
-	for(frm = 0; frm != GEODE_TICKS; frm++) {
+	for(frame = 0; frame != GEODE_TICKS; frame++) {
 		btEffectPosProjectBattler(args->user, &src);
-		btEffectPosProjectBattler(args->tgts[0], &tgt);
+		btEffectPosProjectBattler(args->targets[0], &target);
 
 		/* The backdrop's colours come down from the entrance's white to its
 		   own. */
-		if(frm <= 11) {
-			Uint16 *from = battle->pal;
+		if(frame <= 11) {
+			Uint16 *from = battle->palette;
 			Uint16 *to = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 			for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, from++, to++) {
@@ -176,7 +176,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				*to = RGB(r, g, b);
 			}
 		}
-		if(frm == 1) {
+		if(frame == 1) {
 			IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
 				DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
 					DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -184,7 +184,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				IO_WRITE_HALFWORD);
 			btEffectBuildCanvasTilemap();
 		}
-		if(frm == 34) {
+		if(frame == 34) {
 			syCloseEvent(btEffectTransferCanvas);
 			sySetEvent(
 				btEffectProcessPendingBlock2Transfer, EVENT_PASS_VBLANK + 15);
@@ -201,8 +201,8 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 			REG_BG2CNT =
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 		}
-		if(frm == 35) {
-			syCloseEvent(btDispApplyBg2Affine);
+		if(frame == 35) {
+			syCloseEvent(btDisplayApplyBg2Affine);
 			syCloseEvent(btEffectProcessPendingBlock2Transfer);
 			sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK + 15);
 			IO_WRITE_QUEUE_PUSH((Uint32)&REG_BG2X, 0, IO_WRITE_WORD);
@@ -214,15 +214,15 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
 				IO_WRITE_HALFWORD);
 		}
-		if(frm == 18) {
+		if(frame == 18) {
 			btEffectTintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
 		}
-		if(frm == 36) {
+		if(frame == 36) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			IO_WRITE_QUEUE_PUSH(
 				(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 		}
-		if((Uint32)(frm - 34) <= 5) {
+		if((Uint32)(frame - 34) <= 5) {
 			if(args->side == EFFECT_SIDE_ENEMIES) {
 				REG_WIN0H = WIN_RANGE(32, DISPLAY_WIDTH);
 				REG_WIN1H = WIN_RANGE(32, DISPLAY_WIDTH);
@@ -230,7 +230,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH - 32);
 				REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH - 32);
 			}
-		} else if(frm == 40) {
+		} else if(frame == 40) {
 			REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 			REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
 		}
@@ -238,15 +238,15 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 		/* The clod, now on BG1, flies onto the target with the Djinni behind
 		   it, drawn twice to glow twice as bright in the canvas's orange, its
 		   trail fading by half a tick. */
-		if((Uint32)(frm - GEODE_FLIGHT_TICK) <= 25) {
-			Sint32 t = frm - GEODE_FLIGHT_TICK;
+		if((Uint32)(frame - GEODE_FLIGHT_TICK) <= 25) {
+			Sint32 t = frame - GEODE_FLIGHT_TICK;
 			Sint32 x;
 			Sint32 y;
 
 			if(t > GEODE_FLIGHT_TICKS) {
 				t = GEODE_FLIGHT_TICKS;
 			}
-			x = src.x + (tgt.x - src.x) * t / GEODE_FLIGHT_TICKS;
+			x = src.x + (target.x - src.x) * t / GEODE_FLIGHT_TICKS;
 			y = t * 64 / GEODE_FLIGHT_TICKS + 16;
 			BgScrollWork[1].x = CANVAS_SIZE / 2 - x;
 			BgScrollWork[1].y = t * -46 / GEODE_FLIGHT_TICKS + 78;
@@ -264,14 +264,14 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The battlefield rolls up into the clod over the caster. */
-		if((Uint32)frm <= 34) {
+		if((Uint32)frame <= 34) {
 			Sint32 zoom;
 			Sint32 centerX;
 			Sint32 centerY;
 			Sint32 height;
-			Sint32 ang;
+			Sint32 angle;
 
-			curl = frm;
+			curl = frame;
 			if(curl > GEODE_ROLL_TICKS) {
 				curl = GEODE_ROLL_TICKS;
 			}
@@ -282,8 +282,8 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 			   compare. */
 			centerX = DISPLAY_WIDTH / 2;
 			centerY = -16;
-			if(frm >= 0) {
-				Sint32 f = frm;
+			if(frame >= 0) {
+				Sint32 f = frame;
 
 				if(f > GEODE_ROLL_TICKS) {
 					f = GEODE_ROLL_TICKS;
@@ -303,10 +303,11 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 			}
 			/* Each ring moves from its place on the cylinder toward its place
 			   on the ball as the clod curls. */
-			for(row = 0, height = GEODE_CLOD_TOP, ang = 0;
+			for(row = 0, height = GEODE_CLOD_TOP, angle = 0;
 				row != GEODE_CLOD_RINGS; row++) {
-				Sint32 ballY = FIXEDtoINT(-syCos(ang) * GEODE_CLOD_RADIUS);
-				Sint32 ballRadius = FIXEDtoINT(sySin(ang) * GEODE_CLOD_RADIUS);
+				Sint32 ballY = FIXEDtoINT(-syCos(angle) * GEODE_CLOD_RADIUS);
+				Sint32 ballRadius =
+					FIXEDtoINT(sySin(angle) * GEODE_CLOD_RADIUS);
 				Sint32 column;
 				Sint32 y;
 				Sint32 radius;
@@ -325,13 +326,13 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 						FIXEDtoINT(syCos(turn) * radius);
 				}
 				height += GEODE_RING_SPACING;
-				ang += GEODE_RING_TURN;
+				angle += GEODE_RING_TURN;
 			}
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 8;
 			texture.logHeight = 7;
 			texture.pixels = picture;
-			model->flg = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
+			model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
 			model->kind = MODEL_TEXTURED;
 			model->texture = &texture;
 			model->mesh = mesh;
@@ -339,29 +340,29 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 			model->scrollU = 0;
 			model->scrollV = 0;
 			syInitMatrix();
-			if(frm >= GEODE_TUMBLE_TICK) {
+			if(frame >= GEODE_TUMBLE_TICK) {
 				pitch +=
-					sySin((frm - GEODE_TUMBLE_TICK) * GEODE_TUMBLE_STEP) >> 5;
+					sySin((frame - GEODE_TUMBLE_TICK) * GEODE_TUMBLE_STEP) >> 5;
 				syRotX(pitch * 3 / 2);
 			}
-			syRotY(frm * (TRIG_TURN / 128));
+			syRotY(frame * (TRIG_TURN / 128));
 			btRenderTransformVertices(vertices, projected, GEODE_CLOD_VERTICES);
 			btRenderDrawModelList(model);
 			syHeapRelease(model);
 		}
-		if(frm == GEODE_CRASH_TICK) {
-			sySndPlayStub(SE_CRASH);
+		if(frame == GEODE_CRASH_TICK) {
+			sySoundPlayStub(SE_CRASH);
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
-		if(frm == 64) {
+		if(frame == 64) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 
 		/* Billows of fire burst from where the clod lands: four flared rings
 		   stretched tall that grow and fade, turning one way and the other. */
-		if(frm >= GEODE_CRASH_TICK) {
-			void *ring = syHeapAllocEWRAM(512);
+		if(frame >= GEODE_CRASH_TICK) {
+			void *ring = syHeapAllocateEWRAM(512);
 
 			rings = btRenderAllocateModelList(1);
 			billow.logWidth = 6;
@@ -378,12 +379,12 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				FIXED  scale;
 				Sint32 shade;
 
-				if(frm <= start) {
+				if(frame <= start) {
 					continue;
 				}
-				scale =
-					(frm - start) * GeodeWaveGrowth[i] * 2000 + toFIXED(1) / 2;
-				shade = (start - frm) * 8 + 56;
+				scale = (frame - start) * GeodeWaveGrowth[i] * 2000 +
+					toFIXED(1) / 2;
+				shade = (start - frame) * 8 + 56;
 				if(shade > 0) {
 					shade = 0;
 				}
@@ -392,14 +393,14 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				}
 				rings->shade = shade;
 				syInitMatrix();
-				syTranslate(INTtoFIXED(tgt.x / 2 - CANVAS_SIZE / 2),
+				syTranslate(INTtoFIXED(target.x / 2 - CANVAS_SIZE / 2),
 					toFIXED(GeodeWaveHeights[i]), 0);
 				syScale(scale >> 1, scale << 2, scale >> 1);
 				syRotX(GEODE_BILLOW_TILT);
 				if(i & 1) {
-					syRotY((i * 4 + frm) * (TRIG_TURN / 32));
+					syRotY((i * 4 + frame) * (TRIG_TURN / 32));
 				} else {
-					syRotY((i * 4 - frm) * (TRIG_TURN / 32));
+					syRotY((i * 4 - frame) * (TRIG_TURN / 32));
 				}
 				btRenderTransformVertices(GeodeRingCorners, ring, 32);
 				btRenderDrawModelList(rings);
@@ -407,23 +408,24 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 			syHeapRelease(rings);
 			syHeapRelease(ring);
 		}
-		if(frm == 61) {
+		if(frame == 61) {
 			backdrop->busy = 0;
 			syWordsFillEntry(
 				(void *)&BG_PLTT_COLOR(6, 0), BATTLE_BACKGROUND_COLORS * 2, 0);
 		}
-		if(frm == 62) {
+		if(frame == 62) {
 			btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, battle->bg, -1);
 		}
-		if((Uint32)(frm - 63) <= 4) {
-			battle->brightness = (frm - 62) * (toFIXED(1) / 8);
-			btColBufferScaleStub(battle->pal, (void *)&BG_PLTT_COLOR(6, 0),
-				battle->brightness, BATTLE_BACKGROUND_COLORS);
+		if((Uint32)(frame - 63) <= 4) {
+			battle->brightness = (frame - 62) * (toFIXED(1) / 8);
+			btColorBufferScaleStub(battle->palette,
+				(void *)&BG_PLTT_COLOR(6, 0), battle->brightness,
+				BATTLE_BACKGROUND_COLORS);
 		}
-		if(frm == GEODE_CRASH_TICK) {
-			state->shakeFrm = 16;
+		if(frame == GEODE_CRASH_TICK) {
+			state->shakeFrame = 16;
 		}
-		if(frm >= GEODE_CRASH_TICK) {
+		if(frame >= GEODE_CRASH_TICK) {
 			btCameraShake(8, 8);
 		}
 		EFFECT_END_TICK(state);

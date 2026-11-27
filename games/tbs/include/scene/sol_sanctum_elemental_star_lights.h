@@ -8,7 +8,7 @@
 #include "types.h"
 
 /* Starts count lights floating, actors from first (at most 10). */
-void scSolSanctumStartFloatingLights(Sint32 first, Uint32 cnt);
+void scSolSanctumStartFloatingLights(Sint32 first, Uint32 count);
 
 /* Each light's drift, swing and direction on x, y and z, then its largest scale
    and how fast it pulses, from

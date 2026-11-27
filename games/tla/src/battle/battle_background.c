@@ -39,7 +39,7 @@
 void btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level)
 {
 	BATTLE_STATE   *battle = RamHeapSlots->battleState;
-	Uint16		   *palette = battle->pal;
+	Uint16		   *palette = battle->palette;
 	volatile Uint32 ime;
 
 	IRQ_LOCK(ime);
@@ -48,7 +48,7 @@ void btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level)
 		syDMAXCopy(palette, (void *)BATTLE_BG_PALETTE,
 			DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
 	} else {
-		btColBufferScale(palette, BATTLE_BG_PALETTE,
+		btColorBufferScale(palette, BATTLE_BG_PALETTE,
 			battle->brightness = toFIXED(1) - level * BACKGROUND_LEVEL_STEP,
 			BATTLE_BACKGROUND_COLORS);
 	}
@@ -84,18 +84,18 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 		Uint16		 *palette;
 
 		battle = RamHeapSlots->battleState;
-		palette = battle->pal;
+		palette = battle->palette;
 		syDMAXCopy(palette, (void *)BATTLE_BG_PALETTE,
 			DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
 	} else if(fade != 0) {
 		BATTLE_STATE *battle;
 		Uint16		 *src;
-		Uint16		 *dst;
+		Uint16		 *dest;
 		Sint32		  i;
 
 		battle = RamHeapSlots->battleState;
-		src = battle->pal;
-		dst = BATTLE_BG_PALETTE;
+		src = battle->palette;
+		dest = BATTLE_BG_PALETTE;
 
 		for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
 			Sint32 red = RGB_RED(src[i]);
@@ -114,7 +114,7 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 				blue -= fade;
 			else
 				blue = 0;
-			dst[i] = RGB(red, green, blue);
+			dest[i] = RGB(red, green, blue);
 		}
 	}
 	btTransitionBuildAffineTilemap((void *)BG_SCREEN_BLOCK(7));
@@ -125,7 +125,7 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 /* Allocates the zoomed background's scanline state. */
 void btBackgroundInit(void)
 {
-	void *block = syHeapSlotAllocEWRAM(
+	void *block = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_BATTLE_SCANLINES, sizeof(BATTLE_AFFINE_HDMA));
 	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 
@@ -153,14 +153,14 @@ void btBackgroundLoad(Sint32 mode, Sint32 resource, Sint32 level)
 	RAM_CODE_LOAD(decode, btModelDecodeCode, ModelDecodeCodeSize);
 	decode(data + BACKGROUND_PALETTE_BYTES, (void *)BG_CHAR_BLOCK(2));
 	syHeapRelease(decode);
-	palette = battle->pal;
+	palette = battle->palette;
 	syDMAXCopy(
 		data, palette, DMA_COPY_WORDS(BACKGROUND_PALETTE_BYTES / 4), REG_DMA3);
 	if(level >= 0)
-		btColBufferScale(palette, BATTLE_BG_PALETTE,
+		btColorBufferScale(palette, BATTLE_BG_PALETTE,
 			battle->brightness = toFIXED(1) - level * BACKGROUND_LEVEL_STEP,
 			BATTLE_BACKGROUND_COLORS);
-	if(battle->keepBackdropPal == 0) {
+	if(battle->keepBackdropPalette == 0) {
 		syDMAXCopy((void *)OBJ_PLTT,
 			(void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
 			DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -182,10 +182,10 @@ void btBackgroundLoad(Sint32 mode, Sint32 resource, Sint32 level)
 }
 
 /* Builds the zoomed background's next page for a zoom of scale about centerX
-   and centerY, shifted by ofsX and ofsY, and shows it: below a zoom of 1
+   and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
    the plane lies flat, from 1 it wraps and turns with the camera. */
 void btCameraSetRange(
-	FIXED centerX, FIXED centerY, Sint32 ofsX, Sint32 ofsY, FIXED scale)
+	FIXED centerX, FIXED centerY, Sint32 offsetX, Sint32 offsetY, FIXED scale)
 {
 	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 	BATTLE_AFFINE_HDMA		*scanlines = RamHeapSlots->battleScanlines;
@@ -230,8 +230,8 @@ void btCameraSetRange(
 	affine->pd = step;
 	x = syMulFX(ratio, syMulFX(centerX, scale - toFIXED(1)));
 	y = syMulFX(ratio, syMulFX(centerY, scale - toFIXED(1)));
-	affine->x = ((x + toFIXED(0.5) - 1) >> 8) + ofsX + panX;
-	affine->y = ((y + toFIXED(0.5) - 1) >> 8) + ofsY -
+	affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
+	affine->y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY -
 		Q_8_8(BACKGROUND_PLANE_HIDDEN_LINES);
 	/* The first line that reaches the picture's lower half at this zoom. */
 	lowerHalfLine = FIXEDtoINT(syDivFX((Sint16)affine->pd,
@@ -272,7 +272,7 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
-	Sint32		   eyeOfs[3];
+	Sint32		   eyeOffset[3];
 	Sint32		   originOnScreen[3];
 	Sint32		   origin[3];
 	FIXED		   nearShare;
@@ -294,10 +294,10 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 	syMatrixTranslateVector(focus);
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
-	eyeOfs[0] = 0;
-	eyeOfs[1] = 0;
-	eyeOfs[2] = camera->distance;
-	syCalcPoint(eyeOfs, camera->eye);
+	eyeOffset[0] = 0;
+	eyeOffset[1] = 0;
+	eyeOffset[2] = camera->distance;
+	syCalcPoint(eyeOffset, camera->eye);
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 	syInitMatrix();
@@ -323,7 +323,7 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
-	FIXED		   eyeOfs[3];
+	FIXED		   eyeOffset[3];
 	Sint32		   originOnScreen[3];
 	Sint32		   origin[3];
 	FIXED		   focal = BATTLE_CAMERA_DISTANCE;
@@ -346,10 +346,10 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 	syMatrixTranslateVector(focus);
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
-	eyeOfs[0] = 0;
-	eyeOfs[1] = 0;
-	eyeOfs[2] = focal;
-	syCalcPoint(eyeOfs, (Sint32 *)camera);
+	eyeOffset[0] = 0;
+	eyeOffset[1] = 0;
+	eyeOffset[2] = focal;
+	syCalcPoint(eyeOffset, (Sint32 *)camera);
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 	syInitMatrix();
@@ -371,8 +371,8 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 void btCameraSetViewAtPairMidpoint(
 	Sint32 firstUnitId, Sint32 secondUnitId, Sint32 zoom)
 {
-	MOTION_OBJECT *first = btObjectGet(firstUnitId)->obj;
-	MOTION_OBJECT *second = btObjectGet(secondUnitId)->obj;
+	MOTION_OBJECT *first = btObjectGet(firstUnitId)->object;
+	MOTION_OBJECT *second = btObjectGet(secondUnitId)->object;
 	FIXED		   firstX = first->x;
 	FIXED		   secondX = second->x;
 	FIXED		   firstZ = first->z;
@@ -494,64 +494,65 @@ UNUSED Sint32 btAdjustDebugValue(Sint32 value)
 }
 
 /* Sets the sprite mode of a unit's picture and its shadow. */
-void btHighlightSetSprMode(Sint32 unitId, Sint32 mode)
+void btHighlightSetSpriteMode(Sint32 unitId, Sint32 mode)
 {
 	BATTLE_OBJECT *slot = btObjectGet(unitId);
 	MOTION_OBJECT *object;
 	SPR			  *record;
 	SPR			 **records;
-	Sint32		   recordIdx;
+	Sint32		   recordIndex;
 
 	if(slot == 0)
 		return;
-	object = slot->obj;
+	object = slot->object;
 	if(object == 0)
 		return;
 	switch(object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) {
 	case ACTOR_SPRITE_ONE: {
 		record = object->records;
-		record->image.objMode = mode;
-		record->shadow.objMode = mode;
+		record->image.objectMode = mode;
+		record->shadow.objectMode = mode;
 		break;
 	}
 	case ACTOR_SPRITE_GROUP: {
 		records = object->records;
-		recordIdx = 0;
+		recordIndex = 0;
 		do {
 			record = *records++;
 			if(record == 0)
 				break;
-			record->image.objMode = mode;
-			record->shadow.objMode = mode;
-			recordIdx++;
-		} while(recordIdx < ACTOR_SPRITE_GROUP_SIZE);
+			record->image.objectMode = mode;
+			record->shadow.objectMode = mode;
+			recordIndex++;
+		} while(recordIndex < ACTOR_SPRITE_GROUP_SIZE);
 		break;
 	}
 	}
 }
 
 /* Unused: makes every unit's sprites semi-transparent but selectedUnitId's. */
-UNUSED void btHighlightSetOtherSprModes(Sint32 selectedUnitId)
+UNUSED void btHighlightSetOtherSpriteModes(Sint32 selectedUnitId)
 {
 	Sint16 unitIds[UNIT_MAX];
-	Sint32 unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	Sint32 unitIdx;
+	Sint32 unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	Sint32 unitIndex;
 
-	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++) {
-		if(unitIds[unitIdx] != selectedUnitId)
-			btHighlightSetSprMode(unitIds[unitIdx], SPRITE_SEMI_TRANSPARENT);
+	for(unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+		if(unitIds[unitIndex] != selectedUnitId)
+			btHighlightSetSpriteMode(
+				unitIds[unitIndex], SPRITE_SEMI_TRANSPARENT);
 	}
 }
 
 /* Returns every unit's sprites to SPRITE_OPAQUE. */
-void btHighlightClearAllSprModes(void)
+void btHighlightClearAllSpriteModes(void)
 {
 	Sint16 unitIds[UNIT_MAX];
-	Sint32 unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	Sint32 unitIdx;
+	Sint32 unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	Sint32 unitIndex;
 
-	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++)
-		btHighlightSetSprMode(unitIds[unitIdx], SPRITE_OPAQUE);
+	for(unitIndex = 0; unitIndex < unitCount; unitIndex++)
+		btHighlightSetSpriteMode(unitIds[unitIndex], SPRITE_OPAQUE);
 }
 
 extern Sint8 BattleHighlightBlendRamp[];
@@ -617,13 +618,13 @@ void btHighlightSetModes(Uint16 *actors, Sint32 mode)
 {
 	Sint16		  activeActors[UNIT_MAX];
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
-	Uint32		  cnt;
+	Uint32		  count;
 	Uint32		  i;
 
 	if(mode == HIGHLIGHT_OFF) {
 		syCloseEvent(btBackgroundStepHighlightBlend);
 		syIOWrite16(mode, &REG_BLDY);
-		btHighlightClearAllSprModes();
+		btHighlightClearAllSpriteModes();
 		sySynch(1);
 		syIOWriteQueueStore16((Uint32)&REG_BLDCNT, 0);
 	}
@@ -633,9 +634,9 @@ void btHighlightSetModes(Uint16 *actors, Sint32 mode)
 		REG_BLDY = 0;
 		syIOWrite16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
 
-		cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, (Uint16 *)activeActors);
-		for(i = 0; i < cnt; i++)
-			btHighlightSetSprMode(activeActors[i], mode & 1);
+		count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, (Uint16 *)activeActors);
+		for(i = 0; i < count; i++)
+			btHighlightSetSpriteMode(activeActors[i], mode & 1);
 
 		if(actors != NULL) {
 			Uint32 actor = *actors;
@@ -644,7 +645,7 @@ void btHighlightSetModes(Uint16 *actors, Sint32 mode)
 			actors++;
 			if(actor != BATTLE_UNIT_LIST_END) {
 				do {
-					btHighlightSetSprMode(actor, (mode & 1) ^ 1);
+					btHighlightSetSpriteMode(actor, (mode & 1) ^ 1);
 					i++;
 					if(i >= UNIT_MAX)
 						break;
@@ -673,8 +674,8 @@ struct SPARK {
 struct RING {
 	Sint32 x;
 	Sint32 y;
-	Sint32 velX;
-	Sint32 velY;
+	Sint32 velocityX;
+	Sint32 velocityY;
 	Sint32 age;
 };
 
@@ -730,7 +731,7 @@ extern const Sint32 ElementGlowRingPictures[];
 void btElementGlowUpdateStarField(void)
 {
 	Sint32					 ringsLeft;
-	Sint32					 frm;
+	Sint32					 frame;
 	Uint32					 size;
 	Sint32					 ringX;
 	Sint32					 ringY;
@@ -742,12 +743,12 @@ void btElementGlowUpdateStarField(void)
 	struct SPARK			*spark;
 	struct RING				*ring;
 	Sint32					*axis;
-	Sint32					 axisIdx;
+	Sint32					 axisIndex;
 	FIXED					 distance;
 	FIXED					 scale;
 	Sint32					 step;
 	Uint32					 radius;
-	Sint32					 ang;
+	Sint32					 angle;
 	Uint32					 half;
 	Sint32					 x;
 	Sint32					 y;
@@ -755,7 +756,7 @@ void btElementGlowUpdateStarField(void)
 	Sint32 (*mulFX)(Sint32 a, Sint32 b);
 
 	dest = RamHeapSlots->battleCanvas;
-	state = (struct STAR_FIELD_STATE *)RamHeapSlots->battleEff;
+	state = (struct STAR_FIELD_STATE *)RamHeapSlots->battleEffect;
 	state->ready = 0;
 	draw = RamHeapSlots->ramCode;
 	for(i = 0; i < STAR_FIELD_SPARKS; i++) {
@@ -777,7 +778,7 @@ void btElementGlowUpdateStarField(void)
 				spark->life--;
 				mulFX = syMulFX;
 				axis = spark->motion;
-				for(axisIdx = 0; axisIdx < 3; axisIdx++) {
+				for(axisIndex = 0; axisIndex < 3; axisIndex++) {
 					step = mulFX(mulFX(-*axis >> 8, scale), toFIXED(19) / 16);
 					axis[3] = axis[3] - (axis[3] >> 7) + step;
 					*axis += axis[3];
@@ -787,11 +788,11 @@ void btElementGlowUpdateStarField(void)
 			life = spark->life;
 		}
 		if(life == 0 && state->ticks < STAR_FIELD_SPAWN_TICKS) {
-			ang = syRandom();
+			angle = syRandom();
 			radius = syRandom() + toFIXED(1);
 			half = radius >> 1;
-			spark->motion[0] = syMulFX(syCos(ang), half);
-			spark->motion[1] = syMulFX(sySin(ang), half);
+			spark->motion[0] = syMulFX(syCos(angle), half);
+			spark->motion[1] = syMulFX(sySin(angle), half);
 			if(spark->motion[0] & 1)
 				spark->motion[0] = -spark->motion[0];
 			if(spark->motion[1] & 1)
@@ -809,21 +810,21 @@ void btElementGlowUpdateStarField(void)
 				STAR_FIELD_CENTER;
 			y = (spark->motion[1] >> STAR_FIELD_PIXEL_SHIFT) +
 				STAR_FIELD_CENTER;
-			frm = life;
-			if(frm < 0)
-				frm = 0;
-			else if(frm > 6)
-				frm = 6;
-			size = ElementGlowSparkSizes[frm];
-			draw(dest, (Uint8 *)state + ElementGlowSparkPictures[frm],
+			frame = life;
+			if(frame < 0)
+				frame = 0;
+			else if(frame > 6)
+				frame = 6;
+			size = ElementGlowSparkSizes[frame];
+			draw(dest, (Uint8 *)state + ElementGlowSparkPictures[frame],
 				x - (size >> 1), y - (size >> 1), size, size);
 		}
 	}
 	draw = RamHeapSlots->ramCodePaired;
 	for(ring = state->rings, ringsLeft = STAR_FIELD_RINGS - 1; ringsLeft >= 0;
 		ringsLeft--, ring++) {
-		ring->x += ring->velX;
-		ring->y += ring->velY;
+		ring->x += ring->velocityX;
+		ring->y += ring->velocityY;
 		ringX = ring->x >> STAR_FIELD_PIXEL_SHIFT;
 		ringY = ring->y >> STAR_FIELD_PIXEL_SHIFT;
 		phase = 3 - ring->age / 8;
@@ -848,12 +849,12 @@ void btElementGlowUpdateStarField(void)
 Sint32 btElementGlowUploadStarField(void)
 {
 	void					*src = RamHeapSlots->battleCanvas;
-	struct STAR_FIELD_STATE *state = RamHeapSlots->battleEff;
+	struct STAR_FIELD_STATE *state = RamHeapSlots->battleEffect;
 
 	if(src != 0) {
 		if(state->ready != 0) {
 			state->ready = 0;
-			return syColBufferScaleThreeQuarters(
+			return syColorBufferScaleThreeQuarters(
 				src, (void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
 		}
 	}
@@ -861,15 +862,15 @@ Sint32 btElementGlowUploadStarField(void)
 }
 
 /* Returns the x of the point at angle and radius from the origin. */
-static __inline__ Sint32 PolarX(Sint32 ang, Sint32 radius)
+static __inline__ Sint32 PolarX(Sint32 angle, Sint32 radius)
 {
-	return syMulFX(syCos(ang), radius);
+	return syMulFX(syCos(angle), radius);
 }
 
 /* Returns the y of the point at angle and radius from the origin. */
-static __inline__ Sint32 PolarY(Sint32 ang, Sint32 radius)
+static __inline__ Sint32 PolarY(Sint32 angle, Sint32 radius)
 {
-	return syMulFX(sySin(ang), radius);
+	return syMulFX(sySin(angle), radius);
 }
 
 /* Starts a star field of the element: sixteen sparks on random rings and three
@@ -884,16 +885,16 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	Uint8					*data;
 
 	RamHeapSlots->battleBg->mode = BATTLE_BACKGROUND_FIXED;
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	for(i = 0; i < STAR_FIELD_SPARKS; i++) {
-		Sint32 ang = syRandom();
+		Sint32 angle = syRandom();
 		Uint32 radius = syRandom() + toFIXED(1);
 		Uint32 half = radius >> 1;
 
 		spark = &state->sparks[i];
-		spark->motion[0] = syMulFX(syCos(ang), half);
-		spark->motion[1] = syMulFX(sySin(ang), half);
+		spark->motion[0] = syMulFX(syCos(angle), half);
+		spark->motion[1] = syMulFX(sySin(angle), half);
 		if(spark->motion[0] & 1)
 			spark->motion[0] = -spark->motion[0];
 		if(spark->motion[1] & 1)
@@ -906,14 +907,14 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	}
 	for(i = 0; i < STAR_FIELD_RINGS; i++) {
 		Sint32 radius = 4 * STAR_FIELD_PIXEL;
-		Sint32 ang;
+		Sint32 angle;
 
 		ring = &state->rings[i];
-		ang = i * (DEGtoANG(120));
-		ring->x = PolarX(ang, radius);
-		ring->y = PolarY(ang, radius);
-		ring->velX = PolarX(ang, STAR_FIELD_PIXEL / 2);
-		ring->velY = PolarY(ang, STAR_FIELD_PIXEL / 2);
+		angle = i * (DEGtoANG(120));
+		ring->x = PolarX(angle, radius);
+		ring->y = PolarY(angle, radius);
+		ring->velocityX = PolarX(angle, STAR_FIELD_PIXEL / 2);
+		ring->velocityY = PolarY(angle, STAR_FIELD_PIXEL / 2);
 		ring->age = 0;
 	}
 	state->ticks = 0;
@@ -994,7 +995,7 @@ void btElementGlowPlay(
 	BATTLE_STATE			 *battle = RamHeapSlots->battleState;
 	volatile Uint16			 *ime;
 	struct STAR_FIELD_STATE	 *state;
-	Sint32					  frm;
+	Sint32					  frame;
 	Sint32					 *brightness;
 	SCREEN_POINT			 *pos;
 
@@ -1018,13 +1019,13 @@ void btElementGlowPlay(
 		syIOWriteQueueStore16(
 			(Uint32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
 		btElementGlowInitStarField(element);
-		for(frm = 0, pos = &starPos; frm < STAR_FIELD_TICKS; frm++) {
+		for(frame = 0, pos = &starPos; frame < STAR_FIELD_TICKS; frame++) {
 			brightness = &battle->brightness;
 			ime = &REG_IME;
-			state = (struct STAR_FIELD_STATE *)RamHeapSlots->battleEff;
-			if(frm < STAR_FIELD_DARKEN_TICKS)
-				btColBufferScale(battle->pal, BATTLE_BG_PALETTE,
-					*brightness = toFIXED(1) - frm * BACKGROUND_LEVEL_STEP,
+			state = (struct STAR_FIELD_STATE *)RamHeapSlots->battleEffect;
+			if(frame < STAR_FIELD_DARKEN_TICKS)
+				btColorBufferScale(battle->palette, BATTLE_BG_PALETTE,
+					*brightness = toFIXED(1) - frame * BACKGROUND_LEVEL_STEP,
 					BATTLE_BACKGROUND_COLORS);
 			btMotionProjectScaledPos(unitId, (Sint32 *)pos);
 			state->originX = (STAR_FIELD_CENTER - pos->x) << 8;
@@ -1038,7 +1039,7 @@ void btElementGlowPlay(
 	} else if(mode == GLOW_STREAKS) {
 		/* The streaks, their canvas centred on the unit likewise. */
 		btEffectStartElementStreaksStub(element);
-		for(frm = 0; frm < ELEMENT_STREAK_TICKS; frm++) {
+		for(frame = 0; frame < ELEMENT_STREAK_TICKS; frame++) {
 			btMotionProjectScaledPos(unitId, (Sint32 *)&streakPos);
 			origin[0] = (STAR_FIELD_CENTER - streakPos.x) << 8;
 			origin[1] = (STAR_FIELD_CENTER - streakPos.y) << 8;
@@ -1055,8 +1056,8 @@ void btElementGlowPlay(
 		pillarLaunch.variant = variant;
 		pillarLaunch.actor = unitId;
 		pillarLaunch.actors[0] = unitId;
-		pillarLaunch.firstTgt = unitId;
-		pillarLaunch.cnt = 1;
+		pillarLaunch.firstTarget = unitId;
+		pillarLaunch.count = 1;
 		pillarLaunch.range = 1;
 		btEffectRunElementPillarStub(&pillarLaunch);
 	} else {
@@ -1064,9 +1065,9 @@ void btElementGlowPlay(
 		burstLaunch.kind = element;
 		burstLaunch.variant = 0;
 		burstLaunch.actor = unitId;
-		burstLaunch.firstTgt = unitId;
+		burstLaunch.firstTarget = unitId;
 		burstLaunch.actors[0] = unitId;
-		burstLaunch.cnt = 1;
+		burstLaunch.count = 1;
 		burstLaunch.range = 1;
 		btEffectRunElementBurstStub(&burstLaunch);
 	}
@@ -1094,27 +1095,27 @@ Sint32 btFormationAverageLevel(Sint32 recordId)
 {
 	FORMATION			   *record;
 	const ENEMY_DEFINITION *enemy;
-	Uint32					memberIdx;
+	Uint32					memberIndex;
 	Sint32					enemyId;
 	Sint32					levelTotal;
-	Sint32					enemyCnt;
+	Sint32					enemyCount;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 levels[7];
 
-	enemyCnt = 0;
+	enemyCount = 0;
 	levelTotal = 0;
 	record = &Formations[recordId];
-	for(memberIdx = 0; memberIdx < FORMATION_MEMBERS; memberIdx++) {
-		if(record->minCnts[memberIdx] != 0)
+	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
+		if(record->minCounts[memberIndex] != 0)
 			break;
 	}
-	if(memberIdx == FORMATION_MEMBERS)
+	if(memberIndex == FORMATION_MEMBERS)
 		return -1;
-	for(memberIdx = 0; memberIdx < FORMATION_MEMBERS; memberIdx++) {
-		if(record->maxCnts[memberIdx] == 0)
+	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
+		if(record->maxCounts[memberIndex] == 0)
 			continue;
-		enemyId = record->memberIds[memberIdx];
+		enemyId = record->memberIds[memberIndex];
 		enemy = gmEnemyGetDefinitionStub(enemyId + ENEMY_ID_FIRST);
 		if(enemy == 0)
 			continue;
@@ -1122,9 +1123,9 @@ Sint32 btFormationAverageLevel(Sint32 recordId)
 			!syGameFlagGet(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
 			return -2;
 		levelTotal += enemy->level;
-		enemyCnt++;
+		enemyCount++;
 	}
-	if(enemyCnt == 0)
+	if(enemyCount == 0)
 		return -3;
-	return levelTotal / enemyCnt;
+	return levelTotal / enemyCount;
 }

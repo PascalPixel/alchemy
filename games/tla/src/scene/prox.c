@@ -364,10 +364,11 @@ void scProxSmokeFromChimneys(void);
 
 /* Runs a child at its target while it is near and ahead, and says whether it is
    chasing. */
-Sint32 scProxChaseTarget(ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
+Sint32 scProxChaseTarget(
+	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
 {
 	Sint32	result = 0;
-	Sint32 *tgtPos;
+	Sint32 *targetPos;
 	Sint32 *objectPos;
 
 	/* A child being talked to holds still. */
@@ -375,14 +376,14 @@ Sint32 scProxChaseTarget(ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
 		actor->paused = 1;
 		return 1;
 	}
-	tgtPos = &tgt->x.fixed;
+	targetPos = &target->x.fixed;
 	objectPos = &actor->x.fixed;
-	if(scPosDistance(tgtPos, objectPos) < range || force != 0) {
-		Uint32 ang =
-			(Uint16)syAtan(tgt->z.fixed - actor->z.fixed, *tgtPos - *objectPos);
-		Uint32 left = (ang - FACING_STEP) & HEADING_SECTOR_MASK;
-		Uint32 right = (ang + FACING_STEP) & HEADING_SECTOR_MASK;
-		Uint32 ahead = ang & HEADING_SECTOR_MASK;
+	if(scPosDistance(targetPos, objectPos) < range || force != 0) {
+		Uint32 angle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, *targetPos - *objectPos);
+		Uint32 left = (angle - FACING_STEP) & HEADING_SECTOR_MASK;
+		Uint32 right = (angle + FACING_STEP) & HEADING_SECTOR_MASK;
+		Uint32 ahead = angle & HEADING_SECTOR_MASK;
 		Uint32 facing = actor->facing & HEADING_SECTOR_MASK;
 
 		if(ahead == facing || right == facing || left == facing || force != 0) {
@@ -407,30 +408,30 @@ Sint32 scProxChaseTarget(ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
    close. */
 Sint32 scProxPlayChase(ACTOR *actor)
 {
-	WIN_STATE	*win = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE	*window = (WIN_STATE *)RamHeapSlots->windowState;
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Bool		 flg = FALSE;
-	ACTOR		*tgt;
+	Bool		 flag = FALSE;
+	ACTOR		*target;
 
 #if CHILDREN_WALK_ON_WHEN_TOUCHING_LEADER
-	tgt = fdActorGet(MainRoutineStateWork.leaderActorId);
-	if(scPosDistance(&tgt->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
-		actor->paused = flg;
+	target = fdActorGet(MainRoutineStateWork.leaderActorId);
+	if(scPosDistance(&target->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
+		actor->paused = flag;
 		fdActorSelectAnimation(actor, ANIM_WALK);
 		return 0;
 	}
 #endif
-	if(actor->tmr == 0)
-		tgt = fdActorGet(ACTOR_TRAINING_CHILD);
-	else if(actor->tmr == 1)
-		tgt = fdActorGet(ACTOR_PLAYING_CHILD);
+	if(actor->timer == 0)
+		target = fdActorGet(ACTOR_TRAINING_CHILD);
+	else if(actor->timer == 1)
+		target = fdActorGet(ACTOR_PLAYING_CHILD);
 	else
-		tgt = fdActorGet(ACTOR_CHILD_WHO_MISSES_RUNNING);
-	if(scProxChaseTarget(actor, tgt, CHASE_CHILD_RANGE, 0) == 0) {
-		tgt = fdActorGet(MainRoutineStateWork.leaderActorId);
-		if((state->talk != 0 || win->mindRead != 0) && (actor->tmr & 2))
-			flg = TRUE;
-		scProxChaseTarget(actor, tgt, CHASE_LEADER_RANGE, flg);
+		target = fdActorGet(ACTOR_CHILD_WHO_MISSES_RUNNING);
+	if(scProxChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
+		target = fdActorGet(MainRoutineStateWork.leaderActorId);
+		if((state->talk != 0 || window->mindRead != 0) && (actor->timer & 2))
+			flag = TRUE;
+		scProxChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
 	}
 	return 0;
 }
@@ -619,7 +620,7 @@ void scProxTalkToPlayingChild(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_PLAYING_CHILD);
-	Sint16		 ang = actor->facing;
+	Sint16		 angle = actor->facing;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -635,7 +636,7 @@ void scProxTalkToPlayingChild(void)
 	   stupid..." */
 	fdScriptShowMessage(ACTOR_PLAYING_CHILD, 0);
 	if(state->psynergy == 0)
-		actor->facing = ang;
+		actor->facing = angle;
 	actor->sceneByte = 0;
 	scProxEndScript();
 }
@@ -709,13 +710,13 @@ void scProxSearchForParents(void)
 	if(lit == 0) {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SE_DOOR_OPEN);
+		fdScriptPlaySound(SE_DOOR_OPEN);
 		fdMapGridCopyMetatilesTo(89, 0, 77, 16, 1, 2);
 		fdScriptSetFlag(FLAG_DOOR_LEFT_OPEN);
 		syFieldScriptWait(10);
 		fdActorSetPosAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, toFIXED(520),
 			toFIXED(360), FACING_SOUTH_SOUTHEAST);
-		fdCameraGetActor()->motionFlg = lit;
+		fdCameraGetActor()->motionFlags = lit;
 		fdCameraSetSpeed(1.6);
 		fdCameraMoveTo(552, CAMERA_KEEP, 388, 1);
 		syFieldScriptWait(10);
@@ -977,10 +978,10 @@ void scProxMeetPuelle(void)
 	fdActorFaceDirection(ACTOR_VILLAGER_ON_THE_HOSTAGES, FACING_EAST, 0);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
 	fdActorSetSpeed(ACTOR_ISAAC, 2.4);
-	fdActorGet(ACTOR_ISAAC)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ISAAC)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_ISAAC, 160, 140);
 	syFieldScriptWait(1);
-	fdActorGet(ACTOR_ISAAC)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ISAAC)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetAnimationAndWait(ACTOR_ISAAC, 21);
 	fdActorFaceDirection(
 		ACTOR_VILLAGER_GUARDING_THE_ROAD, FACING_NORTH_NORTHWEST, 0);
@@ -1216,37 +1217,37 @@ void scProxMoldHidesInSnow(void)
 	fdActorSetSpeed(ACTOR_MOLD, 2);
 	actor = fdActorGet(ACTOR_MOLD);
 	actor->layer = MAPGRID_LAYER_MIDDLE;
-	scFieldActorSetSprPriority(ACTOR_MOLD, 3);
+	scFieldActorSetSpritePriority(ACTOR_MOLD, 3);
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 408, 326);
 	syFieldScriptWait(1);
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
-	fdScriptPlaySnd(SE_RATTLE);
+	fdScriptPlaySound(SE_RATTLE);
 	actor = fdCameraGetActor();
 	actor->y.fixed += toFIXED(2);
 	actor = fdActorGet(ACTOR_MOLD);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_MOLD, 408, 200);
 	syFieldScriptWait(1);
 	actor = fdActorGet(ACTOR_MOLD);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetPos(ACTOR_MOLD, 0, 0);
-	fdScriptPlaySnd(SE_KOLIMA_BRIDGE_HOP);
+	fdScriptPlaySound(SE_KOLIMA_BRIDGE_HOP);
 	fdMapGridSetShake(1, 2, 1);
 	syFieldScriptWait(30);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdScriptPlaySnd(SE_LANDING_THUD);
+	fdScriptPlaySound(SE_LANDING_THUD);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_ENEMY_CRY);
+	fdScriptPlaySound(SE_ENEMY_CRY);
 	syFieldScriptWait(20);
 	fdActorShowEmote(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-	scFieldActorSetSprPriority(ACTOR_MOLD, 2);
+	scFieldActorSetSpritePriority(ACTOR_MOLD, 2);
 	actor = fdActorGet(ACTOR_MOLD);
-	actor->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	/* The snow pile moves: the upper layer's metatiles (69, 3) and (69, 8),
 	   kept 45 columns east of (24, 3) and (24, 8), lose the round pile on the
 	   ledge atop the cliff and gain a low mound on the frozen river at the
@@ -1340,9 +1341,9 @@ void scProxEnterDoor(
 	syFieldScriptEndLastingPsynergy(0);
 	if(!fdScriptGetFlag(FLAG_DOOR_LEFT_OPEN)) {
 		if(width == 2)
-			fdScriptPlaySnd(SE_THUMP);
+			fdScriptPlaySound(SE_THUMP);
 		else
-			fdScriptPlaySnd(SE_DOOR_OPEN);
+			fdScriptPlaySound(SE_DOOR_OPEN);
 		fdMapGridCopyMetatilesTo(srcX, srcY, x, y, width, height);
 		syFieldScriptWait(20);
 	}
@@ -1361,7 +1362,7 @@ void scProxEnterDoor(
 	fdActorSetScript(
 		MainRoutineStateWork.leaderActorId, LeaderWalkThroughDoorScript);
 	syWait(12);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(state->stepCue);
@@ -1440,8 +1441,8 @@ void scProxClimbStairs(void)
 		actor->y.fixed, actor->z.fixed - toFIXED(4));
 	scFieldActorWaitForMove(actor);
 	actor->facing = FACING_NORTH;
-	fdScriptPlaySnd(SE_STAIRS_UP);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdScriptPlaySound(SE_STAIRS_UP);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	id = MainRoutineStateWork.leaderActorId;
 	if(stairsExit == PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH)
 		fdActorSetAnimation(id, ANIM_LEADER_LEAVE_ALTERNATE);
@@ -1465,7 +1466,8 @@ void scProxComeDownStairs(Sint32 westOrSouth)
 	syFieldScriptEndLastingPsynergy(0);
 	if(westOrSouth != 0) {
 		/* Without his shadow on the stairs, until he is down. */
-		fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+		fdActorSetSpriteFlags(
+			fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 		scFieldActorSetPosAndResetMotion(actor, actor->x.fixed - toFIXED(1),
 			actor->y.fixed, actor->z.fixed - toFIXED(6));
 		syWait(1);
@@ -1480,7 +1482,7 @@ void scProxComeDownStairs(Sint32 westOrSouth)
 		fdActorSetAnimationAndWait(
 			MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARRIVE);
 	}
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, 8);
@@ -1761,7 +1763,7 @@ void scProxGiveThanksForBeacon(void)
 		   soon..." */
 		fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
 	}
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(158, CAMERA_KEEP, 432, 1);
 	fdCameraWaitForArrival();
 	scFieldActorJump(ACTOR_CHILD_SENT_OUTSIDE, 4, 10);
@@ -1833,7 +1835,7 @@ void scProxGiveThanksForBeacon(void)
 
 		state->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-		state->transitionFrm = 16;
+		state->transitionFrame = 16;
 	}
 	fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 	fdScriptSetFlag(FLAG_THANKED_FOR_BEACON);
@@ -1875,18 +1877,18 @@ Sint32 scInit(void)
 		REG_BLDALPHA = BLEND_ALPHA(8, 12);
 		REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 		sySetEvent(scProxSmokeFromChimneys, EVENT_PASS_TICK);
-		fdTilesetAnimPause(0);
-		fdTilesetAnimPause(1);
-		fdTilesetAnimResume(2);
-		fdTilesetAnimResume(3);
-		fdTilesetAnimResume(4);
-		fdTilesetAnimResume(5);
-		fdTilesetAnimResume(6);
+		fdTilesetAnimationPause(0);
+		fdTilesetAnimationPause(1);
+		fdTilesetAnimationResume(2);
+		fdTilesetAnimationResume(3);
+		fdTilesetAnimationResume(4);
+		fdTilesetAnimationResume(5);
+		fdTilesetAnimationResume(6);
 	}
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_PROX) {
 		if(!fdScriptGetFlag(FLAG_DIG_SPOT_SCOOPED))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
 		scProxInitTown();
 	} else if(scene == SCENE_PROX_MOLD) {
 		scProxInitMold();
@@ -1910,7 +1912,7 @@ void scProxStartPlayingChase(Sint32 actorId, Sint32 x, Sint32 z, Sint32 quarry)
 {
 	ACTOR *child = fdActorGet(actorId);
 
-	child->tmr = quarry;
+	child->timer = quarry;
 	child->sceneByte = 0;
 	child->update = (OBJECT_UPDATE)scProxPlayChase;
 	fdActorSetPos(actorId, x, z);
@@ -1933,8 +1935,9 @@ void scProxInitTown(void)
 			syWait(1);
 		}
 	}
-	scFieldActorSetSprPriority(ACTOR_TOWN_CRATE, 1);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_TOWN_CRATE), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpritePriority(ACTOR_TOWN_CRATE, 1);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_TOWN_CRATE), SPRITE_COLOR_HIDDEN);
 }
 
 /* Sets up the upper village. While the lighthouse is unlit, the warrior from
@@ -1945,8 +1948,9 @@ void scProxInitMold(void)
 {
 	ACTOR *actor;
 
-	scFieldActorSetSprPriority(ACTOR_MOLD_CRATE, 1);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_MOLD_CRATE), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpritePriority(ACTOR_MOLD_CRATE, 1);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_MOLD_CRATE), SPRITE_COLOR_HIDDEN);
 	if(!fdScriptGetFlag(FLAG_MARS_BEACON_LIT)) {
 		if(!fdScriptGetFlag(FLAG_HEARD_OF_PARENTS)) {
 			fdActorSetPos(ACTOR_WARRIOR_SENT_FOR_PARENTS, 0, 0);
@@ -1984,8 +1988,8 @@ void scProxMatchHousesPriority(void)
 	ACTOR *actor;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	scFieldActorSetSprPriority(
-		ACTOR_CHILD_HIDING_FROM_THE_WIND, ((FIELD_SPR *)actor->spr)->pri);
+	scFieldActorSetSpritePriority(ACTOR_CHILD_HIDING_FROM_THE_WIND,
+		((FIELD_SPR *)actor->sprite)->priority);
 }
 
 void scProxInitHouses(void)
@@ -2006,10 +2010,11 @@ void scProxInitHouses(void)
 void scProxMatchCaveHomesPriority(void)
 {
 	Sint32 variant =
-		((FIELD_SPR *)fdActorGet(MainRoutineStateWork.leaderActorId)->spr)->pri;
+		((FIELD_SPR *)fdActorGet(MainRoutineStateWork.leaderActorId)->sprite)
+			->priority;
 
-	scFieldActorSetSprPriority(ACTOR_VILLAGER_ON_PROXS_PURPOSE, variant);
-	scFieldActorSetSprPriority(ACTOR_SHOPKEEPER, variant);
+	scFieldActorSetSpritePriority(ACTOR_VILLAGER_ON_PROXS_PURPOSE, variant);
+	scFieldActorSetSpritePriority(ACTOR_SHOPKEEPER, variant);
 }
 
 void scProxInitCaveHomes(void)
@@ -2047,7 +2052,7 @@ void scProxSayFarewell(void)
 	if(fdScriptGetFlag(FLAG_THANKED_FOR_BEACON) != 0) {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		scFieldActorJump(ACTOR_JENNA, 2, 10);
 		scFieldActorJump(ACTOR_JENNA, 4, 10);
 		syFieldScriptSetMessageId((Sint32)MsgProxWhatTookYouSoLong);
@@ -2062,7 +2067,7 @@ void scProxSayFarewell(void)
 		/* "That's not true, Felix. You take as long as you need to say
 		   farewell..." */
 		fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNAS_MOTHER, 0);
-		fdScriptPlaySnd(MUS_SHAMAN_VILLAGE);
+		fdScriptPlaySound(MUS_SHAMAN_VILLAGE);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 		fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 136, 196);
 		fdActorFaceDirection(
@@ -2236,18 +2241,18 @@ void scProxSayFarewell(void)
 		fdActorSetSpeed(ACTOR_MIA, 0.8);
 		fdActorSetSpeed(ACTOR_IVAN, 0.8);
 		fdActorSetSpeed(ACTOR_GARET, 0.8);
-		scFieldActorSetSprPriority(ACTOR_ISAAC, 2);
-		scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-		scFieldActorSetSprPriority(ACTOR_SOUTH_GATE_KRADEN, 2);
-		scFieldActorSetSprPriority(ACTOR_JENNA, 2);
-		scFieldActorSetSprPriority(ACTOR_SHEBA, 2);
-		scFieldActorSetSprPriority(ACTOR_PIERS, 2);
-		scFieldActorSetSprPriority(ACTOR_KYLE, 2);
-		scFieldActorSetSprPriority(ACTOR_JENNAS_FATHER, 2);
-		scFieldActorSetSprPriority(ACTOR_JENNAS_MOTHER, 2);
-		scFieldActorSetSprPriority(ACTOR_MIA, 2);
-		scFieldActorSetSprPriority(ACTOR_IVAN, 2);
-		scFieldActorSetSprPriority(ACTOR_GARET, 2);
+		scFieldActorSetSpritePriority(ACTOR_ISAAC, 2);
+		scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+		scFieldActorSetSpritePriority(ACTOR_SOUTH_GATE_KRADEN, 2);
+		scFieldActorSetSpritePriority(ACTOR_JENNA, 2);
+		scFieldActorSetSpritePriority(ACTOR_SHEBA, 2);
+		scFieldActorSetSpritePriority(ACTOR_PIERS, 2);
+		scFieldActorSetSpritePriority(ACTOR_KYLE, 2);
+		scFieldActorSetSpritePriority(ACTOR_JENNAS_FATHER, 2);
+		scFieldActorSetSpritePriority(ACTOR_JENNAS_MOTHER, 2);
+		scFieldActorSetSpritePriority(ACTOR_MIA, 2);
+		scFieldActorSetSpritePriority(ACTOR_IVAN, 2);
+		scFieldActorSetSpritePriority(ACTOR_GARET, 2);
 		fdCameraSetSpeed(0.4);
 		fdCameraMoveTo(144, CAMERA_KEEP, 246, 1);
 		fdActorSetScript(ACTOR_JENNAS_FATHER, ProxJennasFatherWalksSouth);
@@ -2590,12 +2595,12 @@ void scProxSayFarewell(void)
 		fdActorSetAnimation(ACTOR_SOUTH_GATE_KRADEN, 9);
 		fdActorSetAnimation(MainRoutineStateWork.leaderActorId, 33);
 		fdActorSetAnimation(ACTOR_ISAAC, 40);
-		fdTilesetAnimPause(2);
-		fdTilesetAnimPause(3);
-		fdTilesetAnimPause(4);
-		fdTilesetAnimPause(5);
-		fdTilesetAnimPause(6);
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdTilesetAnimationPause(2);
+		fdTilesetAnimationPause(3);
+		fdTilesetAnimationPause(4);
+		fdTilesetAnimationPause(5);
+		fdTilesetAnimationPause(6);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		syFieldScriptWait(40);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_DIM_GRAY, PALETTES_ALL);
 		fdPaletteFadeInterpolate(120);
@@ -2648,21 +2653,21 @@ void scLeaderSetSlideStopped(Sint32 stopped)
 /* Spawns count rocks around (x, y, z), each pushed out at a random angle and
    thrown up and out along it. */
 #include "shared/rock_spawn.h"
-/* The overlay's call to fdEffectSprInit: one rock's sprite, its size, pivot and
-   attributes. */
-void scProxInitRockSpr(EFFECT_SPR *spr, Sint32 pivotX, Sint32 pivotY,
+/* The overlay's call to fdEffectSpriteInit: one rock's sprite, its size, pivot
+   and attributes. */
+void scProxInitRockSprite(EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY,
 	Uint32 attributes, Sint32 tile);
 
 /* Unused: loads the falling rocks' tiles and 64 sprites and starts their event,
    as Magma Rock does. */
 UNUSED void scProxStartFallingRocks(void)
 {
-	ROCK_STATE *state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
+	ROCK_STATE *state = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
 	Sint32		entry;
 	Sint32		tile;
 	Sint32		i;
 	ROCK	   *rock;
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
 	entry = syVRAMCacheFindFreeEntry();
@@ -2671,13 +2676,13 @@ UNUSED void scProxStartFallingRocks(void)
 	state->resource = entry;
 	rock = state->rocks;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(state->rocks); i++) {
-		spr = &state->sprs[i];
-		scProxInitRockSpr(spr, 8, 8, OBJ_SIZE_16X16, tile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
-		rock->tmr = -1;
+		sprite = &state->sprites[i];
+		scProxInitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		rock->timer = -1;
 		rock++;
 	}
 	state->next = 0;

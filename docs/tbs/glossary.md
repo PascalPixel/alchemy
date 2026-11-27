@@ -387,7 +387,7 @@ An event is a function on a list that [`sySynch()`](#wait) calls once in every
 code is waiting, and an event never waits itself. An event is a whole piece
 of work, such as moving every [actor](#actor) a step, not one thing in the
 world. The event that types a villager's line into its window letter by
-letter is one. Each event has a rank, which the code calls its `pri`,
+letter is one. Each event has a rank, its `priority`,
 and a higher rank runs earlier in the tick. A few events are called by the
 [VBlank](#vblank) handler instead, once a VBlank. The list, `EventBuf`, has
 room for 20. The record is `EVENT`, and the calls take SGL's names, the verb
@@ -649,9 +649,9 @@ tiles, small square drawings laid side by side like a mosaic. A town is
 drawn on three of them: the ground, the walls, and the roofs and treetops.
 The World Map uses the two the console can scale and rotate
 ([Field code](../../games/tbs/src/field/README.md#towns-and-dungeons-on-screen)).
-In names, `Scr` means a background layer, as SGL's scroll screen does
-(`mnBgScrFillRect`); the whole display is written out, `Screen`
-(`syScreenFadeToBlack`, `SCREEN_POINT`).
+In names, the whole display is `Screen` (`syScreenFadeToBlack`,
+`SCREEN_POINT`), and a background layer's tilemap is its screen
+(`mnBgScreenFillRect`).
 
 Sources: the game: none. SGL: スクロール画面, NBG0 to NBG3 and RBG0. GBATEK: "BG",
 "BG0-BG3".

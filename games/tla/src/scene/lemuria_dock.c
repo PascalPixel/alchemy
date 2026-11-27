@@ -149,9 +149,10 @@ void scLemuriaDockEnterDoor(
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(door->steps, door->x, door->y);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags =
+		ACTOR_FALLS;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	id = MainRoutineStateWork.leaderActorId;
@@ -205,13 +206,13 @@ void scLemuriaDockCyclePalette(void)
 Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	sySetEvent(scLemuriaDockCyclePalette, EVENT_PASS_TICK);
 	fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 #if LEMURIA_DOCK_CANNON_ON_DECK
 	if(fdScriptGetFlag(FLAG_SHIP_CARRIES_CANNON))
-		fdActorSetSprPriority(ACTOR_CANNON, 1);
+		fdActorSetSpritePriority(ACTOR_CANNON, 1);
 	else
 		fdActorSetPos(ACTOR_CANNON, 0, 0);
 #endif

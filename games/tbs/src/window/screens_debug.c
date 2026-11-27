@@ -43,17 +43,18 @@ UNUSED void mnDebugSceneSelectSchedule(void)
 /* Draws the debug scene and entrance numbers with their scene code and area
    name. */
 void mnDebugSceneSelectDrawRow(
-	WINDOW *win, Sint32 sceneId, const Sint16 *entrance)
+	WINDOW *window, Sint32 sceneId, const Sint16 *entrance)
 {
-	Sint16 mapIdx = sceneId;
-	Sint32 label = fdAreaGetNameIndexStub(mapIdx, *entrance) + MsgDebugAreaName;
-	mnWindowSprPrepareForRedraw(win);
-	mnTextDrawNum(mapIdx, 3, win, 0, 14);
-	mnTextDrawNum(*entrance, 3, win, DEBUG_SCENE_SELECTOR_LABEL_X, 14);
-	mnTextDrawString(MenuColonString, win, DEBUG_SCENE_SELECTOR_COLON_X, 0);
-	mnTextDrawMessage(mapIdx + MsgDebugSceneCode, win, 0, 0);
-	mnTextDrawString(MenuColonString, win, DEBUG_SCENE_SELECTOR_COLON_X, 14);
-	mnTextDrawMessage(label, win, DEBUG_SCENE_SELECTOR_LABEL_X, 0);
+	Sint16 mapIndex = sceneId;
+	Sint32 label =
+		fdAreaGetNameIndexStub(mapIndex, *entrance) + MsgDebugAreaName;
+	mnWindowSpritePrepareForRedraw(window);
+	mnTextDrawNumber(mapIndex, 3, window, 0, 14);
+	mnTextDrawNumber(*entrance, 3, window, DEBUG_SCENE_SELECTOR_LABEL_X, 14);
+	mnTextDrawString(MenuColonString, window, DEBUG_SCENE_SELECTOR_COLON_X, 0);
+	mnTextDrawMessage(mapIndex + MsgDebugSceneCode, window, 0, 0);
+	mnTextDrawString(MenuColonString, window, DEBUG_SCENE_SELECTOR_COLON_X, 14);
+	mnTextDrawMessage(label, window, DEBUG_SCENE_SELECTOR_LABEL_X, 0);
 }
 
 /* The debug scene selector: a scene and an entrance number, starting from the
@@ -70,15 +71,15 @@ Sint16 mnDebugSceneSelectRun(void)
 	Sint16	 entrance;
 	MENU_SPR cursor;
 	Sint16	 sceneId;
-	WINDOW	*win;
+	WINDOW	*window;
 	Sint16	 result;
 
-	win = 0;
+	window = 0;
 	selectedField = 0;
 	sceneId = MainRoutineStateWork.returnScene;
 	entrance = MainRoutineStateWork.returnEntrance;
-	win = mnWindowCreate(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
-	mnDebugSceneSelectDrawRow(win, sceneId, &entrance);
+	window = mnWindowCreate(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
+	mnDebugSceneSelectDrawRow(window, sceneId, &entrance);
 	mnArrowCreate(&cursor, &cursorSlot);
 
 	/* Wait for the keys that opened it to be let go. */
@@ -87,16 +88,16 @@ Sint16 mnDebugSceneSelectRun(void)
 
 	for(;;) {
 		result = mnDebugSceneSelectHandleRowInput(
-			win, sceneId, &entrance, &selectedField);
+			window, sceneId, &entrance, &selectedField);
 		if(result == DEBUG_SCENE_GO) {
 			mnArrowRelease(cursorSlot);
-			mnWindowClose(win, 2);
+			mnWindowClose(window, 2);
 			fdScriptSetDestinationStub(sceneId, entrance);
 			RETURN_UNREAD(result);
 		}
 		if(result == DEBUG_SCENE_CANCEL) {
 			mnArrowRelease(cursorSlot);
-			mnWindowClose(win, 2);
+			mnWindowClose(window, 2);
 			RETURN_UNREAD(result);
 		}
 
@@ -112,7 +113,7 @@ Sint16 mnDebugSceneSelectRun(void)
    and set its entrance to 0; an entrance moved past either end wraps by
    DEBUG_ENTRANCE_WRAP. */
 Sint32 mnDebugSceneSelectHandleRowInput(
-	WINDOW *win, Sint16 sceneId, Sint16 *entrance, Sint16 *selectedField)
+	WINDOW *window, Sint16 sceneId, Sint16 *entrance, Sint16 *selectedField)
 {
 	if(PerRepeat & KEY_A)
 		return DEBUG_SCENE_GO;
@@ -132,7 +133,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(sceneId > DEBUG_SCENE_LAST)
 			sceneId = 0;
-		mnDebugSceneSelectDrawRow(win, sceneId, entrance);
+		mnDebugSceneSelectDrawRow(window, sceneId, entrance);
 	} else if(PerRepeat & KEY_LEFT) {
 		if(*selectedField == 0) {
 			sceneId--;
@@ -143,7 +144,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(sceneId < 0)
 			sceneId = DEBUG_SCENE_LAST;
-		mnDebugSceneSelectDrawRow(win, sceneId, entrance);
+		mnDebugSceneSelectDrawRow(window, sceneId, entrance);
 	} else if(PerRepeat & KEY_R) {
 		if(*selectedField == 0) {
 			*entrance = 0;
@@ -155,7 +156,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(sceneId > DEBUG_SCENE_LAST)
 			sceneId = 0;
-		mnDebugSceneSelectDrawRow(win, sceneId, entrance);
+		mnDebugSceneSelectDrawRow(window, sceneId, entrance);
 	} else if(PerRepeat & KEY_L) {
 		if(*selectedField == 0) {
 			*entrance = 0;
@@ -167,7 +168,7 @@ Sint32 mnDebugSceneSelectHandleRowInput(
 		}
 		if(sceneId < 0)
 			sceneId = DEBUG_SCENE_LAST;
-		mnDebugSceneSelectDrawRow(win, sceneId, entrance);
+		mnDebugSceneSelectDrawRow(window, sceneId, entrance);
 	}
 	return sceneId;
 }
@@ -176,46 +177,46 @@ Sint32 mnDebugSceneSelectHandleRowInput(
    page 8 and always returns 0. */
 Sint32 mnDebugFlagEditorRun(void)
 {
-	MENU_SPR cursorSpr;
+	MENU_SPR cursorSprite;
 	Sint32	 cursor[2]; /* column and row */
 	Sint32	 cursorSlot;
 	Sint32	 page;
-	WINDOW	*win;
+	WINDOW	*window;
 	Sint32	 change;
 
 	page = 8;
-	win = 0;
+	window = 0;
 	cursor[0] = 0;
 	cursor[1] = 0;
-	win = mnWindowCreate(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
-	mnDebugFlagEditorDrawTable(win, page);
-	mnArrowCreate(&cursorSpr, &cursorSlot);
+	window = mnWindowCreate(1, 0, 28, 20, WINDOW_FLAG_INSTANT);
+	mnDebugFlagEditorDrawTable(window, page);
+	mnArrowCreate(&cursorSprite, &cursorSlot);
 	for(;;) {
 		sySynch(1);
-		change = mnDebugFlagEditorHandleInput(win, &page, cursor);
+		change = mnDebugFlagEditorHandleInput(window, &page, cursor);
 		/* B closes the table; a change of flag or page redraws it. */
 		if(change == -1)
 			break;
 		if(change == 1)
-			mnDebugFlagEditorDrawTable(win, page);
-		mnArrowSetPos(&cursorSpr, cursor[0] * 8 + 58, cursor[1] * 8 + 20);
+			mnDebugFlagEditorDrawTable(window, page);
+		mnArrowSetPos(&cursorSprite, cursor[0] * 8 + 58, cursor[1] * 8 + 20);
 	}
 	mnArrowRelease(cursorSlot);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	return 0;
 }
 
 /* Writes the lowest count digits of value, up to five, most significant first
    as uppercase hexadecimal in out, without a null terminator. */
-void mnStringFormatHexDigits(Uint32 value, Uint32 cnt, Uint8 *out)
+void mnStringFormatHexDigits(Uint32 value, Uint32 count, Uint8 *out)
 {
 	Uint8  digits[8];
 	Uint32 i;
 
-	if(cnt > 5)
-		cnt = 5;
+	if(count > 5)
+		count = 5;
 
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		Uint32 digit = value & 0xf;
 		if(digit <= 9)
 			digits[i] = digit + '0';
@@ -224,24 +225,24 @@ void mnStringFormatHexDigits(Uint32 value, Uint32 cnt, Uint8 *out)
 		value >>= 4;
 	}
 
-	for(i = cnt - 1; (Sint32)i >= 0; i--)
+	for(i = count - 1; (Sint32)i >= 0; i--)
 		*out++ = digits[i];
 }
 
 /* Draws one page of 256 flags as sixteen rows of hexadecimal labels and
    bits. */
-void mnDebugFlagEditorDrawTable(WINDOW *win, Sint32 page)
+void mnDebugFlagEditorDrawTable(WINDOW *window, Sint32 page)
 {
 	Sint32 row;
 	Sint32 y;
-	Sint32 flg;
+	Sint32 flag;
 	char   label[5];
 	char   bits[17];
 
-	mnWindowSprPrepareForRedraw(win);
-	mnTextDrawStringInWindow((Uint8 *)MenuHexDigitsString, win, 48, 0);
+	mnWindowSpritePrepareForRedraw(window);
+	mnTextDrawStringInWindow((Uint8 *)MenuHexDigitsString, window, 48, 0);
 
-	flg = page << 8;
+	flag = page << 8;
 	for(row = 0; row != DEBUG_FLAG_DIGIT_VALUES; row++) {
 		Sint32 i;
 
@@ -250,33 +251,34 @@ void mnDebugFlagEditorDrawTable(WINDOW *win, Sint32 page)
 		for(i = 0; i != 5; i++) {
 			label[i] = 0;
 		}
-		mnStringFormatHexDigits(flg, 3, label);
-		mnTextDrawStringInWindow((Uint8 *)label, win, 0, y);
-		mnTextDrawStringInWindow((Uint8 *)MenuColonString, win, 32, y);
+		mnStringFormatHexDigits(flag, 3, label);
+		mnTextDrawStringInWindow((Uint8 *)label, window, 0, y);
+		mnTextDrawStringInWindow((Uint8 *)MenuColonString, window, 32, y);
 
 		for(i = 0; i < DEBUG_FLAG_DIGIT_VALUES; i++) {
-			Sint32 set = gmFlagGetStub(flg);
+			Sint32 set = gmFlagGetStub(flag);
 			bits[i] = (set != 0) + '0';
-			flg++;
+			flag++;
 		}
 		bits[i] = 0;
-		mnTextDrawStringInWindow((Uint8 *)bits, win, 48, y);
+		mnTextDrawStringInWindow((Uint8 *)bits, window, 48, y);
 	}
 }
 
 /* Moves within the flag grid, changes pages, or toggles the selected flag.
    Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise. */
-Sint32 mnDebugFlagEditorHandleInput(WINDOW *win, Sint32 *page, Sint32 *cursor)
+Sint32 mnDebugFlagEditorHandleInput(
+	WINDOW *window, Sint32 *page, Sint32 *cursor)
 {
 	Sint32 *row = &cursor[1];
 
 	if(PerRepeat & KEY_A) {
-		Sint32 flg = (((*page << 4) + *row) << 4) + cursor[0];
+		Sint32 flag = (((*page << 4) + *row) << 4) + cursor[0];
 
-		if(gmFlagGetStub(flg))
-			gmFlagClearStub(flg);
+		if(gmFlagGetStub(flag))
+			gmFlagClearStub(flag);
 		else
-			gmFlagSetStub(flg);
+			gmFlagSetStub(flag);
 		return 1;
 	}
 	if((PerPush & KEY_B) || (PerRepeat & KEY_SELECT))
@@ -322,10 +324,10 @@ UNUSED void mnReservedNoOperation(void)
 
 /* Marks the Djinni found (FLAG_DJINNI), then gives it to party member
    `member`. */
-void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 idx)
+void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 index)
 {
-	gmFlagSetStub(FLAG_DJINNI(element * DJINN_PER_ELEMENT + idx));
-	gmDjinnGiveStub(member, element, idx);
+	gmFlagSetStub(FLAG_DJINNI(element * DJINN_PER_ELEMENT + index));
+	gmDjinnGiveStub(member, element, index);
 }
 
 /* The Pause menu: Save your quest, Sleep or Change settings. A cancelled save
@@ -364,7 +366,7 @@ Sint32 mnDebugBrowserIcons(void)
 	Sint32	tile;
 	Sint32	page;
 	Sint32	mode;
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	slot;
 	Sint32	base;
 	Sint32	i;
@@ -372,7 +374,7 @@ Sint32 mnDebugBrowserIcons(void)
 	Sint32	x;
 	Sint32	y;
 
-	win = NULL;
+	window = NULL;
 	page = 0;
 	mode = 0;
 	redraw = TRUE;
@@ -404,21 +406,21 @@ Sint32 mnDebugBrowserIcons(void)
 			redraw = FALSE;
 			page = (page + ICON_BROWSER_PAGES) % ICON_BROWSER_PAGES;
 			mode = (mode + ICON_BROWSER_MODES) % ICON_BROWSER_MODES;
-			mnWindowClose(win, 2);
-			win = mnWindowCreate(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
+			mnWindowClose(window, 2);
+			window = mnWindowCreate(10, 0, 18, 12, WINDOW_FLAG_INSTANT);
 			if(mode == ICON_BROWSER_ITEMS)
-				mnTextDrawStringInWindow(DebugMenuItemTitle, win, 0, 0);
+				mnTextDrawStringInWindow(DebugMenuItemTitle, window, 0, 0);
 			else if(mode == ICON_BROWSER_PSYNERGY)
-				mnTextDrawStringInWindow(DebugMenuEnergyTitle, win, 0, 0);
+				mnTextDrawStringInWindow(DebugMenuEnergyTitle, window, 0, 0);
 			else
-				mnTextDrawStringInWindow(DebugMenuStatusTitle, win, 0, 0);
-			mnTextDrawStringInWindow(DebugMenuPageLabel, win, 0, 8);
-			mnTextDrawNumInWindow(page, 0, win, 40, 8);
+				mnTextDrawStringInWindow(DebugMenuStatusTitle, window, 0, 0);
+			mnTextDrawStringInWindow(DebugMenuPageLabel, window, 0, 8);
+			mnTextDrawNumberInWindow(page, 0, window, 40, 8);
 			base = page * ICON_BROWSER_PAGE_ICONS;
-			mnTextDrawNumInWindow(base, 3, win, 64, 8);
-			mnTextDrawStringInWindow(DebugMenuRangeDash, win, 88, 8);
-			mnTextDrawNumInWindow(
-				base + ICON_BROWSER_PAGE_ICONS - 1, 3, win, 96, 8);
+			mnTextDrawNumberInWindow(base, 3, window, 64, 8);
+			mnTextDrawStringInWindow(DebugMenuRangeDash, window, 88, 8);
+			mnTextDrawNumberInWindow(
+				base + ICON_BROWSER_PAGE_ICONS - 1, 3, window, 96, 8);
 			for(i = 0; i < ICON_BROWSER_PAGE_ICONS; i++) {
 				slot = -1;
 				row = i / ICON_BROWSER_COLUMNS;
@@ -426,23 +428,23 @@ Sint32 mnDebugBrowserIcons(void)
 				y = row * 16 + 16;
 				if(mode == ICON_BROWSER_ITEMS) {
 					mnIconBuildItemIconTiles(base + i, 1, &slot, &tile, mode);
-					mnWindowSprCreate(
-						slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+					mnWindowSpriteCreate(
+						slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 				} else if(mode == ICON_BROWSER_PSYNERGY) {
 					mnIconBuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
-					mnWindowSprCreate(
-						slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+					mnWindowSpriteCreate(
+						slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 				} else {
 					slot = syVRAMCacheFindFreeEntry();
-					mnIconBuildMiscIconTiles(i, 0, slot);
-					mnWindowSprCreate(
-						slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+					mnIconBuildMiscellaneousIconTiles(i, 0, slot);
+					mnWindowSpriteCreate(
+						slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 				}
 			}
 		}
 		sySynch(1);
 	}
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	ActorSystemStateWork->suspended = 0;
 	return 0;
 }
@@ -460,10 +462,10 @@ Sint32 mnDebugBrowserPortraits(void)
 	WIN_STATE *state;
 	WINDOW	  *portrait;
 	Bool	   redraw;
-	WINDOW	  *win;
-	Sint32	   characterCnt;
-	Sint32	   entryCnt;
-	Sint32	   idx;
+	WINDOW	  *window;
+	Sint32	   characterCount;
+	Sint32	   entryCount;
+	Sint32	   index;
 	Sint32	   i;
 	Sint32	   glyph;
 	Sint32	   tile;
@@ -474,31 +476,31 @@ Sint32 mnDebugBrowserPortraits(void)
 	state = WINDOW_STATE;
 	redraw = TRUE;
 	portrait = mnPortraitOpenWindow(0, 0, 10, 5);
-	win = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
-	idx = 0;
+	window = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);
+	index = 0;
 	for(i = 0; PortraitCharacterMap[i * 2] != -1; i++) {
 	}
-	characterCnt = i;
+	characterCount = i;
 	for(i = 0; PortraitSpriteMap[i * 2] != -1; i++) {
 	}
-	entryCnt = characterCnt + i;
+	entryCount = characterCount + i;
 
 	while(1) {
 		if(PerRepeat & KEY_LEFT) {
 			redraw = TRUE;
-			idx--;
+			index--;
 		}
 		if(PerRepeat & KEY_RIGHT) {
 			redraw = TRUE;
-			idx++;
+			index++;
 		}
 		if(PerRepeat & KEY_L) {
 			redraw = TRUE;
-			idx -= DEBUG_MENU_JUMP;
+			index -= DEBUG_MENU_JUMP;
 		}
 		if(PerRepeat & KEY_R) {
 			redraw = TRUE;
-			idx += DEBUG_MENU_JUMP;
+			index += DEBUG_MENU_JUMP;
 		}
 		if(PerRepeat & KEY_A)
 			break;
@@ -506,21 +508,21 @@ Sint32 mnDebugBrowserPortraits(void)
 			break;
 		if(redraw) {
 			redraw = FALSE;
-			idx = (idx + entryCnt) % entryCnt;
-			mnWindowSprPrepareForRedraw(win);
-			if(idx < characterCnt)
-				glyph = PortraitCharacterMap[idx * 2 + 1];
+			index = (index + entryCount) % entryCount;
+			mnWindowSpritePrepareForRedraw(window);
+			if(index < characterCount)
+				glyph = PortraitCharacterMap[index * 2 + 1];
 			else
-				glyph = PortraitSpriteMap[(idx - characterCnt) * 2 + 1] +
+				glyph = PortraitSpriteMap[(index - characterCount) * 2 + 1] +
 					PORTRAIT_SPRITE_MAP_FIRST;
-			slot = state->portraitSprs[portraitSlot];
+			slot = state->portraitSprites[portraitSlot];
 			mnIconLoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
-			mnTextDrawNumInWindow(idx, 2, win, 0, 0);
-			mnTextDrawMessageAsTiles(idx + DEBUG_GLYPH_NAME, win, 24, 0);
+			mnTextDrawNumberInWindow(index, 2, window, 0, 0);
+			mnTextDrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);
 		}
 		sySynch(1);
 	}
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	mnWindowClose(portrait, 2);
 	sySynch(1);
 	return 0;

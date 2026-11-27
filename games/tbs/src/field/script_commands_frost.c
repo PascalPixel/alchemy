@@ -9,7 +9,7 @@
 #define FROST_FLASHES	   16 /* the target's white flashes */
 
 /* Frost's glint on its target. */
-DEFINE_FROST_GLINT(, fdActorSetSprColModeStub)
+DEFINE_FROST_GLINT(, fdActorSetSpriteColorModeStub)
 
 /* Per-tick update: shrinks by 1/16 a tick and is released at 1/16. */
 void fdEffectUpdateOrbitingParticleFade(ACTOR *particle)
@@ -32,17 +32,17 @@ static inline void fdEffectUpdateSpiralParticle(ACTOR *actor, Sint32 clockwise)
 	ACTOR  *particle = actor;
 	VECTOR3 pos;
 	Sint16	remainingTicks;
-	Sint32	decrementedTmr;
+	Sint32	decrementedTimer;
 
 	if(particle != NULL) {
 		/* timer counts the spiral's ticks down; the radius shrinks with it. */
-		decrementedTmr = (Uint16)particle->tmr - 1;
-		particle->tmr = decrementedTmr;
-		remainingTicks = decrementedTmr;
+		decrementedTimer = (Uint16)particle->timer - 1;
+		particle->timer = decrementedTimer;
+		remainingTicks = decrementedTimer;
 		if(remainingTicks != 0) {
-			pos.x = particle->tgtX;
-			pos.y = particle->tgtY;
-			pos.z = particle->tgtZ;
+			pos.x = particle->targetX;
+			pos.y = particle->targetY;
+			pos.z = particle->targetZ;
 			syVectorAddPolarOffset(remainingTicks * toFIXED(2),
 				clockwise
 					? particle->userValue - remainingTicks * (TRIG_TURN / 32)
@@ -75,14 +75,14 @@ void fdEffectUpdateOrbitingParticleRight(ACTOR *actor)
 void fdPsynergyFrostOnTarget(Sint32 unused)
 {
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
-	ACTOR			   *tgt = effectState->tgt;
+	ACTOR			   *target = effectState->target;
 
-	if(tgt != 0) {
-		/* With leaveTgt the target neither flashes nor freezes. */
-		if(effectState->leaveTgt != 0) {
+	if(target != 0) {
+		/* With leaveTarget the target neither flashes nor freezes. */
+		if(effectState->leaveTarget != 0) {
 			effectState->aimAhead = 1;
 		}
-		tgt->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdPsynergyFrost();
 	}
 }
@@ -91,18 +91,18 @@ void fdPsynergyFrostOnTarget(Sint32 unused)
    target flash FROST_FLASHES times; without sceneVariant the target freezes. */
 void fdPsynergyFrost(void)
 {
-	Sint32				eventTgt;
+	Sint32				eventTarget;
 	VECTOR3				pos;
 	FIELD_EFFECT_STATE *effectState;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	ACTOR			   *particle;
 	void			   *event;
 	Sint32				i;
 
 	effectState = FieldEffectStateWork;
-	tgt = effectState->tgt;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_ICE);
+	target = effectState->target;
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_ICE);
 
 	/* A particle every 3 ticks, 0.5 to 1 size, turning either way at random,
 	   centred 2 to 6 pixels from the Psynergy's position. */
@@ -121,52 +121,52 @@ void fdPsynergyFrost(void)
 				particle->update = fdEffectUpdateOrbitingParticleRight;
 
 			particle->facing = syRandom();
-			particle->tmr = FROST_SPIRAL_TICKS;
+			particle->timer = FROST_SPIRAL_TICKS;
 			particle->userValue = syRandom();
-			fdActorSetSprColModeStub(particle, SPRITE_COLOR_BLUE_TINT);
+			fdActorSetSpriteColorModeStub(particle, SPRITE_COLOR_BLUE_TINT);
 
 			SET_POSITION(&pos, effectState->x, effectState->y, effectState->z);
 			radius = (syRandom() << 2) + toFIXED(2);
 			syVectorAddPolarOffset(radius, syRandom(), (FIXED *)&pos);
-			particle->tgtX = pos.x;
-			particle->tgtY = pos.y;
-			particle->tgtZ = pos.z;
+			particle->targetX = pos.x;
+			particle->targetY = pos.y;
+			particle->targetZ = pos.z;
 		}
 
 		sySynch(3);
 	}
 
 	sySynch(10);
-	sySndPlayStub(SE_ICE);
+	sySoundPlayStub(SE_ICE);
 	sySynch(50);
 
-	if(tgt != NULL && effectState->aimAhead == 0) {
-		sySndPlayStub(SE_POWER_UP);
+	if(target != NULL && effectState->aimAhead == 0) {
+		sySoundPlayStub(SE_POWER_UP);
 
 		/* Flash for 1 tick in every 5. */
 		for(i = 0; i < FROST_FLASHES; i++) {
-			fdActorSetSprColModeStub(tgt, SPRITE_COLOR_WHITE);
+			fdActorSetSpriteColorModeStub(target, SPRITE_COLOR_WHITE);
 			sySynch(1);
-			fdActorSetSprColModeStub(tgt, SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColorModeStub(target, SPRITE_COLOR_NORMAL);
 			sySynch(4);
 		}
 
 		if(effectState->sceneVariant == 0) {
-			sySndPlayStub(SE_SHIMMER);
-			fdActorSelectAnimationStub(tgt, PUDDLE_ANIMATION_FREEZE);
+			sySoundPlayStub(SE_SHIMMER);
+			fdActorSelectAnimationStub(target, PUDDLE_ANIMATION_FREEZE);
 		}
 
-		tgt->update = fdEffectUpdateFrostGlint;
-		event = fdFindPsynergyCue(
-			PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FROST, &eventTgt);
+		target->update = fdEffectUpdateFrostGlint;
+		event = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_ACTS),
+			FIELD_PSYNERGY_FROST, &eventTarget);
 		if(event != NULL) {
 			fdRunPsynergyScript(
-				event, MainRoutineStateWork.leaderActorId, eventTgt);
+				event, MainRoutineStateWork.leaderActorId, eventTarget);
 		}
 		sySynch(20);
 	}
 
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 #undef FROST_SNOWFLAKES

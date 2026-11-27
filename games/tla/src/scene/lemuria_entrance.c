@@ -64,7 +64,7 @@ enum { CHANNEL_NORTH_END = 2, CHANNEL_SOUTH_END = 4 };
 /* Starts an actor's animation from its first tick. */
 Sint32 scLemuriaEntranceResetAnimationFrame(ACTOR *actor)
 {
-	((FIELD_SPR *)actor->spr)->flg = 0;
+	((FIELD_SPR *)actor->sprite)->flags = 0;
 	return 1;
 }
 
@@ -97,7 +97,7 @@ void scLemuriaEntranceLandAtHarbor(Sint32 exit)
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	party->ownerOverride = 0;
 	fdScriptClearFlag(FLAG_LEMURIA_OTHER_WAY_IN);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	party->leaderActorId = ACTOR_SHIP;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	fdScriptFinishScreenTransition();
@@ -115,7 +115,7 @@ void scLemuriaEntranceLandAtSouthQuay(Sint32 exit)
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	party->ownerOverride = 0;
 	fdScriptSetFlag(FLAG_LEMURIA_OTHER_WAY_IN);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	party->leaderActorId = ACTOR_SHIP;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	fdScriptFinishScreenTransition();
@@ -171,23 +171,23 @@ Sint32 scInit(void)
 	Sint32	effect = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
 	*screen = effect;
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprFlags(fdActorGet(ACTOR_ROCK), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ROCK), 0);
 	fdScriptSetFlag(FLAG_LEMURIA_REACHED);
 	fdScriptClearFlag(FLAG_SHIP_AT_ATTEKA_INLET);
 	if(fdScriptGetFlag(FLAG_ROCK_GROUND_AWAY))
 		fdActorSetPos(ACTOR_ROCK, 0, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_BOAT_A), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_BOAT_B), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_BOAT_C), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_BOAT_D), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_SHIP_A), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_SHIP_B), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_SHIP_C), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_SHIP_D), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_SHIP_E), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MOORED_SHIP_F), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_BOAT_A), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_BOAT_B), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_BOAT_C), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_BOAT_D), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_SHIP_A), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_SHIP_B), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_SHIP_C), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_SHIP_D), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_SHIP_E), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MOORED_SHIP_F), 0);
 	if(MainRoutineStateWork.entrance == ENTRANCE_ABOARD_SHIP) {
 		MainRoutineStateWork.ownerOverride = 1;
 		fdScriptSetDestination(SCENE_LEMURIA_ENTRANCE, 1);
@@ -299,7 +299,7 @@ void scLemuriaEntranceShebaAsksPiersAge(void)
 	scFieldActorWaitForScriptEndById(ACTOR_SHIP);
 	syFieldScriptWait(10);
 	state = RamHeapSlots->fieldState;
-	state->transitionFrm = 30;
+	state->transitionFrame = 30;
 	state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();

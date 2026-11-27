@@ -53,89 +53,89 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 	BATTLE_MENU_STATE		 *battleMenu;
 	BATTLE_MENU_STATE		 *navigation;
 	Bool					  stripDirty;
-	Sint32					  standbyCnt;
+	Sint32					  standbyCount;
 	Sint32					  pulseScale;
 	Sint32					  command;
-	Sint32					  entryIdx;
+	Sint32					  entryIndex;
 	Sint32					  keys;
 	Sint32					  repeat;
 	Sint32					  iconSlot;
 	Sint32					  i;
-	Sint32					  kindCnt;
+	Sint32					  kindCount;
 
 	state = WINDOW_STATE;
 	/* One 1 KB entry for the selected icon's 32x32, 256-colour sprite. */
-	iconSlot = syVRAMCacheAllocEntry(32 * 32);
+	iconSlot = syVRAMCacheAllocateEntry(32 * 32);
 	stripDirty = TRUE;
-	standbyCnt = 0;
+	standbyCount = 0;
 	battleMenu = BattleMenuStateWork;
-	selectionUi = syHeapAllocEWRAM(sizeof(*selectionUi));
+	selectionUi = syHeapAllocateEWRAM(sizeof(*selectionUi));
 	/* No icon colour placed yet; the shared palette starts at BG entry 1. */
-	for(i = ARRAY_COUNT(selectionUi->pal.slot) - 1; i >= 0; i--)
-		selectionUi->pal.slot[i] = GLYPH_PALETTE_SLOT_FREE;
-	selectionUi->pal.cnt = 1;
+	for(i = ARRAY_COUNT(selectionUi->palette.slot) - 1; i >= 0; i--)
+		selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_FREE;
+	selectionUi->palette.count = 1;
 	if(mode == COMMAND_ROW_PARTY)
-		selectionUi->win = mnWindowCreate(PARTY_WINDOW_X, COMMAND_ROW_TOP,
+		selectionUi->window = mnWindowCreate(PARTY_WINDOW_X, COMMAND_ROW_TOP,
 			DISPLAY_TILE_WIDTH - PARTY_WINDOW_X, 3,
 			WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
 	else
-		selectionUi->win = mnWindowCreate(WINDOW_X, COMMAND_ROW_TOP,
+		selectionUi->window = mnWindowCreate(WINDOW_X, COMMAND_ROW_TOP,
 			DISPLAY_TILE_WIDTH - WINDOW_X, 3,
 			WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-	selectionUi->drawnIdx = -1;
+	selectionUi->drawnIndex = -1;
 	if(mode == COMMAND_ROW_PARTY) {
-		kindCnt = 0;
-		selectionUi->commandKinds[kindCnt++] = COMMAND_ICON_FIGHT;
+		kindCount = 0;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FIGHT;
 		if(RamHeapSlots->battleState->isLink == 0 &&
 			battleMenu->swappedUnit == -1 && gmPartyCountMembersStub() > 4)
-			selectionUi->commandKinds[kindCnt++] = COMMAND_ICON_SWITCH;
+			selectionUi->commandKinds[kindCount++] = COMMAND_ICON_SWITCH;
 		if(fleeAllowed > 0 &&
 			MainRoutineStateWork.battleType != BATTLE_TYPE_NO_ESCAPE)
-			selectionUi->commandKinds[kindCnt++] = COMMAND_ICON_FLEE;
-		selectionUi->commandKinds[kindCnt++] = COMMAND_ICON_STATUS;
-		selectionUi->commandKinds[kindCnt] = -1;
-		selectionUi->selectedIdx = BattleMenuStateWork->commandSelection[0];
+			selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
+		selectionUi->commandKinds[kindCount] = -1;
+		selectionUi->selectedIndex = BattleMenuStateWork->commandSelection[0];
 	} else {
-		Sint32 memberCnt;
+		Sint32 memberCount;
 
-		selectionUi->selectedIdx = BattleMenuStateWork->commandSelection[1];
-		memberCnt = 0;
-		selectionUi->commandKinds[memberCnt++] = COMMAND_ICON_ATTACK;
-		selectionUi->commandKinds[memberCnt++] = COMMAND_ICON_PSYNERGY;
+		selectionUi->selectedIndex = BattleMenuStateWork->commandSelection[1];
+		memberCount = 0;
+		selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ATTACK;
+		selectionUi->commandKinds[memberCount++] = COMMAND_ICON_PSYNERGY;
 		if(*(Sint32 *)gmDjinnGetRecoveryTableStub(0) != 0) {
 			btDjinnCountStandbyStub(0, standby);
 			for(i = 0; i <= 3; i++)
-				standbyCnt += standby[i];
-			selectionUi->commandKinds[memberCnt++] = COMMAND_ICON_DJINN;
-			if(standbyCnt != 0)
-				selectionUi->commandKinds[memberCnt++] = COMMAND_ICON_SUMMON;
+				standbyCount += standby[i];
+			selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DJINN;
+			if(standbyCount != 0)
+				selectionUi->commandKinds[memberCount++] = COMMAND_ICON_SUMMON;
 		}
-		selectionUi->commandKinds[memberCnt++] = COMMAND_ICON_ITEM;
-		selectionUi->commandKinds[memberCnt++] = COMMAND_ICON_DEFEND;
-		selectionUi->commandKinds[memberCnt] = -1;
+		selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ITEM;
+		selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DEFEND;
+		selectionUi->commandKinds[memberCount] = -1;
 	}
-	for(entryIdx = 0; entryIdx <= 5; entryIdx++) {
-		selectionUi->entries[entryIdx].resource = iconSlot;
-		if(selectionUi->commandKinds[entryIdx] == -1)
+	for(entryIndex = 0; entryIndex <= 5; entryIndex++) {
+		selectionUi->entries[entryIndex].resource = iconSlot;
+		if(selectionUi->commandKinds[entryIndex] == -1)
 			break;
 		mnBattleCommandRowLoadIcon(
-			selectionUi, entryIdx, selectionUi->commandKinds[entryIdx]);
+			selectionUi, entryIndex, selectionUi->commandKinds[entryIndex]);
 	}
-	selectionUi->iconCnt = entryIdx;
+	selectionUi->iconCount = entryIndex;
 	selectionUi->affine.scaleX = Q_8_8(1.25);
 	selectionUi->affine.scaleY = PULSE_SCALE_MIN;
-	selectionUi->affine.ang = 0;
-	entryIdx = 0;
-	if(entryIdx < selectionUi->iconCnt) {
+	selectionUi->affine.angle = 0;
+	entryIndex = 0;
+	if(entryIndex < selectionUi->iconCount) {
 		do {
-			Sint32 x = (entryIdx - selectionUi->iconCnt) * 24;
+			Sint32 x = (entryIndex - selectionUi->iconCount) * 24;
 
-			selectionUi->entries[entryIdx].posX = x + 155;
+			selectionUi->entries[entryIndex].posX = x + 155;
 			if(mode != COMMAND_ROW_PARTY)
-				selectionUi->entries[entryIdx].posX = x + WINDOW_X * 8 - 5;
-			selectionUi->entries[entryIdx].posY = COMMAND_ROW_TOP * 8;
-			entryIdx++;
-		} while(entryIdx < selectionUi->iconCnt);
+				selectionUi->entries[entryIndex].posX = x + WINDOW_X * 8 - 5;
+			selectionUi->entries[entryIndex].posY = COMMAND_ROW_TOP * 8;
+			entryIndex++;
+		} while(entryIndex < selectionUi->iconCount);
 	}
 	/* BG1 shows the icons: behind the other layers above the row, in front from
 	   its top line down (mnCommandRowPutBg1Behind). */
@@ -160,103 +160,108 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 			if(mode != COMMAND_ROW_PARTY) {
 				Sint32 panel;
 
-				for(panel = 0; panel < 6 - selectionUi->iconCnt; panel++) {
-					for(entryIdx = 0; entryIdx <= 2; entryIdx++) {
-						Sint32 col;
+				for(panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						Sint32 column;
 
-						for(col = 0; col <= 2; col++)
+						for(column = 0; column <= 2; column++)
 							*(state->tilemap[0] +
-								(entryIdx + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-								panel * 3 + WINDOW_X - 18 + (col & 3)) =
+								(entryIndex + COMMAND_ROW_TOP) *
+									BG_SCREEN_WIDTH +
+								panel * 3 + WINDOW_X - 18 + (column & 3)) =
 								WINDOW_TILE_COMMAND_PANEL;
 					}
 				}
-				for(panel = 0; panel < selectionUi->iconCnt; panel++) {
-					for(entryIdx = 0; entryIdx <= 2; entryIdx++) {
-						Sint32 col;
+				for(panel = 0; panel < selectionUi->iconCount; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						Sint32 column;
 
-						for(col = 0; col <= 2; col++) {
+						for(column = 0; column <= 2; column++) {
 							volatile Uint16 *vram =
 								(volatile Uint16 *)BG_SCREEN_BLOCK(
 									BATTLE_BG1_SCREEN_BLOCK) +
 								COMMAND_ROW_BG1_ROW * BG_SCREEN_WIDTH +
 								WINDOW_X;
 
-							vram[panel * 3 + entryIdx * BG_SCREEN_WIDTH +
-								(col & 3) - selectionUi->iconCnt * 3] =
-								panel * 16 + entryIdx * 4 + col +
+							vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH +
+								(column & 3) - selectionUi->iconCount * 3] =
+								panel * 16 + entryIndex * 4 + column +
 								COMMAND_ROW_ICON_TILE;
 							*(state->tilemap[0] +
-								(entryIdx + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-								panel * 3 + (col & 3) -
-								selectionUi->iconCnt * 3 + WINDOW_X) = 0;
+								(entryIndex + COMMAND_ROW_TOP) *
+									BG_SCREEN_WIDTH +
+								panel * 3 + (column & 3) -
+								selectionUi->iconCount * 3 + WINDOW_X) = 0;
 						}
 					}
 				}
 			} else {
 				Sint32 panel;
 
-				for(panel = 0; panel < 6 - selectionUi->iconCnt; panel++) {
-					for(entryIdx = 0; entryIdx <= 2; entryIdx++) {
-						Sint32 col;
+				for(panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						Sint32 column;
 
-						for(col = 0; col <= 2; col++)
+						for(column = 0; column <= 2; column++)
 							*(state->tilemap[0] +
-								(entryIdx + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-								panel * 3 + 2 + (col & 3)) =
+								(entryIndex + COMMAND_ROW_TOP) *
+									BG_SCREEN_WIDTH +
+								panel * 3 + 2 + (column & 3)) =
 								WINDOW_TILE_COMMAND_PANEL;
 					}
 				}
-				for(panel = 0; panel < selectionUi->iconCnt; panel++) {
-					for(entryIdx = 0; entryIdx <= 2; entryIdx++) {
-						Sint32 col;
+				for(panel = 0; panel < selectionUi->iconCount; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						Sint32 column;
 
-						for(col = 0; col <= 2; col++) {
+						for(column = 0; column <= 2; column++) {
 							volatile Uint16 *vram =
 								(volatile Uint16 *)BG_SCREEN_BLOCK(
 									BATTLE_BG1_SCREEN_BLOCK) +
 								COMMAND_ROW_BG1_ROW * BG_SCREEN_WIDTH +
 								PARTY_WINDOW_X;
 
-							vram[panel * 3 + entryIdx * BG_SCREEN_WIDTH +
-								(col & 3) - selectionUi->iconCnt * 3] =
-								panel * 16 + entryIdx * 4 + col +
+							vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH +
+								(column & 3) - selectionUi->iconCount * 3] =
+								panel * 16 + entryIndex * 4 + column +
 								COMMAND_ROW_ICON_TILE;
 							*(state->tilemap[0] +
-								(entryIdx + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-								panel * 3 + (col & 3) -
-								selectionUi->iconCnt * 3 + PARTY_WINDOW_X) = 0;
+								(entryIndex + COMMAND_ROW_TOP) *
+									BG_SCREEN_WIDTH +
+								panel * 3 + (column & 3) -
+								selectionUi->iconCount * 3 + PARTY_WINDOW_X) =
+								0;
 						}
 					}
 				}
 			}
 		}
-		if(selectionUi->drawnIdx != selectionUi->selectedIdx) {
-			mnWindowSprPrepareForRedraw(selectionUi->win);
+		if(selectionUi->drawnIndex != selectionUi->selectedIndex) {
+			mnWindowSpritePrepareForRedraw(selectionUi->window);
 			mnTextDrawMessageAsTiles(
-				selectionUi->entries[selectionUi->selectedIdx].kind +
+				selectionUi->entries[selectionUi->selectedIndex].kind +
 					(Sint32)MsgCommandName,
-				selectionUi->win, 0, 0);
-			selectionUi->drawnIdx = selectionUi->selectedIdx;
-			mnBattleCommandRowLoadIcon(selectionUi, selectionUi->selectedIdx,
-				selectionUi->commandKinds[selectionUi->selectedIdx]);
+				selectionUi->window, 0, 0);
+			selectionUi->drawnIndex = selectionUi->selectedIndex;
+			mnBattleCommandRowLoadIcon(selectionUi, selectionUi->selectedIndex,
+				selectionUi->commandKinds[selectionUi->selectedIndex]);
 		}
-		selectionUi->affineIdx =
-			syOAMMatrixAllocFromTransform(&selectionUi->affine);
-		for(entryIdx = 0; entryIdx < selectionUi->iconCnt; entryIdx++) {
-			BATTLE_COMMAND_ROW_ICON *entry = &selectionUi->entries[entryIdx];
+		selectionUi->affineIndex =
+			syOAMMatrixAllocateFromTransform(&selectionUi->affine);
+		for(entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
+			BATTLE_COMMAND_ROW_ICON *entry = &selectionUi->entries[entryIndex];
 
-			if(entryIdx == selectionUi->selectedIdx) {
-				entry->spr.oam.f.affineIdx = selectionUi->affineIdx;
-				entry->spr.oam.f.affine = 3;
-				entry->spr.oam.f.x = entry->posX + pulseScale * 7 / 512 - 14;
-				entry->spr.oam.f.y = entry->posY + pulseScale * 3 / 256 - 20;
-				syOAMAddSprAtDepth(entry, OAM_DEPTH_WINDOW + 1);
+			if(entryIndex == selectionUi->selectedIndex) {
+				entry->sprite.oam.f.affineIndex = selectionUi->affineIndex;
+				entry->sprite.oam.f.affine = 3;
+				entry->sprite.oam.f.x = entry->posX + pulseScale * 7 / 512 - 14;
+				entry->sprite.oam.f.y = entry->posY + pulseScale * 3 / 256 - 20;
+				syOAMAddSpriteAtDepth(entry, OAM_DEPTH_WINDOW + 1);
 			} else {
-				entry->spr.oam.f.x = entry->posX;
-				entry->spr.oam.f.y = entry->posY;
-				entry->spr.oam.f.affineIdx = 0;
-				entry->spr.oam.f.affine = 0;
+				entry->sprite.oam.f.x = entry->posX;
+				entry->sprite.oam.f.y = entry->posY;
+				entry->sprite.oam.f.affineIndex = 0;
+				entry->sprite.oam.f.affine = 0;
 			}
 		}
 
@@ -271,7 +276,7 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 			if(navigation->tutorialDelay == 0) {
 				if((Uint32)(navigation->commandActor - JENNA) <=
 					SHEBA - JENNA) {
-					if(selectionUi->commandKinds[selectionUi->selectedIdx] ==
+					if(selectionUi->commandKinds[selectionUi->selectedIndex] ==
 						COMMAND_ICON_DEFEND)
 						keys = repeat = KEY_A;
 					else
@@ -279,31 +284,30 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 					navigation->tutorialDelay = 30;
 				} else if(navigation->commandActor == FELIX) {
 					Sint32 kind =
-						selectionUi->commandKinds[selectionUi->selectedIdx];
+						selectionUi->commandKinds[selectionUi->selectedIndex];
 
 					if(kind == COMMAND_ICON_SUMMON ||
-						(standbyCnt == 0 && kind == COMMAND_ICON_DJINN)) {
+						(standbyCount == 0 && kind == COMMAND_ICON_DJINN)) {
 						if(navigation->tutorialStep == 1) {
 							void *msg;
 
-							((WIN_STATE *)RamHeapSlots->winState)->battleMode |=
-								WINDOW_GLYPHS_BLENDED;
-							if(selectionUi
-									->commandKinds[selectionUi->selectedIdx] ==
-								COMMAND_ICON_DJINN)
+							((WIN_STATE *)RamHeapSlots->windowState)
+								->battleMode |= WINDOW_GLYPHS_BLENDED;
+							if(selectionUi->commandKinds[selectionUi
+									   ->selectedIndex] == COMMAND_ICON_DJINN)
 								msg = mnMessageShowAndWait(
 									mnDjinnGetGiveTutorialMessage() +
 										DJINN_TUTORIAL_LINE_UNLEASH_COMMAND,
 									15, 8);
 							else if(selectionUi->commandKinds[selectionUi
-											->selectedIdx] ==
+											->selectedIndex] ==
 								COMMAND_ICON_SUMMON)
 								msg = mnMessageShowAndWait(
 									mnDjinnGetGiveTutorialMessage() +
 										DJINN_TUTORIAL_LINE_SUMMON,
 									15, 8);
-							((WIN_STATE *)RamHeapSlots->winState)->battleMode &=
-								~WINDOW_GLYPHS_BLENDED;
+							((WIN_STATE *)RamHeapSlots->windowState)
+								->battleMode &= ~WINDOW_GLYPHS_BLENDED;
 							btMessageWaitForAdvanceAtStub(102, 155);
 							mnWindowClose(msg, 1);
 							navigation->tutorialStep++;
@@ -329,24 +333,24 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 			break;
 		}
 		if(keys & KEY_A) {
-			command = selectionUi->commandKinds[selectionUi->selectedIdx];
+			command = selectionUi->commandKinds[selectionUi->selectedIndex];
 			break;
 		}
 		if(keys & KEY_B) {
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			command = -1;
 			break;
 		}
 		if(repeat & (KEY_RIGHT | KEY_DOWN)) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			selectionUi->selectedIdx =
-				(selectionUi->selectedIdx + 1) % selectionUi->iconCnt;
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+			selectionUi->selectedIndex =
+				(selectionUi->selectedIndex + 1) % selectionUi->iconCount;
 		} else if(repeat & (KEY_LEFT | KEY_UP)) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			selectionUi->selectedIdx =
-				(selectionUi->selectedIdx + selectionUi->iconCnt - 1) %
-				selectionUi->iconCnt;
-		} else if(BattleMenuStateWork->tmr == 0) {
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+			selectionUi->selectedIndex =
+				(selectionUi->selectedIndex + selectionUi->iconCount - 1) %
+				selectionUi->iconCount;
+		} else if(BattleMenuStateWork->timer == 0) {
 			/* The link battle's time is up. */
 			command = selectionUi->commandKinds[0];
 			break;
@@ -358,25 +362,26 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 		sySynch(1);
 	}
 	if(mode != COMMAND_ROW_PARTY)
-		BattleMenuStateWork->commandSelection[1] = selectionUi->selectedIdx;
+		BattleMenuStateWork->commandSelection[1] = selectionUi->selectedIndex;
 	else
-		BattleMenuStateWork->commandSelection[0] = selectionUi->selectedIdx;
-	for(entryIdx = 0; entryIdx < selectionUi->iconCnt; entryIdx++)
-		syVRAMCacheFreeEntry(selectionUi->entries[entryIdx].resource);
+		BattleMenuStateWork->commandSelection[0] = selectionUi->selectedIndex;
+	for(entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
+		syVRAMCacheFreeEntry(selectionUi->entries[entryIndex].resource);
 	state->holdTilemapUpload = 1;
-	mnWindowClose(selectionUi->win, 1);
+	mnWindowClose(selectionUi->window, 1);
 	/* Cover the strip again. */
 	{
 		Sint32 panel;
 
 		for(panel = 0; panel <= 6; panel++) {
-			for(entryIdx = 0; entryIdx <= 2; entryIdx++) {
-				Sint32 col;
+			for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+				Sint32 column;
 
-				for(col = 0; col <= 2; col++)
+				for(column = 0; column <= 2; column++)
 					*(volatile Uint16 *)(state->tilemap[0] +
-						(entryIdx + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-						panel * 3 + 5 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+						(entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+						panel * 3 + 5 + (column & 3)) =
+						WINDOW_TILE_COMMAND_PANEL;
 			}
 		}
 	}
@@ -401,7 +406,7 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 void mnWindowHighlightRect(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 paletteBit)
 {
-	WIN_STATE *state = RamHeapSlots->winState;
+	WIN_STATE *state = RamHeapSlots->windowState;
 
 	paletteBit &= 1;
 	paletteBit = BG_TILE_PALETTE(paletteBit);
@@ -453,15 +458,15 @@ void mnWindowHighlightRect(
    row, so its party member columns start at column 29 - 6 * members (the Djinn
    column, when shown, lies left of them). Returns 0.
    mnBattleCollectPartyCommands calls it. */
-Sint32 mnPartyStatHighlightMembers(Uint16 *ids)
+Sint32 mnPartyStatusHighlightMembers(Uint16 *ids)
 {
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
-	Sint32		  cnt;
+	Sint32		  count;
 	Sint32		  i;
 	Sint32		  j;
 
-	cnt = btUnitListIdsStub(BATTLE_SIDE_MASK_PARTY, 0);
-	mnWindowHighlightRect(29 - cnt * 6, 0, 25, 5, WINDOW_PALETTE);
+	count = btUnitListIdsStub(BATTLE_SIDE_MASK_PARTY, 0);
+	mnWindowHighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
 	i = 0;
 	if(ids[0] != BATTLE_UNIT_LIST_END) {
 	next_id:
@@ -473,7 +478,7 @@ Sint32 mnPartyStatHighlightMembers(Uint16 *ids)
 		}
 		if(j != 4)
 			mnWindowHighlightRect(
-				29 - (cnt - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
+				29 - (count - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
 		if(++i < 4 && ids[i] != BATTLE_UNIT_LIST_END)
 			goto next_id;
 	}

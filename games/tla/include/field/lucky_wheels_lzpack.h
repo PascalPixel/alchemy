@@ -23,13 +23,13 @@ typedef struct LZ_PACK_NODE {
 typedef struct LZ_PACK_STATE {
 	LZ_PACK_NODE  nodes[1024]; /* one per window position */
 	LZ_PACK_NODE *bucket[256]; /* each byte value's chain, or null */
-	Sint32		  flgMask;	   /* the flag bit of the next item, 0x80 first */
+	Sint32		  flagMask;	   /* the flag bit of the next item, 0x80 first */
 	Sint32 bucketBySlot[1024]; /* each position's byte; -1 past the input */
-	Sint32 outCnt;			   /* bytes of outBuf in use */
+	Sint32 outCount;		   /* bytes of outBuf in use */
 	/* The group being built: its flag byte, then up to eight items. */
 	Uint8 outBuf[36];
 	/* the best match's distance back (fdLZPackFindWindowMatch) */
-	Sint32 matchOfs;
+	Sint32 matchOffset;
 	Sint32 matchLen;	/* its length; 1 for none */
 	Sint32 pos;			/* the window position being packed */
 	Uint32 inputCursor; /* input bytes read into the window */
@@ -50,8 +50,8 @@ STATIC_ASSERT(offsetof(LZ_PACK_STATE, inputCursor) == 17464);
 void   fdLZPackResetSlotBuckets(void);
 void   fdLZPackInsertSlotNode(Sint32 slot);
 void   fdLZPackRemoveSlotNode(Sint32 slot);
-void   fdLZPackConsumeSlotBytes(Sint32 start, Sint32 cnt, const Uint8 *input);
-void   fdLZPackCopyBufferedBytes(Uint8 *dst);
-Sint32 fdLZPackPackStream(const Uint8 *input, Uint8 *dst, Sint32 size);
+void   fdLZPackConsumeSlotBytes(Sint32 start, Sint32 count, const Uint8 *input);
+void   fdLZPackCopyBufferedBytes(Uint8 *dest);
+Sint32 fdLZPackPackStream(const Uint8 *input, Uint8 *dest, Sint32 size);
 
 #endif

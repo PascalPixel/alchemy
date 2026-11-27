@@ -28,7 +28,7 @@ void fdParticleInitStub(
 	struct FIELD_PARTICLE *effect, Sint32 kind, Sint32 x, Sint32 z);
 /* Gives a field effect sprite its per-tick callback, starting at state 0. */
 void fdParticleSetCallbackStub(
-	struct FIELD_PARTICLE *effect, void (*func)(struct FIELD_PARTICLE *));
+	struct FIELD_PARTICLE *effect, void (*callback)(struct FIELD_PARTICLE *));
 /* Sets the animation of a field effect sprite. */
 void fdParticleSetAnimationStub(struct FIELD_PARTICLE *effect, Sint32 mode);
 /* Makes the script leave for entrance of scene. */

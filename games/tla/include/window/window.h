@@ -33,10 +33,10 @@ void mnWindowSystemInitBattle(Sint32 loadGlyphTiles);
 /* Opens a window at tile (x, y), width by height tiles, in the first free slot,
    with the WINDOW_FLAG_ flags in style; NULL when every slot is taken. */
 WINDOW *mnWindowCreate(
-	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 attrs);
+	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 attributes);
 /* Closes a window: with instant 0 it zooms shut over WINDOW_CLOSE_TICKS;
    otherwise it is erased at once and freed. */
-void mnWindowClose(WINDOW *win, Sint32 instant);
+void mnWindowClose(WINDOW *window, Sint32 instant);
 /* Decodes message into text (a Uint16 string) with no length limit: text must
    have room for the whole message and its terminator. */
 void mnMessageDecodeRawUnbounded(Sint32 msg, Uint16 *text);
@@ -45,7 +45,7 @@ void mnMessageDecodeRawUnbounded(Sint32 msg, Uint16 *text);
 void mnMessageDecodeRaw(Sint32 msg, Uint16 *text, Sint32 capacity);
 /* Decodes key into destination, at most capacity halfwords with the terminator,
    and returns its length. */
-Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dst, Uint32 capacity);
+Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dest, Uint32 capacity);
 /* Opens a window sized to a message near tile (x, y) and starts typing the
    message into it. packed holds the window options in its low bits
    (MESSAGE_WINDOW_OPTION) and the speaker's voice sound in bits 16 to 27
@@ -53,13 +53,13 @@ Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dst, Uint32 capacity);
 WINDOW *mnMessageOpenWindow(Sint32 msg, Sint32 x, Sint32 y, Uint32 packed);
 /* Shows a message in a window centred on the screen, waits until it is typed
    out and closes it, as its flags say. */
-void mnFieldMessageShow(Sint32 msg, Sint32 flg);
+void mnFieldMessageShow(Sint32 msg, Sint32 flags);
 /* Returns 1 once every message's window has its text typed out, or 0 while one
    is still typing (its state 0). */
 Bool mnMessageAllTyped(void);
 /* Returns 1 when a window is fully closed (its slot free), and 0 while it is
    open or closing. */
-Bool mnWindowIsClosed(WINDOW *win);
+Bool mnWindowIsClosed(WINDOW *window);
 /* Sets the decode flags the next message is decoded with (mnMessageDecode):
    MESSAGE_DECODE_HALTING_SPEECH makes it halting speech, a short pause before
    each character, broken off with an ellipsis after the first word;
@@ -67,67 +67,68 @@ Bool mnWindowIsClosed(WINDOW *win);
    characters in English and Japanese. Flags already set stay set: only
    mnMessageOpenWindow clears both, once it has started a message typing, so
    they also apply to every message decoded before that. */
-void mnMessageSetDecodeFlags(Uint32 flg);
+void mnMessageSetDecodeFlags(Uint32 flags);
 /* Clears a window's contents: redraws it empty and releases the window sprites
    it carries. A text canvas window is left alone. */
-void mnWindowSprPrepareForRedraw(WINDOW *win);
+void mnWindowSpritePrepareForRedraw(WINDOW *window);
 /* Clears an area of a window's interior to the window fill. left, top, right
    and bottom are pixels inside the window, and the area covers every tile they
    touch. */
 void mnWindowClearInteriorTiles(
-	const WINDOW *win, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
+	const WINDOW *window, Uint32 left, Uint32 top, Uint32 right, Uint32 bottom);
 /* Draws a divider line from tile (x1, y1) to (x2, y2), joining the tick and
    the dividers already drawn. */
 void mnWindowDrawDividerLine(
-	WINDOW *win, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
+	WINDOW *window, Uint32 x1, Uint32 y1, Uint32 x2, Uint32 y2);
 /* Decodes a message and draws it into a text canvas window at pixel (x, y), all
    at once. */
-void mnTextDrawMessage(Sint32 msg, Sint32 win, Sint32 x, Sint32 y);
-/* Decodes a message and draws it as tiles in a window at pixel (ofsX,
-   ofsY) of its interior. ofsY is rounded down to a tile row; ofsX
+void mnTextDrawMessage(Sint32 msg, Sint32 window, Sint32 x, Sint32 y);
+/* Decodes a message and draws it as tiles in a window at pixel (offsetX,
+   offsetY) of its interior. offsetY is rounded down to a tile row; offsetX
    picks the tile, and its remainder is where the text starts in it. */
 void mnTextDrawMessageAsTiles(
-	Sint32 msg, WINDOW *win, Uint32 ofsX, Uint32 ofsY);
+	Sint32 msg, WINDOW *window, Uint32 offsetX, Uint32 offsetY);
 /* Draws a byte string into a text canvas window at pixel (x, y). */
-void mnTextDrawString(Uint8 *text, Sint32 win, Sint32 x, Sint32 y);
-/* Draws a byte string as tiles in window at pixel (ofsX, ofsY) of its
+void mnTextDrawString(Uint8 *text, Sint32 window, Sint32 x, Sint32 y);
+/* Draws a byte string as tiles in window at pixel (offsetX, offsetY) of its
    interior. */
 void mnTextDrawStringAtOffset(
-	Uint8 *text, WINDOW *win, Sint32 ofsX, Sint32 ofsY);
+	Uint8 *text, WINDOW *window, Sint32 offsetX, Sint32 offsetY);
 /* Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
    rounded down to tiles. */
-void mnTextDrawStringInWindow(Uint8 *text, Sint32 win, Uint32 x, Uint32 y);
-/* Draws a number (width as mnStringFormatNum) into a text canvas window at
+void mnTextDrawStringInWindow(Uint8 *text, Sint32 window, Uint32 x, Uint32 y);
+/* Draws a number (width as mnStringFormatNumber) into a text canvas window at
    pixel (x, y). */
-void mnTextDrawNum(Sint32 value, Sint32 width, Sint32 win, Sint32 x, Sint32 y);
-/* Draws a number (width as mnStringFormatNum) as tiles in a window at pixel (x,
-   y) of its interior. */
-void mnTextDrawNumAtOffset(
-	Sint32 value, Sint32 width, WINDOW *win, Sint32 x, Sint32 y);
-/* Draws a number (width as mnStringFormatNum takes it) into a window's tilemap
-   at pixel (x, y) of its interior. */
-void mnTextDrawNumInWindow(
-	Sint32 value, Sint32 width, Sint32 win, Sint32 x, Sint32 y);
+void mnTextDrawNumber(
+	Sint32 value, Sint32 width, Sint32 window, Sint32 x, Sint32 y);
+/* Draws a number (width as mnStringFormatNumber) as tiles in a window at pixel
+   (x, y) of its interior. */
+void mnTextDrawNumberAtOffset(
+	Sint32 value, Sint32 width, WINDOW *window, Sint32 x, Sint32 y);
+/* Draws a number (width as mnStringFormatNumber takes it) into a window's
+   tilemap at pixel (x, y) of its interior. */
+void mnTextDrawNumberInWindow(
+	Sint32 value, Sint32 width, Sint32 window, Sint32 x, Sint32 y);
 /* Sets the colour (TEXT_COL) the next text is drawn in. */
-void mnTextSetCol(Sint32 col);
+void mnTextSetColor(Sint32 color);
 /* Sets the text style (TXT_STYLE) of drawn text: outlined, or a motion of the
    glyph sprites. Reached only through a bare entry of the window stub table. */
 void mnTextSetStyle(Sint32 style);
 /* Creates a window sprite for the VRAM cache slot `slot` and attaches it to
-   `win`, placed at (ofsX, ofsY) pixels from the window's inner corner
-   (one tile in from its top-left border). `oamFlg` holds the OAM shape and
+   `window`, placed at (offsetX, offsetY) pixels from the window's inner corner
+   (one tile in from its top-left border). `oamFlags` holds the OAM shape and
    size bits. Releases the slot and returns NULL when no sprite is free. */
-WINDOW_SPR *mnWindowSprCreate(
-	Sint32 slot, Sint32 oamFlg, WINDOW *win, Sint32 ofsX, Sint32 ofsY);
+WINDOW_SPR *mnWindowSpriteCreate(Sint32 slot, Sint32 oamFlags, WINDOW *window,
+	Sint32 offsetX, Sint32 offsetY);
 /* Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
-   it as a 16x16 sprite at (x, y) in `win`. */
-WINDOW_SPR *mnWindowSprCreateFromResource(
-	Sint32 mode, Sint32 resource, WINDOW *win, Sint32 x, Sint32 y);
-/* Shows the 32x32 portrait of `character` at (x, y) in `win`, in portrait
+   it as a 16x16 sprite at (x, y) in `window`. */
+WINDOW_SPR *mnWindowSpriteCreateFromResource(
+	Sint32 mode, Sint32 resource, WINDOW *window, Sint32 x, Sint32 y);
+/* Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
    slot `side` (0 or 1, or any other value for the first free one; the second is
    tried first), in PORTRAIT_PALETTE + side. */
-WINDOW_SPR *mnPortraitCreate(
-	Sint32 character, Sint32 pos, Sint32 side, WINDOW *win, Sint32 x, Sint32 y);
+WINDOW_SPR *mnPortraitCreate(Sint32 character, Sint32 pos, Sint32 side,
+	WINDOW *window, Sint32 x, Sint32 y);
 /* Reloads the portrait picture for the key into a portrait slot with that
    slot's palette (PORTRAIT_PALETTE + slot), reusing the slot's VRAM cache
    entry. A slot of 2 or more means whichever slot already shows the picture,
@@ -135,11 +136,11 @@ WINDOW_SPR *mnPortraitCreate(
 void mnPortraitReload(Uint32 slot, Sint32 key, Sint32 unused);
 /* Sets a window sprite's motion and starts it from its first step; does nothing
    for NULL. */
-void mnWindowSprSetMotion(WINDOW_SPR *out, Sint32 mode);
-/* Sets the depth of the window sprite `spr` to ~priority, which is
-   OAM_DEPTH_FRONT - `pri`: a higher priority draws further back. Does
-   nothing when `spr` is NULL. */
-void mnWindowSprSetPriority(void *spr, Sint32 pri);
+void mnWindowSpriteSetMotion(WINDOW_SPR *out, Sint32 mode);
+/* Sets the depth of the window sprite `sprite` to ~priority, which is
+   OAM_DEPTH_FRONT - `priority`: a higher priority draws further back. Does
+   nothing when `sprite` is NULL. */
+void mnWindowSpriteSetPriority(void *sprite, Sint32 priority);
 /* Opens a portrait window at tile (x, y) showing the speaker's portrait.
    portraitOption is passed on through mnPortraitCreate to
    mnIconLoadWithPalette, which ignores it. */
@@ -158,14 +159,14 @@ void mnMessageArgumentClearAll(void);
 /* Adds a message argument of kind (MESSAGE_ARGUMENT_) with value, dropped when
    all eight places are in use. */
 void mnMessageArgumentPush(Uint32 value, Uint32 kind);
-/* Opens the party status window, sized by mnPartyStatBuildLayoutBounds, and
+/* Opens the party status window, sized by mnPartyStatusBuildLayoutBounds, and
    draws it, holding the tilemap upload meanwhile. */
-void mnPartyStatCreateWindow(Sint32 flg);
-/* Draws the party status window with `flg` (PARTY_STATUS_): each member's
+void mnPartyStatusCreateWindow(Sint32 flags);
+/* Draws the party status window with `flags` (PARTY_STATUS_): each member's
    name, HP and PP, and in battle the standby Djinn. */
-void mnPartyStatDraw(Sint32 flg);
+void mnPartyStatusDraw(Sint32 flags);
 /* Closes the party status window and frees its heap block. */
-void mnPartyStatClose(void);
+void mnPartyStatusClose(void);
 /* Closes each message's window whose text has ended, then waits ten ticks. */
 void mnMessageCloseFinishedWindows(void);
 /* Closes every window: first the messages' windows, waiting until they have
@@ -193,7 +194,7 @@ void mnSelectionMenuStopDrawing(void);
    the bottom or top of the screen. count is the name's width in tiles inside
    the tick; 0 keeps the open window as it is. The window stays open until
    mnSelectionMenuClose closes it. */
-void mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 cnt);
+void mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 count);
 /* Closes the selection screen and frees its icons, tiles and state. The chosen
    icons go too, so the choices are only in the indexes the loops returned. */
 void mnSelectionMenuClose(void);
@@ -217,7 +218,7 @@ void mnSelectionMenuBuildEntries(Uint32 unused);
 /* Does nothing; reached only through the window stub table. */
 void mnSelectionMenuReservedNoOperation(void);
 /* Collects the party's commands for a turn into `commands`, one for each of the
-   `commandCnt` units in `actors`, with two nested functions: the party
+   `commandCount` units in `actors`, with two nested functions: the party
    panels' clear and the link wait's message (mnLinkDrawWaitingForOpponent).
    Unlike The Broken Seal's, each round first appends the forced actions of
    statused members (mnBattlePartySplitChoosers), whose count is added to the
@@ -225,7 +226,7 @@ void mnSelectionMenuReservedNoOperation(void);
    member in (mnBattlePartyChooseReserve after choosing the slot); Status lists
    the reserve as well; and the Djinn tutorial's hint follows an unleash. */
 Sint32 mnBattleCollectPartyCommands(
-	struct BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCnt);
+	struct BATTLE_ACTION *commands, Uint16 *actors, Sint32 commandCount);
 /* Shows a message in the battle message window and waits until it has been
    typed out. */
 void mnBattleMessageShowAndWait(Sint32 msg);
@@ -241,7 +242,7 @@ void mnArrowNoOperation6(void);
 Sint32 mnPortraitGetForSpeaker(Uint32 value);
 /* Runs the field menu until the player picks something that leaves it, and
    returns the chosen screen's result. Cancelling the menu returns an undefined
-   value, the missing result of mnPartyStatCloseWithMenu (0 under UBFIX); its
+   value, the missing result of mnPartyStatusCloseWithMenu (0 under UBFIX); its
    one caller, fdModeRun, ignores the result. Its case for command 0, which
    stores the cue tile ahead in the field state's examineMetatile, is
    unreachable. */
@@ -265,10 +266,10 @@ Sint32 mnIconMenuChooseSendOption(Sint32 mode);
 void mnAreaNameWindowShow(void);
 /* Closes the area name at once, if it is shown. */
 void mnAreaNameWindowHide(void);
-/* Shows a message centred across the screen and in its top 15 rows (yOfs
+/* Shows a message centred across the screen and in its top 15 rows (yOffset
    tiles lower) and waits until it is typed out, then closes it, in the window
    mode (CENTERED_MESSAGE_) gives. */
-void mnFieldMessageShowCentered(Sint32 msg, Sint32 mode, Sint32 yOfs);
+void mnFieldMessageShowCentered(Sint32 msg, Sint32 mode, Sint32 yOffset);
 /* Closes the battle message window at once, if one is open, and forgets it, so
    the next battle message (mnBattleMessageOpen) opens a new one. */
 void mnBattleMessageClose(void);
@@ -277,11 +278,11 @@ void mnBattleMessageClose(void);
 void mnMessageResetIdle(void);
 /* Sets up a sprite as the right-pointing arrow, in a free VRAM cache entry
    returned in *slot, which mnArrowRelease frees. */
-void mnArrowCreate(struct MENU_SPR *spr, Sint32 *slot);
+void mnArrowCreate(struct MENU_SPR *sprite, Sint32 *slot);
 /* Places an arrow sprite at screen pixel (x, y) and queues it for drawing this
    tick, at depth OAM_DEPTH_FRONT - 3; the caller calls it every tick it
    shows. */
-void mnArrowSetPos(struct MENU_SPR *spr, Sint32 x, Sint32 y);
+void mnArrowSetPos(struct MENU_SPR *sprite, Sint32 x, Sint32 y);
 /* Frees an arrow sprite's tile slot. */
 void mnArrowRelease(Sint32 slot);
 /* Removes itemId from the party's inventory and returns 0. */
@@ -293,7 +294,7 @@ void mnIconDrawItem(Sint32 code);
    window at pixel (x, y), running its colour, outline, line spacing and new
    line codes; other control codes are skipped with their arguments. */
 void mnTextDrawWideStringAtOffset(
-	Uint16 *text, WINDOW *win, Sint32 x, Sint32 y);
+	Uint16 *text, WINDOW *window, Sint32 x, Sint32 y);
 /* Fills `spans`, a page of the screen transition's window edges past its WININ
    and WINOUT, with the windows' horizontal extent on each of the 160 scan
    lines: (left << 8) | right in the second halfword (WIN1H) of each line's
@@ -302,14 +303,14 @@ void mnTextDrawWideStringAtOffset(
    line gets an empty span. */
 void mnScanlineWindowFillSpans(void *spans);
 /* Redraws a window empty, its border and fill, at its current rectangle. */
-void mnWindowSprRedrawSavedRect(WINDOW *win);
+void mnWindowSpriteRedrawSavedRect(WINDOW *window);
 /* Releases every window sprite in a list, or in a window's list, and empties
    it. */
-void mnWindowSprClearList(void *sprs);
+void mnWindowSpriteClearList(void *sprites);
 /* Writes value into a window's tilemap at tile (x, y) of its interior, in the
    palette mode given (TILEMAP_ENTRY_). */
 void mnWindowSetTilemapEntry(
-	WINDOW *win, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
+	WINDOW *window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
 /* The debug destination menu: picks a scene and an entrance, starting from the
    scene the party came from, and sends the party there with A; returns -1 after
    setting the destination and -2 when B cancels. */
@@ -329,7 +330,7 @@ void mnWindowMarkVisibleTextTiles(void);
 Sint32 mnItemIconCompose(Uint32 code, Uint32 layers);
 /* Highlights the party status columns of the units in `ids`, ended by
    BATTLE_UNIT_LIST_END. */
-Sint32 mnPartyStatHighlightMembers(Uint16 *ids);
+Sint32 mnPartyStatusHighlightMembers(Uint16 *ids);
 /* Builds item icon glyph, over the icon base when withBase is set, and loads it
    into *cacheSlot (a free slot unless reuse is set). Returns the tile in
    *tileOut. */
@@ -340,9 +341,9 @@ void mnIconBuildItemIconTiles(Uint32 glyph, Sint32 withBase, Sint32 *cacheSlot,
 void mnIconBuildAbilityIconTiles(Uint32 glyph, Sint32 withBase,
 	Sint32 *cacheSlot, Sint32 *tileOut, Sint32 reuse);
 /* Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
-   slot and shows it as a 16x16 sprite at (x, y) in `win`. */
-WINDOW_SPR *mnWindowSprCreateLoaded(
-	Sint32 icon, Sint32 layers, WINDOW *win, Sint32 x, Sint32 y);
+   slot and shows it as a 16x16 sprite at (x, y) in `window`. */
+WINDOW_SPR *mnWindowSpriteCreateLoaded(
+	Sint32 icon, Sint32 layers, WINDOW *window, Sint32 x, Sint32 y);
 /* Lets the player choose a file and saves the game to it, asking before it
    writes over a file in use. */
 Sint32 mnSaveToChosenFile(void);
@@ -410,7 +411,7 @@ void mnSummonShowLearnedMessage(Sint32 summon);
 /* Sets the window colours (WINDOW_SHADE) for a window colour (0 to
    WINDOW_COLOR_COUNT - 1, a hue around the colour wheel) and brightness (0 to
    WINDOW_BRIGHTNESS_COUNT - 1, WINDOW_BRIGHTNESS_NEUTRAL the plain one). */
-void mnWindowColApply(Sint32 col, Sint32 brightness);
+void mnWindowColorApply(Sint32 color, Sint32 brightness);
 /* Runs the settings menu: 0 when A or START keeps the settings, -1 when B drops
    them. */
 Sint32 mnSettingsMenuRun(void);
@@ -423,7 +424,7 @@ Sint32 mnSettingsMenuRun(void);
 Sint32 mnPauseMenuRun(void);
 /* Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, a
    BG_SCREEN_WIDTH-tile map, with the tilemap entry `value`. */
-void mnBgScrFillRect(
+void mnBgScreenFillRect(
 	Sint32 unusedA, Sint32 unusedB, Uint32 width, Uint32 height, Sint32 value);
 /* Selects a shop command (Buy, Sell, Artifacts, Repair), centred on the bottom
    row, starting on position `selection`, and returns the position chosen. */
@@ -461,9 +462,9 @@ void mnWindowHighlightRect(
 void mnAbilityBuildIconTiles(
 	Sint32 action, Sint32 withBase, Sint32 *slot, Sint32 *tile, Sint32 reuse);
 /* Copies the UI's ten digit tiles ('0' to '9', tiles 48 to 57) twice into
-   `dst`, each pixel mapped through GraphicsExpandNibbleTable: first with
+   `dest`, each pixel mapped through GraphicsExpandNibbleTable: first with
    colour 1 drawn as colour 10, then unchanged. */
-void mnGraphicsExpandVRAMTilesByColTable(Uint16 *dst);
+void mnGraphicsExpandVRAMTilesByColorTable(Uint16 *dest);
 /* Frees the second range of text tiles, and with allowAlternateTiles set lets
    text take them too. */
 void mnTextUseExtraTiles(Sint32 allowAlternateTiles);
@@ -471,10 +472,10 @@ void mnTextUseExtraTiles(Sint32 allowAlternateTiles);
    Returns the final icon position after closing the menu. */
 Sint32 mnAnimateSelectionToEntry(Sint32 start, Sint32 command);
 /* Returns WindowFixedTileBlocks[0], whatever no is. */
-Sint32 mnWindowSprGetPointerTiles(Sint32 no);
+Sint32 mnWindowSpriteGetPointerTiles(Sint32 no);
 /* Decodes message and starts it typing in window, which is already open;
    returns 0 when the message is empty or there is no window. */
-Sint32 mnMessageOpenDecoded(Sint32 win, Sint32 msg);
+Sint32 mnMessageOpenDecoded(Sint32 window, Sint32 msg);
 /* Returns how many save files there are, leaving out those whose summary has
    its send flag set (the files saved at the end of the game) when `excludeSent`
    is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. It
@@ -487,13 +488,13 @@ void mnWindowDrawBorder(Sint32 x, Sint32 y, Uint32 width, Uint32 height);
    it showed. */
 void mnWindowEraseBorderRect(Sint32 x, Sint32 y, Uint32 width, Uint32 height);
 /* Draws the two page arrows (PageArrowTiles) into the two tiles at VRAM address
-   `ofs`, sliding outward: the left arrow 2 or 3 pixels to the left, the
+   `offset`, sliding outward: the left arrow 2 or 3 pixels to the left, the
    right one as far to the right, eight ticks each. They are drawn over the
    border's top edge tile (WINDOW_TILE_BORDER_TOP) and top-right corner tile
    (WINDOW_TILE_BORDER_TOP_RIGHT). The battle menus call it each tick for
    LIST_PAGE_ARROW_VRAM; the field menus (by stub call) and the password pages
    of the title's Send call it for PAGE_ARROW_VRAM. */
-void mnPageArrowsDraw(Sint32 ofs);
+void mnPageArrowsDraw(Sint32 offset);
 /* Unused: writes ticks as "HHH:MM:SS:CC", hours to hundredths, into out and
    returns out. Its stub mnStringFormatStopwatchStub is exported, but no overlay
    imports it and nothing calls it. */
@@ -511,14 +512,16 @@ Sint32 mnItemIconLoadLayersIntoSlot(
 Sint32 mnTextDrawMessageToCanvas(Sint32 msg, Uint8 *canvas);
 /* Draws character as a glyph sprite on the window at x, y and returns its
    width, or 0 when no window sprite is free. */
-Sint32 mnGlyphDrawAsSpr(WINDOW *win, Sint32 character, Sint32 x, Sint32 y);
+Sint32 mnGlyphDrawAsSprite(
+	WINDOW *window, Sint32 character, Sint32 x, Sint32 y);
 /* Draws the character source names into a 16x16 tile pair and copies it to
    destination. */
-void mnGlyphDrawToTiles(const void *src, void *dst);
-/* Places a glyph sprite on the window at x, y as mnGlyphDrawAsSpr does, but
+void mnGlyphDrawToTiles(const void *src, void *dest);
+/* Places a glyph sprite on the window at x, y as mnGlyphDrawAsSprite does, but
    draws nothing, and returns the VRAM address of its tiles for the caller to
    fill, or NULL when no window sprite is free. */
-void *mnGlyphAddBlankSpr(WINDOW *win, Sint32 character, Sint32 x, Sint32 y);
+void *mnGlyphAddBlankSprite(
+	WINDOW *window, Sint32 character, Sint32 x, Sint32 y);
 
 /* The window sprites WIN_STATE keeps, free or in a window. */
 enum { WINDOW_SPRITE_COUNT = 64 };
@@ -546,12 +549,12 @@ typedef struct WIN_STATE {
 	Uint8	mindRead;	/* nonzero widens a message window by 2 */
 	Uint8	battleMode; /* where the windows are drawn (WINDOW_BATTLE_MODE) */
 	Uint8	holdTilemapUpload; /* while set, the tilemap is not uploaded */
-	Uint8	textPal;		   /* text tiles' palette; 15 by default */
+	Uint8	textPalette;	   /* text tiles' palette; 15 by default */
 	Uint16	tilemap[20][32];   /* the windows' BG tilemap */
-	WINDOW	wins[WINDOW_COUNT];
+	WINDOW	windows[WINDOW_COUNT];
 	MESSAGE msgs[3];
-	WINDOW_SPR		sprs[WINDOW_SPRITE_COUNT];
-	WINDOW_SPR_LIST freeSprs; /* the sprites not in any window */
+	WINDOW_SPR		sprites[WINDOW_SPRITE_COUNT];
+	WINDOW_SPR_LIST freeSprites; /* the sprites not in any window */
 	/* Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
 	   bit 1 while the tilemap shows it, 0 when free. */
 	Uint8  textTileState[2 * TEXT_TILES];
@@ -573,11 +576,11 @@ typedef struct WIN_STATE {
 	/* picture shown in each portrait slot; 999 when free */
 	Uint16 portraitPictures[2];
 	/* VRAM cache slot of each portrait slot's picture */
-	Uint16 portraitSprs[2];
-	Uint16 speakerVoiceSnd; /* first of four voice blip sounds; 0 for none */
+	Uint16 portraitSprites[2];
+	Uint16 speakerVoiceSound; /* first of four voice blip sounds; 0 for none */
 	Uint16 speakerVoiceCountdown; /* characters until the next voice blip */
 	Uint8  pageArrowShown;		  /* 1 while the next-page arrow is shown */
-	Uint8  waitingForSnd;		  /* set while a message waits on its sound */
+	Uint8  waitingForSound;		  /* set while a message waits on its sound */
 	/* The decode flags set for the next messages (mnMessageSetDecodeFlags):
 	   MESSAGE_DECODE_HALTING_SPEECH and MESSAGE_DECODE_SPACING_AFTER. */
 	Uint8 haltingSpeech;
@@ -588,17 +591,17 @@ typedef struct WIN_STATE {
 } WIN_STATE;
 
 STATIC_ASSERT(offsetof(WIN_STATE, tilemap) == 8);
-STATIC_ASSERT(offsetof(WIN_STATE, wins) == 1288);
+STATIC_ASSERT(offsetof(WIN_STATE, windows) == 1288);
 STATIC_ASSERT(offsetof(WIN_STATE, msgs) == 1720);
-STATIC_ASSERT(offsetof(WIN_STATE, sprs) == 1840);
-STATIC_ASSERT(offsetof(WIN_STATE, freeSprs.head) == 3632);
-STATIC_ASSERT(offsetof(WIN_STATE, freeSprs.tailLink) == 3636);
+STATIC_ASSERT(offsetof(WIN_STATE, sprites) == 1840);
+STATIC_ASSERT(offsetof(WIN_STATE, freeSprites.head) == 3632);
+STATIC_ASSERT(offsetof(WIN_STATE, freeSprites.tailLink) == 3636);
 
 STATIC_ASSERT(offsetof(WIN_STATE, lineSpacing) == 3896);
 STATIC_ASSERT(offsetof(WIN_STATE, colour) == 3902);
 STATIC_ASSERT(offsetof(WIN_STATE, textBuf) == 3904);
 STATIC_ASSERT(offsetof(WIN_STATE, battleMode) == 5);
-STATIC_ASSERT(offsetof(WIN_STATE, textPal) == 7);
+STATIC_ASSERT(offsetof(WIN_STATE, textPalette) == 7);
 STATIC_ASSERT(offsetof(WIN_STATE, textTileState) == 3640);
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -634,7 +637,7 @@ typedef enum MESSAGE_DECODE_FLAG {
 #define GLYPH_ROW_BITS		16
 
 /* WINDOW_SPR.kind: what a window sprite owns besides itself, which
-   mnWindowSprRelease frees. */
+   mnWindowSpriteRelease frees. */
 typedef enum WINDOW_SPR_KIND {
 	/* Nothing else to free: a glyph in the window's glyph tiles, or a shop's
 	   cursor or arrow, whose tiles the shop frees. */
@@ -649,7 +652,7 @@ typedef enum GLYPH_DRAW_MODE {
 	GLYPH_DRAW_PAGE_ARROW = 1 /* the next-page arrow, in the window's corner */
 } GLYPH_DRAW_MODE;
 
-void mnWindowSprInitFreeList(void);
+void mnWindowSpriteInitFreeList(void);
 
 struct MENU_CURSOR;
 
@@ -701,7 +704,7 @@ struct MENU_CURSOR;
 
 /* The page numbers of a paged list, the battle lists' and the File Screen
    password grid's: 20 tiles from this one of character block 0, which
-   mnGraphicsExpandVRAMTilesByColTable builds from the UI's digits '0' to '9',
+   mnGraphicsExpandVRAMTilesByColorTable builds from the UI's digits '0' to '9',
    first with colour 1 drawn as 10, then in their own colours; and their tilemap
    entries, + n giving page n + 1's number, the page shown lit. */
 #define PAGE_DIGITS_TILE	 768
@@ -851,7 +854,7 @@ enum {
 };
 
 /* How a window sprite moves (WINDOW_SPR.motion), run each tick by
-   mnWindowSprUpdateAll; 0 is a free window sprite. */
+   mnWindowSpriteUpdateAll; 0 is a free window sprite. */
 enum {
 	WINDOW_SPRITE_MOTION_STILL = 1,
 	WINDOW_SPRITE_MOTION_PAGE_ARROW = 2, /* the next-page arrow, bobbing */
@@ -876,7 +879,7 @@ enum {
 	WINDOW_SPRITE_MOTION_ON_SCREEN = 19,
 };
 
-/* Text colours (mnTextSetCol), named as the basic sprite palette
+/* Text colours (mnTextSetColor), named as the basic sprite palette
    (BASIC_COLORS_PALETTE) shows them. */
 typedef enum TEXT_COL {
 	TEXT_COLOR_RED = 2,
@@ -886,7 +889,7 @@ typedef enum TEXT_COL {
 	TEXT_COLOR_WHITE = 15, /* a message's colour at start */
 } TEXT_COL;
 
-/* The flags of a UI window (WINDOW.flg), which mnWindowCreate takes as its
+/* The flags of a UI window (WINDOW.flags), which mnWindowCreate takes as its
    attributes. */
 enum {
 	WINDOW_FLAG_OPEN = 0x1,	   /* the window slot is in use */
@@ -936,7 +939,7 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot);
 
 /* Counts the standby Djinn on unitId's side, and each element's into counts
    when it is not NULL (btDjinnCountStandby). */
-Sint32 btDjinnCountStandbyStub(Uint32 unitId, Uint8 *cnts);
+Sint32 btDjinnCountStandbyStub(Uint32 unitId, Uint8 *counts);
 
 /* The Djinn tutorial's message on giving a Djinni. */
 Sint32 mnDjinnGetGiveTutorialMessage(void);
@@ -956,10 +959,10 @@ void mnCursorMoveTowardTargetStub(struct MENU_CURSOR *cursor);
 
 /* Writes input as decimal text into buffer and returns where it starts: with
    width 0 unpadded and signed, else right-aligned in width characters. */
-Uint8 *mnStringFormatNum(Uint8 *buf, Sint32 input, Sint32 width);
+Uint8 *mnStringFormatNumber(Uint8 *buf, Sint32 input, Sint32 width);
 
 /* An event: draws each party sprite of the file list at its place and scale. */
-void mnFileListPlacePartySprs(void);
+void mnFileListPlacePartySprites(void);
 
 /* The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
    name entry screen and the talk choices. */
@@ -969,7 +972,7 @@ extern const Uint8 PointingHandTiles[];
 Sint32 mnTextFillCanvasBackground(void);
 
 /* Opens the party status window of the field menu and waits a tick. */
-void mnPartyStatOpenAndWait(void);
+void mnPartyStatusOpenAndWait(void);
 
 /* The layers mnItemIconCompose draws over an item's icon. */
 #define ICON_BASE			 1 /* the base under the icon */
@@ -986,19 +989,19 @@ void mnPartyStatOpenAndWait(void);
 /* An action's id in its encoded list entry, below its flags. */
 #define ACTION_ID_MASK 0x3fff
 
-/* The party status window's flags (mnPartyStatDraw, mnPartyStatCreateWindow):
-   one column of six tiles per party member (name, HP and, when shown, PP with a
-   bar under each), and in battle an optional five-tile column of standby Djinn
-   counts on its left. */
+/* The party status window's flags (mnPartyStatusDraw,
+   mnPartyStatusCreateWindow): one column of six tiles per party member (name,
+   HP and, when shown, PP with a bar under each), and in battle an optional
+   five-tile column of standby Djinn counts on its left. */
 typedef enum PARTY_STAT_FLAG {
 	PARTY_STATUS_HP_ONLY = 0,	  /* names and HP */
 	PARTY_STATUS_SHOW_PP = 1,	  /* add the PP row */
 	PARTY_STATUS_SHOW_DJINN = 2,  /* add the Djinn column (needs the PP row) */
 	PARTY_STATUS_CLOSED = 9,	  /* erase the window */
 	PARTY_STATUS_KEEP_FLAGS = -1, /* redraw with the flags it has */
-	/* BATTLE_STATE.partyStat while the party cannot summon. */
+	/* BATTLE_STATE.partyStatus while the party cannot summon. */
 	PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
-	/* BATTLE_STATE.partyStat while it can, drawn only while a Djinni is on
+	/* BATTLE_STATE.partyStatus while it can, drawn only while a Djinni is on
 	   standby. */
 	PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 } PARTY_STAT_FLAG;
@@ -1201,10 +1204,10 @@ typedef enum SPR_PORTRAIT {
 void mnWindowHighlightRectStub(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 style);
 void mnWindowSetTilemapEntryStub(
-	Sint32 win, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
-WINDOW_SPR *mnWindowSprCreateFromResourceStub(
-	Sint32 mode, Sint32 resource, WINDOW *win, Sint32 x, Sint32 y);
-void mnTextDrawMessageStub(Sint32 msg, Sint32 win, Sint32 x, Sint32 y);
+	Sint32 window, Sint32 value, Sint32 x, Sint32 y, Uint32 mode);
+WINDOW_SPR *mnWindowSpriteCreateFromResourceStub(
+	Sint32 mode, Sint32 resource, WINDOW *window, Sint32 x, Sint32 y);
+void mnTextDrawMessageStub(Sint32 msg, Sint32 window, Sint32 x, Sint32 y);
 
 /* Each main font glyph's width in pixels, from the space (32) on. */
 extern const Uint8 FontGlyphWidths[];
@@ -1231,9 +1234,9 @@ void mnWindowSystemUploadTilemap(void);
 void mnWindowClearTextTilesInRect(
 	Sint32 x, Sint32 y, Uint32 width, Uint32 height);
 /* Moves each sprite an open window carries and queues it for drawing. */
-void mnWindowSprUpdateAll(void);
+void mnWindowSpriteUpdateAll(void);
 /* Frees a window sprite and the VRAM cache entry it showed. */
-void mnWindowSprRelease(WINDOW_SPR *node);
+void mnWindowSpriteRelease(WINDOW_SPR *node);
 /* Marks both portrait slots free. */
 void mnPortraitClearSlots(void);
 

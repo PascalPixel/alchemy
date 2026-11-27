@@ -242,7 +242,7 @@ typedef struct CHAMPA_CLIFF_CAVES_STATE {
 	FIXED	   glowTrailingScale;
 	FIXED	   columnScale;
 	FIXED	   columnTrailingScale;
-	Sint16	   frm;
+	Sint16	   frame;
 } CHAMPA_CLIFF_CAVES_STATE;
 
 /* The state the forge fire's steps end on. */
@@ -359,9 +359,10 @@ void scChampaCliffCavesOpenDoorAndEnter(
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(edit->ticks, edit->x, edit->z);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags =
+		ACTOR_FALLS;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	id = MainRoutineStateWork.leaderActorId;
@@ -398,9 +399,9 @@ void scChampaCliffCavesObabaAsksForBriggs(void)
 	fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, 168, 424);
 	fdActorFaceDirectionAndRefreshById(
 		MainRoutineStateWork.leaderActorId, FACING_EAST);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(edit->ticks, edit->x, edit->z);
-	fdActorGetById(ACTOR_OBABA)->motionFlg = 0;
+	fdActorGetById(ACTOR_OBABA)->motionFlags = 0;
 	fdActorSetPos(ACTOR_OBABA, 184, 408);
 	fdActorSetSpeed(ACTOR_OBABA, 1.8);
 	fdActorWalkByAndWaitById(ACTOR_OBABA, 0, 16);
@@ -424,7 +425,7 @@ void scChampaCliffCavesObabaAsksForBriggs(void)
 	fdActorSetPos(ACTOR_OBABA, 0, 0);
 	edit = &ChampaCliffCavesCloseDoor;
 	fdMapGridPlayMapEdit(edit->ticks, edit->x, edit->z);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 }
 
 /* Talking to the woman standing in the doorway of her home at the west end of
@@ -544,7 +545,7 @@ Sint32 scInit(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 #endif
 	if(party->next != SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
-		fdActorGetById(party->leaderActorId)->priFlg |=
+		fdActorGetById(party->leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	if(party->next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER) {
@@ -559,14 +560,14 @@ Sint32 scInit(void)
 			!syGameFlagGet(FLAG_TRIDENT_TAKEN)) {
 			scFieldActorShowItemIconById(ACTOR_HELD_ITEM, ITEM_TRIDENT);
 			fdActorSetPos(ACTOR_HELD_ITEM, 664, 232);
-			fdActorGetById(ACTOR_HELD_ITEM)->motionFlg = ACTOR_FLOATS;
+			fdActorGetById(ACTOR_HELD_ITEM)->motionFlags = ACTOR_FLOATS;
 		}
 		if(syGameFlagGet(FLAG_TRIDENT_FORGED))
 			fdActorSetPos(ACTOR_OBABA, 664, 200);
 	} else if(party->next == SCENE_CHAMPA_CLIFF_CAVES_OBABA) {
 		if(syGameFlagGet(FLAG_CHAMPA_AVIMANDER_BEATEN)) {
 			fdActorSetAnimationById(ACTOR_BRIGGS_IN_BED, 11);
-			fdActorSetSprFlags(fdActorGetById(ACTOR_BRIGGS_IN_BED), 0);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_BRIGGS_IN_BED), 0);
 		}
 	}
 	return 0;
@@ -590,11 +591,11 @@ void scChampaCliffCavesHandPieceToObaba(Sint32 actor)
 	fdScriptWait(7);
 	fdActorShowItemIconById(ACTOR_HELD_ITEM, actor);
 	fdActorSetPos(ACTOR_HELD_ITEM, 648, 196);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWaitById(MainRoutineStateWork.leaderActorId, -16, -8);
 	fdScriptWait(1);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	fdActorFaceDirectionAndRefreshById(
 		MainRoutineStateWork.leaderActorId, FACING_EAST);
@@ -606,10 +607,10 @@ void scChampaCliffCavesHandPieceToObaba(Sint32 actor)
 void scChampaCliffCavesObabaStepsForward(Sint32 value)
 {
 	fdActorSetSpeed(ACTOR_OBABA, 0.8);
-	fdActorGetById(ACTOR_OBABA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_OBABA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWaitById(ACTOR_OBABA, 0, 6);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_OBABA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_OBABA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorSetAnimationById(ACTOR_OBABA, 8);
 	fdScriptWait(15);
@@ -618,41 +619,41 @@ void scChampaCliffCavesObabaStepsForward(Sint32 value)
 	fdActorSetAnimationById(ACTOR_OBABA, ANIM_STAND);
 	fdScriptWait(15);
 	if(value == 0) {
-		fdActorGetById(ACTOR_OBABA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_OBABA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkByAndWait(ACTOR_OBABA, 0, -6);
 		fdScriptWait(1);
-		fdActorGetById(ACTOR_OBABA)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_OBABA)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdScriptWait(10);
 	}
 }
 
 /* The forge pit's glow changes colour, its five colours fading from one set to
    another over the given number of ticks, a step a tick. */
-void scChampaCliffCavesFadeCols(Uint16 *from, Uint16 *to, Sint32 ticks)
+void scChampaCliffCavesFadeColors(Uint16 *from, Uint16 *to, Sint32 ticks)
 {
 	Sint32 step;
 
 	for(step = 0; step <= ticks; step++) {
-		Sint32 ofs;
+		Sint32 offset;
 		Sint32 left;
 
-		for(ofs = 0, left = 0; left < FORGE_COLORS; left++) {
+		for(offset = 0, left = 0; left < FORGE_COLORS; left++) {
 			Sint32 red, green, blue, toRed, toGreen, toBlue;
 
-			red = RGB_RED(*(Uint16 *)(ofs + (Sint32)from));
-			green = RGB_GREEN(*(Uint16 *)(ofs + (Sint32)from));
-			blue = RGB_BLUE(*(Uint16 *)(ofs + (Sint32)from));
-			toRed = RGB_RED(*(Uint16 *)(ofs + (Sint32)to));
-			toGreen = RGB_GREEN(*(Uint16 *)(ofs + (Sint32)to));
-			toBlue = RGB_BLUE(*(Uint16 *)(ofs + (Sint32)to));
+			red = RGB_RED(*(Uint16 *)(offset + (Sint32)from));
+			green = RGB_GREEN(*(Uint16 *)(offset + (Sint32)from));
+			blue = RGB_BLUE(*(Uint16 *)(offset + (Sint32)from));
+			toRed = RGB_RED(*(Uint16 *)(offset + (Sint32)to));
+			toGreen = RGB_GREEN(*(Uint16 *)(offset + (Sint32)to));
+			toBlue = RGB_BLUE(*(Uint16 *)(offset + (Sint32)to));
 			red += step * (toRed - red) / ticks;
 			green += step * (toGreen - green) / ticks;
 			blue += step * (toBlue - blue) / ticks;
 			SET_RGB(*(Uint16 *)((Uint32)&BG_PLTT_COLOR(
 									FORGE_PALETTE, FORGE_FIRST_COLOR) +
-						ofs),
+						offset),
 				red, green, blue);
-			ofs += 2;
+			offset += 2;
 		}
 		sySynch(1);
 	}
@@ -835,26 +836,26 @@ void scChampaCliffCavesObabaForgesTrident(Sint32 value)
 		fdActorSetPos(ACTOR_HELD_ITEM, 668, 200);
 		thrown->gravity = toFIXED(1) / 4;
 		fdActorJump(ACTOR_HELD_ITEM, 4, 2);
-		fdActorSetSprPriority(ACTOR_HELD_ITEM, 1);
+		fdActorSetSpritePriority(ACTOR_HELD_ITEM, 1);
 		fdActorSetSpeed(ACTOR_HELD_ITEM, 1);
 		fdActorSetDestinationOffsetById(ACTOR_HELD_ITEM, 0, 40);
-		sySndPlay(SE_FALL);
+		sySoundPlay(SE_FALL);
 		fdScriptWait(34);
 		landing[0] = thrown->x.fixed;
 		landing[1] = thrown->y.fixed;
 		landing[2] = thrown->z.fixed;
 		fdActorSetPos(ACTOR_HELD_ITEM, 0, 0);
 		fdScriptWait(20);
-		sySndPlay(SE_HEAVY_IMPACT);
-		scChampaCliffCavesFadeCols(dark, pale, 12);
-		scChampaCliffCavesFadeCols(pale, dark, 48);
+		sySoundPlay(SE_HEAVY_IMPACT);
+		scChampaCliffCavesFadeColors(dark, pale, 12);
+		scChampaCliffCavesFadeColors(pale, dark, 48);
 		fdScriptWait(10);
 	}
 	actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWaitById(MainRoutineStateWork.leaderActorId, 12, 12);
 	fdScriptWait(1);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	fdActorFaceDirectionAndRefreshById(
 		MainRoutineStateWork.leaderActorId, FACING_SOUTHEAST);
@@ -864,29 +865,29 @@ void scChampaCliffCavesObabaForgesTrident(Sint32 value)
 	fdScriptWait(20);
 	fdActorSetAnimationById(ACTOR_OBABA, 7);
 	fdScriptWait(60);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
 	/* "That's funny... Nothing happened." */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
 	fdScriptWait(20);
-	sySndPlay(SE_SHIMMER);
-	scChampaCliffCavesFadeCols(dark, pale, 48);
+	sySoundPlay(SE_SHIMMER);
+	scChampaCliffCavesFadeColors(dark, pale, 48);
 	fdActorStartRepeatedMotion(MainRoutineStateWork.leaderActorId, 3);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(50);
 	fdActorShowEmoteById(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	Call2((void (*)())fdStartColTransition, 16, RGB(16, 4, 4));
+	Call2((void (*)())fdStartColorTransition, 16, RGB(16, 4, 4));
 	fdMapGridSetShake(2, 2, 1);
 	scChampaCliffCavesLightForge(glow);
 	fdActorSetAnimationById(ACTOR_OBABA, ANIM_STAND);
 	fdActorJump(ACTOR_FELIX, 6, 0);
-	sySndPlay(SE_TABLET_RISE);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	sySoundPlay(SE_TABLET_RISE);
+	fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_FELIX, -12, -12);
 	fdScriptWait(1);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorStartRepeatedMotion(ACTOR_OBABA, 3);
 	fdEffectSetAttached(
@@ -897,18 +898,18 @@ void scChampaCliffCavesObabaForgesTrident(Sint32 value)
 		SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
 	fdMapGridSetShake(4, 4, 1);
 	scChampaCliffCavesRaiseColumn(glow);
-	sySndPlay(SE_TABLET_RISE);
+	sySoundPlay(SE_TABLET_RISE);
 	fdScriptWait(10);
 	fdActorJump(ACTOR_OBABA, 6, 15);
 	fdActorJump(ACTOR_OBABA, 6, 23);
-	sySndPlay(SE_TABLET_RISE);
+	sySoundPlay(SE_TABLET_RISE);
 	fdScriptWait(10);
 	/* "Something's happening! Is that...the legendary trident?" */
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
 	scFieldActorShowItemIconById(ACTOR_HELD_ITEM, ITEM_TRIDENT);
 	fdActorSetPos(ACTOR_HELD_ITEM, 664, 232);
-	fdActorSetSprPriority(ACTOR_HELD_ITEM, 1);
-	thrown->motionFlg = ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_HELD_ITEM, 1);
+	thrown->motionFlags = ACTOR_FALLS;
 	thrown->y.fixed = toFIXED(24);
 	thrown->update = ChampaCliffCavesGrowThrown;
 	thrown->groundHeight = 0;
@@ -922,7 +923,7 @@ void scChampaCliffCavesObabaForgesTrident(Sint32 value)
 		sySynch(1);
 	thrown->gravity = toFIXED(1);
 	thrown->y.fixed = 0;
-	thrown->motionFlg = ACTOR_FLOATS;
+	thrown->motionFlags = ACTOR_FLOATS;
 	gmPlayMusic();
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_OBABA, 2);
@@ -936,7 +937,7 @@ void scChampaCliffCavesObabaForgesTrident(Sint32 value)
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
 	fdActorFaceDirectionAndRefreshById(ACTOR_OBABA, FACING_SOUTH_SOUTHWEST);
 	fdScriptWait(10);
-	fdActorSetSprPriority(ACTOR_HELD_ITEM, 2);
+	fdActorSetSpritePriority(ACTOR_HELD_ITEM, 2);
 	fdScriptEnd();
 }
 
@@ -1029,7 +1030,7 @@ void scChampaCliffCavesFightAvimander(void)
 	Uint16		  dark[FORGE_COLORS];
 	Uint16		  fiery[FORGE_COLORS];
 	VECTOR3		  pos;
-	const Uint16 *col;
+	const Uint16 *color;
 	ACTOR		 *actor = fdActorGetById(ACTOR_AVIMANDER);
 
 	if(fdScriptGetFlag(FLAG_CHAMPA_AVIMANDER_BEATEN))
@@ -1043,7 +1044,7 @@ void scChampaCliffCavesFightAvimander(void)
 		fdScriptSetMessageId((Sint32)MsgBackForMore);
 		/* "Back for more?" */
 		syFieldScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-		sySndPlay(MUS_CONFRONTATION);
+		sySoundPlay(MUS_CONFRONTATION);
 		fdCameraMoveTo(664, CAMERA_KEEP, 256, 1);
 		fdCameraWaitForArrival();
 		fdScriptWait(5);
@@ -1062,7 +1063,7 @@ void scChampaCliffCavesFightAvimander(void)
 		fdScriptSetMessageId((Sint32)MsgHoldItRight);
 		/* "Hold it right there!" */
 		syFieldScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
-		sySndPlay(MUS_CONFRONTATION);
+		sySoundPlay(MUS_CONFRONTATION);
 		fdActorFaceDirectionById(
 			MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
 		fdCameraMoveTo(664, CAMERA_KEEP, 256, 1);
@@ -1160,7 +1161,7 @@ void scChampaCliffCavesFightAvimander(void)
 	fdActorSetPos(ACTOR_SALAMANDER, 724, 252);
 	fdActorGetById(ACTOR_SALAMANDER)->scaleX = toFIXED(6) / 5;
 	fdActorGetById(ACTOR_SALAMANDER)->scaleY = toFIXED(6) / 5;
-	fdActorSetSprFlags(fdActorGetById(ACTOR_SALAMANDER), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_SALAMANDER), 0);
 	/* "Oh, all right. Listen, you have no idea what you're getting into. I
 	   think you'd better leave." Yes: "Ah, you've made a good decision..." No:
 	   "Stubborn, are you? Ah, well..." */
@@ -1188,17 +1189,17 @@ void scChampaCliffCavesFightAvimander(void)
 		/* "Heart of the earth, fury of the forge's flames, grant me power!" */
 		syFieldScriptShowMessageThenWait(
 			SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		syFieldMapGridSetMetatileHeight(toFIXED(656), toFIXED(208), 0, -4);
 		syFieldMapGridSetMetatileHeight(toFIXED(656), toFIXED(224), 0, -4);
 		syFieldMapGridSetMetatileHeight(toFIXED(656), toFIXED(240), 0, -4);
 		syFieldMapGridSetMetatileHeight(toFIXED(656), toFIXED(256), 0, -4);
 		actor->gravity = toFIXED(1) / 4;
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->groundHeight = -toFIXED(999);
 		fdActorJump(ACTOR_SALAMANDER, 10, 0);
-		sySndPlay(SE_ENEMY_CRY);
-		fdActorSetSprPriority(ACTOR_SALAMANDER, 1);
+		sySoundPlay(SE_ENEMY_CRY);
+		fdActorSetSpritePriority(ACTOR_SALAMANDER, 1);
 		fdActorSetSpeed(ACTOR_SALAMANDER, 3);
 		fdActorWalkToById(ACTOR_SALAMANDER, 644, 248);
 		fdScriptWait(21);
@@ -1206,39 +1207,40 @@ void scChampaCliffCavesFightAvimander(void)
 		fdScriptWait(50);
 		fdMapGridSetShake(2, 2, 1);
 		fdScriptWait(70);
-		sySndPlay(SE_BOSS_ROAR);
+		sySoundPlay(SE_BOSS_ROAR);
 		fdScriptWait(25);
-		col = (const Uint16 *)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR);
-		dark[0] = *col++;
-		dark[1] = *col++;
-		dark[2] = *col++;
-		dark[3] = *col++;
-		dark[4] = *col++;
-		col = (const Uint16 *)&BG_PLTT_COLOR(
+		color =
+			(const Uint16 *)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR);
+		dark[0] = *color++;
+		dark[1] = *color++;
+		dark[2] = *color++;
+		dark[3] = *color++;
+		dark[4] = *color++;
+		color = (const Uint16 *)&BG_PLTT_COLOR(
 			FORGE_FIERY_PALETTE, FORGE_FIRST_COLOR);
-		fiery[0] = *col++;
-		fiery[1] = *col++;
-		fiery[2] = *col++;
-		fiery[3] = *col++;
-		fiery[4] = *col++;
-		scChampaCliffCavesFadeCols(dark, fiery, 48);
+		fiery[0] = *color++;
+		fiery[1] = *color++;
+		fiery[2] = *color++;
+		fiery[3] = *color++;
+		fiery[4] = *color++;
+		scChampaCliffCavesFadeColors(dark, fiery, 48);
 		fdScriptWait(20);
-		sySndPlay(SE_TABLET_RISE);
+		sySoundPlay(SE_TABLET_RISE);
 		pos.x = toFIXED(662);
 		pos.y = 0;
 		pos.z = toFIXED(238);
 		scChampaCliffCavesStartForgeFire(&pos);
-		sySndPlay(SE_BEAST_CRY);
+		sySoundPlay(SE_BEAST_CRY);
 		fdActorSetPos(ACTOR_AVIMANDER, 664, 248);
 		actor->gravity = toFIXED(1);
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->groundHeight = 0;
 		actor->y.fixed = toFIXED(32);
 		actor->scaleX = toFIXED(1) / 4;
 		actor->update = (Sint32)ChampaCliffCavesGrowThrownSlowly;
 		actor->scaleY = toFIXED(1) / 4;
 		fdActorJump(ACTOR_AVIMANDER, 11, 0);
-		sySndPlay(SE_BEAST_CRY);
+		sySoundPlay(SE_BEAST_CRY);
 		fdActorSetSpeed(ACTOR_AVIMANDER, 3.2);
 		fdActorWalkToAndWait(ACTOR_AVIMANDER, 584, 248);
 		fdScriptSetDefeatDestination(
@@ -1281,7 +1283,7 @@ void scChampaCliffCavesAskIfBriggsLearned(void)
 	/* "Ah, such a bright lad. Now then, don't you ever try to take my..." */
 	fdScriptShowMessageThenWait(ACTOR_OBABA, 0, 20);
 	state = RamHeapSlots->fieldState;
-	state->transitionFrm = 40;
+	state->transitionFrame = 40;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
@@ -1527,10 +1529,10 @@ void scChampaCliffCavesObabaMournsSalamander(void)
 	fdScriptShowMessageThenWait(ACTOR_OBABA, 0, 5);
 	/* "He only did it for Champa!" */
 	fdScriptShowMessageThenWait(ACTOR_CHAUCHA, 0, 5);
-	fdActorSetSprPriority(ACTOR_FELIX, 3);
-	fdActorSetSprPriority(ACTOR_JENNA, 3);
-	fdActorSetSprPriority(ACTOR_SHEBA, 3);
-	fdActorSetSprPriority(ACTOR_PIERS, 3);
+	fdActorSetSpritePriority(ACTOR_FELIX, 3);
+	fdActorSetSpritePriority(ACTOR_JENNA, 3);
+	fdActorSetSpritePriority(ACTOR_SHEBA, 3);
+	fdActorSetSpritePriority(ACTOR_PIERS, 3);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -1542,9 +1544,9 @@ void scChampaCliffCavesObabaMournsSalamander(void)
 	fdCameraMoveTo(568, CAMERA_KEEP, 248, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(10);
-	fdActorSetSprPriority(ACTOR_CHAUCHA, 2);
+	fdActorSetSpritePriority(ACTOR_CHAUCHA, 2);
 	fdActorGetById(ACTOR_CHAUCHA)->facing = FACING_SOUTH_SOUTHEAST;
-	fdActorGetById(ACTOR_CHAUCHA)->motionFlg = 0;
+	fdActorGetById(ACTOR_CHAUCHA)->motionFlags = 0;
 	fdActorSetPos(ACTOR_CHAUCHA, 520, 200);
 	fdActorSetSpeed(ACTOR_CHAUCHA, 1);
 	fdActorWalkByAndWaitById(ACTOR_CHAUCHA, 0, 16);
@@ -1558,7 +1560,7 @@ void scChampaCliffCavesObabaMournsSalamander(void)
 	fdActorWatchAndSetScript(ACTOR_KRADEN, ACTOR_CHAUCHA);
 	fdActorWatchAndSetScript(ACTOR_OBABA, ACTOR_CHAUCHA);
 	fdActorWalkByAndWaitById(ACTOR_CHAUCHA, 0, 16);
-	fdActorSetSprPriority(ACTOR_CHAUCHA, 3);
+	fdActorSetSpritePriority(ACTOR_CHAUCHA, 3);
 	fdActorWalkByAndWaitById(ACTOR_CHAUCHA, 0, 32);
 	fdActorWalkByAndWaitById(ACTOR_CHAUCHA, 8, 8);
 	fdActorWalkByAndWaitById(ACTOR_CHAUCHA, 64, 0);
@@ -1780,15 +1782,15 @@ void scChampaCliffCavesObabaMournsSalamander(void)
 	fdActorSetSpeed(ACTOR_BRIGGS, 2);
 	fdActorWalkByAndWaitById(ACTOR_BRIGGS, -80, 0);
 	fdScriptWait(10);
-	fdActorSetSprPriority(ACTOR_CHAUCHA, 3);
-	fdActorSetSprPriority(ACTOR_BRIGGS, 3);
+	fdActorSetSpritePriority(ACTOR_CHAUCHA, 3);
+	fdActorSetSpritePriority(ACTOR_BRIGGS, 3);
 	fdActorSetSpeed(ACTOR_BRIGGS, 1);
 	fdActorWalkBy(ACTOR_CHAUCHA, 0, -64);
 	fdActorWalkByAndWait(ACTOR_BRIGGS, -16, 0);
 	fdActorWalkByById(ACTOR_BRIGGS, 0, -64);
 	fdScriptWait(15);
-	fdActorSetSprPriority(ACTOR_CHAUCHA, 2);
-	fdActorSetSprPriority(ACTOR_BRIGGS, 2);
+	fdActorSetSpritePriority(ACTOR_CHAUCHA, 2);
+	fdActorSetSpritePriority(ACTOR_BRIGGS, 2);
 	fdActorWaitForMoveById(ACTOR_CHAUCHA);
 	fdActorSetPos(ACTOR_CHAUCHA, 0, 0);
 	fdActorWaitForMoveById(ACTOR_BRIGGS);
@@ -1844,8 +1846,8 @@ void scChampaCliffCavesObabaMournsSalamander(void)
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
 	fdActorFaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
 	fdScriptWait(20);
-	fdActorSetSprPriority(ACTOR_FELIX, 2);
-	fdActorGetById(ACTOR_FELIX)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_FELIX, 2);
+	fdActorGetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetSpeed(ACTOR_JENNA, 1.2);
 	fdActorSetAnimationById(ACTOR_JENNA, ANIM_WALK);
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -1886,7 +1888,7 @@ void scChampaCliffCavesObabaMournsSalamander(void)
    heap, and the sprite that shows them. */
 typedef struct FLASH_STATE {
 	Uint8	   tiles[1024];
-	EFFECT_SPR spr;
+	EFFECT_SPR sprite;
 } FLASH_STATE;
 
 /* The explosion's sprite palette, and the tiles of each of its 16 by 16
@@ -1898,76 +1900,77 @@ enum { FLASH_PALETTE = 15, FLASH_PICTURE_TILES = 16 * 16 / 64 };
    taken off the map. */
 void scChampaCliffCavesStartFlash(Sint32 id, Sint32 mode)
 {
-	FLASH_STATE *state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(FLASH_STATE));
-	ACTOR		*actor = fdActorGetById(id);
-	Sint32		 slot;
-	Sint32		 tile;
-	EFFECT_SPR	*spr;
-	FIXED		 pos[3];
-	Sint32		 frm;
-	FIXED		 z;
+	FLASH_STATE *state =
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(FLASH_STATE));
+	ACTOR	   *actor = fdActorGetById(id);
+	Sint32		slot;
+	Sint32		tile;
+	EFFECT_SPR *sprite;
+	FIXED		pos[3];
+	Sint32		frame;
+	FIXED		z;
 
 	if(mode == 0) {
-		for(frm = 0; frm < 16; frm++) {
-			Sint32 ang = actor->facing;
-			ang += DEGtoANG(45);
-			actor->facing = ang;
+		for(frame = 0; frame < 16; frame++) {
+			Sint32 angle = actor->facing;
+			angle += DEGtoANG(45);
+			actor->facing = angle;
 			sySynch(1);
 		}
 	}
 	sySynch(2);
 	actor->scaleX = 0;
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	syDMAXCopy(FieldExplosionPalette, (void *)&OBJ_PLTT_COLOR(FLASH_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION), state);
 	slot = syVRAMCacheFindFreeEntry();
 	tile = mnVRAMLoad(slot, sizeof(state->tiles), state);
-	spr = &state->spr;
-	syFieldEffectSprInit(spr, 8, 16, OBJ_SIZE_16X16, tile);
-	spr->depth = OAM_DEPTH_WINDOW;
-	spr->oam.pri = 1;
-	spr->oam.fullCol = 0;
-	spr->oam.pal = FLASH_PALETTE;
+	sprite = &state->sprite;
+	syFieldEffectSpriteInit(sprite, 8, 16, OBJ_SIZE_16X16, tile);
+	sprite->depth = OAM_DEPTH_WINDOW;
+	sprite->oam.priority = 1;
+	sprite->oam.fullColor = 0;
+	sprite->oam.palette = FLASH_PALETTE;
 	pos[0] = actor->x.fixed;
 	pos[1] = actor->y.fixed;
 	pos[2] = actor->z.fixed;
 	fdCameraWorldToScreen(pos);
-	spr->x = pos[0];
-	spr->y = z = pos[2];
+	sprite->x = pos[0];
+	sprite->y = z = pos[2];
 	if(mode == 1) {
-		spr->scaleX = toFIXED(2);
-		spr->scaleY = toFIXED(2);
-		spr->y = z + toFIXED(10);
+		sprite->scaleX = toFIXED(2);
+		sprite->scaleY = toFIXED(2);
+		sprite->y = z + toFIXED(10);
 	}
-	sySndPlay(SE_CRASH);
-	for(frm = 0; frm <= 71; frm++) {
-		spr = &state->spr;
-		switch(frm) {
+	sySoundPlay(SE_CRASH);
+	for(frame = 0; frame <= 71; frame++) {
+		sprite = &state->sprite;
+		switch(frame) {
 		case 6:
-			spr->oam.idx = tile + 1 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 1 * FLASH_PICTURE_TILES;
 			break;
 		case 12:
-			spr->oam.idx = tile + 2 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 2 * FLASH_PICTURE_TILES;
 			break;
 		case 22:
-			spr->oam.idx = tile + 3 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 3 * FLASH_PICTURE_TILES;
 			break;
 		case 32:
-			spr->oam.idx = tile + 4 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 4 * FLASH_PICTURE_TILES;
 			break;
 		case 42:
-			spr->oam.idx = tile + 5 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 5 * FLASH_PICTURE_TILES;
 			break;
 		case 52:
-			spr->oam.idx = tile + 6 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 6 * FLASH_PICTURE_TILES;
 			break;
 		case 62:
-			spr->oam.idx = tile + 7 * FLASH_PICTURE_TILES;
+			sprite->oam.index = tile + 7 * FLASH_PICTURE_TILES;
 			break;
 		}
-		fdEffectSprDraw(spr);
+		fdEffectSpriteDraw(sprite);
 		sySynch(1);
 	}
 	fdActorSetPos(id, 0, 0);
@@ -1980,7 +1983,7 @@ void scChampaCliffCavesStartFlash(Sint32 id, Sint32 mode)
 void scChampaCliffCavesLoadGlow(void)
 {
 	CHAMPA_CLIFF_CAVES_STATE *state = RamHeapSlots->menuState;
-	EFFECT_SPR				 *spr;
+	EFFECT_SPR				 *sprite;
 	Sint32					  i;
 	Uint8					 *tile;
 	Sint32					  entry;
@@ -1998,12 +2001,12 @@ void scChampaCliffCavesLoadGlow(void)
 	vram = syVRAMCacheLoad(entry, 64 * 64, state);
 	state->glowEntry = entry;
 	state->glowVram = vram;
-	spr = &state->glow;
-	syFieldEffectSprInit(spr, 31, 31, OBJ_SIZE_64X64, vram);
-	spr->oam.fullCol = 1;
-	spr->oam.pal = 0;
-	spr->oam.pri = 2;
-	spr->depth = 1;
+	sprite = &state->glow;
+	syFieldEffectSpriteInit(sprite, 31, 31, OBJ_SIZE_64X64, vram);
+	sprite->oam.fullColor = 1;
+	sprite->oam.palette = 0;
+	sprite->oam.priority = 2;
+	sprite->depth = 1;
 	state->glowScale = 0;
 	state->glowTrailingScale = 0;
 }
@@ -2013,7 +2016,7 @@ void scChampaCliffCavesLoadGlow(void)
 void scChampaCliffCavesLoadColumn(void)
 {
 	CHAMPA_CLIFF_CAVES_STATE *state = RamHeapSlots->menuState;
-	EFFECT_SPR				 *spr;
+	EFFECT_SPR				 *sprite;
 	Sint32					  i;
 	Uint8					 *tile;
 	Sint32					  entry;
@@ -2031,12 +2034,12 @@ void scChampaCliffCavesLoadColumn(void)
 	vram = syVRAMCacheLoad(entry, 32 * 64, state);
 	state->columnEntry = entry;
 	state->columnVram = vram;
-	spr = &state->column;
-	syFieldEffectSprInit(spr, 15, 47, OBJ_SIZE_32X64, vram);
-	spr->oam.fullCol = 1;
-	spr->oam.pal = 1;
-	spr->oam.pri = 1;
-	spr->depth = 1;
+	sprite = &state->column;
+	syFieldEffectSpriteInit(sprite, 15, 47, OBJ_SIZE_32X64, vram);
+	sprite->oam.fullColor = 1;
+	sprite->oam.palette = 1;
+	sprite->oam.priority = 1;
+	sprite->depth = 1;
 	state->columnScale = 0;
 	state->columnTrailingScale = 0;
 }
@@ -2055,53 +2058,53 @@ void scChampaCliffCavesDrawForgeFire(void)
 {
 	CHAMPA_CLIFF_CAVES_STATE *state = RamHeapSlots->menuState;
 	Sint32					  pos[3];
-	EFFECT_SPR				 *spr;
+	EFFECT_SPR				 *sprite;
 	Sint32					  i;
 
 	for(i = 0; i < GLOW_COLORS; i++) {
 		Sint32 red = RGB_LEVEL_MAX;
-		Sint32 green = sySin((state->frm + i) * (TRIG_TURN / 32)) * 6;
-		Sint32 blue = sySin((state->frm / 2 + i) * (TRIG_TURN / 32) +
+		Sint32 green = sySin((state->frame + i) * (TRIG_TURN / 32)) * 6;
+		Sint32 blue = sySin((state->frame / 2 + i) * (TRIG_TURN / 32) +
 						  TRIG_TURN * 9 / 32) *
 			3;
-		Sint32 col;
+		Sint32 color;
 		green = FIXEDtoINT(green);
 		blue = FIXEDtoINT(blue);
 		green += GLOW_GREEN_MIDDLE;
 		blue += GLOW_BLUE_MIDDLE;
 		if(i < PALETTE_COLORS) {
-			col = RGB(red, green, blue);
+			color = RGB(red, green, blue);
 			((Uint16 *)OBJ_PLTT)[GLOW_CYCLED_ROW * PALETTE_COLORS +
-				PALETTE_COLORS - 1 - i] = col;
+				PALETTE_COLORS - 1 - i] = color;
 		} else {
-			col = RGB(red, green, blue);
+			color = RGB(red, green, blue);
 			((Uint16 *)OBJ_PLTT)[GLOW_PICTURE_ROW * PALETTE_COLORS +
-				PALETTE_COLORS - 1 - i] = col;
+				PALETTE_COLORS - 1 - i] = color;
 		}
 	}
 	pos[0] = state->pos[0];
 	pos[1] = state->pos[1];
 	pos[2] = state->pos[2];
-	spr = &state->glow;
+	sprite = &state->glow;
 	fdCameraWorldToScreen(pos);
-	spr->x = pos[0];
-	spr->y = pos[2];
-	spr->scaleX = state->glowScale;
-	spr->scaleY = state->glowTrailingScale;
-	fdEffectSprDraw(spr);
+	sprite->x = pos[0];
+	sprite->y = pos[2];
+	sprite->scaleX = state->glowScale;
+	sprite->scaleY = state->glowTrailingScale;
+	fdEffectSpriteDraw(sprite);
 	pos[0] = state->pos[0];
 	pos[1] = state->pos[1];
 	pos[2] = state->pos[2];
-	spr = &state->column;
+	sprite = &state->column;
 	fdCameraWorldToScreen(pos);
-	spr->x = pos[0];
-	spr->y = pos[2];
-	spr->scaleX = state->columnScale;
-	spr->scaleY = state->columnTrailingScale;
-	fdEffectSprDraw(spr);
+	sprite->x = pos[0];
+	sprite->y = pos[2];
+	sprite->scaleX = state->columnScale;
+	sprite->scaleY = state->columnTrailingScale;
+	fdEffectSpriteDraw(sprite);
 	state->glowTrailingScale = FIRE_HEIGHT_SCALE(state->glowScale);
 	state->columnTrailingScale = FIRE_HEIGHT_SCALE(state->columnScale);
-	state->frm++;
+	state->frame++;
 }
 
 /* The forge's fire at a spot: the glow grows, holds, and the column rises
@@ -2109,7 +2112,7 @@ void scChampaCliffCavesDrawForgeFire(void)
 void scChampaCliffCavesStartForgeFire(const Sint32 *pos)
 {
 	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState =
-		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(CHAMPA_CLIFF_CAVES_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(CHAMPA_CLIFF_CAVES_STATE));
 	Sint32 ticks;
 	Sint32 state;
 
@@ -2118,7 +2121,7 @@ void scChampaCliffCavesStartForgeFire(const Sint32 *pos)
 	champaCliffCavesState->pos[2] = pos[2];
 	scChampaCliffCavesLoadGlow();
 	scChampaCliffCavesLoadColumn();
-	champaCliffCavesState->frm = 0;
+	champaCliffCavesState->frame = 0;
 	ticks = 0;
 	sySetEvent(scChampaCliffCavesDrawForgeFire, EVENT_PASS_TICK);
 	fdMapGridSetShake(4, 4, 1);
@@ -2209,7 +2212,7 @@ UNUSED void scChampaCliffCavesPutOutForgeFire(void)
 void scChampaCliffCavesLightForge(const VECTOR3 *origin)
 {
 	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState =
-		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(CHAMPA_CLIFF_CAVES_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(CHAMPA_CLIFF_CAVES_STATE));
 	Sint32 state;
 
 	champaCliffCavesState->pos[0] = origin->x;
@@ -2218,9 +2221,9 @@ void scChampaCliffCavesLightForge(const VECTOR3 *origin)
 	scChampaCliffCavesLoadGlow();
 	champaCliffCavesState->columnScale = 0;
 	champaCliffCavesState->columnTrailingScale = 0;
-	champaCliffCavesState->frm = 0;
+	champaCliffCavesState->frame = 0;
 	sySetEvent(scChampaCliffCavesDrawForgeFire, EVENT_PASS_TICK);
-	sySndPlay(SE_DJINNI_SET);
+	sySoundPlay(SE_DJINNI_SET);
 	state = 0;
 	do {
 		if(state == 0) {
@@ -2238,12 +2241,12 @@ void scChampaCliffCavesLightForge(const VECTOR3 *origin)
 void scChampaCliffCavesRaiseColumn(void)
 {
 	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState =
-		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(CHAMPA_CLIFF_CAVES_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(CHAMPA_CLIFF_CAVES_STATE));
 	Sint32 state;
 
 	scChampaCliffCavesLoadColumn();
 	sySetEvent(scChampaCliffCavesDrawForgeFire, EVENT_PASS_TICK);
-	sySndPlay(SE_CLATTER);
+	sySoundPlay(SE_CLATTER);
 	state = 0;
 	do {
 		switch(state) {

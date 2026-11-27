@@ -8,17 +8,17 @@
 void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object)
 {
 	Sint32 x;
-	Sint32 velX;
-	SPR	  *spr;
+	Sint32 velocityX;
+	SPR	  *sprite;
 
-	x = object->eff.x;
-	velX = object->eff.vel.x;
-	spr = object->eff.spr;
+	x = object->effect.x;
+	velocityX = object->effect.velocity.x;
+	sprite = object->effect.sprite;
 
-	object->eff.x = x + velX;
-	object->eff.y += object->eff.vel.y;
-	object->eff.z += object->eff.vel.z;
-	object->eff.scaleX += object->eff.scaleRateX;
-	object->eff.scaleY += object->eff.scaleRateY;
-	spr->rotation += object->eff.spin;
+	object->effect.x = x + velocityX;
+	object->effect.y += object->effect.velocity.y;
+	object->effect.z += object->effect.velocity.z;
+	object->effect.scaleX += object->effect.scaleRateX;
+	object->effect.scaleY += object->effect.scaleRateY;
+	sprite->rotation += object->effect.spin;
 }

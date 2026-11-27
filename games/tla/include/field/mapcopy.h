@@ -7,6 +7,6 @@
 #include "types.h"
 
 void fdMapGridCopyMetatileTilesIndicesRect(Sint32 srcX, Sint32 srcY,
-	Uint32 dstX, Uint32 dstY, Uint32 width, Uint32 height);
+	Uint32 destX, Uint32 destY, Uint32 width, Uint32 height);
 
 #endif

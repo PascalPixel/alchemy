@@ -180,7 +180,7 @@ typedef enum TOLBI_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_TOLBI_EDGE = 12
 } TOLBI_METATILE_BEHAVIOR;
 
-/* The running children keep these flags in ACTOR.tmr, their scene scratch
+/* The running children keep these flags in ACTOR.timer, their scene scratch
    halfword. Bits: 1 talking | 0 chases the younger sister. */
 enum {
 	/* Set on the older brother, who runs after ACTOR_TOLBI_YOUNGER_SISTER. */
@@ -219,14 +219,14 @@ static void scTolbiJoinEmber(void)
 
    Returns 1 when the child stopped. */
 static Sint32 scTolbiKidStopForTarget(
-	ACTOR *kid, ACTOR *tgt, Sint32 range, Sint32 force)
+	ACTOR *kid, ACTOR *target, Sint32 range, Sint32 force)
 {
 	Sint32 stopped = 0;
 
-	if(fdActorDistance(tgt, kid) < range || force != 0) {
+	if(fdActorDistance(target, kid) < range || force != 0) {
 		/* The heading to the target, and the eight-way directions around it. */
 		Uint32 heading = (Uint16)syAtan(
-			tgt->z.fixed - kid->z.fixed, tgt->x.fixed - kid->x.fixed);
+			target->z.fixed - kid->z.fixed, target->x.fixed - kid->x.fixed);
 		Uint32 farLeft = FACING_SIXTEENTH(heading - 2 * FACING_STEP);
 		Uint32 farRight = FACING_SIXTEENTH(heading + 2 * FACING_STEP);
 		Uint32 left = FACING_SIXTEENTH(heading - FACING_STEP);
@@ -239,7 +239,7 @@ static Sint32 scTolbiKidStopForTarget(
 			fdActorSelectAnimation(kid, ANIM_STAND);
 			stopped = 1;
 		}
-		if(tgt == fdActorGet(ACTOR_PARTY_LEADER) &&
+		if(target == fdActorGet(ACTOR_PARTY_LEADER) &&
 			(farRight == facing || farLeft == facing)) {
 			kid->paused = 1;
 			fdActorSelectAnimation(kid, ANIM_STAND);
@@ -258,14 +258,14 @@ static Sint32 scTolbiKidStopForTarget(
    TALK_STOP_RANGE), the child being talked to stops whatever the direction. */
 static UNREAD_RESULT scTolbiUpdateKid(ACTOR *updated)
 {
-	WIN_STATE	*win = (WIN_STATE *)WindowStateWork[0];
+	WIN_STATE	*window = (WIN_STATE *)WindowStateWork[0];
 	FIELD_STATE *state = FieldStateWork;
 	Sint32		 force = 0;
 	Sint32		 range = STOP_RANGE;
 	ACTOR		*other;
 	ACTOR		*leader;
 
-	if((updated->tmr & KID_CHASES_YOUNGER) != 0) {
+	if((updated->timer & KID_CHASES_YOUNGER) != 0) {
 		other = fdActorGet(ACTOR_TOLBI_YOUNGER_SISTER);
 	} else {
 		other = fdActorGet(ACTOR_TOLBI_OLDER_BROTHER);
@@ -276,9 +276,9 @@ static UNREAD_RESULT scTolbiUpdateKid(ACTOR *updated)
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-	if((Sint16)state->talk != 0 || win->mindRead != 0) {
+	if((Sint16)state->talk != 0 || window->mindRead != 0) {
 		range = TALK_STOP_RANGE;
-		if((updated->tmr & KID_TALKING) != 0) {
+		if((updated->timer & KID_TALKING) != 0) {
 			force = 1;
 		}
 	}
@@ -315,9 +315,9 @@ static void scTolbiGrowSprout(void)
 
 	sprout = fdActorGet(ACTOR_TOLBI_SPROUT);
 	if(sprout != NULL) {
-		sprout->collisionFlg = 0;
+		sprout->collisionFlags = 0;
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_TOLBI_SPROUT), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TOLBI_SPROUT), 0);
 	fdSetMetatileBehaviorAt(0, 544, 288, METATILE_BEHAVIOR_CLIMB);
 	gmFlagSet(FLAG_TOLBI_SPROUT_GROWN);
 }
@@ -372,7 +372,7 @@ static void scTolbiTalkToOlderBrother(void)
 	kid = fdActorGet(ACTOR_TOLBI_OLDER_BROTHER);
 	facing = kid->facing;
 	fdScriptStart();
-	kid->tmr |= KID_TALKING;
+	kid->timer |= KID_TALKING;
 	if(state->psynergy == 0) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
 			msg = MsgTolbiYayEasyRun;
@@ -396,7 +396,7 @@ static void scTolbiTalkToOlderBrother(void)
 	fdScriptShowMessageThenWait(ACTOR_TOLBI_OLDER_BROTHER, 0, 10);
 	kid->facing = facing;
 	sySynch(1);
-	kid->tmr &= KID_CHASES_YOUNGER;
+	kid->timer &= KID_CHASES_YOUNGER;
 	fdScriptEnd();
 }
 
@@ -415,7 +415,7 @@ static void scTolbiTalkToYoungerSister(void)
 	kid = fdActorGet(ACTOR_TOLBI_YOUNGER_SISTER);
 	facing = kid->facing;
 	fdScriptStart();
-	kid->tmr |= KID_TALKING;
+	kid->timer |= KID_TALKING;
 	if(state->psynergy == 0) {
 		if(gmFlagGet(FLAG_COLOSSO_OVER) != 0) {
 			msg = MsgTolbiHaHaHa;
@@ -439,7 +439,7 @@ static void scTolbiTalkToYoungerSister(void)
 	fdScriptShowMessageThenWait(ACTOR_TOLBI_YOUNGER_SISTER, 0, 10);
 	kid->facing = facing;
 	sySynch(1);
-	kid->tmr &= KID_CHASES_YOUNGER;
+	kid->timer &= KID_CHASES_YOUNGER;
 	fdScriptEnd();
 }
 
@@ -579,15 +579,15 @@ static void scTolbiEnterDoor(void)
 	for(actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
 		ACTOR *actor = fdActorGet(actorId);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 	door = state->stepCue - 1;
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(
 		TolbiDoors[door].steps, TolbiDoors[door].x, TolbiDoors[door].y);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	if(door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
@@ -606,13 +606,13 @@ static void scTolbiEnterDoor(void)
    was born. */
 static void scTolbiCopyLeaderPriority(ACTOR *updated)
 {
-	Sint32 pri;
+	Sint32 priority;
 
 	if(updated != NULL) {
-		pri = fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
-		updated->priFlg = 0;
-		updated->spr->image.pri = pri;
-		updated->spr->shadow.pri = pri;
+		priority = fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority;
+		updated->priorityFlags = 0;
+		updated->sprite->image.priority = priority;
+		updated->sprite->shadow.priority = priority;
 	}
 }
 
@@ -632,12 +632,12 @@ Sint32 scInit(Sint32 unused)
 	fdActorSetScript(ACTOR_TOLBI_OLDER_BROTHER, TolbiOlderBrotherRun);
 	actor = fdActorGet(ACTOR_TOLBI_OLDER_BROTHER);
 	kidUpdate = (void (*)(ACTOR *))scTolbiUpdateKid;
-	actor->tmr = KID_CHASES_YOUNGER;
+	actor->timer = KID_CHASES_YOUNGER;
 	actor->update = kidUpdate;
 	fdActorSetPos(ACTOR_TOLBI_YOUNGER_SISTER, 368, 320);
 	fdActorSetScript(ACTOR_TOLBI_YOUNGER_SISTER, TolbiYoungerSisterRun);
 	actor = fdActorGet(ACTOR_TOLBI_YOUNGER_SISTER);
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->update = kidUpdate;
 	fdActorGet(ACTOR_TOLBI_OLD_MAN)->update = scTolbiCopyLeaderPriority;
 
@@ -745,8 +745,8 @@ static void scTolbiMeetSearchingSoldiers(void)
 	   side. */
 	fdActorSetPos(ACTOR_TOLBI_SOLDIER_A, 72, 208);
 	fdActorSetPos(ACTOR_TOLBI_SOLDIER_B, 56, 208);
-	fdActorSetSprColById(ACTOR_TOLBI_MISSING_PERSON, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_TOLBI_MISSING_PERSON), 0);
+	fdActorSetSpriteColorById(ACTOR_TOLBI_MISSING_PERSON, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TOLBI_MISSING_PERSON), 0);
 	fdActorSetPos(ACTOR_TOLBI_MISSING_PERSON, 95, 40);
 	fdActorWalkTo(ACTOR_TOLBI_SOLDIER_A, 72, 248);
 	fdActorWalkTo(ACTOR_TOLBI_SOLDIER_B, 56, 248);
@@ -849,9 +849,9 @@ static void scTolbiFreezePuddle(void)
 {
 	ACTOR *puddle = fdActorGet(ACTOR_TOLBI_PUDDLE);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		puddle->motionFlg = 0;
+		fdActorSetSpriteFlags(puddle, 0);
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->motionFlags = 0;
 	}
 	fdActorSetAnimation(ACTOR_TOLBI_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 	fdMapGridCopyMetatileAttributes(36, 16, 1, 1, 34, 16);

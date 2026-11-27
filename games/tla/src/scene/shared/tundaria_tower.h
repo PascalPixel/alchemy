@@ -18,8 +18,9 @@
 
 Sint32 scMapMetatileSetAttributes(
 	Uint32 layer, Sint32 x, Sint32 z, Sint32 value);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 /* Stops the leader where it stands (fdLeaderStopMoving, through the overlay's
    own import row). */
 void syImportLeaderStopMoving(void);
@@ -27,9 +28,9 @@ void syImportLeaderStopMoving(void);
 void scRockSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 ticks);
 
 /* fdPaletteFadeSetSource, under the name the tower's fades call it by. */
-static inline void scTundariaTowerFadeFrom(Sint32 col, Sint32 mode)
+static inline void scTundariaTowerFadeFrom(Sint32 color, Sint32 mode)
 {
-	fdPaletteFadeSetSource(col, mode);
+	fdPaletteFadeSetSource(color, mode);
 }
 
 #endif

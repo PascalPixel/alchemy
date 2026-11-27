@@ -118,7 +118,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 k;
 	Sint32				 total;
 	ACTOR				*src;
@@ -163,14 +163,14 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	src = btObjectGetStub(state->args->user)->actor;
 	height = toFIXED(4);
 	EFFECT_FOR_EACH_TARGET(k, state->args) {
-		ACTOR *tgt = btObjectGetStub(state->args->tgts[k])->actor;
+		ACTOR *target = btObjectGetStub(state->args->targets[k])->actor;
 
 		for(i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
 			PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
 			SET_POSITION(shot, src->x.fixed, height, src->z.fixed);
-			SET_VELOCITY(shot, (tgt->x.fixed - src->x.fixed) >> 4, toFIXED(4),
-				(tgt->z.fixed - src->z.fixed) >> 4);
+			SET_VELOCITY(shot, (target->x.fixed - src->x.fixed) >> 4,
+				toFIXED(4), (target->z.fixed - src->z.fixed) >> 4);
 			shot->variant = 0;
 		}
 	}
@@ -206,27 +206,27 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	if(LOBBED_SHELLS_SHATTER(mode) == 0)
-		total = state->args->tgtCnt * LOBBED_SHELLS_TARGET_TICKS +
+		total = state->args->targetCount * LOBBED_SHELLS_TARGET_TICKS +
 			LOBBED_SHELLS_SMOKE_END_TICKS;
 	else
-		total = state->args->tgtCnt * LOBBED_SHELLS_TARGET_TICKS +
+		total = state->args->targetCount * LOBBED_SHELLS_TARGET_TICKS +
 			LOBBED_SHELLS_SHARDS_END_TICKS;
-	sySndPlayStub(SE_CURSE);
+	sySoundPlayStub(SE_CURSE);
 
-	for(frm = 0; frm != total; frm++) {
+	for(frame = 0; frame != total; frame++) {
 		PARTICLE *burst;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		k = 0;
-		if(state->args->tgtCnt != 0) {
+		if(state->args->targetCount != 0) {
 			do {
-				if(frm >= k * LOBBED_SHELLS_TARGET_TICKS) {
+				if(frame >= k * LOBBED_SHELLS_TARGET_TICKS) {
 					PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS];
 
-					if(frm ==
+					if(frame ==
 						k * LOBBED_SHELLS_TARGET_TICKS +
 							LOBBED_SHELL_FLIGHT_TICKS) {
-						btEffectTintBattler(state->args->tgts[k],
+						btEffectTintBattler(state->args->targets[k],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
 						EFFECT_SHOW_DAMAGE(SE_IMPACT);
 					}
@@ -237,7 +237,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						do {
 						} while(0);
 						/* The shell tumbles as it flies. */
-						step = (frm - k * LOBBED_SHELLS_TARGET_TICKS) / 3;
+						step = (frame - k * LOBBED_SHELLS_TARGET_TICKS) / 3;
 						if(step > LOBBED_SHELL_PICTURES - 1)
 							step = LOBBED_SHELL_PICTURES - 1;
 						btProjectionPoint(shot, &pos);
@@ -261,7 +261,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								shot, 63, -toFIXED(1) / 2);
 						/* On the ground the shell stops and bursts. */
 						if(shot->y < 0) {
-							Sint32 cnt;
+							Sint32 count;
 							/* FAKEMATCH(temporary): records, a pointer to
 							 * LobbedShellsStyles for the one read; as
 							 * LOBBED_SHELLS_SHATTER(mode). */
@@ -271,13 +271,13 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							shot->y = 0;
 							shot->variant = 1;
 							if(records[mode << 1] == 0)
-								cnt = LOBBED_SHELLS_SMOKE_PUFFS;
+								count = LOBBED_SHELLS_SMOKE_PUFFS;
 							else
-								cnt = LOBBED_SHELLS_SHARDS;
+								count = LOBBED_SHELLS_SHARDS;
 							/* Each target's pieces take four groups of eight
 							   slots, room for four shells as The Lost Age's Mud
 							   lobs; a shell's 16 shards fill two. */
-							for(i = 0; i != cnt; i++) {
+							for(i = 0; i != count; i++) {
 								PARTICLE *burst;
 								burst = &LOBBED_SHELLS_BURSTS[(k << 2) *
 										groupSlots +
@@ -300,7 +300,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 				k++;
-			} while(k != state->args->tgtCnt);
+			} while(k != state->args->targetCount);
 		}
 		/* The bursts. */
 		for(i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++) {
@@ -326,7 +326,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(i & 1)
 						picture += 9;
 					flip = args->side;
-					draw[burst->velX > 0 ? flip ^ 1 : flip](canvas,
+					draw[burst->velocityX > 0 ? flip ^ 1 : flip](canvas,
 						state->sheet + LobbedShellsShardPictures[picture] +
 							LOBBED_SHELLS_SHARD_PICTURES,
 						pos.x - LobbedShellsShardWidths[picture] / 2,

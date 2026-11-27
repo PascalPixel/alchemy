@@ -13,7 +13,7 @@ void scFlameThrowerSendForward(Sint32 *pos, Sint32 speed, Sint32 offScreen)
 		scActorResetScriptedFor(actor, 2);
 		actor->update = scFlameUpdateForward;
 		if(offScreen)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }

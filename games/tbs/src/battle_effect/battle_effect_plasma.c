@@ -26,8 +26,8 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 	void				*canvas;
 	Sint32				 i;
 	Uint8				*motes;
-	Sint32				 cnt;
-	Sint32				 frm;
+	Sint32				 count;
+	Sint32				 frame;
 	Sint32				 k;
 	Sint32				 start;
 	PARTICLE			*spark;
@@ -57,42 +57,42 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 		PARTICLES[k].variant = 0;
 	sparks = PARTICLES;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	cnt = PlasmaCounts[state->args->variant];
+	count = PlasmaCounts[state->args->variant];
 
 	/* Seven ticks a pillar and 48 more: after the last strike, 49 ticks at
 	   the least, time for its sparks (41 ticks at the most) to die out. */
-	for(frm = 0; frm != cnt * 7 + 48; frm++) {
-		if(state->args->variant == EFFECT_VARIANT_STRONGEST && frm <= 63) {
+	for(frame = 0; frame != count * 7 + 48; frame++) {
+		if(state->args->variant == EFFECT_VARIANT_STRONGEST && frame <= 63) {
 			BATTLE_CAMERA *camera = BattleCameraWork;
 			Sint32		   speed;
 
 			/* A 256th of a turn a tick, slowing from tick 56. */
-			if(frm <= 55)
+			if(frame <= 55)
 				speed = TRIG_TURN / 256;
 			else
-				speed = TRIG_TURN / 256 - (frm - 56) * 8;
+				speed = TRIG_TURN / 256 - (frame - 56) * 8;
 			if(state->args->side == EFFECT_SIDE_PARTY)
 				camera->yaw -= speed;
 			else
 				camera->yaw += speed;
 		}
-		if(frm == 32)
+		if(frame == 32)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
 		/* Each pillar strikes with a flash. */
-		for(i = 0; i != cnt; i++) {
+		for(i = 0; i != count; i++) {
 			start = i * PLASMA_SPACING;
-			if(frm == start) {
-				sySndPlayStub(SE_HEAVY_IMPACT);
+			if(frame == start) {
+				sySoundPlayStub(SE_HEAVY_IMPACT);
 				syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
 			}
-			if(frm >= start && frm < start + 9) {
-				if(frm >= start + 1 && frm < start + 2)
+			if(frame >= start && frame < start + 9) {
+				if(frame >= start + 1 && frame < start + 2)
 					draw[0](canvas, state->sheet,
 						PLASMA_COLUMN_X(state->args->side, i) -
 							LIGHTNING_PILLAR_WIDTH / 2,
 						0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
-				if(frm >= start + 2 && frm < start + 4)
+				if(frame >= start + 2 && frame < start + 4)
 					draw[0](canvas, state->sheet + PLASMA_SECOND_PICTURE,
 						PLASMA_COLUMN_X(state->args->side, i) -
 							LIGHTNING_PILLAR_WIDTH / 2,
@@ -100,23 +100,24 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 
 				/* Sparks fly up from the pillar's foot, and the screen
 				   shakes. */
-				if(frm == start + 2) {
+				if(frame == start + 2) {
 					Sint32 spawned = 0;
 
 					for(k = 0; k != PLASMA_SPARK_COUNT; k++) {
 						spark = &sparks[k];
 						if(spark->variant == 0) {
 							Sint32 speed;
-							Sint32 ang;
+							Sint32 angle;
 
 							speed = (syRandom() & 0x3ff) + 32;
-							ang = (syRandom() & 0x7fff) - DEGtoANG(90);
+							angle = (syRandom() & 0x7fff) - DEGtoANG(90);
 
 							spark->x =
 								toFIXED(PLASMA_COLUMN_X(state->args->side, i));
 							spark->y = toFIXED(104);
-							spark->velX = (sySin(ang) * speed) >> 7;
-							spark->velY = -((syCos(ang) * speed) << 1) >> 7;
+							spark->velocityX = (sySin(angle) * speed) >> 7;
+							spark->velocityY =
+								-((syCos(angle) * speed) << 1) >> 7;
 							spark->variant = (syRandom() & 7) + 32;
 							spawned++;
 							if(spawned ==
@@ -125,16 +126,16 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 								break;
 						}
 					}
-					state->shakeFrm =
+					state->shakeFrame =
 						PlasmaSparks[state->args->variant][PLASMA_SHAKE_TICKS];
 				}
 			}
 			/* The targets recoil. */
-			if(frm == start + 4) {
+			if(frame == start + 4) {
 				EFFECT_FOR_EACH_TARGET(k, state->args) {
 					btMotionApplyKnockbackStub(
-						state->args->tgts[k], KNOCKBACK_HOP);
-					btEffectTintBattler(state->args->tgts[k],
+						state->args->targets[k], KNOCKBACK_HOP);
+					btEffectTintBattler(state->args->targets[k],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
 				}
 			}
@@ -147,7 +148,7 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 				spark->variant--;
 				btParticleAdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
 				if(spark->y > toFIXED(104)) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else {
 					Sint32 x = FIXEDtoINT(spark->x);
 					Sint32 y;
@@ -209,7 +210,7 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*motes;
 	Sint32				 originX;
 	Sint32				 originY;
@@ -262,27 +263,27 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		i++) {
 		for(j = 0; j != SPARK_GROUPS_FLASHES; j++) {
 			Sint32 radius;
-			Sint32 ang;
+			Sint32 angle;
 
 			point = &state->particles[i * SPARK_GROUPS_FLASHES + j];
 			radius = j * 2;
-			ang = syRandom() & TRIG_ANGLE_MASK;
-			point->x = sySin(ang) * radius;
-			point->y = -(syCos(ang) * radius);
+			angle = syRandom() & TRIG_ANGLE_MASK;
+			point->x = sySin(angle) * radius;
+			point->y = -(syCos(angle) * radius);
 			point->variant = j / 2 + SPARK_GROUPS_FLASH_LIFE;
 		}
 		for(j = 0;
 			j != SparkGroupsShapes[state->args->variant][SPARK_GROUPS_SPARKS];
 			j++) {
 			Sint32 speed;
-			Sint32 ang;
+			Sint32 angle;
 
 			spark = &sparks[i *
 						SparkGroupsShapes[state->args->variant]
 										 [SPARK_GROUPS_SPARKS]] +
 				j;
 			speed = (syRandom() & 0x3ff) + 32;
-			ang = syRandom() & TRIG_ANGLE_MASK;
+			angle = syRandom() & TRIG_ANGLE_MASK;
 			if(state->args->side == EFFECT_SIDE_PARTY)
 				spark->x = INTtoFIXED(originX -
 					SparkGroupsShapes[state->args->variant]
@@ -294,39 +295,39 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 									 [SPARK_GROUPS_OFFSET + i] -
 					SPARK_GROUPS_BURST_REACH);
 			spark->y = toFIXED(originY);
-			spark->velX = (sySin(ang) * speed) >> 6;
-			spark->velY = -((syCos(ang) * speed) << 1) >> 6;
+			spark->velocityX = (sySin(angle) * speed) >> 6;
+			spark->velocityY = -((syCos(angle) * speed) << 1) >> 6;
 			spark->variant = (syRandom() & 7) + 32;
 		}
 	}
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm !=
+	for(frame = 0; frame !=
 		SparkGroupsShapes[state->args->variant][SPARK_GROUPS_BURSTS] *
 				SPARK_GROUPS_SPACING +
 			56;
-		frm++) {
+		frame++) {
 		BATTLE_CAMERA *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 
 		/* The strongest variant turns the camera. */
-		if(state->args->variant == EFFECT_VARIANT_STRONGEST && frm <= 51) {
+		if(state->args->variant == EFFECT_VARIANT_STRONGEST && frame <= 51) {
 			if(state->args->side == EFFECT_SIDE_ENEMIES)
 				camera->yaw += TRIG_TURN / 256;
 			else
 				camera->yaw -= TRIG_TURN / 256;
 		}
 		/* Severe Blow's flash. */
-		if(state->args->variant == SPARK_GROUPS_SEVERE_BLOW && frm == 4)
+		if(state->args->variant == SPARK_GROUPS_SEVERE_BLOW && frame == 4)
 			syWordsFill(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		if(mode == SPARK_GROUPS_DYNAMITE || mode == SPARK_GROUPS_RISING) {
-			if(frm == 2)
+			if(frame == 2)
 				EFFECT_SHOW_DAMAGE(SE_CRASH);
 		} else {
-			if(frm == 2)
-				sySndPlayStub(SE_CRASH);
-			if(frm == 24)
+			if(frame == 2)
+				sySoundPlayStub(SE_CRASH);
+			if(frame == 24)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 
@@ -336,9 +337,9 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			i != SparkGroupsShapes[state->args->variant][SPARK_GROUPS_BURSTS];
 			i++) {
 			start = i * SPARK_GROUPS_SPACING;
-			if(frm == start)
-				state->shakeFrm = 12;
-			if(frm >= start && frm < start + 2) {
+			if(frame == start)
+				state->shakeFrame = 12;
+			if(frame >= start && frame < start + 2) {
 				if(state->args->side == EFFECT_SIDE_PARTY)
 					draw[0](canvas, state->sheet,
 						originX -
@@ -356,7 +357,7 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
 						FLASH_BURST_HEIGHT);
 			}
-			if(frm >= start) {
+			if(frame >= start) {
 				for(j = 0; j != SPARK_GROUPS_RING; j++) {
 					Sint32 x;
 					Sint32 y;
@@ -389,7 +390,7 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			/* The sparks fly and fall (or rise, for SPARK_GROUPS_RISING). */
-			if(frm > start + 5) {
+			if(frame > start + 5) {
 				FIXED gravity;
 
 				if(mode == SPARK_GROUPS_RISING)
@@ -408,7 +409,7 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						btParticleAdvanceWithGravity2D(spark, 60, gravity);
 						spark->variant--;
 						if(spark->y > toFIXED(108)) {
-							spark->velY = -spark->velY / 2;
+							spark->velocityY = -spark->velocityY / 2;
 						} else if(spark->x >= 0 && spark->x < toFIXED(127) &&
 							spark->y >= 0) {
 							Sint16 x = FIXEDtoINT(spark->x);
@@ -422,11 +423,11 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			EFFECT_FOR_EACH_TARGET(j, state->args) {
-				if(frm == start + 6) {
-					btEffectTintBattler(state->args->tgts[j],
+				if(frame == start + 6) {
+					btEffectTintBattler(state->args->targets[j],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 10);
 					btMotionApplyKnockbackStub(
-						state->args->tgts[j], KNOCKBACK_HURL);
+						state->args->targets[j], KNOCKBACK_HURL);
 				}
 			}
 		}

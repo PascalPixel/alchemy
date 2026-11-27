@@ -410,11 +410,11 @@ Sint32 scIzumoRoomsKushinadaAsksSusaNotToCome(void)
 		/* "Susa, please... Don't try to save me." */
 		fdScriptShowMessageAndWait(ACTOR_KUSHINADA, 0);
 	}
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkByById(MainRoutineStateWork.leaderActorId, 0, 16);
 	fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	fdScriptEnd();
 	return 0;
@@ -781,7 +781,7 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 	syFieldScriptWait(120);
 	fdActorSetSpeed(ACTOR_SUSA, 0.6);
 	fdActorSetSpeed(ACTOR_SUSA, 0.6);
-	fdActorGetById(ACTOR_SUSA)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_SUSA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	fdActorWalkTo(ACTOR_SUSA, 144, 648);
 	if(side == HEROES_FROM_THE_EAST) {
 		fdActorWalkToAndWait(ACTOR_SUSA, 88, 648);
@@ -803,12 +803,12 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		fdActorFaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
 		fdActorWalkToAndWait(ACTOR_SUSA, 56, 584);
-		fdActorGetById(ACTOR_WITNESS)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_WITNESS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_WITNESS, 88, 568);
 		fdScriptWait(1);
-		fdActorGetById(ACTOR_WITNESS)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_WITNESS)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirectionById(ACTOR_WITNESS, FACING_EAST, 0);
-		fdActorSetSprPriority(ACTOR_SUSA, 1);
+		fdActorSetSpritePriority(ACTOR_SUSA, 1);
 		fdActorWalkToAndWait(ACTOR_SUSA, 104, 568);
 		fdActorFaceActorById(MainRoutineStateWork.leaderActorId, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
@@ -818,11 +818,11 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		fdActorFaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
-		fdActorSetSprPriority(ACTOR_KRADEN, 1);
-		fdActorSetSprPriority(ACTOR_SUSA, 2);
+		fdActorSetSpritePriority(ACTOR_KRADEN, 1);
+		fdActorSetSpritePriority(ACTOR_SUSA, 2);
 		fdActorWalkToAndWaitById(ACTOR_SUSA, 120, 568);
-		fdActorSetSprPriority(ACTOR_SUSA, 3);
-		fdActorSetSprPriority(ACTOR_KRADEN, 3);
+		fdActorSetSpritePriority(ACTOR_SUSA, 3);
+		fdActorSetSpritePriority(ACTOR_KRADEN, 3);
 		fdActorWalkToAndWait(ACTOR_SUSA, 120, 536);
 		fdActorFaceActorById(MainRoutineStateWork.leaderActorId, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
@@ -856,12 +856,12 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		fdActorFaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
 		fdActorWalkToAndWait(ACTOR_SUSA, 232, 584);
-		fdActorGetById(ACTOR_WITNESS)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_WITNESS)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_WITNESS, 200, 568);
 		fdScriptWait(1);
-		fdActorGetById(ACTOR_WITNESS)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_WITNESS)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
-		fdActorSetSprPriority(ACTOR_SUSA, 1);
+		fdActorSetSpritePriority(ACTOR_SUSA, 1);
 		fdActorWalkToAndWait(ACTOR_SUSA, 184, 568);
 		fdActorFaceActorById(MainRoutineStateWork.leaderActorId, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
@@ -871,11 +871,11 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		fdActorFaceActorById(ACTOR_UZUME, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_SAVED_KUSHINADA, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_WITNESS, ACTOR_SUSA, 0);
-		fdActorSetSprPriority(ACTOR_SUSA, 2);
-		fdActorSetSprPriority(ACTOR_SHEBA, 1);
+		fdActorSetSpritePriority(ACTOR_SUSA, 2);
+		fdActorSetSpritePriority(ACTOR_SHEBA, 1);
 		fdActorWalkToAndWaitById(ACTOR_SUSA, 168, 568);
-		fdActorSetSprPriority(ACTOR_SUSA, 3);
-		fdActorSetSprPriority(ACTOR_SHEBA, 3);
+		fdActorSetSpritePriority(ACTOR_SUSA, 3);
+		fdActorSetSpritePriority(ACTOR_SHEBA, 3);
 		fdActorWalkToAndWait(ACTOR_SUSA, 168, 536);
 		fdActorFaceActorById(MainRoutineStateWork.leaderActorId, ACTOR_SUSA, 0);
 		fdActorFaceActorById(ACTOR_JENNA, ACTOR_SUSA, 0);
@@ -890,7 +890,7 @@ void scIzumoRoomsRecognizeTheHeroes(Sint32 side)
 		fdActorWalkToAndWait(ACTOR_WITNESS, 200, 648);
 		fdActorSetPos(ACTOR_WITNESS, 0, 0);
 	}
-	fdActorGetById(ACTOR_SUSA)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_SUSA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1315,9 +1315,9 @@ void scIzumoRoomsShowMove(void)
 {
 	fdPsynergyLoadResources(ABILITY_MOVE, 1);
 	fdPsynergySetupActorPair(ACTOR_UZUME, -1);
-	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->finishFunc =
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->finishCallback =
 		(void (*)(void))scIzumoRoomsFindNoMoveTarget;
-	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->aimAhead = 1;
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->aimAhead = 1;
 	fdPsynergyStartCast();
 	fdScriptWait(10);
 	fdPsynergyRunHandler(0);
@@ -1363,7 +1363,7 @@ void scIzumoRoomsGiveUzumeTheDoll(void)
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
 		fdActorGetById(ACTOR_UZUME), CASTER_LOOK_CYCLING_COLORS);
-	sySndPlay(SE_ASCEND);
+	sySoundPlay(SE_ASCEND);
 	fdScriptWait(60);
 	fdActorSetPos(ACTOR_COAL, 144, 520);
 	fdActorJump(ACTOR_COAL, 6, 0);
@@ -1434,7 +1434,7 @@ Sint32 scInit(void)
 	if(syGameFlagGet(FLAG_SERPENT_SLAIN) &&
 		!syGameFlagGet(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
 		MainRoutineStateWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH) {
-		fdScriptPlaySnd(MUS_IZUMO);
+		fdScriptPlaySound(MUS_IZUMO);
 		fdActorSetPos(ACTOR_WITNESS, 144, 568);
 		fdActorSetPos(ACTOR_SUSA, 0, 0);
 		fdActorSetPos(ACTOR_FIRST_DANCER, 0, 0);
@@ -1446,7 +1446,7 @@ Sint32 scInit(void)
 		syGameFlagGet(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
 		MainRoutineStateWork.entrance == IZUMO_ROOMS_FROM_IZUMO_NORTH &&
 		syGameFlagGet(FLAG_HEROES_JUST_RECOGNIZED)) {
-		fdScriptPlaySnd(MUS_IZUMO);
+		fdScriptPlaySound(MUS_IZUMO);
 		fdActorSetPos(ACTOR_FIRST_DANCER, 0, 0);
 		fdActorSetPos(ACTOR_SECOND_DANCER, 0, 0);
 		fdActorSetPos(ACTOR_WEST_VILLAGER, 0, 0);

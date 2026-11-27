@@ -28,17 +28,17 @@ void syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler)
 			/* The display interrupts also need their DISPSTAT enable */
 			Uint32 enable = DISPSTAT_VBLANK_INTR << irq;
 			Uint32 keep = ~enable;
-			Uint32 stat;
+			Uint32 status;
 
 			if(irq == IRQ_VCOUNT) {
 				enable |= DISPSTAT_VCOUNT_LINE(vcount);
 				/* The old line goes too. */
 				keep &= DISPSTAT_FLAGS;
 			}
-			stat = REG_DISPSTAT & keep;
+			status = REG_DISPSTAT & keep;
 			if(handler != 0)
-				stat |= enable;
-			REG_DISPSTAT = stat;
+				status |= enable;
+			REG_DISPSTAT = status;
 		}
 		if(handler != 0)
 			IrqHandlers[irq] = handler;
@@ -54,7 +54,7 @@ void syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler)
 void syWaitForVBlankInterrupt(void)
 {
 	Uint32 saved;
-	Uint8 *snd;
+	Uint8 *sound;
 
 	if(SoundVBlankStateWork.soundTestActive) {
 		VBlankDone &= ~1;
@@ -66,15 +66,15 @@ void syWaitForVBlankInterrupt(void)
 		VBlankDone &= ~1;
 		SoundVBlankStateWork.lastFrame = FrameCount;
 		SoundVBlankStateWork.updating = 1;
-		snd = SoundInfoPointer;
-		if(SOUND_INFO_BYTE(snd, transferCountdown) <= 1)
+		sound = SoundInfoPointer;
+		if(SOUND_INFO_BYTE(sound, transferCountdown) <= 1)
 			SoundVBlankStateWork.transferCountdown =
-				SOUND_INFO_BYTE(snd, transferPeriod);
+				SOUND_INFO_BYTE(sound, transferPeriod);
 		else
 			SoundVBlankStateWork.transferCountdown =
-				SOUND_INFO_BYTE(snd, transferCountdown) - 1;
+				SOUND_INFO_BYTE(sound, transferCountdown) - 1;
 		REG_IME = saved;
-		sySndUpdateBGMRampsStub();
+		sySoundUpdateBGMRampsStub();
 		if(SoundDriverEnterVBlankUpdate() == 0) {
 			void (*render)(Sint32) = IwramSoundRenderVBlank;
 
@@ -104,7 +104,7 @@ enum {
 #define syReset(entry) \
 	{ \
 		CartridgeResetMarker = CARTRIDGE_RESET_MARK; \
-		sySndSuspendDirectSndStub(); \
+		sySoundSuspendDirectSoundStub(); \
 		(entry) = CartStart; \
 		syIOWrite16(0, &REG_IME); \
 		ASM_CART_JUMP(entry); \
@@ -137,7 +137,7 @@ void sySynch(Sint32 ticks)
 		EventsRunning = 0;
 		if(OamCopyEnabled) {
 			syRenderBuildOAMList(
-				syHeapSlotAlloc(HEAP_SLOT_TICK_SCRATCH, OAM_SIZE));
+				syHeapSlotAllocate(HEAP_SLOT_TICK_SCRATCH, OAM_SIZE));
 		} else {
 			OamUsageWork.used = 0;
 			OamUsageWork.limit = OAM_SIZE / 4;
@@ -211,7 +211,7 @@ void sySynch(Sint32 ticks)
 		PlayTimeTicks++;
 		syInputUpdateKeyRepeatAndDirection();
 		if(SerialExchangeActive) {
-			sySerialPollStat();
+			sySerialPollStatus();
 			if(SerialStateWork.mode)
 				SerialStateWork.transferEnabled = 1;
 		}
@@ -263,33 +263,33 @@ void sySynch(Sint32 ticks)
 /* Restarts the key repeat delay, so held keys wait the full delay again. */
 void syInputResetKeyRepeat(void)
 {
-	PerWork.repeatTmr = INPUT_KEY_REPEAT_FIRST;
+	PerWork.repeatTimer = INPUT_KEY_REPEAT_FIRST;
 }
 
 /* Turns the keys the VBlank handler read into repeats, once a tick after
    VBlank. When the repeat timer has run out, the held keys repeat into
-   PerWork.repeat. PerWork.dir is the same keys with at most one D-pad
-   direction: of several held directions it keeps the one added last (prevDir
-   remembers it), and with all four it keeps none. Last, the keys newly held
-   since the previous tick go to pressed, and prevData takes held. */
+   PerWork.repeat. PerWork.direction is the same keys with at most one D-pad
+   direction: of several held directions it keeps the one added last
+   (prevDirection remembers it), and with all four it keeps none. Last, the keys
+   newly held since the previous tick go to pressed, and prevData takes held. */
 void syInputUpdateKeyRepeatAndDirection(void)
 {
 	Uint32 held;
 	Uint32 keys;
 	Uint32 axis = 0;
-	Uint32 directionCnt;
+	Uint32 directionCount;
 	Uint32 mask;
 	Sint32 delay;
 
 	held = PerWork.data;
-	delay = PerWork.repeatTmr;
+	delay = PerWork.repeatTimer;
 	if(delay <= 0) {
 		keys = held;
 		PerWork.repeat = held;
 		if(delay == 0)
-			PerWork.repeatTmr = INPUT_KEY_REPEAT_NEXT;
+			PerWork.repeatTimer = INPUT_KEY_REPEAT_NEXT;
 		else
-			PerWork.repeatTmr = INPUT_KEY_REPEAT_FIRST;
+			PerWork.repeatTimer = INPUT_KEY_REPEAT_FIRST;
 	} else {
 		keys = 0;
 		PerWork.repeat = 0;
@@ -297,66 +297,66 @@ void syInputUpdateKeyRepeatAndDirection(void)
 
 	if(keys != 0) {
 		/* Count the D-pad directions in the repeat */
-		directionCnt = 0;
+		directionCount = 0;
 		if(keys & KEY_UP)
-			directionCnt = 1;
+			directionCount = 1;
 		if(keys & KEY_DOWN)
-			directionCnt++;
+			directionCount++;
 		if(keys & KEY_LEFT)
-			directionCnt++;
+			directionCount++;
 		if(keys & KEY_RIGHT)
-			directionCnt++;
+			directionCount++;
 
-		PerWork.dir = keys;
-		switch(directionCnt) {
+		PerWork.direction = keys;
+		switch(directionCount) {
 		default:
-			PerWork.prevDir = KEYS_HORIZONTAL;
+			PerWork.prevDirection = KEYS_HORIZONTAL;
 			mask = KEY_WORD_BITS & ~KEYS_DPAD;
-			PerWork.dir &= mask;
+			PerWork.direction &= mask;
 			break;
 		case 0:
-			PerWork.prevDir = KEYS_HORIZONTAL;
+			PerWork.prevDirection = KEYS_HORIZONTAL;
 			break;
 		case 1:
-			PerWork.prevDir = keys & KEYS_DPAD;
+			PerWork.prevDirection = keys & KEYS_DPAD;
 			break;
 		case 2:
-			if((PerWork.prevDir & PerWork.dir) == 0)
-				PerWork.prevDir = KEYS_HORIZONTAL;
-			PerWork.dir &= PerWork.prevDir ^ KEY_WORD_BITS;
+			if((PerWork.prevDirection & PerWork.direction) == 0)
+				PerWork.prevDirection = KEYS_HORIZONTAL;
+			PerWork.direction &= PerWork.prevDirection ^ KEY_WORD_BITS;
 			break;
 		case 3:
-			if(PerWork.prevDir & KEYS_HORIZONTAL)
+			if(PerWork.prevDirection & KEYS_HORIZONTAL)
 				axis = KEYS_HORIZONTAL;
-			if(PerWork.prevDir & KEYS_VERTICAL)
+			if(PerWork.prevDirection & KEYS_VERTICAL)
 				axis = KEYS_VERTICAL;
 			mask = KEY_WORD_BITS ^ axis;
-			PerWork.prevDir = keys & mask;
-			PerWork.dir &= mask;
+			PerWork.prevDirection = keys & mask;
+			PerWork.direction &= mask;
 			break;
 		}
 	} else {
-		PerWork.dir = keys;
+		PerWork.direction = keys;
 	}
 
 	PerWork.push = held & ~PerWork.prevData;
 	syIOWrite16(held, &PerWork.prevData);
 }
 
-/* Copies 16 bytes from `src` to `dst` with one four-register load
+/* Copies 16 bytes from `src` to `dest` with one four-register load
    and store. */
-static __inline__ void Copy16Bytes(const void *src, volatile void *dst)
+static __inline__ void Copy16Bytes(const void *src, volatile void *dest)
 {
 	ASM_REGISTER(const void *srcReg, "r0") = src;
-	ASM_REGISTER(volatile void *dstReg, "r1") = dst;
-	ASM_COPY_WORDS_4(srcReg, dstReg);
+	ASM_REGISTER(volatile void *destReg, "r1") = dest;
+	ASM_COPY_WORDS_4(srcReg, destReg);
 }
 
 /* The VBlank interrupt handler, installed by syInit. */
 void syVBlankHandler(void)
 {
 	Uint32 keys;
-	Uint32 frmCnt;
+	Uint32 frameCount;
 	void (*hook)(void);
 
 	/* The display writes come first, while the blank lasts: OAM can be written
@@ -374,7 +374,7 @@ void syVBlankHandler(void)
 	if(TickRenderPending != 0) {
 		TickRenderPending = 0;
 		if(OamUsageWork.used != 0)
-			syDMAXCopy(RamHeapSlots->frmScratch, OAM,
+			syDMAXCopy(RamHeapSlots->frameScratch, OAM,
 				DMA_COPY_WORDS(0) + OamUsageWork.used, REG_DMA3);
 		Copy16Bytes(BgScrollWork, REG_BG0HOFS);
 		syIOWriteQueueFlushPending();
@@ -398,37 +398,37 @@ void syVBlankHandler(void)
 		input->pendingPush |= pressed;
 		input->data = keys;
 		if(keys == 0) {
-			input->repeatTmr = INPUT_KEY_REPEAT_FIRST;
+			input->repeatTimer = INPUT_KEY_REPEAT_FIRST;
 			input->repeat = keys;
 		} else if(input->data & (input->prevVblankData ^ KEY_WORD_BITS)) {
-			input->repeatTmr = -1;
+			input->repeatTimer = -1;
 			input->repeat = keys;
-		} else if(input->repeatTmr > 0) {
-			input->repeatTmr--;
+		} else if(input->repeatTimer > 0) {
+			input->repeatTimer--;
 		}
 	}
 	{
 		/* volatile: the tick loop waits on the count this interrupt
 		   advances. */
-		volatile Uint32					 *cnt;
-		volatile struct SoundVBlankState *snd;
+		volatile Uint32					 *count;
+		volatile struct SoundVBlankState *sound;
 
-		cnt = &FrameCount;
+		count = &FrameCount;
 		((volatile INPUT_STATE *)&PerWork)->prevVblankData = keys;
-		snd = &SoundVBlankStateWork;
-		frmCnt = *cnt;
-		if(snd->lastFrame != (Uint8)frmCnt && snd->updating == 0) {
-			snd->transferCountdown =
+		sound = &SoundVBlankStateWork;
+		frameCount = *count;
+		if(sound->lastFrame != (Uint8)frameCount && sound->updating == 0) {
+			sound->transferCountdown =
 				SOUND_INFO_BYTE(SoundInfoPointer, transferCountdown);
-			sySndUpdateBGMRampsStub();
+			sySoundUpdateBGMRampsStub();
 			if(SoundDriverEnterVBlankUpdate() == 0) {
 				void (*render)(Sint32) = IwramSoundRenderVBlank;
 
 				render(8);
 			}
-			snd->lastFrame = frmCnt;
+			sound->lastFrame = frameCount;
 		}
-		*cnt = frmCnt + 1;
+		*count = frameCount + 1;
 	}
 	syIOWrite32(TickFrames + 1, &TickFrames);
 	VBlankDone = 1;
@@ -440,7 +440,7 @@ void syVBlankHandler(void)
    SoundReverbCode) into IWRAM, The Lost Age keeps only the range check and
    returns 0, so its callers (the battle engine, the lobby, the sound test and
    the debug menu) change nothing. */
-Sint32 sySndLoadReverbCode(Sint32 code)
+Sint32 sySoundLoadReverbCode(Sint32 code)
 {
 	if((Uint32)code > SOUND_REVERB_CODE_COUNT - 1)
 		code = 0;
@@ -448,12 +448,12 @@ Sint32 sySndLoadReverbCode(Sint32 code)
 }
 
 /* Empty: nothing calls it or its neighbour. */
-UNUSED void sySndReservedNoOperationA(void)
+UNUSED void sySoundReservedNoOperationA(void)
 {
 }
 
-/* Empty, as sySndReservedNoOperationA. */
-UNUSED void sySndReservedNoOperationB(void)
+/* Empty, as sySoundReservedNoOperationA. */
+UNUSED void sySoundReservedNoOperationB(void)
 {
 }
 

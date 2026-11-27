@@ -1,7 +1,7 @@
 /* The colour tables of four more SpriteColorModes, 256 bytes each, a pixel's
    colour number to the one it is drawn in; they follow SpriteColorTables' five,
    and fdRenderDecodePicture reads them as its tables 6 to 9. The grey one also
-   recolours the top of a command icon (fdSprColRemapPixels). */
+   recolours the top of a command icon (fdSpriteColorRemapPixels). */
 
 #include "field/field.h"
 

@@ -8,15 +8,15 @@
    README.md in this folder gives the words, prefixes and spellings the parts
    use. Where to start:
 
-	 Sprites         field_sprite_draw.c: fdSprComposePicture,
-					 fdRenderPlaceProjectedSpr; field_sprite_animation.c:
-					 fdSprCreate, fdSprStartAnimation
+	 Sprites         field_sprite_draw.c: fdSpriteComposePicture,
+					 fdRenderPlaceProjectedSprite; field_sprite_animation.c:
+					 fdSpriteCreate, fdSpriteStartAnimation
 	 Actors          field_actors.c: fdActorCreate, fdActorSystemInit;
 					 field_actor_motion.c: fdActorUpdateAllOnField,
 					 fdActorSetMoveTarget
 	 Actor scripts   field_script_commands.c, the SC_ commands of
 					 actor_script.h
-	 The player      field_player_control.c: fdActorUpdatePlayerCtrl
+	 The player      field_player_control.c: fdActorUpdatePlayerControl
 	 Maps            field_map_grid.c: fdMapGridLoadMap,
 					 fdMapGridUpdateLayerScroll; field_world_map.c:
 					 fdWorldMapInitPerspective, fdWorldMapUpdateView

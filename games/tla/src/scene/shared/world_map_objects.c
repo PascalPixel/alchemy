@@ -38,7 +38,7 @@ UNUSED void scWorldMapSelectExitByX(
 	} else {
 		state->exit = exitAfter;
 	}
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 }
 
 /* Chooses a passage exit from the leader's north-south approach. */
@@ -56,7 +56,7 @@ void scWorldMapSelectExitByZ(Sint32 cue, Sint32 exitBefore, Sint32 exitAfter)
 	} else {
 		state->exit = exitAfter;
 	}
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 }
 
 extern Sint32 WorldMapPlacedActorScript[];
@@ -69,7 +69,7 @@ void scWorldMapUpdatePlacedActors(void)
 {
 	const WORLD_MAP_PLACE *placement = fdWorldMapPlacesGetTable();
 	ACTOR				  *leader = fdActorGetById(fdPartyGetLeaderActor());
-	Sint32				   leaderReach = leader->spr->scale * leader->radius;
+	Sint32				   leaderReach = leader->sprite->scale * leader->radius;
 	Uint32				   i;
 	FIXED				   left, right, top, bottom;
 	ACTOR				 **slot;
@@ -89,7 +89,7 @@ void scWorldMapUpdatePlacedActors(void)
 		bottom = actor->z.fixed + toFIXED(300);
 	}
 	for(i = 0, slot = WorldMapPlacedActors;
-		i < MAP_SCREEN_PLACE_COUNT && placement->flg != 0;
+		i < MAP_SCREEN_PLACE_COUNT && placement->flags != 0;
 		i++, slot++, placement++) {
 		FIXED px, pz;
 
@@ -99,33 +99,33 @@ void scWorldMapUpdatePlacedActors(void)
 		px = toFIXED(placement->x);
 		pz = toFIXED(placement->z);
 		if(px > left && px < right && pz > top && pz < bottom) {
-			Sint32 flg = placement->shownFlg;
+			Sint32 flag = placement->shownFlag;
 			Sint32 shown;
 
-			if(flg == -1)
+			if(flag == -1)
 				shown = 1;
-			else if(flg & CONDITION_FLAG_SET)
-				shown = syGameFlagGet(flg);
+			else if(flag & CONDITION_FLAG_SET)
+				shown = syGameFlagGet(flag);
 			else
-				shown = syFlagIsClear(flg);
+				shown = syFlagIsClear(flag);
 			if(shown) {
 				if(actor == NULL) {
-					SPR *spr;
+					SPR *sprite;
 
-					actor = syImportActorCreate(placement->spr, px, 0, pz);
+					actor = syImportActorCreate(placement->sprite, px, 0, pz);
 					if(actor == NULL)
 						continue;
 					fdActorStartScript(actor, WorldMapPlacedActorScript);
-					actor->motionFlg = 0;
-					actor->collisionFlg = ACTOR_SOLID;
+					actor->motionFlags = 0;
+					actor->collisionFlags = ACTOR_SOLID;
 					actor->facing = placement->facing;
 					fdActorSelectAnimation(actor, 1);
-					spr = actor->spr;
-					spr->scale = syMulFX(spr->scale, toFIXED(3) / 4);
+					sprite = actor->sprite;
+					sprite->scale = syMulFX(sprite->scale, toFIXED(3) / 4);
 					*slot = actor;
 				}
 				if(MainRoutineStateWork.ownerOverride == 0) {
-					Sint32 scale = actor->spr->scale;
+					Sint32 scale = actor->sprite->scale;
 					FIXED  dx = ABS(actor->x.fixed - leader->x.fixed);
 
 					if(dx + ABS(actor->z.fixed - leader->z.fixed) <
@@ -186,7 +186,7 @@ UNUSED Sint32 scWorldMapGetMetatileIndex(FIXED x, FIXED z)
 Bool scWorldMapRiseFromAnchor(ACTOR *actor)
 {
 	ACTOR *parent = (ACTOR *)actor->watchedActor;
-	Sint32 step = ++actor->tmr;
+	Sint32 step = ++actor->timer;
 	FIXED  scale;
 
 	if(step >= SPARK_RISE_TICKS)
@@ -209,7 +209,7 @@ extern Uint32 WorldMapParticleScript[];
 void scWorldMapSpawnSparkPair(ACTOR *actor)
 {
 	ACTOR	  *spark;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	/* DEAD: a scale multiplied and dropped; the ROM keeps the call. */
 	syMathMulFX(actor->scaleX, toFIXED(3) / 2);
@@ -217,30 +217,30 @@ void scWorldMapSpawnSparkPair(ACTOR *actor)
 		SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(spark != NULL) {
 		spark->groundHeight = actor->groundHeight;
-		spr = spark->spr;
+		sprite = spark->sprite;
 		fdActorStartScript(spark, WorldMapSparkScript);
-		spark->motionFlg = 0;
-		spark->tmr = 0;
+		spark->motionFlags = 0;
+		spark->timer = 0;
 		spark->watchedActor = (union FIELD_OBJECT *)actor;
-		if(spr != NULL) {
-			fdSprStartAnimation(spr, 2);
-			spr->flg = 0;
-			spr->pri = 1;
+		if(sprite != NULL) {
+			fdSpriteStartAnimation(sprite, 2);
+			sprite->flags = 0;
+			sprite->priority = 1;
 		}
 	}
 	spark = scFieldActorCreate(
 		SPRITE_GOLDEN_RINGS, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(spark != NULL) {
 		spark->groundHeight = actor->groundHeight;
-		spr = spark->spr;
+		sprite = spark->sprite;
 		fdActorStartScript(spark, WorldMapSparkScript);
-		spark->motionFlg = 0;
-		spark->tmr = 0;
+		spark->motionFlags = 0;
+		spark->timer = 0;
 		spark->watchedActor = (union FIELD_OBJECT *)actor;
 		spark->layer = 1;
-		if(spr != NULL) {
-			fdSprStartAnimation(spr, 1);
-			spr->flg = 0;
+		if(sprite != NULL) {
+			fdSpriteStartAnimation(sprite, 1);
+			sprite->flags = 0;
 		}
 	}
 }
@@ -251,7 +251,7 @@ void scWorldMapSpawnParticle(ACTOR *actor)
 	Sint32	   pos[3];
 	FIXED	   spread;
 	ACTOR	  *particle;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	/* DEAD: a scale multiplied and dropped; the ROM keeps the call. */
 	syMulFX(actor->scaleX, toFIXED(3) / 2);
@@ -262,14 +262,14 @@ void scWorldMapSpawnParticle(ACTOR *actor)
 	particle = (scFieldActorCreate(SPRITE_GLINT, pos[0], pos[1], pos[2]));
 	if(particle != NULL) {
 		particle->groundHeight = actor->groundHeight;
-		spr = particle->spr;
+		sprite = particle->sprite;
 		fdActorStartScript(particle, WorldMapParticleScript);
-		fdSprStartAnimation(spr, 2);
+		fdSpriteStartAnimation(sprite, 2);
 		particle->gravity = toFIXED(1) / 128;
 		particle->scaleX = toFIXED(4) / 5;
 		particle->scaleY = toFIXED(4) / 5;
-		if(spr != NULL)
-			spr->flg = 0;
+		if(sprite != NULL)
+			sprite->flags = 0;
 	}
 }
 

@@ -32,11 +32,11 @@
    mnTextSetCanvasPixel masks one pixel out of. */
 #define PIXELS_4BPP_HALFWORD(color) ((color) * 0x1111)
 
-/* Sets one pixel in the column-major text canvas. winHeight includes the two
-   border rows; doubledPixelRow is twice the row within a tile. repeatedCol
+/* Sets one pixel in the column-major text canvas. windowHeight includes the two
+   border rows; doubledPixelRow is twice the row within a tile. repeatedColor
    holds the colour index in all four nibbles. */
-static __inline__ void mnTextSetCanvasPixel(Uint32 winHeight, Uint32 x,
-	Uint32 tileY, Uint32 doubledPixelRow, Uint8 *canvas, Uint32 repeatedCol)
+static __inline__ void mnTextSetCanvasPixel(Uint32 windowHeight, Uint32 x,
+	Uint32 tileY, Uint32 doubledPixelRow, Uint8 *canvas, Uint32 repeatedColor)
 {
 	Uint16 *pixelHalfword;
 	Uint32	pixelMask;
@@ -45,10 +45,11 @@ static __inline__ void mnTextSetCanvasPixel(Uint32 winHeight, Uint32 x,
 	   row is two halfwords of four pixels, the leftmost in the low nibble. */
 	pixelHalfword =
 		(Uint16 *)(((Uint32)canvas +
-					   (((x >> 3) * (winHeight - 2) + tileY) << 5)) |
+					   (((x >> 3) * (windowHeight - 2) + tileY) << 5)) |
 			((doubledPixelRow | ((x & 7) >> 2)) << 1));
 	pixelMask = 15 << ((x & 3) << 2);
-	*pixelHalfword = (*pixelHalfword & ~pixelMask) | (pixelMask & repeatedCol);
+	*pixelHalfword =
+		(*pixelHalfword & ~pixelMask) | (pixelMask & repeatedColor);
 }
 
 /* Draws one character into a window's text canvas with its top-left corner at
@@ -63,28 +64,28 @@ static __inline__ void mnTextSetCanvasPixel(Uint32 winHeight, Uint32 x,
    glyph itself in colour 1. Kana marks (TEXT_MARK_VOICED and
    TEXT_MARK_SEMIVOICED) sit over the previous character and advance by 0. */
 Sint32 mnGlyphDrawArm(
-	WINDOW *win, Uint32 character, Uint32 x, Uint32 y, const Uint8 *font)
+	WINDOW *window, Uint32 character, Uint32 x, Uint32 y, const Uint8 *font)
 {
 	const Uint16 *glyphRows;
 	Uint32		  glyphWidth;
 	Uint32		  outlinePass;
 	Uint32		  advance;
-	Uint32		  winHeight;
+	Uint32		  windowHeight;
 	Uint32		  row;
 	Uint32		  nextRow;
 	Uint32		  column;
 #if !GLYPH_DRAW_UNUSED_STACK_ARRAY_REMOVED
 	/* Unused: sixteen words nothing reads or writes. */
-	UNUSED Uint32 unusedStackFrm[16];
+	UNUSED Uint32 unusedStackFrame[16];
 #endif
 
-	winHeight = win->height;
+	windowHeight = window->height;
 	/* character - TEXT_MARK_VOICED <= 1, unsigned, is either kana mark. */
 	if(character <= TEXT_LAST_FONT_CODE ||
 		(font != NULL && character - TEXT_MARK_VOICED <= 1)) {
 		if(font != NULL) {
 			const Uint8 *src;
-			Uint32		 col;
+			Uint32		 color;
 			Uint32		 bits;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 			Uint32 fontWidth;
@@ -93,7 +94,7 @@ Sint32 mnGlyphDrawArm(
 			   leftmost pixel, in colour 1. A character is drawn a pixel in and
 			   advances 8; a kana mark goes 2 further left and a row up, and
 			   advances 2. */
-			col = PIXELS_4BPP_HALFWORD(1);
+			color = PIXELS_4BPP_HALFWORD(1);
 			fontWidth = 8;
 			x++;
 			if(character - TEXT_MARK_VOICED <= 1) {
@@ -121,8 +122,8 @@ Sint32 mnGlyphDrawArm(
 					rowLine = ((y + row) & 7) << 1;
 					do {
 						if(bits & 1)
-							mnTextSetCanvasPixel(winHeight, x + column, tileY,
-								rowLine, vram, col);
+							mnTextSetCanvasPixel(windowHeight, x + column,
+								tileY, rowLine, vram, color);
 						column++;
 						bits >>= 1;
 					} while(bits != 0);
@@ -133,16 +134,16 @@ Sint32 mnGlyphDrawArm(
 				bits = *src++;
 			}
 #else
-			Uint32 foregroundCol;
-			Uint32 secondaryCol;
+			Uint32 foregroundColor;
+			Uint32 secondaryColor;
 			Uint32 fontWidth;
 
 			/* The 8x8 font is window tiles of 4bpp pixels: a pixel of value 1
 			   is drawn in colour 1, one of 3 in colour 3, any other is left
 			   (bits & 0xd is 1 only for 1 and 3). */
 			src = font + character * TILE_SIZE_4BPP;
-			foregroundCol = PIXELS_4BPP_HALFWORD(1);
-			secondaryCol = PIXELS_4BPP_HALFWORD(3);
+			foregroundColor = PIXELS_4BPP_HALFWORD(1);
+			secondaryColor = PIXELS_4BPP_HALFWORD(3);
 			row = 0;
 			fontWidth = FontGlyphWidths[character - FONT_FIRST_CODE];
 			if(y < TEXT_CANVAS_PIXEL_HEIGHT) {
@@ -163,12 +164,12 @@ Sint32 mnGlyphDrawArm(
 						else
 							bits = *src++;
 						if((bits & 0xd) == 1) {
-							col = secondaryCol;
+							color = secondaryColor;
 							if((bits & 0xf) == 1)
-								col = foregroundCol;
+								color = foregroundColor;
 							if(((x + column) >> 3) < DISPLAY_TILE_WIDTH)
-								mnTextSetCanvasPixel(winHeight, x + column,
-									tileY, rowLine, vram, col);
+								mnTextSetCanvasPixel(windowHeight, x + column,
+									tileY, rowLine, vram, color);
 						}
 						column++;
 						if(column > 7)
@@ -210,16 +211,16 @@ Sint32 mnGlyphDrawArm(
 
 	/* Draw the three outline offsets first, then the foreground pixels. */
 	for(outlinePass = 0; outlinePass <= 3; outlinePass++) {
-		Uint32		  col;
+		Uint32		  color;
 		Uint32		  bits;
 		Uint8		 *vram;
 		const Uint16 *nextGlyphRow;
 
 		if(outlinePass == 3)
-			col = PIXELS_4BPP_HALFWORD(1);
+			color = PIXELS_4BPP_HALFWORD(1);
 		else
-			col = PIXELS_4BPP_HALFWORD(5);
-		if(win->flg & WINDOW_FLAG_OUTLINED_TEXT) {
+			color = PIXELS_4BPP_HALFWORD(5);
+		if(window->flags & WINDOW_FLAG_OUTLINED_TEXT) {
 			if(outlinePass <= 1) {
 				if(outlinePass == 1)
 					x += 2;
@@ -247,8 +248,8 @@ Sint32 mnGlyphDrawArm(
 				rowLine = ((y + row) & 7) << 1;
 				while(1) {
 					if((Sint32)bits < 0)
-						mnTextSetCanvasPixel(
-							winHeight, x + column, tileY, rowLine, vram, col);
+						mnTextSetCanvasPixel(windowHeight, x + column, tileY,
+							rowLine, vram, color);
 					bits <<= 1;
 					if(bits == 0)
 						break;

@@ -24,7 +24,7 @@
    Abilities: Condemn. */
 void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	void				*canvas = RamHeapSlots->battleCanvas;
 	/* what the canvas is cleared to after each copy */
 	Sint32		 transferValue = 0;
@@ -37,7 +37,7 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 	Sint32		 pictureColumn;
 	Sint32		 pictureRow;
 	Uint8 *cells; /* the cell buffer, held across the reveal sheet's load */
-	Sint32 frm;
+	Sint32 frame;
 
 	btEffectStartTiledCanvas(BGCNT_WRAP);
 	REG_BG2PA = Q_8_8(1);
@@ -63,17 +63,17 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		swayCenter[0] = toFIXED(112);
 	swayCenter[1] = -toFIXED(32);
 
-	for(frm = 0; frm != CONDEMN_TICKS; frm++) {
+	for(frame = 0; frame != CONDEMN_TICKS; frame++) {
 		Sint32	spin;
 		Sint32	screenX;
 		Sint32	screenY;
 		Sint32	ripple;
-		Sint32	lineOfs;
-		Sint32	ang;
+		Sint32	lineOffset;
+		Sint32	angle;
 		Sint32	i;
 		Sint32 *scanline;
 
-		spin = frm * (TRIG_TURN / 128);
+		spin = frame * (TRIG_TURN / 128);
 		screenX = FIXEDtoINT(swayCenter[0]) +
 			FIXEDtoINT(sySin(spin) * CONDEMN_SWAY_X) + 48;
 		screenY = FIXEDtoINT(swayCenter[1]) +
@@ -81,7 +81,7 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 
 		/* The second pass, lower and further across, hidden for the tick of
 		   the jump. */
-		if(frm == 24) {
+		if(frame == 24) {
 			if(args->side == EFFECT_SIDE_PARTY)
 				swayCenter[0] = -toFIXED(32);
 			else
@@ -89,13 +89,13 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 			swayCenter[1] = toFIXED(24);
 			drawReaper = 0;
 		}
-		if(frm == 25) {
+		if(frame == 25) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			drawReaper = 1;
 		}
 		/* The last pass, on the first target. */
-		if(frm == 48) {
-			btEffectPosProjectScaledBattler(args->tgts[0], pos);
+		if(frame == 48) {
+			btEffectPosProjectScaledBattler(args->targets[0], pos);
 			if(args->side == EFFECT_SIDE_PARTY)
 				swayCenter[0] = INTtoFIXED(pos[0].x - 128);
 			else
@@ -103,7 +103,7 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 			swayCenter[1] = 0;
 			drawReaper = 0;
 		}
-		if(frm == 49) {
+		if(frame == 49) {
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			drawReaper = 1;
 		}
@@ -112,15 +112,15 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		   over its last eight ticks. */
 		scanline = state->bg2xLines;
 		ripple = 0;
-		if(frm <= 23) {
-			if(frm > 15) {
-				ripple = (frm * 2) - 32;
-				REG_BLDALPHA = EFFECT_BLEND_CANVAS(31 - frm);
+		if(frame <= 23) {
+			if(frame > 15) {
+				ripple = (frame * 2) - 32;
+				REG_BLDALPHA = EFFECT_BLEND_CANVAS(31 - frame);
 			}
-		} else if(frm <= 47) {
-			if(frm > 31) {
-				ripple = (frm * 2) - 64;
-				REG_BLDALPHA = EFFECT_BLEND_CANVAS(47 - frm);
+		} else if(frame <= 47) {
+			if(frame > 31) {
+				ripple = (frame * 2) - 64;
+				REG_BLDALPHA = EFFECT_BLEND_CANVAS(47 - frame);
 			}
 		}
 		if(ripple < 0)
@@ -129,11 +129,11 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		/* The reaper moves by scrolling the canvas line by line, not by where
 		   it is drawn. */
 		i = 0;
-		lineOfs = (6 - screenX) << 8;
-		ang = frm * (TRIG_TURN / 32);
+		lineOffset = (6 - screenX) << 8;
+		angle = frame * (TRIG_TURN / 32);
 		for(; i != DISPLAY_HEIGHT; i++) {
-			*scanline++ = lineOfs - CANVAS_WAVE_BG2X(sySin(ang) * ripple);
-			ang += TRIG_TURN / 32;
+			*scanline++ = lineOffset - CANVAS_WAVE_BG2X(sySin(angle) * ripple);
+			angle += TRIG_TURN / 32;
 		}
 
 		/* The reaper, then from the swing its swung pose and the crescent
@@ -153,13 +153,13 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 				/* FAKEMATCH(dead): side set again, never read. */
 				side = EFFECT_SIDE_ENEMIES;
 			}
-			if(frm < CONDEMN_SWING_TICK) {
+			if(frame < CONDEMN_SWING_TICK) {
 				draw[args->side](canvas, state->sheet,
 					CONDEMN_PICTURE_X(pictureColumn, 0),
 					CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
 					REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
 			} else {
-				if(frm <= CONDEMN_SWING_TICK + 3)
+				if(frame <= CONDEMN_SWING_TICK + 3)
 					draw[args->side](canvas, state->sheet,
 						CONDEMN_PICTURE_X(pictureColumn, 0),
 						CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
@@ -167,35 +167,36 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 				EFFECT_DRAW_PICTURE(draw[args->side], canvas, state->sheet,
 					REAPER_SHEET_SWUNG, CONDEMN_PICTURE_X(pictureColumn, 1),
 					CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
-				if(frm >= CONDEMN_SWING_TICK && frm <= CONDEMN_SWING_TICK + 1)
+				if(frame >= CONDEMN_SWING_TICK &&
+					frame <= CONDEMN_SWING_TICK + 1)
 					syWordsFillEntry(canvas, CANVAS_BYTES,
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-				if(frm >= CONDEMN_SWING_TICK + 2 &&
-					frm <= CONDEMN_SWING_TICK + 3)
+				if(frame >= CONDEMN_SWING_TICK + 2 &&
+					frame <= CONDEMN_SWING_TICK + 3)
 					EFFECT_DRAW_PICTURE(draw[args->side], canvas, state->sheet,
 						REAPER_SHEET_CRESCENT,
 						CONDEMN_PICTURE_X(pictureColumn, 2),
 						CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
-				if(frm >= CONDEMN_SWING_TICK + 4 &&
-					frm <= CONDEMN_SWING_TICK + 5)
+				if(frame >= CONDEMN_SWING_TICK + 4 &&
+					frame <= CONDEMN_SWING_TICK + 5)
 					EFFECT_DRAW_PICTURE(draw[args->side], canvas,
 						MapGridMetatileBuffer, RED_CRESCENT_FADE_A,
 						CONDEMN_PICTURE_X(pictureColumn, 3),
 						CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
-				if(frm >= CONDEMN_SWING_TICK + 6 &&
-					frm <= CONDEMN_SWING_TICK + 7)
+				if(frame >= CONDEMN_SWING_TICK + 6 &&
+					frame <= CONDEMN_SWING_TICK + 7)
 					EFFECT_DRAW_PICTURE(draw[args->side], canvas,
 						MapGridMetatileBuffer, RED_CRESCENT_FADE_B,
 						CONDEMN_PICTURE_X(pictureColumn, 4),
 						CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
-				if(frm >= CONDEMN_SWING_TICK + 8 &&
-					frm <= CONDEMN_SWING_TICK + 9)
+				if(frame >= CONDEMN_SWING_TICK + 8 &&
+					frame <= CONDEMN_SWING_TICK + 9)
 					EFFECT_DRAW_PICTURE(draw[args->side], canvas,
 						MapGridMetatileBuffer, RED_CRESCENT_FADE_C,
 						CONDEMN_PICTURE_X(pictureColumn, 5),
 						CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
-				if(frm >= CONDEMN_SWING_TICK + 10 &&
-					frm <= CONDEMN_SWING_TICK + 11)
+				if(frame >= CONDEMN_SWING_TICK + 10 &&
+					frame <= CONDEMN_SWING_TICK + 11)
 					EFFECT_DRAW_PICTURE(draw[args->side], canvas,
 						MapGridMetatileBuffer, RED_CRESCENT_FADE_D,
 						CONDEMN_PICTURE_X(pictureColumn, 6),
@@ -205,11 +206,11 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 
 		/* A sound as the scythe rises; on the swing the target is knocked back,
 		   the screen shakes and the results begin. */
-		if(frm == CONDEMN_SWING_TICK - 4)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == CONDEMN_SWING_TICK) {
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
-			state->shakeFrm = 8;
+		if(frame == CONDEMN_SWING_TICK - 4)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == CONDEMN_SWING_TICK) {
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_NUDGE);
+			state->shakeFrame = 8;
 			EFFECT_SHOW_DAMAGE(SE_CLATTER);
 		}
 		btCameraShake(8, 8);

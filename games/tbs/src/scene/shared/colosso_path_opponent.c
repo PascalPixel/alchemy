@@ -36,8 +36,8 @@ static void scColossoUpdatePathOpponent(void)
 		return;
 	}
 	if(recorder->mode == PATH_RECORDER_PLAY) {
-		x = state->path[(Sint16)recorder->pathIdx++];
-		z = state->path[(Sint16)recorder->pathIdx++];
+		x = state->path[(Sint16)recorder->pathIndex++];
+		z = state->path[(Sint16)recorder->pathIndex++];
 		if(x == 0 && z == 0) {
 			FIXED finishZ;
 			recorder->mode = PATH_RECORDER_FINISHED;
@@ -54,7 +54,7 @@ static void scColossoUpdatePathOpponent(void)
 				finishZ = state->gauge.finishZ - toFIXED(16);
 				itemActorId = &state->gauge.finishItemActorIdA;
 			}
-			actor->tmr = *itemActorId;
+			actor->timer = *itemActorId;
 			actor->acceleration = toFIXED(1) / 4;
 			actor->speedLimit = toFIXED(1);
 			syFieldActorSetMoveTargetFX(actor, x, 0, finishZ);
@@ -69,8 +69,8 @@ static void scColossoUpdatePathOpponent(void)
 		}
 		if(actor->x.fixed != x || actor->z.fixed != z) {
 			{
-				Uint16 ang = syAtan(z - actor->z.fixed, x - actor->x.fixed);
-				turn = (Sint16)(ang - actor->facing);
+				Uint16 angle = syAtan(z - actor->z.fixed, x - actor->x.fixed);
+				turn = (Sint16)(angle - actor->facing);
 			}
 			if(turn > FACING_STEP) {
 				turn = FACING_STEP;
@@ -93,13 +93,13 @@ static void scColossoUpdatePathOpponent(void)
 	} else if(recorder->mode == PATH_RECORDER_RECORD) {
 		x = actor->x.part[0].integer;
 		z = actor->z.part[0].integer;
-		state->path[(Sint16)recorder->pathIdx++] = x;
-		state->path[(Sint16)recorder->pathIdx++] = z;
-		if((Sint16)recorder->pathIdx == COLOSSO_PATH_HALFWORDS - 2) {
-			state->path[(Sint16)recorder->pathIdx++] = 0;
-			state->path[(Sint16)recorder->pathIdx] = 0;
+		state->path[(Sint16)recorder->pathIndex++] = x;
+		state->path[(Sint16)recorder->pathIndex++] = z;
+		if((Sint16)recorder->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {
+			state->path[(Sint16)recorder->pathIndex++] = 0;
+			state->path[(Sint16)recorder->pathIndex] = 0;
 			recorder->actorId = state->gauge.opponentActorId;
-			recorder->pathIdx = 0;
+			recorder->pathIndex = 0;
 			recorder->mode = PATH_RECORDER_PLAY;
 		}
 	}
@@ -133,8 +133,8 @@ typedef enum COLOSSO_GAUGE_TILE {
 static void scColossoDrawGauge(void)
 {
 	COLOSSO_GAUGE_STATE *gauge = (COLOSSO_GAUGE_STATE *)ColossoState;
-	Sint32				*dst = (Sint32 *)gauge;
-	COLOSSO_GAUGE_SPR	*entry = gauge->sprs;
+	Sint32				*dest = (Sint32 *)gauge;
+	COLOSSO_GAUGE_SPR	*entry = gauge->sprites;
 	Sint32				 tile;
 	Uint32				 segments;
 	Uint32				 i;
@@ -145,7 +145,7 @@ static void scColossoDrawGauge(void)
 	ACTOR				*actor;
 	Uint32				 shape;
 
-	tile = VramCacheEntries[gauge->vramBlock].ofs >> 5;
+	tile = VramCacheEntries[gauge->vramBlock].offset >> 5;
 	segments = gauge->segments;
 	if(gauge->hold != 0) {
 		gauge->level = 2;
@@ -159,7 +159,7 @@ static void scColossoDrawGauge(void)
 				(void *)&OBJ_PLTT_COLOR(GAUGE_PALETTE, 0),
 				DMA_COPY_HALFWORDS(16), REG_DMA3);
 			buf = syHeapCallAlternatePool(
-				syHeapAllocEWRAM, GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
+				syHeapAllocateEWRAM, GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
 			syFieldDecompressTaggedLZ(ColossoGaugeGraphics, buf);
 			syVRAMCacheLoad(
 				gauge->vramBlock, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, buf);
@@ -176,52 +176,52 @@ static void scColossoDrawGauge(void)
 	x = 104 - width;
 	/* shape holds each sprite's size in turn. */
 	shape = OBJ_SIZE_8X16;
-	*dst++ = 0;
-	*dst++ = OBJ_X(x) | y | shape;
-	*dst++ =
+	*dest++ = 0;
+	*dest++ = OBJ_X(x) | y | shape;
+	*dest++ =
 		(tile + GAUGE_TILE_END) | OBJ_PRIORITY(1) | OBJ_PALETTE(GAUGE_PALETTE);
-	syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+	syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 	for(i = 0; i < segments; i++) {
 		x = 96 - i * 16;
 		shape = OBJ_SIZE_16X16;
-		*dst++ = 0;
-		*dst++ = OBJ_X(x) | y | shape;
-		*dst++ = (tile + GAUGE_TILE_BAR) | OBJ_PRIORITY(1) |
+		*dest++ = 0;
+		*dest++ = OBJ_X(x) | y | shape;
+		*dest++ = (tile + GAUGE_TILE_BAR) | OBJ_PRIORITY(1) |
 			OBJ_PALETTE(GAUGE_PALETTE);
-		syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+		syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 	}
 	x = 112;
 	shape = OBJ_SIZE_8X16;
-	*dst++ = 0;
-	*dst++ = OBJ_X(x) | y | shape;
-	*dst++ = (tile + GAUGE_TILE_FINISH) | OBJ_PRIORITY(1) |
+	*dest++ = 0;
+	*dest++ = OBJ_X(x) | y | shape;
+	*dest++ = (tile + GAUGE_TILE_FINISH) | OBJ_PRIORITY(1) |
 		OBJ_PALETTE(GAUGE_PALETTE);
-	syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+	syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 	x = 120;
-	*dst++ = 0;
-	*dst++ = OBJ_X(x) | y | shape | OBJ_HFLIP;
-	*dst++ = (tile + GAUGE_TILE_FINISH) | OBJ_PRIORITY(1) |
+	*dest++ = 0;
+	*dest++ = OBJ_X(x) | y | shape | OBJ_HFLIP;
+	*dest++ = (tile + GAUGE_TILE_FINISH) | OBJ_PRIORITY(1) |
 		OBJ_PALETTE(GAUGE_PALETTE);
-	syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+	syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 	for(i = 0; i < segments; i++) {
 		x = 128 + i * 16;
 		shape = OBJ_SIZE_16X16;
-		*dst++ = 0;
-		*dst++ = y | OBJ_X(x) | shape | OBJ_HFLIP;
-		*dst++ = (tile + GAUGE_TILE_BAR) | OBJ_PRIORITY(1) |
+		*dest++ = 0;
+		*dest++ = y | OBJ_X(x) | shape | OBJ_HFLIP;
+		*dest++ = (tile + GAUGE_TILE_BAR) | OBJ_PRIORITY(1) |
 			OBJ_PALETTE(GAUGE_PALETTE);
-		syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+		syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 	}
 	x = width + 128;
 	shape = OBJ_SIZE_8X16;
-	*dst++ = 0;
+	*dest++ = 0;
 	y |= OBJ_X(x);
 	y |= shape;
 	y |= OBJ_HFLIP;
-	*dst++ = y;
-	*dst++ =
+	*dest++ = y;
+	*dest++ =
 		(tile + GAUGE_TILE_END) | OBJ_PRIORITY(1) | OBJ_PALETTE(GAUGE_PALETTE);
-	syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+	syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 
 	if((TickCount & 15) > 4) {
 		shape = OBJ_SIZE_16X16;
@@ -234,13 +234,13 @@ static void scColossoDrawGauge(void)
 					toFIXED(GAUGE_COURSE_PER_PIXEL)) +
 				gauge->level * 6 - 4;
 			y &= 255;
-			*dst++ = 0;
+			*dest++ = 0;
 			y |= OBJ_X(x);
 			y |= shape;
-			*dst++ = y;
-			*dst++ = (tile + GAUGE_TILE_OPPONENT_MARK) | OBJ_PRIORITY(1) |
+			*dest++ = y;
+			*dest++ = (tile + GAUGE_TILE_OPPONENT_MARK) | OBJ_PRIORITY(1) |
 				OBJ_PALETTE(GAUGE_PALETTE);
-			syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+			syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 		}
 		actor = fdActorLookup(gauge->playerActorId);
 		if(actor != NULL) {
@@ -251,13 +251,13 @@ static void scColossoDrawGauge(void)
 					toFIXED(GAUGE_COURSE_PER_PIXEL)) +
 				gauge->level * 6 - 4;
 			y &= 255;
-			*dst++ = 0;
+			*dest++ = 0;
 			y |= OBJ_X(x);
 			y |= shape;
-			*dst++ = y;
-			*dst++ = (tile + GAUGE_TILE_PLAYER_MARK) | OBJ_PRIORITY(1) |
+			*dest++ = y;
+			*dest++ = (tile + GAUGE_TILE_PLAYER_MARK) | OBJ_PRIORITY(1) |
 				OBJ_PALETTE(GAUGE_PALETTE);
-			syOAMAddSprAtDepth(entry++, OAM_DEPTH_FRONT);
+			syOAMAddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 		}
 	}
 }

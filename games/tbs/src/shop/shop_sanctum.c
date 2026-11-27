@@ -55,15 +55,16 @@ Sint32 mnSanctumNeedsService(Sint32 unitId, Sint32 serviceKind)
 Sint32 mnSanctumCountMembersInNeed(void)
 {
 	SHOP_STATE *shop = MenuState;
-	Sint32		eligibleCnt = 0;
+	Sint32		eligibleCount = 0;
 	Sint32		serviceKind = shop->action;
-	Sint32		memberIdx;
+	Sint32		memberIndex;
 
-	for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
-		if(mnSanctumNeedsService(shop->partyMemberIds[memberIdx], serviceKind))
-			eligibleCnt++;
+	for(memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+		if(mnSanctumNeedsService(
+			   shop->partyMemberIds[memberIndex], serviceKind))
+			eligibleCount++;
 	}
-	return eligibleCnt;
+	return eligibleCount;
 }
 
 /* Returns the current service's line that stands where msgId stands among
@@ -128,7 +129,7 @@ void mnSanctumShowKeeperMessageHidingCursor(Sint32 msgId)
 Sint32 mnSanctumRun(Sint32 keeperId)
 {
 	Sint32		serviceSelection = 0;
-	WINDOW	   *listWin = 0;
+	WINDOW	   *listWindow = 0;
 	SHOP_STATE *shop;
 	WINDOW_SPR *cursorAnchor;
 
@@ -137,24 +138,25 @@ Sint32 mnSanctumRun(Sint32 keeperId)
 	shop->action = serviceSelection;
 
 	{
-		Sint32 keeperAnmId =
-			(Uint16)(fdActorGetByIdStub(keeperId))->spr->entries[0]->anmId;
-		shop->keeperGraphics = keeperAnmId;
+		Sint32 keeperAnimationId = (Uint16)(fdActorGetByIdStub(keeperId))
+									   ->sprite->entries[0]
+									   ->animationId;
+		shop->keeperGraphics = keeperAnimationId;
 	}
 
 	/* The healer's portrait window; failing that an empty one off the left
 	   edge, and failing that one on screen with Ivan's portrait */
-	listWin = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
-	if(listWin == 0) {
-		listWin = mnWindowCreateStub(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
+	listWindow = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	if(listWindow == 0) {
+		listWindow = mnWindowCreateStub(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
 	}
-	if(listWin == 0) {
-		listWin = mnWindowCreateStub(0, 0, 5, 5, WINDOW_FLAG_INSTANT);
-		mnPortraitCreateStub(IVAN, 0, 0, listWin, -4, -4);
+	if(listWindow == 0) {
+		listWindow = mnWindowCreateStub(0, 0, 5, 5, WINDOW_FLAG_INSTANT);
+		mnPortraitCreateStub(IVAN, 0, 0, listWindow, -4, -4);
 	}
 
-	cursorAnchor = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, listWin, 0, 0);
+	cursorAnchor = mnWindowSpriteCreateStub(
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, listWindow, 0, 0);
 	cursorAnchor->motion = WINDOW_SPRITE_MOTION_STILL;
 	cursorAnchor->kind = WINDOW_SPRITE_PLAIN; /* the icon is the shop state's */
 	mnCursorSetPosImmediate(&shop->cursor, -32, 112);
@@ -162,7 +164,7 @@ Sint32 mnSanctumRun(Sint32 keeperId)
 	/* "Welcome, weary wanderers. What aid do you seek?" */
 	mnSanctumShowKeeperMessage(MsgSanctumWelcome);
 
-	shop->moneyWin = mnWindowCreateStub(
+	shop->moneyWindow = mnWindowCreateStub(
 		16, 11, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 
@@ -193,8 +195,8 @@ Sint32 mnSanctumRun(Sint32 keeperId)
 
 	/* "Visit us again anytime you need healing." */
 	mnSanctumShowKeeperMessage(MsgSanctumFarewell);
-	mnWindowCloseStub(shop->moneyWin, 2);
-	mnWindowCloseStub(listWin, 2);
+	mnWindowCloseStub(shop->moneyWindow, 2);
+	mnWindowCloseStub(listWindow, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -204,36 +206,36 @@ Sint32 mnSanctumRun(Sint32 keeperId)
 Sint32 mnSanctumRunPartyService(void)
 {
 	SHOP_STATE *shop = MenuState;
-	WINDOW	   *priceWin;
+	WINDOW	   *priceWindow;
 	Bool		redraw;
 	Sint32		serviceKind;
-	WINDOW	   *listWin;
-	Sint32		memberIdx;
+	WINDOW	   *listWindow;
+	Sint32		memberIndex;
 	Sint32		unitId;
 	Bool		chooseAgain;
 	Uint32		donation;
 	Sint32		msgBase;
 
-	priceWin = 0;
+	priceWindow = 0;
 	redraw = TRUE;
 	serviceKind = shop->action;
 	/* Revive's words, as below: "Who shall I revive?" */
 	mnSanctumShowKeeperMessage(MsgWhoToRevive);
 
-	listWin = mnWindowCreateStub(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
+	listWindow = mnWindowCreateStub(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
 	/* redraw is 1 here: the hand's first move to a party member takes one
 	   tick */
-	shop->cursorFrm = redraw;
-	mnCreatePartyFiguresStub(listWin, 2, 0, 8, 0);
-	priceWin = mnWindowCreateStub(SANCTUM_PRICE_WINDOW_X, 16,
+	shop->cursorFrame = redraw;
+	mnCreatePartyFiguresStub(listWindow, 2, 0, 8, 0);
+	priceWindow = mnWindowCreateStub(SANCTUM_PRICE_WINDOW_X, 16,
 		SANCTUM_PRICE_WINDOW_WIDTH, 3, WINDOW_FLAG_INSTANT);
 
-	memberIdx = 0;
+	memberIndex = 0;
 	unitId = 0;
 	chooseAgain = FALSE;
-	for(; memberIdx < shop->partyMemberCnt; memberIdx++) {
-		unitId = shop->partyMemberIds[memberIdx];
+	for(; memberIndex < shop->partyMemberCount; memberIndex++) {
+		unitId = shop->partyMemberIds[memberIndex];
 		if(mnSanctumNeedsService(unitId, serviceKind) != 0)
 			break;
 	}
@@ -244,8 +246,9 @@ Sint32 mnSanctumRunPartyService(void)
 			chooseAgain = FALSE;
 			mnSanctumShowKeeperMessage(MsgWhoToRevive);
 			redraw = TRUE;
-			for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
-				unitId = shop->partyMemberIds[memberIdx];
+			for(memberIndex = 0; memberIndex < shop->partyMemberCount;
+				memberIndex++) {
+				unitId = shop->partyMemberIds[memberIndex];
 				if(mnSanctumNeedsService(unitId, serviceKind) != 0)
 					break;
 			}
@@ -253,20 +256,20 @@ Sint32 mnSanctumRunPartyService(void)
 
 		if(redraw != 0) {
 			redraw = FALSE;
-			memberIdx =
-				(memberIdx + shop->partyMemberCnt) % shop->partyMemberCnt;
-			unitId = shop->partyMemberIds[memberIdx];
-			mnCursorPlace(listWin, memberIdx * 24 - 12, 0);
-			shop->cursorFrm = 3;
-			mnSanctumHighlightMembers(listWin, memberIdx);
-			mnSanctumDrawFee(priceWin, unitId);
+			memberIndex =
+				(memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[memberIndex];
+			mnCursorPlace(listWindow, memberIndex * 24 - 12, 0);
+			shop->cursorFrame = 3;
+			mnSanctumHighlightMembers(listWindow, memberIndex);
+			mnSanctumDrawFee(priceWindow, unitId);
 		}
 
 		if((PerPush & KEY_A) != 0) {
 			sySynch(1);
 			donation = mnSanctumServicePrice(unitId, serviceKind);
 			if(mnSanctumNeedsService(unitId, serviceKind) == 0) {
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 				continue;
 			}
 			mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -283,7 +286,7 @@ Sint32 mnSanctumRunPartyService(void)
 				continue;
 			}
 			if(donation > MainRoutineStateWork.holdings.coins) {
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 				/* "I'm sorry, but you must be able to pay the donation." */
 				mnSanctumShowKeeperMessageHidingCursor(msgBase + 1);
 				chooseAgain = TRUE;
@@ -294,7 +297,7 @@ Sint32 mnSanctumRunPartyService(void)
 			mnSanctumShowKeeperMessage(msgBase + 3);
 			mnMessageCloseFinishedWindowsStub();
 			mnSanctumApplyService(unitId, serviceKind);
-			mnSanctumRunMemberIconBurst(memberIdx);
+			mnSanctumRunMemberIconBurst(memberIndex);
 			gmPartyAdjustCoinsStub(-donation);
 			mnShopDrawMoney();
 			mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -307,26 +310,26 @@ Sint32 mnSanctumRunPartyService(void)
 			break;
 		}
 		if((PerPush & KEY_B) != 0) {
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			break;
 		}
 		if((PerRepeat & KEY_LEFT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			redraw = TRUE;
-			memberIdx--;
+			memberIndex--;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			redraw = TRUE;
-			memberIdx++;
+			memberIndex++;
 		}
 		sySynch(1);
 		continue;
 	}
 
 	mnReleasePartyFiguresStub();
-	mnWindowCloseStub(priceWin, 2);
-	mnWindowCloseStub(listWin, 2);
+	mnWindowCloseStub(priceWindow, 2);
+	mnWindowCloseStub(listWindow, 2);
 	sySynch(1);
 	return 0;
 }
@@ -351,10 +354,10 @@ void mnSanctumApplyService(Sint32 unitId, Sint32 serviceKind)
 		for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
 			inventorySlot++) {
 			if(unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
-				if(gmItemGetDirectStub(unit->inventory[inventorySlot])->flg &
+				if(gmItemGetDirectStub(unit->inventory[inventorySlot])->flags &
 					ITEM_CURSED) {
 					unit->inventory[inventorySlot] ^= INVENTORY_EQUIPPED;
-					gmUnitCalcStub(unitId);
+					gmUnitCalculateStub(unitId);
 				}
 			}
 		}
@@ -363,39 +366,40 @@ void mnSanctumApplyService(Sint32 unitId, Sint32 serviceKind)
 
 /* Shows the chosen party member running in place, and those who do not need the
    service drawn smaller. */
-void mnSanctumHighlightMembers(WINDOW *win, Sint32 selected)
+void mnSanctumHighlightMembers(WINDOW *window, Sint32 selected)
 {
 	SHOP_STATE *shop = MenuState;
-	Sint32		memberIdx;
+	Sint32		memberIndex;
 	Sint32		serviceKind = shop->action;
 
-	if(win != 0) {
-		for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
-			if(memberIdx == selected)
-				fdSprStartAnimationStub(
-					shop->partyMemberIcons[memberIdx], ANIM_PARTY_RUN);
+	if(window != 0) {
+		for(memberIndex = 0; memberIndex < shop->partyMemberCount;
+			memberIndex++) {
+			if(memberIndex == selected)
+				fdSpriteStartAnimationStub(
+					shop->partyMemberIcons[memberIndex], ANIM_PARTY_RUN);
 			else
-				fdSprStartAnimationStub(
-					shop->partyMemberIcons[memberIdx], ANIM_STAND);
-			shop->partyMemberScale[memberIdx] = toFIXED(1);
+				fdSpriteStartAnimationStub(
+					shop->partyMemberIcons[memberIndex], ANIM_STAND);
+			shop->partyMemberScale[memberIndex] = toFIXED(1);
 			if(!mnSanctumNeedsService(
-				   shop->partyMemberIds[memberIdx], serviceKind))
-				shop->partyMemberScale[memberIdx] = toFIXED(7) / 10;
+				   shop->partyMemberIds[memberIndex], serviceKind))
+				shop->partyMemberScale[memberIndex] = toFIXED(7) / 10;
 		}
 	}
 }
 
 /* Draws the party member's fee for the current service, or that they need no
    treatment. */
-void mnSanctumDrawFee(WINDOW *tgt, Sint32 unitId)
+void mnSanctumDrawFee(WINDOW *target, Sint32 unitId)
 {
 	Sint32 serviceOrMsg;
 	Sint32 donation;
 
 	serviceOrMsg = ((SHOP_STATE *)MenuState)->action;
 	donation = mnSanctumServicePrice(unitId, serviceOrMsg);
-	if(tgt != 0) {
-		mnWindowSprPrepareForRedrawStub(tgt);
+	if(target != 0) {
+		mnWindowSpritePrepareForRedrawStub(target);
 		if(mnSanctumNeedsService(unitId, serviceOrMsg) != 0) {
 			/* "Revive for (fee) coins" */
 			serviceOrMsg = MsgReviveCost;
@@ -405,7 +409,7 @@ void mnSanctumDrawFee(WINDOW *tgt, Sint32 unitId)
 		}
 		serviceOrMsg = mnSanctumGetServiceMessage(serviceOrMsg);
 		mnMessageArgumentPushStub(donation, MESSAGE_ARGUMENT_NUMBER);
-		mnTextDrawMessageStub(serviceOrMsg, tgt, 0, 0);
+		mnTextDrawMessageStub(serviceOrMsg, target, 0, 0);
 	}
 }
 
@@ -416,7 +420,7 @@ void mnSanctumUpdateBurstSparkle(FIELD_PARTICLE *effect)
 	POS	   pos;
 	Sint8 *statePtr;
 	Sint32 state;
-	Sint32 tgtPending;
+	Sint32 targetPending;
 
 	statePtr = &effect->state;
 	state = *statePtr;
@@ -428,17 +432,17 @@ void mnSanctumUpdateBurstSparkle(FIELD_PARTICLE *effect)
 		pos.x = effect->originX;
 		pos.z = effect->originZ;
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), (FIXED *)&pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		/* 16.16 pixels: at most 2 a tick, gaining 0.4 a tick */
 		effect->speedMax = toFIXED(2);
 		effect->acceleration = toFIXED(2) / 5;
 		effect->turnStepLimited = state;
 		*statePtr = *statePtr + 1;
 	} else if(state == SANCTUM_SPARKLE_FLYING) {
-		tgtPending = fdParticleHasPendingTargetStub(effect);
-		if(tgtPending == 0)
-			*statePtr = tgtPending;
+		targetPending = fdParticleHasPendingTargetStub(effect);
+		if(targetPending == 0)
+			*statePtr = targetPending;
 	} else if(state == SANCTUM_SPARKLE_LAST_FLIGHT) {
 		if(fdParticleHasPendingTargetStub(effect) == 0)
 			fdEffectClearOwnedSlotStub(effect);
@@ -454,15 +458,15 @@ void mnSanctumUpdateBurst(void)
 	Sint8		burstMember;
 
 	for(i = 0; i < SANCTUM_PARTICLE_COUNT; i++)
-		fdParticleUpdateStub(&shop->effs[i]);
+		fdParticleUpdateStub(&shop->effects[i]);
 	burstMember = shop->burstMember;
 	if(burstMember != -1)
-		fdSprSetAnimationColModesStub(shop->partyMemberIcons[burstMember],
+		fdSpriteSetAnimationColorModesStub(shop->partyMemberIcons[burstMember],
 			syRandom16Below(SANCTUM_BURST_COLOR_MODES));
 }
 
 /* The tune each service's burst plays. */
-static const Sint8 SanctumServiceSnds[4] = {
+static const Sint8 SanctumServiceSounds[4] = {
 	[SANCTUM_SERVICE_REVIVE] = MUS_RECOVERING_AFTER_COMBAT,
 	[SANCTUM_SERVICE_CURE_POISON] = MUS_POISON_CURED,
 	[SANCTUM_SERVICE_REPEL_EVIL] = MUS_EXORCISED,
@@ -478,15 +482,15 @@ void mnSanctumRunMemberIconBurst(Sint32 member)
 	Sint8			savedCursorMode;
 	POS				pos;
 	FIELD_PARTICLE *effect;
-	Sint32			effectIdx;
+	Sint32			effectIndex;
 
 	shop = MenuState;
 	savedCursorMode = shop->cursor.anchor->motion;
 	shop->burstMember = -1;
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
-	sySndPlayStub(SanctumServiceSnds[shop->action]);
+	sySoundPlayStub(SanctumServiceSounds[shop->action]);
 	mnShopSaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
-	fdSprSetAnimationSpeedStub(shop->partyMemberIcons[member], 0);
+	fdSpriteSetAnimationSpeedStub(shop->partyMemberIcons[member], 0);
 	sySynch(20);
 	sySetEvent(mnSanctumUpdateBurst, EVENT_PASS_TICK);
 
@@ -495,45 +499,45 @@ void mnSanctumRunMemberIconBurst(Sint32 member)
 	pos.z = toFIXED(shop->partyMemberY[member]) - toFIXED(12);
 
 	/* A sparkle starts every 3 ticks; the burst's event moves them. */
-	for(effectIdx = 0; effectIdx < SANCTUM_BURST_SPARKLES; effectIdx++) {
-		effect = &shop->effs[effectIdx];
+	for(effectIndex = 0; effectIndex < SANCTUM_BURST_SPARKLES; effectIndex++) {
+		effect = &shop->effects[effectIndex];
 		fdParticleInitStub(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallbackStub(effect, mnSanctumUpdateBurstSparkle);
 		fdParticleSetAnimationStub(effect, PARTICLE_ANIMATION_FLICKER);
-		fdSprSetAnimationColModesStub(
-			effect->spr, syRandom16Below(SANCTUM_BURST_COLOR_MODES));
+		fdSpriteSetAnimationColorModesStub(
+			effect->sprite, syRandom16Below(SANCTUM_BURST_COLOR_MODES));
 		effect->scaleY = toFIXED(7) / 10;
 		effect->scaleX = toFIXED(7) / 10;
 		sySynch(3);
 		/* The icon starts to flicker with the sixth sparkle. */
-		if(effectIdx == 5) {
+		if(effectIndex == 5) {
 			shop->burstMember = member;
 		}
 	}
 
 	/* As the tune ends, every sparkle makes one last flight and is freed when
 	   it arrives. */
-	mnSndWaitForJingle();
-	for(effectIdx = 0; effectIdx < SANCTUM_PARTICLE_COUNT; effectIdx++) {
-		if(shop->effs[effectIdx].active)
-			shop->effs[effectIdx].state = SANCTUM_SPARKLE_LAST_FLIGHT;
+	mnSoundWaitForJingle();
+	for(effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
+		if(shop->effects[effectIndex].active)
+			shop->effects[effectIndex].state = SANCTUM_SPARKLE_LAST_FLIGHT;
 	}
 
 	sySynch(20);
-	sySndPlayStub(SE_RECOVERY);
+	sySoundPlayStub(SE_RECOVERY);
 	shop->burstMember = -1;
-	fdSprSetAnimationColModesStub(shop->partyMemberIcons[member], 0);
+	fdSpriteSetAnimationColorModesStub(shop->partyMemberIcons[member], 0);
 	sySynch(20);
 
 	/* Free the sparkles still flying. */
-	for(effectIdx = 0; effectIdx < SANCTUM_PARTICLE_COUNT; effectIdx++) {
-		effect = &shop->effs[effectIdx];
+	for(effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
+		effect = &shop->effects[effectIndex];
 		if(effect->active != 0)
 			fdEffectClearOwnedSlotStub(effect);
 	}
 
 	syCloseEvent(mnSanctumUpdateBurst);
-	fdSprSetAnimationSpeedStub(
+	fdSpriteSetAnimationSpeedStub(
 		shop->partyMemberIcons[member], ANIM_STEP_NORMAL);
 	mnShopRestoreFieldPalette();
 	sySynch(30);

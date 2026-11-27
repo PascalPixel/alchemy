@@ -444,8 +444,8 @@ static void scColosseumAzartMatchUpdateRockMetatiles(void)
 	actor = fdActorGet(ACTOR_ROCK_A);
 	blocked = fdMapGridGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 	if(actor->y.fixed == 0 && blocked == 0) {
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		actor->motionFlg = 0;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = 0;
 		{
 			Sint32 x = FIELD_METATILE(actor->x.fixed);
 			Sint32 y = FIELD_METATILE(actor->z.fixed);
@@ -501,13 +501,13 @@ static void scColosseumAzartMatchDousePipe(void)
 	fdCameraMoveTo(600, CAMERA_KEEP, 200, 1);
 	fdActorSelectAnimation(actor, PAN_ANIMATION_FULL);
 	fdCameraWaitForMove();
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->acceleration = toFIXED(2) / 5;
 	actor->speedLimit = toFIXED(4) / 5;
 	syFieldActorSetMoveTargetFX(
 		actor, actor->x.fixed, toFIXED(8), actor->z.fixed);
 	actor = fdActorGet(ACTOR_PIPE_EAST);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->acceleration = toFIXED(2) / 5;
 	actor->speedLimit = toFIXED(4) / 5;
 	syFieldActorSetMoveTargetFX(
@@ -552,10 +552,10 @@ static void scColosseumAzartMatchMoveActorPairByOffset(
 		fdActorSelectAnimation(
 			actor, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
 	}
-	sySndPlay(SE_LOG_PUSH);
+	sySoundPlay(SE_LOG_PUSH);
 	fdActorWaitForMove(leader);
 	fdActorSelectAnimation(actor, FLOATING_LOG_ANIMATION_SETTLE);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdScriptEnd();
 }
 
@@ -564,18 +564,19 @@ static void scColosseumAzartMatchRollLogNorthSouth(void)
 {
 	ACTOR *actor;
 	Sint32 row;
-	Sint32 ofs;
+	Sint32 offset;
 
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	row = FIELD_METATILE(actor->z.fixed);
-	ofs = -LOG_NORTH_SOUTH_FLOAT;
+	offset = -LOG_NORTH_SOUTH_FLOAT;
 	if(row <= LOG_NORTH_ROW) {
-		ofs = LOG_NORTH_SOUTH_FLOAT;
+		offset = LOG_NORTH_SOUTH_FLOAT;
 	}
 	/* Its row goes back to water, three metatiles of the pool beside the log's
 	   north line, and its new row is the log's. */
 	fdMapGridCopyMetatileAttributes(67, 8, 3, 1, 64, row);
-	scColosseumAzartMatchMoveActorPairByOffset(ACTOR_LOG_NORTH_SOUTH, 0, ofs);
+	scColosseumAzartMatchMoveActorPairByOffset(
+		ACTOR_LOG_NORTH_SOUTH, 0, offset);
 	actor = fdActorGet(ACTOR_LOG_NORTH_SOUTH);
 	row = FIELD_METATILE(actor->z.fixed);
 	fdMapGridCopyMetatileAttributes(
@@ -586,7 +587,7 @@ static void scColosseumAzartMatchRollLogNorthSouth(void)
 static void scColosseumAzartMatchRollLogEastWest(void)
 {
 	Sint32 column;
-	Sint32 ofs;
+	Sint32 offset;
 	Sint32 direction;
 
 	column =
@@ -597,29 +598,29 @@ static void scColosseumAzartMatchRollLogEastWest(void)
 	if((PerData & KEY_RIGHT) != 0) {
 		direction = 1;
 	}
-	ofs = FIELD_METATILE(fdActorGet(ACTOR_LOG_NORTH_SOUTH)->z.fixed);
+	offset = FIELD_METATILE(fdActorGet(ACTOR_LOG_NORTH_SOUTH)->z.fixed);
 	if(column == 63) {
-		if(ofs == LOG_SOUTH_ROW) {
+		if(offset == LOG_SOUTH_ROW) {
 			return;
 		}
-		ofs = LOG_EAST_WEST_FLOAT;
+		offset = LOG_EAST_WEST_FLOAT;
 	} else if(column == 67) {
-		if(ofs == LOG_SOUTH_ROW && direction == -1) {
+		if(offset == LOG_SOUTH_ROW && direction == -1) {
 			return;
 		}
-		ofs = LOG_EAST_WEST_SHORT_FLOAT;
+		offset = LOG_EAST_WEST_SHORT_FLOAT;
 	} else {
-		if(ofs == LOG_SOUTH_ROW) {
-			ofs = LOG_EAST_WEST_SHORT_FLOAT;
+		if(offset == LOG_SOUTH_ROW) {
+			offset = LOG_EAST_WEST_SHORT_FLOAT;
 		} else {
-			ofs = LOG_EAST_WEST_FLOAT;
+			offset = LOG_EAST_WEST_FLOAT;
 		}
-		ofs = -ofs;
+		offset = -offset;
 	}
 	/* Its column goes back to water, three metatiles of the pool, and its new
 	   column is the log's. */
 	fdMapGridCopyMetatileAttributes(72, 9, 1, 3, column, 9);
-	scColosseumAzartMatchMoveActorPairByOffset(ACTOR_LOG_EAST_WEST, ofs, 0);
+	scColosseumAzartMatchMoveActorPairByOffset(ACTOR_LOG_EAST_WEST, offset, 0);
 	column = FIELD_METATILE(fdActorGet(ACTOR_LOG_EAST_WEST)->x.fixed);
 	fdMapGridCopyMetatileAttributes(
 		LOG_EAST_WEST_COLUMN, LOG_EAST_WEST_ROW, 1, 3, column, 9);
@@ -665,13 +666,13 @@ static void scColosseumAzartMatchPushPipeworksPipe(void)
 	fdScriptWait(6);
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 5;
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSelectAnimation(actor, PIPE_ANIMATION_ROLLING);
 	syFieldActorSetMoveTargetFX(
 		actor, actor->x.fixed - toFIXED(48), 0, actor->z.fixed);
 	fdScriptWait(6);
 	fdActorSetAnimation(leaderId, ANIM_WALK);
-	fdActorStartCamera(((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	fdActorStartCamera(((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 							HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 						   ->camera,
 		(Sint32)actor);
@@ -682,8 +683,8 @@ static void scColosseumAzartMatchPushPipeworksPipe(void)
 	fdActorSetAnimation(leaderId, ANIM_STAND);
 	fdActorWaitForMove(actor);
 	fdActorSelectAnimation(actor, PIPE_ANIMATION_STILL);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdScriptWait(15);
 	fdScriptEnd();
 	/* The pipe's column of wall, (37, 7..10), moves to where it now lies, and
@@ -707,7 +708,7 @@ static void scColosseumAzartMatchPushPipeworksPipe(void)
 	fdCameraMoveTo(600, CAMERA_KEEP, 200, 1);
 	fdCameraWaitForMove();
 	actor = fdActorGet(ACTOR_PIPE_WEST);
-	actor->motionFlg = none;
+	actor->motionFlags = none;
 	actor->acceleration = toFIXED(2) / 5;
 	actor->speedLimit = toFIXED(4) / 5;
 	syFieldActorSetMoveTargetFX(
@@ -715,7 +716,7 @@ static void scColosseumAzartMatchPushPipeworksPipe(void)
 	fdActorSelectAnimation(actor, PAN_ANIMATION_FULL);
 	scColosseumAzartMatchAnimatePipeworksWater();
 	actor = fdActorGet(ACTOR_PIPE_EAST);
-	actor->motionFlg = none;
+	actor->motionFlags = none;
 	actor->acceleration = toFIXED(2) / 5;
 	actor->speedLimit = toFIXED(4) / 5;
 	syFieldActorSetMoveTargetFX(
@@ -829,16 +830,16 @@ static void scColosseumAzartMatchRestoreMatchResult(Sint32 result)
    the plant itself stands on. */
 static void scColosseumAzartMatchSetLayerOnVineMetatile(Sint32 actorId)
 {
-	ACTOR *tgt;
+	ACTOR *target;
 	Sint32 column;
 	Sint32 row;
 
-	tgt = fdActorGet(actorId);
-	if(tgt != NULL) {
-		column = FIELD_HALF_METATILE(tgt->x.fixed);
-		row = FIELD_HALF_METATILE(tgt->z.fixed);
+	target = fdActorGet(actorId);
+	if(target != NULL) {
+		column = FIELD_HALF_METATILE(target->x.fixed);
+		row = FIELD_HALF_METATILE(target->z.fixed);
 		if(column >= 94 && column <= 95 && row > 23 && row <= 26) {
-			tgt->layer = 1;
+			target->layer = 1;
 		}
 	}
 }
@@ -849,15 +850,15 @@ Sint32 scInit(void)
 	ACTOR *actor;
 	FIXED  hit;
 	Sint32 x;
-	Sint32 col;
+	Sint32 color;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
 	gmFlagSet(FLAG_RETREAT_BLOCKED);
 	actor = fdActorGet(ACTOR_ROCK_A);
 	hit = fdMapGridGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 	if(actor->y.fixed == 0 && hit == 0) {
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		actor->motionFlg = hit;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->motionFlags = hit;
 		fdMapGridCopyMetatileAttributes(HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1,
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
 	}
@@ -867,8 +868,8 @@ Sint32 scInit(void)
 	}
 	actor = fdActorGet(ACTOR_ROCK_B);
 	actor->x.fixed = FIELD_METATILE_CENTER(x);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(
 		HOP_SQUARE_COLUMN, HOP_SQUARE_ROW, 1, 1, x, 12);
 	sySetTickEvent(scColosseumAzartMatchUpdateBrokenBridge, EVENT_PASS_TICK);
@@ -876,23 +877,24 @@ Sint32 scInit(void)
 	actor->layer = 1;
 	if(gmFlagGet(FLAG_PLANT_GROWN)) {
 		fdActorSelectAnimation(actor, SPROUT_ANIMATION_GROWN);
-		fdActorSetSprFlags(actor, 0);
-		actor->collisionFlg = 0;
-		actor->priFlg = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(actor, 0);
+		actor->collisionFlags = 0;
+		actor->priorityFlags =
+			ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(VINE_COLUMN, VINE_ROW, 1, 1, 47, 12);
 	}
 	actor = fdActorGet(ACTOR_LOG_NORTH_SOUTH);
-	col = FIELD_METATILE(actor->z.fixed);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	color = FIELD_METATILE(actor->z.fixed);
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(
-		LOG_NORTH_SOUTH_COLUMN, LOG_NORTH_SOUTH_ROW, 3, 1, 64, col);
+		LOG_NORTH_SOUTH_COLUMN, LOG_NORTH_SOUTH_ROW, 3, 1, 64, color);
 	actor = fdActorGet(ACTOR_LOG_EAST_WEST);
-	col = FIELD_METATILE(actor->x.fixed);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	color = FIELD_METATILE(actor->x.fixed);
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(
-		LOG_EAST_WEST_COLUMN, LOG_EAST_WEST_ROW, 1, 3, col, 9);
+		LOG_EAST_WEST_COLUMN, LOG_EAST_WEST_ROW, 1, 3, color, 9);
 	/* With the Pipeworks' loose pipe pushed under the spout, water pours down
 	   into the channel. */
 	if(gmFlagGet(FLAG_PIPEWORKS_PIPE_PUSHED)) {
@@ -905,7 +907,7 @@ Sint32 scInit(void)
 	actor = fdActorGet(ACTOR_PIPE_WEST);
 	if(gmFlagGet(FLAG_PIPES_MOVED)) {
 		fdMapGridCopyMetatileAttributes(43, 12, 1, 1, 41, 12);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->acceleration = toFIXED(2) / 5;
 		actor->speedLimit = toFIXED(4) / 5;
 		actor->y.fixed = toFIXED(8);
@@ -913,7 +915,7 @@ Sint32 scInit(void)
 	} else {
 		fdActorSelectAnimation(actor, PAN_ANIMATION_EMPTY);
 	}
-	fdActorGet(ACTOR_PIPE_EAST)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_PIPE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	scColossoShowItemIcon(ACTOR_PRIZE_A, ITEM_IRON_SHIELD);
 	scColossoShowItemIcon(ACTOR_PRIZE_B, ITEM_PADDED_GLOVES);
 	switch(MainRoutineStateWork.entrance) {
@@ -929,8 +931,8 @@ Sint32 scInit(void)
 		fdActorReleaseById(ACTOR_BRIDGE_ATTENDANT);
 		fdActorReleaseById(ACTOR_LUMBER_ATTENDANT);
 		if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-			sySndPlay(SOUND_FADE_OUT_BGM);
-			scColossoCtrlCharacterAlone(ISAAC);
+			sySoundPlay(SOUND_FADE_OUT_BGM);
+			scColossoControlCharacterAlone(ISAAC);
 			scColossoPlaceFriendsAtCheeringSpots();
 			scColosseumAzartMatchSetLayerOnVineMetatile(ACTOR_GARET);
 			scColosseumAzartMatchSetLayerOnVineMetatile(ACTOR_IVAN);
@@ -948,7 +950,7 @@ Sint32 scInit(void)
 		fdActorReleaseById(ACTOR_PRIZE_B);
 		if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 			scColossoPlaceFriendsAtCheeringSpots();
-			scColossoCtrlCharacterAlone(GARET);
+			scColossoControlCharacterAlone(GARET);
 			scColossoShowOpeningLettering(LETTERING_LEND_A_HAND);
 		}
 		break;
@@ -1193,7 +1195,7 @@ static void scColosseumAzartMatchTalkToRockAttendant(Sint32 actorId)
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 			fdActorSetPos(ACTOR_ROCK_A, 312, 168);
-			scColossoRepeatStageNum(actorId, STAGE_ROCK_CHALLENGE);
+			scColossoRepeatStageNumber(actorId, STAGE_ROCK_CHALLENGE);
 		} else if(path == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoObjectiveStageClear);
 			/* "The objective in this stage is to clear a path as quickly
@@ -1209,7 +1211,7 @@ static void scColosseumAzartMatchTalkToRockAttendant(Sint32 actorId)
 static inline void scColosseumAzartMatchSetPipeHeight(
 	ACTOR *actor, FIXED height)
 {
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->acceleration = toFIXED(2) / 5;
 	actor->speedLimit = toFIXED(4) / 5;
 	syFieldActorSetMoveTargetFX(actor, actor->x.fixed, height, actor->z.fixed);
@@ -1272,7 +1274,7 @@ static void scColosseumAzartMatchTalkToPipeworksAttendant(Sint32 attendant)
 			scColossoHidePointer();
 			sySynch(2);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(attendant, STAGE_PIPEWORKS);
+			scColossoRepeatStageNumber(attendant, STAGE_PIPEWORKS);
 		} else if(path == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoObjectiveMakeGood);
 			/* "The objective here is to make good use of the scales." */
@@ -1320,7 +1322,7 @@ static void scColosseumAzartMatchTalkToBridgeAttendant(Sint32 actorId)
 			fdScriptShowMessage(actorId, 0);
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(actorId, STAGE_BROKEN_BRIDGE);
+			scColossoRepeatStageNumber(actorId, STAGE_BROKEN_BRIDGE);
 		} else if(path == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoOperatorBridgeWillAlsoCheer);
 			/* "The operator of the bridge will also cheer for you in
@@ -1386,7 +1388,7 @@ static void scColosseumAzartMatchTalkToLumberAttendant(Sint32 actorId)
 		scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 		fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 		fdActorSetPos(ACTOR_LOG_EAST_WEST, 1016, 168);
-		scColossoRepeatStageNum(actorId, STAGE_LUMBER_WATER_CROSSING);
+		scColossoRepeatStageNumber(actorId, STAGE_LUMBER_WATER_CROSSING);
 	} else if(path == COLOSSO_GUIDE_OFFER_CHEERING) {
 		fdScriptSetMessageId(MsgColossoLogsKeyClearingStage);
 		/* "The logs are the key to clearing this stage." */

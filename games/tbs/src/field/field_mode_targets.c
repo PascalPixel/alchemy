@@ -38,7 +38,7 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 	ACTOR *candidate;
 	Sint32 nearestActorId;
 	Sint32 nearestDistance;
-	Sint32 actorIdx;
+	Sint32 actorIndex;
 	Sint32 dx;
 	Sint32 dy;
 	Sint32 dz;
@@ -47,7 +47,7 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 	Sint32 squaredZ;
 	Sint32 squaredDistance;
 	Sint32 distance;
-	Sint32 ang;
+	Sint32 angle;
 
 	nearestActorId = -1;
 	nearestDistance = 32;
@@ -57,16 +57,16 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 		   first treasure spot's actor, so the map's first chest or Psynergy
 		   Stone is a candidate too. */
 #if FIX_FIRST_TREASURE_SPOT_IN_ACTOR_LOOPS
-		for(actorIdx = 0; actorIdx < ACTOR_ID_COUNT; actorIdx++) {
+		for(actorIndex = 0; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
 #else
-		for(actorIdx = 0; actorIdx <= ACTOR_ID_COUNT; actorIdx++) {
+		for(actorIndex = 0; actorIndex <= ACTOR_ID_COUNT; actorIndex++) {
 #endif
-			if(actorIdx == id)
+			if(actorIndex == id)
 				continue;
 
-			candidate = fdActorLookup(actorIdx);
+			candidate = fdActorLookup(actorIndex);
 			if(candidate == 0 ||
-				(candidate->collisionFlg & ACTOR_NOT_TARGETED) != 0)
+				(candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
 				continue;
 
 			/* y is height: an actor more than 48 pixels above or below is out
@@ -87,23 +87,23 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 			squaredZ = dz * dz;
 			squaredDistance = squaredX + squaredY + squaredZ;
 			distance = sySquartIWRAM(squaredDistance);
-			if((candidate->collisionFlg & ACTOR_NEAR_TALK) != 0)
+			if((candidate->collisionFlags & ACTOR_NEAR_TALK) != 0)
 				distance = distance * 10 / 13;
 			if(distance >= nearestDistance)
 				continue;
 
-			ang = (Uint16)syAtan(candidate->z.fixed - src->z.fixed,
+			angle = (Uint16)syAtan(candidate->z.fixed - src->z.fixed,
 				candidate->x.fixed - src->x.fixed);
 			if(distance > 11) {
-				Sint32 angDifference = (Sint16)(ang - src->facing);
+				Sint32 angleDifference = (Sint16)(angle - src->facing);
 
-				if(angDifference < -(TRIG_TURN * 3 / 16 - 1))
+				if(angleDifference < -(TRIG_TURN * 3 / 16 - 1))
 					continue;
-				if(angDifference > TRIG_TURN * 3 / 16 - 1)
+				if(angleDifference > TRIG_TURN * 3 / 16 - 1)
 					continue;
 			}
 
-			nearestActorId = actorIdx;
+			nearestActorId = actorIndex;
 			nearestDistance = distance;
 		}
 	}
@@ -122,14 +122,14 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 	Sint32 nearestActorId;
 	Sint32 nearestDistance;
 	Sint32 facingQuadrant;
-	Sint32 actorIdx;
+	Sint32 actorIndex;
 	FIXED  heightLimit;
 	Sint32 dx;
 	FIXED  dz;
 	Sint32 pixelZ;
 	Sint32 distance;
-	Sint32 ang;
-	Sint32 coneHalfAng;
+	Sint32 angle;
+	Sint32 coneHalfAngle;
 
 	nearestActorId = -1;
 	nearestDistance = fdGetPsynergyTargetRange(kind);
@@ -142,16 +142,16 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 	   treasure spot's actor, so the map's first chest or Psynergy Stone is a
 	   candidate too. */
 #if FIX_FIRST_TREASURE_SPOT_IN_ACTOR_LOOPS
-	for(actorIdx = 0; actorIdx < ACTOR_ID_COUNT; actorIdx++) {
+	for(actorIndex = 0; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
 #else
-	for(actorIdx = 0; actorIdx <= ACTOR_ID_COUNT; actorIdx++) {
+	for(actorIndex = 0; actorIndex <= ACTOR_ID_COUNT; actorIndex++) {
 #endif
-		if(actorIdx == id)
+		if(actorIndex == id)
 			continue;
 
-		candidate = fdActorLookup(actorIdx);
+		candidate = fdActorLookup(actorIndex);
 		if(candidate == 0 ||
-			(candidate->collisionFlg & ACTOR_NOT_TARGETED) != 0)
+			(candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
 			continue;
 
 		heightLimit = toFIXED(8);
@@ -179,28 +179,28 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 		pixelZ = dz / toFIXED(1);
 
 		distance = sySquartIWRAM(dx * dx + pixelZ * pixelZ);
-		if((candidate->collisionFlg & ACTOR_NEAR_PSYNERGY) != 0)
+		if((candidate->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
 			distance = distance * 2 / 3;
 		if(distance >= nearestDistance)
 			continue;
 
-		ang = (Uint16)syAtan(candidate->z.fixed - src->z.fixed,
+		angle = (Uint16)syAtan(candidate->z.fixed - src->z.fixed,
 			candidate->x.fixed - src->x.fixed);
-		coneHalfAng = DEGtoANG(33.75);
+		coneHalfAngle = DEGtoANG(33.75);
 		if(distance > 19)
-			coneHalfAng = DEGtoANG(22.5);
+			coneHalfAngle = DEGtoANG(22.5);
 		if(kind == FIELD_PSYNERGY_MIND_READ)
-			coneHalfAng = DEGtoANG(45);
+			coneHalfAngle = DEGtoANG(45);
 
 		if(distance > 11) {
-			Sint32 angDifference = (Sint16)(ang - facingQuadrant);
-			if(angDifference < 0)
-				angDifference = -angDifference;
-			if(angDifference >= coneHalfAng)
+			Sint32 angleDifference = (Sint16)(angle - facingQuadrant);
+			if(angleDifference < 0)
+				angleDifference = -angleDifference;
+			if(angleDifference >= coneHalfAngle)
 				continue;
 		}
 
-		nearestActorId = actorIdx;
+		nearestActorId = actorIndex;
 		nearestDistance = distance;
 	}
 
@@ -211,53 +211,55 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
    treasure) and, 12 ticks later, shows itemId in front of actor actorId with
    sparkles; returns the actor that shows the item, or 0 when there is no
    chest. */
-Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 tgt, Sint32 itemId)
+Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId)
 {
-	void  *tgtActor;
+	void  *targetActor;
 	Sint32 itemActor;
 
-	tgtActor = fdActorGetById(tgt);
+	targetActor = fdActorGetById(target);
 	itemActor = 0;
-	if(tgtActor != 0) {
-		sySndPlayStub(SE_CHEST_OPEN);
-		fdActorSelectAnimationStub(tgtActor, CHEST_ANIMATION_OPEN_ON_TREASURE);
+	if(targetActor != 0) {
+		sySoundPlayStub(SE_CHEST_OPEN);
+		fdActorSelectAnimationStub(
+			targetActor, CHEST_ANIMATION_OPEN_ON_TREASURE);
 		sySynch(12);
-		itemActor = (Sint32)fdItemDispShowItemInFront(actorId, itemId);
+		itemActor = (Sint32)fdItemDisplayShowItemInFront(actorId, itemId);
 	}
 	return itemActor;
 }
 
 /* Gives each running layer of an actor's one sprite the colour mode
-   colModePlusOne - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind
+   colorModePlusOne - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind
    Read's caster cycle, a mode every 2 ticks; a hidden layer stays hidden. */
-void fdActorSetLayersColMode(ACTOR *actor, Sint32 colModePlusOne)
+void fdActorSetLayersColorMode(ACTOR *actor, Sint32 colorModePlusOne)
 {
-	SPR			   *spr;
+	SPR			   *sprite;
 	SPR_ANIMATION **entrySlot;
 	SPR_ANIMATION  *entry;
 	Sint32			remainingParts;
 	Sint32			replacement;
-	Uint8			partCnt;
+	Uint8			partCount;
 
-	if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		spr = actor->spr;
-		replacement = colModePlusOne - 1;
-		if(colModePlusOne == 0)
+	if((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+		ACTOR_SPRITE_ONE) {
+		sprite = actor->sprite;
+		replacement = colorModePlusOne - 1;
+		if(colorModePlusOne == 0)
 			replacement = MindReadCasterPaletteCycle[(TickCount >> 1) & 7];
 
-		partCnt = spr->cnt;
-		if(partCnt != 0) {
-			entrySlot = spr->entries;
-			remainingParts = partCnt;
+		partCount = sprite->count;
+		if(partCount != 0) {
+			entrySlot = sprite->entries;
+			remainingParts = partCount;
 			do {
 				entry = *entrySlot++;
 				if(entry != 0 && entry->script != 0 &&
-					entry->colMode != SPRITE_COLOR_HIDDEN)
-					entry->colMode = replacement;
+					entry->colorMode != SPRITE_COLOR_HIDDEN)
+					entry->colorMode = replacement;
 				remainingParts--;
 			} while(remainingParts != 0);
 		}
-		spr->dirty = 1;
+		sprite->dirty = 1;
 	}
 }
 

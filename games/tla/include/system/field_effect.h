@@ -29,37 +29,37 @@ typedef struct FIELD_EFFECT {
 	Uint8		  layer;		/* Actor's */
 	/* The spawner clears bit 0 when EFFECT_USE_PRIORITY sets the sprite's
 	   priority. */
-	Uint8 priFlg;
+	Uint8 priorityFlags;
 	/* Actor's velocityX to velocityZ; effects move by velocity instead. */
-	VECTOR3 objVel;
+	VECTOR3 objectVelocity;
 	/* Added to scaleX each tick by the update hooks, in 16.16 fixed point a
 	   tick; zeroed by the spawner. */
 	FIXED  scaleRateX;
 	Sint32 scaleRateY; /* as scaleRateX, for scaleY */
 	/* Actor's targetX to targetZ. */
-	Sint32 tgtX;
-	Sint32 tgtY;
-	Sint32 tgtZ;
+	Sint32 targetX;
+	Sint32 targetY;
+	Sint32 targetZ;
 	/* Added to x, y and z each tick by the update hooks, in 16.16 fixed-point
 	   pixels per tick. */
-	VECTOR3	   vel;
-	FIELD_SPR *spr;			   /* the sprite spin turns */
-	Uint8	   sprStorageKind; /* Actor's */
-	Uint8	   motionFlg;	   /* zeroed by the spawner */
+	VECTOR3	   velocity;
+	FIELD_SPR *sprite;			  /* the sprite spin turns */
+	Uint8	   spriteStorageKind; /* Actor's */
+	Uint8	   motionFlags;		  /* zeroed by the spawner */
 	/* Actor's arrival axis, last flag test and snap flag. */
 	Uint8 arrivalAxis;
 	Uint8 conditionResult;
-	Uint8 snapToTgt;
-	Uint8 collisionFlg; /* Actor's */
-	/* Actor's steeringFlg to sceneByte. */
-	Uint8  steeringFlg;
+	Uint8 snapToTarget;
+	Uint8 collisionFlags; /* Actor's */
+	/* Actor's steeringFlags to sceneByte. */
+	Uint8  steeringFlags;
 	Uint8  paused;
-	Uint8  retainSprCache;
-	Uint8  repeatCnt;
+	Uint8  retainSpriteCache;
+	Uint8  repeatCount;
 	Sint16 wait;
 	Uint8  refused;
 	Uint8  frozen;
-	Uint8  sceneCnt;
+	Uint8  sceneCount;
 	Uint8  sceneByte;
 	/* Added to the sprite's rotation each tick by the update hooks, in 1/65536
 	   turns per tick; zeroed by the spawner. */
@@ -72,8 +72,8 @@ typedef struct FIELD_EFFECT {
 } FIELD_EFFECT;
 
 STATIC_ASSERT(offsetof(FIELD_EFFECT, scaleRateX) == 48);
-STATIC_ASSERT(offsetof(FIELD_EFFECT, vel) == 68);
-STATIC_ASSERT(offsetof(FIELD_EFFECT, spr) == 80);
+STATIC_ASSERT(offsetof(FIELD_EFFECT, velocity) == 68);
+STATIC_ASSERT(offsetof(FIELD_EFFECT, sprite) == 80);
 STATIC_ASSERT(offsetof(FIELD_EFFECT, spin) == 100);
 STATIC_ASSERT(offsetof(FIELD_EFFECT, countdown) == 104);
 STATIC_ASSERT(offsetof(FIELD_EFFECT, update) == 108);
@@ -81,7 +81,7 @@ STATIC_ASSERT(offsetof(FIELD_EFFECT, update) == 108);
 /* An object on the field, read as an actor or as an effect. */
 typedef union FIELD_OBJECT {
 	ACTOR		 actor;
-	FIELD_EFFECT eff;
+	FIELD_EFFECT effect;
 } FIELD_OBJECT;
 
 /* The flags of a scene's effect spawner (scFieldEffectSpawn): a script number
@@ -90,8 +90,9 @@ typedef enum EFFECT_SPAWN_FLAGS {
 	/* Picks one of the spawner's effect scripts; the object's mode is this plus
 	   1. */
 	EFFECT_SCRIPT_MASK = 0x0f,
-	EFFECT_USE_PALETTE = 0x10000,  /* options.pal */
-	EFFECT_USE_PRIORITY = 0x20000, /* options.pri, as the sprite's priority */
+	EFFECT_USE_PALETTE = 0x10000, /* options.palette */
+	EFFECT_USE_PRIORITY =
+		0x20000, /* options.priority, as the sprite's priority */
 	/* Grows from the start scale, or full size, to the target scale over the
 	   script's repeat count. */
 	EFFECT_SCALE_TO_TARGET = 0x40000,
@@ -141,17 +142,17 @@ typedef enum EFFECT_DURATION {
 /* The options of a spawned field effect, each used when its EFFECT_USE_ flag
    (or EFFECT_SCALE_TO_TARGET) is set. */
 typedef struct EFFECT_OPTIONS {
-	Sint32		  pri;		   /* the sprite's priority */
-	Sint32		  pal;		   /* passed to fdActorSetSprCol */
-	FIXED		  startScaleX; /* 16.16 fixed point, toFIXED(1) full size */
-	FIXED		  startScaleY; /* 16.16 fixed point, toFIXED(1) full size */
-	FIXED		  tgtScaleX;   /* 16.16 fixed point, toFIXED(1) full size */
-	FIXED		  tgtScaleY;   /* 16.16 fixed point, toFIXED(1) full size */
-	Sint16		  type;		   /* the object type to create */
-	const Sint32 *script;	   /* the object script, run in mode 1 */
-	Uint16		  rotation;	   /* 1/65536 turns */
-	Uint16		  spin;		   /* 1/65536 turns per tick */
-	void		 *update;	   /* replaces the update hook */
+	Sint32		  priority;		/* the sprite's priority */
+	Sint32		  palette;		/* passed to fdActorSetSpriteColor */
+	FIXED		  startScaleX;	/* 16.16 fixed point, toFIXED(1) full size */
+	FIXED		  startScaleY;	/* 16.16 fixed point, toFIXED(1) full size */
+	FIXED		  targetScaleX; /* 16.16 fixed point, toFIXED(1) full size */
+	FIXED		  targetScaleY; /* 16.16 fixed point, toFIXED(1) full size */
+	Sint16		  type;			/* the object type to create */
+	const Sint32 *script;		/* the object script, run in mode 1 */
+	Uint16		  rotation;		/* 1/65536 turns */
+	Uint16		  spin;			/* 1/65536 turns per tick */
+	void		 *update;		/* replaces the update hook */
 } EFFECT_OPTIONS;
 
 STATIC_ASSERT(offsetof(EFFECT_OPTIONS, type) == 24);
@@ -159,7 +160,8 @@ STATIC_ASSERT(offsetof(EFFECT_OPTIONS, update) == 36);
 
 void fdEffectUpdateMotionScaleAndSpin(FIELD_OBJECT *object);
 
-void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
-	Sint32 velY, Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void fdEffectSpawnResident(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #endif

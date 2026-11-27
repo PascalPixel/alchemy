@@ -42,7 +42,7 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 {
 	Sint32	i, x, y, row, end, speed;
 	Sint32	red, green, blue;
-	Uint16	col;
+	Uint16	color;
 	Uint8  *delays, *p, *pixel;
 	Uint16 *palette;
 	Uint32	delayMask;
@@ -78,10 +78,10 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 						pixel = BLUE_RAMP_PIXELS +
 							((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) +
 								((y / 8) << BLUE_RAMP_TILE_ROW_SHIFT));
-						col = ((Sint16 *)BG_PLTT)[*pixel];
-						red = RGB_RED(col);
-						green = RGB_GREEN(col);
-						blue = RGB_BLUE(col);
+						color = ((Sint16 *)BG_PLTT)[*pixel];
+						red = RGB_RED(color);
+						green = RGB_GREEN(color);
+						blue = RGB_BLUE(color);
 						if(red < green)
 							red = green;
 						if(red < blue)
@@ -133,21 +133,21 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	Sint32				 scale[3];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
 	Sint32				 member;
 	BATTLE_CAMERA		*camera;
 	Sint32				 shift;
 	Uint8				*graphics;
 	MOTION_OBJECT		*object;
-	Sint32				 memberFrm;
+	Sint32				 memberFrame;
 	PARTICLE			*point;
 	Sint32				 size;
 	Sint32				 j;
 	Sint32				 k;
 	HEAP_SLOTS			*heap;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 	camera = RamHeapSlots->cameraState;
@@ -172,32 +172,33 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
 	/* The canvas is scrolled so that the target stands at its middle. */
-	btEffectPosProjectScaledBattler(args->tgts[0], &anchor);
+	btEffectPosProjectScaledBattler(args->targets[0], &anchor);
 	shift = CANVAS_SIZE / 2 - anchor.x;
 	REG_BG2X = shift << 8;
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0; frm != args->tgtCnt * 20 + 72; frm++) {
-		if(frm == BIND_RUNE_TICK)
+	for(frame = 0; frame != args->targetCount * 20 + 72; frame++) {
+		if(frame == BIND_RUNE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		/* The colours cycle through the hues. */
 		btEffectUpdatePhasePalette(
-			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 
 		/* Luff's Djinni sways where it appeared, then rises away. */
 		if(args->prelude == 1) {
 			Sint32 x;
 			Sint32 y;
 
-			x = FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
+			x = FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
 				origin[0] + shift - DJINNI_WIDTH / 2;
-			y = FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4) + origin[1] - 24;
+			y = FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4) + origin[1] -
+				24;
 			btEffectBuildCanvasBlitters(args->side, draw);
-			if(frm > 32)
-				y = y - frm * 2 + 64;
+			if(frame > 32)
+				y = y - frame * 2 + 64;
 			draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frm <= 3)
+			if(frame <= 3)
 				draw[1](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -210,14 +211,14 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 		draw[1] = heap->ramCodePaired;
-		if(frm > 16 && (frm & 15) == 0)
+		if(frame > 16 && (frame & 15) == 0)
 			state->transferValue += CANVAS_FILL_WORD(1);
 
 		/* Only the first target gets a triangle. */
 		for(member = 0; member != 1; member++) {
-			object = btObjectGetStub(args->tgts[member])->obj;
-			memberFrm = frm - member * 8;
-			if(memberFrm >= 0 && memberFrm < 96) {
+			object = btObjectGetStub(args->targets[member])->object;
+			memberFrame = frame - member * 8;
+			if(memberFrame >= 0 && memberFrame < 96) {
 				syInitMatrix();
 				syLookAtLoad(camera->eye, camera->focus);
 				vector[0] = object->x;
@@ -230,25 +231,25 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 				/* The three corners turn and shrink onto the target until the
 				   rune shows, then hold; flares are stamped along the edges
 				   between them. */
-				if(memberFrm <= 67) {
+				if(memberFrame <= 67) {
 					for(j = 0; j != BIND_CORNERS; j++) {
 						point =
 							&state->particles[member * BIND_SLOTS_PER_TARGET +
 								j];
 						syInitMatrix();
-						if(memberFrm < BIND_RUNE_TICK) {
-							scale[0] = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale[1] = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale[2] = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+						if(memberFrame < BIND_RUNE_TICK) {
+							scale[0] = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale[1] = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale[2] = toFIXED(21) / 8 - (memberFrame * 3 << 9);
 							syMatrixScaleVector(scale);
-							syRotZ((BIND_RUNE_TICK - memberFrm) << 9);
-							syRotY((BIND_RUNE_TICK - memberFrm) << 9);
+							syRotZ((BIND_RUNE_TICK - memberFrame) << 9);
+							syRotY((BIND_RUNE_TICK - memberFrame) << 9);
 						}
 						syRotZ(j * (DEGtoANG(120)));
 						btEffectPosProjectPoint(
 							BindVertex, (SCREEN_POINT *)vector);
-						point->velX = vector[0] + screen.x;
-						point->velY = vector[1] + screen.y + 16;
+						point->velocityX = vector[0] + screen.x;
+						point->velocityY = vector[1] + screen.y + 16;
 					}
 					for(j = 0; j != BIND_CORNERS; j++) {
 						PARTICLE *from = &state->particles[j +
@@ -257,12 +258,14 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 							&state->particles[(j + 1) % BIND_CORNERS +
 								member * BIND_SLOTS_PER_TARGET];
 
-						size = 5 - memberFrm / 16;
+						size = 5 - memberFrame / 16;
 						for(k = 0; k != BIND_EDGE_FLARES; k++) {
-							Sint32 x = from->velX +
-								k * (to->velX - from->velX) / BIND_EDGE_FLARES;
-							Sint32 y = from->velY +
-								k * (to->velY - from->velY) / BIND_EDGE_FLARES;
+							Sint32 x = from->velocityX +
+								k * (to->velocityX - from->velocityX) /
+									BIND_EDGE_FLARES;
+							Sint32 y = from->velocityY +
+								k * (to->velocityY - from->velocityY) /
+									BIND_EDGE_FLARES;
 
 							EFFECT_DRAW_FLARE(draw[0], canvas,
 								state->sheet + BIND_FLARE_PICTURES, x, y, size);
@@ -271,7 +274,7 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 				}
 
 				/* Then the rune, its right half mirrored from the left. */
-				if(memberFrm >= BIND_RUNE_TICK) {
+				if(memberFrame >= BIND_RUNE_TICK) {
 					draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
 						screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
 						RUNE_HALF_HEIGHT);
@@ -302,21 +305,21 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	Sint32				 scale[3];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
 	Sint32				 member;
 	BATTLE_CAMERA		*camera;
 	Sint32				 shift;
 	Uint8				*graphics;
 	MOTION_OBJECT		*object;
-	Sint32				 memberFrm;
+	Sint32				 memberFrame;
 	PARTICLE			*point;
 	Sint32				 size;
 	Sint32				 j;
 	Sint32				 k;
 	HEAP_SLOTS			*heap;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 	camera = RamHeapSlots->cameraState;
@@ -332,19 +335,19 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
 	/* The canvas is scrolled so that the target stands at its middle. */
-	btEffectPosProjectScaledBattler(args->tgts[0], &anchor);
+	btEffectPosProjectScaledBattler(args->targets[0], &anchor);
 	shift = CANVAS_SIZE / 2 - anchor.x;
 	REG_BG2X = shift << 8;
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0; frm != args->tgtCnt * 20 + 72; frm++) {
-		if(frm == BIND_RUNE_TICK)
+	for(frame = 0; frame != args->targetCount * 20 + 72; frame++) {
+		if(frame == BIND_RUNE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
-		if(frm == 46)
+		if(frame == 46)
 			btMotionApproachTargetStub(
-				args->user, args->tgts[0], TRIANGLE_STRIKE_LEAP_TICKS, 0);
+				args->user, args->targets[0], TRIANGLE_STRIKE_LEAP_TICKS, 0);
 		btEffectUpdatePhasePalette(
-			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 
 		/* Two blitters that keep the brighter pixel, the second mirrored. */
 		EFFECT_LOAD_BLITTER(
@@ -353,14 +356,14 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 		draw[1] = heap->ramCodePaired;
-		if(frm > 16 && (frm & 15) == 0)
+		if(frame > 16 && (frame & 15) == 0)
 			state->transferValue += CANVAS_FILL_WORD(1);
 
 		/* Only the first target gets a triangle. */
 		for(member = 0; member != 1; member++) {
-			object = btObjectGetStub(args->tgts[member])->obj;
-			memberFrm = frm - member * 8;
-			if(memberFrm >= 0 && memberFrm < 96) {
+			object = btObjectGetStub(args->targets[member])->object;
+			memberFrame = frame - member * 8;
+			if(memberFrame >= 0 && memberFrame < 96) {
 				syInitMatrix();
 				syLookAtLoad(camera->eye, camera->focus);
 				vector[0] = object->x;
@@ -373,25 +376,25 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 				/* The three corners turn and shrink onto the target until the
 				   rune shows, then hold; flares are stamped along the edges
 				   between them. */
-				if(memberFrm <= 67) {
+				if(memberFrame <= 67) {
 					for(j = 0; j != BIND_CORNERS; j++) {
 						point =
 							&state->particles[member * BIND_SLOTS_PER_TARGET +
 								j];
 						syInitMatrix();
-						if(memberFrm < BIND_RUNE_TICK) {
-							scale[0] = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale[1] = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale[2] = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+						if(memberFrame < BIND_RUNE_TICK) {
+							scale[0] = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale[1] = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale[2] = toFIXED(21) / 8 - (memberFrame * 3 << 9);
 							syMatrixScaleVector(scale);
-							syRotZ((BIND_RUNE_TICK - memberFrm) << 9);
-							syRotY((BIND_RUNE_TICK - memberFrm) << 9);
+							syRotZ((BIND_RUNE_TICK - memberFrame) << 9);
+							syRotY((BIND_RUNE_TICK - memberFrame) << 9);
 						}
 						syRotZ(j * (DEGtoANG(120)));
 						btEffectPosProjectPoint(
 							BindTriangleStrikeVertex, (SCREEN_POINT *)vector);
-						point->velX = vector[0] + screen.x;
-						point->velY = vector[1] + screen.y + 16;
+						point->velocityX = vector[0] + screen.x;
+						point->velocityY = vector[1] + screen.y + 16;
 					}
 					for(j = 0; j != BIND_CORNERS; j++) {
 						PARTICLE *from = &state->particles[j +
@@ -400,12 +403,14 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 							&state->particles[(j + 1) % BIND_CORNERS +
 								member * BIND_SLOTS_PER_TARGET];
 
-						size = 5 - memberFrm / 16;
+						size = 5 - memberFrame / 16;
 						for(k = 0; k != BIND_EDGE_FLARES; k++) {
-							Sint32 x = from->velX +
-								k * (to->velX - from->velX) / BIND_EDGE_FLARES;
-							Sint32 y = from->velY +
-								k * (to->velY - from->velY) / BIND_EDGE_FLARES;
+							Sint32 x = from->velocityX +
+								k * (to->velocityX - from->velocityX) /
+									BIND_EDGE_FLARES;
+							Sint32 y = from->velocityY +
+								k * (to->velocityY - from->velocityY) /
+									BIND_EDGE_FLARES;
 
 							EFFECT_DRAW_FLARE(draw[0], canvas,
 								state->sheet + BIND_FLARE_PICTURES, x, y, size);
@@ -414,7 +419,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 				}
 
 				/* Then the rune, its right half mirrored from the left. */
-				if(memberFrm >= BIND_RUNE_TICK) {
+				if(memberFrame >= BIND_RUNE_TICK) {
 					draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
 						screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
 						RUNE_HALF_HEIGHT);

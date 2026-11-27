@@ -16,7 +16,7 @@
 	 Messages        window_borders.c: mnMessageOpenWindow, mnFieldMessageShow;
 					 window_typing.c: mnMessageUpdateAll;
 					 window_decode.c: mnMessageDecode
-	 Text drawing    window_sprites.c: mnWindowSprUpdateAll;
+	 Text drawing    window_sprites.c: mnWindowSpriteUpdateAll;
 					 window_text_tiles.c: mnTextDrawStringAsTiles,
 					 mnTextDrawString
 	 Screens         window_selection.c: mnFieldMenuRun;
@@ -28,8 +28,8 @@
    declaration in scope. */
 void mnWindowMapTextCanvasTiles(
 	Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 whole);
-MESSAGE *mnMessageStart(
-	WINDOW *win, Sint32 entry, Sint32 x, Sint32 y, Uint16 *spacing, Sint32 flg);
+MESSAGE *mnMessageStart(WINDOW *window, Sint32 entry, Sint32 x, Sint32 y,
+	Uint16 *spacing, Sint32 flags);
 
 /* The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
    parts"). */

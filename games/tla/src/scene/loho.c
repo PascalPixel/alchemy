@@ -156,10 +156,10 @@ typedef struct LOHO_SPARK {
 			Uint16 x : 9;
 			Uint16 attr1 : 7;
 			Uint16 tile : 10;
-			Uint16 pri : 2;
-			Uint16 pal : 4;
+			Uint16 priority : 2;
+			Uint16 palette : 4;
 		} oam;
-	} spr;
+	} sprite;
 
 	Sint32 age;
 } LOHO_SPARK;
@@ -256,8 +256,8 @@ void scLohoFireCannon(void)
 	ACTOR	   *cannon;
 	ACTOR	   *walkingMiner;
 	LOHO_SPARK *spark;
-	LOHO_SPARK *tbl;
-	Sint32	   *tmr;
+	LOHO_SPARK *table;
+	Sint32	   *timer;
 	Sint32		tiles, entry, i, zero;
 	Sint32		sheet;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -312,7 +312,7 @@ inPlace:
 	fdActorMoveToAndWait(ACTOR_FELIX, 487, 377);
 	fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
 	fdScriptWait(30);
-	fdScriptPlaySnd(SE_SPIN);
+	fdScriptPlaySound(SE_SPIN);
 	scFieldActorStartRepeatedMotion(ACTOR_MINER_BY_THE_CANNON, 2);
 	scFieldActorStartRepeatedMotion(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 2);
 	fdActorRunRepeatedMotion(ACTOR_MAN_KEEPING_THE_CANNON, 2);
@@ -327,7 +327,7 @@ inPlace:
 	fdActorWalkByAndWait(ACTOR_FELIX, 24, 12);
 	fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
 	fdScriptWait(30);
-	fdScriptPlaySnd(SE_CLATTER);
+	fdScriptPlaySound(SE_CLATTER);
 	scFieldActorShowItemIconById(ACTOR_MAGMA_BALL, ITEM_MAGMA_BALL);
 	fdActorSetPos(ACTOR_MAGMA_BALL, 488, 330);
 	fdActorSetDestinationOffset(ACTOR_CANNON, 0, 8);
@@ -338,10 +338,10 @@ inPlace:
 	fdActorWaitForMoveById(ACTOR_MAGMA_BALL);
 	fdActorSetPos(ACTOR_MAGMA_BALL, 0, 0);
 	fdMapGridSetShake(7, 7, 1);
-	tbl = (LOHO_SPARK *)syHeapAllocEWRAM(
+	table = (LOHO_SPARK *)syHeapAllocateEWRAM(
 		EXPLOSION_SPARK_COUNT * sizeof(LOHO_SPARK));
 	{
-		void *buf = syHeapAlloc(4096);
+		void *buf = syHeapAllocate(4096);
 
 		sheet = syResourceGetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION);
 		syDecompressTaggedLZ(sheet, buf);
@@ -350,52 +350,52 @@ inPlace:
 		syHeapRelease(buf);
 	}
 	/* Each spark waits up to 31 ticks to appear. */
-	tmr = &tbl->age;
+	timer = &table->age;
 	for(i = 0; i < EXPLOSION_SPARK_COUNT; i++) {
-		*tmr = -(syRandom() << 5 >> 16);
-		tmr += sizeof(LOHO_SPARK) / sizeof(Sint32);
+		*timer = -(syRandom() << 5 >> 16);
+		timer += sizeof(LOHO_SPARK) / sizeof(Sint32);
 	}
 	syDMAXCopy((const void *)(Sint32)FieldExplosionPalette,
 		(void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	for(i = 0; i < LOHO_BLAST_TICKS; i++) {
 		if((i & 31) == 0) {
-			fdScriptPlaySnd(SE_CRASH);
+			fdScriptPlaySound(SE_CRASH);
 		}
 		if(i == 30) {
 			syScreenFadeToWhite(90);
-			fdScriptPlaySnd(SE_RUMBLE);
+			fdScriptPlaySound(SE_RUMBLE);
 		}
-		spark = tbl;
+		spark = table;
 		do {
 			if(spark->age == 0) {
-				spark->spr.words[0] = OBJ_SIZE_16X16;
-				spark->spr.words[1] = 0;
-				spark->spr.oam.x = syRandomBelow(96) + 72;
-				spark->spr.oam.y = syRandom() >> 10;
-				spark->spr.oam.pal = EXPLOSION_SPARK_PALETTE;
-				spark->spr.oam.pri = 0;
+				spark->sprite.words[0] = OBJ_SIZE_16X16;
+				spark->sprite.words[1] = 0;
+				spark->sprite.oam.x = syRandomBelow(96) + 72;
+				spark->sprite.oam.y = syRandom() >> 10;
+				spark->sprite.oam.palette = EXPLOSION_SPARK_PALETTE;
+				spark->sprite.oam.priority = 0;
 			}
 			if(spark->age >= 0) {
-				spark->spr.oam.tile = tiles + (spark->age >> 2) * 4;
-				syOAMAddSprAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
+				spark->sprite.oam.tile = tiles + (spark->age >> 2) * 4;
+				syOAMAddSpriteAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
 			}
 			spark->age++;
 			if(spark->age >= EXPLOSION_SPARK_TICKS) {
 				spark->age = -(syRandomBelow(7));
 			}
 			spark++;
-		} while((Sint32)spark <= (Sint32)&tbl[EXPLOSION_SPARK_COUNT - 1]);
+		} while((Sint32)spark <= (Sint32)&table[EXPLOSION_SPARK_COUNT - 1]);
 		sySynch(1);
 	}
 	syVRAMCacheFreeEntry(entry);
-	syHeapRelease(tbl);
+	syHeapRelease(table);
 	fdCameraMoveTo(488, CAMERA_KEEP, 390, 1);
 	fdActorSetPosAndFacing(
 		ACTOR_MINER_AT_HIS_SPOT, toFIXED(248), toFIXED(480), FACING_EAST);
 	scLohoDrawBrokenWall();
 	fdMapGridSetShake(0, 0, 1);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(180);
 	syScreenFadeFromWhite(120);
 	fdScriptSetMessageId((Sint32)MsgLohoIsEveryoneAllRight);
@@ -518,7 +518,7 @@ inPlace:
 	fdCameraMoveTo(542, CAMERA_KEEP, 256, 1);
 	zero = 0;
 	miner = fdActorGetById(ACTOR_MINER_BY_THE_CANNON);
-	miner->motionFlg = zero;
+	miner->motionFlags = zero;
 	fdActorSetSpeed(ACTOR_MINER_BY_THE_CANNON, 1.5);
 	fdActorSetScript(ACTOR_MINER_BY_THE_CANNON, LohoFirstMinerGoesToWall);
 	fdActorSetSpeed(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0.5);
@@ -615,7 +615,7 @@ crewLeaves:
 	fdScriptWait(40);
 	fdActorSetSpeed(ACTOR_CANNON, 0.1);
 	cannon = fdActorGetById(ACTOR_CANNON);
-	cannon->motionFlg = 0;
+	cannon->motionFlags = 0;
 	fdActorSetScript(ACTOR_CANNON, (Sint32)LohoCannonRises);
 	fdActorWaitForScriptEndById(ACTOR_CANNON);
 	fdActorSetSpeed(ACTOR_CANNON, 0.3);
@@ -623,7 +623,7 @@ crewLeaves:
 	fdCameraMoveTo(460, CAMERA_KEEP, 350, 1);
 	fdScriptWait(30);
 	walkingMiner = fdActorGetById(ACTOR_MINER_BY_THE_CANNON);
-	walkingMiner->steeringFlg &= ~ACTOR_FACES_MOTION;
+	walkingMiner->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, -40, -20);
 	fdActorWalkBy(ACTOR_MAN_KEEPING_THE_CANNON, -40, -20);
 	fdActorWalkBy(ACTOR_MINER_BY_THE_CANNON, -40, -20);
@@ -698,7 +698,7 @@ void scLohoScoopBoulderGolemCore(Sint32 id)
 void scLohoLiftBoulder(void)
 {
 	fdScriptSetFlag(FLAG_LOHO_BOULDER_LIFTED);
-	fdActorGetById(ACTOR_BOULDER)->collisionFlg &= ~ACTOR_SOLID;
+	fdActorGetById(ACTOR_BOULDER)->collisionFlags &= ~ACTOR_SOLID;
 	if(fdScriptGetFlag(FLAG_LOHO_GOLEM_CORE_DUG) == 0)
 		fdActorSetPos(FIELD_TREASURE_ACTOR + 2, 520, 136);
 }
@@ -836,16 +836,16 @@ void scLohoOpenDoorAndEnter(void)
 		ACTOR *actor = fdActorGetById(i);
 
 		if(actor != NULL)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
 	cue = &state->stepCue;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	scLohoAnimateMetatiles(
 		LohoSanctumDoor.steps, LohoSanctumDoor.x, LohoSanctumDoor.y);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, -4);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptWait(6);
 	syImportScriptSetExitRequest(*cue);
 	fdScriptFinishScreenTransition();
@@ -862,7 +862,7 @@ void scLohoEnterDoor(void)
 
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, -4);
 	syImportScriptSetExitRequest(state->stepCue);
 }
@@ -883,17 +883,17 @@ void scLohoClimbDownLadder(void)
 		fdActorSetPos(ACTOR_MINER_WELCOMING_TO_LOHO, 224, 224);
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(10);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdMapGridCopyMetatilesTo(96, 14, 72, 14, 2, 1);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 4);
 	fdActorWaitForMoveById(ACTOR_FELIX);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FELIX), 0);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 16);
 	fdActorWaitForMoveById(ACTOR_FELIX);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB);
 	fdScriptWait(14);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(cue);
 	fdScriptEnd();
 }
@@ -938,7 +938,7 @@ void scLohoTurnAndClimbDownLadder(void)
 void scLohoSetUpTown(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_CANNON), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_CANNON), 0);
 }
 
 /* The houses open with the window transition; the unseen marker on the inn
@@ -947,7 +947,7 @@ void scLohoSetUpRooms(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_INN_COUNTER), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_INN_COUNTER), 0);
 }
 
 /* Places an actor facing an angle, the angle taken as the Uint16 an actor's
@@ -962,11 +962,11 @@ Sint32 scInit(void)
 {
 	if(MainRoutineStateWork.next == SCENE_LOHO) {
 		if(!fdScriptGetFlag(FLAG_LOHO_MYTHRIL_SILVER_DUG))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
 		if(!fdScriptGetFlag(FLAG_LOHO_WALL_GOLEM_CORE_DUG))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
 		if(!fdScriptGetFlag(FLAG_LOHO_BOULDER_GOLEM_CORE_DUG))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR + 2, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR + 2, TREASURE_SPOT_WIDE);
 		scLohoSetUpTown();
 	} else {
 		scLohoSetUpRooms();
@@ -986,7 +986,7 @@ Sint32 scInit(void)
 				toFIXED(203), FACING_WEST);
 			scLohoPlaceFacing(ACTOR_MAN_KEEPING_THE_CANNON, toFIXED(490),
 				toFIXED(188), FACING_SOUTHEAST);
-			fdActorGetById(ACTOR_MAN_KEEPING_THE_CANNON)->tmr = FIXEDtoINT(
+			fdActorGetById(ACTOR_MAN_KEEPING_THE_CANNON)->timer = FIXEDtoINT(
 				fdActorGetById(ACTOR_MAN_KEEPING_THE_CANNON)->x.fixed);
 			fdActorGetById(ACTOR_MAN_KEEPING_THE_CANNON)->userValue =
 				FIXEDtoINT(

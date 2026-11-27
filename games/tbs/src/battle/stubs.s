@@ -12,10 +12,10 @@ StubsBattle:
 	stub btBackgroundSetModeStub, btBackgroundSetMode
 	stub btBackgroundLoadStub, btBackgroundLoad
 	stub btBackgroundSetPaletteLevelStub, btBackgroundSetPaletteLevel
-	unnamed_stub btSprGetEffectHeight
-	stub btSprHasHeavyImpactStub, btSprHasHeavyImpact
-	unnamed_stub btSprGetAttackHop
-	unnamed_stub btSprIsSmall
+	unnamed_stub btSpriteGetEffectHeight
+	stub btSpriteHasHeavyImpactStub, btSpriteHasHeavyImpact
+	unnamed_stub btSpriteGetAttackHop
+	unnamed_stub btSpriteIsSmall
 	stub btUnitGetEffectHeightStub, btUnitGetEffectHeight
 	stub btMotionApproachTargetStub, btMotionApproachTarget
 	unnamed_stub btMotionLeapBack
@@ -29,15 +29,15 @@ StubsBattle:
 	unnamed_stub btUnitListLiving
 	stub btPartyPrepareMembersStub, btPartyPrepareMembers
 	stub btCameraSetCommandViewStub, btCameraSetCommandView
-	stub btActorGetSprStub, btActorGetSpr
+	stub btActorGetSpriteStub, btActorGetSprite
 	stub btHighlightSetModesStub, btHighlightSetModes
 	stub btPlaybackStartStub, btPlaybackStart
 	stub btGraphicsScaleRGB555ClampedStub, btGraphicsScaleRGB555Clamped
 	stub btDjinnRecoveryCountDownStub, btDjinnRecoveryCountDown
 	stub btObjectGetPaletteStub, btObjectGetPalette
 	stub btDjinnRecoveryCountDownTwentyStub, btDjinnRecoveryCountDownTwenty
-	stub btDebugParmSetLoadStub, btDebugParmSetLoad
+	stub btDebugParamSetLoadStub, btDebugParamSetLoad
 	stub btObjectPutStub, btObjectPut
-	unnamed_stub btObjectDestroySprs
+	unnamed_stub btObjectDestroySprites
 	stub btMessageWaitForAdvanceAtStub, btMessageWaitForAdvanceAt
 	stub btDjinnCountStandbyStub, btDjinnCountStandby

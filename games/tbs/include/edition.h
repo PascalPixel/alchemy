@@ -704,7 +704,7 @@
 
 /* Where the es and it battle-target code sizes windows by the cartridge's
    language at run time, mnBattleTargetRunSelection's stack frame comes out
-   differently. The eighteen dead effect.ang = 0 stores, a FAKEMATCH that
+   differently. The eighteen dead effect.angle = 0 stores, a FAKEMATCH that
    restores the other editions' spill slots, are left out. Nothing visible
    changes. */
 #ifndef CARTRIDGE_LANGUAGE_AT_RUN_TIME
@@ -977,9 +977,9 @@
 #endif
 
 /* In Lalivero, Iodem comes out of his door and is placed in the doorway at (72,
-   312) in every edition. With this feature, his leftover move target (tgtZ) is
-   then cleared and he is placed in the doorway a second time. He then walks to
-   the fixed point (72, 328), instead of 16 pixels south of where he stands.
+   312) in every edition. With this feature, his leftover move target (targetZ)
+   is then cleared and he is placed in the doorway a second time. He then walks
+   to the fixed point (72, 328), instead of 16 pixels south of where he stands.
    Both walks end at the same point, so the visible effect is only a guard
    against a stale target left from an earlier move. */
 #ifndef IODEM_DOOR_WALK_RESET
@@ -1515,12 +1515,12 @@
 #endif
 
 /* The transfer method menu's help (Password or Cable/Link) releases its
-   window's text sprites with mnWindowSprClearList without first redrawing the
-   window empty, as mnWindowSprPrepareForRedraw does in the other editions. It
-   draws Password's help when the selection moves onto Password and the other
-   method's only when it moves off Password, setting the shown selection after
-   drawing. With the menu's two icons that is every move, and the text is window
-   sprites, so the help looks the same. */
+   window's text sprites with mnWindowSpriteClearList without first redrawing
+   the window empty, as mnWindowSpritePrepareForRedraw does in the other
+   editions. It draws Password's help when the selection moves onto Password and
+   the other method's only when it moves off Password, setting the shown
+   selection after drawing. With the menu's two icons that is every move, and
+   the text is window sprites, so the help looks the same. */
 #ifndef TRANSFER_HELP_SKIPS_EMPTY_WINDOW_REDRAW
 #define TRANSFER_HELP_SKIPS_EMPTY_WINDOW_REDRAW 0
 #endif
@@ -1602,7 +1602,7 @@
 
 /* In the prologue by the river, a per-tick task keeps Garet and the exhausted
    strongman at the leader's sprite priority. It now sets that priority through
-   fdActorSetSprPriority, so their shadows follow the leader's priority too.
+   fdActorSetSpritePriority, so their shadows follow the leader's priority too.
    Before, only their sprites did, and their shadows kept whatever priority they
    had. */
 #ifndef VALE_PROLOGUE_SHADOWS_TAKE_LEADER_PRIORITY

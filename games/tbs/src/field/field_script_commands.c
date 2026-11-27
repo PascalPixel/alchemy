@@ -63,9 +63,10 @@ Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 {
 	Sint16		   initCursor = interpreter->scriptCursor;
-	SCRIPT_COMMAND func = (SCRIPT_COMMAND)interpreter->script[initCursor + 1];
+	SCRIPT_COMMAND callback =
+		(SCRIPT_COMMAND)interpreter->script[initCursor + 1];
 
-	if(func(interpreter) != 0)
+	if(callback(interpreter) != 0)
 		return FALSE;
 	if(interpreter->scriptCursor == initCursor)
 		interpreter->scriptCursor = interpreter->scriptCursor + 2;
@@ -79,7 +80,7 @@ Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 {
 	Uint32 *scriptWords;
-	Sint32	wordIdx;
+	Sint32	wordIndex;
 
 	interpreter->wait = 0;
 	if(labelKey == 0) {
@@ -88,9 +89,9 @@ Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 
 	labelKey &= SCRIPT_LABEL_KEY_MASK;
 	scriptWords = (Uint32 *)interpreter->script;
-	for(wordIdx = 0; wordIdx < SCRIPT_LABEL_SEARCH_WORDS; wordIdx++) {
+	for(wordIndex = 0; wordIndex < SCRIPT_LABEL_SEARCH_WORDS; wordIndex++) {
 		if(*scriptWords++ == labelKey) {
-			return wordIdx + 1;
+			return wordIndex + 1;
 		}
 	}
 	return 0;
@@ -103,7 +104,7 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 	const Sint32 *arguments;
 	Sint32		  repeatLimit;
 	Sint32		  jumpKey;
-	Sint32		  nextCnt;
+	Sint32		  nextCount;
 
 	arguments = &interpreter->script[interpreter->scriptCursor + 1];
 	repeatLimit = *arguments++;
@@ -112,13 +113,13 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 		interpreter->scriptCursor =
 			fdActorScriptFindLabel(interpreter, jumpKey);
 	} else {
-		nextCnt = interpreter->repeatCnt + 1;
-		interpreter->repeatCnt = nextCnt;
-		if((Uint8)nextCnt < (Sint16)repeatLimit) {
+		nextCount = interpreter->repeatCount + 1;
+		interpreter->repeatCount = nextCount;
+		if((Uint8)nextCount < (Sint16)repeatLimit) {
 			interpreter->scriptCursor =
 				fdActorScriptFindLabel(interpreter, jumpKey);
 		} else {
-			interpreter->repeatCnt = 0;
+			interpreter->repeatCount = 0;
 			interpreter->scriptCursor += 3;
 		}
 	}
@@ -188,11 +189,11 @@ Sint32 fdActorScriptTestFlag(ACTOR *interpreter)
 #define SCRIPT_DEFINE_FLAG_COMMAND(name, change) \
 	Sint32 name(ACTOR *interpreter) \
 	{ \
-		Sint32 flgId; \
+		Sint32 flagId; \
 \
-		flgId = interpreter->script[interpreter->scriptCursor + 1]; \
-		interpreter->conditionResult = gmFlagGetStub(flgId); \
-		change(flgId); \
+		flagId = interpreter->script[interpreter->scriptCursor + 1]; \
+		interpreter->conditionResult = gmFlagGetStub(flagId); \
+		change(flagId); \
 		interpreter->scriptCursor += 2; \
 		return 1; \
 	}
@@ -205,16 +206,16 @@ SCRIPT_DEFINE_FLAG_COMMAND(fdActorScriptClearFlagAndTest, gmFlagClearStub)
 /* SC_FLAG_REV(f): tests game flag f, then flips it. */
 Sint32 fdActorScriptToggleFlagAndTest(ACTOR *interpreter)
 {
-	Sint32 flgId;
-	Sint32 prevFlgValue;
+	Sint32 flagId;
+	Sint32 prevFlagsValue;
 
-	flgId = interpreter->script[interpreter->scriptCursor + 1];
-	prevFlgValue = gmFlagGetStub(flgId);
-	interpreter->conditionResult = prevFlgValue;
-	if((Uint8)prevFlgValue == 1) {
-		gmFlagClearStub(flgId);
+	flagId = interpreter->script[interpreter->scriptCursor + 1];
+	prevFlagsValue = gmFlagGetStub(flagId);
+	interpreter->conditionResult = prevFlagsValue;
+	if((Uint8)prevFlagsValue == 1) {
+		gmFlagClearStub(flagId);
 	} else {
-		gmFlagSetStub(flgId);
+		gmFlagSetStub(flagId);
 	}
 	interpreter->scriptCursor += 2;
 	return 1;
@@ -245,9 +246,9 @@ Sint32 fdActorScriptNoOperation(ACTOR *interpreter)
 }
 
 /* SC_SE(n): sends sound command n. */
-Sint32 fdActorScriptPlaySnd(ACTOR *interpreter)
+Sint32 fdActorScriptPlaySound(ACTOR *interpreter)
 {
-	sySndPlayStub(interpreter->script[interpreter->scriptCursor + 1]);
+	sySoundPlayStub(interpreter->script[interpreter->scriptCursor + 1]);
 	interpreter->scriptCursor += 2;
 	return 1;
 }
@@ -256,12 +257,12 @@ Sint32 fdActorScriptPlaySnd(ACTOR *interpreter)
    (ACTOR_SOLID), each radius less 2 pixels; otherwise 0. */
 Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIdx;
+	Sint32 actorIndex;
 	ACTOR *candidate = ActorsWork;
 
-	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
+	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
 		if(candidate->script != NULL &&
-			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
+			(candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
 				   values, actor->radius - 2) >= 0)
 				return -1;
@@ -274,12 +275,12 @@ Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
    as fdActorScriptCheckOverlap tests, or NULL. */
 ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIdx;
+	Sint32 actorIndex;
 	ACTOR *candidate = ActorsWork;
 
-	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
+	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
 		if(candidate->script != NULL &&
-			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
+			(candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
 				   values, actor->radius - 2) >= 0)
 				return candidate;
@@ -340,13 +341,13 @@ Sint32 fdActorScriptApplyRelativePos(ACTOR *actor)
 
 /* SC_FACE_WATCHED: turns the actor to face its watched actor across the
    ground. */
-Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
+Sint32 fdActorScriptStoreAngleToWatchedActor(ACTOR *actor)
 {
-	ACTOR *tgt;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
+	target = (ACTOR *)actor->watchedActor;
 	actor->facing = syAtan(
-		(tgt->z.fixed - actor->z.fixed), (tgt->x.fixed - actor->x.fixed));
+		(target->z.fixed - actor->z.fixed), (target->x.fixed - actor->x.fixed));
 	actor->scriptCursor++;
 	return 1;
 }
@@ -354,10 +355,11 @@ Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
 /* SC_MOVE_TO_WATCHED: sends the actor towards its watched actor. */
 Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
 {
-	ACTOR *tgt;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
-	fdActorSetMoveTarget(actor, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+	target = (ACTOR *)actor->watchedActor;
+	fdActorSetMoveTarget(
+		actor, target->x.fixed, target->y.fixed, target->z.fixed);
 	actor->scriptCursor++;
 	return 1;
 }
@@ -366,15 +368,15 @@ Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
    is never filled in; the operands are skipped unread. */
 Sint32 fdActorScriptApplyLocalOffsetPos(ACTOR *actor)
 {
-	Sint32 localOfs[3];
+	Sint32 localOffset[3];
 
 	/* BUG: offset is never set, so the target is the position plus whatever the
 	   stack held. */
 #if FIX_UNINITIALIZED_READ
-	localOfs[0] = localOfs[1] = localOfs[2] = 0;
+	localOffset[0] = localOffset[1] = localOffset[2] = 0;
 #endif
-	fdActorSetMoveTarget(actor, actor->x.fixed + localOfs[0],
-		actor->y.fixed + localOfs[1], actor->z.fixed + localOfs[2]);
+	fdActorSetMoveTarget(actor, actor->x.fixed + localOffset[0],
+		actor->y.fixed + localOffset[1], actor->z.fixed + localOffset[2]);
 	actor->scriptCursor += 3;
 	return 1;
 }
@@ -405,7 +407,7 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *cameraActor)
 	/* UB: the bounds read the leader's height before the null check below. */
 #if FIX_NULL_DEREFERENCE
 	if(leader == NULL) {
-		cameraActor->motionFlg = 0;
+		cameraActor->motionFlags = 0;
 		cameraActor->scriptCursor++;
 		return 1;
 	}
@@ -417,14 +419,14 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *cameraActor)
 	maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
 	maxZ = bounds->maxY + leader->y.fixed -
 		(FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
-	cameraActor->motionFlg = 0;
+	cameraActor->motionFlags = 0;
 	if(leader != NULL && leader->script != NULL) {
 		x = leader->x.fixed;
 		y = leader->y.fixed;
 		z = leader->z.fixed;
-		cameraActor->tgtX = ACTOR_NO_TARGET;
-		cameraActor->tgtY = ACTOR_NO_TARGET;
-		cameraActor->tgtZ = ACTOR_NO_TARGET;
+		cameraActor->targetX = ACTOR_NO_TARGET;
+		cameraActor->targetY = ACTOR_NO_TARGET;
+		cameraActor->targetZ = ACTOR_NO_TARGET;
 		if(x < minX)
 			x = minX;
 		if(z < minZ)
@@ -433,7 +435,7 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *cameraActor)
 			x = maxX;
 		if(z > maxZ)
 			z = maxZ;
-		if(cameraActor->tmr != 0) {
+		if(cameraActor->timer != 0) {
 			SET_ACTOR_POSITION(cameraActor, x, y, z);
 		} else {
 			/* The distance in the XZ plane: dy is computed as in
@@ -699,7 +701,7 @@ Sint32 fdActorScriptWanderNearHome(ACTOR *actor)
 			dz = candidatePosition.z / toFIXED(1) - actor->homeZ;
 			if(dx * dx + dz * dz > homeRadiusSquared)
 				goto roam;
-			actor->collisionFlg |= ACTOR_PUSHABLE;
+			actor->collisionFlags |= ACTOR_PUSHABLE;
 			fdActorSetMoveTarget(actor, candidatePosition.x,
 				candidatePosition.y, candidatePosition.z);
 			goto done;
@@ -727,7 +729,7 @@ back:
 			travelDistance, heading, (FIXED *)&candidatePosition);
 		if(fdMapGridCheckCollision(actor, &candidatePosition) != COLLISION_NONE)
 			goto back;
-		actor->collisionFlg &= ~ACTOR_PUSHABLE;
+		actor->collisionFlags &= ~ACTOR_PUSHABLE;
 		fdActorSetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
 			candidatePosition.z);
 	}
@@ -791,7 +793,8 @@ typedef enum SCRIPT_OPERAND_OPERATION {
 /* The state value handlers, one for each entry of ACTOR_SCRIPT_VALUE (see
    ActorScriptOperandHandlerTable in actor_script_operands.c); each names the
    actor field it sets, adds to or compares. */
-SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareScriptAddress, scriptAdr)
+SCRIPT_DEFINE_OPERAND_ADDRESS(
+	fdActorScriptSetOrCompareScriptAddress, scriptAddr)
 
 /* State value SW_CURSOR: sets, adds to or compares the script cursor. */
 void fdActorScriptSetOrCompareCursor(
@@ -841,13 +844,13 @@ SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareScaleX, scaleX)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareScaleY, scaleY)
 /* State value SW_VELOCITY_X: sets, adds to or compares the actor's x
    velocity. */
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityX, velX)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityX, velocityX)
 /* State value SW_VELOCITY_Y: sets, adds to or compares the actor's y
    velocity. */
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityY, velY)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityY, velocityY)
 /* State value SW_VELOCITY_Z: sets, adds to or compares the actor's z
    velocity. */
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityZ, velZ)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityZ, velocityZ)
 /* State value SW_SPEED: sets, adds to or compares the actor's top speed. */
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareSpeedLimit, speedLimit)
 /* State value SW_ACCELERATION: sets, adds to or compares the actor's
@@ -855,13 +858,13 @@ SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareSpeedLimit, speedLimit)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareAcceleration, acceleration)
 /* State value SW_TARGET_X: sets, adds to or compares the x the actor heads
    for. */
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetX, tgtX)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetX, targetX)
 /* State value SW_TARGET_Y: sets, adds to or compares the y the actor heads
    for. */
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetY, tgtY)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetY, targetY)
 /* State value SW_TARGET_Z: sets, adds to or compares the z the actor heads
    for. */
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetZ, tgtZ)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetZ, targetZ)
 /* State value SW_BOUNCE: sets, adds to or compares the actor's bounce. */
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareBounce, bounce)
 /* State value SW_GRAVITY: sets, adds to or compares the actor's gravity. */
@@ -873,14 +876,14 @@ SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTerrainHeight, groundHeight)
    scene code's own word. */
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareSceneWord, sceneWord)
 /* State value SW_SPRITE: sets, adds to or compares the actor's sprite. */
-SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareSpr, spr)
+SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareSprite, sprite)
 /* State value SW_SPRITE_KIND: sets, adds to or compares whether the actor draws
    no sprite, one or a group. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSprStorageKind, sprStorageKind, Uint8)
+	fdActorScriptSetOrCompareSpriteStorageKind, spriteStorageKind, Uint8)
 /* State value SW_MOTION: sets, adds to or compares the actor's motion flags. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareMotionFlags, motionFlg, Uint8)
+	fdActorScriptSetOrCompareMotionFlags, motionFlags, Uint8)
 /* State value SW_ARRIVAL: sets, adds to or compares the axis the actor's
    arrival is judged on. */
 SCRIPT_DEFINE_OPERAND_NARROW(
@@ -892,28 +895,28 @@ SCRIPT_DEFINE_OPERAND_NARROW(
 /* State value SW_SNAP: sets, adds to or compares whether the actor snaps to its
    target. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSnapToTarget, snapToTgt, Uint8)
+	fdActorScriptSetOrCompareSnapToTarget, snapToTarget, Uint8)
 /* State value SW_COLLISION: sets, adds to or compares the actor's collision
    flags. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareCollisionFlags, collisionFlg, Uint8)
+	fdActorScriptSetOrCompareCollisionFlags, collisionFlags, Uint8)
 /* State value SW_STEERING: sets, adds to or compares the actor's steering
    flags. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSteeringFlags, steeringFlg, Uint8)
+	fdActorScriptSetOrCompareSteeringFlags, steeringFlags, Uint8)
 /* State value SW_PAUSED: sets, adds to or compares whether the actor is
    paused. */
 SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrComparePaused, paused, Uint8)
 /* State value SW_REPEAT: sets, adds to or compares the script's repeat
    count. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareRepeatCount, repeatCnt, Uint8)
+	fdActorScriptSetOrCompareRepeatCount, repeatCount, Uint8)
 
 /* State value SW_WAIT: sets, adds to or compares the wait counter. */
 SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrCompareWait, wait, Sint16)
 
 /* State value SW_TIMER: sets, adds to or compares the actor's timer. */
-SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrCompareTimer, tmr, Sint16)
+SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrCompareTimer, timer, Sint16)
 /* State value SW_USER_VALUE: sets, adds to or compares the actor's user
    value. */
 SCRIPT_DEFINE_OPERAND_NARROW(
@@ -924,10 +927,10 @@ SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareWatchedActor, watchedActor)
 /* State value SW_HOOK: sets, adds to or compares the actor's update
    function. */
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareUpdateAddress, update)
-/* State value SW_SCENE_COUNTER: sets, adds to or compares the actor's sceneCnt,
-   scene code's own counter. */
+/* State value SW_SCENE_COUNTER: sets, adds to or compares the actor's
+   sceneCount, scene code's own counter. */
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSceneCounter, sceneCnt, Uint8)
+	fdActorScriptSetOrCompareSceneCounter, sceneCount, Uint8)
 /* State value SW_SCENE_BYTE: sets, adds to or compares the actor's sceneByte,
    scene code's own byte. */
 SCRIPT_DEFINE_OPERAND_NARROW(
@@ -940,7 +943,7 @@ static __inline__ Sint32 fdActorScriptApplyOperandCommand(
 {
 	Sint16		  commandCursor = operands->cursor;
 	const Sint32 *arguments =
-		(const Sint32 *)operands->scriptAdr + commandCursor + 1;
+		(const Sint32 *)operands->scriptAddr + commandCursor + 1;
 	OPERAND_FUNC handler = ActorScriptOperandHandlerTable[arguments[0]];
 
 	if(handler != 0)

@@ -37,10 +37,10 @@ void fdEffectUpdateDouseDrop(ACTOR *drop)
 			}
 			splash->scaleY = toFIXED(1) / 2;
 			splash->scaleX = toFIXED(1) / 2;
-			splash->motionFlg = ACTOR_FALLS;
-			splash->velY = toFIXED(1);
+			splash->motionFlags = ACTOR_FALLS;
+			splash->velocityY = toFIXED(1);
 			splash->speedLimit = syRandom() + toFIXED(6) / 5;
-			fdActorSetTargetPosFromMagnitudeAng(
+			fdActorSetTargetPosFromMagnitudeAngle(
 				splash, toFIXED(32), syRandom());
 			splash->wait = 6;
 			fdActorStartScriptStub(splash, FieldEffectSharedParticleScript);
@@ -81,21 +81,21 @@ void fdPsynergyDouse(void)
 	ACTOR			   *cloud;
 	Sint32				step;
 	Sint32				steps = GROW_STEPS + 1;
-	Sint32				cnt;
+	Sint32				count;
 	Sint32				y;
 	ACTOR			   *particle;
 
 	cloud = fdActorSpawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
 	if(cloud == 0)
 		return;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_ITEM_BREAK);
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_ITEM_BREAK);
 	/* No target: 16 pixels in front of the caster, at the ground's height. */
-	if(effectState->tgt == 0) {
+	if(effectState->target == 0) {
 		effectState->x = caster->x.fixed;
 		effectState->z = caster->z.fixed;
 		syVectorAddPolarOffset(
-			toFIXED(16), effectState->ang, (FIXED *)&effectState->x);
+			toFIXED(16), effectState->angle, (FIXED *)&effectState->x);
 		effectState->y = fdMapGridGetTerrainHeightStub(
 			MAPGRID_LAYER_GROUND, effectState->x, effectState->z);
 	}
@@ -126,16 +126,16 @@ void fdPsynergyDouse(void)
 	if((Sint8)effectState->lit == 0) {
 		/* A drop every 6 ticks from 3 to 8 pixels round the cloud (the last
 		   right under it); aimAhead is cleared once a target is dispatched. */
-		cnt = DOUSE_DROPS;
+		count = DOUSE_DROPS;
 		if(effectState->aimAhead == 0)
-			cnt = DOUSE_DROPS_ON_TARGET;
-		for(step = 0; step < cnt; step++) {
+			count = DOUSE_DROPS_ON_TARGET;
+		for(step = 0; step < count; step++) {
 			pos.x = cloud->x.fixed;
 			pos.y = cloud->y.fixed;
 			pos.z = cloud->z.fixed;
 			syVectorAddPolarOffset(
 				syRandom() * 5 + toFIXED(3), syRandom(), (FIXED *)&pos);
-			if(step == cnt - 1) {
+			if(step == count - 1) {
 				sySynch(25);
 				pos.x = cloud->x.fixed;
 				pos.y = cloud->y.fixed;
@@ -145,9 +145,9 @@ void fdPsynergyDouse(void)
 			if(particle != 0) {
 				particle->groundHeight = pos.y - toFIXED(32);
 				particle->update = fdEffectUpdateDouseDrop;
-				particle->motionFlg = ACTOR_FALLS;
+				particle->motionFlags = ACTOR_FALLS;
 			}
-			sySndPlayStub(SE_WATER);
+			sySoundPlayStub(SE_WATER);
 			sySynch(6);
 		}
 		sySynch(10);
@@ -155,10 +155,10 @@ void fdPsynergyDouse(void)
 		/* Every 6 ticks, a blue drop sways down from 3 to 8 pixels round the
 		   cloud. */
 		if(effectState->aimAhead != 0)
-			cnt = DOUSE_DROPS;
+			count = DOUSE_DROPS;
 		else
-			cnt = DOUSE_SWAYING_DROPS_ON_TARGET;
-		for(step = 0; step < cnt; step++) {
+			count = DOUSE_SWAYING_DROPS_ON_TARGET;
+		for(step = 0; step < count; step++) {
 			pos.x = cloud->x.fixed;
 			pos.y = cloud->y.fixed;
 			pos.z = cloud->z.fixed;
@@ -167,10 +167,10 @@ void fdPsynergyDouse(void)
 			particle = fdActorSpawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
 			if(particle != 0) {
 				particle->update = fdEffectUpdateDriftingFallActor;
-				particle->motionFlg = 0;
-				particle->spr->image.pri = 2;
+				particle->motionFlags = 0;
+				particle->sprite->image.priority = 2;
 				fdActorSelectAnimationStub(particle, 8);
-				fdActorSetSprColModeStub(particle, SPRITE_COLOR_WHITE);
+				fdActorSetSpriteColorModeStub(particle, SPRITE_COLOR_WHITE);
 			}
 			sySynch(6);
 		}
@@ -192,7 +192,7 @@ void fdPsynergyDouse(void)
 		step++;
 	} while(step < steps);
 	fdActorReleaseStub(cloud);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 #undef DOUSE_DROPS

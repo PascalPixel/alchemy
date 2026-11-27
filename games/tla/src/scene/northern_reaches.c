@@ -61,7 +61,7 @@ typedef enum NORTHERN_REACHES_ACTOR_ID {
 } NORTHERN_REACHES_ACTOR_ID;
 
 void scNorthernReachesShatterIceWall(
-	FIXED *blast, FIXED *pos, void (*func)(void));
+	FIXED *blast, FIXED *pos, void (*callback)(void));
 
 extern Sint32 NorthernReachesShipAtRest[];
 
@@ -71,9 +71,9 @@ typedef struct ICE_SHARD_OBJ {
 	FIXED  x;
 	FIXED  y;
 	FIXED  z;
-	FIXED  velX;
-	FIXED  velY;
-	FIXED  velZ;
+	FIXED  velocityX;
+	FIXED  velocityY;
+	FIXED  velocityZ;
 	Uint32 age;
 } ICE_SHARD_OBJ;
 
@@ -98,7 +98,7 @@ typedef struct EXPLOSION_SPARK {
    motion. */
 typedef struct ICE_WALL_STATE {
 	Uint8		  sheet[SHEET_BUFFER_SIZE];
-	EFFECT_SPR	  sprs[ICE_SHARD_COUNT];
+	EFFECT_SPR	  sprites[ICE_SHARD_COUNT];
 	ICE_SHARD_OBJ shards[ICE_SHARD_COUNT];
 } ICE_WALL_STATE;
 
@@ -223,14 +223,14 @@ void scNorthernReachesFireMagmaBall(void)
 	ACTOR *ball;
 	ACTOR *smoke;
 	FIXED  to[3];
-	Sint32 cnt, msg;
+	Sint32 count, msg;
 	Sint32 told;
 
 	ball = fdActorGet(ACTOR_MAGMA_BALL_SHOT);
 	smoke = fdActorGet(ACTOR_CANNON_SMOKE);
 	ship = fdActorGet(ACTOR_SHIP);
-	cnt = fdScriptGetFlag(FLAG_ICE_WALL_SHATTERED);
-	if(cnt != 0)
+	count = fdScriptGetFlag(FLAG_ICE_WALL_SHATTERED);
+	if(count != 0)
 		return;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -242,10 +242,10 @@ void scNorthernReachesFireMagmaBall(void)
 	fdActorGet(ACTOR_PIERS)->scaleX = 0;
 	fdActorGet(ACTOR_JENNA)->scaleX = 0;
 	fdActorGet(ACTOR_SHEBA)->scaleX = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PIERS), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHEBA), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PIERS), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHEBA), 0);
 	fdActorSetPos(ACTOR_KRADEN, 464, 216);
 	fdActorSetPos(ACTOR_PIERS, 464, 216);
 	fdActorSetPos(ACTOR_JENNA, 464, 216);
@@ -274,13 +274,14 @@ void scNorthernReachesFireMagmaBall(void)
 		/* "Fire the Magma Ball!" */
 		syFieldScriptShowMessageThenWait(ACTOR_KRADEN, 0, 5);
 		fdActorSetSpeed(ACTOR_SHIP, 3);
-		fdActorGet(ACTOR_SHIP)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_SHIP)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkBy(ACTOR_SHIP, 0, 16);
-		fdScriptPlaySnd(SE_CLATTER);
+		fdScriptPlaySound(SE_CLATTER);
 		syFieldScriptWait(4);
 		smoke->scaleX = toFIXED(3) / 2;
 		smoke->scaleY = toFIXED(3) / 2;
-		fdActorSetSprColMode(fdActorGet(ACTOR_CANNON_SMOKE), SPRITE_COLOR_GREY);
+		fdActorSetSpriteColorMode(
+			fdActorGet(ACTOR_CANNON_SMOKE), SPRITE_COLOR_GREY);
 		fdActorSetPos(ACTOR_CANNON_SMOKE, 464, 200);
 		fdActorSetAnimation(ACTOR_CANNON_SMOKE, 1);
 		ball->scaleX = toFIXED(1) / 2;
@@ -288,7 +289,7 @@ void scNorthernReachesFireMagmaBall(void)
 		fdActorSetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
 		fdActorSetPos(ACTOR_MAGMA_BALL_SHOT, 464, 216);
 		fdActorWalkTo(ACTOR_MAGMA_BALL_SHOT, 464, 144);
-		for(cnt = MAGMA_BALL_GROW_TICKS - 1; cnt >= 0; cnt--) {
+		for(count = MAGMA_BALL_GROW_TICKS - 1; count >= 0; count--) {
 			ball->scaleX += toFIXED(1) / 32;
 			ball->scaleY += toFIXED(1) / 32;
 			syWait(1);
@@ -296,7 +297,7 @@ void scNorthernReachesFireMagmaBall(void)
 		fdCameraMoveTo(472, CAMERA_KEEP, 176, 1);
 		fdCameraWaitForArrival();
 		scFieldActorWaitForMoveById(ACTOR_MAGMA_BALL_SHOT);
-		fdScriptPlaySnd(SE_CRASH);
+		fdScriptPlaySound(SE_CRASH);
 		from[0] = ((ball->x.fixed) - toFIXED(2));
 		from[1] = (ball->y.fixed);
 		from[2] = ((ball->z.fixed) - toFIXED(8));
@@ -308,11 +309,11 @@ void scNorthernReachesFireMagmaBall(void)
 		syFieldScriptWait(20);
 		fdActorSetPos(ACTOR_CANNON_SMOKE, 0, 0);
 		fdActorSetPos(ACTOR_MAGMA_BALL_SHOT, 0, 0);
-		FieldStateWork->transitionFrm = 100;
+		FieldStateWork->transitionFrame = 100;
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
-		FieldStateWork->transitionFrm = 8;
+		FieldStateWork->transitionFrame = 8;
 		/* "Great! We did it! We can keep going now!" */
 		syFieldScriptShowMessageThenWait(
 			SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 5);
@@ -346,7 +347,7 @@ void scNorthernReachesFireMagmaBall(void)
 		scFieldActorWaitForMoveById(ACTOR_SHIP);
 		fdActorSetSpeed(ACTOR_SHIP, 0.2);
 		fdActorSetDestinationOffset(ACTOR_SHIP, 0, -12);
-		for(cnt = 0; cnt < SHIP_SHRINK_STEPS; cnt++) {
+		for(count = 0; count < SHIP_SHRINK_STEPS; count++) {
 			fdActorShrinkBy(ship, toFIXED(9) / 256);
 			syWait(7);
 		}
@@ -374,7 +375,8 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state = &MainRoutineStateWork;
-	fdActorGet(state->leaderActorId)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(state->leaderActorId)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
 	if(state->entrance == ENTRANCE_ABOARD_SHIP_WITH_CANNON) {
 		fdScriptSetFlag(FLAG_SHIP_CARRIES_CANNON);
 		/* The player steers the ship, actor 8, in place of the leader. */
@@ -396,27 +398,27 @@ Sint32 scPrepareMap(void)
 }
 
 /* The Magma Ball's explosion over the ice wall: sparks fly, the screen fades to
-   white, `func` draws the wall gone and its shards fly apart from
+   white, `callback` draws the wall gone and its shards fly apart from
    `pos`. The caller passes where the ball struck as `blast`, but nothing
    reads it: the sparks burst at random over a fixed stretch of the screen, 52
    to 179 pixels across and 16 to 79 down, wherever the ball landed. */
 void scNorthernReachesShatterIceWall(
-	FIXED *blast, FIXED *pos, void (*func)(void))
+	FIXED *blast, FIXED *pos, void (*callback)(void))
 {
 	ICE_WALL_STATE	*state;
 	ICE_SHARD_OBJ	*shard;
-	EFFECT_SPR		*spr;
-	EFFECT_SPR		*flySpr;
+	EFFECT_SPR		*sprite;
+	EFFECT_SPR		*flySprite;
 	EXPLOSION_SPARK *sparks;
 	EXPLOSION_SPARK *spark;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	Uint8  frmSlot[4];
+	Uint8  frameSlot[4];
 	void  *sheet;
-	Sint32 i, frm, column, entry, sparkEntry, tiles, flying, sparkTiles;
+	Sint32 i, frame, column, entry, sparkEntry, tiles, flying, sparkTiles;
 	Sint32 size;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(ICE_WALL_STATE));
+	state = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(ICE_WALL_STATE));
 	flying = 0;
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_FIELD_EFFECT_ICE_SHARD), state);
@@ -424,22 +426,22 @@ void scNorthernReachesShatterIceWall(
 	tiles = syVRAMCacheLoad(entry, 1280, state);
 	i = 0;
 	shard = state->shards;
-	spr = state->sprs;
+	sprite = state->sprites;
 	for(; i < ICE_SHARD_COUNT; i++) {
-		fdEffectSprInit(spr, 0, 0, OBJ_SIZE_16X16, (i & 3) * 8 + tiles);
-		spr->depth = EFFECT_SPRITE_FRONT_DEPTH;
-		spr->oam.pri = 0;
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
+		fdEffectSpriteInit(sprite, 0, 0, OBJ_SIZE_16X16, (i & 3) * 8 + tiles);
+		sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
+		sprite->oam.priority = 0;
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
 		column = i / 6;
 		shard->x = pos[0] + FIELD_METATILE_ORIGIN(column);
 		shard->y = pos[1] - FIELD_METATILE_ORIGIN(i % 6);
 		column -= 4;
-		spr++;
+		sprite++;
 		shard->z = pos[2];
-		shard->velX = (syRandom() * 3 >> 1) * column;
-		shard->velY = (syRandom() << 2) + toFIXED(2);
-		shard->velZ = 0;
+		shard->velocityX = (syRandom() * 3 >> 1) * column;
+		shard->velocityY = (syRandom() << 2) + toFIXED(2);
+		shard->velocityZ = 0;
 		shard->age = 0;
 		shard++;
 	}
@@ -447,8 +449,9 @@ void scNorthernReachesShatterIceWall(
 	 * before the sparks are allocated; as SHEET_BUFFER_SIZE at the
 	 * allocation. */
 	size = SHEET_BUFFER_SIZE;
-	sparks = syHeapAllocEWRAM(EXPLOSION_SPARK_COUNT * sizeof(EXPLOSION_SPARK));
-	sheet = syHeapAlloc(size);
+	sparks =
+		syHeapAllocateEWRAM(EXPLOSION_SPARK_COUNT * sizeof(EXPLOSION_SPARK));
+	sheet = syHeapAllocate(size);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION), sheet);
 	sparkEntry = syVRAMCacheFindFreeEntry();
@@ -459,34 +462,34 @@ void scNorthernReachesShatterIceWall(
 	syDMAXCopy(FieldExplosionPalette,
 		(void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-	for(frm = 0; frm <= 149; frm++) {
-		if((frm & 31) == 0) {
-			fdScriptPlaySnd(SE_CRASH);
+	for(frame = 0; frame <= 149; frame++) {
+		if((frame & 31) == 0) {
+			fdScriptPlaySound(SE_CRASH);
 		}
-		if(frm == 60) {
+		if(frame == 60) {
 			fdPaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
 			fdPaletteFadeStartInterpolation(90);
-			fdScriptPlaySnd(SE_RUMBLE);
+			fdScriptPlaySound(SE_RUMBLE);
 		}
-		if(frm == 105) {
-			func();
+		if(frame == 105) {
+			callback();
 			flying = 1;
 			fdMapGridSetShake(6, 6, 1);
-			fdScriptPlaySnd(SE_SPARKLING_PASSAGE);
+			fdScriptPlaySound(SE_SPARKLING_PASSAGE);
 		}
-		if(frm == 130) {
+		if(frame == 130) {
 			flying = 1;
 		}
 		if(flying != 0) {
 			shard = state->shards;
-			flySpr = state->sprs;
+			flySprite = state->sprites;
 			for(i = ICE_SHARD_COUNT - 1; i >= 0; i--) {
 				if(shard->age < ICE_SHARD_TICKS) {
-					fdEffectSprDrawAtWorldPos(flySpr, &shard->x);
+					fdEffectSpriteDrawAtWorldPos(flySprite, &shard->x);
 					fdBattleEffectStepVector3(&shard->x, 63, -toFIXED(3) / 16);
 					shard->age++;
 				}
-				flySpr++;
+				flySprite++;
 				shard++;
 			}
 		}
@@ -497,12 +500,12 @@ void scNorthernReachesShatterIceWall(
 				spark->oam.words.second = 0;
 				spark->oam.oam.x = (syRandom() << 7 >> 16) + 52;
 				spark->oam.oam.y = (syRandom() << 6 >> 16) + 16;
-				spark->oam.oam.pal = EXPLOSION_SPARK_PALETTE;
-				spark->oam.oam.pri = 0;
+				spark->oam.oam.palette = EXPLOSION_SPARK_PALETTE;
+				spark->oam.oam.priority = 0;
 			}
 			if(spark->age >= 0) {
-				spark->oam.oam.idx = sparkTiles + (spark->age >> 2) * 4;
-				syOAMAddSprAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
+				spark->oam.oam.index = sparkTiles + (spark->age >> 2) * 4;
+				syOAMAddSpriteAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
 			}
 			spark->age++;
 			if(spark->age >= EXPLOSION_SPARK_TICKS) {

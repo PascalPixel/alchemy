@@ -39,7 +39,7 @@ static void scColossoPushActorAhead(void)
 	pos.z = pushed->z.fixed + step;
 
 	blocker = scActorFindAtPos(&pos, pushed);
-	if(blocker != NULL && (blocker->collisionFlg & ACTOR_SOLID) != 0) {
+	if(blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0) {
 		return;
 	}
 
@@ -48,7 +48,7 @@ static void scColossoPushActorAhead(void)
 	pos.z = pushed->z.fixed;
 
 	blocker = scActorFindAtPos(&pos, pushed);
-	if(blocker != NULL && (blocker->collisionFlg & ACTOR_SOLID) != 0) {
+	if(blocker != NULL && (blocker->collisionFlags & ACTOR_SOLID) != 0) {
 		return;
 	}
 
@@ -75,14 +75,14 @@ static void scColossoPushActorAhead(void)
 	leader->acceleration = toFIXED(1) / 5;
 	syFieldActorSetMoveTargetFX(leader, pos.x, pos.y, pos.z);
 
-	sySndPlay(SE_PUSH_STEP);
+	sySoundPlay(SE_PUSH_STEP);
 	fdActorWaitForMove(pushed);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 
 	pushed->x.fixed = pos.x;
 	pushed->z.fixed = pos.z;
-	pushed->velX = 0;
-	pushed->velZ = 0;
+	pushed->velocityX = 0;
+	pushed->velocityZ = 0;
 
 	fdActorSelectAnimation(leader, ANIM_STAND);
 }

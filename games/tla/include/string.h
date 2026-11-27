@@ -6,6 +6,6 @@
 #include "edition.h"
 
 /* Copies size bytes from source to destination, for the modern build. */
-void *memcpy(void *dst, const void *src, unsigned long size);
+void *memcpy(void *dest, const void *src, unsigned long size);
 
 #endif

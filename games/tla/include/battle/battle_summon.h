@@ -9,7 +9,7 @@
 #include "types.h"
 #include "edition.h"
 
-/* A class's plain attack (BATTLE_SPR_DEFINITION.attackEff), which
+/* A class's plain attack (BATTLE_SPR_DEFINITION.attackEffect), which
    btEffectRunByIdRange plays: btEffectRunAttackSlash's beam from the attacker
    and the target's recoil, or the canvas burst. */
 typedef enum ATTACK_EFFECT {
@@ -26,8 +26,8 @@ typedef enum ATTACK_EFFECT {
 	ATTACK_EFFECT_BURST	 /* btEffectRunBallAttack's small ball */
 } ATTACK_EFFECT;
 
-/* A fallen class's cry (BATTLE_SPR_DEFINITION.defeatSnd): BattlePlayback plays
-   SE_ENEMY_CRY plus it, or one less (never below SE_ENEMY_CRY) when the
+/* A fallen class's cry (BATTLE_SPR_DEFINITION.defeatSound): BattlePlayback
+   plays SE_ENEMY_CRY plus it, or one less (never below SE_ENEMY_CRY) when the
    playback's flags are set. */
 typedef enum DEFEAT_SND {
 	DEFEAT_SOUND_ENEMY_CRY,	   /* SE_ENEMY_CRY */
@@ -40,18 +40,18 @@ typedef enum DEFEAT_SND {
 /* An enemy class's battle sprite: its animation, size, attack effect, palette
    and defeat-sound kind. */
 typedef struct BATTLE_SPR_DEFINITION {
-	Uint16 anm; /* the class's battle sprite */
-	/* The byte at 2. bits: 7..5 attackHop | 4..1 attackEff | 0 isSmall */
-	Uint8 isSmall : 1;	 /* 1 for a small enemy, which takes one sprite slot */
-	Uint8 attackEff : 4; /* ATTACK_EFFECT; 0 reads as ATTACK_EFFECT_SLASH */
-	Uint8 attackHop : 3; /* the attack-hop height */
-	/* The byte at 3. bits: 7..5 defeatSnd | 4..1 palette | 0 heavyImpact */
+	Uint16 animation; /* the class's battle sprite */
+	/* The byte at 2. bits: 7..5 attackHop | 4..1 attackEffect | 0 isSmall */
+	Uint8 isSmall : 1; /* 1 for a small enemy, which takes one sprite slot */
+	Uint8 attackEffect : 4; /* ATTACK_EFFECT; 0 reads as ATTACK_EFFECT_SLASH */
+	Uint8 attackHop : 3;	/* the attack-hop height */
+	/* The byte at 3. bits: 7..5 defeatSound | 4..1 palette | 0 heavyImpact */
 	Uint8 heavyImpact : 1; /* 1 for an enemy whose beam blow lands heavily */
-	Uint8 pal : 4;		   /* the sprite's palette */
-	Uint8 defeatSnd : 3;   /* DEFEAT_SND; above 4 reads as none */
+	Uint8 palette : 4;	   /* the sprite's palette */
+	Uint8 defeatSound : 3; /* DEFEAT_SND; above 4 reads as none */
 	/* The height a battle effect is drawn at over the enemy, in pixels; 0 for
 	   its size's default. */
-	Uint8 effHeight;
+	Uint8 effectHeight;
 	Uint8 reserved[3]; /* 0 in every row */
 } BATTLE_SPR_DEFINITION;
 
@@ -69,7 +69,7 @@ typedef struct SUMMON_DEFINITION {
 /* Returns a summon's definition, or NULL past the last. */
 const SUMMON_DEFINITION *gmSummonDefinitionGetNearStub(Sint32 summonId);
 Sint32					 btEnemyGetFreeUnitId(void);
-Sint32					 btEnemyHasSprRoom(Sint32 classId);
+Sint32					 btEnemyHasSpriteRoom(Sint32 classId);
 
 Sint32		  btFormationGetRandomMember(Sint32 recordId);
 Sint32		  btEnemyClaimNameLetter(Sint32 classId, Sint32 n);

@@ -32,14 +32,14 @@ const Sint16 ShopUnusedItemIds[21] = {
 
 /* Gives a Game Ticket once the party's spending in shops reaches the next
    ticket's cost, and lets the player choose who takes it. */
-void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
+void mnShopGiveGameTicket(WINDOW *window, WINDOW *itemWindow)
 {
 	SHOP_STATE *shop = MenuState;
 	Sint32		creditCost;
 	Uint32		savedSelectedItem;
 	Sint32		redraw;
 	Sint32		unitId;
-	Sint32		memberIdx;
+	Sint32		memberIndex;
 	Sint32		msgBase;
 	Sint32		slot;
 
@@ -47,7 +47,7 @@ void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 	unitId = 0;
 	savedSelectedItem = shop->selectedItem;
 	creditCost = GameTicketCreditCosts[MainRoutineStateWork.holdings.shopGifts];
-	memberIdx = 0;
+	memberIndex = 0;
 
 	/* A ticket is paid for by the coins already spent, which it uses up; the
 	   party's coins are left alone. */
@@ -65,20 +65,20 @@ void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 	while(1) {
 		if(redraw != 0) {
 			redraw = 0;
-			memberIdx =
-				(memberIdx + shop->partyMemberCnt) % shop->partyMemberCnt;
-			unitId = shop->partyMemberIds[memberIdx];
-			mnCursorPlace(win, memberIdx * 24 - 12, 0);
-			shop->cursorFrm = 3;
-			mnShopDrawParty(win, memberIdx, shop->selectedItem);
-			mnShopDrawCarriedItem(itemWin, unitId, shop->selectedItem);
+			memberIndex =
+				(memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[memberIndex];
+			mnCursorPlace(window, memberIndex * 24 - 12, 0);
+			shop->cursorFrame = 3;
+			mnShopDrawParty(window, memberIndex, shop->selectedItem);
+			mnShopDrawCarriedItem(itemWindow, unitId, shop->selectedItem);
 		}
 		if((PerPush & KEY_A) != 0) {
 			/* The ticket goes into the pack to see that it fits, and comes out
 			   again until the shopkeeper has handed it over. */
 			slot = gmInventoryAddItemStub(unitId, shop->selectedItem);
 			if(slot < 0) {
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 				mnMessageArgumentPushStub(unitId, MESSAGE_ARGUMENT_ACTOR);
 				mnMessageArgumentPushStub(
 					shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
@@ -93,7 +93,7 @@ void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 				continue;
 			}
 			gmInventoryRemoveStub(unitId, slot);
-			sySndPlayStub(SE_SHOP_PURCHASE);
+			sySoundPlayStub(SE_SHOP_PURCHASE);
 			/* "Then here you go!" */
 			mnShopShowKeeperMessageHidingCursor(MsgHereYouGo);
 			gmInventoryAddItemStub(unitId, shop->selectedItem);
@@ -104,17 +104,17 @@ void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 		if((PerPush & KEY_B) != 0) {
 			/* "What! You don't want it?" */
 			mnShopShowKeeperMessageHidingCursor(MsgDontWantIt);
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			break;
 		}
 		if((PerRepeat & KEY_LEFT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIdx--;
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+			memberIndex--;
 			redraw = 1;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIdx++;
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+			memberIndex++;
 			redraw = 1;
 		}
 		sySynch(1);
@@ -355,21 +355,21 @@ void mnShopStockAddArtifacts(Sint32 stockRow)
 	const Sint16 *stockEntries;
 	const Sint16 *artifactCursor;
 	Sint32		  itemId;
-	Sint32		  artifactIdx;
-	Sint32		  initializedFlg;
+	Sint32		  artifactIndex;
+	Sint32		  initializedFlag;
 
-	initializedFlg = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
-	if(gmFlagGetStub(initializedFlg) == 0) {
-		gmFlagSetStub(initializedFlg);
-		artifactIdx = 0;
+	initializedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
+	if(gmFlagGetStub(initializedFlag) == 0) {
+		gmFlagSetStub(initializedFlag);
+		artifactIndex = 0;
 		itemId = StockTable[stockRow][SHOP_STOCK_ARTIFACTS];
 		if(itemId != 0) {
 			stockEntries = StockTable[stockRow];
 			artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
 			do {
 				gmItemAdjustRareItemStockStub(itemId, 1);
-				artifactIdx++;
-				if(artifactIdx > SHOP_STOCK_ARTIFACT_COUNT - 1)
+				artifactIndex++;
+				if(artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
 					break;
 				artifactCursor++;
 				itemId = *artifactCursor;
@@ -383,26 +383,26 @@ void mnShopStockAddArtifacts(Sint32 stockRow)
 Sint32 mnShopStockCopyItems(Sint32 stockRow, Sint16 *output)
 {
 	const Sint16 *src;
-	Sint16		 *dst;
-	Sint32		  cnt;
+	Sint16		 *dest;
+	Sint32		  count;
 	Uint32		  item;
 
-	cnt = 0;
+	count = 0;
 	if(StockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
-		dst = output;
+		dest = output;
 		src = StockTable[stockRow];
 		do {
 			item = (Uint16)*src;
-			*dst = item;
-			cnt++;
+			*dest = item;
+			count++;
 			src++;
-			dst++;
-			if(cnt > SHOP_STOCK_ITEM_COUNT - 1)
+			dest++;
+			if(count > SHOP_STOCK_ITEM_COUNT - 1)
 				break;
 		} while(*src != 0);
 	}
-	output[cnt] = 0;
-	return cnt;
+	output[count] = 0;
+	return count;
 }
 
 /* Returns the shop's type from the last column of its stock row (enum

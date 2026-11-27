@@ -42,7 +42,7 @@ void fdActorUpdateAllMotion(void)
 	ACTOR **next;
 	ACTOR  *actor;
 	FIXED	y;
-	Sint32	arrivedAtTgt;
+	Sint32	arrivedAtTarget;
 	FIXED	x;
 	FIXED	z;
 	Sint32	dx;
@@ -63,121 +63,126 @@ void fdActorUpdateAllMotion(void)
 		/* UB: a frozen actor otherwise reads an uninitialized arrival flag, or
 		   inherits the preceding actor's flag. */
 #if FIX_UNINITIALIZED_READ
-		arrivedAtTgt = 0;
+		arrivedAtTarget = 0;
 #endif
 		if(actor->frozen == 0) {
 #if !FIX_UNINITIALIZED_READ
-			arrivedAtTgt = 0;
+			arrivedAtTarget = 0;
 #endif
 			/* Steer in the XZ plane towards the target, or brake. */
-			if(actor->tgtX != ACTOR_NO_TARGET) {
-				dx = (actor->tgtX - x) / toFIXED(1);
-				dz = (actor->tgtZ - z) / toFIXED(1);
+			if(actor->targetX != ACTOR_NO_TARGET) {
+				dx = (actor->targetX - x) / toFIXED(1);
+				dz = (actor->targetZ - z) / toFIXED(1);
 				distance = toFIXED(sySquartIWRAM(dx * dx + dz * dz));
 				/* Under 256 pixels, measure again in 16.16: the root of a 16.16
 				   square is 8.8, and << 8 makes it 16.16 again. */
 				if(distance <= toFIXED(256) - 1) {
-					dx = actor->tgtX - x;
-					dz = actor->tgtZ - z;
+					dx = actor->targetX - x;
+					dz = actor->targetZ - z;
 					distance = sySquartIWRAM(syMulFX(dx, dx) + syMulFX(dz, dz))
 						<< 8;
 				}
 				if(distance == 0) {
-					x = actor->tgtX;
-					z = actor->tgtZ;
+					x = actor->targetX;
+					z = actor->targetZ;
 				} else {
 					ratio = syDivFX(distance, actor->acceleration);
-					actor->velX += syMulFX(dx, ratio);
-					actor->velZ += syMulFX(dz, ratio);
-					dx = actor->velX;
-					dz = actor->velZ;
+					actor->velocityX += syMulFX(dx, ratio);
+					actor->velocityZ += syMulFX(dz, ratio);
+					dx = actor->velocityX;
+					dz = actor->velocityZ;
 					distance = sySquartIWRAM(syMulFX(dx, dx) + syMulFX(dz, dz))
 						<< 8;
 					if(distance > actor->speedLimit) {
 						ratio = syDivFX(distance, actor->speedLimit);
-						actor->velX = syMulFX(dx, ratio);
-						actor->velZ = syMulFX(dz, ratio);
+						actor->velocityX = syMulFX(dx, ratio);
+						actor->velocityZ = syMulFX(dz, ratio);
 					}
 				}
 			} else {
-				dx = actor->velX;
-				dz = actor->velZ;
+				dx = actor->velocityX;
+				dz = actor->velocityZ;
 				if((dx | dz) != 0) {
 					distance = sySquartIWRAM(syMulFX(dx, dx) + syMulFX(dz, dz))
 						<< 8;
 					if(distance != 0) {
 						if(distance - actor->acceleration < 0) {
-							actor->velX = 0;
-							actor->velZ = 0;
+							actor->velocityX = 0;
+							actor->velocityZ = 0;
 						} else {
 							ratio = syDivFX(
 								distance, distance - actor->acceleration);
-							actor->velX = syMulFX(dx, ratio);
-							actor->velZ = syMulFX(dz, ratio);
+							actor->velocityX = syMulFX(dx, ratio);
+							actor->velocityZ = syMulFX(dz, ratio);
 						}
 					} else {
-						actor->velX = 0;
-						actor->velZ = 0;
+						actor->velocityX = 0;
+						actor->velocityZ = 0;
 					}
 				}
 			}
 			/* Gravity, and a bounce that loses energy on landing. */
-			if(actor->motionFlg & ACTOR_FALLS) {
+			if(actor->motionFlags & ACTOR_FALLS) {
 				if(y > actor->groundHeight) {
-					actor->velY -= actor->gravity;
-				} else if(actor->velY < 0) {
+					actor->velocityY -= actor->gravity;
+				} else if(actor->velocityY < 0) {
 					y = actor->groundHeight;
-					actor->velY = -syMulFX(actor->velY, actor->bounce);
-					if((actor->velY < 0 ? -actor->velY : actor->velY) <=
-						actor->gravity)
-						actor->velY = 0;
+					actor->velocityY =
+						-syMulFX(actor->velocityY, actor->bounce);
+					if((actor->velocityY < 0
+							   ? -actor->velocityY
+							   : actor->velocityY) <= actor->gravity)
+						actor->velocityY = 0;
 				}
 			}
 		}
-		x += actor->velX;
-		y += actor->velY;
-		z += actor->velZ;
+		x += actor->velocityX;
+		y += actor->velocityY;
+		z += actor->velocityZ;
 		/* Arrived: the watched axis reached the target, or crossed it. */
 		if(actor->arrivalAxis != 0)
 			switch(actor->arrivalAxis) {
 			case ARRIVAL_AXIS_X:
-				if(x == actor->tgtX ||
-					((actor->x.fixed - actor->tgtX) ^ (x - actor->tgtX)) < 0)
-					arrivedAtTgt = 1;
+				if(x == actor->targetX ||
+					((actor->x.fixed - actor->targetX) ^ (x - actor->targetX)) <
+						0)
+					arrivedAtTarget = 1;
 				break;
 			case ARRIVAL_AXIS_Y:
-				if(y == actor->tgtY ||
-					((actor->y.fixed - actor->tgtY) ^ (y - actor->tgtY)) < 0)
-					arrivedAtTgt = 1;
+				if(y == actor->targetY ||
+					((actor->y.fixed - actor->targetY) ^ (y - actor->targetY)) <
+						0)
+					arrivedAtTarget = 1;
 				break;
 			case ARRIVAL_AXIS_Z:
-				if(z == actor->tgtZ ||
-					((actor->z.fixed - actor->tgtZ) ^ (z - actor->tgtZ)) < 0)
-					arrivedAtTgt = 1;
+				if(z == actor->targetZ ||
+					((actor->z.fixed - actor->targetZ) ^ (z - actor->targetZ)) <
+						0)
+					arrivedAtTarget = 1;
 				break;
 			}
-		if(arrivedAtTgt) {
-			if(actor->snapToTgt) {
-				actor->velX = 0;
-				actor->velZ = 0;
-				x = actor->tgtX;
-				z = actor->tgtZ;
-				if(actor->motionFlg == 0) {
-					y = actor->tgtY;
-					actor->velY = 0;
+		if(arrivedAtTarget) {
+			if(actor->snapToTarget) {
+				actor->velocityX = 0;
+				actor->velocityZ = 0;
+				x = actor->targetX;
+				z = actor->targetZ;
+				if(actor->motionFlags == 0) {
+					y = actor->targetY;
+					actor->velocityY = 0;
 				}
 			}
-			actor->tgtX = ACTOR_NO_TARGET;
-			actor->tgtY = ACTOR_NO_TARGET;
-			actor->tgtZ = ACTOR_NO_TARGET;
+			actor->targetX = ACTOR_NO_TARGET;
+			actor->targetY = ACTOR_NO_TARGET;
+			actor->targetZ = ACTOR_NO_TARGET;
 			actor->arrivalAxis = 0;
 		}
 		SET_ACTOR_POSITION(actor, x, y, z);
 		/* Turn to face the direction of travel, at most a sixteenth of a turn a
 		   tick, the shorter way round. */
-		if(actor->steeringFlg & ACTOR_FACES_MOTION) {
-			x = actor->velX;
-			z = actor->velZ;
+		if(actor->steeringFlags & ACTOR_FACES_MOTION) {
+			x = actor->velocityX;
+			z = actor->velocityZ;
 			if(x != 0 || z != 0) {
 				facingStep = (Sint16)(syAtan(z, x) - actor->facing);
 				if(facingStep > FACING_STEP)
@@ -210,9 +215,9 @@ Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 
 	if(actor->refused > SCRIPT_BLOCKED_MOVE_TICKS - 1) {
 		actor->refused = 0;
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtY = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 		actor->arrivalAxis = 0;
 		interpreter->scriptCursor++;
 		return TRUE;
@@ -228,9 +233,10 @@ Bool fdActorScriptWaitForArrival(ACTOR *interpreter)
 Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 {
 	Sint16		   initCursor = interpreter->scriptCursor;
-	SCRIPT_COMMAND func = (SCRIPT_COMMAND)interpreter->script[initCursor + 1];
+	SCRIPT_COMMAND callback =
+		(SCRIPT_COMMAND)interpreter->script[initCursor + 1];
 
-	if(func(interpreter) != 0)
+	if(callback(interpreter) != 0)
 		return FALSE;
 	if(interpreter->scriptCursor == initCursor)
 		interpreter->scriptCursor = interpreter->scriptCursor + 2;
@@ -244,7 +250,7 @@ Bool fdActorScriptInvokeCallback(ACTOR *interpreter)
 Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 {
 	Uint32 *scriptWords;
-	Sint32	wordIdx;
+	Sint32	wordIndex;
 
 	interpreter->wait = 0;
 	if(labelKey == 0) {
@@ -253,9 +259,9 @@ Sint32 fdActorScriptFindLabel(ACTOR *interpreter, Uint32 labelKey)
 
 	labelKey &= SCRIPT_LABEL_KEY_MASK;
 	scriptWords = (Uint32 *)interpreter->script;
-	for(wordIdx = 0; wordIdx < SCRIPT_LABEL_SEARCH_WORDS; wordIdx++) {
+	for(wordIndex = 0; wordIndex < SCRIPT_LABEL_SEARCH_WORDS; wordIndex++) {
 		if(*scriptWords++ == labelKey) {
-			return wordIdx + 1;
+			return wordIndex + 1;
 		}
 	}
 	return 0;
@@ -268,8 +274,8 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 	const Sint32 *arguments;
 	Sint32		  repeatLimit;
 	Sint32		  jumpKey;
-	Uint8		 *repeatCnt;
-	Sint32		  nextCnt;
+	Uint8		 *repeatCount;
+	Sint32		  nextCount;
 
 	arguments = &interpreter->script[interpreter->scriptCursor + 1];
 	repeatLimit = *arguments++;
@@ -278,14 +284,14 @@ Sint32 fdActorScriptRepeatOrJump(ACTOR *interpreter)
 		interpreter->scriptCursor =
 			fdActorScriptFindLabel(interpreter, jumpKey);
 	} else {
-		repeatCnt = &interpreter->repeatCnt;
-		nextCnt = *repeatCnt + 1;
-		*repeatCnt = nextCnt;
-		if((Sint32)(Uint8)nextCnt < (Sint32)(Sint16)repeatLimit) {
+		repeatCount = &interpreter->repeatCount;
+		nextCount = *repeatCount + 1;
+		*repeatCount = nextCount;
+		if((Sint32)(Uint8)nextCount < (Sint32)(Sint16)repeatLimit) {
 			interpreter->scriptCursor =
 				fdActorScriptFindLabel(interpreter, jumpKey);
 		} else {
-			*repeatCnt = 0;
+			*repeatCount = 0;
 			interpreter->scriptCursor += 3;
 		}
 	}
@@ -419,18 +425,18 @@ Sint32 fdActorScriptNoOperation(ACTOR *interpreter)
 }
 
 /* SC_SE(n): sends sound command n. */
-Sint32 fdActorScriptPlaySnd(ACTOR *interpreter)
+Sint32 fdActorScriptPlaySound(ACTOR *interpreter)
 {
-	sySndPlayStub(interpreter->script[interpreter->scriptCursor + 1]);
+	sySoundPlayStub(interpreter->script[interpreter->scriptCursor + 1]);
 	interpreter->scriptCursor += 2;
 	return 1;
 }
 
 /* SC_SE_IN_VIEW(n): plays sound n when the actor is in view of the camera
-   (fdActorPlaySndInView). */
-Sint32 fdActorScriptPlaySndInView(ACTOR *interpreter)
+   (fdActorPlaySoundInView). */
+Sint32 fdActorScriptPlaySoundInView(ACTOR *interpreter)
 {
-	fdActorPlaySndInViewStub(
+	fdActorPlaySoundInViewStub(
 		interpreter, interpreter->script[interpreter->scriptCursor + 1]);
 	interpreter->scriptCursor += 2;
 	return 1;
@@ -440,12 +446,12 @@ Sint32 fdActorScriptPlaySndInView(ACTOR *interpreter)
    radius less 2 pixels; otherwise 0. */
 Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIdx;
+	Sint32 actorIndex;
 	ACTOR *candidate = ((ACTOR *)RamHeapSlots->actors);
 
-	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
+	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
 		if(candidate->script != NULL &&
-			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
+			(candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
 				   values, actor->radius - 2) >= 0)
 				return -1;
@@ -458,12 +464,12 @@ Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
    as fdActorScriptCheckOverlap tests, or NULL. */
 ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values)
 {
-	Sint32 actorIdx;
+	Sint32 actorIndex;
 	ACTOR *candidate = ((ACTOR *)RamHeapSlots->actors);
 
-	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
+	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
 		if(candidate->script != NULL &&
-			(candidate->collisionFlg & ACTOR_SOLID) && candidate != actor) {
+			(candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
 			if(fdCheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
 				   values, actor->radius - 2) >= 0)
 				return candidate;
@@ -483,7 +489,7 @@ Sint32 fdActorScriptSetPosAndResetMotion(ACTOR *actor)
 	FIXED		  height;
 
 	fdActorSetPosAndResetMotion(actor, x, y, z);
-	if(y == -1 && (actor->motionFlg & ACTOR_FOLLOWS_TERRAIN)) {
+	if(y == -1 && (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN)) {
 		height = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);
 		actor->y.fixed = actor->y.fixed - actor->groundHeight + height;
@@ -501,7 +507,7 @@ Sint32 fdActorScriptResetToOrigin(ACTOR *actor)
 	FIXED height;
 
 	fdActorSetPosAndResetMotion(actor, 0, actor->y.fixed, 0);
-	if(actor->motionFlg & ACTOR_FOLLOWS_TERRAIN) {
+	if(actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
 		height = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);
 		actor->y.fixed = actor->y.fixed - actor->groundHeight + height;
@@ -554,14 +560,14 @@ Sint32 fdActorScriptApplyRelativePos(ACTOR *actor)
 
 /* SC_FACE_WATCHED: turns the actor to face its watched actor, on the ground
    plane (x and z). */
-Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
+Sint32 fdActorScriptStoreAngleToWatchedActor(ACTOR *actor)
 {
 
-	ACTOR *tgt;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
+	target = (ACTOR *)actor->watchedActor;
 	actor->facing = syAtan(
-		(tgt->z.fixed - actor->z.fixed), (tgt->x.fixed - actor->x.fixed));
+		(target->z.fixed - actor->z.fixed), (target->x.fixed - actor->x.fixed));
 	actor->scriptCursor++;
 	return 1;
 }
@@ -570,10 +576,11 @@ Sint32 fdActorScriptStoreAngToWatchedActor(ACTOR *actor)
 Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
 {
 
-	ACTOR *tgt;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
-	fdActorSetMoveTarget(actor, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+	target = (ACTOR *)actor->watchedActor;
+	fdActorSetMoveTarget(
+		actor, target->x.fixed, target->y.fixed, target->z.fixed);
 	actor->scriptCursor++;
 	return 1;
 }
@@ -583,15 +590,15 @@ Sint32 fdActorScriptApplyWatchedActorPos(ACTOR *actor)
 Sint32 fdActorScriptApplyLocalOffsetPos(ACTOR *actor)
 {
 
-	Sint32 localOfs[3];
+	Sint32 localOffset[3];
 
 	/* BUG: offset is never set, so the target is the position plus whatever the
 	   stack held. */
 #if FIX_UNINITIALIZED_READ
-	localOfs[0] = localOfs[1] = localOfs[2] = 0;
+	localOffset[0] = localOffset[1] = localOffset[2] = 0;
 #endif
-	fdActorSetMoveTarget(actor, actor->x.fixed + localOfs[0],
-		actor->y.fixed + localOfs[1], actor->z.fixed + localOfs[2]);
+	fdActorSetMoveTarget(actor, actor->x.fixed + localOffset[0],
+		actor->y.fixed + localOffset[1], actor->z.fixed + localOffset[2]);
 	actor->scriptCursor += 3;
 	return 1;
 }
@@ -626,7 +633,7 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *interpreter)
 	/* UB: the bounds read the leader's height before the null check below. */
 #if FIX_NULL_DEREFERENCE
 	if(leader == NULL) {
-		camera->motionFlg = 0;
+		camera->motionFlags = 0;
 		camera->scriptCursor++;
 		return 1;
 	}
@@ -638,14 +645,14 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *interpreter)
 	maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
 	maxZ = bounds->maxZ + leader->y.fixed -
 		(FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
-	camera->motionFlg = 0;
+	camera->motionFlags = 0;
 	if(leader != NULL && leader->script != NULL) {
 		x = leader->x.fixed;
 		y = leader->y.fixed;
 		z = leader->z.fixed;
-		camera->tgtX = ACTOR_NO_TARGET;
-		camera->tgtY = ACTOR_NO_TARGET;
-		camera->tgtZ = ACTOR_NO_TARGET;
+		camera->targetX = ACTOR_NO_TARGET;
+		camera->targetY = ACTOR_NO_TARGET;
+		camera->targetZ = ACTOR_NO_TARGET;
 		if(x < minX)
 			x = minX;
 		if(z < minZ)
@@ -680,7 +687,7 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *interpreter)
 				region += 4;
 			}
 		}
-		if(camera->tmr != 0) {
+		if(camera->timer != 0) {
 			SET_ACTOR_POSITION(camera, x, y, z);
 		} else {
 			dx = (x - camera->x.fixed) / toFIXED(1);
@@ -747,14 +754,14 @@ Sint32 fdCameraFollowWatchedInBounds(ACTOR *camera)
 	minZ = bounds->minZ + FIELD_VIEW_FOCUS_Y;
 	maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
 	maxZ = bounds->maxZ - (FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
-	camera->motionFlg = 0;
+	camera->motionFlags = 0;
 	if(leader != NULL && leader->script != NULL) {
 		x = leader->x.fixed;
 		y = leader->y.fixed;
 		z = leader->z.fixed;
-		camera->tgtX = ACTOR_NO_TARGET;
-		camera->tgtY = ACTOR_NO_TARGET;
-		camera->tgtZ = ACTOR_NO_TARGET;
+		camera->targetX = ACTOR_NO_TARGET;
+		camera->targetY = ACTOR_NO_TARGET;
+		camera->targetZ = ACTOR_NO_TARGET;
 		if(x < minX)
 			x = minX;
 		if(z < minZ)
@@ -763,7 +770,7 @@ Sint32 fdCameraFollowWatchedInBounds(ACTOR *camera)
 			x = maxX;
 		if(z > maxZ)
 			z = maxZ;
-		if(camera->tmr != 0) {
+		if(camera->timer != 0) {
 			SET_ACTOR_POSITION(camera, x, y, z);
 		} else {
 			dx = (x - camera->x.fixed) / toFIXED(1);
@@ -1004,7 +1011,7 @@ Sint32 fdActorScriptWanderNearHome(ACTOR *actor)
 				dz = candidatePosition.z / toFIXED(1) - actor->homeZ;
 				if(dx * dx + dz * dz > homeRadiusSquared)
 					continue;
-				actor->collisionFlg |= ACTOR_PUSHABLE;
+				actor->collisionFlags |= ACTOR_PUSHABLE;
 				fdActorSetMoveTarget(actor, candidatePosition.x,
 					candidatePosition.y, candidatePosition.z);
 				goto done;
@@ -1032,7 +1039,7 @@ Sint32 fdActorScriptWanderNearHome(ACTOR *actor)
 			syVectorAddPolarOffset(travelDistance, heading, &candidatePosition);
 			if(fdMapGridCheckCollision(actor, &candidatePosition) != 0)
 				continue;
-			actor->collisionFlg &= ~ACTOR_PUSHABLE;
+			actor->collisionFlags &= ~ACTOR_PUSHABLE;
 			fdActorSetMoveTarget(actor, candidatePosition.x,
 				candidatePosition.y, candidatePosition.z);
 		}
@@ -1135,47 +1142,47 @@ void fdActorScriptSetOrCompareRadius(
 
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareScaleX, scaleX)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareScaleY, scaleY)
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityX, velX)
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityY, velY)
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityZ, velZ)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityX, velocityX)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityY, velocityY)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareVelocityZ, velocityZ)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareSpeedLimit, speedLimit)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareAcceleration, acceleration)
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetX, tgtX)
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetY, tgtY)
-SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetZ, tgtZ)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetX, targetX)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetY, targetY)
+SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTargetZ, targetZ)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareBounce, bounce)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareGravity, gravity)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareTerrainHeight, groundHeight)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareSceneWord, sceneWord)
-SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareSpr, spr)
+SCRIPT_DEFINE_OPERAND_ADDRESS(fdActorScriptSetOrCompareSprite, sprite)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSprStorageKind, sprStorageKind, Uint8)
+	fdActorScriptSetOrCompareSpriteStorageKind, spriteStorageKind, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareMotionFlags, motionFlg, Uint8)
+	fdActorScriptSetOrCompareMotionFlags, motionFlags, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
 	fdActorScriptSetOrCompareArrivalAxis, arrivalAxis, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
 	fdActorScriptSetOrCompareComparisonResult, conditionResult, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSnapToTarget, snapToTgt, Uint8)
+	fdActorScriptSetOrCompareSnapToTarget, snapToTarget, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareCollisionFlags, collisionFlg, Uint8)
+	fdActorScriptSetOrCompareCollisionFlags, collisionFlags, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSteeringFlags, steeringFlg, Uint8)
+	fdActorScriptSetOrCompareSteeringFlags, steeringFlags, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrComparePaused, paused, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareRepeatCount, repeatCnt, Uint8)
+	fdActorScriptSetOrCompareRepeatCount, repeatCount, Uint8)
 
 /* Work value SW_WAIT: sets, adds to or compares the wait counter. */
 SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrCompareWait, wait, Sint16)
 
-SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrCompareTimer, tmr, Sint16)
+SCRIPT_DEFINE_OPERAND_NARROW(fdActorScriptSetOrCompareTimer, timer, Sint16)
 SCRIPT_DEFINE_OPERAND_NARROW(
 	fdActorScriptSetOrCompareUserValue, userValue, Sint16)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareWatchedActor, watchedActor)
 SCRIPT_DEFINE_OPERAND_WORD(fdActorScriptSetOrCompareUpdateAddress, update)
 SCRIPT_DEFINE_OPERAND_NARROW(
-	fdActorScriptSetOrCompareSceneCounter, sceneCnt, Uint8)
+	fdActorScriptSetOrCompareSceneCounter, sceneCount, Uint8)
 SCRIPT_DEFINE_OPERAND_NARROW(
 	fdActorScriptSetOrCompareSceneByte, sceneByte, Uint8)
 
@@ -1231,84 +1238,84 @@ extern const Sint16 WorldMapKeyHeadings[16];
 
 /* SC_HOVER: the leader hovering (the Hover Psynergy), moved by the direction
    pad over what lies below. */
-Bool fdActorUpdateHoverCtrl(ACTOR *actor)
+Bool fdActorUpdateHoverControl(ACTOR *actor)
 {
 	POS	   pos;
 	POS	   testPos;
 	POS	   contact;
-	Sint16 angOffsets[22];
+	Sint16 angleOffsets[22];
 	Sint32 collision;
 	Sint16 heading;
-	Sint32 ang;
-	Sint32 movementAnm;
+	Sint32 angle;
+	Sint32 movementAnimation;
 	Uint16 direction;
-	Sint32 angIdx;
-	Sint32 headingCnt;
+	Sint32 angleIndex;
+	Sint32 headingCount;
 	ACTOR *other;
 	Bool   pressed;
 
-	movementAnm = ANIM_WALK;
+	movementAnimation = ANIM_WALK;
 	collision = 0;
-	actor->motionFlg = ACTOR_FLOATS;
+	actor->motionFlags = ACTOR_FLOATS;
 	/* Hovering, the dash button changes only the animation, not the speed. */
 	if(PerWork.data & MainRoutineStateWork.dashKeys) {
 		actor->speedLimit = toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 8;
-		movementAnm = ANIM_LEADER_RUN;
+		movementAnimation = ANIM_LEADER_RUN;
 	} else {
 		actor->speedLimit = toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 8;
 	}
 
-	ang = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
-	if((Uint16)ang == WORLD_MAP_KEY_HEADING_NONE) {
+	angle = WorldMapKeyHeadings[DPAD_INDEX(PerWork.data)];
+	if((Uint16)angle == WORLD_MAP_KEY_HEADING_NONE) {
 		collision |= PLAYER_STEP_STOPPED;
 	} else {
 		collision = 0;
 		SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		syVectorAddPolarOffset(toFIXED(8), (Uint16)ang, &pos);
+		syVectorAddPolarOffset(toFIXED(8), (Uint16)angle, &pos);
 		if(DebugMode != 0 && (PerWork.data & KEY_L)) {
-			heading = ang;
+			heading = angle;
 		} else {
 			if(fdMapGridCheckCollisionAbove(actor, &pos) == 0) {
 				SET_POSITION(
 					&testPos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 				syVectorAddPolarOffset(
-					toFIXED(8), (Uint16)ang + FIELD_PROBE_ANGLE, &testPos);
+					toFIXED(8), (Uint16)angle + FIELD_PROBE_ANGLE, &testPos);
 				if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0) {
 					SET_POSITION(&testPos, actor->x.fixed, actor->y.fixed,
 						actor->z.fixed);
-					syVectorAddPolarOffset(
-						toFIXED(8), (Uint16)ang - FIELD_PROBE_ANGLE, &testPos);
+					syVectorAddPolarOffset(toFIXED(8),
+						(Uint16)angle - FIELD_PROBE_ANGLE, &testPos);
 					if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0) {
 						SET_POSITION(&testPos, actor->x.fixed, actor->y.fixed,
 							actor->z.fixed);
 						syVectorAddPolarOffset(
-							toFIXED(8), (Uint16)ang + DEGtoANG(45), &testPos);
+							toFIXED(8), (Uint16)angle + DEGtoANG(45), &testPos);
 						if(fdMapGridCheckCollisionAbove(actor, &testPos) == 0) {
 							SET_POSITION(&testPos, actor->x.fixed,
 								actor->y.fixed, actor->z.fixed);
 							syVectorAddPolarOffset(toFIXED(8),
-								(Uint16)ang - DEGtoANG(45), &testPos);
+								(Uint16)angle - DEGtoANG(45), &testPos);
 							if(fdMapGridCheckCollisionAbove(actor, &testPos) ==
 								0) {
-								heading = ang;
+								heading = angle;
 								goto check_objects;
 							}
 						}
 					}
 				}
 			}
-			direction = ang;
-			headingCnt = 0;
-			angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE;
-			angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE;
-			angOffsets[headingCnt++] = direction + DEGtoANG(45);
-			angOffsets[headingCnt++] = direction - DEGtoANG(45);
-			angOffsets[headingCnt++] = direction + FIELD_PROBE_ANGLE * 3;
-			angOffsets[headingCnt++] = direction - FIELD_PROBE_ANGLE * 3;
-			for(angIdx = 0; angIdx < headingCnt; angIdx++) {
-				heading = angOffsets[angIdx];
+			direction = angle;
+			headingCount = 0;
+			angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
+			angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
+			angleOffsets[headingCount++] = direction + DEGtoANG(45);
+			angleOffsets[headingCount++] = direction - DEGtoANG(45);
+			angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
+			angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
+			for(angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+				heading = angleOffsets[angleIndex];
 				SET_POSITION(
 					&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 				syVectorAddPolarOffset(toFIXED(8), (Uint16)heading, &pos);
@@ -1347,13 +1354,14 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 				&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
 			other = RamHeapSlots->actors;
-			for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
+			for(angleIndex = 0; angleIndex < ACTOR_COUNT;
+				angleIndex++, other++) {
 				Sint32 radius;
 
 				radius = actor->radius - 2;
 				if(other->script == 0)
 					continue;
-				if((other->collisionFlg & ACTOR_SOLID) == 0)
+				if((other->collisionFlags & ACTOR_SOLID) == 0)
 					continue;
 				if(other == actor)
 					continue;
@@ -1381,17 +1389,17 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 			action = ANIM_LEADER_LEAN_BACK;
 		fdActorSelectAnimation(actor, action);
 	} else {
-		fdActorSelectAnimation(actor, movementAnm);
+		fdActorSelectAnimation(actor, movementAnimation);
 	}
 
 	if(collision != 0) {
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtY = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetY = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
 		if(collision & PLAYER_STEP_BLOCKED) {
 			Sint32 difference;
 
-			difference = (Uint16)ang - actor->facing;
+			difference = (Uint16)angle - actor->facing;
 			difference = (Sint16)difference;
 			if(difference > FIELD_BLOCKED_TURN_MAX)
 				difference = FIELD_BLOCKED_TURN_MAX;
@@ -1399,12 +1407,12 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 				difference = -FIELD_BLOCKED_TURN_MAX;
 			actor->facing += difference;
 		}
-		actor->tmr = 0;
+		actor->timer = 0;
 		actor->userValue = FOOTPRINT_BOTH_FEET;
 	} else {
 		fdActorSetMoveTarget(actor, pos.x, pos.y, pos.z);
-		if(actor->tmr != 0)
-			actor->tmr--;
+		if(actor->timer != 0)
+			actor->timer--;
 	}
 
 	pressed = FALSE;
@@ -1418,7 +1426,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 		pressed = TRUE;
 	/* While hovering the menus and shortcuts are refused with a buzz. */
 	if(pressed) {
-		sySndPlayStub(SE_MENU_CANCEL);
+		sySoundPlayStub(SE_MENU_CANCEL);
 	} else {
 		actor->groundHeight = fdMapGridGetTerrainHeight(
 			actor->layer, actor->x.fixed, actor->z.fixed);

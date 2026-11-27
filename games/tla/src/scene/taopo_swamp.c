@@ -228,8 +228,8 @@ typedef enum TAOPO_SWAMP_STAR_DUST_ACTOR_ID {
 #define FLAG_TAOPO_SWAMP_LAST_ROCK_COOLED			FLAG_AREA_TEMP_42
 #define FLAG_TAOPO_SWAMP_LAST_ROCK_UNMOVABLE		FLAG_AREA_TEMP_43
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
-void scVentSetGust(Sint32 idx, FIXED speed);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
+void scVentSetGust(Sint32 index, FIXED speed);
 void scVentSetId(Sint32 slot, Sint32 id);
 
 extern Sint32 TaopoSwampSteamPuffs;
@@ -363,12 +363,13 @@ static __inline__ ACTOR *scTaopoSwampCreateActor(
 
 /* The Mad Plant leaps out of the weeds at the leader
    (fdMadPlantLeapAtLeader). */
-static __inline__ void scTaopoSwampLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
+static __inline__ void scTaopoSwampLeapAtLeader(
+	Sint32 sprite, Sint32 x, Sint32 z)
 {
-	fdMadPlantLeapAtLeader(spr, x, z);
+	fdMadPlantLeapAtLeader(sprite, x, z);
 }
 
-Sint32 scVentIsBlowing(Sint32 idx);
+Sint32 scVentIsBlowing(Sint32 index);
 
 void scTaopoSwampFocusMapMiddle();
 void scTaopoSwampJumpForward(void);
@@ -475,7 +476,7 @@ void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 {
 	ACTOR	  *actor = fdActorGetById(id);
 	ACTOR	  *splash, *spark;
-	FIELD_SPR *spr, *splashSpr, *sparkSpr;
+	FIELD_SPR *sprite, *splashSprite, *sparkSprite;
 	Sint32	   i;
 	FIXED	   x, z;
 	Sint32	   k;
@@ -484,18 +485,18 @@ void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 		return;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syWait(5);
-	actor->motionFlg = 0;
-	actor->velY = 0;
+	actor->motionFlags = 0;
+	actor->velocityY = 0;
 	actor->y.fixed = toFIXED(4);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	for(i = 0; i <= STUMP_SINK_ROWS; i++) {
-		((SPR *)spr)->sunkRows = i;
-		spr->flg |= SPRITE_FLAG_SUNK;
-		spr->flg &= ~SPRITE_FLAG_SHADOW;
+		((SPR *)sprite)->sunkRows = i;
+		sprite->flags |= SPRITE_FLAG_SUNK;
+		sprite->flags &= ~SPRITE_FLAG_SHADOW;
 		k = i;
-		spr->dirty = 1;
+		sprite->dirty = 1;
 		k &= 3;
 		if(k == 0) {
 			x = actor->x.fixed + syRandom() * 2 - syRandom() * 2;
@@ -503,42 +504,44 @@ void scTaopoSwampSinkStump(Sint32 unused, Sint32 id)
 			splash = (scFieldActorCreate(
 				SPRITE_WADING_SPLASH, x, actor->y.fixed, z));
 			if(splash != 0) {
-				splashSpr = splash->spr;
+				splashSprite = splash->sprite;
 				splash->groundHeight = actor->groundHeight;
 				fdActorStartScript(splash, TaopoSwampSplashFades);
-				splash->motionFlg = 0;
-				if(splashSpr != 0) {
-					fdSprStartAnimation(splashSpr, 1);
-					splashSpr->flg = k;
-					splashSpr->pri = spr->pri;
-					fdSprSetAnimationColModes(splashSpr, SPRITE_COLOR_FILL);
-					fdSprSetAnimationSpeed(splashSpr, ANIM_STEP_NORMAL / 2);
+				splash->motionFlags = 0;
+				if(splashSprite != 0) {
+					fdSpriteStartAnimation(splashSprite, 1);
+					splashSprite->flags = k;
+					splashSprite->priority = sprite->priority;
+					fdSpriteSetAnimationColorModes(
+						splashSprite, SPRITE_COLOR_FILL);
+					fdSpriteSetAnimationSpeed(
+						splashSprite, ANIM_STEP_NORMAL / 2);
 				}
 			}
 		}
 		syWait(3);
 	}
 
-	actor->sprStorageKind = 0;
+	actor->spriteStorageKind = 0;
 	actor->y.fixed = 0;
 	for(i = 0; i < 2; i++) {
 		spark = (scFieldActorCreate(SPRITE_SPLASH_RING, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed));
 		if(spark != 0) {
-			sparkSpr = spark->spr;
+			sparkSprite = spark->sprite;
 			fdActorStartScript(spark, TaopoSwampSplashFades);
-			spark->motionFlg = 0;
+			spark->motionFlags = 0;
 			spark->layer = 1;
-			if(sparkSpr != 0) {
-				fdSprStartAnimation(sparkSpr, 2);
-				sparkSpr->flg = 0;
-				sparkSpr->pri = 2;
+			if(sparkSprite != 0) {
+				fdSpriteStartAnimation(sparkSprite, 2);
+				sparkSprite->flags = 0;
+				sparkSprite->priority = 2;
 			}
 		}
 		syWait(15);
 	}
 	syFieldScriptWait(30);
-	actor->sprStorageKind = 1;
+	actor->spriteStorageKind = 1;
 	fdActorSetPos(id, 0, 0);
 	fdScriptEnd();
 	fdScriptSetFlag(FLAG_TAOPO_SWAMP_STUMP_SUNK);
@@ -587,7 +590,7 @@ void scTaopoSwampUncoverBrambleSeed(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, 0, -16);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -617,10 +620,10 @@ void scTaopoSwampStartMadPlantBattle(void)
    leaves by share their number. */
 void scTaopoSwampDropToLowerFloor(Sint32 exit)
 {
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
 	scTaopoSwampJumpDownLedge(MainRoutineStateWork.leaderActorId,
 		ANIM_LEADER_SPRING, LEDGE_JUMP_NO_LANDING_WAIT);
-	fdScriptPlaySnd(SE_FALL);
+	fdScriptPlaySound(SE_FALL);
 	fdScriptSetFlag(FLAG_ARRIVE_FALLING);
 	syFieldScriptSetExitRequest(exit);
 }
@@ -744,15 +747,15 @@ void scTaopoSwampBlowFlowerOffLedge(void)
 		ACTOR_FLOWER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	speed = toFIXED(1) / 2;
 	for(i = 0; i < 3; i++) {
-		actor->velY = toFIXED(2);
-		fdScriptPlaySnd(SE_JUMP);
+		actor->velocityY = toFIXED(2);
+		fdScriptPlaySound(SE_JUMP);
 		actor->speedLimit = speed;
 		actor->acceleration = speed / 2;
 		fdActorWalkByAndWait(ACTOR_FLOWER, 0, 8);
 		speed += toFIXED(0.25);
 	}
-	fdScriptPlaySnd(SE_FALL);
-	actor->velY = toFIXED(4);
+	fdScriptPlaySound(SE_FALL);
+	actor->velocityY = toFIXED(4);
 	fdActorWalkByAndWait(ACTOR_FLOWER, 0, 8);
 	syFieldScriptWait(60);
 	fdScriptSetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE);
@@ -783,8 +786,8 @@ void scTaopoSwampDropPillarIntoGap(Sint32 unused, Sint32 id)
    first. */
 void scTaopoSwampDouseVentSpot(Sint32 unused, Sint32 id)
 {
-	scFieldActorSetSprPriority(id, 3);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(id, 3);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetAnimation(id, 1);
 	fdScriptSetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
 	fdScriptSetFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE);
@@ -798,8 +801,8 @@ void scTaopoSwampDouseVentSpot(Sint32 unused, Sint32 id)
 	void name(Sint32 unused, Sint32 id) \
 	{ \
 		scTaopoSwampCopyMetatileAttributes(pillarX, z, 1, 1, spotX, z); \
-		scFieldActorSetSprPriority(id, 2); \
-		fdActorGet(id)->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT; \
+		scFieldActorSetSpritePriority(id, 2); \
+		fdActorGet(id)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT; \
 		scVentSetId(0, id); \
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN); \
 		fdScriptClearFlag(FLAG_TAOPO_SWAMP_SPOT_PUDDLE); \
@@ -816,8 +819,8 @@ void scTaopoSwampShatterIcePillar(Sint32 id)
 	ACTOR *actor;
 
 	fdActorSetAnimation(id, 8);
-	scFieldActorSetSprPriority(id, 3);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(id, 3);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorGet(id)->update = 0;
 	scVentSetId(0, 0);
 	fdScriptClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
@@ -842,8 +845,8 @@ void scTaopoSwampShatterIcePillar(Sint32 id)
 void scTaopoSwampBlowAwayPuddle(Sint32 id)
 {
 	fdActorSetAnimation(id, 7);
-	scFieldActorSetSprPriority(id, 3);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(id, 3);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorGet(id)->update = 0;
 	scVentSetId(0, 0);
 	fdScriptClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
@@ -860,8 +863,8 @@ void scTaopoSwampBlowAwayPuddle(Sint32 id)
    Jenna's actor counts. */
 void scTaopoSwampFillDripSpot(Sint32 caster, Sint32 id)
 {
-	scFieldActorSetSprPriority(id, 3);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(id, 3);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetAnimation(id, 1);
 	if(caster == ACTOR_JENNA ||
 		scFieldGameFlagGetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
@@ -887,8 +890,8 @@ void scTaopoSwampShatterDripIcePillar(Sint32 id)
 	ACTOR *actor;
 
 	fdActorSetAnimation(id, 8);
-	scFieldActorSetSprPriority(id, 3);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(id, 3);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorGet(id)->update = 0;
 	scVentSetId(0, 0);
 	fdScriptClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
@@ -915,8 +918,8 @@ void scTaopoSwampShatterDripIcePillar(Sint32 id)
 void scTaopoSwampBlowAwayDripPuddle(Sint32 id)
 {
 	fdActorSetAnimation(id, 7);
-	scFieldActorSetSprPriority(id, 3);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpritePriority(id, 3);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorGet(id)->update = 0;
 	scVentSetId(0, 0);
 	fdScriptClearFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
@@ -941,8 +944,8 @@ void scTaopoSwampPushLavaRockIn(Sint32 unused, Sint32 id)
 
 	if(FIELD_METATILE(actor->x.fixed) == 7) {
 		fdActorSetAnimation(id, 3);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_UNMOVABLE);
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK);
 		fdMapGridCopyMetatileAttributes(7, 17, 1, 1, 7, 15);
@@ -968,8 +971,8 @@ void scTaopoSwampPushPillarRockIn(Sint32 unused, Sint32 id)
 
 	if(FIELD_METATILE(actor->z.fixed) == 16) {
 		fdActorSetAnimation(id, 3);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_UNMOVABLE);
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK);
 		fdActorSetSpeed(id, 0.5);
@@ -984,7 +987,7 @@ void scTaopoSwampPushPillarRockIn(Sint32 unused, Sint32 id)
    thirty-second of a turn each tick as it rolls. */
 void scTaopoSwampSpinRockPile(ACTOR *actor)
 {
-	((FIELD_SPR *)actor->spr)->rotation -= TRIG_TURN / 32;
+	((FIELD_SPR *)actor->sprite)->rotation -= TRIG_TURN / 32;
 }
 
 /* An event: one puff of steam from the cooling pool each tick, until the count
@@ -1002,7 +1005,7 @@ void scTaopoSwampPuffSteam(void)
 	z = syRandom() * 16 + a + toFIXED(260);
 	actor = scFieldActorCreate(SPRITE_DUST_CLOUD, x, 0, z);
 	fdActorStartScript(actor, TaopoSwampPuffSteamScript);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorSetBlendMode(actor, 1);
 	if(TaopoSwampSteamPuffs == 0)
 		syFieldCloseEvent(scTaopoSwampPuffSteam);
@@ -1012,11 +1015,11 @@ void scTaopoSwampPuffSteam(void)
    south end up, a row of metatiles every eight ticks. */
 void scTaopoSwampOpenPassage(void)
 {
-	Sint32 tmr = --TaopoSwampPassageTicks;
-	Sint32 step = tmr / 8;
+	Sint32 timer = --TaopoSwampPassageTicks;
+	Sint32 step = timer / 8;
 
 	fdMapGridCopyMetatiles(
-		47 - (tmr & 1) * 2, 64 - step, 2, step, 29, 15 - step);
+		47 - (timer & 1) * 2, 64 - step, 2, step, 29, 15 - step);
 	if(TaopoSwampPassageTicks == 0)
 		syFieldCloseEvent(scTaopoSwampOpenPassage);
 }
@@ -1045,50 +1048,50 @@ void scTaopoSwampTremorPillar(void)
 	ACTOR *clod;
 	Sint32 i, row;
 	FIXED  cosine;
-	Uint32 ang, speed, scale;
+	Uint32 angle, speed, scale;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	for(i = 0; i < 10; i++) {
 		syWait(1);
-		((FIELD_SPR *)rock->spr)->rotation -= TRIG_TURN / 256;
-		rock->x.fixed -= syCos(((FIELD_SPR *)rock->spr)->rotation) / 2;
-		rock->tgtX = ACTOR_NO_TARGET;
+		((FIELD_SPR *)rock->sprite)->rotation -= TRIG_TURN / 256;
+		rock->x.fixed -= syCos(((FIELD_SPR *)rock->sprite)->rotation) / 2;
+		rock->targetX = ACTOR_NO_TARGET;
 	}
 	rock->update = scTaopoSwampSpinRockPile;
 	fdActorSetSpeed(ACTOR_TREMOR_ROCK_PILE, 2);
 	fdActorSetDestination(ACTOR_TREMOR_ROCK_PILE, 492, 246);
 	rock->gravity = toFIXED(4) / 5;
-	rock->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	rock->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	rock->layer = 0;
 	scFieldActorWaitForMoveById(ACTOR_TREMOR_ROCK_PILE);
-	rock->velY = 0;
+	rock->velocityY = 0;
 	rock->y.fixed = rock->groundHeight;
 	fdActorSetPos(ACTOR_TREMOR_ROCK_PILE, 480, 248);
-	((FIELD_SPR *)rock->spr)->rotation = 0;
-	fdScriptPlaySnd(SE_THUMP);
+	((FIELD_SPR *)rock->sprite)->rotation = 0;
+	fdScriptPlaySound(SE_THUMP);
 	fdMapGridSetShake(5, 5, 1);
-	fdScriptPlaySnd(SE_RUMBLE);
+	fdScriptPlaySound(SE_RUMBLE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdActorSetPos(ACTOR_TREMOR_PILLAR_ROCK, 480, 248);
 	fdActorSetDestination(ACTOR_TREMOR_PILLAR_ROCK, 440, 232);
-	fdActorGet(ACTOR_TREMOR_PILLAR_ROCK)->velY = toFIXED(10);
+	fdActorGet(ACTOR_TREMOR_PILLAR_ROCK)->velocityY = toFIXED(10);
 	rock->update = 0;
 	for(i = 0; i < TREMOR_CLODS; i++) {
 		clod = (scFieldActorCreate(SPRITE_ROCK, rock->x.fixed,
 			rock->y.fixed + toFIXED(16), rock->z.fixed));
 		if(clod != 0) {
 
-			ang = syRandom();
+			angle = syRandom();
 			speed = syRandom();
 			scale = (syRandom() >> 2) + toFIXED(1) / 16;
 			fdActorStartScript(clod, DebrisScript);
-			fdActorSetSprFlags(clod, 0);
-			clod->velY = (ang << 2) + toFIXED(2);
-			cosine = syCos(ang);
+			fdActorSetSpriteFlags(clod, 0);
+			clod->velocityY = (angle << 2) + toFIXED(2);
+			cosine = syCos(angle);
 			speed <<= 3;
-			clod->velZ = syMulFX(speed, cosine);
-			clod->velX = syMulFX(speed, syMathSin(ang));
+			clod->velocityZ = syMulFX(speed, cosine);
+			clod->velocityX = syMulFX(speed, syMathSin(angle));
 			clod->acceleration = 0;
 			clod->gravity = toFIXED(0.33);
 			clod->scaleX = scale;
@@ -1136,8 +1139,8 @@ void scTaopoSwampPushChestRockIn(Sint32 unused, Sint32 id)
 
 	if(FIELD_METATILE(actor->z.fixed) == 21) {
 		fdActorSetAnimation(id, 3);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_UNMOVABLE);
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK);
 		fdMapGridCopyMetatileAttributes(11, 19, 1, 1, 11, 21);
@@ -1164,8 +1167,8 @@ void scTaopoSwampPushExitRockIn(Sint32 unused, Sint32 id)
 
 	if(FIELD_METATILE(actor->x.fixed) == 31) {
 		fdActorSetAnimation(id, 3);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_UNMOVABLE);
 		fdScriptSetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK);
 		fdActorSetSpeed(id, 0.5);
@@ -1274,7 +1277,7 @@ Bool scTaopoSwampLandDrop(ACTOR *actor)
 	ACTOR *spark;
 	FIXED  scale;
 
-	if(y + actor->velY < actor->groundHeight) {
+	if(y + actor->velocityY < actor->groundHeight) {
 		spark = scTaopoSwampCreateActor(
 			SPRITE_SPLASH_RING, actor->x.fixed, y, actor->z.fixed);
 		scale = toFIXED(55) / 100;
@@ -1282,12 +1285,12 @@ Bool scTaopoSwampLandDrop(ACTOR *actor)
 			spark->scaleX = scale;
 			spark->scaleY = scale;
 			fdActorStartScript(spark, TaopoSwampSparkFades);
-			fdActorSetSprFlags(spark, 0);
+			fdActorSetSpriteFlags(spark, 0);
 			fdActorSelectAnimation(spark, 2);
 		}
-		fdScriptPlaySnd(SE_DRIP);
+		fdScriptPlaySound(SE_DRIP);
 		actor->y.fixed = actor->groundHeight;
-		actor->velY = 0;
+		actor->velocityY = 0;
 		return FALSE;
 	}
 	return TRUE;
@@ -1309,8 +1312,8 @@ void scTaopoSwampDripAtRandom(void)
 			actor->scaleY = scale;
 			actor->gravity = toFIXED(0.45);
 			fdActorStartScript(actor, TaopoSwampDripAtRandomScript);
-			fdActorSetSprFlags(actor, 0);
-			fdActorSetSprPriorityDirect(actor, 3);
+			fdActorSetSpriteFlags(actor, 0);
+			fdActorSetSpritePriorityDirect(actor, 3);
 		}
 	}
 }
@@ -1328,9 +1331,9 @@ void scTaopoSwampDripAtRandom(void)
    blown off its ledge. */
 void scTaopoSwampCycleDjinniVents(void)
 {
-	Sint32 tmr = scVentGetCounter();
+	Sint32 timer = scVentGetCounter();
 
-	switch(tmr) {
+	switch(timer) {
 	case 0:
 		scVentSetBlowing(0, 1);
 		scVentSetBlowing(1, 1);
@@ -1366,7 +1369,7 @@ void scTaopoSwampCycleDjinniVents(void)
 	}
 	/* Ticks 251 to 429: from 11 ticks after the second set starts blowing to
 	   9 after it stops. */
-	if((Uint32)(tmr - 251) <= 178 &&
+	if((Uint32)(timer - 251) <= 178 &&
 		fdScriptGetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT) &&
 		!fdScriptGetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
 		!fdScriptGetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
@@ -1379,9 +1382,9 @@ void scTaopoSwampCycleDjinniVents(void)
    pillar or blow its puddle away. */
 void scTaopoSwampCycleSpotVent(void)
 {
-	Sint32 tmr = scVentGetCounter();
+	Sint32 timer = scVentGetCounter();
 
-	switch(tmr) {
+	switch(timer) {
 	case 0:
 		scVentSetBlowing(0, 1);
 		scVentSetBlowing(1, 1);
@@ -1393,7 +1396,7 @@ void scTaopoSwampCycleSpotVent(void)
 		fdQueueMusic(-1);
 		break;
 	}
-	if((Uint32)(tmr - 11) <= 118) {
+	if((Uint32)(timer - 11) <= 118) {
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
 			scTaopoSwampShatterIcePillar(ACTOR_GAP_PUDDLE);
 		else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
@@ -1405,9 +1408,9 @@ void scTaopoSwampCycleSpotVent(void)
 /* As scTaopoSwampCycleSpotVent, for the spot the ceiling drips onto. */
 void scTaopoSwampCycleDripVent(void)
 {
-	Sint32 tmr = scVentGetCounter();
+	Sint32 timer = scVentGetCounter();
 
-	switch(tmr) {
+	switch(timer) {
 	case 0:
 		scVentSetBlowing(0, 1);
 		scVentSetBlowing(1, 1);
@@ -1419,7 +1422,7 @@ void scTaopoSwampCycleDripVent(void)
 		fdQueueMusic(-1);
 		break;
 	}
-	if((Uint32)(tmr - 11) <= 118) {
+	if((Uint32)(timer - 11) <= 118) {
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN))
 			scTaopoSwampShatterDripIcePillar(ACTOR_DRIP_PUDDLE);
 		else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
@@ -1450,15 +1453,15 @@ void scTaopoSwampCycleRockRoomVents(void)
    up to four. */
 Bool scTaopoSwampLandDrip(ACTOR *actor)
 {
-	Sint32 flg;
-	Sint32 cnt;
+	Sint32 flag;
+	Sint32 count;
 	ACTOR *spark;
 	FIXED  scale;
 
-	if(actor->y.fixed + actor->velY < actor->groundHeight) {
-		flg = fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
-		if(flg) {
-			fdScriptPlaySnd(SE_DRIP);
+	if(actor->y.fixed + actor->velocityY < actor->groundHeight) {
+		flag = fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN);
+		if(flag) {
+			fdScriptPlaySound(SE_DRIP);
 			return FALSE;
 		}
 		spark = scTaopoSwampCreateActor(
@@ -1468,23 +1471,23 @@ Bool scTaopoSwampLandDrip(ACTOR *actor)
 			spark->scaleX = scale;
 			spark->scaleY = scale;
 			fdActorStartScript(spark, TaopoSwampSparkFades);
-			fdActorSetSprFlags(spark, 0);
+			fdActorSetSpriteFlags(spark, 0);
 			fdActorSelectAnimation(spark, 2);
 		}
-		fdScriptPlaySnd(SE_DRIP);
+		fdScriptPlaySound(SE_DRIP);
 		actor->y.fixed = actor->groundHeight;
-		actor->velY = 0;
+		actor->velocityY = 0;
 		if(fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-			cnt = scFieldGameFlagGetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT);
-			if(cnt <= 3) {
-				cnt++;
-				syGameFlagSetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, cnt);
+			count = scFieldGameFlagGetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT);
+			if(count <= 3) {
+				count++;
+				syGameFlagSetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT, count);
 			}
-			if(cnt != 0)
+			if(count != 0)
 				scTaopoSwampFillDripSpot(0, ACTOR_DRIP_PUDDLE);
 			actor = fdActorGet(ACTOR_DRIP_PUDDLE);
-			actor->scaleX = cnt * (toFIXED(1) / 4);
-			actor->scaleY = cnt * (toFIXED(1) / 4);
+			actor->scaleX = count * (toFIXED(1) / 4);
+			actor->scaleY = count * (toFIXED(1) / 4);
 		}
 		return FALSE;
 	}
@@ -1507,7 +1510,7 @@ void scTaopoSwampDripFromCeiling(void)
 			actor->scaleY = scale;
 			actor->gravity = toFIXED(0.45);
 			fdActorStartScript(actor, TaopoSwampDripFromCeilingScript);
-			fdActorSetSprFlags(actor, 0);
+			fdActorSetSpriteFlags(actor, 0);
 		}
 	}
 }
@@ -1515,7 +1518,7 @@ void scTaopoSwampDripFromCeiling(void)
 /* A drop's script test: whether it is still above the floor. */
 Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 {
-	if(actor->y.fixed + actor->velY < -toFIXED(48))
+	if(actor->y.fixed + actor->velocityY < -toFIXED(48))
 		return FALSE;
 	return TRUE;
 }
@@ -1526,9 +1529,9 @@ Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 	void name(void) \
 	{ \
 		if((TickCount & 7) == 0 && (Uint32)syRandom() < 16384) { \
-			Sint32 ofs = syRandom() << 5; \
-			Sint32 x = ofs + x0; \
-			Sint32 z = z0 - ofs; \
+			Sint32 offset = syRandom() << 5; \
+			Sint32 x = offset + x0; \
+			Sint32 z = z0 - offset; \
 			Sint32 y = toFIXED(160); \
 			ACTOR *actor = scFieldActorCreate(SPRITE_DROPLET, x, y, z); \
 			Sint32 scale = toFIXED(33) / 100; \
@@ -1536,11 +1539,11 @@ Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 			if(actor != NULL) { \
 				actor->scaleX = scale; \
 				actor->scaleY = scale; \
-				actor->motionFlg = ACTOR_FALLS; \
+				actor->motionFlags = ACTOR_FALLS; \
 				actor->groundHeight = -toFIXED(64); \
 				actor->gravity = toFIXED(0.45); \
 				fdActorStartScript(actor, TaopoSwampDropFalls); \
-				fdActorSetSprFlags(actor, 0); \
+				fdActorSetSpriteFlags(actor, 0); \
 			} \
 		} \
 	}
@@ -1583,24 +1586,24 @@ Sint32 scInit(void)
 			else
 				fdActorGetById(id)->scaleY = toFIXED(5) / 4;
 		}
-		fdActorSetSprPriority(ACTOR_MUD_SPROUT, 3);
-		fdActorGetById(ACTOR_MUD_SPROUT)->collisionFlg = 0;
+		fdActorSetSpritePriority(ACTOR_MUD_SPROUT, 3);
+		fdActorGetById(ACTOR_MUD_SPROUT)->collisionFlags = 0;
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_VINE_GROWN))
 			fdMapGridCopyMetatileAttributes(50, 16, 1, 2, 47, 16);
 		stump = fdActorGetById(ACTOR_MUD_STUMP);
 		if(stump != 0) {
 			stump->scaleX = toFIXED(3) / 4;
 			stump->scaleY = toFIXED(3) / 4;
-			stump->motionFlg = 0;
+			stump->motionFlags = 0;
 		}
 		sySetEvent(scTaopoSwampDripAtRandom, EVENT_PASS_TICK);
 		((MAP_STATE_GROUND_EFFECTS *)map)->wading = MAP_WADING_MUD;
 		DecodeFillByte = MUD_COLOR;
 	} else if(scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
 	} else if(scene == SCENE_TAOPO_SWAMP_FLOWER) {
 		fdEffectStartBlankOverlay(0);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
@@ -1625,20 +1628,20 @@ Sint32 scInit(void)
 			scVentsStart(
 				TaopoSwampPillarGapVents, 0, scTaopoSwampCycleSpotVent);
 		piece = fdActorGetById(ACTOR_GAP_PUDDLE);
-		piece->motionFlg = 0;
-		fdActorSetSprFlags(piece, 0);
+		piece->motionFlags = 0;
+		fdActorSetSpriteFlags(piece, 0);
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
 			fdMapGridCopyMetatileAttributes(28, 8, 1, 1, 26, 8);
 			fdActorSelectAnimation(piece, 0);
 		} else {
 			fdMapGridCopyMetatileAttributes(22, 8, 1, 1, 26, 8);
-			fdActorSetSprPriority(ACTOR_GAP_PUDDLE, 3);
-			piece->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpritePriority(ACTOR_GAP_PUDDLE, 3);
+			piece->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
 				fdActorSelectAnimation(piece, 7);
 		}
 		piece = fdActorGetById(ACTOR_GAP_PILLAR);
-		piece->motionFlg = 0;
+		piece->motionFlags = 0;
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_PILLAR_IN_GAP)) {
 			fdActorSetPos(ACTOR_GAP_PILLAR, 264, 424);
 			piece->groundHeight = 0;
@@ -1660,18 +1663,18 @@ Sint32 scInit(void)
 		} else {
 			Value3((Sint32 (*)())scVentsStart, (Sint32)TaopoSwampDripsVents, 0,
 				(Sint32)scTaopoSwampCycleDripVent);
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
 			syFieldSetTickEvent(TaopoSwampDripInDripRoom, EVENT_PASS_TICK);
 			syFieldSetTickEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_TICK);
 			actor = fdActorGetById(ACTOR_DRIP_PUDDLE);
-			actor->motionFlg = 0;
-			fdActorSetSprFlags(actor, 0);
+			actor->motionFlags = 0;
+			fdActorSetSpriteFlags(actor, 0);
 			if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
 				fdActorSelectAnimation(actor, 0);
 			} else {
-				fdActorSetSprPriority(ACTOR_DRIP_PUDDLE, 3);
-				actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+				fdActorSetSpritePriority(ACTOR_DRIP_PUDDLE, 3);
+				actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 				if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
 					fdActorSelectAnimation(actor, 7);
 			}
@@ -1685,10 +1688,10 @@ Sint32 scInit(void)
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK)) {
 			fdActorSetAnimation(ACTOR_CHEST_ROCK, 3);
 			fdActorSetPos(ACTOR_CHEST_ROCK, 184, 344);
-			fdActorGetById(ACTOR_CHEST_ROCK)->collisionFlg = 0;
-			fdActorGetById(ACTOR_CHEST_ROCK)->priFlg |=
+			fdActorGetById(ACTOR_CHEST_ROCK)->collisionFlags = 0;
+			fdActorGetById(ACTOR_CHEST_ROCK)->priorityFlags |=
 				ACTOR_PRIORITY_UNDERFOOT;
-			fdActorSetSprPriority(ACTOR_CHEST_ROCK, 3);
+			fdActorSetSpritePriority(ACTOR_CHEST_ROCK, 3);
 			fdMapGridCopyMetatileAttributes(11, 19, 1, 1, 11, 21);
 		}
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED)) {
@@ -1696,8 +1699,9 @@ Sint32 scInit(void)
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK)) {
 			fdActorSetAnimation(ACTOR_EXIT_ROCK, 3);
 			fdActorSetPos(ACTOR_EXIT_ROCK, 504, 184);
-			fdActorGetById(ACTOR_EXIT_ROCK)->collisionFlg = 0;
-			fdActorGetById(ACTOR_EXIT_ROCK)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGetById(ACTOR_EXIT_ROCK)->collisionFlags = 0;
+			fdActorGetById(ACTOR_EXIT_ROCK)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(30, 13, 1, 1, 31, 11);
 		}
 	} else if(scene == SCENE_TAOPO_SWAMP_TREMOR) {
@@ -1709,7 +1713,7 @@ Sint32 scInit(void)
 			fdMapGridCopyMetatiles(47, 50, 2, 14, 29, 1);
 			fdMapGridCopyMetatiles(50, 59, 13, 5, 18, 15);
 		} else {
-			piece->motionFlg = 0;
+			piece->motionFlags = 0;
 			piece->y.fixed = toFIXED(32);
 		}
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED)) {
@@ -1717,8 +1721,8 @@ Sint32 scInit(void)
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK)) {
 			fdActorSetAnimation(ACTOR_TREMOR_LAVA_ROCK, 3);
 			fdActorSetPos(ACTOR_TREMOR_LAVA_ROCK, 120, 248);
-			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->collisionFlg = 0;
-			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->priFlg |=
+			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->collisionFlags = 0;
+			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->priorityFlags |=
 				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(7, 17, 1, 1, 7, 15);
 		} else {
@@ -1731,8 +1735,8 @@ Sint32 scInit(void)
 			if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK)) {
 				fdActorSetAnimation(ACTOR_TREMOR_PILLAR_ROCK, 3);
 				fdActorSetPos(ACTOR_TREMOR_PILLAR_ROCK, 408, 264);
-				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->collisionFlg = 0;
-				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->priFlg |=
+				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->collisionFlags = 0;
+				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->priorityFlags |=
 					ACTOR_PRIORITY_UNDERFOOT;
 				fdMapGridCopyMetatileAttributes(25, 18, 1, 1, 25, 16);
 			} else {
@@ -1751,7 +1755,7 @@ Sint32 scInit(void)
 		else
 			fdActorSetAnimation(ACTOR_LAST_ROCK, 0);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
 		entrance = MainRoutineStateWork.entrance;
 		if(entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
 			entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
@@ -1796,15 +1800,15 @@ Sint32 scInit(void)
 			else
 				fdActorGetById(id)->scaleY = toFIXED(5) / 4;
 		}
-		fdActorSetSprPriority(ACTOR_MUD_SPROUT, 3);
-		fdActorGetById(ACTOR_MUD_SPROUT)->collisionFlg = 0;
+		fdActorSetSpritePriority(ACTOR_MUD_SPROUT, 3);
+		fdActorGetById(ACTOR_MUD_SPROUT)->collisionFlags = 0;
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_VINE_GROWN))
 			fdMapGridCopyMetatileAttributes(50, 16, 1, 2, 47, 16);
 		stump = fdActorGetById(ACTOR_MUD_STUMP);
 		if(stump != 0) {
 			stump->scaleX = toFIXED(3) / 4;
 			stump->scaleY = toFIXED(3) / 4;
-			stump->motionFlg = 0;
+			stump->motionFlags = 0;
 		}
 		sySetEvent(scTaopoSwampDripAtRandom, EVENT_PASS_TICK);
 		((MAP_STATE_GROUND_EFFECTS *)map)->wading = MAP_WADING_MUD;
@@ -1813,9 +1817,9 @@ Sint32 scInit(void)
 		*effect = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(0)))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_WIDE);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREASURE_DUG_UP(1)))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR + 1, TREASURE_SPOT_WIDE);
 	} else if(scene == SCENE_TAOPO_SWAMP_FLOWER) {
 		*effect = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1849,20 +1853,20 @@ Sint32 scInit(void)
 			scVentsStart(
 				TaopoSwampPillarGapVents, 0, scTaopoSwampCycleSpotVent);
 		piece = fdActorGetById(ACTOR_GAP_PUDDLE);
-		piece->motionFlg = 0;
-		fdActorSetSprFlags(piece, 0);
+		piece->motionFlags = 0;
+		fdActorSetSpriteFlags(piece, 0);
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
 			fdMapGridCopyMetatileAttributes(28, 8, 1, 1, 26, 8);
 			fdActorSelectAnimation(piece, 0);
 		} else {
 			fdMapGridCopyMetatileAttributes(22, 8, 1, 1, 26, 8);
-			fdActorSetSprPriority(ACTOR_GAP_PUDDLE, 3);
-			piece->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpritePriority(ACTOR_GAP_PUDDLE, 3);
+			piece->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
 				fdActorSelectAnimation(piece, 7);
 		}
 		piece = fdActorGetById(ACTOR_GAP_PILLAR);
-		piece->motionFlg = 0;
+		piece->motionFlags = 0;
 		if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_PILLAR_IN_GAP)) {
 			fdActorSetPos(ACTOR_GAP_PILLAR, 264, 424);
 			piece->groundHeight = 0;
@@ -1886,18 +1890,18 @@ Sint32 scInit(void)
 		} else {
 			Value3((Sint32 (*)())scVentsStart, (Sint32)TaopoSwampDripsVents, 0,
 				(Sint32)scTaopoSwampCycleDripVent);
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
 			syFieldSetTickEvent(TaopoSwampDripInDripRoom, EVENT_PASS_TICK);
 			syFieldSetTickEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_TICK);
 			actor = fdActorGetById(ACTOR_DRIP_PUDDLE);
-			actor->motionFlg = 0;
-			fdActorSetSprFlags(actor, 0);
+			actor->motionFlags = 0;
+			fdActorSetSpriteFlags(actor, 0);
 			if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_FROZEN)) {
 				fdActorSelectAnimation(actor, 0);
 			} else {
-				fdActorSetSprPriority(ACTOR_DRIP_PUDDLE, 3);
-				actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+				fdActorSetSpritePriority(ACTOR_DRIP_PUDDLE, 3);
+				actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 				if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
 					fdActorSelectAnimation(actor, 7);
 			}
@@ -1913,10 +1917,10 @@ Sint32 scInit(void)
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_CHEST_ROCK_SUNK)) {
 			fdActorSetAnimation(ACTOR_CHEST_ROCK, 3);
 			fdActorSetPos(ACTOR_CHEST_ROCK, 184, 344);
-			fdActorGetById(ACTOR_CHEST_ROCK)->collisionFlg = 0;
-			fdActorGetById(ACTOR_CHEST_ROCK)->priFlg |=
+			fdActorGetById(ACTOR_CHEST_ROCK)->collisionFlags = 0;
+			fdActorGetById(ACTOR_CHEST_ROCK)->priorityFlags |=
 				ACTOR_PRIORITY_UNDERFOOT;
-			fdActorSetSprPriority(ACTOR_CHEST_ROCK, 3);
+			fdActorSetSpritePriority(ACTOR_CHEST_ROCK, 3);
 			fdMapGridCopyMetatileAttributes(11, 19, 1, 1, 11, 21);
 		}
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_COOLED)) {
@@ -1924,8 +1928,9 @@ Sint32 scInit(void)
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_EXIT_ROCK_SUNK)) {
 			fdActorSetAnimation(ACTOR_EXIT_ROCK, 3);
 			fdActorSetPos(ACTOR_EXIT_ROCK, 504, 184);
-			fdActorGetById(ACTOR_EXIT_ROCK)->collisionFlg = 0;
-			fdActorGetById(ACTOR_EXIT_ROCK)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGetById(ACTOR_EXIT_ROCK)->collisionFlags = 0;
+			fdActorGetById(ACTOR_EXIT_ROCK)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(30, 13, 1, 1, 31, 11);
 		}
 	} else if(scene == SCENE_TAOPO_SWAMP_TREMOR) {
@@ -1939,7 +1944,7 @@ Sint32 scInit(void)
 			fdMapGridCopyMetatiles(47, 50, 2, 14, 29, 1);
 			fdMapGridCopyMetatiles(50, 59, 13, 5, 18, 15);
 		} else {
-			piece->motionFlg = 0;
+			piece->motionFlags = 0;
 			piece->y.fixed = toFIXED(32);
 		}
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_COOLED)) {
@@ -1947,8 +1952,8 @@ Sint32 scInit(void)
 		} else if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_TREMOR_LAVA_ROCK_SUNK)) {
 			fdActorSetAnimation(ACTOR_TREMOR_LAVA_ROCK, 3);
 			fdActorSetPos(ACTOR_TREMOR_LAVA_ROCK, 120, 248);
-			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->collisionFlg = 0;
-			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->priFlg |=
+			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->collisionFlags = 0;
+			fdActorGetById(ACTOR_TREMOR_LAVA_ROCK)->priorityFlags |=
 				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(7, 17, 1, 1, 7, 15);
 		} else {
@@ -1961,8 +1966,8 @@ Sint32 scInit(void)
 			if(fdScriptGetFlag(FLAG_TAOPO_SWAMP_PILLAR_ROCK_SUNK)) {
 				fdActorSetAnimation(ACTOR_TREMOR_PILLAR_ROCK, 3);
 				fdActorSetPos(ACTOR_TREMOR_PILLAR_ROCK, 408, 264);
-				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->collisionFlg = 0;
-				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->priFlg |=
+				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->collisionFlags = 0;
+				fdActorGetById(ACTOR_TREMOR_PILLAR_ROCK)->priorityFlags |=
 					ACTOR_PRIORITY_UNDERFOOT;
 				fdMapGridCopyMetatileAttributes(25, 18, 1, 1, 25, 16);
 			} else {
@@ -1983,7 +1988,7 @@ Sint32 scInit(void)
 		else
 			fdActorSetAnimation(ACTOR_LAST_ROCK, 0);
 		if(!fdScriptGetFlag(FLAG_TAOPO_SWAMP_STAR_DUST_DUG_UP))
-			fdActorSetWideSpr(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
+			fdActorSetWideSprite(FIELD_TREASURE_ACTOR, TREASURE_SPOT_PUT_AWAY);
 		entrance = MainRoutineStateWork.entrance;
 		if(entrance == TAOPO_SWAMP_STAR_DUST_FROM_TAOPO_SWAMP_TREMOR ||
 			entrance == STAR_DUST_FIRST_TO_MIDDLE_ROOM) {
@@ -2053,11 +2058,11 @@ void scTaopoSwampFocusMapOn(Sint32 x, Sint32 z)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer;
-	Sint32	   idx, fx = FIELD_HALF_METATILE_ORIGIN(x);
+	Sint32	   index, fx = FIELD_HALF_METATILE_ORIGIN(x);
 
 	layer = &map->layers[2];
-	layer->ofsX = fx;
-	layer->ofsY = FIELD_HALF_METATILE_ORIGIN(z);
+	layer->offsetX = fx;
+	layer->offsetY = FIELD_HALF_METATILE_ORIGIN(z);
 	layer->maskX = MAPGRID_SIZE - 1;
 	layer->maskY = MAPGRID_ROW_MASK;
 	layer->originY = z << 7;
@@ -2066,12 +2071,12 @@ void scTaopoSwampFocusMapOn(Sint32 x, Sint32 z)
 	layer->speedY = 0;
 	layer->phaseX = 0;
 	layer->phaseY = 0;
-	idx = (z / 2 << 7) + x / 2;
+	index = (z / 2 << 7) + x / 2;
 	layer->scaleY = layer->scaleX = toFIXED(1);
-	layer->metatiles = (MAP_METATILE *)(MapGridMetatileBuffer + idx * 4);
-	layer->terrainIds = MapShapeGrid + idx;
-	layer->x = syMulFX(map->view[0], toFIXED(1)) + layer->ofsX;
-	layer->y = syMulFX(map->view[1], layer->scaleY) + layer->ofsY;
+	layer->metatiles = (MAP_METATILE *)(MapGridMetatileBuffer + index * 4);
+	layer->terrainIds = MapShapeGrid + index;
+	layer->x = syMulFX(map->view[0], toFIXED(1)) + layer->offsetX;
+	layer->y = syMulFX(map->view[1], layer->scaleY) + layer->offsetY;
 	fdMapGridCenterOnFollowedPoint();
 	syWait(1);
 }
@@ -2122,16 +2127,16 @@ void scTaopoSwampSinkInMud(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
 	ACTOR		*actor = fdActorGet(syFieldPartyGetLeaderActor());
-	SPR			*spr = actor->spr;
+	SPR			*sprite = actor->sprite;
 	ACTOR		*spark;
-	FIELD_SPR	*sparkSpr;
+	FIELD_SPR	*sparkSprite;
 	Sint32		 step, i;
 
-	if(spr->entries[1] != 0)
-		spr->entries[1]->pri = 1;
-	spr->flg |= SPRITE_FLAG_SUNK;
-	spr->flg &= ~SPRITE_FLAG_SHADOW;
-	syIOWrite8(1, &spr->dirty);
+	if(sprite->entries[1] != 0)
+		sprite->entries[1]->priority = 1;
+	sprite->flags |= SPRITE_FLAG_SUNK;
+	sprite->flags &= ~SPRITE_FLAG_SHADOW;
+	syIOWrite8(1, &sprite->dirty);
 	/* Walking, the leader sinks all the way in about 95 ticks; running, in
 	   64. */
 	if(PerWork.data & KEYS_DPAD) {
@@ -2140,33 +2145,33 @@ void scTaopoSwampSinkInMud(void)
 			step = step * 3 >> 1;
 		state->depth += step / MUD_SINK_TICKS + 1;
 	}
-	spr->sunkRows = state->depth / MUD_DEPTH_ROW;
+	sprite->sunkRows = state->depth / MUD_DEPTH_ROW;
 	state->footing = FOOTING_MUD;
 	if(state->depth < LEADER_SINK_ROWS * MUD_DEPTH_ROW)
 		return;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	actor->sprStorageKind = 0;
+	actor->spriteStorageKind = 0;
 	for(i = 0; i < 2; i++) {
 		spark = (scFieldActorCreate(SPRITE_SPLASH_RING, actor->x.fixed,
 			actor->y.fixed, actor->z.fixed));
 		if(spark != 0) {
-			sparkSpr = spark->spr;
+			sparkSprite = spark->sprite;
 			fdActorStartScript(spark, TaopoSwampSplashFades);
-			spark->motionFlg = 0;
+			spark->motionFlags = 0;
 			spark->layer = 1;
-			if(sparkSpr != 0) {
-				fdSprStartAnimation(sparkSpr, 2);
-				sparkSpr->flg = 0;
-				sparkSpr->pri = 2;
+			if(sparkSprite != 0) {
+				fdSpriteStartAnimation(sparkSprite, 2);
+				sparkSprite->flags = 0;
+				sparkSprite->priority = 2;
 			}
 		}
 		syWait(15);
 	}
 	syFieldScriptWait(30);
-	actor->sprStorageKind = 1;
-	spr->sunkRows = 0;
-	spr->flg = 0;
+	actor->spriteStorageKind = 1;
+	sprite->sunkRows = 0;
+	sprite->flags = 0;
 	fdScriptEnd();
 	actor->x.fixed = state->x;
 	actor->z.fixed = state->z;
@@ -2180,25 +2185,25 @@ void scTaopoSwampRiseOnBubble(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
 	ACTOR		*actor;
-	SPR			*spr;
+	SPR			*sprite;
 
 	if(state->footing != FOOTING_BUBBLE) {
 		actor = fdActorGet(syFieldPartyGetLeaderActor());
-		spr = actor->spr;
+		sprite = actor->sprite;
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		scFieldActorSetMoveTargetFX(actor,
 			(actor->x.fixed & -toFIXED(16)) + toFIXED(8), actor->y.fixed,
 			(actor->z.fixed & -toFIXED(16)) + toFIXED(8));
 		scFieldActorWaitForMove(actor);
-		while(spr->sunkRows != 0) {
-			spr->sunkRows--;
-			spr->dirty = 1;
+		while(sprite->sunkRows != 0) {
+			sprite->sunkRows--;
+			sprite->dirty = 1;
 			syWait(1);
 		}
 		fdScriptEnd();
-		spr->flg |= SPRITE_FLAG_SUNK;
-		spr->flg &= ~SPRITE_FLAG_SHADOW;
+		sprite->flags |= SPRITE_FLAG_SUNK;
+		sprite->flags &= ~SPRITE_FLAG_SHADOW;
 		state->footing = FOOTING_BUBBLE;
 		state->depth = 0;
 	}
@@ -2210,16 +2215,17 @@ void scTaopoSwampRiseOnBubble(void)
 void scTaopoSwampStepOnFirmGround(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
-	SPR			*spr;
+	SPR			*sprite;
 
 	scTaopoSwampSaveFirmGround();
 	if(state->footing != FOOTING_FIRM_GROUND) {
-		spr = fdActorGet(syFieldPartyGetLeaderActor())->spr;
-		if(spr->entries[1])
-			spr->entries[1]->pri = SPRITE_LAYER_NOT_DRAWN;
-		spr->flg = (spr->flg & ~SPRITE_FLAG_SUNK) | SPRITE_FLAG_SHADOW;
-		spr->sunkRows = 0;
-		spr->dirty = 1;
+		sprite = fdActorGet(syFieldPartyGetLeaderActor())->sprite;
+		if(sprite->entries[1])
+			sprite->entries[1]->priority = SPRITE_LAYER_NOT_DRAWN;
+		sprite->flags =
+			(sprite->flags & ~SPRITE_FLAG_SUNK) | SPRITE_FLAG_SHADOW;
+		sprite->sunkRows = 0;
+		sprite->dirty = 1;
 		state->footing = FOOTING_FIRM_GROUND;
 		state->depth = 0;
 	}
@@ -2251,7 +2257,7 @@ void scVentPuff(Sint32 *pos, Sint32 base)
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() << 1) + base;
 		/* A spin of up to half a turn a tick, either way. */
-		actor->tmr = syRandomBelow(TRIG_TURN) - DEGtoANG(180);
+		actor->timer = syRandomBelow(TRIG_TURN) - DEGtoANG(180);
 		scActorStartScripted(actor, 3);
 		actor->update = (OBJECT_UPDATE)scVentBounce;
 		fdActorSetBlendMode(actor, 1);
@@ -2265,18 +2271,18 @@ void scVentPuff(Sint32 *pos, Sint32 base)
 #include "shared/vent_is_blowing.h"
 
 /* Starts or stops vent index's gust. */
-void scVentSetBlowing(Sint32 idx, Sint32 blowing)
+void scVentSetBlowing(Sint32 index, Sint32 blowing)
 {
 	VENT_WORK *state;
 
 	state = VENT_STATE;
-	VENT_AT(state, idx)->entries[0].active = blowing;
+	VENT_AT(state, index)->entries[0].active = blowing;
 }
 
 /* The vents' tick counter, which their cycles time their gusts by. */
 Sint32 scVentGetCounter(void)
 {
-	return VENT_STATE->cnt;
+	return VENT_STATE->count;
 }
 
 #include "shared/vent_advance_counter.h"

@@ -23,7 +23,7 @@
 #include "field/call.h"
 #include "field/actor_script.h"
 
-void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt);
+void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 count);
 void scIzumoRuinsShowStakeState(ACTOR *actor);
 
 extern Sint16		IzumoRuinsFirstRoomPillars[];
@@ -45,7 +45,7 @@ void   scDustBurst(void);
 Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
 void   fdLeaderSetMetatileShapeAt(Sint32 level, Sint32 layer);
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 
 #include "shared/crumbling_pillar.h"
 
@@ -148,12 +148,12 @@ void scIzumoRuinsShowStakeState(ACTOR *actor)
 	Sint32 height = METATILE_HEIGHT_STEPS(
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
-	if(fdScriptGetFlag(actor->tmr)) {
+	if(fdScriptGetFlag(actor->timer)) {
 		upper |= METATILE_ATTRIBUTES(METATILE_BEHAVIOR_WALL, 0);
 		lower &= ~MAP_METATILE_JUMP;
 		if(METATILE_HEIGHT_STEPS(actor->groundHeight) != height)
 			height -= STAKE_HEIGHT_STEPS;
-		fdSetActorSprPriority(actor, 3);
+		fdSetActorSpritePriority(actor, 3);
 	} else {
 		if(METATILE_CODE(lower) != METATILE_BEHAVIOR_SAND)
 			upper = METATILE_ATTRIBUTES(
@@ -163,7 +163,7 @@ void scIzumoRuinsShowStakeState(ACTOR *actor)
 				METATILE_BEHAVIOR_SAND, upper & METATILE_ATTRIBUTE_BITS);
 		lower |= MAP_METATILE_JUMP;
 		height += STAKE_HEIGHT_STEPS;
-		fdSetActorSprPriority(actor, 2);
+		fdSetActorSpritePriority(actor, 2);
 	}
 	scMapMetatileSetAttributes(MAPGRID_LAYER_GROUND, column, row, lower);
 	scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD, column, row, upper);
@@ -176,16 +176,16 @@ void scIzumoRuinsShowStakeState(ACTOR *actor)
 void scIzumoRuinsPlaceStakes(Uint16 *list)
 {
 	ACTOR *actor;
-	Sint32 flg;
+	Sint32 flag;
 
 	for(; list[0] != ACTOR_LIST_END; list += 3) {
 		actor = fdActorGet(list[0]);
-		flg = (Sint16)list[2];
-		fdActorSetSprFlags(actor, 0);
-		fdActorSelectAnimation(actor, fdScriptGetFlag((Uint16)flg) + 1);
-		actor->motionFlg = 0;
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		actor->tmr = flg;
+		flag = (Sint16)list[2];
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSelectAnimation(actor, fdScriptGetFlag((Uint16)flag) + 1);
+		actor->motionFlags = 0;
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		actor->timer = flag;
 		scIzumoRuinsShowStakeState(actor);
 	}
 }
@@ -230,19 +230,19 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
    fdPoundSinkTarget animates the blow from the scene's list of stakes; as the
    stake lands (mode 1) scIzumoRuinsShowStakeState makes its metatile floor. */
-void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frm)
+void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frame)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	Sint16				scene;
 
 	scene = party->next;
 	if(scene == SCENE_IZUMO_RUINS_FIRST_ROOM)
-		fdPoundSinkTarget(IzumoRuinsFirstRoomStakes, mode, frm);
+		fdPoundSinkTarget(IzumoRuinsFirstRoomStakes, mode, frame);
 	else
-		fdPoundSinkTarget(IzumoRuinsSecondRoomStakes, mode, frm);
+		fdPoundSinkTarget(IzumoRuinsSecondRoomStakes, mode, frame);
 	if(mode == POUND_STAGE_LANDED)
-		scIzumoRuinsShowStakeState(fdActorGet(state->tgtId));
+		scIzumoRuinsShowStakeState(fdActorGet(state->targetId));
 }
 
 /* Frost on one of the two puddles either side of the stakes where the ladder
@@ -257,8 +257,8 @@ void scIzumoRuinsFreezePuddle(void)
 	syFieldScriptEndLastingPsynergy(0);
 	fdFlagBlockApplyFlags(IzumoRuinsPuddles);
 	actor = state->movedBlock;
-	actor->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 	fdScriptEnd();
 }
 
@@ -352,7 +352,7 @@ Sint32 scInit(void)
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
@@ -360,9 +360,9 @@ Sint32 scInit(void)
 		scIzumoRuinsPlaceStakes((Uint16 *)IzumoRuinsFirstRoomStakes);
 		fdFlagBlockPlaceAll(IzumoRuinsPuddles);
 	} else {
-		fdActorGet(ACTOR_RING_NORTHWEST_PILLAR)->priFlg |=
+		fdActorGet(ACTOR_RING_NORTHWEST_PILLAR)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
-		fdActorGet(ACTOR_RING_NORTHEAST_PILLAR)->priFlg |=
+		fdActorGet(ACTOR_RING_NORTHEAST_PILLAR)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 		fdActorPlaceBlocks(IzumoRuinsSecondRoomPillars);
 		scIzumoRuinsPlaceStakes((Uint16 *)IzumoRuinsSecondRoomStakes);

@@ -232,9 +232,10 @@ void scAlhafraOpenDoorAndEnter(
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(step->steps, step->x, step->y);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = ACTOR_FALLS;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags =
+		ACTOR_FALLS;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -8);
@@ -252,11 +253,11 @@ void scAlhafraOpenDoorAndEnter(
 
    Each door's metatile behaviour is the number of the exit it leads by, and of
    its row of AlhafraDoors. */
-void scAlhafraEnterDoor(Sint32 idx)
+void scAlhafraEnterDoor(Sint32 index)
 {
-	MAP_GRID_METATILE_ANIMATION *tbl = AlhafraDoors;
+	MAP_GRID_METATILE_ANIMATION *table = AlhafraDoors;
 
-	scAlhafraOpenDoorAndEnter(&tbl[idx], idx, 0);
+	scAlhafraOpenDoorAndEnter(&table[index], index, 0);
 }
 
 /* Alhafra's shops, as mnShopRun numbers them. */
@@ -376,7 +377,7 @@ void scAlhafraPirateRunsToWarnTheCrew(void)
    drawn behind the wall from where Felix now stands. */
 void scAlhafraDrawPirateBehind(void)
 {
-	scFieldActorSetSprPriority(ACTOR_PIRATE, 2);
+	scFieldActorSetSpritePriority(ACTOR_PIRATE, 2);
 }
 
 /* Nothing visible happens as Felix walks back past the pirate's wall, south of
@@ -384,7 +385,7 @@ void scAlhafraDrawPirateBehind(void)
    front of the wall again. */
 void scAlhafraDrawPirateInFront(void)
 {
-	scFieldActorSetSprPriority(ACTOR_PIRATE, 3);
+	scFieldActorSetSpritePriority(ACTOR_PIRATE, 3);
 }
 
 extern Sint16 AlhafraPuddles[];
@@ -394,7 +395,7 @@ extern Sint16 AlhafraPuddles[];
 void scAlhafraFreezePuddle(Sint32 unused, Sint32 actorId)
 {
 	fdFlagBlockApplyFlags((Sint32)AlhafraPuddles);
-	fdActorGetById(actorId)->priFlg = 0;
+	fdActorGetById(actorId)->priorityFlags = 0;
 }
 
 /* The sailor building houses grumbles, and the woman beside him tells him to
@@ -511,9 +512,9 @@ void scAlhafraFindGoldCoins(void)
 	fdActorFaceDirection(ACTOR_BOY_HUNTING_FOR_COINS, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_LUCKY_MOTHERS_CHILD, FACING_SOUTHWEST, 0);
 	fdActorSetAnimationById(ACTOR_LUCKY_MOTHER, 5);
-	sySndPlay(MUS_LEVEL_UP);
+	sySoundPlay(MUS_LEVEL_UP);
 	MainRoutineStateWork.leaderActorId = ACTOR_LUCKY_MOTHER;
-	fdItemDispShowItem(0, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+	fdItemDisplayShowItem(0, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	MainRoutineStateWork.leaderActorId = ACTOR_FELIX;
 	fdScriptWait(50);
 	scFieldActorJump(ACTOR_LUCKY_MOTHERS_HUSBAND, 6, 15);
@@ -652,10 +653,10 @@ Sint32 scInit(void)
 				(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
 			fdActorGetById(ACTOR_OLD_MAN_WAITING_FOR_THIS_DAY)->update =
 				(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
-			fdActorSetSprPriority(ACTOR_OLD_MAN_ON_SAILS, 2);
-			fdActorSetSprPriority(ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP, 3);
-			fdActorSetSprPriority(ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, 3);
-			fdActorSetSprPriority(ACTOR_WOMAN_ADMIRING_THE_MAST, 1);
+			fdActorSetSpritePriority(ACTOR_OLD_MAN_ON_SAILS, 2);
+			fdActorSetSpritePriority(ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP, 3);
+			fdActorSetSpritePriority(ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, 3);
+			fdActorSetSpritePriority(ACTOR_WOMAN_ADMIRING_THE_MAST, 1);
 		} else {
 			fdActorGet(ACTOR_WOMAN_ON_THE_LOST_SHIPS)->update =
 				(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
@@ -663,34 +664,34 @@ Sint32 scInit(void)
 				(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
 			fdActorGetById(ACTOR_MAN_FINISHING_A_CANOE)->update =
 				(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
-			fdActorSetSprPriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
-			fdActorSetSprPriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
-			fdActorSetSprPriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
-			fdActorSetSprPriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
-			fdActorSetSprPriority(ACTOR_HUNGRY_BOY, 2);
-			fdActorSetSprPriority(ACTOR_LUCKY_MOTHERS_HUSBAND, 3);
-			fdActorSetSprPriority(ACTOR_LUCKY_MOTHER, 1);
-			fdActorSetSprPriority(ACTOR_LUCKY_MOTHERS_CHILD, 3);
-			fdActorSetSprPriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
-			fdActorSetSprPriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
-			fdActorSetSprPriority(ACTOR_MANOR_GUARD, 3);
+			fdActorSetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
+			fdActorSetSpritePriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
+			fdActorSetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
+			fdActorSetSpritePriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
+			fdActorSetSpritePriority(ACTOR_HUNGRY_BOY, 2);
+			fdActorSetSpritePriority(ACTOR_LUCKY_MOTHERS_HUSBAND, 3);
+			fdActorSetSpritePriority(ACTOR_LUCKY_MOTHER, 1);
+			fdActorSetSpritePriority(ACTOR_LUCKY_MOTHERS_CHILD, 3);
+			fdActorSetSpritePriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
+			fdActorSetSpritePriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
+			fdActorSetSpritePriority(ACTOR_MANOR_GUARD, 3);
 		}
 	} else if(syGameFlagGet(FLAG_BRIGGS_CAUGHT)) {
 		fdActorGetById(ACTOR_WOMAN_ON_THE_LOST_SHIPS)->update =
 			(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
 		fdActorGetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
 			(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
-		fdActorSetSprPriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
-		fdActorSetSprPriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
-		fdActorSetSprPriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 3);
-		fdActorSetSprPriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
-		fdActorSetSprPriority(ACTOR_MAN_FINISHING_A_CANOE, 2);
-		fdActorSetSprPriority(ACTOR_HUNGRY_BOY, 2);
-		fdActorSetSprPriority(ACTOR_LUCKY_MOTHERS_HUSBAND, 3);
-		fdActorSetSprPriority(ACTOR_LUCKY_MOTHER, 1);
-		fdActorSetSprPriority(ACTOR_LUCKY_MOTHERS_CHILD, 3);
-		fdActorSetSprPriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
-		fdActorSetSprPriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
+		fdActorSetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
+		fdActorSetSpritePriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
+		fdActorSetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 3);
+		fdActorSetSpritePriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
+		fdActorSetSpritePriority(ACTOR_MAN_FINISHING_A_CANOE, 2);
+		fdActorSetSpritePriority(ACTOR_HUNGRY_BOY, 2);
+		fdActorSetSpritePriority(ACTOR_LUCKY_MOTHERS_HUSBAND, 3);
+		fdActorSetSpritePriority(ACTOR_LUCKY_MOTHER, 1);
+		fdActorSetSpritePriority(ACTOR_LUCKY_MOTHERS_CHILD, 3);
+		fdActorSetSpritePriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
+		fdActorSetSpritePriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
 		fdActorSetMovementType(fdActorGetById(ACTOR_WOMAN_WAITING_AT_THE_INN),
 			MOVEMENT_TYPE_TAKE_LEADER_LAYER);
 		if(!syGameFlagGet(FLAG_HUNGRY_BOY_FED))
@@ -704,9 +705,9 @@ Sint32 scInit(void)
 			fdActorFaceDirectionById(ACTOR_HUNGRY_BOYS_FATHER, FACING_EAST, 0);
 		}
 	} else {
-		fdActorSetSprPriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
-		fdActorSetSprPriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
-		fdActorSetSprPriority(ACTOR_MANOR_GUARD, 3);
+		fdActorSetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
+		fdActorSetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
+		fdActorSetSpritePriority(ACTOR_MANOR_GUARD, 3);
 		fdActorGetById(ACTOR_SAILOR_BUILDING_HOUSES)->update =
 			(OBJECT_UPDATE)scAlhafraTakeLeadersLayer;
 		if(syGameFlagGet(FLAG_ALHAFRA_MADRANS_ARRIVED))
@@ -871,7 +872,7 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 	fdActorWaitForMoveById(ACTOR_SILENT_MADRAN);
 	fdActorFaceDirection(ACTOR_SILENT_MADRAN, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_SOUTH, 0);
-	fdActorSetSprPriority(ACTOR_SILENT_MADRAN, 3);
+	fdActorSetSpritePriority(ACTOR_SILENT_MADRAN, 3);
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_WEARY_MADRAN, 400, 872);
 	/* "Haaa hoo hooo... Are we...here? I feel like I just walked 500 miles." */
@@ -1115,7 +1116,7 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 	syScriptCameraFollowActor(ACTOR_MADRAS_MAYOR, 1);
 	fdCameraWaitForArrival();
 	if(metatileBehavior == METATILE_BEHAVIOR_MADRANS_ARRIVE_BESIDE_FELIX) {
-		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 2);
+		scFieldActorSetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
 		scFieldActorWatchAndSetScript(
 			ACTOR_FIRST_MADRAN_SOLDIER, ACTOR_MADRAS_ELDER);
 		scFieldActorWatchAndSetScript(
@@ -1128,14 +1129,14 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 		fdActorSetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
 			(Sint32)AlhafraWaitingMadranFollowsBesideFelixScript);
 		fdScriptWait(80);
-		scFieldActorSetSprPriority(ACTOR_MADRAS_ELDER, 3);
-		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 3);
-		scFieldActorSetSprPriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
-		scFieldActorSetSprPriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
-		scFieldActorSetSprPriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
-		scFieldActorSetSprPriority(ACTOR_WEARY_MADRAN, 3);
-		scFieldActorSetSprPriority(ACTOR_SILENT_MADRAN, 3);
-		scFieldActorSetSprPriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
+		scFieldActorSetSpritePriority(ACTOR_MADRAS_ELDER, 3);
+		scFieldActorSetSpritePriority(ACTOR_MADRAS_MAYOR, 3);
+		scFieldActorSetSpritePriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
+		scFieldActorSetSpritePriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
+		scFieldActorSetSpritePriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
+		scFieldActorSetSpritePriority(ACTOR_WEARY_MADRAN, 3);
+		scFieldActorSetSpritePriority(ACTOR_SILENT_MADRAN, 3);
+		scFieldActorSetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
 		scFieldActorWatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_ELDER);
 		fdActorSetMovementTypeById(
 			ACTOR_MADRAS_MAYOR, (Sint32)AlhafraMayorFollowsBesideFelixScript);
@@ -1151,7 +1152,7 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 		fdActorSetMovementTypeById(ACTOR_SILENT_MADRAN,
 			(Sint32)AlhafraSilentMadranFollowsBesideFelixScript);
 	} else {
-		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 2);
+		scFieldActorSetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
 		scFieldActorWatchAndSetScript(
 			ACTOR_MADRAS_MAYOR, ACTOR_ALHAFRAN_GIVING_DIRECTIONS);
 		scFieldActorWatchAndSetScript(
@@ -1170,14 +1171,14 @@ void scAlhafraMadransArrive(Sint32 metatileBehavior)
 		scFieldActorWatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_ELDER);
 		fdActorSetMovementTypeById(
 			ACTOR_MADRAS_MAYOR, (Sint32)AlhafraMayorFollowsBehindFelixScript);
-		scFieldActorSetSprPriority(ACTOR_MADRAS_ELDER, 3);
-		scFieldActorSetSprPriority(ACTOR_MADRAS_MAYOR, 3);
-		scFieldActorSetSprPriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
-		scFieldActorSetSprPriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
-		scFieldActorSetSprPriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
-		scFieldActorSetSprPriority(ACTOR_WEARY_MADRAN, 3);
-		scFieldActorSetSprPriority(ACTOR_SILENT_MADRAN, 3);
-		fdActorSetSprPriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
+		scFieldActorSetSpritePriority(ACTOR_MADRAS_ELDER, 3);
+		scFieldActorSetSpritePriority(ACTOR_MADRAS_MAYOR, 3);
+		scFieldActorSetSpritePriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
+		scFieldActorSetSpritePriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
+		scFieldActorSetSpritePriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
+		scFieldActorSetSpritePriority(ACTOR_WEARY_MADRAN, 3);
+		scFieldActorSetSpritePriority(ACTOR_SILENT_MADRAN, 3);
+		fdActorSetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
 		fdScriptWait(120);
 		fdActorSetMovementTypeById(ACTOR_WEARY_MADRAN,
 			(Sint32)AlhafraWearyMadranFollowsBehindFelixScript);
@@ -1291,10 +1292,10 @@ void scAlhafraPirateSeesMadrasMayor(Sint32 how)
 		fdEffectSetAttached(
 			ACTOR_PIRATE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdScriptWait(40);
-		fdActorGetById(ACTOR_PIRATE)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_PIRATE)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWaitById(ACTOR_PIRATE, 192, 736);
 		fdScriptWait(1);
-		fdActorGetById(ACTOR_PIRATE)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_PIRATE)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdScriptWait(10);
 		/* "What's your problem? What are you, some kind of freak?" */
 		fdScriptShowMessageThenWait(ACTOR_PIRATE, 0, 10);
@@ -1315,10 +1316,10 @@ void scAlhafraPirateSeesMadrasMayor(Sint32 how)
 			/* No: "So where do you get off invading my personal space, huh?" */
 			fdScriptShowMessageThenWait(ACTOR_PIRATE, 0, 10);
 		}
-		fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_FELIX, 152, 752);
 		fdScriptWait(1);
-		fdActorGetById(ACTOR_FELIX)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_PIRATE, ANIM_NOD);

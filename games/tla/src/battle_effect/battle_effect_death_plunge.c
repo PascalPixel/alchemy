@@ -35,19 +35,19 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR   draw;
 	BATTLE_OBJECT *userObject;
-	BATTLE_OBJECT *tgtObject;
+	BATTLE_OBJECT *targetObject;
 	ACTOR		  *user;
-	ACTOR		  *tgt;
+	ACTOR		  *target;
 	Sint32		   percent;
 	FIXED		   x;
 	FIXED		   z;
 	Sint32		   userHeight;
-	Sint32		   tgtHeight;
-	SCREEN_POINT   tgtScreen;
+	Sint32		   targetHeight;
+	SCREEN_POINT   targetScreen;
 	FIXED		   point[3];
 	SCREEN_POINT   screen;
 	MODEL_TEXTURE  texture;
@@ -57,7 +57,7 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	Sint32		   i;
 	Uint8		  *pixels;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 
 	/* Set up the canvas, the flash sprite sheet, the rings' texture and a
@@ -86,53 +86,53 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 
 	/* The run, most of the way to the target. */
 	userObject = btObjectGetStub(args->user);
-	tgtObject = btObjectGetStub(args->tgts[0]);
-	user = userObject->obj;
-	tgt = tgtObject->obj;
+	targetObject = btObjectGetStub(args->targets[0]);
+	user = userObject->object;
+	target = targetObject->object;
 	percent = DEATH_PLUNGE_RUN_PERCENT;
-	x = user->x.fixed + percent * (tgt->x.fixed - user->x.fixed) / 100;
-	z = user->z.fixed + percent * (tgt->z.fixed - user->z.fixed) / 100;
+	x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
+	z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
 	userHeight = btUnitGetEffectHeightStub(args->user);
-	tgtHeight = btUnitGetEffectHeightStub(args->tgts[0]);
-	btEffectPosProjectBattler(args->tgts[0], &tgtScreen);
+	targetHeight = btUnitGetEffectHeightStub(args->targets[0]);
+	btEffectPosProjectBattler(args->targets[0], &targetScreen);
 	fdActorStartIdleStub(user);
 	fdActorSetMoveTargetStub(user, x, 0, z);
 	fdActorSelectAnimationStub(user, POSE_LEAP);
-	user->snapToTgt = 1;
-	user->steeringFlg = ACTOR_FACES_MOTION;
+	user->snapToTarget = 1;
+	user->steeringFlags = ACTOR_FACES_MOTION;
 	user->acceleration = toFIXED(2);
 	user->speedLimit = toFIXED(8);
 	sySynch(20);
 
-	for(frm = 0; frm != DEATH_PLUNGE_TICKS; frm++) {
+	for(frame = 0; frame != DEATH_PLUNGE_TICKS; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* Both leap at 15 pixels a tick, and soon turn upside down. */
-		if(frm == 0) {
-			tgt->velY = toFIXED(15);
-			tgt->gravity = toFIXED(57) / 100;
-			user->velY = toFIXED(15);
+		if(frame == 0) {
+			target->velocityY = toFIXED(15);
+			target->gravity = toFIXED(57) / 100;
+			user->velocityY = toFIXED(15);
 			user->gravity = toFIXED(57) / 100;
 		}
-		if(frm == 11) {
-			tgt->scaleY = -tgt->scaleY;
+		if(frame == 11) {
+			target->scaleY = -target->scaleY;
 			user->scaleY = -user->scaleY;
 			user->y.fixed += userHeight;
-			tgt->y.fixed += tgtHeight;
+			target->y.fixed += targetHeight;
 		}
 
 		/* The target flashes and both bounce; the user heads back towards the
 		   middle of the field. */
-		if(frm == DEATH_PLUNGE_STRIKE_TICK) {
+		if(frame == DEATH_PLUNGE_STRIKE_TICK) {
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 10);
-			tgt->velY = toFIXED(8);
-			tgt->gravity = BATTLE_UNIT_GRAVITY;
-			user->velY = toFIXED(5);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 10);
+			target->velocityY = toFIXED(8);
+			target->gravity = BATTLE_UNIT_GRAVITY;
+			user->velocityY = toFIXED(5);
 			user->gravity = toFIXED(47) / 100;
 			user->acceleration = toFIXED(1);
 			user->speedLimit = toFIXED(2);
-			user->steeringFlg = 0;
+			user->steeringFlags = 0;
 			fdActorStartIdleStub(user);
 			fdActorSetMoveTargetStub(user, 0, 0, user->z.fixed);
 		}
@@ -143,39 +143,39 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 			SET_VECTOR(point, user->x.fixed, user->y.fixed, user->z.fixed);
 			btEffectPosProjectPoint(point, &screen);
 			screen.x >>= 1;
-			if(frm == DEATH_PLUNGE_STRIKE_TICK ||
-				frm == DEATH_PLUNGE_STRIKE_TICK + 1)
+			if(frame == DEATH_PLUNGE_STRIKE_TICK ||
+				frame == DEATH_PLUNGE_STRIKE_TICK + 1)
 				draw[0](canvas, state->sheet, screen.x - FLASH_BURST_WIDTH / 2,
 					screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-			if(frm >= 56 && frm <= 67) {
+			if(frame >= 56 && frame <= 67) {
 				for(i = 0; i != DEATH_PLUNGE_RING_FLASHES; i++) {
-					Sint32 ang = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
-					Sint32 rx =
-						screen.x + (FIXEDtoINT(sySin(ang) * (frm - 46) * 2));
-					Sint32 ry =
-						(FIXEDtoINT(syCos(ang) * (frm - 46) * 2)) - frm + 100;
+					Sint32 angle = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
+					Sint32 rx = screen.x +
+						(FIXEDtoINT(sySin(angle) * (frame - 46) * 2));
+					Sint32 ry = (FIXEDtoINT(syCos(angle) * (frame - 46) * 2)) -
+						frame + 100;
 
 					draw[0](canvas,
 						state->sheet +
-							(frm - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
+							(frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
 						rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
 						FLASH_BURST_HEIGHT);
 				}
 			}
-		} else if(frm > 55) {
+		} else if(frame > 55) {
 			/* The bursts fly from the target. */
-			if(frm == 56) {
+			if(frame == 56) {
 				burst = state->particles;
 				for(i = 0; i != DEATH_LEAP_BURST_SLOTS; i++) {
-					Sint32 ang;
+					Sint32 angle;
 					Sint32 force;
 
-					burst->x = toFIXED(tgtScreen.x / 2);
-					burst->y = INTtoFIXED(tgtScreen.y - 16);
-					ang = syRandom();
+					burst->x = toFIXED(targetScreen.x / 2);
+					burst->y = INTtoFIXED(targetScreen.y - 16);
+					angle = syRandom();
 					force = (syRandom() & 255) + 64;
-					burst->velX = (sySin(ang) * force) >> 6;
-					burst->velY = (syCos(ang) * force) >> 5;
+					burst->velocityX = (sySin(angle) * force) >> 6;
+					burst->velocityY = (syCos(angle) * force) >> 5;
 					burst->variant = -i / 4;
 					burst++;
 				}
@@ -199,18 +199,18 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 
 		if(args->variant == EFFECT_VARIANT_STRONGER) {
 			/* The rings swell from tick 56. */
-			vertices = syHeapAllocEWRAM(512);
+			vertices = syHeapAllocateEWRAM(512);
 			model = btRenderAllocateModelList(1);
-			if(frm > 55) {
-				FIXED scale = ((frm - 56) << DEATH_LEAP_RING_GROWTH_SHIFT) +
+			if(frame > 55) {
+				FIXED scale = ((frame - 56) << DEATH_LEAP_RING_GROWTH_SHIFT) +
 					toFIXED(1) / 4;
 				Sint32 shade = 0;
 
-				if(frm >= DEATH_PLUNGE_LAND_TICK)
+				if(frame >= DEATH_PLUNGE_LAND_TICK)
 					shade =
-						(DEATH_PLUNGE_LAND_TICK - frm) * DEATH_LEAP_RING_FADE;
+						(DEATH_PLUNGE_LAND_TICK - frame) * DEATH_LEAP_RING_FADE;
 				if(shade > MODEL_SHADE_INVISIBLE) {
-					Sint32 ang;
+					Sint32 angle;
 
 					texture.logWidth = 7;
 					texture.logHeight = 7;
@@ -220,13 +220,13 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 					model->vertices = vertices;
 					texture.pixels = pixels;
 					model->shade = shade;
-					for(i = 0, ang = DEGtoANG(45); i != DEATH_LEAP_RINGS;
-						ang += DEGtoANG(90), i++) {
+					for(i = 0, angle = DEGtoANG(45); i != DEATH_LEAP_RINGS;
+						angle += DEGtoANG(90), i++) {
 						syInitMatrix();
-						syTranslate(
-							INTtoFIXED(tgtScreen.x / 2 - 64), toFIXED(32), 0);
+						syTranslate(INTtoFIXED(targetScreen.x / 2 - 64),
+							toFIXED(32), 0);
 						syScale(scale, scale, scale);
-						syRotZ(ang);
+						syRotZ(angle);
 						syRotX(-TRIG_TURN / 16);
 						btRenderTransformVertices(
 							BattleEffectGroundSquareCorners, vertices, 4);
@@ -239,27 +239,27 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Both turn right side up again. */
-		if(frm == DEATH_PLUNGE_LAND_TICK) {
-			tgt->scaleY = -tgt->scaleY;
+		if(frame == DEATH_PLUNGE_LAND_TICK) {
+			target->scaleY = -target->scaleY;
 			user->scaleY = -user->scaleY;
 			user->y.fixed -= userHeight;
-			tgt->y.fixed -= tgtHeight;
+			target->y.fixed -= targetHeight;
 			/* The user takes its first animation, a party member's stance
 			   between turns. */
 			fdActorSelectAnimationStub(user, POSE_STILL);
 		}
-		if(frm == DEATH_PLUNGE_STRIKE_TICK) {
+		if(frame == DEATH_PLUNGE_STRIKE_TICK) {
 			if(args->variant == EFFECT_VARIANT_BASIC)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			else
 				EFFECT_SHOW_DAMAGE(SE_CRASH);
 		}
-		if(frm == 0)
-			sySndPlayStub(SE_WHOOSH);
-		if(frm == 0)
-			state->shakeFrm = 6;
-		if(frm == 53)
-			state->shakeFrm = 6;
+		if(frame == 0)
+			sySoundPlayStub(SE_WHOOSH);
+		if(frame == 0)
+			state->shakeFrame = 6;
+		if(frame == 53)
+			state->shakeFrame = 6;
 		btCameraShake(16, 16);
 		EFFECT_PRESENT_CANVAS(state);
 	}

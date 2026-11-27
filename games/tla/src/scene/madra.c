@@ -170,7 +170,7 @@ void scMadraEnterDoor(void)
 	ACTOR		*actor;
 	Sint16		*cue;
 	Uint32		 id;
-	Sint32		 idx;
+	Sint32		 index;
 
 	state = RamHeapSlots->fieldState;
 	fdScriptStart();
@@ -178,19 +178,19 @@ void scMadraEnterDoor(void)
 	for(id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
 		actor = fdActorGetById(id);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 	cue = &state->stepCue;
-	idx = *cue - 1;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	index = *cue - 1;
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	{
-		Sint32 x = MadraDoors[idx].x;
-		Sint32 y = MadraDoors[idx].y;
+		Sint32 x = MadraDoors[index].x;
+		Sint32 y = MadraDoors[index].y;
 
-		fdMapGridAnimateMetatiles(MadraDoors[idx].steps, x, y);
+		fdMapGridAnimateMetatiles(MadraDoors[index].steps, x, y);
 	}
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -8);
 	fdScriptWait(10);
@@ -449,14 +449,14 @@ static inline void scMadraPlaceFacing(
 void scMadraWorkerBlocksHole(void)
 {
 	if(fdScriptGetFlag(FLAG_MADRA_GATE_INSPECTED)) {
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		syImportScriptSetExitRequest(MADRA_TO_MADRA_CATACOMBS_LADDERS_EAST);
 	} else if(!fdScriptGetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		scMadraPlaceFacing(
 			ACTOR_HOLE_WORKER, toFIXED(744), toFIXED(257), FACING_SOUTH);
-		fdActorGetById(ACTOR_FELIX)->velY = toFIXED(5);
+		fdActorGetById(ACTOR_FELIX)->velocityY = toFIXED(5);
 		fdActorSetSpeed(ACTOR_FELIX, 2);
 		fdActorWalkToAndWait(ACTOR_FELIX, 720, 244);
 		fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHEAST);
@@ -480,7 +480,7 @@ void scMadraWorkerBlocksSealedHole(void)
 		fdScriptEndLastingPsynergy(0);
 		scMadraPlaceFacing(
 			ACTOR_HOLE_WORKER, toFIXED(744), toFIXED(256), FACING_SOUTH);
-		fdActorGetById(ACTOR_FELIX)->velY = toFIXED(5);
+		fdActorGetById(ACTOR_FELIX)->velocityY = toFIXED(5);
 		fdActorSetSpeed(ACTOR_FELIX, 2);
 		fdActorWalkToAndWait(ACTOR_FELIX, 720, 244);
 		fdActorFaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHEAST);
@@ -534,13 +534,13 @@ Sint32 scInit(void)
 		scMadraSealHole();
 	} else {
 		/* The worker stands down in the hole. */
-		fdActorSetSprFlags(fdActorGetById(ACTOR_HOLE_WORKER), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_HOLE_WORKER), 0);
 		actor = fdActorGetById(ACTOR_HOLE_WORKER);
 		actor->radius = fdActorGetById(ACTOR_HOLE_WORKER)->radius * 4 / 3;
-		((FIELD_SPR *)fdActorGetById(ACTOR_HOLE_WORKER)->spr)->flg |=
+		((FIELD_SPR *)fdActorGetById(ACTOR_HOLE_WORKER)->sprite)->flags |=
 			SPRITE_FLAG_SUNK;
-		((SPR *)fdActorGetById(ACTOR_HOLE_WORKER)->spr)->sunkRows = 8;
-		((FIELD_SPR *)fdActorGetById(ACTOR_HOLE_WORKER)->spr)->dirty = 1;
+		((SPR *)fdActorGetById(ACTOR_HOLE_WORKER)->sprite)->sunkRows = 8;
+		((FIELD_SPR *)fdActorGetById(ACTOR_HOLE_WORKER)->sprite)->dirty = 1;
 		if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0 &&
 			fdScriptGetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
 			fdActorSetPos(ACTOR_ICE_SHAFT_WITNESS, 0, 0);
@@ -715,17 +715,17 @@ void scMadraMindReadBriggsFan(void)
    for her, and asks again next time. */
 void scMadraAskAboutJenna(void)
 {
-	Sint32 flg;
+	Sint32 flags;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorFaceActor(ACTOR_BOAT_OWNER, ACTOR_FELIX, 0);
 	fdScriptSetMessageId((Sint32)&MsgMadraIsThereByAnyChance);
-	flg = 0;
+	flags = 0;
 	/* "Is there by any chance a girl named Jenna with you?" Yes: "Ah! Those
 	   people must have been looking for..." No: "Oh... Well, if you run across
 	   anyone named..." */
-	fdScriptOpenMessage(ACTOR_BOAT_OWNER, flg);
+	fdScriptOpenMessage(ACTOR_BOAT_OWNER, flags);
 	if(fdScriptAskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
 		fdScriptSetFlag(FLAG_MADRA_TOLD_OF_JENNA);
 		/* "Ah! Those people must have been looking for you! There were four
@@ -796,15 +796,16 @@ void scMadraInspectPartyAtGate(void)
 	fdActorSetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_NOD);
 	fdScriptWait(30);
 	fdActorFaceDirection(ACTOR_GATE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
-	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priFlg &=
+	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_SECOND_GATE_GUARD, 3);
+	fdActorSetSpritePriority(ACTOR_SECOND_GATE_GUARD, 3);
 	fdActorWalkToAndWait(ACTOR_SECOND_GATE_GUARD, 457, 402);
 	fdActorWalkByAndWait(ACTOR_SECOND_GATE_GUARD, 16, 0);
 	fdActorWalkToAndWait(ACTOR_SECOND_GATE_GUARD, 472, 420);
 	fdScriptWait(30);
 	fdActorWalkToAndWait(ACTOR_SECOND_GATE_GUARD, 484, 420);
-	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags |=
+		ACTOR_PRIORITY_AUTOMATIC;
 	fdActorFaceDirection(ACTOR_SECOND_GATE_GUARD, FACING_SOUTH, 0);
 	fdScriptWait(60);
 	fdScriptWait(10);
@@ -823,13 +824,14 @@ void scMadraInspectPartyAtGate(void)
 	fdScriptWait(5);
 	/* "Sorry for the delay. You may pass." */
 	fdScriptShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
-	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priFlg &=
+	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_SECOND_GATE_GUARD, 3);
+	fdActorSetSpritePriority(ACTOR_SECOND_GATE_GUARD, 3);
 	fdActorWalkByAndWait(ACTOR_SECOND_GATE_GUARD, 0, -16);
 	fdActorWalkToAndWait(ACTOR_SECOND_GATE_GUARD, 475, 400);
 	fdActorWalkByAndWait(ACTOR_SECOND_GATE_GUARD, -16, 0);
-	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags |=
+		ACTOR_PRIORITY_AUTOMATIC;
 	fdCameraMoveTo(476, CAMERA_KEEP, 396, 1);
 	fdActorWalkToAndWait(ACTOR_SECOND_GATE_GUARD, 459, 416);
 	fdActorFaceDirection(ACTOR_SECOND_GATE_GUARD, FACING_SOUTHEAST, 0);
@@ -1294,7 +1296,7 @@ void scMadraMeetKarst(void)
 		MadraDoors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].steps,
 		MadraDoors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].x,
 		MadraDoors[MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST - 1].y);
-	fdActorSetHorizontalPosAndAngWithTerrain(ACTOR_MAYOR, x, z, FACING_SOUTH);
+	fdActorSetHorizontalPosAndAngleWithTerrain(ACTOR_MAYOR, x, z, FACING_SOUTH);
 	fdActorWalkByAndWaitById(ACTOR_MAYOR, 0, 4);
 	fdActorAnimateThenWait(ACTOR_MAYOR, ANIM_NOD, 20);
 	/* "I believe I promised you a reward for helping with the boat, didn't
@@ -1358,14 +1360,14 @@ void scMadraMeetKarst(void)
 	fdActorWalkByAndWaitById(ACTOR_MAYOR, 16, 8);
 	fdActorFaceDirection(ACTOR_MAYOR, FACING_SOUTH, 0);
 	if(gmPartyInventoryFindRoom(ITEM_CYCLONE_CHIP) >= 0) {
-		fdItemDispShowItem(
+		fdItemDisplayShowItem(
 			ITEM_CYCLONE_CHIP, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 		fdPartyInventoryGiveItem(ITEM_CYCLONE_CHIP, 0);
 		(FieldStateWork->msg)++;
 		fdActorFaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
 		syGameFlagSet(FLAG_MADRA_CYCLONE_CHIP_GIVEN);
 	} else {
-		Sint32 cnt = FieldStateWork->msg + 1;
+		Sint32 count = FieldStateWork->msg + 1;
 
 		fdScriptSetMessageId((Sint32)MsgMadraMayorTriedToGiveFelix);
 		mnMessageArgumentPush(ITEM_CYCLONE_CHIP, MESSAGE_ARGUMENT_ITEM);
@@ -1378,7 +1380,7 @@ void scMadraMeetKarst(void)
 		fdActorWalkByAndWait(ACTOR_MAYOR, -16, 0);
 		fdActorFaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
 		fdActorSetPos(ACTOR_CYCLONE_CHIP, 192, 256);
-		FieldStateWork->msg = cnt;
+		FieldStateWork->msg = count;
 	}
 	fdActorWalkByAndWait(ACTOR_MAYOR, -16, -8);
 	fdActorFaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
@@ -1407,7 +1409,7 @@ void scMadraMeetKarst(void)
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
 	/* "...Felix?" */
 	fdScriptShowMessageAndWait(ACTOR_KARST, 0);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	scFieldActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	scFieldActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	scFieldActorShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1421,7 +1423,7 @@ void scMadraMeetKarst(void)
 	fdScriptWait(20);
 	fdCameraFollowActor(ACTOR_KARST, 1);
 	fdScriptWait(60);
-	sySndPlay(MUS_CONFRONTATION);
+	sySoundPlay(MUS_CONFRONTATION);
 	scFieldActorShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
 	/* "You... He just called you Felix, didn't he?" */
 	fdScriptShowMessageAndWait(ACTOR_KARST, 0);
@@ -1643,7 +1645,7 @@ void scMadraMeetKarst(void)
 	/* "I'm going to find this Isaac... And I swear that the last thing
 	   he..." */
 	fdScriptShowMessageAndWait(ACTOR_KARST, 0);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdActorWalkByAndWaitById(ACTOR_KARST, 24, 24);
 	fdActorWalkByAndWaitById(ACTOR_KARST, 132, 0);
@@ -1700,7 +1702,7 @@ void scMadraMeetKarst(void)
 	/* "But, Jenna... Aren't you and Isaac an item? Couldn't you, you
 	   know..." */
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
-	fdActorSetSprCol(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_RED_TINT);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_RED_TINT);
 	/* "A... An item? No! I mean... It's not like that! Not...really..." */
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
@@ -1714,7 +1716,7 @@ void scMadraMeetKarst(void)
 	fdActorFaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH);
 	/* "Ah! Well! Er, yes. For now, we should press onward to Jupiter..." */
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-	fdActorSetSprCol(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_NORMAL);
 	fdScriptWait(20);
 	scFieldActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	fdActorFaceActorById(ACTOR_JENNA, ACTOR_KRADEN, 0);
@@ -1724,7 +1726,7 @@ void scMadraMeetKarst(void)
 	scFieldActorShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
 	/* "Don't you mean...Isaac?" */
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
-	fdActorSetSprCol(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_RED_TINT);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_RED_TINT);
 	fdActorFaceActorById(ACTOR_JENNA, ACTOR_SHEBA, 0);
 	fdScriptWait(20);
 	/* "Sheba! Be quiet! Sheesh..." */
@@ -1733,7 +1735,7 @@ void scMadraMeetKarst(void)
 	fdScriptWait(20);
 	/* "*Ahem!* Are you ready to listen yet?" */
 	fdScriptShowMessageAndWait(ACTOR_KRADEN, 0);
-	fdActorSetSprCol(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_JENNA), SPRITE_COLOR_NORMAL);
 	fdActorFaceActorById(ACTOR_FELIX, ACTOR_KRADEN, 0);
 	fdActorFaceActorById(ACTOR_JENNA, ACTOR_KRADEN, 0);
 	fdActorFaceActorById(ACTOR_SHEBA, ACTOR_KRADEN, 0);
@@ -1845,16 +1847,16 @@ void scMadraClimbDownLadder(void)
 		next = MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST;
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(10);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 4);
 	fdActorWaitForMoveById(ACTOR_FELIX);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FELIX), 0);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 16);
 	fdActorWaitForMoveById(ACTOR_FELIX);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB);
 	fdScriptWait(10);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(next);
 	fdScriptEnd();
 }

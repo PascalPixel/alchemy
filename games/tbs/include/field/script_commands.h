@@ -64,23 +64,23 @@ Sint32 fdPartyCheckShortcut(Uint32 shortcut);
 Sint32 fdPartyCheckItemLimit(Sint32 item);
 void   fdInventoryNoOperationCallback(void);
 void   fdInventoryReservedNoOperation(void);
-void   fdActorWaitForAnimationEnd(Sint32 actorId, Sint32 anm);
+void   fdActorWaitForAnimationEnd(Sint32 actorId, Sint32 animation);
 /* fdRequestDjinnBattle's actorAndHop: the Djinni does not hop first. */
 #define DJINN_NO_HOP 0x800
 
 void fdEffectUpdateDustPuff(struct ACTOR *actor);
-void fdEffectSpawnDustPuff(struct ACTOR *src, Sint32 col);
+void fdEffectSpawnDustPuff(struct ACTOR *src, Sint32 color);
 void fdActorTurnPairToFaceEachOther(struct ACTOR *first, struct ACTOR *second);
 void fdActorReleaseNoOperation(void);
 void fdActorUpdateBlink(struct ACTOR *actor);
-Sint32 fdActorStepAng(struct ACTOR *actor);
+Sint32 fdActorStepAngle(struct ACTOR *actor);
 void   fdActorReservedNoOperation(void);
 
 struct WINDOW;
 
 /* A camera move's axis that stays where the camera is. */
 #define CAMERA_KEEP (-1)
-void		  fdCameraFollow(struct ACTOR *tgt, Sint32 keepCurPos);
+void		  fdCameraFollow(struct ACTOR *target, Sint32 keepCurrentPos);
 UNREAD_RESULT fdWorldMapStepZoom(void);
 UNREAD_RESULT fdEffectCopyWatchedActorPos(struct ACTOR *actor);
 /* fdActorShowEmoteById's emote flag: the bubble takes sprite priority 1 instead
@@ -116,16 +116,16 @@ typedef enum ATTACHED_EFFECT_FLAG {
 	ATTACHED_EFFECT_IN_FRONT = 0x100
 } ATTACHED_EFFECT_FLAG;
 
-Sint32		  fdActorClearSprAndCollisionFlags(struct ACTOR *actor);
+Sint32		  fdActorClearSpriteAndCollisionFlags(struct ACTOR *actor);
 Sint32		  fdActorMoveTowardTarget(struct ACTOR *actor);
 Sint32		  fdActorTurnTowardWatchedActor(struct ACTOR *actor);
-struct ACTOR *fdActorFindNearestFacingTarget(struct ACTOR *self, Sint32 spr);
+struct ACTOR *fdActorFindNearestFacingTarget(struct ACTOR *self, Sint32 sprite);
 void		  fdExitNoOperation(void);
 UNREAD_RESULT fdStartEncounterTransition(Sint32 unused);
-void		  fdExitPrepareAnimation(Sint32 anm);
+void		  fdExitPrepareAnimation(Sint32 animation);
 void		  fdExitStartStairsUp(void);
 void		  fdExitStartStairsDown(void);
-void		  fdEntrancePlayArrivalAnimation(Sint32 anm);
+void		  fdEntrancePlayArrivalAnimation(Sint32 animation);
 Sint32		  fdEntrancePlayArrival(void);
 
 void fdLineScrollArmDMA(void);
@@ -144,11 +144,11 @@ void fdDjinnRestoreActorAfterBattle(void);
    two. */
 void fdDjinnResolvePending();
 void fdEffectUpdateAllSlots(void);
-void fdEffectAdvanceSpinAng(struct ACTOR *actor);
+void fdEffectAdvanceSpinAngle(struct ACTOR *actor);
 void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle);
 void fdDjinnRunJupiterJoinEffect(Sint32 djinniId);
 void fdEffectPulseActorScale(struct ACTOR *actor);
-void fdEffectAdvanceAngWithRamp(struct ACTOR *actor);
+void fdEffectAdvanceAngleWithRamp(struct ACTOR *actor);
 void fdEffectUpdateMarsSpark(FIELD_PARTICLE *effect);
 void fdDjinnRunMarsJoinEffect(Sint32 djinniId);
 void fdEffectUpdateDescendingOrbitActor(struct ACTOR *actor);
@@ -160,15 +160,15 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId);
 
 struct VECTOR3;
 
-void		  fdPsynergyRun(void);
-void		  fdPsynergyDispatch(void);
-void		  fdPsynergyFinishMindRead(void);
-void		  fdPsynergyRunExtraHandler(void);
-Sint32		  fdRunPsynergyScript(const void *event, Sint32 param, Sint32 tgt);
-void		  fdActorCycleSprCols(struct ACTOR *actor);
+void   fdPsynergyRun(void);
+void   fdPsynergyDispatch(void);
+void   fdPsynergyFinishMindRead(void);
+void   fdPsynergyRunExtraHandler(void);
+Sint32 fdRunPsynergyScript(const void *event, Sint32 param, Sint32 target);
+void   fdActorCycleSpriteColors(struct ACTOR *actor);
 struct ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z);
 void		  fdActorSetOthersPaused(
-			 struct ACTOR *except, Sint32 paused, Sint32 anmSpeed);
+			 struct ACTOR *except, Sint32 paused, Sint32 animationSpeed);
 void fdEffectUpdateScaledArcActorA(struct ACTOR *actor);
 void fdEffectUpdateScaledArcActorB(struct ACTOR *actor);
 void fdEffectSpawnScaledArcActors(struct ACTOR *watched);
@@ -179,18 +179,18 @@ void fdEffectUpdateAllEffectSlots(void);
 void   fdPsynergyUpdateMindReadWave(void);
 void   fdMindReadStartRipple(void);
 void   fdMindReadAdvanceTint(void);
-void   fdEffectCalcHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
-Sint32 fdEffectHueChannelRamp(Sint32 ang, Sint32 low, FIXED high);
+void   fdEffectCalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
+Sint32 fdEffectHueChannelRamp(Sint32 angle, Sint32 low, FIXED high);
 FIXED  fdFixedPointRemainder(FIXED value, FIXED divisor);
 void   fdMindReadUpdateCrescent(struct ACTOR *actor);
-/* What fdInputGetDpadAng returns when no direction, or a diagonal, is held: the
-   blank entries of InputDpadAngles. */
+/* What fdInputGetDpadAngle returns when no direction, or a diagonal, is held:
+   the blank entries of InputDpadAngles. */
 #define DPAD_ANGLE_NONE 65535
-Sint32		  fdInputGetDpadAng(Uint32 unused);
+Sint32		  fdInputGetDpadAngle(Uint32 unused);
 void		  fdEffectUpdateMoveHand(struct ACTOR *actor);
 void		  fdEffectUpdateOutAndBack(FIELD_PARTICLE *effect);
 void		  fdPsynergyMove(void);
-void		  fdActorSetRevealSprCol(Sint32 value);
+void		  fdActorSetRevealSpriteColor(Sint32 value);
 void		  fdPsynergyWatchLeaderDistance(void);
 void		  fdPsynergyReveal(void);
 void		  fdPsynergyEndReveal(void);
@@ -198,7 +198,7 @@ void		  fdPsynergyGrowthOnTarget(Sint32 unused);
 void		  fdPsynergyGrowth(void);
 void		  fdEffectSpawnBurstParticleField(void);
 void		  fdPsynergyLiftOnTarget(Sint32 unused);
-struct ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
+struct ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
 void		  fdEffectUpdateRadialBurst(FIELD_PARTICLE *effect);
 Sint32		  fdEffectSpawnHeavyImpact(struct ACTOR *interpreter);
 void		  fdPsynergyForceOnTarget(Sint32 unused);
@@ -221,32 +221,33 @@ void		  fdEffectUpdateDriftingFallActor(struct ACTOR *actor);
 void		  fdPsynergyDouseOnTarget(Sint32 unused);
 void		  fdPsynergyDouse(void);
 void		  fdEffectSpawnFallingParticles(void);
-void		  fdPsynergySteerLiftedTarget(Sint32 tgtId);
-struct ACTOR *fdEffectSpawnCarryHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang);
-void		  fdEffectSpawnRadialParticleRing(struct ACTOR *origin);
-void		  fdEffectWanderAroundAnchor(struct ACTOR *actor);
-void		  fdEffectCircleAnchor(struct ACTOR *actor);
-void		  fdWhirlwindUpdateTarget(struct ACTOR *actor);
-void		  fdPsynergyWhirlwindOnTarget(Sint32 unused);
-void		  fdPsynergyWhirlwind(void);
-void		  fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect);
-void		  fdPsynergyHaltOnTarget(Sint32 unused);
-void		  fdPsynergyHalt(void);
-void		  fdPsynergyUpdateHaltedActor(struct ACTOR *actor);
-Sint32		  fdPsynergyFilterHaltTarget(Sint32 id);
-void		  fdPsynergyCatchOnTarget(Sint32 unused);
-void		  fdPsynergyCatch(void);
-void		  fdEffectUpdateSpinAng(struct ACTOR *actor);
-void		  fdEffectUpdateRetreatCaster(struct ACTOR *actor);
-void		  fdRetreatUpdateSpark(FIELD_PARTICLE *effect);
-void		  fdPsynergyRetreat(void);
-void		  fdEffectUpdateDescendingParticlePositiveArc(struct ACTOR *actor);
-void		  fdEffectUpdateDescendingParticleNegativeArc(struct ACTOR *actor);
-void		  fdEffectSpawnDescendingArcParticles(struct ACTOR *src);
-void		  fdEffectBlinkAvoidCaster(void);
-void		  fdEffectUpdateAvoidCaster(struct ACTOR *actor);
-void		  fdPsynergyShowAvoidWoreOff(void);
-void		  fdPsynergyAvoid(void);
+void		  fdPsynergySteerLiftedTarget(Sint32 targetId);
+struct ACTOR *fdEffectSpawnCarryHand(
+	Sint32 x, Sint32 y, Sint32 z, Sint32 angle);
+void   fdEffectSpawnRadialParticleRing(struct ACTOR *origin);
+void   fdEffectWanderAroundAnchor(struct ACTOR *actor);
+void   fdEffectCircleAnchor(struct ACTOR *actor);
+void   fdWhirlwindUpdateTarget(struct ACTOR *actor);
+void   fdPsynergyWhirlwindOnTarget(Sint32 unused);
+void   fdPsynergyWhirlwind(void);
+void   fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect);
+void   fdPsynergyHaltOnTarget(Sint32 unused);
+void   fdPsynergyHalt(void);
+void   fdPsynergyUpdateHaltedActor(struct ACTOR *actor);
+Sint32 fdPsynergyFilterHaltTarget(Sint32 id);
+void   fdPsynergyCatchOnTarget(Sint32 unused);
+void   fdPsynergyCatch(void);
+void   fdEffectUpdateSpinAngle(struct ACTOR *actor);
+void   fdEffectUpdateRetreatCaster(struct ACTOR *actor);
+void   fdRetreatUpdateSpark(FIELD_PARTICLE *effect);
+void   fdPsynergyRetreat(void);
+void   fdEffectUpdateDescendingParticlePositiveArc(struct ACTOR *actor);
+void   fdEffectUpdateDescendingParticleNegativeArc(struct ACTOR *actor);
+void   fdEffectSpawnDescendingArcParticles(struct ACTOR *src);
+void   fdEffectBlinkAvoidCaster(void);
+void   fdEffectUpdateAvoidCaster(struct ACTOR *actor);
+void   fdPsynergyShowAvoidWoreOff(void);
+void   fdPsynergyAvoid(void);
 
 void fdEffectDrawScaledActor(FIELD_PARTICLE *object);
 void fdParticleUpdateMotion(FIELD_PARTICLE *effect);

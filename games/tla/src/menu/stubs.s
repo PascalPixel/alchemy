@@ -6,7 +6,7 @@
 StubsMenu:
 	stub mnItemMenuRunStub, mnItemMenuRun
 	stub mnPsynergyMenuRunStub, mnPsynergyMenuRun
-	stub mnStatScreenRunStub, mnStatScreenRun
+	stub mnStatusScreenRunStub, mnStatusScreenRun
 	stub mnPartyMemberChooserOpenStub, mnPartyMemberChooserOpen
 	stub mnIconCreateHandCursorStub, mnIconCreateHandCursor
 	stub mnIconShowStub, mnIconShow

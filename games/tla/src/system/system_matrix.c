@@ -34,7 +34,7 @@ void syRenderNoOperationHook(void)
 void syInitMatrix(void)
 {
 	MatrixStackTop =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_MATRIX_STACK, sizeof(CurrentMatrix));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_MATRIX_STACK, sizeof(CurrentMatrix));
 	MatrixStackDepth = 0;
 	syUnitMatrixCurrentInline();
 }
@@ -58,10 +58,10 @@ void syPushMatrix(void)
 	}
 }
 
-/* Copies CurrentMatrix to `dst`. */
-void syGetMatrix(MATRIX dst)
+/* Copies CurrentMatrix to `dest`. */
+void syGetMatrix(MATRIX dest)
 {
-	syDMAXCopy(CurrentMatrix, dst, MATRIX_DMA, REG_DMA3);
+	syDMAXCopy(CurrentMatrix, dest, MATRIX_DMA, REG_DMA3);
 }
 
 /* Copies the matrix at `src` into CurrentMatrix. */
@@ -125,68 +125,68 @@ static __inline__ void syMatrixStoreUnit(MATRIX matrix)
 	ASM_MATRIX_UNIT_STORE(matrix);
 }
 
-/* Rotates CurrentMatrix about the X axis by `ang`. */
-void syRotX(ANGLE ang)
+/* Rotates CurrentMatrix about the X axis by `angle`. */
+void syRotX(ANGLE angle)
 {
 	MATRIX matrix;
 	FIXED  sine;
 	FIXED  cosine;
 
 	syMatrixStoreUnit(matrix);
-	cosine = COS(ang);
+	cosine = COS(angle);
 	matrix[4] = cosine;
 	matrix[8] = cosine;
-	sine = sySin(ang);
+	sine = sySin(angle);
 	matrix[5] = sine;
 	matrix[7] = -sine;
 	syMultiMatrix(matrix);
 }
 
-/* Rotates CurrentMatrix about the Y axis by `ang`. */
-void syRotY(ANGLE ang)
+/* Rotates CurrentMatrix about the Y axis by `angle`. */
+void syRotY(ANGLE angle)
 {
 	MATRIX matrix;
 	FIXED  sine;
 	FIXED  cosine;
 
 	syMatrixStoreUnit(matrix);
-	cosine = COS(ang);
+	cosine = COS(angle);
 	matrix[0] = cosine;
 	matrix[8] = cosine;
-	sine = sySin(ang);
+	sine = sySin(angle);
 	matrix[2] = -sine;
 	matrix[6] = sine;
 	syMultiMatrix(matrix);
 }
 
-/* Makes CurrentMatrix a rotation about the Y axis by `ang`. */
-void syMatrixSetRotateY(ANGLE ang)
+/* Makes CurrentMatrix a rotation about the Y axis by `angle`. */
+void syMatrixSetRotateY(ANGLE angle)
 {
 	FIXED *matrix = CurrentMatrix;
 	FIXED  sine;
 	FIXED  cosine;
 
 	syMatrixStoreUnit(matrix);
-	cosine = COS(ang);
+	cosine = COS(angle);
 	matrix[0] = cosine;
 	matrix[8] = cosine;
-	sine = sySin(ang);
+	sine = sySin(angle);
 	matrix[2] = -sine;
 	matrix[6] = sine;
 }
 
-/* Rotates CurrentMatrix about the Z axis by `ang`. */
-void syRotZ(ANGLE ang)
+/* Rotates CurrentMatrix about the Z axis by `angle`. */
+void syRotZ(ANGLE angle)
 {
 	MATRIX matrix;
 	FIXED  sine;
 	FIXED  cosine;
 
 	syMatrixStoreUnit(matrix);
-	cosine = COS(ang);
+	cosine = COS(angle);
 	matrix[0] = cosine;
 	matrix[4] = cosine;
-	sine = sySin(ang);
+	sine = sySin(angle);
 	matrix[1] = sine;
 	matrix[3] = -sine;
 	syMultiMatrix(matrix);
@@ -332,9 +332,9 @@ void syMatrixRotateTranslateScale(Sint32 *angles, POINT pos, VECTOR scale)
 /* sySquartFX written in place, as syMatrixBuildLookAt takes it. */
 #define sySquartFX(v) (sySquartIWRAM(v) << 8)
 
-/* Builds in `out` the camera matrix of an eye at `eye` looking at `tgt`. The
+/* Builds in `out` the camera matrix of an eye at `eye` looking at `target`. The
    camera's sideways axis is kept level (no Y component). */
-void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out)
+void syMatrixBuildLookAt(POINT eye, POINT target, MATRIX out)
 {
 	ASM_REGISTER(DOT_PRODUCT_ROUTINE dot, "sl");
 	Uint32 code[8];
@@ -364,9 +364,9 @@ void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out)
 
 	/* The view axis d, pointing from the target back to the eye, normalized:
 	   its length in whole pixels, and toFIXED(1) over it, negated. */
-	dx = tgt[0] - eye[0];
-	dy = tgt[1] - eye[1];
-	dz = tgt[2] - eye[2];
+	dx = target[0] - eye[0];
+	dy = target[1] - eye[1];
+	dz = target[2] - eye[2];
 	length = sySquartIWRAM(
 		dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
 	scale = divide(dividend, length) >> RECIPROCAL_SHIFT;
@@ -417,18 +417,18 @@ void syMatrixBuildLookAt(POINT eye, POINT tgt, MATRIX out)
 	out[MATRIX_TRANSLATION_Z] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
-/* Makes the camera at `eye` looking at `tgt` the whole of CurrentMatrix. */
-void syLookAtLoad(POINT eye, POINT tgt)
+/* Makes the camera at `eye` looking at `target` the whole of CurrentMatrix. */
+void syLookAtLoad(POINT eye, POINT target)
 {
-	syMatrixBuildLookAt(eye, tgt, CurrentMatrix);
+	syMatrixBuildLookAt(eye, target, CurrentMatrix);
 }
 
-/* Multiplies the camera at `eye` looking at `tgt` into CurrentMatrix. */
-void syLookAt(POINT eye, POINT tgt)
+/* Multiplies the camera at `eye` looking at `target` into CurrentMatrix. */
+void syLookAt(POINT eye, POINT target)
 {
 	MATRIX state;
 
-	syMatrixBuildLookAt(eye, tgt, state);
+	syMatrixBuildLookAt(eye, target, state);
 	syMultiMatrix(state);
 }
 
@@ -437,13 +437,13 @@ void syLookAt(POINT eye, POINT tgt)
    the angle. */
 void syPerspective(Sint32 fieldOfView, FIXED nearDepth, FIXED farDepth)
 {
-	Sint32 halfAng;
+	Sint32 halfAngle;
 	FIXED  sine;
 	FIXED  focal;
 
-	halfAng = fieldOfView / 2;
-	sine = sySin(halfAng);
-	focal = syDivFX(sine, COS(halfAng) * (DISPLAY_HEIGHT / 2));
+	halfAngle = fieldOfView / 2;
+	sine = sySin(halfAngle);
+	focal = syDivFX(sine, COS(halfAngle) * (DISPLAY_HEIGHT / 2));
 	ProjectionWork.near = nearDepth;
 	ProjectionWork.focal = focal;
 	ProjectionWork.far = farDepth;

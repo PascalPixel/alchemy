@@ -58,7 +58,7 @@ typedef struct PILLAR_ENTRY {
    VRAM entry. */
 typedef struct PILLAR_STATE {
 	Uint16		 vramEntry;
-	Uint16		 cnt;
+	Uint16		 count;
 	PILLAR_ENTRY entries[PILLAR_ENTRIES];
 } PILLAR_STATE;
 
@@ -69,7 +69,7 @@ typedef struct BEAM_ENTRY {
 	Sint32 y;
 	Sint32 z;
 	Uint16 unusedAfterZ; /* no code names it */
-	Uint16 dir;
+	Uint16 direction;
 } BEAM_ENTRY;
 
 /* A splash the streams leave on an open metatile, and its sprite's
@@ -79,8 +79,8 @@ typedef struct SPLASH {
 	Sint32 y;
 	Sint32 z;
 	Uint16 active;
-	Uint16 dir;
-	Uint32 spr[3];
+	Uint16 direction;
+	Uint32 sprite[3];
 } SPLASH;
 
 /* The most splashes the streams leave at once. */
@@ -89,7 +89,7 @@ typedef struct SPLASH {
 /* The streams and their splashes, which scAquaRockInsideDrawSplashes draws. */
 typedef struct BEAM_STATE {
 	Uint16	   vramEntry;
-	Uint16	   cnt;
+	Uint16	   count;
 	BEAM_ENTRY entries[2];
 	SPLASH	   splashes[SPLASH_ENTRIES];
 } BEAM_STATE;
@@ -106,12 +106,12 @@ void   scAquaRockInsideSetPillarsHeight(Sint32 value);
 void   scAquaRockInsideDrawSplashes(void);
 void   scAquaRockInsideStartSplashes(void);
 Sint32 scAquaRockInsideAddSplash(Sint32 x, Sint32 y, Sint32 z, Sint32 kind);
-Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt);
+Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 target);
 /* The motion of a thing a vent throws out (field/actor_vent_bounce.c). */
 void   scVentBounce(ACTOR *actor);
-void   scActorStartScripted(ACTOR *actor, Sint32 pri);
+void   scActorStartScripted(ACTOR *actor, Sint32 priority);
 void   scVentPuff(Sint32 *pos, Sint32 base);
-Sint32 scVentSetBlowing(Sint32 idx, Sint32 blowing);
+Sint32 scVentSetBlowing(Sint32 index, Sint32 blowing);
 Sint32 scVentGetCounter(void);
 Sint32 scVentAdvanceCounter(Sint32 limit);
 
@@ -488,7 +488,7 @@ void scAquaRockInsideSetPillarInGap(Sint32 unused, Sint32 id)
 		Sint32 row = FIELD_METATILE(actor->z.fixed);
 
 		if(row == 12) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			{
 				Sint32 step = -toFIXED(1);
 
@@ -500,7 +500,7 @@ void scAquaRockInsideSetPillarInGap(Sint32 unused, Sint32 id)
 		}
 	} else if(id == ACTOR_WATER_OF_LIFE_CHEST_EAST_PILLAR) {
 		if(FIELD_METATILE(actor->x.fixed) == 51) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			{
 				FIXED step = -toFIXED(1);
 
@@ -533,10 +533,10 @@ void scAquaRockInsideDouseWaterOfLifeChestEastMoai(Sint32 unused, Sint32 id)
 	Sint32 column;
 	Sint32 moai = id;
 
-	scFieldActorSetSprCol(fdActorGet(moai), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(moai), SPRITE_COLOR_NORMAL);
 	scAquaRockInsideAddMoaiWater(moai);
 	fdActorSetAnimation(moai, 3);
-	layer->ofsY -= toFIXED(WATER_LEVEL_STEP);
+	layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
 	fdMapLoadMetatilesAndShapes();
 	fdMapGridCenterOnFollowedPoint();
 	column = FIELD_METATILE(
@@ -544,13 +544,13 @@ void scAquaRockInsideDouseWaterOfLifeChestEastMoai(Sint32 unused, Sint32 id)
 		42;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 	/* scAquaRockInsideSetPillarHeight, defined below, is called with no
 	   prototype in scope. */
 	for(i = 0; i <= WATER_LEVEL_STEP - 1; i++) {
 		scAquaRockInsideSetPillarsHeight(toFIXED(i));
 		scAquaRockInsideSetPillarHeight(column, 0);
-		layer->ofsY += toFIXED(1);
+		layer->offsetY += toFIXED(1);
 		syWait(4);
 	}
 	if(fdScriptGetFlag(FLAG_WATER_OF_LIFE_CHEST_PUDDLE_FROZEN))
@@ -567,18 +567,18 @@ void scAquaRockInsideDouseWaterOfLifeChestWestMoai(Sint32 unused, Sint32 id)
 		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
-	scFieldActorSetSprCol(fdActorGet(id), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(id), SPRITE_COLOR_NORMAL);
 	scAquaRockInsideAddMoaiWater(id);
 	fdActorSetAnimation(id, 3);
-	layer->ofsY -= toFIXED(WATER_LEVEL_STEP);
+	layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
 	fdMapLoadMetatilesAndShapes();
 	fdMapGridCenterOnFollowedPoint();
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 	for(i = 0; i <= WATER_LEVEL_STEP - 1; i++) {
 		scAquaRockInsideSetPillarsHeight(toFIXED(i));
-		layer->ofsY += toFIXED(1);
+		layer->offsetY += toFIXED(1);
 		syWait(4);
 	}
 	fdScriptEnd();
@@ -606,13 +606,13 @@ void scAquaRockInsideFreezePuddle(void)
    lands with a thump. */
 void scAquaRockInsideWaitToLand(ACTOR *actor)
 {
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	do {
 		syWait(1);
-	} while(actor->velY != 0);
-	fdScriptPlaySnd(SE_THUMP);
+	} while(actor->velocityY != 0);
+	fdScriptPlaySound(SE_THUMP);
 	syWait(10);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 }
 #endif
 
@@ -629,9 +629,9 @@ void scAquaRockInsidePushPillarOffLedge(Sint32 unused, Sint32 id)
 		x = FIELD_METATILE(actor->x.fixed);
 		if(x == 39) {
 #if !AQUA_ROCK_PILLAR_LANDS_WITH_THUMP
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			syWait(15);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			fdScriptSetFlag(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED);
 			fdMapGridCopyMetatileAttributes(41, 9, 1, 1, x, id);
 #else
@@ -652,7 +652,8 @@ void scAquaRockInsidePushPillarOffLedge(Sint32 unused, Sint32 id)
 void scAquaRockInsideParchSteamRoomMoai(void)
 {
 	fdActorSetAnimation(ACTOR_STEAM_ROOM_MOAI, 4);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_STEAM_ROOM_MOAI), SPRITE_COLOR_GREY);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_STEAM_ROOM_MOAI), SPRITE_COLOR_GREY);
 	fdMapGridCopyMetatiles(123, 15, 5, 3, 110, 15);
 	FieldStateWork->raisedCue = CUE_STEAM_ROOM_MOAI;
 }
@@ -661,12 +662,13 @@ void scAquaRockInsideParchSteamRoomMoai(void)
    pictures follow it down from the Moai, until the bed is dry. */
 void scAquaRockInsideDrainStream(void)
 {
-	Sint32 cnt = AquaRockInsideSpringLevel - 1;
+	Sint32 count = AquaRockInsideSpringLevel - 1;
 	Sint32 row;
 
-	AquaRockInsideSpringLevel = cnt;
-	row = cnt / 8;
-	fdMapGridCopyMetatiles((cnt & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
+	AquaRockInsideSpringLevel = count;
+	row = count / 8;
+	fdMapGridCopyMetatiles(
+		(count & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
 	if(AquaRockInsideSpringLevel == 0)
 		syFieldCloseEvent(scAquaRockInsideDrainStream);
 }
@@ -676,14 +678,14 @@ void scAquaRockInsideDrainStream(void)
    then the bed (metatiles (46, 16) to (50, 47)) becomes dry ground. */
 void scAquaRockInsideSteamRoomStreamDrains(void)
 {
-	Sint32 pri;
+	Sint32 priority;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_LOW);
-	pri = EVENT_PASS_TICK;
-	syFieldSetTickEvent(scAquaRockInsideDrainStream, pri);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_LOW);
+	priority = EVENT_PASS_TICK;
+	syFieldSetTickEvent(scAquaRockInsideDrainStream, priority);
 	fdCameraSetSpeedAndAcceleration(2.5, 0.25);
 	fdCameraMoveTo(776, CAMERA_KEEP, 648, 1);
 	fdCameraWaitForArrival();
@@ -697,7 +699,7 @@ void scAquaRockInsideSteamRoomStreamDrains(void)
 void scAquaRockInsideShowAquariusStone(void)
 {
 	ACTOR *actor;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	scFieldActorShowItemIconById(ACTOR_AQUARIUS_STONE, ITEM_AQUARIUS_STONE);
 	/* UB: this room has no actor 20 (it places actors 8 to 10 and treasure
@@ -708,9 +710,9 @@ void scAquaRockInsideShowAquariusStone(void)
 	if(actor == NULL)
 		return;
 #endif
-	spr = actor->spr;
-	spr->retainCacheEntry = 1;
-	actor->motionFlg = 0;
+	sprite = actor->sprite;
+	sprite->retainCacheEntry = 1;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(24);
 }
 
@@ -728,7 +730,7 @@ extern Uint8 AquaRockInsideSpringLevelMetatiles[SPRING_LEVELS * 2];
    once the shaking stops. */
 void scAquaRockInsideUseAquariusStone(void)
 {
-	Sint32 pri;
+	Sint32 priority;
 	Sint32 i;
 	Sint32 j;
 
@@ -736,9 +738,9 @@ void scAquaRockInsideUseAquariusStone(void)
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	scAquaRockInsideShowAquariusStone();
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(SE_WAVE);
+	fdScriptPlaySound(SE_WAVE);
 	fdMapGridSetShake(1, 1, 1);
 	syFieldScriptWait(20);
 	fdMapGridSetShake(1, 2, 1);
@@ -749,11 +751,11 @@ void scAquaRockInsideUseAquariusStone(void)
 	   metatiles (110, 16) to (114, 47); in this room's map those metatiles lie
 	   far east of the room (x 1760 on, the room ending at x 704), so nothing
 	   the player sees is them. */
-	pri = EVENT_PASS_TICK;
-	syFieldSetTickEvent(scAquaRockInsideDrainStream, pri);
+	priority = EVENT_PASS_TICK;
+	syFieldSetTickEvent(scAquaRockInsideDrainStream, priority);
 	fdCameraSetSpeedAndAcceleration(2.5, 0.25);
 	fdCameraMoveTo(312, CAMERA_KEEP, 504, 1);
-	fdScriptPlaySnd(SE_SCATTER);
+	fdScriptPlaySound(SE_SCATTER);
 	fdMapGridCopyMetatilesLayered(75, 96, 7, 13, 80, 27);
 	fdMapGridCopyMetatilesLayered(91, 96, 7, 10, 16, 31);
 	fdMapGridCopyMetatilesLayered(99, 96, 7, 14, 16, 91);
@@ -761,21 +763,22 @@ void scAquaRockInsideUseAquariusStone(void)
 	for(i = 0; i < SPRING_LEVELS - 1; i++) {
 		for(j = 0; j <= 6; j++) {
 			{
-				Sint32 idx = (i + (1 & ~j)) * 2;
+				Sint32 index = (i + (1 & ~j)) * 2;
 
 				fdMapGridCopyMetatilesLayered(
-					AquaRockInsideSpringLevelMetatiles[idx],
-					AquaRockInsideSpringLevelMetatiles[idx + 1], 7, 13, 80, 27);
+					AquaRockInsideSpringLevelMetatiles[index],
+					AquaRockInsideSpringLevelMetatiles[index + 1], 7, 13, 80,
+					27);
 				syWait(1);
 			}
 		}
 	}
 	fdCameraWaitForArrival();
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(MUS_PUZZLE_SOLVED);
-	sySndWaitForBGMRestore();
+	fdScriptPlaySound(MUS_PUZZLE_SOLVED);
+	sySoundWaitForBGMRestore();
 	fdScriptEnd();
 	gmPlayMusic();
 	fdScriptSetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_SET);
@@ -792,7 +795,7 @@ void scAquaRockInsideOpenDoorToTablet(Sint32 exit)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_THUMP);
+	fdScriptPlaySound(SE_THUMP);
 	fdMapGridCopyMetatilesTo(107, 96, 19, 29, width, height);
 	syFieldScriptWait(8);
 	fdMapGridCopyMetatilesTo(108, 96, 19, 29, width, height);
@@ -801,11 +804,11 @@ void scAquaRockInsideOpenDoorToTablet(Sint32 exit)
 	syFieldScriptWait(8);
 	fdMapGridCopyMetatilesTo(108, 98, 19, 29, width, height);
 	syFieldScriptWait(15);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 	fdActorGet(MainRoutineStateWork.leaderActorId)->speedLimit =
 		fdActorGet(MainRoutineStateWork.leaderActorId)->acceleration =
 			toFIXED(1) / 2;
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 312, 496);
 	syFieldScriptWait(5);
 	syFieldScriptSetExitRequest(exit);
@@ -947,18 +950,18 @@ void scAquaRockInsideDouseRustySwordChestMoai(Sint32 unused, Sint32 id)
 		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGet(ACTOR_RUSTY_SWORD_CHEST_MOAI), SPRITE_COLOR_BRG);
 	scAquaRockInsideAddMoaiWater(id);
 	fdActorSetAnimation(id, 3);
-	layer->ofsY -= toFIXED(WATER_LEVEL_STEP);
+	layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
 	fdMapLoadMetatilesAndShapes();
 	fdMapGridCenterOnFollowedPoint();
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_LOW);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_LOW);
 	for(i = 0; i < WATER_LEVEL_STEP; i++) {
-		layer->ofsY += toFIXED(1);
+		layer->offsetY += toFIXED(1);
 		syWait(4);
 	}
 	fdScriptEnd();
@@ -983,7 +986,7 @@ void scAquaRockInsideStepIntoVentGust(Sint32 cue)
 {
 	Sint32	clear = 1;
 	ACTOR  *actor;
-	VECTOR3 tgt;
+	VECTOR3 target;
 	Sint32	result;
 
 	if(MainRoutineStateWork.next ==
@@ -1012,10 +1015,10 @@ void scAquaRockInsideStepIntoVentGust(Sint32 cue)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	for(;;) {
-		tgt.x = actor->x.fixed;
-		tgt.y = actor->y.fixed;
-		tgt.z = actor->z.fixed + toFIXED(8);
-		result = fdMapGridCheckCollision(actor, &tgt);
+		target.x = actor->x.fixed;
+		target.y = actor->y.fixed;
+		target.z = actor->z.fixed + toFIXED(8);
+		result = fdMapGridCheckCollision(actor, &target);
 		if(result > 0)
 			break;
 		if(result < 0) {
@@ -1024,22 +1027,22 @@ void scAquaRockInsideStepIntoVentGust(Sint32 cue)
 			return;
 		}
 		{
-			Sint32 ofs;
+			Sint32 offset;
 			FIXED  x;
 
 			actor->z.fixed += toFIXED(2);
 			x = actor->x.fixed;
-			ofs = (x & (toFIXED(16) - 1)) - toFIXED(8);
+			offset = (x & (toFIXED(16) - 1)) - toFIXED(8);
 			{
 				Sint32 limit = toFIXED(1) + 1;
 
-				if(ofs >= limit)
-					ofs = toFIXED(1);
+				if(offset >= limit)
+					offset = toFIXED(1);
 				limit = -(toFIXED(1) + 1);
-				if(ofs <= limit)
-					ofs = -toFIXED(1);
+				if(offset <= limit)
+					offset = -toFIXED(1);
 			}
-			actor->x.fixed = x - ofs;
+			actor->x.fixed = x - offset;
 		}
 		actor->facing += TRIG_TURN / 16;
 		syWait(1);
@@ -1071,21 +1074,21 @@ void scAquaRockInsideRideFalls(Sint32 exit)
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIXED  speed;
 	Sint32 i;
-	Uint8 *flg;
+	Uint8 *flags;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	flg = &actor->motionFlg;
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	flags = &actor->motionFlags;
 	speed = 0;
-	*flg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	*flags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorSelectAnimation(actor, ANIM_LEADER_TUMBLE_IN_WATER);
-	fdScriptPlaySnd(SE_SPLASH_SMALL);
+	fdScriptPlaySound(SE_SPLASH_SMALL);
 	syWait(13);
-	fdActorSetSprColMode(actor, SPRITE_COLOR_BLUE_TINT);
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_BLUE_TINT);
 	fdActorSelectAnimation(actor, ANIM_LEADER_ARMS_RAISED);
-	fdScriptPlaySnd(SE_SPIRAL);
+	fdScriptPlaySound(SE_SPIRAL);
 	for(i = 0; i <= 59; i++) {
 		if(i == 30)
 			fdScriptFinishScreenTransition();
@@ -1120,22 +1123,22 @@ void scAquaRockInsideBlockMoaiWithPillar(Sint32 unused, Sint32 id)
 		syFieldScriptEndLastingPsynergy(0);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
-		fdScriptPlaySnd(SE_RISE_WITH_SPARKS_LOW);
+		fdScriptPlaySound(SE_RISE_WITH_SPARKS_LOW);
 		fdActorSetAnimation(ACTOR_VIAL_CHEST_MOAI, 2);
 		fdMapGridCopyMetatilesLayered(114, 39, 1, 2, 113, 39);
 		for(i = 0; i < WATER_LEVEL_STEP; i++) {
-			layer->ofsY -= toFIXED(1);
+			layer->offsetY -= toFIXED(1);
 			syWait(4);
 		}
 		for(i = ACTOR_VIAL_CHEST_PUDDLE_A; i <= ACTOR_VIAL_CHEST_PUDDLE_C;
 			i++) {
 			actor = fdActorGetById(i);
-			actor->x.fixed = toFIXED(actor->tmr);
+			actor->x.fixed = toFIXED(actor->timer);
 			actor->z.fixed = toFIXED(actor->userValue);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = -toFIXED(WATER_LEVEL_STEP);
 			actor->y.fixed = -toFIXED(WATER_LEVEL_STEP);
-			scFieldActorSetSprPriority(i, 3);
+			scFieldActorSetSpritePriority(i, 3);
 		}
 		fdBlendScriptSuspend();
 		for(fade = 12; fade >= 0; fade--) {
@@ -1162,7 +1165,7 @@ void scAquaRockInsideFreezeRoomPuddle(Sint32 unused, Sint32 id)
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
 		fdScriptSetFlag(
 			FLAG_VIAL_CHEST_PUDDLE_A_FROZEN - ACTOR_VIAL_CHEST_PUDDLE_A + id);
-		actor->priFlg = 0;
+		actor->priorityFlags = 0;
 	}
 }
 
@@ -1183,7 +1186,7 @@ void scAquaRockInsideSettleVentPillars(Sint32 unused, Sint32 id)
 	if((Uint32)(id - ACTOR_VIAL_CHEST_WEST_VENT_PILLAR) <= 1) {
 		ACTOR *actor = fdActorGet(ACTOR_VIAL_CHEST_WEST_VENT_PILLAR);
 
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		{
 			Sint32 row = 33;
 
@@ -1191,7 +1194,7 @@ void scAquaRockInsideSettleVentPillars(Sint32 unused, Sint32 id)
 				8, row, 1, 1, FIELD_METATILE(actor->x.fixed), 34);
 		}
 		actor = fdActorGet(ACTOR_VIAL_CHEST_EAST_VENT_PILLAR);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		{
 			Sint32 row = 33;
 
@@ -1209,7 +1212,7 @@ void scAquaRockInsideWaitToRise(ACTOR *actor)
 	while(ticks != 0) {
 		syWait(1);
 		ticks--;
-		if(actor->velY == 0)
+		if(actor->velocityY == 0)
 			break;
 	}
 }
@@ -1222,7 +1225,7 @@ void scAquaRockInsideCheckPsynergyStone(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	mnMessageShowCentered(MsgCheckedThePsynergy, 1);
-	fdScriptPlaySnd(SE_RECOVERY);
+	fdScriptPlaySound(SE_RECOVERY);
 	fdPartyAddPp(PARTY_PP_REPLENISH, 0);
 	syFieldScriptWait(10);
 	fdScriptClearFlag(FLAG_NOTHING_HAPPENS);
@@ -1277,17 +1280,17 @@ void scAquaRockInsideDouseTearStoneMoai(Sint32 unused, Sint32 id)
 		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
-	scFieldActorSetSprCol(fdActorGet(id), SPRITE_COLOR_BRG);
+	scFieldActorSetSpriteColor(fdActorGet(id), SPRITE_COLOR_BRG);
 	scAquaRockInsideAddMoaiWater(id);
 	fdActorSetAnimation(id, 3);
-	layer->ofsY -= toFIXED(WATER_LEVEL_STEP);
+	layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
 	fdMapLoadMetatilesAndShapes();
 	fdMapGridCenterOnFollowedPoint();
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 	for(i = 0; i < WATER_LEVEL_STEP; i++) {
-		layer->ofsY += toFIXED(1);
+		layer->offsetY += toFIXED(1);
 		syWait(4);
 	}
 	fdScriptEnd();
@@ -1309,7 +1312,7 @@ void scAquaRockInsideWaterSinks(void)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	layer->ofsY -= toFIXED(WATER_LEVEL_STEP);
+	layer->offsetY -= toFIXED(WATER_LEVEL_STEP);
 	fdMapGridCenterOnFollowedPoint();
 	fdMapGridSetShake(1, 1, 1);
 	for(i = 0; i < POOL_FLICKERS; i++) {
@@ -1325,7 +1328,7 @@ void scAquaRockInsideWaterSinks(void)
 	}
 	syWait(10);
 	for(i = 0; i < WATER_LEVEL_STEP * 4; i++) {
-		layer->ofsY += toFIXED(1) / 4;
+		layer->offsetY += toFIXED(1) / 4;
 		syWait(1);
 	}
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1381,39 +1384,39 @@ void scAquaRockInsidePiersLearnsParch(Sint32 tabletId, Sint32 adeptId)
 	Sint32 unused[3];
 
 	script = LessonAdeptRiseScript;
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptWait(30);
 	fdCameraSetSpeed(0.5);
 	fdCameraMoveWithinMapBounds(toFIXED(FIXEDtoINT(tablet->x.fixed)),
 		toFIXED(FIXEDtoINT(tablet->y.fixed)),
 		toFIXED(FIXEDtoINT(tablet->z.fixed)), 1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdMapGridSetShake(2, 2, 1);
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeSetTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
-	tablet->motionFlg = 0;
+	tablet->motionFlags = 0;
 	tablet->acceleration = toFIXED(1) / 5;
 	tablet->speedLimit = toFIXED(1) / 5;
 	fdActorSetMovementTypeById(tabletId, LessonTabletRiseScript);
-	sySndPlay(SE_TABLET_RISE);
+	sySoundPlay(SE_TABLET_RISE);
 	fdScriptWait(45);
-	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_BLINK);
+	fdActorConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
 	REG_BLDALPHA = BLEND_ALPHA(8, BLEND_WEIGHT_MAX);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	for(i = 0; i != TABLET_RISING_SPARKS; i++) {
 		actor = ((void *)syImportActorCreate(SPRITE_PARTICLE, tablet->x.fixed,
 			tablet->y.fixed, tablet->z.fixed));
-		sySndPlay(SE_GLITTER);
+		sySoundPlay(SE_GLITTER);
 		actor->x.fixed += toFIXED((syRandom() & 31) - 16);
 		actor->y.fixed += toFIXED((syRandom() & 15) - 8);
 		actor->speedLimit = toFIXED(8);
 		actor->acceleration = toFIXED(1) / 5;
-		actor->motionFlg = 0;
-		fdActorSetSprCol(actor, SPRITE_COLOR_RBG);
-		fdSetActorSprPriority(actor, 1);
+		actor->motionFlags = 0;
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_RBG);
+		fdSetActorSpritePriority(actor, 1);
 		fdActorSelectAnimation(actor, 7);
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorSetBlendMode(actor, 1);
 		fdActorStartScript(actor, AquaRockInsideTabletGlowScript);
 		REG_BLDALPHA = BLEND_ALPHA(4, BLEND_WEIGHT_MAX);
@@ -1430,62 +1433,62 @@ void scAquaRockInsidePiersLearnsParch(Sint32 tabletId, Sint32 adeptId)
 	for(i = 0; i != LEARN_SPARKS; i++) {
 		spark = scFieldActorCreate(
 			SPRITE_PARTICLE, adept->x.fixed, adept->y.fixed, adept->z.fixed);
-		sySndPlay(SE_SPARKS);
-		spark->tmr = (syRandom() & 0x7fff) + DEGtoANG(180);
+		sySoundPlay(SE_SPARKS);
+		spark->timer = (syRandom() & 0x7fff) + DEGtoANG(180);
 		spark->userValue = (((i & 1) << 1) - 1) << ((syRandom() & 3) + 9);
 		noMotion = 0;
-		spark->motionFlg = noMotion;
+		spark->motionFlags = noMotion;
 		spark->sceneWord = toFIXED(122);
 		spark->watchedActor = (FIELD_OBJECT *)adept;
-		spark->sceneCnt =
+		spark->sceneCount =
 			(LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_TICKS;
-		fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
-		fdSetActorSprPriority(spark, 1);
+		fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+		fdSetActorSpritePriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
 		syFieldVectorAddPolarOffsetFX(
-			spark->sceneWord, spark->tmr, &spark->x.fixed);
+			spark->sceneWord, spark->timer, &spark->x.fixed);
 		fdActorStartScript(spark, AquaRockInsideSpiralSparkScript);
 		if(i == 3) {
-			fdActorSetSprColById(adeptId, SPRITE_COLOR_BLINK);
-			adept->motionFlg = noMotion;
+			fdActorSetSpriteColorById(adeptId, SPRITE_COLOR_BLINK);
+			adept->motionFlags = noMotion;
 			adept->acceleration = toFIXED(1) / 5;
 			adept->speedLimit = toFIXED(1) / 5;
 			fdActorSetMovementTypeById(adeptId, script);
 		}
 		sySynch(LEARN_SPARK_INTERVAL);
 	}
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(16);
 	for(i = 2; i != ORBIT_HALF_TURN; i += 2) {
 		swirl = scFieldActorCreate(SPRITE_PARTICLE, adept->x.fixed,
 			adept->y.fixed + i * toFIXED(1) - toFIXED(8), adept->z.fixed);
-		swirl->tmr = syRandom();
+		swirl->timer = syRandom();
 		swirl->userValue = TRIG_TURN / 32;
-		swirl->sceneCnt = i;
+		swirl->sceneCount = i;
 		swirl->sceneByte = 1;
 		swirl->bounce = swirl->x.fixed;
 		swirl->sceneWord = 0;
 		swirl->gravity = swirl->z.fixed;
 		swirl->watchedActor = (FIELD_OBJECT *)adept;
-		swirl->motionFlg = (Uint16)0;
-		swirl->priFlg = ACTOR_PRIORITY_AUTOMATIC;
-		fdActorSetSprCol(swirl, SPRITE_COLOR_RBG);
+		swirl->motionFlags = (Uint16)0;
+		swirl->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpriteColor(swirl, SPRITE_COLOR_RBG);
 		fdActorSelectAnimation(swirl, 7);
-		fdActorSetSprFlags(swirl, 0);
+		fdActorSetSpriteFlags(swirl, 0);
 		fdActorSetBlendMode(swirl, 1);
 		fdActorStartScript(swirl, LessonSeekingSparkScript);
 	}
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(50);
 	fdPaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(8);
 	sySynch(16);
 	fdMapGridSetShake(0, 0, 0);
-	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_NORMAL);
-	fdActorConfigureSprCol(adeptId, SPRITE_COLOR_NORMAL);
-	sySndPlay(SE_FLASH);
+	fdActorConfigureSpriteColor(tabletId, SPRITE_COLOR_NORMAL);
+	fdActorConfigureSpriteColor(adeptId, SPRITE_COLOR_NORMAL);
+	sySoundPlay(SE_FLASH);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(80);
 	fdActorSetMovementTypeById(tabletId, LessonTabletSettleScript);
@@ -1493,7 +1496,7 @@ void scAquaRockInsidePiersLearnsParch(Sint32 tabletId, Sint32 adeptId)
 	adept->update = scActorEmitSparkles;
 	sySynch(120);
 	adept->update = 0;
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmPlayMusic();
 	sySynch(1);
 }
@@ -1552,7 +1555,7 @@ void scAquaRockInsideReadParchTablet(void)
 	scAquaRockInsidePiersLearnsParch(ACTOR_PARCH_TABLET, ACTOR_PIERS);
 	fdPartyLearnAbility(PIERS, ABILITY_PARCH);
 	fdScriptSetFlag(FLAG_PIERS_LEARNED_PARCH);
-	fdScriptPlaySnd(SE_TREMOR);
+	fdScriptPlaySound(SE_TREMOR);
 	syFieldScriptWait(30);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
@@ -1561,7 +1564,7 @@ void scAquaRockInsideReadParchTablet(void)
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	scAquaRockInsideWaterSinks();
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	syFieldScriptWait(30);
 	syFieldScriptSetMessageId((Sint32)&MsgWhatWentWrong);
 	fdActorShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
@@ -1686,11 +1689,11 @@ void scAquaRockInsideAddMoaiWater(Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 
 	if(actor != 0) {
-		SPR_ANIMATION *water =
-			(SPR_ANIMATION *)fdSprAddAnimation(actor->spr, SPRITE_MOAI_WATER);
+		SPR_ANIMATION *water = (SPR_ANIMATION *)fdSpriteAddAnimation(
+			actor->sprite, SPRITE_MOAI_WATER);
 
-		water->colMode = SPRITE_COLOR_NORMAL;
-		water->pri = 0;
+		water->colorMode = SPRITE_COLOR_NORMAL;
+		water->priority = 0;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1705,16 +1708,16 @@ void scAquaRockInsideSplashBeneath(ACTOR *actor)
 			SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 
 		if(child != 0) {
-			FIELD_SPR *spr = child->spr;
+			FIELD_SPR *sprite = child->sprite;
 
 			fdActorStartScript(child, AquaRockInsideSplashScript);
-			child->motionFlg = 0;
+			child->motionFlags = 0;
 			child->layer = 1;
-			if(spr != 0) {
-				fdSprStartAnimation(spr, 2);
-				spr->flg = 0;
-				spr->rotation = DEGtoANG(90);
-				spr->pri = 2;
+			if(sprite != 0) {
+				fdSpriteStartAnimation(sprite, 2);
+				sprite->flags = 0;
+				sprite->rotation = DEGtoANG(90);
+				sprite->priority = 2;
 			}
 		}
 	}
@@ -1726,31 +1729,31 @@ void scAquaRockInsideSplashBeneath(ACTOR *actor)
 void scAquaRockInsideFallThroughWater(void)
 {
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Uint8 *flg = &actor->motionFlg;
-	Sint32 saved = *flg;
+	Uint8 *flags = &actor->motionFlags;
+	Sint32 saved = *flags;
 	FIXED  speed;
 	Sint32 i;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
-	fdActorSetSprColMode(actor, SPRITE_COLOR_BLUE_TINT);
-	*flg = 0;
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_BLUE_TINT);
+	*flags = 0;
 	actor->y.fixed = toFIXED(80);
 	speed = toFIXED(3);
 	for(i = 0; i < 32; i++) {
 		actor->y.fixed -= speed;
 		actor->facing += DEGtoANG(45);
 		speed += -(toFIXED(1) / 20);
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		syWait(1);
 	}
 	scActorSpawnWadingSplash(actor);
-	fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
-	*flg = saved;
-	actor->velY = toFIXED(8);
-	fdScriptPlaySnd(SE_SPLASH_SMALL);
+	*flags = saved;
+	actor->velocityY = toFIXED(8);
+	fdScriptPlaySound(SE_SPLASH_SMALL);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 168, 200);
 	fdScriptEnd();
 }
@@ -1800,7 +1803,7 @@ Sint32 scInit(void)
 			scAquaRockInsideAddMoaiWater(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI);
 			fdActorSetAnimation(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI, 3);
 		} else {
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGetById(ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI),
 				SPRITE_COLOR_GREY);
 		}
@@ -1808,7 +1811,7 @@ Sint32 scInit(void)
 			scAquaRockInsideAddMoaiWater(ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI);
 			fdActorSetAnimation(ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI, 3);
 		} else {
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGetById(ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI),
 				SPRITE_COLOR_GREY);
 		}
@@ -1816,14 +1819,14 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_STEAM_ROOM_STREAM_DRAINED)) {
 			fdMapGridCopyMetatilesLayered(118, 15, 5, 32, 110, 15);
 			fdMapGridCopyMetatileAttributes(59, 16, 5, 32, 46, 16);
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGetById(ACTOR_STEAM_ROOM_MOAI), SPRITE_COLOR_GREY);
 		} else {
 			scAquaRockInsideAddMoaiWater(ACTOR_STEAM_ROOM_MOAI);
 			fdActorSetAnimation(ACTOR_STEAM_ROOM_MOAI, 3);
 		}
 		actor = fdActorGetById(ACTOR_STEAM_ROOM_PILLAR);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		if(syGameFlagGet(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED)) {
 			fdActorSetPos(ACTOR_STEAM_ROOM_PILLAR, 632, 152);
 			fdMapGridCopyMetatileAttributes(41, 9, 1, 1, 39, 9);
@@ -1846,23 +1849,23 @@ Sint32 scInit(void)
 			WAY_RUSTY_SWORD_CHEST_SOUTHWEST_TO_SOUTHEAST -
 				AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_FROM_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
 			if(syGameFlagGet(FLAG_RUSTY_SWORD_CHEST_MOAI_FILLED)) {
-				scFieldActorSetSprCol(
+				scFieldActorSetSpriteColor(
 					fdActorGetById(ACTOR_RUSTY_SWORD_CHEST_MOAI),
 					SPRITE_COLOR_BRG);
 				scAquaRockInsideAddMoaiWater(ACTOR_RUSTY_SWORD_CHEST_MOAI);
 				fdActorSetAnimation(ACTOR_RUSTY_SWORD_CHEST_MOAI, 3);
 				scAquaRockInsideSetPillarMetatileJumpableInWater();
 			} else {
-				scFieldActorSetSprCol(
+				scFieldActorSetSpriteColor(
 					fdActorGetById(ACTOR_RUSTY_SWORD_CHEST_MOAI),
 					SPRITE_COLOR_GREY);
 			}
 		}
-		fdActorGetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->sceneCnt = 1;
-		fdActorGetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->sceneCnt = 1;
+		fdActorGetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_B)->sceneCount = 1;
+		fdActorGetById(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C)->sceneCount = 1;
 		actor = fdActorGetById(ACTOR_RUSTY_SWORD_CHEST);
 		if(actor != 0) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = -toFIXED(WATER_LEVEL_STEP);
 			actor->y.fixed = -toFIXED(WATER_LEVEL_STEP);
 		}
@@ -1895,9 +1898,9 @@ Sint32 scInit(void)
 			fdActorSetAnimation(ACTOR_VIAL_CHEST_MOAI, 3);
 		}
 		actor = fdActorGetById(ACTOR_VIAL_CHEST_SPLASH);
-		fdActorSetSprFlags(actor, 0);
-		actor->collisionFlg = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(actor, 0);
+		actor->collisionFlags = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		actor->update = (OBJECT_UPDATE)scAquaRockInsideSplashBeneath;
 		if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION) &&
 			entrance ==
@@ -1905,20 +1908,20 @@ Sint32 scInit(void)
 			scAquaRockInsideFallThroughWater();
 	} else if(scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE) {
 		if(syGameFlagGet(FLAG_TEAR_STONE_MOAI_FILLED)) {
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGetById(ACTOR_TEAR_STONE_MOAI), SPRITE_COLOR_BRG);
 			scAquaRockInsideAddMoaiWater(ACTOR_TEAR_STONE_MOAI);
 			fdActorSetAnimation(ACTOR_TEAR_STONE_MOAI, 3);
 		} else {
-			scFieldActorSetSprCol(
+			scFieldActorSetSpriteColor(
 				fdActorGetById(ACTOR_TEAR_STONE_MOAI), SPRITE_COLOR_GREY);
 		}
-		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->sceneCnt = 1;
-		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->sceneCnt = 1;
-		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_E)->sceneCnt = 1;
-		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_G)->sceneCnt = 1;
-		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_H)->sceneCnt = 1;
-		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_I)->sceneCnt = 1;
+		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_A)->sceneCount = 1;
+		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_B)->sceneCount = 1;
+		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_E)->sceneCount = 1;
+		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_G)->sceneCount = 1;
+		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_H)->sceneCount = 1;
+		fdActorGetById(ACTOR_TEAR_STONE_WATER_PILLAR_I)->sceneCount = 1;
 	}
 	return 0;
 }
@@ -1965,12 +1968,12 @@ Sint32 scPrepareMap(void)
 				WAY_WATER_OF_LIFE_CHEST_SOUTHEAST_TO_NORTHEAST_WEST ||
 			entrance == WAY_WATER_OF_LIFE_CHEST_SOUTHEAST_TO_NORTHEAST_EAST) {
 			actor = fdActorGetById(ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = 0;
 			actor->y.fixed = 0;
 			fdActorSelectAnimation((Sint32)actor, 0);
 			actor = fdActorGetById(ACTOR_WATER_OF_LIFE_CHEST_PUDDLE);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = 0;
 			actor->y.fixed = 0;
 			if(!syGameFlagGet(FLAG_WATER_OF_LIFE_CHEST_EAST_MOAI_FILLED)) {
@@ -2017,14 +2020,14 @@ Sint32 scPrepareMap(void)
 			scAquaRockInsideAddSpouts(COLLISION_STREAM_BEND, 0, -2);
 		}
 		actor = fdActorGetById(ACTOR_STEAM_ROOM_MOAI);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->groundHeight = 0;
 		actor->y.fixed = 0;
 	} else if(scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE) {
 		fdEffectStartBlankOverlay(0);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			(Sint32)fdActorGetById(ACTOR_AQUARIUS_STONE_BASE), 0);
-		fdActorSetSprFlags((Sint32)fdActorGetById(ACTOR_AQUARIUS_STONE), 0);
+		fdActorSetSpriteFlags((Sint32)fdActorGetById(ACTOR_AQUARIUS_STONE), 0);
 		scAquaRockInsideAddSpouts(COLLISION_STREAM_BEND, 8, -2);
 		scAquaRockInsideAddSpouts(COLLISION_SECOND_SPOUTS, 8, 8);
 		if(syGameFlagGet(FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED)) {
@@ -2051,7 +2054,7 @@ Sint32 scPrepareMap(void)
 			   AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_FROM_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) <=
 			WAY_RUSTY_SWORD_CHEST_SOUTHWEST_TO_SOUTHEAST -
 				AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST_FROM_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
 			Value3((Sint32 (*)())scAquaRockInsideAddPillar,
 				ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, 5, 4);
@@ -2091,7 +2094,7 @@ Sint32 scPrepareMap(void)
 				rustySwordPillar <= ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C;
 				rustySwordPillar++) {
 				actor = fdActorGetById(rustySwordPillar);
-				actor->motionFlg = 0;
+				actor->motionFlags = 0;
 				actor->groundHeight = 0;
 				actor->y.fixed = 0;
 			}
@@ -2137,7 +2140,7 @@ Sint32 scPrepareMap(void)
 			for(hiddenPuddle = ACTOR_VIAL_CHEST_PUDDLE_A;
 				hiddenPuddle <= ACTOR_VIAL_CHEST_PUDDLE_C; hiddenPuddle++) {
 				actor = fdActorGetById(hiddenPuddle);
-				actor->motionFlg = 0;
+				actor->motionFlags = 0;
 				actor->x.fixed = 0;
 				actor->z.fixed = 0;
 			}
@@ -2171,7 +2174,7 @@ Sint32 scPrepareMap(void)
 			   AQUA_ROCK_INSIDE_TEAR_STONE_FROM_AQUA_ROCK_INSIDE_TIGHTROPE_NORTHEAST) <=
 			AQUA_ROCK_INSIDE_TEAR_STONE_FROM_AQUA_ROCK_INSIDE_TIGHTROPE_EAST -
 				AQUA_ROCK_INSIDE_TEAR_STONE_FROM_AQUA_ROCK_INSIDE_TIGHTROPE_NORTHEAST) {
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 				ACTOR_PRIORITY_IGNORES_RISES;
 			Value3((Sint32 (*)())scAquaRockInsideAddPillar,
 				ACTOR_TEAR_STONE_WATER_PILLAR_A, 6, 4);
@@ -2225,7 +2228,7 @@ Sint32 scPrepareMap(void)
 		for(tearStonePillar = ACTOR_TEAR_STONE_WATER_PILLAR_A;
 			tearStonePillar <= ACTOR_TEAR_STONE_PILLAR_B; tearStonePillar++) {
 			actor = fdActorGetById(tearStonePillar);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = 0;
 			actor->y.fixed = 0;
 		}
@@ -2288,7 +2291,7 @@ void scAquaRockInsideDrawPillars(void)
 	viewX &= FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(RamHeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
 	originY = ((MAP_STATE *)RamHeapSlots->mapGrid)->origin[1];
-	tile = VramCacheEntries[state->vramEntry].ofs >> 5;
+	tile = VramCacheEntries[state->vramEntry].offset >> 5;
 
 	for(i = 0; i < PILLAR_ENTRIES; i++) {
 		if(entry->state != 0) {
@@ -2329,7 +2332,7 @@ void scAquaRockInsideDrawPillars(void)
 					screenY |= OBJ_SIZE_16X16 | OBJ_256_COLORS;
 					entry->top[1] = screenY;
 					entry->top[2] = (tile + rise) | attributes;
-					syOAMAddSprAtDepthClamped(entry->top, depth);
+					syOAMAddSpriteAtDepthClamped(entry->top, depth);
 				}
 				screenY = z - y;
 				screenY = FIXEDtoINT(screenY) + 8;
@@ -2349,7 +2352,7 @@ void scAquaRockInsideDrawPillars(void)
 						screenY |= OBJ_SIZE_16X8 | OBJ_256_COLORS;
 						entry->column[1] = screenY;
 						entry->column[2] = attributes | (tile + rise);
-						syOAMAddSprAtDepthClamped(column, depth);
+						syOAMAddSpriteAtDepthClamped(column, depth);
 					}
 				}
 			}
@@ -2363,16 +2366,16 @@ void scAquaRockInsideDrawPillars(void)
 void scAquaRockInsideStartPillars(void)
 {
 	void  *buf;
-	Sint32 pri;
+	Sint32 priority;
 
 	syWordsClearEntry(&AquaRockInsidePillars, sizeof(PILLAR_STATE));
-	buf = syHeapCallAlternatePool(syHeapAlloc, 3200);
+	buf = syHeapCallAlternatePool(syHeapAllocate, 3200);
 	syDecompressTaggedLZ(AquaRockInsidePillarTiles, buf);
 	AquaRockInsidePillars.vramEntry = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(AquaRockInsidePillars.vramEntry, 3200, buf);
 	syHeapRelease(buf);
-	pri = EVENT_PASS_TICK - 100;
-	syFieldSetTickEvent(scAquaRockInsideDrawPillars, pri);
+	priority = EVENT_PASS_TICK - 100;
+	syFieldSetTickEvent(scAquaRockInsideDrawPillars, priority);
 }
 
 /* Adds a water spout on every map metatile of the given layer whose spout kind
@@ -2383,12 +2386,12 @@ void scAquaRockInsideAddSpouts(Uint32 first, Sint32 level, Sint32 baseLevel)
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_LAYER	 *layer = map->layers;
 	MAP_METATILE *metatiles = layer->metatiles;
-	Sint32		  originX = layer->ofsX + map->minX;
-	Sint32		  originZ = layer->ofsY + map->minZ;
+	Sint32		  originX = layer->offsetX + map->minX;
+	Sint32		  originZ = layer->offsetY + map->minZ;
 	PILLAR_STATE *state = &AquaRockInsidePillars;
 	Sint32		  width = FIELD_METATILE(map->maxX - map->minX);
 	Sint32		  depth = FIELD_METATILE(map->maxZ - map->minZ);
-	PILLAR_ENTRY *spout = &state->entries[state->cnt];
+	PILLAR_ENTRY *spout = &state->entries[state->count];
 	Sint32		  corner =
 		(FIELD_METATILE(map->minZ) << 7) + FIELD_METATILE(map->minX);
 	Sint16 row;
@@ -2424,7 +2427,7 @@ void scAquaRockInsideAddSpouts(Uint32 first, Sint32 level, Sint32 baseLevel)
 							spout->pos = 0;
 							spout->state = 1;
 							spout++;
-							state->cnt++;
+							state->count++;
 							{
 								Uint8 *terrain =
 									map->layers[MAPGRID_LAYER_GROUND]
@@ -2452,7 +2455,7 @@ void scAquaRockInsideAddPillar(Sint32 id, Sint32 kind, Sint32 height)
 {
 	ACTOR		 *actor = fdActorGet(id);
 	PILLAR_STATE *state = &AquaRockInsidePillars;
-	PILLAR_ENTRY *entry = &state->entries[state->cnt];
+	PILLAR_ENTRY *entry = &state->entries[state->count];
 
 	if(actor != 0) {
 		entry->x = 0;
@@ -2462,7 +2465,7 @@ void scAquaRockInsideAddPillar(Sint32 id, Sint32 kind, Sint32 height)
 		entry->state = 2;
 		entry->kind = kind;
 		entry->pos = &actor->x.fixed;
-		state->cnt++;
+		state->count++;
 	}
 }
 
@@ -2483,15 +2486,15 @@ void scAquaRockInsideSetPillarsHeight(Sint32 height)
 	}
 }
 
-/* Raises water pillar `idx` alone to `height`, its metatile taking
+/* Raises water pillar `index` alone to `height`, its metatile taking
    MAP_SHAPE_RAISED_ALONE at that height. */
-void scAquaRockInsideSetPillarHeight(Uint32 idx, Sint32 height)
+void scAquaRockInsideSetPillarHeight(Uint32 index, Sint32 height)
 {
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	PILLAR_STATE *state = &AquaRockInsidePillars;
 
-	if(idx < PILLAR_ENTRIES) {
-		PILLAR_ENTRY *entry = &state->entries[idx];
+	if(index < PILLAR_ENTRIES) {
+		PILLAR_ENTRY *entry = &state->entries[index];
 
 		if(entry->x != 0) {
 			*(Sint32 *)(RamMapCollision + MAP_SHAPE_RAISED_ALONE * 4) =
@@ -2524,7 +2527,7 @@ void scAquaRockInsideDrawSplashes(void)
 	viewX &= FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	originY = map->origin[1];
-	tile = VramCacheEntries[splashes->vramEntry].ofs >> 5;
+	tile = VramCacheEntries[splashes->vramEntry].offset >> 5;
 	splash = splashes->splashes;
 	i = SPLASH_ENTRIES - 1;
 
@@ -2545,15 +2548,15 @@ void scAquaRockInsideDrawSplashes(void)
 			z = FIXEDtoINT(y + z) + WATER_SPRITE_DEPTH;
 
 			if((Uint32)(x + 15) <= 270 && (Uint32)(screenY + 47) <= 238) {
-				Uint32 *frm = &splash->spr[2];
+				Uint32 *frame = &splash->sprite[2];
 				Sint32	column = x & 511;
 
 				screenY &= 255;
-				splash->spr[0] = 0;
-				splash->spr[1] =
+				splash->sprite[0] = 0;
+				splash->sprite[1] =
 					screenY | OBJ_X(column) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-				*frm = (tile + ((syRandomBelow(3)) << 3)) | priority;
-				syOAMAddSprAtDepthClamped(splash->spr, z);
+				*frame = (tile + ((syRandomBelow(3)) << 3)) | priority;
+				syOAMAddSpriteAtDepthClamped(splash->sprite, z);
 			}
 		}
 		i--;
@@ -2566,17 +2569,17 @@ void scAquaRockInsideDrawSplashes(void)
 void scAquaRockInsideStartSplashes(void)
 {
 	void  *buf;
-	Sint32 pri;
+	Sint32 priority;
 
 	syWordsClearEntry(&AquaRockInsideSplashes, sizeof(BEAM_STATE));
-	buf = syHeapCallAlternatePool(syHeapAlloc, 1024);
+	buf = syHeapCallAlternatePool(syHeapAllocate, 1024);
 	syDecompressTaggedLZ(AquaRockInsideSplashTiles, buf);
 	AquaRockInsideSplashes.vramEntry = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(AquaRockInsideSplashes.vramEntry, 1024, buf);
 	syHeapRelease(buf);
-	pri = EVENT_PASS_TICK - 100;
-	syFieldSetTickEvent(scAquaRockInsideDrawSplashes, pri);
-	fdScriptPlaySnd(SE_SHIMMER);
+	priority = EVENT_PASS_TICK - 100;
+	syFieldSetTickEvent(scAquaRockInsideDrawSplashes, priority);
+	fdScriptPlaySound(SE_SHIMMER);
 }
 
 /* Starts a stream from metatile (x, z), at height y, running in direction
@@ -2590,7 +2593,7 @@ Sint32 scAquaRockInsideAddSplash(Sint32 x, Sint32 y, Sint32 z, Sint32 kind)
 		entry++;
 	SET_POSITION(entry, FIELD_METATILE_CENTER(x), FIELD_METATILE_ORIGIN(y),
 		FIELD_METATILE_CENTER(z));
-	entry->dir = kind;
+	entry->direction = kind;
 }
 
 extern Sint8 AquaRockInsideStreamTurns[];
@@ -2600,12 +2603,12 @@ extern Sint8 AquaRockInsideStreamTurns[];
    open metatile it crosses, stops on a wall kind and counts the metatiles of
    the given kind it reaches; then it clears the splashes past the new count and
    opens the metatiles under those left. */
-Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt)
+Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 target)
 {
 	Sint32		reached = 0;
 	MAP_STATE  *map = RamHeapSlots->mapGrid;
 	BEAM_STATE *state = &AquaRockInsideSplashes;
-	Sint32		cnt = state->cnt;
+	Sint32		count = state->count;
 	Sint32		turn;
 	Bool		again = FALSE;
 	Sint32		i;
@@ -2614,7 +2617,7 @@ Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt)
 
 	for(i = 0; i < 2; i++) {
 		if(stream->x != 0) {
-			splash = &state->splashes[state->cnt];
+			splash = &state->splashes[state->count];
 			do {
 				MAP_METATILE *metatiles =
 					map->layers[MAPGRID_LAYER_GROUND].metatiles;
@@ -2628,18 +2631,18 @@ Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt)
 					splash->y = stream->y;
 					splash->active = 1;
 					splash++;
-					state->cnt++;
+					state->count++;
 					turn = 0;
 					again = TRUE;
 				} else if(kind >= first && kind <= first + 7) {
-					turn = AquaRockInsideStreamTurns[(stream->dir << 3) + kind -
-						first];
+					turn = AquaRockInsideStreamTurns[(stream->direction << 3) +
+						kind - first];
 					if(turn != STREAM_STOP)
-						cnt = state->cnt;
+						count = state->count;
 					again = FALSE;
-				} else if(kind == tgt) {
+				} else if(kind == target) {
 					turn = STREAM_STOP;
-					cnt = state->cnt;
+					count = state->count;
 					reached++;
 					again = FALSE;
 				} else if(kind == 0) {
@@ -2649,18 +2652,18 @@ Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt)
 				if(turn != STREAM_STOP) {
 					/* Each step of `turn` is a quarter turn, one way or the
 					   other. */
-					stream->dir = (Uint32)(stream->dir + turn) % 4;
+					stream->direction = (Uint32)(stream->direction + turn) % 4;
 					syFieldVectorAddPolarOffset(
-						16, stream->dir * DEGtoANG(90), &stream->x);
+						16, stream->direction * DEGtoANG(90), &stream->x);
 				}
 			} while(again != 0);
-			state->cnt = cnt;
+			state->count = count;
 		}
 		stream++;
 	}
-	splash = &state->splashes[cnt];
-	if(cnt < SPLASH_ENTRIES) {
-		i = SPLASH_ENTRIES - cnt;
+	splash = &state->splashes[count];
+	if(count < SPLASH_ENTRIES) {
+		i = SPLASH_ENTRIES - count;
 		do {
 			if(splash->active != 0)
 				splash->active = 0;
@@ -2668,8 +2671,8 @@ Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt)
 		} while(--i != 0);
 	}
 	splash = state->splashes;
-	if(cnt != 0) {
-		i = cnt;
+	if(count != 0) {
+		i = count;
 		do {
 			if(splash->active != 0) {
 				MAP_METATILE *metatiles =
@@ -2697,15 +2700,15 @@ void scVentPuff(Sint32 *pos, Sint32 base)
 {
 	ACTOR *actor = scFieldActorCreate(
 		SPRITE_DUST_CLOUD, pos[0], pos[1], pos[2] - toFIXED(2));
-	Sint32 ang;
+	Sint32 angle;
 
 	if(actor != 0) {
 		actor->bounce = syCos(((Uint32)(syRandom() * (toFIXED(3) / 16)) >> 16) +
 			(toFIXED(3) / 16));
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() << 1) + base;
-		ang = (Uint16)syRandom() - DEGtoANG(180);
-		actor->tmr = ang;
+		angle = (Uint16)syRandom() - DEGtoANG(180);
+		actor->timer = angle;
 		scActorStartScripted(actor, 3);
 		actor->update = (OBJECT_UPDATE)scVentBounce;
 		fdActorSetBlendMode(actor, 1);
@@ -2719,18 +2722,18 @@ void scVentPuff(Sint32 *pos, Sint32 base)
 #include "shared/vent_is_blowing.h"
 
 /* Starts or stops vent index's gust. */
-Sint32 scVentSetBlowing(Sint32 idx, Sint32 blowing)
+Sint32 scVentSetBlowing(Sint32 index, Sint32 blowing)
 {
 	VENT_WORK *state;
 
 	state = VENT_STATE;
-	VENT_AT(state, idx)->entries[0].active = blowing;
+	VENT_AT(state, index)->entries[0].active = blowing;
 }
 
 /* The vents' tick counter, which their cycles time their gusts by. */
 Sint32 scVentGetCounter(void)
 {
-	return VENT_STATE->cnt;
+	return VENT_STATE->count;
 }
 
 #include "shared/vent_advance_counter.h"

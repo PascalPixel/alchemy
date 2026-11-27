@@ -10,8 +10,8 @@
 #include "system.h"
 
 /* The game flag that marks a World Map place visited, from its
-   WORLD_MAP_PLACE.flg. The first of those flags, a place's WORLD_MAP_PLACE.flg
-   being added to it. */
+   WORLD_MAP_PLACE.flags. The first of those flags, a place's
+   WORLD_MAP_PLACE.flags being added to it. */
 #define FLAG_PLACE_VISITED_FIRST  0x180
 #define FLAG_PLACE_VISITED(place) ((place) + FLAG_PLACE_VISITED_FIRST)
 
@@ -27,16 +27,16 @@ typedef enum WORLD_MAP_MARKER_KIND {
    FLAG_PLACE_VISITED(flag)); fdWorldMapPlacesGetTable returns them, ended by a
    zero flag. */
 typedef struct WORLD_MAP_PLACE {
-	Uint8 flg;
+	Uint8 flags;
 	Uint8 value; /* its markers: low nibble, high nibble on the map screen */
 	/* The actor the World Map places there (scWorldMapUpdatePlacedActors): its
 	   sprite, place in pixels and facing, and the flag it is shown by (-1
 	   always; bit 12 set: shown while the rest is set, else while clear). */
-	Sint16 spr;
+	Sint16 sprite;
 	Sint16 x;
 	Sint16 z;
 	Uint16 facing;
-	Sint16 shownFlg;
+	Sint16 shownFlag;
 	/* The scene and entrance whose arrival marks it visited
 	   (fdWorldMapMarkPlaceVisited), and whose area name the map screen shows
 	   for it; an entrance of -1 matches any. */

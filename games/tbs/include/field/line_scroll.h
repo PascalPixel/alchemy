@@ -14,12 +14,15 @@ typedef struct LINE_SCROLL_STATE {
 	BG_SCROLL rows[2][160][3]; /* per page and scanline: BG3, BG2, BG1 */
 	Uint8	  page; /* the page the HBlank DMA shows; the other is built */
 	Uint8	  mode; /* set at the start; not read by name */
-	Uint16 frm; /* ticks built so far, added to BG3's y for the wave's phase */
-	Uint8  unused[4]; /* zeroed with the block; nothing reads or writes it */
-	FIXED  freqX; /* phase per tick and per BG3 row, 16.16 wave table entries */
-	FIXED  freqY; /* phase per tick and per BG3 row, 16.16 wave table entries */
-	FIXED  stepX; /* 16.16 wave table entries a scanline, 256 a cycle */
-	FIXED  stepY; /* 16.16 wave table entries a scanline, 256 a cycle */
+	Uint16
+		  frame; /* ticks built so far, added to BG3's y for the wave's phase */
+	Uint8 unused[4];  /* zeroed with the block; nothing reads or writes it */
+	FIXED frequencyX; /* phase per tick and per BG3 row, 16.16 wave table
+						 entries */
+	FIXED frequencyY; /* phase per tick and per BG3 row, 16.16 wave table
+						 entries */
+	FIXED stepX;	  /* 16.16 wave table entries a scanline, 256 a cycle */
+	FIXED stepY;	  /* 16.16 wave table entries a scanline, 256 a cycle */
 	FIXED
 	ampX; /* 16.16 scale on the sine entry, which is then divided by 256 */
 	FIXED
@@ -28,7 +31,7 @@ typedef struct LINE_SCROLL_STATE {
 
 STATIC_ASSERT(sizeof(LINE_SCROLL_STATE) == 3872);
 STATIC_ASSERT(offsetof(LINE_SCROLL_STATE, page) == 3840);
-STATIC_ASSERT(offsetof(LINE_SCROLL_STATE, freqX) == 3848);
+STATIC_ASSERT(offsetof(LINE_SCROLL_STATE, frequencyX) == 3848);
 
 /* The line scroll's state, HEAP_SLOT_LINE_SCROLL under its own name, which
    scLineScrollInitWave takes for a scene's wave. */

@@ -232,10 +232,10 @@ void scGabombaStatueFightSteel(void)
    10 to 49 ticks. */
 Sint32 scGabombaStatueLookAround(ACTOR *actor)
 {
-	if(actor->lookTmr != 0) {
-		actor->lookTmr--;
+	if(actor->lookTimer != 0) {
+		actor->lookTimer--;
 	} else {
-		actor->lookTmr = (syRandomBelow(40)) + 10;
+		actor->lookTimer = (syRandomBelow(40)) + 10;
 		if(actor->lookTurned != 0) {
 			actor->lookTurned = 0;
 			actor->facing = actor->lookFacing;
@@ -287,11 +287,11 @@ const Uint32 *scGetExits(void)
    ticks. */
 Sint32 scGabombaStatueFlashCog(ACTOR *actor)
 {
-	Uint32 frm = TickCount;
+	Uint32 frame = TickCount;
 
-	if(frm % 10 == 0)
-		((SPR *)actor->spr)->entries[0]->colMode =
-			frm % 20 / 10 + SPRITE_COLOR_BGR;
+	if(frame % 10 == 0)
+		((SPR *)actor->sprite)->entries[0]->colorMode =
+			frame % 20 / 10 + SPRITE_COLOR_BGR;
 	return 1;
 }
 
@@ -299,7 +299,7 @@ Sint32 scGabombaStatueFlashCog(ACTOR *actor)
    flashing cog has two. */
 enum { FIRST_ROPE, SECOND_ROPE };
 
-/* The steps of a cog tooth's turn: its phase, kept in the tooth's sceneCnt,
+/* The steps of a cog tooth's turn: its phase, kept in the tooth's sceneCount,
    counts them, two degrees each. */
 enum { COG_TOOTH_STEPS = 180 };
 
@@ -422,12 +422,12 @@ extern Sint32 GabombaStatueCogDirection;
 void scGabombaStatueGetToothPos(ACTOR *actor, FIXED *x, FIXED *z)
 {
 	FIXED  pos[3];
-	Sint32 ang = actor->sceneCnt * TRIG_TURN / COG_TOOTH_STEPS;
+	Sint32 angle = actor->sceneCount * TRIG_TURN / COG_TOOTH_STEPS;
 	Sint32 turn;
 
 	SET_VECTOR(
 		pos, INTtoFIXED(actor->homeX + 16), toFIXED(16), toFIXED(actor->homeZ));
-	turn = GabombaStatueCogDirection * (TRIG_TURN * 3 / 16) + ang;
+	turn = GabombaStatueCogDirection * (TRIG_TURN * 3 / 16) + angle;
 	syFieldVectorAddPolarOffset(13, turn + DEGtoANG(180), pos);
 	*x = pos[0];
 	*z = pos[2];
@@ -437,15 +437,15 @@ void scGabombaStatueGetToothPos(ACTOR *actor, FIXED *x, FIXED *z)
    direction. */
 Sint32 scGabombaStatueTurnTooth(ACTOR *actor)
 {
-	Uint8 *phase = &actor->sceneCnt;
-	Sint32 ang = *phase * TRIG_TURN / COG_TOOTH_STEPS;
+	Uint8 *phase = &actor->sceneCount;
+	Sint32 angle = *phase * TRIG_TURN / COG_TOOTH_STEPS;
 	Sint32 next;
 
-	actor->priFlg = 0;
+	actor->priorityFlags = 0;
 	actor->x.fixed = INTtoFIXED(actor->homeX + 16);
 	actor->y.fixed = toFIXED(16);
 	actor->z.fixed = toFIXED(actor->homeZ);
-	syFieldVectorAddPolarOffset(13, ang + DEGtoANG(180), &actor->x.fixed);
+	syFieldVectorAddPolarOffset(13, angle + DEGtoANG(180), &actor->x.fixed);
 	next = *phase + GabombaStatueCogDirection;
 	if(next < 0)
 		next = COG_TOOTH_STEPS - 1;
@@ -484,7 +484,7 @@ typedef struct SCENE_STATE {
 	Sint16	 originZ;
 	Sint16	 blocksRaised;
 	Uint8	 unusedAfterBlocksRaised[2];
-	Sint32	 blocksAng;
+	Sint32	 blocksAngle;
 	SPR_VIEW oam[10];
 } SCENE_STATE;
 
@@ -501,7 +501,7 @@ Sint32 scGabombaStatueCircleOwner(ACTOR *actor)
 	ACTOR *owner = &actor->watchedActor->actor;
 
 	if(owner != NULL) {
-		Uint8 *phase = &actor->sceneCnt;
+		Uint8 *phase = &actor->sceneCount;
 
 		actor->x.fixed = owner->x.fixed;
 		actor->y.fixed = owner->y.fixed + toFIXED(16);
@@ -525,23 +525,23 @@ extern ACTOR_PLACE GabombaStatuePinionActorPlacements[];
 const Uint8 *scGetActorPlacements(void)
 {
 	Sint16		 scene = MainRoutineStateWork.next;
-	const Uint8 *tbl = GabombaStatuePlacements;
+	const Uint8 *table = GabombaStatuePlacements;
 
 	if(scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-		tbl = GabombaStatueBoneArmletChestActorPlacements;
+		table = GabombaStatueBoneArmletChestActorPlacements;
 	else if(scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-		tbl = GabombaStatueElixirChestActorPlacements;
+		table = GabombaStatueElixirChestActorPlacements;
 	else if(scene == SCENE_GABOMBA_STATUE_STEEL)
-		tbl = GabombaStatueSteelActorPlacements;
+		table = GabombaStatueSteelActorPlacements;
 	else if(scene == SCENE_GABOMBA_STATUE_MOUSE)
-		tbl = GabombaStatueMouseActorPlacements;
+		table = GabombaStatueMouseActorPlacements;
 	else if(scene == SCENE_GABOMBA_STATUE_COGS)
-		tbl = GabombaStatueCogsActorPlacements;
+		table = GabombaStatueCogsActorPlacements;
 	else if(scene == SCENE_GABOMBA_STATUE_ARROWS)
-		tbl = GabombaStatueArrowsActorPlacements;
+		table = GabombaStatueArrowsActorPlacements;
 	else if(scene == SCENE_GABOMBA_STATUE_PINION)
-		tbl = GabombaStatuePinionActorPlacements;
-	return tbl;
+		table = GabombaStatuePinionActorPlacements;
+	return table;
 }
 
 extern Sint8 GabombaStatueRopeStopSteps[];
@@ -569,7 +569,7 @@ void scGabombaStatueLashRope(void)
 		fdScriptSetFlag(FLAG_COGS_STOPPED);
 		FieldStateWork->psynergy = 0;
 		for(i = 0; i < ROPE_STOP_TICKS; i++) {
-			actor->sceneCnt += GabombaStatueRopeStopSteps[i] * direction;
+			actor->sceneCount += GabombaStatueRopeStopSteps[i] * direction;
 			syWait(1);
 		}
 	}
@@ -583,9 +583,9 @@ ACTOR *scGabombaStatueFindCogUnder(ACTOR *origin, Sint32 id)
 	for(i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
 		ACTOR *cog = fdActorGet(i);
 
-		if(cog != NULL && cog->sprStorageKind == ACTOR_SPRITE_ONE &&
-			((SPR *)cog->spr)->entries[0] != NULL &&
-			((SPR *)cog->spr)->entries[0]->anmId == id) {
+		if(cog != NULL && cog->spriteStorageKind == ACTOR_SPRITE_ONE &&
+			((SPR *)cog->sprite)->entries[0] != NULL &&
+			((SPR *)cog->sprite)->entries[0]->animationId == id) {
 			if(DIFF_WITHIN(cog->x.fixed, origin->x.fixed, toFIXED(24) - 1) &&
 				DIFF_WITHIN(cog->z.fixed, origin->z.fixed, toFIXED(24) - 1))
 				return cog;
@@ -607,9 +607,9 @@ ACTOR *scGabombaStatueFindCogAhead(ACTOR *origin, Sint32 id)
 	for(i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
 		ACTOR *cog = fdActorGet(i);
 
-		if(cog != NULL && cog->sprStorageKind == ACTOR_SPRITE_ONE &&
-			((SPR *)cog->spr)->entries[0] != NULL &&
-			((SPR *)cog->spr)->entries[0]->anmId == id) {
+		if(cog != NULL && cog->spriteStorageKind == ACTOR_SPRITE_ONE &&
+			((SPR *)cog->sprite)->entries[0] != NULL &&
+			((SPR *)cog->sprite)->entries[0]->animationId == id) {
 			if(DIFF_WITHIN(cog->x.fixed, pos[0], toFIXED(24) - 1) &&
 				DIFF_WITHIN(cog->z.fixed, pos[2], toFIXED(24) - 1))
 				return cog;
@@ -619,28 +619,29 @@ ACTOR *scGabombaStatueFindCogAhead(ACTOR *origin, Sint32 id)
 }
 
 /* The leader hops off a cog by dx, dz. */
-void scGabombaStatueHopOffCog(ACTOR *actor, Sint32 dx, Sint32 dz, Sint32 vel)
+void scGabombaStatueHopOffCog(
+	ACTOR *actor, Sint32 dx, Sint32 dz, Sint32 velocity)
 {
-	Uint8 *flg = &actor->motionFlg;
+	Uint8 *flags = &actor->motionFlags;
 	Uint8  saved;
 
 	syImportLeaderStopMoving(actor);
-	saved = *flg;
+	saved = *flags;
 	fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 	syWait(6);
-	fdScriptPlaySnd(SE_JUMP);
+	fdScriptPlaySound(SE_JUMP);
 	fdActorSelectAnimation(actor, ANIM_LEADER_LEAP);
 	actor->speedLimit = toFIXED(3);
 	actor->acceleration = toFIXED(2);
-	actor->velY = vel;
-	*flg &= ACTOR_JUMP_KEEPS_MOTION;
-	fdActorSetSprFlags(actor, 0);
+	actor->velocityY = velocity;
+	*flags &= ACTOR_JUMP_KEEPS_MOTION;
+	fdActorSetSpriteFlags(actor, 0);
 	scFieldActorSetMoveTargetFX(
 		actor, actor->x.fixed + dx, actor->y.fixed, actor->z.fixed + dz);
 	scFieldActorWaitForMove(actor);
-	*flg = saved;
+	*flags = saved;
 	fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	syWait(3);
 }
 
@@ -656,9 +657,9 @@ void scGabombaStatueTurnWithCog(void)
 		ACTOR *near = scGabombaStatueFindCogUnder(leader, SPRITE_GREEN_COG);
 
 		if(near != NULL) {
-			Uint16 ang = near->facing;
+			Uint16 angle = near->facing;
 
-			if(ang == FACING_WEST)
+			if(angle == FACING_WEST)
 				delta = turn;
 		}
 		leader->facing += delta;
@@ -696,28 +697,28 @@ void scGabombaStatueRideBlueCog(void)
 			x = cog->x.fixed + syMulFX(c, dx) + syMulFX(s, dz);
 			z = cog->z.fixed - syMulFX(s, dx) + syMulFX(c, dz);
 		}
-		test.x = x + actor->velX;
+		test.x = x + actor->velocityX;
 		test.y = cog->y.fixed;
-		test.z = z + actor->velZ;
+		test.z = z + actor->velocityZ;
 		if(fdMapGridCheckCollision(actor, &test) == 0) {
-			Sint32 s, c, ang;
-			ang = DEGtoANG(30) - turn;
-			s = syMathSin(ang);
-			c = syCos(ang);
+			Sint32 s, c, angle;
+			angle = DEGtoANG(30) - turn;
+			s = syMathSin(angle);
+			c = syCos(angle);
 			tx = cog->x.fixed + syMulFX(c, dx) + syMulFX(s, dz);
 			tz = cog->z.fixed - syMulFX(s, dx) + syMulFX(c, dz);
-			test.x = tx + actor->velX;
-			test.z = tz + actor->velZ;
+			test.x = tx + actor->velocityX;
+			test.z = tz + actor->velocityZ;
 			if(fdMapGridCheckCollision(actor, &test) == 0) {
 				FIXED  s, c;
-				Sint32 ang;
-				ang = back - DEGtoANG(30);
-				s = syMathSin(ang);
-				c = syCos(ang);
+				Sint32 angle;
+				angle = back - DEGtoANG(30);
+				s = syMathSin(angle);
+				c = syCos(angle);
 				tx = cog->x.fixed + syMulFX(c, dx) + syMulFX(s, dz);
 				tz = cog->z.fixed - syMulFX(s, dx) + syMulFX(c, dz);
-				test.x = tx + actor->velX;
-				test.z = tz + actor->velZ;
+				test.x = tx + actor->velocityX;
+				test.z = tz + actor->velocityZ;
 				if(fdMapGridCheckCollision(actor, &test) == 0) {
 					actor->x.fixed = x;
 					actor->z.fixed = z;
@@ -740,7 +741,7 @@ void scGabombaStatueRideSlidingCog(void)
 		Sint32 dx = *speed * toFIXED(0.5);
 
 		if(cog != NULL) {
-			FIXED diff, x, cogX;
+			FIXED difference, x, cogX;
 
 			if(cog->facing == FACING_WEST)
 				dx = -dx;
@@ -751,16 +752,17 @@ void scGabombaStatueRideSlidingCog(void)
 			x = actor->x.fixed + dx;
 			actor->x.fixed = x;
 			cogX = cog->x.fixed;
-			diff = cogX - x;
-			if(diff >= 0 ? diff >= toFIXED(20) : x - cogX >= toFIXED(20)) {
+			difference = cogX - x;
+			if(difference >= 0 ? difference >= toFIXED(20)
+							   : x - cogX >= toFIXED(20)) {
 				Sint32 sign;
-				FIXED  ofs;
+				FIXED  offset;
 
 				sign = 0;
-				ofs = actor->x.fixed - cogX;
-				if(ofs != 0) {
+				offset = actor->x.fixed - cogX;
+				if(offset != 0) {
 					sign = 1;
-					if(ofs <= 0)
+					if(offset <= 0)
 						sign = -sign;
 				}
 				scGabombaStatueHopOffCog(
@@ -779,8 +781,8 @@ void scGabombaStatueEndRide(ACTOR *actor)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(6);
 	actor->z.fixed = toFIXED(247.25707);
 	actor->facing = FACING_SOUTH;
@@ -797,7 +799,7 @@ void scGabombaStatueEndRide(ACTOR *actor)
 		actor->y.fixed -= toFIXED(3) / 2;
 		syWait(1);
 		if(i == 10)
-			fdScriptPlaySnd(SE_DUST_PUFF);
+			fdScriptPlaySound(SE_DUST_PUFF);
 		/* DEAD: the loop ends before tick 20, so the screen is never taken out
 		   here; the ROM keeps the test and the transition. */
 		if(i == 20) {
@@ -818,7 +820,7 @@ void scGabombaStatueRideRoller(void)
 	Sint32 speed;
 	FIXED  d;
 	Sint32 sign, x;
-	FIXED  z, rollerZ, ofs;
+	FIXED  z, rollerZ, offset;
 
 	if(GabombaStatueCogDirection == 0)
 		return;
@@ -836,10 +838,10 @@ void scGabombaStatueRideRoller(void)
 		d = rollerZ - z;
 		if(d >= 0 ? d >= toFIXED(20) : z - rollerZ >= toFIXED(20)) {
 			sign = 0;
-			ofs = actor->z.fixed - rollerZ;
-			if(ofs != 0) {
+			offset = actor->z.fixed - rollerZ;
+			if(offset != 0) {
 				sign = 1;
-				if(ofs <= 0)
+				if(offset <= 0)
 					sign = -sign;
 			}
 			scGabombaStatueHopOffCog(actor, 0, sign * toFIXED(12), toFIXED(2));
@@ -858,10 +860,10 @@ void scGabombaStatueRideRoller(void)
 	d = rollerZ - z;
 	if(d >= 0 ? d >= toFIXED(20) : z - rollerZ >= toFIXED(20)) {
 		sign = 0;
-		ofs = actor->z.fixed - rollerZ;
-		if(ofs != 0) {
+		offset = actor->z.fixed - rollerZ;
+		if(offset != 0) {
 			sign = 1;
-			if(ofs <= 0)
+			if(offset <= 0)
 				sign = -sign;
 		}
 		scGabombaStatueHopOffCog(actor, 0, sign * toFIXED(12), toFIXED(2));
@@ -948,7 +950,7 @@ void scGabombaStatueMouseShowsTheWay(ACTOR *actor)
 		EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	syScriptCameraFollowActor(ACTOR_MOUSE, 1);
 	syFieldScriptWait(30);
-	fdActorGet(ACTOR_MOUSE)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_MOUSE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorSetAnimation(ACTOR_MOUSE, 1);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 320, 240);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 304, 216);
@@ -957,7 +959,7 @@ void scGabombaStatueMouseShowsTheWay(ACTOR *actor)
 	syFieldScriptWait(20);
 	fdActorFaceActor(ACTOR_MOUSE, MainRoutineStateWork.leaderActorId, 0);
 	syFieldScriptWait(10);
-	fdScriptPlaySnd(SE_VOICE_GIRL_C);
+	fdScriptPlaySound(SE_VOICE_GIRL_C);
 	{
 		Sint32 emote = EMOTE_IN_FRONT | EMOTE_EXCLAMATION, ticks = 30;
 
@@ -968,25 +970,25 @@ void scGabombaStatueMouseShowsTheWay(ACTOR *actor)
 	syFieldScriptWait(2);
 	fdActorFaceDirection(ACTOR_MOUSE, FACING_WEST, 0);
 	syFieldScriptWait(15);
-	fdScriptPlaySnd(SE_JUMP);
-	fdActorGet(ACTOR_MOUSE)->velY = toFIXED(4);
+	fdScriptPlaySound(SE_JUMP);
+	fdActorGet(ACTOR_MOUSE)->velocityY = toFIXED(4);
 	fdActorSetSpeed(ACTOR_MOUSE, 4);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 312, 200);
-	fdScriptPlaySnd(SE_JUMP);
-	fdActorGet(ACTOR_MOUSE)->velY = toFIXED(6);
+	fdScriptPlaySound(SE_JUMP);
+	fdActorGet(ACTOR_MOUSE)->velocityY = toFIXED(6);
 	fdActorSetSpeed(ACTOR_MOUSE, 4);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 312, 168);
 	fdActorSetSpeed(ACTOR_MOUSE, 2);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 328, 152);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	syFieldScriptWait(15);
-	fdScriptPlaySnd(SE_JUMP);
-	fdActorGet(ACTOR_MOUSE)->velY = toFIXED(6);
+	fdScriptPlaySound(SE_JUMP);
+	fdActorGet(ACTOR_MOUSE)->velocityY = toFIXED(6);
 	fdActorSetSpeed(ACTOR_MOUSE, 4);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 360, 152);
 	syFieldScriptWait(15);
-	fdScriptPlaySnd(SE_JUMP);
-	fdActorGet(ACTOR_MOUSE)->velY = toFIXED(6);
+	fdScriptPlaySound(SE_JUMP);
+	fdActorGet(ACTOR_MOUSE)->velocityY = toFIXED(6);
 	fdActorSetSpeed(ACTOR_MOUSE, 2);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 360, 184);
 	fdActorSetSpeed(ACTOR_MOUSE, 2);
@@ -994,8 +996,8 @@ void scGabombaStatueMouseShowsTheWay(ACTOR *actor)
 	fdActorWalkToAndWait(ACTOR_MOUSE, 392, 200);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 408, 184);
 	syFieldScriptWait(15);
-	fdScriptPlaySnd(SE_JUMP);
-	fdActorGet(ACTOR_MOUSE)->velY = toFIXED(6);
+	fdScriptPlaySound(SE_JUMP);
+	fdActorGet(ACTOR_MOUSE)->velocityY = toFIXED(6);
 	fdActorSetSpeed(ACTOR_MOUSE, 4);
 	fdActorWalkToAndWait(ACTOR_MOUSE, 440, 184);
 	fdActorSetPos(ACTOR_MOUSE, 0, 0);
@@ -1004,7 +1006,7 @@ void scGabombaStatueMouseShowsTheWay(ACTOR *actor)
 }
 
 void scGabombaStatueSendCharge(
-	Sint32 id, Sint32 colMode, Sint32 statueId, Sint32 ang);
+	Sint32 id, Sint32 colorMode, Sint32 statueId, Sint32 angle);
 
 /* How the charges reached the statue in the middle (scGabombaStatueRunCharges),
    which decides how the ceremony outside goes on. */
@@ -1053,7 +1055,7 @@ void scGabombaStatueHearTheOffering(void)
 	fdScriptSetFlag(FLAG_OFFERING_HEARD);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	scGabombaStatueStopClock();
 	syFieldScriptWait(40);
 	syFieldScriptSetMessageId(MsgGabombaAcceptOffering);
@@ -1061,30 +1063,32 @@ void scGabombaStatueHearTheOffering(void)
 	fdScriptShowMessage(ACTOR_AKAFUBU, 0);
 	fdCameraMoveTo(392, CAMERA_KEEP, 256, 1);
 	fdCameraWaitForArrival();
-	fdScriptPlaySnd(SE_SHIMMER);
+	fdScriptPlaySound(SE_SHIMMER);
 	syWait(1);
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeApplyTarget(RGB_WHITE, 0);
 	fdPaletteFadeInterpolate(40);
 	syWait(80);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
-	scFieldActorSetSprCol(
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	scFieldActorSetSpriteColor(
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
 	scGabombaStatueReleaseCharges();
 	syWait(1);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeInterpolate(10);
 	syWait(20);
-	fdScriptPlaySnd(SE_PSYNERGY_START);
-	scFieldActorSetSprCol(
+	fdScriptPlaySound(SE_PSYNERGY_START);
+	scFieldActorSetSpriteColor(
 		fdActorGet(ACTOR_BLUE_ORB_STATUE), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_WHITE);
 	syWait(8);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_BGR);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_BGR);
+	scFieldActorSetSpriteColor(
 		fdActorGet(ACTOR_BLUE_ORB_STATUE), SPRITE_COLOR_NORMAL);
 	syWait(8);
-	fdScriptPlaySnd(MUS_RITUALS);
+	fdScriptPlaySound(MUS_RITUALS);
 	result = scGabombaStatueRunCharges(ACTOR_CHARGE_A, 1);
 	fdActorTableSnapshot();
 	FieldStateWork->transition =
@@ -1123,23 +1127,23 @@ extern CUE GabombaStatuePinionCues[];
 const Uint8 *scGetCues(void)
 {
 	Sint16		 scene = MainRoutineStateWork.next;
-	const Uint8 *tbl = GabombaStatueCues;
+	const Uint8 *table = GabombaStatueCues;
 
 	if(scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
-		tbl = GabombaStatueBoneArmletChestCues;
+		table = GabombaStatueBoneArmletChestCues;
 	else if(scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
-		tbl = GabombaStatueElixirChestCues;
+		table = GabombaStatueElixirChestCues;
 	else if(scene == SCENE_GABOMBA_STATUE_STEEL)
-		tbl = GabombaStatueSteelCues;
+		table = GabombaStatueSteelCues;
 	else if(scene == SCENE_GABOMBA_STATUE_MOUSE)
-		tbl = GabombaStatueMouseCues;
+		table = GabombaStatueMouseCues;
 	else if(scene == SCENE_GABOMBA_STATUE_COGS)
-		tbl = GabombaStatueCogsCues;
+		table = GabombaStatueCogsCues;
 	else if(scene == SCENE_GABOMBA_STATUE_ARROWS)
-		tbl = GabombaStatueArrowsCues;
+		table = GabombaStatueArrowsCues;
 	else if(scene == SCENE_GABOMBA_STATUE_PINION)
-		tbl = GabombaStatuePinionCues;
-	return tbl;
+		table = GabombaStatuePinionCues;
+	return table;
 }
 
 /* Felix walks to the top of the ladder at x, z, turns his back and climbs down
@@ -1152,18 +1156,18 @@ void scGabombaStatueClimbDownLadder(Sint32 x, Sint32 z)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, x, z);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	scFieldActorWaitForScriptEndById(MainRoutineStateWork.leaderActorId);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	scFieldActorSetMoveTarget(actor, x, -12, z);
 	scFieldActorWaitForMove(actor);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(state->stepCue);
@@ -1350,18 +1354,18 @@ void scGabombaStatueClimbDownArrowsLadder(void)
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 472, 144);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	scFieldActorWaitForScriptEndById(MainRoutineStateWork.leaderActorId);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	scFieldActorSetMoveTarget(leader, 472, 0, 156);
 	scFieldActorWaitForMove(leader);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(state->stepCue);
@@ -1374,7 +1378,7 @@ void scGabombaStatueClimbDownArrowsLadder(void)
 	{ \
 		fdScriptStart(); \
 		syFieldScriptEndLastingPsynergy(0); \
-		fdScriptPlaySnd(SE_GABOMBA_STATUE_HOLE); \
+		fdScriptPlaySound(SE_GABOMBA_STATUE_HOLE); \
 		fdActorSetSpeedAndAcceleration( \
 			MainRoutineStateWork.leaderActorId, 1.6, 1.6); \
 		fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, x, z); \
@@ -1395,14 +1399,14 @@ void scGabombaStatuePinionsThrowLeaderSouth(void)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_GABOMBA_STATUE_HOLE);
-	actor->motionFlg = 0;
+	fdScriptPlaySound(SE_GABOMBA_STATUE_HOLE);
+	actor->motionFlags = 0;
 	fdActorSetSpeedAndAcceleration(
 		MainRoutineStateWork.leaderActorId, 1.6, 1.6);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 152, 488);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(8);
-	fdScriptPlaySnd(SE_RATTLE);
+	fdScriptPlaySound(SE_RATTLE);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_LEAN_BACK);
 	syFieldScriptWait(20);
@@ -1460,9 +1464,9 @@ void scGabombaStatueHideLadderTopBlocks(void)
 /* Pound on one of the two stakes either side of the flashing cog in the south
    of its room, metatiles (20, 30) and (24, 30), drives it into the floor. Once
    both are down, the cogs turn the other way. */
-void scGabombaStatuePoundStake(Sint32 landed, Sint32 frm)
+void scGabombaStatuePoundStake(Sint32 landed, Sint32 frame)
 {
-	fdPoundSinkTarget(GabombaStatueStakes, landed, frm);
+	fdPoundSinkTarget(GabombaStatueStakes, landed, frame);
 	if(fdScriptGetFlag(FLAG_GABOMBA_FIRST_STAKE_POUNDED) &&
 		fdScriptGetFlag(FLAG_GABOMBA_SECOND_STAKE_POUNDED))
 		FieldStateWork->raisedCue = RAISED_COGS_TURN_BACK;
@@ -1477,15 +1481,15 @@ void scGabombaStatueCogsTurnBack(void)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.6);
 	fdCameraMoveTo(360, 0, 496, 1);
 	fdCameraWaitForArrival();
-	fdScriptPlaySnd(SE_GABOMBA_STATUE_COGS);
+	fdScriptPlaySound(SE_GABOMBA_STATUE_COGS);
 	scGabombaStatueTurnCogs(0);
 	syFieldScriptWait(40);
-	fdScriptPlaySnd(SE_LEMURIAN_SHIP_LIFT_FAST);
-	actor->motionFlg = 0;
+	fdScriptPlaySound(SE_LEMURIAN_SHIP_LIFT_FAST);
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(8);
 	syFieldScriptWait(10);
 	actor->y.fixed = 0;
@@ -1515,7 +1519,7 @@ void scGabombaStatueStakeStandsUp(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(SE_RISING_CHIMES);
+	fdScriptPlaySound(SE_RISING_CHIMES);
 	fdActorSelectAnimation(actor, 5);
 	actor->scaleY = toFIXED(1);
 	fdScriptEnd();
@@ -1533,9 +1537,9 @@ void scGabombaStatueCheckOfferingClock(void)
 void scGabombaStatueHideActor(Sint32 id)
 {
 	fdActorDisableById(id);
-	scFieldActorSetSprCol(fdActorGet(id), SPRITE_COLOR_HIDDEN);
-	scFieldActorSetSprPriority(id, 1);
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	scFieldActorSetSpriteColor(fdActorGet(id), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpritePriority(id, 1);
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* Coming back to the same spot hides the ladder-top blocks again unless they
@@ -1562,7 +1566,7 @@ void scGabombaStatueRestoreLadderTopBlocks(void)
 			ACTOR *actor = fdActorGet(id); \
 \
 			scGabombaStatueHideActor(id); \
-			actor->motionFlg = 0; \
+			actor->motionFlags = 0; \
 			actor->y.fixed = toFIXED(36); \
 		} \
 		scGabombaStatueRestoreLadderTopBlocks(); \
@@ -1596,11 +1600,11 @@ void scGabombaStatuePauseCogsInMenus(void)
 		{
 			ACTOR *actor = fdActorGet(i);
 
-			if(actor != NULL && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-				SPR_ANIMATION *part = ((SPR *)actor->spr)->entries[0];
+			if(actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+				SPR_ANIMATION *part = ((SPR *)actor->sprite)->entries[0];
 
 				if(part != NULL) {
-					switch(part->anmId) {
+					switch(part->animationId) {
 					case SPRITE_BLUE_COG:
 					case SPRITE_GREEN_COG:
 					case SPRITE_RED_COG:
@@ -1676,9 +1680,9 @@ void scGabombaStatueDrawCogMetatiles(void)
 		actor = fdActorGetById(i);
 		if(actor == 0)
 			continue;
-		if(actor->sprStorageKind != ACTOR_SPRITE_ONE)
+		if(actor->spriteStorageKind != ACTOR_SPRITE_ONE)
 			continue;
-		ticks = (Sint16 *)((SPR *)actor->spr)->entries[0];
+		ticks = (Sint16 *)((SPR *)actor->sprite)->entries[0];
 		if(ticks == 0)
 			continue;
 		found = 0;
@@ -1772,10 +1776,10 @@ void scGabombaStatueDrawCogMetatiles(void)
 			break;
 		}
 		if(found) {
-			actor->collisionFlg = 0;
-			actor->motionFlg = 0;
-			actor->priFlg = 0;
-			fdActorSetSprFlags(actor, 0);
+			actor->collisionFlags = 0;
+			actor->motionFlags = 0;
+			actor->priorityFlags = 0;
+			fdActorSetSpriteFlags(actor, 0);
 		}
 	}
 	sySetTickEvent(scGabombaStatuePauseCogsInMenus, EVENT_PASS_TICK);
@@ -1799,12 +1803,12 @@ void scGabombaStatueFadeByDepth(void)
 void scGabombaStatueSetCogTurn(Sint32 id, Sint32 direction, Sint32 value)
 {
 	ACTOR *actor = fdActorGet(id);
-	void  *anm = actor->spr;
+	void  *animation = actor->sprite;
 
 	fdActorSelectAnimation(
 		actor, GabombaStatueCogAnimations[(direction + 1) & 3]);
-	actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
-	fdSprSetAnimationTimers(anm, value);
+	actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
+	fdSpriteSetAnimationTimers(animation, value);
 }
 
 /* Sets the cogs' direction and turns every cog of the room that way. */
@@ -1848,7 +1852,7 @@ void scGabombaStatueTurnCogs(Sint32 direction)
 			fdMapGridCopyMetatileAttributes(35, 12, 1, 3, 27, 12);
 	} else if(scene == SCENE_GABOMBA_STATUE_ARROWS) {
 		fdActorSetAnimation(ACTOR_CHARGE_C, 5);
-		fdActorSetSprFlags(fdActorGet(ACTOR_CHARGE_C), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_CHARGE_C), 0);
 	} else if(scene == SCENE_GABOMBA_STATUE_PINION) {
 		scGabombaStatueSetCogTurn(ACTOR_PINION_A, direction, 0);
 		scGabombaStatueSetCogTurn(ACTOR_PINION_B, direction, 1);
@@ -1865,23 +1869,23 @@ void scGabombaStatueTurnCogs(Sint32 direction)
 extern Sint32 GabombaStatueChargeScript[];
 
 /* Sets charge id circling the orb statue statueId from the angle given, tinted
-   colMode. */
+   colorMode. */
 void scGabombaStatueSendCharge(
-	Sint32 id, Sint32 colMode, Sint32 statueId, Sint32 ang)
+	Sint32 id, Sint32 colorMode, Sint32 statueId, Sint32 angle)
 {
 	ACTOR *charge = fdActorGet(id);
-	ACTOR *tgt = fdActorGet(statueId);
+	ACTOR *target = fdActorGet(statueId);
 
 	fdActorSelectAnimation(charge, 0);
 	fdActorStartScript(charge, GabombaStatueChargeScript);
-	fdActorSetSprFlags(charge, 0);
-	charge->motionFlg = 0;
-	charge->watchedActor = (FIELD_OBJECT *)tgt;
-	/* sceneCnt is its place on the circle, in 256ths of a turn, and sceneByte
+	fdActorSetSpriteFlags(charge, 0);
+	charge->motionFlags = 0;
+	charge->watchedActor = (FIELD_OBJECT *)target;
+	/* sceneCount is its place on the circle, in 256ths of a turn, and sceneByte
 	   its own actor id until the run sets chargeState there. */
-	charge->sceneCnt = ang / (TRIG_TURN / 256);
+	charge->sceneCount = angle / (TRIG_TURN / 256);
 	charge->sceneByte = id;
-	fdActorSetSprColMode(charge, colMode);
+	fdActorSetSpriteColorMode(charge, colorMode);
 }
 
 #undef DIFF_WITHIN
@@ -1912,34 +1916,34 @@ void scGabombaStatueLandFromFall(void)
 	actor->y.fixed = toFIXED(130);
 	actor->gravity = toFIXED(1) / 2;
 	actor->bounce = 0;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SE_DUST_PUFF);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdScriptPlaySound(SE_DUST_PUFF);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	for(i = 0; i <= DUST_RING_PUFFS; i++) {
-		Sint32 ang;
-		FIXED  vel[3];
+		Sint32 angle;
+		FIXED  velocity[3];
 
-		ang = i * FACING_STEP;
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = syMathSin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
-		vel[2] += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
+		angle = i * FACING_STEP;
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = syMathSin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += (syRandomBelow(toFIXED(3) / 4)) - toFIXED(3) / 8;
+		velocity[2] += (syRandomBelow(toFIXED(3) / 8)) - toFIXED(3) / 16;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
-	fdScriptPlaySnd(SE_THUMP);
+	fdScriptPlaySound(SE_THUMP);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_SIT);
@@ -1966,7 +1970,7 @@ void scGabombaStatueFocusEnergies(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(40);
@@ -2012,11 +2016,11 @@ void scGabombaStatueFocusEnergies(void)
 	fdActorGet(MainRoutineStateWork.leaderActorId)->facing = FACING_SOUTH;
 	fdActorGet(ACTOR_SHEBA)->facing = FACING_SOUTH;
 	fdActorGet(ACTOR_JENNA)->facing = FACING_SOUTH;
-	fdActorGet(ACTOR_PIERS)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(ACTOR_PIERS)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_SHEBA)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_JENNA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_PIERS, 400, 272);
 	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 420, 272);
 	fdActorWalkTo(ACTOR_SHEBA, 444, 272);
@@ -2039,7 +2043,7 @@ void scGabombaStatueWatchTheChargesStick(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdActorSetPosAndFacing(
 		MainRoutineStateWork.leaderActorId, toFIXED(348), toFIXED(312), south);
 	fdActorSetPosAndFacing(ACTOR_PIERS, toFIXED(330), toFIXED(312), south);
@@ -2053,7 +2057,7 @@ void scGabombaStatueWatchTheChargesStick(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(40);
-	fdScriptPlaySnd(SE_SHIMMER);
+	fdScriptPlaySound(SE_SHIMMER);
 	syWait(1);
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, 0);
 	fdPaletteFadeApplyTarget(RGB_WHITE, 0);
@@ -2075,28 +2079,30 @@ void scGabombaStatueWatchTheChargesStick(void)
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 60);
-	fdScriptPlaySnd(SE_PSYNERGY_START);
-	scFieldActorSetSprCol(
+	fdScriptPlaySound(SE_PSYNERGY_START);
+	scFieldActorSetSpriteColor(
 		fdActorGet(ACTOR_BLUE_ORB_STATUE), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_WHITE);
 	syWait(8);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_BGR);
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_BGR);
+	scFieldActorSetSpriteColor(
 		fdActorGet(ACTOR_BLUE_ORB_STATUE), SPRITE_COLOR_NORMAL);
 	syWait(8);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->lookTmr =
+	fdActorGet(MainRoutineStateWork.leaderActorId)->lookTimer =
 		(syRandomBelow(40)) + 10;
-	fdActorGet(ACTOR_PIERS)->lookTmr = (syRandomBelow(40)) + 10;
-	fdActorGet(ACTOR_JENNA)->lookTmr = (syRandomBelow(40)) + 10;
-	fdActorGet(ACTOR_SHEBA)->lookTmr = (syRandomBelow(40)) + 10;
-	fdActorGet(ACTOR_KRADEN)->lookTmr = (syRandomBelow(40)) + 10;
+	fdActorGet(ACTOR_PIERS)->lookTimer = (syRandomBelow(40)) + 10;
+	fdActorGet(ACTOR_JENNA)->lookTimer = (syRandomBelow(40)) + 10;
+	fdActorGet(ACTOR_SHEBA)->lookTimer = (syRandomBelow(40)) + 10;
+	fdActorGet(ACTOR_KRADEN)->lookTimer = (syRandomBelow(40)) + 10;
 	fdActorSetScript(MainRoutineStateWork.leaderActorId,
 		GabombaStatueLookNorthAndEastScript);
 	fdActorSetScript(ACTOR_PIERS, GabombaStatueLookNorthAndEastScript);
 	fdActorSetScript(ACTOR_JENNA, GabombaStatueLookNorthAndWestScript);
 	fdActorSetScript(ACTOR_SHEBA, GabombaStatueLookNorthAndWestScript);
 	fdActorSetScript(ACTOR_KRADEN, GabombaStatueLookNorthAndWestScript);
-	fdScriptPlaySnd(MUS_RITUALS);
+	fdScriptPlaySound(MUS_RITUALS);
 	scGabombaStatueRunCharges(ACTOR_CHARGE_A, 0);
 	syFieldScriptWait(80);
 	fdScriptSetFlag(FLAG_GABOMBA_MUSIC_SILENCED);
@@ -2137,7 +2143,7 @@ void scGabombaStatueSeeHowItWorks(void)
 	syFieldScriptSetMessageId(MsgGabombaUnderstandsChannel);
 	/* "Ah! So that's how it works!" */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(392, CAMERA_KEEP, 292, 1);
 	fdCameraWaitForArrival();
@@ -2283,7 +2289,7 @@ void scGabombaStatueSeeHowItWorks(void)
    party tells him how it mended the channel and where the orb went. */
 void scGabombaStatueSawEnergyFlow(void)
 {
-	Sint32 idx = scGabombaStatueGetPuzzleSeed();
+	Sint32 index = scGabombaStatueGetPuzzleSeed();
 	FIXED  x;
 	FIXED  z;
 	ACTOR *hand;
@@ -2293,7 +2299,7 @@ void scGabombaStatueSawEnergyFlow(void)
 	syFieldScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	scGabombaStatueSetUpChannelPuzzle(CHANNEL_ORIGIN_COLUMN, CHANNEL_ORIGIN_ROW,
-		GabombaStatueChannelSeeds[idx], ACTOR_BLOCK_A);
+		GabombaStatueChannelSeeds[index], ACTOR_BLOCK_A);
 	fdActorSetAnimation(ACTOR_ARROWS_STAKE, 5);
 	fdActorSetPos(ACTOR_CHARGE_A, 0, 0);
 	fdActorSetPos(ACTOR_CHARGE_B, 0, 0);
@@ -2343,8 +2349,8 @@ void scGabombaStatueSawEnergyFlow(void)
 	x = FIELD_METATILE_ORIGIN(x) + FIELD_METATILE_CENTER(CHANNEL_ORIGIN_COLUMN);
 	z = FIELD_METATILE_ORIGIN(z) + FIELD_METATILE_CENTER(CHANNEL_ORIGIN_ROW);
 	hand = scFieldActorCreate(SPRITE_POINTING_HAND, x, 0, z);
-	hand->motionFlg |= ACTOR_FLOATS;
-	fdActorSetSprFlags(hand, 0);
+	hand->motionFlags |= ACTOR_FLOATS;
+	fdActorSetSpriteFlags(hand, 0);
 	fdActorSelectAnimation(hand, 1);
 	syWait(1);
 	actor = fdActorGet(ACTOR_JENNA);
@@ -2411,7 +2417,7 @@ void scGabombaStatueKradenNoticesTiming(void)
 {
 	scGabombaStatueStopClock();
 	fdActorPlaceOnActor(ACTOR_KRADEN, MainRoutineStateWork.leaderActorId);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_KRADEN), SPRITE_COLOR_HIDDEN);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_KRADEN), SPRITE_COLOR_HIDDEN);
 	syWait(10);
 	syFieldScriptSetMessageId(MsgGabombaChannelTiming);
 	/* "It looks like just fixing the channel should do the trick...
@@ -2441,7 +2447,7 @@ Sint32 scInit(void)
 			scGabombaStatueTurnCogs(1);
 		scGabombaStatueDrawCogMetatiles();
 	}
-	fdActorGet(syFieldPartyGetLeaderActor())->priFlg |=
+	fdActorGet(syFieldPartyGetLeaderActor())->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
@@ -2486,9 +2492,9 @@ void scGabombaStatueInitBoneArmletChest(void)
    the script inline over the scene's import of fdRopePlace, as script_inline.h
    writes them. */
 static inline void scFieldRopePlace(
-	Sint32 idx, Sint32 flg, Sint32 firstPost, Sint32 secondPost)
+	Sint32 index, Sint32 flag, Sint32 firstPost, Sint32 secondPost)
 {
-	scGabombaStatuePlaceRope(idx, flg, firstPost, secondPost);
+	scGabombaStatuePlaceRope(index, flag, firstPost, secondPost);
 }
 
 /* Sets up the Elixir chest's room: its pinions let go of the leader coming in
@@ -2565,19 +2571,24 @@ void scGabombaStatueInitArrows(void)
 	ACTOR *leader;
 	Sint32 seed;
 
-	scFieldActorSetSprCol(fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_BGR);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_RED_ORB_STATUE), SPRITE_COLOR_BGR);
 	sySetTickEvent((Sint32)scGabombaStatueFadeByDepth, EVENT_PASS_TICK);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_CHARGE_A), SPRITE_COLOR_GREEN_TINT);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_CHARGE_B), SPRITE_COLOR_GREEN_TINT);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_CHARGE_C), SPRITE_COLOR_RED_TINT);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_CHARGE_D), SPRITE_COLOR_RED_TINT);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_A), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_B), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_C), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_D), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_E), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_F), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BLOCK_G), 0);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_CHARGE_A), SPRITE_COLOR_GREEN_TINT);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_CHARGE_B), SPRITE_COLOR_GREEN_TINT);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_CHARGE_C), SPRITE_COLOR_RED_TINT);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_CHARGE_D), SPRITE_COLOR_RED_TINT);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_A), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_B), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_C), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_D), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_E), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_F), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BLOCK_G), 0);
 	if(fdScriptGetFlag(FLAG_GABOMBA_RESPONDED) &&
 		!fdScriptGetFlag(FLAG_AKAFUBU_OFFERED_HELP)) {
 		scGabombaStatueSawEnergyFlow();
@@ -2642,7 +2653,7 @@ void scGabombaStatueInitArrows(void)
    it. */
 void scGabombaStatueInitPinion(void)
 {
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(MainRoutineStateWork.entrance ==
 		GABOMBA_STATUE_PINION_FROM_KIBOMBO_STATUE_GROUNDS) {
@@ -2651,9 +2662,9 @@ void scGabombaStatueInitPinion(void)
 	}
 }
 
-static __inline__ void *scMemAlloc(Sint32 size)
+static __inline__ void *scMemAllocate(Sint32 size)
 {
-	return syHeapAlloc(size);
+	return syHeapAllocate(size);
 }
 
 /* A raised block's picture: 16 pixels square in 256 colours, one for each piece
@@ -2664,7 +2675,7 @@ enum { BLOCK_PICTURE_BYTES = 16 * 16 };
 void scGabombaStatueLoadBlockPictures(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
-	void		*buf = scMemAlloc(PIECE_KINDS * BLOCK_PICTURE_BYTES);
+	void		*buf = scMemAllocate(PIECE_KINDS * BLOCK_PICTURE_BYTES);
 	Sint32		 handle;
 
 	syDecompressTaggedLZ(FieldCachedTilesA, buf);
@@ -2715,12 +2726,12 @@ void scGabombaStatueRedrawChannel(void)
 {
 	SCENE_STATE *state = &SceneStateWork;
 	Uint32		 row;
-	Uint32		 col;
+	Uint32		 column;
 
 	for(row = 0; row < CHANNEL_ROWS; row++)
-		for(col = 0; col < CHANNEL_COLUMNS; col++) {
+		for(column = 0; column < CHANNEL_COLUMNS; column++) {
 			PUZZLE_METATILE *metatile =
-				state->metatiles[0] + (row * CHANNEL_COLUMNS + col);
+				state->metatiles[0] + (row * CHANNEL_COLUMNS + column);
 			Sint32 occupied = metatile->occupied;
 
 			if(fdScriptGetFlag(FLAG_GABOMBA_RESPONDED) &&
@@ -2730,15 +2741,15 @@ void scGabombaStatueRedrawChannel(void)
 			}
 			if(occupied == BLOCK_RAISED)
 				fdMapGridCopyMetatiles(BLOCK_NONE, PIECE_SOCKET, 1, 1,
-					state->originX + col, state->originZ + row);
+					state->originX + column, state->originZ + row);
 			else if(occupied == BLOCK_IN_PLACE)
 				fdMapGridCopyMetatiles(BLOCK_IN_PLACE,
-					state->metatiles[row][col].kind, 1, 1, state->originX + col,
-					state->originZ + row);
+					state->metatiles[row][column].kind, 1, 1,
+					state->originX + column, state->originZ + row);
 			else
 				fdMapGridCopyMetatiles(occupied,
-					state->metatiles[row][col].kind, 1, 1, state->originX + col,
-					state->originZ + row);
+					state->metatiles[row][column].kind, 1, 1,
+					state->originX + column, state->originZ + row);
 		}
 }
 
@@ -2762,7 +2773,7 @@ enum {
 Sint32 scGabombaStatueLayChannel(Sint32 seed)
 {
 	SCENE_STATE *state = &SceneStateWork;
-	Sint32		 row, col, n, blueShared, redShared, crossed, tries, blocksLeft,
+	Sint32 row, column, n, blueShared, redShared, crossed, tries, blocksLeft,
 		westward;
 	Sint32			 piece, paths;
 	PUZZLE_METATILE *metatile;
@@ -2787,9 +2798,10 @@ retry:
 	state->metatiles[CHANNEL_STATUES_ROW][CHANNEL_RED_STATUE_COLUMN + 1]
 		.blocked = 1;
 	for(row = 0; row < CHANNEL_ROWS; row++)
-		for(col = 0; col < CHANNEL_COLUMNS; col++)
-			fdMapGridCopyMetatiles(BLOCK_NONE, state->metatiles[row][col].kind,
-				1, 1, state->originX + col, state->originZ + row);
+		for(column = 0; column < CHANNEL_COLUMNS; column++)
+			fdMapGridCopyMetatiles(BLOCK_NONE,
+				state->metatiles[row][column].kind, 1, 1,
+				state->originX + column, state->originZ + row);
 	/* The charges sent east from the blue statue and west from the red cross on
 	   a piece of two curves between the statues, the crossing's metatile
 	   counted in neither part of their paths. */
@@ -2835,9 +2847,9 @@ retry:
 	redShared = 0;
 	crossed = 0;
 	for(row = 0; row < CHANNEL_ROWS; row++)
-		for(col = 0; col < CHANNEL_COLUMNS; col++) {
-			piece = state->metatiles[row][col].kind;
-			paths = state->metatiles[row][col].state;
+		for(column = 0; column < CHANNEL_COLUMNS; column++) {
+			piece = state->metatiles[row][column].kind;
+			paths = state->metatiles[row][column].state;
 			if(paths == PATH_BLUE)
 				blueShared++;
 			if(paths == PATH_RED)
@@ -2853,18 +2865,18 @@ retry:
 	westward = syRandomBelow(2);
 	blocksLeft = CHANNEL_BLOCKS;
 	for(tries = 1; tries <= CHANNEL_METATILES; tries++) {
-		col = syRandomBelow(CHANNEL_COLUMNS);
+		column = syRandomBelow(CHANNEL_COLUMNS);
 		row = (syRandomBelow(3)) + 5;
-		if(scGabombaStatueHasTakenNeighbor(col, row) == 0) {
-			piece = state->metatiles[row][col].kind;
+		if(scGabombaStatueHasTakenNeighbor(column, row) == 0) {
+			piece = state->metatiles[row][column].kind;
 			if((Uint32)(piece - PIECE_NORTH_SOUTH) <= 1) {
-				paths = state->metatiles[row][col].state;
+				paths = state->metatiles[row][column].state;
 				if((westward == 0 &&
 					   (paths & (PATH_RED_EAST | PATH_BLUE_EAST)) != 0) ||
 					(westward == 1 &&
 						(paths & (PATH_BLUE_WEST | PATH_RED_WEST)) != 0)) {
-					state->metatiles[row][col].kind = PIECE_STOP;
-					state->metatiles[row][col].occupied = BLOCK_IN_PLACE;
+					state->metatiles[row][column].kind = PIECE_STOP;
+					state->metatiles[row][column].occupied = BLOCK_IN_PLACE;
 					blocksLeft = CHANNEL_BLOCKS - 1;
 					break;
 				}
@@ -2875,14 +2887,14 @@ retry:
 	   blocks. */
 	for(n = 0; n < 4; n++)
 		for(tries = 1; tries <= CHANNEL_METATILES; tries++) {
-			col = syRandomBelow(CHANNEL_COLUMNS);
+			column = syRandomBelow(CHANNEL_COLUMNS);
 			row = syRandomBelow(CHANNEL_ROWS);
-			if(scGabombaStatueHasTakenNeighbor(col, row) == 0) {
-				piece = state->metatiles[row][col].kind;
+			if(scGabombaStatueHasTakenNeighbor(column, row) == 0) {
+				piece = state->metatiles[row][column].kind;
 				if(piece == PIECE_CROSSING ||
 					piece == PIECE_EAST_SOUTH_AND_WEST_NORTH ||
 					piece == PIECE_SOUTH_WEST_AND_NORTH_EAST) {
-					metatile = &state->metatiles[row][col];
+					metatile = &state->metatiles[row][column];
 					paths = metatile->state;
 					if(paths != (PATH_RED_EAST | PATH_BLUE_EAST) &&
 						paths != (PATH_BLUE_WEST | PATH_RED_WEST)) {
@@ -2900,7 +2912,7 @@ retry:
 								((syRandomBelow(2)) << 1) + PIECE_SOUTH_WEST;
 							break;
 						}
-						state->metatiles[row][col].occupied = BLOCK_IN_PLACE;
+						state->metatiles[row][column].occupied = BLOCK_IN_PLACE;
 						blocksLeft--;
 						break;
 					}
@@ -2909,13 +2921,13 @@ retry:
 		}
 	/* One curve, then straight pieces for the blocks blocksLeft. */
 	for(tries = 1; tries <= CHANNEL_METATILES; tries++) {
-		col = syRandomBelow(CHANNEL_COLUMNS);
+		column = syRandomBelow(CHANNEL_COLUMNS);
 		row = syRandomBelow(CHANNEL_ROWS);
-		if(scGabombaStatueHasTakenNeighbor(col, row) == 0) {
-			piece = state->metatiles[row][col].kind;
+		if(scGabombaStatueHasTakenNeighbor(column, row) == 0) {
+			piece = state->metatiles[row][column].kind;
 			if(piece == PIECE_EAST_SOUTH || piece == PIECE_WEST_NORTH ||
 				piece == PIECE_SOUTH_WEST || piece == PIECE_NORTH_EAST) {
-				state->metatiles[row][col].occupied = BLOCK_IN_PLACE;
+				state->metatiles[row][column].occupied = BLOCK_IN_PLACE;
 				blocksLeft--;
 				break;
 			}
@@ -2923,12 +2935,12 @@ retry:
 	}
 	for(n = 0; n < blocksLeft; n++)
 		for(tries = 1; tries <= CHANNEL_METATILES; tries++) {
-			col = syRandomBelow(CHANNEL_COLUMNS);
+			column = syRandomBelow(CHANNEL_COLUMNS);
 			row = syRandomBelow(CHANNEL_ROWS);
-			if(scGabombaStatueHasTakenNeighbor(col, row) == 0) {
-				piece = state->metatiles[row][col].kind;
+			if(scGabombaStatueHasTakenNeighbor(column, row) == 0) {
+				piece = state->metatiles[row][column].kind;
 				if((Uint32)(piece - PIECE_NORTH_SOUTH) <= 1) {
-					state->metatiles[row][col].occupied = BLOCK_IN_PLACE;
+					state->metatiles[row][column].occupied = BLOCK_IN_PLACE;
 					break;
 				}
 			}
@@ -2936,33 +2948,33 @@ retry:
 	/* Turns each block at random, and draws the channel; paths now holds what
 	   stands on each metatile. */
 	for(row = 0; row < CHANNEL_ROWS; row++)
-		for(col = 0; col < CHANNEL_COLUMNS; col++) {
-			piece = state->metatiles[row][col].kind;
-			paths = state->metatiles[row][col].occupied;
+		for(column = 0; column < CHANNEL_COLUMNS; column++) {
+			piece = state->metatiles[row][column].kind;
+			paths = state->metatiles[row][column].occupied;
 			if(paths != BLOCK_NONE) {
 				switch(syRandomBelow(8)) {
 				case 0:
 				case 1:
 				case 2:
 					piece = scGabombaStatueTurnBlockPiece(
-						col, row, TURN_COUNTERCLOCKWISE);
+						column, row, TURN_COUNTERCLOCKWISE);
 					break;
 				case 3:
 				case 4:
 				case 5:
-					piece =
-						scGabombaStatueTurnBlockPiece(col, row, TURN_CLOCKWISE);
+					piece = scGabombaStatueTurnBlockPiece(
+						column, row, TURN_CLOCKWISE);
 					break;
 				case 6:
 					scGabombaStatueTurnBlockPiece(
-						col, row, TURN_COUNTERCLOCKWISE);
+						column, row, TURN_COUNTERCLOCKWISE);
 					piece = scGabombaStatueTurnBlockPiece(
-						col, row, TURN_COUNTERCLOCKWISE);
+						column, row, TURN_COUNTERCLOCKWISE);
 					break;
 				}
 			}
-			fdMapGridCopyMetatiles(
-				paths, piece, 1, 1, state->originX + col, state->originZ + row);
+			fdMapGridCopyMetatiles(paths, piece, 1, 1, state->originX + column,
+				state->originZ + row);
 		}
 	return state->seed;
 }
@@ -2996,7 +3008,7 @@ Sint32 scGabombaStatueLayPath(Sint32 x0, Sint32 z0, Sint32 endX, Sint32 endZ,
 {
 	Uint8 *metatiles, *kinds;
 	Sint32 piece;
-	Sint32 spare, step, dir, used, dz, idx, one;
+	Sint32 spare, step, heading, used, dz, index, one;
 	Uint32 x, z, nextX, nextZ, tries, attempts;
 	Uint8  tried;
 
@@ -3024,11 +3036,11 @@ Sint32 scGabombaStatueLayPath(Sint32 x0, Sint32 z0, Sint32 endX, Sint32 endZ,
 		if(++attempts > PATH_ATTEMPTS_MAX)
 			return -1;
 		{
-			Sint32 ofs = (z * CHANNEL_COLUMNS + x) * sizeof(PUZZLE_METATILE);
+			Sint32 offset = (z * CHANNEL_COLUMNS + x) * sizeof(PUZZLE_METATILE);
 			GabombaStatuePathPieces[step] =
-				((PUZZLE_METATILE *)(metatiles + ofs))->kind;
+				((PUZZLE_METATILE *)(metatiles + offset))->kind;
 			GabombaStatuePathMetatilePaths[step] =
-				((PUZZLE_METATILE *)(metatiles + ofs))->state;
+				((PUZZLE_METATILE *)(metatiles + offset))->state;
 		}
 		GabombaStatuePathColumns[step] = x;
 		GabombaStatuePathRows[step] = z;
@@ -3044,18 +3056,18 @@ Sint32 scGabombaStatueLayPath(Sint32 x0, Sint32 z0, Sint32 endX, Sint32 endZ,
 			Uint32 value;
 			if(++tries <= PATH_TRIES_PER_STEP) {
 				value = syRandom();
-				dir = direction;
+				heading = direction;
 				if(value >= PATH_KEEP_HEADING_CHANCE)
-					dir = syRandomBelow(4);
+					heading = syRandomBelow(4);
 				tried = GabombaStatuePathTried[step];
-				if((tried >> dir) & one)
+				if((tried >> heading) & one)
 					continue;
 				{
 					Sint8 *steps = GabombaStatuePathSteps;
-					idx = dir * 2;
-					nextX = x + steps[idx];
-					idx += 1;
-					nextZ = z + steps[idx];
+					index = heading * 2;
+					nextX = x + steps[index];
+					index += 1;
+					nextZ = z + steps[index];
 				}
 				if(nextX < CHANNEL_COLUMNS && nextZ < CHANNEL_ROWS &&
 					!(step == length - 1 && (nextX != endX || nextZ != endZ))) {
@@ -3065,29 +3077,30 @@ Sint32 scGabombaStatueLayPath(Sint32 x0, Sint32 z0, Sint32 endX, Sint32 endZ,
 					if(metatile->blocked == 0 &&
 						(used = (metatile->state >> bit) & one) == 0 &&
 						metatile->kind != PIECE_STOP) {
-						tried |= one << dir;
+						tried |= one << heading;
 						GabombaStatuePathTried[step] = tried;
 						kinds = GabombaStatuePathPieces;
 						piece = scGabombaStatuePickPiece(
-							direction, dir, kinds[step]);
+							direction, heading, kinds[step]);
 						{
-							Sint32 ofs = (z * CHANNEL_COLUMNS + x) *
+							Sint32 offset = (z * CHANNEL_COLUMNS + x) *
 								sizeof(PUZZLE_METATILE);
 							scGabombaStatueWritePiece(x, z, piece,
-								((PUZZLE_METATILE *)(metatiles + ofs))->state |
+								((PUZZLE_METATILE *)(metatiles + offset))
+										->state |
 									one << bit);
 						}
 						step++;
 						x = nextX;
 						z = nextZ;
-						direction = dir;
+						direction = heading;
 						if(step == length)
 							goto done;
 						GabombaStatuePathTried[step] = 0;
 						break;
 					}
 				}
-				GabombaStatuePathTried[step] |= 1 << dir;
+				GabombaStatuePathTried[step] |= 1 << heading;
 				if(GabombaStatuePathTried[step] != HEADING_ALL_TRIED)
 					continue;
 			}
@@ -3104,11 +3117,11 @@ Sint32 scGabombaStatueLayPath(Sint32 x0, Sint32 z0, Sint32 endX, Sint32 endZ,
 		}
 	}
 done: {
-	Sint32 ofs = (nextZ * CHANNEL_COLUMNS + nextX) * sizeof(PUZZLE_METATILE);
+	Sint32 offset = (nextZ * CHANNEL_COLUMNS + nextX) * sizeof(PUZZLE_METATILE);
 	piece = scGabombaStatuePickPiece(
-		dir, last, ((PUZZLE_METATILE *)(metatiles + ofs))->kind);
+		heading, last, ((PUZZLE_METATILE *)(metatiles + offset))->kind);
 	scGabombaStatueWritePiece(nextX, nextZ, piece,
-		((PUZZLE_METATILE *)(metatiles + ofs))->state | 1 << bit);
+		((PUZZLE_METATILE *)(metatiles + offset))->state | 1 << bit);
 }
 	return 0;
 }
@@ -3205,11 +3218,11 @@ Sint32 scGabombaStatueTurnBlockPiece(Sint32 x, Sint32 z, Sint32 direction)
 
 /* A step of the Pound on the arrows room's stake: it sinks, and as it ends the
    blocks rise. */
-void scGabombaStatueRaiseBlocks(Sint32 landed, Sint32 frm)
+void scGabombaStatueRaiseBlocks(Sint32 landed, Sint32 frame)
 {
 	ACTOR *actor = fdActorGet(ACTOR_ARROWS_STAKE);
 
-	if(frm < POUND_LAND_TICK)
+	if(frame < POUND_LAND_TICK)
 		actor->scaleY += -toFIXED(31) / 256;
 	if(landed == POUND_STAGE_LANDED) {
 		scGabombaStatueSetBlocksRaised(SceneStateWork.firstBlock, 1);
@@ -3226,14 +3239,14 @@ void scGabombaStatuePoundBlock(Sint32 landed)
 	ACTOR			*actor;
 	PUZZLE_METATILE *metatile;
 	Sint32			 x, z;
-	Uint32			 row, col;
+	Uint32			 row, column;
 	Sint32			 found;
 
 	if(landed != POUND_STAGE_LANDED)
 		return;
 	state = &SceneStateWork;
-	actor =
-		fdActorGet(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgtId);
+	actor = fdActorGet(
+		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->targetId);
 	x = FIELD_METATILE(actor->x.fixed) - state->originX;
 	z = FIELD_METATILE(actor->z.fixed) - state->originZ;
 	{
@@ -3249,8 +3262,8 @@ void scGabombaStatuePoundBlock(Sint32 landed)
 	found = 0;
 	row = 0;
 	for(row = 0; row < CHANNEL_ROWS; row++) {
-		for(col = 0; col < CHANNEL_COLUMNS; col++) {
-			if(state->metatiles[row][col].occupied == BLOCK_RAISED) {
+		for(column = 0; column < CHANNEL_COLUMNS; column++) {
+			if(state->metatiles[row][column].occupied == BLOCK_RAISED) {
 				found = 1;
 				break;
 			}
@@ -3262,9 +3275,9 @@ void scGabombaStatuePoundBlock(Sint32 landed)
 }
 
 /* Sets the channel blocks' animation (BLOCK_ANIM_TURN_*). */
-void scGabombaStatueSetBlockAnimation(Sint32 anm)
+void scGabombaStatueSetBlockAnimation(Sint32 animation)
 {
-	fdActorSetAnimationById(SceneStateWork.firstBlock, anm);
+	fdActorSetAnimationById(SceneStateWork.firstBlock, animation);
 }
 
 /* Turns every raised block a quarter turn. */
@@ -3306,19 +3319,19 @@ void scGabombaStatuePressLeftArrowPanel(void)
 			ARROW_PANEL_PRESSED_ROW, 1, 1, state->originX + 3,
 			state->originZ - 2);
 		if(state->blocksRaised != 0) {
-			fdScriptPlaySnd(SE_GABOMBA_STATUE_ARROW);
+			fdScriptPlaySound(SE_GABOMBA_STATUE_ARROW);
 			fdScriptStart();
 			syFieldScriptEndLastingPsynergy(0);
 			scGabombaStatueSetBlockAnimation(BLOCK_ANIM_TURN_COUNTERCLOCKWISE);
 			for(i = 0; i < BLOCK_TURN_TICKS; i++) {
-				Sint32 *ofs = &state->blocksAng;
+				Sint32 *offset = &state->blocksAngle;
 
-				*ofs -= DEGtoANG(90) / BLOCK_TURN_TICKS;
+				*offset -= DEGtoANG(90) / BLOCK_TURN_TICKS;
 				syWait(1);
 			}
 			scGabombaStatueTurnBlocks(0);
 			fdScriptEnd();
-			state->blocksAng = 0;
+			state->blocksAngle = 0;
 		}
 		state->leftArrowDown = 1;
 	}
@@ -3346,19 +3359,19 @@ void scGabombaStatuePressRightArrowPanel(void)
 			ARROW_PANEL_PRESSED_ROW, 1, 1, state->originX + 7,
 			state->originZ - 2);
 		if(state->blocksRaised != 0) {
-			fdScriptPlaySnd(SE_GABOMBA_STATUE_ARROW);
+			fdScriptPlaySound(SE_GABOMBA_STATUE_ARROW);
 			fdScriptStart();
 			syFieldScriptEndLastingPsynergy(0);
 			scGabombaStatueSetBlockAnimation(BLOCK_ANIM_TURN_CLOCKWISE);
 			for(i = 0; i < BLOCK_TURN_TICKS; i++) {
-				Sint32 *ofs = &state->blocksAng;
+				Sint32 *offset = &state->blocksAngle;
 
-				*ofs += DEGtoANG(90) / BLOCK_TURN_TICKS;
+				*offset += DEGtoANG(90) / BLOCK_TURN_TICKS;
 				syWait(1);
 			}
 			scGabombaStatueTurnBlocks(1);
 			fdScriptEnd();
-			state->blocksAng = 0;
+			state->blocksAngle = 0;
 		}
 		state->rightArrowDown = 1;
 	}
@@ -3391,15 +3404,15 @@ void scGabombaStatueDrawRaisedBlocks(void)
 		syMapStateView(RamHeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
 	Sint32 scrollZ =
 		syMapStateView(RamHeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
-	Uint16			 tile = VramCacheEntries[state->blockTileEntry].ofs >> 5;
+	Uint16			 tile = VramCacheEntries[state->blockTileEntry].offset >> 5;
 	AFFINE_TRANSFORM effect;
 	Sint32			 id;
 
-	if(state->blocksAng != 0) {
-		effect.ang = state->blocksAng;
+	if(state->blocksAngle != 0) {
+		effect.angle = state->blocksAngle;
 		effect.scaleX = Q_8_8(1);
 		effect.scaleY = Q_8_8(1);
-		affine = syOAMMatrixAllocFromTransform(&effect);
+		affine = syOAMMatrixAllocateFromTransform(&effect);
 	}
 	for(id = state->firstBlock; id < state->endBlock; id++) {
 		ACTOR *piece = fdActorGet(id);
@@ -3421,11 +3434,11 @@ void scGabombaStatueDrawRaisedBlocks(void)
 			*p++ = 0;
 			*p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
 			*p = (tile + (kind << 3)) | OBJ_PRIORITY(2);
-			if(state->blocksAng != 0) {
+			if(state->blocksAngle != 0) {
 				oam->affineMode = 1;
 				oam->matrix = affine;
 			}
-			syOAMAddSprAtDepthClamped(oam, depth);
+			syOAMAddSpriteAtDepthClamped(oam, depth);
 			oam++;
 		}
 	}
@@ -3453,7 +3466,7 @@ Sint32 scGabombaStatueSetUpChannelPuzzle(
 		scGabombaStatueSetBlocksRaised(id, 0);
 		sySetTickEvent(scGabombaStatueDrawRaisedBlocks, EVENT_PASS_TICK);
 	}
-	fdActorGet(id)->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+	fdActorGet(id)->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 	return laidSeed;
 }
 
@@ -3471,16 +3484,16 @@ enum { CHARGE_STEPS_PER_METATILE = 16, CHARGE_METATILES_MAX = 128 };
 void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 {
 	Sint16		*colp = &charge->chargeColumn;
-	Sint32		 col = *colp;
+	Sint32		 column = *colp;
 	Sint16		*rowp = &charge->chargeRow;
 	Sint32		 row = *rowp;
 	Uint8		*headingp = &charge->chargeHeading;
 	Sint32		 heading = *headingp;
 	Sint32		 angle = heading * DEGtoANG(90);
-	Sint32		 metatile = row * CHANNEL_COLUMNS + col;
+	Sint32		 metatile = row * CHANNEL_COLUMNS + column;
 	SCENE_STATE *state = &SceneStateWork;
-	Sint32		 piece = state->metatiles[row][col].kind;
-	Sint32		 goal = state->metatiles[row][col].occupied;
+	Sint32		 piece = state->metatiles[row][column].kind;
+	Sint32		 goal = state->metatiles[row][column].occupied;
 	Sint32		 key = CHARGE_STEP(heading, piece);
 	Sint32		 d = step - MAPGRID_METATILE_PIXELS / 2;
 	Sint32		 arc = step * (DEGtoANG(90) / CHARGE_STEPS_PER_METATILE);
@@ -3489,12 +3502,12 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 	Sint32		 z;
 	Sint32		 x;
 
-	x = FIELD_METATILE_CENTER(state->originX + col);
+	x = FIELD_METATILE_CENTER(state->originX + column);
 	z = FIELD_METATILE_CENTER(state->originZ + row);
 	if(goal == BLOCK_RAISED) {
-		heading = row = col = 0;
+		heading = row = column = 0;
 		if(charge->chargeState == CHARGE_RUNNING) {
-			sySndPlay(SE_DUST_PUFF);
+			sySoundPlay(SE_DUST_PUFF);
 			fdActorStartScript(charge, GabombaStatueChargeShrinkScript);
 			charge->chargeState = goal;
 		}
@@ -3502,12 +3515,12 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 		switch(key) {
 		case CHARGE_STEP(HEADING_WEST, PIECE_EAST_WEST):
 		case CHARGE_STEP(HEADING_WEST, PIECE_CROSSING):
-			col--;
+			column--;
 			x -= toFIXED(d);
 			break;
 		case CHARGE_STEP(HEADING_EAST, PIECE_EAST_WEST):
 		case CHARGE_STEP(HEADING_EAST, PIECE_CROSSING):
-			col++;
+			column++;
 			x += toFIXED(d);
 			break;
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_NORTH_SOUTH):
@@ -3530,7 +3543,7 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 			break;
 		case CHARGE_STEP(HEADING_NORTH, PIECE_SOUTH_WEST):
 		case CHARGE_STEP(HEADING_NORTH, PIECE_SOUTH_WEST_AND_NORTH_EAST):
-			col--;
+			column--;
 			heading = HEADING_WEST;
 			x = x + c - toFIXED(8);
 			z = z - s + toFIXED(8);
@@ -3546,7 +3559,7 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 			break;
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_NORTH_EAST):
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_SOUTH_WEST_AND_NORTH_EAST):
-			col++;
+			column++;
 			heading = HEADING_EAST;
 			x = x - c + toFIXED(8);
 			z = z + s - toFIXED(8);
@@ -3562,7 +3575,7 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 			break;
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_WEST_NORTH):
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_EAST_SOUTH_AND_WEST_NORTH):
-			col--;
+			column--;
 			heading = HEADING_WEST;
 			x = x + c - toFIXED(8);
 			z = z + s - toFIXED(8);
@@ -3578,20 +3591,20 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 			break;
 		case CHARGE_STEP(HEADING_NORTH, PIECE_EAST_SOUTH):
 		case CHARGE_STEP(HEADING_NORTH, PIECE_EAST_SOUTH_AND_WEST_NORTH):
-			col++;
+			column++;
 			heading = HEADING_EAST;
 			x = x - c + toFIXED(8);
 			z = z - s + toFIXED(8);
 			angle = arc + TRIG_TURN * 3 / 4;
 			break;
 		case CHARGE_STEP(HEADING_EAST, PIECE_SOCKET):
-			heading = row = col = 0;
+			heading = row = column = 0;
 			break;
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_SOCKET):
-			heading = row = col = 0;
+			heading = row = column = 0;
 			break;
 		case CHARGE_STEP(HEADING_WEST, PIECE_SOCKET):
-			heading = row = col = 0;
+			heading = row = column = 0;
 			break;
 		case CHARGE_STEP(HEADING_EAST, PIECE_STOP):
 		case CHARGE_STEP(HEADING_SOUTH, PIECE_STOP):
@@ -3608,19 +3621,19 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 						CHANNEL_ORIGIN_ROW + CHANNEL_MIDDLE_STATUE_ROW) {
 					charge->chargeState = CHARGE_ARRIVED;
 				} else {
-					sySndPlay(SE_DUST_PUFF);
+					sySoundPlay(SE_DUST_PUFF);
 					fdActorStartScript(charge, GabombaStatueChargeShrinkScript);
 					charge->chargeState = CHARGE_LEAVING;
 				}
 			}
 			break;
 		case CHARGE_STEP(HEADING_NORTH, PIECE_SOCKET):
-			heading = row = col = 0;
+			heading = row = column = 0;
 			break;
 		default:
-			heading = row = col = 0;
+			heading = row = column = 0;
 			if(charge->chargeState == CHARGE_RUNNING) {
-				sySndPlay(SE_WATER);
+				sySoundPlay(SE_WATER);
 				fdActorStartScript(charge, GabombaStatueChargeBurstScript);
 				charge->chargeState = CHARGE_LEAVING;
 			}
@@ -3628,7 +3641,7 @@ void scGabombaStatueMoveCharge(ACTOR *charge, Sint32 step, Sint32 id)
 		}
 	}
 	if(step == CHARGE_STEPS_PER_METATILE - 1) {
-		*colp = col;
+		*colp = column;
 		*rowp = row;
 		*headingp = heading;
 	}
@@ -3806,7 +3819,7 @@ typedef struct CLOCK_WORK {
 	Uint8	 digit[8];
 	SPR_VIEW oam[8];
 	Sint32	 tileEntry;
-	Sint32	 tmr;
+	Sint32	 timer;
 	Uint8	 ringing;
 	Uint8	 mode;
 } CLOCK_WORK;
@@ -3849,8 +3862,8 @@ Sint32 scGabombaStatueTickClock(Sint32 time)
 	if(tick != 0) {
 		*ringing = 1;
 	} else if(*ringing) {
-		if(clock->tmr != 0)
-			fdScriptPlaySnd(SE_COLOSSO_COUNTDOWN);
+		if(clock->timer != 0)
+			fdScriptPlaySound(SE_COLOSSO_COUNTDOWN);
 		*ringing = tick;
 	}
 	if(tick < TICKS_PER_SECOND / 3) {
@@ -3874,9 +3887,9 @@ void scGabombaStatueDrawClock(void)
 	Uint8			*digit = clock->digit;
 	Uint8			*old = clock->tiles;
 	Uint8			*now = clock->digits;
-	Uint32			 tile = VramCacheEntries[clock->tileEntry].ofs >> 5;
+	Uint32			 tile = VramCacheEntries[clock->tileEntry].offset >> 5;
 	SPR_VIEW		*oam = clock->oam;
-	Sint32			*tmr = &clock->tmr;
+	Sint32			*timer = &clock->timer;
 	AFFINE_TRANSFORM effect;
 	Sint32			 plain, scaled, i;
 	Sint32			 scale;
@@ -3886,9 +3899,9 @@ void scGabombaStatueDrawClock(void)
 	   those changing have shrunk out of sight (scGabombaStatueTickClock); the
 	   ones that differ from the time a second before are the ones that
 	   shrink. */
-	scGabombaStatueFormatClock(*tmr + TICKS_PER_SECOND - 10, digit);
-	scGabombaStatueFormatClock(*tmr + TICKS_PER_SECOND, clock->old);
-	scGabombaStatueFormatClock(*tmr, clock->now);
+	scGabombaStatueFormatClock(*timer + TICKS_PER_SECOND - 10, digit);
+	scGabombaStatueFormatClock(*timer + TICKS_PER_SECOND, clock->old);
+	scGabombaStatueFormatClock(*timer, clock->now);
 	/* old and now walk the sprite sheet and the pictures here, the digit lists
 	   below. */
 	for(i = 0; i < CLOCK_SHOWN_PICTURES; i++) {
@@ -3900,15 +3913,15 @@ void scGabombaStatueDrawClock(void)
 	}
 	mnVRAMLoad(clock->tileEntry, CLOCK_SHOWN_PICTURES * CLOCK_PICTURE_BYTES,
 		clock->digits);
-	effect.ang = 0;
+	effect.angle = 0;
 	effect.scaleX = Q_8_8(2);
 	effect.scaleY = Q_8_8(2);
-	plain = syOAMMatrixAllocFromTransform(&effect);
-	scale = scGabombaStatueTickClock(*tmr);
-	effect.ang = 0;
+	plain = syOAMMatrixAllocateFromTransform(&effect);
+	scale = scGabombaStatueTickClock(*timer);
+	effect.angle = 0;
 	effect.scaleX = scale;
 	effect.scaleY = scale;
-	scaled = syOAMMatrixAllocFromTransform(&effect);
+	scaled = syOAMMatrixAllocateFromTransform(&effect);
 	old = clock->old;
 	now = clock->now;
 	for(i = 0; i < CLOCK_SHOWN_PICTURES; i++, tile += 2, oam++) {
@@ -3921,7 +3934,7 @@ void scGabombaStatueDrawClock(void)
 			oam->matrix = scaled;
 		else
 			oam->matrix = plain;
-		syOAMAddSprAtDepthClamped(oam, CLOCK_DEPTH);
+		syOAMAddSpriteAtDepthClamped(oam, CLOCK_DEPTH);
 	}
 }
 
@@ -3932,8 +3945,8 @@ void scGabombaStatueCountDownShowingClock(void)
 	CLOCK_WORK	*clock = CLOCK_STATE;
 
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
-		clock->tmr > 0)
-		clock->tmr--;
+		clock->timer > 0)
+		clock->timer--;
 	scGabombaStatueDrawClock();
 }
 
@@ -3944,8 +3957,8 @@ void scGabombaStatueCountDown(void)
 	CLOCK_WORK	*clock = CLOCK_STATE;
 
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
-		clock->tmr > 0)
-		clock->tmr--;
+		clock->timer > 0)
+		clock->timer--;
 }
 
 /* Starts the clock at one minute, shown or hidden. */
@@ -3956,10 +3969,10 @@ void scGabombaStatueStartClock(Sint32 mode)
 
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		syWordsClearEntry(clock, sizeof(CLOCK_WORK));
-		clock->tmr = TICKS_PER_SECOND * 60;
+		clock->timer = TICKS_PER_SECOND * 60;
 		clock->ringing = 1;
 	}
-	tiles = syHeapAllocEWRAM(1024);
+	tiles = syHeapAllocateEWRAM(1024);
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_CLOCK_DIGITS), tiles);
 	clock->tiles = tiles;
 	clock->digits = tiles + CLOCK_SHEET_PICTURES * CLOCK_PICTURE_BYTES;
@@ -3993,19 +4006,19 @@ void scGabombaStatueRestartClock(void)
 		sySetTickEvent(scGabombaStatueCountDownShowingClock, EVENT_PASS_TICK);
 	else
 		sySetTickEvent(scGabombaStatueCountDown, EVENT_PASS_TICK);
-	clock->tmr = TICKS_PER_SECOND * 60;
+	clock->timer = TICKS_PER_SECOND * 60;
 }
 
 /* The ticks left on the clock. */
 Sint32 scGabombaStatueGetClock(void)
 {
-	return CLOCK_STATE->tmr;
+	return CLOCK_STATE->timer;
 }
 
 /* Sets the clock back to a minute. */
 void scGabombaStatueResetClock(void)
 {
-	CLOCK_STATE->tmr = TICKS_PER_SECOND * 60;
+	CLOCK_STATE->timer = TICKS_PER_SECOND * 60;
 }
 
 /* Puts out the stakes of a table of rows (actor, kind, flag), ended by -1, each
@@ -4018,11 +4031,11 @@ void scGabombaStatuePlaceSwitchActors(const Uint16 *entry)
 		Uint16 id = *entry++;
 		ACTOR *actor = fdActorGet(id);
 		Sint16 kind = entry[0];
-		Sint16 flg = entry[1];
+		Sint16 flag = entry[1];
 
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flg, actor->layer);
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flag, actor->layer);
 	}
 }
 

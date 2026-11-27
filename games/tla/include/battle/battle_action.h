@@ -13,19 +13,20 @@ struct SPR_ANIMATION;
 /* A unit's place on the battlefield: its sprite object, resources and
    animations, its anchor spot and scale, and the conditions it shows. */
 typedef struct BATTLE_OBJECT {
-	struct MOTION_OBJECT *obj;		/* NULL once released */
+	struct MOTION_OBJECT *object;	/* NULL once released */
 	Uint16				  resource; /* the unit's sprite */
 	Uint16 overlay;		   /* a second sprite drawn over it; 0 for none */
-	Uint16 anm;			   /* the status icon's animation shown; 0 for none */
+	Uint16 animation;	   /* the status icon's animation shown; 0 for none */
 	Uint16 shadow;		   /* the shadow sprite drawn under the unit */
 	FIXED  anchorX;		   /* 16.16 fixed-point pixels */
 	FIXED  anchorZ;		   /* 16.16 fixed-point pixels */
-	Sint32 pal;			   /* the unit sprite's colour mode, an SPR_COL_MODE */
+	Sint32 palette;		   /* the unit sprite's colour mode, an SPR_COL_MODE */
 	FIXED  scale;		   /* 16.16 fixed point, toFIXED(1) full size */
 	Uint16 activeStatuses; /* a bit per status with an icon */
-	Uint8  selectedCondition;		   /* the status whose icon is shown */
-	Sint8  cycleTmr;				   /* ticks until the next status icon */
-	struct SPR_ANIMATION *anmEntry;	   /* the status icon's sprite, or NULL */
+	Uint8  selectedCondition; /* the status whose icon is shown */
+	Sint8  cycleTimer;		  /* ticks until the next status icon */
+	struct SPR_ANIMATION
+		*animationEntry;			   /* the status icon's sprite, or NULL */
 	struct SPR_ANIMATION *shadowEntry; /* the shadow sprite, or NULL */
 	/* Set by btObjectMarkForRelease: the object is released with the others. */
 	Sint16 active;
@@ -72,12 +73,12 @@ typedef enum BATTLE_COMMAND {
    its target and range, and its priority in the turn order. */
 typedef struct BATTLE_ACTION_RECORD {
 	Sint16 unitId;
-	Uint16 slot;	/* in a link battle, unitId as the opponent knows it */
-	Uint16 pri;		/* its place in the turn order */
-	Sint16 command; /* BATTLE_COMMAND */
-	Sint16 prm;		/* the command's ability, item or Djinni */
-	Sint16 tgt;		/* the aimed unit's id */
-	Sint16 range;	/* the action's range */
+	Uint16 slot;	 /* in a link battle, unitId as the opponent knows it */
+	Uint16 priority; /* its place in the turn order */
+	Sint16 command;	 /* BATTLE_COMMAND */
+	Sint16 param;	 /* the command's ability, item or Djinni */
+	Sint16 target;	 /* the aimed unit's id */
+	Sint16 range;	 /* the action's range */
 	/* Which of the unit's actions this turn it is, from 0: Poseidon's and the
 	   Doom Dragon's forms choose each by it (btAIChooseAction). */
 	Sint16 turnAction;
@@ -96,20 +97,20 @@ typedef struct BATTLE_SPOILS {
 	Uint16 queuedSummons[2];
 	Uint8  queuedLetters[2];
 	Sint8  queueHead;
-	Sint8  queueCnt;
+	Sint8  queueCount;
 } BATTLE_SPOILS;
 
 STATIC_ASSERT(sizeof(BATTLE_OBJECT) == 44);
 STATIC_ASSERT(offsetof(BATTLE_OBJECT, anchorX) == 12);
 STATIC_ASSERT(offsetof(BATTLE_OBJECT, activeStatuses) == 28);
-STATIC_ASSERT(offsetof(BATTLE_OBJECT, cycleTmr) == 31);
+STATIC_ASSERT(offsetof(BATTLE_OBJECT, cycleTimer) == 31);
 STATIC_ASSERT(offsetof(BATTLE_OBJECT, active) == 40);
 
 STATIC_ASSERT(sizeof(BATTLE_ACTION_RECORD) == 16);
-STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, pri) == 4);
+STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, priority) == 4);
 STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, command) == 6);
-STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, prm) == 8);
-STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, tgt) == 10);
+STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, param) == 8);
+STATIC_ASSERT(offsetof(BATTLE_ACTION_RECORD, target) == 10);
 STATIC_ASSERT(sizeof(BATTLE_SPOILS) == 28);
 
 /* A unit's chosen action as the party's command menus write it: the
@@ -117,10 +118,10 @@ STATIC_ASSERT(sizeof(BATTLE_SPOILS) == 28);
 typedef struct BATTLE_ACTION {
 	Uint16 unitId;
 	Uint16 slot;
-	Sint16 pri;
+	Sint16 priority;
 	Uint16 command;
-	Uint16 prm;
-	Uint16 tgt;
+	Uint16 param;
+	Uint16 target;
 	Uint16 range;
 	Uint16 turnAction;
 } BATTLE_ACTION;

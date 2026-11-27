@@ -25,22 +25,22 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 		return;
 
 	fdEffectInitSlots();
-	effectState = RamHeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffectState;
 	/* Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
 	   script_commands_mercury.c spells out for its blue. */
 	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
 	sySynch(30);
 	djinni->paused = 0;
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	fdActorJump(djinniId, 4, 15);
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	fdActorJump(djinniId, 4, 15);
 	/* Spin and leap, then shrink away while the screen shakes (1.3 pixels). */
 	sySynch(30);
-	djinni->update = (OBJECT_UPDATE)fdDjinnAdvanceSpinAng;
-	sySndPlayStub(SE_HIGH_JUMP);
+	djinni->update = (OBJECT_UPDATE)fdDjinnAdvanceSpinAngle;
+	sySoundPlayStub(SE_HIGH_JUMP);
 	fdActorJump(djinniId, 8, 22);
-	sySndPlayStub(SE_SPIN);
+	sySoundPlayStub(SE_SPIN);
 	fdMapGridSetScreenShakeStub(toFIXED(13) / 10, toFIXED(13) / 10, toFIXED(1));
 	djinni->update = (OBJECT_UPDATE)fdEffectShrinkActorAndDestroyFast;
 	fdActorSelectAnimationStub(djinni, DJINNI_ANIMATION_EXCITED);
@@ -67,7 +67,8 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateRadialSpread);
 		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
-		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_GREEN_TINT);
+		fdSpriteSetAnimationColorModesStub(
+			effect->sprite, SPRITE_COLOR_GREEN_TINT);
 		effect->scaleX = toFIXED(1) / 2;
 		effect->scaleY = syRandom() + toFIXED(3) / 2;
 		sySynch(1);
@@ -96,38 +97,38 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 			scale = syRandom() / 3 + toFIXED(1);
 			djinni->scaleY = scale;
 			djinni->scaleX = scale;
-			djinni->orbitFrm = 100;
-			djinni->orbitAng = remaining * TRIG_TURN / VENUS_JOIN_MOTES;
+			djinni->orbitFrame = 100;
+			djinni->orbitAngle = remaining * TRIG_TURN / VENUS_JOIN_MOTES;
 			djinni->update = (OBJECT_UPDATE)fdEffectUpdateDescendingOrbitActor;
-			djinni->motionFlg = 0;
+			djinni->motionFlags = 0;
 			fdActorSelectAnimationStub(djinni, ANIM_PARTICLE_TWINKLE);
-			fdActorSetSprColModeStub(djinni, SPRITE_COLOR_GREEN_TINT);
+			fdActorSetSpriteColorModeStub(djinni, SPRITE_COLOR_GREEN_TINT);
 		}
 	}
 
 	sySynch(100);
-	sySndPlayStub(SE_STOP_EXIT_SE);
+	sySoundPlayStub(SE_STOP_EXIT_SE);
 	sySynch(1);
-	sySndPlayStub(SE_LIGHT_APPEAR);
+	sySoundPlayStub(SE_LIGHT_APPEAR);
 	pos.x = leader->x.fixed;
 	pos.y = leader->y.fixed + toFIXED(18);
 	pos.z = leader->z.fixed;
 	/* 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
 	   random direction at 1.4 to 2.4 pixels a tick and 5 up (gravity is
-	   ACTOR.velY), falling, and released after 8 ticks; stop at the first that
-	   cannot be spawned. */
+	   ACTOR.velocityY), falling, and released after 8 ticks; stop at the first
+	   that cannot be spawned. */
 	for(remaining = 0; remaining <= 7; remaining++) {
 		djinni = fdActorSpawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
 		if(djinni == NULL)
 			break;
 		djinni->scaleY = toFIXED(3) / 5;
 		djinni->scaleX = toFIXED(3) / 5;
-		djinni->motionFlg = ACTOR_FALLS;
-		djinni->velY = toFIXED(5);
+		djinni->motionFlags = ACTOR_FALLS;
+		djinni->velocityY = toFIXED(5);
 		djinni->groundHeight = djinni->y.fixed;
 		djinni->speedLimit = syRandom() + toFIXED(7) / 5;
-		fdActorSetTargetPosFromMagnitudeAng(djinni, toFIXED(32), syRandom());
-		fdActorSetSprColModeStub(djinni, SPRITE_COLOR_GREEN_TINT);
+		fdActorSetTargetPosFromMagnitudeAngle(djinni, toFIXED(32), syRandom());
+		fdActorSetSpriteColorModeStub(djinni, SPRITE_COLOR_GREEN_TINT);
 		djinni->wait = 8;
 		fdActorStartScriptStub(djinni, FieldEffectReleaseScript);
 	}
@@ -159,8 +160,8 @@ void fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect)
 		fdCameraWorldToScreen(&pos);
 		syVectorAddPolarOffset(syRandom() * 6 + toFIXED(2), syRandom(), &pos);
 
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->x = pos.x;
 		effect->z = pos.z - toFIXED(100);
 		effect->acceleration = toFIXED(3);
@@ -168,7 +169,7 @@ void fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect)
 		effect->scaleX = toFIXED(1);
 		effect->scaleY = toFIXED(1);
 		effect->turnStepLimited = state;
-		effect->stopAtTgt = 1;
+		effect->stopAtTarget = 1;
 		effect->state++;
 	} else if((Uint8)(effect->state - MERCURY_DROPLET_FALLING) <=
 		MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
@@ -176,21 +177,21 @@ void fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect)
 			pos.x = effect->x;
 			pos.z = effect->z;
 			syVectorAddPolarOffset(toFIXED(12), syRandom(), &pos);
-			effect->tgtX = pos.x;
-			effect->tgtZ = pos.z;
-			effect->stopAtTgt = 0;
+			effect->targetX = pos.x;
+			effect->targetZ = pos.z;
+			effect->stopAtTarget = 0;
 			effect->speed = toFIXED(1);
 			effect->acceleration = 0;
 			effect->speedMax = syRandom() + toFIXED(11) / 5;
 			effect->scaleX = toFIXED(1) / 2;
 			effect->scaleY = toFIXED(1) / 2;
-			sySndPlayStub(SE_CRACK);
+			sySoundPlayStub(SE_CRACK);
 
 			if(effect->state == MERCURY_DROPLET_FALLING)
 				effect->state--;
 			else
 				effect->state++;
-			effect->funcDelay = 6;
+			effect->callbackDelay = 6;
 		}
 	} else if(state == MERCURY_DROPLET_DONE) {
 		fdEffectClearOwnedSlot(effect);

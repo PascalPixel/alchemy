@@ -20,7 +20,7 @@
 /* A DIRECTION_STEP's Z as a 16.16 offset: its lower halfword, shifted up. */
 #define DIRECTION_STEP_Z_FIXED(step) INTtoFIXED(step)
 
-/* PUSHED_ACTOR_PROBE.rectangleIdx of an actor whose sprite is none of the six
+/* PUSHED_ACTOR_PROBE.rectangleIndex of an actor whose sprite is none of the six
    large things, past their rows. */
 #define PUSHED_ACTOR_NO_RECTANGLE 7
 
@@ -30,14 +30,14 @@
 typedef struct PUSHED_ACTOR_PROBE {
 	/* The large thing's row in PushedActorRectangleKinds and
 	   PushedActorRectangles, 0 to 5. */
-	Sint32 rectangleIdx;
+	Sint32 rectangleIndex;
 	Sint32 actorSlot; /* the large thing's actor id, 8 to 65 */
 	/* 16.16 pixels while moving; converted to metatiles by rectangle
 	   redraws. */
 	FIELD_POS pos;
 	/* Run as the leader follows the rolling thing, when not null; the probe
 	   clears it. */
-	void (*func)(void);
+	void (*callback)(void);
 } PUSHED_ACTOR_PROBE;
 
 /* A large thing's edges, a row of PushedActorRectangles. */

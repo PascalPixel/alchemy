@@ -11,12 +11,12 @@ Sint32 scActorEmitMist(ACTOR *actor)
 		FIXED  x;
 		FIXED  y;
 
-		mist.pal = SPRITE_COLOR_WHITE;
+		mist.palette = SPRITE_COLOR_WHITE;
 		if((TickCount & 2) == 0)
-			mist.pal = SPRITE_COLOR_BRG;
+			mist.palette = SPRITE_COLOR_BRG;
 		mist.startScaleX = toFIXED(4) / 5;
 		mist.startScaleY = toFIXED(4) / 5;
-		mist.pri = 0;
+		mist.priority = 0;
 		drift = syRandomBelow(8) * toFIXED(0.2);
 		x = actor->x.fixed;
 		y = actor->y.fixed;

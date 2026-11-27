@@ -30,14 +30,14 @@ typedef struct BATTLE_PLAYBACK_QUEUE {
 	/* Each command's operand: a unit, item or ability id, a number, a message
 	   or a sound. */
 	Uint32 operands[BATTLE_PLAYBACK_CAPACITY];
-	Sint32 tgtIdx; /* the plan's next target to resolve */
-	Sint32 cnt;	   /* commands queued */
+	Sint32 targetIndex; /* the plan's next target to resolve */
+	Sint32 count;		/* commands queued */
 } BATTLE_PLAYBACK_QUEUE;
 
 STATIC_ASSERT(sizeof(BATTLE_PLAYBACK_QUEUE) == 328);
 STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, operands) == 64);
-STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, tgtIdx) == 320);
-STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, cnt) == 324);
+STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, targetIndex) == 320);
+STATIC_ASSERT(offsetof(BATTLE_PLAYBACK_QUEUE, count) == 324);
 
 /* The playback commands btPlaybackPush queues, each with one operand, for
    btPlaybackRun (or btPlaybackRunAll) to play in order. The names, numbers and

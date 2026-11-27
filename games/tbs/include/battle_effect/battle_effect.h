@@ -17,7 +17,7 @@ struct PARTICLE;
 /* The battle-effect module's functions in the order of its stub table
    (src/battle_effect/stubs.s). */
 Sint32 btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift,
-	Sint32 flg, Uint32 mode);
+	Sint32 flags, Uint32 mode);
 void   btEffectRunByIdRange(BATTLE_EFFECT_PARM *args);
 void   btEffectRunSummon(BATTLE_EFFECT_PARM *args);
 void   btEffectRunFromTable(BATTLE_EFFECT_PARM *args);
@@ -244,11 +244,11 @@ extern BATTLE_EFFECT_HANDLER BattleEffectHandlers[];
    list, and how many indices either side of it to keep. */
 typedef struct {
 	Sint32 unused[3];			/* no code names it */
-	Sint32 curValue;			/* the value looked for in values */
-	Sint32 idxRadius;			/* indices kept either side of where it sits */
+	Sint32 currentValue;		/* the value looked for in values */
+	Sint32 indexRadius;			/* indices kept either side of where it sits */
 	Sint32 entryLimit;			/* indices from this up are dropped */
 	Sint32 unusedAfterLimit[3]; /* no code names it */
-	Sint16 values[1]; /* idxRadius * 2 + 1 values, searched in order */
+	Sint16 values[1]; /* indexRadius * 2 + 1 values, searched in order */
 } BATTLE_EFFECT_INDEX_WINDOW;
 
 /* The map cell buffer (MapGridMetatileBuffer), which the effects borrow, has
@@ -291,7 +291,7 @@ typedef DRAW_RECTANGLE BLITTER_PAIR[2];
    order. */
 
 /* battle_effect_display.c */
-void btEffectConfigureEffectDisp(void);
+void btEffectConfigureEffectDisplay(void);
 void btEffectAdvanceScrollOnInterval(void);
 void btEffectAdvanceBg2OnInterval(void);
 void btEffectArmWin0HBlankDMA(void);
@@ -354,7 +354,7 @@ void btEffectEndCanvasLayer(void);
 void btEffectHideBg1AndRestoreBackdrop(void);
 void btEffectSetupCanvasTileMap(void);
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col);
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color);
 
 /* battle_effect_planet_diver.c */
 void btEffectRunPlanetDiver(BATTLE_EFFECT_PARM *args);
@@ -419,7 +419,7 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args);
 /* battle_effect_prism.c */
 void btEffectRunPrism(BATTLE_EFFECT_PARM *args);
 void btEffectUpdatePhasePalette(
-	Sint32 frm, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
+	Sint32 frame, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
 
 /* battle_effect_plasma.c */
 void btEffectRunPlasma(BATTLE_EFFECT_PARM *args);
@@ -448,15 +448,15 @@ void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args);
 void btCameraApplyPhasedDelta(void);
 
 /* battle_effect_dispatch.c */
-void btEffectCallNoOperation(Sint32 cnt);
+void btEffectCallNoOperation(Sint32 count);
 void btEffectBuildWindowEdgeTable(void);
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args);
-void btEffectSetupBlendedDisp(void);
+void btEffectSetupBlendedDisplay(void);
 /* Passed to btEffectTintBattler as its palette, animation or timerSlot: leave
    that one as it is. */
 #define TINT_KEEP (-1)
-void btEffectTintBattler(Sint32 actorId, Sint32 palette, Sint32 anm,
-	Sint32 tmrSlot, Sint32 tmrTicks);
+void btEffectTintBattler(Sint32 actorId, Sint32 palette, Sint32 animation,
+	Sint32 timerSlot, Sint32 timerTicks);
 void btEffectOpenAndCloseTiledCanvas(void);
 
 /* battle_effect_cybele.c */
@@ -496,7 +496,7 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode);
 /* battle_effect_flare.c */
 void   btEffectRunFlare(BATTLE_EFFECT_PARM *args);
 Sint32 btEffectBuildCenteredIndexList(
-	BATTLE_EFFECT_INDEX_WINDOW *win, Sint16 *output);
+	BATTLE_EFFECT_INDEX_WINDOW *window, Sint16 *output);
 
 /* battle_effect_quake.c */
 void btEffectRunQuake(BATTLE_EFFECT_PARM *args);
@@ -514,7 +514,7 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args);
 void btEffectRunSmokeBomb(BATTLE_EFFECT_PARM *args);
 void btEffectRunBlast(BATTLE_EFFECT_PARM *args);
 void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode);
-void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri);
+void btEffectCreateSprites(Sint32 count, Sint32 spriteId, Uint32 priority);
 void btEffectNoOperation(void);
 
 /* battle_effect_burst_shower.c */
@@ -562,11 +562,11 @@ void btEffectRunIceBlessing(BATTLE_EFFECT_PARM *args);
 void btEffectRunBlizzard(BATTLE_EFFECT_PARM *args);
 void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode);
 void btEffectHopBackToSpot(Sint32 id);
-void btEffectSetApproachMotion(Sint32 id, Sint32 tgtId, Sint32 ticks);
+void btEffectSetApproachMotion(Sint32 id, Sint32 targetId, Sint32 ticks);
 
 /* battle_effect_rushing_strike.c */
 void btEffectPackYellowOrbs(
-	Uint8 *src, Uint8 *dst, Sint32 stride, Sint32 rowCnt);
+	Uint8 *src, Uint8 *dest, Sint32 stride, Sint32 rowCount);
 void btEffectRunBoneCharge(BATTLE_EFFECT_PARM *args);
 void btEffectRunBruteForce(BATTLE_EFFECT_PARM *args);
 void btEffectRunOnslaught(BATTLE_EFFECT_PARM *args);
@@ -574,11 +574,11 @@ void btEffectRunHeadbutt(BATTLE_EFFECT_PARM *args);
 void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode);
 
 /* battle_effect_djinn_attacks.c */
-void btEffectTransposeCopy(const Uint8 *src, Uint8 *dst, Sint32 w, Sint32 h);
+void btEffectTransposeCopy(const Uint8 *src, Uint8 *dest, Sint32 w, Sint32 h);
 void btEffectRunMercury(BATTLE_EFFECT_PARM *args);
 void btEffectRunJupiter(BATTLE_EFFECT_PARM *args);
 void btResourceLoadAndDecompress(
-	Sint32 id, void *dst, Sint32 skipPalette, Sint32 copyPalette);
+	Sint32 id, void *dest, Sint32 skipPalette, Sint32 copyPalette);
 void btEffectRunVenus(BATTLE_EFFECT_PARM *args);
 void btEffectRunMars(BATTLE_EFFECT_PARM *args);
 
@@ -611,7 +611,7 @@ void btParticleAdvanceWithGravity3D(
 void btParticleAdvanceWithGravity2D(
 	PARTICLE *step, Sint32 damping, Sint32 gravity);
 Sint32 btProjectionPoint(const void *point, SCREEN_POINT *pos);
-void   btProjectionSpr(Sint32 id, SCREEN_POINT *pos);
+void   btProjectionSprite(Sint32 id, SCREEN_POINT *pos);
 void   btProjectionScaledUnit(Sint32 id, SCREEN_POINT *pos);
 void   btProjectionUnit(Sint32 id, SCREEN_POINT *pos);
 Sint32 btUnitProjectToScreen(Sint32 unit, Sint32 *screen);
@@ -631,7 +631,7 @@ void btEffectRunKite(BATTLE_EFFECT_PARM *args);
 
 /* battle_effect_helm_splitter.c */
 void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args);
-void btEffectPlaceFormationSprs(Sint32 formation, FIXED x, FIXED z);
+void btEffectPlaceFormationSprites(Sint32 formation, FIXED x, FIXED z);
 void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y);
 
 /* battle_effect_starfield_fall.c */

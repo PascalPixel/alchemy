@@ -34,7 +34,7 @@ typedef enum CENTRE_LINE_VARIANT {
 #define SCENE_TRANSITION_STYLE(transition)	 (((transition) >> 8) & 0xff)
 #define SCENE_TRANSITION_VARIANT(transition) ((transition) & 0xff)
 
-/* ACTOR.tgtX, targetY and targetZ when it has no movement target. */
+/* ACTOR.targetX, targetY and targetZ when it has no movement target. */
 #define ACTOR_NO_TARGET ((Sint32)0x80000000)
 
 /* The actor id that ends a list of actors, or of rows that start with one. */
@@ -48,7 +48,7 @@ typedef enum CENTRE_LINE_VARIANT {
 #define SET_ACTOR_POSITION(p, fixedX, fixedY, fixedZ) \
 	((p)->x.fixed = (fixedX), (p)->y.fixed = (fixedY), (p)->z.fixed = (fixedZ))
 
-/* ACTOR.priFlg bits. */
+/* ACTOR.priorityFlags bits. */
 typedef enum ACTOR_PRIORITY_FLAG {
 	/* The sprite takes its priority from the map metatile under it. */
 	ACTOR_PRIORITY_AUTOMATIC = 0x01,
@@ -56,7 +56,7 @@ typedef enum ACTOR_PRIORITY_FLAG {
 	ACTOR_PRIORITY_UNDERFOOT = 0x02,
 	/* The depth sort treats it as 320 pixels lower on the screen. */
 	ACTOR_PRIORITY_OVERHEAD = 0x04,
-	/* Drawn at the depth its sceneCnt byte holds, not its own place
+	/* Drawn at the depth its sceneCount byte holds, not its own place
 	   (fdRenderApplyProjectedPlacementAtDepth). */
 	ACTOR_PRIORITY_OWN_DEPTH = 0x08,
 	ACTOR_PRIORITY_NOT_DRAWN = 0x10, /* placed nowhere, as if off screen */
@@ -70,7 +70,7 @@ typedef enum ACTOR_PRIORITY_FLAG {
 	ACTOR_PRIORITY_PLATFORM = 0x80
 } ACTOR_PRIORITY_FLAG;
 
-/* ACTOR.motionFlg bits. */
+/* ACTOR.motionFlags bits. */
 typedef enum ACTOR_MOTION_FLAG {
 	ACTOR_FOLLOWS_TERRAIN = 0x01, /* moves with the ground height under it */
 	ACTOR_FALLS = 0x02,			  /* falls by its gravity and bounces */
@@ -87,7 +87,7 @@ typedef enum ACTOR_MOTION_FLAG {
 		(Uint8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE)
 } ACTOR_MOTION_FLAG;
 
-/* ACTOR.collisionFlg bits. */
+/* ACTOR.collisionFlags bits. */
 typedef enum ACTOR_COLLISION_FLAG {
 	ACTOR_SOLID = 0x01,			/* blocks other actors and the player */
 	ACTOR_PUSHABLE = 0x02,		/* the player pushes it */
@@ -98,7 +98,7 @@ typedef enum ACTOR_COLLISION_FLAG {
 	ACTOR_BLOCKED_BY_SOLID = 0x80
 } ACTOR_COLLISION_FLAG;
 
-/* ACTOR.steeringFlg bits. */
+/* ACTOR.steeringFlags bits. */
 typedef enum ACTOR_STEERING_FLAG {
 	ACTOR_FACES_MOTION = 0x01 /* turns toward its velocity, 1/16 turn a tick */
 } ACTOR_STEERING_FLAG;
@@ -127,7 +127,7 @@ struct SPR;
    (fdActorUpdateAllOnField). */
 typedef void (*OBJECT_UPDATE)(union FIELD_OBJECT *object);
 
-/* ACTOR.retainSprCache's bits, read by fdActorSystemPlaceSprs. */
+/* ACTOR.retainSpriteCache's bits, read by fdActorSystemPlaceSprites. */
 typedef enum ACTOR_SPR_CACHE_FLAG {
 	/* Keeps the sprite's VRAM cache entry while the field is suspended or the
 	   actor is off screen (fdActorSetItemIcon sets it). */
@@ -150,19 +150,19 @@ typedef struct ACTOR {
 	FIXED			 scaleY;	   /* 16.16 fixed point, toFIXED(1) full size */
 	Uint16			 radius;	   /* collision radius in pixels */
 	Uint8			 layer; /* the map layer its ground height is read from */
-	/* ACTOR_PRIORITY_FLAG bits; fdActorSetSprPriorityDirect clears
+	/* ACTOR_PRIORITY_FLAG bits; fdActorSetSpritePriorityDirect clears
 	   ACTOR_PRIORITY_AUTOMATIC as it fixes its sprite's priority. */
-	Uint8 priFlg;
-	FIXED velX;		  /* 16.16 fixed-point pixels per tick */
-	FIXED velY;		  /* 16.16 fixed-point pixels per tick */
-	FIXED velZ;		  /* 16.16 fixed-point pixels per tick */
+	Uint8 priorityFlags;
+	FIXED velocityX;  /* 16.16 fixed-point pixels per tick */
+	FIXED velocityY;  /* 16.16 fixed-point pixels per tick */
+	FIXED velocityZ;  /* 16.16 fixed-point pixels per tick */
 	FIXED speedLimit; /* 16.16 fixed-point pixels per tick */
 	/* Added toward the target each tick, or taken off the speed when there is
 	   none, in 16.16 fixed-point pixels per tick. */
 	FIXED acceleration;
-	FIXED tgtX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
-	FIXED tgtY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
-	FIXED tgtZ; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetX; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetY; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
+	FIXED targetZ; /* 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset */
 	/* The share of its falling speed kept as it bounces on landing, 16.16 fixed
 	   point. */
 	FIXED bounce;
@@ -176,35 +176,35 @@ typedef struct ACTOR {
 	/* Its sprite for ACTOR_SPRITE_ONE (read as a FIELD_SPR or a struct Sprite),
 	   or its list of sprites for ACTOR_SPRITE_GROUP, which code that reads it
 	   converts. */
-	struct SPR *spr;
+	struct SPR *sprite;
 	/* ACTOR_SPRITE_ONE or ACTOR_SPRITE_GROUP in the low four bits, which is all
 	   the field and the scenes test. */
-	Uint8 sprStorageKind;
-	Uint8 motionFlg; /* ACTOR_MOTION_FLAG bits */
+	Uint8 spriteStorageKind;
+	Uint8 motionFlags; /* ACTOR_MOTION_FLAG bits */
 	/* The ARRIVAL_AXIS_* watched for arrival at the target; ARRIVAL_AXIS_NONE
 	   once it arrives, and cleared with the target. */
 	Uint8 arrivalAxis;
 	Uint8 conditionResult; /* the actor script's last flag test */
-	Uint8 snapToTgt;	   /* nonzero lands it exactly on its target */
-	Uint8 collisionFlg;	   /* ACTOR_COLLISION_FLAG bits */
-	Uint8 steeringFlg;	   /* ACTOR_STEERING_FLAG bits */
+	Uint8 snapToTarget;	   /* nonzero lands it exactly on its target */
+	Uint8 collisionFlags;  /* ACTOR_COLLISION_FLAG bits */
+	Uint8 steeringFlags;   /* ACTOR_STEERING_FLAG bits */
 	Uint8 paused;
 	/* ACTOR_SPR_CACHE_FLAG bits: what its sprite keeps while the field is
-	   suspended or the actor is off screen (fdActorSystemPlaceSprs). */
-	Uint8  retainSprCache;
-	Uint8  repeatCnt; /* the actor script's loop count */
-	Sint16 wait;	  /* the actor script's wait, in ticks */
+	   suspended or the actor is off screen (fdActorSystemPlaceSprites). */
+	Uint8  retainSpriteCache;
+	Uint8  repeatCount; /* the actor script's loop count */
+	Sint16 wait;		/* the actor script's wait, in ticks */
 
 	/* The field's effects keep a hook here; a scene whose actor bobs keeps its
 	   own tick count in the third byte instead. */
 	union {
-		void *func;
+		void *callback;
 
 		struct {
 			/* ticks in a row a solid actor has refused its move */
 			Uint8 refused;
 			Uint8 frozen;
-			Uint8 sceneCnt; /* ticks into the bob, its low six bits a cycle */
+			Uint8 sceneCount; /* ticks into the bob, its low six bits a cycle */
 			/* A block's: nonzero while it blocks the metatiles ahead of and
 			   behind it. */
 			Uint8 sceneByte;
@@ -214,8 +214,8 @@ typedef struct ACTOR {
 		   and a wake's own ticks. */
 		struct {
 			Uint8 unusedBeforeWake[2]; /* refused and frozen */
-			Uint8 wakeTmr;			   /* ticks to the ship's next wake */
-			Uint8 wakeFrm;			   /* a wake's ticks left */
+			Uint8 wakeTimer;		   /* ticks to the ship's next wake */
+			Uint8 wakeFrame;		   /* a wake's ticks left */
 		};
 
 		/* An actor showing an item (fdActorSetItemIcon). */
@@ -226,16 +226,16 @@ typedef struct ACTOR {
 
 		/* The leader while it crosses a rope or tightrope. */
 		struct {
-			Uint8 unusedBeforeSavedPri[2]; /* refused and frozen */
+			Uint8 unusedBeforeSavedPriority[2]; /* refused and frozen */
 			/* its sprite's priority, given back after */
-			Uint8 savedSprPri;
+			Uint8 savedSpritePriority;
 		};
 
 		/* A member of the party looking about in the Gabomba Statue
 		   (scGabombaStatueLookAround). */
 		struct {
-			Uint8 unusedBeforeLookTmr[2]; /* refused and frozen */
-			Uint8 lookTmr;				  /* ticks to its next turn */
+			Uint8 unusedBeforeLookTimer[2]; /* refused and frozen */
+			Uint8 lookTimer;				/* ticks to its next turn */
 			Uint8 lookTurned; /* nonzero while it faces lookOtherFacing */
 		};
 
@@ -290,7 +290,7 @@ typedef struct ACTOR {
 		/* An actor that blinks, as Magma Rock's statues and blasted wall do
 		   (syStatueFlashUnderBurst). */
 		struct {
-			Uint8 unusedBeforeFlashMask[3]; /* refused, frozen and sceneCnt */
+			Uint8 unusedBeforeFlashMask[3]; /* refused, frozen and sceneCount */
 			/* its sprite flashes while TickCount & this is set */
 			Uint8 flashMask;
 		};
@@ -306,7 +306,8 @@ typedef struct ACTOR {
 		   (scShamanVillageFlickerRock). */
 		struct {
 			Uint8 unusedBeforeFlicker[2]; /* refused and frozen */
-			Uint8 flickerCol; /* the colour attribute shown on its lit ticks */
+			Uint8
+				flickerColor; /* the colour attribute shown on its lit ticks */
 			/* lit every other tick at 0, every other two * at 1 */
 			Uint8 flickerShift;
 		};
@@ -317,7 +318,7 @@ typedef struct ACTOR {
 		struct {
 			/* The parameter its actor script reads (a follow distance or an
 			   angle to face). */
-			Sint16 tmr;
+			Sint16 timer;
 			/* The side of the player's next footprint, or scene scratch. */
 			Sint16 userValue;
 		};
@@ -332,26 +333,26 @@ typedef struct ACTOR {
 		/* Avoid's caster (fdEffectUpdateAvoidCaster). */
 		struct {
 			Sint16 arcPhase; /* 1 spins the caster 3/64 turn a tick */
-			Sint16 arcFrm;	 /* ticks since the arcs started */
+			Sint16 arcFrame; /* ticks since the arcs started */
 		};
 
 		/* A Venus Djinni's falling motes
 		   (fdEffectUpdateDescendingOrbitActor). */
 		struct {
-			Uint16 orbitFrm; /* ticks left of the spiral, 100 at the start */
-			Sint16 orbitAng; /* its start on the circle, 1/65536 turns */
+			Uint16 orbitFrame; /* ticks left of the spiral, 100 at the start */
+			Sint16 orbitAngle; /* its start on the circle, 1/65536 turns */
 		};
 
 		/* A Whirlwind particle (fdEffectCircleAnchor,
 		   fdEffectWanderAroundAnchor). */
 		struct {
-			Uint16 swirlFrm; /* ticks it has circled or wandered so far */
-			Sint16 turnFrm;	 /* ticks left of a sharp turn */
+			Uint16 swirlFrame; /* ticks it has circled or wandered so far */
+			Sint16 turnFrame;  /* ticks left of a sharp turn */
 		};
 
-		/* A spin that speeds up (fdEffectAdvanceAngWithRamp). */
+		/* A spin that speeds up (fdEffectAdvanceAngleWithRamp). */
 		struct {
-			Sint16 spinRampFrm; /* ticks the spin has been speeding up for */
+			Sint16 spinRampFrame; /* ticks the spin has been speeding up for */
 		};
 
 		/* The two headings a member of the party looking about turns between
@@ -384,7 +385,7 @@ typedef struct ACTOR {
 } ACTOR;
 
 STATIC_ASSERT(sizeof(ACTOR) == 128);
-STATIC_ASSERT(offsetof(ACTOR, collisionFlg) == 89);
+STATIC_ASSERT(offsetof(ACTOR, collisionFlags) == 89);
 
 void fdActorMoveHalfwayTowardTarget(ACTOR *actor);
 void fdActorMoveHalfwayTowardTargetCopy(ACTOR *actor);
@@ -398,16 +399,16 @@ void fdActorWaitForMoveStub(ACTOR *);
 void fdActorSelectAnimationStub(ACTOR *, Sint32);
 void fdActorWaitForScriptEndStub(ACTOR *);
 void fdActorWaitUntilLanded(ACTOR *actor);
-void sySndPlayStub(Sint32);
+void sySoundPlayStub(Sint32);
 
 extern const Sint32 ActorFaceWatchedScript[];
 extern const Sint32 ActorOffsetScript[];
 extern const Uint8	ActorVariantScripts[];
 
 /* Sets bits in one of an actor's flag bytes. */
-static inline void syActorFlagsSet(Uint8 *flg, Uint8 bits)
+static inline void syActorFlagsSet(Uint8 *flags, Uint8 bits)
 {
-	*flg |= bits;
+	*flags |= bits;
 }
 
 #endif

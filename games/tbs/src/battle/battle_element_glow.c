@@ -52,14 +52,14 @@ STATIC_ASSERT(offsetof(SPARK_STATE, canvasOrigin) ==
    shrinks as its life runs out, and the three rings move outward. */
 UNREAD_RESULT btElementGlowUpdateStarField(void)
 {
-	Sint32		   ringIdx;
+	Sint32		   ringIndex;
 	Sint32		   picture;
 	Uint32		   size;
 	Sint32		   ringX;
 	Sint32		   ringY;
 	Sint32		   phase;
 	void		  *canvas;
-	Sint32		   sparkIdx;
+	Sint32		   sparkIndex;
 	SPARK_STATE	  *state;
 	DRAW_RECTANGLE draw;
 	SPARK		  *spark;
@@ -71,7 +71,7 @@ UNREAD_RESULT btElementGlowUpdateStarField(void)
 	Sint32		   coordinate;
 	FIXED		   acceleration;
 	Uint32		   radius;
-	Sint32		   ang;
+	Sint32		   angle;
 	Uint32		   halfRadius;
 	Sint32		   x;
 	Sint32		   y;
@@ -81,8 +81,8 @@ UNREAD_RESULT btElementGlowUpdateStarField(void)
 	state = HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
 	state->ready = 0;
 	draw = (DRAW_RECTANGLE)HeapSlots[HEAP_SLOT_RAM_CODE];
-	for(sparkIdx = 0; sparkIdx < STAR_FIELD_SPARKS; sparkIdx++) {
-		spark = &state->sparks[sparkIdx];
+	for(sparkIndex = 0; sparkIndex < STAR_FIELD_SPARKS; sparkIndex++) {
+		spark = &state->sparks[sparkIndex];
 		life = spark->life;
 		/* A spark ends within 4 pixels of the centre (the distance is in
 		   STAR_FIELD_PIXEL units). Until then it is pulled straight at the
@@ -113,11 +113,11 @@ UNREAD_RESULT btElementGlowUpdateStarField(void)
 		/* A spent spark starts again, as btElementGlowInitStarField starts
 		   them, while the field is young. */
 		if(life == 0 && state->ticks < STAR_FIELD_SPAWN_TICKS) {
-			ang = syRandom();
+			angle = syRandom();
 			radius = syRandom() + toFIXED(1);
 			halfRadius = radius >> 1;
-			spark->motion[0] = syMulFX(syCos(ang), halfRadius);
-			spark->motion[1] = syMulFX(sySin(ang), halfRadius);
+			spark->motion[0] = syMulFX(syCos(angle), halfRadius);
+			spark->motion[1] = syMulFX(sySin(angle), halfRadius);
 			if(spark->motion[0] & 1)
 				spark->motion[0] = -spark->motion[0];
 			if(spark->motion[1] & 1)
@@ -150,10 +150,10 @@ UNREAD_RESULT btElementGlowUpdateStarField(void)
 	/* The rings, through the blitter that keeps the brighter colour: each shows
 	   its four pictures eight ticks apiece, then is no longer drawn. */
 	draw = (DRAW_RECTANGLE)HeapSlots[HEAP_SLOT_RAM_CODE_PAIRED];
-	for(ring = state->rings, ringIdx = STAR_FIELD_RINGS - 1; ringIdx >= 0;
-		ringIdx--, ring++) {
-		ring->x += ring->velX;
-		ring->y += ring->velY;
+	for(ring = state->rings, ringIndex = STAR_FIELD_RINGS - 1; ringIndex >= 0;
+		ringIndex--, ring++) {
+		ring->x += ring->velocityX;
+		ring->y += ring->velocityY;
 		ringX = ring->x >> STAR_FIELD_PIXEL_SHIFT;
 		ringY = ring->y >> STAR_FIELD_PIXEL_SHIFT;
 		phase = 3 - ring->age / 8;
@@ -207,29 +207,30 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	SPARK_STATE *state;
 	SPARK		*spark;
 	RING		*ring;
-	Sint32		 effectIdx;
+	Sint32		 effectIndex;
 	Uint8		*graphics;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED SPARK unused;
 
 	BattleBackgroundStateWork->mode = BATTLE_BACKGROUND_FIXED;
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, STAR_FIELD_SIZE * STAR_FIELD_SIZE);
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
+	syHeapSlotAllocate(
+		HEAP_SLOT_BATTLE_CANVAS, STAR_FIELD_SIZE * STAR_FIELD_SIZE);
 	/* FAKEMATCH(dead): an empty once-only loop. */
 	do {
 	} while(0);
 	/* Each spark at a random angle and height, swirling inward; it lives a
 	   tick for every four pixels it starts out from the centre, and one
 	   more. */
-	for(effectIdx = 0; effectIdx < STAR_FIELD_SPARKS; effectIdx++) {
-		Sint32 ang = syRandom();
+	for(effectIndex = 0; effectIndex < STAR_FIELD_SPARKS; effectIndex++) {
+		Sint32 angle = syRandom();
 		Uint32 radius = syRandom() + toFIXED(1);
 		Uint32 halfRadius = radius >> 1;
 
-		spark = &state->sparks[effectIdx];
-		spark->motion[0] = syMulFX(syCos(ang), halfRadius);
-		spark->motion[1] = syMulFX(sySin(ang), halfRadius);
+		spark = &state->sparks[effectIndex];
+		spark->motion[0] = syMulFX(syCos(angle), halfRadius);
+		spark->motion[1] = syMulFX(sySin(angle), halfRadius);
 		if(spark->motion[0] & 1)
 			spark->motion[0] = -spark->motion[0];
 		if(spark->motion[1] & 1)
@@ -240,16 +241,16 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 		spark->motion[5] = 0;
 		spark->life = radius / (8 * STAR_FIELD_PIXEL) + 1;
 	}
-	for(effectIdx = 0; effectIdx < STAR_FIELD_RINGS; effectIdx++) {
+	for(effectIndex = 0; effectIndex < STAR_FIELD_RINGS; effectIndex++) {
 		Sint32 radius = 4 * STAR_FIELD_PIXEL;
-		Sint32 ang;
+		Sint32 angle;
 
-		ring = &state->rings[effectIdx];
-		ang = effectIdx * (DEGtoANG(120));
-		ring->x = syMulFX(syCos(ang), radius);
-		ring->y = syMulFX(sySin(ang), radius);
-		ring->velX = syMulFX(syCos(ang), STAR_FIELD_PIXEL / 2);
-		ring->velY = syMulFX(sySin(ang), STAR_FIELD_PIXEL / 2);
+		ring = &state->rings[effectIndex];
+		angle = effectIndex * (DEGtoANG(120));
+		ring->x = syMulFX(syCos(angle), radius);
+		ring->y = syMulFX(sySin(angle), radius);
+		ring->velocityX = syMulFX(syCos(angle), STAR_FIELD_PIXEL / 2);
+		ring->velocityY = syMulFX(sySin(angle), STAR_FIELD_PIXEL / 2);
 		ring->age = 0;
 	}
 	state->ticks = 0;
@@ -310,7 +311,7 @@ Sint32 btElementGlowEnd(Sint32 unused)
 /* Copies count colours from source to destination, each channel scaled by scale
    (16.16, at most 1), and returns 0. */
 Sint32 btGraphicsScaleRGB555Clamped(
-	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 cnt)
+	Uint16 *src, Uint16 *dest, FIXED scale, Sint32 count)
 {
 	Sint32 i;
 
@@ -318,23 +319,23 @@ Sint32 btGraphicsScaleRGB555Clamped(
 		scale = toFIXED(1);
 	/* Each channel scaled in place: a 16.16 scale of at most 1 keeps it inside
 	   its own five bits. */
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		Uint32 redMask = RGB(RGB_LEVEL_MAX, 0, 0);
 		Uint32 greenMask = RGB(0, RGB_LEVEL_MAX, 0);
 		Uint32 blueMask = RGB(0, 0, RGB_LEVEL_MAX);
-		Uint32 col = *src;
-		Uint32 red = col & redMask;
-		Uint32 green = col & greenMask;
-		Uint32 blue = blueMask & col;
+		Uint32 color = *src;
+		Uint32 red = color & redMask;
+		Uint32 green = color & greenMask;
+		Uint32 blue = blueMask & color;
 
 		red *= scale;
 		green *= scale;
 		blue *= scale;
-		col = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
-		col |= FIXEDtoINT(blue) & blueMask;
-		*dst = col;
+		color = (FIXEDtoINT(red) & redMask) | (FIXEDtoINT(green) & greenMask);
+		color |= FIXEDtoINT(blue) & blueMask;
+		*dest = color;
 		src++;
-		dst++;
+		dest++;
 	}
 	return 0;
 }
@@ -358,7 +359,7 @@ void btElementGlowPlay(
 	BATTLE_STATE	*battle =
 		HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
 	SPARK_STATE *state;
-	Sint32		 frm;
+	Sint32		 frame;
 	Sint32		*brightness;
 
 	sySynch(1);
@@ -382,13 +383,13 @@ void btElementGlowPlay(
 		syIOWriteQueueStore16(
 			(Uint32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
 		btElementGlowInitStarField(element);
-		for(frm = 0; frm < STAR_FIELD_TICKS; frm++) {
+		for(frame = 0; frame < STAR_FIELD_TICKS; frame++) {
 			brightness = &battle->brightness;
 			ime = &REG_IME;
 			state = HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
-			if(frm <= 24)
-				btGraphicsScaleRGB555Clamped(battle->pal, BATTLE_BG_PALETTE,
-					*brightness = toFIXED(1) - frm * BACKGROUND_LEVEL_STEP,
+			if(frame <= 24)
+				btGraphicsScaleRGB555Clamped(battle->palette, BATTLE_BG_PALETTE,
+					*brightness = toFIXED(1) - frame * BACKGROUND_LEVEL_STEP,
 					BATTLE_BACKGROUND_COLORS);
 			btMotionProjectScaledPos(
 				unitId, syScreenPointCoordinates(&starFieldPos));
@@ -409,7 +410,7 @@ void btElementGlowPlay(
 
 		/* The effect uses its image area to stage the tracked canvas origin. */
 		btEffectStartElementStreaksStub(element);
-		for(frm = 0; frm < 40; frm++) {
+		for(frame = 0; frame < 40; frame++) {
 			effectState = HeapSlots[HEAP_SLOT_BATTLE_EFFECT];
 			btMotionProjectScaledPos(
 				unitId, syScreenPointCoordinates(&streakPos));
@@ -427,25 +428,25 @@ void btElementGlowPlay(
 	} else if(mode == GLOW_PILLAR) {
 		/* The pillar and the burst run a battle effect with the unit as its
 		   user and only target. */
-		pillarLaunch.eff.prelude = 0;
-		pillarLaunch.eff.kind = element;
-		pillarLaunch.eff.variant = variant;
-		pillarLaunch.eff.user = unitId;
-		pillarLaunch.eff.tgts[0] = unitId;
-		pillarLaunch.eff.firstTgt = unitId;
-		pillarLaunch.eff.tgtCnt = 1;
-		pillarLaunch.eff.range = 1;
-		btEffectRunElementPillarStub(&pillarLaunch.eff);
+		pillarLaunch.effect.prelude = 0;
+		pillarLaunch.effect.kind = element;
+		pillarLaunch.effect.variant = variant;
+		pillarLaunch.effect.user = unitId;
+		pillarLaunch.effect.targets[0] = unitId;
+		pillarLaunch.effect.firstTarget = unitId;
+		pillarLaunch.effect.targetCount = 1;
+		pillarLaunch.effect.range = 1;
+		btEffectRunElementPillarStub(&pillarLaunch.effect);
 	} else {
-		burstLaunch.eff.kind = element;
-		burstLaunch.eff.prelude = 0;
-		burstLaunch.eff.variant = 0;
-		burstLaunch.eff.user = unitId;
-		burstLaunch.eff.tgts[0] = unitId;
-		burstLaunch.eff.firstTgt = unitId;
-		burstLaunch.eff.tgtCnt = 1;
-		burstLaunch.eff.range = 1;
-		btEffectRunElementBurstStub(&burstLaunch.eff);
+		burstLaunch.effect.kind = element;
+		burstLaunch.effect.prelude = 0;
+		burstLaunch.effect.variant = 0;
+		burstLaunch.effect.user = unitId;
+		burstLaunch.effect.targets[0] = unitId;
+		burstLaunch.effect.firstTarget = unitId;
+		burstLaunch.effect.targetCount = 1;
+		burstLaunch.effect.range = 1;
+		btEffectRunElementBurstStub(&burstLaunch.effect);
 	}
 }
 

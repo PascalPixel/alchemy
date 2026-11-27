@@ -172,9 +172,11 @@ static void scXianUpdateFrozenWaterLayer(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(leader->y.part[0].integer > 31) {
-		fdActorGet(ACTOR_SPILLED_WATER)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_SPILLED_WATER)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
 	} else {
-		fdActorGet(ACTOR_SPILLED_WATER)->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_SPILLED_WATER)->priorityFlags &=
+			~ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 
@@ -182,7 +184,7 @@ static void scXianUpdateFrozenWaterLayer(void)
 static void scXianRotateTrainingTree(void)
 {
 	ACTOR *tree = fdActorGet(ACTOR_TRAINING_TREE);
-	SPR	  *sprite = tree->spr;
+	SPR	  *sprite = tree->sprite;
 	sprite->rotation += TRIG_TURN * 5 / 64;
 }
 
@@ -194,8 +196,8 @@ static void scXianSpawnTrainingParticles(void)
 	if((TickCount & 3) == 0) {
 		EFFECT_OPTIONS options;
 
-		options.pri = 1;
-		options.pal = SPRITE_COLOR_BLUE_TINT;
+		options.priority = 1;
+		options.palette = SPRITE_COLOR_BLUE_TINT;
 		options.type = SPRITE_GIRL_IN_PINK;
 		options.script = XianTrainingParticleScript;
 		fdEffectSpawn(student->x.fixed, student->y.fixed,
@@ -208,7 +210,7 @@ static void scXianSpawnTrainingParticles(void)
 
 #include "shared/actor_distance.c"
 
-/* Stops the water carrier where she stands while `tgt` is within
+/* Stops the water carrier where she stands while `target` is within
    `distanceLimit` pixels of her and no more than a sixteenth of a turn off her
    heading, or whenever `alwaysStop` is set, and sets her walking on otherwise.
    Returns whether she is stopped.
@@ -216,21 +218,21 @@ static void scXianSpawnTrainingParticles(void)
    `paused` holds her still, and `timer` is 1 while this function holds her;
    paused with `timer` 0, she stays put whatever the leader does. */
 static Sint32 scXianStopCarrierBeforeLeader(
-	ACTOR *actor, ACTOR *tgt, Sint32 distanceLimit, Sint32 alwaysStop)
+	ACTOR *actor, ACTOR *target, Sint32 distanceLimit, Sint32 alwaysStop)
 {
 	Sint32 stopped = 0;
 
-	if(actor->paused == 1 && actor->tmr == 0) {
+	if(actor->paused == 1 && actor->timer == 0) {
 		fdActorSelectAnimation(actor, ANIM_STAND);
 		return 1;
 	}
 
-	if(fdActorDistance(tgt, actor) < distanceLimit || alwaysStop != 0) {
-		Uint16 ang = syAtan(
-			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
-		Sint32 previousHeading = FACING_SIXTEENTH(ang - FACING_STEP);
-		Sint32 nextHeading = FACING_SIXTEENTH(ang + FACING_STEP);
-		Sint32 targetHeading = FACING_SIXTEENTH(ang);
+	if(fdActorDistance(target, actor) < distanceLimit || alwaysStop != 0) {
+		Uint16 angle = syAtan(
+			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+		Sint32 previousHeading = FACING_SIXTEENTH(angle - FACING_STEP);
+		Sint32 nextHeading = FACING_SIXTEENTH(angle + FACING_STEP);
+		Sint32 targetHeading = FACING_SIXTEENTH(angle);
 		Sint32 currentHeading = FACING_SIXTEENTH(actor->facing);
 
 		if(targetHeading == currentHeading || nextHeading == currentHeading ||
@@ -238,16 +240,16 @@ static Sint32 scXianStopCarrierBeforeLeader(
 			actor->paused = 1;
 			fdActorSelectAnimation(actor, ANIM_STAND);
 			stopped = 1;
-			actor->tmr = stopped;
+			actor->timer = stopped;
 		} else {
 			actor->paused = 0;
 			fdActorSelectAnimation(actor, ANIM_WALK);
-			actor->tmr = 0;
+			actor->timer = 0;
 		}
 	} else {
 		actor->paused = 0;
 		fdActorSelectAnimation(actor, ANIM_WALK);
-		actor->tmr = 0;
+		actor->timer = 0;
 	}
 
 	return stopped;
@@ -262,25 +264,26 @@ static UNREAD_RESULT scXianWatchWaterCarrierPath(ACTOR *carrier)
 	ACTOR *leader;
 	Sint32 near = 0;
 
-	if(carrier->tgtX == ACTOR_NO_TARGET && carrier->tgtZ == ACTOR_NO_TARGET)
+	if(carrier->targetX == ACTOR_NO_TARGET &&
+		carrier->targetZ == ACTOR_NO_TARGET)
 		RETURN_UNREAD(0);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(FIELD_METATILE(leader->x.fixed) >= CARRIER_ROUTE_WEST_COLUMN &&
 		FIELD_METATILE(leader->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 1 &&
 		FIELD_METATILE(leader->z.fixed) == CARRIER_ROUTE_ROW &&
 		FIELD_METATILE(carrier->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 2 &&
-		carrier->velX <= 0) {
+		carrier->velocityX <= 0) {
 		if(leader->x.fixed <= carrier->x.fixed) {
-			carrier->sceneCnt++;
+			carrier->sceneCount++;
 			near = 1;
 		}
 	} else {
-		carrier->sceneCnt = 0;
+		carrier->sceneCount = 0;
 	}
-	/* sceneCnt counts the ticks he has stood there. */
-	if(near && carrier->sceneCnt > XIAN_CARRIER_BLOCKED_TICKS - 1) {
+	/* sceneCount counts the ticks he has stood there. */
+	if(near && carrier->sceneCount > XIAN_CARRIER_BLOCKED_TICKS - 1) {
 		FieldStateWork->raisedCue = RAISED_CARRIER_BLOCKED;
-		carrier->sceneCnt = 0;
+		carrier->sceneCount = 0;
 	}
 	scXianStopCarrierBeforeLeader(carrier, leader, 18, near);
 	RETURN_UNREAD(0);
@@ -367,7 +370,7 @@ static void scXianTalkToWaterCarrier(void)
 			FieldStateWork->msg++;
 			/* "Do not speak to me. I might spill my water." */
 			fdScriptShowMessage(ACTOR_WOMAN_CARRYING_WATER, 0);
-			fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->tmr = 0;
+			fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->timer = 0;
 			fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->facing = savedFacing;
 		} else {
 			/* "Now I must get water again. This work is hard on my back." */
@@ -392,7 +395,8 @@ static void scXianTalkToWaterCarrier(void)
 		   on the side he stands (row 14's middle is 232 pixels down). */
 		leader = fdActorGet(ACTOR_PARTY_LEADER);
 		if(leader->x.fixed < fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->x.fixed) {
-			fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &=
+				~ACTOR_FACES_MOTION;
 			fdActorWalkTo(ACTOR_PARTY_LEADER,
 				(FIELD_METATILE(fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->x.fixed)
 					<< 4) -
@@ -400,7 +404,8 @@ static void scXianTalkToWaterCarrier(void)
 				232);
 			leaderMustStepAside = 1;
 		} else {
-			fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &=
+				~ACTOR_FACES_MOTION;
 			fdActorWalkTo(ACTOR_PARTY_LEADER,
 				(FIELD_METATILE(fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->x.fixed)
 					<< 4) +
@@ -409,14 +414,14 @@ static void scXianTalkToWaterCarrier(void)
 		}
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	}
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->tgtX = ACTOR_NO_TARGET;
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->tgtY = ACTOR_NO_TARGET;
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->tgtZ = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->targetX = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->targetY = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->targetZ = ACTOR_NO_TARGET;
 	fdActorSetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
 	fdActorSetAnimation(ACTOR_WOMAN_CARRYING_WATER, ANIM_STAND);
 	fdActorRunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
 	fdScriptWait(10);
-	sySndPlay(SE_SPARKLING_PASSAGE);
+	sySoundPlay(SE_SPARKLING_PASSAGE);
 	puddle->scaleX = toFIXED(3) / 10;
 	puddle->scaleY = toFIXED(3) / 10;
 	carrierMetatileX =
@@ -430,8 +435,8 @@ static void scXianTalkToWaterCarrier(void)
 	carrier = fdActorGet(ACTOR_WOMAN_CARRYING_WATER);
 	fdMapGridCopyMetatileAttributes(16, 16, 1, 1, FIELD_METATILE(carrierX),
 		FIELD_METATILE(carrier->z.fixed));
-	fdActorSetSprPriority(ACTOR_SPILLED_WATER, 2);
-	puddle->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(ACTOR_SPILLED_WATER, 2);
+	puddle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	do {
 		sySynch(3);
 		scaleY = puddle->scaleY;
@@ -461,7 +466,7 @@ static void scXianTalkToWaterCarrier(void)
 	if(leaderMustStepAside != 0) {
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
@@ -475,7 +480,7 @@ static void scXianTalkToWaterCarrier(void)
 	}
 	fdActorWalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
 	gmFlagSet(FLAG_XIAN_WATER_SPILLED);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptEnd();
 }
 
@@ -488,7 +493,7 @@ static void scXianUpdatePuddlePriority(void)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 	if(FIELD_METATILE(leader->z.fixed) < CARRIER_ROUTE_ROW)
-		fdActorSetSprPriority(ACTOR_SPILLED_WATER, 1);
+		fdActorSetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 
 /* Frost on the spilled water in Xian freezes the puddle into an ice pillar.
@@ -503,15 +508,15 @@ static void scXianFreezeSpilledWater(void)
 	FIXED  puddleX;
 
 	fdScriptStart();
-	fdActorGet(ACTOR_SPILLED_WATER)->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_SPILLED_WATER)->motionFlg = 0;
+	fdActorGet(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_SPILLED_WATER)->motionFlags = 0;
 	puddleX = fdActorGet(ACTOR_SPILLED_WATER)->x.fixed;
 	puddle = fdActorGet(ACTOR_SPILLED_WATER);
 	fdMapGridCopyMetatileAttributes(3, 17, 1, 1, FIELD_METATILE(puddleX),
 		(FIELD_METATILE(puddle->z.fixed)));
 	sySetTickEvent(scXianUpdateFrozenWaterLayer, EVENT_PASS_TICK);
 	gmFlagSet(FLAG_XIAN_SPILLED_WATER_FROZEN);
-	fdActorSetSprPriority(ACTOR_SPILLED_WATER, 2);
+	fdActorSetSpritePriority(ACTOR_SPILLED_WATER, 2);
 	fdScriptEnd();
 }
 
@@ -521,8 +526,8 @@ static void scXianFreezeSpilledWater(void)
    drops back. "Heh heh heh..." After that she only boasts of her kung fu. */
 static void scXianTalkToKungFuStudent(void)
 {
-	FIXED		   reboundVel;
-	Sint32		   stepBackOfs[3];
+	FIXED		   reboundVelocity;
+	Sint32		   stepBackOffset[3];
 	EFFECT_OPTIONS options;
 
 	fdScriptStart();
@@ -539,31 +544,31 @@ static void scXianTalkToKungFuStudent(void)
 		/* "Hoo-whaaa... Hachaaa!" */
 		fdScriptShowMessage(ACTOR_KUNG_FU_STUDENT, 0);
 		fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
-		SET_VECTOR(stepBackOfs, 0, 0, 0);
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+		SET_VECTOR(stepBackOffset, 0, 0, 0);
 		syFieldVectorAddPolarOffset(-8, fdActorGet(ACTOR_PARTY_LEADER)->facing,
-			(FIELD_POS *)stepBackOfs);
+			(FIELD_POS *)stepBackOffset);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER,
-			stepBackOfs[0] / toFIXED(1), stepBackOfs[2] / toFIXED(1));
+			stepBackOffset[0] / toFIXED(1), stepBackOffset[2] / toFIXED(1));
 		fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdScriptWait(30);
 		fdActorRunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
-		options.pri = 1;
+		options.priority = 1;
 		fdEffectSpawn(toFIXED(192), 0, toFIXED(312), toFIXED(1) / 10,
 			toFIXED(1) / 5, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		fdEffectSpawn(toFIXED(192), 0, toFIXED(312), toFIXED(1) / 5,
 			toFIXED(1) / 10, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-		sySndPlay(SE_WATER);
+		sySoundPlay(SE_WATER);
 		sySetTickEvent(scXianSpawnTrainingParticles, EVENT_PASS_TICK);
-		fdActorGet(ACTOR_KUNG_FU_STUDENT)->velY = toFIXED(6);
+		fdActorGet(ACTOR_KUNG_FU_STUDENT)->velocityY = toFIXED(6);
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->gravity = toFIXED(1);
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
 		fdActorSetSpeed(ACTOR_KUNG_FU_STUDENT, 3);
 		fdActorSetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
 		fdActorWaitForMoveById(ACTOR_KUNG_FU_STUDENT);
-		sySndPlay(SE_HEAVY_IMPACT);
+		sySoundPlay(SE_HEAVY_IMPACT);
 		fdActorSetScript(ACTOR_TRAINING_TREE, XianTrainingTreeJump);
 		sySetTickEvent(scXianRotateTrainingTree, EVENT_PASS_TICK);
 		options.type = SPRITE_STAR_BURST;
@@ -582,11 +587,11 @@ static void scXianTalkToKungFuStudent(void)
 			toFIXED(1) / 10, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		/* Half a pixel a tick back east, and below as a rotation: half a turn,
 		   which stands the post upright again. */
-		reboundVel = -toFIXED(1) / 2;
-		fdEffectSpawn(toFIXED(144), 0, toFIXED(312), reboundVel, 0, 0,
+		reboundVelocity = -toFIXED(1) / 2;
+		fdEffectSpawn(toFIXED(144), 0, toFIXED(312), reboundVelocity, 0, 0,
 			EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		fdActorWaitForScriptEndById(ACTOR_TRAINING_TREE);
-		sySndPlay(SE_CHEST_OPEN);
+		sySoundPlay(SE_CHEST_OPEN);
 		fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), 0, 0, 0,
 			EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), toFIXED(1) / 5, 0,
@@ -594,7 +599,7 @@ static void scXianTalkToKungFuStudent(void)
 		fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), -toFIXED(1) / 5,
 			0, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 		syCloseEvent(scXianRotateTrainingTree);
-		fdActorGet(ACTOR_TRAINING_TREE)->spr->rotation = reboundVel;
+		fdActorGet(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->bounce = toFIXED(1) / 4;
 		fdActorGet(ACTOR_KUNG_FU_STUDENT)->gravity = toFIXED(1);
 		fdScriptWait(30);
@@ -626,12 +631,12 @@ static void scXianTalkToFeizhi(void)
    metatiles on if nothing stands there. */
 static void scXianJumpOverSpilledWater(void)
 {
-	Sint32	  savedMotionFlg;
+	Sint32	  savedMotionFlags;
 	ACTOR	 *leader;
 	FIELD_POS landingPos;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlg = leader->motionFlg;
+	savedMotionFlags = leader->motionFlags;
 	if(gmFlagGet(FLAG_XIAN_WATER_SPILLED) != 0) {
 		landingPos.x = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		landingPos.y = leader->y.fixed;
@@ -642,18 +647,18 @@ static void scXianJumpOverSpilledWater(void)
 			fdScriptStart();
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 			sySynch(6);
-			sySndPlay(SE_JUMP);
+			sySoundPlay(SE_JUMP);
 			fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 			leader->speedLimit = toFIXED(3);
 			leader->acceleration = toFIXED(2);
-			leader->velY = toFIXED(4);
-			leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-			fdActorSetSprFlags(leader, 0);
+			leader->velocityY = toFIXED(4);
+			leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+			fdActorSetSpriteFlags(leader, 0);
 			fdActorMoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(landingPos.x),
 				FIXEDtoINT(landingPos.z));
 			fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-			fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
-			leader->motionFlg = savedMotionFlg;
+			fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+			leader->motionFlags = savedMotionFlags;
 			fdScriptEnd();
 		}
 	}
@@ -661,18 +666,18 @@ static void scXianJumpOverSpilledWater(void)
 
 /* Walks the leader through a doorway and leaves by its exit. Through the
    Sanctum's door the leader walks straight in, without centering on it. */
-static void scXianWalkThroughExit(Sint32 exitNum)
+static void scXianWalkThroughExit(Sint32 exitNumber)
 {
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	if(exitNum == XIAN_TO_SANCTUM) {
+	if(exitNumber == XIAN_TO_SANCTUM) {
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -16);
 	} else {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	}
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
-	syImportScriptSetExitRequest(exitNum);
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
+	syImportScriptSetExitRequest(exitNumber);
 }
 
 /* Walking north into one of Xian's doors opens it with a creak, or the
@@ -685,31 +690,31 @@ static void scXianOpenDoorAndLeave(void)
 
 	switch(state->stepCue) {
 	case XIAN_TO_HOUSE:
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(XianHouseDoorOpens, 81, 18);
 		break;
 	case XIAN_TO_HOUSE_NORTH:
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(XianNorthHouseDoorOpens, 83, 11);
 		break;
 	case XIAN_TO_LACQUER_ROOMS_B_EAST:
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(XianNorthHouseDoorOpens, 86, 11);
 		break;
 	case XIAN_TO_INN:
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(XianInnDoorOpens, 84, 24);
 		break;
 	case XIAN_TO_WEAPON_AND_ARMOR_SHOP:
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(XianInnDoorOpens, 72, 7);
 		break;
 	case XIAN_TO_SANCTUM:
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		fdMapGridPlayMapEdit(XianSanctumDoorOpens, 69, 11);
 		break;
 	case XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL:
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(XianSchoolDoorOpens, 83, 7);
 		break;
 	default:
@@ -733,7 +738,7 @@ static void scXianStrikeTrainingTreeWithForce(void)
 	rotate = scXianRotateTrainingTree;
 	sySetTickEvent(rotate, EVENT_PASS_TICK);
 	fdActorWaitForScriptEndById(ACTOR_TRAINING_TREE);
-	sySndPlay(SE_CHEST_OPEN);
+	sySoundPlay(SE_CHEST_OPEN);
 	fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), 0, 0, 0,
 		EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 	fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), toFIXED(1) / 5, 0, 0,
@@ -741,7 +746,7 @@ static void scXianStrikeTrainingTreeWithForce(void)
 	fdEffectSpawn(toFIXED(168), toFIXED(8), toFIXED(312), -toFIXED(1) / 5, 0, 0,
 		EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
 	syCloseEvent(rotate);
-	fdActorGet(ACTOR_TRAINING_TREE)->spr->rotation = DEGtoANG(180);
+	fdActorGet(ACTOR_TRAINING_TREE)->sprite->rotation = DEGtoANG(180);
 	fdActorSetPos(ACTOR_FORCE_TARGET, 168, 312);
 	fdScriptWait(20);
 	fdActorFaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
@@ -765,10 +770,10 @@ static void scXianWaterCarrierStartsRoundAgain(void)
 	fdScriptStart();
 	fdActorSetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
 	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->update = 0;
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->tgtX = ACTOR_NO_TARGET;
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->tgtZ = ACTOR_NO_TARGET;
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->velX = 0;
-	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->velZ = 0;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->targetX = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->targetZ = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->velocityX = 0;
+	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->velocityZ = 0;
 	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->speedLimit = 0;
 	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->acceleration = 0;
 	fdActorShowEmote(
@@ -797,7 +802,7 @@ const CUE *scGetCues(void)
 Sint32 scInit(void)
 {
 	ACTOR *actor;
-	Uint32 crateIdx;
+	Uint32 crateIndex;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdQueueMusic(SE_AMBIENT_WIND);
@@ -823,14 +828,15 @@ Sint32 scInit(void)
 	/* Set the three crates up as fdActorCreateConfigured sets up its actors:
 	   still, not solid, never a target and hidden. XXX (no evidence): what the
 	   crates are for; nothing reads them again. */
-	for(crateIdx = 0; crateIdx <= 2; crateIdx++) {
-		ACTOR *crate = fdActorGet(crateIdx + ACTOR_FIRST_CRATE);
-		crate->spr->image.pri = 1;
-		crate->motionFlg = 0;
-		crate->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(crate, 0);
-		fdActorSetSprCol(crate, SPRITE_COLOR_HIDDEN);
-		crate->priFlg = (crate->priFlg & ~ACTOR_PRIORITY_AUTOMATIC) |
+	for(crateIndex = 0; crateIndex <= 2; crateIndex++) {
+		ACTOR *crate = fdActorGet(crateIndex + ACTOR_FIRST_CRATE);
+		crate->sprite->image.priority = 1;
+		crate->motionFlags = 0;
+		crate->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(crate, 0);
+		fdActorSetSpriteColor(crate, SPRITE_COLOR_HIDDEN);
+		crate->priorityFlags =
+			(crate->priorityFlags & ~ACTOR_PRIORITY_AUTOMATIC) |
 			ACTOR_PRIORITY_UNDERFOOT;
 	}
 	if(gmFlagGet(FLAG_XIAN_STRIKE_SHOWN)) {
@@ -849,19 +855,19 @@ Sint32 scInit(void)
 		sySetTickEvent(scXianUpdateFrozenWaterLayer, EVENT_PASS_TICK);
 	}
 	/* The water carrier's sprite is drawn with its green and blue swapped. */
-	fdActorSetSprColById(ACTOR_WOMAN_CARRYING_WATER, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_WOMAN_CARRYING_WATER, SPRITE_COLOR_RBG);
 	fdActorGet(ACTOR_WOMAN_CARRYING_WATER)->update = XIAN_WATER_CARRIER_UPDATE;
 	actor = fdActorGet(ACTOR_TRAINING_TREE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(16);
-	actor->tgtY = toFIXED(16);
+	actor->targetY = toFIXED(16);
 	actor->scaleX = toFIXED(11) / 20;
 	actor->scaleY = toFIXED(2) / 5;
-	actor->spr->rotation = DEGtoANG(180);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FORCE_TARGET), 0);
-	fdActorGet(ACTOR_FORCE_TARGET)->motionFlg = 0;
+	actor->sprite->rotation = DEGtoANG(180);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FORCE_TARGET), 0);
+	fdActorGet(ACTOR_FORCE_TARGET)->motionFlags = 0;
 	fdActorGet(ACTOR_FORCE_TARGET)->y.fixed = 0;
-	fdActorGet(ACTOR_FORCE_TARGET)->tgtY = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_FORCE_TARGET)->targetY = ACTOR_NO_TARGET;
 	return 0;
 }
 

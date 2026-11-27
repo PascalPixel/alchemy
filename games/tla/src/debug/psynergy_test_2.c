@@ -43,13 +43,13 @@ typedef enum PSYNERGY_TEST2_ACTOR_ID {
 typedef struct ROCK_PARTICLE_STATE {
 	Uint8	   tiles[ROCK_SHEET_BYTES];
 	PARTICLE   rocks[ROCK_COUNT];
-	EFFECT_SPR sprs[ROCK_COUNT];
+	EFFECT_SPR sprites[ROCK_COUNT];
 	Sint16	   next;
 	Uint16	   tileBase;
 	Sint16	   resource;
 } ROCK_PARTICLE_STATE;
 
-void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt);
+void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count);
 
 void dbPsynergyTest2StartRocks(void);
 void dbPsynergyTest2EndRocks(void);
@@ -166,18 +166,19 @@ void dbPsynergyTest2UpdateRocks(void)
 {
 	ROCK_PARTICLE_STATE *state = RamHeapSlots->menuState;
 	PARTICLE			*particle = state->rocks;
-	EFFECT_SPR			*spr = state->sprs;
+	EFFECT_SPR			*sprite = state->sprites;
 	Sint32				 i;
 	Sint32				 step = -toFIXED(1) / 2;
 
 	for(i = 0; i < ROCK_COUNT; i++) {
 		if((Uint32)particle->variant < ROCK_TICKS) {
-			spr->oam.idx = state->tileBase + ((particle->variant >> 2) & 7) * 8;
-			fdEffectSprDrawAtWorldPos(spr, particle);
+			sprite->oam.index =
+				state->tileBase + ((particle->variant >> 2) & 7) * 8;
+			fdEffectSpriteDrawAtWorldPos(sprite, particle);
 			fdBattleEffectStepVector3(particle, 63, step);
 			particle->variant++;
 		}
-		spr++;
+		sprite++;
 		particle++;
 	}
 }
@@ -223,31 +224,31 @@ CUE SceneCues[] = {
 	{CUE_TABLE_END},
 };
 
-/* Throws `cnt` rocks out of (x, y, z): each starts 8 pixels or more away at a
+/* Throws `count` rocks out of (x, y, z): each starts 8 pixels or more away at a
    random angle and flies up and outward. */
-void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
+void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count)
 {
 	ROCK_PARTICLE_STATE *state = RamHeapSlots->menuState;
 	PARTICLE			*rock;
-	Sint32				 ang;
+	Sint32				 angle;
 	Sint32				 i;
 
-	if(cnt > 0) {
-		i = cnt;
+	if(count > 0) {
+		i = count;
 		do {
-			ang = syRandom();
+			angle = syRandom();
 			rock = &state->rocks[state->next];
 			rock->variant = 0;
 			rock->x = x;
 			rock->y = y;
 			rock->z = z;
 			syFieldVectorAddPolarOffsetFX(
-				(syRandom() << 3) + toFIXED(8), ang, &rock->x);
-			rock->velX = 0;
-			rock->velY = toFIXED(5);
-			rock->velZ = 0;
+				(syRandom() << 3) + toFIXED(8), angle, &rock->x);
+			rock->velocityX = 0;
+			rock->velocityY = toFIXED(5);
+			rock->velocityZ = 0;
 			syFieldVectorAddPolarOffsetFX(
-				(syRandom() << 1) + toFIXED(2), ang, &rock->velX);
+				(syRandom() << 1) + toFIXED(2), angle, &rock->velocityX);
 			state->next++;
 			state->next &= ROCK_COUNT - 1;
 			i--;
@@ -260,12 +261,12 @@ void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 void dbPsynergyTest2StartRocks(void)
 {
 	ROCK_PARTICLE_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(ROCK_PARTICLE_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(ROCK_PARTICLE_STATE));
 	Sint32		entry;
 	Sint32		tile;
 	Sint32		i;
 	PARTICLE   *rock;
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
 	entry = syVRAMCacheFindFreeEntry();
@@ -274,12 +275,12 @@ void dbPsynergyTest2StartRocks(void)
 	state->resource = entry;
 	rock = state->rocks;
 	for(i = 0; i < ROCK_COUNT; i++) {
-		spr = &state->sprs[i];
-		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
+		sprite = &state->sprites[i];
+		fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
 		rock->variant = -1;
 		rock++;
 	}
@@ -299,10 +300,10 @@ void dbPsynergyTest2EndRocks(void)
 
 /* Unused: the Psynergy test's dbPsynergyTestDigMetatiles again. */
 UNUSED void dbPsynergyTest2DigMetatiles(Sint32 stage, Sint32 srcX, Sint32 srcY,
-	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
+	Sint32 width, Sint32 height, Sint32 destX, Sint32 destY)
 {
 	if(stage == SCOOP_STAGE_DUG)
-		fdMapGridCopyMetatiles(srcX, srcY, width, height, dstX, dstY);
+		fdMapGridCopyMetatiles(srcX, srcY, width, height, destX, destY);
 }
 
 /* Unused: the Psynergy test's dbPsynergyTestGrowActor again. */
@@ -341,7 +342,7 @@ UNUSED void dbPsynergyTest2DropActor(
 	if(stage == SCOOP_STAGE_DUG_UP) {
 		fdActorSetPos(id, x, z);
 		actor->y.fixed = toFIXED(32);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		actor->gravity = toFIXED(0.09);
 		syWait(50);
 	}
@@ -357,8 +358,8 @@ UNUSED void dbPsynergyTest2RaiseStatue(
 		actor =
 			scFieldActorCreate(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
 		if(actor != NULL) {
-			fdActorSetSprFlags(actor, 0);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(actor, 0);
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		}
 	}
 	if(stage == SCOOP_STAGE_DUG_UP) {
@@ -367,8 +368,8 @@ UNUSED void dbPsynergyTest2RaiseStatue(
 		if(actor != NULL) {
 			Sint32 scale;
 
-			fdActorSetSprFlags(actor, 0);
-			actor->velY = toFIXED(6);
+			fdActorSetSpriteFlags(actor, 0);
+			actor->velocityY = toFIXED(6);
 			actor->scaleX = toFIXED(2) / 5;
 			actor->scaleY = toFIXED(2) / 5;
 			while(actor->scaleX < toFIXED(1)) {

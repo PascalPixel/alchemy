@@ -19,7 +19,7 @@ void scColossoFadeInWarrior(Sint32 id, Sint32 x, Sint32 z)
 {
 	ACTOR_SYSTEM_STATE *system;
 	ACTOR			   *actor;
-	SPR				   *spr;
+	SPR				   *sprite;
 	Sint32				i;
 
 	system = ActorSystemStateWork;
@@ -28,12 +28,12 @@ void scColossoFadeInWarrior(Sint32 id, Sint32 x, Sint32 z)
 	system->fill = WARRIOR_OUTLINE_FILL;
 	ColossoWarriorStartX = actor->x.fixed;
 	ColossoWarriorStartZ = actor->z.fixed;
-	spr = (SPR *)actor->spr;
+	sprite = (SPR *)actor->sprite;
 	ColossoWarriorStartAngle = actor->facing;
-	fdActorSetSprPriority(id, 2);
-	actor->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(id, 2);
+	actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	actor->facing = FACING_SOUTH;
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED);
 	fdActorSelectAnimation(actor, ANIM_STILL);
 	fdActorSelectAnimation(actor, ANIM_STAND);
 	fdActorSetPosFX(id, toFIXED(x), toFIXED(z));
@@ -43,9 +43,9 @@ void scColossoFadeInWarrior(Sint32 id, Sint32 x, Sint32 z)
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
 		BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3,
 		IO_WRITE_HALFWORD);
-	spr->image.objMode = OBJ_MODE_SEMI_TRANSPARENT;
-	spr->shadow.objMode = OBJ_MODE_SEMI_TRANSPARENT;
-	sySndPlay(SE_COLOSSO_WARRIOR_APPEAR);
+	sprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+	sprite->shadow.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+	sySoundPlay(SE_COLOSSO_WARRIOR_APPEAR);
 	for(i = 0; i < BLEND_WEIGHT_MAX; i += 2) {
 		actor->scaleX = i * (toFIXED(1) / 16) + toFIXED(1) / 16;
 		actor->scaleY = toFIXED(31) / 16 - i * (toFIXED(1) / 16);
@@ -63,8 +63,8 @@ void scColossoFadeInWarrior(Sint32 id, Sint32 x, Sint32 z)
 	actor->scaleX = toFIXED(1);
 	actor->scaleY = toFIXED(1);
 	fdScriptWait(13);
-	spr->image.objMode = OBJ_MODE_NORMAL;
-	spr->shadow.objMode = OBJ_MODE_NORMAL;
+	sprite->image.objectMode = OBJ_MODE_NORMAL;
+	sprite->shadow.objectMode = OBJ_MODE_NORMAL;
 	fdActorSetAnimationAndWait(id, ANIM_NOD);
 	fdScriptWait(20);
 }
@@ -93,15 +93,15 @@ void scColossoRestoreWarrior(Sint32 id)
 	actor->x.fixed = ColossoWarriorStartX;
 	actor->z.fixed = ColossoWarriorStartZ;
 	actor->facing = ColossoWarriorStartAngle;
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
-	actor->velX = 0;
-	actor->velZ = 0;
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
+	actor->velocityX = 0;
+	actor->velocityZ = 0;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->layer = 0;
 	actor->y.fixed = 0;
 	actor->groundHeight = 0;
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	fdActorSelectAnimation(actor, ANIM_STILL);
 	fdActorSelectAnimation(actor, ANIM_STAND);
 	sySynch(1);
@@ -113,10 +113,10 @@ void scActorResetMotionFields(Sint32 actorId)
 	ACTOR *actor = fdActorGetById(actorId);
 
 	fdActorStartIdle(actor);
-	actor->velX = 0;
-	actor->velZ = 0;
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
+	actor->velocityX = 0;
+	actor->velocityZ = 0;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 }
 
 /* The guide's pointer: one 16x16 sprite centred on a point of the screen, shown
@@ -155,12 +155,12 @@ static void scColossoUpdatePointer(void)
 	Sint32	total;
 	Sint32	step;
 	Sint32 *oam;
-	Sint32 *dst;
+	Sint32 *dest;
 	Sint32	x;
 	Sint32	y;
 
 	oam = ColossoPointerOam;
-	tile = VramCacheEntries[ColossoPointerSlot].ofs >> 5;
+	tile = VramCacheEntries[ColossoPointerSlot].offset >> 5;
 	total = ColossoPointerSteps;
 	if(total != 0) {
 		step = ++ColossoPointerStep;
@@ -179,11 +179,12 @@ static void scColossoUpdatePointer(void)
 
 		x = ColossoPointerX;
 		y = ColossoPointerY;
-		dst = oam;
-		*dst++ = 0;
-		*dst++ = (y - 8) | OBJ_X(x - 8) | size | ColossoPointerFlip * OBJ_HFLIP;
-		*dst = tile | OBJ_PRIORITY(1);
-		syOAMAddSprAtDepth(oam, OAM_DEPTH_FRONT);
+		dest = oam;
+		*dest++ = 0;
+		*dest++ =
+			(y - 8) | OBJ_X(x - 8) | size | ColossoPointerFlip * OBJ_HFLIP;
+		*dest = tile | OBJ_PRIORITY(1);
+		syOAMAddSpriteAtDepth(oam, OAM_DEPTH_FRONT);
 	} else if(ColossoPointerBlink >= POINTER_BLINK_TICKS) {
 		ColossoPointerBlink = 0;
 	}

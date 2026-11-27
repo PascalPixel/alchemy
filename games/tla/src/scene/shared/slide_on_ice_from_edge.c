@@ -6,8 +6,8 @@ void scLeaderSlideOnIceFromEdge(void)
 {
 	ACTOR  *actor;
 	Sint32	startMetatile;
-	FIXED	tgtX;
-	FIXED	tgtZ;
+	FIXED	targetX;
+	FIXED	targetZ;
 	FIXED	x;
 	FIXED	z;
 	Uint8  *layer;
@@ -15,11 +15,11 @@ void scLeaderSlideOnIceFromEdge(void)
 	Sint32	pos[3];
 	FIXED	dx, dz;
 	Sint32	metatile;
-	Sint16	ang;
+	Sint16	angle;
 	Sint32	i;
 	Sint32	j;
 	ACTOR  *entry;
-	Uint8  *flg;
+	Uint8  *flags;
 	Sint32 *q;
 
 	/* SlideOnIceStopped is volatile: an event of the VBlank pass sets it while
@@ -31,40 +31,40 @@ retry:
 	fdLeaderStopIfPending();
 	actor->speedLimit = toFIXED(1);
 	actor->acceleration = toFIXED(1) / 2;
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
-	actor->velX = 0;
-	actor->velZ = 0;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
+	actor->velocityX = 0;
+	actor->velocityZ = 0;
 	pos[0] = x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	pos[1] = actor->y.fixed;
 	pos[2] = z = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	tgtZ = z;
-	tgtX = x;
+	targetZ = z;
+	targetX = x;
 	layer = &actor->layer;
-	startMetatile = fdMapGridGetMetatileBehaviorAt(*layer, tgtX, tgtZ);
-	dz = tgtZ - actor->z.fixed;
-	dx = tgtX - actor->x.fixed;
+	startMetatile = fdMapGridGetMetatileBehaviorAt(*layer, targetX, targetZ);
+	dz = targetZ - actor->z.fixed;
+	dx = targetX - actor->x.fixed;
 	if(syMulFX(dx, dx) + syMulFX(dz, dz) < toFIXED(4)) {
-		ang = SlideOnIceAnglesByKey[DPAD_INDEX(PerWork.data)];
+		angle = SlideOnIceAnglesByKey[DPAD_INDEX(PerWork.data)];
 		/* -1 for no direction, tested as its halfword. */
-		if((Uint16)ang == DPAD_ANGLE_NONE)
+		if((Uint16)angle == DPAD_ANGLE_NONE)
 #if !ICE_SLIDE_ENDS_CLEANLY
 			return;
 #else
 			goto end;
 #endif
 	} else {
-		ang = syAtan(tgtZ - actor->z.fixed, tgtX - actor->x.fixed);
-		ang = FACING_NEAREST_CARDINAL(ang);
+		angle = syAtan(targetZ - actor->z.fixed, targetX - actor->x.fixed);
+		angle = FACING_NEAREST_CARDINAL(angle);
 	}
-	syFieldVectorAddPolarOffset(16, ang, pos);
+	syFieldVectorAddPolarOffset(16, angle, pos);
 	metatile = fdMapGridGetMetatileBehaviorAt(*layer, pos[0], pos[2]);
 	if(metatile == METATILE_BEHAVIOR_WALL ||
 		fdMapGetTerrainHeight(*layer, pos[0], pos[2]) - actor->y.fixed >
 			toFIXED(8)) {
-		actor->facing = ang;
-		actor->velX = 0;
-		actor->velZ = 0;
+		actor->facing = angle;
+		actor->velocityX = 0;
+		actor->velocityZ = 0;
 		actor->x.fixed = x;
 		actor->z.fixed = z;
 		goto end;
@@ -73,7 +73,7 @@ retry:
 	pos[2] = z;
 	actor->speedLimit = toFIXED(2);
 	actor->acceleration = toFIXED(1) / 10;
-	actor->tmr = 0;
+	actor->timer = 0;
 	fdActorSetMoveTarget(actor, x, actor->y.fixed, z);
 	fdActorSelectAnimation(actor, ANIM_WALK);
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
@@ -88,7 +88,7 @@ retry:
 #endif
 	actor->update = (OBJECT_UPDATE)fdActorSteerByPad;
 	for(;;) {
-		syFieldVectorAddPolarOffset(16, ang, pos);
+		syFieldVectorAddPolarOffset(16, angle, pos);
 		q = pos;
 		metatile = fdMapGridGetMetatileBehaviorAt(*layer, q[0], q[2]);
 		if(metatile == METATILE_BEHAVIOR_WALL)
@@ -104,17 +104,17 @@ retry:
 #endif
 		radius = actor->radius - 2;
 		entry = RamHeapSlots->actors;
-		flg = &entry->collisionFlg;
-		for(j = 0; j < ACTOR_COUNT; j++, flg += sizeof(*entry), entry++) {
-			if(entry->script != NULL && (ACTOR_SOLID & *flg) &&
+		flags = &entry->collisionFlags;
+		for(j = 0; j < ACTOR_COUNT; j++, flags += sizeof(*entry), entry++) {
+			if(entry->script != NULL && (ACTOR_SOLID & *flags) &&
 				entry != actor) {
 				if(scScriptCheckSpheresOverlap(
 					   &entry->x.fixed, radius, pos, entry->radius - 2) >= 0)
 					goto blocked;
 			}
 		}
-		tgtX = pos[0];
-		tgtZ = pos[2];
+		targetX = pos[0];
+		targetZ = pos[2];
 		actor->speedLimit = toFIXED(2);
 		actor->acceleration = toFIXED(1) / 10;
 		fdActorSetMoveTarget(actor, pos[0], pos[1], pos[2]);
@@ -130,7 +130,7 @@ retry:
 blocked:
 	actor->speedLimit = toFIXED(2);
 	actor->acceleration = toFIXED(1);
-	fdActorSetMoveTarget(actor, tgtX, actor->y.fixed, tgtZ);
+	fdActorSetMoveTarget(actor, targetX, actor->y.fixed, targetZ);
 	scFieldActorWaitForMove(actor);
 	syWait(2);
 	goto retry;
@@ -138,7 +138,7 @@ changed:
 	syWait(10);
 end:
 	actor->update = NULL;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor->acceleration = toFIXED(1) / 4;
 	fdActorSelectAnimation(actor, ANIM_STAND);
 }

@@ -6,7 +6,7 @@
 #define LIGHT_LEFT		   8
 
 /* Draws a glow sprite over each listed actor. */
-void scLightSprsDraw(void)
+void scLightSpritesDraw(void)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX, viewZ, tile, viewY;
@@ -14,7 +14,7 @@ void scLightSprsDraw(void)
 	Sint32	   i;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
-	tile = VramCacheEntries[LightSpriteTile].ofs >> 5;
+	tile = VramCacheEntries[LightSpriteTile].offset >> 5;
 	viewY = map->origin[1];
 	oam = LightSpriteOams;
 
@@ -24,7 +24,7 @@ void scLightSprsDraw(void)
 			Sint32	large, screenX;
 			FIXED	y, z;
 			Sint32	screenY, depth;
-			Sint32	frm;
+			Sint32	frame;
 			Uint32 *word;
 			screenX = actor->x.fixed - viewX;
 			y = actor->y.fixed - viewY + toFIXED(8);
@@ -34,7 +34,7 @@ void scLightSprsDraw(void)
 			large = LightSpritesLarge;
 			if(large == 0) {
 				Sint32 actorX, actorY;
-				frm = actor->tmr;
+				frame = actor->timer;
 				actorX = FIXEDtoINT(screenX);
 				actorY = FIXEDtoINT(screenY);
 				screenX = actorX - LIGHT_LEFT;
@@ -48,16 +48,16 @@ void scLightSprsDraw(void)
 				*word++ = 0;
 				*word++ =
 					screenY | OBJ_X(screenX) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-				*word = (tile + frm * 8) | OBJ_PRIORITY(2);
+				*word = (tile + frame * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
-					oam->pri = fdActorGetSprPriority(actor);
+					oam->priority = fdActorGetSpritePriority(actor);
 				else
-					oam->pri = LightSpritePriority;
-				syOAMAddSprAtDepthClamped(oam, depth);
+					oam->priority = LightSpritePriority;
+				syOAMAddSpriteAtDepthClamped(oam, depth);
 				oam++;
 			} else {
 				Sint32 actorX, actorY;
-				frm = actor->tmr;
+				frame = actor->timer;
 				actorX = FIXEDtoINT(screenX);
 				actorY = FIXEDtoINT(screenY);
 				screenX = actorX - LIGHT_LEFT;
@@ -71,12 +71,12 @@ void scLightSprsDraw(void)
 				*word++ = 0;
 				*word++ =
 					screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
-				*word = (tile + frm * 8) | OBJ_PRIORITY(2);
+				*word = (tile + frame * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
-					oam->pri = fdActorGetSprPriority(actor);
+					oam->priority = fdActorGetSpritePriority(actor);
 				else
-					oam->pri = LightSpritePriority;
-				syOAMAddSprAtDepthClamped(oam, depth);
+					oam->priority = LightSpritePriority;
+				syOAMAddSpriteAtDepthClamped(oam, depth);
 				oam++;
 			}
 		}

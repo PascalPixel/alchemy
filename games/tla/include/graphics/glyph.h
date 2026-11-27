@@ -23,11 +23,11 @@ enum { FONT_GLYPH_ROWS = 15 };
    are taken. */
 typedef struct ICON_PALETTE {
 	Uint8  slot[256];
-	Sint32 cnt;
+	Sint32 count;
 } ICON_PALETTE;
 
 STATIC_ASSERT(sizeof(ICON_PALETTE) == 260);
-STATIC_ASSERT(offsetof(ICON_PALETTE, cnt) == 256);
+STATIC_ASSERT(offsetof(ICON_PALETTE, count) == 256);
 
 /* A character of the text font: its width and its rows of pixels. */
 typedef struct GLYPH {

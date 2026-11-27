@@ -437,7 +437,7 @@ static void scBilibinOpenDoorAndLeave(void)
 {
 	Uint32		 actorSlot;
 	ACTOR		*actor;
-	Sint32		 exitIdx;
+	Sint32		 exitIndex;
 	Sint32		 column;
 	Sint32		 row;
 	FIELD_STATE *state;
@@ -449,35 +449,35 @@ static void scBilibinOpenDoorAndLeave(void)
 		actorSlot++) {
 		actor = fdActorGet(actorSlot);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
-	exitIdx = (Sint16)(state->stepCue - BILIBIN_TO_INN);
-	if(exitIdx == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-		sySndPlay(SE_THUMP);
+	exitIndex = (Sint16)(state->stepCue - BILIBIN_TO_INN);
+	if(exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+		sySoundPlay(SE_THUMP);
 	} else {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 	}
 	/* Each door has its metatile and the steps that draw it opening. */
-	column = BilibinDoorMetatiles[exitIdx][0];
-	row = BilibinDoorMetatiles[exitIdx][1];
-	fdMapGridPlayMapEdit(BilibinDoorSteps[exitIdx], column, row);
+	column = BilibinDoorMetatiles[exitIndex][0];
+	row = BilibinDoorMetatiles[exitIndex][1];
+	fdMapGridPlayMapEdit(BilibinDoorSteps[exitIndex], column, row);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	if(exitIdx == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
+	if(exitIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
 	} else {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	}
-	if(exitIdx == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
-		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
+	if(exitIndex == BILIBIN_TO_ITEM_SHOP - BILIBIN_TO_INN) {
+		fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	} else {
-		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
+		fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	}
 	fdScriptWait(16);
-	syImportScriptSetExitRequest(exitIdx + BILIBIN_TO_INN);
+	syImportScriptSetExitRequest(exitIndex + BILIBIN_TO_INN);
 	fdScriptEnd();
 }
 
@@ -495,13 +495,13 @@ static void scBilibinPullJillFromRiver(void)
 	jillTree = fdActorGet(ACTOR_JILL_TREE);
 	if(FIELD_METATILE(jillTree->x.fixed) == 6) {
 		fdScriptStart();
-		fdActorSetSprPriority(ACTOR_JILL_TREE, 1);
+		fdActorSetSpritePriority(ACTOR_JILL_TREE, 1);
 		fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 		fdScriptWait(20);
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
 		fdActorSetSpeed(ACTOR_JILL_TREE, 0.2);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
-		jillTree->motionFlg = 0;
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+		jillTree->motionFlags = 0;
 		/* Each tug: the leader faces about, strains and draws her in, then
 		   steps on. */
 		leader->scaleX = -toFIXED(1);
@@ -526,11 +526,11 @@ static void scBilibinPullJillFromRiver(void)
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
 		fdActorMoveToAndWait(ACTOR_JILL_TREE, 132, 186);
 		leader->scaleX = toFIXED(1);
-		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-		fdActorSetSprPriority(ACTOR_JILL_TREE, 2);
+		fdActorSetSpritePriority(ACTOR_JILL_TREE, 2);
 		fdPsynergyStartMindReadWave(0, ACTOR_JILL_TREE);
 		sySynch(10);
 		fdScriptSetMessageId(MsgBilibinThankSavedMeFromBeing);
@@ -617,10 +617,10 @@ static void scBilibinJillGivesHardNut(void)
 	/* "I would have been swept down the river if it wasn't for you." */
 	fdScriptShowMessage(ACTOR_JILL, 0);
 	fdActorSetSpeed(ACTOR_JILL, 0.6);
-	fdActorGet(ACTOR_JILL)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_JILL, 266, 172);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_JILL)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JILL)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorSetAnimationAndWait(ACTOR_JILL, ANIM_NOD);
 	/* "Please, take this. It is a small token of my appreciation." */
@@ -633,14 +633,14 @@ static void scBilibinJillGivesHardNut(void)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorSetSpeed(ACTOR_JILL, 1);
-	fdActorGet(ACTOR_JILL)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JILL)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_JILL, 262, 156);
 	fdScriptWait(1);
 	{
 		ACTOR *jill = fdActorGet(ACTOR_JILL);
-		Uint8  steeringFlg = jill->steeringFlg | ACTOR_FACES_MOTION;
+		Uint8  steeringFlags = jill->steeringFlags | ACTOR_FACES_MOTION;
 
-		jill->steeringFlg = steeringFlg;
+		jill->steeringFlags = steeringFlags;
 	}
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_GANG_MEMBER_EAST, 2);
@@ -687,7 +687,7 @@ static void scBilibinRestoreVillageActors(void)
 		fdActorFaceDirection(
 			ACTOR_OLD_WOMAN_ROAD_BLOCKED, FACING_SOUTH_SOUTHWEST, 0);
 	} else {
-		fdActorSetSprFlags(fdActorGet(ACTOR_TREE_MAN), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_TREE_MAN), 0);
 		fdActorSetPos(ACTOR_FORMER_TREE_MAN, 0, 0);
 	}
 	fdActorGet(ACTOR_IVY)->scaleY = toFIXED(3) / 2;
@@ -774,7 +774,7 @@ static void scBilibinRestoreRiverActors(void)
 
 	fallenTree = fdActorGet(ACTOR_MIDDLE_TREE);
 	jillTree = fdActorGet(ACTOR_JILL_TREE);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BARRICADE_CRATES), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BARRICADE_CRATES), 0);
 	populationState = gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED);
 	if(populationState != 0) {
 		/* The curse is lifted: the trees are gone. */
@@ -803,34 +803,35 @@ static void scBilibinRestoreRiverActors(void)
 		fdActorSetPos(ACTOR_GANG_MEMBER_EAST, 0, 0);
 		fdActorSetPos(ACTOR_GANG_MEMBER_WEST, 0, 0);
 		fdActorSetPos(ACTOR_JILL, 0, 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_BOTTOM_TREE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_MIDDLE_TREE), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_JILL_TREE), 0);
-		fallenTree->motionFlg = populationState;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_BOTTOM_TREE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_MIDDLE_TREE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_JILL_TREE), 0);
+		fallenTree->motionFlags = populationState;
 		/* Once FLAG_SATUROS_BEATEN_AT_MERCURY is set ("They crossed the river
 		   after pushing us down"), the middle tree lies on its side and Jill is
 		   in the water, or on the bank where she was pulled ashore. */
 		crossingState = gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY);
 		if(crossingState != 0) {
-			fdActorGet(ACTOR_BOTTOM_TREE)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
-			fdActorGet(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlg |=
+			fdActorGet(ACTOR_BOTTOM_TREE)->collisionFlags |=
 				ACTOR_NEAR_PSYNERGY;
-			fdActorGet(ACTOR_JILL_TREE)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+			fdActorGet(ACTOR_FALLEN_TREE_STAND_IN)->collisionFlags |=
+				ACTOR_NEAR_PSYNERGY;
+			fdActorGet(ACTOR_JILL_TREE)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 			fdActorSetPos(ACTOR_FALLEN_TREE_STAND_IN, 142, 156);
-			fdActorSetSprFlags(fdActorGet(ACTOR_FALLEN_TREE_STAND_IN), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_FALLEN_TREE_STAND_IN), 0);
 			fdActorSetPos(ACTOR_MIDDLE_TREE, 142, 156);
-			fallenTree->spr->rotation = DEGtoANG(90);
+			fallenTree->sprite->rotation = DEGtoANG(90);
 			fallenTree->y.fixed -= toFIXED(8);
 			if(gmFlagGet(FLAG_BILIBIN_JILL_RESCUED) != 0) {
 				fdActorSetPos(ACTOR_JILL_TREE, 132, 186);
 			} else {
 				fdActorSetPos(ACTOR_JILL_TREE, 88, 196);
-				fdActorSetSprPriority(ACTOR_JILL_TREE, 3);
-				jillTree->collisionFlg |= ACTOR_NEAR_TALK;
+				fdActorSetSpritePriority(ACTOR_JILL_TREE, 3);
+				jillTree->collisionFlags |= ACTOR_NEAR_TALK;
 			}
 		} else {
 			fallenTree->y.fixed = toFIXED(32);
-			jillTree->motionFlg = crossingState;
+			jillTree->motionFlags = crossingState;
 			jillTree->y.fixed = toFIXED(48);
 		}
 	}
@@ -895,7 +896,7 @@ static void scBilibinPushStatueOrCrates(void)
 	ACTOR	 *leader;
 	ACTOR	 *pushed;
 	Uint32	  direction;
-	FIELD_POS dst;
+	FIELD_POS dest;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	direction = FACING_INDEX(leader->facing);
@@ -908,23 +909,23 @@ static void scBilibinPushStatueOrCrates(void)
 			4);
 	if(pushed != NULL) {
 		pushed->layer = 2;
-		fdActorStepFrom(&dst, pushed, PushedActorDirectionSteps[direction]);
-		if(syFieldActorCheckMovementCollision(pushed, &dst) <= 0) {
+		fdActorStepFrom(&dest, pushed, PushedActorDirectionSteps[direction]);
+		if(syFieldActorCheckMovementCollision(pushed, &dest) <= 0) {
 			/* The leader leans on it, then both move together. */
 			fdActorSelectAnimation(leader, ANIM_PUSH);
 			sySynch(15);
-			sySndPlay(SE_PUSH);
+			sySoundPlay(SE_PUSH);
 			pushed->speedLimit = toFIXED(1) / 5;
 			pushed->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(pushed, dst.x, dst.y, dst.z);
+			syFieldActorSetMoveTargetFX(pushed, dest.x, dest.y, dest.z);
 			leader->speedLimit = toFIXED(1) / 5;
 			leader->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
+			syFieldActorSetMoveTargetFX(leader, dest.x, dest.y, dest.z);
 			fdActorWaitForMove(pushed);
-			pushed->x.fixed = dst.x;
-			pushed->z.fixed = dst.z;
-			pushed->velX = 0;
-			pushed->velZ = 0;
+			pushed->x.fixed = dest.x;
+			pushed->z.fixed = dest.z;
+			pushed->velocityX = 0;
+			pushed->velocityZ = 0;
 			fdActorSelectAnimation(leader, ANIM_STAND);
 			/* Each scene derives its metatile behaviors from this same moved
 			   actor. */
@@ -962,25 +963,25 @@ static void scBilibinUpdateRiverRipples(void)
 static void scBilibinSpawnRipple(ACTOR *actor)
 {
 	ACTOR *effect;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	effect = syFieldActorCreate(
 		SPRITE_RIPPLE, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	if(effect == NULL)
 		return;
 
-	spr = effect->spr;
+	sprite = effect->sprite;
 	fdActorStartScript(effect, BilibinRippleScript);
-	effect->motionFlg = 0;
+	effect->motionFlags = 0;
 	effect->layer = 1;
-	effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-	if(spr == NULL)
+	effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+	if(sprite == NULL)
 		return;
 
-	fdSprStartAnimation(spr, 2);
-	spr->flg = 0;
-	spr->image.objMode = OBJ_MODE_SEMI_TRANSPARENT;
-	spr->image.pri = 3;
+	fdSpriteStartAnimation(sprite, 2);
+	sprite->flags = 0;
+	sprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+	sprite->image.priority = 3;
 }
 
 static void scBilibinUpdateTreasuryStatueMetatiles(void)

@@ -1,4 +1,4 @@
-@ Why syMathUnsignedMulHigh to syMathUnsignedMulHighAdd are assembly:
+@ Why syMathUnsignedMultiplyHigh to syMathUnsignedMultiplyHighAdd are assembly:
 @ each Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the nop after bx pc is never run.
 @ Secondary: umulls sets flags nothing reads; GCC 2.95.2's ARM patterns
@@ -10,9 +10,9 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global syMathUnsignedMulHigh
+	.global syMathUnsignedMultiplyHigh
 	.thumb_func
-syMathUnsignedMulHigh:
+syMathUnsignedMultiplyHigh:
 	bx	pc
 AlchemyUncredited08002076:
 	nop
@@ -21,9 +21,9 @@ AlchemyUncreditedEnd08002076:
 	umulls	r3, r0, r1, r0
 	bx	lr
 	.thumb
-	.global syMathUnsignedMulHighAdd
+	.global syMathUnsignedMultiplyHighAdd
 	.thumb_func
-syMathUnsignedMulHighAdd:
+syMathUnsignedMultiplyHighAdd:
 	bx	pc
 AlchemyUncredited08002082:
 	nop

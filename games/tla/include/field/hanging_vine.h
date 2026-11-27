@@ -14,10 +14,10 @@ typedef struct HANGING_VINE_LINK {
 	FIXED					  x; /* 16.16 fixed-point pixels */
 	FIXED					  y;
 	FIXED					  z;
-	Uint16					  ang;
+	Uint16					  angle;
 	Sint8			   kind; /* 0 or 1: not drawn; else its picture, from 2 */
 	Uint8			   unusedAfterKind; /* no code names it */
-	ANIMATION_SPR_PART spr;
+	ANIMATION_SPR_PART sprite;
 } HANGING_VINE_LINK;
 
 /* One of the eight hanging vines: the actor it hangs from and its swing. */

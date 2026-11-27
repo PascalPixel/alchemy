@@ -27,9 +27,9 @@ void fdTreasureSpotMoveLeaderAway(void)
 				leader->z.fixed = other->z.fixed;
 				syVectorAddPolarOffset(
 					toFIXED(20), (Uint16)syAtan(dz, dx), &leader->x.fixed);
-				leader->tgtX = ACTOR_NO_TARGET;
-				leader->tgtY = ACTOR_NO_TARGET;
-				leader->tgtZ = ACTOR_NO_TARGET;
+				leader->targetX = ACTOR_NO_TARGET;
+				leader->targetY = ACTOR_NO_TARGET;
+				leader->targetZ = ACTOR_NO_TARGET;
 				break;
 			}
 	}
@@ -42,7 +42,7 @@ static inline void fdActorInitSparkle(ACTOR *actor)
 	if(actor != 0) {
 		fdActorStartScriptStub(actor, (const Sint32 *)ItemDisplaySparkleScript);
 		fdActorSelectAnimationStub(actor, 0);
-		((SPR *)actor->spr)->image.pri = 1;
+		((SPR *)actor->sprite)->image.priority = 1;
 	}
 }
 
@@ -67,13 +67,14 @@ static inline void fdActorInitSparkle(ACTOR *actor)
 
 /* Each tick of a found item's picture: one time in ten, a sparkle appears
    within 16 pixels of it. */
-void fdItemDispEmitSparkles(ACTOR *emitter)
+void fdItemDisplayEmitSparkles(ACTOR *emitter)
 {
 	/* Once the picture's rise has all but stopped (under 1/256 pixel a tick),
 	   clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN) ends
 	   gravity, so it hangs at the top of its rise. */
-	if(emitter->velY > -(toFIXED(1) / 256) && emitter->velY < toFIXED(1) / 256)
-		emitter->motionFlg = 0;
+	if(emitter->velocityY > -(toFIXED(1) / 256) &&
+		emitter->velocityY < toFIXED(1) / 256)
+		emitter->motionFlags = 0;
 
 	/* Test the chance before drawing the radius and angle from the RNG. */
 	if((100 * syRandom() >> 16) > 9)
@@ -101,12 +102,12 @@ void fdRevealEmitSparkles(ACTOR *src);
    the centre of the metatile 16 pixels in front of them: it rises a little and
    hangs there, sparkling. While Reveal is active it first releases Reveal's
    sparkles, and then its mark on the picture's metatile. */
-ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
+ACTOR *fdItemDisplayShowItemInFront(Sint32 actorId, Sint32 item)
 {
 	FIELD_STATE	  *state = RamHeapSlots->fieldState;
 	ACTOR		  *picture = state->actors[actorId];
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	FIXED		   pos[3];
 	ICON_TRANSFER *transfer;
 	Sint32		   tile;
@@ -142,24 +143,25 @@ ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 	if(picture == NULL)
 		return NULL;
 	fdActorStartScriptStub(picture, ItemDisplayGrowInScript);
-	spr = picture->spr;
+	sprite = picture->sprite;
 	/* No shadow, outline or sprite animations: a 16-colour sprite in OBJ
 	   palette 0 whose tiles are the item's icon. */
-	spr->flg = 0;
-	spr->cnt = 0;
-	spr->image.fullCol = 0;
-	spr->image.pal = 0;
-	spr->image.pri = 1;
-	picture->motionFlg = ACTOR_FALLS;
+	sprite->flags = 0;
+	sprite->count = 0;
+	sprite->image.fullColor = 0;
+	sprite->image.palette = 0;
+	sprite->image.priority = 1;
+	picture->motionFlags = ACTOR_FALLS;
 	picture->groundHeight = pos[1];
-	picture->velY = toFIXED(2);
+	picture->velocityY = toFIXED(2);
 	picture->gravity = toFIXED(1) / 4;
-	transfer = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	transfer =
+		syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnIconDrawItemStub(item);
-	tile = syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, transfer->tiles);
-	spr->image.tile = tile;
+	tile = syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
+	sprite->image.tile = tile;
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-	picture->update = fdItemDispEmitSparkles;
+	picture->update = fdItemDisplayEmitSparkles;
 	if(state->revealActive != 0) {
 		ACTOR *marker = RamHeapSlots->actors;
 		Sint32 j;
@@ -188,13 +190,13 @@ void fdActorReleaseIfPresent(ACTOR *actor)
 
 /* Unused: an empty function between the item display's own, which nothing
    calls; The Broken Seal has none here. */
-UNUSED void fdItemDispUnused(void)
+UNUSED void fdItemDisplayUnused(void)
 {
 }
 
 /* Raises a found item's picture to 36 pixels above the party leader, who holds
    it up (ANIM_LEADER_ARMS_RAISED) facing the screen. */
-void fdItemDispRaiseAboveLeader(ACTOR *actor)
+void fdItemDisplayRaiseAboveLeader(ACTOR *actor)
 {
 	ACTOR *leader;
 
@@ -207,12 +209,12 @@ void fdItemDispRaiseAboveLeader(ACTOR *actor)
 		   flags, so it neither falls nor follows the ground. */
 		actor->acceleration = toFIXED(1);
 		actor->speedLimit = toFIXED(2);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		leader = found;
 	}
 	fdActorSetMoveTargetStub(
 		actor, leader->x.fixed, leader->y.fixed + toFIXED(36), leader->z.fixed);
-	fdActorSetSprPriorityDirectStub(actor, 1);
+	fdActorSetSpritePriorityDirectStub(actor, 1);
 	sySynch(3);
 	fdActorSelectAnimationStub(leader, ANIM_LEADER_ARMS_RAISED);
 	fdActorStartScriptStub(actor, ItemDisplayPulseScript);
@@ -222,24 +224,24 @@ void fdItemDispRaiseAboveLeader(ACTOR *actor)
 
 /* Shows a found item's picture as flags choose (ITEM_DISPLAY_FLAG), with waits
    of 60 and 80 ticks around its raising when both are set. */
-void fdItemDispShowPicture(ACTOR *actor, Sint32 flg)
+void fdItemDisplayShowPicture(ACTOR *actor, Sint32 flags)
 {
 	ACTOR *leader;
 
 	if(actor != NULL) {
 		leader = fdActorLookup(fdPartyGetLeaderActor());
-		if(flg & ITEM_DISPLAY_SPARKLES) {
-			fdActorSetSprFlagsStub(actor, 0);
+		if(flags & ITEM_DISPLAY_SPARKLES) {
+			fdActorSetSpriteFlagsStub(actor, 0);
 			fdActorStartScriptStub(actor, ItemDisplayGrowInScript);
-			((ACTOR *)actor)->velY = toFIXED(2);
+			((ACTOR *)actor)->velocityY = toFIXED(2);
 			((ACTOR *)actor)->gravity = toFIXED(1) / 4;
-			((ACTOR *)actor)->update = fdItemDispEmitSparkles;
+			((ACTOR *)actor)->update = fdItemDisplayEmitSparkles;
 		}
-		if(flg == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED))
+		if(flags == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED))
 			sySynch(60);
-		if(flg & ITEM_DISPLAY_RAISED)
-			fdItemDispRaiseAboveLeader(actor);
-		if(flg == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED))
+		if(flags & ITEM_DISPLAY_RAISED)
+			fdItemDisplayRaiseAboveLeader(actor);
+		if(flags == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED))
 			sySynch(80);
 		fdActorSelectAnimationStub(leader, ANIM_STAND);
 	}
@@ -247,31 +249,31 @@ void fdItemDispShowPicture(ACTOR *actor, Sint32 flg)
 
 /* Shows the picture of item 36 pixels above the party leader for 80 ticks, as
    flags choose (ITEM_DISPLAY_FLAG). */
-void fdItemDispShowItem(Sint32 item, Sint32 flg)
+void fdItemDisplayShowItem(Sint32 item, Sint32 flags)
 {
 	ACTOR		  *leader = fdActorLookup(fdPartyGetLeaderActor());
 	ICON_TRANSFER *transfer =
-		syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	ACTOR *actor = fdActorCreateStub(SPRITE_UNSEEN_MARKER, leader->x.fixed,
 		leader->y.fixed + toFIXED(36), leader->z.fixed);
 
 	if(actor != 0) {
-		SPR *spr = actor->spr;
+		SPR *sprite = actor->sprite;
 
-		spr->flg = 0;
-		spr->cnt = 0;
-		spr->image.fullCol = 0;
-		spr->image.pal = 0;
-		spr->image.pri = 1;
+		sprite->flags = 0;
+		sprite->count = 0;
+		sprite->image.fullColor = 0;
+		sprite->image.palette = 0;
+		sprite->image.priority = 1;
 
 		mnIconDrawItemStub(item);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, transfer->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 
-		if(flg & ITEM_DISPLAY_SPARKLES)
-			actor->update = fdItemDispEmitSparkles;
-		if(flg & ITEM_DISPLAY_RAISED)
-			fdItemDispRaiseAboveLeader(actor);
+		if(flags & ITEM_DISPLAY_SPARKLES)
+			actor->update = fdItemDisplayEmitSparkles;
+		if(flags & ITEM_DISPLAY_RAISED)
+			fdItemDisplayRaiseAboveLeader(actor);
 
 		sySynch(80);
 		fdActorSelectAnimationStub(leader, ANIM_STAND);
@@ -310,7 +312,7 @@ void fdEffectSpawnRevealMarkers(void)
 	ACTOR *actor;
 	Sint16 type;
 	Sint32 id;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 i;
 	FIXED  x;
 	Sint32 y;
@@ -327,9 +329,9 @@ void fdEffectSpawnRevealMarkers(void)
 		!(type & SCENE_ITEMS_HEADER);
 		i++) {
 		id = entry[0];
-		flg = entry[1];
+		flag = entry[1];
 		entry += 3;
-		if(type != CONTAINER_CHEST && flg != -1 && syGameFlagGet(flg))
+		if(type != CONTAINER_CHEST && flag != -1 && syGameFlagGet(flag))
 			continue;
 		if(fdSceneItemFindPos(id, found.pos))
 			continue;
@@ -339,7 +341,7 @@ void fdEffectSpawnRevealMarkers(void)
 		/* A tile script's actor holds its map metatile, marked by this
 		   value. */
 		if(actor->sceneWord == TREASURE_SPOT_ON_METATILE) {
-			x = toFIXED(actor->tmr);
+			x = toFIXED(actor->timer);
 			z = toFIXED(actor->userValue);
 			y = fdMapGridGetTerrainHeightStub(0, x, z);
 		} else {
@@ -362,15 +364,15 @@ void fdEffectSpawnRevealMarkers(void)
 		   above and 31 below. */
 		if((Uint32)(dx + 15) > 270 || (Uint32)(dz + 47) > 238)
 			continue;
-		if(flg == -1 || syGameFlagGet(flg))
+		if(flag == -1 || syGameFlagGet(flag))
 			continue;
 		actor = fdActorCreateStub(SPRITE_SPARKLE, x, y, z);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			fdActorStartScriptStub((ACTOR *)actor, RevealMarkerScript);
-			fdActorSetSprFlagsStub((ACTOR *)actor, 0);
+			fdActorSetSpriteFlagsStub((ACTOR *)actor, 0);
 			fdActorSelectAnimationStub(actor, ANIM_STAND);
-			((SPR *)actor->spr)->image.pri = 1;
+			((SPR *)actor->sprite)->image.priority = 1;
 		}
 	}
 }

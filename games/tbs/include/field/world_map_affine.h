@@ -19,10 +19,10 @@ typedef struct WORLD_MAP_SCANLINE {
 	FIXED depth;
 	/* Where the line starts on the map, from the origin, 16.16; 0 from
 	   fdWorldMapBuildScanlineTable. */
-	Sint32 ofsX;
-	Sint32 ofsY; /* the same, down the map */
-	Sint16 pa;	 /* BG2PA as last worked out, kept while the yaw holds */
-	Sint16 pc;	 /* BG2PC, the same */
+	Sint32 offsetX;
+	Sint32 offsetY; /* the same, down the map */
+	Sint16 pa;		/* BG2PA as last worked out, kept while the yaw holds */
+	Sint16 pc;		/* BG2PC, the same */
 } WORLD_MAP_SCANLINE;
 
 /* One screen line's affine parameters for a background, as the HBlank DMA

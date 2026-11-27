@@ -46,19 +46,19 @@ static void scColossoSparkleAroundPrize(ACTOR *prize)
 {
 	Sint32 pos[3];
 
-	if(prize->velY >= -PRIZE_SETTLE_SPEED &&
-		prize->velY <= PRIZE_SETTLE_SPEED) {
-		prize->motionFlg = 0;
+	if(prize->velocityY >= -PRIZE_SETTLE_SPEED &&
+		prize->velocityY <= PRIZE_SETTLE_SPEED) {
+		prize->motionFlags = 0;
 	}
 	if(syRandomBelow(100) < 10) {
 		ACTOR *sparkle;
 		Sint32 distance;
-		Sint32 ang;
+		Sint32 angle;
 
 		SET_VECTOR(pos, prize->x.fixed, prize->y.fixed, prize->z.fixed);
 		distance = syRandomNext();
-		ang = syRandomNext();
-		syVectorAddPolarOffset(distance << 4, ang, pos);
+		angle = syRandomNext();
+		syVectorAddPolarOffset(distance << 4, angle, pos);
 		{
 			Sint32 x = pos[0];
 			Sint32 y = pos[1];
@@ -67,8 +67,8 @@ static void scColossoSparkleAroundPrize(ACTOR *prize)
 			sparkle = syFieldActorCreate(SPRITE_SPARKLE, x, y, z);
 		}
 		if(sparkle != NULL) {
-			sparkle->motionFlg = 0;
-			fdActorSetSprFlags(sparkle, 0);
+			sparkle->motionFlags = 0;
+			fdActorSetSpriteFlags(sparkle, 0);
 			fdActorStartScript(sparkle, ColossoPrizeSparkleScript);
 			fdActorSelectAnimation(sparkle, 1);
 			fdActorSelectAnimation(sparkle, 0);
@@ -81,14 +81,14 @@ static void scColossoSparkleAroundPrize(ACTOR *prize)
    jingle, and the cleared timer lets scColossoTakePrize go on. */
 static Sint32 scColossoRaisePrize(ACTOR *warrior)
 {
-	ACTOR *prize = fdActorGet(warrior->tmr);
+	ACTOR *prize = fdActorGet(warrior->timer);
 
 	syFieldActorSetMoveTargetFX(prize, warrior->x.fixed,
 		warrior->y.fixed + toFIXED(36), warrior->z.fixed);
-	prize->motionFlg = 0;
+	prize->motionFlags = 0;
 	fdActorStartScript(prize, ColossoPrizeScript);
-	sySndPlay(MUS_TREASURE_FOUND);
-	warrior->tmr = 0;
+	sySoundPlay(MUS_TREASURE_FOUND);
+	warrior->timer = 0;
 	return 0;
 }
 
@@ -120,7 +120,7 @@ static Sint32 scColossoTakePrize(Sint32 firstItem, Sint32 secondItem)
 		z = gauge->finishZ - toFIXED(16);
 		prizeActorId = &gauge->finishItemActorIdA;
 	}
-	raisedPrizeActorId = &leader->tmr;
+	raisedPrizeActorId = &leader->timer;
 	*raisedPrizeActorId = *prizeActorId;
 	leader->acceleration = toFIXED(1) / 4;
 	leader->speedLimit = toFIXED(1);

@@ -44,13 +44,13 @@ void   btCameraSetViewAtPairMidpoint(
 void   btBackgroundSetMode(Sint32 mode, Sint32 unusedResource, Sint32 fade);
 void   btBackgroundLoad(Sint32 mode, Sint32 resourceId, Sint32 level);
 void   btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level);
-Sint32 btSprGetEffectHeight(Sint32 idx);
-Sint32 btSprHasHeavyImpact(Sint32 idx);
-Uint32 btSprGetAttackHop(Uint32 idx);
-Sint32 btSprIsSmall(Sint32 idx);
+Sint32 btSpriteGetEffectHeight(Sint32 index);
+Sint32 btSpriteHasHeavyImpact(Sint32 index);
+Uint32 btSpriteGetAttackHop(Uint32 index);
+Sint32 btSpriteIsSmall(Sint32 index);
 Sint32 btUnitGetEffectHeight(Sint32 unitId);
 void   btMotionApproachTarget(
-	  Sint32 unitId, Sint32 tgtId, Sint32 ticks, Sint32 initVelY);
+	  Sint32 unitId, Sint32 targetId, Sint32 ticks, Sint32 initVelocityY);
 void				  btMotionLeapBack(Sint32 unitId);
 void				  btMotionApplyKnockback(Sint32 unitId, Sint32 variant);
 Sint32				  btUnitListIds(Sint32 sideMask, Uint16 *unitIds);
@@ -61,28 +61,28 @@ Sint32 btMotionProjectScaledPos(Sint32 unitId, Sint32 *projected);
 Sint32 btMotionProjectCursorPoint(Sint32 unitId, Sint32 *projected);
 Sint32 btUnitListLiving(Sint32 sideMask, Uint16 *unitIds);
 Sint32 btPartyPrepareMembers(Uint16 *unitIds);
-void   btCameraSetCommandView(Sint32 verticalOfs);
-void  *btActorGetSpr(struct ACTOR *actor, Sint32 sprIdx);
+void   btCameraSetCommandView(Sint32 verticalOffset);
+void  *btActorGetSprite(struct ACTOR *actor, Sint32 spriteIndex);
 void   btHighlightSetModes(Uint16 *selectedUnits, Sint32 mode);
-void   btPlaybackStart(Sint32 snd);
+void   btPlaybackStart(Sint32 sound);
 Sint32 btGraphicsScaleRGB555Clamped(
-	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 cnt);
+	Uint16 *src, Uint16 *dest, FIXED scale, Sint32 count);
 Sint32		  btDjinnRecoveryCountDown(void);
 Sint32		  btObjectGetPalette(Sint32 id);
 Sint32		  btDjinnRecoveryCountDownTwenty(void);
-Sint32		  btDebugParmSetLoad(Sint32 set);
+Sint32		  btDebugParamSetLoad(Sint32 set);
 void		  btObjectPut(void);
-void		  btObjectDestroySprs(Sint32 unitId);
+void		  btObjectDestroySprites(Sint32 unitId);
 UNREAD_RESULT btMessageWaitForAdvanceAt(Sint32 x, Sint32 y);
-Sint32		  btDjinnCountStandby(Uint32 unitId, Uint8 *cnts);
+Sint32		  btDjinnCountStandby(Uint32 unitId, Uint8 *counts);
 
 /* One of the star field's three rings, moving outward on the effect canvas. */
 typedef struct RING {
-	Sint32 x;	 /* 1/1024 canvas pixels */
-	Sint32 y;	 /* 1/1024 canvas pixels */
-	Sint32 velX; /* 1/1024 canvas pixels per tick */
-	Sint32 velY; /* 1/1024 canvas pixels per tick */
-	Sint32 age;	 /* ticks */
+	Sint32 x;		  /* 1/1024 canvas pixels */
+	Sint32 y;		  /* 1/1024 canvas pixels */
+	Sint32 velocityX; /* 1/1024 canvas pixels per tick */
+	Sint32 velocityY; /* 1/1024 canvas pixels per tick */
+	Sint32 age;		  /* ticks */
 } RING;
 
 /* The weights an enemy picks among its eight actions by, one table for each
@@ -116,7 +116,7 @@ extern const Uint8 BattleTransitionCurtainTiles[];
 /* Eight curtain tiles, 32 bytes each, of which the transition copies one at a
    time into the curtain's first tile. */
 extern const Uint8 BattleTransitionCurtainVariants[];
-/* Garet's weapon sprite by weapon kind (btUnitGetWeaponSpr). */
+/* Garet's weapon sprite by weapon kind (btUnitGetWeaponSprite). */
 extern const Uint16 BattleUnitWeaponAnimationsGaret[];
 /* Ivan's weapon sprite by weapon kind. */
 extern const Uint16 BattleUnitWeaponAnimationsIvan[];
@@ -163,7 +163,7 @@ extern Uint16 EncounterZones[];
 #define BattleBackgroundStateWork \
 	(*(struct BATTLE_BACKGROUND_STATE * \
 			*)&HeapSlots[HEAP_SLOT_BATTLE_BACKGROUND])
-/* Isaac's weapon sprite by weapon kind (btUnitGetWeaponSpr). */
+/* Isaac's weapon sprite by weapon kind (btUnitGetWeaponSprite). */
 extern const Uint16 BattleUnitWeaponAnimationsIsaac[];
 /* The ARM decoder for a battle background's image, which btBackgroundLoad
    copies to RAM and runs as a BIT_DECODER. */
@@ -189,8 +189,8 @@ typedef enum BATTLE_KNOCKBACK {
 	KNOCKBACK_JOLT	  /* the spot itself, a hop of 5.5 */
 } BATTLE_KNOCKBACK;
 
-/* The battle sprites' animations (fdSprStartAnimation numbers) that the battle
-   code picks by name. */
+/* The battle sprites' animations (fdSpriteStartAnimation numbers) that the
+   battle code picks by name. */
 typedef enum BATTLE_POSE {
 	/* The first standing picture held still, without POSE_STANDING's breathing:
 	   how an enemy asleep, stunned or held stands. */
@@ -204,7 +204,7 @@ typedef enum BATTLE_POSE {
 	POSE_ENEMY_DOWN = 5 /* a downed enemy stays in its damage pose */
 } BATTLE_POSE;
 
-/* A battle unit's sprites' OBJ mode, as btHighlightSetSprMode sets it: faded
+/* A battle unit's sprites' OBJ mode, as btHighlightSetSpriteMode sets it: faded
    units are semi-transparent, and the battle's blends act on them. */
 typedef enum BATTLE_SPR_MODE {
 	SPRITE_OPAQUE,
@@ -241,7 +241,7 @@ struct ACTOR;
 
 void						 btDebugBattleViewMessages(void);
 void						 btCameraUpdate(void);
-void						 btIntroAnnounceEncounter(Sint32 enemyCnt);
+void						 btIntroAnnounceEncounter(Sint32 enemyCount);
 void						 btUnitCollect(void);
 Sint32						 btShiftVRAMTiles(void);
 void						 btClearBg0Vofs(void);
@@ -262,7 +262,7 @@ Sint32		  btClearSerialTransferPayload(void);
 #define BATTLE_OUTCOME_LOST -1
 #define BATTLE_OUTCOME_FLED 999
 void   btCameraAdjustByShoulderKeys(void);
-void   btCameraAdjustByShoulderKeysAlt(void);
+void   btCameraAdjustByShoulderKeysAlternate(void);
 Sint32 btUnitCountDownDefenseStage(Sint32 unitId);
 Sint32 btUnitCountDownResistanceStage(Sint32 unitId);
 Sint32 btUnitCountDownDelusion(Sint32 unitId);
@@ -279,15 +279,15 @@ Sint32 btUnitCountDownSleep(Sint32 unitId);
 #define DEFINE_ADJUST_CAMERA(name) \
 	void name(void) \
 	{ \
-		struct BATTLE_CAMERA		   *cam = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA); \
+		struct BATTLE_CAMERA *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA); \
 		struct BATTLE_BACKGROUND_STATE *view = \
 			HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND); \
 \
 		if((PerData & KEY_L) != 0) { \
-			cam->yaw += 512; \
+			camera->yaw += 512; \
 		} \
 		if((PerData & KEY_R) != 0) { \
-			cam->yaw -= 512; \
+			camera->yaw -= 512; \
 		} \
 		if(view->keepRange == 0) { \
 			btCameraSetRange(toFIXED(120), toFIXED(120), 0, 0, toFIXED(1)); \
@@ -296,27 +296,27 @@ Sint32 btUnitCountDownSleep(Sint32 unitId);
 
 Sint32		  btEnemyList(Sint16 *unitIds);
 void		  btObjectPutKeepingPoses(void);
-Sint32		  btEnemyHasSprRoom(Sint32 enemyId);
-Sint32		  btEnemySprLoadIntoSlots(Sint32 unitId);
-UNREAD_RESULT btObjectReleaseSprSlots(Sint32 unitId);
+Sint32		  btEnemyHasSpriteRoom(Sint32 enemyId);
+Sint32		  btEnemySpriteLoadIntoSlots(Sint32 unitId);
+UNREAD_RESULT btObjectReleaseSpriteSlots(Sint32 unitId);
 Sint32		  btUnitGetWeaponKind(Sint32 itemId);
-Sint32		  btUnitGetWeaponSpr(Sint32 unitId);
+Sint32		  btUnitGetWeaponSprite(Sint32 unitId);
 void		  btObjectMake(
 			 struct BATTLE_OBJECT *battleObject, Sint32 unitId, Sint32 x, Sint32 y);
 void btPlacementGetStepPair(Sint32 partyPlace, Sint32 *x, Sint32 *y);
 void btPlacementLayoutEnemies(
-	Uint16 *unitIds, Sint32 cnt, Sint32 *xPositions, Sint32 *zPositions);
+	Uint16 *unitIds, Sint32 count, Sint32 *xPositions, Sint32 *zPositions);
 Sint32		  btEnemyGetFreeUnitId(void);
 UNREAD_RESULT btPlacementRelayoutEnemies(void);
 void		  btUnitRefreshPlacement(void);
 Bool		  btPlacementContainsId(Sint16 *list, Sint32 place);
-void		  btObjectUpdateSprPriorities(void);
-UNREAD_RESULT btUnitBuildStatFlags(
+void		  btObjectUpdateSpritePriorities(void);
+UNREAD_RESULT btUnitBuildStatusFlags(
 	Sint32 unitId, struct BATTLE_OBJECT *battleObject);
-UNREAD_RESULT btStatIconCycle(struct BATTLE_OBJECT *battleObject);
+UNREAD_RESULT btStatusIconCycle(struct BATTLE_OBJECT *battleObject);
 UNREAD_RESULT btObjectUpdatePose(Sint32 unitId);
-void		  btSprDetachScripts(void *recordGroup);
-void		  btActorDetachSprScripts(struct ACTOR *actor);
+void		  btSpriteDetachScripts(void *recordGroup);
+void		  btActorDetachSpriteScripts(struct ACTOR *actor);
 Sint32		  btObjectMarkForRelease(Sint32 unitId);
 #if FIX_FUNCTION_SIGNATURES
 void btObjectDestroyAll(void);
@@ -355,9 +355,9 @@ void   btUnitResetGuardLevels(void);
 Sint32 btFleeCheckSuccess(void);
 Sint32 btBuildPartyActions(struct BATTLE_ACTION *entries);
 Sint32 btBuildEnemyActions(struct BATTLE_ACTION *entries);
-void   btActionOrderSort(struct BATTLE_ACTION *entries, Sint32 cnt);
-Sint32 btAppendLinkedActions(struct BATTLE_ACTION *actions, Sint32 cnt);
-void   btPaletteCopyWithBrightnessOffset(Sint32 ofs);
+void   btActionOrderSort(struct BATTLE_ACTION *entries, Sint32 count);
+Sint32 btAppendLinkedActions(struct BATTLE_ACTION *actions, Sint32 count);
+void   btPaletteCopyWithBrightnessOffset(Sint32 offset);
 Sint32 btGatherActions(struct BATTLE_ACTION *actions);
 Sint32 btGetUnitAtPlace(Sint32 taggedPlace);
 Sint32 btFindUnitPlace(Uint32 unitId);
@@ -371,10 +371,10 @@ Sint32 btStagingRunFullScreen(struct BATTLE_ACTION_RUN *plan, Sint32 mode);
 UNREAD_RESULT btStagingRunMessages(
 	struct BATTLE_ACTION_RUN *plan, Sint32 unused);
 Sint32 btStagingRunAttack(struct BATTLE_ACTION_RUN *plan, Sint32 mode);
-Sint32 btStagingRunPlainAttack(struct BATTLE_ACTION_RUN *input, Sint32 flg);
+Sint32 btStagingRunPlainAttack(struct BATTLE_ACTION_RUN *input, Sint32 flags);
 Sint32 btStagingRunItem(struct BATTLE_ACTION_RUN *plan, Sint32 unused,
 	struct BATTLE_ACTION *selection);
-UNREAD_RESULT btObjectSetColMode(struct ACTOR *actor, Sint32 palette);
+UNREAD_RESULT btObjectSetColorMode(struct ACTOR *actor, Sint32 palette);
 Sint32 btStagingRunPsynergyCast(struct BATTLE_ACTION_RUN *plan, Sint32 mode);
 
 void   btMotionFlashHit(Sint32 unitId, Sint32 unusedA, Sint32 unusedB);
@@ -426,11 +426,11 @@ void btTransitionUploadTileVariant(void);
 void btTransitionAdvanceOpening(void);
 void btTransitionDrawRows(void);
 void btTransitionClearBg0Vofs(void);
-void btTransitionRun(Sint32 enemyCnt, Sint32 encounterId);
+void btTransitionRun(Sint32 enemyCount, Sint32 encounterId);
 void btBackgroundInit(void);
 void btBackgroundFree(void);
 void btCameraSetRange(
-	FIXED centerX, FIXED centerY, Sint32 ofsX, Sint32 ofsY, FIXED scale);
+	FIXED centerX, FIXED centerY, Sint32 offsetX, Sint32 offsetY, FIXED scale);
 #if FIX_UNINITIALIZED_READ
 void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom);
 #else
@@ -443,13 +443,13 @@ void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y);
 #define BATTLE_BACKGROUND_SCROLL_Y 32
 /* btCameraSetView's zoom, in percent, for the battle's usual view. */
 #define BATTLE_ZOOM_NORMAL		   100
-void   btBackgroundSetBlendCtrl(void);
+void   btBackgroundSetBlendControl(void);
 void   btTransitionInitEntries(struct BATTLE_TRANSITION_ENTRY *entries);
 Sint32 btBackgroundDivideBy16(Sint32 value);
 Sint32 btAdjustDebugValue(Sint32 selectedValue);
-void   btHighlightSetSprMode(Sint32 unitId, Sint32 mode);
-void   btHighlightSetOtherSprModes(Sint32 selectedUnitId);
-void   btHighlightClearAllSprModes(void);
+void   btHighlightSetSpriteMode(Sint32 unitId, Sint32 mode);
+void   btHighlightSetOtherSpriteModes(Sint32 selectedUnitId);
+void   btHighlightClearAllSpriteModes(void);
 void   btBackgroundStepHighlightBlend(void);
 
 UNREAD_RESULT btElementGlowUpdateStarField(void);
@@ -482,10 +482,10 @@ UNREAD_RESULT btEnemyLetterFirstOfKind(Sint32 enemyId);
 Sint32		  btFormationGetRandomMember(Sint32 formationId);
 Sint32		  btFormationBuildEnemyList(Sint32 formationId);
 
-Uint32 btSprGetDefeatSnd(Sint32 idx);
-Sint32 btSprGetSpr(Sint32 idx);
-Sint32 btSprGetPalette(Sint32 idx);
-Uint32 btSprGetAttackEffect(Uint32 idx);
+Uint32 btSpriteGetDefeatSound(Sint32 index);
+Sint32 btSpriteGetSprite(Sint32 index);
+Sint32 btSpriteGetPalette(Sint32 index);
+Uint32 btSpriteGetAttackEffect(Uint32 index);
 
 Uint32 btSpoilsRankItem(Uint32 inventoryEntry);
 void   btSpoilsClear(void);

@@ -2,7 +2,7 @@
    sprite's shadow and puts it on the middle layer. */
 Sint32 scShipDropShadow(ACTOR *actor)
 {
-	((FIELD_SPR *)actor->spr)->flg = 0;
+	((FIELD_SPR *)actor->sprite)->flags = 0;
 	actor->layer = MAPGRID_LAYER_MIDDLE;
 	return 1;
 }

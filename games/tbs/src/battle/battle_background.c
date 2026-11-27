@@ -49,7 +49,7 @@
 void btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level)
 {
 	BATTLE_STATE   *battle = BattleStateWork;
-	Uint16		   *palette = battle->pal;
+	Uint16		   *palette = battle->palette;
 	volatile Uint32 ime;
 
 	syIRQLock(&ime);
@@ -89,17 +89,18 @@ void btBackgroundSetMode(Sint32 mode, Sint32 unusedResource, Sint32 fade)
 		BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 
 	if(fade == BATTLE_BACKGROUND_FADE_RESTORE) {
-		syDMAXCopy(BattleStateWork->pal, BATTLE_BG_PALETTE,
+		syDMAXCopy(BattleStateWork->palette, BATTLE_BG_PALETTE,
 			DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
 	} else if(fade != 0) {
-		Uint16 *src = BattleStateWork->pal;
+		Uint16 *src = BattleStateWork->palette;
 		Uint16 *destination = BATTLE_BG_PALETTE;
-		Sint32	colIdx;
+		Sint32	colorIndex;
 
-		for(colIdx = 0; colIdx != BATTLE_BACKGROUND_COLORS; colIdx++) {
-			Sint32 red = RGB_RED(src[colIdx]);
-			Sint32 green = RGB_GREEN(src[colIdx]);
-			Sint32 blue = RGB_BLUE(src[colIdx]);
+		for(colorIndex = 0; colorIndex != BATTLE_BACKGROUND_COLORS;
+			colorIndex++) {
+			Sint32 red = RGB_RED(src[colorIndex]);
+			Sint32 green = RGB_GREEN(src[colorIndex]);
+			Sint32 blue = RGB_BLUE(src[colorIndex]);
 
 			if(red > fade) {
 				red -= fade;
@@ -116,7 +117,7 @@ void btBackgroundSetMode(Sint32 mode, Sint32 unusedResource, Sint32 fade)
 			} else {
 				blue = 0;
 			}
-			destination[colIdx] = RGB(red, green, blue);
+			destination[colorIndex] = RGB(red, green, blue);
 		}
 	}
 
@@ -130,7 +131,7 @@ void btBackgroundInit(void)
 	BATTLE_AFFINE_HDMA		*scanlines;
 	BATTLE_BACKGROUND_STATE *view;
 	scanlines =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_SCANLINES, sizeof *scanlines);
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_SCANLINES, sizeof *scanlines);
 	view = BattleBackgroundStateWork;
 	DMA_FILL32(0, scanlines, sizeof *scanlines);
 	view->mode = BATTLE_BACKGROUND_NONE;
@@ -161,7 +162,7 @@ void btBackgroundLoad(Sint32 mode, Sint32 resourceId, Sint32 level)
 	((BIT_DECODER)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
 		backgroundData + BACKGROUND_PALETTE_BYTES, BG_CHAR_BLOCK(2));
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);
-	palette = battle->pal;
+	palette = battle->palette;
 	syDMAXCopy(backgroundData, palette,
 		DMA_COPY_WORDS(BACKGROUND_PALETTE_BYTES / 4), REG_DMA3);
 	if(level >= 0)
@@ -186,10 +187,10 @@ void btBackgroundLoad(Sint32 mode, Sint32 resourceId, Sint32 level)
 }
 
 /* Builds the zoomed background's next page for a zoom of scale about centerX
-   and centerY, shifted by ofsX and ofsY, and shows it: below a zoom of 1
+   and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
    the plane lies flat, from 1 it wraps and turns with the camera. */
 void btCameraSetRange(
-	FIXED centerX, FIXED centerY, Sint32 ofsX, Sint32 ofsY, FIXED scale)
+	FIXED centerX, FIXED centerY, Sint32 offsetX, Sint32 offsetY, FIXED scale)
 {
 	BATTLE_BACKGROUND_STATE *view =
 		HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -234,8 +235,8 @@ void btCameraSetRange(
 	affine->pd = step;
 	x = syMulFX(ratio, syMulFX(centerX, scale - toFIXED(1)));
 	y = syMulFX(ratio, syMulFX(centerY, scale - toFIXED(1)));
-	affine->x = ((x + toFIXED(0.5) - 1) >> 8) + ofsX + panX;
-	y = ((y + toFIXED(0.5) - 1) >> 8) + ofsY -
+	affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
+	y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY -
 		Q_8_8(BACKGROUND_PLANE_HIDDEN_LINES);
 	affine->y = y;
 
@@ -280,7 +281,7 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 	BATTLE_CAMERA *camera = BattleCameraWork;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
-	Sint32		   eyeOfs[3];
+	Sint32		   eyeOffset[3];
 	Sint32		   originOnScreen[3];
 	Sint32		   origin[3];
 	FIXED		   nearShare;
@@ -300,10 +301,10 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 	syMatrixTranslateVector(focus);
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
-	eyeOfs[0] = 0;
-	eyeOfs[1] = 0;
-	eyeOfs[2] = camera->distance;
-	syCalcPoint(eyeOfs, (Sint32 *)camera);
+	eyeOffset[0] = 0;
+	eyeOffset[1] = 0;
+	eyeOffset[2] = camera->distance;
+	syCalcPoint(eyeOffset, (Sint32 *)camera);
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
 	syInitMatrix();
@@ -327,7 +328,7 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 	BATTLE_CAMERA *camera = BattleCameraWork;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
-	FIXED		   eyeOfs[3];
+	FIXED		   eyeOffset[3];
 	Sint32		   originOnScreen[3];
 	Sint32		   origin[3];
 	FIXED		   distance = BATTLE_CAMERA_DISTANCE;
@@ -349,10 +350,10 @@ void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 	syMatrixTranslateVector(focus);
 	syRotY(camera->yaw);
 	syRotX(camera->pitch);
-	eyeOfs[0] = 0;
-	eyeOfs[1] = 0;
-	eyeOfs[2] = distance;
-	syCalcPoint(eyeOfs, (Sint32 *)camera);
+	eyeOffset[0] = 0;
+	eyeOffset[1] = 0;
+	eyeOffset[2] = distance;
+	syCalcPoint(eyeOffset, (Sint32 *)camera);
 	/* Where the battlefield's origin falls on the screen moves the plane as
 	   much. */
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -424,7 +425,7 @@ typedef struct BATTLE_TRANSITION_ENTRY {
 } BATTLE_TRANSITION_ENTRY;
 
 /* Unused: lightens every layer by REG_BLDY. */
-UNUSED void btBackgroundSetBlendCtrl(void)
+UNUSED void btBackgroundSetBlendControl(void)
 {
 	REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
@@ -479,63 +480,64 @@ UNUSED Sint32 btAdjustDebugValue(Sint32 selectedValue)
 }
 
 /* Sets the sprite mode of a unit's picture and its shadow. */
-void btHighlightSetSprMode(Sint32 unitId, Sint32 mode)
+void btHighlightSetSpriteMode(Sint32 unitId, Sint32 mode)
 {
 	BATTLE_OBJECT *slot = btObjectGet(unitId);
 	ACTOR		  *actor;
-	SPR			  *spr;
-	SPR			 **sprs;
-	Sint32		   sprIdx;
+	SPR			  *sprite;
+	SPR			 **sprites;
+	Sint32		   spriteIndex;
 
 	if(slot == 0)
 		return;
 	actor = slot->actor;
 	if(actor == 0)
 		return;
-	switch(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) {
+	switch(actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) {
 	case ACTOR_SPRITE_ONE: {
-		spr = actor->spr;
-		spr->image.objMode = mode;
-		spr->shadow.objMode = mode;
+		sprite = actor->sprite;
+		sprite->image.objectMode = mode;
+		sprite->shadow.objectMode = mode;
 		break;
 	}
 	case ACTOR_SPRITE_GROUP: {
-		sprs = (SPR **)actor->spr;
-		sprIdx = 0;
+		sprites = (SPR **)actor->sprite;
+		spriteIndex = 0;
 		do {
-			spr = *sprs++;
-			if(spr == 0)
+			sprite = *sprites++;
+			if(sprite == 0)
 				break;
-			spr->image.objMode = mode;
-			spr->shadow.objMode = mode;
-		} while(++sprIdx < ACTOR_SPRITE_GROUP_SIZE);
+			sprite->image.objectMode = mode;
+			sprite->shadow.objectMode = mode;
+		} while(++spriteIndex < ACTOR_SPRITE_GROUP_SIZE);
 		break;
 	}
 	}
 }
 
 /* Unused: makes every unit's sprites semi-transparent but selectedUnitId's. */
-UNUSED void btHighlightSetOtherSprModes(Sint32 selectedUnitId)
+UNUSED void btHighlightSetOtherSpriteModes(Sint32 selectedUnitId)
 {
 	Sint16 unitIds[UNIT_MAX];
-	Sint32 unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	Sint32 unitIdx;
+	Sint32 unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	Sint32 unitIndex;
 
-	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++) {
-		if(unitIds[unitIdx] != selectedUnitId)
-			btHighlightSetSprMode(unitIds[unitIdx], SPRITE_SEMI_TRANSPARENT);
+	for(unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+		if(unitIds[unitIndex] != selectedUnitId)
+			btHighlightSetSpriteMode(
+				unitIds[unitIndex], SPRITE_SEMI_TRANSPARENT);
 	}
 }
 
 /* Returns every unit's sprites to SPRITE_OPAQUE. */
-void btHighlightClearAllSprModes(void)
+void btHighlightClearAllSpriteModes(void)
 {
 	Sint16 unitIds[UNIT_MAX];
-	Sint32 unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-	Sint32 unitIdx;
+	Sint32 unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+	Sint32 unitIndex;
 
-	for(unitIdx = 0; unitIdx < unitCnt; unitIdx++)
-		btHighlightSetSprMode(unitIds[unitIdx], SPRITE_OPAQUE);
+	for(unitIndex = 0; unitIndex < unitCount; unitIndex++)
+		btHighlightSetSpriteMode(unitIds[unitIndex], SPRITE_OPAQUE);
 }
 
 /* Lightens the highlighted units by the next step of the blend ramp: the first
@@ -544,8 +546,8 @@ void btBackgroundStepHighlightBlend(void)
 {
 	BATTLE_STATE *battle = BattleStateWork;
 	Sint8		 *blendRamp;
-	Uint16		  rampIdx;
-	Sint32		  nextIdx;
+	Uint16		  rampIndex;
+	Sint32		  nextIndex;
 
 	if(battle != NULL && battle->highlightMode != HIGHLIGHT_OFF) {
 		REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
@@ -554,11 +556,11 @@ void btBackgroundStepHighlightBlend(void)
 		REG_BLDY = blendRamp[battle->highlightStep];
 		/* From the first half's last step on, the next step stays in the
 		   second. */
-		rampIdx = battle->highlightStep;
-		nextIdx = (rampIdx + 1) & (HIGHLIGHT_RAMP_HALF - 1);
-		if(rampIdx >= HIGHLIGHT_RAMP_HALF - 1)
-			nextIdx |= HIGHLIGHT_RAMP_HALF;
-		battle->highlightStep = nextIdx;
+		rampIndex = battle->highlightStep;
+		nextIndex = (rampIndex + 1) & (HIGHLIGHT_RAMP_HALF - 1);
+		if(rampIndex >= HIGHLIGHT_RAMP_HALF - 1)
+			nextIndex |= HIGHLIGHT_RAMP_HALF;
+		battle->highlightStep = nextIndex;
 	}
 }
 
@@ -568,13 +570,13 @@ void btHighlightSetModes(Uint16 *selectedUnits, Sint32 mode)
 {
 	Sint16		  unitIds[UNIT_MAX];
 	BATTLE_STATE *battle = BattleStateWork;
-	Uint32		  unitCnt;
-	Uint32		  unitIdx;
+	Uint32		  unitCount;
+	Uint32		  unitIndex;
 
 	if(mode == HIGHLIGHT_OFF) {
 		syCloseEvent(btBackgroundStepHighlightBlend);
 		REG_BLDY = mode;
-		btHighlightClearAllSprModes();
+		btHighlightClearAllSpriteModes();
 		sySynch(1);
 		syIOWriteQueueStore16((Uint32)&REG_BLDCNT, 0);
 	}
@@ -584,18 +586,18 @@ void btHighlightSetModes(Uint16 *selectedUnits, Sint32 mode)
 		REG_BLDY = 0;
 		IO_WRITE16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
 
-		unitCnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
-		for(unitIdx = 0; unitIdx < unitCnt; unitIdx++)
-			btHighlightSetSprMode(unitIds[unitIdx], mode & 1);
+		unitCount = btUnitListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+		for(unitIndex = 0; unitIndex < unitCount; unitIndex++)
+			btHighlightSetSpriteMode(unitIds[unitIndex], mode & 1);
 
 		if(selectedUnits != 0) {
 			Uint32 unitId;
 
-			for(unitIdx = 0; unitIdx < UNIT_MAX; unitIdx++) {
+			for(unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
 				unitId = *selectedUnits++;
 				if(unitId == BATTLE_UNIT_LIST_END)
 					break;
-				btHighlightSetSprMode(unitId, (mode & 1) ^ 1);
+				btHighlightSetSpriteMode(unitId, (mode & 1) ^ 1);
 			}
 		}
 		sySynch(1);

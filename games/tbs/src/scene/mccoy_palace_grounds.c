@@ -286,10 +286,10 @@ static void scMcCoyPalaceGroundsTalkToEastGuard(void)
 			fdScriptShowMessageThenWait(ACTOR_WEST_GUARD, 0, 20);
 			fdActorFaceDirection(ACTOR_WEST_GUARD, FACING_EAST_NORTHEAST, 0);
 			fdActorSetSpeed(ACTOR_EAST_GUARD, 1);
-			fdActorGet(ACTOR_EAST_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
 			fdScriptWait(1);
-			fdActorGet(ACTOR_EAST_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
+			fdActorGet(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
 			fdActorSetSpeed(ACTOR_WEST_GUARD, 0.6);
 			fdActorWalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
 			fdActorWalkToAndWait(ACTOR_WEST_GUARD, 328, 252);
@@ -337,8 +337,8 @@ Sint32 scInit(void)
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
 	actor = fdActorGet(ACTOR_WEST_WORKER);
-	actor->priFlg = 0;
-	actor->spr->image.pri = 1;
+	actor->priorityFlags = 0;
+	actor->sprite->image.priority = 1;
 
 	if(MainRoutineStateWork.next == SCENE_MC_COY_PALACE_GROUNDS) {
 		scMcCoyPalaceGroundsRestoreStory();
@@ -457,10 +457,10 @@ static void scMcCoyPalaceGroundsGuardsArrestParty(void)
 	fdScriptWait(60);
 	if(gmFlagGet(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
 		fdActorSetSpeed(ACTOR_EAST_GUARD, 1);
-		fdActorGet(ACTOR_EAST_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
 		fdScriptWait(1);
-		fdActorGet(ACTOR_EAST_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
 	}
 	fdActorSetSpeed(ACTOR_WEST_GUARD, 0.8);
 	/* The west guard marches Isaac through the door into the palace. */
@@ -486,7 +486,7 @@ static void scMcCoyPalaceGroundsGuardsArrestParty(void)
 /* The palace door swings open with a thump. */
 static void scMcCoyPalaceGroundsOpenDoor(void)
 {
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridPlayMapEdit(McCoyPalaceGroundsDoorOpenSteps, 52, 11);
 	gmFlagSet(FLAG_DOOR_OPEN);
 }

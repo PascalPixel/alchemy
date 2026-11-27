@@ -7,11 +7,11 @@
    back to 0. */
 void fdActorStopWhereItStands(ACTOR *actor)
 {
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtY = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 
 	SET_VELOCITY(actor, 0, 0, 0);
 
-	actor->tmr = 0;
+	actor->timer = 0;
 }

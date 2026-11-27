@@ -19,22 +19,22 @@ typedef enum LEVEL_UP_GAIN {
    none. */
 Uint32 btSpoilsRankItem(Uint32 inventoryEntry)
 {
-	Uint32 pri = 0;
+	Uint32 priority = 0;
 	Uint32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
 	if(itemId == 0)
 		return 0;
 	{
-		Uint8 flg = gmItemGetDirectStub(itemId)->flg;
+		Uint8 flags = gmItemGetDirectStub(itemId)->flags;
 
-		if(flg & ITEM_INDISPENSABLE)
-			pri = 1;
-		pri <<= 1;
-		if(flg & ITEM_RARE)
-			pri++;
-		pri <<= 9;
-		pri += itemId;
+		if(flags & ITEM_INDISPENSABLE)
+			priority = 1;
+		priority <<= 1;
+		if(flags & ITEM_RARE)
+			priority++;
+		priority <<= 9;
+		priority += itemId;
 	}
-	return pri;
+	return priority;
 }
 
 /* Above every item's rank: the search for the lowest of the spoils' four starts
@@ -47,15 +47,15 @@ void btSpoilsClear(void)
 	BATTLE_STATE  *battle = RamHeapSlots->battleState;
 	BATTLE_SPOILS *spoils = &battle->spoils;
 	Uint16		  *items;
-	Sint32		   idx;
+	Sint32		   index;
 
 	MainRoutineStateWork.pendingItem = 0;
 	spoils->coins = 0;
 	spoils->experience = 0;
 	spoils->defeated = 0;
 	items = battle->spoils.items;
-	for(idx = 3; idx >= 0; idx--)
-		items[idx] = 0;
+	for(index = 3; index >= 0; index--)
+		items[index] = 0;
 }
 
 /* The name suffixes the scan reads back (NAME_SUFFIX_COUNT of them): the digits
@@ -78,14 +78,14 @@ Sint32 btStringFindFirstDigit(Uint8 *name)
 
 /* Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided die
    for every ten levels and one more, at least 30 percent of its own. */
-static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, Uint16 *reward)
+static __inline__ Sint32 btEnemyCalculateCoinReward(UNIT *unit, Uint16 *reward)
 {
-	Sint32 rollIdx;
+	Sint32 rollIndex;
 	Sint32 bonus = 0;
 	Sint32 base;
 	Sint32 minimumBonus;
 
-	for(rollIdx = 0; rollIdx < (Uint8)(unit->level / 10U) + 1; rollIdx++)
+	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
 		bonus += (syRandomBelow(6)) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -96,14 +96,15 @@ static __inline__ Sint32 btEnemyCalcCoinReward(UNIT *unit, Uint16 *reward)
 
 /* Returns an enemy's experience with the Djinn bonus: its own plus a four-sided
    die for every ten levels and one more, at least 30 percent more. */
-static __inline__ Sint32 btEnemyCalcExperienceReward(UNIT *unit, Uint16 *reward)
+static __inline__ Sint32 btEnemyCalculateExperienceReward(
+	UNIT *unit, Uint16 *reward)
 {
-	Sint32 rollIdx;
+	Sint32 rollIndex;
 	Sint32 bonus = 0;
 	Sint32 base;
 	Sint32 minimumBonus;
 
-	for(rollIdx = 0; rollIdx < (Uint8)(unit->level / 10U) + 1; rollIdx++)
+	for(rollIndex = 0; rollIndex < (Uint8)(unit->level / 10U) + 1; rollIndex++)
 		bonus += (syRandomBelow(4)) + 1;
 	base = *reward;
 	minimumBonus = base * 3 / 10;
@@ -124,14 +125,14 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	const ENEMY_DEFINITION *enemy;
 	BATTLE_STATE		   *battle;
 	BATTLE_SPOILS		   *spoils;
-	Sint32					itemIdx;
+	Sint32					itemIndex;
 	Sint32					dropShift;
 	Sint32					classSlot;
-	Sint32					lowestItemPri;
+	Sint32					lowestItemPriority;
 	Sint32					lowestSlot;
-	Sint32					itemPri;
+	Sint32					itemPriority;
 	Sint32					slot;
-	Sint32					classIdx;
+	Sint32					classIndex;
 
 	unit = syUnitGet(unitId);
 	battle = RamHeapSlots->battleState;
@@ -145,20 +146,20 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	slot = spoils->queueHead = (spoils->queueHead + 1) % 2;
 	spoils->queuedSummons[slot] = unit->enemyId;
 	spoils->queuedLetters[slot] = btStringFindFirstDigit((Uint8 *)unit);
-	if(spoils->queueCnt <= 1)
-		spoils->queueCnt++;
+	if(spoils->queueCount <= 1)
+		spoils->queueCount++;
 	classSlot = 0;
-	classIdx = 0;
+	classIndex = 0;
 	/* UB: the search runs to a sixth kind, one past enemyKinds: it reads
 	   kindsEnd, the halfword after them. */
 	if(battle->enemyKinds[0] != unit->enemyId) {
 		do {
-			if(++classIdx > (ENEMY_BATTLE_SIZE - 1))
+			if(++classIndex > (ENEMY_BATTLE_SIZE - 1))
 				break;
-		} while(battle->enemyKinds[classIdx] != unit->enemyId);
+		} while(battle->enemyKinds[classIndex] != unit->enemyId);
 	}
-	if(classIdx != ENEMY_BATTLE_SIZE)
-		classSlot = classIdx;
+	if(classIndex != ENEMY_BATTLE_SIZE)
+		classSlot = classIndex;
 	/* The first class to fall names the victory message. XXX (no evidence):
 	   whether DEFEAT_BY_PARTY_MEMBER was meant; no state is 2, so the test
 	   never fails. */
@@ -176,24 +177,24 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	enemy = gmEnemyGetDefinitionStub(unit->enemyId);
 	if(djinnBonus != 0) {
 		if(enemy->coins != 0)
-			spoils->coins += btEnemyCalcCoinReward(unit, &enemy->coins);
+			spoils->coins += btEnemyCalculateCoinReward(unit, &enemy->coins);
 		if(enemy->experience != 0)
 			spoils->experience +=
-				btEnemyCalcExperienceReward(unit, &enemy->experience);
+				btEnemyCalculateExperienceReward(unit, &enemy->experience);
 	} else {
 		spoils->coins += enemy->coins;
 		spoils->experience += enemy->experience;
 	}
 	if(enemy->item == 0 || enemy->itemChance == 0)
 		return 0;
-	itemIdx = 0;
+	itemIndex = 0;
 	if(spoils->items[0] != enemy->item) {
 		do {
-			if(++itemIdx > 3)
+			if(++itemIndex > 3)
 				break;
-		} while(spoils->items[itemIdx] != enemy->item);
+		} while(spoils->items[itemIndex] != enemy->item);
 	}
-	if(itemIdx == 4) {
+	if(itemIndex == 4) {
 		dropShift = enemy->itemChance;
 		if(djinnBonus != 0)
 			dropShift -= 2;
@@ -203,15 +204,15 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 		   1). */
 		if((toFIXED(2) >> dropShift) > (gmBattleRandomStub() & 0xffff)) {
 			lowestSlot = -1;
-			lowestItemPri = SPOILS_RANK_CEILING;
-			for(itemIdx = 0; itemIdx <= 3; itemIdx++) {
-				itemPri = btSpoilsRankItem(spoils->items[itemIdx]);
-				if(itemPri < lowestItemPri) {
-					lowestItemPri = itemPri;
-					lowestSlot = itemIdx;
+			lowestItemPriority = SPOILS_RANK_CEILING;
+			for(itemIndex = 0; itemIndex <= 3; itemIndex++) {
+				itemPriority = btSpoilsRankItem(spoils->items[itemIndex]);
+				if(itemPriority < lowestItemPriority) {
+					lowestItemPriority = itemPriority;
+					lowestSlot = itemIndex;
 				}
 			}
-			if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPri)
+			if((Sint32)btSpoilsRankItem(enemy->item) > lowestItemPriority)
 				spoils->items[lowestSlot] = enemy->item;
 		}
 	}
@@ -226,7 +227,7 @@ void btAwardSpoils(void)
 	BATTLE_SPOILS *spoils;
 	Sint32		   living;
 	Uint16		  *list;
-	Sint32		   cnt;
+	Sint32		   count;
 	Sint32		   i;
 	Sint32		   unitId;
 	UNIT		  *unit;
@@ -251,9 +252,9 @@ void btAwardSpoils(void)
 	}
 	list = units;
 	living = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, list);
-	cnt = btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
-	backup = syHeapAllocEWRAM(sizeof(UNIT));
-	for(i = 0; i < cnt; i++) {
+	count = btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
+	backup = syHeapAllocateEWRAM(sizeof(UNIT));
+	for(i = 0; i < count; i++) {
 		unitId = list[i];
 		unit = syUnitGet(unitId);
 		if(i >= living)
@@ -262,7 +263,7 @@ void btAwardSpoils(void)
 			unit->experience += spoils->experience;
 		while(syWordsCopyEntry(backup, unit, sizeof(UNIT)),
 			gmUnitTryLevelUpStub(unitId, gains) != 0) {
-			sySndPlayStub(MUS_LEVEL_UP);
+			sySoundPlayStub(MUS_LEVEL_UP);
 			mnMessageArgumentClearAllStub();
 			mnMessageArgumentPushStub(unit->classId, MESSAGE_ARGUMENT_CLASS);
 			mnMessageArgumentPushStub(list[i], MESSAGE_ARGUMENT_ACTOR);
@@ -287,7 +288,7 @@ void btAwardSpoils(void)
 							unitId, MESSAGE_ARGUMENT_ACTOR);
 						mnMessageArgumentPushStub(
 							learned & ACTION_ID_MASK, MESSAGE_ARGUMENT_ABILITY);
-						sySndPlayStub(SE_CAST);
+						sySoundPlayStub(SE_CAST);
 						/* "Mastered the <class>'s <ability>" */
 						mnBattleMessageShowAndWaitStub(
 							(Sint32)MsgMasteredAbility);

@@ -314,13 +314,13 @@ static __inline__ ACTOR *scKandoreanTempleCreateActor(
 #define FLAG_LASH_RECEIVED			0x84a
 #define FLAG_LADDER_LOWERED			0x92d
 
-/* The map state as the two water rooms write it: MAP_STATE.groundEffs as its
+/* The map state as the two water rooms write it: MAP_STATE.groundEffects as its
    two fields, the footprints and the kind of wading, which they set to 1. */
 typedef struct MAP_STATE_GROUND_EFFECTS {
 	Sint32 *origin;
 	Sint32	shakeX, shakeY, shakeDecay;
 	Uint8  *script;
-	Uint16	flg;
+	Uint16	flags;
 	Uint8	wideTiles;
 	Uint8	footprints : 2;
 	Uint8	wading : 2;
@@ -372,12 +372,12 @@ Uint32 scKandoreanTempleCountDownSteam(ACTOR *actor)
    ellipsis over his head. */
 Sint32 scKandoreanTempleMeditate(ACTOR *actor)
 {
-	if(actor->tmr != 0) {
-		actor->tmr--;
+	if(actor->timer != 0) {
+		actor->timer--;
 	} else {
 		fdActorShowEmoteById(
 			actor->userValue, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-		actor->tmr = (syRandomBelow(240)) + 240;
+		actor->timer = (syRandomBelow(240)) + 240;
 	}
 	return 1;
 }
@@ -386,7 +386,7 @@ Sint32 scKandoreanTempleMeditate(ACTOR *actor)
    and stretches back to its own shape over six ticks. */
 Sint32 scKandoreanTempleSquashAndStretch(ACTOR *actor)
 {
-	switch(actor->tmr) {
+	switch(actor->timer) {
 	case 6:
 		actor->scaleX -= toFIXED(1) / 4;
 		actor->scaleY += toFIXED(1) / 8;
@@ -402,10 +402,10 @@ Sint32 scKandoreanTempleSquashAndStretch(ACTOR *actor)
 	case 0:
 		actor->scaleX = toFIXED(1);
 		actor->scaleY = toFIXED(1);
-		actor->tmr = syRandom() % 90 + 60;
+		actor->timer = syRandom() % 90 + 60;
 		break;
 	}
-	actor->tmr--;
+	actor->timer--;
 	return 1;
 }
 
@@ -413,11 +413,11 @@ Sint32 scKandoreanTempleSquashAndStretch(ACTOR *actor)
    its size, with no shadow, never a talk or Psynergy target. */
 Sint32 scKandoreanTemplePlaceFlame(ACTOR *actor)
 {
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->scaleX = toFIXED(4) / 5;
 	actor->scaleY = toFIXED(4) / 5;
-	actor->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorSetSprFlags(actor, 0);
+	actor->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -588,7 +588,8 @@ UNUSED void scKandoreanTempleStartSplashRings(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	scKandoreanTempleLeaveSplashRings(leader, 0);
 }
 
@@ -596,7 +597,7 @@ UNUSED void scKandoreanTempleStartSplashRings(void)
    spreads a ring on the water at its feet once enough are counted. */
 void scKandoreanTempleLeaveSplashRings(ACTOR *actor, Sint32 step)
 {
-	Sint32	speed = (actor->velX + actor->velZ) >> 1;
+	Sint32	speed = (actor->velocityX + actor->velocityZ) >> 1;
 	Sint32 *counter = &KandoreanTempleSplashRingCounter;
 
 	if(speed < 0)
@@ -618,19 +619,19 @@ void scKandoreanTempleSpawnSplashRing(ACTOR *actor)
 {
 	ACTOR *ring = scKandoreanTempleCreateActor(
 		SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	if(ring) {
-		spr = ring->spr;
+		sprite = ring->sprite;
 		fdActorStartScript(ring, KandoreanTempleSplashRingScript);
-		ring->motionFlg = 0;
+		ring->motionFlags = 0;
 		ring->layer = 1;
-		ring->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		if(spr) {
-			fdSprStartAnimation(spr, 2);
-			spr->objMode = OBJ_MODE_SEMI_TRANSPARENT;
-			spr->flg = 0;
-			spr->pri = 3;
+		ring->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		if(sprite) {
+			fdSpriteStartAnimation(sprite, 2);
+			sprite->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
+			sprite->flags = 0;
+			sprite->priority = 3;
 		}
 	}
 }
@@ -647,7 +648,7 @@ void scKandoreanTemplePushAlongTheCurrent(void)
 		splash = ((ACTOR *)syImportActorCreate(SPRITE_WADING_SPLASH,
 			leader->x.fixed, leader->y.fixed + toFIXED(6), leader->z.fixed));
 		if(splash) {
-			fdActorSetSprFlags(splash, 0);
+			fdActorSetSpriteFlags(splash, 0);
 			fdActorSelectAnimation(splash, 1);
 			fdActorStartScript(splash, KandoreanTempleSplashScript);
 		}
@@ -706,7 +707,7 @@ void scKandoreanTempleUpdateVentSteam(ACTOR *actor)
 	ACTOR	  *other = fdActorGetById(ACTOR_VENT_ROOM_PILLAR);
 	FIXED	   vx = actor->bounce;
 	FIXED	   vz;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Sint32	   rate;
 	Sint32	   scale;
 
@@ -718,10 +719,10 @@ void scKandoreanTempleUpdateVentSteam(ACTOR *actor)
 	actor->sceneWord = vz - vz / FIELD_EFFECT_DRAG_Z;
 	rate = actor->speedLimit;
 	scale = actor->scaleX;
-	spr = actor->spr;
+	sprite = actor->sprite;
 	actor->scaleX = scale + rate;
 	actor->scaleY += actor->acceleration;
-	spr->rotation += actor->tmr;
+	sprite->rotation += actor->timer;
 	if(leader->y.fixed == 0) {
 		if(scKandoreanTempleIsOverActor(actor, leader)) {
 			actor->z.fixed -= actor->sceneWord;
@@ -742,16 +743,16 @@ void scKandoreanTempleInitSteam(ACTOR *actor, Sint32 priority)
 {
 	FIELD_SPR *sprite;
 
-	actor->motionFlg = 0;
-	actor->collisionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-	sprite = actor->spr;
-	sprite->pri = priority;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = 0;
+	actor->collisionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+	sprite = actor->sprite;
+	sprite->priority = priority;
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorSelectAnimation(actor, 2);
 	fdActorStartScript(actor, KandoreanTempleSteamScript);
-	fdActorSetSprCol(actor, SPRITE_COLOR_BLUE_TINT);
-	actor->tmr = 0;
+	fdActorSetSpriteColor(actor, SPRITE_COLOR_BLUE_TINT);
+	actor->timer = 0;
 	actor->speedLimit = 0;
 	actor->acceleration = 0;
 }
@@ -770,7 +771,7 @@ void scKandoreanTempleBlowSteam(Sint32 *position, Sint32 value)
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() * 2) + value;
 		timer = (Uint16)syRandom() - 32768;
-		actor->tmr = timer;
+		actor->timer = timer;
 		scKandoreanTempleInitSteam(actor, 3);
 		actor->update = (OBJECT_UPDATE)scKandoreanTempleUpdateVentSteam;
 		fdActorSetBlendMode(actor, 1);
@@ -797,18 +798,18 @@ void scKandoreanTempleUpdateStreamSteam(ACTOR *actor)
 	actor->sceneWord = vz - vz / FIELD_EFFECT_DRAG_Z;
 	rate = actor->speedLimit;
 	scale = actor->scaleX;
-	sprite = actor->spr;
+	sprite = actor->sprite;
 	actor->scaleX = scale + rate;
 	actor->scaleY += actor->acceleration;
-	sprite->rotation += actor->tmr;
+	sprite->rotation += actor->timer;
 	if(scKandoreanTempleIsOverActor(actor, leader)) {
-		((FIELD_SPR *)actor->spr)->pri = 3;
+		((FIELD_SPR *)actor->sprite)->priority = 3;
 		actor->z.fixed -= actor->sceneWord;
 		actor->gravity += actor->sceneWord >> 2;
 		actor->sceneWord = 0;
 	}
 	if(scKandoreanTempleIsOverActor(actor, other)) {
-		((FIELD_SPR *)actor->spr)->pri = 3;
+		((FIELD_SPR *)actor->sprite)->priority = 3;
 		actor->z.fixed -= actor->sceneWord;
 		actor->gravity += actor->sceneWord >> 3;
 		actor->sceneWord = 0;
@@ -829,7 +830,7 @@ void scKandoreanTempleBlowStreamSteam(void)
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() * 2) + toFIXED(11) / 2;
 		timer = (Uint16)syRandom() - 32768;
-		actor->tmr = timer;
+		actor->timer = timer;
 		scKandoreanTempleInitSteam(actor, 1);
 		actor->update = (OBJECT_UPDATE)scKandoreanTempleUpdateStreamSteam;
 		fdActorSetBlendMode(actor, 1);
@@ -839,7 +840,7 @@ void scKandoreanTempleBlowStreamSteam(void)
 /* Gives the leader its shadow back. */
 void scKandoreanTempleShowLeader(void)
 {
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
 }
 
@@ -849,18 +850,18 @@ void scKandoreanTemplePrepareLift(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
 
-	actor->sceneCnt = 1;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->sceneCount = 1;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetAnimationById(id, 1);
-	fdActorSetSprPriority(id, 3);
+	fdActorSetSpritePriority(id, 3);
 	fdActorDisableById(id);
 }
 
 /* Sets a lift's column or a piece of one at rest, disabled. */
 void scKandoreanTemplePrepareColumn(Sint32 id)
 {
-	fdActorGetById(id)->sceneCnt = 1;
-	fdActorSetSprPriority(id, 2);
+	fdActorGetById(id)->sceneCount = 1;
+	fdActorSetSpritePriority(id, 2);
 	fdActorDisableById(id);
 }
 
@@ -974,8 +975,8 @@ Bool scKandoreanTempleIsEastVentBlocked(void)
 		fdActorSetAnimationById(lower, 3); \
 		fdActorSetAnimationById(foot, 3); \
 		fdActorSetAnimationById(coverId, 0); \
-		fdActorSetSprPriority(coverId, 2); \
-		fdActorGetById(coverId)->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT; \
+		fdActorSetSpritePriority(coverId, 2); \
+		fdActorGetById(coverId)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT; \
 		scFieldActorSetPosAndResetMotion(fdActorGetById(coverId), \
 			toFIXED(coverX), toFIXED(8), toFIXED(coverZ)); \
 		if(syGameFlagGet(onLift)) { \
@@ -983,7 +984,7 @@ Bool scKandoreanTempleIsEastVentBlocked(void)
 			scFieldActorSetPosAndResetMotion( \
 				fdActorGetById(MainRoutineStateWork.leaderActorId), \
 				toFIXED(coverX), toFIXED(12), toFIXED(coverZ)); \
-			fdActorSetSprFlags( \
+			fdActorSetSpriteFlags( \
 				fdActorGetById(MainRoutineStateWork.leaderActorId), 0); \
 		} \
 		fdActorGetById(top)->scaleY = toFIXED(1); \
@@ -1043,7 +1044,7 @@ typedef enum VENT_TICK {
 	pillarOnOther) \
 	void name(void) \
 	{ \
-		Sint32 *tmr = &timerVar; \
+		Sint32 *timer = &timerVar; \
 		ACTOR  *cover; \
 		ACTOR  *leader; \
 		Uint16 *phase; \
@@ -1052,7 +1053,7 @@ typedef enum VENT_TICK {
 		Sint32	last; \
 		Sint32	t; \
 \
-		t = *tmr; \
+		t = *timer; \
 		if(t < VENT_BLOW) { \
 			if(isBlocked() != 0) \
 				return; \
@@ -1067,7 +1068,7 @@ typedef enum VENT_TICK {
 			if(t <= last) { \
 				cover = fdActorGetById(coverId); \
 				raised = syGameFlagGet(pillarOnOther); \
-				t = *tmr; \
+				t = *timer; \
 				if(raised) { \
 					if(t <= VENT_RISE_END) { \
 						cover->y.fixed += toFIXED(9) / 2; \
@@ -1082,7 +1083,7 @@ typedef enum VENT_TICK {
 						scKandoreanTempleGrowColumn(foot, 0, limit); \
 					} else if(t < VENT_FLOAT_END) { \
 						if(syGameFlagGet(onLift) && \
-							*tmr == VENT_CARRY_LEADER) { \
+							*timer == VENT_CARRY_LEADER) { \
 							fdMapGridCopyMetatileAttributes( \
 								carryMetatile, 0, 1, 1, metatileX, metatileZ); \
 							syCloseEvent(name); \
@@ -1094,7 +1095,7 @@ typedef enum VENT_TICK {
 						phase = &phaseVar; \
 						if(*phase == 0) { \
 							blowingVar = 0; \
-							*tmr = VENT_SINK - 1; \
+							*timer = VENT_SINK - 1; \
 							syGameFlagClear(blowingFlag); \
 						} \
 						cover->y.fixed += sySin(*phase) >> 1; \
@@ -1111,7 +1112,7 @@ typedef enum VENT_TICK {
 							lower, toFIXED(3) / 4, limit); \
 						scKandoreanTempleShrinkColumn(foot, 0, limit); \
 						if(fdActorGetById(foot)->scaleY <= limit) \
-							*tmr = last; \
+							*timer = last; \
 					} \
 				} else { \
 					if(t <= VENT_RISE_END) { \
@@ -1129,7 +1130,7 @@ typedef enum VENT_TICK {
 						phase = &phaseVar; \
 						if(*phase == 0) { \
 							blowingVar = 0; \
-							*tmr = VENT_SINK - 1; \
+							*timer = VENT_SINK - 1; \
 							syGameFlagClear(blowingFlag); \
 						} \
 						cover->y.fixed += sySin(*phase) >> 1; \
@@ -1143,15 +1144,15 @@ typedef enum VENT_TICK {
 							upper, toFIXED(3) / 4, limit); \
 						scKandoreanTempleShrinkColumn(middle, 0, limit); \
 						if(fdActorGetById(middle)->scaleY <= limit) \
-							*tmr = last; \
+							*timer = last; \
 					} \
 				} \
 				if(syGameFlagGet(onLift)) { \
 					leader = \
 						fdActorGetById(MainRoutineStateWork.leaderActorId); \
 					leader->y.fixed = cover->y.fixed + toFIXED(4); \
-					leader->tgtY = ACTOR_NO_TARGET; \
-					leader->velY = 0; \
+					leader->targetY = ACTOR_NO_TARGET; \
+					leader->velocityY = 0; \
 				} \
 			} else if(t == VENT_SHUT) { \
 				fdMapGridCopyMetatileAttributes( \
@@ -1166,14 +1167,15 @@ typedef enum VENT_TICK {
 				fdActorSetAnimationById(coverId, 1); \
 				scFieldActorSetPosAndResetMotion(fdActorGetById(coverId), \
 					toFIXED(coverX), 0, toFIXED(coverZ)); \
-				fdActorGetById(coverId)->priFlg |= ACTOR_PRIORITY_UNDERFOOT; \
-				fdActorSetSprPriority(coverId, 3); \
+				fdActorGetById(coverId)->priorityFlags |= \
+					ACTOR_PRIORITY_UNDERFOOT; \
+				fdActorSetSpritePriority(coverId, 3); \
 				if(syGameFlagGet(onLift)) { \
 					leader = \
 						fdActorGetById(MainRoutineStateWork.leaderActorId); \
 					fdActorSetPosAndResetMotion( \
 						leader, leader->x.fixed, 0, leader->z.fixed); \
-					fdActorSetSprFlags( \
+					fdActorSetSpriteFlags( \
 						fdActorGetById(MainRoutineStateWork.leaderActorId), \
 						SPRITE_FLAG_SHADOW); \
 				} \
@@ -1182,9 +1184,9 @@ typedef enum VENT_TICK {
 \
 				if(none != 0) \
 					return; \
-				*tmr += syRandomBelow(128); \
-				if((Uint32)*tmr > (syRandomBelow(10000)) + 10000) \
-					*tmr = none; \
+				*timer += syRandomBelow(128); \
+				if((Uint32)*timer > (syRandomBelow(10000)) + 10000) \
+					*timer = none; \
 			} \
 		} \
 		timerVar++; \
@@ -1238,45 +1240,45 @@ typedef enum LIFT_TICK {
 	{ \
 		ACTOR  *lift = fdActorGetById(liftId); \
 		ACTOR  *base = fdActorGetById(columnId); \
-		Sint32 *tmr = &timerVar; \
+		Sint32 *timer = &timerVar; \
 \
-		if(*tmr == LIFT_RISE) { \
+		if(*timer == LIFT_RISE) { \
 			fdQueueMusic(SE_WAVE); \
 			scFieldActorSetPosAndResetMotion(fdActorGetById(liftId), \
 				toFIXED(x), toFIXED(LIFT_SUNK_HEIGHT), toFIXED(z)); \
 			fdActorSetPosAndResetMotion(fdActorGetById(columnId), toFIXED(x), \
 				toFIXED(LIFT_SUNK_HEIGHT), toFIXED((z) - 4)); \
-			fdActorSetSprPriority(liftId, 3); \
-			fdActorSetSprPriority(columnId, 3); \
-			base->priFlg |= ACTOR_PRIORITY_UNDERFOOT; \
+			fdActorSetSpritePriority(liftId, 3); \
+			fdActorSetSpritePriority(columnId, 3); \
+			base->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT; \
 			base->scaleY = toFIXED(1) / 64; \
 			fdActorSetAnimationById(liftId, 0); \
 			fdActorSetAnimationById(columnId, 2); \
-		} else if(*tmr > LIFT_RISE && *tmr < LIFT_RISEN) { \
+		} else if(*timer > LIFT_RISE && *timer < LIFT_RISEN) { \
 			lift->y.fixed += toFIXED(4); \
 			scKandoreanTempleGrowColumn(columnId, toFIXED(0.3), toFIXED(0.3)); \
 			if(lift->y.fixed > -toFIXED(5)) \
-				fdActorSetSprPriority(liftId, 2); \
+				fdActorSetSpritePriority(liftId, 2); \
 			if(lift->y.fixed >= 0) { \
 				fdMapGridCopyMetatileAttributes( \
 					0, 0, 1, 1, metatileX, metatileZ); \
-				*tmr = LIFT_RISEN; \
+				*timer = LIFT_RISEN; \
 			} \
-		} else if(*tmr < LIFT_SINK) { \
+		} else if(*timer < LIFT_SINK) { \
 			Uint16 *phase = &phaseVar; \
 \
 			lift->y.fixed += sySin(*phase) >> 1; \
 			*phase += TRIG_TURN / 16; \
-			if(*tmr == LIFT_WALL_OFF) \
+			if(*timer == LIFT_WALL_OFF) \
 				fdMapGridCopyMetatileAttributes( \
 					metatileX, (metatileZ) - 2, 1, 1, metatileX, metatileZ); \
-			if(*tmr > LIFT_FLOAT_END && *phase == 0) { \
+			if(*timer > LIFT_FLOAT_END && *phase == 0) { \
 				if(syGameFlagGet(onLift)) { \
 					fdMapGridCopyMetatileAttributes( \
 						carryMetatile, 0, 1, 1, metatileX, metatileZ); \
 					syCloseEvent(name); \
 				} else { \
-					*tmr = LIFT_SINK; \
+					*timer = LIFT_SINK; \
 				} \
 			} \
 		} else { \
@@ -1284,7 +1286,7 @@ typedef enum LIFT_TICK {
 			scKandoreanTempleShrinkColumn( \
 				columnId, toFIXED(0.3), toFIXED(0.3)); \
 			if(lift->y.fixed < -toFIXED(5)) \
-				fdActorSetSprPriority(liftId, 3); \
+				fdActorSetSpritePriority(liftId, 3); \
 			if(lift->y.fixed <= toFIXED(LIFT_SUNK_HEIGHT)) { \
 				fdQueueMusic(SE_AMBIENT_STREAM); \
 				fdActorSetPos(liftId, 0, 0); \
@@ -1373,20 +1375,20 @@ void scKandoreanTempleWatchLifts(void)
 		return;
 	if(metatileX == 27 && metatileZ == 12) {
 		ACTOR *lift = fdActorGetById(ACTOR_WEST_LIFT);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 		fdActorSetAnimationById(ACTOR_WEST_LIFT, 4);
-		leader->motionFlg = riding;
+		leader->motionFlags = riding;
 		leader->y.fixed = lift->y.fixed;
 		syGameFlagSet(FLAG_ON_WEST_LIFT);
 		riding = 1;
 	}
 	if(metatileX == 37 && metatileZ == 14) {
 		ACTOR *lift = fdActorGetById(ACTOR_EAST_LIFT);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 		fdActorSetAnimationById(ACTOR_EAST_LIFT, 4);
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		leader->y.fixed = lift->y.fixed;
 		syGameFlagSet(FLAG_ON_EAST_LIFT);
 		riding = 1;
@@ -1397,9 +1399,9 @@ void scKandoreanTempleWatchLifts(void)
 	}
 	fdActorSetAnimationById(ACTOR_WEST_LIFT, 0);
 	fdActorSetAnimationById(ACTOR_EAST_LIFT, 0);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syGameFlagClear(FLAG_ON_WEST_LIFT);
 	syGameFlagClear(FLAG_ON_EAST_LIFT);
 	syGameFlagClear(FLAG_NO_PLACE_TO_SAVE);
@@ -1410,11 +1412,11 @@ void scKandoreanTempleWatchLifts(void)
 void scKandoreanTempleMatchStudentsToLeader(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32 pri = ((FIELD_SPR *)leader->spr)->pri;
+	Sint32 priority = ((FIELD_SPR *)leader->sprite)->priority;
 
-	fdActorSetSprPriority(ACTOR_FIRST_TESTED_STUDENT, pri);
-	fdActorSetSprPriority(ACTOR_SECOND_TESTED_STUDENT, pri);
-	fdActorSetSprPriority(ACTOR_THIRD_TESTED_STUDENT, pri);
+	fdActorSetSpritePriority(ACTOR_FIRST_TESTED_STUDENT, priority);
+	fdActorSetSpritePriority(ACTOR_SECOND_TESTED_STUDENT, priority);
+	fdActorSetSpritePriority(ACTOR_THIRD_TESTED_STUDENT, priority);
 }
 
 /* The vent room's event: a leader standing over a metatile the map marks low
@@ -1542,19 +1544,20 @@ void scKandoreanTempleClimbDownTheLadder(void)
 	}
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1);
 	fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, 168, 80);
 	fdActorFaceDirectionAndRefreshById(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH);
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	scFieldActorSetMoveTarget(leader, 168, -12, 80);
 	fdActorWaitForMove(leader);
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
@@ -1583,14 +1586,14 @@ void scKandoreanTempleEnterTheCave(void)
 	fdActorFaceDirectionAndRefreshById(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH);
 	if(syGameFlagGet(FLAG_CAVE_DOOR_OPEN) == 0) {
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		scKandoreanTempleOpenTheCaveDoor();
 	}
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 3);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 3);
 	fdActorWalkToById(MainRoutineStateWork.leaderActorId, 400, 640);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
@@ -1604,7 +1607,7 @@ void scKandoreanTempleEnterTheCave(void)
 void scKandoreanTempleClimbDownTheWell(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Uint32 frm;
+	Uint32 frame;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1613,16 +1616,17 @@ void scKandoreanTempleClimbDownTheWell(void)
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH, 10);
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
-	leader->motionFlg = 0;
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
-	for(frm = 0; frm < 8; frm++) {
+	leader->motionFlags = 0;
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	for(frame = 0; frame < 8; frame++) {
 		leader->z.fixed += toFIXED(1);
 		sySynch(1);
 	}
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
-	for(frm = 0; frm < 8; frm++) {
+	for(frame = 0; frame < 8; frame++) {
 		leader->y.fixed -= toFIXED(1);
 		sySynch(1);
 	}
@@ -1726,14 +1730,14 @@ void scKandoreanTempleTouchTheHotFloor(void)
 	fdScriptEndLastingPsynergy(0);
 	fdActorShowEmoteById(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-	sySndPlay(SE_WATER);
-	fdActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId),
+	sySoundPlay(SE_WATER);
+	fdActorSetSpriteColor(fdActorGetById(MainRoutineStateWork.leaderActorId),
 		SPRITE_COLOR_RED_TINT);
-	leader->velY = toFIXED(6);
+	leader->velocityY = toFIXED(6);
 	sySynch(20);
-	while(leader->velY != 0)
+	while(leader->velocityY != 0)
 		sySynch(1);
-	fdActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId),
+	fdActorSetSpriteColor(fdActorGetById(MainRoutineStateWork.leaderActorId),
 		SPRITE_COLOR_NORMAL);
 	fdScriptEnd();
 }
@@ -1747,7 +1751,7 @@ void scKandoreanTempleOpenTheTempleDoor(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridCopyMetatileTilesIndicesRect(77, 33, 77, 24, 2, 2);
 	fdMapGridCopyMetatileAttributes(32, 30, 2, 1, 17, 25);
 	sySynch(10);
@@ -1793,14 +1797,14 @@ void scKandoreanTempleFindTheHiddenPassage(void)
    to use it and crosses the north rope back to the upper hall. */
 void scKandoreanTempleReceiveLash(void)
 {
-	Sint16 ang =
+	Sint16 angle =
 		*(Sint16 *)&fdActorGetById(MainRoutineStateWork.leaderActorId)->facing;
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	((void (*)())fdActorFaceDirectionById)(ACTOR_POI, FACING_EAST);
 	fdScriptSetMessageId((Sint32)&MsgKandoreanTempleSecretOfLash);
 	/* "This is the power and the secret of our temple!" */
@@ -1820,9 +1824,9 @@ void scKandoreanTempleReceiveLash(void)
 	/* "Take this power with you, and do good." */
 	fdScriptShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
 	fdActorFaceDirectionById(
-		MainRoutineStateWork.leaderActorId, (Uint16)ang, 10);
+		MainRoutineStateWork.leaderActorId, (Uint16)angle, 10);
 	if(KandoreanTempleLashPebble != 0)
-		fdItemDispShowPicture(KandoreanTempleLashPebble,
+		fdItemDisplayShowPicture(KandoreanTempleLashPebble,
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	gmPartyGiveItem(ITEM_LASH_PEBBLE, 0);
 	if(KandoreanTempleLashPebble != 0)
@@ -1835,28 +1839,28 @@ void scKandoreanTempleReceiveLash(void)
 	fdCameraSetSpeed(0.4);
 	fdCameraMoveTo(424, 0, 400, 1);
 	actor = fdActorGetById(ACTOR_POI);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	fdActorSetSpeed(ACTOR_POI, 0.8);
 	fdActorWalkToAndWait(ACTOR_POI, 424, 376);
-	scFieldActorSetSprPriority(ACTOR_POI, 1);
+	scFieldActorSetSpritePriority(ACTOR_POI, 1);
 	fdActorSetSpeed(ACTOR_POI, 1.6);
 	scFieldActorJump(ACTOR_POI, 4, 0);
 	fdActorMoveToAndWait(ACTOR_POI, 444, 376);
 	fdActorSetAnimation(ACTOR_POI, 7);
 	actor->scaleX = -toFIXED(1);
-	spr->rotation = TRIG_TURN * 7 / 8;
-	actor->motionFlg = 0;
+	sprite->rotation = TRIG_TURN * 7 / 8;
+	actor->motionFlags = 0;
 	actor->y.fixed += toFIXED(4);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_POI), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_POI), 0);
 	fdActorSetSpeed(ACTOR_POI, 0.4);
 	scFieldActorSetMoveTarget(actor, 492, 8, 376);
 	scFieldActorWaitForMoveById(ACTOR_POI);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->groundHeight = 0;
 	actor->scaleX = toFIXED(1);
-	spr->rotation = 0;
+	sprite->rotation = 0;
 	fdActorSetAnimation(ACTOR_POI, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_POI), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_POI), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeed(ACTOR_POI, 1.6);
 	scFieldActorJump(ACTOR_POI, 4, 0);
 	fdActorMoveToAndWait(ACTOR_POI, 504, 376);
@@ -1865,28 +1869,28 @@ void scKandoreanTempleReceiveLash(void)
 	fdActorWalkToAndWait(ACTOR_POI, 432, 394);
 	scFieldActorWatchAndSetScript(
 		ACTOR_POI, MainRoutineStateWork.leaderActorId);
-	scFieldActorSetSprPriority(ACTOR_POI, 2);
+	scFieldActorSetSpritePriority(ACTOR_POI, 2);
 	fdScriptSetFlag(FLAG_LASH_RECEIVED);
 	fdScriptEnd();
 }
 
 /* Nothing visible happens as Felix steps behind a post of the rope across to
-   Fog; he is drawn behind the post (`fdActorSetSprPriority`) while he is
+   Fog; he is drawn behind the post (`fdActorSetSpritePriority`) while he is
    there. */
 void scKandoreanTempleStepBehindThePost(void)
 {
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 }
 
 /* Nothing visible happens as Felix steps out from behind the rope's post; he is
    drawn in front of it again. */
 void scKandoreanTempleStepOutFromThePost(void)
 {
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg &=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags &=
 		~ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
 }
 
@@ -1903,15 +1907,15 @@ void scKandoreanTempleFightChestbeaters(void)
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 	fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, 328, 174);
 	fdActorRunRepeatedMotion(ACTOR_MIDDLE_CHESTBEATER, 2);
-	sySndPlay(SE_ENEMY_CRY);
+	sySoundPlay(SE_ENEMY_CRY);
 	fdActorSetAnimationById(ACTOR_MIDDLE_CHESTBEATER, 2);
-	fdActorGetById(ACTOR_MIDDLE_CHESTBEATER)->velY = toFIXED(4);
+	fdActorGetById(ACTOR_MIDDLE_CHESTBEATER)->velocityY = toFIXED(4);
 	fdScriptWait(10);
-	sySndPlay(SE_ENEMY_CRY);
+	sySoundPlay(SE_ENEMY_CRY);
 	fdActorSetAnimationById(ACTOR_WEST_CHESTBEATER, 2);
 	fdActorSetAnimationById(ACTOR_EAST_CHESTBEATER, 2);
-	fdActorGetById(ACTOR_WEST_CHESTBEATER)->velY = toFIXED(6);
-	fdActorGetById(ACTOR_EAST_CHESTBEATER)->velY = toFIXED(6);
+	fdActorGetById(ACTOR_WEST_CHESTBEATER)->velocityY = toFIXED(6);
+	fdActorGetById(ACTOR_EAST_CHESTBEATER)->velocityY = toFIXED(6);
 	fdActorSetDestinationById(ACTOR_WEST_CHESTBEATER, 300, 164);
 	fdActorMoveToAndWaitById(ACTOR_EAST_CHESTBEATER, 356, 164);
 	fdScriptWait(40);
@@ -2048,10 +2052,10 @@ void scKandoreanTempleStartChestbeaterRoom(void)
 	ACTOR *actor = fdActorGetById(ACTOR_EMBERS_UNDER_THE_POT);
 
 	fdActorDisableById(ACTOR_EMBERS_UNDER_THE_POT);
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetAnimationById(ACTOR_EMBERS_UNDER_THE_POT, 2);
 	actor = fdActorGetById(ACTOR_BOILING_POT);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	if(syGameFlagGet(FLAG_POT_PUSHED_WEST)) {
 		scFieldActorSetPosAndResetMotion(fdActorGetById(ACTOR_BOILING_POT),
 			toFIXED(312), toFIXED(32), toFIXED(472));
@@ -2065,7 +2069,7 @@ void scKandoreanTempleStartChestbeaterRoom(void)
 	actor = fdActorGetById(ACTOR_POIS_SIGN);
 	actor->scaleX = toFIXED(7) / 10;
 	actor->scaleY = toFIXED(7) / 10;
-	actor->collisionFlg = 0;
+	actor->collisionFlags = 0;
 	fdEffectStartBlankOverlay(0);
 	if(fdScriptGetFlag(FLAG_LADDER_LOWERED)) {
 		{
@@ -2167,7 +2171,7 @@ void scKandoreanTempleStartVentRoom(void)
 			KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_SHAFT)
 		scKandoreanTempleLandFromAbove();
 	sySetTickEvent(scKandoreanTempleWatchVents, EVENT_PASS_TICK);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
 	fdEffectStartBlankOverlay(0);
 }
 
@@ -2186,7 +2190,7 @@ void scKandoreanTempleLandFromAbove(void)
 {
 	ACTOR		  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	EFFECT_OPTIONS options;
-	Uint32		   particleIdx;
+	Uint32		   particleIndex;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -2196,33 +2200,33 @@ void scKandoreanTempleLandFromAbove(void)
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	sySoundPlay(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
-	for(particleIdx = 0; particleIdx <= DUST_RING_PUFFS; particleIdx++) {
-		FIXED vel[3];
+	for(particleIndex = 0; particleIndex <= DUST_RING_PUFFS; particleIndex++) {
+		FIXED velocity[3];
 
-		vel[0] = syCos(particleIdx * (TRIG_TURN / DUST_RING_PUFFS));
-		vel[1] = 0;
-		vel[2] = sySin(particleIdx * (TRIG_TURN / DUST_RING_PUFFS));
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4);
-		vel[0] += -toFIXED(3) / 8;
-		vel[2] += syRandomBelow(toFIXED(3) / 8) + -toFIXED(3) / 16;
+		velocity[0] = syCos(particleIndex * (TRIG_TURN / DUST_RING_PUFFS));
+		velocity[1] = 0;
+		velocity[2] = sySin(particleIndex * (TRIG_TURN / DUST_RING_PUFFS));
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4);
+		velocity[0] += -toFIXED(3) / 8;
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) + -toFIXED(3) / 16;
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 	}
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimationById(
@@ -2278,14 +2282,14 @@ void scKandoreanTempleLandFromAbove(void)
 		fdScriptStart(); \
 		fdScriptEndLastingPsynergy(0); \
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0); \
-		fdCameraGetActor()->motionFlg = 0; \
-		leader->motionFlg = 0; \
+		fdCameraGetActor()->motionFlags = 0; \
+		leader->motionFlags = 0; \
 		sySynch(1); \
 		westSide(FLAG_ON_WEST_LIFT); \
 		eastSide(FLAG_ON_EAST_LIFT); \
 		westSide(FLAG_PILLAR_ON_EAST_VENT); \
 		eastSide(FLAG_PILLAR_ON_WEST_VENT); \
-		sySndPlay(SE_WAVE); \
+		sySoundPlay(SE_WAVE); \
 		start(); \
 		i = 0; \
 		do { \
@@ -2312,7 +2316,7 @@ void scKandoreanTempleLandFromAbove(void)
 		SINK_COVER(top, upper, middle, lower, foot) \
 		blowingVar = 0; \
 		syGameFlagClear(blowingFlag); \
-		sySndPlay(SOUND_FADE_OUT_ACTION_SE); \
+		sySoundPlay(SOUND_FADE_OUT_ACTION_SE); \
 		fdActorSetPos(top, 0, 0); \
 		fdActorSetPos(upper, 0, 0); \
 		fdActorSetPos(middle, 0, 0); \
@@ -2321,11 +2325,12 @@ void scKandoreanTempleLandFromAbove(void)
 		fdActorSetAnimationById(coverId, 1); \
 		scFieldActorSetPosAndResetMotion( \
 			fdActorGetById(coverId), toFIXED(coverX), 0, toFIXED(coverZ)); \
-		cover->priFlg |= ACTOR_PRIORITY_UNDERFOOT; \
-		fdActorSetSprPriority(coverId, 3); \
+		cover->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT; \
+		fdActorSetSpritePriority(coverId, 3); \
 		fdActorSetPosAndResetMotion( \
 			leader, leader->x.fixed, 0, leader->z.fixed); \
-		fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), \
+		fdActorSetSpriteFlags( \
+			fdActorGetById(MainRoutineStateWork.leaderActorId), \
 			SPRITE_FLAG_SHADOW); \
 		sySynch(1); \
 		FieldStateWork->transition = SCENE_TRANSITION( \
@@ -2353,7 +2358,7 @@ void scKandoreanTempleLeaveBySteam(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
@@ -2384,17 +2389,18 @@ void scKandoreanTempleLeaveByEastVent(void)
 void scKandoreanTempleSinkIntoTheSteam(void)
 {
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Uint32 frm;
+	Uint32 frame;
 	MAIN_ROUTINE_STATE *party;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	actor->motionFlg = 0;
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	actor->motionFlags = 0;
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	actor->facing = 0;
 	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, 16);
-	for(frm = 0; frm <= 7; frm++) {
+	for(frame = 0; frame <= 7; frame++) {
 		fdActorSetPosAndResetMotion(
 			actor, actor->x.fixed, actor->y.fixed, actor->z.fixed + toFIXED(3));
 		sySynch(1);
@@ -2408,8 +2414,8 @@ void scKandoreanTempleSinkIntoTheSteam(void)
 	fdScriptWait(30);
 	fdActorSetAnimationById(party->leaderActorId, ANIM_LEADER_ARMS_RAISED);
 	fdScriptWait(10);
-	fdActorSetSprPriority(party->leaderActorId, 3);
-	for(frm = 0; frm <= 39; frm++) {
+	fdActorSetSpritePriority(party->leaderActorId, 3);
+	for(frame = 0; frame <= 39; frame++) {
 		{
 			Sint32 scale = actor->scaleX;
 
@@ -2418,9 +2424,9 @@ void scKandoreanTempleSinkIntoTheSteam(void)
 		actor->scaleY += -toFIXED(1) / 64;
 		actor->y.fixed += -toFIXED(2);
 		sySynch(1);
-		if(frm == 10)
-			sySndPlay(SE_DUST_PUFF);
-		if(frm == 20) {
+		if(frame == 10)
+			sySoundPlay(SE_DUST_PUFF);
+		if(frame == 20) {
 			FieldStateWork->transition =
 				SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 			fdScriptFinishScreenTransition();
@@ -2444,23 +2450,23 @@ void scKandoreanTempleSinkIntoTheSteam(void)
 		fdQueueMusic(SE_WAVE); \
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0); \
 		sySynch(1); \
-		leader->motionFlg = 0; \
+		leader->motionFlags = 0; \
 		scFieldActorSetPosAndResetMotion( \
 			fdActorGetById(MainRoutineStateWork.leaderActorId), toFIXED(x), \
 			toFIXED(LIFT_SUNK_HEIGHT), toFIXED(z)); \
-		fdActorSetSprFlags( \
+		fdActorSetSpriteFlags( \
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0); \
 		scFieldActorSetPosAndResetMotion(fdActorGetById(liftId), toFIXED(x), \
 			toFIXED(LIFT_SUNK_HEIGHT), toFIXED(liftZ)); \
 		scFieldActorSetPosAndResetMotion(fdActorGetById(columnId), toFIXED(x), \
 			toFIXED(LIFT_SUNK_HEIGHT), toFIXED(z)); \
-		fdActorSetSprPriority(liftId, 2); \
-		fdActorSetSprPriority(columnId, 3); \
+		fdActorSetSpritePriority(liftId, 2); \
+		fdActorSetSpritePriority(columnId, 3); \
 		{ \
-			Uint8 *flg = &second->priFlg; \
-			Sint32 c = ACTOR_PRIORITY_UNDERFOOT | *flg; \
+			Uint8 *flags = &second->priorityFlags; \
+			Sint32 c = ACTOR_PRIORITY_UNDERFOOT | *flags; \
 \
-			*flg = c; \
+			*flags = c; \
 		} \
 		second->scaleY = toFIXED(1) / 64; \
 		fdActorSetAnimationById(liftId, 4); \
@@ -2582,7 +2588,7 @@ void scKandoreanTempleStartFogRoom(void)
 	if(syGameFlagGet(FLAG_MET_POI)) {
 		fdActorSetPos(ACTOR_STUDENT_WHO_GAVE_UP, 0, 0);
 	} else {
-		fdActorSetSprFlags(fdActorGetById(ACTOR_STUDENT_WHO_GAVE_UP), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_STUDENT_WHO_GAVE_UP), 0);
 		fdActorSetAnimationById(ACTOR_STUDENT_WHO_GAVE_UP, 6);
 		fdActorSetMovementTypeById(
 			ACTOR_STUDENT_WHO_GAVE_UP, KandoreanTempleLevitateScript);
@@ -2597,7 +2603,7 @@ void scKandoreanTempleStartMeditating(Sint32 id, Sint32 delay)
 	ACTOR *actor = fdActorGetById(id);
 
 	fdActorSetAnimationById(id, 5);
-	actor->tmr = delay + (syRandomBelow(400));
+	actor->timer = delay + (syRandomBelow(400));
 	actor->userValue = id;
 	fdActorSetMovementTypeById(id, KandoreanTempleMeditateScript);
 }
@@ -2730,13 +2736,13 @@ void scKandoreanTempleStartPoisRoom(void)
 
 /* Turns a sprite by step (of TRIG_TURN to the turn) each tick for the given
    ticks. */
-void scKandoreanTempleTurnSpr(FIELD_SPR *spr, Uint32 ticks, Sint32 step)
+void scKandoreanTempleTurnSprite(FIELD_SPR *sprite, Uint32 ticks, Sint32 step)
 {
-	Uint32 cnt = ticks;
+	Uint32 count = ticks;
 	Uint32 i;
 
-	for(i = 0; i < cnt; i++) {
-		spr->rotation += step;
+	for(i = 0; i < count; i++) {
+		sprite->rotation += step;
 		fdScriptWait(1);
 	}
 }
@@ -2744,10 +2750,10 @@ void scKandoreanTempleTurnSpr(FIELD_SPR *spr, Uint32 ticks, Sint32 step)
 /* Moves an actor sideways by step each tick for the given ticks. */
 void scKandoreanTempleDrift(ACTOR *actor, Uint32 ticks, FIXED step)
 {
-	Uint32 cnt = ticks;
+	Uint32 count = ticks;
 	Uint32 i;
 
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		actor->x.fixed += step;
 		fdScriptWait(1);
 	}
@@ -2758,13 +2764,13 @@ void scKandoreanTempleDrift(ACTOR *actor, Uint32 ticks, FIXED step)
 void scKandoreanTempleTestTheStudents(void)
 {
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
-	Uint32	   frm;
+	FIELD_SPR *sprite;
+	Uint32	   frame;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	sySynch(1);
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 400, 796);
 	sySynch(1);
@@ -2780,33 +2786,33 @@ void scKandoreanTempleTestTheStudents(void)
 	fdCameraMoveTo(456, 0, 688, 1);
 	fdCameraWaitForArrival();
 	fdActorRunRepeatedMotion(ACTOR_FIRST_TESTED_STUDENT, 2);
-	sySndPlay(SE_PSYNERGY_SPARKLE);
-	fdActorConfigureSprCol(ACTOR_FIRST_TESTED_STUDENT, SPRITE_COLOR_BLINK);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
+	fdActorConfigureSpriteColor(ACTOR_FIRST_TESTED_STUDENT, SPRITE_COLOR_BLINK);
 	fdScriptWait(20);
-	fdActorConfigureSprCol(ACTOR_FIRST_TESTED_STUDENT, 0);
+	fdActorConfigureSpriteColor(ACTOR_FIRST_TESTED_STUDENT, 0);
 	fdScriptWait(20);
 	actor = fdActorGetById(ACTOR_FIRST_TESTED_STUDENT);
-	spr = actor->spr;
-	actor->motionFlg = 0;
-	for(frm = 0; frm <= 63; frm++) {
+	sprite = actor->sprite;
+	actor->motionFlags = 0;
+	for(frame = 0; frame <= 63; frame++) {
 		actor->y.fixed += toFIXED(0.05);
 		fdScriptWait(1);
 	}
-	scKandoreanTempleTurnSpr(spr, 32, TRIG_TURN / 2048);
+	scKandoreanTempleTurnSprite(sprite, 32, TRIG_TURN / 2048);
 	fdScriptWait(20);
 	fdActorSetAttachedEffect(ACTOR_FIRST_TESTED_STUDENT,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	scKandoreanTempleTurnSpr(spr, 32, -TRIG_TURN / 1024);
-	scKandoreanTempleTurnSpr(spr, 32, TRIG_TURN / 1024);
-	scKandoreanTempleTurnSpr(spr, 64, TRIG_TURN / 2048);
+	scKandoreanTempleTurnSprite(sprite, 32, -TRIG_TURN / 1024);
+	scKandoreanTempleTurnSprite(sprite, 32, TRIG_TURN / 1024);
+	scKandoreanTempleTurnSprite(sprite, 64, TRIG_TURN / 2048);
 	fdEffectSetAttached(ACTOR_FIRST_TESTED_STUDENT,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(60);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(5);
-	sySndPlay(SE_DOOR_CLOSE);
-	actor->velY = toFIXED(3);
-	spr->rotation = 0;
+	sySoundPlay(SE_DOOR_CLOSE);
+	actor->velocityY = toFIXED(3);
+	sprite->rotation = 0;
 	fdScriptWait(60);
 	/* "Did you see that, Master?" */
 	fdScriptShowMessageAndWait(ACTOR_FIRST_TESTED_STUDENT, 0);
@@ -2835,16 +2841,17 @@ void scKandoreanTempleTestTheStudents(void)
 	fdCameraMoveTo(342, 0, 688, 1);
 	fdCameraWaitForArrival();
 	fdActorRunRepeatedMotion(ACTOR_SECOND_TESTED_STUDENT, 2);
-	sySndPlay(SE_PSYNERGY_SPARKLE);
-	fdActorConfigureSprCol(ACTOR_SECOND_TESTED_STUDENT, SPRITE_COLOR_BLINK);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
+	fdActorConfigureSpriteColor(
+		ACTOR_SECOND_TESTED_STUDENT, SPRITE_COLOR_BLINK);
 	fdScriptWait(20);
-	fdActorConfigureSprCol(ACTOR_SECOND_TESTED_STUDENT, 0);
+	fdActorConfigureSpriteColor(ACTOR_SECOND_TESTED_STUDENT, 0);
 	fdScriptWait(20);
 	fdActorSetAttachedEffect(ACTOR_SECOND_TESTED_STUDENT,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	actor = fdActorGetById(ACTOR_SECOND_TESTED_STUDENT);
-	actor->motionFlg = 0;
-	for(frm = 0; frm <= 63; frm++) {
+	actor->motionFlags = 0;
+	for(frame = 0; frame <= 63; frame++) {
 		actor->y.fixed += toFIXED(3) / 20;
 		fdScriptWait(1);
 	}
@@ -2855,10 +2862,10 @@ void scKandoreanTempleTestTheStudents(void)
 	fdScriptWait(20);
 	fdActorSetAttachedEffect(ACTOR_SECOND_TESTED_STUDENT,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(5);
-	sySndPlay(SE_DOOR_CLOSE);
-	actor->velY = toFIXED(3);
+	sySoundPlay(SE_DOOR_CLOSE);
+	actor->velocityY = toFIXED(3);
 	fdScriptWait(60);
 	/* "How was that, Master?" */
 	fdScriptShowMessageAndWait(ACTOR_SECOND_TESTED_STUDENT, 0);
@@ -2872,27 +2879,27 @@ void scKandoreanTempleTestTheStudents(void)
 	fdCameraMoveTo(400, 0, 688, 1);
 	fdCameraWaitForArrival();
 	fdActorRunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 2);
-	sySndPlay(SE_PSYNERGY_SPARKLE);
-	fdActorConfigureSprCol(ACTOR_THIRD_TESTED_STUDENT, SPRITE_COLOR_BLINK);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
+	fdActorConfigureSpriteColor(ACTOR_THIRD_TESTED_STUDENT, SPRITE_COLOR_BLINK);
 	fdScriptWait(20);
-	fdActorConfigureSprCol(ACTOR_THIRD_TESTED_STUDENT, 0);
+	fdActorConfigureSpriteColor(ACTOR_THIRD_TESTED_STUDENT, 0);
 	fdScriptWait(20);
 	actor = fdActorGetById(ACTOR_THIRD_TESTED_STUDENT);
-	spr = actor->spr;
-	actor->motionFlg = 0;
-	for(frm = 0; frm <= 63; frm++) {
+	sprite = actor->sprite;
+	actor->motionFlags = 0;
+	for(frame = 0; frame <= 63; frame++) {
 		actor->y.fixed += toFIXED(1) / 5;
 		fdScriptWait(1);
 	}
-	scKandoreanTempleTurnSpr(spr, 32, TRIG_TURN / 1024);
-	spr->rotation = 0;
+	scKandoreanTempleTurnSprite(sprite, 32, TRIG_TURN / 1024);
+	sprite->rotation = 0;
 	fdActorRunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 1);
 	fdScriptWait(60);
-	scKandoreanTempleTurnSpr(spr, 32, -TRIG_TURN / 1024);
-	spr->rotation = 0;
+	scKandoreanTempleTurnSprite(sprite, 32, -TRIG_TURN / 1024);
+	sprite->rotation = 0;
 	fdActorRunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 1);
 	fdScriptWait(60);
-	for(frm = 0; frm <= 63; frm++) {
+	for(frame = 0; frame <= 63; frame++) {
 		actor->y.fixed += -toFIXED(1) / 5;
 		fdScriptWait(1);
 	}
@@ -2935,20 +2942,20 @@ void scKandoreanTempleTestTheStudents(void)
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
 	fdActorWalkToAndWait(ACTOR_POI, 326, 664);
 	fdActorWalkToAndWaitById(ACTOR_POI, 328, 648);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_POI), 0);
-	fdActorSetSprCol(fdActorGetById(ACTOR_POI), SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_POI), 0);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_POI), SPRITE_COLOR_HIDDEN);
 	fdActorSetPos(ACTOR_POI, 440, 600);
 	fdCameraMoveTo(400, 0, 688, 1);
 	fdActorSetSpeed(ACTOR_THIRD_TESTED_STUDENT, 0.8);
 	fdActorWalkToAndWait(ACTOR_THIRD_TESTED_STUDENT, 400, 644);
 	fdScriptWait(20);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	scKandoreanTempleOpenTheCaveDoor();
 	/* "Enter the cave, and ascend!" */
 	fdScriptShowMessageAndWait(ACTOR_POI, 0);
 	syCloseEvent(scKandoreanTempleMatchStudentsToLeader);
 	fdActorSetAnimationAndWait(ACTOR_THIRD_TESTED_STUDENT, ANIM_NOD);
-	fdActorSetSprPriority(ACTOR_THIRD_TESTED_STUDENT, 3);
+	fdActorSetSpritePriority(ACTOR_THIRD_TESTED_STUDENT, 3);
 	fdActorWalkToAndWait(ACTOR_THIRD_TESTED_STUDENT, 400, 640);
 	fdActorSetPos(ACTOR_THIRD_TESTED_STUDENT, 0, 0);
 	fdActorSetPos(ACTOR_POI, 0, 0);
@@ -3038,7 +3045,7 @@ void scKandoreanTempleFindTheRopeOnTheFloor(void)
 	fdActorSetPos(ACTOR_POI, 0, 0);
 	fdActorSetPos(ACTOR_THIRD_TESTED_STUDENT, 0, 0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	sySynch(1);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -3080,18 +3087,19 @@ void scKandoreanTemplePoiWalksUp(void)
 void scKandoreanTempleMeetPoi(void)
 {
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
-	Uint8	  *flg;
+	FIELD_SPR *sprite;
+	Uint8	  *flags;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	sySynch(1);
 	fdActorSetPosAndFacing(
 		ACTOR_POIS_ROOM_KRADEN, toFIXED(376), toFIXED(392), FACING_EAST);
-	fdActorSetHorizontalPosAndAngWithTerrain(MainRoutineStateWork.leaderActorId,
-		toFIXED(376), toFIXED(408), FACING_EAST);
+	fdActorSetHorizontalPosAndAngleWithTerrain(
+		MainRoutineStateWork.leaderActorId, toFIXED(376), toFIXED(408),
+		FACING_EAST);
 	fdActorSetPosAndFacing(
 		ACTOR_POI, toFIXED(472), toFIXED(454), FACING_NORTH_NORTHWEST);
 	FieldStateWork->transition =
@@ -3289,23 +3297,23 @@ void scKandoreanTempleMeetPoi(void)
 	fdActorWalkToAndWait(ACTOR_POI, 504, 376);
 	fdActorFaceDirectionById(ACTOR_POI, FACING_WEST, 20);
 	actor = fdActorGetById(ACTOR_POI);
-	spr = actor->spr;
-	fdActorSetSprPriority(ACTOR_POI, 1);
+	sprite = actor->sprite;
+	fdActorSetSpritePriority(ACTOR_POI, 1);
 	fdActorSetSpeed(ACTOR_POI, 1.6);
 	fdActorJump(ACTOR_POI, 4, 0);
 	fdActorMoveToAndWait(ACTOR_POI, 492, 376);
 	fdActorSetAnimationById(ACTOR_POI, 7);
 	actor->scaleX = -toFIXED(1);
-	spr->rotation = TRIG_TURN * 7 / 8;
-	actor->motionFlg = 0;
+	sprite->rotation = TRIG_TURN * 7 / 8;
+	actor->motionFlags = 0;
 	actor->y.fixed += toFIXED(4);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_POI), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_POI), 0);
 	fdActorSetSpeed(ACTOR_POI, 0.4);
 	scFieldActorSetMoveTarget((Sint32)actor, 444, 40, 376);
 	fdActorWaitForMoveById(ACTOR_POI);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprFlags(fdActorGetById(ACTOR_POI), SPRITE_FLAG_SHADOW);
-	spr->rotation = 0;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_POI), SPRITE_FLAG_SHADOW);
+	sprite->rotation = 0;
 	actor->scaleX = toFIXED(1);
 	actor->groundHeight = toFIXED(32);
 	fdActorSetAnimationById(ACTOR_POI, ANIM_STAND);
@@ -3316,7 +3324,7 @@ void scKandoreanTempleMeetPoi(void)
 	fdActorSetSpeed(ACTOR_POI, 0.8);
 	fdActorWalkToAndWait(ACTOR_POI, 392, 360);
 	fdActorFaceDirection(ACTOR_POI, FACING_SOUTH_SOUTHEAST, 0);
-	fdActorSetSprPriority(ACTOR_POI, 2);
+	fdActorSetSpritePriority(ACTOR_POI, 2);
 	fdActorStop(ACTOR_POIS_ROOM_KRADEN);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
 	sySynch(1);
@@ -3353,18 +3361,19 @@ void scKandoreanTempleCreateLashPebble(void)
 
 	*slot = actor;
 	if(actor) {
-		FIELD_SPR	  *spr = actor->spr;
+		FIELD_SPR	  *sprite = actor->sprite;
 		ICON_TRANSFER *glyph;
 
-		spr->fullCol = 0;
-		spr->pal = 0;
-		actor->motionFlg = clear;
-		actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		spr->flg = clear;
-		spr->cnt = clear;
-		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		sprite->fullColor = 0;
+		sprite->palette = 0;
+		actor->motionFlags = clear;
+		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		sprite->flags = clear;
+		sprite->count = clear;
+		glyph =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_LASH_PEBBLE);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 }
@@ -3378,7 +3387,7 @@ void scKandoreanTempleLowerTheLadder(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
-	sySndPlay(SE_SCUFFLE);
+	sySoundPlay(SE_SCUFFLE);
 	fdMapGridCopyMetatileTilesIndicesRect(41, 0, 20, 0, 1, 1);
 	fdScriptWait(10);
 	fdMapGridCopyMetatileTilesIndicesRect(41, 1, 20, 1, 1, 1);

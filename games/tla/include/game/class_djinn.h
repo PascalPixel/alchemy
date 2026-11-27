@@ -42,7 +42,7 @@ typedef enum CLASS_SERIES {
 	CLASS_SERIES_DARK_MAGE	 /* with the Tomegathericon equipped */
 } CLASS_SERIES;
 
-/* The caps on a unit's level and stats (gmUnitCalc). */
+/* The caps on a unit's level and stats (gmUnitCalculate). */
 #define UNIT_LEVEL_MAX		  99
 #define UNIT_ENEMY_HP_MAX	  16383 /* maximum HP, an enemy's */
 #define UNIT_ENEMY_PP_MAX	  9999	/* maximum PP, an enemy's */
@@ -73,14 +73,14 @@ typedef struct CLASS_DEFINITION {
 	Uint8 padding[2];  /* padding */
 	/* The Psynergy the class teaches. */
 	CLASS_ABILITY abilities[CLASS_ABILITY_SLOTS];
-	Uint8		  weakEffs[4]; /* the ability effects the class is weak to */
+	Uint8		  weakEffects[4]; /* the ability effects the class is weak to */
 } CLASS_DEFINITION;
 
 extern const CLASS_DEFINITION ClassDefinitionTable[];
 
 STATIC_ASSERT(sizeof(CLASS_DEFINITION) == 84);
 STATIC_ASSERT(offsetof(DJINN_RECOVERY_TABLE, list) == 8);
-STATIC_ASSERT(offsetof(DJINN_RECOVERY_TABLE, list.cnt) == 296);
+STATIC_ASSERT(offsetof(DJINN_RECOVERY_TABLE, list.count) == 296);
 
 CLASS_DEFINITION *gmClassGetDefinition(Sint32 classId);
 

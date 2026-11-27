@@ -32,7 +32,8 @@ typedef enum FLASHING_STRIKE_MODE {
    Abilities: Thrash. */
 void btEffectRunThrash(BATTLE_EFFECT_PARM *args)
 {
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(61) / 5);
+	btMotionApproachTargetStub(
+		args->user, args->targets[0], 24, toFIXED(61) / 5);
 	sySynch(29);
 	args->variant = SPARK_GROUPS_THRASH;
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -44,7 +45,8 @@ void btEffectRunThrash(BATTLE_EFFECT_PARM *args)
    Abilities: Mighty Press. */
 void btEffectRunMightyPress(BATTLE_EFFECT_PARM *args)
 {
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(61) / 5);
+	btMotionApproachTargetStub(
+		args->user, args->targets[0], 24, toFIXED(61) / 5);
 	sySynch(26);
 	args->variant = SPARK_GROUPS_MIGHTY_PRESS;
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -56,7 +58,8 @@ void btEffectRunMightyPress(BATTLE_EFFECT_PARM *args)
    Abilities: Severe Blow. */
 void btEffectRunSevereBlow(BATTLE_EFFECT_PARM *args)
 {
-	btMotionApproachTargetStub(args->user, args->tgts[0], 24, toFIXED(36) / 5);
+	btMotionApproachTargetStub(
+		args->user, args->targets[0], 24, toFIXED(36) / 5);
 	sySynch(12);
 	args->variant = SPARK_GROUPS_SEVERE_BLOW;
 	btEffectRunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -116,9 +119,9 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	DRAW_RECTANGLE		 draw[2];
-	Sint32				 frm;
+	Sint32				 frame;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	/* Lunar Slash, Boost Hack and Twin Shear add the canvas to the battle; the
@@ -175,16 +178,17 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	   Boost Hack strikes a pose instead and waits 8). */
 	if(mode == FLASHING_STRIKE_QUICK_STRIKE ||
 		mode == FLASHING_STRIKE_TWIN_SHEAR)
-		btMotionApproachTargetStub(args->user, args->tgts[0], 16, toFIXED(8));
+		btMotionApproachTargetStub(
+			args->user, args->targets[0], 16, toFIXED(8));
 	else if(mode == FLASHING_STRIKE_LUNAR_SLASH)
 		btMotionApproachTargetStub(args->user, args->user, 16, toFIXED(10));
 	else if(mode == FLASHING_STRIKE_BOOST_HACK) {
-		MOTION_OBJECT *user = btObjectGetStub(args->user)->obj;
+		MOTION_OBJECT *user = btObjectGetStub(args->user)->object;
 
 		fdActorSelectAnimationStub(user, POSE_LEAP);
 		fdActorSetAnimationSpeedStub(user, ANIM_STEP_NORMAL * 3);
 	} else
-		btMotionApproachTargetStub(args->user, args->tgts[0], 16, 0);
+		btMotionApproachTargetStub(args->user, args->targets[0], 16, 0);
 	if(mode == FLASHING_STRIKE_BOOST_HACK)
 		sySynch(8);
 	else
@@ -207,16 +211,16 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_ADDITIVE);
 	draw[1] = RamHeapSlots->ramCodePaired;
 
-	sySndPlayStub(SE_POWER_UP);
-	for(frm = 0; frm != FLASHING_STRIKE_TICKS; frm++) {
+	sySoundPlayStub(SE_POWER_UP);
+	for(frame = 0; frame != FLASHING_STRIKE_TICKS; frame++) {
 		if(mode == FLASHING_STRIKE_TWIN_SHEAR) {
 			/* Half the picture, then its reflection below it. */
-			if(frm <= 3) {
+			if(frame <= 3) {
 				draw[0](canvas, RamMapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
 				draw[1](canvas, RamMapMetatileBuffer, 0, SLASH_PICTURE_SIZE / 2,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
-			} else if(frm <= 7) {
+			} else if(frame <= 7) {
 				draw[0](canvas,
 					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
@@ -224,7 +228,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
-			} else if(frm <= 11) {
+			} else if(frame <= 11) {
 				draw[0](canvas,
 					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
@@ -232,7 +236,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
-			} else if(frm <= 15) {
+			} else if(frame <= 15) {
 				draw[0](canvas,
 					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
@@ -242,31 +246,31 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					SLASH_PICTURE_SIZE / 2);
 			}
 		} else {
-			if(frm <= 3)
+			if(frame <= 3)
 				draw[0](canvas, state->sheet, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE);
-			else if(frm <= 7)
+			else if(frame <= 7)
 				draw[0](canvas, state->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0,
 					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
-			else if(frm <= 11)
+			else if(frame <= 11)
 				draw[0](canvas, RamMapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE);
-			else if(frm <= 15)
+			else if(frame <= 15)
 				draw[0](canvas,
 					RamMapMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		}
 
 		/* The flood: four ticks of the canvas at its brightest. */
-		if(frm >= FLASHING_STRIKE_FLOOD_TICK &&
-			frm <= FLASHING_STRIKE_FLOOD_TICK + 3)
+		if(frame >= FLASHING_STRIKE_FLOOD_TICK &&
+			frame <= FLASHING_STRIKE_FLOOD_TICK + 3)
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-		if(frm == FLASHING_STRIKE_DAMAGE_TICK)
+		if(frame == FLASHING_STRIKE_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(frm == FLASHING_STRIKE_HIT_TICK) {
-			state->shakeFrm = 8;
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
+		if(frame == FLASHING_STRIKE_HIT_TICK) {
+			state->shakeFrame = 8;
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HURL);
 		}
 		btCameraShake(16, 16);
 		EFFECT_END_TICK(state);
@@ -285,7 +289,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	} else {
 		if(mode == FLASHING_STRIKE_BOOST_HACK)
 			fdActorSetAnimationSpeedStub(
-				btObjectGetStub(args->user)->obj, ANIM_STEP_NORMAL);
+				btObjectGetStub(args->user)->object, ANIM_STEP_NORMAL);
 		btEffectEndCanvasLayer();
 	}
 }

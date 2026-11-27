@@ -6,7 +6,7 @@ Bool scPushTargetFillRectangle(Sint32 id)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGet(id);
-	Sint16	   shape = ((SPR *)actor->spr)->entries[0]->anmId;
+	Sint16	   shape = ((SPR *)actor->sprite)->entries[0]->animationId;
 	Sint16	   i = 0;
 	Uint32	   j;
 	Sint32	   width;
@@ -34,9 +34,9 @@ Bool scPushTargetFillRectangle(Sint32 id)
 	height = (ABS(PushRectangles[j][1]) + ABS(PushRectangles[j][3])) >> 4;
 	x = FIELD_METATILE(actor->x.fixed + toFIXED(PushRectangles[j][0]));
 	z = FIELD_METATILE(actor->z.fixed + toFIXED(PushRectangles[j][1]));
-	mapX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsX);
+	mapX = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
 	i = mapX;
-	mapZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].ofsY);
+	mapZ = FIELD_METATILE(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
 	toX = x + (Uint16)i;
 	toZ = z + (Uint16)mapZ;
 	fdMapGridCopyMetatileAttributes(x, z, width, height, toX, toZ);

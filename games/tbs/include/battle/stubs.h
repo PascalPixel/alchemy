@@ -14,10 +14,10 @@ void btCameraSetViewAtPairMidpointStub(
 void   btBackgroundSetModeStub(Sint32 mode, Sint32 unusedResource, Sint32 fade);
 void   btBackgroundLoadStub(Sint32 mode, Sint32 resourceId, Sint32 level);
 void   btBackgroundSetPaletteLevelStub(Sint32 unused, Sint32 level);
-Sint32 btSprHasHeavyImpactStub(Sint32 idx);
+Sint32 btSpriteHasHeavyImpactStub(Sint32 index);
 Sint32 btUnitGetEffectHeightStub(Sint32 unitId);
 void   btMotionApproachTargetStub(
-	  Sint32 unitId, Sint32 tgtId, Sint32 ticks, Sint32 initVelY);
+	  Sint32 unitId, Sint32 targetId, Sint32 ticks, Sint32 initVelocityY);
 void   btMotionApplyKnockbackStub(Sint32 unitId, Sint32 variant);
 Sint32 btUnitListIdsStub(Sint32 sideMask, Uint16 *unitIds);
 /* Returns a unit's battle object, or null for a unit with no place
@@ -31,18 +31,18 @@ Sint32 btMotionProjectScaledPosStub(Sint32 unitId, Sint32 *projected);
 Sint32 btMotionProjectCursorPointStub(
 	Sint32 unitId, struct SCREEN_POINT *projected);
 Sint32 btPartyPrepareMembersStub(Uint16 *unitIds);
-void   btCameraSetCommandViewStub(Sint32 verticalOfs);
-void  *btActorGetSprStub(struct ACTOR *actor, Sint32 recordIdx);
+void   btCameraSetCommandViewStub(Sint32 verticalOffset);
+void  *btActorGetSpriteStub(struct ACTOR *actor, Sint32 recordIndex);
 void   btHighlightSetModesStub(Uint16 *selectedUnits, Sint32 mode);
-void   btPlaybackStartStub(Sint32 snd);
+void   btPlaybackStartStub(Sint32 sound);
 Sint32 btGraphicsScaleRGB555ClampedStub(
-	Uint16 *src, Uint16 *dst, Sint32 scale, Sint32 cnt);
+	Uint16 *src, Uint16 *dest, Sint32 scale, Sint32 count);
 Sint32		  btDjinnRecoveryCountDownStub(void);
 Sint32		  btObjectGetPaletteStub(Sint32 id);
 Sint32		  btDjinnRecoveryCountDownTwentyStub(void);
-Sint32		  btDebugParmSetLoadStub(Sint32 set);
+Sint32		  btDebugParamSetLoadStub(Sint32 set);
 void		  btObjectPutStub(void);
 UNREAD_RESULT btMessageWaitForAdvanceAtStub(Sint32 x, Sint32 y);
-Sint32		  btDjinnCountStandbyStub(Uint32 unitId, Uint8 *cnts);
+Sint32		  btDjinnCountStandbyStub(Uint32 unitId, Uint8 *counts);
 
 #endif

@@ -2,7 +2,7 @@
 #define ALCHEMY_SOUND_DRIVER_SYMBOLS_H
 
 /* What the game sets over the sound driver: the music's player, the sound
-   numbers sySndPlay takes and their ranges, the music players by row, the
+   numbers sySoundPlay takes and their ranges, the music players by row, the
    mixer's reverb codes, and the music's volume and tempo ramps. */
 
 #include "sounds.h"
@@ -11,7 +11,7 @@
 
 struct MusicPlayerInfo;
 
-/* sySndUpdateCommandMask's command: the new SoundCommandMask, or with
+/* sySoundUpdateCommandMask's command: the new SoundCommandMask, or with
    AUDIO_COMMAND_TOGGLE the bits to flip in it. Nothing sends one. */
 enum AudioCommandMask {
 	AUDIO_COMMAND_TOGGLE = 0x80,
@@ -19,11 +19,11 @@ enum AudioCommandMask {
 };
 
 /* Rate 9, 31536 samples a second, as the rate bits of a sound mode word
-   (SOUND_MODE_FREQ): the rate sySndInit fixes for the game (pret's
+   (SOUND_MODE_FREQ): the rate sySoundInit fixes for the game (pret's
    SOUND_MODE_FREQ_31536). */
 #define SOUND_MODE_FREQ_GAME 0x00090000
 
-/* A sound for sySndPlay: bits 11..0 the sound number, 15..12 flags.
+/* A sound for sySoundPlay: bits 11..0 the sound number, 15..12 flags.
    SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM, SOUND_FADE_OUT_ACTION_SE and
    SOUND_FADE_OUT_EXIT_SE are rows of the song table, in sounds.h. */
 enum SoundControl {
@@ -50,12 +50,12 @@ enum MusicPlayerId {
 	MUSIC_PLAYER_SE_FIRST = 4,
 	MUSIC_PLAYER_SE5 = 5, /* MPlayInfoSE5 */
 	/* A sound on it takes the first idle music player from here down to
-	   MUSIC_PLAYER_SE_FIRST, else this one (sySndPlay). */
+	   MUSIC_PLAYER_SE_FIRST, else this one (sySoundPlay). */
 	MUSIC_PLAYER_SE_LAST = 7
 };
 
-/* The mixer's reverb codes. sySndLoadReverbCode loads none of them, and
-   sySndGetReverbCode gives every music SOUND_REVERB_LONG. */
+/* The mixer's reverb codes. sySoundLoadReverbCode loads none of them, and
+   sySoundGetReverbCode gives every music SOUND_REVERB_LONG. */
 enum SoundReverbCode {
 	SOUND_REVERB_MONO,
 	SOUND_REVERB_CROSSED,
@@ -76,7 +76,7 @@ struct SoundVBlankState {
 	   the VBlank handler. */
 	Uint8 soundTestActive;
 	/* Set while the tick wait runs the update: the VBlank handler skips its
-	   own, and sySndPlay ignores every sound. */
+	   own, and sySoundPlay ignores every sound. */
 	Uint8 updating;
 };
 

@@ -17,8 +17,8 @@ typedef struct ENEMY_ELEMENT_PRESET {
 	/* Its level in each element; gmUnitGetElementLevels returns ten times
 	   each. */
 	Uint8 elementLevels[4];
-	/* Its base power and resistance in each element, as gmUnitCalcBaseElements
-	   gives them to the unit. */
+	/* Its base power and resistance in each element, as
+	   gmUnitCalculateBaseElements gives them to the unit. */
 	BATTLE_ELEMENT_STATS stats[4];
 } ENEMY_ELEMENT_PRESET;
 

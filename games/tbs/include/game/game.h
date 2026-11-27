@@ -30,7 +30,7 @@ struct UNIT;
    (src/game/stubs.s). */
 struct DJINN_RECOVERY_TABLE *gmDjinnGetRecoveryTable(Sint32 enemySide);
 UNIT						*gmUnitGet(Uint32 unitId);
-void						 gmUnitCalc(Sint32 unitId);
+void						 gmUnitCalculate(Sint32 unitId);
 const ITEM_DEFINITION		*gmItemGetDirect(Sint32 item);
 Sint32						 gmInventoryGetQuantity(Sint32 unitId, Sint32 slot);
 Sint32						 gmInventoryAddItem(Sint32 unitId, Sint32 itemId);
@@ -52,16 +52,16 @@ LEVEL_UP_RESULT	   *gmUnitCheckLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains);
 void				gmPartyInitCharacters(void);
 void				gmUnitLevelNoOperation(void);
 LEVEL_UP_RESULT	   *gmUnitTryLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains);
-Bool				gmFlagGet(Sint32 flg);
-Sint32				gmFlagSet(Sint32 flg);
-void				gmFlagClear(Sint32 flg);
-Uint32				gmFlagToggle(Sint32 flg);
-Sint32				gmFlagGetByte(Sint32 flg);
-void				gmFlagSetByte(Sint32 flg, Sint32 value);
-Uint8				gmFlagIncrementByte(Sint32 flg);
-Uint8				gmFlagDecrementByte(Sint32 flg);
-Sint32				gmFlagGetNibble(Uint32 flg);
-void				gmFlagSetNibble(Sint32 flg, Sint32 value);
+Bool				gmFlagGet(Sint32 flag);
+Sint32				gmFlagSet(Sint32 flag);
+void				gmFlagClear(Sint32 flag);
+Uint32				gmFlagToggle(Sint32 flag);
+Sint32				gmFlagGetByte(Sint32 flag);
+void				gmFlagSetByte(Sint32 flag, Sint32 value);
+Uint8				gmFlagIncrementByte(Sint32 flag);
+Uint8				gmFlagDecrementByte(Sint32 flag);
+Sint32				gmFlagGetNibble(Uint32 flag);
+void				gmFlagSetNibble(Sint32 flag, Sint32 value);
 void				gmRestartQuest(void);
 /* Adds delta to unit unitId's HP, kept from 0 to its maximum, and returns the
    new HP. */
@@ -79,31 +79,32 @@ Sint32 gmPartyListMembers(Sint16 *unitIds);
 Sint32 gmEquipmentRollUnleash(UNIT *unit);
 Sint32 gmPartyRemoveMember(Sint32 unitId);
 Sint32 gmUnitGetAttackElement(Sint32 unitId);
-Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 tgt, Sint32 element,
+Sint32 gmBattleRollEffectSuccess(Sint32 caster, Sint32 target, Sint32 element,
 	Sint32 effectId, Sint32 successScale);
-Sint32 gmBattleCalcAttackDamage(
+Sint32 gmBattleCalculateAttackDamage(
 	Sint32 attack, Sint32 defense, Sint32 addedPower, Sint32 elementDifference);
-Sint32 gmBattleCalcPsynergyPower(
+Sint32 gmBattleCalculatePsynergyPower(
 	Sint32 power, Sint32 elementDifference, Sint32 powerMultiplier);
-Sint32 gmBattleCalcRecovery(
+Sint32 gmBattleCalculateRecovery(
 	Sint32 power, Sint32 elementPower, Sint32 powerMultiplier);
 const ENEMY_DEFINITION *gmEnemyGetDefinition(Sint32 enemyId);
 Sint32					gmBattleRandom(void);
-Sint32	gmDjinnGive(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
-Sint32	gmDjinnSet(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
-Uint32	gmDjinnPutOnStandby(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
-Sint32	gmDjinnRecoveryRemove(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32	gmDjinnGive(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
+Sint32	gmDjinnSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
+Uint32	gmDjinnPutOnStandby(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
+Sint32	gmDjinnRecoveryRemove(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 Uint32 *gmDjinnRecoveryAddStandby(
-	Uint32 unitId, Uint32 element, Uint32 djinnIdx);
-Sint32 gmDjinnTransfer(Sint32 src, Sint32 element, Sint32 djinnIdx, Sint32 tgt);
-Sint32 gmSummonListLearned(Uint8 *output);
+	Uint32 unitId, Uint32 element, Uint32 djinnIndex);
+Sint32 gmDjinnTransfer(
+	Sint32 src, Sint32 element, Sint32 djinnIndex, Sint32 target);
+Sint32					 gmSummonListLearned(Uint8 *output);
 const SUMMON_DEFINITION *gmSummonDefinitionGetNear(Uint32 summonId);
 Sint32					 gmDjinnGetAbilityId(Uint32 element, Uint32 djinni);
-void					 gmUnitLevelUpTo(Sint32 unitId, Sint32 tgtLevel);
+void					 gmUnitLevelUpTo(Sint32 unitId, Sint32 targetLevel);
 Sint32					 gmUnitGetElementLevel(Sint32 unitId, Sint32 element);
-Sint32					 gmDjinnRecoveryCountStandby(Uint8 *cnts);
-Uint32 gmDjinnIsSet(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
-Bool   gmDjinnCanSet(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32					 gmDjinnRecoveryCountStandby(Uint8 *counts);
+Uint32 gmDjinnIsSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
+Bool   gmDjinnCanSet(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 Sint32 gmItemCanUnitEquipDirect(Sint32 unitId, Sint32 itemId);
 Sint32 gmItemIsCompatibleWithUnit(Sint32 unitId, Sint32 itemId);
 Sint32 gmInventoryFindEquipped(Sint32 unitId, Sint32 type);
@@ -165,7 +166,7 @@ extern const Uint32 CharacterLevelExpTable[];
 extern Sint16 DjinnElementSprites[];
 
 /* The elemental power and resistance of one element level, in
-   ElementPowerResistByLevel, which gmUnitCalcBaseElements reads by whole
+   ElementPowerResistByLevel, which gmUnitCalculateBaseElements reads by whole
    level, 0 to 15. */
 typedef struct ELEMENT_LEVEL_BONUS {
 	Uint16 power;	   /* base power, before the tenths of a level */
@@ -225,11 +226,11 @@ extern const Uint8 SummonOrderList[16];
 #define SUMMON_END 32
 
 void gmMemoryCopyBytesDirectional(
-	Uint8 *first, Uint8 *second, Sint32 cnt, Sint32 direction);
+	Uint8 *first, Uint8 *second, Sint32 count, Sint32 direction);
 
 const ITEM_DEFINITION *gmInventoryGetEquippedDefinition(
 	UNIT *unit, Sint32 type);
-Sint32						gmRareItemStockAdjust(Sint32 idx, Sint32 delta);
+Sint32						gmRareItemStockAdjust(Sint32 index, Sint32 delta);
 const CHARACTER_DEFINITION *gmCharacterGetDefinition(Sint32 characterId);
 LEVEL_UP_RESULT *gmUnitLevelUp(Sint32 unitId, LEVEL_UP_RESULT *gains);
 
@@ -238,20 +239,20 @@ Sint32 gmUnitGetElementLevels(
 	Sint32 unitId, const Uint8 *djinnHeld, Sint32 output[4]);
 Sint32 gmEnemyGetAttackElement(UNIT *unit);
 UNREAD_RESULT
-gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst);
+gmUnitCalculateBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dest);
 Sint32			  gmClassDetermine(Sint32 character, const Uint8 *djinn);
 CLASS_DEFINITION *gmClassGetDefinition(Sint32 classId);
 
 Sint32 gmBattleGetElementMultiplier(Sint32 difference, Sint32 halve);
 Uint32 gmBattleRandomPercent(void);
-/* The element power at which gmBattleCalcRecovery's healing is neither stronger
-   nor weaker: each point above it counts as two points of element
+/* The element power at which gmBattleCalculateRecovery's healing is neither
+   stronger nor weaker: each point above it counts as two points of element
    difference. */
 #define HEALING_BASE_POWER	  100
 /* The battle's multipliers are 256ths: this one keeps an amount as it is. */
 #define BATTLE_MULTIPLIER_ONE 256
 Sint32 gmBattleGetEffectBaseSuccessRate(Sint32 effectId);
-Bool   gmBattleAbilityIsWeakToEffect(const UNIT *tgt, Sint32 effectId);
+Bool   gmBattleAbilityIsWeakToEffect(const UNIT *target, Sint32 effectId);
 
 const DJINN_DEFINITION *gmDjinnGetDefinition(Uint32 element, Uint32 djinni);
 

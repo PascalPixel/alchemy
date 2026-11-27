@@ -27,7 +27,7 @@ typedef enum MAGMA_ROCK_FIRE_STOP_METATILE {
    its flag. */
 typedef struct MAGMA_ROCK_CRUMBLING_PILLAR {
 	Uint16 id;
-	Uint16 flg;
+	Uint16 flags;
 } MAGMA_ROCK_CRUMBLING_PILLAR;
 
 Sint32 fdMapMetatileGetAttributes(Uint32 layer, Sint32 x, Sint32 z);
@@ -55,10 +55,10 @@ extern Sint16 MagmaRockStatueStatues[];
 
 void syStatueFlashUnderBurst(struct ACTOR *actor);
 
-void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt);
+void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 count);
 void scMagmaRockStartFallingRocks(void);
 
-void scMagmaRockBurstCrackedPillar(Sint32 mode, Sint32 snd);
+void scMagmaRockBurstCrackedPillar(Sint32 mode, Sint32 sound);
 
 void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 id);
 
@@ -66,7 +66,7 @@ struct ACTOR *fdActorFindInMetatile(Sint32 *pos, struct ACTOR *self);
 
 extern Sint16 MagmaRockCrumblingPillars[];
 
-void scMagmaRockRestoreCrumblingPillars(const Uint16 *tbl);
+void scMagmaRockRestoreCrumblingPillars(const Uint16 *table);
 
 /* Lays a tightrope between its two posts (fdTightropePlace, through the
    overlay's own import row). */

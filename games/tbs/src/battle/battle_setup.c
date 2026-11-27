@@ -19,7 +19,7 @@ void btCameraUpdate(void)
 		HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
 	BATTLE_STATE *battle =
 		HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
-	POS		eyeOfs;
+	POS		eyeOffset;
 	Sint32 *focus;
 	Sint16	delta;
 
@@ -41,7 +41,7 @@ void btCameraUpdate(void)
 	}
 
 	if(view->ticks != 0) {
-		delta = view->tgtYaw - camera->yaw;
+		delta = view->targetYaw - camera->yaw;
 		delta /= CAMERA_YAW_EASE;
 		/* The step is added to the yaw read as an unsigned halfword. */
 		camera->yaw = (Uint16)camera->yaw + delta;
@@ -59,10 +59,10 @@ void btCameraUpdate(void)
 	syRotX(camera->pitch);
 
 	/* The eye sits distance behind the focus, along the turned view. */
-	eyeOfs.x = 0;
-	eyeOfs.y = 0;
-	eyeOfs.z = camera->distance;
-	syCalcPoint(&eyeOfs.x, (Sint32 *)camera);
+	eyeOffset.x = 0;
+	eyeOffset.y = 0;
+	eyeOffset.z = camera->distance;
+	syCalcPoint(&eyeOffset.x, (Sint32 *)camera);
 
 	/* The plane centred on the projection's centre, at a zoom of 1. */
 	if(view->keepRange == 0) {
@@ -73,7 +73,7 @@ void btCameraUpdate(void)
 
 /* Announces the enemies at the start of a battle, "<enemy> appeared!" for each,
    then whether the party strikes first or is caught by surprise. */
-void btIntroAnnounceEncounter(Sint32 enemyCnt)
+void btIntroAnnounceEncounter(Sint32 enemyCount)
 {
 	Sint16		  enemies[8];
 	BATTLE_STATE *battle = BattleStateWork;
@@ -81,9 +81,9 @@ void btIntroAnnounceEncounter(Sint32 enemyCnt)
 
 	mnMessageArgumentClearAllStub();
 	btEnemyList(enemies);
-	for(i = 0; i != enemyCnt; i++) {
+	for(i = 0; i != enemyCount; i++) {
 		mnMessageArgumentPushStub((Uint16)enemies[i], MESSAGE_ARGUMENT_ACTOR);
-		if(i == enemyCnt - 1)
+		if(i == enemyCount - 1)
 			mnBattleMessageShowAndWaitStub(MsgLastEnemyAppeared);
 		else
 			mnBattleMessageShowAndWaitStub(MsgEnemyAppeared);
@@ -111,36 +111,36 @@ void btUnitCollect(void)
 {
 	Uint16		  unitIds[UNIT_MAX];
 	BATTLE_STATE *battle;
-	Sint32		  cnt;
+	Sint32		  count;
 	Sint32		  i;
 	Sint32		  pos;
 	Sint32		  formation;
 
 	battle = BattleStateWork;
-	cnt = btPartyPrepareMembers(unitIds);
-	for(i = 0; i < cnt; i++)
+	count = btPartyPrepareMembers(unitIds);
+	for(i = 0; i < count; i++)
 		battle->partyUnits[i] = unitIds[i];
-	battle->partyUnits[cnt] = BATTLE_UNIT_LIST_END;
+	battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
 	/* The shuffled and interleaved formations keep the enemies in unit order;
 	   the others put the first in the centre and the rest either side of it. */
-	cnt = btEnemyList(unitIds);
+	count = btEnemyList(unitIds);
 	formation = battle->layout;
 	switch(formation) {
 	case FORMATION_LAYOUT_SHUFFLED:
 	case FORMATION_LAYOUT_INTERLEAVED:
-		for(i = 0; i < cnt; i++)
+		for(i = 0; i < count; i++)
 			battle->enemyIds[i] = unitIds[i];
 		break;
 	case FORMATION_LAYOUT_CENTERED:
 	default:
-		for(i = 0; i < cnt; i++) {
-			pos = BattleFormationCenteredOffsets[i] + cnt / 2;
+		for(i = 0; i < count; i++) {
+			pos = BattleFormationCenteredOffsets[i] + count / 2;
 			battle->enemyIds[pos] = unitIds[i];
 		}
 		break;
 	}
-	battle->enemyIds[cnt] = BATTLE_UNIT_LIST_END;
+	battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
 /* Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
@@ -170,12 +170,12 @@ void btPartyBattleSetupNoOperation(Sint32 unused)
 UNREAD_RESULT btPartyClearBattleStatuses(void)
 {
 	Uint16 unitIds[10];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
-	cnt = btPartyPrepareMembers(unitIds);
+	count = btPartyPrepareMembers(unitIds);
 
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		UNIT  *unit = gmUnitGetStub(unitIds[i]);
 		Sint32 element;
 
@@ -205,7 +205,7 @@ UNREAD_RESULT btPartyClearBattleStatuses(void)
 		unit->agilityStage = 0;
 		unit->challenge = 0;
 
-		gmUnitCalcStub(unitIds[i]);
+		gmUnitCalculateStub(unitIds[i]);
 	}
 }
 
@@ -214,17 +214,17 @@ UNREAD_RESULT btPartyClearBattleStatuses(void)
 UNREAD_RESULT btDjinnRecoveryReconcile(void)
 {
 	Uint16 unitIds[10];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 	Sint32 unitId;
 	Sint32 element;
 	Sint32 djinni;
 
-	cnt = btPartyPrepareMembers(unitIds);
+	count = btPartyPrepareMembers(unitIds);
 
 	/* A party unit (0 to ALLY_MAX) uses the party's list, any other the
 	   opponent's. */
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		unitId = unitIds[i];
 		for(element = 0; element < ELEMENT_COUNT; element++) {
 			for(djinni = 0; djinni < DJINN_PER_ELEMENT; djinni++) {
@@ -236,12 +236,12 @@ UNREAD_RESULT btDjinnRecoveryReconcile(void)
 													 ->list;
 					Sint32 j;
 
-					for(j = 0; j < list->cnt; j++) {
+					for(j = 0; j < list->count; j++) {
 						if(element == list->entries[j].element &&
-							djinni == list->entries[j].idx)
+							djinni == list->entries[j].index)
 							break;
 					}
-					if(j == list->cnt)
+					if(j == list->count)
 						gmDjinnRecoveryAddStandbyStub(unitId, element, djinni);
 				}
 			}
@@ -256,17 +256,17 @@ UNREAD_RESULT btDjinnRecoveryReconcile(void)
 		DJINN_RECOVERY_LIST *list =
 			&gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->list;
 
-		for(i = 0; i < list->cnt; i++) {
+		for(i = 0; i < list->count; i++) {
 			DJINN_RECOVERY_ENTRY *entry = &list->entries[i];
 
 			if(entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
 				btObjectGet(entry->unitId) == 0) {
 				Uint8 id = entry->unitId;
 				Uint8 element = entry->element;
-				Uint8 idx = entry->idx;
+				Uint8 index = entry->index;
 
-				gmDjinnSetStub(id, element, idx);
-				gmDjinnRecoveryRemoveStub(id, element, idx);
+				gmDjinnSetStub(id, element, index);
+				gmDjinnRecoveryRemoveStub(id, element, index);
 			}
 		}
 	}
@@ -299,7 +299,7 @@ DJINN_RECOVERY_TABLE *btSummonUpdateAvailability(void)
 			for(partySlot = 0; partySlot < partySize; partySlot++) {
 				UNIT *member = gmUnitGetStub(partyMembers[partySlot]);
 
-				totals[element] += member->djinnHeldCnts[element];
+				totals[element] += member->djinnHeldCounts[element];
 			}
 		}
 	}
@@ -332,10 +332,10 @@ DJINN_RECOVERY_TABLE *btSummonUpdateAvailability(void)
 	}
 
 	{
-		DJINN_RECOVERY_TABLE *tbl =
+		DJINN_RECOVERY_TABLE *table =
 			gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY);
-		tbl->summonMask = availableMask;
-		return tbl;
+		table->summonMask = availableMask;
+		return table;
 	}
 }
 

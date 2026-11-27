@@ -36,7 +36,7 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	running = fieldState->psynergyActing;
 	if(running == 0) {
 		effectState =
-			syHeapSlotAlloc(HEAP_SLOT_FIELD_EFFECT, sizeof *effectState);
+			syHeapSlotAllocate(HEAP_SLOT_FIELD_EFFECT, sizeof *effectState);
 		DMA_FILL32(running, effectState, sizeof *effectState);
 	} else {
 		effectState = FieldEffectStateWork;
@@ -65,7 +65,7 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	/* Every field Psynergy but Reveal itself pauses Reveal's countdown (running
 	   is 0 here) until fdPsynergyEnd lets it run again. */
 	if(effectState->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
-		fieldState->effTmrRunning = running;
+		fieldState->effectTimerRunning = running;
 	effectState->tileSlot = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(effectState->tileSlot, 256, FieldEffectSparkTiles);
 	sySetEvent(fdEffectUpdateAllEffectSlots, EVENT_PASS_TICK);
@@ -73,35 +73,35 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 
 /* Records the caster and the target of a field Psynergy, and where it takes
    place: on the target, or 16 pixels in front of the caster with none. */
-void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
+void fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId)
 {
 	ACTOR			   *user;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	Sint32				facing;
 	FIELD_EFFECT_STATE *effectState;
 
 	effectState = FieldEffectStateWork;
 	effectState->casterId = userId;
 	user = fdActorLookup((Sint16)userId);
-	effectState->tgtId = tgtId;
+	effectState->targetId = targetId;
 	effectState->caster = user;
-	tgt = fdActorLookup((Sint16)tgtId);
+	target = fdActorLookup((Sint16)targetId);
 	facing = FACING_NEAREST_CARDINAL(user->facing);
-	effectState->tgt = tgt;
-	effectState->ang = facing;
-	if(tgt != NULL) {
+	effectState->target = target;
+	effectState->angle = facing;
+	if(target != NULL) {
 		/* Keep the target's motion and colours, to restore them later. */
-		effectState->savedFunc = tgt->update;
-		effectState->savedScript = (const Sint32 *)tgt->script;
+		effectState->savedCallback = target->update;
+		effectState->savedScript = (const Sint32 *)target->script;
 		{
-			SPR	 *spr = tgt->spr;
-			Uint8 colMode = spr->entries[0]->colMode;
+			SPR	 *sprite = target->sprite;
+			Uint8 colorMode = sprite->entries[0]->colorMode;
 
-			effectState->savedPal = colMode;
+			effectState->savedPalette = colorMode;
 		}
-		effectState->x = tgt->x.fixed;
-		effectState->z = tgt->z.fixed;
-		effectState->y = tgt->y.fixed;
+		effectState->x = target->x.fixed;
+		effectState->z = target->z.fixed;
+		effectState->y = target->y.fixed;
 		return;
 	}
 	effectState->x = user->x.fixed;
@@ -118,7 +118,7 @@ void fdPsynergyStopCasterUpdate(void)
 	ACTOR			   *user = effectState->caster;
 
 	user->update = NULL;
-	fdActorSetSprColModeStub(user, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorModeStub(user, SPRITE_COLOR_NORMAL);
 	sySynch(1);
 }
 
@@ -181,7 +181,7 @@ void fdPsynergyEnd(void)
 		grid->shakeY = effectState->savedShakeY;
 		grid->shakeDecay = effectState->savedShakeDecay;
 		if(effectState->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
-			fieldState->effTmrRunning = 1;
+			fieldState->effectTimerRunning = 1;
 		fdPlayQueuedMusic();
 		syHeapSlotRelease(HEAP_SLOT_FIELD_EFFECT);
 	}
@@ -201,12 +201,12 @@ void fdPsynergyStartCast(void)
 	caster = effectState->caster;
 	ability = (Sint16)effectState->ability;
 	fdActorSelectAnimationStub(caster, ANIM_CAST_PSYNERGY_START);
-	caster->tgtX = caster->x.fixed;
-	caster->tgtY = caster->y.fixed;
-	caster->tgtZ = caster->z.fixed;
+	caster->targetX = caster->x.fixed;
+	caster->targetY = caster->y.fixed;
+	caster->targetZ = caster->z.fixed;
 	SET_VELOCITY(caster, 0, 0, 0);
 	if(effectState->flashCaster != 0) {
-		sySndPlayStub(SE_POWER_UP);
+		sySoundPlayStub(SE_POWER_UP);
 		caster->update = fdEffectFlickerActorAndSpawnArcs;
 	}
 	if(effectState->announceName != 0) {
@@ -234,7 +234,7 @@ void fdPsynergyStartCast(void)
 /* Saves the palettes for the Psynergy and fades them toward one of the eight
    cast colours (FieldPsynergyCastColors), picked by the tick counter or
    forced by FLAG_PSYNERGY_TINT(0) to (7), over 8 ticks. */
-void fdPsynergyFadeToCastCol(void)
+void fdPsynergyFadeToCastColor(void)
 {
 	FIELD_STATE	 *fieldState;
 	PALETTE_FADE *fade;
@@ -244,14 +244,14 @@ void fdPsynergyFadeToCastCol(void)
 	   sprite half and, unless Reveal is active, the BG half. */
 	fieldState = FieldStateWork;
 	fade = PaletteFadeState;
-	syDMAXCopy(&fade->tgt[FADE_HALF_CHANNELS],
-		&fieldState->savedFadeTgt[FADE_HALF_CHANNELS],
+	syDMAXCopy(&fade->target[FADE_HALF_CHANNELS],
+		&fieldState->savedFadeTarget[FADE_HALF_CHANNELS],
 		DMA_COPY_WORDS(FADE_HALF_CHANNELS / 2), REG_DMA3);
 	if(fieldState->revealActive == 0)
-		syDMAXCopy(fade->tgt, fieldState->savedFadeTgt,
+		syDMAXCopy(fade->target, fieldState->savedFadeTarget,
 			DMA_COPY_WORDS(FADE_HALF_CHANNELS / 2), REG_DMA3);
-	syDMAXCopy(
-		fade->tgt, fade->cur, DMA_COPY_WORDS(sizeof fade->cur / 4), REG_DMA3);
+	syDMAXCopy(fade->target, fade->current,
+		DMA_COPY_WORDS(sizeof fade->current / 4), REG_DMA3);
 
 	/* Of the forcing flags, the highest one set wins. */
 	tint = TickCount & 7;
@@ -278,10 +278,10 @@ void fdPsynergyFadeToCastCol(void)
 /* Fades the palettes back from a cast's colours to the saved ones over 8
    ticks; while Reveal is active the BG half fades to Reveal's grey instead
    (PALETTE_TINT_GRAYSCALE). */
-void fdPsynergyFadeFromCastCol(void)
+void fdPsynergyFadeFromCastColor(void)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Sint32		 savedPalettes = (Sint32)state->savedFadeTgt;
+	Sint32		 savedPalettes = (Sint32)state->savedFadeTarget;
 
 	fdPaletteFadeSetTarget(savedPalettes, PALETTES_SPRITES);
 	if(state->revealActive != 0) {

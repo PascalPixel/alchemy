@@ -4,7 +4,7 @@
    one and the step cue a hit raises. Blends the flames over the room and starts
    their puffs. */
 void scFlameThrowersStart(
-	Uint16 *tgts, Uint16 *stops, Sint32 onBlocked, Sint32 hitCue)
+	Uint16 *targets, Uint16 *stops, Sint32 onBlocked, Sint32 hitCue)
 {
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 	FLAME_THROWER	*entry = state->entries;
@@ -12,29 +12,29 @@ void scFlameThrowersStart(
 	Sint32			 i;
 	Sint32			 value;
 	Sint32			 one;
-	Sint32			 flg;
+	Sint32			 flags;
 	Sint32			 reach;
 	ACTOR			*actor;
 	Sint32			 alpha;
 	Sint32			 control;
 
 	if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-		for(i = 0; i < 4 && (id = *tgts++) > 0; i++) {
-			flg = *tgts;
-			reach = flg & FLAME_THROWER_REACH_BITS;
-			flg &= FLAME_THROWER_FLAG_BITS;
+		for(i = 0; i < 4 && (id = *targets++) > 0; i++) {
+			flags = *targets;
+			reach = flags & FLAME_THROWER_REACH_BITS;
+			flags &= FLAME_THROWER_FLAG_BITS;
 			actor = fdActorGet(id);
-			tgts++;
+			targets++;
 			if(actor != NULL) {
-				fdActorSetSprFlags(actor, 0);
-				*(Uint8 *)&actor->sceneCnt = one = 1;
-				if((flg & FLAME_SPARK) == 0)
-					actor->collisionFlg = 0;
+				fdActorSetSpriteFlags(actor, 0);
+				*(Uint8 *)&actor->sceneCount = one = 1;
+				if((flags & FLAME_SPARK) == 0)
+					actor->collisionFlags = 0;
 				entry->active = one;
-				entry->flg = flg;
+				entry->flags = flags;
 				entry->actor = fdActorGet(id);
 				entry->reach = toFIXED(reach);
-				entry->tmr = i;
+				entry->timer = i;
 				entry++;
 			}
 		}

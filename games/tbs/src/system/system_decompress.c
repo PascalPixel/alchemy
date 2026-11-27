@@ -1,27 +1,27 @@
 /* Resource decoding and pixel buffer shading, through RAM copies of ARM code.
    Part of system.c. */
 
-/* Decompresses the halfword LZ stream at `src` to `dst`, with a copy
+/* Decompresses the halfword LZ stream at `src` to `dest`, with a copy
    of the ARM decoder on the stack. */
-void syDecompressHalfwords(const void *src, void *dst)
+void syDecompressHalfwords(const void *src, void *dest)
 {
 	Uint32 words = (Uint32)syDecompressHalfwordsCodeSize >> 2;
 	Uint32 routine[words];
 	syDMAXCopy(
 		syDecompressHalfwordLZ, routine, DMA_COPY_WORDS(words), REG_DMA3);
-	((void (*)(const void *, void *))routine)(src, dst);
+	((void (*)(const void *, void *))routine)(src, dest);
 }
 
 /* Each decoder copies its ARM function `code` to RAM, runs it and frees the
    copy, and returns the number of bytes it decoded. */
 #define RESOURCE_DEFINE_DECODE(name, code, bytes) \
-	Sint32 name(const void *src, void *dst) \
+	Sint32 name(const void *src, void *dest) \
 	{ \
 		Sint32 (*routine)(const void *, void *); \
 		Sint32 result; \
 \
 		RAM_CODE_LOAD(routine, code, bytes); \
-		result = routine(src, dst); \
+		result = routine(src, dest); \
 		syHeapRelease(routine); \
 		return result; \
 	}
@@ -40,26 +40,26 @@ RESOURCE_DEFINE_DECODE(
 
 /* The canvas fades of battle effects, the element glow and the Lucky Wheels. A
    canvas is a buffer of 8-bit pixels, each a step 0 to 63 of a colour ramp.
-   Each function copies the canvas to `dst`, the tiles on screen, 16
+   Each function copies the canvas to `dest`, the tiles on screen, 16
    bytes at a time, and shades each group in the canvas as it goes, so what is
    drawn next lands on a dimmer copy of this tick. `amount` holds the step in
    each of its four bytes (CANVAS_FILL_WORD). */
 #define CANVAS_DEFINE_FADE_BY(name, code, size) \
-	void name(Uint8 *buf, Uint32 amount, Uint8 *dst, Uint32 bytes) \
+	void name(Uint8 *buf, Uint32 amount, Uint8 *dest, Uint32 bytes) \
 	{ \
 		Uint32 words = (Uint32)size >> 2; \
 		Uint32 routine[words]; \
 		syDMAXCopy(code, routine, DMA_COPY_WORDS(words), REG_DMA3); \
 		((void (*)(Uint8 *, Uint32, Uint8 *, Uint32))routine)( \
-			buf, amount, dst, bytes); \
+			buf, amount, dest, bytes); \
 	}
 #define CANVAS_DEFINE_FADE(name, code, size) \
-	void name(Uint8 *buf, Uint8 *dst, Uint32 bytes) \
+	void name(Uint8 *buf, Uint8 *dest, Uint32 bytes) \
 	{ \
 		Uint32 words = (Uint32)size >> 2; \
 		Uint32 routine[words]; \
 		syDMAXCopy(code, routine, DMA_COPY_WORDS(words), REG_DMA3); \
-		((void (*)(Uint8 *, Uint8 *, Uint32))routine)(buf, dst, bytes); \
+		((void (*)(Uint8 *, Uint8 *, Uint32))routine)(buf, dest, bytes); \
 	}
 
 /* Raises every pixel in the canvas by `amount`, stopping at 63. */

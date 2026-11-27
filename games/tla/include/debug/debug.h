@@ -51,7 +51,8 @@ void mnDebugWarpKaoruSpecial3(void);
 void mnDebugWarpKaoruSpecial2(void);
 void mnDebugWarpKaoruSpecial1(void);
 
-void   mnDebugFlagEditorDrawTable(Sint32 win, Sint32 startFlg);
-Sint32 mnDebugFlagEditorHandleInput(Sint32 win, Sint32 *page, Sint32 *cursor);
+void   mnDebugFlagEditorDrawTable(Sint32 window, Sint32 startFlag);
+Sint32 mnDebugFlagEditorHandleInput(
+	Sint32 window, Sint32 *page, Sint32 *cursor);
 
 #endif

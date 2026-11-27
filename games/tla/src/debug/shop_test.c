@@ -81,18 +81,18 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return ActorPlacements;
 }
 
-/* Browses `cnt` messages from `msg`, each typed out at once: A for the
+/* Browses `count` messages from `msg`, each typed out at once: A for the
    next, B to close; each moves on by itself after 10 ticks held, or 60 ticks
    before it is typed out. */
-void dbShopTestBrowseMessageRange(Sint32 msg, Sint32 cnt)
+void dbShopTestBrowseMessageRange(Sint32 msg, Sint32 count)
 {
 	Sint32 i;
 	Sint32 ticks;
-	void  *win;
+	void  *window;
 	Sint32 typed;
 
-	win = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-	for(i = 0; i < cnt; i++) {
+	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
+	for(i = 0; i < count; i++) {
 		/* A sample name, item and number for each message to show: Garet, the
 		   Shamshir and a number of six digits. */
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
@@ -136,7 +136,7 @@ void dbShopTestBrowseMessageRange(Sint32 msg, Sint32 cnt)
 	}
 done:
 	mnMessageCloseFinishedWindows();
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 }
 
 /* The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
@@ -300,7 +300,7 @@ void dbShopTestTalkToSunshinesWife(Sint32 actor)
 			fdScriptSetMessageId(msg + 4);
 			/* "OK, here you go!" */
 			fdScriptShowMessageAndWait(actor, 0);
-			fdItemDispShowItem(
+			fdItemDisplayShowItem(
 				item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 			fdPartyInventoryGiveItem(item, 0);
 			mnForgeSetItem(0);
@@ -688,14 +688,14 @@ Sint32 scPrepareMap(void)
 void dbShopTestRaisePartyLevels(Sint32 levels)
 {
 	Sint16 owners[16];
-	Sint32 cnt = syFieldPartyListMembers(owners);
+	Sint32 count = syFieldPartyListMembers(owners);
 	Sint32 i;
 
-	for(i = 0; i < cnt;) {
+	for(i = 0; i < count;) {
 		Uint16 owner = owners[i++];
 
 		gmUnitLevelUpTo(owner, syUnitGet(owner)->level + levels);
-		gmUnitCalc(owner);
+		gmUnitCalculate(owner);
 	}
 }
 
@@ -706,38 +706,38 @@ void dbShopTestRaisePartyLevels(Sint32 levels)
 void dbShopTestRunLevelEditor(void)
 {
 	UNIT		*unit = syUnitGet(MainRoutineStateWork.leaderActorId);
-	void		*win = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
+	void		*window = mnWindowCreate(0, 0, 30, 9, WINDOW_FLAG_INSTANT);
 	const Uint8 *msg = MsgRaiseEveryoneS;
 	Sint32		 redraw;
 
-	mnTextDrawMessage(msg, win, 0, 0);
-	mnTextDrawMessage(msg + 1, win, 0, 16);
+	mnTextDrawMessage(msg, window, 0, 0);
+	mnTextDrawMessage(msg + 1, window, 0, 16);
 	redraw = 1;
-	mnTextDrawMessage(msg + 2, win, 0, 32);
+	mnTextDrawMessage(msg + 2, window, 0, 32);
 	for(;;) {
 		if(redraw) {
-			mnWindowSprRedrawSavedRect(win);
-			mnTextDrawStringAtOffset(unit->name, win, 0, 48);
-			mnTextDrawStringInWindow(ShopTestLvLabel, win, 48, 48);
+			mnWindowSpriteRedrawSavedRect(window);
+			mnTextDrawStringAtOffset(unit->name, window, 0, 48);
+			mnTextDrawStringInWindow(ShopTestLvLabel, window, 48, 48);
 			redraw = 0;
-			mnTextDrawNumInWindow(unit->level, 0, win, 72, 48);
+			mnTextDrawNumberInWindow(unit->level, 0, window, 72, 48);
 		}
 		sySynch(1);
 		if((PerWork.push & KEY_START) || (PerWork.push & KEY_SELECT)) {
 			dbShopTestRaisePartyLevels(5);
-			sySndPlay(MUS_SUPER_LUCKY);
+			sySoundPlay(MUS_SUPER_LUCKY);
 			redraw = 1;
 		}
 		if(PerWork.push & KEY_A) {
 			dbShopTestRaisePartyLevels(1);
-			sySndPlay(MUS_LUCKY);
+			sySoundPlay(MUS_LUCKY);
 			redraw = 1;
 		}
 		if(PerWork.push & KEY_B)
 			break;
 	}
-	sySndPlay(SE_MENU_CANCEL);
-	mnWindowClose(win, 2);
+	sySoundPlay(SE_MENU_CANCEL);
+	mnWindowClose(window, 2);
 }
 
 /* The selector's item numbers, 0 to 499, wrapping. */
@@ -749,18 +749,18 @@ void dbShopTestRunLevelEditor(void)
    Talking to ACTOR_ITEM_SELECTOR. */
 void dbShopTestSelectItem(void)
 {
-	void  *win;
+	void  *window;
 	void  *details;
 	Sint32 item;
 	Sint32 redraw;
-	Sint32 entryCnt;
+	Sint32 entryCount;
 	Sint8  step;
 
-	entryCnt = ITEM_SELECTOR_ITEM_COUNT;
+	entryCount = ITEM_SELECTOR_ITEM_COUNT;
 	step = 0;
 	item = 1;
 	redraw = 1;
-	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 	syDMAXCopy((const void *)OBJ_PLTT,
 		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0), DMA_COPY_HALFWORDS(16),
@@ -769,89 +769,89 @@ void dbShopTestSelectItem(void)
 		(const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
 		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
 		DMA_COPY_HALFWORDS(1), REG_DMA3);
-	sySndPlay(SE_MENU_CONFIRM);
+	sySoundPlay(SE_MENU_CONFIRM);
 	sySynch(1);
 	while(1) {
 		if(redraw) {
 			redraw = 0;
-			mnWindowSprPrepareForRedraw(win);
-			mnWindowSprPrepareForRedraw(details);
-			mnTextDrawStringInWindow(ShopTestItemPrompt, win, 0, 0);
-			mnTextDrawNumAtOffset(item, 0, win, 80, 0);
+			mnWindowSpritePrepareForRedraw(window);
+			mnWindowSpritePrepareForRedraw(details);
+			mnTextDrawStringInWindow(ShopTestItemPrompt, window, 0, 0);
+			mnTextDrawNumberAtOffset(item, 0, window, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
-				mnTextDrawStringInWindow(ShopTestItemHelp, win, 0, 32);
+				mnTextDrawStringInWindow(ShopTestItemHelp, window, 0, 32);
 				mnTextDrawMessageAsTiles(
-					(Sint32)(item + MsgItemName), win, 120, 0);
+					(Sint32)(item + MsgItemName), window, 120, 0);
 				mnTextDrawMessage(
-					(Sint32)(item + MsgItemDescription), win, 0, 16);
+					(Sint32)(item + MsgItemDescription), window, 0, 16);
 				mnItemMenuDrawItemDetails((Sint32)details, item);
 			} else {
-				mnTextDrawStringInWindow(ShopTestItemFull, win, 0, 32);
+				mnTextDrawStringInWindow(ShopTestItemFull, window, 0, 32);
 			}
 		}
 		sySynch(1);
 		if(PerWork.push & KEY_A) {
 			if(gmPartyInventoryAdd(item) == -1) {
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				break;
 			}
-			sySndPlay(SE_NOTE_HIGH);
+			sySoundPlay(SE_NOTE_HIGH);
 		}
 		if(PerWork.push & KEY_B) {
-			sySndPlay(SE_MENU_CANCEL);
+			sySoundPlay(SE_MENU_CANCEL);
 			break;
 		}
 		if(PerWork.repeat & KEY_DOWN) {
 			step = 1;
 			item++;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_UP) {
 			step = -1;
 			item--;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_RIGHT) {
 			step = 1;
 			item += DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_LEFT) {
 			step = -1;
 			item -= DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_R) {
 			step = 1;
 			item += DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerWork.repeat & KEY_L) {
 			step = -1;
 			item -= DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(step == -1) {
-			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCnt;
+			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCount;
 				gmItemGetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
-				item = (item + ITEM_SELECTOR_ITEM_COUNT - 1) % entryCnt)
+				item = (item + ITEM_SELECTOR_ITEM_COUNT - 1) % entryCount)
 				;
 		}
 		if(step == 1) {
-			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCnt;
+			for(item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCount;
 				gmItemGetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
-				item = (item + ITEM_SELECTOR_ITEM_COUNT + 1) % entryCnt)
+				item = (item + ITEM_SELECTOR_ITEM_COUNT + 1) % entryCount)
 				;
 		}
 		step = 0;
 	}
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	mnWindowClose(details, 2);
 }
 
@@ -869,10 +869,10 @@ void dbShopTestOpenPortraitBrowser(void)
 
 /* Unused: the Psynergy test's dbPsynergyTestDigMetatiles again. */
 UNUSED void dbShopTestDigMetatiles(Sint32 stage, Sint32 srcX, Sint32 srcY,
-	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
+	Sint32 width, Sint32 height, Sint32 destX, Sint32 destY)
 {
 	if(stage == SCOOP_STAGE_DUG)
-		fdMapCopyMetatilesRect(srcX, srcY, width, height, dstX, dstY);
+		fdMapCopyMetatilesRect(srcX, srcY, width, height, destX, destY);
 }
 
 /* Unused: the Psynergy test's dbPsynergyTestGrowActor again. */
@@ -909,7 +909,7 @@ UNUSED void dbShopTestDropActor(Sint32 stage, Sint32 id, Sint32 x, Sint32 z)
 	if(stage == SCOOP_STAGE_DUG_UP) {
 		fdActorSetPos(id, x, z);
 		actor->y.fixed = toFIXED(32);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		actor->gravity = toFIXED(0.09);
 		sySynch(50);
 	}
@@ -926,8 +926,8 @@ UNUSED void dbShopTestRaiseStatue(
 		actor =
 			scFieldActorCreate(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
 		if(actor != NULL) {
-			fdActorSetSprFlags(actor, 0);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(actor, 0);
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		}
 	}
 	if(stage == SCOOP_STAGE_DUG_UP) {
@@ -936,8 +936,8 @@ UNUSED void dbShopTestRaiseStatue(
 		if(actor != NULL) {
 			Sint32 scale;
 
-			fdActorSetSprFlags(actor, 0);
-			actor->velY = toFIXED(6);
+			fdActorSetSpriteFlags(actor, 0);
+			actor->velocityY = toFIXED(6);
 			actor->scaleX = toFIXED(2) / 5;
 			actor->scaleY = toFIXED(2) / 5;
 			while(actor->scaleX < toFIXED(1)) {

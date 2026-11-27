@@ -950,8 +950,8 @@ extern char ResourceIdPublisherLogo;
 /* The Camelot logo mnTitleShowCamelotLogo shows after the publisher's. */
 extern char ResourceIdCamelotLogo;
 #define RESOURCE_CAMELOT_LOGO ((Sint32)&ResourceIdCamelotLogo)
-/* The title's lettering sprites and their colours, which scTitleLoadSprs loads
-   into sprite palette 15. */
+/* The title's lettering sprites and their colours, which scTitleLoadSprites
+   loads into sprite palette 15. */
 extern char ResourceIdIntroTilesB;
 #define RESOURCE_INTRO_TILES_B ((Sint32)&ResourceIdIntroTilesB)
 /* Loaded by scClearLoadBackground and scTitleLoadBackground. */
@@ -1421,7 +1421,7 @@ extern char ResourceIdCreditsStubs;
 extern char ResourceIdBattleEffectStubs;
 #define RESOURCE_BATTLE_EFFECT_STUBS ((Sint32)&ResourceIdBattleEffectStubs)
 /* The sprites' animation data, which the debug sprite viewer passes to a stub
-   (fdSprViewerRun). */
+   (fdSpriteViewerRun). */
 extern char ResourceIdSpriteMetadata;
 #define RESOURCE_SPRITE_METADATA ((Sint32)&ResourceIdSpriteMetadata)
 /* Loaded by fdTileMapConvertBuffer. */

@@ -55,17 +55,17 @@ void syIntFunction(Uint32 irq, Sint32 vcount, INTERRUPT_HANDLER handler)
 			/* The display interrupts also need their DISPSTAT enable */
 			Uint32 enable = DISPSTAT_VBLANK_INTR << irq;
 			Uint32 keep = ~enable;
-			Uint32 stat;
+			Uint32 status;
 
 			if(irq == IRQ_VCOUNT) {
 				enable |= DISPSTAT_VCOUNT_LINE(vcount);
 				/* The old line goes too. */
 				keep &= DISPSTAT_FLAGS;
 			}
-			stat = REG_DISPSTAT & keep;
+			status = REG_DISPSTAT & keep;
 			if(handler != 0)
-				stat |= enable;
-			REG_DISPSTAT = stat;
+				status |= enable;
+			REG_DISPSTAT = status;
 		}
 		if(handler != 0)
 			IrqHandlers[irq] = handler;
@@ -91,12 +91,12 @@ enum { CPU_LOAD_PEAK_TICKS = 30 };
 void sySynch(Sint32 ticks)
 {
 	Uint8 *sp;
-	Uint32 frmIdx;
+	Uint32 frameIndex;
 	Uint8 *base;
 	Uint32 line;
-	Sint32 delayFrm;
+	Sint32 delayFrame;
 	Sint16 savedDisplayControl;
-	Sint16 savedBackdropCol;
+	Sint16 savedBackdropColor;
 
 	ASM_STACK_POINTER_GET(sp);
 
@@ -110,12 +110,12 @@ void sySynch(Sint32 ticks)
 			base, SavedStack, DMA_COPY_WORDS(SavedStackSize >> 2), REG_DMA3);
 		ASM_STACK_POINTER_SET(top);
 	}
-	for(frmIdx = 0; frmIdx < ticks; frmIdx++) {
+	for(frameIndex = 0; frameIndex < ticks; frameIndex++) {
 		/* Run the tick pass's events and build this tick's sprites */
 		EventsRunning = 1;
 		syExecuteEvent(EVENT_PASS_TICK);
 		EventsRunning = 0;
-		syOAMBuildBuffer(syHeapSlotAlloc(HEAP_SLOT_TICK_SCRATCH, 1024));
+		syOAMBuildBuffer(syHeapSlotAllocate(HEAP_SLOT_TICK_SCRATCH, 1024));
 		TickRenderPending = 1;
 		if(CpuLoadDisplayEnabled) {
 			/* CPU load: the scanline the tick's work ended on, counted from
@@ -195,7 +195,7 @@ void sySynch(Sint32 ticks)
 		PlayTimeTicks++;
 		syInputUpdateKeyRepeatAndDirection();
 		if(SerialExchangeActive) {
-			sySerialPollStat();
+			sySerialPollStatus();
 			if(SerialStateWork.mode)
 				SerialStateWork.transferEnabled = 1;
 		}
@@ -204,11 +204,12 @@ void sySynch(Sint32 ticks)
 		   first. */
 		if(SleepRequested && SleepDisabled == 0) {
 			savedDisplayControl = REG_DISPCNT;
-			savedBackdropCol = PLTT_BACKDROP;
+			savedBackdropColor = PLTT_BACKDROP;
 			if(SleepRequested == 1) {
 				IO_WRITE16(0, &REG_DISPCNT);
 				IO_WRITE16(RGB_WHITE, &PLTT_BACKDROP);
-				for(delayFrm = 0; delayFrm < SLEEP_WHITE_FRAMES; delayFrm++) {
+				for(delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES;
+					delayFrame++) {
 					SYNCH_WAIT_VBLANK();
 				}
 				SleepActive = 1;
@@ -219,8 +220,9 @@ void sySynch(Sint32 ticks)
 				IO_WRITE16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
 				SleepActive = 0;
 				IO_WRITE16((Uint16)savedDisplayControl, &REG_DISPCNT);
-				IO_WRITE16((Uint16)savedBackdropCol, &PLTT_BACKDROP);
-				for(delayFrm = 0; delayFrm < SLEEP_WAKE_FRAMES; delayFrm++) {
+				IO_WRITE16((Uint16)savedBackdropColor, &PLTT_BACKDROP);
+				for(delayFrame = 0; delayFrame < SLEEP_WAKE_FRAMES;
+					delayFrame++) {
 					SYNCH_WAIT_VBLANK();
 				}
 				SleepRequested = 0;
@@ -255,7 +257,7 @@ void sySynch(Sint32 ticks)
 			ASM_STACK_POINTER_SET(sp);
 			syDMAXCopy(SavedStack, base, DMA_COPY_WORDS(SavedStackSize >> 2),
 				REG_DMA3);
-			while(DMA3->ctrl & DMA_BUSY)
+			while(DMA3->control & DMA_BUSY)
 				;
 			SavedStackSize = 0;
 		}
@@ -281,7 +283,7 @@ void syInputUpdateKeyRepeatAndDirection(void)
 	Sint32 delay = PerRepeatTimer;
 	Uint32 keys;
 	Uint32 axis = 0;
-	Uint32 directionCnt;
+	Uint32 directionCount;
 	Uint32 mask;
 
 	if(delay <= 0) {
@@ -298,18 +300,18 @@ void syInputUpdateKeyRepeatAndDirection(void)
 
 	if(keys != 0) {
 		/* Count the D-pad directions in the repeat */
-		directionCnt = 0;
+		directionCount = 0;
 		if(keys & KEY_UP)
-			directionCnt = 1;
+			directionCount = 1;
 		if(keys & KEY_DOWN)
-			directionCnt++;
+			directionCount++;
 		if(keys & KEY_LEFT)
-			directionCnt++;
+			directionCount++;
 		if(keys & KEY_RIGHT)
-			directionCnt++;
+			directionCount++;
 
 		PerRepeatDirected = keys;
-		switch(directionCnt) {
+		switch(directionCount) {
 		default:
 			PerDirection = KEYS_HORIZONTAL;
 			mask = KEY_WORD_BITS & ~KEYS_DPAD;
@@ -362,7 +364,7 @@ void syVBlankHandler(void)
 			(void *)&SerialTransfer, SerialPeerPayloads);
 		sySerialStepBlockTransfer();
 	}
-	sySndUpdateBGMRampsStub();
+	sySoundUpdateBGMRampsStub();
 	syScreenFadeUpdate();
 	if(TickRenderPending != 0) {
 		if(OamCopyEnabled != 0)
@@ -407,26 +409,26 @@ void syVBlankHandler(void)
 
 /* Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
    else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. */
-Sint32 sySndLoadReverbCode(Sint32 code)
+Sint32 sySoundLoadReverbCode(Sint32 code)
 {
-	Sint32 idx;
+	Sint32 index;
 
-	idx = code;
+	index = code;
 	if(code < 0 || code >= SOUND_REVERB_CODE_COUNT) {
-		idx = 0;
+		index = 0;
 	}
-	syDMAXCopy(IwramSoundReverbCodes + idx * SOUND_REVERB_CODE_SIZE,
+	syDMAXCopy(IwramSoundReverbCodes + index * SOUND_REVERB_CODE_SIZE,
 		IwramSoundReverbCode, DMA_COPY_WORDS(SOUND_REVERB_CODE_SIZE / 4),
 		REG_DMA3);
 	return 0;
 }
 
 /* Unused: two empty functions after the reverb loader, which nothing calls. */
-UNUSED void sySndReservedNoOperationA(void)
+UNUSED void sySoundReservedNoOperationA(void)
 {
 }
 
-UNUSED void sySndReservedNoOperationB(void)
+UNUSED void sySoundReservedNoOperationB(void)
 {
 }
 

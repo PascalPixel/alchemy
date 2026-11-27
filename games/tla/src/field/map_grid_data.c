@@ -149,7 +149,7 @@ Sint32 fdActorScriptSetPosAndResetMotion();
 Sint32 fdActorScriptResetToOrigin();
 Sint32 fdActorScriptApplyAbsolutePos();
 Sint32 fdActorScriptApplyRelativePos();
-Sint32 fdActorScriptStoreAngToWatchedActor();
+Sint32 fdActorScriptStoreAngleToWatchedActor();
 Sint32 fdActorScriptApplyWatchedActorPos();
 Sint32 fdActorScriptApplyLocalOffsetPos();
 Bool   fdActorWander();
@@ -168,7 +168,7 @@ Sint32 fdActorScriptToggleFlagAndTest();
 Sint32 fdActorScriptApplyOperandSet();
 Sint32 fdActorScriptApplyOperandAdd();
 Sint32 fdActorScriptApplyOperandCompare();
-Sint32 fdActorUpdatePlayerCtrl();
+Sint32 fdActorUpdatePlayerControl();
 Sint32 fdActorMoveOnWorldMap();
 Sint32 fdActorMoveByKeys();
 Sint32 fdActorCrossRope();
@@ -178,14 +178,14 @@ Sint32 fdActorSailOnMap();
 Sint32 fdActorSailOnWorldMap();
 Sint32 fdActorFlyOnWorldMap();
 Sint32 fdActorMoveAsSandOnWorldMap();
-Bool   fdActorUpdateHoverCtrl();
-Sint32 fdActorUpdateWalkingCtrl();
+Bool   fdActorUpdateHoverControl();
+Sint32 fdActorUpdateWalkingControl();
 Sint32 fdCheckConfiguredKeysAndCount();
 Sint32 fdActorScriptRelease();
 Sint32 fdActorScriptSetAnimation();
 Sint32 fdActorScriptNoOperation();
-Sint32 fdActorScriptPlaySnd();
-Sint32 fdActorScriptPlaySndInView();
+Sint32 fdActorScriptPlaySound();
+Sint32 fdActorScriptPlaySoundInView();
 Bool   fdActorScriptInvokeCallback();
 Sint32 fdCameraFollowWatchedInBounds();
 Sint32 fdActorScriptSetMoveTargetXZ();
@@ -226,21 +226,21 @@ const Sint32 ActorSandScript[] = {
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* Hovering (fdActorUpdateHoverCtrl). */
+/* Hovering (fdActorUpdateHoverControl). */
 const Sint32 ActorHoverScript[] = {
 	SC_HOVER,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* Walking (fdActorUpdateWalkingCtrl). */
+/* Walking (fdActorUpdateWalkingControl). */
 const Sint32 ActorWalkingScript[] = {
 	SC_WALK,
 	SC_WAIT(1),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/* The leader on foot (fdActorUpdatePlayerCtrl). */
+/* The leader on foot (fdActorUpdatePlayerControl). */
 const Sint32 ActorPlayerScript[] = {
 	SC_PLAYER,
 	SC_WAIT(1),
@@ -309,7 +309,7 @@ const SCRIPT_COMMAND_FN ActorScriptCommandTable[54] = {
 	fdActorScriptResetToOrigin,					 /* 0x03 SC_POSITION_ORIGIN */
 	fdActorScriptApplyAbsolutePos,				 /* 0x04 SC_MOVE */
 	fdActorScriptApplyRelativePos,				 /* 0x05 SC_MOVE_BY */
-	fdActorScriptStoreAngToWatchedActor,		 /* 0x06 SC_FACE_WATCHED */
+	fdActorScriptStoreAngleToWatchedActor,		 /* 0x06 SC_FACE_WATCHED */
 	fdActorScriptApplyWatchedActorPos,			 /* 0x07 SC_MOVE_TO_WATCHED */
 	fdActorScriptApplyLocalOffsetPos,			 /* 0x08 SC_MOVE_LOCAL */
 	fdActorWander,								 /* 0x09 SC_WANDER */
@@ -328,7 +328,7 @@ const SCRIPT_COMMAND_FN ActorScriptCommandTable[54] = {
 	fdActorScriptApplyOperandSet,				 /* 0x16 SC_SET */
 	fdActorScriptApplyOperandAdd,				 /* 0x17 SC_ADD */
 	fdActorScriptApplyOperandCompare,			 /* 0x18 SC_CMP */
-	fdActorUpdatePlayerCtrl,					 /* 0x19 SC_PLAYER */
+	fdActorUpdatePlayerControl,					 /* 0x19 SC_PLAYER */
 	fdActorMoveOnWorldMap,						 /* 0x1a SC_WORLD */
 	fdActorMoveByKeys,							 /* 0x1b SC_KEYS */
 	fdActorCrossRope,							 /* 0x1c SC_ROPE */
@@ -338,17 +338,17 @@ const SCRIPT_COMMAND_FN ActorScriptCommandTable[54] = {
 	fdActorSailOnWorldMap,						 /* 0x20 SC_WORLD_SAIL */
 	fdActorFlyOnWorldMap,						 /* 0x21 SC_WORLD_FLY */
 	fdActorMoveAsSandOnWorldMap,				 /* 0x22 SC_WORLD_SAND */
-	fdActorUpdateHoverCtrl,						 /* 0x23 SC_HOVER */
-	fdActorUpdateWalkingCtrl,					 /* 0x24 SC_WALK */
+	fdActorUpdateHoverControl,					 /* 0x23 SC_HOVER */
+	fdActorUpdateWalkingControl,				 /* 0x24 SC_WALK */
 	fdCheckConfiguredKeysAndCount,				 /* 0x25 SC_KEY_COUNT */
 	fdActorScriptRelease,						 /* 0x26 SC_RELEASE */
 	fdActorScriptSetAnimation,					 /* 0x27 SC_ANIMATION */
 	fdActorScriptNoOperation,					 /* 0x28 SC_NOP */
-	fdActorScriptPlaySnd,						 /* 0x29 SC_SE */
-	fdActorScriptPlaySndInView,					 /* 0x2a SC_SE_IN_VIEW */
+	fdActorScriptPlaySound,						 /* 0x29 SC_SE */
+	fdActorScriptPlaySoundInView,				 /* 0x2a SC_SE_IN_VIEW */
 	fdActorScriptGoto,							 /* 0x2b SC_GOTO */
-	fdActorScriptHideSprs,						 /* 0x2c SC_HIDE_SPRITES */
-	fdActorScriptShowSpr,						 /* 0x2d SC_SHOW_SPRITE */
+	fdActorScriptHideSprites,					 /* 0x2c SC_HIDE_SPRITES */
+	fdActorScriptShowSprite,					 /* 0x2d SC_SHOW_SPRITE */
 	fdActorScriptInvokeCallback,				 /* 0x2e SC_CALL */
 	fdCameraFollowWatchedInBounds,				 /* 0x2f SC_CAMERA_IN_BOUNDS */
 	fdActorScriptSetMoveTargetXZ,				 /* 0x30 SC_MOVE_XZ */
@@ -361,45 +361,45 @@ const SCRIPT_COMMAND_FN ActorScriptCommandTable[54] = {
 
 /* The handler of each work value (ACTOR_SCRIPT_VALUE in actor_script.h). */
 const OPERAND_FUNC ActorScriptOperandHandlerTable[41] = {
-	fdActorScriptSetOrCompareScriptAddress,	   /* 0x00 SW_SCRIPT */
-	fdActorScriptSetOrCompareCursor,		   /* 0x01 SW_CURSOR */
-	fdActorScriptSetOrCompareFacing,		   /* 0x02 */
-	fdActorScriptSetOrCompareFacing,		   /* 0x03 SW_FACING */
-	fdActorScriptSetOrCompareFacing,		   /* 0x04 */
-	fdActorScriptSetOrCompareX,				   /* 0x05 SW_X */
-	fdActorScriptSetOrCompareY,				   /* 0x06 SW_Y */
-	fdActorScriptSetOrCompareZ,				   /* 0x07 SW_Z */
-	fdActorScriptSetOrCompareRadius,		   /* 0x08 SW_RADIUS */
-	fdActorScriptSetOrCompareScaleX,		   /* 0x09 SW_SCALE_X */
-	fdActorScriptSetOrCompareScaleY,		   /* 0x0a SW_SCALE_Y */
-	fdActorScriptSetOrCompareScaleY,		   /* 0x0b */
-	fdActorScriptSetOrCompareVelocityX,		   /* 0x0c SW_VELOCITY_X */
-	fdActorScriptSetOrCompareVelocityY,		   /* 0x0d SW_VELOCITY_Y */
-	fdActorScriptSetOrCompareVelocityZ,		   /* 0x0e SW_VELOCITY_Z */
-	fdActorScriptSetOrCompareSpeedLimit,	   /* 0x0f SW_SPEED */
-	fdActorScriptSetOrCompareAcceleration,	   /* 0x10 SW_ACCELERATION */
-	fdActorScriptSetOrCompareTargetX,		   /* 0x11 SW_TARGET_X */
-	fdActorScriptSetOrCompareTargetY,		   /* 0x12 SW_TARGET_Y */
-	fdActorScriptSetOrCompareTargetZ,		   /* 0x13 SW_TARGET_Z */
-	fdActorScriptSetOrCompareBounce,		   /* 0x14 SW_BOUNCE */
-	fdActorScriptSetOrCompareGravity,		   /* 0x15 SW_GRAVITY */
-	fdActorScriptSetOrCompareTerrainHeight,	   /* 0x16 SW_GROUND */
-	fdActorScriptSetOrCompareSceneWord,		   /* 0x17 */
-	fdActorScriptSetOrCompareSpr,			   /* 0x18 */
-	fdActorScriptSetOrCompareSprStorageKind,   /* 0x19 */
-	fdActorScriptSetOrCompareMotionFlags,	   /* 0x1a SW_MOTION */
-	fdActorScriptSetOrCompareArrivalAxis,	   /* 0x1b SW_ARRIVAL */
-	fdActorScriptSetOrCompareComparisonResult, /* 0x1c SW_RESULT */
-	fdActorScriptSetOrCompareSnapToTarget,	   /* 0x1d SW_SNAP */
-	fdActorScriptSetOrCompareCollisionFlags,   /* 0x1e SW_COLLISION */
-	fdActorScriptSetOrCompareSteeringFlags,	   /* 0x1f SW_STEERING */
-	fdActorScriptSetOrComparePaused,		   /* 0x20 SW_PAUSED */
-	fdActorScriptSetOrCompareRepeatCount,	   /* 0x21 SW_REPEAT */
-	fdActorScriptSetOrCompareWait,			   /* 0x22 SW_WAIT */
-	fdActorScriptSetOrCompareTimer,			   /* 0x23 SW_TIMER */
-	fdActorScriptSetOrCompareUserValue,		   /* 0x24 SW_USER_VALUE */
-	fdActorScriptSetOrCompareWatchedActor,	   /* 0x25 */
-	fdActorScriptSetOrCompareUpdateAddress,	   /* 0x26 SW_HOOK */
-	fdActorScriptSetOrCompareSceneCounter,	   /* 0x27 SW_SCENE_COUNTER */
-	fdActorScriptSetOrCompareSceneByte,		   /* 0x28 SW_SCENE_BYTE */
+	fdActorScriptSetOrCompareScriptAddress,		/* 0x00 SW_SCRIPT */
+	fdActorScriptSetOrCompareCursor,			/* 0x01 SW_CURSOR */
+	fdActorScriptSetOrCompareFacing,			/* 0x02 */
+	fdActorScriptSetOrCompareFacing,			/* 0x03 SW_FACING */
+	fdActorScriptSetOrCompareFacing,			/* 0x04 */
+	fdActorScriptSetOrCompareX,					/* 0x05 SW_X */
+	fdActorScriptSetOrCompareY,					/* 0x06 SW_Y */
+	fdActorScriptSetOrCompareZ,					/* 0x07 SW_Z */
+	fdActorScriptSetOrCompareRadius,			/* 0x08 SW_RADIUS */
+	fdActorScriptSetOrCompareScaleX,			/* 0x09 SW_SCALE_X */
+	fdActorScriptSetOrCompareScaleY,			/* 0x0a SW_SCALE_Y */
+	fdActorScriptSetOrCompareScaleY,			/* 0x0b */
+	fdActorScriptSetOrCompareVelocityX,			/* 0x0c SW_VELOCITY_X */
+	fdActorScriptSetOrCompareVelocityY,			/* 0x0d SW_VELOCITY_Y */
+	fdActorScriptSetOrCompareVelocityZ,			/* 0x0e SW_VELOCITY_Z */
+	fdActorScriptSetOrCompareSpeedLimit,		/* 0x0f SW_SPEED */
+	fdActorScriptSetOrCompareAcceleration,		/* 0x10 SW_ACCELERATION */
+	fdActorScriptSetOrCompareTargetX,			/* 0x11 SW_TARGET_X */
+	fdActorScriptSetOrCompareTargetY,			/* 0x12 SW_TARGET_Y */
+	fdActorScriptSetOrCompareTargetZ,			/* 0x13 SW_TARGET_Z */
+	fdActorScriptSetOrCompareBounce,			/* 0x14 SW_BOUNCE */
+	fdActorScriptSetOrCompareGravity,			/* 0x15 SW_GRAVITY */
+	fdActorScriptSetOrCompareTerrainHeight,		/* 0x16 SW_GROUND */
+	fdActorScriptSetOrCompareSceneWord,			/* 0x17 */
+	fdActorScriptSetOrCompareSprite,			/* 0x18 */
+	fdActorScriptSetOrCompareSpriteStorageKind, /* 0x19 */
+	fdActorScriptSetOrCompareMotionFlags,		/* 0x1a SW_MOTION */
+	fdActorScriptSetOrCompareArrivalAxis,		/* 0x1b SW_ARRIVAL */
+	fdActorScriptSetOrCompareComparisonResult,	/* 0x1c SW_RESULT */
+	fdActorScriptSetOrCompareSnapToTarget,		/* 0x1d SW_SNAP */
+	fdActorScriptSetOrCompareCollisionFlags,	/* 0x1e SW_COLLISION */
+	fdActorScriptSetOrCompareSteeringFlags,		/* 0x1f SW_STEERING */
+	fdActorScriptSetOrComparePaused,			/* 0x20 SW_PAUSED */
+	fdActorScriptSetOrCompareRepeatCount,		/* 0x21 SW_REPEAT */
+	fdActorScriptSetOrCompareWait,				/* 0x22 SW_WAIT */
+	fdActorScriptSetOrCompareTimer,				/* 0x23 SW_TIMER */
+	fdActorScriptSetOrCompareUserValue,			/* 0x24 SW_USER_VALUE */
+	fdActorScriptSetOrCompareWatchedActor,		/* 0x25 */
+	fdActorScriptSetOrCompareUpdateAddress,		/* 0x26 SW_HOOK */
+	fdActorScriptSetOrCompareSceneCounter,		/* 0x27 SW_SCENE_COUNTER */
+	fdActorScriptSetOrCompareSceneByte,			/* 0x28 SW_SCENE_BYTE */
 };

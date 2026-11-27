@@ -206,7 +206,7 @@ typedef enum BILIBIN_CAVE_METATILE_BEHAVIOR {
 /* A script command that draws the puddle it runs on without a shadow. */
 static Sint32 scBilibinCaveHideScriptedShadow(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -295,11 +295,11 @@ static void scBilibinCaveRevealHiddenPath(void)
 {
 	fdMapGridCopyMetatilesTo(111, 37, 97, 21, 1, 3);
 	{
-		Sint32 dstMetatileX = 32;
-		Sint32 dstMetatileZ = 24;
+		Sint32 destMetatileX = 32;
+		Sint32 destMetatileZ = 24;
 
 		fdMapGridCopyMetatileAttributes(
-			46, 38, 3, 2, dstMetatileX, dstMetatileZ);
+			46, 38, 3, 2, destMetatileX, destMetatileZ);
 	}
 }
 
@@ -309,11 +309,11 @@ static void scBilibinCaveHideRevealedPath(void)
 {
 	fdMapGridCopyMetatilesTo(95, 21, 97, 21, 1, 3);
 	{
-		Sint32 dstMetatileX = 32;
-		Sint32 dstMetatileZ = 25;
+		Sint32 destMetatileX = 32;
+		Sint32 destMetatileZ = 25;
 
 		fdMapGridCopyMetatileAttributes(
-			46, 38, 3, 1, dstMetatileX, dstMetatileZ);
+			46, 38, 3, 1, destMetatileX, destMetatileZ);
 	}
 }
 
@@ -341,9 +341,9 @@ static void scBilibinCaveDouseIceRoomFire(void)
 	/* The pillar is drawn under the party, and its metatile becomes a hop
 	   square. */
 	fdActorSetAnimationAndWait(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_FREEZE);
-	fdActorGet(ACTOR_FIRST_PUDDLE)->motionFlg = 0;
-	fdActorGet(ACTOR_FIRST_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 2);
+	fdActorGet(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
+	fdActorGet(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
 	fdMapGridCopyMetatileAttributes(FIRST_PILLAR_METATILE, 1, 1, 18, 14);
 	fdScriptEnd();
 }
@@ -353,9 +353,9 @@ static void scBilibinCaveDouseIceRoomFire(void)
 static inline void scBilibinCaveMeltFrostBack(Sint32 actorId)
 {
 	fdScriptStart();
-	fdActorSetSprColById(actorId, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(actorId, SPRITE_COLOR_NORMAL);
 	fdScriptWait(40);
-	sySndPlay(SE_HIDDEN_PASSAGE_OPEN);
+	sySoundPlay(SE_HIDDEN_PASSAGE_OPEN);
 	fdActorSetAnimationAndWait(actorId, PUDDLE_ANIMATION_MELT);
 	fdScriptEnd();
 }
@@ -398,7 +398,7 @@ static void scBilibinCaveUpdateThirdPuddleFromTorches(void)
 {
 	ACTOR *firstActor;
 	ACTOR *secondActor;
-	Sint32 dstMetatileX;
+	Sint32 destMetatileX;
 
 	firstActor = fdActorGet(ACTOR_THIRD_TORCH);
 	secondActor = fdActorGet(ACTOR_FOURTH_TORCH);
@@ -419,14 +419,14 @@ static void scBilibinCaveUpdateThirdPuddleFromTorches(void)
 		if(fdScriptGetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) == 0) {
 			fdScriptStart();
 			fdScriptWait(40);
-			sySndPlay(SE_HIDDEN_PASSAGE_OPEN);
-			dstMetatileX = 36;
+			sySoundPlay(SE_HIDDEN_PASSAGE_OPEN);
+			destMetatileX = 36;
 			fdActorSetAnimationAndWait(
 				ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_MELT);
 			fdMapGridCopyMetatileAttributes(
-				THIRD_PUDDLE_NORTH_HOP_METATILE, 1, 1, dstMetatileX, 22);
+				THIRD_PUDDLE_NORTH_HOP_METATILE, 1, 1, destMetatileX, 22);
 			fdMapGridCopyMetatileAttributes(
-				THIRD_PUDDLE_SOUTH_HOP_METATILE, 1, 1, dstMetatileX, 24);
+				THIRD_PUDDLE_SOUTH_HOP_METATILE, 1, 1, destMetatileX, 24);
 			fdScriptEnd();
 		}
 		gmFlagSet(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
@@ -434,14 +434,14 @@ static void scBilibinCaveUpdateThirdPuddleFromTorches(void)
 		if(fdScriptGetFlag(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
 			fdScriptStart();
 			fdScriptWait(40);
-			sySndPlay(SE_SHIMMER);
-			dstMetatileX = 36;
+			sySoundPlay(SE_SHIMMER);
+			destMetatileX = 36;
 			fdActorSetAnimationAndWait(
 				ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_FREEZE);
 			fdMapGridCopyMetatileAttributes(
-				THIRD_PUDDLE_NORTH_GROUND_METATILE, 1, 1, dstMetatileX, 22);
+				THIRD_PUDDLE_NORTH_GROUND_METATILE, 1, 1, destMetatileX, 22);
 			fdMapGridCopyMetatileAttributes(
-				THIRD_PUDDLE_SOUTH_GROUND_METATILE, 1, 1, dstMetatileX, 24);
+				THIRD_PUDDLE_SOUTH_GROUND_METATILE, 1, 1, destMetatileX, 24);
 			fdScriptEnd();
 		}
 		gmFlagClear(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED);
@@ -511,7 +511,7 @@ static void scBilibinCaveRestoreRapierRoom(void)
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
 		fdActorSetPos(ACTOR_RAPIER_ROOM_FIRE, 0, 0);
 	} else {
-		fdActorSetSprFlags(fdActorGet(ACTOR_RAPIER_ROOM_FIRE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_RAPIER_ROOM_FIRE), 0);
 	}
 }
 
@@ -519,13 +519,13 @@ static void scBilibinCaveRestoreRapierRoom(void)
 static inline void scBilibinCaveHideShadow(Sint32 actorId)
 {
 	ACTOR *actor = fdActorGet(actorId);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 }
 
 /* Sets up Bilibin Cave's SceneIdBilibinCaveIce. */
 static void scBilibinCaveRestoreIceRoom(void)
 {
-	Sint32 dstMetatileX;
+	Sint32 destMetatileX;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -571,31 +571,32 @@ static void scBilibinCaveRestoreIceRoom(void)
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
 		fdActorSetPos(ACTOR_ICE_ROOM_FIRE, 0, 0);
 		fdActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
-		fdActorGet(ACTOR_FIRST_PUDDLE)->motionFlg = 0;
+		fdActorGet(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
 		fdActorGet(ACTOR_FIRST_PUDDLE)->y.fixed = -toFIXED(4);
-		fdActorGet(ACTOR_FIRST_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 2);
+		fdActorGet(ACTOR_FIRST_PUDDLE)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
 		fdMapGridCopyMetatileAttributes(FIRST_PILLAR_METATILE, 1, 1, 18, 14);
 	} else {
 		fdActorSetAnimation(ACTOR_ICE_ROOM_FIRE, FIRE_ANIMATION_BURNING);
-		fdActorSetSprFlags(fdActorGet(ACTOR_ICE_ROOM_FIRE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_ICE_ROOM_FIRE), 0);
 		fdActorSetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 	}
 	fdActorSetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED) != 0) {
-		dstMetatileX = 36;
+		destMetatileX = 36;
 		fdActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 		fdMapGridCopyMetatileAttributes(
-			THIRD_PUDDLE_NORTH_HOP_METATILE, 1, 1, dstMetatileX, 22);
+			THIRD_PUDDLE_NORTH_HOP_METATILE, 1, 1, destMetatileX, 22);
 		fdMapGridCopyMetatileAttributes(
-			THIRD_PUDDLE_SOUTH_HOP_METATILE, 1, 1, dstMetatileX, 24);
+			THIRD_PUDDLE_SOUTH_HOP_METATILE, 1, 1, destMetatileX, 24);
 	} else {
-		dstMetatileX = 36;
+		destMetatileX = 36;
 		fdActorSetAnimation(ACTOR_THIRD_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 		fdMapGridCopyMetatileAttributes(
-			THIRD_PUDDLE_NORTH_GROUND_METATILE, 1, 1, dstMetatileX, 22);
+			THIRD_PUDDLE_NORTH_GROUND_METATILE, 1, 1, destMetatileX, 22);
 		fdMapGridCopyMetatileAttributes(
-			THIRD_PUDDLE_SOUTH_GROUND_METATILE, 1, 1, dstMetatileX, 24);
+			THIRD_PUDDLE_SOUTH_GROUND_METATILE, 1, 1, destMetatileX, 24);
 	}
 	if(gmFlagGet(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR) != 0) {
 		fdActorSetPos(ACTOR_THIRD_TORCH, 570, 376);
@@ -614,12 +615,12 @@ static void scBilibinCaveRestoreIceRoom(void)
 static void scBilibinCavePushTorch(void)
 {
 	ACTOR	 *leader;
-	ACTOR	 *tgt;
+	ACTOR	 *target;
 	ACTOR	 *blocker;
 	Sint32	  heading;
 	Sint32	  nextMetatileX;
 	Sint32	  nextMetatileZ;
-	FIELD_POS dst;
+	FIELD_POS dest;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	heading = FACING_INDEX(leader->facing);
@@ -630,46 +631,46 @@ static void scBilibinCavePushTorch(void)
 	nextMetatileZ = (leader->z.part[0].integer +
 						(Sint16)PushedActorDirectionSteps[heading]) >>
 		4;
-	tgt = scActorFindAtMetatile(nextMetatileX, nextMetatileZ);
-	if(tgt == NULL)
+	target = scActorFindAtMetatile(nextMetatileX, nextMetatileZ);
+	if(target == NULL)
 		return;
 
-	nextMetatileX = (tgt->x.part[0].integer +
+	nextMetatileX = (target->x.part[0].integer +
 						(FIXEDtoINT(PushedActorDirectionSteps[heading]))) >>
 		4;
-	nextMetatileZ =
-		(tgt->z.part[0].integer + (Sint16)PushedActorDirectionSteps[heading]) >>
+	nextMetatileZ = (target->z.part[0].integer +
+						(Sint16)PushedActorDirectionSteps[heading]) >>
 		4;
 	blocker = scActorFindAtMetatile(nextMetatileX, nextMetatileZ);
 	if(blocker != NULL)
 		return;
 
-	tgt->layer = 2;
+	target->layer = 2;
 
-	fdActorStepFrom(&dst, tgt, PushedActorDirectionSteps[heading]);
+	fdActorStepFrom(&dest, target, PushedActorDirectionSteps[heading]);
 
-	if(syFieldActorCheckMovementCollision(tgt, &dst) > 0)
+	if(syFieldActorCheckMovementCollision(target, &dest) > 0)
 		return;
 
 	fdActorSelectAnimation(leader, ANIM_PUSH);
 	sySynch(15);
-	sySndPlay(SE_PUSH);
+	sySoundPlay(SE_PUSH);
 
-	tgt->speedLimit = toFIXED(1) / 5;
-	tgt->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(tgt, dst.x, dst.y, dst.z);
+	target->speedLimit = toFIXED(1) / 5;
+	target->acceleration = toFIXED(1) / 5;
+	syFieldActorSetMoveTargetFX(target, dest.x, dest.y, dest.z);
 
 	leader->speedLimit = toFIXED(1) / 5;
 	leader->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
+	syFieldActorSetMoveTargetFX(leader, dest.x, dest.y, dest.z);
 
-	fdActorWaitForMove(tgt);
+	fdActorWaitForMove(target);
 
-	tgt->x.fixed = dst.x;
-	tgt->z.fixed = dst.z;
+	target->x.fixed = dest.x;
+	target->z.fixed = dest.z;
 	/* blocker is null here: the torch comes to rest. */
-	tgt->velX = (Sint32)blocker;
-	tgt->velZ = (Sint32)blocker;
+	target->velocityX = (Sint32)blocker;
+	target->velocityZ = (Sint32)blocker;
 
 	fdActorSelectAnimation(leader, ANIM_STAND);
 	scBilibinCaveUpdateThirdPuddleFromTorches();

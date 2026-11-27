@@ -7,7 +7,7 @@
 typedef struct ACTOR_CAMERA_TILE {
 	Uint32 block : 12; /* the number of the metatile's tiles */
 	Uint32 layer : 2;  /* if not 0, the layer of an actor standing on it, + 1 */
-	Uint32 pri : 2;	   /* if not 0, the priority of an actor standing on it */
+	Uint32 priority : 2; /* if not 0, the priority of an actor standing on it */
 	/* MAP_GRID_METATILE's metatile behavior and shape; not read here. */
 	Uint32 behaviorAndCollision : 16;
 } ACTOR_CAMERA_TILE;
@@ -24,31 +24,31 @@ typedef struct ACTOR_CAMERA_POINT {
    target it looks from and at, or the points that stand in for them. */
 typedef struct ACTOR_CAMERA_FIXED {
 	ACTOR_CAMERA_POINT	eye;
-	ACTOR_CAMERA_POINT	tgt;
+	ACTOR_CAMERA_POINT	target;
 	ACTOR_CAMERA_POINT *followEye; /* when set, used as the eye */
 	ACTOR_CAMERA_POINT *followPos; /* when set, used as the target */
 } ACTOR_CAMERA_FIXED;
 
 /* Each tick, with the scrolling camera: places every actor's sprite on the
    screen. */
-void fdActorSystemPlaceSprs(void)
+void fdActorSystemPlaceSprites(void)
 {
 	/* LEFTOVER(frame): three unused points the ROM's frame reserves and never
 	 * touches. */
 	UNUSED ACTOR_CAMERA_POINT unusedPoints[3];
-	Sint32					  actorIdx;
+	Sint32					  actorIndex;
 	MAP_GRID_SCROLL_STATE	 *grid;
 	Sint32					  viewX;
 	Sint32					  viewZ;
 	ACTOR_SYSTEM_STATE		 *system;
 	ACTOR					 *actor;
-	SPR						 *spr;
+	SPR						 *sprite;
 	Uint32					  kind;
 	FIXED					  dx;
 	FIXED					  dz;
 	FIXED					  screenTop;
 	ACTOR_CAMERA_TILE		 *tile;
-	Uint32					  pri;
+	Uint32					  priority;
 	SPR_SCALE				  scale;
 	SPR_PLACEMENT			  drawPos;
 	Uint32					  layerPlusOne;
@@ -64,13 +64,13 @@ void fdActorSystemPlaceSprs(void)
 		RenderDecodePictureCodeSize);
 	system->used = 0;
 	actor = ActorsWork;
-	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, actor++) {
+	for(actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, actor++) {
 		if(actor->script == 0)
 			continue;
 		/* An actor at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
 		   given up. */
 		if(actor->x.fixed != 0 || actor->z.fixed != 0) {
-			kind = actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK;
+			kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
 			if(kind == ACTOR_SPRITE_NONE)
 				continue;
 			/* This camera places single sprites only; groups are left. */
@@ -78,8 +78,8 @@ void fdActorSystemPlaceSprs(void)
 				continue;
 			/* While a menu has sprite projection suspended, only held actors
 			   are drawn. */
-			if(system->suspended != 0 && actor->retainSprCache == 0) {
-				SPR *frozen = actor->spr;
+			if(system->suspended != 0 && actor->retainSpriteCache == 0) {
+				SPR *frozen = actor->sprite;
 
 				syVRAMCacheReleaseVRAM(frozen->slot);
 				frozen->dirty = kind;
@@ -88,7 +88,7 @@ void fdActorSystemPlaceSprs(void)
 			dx = actor->x.fixed - viewX;
 			dz = actor->z.fixed - viewZ;
 			screenTop = dz - actor->y.fixed;
-			spr = actor->spr;
+			sprite = actor->sprite;
 			/* From 32 pixels left of the screen to 32 past its 240, and from 32
 			   pixels above it to 224. */
 			if(dx > -toFIXED(32) && dx < toFIXED(272) &&
@@ -98,18 +98,18 @@ void fdActorSystemPlaceSprs(void)
 				tile = &((ACTOR_CAMERA_TILE *)grid->layers[actor->layer]
 						.metatiles)[(FIELD_METATILE(actor->x.fixed)) +
 					FIELD_METATILE(actor->z.fixed) * MAPGRID_SIZE];
-				if(actor->priFlg & ACTOR_PRIORITY_AUTOMATIC) {
-					pri = tile->pri;
-					if(pri != 0) {
-						spr->image.pri = pri;
-						spr->shadow.pri = pri;
+				if(actor->priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
+					priority = tile->priority;
+					if(priority != 0) {
+						sprite->image.priority = priority;
+						sprite->shadow.priority = priority;
 					}
 				}
 				layerPlusOne = tile->layer;
 				if(layerPlusOne != 0)
 					actor->layer = layerPlusOne - 1;
-				scale.x = syMulFX(actor->scaleX, spr->scale);
-				scale.y = syMulFX(actor->scaleY, spr->scale);
+				scale.x = syMulFX(actor->scaleX, sprite->scale);
+				scale.y = syMulFX(actor->scaleY, sprite->scale);
 				drawPos.x = dx;
 				drawPos.height = actor->y.fixed;
 				drawPos.y = dz;
@@ -119,35 +119,35 @@ void fdActorSystemPlaceSprs(void)
 				   so the sprite and shadow stay where they are on screen; only
 				   the draw slot changes, which fdRenderApplyProjectedPlacement
 				   takes from the point's y before its height is taken off. */
-				if(actor->priFlg & ACTOR_PRIORITY_UNDERFOOT) {
+				if(actor->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
 					drawPos.height += -toFIXED(320);
 					drawPos.y += -toFIXED(320);
 					drawPos.groundHeight += -toFIXED(320);
 				}
-				if(actor->priFlg & ACTOR_PRIORITY_OVERHEAD) {
+				if(actor->priorityFlags & ACTOR_PRIORITY_OVERHEAD) {
 					drawPos.height += toFIXED(320);
 					drawPos.y += toFIXED(320);
 					drawPos.groundHeight += toFIXED(320);
 				}
 				fdRenderApplyProjectedPlacement(
-					spr, &drawPos, &scale, actor->facing);
+					sprite, &drawPos, &scale, actor->facing);
 				continue;
 			}
 			/* Off screen: the sprite's VRAM goes back to the cache, and dirty
 			   makes it redraw when it comes back. */
-			if(actor->retainSprCache == 0) {
-				if(!spr->retainCacheEntry) {
-					syVRAMCacheReleaseVRAM(spr->slot);
-					spr->dirty = 1;
+			if(actor->retainSpriteCache == 0) {
+				if(!sprite->retainCacheEntry) {
+					syVRAMCacheReleaseVRAM(sprite->slot);
+					sprite->dirty = 1;
 				}
 			}
 		} else {
-			kind = actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK;
+			kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
 			if(kind == ACTOR_SPRITE_ONE) {
-				spr = actor->spr;
-				if(actor->retainSprCache == 0 && !spr->retainCacheEntry) {
-					syVRAMCacheReleaseVRAM(spr->slot);
-					spr->dirty = kind;
+				sprite = actor->sprite;
+				if(actor->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
+					syVRAMCacheReleaseVRAM(sprite->slot);
+					sprite->dirty = kind;
 				}
 			}
 		}
@@ -163,20 +163,20 @@ UNUSED Sint32 fdActorCameraReturnTrue(void)
 
 /* Each tick, with the fixed camera: places every actor's sprite, from the 64th
    actor down, facing them by the angle from the eye to the target. */
-void fdActorSystemProjectSprs(void)
+void fdActorSystemProjectSprites(void)
 {
 	Sint32				i;
 	ACTOR_CAMERA_FIXED *camera;
 	ACTOR_SYSTEM_STATE *system;
 	ACTOR_CAMERA_POINT *eye;
-	ACTOR_CAMERA_POINT *tgt;
+	ACTOR_CAMERA_POINT *target;
 	ACTOR			   *actor;
-	Sint32				ang;
+	Sint32				angle;
 	Sint32				part;
 	Sint32				kind;
 	Sint32			   *pos;
-	void			  **sprs;
-	void			   *spr;
+	void			  **sprites;
+	void			   *sprite;
 	FIXED				groupScale[2];
 	FIXED				scale[2];
 	/* LEFTOVER(frame): two unused points the ROM's frame reserves and never
@@ -188,26 +188,26 @@ void fdActorSystemProjectSprs(void)
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_TICK_SCRATCH, fdRenderDecodePicture,
 		RenderDecodePictureCodeSize);
 	eye = &camera->eye;
-	tgt = &camera->tgt;
+	target = &camera->target;
 	if(camera->followEye != NULL)
 		eye = camera->followEye;
 	if(camera->followPos != NULL)
-		tgt = camera->followPos;
+		target = camera->followPos;
 	/* The camera's heading over the ground, from the eye's offset from the
 	   target in whole pixels; each sprite's facing is drawn relative to it, so
 	   a sprite keeps its world heading as the camera turns. */
-	ang = (Sint16)syAtan(
-		FIXEDtoINT(eye->x - tgt->x), FIXEDtoINT(eye->z - tgt->z));
+	angle = (Sint16)syAtan(
+		FIXEDtoINT(eye->x - target->x), FIXEDtoINT(eye->z - target->z));
 	system->used = 0;
 	syInitMatrix();
 	/* Under the fixed view matrix every sprite also faces an eighth of a turn
 	   further back. */
 	if(gmFlagGetStub(FLAG_CHOOSING_COMMANDS)) {
-		ang += -(DEGtoANG(45));
+		angle += -(DEGtoANG(45));
 		syMultiMatrix(CameraFixedViewMatrix);
-		syLookAt((Sint32 *)eye, (Sint32 *)tgt);
+		syLookAt((Sint32 *)eye, (Sint32 *)target);
 	} else {
-		syLookAtLoad((Sint32 *)eye, (Sint32 *)tgt);
+		syLookAtLoad((Sint32 *)eye, (Sint32 *)target);
 	}
 	/* The actors are placed from the last down. */
 	actor = ActorsWork;
@@ -218,19 +218,19 @@ void fdActorSystemProjectSprs(void)
 		for(i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
 			if(actor->script == 0)
 				continue;
-			kind = actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK;
+			kind = actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK;
 			switch(kind) {
 			case ACTOR_SPRITE_ONE:
 				pos = &actor->x.fixed;
 				scale[0] = actor->scaleX;
 				scale[1] = actor->scaleY;
-				spr = actor->spr;
+				sprite = actor->sprite;
 				if(gmFlagGetStub(FLAG_CHOOSING_COMMANDS)) {
 					scale[0] = fixedScale;
 					scale[1] = fixedScale;
 				}
-				fdRenderPlaceProjectedSpr(
-					spr, pos, scale, actor->facing + ang, actor->layer);
+				fdRenderPlaceProjectedSprite(
+					sprite, pos, scale, actor->facing + angle, actor->layer);
 				break;
 			case ACTOR_SPRITE_GROUP:
 				groupScale[0] = actor->scaleX;
@@ -241,12 +241,12 @@ void fdActorSystemProjectSprs(void)
 				}
 				/* A group's sprite field points to its four sprite pointers;
 				   empty ones are null. */
-				sprs = (void **)actor->spr;
+				sprites = (void **)actor->sprite;
 				for(part = 0; part < 4; part++) {
-					spr = *sprs++;
-					if(spr != NULL)
-						fdRenderPlaceProjectedSpr(spr, &actor->x.fixed,
-							groupScale, actor->facing + ang, actor->layer);
+					sprite = *sprites++;
+					if(sprite != NULL)
+						fdRenderPlaceProjectedSprite(sprite, &actor->x.fixed,
+							groupScale, actor->facing + angle, actor->layer);
 				}
 				break;
 			case ACTOR_SPRITE_NONE:

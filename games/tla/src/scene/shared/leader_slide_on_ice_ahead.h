@@ -12,7 +12,7 @@ void fdLeaderSlideOnIceAhead(void)
 	Sint32	nextBehavior;
 	Uint8  *layer;
 	ACTOR  *other;
-	Uint8  *flg;
+	Uint8  *flags;
 	Sint32	i;
 	FIXED	startX;
 	FIXED	startZ;
@@ -23,10 +23,10 @@ void fdLeaderSlideOnIceAhead(void)
 		fdLeaderStopIfPending();
 		actor->speedLimit = toFIXED(1);
 		actor->acceleration = toFIXED(1) / 2;
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
-		actor->velX = 0;
-		actor->velZ = 0;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
+		actor->velocityX = 0;
+		actor->velocityZ = 0;
 		probe.x = startX = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		probe.y = actor->y.fixed;
 		probe.z = startZ = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
@@ -42,8 +42,8 @@ void fdLeaderSlideOnIceAhead(void)
 			fdMapGetTerrainHeight(*layer, probe.x, probe.z) - actor->y.fixed >
 				toFIXED(8)) {
 			actor->facing = heading;
-			actor->velX = 0;
-			actor->velZ = 0;
+			actor->velocityX = 0;
+			actor->velocityZ = 0;
 			actor->x.fixed = startX;
 			actor->z.fixed = startZ;
 			goto done;
@@ -52,7 +52,7 @@ void fdLeaderSlideOnIceAhead(void)
 		probe.z = z;
 		actor->speedLimit = toFIXED(2);
 		actor->acceleration = toFIXED(1) / 10;
-		actor->tmr = 0;
+		actor->timer = 0;
 		fdActorSelectAnimation(actor, ANIM_WALK);
 		fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL * 3);
 		actor->update = fdActorSteerByPad;
@@ -71,10 +71,10 @@ void fdLeaderSlideOnIceAhead(void)
 			{
 				Sint32 radius = actor->radius - 2;
 				other = RamHeapSlots->actors;
-				flg = &other->collisionFlg;
+				flags = &other->collisionFlags;
 				for(i = 0; i < ACTOR_COUNT;
-					i++, flg += sizeof(ACTOR), other++) {
-					if(other->script != NULL && (*flg & ACTOR_SOLID) &&
+					i++, flags += sizeof(ACTOR), other++) {
+					if(other->script != NULL && (*flags & ACTOR_SOLID) &&
 						other != actor) {
 						if(scScriptCheckSpheresOverlap(&other->x.fixed, radius,
 							   &probe.x, other->radius - 2) >= 0) {
@@ -105,7 +105,7 @@ blocked:
 	syWait(10);
 done:
 	actor->update = NULL;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor->acceleration = toFIXED(1) / 4;
 	fdActorSelectAnimation(actor, ANIM_STAND);
 }

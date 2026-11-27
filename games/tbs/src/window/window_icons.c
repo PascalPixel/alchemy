@@ -20,13 +20,13 @@ Sint32 mnIconCountPsynergyIcons(void)
 
 /* Builds a command's icon, its picture over a tick (ICON_FRAME), and loads it
    into a sprite tile slot: *slot, or a free one when reuse is 0. */
-void mnIconBuildCommandIconTiles(
-	Sint32 overlayIcon, Sint32 frm, Sint32 *slot, Sint32 *tileOut, Sint32 reuse)
+void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 frame, Sint32 *slot,
+	Sint32 *tileOut, Sint32 reuse)
 {
 	ICON_TRANSFER *state;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	state->encoded = IconBasePointerTable[frm];
+	state = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	state->encoded = IconBasePointerTable[frame];
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 0);
@@ -59,7 +59,7 @@ void mnIconBuildItemIconTiles(Uint32 icon, Sint32 withBase, Sint32 *cacheSlot,
 	Sint32		   overlay;
 
 	overlay = 0;
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	state = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 
 	if(icon >= mnIconCountItemIcons())
 		icon = 0;
@@ -94,10 +94,10 @@ Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
 	Bool			 overlay;
 	ITEM_DEFINITION *item;
 	ICON_TRANSFER	*state;
-	Sint32			 cnt;
+	Sint32			 count;
 
 	overlay = FALSE;
-	cnt = 0;
+	count = 0;
 	item = gmItemGetDirectStub(code & INVENTORY_ITEM_ID_MASK);
 	state = GlyphState;
 	if(state == NULL)
@@ -126,34 +126,34 @@ Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
 		mnIconDecode(state, 1);
 	}
 	if((layers & ICON_CURSED) && (code & INVENTORY_EQUIPPED) &&
-		(item->flg & ITEM_CURSED) && (item->flg & ITEM_CANNOT_UNEQUIP)) {
+		(item->flags & ITEM_CURSED) && (item->flags & ITEM_CANNOT_UNEQUIP)) {
 		state->encoded = IconMarkPointers[ICON_MARK_CURSED];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 1);
 	}
 	if(layers & ICON_COUNT_ABOVE_ONE) {
-		cnt = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
-		cnt++;
-		if(cnt <= 1)
-			cnt = 0;
+		count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
+		count++;
+		if(count <= 1)
+			count = 0;
 	}
 	if(layers & ICON_COUNT) {
-		cnt = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
-		cnt++;
+		count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
+		count++;
 	}
 	/* Counts up to a full stack show: the ones digit, and a tens digit from the
 	   second set (1 to 3) over it. */
-	if(cnt != 0 && cnt <= INVENTORY_STACK_MAX) {
-		Sint32 ones = cnt % 10;
+	if(count != 0 && count <= INVENTORY_STACK_MAX) {
+		Sint32 ones = count % 10;
 
 		state->encoded = IconDigitPointers[ones];
 		state->width = 2;
 		state->height = 2;
 		mnIconDecode(state, 1);
-		if(cnt / 10 != 0) {
+		if(count / 10 != 0) {
 			state->encoded =
-				IconDigitPointers[ICON_DIGIT_TENS_FIRST - 1 + cnt / 10];
+				IconDigitPointers[ICON_DIGIT_TENS_FIRST - 1 + count / 10];
 			state->width = 2;
 			state->height = 2;
 			mnIconDecode(state, 1);
@@ -169,21 +169,22 @@ Sint32 mnItemIconLoadLayersIntoSlot(
 {
 	ICON_TRANSFER *state;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	state = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	mnItemIconCompose(inventoryCode, layers);
 	syVRAMCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return 1;
 }
 
-/* Builds one of the other icons (IconMiscIconPointers) and loads it into
-   sprite tile slot cacheSlot. */
-Sint32 mnIconBuildMiscIconTiles(Sint32 icon, Sint32 unused, Sint32 cacheSlot)
+/* Builds one of the other icons (IconMiscellaneousIconPointers) and loads it
+   into sprite tile slot cacheSlot. */
+Sint32 mnIconBuildMiscellaneousIconTiles(
+	Sint32 icon, Sint32 unused, Sint32 cacheSlot)
 {
 	ICON_TRANSFER *state;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
-	mnIconDrawMisc(icon);
+	state = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	mnIconDrawMiscellaneous(icon);
 	syVRAMCacheLoad(cacheSlot, 2 * 2 * TILE_SIZE_4BPP, state->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	return 1;
@@ -251,7 +252,7 @@ void mnIconBuildAbilityIconTiles(Uint32 icon, Sint32 withBase,
 	ICON_TRANSFER *state;
 	Sint32		   overlay;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	state = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	overlay = 0;
 
 	if(icon >= mnIconCountPsynergyIcons())
@@ -279,11 +280,11 @@ void mnIconBuildAbilityIconTiles(Uint32 icon, Sint32 withBase,
 }
 
 /* Draws one of the other icons into the glyph transfer buffer. */
-void mnIconDrawMisc(Uint32 iconIdx)
+void mnIconDrawMiscellaneous(Uint32 iconIndex)
 {
 	ICON_TRANSFER *glyph = GlyphState;
 
-	glyph->encoded = IconMiscIconPointers[iconIdx];
+	glyph->encoded = IconMiscellaneousIconPointers[iconIndex];
 	glyph->width = 2;
 	glyph->height = 2;
 	mnIconDecode(glyph, 0);
@@ -298,19 +299,19 @@ void mnIconLoadWithPalette(Uint32 icon, Sint32 unused, Sint32 *slot,
 	ICON_TRANSFER *state;
 	Uint16		  *offsets;
 	Uint8		  *encodedEntry;
-	Uint32		   idx;
+	Uint32		   index;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+	state = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	offsets = syResourceGetTableEntry(RESOURCE_ICONS);
 	/* A number below PORTRAIT_SPRITE_MAP_FIRST is the entry itself; the other
 	   speakers' portraits, numbered from it (mnPortraitGetForSpeaker), are the
 	   entries from PORTRAIT_JUPITER_DJINNI on. Each entry's colours come before
 	   its encoded tiles. */
 	if(icon < PORTRAIT_SPRITE_MAP_FIRST)
-		idx = icon;
+		index = icon;
 	else
-		idx = icon - PORTRAIT_SPRITE_MAP_FIRST + PORTRAIT_JUPITER_DJINNI;
-	encodedEntry = (Uint8 *)offsets + offsets[idx];
+		index = icon - PORTRAIT_SPRITE_MAP_FIRST + PORTRAIT_JUPITER_DJINNI;
+	encodedEntry = (Uint8 *)offsets + offsets[index];
 	state->encoded = encodedEntry + PALETTE_COLORS * sizeof(Uint16);
 	state->width = 4;
 	state->height = 4;

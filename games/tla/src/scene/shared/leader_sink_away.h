@@ -9,15 +9,15 @@ void scLeaderSinkAway(Sint32 entrance)
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_SPARKLING_PASSAGE);
+	fdScriptPlaySound(SE_SPARKLING_PASSAGE);
 	leader->update = (OBJECT_UPDATE)scActorEmitMist;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	leader->speedLimit = toFIXED(1) / 5;
 	fdActorSetAnimation(*owner, 2);
 	fdActorSetDestinationOffset(*owner, 0, -8);
 	scFieldActorWaitForMoveById(*owner);
-	scFieldActorSetSprCol(fdActorGet(*owner), SPRITE_COLOR_BLUE_TINT);
-	fdActorSetSprFlags(fdActorGet(*owner), 0);
+	scFieldActorSetSpriteColor(fdActorGet(*owner), SPRITE_COLOR_BLUE_TINT);
+	fdActorSetSpriteFlags(fdActorGet(*owner), 0);
 	leader->update = 0;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();

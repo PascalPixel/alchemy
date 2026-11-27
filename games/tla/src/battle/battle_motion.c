@@ -8,26 +8,26 @@
 #define fdActorSelectAnimationStub \
 	((void (*)(MOTION_OBJECT *, Sint32))fdActorSelectAnimationStub)
 
-/* Sends unitId back to its spot, landing exactly there (snapToTgt), and turns
-   it to face the centre at once. */
+/* Sends unitId back to its spot, landing exactly there (snapToTarget), and
+   turns it to face the centre at once. */
 void btMotionReturnToSpot(Sint32 unitId)
 {
 	BATTLE_OBJECT *slot;
 	MOTION_OBJECT *object;
 
 	slot = btObjectGet(unitId);
-	object = slot->obj;
+	object = slot->object;
 	object->acceleration = toFIXED(2);
 	object->speedLimit = toFIXED(8);
-	object->velY = 0;
+	object->velocityY = 0;
 	object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 	object->verticalMotionPhase = 0;
 	object->autoFaceMotion = 0;
-	object->snapToTgt = 1;
+	object->snapToTarget = 1;
 	fdActorStartIdleStub(object);
 	fdActorSetMoveTargetStub(object, slot->anchorX, 0, slot->anchorZ);
 	/* As btObjectMake turns a new actor. */
-	object->ang =
+	object->angle =
 		(Sint16)(syAtan(slot->anchorZ / 8, slot->anchorX) - DEGtoANG(180));
 }
 
@@ -39,10 +39,10 @@ void btMotionSetupEscapeObject(Sint32 unitId)
 	MOTION_OBJECT *object;
 
 	slot = btObjectGet(unitId);
-	object = slot->obj;
+	object = slot->object;
 	object->acceleration = toFIXED(2);
 	object->speedLimit = toFIXED(8);
-	object->velY = toFIXED(5);
+	object->velocityY = toFIXED(5);
 	object->verticalMotionStrength = toFIXED(47) / 100;
 	object->verticalMotionPhase = 0;
 	object->autoFaceMotion = 0;
@@ -65,10 +65,10 @@ void btMotionLeapToward(ACTOR **startSlot, ACTOR **endSlot, Sint32 progress)
 	REG_BLDCNT = 0;
 	start->acceleration = toFIXED(2);
 	start->speedLimit = toFIXED(8);
-	start->velY = toFIXED(4);
+	start->velocityY = toFIXED(4);
 	start->gravity = BATTLE_UNIT_GRAVITY;
 	start->bounce = 0;
-	start->steeringFlg = 1;
+	start->steeringFlags = 1;
 	fdActorSetMoveTargetStub(start, x, 0, z);
 	fdActorSelectAnimationStub(start, POSE_LEAP);
 }
@@ -76,7 +76,7 @@ void btMotionLeapToward(ACTOR **startSlot, ACTOR **endSlot, Sint32 progress)
 /* Unused: sends a unit back to its spot. */
 void btMotionReturnObjectToSpot(BATTLE_OBJECT *slot)
 {
-	MOTION_OBJECT *object = slot->obj;
+	MOTION_OBJECT *object = slot->object;
 
 	object->acceleration = toFIXED(2);
 	object->speedLimit = toFIXED(8);
@@ -94,10 +94,10 @@ void btMotionHopBack(Sint32 unitId)
 	MOTION_OBJECT *object;
 
 	slot = btObjectGet(unitId);
-	object = slot->obj;
+	object = slot->object;
 	object->acceleration = toFIXED(1);
 	object->speedLimit = toFIXED(4);
-	object->velY = toFIXED(3);
+	object->velocityY = toFIXED(3);
 	object->verticalMotionStrength = toFIXED(3) / 5;
 	object->verticalMotionPhase = 0;
 	object->autoFaceMotion = 0;
@@ -113,10 +113,10 @@ void btMotionLeapBack(Sint32 unitId)
 	MOTION_OBJECT *object;
 
 	slot = btObjectGet(unitId);
-	object = slot->obj;
+	object = slot->object;
 	object->acceleration = toFIXED(1);
 	object->speedLimit = toFIXED(4);
-	object->velY = toFIXED(4);
+	object->velocityY = toFIXED(4);
 	object->verticalMotionStrength = toFIXED(3) / 5;
 	object->verticalMotionPhase = 0;
 	object->autoFaceMotion = 0;
@@ -144,7 +144,7 @@ void btMotionApplyKnockback(Sint32 id, Sint32 variant)
 	Sint32		   enemyId;
 
 	slot = btObjectGet(id);
-	object = slot->obj;
+	object = slot->object;
 	enemyId = syUnitGet(id)->enemyId;
 	if(enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON_A &&
 		enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H) {
@@ -153,7 +153,7 @@ void btMotionApplyKnockback(Sint32 id, Sint32 variant)
 		/* A unit already in the air keeps its hop, except from KNOCKBACK_SKID
 		   on. */
 		if(object->y == 0 || variant > 4)
-			object->velY = BattleKnockbackVelocityY[variant];
+			object->velocityY = BattleKnockbackVelocityY[variant];
 		fdActorStartIdleStub(object);
 		scale = slot->anchorX;
 		x = (scale * BattleKnockbackDistancePercent[variant]) / 100;
@@ -168,17 +168,17 @@ void btMotionApplyKnockback(Sint32 id, Sint32 variant)
 /* Sends one unit leaping three quarters of the way to another, arriving in
    travelTicks ticks. */
 void btMotionApproachTarget(
-	Sint32 actorId, Sint32 tgtId, Sint32 travelTicks, Sint32 initVelY)
+	Sint32 actorId, Sint32 targetId, Sint32 travelTicks, Sint32 initVelocityY)
 {
 	BATTLE_OBJECT *actorSlot = btObjectGet(actorId);
-	BATTLE_OBJECT *tgtSlot = btObjectGet(tgtId);
-	MOTION_OBJECT *object = actorSlot->obj;
-	MOTION_OBJECT *tgt = tgtSlot->obj;
+	BATTLE_OBJECT *targetSlot = btObjectGet(targetId);
+	MOTION_OBJECT *object = actorSlot->object;
+	MOTION_OBJECT *target = targetSlot->object;
 	Sint32		   percent = 75;
-	Sint32		   dx = tgt->x - object->x;
+	Sint32		   dx = target->x - object->x;
 	Sint32		   startX = object->x;
 	Sint32		   stepX = percent * dx / 100;
-	Sint32		   dz = tgt->z - object->z;
+	Sint32		   dz = target->z - object->z;
 	Sint32		   startZ = object->z;
 	Sint32		   stepZ = percent * dz / 100;
 	Sint32		   x = startX + stepX;
@@ -187,26 +187,26 @@ void btMotionApproachTarget(
 	Sint32 coarseX = stepX >> 8;
 	Sint32 coarseZ = stepZ >> 8;
 	Sint32 sum = coarseX * coarseX + coarseZ * coarseZ;
-	Sint32 dist;
+	Sint32 distance;
 
 	if(sum != 0)
-		dist = sySquartIWRAM(sum) << 8;
+		distance = sySquartIWRAM(sum) << 8;
 	else
-		dist = 0;
-	dist = dist / travelTicks;
-	object->acceleration = dist;
-	object->speedLimit = dist;
-	object->snapToTgt = 1;
+		distance = 0;
+	distance = distance / travelTicks;
+	object->acceleration = distance;
+	object->speedLimit = distance;
+	object->snapToTarget = 1;
 
 	/* DEAD: the store under ACTOR_FLOATS is overwritten at once; the ROM keeps
 	   the test and its store. */
-	if(object->motionFlg & ACTOR_FLOATS)
-		object->velY = initVelY;
-	object->velY = initVelY;
+	if(object->motionFlags & ACTOR_FLOATS)
+		object->velocityY = initVelocityY;
+	object->velocityY = initVelocityY;
 	object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
 	object->autoFaceMotion = 1;
 	fdActorStartIdleStub(object);
-	if(dist != 0)
+	if(distance != 0)
 		fdActorSetMoveTargetStub(object, x, 0, z);
 	fdActorSelectAnimationStub(object, POSE_LEAP);
 }
@@ -216,7 +216,7 @@ void btMotionRestartLeap(Sint32 id)
 {
 	MOTION_OBJECT *object;
 
-	object = btObjectGet(id)->obj;
+	object = btObjectGet(id)->object;
 	fdActorStartIdleStub(object);
 	fdActorSelectAnimationStub(object, POSE_LEAP);
 }
@@ -249,23 +249,23 @@ void btMotionApplyPairMidpoint(Sint32 firstId, Sint32 secondId)
 		Sint32 z;
 	} pos;
 
-	first = btObjectGet(firstId)->obj;
+	first = btObjectGet(firstId)->object;
 	secondSlot = btObjectGet(secondId);
 
-	x1 = first->tgtX;
-	second = secondSlot->obj;
+	x1 = first->targetX;
+	second = secondSlot->object;
 	if(x1 == ACTOR_NO_TARGET) {
 		x1 = first->x;
 	}
-	z1 = first->tgtZ;
+	z1 = first->targetZ;
 	if(z1 == ACTOR_NO_TARGET) {
 		z1 = first->z;
 	}
-	x2 = second->tgtX;
+	x2 = second->targetX;
 	if(x2 == ACTOR_NO_TARGET) {
 		x2 = second->x;
 	}
-	z2 = second->tgtZ;
+	z2 = second->targetZ;
 	if(z2 == ACTOR_NO_TARGET) {
 		z2 = second->z;
 	}
@@ -282,14 +282,14 @@ void btMotionPlayHitFlash(Sint32 unitId)
 	BATTLE_OBJECT *battleObject = btObjectGet(unitId);
 	SPR_ANIMATION *effect;
 
-	if(battleObject->obj != NULL) {
-		if((battleObject->obj->recordStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+	if(battleObject->object != NULL) {
+		if((battleObject->object->recordStorageKind & ACTOR_SPRITE_KIND_MASK) ==
 			ACTOR_SPRITE_ONE) {
-			effect = (SPR_ANIMATION *)fdSprAddAnimationStub(
-				battleObject->obj->records, SPRITE_STAR_BURST);
+			effect = (SPR_ANIMATION *)fdSpriteAddAnimationStub(
+				battleObject->object->records, SPRITE_STAR_BURST);
 			if(effect != NULL) {
-				fdSprAnimationStartStub(effect, 1);
-				effect->pri = 3;
+				fdSpriteAnimationStartStub(effect, 1);
+				effect->priority = 3;
 			}
 			sySynch(10);
 		}
@@ -306,8 +306,8 @@ void btMotionPlayHitFlash(Sint32 unitId)
    is. Returns 0. */
 Sint32 btMotionProjectScaledPos(Sint32 unitId, Sint32 *screen)
 {
-	MOTION_OBJECT *object = btObjectGet(unitId)->obj;
-	SPR			  *record = btActorGetSpr(object, 0);
+	MOTION_OBJECT *object = btObjectGet(unitId)->object;
+	SPR			  *record = btActorGetSprite(object, 0);
 	FIXED		   scale;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
@@ -324,13 +324,13 @@ Sint32 btMotionProjectScaledPos(Sint32 unitId, Sint32 *screen)
    EFFECT_HEIGHT_LARGE for others, scaled as the sprite is. Returns 0. */
 Sint32 btMotionProjectCursorPoint(Sint32 unitId, Sint32 *screen)
 {
-	MOTION_OBJECT *object = btObjectGet(unitId)->obj;
-	SPR			  *record = btActorGetSpr(object, 0);
+	MOTION_OBJECT *object = btObjectGet(unitId)->object;
+	SPR			  *record = btActorGetSprite(object, 0);
 	FIXED		   scale;
 
 	btCameraApplyTransform();
 	scale = syMulFX(syConvert3Dto2D(&object->x, screen), record->scale);
-	if(btSprIsSmall(syUnitGet(unitId)->enemyId) != 0)
+	if(btSpriteIsSmall(syUnitGet(unitId)->enemyId) != 0)
 		screen[1] -= syMulFX(scale, EFFECT_HEIGHT_SMALL);
 	else
 		screen[1] -= syMulFX(scale, EFFECT_HEIGHT_LARGE);
@@ -343,10 +343,10 @@ Sint32 btMotionProjectCursorPoint(Sint32 unitId, Sint32 *screen)
 FIXED btUnitGetEffectHeight(Sint32 unitId)
 {
 	FIXED value =
-		toFIXED((Uint8)btSprGetEffectHeight(syUnitGet(unitId)->enemyId));
+		toFIXED((Uint8)btSpriteGetEffectHeight(syUnitGet(unitId)->enemyId));
 
 	if(value == 0) {
-		if(btSprIsSmall(syUnitGet(unitId)->enemyId) != 0)
+		if(btSpriteIsSmall(syUnitGet(unitId)->enemyId) != 0)
 			value = toFIXED(EFFECT_HEIGHT_SMALL);
 		else
 			value = toFIXED(EFFECT_HEIGHT_LARGE);

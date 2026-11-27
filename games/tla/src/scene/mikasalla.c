@@ -123,7 +123,7 @@ void scMikasallaEnterDoor(void)
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 id;
 	Sint16		*exit;
-	Sint32		 idx;
+	Sint32		 index;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -131,19 +131,19 @@ void scMikasallaEnterDoor(void)
 		ACTOR *actor = fdActorGetById(id);
 
 		if(actor != NULL)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
 	exit = &state->stepCue;
-	idx = *exit;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	idx--;
-	fdMapGridAnimateMetatiles(MikasallaDoors[idx].steps, MikasallaDoors[idx].x,
-		MikasallaDoors[idx].y);
+	index = *exit;
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	index--;
+	fdMapGridAnimateMetatiles(MikasallaDoors[index].steps,
+		MikasallaDoors[index].x, MikasallaDoors[index].y);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
-	if(idx != MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM - 1) {
+	if(index != MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM - 1) {
 		fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -8);
 		fdScriptWait(10);
 	}
@@ -209,9 +209,9 @@ void scMikasallaDigUpLadder(void)
    drawn over its pools. */
 static inline void scMikasallaDryTunnels(void)
 {
-	fdTilesetAnimPause(0);
-	fdTilesetAnimPause(1);
-	fdTilesetAnimPause(2);
+	fdTilesetAnimationPause(0);
+	fdTilesetAnimationPause(1);
+	fdTilesetAnimationPause(2);
 	fdMapGridCopyMetatilesTo(56, 46, 30, 46, 16, 16);
 	fdMapGridCopyMetatilesTo(56, 174, 30, 174, 16, 16);
 	fdMapGridCopyMetatiles(28, 23, 16, 16, 15, 23);
@@ -244,9 +244,9 @@ Sint32 scPrepareMap(void)
 {
 	MAIN_ROUTINE_STATE *party;
 
-	fdActorGetById(ACTOR_CHICKEN)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_CHICKEN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	party = &MainRoutineStateWork;
-	fdActorGetById(party->leaderActorId)->priFlg |=
+	fdActorGetById(party->leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(party->next == SCENE_MIKASALLA_NORTH) {
 		if(fdScriptGetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED))
@@ -274,20 +274,20 @@ void scMikasallaClimbDownLadder(void)
 	}
 	fdActorFaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(10);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	/* XXX: what do the two metatiles copied to (72, 14) show, in both the
 	   village and the tunnels? A recording of each climb down, with the grid
 	   before and after, would settle it. */
 	fdMapGridCopyMetatilesTo(96, 14, 72, 14, 2, 1);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, 4);
 	fdActorWaitForMoveById(ACTOR_FELIX);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FELIX), 0);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	fdActorSetDestinationOffset(ACTOR_FELIX, 0, drop);
 	fdActorWaitForMoveById(ACTOR_FELIX);
 	fdActorSetAnimation(ACTOR_FELIX, ANIM_LEADER_CLIMB);
 	fdScriptWait(10);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(exit);
 	fdScriptEnd();
 }

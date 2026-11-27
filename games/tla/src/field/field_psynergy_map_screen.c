@@ -36,7 +36,7 @@ void fdMapScreenInit(void)
 	FIXED			 bottom;
 	Sint32			 left;
 
-	markerTiles = syHeapAllocEWRAM(WORLD_MAP_MARKER_ALLOCATION_SIZE);
+	markerTiles = syHeapAllocateEWRAM(WORLD_MAP_MARKER_ALLOCATION_SIZE);
 	oam = (Uint32 *)state->markers;
 	/* DEAD: the leader looked up and never used; the ROM keeps the calls. */
 	fdActorGetById(fdPartyGetLeaderActor());
@@ -107,9 +107,9 @@ void fdMapScreenInit(void)
 		screenY = bottom;
 	RamWorldMapCursorStart[0] = state->x;
 	RamWorldMapCursorStart[1] = state->z;
-	state->winSlot = mnPointingHandLoadIntoFreeSlotStub();
-	tile = VramCacheEntries[state->winSlot].ofs;
-	state->win = mnWindowCreateStub(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
+	state->windowSlot = mnPointingHandLoadIntoFreeSlotStub();
+	tile = VramCacheEntries[state->windowSlot].offset;
+	state->window = mnWindowCreateStub(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
 	state->shown = -1;
 	state->speed = toFIXED(1);
 	cursorAttributes = OBJ_SIZE_16X16;
@@ -128,8 +128,8 @@ void fdMapScreenInit(void)
 void fdMapScreenRelease(void)
 {
 	syVRAMCacheFreeEntry(WorldMapStateWork.vramBlock);
-	syVRAMCacheFreeEntry(WorldMapStateWork.winSlot);
-	mnWindowCloseStub((Uint32)WorldMapStateWork.win, 2);
+	syVRAMCacheFreeEntry(WorldMapStateWork.windowSlot);
+	mnWindowCloseStub((Uint32)WorldMapStateWork.window, 2);
 }
 
 /* Unused: nothing calls it. Puts the leader at the world map position of image

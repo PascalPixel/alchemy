@@ -32,10 +32,10 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	BATTLE_CAMERA		*camera;
 	Sint32				 point[3];
 	SCREEN_POINT		 screen;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	sheet = RamHeapSlots->battleSheet;
 	camera = RamHeapSlots->cameraState;
@@ -51,12 +51,12 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	EFFECT_VIEW_FROM_CAMERA(camera);
 
 	/* Scatter the shards around the middle of each body. */
-	for(member = 0; member != args->tgtCnt; member++) {
+	for(member = 0; member != args->targetCount; member++) {
 		MOTION_OBJECT *object;
 		Sint32		   height;
 
-		object = btObjectGetStub(args->tgts[member])->obj;
-		height = btUnitGetEffectHeightStub(args->tgts[member]) / 2;
+		object = btObjectGetStub(args->targets[member])->object;
+		height = btUnitGetEffectHeightStub(args->targets[member]) / 2;
 		point[0] = object->x;
 		point[1] = height;
 		point[2] = object->z;
@@ -65,36 +65,37 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != BREAK_SHARDS_PER_TARGET; i++) {
 			PARTICLE *shard = &PARTICLES[member * BREAK_SHARDS_PER_TARGET + i];
 			Sint32	  radius;
-			Sint32	  ang;
+			Sint32	  angle;
 			Sint32	  lift;
 
 			radius = syRandom() & 0xff;
-			ang = syRandom() & TRIG_ANGLE_MASK;
-			shard->x = ((sySin(ang) * radius) >> 7) + toFIXED(screen.x);
-			shard->y = ((syCos(ang) * radius) >> 3) + toFIXED(screen.y);
+			angle = syRandom() & TRIG_ANGLE_MASK;
+			shard->x = ((sySin(angle) * radius) >> 7) + toFIXED(screen.x);
+			shard->y = ((syCos(angle) * radius) >> 3) + toFIXED(screen.y);
 			/* Thrown up at 2 to 6 pixels a tick, and up to a pixel a tick
 			   aside. */
-			shard->velX = (128 - (syRandom() & 0xff)) << 9;
+			shard->velocityX = (128 - (syRandom() & 0xff)) << 9;
 			lift = syRandom() & 0xff;
 			shard->variant = 0;
-			shard->velY = (-lift - 128) << 10;
+			shard->velocityY = (-lift - 128) << 10;
 		}
 	}
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != args->tgtCnt * DRAIN_TARGET_TICKS + BREAK_FALL_TICKS;
-		frm++) {
-		if(frm == BREAK_HIT_TICK)
+	for(frame = 0;
+		frame != args->targetCount * DRAIN_TARGET_TICKS + BREAK_FALL_TICKS;
+		frame++) {
+		if(frame == BREAK_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(0);
-		for(member = 0; member != args->tgtCnt; member++) {
-			if(frm == member * DRAIN_TARGET_TICKS) {
-				sySndPlayStub(SE_CRACK);
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+		for(member = 0; member != args->targetCount; member++) {
+			if(frame == member * DRAIN_TARGET_TICKS) {
+				sySoundPlayStub(SE_CRACK);
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
 					TINT_KEEP, member, 20);
 			}
 			/* A shard falls and goes out below the ground. */
-			if(frm > member * DRAIN_TARGET_TICKS) {
+			if(frame > member * DRAIN_TARGET_TICKS) {
 				for(i = 0; i != BREAK_SHARDS_PER_TARGET; i++) {
 					PARTICLE *shard =
 						&PARTICLES[member * BREAK_SHARDS_PER_TARGET + i];
@@ -109,7 +110,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 						btParticleAdvanceWithGravity2D(
 							shard, 62, DrainGravities[i & 3]);
 						shard->variant++;
-						if(shard->velY > 0 &&
+						if(shard->velocityY > 0 &&
 							FIXED_INTEGER_PART(shard->y) > BREAK_SHARD_GROUND)
 							shard->variant = -1;
 					}
@@ -168,7 +169,7 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 draw;
 	Sint32				 member;
 	Uint8				*sheet;
@@ -177,7 +178,7 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 palette;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	sheet = RamHeapSlots->battleSheet;
 	camera = RamHeapSlots->cameraState;
@@ -198,25 +199,25 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* The motes fly out of each target's body. */
 	EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
-	for(member = 0; member != args->tgtCnt; member++) {
+	for(member = 0; member != args->targetCount; member++) {
 		MOTION_OBJECT *object;
 		Sint32		   halfHeight;
 
-		object = btObjectGetStub(args->tgts[member])->obj;
-		halfHeight = btUnitGetEffectHeightStub(args->tgts[member]) / 2;
+		object = btObjectGetStub(args->targets[member])->object;
+		halfHeight = btUnitGetEffectHeightStub(args->targets[member]) / 2;
 		for(i = 0; i != DRAIN_MOTES_PER_TARGET; i++) {
 			PARTICLE *mote = &PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
 			Sint32	  speed;
 
 			SET_POSITION(mote, object->x, object->y + halfHeight, object->z);
-			mote->velX = ((syRandom() & 0xff) - 128) << 10;
-			mote->velY = ((syRandom() & 0xff) - 128) << 10;
-			mote->velZ = (speed = (syRandom() & 0xff) - 128) << 10;
+			mote->velocityX = ((syRandom() & 0xff) - 128) << 10;
+			mote->velocityY = ((syRandom() & 0xff) - 128) << 10;
+			mote->velocityZ = (speed = (syRandom() & 0xff) - 128) << 10;
 			/* True Collide's fly out twice as fast. */
 			if(mode == DRAIN_MOTES_TRUE_COLLIDE) {
-				mote->velX <<= 1;
-				mote->velY <<= 1;
-				mote->velZ = speed * (toFIXED(1) / 32);
+				mote->velocityX <<= 1;
+				mote->velocityY <<= 1;
+				mote->velocityZ = speed * (toFIXED(1) / 32);
 			}
 			mote->variant = 0;
 		}
@@ -241,31 +242,32 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 	}
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0; frm != args->tgtCnt * DRAIN_TARGET_TICKS + DRAIN_END_TICKS;
-		frm++) {
+	for(frame = 0;
+		frame != args->targetCount * DRAIN_TARGET_TICKS + DRAIN_END_TICKS;
+		frame++) {
 		MOTION_OBJECT *user;
 		Sint32		   halfHeight;
 
-		user = btObjectGetStub(args->user)->obj;
+		user = btObjectGetStub(args->user)->object;
 		halfHeight = btUnitGetEffectHeightStub(args->user) / 2;
-		if(frm == DRAIN_HIT_TICK)
+		if(frame == DRAIN_HIT_TICK)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frm == DRAIN_GLOW_TICK)
+		if(frame == DRAIN_GLOW_TICK)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frm ==
-			args->tgtCnt * DRAIN_TARGET_TICKS + DRAIN_END_TICKS -
+		if(frame ==
+			args->targetCount * DRAIN_TARGET_TICKS + DRAIN_END_TICKS -
 				DRAIN_GLOW_END_TICKS)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
-		for(member = 0; member != args->tgtCnt; member++) {
-			if(frm == member * DRAIN_TARGET_TICKS)
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+		for(member = 0; member != args->targetCount; member++) {
+			if(frame == member * DRAIN_TARGET_TICKS)
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, member, 42);
-			if(frm > member * DRAIN_TARGET_TICKS) {
+			if(frame > member * DRAIN_TARGET_TICKS) {
 				for(i = 0; i != DRAIN_DRAWN; i++) {
 					PARTICLE *mote =
 						&PARTICLES[member * DRAIN_MOTES_PER_TARGET + i];
@@ -286,7 +288,7 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						}
 
 						/* After a moment a mote is pulled into the user. */
-						if(frm > member * DRAIN_TARGET_TICKS + i +
+						if(frame > member * DRAIN_TARGET_TICKS + i +
 								DRAIN_PULL_DELAY) {
 							Sint32 dx;
 							Sint32 dy;
@@ -295,9 +297,9 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							dx = DRAIN_PULL(user->x - mote->x);
 							dy = DRAIN_PULL(user->y + halfHeight - mote->y);
 							dz = DRAIN_PULL(user->z - mote->z);
-							mote->velX += dx;
-							mote->velY += dy;
-							mote->velZ += dz;
+							mote->velocityX += dx;
+							mote->velocityY += dy;
+							mote->velocityZ += dz;
 							if((dx > -DRAIN_PULL(
 										 toFIXED(DRAIN_ARRIVAL_DISTANCE)) &&
 								   dx < DRAIN_PULL(

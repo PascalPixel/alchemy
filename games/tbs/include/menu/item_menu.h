@@ -33,35 +33,35 @@ typedef struct ITEM_MENU_STATE {
 	/* no view of the menu state names it (see menu/README.md) */
 	Uint8		   unused[8];
 	Sint32		   selectedMember; /* the party member chosen */
-	struct WINDOW *moneyWin;	   /* SHOP_STATE's; not named here */
-	struct WINDOW *mainWin;
+	struct WINDOW *moneyWindow;	   /* SHOP_STATE's; not named here */
+	struct WINDOW *mainWindow;
 	/* The two sides: the party member whose items are shown, and the one an
 	   item is given to. */
 	WINDOW_SPR *sideIcons[2];
 	/* the party member chosen, in memberIds; -1 for none at */
-	Sint8 sideIdx[2];
+	Sint8 sideIndex[2];
 	/* first */
-	Sint8		   sideCnt[2]; /* party members to choose from; 1 at first */
-	struct WINDOW *itemWin;
-	struct WINDOW *statWin;
-	struct WINDOW *buttonHelpWin;
-	struct WINDOW *descriptionWin;
-	struct WINDOW *equipWin;
-	struct WINDOW *listWin;
-	struct WINDOW *unopenedWin; /* never given a window; only closed */
-	struct WINDOW *modalWin;
-	struct WINDOW *secondUnopenedWin; /* never given a window; only closed */
-	WINDOW_SPR	  *gridCursor;		  /* only prepared by name */
+	Sint8		   sideCount[2]; /* party members to choose from; 1 at first */
+	struct WINDOW *itemWindow;
+	struct WINDOW *statusWindow;
+	struct WINDOW *buttonHelpWindow;
+	struct WINDOW *descriptionWindow;
+	struct WINDOW *equipWindow;
+	struct WINDOW *listWindow;
+	struct WINDOW *unopenedWindow; /* never given a window; only closed */
+	struct WINDOW *modalWindow;
+	struct WINDOW *secondUnopenedWindow; /* never given a window; only closed */
+	WINDOW_SPR	  *gridCursor;			 /* only prepared by name */
 	WINDOW_SPR	  *entryIcons[MENU_ENTRY_ICONS];
-	WINDOW_SPR	  *statIcons[8];
+	WINDOW_SPR	  *statusIcons[8];
 	Uint8 unusedAfterIcons[36]; /* no view of the menu state names it */
-	struct WINDOW *questionWin;
+	struct WINDOW *questionWindow;
 	/* The cursor grid: its place and its size, 1 by 1 at first. */
 	Uint8		selectedColumn;
 	Uint8		selectedRow;
-	Uint8		columnCnt;
-	Uint8		rowCnt;
-	struct SPR *memberSprs[8];	  /* the party members' figures */
+	Uint8		columnCount;
+	Uint8		rowCount;
+	struct SPR *memberSprites[8]; /* the party members' figures */
 	Sint16		memberX[8];		  /* screen pixels */
 	Sint16		memberY[8];		  /* screen pixels */
 	FIXED		memberScale[8];	  /* 16.16 fixed point, toFIXED(1) full size */
@@ -72,12 +72,12 @@ typedef struct ITEM_MENU_STATE {
 	Uint8		aroundBackdrop[72];
 	Uint16		items[32];	  /* the inventory entries listed */
 	Uint16		memberIds[8]; /* the party in order (gmPartyListMembers) */
-	Uint8		itemCnt;
-	Uint8		partyCnt;
+	Uint8		itemCount;
+	Uint8		partyCount;
 	Uint8		sideMember[2]; /* each side's party member */
 	WINDOW_SPR *selectedItemIcon;
-	Uint16		flg; /* 1 while the item's name and command grid are drawn */
-	Sint16 completionFlg; /* set to 1 as item commands end; not read by name */
+	Uint16		flags; /* 1 while the item's name and command grid are drawn */
+	Sint16 completionFlag; /* set to 1 as item commands end; not read by name */
 	/* The row of four figures the Djinn and status screens show
 	   (menu_djinn_figures.c): each one's sprite and place in screen pixels, and
 	   its scale in 16.16, which closes a third of its gap to toFIXED(1) each
@@ -87,12 +87,12 @@ typedef struct ITEM_MENU_STATE {
 	Sint16		figureY[4];
 	Sint32		figureScales[4];
 	Uint8  unusedAfterFigures[6]; /* DJINN_MENU_STATE's pair; not named here */
-	Sint16 msgOfs;		 /* the item use's result, after MsgItemUseResult */
+	Sint16 msgOffset;	 /* the item use's result, after MsgItemUseResult */
 	Sint8  equipPreview; /* 1 while the stats preview a removal, not an equip */
 	/* the command chosen last (ITEM_MENU_COMMAND); -1 for none */
 	Uint8 listMode;
-	Uint8 unusedAfterListMode[2]; /* no view of the menu state names it */
-	Sint8 selectedIdxByMember[8]; /* each party member's entry chosen last */
+	Uint8 unusedAfterListMode[2];	/* no view of the menu state names it */
+	Sint8 selectedIndexByMember[8]; /* each party member's entry chosen last */
 	Uint8 mode; /* not named through this struct; PSYNERGY_MENU_STATE.mode */
 	/* SHOP_STATE's stock, party and cursor; not named here */
 	Uint8  shopStock[297];
@@ -100,19 +100,19 @@ typedef struct ITEM_MENU_STATE {
 } ITEM_MENU_STATE;
 
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideIcons) == 20);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideIdx) == 28);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideCnt) == 30);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, itemWin) == 32);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, descriptionWin) == 44);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideIndex) == 28);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideCount) == 30);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, itemWindow) == 32);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, descriptionWindow) == 44);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, gridCursor) == 68);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, entryIcons) == 72);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, statIcons) == 200);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, questionWin) == 268);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, statusIcons) == 200);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, questionWindow) == 268);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, selectedColumn) == 272);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, selectedRow) == 273);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, columnCnt) == 274);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, rowCnt) == 275);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, memberSprs) == 276);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, columnCount) == 274);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, rowCount) == 275);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, memberSprites) == 276);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, memberX) == 308);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, memberY) == 324);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, memberScale) == 340);
@@ -121,13 +121,13 @@ STATIC_ASSERT(offsetof(ITEM_MENU_STATE, selectedItems) == 376);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, cursor) == 380);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, items) == 456);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, memberIds) == 520);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, itemCnt) == 536);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, itemCount) == 536);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, sideMember) == 538);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, selectedItemIcon) == 540);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, figures) == 548);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, msgOfs) == 602);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, msgOffset) == 602);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, equipPreview) == 604);
-STATIC_ASSERT(offsetof(ITEM_MENU_STATE, selectedIdxByMember) == 608);
+STATIC_ASSERT(offsetof(ITEM_MENU_STATE, selectedIndexByMember) == 608);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, mode) == 616);
 STATIC_ASSERT(offsetof(ITEM_MENU_STATE, resourceSlots) == 914);
 STATIC_ASSERT(sizeof(ITEM_MENU_STATE) == 920);

@@ -64,7 +64,7 @@ typedef enum ITEM_USE_RESULT {
 
 /* STAT_SCREEN_STATE.page: which screen the party member row belongs to. */
 typedef enum STAT_SCREEN_PAGE {
-	STATUS_SCREEN_PAGE_STATUS = 0, /* the Status menu (mnStatScreenRun) */
+	STATUS_SCREEN_PAGE_STATUS = 0, /* the Status menu (mnStatusScreenRun) */
 	/* The party member chooser (mnPartyMemberChooserOpen). */
 	STATUS_SCREEN_PAGE_CHOOSER = 3
 } STAT_SCREEN_PAGE;
@@ -124,7 +124,7 @@ typedef enum ITEM_TARGET_MODE {
    numbers end, with their right arrow (mnPagedListDrawPageNumbers). */
 #define PAGE_NUMBERS_RIGHT	   15
 
-/* What mnStatPanelDraw shows below the name and statuses: the low byte of its
+/* What mnStatusPanelDraw shows below the name and statuses: the low byte of its
    mode. */
 typedef enum STAT_PANEL_KIND {
 	STATUS_PANEL_EXPERIENCE = 0, /* class, HP, PP and experience */
@@ -137,7 +137,7 @@ typedef enum STAT_PANEL_KIND {
 	STATUS_PANEL_STATS = 8,
 } STAT_PANEL_KIND;
 
-/* The panel kind in mnStatPanelDraw's mode; the bits above it are
+/* The panel kind in mnStatusPanelDraw's mode; the bits above it are
    STATUS_PANEL_LOWER_ONLY. */
 #define STATUS_PANEL_KIND_MASK	0xff
 /* Keeps the open window, the name and the statuses, and redraws only the part
@@ -149,7 +149,7 @@ typedef enum STAT_PANEL_KIND {
    the Japanese edition decodes it into the text canvas (mnTextDrawMessage), so
    clearing it releases the canvas's window sprites. */
 #define MENU_RESET_DESCRIPTION_WINDOW \
-	JAPANESE_OR(mnWindowSprClearListStub, mnWindowSprRedrawSavedRectStub)
+	JAPANESE_OR(mnWindowSpriteClearListStub, mnWindowSpriteRedrawSavedRectStub)
 #define MENU_DRAW_DESCRIPTION \
 	JAPANESE_OR(mnTextDrawMessageStub, mnTextDrawMessageAsTilesStub)
 

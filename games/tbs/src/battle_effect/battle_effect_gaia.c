@@ -49,22 +49,22 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	BLITTER_PAIR		 draw;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	Sint32				 wallX;
 	Sint32				 rockX;
 	SPR_SCALE			 scale;
 	SPR_PLACEMENT		 pos;
 	Uint8				*src;
-	volatile Uint16		*col;
-	Sint32				 sheetIdx;
-	Sint32				 frm;
+	volatile Uint16		*color;
+	Sint32				 sheetIndex;
+	Sint32				 frame;
 	Sint32				 i;
 	Sint32				 j;
 	Sint32				 k;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-	sprs = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+	sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 	state->args = args;
 	btEffectStartCanvasLayer(0);
 
@@ -91,9 +91,9 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		RESOURCE_EARTH_WALL_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	syWordsCopy(BG_PLTT, syResourceGetTableEntry(RESOURCE_GAIA_ORANGE_PALETTE),
 		SHEET_PALETTE_BYTES);
-	col = &BG_PLTT[1];
+	color = &BG_PLTT[1];
 	for(i = 0; i != SHEET_PALETTE_COLORS - 1; i++) {
-		Sint32 entry = *col;
+		Sint32 entry = *color;
 		Sint32 blue = RGB_BLUE((Uint16)entry);
 		Sint32 green = RGB_GREEN((Uint16)entry);
 		Sint32 red = RGB_RED(entry);
@@ -108,41 +108,41 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 			green = 0;
 		if(red < 0)
 			red = 0;
-		*col++ = RGB(red, green, blue);
+		*color++ = RGB(red, green, blue);
 	}
 
 	src = RamMapGridMetatileBuffer;
-	sheetIdx = 0;
+	sheetIndex = 0;
 	for(j = 0; j != 9; j++) {
 		for(i = 0; i != GAIA_ROW_HEIGHT; i++) {
-			for(k = 0; k != GaiaRowWidths[j]; k++, sheetIdx++)
-				state->sheet[sheetIdx] = src[k];
+			for(k = 0; k != GaiaRowWidths[j]; k++, sheetIndex++)
+				state->sheet[sheetIndex] = src[k];
 		}
 		src += GaiaRowWidths[j];
 	}
 	for(j = 0; j != GAIA_ROW_HEIGHT; j++) {
 		for(i = 0; i != GAIA_WALL_TOP_HEIGHT / GAIA_ROW_HEIGHT; i++) {
-			for(k = 0; k != GAIA_WALL_TOP_WIDTH; k++, sheetIdx++)
-				state->sheet[sheetIdx] = src[k];
+			for(k = 0; k != GAIA_WALL_TOP_WIDTH; k++, sheetIndex++)
+				state->sheet[sheetIndex] = src[k];
 		}
 		src += GAIA_WALL_TOP_WIDTH;
 	}
 	for(i = 0; i != GAIA_WALL_FOOT_WIDTH * GAIA_WALL_FOOT_HEIGHT; i++)
-		state->sheet[sheetIdx++] = *src++;
+		state->sheet[sheetIndex++] = *src++;
 	for(i = 0; i != 3; i++) {
 		for(k = 0; k != GaiaFlameWidths[i] * GaiaFlameHeights[i]; k++)
-			state->sheet[sheetIdx++] = *src++;
+			state->sheet[sheetIndex++] = *src++;
 	}
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 
 	for(i = 0; i != GAIA_ROCKS; i++) {
-		SPR *rock = fdSprCreateStub(SPRITE_BATTLE_ROCKS);
+		SPR *rock = fdSpriteCreateStub(SPRITE_BATTLE_ROCKS);
 
-		state->sprs[i] = rock;
+		state->sprites[i] = rock;
 		if(rock != 0) {
-			rock->flg = 0;
-			fdSprStartAnimationStub(rock, i / 4);
-			state->sprs[i]->image.pri = 1;
+			rock->flags = 0;
+			fdSpriteStartAnimationStub(rock, i / 4);
+			state->sprites[i]->image.priority = 1;
 		}
 	}
 	EFFECT_LOAD_BLITTER(
@@ -178,26 +178,26 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 
 		dust->x = INTtoFIXED((syRandom() & 63) + wallX + 32);
 		dust->y = INTtoFIXED((syRandom() & 7) + 96);
-		dust->velY = ((syRandom() & 63) + 32) << 13;
+		dust->velocityY = ((syRandom() & 63) + 32) << 13;
 		dust->variant = syRandom() & 31;
 	}
 	REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7);
 	/* The screen shakes throughout. */
-	state->shakeFrm = 250;
-	for(frm = 0; frm != GAIA_TICKS; frm++) {
-		if(frm == 0)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == 40)
-			sySndPlayStub(SE_RUMBLE);
-		if(frm == 96)
-			sySndPlayStub(SE_CRASH);
-		if(frm == 120)
+	state->shakeFrame = 250;
+	for(frame = 0; frame != GAIA_TICKS; frame++) {
+		if(frame == 0)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == 40)
+			sySoundPlayStub(SE_RUMBLE);
+		if(frame == 96)
+			sySoundPlayStub(SE_CRASH);
+		if(frame == 120)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
 		/* The flames flicker at the wall's foot. */
-		if(frm <= 81) {
-			Sint32 picture = frm / 4;
+		if(frame <= 81) {
+			Sint32 picture = frame / 4;
 
 			if(picture > 2)
 				picture = (picture & 1) + 1;
@@ -211,8 +211,8 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The rising wall widens a row at a time. */
-		if(frm >= 12 && frm < GAIA_WALL_STAND_TICK) {
-			Sint32 row = (frm - GAIA_WALL_WIDEN_TICK) / 3;
+		if(frame >= 12 && frame < GAIA_WALL_STAND_TICK) {
+			Sint32 row = (frame - GAIA_WALL_WIDEN_TICK) / 3;
 
 			CLAMP(row, 0, 7);
 			for(i = 0; i != 4; i++) {
@@ -226,8 +226,8 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The wall sinks away. */
-		if(frm >= GAIA_WALL_SINK_TICK && frm < GAIA_WALL_SINK_TICK + 24) {
-			Sint32 row = 7 - (frm - GAIA_WALL_SINK_TICK) / 3;
+		if(frame >= GAIA_WALL_SINK_TICK && frame < GAIA_WALL_SINK_TICK + 24) {
+			Sint32 row = 7 - (frame - GAIA_WALL_SINK_TICK) / 3;
 
 			CLAMP(row, 0, 7);
 			for(i = 0; i != 4; i++) {
@@ -241,7 +241,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The standing wall. */
-		if(frm >= GAIA_WALL_STAND_TICK && frm < GAIA_WALL_SINK_TICK) {
+		if(frame >= GAIA_WALL_STAND_TICK && frame < GAIA_WALL_SINK_TICK) {
 			Sint32 width = GAIA_WALL_TOP_WIDTH;
 
 			draw[0](canvas, &state->sheet[GAIA_WALL_TOP], wallX + 16, 0, width,
@@ -255,17 +255,17 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Dust keeps rising up the wall. */
-		if(frm >= GAIA_WALL_STAND_TICK) {
+		if(frame >= GAIA_WALL_STAND_TICK) {
 			for(i = 0; i != GAIA_DUST_SHOWN; i++) {
 				PARTICLE *dust = &PARTICLES[i];
 
 				if(dust->variant == 0) {
 					Sint32 size = (i & 3) + 5;
 
-					EFFECT_DRAW_MOTE(draw[0], canvas, sprs, FIXEDtoINT(dust->x),
-						FIXEDtoINT(dust->y), size);
-					dust->y -= dust->velY;
-					if(dust->y < 0 && frm < GAIA_WALL_SINK_TICK)
+					EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+						FIXEDtoINT(dust->x), FIXEDtoINT(dust->y), size);
+					dust->y -= dust->velocityY;
+					if(dust->y < 0 && frame < GAIA_WALL_SINK_TICK)
 						dust->y = toFIXED(96);
 				} else {
 					dust->variant--;
@@ -274,10 +274,10 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Rocks tumble up through the wall, larger with the variant. */
-		if(frm > 4) {
+		if(frame > 4) {
 			Sint32 rocks = GAIA_EARLY_ROCKS;
 
-			if(frm > 71)
+			if(frame > 71)
 				rocks = GAIA_ROCKS;
 			for(k = 0; k != rocks; k++) {
 				PARTICLE *rock = &state->particles[GAIA_FIRST_ROCK + k];
@@ -287,7 +287,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 					/* DEAD: scale copied from unitScale before both its fields
 					   are set; the ROM keeps the copy. */
 					scale = unitScale;
-					if(frm > 71) {
+					if(frame > 71) {
 						scale.x = k * (toFIXED(1) / 16) + toFIXED(1) / 2;
 						scale.x += state->args->variant * (toFIXED(1) / 4);
 					} else {
@@ -298,23 +298,23 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 					pos.x = toFIXED(rock->x + rockX * 2);
 					pos.height = toFIXED(512) - toFIXED(rock->y);
 					pos.y = toFIXED(512);
-					slot = (frm / 2 + k) % GAIA_ROCKS;
+					slot = (frame / 2 + k) % GAIA_ROCKS;
 					/* DEAD: slot != -1 always holds, slot being a remainder of
 					   a positive count; the ROM keeps the test. */
 					if(slot != -1)
 						fdRenderApplyProjectedPlacementStub(
-							state->sprs[slot], &pos, &scale, 0);
+							state->sprites[slot], &pos, &scale, 0);
 					rock->y -= rock->z;
 					/* DEAD: velocityX steps from 1 to 12 by velocityY and
 					   nothing reads it; the ROM keeps the count. */
-					rock->velX += rock->velY;
-					if(rock->velX > 12)
-						rock->velX -= 12;
+					rock->velocityX += rock->velocityY;
+					if(rock->velocityX > 12)
+						rock->velocityX -= 12;
 					if(rock->y < 0) {
-						if(frm >= GAIA_WALL_SINK_TICK) {
+						if(frame >= GAIA_WALL_SINK_TICK) {
 							rock->variant = -1;
 						} else {
-							if(frm >= GAIA_WALL_STAND_TICK) {
+							if(frame >= GAIA_WALL_STAND_TICK) {
 								rock->z = (syRandom() & 7) + 8;
 								if(state->args->variant == EFFECT_VARIANT_BASIC)
 									rock->x = syRandom() % 96 + 42;
@@ -335,19 +335,19 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The targets flash and recoil. */
-		if(frm <= 158) {
+		if(frame <= 158) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frm > 85) {
-					if(frm % 12 == 0)
-						btEffectTintBattler(state->args->tgts[i],
+				if(frame > 85) {
+					if(frame % 12 == 0)
+						btEffectTintBattler(state->args->targets[i],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 6);
-					if((frm & 3) == 0)
+					if((frame & 3) == 0)
 						btMotionApplyKnockbackStub(
-							state->args->tgts[i], KNOCKBACK_SKID);
+							state->args->targets[i], KNOCKBACK_SKID);
 				}
 			}
 		}
-		if(frm < 90 || frm > 160)
+		if(frame < 90 || frame > 160)
 			btCameraShake(2, 2);
 		else
 			btCameraShake(8, 8);
@@ -356,7 +356,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
 	for(i = 0; i != GAIA_ROCKS; i++)
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	btEffectEndCanvasLayer();
 }
 

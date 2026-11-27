@@ -492,7 +492,7 @@ static void scKalayTolbiDocksTalkToDockWorker(void)
    ship's plank. */
 static void scKalayTolbiDocksTalkToWomanSellingTickets(void)
 {
-	WINDOW			   *coinsWin;
+	WINDOW			   *coinsWindow;
 	MAIN_ROUTINE_STATE *state;
 	Sint32				ticketPrice = TICKET_PRICE;
 	Sint32				coinLabel;
@@ -514,36 +514,36 @@ static void scKalayTolbiDocksTalkToWomanSellingTickets(void)
 			mnMessageArgumentPush(ticketPrice, MESSAGE_ARGUMENT_NUMBER);
 			/* "Let's see...there are four of you, so it will cost ......" */
 			fdScriptOpenMessage(ACTOR_SELLING_TICKETS, 0);
-			coinsWin = mnWindowCreate(
+			coinsWindow = mnWindowCreate(
 				DOCKS_COINS_WINDOW_X, 8, DOCKS_COINS_WINDOW_WIDTH, 4, 2);
 			coinLabel = MSGNO(MsgYourCoins);
-			mnTextDrawMessageAsTiles(coinLabel, coinsWin, 0, 0);
+			mnTextDrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
 			state = &MainRoutineStateWork;
-			mnTextDrawNumInWindow(
-				state->holdings.coins, 6, coinsWin, DOCKS_COINS_X, 8);
+			mnTextDrawNumberInWindow(
+				state->holdings.coins, 6, coinsWindow, DOCKS_COINS_X, 8);
 #if LANGUAGE == LANGUAGE_JAPANESE
 			mnTextDrawMessageAsTiles(
-				coinLabel + (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)), coinsWin,
-				48, 8);
+				coinLabel + (MSGNO(MsgCoins) - MSGNO(MsgYourCoins)),
+				coinsWindow, 48, 8);
 #endif
 			if(fdScriptAskYesNoWithActorAnimation(-1, 0) == 1) {
-				mnWindowClose(coinsWin, 2);
+				mnWindowClose(coinsWindow, 2);
 				fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_SHAKE_HEAD);
 				fdScriptWait(10);
 				/* "You're not going to do it? If you don't get onboard,
 				   you..." */
 				fdScriptShowMessage(ACTOR_SELLING_TICKETS, 0);
 			} else if((Uint32)ticketPrice > (Uint32)state->holdings.coins) {
-				mnWindowClose(coinsWin, 2);
+				mnWindowClose(coinsWindow, 2);
 				fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 				fdScriptWait(10);
 				FieldStateWork->msg++;
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				/* "Uh oh... You don't have enough money. I can't sell you a
 				   ticket." */
 				fdScriptShowMessage(ACTOR_SELLING_TICKETS, 0);
 			} else {
-				mnWindowClose(coinsWin, 2);
+				mnWindowClose(coinsWindow, 2);
 				fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 				fdScriptWait(10);
 				FieldStateWork->msg += 3;
@@ -638,9 +638,9 @@ static void scKalayTolbiDocksTalkToWaitingDaughter(void)
 static void scKalayTolbiDocksOpenDoorAndLeave(void)
 {
 	fdScriptStart();
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	if(MainRoutineStateWork.next == SCENE_KALAY_DOCKS) {
 		fdActorWalkTo(ACTOR_PARTY_LEADER, 304, 1392);
 		fdMapGridAnimateMetatiles(KalayTolbiDocksKalayDoorMetatiles, 78, 86);
@@ -708,7 +708,7 @@ static void scKalayTolbiDocksPrepareTolbiDocks(void)
 
 	scKalayTolbiDocksUpdateCrateMetatiles();
 	if(fdScriptGetFlag(FLAG_COLOSSO_OVER)) {
-		fdActorSetSprColById(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
+		fdActorSetSpriteColorById(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
 	}
 	if(MainRoutineStateWork.entrance == TOLBI_DOCKS_FROM_COTTAGE_ROOMS_E) {
 		gmFlagClear(FLAG_SHOW_AREA_NAME);
@@ -731,15 +731,15 @@ static void scKalayTolbiDocksPrepareTolbiDocks(void)
 		fdActorSetPos(ACTOR_STRANDED_WOMAN, 240, 312);
 		fdActorFaceDirection(ACTOR_STRANDED_WOMAN, FACING_NORTH, 0);
 		actor = fdActorGet(ACTOR_ANGRY_YOUNG_MAN);
-		actor->collisionFlg = 0;
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		actor->spr->image.pri = 3;
-		actor->spr->flg = 0;
-		actor->spr->rotation = TRIG_TURN * 3 / 4;
+		actor->collisionFlags = 0;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		actor->sprite->image.priority = 3;
+		actor->sprite->flags = 0;
+		actor->sprite->rotation = TRIG_TURN * 3 / 4;
 		actor = fdActorGet(ACTOR_STRANDED_WOMAN);
-		actor->priFlg = 0;
-		actor->spr->image.pri = 3;
-		actor->spr->shadow.pri = 3;
+		actor->priorityFlags = 0;
+		actor->sprite->image.priority = 3;
+		actor->sprite->shadow.priority = 3;
 	}
 	/* Once Colosso is over, the passengers stranded at Tolbi's docks gather
 	   here, and the two metatiles just north of where they stand take a wall's
@@ -785,10 +785,10 @@ static void scKalayTolbiDocksSettleCrates(Sint32 actorId)
 {
 	ACTOR *actor = fdActorGet(actorId);
 
-	fdActorSetSprFlags(fdActorGet(actorId), 0);
-	fdActorSetSprPriority(actorId, 3);
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpriteFlags(fdActorGet(actorId), 0);
+	fdActorSetSpritePriority(actorId, 3);
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
 /* At Kalay Docks, on the first entry from the World Map, Garet runs to the edge
@@ -877,7 +877,7 @@ static void scKalayTolbiDocksGaretSeesTheKaragol(void)
 	fdActorSetMovementTypeById(
 		ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, MOVEMENT_TYPE_WANDER);
 	actor = fdActorGet(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
-	actor->tmr = actor->x.fixed / toFIXED(1);
+	actor->timer = actor->x.fixed / toFIXED(1);
 	actor->userValue = actor->z.fixed / toFIXED(1);
 	fdScriptEnd();
 }
@@ -896,9 +896,9 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 	fdEndBusyAndReveal();
 	fdScriptSetMessageId(MsgKalayReturnedTicketCost);
 	actor = fdActorGet(ACTOR_STRANDED_WOMAN);
-	actor->priFlg = 0;
-	actor->spr->image.pri = 3;
-	actor->spr->shadow.pri = 3;
+	actor->priorityFlags = 0;
+	actor->sprite->image.priority = 3;
+	actor->sprite->shadow.priority = 3;
 	fdCameraMoveTo(232, CAMERA_KEEP, 304, 1);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 216, 272);
@@ -932,27 +932,27 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 16, 0);
 	fdActorJump(ACTOR_ANGRY_YOUNG_MAN, 7, 0);
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
-	sySndPlay(SE_HIGH_JUMP);
+	sySoundPlay(SE_HIGH_JUMP);
 	fdActorSetSpeed(ACTOR_TOUR_GUIDE, 2.4);
 	fdActorWalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
 	fdScriptWait(10);
 	fdActorSetAnimation(ACTOR_ANGRY_YOUNG_MAN, ANIM_STAND);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetAttachedEffect(
 		ACTOR_TOUR_GUIDE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdActorStartRepeatedMotion(ACTOR_TOUR_GUIDE, 2);
-	sySndPlay(SE_SWITCH);
+	sySoundPlay(SE_SWITCH);
 	fdScriptWait(10);
-	sySndPlay(SE_SWITCH);
+	sySoundPlay(SE_SWITCH);
 	fdScriptWait(10);
-	sySndPlay(SE_SWITCH);
+	sySoundPlay(SE_SWITCH);
 	fdScriptWait(10);
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_TOUR_GUIDE, 0.4);
 	fdActorJump(ACTOR_TOUR_GUIDE, 6, 0);
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	fdActorWalkByAndWait(ACTOR_TOUR_GUIDE, -8, 0);
 	fdScriptWait(20);
 	/* "You brought us all here! Take responsibility for it!..." */
@@ -1016,10 +1016,10 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 	fdScriptShowMessage(ACTOR_BODYGUARD, 0);
 	fdScriptWait(10);
 	fdActorShowEmote(ACTOR_ANGRY_YOUNG_MAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0.8);
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -8, 0);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	fdActorRunRepeatedMotion(ACTOR_ANGRY_YOUNG_MAN, 2);
 	fdScriptWait(20);
@@ -1031,10 +1031,10 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 	/* "Sorry, but I was hired to BE in your way! Please. Let it go..." */
 	fdScriptShowMessage(ACTOR_BODYGUARD, 0);
 	fdScriptWait(10);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_ANGRY_YOUNG_MAN, 0.8);
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -16, 0);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_EAST, 0);
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_ANGRY_YOUNG_MAN, ANIM_SHAKE_HEAD);
@@ -1043,24 +1043,24 @@ static void scKalayTolbiDocksPassengersBlameTourGuide(void)
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 8, 0);
 	fdActorJump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, 24, 0);
-	sySndPlay(SE_IMPACT);
+	sySoundPlay(SE_IMPACT);
 	fdActorJump(ACTOR_BODYGUARD, 6, 0);
 	/* The passenger bounces off the spinning bodyguard and lands on his
 	   back. */
 	fdActorSetScript(ACTOR_BODYGUARD, KalayTolbiDocksBodyguardSpinScript);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorJump(ACTOR_ANGRY_YOUNG_MAN, 6, 0);
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
 	actor = fdActorGet(ACTOR_ANGRY_YOUNG_MAN);
-	actor->collisionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-	actor->spr->image.pri = 3;
-	actor->spr->flg = 0;
-	actor->spr->rotation = TRIG_TURN * 3 / 4;
+	actor->collisionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+	actor->sprite->image.priority = 3;
+	actor->sprite->flags = 0;
+	actor->sprite->rotation = TRIG_TURN * 3 / 4;
 	fdActorWalkByAndWait(ACTOR_ANGRY_YOUNG_MAN, -12, 4);
 	fdActorFaceDirection(ACTOR_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
-	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlg |= ACTOR_FACES_MOTION;
-	sySndPlay(SE_DOOR_CLOSE);
+	fdActorGet(ACTOR_ANGRY_YOUNG_MAN)->steeringFlags |= ACTOR_FACES_MOTION;
+	sySoundPlay(SE_DOOR_CLOSE);
 	fdScriptWait(20);
 	fdActorShowEmote(ACTOR_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
 	fdActorSetSpeed(ACTOR_STRANDED_WOMAN, 1.5);

@@ -7,14 +7,14 @@
 #include "sounds.h"
 #include "types.h"
 
-/* sySndUpdateCommandMask's command: the new SoundCommandMaskWork, or with
+/* sySoundUpdateCommandMask's command: the new SoundCommandMaskWork, or with
    SOUND_COMMAND_MASK_TOGGLE the bits to flip in it. */
 enum SoundCommandMask {
 	SOUND_COMMAND_MASK_TOGGLE = 0x80,
 	SOUND_COMMAND_MASK_BITS = 0x7f
 };
 
-/* A sound for sySndPlay: bits 11..0 the sound number, 15..12 flags. */
+/* A sound for sySoundPlay: bits 11..0 the sound number, 15..12 flags. */
 enum SoundControl {
 	SOUND_NUM_MASK = 0xfff,
 	SOUND_FLAGS_MASK = 0xf000,
@@ -38,11 +38,11 @@ enum MusicPlayerId {
 	/* The first music player a sound on MUSIC_PLAYER_SE_LAST may borrow. */
 	MUSIC_PLAYER_SE_FIRST = 4,
 	/* A sound on it takes the first idle music player from here down to
-	   MUSIC_PLAYER_SE_FIRST, else this one (sySndPlay). */
+	   MUSIC_PLAYER_SE_FIRST, else this one (sySoundPlay). */
 	MUSIC_PLAYER_SE_LAST = 7
 };
 
-/* The five versions of the IWRAM mixer's last step sySndLoadReverbCode copies
+/* The five versions of the IWRAM mixer's last step sySoundLoadReverbCode copies
    into place, each carrying a different share of a frame's sound into the
    next: the song's reverb, as MusicPlayer2000 calls it. */
 enum SoundReverbCode {
@@ -87,10 +87,10 @@ extern Uint16 BgmVolumeStep;
 extern Uint16 BgmTempoPitch;
 extern Uint16 BgmTempoPitchTarget;
 extern Uint16 BgmTempoPitchStep;
-/* The music sySndPlay last chose: 0xff before any, MUS_SILENCE after a fade;
+/* The music sySoundPlay last chose: 0xff before any, MUS_SILENCE after a fade;
    asking for it again changes nothing. */
 extern Uint8 CurrentBgm;
-/* Set by sySndUpdateCommandMask; nothing reads it. */
+/* Set by sySoundUpdateCommandMask; nothing reads it. */
 extern Uint8 SoundCommandMaskWork;
 
 #endif

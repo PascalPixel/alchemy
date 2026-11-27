@@ -71,17 +71,17 @@ typedef enum DJINN_TUTORIAL_LINE {
 typedef struct DJINN_MENU_BACKDROP {
 	/* each party member's Djinn */
 	Uint16 ids[DJINN_LIST_MEMBERS][DJINN_LIST_ROWS];
-	Sint8  cnts[DJINN_LIST_MEMBERS];
-	Uint8  tiles[8192];	 /* BG character block 1's first 8 KB */
-	Uint8  pal[128];	 /* BG palettes 4 to 7 */
-	Sint32 tutorialTmr;	 /* ticks into the tutorial's current step */
-	Sint32 tutorialStep; /* DJINN_TUTORIAL_STEP */
+	Sint8  counts[DJINN_LIST_MEMBERS];
+	Uint8  tiles[8192];	  /* BG character block 1's first 8 KB */
+	Uint8  palette[128];  /* BG palettes 4 to 7 */
+	Sint32 tutorialTimer; /* ticks into the tutorial's current step */
+	Sint32 tutorialStep;  /* DJINN_TUTORIAL_STEP */
 } DJINN_MENU_BACKDROP;
 
 /* A window as the Djinn menu's preview reads it: a Window whose y it reads
    signed, in tiles. */
 typedef struct DJINN_PREVIEW_WINDOW {
-	Uint8  sprs[8]; /* the window's sprite list; not read here */
+	Uint8  sprites[8]; /* the window's sprite list; not read here */
 	Uint16 width;
 	Uint16 height;
 	Uint16 x;
@@ -98,36 +98,36 @@ typedef enum DJINN_PENDING {
    opening to its closing, laid out as ITEM_MENU_STATE is: it names only what
    the Djinn screen reads, and says whose the rest is. */
 typedef struct DJINN_MENU_STATE {
-	Uint8			   unused[8]; /* no view of the menu state names it */
-	Sint32			   member;	  /* the party member whose Djinn are shown */
-	Sint32			   moneyWin;  /* SHOP_STATE's; not named here */
-	Sint32			   statWin;
+	Uint8			   unused[8];	/* no view of the menu state names it */
+	Sint32			   member;		/* the party member whose Djinn are shown */
+	Sint32			   moneyWindow; /* SHOP_STATE's; not named here */
+	Sint32			   statusWindow;
 	struct WINDOW_SPR *cursor;
 	/* The second of ITEM_MENU_STATE's sideIcons; not named here. */
 	struct WINDOW_SPR *secondSideIcon;
 	/* each side's party member, an index into members */
 	Sint8  selectedColumn[2];
-	Sint8  sideCnt[2];			/* ITEM_MENU_STATE's; not named here */
+	Sint8  sideCount[2];		/* ITEM_MENU_STATE's; not named here */
 	Uint8  unusedAfterSides[4]; /* no view of the menu state names it */
-	Sint32 itemWin; /* ITEM_MENU_STATE's and SHOP_STATE's; not named here */
-	Sint32 win;
-	Sint32 unopenedWin;
-	Sint32 infoWin; /* ITEM_MENU_STATE's; not named here */
-	Sint32 listWin;
-	DJINN_PREVIEW_WINDOW *secondWin;
+	Sint32 itemWindow; /* ITEM_MENU_STATE's and SHOP_STATE's; not named here */
+	Sint32 window;
+	Sint32 unopenedWindow;
+	Sint32 infoWindow; /* ITEM_MENU_STATE's; not named here */
+	Sint32 listWindow;
+	DJINN_PREVIEW_WINDOW *secondWindow;
 	/* ITEM_MENU_STATE's last windows and its icons; not named here. */
-	Uint8			   itemWins[16];
+	Uint8			   itemWindows[16];
 	struct WINDOW_SPR *entryIcons[32];
 	Uint8  unusedAfterIcons[36]; /* no view of the menu state names it */
-	Sint32 helpWin;
-	Uint8  cursorGrid[4];	/* ITEM_MENU_STATE's cursor grid; not named here */
-	void  *memberSprs[8];	/* the party members' figures */
-	Sint16 memberX[8];		/* screen pixels */
-	Sint16 memberY[8];		/* screen pixels */
-	FIXED  memberScale[8];	/* ITEM_MENU_STATE's; not named here */
-	Sint16 memberSprIds[8]; /* ITEM_MENU_STATE's; not named here */
-	Uint16 selection[2];	/* each side's cursor (DJINN_CURSOR_ROW_STRIDE) */
-	Uint16 pairEntries[2];	/* each side's chosen list entry */
+	Sint32 helpWindow;
+	Uint8  cursorGrid[4];	 /* ITEM_MENU_STATE's cursor grid; not named here */
+	void  *memberSprites[8]; /* the party members' figures */
+	Sint16 memberX[8];		 /* screen pixels */
+	Sint16 memberY[8];		 /* screen pixels */
+	FIXED  memberScale[8];	 /* ITEM_MENU_STATE's; not named here */
+	Sint16 memberSpriteIds[8]; /* ITEM_MENU_STATE's; not named here */
+	Uint16 selection[2];   /* each side's cursor (DJINN_CURSOR_ROW_STRIDE) */
+	Uint16 pairEntries[2]; /* each side's chosen list entry */
 	struct WINDOW_SPR *secondCursor;
 	Uint8 unusedBeforeArrows[4]; /* no view of the menu state names it */
 	/* The up and down arrows beside the party row (mnCursorCreate). */
@@ -136,30 +136,30 @@ typedef struct DJINN_MENU_STATE {
 	Uint8  unusedAfterBackdrop[64]; /* no view of the menu state names it */
 	Uint16 entries[32]; /* ITEM_MENU_STATE's items; not named here */
 	Uint16 members[DJINN_LIST_MEMBERS]; /* the party in order */
-	Uint8  pairCnt;						/* not read by name here */
-	Uint8  memberCnt;
+	Uint8  pairCount;					/* not read by name here */
+	Uint8  memberCount;
 	Uint8  shownMember[2]; /* the party member giving and the one receiving */
 	/* ITEM_MENU_STATE's selectedItemIcon; not named here. */
 	struct WINDOW_SPR *selectedIcon;
-	Uint16			   pending;		  /* DJINN_PENDING bits */
-	Sint16			   completionFlg; /* ITEM_MENU_STATE's; not named here */
-	void			  *figures[4];	  /* ITEM_MENU_STATE's; not named here */
+	Uint16			   pending;		   /* DJINN_PENDING bits */
+	Sint16			   completionFlag; /* ITEM_MENU_STATE's; not named here */
+	void			  *figures[4];	   /* ITEM_MENU_STATE's; not named here */
 	Uint16			   slotX[4];
 	Uint16			   slotY[4];
 	Sint32 figurePhases[4]; /* ITEM_MENU_STATE's figureScales; not named here */
 	Uint16 figureFacings[4]; /* ITEM_MENU_STATE's; not named here */
 	/* The Djinn chosen on each side: index in their element, element, party
 	   member. */
-	Uint8  pairIdx[2];
+	Uint8  pairIndex[2];
 	Uint8  pairElement[2];
 	Uint8  pairMember[2];
-	Sint16 msgOfs; /* ITEM_MENU_STATE's; not named here */
+	Sint16 msgOffset; /* ITEM_MENU_STATE's; not named here */
 } DJINN_MENU_STATE;
 
 STATIC_ASSERT(offsetof(DJINN_MENU_BACKDROP, tiles) == 168);
-STATIC_ASSERT(offsetof(DJINN_MENU_BACKDROP, tutorialTmr) == 8488);
-STATIC_ASSERT(offsetof(DJINN_MENU_STATE, win) == 40);
-STATIC_ASSERT(offsetof(DJINN_MENU_STATE, helpWin) == 240);
+STATIC_ASSERT(offsetof(DJINN_MENU_BACKDROP, tutorialTimer) == 8488);
+STATIC_ASSERT(offsetof(DJINN_MENU_STATE, window) == 40);
+STATIC_ASSERT(offsetof(DJINN_MENU_STATE, helpWindow) == 240);
 STATIC_ASSERT(offsetof(DJINN_MENU_STATE, memberY) == 296);
 STATIC_ASSERT(offsetof(DJINN_MENU_STATE, backdrop) == 384);
 STATIC_ASSERT(offsetof(DJINN_MENU_STATE, members) == 516);

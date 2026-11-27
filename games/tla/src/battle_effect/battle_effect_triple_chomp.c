@@ -35,7 +35,7 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the idle half of the pair. */
 	BLITTER_PAIR  draw;
 	Uint8		 *graphics;
@@ -48,7 +48,7 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 	Sint32		  j;
 	Uint8		 *pixels = RamMapMetatileBuffer;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 
@@ -56,7 +56,7 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	btEffectSetApproachMotion(args->user, args->tgts[0], 8, 80);
+	btEffectSetApproachMotion(args->user, args->targets[0], 8, 80);
 	sySynch(8);
 
 	/* A clipped, mirrored blitter keeping the brighter for the sparks; the
@@ -70,17 +70,17 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 		syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
 		SHEET_PALETTE_BYTES);
 
-	for(frm = 0; frm != TRIPLE_CHOMP_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != TRIPLE_CHOMP_TICKS; frame++) {
+		if(frame == 0) {
 			for(i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++)
 				EXTRA_PARTICLES[i].variant = -1;
 		}
 
 		/* This tick's ring: one model drawing the square with the 128x128
 		   texture. */
-		vertices = syHeapAllocEWRAM(32);
+		vertices = syHeapAllocateEWRAM(32);
 		model = btRenderAllocateModelList(1);
-		btEffectPosProjectBattler(args->tgts[0], &pos);
+		btEffectPosProjectBattler(args->targets[0], &pos);
 		texture.logWidth = 7;
 		texture.logHeight = 7;
 		texture.pixels = pixels;
@@ -92,23 +92,23 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != TRIPLE_CHOMP_BITES; i++) {
 			/* The bite closes: its sparks fly from the target's middle, and the
 			   target jolts and flashes. The last bite shows the damage. */
-			if(frm == TripleChompBiteTicks[i]) {
+			if(frame == TripleChompBiteTicks[i]) {
 				for(j = 0; j != TRIPLE_CHOMP_BITE_SPARKS; j++) {
 					PARTICLE *spark =
 						&EXTRA_PARTICLES[i * TRIPLE_CHOMP_BITE_SPARK_SLOTS + j];
-					Sint32 ang;
+					Sint32 angle;
 					Sint32 force;
 
 					spark->x = toFIXED(pos.x / 2);
 					spark->y = INTtoFIXED(pos.y - TRIPLE_CHOMP_BITE_HEIGHT);
-					ang = syRandom();
+					angle = syRandom();
 					force = (syRandom() & 255) + 32;
-					spark->velX = (sySin(ang) * force) >> 8;
-					spark->velY = (syCos(ang) * force) >> 6;
+					spark->velocityX = (sySin(angle) * force) >> 8;
+					spark->velocityY = (syCos(angle) * force) >> 6;
 					if(args->side == EFFECT_SIDE_ENEMIES)
-						spark->velX += -toFIXED(1) / 2;
+						spark->velocityX += -toFIXED(1) / 2;
 					else
-						spark->velX += toFIXED(1) / 2;
+						spark->velocityX += toFIXED(1) / 2;
 					BITE_RING(i)->x = pos.x;
 					BITE_RING(i)->y = pos.y - TRIPLE_CHOMP_BITE_HEIGHT;
 					spark->variant = (syRandom() & 7) + 16;
@@ -116,18 +116,18 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 				if(i == TRIPLE_CHOMP_BITES - 1)
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				else
-					sySndPlayStub(SE_HEAVY_IMPACT);
-				btEffectStartActorMotion(
-					args->tgts[0], 1, toFIXED(2), toFIXED(8), 0, i * 20 + 120);
+					sySoundPlayStub(SE_HEAVY_IMPACT);
+				btEffectStartActorMotion(args->targets[0], 1, toFIXED(2),
+					toFIXED(8), 0, i * 20 + 120);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-				state->shakeFrm = 8;
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				state->shakeFrame = 8;
 			}
 
 			/* The bite's ring swells and fades. */
-			if(frm >= TripleChompBiteTicks[i] &&
-				frm < TripleChompBiteTicks[i] + TRIPLE_CHOMP_RING_TICKS) {
-				Sint32 age = frm - TripleChompBiteTicks[i];
+			if(frame >= TripleChompBiteTicks[i] &&
+				frame < TripleChompBiteTicks[i] + TRIPLE_CHOMP_RING_TICKS) {
+				Sint32 age = frame - TripleChompBiteTicks[i];
 				Sint32 shade =
 					TRIPLE_CHOMP_RING_TICKS / 2 * TRIPLE_CHOMP_RING_FADE -
 					age * TRIPLE_CHOMP_RING_FADE;

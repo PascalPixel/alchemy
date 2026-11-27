@@ -26,7 +26,7 @@ void btEffectRunHail(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	PARTICLE			*chip;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 rise;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -39,30 +39,30 @@ void btEffectRunHail(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_WATER_SPRAY_SHEET, state->sheet, 1, 1);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	btProjectionUnit(state->args->tgts[0], &origin);
+	btProjectionUnit(state->args->targets[0], &origin);
 
 	/* The chips burst up from just above the first target. */
 	for(i = 0; i != HAIL_CHIPS; i++) {
-		Sint32 ang;
+		Sint32 angle;
 		Sint32 speed;
 
-		ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+		angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 		speed = (syRandom() & 0x1ff) + 128;
 		PARTICLES[i].x = toFIXED((origin.x / 2 + (syRandom() & 0xf)) - 8);
 		PARTICLES[i].y = INTtoFIXED(origin.y + 8);
-		PARTICLES[i].velX = (sySin(ang) * speed) >> 9;
-		PARTICLES[i].velY = (syCos(ang) * speed) >> 6;
+		PARTICLES[i].velocityX = (sySin(angle) * speed) >> 9;
+		PARTICLES[i].velocityY = (syCos(angle) * speed) >> 6;
 		PARTICLES[i].z = syRandom() & 0x7f;
-		PARTICLES[i].velZ = syRandom() & 0x7f;
+		PARTICLES[i].velocityZ = syRandom() & 0x7f;
 		PARTICLES[i].variant = (syRandom() & 0xf) + 32;
 	}
 
-	for(frm = 0; frm != HAIL_TICKS; frm++) {
-		if(frm > 47)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frm);
+	for(frame = 0; frame != HAIL_TICKS; frame++) {
+		if(frame > 47)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frame);
 		/* The chips and the Djinni load on tick 1, so on tick 0 the prelude
 		   draws whatever the sprite sheet holds. */
-		if(frm == 1) {
+		if(frame == 1) {
 			btResourceLoadAndDecompress(RESOURCE_ICE_CHIP_SHEET,
 				state->sheet + HAIL_CHIP_PICTURES, 1, 1);
 			btResourceLoadAndDecompress(RESOURCE_MERCURY_DJINN_SMALL_SHEET,
@@ -75,16 +75,16 @@ void btEffectRunHail(BATTLE_EFFECT_PARM *args)
 			Sint32 x;
 			Sint32 y;
 
-			orbit = frm * (TRIG_TURN / 32);
+			orbit = frame * (TRIG_TURN / 32);
 			x = FIXEDtoINT(-sySin(orbit) * 4) + screenX / 2 - 10;
 			y = FIXEDtoINT(syCos(orbit) * 2) + screenY - 22;
 			/* DEAD: tick never passes 69, the loop ending at tick 63; the ROM
 			   keeps the compare and the rise. */
-			if(frm > 69)
-				y = (y - frm * 2) + 138;
+			if(frame > 69)
+				y = (y - frame * 2) + 138;
 			draw[1](canvas, state->sheet + HAIL_DJINNI_PICTURE, x, y,
 				SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-			if(frm <= 3)
+			if(frame <= 3)
 				draw[1](canvas, state->sheet + HAIL_DJINNI_PICTURE, x, y,
 					SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
 		}
@@ -92,7 +92,7 @@ void btEffectRunHail(BATTLE_EFFECT_PARM *args)
 		/* The chips fly up, odd ones mirrored. */
 		for(i = 0; i != HAIL_CHIPS; i++) {
 			chip = &PARTICLES[i];
-			if(frm >= i / 4 + 4) {
+			if(frame >= i / 4 + 4) {
 				Sint32 picture;
 				Sint32 width;
 				Sint32 height;
@@ -119,27 +119,28 @@ void btEffectRunHail(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frm == 8) {
-			state->shakeFrm = frm;
+		if(frame == 8) {
+			state->shakeFrame = frame;
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-			btEffectTintBattler(
-				state->args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 16);
-			btMotionApplyKnockbackStub(state->args->tgts[0], KNOCKBACK_LAUNCH);
+			btEffectTintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
+				POSE_DAMAGE, 0, 16);
+			btMotionApplyKnockbackStub(
+				state->args->targets[0], KNOCKBACK_LAUNCH);
 		}
 
 		/* Waves rise along the bottom, drifting away from the user. */
-		rise = frm * 4;
+		rise = frame * 4;
 		if(rise > WATER_WAVE_HEIGHT)
 			rise = WATER_WAVE_HEIGHT;
 		if(state->args->side == EFFECT_SIDE_ENEMIES) {
 			for(i = 0; i != 5; i++)
-				draw[0](canvas, state->sheet, (i << 5) - (frm / 4 & 31),
+				draw[0](canvas, state->sheet, (i << 5) - (frame / 4 & 31),
 					120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
 		} else {
 			for(i = 0; i != 5; i++)
 				draw[0](canvas, state->sheet,
-					((i << 5) + (frm / 4 & 31)) - WATER_WAVE_WIDTH, 120 - rise,
-					WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
+					((i << 5) + (frame / 4 & 31)) - WATER_WAVE_WIDTH,
+					120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
 		}
 
 		btCameraShake(4, 8);
@@ -170,10 +171,10 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
 	BATTLE_CAMERA		*camera;
-	ACTOR				*tgt;
+	ACTOR				*target;
 	ACTOR				*user;
 	SCREEN_POINT		 pos;
 	Sint32				 screenX;
@@ -201,7 +202,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	user = btObjectGetStub(state->args->user)->actor;
-	tgt = btObjectGetStub(state->args->tgts[0])->actor;
+	target = btObjectGetStub(state->args->targets[0])->actor;
 	/* The portals fan out from above the user. */
 	/* DEAD: the last two portals are set out but never drawn or moved; the ROM
 	   keeps their stores. */
@@ -213,27 +214,27 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 			(Sint32)toFIXED((syRandom() & 127) - 64) >> 6,
 			(Sint32)toFIXED((syRandom() & 255) - 127) >> 5);
 		if(portal->x > 0)
-			portal->velX = -portal->velX;
+			portal->velocityX = -portal->velocityX;
 		portal->variant = 1;
 	}
-	for(frm = 0; frm != GROUND_TICKS; frm++) {
-		if(frm > 16)
+	for(frame = 0; frame != GROUND_TICKS; frame++) {
+		if(frame > 16)
 			btEffectStepPaletteToResource(RESOURCE_PORTAL_SHEET);
 		/* The Djinni circles above the user, then rises away. */
 		if(state->args->prelude == 1) {
-			Sint32 ang = frm * (TRIG_TURN / 32);
-			Sint32 x = FIXEDtoINT(-sySin(ang) * 4) + screenX / 2 - 10;
-			Sint32 y = FIXEDtoINT(syCos(ang) * 2) + screenY - 22;
+			Sint32 angle = frame * (TRIG_TURN / 32);
+			Sint32 x = FIXEDtoINT(-sySin(angle) * 4) + screenX / 2 - 10;
+			Sint32 y = FIXEDtoINT(syCos(angle) * 2) + screenY - 22;
 
-			if(frm > 16)
-				y = y - frm * 2 + 32;
+			if(frame > 16)
+				y = y - frame * 2 + 32;
 			if(state->args->side == EFFECT_SIDE_PARTY)
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
 			else
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS, COMPOSITE_ADDITIVE);
-			if(frm <= 3)
+			if(frame <= 3)
 				EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)(canvas,
 					state->sheet + GROUND_DJINNI_PICTURE, x, y,
 					SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
@@ -244,12 +245,12 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 		/* Crackles flicker round each portal. */
 		/* DEAD: the crackles of the two portals never drawn are rolled too; the
 		   ROM keeps the rolls. */
-		if((frm & 1) == 0) {
+		if((frame & 1) == 0) {
 			for(i = 0; i != GROUND_CRACKLES; i++) {
 				PARTICLE *crackle = &state->particles[GROUND_FIRST_CRACKLE + i];
 
-				crackle->velX = syRandom() % 6 + 3;
-				crackle->velY = GroundCrackleFlips[syRandom() & 3];
+				crackle->velocityX = syRandom() % 6 + 3;
+				crackle->velocityY = GroundCrackleFlips[syRandom() & 3];
 			}
 		}
 		EFFECT_VIEW_FROM_CAMERA(camera);
@@ -257,7 +258,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 			PARTICLE *portal = &state->particles[i];
 
 			if(portal->variant == 1) {
-				if(frm > i * 2) {
+				if(frame > i * 2) {
 					Sint32 x;
 					Sint32 y;
 
@@ -267,7 +268,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 					y = pos.y - PORTAL_HEIGHT / 2;
 					draw[0](canvas, state->sheet, x, y, PORTAL_WIDTH,
 						PORTAL_HEIGHT);
-					if((frm & 3) <= 1)
+					if((frame & 3) <= 1)
 						draw[0](canvas, state->sheet + GroundPortalPictures[1],
 							x + GroundPortalX[1], y + GroundPortalY[1],
 							GroundPortalWidths[1], GroundPortalHeights[1]);
@@ -283,43 +284,47 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 						Sint32 crackleY;
 
 						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
-							crackle->velY, COMPOSITE_LIGHTEN);
+							crackle->velocityY, COMPOSITE_LIGHTEN);
 						draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-						if(crackle->velY & 4)
-							crackleX = x - GroundPortalWidths[crackle->velX] -
-								GroundPortalX[crackle->velX] + 24;
+						if(crackle->velocityY & 4)
+							crackleX = x -
+								GroundPortalWidths[crackle->velocityX] -
+								GroundPortalX[crackle->velocityX] + 24;
 						else
-							crackleX = x + GroundPortalX[crackle->velX];
-						if(crackle->velY & 8)
-							crackleY = y - GroundPortalHeights[crackle->velX] -
-								GroundPortalY[crackle->velX] + 48;
+							crackleX = x + GroundPortalX[crackle->velocityX];
+						if(crackle->velocityY & 8)
+							crackleY = y -
+								GroundPortalHeights[crackle->velocityX] -
+								GroundPortalY[crackle->velocityX] + 48;
 						else
-							crackleY = y + GroundPortalY[crackle->velX];
+							crackleY = y + GroundPortalY[crackle->velocityX];
 						draw[1](canvas,
-							state->sheet + GroundPortalPictures[crackle->velX],
+							state->sheet +
+								GroundPortalPictures[crackle->velocityX],
 							crackleX, crackleY,
-							GroundPortalWidths[crackle->velX],
-							GroundPortalHeights[crackle->velX]);
+							GroundPortalWidths[crackle->velocityX],
+							GroundPortalHeights[crackle->velocityX]);
 						syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 					}
-					portal->x += portal->velX;
-					portal->y += portal->velY;
-					portal->z += portal->velZ;
+					portal->x += portal->velocityX;
+					portal->y += portal->velocityY;
+					portal->z += portal->velocityZ;
 				}
 				/* The portal homes in on the target and strikes it. */
-				if(frm > i * 2 + 16) {
-					portal->velX += (tgt->x.fixed - portal->x) >> 8;
-					portal->velY += (toFIXED(20) - portal->y) >> 8;
-					portal->velZ += (tgt->z.fixed - portal->z) >> 8;
-					if(frm < i * 2 + 85) {
-						SET_VELOCITY(portal, portal->velX * 60 / DAMPING_SCALE,
-							portal->velY * 60 / DAMPING_SCALE,
-							portal->velZ * 60 / DAMPING_SCALE);
+				if(frame > i * 2 + 16) {
+					portal->velocityX += (target->x.fixed - portal->x) >> 8;
+					portal->velocityY += (toFIXED(20) - portal->y) >> 8;
+					portal->velocityZ += (target->z.fixed - portal->z) >> 8;
+					if(frame < i * 2 + 85) {
+						SET_VELOCITY(portal,
+							portal->velocityX * 60 / DAMPING_SCALE,
+							portal->velocityY * 60 / DAMPING_SCALE,
+							portal->velocityZ * 60 / DAMPING_SCALE);
 					}
 					if(portal->y < toFIXED(20)) {
-						state->shakeFrm = 8;
+						state->shakeFrame = 8;
 						portal->variant = 0;
-						sySndPlayStub(SE_HEAVY_IMPACT);
+						sySoundPlayStub(SE_HEAVY_IMPACT);
 						EFFECT_STRIKE_TARGET(state->args, 0, 4, KNOCKBACK_HURL);
 					}
 				}
@@ -332,22 +337,22 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 }
 
 /* Shakes the battle view by up to rangeX and rangeY pixels while the effect's
-   shakeFrm last, then puts it back where it was. */
+   shakeFrame last, then puts it back where it was. */
 void btCameraShake(Sint32 rangeX, Uint32 rangeY)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	if(state->shakeFrm > 0) {
+	if(state->shakeFrame > 0) {
 		Sint32 randomX = (rangeX - 1) & syRandom();
 		Sint32 halfRange = (Sint32)rangeY / 2;
-		Sint32 ofsY = ((rangeY - 1) & syRandom()) - halfRange;
-		Sint32 ofsX = randomX - halfRange;
+		Sint32 offsetY = ((rangeY - 1) & syRandom()) - halfRange;
+		Sint32 offsetX = randomX - halfRange;
 
-		BgScrollWork[1].x = ofsX;
-		BgScrollWork[1].y = ofsY + BATTLE_BACKGROUND_SCROLL_Y;
-		ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X - ofsX;
-		ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y - ofsY;
-		state->shakeFrm--;
+		BgScrollWork[1].x = offsetX;
+		BgScrollWork[1].y = offsetY + BATTLE_BACKGROUND_SCROLL_Y;
+		ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X - offsetX;
+		ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y - offsetY;
+		state->shakeFrame--;
 		return;
 	}
 	BgScrollWork[1].x = state->savedBg1X;

@@ -472,14 +472,14 @@ static void scColosseumSatrageMatchMoveMiniMazePillar(void)
 
 /* Nothing visible happens when Force is cast at the tall log by the Board
    Walk's channel, just before the fist flies. The scene sets the Psynergy's
-   `leaveTgt`, so that the fist does not shove the log 16 pixels away as it
+   `leaveTarget`, so that the fist does not shove the log 16 pixels away as it
    shoves what else it hits, and the log topples from where it stands
    (scColosseumSatrageMatchKnockDownLog). */
 static void scColosseumSatrageMatchKeepLogStillForForce(void)
 {
 	Uint8 *effectState = FieldEffectStateWork;
 
-	((FIELD_EFFECT_STATE *)effectState)->leaveTgt = 1;
+	((FIELD_EFFECT_STATE *)effectState)->leaveTarget = 1;
 }
 
 /* Force on the tall log standing at the east end of the Board Walk's channel
@@ -492,37 +492,37 @@ static void scColosseumSatrageMatchKnockDownLog(void)
 	Sint32 rotationStep;
 	Sint32 settleTicks;
 	Sint32 settleRotationStep;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	obstacle = fdActorGet(ACTOR_FALLING_LOG);
-	spr = obstacle->spr;
+	sprite = obstacle->sprite;
 	fdScriptSetFlag(FLAG_LOG_KNOCKED_DOWN);
 	obstacle->acceleration = toFIXED(1) / 10;
 	obstacle->speedLimit = toFIXED(6) / 5;
-	sySndPlay(SE_TOPPLE);
+	sySoundPlay(SE_TOPPLE);
 	syFieldActorSetMoveTarget(obstacle, 336, 10, 264);
 	for(rotationStep = 0, fallTicks = 0; fallTicks < 10; fallTicks++) {
-		spr->rotation -= rotationStep;
+		sprite->rotation -= rotationStep;
 		sySynch(1);
 		rotationStep += FALL_SPIN_ACCELERATION;
 	}
 	syFieldActorSetMoveTarget(obstacle, 330, -16, 264);
 	for(settleRotationStep = SETTLE_SPIN_START, settleTicks = 0;
 		settleTicks < 22; settleTicks++) {
-		spr->rotation -= settleRotationStep;
+		sprite->rotation -= settleRotationStep;
 		sySynch(1);
 		settleRotationStep += FALL_SPIN_ACCELERATION;
 	}
 	fdActorWaitForMove(obstacle);
 	fdScriptWait(2);
-	sySndPlay(SE_LOG_FALL);
-	spr->rotation = 0;
+	sySoundPlay(SE_LOG_FALL);
+	sprite->rotation = 0;
 	fdActorSetAnimation(ACTOR_FALLING_LOG, FALLING_LOG_ANIMATION_FALLEN);
 	obstacle->x.fixed = toFIXED(336);
 	obstacle->y.fixed = -toFIXED(8);
 	obstacle->z.fixed = toFIXED(264);
-	obstacle->velY = 0;
-	obstacle->velX = 0;
+	obstacle->velocityY = 0;
+	obstacle->velocityX = 0;
 	fdMapGridCopyMetatileAttributes(19, 16, 1, 1, 20, 16);
 	fdMapGridCopyMetatileAttributes(20, 80, 1, 1, 21, 80);
 }
@@ -533,7 +533,7 @@ static void scColosseumSatrageMatchKnockDownLog(void)
 static void scColosseumSatrageMatchFreezeWestPuddle(void)
 {
 	gmFlagSet(FLAG_WEST_PUDDLE_FROZEN);
-	fdActorGet(ACTOR_PUDDLE_WEST)->motionFlg = 0;
+	fdActorGet(ACTOR_PUDDLE_WEST)->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(46, 17, 1, 1, 44, 17);
 }
 
@@ -543,7 +543,7 @@ static void scColosseumSatrageMatchFreezeWestPuddle(void)
 static void scColosseumSatrageMatchFreezeEastPuddle(void)
 {
 	gmFlagSet(FLAG_EAST_PUDDLE_FROZEN);
-	fdActorGet(ACTOR_PUDDLE_EAST)->motionFlg = 0;
+	fdActorGet(ACTOR_PUDDLE_EAST)->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(46, 17, 1, 1, 50, 17);
 }
 
@@ -574,49 +574,53 @@ static void scColosseumSatrageMatchHopWestFromPost(void)
    with Isaac on top walking backwards as it turns under him, and stops both in
    the middle of their metatiles. */
 static void scColosseumSatrageMatchMoveRidingLog(
-	Sint32 logId, Sint32 ofsX, Sint32 ofsZ)
+	Sint32 logId, Sint32 offsetX, Sint32 offsetZ)
 {
 	ACTOR *rider;
 	ACTOR *log;
-	FIXED  dstX;
-	FIXED  dstZ;
+	FIXED  destX;
+	FIXED  destZ;
 
 	rider = fdActorGet(MainRoutineStateWork.leaderActorId);
 	log = fdActorGet(logId);
 	fdScriptStart();
 	{
-		dstX = ((rider->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsX)) &
-				   FIELD_METATILE_MASK) +
+		destX =
+			((rider->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
+				FIELD_METATILE_MASK) +
 			toFIXED(8);
-		dstZ = ((rider->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsZ)) &
-				   FIELD_METATILE_MASK) +
+		destZ =
+			((rider->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
+				FIELD_METATILE_MASK) +
 			toFIXED(8);
 
 		rider->speedLimit = toFIXED(1);
 		rider->acceleration = toFIXED(1) / 2;
-		syFieldActorSetMoveTargetFX(rider, dstX, rider->y.fixed, dstZ);
+		syFieldActorSetMoveTargetFX(rider, destX, rider->y.fixed, destZ);
 	}
 	fdActorSelectAnimation(rider, ANIM_LEADER_WALK_BACKWARDS);
 	{
-		dstX = ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsX)) &
-				   FIELD_METATILE_MASK) +
+		destX =
+			((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
+				FIELD_METATILE_MASK) +
 			toFIXED(8);
-		dstZ = ((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(ofsZ)) &
-				   FIELD_METATILE_MASK) +
+		destZ =
+			((log->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
+				FIELD_METATILE_MASK) +
 			toFIXED(8);
 
 		log->speedLimit = toFIXED(1);
 		log->acceleration = toFIXED(1) / 2;
-		syFieldActorSetMoveTargetFX(log, dstX, log->y.fixed, dstZ);
+		syFieldActorSetMoveTargetFX(log, destX, log->y.fixed, destZ);
 	}
-	if(ofsX < 0 || ofsZ < 0) {
+	if(offsetX < 0 || offsetZ < 0) {
 		fdActorSelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
 	} else {
 		fdActorSelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
 	}
-	sySndPlay(SE_LOG_PUSH);
+	sySoundPlay(SE_LOG_PUSH);
 	fdActorWaitForMove(rider);
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	fdActorSelectAnimation(log, FLOATING_LOG_ANIMATION_SETTLE);
 	fdScriptEnd();
 }
@@ -628,7 +632,7 @@ static void scColosseumSatrageMatchRideLog(void)
 {
 	ACTOR *rider = fdActorGet(MainRoutineStateWork.leaderActorId);
 	Sint32 column = FIELD_METATILE(rider->x.fixed);
-	Sint32 ofsX = 0;
+	Sint32 offsetX = 0;
 	Sint32 logId = ACTOR_RIDING_LOG_NORTH;
 
 	if(FIELD_METATILE(rider->z.fixed) >= RIDING_LOG_SOUTH_ROW) {
@@ -639,13 +643,13 @@ static void scColosseumSatrageMatchRideLog(void)
 	}
 	if(column > 51) {
 		if(PerData & KEY_LEFT) {
-			ofsX = -COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
+			offsetX = -COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
 		}
 	} else if(PerData & KEY_RIGHT) {
-		ofsX = COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
+		offsetX = COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
 	}
-	if(ofsX != 0) {
-		scColosseumSatrageMatchMoveRidingLog(logId, ofsX, 0);
+	if(offsetX != 0) {
+		scColosseumSatrageMatchMoveRidingLog(logId, offsetX, 0);
 		fdMapGridCopyMetatileAttributes(
 			LOG_ROLLING_STORE_COLUMN, 10, 5, 6, 48, 10);
 		column = FIELD_METATILE(fdActorGet(ACTOR_RIDING_LOG_NORTH)->x.fixed);
@@ -667,17 +671,17 @@ static void scColosseumSatrageMatchRollLogToMetatile(
 	ACTOR *log = fdActorGet(logId);
 	Sint32 heading = FACING_NEAREST_EIGHTH(pusherActor->facing);
 	Sint32 alongX = FIELD_METATILE(log->x.fixed) != halfMetatileX / 2;
-	FIXED  ofsX;
-	FIXED  ofsZ;
+	FIXED  offsetX;
+	FIXED  offsetZ;
 
 	halfMetatileX = FIELD_HALF_METATILE_ORIGIN(halfMetatileX);
 	halfMetatileZ = FIELD_HALF_METATILE_ORIGIN(halfMetatileZ);
 	if(alongX) {
-		ofsX = (halfMetatileX - log->x.fixed) / 2;
-		ofsZ = 0;
+		offsetX = (halfMetatileX - log->x.fixed) / 2;
+		offsetZ = 0;
 	} else {
-		ofsX = 0;
-		ofsZ = (halfMetatileZ - log->z.fixed) / 2;
+		offsetX = 0;
+		offsetZ = (halfMetatileZ - log->z.fixed) / 2;
 	}
 	fdScriptStart();
 	fdActorSetAnimation(pusher, ANIM_PUSH);
@@ -690,20 +694,20 @@ static void scColosseumSatrageMatchRollLogToMetatile(
 	fdScriptWait(6);
 	fdActorSetAnimation(pusher, ANIM_WALK);
 	/* Follow halfway behind the rolling log while its finish effect runs. */
-	fdActorStartCamera(((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	fdActorStartCamera(((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 							HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 						   ->camera,
 		(Sint32)log);
 	fdActorSetSpeedAndAcceleration(pusher, 0.5, 0.2);
 	fdActorSelectAnimation(pusherActor, ANIM_WALK);
-	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + ofsX, 0,
-		pusherActor->z.fixed + ofsZ);
-	sySndPlay(SE_HEAVY_MOVE);
+	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + offsetX, 0,
+		pusherActor->z.fixed + offsetZ);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorWaitForMove(pusherActor);
 	fdActorSelectAnimation(pusherActor, ANIM_STAND);
 	fdActorWaitForMove(log);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdActorSelectAnimation(log, LOG_ANIMATION_AT_REST);
 	fdScriptWait(15);
 	fdScriptEnd();
@@ -833,14 +837,15 @@ static void scColosseumSatrageMatchUpdateLifts(void)
 			riderZ = lift->z.fixed;
 		} else {
 			riderZ = rider->z.fixed;
-			deltaZ = lift->velZ;
+			deltaZ = lift->velocityZ;
 			riderZ += deltaZ;
 		}
 		rider->z.fixed = riderZ;
 	}
 	/* The final lift's destination selects the metatile behaviors for the
 	   row. */
-	if(ColosseumSatrageMatchLiftTimer != 0 && lift->tgtX == ACTOR_NO_TARGET) {
+	if(ColosseumSatrageMatchLiftTimer != 0 &&
+		lift->targetX == ACTOR_NO_TARGET) {
 		if(ColosseumSatrageMatchLiftsApart == 0) {
 			fdMapGridCopyMetatileAttributes(58, 28, 7, 1, 58, 13);
 		} else {
@@ -1047,7 +1052,7 @@ Sint32 scInit(void)
 	Sint32 obstacleId;
 	Sint32 column;
 	Sint32 liftId;
-	Sint32 columnOfs;
+	Sint32 columnOffset;
 	Sint32 row;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
@@ -1060,11 +1065,11 @@ Sint32 scInit(void)
 		/* The falling log, last of these, takes the same number, its
 		   FALLING_LOG_ANIMATION_FALLEN, until the lines below stand it up. */
 		fdActorSelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = 0;
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
-	fdActorGet(ACTOR_FORCE_TARGET)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_FORCE_TARGET)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	if(gmFlagGet(FLAG_LOG_KNOCKED_DOWN)) {
 		actor = fdActorGet(ACTOR_FALLING_LOG);
 		actor->x.fixed = toFIXED(336);
@@ -1077,7 +1082,7 @@ Sint32 scInit(void)
 		fdActorSelectAnimation(actor, FALLING_LOG_ANIMATION_STANDING);
 		actor->y.fixed = toFIXED(16);
 	}
-	fdActorGet(ACTOR_WALL_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_WALL_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	/* With the wall pillar moved, metatile (35, 77) takes the open ground of
 	   the metatile south of it; the map stores it as a wall. */
 	if(gmFlagGet(FLAG_WALL_PILLAR_MOVED)) {
@@ -1088,26 +1093,26 @@ Sint32 scInit(void)
 		fdMapGridCopyMetatileAttributes(32, 37, 1, 4, 32, 77);
 	}
 	if(gmFlagGet(FLAG_WEST_PUDDLE_FROZEN)) {
-		fdActorGet(ACTOR_PUDDLE_WEST)->motionFlg = 0;
-		fdActorGet(ACTOR_PUDDLE_WEST)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_PUDDLE_WEST)->motionFlags = 0;
+		fdActorGet(ACTOR_PUDDLE_WEST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSetAnimation(ACTOR_PUDDLE_WEST, PUDDLE_ANIMATION_PILLAR);
 		fdMapGridCopyMetatileAttributes(46, 17, 1, 1, 44, 17);
 	}
 	if(gmFlagGet(FLAG_EAST_PUDDLE_FROZEN)) {
-		fdActorGet(ACTOR_PUDDLE_EAST)->motionFlg = 0;
-		fdActorGet(ACTOR_PUDDLE_EAST)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_PUDDLE_EAST)->motionFlags = 0;
+		fdActorGet(ACTOR_PUDDLE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSetAnimation(ACTOR_PUDDLE_EAST, PUDDLE_ANIMATION_PILLAR);
 		fdMapGridCopyMetatileAttributes(46, 17, 1, 1, 50, 17);
 	}
 	actor = fdActorGet(ACTOR_RIDING_LOG_NORTH);
 	column = FIELD_METATILE(actor->x.fixed);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(52, 28, 1, 3, column, 10);
 	actor = fdActorGet(ACTOR_RIDING_LOG_SOUTH);
 	column = FIELD_METATILE(actor->x.fixed);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(52, 28, 1, 3, column, 13);
 
 	/* Each Mini-Maze pillar returns to the column its area temp flag byte
@@ -1118,8 +1123,8 @@ Sint32 scInit(void)
 	}
 	actor = fdActorGet(ACTOR_MINI_MAZE_FIRST_PILLAR);
 	actor->x.fixed = FIELD_METATILE_CENTER(x);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(71, 16, 1, 1, x, 16);
 	x = syFieldGameFlagGetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN);
 	if(x == 0) {
@@ -1127,8 +1132,8 @@ Sint32 scInit(void)
 	}
 	actor = fdActorGet(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
 	actor->x.fixed = FIELD_METATILE_CENTER(x);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(71, 16, 1, 1, x, 16);
 	x = syFieldGameFlagGetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN);
 	if(x == 0) {
@@ -1136,8 +1141,8 @@ Sint32 scInit(void)
 	}
 	actor = fdActorGet(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
 	actor->x.fixed = FIELD_METATILE_CENTER(x);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(71, 16, 1, 1, x, 16);
 
 	scColosseumSatrageMatchUpdateRollingLogCollision();
@@ -1147,13 +1152,13 @@ Sint32 scInit(void)
 		ACTOR_LIFT_OPERATOR, LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
 	if(gmFlagGet(FLAG_LIFTS_HALTED)) {
 		for(liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
-		columnOfs = 58;
+		columnOffset = 58;
 			liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
-			liftId++, columnOfs += 2) {
+			liftId++, columnOffset += 2) {
 			actor = fdActorGet(liftId);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			fdActorSelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
-			fdMapGridCopyMetatileAttributes(56, 13, 1, 1, columnOfs, row);
+			fdMapGridCopyMetatileAttributes(56, 13, 1, 1, columnOffset, row);
 		}
 		fdActorSetAnimation(
 			ACTOR_LIFT_OPERATOR, LIFT_OPERATOR_ANIMATION_LIFTS_LINED_UP);
@@ -1162,7 +1167,7 @@ Sint32 scInit(void)
 		for(liftId = ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
 			liftId <= ACTOR_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
 			actor = fdActorGet(liftId);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			fdActorSelectAnimation(actor, PLATFORM_ANIMATION_AT_WATERLINE);
 			actor->speedLimit = toFIXED(1) / 2;
 			actor->acceleration = toFIXED(1) / 5;
@@ -1174,7 +1179,7 @@ Sint32 scInit(void)
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
 	scColossoShowItemIcon(ACTOR_PRIZE_B, ITEM_COTTON_SHIRT);
 	scColossoShowItemIcon(ACTOR_PRIZE_A, ITEM_CHAIN_MAIL);
-	fdActorSetSprColById(ACTOR_OPPONENT, SPRITE_COLOR_GRB);
+	fdActorSetSpriteColorById(ACTOR_OPPONENT, SPRITE_COLOR_GRB);
 	/* The race, the friends' turns, the tour, and the battle's result. */
 	switch(MainRoutineStateWork.entrance) {
 	case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
@@ -1189,8 +1194,8 @@ Sint32 scInit(void)
 		fdActorReleaseById(ACTOR_WALL_ATTENDANT);
 		fdActorReleaseById(ACTOR_BOARD_WALK_ATTENDANT);
 		if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-			sySndPlay(SOUND_FADE_OUT_BGM);
-			scColossoCtrlCharacterAlone(ISAAC);
+			sySoundPlay(SOUND_FADE_OUT_BGM);
+			scColossoControlCharacterAlone(ISAAC);
 			scColossoPlaceFriendsAtCheeringSpots();
 			scColossoShowOpeningLettering(FINALS_MATCH);
 		}
@@ -1206,7 +1211,7 @@ Sint32 scInit(void)
 		fdActorReleaseById(ACTOR_PRIZE_B);
 		if(!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 			scColossoPlaceFriendsAtCheeringSpots();
-			scColossoCtrlCharacterAlone(GARET);
+			scColossoControlCharacterAlone(GARET);
 			scColossoShowOpeningLettering(LETTERING_LEND_A_HAND);
 		}
 		break;
@@ -1333,7 +1338,7 @@ static void scColosseumSatrageMatchTalkToMiniMazeAttendant(Sint32 attendant)
 			scColossoWalkActorToAndStand(ACTOR_PARTY_LEADER, 1224, 248);
 			scColossoWalkActorToAndStand(ACTOR_PARTY_LEADER, 1192, 248);
 			fdScriptWait(3);
-			fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(4);
+			fdActorGet(ACTOR_PARTY_LEADER)->velocityY = toFIXED(4);
 			fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_ARMS_RAISED);
 			fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1341,7 +1346,7 @@ static void scColosseumSatrageMatchTalkToMiniMazeAttendant(Sint32 attendant)
 			fdScriptShowMessage(attendant, 0);
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(attendant, STAGE_MINI_MAZE);
+			scColossoRepeatStageNumber(attendant, STAGE_MINI_MAZE);
 		} else if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoMainThingStage);
 			/* "The main thing with this stage is to proceed through the..." */
@@ -1385,7 +1390,7 @@ static void scColosseumSatrageMatchTalkToShiftingFloorAttendant(
 			fdScriptShowMessage(attendant, 0);
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(attendant, STAGE_SHIFTING_FLOOR);
+			scColossoRepeatStageNumber(attendant, STAGE_SHIFTING_FLOOR);
 		} else {
 			if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 				fdScriptSetMessageId(MsgColossoOperatorLiftsWillCheerFor);
@@ -1441,7 +1446,7 @@ static void scColosseumSatrageMatchTalkToLogRollingAttendant(Sint32 attendant)
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 			fdActorSetPos(ACTOR_RIDING_LOG_SOUTH, 840, 232);
-			scColossoRepeatStageNum(attendant, STAGE_LOG_ROLLING);
+			scColossoRepeatStageNumber(attendant, STAGE_LOG_ROLLING);
 		} else if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoHereYourObjectiveRideLogs);
 			/* "Here, your objective is to ride the logs as quickly as
@@ -1501,7 +1506,7 @@ static void scColosseumSatrageMatchTalkToWallAttendant(Sint32 attendant)
 		fdScriptShowMessage(attendant, 0);
 		scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 		fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		scColossoRepeatStageNum(attendant, STAGE_WALL);
+		scColossoRepeatStageNumber(attendant, STAGE_WALL);
 	} else if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 		fdScriptSetMessageId(MsgColossoScalingWallQuickly);
 		/* "Scaling the wall quickly is priority one in this stage." */
@@ -1523,37 +1528,37 @@ static void scColosseumSatrageMatchDemonstrateLogPush(
 	   metatiles:
 	   given pixels it always holds, so the push is along x, as this one is. */
 	Sint32 alongX = FIELD_METATILE(obstacle->x.fixed) != x / 2;
-	FIXED  ofsX;
-	FIXED  ofsZ;
+	FIXED  offsetX;
+	FIXED  offsetZ;
 
 	x <<= 16;
 	z <<= 16;
 	if(alongX) {
-		ofsX = (x - obstacle->x.fixed) / 2;
-		ofsZ = 0;
+		offsetX = (x - obstacle->x.fixed) / 2;
+		offsetZ = 0;
 	} else {
-		ofsX = 0;
-		ofsZ = (z - obstacle->z.fixed) / 2;
+		offsetX = 0;
+		offsetZ = (z - obstacle->z.fixed) / 2;
 	}
 	fdActorSetAnimation(pusher, ANIM_PUSH);
 	fdScriptWait(6);
 	obstacle->speedLimit = toFIXED(1) / 2;
 	obstacle->acceleration = toFIXED(1) / 5;
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSelectAnimation(obstacle, LOG_ANIMATION_ROLL_WEST);
 	syFieldActorSetMoveTargetFX(obstacle, x, 0, z);
 	fdScriptWait(6);
 	fdActorSetAnimation(pusher, ANIM_WALK);
 	fdActorSetSpeedAndAcceleration(pusher, 0.5, 0.2);
 	fdActorSelectAnimation(pusherActor, ANIM_WALK);
-	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + ofsX, 0,
-		pusherActor->z.fixed + ofsZ);
+	syFieldActorSetMoveTargetFX(pusherActor, pusherActor->x.fixed + offsetX, 0,
+		pusherActor->z.fixed + offsetZ);
 	fdActorWaitForMove(pusherActor);
 	fdActorSelectAnimation(pusherActor, ANIM_STAND);
 	fdActorWaitForMove(obstacle);
 	fdActorSelectAnimation(obstacle, LOG_ANIMATION_AT_REST);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdScriptWait(15);
 }
 
@@ -1596,7 +1601,7 @@ static void scColosseumSatrageMatchTalkToBoardWalkAttendant(Sint32 attendant)
 		scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 		fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
 		fdActorSetPos(ACTOR_ROLLING_LOG_EAST, 392, 208);
-		scColossoRepeatStageNum(attendant, STAGE_BOARD_WALK);
+		scColossoRepeatStageNumber(attendant, STAGE_BOARD_WALK);
 	} else if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 		fdScriptSetMessageId(MsgColossoFocusRollingLogs);
 		/* "Your focus here will be rolling the logs to form a path." */
@@ -1633,9 +1638,9 @@ void scColosseumSatrageMatchStartRaceGauge(Sint32 leaderId, Sint32 opponentId,
 	void			   *graphics;
 	Sint32				vramSlot;
 
-	state = syHeapSlotAllocEWRAM(
+	state = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_COLOSSO_RACE, sizeof(COLOSSO_RACE_STATE));
-	graphics = syHeapAllocEWRAM(512);
+	graphics = syHeapAllocateEWRAM(512);
 
 	state->gauge.playerActorId = leaderId;
 	state->gauge.opponentActorId = opponentId;
@@ -1682,7 +1687,7 @@ static void scColosseumSatrageMatchStartOpponentPath(Sint32 pathResource)
 		recorder->mirror = 1;
 		recorder->actorId = state->gauge.opponentActorId;
 		recorder->still = 0;
-		recorder->pathIdx = 0;
+		recorder->pathIndex = 0;
 	}
 	sySetTickEvent(scColossoUpdatePathOpponent, EVENT_PASS_TICK + 5);
 }

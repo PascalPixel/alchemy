@@ -190,11 +190,11 @@ static void scCottageRoomsASpawnSleepZ(void);
 /* Moves and grows a Z drifting up from Garet's sleeping grandfather. */
 static Sint32 scCottageRoomsAAdvanceSleepZ(ACTOR *actor)
 {
-	actor->x.fixed += actor->tmr * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
+	actor->x.fixed += actor->timer * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
 	actor->y.fixed += actor->userValue * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
 	actor->scaleX += toFIXED(1) / 40;
 	actor->scaleY += toFIXED(1) / 40;
-	actor->tmr += 5;
+	actor->timer += 5;
 	actor->userValue--;
 	return 0;
 }
@@ -221,17 +221,17 @@ const Uint32 *scGetExits(void)
    of their actors are in view. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *tbl;
+	ACTOR_PLACE *table;
 
 	if(gmFlagGet(FLAG_KALAY_REACHED)) {
-		tbl = CottageRoomsAActorPlacementsAfterKalay;
+		table = CottageRoomsAActorPlacementsAfterKalay;
 	} else if(gmFlagGet(FLAG_VALE_PARTY_LEFT)) {
-		tbl = CottageRoomsAActorPlacementsAfterLeaving;
+		table = CottageRoomsAActorPlacementsAfterLeaving;
 	} else {
-		tbl = CottageRoomsAActorPlacements;
+		table = CottageRoomsAActorPlacements;
 	}
-	fdAssignViewFlags(tbl);
-	return tbl;
+	fdAssignViewFlags(table);
+	return table;
 }
 
 /* Selects the cues for the current visit to Vale. */
@@ -336,17 +336,17 @@ static void scCottageRoomsAWorryAboutTravelersHealth(void)
 
 /* Leaves a house by its door, on the stormy night stopping the lightning
    first. */
-static void scCottageRoomsALeaveThroughDoor(Sint32 exitNum)
+static void scCottageRoomsALeaveThroughDoor(Sint32 exitNumber)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0)
 		fdWeatherStopLightning();
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	syImportScriptSetExitRequest(exitNum);
+	syImportScriptSetExitRequest(exitNumber);
 }
 
 /* The rooms' doors: stepping on a door's metatile, whose metatile behavior is
@@ -442,16 +442,17 @@ Sint32 scInit(void)
 				scCottageRoomsAGaretComesHome();
 			}
 		}
-		fdActorGet(ACTOR_GARETS_FATHER)->collisionFlg |= ACTOR_BLOCKED_BY_SOLID;
+		fdActorGet(ACTOR_GARETS_FATHER)->collisionFlags |=
+			ACTOR_BLOCKED_BY_SOLID;
 	}
 	/* Once Jenna is taken, her grandmother lies sick in bed. */
 	if(MainRoutineStateWork.entrance == COTTAGE_ROOMS_A_FROM_VALE_NORTH) {
 		if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
 			fdActorSetPos(ACTOR_JENNAS_GRANDMOTHER, 454, 150);
-			fdActorSetSprFlags(fdActorGet(ACTOR_JENNAS_GRANDMOTHER), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNAS_GRANDMOTHER), 0);
 			fdActorSetAnimation(
 				ACTOR_JENNAS_GRANDMOTHER, ANIM_GRANDMOTHER_IN_BED);
-			fdTilesetAnimResume(JENNAS_GRANDMOTHERS_SICKBED_ANIMATION);
+			fdTilesetAnimationResume(JENNAS_GRANDMOTHERS_SICKBED_ANIMATION);
 		}
 	}
 	return 0;
@@ -545,17 +546,17 @@ static inline void scCottageRoomsAFamilyNods(void)
 /* Has an actor squash and spring back once while it plays an animation
    through. */
 static inline void scCottageRoomsAPlayRepeatedAnimationAndWait(
-	Sint32 actorId, Sint32 anm)
+	Sint32 actorId, Sint32 animation)
 {
 	fdActorStartRepeatedMotion(actorId, 1);
-	fdActorSetAnimationAndWait(actorId, anm);
+	fdActorSetAnimationAndWait(actorId, animation);
 }
 
 /* In Garet's house in Vale, back from Kalay, Garet comes home. */
 static void scCottageRoomsAGaretComesHome(void)
 {
 	ACTOR		 *actor;
-	Sint32		  motionFlg = 0;
+	Sint32		  motionFlags = 0;
 	EVENT_FUNC	  timedUpdate;
 	const Sint32 *partyScript;
 
@@ -564,23 +565,23 @@ static void scCottageRoomsAGaretComesHome(void)
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
-	fdActorSetSprPriority(ACTOR_MIA, 1);
+	fdActorSetSpritePriority(ACTOR_MIA, 1);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
 	fdActorSetSpeed(ACTOR_GARET, 0.4);
 	fdActorSetSpeed(ACTOR_IVAN, 0.4);
 	fdActorSetSpeed(ACTOR_MIA, 0.4);
 	fdActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_GRANDFATHER_ASLEEP);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 808, 508);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z + 1), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z + 2), 0);
-	fdActorGet(ACTOR_FIRST_SLEEP_Z)->motionFlg = motionFlg;
-	fdActorGet(ACTOR_FIRST_SLEEP_Z + 1)->motionFlg = motionFlg;
-	fdActorGet(ACTOR_FIRST_SLEEP_Z + 2)->motionFlg = motionFlg;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z + 1), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_SLEEP_Z + 2), 0);
+	fdActorGet(ACTOR_FIRST_SLEEP_Z)->motionFlags = motionFlags;
+	fdActorGet(ACTOR_FIRST_SLEEP_Z + 1)->motionFlags = motionFlags;
+	fdActorGet(ACTOR_FIRST_SLEEP_Z + 2)->motionFlags = motionFlags;
 	timedUpdate = scCottageRoomsASpawnSleepZ;
 	sySetTickEvent(timedUpdate, EVENT_PASS_TICK);
 	sySynch(1);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
@@ -616,7 +617,7 @@ static void scCottageRoomsAGaretComesHome(void)
 		ACTOR_WATCH_KEEP_MOTION | ACTOR_GARETS_FATHER,
 		CottageRoomsAFaceTargetScript);
 	fdScriptWait(300);
-	fdCameraGetActor()->motionFlg = motionFlg;
+	fdCameraGetActor()->motionFlags = motionFlags;
 	/* The camera pans slowly up to Garet's parents. His father, pacing, asks
 	   whether they should look for Garet; Isaac still does not know about Dora.
 	   His mother teases that he misses Garet. */
@@ -830,15 +831,15 @@ static void scCottageRoomsAGaretComesHome(void)
 	fdScriptShowMessageThenWait(ACTOR_IVAN, 0, 20);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	scCottageRoomsAFamilyNods();
-	fdActorGet(ACTOR_MIA)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_MIA, 1);
+	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_MIA, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
 	fdActorWalkToAndWait(ACTOR_MIA, 794, 520);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
 	fdActorWalkToAndWait(ACTOR_MIA, 784, 496);
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST_NORTHWEST, 10);
-	fdActorGet(ACTOR_MIA)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
 	scCottageRoomsAFamilyNods();
 	fdScriptWait(20);
@@ -890,13 +891,13 @@ static void scCottageRoomsAGaretComesHome(void)
 static void scCottageRoomsASpawnSleepZ(void)
 {
 	Sint32 actorId;
-	Uint32 cycleFrm;
+	Uint32 cycleFrame;
 	ACTOR *actor;
 	ACTOR *origin;
 
-	cycleFrm = TickCount % 180;
+	cycleFrame = TickCount % 180;
 	actorId = ACTOR_FIRST_SLEEP_Z;
-	switch(cycleFrm) {
+	switch(cycleFrame) {
 	case 10:
 		break;
 	case 20:
@@ -924,8 +925,8 @@ static void scCottageRoomsASpawnSleepZ(void)
 		FIXED height = actor->y.fixed + toFIXED(24);
 
 		actor->y.fixed = height;
-		actor->tgtY = height;
-		actor->tmr = 25;
+		actor->targetY = height;
+		actor->timer = 25;
 		actor->userValue = SLEEP_Z_STEPS_PER_PIXEL / 2;
 	}
 	fdActorSetScript(actorId, CottageRoomsASleepZScript);

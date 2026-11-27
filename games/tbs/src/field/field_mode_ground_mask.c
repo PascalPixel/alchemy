@@ -40,7 +40,8 @@ void fdGroundMaskDrawMarks(void)
 	terrainFloor = FIXEDtoINT(actor->groundHeight);
 	terrainLayer = actor->layer;
 	/* The first tile of the solid block fdEffectStartGroundMask loaded. */
-	tile = VramCacheEntries[VRAM_CACHE_ENTRY_GROUND_MASK].ofs / TILE_SIZE_4BPP;
+	tile =
+		VramCacheEntries[VRAM_CACHE_ENTRY_GROUND_MASK].offset / TILE_SIZE_4BPP;
 	/* The left metatile, 8 pixels left of the actor. */
 	x -= toFIXED(8);
 	height = FIXEDtoINT(
@@ -56,16 +57,16 @@ void fdGroundMaskDrawMarks(void)
 		   words differ. */
 		((Uint32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
 		((Uint32 *)mark)[2] = OBJ_PRIORITY(1);
-		mark->pri = 0;
+		mark->priority = 0;
 		mark->tile = tile;
-		mark->objMode = OBJ_MODE_SEMI_TRANSPARENT;
+		mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
 		/* Snapped to the metatile's grid, then moved up by the ground's
 		   height. */
 		mark->x =
 			((Uint32)FIXEDtoINT(x) & MAPGRID_METATILE_PIXEL_MASK) - cameraX;
 		screenRow = FIXEDtoINT(z) & METATILE_GRID_ROW_MASK;
 		mark->y = screenRow - cameraZ - height + 16;
-		syOAMAddSprAtDepth(mark, 0);
+		syOAMAddSpriteAtDepth(mark, 0);
 	}
 	/* The right metatile, 8 pixels right of the actor, read the same way. */
 	x += toFIXED(16);
@@ -80,14 +81,14 @@ void fdGroundMaskDrawMarks(void)
 	if(height > 0 && height > terrainFloor) {
 		((Uint32 *)mark)[1] = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_WINDOW);
 		((Uint32 *)mark)[2] = 0;
-		mark->pri = 0;
+		mark->priority = 0;
 		mark->tile = tile;
-		mark->objMode = OBJ_MODE_SEMI_TRANSPARENT;
+		mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
 		mark->x =
 			((Uint32)FIXEDtoINT(x) & MAPGRID_METATILE_PIXEL_MASK) - cameraX;
 		screenRow = FIXEDtoINT(z) & METATILE_GRID_ROW_MASK;
 		mark->y = screenRow - cameraZ - height + 16;
-		syOAMAddSprAtDepth(mark, 0);
+		syOAMAddSpriteAtDepth(mark, 0);
 	}
 }
 
@@ -101,9 +102,9 @@ void fdEffectStartGroundMask(void *object)
 	Uint8			  *tiles;
 	volatile Uint32	   fill;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_GROUND_MASK, sizeof(*state));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_GROUND_MASK, sizeof(*state));
 	/* Upload the solid sprite tiles before enabling the drawing event. */
-	tiles = syHeapSlotAlloc(HEAP_SLOT_TILE_SCRATCH, 1024);
+	tiles = syHeapSlotAllocate(HEAP_SLOT_TILE_SCRATCH, 1024);
 	DMA_FILL32_CELL(fill, PIXELS_4BPP(1), tiles, 512);
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_GROUND_MASK, 512, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);

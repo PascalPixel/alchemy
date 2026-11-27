@@ -184,13 +184,13 @@ void scIdejimaGetUp(Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 
 	fdActorSetAnimation(id, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(id), 1);
+	fdActorSetSpriteFlags(fdActorGet(id), 1);
 	actor->x.fixed -= toFIXED(12);
-	((FIELD_SPR *)actor->spr)->rotation = 0;
+	((FIELD_SPR *)actor->sprite)->rotation = 0;
 	syWait(1);
-	fdActorSetSprFlags(fdActorGet(id), 1);
-	actor->velY = toFIXED(4);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(fdActorGet(id), 1);
+	actor->velocityY = toFIXED(4);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syWait(40);
 }
 
@@ -216,11 +216,11 @@ void scIdejimaWakeKraden(void)
 	fdMapGridCopyMetatileAttributes(38, 31, 2, 1, 25, 42);
 	actor = fdActorGet(ACTOR_KRADEN);
 	fdActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 1);
 	syWait(1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 1);
-	actor->velY = toFIXED(4);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 1);
+	actor->velocityY = toFIXED(4);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syWait(40);
 	/* "Ouch..." */
 	fdScriptShowMessage(ACTOR_KRADEN, 0);
@@ -287,11 +287,11 @@ void scIdejimaWakeJenna(void)
 	fdMapGridCopyMetatileAttributes(38, 31, 2, 1, 17, 46);
 	actor = fdActorGet(ACTOR_JENNA);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 1);
 	syWait(1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 1);
-	actor->velY = toFIXED(4);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 1);
+	actor->velocityY = toFIXED(4);
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syWait(40);
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	/* "Oh... I must have blacked out when the wave hit..." */
@@ -354,11 +354,11 @@ void scIdejimaWakeSheba(void)
 	/* "The wave!" */
 	fdScriptShowMessageAndWait(ACTOR_SHEBA, 0);
 	fdMapGridCopyMetatileAttributes(38, 31, 2, 1, 14, 40);
-	fdActorGetById(ACTOR_SHEBA)->motionFlg =
+	fdActorGetById(ACTOR_SHEBA)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdActorJump(ACTOR_SHEBA, 4, 0);
 	fdActorSetAnimationById(ACTOR_SHEBA, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_SHEBA), 1);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHEBA), 1);
 	fdScriptWait(20);
 	fdActorTurnToFaceEachOther(
 		ACTOR_SHEBA, MainRoutineStateWork.leaderActorId, 0);
@@ -410,7 +410,7 @@ void scIdejimaEnterDoor(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(EXIT_DOOR);
@@ -585,11 +585,11 @@ void scIdejimaCatchUpWithFelix(void)
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 0);
 		fdMapGridCopyMetatileAttributes(38, 31, 2, 1, 14, 40);
-		fdActorGetById(ACTOR_SHEBA)->motionFlg =
+		fdActorGetById(ACTOR_SHEBA)->motionFlags =
 			ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdActorJump(ACTOR_SHEBA, 4, 0);
 		fdActorSetAnimationById(ACTOR_SHEBA, ANIM_STAND);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_SHEBA), 1);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_SHEBA), 1);
 		fdScriptWait(20);
 		fdActorSetSpeed(ACTOR_SHEBA, 1.6);
 		fdActorWalkToAndWait(ACTOR_SHEBA, 212, 680);
@@ -968,14 +968,14 @@ void scIdejimaUpdateWaveLines(void)
    and clears colour 0, for the island adrift. */
 void scIdejimaUseDriftPalette(void)
 {
-	FADE_PALETTE *palette = RamHeapSlots->palFade;
-	Uint16		 *to = palette->cols;
-	Uint16		 *from = palette->cols + 8 * PALETTE_COLORS;
+	FADE_PALETTE *palette = RamHeapSlots->paletteFade;
+	Uint16		 *to = palette->colors;
+	Uint16		 *from = palette->colors + 8 * PALETTE_COLORS;
 	Uint32		  i;
 
 	for(i = 0; i < 4 * PALETTE_COLORS; i++)
 		*to++ = *from++;
-	palette->cols[0] = 0;
+	palette->colors[0] = 0;
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 0);
 }
 
@@ -1015,8 +1015,8 @@ void scIdejimaBreakAwayFromGondowan(void)
 		kraden->facing = FACING_WEST;
 	}
 	fdActorSetPos(ACTOR_ALEX, 186, 164);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_ALEX), SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_ALEX), SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
 	syWait(1);
 	fdScriptStartScreenTransition();
 	fdCameraSetSpeed(0.6);
@@ -1197,8 +1197,8 @@ void scIdejimaBreakAwayFromGondowan(void)
 		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 1);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_ALEX), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 1);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_ALEX), 0);
 	syFieldScriptWait(10);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_EAST, 40);
 	fdActorSetAnimation(ACTOR_ALEX, ANIM_NOD);
@@ -1254,12 +1254,12 @@ void scIdejimaFindFelixAndSheba(void)
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdActorSetPos(ACTOR_SHEBA, 444, 212);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHEBA), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHEBA), 0);
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 432, 234);
 	fdActorGet(MainRoutineStateWork.leaderActorId)->scaleX = -toFIXED(1);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	fdActorSetPos(ACTOR_ALEX, 392, 172);
 	syWait(1);
 	fdCameraMoveTo(192, CAMERA_KEEP, 214, 0);
@@ -1267,10 +1267,10 @@ void scIdejimaFindFelixAndSheba(void)
 	syWait(1);
 	fdActorSetPos(ACTOR_JENNA, 208, 218);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_COLLAPSE);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 0);
 	fdActorSetPos(ACTOR_KRADEN, 176, 204);
 	fdActorSetAnimation(ACTOR_KRADEN, KRADEN_ANIMATION_ASLEEP);
-	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 0);
 	syWait(1);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1327,10 +1327,10 @@ void scIdejimaFindFelixAndSheba(void)
 	fdActorSetScript(ACTOR_ALEX, IdejimaAlexLeadsTheWayScript);
 	syFieldScriptWait(40);
 	fdActorSetAnimation(ACTOR_KRADEN, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 1);
 	scFieldActorJump(ACTOR_KRADEN, 4, 20);
 	fdActorSetAnimation(ACTOR_JENNA, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 1);
 	scFieldActorJump(ACTOR_JENNA, 4, 20);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 40);
@@ -1340,11 +1340,11 @@ void scIdejimaFindFelixAndSheba(void)
 	syFieldScriptWait(40);
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(368, CAMERA_KEEP, 210, 1);
-	actor->tmr = 0;
+	actor->timer = 0;
 	fdActorSetScript(ACTOR_JENNA, IdejimaJennaFollowsAlexScript);
 	do {
 		syWait(1);
-	} while(actor->tmr == 0);
+	} while(actor->timer == 0);
 	syFieldScriptWait(10);
 	fdActorSetAttachedEffect(
 		ACTOR_KRADEN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1369,7 +1369,7 @@ void scIdejimaFindFelixAndSheba(void)
 	/* "What is this? Alex, what happened?" */
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0, 40);
-	FieldStateWork->transitionFrm = 120;
+	FieldStateWork->transitionFrame = 120;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetExitRequest(IDEJIMA_TO_TITLE);
@@ -1394,12 +1394,12 @@ void scIdejimaRideTheTidalWave(void)
 	fdActorSetPosAndFacing(
 		ACTOR_SHEBA, toFIXED(342), toFIXED(230), FACING_EAST);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHEBA), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHEBA), 0);
 	fdActorSetPosAndFacing(MainRoutineStateWork.leaderActorId, toFIXED(312),
 		toFIXED(230), FACING_WEST);
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	syWait(1);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1447,18 +1447,18 @@ void scIdejimaRideTheTidalWave(void)
 	syFieldScriptShowMessageThenWait(ACTOR_KRADEN, 0, 40);
 	/* "With Felix...?" */
 	syFieldScriptShowMessageThenWait(ACTOR_SHEBA, 0, 40);
-	fdActorGet(ACTOR_SHEBA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHEBA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_SHEBA, 340, 226);
 	scFieldActorJump(ACTOR_SHEBA, 4, 0);
 	fdActorSetAnimation(ACTOR_SHEBA, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHEBA), 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHEBA), 1);
 	syFieldScriptWait(20);
 	fdActorSetAttachedEffect(
 		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(20);
 	/* "Take your time... Do you feel all right, Sheba?" */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
-	fdActorGet(ACTOR_SHEBA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHEBA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
 	scFieldActorWaitForScriptEndById(ACTOR_SHEBA);
 	fdActorSetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -1578,19 +1578,19 @@ void scIdejimaRideTheTidalWave(void)
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
 	/* "Brother..." */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkTo(MainRoutineStateWork.leaderActorId, 314, 226);
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 4, 0);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 1);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 1);
 	leader->scaleX = toFIXED(1);
 	syFieldScriptWait(20);
 	fdActorSetAttachedEffect(
 		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	/* "Are you sure you should be standing?" */
 	fdScriptShowMessage(ACTOR_JENNA, 0);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	fdActorFaceDirection(
 		MainRoutineStateWork.leaderActorId, FACING_SOUTHWEST, 40);
@@ -1661,7 +1661,7 @@ void scIdejimaRideTheTidalWave(void)
 	fdActorSetSpeed(ACTOR_SHEBA, 0.8);
 	fdActorSetSpeed(ACTOR_KRADEN, 0.8);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
-	leader->tmr = 0;
+	leader->timer = 0;
 	fdActorSetScript(ACTOR_KRADEN, IdejimaKradenToTheShoreScript);
 	fdActorSetScript(ACTOR_JENNA, IdejimaJennaToTheShoreScript);
 	fdActorSetScript(
@@ -1669,7 +1669,7 @@ void scIdejimaRideTheTidalWave(void)
 	fdActorSetScript(ACTOR_SHEBA, IdejimaShebaToTheShoreScript);
 	do
 		syWait(1);
-	while(leader->tmr == 0);
+	while(leader->timer == 0);
 	fdCameraWaitForArrival();
 	fdActorShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	/* "It's land! An island!" */
@@ -1723,7 +1723,7 @@ void scIdejimaFelixWakes(void)
 	fdActorSetAnimation(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
 	syWait(1);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 0);
 	syWait(1);
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 384, 728);
 	fdActorSetPos(ACTOR_NARRATOR, 384, 702);
@@ -1747,7 +1747,7 @@ void scIdejimaFelixWakes(void)
 	scFelixWakeWaitForButton();
 	scFelixWakeStartStep();
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 1);
+	fdActorSetSpriteFlags(fdActorGet(MainRoutineStateWork.leaderActorId), 1);
 	syWait(1);
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 4, 20);
 	syFieldScriptSetMessageId((Sint32)MsgIdejimaCheckForInjuries);
@@ -1867,20 +1867,20 @@ UNUSED void scIdejimaLieDown(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	fdActorSetSprFlags(fdActorGet(id), 0);
+	fdActorSetSpriteFlags(fdActorGet(id), 0);
 	actor->facing = FACING_SOUTH;
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->x.fixed += toFIXED(12);
 	actor->y.fixed = toFIXED(16);
-	actor->collisionFlg = 0;
-	((FIELD_SPR *)actor->spr)->rotation = DEGtoANG(270);
+	actor->collisionFlags = 0;
+	((FIELD_SPR *)actor->sprite)->rotation = DEGtoANG(270);
 }
 
 /* Lays each of Kraden, Jenna and Sheba who has not yet joined asleep on the
    grass where the wave left them, and wakes Felix the first time. */
 void scIdejimaLayDownTheOthers(void)
 {
-	Sint32 flg;
+	Sint32 flag;
 
 	if(!fdScriptGetFlag(FLAG_IDEJIMA_KRADEN_JOINED)) {
 		ACTOR *actor;
@@ -1888,11 +1888,11 @@ void scIdejimaLayDownTheOthers(void)
 		fdActorSetPos(ACTOR_KRADEN, 416, 680);
 		fdMapGridCopyMetatileAttributes(38, 32, 2, 1, 25, 42);
 		actor = fdActorGet(ACTOR_KRADEN);
-		fdActorSetSprFlags(fdActorGet(ACTOR_KRADEN), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_KRADEN), 0);
 		actor->facing = FACING_SOUTH;
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(12);
-		actor->collisionFlg = 0;
+		actor->collisionFlags = 0;
 		fdActorSetAnimation(ACTOR_KRADEN, KRADEN_ANIMATION_ASLEEP);
 	}
 	if(!fdScriptGetFlag(FLAG_IDEJIMA_JENNA_JOINED)) {
@@ -1901,23 +1901,23 @@ void scIdejimaLayDownTheOthers(void)
 		fdActorSetPos(ACTOR_JENNA, 288, 744);
 		fdMapGridCopyMetatileAttributes(38, 33, 2, 1, 17, 46);
 		actor = fdActorGet(ACTOR_JENNA);
-		fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 0);
 		actor->facing = FACING_SOUTH;
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(12);
-		actor->collisionFlg = 0;
+		actor->collisionFlags = 0;
 		fdActorSetAnimation(ACTOR_JENNA, ANIM_JENNA_LIE_ON_SIDE);
 	}
-	flg = fdScriptGetFlag(FLAG_IDEJIMA_SHEBA_JOINED);
-	if(flg == 0) {
+	flag = fdScriptGetFlag(FLAG_IDEJIMA_SHEBA_JOINED);
+	if(flag == 0) {
 		ACTOR *actor;
 
 		actor = fdActorGet(ACTOR_SHEBA);
 		fdActorSetPos(ACTOR_SHEBA, 240, 648);
 		fdMapGridCopyMetatileAttributes(38, 34, 2, 1, 14, 40);
 		fdActorSetAnimation(ACTOR_SHEBA, ANIM_COLLAPSE);
-		fdActorSetSprFlags(fdActorGet(ACTOR_SHEBA), 0);
-		actor->motionFlg = 0;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_SHEBA), 0);
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(12);
 	}
 	fdMapGridCopyMetatilesTo(72, 42, 75, 40, 1, 1);

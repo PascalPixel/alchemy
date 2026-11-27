@@ -29,22 +29,23 @@ typedef struct MIND_READ_STATE {
 	Sint8  red;	  /* the hue as a colour (red, green, blue, 4 to 11 each) */
 	Sint8  green;
 	Sint8  blue;
-	Uint16 hue;	  /* hue, 0 to 359 degrees */
-	Uint16 srcId; /* the caster's actor id */
-	Uint16 tgtId; /* the target's actor id */
-	Uint8  delay; /* ticks before it starts */
-	Uint8  cnt;	  /* particle spawn cycle (0 to 60) */
+	Uint16 hue;		 /* hue, 0 to 359 degrees */
+	Uint16 srcId;	 /* the caster's actor id */
+	Uint16 targetId; /* the target's actor id */
+	Uint8  delay;	 /* ticks before it starts */
+	Uint8  count;	 /* particle spawn cycle (0 to 60) */
 } MIND_READ_STATE;
 
-/* Starts the wave effect of casterId on tgtId (actor ids): fades the
+/* Starts the wave effect of casterId on targetId (actor ids): fades the
    palettes toward a hue that shifts with the tick counter, and starts its
    per-tick update (fdPsynergyUpdateMindReadWave) after 8 ticks. */
-void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId)
+void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 targetId)
 {
 	MIND_READ_STATE *state;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_MIND_READ, sizeof(MIND_READ_STATE));
-	fdPsynergyFadeToCastCol();
+	state =
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_MIND_READ, sizeof(MIND_READ_STATE));
+	fdPsynergyFadeToCastColor();
 	DMA_FILL32(0, state, sizeof(MIND_READ_STATE));
 	state->hue = ((Uint32)(TickCount << 1) % (Uint32)HUE_DEGREES);
 	fdMindReadAdvanceTint();
@@ -54,7 +55,7 @@ void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId)
 		PALETTES_BG);
 	fdPaletteFadeStartInterpolation(8);
 	state->srcId = casterId;
-	state->tgtId = tgtId;
+	state->targetId = targetId;
 	state->delay = 8;
 	fdPsynergyGreyMindReadPalette();
 	sySetEvent(fdPsynergyUpdateMindReadWave, EVENT_PASS_TICK);
@@ -69,8 +70,8 @@ void fdPsynergyStopMindReadWave(void)
 	fdPsynergyRestoreMindReadPalette();
 	syCloseEvent(fdPsynergyUpdateMindReadWave);
 	/* Back to SPRITE_COLOR_NORMAL. */
-	fdActorSetLayersColMode(fdActorGetById(state->srcId), 1);
-	fdPsynergyFadeFromCastCol();
+	fdActorSetLayersColorMode(fdActorGetById(state->srcId), 1);
+	fdPsynergyFadeFromCastColor();
 	syHeapSlotRelease(HEAP_SLOT_MIND_READ);
 }
 
@@ -85,9 +86,9 @@ void fdPsynergyUpdateMindReadWave(void)
 	Uint16			   *line;
 	Uint32				scanline;
 	ACTOR			   *caster;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	ACTOR			   *particle;
-	WAVE_EFFECT_SPR	   *spr;
+	WAVE_EFFECT_SPR	   *sprite;
 	VECTOR3				from;
 	VECTOR3				to;
 	ANIMATION_METADATA *meta;
@@ -112,46 +113,46 @@ void fdPsynergyUpdateMindReadWave(void)
 		fdMindReadAdvanceTint();
 	}
 	/* The caster's colours cycle. */
-	fdActorSetLayersColMode(fdActorGetById(state->srcId), 0);
+	fdActorSetLayersColorMode(fdActorGetById(state->srcId), 0);
 
-	if(state->cnt == 0 || state->cnt == MIND_READ_PARTICLE_GAP ||
-		state->cnt == 2 * MIND_READ_PARTICLE_GAP) {
+	if(state->count == 0 || state->count == MIND_READ_PARTICLE_GAP ||
+		state->count == 2 * MIND_READ_PARTICLE_GAP) {
 		caster = fdActorGetById(state->srcId);
-		tgt = fdActorGetById(state->tgtId);
-		if(caster != 0 && tgt != 0) {
+		target = fdActorGetById(state->targetId);
+		if(caster != 0 && target != 0) {
 			/* From 2 pixels below each one's sprite height (its metadata's
-			   sprTop). */
+			   spriteTop). */
 			from.x = caster->x.fixed;
 			meta = syResourceGetMetadataRecordStub(
-				(Sint16)fdFindActorPlacement(state->srcId)->spr);
-			from.y = caster->y.fixed + toFIXED(meta->sprTop) - toFIXED(2);
+				(Sint16)fdFindActorPlacement(state->srcId)->sprite);
+			from.y = caster->y.fixed + toFIXED(meta->spriteTop) - toFIXED(2);
 			from.z = caster->z.fixed;
-			to.x = tgt->x.fixed;
+			to.x = target->x.fixed;
 			meta = syResourceGetMetadataRecordStub(
-				(Sint16)fdFindActorPlacement(state->tgtId)->spr);
-			to.y = tgt->y.fixed + toFIXED(meta->sprTop) - toFIXED(2);
-			to.z = tgt->z.fixed;
+				(Sint16)fdFindActorPlacement(state->targetId)->sprite);
+			to.y = target->y.fixed + toFIXED(meta->spriteTop) - toFIXED(2);
+			to.z = target->z.fixed;
 			particle = fdActorCreateStub(SPRITE_CRESCENT, to.x, to.y, to.z);
 			if(particle != 0) {
-				spr = (WAVE_EFFECT_SPR *)particle->spr;
-				particle->motionFlg = 0;
+				sprite = (WAVE_EFFECT_SPR *)particle->sprite;
+				particle->motionFlags = 0;
 				/* 0.64 pixels a tick */
 				particle->speedLimit = toFIXED(16) / 25;
 				particle->acceleration = toFIXED(16) / 25;
 				particle->facing = syAtan(from.z - to.z, from.x - to.x);
 				particle->update = fdMindReadUpdateCrescent;
 				/* No shadow or outline, sprite priority 1. */
-				spr->flg = 0;
-				spr->pri = 1;
+				sprite->flags = 0;
+				sprite->priority = 1;
 				fdActorSetMoveTargetStub(particle, from.x, from.y, from.z);
 			}
 		}
 	}
 
-	if(state->cnt == 0)
-		sySndPlayStub(SE_PSYNERGY_START);
-	if(++state->cnt > MIND_READ_CYCLE_LAST)
-		state->cnt = 0;
+	if(state->count == 0)
+		sySoundPlayStub(SE_PSYNERGY_START);
+	if(++state->count > MIND_READ_CYCLE_LAST)
+		state->count = 0;
 }
 
 /* What Mind Read's wave uses: BG0's line scroll, the hue cycle and BG
@@ -186,22 +187,22 @@ void fdMindReadAdvanceTint(void)
 	Sint32			 r = 0;
 	Sint32			 g = 0;
 	Sint32			 b = 0;
-	Sint32			 ofs;
+	Sint32			 offset;
 	Uint8			*pr;
 	Uint8			*pg;
 	Uint8			*pb;
 
-	fdEffectCalcHueChannels(toFIXED(state->hue), &r, &g, &b);
+	fdEffectCalculateHueChannels(toFIXED(state->hue), &r, &g, &b);
 
 	/* Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue. */
-	ofs = offsetof(MIND_READ_STATE, red);
-	pr = (Uint8 *)state + ofs;
+	offset = offsetof(MIND_READ_STATE, red);
+	pr = (Uint8 *)state + offset;
 	*pr = (FIXEDtoINT(r) >> 2) + MIND_READ_TINT_LEVEL_MIN;
-	ofs += 1;
-	pg = (Uint8 *)state + ofs;
+	offset += 1;
+	pg = (Uint8 *)state + offset;
 	*pg = (FIXEDtoINT(g) >> 2) + MIND_READ_TINT_LEVEL_MIN;
-	ofs += 1;
-	pb = (Uint8 *)state + ofs;
+	offset += 1;
+	pb = (Uint8 *)state + offset;
 	*pb = (FIXEDtoINT(b) >> 2) + MIND_READ_TINT_LEVEL_MIN;
 
 	state->hue += 4;
@@ -217,7 +218,7 @@ void fdMindReadAdvanceTint(void)
 
 /* Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
    (16.16). */
-void fdEffectCalcHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b)
+void fdEffectCalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b)
 {
 	*r = fdEffectHueChannelRamp(
 		hue + HUE_CIRCLE / 3, 0, toFIXED(1) * RGB_LEVEL_MAX);
@@ -228,15 +229,16 @@ void fdEffectCalcHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b)
 
 /* One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
    high from 60 to 180, falling from 180 to 240, low elsewhere. */
-Sint32 fdEffectHueChannelRamp(Sint32 ang, Sint32 low, FIXED high)
+Sint32 fdEffectHueChannelRamp(Sint32 angle, Sint32 low, FIXED high)
 {
-	ang = fdFixedPointRemainder(ang, HUE_CIRCLE);
-	if(ang < HUE_CIRCLE / 6)
-		return syDivFX(HUE_CIRCLE / 6, syMulFX(high, ang));
-	if(ang >= HUE_CIRCLE / 6 && ang < HUE_CIRCLE / 2)
+	angle = fdFixedPointRemainder(angle, HUE_CIRCLE);
+	if(angle < HUE_CIRCLE / 6)
+		return syDivFX(HUE_CIRCLE / 6, syMulFX(high, angle));
+	if(angle >= HUE_CIRCLE / 6 && angle < HUE_CIRCLE / 2)
 		return high;
-	if(ang >= HUE_CIRCLE / 2 && ang < HUE_CIRCLE * 2 / 3)
-		return syDivFX(HUE_CIRCLE / 6, syMulFX(high, HUE_CIRCLE * 2 / 3 - ang));
+	if(angle >= HUE_CIRCLE / 2 && angle < HUE_CIRCLE * 2 / 3)
+		return syDivFX(
+			HUE_CIRCLE / 6, syMulFX(high, HUE_CIRCLE * 2 / 3 - angle));
 	return low;
 }
 
@@ -259,13 +261,13 @@ FIXED fdFixedPointRemainder(FIXED value, FIXED divisor)
    SC_RELEASE. */
 void fdMindReadUpdateCrescent(ACTOR *actor)
 {
-	Sint32 tgtY;
-	Sint32 tgtX;
+	Sint32 targetY;
+	Sint32 targetX;
 
-	tgtX = actor->tgtX;
-	if(tgtX == ACTOR_NO_TARGET) {
-		tgtY = actor->tgtY;
-		if((tgtY == tgtX) && (actor->tgtZ == tgtY)) {
+	targetX = actor->targetX;
+	if(targetX == ACTOR_NO_TARGET) {
+		targetY = actor->targetY;
+		if((targetY == targetX) && (actor->targetZ == targetY)) {
 			fdActorStartScriptStub(actor, FieldEffectUntargetedActorScript);
 		}
 	}
@@ -317,8 +319,8 @@ void fdPsynergyRestoreMindReadPalette(void)
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR) = RGB(0, 0, 0);
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BORDER_DARK_COLOR) = RGB(10, 10, 10);
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BORDER_LIGHT_COLOR) = RGB(20, 20, 20);
-	mnWindowColApplyStub(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApplyStub(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	((WIN_STATE *)state)->mindRead = 0;
 }
 

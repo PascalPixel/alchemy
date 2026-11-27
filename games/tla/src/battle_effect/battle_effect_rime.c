@@ -37,10 +37,10 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	void		  *vertices;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
-	Sint32		   frm;
+	Sint32		   frame;
 	Sint32		   i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	if(mode == DJINNI_SIGN_RIME) {
@@ -94,30 +94,30 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	blit[0] = RamHeapSlots->ramCode;
 
-	for(frm = 0; frm != DJINNI_SIGN_TICKS; frm++) {
+	for(frame = 0; frame != DJINNI_SIGN_TICKS; frame++) {
 		/* Tick 0: Haze's stars take random places about the centre, one more
 		   blooming every two ticks. */
-		if(frm == 0) {
+		if(frame == 0) {
 			for(i = 0; i != HAZE_PLACED_STARS; i++) {
 				PARTICLE *star = &state->particles[i];
 
 				SET_POSITION(star, toFIXED((syRandom() & 31) - 16),
 					toFIXED((syRandom() & 63) - 16), (syRandom() & 127) + 128);
-				star->velY = syRandom();
+				star->velocityY = syRandom();
 				star->variant = -i * 2;
 			}
 		}
-		if(frm == 38)
+		if(frame == 38)
 			EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 		if(mode == DJINNI_SIGN_RIME) {
-			if(frm == 32)
-				sySndPlayStub(SE_POWER_UP);
+			if(frame == 32)
+				sySoundPlayStub(SE_POWER_UP);
 		} else {
-			if(frm > 7)
+			if(frame > 7)
 				btEffectStepPaletteToResource(RESOURCE_STAR_CROSS_SHEET);
-			if(frm == 32)
+			if(frame == 32)
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 24);
+					args->targets[0], SPRITE_COLOR_WHITE, TINT_KEEP, 0, 24);
 		}
 
 		/* The Djinni rises a pixel a tick, swaying, until it leaves the
@@ -129,14 +129,14 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				height = DJINNI_HEIGHT;
 			blit[0](canvas, state->sheet + DJINNI_SIGN_DJINNI_PICTURE,
 				FIXEDtoINT(
-					sySin(frm * (TRIG_TURN / 64)) * DJINNI_SIGN_DJINNI_SWAY) +
+					sySin(frame * (TRIG_TURN / 64)) * DJINNI_SIGN_DJINNI_SWAY) +
 					CANVAS_SIZE / 2 - DJINNI_WIDTH / 2,
 				center[1] - DJINNI_HEIGHT / 2, DJINNI_WIDTH, height);
 		}
 
 		syInitMatrix();
 		ProjectionWork.centerY = 104;
-		vertices = syHeapAllocEWRAM(32);
+		vertices = syHeapAllocateEWRAM(32);
 		model = btRenderAllocateModelList(1);
 		/* 64x64: Rime's seal, or Haze's star. */
 		texture.logWidth = 6;
@@ -149,30 +149,30 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			/* Rime's seal fades in over the first eight ticks and turns in two
 			   mirrored copies that come together at tick 32, shrinking from
 			   twice its size. */
-			Sint32 brightness = frm * 8 - 64;
+			Sint32 brightness = frame * 8 - 64;
 
 			if(brightness > 0)
 				brightness = 0;
 			/* DEAD: the effect ends after tick 47, so this fade-out never
 			   runs; the ROM keeps its test and store. */
-			if(frm > 55)
-				brightness = (56 - frm) * 8;
+			if(frame > 55)
+				brightness = (56 - frame) * 8;
 			model->shade = brightness;
 			texture.pixels = state->sheet + RIME_SEAL_TEXTURE;
 			for(i = 0; i != 2; i++) {
-				FIXED scale = toFIXED(2) - frm * (toFIXED(1) / 32);
+				FIXED scale = toFIXED(2) - frame * (toFIXED(1) / 32);
 
-				if(frm > 31 && i == 1)
+				if(frame > 31 && i == 1)
 					continue;
 				if(scale < toFIXED(1))
 					scale = toFIXED(1);
 				syInitMatrix();
 				syRotX(-DEGtoANG(90));
-				if(frm <= 31) {
+				if(frame <= 31) {
 					if(i == 0)
-						syRotY((32 - frm) << 9);
+						syRotY((32 - frame) << 9);
 					else
-						syRotY((frm << 9) - DEGtoANG(90));
+						syRotY((frame << 9) - DEGtoANG(90));
 				}
 				syScale(scale >> 1, scale >> 1, scale >> 1);
 				btRenderTransformVertices(
@@ -188,7 +188,7 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			texture.pixels = state->sheet;
 			for(i = 0, star = state->particles; i != HAZE_STARS; i++, star++) {
 				if(star->variant == 4 && (i & 3) == 0)
-					sySndPlayStub(SE_PSYNERGY_START);
+					sySoundPlayStub(SE_PSYNERGY_START);
 				if(star->variant >= 0 && star->variant < HAZE_STAR_TICKS) {
 					FIXED swell =
 						sySin(star->variant * (TRIG_TURN / 32)) * star->z;
@@ -198,7 +198,7 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syTranslate(star->x, star->y, 0);
 					size = swell >> 8;
 					syRotX(DEGtoANG(90));
-					syRotY(frm << 9);
+					syRotY(frame << 9);
 					size /= 2;
 					syScale(size, size, size);
 					btRenderTransformVertices(

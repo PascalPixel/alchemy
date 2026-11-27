@@ -13,8 +13,8 @@
 #include "stubs.h"
 #include "system.h"
 
-/* Each ability's staging bits (BATTLE_ACTION_RUN.battleEff), by ability id 0 to
-   518 (ability_staging.c). */
+/* Each ability's staging bits (BATTLE_ACTION_RUN.battleEffect), by ability id 0
+   to 518 (ability_staging.c). */
 extern const Uint32 AbilityBattleEffects[];
 /* Each ability's outcome staging (BATTLE_ACTION_RUN.staging), 0 for the
    default, by ability id 0 to 517 (ability_staging.c). */
@@ -41,8 +41,8 @@ typedef enum BATTLE_STAGING {
 	STAGING_FULL_SCREEN = 9 /* Gaia, Rockfall, Procne and their kin */
 } BATTLE_STAGING;
 
-/* BATTLE_ACTION_RUN.battleEff: the effect kind in the low twelve bits and its
-   strength (a double or triple blow) above them; then how the effect is
+/* BATTLE_ACTION_RUN.battleEffect: the effect kind in the low twelve bits and
+   its strength (a double or triple blow) above them; then how the effect is
    staged. */
 #define EFFECT_ID_MASK		 0xfff
 #define EFFECT_VARIANT_MASK	 0x3000
@@ -59,8 +59,8 @@ typedef enum BATTLE_STAGING {
    while it plays. */
 #define EFFECT_ID_SEVERE_BLOW 135
 
-/* More of BATTLE_ACTION_RUN.battleEff: the camera takes the other side's view
-   (an enemy's cast a view of its own), or turns right round. */
+/* More of BATTLE_ACTION_RUN.battleEffect: the camera takes the other side's
+   view (an enemy's cast a view of its own), or turns right round. */
 #define EFFECT_VIEW_ACROSS	 0x40000
 #define EFFECT_VIEW_REVERSED 0x80000
 

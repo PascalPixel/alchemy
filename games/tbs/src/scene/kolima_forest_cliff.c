@@ -83,16 +83,17 @@ static void scKolimaForestCliffPushLog(void)
 			fdActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
 			fdActorSetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
 			fdScriptWait(30);
-			sySndPlay(SE_LOG_FALL);
+			sySoundPlay(SE_LOG_FALL);
 			fdActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
 			/* It floats under the party's feet, and the river's metatiles under
 			   it become ground to cross on. */
-			fdActorGet(ACTOR_RIVER_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_RIVER_LOG)->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(32, 20, 2, 4, 11, 16);
 			scMapGridFillCollisionRectangle(
 				2, 12, 16, 1, 4, METATILE_BEHAVIOR_NORMAL);
 			gmFlagSet(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
-			fdActorSetSprFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
 		}
 	}
 	fdScriptEnd();
@@ -118,11 +119,11 @@ Sint32 scInit(void)
 	/* The log the party tipped in still floats in the river, as ground to cross
 	   on. */
 	if(gmFlagGet(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
-		fdActorGet(ACTOR_RIVER_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(32, 20, 2, 4, 11, 16);
 		scMapGridFillCollisionRectangle(
 			2, 12, 16, 1, 4, METATILE_BEHAVIOR_NORMAL);
-		fdActorSetSprFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
 	}
 
 	scPushedActorBlockFootprint(ACTOR_FIRST_LOG);

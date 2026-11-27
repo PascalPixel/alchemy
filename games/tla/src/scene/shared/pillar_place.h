@@ -11,10 +11,10 @@ void scPillarPlace(const Uint16 *list)
 		Uint32 id = entry[0];
 		ACTOR *actor = fdActorGet(id);
 		Sint16 kind = entry[1];
-		Sint16 flg = entry[2];
+		Sint16 flag = entry[2];
 
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flg, actor->layer);
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flag, actor->layer);
 	}
 }

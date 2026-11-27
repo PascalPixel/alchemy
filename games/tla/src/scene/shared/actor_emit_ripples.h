@@ -11,16 +11,16 @@ void scActorEmitRipples(ACTOR *actor)
 			SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 
 		if(child != 0) {
-			FIELD_SPR *spr = child->spr;
+			FIELD_SPR *sprite = child->sprite;
 
 			fdActorStartScript(child, RippleScript);
-			child->motionFlg = 0;
+			child->motionFlags = 0;
 			child->y.fixed = -(toFIXED(15) / 2);
 			child->layer = 1;
-			if(spr != 0) {
-				fdSprStartAnimation(spr, 2);
-				spr->flg = 0;
-				spr->pri = 2;
+			if(sprite != 0) {
+				fdSpriteStartAnimation(sprite, 2);
+				sprite->flags = 0;
+				sprite->priority = 2;
 			}
 		}
 	}

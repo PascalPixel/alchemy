@@ -160,7 +160,7 @@ extern Uint8 LemuriaSpringObstacleStartZ[];
 
 extern Uint16 LemuriaSpringObstacleHeadings[];
 
-void scLemuriaSpringSetSprStorageKind(Sint32 actor, Sint32 active);
+void scLemuriaSpringSetSpriteStorageKind(Sint32 actor, Sint32 active);
 
 SPRING_TOSS_MOTION LemuriaSpringToss BSS_DATA ALIGNED(16);
 Sint32 LemuriaSpringTossKind				  BSS_DATA;
@@ -199,7 +199,7 @@ void scLemuriaSpringDrinkFromSpring(void)
 	/* "Felix and the others drank of the spring. Their HP and PP were
 	   fully..." */
 	mnMessageShowCentered((Sint32)MsgAndTheOthers, 1);
-	fdScriptPlaySnd(SE_RECOVERY);
+	fdScriptPlaySound(SE_RECOVERY);
 	gmPartyRestoreHpPp(1);
 }
 
@@ -214,10 +214,10 @@ void scLemuriaSpringDrainSpring(void)
 	MAP_LAYER *layer;
 	Sint32	   i;
 
-	fdScriptPlaySnd(SE_BURST);
+	fdScriptPlaySound(SE_BURST);
 	layer = &map->layers[MAPGRID_LAYER_OVERHEAD];
 	for(i = 0; i < WATER_SHIFT_PIXELS; i++) {
-		layer->ofsY -= toFIXED(1);
+		layer->offsetY -= toFIXED(1);
 		sySynch(4);
 	}
 	for(i = 0; i < 8; i++) {
@@ -265,15 +265,16 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	leader->priFlg = ACTOR_PRIORITY_IGNORES_RISES | leader->priFlg;
+	leader->priorityFlags =
+		ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
 	blend = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_BLDCNT = blend;
 	syIOWrite16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
 	fdActorSetAnimation(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB, ANIM_SIGN_SLAB);
 	fdActorSetAnimation(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB, ANIM_SIGN_SLAB);
-	fdActorGet(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB)->priFlg =
+	fdActorGet(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB)->priorityFlags =
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB)->priFlg =
+	fdActorGet(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB)->priorityFlags =
 		ACTOR_PRIORITY_UNDERFOOT;
 	fdScriptStartScreenTransition();
 	if(MainRoutineStateWork.entrance == LEMURIA_SPRING_FROM_LEMURIA) {
@@ -320,7 +321,7 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 	Sint32	msg;
 	Sint32	coins;
 	Sint32	medals;
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	result;
 	Sint32	prizeRoll;
 	Sint32	total;
@@ -338,14 +339,14 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 		fdScriptSetMessageId(msg);
 		/* "What will you throw?" */
 		fdScriptOpenMessage(-1, 0);
-		win = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
+		window = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
 		result = (Sint32)MsgLemuriaSpringCoins;
-		mnTextDrawMessageAsTiles(result, win, 0, 0);
-		mnTextDrawNumInWindow(coins, 6, win, COIN_NUMBER_X, 0);
-		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
-		mnTextDrawNumInWindow(medals, 6, win, COIN_NUMBER_X, 8);
+		mnTextDrawMessageAsTiles(result, window, 0, 0);
+		mnTextDrawNumberInWindow(coins, 6, window, COIN_NUMBER_X, 0);
+		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
+		mnTextDrawNumberInWindow(medals, 6, window, COIN_NUMBER_X, 8);
 		choice = mnSelectCoinsOrMedals(choice);
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		mnMessageCloseFinishedWindows();
 		if(choice == -1) {
 			fdScriptEnd();
@@ -375,26 +376,26 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 					goto end;
 			}
 		}
-		win = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+		window = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
 		result = (Sint32)MsgLemuriaSpringToss;
-		mnTextDrawMessageAsTiles(result, win, 0, 0);
-		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
+		mnTextDrawMessageAsTiles(result, window, 0, 0);
+		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
 		sySynch(5);
-		fdScriptPlaySnd(SE_TOLBI_SPRING_TOSS_PROMPT);
+		fdScriptPlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
 		for(;;) {
 			if(PerWork.push & KEY_A) {
-				fdScriptPlaySnd(SE_MENU_CONFIRM);
+				fdScriptPlaySound(SE_MENU_CONFIRM);
 				result = 0;
 				break;
 			}
 			if(PerWork.push & KEY_B) {
-				fdScriptPlaySnd(SE_MENU_CANCEL);
+				fdScriptPlaySound(SE_MENU_CANCEL);
 				result = cancelled;
 				break;
 			}
 			sySynch(1);
 		}
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		break;
 	}
 #else
@@ -412,16 +413,16 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 		fdScriptSetMessageId(msg);
 		/* "What will you throw?" */
 		fdScriptOpenMessage(-1, 0);
-		win = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
+		window = mnWindowCreate(0, 0, COIN_WINDOW_WIDTH, 4, 2);
 		text = (Sint32)MsgLemuriaSpringCoins;
-		mnTextDrawMessageAsTiles(text, win, 0, 0);
-		mnTextDrawNumInWindow(coins, 6, win, COIN_NUMBER_X, 0);
-		mnTextDrawMessageAsTiles(text + 2, win, 104, 0);
-		mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
-		mnTextDrawNumInWindow(medals, 6, win, COIN_NUMBER_X, 8);
-		mnTextDrawMessageAsTiles(text + 2, win, 104, 8);
+		mnTextDrawMessageAsTiles(text, window, 0, 0);
+		mnTextDrawNumberInWindow(coins, 6, window, COIN_NUMBER_X, 0);
+		mnTextDrawMessageAsTiles(text + 2, window, 104, 0);
+		mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
+		mnTextDrawNumberInWindow(medals, 6, window, COIN_NUMBER_X, 8);
+		mnTextDrawMessageAsTiles(text + 2, window, 104, 8);
 		choice = mnSelectCoinsOrMedals(choice);
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		mnMessageCloseFinishedWindows();
 		if(choice == -1) {
 			fdScriptEnd();
@@ -453,26 +454,26 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 					goto end;
 			}
 		}
-		win = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+		window = mnWindowCreate(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
 		result = (Sint32)MsgLemuriaSpringToss;
-		mnTextDrawMessageAsTiles(result, win, 0, 0);
-		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
+		mnTextDrawMessageAsTiles(result, window, 0, 0);
+		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
 		sySynch(5);
-		fdScriptPlaySnd(SE_TOLBI_SPRING_TOSS_PROMPT);
+		fdScriptPlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
 		for(;;) {
 			if(PerWork.push & KEY_A) {
-				fdScriptPlaySnd(SE_MENU_CONFIRM);
+				fdScriptPlaySound(SE_MENU_CONFIRM);
 				result = 0;
 				break;
 			}
 			if(PerWork.push & KEY_B) {
-				fdScriptPlaySnd(SE_MENU_CANCEL);
+				fdScriptPlaySound(SE_MENU_CANCEL);
 				result = cancelled;
 				break;
 			}
 			sySynch(1);
 		}
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		break;
 	}
 #endif
@@ -488,14 +489,14 @@ Sint32 scLemuriaSpringRunSpringGame(void)
 		if(choice == SPRING_TOSS_COIN) {
 			if(result != TOSS_RING_MISSED) {
 				gmPartyAdjustCoins(LemuriaSpringCoinPrizes[result]);
-				fdScriptPlaySnd(MUS_LUCKY);
+				fdScriptPlaySound(MUS_LUCKY);
 				mnMessageArgumentPush(
 					LemuriaSpringCoinPrizes[result], MESSAGE_ARGUMENT_NUMBER);
 				fdScriptSetMessageId((Sint32)MsgLemuriaSpringYouWonCoin);
 				/* "You won ... coin!" */
 				fdScriptShowMessage(-1, 0);
 			} else {
-				fdScriptPlaySnd(SE_MENU_CANCEL);
+				fdScriptPlaySound(SE_MENU_CANCEL);
 				syFieldScriptWait(10);
 			}
 		} else {
@@ -535,7 +536,7 @@ static inline void scLemuriaSpringShowPrizePicture(
 	Sint32 srcColumn, Sint32 srcRow)
 {
 	fdMapGridCopyMetatilesTo(srcColumn, srcRow, 70, 0, 3, 8);
-	fdScriptPlaySnd(SE_CAST);
+	fdScriptPlaySound(SE_CAST);
 	syFieldScriptWait(8);
 }
 
@@ -554,7 +555,7 @@ void scLemuriaSpringGivePrize(Sint32 item)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_BOSS_ROAR);
+	fdScriptPlaySound(SE_BOSS_ROAR);
 	syFieldScriptWait(100);
 	fdActorFaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
 	syFieldScriptWait(40);
@@ -574,14 +575,14 @@ void scLemuriaSpringGivePrize(Sint32 item)
 	scLemuriaSpringShowPrizePicture(94, 29);
 	scLemuriaSpringShowPrizePicture(97, 29);
 	fdMapGridCopyMetatilesTo(100, 29, 70, 0, 3, 8);
-	fdScriptPlaySnd(SE_CAST);
+	fdScriptPlaySound(SE_CAST);
 	syFieldScriptWait(70);
-	fdScriptPlaySnd(SE_RECOVERY);
+	fdScriptPlaySound(SE_RECOVERY);
 	if(item == PRIZE_ECLIPSE) {
 		prize = fdActorGet(ACTOR_LEMURIA_SPRING_SUMMON_TABLET);
 		fdActorPlaceOnActor(ACTOR_LEMURIA_SPRING_SUMMON_TABLET,
 			MainRoutineStateWork.leaderActorId);
-		prize->motionFlg = 0;
+		prize->motionFlags = 0;
 		prize->y.fixed = toFIXED(32);
 		scFieldActorSetAnimation(
 			MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
@@ -592,7 +593,7 @@ void scLemuriaSpringGivePrize(Sint32 item)
 		scFieldActorSetAnimation(
 			MainRoutineStateWork.leaderActorId, ANIM_STAND);
 	} else {
-		Call2(fdItemDispShowItem, item,
+		Call2(fdItemDisplayShowItem, item,
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 		gmPartyGiveItem(item, 0);
 		syFieldScriptWait(20);
@@ -617,10 +618,10 @@ void scLemuriaSpringGivePrize(Sint32 item)
 /* Sets an actor of the toss where the simulation has it: its position, facing,
    colour mode and animation step. */
 void scLemuriaSpringSetActorAppearance(
-	Sint32 id, Sint32 *pos, Sint32 facing, Sint32 colMode, Sint32 step)
+	Sint32 id, Sint32 *pos, Sint32 facing, Sint32 colorMode, Sint32 step)
 {
 	ACTOR		   *actor = fdActorGet(id);
-	SPR			   *spr;
+	SPR			   *sprite;
 	SPR_ANIMATION **entry;
 	Sint32			i;
 
@@ -629,33 +630,33 @@ void scLemuriaSpringSetActorAppearance(
 		actor->y.fixed = *pos++;
 		actor->z.fixed = *pos;
 		actor->facing = facing;
-		actor->motionFlg = 0;
-		((SPR *)actor->spr)->flg = 0;
+		actor->motionFlags = 0;
+		((SPR *)actor->sprite)->flags = 0;
 		fdActorSetAnimationSpeed(actor, step);
 	}
-	spr = actor->spr;
+	sprite = actor->sprite;
 	i = 0;
-	if(i < spr->cnt) {
-		entry = spr->entries;
-		for(; i < spr->cnt; i++) {
-			SPR_ANIMATION *anm = *entry++;
+	if(i < sprite->count) {
+		entry = sprite->entries;
+		for(; i < sprite->count; i++) {
+			SPR_ANIMATION *animation = *entry++;
 
-			if(anm->colMode != colMode) {
-				anm->colMode = colMode;
-				anm->picture = SPRITE_PICTURE_NONE;
+			if(animation->colorMode != colorMode) {
+				animation->colorMode = colorMode;
+				animation->picture = SPRITE_PICTURE_NONE;
 			}
 		}
 	}
 }
 
-/* Sets how actor `id` keeps its sprites (ACTOR.sprStorageKind). */
-void scLemuriaSpringSetSprStorageKind(Sint32 id, Sint32 kind)
+/* Sets how actor `id` keeps its sprites (ACTOR.spriteStorageKind). */
+void scLemuriaSpringSetSpriteStorageKind(Sint32 id, Sint32 kind)
 {
 	ACTOR *actor;
 
 	actor = fdActorGetById(id);
 	if(actor != 0) {
-		actor->sprStorageKind = kind;
+		actor->spriteStorageKind = kind;
 	}
 }
 
@@ -665,12 +666,12 @@ void scLemuriaSpringUpdateTossSimulation(void)
 {
 	SPRING_TOSS_MOTION *toss;
 	SPRING_OBSTACLE	   *obstacle;
-	Sint32				idx;
+	Sint32				index;
 	Sint32				height;
 	FIXED				edgeInset;
 	Sint32				motionStep;
 	Sint32				speedMode;
-	Sint32				cycleFrm;
+	Sint32				cycleFrame;
 	FIXED				minX;
 	FIXED				maxX;
 	FIXED				minZ;
@@ -680,25 +681,25 @@ void scLemuriaSpringUpdateTossSimulation(void)
 	VECTOR3 spare;
 
 	toss = &LemuriaSpringToss;
-	idx = 3;
+	index = 3;
 	do {
-		toss->trail[idx].x = toss->trail[idx - 1].x;
-		toss->trail[idx].y = toss->trail[idx - 1].y;
-		toss->trail[idx].z = toss->trail[idx - 1].z;
-		idx--;
-	} while(idx != 0);
+		toss->trail[index].x = toss->trail[index - 1].x;
+		toss->trail[index].y = toss->trail[index - 1].y;
+		toss->trail[index].z = toss->trail[index - 1].z;
+		index--;
+	} while(index != 0);
 
 	/* The token leaves the leader's hand 32 ticks into the throw. */
-	if(toss->launchFrm > 31) {
-		toss->trail[0].x += toss->vel.x;
-		height = toss->trail[0].y + toss->vel.y;
+	if(toss->launchFrame > 31) {
+		toss->trail[0].x += toss->velocity.x;
+		height = toss->trail[0].y + toss->velocity.y;
 		toss->trail[0].y = height;
-		toss->trail[0].z += toss->vel.z;
+		toss->trail[0].z += toss->velocity.z;
 
 		if(height <= 0) {
 			toss->trail[0].y = 0;
-			if(toss->vel.y != 0) {
-				toss->vel.y = 0;
+			if(toss->velocity.y != 0) {
+				toss->velocity.y = 0;
 				if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 					fdActorSelectAnimation(
 						fdActorGetById(ACTOR_LEMURIA_SPRING_MEDAL),
@@ -710,7 +711,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 				}
 			}
 
-			if(toss->attractionFrm > 0) {
+			if(toss->attractionFrame > 0) {
 				Sint32 deltaX;
 				Sint32 deltaZ;
 				Sint32 distance;
@@ -721,44 +722,46 @@ void scLemuriaSpringUpdateTossSimulation(void)
 				deltaZ >>= 8;
 				/* BUG: an exact center position leaves a zero divisor below. */
 				distance = sySquartIWRAM(deltaX * deltaX + deltaZ * deltaZ);
-				toss->vel.x += (toFIXED(0.1) * deltaX) / distance;
-				toss->vel.z += (toFIXED(0.1) * deltaZ) / distance;
-				toss->vel.x =
-					toss->vel.x * PULLED_SPEED_KEPT / SPEED_KEPT_SCALE;
-				toss->vel.z =
-					toss->vel.z * PULLED_SPEED_KEPT / SPEED_KEPT_SCALE;
-				toss->attractionFrm = toss->attractionFrm - 1;
+				toss->velocity.x += (toFIXED(0.1) * deltaX) / distance;
+				toss->velocity.z += (toFIXED(0.1) * deltaZ) / distance;
+				toss->velocity.x =
+					toss->velocity.x * PULLED_SPEED_KEPT / SPEED_KEPT_SCALE;
+				toss->velocity.z =
+					toss->velocity.z * PULLED_SPEED_KEPT / SPEED_KEPT_SCALE;
+				toss->attractionFrame = toss->attractionFrame - 1;
 			} else {
-				toss->vel.x = toss->vel.x * DRIFT_SPEED_KEPT / SPEED_KEPT_SCALE;
-				toss->vel.z = toss->vel.z * DRIFT_SPEED_KEPT / SPEED_KEPT_SCALE;
-				if(toss->vel.x > -toFIXED(1) / 64 &&
-					toss->vel.x < toFIXED(1) / 64) {
-					toss->vel.x = 0;
+				toss->velocity.x =
+					toss->velocity.x * DRIFT_SPEED_KEPT / SPEED_KEPT_SCALE;
+				toss->velocity.z =
+					toss->velocity.z * DRIFT_SPEED_KEPT / SPEED_KEPT_SCALE;
+				if(toss->velocity.x > -toFIXED(1) / 64 &&
+					toss->velocity.x < toFIXED(1) / 64) {
+					toss->velocity.x = 0;
 				}
-				if(toss->vel.z > -toFIXED(1) / 64 &&
-					toss->vel.z < toFIXED(1) / 64) {
-					toss->vel.z = 0;
+				if(toss->velocity.z > -toFIXED(1) / 64 &&
+					toss->velocity.z < toFIXED(1) / 64) {
+					toss->velocity.z = 0;
 				}
-				if(toss->vel.x == 0 && toss->vel.z == 0) {
+				if(toss->velocity.x == 0 && toss->velocity.z == 0) {
 					if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 						fdActorSelectAnimation(
 							fdActorGetById(ACTOR_LEMURIA_SPRING_MEDAL),
 							ANIM_TOKEN_REST);
-						scLemuriaSpringSetSprStorageKind(
+						scLemuriaSpringSetSpriteStorageKind(
 							LEMURIA_SPRING_MEDAL_TRAIL(1), 0);
-						scLemuriaSpringSetSprStorageKind(
+						scLemuriaSpringSetSpriteStorageKind(
 							LEMURIA_SPRING_MEDAL_TRAIL(2), 0);
-						scLemuriaSpringSetSprStorageKind(
+						scLemuriaSpringSetSpriteStorageKind(
 							LEMURIA_SPRING_MEDAL_TRAIL(3), 0);
 					} else {
 						fdActorSelectAnimation(
 							fdActorGetById(ACTOR_LEMURIA_SPRING_COIN),
 							ANIM_TOKEN_REST);
-						scLemuriaSpringSetSprStorageKind(
+						scLemuriaSpringSetSpriteStorageKind(
 							LEMURIA_SPRING_COIN_TRAIL(1), 0);
-						scLemuriaSpringSetSprStorageKind(
+						scLemuriaSpringSetSpriteStorageKind(
 							LEMURIA_SPRING_COIN_TRAIL(2), 0);
-						scLemuriaSpringSetSprStorageKind(
+						scLemuriaSpringSetSpriteStorageKind(
 							LEMURIA_SPRING_COIN_TRAIL(3), 0);
 					}
 					{
@@ -842,47 +845,47 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			/* The token bounces off a wall at half its speed. */
 			if(toss->trail[0].x < minX) {
 				toss->trail[0].x = minX;
-				if(toss->vel.x < 0) {
-					toss->vel.x = -toss->vel.x / 2;
+				if(toss->velocity.x < 0) {
+					toss->velocity.x = -toss->velocity.x / 2;
 				}
 			}
 			if(toss->trail[0].x > maxX) {
 				toss->trail[0].x = maxX;
-				if(toss->vel.x > 0) {
-					toss->vel.x = -toss->vel.x / 2;
+				if(toss->velocity.x > 0) {
+					toss->velocity.x = -toss->velocity.x / 2;
 				}
 			}
 			if(toss->trail[0].z < minZ) {
 				toss->trail[0].z = minZ;
-				if(toss->vel.z < 0) {
-					toss->vel.z = -toss->vel.z / 2;
+				if(toss->velocity.z < 0) {
+					toss->velocity.z = -toss->velocity.z / 2;
 				}
 			}
 			if(toss->trail[0].z > maxZ) {
 				toss->trail[0].z = maxZ;
-				if(toss->vel.z > 0) {
-					toss->vel.z = -toss->vel.z / 2;
+				if(toss->velocity.z > 0) {
+					toss->velocity.z = -toss->velocity.z / 2;
 				}
 			}
 		} else {
-			toss->vel.y -= toFIXED(1) / 4;
+			toss->velocity.y -= toFIXED(1) / 4;
 		}
 	}
 
 	/* The two crabs scuttle east and west; the two turtles swim round ellipses,
 	   the second hiding in its shell for the last quarter of every 512
 	   ticks. */
-	idx = 0;
+	index = 0;
 	do {
-		obstacle = &LemuriaSpringObstacles[idx];
+		obstacle = &LemuriaSpringObstacles[index];
 
-		if(obstacle->reactionFrm > 0) {
-			obstacle->reactionFrm = obstacle->reactionFrm - 1;
+		if(obstacle->reactionFrame > 0) {
+			obstacle->reactionFrame = obstacle->reactionFrame - 1;
 		}
-		if(obstacle->hitCooldownFrm > 0) {
-			obstacle->hitCooldownFrm = obstacle->hitCooldownFrm - 1;
+		if(obstacle->hitCooldownFrame > 0) {
+			obstacle->hitCooldownFrame = obstacle->hitCooldownFrame - 1;
 		}
-		if(idx <= OBSTACLE_CRAB_B) {
+		if(index <= OBSTACLE_CRAB_B) {
 			speedMode = obstacle->speedMode;
 			motionStep = toFIXED(1);
 			if(speedMode == 1) {
@@ -891,8 +894,8 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			if(speedMode == 2) {
 				motionStep = motionStep * 3;
 			}
-			if(obstacle->reactionFrm > 0) {
-				if(idx == OBSTACLE_CRAB_A) {
+			if(obstacle->reactionFrame > 0) {
+				if(index == OBSTACLE_CRAB_A) {
 					fdActorSelectAnimation(
 						fdActorGetById(ACTOR_LEMURIA_SPRING_CRAB_A),
 						ANIM_CRAB_RAISE_CLAWS);
@@ -902,7 +905,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 						ANIM_CRAB_RAISE_CLAWS);
 				}
 			} else {
-				if(idx == OBSTACLE_CRAB_A) {
+				if(index == OBSTACLE_CRAB_A) {
 					fdActorSelectAnimation(
 						fdActorGetById(ACTOR_LEMURIA_SPRING_CRAB_A),
 						ANIM_CRAB_SCUTTLE);
@@ -922,13 +925,13 @@ void scLemuriaSpringUpdateTossSimulation(void)
 					}
 					if(obstacle->pos.x <= toFIXED(64)) {
 						obstacle->heading = CRAB_HEADING_EAST;
-						if(idx == OBSTACLE_CRAB_B) {
+						if(index == OBSTACLE_CRAB_B) {
 							obstacle->pauseOrPhase = CRAB_TURN_PAUSE_TICKS;
 						}
 					}
 					if(obstacle->pos.x > toFIXED(176) - 1) {
 						obstacle->heading = CRAB_HEADING_WEST;
-						if(idx == OBSTACLE_CRAB_B) {
+						if(index == OBSTACLE_CRAB_B) {
 							obstacle->pauseOrPhase = CRAB_TURN_PAUSE_TICKS;
 						}
 					}
@@ -936,7 +939,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 					obstacle->pauseOrPhase = obstacle->pauseOrPhase - 1;
 				}
 			}
-		} else if(idx == OBSTACLE_TURTLE_A) {
+		} else if(index == OBSTACLE_TURTLE_A) {
 			speedMode = obstacle->speedMode;
 			motionStep = -TURTLE_SWIM_TURN;
 			if(speedMode == 1) {
@@ -945,7 +948,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			if(speedMode == 2) {
 				motionStep = motionStep * 3;
 			}
-			if(obstacle->reactionFrm > 0) {
+			if(obstacle->reactionFrame > 0) {
 				fdActorSelectAnimation(
 					fdActorGetById(ACTOR_LEMURIA_SPRING_TURTLE_A),
 					ANIM_TURTLE_HIDE);
@@ -955,12 +958,12 @@ void scLemuriaSpringUpdateTossSimulation(void)
 					ANIM_TURTLE_SWIM);
 				obstacle->pos.x = sySin(obstacle->heading) * 48 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 40 + toFIXED(72);
-				cycleFrm = (Uint16)obstacle->heading + motionStep;
-				obstacle->heading = cycleFrm;
+				cycleFrame = (Uint16)obstacle->heading + motionStep;
+				obstacle->heading = cycleFrame;
 				obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
 			}
 		} else {
-			cycleFrm = obstacle->pauseOrPhase & 511;
+			cycleFrame = obstacle->pauseOrPhase & 511;
 			speedMode = obstacle->speedMode;
 			motionStep = TURTLE_SWIM_TURN;
 			if(speedMode == 1) {
@@ -969,11 +972,11 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			if(speedMode == 2) {
 				motionStep = motionStep * 3;
 			}
-			if(obstacle->reactionFrm > 0) {
+			if(obstacle->reactionFrame > 0) {
 				fdActorSelectAnimation(
 					fdActorGetById(ACTOR_LEMURIA_SPRING_TURTLE_B),
 					ANIM_TURTLE_HIDE);
-			} else if(cycleFrm <= 383) {
+			} else if(cycleFrame <= 383) {
 				obstacle->pos.x = sySin(obstacle->heading) * 52 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 24 + toFIXED(72);
 				obstacle->heading = obstacle->heading + motionStep;
@@ -991,7 +994,7 @@ void scLemuriaSpringUpdateTossSimulation(void)
 		/* A creature the token drifts against knocks it away at 3 pixels a
 		   tick and shortens the rings' pull; it flinches and speeds up a
 		   step. */
-		if(obstacle->hitCooldownFrm == 0 && toss->trail[0].y == 0) {
+		if(obstacle->hitCooldownFrame == 0 && toss->trail[0].y == 0) {
 			Sint32 distanceSquared;
 			Sint32 deltaX;
 			Sint32 deltaZ;
@@ -999,21 +1002,21 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			deltaX = FIXEDtoINT(obstacle->pos.x - toss->trail[0].x);
 			deltaZ = FIXEDtoINT(obstacle->pos.z - toss->trail[0].z);
 			distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
-			if(distanceSquared <= 119 && toss->attractionFrm > 30) {
+			if(distanceSquared <= 119 && toss->attractionFrame > 30) {
 				Sint32 nextMode;
 				FIXED  speed;
 
 				speed = toFIXED(3);
-				if(idx <= OBSTACLE_CRAB_B) {
+				if(index <= OBSTACLE_CRAB_B) {
 					if(obstacle->heading == CRAB_HEADING_EAST) {
-						if(toss->vel.x < speed) {
-							toss->vel.x = speed;
-							toss->attractionFrm = toss->attractionFrm - 100;
+						if(toss->velocity.x < speed) {
+							toss->velocity.x = speed;
+							toss->attractionFrame = toss->attractionFrame - 100;
 						}
 					} else {
-						if(toss->vel.x > -speed) {
-							toss->vel.x = -speed;
-							toss->attractionFrm = toss->attractionFrm - 100;
+						if(toss->velocity.x > -speed) {
+							toss->velocity.x = -speed;
+							toss->attractionFrame = toss->attractionFrame - 100;
 						}
 					}
 				} else {
@@ -1021,19 +1024,19 @@ void scLemuriaSpringUpdateTossSimulation(void)
 
 					/* BUG: coincident positions leave a zero divisor below. */
 					distance = sySquartIWRAM(distanceSquared);
-					toss->vel.x = -deltaX * speed / distance;
-					toss->vel.z = -deltaZ * speed / distance;
-					toss->attractionFrm = toss->attractionFrm - 100;
+					toss->velocity.x = -deltaX * speed / distance;
+					toss->velocity.z = -deltaZ * speed / distance;
+					toss->attractionFrame = toss->attractionFrame - 100;
 				}
-				fdScriptPlaySnd(SE_TOLBI_SPRING_OBSTACLE_HIT);
+				fdScriptPlaySound(SE_TOLBI_SPRING_OBSTACLE_HIT);
 				nextMode = (obstacle->speedMode + 1) % 3;
-				obstacle->reactionFrm = 36;
+				obstacle->reactionFrame = 36;
 				obstacle->speedMode = nextMode;
-				obstacle->hitCooldownFrm = 30;
+				obstacle->hitCooldownFrame = 30;
 			}
 		}
 
-		switch(idx) {
+		switch(index) {
 		case OBSTACLE_CRAB_A:
 			scLemuriaSpringSetActorAppearance(ACTOR_LEMURIA_SPRING_CRAB_A,
 				&obstacle->pos.x, 0,
@@ -1059,8 +1062,8 @@ void scLemuriaSpringUpdateTossSimulation(void)
 				ANIM_STEP_NORMAL * (obstacle->speedMode + 1));
 			break;
 		}
-		idx++;
-	} while(idx != OBSTACLE_COUNT);
+		index++;
+	} while(index != OBSTACLE_COUNT);
 
 	toss->shadow.x = toss->trail[0].x;
 	toss->shadow.y = 0;
@@ -1102,8 +1105,8 @@ void scLemuriaSpringUpdateTossSimulation(void)
 			fdActorGetById(LEMURIA_SPRING_COIN_TRAIL(3)), ANIM_TOKEN_GLINT);
 	}
 
-	if(toss->launchFrm != -1) {
-		toss->launchFrm = toss->launchFrm + 1;
+	if(toss->launchFrame != -1) {
+		toss->launchFrame = toss->launchFrame + 1;
 	}
 }
 
@@ -1131,17 +1134,17 @@ void scLemuriaSpringInitTossSimulation(void)
 		obstacle->heading = LemuriaSpringObstacleHeadings[i];
 		obstacle->pauseOrPhase = 0;
 		obstacle->speedMode = 0;
-		obstacle->reactionFrm = 0;
-		obstacle->hitCooldownFrm = 0;
+		obstacle->reactionFrame = 0;
+		obstacle->hitCooldownFrame = 0;
 	}
 
 	toss->trail[0].x = -toFIXED(30);
 	toss->trail[0].y = 0;
 	toss->trail[0].z = toFIXED(100);
-	toss->vel.x = 0;
-	toss->vel.y = 0;
-	toss->vel.z = 0;
-	toss->attractionFrm = 0;
+	toss->velocity.x = 0;
+	toss->velocity.y = 0;
+	toss->velocity.z = 0;
+	toss->attractionFrame = 0;
 
 	fdActorSelectAnimation(
 		fdActorGet(ACTOR_LEMURIA_SPRING_TURTLE_A), ANIM_TURTLE_SWIM);
@@ -1165,32 +1168,32 @@ Sint32 scLemuriaSpringRunToss(Sint32 tossKind)
 	toss->trail[3].y = 0;
 	LemuriaSpringTossKind = tossKind;
 	LemuriaSpringTossEnded = 0;
-	toss->launchFrm = -1;
+	toss->launchFrame = -1;
 	for(LemuriaSpringTossTick = 0;; LemuriaSpringTossTick++) {
 		if(LemuriaSpringTossTick == 50)
-			fdScriptPlaySnd(SE_TOLBI_SPRING_TOSS);
+			fdScriptPlaySound(SE_TOLBI_SPRING_TOSS);
 		if(LemuriaSpringTossTick == 16) {
 			fdActorSetAnimation(
 				MainRoutineStateWork.leaderActorId, ANIM_LEADER_TOSS);
-			toss->launchFrm = 0;
-			toss->vel.x = toFIXED(13) / 10;
-			toss->vel.y = toFIXED(4);
-			toss->vel.z = -toFIXED(2);
+			toss->launchFrame = 0;
+			toss->velocity.x = toFIXED(13) / 10;
+			toss->velocity.y = toFIXED(4);
+			toss->velocity.z = -toFIXED(2);
 			toss->trail[0].x = toFIXED(120);
 			toss->trail[0].y = toFIXED(16);
 			toss->trail[0].z = toFIXED(152);
-			toss->attractionFrm = 300;
+			toss->attractionFrame = 300;
 			if(LemuriaSpringTossKind == SPRING_TOSS_MEDAL) {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW),
 					ANIM_TOKEN_SHADOW);
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_LEMURIA_SPRING_MEDAL), ANIM_TOKEN_TUMBLE);
-				scLemuriaSpringSetSprStorageKind(
+				scLemuriaSpringSetSpriteStorageKind(
 					LEMURIA_SPRING_MEDAL_TRAIL(1), 1);
-				scLemuriaSpringSetSprStorageKind(
+				scLemuriaSpringSetSpriteStorageKind(
 					LEMURIA_SPRING_MEDAL_TRAIL(2), 1);
-				scLemuriaSpringSetSprStorageKind(
+				scLemuriaSpringSetSpriteStorageKind(
 					LEMURIA_SPRING_MEDAL_TRAIL(3), 1);
 			} else {
 				fdActorSelectAnimation(
@@ -1198,11 +1201,11 @@ Sint32 scLemuriaSpringRunToss(Sint32 tossKind)
 					ANIM_TOKEN_SHADOW);
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_LEMURIA_SPRING_COIN), ANIM_TOKEN_TUMBLE);
-				scLemuriaSpringSetSprStorageKind(
+				scLemuriaSpringSetSpriteStorageKind(
 					LEMURIA_SPRING_COIN_TRAIL(1), 1);
-				scLemuriaSpringSetSprStorageKind(
+				scLemuriaSpringSetSpriteStorageKind(
 					LEMURIA_SPRING_COIN_TRAIL(2), 1);
-				scLemuriaSpringSetSprStorageKind(
+				scLemuriaSpringSetSpriteStorageKind(
 					LEMURIA_SPRING_COIN_TRAIL(3), 1);
 			}
 		}

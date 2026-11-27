@@ -13,7 +13,7 @@
    height rectangle at (x, z) of the layer, copies the matching metatile tiles
    from the rectangle at (toX, toZ) over it, opens it on layer 2 and records the
    copy in TouchCopiesWork, up to 64. Gaia Rock calls it after a Cyclone. */
-void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
+void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIndex,
 	Sint16 width, Sint16 height, Sint32 toX, Sint32 toZ)
 {
 	FIELD_STATE *field = RamHeapSlots->fieldState;
@@ -21,15 +21,15 @@ void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
 	MAP_LAYER	*layer = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers;
 	Sint16		*metatile = field->psynergyMetatiles;
 	Sint32		 lift;
-	Sint32		 scrollX = FIELD_METATILE(layer->ofsX);
-	Sint32		 scrollZ = FIELD_METATILE(layer->ofsY);
+	Sint32		 scrollX = FIELD_METATILE(layer->offsetX);
+	Sint32		 scrollZ = FIELD_METATILE(layer->offsetY);
 	Sint32		 layerX, layerZ;
 	Sint32		 left, top, i;
 
-	if(layerIdx <= 2)
-		layer += layerIdx;
-	layerX = FIELD_METATILE(layer->ofsX);
-	layerZ = FIELD_METATILE(layer->ofsY);
+	if(layerIndex <= 2)
+		layer += layerIndex;
+	layerX = FIELD_METATILE(layer->offsetX);
+	layerZ = FIELD_METATILE(layer->offsetY);
 	left = x - layerX;
 	top = z - layerZ;
 	lift = -(FIELD_METATILE(owner->groundHeight));
@@ -53,7 +53,7 @@ void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
 			fdMapGridGetMetatileAt(
 				FIELD_METATILE_ORIGIN(cx), FIELD_METATILE_ORIGIN(cz), 2)
 				->collisionCode = 0;
-			n = TouchCopiesWork.cnt;
+			n = TouchCopiesWork.count;
 			if(n < (Sint32)ARRAY_COUNT(TouchCopiesWork.copies)) {
 				TouchCopiesWork.copies[n].toX = toX + dx;
 				TouchCopiesWork.copies[n].toZ = toZ + dz;
@@ -61,7 +61,7 @@ void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
 				TouchCopiesWork.copies[n].fromZ = z + dz;
 				TouchCopiesWork.copies[n].metatileX = metatile[i * 2];
 				TouchCopiesWork.copies[n].metatileZ = metatile[i * 2 + 1];
-				TouchCopiesWork.cnt++;
+				TouchCopiesWork.count++;
 			}
 		}
 	}
@@ -72,11 +72,11 @@ void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
    it grows, turns to the leader, hops twice and leaps at the leader in an arc
    before the battle. The Gabomba Catacombs, Taopo Swamp and Gaia Rock each hide
    one. */
-void fdMadPlantLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
+void fdMadPlantLeapAtLeader(Sint32 sprite, Sint32 x, Sint32 z)
 {
 	Sint32 ownerId = fdPartyGetLeaderActor();
 	ACTOR *owner = fdActorGetById(ownerId);
-	ACTOR *actor = fdActorCreateStub(spr, toFIXED(x), 0, toFIXED(z));
+	ACTOR *actor = fdActorCreateStub(sprite, toFIXED(x), 0, toFIXED(z));
 	FIXED  from[3];
 	FIXED  to[3];
 	Sint32 i;
@@ -84,9 +84,9 @@ void fdMadPlantLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
 
 	if(actor == NULL)
 		return;
-	fdActorSetSprFlagsStub(actor, 0);
+	fdActorSetSpriteFlagsStub(actor, 0);
 	actor->gravity = toFIXED(7) / 20;
-	actor->velY = toFIXED(5);
+	actor->velocityY = toFIXED(5);
 	actor->scaleY = actor->scaleX = toFIXED(2) / 5;
 	do {
 		sySynch(1);
@@ -96,20 +96,20 @@ void fdMadPlantLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
 	actor->scaleY = actor->scaleX = toFIXED(1);
 	fdActorSelectAnimationStub(owner, 1);
 	fdActorTurnPairToFaceEachOther(actor, owner);
-	owner->tmr = owner->facing;
+	owner->timer = owner->facing;
 	fdScriptWait(10);
 	fdActorStartRepeatedMotion(ownerId, 3);
 	fdEffectSetAttached(
 		ownerId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	fdScriptWait(32);
 	actor->gravity = toFIXED(1);
-	actor->velY = toFIXED(6);
-	sySndPlayStub(SE_JUMP);
+	actor->velocityY = toFIXED(6);
+	sySoundPlayStub(SE_JUMP);
 	fdScriptWait(15);
-	actor->velY = toFIXED(6);
-	sySndPlayStub(SE_JUMP);
+	actor->velocityY = toFIXED(6);
+	sySoundPlayStub(SE_JUMP);
 	fdScriptWait(23);
-	sySndPlayStub(SE_ENEMY_CRY);
+	sySoundPlayStub(SE_ENEMY_CRY);
 
 	from[0] = actor->x.fixed;
 	from[1] = actor->y.fixed;
@@ -133,19 +133,20 @@ void fdMadPlantLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z)
    middle of the canvas, from angle on, shading through the canvas palette's
    colours 1 to 15; offsets maps each point to its byte. The Cyclone draws its
    swirl with it. */
-void fdCyclonePlotArc(Sint32 radius, Sint32 ang, Uint16 *offsets, Uint8 *pixels)
+void fdCyclonePlotArc(
+	Sint32 radius, Sint32 angle, Uint16 *offsets, Uint8 *pixels)
 {
 	Sint32 i;
 
 	if(radius > CANVAS_WIDTH / 2 - 1)
 		radius = CANVAS_WIDTH / 2 - 1;
 	for(i = 0; i < CYCLONE_ARC_PIXELS; i++) {
-		Sint32 x = FIXEDtoINT(radius * syCos(ang)) + CANVAS_WIDTH / 2;
-		Sint32 y = FIXEDtoINT(radius * sySin(ang)) + CANVAS_WIDTH / 2;
+		Sint32 x = FIXEDtoINT(radius * syCos(angle)) + CANVAS_WIDTH / 2;
+		Sint32 y = FIXEDtoINT(radius * sySin(angle)) + CANVAS_WIDTH / 2;
 		Sint32 value = i / 2 + CANVAS_PALETTE * PALETTE_COLORS + 1;
 
 		pixels[offsets[y * CANVAS_WIDTH + x]] = value;
-		ang += CYCLONE_ARC_PIXEL_STEP;
+		angle += CYCLONE_ARC_PIXEL_STEP;
 	}
 }
 
@@ -155,21 +156,21 @@ void fdCyclonePlotArc(Sint32 radius, Sint32 ang, Uint16 *offsets, Uint8 *pixels)
 void fdParticleBurstStart(void)
 {
 	PARTICLE_BURST_STATE *state =
-		(PARTICLE_BURST_STATE *)RamHeapSlots->battleEff;
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+		(PARTICLE_BURST_STATE *)RamHeapSlots->battleEffect;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	ACTOR			   *owner = effect->caster;
 	BURST_METATILE	   *metatile = (BURST_METATILE *)field->psynergyMetatiles;
 	FIXED dx = FIELD_METATILE_ORIGIN(metatile->x) - owner->x.fixed + toFIXED(8);
 	FIXED dz = FIELD_METATILE_ORIGIN(metatile->z) - owner->z.fixed + toFIXED(8);
 	Sint32			heading = (Uint16)syAtan(dz, dx);
-	EFFECT_SPR	   *spr;
+	EFFECT_SPR	   *sprite;
 	BURST_PARTICLE *particle;
 	Sint32			resource;
 	Sint32			vram;
 	Sint32			i;
 
-	state->frm = 0;
+	state->frame = 0;
 	state->active = 1;
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LEAVES), state);
 	resource = syVRAMCacheFindFreeEntry();
@@ -179,12 +180,12 @@ void fdParticleBurstStart(void)
 
 	for(i = 0, particle = state->particles; i < PARTICLE_BURST_COUNT;
 		i++, particle++) {
-		spr = &state->sprs[i];
-		fdEffectSprInit(spr, 4, 4, 0, vram);
-		spr->depth = EFFECT_SPRITE_FRONT_DEPTH;
-		spr->oam.pri = 0;
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
+		sprite = &state->sprites[i];
+		fdEffectSpriteInit(sprite, 4, 4, 0, vram);
+		sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
+		sprite->oam.priority = 0;
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
 		SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
 		syVectorAddPolarOffset(
 			syRandom() * 8 + toFIXED(8), syRandom(), &particle->x);
@@ -195,7 +196,7 @@ void fdParticleBurstStart(void)
 			particle->spin = -particle->spin;
 		particle->delay = -i / 2;
 	}
-	sySndPlayStub(SE_SHIMMER);
+	sySoundPlayStub(SE_SHIMMER);
 	sySetEvent(fdParticleBurstUpdate, EVENT_PASS_TICK);
 }
 

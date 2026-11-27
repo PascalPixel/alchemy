@@ -25,13 +25,13 @@
 	stub syCos, syCosStub
 	stub syVectorAddPolarOffset, syVectorAddPolarOffsetStub
 	stub syIntFunction, syIntFunctionStub
-	stub syHeapSlotAllocEWRAM, syHeapSlotAllocEWRAMStub
-	stub syHeapSlotAlloc, syHeapSlotAllocStub
+	stub syHeapSlotAllocateEWRAM, syHeapSlotAllocateEWRAMStub
+	stub syHeapSlotAllocate, syHeapSlotAllocateStub
 	stub syHeapSlotRelease, syHeapSlotReleaseStub
 	stub scMagmaRockInsideDecompressTaggedLZ, syDecompressTaggedLZStub
 	stub syImportDecompressTaggedLZ, syDecompressTaggedLZStub
-	stub syHeapAlloc, syHeapAllocStub
-	stub syHeapAllocEWRAM, syHeapAllocEWRAMStub
+	stub syHeapAllocate, syHeapAllocateStub
+	stub syHeapAllocateEWRAM, syHeapAllocateEWRAMStub
 	stub syHeapRelease, syHeapReleaseStub
 	stub syDecompressByteLZ, syDecompressByteLZStub
 	stub syDecompressTaggedLZ, syDecompressTaggedLZStub
@@ -40,9 +40,9 @@
 	stub syVRAMCacheLoad, syVRAMCacheLoadStub
 	stub syVRAMCacheFindFreeEntry, syVRAMCacheFindFreeEntryStub
 	stub syPrintClear, syPrintClearStub
-	stub syOAMMatrixAllocFromTransform, syOAMMatrixAllocFromTransformStub
-	stub syOAMAddSprAtDepth, syOAMAddSprAtDepthClampedStub
-	stub syOAMAddSprAtDepthClamped, syOAMAddSprAtDepthClampedStub
+	stub syOAMMatrixAllocateFromTransform, syOAMMatrixAllocateFromTransformStub
+	stub syOAMAddSpriteAtDepth, syOAMAddSpriteAtDepthClampedStub
+	stub syOAMAddSpriteAtDepthClamped, syOAMAddSpriteAtDepthClampedStub
 	stub syWindowLoadGraphics, syWindowLoadGraphicsStub
 	stub syConvert3Dto2D, syConvert3Dto2DStub
 	stub syResourceGetTableEntry, syResourceGetTableEntryStub
@@ -54,7 +54,7 @@
 	stub sySerialInit, sySerialInitStub
 	stub sySerialRemoveIRQHandlers, sySerialRemoveIRQHandlersStub
 	stub syScreenFadeWait, syScreenFadeWaitStub
-	stub sySndLoadReverbCode, sySndLoadReverbCodeStub
+	stub sySoundLoadReverbCode, sySoundLoadReverbCodeStub
 	stub sySerialStartSend, sySerialStartSendStub
 	stub sySerialStartReceive, sySerialStartReceiveStub
 	stub sySerialGetActiveTransfers, sySerialGetActiveTransfersStub
@@ -65,14 +65,14 @@
 	stub syGameFlagClear, syGameFlagClearStub
 	stub mnWindowSystemInitField, mnWindowSystemInitFieldStub
 	stub syFindEvent, syFindEventStub
-	stub fdSprSetAnimationTimers, fdSprSetAnimationTimersStub
+	stub fdSpriteSetAnimationTimers, fdSpriteSetAnimationTimersStub
 	stub syImportActorSelectAnimation, fdActorSelectAnimationStub
 	stub syGameFlagGetByte, syGameFlagGetByteStub
 	stub syImportActorStartScript, fdActorStartScriptStub
 	stub syGameFlagSetByte, syGameFlagSetByteStub
-	stub fdSprAnimationClear, fdSprAnimationClearStub
-	stub fdSprStartAnimation, fdSprStartAnimationStub
-	stub fdSprAddAnimation, fdSprAddAnimationStub
+	stub fdSpriteAnimationClear, fdSpriteAnimationClearStub
+	stub fdSpriteStartAnimation, fdSpriteStartAnimationStub
+	stub fdSpriteAddAnimation, fdSpriteAddAnimationStub
 	stub fdActorSelectAnimation, fdActorSelectAnimationStub
 	stub fdActorSetAnimationSpeed, fdActorSetAnimationSpeedStub
 	stub scTundariaTowerStartEffectScript, fdActorStartScriptStub
@@ -89,8 +89,8 @@
 	stub fdMapGridPlayMapEdit, fdMapGridPlayMapEditStub
 	stub fdMapGridCopyMetatileTilesIndicesRect, fdMapGridCopyMetatileTilesIndicesRectStub
 	stub fdWorldMapSetWindowMetatileTile, fdWorldMapSetWindowMetatileTileStub
-	stub fdTilesetAnimResume, fdTilesetAnimResumeStub
-	stub fdTilesetAnimPause, fdTilesetAnimPauseStub
+	stub fdTilesetAnimationResume, fdTilesetAnimationResumeStub
+	stub fdTilesetAnimationPause, fdTilesetAnimationPauseStub
 	stub fdBlendScriptResume, fdBlendScriptResumeStub
 	stub fdWorldMapSetWindowMetatileTileAndDraw, fdWorldMapSetWindowMetatileTileAndDrawStub
 	stub fdBlendScriptSuspend, fdBlendScriptSuspendStub
@@ -103,27 +103,27 @@
 	stub fdMapGridCopyMetatileTilesMetatilesRect, fdMapGridCopyMetatileTilesMetatilesRectStub
 	stub fdMapGridCheckCollision, fdMapGridCheckCollisionStub
 	stub fdMapCopyRawMetatilesRect, fdMapCopyRawMetatilesRectStub
-	stub fdActorSetSprFlags, fdActorSetSprFlagsStub
-	stub fdActorSetFirstSprAnimation, fdActorSetFirstSprAnimationStub
+	stub fdActorSetSpriteFlags, fdActorSetSpriteFlagsStub
+	stub fdActorSetFirstSpriteAnimation, fdActorSetFirstSpriteAnimationStub
 	stub fdActorSetBlendMode, fdActorSetBlendModeStub
-	stub fdActorSystemSuspendProjectionAndShowSprs, fdActorSystemSuspendProjectionAndShowSprsStub
+	stub fdActorSystemSuspendProjectionAndShowSprites, fdActorSystemSuspendProjectionAndShowSpritesStub
 	stub fdActorSystemResumeProjectionAndHideLayers, fdActorSystemResumeProjectionAndHideLayersStub
 	stub mnWindowCreate, mnWindowCreateStub
 	stub fdMapGridSetScreenShake, fdMapGridSetScreenShakeStub
 	stub fdMapGridSetShownLayers, fdMapGridSetShownLayersStub
 	stub fdMapGridWaitForShakeToSettle, fdMapGridWaitForShakeToSettleStub
 	stub fdMapGridSetMetatileBehaviorAt, fdMapGridSetMetatileBehaviorAtStub
-	stub fdSprSetAnimationColModes, fdSprSetAnimationColModesStub
-	stub fdActorSetSprColMode, fdActorSetSprColModeStub
+	stub fdSpriteSetAnimationColorModes, fdSpriteSetAnimationColorModesStub
+	stub fdActorSetSpriteColorMode, fdActorSetSpriteColorModeStub
 	stub fdWorldMapIsWalkable, fdWorldMapIsWalkableStub
 	stub fdWorldMapGetBlockMetatileBehavior, fdWorldMapGetBlockMetatileBehaviorStub
-	stub fdTilesetAnimSuspendAll, fdTilesetAnimSuspendAllStub
+	stub fdTilesetAnimationSuspendAll, fdTilesetAnimationSuspendAllStub
 	stub fdMapLoadMetatilesAndShapes, fdMapLoadMetatilesAndShapesStub
-	stub fdActorSetSprPriorityDirect, fdActorSetSprPriorityDirectStub
+	stub fdActorSetSpritePriorityDirect, fdActorSetSpritePriorityDirectStub
 	stub fdWorldMapGetCollision, fdWorldMapGetCollisionStub
-	stub fdTilesetAnimResumeAll, fdTilesetAnimResumeAllStub
+	stub fdTilesetAnimationResumeAll, fdTilesetAnimationResumeAllStub
 	stub syImportMapGridSetMetatileHeight, fdMapGridSetMetatileHeightStub
-	stub fdSprSetAnimationSpeed, fdSprSetAnimationSpeedStub
+	stub fdSpriteSetAnimationSpeed, fdSpriteSetAnimationSpeedStub
 	stub fdMapGridGetTerrainKind, fdMapGridGetTerrainKindStub
 	stub fdActorHasArrived, fdActorHasArrivedStub
 	stub syImportFieldCheckSpheresOverlap, fdCheckSpheresOverlapStub
@@ -137,17 +137,17 @@
 	stub fdMapCopyPalette, fdMapCopyPaletteStub
 	stub mnFieldMessageShow, mnFieldMessageShowStub
 	stub mnMessageAllTyped, mnMessageAllTypedStub
-	stub mnWindowSprPrepareForRedraw, mnWindowSprPrepareForRedrawStub
+	stub mnWindowSpritePrepareForRedraw, mnWindowSpritePrepareForRedrawStub
 	stub mnWindowDrawDividerLine, mnWindowDrawDividerLineStub
-	stub mnTextDrawNum, mnTextDrawNumStub
+	stub mnTextDrawNumber, mnTextDrawNumberStub
 	stub mnTextDrawMessage, mnTextDrawMessageStub
 	stub mnMessageArgumentClearAll, mnMessageArgumentClearAllStub
 	stub mnTextDrawMessageAsTiles, mnTextDrawMessageAsTilesStub
 	stub mnTextDrawStringAtOffset, mnTextDrawStringAtOffsetStub
 	stub mnTextDrawStringInWindow, mnTextDrawStringInWindowStub
-	stub mnTextDrawNumAtOffset, mnTextDrawNumAtOffsetStub
-	stub mnWindowSprCreate, mnWindowSprCreateStub
-	stub mnTextDrawNumInWindow, mnTextDrawNumInWindowStub
+	stub mnTextDrawNumberAtOffset, mnTextDrawNumberAtOffsetStub
+	stub mnWindowSpriteCreate, mnWindowSpriteCreateStub
+	stub mnTextDrawNumberInWindow, mnTextDrawNumberInWindowStub
 	stub mnPortraitOpenWindow, mnPortraitOpenWindowStub
 	stub mnMessageArgumentPush, mnMessageArgumentPushStub
 	stub mnWindowCloseMatchingId, mnPortraitCloseWindowStub
@@ -158,10 +158,10 @@
 	stub mnFileListSelectAction, mnFileListSelectActionStub
 	stub mnIconMenuChooseSendOption, mnIconMenuChooseSendOptionStub
 	stub mnFieldMessageShowCentered, mnFieldMessageShowCenteredStub
-	stub mnWindowSprRedrawSavedRect, mnWindowSprRedrawSavedRectStub
+	stub mnWindowSpriteRedrawSavedRect, mnWindowSpriteRedrawSavedRectStub
 	stub mnIconDrawItem, mnIconDrawItemStub
 	stub mnWindowSetTilemapEntry, mnWindowSetTilemapEntryStub
-	stub mnWindowSprClearList, mnWindowSprClearListStub
+	stub mnWindowSpriteClearList, mnWindowSpriteClearListStub
 	stub mnSaveToChosenFile, mnSaveToChosenFileStub
 	stub mnSaveChooseAndLoadFile, mnSaveChooseAndLoadFileStub
 	stub mnSaveCopyFile, mnSaveCopyFileStub
@@ -172,18 +172,18 @@
 	stub mnPointingHandLoadIntoSlot, mnPointingHandLoadIntoSlotStub
 	stub mnDebugBrowserPortraits, mnDebugBrowserPortraitsStub
 	stub mnNameCaretLoadIntoSlot, mnNameCaretLoadIntoSlotStub
-	stub mnWindowColApply, mnWindowColApplyStub
+	stub mnWindowColorApply, mnWindowColorApplyStub
 	stub mnSummonShowLearnedMessage, mnSummonShowLearnedMessageStub
 	stub mnYesNoMenuRun, mnYesNoMenuRunStub
 	stub gmPartySetLeaderJenna, gmPartySetLeaderJennaStub
 	stub gmPartySetLeaderFelix, gmPartySetLeaderFelixStub
 	stub mnSelectCoinsOrMedals, mnSelectCoinsOrMedalsStub
 	stub mnAnimateSelectionToEntry, mnAnimateSelectionToEntryStub
-	stub mnGraphicsExpandVRAMTilesByColTable, mnGraphicsExpandVRAMTilesByColTableStub
+	stub mnGraphicsExpandVRAMTilesByColorTable, mnGraphicsExpandVRAMTilesByColorTableStub
 	stub mnGlyphDrawToTiles, mnGlyphDrawToTilesStub
-	stub mnGlyphAddBlankSpr, mnGlyphAddBlankSprStub
+	stub mnGlyphAddBlankSprite, mnGlyphAddBlankSpriteStub
 	stub gmDjinnGetRecoveryTable, gmDjinnGetRecoveryTableStub
-	stub gmUnitCalc, gmUnitCalcStub
+	stub gmUnitCalculate, gmUnitCalculateStub
 	stub gmItemGetDirect, gmItemGetDirectStub
 	stub gmInventoryGetQuantity, gmInventoryGetQuantityStub
 	stub gmPartyInventoryFindMember, gmPartyInventoryFindMemberStub
@@ -245,7 +245,7 @@
 	stub fdScriptPickUpItem, fdScriptPickUpItemStub
 	stub fdActorGetById, fdActorGetByIdStub
 	stub fdActorReleaseById, fdActorReleaseByIdStub
-	stub fdActorSetSpeedParms, fdActorSetSpeedParmsStub
+	stub fdActorSetSpeedParams, fdActorSetSpeedParamsStub
 	stub fdActorSetMovementTypeById, fdActorSetMovementTypeByIdStub
 	stub fdActorWaitForScriptEndById, fdActorWaitForScriptEndByIdStub
 	stub fdActorStop, fdActorStopStub
@@ -258,7 +258,7 @@
 	stub fdActorSetDestinationOffsetById, fdActorSetDestinationOffsetByIdStub
 	stub fdActorWaitForMoveById, fdActorWaitForMoveByIdStub
 	stub fdActorSetHorizontalPosWithTerrain, fdActorSetHorizontalPosWithTerrainStub
-	stub fdActorSetHorizontalPosAndAngWithTerrain, fdActorSetHorizontalPosAndAngWithTerrainStub
+	stub fdActorSetHorizontalPosAndAngleWithTerrain, fdActorSetHorizontalPosAndAngleWithTerrainStub
 	stub fdActorPlaceOnActor, fdActorPlaceOnActorStub
 	stub fdActorSetAnimationById, fdActorSetAnimationByIdStub
 	stub fdActorSetAnimationSpeedById, fdActorSetAnimationSpeedByIdStub
@@ -270,8 +270,8 @@
 	stub fdActorJumpDownLedge, fdActorJumpDownLedgeStub
 	stub fdActorFaceActorById, fdActorFaceActorByIdStub
 	stub fdActorTurnToFaceEachOther, fdActorTurnToFaceEachOtherStub
-	stub fdActorConfigureSprCol, fdActorConfigureSprColStub
-	stub fdActorSetSprCol, fdActorSetSprColStub
+	stub fdActorConfigureSpriteColor, fdActorConfigureSpriteColorStub
+	stub fdActorSetSpriteColor, fdActorSetSpriteColorStub
 	stub fdScriptSetMessageId, fdScriptSetMessageIdStub
 	stub fdMessageShowAtActor, fdMessageShowAtActorStub
 	stub fdScriptShowMessageThenWait, fdScriptShowMessageThenWaitStub
@@ -280,14 +280,14 @@
 	stub fdActorFaceDirectionById, fdActorFaceDirectionByIdStub
 	stub fdActorFaceDirectionAndRefreshById, fdActorFaceDirectionAndRefreshByIdStub
 	stub fdScriptShowTwoMessagesAndWait, fdScriptShowTwoMessagesAndWaitStub
-	stub fdActorSetSprPriority, fdActorSetSprPriorityStub
+	stub fdActorSetSpritePriority, fdActorSetSpritePriorityStub
 	stub fdActorDisableById, fdActorDisableByIdStub
 	stub fdActorShowEmoteById, fdActorShowEmoteByIdStub
 	stub syImportScriptSetDestination, fdScriptSetDestinationStub
 	stub fdEffectSetAttached, fdEffectSetAttachedStub
 	stub fdActorCopyGraphics, fdActorCopyGraphicsStub
 	stub fdCameraFollowActor, fdCameraFollowActorStub
-	stub fdCameraSetSpeedParms, fdCameraSetSpeedParmsStub
+	stub fdCameraSetSpeedParams, fdCameraSetSpeedParamsStub
 	stub fdCameraMoveWithinMapBounds, fdCameraMoveWithinMapBoundsStub
 	stub fdCameraWaitForArrival, fdCameraWaitForArrivalStub
 	stub fdMapGridSetCameraBounds, fdMapGridSetCameraBoundsStub
@@ -319,13 +319,13 @@
 	stub fdScriptFinishScreenTransition, fdScriptFinishScreenTransitionStub
 	stub fdScriptWaitTransitionTicks, fdScriptWaitTransitionTicksStub
 	stub mnCreditsRun, mnCreditsRunStub
-	stub fdActorSetWideSpr, fdActorSetWideSprStub
-	stub fdItemDispShowItem, fdItemDispShowItemStub
+	stub fdActorSetWideSprite, fdActorSetWideSpriteStub
+	stub fdItemDisplayShowItem, fdItemDisplayShowItemStub
 	stub fdActorReturnHome, fdActorReturnHomeStub
 	stub fdWorldMapFreeze, fdWorldMapFreezeStub
 	stub fdTreasureSpotSetActorPos, fdTreasureSpotSetActorPosStub
 	stub fdLineScrollInitWave, fdLineScrollInitWaveStub
-	stub fdItemDispShowPicture, fdItemDispShowPictureStub
+	stub fdItemDisplayShowPicture, fdItemDisplayShowPictureStub
 	stub mnTitleShowTitleScreen, mnTitleShowTitleScreenStub
 	stub fdActorLookup, fdActorLookupStub
 	stub fdEffectStartBlankOverlay, fdEffectStartBlankOverlayStub
@@ -333,7 +333,7 @@
 	stub mnTitleShowPublisherLogo, mnTitleShowPublisherLogoStub
 	stub mnTitleShowCamelotLogo, mnTitleShowCamelotLogoStub
 	stub mnTitleIntroRun, mnTitleIntroRunStub
-	stub fdPsynergyFadeFromCastCol, fdPsynergyFadeFromCastColStub
+	stub fdPsynergyFadeFromCastColor, fdPsynergyFadeFromCastColorStub
 	stub fdPsynergyRunHandler, fdPsynergyRunHandlerStub
 	stub fdScriptEndAllLastingPsynergy, fdScriptEndAllLastingPsynergyStub
 	stub fdPsynergyLoadResources, fdPsynergyLoadResourcesStub
@@ -345,7 +345,7 @@
 	stub fdPsynergyStartCast, fdPsynergyStartCastStub
 	stub fdScriptEndLastingPsynergy, fdScriptEndLastingPsynergyStub
 	stub fdSummonTabletPlayRunes, fdSummonTabletPlayRunesStub
-	stub fdSprShareVRAMCacheEntry, fdSprShareVRAMCacheEntryStub
+	stub fdSpriteShareVRAMCacheEntry, fdSpriteShareVRAMCacheEntryStub
 	stub fdSpeakerGetVoice, fdSpeakerGetVoiceStub
 	stub fdPartyAddPp, fdPartyAddPpStub
 	stub fdPartyAddHp, fdPartyAddHpStub
@@ -367,9 +367,9 @@
 	stub fdActorWalkByById, fdActorWalkByByIdStub
 	stub fdActorWalkByAndWaitById, fdActorWalkByAndWaitByIdStub
 	stub fdActorWatchAndSetScript, fdActorWatchAndSetScriptStub
-	stub fdActorGetSprById, fdActorGetSprByIdStub
+	stub fdActorGetSpriteById, fdActorGetSpriteByIdStub
 	stub fdWorldMapStartZoom, fdWorldMapStartZoomStub
-	stub scProxInitRockSpr, fdEffectSprInitStub
+	stub scProxInitRockSprite, fdEffectSpriteInitStub
 	stub scDehkanPlateauInitRopes, fdRopeInitStub
 	stub scIdejimaCountAnswer, fdScriptCountAnswerStub
 	stub fdActorTableSnapshot, fdActorTableSnapshotStub
@@ -400,41 +400,41 @@
 	stub fdActorPlaceMovedBlock, fdActorPlaceMovedBlockStub
 	stub fdMapShapeFindOrAdd, fdMapShapeFindOrAddStub
 	stub fdActorFindAtMetatile, fdActorFindAtMetatileStub
-	stub scJupiterLighthouseInitSparkSpr, fdEffectSprInitStub
+	stub scJupiterLighthouseInitSparkSprite, fdEffectSpriteInitStub
 	stub fdLeaderCanPushObjectAhead, fdLeaderCanPushObjectAheadStub
 	stub scEasternAlhafraPushObjectAhead, fdLeaderPushObjectAheadStub
-	stub scJupiterLighthouseDrawSparkSpr, fdEffectSprDrawStub
+	stub scJupiterLighthouseDrawSparkSprite, fdEffectSpriteDrawStub
 	stub fdLeaderPushObjectAhead, fdLeaderPushObjectAheadStub
 	stub fdLeaderFindActorAhead, fdLeaderFindActorAheadStub
 	stub fdTileCopiesCopyTouchedMetatiles, fdTileCopiesCopyTouchedMetatilesStub
 	stub fdPartyGetLeaderActor, fdPartyGetLeaderActorStub
 	stub fdHangingVinePlace, fdHangingVinePlaceStub
 	stub fdActorFallOverById, fdActorFallOverByIdStub
-	stub scMagmaRockInsideInitRockSpr, fdEffectSprInitStub
+	stub scMagmaRockInsideInitRockSprite, fdEffectSpriteInitStub
 	stub scTaopoSwampShowMessage, fdScriptShowMessageAndOfferScoopStub
 	stub scGabombaStatueChamberCountAnswer, fdScriptCountAnswerStub
 	stub fdExitPrepareActorAnimation, fdExitPrepareActorAnimationStub
 	stub mnItemMenuDrawItemDetails, mnItemMenuDrawItemDetailsStub
 	stub fdActorAppearInSparks, fdActorAppearInSparksStub
-	stub fdActorSetSprRotationById, fdActorSetSprRotationByIdStub
+	stub fdActorSetSpriteRotationById, fdActorSetSpriteRotationByIdStub
 	stub scKibomboCountAnswer, fdScriptCountAnswerStub
 	stub fdActorFallOverWithAnimationById, fdActorFallOverWithAnimationByIdStub
 	stub scTrialRoadCopyTouchedMetatiles, fdCycloneCopyTouchedMetatilesStub
 	stub scMadraRoomsCountAnswer, fdScriptCountAnswerStub
-	stub scEasternAlhafraInitRockSpr, fdEffectSprInitStub
-	stub fdEffectSprInit, fdEffectSprInitStub
+	stub scEasternAlhafraInitRockSprite, fdEffectSpriteInitStub
+	stub fdEffectSpriteInit, fdEffectSpriteInitStub
 	stub fdExitStartStairsUp, fdExitStartStairsUpStub
-	stub syImportEffectSprDraw, fdEffectSprDrawStub
-	stub fdEffectSprDrawAtWorldPos, fdEffectSprDrawAtWorldPosStub
-	stub fdEffectSprDraw, fdEffectSprDrawStub
+	stub syImportEffectSpriteDraw, fdEffectSpriteDrawStub
+	stub fdEffectSpriteDrawAtWorldPos, fdEffectSpriteDrawAtWorldPosStub
+	stub fdEffectSpriteDraw, fdEffectSpriteDrawStub
 	stub fdBattleEffectStepVector3, fdBattleEffectStepVector3Stub
-	stub fdActorGetSprPriority, fdActorGetSprPriorityStub
+	stub fdActorGetSpritePriority, fdActorGetSpritePriorityStub
 	stub syImportMadPlantLeapAtLeader, fdMadPlantLeapAtLeaderStub
 	stub mnEndingImageStart, mnEndingImageStartStub
-	stub fdActorPlaySndInView, fdActorPlaySndInViewStub
+	stub fdActorPlaySoundInView, fdActorPlaySoundInViewStub
 	stub fdMapGridGetMetatileAttributesAt, fdMapGridGetMetatileAttributesAtStub
-	stub fdActorGetSprDepth, fdActorGetSprDepthStub
-	stub fdStartColTransition, fdStartColTransitionStub
+	stub fdActorGetSpriteDepth, fdActorGetSpriteDepthStub
+	stub fdStartColorTransition, fdStartColorTransitionStub
 	stub fdStartPaletteTransition, fdStartPaletteTransitionStub
 	stub mnEndingImageShow, mnEndingImageShowStub
 	stub fdBattleEffectStartArcEffect, fdBattleEffectStartArcEffectStub
@@ -471,23 +471,23 @@
 	stub fdCycloneCopyTouchedMetatiles, fdCycloneCopyTouchedMetatilesStub
 	stub syImportDebugMadPlantLeap, fdMadPlantLeapAtLeaderStub
 	stub fdTightropeSettle, fdTightropeSettleStub
-	stub fdEffectSprInitWithFadeOverlay, fdEffectSprInitWithFadeOverlayStub
-	stub fdEffectSprDrawAtWorldXYZ, fdEffectSprDrawAtWorldXYZStub
+	stub fdEffectSpriteInitWithFadeOverlay, fdEffectSpriteInitWithFadeOverlayStub
+	stub fdEffectSpriteDrawAtWorldXYZ, fdEffectSpriteDrawAtWorldXYZStub
 	stub fdActorResetTargetsAndVelocity, fdActorResetTargetsAndVelocityStub
 	stub mnShopRun, mnShopRunStub
-	stub fdActorCycleSprCols, fdActorCycleSprColsStub
-	stub fdEffectSprInitWithFadeOverlayBlended, fdEffectSprInitWithFadeOverlayBlendedStub
+	stub fdActorCycleSpriteColors, fdActorCycleSpriteColorsStub
+	stub fdEffectSpriteInitWithFadeOverlayBlended, fdEffectSpriteInitWithFadeOverlayBlendedStub
 	stub mnSanctumRun, mnSanctumRunStub
 	stub fdWorldMapSetReturnLeavingScene, fdWorldMapSetReturnLeavingSceneStub
 	stub fdMadPlantLeapAtLeader, fdMadPlantLeapAtLeaderStub
-	stub mnStatScreenRun, mnStatScreenRunStub
+	stub mnStatusScreenRun, mnStatusScreenRunStub
 	stub mnCursorAdvance, mnCursorAdvanceStub
 	stub mnInnCheckIn, mnInnCheckInStub
 	stub mnForgeRun, mnForgeRunStub
 	stub btDjinnRecoveryCountDownTwenty, btDjinnRecoveryCountDownTwentyStub
-	stub btDebugParmSetLoad, btDebugParmSetLoadStub
+	stub btDebugParamSetLoad, btDebugParamSetLoadStub
 	stub mnCursorSet, mnCursorSetStub
-	stub mnSndWaitForJingle, mnSndWaitForJingleStub
+	stub mnSoundWaitForJingle, mnSoundWaitForJingleStub
 	stub mnItemPickerRunToDrop, mnItemPickerRunToDropStub
 	stub mnInnQuoteRoomPrice, mnInnQuoteRoomPriceStub
 	stub mnItemPickerRunToShow, mnItemPickerRunToShowStub
@@ -495,6 +495,6 @@
 	stub mnForgeGetItem, mnForgeGetItemStub
 	stub mnCursorSetPosImmediate, mnCursorSetPosImmediateStub
 	stub mnInnPlaySleep, mnInnPlaySleepStub
-	stub sySndPlay, sySndPlayStub
-	stub sySndWaitForBGMRestore, sySndWaitForBGMRestoreStub
-	stub sySndFlagTest, sySndFlagTestStub
+	stub sySoundPlay, sySoundPlayStub
+	stub sySoundWaitForBGMRestore, sySoundWaitForBGMRestoreStub
+	stub sySoundFlagTest, sySoundFlagTestStub

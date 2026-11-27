@@ -395,10 +395,10 @@ void scMadraRoomsMindReadMushroomLover(void)
 			fdScriptShowMessage(ACTOR_MUSHROOM_LOVER, 0);
 		}
 	} else {
-		Sint32 flg = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
+		Sint32 flag = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
 		Sint32 msg = (Sint32)MsgMadraRoomsImDyingForSome;
 
-		if(flg) {
+		if(flag) {
 			syFieldScriptSetMessageId(msg);
 			fdScriptShowMessage(ACTOR_MUSHROOM_LOVER, 0);
 		} else {
@@ -425,10 +425,10 @@ void scMadraRoomsMindReadMushroomCook(void)
 			fdScriptShowMessage(ACTOR_MUSHROOM_COOK, 0);
 		}
 	} else {
-		Sint32 flg = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
+		Sint32 flag = fdScriptGetFlag(FLAG_MADRA_LAUGHING_FUNGUS_OFFERED);
 		Sint32 msg = (Sint32)MsgMadraRoomsMyPoorHusbandsGettingOld;
 
-		if(flg) {
+		if(flag) {
 			syFieldScriptSetMessageId(msg);
 			fdScriptShowMessage(ACTOR_MUSHROOM_COOK, 0);
 		} else {
@@ -491,7 +491,7 @@ void scMadraRoomsPlaceBlackCrystal(void)
 		fdActorSetPos(ACTOR_BLACK_CRYSTAL, 888, 8);
 	} else {
 		fdActorSetItemIcon(fdActorGet(ACTOR_BLACK_CRYSTAL), ITEM_BLACK_CRYSTAL);
-		fdActorSetSprFlags(fdActorGet(ACTOR_BLACK_CRYSTAL), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_BLACK_CRYSTAL), 0);
 	}
 }
 
@@ -509,7 +509,7 @@ static inline void scMadraRoomsPlaceFacing(
 void scMadraRoomsSetUpJail(void)
 {
 	if(!fdScriptGetFlag(FLAG_BRIGGS_CAUGHT)) {
-		FieldStateWork->psynergyDrawFlg =
+		FieldStateWork->psynergyDrawFlags =
 			PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
 		if(!fdScriptGetFlag(FLAG_PIERS_INTERROGATED)) {
 			scMadraRoomsShinAngersPiers();
@@ -540,23 +540,25 @@ extern Sint32 MadraRoomsShinAndFriendRunAway[];
    Black Crystal. */
 Sint32 scInit(void)
 {
-	FIELD_SPR	*spr;
+	FIELD_SPR	*sprite;
 	FIELD_STATE *event;
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next == SCENE_MADRA_ROOMS_HOUSES) {
 		event = RamHeapSlots->fieldState;
-		event->psynergyDrawFlg =
+		event->psynergyDrawFlags =
 			PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
 		if(!fdScriptGetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {
 			fdActorSetPos(ACTOR_MORGAN, 0, 0);
 			fdActorSetPos(ACTOR_DEKKA, 0, 0);
 		} else {
-			scFieldActorSetSprCol(fdActorGet(ACTOR_MORGAN), SPRITE_COLOR_BGR);
-			scFieldActorSetSprCol(fdActorGet(ACTOR_DEKKA), SPRITE_COLOR_BRG);
+			scFieldActorSetSpriteColor(
+				fdActorGet(ACTOR_MORGAN), SPRITE_COLOR_BGR);
+			scFieldActorSetSpriteColor(
+				fdActorGet(ACTOR_DEKKA), SPRITE_COLOR_BRG);
 		}
 		if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT)) {
 			fdMapGridCopyMetatilesLayered(2, 110, 16, 10, 16, 64);
@@ -569,23 +571,24 @@ Sint32 scInit(void)
 		if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT)) {
 			fdActorSetPos(ACTOR_SISTER_IN_BED, 0, 0);
 		} else {
-			fdActorSetSprRotationById(ACTOR_SISTER_IN_BED, TRIG_TURN * 3 / 4);
-			fdActorSetSprFlags(fdActorGet(ACTOR_SISTER_IN_BED), 0);
+			fdActorSetSpriteRotationById(
+				ACTOR_SISTER_IN_BED, TRIG_TURN * 3 / 4);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_SISTER_IN_BED), 0);
 			/* Lying under the covers: her sprite turned, its bottom 8 rows
 			   sunk. */
-			((FIELD_SPR *)fdActorGet(ACTOR_SISTER_IN_BED)->spr)->flg |=
+			((FIELD_SPR *)fdActorGet(ACTOR_SISTER_IN_BED)->sprite)->flags |=
 				SPRITE_FLAG_SUNK;
-			spr = fdActorGet(ACTOR_SISTER_IN_BED)->spr;
-			spr->sunkRows = 8;
-			((FIELD_SPR *)fdActorGet(ACTOR_SISTER_IN_BED)->spr)->dirty = 1;
+			sprite = fdActorGet(ACTOR_SISTER_IN_BED)->sprite;
+			sprite->sunkRows = 8;
+			((FIELD_SPR *)fdActorGet(ACTOR_SISTER_IN_BED)->sprite)->dirty = 1;
 		}
 	}
 	scMadraRoomsPlaceBlackCrystal();
 	if(fdScriptGetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
-		scFieldActorSetSprCol(
+		scFieldActorSetSpriteColor(
 			fdActorGet(ACTOR_TRAVELERS_PARTNER_ON_RETURN), SPRITE_COLOR_RBG);
 	else
-		scFieldActorSetSprCol(
+		scFieldActorSetSpriteColor(
 			fdActorGet(ACTOR_TRAVELERS_PARTNER), SPRITE_COLOR_RBG);
 	return 0;
 }
@@ -597,24 +600,24 @@ Sint32 scPrepareMap(void)
 
 /* Turns an actor's sprite a thirty-second of a turn, a tick of Shin falling
    over (MadraRoomsShinFalls). */
-Sint32 scMadraRoomsRotateSpr(ACTOR *actor)
+Sint32 scMadraRoomsRotateSprite(ACTOR *actor)
 {
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
-	spr = actor->spr;
-	if(actor != NULL && spr != NULL)
-		spr->rotation -= TRIG_TURN / 32;
+	sprite = actor->sprite;
+	if(actor != NULL && sprite != NULL)
+		sprite->rotation -= TRIG_TURN / 32;
 	return 0;
 }
 
 /* Unused: stands an actor's sprite upright again; no script calls it. */
-UNUSED Sint32 scMadraRoomsResetSprRotation(ACTOR *actor)
+UNUSED Sint32 scMadraRoomsResetSpriteRotation(ACTOR *actor)
 {
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
-	spr = actor->spr;
-	if(actor != NULL && spr != NULL)
-		spr->rotation = 0;
+	sprite = actor->sprite;
+	if(actor != NULL && sprite != NULL)
+		sprite->rotation = 0;
 	return 0;
 }
 
@@ -667,13 +670,13 @@ void scMadraRoomsShinAngersPiers(void)
 	/* "The heart of the Eastern Sea... If I told you where, you'd never..." */
 	syFieldScriptShowMessageThenWait(ACTOR_PIERS, 0, 10);
 	scFieldActorShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-	fdActorGet(ACTOR_SHIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	for(i = 0; i < 3; i++) {
 		fdActorWalkByAndWait(ACTOR_SHIN, 0, -8);
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
 		fdActorWalkByAndWait(ACTOR_SHIN, 0, 8);
 	}
-	fdActorGet(ACTOR_SHIN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHIN)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(30);
 	fdActorShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
 	/* "Look at me when I'm talking to you! Are you trying to mock me!?" */
@@ -726,7 +729,7 @@ void scMadraRoomsShinAngersPiers(void)
 	fdActorShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	fdActorFaceActor(ACTOR_SHIN, ACTOR_PIERS, 0);
 	fdActorFaceActor(ACTOR_SHINS_FRIEND, ACTOR_PIERS, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHIN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHIN), 0);
 	fdActorSetScript(ACTOR_SHIN, MadraRoomsShinLifted);
 	fdPsynergyRunHandler(1);
 	fdBattleEffectStopMainActor();
@@ -737,18 +740,18 @@ void scMadraRoomsShinAngersPiers(void)
 	fdActorGet(ACTOR_SHIN)->scaleX = toFIXED(1);
 	fdActorGet(ACTOR_SHIN)->scaleY = toFIXED(1);
 	syFieldScriptWait(4);
-	fdActorGet(ACTOR_SHIN)->motionFlg = ACTOR_FALLS;
-	fdActorGet(ACTOR_SHIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHIN)->motionFlags = ACTOR_FALLS;
+	fdActorGet(ACTOR_SHIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestinationOffset(ACTOR_SHIN, -8, 0);
 	fdActorSetScript(ACTOR_SHIN, MadraRoomsShinFalls);
 	scFieldActorWaitForScriptEndById(ACTOR_SHIN);
-	fdScriptPlaySnd(SE_LANDING_THUD);
+	fdScriptPlaySound(SE_LANDING_THUD);
 	syFieldScriptWait(60);
-	fdActorGet(ACTOR_SHIN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHIN)->steeringFlags |= ACTOR_FACES_MOTION;
 	scFieldActorJump(ACTOR_SHIN, 6, 0);
 	syFieldScriptWait(3);
-	fdActorSetSprRotationById(ACTOR_SHIN, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SHIN), 1);
+	fdActorSetSpriteRotationById(ACTOR_SHIN, 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SHIN), 1);
 	fdActorFaceDirection(ACTOR_SHIN, FACING_SOUTH, 0);
 	syFieldScriptWait(20);
 	fdActorFaceDirection(ACTOR_SHINS_FRIEND, FACING_EAST, 0);
@@ -764,8 +767,8 @@ void scMadraRoomsShinAngersPiers(void)
 	syFieldScriptWait(20);
 	fdActorFaceActor(ACTOR_SHIN, ACTOR_PIERS, 0);
 	syFieldScriptWait(20);
-	fdActorGet(ACTOR_SHINS_FRIEND)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_SHIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHINS_FRIEND)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkByAndWait(ACTOR_SHIN, -16, 16);
 	fdActorRunRepeatedMotion(ACTOR_PIERS, 2);
 	syFieldScriptWait(20);
@@ -774,7 +777,7 @@ void scMadraRoomsShinAngersPiers(void)
 	syFieldScriptWait(10);
 	scFieldActorJump(ACTOR_SHIN, 6, 20);
 	syFieldScriptWait(20);
-	fdActorGet(ACTOR_SHIN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHIN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetScript(ACTOR_SHIN, MadraRoomsShinAndFriendRunAway);
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_SHIN);
 	scFieldActorWatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_SHIN);
@@ -804,7 +807,7 @@ void scMadraRoomsShinAngersPiers(void)
 	syFieldScriptWait(20);
 	/* "Help!!!" */
 	syFieldScriptShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
-	fdActorGet(ACTOR_SHINS_FRIEND)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SHINS_FRIEND)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetScript(ACTOR_SHINS_FRIEND, MadraRoomsShinAndFriendRunAway);
 	syFieldScriptWait(40);
 	scFieldActorStop(ACTOR_FELIX);
@@ -813,7 +816,7 @@ void scMadraRoomsShinAngersPiers(void)
 	fdActorSetPos(ACTOR_SHIN, 0, 0);
 	fdActorSetPos(ACTOR_SHINS_FRIEND, 0, 0);
 	fdActorSetAnimation(ACTOR_JAIL_PUDDLE, 6);
-	fdActorSetSprColById(ACTOR_JAIL_PUDDLE, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_JAIL_PUDDLE, SPRITE_COLOR_NORMAL);
 	fdActorFaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
 	fdActorWaitForAnimationChange(8);
 	syScriptCameraFollowActor(ACTOR_FELIX, 1);
@@ -1883,21 +1886,21 @@ Sint32 MadraRoomsShinAndFriendRunAway[] = {
 
 /* Shin falls over, a quarter turn in eight ticks. */
 Sint32 MadraRoomsShinFalls[] = {
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
-	SC_CALL(scMadraRoomsRotateSpr),
+	SC_CALL(scMadraRoomsRotateSprite),
 	SC_WAIT(1),
 	SC_END,
 };

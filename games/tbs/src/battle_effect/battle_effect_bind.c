@@ -37,7 +37,7 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 {
 	Sint32	i, x, y, row, end, speed;
 	Sint32	red, green, blue;
-	Uint16	col;
+	Uint16	color;
 	Uint8  *delays, *pixel;
 	Uint16 *palette;
 	palette = (Uint16 *)&BG_PLTT_COLOR(BLUE_RAMP_PALETTE, 0);
@@ -64,10 +64,10 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 					if(y < BATTLE_BACKGROUND_HEIGHT) {
 						pixel =
 							BLUE_RAMP_PIXELS + BACKGROUND_PIXEL_OFFSET(x, y);
-						col = ((Sint16 *)BG_PLTT)[*pixel];
-						red = RGB_RED(col);
-						green = RGB_GREEN(col);
-						blue = RGB_BLUE(col);
+						color = ((Sint16 *)BG_PLTT)[*pixel];
+						red = RGB_RED(color);
+						green = RGB_GREEN(color);
+						blue = RGB_BLUE(color);
 						if(red < green)
 							red = green;
 						if(red < blue)
@@ -116,14 +116,14 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 member;
 	BATTLE_CAMERA		*camera;
 	Sint32				 shift;
 	Uint8				*graphics;
 	Uint8				*palette;
 	ACTOR				*actor;
-	Sint32				 memberFrm;
+	Sint32				 memberFrame;
 	PARTICLE			*point;
 	Sint32				 size;
 	Sint32				 j;
@@ -152,32 +152,32 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	palette += SHEET_PALETTE_BYTES;
 	syDecompressTaggedLZ(palette, state->sheet + BIND_DJINNI_PICTURE);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-	btProjectionScaledUnit(state->args->tgts[0], &anchor);
+	btProjectionScaledUnit(state->args->targets[0], &anchor);
 	shift = CANVAS_SIZE / 2 - anchor.x;
 	REG_BG2X = shift << 8;
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0; frm != state->args->tgtCnt * 20 + 72; frm++) {
-		if(frm == BIND_RUNE_TICK)
+	for(frame = 0; frame != state->args->targetCount * 20 + 72; frame++) {
+		if(frame == BIND_RUNE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		/* The colours cycle through the hues. */
 		btEffectUpdatePhasePalette(
-			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 
 		/* The Djinni sways, then rises away. */
 		if(state->args->prelude == 1) {
 			Sint32 x;
 			Sint32 y;
 
-			x = FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
+			x = FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
 				originX + shift - DJINNI_WIDTH / 2;
-			y = FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4) + originY - 24;
+			y = FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
 			btEffectBuildCanvasBlitters(state->args->side, draw);
-			if(frm > 32)
-				y = y - frm * 2 + 64;
+			if(frame > 32)
+				y = y - frame * 2 + 64;
 			draw[0](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y,
 				DJINNI_WIDTH, DJINNI_HEIGHT);
-			if(frm <= 3)
+			if(frame <= 3)
 				draw[1](canvas, state->sheet + BIND_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
 			EFFECT_RELEASE_BLITTERS();
@@ -188,15 +188,15 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-		if(frm > 16 && (frm & 15) == 0)
+		if(frame > 16 && (frame & 15) == 0)
 			state->transferValue += CANVAS_FILL_WORD(1);
 
 		/* Only the first target's triangle is drawn, though the ticks are
 		   counted for every target. */
 		for(member = 0; member != 1; member++) {
-			memberFrm = frm - member * 8;
-			actor = btObjectGetStub(state->args->tgts[member])->actor;
-			if(memberFrm >= 0 && memberFrm < 96) {
+			memberFrame = frame - member * 8;
+			actor = btObjectGetStub(state->args->targets[member])->actor;
+			if(memberFrame >= 0 && memberFrame < 96) {
 				EFFECT_VIEW_FROM_CAMERA(camera);
 				SET_VECTOR(syScreenPointCoordinates(&corner), actor->x.fixed,
 					actor->y.fixed, actor->z.fixed);
@@ -204,24 +204,24 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 				screen.x = anchor.x + shift;
 				screen.y -= 24;
 				/* The triangle. */
-				if(memberFrm <= 67) {
+				if(memberFrame <= 67) {
 					for(j = 0; j != 3; j++) {
 						point =
 							&state->particles[member * BIND_SLOTS_PER_TARGET +
 								j];
 						syInitMatrix();
-						if(memberFrm < BIND_RUNE_TICK) {
-							scale.x = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale.y = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale.z = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+						if(memberFrame < BIND_RUNE_TICK) {
+							scale.x = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale.y = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale.z = toFIXED(21) / 8 - (memberFrame * 3 << 9);
 							syMatrixScaleVector(syVector3Coordinates(&scale));
-							syRotZ((BIND_RUNE_TICK - memberFrm) << 9);
-							syRotY((BIND_RUNE_TICK - memberFrm) << 9);
+							syRotZ((BIND_RUNE_TICK - memberFrame) << 9);
+							syRotY((BIND_RUNE_TICK - memberFrame) << 9);
 						}
 						syRotZ(j * (DEGtoANG(120)));
 						btProjectionPoint(BindVertex, &corner);
-						point->velX = corner.x + screen.x;
-						point->velY = corner.y + screen.y + 16;
+						point->velocityX = corner.x + screen.x;
+						point->velocityY = corner.y + screen.y + 16;
 					}
 					for(j = 0; j != 3; j++) {
 						PARTICLE *from = &state->particles[j +
@@ -229,12 +229,14 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 						PARTICLE *to = &state->particles[(j + 1) % 3 +
 							member * BIND_SLOTS_PER_TARGET];
 
-						size = 5 - memberFrm / 16;
+						size = 5 - memberFrame / 16;
 						for(k = 0; k != BIND_EDGE_FLARES; k++) {
-							Sint32 x = from->velX +
-								k * (to->velX - from->velX) / BIND_EDGE_FLARES;
-							Sint32 y = from->velY +
-								k * (to->velY - from->velY) / BIND_EDGE_FLARES;
+							Sint32 x = from->velocityX +
+								k * (to->velocityX - from->velocityX) /
+									BIND_EDGE_FLARES;
+							Sint32 y = from->velocityY +
+								k * (to->velocityY - from->velocityY) /
+									BIND_EDGE_FLARES;
 
 							EFFECT_DRAW_FLARE(draw[0], canvas,
 								state->sheet + BIND_FLARE_PICTURES, x, y, size);
@@ -242,7 +244,7 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				/* Then the rune, in two mirrored halves. */
-				if(memberFrm >= BIND_RUNE_TICK) {
+				if(memberFrame >= BIND_RUNE_TICK) {
 					draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
 						screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
 						RUNE_HALF_HEIGHT);
@@ -274,7 +276,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	VECTOR3				 scale;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
 	Sint32				 member;
 	BATTLE_CAMERA		*camera;
@@ -282,7 +284,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	Uint8				*graphics;
 	Uint8				*palette;
 	ACTOR				*actor;
-	Sint32				 memberFrm;
+	Sint32				 memberFrame;
 	PARTICLE			*point;
 	Sint32				 size;
 	Sint32				 j;
@@ -304,59 +306,59 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	palette = syResourceGetTableEntry(RESOURCE_BLUE_GLOW_SHEET);
 	syDecompressTaggedLZ(palette, state->sheet + BIND_FLARE_PICTURES);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-	btProjectionScaledUnit(state->args->tgts[0], &anchor);
+	btProjectionScaledUnit(state->args->targets[0], &anchor);
 	shift = CANVAS_SIZE / 2 - anchor.x;
 	REG_BG2X = shift << 8;
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0; frm != state->args->tgtCnt * 20 + 72; frm++) {
-		if(frm == BIND_RUNE_TICK)
+	for(frame = 0; frame != state->args->targetCount * 20 + 72; frame++) {
+		if(frame == BIND_RUNE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
 		/* The user sets off towards the target. */
-		if(frm == 46)
-			btMotionApproachTargetStub(state->args->user, state->args->tgts[0],
-				TRIANGLE_STRIKE_LEAP_TICKS, 0);
+		if(frame == 46)
+			btMotionApproachTargetStub(state->args->user,
+				state->args->targets[0], TRIANGLE_STRIKE_LEAP_TICKS, 0);
 		btEffectUpdatePhasePalette(
-			frm, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
+			frame, TRIG_TURN - DEGtoANG(120), DEGtoANG(120), 0);
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_LIGHTEN);
 		draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
 		draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
-		if(frm > 16 && (frm & 15) == 0)
+		if(frame > 16 && (frame & 15) == 0)
 			state->transferValue += CANVAS_FILL_WORD(1);
 
 		/* Only the first target's triangle is drawn, though the ticks are
 		   counted for every target. */
 		for(member = 0; member != 1; member++) {
-			memberFrm = frm - member * 8;
-			actor = btObjectGetStub(state->args->tgts[member])->actor;
-			if(memberFrm >= 0 && memberFrm < 96) {
+			memberFrame = frame - member * 8;
+			actor = btObjectGetStub(state->args->targets[member])->actor;
+			if(memberFrame >= 0 && memberFrame < 96) {
 				EFFECT_VIEW_FROM_CAMERA(camera);
 				SET_VECTOR(syScreenPointCoordinates(&corner), actor->x.fixed,
 					actor->y.fixed, actor->z.fixed);
 				btProjectionPoint(&corner, &screen);
 				screen.x = anchor.x + shift;
 				screen.y -= 24;
-				if(memberFrm <= 67) {
+				if(memberFrame <= 67) {
 					for(j = 0; j != 3; j++) {
 						point =
 							&state->particles[member * BIND_SLOTS_PER_TARGET +
 								j];
 						syInitMatrix();
-						if(memberFrm < BIND_RUNE_TICK) {
-							scale.x = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale.y = toFIXED(21) / 8 - (memberFrm * 3 << 9);
-							scale.z = toFIXED(21) / 8 - (memberFrm * 3 << 9);
+						if(memberFrame < BIND_RUNE_TICK) {
+							scale.x = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale.y = toFIXED(21) / 8 - (memberFrame * 3 << 9);
+							scale.z = toFIXED(21) / 8 - (memberFrame * 3 << 9);
 							syMatrixScaleVector(syVector3Coordinates(&scale));
-							syRotZ((BIND_RUNE_TICK - memberFrm) << 9);
-							syRotY((BIND_RUNE_TICK - memberFrm) << 9);
+							syRotZ((BIND_RUNE_TICK - memberFrame) << 9);
+							syRotY((BIND_RUNE_TICK - memberFrame) << 9);
 						}
 						syRotZ(j * (DEGtoANG(120)));
 						btProjectionPoint(BindTriangleStrikeVertex, &corner);
-						point->velX = corner.x + screen.x;
-						point->velY = corner.y + screen.y + 16;
+						point->velocityX = corner.x + screen.x;
+						point->velocityY = corner.y + screen.y + 16;
 					}
 					for(j = 0; j != 3; j++) {
 						PARTICLE *from = &state->particles[j +
@@ -364,12 +366,14 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 						PARTICLE *to = &state->particles[(j + 1) % 3 +
 							member * BIND_SLOTS_PER_TARGET];
 
-						size = 5 - memberFrm / 16;
+						size = 5 - memberFrame / 16;
 						for(k = 0; k != BIND_EDGE_FLARES; k++) {
-							Sint32 x = from->velX +
-								k * (to->velX - from->velX) / BIND_EDGE_FLARES;
-							Sint32 y = from->velY +
-								k * (to->velY - from->velY) / BIND_EDGE_FLARES;
+							Sint32 x = from->velocityX +
+								k * (to->velocityX - from->velocityX) /
+									BIND_EDGE_FLARES;
+							Sint32 y = from->velocityY +
+								k * (to->velocityY - from->velocityY) /
+									BIND_EDGE_FLARES;
 
 							EFFECT_DRAW_FLARE(draw[0], canvas,
 								state->sheet + BIND_FLARE_PICTURES, x, y, size);
@@ -377,7 +381,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				/* Then the rune, in two mirrored halves. */
-				if(memberFrm >= BIND_RUNE_TICK) {
+				if(memberFrame >= BIND_RUNE_TICK) {
 					draw[0](canvas, state->sheet, screen.x - RUNE_HALF_WIDTH,
 						screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
 						RUNE_HALF_HEIGHT);

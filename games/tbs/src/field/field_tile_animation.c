@@ -5,7 +5,7 @@
 #include "field_internal.h"
 
 /* A tileset animation script's commands, a halfword each where a source tile
-   would stand (fdTilesetAnimUpdate and fdTilesetAnimStartAll). */
+   would stand (fdTilesetAnimationUpdate and fdTilesetAnimationStartAll). */
 #define TILESET_ANIM_LOOP				   0xffff /* back to the start of the script */
 #define TILESET_ANIM_OPCODE_MASK		   0xff00 /* the high byte: the command */
 #define TILESET_ANIM_JUMP				   0xfe00 /* low byte: the halfword pair to jump to */
@@ -19,7 +19,7 @@
 #define TILESET_ANIM_MARKER				   0xfd00
 #define TILESET_ANIM_MARKER_PAUSED		   0x80 /* a marker's bit: start it paused */
 #define TILESET_ANIM_MARKER_ANIMATION_MASK 0xf /* a marker's animation */
-/* The first source tile read from MapGridAnimTiles rather than VRAM, for
+/* The first source tile read from MapGridAnimationTiles rather than VRAM, for
    32-byte and for 64-byte (wide) tiles: both bases put it at its start. */
 #define TILESET_ANIM_RAM_TILE			   1536
 #define TILESET_ANIM_RAM_WIDE_TILE		   512
@@ -39,33 +39,33 @@
 #define BLDCNT_EFFECT_MASK 0x00c0
 
 /* Each tick: runs the 16 tileset animations. */
-void fdTilesetAnimUpdate(void)
+void fdTilesetAnimationUpdate(void)
 {
 	MAP_GRID_SCROLL_STATE *gridState = MapGridState[0];
-	Uint32				   channelIdx;
+	Uint32				   channelIndex;
 
-	for(channelIdx = 0; channelIdx < ARRAY_COUNT(gridState->anms);
-		channelIdx++) {
+	for(channelIndex = 0; channelIndex < ARRAY_COUNT(gridState->animations);
+		channelIndex++) {
 		const Uint16 *commands;
 		Uint32		  srcTileOrOpcode;
-		Uint32		  tileCnt;
-		Uint32		  dstTile;
+		Uint32		  tileCount;
+		Uint32		  destTile;
 
 		/* A tileset animation with no script, or paused by a script, keeps its
 		   place. */
-		if((gridState->anms + channelIdx)->start == NULL ||
-			(gridState->anms + channelIdx)->paused != 0)
+		if((gridState->animations + channelIndex)->start == NULL ||
+			(gridState->animations + channelIndex)->paused != 0)
 			continue;
 		/* While the wait lasts the tileset animation only counts down; when it
 		   is over, commands run in this same tick until one sets a new wait or
 		   stops. */
 	next:
-		if((gridState->anms + channelIdx)->tmr == 0) {
-			commands = (gridState->anms + channelIdx)->cursor;
+		if((gridState->animations + channelIndex)->timer == 0) {
+			commands = (gridState->animations + channelIndex)->cursor;
 			srcTileOrOpcode = *commands++;
 			if(srcTileOrOpcode == TILESET_ANIM_LOOP) {
-				(gridState->anms + channelIdx)->cursor =
-					(gridState->anms + channelIdx)->start;
+				(gridState->animations + channelIndex)->cursor =
+					(gridState->animations + channelIndex)->start;
 				goto next;
 			}
 			/* TILESET_ANIM_STOP leaves the cursor on itself, so the tileset
@@ -77,71 +77,71 @@ void fdTilesetAnimUpdate(void)
 				if((srcTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) ==
 					TILESET_ANIM_STOP)
 					continue;
-				(gridState->anms + channelIdx)->cursor =
-					(gridState->anms + channelIdx)->start +
+				(gridState->animations + channelIndex)->cursor =
+					(gridState->animations + channelIndex)->start +
 					(srcTileOrOpcode & TILESET_ANIM_ARGUMENT_MASK) * 2;
 				goto next;
 			}
-			tileCnt = *commands++;
-			dstTile = commands[0];
-			(gridState->anms + channelIdx)->tmr = commands[1];
+			tileCount = *commands++;
+			destTile = commands[0];
+			(gridState->animations + channelIndex)->timer = commands[1];
 			/* A source tile from TILESET_ANIM_RAM_TILE
 			   (TILESET_ANIM_RAM_WIDE_TILE for 64-byte tiles) is read from RAM,
-			   at the start of MapGridAnimTiles. */
+			   at the start of MapGridAnimationTiles. */
 			if(gridState->wideTiles == 0) {
 				if(srcTileOrOpcode >= TILESET_ANIM_RAM_TILE)
 					syDMAXCopy(
 						RamDecodeBuffer + srcTileOrOpcode * TILE_SIZE_4BPP,
-						BG_CHAR_BLOCK(1) + dstTile * TILE_SIZE_4BPP,
-						DMA_COPY_WORDS(tileCnt * (TILE_SIZE_4BPP / 4)),
+						BG_CHAR_BLOCK(1) + destTile * TILE_SIZE_4BPP,
+						DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)),
 						REG_DMA3);
 				else
 					syDMAXCopy(
 						BG_CHAR_BLOCK(1) + srcTileOrOpcode * TILE_SIZE_4BPP,
-						BG_CHAR_BLOCK(1) + dstTile * TILE_SIZE_4BPP,
-						DMA_COPY_WORDS(tileCnt * (TILE_SIZE_4BPP / 4)),
+						BG_CHAR_BLOCK(1) + destTile * TILE_SIZE_4BPP,
+						DMA_COPY_WORDS(tileCount * (TILE_SIZE_4BPP / 4)),
 						REG_DMA3);
 			} else {
 				if(srcTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
 					syDMAXCopy(RamMetatileTiles +
 							srcTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
 						BG_CHAR_BLOCK(2) +
-							dstTile * TILESET_ANIM_WIDE_TILE_BYTES,
+							destTile * TILESET_ANIM_WIDE_TILE_BYTES,
 						DMA_COPY_WORDS(
-							tileCnt * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+							tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
 						REG_DMA3);
 				else
 					syDMAXCopy(BG_CHAR_BLOCK(2) +
 							srcTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
 						BG_CHAR_BLOCK(2) +
-							dstTile * TILESET_ANIM_WIDE_TILE_BYTES,
+							destTile * TILESET_ANIM_WIDE_TILE_BYTES,
 						DMA_COPY_WORDS(
-							tileCnt * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
+							tileCount * (TILESET_ANIM_WIDE_TILE_BYTES / 4)),
 						REG_DMA3);
 			}
 			/* A copy with a wait of 0 lets the next command run at once. */
-			(gridState->anms + channelIdx)->cursor += 4;
+			(gridState->animations + channelIndex)->cursor += 4;
 			goto next;
 		} else {
-			(gridState->anms + channelIdx)->tmr--;
+			(gridState->animations + channelIndex)->timer--;
 		}
 	}
 }
 
-/* Resumes tileset animation channelIdx by clearing its paused byte. */
-void fdTilesetAnimResume(Uint32 channelIdx)
+/* Resumes tileset animation channelIndex by clearing its paused byte. */
+void fdTilesetAnimationResume(Uint32 channelIndex)
 {
 	MAP_GRID_SCROLL_STATE *gridState = MapGridState[0];
-	TILESET_ANIM		  *channel = &gridState->anms[channelIdx];
+	TILESET_ANIM		  *channel = &gridState->animations[channelIndex];
 
 	channel->paused = 0;
 }
 
-/* Pauses tileset animation channelIdx by setting its paused byte. */
-void fdTilesetAnimPause(Uint32 channelIdx)
+/* Pauses tileset animation channelIndex by setting its paused byte. */
+void fdTilesetAnimationPause(Uint32 channelIndex)
 {
 	MAP_GRID_SCROLL_STATE *gridState = MapGridState[0];
-	TILESET_ANIM		  *channel = &gridState->anms[channelIdx];
+	TILESET_ANIM		  *channel = &gridState->animations[channelIndex];
 
 	channel->paused = 1;
 }
@@ -149,7 +149,7 @@ void fdTilesetAnimPause(Uint32 channelIdx)
 /* Starts the tileset animations a map's animation script lists: each
    TILESET_ANIM_MARKER starts the tileset animation its low four bits name there
    (paused with TILESET_ANIM_MARKER_PAUSED). */
-void fdTilesetAnimStartAll(const Uint16 *script)
+void fdTilesetAnimationStartAll(const Uint16 *script)
 {
 	MAP_GRID_SCROLL_STATE *gridState;
 	Sint32				   channelsStarted;
@@ -157,7 +157,7 @@ void fdTilesetAnimStartAll(const Uint16 *script)
 
 	gridState = MapGridState[0];
 	channelsStarted = 0;
-	DMA_FILL32(0, gridState->anms, sizeof(gridState->anms));
+	DMA_FILL32(0, gridState->animations, sizeof(gridState->animations));
 	/* Each tileset animation's script starts just after its marker and runs on
 	   through the rest of the stream; the scan steps over the halfwords between
 	   markers. */
@@ -167,14 +167,14 @@ void fdTilesetAnimStartAll(const Uint16 *script)
 	while(marker != TILESET_ANIM_LOOP) {
 		if((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
 			TILESET_ANIM *channel;
-			Uint32 channelIdx = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
+			Uint32 channelIndex = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
 			Uint32 paused = 0;
 			if(marker & TILESET_ANIM_MARKER_PAUSED)
 				paused = 1;
-			channel = &gridState->anms[channelIdx];
+			channel = &gridState->animations[channelIndex];
 			channel->start = script;
 			channel->cursor = script;
-			channel->tmr = 0;
+			channel->timer = 0;
 			channel->paused = paused;
 			channelsStarted++;
 		}
@@ -182,23 +182,23 @@ void fdTilesetAnimStartAll(const Uint16 *script)
 	}
 	/* A map with no tileset animations never adds the update. */
 	if(channelsStarted != 0)
-		sySetEvent(fdTilesetAnimUpdate, EVENT_PASS_TICK);
+		sySetEvent(fdTilesetAnimationUpdate, EVENT_PASS_TICK);
 }
 
 /* Suspends the tileset animations, unless the world map's still image is
    shown. */
-void fdTilesetAnimSuspendAll(void)
+void fdTilesetAnimationSuspendAll(void)
 {
-	if(((MAP_GRID_SCROLL_STATE *)MapGridState[0])->anmActive == 0)
-		sySuspendEvent(fdTilesetAnimUpdate);
+	if(((MAP_GRID_SCROLL_STATE *)MapGridState[0])->animationActive == 0)
+		sySuspendEvent(fdTilesetAnimationUpdate);
 }
 
 /* Resumes the tileset animations, unless the world map's still image is
    shown. */
-void fdTilesetAnimResumeAll(void)
+void fdTilesetAnimationResumeAll(void)
 {
-	if(((MAP_GRID_SCROLL_STATE *)MapGridState[0])->anmActive == 0)
-		syResumeEvent(fdTilesetAnimUpdate);
+	if(((MAP_GRID_SCROLL_STATE *)MapGridState[0])->animationActive == 0)
+		syResumeEvent(fdTilesetAnimationUpdate);
 }
 
 /* Each tick: runs the map's blend script. */
@@ -208,7 +208,7 @@ void fdBlendScriptRun(void)
 	BLEND_SCRIPT_STATE	  *blend;
 	Uint16				  *commands;
 	Uint32				   instruction;
-	Uint32				   delayOrJumpIdx;
+	Uint32				   delayOrJumpIndex;
 	Uint16				   delay;
 
 	blend = &gridState->blend;
@@ -220,8 +220,8 @@ void fdBlendScriptRun(void)
 	/* As with the tileset animations, commands run in one tick until a level
 	   sets a wait; a BLDCNT command and the jumps take no time. */
 again:
-	delayOrJumpIdx = blend->delay;
-	delay = delayOrJumpIdx;
+	delayOrJumpIndex = blend->delay;
+	delay = delayOrJumpIndex;
 	if(delay == 0) {
 		commands = blend->cursor;
 		instruction = *commands;
@@ -232,10 +232,10 @@ again:
 		}
 
 		if((instruction & BLEND_SCRIPT_OPCODE_MASK) == BLEND_SCRIPT_JUMP) {
-			delayOrJumpIdx = instruction & BLEND_SCRIPT_ARGUMENT_MASK;
-			if(delayOrJumpIdx == BLEND_SCRIPT_STOP)
+			delayOrJumpIndex = instruction & BLEND_SCRIPT_ARGUMENT_MASK;
+			if(delayOrJumpIndex == BLEND_SCRIPT_STOP)
 				return;
-			blend->cursor = blend->script + delayOrJumpIdx * 2;
+			blend->cursor = blend->script + delayOrJumpIndex * 2;
 			goto again;
 		}
 
@@ -243,14 +243,15 @@ again:
 		   target's sprite and backdrop bits. */
 		if((instruction & BLEND_SCRIPT_BLDCNT_MASK) == BLEND_SCRIPT_BLDCNT) {
 			REG_BLDCNT = instruction;
-			gridState->blendCtrl = instruction;
+			gridState->blendControl = instruction;
 			blend->cursor++;
 			goto again;
 		}
 
 		/* An alpha blend takes the level as BLDALPHA; a fade to white or black
 		   takes it as BLDY. */
-		if((gridState->blendCtrl & BLDCNT_EFFECT_MASK) == BLDCNT_EFFECT_BLEND)
+		if((gridState->blendControl & BLDCNT_EFFECT_MASK) ==
+			BLDCNT_EFFECT_BLEND)
 			REG_BLDALPHA = instruction;
 		else
 			REG_BLDY = instruction;
@@ -258,7 +259,7 @@ again:
 		blend->cursor += 2;
 		goto again;
 	}
-	blend->delay = delayOrJumpIdx - 1;
+	blend->delay = delayOrJumpIndex - 1;
 }
 
 /* Starts a map's blend script, unless it is empty. Clears the map state's
@@ -305,57 +306,58 @@ UNUSED void fdPaletteCycleInit(void)
 {
 	PALETTE_CYCLE_STATE *paletteCycles;
 	PALETTE_CYCLE		*cycle;
-	Uint16				 cycleIdx;
-	Uint16				 colIdx;
+	Uint16				 cycleIndex;
+	Uint16				 colorIndex;
 
-	paletteCycles = syHeapSlotAllocEWRAM(
+	paletteCycles = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_PALETTE_CYCLES, sizeof(PALETTE_CYCLE_STATE));
 	cycle = paletteCycles->entries;
-	for(cycleIdx = 0; cycleIdx != ARRAY_COUNT(paletteCycles->entries);
-		cycleIdx++) {
+	for(cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
+		cycleIndex++) {
 		cycle->src = 0;
 		cycle->pos = 0;
-		cycle->tmr = 0;
+		cycle->timer = 0;
 		cycle->delay = 0;
-		cycle->cnt = 0;
-		for(colIdx = 0; colIdx != ARRAY_COUNT(cycle->cols); colIdx++) {
-			cycle->cols[colIdx] = 0;
+		cycle->count = 0;
+		for(colorIndex = 0; colorIndex != ARRAY_COUNT(cycle->colors);
+			colorIndex++) {
+			cycle->colors[colorIndex] = 0;
 		}
 		cycle++;
 	}
-	paletteCycles->cnt = 0;
+	paletteCycles->count = 0;
 }
 
-/* Unused: adds a palette cycle: colCnt colours of background palette
-   paletteNum from firstCol, rotated by one every delay + 1 ticks. Returns
+/* Unused: adds a palette cycle: colorCount colours of background palette
+   paletteNumber from firstColor, rotated by one every delay + 1 ticks. Returns
    0, or -1 when all four cycles are taken. The cycle keeps a copy of the
    colours as they were, which every step rotates from. */
 UNUSED Sint32 fdPaletteCycleAdd(
-	Sint16 paletteNum, Sint16 firstCol, Sint16 delay, Sint16 colCnt)
+	Sint16 paletteNumber, Sint16 firstColor, Sint16 delay, Sint16 colorCount)
 {
 	PALETTE_CYCLE_STATE *paletteQueue;
 	PALETTE_CYCLE		*cycle;
-	Uint16				*paletteCols;
-	Uint32				 cycleIdx;
-	Uint16				 colCount16;
+	Uint16				*paletteColors;
+	Uint32				 cycleIndex;
+	Uint16				 colorCount16;
 
 	paletteQueue = PaletteCycleStateWork;
-	cycleIdx = paletteQueue->cnt;
-	if(cycleIdx >= ARRAY_COUNT(paletteQueue->entries))
+	cycleIndex = paletteQueue->count;
+	if(cycleIndex >= ARRAY_COUNT(paletteQueue->entries))
 		return -1;
 	/* The cycle saves the colours as they are now. */
-	cycle = &paletteQueue->entries[cycleIdx];
-	paletteCols = (Uint16 *)BG_PLTT +
-		(((Uint16)paletteNum * PALETTE_COLORS) + (Uint16)firstCol);
-	colCount16 = colCnt;
+	cycle = &paletteQueue->entries[cycleIndex];
+	paletteColors = (Uint16 *)BG_PLTT +
+		(((Uint16)paletteNumber * PALETTE_COLORS) + (Uint16)firstColor);
+	colorCount16 = colorCount;
 	cycle->pos = 0;
-	cycle->tmr = 0;
-	cycle->cnt = colCount16;
-	cycle->src = paletteCols;
+	cycle->timer = 0;
+	cycle->count = colorCount16;
+	cycle->src = paletteColors;
 	cycle->delay = delay;
-	syDMAXCopy(
-		paletteCols, cycle->cols, DMA_COPY_HALFWORDS(colCount16), REG_DMA3);
-	paletteQueue->cnt++;
+	syDMAXCopy(paletteColors, cycle->colors, DMA_COPY_HALFWORDS(colorCount16),
+		REG_DMA3);
+	paletteQueue->count++;
 	return 0;
 }
 
@@ -378,37 +380,39 @@ UNUSED void fdPaletteCycleStart(void)
 void fdPaletteCycleStep(void)
 {
 	PALETTE_CYCLE_STATE *paletteQueue = PaletteCycleStateWork;
-	Uint8				 cycleIdx;
+	Uint8				 cycleIndex;
 	/* BUG: four queued cycles become zero here, so none advance. */
-	Uint16 activeCycles = paletteQueue->cnt & 3;
-	Uint16 rotatedCols[PALETTE_COLORS];
+	Uint16 activeCycles = paletteQueue->count & 3;
+	Uint16 rotatedColors[PALETTE_COLORS];
 
-	for(cycleIdx = 0; cycleIdx < activeCycles; cycleIdx++) {
-		PALETTE_CYCLE *cycle = &paletteQueue->entries[cycleIdx];
-		if(cycle->tmr == 0) {
-			Uint16	rotationOfs = cycle->pos;
-			Uint16	colCnt = cycle->cnt;
-			void   *paletteCols = cycle->src;
-			Uint16 *savedCols = cycle->cols;
-			Uint8	colIdx;
+	for(cycleIndex = 0; cycleIndex < activeCycles; cycleIndex++) {
+		PALETTE_CYCLE *cycle = &paletteQueue->entries[cycleIndex];
+		if(cycle->timer == 0) {
+			Uint16	rotationOffset = cycle->pos;
+			Uint16	colorCount = cycle->count;
+			void   *paletteColors = cycle->src;
+			Uint16 *savedColors = cycle->colors;
+			Uint8	colorIndex;
 
-			/* Each saved colour moves rotationOfs places down, the first
+			/* Each saved colour moves rotationOffset places down, the first
 			   ones wrapping round to the end. */
-			for(colIdx = colCnt - rotationOfs; colIdx < colCnt; colIdx++)
-				rotatedCols[colIdx] = *savedCols++;
-			for(colIdx = 0; colIdx < colCnt - rotationOfs; colIdx++)
-				rotatedCols[colIdx] = *savedCols++;
-			syDMAXCopy(
-				rotatedCols, paletteCols, DMA_COPY_HALFWORDS(colCnt), REG_DMA3);
+			for(colorIndex = colorCount - rotationOffset;
+				colorIndex < colorCount; colorIndex++)
+				rotatedColors[colorIndex] = *savedColors++;
+			for(colorIndex = 0; colorIndex < colorCount - rotationOffset;
+				colorIndex++)
+				rotatedColors[colorIndex] = *savedColors++;
+			syDMAXCopy(rotatedColors, paletteColors,
+				DMA_COPY_HALFWORDS(colorCount), REG_DMA3);
 			/* The next step rotates one place further, back to none after a
 			   full turn, and waits delay ticks. */
-			rotationOfs++;
-			if(rotationOfs >= colCnt)
-				rotationOfs = 0;
-			cycle->pos = rotationOfs;
-			cycle->tmr = cycle->delay;
+			rotationOffset++;
+			if(rotationOffset >= colorCount)
+				rotationOffset = 0;
+			cycle->pos = rotationOffset;
+			cycle->timer = cycle->delay;
 		} else {
-			cycle->tmr--;
+			cycle->timer--;
 		}
 	}
 }

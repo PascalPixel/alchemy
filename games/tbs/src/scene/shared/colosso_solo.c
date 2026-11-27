@@ -55,7 +55,7 @@ void scColossoPlaceFriendsAtCheeringSpots(void)
 
 /* Makes the character the only party member, the one the player moves and the
    camera follows, with full HP and PP and no poison. */
-void scColossoCtrlCharacterAlone(Sint32 id)
+void scColossoControlCharacterAlone(Sint32 id)
 {
 	UNIT *unit;
 
@@ -109,7 +109,7 @@ static void scColossoTakePlaceForMatch(void)
 	ACTOR		*supporter = fdActorGetById(supporterId);
 	Sint32		 actorId;
 	Sint32		*transition;
-	Sint32		 flgBase;
+	Sint32		 flagBase;
 
 	fdScriptStart();
 	/* BUG: one past the actor table: fdActorLookup(ACTOR_ID_COUNT) is the first
@@ -122,8 +122,9 @@ static void scColossoTakePlaceForMatch(void)
 #endif
 		ACTOR *actor = fdActorGetById(actorId);
 
-		if(actor != NULL && actor->sprStorageKind == ACTOR_SPRITE_ONE &&
-			actor->spr->entries[0]->anmId == SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
+		if(actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
+			actor->sprite->entries[0]->animationId ==
+				SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
 			Sint32 distanceX =
 				(supporter->x.fixed - actor->x.fixed) / toFIXED(1);
 			Sint32 distanceZ =
@@ -150,24 +151,24 @@ static void scColossoTakePlaceForMatch(void)
 	fdScriptShowMessageAndWait(speakerId, 0);
 	transition = &state->transition;
 	*transition = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	state->transitionFrm = 15;
+	state->transitionFrame = 15;
 	fdScriptWait(20);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	flgBase = COLOSSO_CHEER_SLOT(supporterId);
+	flagBase = COLOSSO_CHEER_SLOT(supporterId);
 	syFieldGameFlagSetByte(
-		flgBase + COLOSSO_CHEER_COLUMN, FIELD_METATILE(supporter->x.fixed));
+		flagBase + COLOSSO_CHEER_COLUMN, FIELD_METATILE(supporter->x.fixed));
 	{
 		Sint32 metatileRow = FIELD_METATILE(supporter->z.fixed);
 
-		syFieldGameFlagSetByte(flgBase + COLOSSO_CHEER_ROW, metatileRow);
+		syFieldGameFlagSetByte(flagBase + COLOSSO_CHEER_ROW, metatileRow);
 	}
 	supporterId++;
 	if(supporterId > MIA) {
 		syImportScriptSetExitRequest(COLOSSO_SOLO_TO_RACE);
 		gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
 	} else {
-		scColossoCtrlCharacterAlone(supporterId);
+		scColossoControlCharacterAlone(supporterId);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
 		*transition = 0;
@@ -204,7 +205,7 @@ void scColossoAskDoneCheering(Sint32 id)
 		fdScriptShowMessageAndWait(id, 0);
 		state->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-		state->transitionFrm = 15;
+		state->transitionFrame = 15;
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
 		syFieldGameFlagSetByte(
@@ -217,7 +218,7 @@ void scColossoAskDoneCheering(Sint32 id)
 			syImportScriptSetExitRequest(COLOSSO_SOLO_TO_RACE);
 			gmFlagSet(FLAG_KEEP_MUSIC_ONCE);
 		} else {
-			scColossoCtrlCharacterAlone(friendId);
+			scColossoControlCharacterAlone(friendId);
 			fdScriptStartScreenTransition();
 			fdScriptWaitTransitionTicks();
 			state->transition = SCENE_TRANSITION(TRANSITION_FADE, 0);
@@ -326,7 +327,7 @@ Sint32 scColossoGreetAtStage(Sint32 speaker, Sint32 stage)
 
 /* A stage's guide, after describing the stage, names it again: the copy of that
    line after it in the text. */
-void scColossoRepeatStageNum(Sint32 speaker, Sint32 stage)
+void scColossoRepeatStageNumber(Sint32 speaker, Sint32 stage)
 {
 	Sint32 sceneId;
 	Sint32 msg;
@@ -352,7 +353,7 @@ void scColossoOfferCheeringSpot(Sint32 mode, Sint32 guide, Sint32 stage)
 	ACTOR *leader;
 	Sint32 guideX;
 	Sint32 guideZ;
-	Sint32 memberCnt;
+	Sint32 memberCount;
 	Sint32 answer;
 	Sint32 friendId;
 	Sint32 frontZ;
@@ -371,11 +372,11 @@ void scColossoOfferCheeringSpot(Sint32 mode, Sint32 guide, Sint32 stage)
 		fdScriptShowMessage(guide, 0);
 		return;
 	}
-	memberCnt = gmPartyCountMembers();
-	for(i = 0; i < memberCnt; i++) {
+	memberCount = gmPartyCountMembers();
+	for(i = 0; i < memberCount; i++) {
 		members[i] = MainRoutineStateWork.party[i];
 	}
-	if(memberCnt <= 1) {
+	if(memberCount <= 1) {
 		fdScriptSetMessageId(MsgColossoDoYourBest);
 		fdScriptShowMessage(guide, 0);
 		return;
@@ -398,21 +399,21 @@ void scColossoOfferCheeringSpot(Sint32 mode, Sint32 guide, Sint32 stage)
 		fdScriptShowMessage(guide, 0);
 		return;
 	}
-	if(answer < memberCnt) {
-		for(i = 0; i < memberCnt; i++) {
+	if(answer < memberCount) {
+		for(i = 0; i < memberCount; i++) {
 			gmPartyRemoveMember((Sint8)members[i]);
 		}
 	}
-	for(i = 0; i < memberCnt; i++) {
+	for(i = 0; i < memberCount; i++) {
 		if((Sint8)members[i] != 0) {
 			gmPartyAddMember((Sint8)members[i]);
 		}
 	}
 	friendId = mnPartyMemberChooserOpen();
-	for(i = 0; i < memberCnt; i++) {
+	for(i = 0; i < memberCount; i++) {
 		gmPartyRemoveMember((Sint8)members[i]);
 	}
-	for(i = 0; i < memberCnt; i++) {
+	for(i = 0; i < memberCount; i++) {
 		gmPartyAddMember((Sint8)members[i]);
 	}
 	if(friendId == -1) {

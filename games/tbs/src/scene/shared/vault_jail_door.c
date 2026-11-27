@@ -9,12 +9,12 @@
 static void scVaultEnterJail(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	SPR	  *spr = actor->spr;
+	SPR	  *sprite = actor->sprite;
 
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultJailDoorMetatiles, 35, 9);
 	fdMapGridCopyMetatileAttributes(33, 20, 1, 3, 4, 10);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 3;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 3;
 	scVaultWalkThroughExit(72, 160, VAULT_JAIL_EXIT);
 }

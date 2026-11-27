@@ -61,12 +61,12 @@
 void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 {
 	POINT2_D			 trail[DRAGON_CLOUD_TRAIL_LENGTH];
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	SCREEN_POINT		 pos;
 	DRAW_RECTANGLE		 draw[2];
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 drift;
 	Sint8				*path;
 	Sint32				 x;
@@ -76,9 +76,9 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*particle;
 	Sint32				 i;
 	Sint32				 j;
-	Sint32				 ang;
+	Sint32				 angle;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	drift = 0;
 	x = 0;
@@ -120,7 +120,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	/* The embers and flashes thrown at the strike wait at the target: the first
 	   DragonCloudSparkCounts[variant] are drawn as embers, the rest play the
 	   flash pictures and rise more slowly. */
-	actor = (ACTOR *)btObjectGetStub(args->tgts[0])->obj;
+	actor = (ACTOR *)btObjectGetStub(args->targets[0])->object;
 	for(i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
 		particle = &state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
 		SET_POSITION(particle, actor->x.fixed, 0, actor->z.fixed);
@@ -140,68 +140,68 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	for(i = 0; i != EPICENTER_SPARK_BATCH; i++) {
 		particle = &EXTRA_PARTICLES[i];
 		SET_POSITION(particle, actor->x.fixed, 0, actor->z.fixed);
-		particle->velX = ((syRandom() & 63) - 32) << 14;
-		particle->velY = (syRandom() & 63) << 12;
-		particle->velZ = ((syRandom() & 63) - 32) << 14;
+		particle->velocityX = ((syRandom() & 63) - 32) << 14;
+		particle->velocityY = (syRandom() & 63) << 12;
+		particle->velocityZ = ((syRandom() & 63) - 32) << 14;
 		particle->variant = (syRandom() & 15) + 24;
 	}
 
 	/* The eight puffs, on an arc over the user, each two ticks after the
 	   last. */
-	for(i = 0, ang = -DEGtoANG(90); i != DRAGON_CLOUD_PUFFS;
-		ang += TRIG_TURN / 16, i++) {
+	for(i = 0, angle = -DEGtoANG(90); i != DRAGON_CLOUD_PUFFS;
+		angle += TRIG_TURN / 16, i++) {
 		particle = &state->particles[i];
 		if(args->side == EFFECT_SIDE_PARTY) {
 			particle->x =
-				FIXEDtoINT(sySin(ang) * DRAGON_CLOUD_PUFF_RADIUS_X) + 88;
+				FIXEDtoINT(sySin(angle) * DRAGON_CLOUD_PUFF_RADIUS_X) + 88;
 			particle->y =
-				FIXEDtoINT(syCos(ang) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
+				FIXEDtoINT(syCos(angle) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
 		} else {
 			particle->x =
-				FIXEDtoINT(-(sySin(ang) * DRAGON_CLOUD_PUFF_RADIUS_X)) + 16;
+				FIXEDtoINT(-(sySin(angle) * DRAGON_CLOUD_PUFF_RADIUS_X)) + 16;
 			particle->y =
-				FIXEDtoINT(syCos(ang) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
+				FIXEDtoINT(syCos(angle) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
 		}
 		particle->variant = -(i * 2);
 	}
 	path = syResourceGetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);
 
-	for(frm = 0; frm != DRAGON_CLOUD_TICKS; frm++) {
+	for(frame = 0; frame != DRAGON_CLOUD_TICKS; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		if(frm == DRAGON_CLOUD_STRIKE_TICK) {
+		if(frame == DRAGON_CLOUD_STRIKE_TICK) {
 			if(args->variant == EFFECT_VARIANT_BASIC)
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			else
 				EFFECT_SHOW_DAMAGE(SE_CRASH);
 		}
-		if(frm == 0)
-			sySndPlayStub(SE_WHOOSH);
-		if(frm == 50)
-			sySndPlayStub(SE_WHOOSH);
+		if(frame == 0)
+			sySoundPlayStub(SE_WHOOSH);
+		if(frame == 50)
+			sySoundPlayStub(SE_WHOOSH);
 
 		/* For 64 ticks the camera turns away from the user's side. */
 		if(args->side == EFFECT_SIDE_ENEMIES) {
-			if(frm <= 63)
+			if(frame <= 63)
 				camera->yaw -= TRIG_TURN / 256;
 		} else {
-			if(frm <= 63)
+			if(frame <= 63)
 				camera->yaw += TRIG_TURN / 256;
 		}
 		btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
 
 		/* Frames 0-17: the puff arc rises, one picture every three ticks. */
-		if(frm <= 17) {
-			Sint32 picture = frm / 3;
+		if(frame <= 17) {
+			Sint32 picture = frame / 3;
 			Sint32 width;
-			Sint32 ofs;
+			Sint32 offset;
 
-			ofs = BattleEffectEmberStreakPictures[picture];
+			offset = BattleEffectEmberStreakPictures[picture];
 			/* LEFTOVER(template): width, read from the puff table as
 			 * btEffectRunHaures and btEffectRunUlysses read it to draw
 			 * with, and unused here; as no width at all. */
 			width = BattleEffectEmberStreakPictureWidths[picture];
-			draw[0](canvas, &state->sheet[ofs + DRAGON_CLOUD_PUFF_PICTURES],
+			draw[0](canvas, &state->sheet[offset + DRAGON_CLOUD_PUFF_PICTURES],
 				56 - BattleEffectEmberStreakPictureWidths[picture] / 2,
 				BattleEffectEmberStreakPictureBiasY[picture] + 60,
 				BattleEffectEmberStreakPictureWidths[picture],
@@ -214,25 +214,25 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 		/* Epicenter: a batch of sparks thrown up from the user's side at the
 		   start. */
 		if(args->variant == EFFECT_VARIANT_STRONGER) {
-			if(frm == 0) {
+			if(frame == 0) {
 				for(i = 0; i != EPICENTER_SPARK_BATCH; i++) {
-					Sint32 ang;
+					Sint32 angle;
 					Sint32 force;
 
 					particle = &EXTRA_PARTICLES[EPICENTER_SPARK_BATCH + i];
 					particle->x = toFIXED(60);
 					particle->y = toFIXED(EPICENTER_SPARK_GROUND);
-					ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+					angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 					force = (syRandom() & 255) + 127;
-					particle->velX = (sySin(ang) * force) >> 7;
-					particle->velY = (syCos(ang) * force) >> 5;
+					particle->velocityX = (sySin(angle) * force) >> 7;
+					particle->velocityY = (syCos(angle) * force) >> 5;
 					particle->variant = (syRandom() & 15) + 24;
 				}
 			}
 			/* Only the first half of them is drawn. */
 			for(i = 0; i != EPICENTER_SPARK_BATCH / 2; i++) {
 				particle = &EXTRA_PARTICLES[EPICENTER_SPARK_BATCH + i];
-				if(particle->variant >= 0 && frm >= i / 8) {
+				if(particle->variant >= 0 && frame >= i / 8) {
 					Sint32 size = (particle->variant >> 4) + 1;
 
 					draw[i & 1](canvas,
@@ -243,7 +243,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 						particle, 62, toFIXED(1) / 4);
 					if(particle->y >
 						INTtoFIXED((i & 3) + EPICENTER_SPARK_GROUND))
-						particle->velY = -particle->velY / 2;
+						particle->velocityY = -particle->velocityY / 2;
 					particle->variant--;
 				}
 			}
@@ -251,8 +251,8 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 
 		/* The flame flies along its path, a 16-bit start and then steps; from
 		   tick 78 it dives from above the target. */
-		if(frm >= 18 && frm <= 58) {
-			if(frm == 18) {
+		if(frame >= 18 && frame <= 58) {
+			if(frame == 18) {
 				x = (path[0] << 8) + (Uint8)path[1];
 				y = (path[2] << 8) + (Uint8)path[3] + 16;
 				path += 4;
@@ -262,10 +262,10 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 				path += 2;
 			}
 		}
-		if(frm >= 78 && frm <= 118) {
-			btEffectPosProjectBattler(args->tgts[0], &tgt);
-			if(frm == 78) {
-				x = tgt.x / 2;
+		if(frame >= 78 && frame <= 118) {
+			btEffectPosProjectBattler(args->targets[0], &target);
+			if(frame == 78) {
+				x = target.x / 2;
 				y = 48;
 			} else {
 				y -= 16;
@@ -275,7 +275,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 		/* The trail: each copy takes the place of the one before, the older
 		   ones darker. */
 		for(j = DRAGON_CLOUD_TRAIL_LENGTH - 1; j != 0; j--) {
-			if(frm > j + 18 && frm <= j + 83) {
+			if(frame > j + 18 && frame <= j + 83) {
 				trail[j].x = trail[j - 1].x;
 				trail[j].y = trail[j - 1].y;
 				if(j > DRAGON_CLOUD_TRAIL_BRIGHT)
@@ -295,10 +295,10 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 		syLookAtLoad(camera->eye, camera->focus);
 
 		/* The flame leans as it rises and falls. */
-		if(frm >= 18 && frm <= DRAGON_CLOUD_STRIKE_TICK) {
+		if(frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_TICK) {
 			Sint32 lift;
 
-			if(frm >= 78 && frm <= 118)
+			if(frame >= 78 && frame <= 118)
 				pos.x = x;
 			else if(args->side == EFFECT_SIDE_PARTY)
 				pos.x = 64 - x / 2;
@@ -326,26 +326,26 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 			/* The flame sheds four sparks a tick (only Epicenter draws
 			   them). */
 			for(i = 0; i != 4; i++) {
-				Sint32 ang;
+				Sint32 angle;
 				Sint32 force;
-				Sint32 idx;
+				Sint32 index;
 
-				idx = ((frm * 4 + i) & (EPICENTER_SPARK_BATCH - 1)) +
+				index = ((frame * 4 + i) & (EPICENTER_SPARK_BATCH - 1)) +
 					EPICENTER_SPARK_BATCH * 2;
-				particle = &EXTRA_PARTICLES[idx];
+				particle = &EXTRA_PARTICLES[index];
 				particle->x = toFIXED(pos.x);
 				particle->y = toFIXED(pos.y);
-				ang = syRandom();
+				angle = syRandom();
 				force = (syRandom() & 255) + 127;
-				particle->velX = (sySin(ang) * force) >> 7;
-				particle->velY = (syCos(ang) * force) >> 5;
+				particle->velocityX = (sySin(angle) * force) >> 7;
+				particle->velocityY = (syCos(angle) * force) >> 5;
 				particle->variant = (syRandom() & 15) + 24;
 			}
 		}
 
 		/* After the strike the embers rise and fall back, sized by depth, and
 		   the flashes play the flash pictures. */
-		if(frm >= DRAGON_CLOUD_STRIKE_TICK) {
+		if(frame >= DRAGON_CLOUD_STRIKE_TICK) {
 			for(i = 0; i != DRAGON_CLOUD_EMBERS + DRAGON_CLOUD_FLASHES; i++) {
 				particle = &state->particles[DRAGON_CLOUD_FIRST_EMBER + i];
 				if(particle->y >= 0) {
@@ -428,17 +428,17 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frm == DRAGON_CLOUD_STRIKE_TICK) {
-			state->shakeFrm = 8;
+		if(frame == DRAGON_CLOUD_STRIKE_TICK) {
+			state->shakeFrame = 8;
 			EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_HOP);
 		}
-		if(frm == 50) {
-			state->shakeFrm = 12;
+		if(frame == 50) {
+			state->shakeFrame = 12;
 			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 		}
 		/* The puffs. */
-		if(frm > 49) {
+		if(frame > 49) {
 			for(i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
 				particle = &state->particles[i];
 				if(particle->variant >= 0 &&

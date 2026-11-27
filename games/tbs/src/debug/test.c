@@ -64,10 +64,10 @@ typedef enum MENU_TEST_ACTOR_ID {
 /* Recalculates the four heroes after a debug inventory or stat change. */
 static __inline__ void dbMenuTestRecalculateParty(void)
 {
-	gmUnitCalc(ISAAC);
-	gmUnitCalc(GARET);
-	gmUnitCalc(MIA);
-	gmUnitCalc(IVAN);
+	gmUnitCalculate(ISAAC);
+	gmUnitCalculate(GARET);
+	gmUnitCalculate(MIA);
+	gmUnitCalculate(IVAN);
 }
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -109,14 +109,14 @@ static void dbMenuTestShowMessageAndWait(Sint32 msgId)
 }
 
 /* Browses sample dialogue with A/Down and Up; B closes the window. */
-static void dbMenuTestBrowseMessageRange(Sint32 msgId, Sint32 msgCnt)
+static void dbMenuTestBrowseMessageRange(Sint32 msgId, Sint32 msgCount)
 {
-	WINDOW *win;
-	Sint32	msgIdx;
+	WINDOW *window;
+	Sint32	msgIndex;
 
 	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_FAST;
-	win = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
-	for(msgIdx = 0; msgIdx < msgCnt; msgIdx++) {
+	window = mnPortraitOpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
+	for(msgIndex = 0; msgIndex < msgCount; msgIndex++) {
 		/* A sample name, item and number for each message to show: Garet, the
 		   Virtuous Armlet and a number of six digits. */
 		mnMessageArgumentPush(GARET, MESSAGE_ARGUMENT_ACTOR);
@@ -144,7 +144,7 @@ static void dbMenuTestBrowseMessageRange(Sint32 msgId, Sint32 msgCnt)
 	}
 end:
 	mnMessageCloseFinishedWindows();
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 }
 
 /* The shop message browsers, run by talking to ACTOR_FELIX and
@@ -230,11 +230,11 @@ static void dbMenuTestIgnorePsynergy(void)
 }
 
 /* Keeps Force from pushing ACTOR_IVY: run as Force is cast at it, before the
-   shot, this sets the effect's leaveTgt, and the shot then leaves its target
+   shot, this sets the effect's leaveTarget, and the shot then leaves its target
    where it is (field/script_commands_force.c). */
 static void dbMenuTestKeepIvyInPlace(void)
 {
-	((FIELD_EFFECT_STATE *)FieldEffectStateWork)->leaveTgt = 1;
+	((FIELD_EFFECT_STATE *)FieldEffectStateWork)->leaveTarget = 1;
 }
 
 #if DEBUG_SECOND_DORA_NUT_GIFT
@@ -486,16 +486,16 @@ static void dbMenuTestGivePartyDjinn(void)
 	UNUSED Uint8 fillBuf[256];
 #if !DEBUG_DJINN_GIFT_FILL_LOOP_DROPPED
 	Sint32 pass;
-	Sint32 characterIdx;
+	Sint32 characterIndex;
 
 	for(pass = 0; pass < FILL_PASSES; pass++) {
-		for(characterIdx = 0; characterIdx < (Sint32)sizeof(fillBuf);
-			characterIdx++) {
-			fillBuf[characterIdx] = 0;
+		for(characterIndex = 0; characterIndex < (Sint32)sizeof(fillBuf);
+			characterIndex++) {
+			fillBuf[characterIndex] = 0;
 		}
-		for(characterIdx = 0; characterIdx < pass + FILL_FIRST_LENGTH;
-			characterIdx++) {
-			fillBuf[characterIdx] = MenuTestFillLetter + 1;
+		for(characterIndex = 0; characterIndex < pass + FILL_FIRST_LENGTH;
+			characterIndex++) {
+			fillBuf[characterIndex] = MenuTestFillLetter + 1;
 		}
 		MenuTestFillLetter++;
 		if(MenuTestFillLetter >= 'a') {
@@ -636,16 +636,16 @@ static void dbMenuTestGiveEquipmentTestStock(void)
    with no item. */
 static void dbMenuTestSelectItem(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 	WINDOW *details;
 	Sint32	selectedItemId;
 	Sint32	redraw;
 	Sint32	itemId;
-	Sint32	itemCnt;
+	Sint32	itemCount;
 
-	itemCnt = DEBUG_ITEM_COUNT;
-	sySndPlay(SE_MENU_CONFIRM);
-	win = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
+	itemCount = DEBUG_ITEM_COUNT;
+	sySoundPlay(SE_MENU_CONFIRM);
+	window = mnWindowCreate(0, 0, 30, 7, WINDOW_FLAG_INSTANT);
 	details = mnWindowCreate(0, 8, 13, 10, WINDOW_FLAG_INSTANT);
 	selectedItemId = 1;
 	redraw = 1;
@@ -662,71 +662,71 @@ static void dbMenuTestSelectItem(void)
 	while(1) {
 		if(redraw) {
 			redraw = 0;
-			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCnt;
-			mnWindowSprRedrawSavedRect(win);
-			mnWindowSprClearList(win);
-			mnTextDrawStringInWindow(MenuTestItemPrompt, win, 0, 0);
-			mnTextDrawNumAtOffset(selectedItemId, 0, win, 80, 0);
+			selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % itemCount;
+			mnWindowSpriteRedrawSavedRect(window);
+			mnWindowSpriteClearList(window);
+			mnTextDrawStringInWindow(MenuTestItemPrompt, window, 0, 0);
+			mnTextDrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
 			if(gmPartyInventoryHasSpace()) {
-				mnTextDrawStringInWindow(MenuTestItemHelp, win, 0, 32);
+				mnTextDrawStringInWindow(MenuTestItemHelp, window, 0, 32);
 				itemId = selectedItemId & INVENTORY_ITEM_ID_MASK;
 				/* DEAD: the item's definition is looked up and not used; the
 				   ROM keeps the call. */
 				gmItemGetDirect(itemId);
-				mnTextDrawMessageAsTiles(itemId + MsgItemName, win, 120, 0);
-				mnTextDrawMessage(itemId + MsgItemPlainName, win, 0, 16);
-				mnWindowSprRedrawSavedRect(details);
+				mnTextDrawMessageAsTiles(itemId + MsgItemName, window, 120, 0);
+				mnTextDrawMessage(itemId + MsgItemPlainName, window, 0, 16);
+				mnWindowSpriteRedrawSavedRect(details);
 				mnItemMenuDrawItemDetails(details, selectedItemId);
 			} else {
-				mnTextDrawStringInWindow(MenuTestItemFull, win, 0, 32);
+				mnTextDrawStringInWindow(MenuTestItemFull, window, 0, 32);
 			}
 		}
 		if(PerPush & KEY_A) {
 			if(gmPartyInventoryAdd(selectedItemId) == -1) {
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				break;
 			}
-			sySndPlay(SE_NOTE_HIGH);
+			sySoundPlay(SE_NOTE_HIGH);
 		}
 		if(PerPush & KEY_B) {
-			sySndPlay(SE_MENU_CANCEL);
+			sySoundPlay(SE_MENU_CANCEL);
 			break;
 		}
 		if(PerRepeat & KEY_UP) {
 			selectedItemId--;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_DOWN) {
 			selectedItemId++;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_RIGHT) {
 			selectedItemId += DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_LEFT) {
 			selectedItemId -= DEBUG_BROWSER_ROW_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_R) {
 			selectedItemId += DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		if(PerRepeat & KEY_L) {
 			selectedItemId -= DEBUG_BROWSER_PAGE_STEP;
 			redraw = 1;
-			sySndPlay(SE_MENU_CURSOR_MOVE);
+			sySoundPlay(SE_MENU_CURSOR_MOVE);
 		}
 		sySynch(1);
 	}
-	mnWindowSprRedrawSavedRect(win);
+	mnWindowSpriteRedrawSavedRect(window);
 	sySynch(1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	mnWindowClose(details, 1);
 }
 

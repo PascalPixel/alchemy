@@ -20,14 +20,14 @@ EFFECT_ADVANCE_LINKAGE void scFieldEffectAdvanceMotion(ACTOR *actor)
 {
 	FIELD_EFFECT *effect = ((FIELD_EFFECT *)actor);
 
-	effect->x += effect->vel.x;
-	effect->y += effect->vel.y;
-	effect->z += effect->vel.z;
-	effect->vel.x -= effect->vel.x / FIELD_EFFECT_DRAG_X;
-	effect->vel.z -= effect->vel.z / FIELD_EFFECT_DRAG_Z;
+	effect->x += effect->velocity.x;
+	effect->y += effect->velocity.y;
+	effect->z += effect->velocity.z;
+	effect->velocity.x -= effect->velocity.x / FIELD_EFFECT_DRAG_X;
+	effect->velocity.z -= effect->velocity.z / FIELD_EFFECT_DRAG_Z;
 	effect->scaleX += effect->scaleRateX;
 	effect->scaleY += effect->scaleRateY;
-	effect->spr->rotation += effect->spin;
+	effect->sprite->rotation += effect->spin;
 }
 
 #undef EFFECT_ADVANCE_LINKAGE

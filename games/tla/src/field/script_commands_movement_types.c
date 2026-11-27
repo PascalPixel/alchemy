@@ -8,7 +8,7 @@ extern const Uint8 ActorWaitScript[];
    removes the actor attached to an actor, attaches one (SPRITE_RAY_ARC,
    animation 1) unless one already is, or shows a one-off one (animation 2) that
    ends by itself (ActorWaitScript). */
-void fdEffectSetAttached(Sint32 actorId, Sint32 flg)
+void fdEffectSetAttached(Sint32 actorId, Sint32 flags)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 	ACTOR *effect;
@@ -21,8 +21,8 @@ void fdEffectSetAttached(Sint32 actorId, Sint32 flg)
 	if(actor == 0)
 		return;
 
-	if((flg & 3) != 0) {
-		if((flg & 3) == ATTACHED_EFFECT_ONCE ||
+	if((flags & 3) != 0) {
+		if((flags & 3) == ATTACHED_EFFECT_ONCE ||
 			fdActorIsNotAttachedEffect((ACTOR *)actor->watchedActor)) {
 			effect = fdActorCreateStub(
 				SPRITE_RAY_ARC, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -39,47 +39,48 @@ void fdEffectSetAttached(Sint32 actorId, Sint32 flg)
 	if(effect == 0)
 		return;
 
-	mode = flg & 3;
+	mode = flags & 3;
 	switch(mode) {
 	case ATTACHED_EFFECT_ATTACH:
 		fdActorSelectAnimationStub(effect, 1);
 		actor->watchedActor = (union FIELD_OBJECT *)effect;
-		effect->tmr = 1;
+		effect->timer = 1;
 		break;
 	case ATTACHED_EFFECT_ONCE:
 		fdActorSelectAnimationStub(effect, 2);
 		fdActorStartScriptStub(effect, ActorWaitScript);
-		effect->tmr = 1;
+		effect->timer = 1;
 		break;
 	}
 
 	effect->userValue = actorId;
-	effect->motionFlg = 0;
+	effect->motionFlags = 0;
 	effect->update = (OBJECT_UPDATE)fdEffectCopyWatchedActorPos;
-	visual = effect->spr;
-	visual->flg = 0;
+	visual = effect->sprite;
+	visual->flags = 0;
 	effect->watchedActor = (union FIELD_OBJECT *)actor;
 
 	/* The effect takes sprite priority 1, or the actor's. */
-	if(flg & ATTACHED_EFFECT_IN_FRONT)
-		((PLACED_SPR *)visual)->pri = 1;
+	if(flags & ATTACHED_EFFECT_IN_FRONT)
+		((PLACED_SPR *)visual)->priority = 1;
 	else
-		((PLACED_SPR *)visual)->pri = ((PLACED_SPR *)actor->spr)->pri;
+		((PLACED_SPR *)visual)->priority =
+			((PLACED_SPR *)actor->sprite)->priority;
 }
 
 /* The SC_CALL function of MOVEMENT_TYPE_CLEAR_COLLISION: clears an actor's
    sprite flags and its collision flags, so nothing collides with it. */
-Sint32 fdActorClearSprAndCollisionFlags(void *obj)
+Sint32 fdActorClearSpriteAndCollisionFlags(void *object)
 {
-	fdActorSetSprFlagsStub(obj, 0);
-	((ACTOR *)obj)->collisionFlg = 0;
+	fdActorSetSpriteFlagsStub(object, 0);
+	((ACTOR *)object)->collisionFlags = 0;
 	return 0;
 }
 
 /* Actor script hook: clears the actor's sprite flags (outline and shadow). */
-Sint32 fdActorClearSprFlags(ACTOR *obj)
+Sint32 fdActorClearSpriteFlags(ACTOR *object)
 {
-	fdActorSetSprFlagsStub((ACTOR *)obj, 0);
+	fdActorSetSpriteFlagsStub((ACTOR *)object, 0);
 	return 0;
 }
 
@@ -87,7 +88,7 @@ Sint32 fdActorClearSprFlags(ACTOR *obj)
    ground in front rises. */
 Sint32 fdActorIgnoreRises(ACTOR *actor)
 {
-	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	return 0;
 }
 
@@ -114,7 +115,7 @@ Sint32 fdActorMoveTowardTarget(ACTOR *actor)
 		deltaZ = target->z.fixed - actor->z.fixed;
 		pixelsZ = deltaZ / toFIXED(1);
 		distance = sySquartIWRAM(pixelsX * pixelsX + pixelsZ * pixelsZ);
-		step = actor->tmr;
+		step = actor->timer;
 		if(distance >= step) {
 			/* A target 16 pixels on for each pixel of distance, over the
 			   step. */
@@ -136,33 +137,33 @@ Sint32 fdActorMoveTowardTarget(ACTOR *actor)
 Sint32 fdActorTurnTowardWatchedActor(ACTOR *actor)
 {
 	Sint16 turnStep;
-	Uint16 curAng;
-	Sint32 tgtAng;
-	ACTOR *tgt;
+	Uint16 currentAngle;
+	Sint32 targetAngle;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
-	if(tgt != NULL) {
+	target = (ACTOR *)actor->watchedActor;
+	if(target != NULL) {
 		/* Clear ACTOR_FACES_MOTION, so moving does not turn it away again. */
-		actor->steeringFlg &= ~ACTOR_FACES_MOTION;
-		tgtAng = (Uint16)syAtan(
-			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
-		curAng = actor->facing;
-		turnStep = tgtAng - curAng;
+		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+		targetAngle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+		currentAngle = actor->facing;
+		turnStep = targetAngle - currentAngle;
 		if(turnStep != 0) {
 			if(turnStep > FACING_STEP)
 				turnStep = FACING_STEP;
 			if(turnStep < -FACING_STEP)
 				turnStep = -FACING_STEP;
-			actor->facing = (curAng + turnStep);
+			actor->facing = (currentAngle + turnStep);
 		}
 	}
 	return 1;
 }
 
 /* Keeps an actor turning to face another. */
-void fdActorWatchActor(ACTOR *actor, ACTOR *tgt)
+void fdActorWatchActor(ACTOR *actor, ACTOR *target)
 {
-	actor->watchedActor = (union FIELD_OBJECT *)tgt;
+	actor->watchedActor = (union FIELD_OBJECT *)target;
 	actor->update = fdActorTurnTowardWatchedActor;
 }
 
@@ -171,14 +172,14 @@ void fdActorWatchActor(ACTOR *actor, ACTOR *tgt)
 Sint32 fdActorTakeLeaderLayer(ACTOR *actor)
 {
 	ACTOR *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	Sint32 layer = ((PLACED_SPR *)leader->spr)->pri;
+	Sint32 layer = ((PLACED_SPR *)leader->sprite)->priority;
 
-	if((actor->sprStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
-		PLACED_SPR *spr = actor->spr;
+	if((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+		PLACED_SPR *sprite = actor->sprite;
 
-		spr->pri = layer;
-		spr->shadowPri = layer;
-		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite->priority = layer;
+		sprite->shadowPriority = layer;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	}
 	return 0;
 }
@@ -252,24 +253,24 @@ ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 id)
 {
 	ACTOR *entry;
 	ACTOR *found;
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 best;
 	FIXED  dy;
 	Sint32 dx;
 	Sint32 dz;
-	Sint32 dist;
-	Sint32 ang;
+	Sint32 distance;
+	Sint32 angle;
 	Sint32 turn;
 
 	found = NULL;
 	best = FACING_TARGET_REACH;
 	entry = RamHeapSlots->actors;
-	for(cnt = 0; cnt < ACTOR_COUNT; cnt++, entry++) {
+	for(count = 0; count < ACTOR_COUNT; count++, entry++) {
 		if(entry->script == NULL)
 			continue;
 		if(entry == self)
 			continue;
-		if(entry->sprStorageKind != ACTOR_SPRITE_ONE)
+		if(entry->spriteStorageKind != ACTOR_SPRITE_ONE)
 			continue;
 		dy = entry->y.fixed - self->y.fixed;
 		if(dy >= 0) {
@@ -281,24 +282,24 @@ ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 id)
 		}
 		dx = (entry->x.fixed - self->x.fixed) / toFIXED(1);
 		dz = (entry->z.fixed - self->z.fixed) / toFIXED(1);
-		dist = sySquartIWRAM(dx * dx + dz * dz);
-		if(dist >= best)
+		distance = sySquartIWRAM(dx * dx + dz * dz);
+		if(distance >= best)
 			continue;
-		ang = (Uint16)syAtan(
+		angle = (Uint16)syAtan(
 			entry->z.fixed - self->z.fixed, entry->x.fixed - self->x.fixed);
-		if(dist > FACING_TARGET_NEAR) {
-			turn = (Sint16)(ang - self->facing);
+		if(distance > FACING_TARGET_NEAR) {
+			turn = (Sint16)(angle - self->facing);
 			if(turn < -(TRIG_TURN * 3 / 16 - 1))
 				continue;
 			if(turn > TRIG_TURN * 3 / 16 - 1)
 				continue;
 		}
 		found = entry;
-		best = dist;
+		best = distance;
 	}
 	if(found == NULL)
 		return NULL;
-	if(((SPR *)found->spr)->entries[0]->anmId != id)
+	if(((SPR *)found->sprite)->entries[0]->animationId != id)
 		return NULL;
 	return found;
 }
@@ -336,11 +337,11 @@ Sint32 fdTryJumpForward(void)
 {
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 result = -1;
-	Sint32		 ang = leader->facing;
-	Uint8		*flg = &leader->motionFlg;
-	Uint8		 saved = *flg;
+	Sint32		 angle = leader->facing;
+	Uint8		*flags = &leader->motionFlags;
+	Uint8		 saved = *flags;
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Sint16		 sprFlg = SPRITE_FLAG_SHADOW;
+	Sint16		 spriteFlags = SPRITE_FLAG_SHADOW;
 	FIELD_COORDINATE pos[3];
 	ACTOR			*entry;
 	ACTOR			*platform;
@@ -351,28 +352,28 @@ Sint32 fdTryJumpForward(void)
 		return result;
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_ROPE)
 		return result;
-	if((ang + FACING_STEP) & DEGtoANG(45)) /* not facing a quarter turn */
+	if((angle + FACING_STEP) & DEGtoANG(45)) /* not facing a quarter turn */
 		return result;
-	ang = (ang + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+	angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
 again:
 	/* The middle of the tile in front, then of the tile beyond. */
 	pos[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	pos[1].fixed = leader->y.fixed;
 	pos[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	syVectorAddPolarOffset(toFIXED(16), ang, &pos[0].fixed);
+	syVectorAddPolarOffset(toFIXED(16), angle, &pos[0].fixed);
 	if(fdMapGridCheckCollisionStub(leader, &pos[0].fixed) == 1)
 		return -1;
 	pos[0].fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	pos[1].fixed = leader->y.fixed;
 	pos[2].fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	syVectorAddPolarOffset(toFIXED(32), ang, &pos[0].fixed);
+	syVectorAddPolarOffset(toFIXED(32), angle, &pos[0].fixed);
 	canJump = FALSE;
 	if(fdMapGridBlocksJump(leader, &pos[0].fixed) == 0 &&
 		fdMapGridCheckCollisionStub(leader, &pos[0].fixed) == 0)
 		canJump = TRUE;
 
 	/* A platform 16 pixels below the landing makes it a jump spot. */
-	if(leader->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
+	if(leader->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
 		entry = RamHeapSlots->actors;
 		for(i = 0; i < ACTOR_COUNT; i++, entry++) {
 			Sint32 bound = toFIXED(8) - 1;
@@ -381,7 +382,7 @@ again:
 
 			if(entry->script == NULL)
 				continue;
-			if(!(entry->priFlg & ACTOR_PRIORITY_PLATFORM))
+			if(!(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM))
 				continue;
 			if(entry->arrivalAxis != 0)
 				continue;
@@ -411,8 +412,8 @@ again:
 	entry = RamHeapSlots->actors;
 	for(i = 0; i < ACTOR_COUNT; i++, entry++) {
 		if(entry->script != NULL &&
-			!(entry->priFlg & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
-			entry->collisionFlg != 0 &&
+			!(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) &&
+			entry != leader && entry->collisionFlags != 0 &&
 			FIELD_METATILE(pos[0].fixed - entry->x.fixed + toFIXED(8)) == 0 &&
 			FIELD_METATILE(pos[2].fixed - entry->z.fixed + toFIXED(8)) == 0) {
 			FIXED d = pos[1].fixed - entry->y.fixed;
@@ -429,29 +430,30 @@ again:
 
 	if(canJump) {
 		MAP_STATE *map;
-		Uint8	   attr;
+		Uint8	   attribute;
 
 		/* Crouch, then jump there. */
-		if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-			sprFlg = ((SPR *)leader->spr)->flg;
+		if(leader->spriteStorageKind == ACTOR_SPRITE_ONE)
+			spriteFlags = ((SPR *)leader->sprite)->flags;
 		fdScriptStart();
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlayStub(SE_JUMP);
+		sySoundPlayStub(SE_JUMP);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		*flg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlagsStub(leader, sprFlg & (Uint8)~SPRITE_FLAG_SHADOW);
+		leader->velocityY = toFIXED(4);
+		*flags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlagsStub(
+			leader, spriteFlags & (Uint8)~SPRITE_FLAG_SHADOW);
 		fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId,
 			pos[0].part[0].integer, pos[2].part[0].integer);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlagsStub(leader, sprFlg);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 
 		map = RamHeapSlots->mapGrid;
-		attr = map->groundEffs;
-		if(attr & GROUND_EFFECTS_WADING_MASK) {
+		attribute = map->groundEffects;
+		if(attribute & GROUND_EFFECTS_WADING_MASK) {
 			Sint32		  metatileX = FIELD_METATILE(leader->x.fixed);
 			Sint32		  metatileZ = FIELD_METATILE(leader->z.fixed);
 			MAP_METATILE *metatiles;
@@ -463,7 +465,7 @@ again:
 			metatiles += metatileX + metatileZ * MAPGRID_SIZE;
 			if(metatiles->attributeB & MAP_METATILE_WATER)
 				fdActorSpawnWaterSplashStub(
-					leader, GROUND_EFFECTS_WADING(attr));
+					leader, GROUND_EFFECTS_WADING(attribute));
 		}
 
 		/* A log underfoot dips 2 pixels with the leader and comes back up. */
@@ -471,7 +473,7 @@ again:
 				 leader, SPRITE_LOG_WEST_EAST)) != NULL ||
 			   (platform = fdActorFindNearestFacingTarget(
 					leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) &&
-			(platform->priFlg & ACTOR_PRIORITY_UNDERFOOT)) {
+			(platform->priorityFlags & ACTOR_PRIORITY_UNDERFOOT)) {
 			fdActorSelectAnimationStub(platform, 7);
 			leader->y.fixed -= toFIXED(1);
 			leader->groundHeight -= toFIXED(1);
@@ -487,7 +489,7 @@ again:
 		} else {
 			sySynch(6);
 		}
-		*flg = saved;
+		*flags = saved;
 		fdScriptEnd();
 		if(state != NULL)
 			state->walkingDistance +=
@@ -500,7 +502,7 @@ again:
 		}
 		result = 0;
 	}
-	leader->tmr = 8;
+	leader->timer = 8;
 	leader->userValue = 0;
 	return result;
 }
@@ -523,8 +525,8 @@ Sint32 fdClimbDown(void)
 	gridY = METATILE_MIDDLE(FIXEDtoINT(leader->y.fixed));
 	gridZ = METATILE_MIDDLE(FIXEDtoINT(leader->z.fixed));
 	fdScriptStart();
-	if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-		spriteFlags = ((SPR *)leader->spr)->flg;
+	if(leader->spriteStorageKind == ACTOR_SPRITE_ONE)
+		spriteFlags = ((SPR *)leader->sprite)->flags;
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		ACTOR		 *entry;
 		MAP_METATILE *metatile;
@@ -563,7 +565,7 @@ Sint32 fdClimbDown(void)
 		position[2] = leader->z.fixed + toFIXED(16);
 		entry = RamHeapSlots->actors;
 		for(i = 0; i < ACTOR_COUNT; i++, entry++) {
-			if(entry->script != NULL && (entry->collisionFlg & ACTOR_SOLID) &&
+			if(entry->script != NULL && (entry->collisionFlags & ACTOR_SOLID) &&
 				entry != leader &&
 				fdCheckSpheresOverlapStub(
 					&entry->x.fixed, radius, position, entry->radius - 2) >= 0)
@@ -577,10 +579,10 @@ Sint32 fdClimbDown(void)
 		fdActorFaceDirectionById(
 			MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 		fdActorWaitForScriptEndById(MainRoutineStateWork.leaderActorId);
-		leader->steeringFlg = ACTOR_FACES_MOTION;
-		leader->motionFlg = 0;
+		leader->steeringFlags = ACTOR_FACES_MOTION;
+		leader->motionFlags = 0;
 		spriteFlags &= (Uint8)~SPRITE_FLAG_SHADOW;
-		fdActorSetSprFlagsStub(leader, spriteFlags);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 		fdActorSetMoveTargetStub(leader, toFIXED(gridX),
 			leader->y.fixed - toFIXED(16), toFIXED(gridZ) + toFIXED(16));
@@ -590,16 +592,16 @@ Sint32 fdClimbDown(void)
 	} else {
 		/* Let go of the wall and fall. */
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		leader->velY = toFIXED(4);
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->velocityY = toFIXED(4);
 		leader->groundHeight = leader->y.fixed;
 		spriteFlags |= SPRITE_FLAG_SHADOW;
-		fdActorSetSprFlagsStub(leader, spriteFlags);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 		fdScriptWait(6);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-		leader->steeringFlg = ACTOR_FACES_MOTION;
+		leader->steeringFlags = ACTOR_FACES_MOTION;
 		leader->facing = TRIG_TURN * 3 / 4;
-		leader->tmr = 0;
+		leader->timer = 0;
 		leader->userValue = 0;
 	}
 	fdScriptEnd();
@@ -626,8 +628,8 @@ Sint32 fdClimbUp(void)
 	Sint32 result;
 
 	fdScriptStart();
-	if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-		spriteFlags = ((SPR *)leader->spr)->flg;
+	if(leader->spriteStorageKind == ACTOR_SPRITE_ONE)
+		spriteFlags = ((SPR *)leader->sprite)->flags;
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		MAP_METATILE *metatile;
 		MAP_METATILE *north;
@@ -660,23 +662,23 @@ Sint32 fdClimbUp(void)
 			goto failure;
 
 		/* Step to the middle of the tile, crouch, jump and grab the wall. */
-		leader->steeringFlg = result;
+		leader->steeringFlags = result;
 		fdActorMoveToAndWaitById(
 			MainRoutineStateWork.leaderActorId, gridX, gridZ);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 		sySynch(4);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAP);
-		leader->velY = toFIXED(4);
+		leader->velocityY = toFIXED(4);
 		sySynch(4);
-		leader->motionFlg = result;
+		leader->motionFlags = result;
 		spriteFlags &= (Uint8)~SPRITE_FLAG_SHADOW;
-		fdActorSetSprFlagsStub(leader, spriteFlags);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 		leader->speedLimit = toFIXED(1);
-		leader->velY = result;
+		leader->velocityY = result;
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLING);
 		sySynch(4);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_KEYS;
-		leader->steeringFlg = ACTOR_FACES_MOTION;
+		leader->steeringFlags = ACTOR_FACES_MOTION;
 		sySynch(8);
 		leader->z.fixed = (leader->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	} else {
@@ -690,7 +692,7 @@ Sint32 fdClimbUp(void)
 		i = 0;
 		entry = RamHeapSlots->actors;
 		for(; i < ACTOR_COUNT; i++, entry++) {
-			if(entry->script != NULL && (entry->collisionFlg & ACTOR_SOLID) &&
+			if(entry->script != NULL && (entry->collisionFlags & ACTOR_SOLID) &&
 				entry != leader &&
 				fdCheckSpheresOverlapStub(
 					&entry->x.fixed, radius, position, entry->radius - 2) >= 0)
@@ -698,19 +700,19 @@ Sint32 fdClimbUp(void)
 		}
 
 		/* Climb over the top: up 8 pixels and a tile north. */
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB_OVER_TOP);
 		fdActorSetMoveTargetStub(leader, toFIXED(gridX),
 			leader->y.fixed + toFIXED(8), toFIXED(gridZ) - toFIXED(16));
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		leader->groundHeight = leader->y.fixed;
 		spriteFlags |= SPRITE_FLAG_SHADOW;
-		fdActorSetSprFlagsStub(leader, spriteFlags);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 		fdScriptWait(4);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-		leader->steeringFlg = ACTOR_FACES_MOTION;
-		leader->tmr = 0;
+		leader->steeringFlags = ACTOR_FACES_MOTION;
+		leader->timer = 0;
 		leader->userValue = 0;
 	}
 	fdScriptEnd();
@@ -768,28 +770,28 @@ ROPE_NODE *fdRopeFindNodeNear(Sint32 *position)
 Bool fdLeaderStepOntoRope(void)
 {
 	ACTOR	  *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	SPR		  *spr = leader->spr;
+	SPR		  *sprite = leader->sprite;
 	ROPE_NODE *node = fdRopeFindNodeNear(&leader->x.fixed);
-	Uint8	  *flg;
+	Uint8	  *flags;
 
 	FieldStateWork->blockedSteps = 0;
 	if(node == NULL)
 		return FALSE;
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	leader->acceleration = toFIXED(1);
 	leader->speedLimit = toFIXED(2);
-	leader->velY = toFIXED(4);
+	leader->velocityY = toFIXED(4);
 	leader->watchedActor = (union FIELD_OBJECT *)node;
 	fdActorSelectAnimationStub(leader, ANIM_WALK);
 	fdActorSetMoveTargetStub(leader, node->x, node->y, node->z);
 	fdActorWaitForMoveStub(leader);
-	leader->tmr = leader->motionFlg;
-	flg = &leader->priFlg;
-	leader->userValue = spr->flg;
-	leader->savedSprPri = spr->image.pri;
-	leader->priFlg = *flg & ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->flg = 0;
-	spr->image.pri = 1;
+	leader->timer = leader->motionFlags;
+	flags = &leader->priorityFlags;
+	leader->userValue = sprite->flags;
+	leader->savedSpritePriority = sprite->image.priority;
+	leader->priorityFlags = *flags & ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->flags = 0;
+	sprite->image.priority = 1;
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_ROPE;
 	return TRUE;
 }
@@ -799,7 +801,7 @@ Bool fdLeaderStepOntoRope(void)
 Bool fdLeaderStepOffRope(void)
 {
 	ACTOR *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	SPR	  *sprite = leader->spr;
+	SPR	  *sprite = leader->sprite;
 	FIXED  position[3];
 	Uint32 angle;
 
@@ -818,19 +820,19 @@ Bool fdLeaderStepOffRope(void)
 		fdMapGridCheckCollisionStub(leader, position))
 		return FALSE;
 	leader->facing = angle;
-	leader->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	leader->motionFlg = leader->tmr;
+	leader->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	leader->motionFlags = leader->timer;
 	leader->scaleX = toFIXED(1);
-	sprite->flg = leader->userValue;
+	sprite->flags = leader->userValue;
 	sprite->rotation = 0;
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	leader->speedLimit = toFIXED(2);
-	leader->velY = toFIXED(4);
+	leader->velocityY = toFIXED(4);
 	leader->acceleration = toFIXED(1);
 	fdActorSelectAnimationStub(leader, ANIM_WALK);
 	fdActorSetMoveTargetStub(leader, position[0], position[1], position[2]);
 	fdActorWaitForMoveStub(leader);
-	sprite->image.pri = leader->savedSprPri;
+	sprite->image.priority = leader->savedSpritePriority;
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
 	return TRUE;
 }
@@ -880,28 +882,28 @@ Bool fdLeaderStepOntoTightrope(void)
 {
 	MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 	ACTOR			   *leader = fdActorLookup(state->leaderActorId);
-	SPR				   *spr = leader->spr;
+	SPR				   *sprite = leader->sprite;
 	TIGHTROPE_NODE	   *node = fdTightropeFindNodeNear(&leader->x.fixed);
-	Uint8			   *flg;
+	Uint8			   *flags;
 
 	FieldStateWork->blockedSteps = 0;
 	if(node == NULL)
 		return FALSE;
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	leader->acceleration = toFIXED(1);
 	leader->speedLimit = toFIXED(2);
-	leader->velY = toFIXED(4);
+	leader->velocityY = toFIXED(4);
 	leader->watchedActor = (union FIELD_OBJECT *)node;
 	fdActorSelectAnimationStub(leader, ANIM_WALK);
 	fdActorSetMoveTargetStub(leader, node->x, node->y, node->z);
 	fdActorWaitForMoveStub(leader);
-	leader->tmr = leader->motionFlg;
-	leader->userValue = spr->flg;
-	leader->savedSprPri = spr->image.pri;
-	flg = &leader->priFlg;
-	leader->priFlg = *flg & ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->flg = 0;
-	spr->image.pri = 1;
+	leader->timer = leader->motionFlags;
+	leader->userValue = sprite->flags;
+	leader->savedSpritePriority = sprite->image.priority;
+	flags = &leader->priorityFlags;
+	leader->priorityFlags = *flags & ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->flags = 0;
+	sprite->image.priority = 1;
 	state->movementMode = LEADER_MOVEMENT_TIGHTROPE;
 	return TRUE;
 }
@@ -911,7 +913,7 @@ Bool fdLeaderStepOntoTightrope(void)
 Bool fdLeaderStepOffTightrope(void)
 {
 	ACTOR *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	SPR	  *sprite = leader->spr;
+	SPR	  *sprite = leader->sprite;
 	FIXED  position[3];
 	Uint32 angle;
 
@@ -930,18 +932,18 @@ Bool fdLeaderStepOffTightrope(void)
 		fdMapGridCheckCollisionStub(leader, position))
 		return FALSE;
 	leader->facing = angle;
-	leader->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	leader->motionFlg = leader->tmr;
-	sprite->flg = leader->userValue;
+	leader->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	leader->motionFlags = leader->timer;
+	sprite->flags = leader->userValue;
 	sprite->rotation = 0;
-	sySndPlayStub(SE_JUMP);
+	sySoundPlayStub(SE_JUMP);
 	leader->acceleration = toFIXED(1);
 	leader->speedLimit = toFIXED(2);
-	leader->velY = toFIXED(4);
+	leader->velocityY = toFIXED(4);
 	fdActorSelectAnimationStub(leader, ANIM_WALK);
 	fdActorSetMoveTargetStub(leader, position[0], position[1], position[2]);
 	fdActorWaitForMoveStub(leader);
-	sprite->image.pri = leader->savedSprPri;
+	sprite->image.priority = leader->savedSpritePriority;
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
 	return TRUE;
 }

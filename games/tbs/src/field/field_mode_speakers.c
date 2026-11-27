@@ -12,13 +12,13 @@
 const SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 {
 	const SPEAKER_DEFINITION *entry = SpeakerDefinitions;
-	Uint32					  definitionIdx = 0;
+	Uint32					  definitionIndex = 0;
 
 	if(entry->id != id) {
 		do {
-			definitionIdx += 1;
+			definitionIndex += 1;
 			entry++;
-			if(definitionIdx >= SPEAKER_DEFINITION_COUNT)
+			if(definitionIndex >= SPEAKER_DEFINITION_COUNT)
 				break;
 		} while(entry->id != id);
 	}
@@ -27,27 +27,28 @@ const SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 
 /* Returns the sprite id actor id shows, its one sprite's first animation's, or
    0 when it shows no single sprite or that animation is absent. */
-Sint32 fdSpeakerGetActorSpr(Sint32 id)
+Sint32 fdSpeakerGetActorSprite(Sint32 id)
 {
 	ACTOR *actor = fdActorLookup(id);
 
-	if(actor->sprStorageKind != ACTOR_SPRITE_ONE || actor->spr == NULL ||
-		actor->spr->entries[0] == NULL) {
+	if(actor->spriteStorageKind != ACTOR_SPRITE_ONE || actor->sprite == NULL ||
+		actor->sprite->entries[0] == NULL) {
 		return 0;
 	}
-	return actor->spr->entries[0]->anmId;
+	return actor->sprite->entries[0]->animationId;
 }
 
-/* Returns the voice of sprite sprId's messages: the first of its four blip
+/* Returns the voice of sprite spriteId's messages: the first of its four blip
    sounds, SE_VOICE_FIRST plus its definition's value, or 0 for none
    (SPEAKER_VOICE_NONE) or with the Speech option off
    (MainRoutineStateWork.speech). */
-Sint32 fdSpeakerGetVoice(Uint32 sprId)
+Sint32 fdSpeakerGetVoice(Uint32 spriteId)
 {
 	Uint8 voice;
 
 	if(MainRoutineStateWork.speech == 0 ||
-		(voice = fdSpeakerFindDefinition(sprId)->value) == SPEAKER_VOICE_NONE) {
+		(voice = fdSpeakerFindDefinition(spriteId)->value) ==
+			SPEAKER_VOICE_NONE) {
 		return 0;
 	}
 	return voice + SE_VOICE_FIRST;
@@ -58,5 +59,5 @@ Sint32 fdSpeakerGetVoice(Uint32 sprId)
    Halt passes it over (fdPsynergyFilterHaltTarget). */
 Sint32 fdSpeakerGetHaltedLines(Sint32 id)
 {
-	return fdSpeakerFindDefinition(fdSpeakerGetActorSpr(id))->haltedLines;
+	return fdSpeakerFindDefinition(fdSpeakerGetActorSprite(id))->haltedLines;
 }

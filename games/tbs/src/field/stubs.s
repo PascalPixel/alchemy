@@ -4,38 +4,38 @@
 StubsField:
 	stub fdActorSystemConfigureStub, fdActorSystemConfigure
 	stub fdRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement
-	unnamed_stub fdRenderPlaceProjectedSpr
-	unnamed_stub fdSprResetAnimations
-	stub fdSprStartAnimationStub, fdSprStartAnimation
-	unnamed_stub fdSprSetAnimationTimers
-	stub fdSprCreateStub, fdSprCreate
-	stub fdSprDestroyStub, fdSprDestroy
-	unnamed_stub fdRenderPlaceSprPartPair
-	stub fdSprAddAnimationStub, fdSprAddAnimation
-	stub fdSprRemoveAnimationStub, fdSprRemoveAnimation
-	unnamed_stub fdSprRemoveAnimationAt
-	stub fdSprAnimationClearStub, fdSprAnimationClear
-	unnamed_stub fdSprAnimationReset
-	stub fdSprAnimationStartStub, fdSprAnimationStart
+	unnamed_stub fdRenderPlaceProjectedSprite
+	unnamed_stub fdSpriteResetAnimations
+	stub fdSpriteStartAnimationStub, fdSpriteStartAnimation
+	unnamed_stub fdSpriteSetAnimationTimers
+	stub fdSpriteCreateStub, fdSpriteCreate
+	stub fdSpriteDestroyStub, fdSpriteDestroy
+	unnamed_stub fdRenderPlaceSpritePartPair
+	stub fdSpriteAddAnimationStub, fdSpriteAddAnimation
+	stub fdSpriteRemoveAnimationStub, fdSpriteRemoveAnimation
+	unnamed_stub fdSpriteRemoveAnimationAt
+	stub fdSpriteAnimationClearStub, fdSpriteAnimationClear
+	unnamed_stub fdSpriteAnimationReset
+	stub fdSpriteAnimationStartStub, fdSpriteAnimationStart
 	stub fdActorSystemInitStub, fdActorSystemInit
 	stub fdActorSelectAnimationStub, fdActorSelectAnimation
 	stub fdActorSetAnimationSpeedStub, fdActorSetAnimationSpeed
 	unnamed_stub fdActorSetAnimationAndSpeed
 	stub fdActorStartScriptStub, fdActorStartScript
-	stub fdActorStartPlayerCtrlStub, fdActorStartPlayerCtrl
-	stub fdActorStartWorldMapCtrlStub, fdActorStartWorldMapCtrl
+	stub fdActorStartPlayerControlStub, fdActorStartPlayerControl
+	stub fdActorStartWorldMapControlStub, fdActorStartWorldMapControl
 	stub fdActorStartMoveByKeysStub, fdActorStartMoveByKeys
 	stub fdActorStartKeyCheckStub, fdActorStartKeyCheck
 	unnamed_stub fdActorFindFree
 	stub fdActorCreateStub, fdActorCreate
 	stub fdActorReleaseStub, fdActorRelease
-	unnamed_stub fdActorSetSprRotation
+	unnamed_stub fdActorSetSpriteRotation
 	stub fdActorStartCameraStub, fdActorStartCamera
 	unnamed_stub fdActorStartApproachWatched
 	stub fdActorSetPosAndResetMotionStub, fdActorSetPosAndResetMotion
-	stub fdSprDissolveStepStub, fdSprDissolveStep
-	stub fdSprDissolveRunStub, fdSprDissolveRun
-	stub fdSprDissolveRunManyStub, fdSprDissolveRunMany
+	stub fdSpriteDissolveStepStub, fdSpriteDissolveStep
+	stub fdSpriteDissolveRunStub, fdSpriteDissolveRun
+	stub fdSpriteDissolveRunManyStub, fdSpriteDissolveRunMany
 	stub fdMapGridLoadMapStub, fdMapGridLoadMap
 	stub fdWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
 	unnamed_stub fdMapGridSetCameraCenter
@@ -51,8 +51,8 @@ StubsField:
 	stub fdWorldMapLoadDefaultMetatilesAndUpdateBlockStub, fdWorldMapLoadDefaultMetatilesAndUpdateBlock
 	stub fdMapGridPlayMapEditStub, fdMapGridPlayMapEdit
 	stub fdMapGridCopyMetatileTilesIndicesRectStub, fdMapGridCopyMetatileTilesIndicesRect
-	stub fdTilesetAnimResumeStub, fdTilesetAnimResume
-	stub fdTilesetAnimPauseStub, fdTilesetAnimPause
+	stub fdTilesetAnimationResumeStub, fdTilesetAnimationResume
+	stub fdTilesetAnimationPauseStub, fdTilesetAnimationPause
 	stub fdBlendScriptResumeStub, fdBlendScriptResume
 	stub fdBlendScriptSuspendStub, fdBlendScriptSuspend
 	stub fdMapGridGetTerrainHeightStub, fdMapGridGetTerrainHeight
@@ -62,30 +62,30 @@ StubsField:
 	stub fdMapGridCopyMetatileIndexRectStub, fdMapGridCopyMetatileIndexRect
 	stub fdWorldMapSetGridTileStub, fdWorldMapSetGridTile
 	stub fdMapGridCheckCollisionStub, fdMapGridCheckCollision
-	stub fdActorSetSprFlagsStub, fdActorSetSprFlags
+	stub fdActorSetSpriteFlagsStub, fdActorSetSpriteFlags
 	stub fdActorSetBlendModeStub, fdActorSetBlendMode
 	stub fdMapGridSetScreenShakeStub, fdMapGridSetScreenShake
 	stub fdMapGridWaitForShakeToSettleStub, fdMapGridWaitForShakeToSettle
-	unnamed_stub fdActorSetFirstSprAnimation
-	stub fdActorSystemSuspendProjectionAndShowSprsStub, fdActorSystemSuspendProjectionAndShowSprs
+	unnamed_stub fdActorSetFirstSpriteAnimation
+	stub fdActorSystemSuspendProjectionAndShowSpritesStub, fdActorSystemSuspendProjectionAndShowSprites
 	stub fdActorSystemResumeProjectionAndHideLayersStub, fdActorSystemResumeProjectionAndHideLayers
-	unnamed_stub fdActorSetSprScale
+	unnamed_stub fdActorSetSpriteScale
 	stub fdMapGridIsWallAtStub, fdMapGridIsWallAt
-	stub fdActorRegisterSprMetadataStub, fdActorRegisterSprMetadata
+	stub fdActorRegisterSpriteMetadataStub, fdActorRegisterSpriteMetadata
 	stub fdWorldMapStartStillImageStub, fdWorldMapStartStillImage
 	stub fdWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
-	stub fdActorSetSprColModeStub, fdActorSetSprColMode
-	stub fdSprSetAnimationColModesStub, fdSprSetAnimationColModes
+	stub fdActorSetSpriteColorModeStub, fdActorSetSpriteColorMode
+	stub fdSpriteSetAnimationColorModesStub, fdSpriteSetAnimationColorModes
 	stub fdActorScriptCheckOverlapStub, fdActorScriptCheckOverlap
 	stub fdMapGridSetShownLayersStub, fdMapGridSetShownLayers
-	stub fdSprAnimationSumCommandLengthsStub, fdSprAnimationSumCommandLengths
+	stub fdSpriteAnimationSumCommandLengthsStub, fdSpriteAnimationSumCommandLengths
 	stub fdWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
-	stub fdSprPictureCacheLoadStub, fdSprPictureCacheLoad
+	stub fdSpritePictureCacheLoadStub, fdSpritePictureCacheLoad
 	stub fdMapGridSetMetatileBehaviorAtStub, fdMapGridSetMetatileBehaviorAt
-	stub fdSprSetAnimationSpeedStub, fdSprSetAnimationSpeed
-	stub fdSprColRemapPixelsStub, fdSprColRemapPixels
-	stub fdTilesetAnimSuspendAllStub, fdTilesetAnimSuspendAll
-	stub fdTilesetAnimResumeAllStub, fdTilesetAnimResumeAll
+	stub fdSpriteSetAnimationSpeedStub, fdSpriteSetAnimationSpeed
+	stub fdSpriteColorRemapPixelsStub, fdSpriteColorRemapPixels
+	stub fdTilesetAnimationSuspendAllStub, fdTilesetAnimationSuspendAll
+	stub fdTilesetAnimationResumeAllStub, fdTilesetAnimationResumeAll
 	stub fdActorScriptFindOverlappingActorStub, fdActorScriptFindOverlappingActor
 	stub fdMapGridGetTerrainKindAtStub, fdMapGridGetTerrainKindAt
-	unnamed_stub fdSprViewerRun
+	unnamed_stub fdSpriteViewerRun

@@ -12,7 +12,7 @@
 /* A window tilemap entry: the tile in WINDOW_PALETTE. */
 #define WINDOW_TILE(tile) (BG_TILE_PALETTE(WINDOW_PALETTE) | (tile))
 
-/* The HP and PP labels before a number (mnTextDrawPrefixedNumAtOffset) or a
+/* The HP and PP labels before a number (mnTextDrawPrefixedNumberAtOffset) or a
    Psynergy's cost: each label's first tile, and the second tile the HP label
    always takes. */
 enum {

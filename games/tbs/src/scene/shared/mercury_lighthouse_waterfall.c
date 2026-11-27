@@ -8,14 +8,14 @@ static void scMercuryLighthouseWalkIntoWaterfall(Sint32 exit)
 {
 	ACTOR *leader = fdActorGetById(ACTOR_PARTY_LEADER);
 	fdScriptStart();
-	sySndPlay(SE_SPARKLING_PASSAGE);
+	sySoundPlay(SE_SPARKLING_PASSAGE);
 	leader->update = (void (*)(ACTOR *))scMercuryLighthouseTrailSparks;
 	leader->speedLimit = toFIXED(1) / 5;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	fdActorSetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
-	fdActorConfigureSprCol(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_PARTY_LEADER), 0);
+	fdActorConfigureSpriteColor(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_PARTY_LEADER), 0);
 	leader->update = NULL;
 	fdScriptWait(30);
 	fdScriptFinishScreenTransition();
@@ -33,11 +33,11 @@ static void scMercuryLighthouseWalkIntoWaterfall(Sint32 exit)
 static void UNUSED scMercuryLighthouseDropLeaderToColumn(Sint32 column)
 {
 	fdScriptStart();
-	sySndPlay(SE_SPARKLING_PASSAGE);
+	sySoundPlay(SE_SPARKLING_PASSAGE);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	fdActorSetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -8);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdScriptWait(8);
 	fdActorSetPosFX(
 		ACTOR_PARTY_LEADER, FIELD_HALF_METATILE_ORIGIN(column) + toFIXED(8), 0);

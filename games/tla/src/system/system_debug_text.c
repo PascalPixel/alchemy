@@ -24,10 +24,10 @@ void syStringFormatHex(Uint32 value)
 {
 	Uint8		*buf = NumberTextBuffer;
 	const Uint8 *digits = StringHexDigits;
-	Sint32		 idx;
+	Sint32		 index;
 
-	for(idx = HEX_DIGITS - 1; idx >= 0; idx--) {
-		buf[idx] = digits[value & 0xf];
+	for(index = HEX_DIGITS - 1; index >= 0; index--) {
+		buf[index] = digits[value & 0xf];
 		value >>= 4;
 	}
 	NumberTextBuffer[HEX_DIGITS] = 0;
@@ -48,7 +48,7 @@ void syStringFormatDecimal(Sint32 value)
 	}
 	NumberTextBuffer[DECIMAL_DIGITS_MAX + 1] = 0;
 	for(i = DECIMAL_DIGITS_MAX; value != 0; i--) {
-		quotient = syMathUnsignedMulHigh(value, RECIPROCAL_OF(10));
+		quotient = syMathUnsignedMultiplyHigh(value, RECIPROCAL_OF(10));
 		value -= quotient * 10;
 		NumberTextBuffer[i] = value + '0';
 		value = quotient;
@@ -65,17 +65,17 @@ void syStringFormatDecimal(Sint32 value)
 		NumberTextBuffer[i] = ' ';
 }
 
-/* Writes `cnt` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
+/* Writes `count` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
    and moves it on, when debug text is on. */
-void syPrintBlanks(Uint32 cnt)
+void syPrintBlanks(Uint32 count)
 {
-	Uint16 *dst = DebugTextCursor;
+	Uint16 *dest = DebugTextCursor;
 	Uint32	i;
 
 	if(DebugTextEnabled != 0) {
-		for(i = 0; i < cnt; i++)
-			*dst++ = WINDOW_TILE_BLANK;
-		DebugTextCursor = dst;
+		for(i = 0; i < count; i++)
+			*dest++ = WINDOW_TILE_BLANK;
+		DebugTextCursor = dest;
 	}
 }
 
@@ -87,7 +87,7 @@ void syPrint(const Uint8 *text)
 	if(DebugTextEnabled != 0) {
 		Uint16 *cursor = DebugTextCursor;
 		Uint32	c = *text;
-		Uint32	cnt = 0;
+		Uint32	count = 0;
 
 		text++;
 		if(c != 0) {
@@ -100,7 +100,7 @@ void syPrint(const Uint8 *text)
 					(Uint16 *)(BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK) +
 						DEBUG_TEXT_SCREEN_BYTES))
 					cursor = (Uint16 *)BG_SCREEN_BLOCK(DEBUG_TEXT_SCREEN_BLOCK);
-				if(++cnt > DEBUG_TEXT_MAX_LENGTH - 1)
+				if(++count > DEBUG_TEXT_MAX_LENGTH - 1)
 					break;
 				c = *text++;
 			} while(c != 0);
@@ -122,7 +122,7 @@ void syPrintHex(Uint32 value, Sint32 digits)
 /* Prints the last `digits` characters of `value` in signed decimal (1 to
    DECIMAL_DIGITS_MAX; anything else prints DECIMAL_DIGITS_MAX). Reached through
    the stub table. */
-void syPrintDec(Sint32 value, Sint32 digits)
+void syPrintDecimal(Sint32 value, Sint32 digits)
 {
 	if(digits < 1 || digits > DECIMAL_DIGITS_MAX)
 		digits = DECIMAL_DIGITS_MAX;
@@ -172,7 +172,7 @@ void syWindowLoadGraphics(void)
 }
 
 /* Loads the basic sprite palettes. */
-void syPaletteLoadBasicSprCols(void)
+void syPaletteLoadBasicSpriteColors(void)
 {
 	syDMAXCopy((const void *)SystemBasicColorPalette, (void *)OBJ_PLTT,
 		DMA_COPY_HALFWORDS(BASIC_SPRITE_PALETTES * PALETTE_COLORS), REG_DMA3);

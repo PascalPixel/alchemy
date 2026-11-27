@@ -1,4 +1,4 @@
-/* The colour map mnGraphicsExpandVRAMTilesByColTable draws the UI's digits
+/* The colour map mnGraphicsExpandVRAMTilesByColorTable draws the UI's digits
    through, and the link battle timer's heading. */
 
 #include "stubs.h"

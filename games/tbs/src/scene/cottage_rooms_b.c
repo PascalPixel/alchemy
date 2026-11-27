@@ -313,18 +313,18 @@ const Uint32 *scGetExits(void)
 /* Places Babi's scholars, or Vale's villagers as the story has left them. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *tbl;
+	ACTOR_PLACE *table;
 
 	if(MainRoutineStateWork.entrance == COTTAGE_ROOMS_B_FROM_BABI_PALACE)
 		return CottageRoomsBBabiScholarsActorPlacements;
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0)
-		tbl = CottageRoomsBActorPlacementsAfterKalay;
+		table = CottageRoomsBActorPlacementsAfterKalay;
 	else if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0)
-		tbl = CottageRoomsBActorPlacementsAfterLeaving;
+		table = CottageRoomsBActorPlacementsAfterLeaving;
 	else
-		tbl = CottageRoomsBActorPlacements;
-	fdAssignViewFlags(tbl);
-	return tbl;
+		table = CottageRoomsBActorPlacements;
+	fdAssignViewFlags(table);
+	return table;
 }
 
 /* In Babi's Palace, one of Babi's scholars asks whether the party knows
@@ -416,7 +416,7 @@ static void scCottageRoomsBAskWhetherMaskedManWasFelix(void)
 
 /* Takes an exit by a doorway or the stairs, on the stormy night stopping the
    lightning first. */
-static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNum)
+static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNumber)
 {
 	if(gmFlagGet(FLAG_VALE_STORM) != 0) {
 		fdWeatherStopLightning();
@@ -425,7 +425,7 @@ static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNum)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	syImportScriptSetExitRequest(exitNum);
+	syImportScriptSetExitRequest(exitNumber);
 }
 
 /* The exits in Vale: stepping on the metatile behavior of the same number in
@@ -437,7 +437,7 @@ static void scCottageRoomsBCloseScreenAndExit(Sint32 exitNum)
    (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST). */
 static void scCottageRoomsBExitToValePlazaNorthwest(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
@@ -446,7 +446,7 @@ static void scCottageRoomsBExitToValePlazaNorthwest(void)
    (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH). */
 static void scCottageRoomsBExitToValeKradensCottageNorth(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(
 		COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
@@ -456,7 +456,7 @@ static void scCottageRoomsBExitToValeKradensCottageNorth(void)
    (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH). */
 static void scCottageRoomsBExitToValePlazaNortheast(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
@@ -465,7 +465,7 @@ static void scCottageRoomsBExitToValePlazaNortheast(void)
    Vale's plaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH). */
 static void scCottageRoomsBExitToValePlazaWest(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
@@ -473,7 +473,7 @@ static void scCottageRoomsBExitToValePlazaWest(void)
    its guest room. */
 static void scCottageRoomsBExitToInnUpstairs(void)
 {
-	sySndPlay(SE_STAIRS_UP);
+	sySoundPlay(SE_STAIRS_UP);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
 
@@ -483,14 +483,14 @@ static void scCottageRoomsBExitToInnUpstairs(void)
    (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE). */
 static void scCottageRoomsBExitToVale(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
 /* Climbing the stairs of Isaac's house takes the party up to his bedroom. */
 static void scCottageRoomsBExitToIsaacsHouseUpstairs(void)
 {
-	sySndPlay(SE_STAIRS_UP);
+	sySoundPlay(SE_STAIRS_UP);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
@@ -498,7 +498,7 @@ static void scCottageRoomsBExitToIsaacsHouseUpstairs(void)
    to the innkeeper's counter. */
 static void scCottageRoomsBExitToInnDownstairs(void)
 {
-	sySndPlay(SE_STAIRS_DOWN);
+	sySoundPlay(SE_STAIRS_DOWN);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
@@ -506,7 +506,7 @@ static void scCottageRoomsBExitToInnDownstairs(void)
    floor of his house. */
 static void scCottageRoomsBExitToIsaacsHouseDownstairs(void)
 {
-	sySndPlay(SE_STAIRS_DOWN);
+	sySoundPlay(SE_STAIRS_DOWN);
 	scCottageRoomsBCloseScreenAndExit(
 		COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
@@ -515,7 +515,7 @@ static void scCottageRoomsBExitToIsaacsHouseDownstairs(void)
    comes back out into the storm (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST). */
 static void scCottageRoomsBExitToValePrologueWest(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST);
 }
 
@@ -523,7 +523,7 @@ static void scCottageRoomsBExitToValePrologueWest(void)
    comes back out into the storm (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST). */
 static void scCottageRoomsBExitToValePrologueEast(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scCottageRoomsBCloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST);
 }
 
@@ -545,19 +545,19 @@ Sint32 scInit(void)
 		} else {
 			scCottageRoomsBRestoreRoomPatch();
 		}
-		fdActorSetSprPriority(ACTOR_INNKEEPER, 1);
+		fdActorSetSpritePriority(ACTOR_INNKEEPER, 1);
 		if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
-			fdActorSetSprFlags(fdActorGet(ACTOR_INVISIBLE_AFTER_KALAY), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_INVISIBLE_AFTER_KALAY), 0);
 			if(MainRoutineStateWork.entrance == COTTAGE_ROOMS_B_FROM_VALE ||
 				MainRoutineStateWork.entrance ==
 					COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
 				if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) != 0) {
 					if(gmFlagGet(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
-						fdTilesetAnimResume(DORAS_SICKBED_EMPTY_ANIMATION);
+						fdTilesetAnimationResume(DORAS_SICKBED_EMPTY_ANIMATION);
 					}
 				} else {
-					fdTilesetAnimResume(DORAS_SICKBED_IN_BED_ANIMATION);
-					fdActorSetSprFlags(fdActorGet(ACTOR_DORA), 0);
+					fdTilesetAnimationResume(DORAS_SICKBED_IN_BED_ANIMATION);
+					fdActorSetSpriteFlags(fdActorGet(ACTOR_DORA), 0);
 					fdActorSetAnimation(ACTOR_DORA, DORA_ANIMATION_IN_BED);
 				}
 			}
@@ -604,7 +604,7 @@ Sint32 scInit(void)
 static void scCottageRoomsBDoraWakesIsaac(void)
 {
 	Sint32				   firstMsg;
-	SPR					  *spr;
+	SPR					  *sprite;
 	MAP_GRID_SCROLL_STATE *grid;
 	ACTOR				  *viewCenter;
 	FIELD_STATE			  *state;
@@ -612,7 +612,7 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	state = FieldStateWork;
 	grid = MapGridState[0];
 	viewCenter = state->camera;
-	spr = fdActorGet(ACTOR_TUNIC)->spr;
+	sprite = fdActorGet(ACTOR_TUNIC)->sprite;
 	fdScriptStart();
 	fdActorSetPos(ACTOR_YOUNG_SMITH, 0, 0);
 	fdActorSetPos(ACTOR_YOUNG_SMITHS_MOTHER, 0, 0);
@@ -621,15 +621,15 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	fdActorSetPos(ACTOR_INN_WORKER, 0, 0);
 	fdActorSetPos(ACTOR_MASKED_MAN, 0, 0);
 	/* Isaac lies asleep in bed; his tunic is set beside him. */
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_ASLEEP);
-	spr->rotation = TRIG_TURN / 48;
-	fdActorGet(ACTOR_TUNIC)->motionFlg = 0;
-	fdActorSetSprFlags(fdActorGet(ACTOR_TUNIC), 0);
+	sprite->rotation = TRIG_TURN / 48;
+	fdActorGet(ACTOR_TUNIC)->motionFlags = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TUNIC), 0);
 	fdActorSetPos(ACTOR_TUNIC, 576, 650);
-	fdTilesetAnimResume(ISAACS_BED_ASLEEP_ANIMATION);
+	fdTilesetAnimationResume(ISAACS_BED_ASLEEP_ANIMATION);
 	fdActorSetPos(ACTOR_DORA, 534, 688);
-	fdActorSystemSuspendProjectionAndShowSprs();
+	fdActorSystemSuspendProjectionAndShowSprites();
 	/* On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake
 	   up!" */
 	fdMessageSetVoiceFromActor(ACTOR_DORA);
@@ -653,7 +653,7 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	sySynch(1);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	FieldStateWork->transitionFrm = 64;
+	FieldStateWork->transitionFrame = 64;
 	fdWeatherStartLightning();
 	((FIELD_BLEND_STATE *)FieldBlendStateWork[0])->loud = 1;
 	fdWeatherLastLightning();
@@ -675,21 +675,21 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	/* Isaac gets out of bed and jumps down beside Dora. */
-	fdTilesetAnimPause(ISAACS_BED_ASLEEP_ANIMATION);
+	fdTilesetAnimationPause(ISAACS_BED_ASLEEP_ANIMATION);
 	fdScriptWait(20);
-	fdTilesetAnimResume(ISAACS_BED_GETTING_UP_ANIMATION);
+	fdTilesetAnimationResume(ISAACS_BED_GETTING_UP_ANIMATION);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_GET_UP);
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
-	fdTilesetAnimPause(ISAACS_BED_GETTING_UP_ANIMATION);
-	fdTilesetAnimResume(ISAACS_BED_EMPTY_ANIMATION);
+	fdTilesetAnimationPause(ISAACS_BED_GETTING_UP_ANIMATION);
+	fdTilesetAnimationResume(ISAACS_BED_EMPTY_ANIMATION);
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
 	fdScriptWait(30);
 	fdActorFaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_PARTY_LEADER, 4, 0);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
 	fdActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
 	fdScriptWait(20);
@@ -703,28 +703,28 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	fdActorStartRepeatedMotion(ACTOR_DORA, 2);
 	fdScriptShowMessageThenWait(
 		SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
-	fdActorGet(ACTOR_DORA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_DORA, 542, 680);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_DORA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_DORA, 2);
-	fdActorRegisterSprMetadata(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
+	fdActorRegisterSpriteMetadata(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_TUNIC);
 	gmFlagSet(FLAG_ISAAC_WEARS_TUNIC);
-	sySndPlay(SE_RECOVERY);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
+	sySoundPlay(SE_RECOVERY);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_WHITE);
 	fdScriptWait(10);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_DORA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_DORA, 534, 688);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_DORA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_DORA, 1.5);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1.5);
 	fdCameraFollowActor(ACTOR_DORA, 1);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetScript(ACTOR_DORA, CottageRoomsBLeaveHouseScript);
 	fdScriptWait(20);
 	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBLeaveHouseScript);
@@ -749,7 +749,7 @@ static void scCottageRoomsBDoraWakesIsaac(void)
 	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBIsaacLeavesScript);
 	fdScriptWait(20);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(
@@ -776,12 +776,12 @@ static inline void scSetBlendAlpha(Uint32 value)
 static void scCottageRoomsBHurryToThePlaza(void)
 {
 	ACTOR			*actor;
-	SPR				*spr;
+	SPR				*sprite;
 	Uint32			 i;
 	volatile Uint16 *alpha;
 
 	actor = fdActorGet(ACTOR_FLAME_AND_SMOKE);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	fdScriptStart();
 	/* The villagers stay out of sight; ACTOR_FLAME_AND_SMOKE starts shaking. */
 	fdActorSetPos(ACTOR_YOUNG_SMITH, 0, 0);
@@ -792,10 +792,10 @@ static void scCottageRoomsBHurryToThePlaza(void)
 	fdActorSetPos(ACTOR_MASKED_MAN, 0, 0);
 	fdActorSetPos(ACTOR_DORA, 431, 391);
 	fdActorSetPos(ACTOR_FLAME_AND_SMOKE, 463, 404);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FLAME_AND_SMOKE), 0);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	actor->motionFlg = 0;
-	spr->image.pri = 1;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FLAME_AND_SMOKE), 0);
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->motionFlags = 0;
+	sprite->image.priority = 1;
 	fdActorSetScript(ACTOR_FLAME_AND_SMOKE, CottageRoomsBFlameShakesScript);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	/* These nine copies redraw the ground floor's metatiles on map layer 2,
@@ -832,7 +832,7 @@ static void scCottageRoomsBHurryToThePlaza(void)
 	fdActorSetScript(ACTOR_DORA, CottageRoomsBDoraRunsAheadScript);
 	fdScriptStartScreenTransition();
 	fdActorWaitForScriptEndById(ACTOR_DORA);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorRunRepeatedMotion(ACTOR_DORA, 2);
 	fdActorFaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
@@ -859,7 +859,7 @@ static void scCottageRoomsBHurryToThePlaza(void)
 	fdScriptWait(10);
 	fdActorSetScript(ACTOR_DORA, CottageRoomsBDoraRunsBackScript);
 	fdActorSetScript(ACTOR_PARTY_LEADER, CottageRoomsBIsaacRunsBackScript);
-	sySndPlay(SE_RUN_BACK);
+	sySoundPlay(SE_RUN_BACK);
 	fdScriptWait(20);
 	/* ACTOR_FLAME_AND_SMOKE flares up, turns to smoke and rises away
 	   (CottageRoomsBFlameRisesScript) as SE_FLAME_FLARE plays. */
@@ -873,7 +873,7 @@ ramp:
 	sySynch(1);
 	if(++i <= 3)
 		goto ramp;
-	sySndPlay(SE_FLAME_FLARE);
+	sySoundPlay(SE_FLAME_FLARE);
 	sySynch(10);
 	for(i = 0; i < BLEND_WEIGHT_MAX; i++) {
 		scSetBlendAlpha(
@@ -903,7 +903,7 @@ ramp:
 	fdActorSetScript(ACTOR_DORA, CottageRoomsBRunToPlazaScript);
 	fdActorRunScriptAndWait(ACTOR_PARTY_LEADER, CottageRoomsBRunToPlazaScript);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
@@ -1017,8 +1017,8 @@ static void scCottageRoomsBVisitSickDora(void)
 	fdScriptWait(80);
 	fdActorSetSpeed(ACTOR_DORA, 0.8);
 	fdActorSetDestination(ACTOR_DORA, 584, 406);
-	fdTilesetAnimPause(DORAS_SICKBED_IN_BED_ANIMATION);
-	fdTilesetAnimResume(DORAS_SICKBED_EMPTY_ANIMATION);
+	fdTilesetAnimationPause(DORAS_SICKBED_IN_BED_ANIMATION);
+	fdTilesetAnimationResume(DORAS_SICKBED_EMPTY_ANIMATION);
 	fdActorSetAnimation(ACTOR_DORA, DORA_ANIMATION_HEAD_BOWED);
 	fdScriptWait(80);
 	fdActorRunRepeatedMotion(ACTOR_DORA, 2);
@@ -1090,7 +1090,7 @@ static void scCottageRoomsBVisitSickDora(void)
 	fdScriptWait(40);
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_EAST;
 	sySynch(1);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 558, 388);
 	fdActorSetSpeed(ACTOR_DORA, 1.2);
 	fdActorSetAnimation(ACTOR_DORA, DORA_ANIMATION_STRAIGHTEN);
@@ -1098,7 +1098,7 @@ static void scCottageRoomsBVisitSickDora(void)
 	fdScriptWait(40);
 	fdActorWalkToAndWait(ACTOR_DORA, 580, 382);
 	fdActorFaceDirection(ACTOR_DORA, FACING_WEST, 40);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_DORA, FACING_NORTH, 8);
 	fdActorFaceDirection(ACTOR_DORA, FACING_EAST, 8);
 	fdActorFaceDirection(ACTOR_DORA, FACING_SOUTH, 8);
@@ -1163,7 +1163,7 @@ static void scCottageRoomsBRestoreRoomPatch(void)
 static void scCottageRoomsBShowMythrilBag(void)
 {
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *glyph;
 	Uint8		   clear = 0;
 
@@ -1176,15 +1176,15 @@ static void scCottageRoomsBShowMythrilBag(void)
 	fdCameraFollowActor(ACTOR_KRADEN, 1);
 	actor = syFieldActorCreate(
 		SPRITE_BLANK, toFIXED(328), toFIXED(2), toFIXED(195));
-	actor->motionFlg = clear;
-	spr = actor->spr;
+	actor->motionFlags = clear;
+	sprite = actor->sprite;
 	actor->y.fixed = toFIXED(5);
-	spr->cnt = clear;
-	spr->image.fullCol = 0;
-	spr->image.pal = 0;
-	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
+	sprite->count = clear;
+	sprite->image.fullColor = 0;
+	sprite->image.palette = 0;
+	glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
 	mnIconDrawItem(ITEM_MYTHRIL_BAG);
-	syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+	syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 	fdScriptStartScreenTransition();
@@ -1211,9 +1211,9 @@ static void scCottageRoomsBShowMythrilBag(void)
 UNUSED static void scCottageRoomsBFlashPaletteAndSpawnPair(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scCottageRoomsBSpawnEffectPair(actor);
@@ -1227,7 +1227,7 @@ UNUSED static void scCottageRoomsBFlashPaletteAndSpawnPair(ACTOR *actor)
 static void scCottageRoomsBCyclePaletteAndSpawnPair(ACTOR *actor)
 {
 	if((TickCount & 1) != 0) {
-		fdActorSetColMode(actor, (TickCount >> 1) % 6);
+		fdActorSetColorMode(actor, (TickCount >> 1) % 6);
 	}
 	if((TickCount & 15) == 0) {
 		scCottageRoomsBSpawnEffectPair(actor);
@@ -1245,31 +1245,32 @@ static void scCottageRoomsBSpawnEffectPair(ACTOR *parent)
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
 	SPR				   *part;
-	SPR				   *spr;
+	SPR				   *sprite;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
-	Sint32				effectIdx;
+	Sint32				effectIndex;
 
-	for(effectIdx = 0; effectIdx < 2; ++effectIdx) {
+	for(effectIndex = 0; effectIndex < 2; ++effectIndex) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
 			parent->y.fixed, parent->z.fixed);
-		pair[effectIdx] = child;
+		pair[effectIndex] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			part = child->spr;
-			child->motionFlg = 0;
-			child->tmr = 0;
+			part = child->sprite;
+			child->motionFlags = 0;
+			child->timer = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
 			if(part != NULL) {
-				spr = part;
-				fdSprStartAnimation(part, 0);
-				spr->flg = 0;
-				syVRAMCacheFreeEntry(spr->slot);
-				spr->slot = effectState->tileSlot;
-				spr->retainCacheEntry = 1;
-				spr->image.tile =
-					(VramCacheEntries[spr->slot].ofs >> 5) & OBJ_TILE_MASK;
-				spr->image.fullCol = 0;
-				spr->image.shape = RING_HALF_SHAPE;
+				sprite = part;
+				fdSpriteStartAnimation(part, 0);
+				sprite->flags = 0;
+				syVRAMCacheFreeEntry(sprite->slot);
+				sprite->slot = effectState->tileSlot;
+				sprite->retainCacheEntry = 1;
+				sprite->image.tile =
+					(VramCacheEntries[sprite->slot].offset >> 5) &
+					OBJ_TILE_MASK;
+				sprite->image.fullColor = 0;
+				sprite->image.shape = RING_HALF_SHAPE;
 				part->image.size = RING_HALF_SIZE;
 				part->entries[0]->picture = 0;
 			}
@@ -1277,18 +1278,18 @@ static void scCottageRoomsBSpawnEffectPair(ACTOR *parent)
 	}
 	{
 		ACTOR *effectActor = pair[0];
-		SPR	  *effectSpr = effectActor->spr;
+		SPR	  *effectSprite = effectActor->sprite;
 
 		effectActor->update = scFieldEffectRiseRingFrontHalf;
-		effectSpr->image.pri = 2;
+		effectSprite->image.priority = 2;
 	}
 	{
 		ACTOR *effectActor = pair[1];
-		SPR	  *effectSpr = effectActor->spr;
+		SPR	  *effectSprite = effectActor->sprite;
 
-		effectSpr->image.pri = 2;
+		effectSprite->image.priority = 2;
 		effectActor->update = scFieldEffectRiseRingBackHalf;
-		effectActor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		effectActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 
@@ -1303,7 +1304,7 @@ UNUSED static void scCottageRoomsBCyclePaletteWithParticles(void)
 /* Cycles the tunic's palette, with no effects. */
 UNUSED static void scCottageRoomsBCyclePaletteWithoutParticles(void)
 {
-	scCycleColModesOnOddTicks(fdActorGet(ACTOR_TUNIC));
+	scCycleColorModesOnOddTicks(fdActorGet(ACTOR_TUNIC));
 }
 
 /* Dora casts Catch on Isaac's tunic beside his bed. */

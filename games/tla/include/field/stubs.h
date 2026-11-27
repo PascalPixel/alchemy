@@ -13,20 +13,21 @@ void fdWorldMapLoadGraphicsStub(Sint32 x, Sint32 z);
    (mode is an ACTOR_SYSTEM_MODE). */
 void fdActorSystemInitStub(Sint32 mode);
 /* Starts an animation on a sprite, unless the sprite plays it already. */
-Sint32 fdSprStartAnimationStub(void *spr, Sint32 anm);
+Sint32 fdSpriteStartAnimationStub(void *sprite, Sint32 animation);
 /* The height of the ground at (x, z) (16.16 pixels) on the given layer, less
    base. */
 FIXED fdMapGridGetTerrainHeightAboveStub(
 	FIXED x, FIXED z, Sint32 layer, FIXED base);
 /* Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
-   is in use; encodedSpr is the kind of actor and its sprite. */
-struct ACTOR *fdActorCreateStub(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z);
+   is in use; encodedSprite is the kind of actor and its sprite. */
+struct ACTOR *fdActorCreateStub(
+	Sint32 encodedSprite, FIXED x, FIXED y, FIXED z);
 /* Loads the pictures of animation id number into picture cache slot's buffer,
    their colours remapped for variant. */
-Sint32 fdSprPictureCacheLoadStub(
-	Uint32 slot, Uint32 *buf, Sint32 num, Uint32 variant);
+Sint32 fdSpritePictureCacheLoadStub(
+	Uint32 slot, Uint32 *buf, Sint32 number, Uint32 variant);
 /* Starts animation on a sprite animation when its set has it. */
-void fdSprAnimationStartStub(void *layer, Sint32 anm);
+void fdSpriteAnimationStartStub(void *layer, Sint32 animation);
 /* Frees the actors' shadow tiles. */
 void fdActorShadowFreeTilesStub(void);
 /* Loads the actors' shadow tiles. */
@@ -38,7 +39,7 @@ Sint32 fdWorldMapGetBattleEnvironmentStub(void *pos, Sint32 *encounterRegion);
 void fdWorldMapInitPerspectiveStub(void);
 /* Loads map index from MapsWork: its pictures, collision, metatiles and
    scripts, and starts its layers scrolling. */
-void fdMapGridLoadMapStub(Sint32 idx);
+void fdMapGridLoadMapStub(Sint32 index);
 /* Loads and draws the 2x2 world map tiles around the player in both layers. */
 void fdWorldMapUpdateCurrentTileBlockStub(void);
 /* Plays every edit of the map whose flag is set. */

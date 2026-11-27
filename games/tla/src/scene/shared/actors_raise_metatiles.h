@@ -8,9 +8,9 @@ void scMagmaRockInsideRaiseActorMetatiles(Uint16 *list)
 		Sint32 height =
 			fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
 
-		actor->motionFlg = 0;
-		actor->collisionFlg = 0;
-		fdActorSetSprFlags(actor, 0);
+		actor->motionFlags = 0;
+		actor->collisionFlags = 0;
+		fdActorSetSpriteFlags(actor, 0);
 		scMagmaRockInsideSetMetatileShape(actor->layer,
 			FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed),
 			METATILE_HEIGHT_STEPS(height) + METATILE_HEIGHT_STEPS(toFIXED(32)));

@@ -20,11 +20,11 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	const ENEMY_DEFINITION *enemy;
 	Uint16					name[UNIT_NAME_SIZE];
 	Sint32					i;
-	Uint32					idx;
+	Uint32					index;
 	Sint32					copy;
-	Sint32					cnt;
+	Sint32					count;
 
-	idx = enemyId - ENEMY_ID_FIRST;
+	index = enemyId - ENEMY_ID_FIRST;
 	if(unitId < FIRST_ENEMY_UNIT)
 		return FALSE;
 	/* BUG: one too many: unit FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE passes, but
@@ -32,13 +32,13 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	   it. */
 	if(unitId > FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE)
 		return FALSE;
-	if(idx > ENEMY_ID_MAX - ENEMY_ID_FIRST)
+	if(index > ENEMY_ID_MAX - ENEMY_ID_FIRST)
 		return FALSE;
 	unit = gmUnitGet(unitId);
 	syWordsClear(unit, BATTLE_UNIT_SIZE);
-	if(idx >= ENEMY_DEFINITION_COUNT)
-		idx = 0;
-	enemy = &EnemyDefinitions[idx];
+	if(index >= ENEMY_DEFINITION_COUNT)
+		index = 0;
+	enemy = &EnemyDefinitions[index];
 	unit->level = enemy->level;
 	unit->baseHp = enemy->hp;
 	unit->hp = enemy->hp;
@@ -52,10 +52,10 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	unit->baseDefense = enemy->defense;
 	unit->baseAgility = enemy->agility;
 	unit->baseLuck = enemy->luck;
-	unit->baseActionCnt = enemy->actionCnt;
+	unit->baseActionCount = enemy->actionCount;
 	unit->baseHpRegen = enemy->hpRegen;
 	unit->basePpRegen = enemy->ppRegen;
-	mnMessageDecodeRawStub(idx + MsgEnemyName, name, UNIT_NAME_SIZE);
+	mnMessageDecodeRawStub(index + MsgEnemyName, name, UNIT_NAME_SIZE);
 	for(i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
 		unit->name[i] = name[i];
 	/* Enemies of one kind are told apart by a letter after the name; past the
@@ -66,20 +66,20 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 	}
 	unit->name[i] = 0;
 	unit->name[UNIT_NAME_SIZE - 1] = 0;
-	cnt = 0;
+	count = 0;
 	for(i = 0; i < 4; i++) {
 		if(enemy->items[i] != 0) {
-			for(copy = 0; copy < enemy->cnts[i]; copy++) {
-				if(cnt < INVENTORY_SLOTS)
-					unit->inventory[cnt++] = enemy->items[i];
+			for(copy = 0; copy < enemy->counts[i]; copy++) {
+				if(count < INVENTORY_SLOTS)
+					unit->inventory[count++] = enemy->items[i];
 			}
 		}
 	}
 	unit->aiState = enemy->aiState;
 	unit->classId = CLASS_NONE;
 	unit->id = enemyId;
-	gmUnitCalcBaseElements(unitId, unit->baseElement);
-	gmUnitCalc(unitId);
+	gmUnitCalculateBaseElements(unitId, unit->baseElement);
+	gmUnitCalculate(unitId);
 	unit->side = BATTLE_SIDE_ENEMY;
 	switch(unit->id) {
 	case ENEMY_VENUS_DJINNI_QUARTZ:
@@ -109,14 +109,14 @@ Bool gmBattleUnitSet(Sint32 unitId, Sint32 enemyId, Sint32 suffix)
 Sint32 gmPartyCountMembers(void)
 {
 	Sint32 unitId;
-	Sint32 cnt;
+	Sint32 count;
 
-	cnt = 0;
+	count = 0;
 	for(unitId = 0; unitId <= PIERS; unitId++) {
 		if(gmFlagGet(FLAG_IN_PARTY(unitId)) != 0)
-			cnt++;
+			count++;
 	}
-	return cnt;
+	return count;
 }
 
 /* Adds a character to the end of the party unless it is there already, and
@@ -124,14 +124,14 @@ Sint32 gmPartyCountMembers(void)
 Sint32 gmPartyAddMember(Sint32 unitId)
 {
 	Sint32 partySize = gmPartyCountMembers();
-	Sint32 partyIdx;
+	Sint32 partyIndex;
 
 	gmFlagSet(FLAG_IN_PARTY(unitId));
-	for(partyIdx = 0; partyIdx < partySize; partyIdx++) {
-		if(MainRoutineStateWork.party[partyIdx] == unitId)
+	for(partyIndex = 0; partyIndex < partySize; partyIndex++) {
+		if(MainRoutineStateWork.party[partyIndex] == unitId)
 			return partySize;
 	}
-	MainRoutineStateWork.party[partyIdx] = unitId;
+	MainRoutineStateWork.party[partyIndex] = unitId;
 	return partySize + 1;
 }
 
@@ -140,35 +140,35 @@ Sint32 gmPartyAddMember(Sint32 unitId)
 Sint32 gmPartyRemoveMember(Sint32 unitId)
 {
 	Sint32 partySize = gmPartyCountMembers();
-	Sint32 removedIdx;
-	Sint32 partyIdx;
+	Sint32 removedIndex;
+	Sint32 partyIndex;
 
 	gmFlagClear(FLAG_IN_PARTY(unitId));
-	for(removedIdx = 0; removedIdx < partySize; removedIdx++) {
-		if(MainRoutineStateWork.party[removedIdx] == unitId)
+	for(removedIndex = 0; removedIndex < partySize; removedIndex++) {
+		if(MainRoutineStateWork.party[removedIndex] == unitId)
 			break;
 	}
-	for(partyIdx = removedIdx; partyIdx < partySize - 1; partyIdx++)
-		MainRoutineStateWork.party[partyIdx] =
-			MainRoutineStateWork.party[partyIdx + 1];
+	for(partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
+		MainRoutineStateWork.party[partyIndex] =
+			MainRoutineStateWork.party[partyIndex + 1];
 	return gmPartyCountMembers();
 }
 
 /* Writes the party members to unitIds and returns how many there are. */
 Sint32 gmPartyListMembers(Sint16 *unitIds)
 {
-	Sint32 cnt = 0;
+	Sint32 count = 0;
 
 	if(unitIds != NULL) {
-		Sint32 idx;
+		Sint32 index;
 
-		cnt = gmPartyCountMembers();
-		for(idx = 0; idx != cnt; idx++) {
-			*unitIds++ = MainRoutineStateWork.party[idx];
+		count = gmPartyCountMembers();
+		for(index = 0; index != count; index++) {
+			*unitIds++ = MainRoutineStateWork.party[index];
 		}
 		*unitIds = BATTLE_UNIT_LIST_END;
 	}
-	return cnt;
+	return count;
 }
 
 /* Adds `amount` to the party's coins, kept between 0 and COIN_MAX, and returns
@@ -220,7 +220,7 @@ Sint32 gmSummonListLearned(Uint8 *output)
 {
 	const Uint8 *summon = SummonOrderList;
 	const Uint8 *last = &SummonOrderList[ARRAY_COUNT(SummonOrderList) - 1];
-	Sint32		 cnt = 0;
+	Sint32		 count = 0;
 
 	do {
 		Uint8 summonId = *summon++;
@@ -228,11 +228,11 @@ Sint32 gmSummonListLearned(Uint8 *output)
 		if(gmDjinnGetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask &
 			(1 << summonId)) {
 			*output++ = summonId;
-			cnt++;
+			count++;
 		}
 	} while(summon <= last);
 	*output = SUMMON_END;
-	return cnt;
+	return count;
 }
 
 /* Returns summon `summonId`'s definition, or NULL past the last. */

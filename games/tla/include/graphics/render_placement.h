@@ -29,7 +29,7 @@ typedef struct SPR_PLACEMENT {
 } SPR_PLACEMENT;
 
 /* Returns the placement's values as a writable array. */
-static inline Sint32 *sySprPlacementValues(SPR_PLACEMENT *placement)
+static inline Sint32 *sySpritePlacementValues(SPR_PLACEMENT *placement)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
 	return placement->values;

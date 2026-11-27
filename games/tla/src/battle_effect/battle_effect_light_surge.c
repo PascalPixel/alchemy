@@ -72,14 +72,14 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	Sint32				 radius;
-	Sint32				 ang;
+	Sint32				 angle;
 	Sint32				 z;
 	Sint32				 turn;
 	Sint32				 half;
-	Sint32				 idx;
+	Sint32				 index;
 	Sint16				*entry;
 	/* FAKEMATCH(temporary): out, a second pointer holding &screen, taken from
 	 * pos in one arm and as &screen in the other. */
@@ -88,7 +88,7 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 	Uint32			  scale;
 	BATTLE_CAMERA	 *camera;
 	Sint16			  savedYaw;
-	MOTION_OBJECT	 *tgt;
+	MOTION_OBJECT	 *target;
 	Sint16			 *circles;
 	Sint32			  x;
 	Sint32			  y;
@@ -104,15 +104,15 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 	PARTICLE		 *flash;
 	PARTICLE		 *glow;
 	PROJECTED_VERTEX *vertices;
-	Sint32			  ofs;
+	Sint32			  offset;
 	Sint32			  size;
 	Sint32			  shade;
-	Uint8			 *sprs;
+	Uint8			 *sprites;
 	Uint8			 *cells;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -120,28 +120,28 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 		RESOURCE_GLOW_ORB_TEXTURE, state->sheet + LIGHT_SURGE_GLOW_ORB, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
 		state->sheet + LIGHT_SURGE_GLOW_BAND, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	camera = RamHeapSlots->cameraState;
 	savedYaw = camera->yaw;
-	tgt = btObjectGetStub(args->tgts[0])->obj;
+	target = btObjectGetStub(args->targets[0])->object;
 
 	/* The discs' quarters, packed in the map cell buffer; the sheet's start
 	   keeps where each lies. */
 	cells = MapGridMetatileBuffer;
 	circles = (Sint16 *)state->sheet;
-	ofs = 0;
+	offset = 0;
 	size = 2;
 	for(i = 0; i != SURGE_CIRCLES; i++) {
 		btEffectDrawShadedCircles(
-			(Uint8 *)(ofs + (Sint32)cells), size, toFIXED(1));
-		circles[i] = ofs;
-		ofs += (i * 2 + 3) * size / 2;
+			(Uint8 *)(offset + (Sint32)cells), size, toFIXED(1));
+		circles[i] = offset;
+		offset += (i * 2 + 3) * size / 2;
 		size += 2;
 	}
 
-	frm = 0;
+	frame = 0;
 	/* FAKEMATCH(dead): pos first takes the camera's look-at point. */
 	pos = (SCREEN_POINT *)camera->focus;
 	/* FAKEMATCH(dead): the texture's address, computed as center's address
@@ -149,14 +149,14 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 	vertices = (PROJECTED_VERTEX *)((Sint32)&center - 8);
 	/* FAKEMATCH(temporary): pos holds &screen. */
 	pos = &screen;
-	for(; frm != LIGHT_SURGE_TICKS; frm++) {
-		if(frm == LIGHT_SURGE_DAMAGE_TICK) {
+	for(; frame != LIGHT_SURGE_TICKS; frame++) {
+		if(frame == LIGHT_SURGE_DAMAGE_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
-		if(frm >= LIGHT_SURGE_RECOLOR_TICK && (frm & 3) == 0) {
+		if(frame >= LIGHT_SURGE_RECOLOR_TICK && (frame & 3) == 0) {
 			btEffectStepPaletteToResource(RESOURCE_MERCURY_DJINN_SHEET);
 		}
-		if(frm == 0) {
+		if(frame == 0) {
 			camera->yaw = savedYaw;
 			EFFECT_FREE_PARTICLES(i, state->particles, SURGE_FIRST_BOLT);
 			/* Each bolt falls from 110 pixels up, 32 to 95 pixels out from the
@@ -166,31 +166,31 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 				i++) {
 				fall = &state->particles[SURGE_FIRST_BOLT + i];
 				radius = (syRandom() & 63) + 32;
-				ang = syRandom() & TRIG_ANGLE_MASK;
+				angle = syRandom() & TRIG_ANGLE_MASK;
 
-				fall->x = sySin(ang) * radius;
-				fall->z = syCos(ang) * radius;
+				fall->x = sySin(angle) * radius;
+				fall->z = syCos(angle) * radius;
 				fall->y = toFIXED(110);
 				radius = (syRandom() & 31) + 4;
-				fall->velX = tgt->x + sySin(ang) * radius;
-				z = tgt->z + syCos(ang) * radius;
+				fall->velocityX = target->x + sySin(angle) * radius;
+				z = target->z + syCos(angle) * radius;
 				/* DEAD: the z and y speeds are overwritten below before any
 				   read; the ROM keeps the stores. */
-				fall->velZ = z;
-				fall->velY = -toFIXED(8);
-				fall->velX = (fall->velX - fall->x) / SURGE_BOLT_FALL;
-				fall->velY = (-toFIXED(8) - fall->y) / SURGE_BOLT_FALL;
-				fall->velZ = (z - fall->z) / SURGE_BOLT_FALL;
+				fall->velocityZ = z;
+				fall->velocityY = -toFIXED(8);
+				fall->velocityX = (fall->velocityX - fall->x) / SURGE_BOLT_FALL;
+				fall->velocityY = (-toFIXED(8) - fall->y) / SURGE_BOLT_FALL;
+				fall->velocityZ = (z - fall->z) / SURGE_BOLT_FALL;
 				fall->variant = -i * SURGE_BOLT_INTERVAL;
 			}
 		}
-		if((Uint32)(frm - SURGE_SWING_START) <
+		if((Uint32)(frame - SURGE_SWING_START) <
 			SURGE_SWING_END - SURGE_SWING_START) {
-			if(frm < SURGE_SWING_END - SURGE_SWING_SLOWING) {
+			if(frame < SURGE_SWING_END - SURGE_SWING_SLOWING) {
 				turn = SURGE_SWING_TURN;
 			} else {
 				turn = SURGE_SWING_TURN -
-					(frm - (SURGE_SWING_END - SURGE_SWING_SLOWING)) *
+					(frame - (SURGE_SWING_END - SURGE_SWING_SLOWING)) *
 						(SURGE_SWING_TURN / SURGE_SWING_SLOWING);
 			}
 			if(args->side == EFFECT_SIDE_ENEMIES) {
@@ -214,23 +214,23 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 			   back. */
 			size = (FIXEDtoINT(sySin(disc->variant *
 								   (DEGtoANG(180) / SURGE_DISC_TICKS)) *
-					   disc->velX)) *
+					   disc->velocityX)) *
 				2;
-			idx = size - 2;
+			index = size - 2;
 			disc->variant++;
 			/* A disc with no size, or as large as the largest circle, is not
 			   drawn. */
-			if((Uint32)idx >= SURGE_CIRCLE_SIZE_MAX - 2) {
+			if((Uint32)index >= SURGE_CIRCLE_SIZE_MAX - 2) {
 				continue;
 			}
 			btEffectPosProjectPoint(disc, pos);
-			idx >>= 1;
+			index >>= 1;
 			x = pos->x / 2;
 			y = pos->y;
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-			idx <<= 1;
-			entry = (Sint16 *)(idx + (Sint32)circles);
+			index <<= 1;
+			entry = (Sint16 *)(index + (Sint32)circles);
 			half = size >> 1;
 			(RamHeapSlots->ramCodePaired)(canvas,
 				(void *)(*entry + (Sint32)cells), x - half, y - size, half,
@@ -257,7 +257,7 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 
 		/* The bolts: GlowBandTextureA across a quad from its tail to its
 		   head. */
-		vertices = syHeapAllocEWRAM(4 * sizeof(PROJECTED_VERTEX));
+		vertices = syHeapAllocateEWRAM(4 * sizeof(PROJECTED_VERTEX));
 		model = btRenderAllocateModelList(1);
 		shade = 0;
 		texture.logWidth = 5;
@@ -278,14 +278,14 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 				continue;
 			}
 			if(t >= SURGE_BOLT_TAIL) {
-				point[0] = bolt->x + bolt->velX * (t - SURGE_BOLT_TAIL);
-				point[1] =
-					bolt->y + bolt->velY * (bolt->variant - SURGE_BOLT_TAIL);
-				point[2] =
-					bolt->z + bolt->velZ * (bolt->variant - SURGE_BOLT_TAIL);
+				point[0] = bolt->x + bolt->velocityX * (t - SURGE_BOLT_TAIL);
+				point[1] = bolt->y +
+					bolt->velocityY * (bolt->variant - SURGE_BOLT_TAIL);
+				point[2] = bolt->z +
+					bolt->velocityZ * (bolt->variant - SURGE_BOLT_TAIL);
 				if(bolt->variant == SURGE_BOLT_GLOW) {
 					SET_POSITION(glow, point[0], point[1], point[2]);
-					glow->velX = (syRandom() & 15) + 8;
+					glow->velocityX = (syRandom() & 15) + 8;
 					glow->variant = 0;
 				}
 				out = pos;
@@ -299,23 +299,23 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 			vertices[1].x = out->x / 2 + SURGE_BOLT_HALF_WIDTH;
 			vertices[1].y = out->y;
 			if(bolt->variant < SURGE_BOLT_FALL) {
-				point[0] = bolt->x + bolt->velX * bolt->variant;
-				point[1] = bolt->y + bolt->velY * bolt->variant;
-				point[2] = bolt->z + bolt->velZ * bolt->variant;
+				point[0] = bolt->x + bolt->velocityX * bolt->variant;
+				point[1] = bolt->y + bolt->velocityY * bolt->variant;
+				point[2] = bolt->z + bolt->velocityZ * bolt->variant;
 			} else {
-				point[0] = bolt->x + bolt->velX * SURGE_BOLT_FALL;
-				point[1] = bolt->y + bolt->velY * SURGE_BOLT_FALL;
-				point[2] = bolt->z + bolt->velZ * SURGE_BOLT_FALL;
+				point[0] = bolt->x + bolt->velocityX * SURGE_BOLT_FALL;
+				point[1] = bolt->y + bolt->velocityY * SURGE_BOLT_FALL;
+				point[2] = bolt->z + bolt->velocityZ * SURGE_BOLT_FALL;
 			}
 			if(bolt->variant == SURGE_BOLT_FALL) {
 				SET_POSITION(flash, point[0], point[1], point[2]);
-				flash->velX = (syRandom() & 7) + 24;
+				flash->velocityX = (syRandom() & 7) + 24;
 				flash->variant = 0;
-				state->shakeFrm = 4;
-				sySndPlayStub(SE_CRASH);
-				btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_NUDGE);
+				state->shakeFrame = 4;
+				sySoundPlayStub(SE_CRASH);
+				btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_NUDGE);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 2);
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 2);
 			}
 			btEffectPosProjectPoint(point, out);
 			vertices[2].x = out->x / 2 - SURGE_BOLT_HALF_WIDTH;
@@ -327,9 +327,9 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 
 		/* The rings: GlowOrbTexture on a square, twice as tall on the canvas as
 		   it is wide, so round on the screen. */
-		if((Uint32)(frm - SURGE_RINGS_START) <
+		if((Uint32)(frame - SURGE_RINGS_START) <
 			SURGE_RINGS_END - SURGE_RINGS_START) {
-			btEffectPosProjectBattler(args->tgts[0], &center);
+			btEffectPosProjectBattler(args->targets[0], &center);
 			texture.logWidth = 5;
 			texture.logHeight = 5;
 			texture.pixels = state->sheet + LIGHT_SURGE_GLOW_ORB;
@@ -339,7 +339,7 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 				/* Each sways along a line through the target, turned with the
 				   camera:
 				   across the screen, and into it drawn as up and down. */
-				FIXED  sway = sySin((frm << 8) + TRIG_TURN / 16);
+				FIXED  sway = sySin((frame << 8) + TRIG_TURN / 16);
 				Sint32 x = INTtoFIXED(center.x / 2 - CANVAS_SIZE / 2) -
 					(LightSurgeRingSways[i] * sway / toFIXED(1)) *
 						sySin(camera->yaw);
@@ -349,20 +349,20 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 				/* FAKEMATCH(dead): a store both arms below overwrite. */
 				if(i == 300)
 					growth = 0;
-				if(frm < SURGE_RINGS_GROWN) {
-					growth = sySin((frm - SURGE_RINGS_START) *
+				if(frame < SURGE_RINGS_GROWN) {
+					growth = sySin((frame - SURGE_RINGS_START) *
 						(DEGtoANG(90) /
 							(SURGE_RINGS_GROWN - SURGE_RINGS_START)));
 				} else {
 					growth = toFIXED(1);
 				}
 				scale = (Uint32)(LightSurgeRingSizes[i] * growth) / toFIXED(1);
-				if(frm >= SURGE_RINGS_DIMMING) {
+				if(frame >= SURGE_RINGS_DIMMING) {
 					shade = LightSurgeRingShades[i] -
-						(frm - SURGE_RINGS_DIMMING) * 8;
-				} else if(frm < SURGE_RINGS_SHOWN) {
-					shade =
-						LightSurgeRingShades[i] + (frm - SURGE_RINGS_SHOWN) * 8;
+						(frame - SURGE_RINGS_DIMMING) * 8;
+				} else if(frame < SURGE_RINGS_SHOWN) {
+					shade = LightSurgeRingShades[i] +
+						(frame - SURGE_RINGS_SHOWN) * 8;
 				} else {
 					shade = LightSurgeRingShades[i];
 				}

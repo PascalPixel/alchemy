@@ -2,11 +2,11 @@
    battle_effect.c. */
 
 /* Calls the empty btEffectNoOperation count times: a busy delay. */
-void btEffectCallNoOperation(Sint32 cnt)
+void btEffectCallNoOperation(Sint32 count)
 {
 	Sint32 i;
 
-	for(i = 0; i != cnt; i++)
+	for(i = 0; i != count; i++)
 		btEffectNoOperation();
 }
 
@@ -17,10 +17,10 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	state = RamHeapSlots->battleEff;
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	state = RamHeapSlots->battleEffect;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 	if(args->kind == SUMMON_EFFECT_NONE) {
@@ -127,10 +127,10 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	state = RamHeapSlots->battleEff;
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	state = RamHeapSlots->battleEffect;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 	BattleEffectHandlers[args->kind - 1](args);
@@ -176,14 +176,14 @@ void btEffectBuildWindowEdgeTable(void)
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 {
 	Sint16 list[UNIT_MAX];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
-	cnt = 0;
-	for(i = 0; i != args->tgtCnt; i++) {
-		if(syUnitGet(args->tgts[i])->hp > 0)
-			list[cnt++] = args->tgts[i];
+	count = 0;
+	for(i = 0; i != args->targetCount; i++) {
+		if(syUnitGet(args->targets[i])->hp > 0)
+			list[count++] = args->targets[i];
 	}
-	list[cnt] = BATTLE_UNIT_LIST_END;
+	list[count] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForListStub(list, 0);
 }

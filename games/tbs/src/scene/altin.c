@@ -419,7 +419,7 @@ static void scAltinTalkToThirstyOldWoman(void)
 		if(gmFlagGet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
 			beast = fdActorGet(ACTOR_WATER_BEAST);
 
-			fdCameraGetActor()->motionFlg = 0;
+			fdCameraGetActor()->motionFlags = 0;
 			fdCameraSetSpeed(1);
 			fdCameraMoveToFX(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
 			/* BUG: FACING_SOUTH's value is passed as an actor id. No actor has
@@ -656,7 +656,7 @@ static void scAltinEnterDoor(void)
 	Uint32		 actorId;
 	FIELD_STATE *state;
 	ACTOR		*actor;
-	Sint32		 doorIdx;
+	Sint32		 doorIndex;
 	Sint32		 column;
 	Sint32		 row;
 	Sint32		 rightColumn;
@@ -666,16 +666,16 @@ static void scAltinEnterDoor(void)
 	for(actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID; actorId++) {
 		actor = fdActorGet(actorId);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 
-	doorIdx = (Sint16)(state->stepCue - METATILE_BEHAVIOR_ALTIN_FIRST_DOOR);
-	column = (Sint16)AltinDoors[doorIdx].x;
-	row = (Sint16)AltinDoors[doorIdx].y;
-	if(doorIdx == DOOR_SANCTUM) {
+	doorIndex = (Sint16)(state->stepCue - METATILE_BEHAVIOR_ALTIN_FIRST_DOOR);
+	column = (Sint16)AltinDoors[doorIndex].x;
+	row = (Sint16)AltinDoors[doorIndex].y;
+	if(doorIndex == DOOR_SANCTUM) {
 		/* The Sanctum's door slides open with SE_THUMP, as Bilibin's does. */
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		fdMapGridCopyMetatilesTo(42, 33, column, row, 2, 2);
 		rightColumn = column + 2;
 		fdMapGridCopyMetatilesTo(42, 35, rightColumn, row, 2, 2);
@@ -684,32 +684,32 @@ static void scAltinEnterDoor(void)
 		fdMapGridCopyMetatilesTo(40, 35, rightColumn, row, 2, 2);
 		fdScriptWait(4);
 	} else {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		/* The cliff house door's row in AltinDoors plays its opening at (39,
 		   17), outside the village's camera box; its house stands at (8, 17),
 		   above where the party comes back out
 		   (ALTIN_FROM_COTTAGE_ROOMS_D_CLIFF_HOUSE), so that doorway is drawn
 		   open here (a render with this copy made on entry shows the open
 		   doorway). */
-		if(doorIdx ==
+		if(doorIndex ==
 			METATILE_BEHAVIOR_ALTIN_CLIFF_HOUSE_DOOR -
 				METATILE_BEHAVIOR_ALTIN_FIRST_DOOR) {
 			fdMapGridCopyMetatilesTo(33, 42, 8, 17, 1, 2);
 		}
-		fdMapGridAnimateMetatiles(AltinDoors[doorIdx].steps, column, row);
+		fdMapGridAnimateMetatiles(AltinDoors[doorIndex].steps, column, row);
 	}
 
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-	if(doorIdx == DOOR_ARMOR_SHOP) {
+	if(doorIndex == DOOR_ARMOR_SHOP) {
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
 	} else {
-		if(doorIdx != DOOR_SANCTUM) {
+		if(doorIndex != DOOR_SANCTUM) {
 			fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
 		} else {
-			fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
+			fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 			fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
 		}
 	}
@@ -731,8 +731,8 @@ static void scAltinWalkIntoMine(void)
 
 	state = FieldStateWork;
 	fdScriptStart();
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
-	sySndPlay(SE_MAP_EXIT);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
+	sySoundPlay(SE_MAP_EXIT);
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
 	syImportScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
@@ -754,12 +754,12 @@ static void scAltinBeastHop(ACTOR *actor)
 		if(--beast->userValue == 1)
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	}
-	if(beast->velY == 0) {
+	if(beast->velocityY == 0) {
 		fdActorSelectAnimation(beast, ANIM_STAND);
 		beast->y.fixed -= toFIXED(3) / 2;
 		if(beast->y.fixed < beast->groundHeight) {
 			if(((FIELD_EFFECT *)actor)->countdown != 0) {
-				sySndPlay(SE_SPLASH);
+				sySoundPlay(SE_SPLASH);
 				((FIELD_EFFECT *)actor)->countdown = 0;
 				/* Four ticks of shake. */
 				beast->userValue = 4;
@@ -771,14 +771,14 @@ static void scAltinBeastHop(ACTOR *actor)
 	} else {
 		beast->paused = 0;
 	}
-	if(beast->tmr == 0) {
-		sySndPlay(SE_JUMP);
+	if(beast->timer == 0) {
+		sySoundPlay(SE_JUMP);
 		((FIELD_EFFECT *)actor)->countdown = 1;
 		fdActorSelectAnimation(beast, WATER_BEAST_ANIMATION_LEAP);
-		beast->velY = toFIXED(3);
+		beast->velocityY = toFIXED(3);
 	}
-	if(++beast->tmr == WATER_BEAST_HOP_PERIOD)
-		beast->tmr = 0;
+	if(++beast->timer == WATER_BEAST_HOP_PERIOD)
+		beast->timer = 0;
 }
 
 /* The water beast hops along the shore into the mine doorway in the west cliff
@@ -788,14 +788,14 @@ static void scAltinBeastHopAway(void)
 	ACTOR *beast;
 
 	beast = fdActorGet(ACTOR_WATER_BEAST);
-	beast->tmr = 0;
+	beast->timer = 0;
 	beast->userValue = 0;
 	beast->gravity = toFIXED(2) / 5;
 	beast->update = scAltinBeastHop;
 	fdActorSetSpeed(ACTOR_WATER_BEAST, 1.2);
 	fdActorMoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
 	fdActorMoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
-	sySndPlay(SE_SPLASH);
+	sySoundPlay(SE_SPLASH);
 	fdActorReleaseById(ACTOR_WATER_BEAST);
 	fdMapGridSetShake(0, 1, 1);
 	fdScriptWait(4);
@@ -883,7 +883,7 @@ static void scAltinApplyWaterLevel(void)
 		fdActorReleaseById(ACTOR_WATER_BEAST);
 	} else {
 		fdQueueMusic(SE_AMBIENT_WATER);
-		fdActorSetSprColById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
+		fdActorSetSpriteColorById(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
 		fdActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
 		sySetTickEvent(scAltinBeastSpewWater, EVENT_PASS_TICK);
 	}
@@ -902,19 +902,19 @@ static void scAltinApplyWaterLevel(void)
 	if(gmFlagGet(FLAG_ALTIN_STATUE_MOVED) != 0) {
 		fdActorSetPos(ACTOR_STONE_STATUE, 360, 168);
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_STONE_STATUE), 0);
-	fdActorSetSprColById(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprColById(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprColById(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
-	fdActorGet(ACTOR_FIRST_CRATE)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_SECOND_CRATE)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_THIRD_CRATE)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_FIRST_CRATE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_SECOND_CRATE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_THIRD_CRATE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(ACTOR_FIRST_CRATE, 1);
-	fdActorSetSprPriority(ACTOR_SECOND_CRATE, 1);
-	fdActorSetSprPriority(ACTOR_THIRD_CRATE, 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_STONE_STATUE), 0);
+	fdActorSetSpriteColorById(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
+	fdActorGet(ACTOR_FIRST_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_SECOND_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_THIRD_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_FIRST_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_SECOND_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_THIRD_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(ACTOR_FIRST_CRATE, 1);
+	fdActorSetSpritePriority(ACTOR_SECOND_CRATE, 1);
+	fdActorSetSpritePriority(ACTOR_THIRD_CRATE, 1);
 	sySynch(1);
 	fdScriptStart();
 	fdCameraMoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
@@ -945,15 +945,15 @@ static void scCottageRoomsDPlaceSheltering(void)
 		fdActorGet(ACTOR_WEAPON_MERCHANT)->facing = FACING_NORTH_NORTHWEST;
 	} else {
 		actor = fdActorGet(ACTOR_WEAPON_MERCHANT);
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
 	}
 	actor = fdActorGet(ACTOR_ARMOR_MERCHANT);
 	if(actor != NULL) {
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
 	}
 	actor = fdActorGet(ACTOR_ITEM_MERCHANT);
 	if(actor != NULL) {
-		actor->collisionFlg |= ACTOR_NEAR_TALK;
+		actor->collisionFlags |= ACTOR_NEAR_TALK;
 	}
 }
 
@@ -961,10 +961,10 @@ static void scCottageRoomsDPlaceSheltering(void)
    and small. */
 static void scAltinInitSpew(ACTOR *drop)
 {
-	drop->motionFlg = 0;
-	drop->spr->image.pri = 1;
-	fdActorSetSprCol(drop, SPRITE_COLOR_BGR);
-	fdActorSetSprFlags(drop, 0);
+	drop->motionFlags = 0;
+	drop->sprite->image.priority = 1;
+	fdActorSetSpriteColor(drop, SPRITE_COLOR_BGR);
+	fdActorSetSpriteFlags(drop, 0);
 	drop->scaleX = SPEW_START_SCALE;
 	drop->scaleY = SPEW_START_SCALE;
 }
@@ -976,9 +976,9 @@ static void scAltinInitSpew(ACTOR *drop)
    end, and is released. */
 static void scAltinDriftSpew(ACTOR *drop)
 {
-	drop->x.fixed +=
-		SPEW_LATERAL_STEP(drop->tmr, (Sint16)((Sint32)(syRandomBelow(2)) - 1));
-	if(drop->tmr <= 3) {
+	drop->x.fixed += SPEW_LATERAL_STEP(
+		drop->timer, (Sint16)((Sint32)(syRandomBelow(2)) - 1));
+	if(drop->timer <= 3) {
 		drop->z.fixed -= syRandomBelow(toFIXED(1) / 2) + toFIXED(1);
 		drop->scaleX += toFIXED(3) / 20;
 		drop->scaleY -= toFIXED(1) / 25;
@@ -987,12 +987,12 @@ static void scAltinDriftSpew(ACTOR *drop)
 		drop->scaleX += toFIXED(3) / 100;
 		drop->scaleY += toFIXED(3) / 100;
 	}
-	if(syRandomBelow(drop->tmr) == 0)
-		fdActorSetSprCol(drop, SPRITE_COLOR_WHITE);
-	if(drop->tmr != 0)
-		drop->tmr--;
+	if(syRandomBelow(drop->timer) == 0)
+		fdActorSetSpriteColor(drop, SPRITE_COLOR_WHITE);
+	if(drop->timer != 0)
+		drop->timer--;
 	else
-		drop->tmr = (syRandomBelow(5)) * 2 + 2;
+		drop->timer = (syRandomBelow(5)) * 2 + 2;
 	if(--((FIELD_EFFECT *)drop)->countdown == 0) {
 		drop->update = 0;
 		fdActorRelease(drop);
@@ -1009,7 +1009,7 @@ static void scAltinBeastSpewWater(void)
 		drop = ((ACTOR *)syFieldActorCreate(
 			SPRITE_DUST_PUFF, toFIXED(64), 0, toFIXED(400)));
 		if(drop != NULL) {
-			drop->tmr = SPEW_LIFETIME;
+			drop->timer = SPEW_LIFETIME;
 			drop->userValue = 0;
 			((FIELD_EFFECT *)drop)->countdown = SPEW_LIFETIME;
 			scAltinInitSpew(drop);
@@ -1039,7 +1039,7 @@ static void scAltinScareOffBeast(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
 	fdActorFaceDirection(ACTOR_WATER_BEAST, FACING_NORTH_NORTHEAST, 40);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdActorRunRepeatedMotion(ACTOR_WATER_BEAST, 2);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_WATER_BEAST, FACING_NORTH_NORTHWEST, 40);

@@ -23,10 +23,10 @@ MESSAGE *mnMessageStart(WINDOW *window, Sint32 entry, Sint32 x, Sint32 y,
    (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed. */
 void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
-	Sint32	   djinniSpr;
-	WINDOW	  *win;
-	Sint32	   spr[3];
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
+	Sint32	   djinniSprite;
+	WINDOW	  *window;
+	Sint32	   sprite[3];
 	Sint32	  *entry;
 	Sint32	   tile, slot;
 	Sint32	   id;
@@ -34,17 +34,17 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 	Sint32	  *p;
 	Uint16	  *spacing = NULL;
 
-	win = NULL;
-	djinniSpr = DjinnElementSprites[element & 3];
-	entry = spr;
-	win = mnWindowCreate(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
+	window = NULL;
+	djinniSprite = DjinnElementSprites[element & 3];
+	entry = sprite;
+	window = mnWindowCreate(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
 
-	if(win != NULL) {
-		mnWindowDrawDividerLine(win, 4, 0, 4, 4);
+	if(window != NULL) {
+		mnWindowDrawDividerLine(window, 4, 0, 4, 4);
 
 		state->dirty = 1;
 
-		id = mnPortraitGetForSpeaker(djinniSpr);
+		id = mnPortraitGetForSpeaker(djinniSprite);
 		mnIconLoadWithPalette(id, 0, &slot, &tile, PORTRAIT_PALETTE, 0);
 
 		/* The portrait as a bare OAM entry, pushed each tick: a link word,
@@ -55,7 +55,7 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 		*p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
 		*p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
 
-		state->speakerVoiceSnd = 0;
+		state->speakerVoiceSound = 0;
 		state->speakerVoiceCountdown = 0;
 
 		mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
@@ -67,43 +67,43 @@ void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 			element + (Sint32)MsgFoundVenusDjinni);
 
 #if FIX_FUNCTION_SIGNATURES
-		mnMessageStart(win, text, 36, 2, spacing, 0);
+		mnMessageStart(window, text, 36, 2, spacing, 0);
 #else
-		mnMessageStart(win, text, 36, 2, spacing);
+		mnMessageStart(window, text, 36, 2, spacing);
 #endif
 
-		sySndPlayStub(MUS_A_NEW_ALLY);
+		sySoundPlayStub(MUS_A_NEW_ALLY);
 
 		do {
-			syOAMAddSprAtDepth(entry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
 			sySynch(1);
-		} while(sySndGetBGMRestoreDelayStub() != 0 &&
+		} while(sySoundGetBGMRestoreDelayStub() != 0 &&
 			(PerWork.push & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		sySynch(1);
 		syVRAMCacheFreeEntry(slot);
 	}
 }
 
-/* Returns the sprite of party member `idx` (ISAAC to PIERS), from
+/* Returns the sprite of party member `index` (ISAAC to PIERS), from
    CharacterSpriteTable, by which mnPortraitGetForSpeaker finds its portrait; 0
    past 8. Index 8 reads the halfword after the table's eight. */
-Sint32 mnPartyGetMemberPortraitSpr(Uint32 idx)
+Sint32 mnPartyGetMemberPortraitSprite(Uint32 index)
 {
-	if(idx > 8)
+	if(index > 8)
 		return 0;
-	return CharacterSpriteTable[idx];
+	return CharacterSpriteTable[index];
 }
 
 /* Shows that a party member joined the party while the join jingle
    (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed. */
 void mnPartyShowJoinedMessage(Sint32 member)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
 	WINDOW	  *window = NULL;
-	Sint32	   spr[3];
-	Sint32	  *entry = spr;
+	Sint32	   sprite[3];
+	Sint32	  *entry = sprite;
 	Sint32	   tile, slot;
 	Sint32	  *p;
 
@@ -112,7 +112,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
 		mnWindowDrawDividerLine(window, 4, 0, 4, 4);
 		state->dirty = 1;
 		mnIconLoadWithPalette(
-			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(member)), 0,
+			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSprite(member)), 0,
 			&slot, &tile, PORTRAIT_PALETTE, 0);
 		/* The portrait as a bare OAM entry, pushed each tick: a link word,
 		   attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile in
@@ -121,7 +121,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
 		*p++ = 0;
 		*p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
 		*p = tile | OBJ_PALETTE(PORTRAIT_PALETTE);
-		state->speakerVoiceSnd = 0;
+		state->speakerVoiceSound = 0;
 		state->speakerVoiceCountdown = 0;
 		mnMessageArgumentPush(member, MESSAGE_ARGUMENT_ACTOR);
 #if FIX_FUNCTION_SIGNATURES
@@ -132,11 +132,11 @@ void mnPartyShowJoinedMessage(Sint32 member)
 		mnMessageStart(window,
 			mnMessageDecodeAndClearArguments((Sint32)MsgJoinedParty), 36, 2, 0);
 #endif
-		sySndPlayStub(MUS_A_NEW_ALLY);
+		sySoundPlayStub(MUS_A_NEW_ALLY);
 		do {
-			syOAMAddSprAtDepth(entry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
 			sySynch(1);
-		} while(sySndGetBGMRestoreDelayStub() != 0 &&
+		} while(sySoundGetBGMRestoreDelayStub() != 0 &&
 			(PerWork.push & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 		mnWindowClose(window, 2);
 		sySynch(1);
@@ -148,26 +148,26 @@ void mnPartyShowJoinedMessage(Sint32 member)
    (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed. */
 void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
-	WINDOW	  *win;
-	Sint32	   secondSpr[3];
-	Sint32	   firstSpr[3];
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
+	WINDOW	  *window;
+	Sint32	   secondSprite[3];
+	Sint32	   firstSprite[3];
 	Sint32	  *firstEntry;
 	Sint32	  *secondEntry;
 	Sint32	   firstSlot, palette, secondSlot;
 	Sint32	  *p;
 
-	win = NULL;
-	firstEntry = firstSpr;
-	win = mnWindowCreate(1, 1, 28, 5, 0);
+	window = NULL;
+	firstEntry = firstSprite;
+	window = mnWindowCreate(1, 1, 28, 5, 0);
 
-	if(win != NULL) {
-		mnWindowDrawDividerLine(win, 8, 0, 4, 4);
+	if(window != NULL) {
+		mnWindowDrawDividerLine(window, 8, 0, 4, 4);
 
 		state->dirty = 1;
 
 		mnIconLoadWithPalette(
-			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(first)), 0,
+			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSprite(first)), 0,
 			&firstSlot, &palette, PORTRAIT_PALETTE, 0);
 		/* The portraits as bare OAM entries, pushed each tick: a link word,
 		   attributes 0 and 1 (32x32 at y 12, x 12 and 44) and attribute 2, the
@@ -177,41 +177,41 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 		*p++ = OBJ_SIZE_32X32 | OBJ_X(12) | 12;
 		*p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
-		secondEntry = secondSpr;
+		secondEntry = secondSprite;
 		mnIconLoadWithPalette(
-			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSpr(second)), 0,
+			mnPortraitGetForSpeaker(mnPartyGetMemberPortraitSprite(second)), 0,
 			&secondSlot, &palette, PORTRAIT_PALETTE + 1, 0);
 		p = secondEntry;
 		*p++ = 0;
 		*p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
 		*p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
-		state->speakerVoiceSnd = 0;
+		state->speakerVoiceSound = 0;
 		state->speakerVoiceCountdown = 0;
 
 		mnMessageArgumentPush(first, MESSAGE_ARGUMENT_ACTOR);
 		mnMessageArgumentPush(second, MESSAGE_ARGUMENT_ACTOR);
 
 #if FIX_FUNCTION_SIGNATURES
-		mnMessageStart(win,
+		mnMessageStart(window,
 			mnMessageDecodeAndClearArguments((Sint32)MsgPairJoinedParty), 68, 2,
 			NULL, 0);
 #else
-		mnMessageStart(win,
+		mnMessageStart(window,
 			mnMessageDecodeAndClearArguments((Sint32)MsgPairJoinedParty), 68, 2,
 			0);
 #endif
 
-		sySndPlayStub(MUS_A_NEW_ALLY);
+		sySoundPlayStub(MUS_A_NEW_ALLY);
 
 		do {
-			syOAMAddSprAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
-			syOAMAddSprAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
+			syOAMAddSpriteAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
 			sySynch(1);
-		} while(sySndGetBGMRestoreDelayStub() != 0 &&
+		} while(sySoundGetBGMRestoreDelayStub() != 0 &&
 			(PerWork.push & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		sySynch(1);
 		syVRAMCacheFreeEntry(firstSlot);
 		syVRAMCacheFreeEntry(secondSlot);
@@ -230,24 +230,24 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
    pressed. */
 void mnSummonShowLearnedMessage(Sint32 summon)
 {
-	WIN_STATE *state = RamHeapSlots->winState;
-	WINDOW	  *win;
+	WIN_STATE *state = RamHeapSlots->windowState;
+	WINDOW	  *window;
 	Sint32	   entries;
 	Uint32	   resource;
 	/* LEFTOVER(frame): an unused local the tick reserves and no instruction
 	 * touches. */
 	UNUSED Sint32 unused[7];
-	Sint32		  cnts[4];
+	Sint32		  counts[4];
 	const Uint8	 *djinn;
 	Sint32		  i;
 	Sint32		  n;
 
-	win = NULL;
-	win = mnWindowCreate(4, 1, 22, 5, 0);
-	if(win == NULL)
+	window = NULL;
+	window = mnWindowCreate(4, 1, 22, 5, 0);
+	if(window == NULL)
 		return;
 	state->dirty = 1;
-	state->speakerVoiceSnd = 0;
+	state->speakerVoiceSound = 0;
 	state->speakerVoiceCountdown = 0;
 	mnMessageArgumentPush(
 		SummonAbilities[summon & (SUMMON_END - 1)], MESSAGE_ARGUMENT_ABILITY);
@@ -255,54 +255,54 @@ void mnSummonShowLearnedMessage(Sint32 summon)
 	/* UB: five of mnMessageStart's six arguments, as above; the flags are the
 	   stack word resource takes, which nothing sets. UBFIX passes 0. */
 #if FIX_FUNCTION_SIGNATURES
-	mnMessageStart(win, entries, 0, 2, NULL, 0);
+	mnMessageStart(window, entries, 0, 2, NULL, 0);
 #else
-	mnMessageStart(win, entries, 0, 2, 0);
+	mnMessageStart(window, entries, 0, 2, 0);
 #endif
-	sySndPlayStub(MUS_A_NEW_ALLY);
+	sySoundPlayStub(MUS_A_NEW_ALLY);
 	do
 		sySynch(1);
-	while(sySndGetBGMRestoreDelayStub() != 0 &&
+	while(sySoundGetBGMRestoreDelayStub() != 0 &&
 		(PerWork.push & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	sySynch(1);
 
-	win = mnWindowCreate(TO_SUMMON_WINDOW_X, 1, TO_SUMMON_WINDOW_WIDTH,
+	window = mnWindowCreate(TO_SUMMON_WINDOW_X, 1, TO_SUMMON_WINDOW_WIDTH,
 		TO_SUMMON_WINDOW_HEIGHT, 0);
-	if(win == NULL)
+	if(window == NULL)
 		return;
 	mnMessageArgumentPush(
 		SummonAbilities[summon & (SUMMON_END - 1)], MESSAGE_ARGUMENT_ABILITY);
 	entries = mnMessageDecodeAndClearArguments((Sint32)MsgToSummon);
 	djinn = gmSummonDefinitionGetNearStub(summon)->djinnRequired;
 	for(i = 0; i < 4; i++)
-		cnts[i] = djinn[i];
+		counts[i] = djinn[i];
 	for(n = 0; n < 2; n++) {
 		Sint32 best = 0;
 		Sint32 most = 0;
 
 		for(i = 0; i < 4; i++) {
-			if(most < cnts[i]) {
+			if(most < counts[i]) {
 				best = i;
-				most = cnts[i];
+				most = counts[i];
 			}
 		}
 		/* MsgSummonVenus is the first of four Djinn counts (Venus, Mercury,
 		   Mars, Jupiter); the message four past it ends their line. */
 		mnMessageArgumentPush(most, MESSAGE_ARGUMENT_NUMBER);
 		mnMessageDecodeAppend((Sint32)MsgSummonVenus + best);
-		cnts[best] = 0;
+		counts[best] = 0;
 	}
 	mnMessageDecodeAppend((Sint32)MsgSummonVenus + 4);
 #if FIX_FUNCTION_SIGNATURES
-	mnMessageStart(win, entries, 4, 2, NULL, 0);
+	mnMessageStart(window, entries, 4, 2, NULL, 0);
 #else
-	mnMessageStart(win, entries, 4, 2, 0);
+	mnMessageStart(window, entries, 4, 2, 0);
 #endif
 	do
 		sySynch(1);
 	while((PerWork.push & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	sySynch(1);
 	/* UB: resource is never set, so this frees whichever VRAM cache entry its
 	   stack word names; UBFIX frees nothing, as nothing was loaded. */

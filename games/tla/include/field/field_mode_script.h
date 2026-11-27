@@ -11,14 +11,14 @@
    function). */
 typedef struct PENDING_CUE {
 	Uint32 key;
-	Uint16 flg;
+	Uint16 flags;
 	Uint16 condition;
 	Sint32 action;
 } PENDING_CUE;
 
 void   fdScriptRunMessage(Sint32 actor, Sint32 msg);
 Sint32 fdRunPsynergyEndScripts(Uint32 action);
-Sint32 fdRunPsynergyScript(PENDING_CUE *event, Sint32 argument, Sint32 tgt);
+Sint32 fdRunPsynergyScript(PENDING_CUE *event, Sint32 argument, Sint32 target);
 void   fdScriptUpdateDebugSkip(void);
 void   fdScriptNoOperationCallback(void);
 

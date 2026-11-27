@@ -14,5 +14,5 @@ StubsShop:
 	stub mnShopSaveAndTintFieldPaletteStub, mnShopSaveAndTintFieldPalette
 	stub mnShopRestoreFieldPaletteStub, mnShopRestoreFieldPalette
 	stub mnItemPickerRunStub, mnItemPickerRun
-	stub mnSndWaitForJingleStub, mnSndWaitForJingle
+	stub mnSoundWaitForJingleStub, mnSoundWaitForJingle
 	stub mnInnPlaySleepStub, mnInnPlaySleep

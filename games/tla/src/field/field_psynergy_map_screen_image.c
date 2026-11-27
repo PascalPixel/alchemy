@@ -46,9 +46,9 @@ void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
 	Sint32				   bestDistance;
 	Sint32				   cursorX;
 	Sint32				   cursorY;
-	Sint32				   cnt;
+	Sint32				   count;
 	Sint32				   wraps;
-	Sint32				   flg;
+	Sint32				   flag;
 	Uint32				   marker;
 	WORLD_MAP_STATE		  *worldMapState = RamWorldMapState;
 
@@ -63,15 +63,15 @@ void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
 		cursorX = FIXEDtoINT(worldMapState->searchX);
 		cursorY = FIXEDtoINT(worldMapState->searchZ);
 	}
-	for(cnt = 0; cnt < MAP_SCREEN_PLACE_COUNT; cnt++) {
-		place = &places[cnt];
-		if(place->flg == 0)
+	for(count = 0; count < MAP_SCREEN_PLACE_COUNT; count++) {
+		place = &places[count];
+		if(place->flags == 0)
 			break;
-		flg = FLAG_PLACE_VISITED(place->flg);
+		flag = FLAG_PLACE_VISITED(place->flags);
 		marker = fdWorldMapPlaceGetMarker(place);
 
 		if(marker != WORLD_MAP_MARKER_NONE && marker != WORLD_MAP_MARKER_SHIP &&
-			syGameFlagGet(flg)) {
+			syGameFlagGet(flag)) {
 			Sint32 sx = MAP_SCREEN_X(place->x);
 			Sint32 sy = MAP_SCREEN_Y(place->z);
 			Sint32 dx = sx - cursorX;
@@ -80,7 +80,7 @@ void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
 
 			if(bestDistance > distance) {
 				bestDistance = distance;
-				best = cnt;
+				best = count;
 			}
 		}
 	}
@@ -94,19 +94,20 @@ void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
 		do {
 			best += step;
 			if(best < 0) {
-				best = cnt - 1;
+				best = count - 1;
 				wraps++;
 			} else {
 				next = &places[best];
-				if(next->flg == 0) {
+				if(next->flags == 0) {
 					best = 0;
 					wraps++;
 				} else {
-					flg = FLAG_PLACE_VISITED(next->flg);
+					flag = FLAG_PLACE_VISITED(next->flags);
 					marker = fdWorldMapPlaceGetMarker(next);
 
 					if(marker != WORLD_MAP_MARKER_NONE &&
-						marker != WORLD_MAP_MARKER_SHIP && syGameFlagGet(flg)) {
+						marker != WORLD_MAP_MARKER_SHIP &&
+						syGameFlagGet(flag)) {
 						place = next;
 						break;
 					}
@@ -120,10 +121,10 @@ void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
 
 /* Moves every window sprite of a list by dx, dy: the output's position and its
    queued sprite's OAM x and y. */
-void fdWindowSprListMove(WINDOW_SPR_LIST *list, Sint32 dx, Sint32 dy)
+void fdWindowSpriteListMove(WINDOW_SPR_LIST *list, Sint32 dx, Sint32 dy)
 {
 	WINDOW_SPR *output;
-	QUEUED_SPR *spr;
+	QUEUED_SPR *sprite;
 
 	if(list == NULL)
 		return;
@@ -131,10 +132,10 @@ void fdWindowSprListMove(WINDOW_SPR_LIST *list, Sint32 dx, Sint32 dy)
 	while(output != NULL) {
 		output->x += dx;
 		output->y += dy;
-		spr = mnWindowSprGetSpr(output);
+		sprite = mnWindowSpriteGetSprite(output);
 		output = output->next;
-		spr->oam.x += dx;
-		spr->oam.y += dy;
+		sprite->oam.x += dx;
+		sprite->oam.y += dy;
 	}
 }
 
@@ -199,17 +200,17 @@ void fdMapScreenUpdateMarkers(void)
 	FIXED				   step;
 	Sint32				   cursorX;
 	Sint32				   cursorY;
-	Uint16				   ang;
+	Uint16				   angle;
 	Sint32				   tile;
 	Sint32				   always;
-	Sint32				   flg;
+	Sint32				   flags;
 	Sint32				   i;
 
 	/* DEAD: the leader looked up and never used; the ROM keeps the call. */
 	fdPartyGetLeaderActor();
 	state = RamWorldMapState;
 	marker = state->markers;
-	tileBase = VramCacheEntries[state->vramBlock].ofs >> 5;
+	tileBase = VramCacheEntries[state->vramBlock].offset >> 5;
 	nearest = -1;
 	nearestDistance = WORLD_MAP_NAME_REACH * WORLD_MAP_NAME_REACH;
 	nearestX = 0;
@@ -247,12 +248,12 @@ void fdMapScreenUpdateMarkers(void)
 			state->z += dz;
 		}
 	} else {
-		ang = WorldMapCursorDirectionAngles[DPAD_INDEX(PerWork.data)];
-		if(ang != WORLD_MAP_KEY_HEADING_NONE) {
+		angle = WorldMapCursorDirectionAngles[DPAD_INDEX(PerWork.data)];
+		if(angle != WORLD_MAP_KEY_HEADING_NONE) {
 			pos[0] = state->x;
 			pos[1] = 0;
 			pos[2] = state->z;
-			syVectorAddPolarOffset(state->speed, ang, pos);
+			syVectorAddPolarOffset(state->speed, angle, pos);
 			if(pos[0] < toFIXED(WORLD_MAP_CURSOR_MIN_X))
 				pos[0] = toFIXED(WORLD_MAP_CURSOR_MIN_X);
 			if(pos[0] > toFIXED(WORLD_MAP_CURSOR_MAX_X))
@@ -275,7 +276,7 @@ void fdMapScreenUpdateMarkers(void)
 	place = places;
 	i = 0;
 	do {
-		if(place->flg == 0) {
+		if(place->flags == 0) {
 			if(MapScreenFirstListOnly != 0)
 				break;
 			place = &places[MAP_SCREEN_PLACE_COUNT];
@@ -287,7 +288,7 @@ void fdMapScreenUpdateMarkers(void)
 		} else {
 			name = place->visitScene;
 			entrance = place->visitEntrance;
-			flg = FLAG_PLACE_VISITED(place->flg);
+			flags = FLAG_PLACE_VISITED(place->flags);
 			tile = fdWorldMapPlaceGetMarker(place);
 			if(tile == WORLD_MAP_MARKER_NONE)
 				continue;
@@ -302,14 +303,14 @@ void fdMapScreenUpdateMarkers(void)
 				placeX = MAP_SCREEN_X(FIXEDtoINT(MainRoutineStateWork.shipX));
 				placeY = MAP_SCREEN_Y(FIXEDtoINT(MainRoutineStateWork.shipZ));
 			} else {
-				if(!syGameFlagGet(flg))
+				if(!syGameFlagGet(flags))
 					continue;
 				always = 1;
 				placeX = MAP_SCREEN_X(place->x);
 				placeY = MAP_SCREEN_Y(place->z);
 			}
 		}
-		marker->objMode = always;
+		marker->objectMode = always;
 		marker->tile = tileBase + tile;
 		if(MapScreenZoomed == 0) {
 			x = placeX - FIXEDtoINT(scrollX) - 1;
@@ -337,7 +338,7 @@ void fdMapScreenUpdateMarkers(void)
 			nearestY = placeY;
 		}
 		if(always != 0 || (TickCount & 15) <= 7)
-			syOAMAddSprAtDepthClamped(marker++, MAP_SCREEN_MARKER_DEPTH);
+			syOAMAddSpriteAtDepthClamped(marker++, MAP_SCREEN_MARKER_DEPTH);
 	} while(++i, place++, i < MAP_SCREEN_PLACE_COUNT);
 
 	if(PerWork.data == 0) {
@@ -347,11 +348,11 @@ void fdMapScreenUpdateMarkers(void)
 				state->z = toFIXED(nearestY);
 				state->speed = WORLD_MAP_CURSOR_MIN_SPEED;
 			} else {
-				ang = syAtan(nearestY - cursorY, nearestX - cursorX);
+				angle = syAtan(nearestY - cursorY, nearestX - cursorX);
 				pos[0] = state->x;
 				pos[1] = 0;
 				pos[2] = state->z;
-				syVectorAddPolarOffset(state->speed, (Uint16)ang, pos);
+				syVectorAddPolarOffset(state->speed, (Uint16)angle, pos);
 				state->x = pos[0];
 				state->z = pos[2];
 			}
@@ -363,7 +364,7 @@ void fdMapScreenUpdateMarkers(void)
 	}
 
 	if(nearest != -1 && (TickCount & 15) <= 7) {
-		marker->objMode = 0;
+		marker->objectMode = 0;
 		marker->tile = tileBase + WORLD_MARKER_TILE_NEAREST;
 		if(MapScreenZoomed == 0) {
 			marker->x = nearestX - FIXEDtoINT(scrollX) - 2;
@@ -372,19 +373,19 @@ void fdMapScreenUpdateMarkers(void)
 			marker->x = WORLD_MAP_SCALE(nearestX) - 2;
 			marker->y = WORLD_MAP_SCALE(nearestY) - 2;
 		}
-		syOAMAddSprAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
+		syOAMAddSpriteAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
 	}
 
 	marker = &MapScreenCursorMarker;
 	if(MapScreenZoomed == 0) {
-		marker->affineIdx = 0;
+		marker->affineIndex = 0;
 		marker->x = cursorX - FIXEDtoINT(scrollX) - MAP_SCREEN_CURSOR_LEFT;
 		marker->y = cursorY - FIXEDtoINT(scrollY) + 1;
 	} else {
 		marker->x = WORLD_MAP_SCALE(cursorX) - MAP_SCREEN_CURSOR_LEFT;
 		marker->y = WORLD_MAP_SCALE(cursorY) + 1;
 	}
-	syOAMAddSprAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
+	syOAMAddSpriteAtDepthClamped(marker, MAP_SCREEN_MARKER_DEPTH);
 
 	if(state->shown != nearest) {
 		/* The Japanese release prepares the window and draws the new name in
@@ -392,7 +393,7 @@ void fdMapScreenUpdateMarkers(void)
 		   window. */
 #if MAP_SCREEN_NAME_DELAYED_REDRAW
 		if(MapScreenNameRedrawPending[0] == 0) {
-			mnWindowSprPrepareForRedrawStub(state->win);
+			mnWindowSpritePrepareForRedrawStub(state->window);
 			MapScreenNameRedrawPending[0] = 1;
 			MapScreenNameRedrawDelay[0] = 6;
 		} else if(--MapScreenNameRedrawDelay[0] <= 0) {
@@ -401,7 +402,7 @@ void fdMapScreenUpdateMarkers(void)
 #else
 		{
 			state->shown = nearest;
-			mnWindowSprPrepareForRedrawStub(state->win);
+			mnWindowSpritePrepareForRedrawStub(state->window);
 #endif
 			if(nearest != -1) {
 				if(nearestName == MARKER_NAME_PARTY)
@@ -430,7 +431,7 @@ void fdMapScreenUpdateMarkers(void)
 				if(cursorY < 0)
 					cursorY = 0;
 				mnTextDrawMessageStub(
-					nearestName, state->win, cursorX, cursorY);
+					nearestName, state->window, cursorX, cursorY);
 				state->nameBox.width = width;
 				state->nameBox.height = height;
 				state->nameBox.x = cursorX;
@@ -457,7 +458,7 @@ void fdMapScreenUpdateMarkers(void)
 			cursorY = 0;
 		width = cursorX - state->nameBox.x;
 		height = cursorY - state->nameBox.y;
-		fdWindowSprListMove(state->win, width, height);
+		fdWindowSpriteListMove(state->window, width, height);
 		state->nameBox.x = cursorX;
 		state->nameBox.y = cursorY;
 	}
@@ -713,20 +714,20 @@ void fdMapScreenUpdateScroll(void)
    image. */
 Sint32 fdMapScreenShow(Sint32 mode)
 {
-	Sint32				   savedDelay;
-	Uint8				   savedFlg[ARRAY_COUNT(((MAP_STATE *)NULL)->anim)];
-	Sint32				   screenX;
-	Sint32				   screenY;
-	MAP_STATE			  *map = RamHeapSlots->mapGrid;
-	WORLD_MAP_VIEW		  *view = RamHeapSlots->mapGrid;
-	FIELD_STATE			  *field = RamHeapSlots->fieldState;
-	ACTOR_SYSTEM_STATE	  *actorSystem = RamHeapSlots->actorSystem;
-	Sint16				   blend;
-	Bool				   msgShown = FALSE;
-	Sint32				   zoomed = 0;
-	Sint32				   gliding = 0;
-	WORLD_MAP_STATE		  *state = &WorldMapStateWork;
-	MAP_ANIMATION		  *layer;
+	Sint32				savedDelay;
+	Uint8				savedFlags[ARRAY_COUNT(((MAP_STATE *)NULL)->animation)];
+	Sint32				screenX;
+	Sint32				screenY;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
+	WORLD_MAP_VIEW	   *view = RamHeapSlots->mapGrid;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
+	ACTOR_SYSTEM_STATE *actorSystem = RamHeapSlots->actorSystem;
+	Sint16				blend;
+	Bool				msgShown = FALSE;
+	Sint32				zoomed = 0;
+	Sint32				gliding = 0;
+	WORLD_MAP_STATE	   *state = &WorldMapStateWork;
+	MAP_ANIMATION	   *layer;
 	const WORLD_MAP_PLACE *place;
 	Uint32				  *tiles;
 	Uint32				   tile;
@@ -749,13 +750,13 @@ Sint32 fdMapScreenShow(Sint32 mode)
 	if(mode != MAP_SCREEN_LOOK || field->mode != ACTOR_SYSTEM_WORLD_MAP)
 		fdActorTableSnapshot();
 	if(field->mode == ACTOR_SYSTEM_WORLD_MAP) {
-		savedDelay = field->transitionFrm;
-		field->transitionFrm = 6;
+		savedDelay = field->transitionFrame;
+		field->transitionFrame = 6;
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
-		layer = map->anim;
-		for(i = 0; i < (Sint32)ARRAY_COUNT(savedFlg); i++) {
-			savedFlg[i] = layer->paused;
+		layer = map->animation;
+		for(i = 0; i < (Sint32)ARRAY_COUNT(savedFlags); i++) {
+			savedFlags[i] = layer->paused;
 			layer->paused = 1;
 			layer++;
 		}
@@ -769,8 +770,8 @@ Sint32 fdMapScreenShow(Sint32 mode)
 		} while(0);
 	} else {
 		syIOWrite8(1, &field->camera->paused);
-		savedDelay = field->transitionFrm;
-		field->transitionFrm = 6;
+		savedDelay = field->transitionFrame;
+		field->transitionFrame = 6;
 		field->transition = 0;
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
@@ -877,7 +878,7 @@ Sint32 fdMapScreenShow(Sint32 mode)
 			}
 			if(input->repeat & KEY_SELECT) {
 				state->shown = -1;
-				mnWindowSprPrepareForRedrawStub(state->win);
+				mnWindowSpritePrepareForRedrawStub(state->window);
 				syIOWrite16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
 				zoomed ^= 1;
 				if(*cursorX != 0) {
@@ -916,7 +917,7 @@ Sint32 fdMapScreenShow(Sint32 mode)
 				place = fdWorldMapPlacesGetTable();
 				place += state->shown;
 				routine->teleportScene = SCENE_WORLD_MAP;
-				choice->flg = place->flg;
+				choice->flags = place->flags;
 				fdWorldMapSetReturnForScene(place->scene, place->entrance);
 				goto done;
 			}
@@ -928,7 +929,7 @@ Sint32 fdMapScreenShow(Sint32 mode)
 						 * at its uses. */
 						Sint32 none = -1;
 
-						choice->flg = none;
+						choice->flags = none;
 					}
 				}
 				goto done;
@@ -945,9 +946,9 @@ done:
 		fdWorldMapLoadAreaGraphicsStub();
 		IO_WRITE_QUEUE_PUSH(
 			(Uint32)&REG_BLDALPHA, (Uint16)blend, IO_WRITE_HALFWORD);
-		layer = map->anim;
-		for(i = 0; i < (Sint32)ARRAY_COUNT(savedFlg); i++) {
-			layer->paused = savedFlg[i];
+		layer = map->animation;
+		for(i = 0; i < (Sint32)ARRAY_COUNT(savedFlags); i++) {
+			layer->paused = savedFlags[i];
 			layer++;
 		}
 		actorSystem->suspended = 0;
@@ -956,7 +957,7 @@ done:
 		view->viewHeld = 0;
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
-		field->transitionFrm = savedDelay;
+		field->transitionFrame = savedDelay;
 		field->camera->paused = 0;
 	}
 	return 0;

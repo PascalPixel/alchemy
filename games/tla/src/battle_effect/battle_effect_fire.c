@@ -22,7 +22,7 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BATTLE_CAMERA		*camera;
 	Uint8				*sheet;
 	FIXED				 bodyTop;
@@ -31,7 +31,7 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	MOTION_OBJECT		*user;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
 	sheet = RamHeapSlots->battleSheet;
@@ -51,18 +51,18 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 
 	/* The embers leave the top of the user in a random direction. */
-	user = btObjectGetStub(args->user)->obj;
+	user = btObjectGetStub(args->user)->object;
 	bodyTop = user->y + btUnitGetEffectHeightStub(args->user);
 	for(i = 0; i != FIRE_EMBERS; i++) {
 		PARTICLE *ember = &PARTICLES[i];
-		Sint32	  ang;
+		Sint32	  angle;
 		Sint32	  speed;
 
-		ang = syRandom();
+		angle = syRandom();
 		speed = (syRandom() & 127) + 127;
-		SET_VELOCITY(ember, (sySin(ang) * speed) >> 6,
+		SET_VELOCITY(ember, (sySin(angle) * speed) >> 6,
 			(Sint32)toFIXED((syRandom() & 127) - 16) >> 6,
-			(syCos(ang) * speed) >> 6);
+			(syCos(angle) * speed) >> 6);
 		SET_POSITION(ember, user->x, bodyTop, user->z);
 		ember->variant = FIRE_EMBER_IN_FLIGHT;
 	}
@@ -73,13 +73,13 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != (FireCounts[args->variant] >> 1) + 132; frm++) {
+	for(frame = 0; frame != (FireCounts[args->variant] >> 1) + 132; frame++) {
 		/* The camera turns while the embers fly. */
-		if(frm > 16 && frm < 80)
+		if(frame > 16 && frame < 80)
 			state->cameraDelta = TRIG_TURN / 256;
 		else
 			state->cameraDelta = 0;
-		if(frm == (FireCounts[args->variant] >> 1) + 108)
+		if(frame == (FireCounts[args->variant] >> 1) + 108)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
 		EFFECT_VIEW_FROM_CAMERA(camera);
@@ -87,10 +87,10 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 		/* The embers in flight, two more each tick. */
 		for(i = 0; i != FireCounts[args->variant]; i++) {
 			PARTICLE *ember = &PARTICLES[i];
-			Sint32	  launchFrm;
+			Sint32	  launchFrame;
 
-			launchFrm = i / 2;
-			if(frm > launchFrm && ember->variant == FIRE_EMBER_IN_FLIGHT) {
+			launchFrame = i / 2;
+			if(frame > launchFrame && ember->variant == FIRE_EMBER_IN_FLIGHT) {
 				Sint32 size;
 
 				btEffectPosProjectPoint(ember, &screen);
@@ -100,25 +100,27 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 				size = MOTE_PICTURES -
 					(screen.depth - FIRE_EMBER_DEPTH_NEAR) /
 						FIRE_EMBER_DEPTH_STEP;
-				EFFECT_DRAW_MOTE(draw[frm < launchFrm + 48 ? 1 : 0], canvas,
+				EFFECT_DRAW_MOTE(draw[frame < launchFrame + 48 ? 1 : 0], canvas,
 					sheet, screen.x, screen.y, size);
-				ember->x += ember->velX;
-				ember->y += ember->velY;
-				ember->z += ember->velZ;
+				ember->x += ember->velocityX;
+				ember->y += ember->velocityY;
+				ember->z += ember->velocityZ;
 			}
 
 			/* An ember homes in on its target. */
-			if(frm > launchFrm + 48 && ember->variant == FIRE_EMBER_IN_FLIGHT) {
-				MOTION_OBJECT *tgt;
+			if(frame > launchFrame + 48 &&
+				ember->variant == FIRE_EMBER_IN_FLIGHT) {
+				MOTION_OBJECT *target;
 				Sint32		   vx;
 				Sint32		   vy;
 				Sint32		   vz;
 
-				tgt = btObjectGetStub(args->tgts[i % args->tgtCnt])->obj;
-				vx = ember->velX += (tgt->x - ember->x) >> 9;
-				vy = ember->velY += (tgt->y - ember->y) >> 9;
-				vz = ember->velZ += (tgt->z - ember->z) >> 9;
-				if(frm < launchFrm + 85) {
+				target = btObjectGetStub(args->targets[i % args->targetCount])
+							 ->object;
+				vx = ember->velocityX += (target->x - ember->x) >> 9;
+				vy = ember->velocityY += (target->y - ember->y) >> 9;
+				vz = ember->velocityZ += (target->z - ember->z) >> 9;
+				if(frame < launchFrame + 85) {
 					SET_VELOCITY(ember, vx * 60 / DAMPING_SCALE,
 						vy * 60 / DAMPING_SCALE, vz * 60 / DAMPING_SCALE);
 				}
@@ -130,13 +132,13 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 					ember->x = screen.x;
 					ember->y = screen.y;
 					if(args->variant == EFFECT_VARIANT_STRONGEST)
-						sySndPlayStub(SE_HEAVY_IMPACT);
+						sySoundPlayStub(SE_HEAVY_IMPACT);
 					else
-						sySndPlayStub(SE_WHOOSH);
-					btEffectTintBattler(args->tgts[i % args->tgtCnt],
-						SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % args->tgtCnt,
-						4);
-					state->shakeFrm = 2;
+						sySoundPlayStub(SE_WHOOSH);
+					btEffectTintBattler(args->targets[i % args->targetCount],
+						SPRITE_COLOR_RED_TINT, POSE_DAMAGE,
+						i % args->targetCount, 4);
+					state->shakeFrame = 2;
 				}
 			}
 		}

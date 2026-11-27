@@ -10,10 +10,10 @@ UNUSED Sint32 scActorEmitSmokeB(ACTOR *actor)
 		FIXED x;
 		FIXED y;
 
-		puff.pri = 3;
+		puff.priority = 3;
 		puff.startScaleX = toFIXED(7) / 10;
 		puff.startScaleY = toFIXED(7) / 10;
-		puff.pal = SPRITE_COLOR_BLACK;
+		puff.palette = SPRITE_COLOR_BLACK;
 		x = actor->x.fixed + toFIXED(syRandomBelow(9) - 4);
 		y = actor->y.fixed + toFIXED(32 - syRandomBelow(20));
 		scFieldEffectSpawn(x, y, actor->z.fixed, 0,

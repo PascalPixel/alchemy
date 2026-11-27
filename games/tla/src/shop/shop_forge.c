@@ -72,11 +72,11 @@ Bool mnForgeUnitHasMaterial(Sint32 unitId)
 Bool mnForgePartyHasMaterial(void)
 {
 	Uint16 partyMemberIds[16];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
-	cnt = gmPartyListMembersStub(partyMemberIds);
-	for(i = 0; i < cnt; i++) {
+	count = gmPartyListMembersStub(partyMemberIds);
+	for(i = 0; i < count; i++) {
 		if(mnForgeUnitHasMaterial(partyMemberIds[i]) != 0)
 			return TRUE;
 	}

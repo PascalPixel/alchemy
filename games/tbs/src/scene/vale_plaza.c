@@ -209,7 +209,7 @@ typedef enum VALE_PLAZA_DAY_ACTOR_ID {
 	/* Two children, a small boy with fair hair and a little girl with orange
 	   pigtails. By day the boy asks "Did the travelers that stopped by today go
 	   to meet the mayor?" Back from Kalay he thinks "I wonder if we can play
-	   with Isaac and his pals again, like we used to." */
+	   with Isaac and his palettes again, like we used to." */
 	ACTOR_FIRST_CHILD,
 	/* The little girl: "With Psynergy, the more you practice, the more you
 	   learn." */
@@ -440,7 +440,7 @@ static void scValePlazaUsePsynergyStone(void)
 {
 	fdScriptStart();
 	mnFieldMessageShow(MsgValeCheckedThePsynergyStone, 1);
-	sySndPlay(SE_RECOVERY);
+	sySoundPlay(SE_RECOVERY);
 	fdPartyAddPp(PP_RESTORED_BY_STONE, 0);
 	fdScriptWait(10);
 	mnFieldMessageShow(MsgValePartyPpRestored, 1);
@@ -520,7 +520,7 @@ static void scValePlazaAskAboutTheTravelers(void)
    shows Isaac his Psynergy and shakes the ground. */
 static void scValePlazaDemonstratePsynergy(void)
 {
-	Uint32	frm;
+	Uint32	frame;
 	Sint32	msg;
 	Sint32	shakes;
 	Sint32 *origin;
@@ -558,16 +558,16 @@ static void scValePlazaDemonstratePsynergy(void)
 		fdScriptWait(15);
 		scStartScriptPsynergy();
 		shakes = 0;
-		for(frm = 0; frm < 40; frm++) {
+		for(frame = 0; frame < 40; frame++) {
 			scValePlazaFlashPsynergyPalette(
 				fdActorGet(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
 			sySynch(1);
 		}
 		sySetTickEvent(
 			scValePlazaUpdateShowingStrongmanPsynergy, EVENT_PASS_TICK);
-		sySndPlay(SE_TREMOR);
-		for(frm = 0; frm != 180; frm++) {
-			if(syMathRemainderUnsigned(frm, TREMOR_STEP_TICKS) == 0) {
+		sySoundPlay(SE_TREMOR);
+		for(frame = 0; frame != 180; frame++) {
+			if(syMathRemainderUnsigned(frame, TREMOR_STEP_TICKS) == 0) {
 				if((1 & shakes) != 0) {
 					*origin -= toFIXED(1);
 				} else {
@@ -577,11 +577,11 @@ static void scValePlazaDemonstratePsynergy(void)
 			}
 			fdScriptWait(1);
 		}
-		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+		sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 		syCloseEvent(scValePlazaUpdateShowingStrongmanPsynergy);
 		sySynch(1);
 		scEndScriptPsynergy();
-		fdActorSetSprColById(
+		fdActorSetSpriteColorById(
 			ACTOR_STRONGMAN_SHOWING_PSYNERGY, SPRITE_COLOR_NORMAL);
 		fdScriptWait(40);
 		fdScriptSetMessageId(MsgValeBeholdPowerPsynergy);
@@ -652,8 +652,8 @@ static void scValePlazaTalkAboutFallenStone(void)
    small rock (ACTOR_STORM_SMALL_ROCK) into the air. */
 static void scValePlazaBoyLiftsSmallRock(void)
 {
-	Uint32 frm;
-	Sint32 savedMotionFlg;
+	Uint32 frame;
+	Sint32 savedMotionFlags;
 	ACTOR *rock;
 
 	fdScriptStart();
@@ -669,7 +669,7 @@ static void scValePlazaBoyLiftsSmallRock(void)
 	/* The boy flashes white as he calls up his Psynergy, then he and the rock
 	   shift colours as it rises. */
 	scStartScriptPsynergy();
-	for(frm = 0; frm < 40; frm++) {
+	for(frame = 0; frame < 40; frame++) {
 		scValePlazaFlashPsynergyPalette(
 			fdActorGet(ACTOR_STORM_ROCK_LIFTING_BOY));
 		sySynch(1);
@@ -680,19 +680,20 @@ static void scValePlazaBoyLiftsSmallRock(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
 	/* The rock floats up a little each tick, kept from falling back. */
 	rock = fdActorGet(ACTOR_STORM_SMALL_ROCK);
-	savedMotionFlg = rock->motionFlg;
-	rock->motionFlg = 0;
-	for(frm = 0; frm < 40; frm++) {
+	savedMotionFlags = rock->motionFlags;
+	rock->motionFlags = 0;
+	for(frame = 0; frame < 40; frame++) {
 		rock->y.fixed += toFIXED(3) / 32;
 		sySynch(1);
 	}
-	rock->motionFlg = savedMotionFlg;
+	rock->motionFlags = savedMotionFlags;
 	syCloseEvent(scValePlazaUpdateRockLiftingBoyPsynergy);
 	syCloseEvent(scValePlazaUpdateSmallRockPalette);
 	sySynch(1);
-	sySndPlay(SE_RATTLE);
-	fdActorSetSprColById(ACTOR_STORM_ROCK_LIFTING_BOY, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
+	sySoundPlay(SE_RATTLE);
+	fdActorSetSpriteColorById(
+		ACTOR_STORM_ROCK_LIFTING_BOY, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_STORM_SMALL_ROCK, SPRITE_COLOR_NORMAL);
 	fdScriptWait(40);
 	scEndScriptPsynergy();
 	fdActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_STORM_ROCK_LIFTING_BOY, 30);
@@ -740,9 +741,9 @@ static void scValePlazaPsynergyStoneIsGone(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_AFTER_KALAY_HUT_OWNER);
 	fdScriptStart();
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtY = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 	fdActorSetAnimation(ACTOR_AFTER_KALAY_HUT_OWNER, ANIM_STAND);
 	fdActorStop(ACTOR_AFTER_KALAY_HUT_OWNER);
 	fdActorShowEmote(
@@ -772,7 +773,7 @@ static void scValePlazaPsynergyStoneIsGone(void)
 static inline void scValePlazaOpenDoorAndWalkThrough(
 	Sint32 metatileX, Sint32 metatileZ, Sint32 x, Sint32 z)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePlazaDoorOpens, metatileX, metatileZ);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, x, z);
 }
@@ -797,13 +798,13 @@ static void scValePlazaOpenNorthwestDoor(void)
    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST). */
 static void scValePlazaOpenNortheastDoor(void)
 {
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridCopyMetatilesTo(0, 63, 51, 8, 2, 2);
 	sySynch(10);
 	fdMapGridCopyMetatilesTo(2, 63, 51, 8, 2, 2);
 	sySynch(10);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
 	scValeRequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH);
 }
@@ -856,7 +857,7 @@ static void scValePlazaOpenSoutheastDoor(void)
    (metatiles (0, 20..21)), back to the river and the rest of the village. */
 static void scValePlazaLeaveThroughWestPassage(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scValeRequestBackdropExit(VALE_PLAZA_TO_VALE);
 }
 
@@ -866,7 +867,7 @@ static void scValePlazaLeaveThroughWestPassage(void)
 static void scValePlazaLeaveThroughTownGate(void)
 {
 	if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
-		sySndPlay(SE_MAP_EXIT);
+		sySoundPlay(SE_MAP_EXIT);
 		scValeRequestBackdropExit(VALE_PLAZA_TO_WORLD_MAP);
 	}
 }
@@ -895,7 +896,7 @@ static void scValePlazaBlowAwayThirdIvy(void)
 Sint32 scInit(void)
 {
 	ACTOR *actor;
-	Sint32 flg;
+	Sint32 flags;
 	FIXED  verticalScale;
 
 	if(gmFlagGet(FLAG_VALE_FIRST_IVY_BLOWN_AWAY) != 0) {
@@ -937,8 +938,8 @@ Sint32 scInit(void)
 			fdWeatherStartRain();
 			fdWeatherStartLightning();
 			fdMapGridCopyMetatileAttributes(21, 38, 1, 1, 18, 41);
-			flg = gmFlagGet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
-			if(flg != 0) {
+			flags = gmFlagGet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
+			if(flags != 0) {
 				fdActorSetPos(ACTOR_STORM_FIRST_AIDE, 0, 0);
 				fdActorSetPos(ACTOR_STORM_SECOND_AIDE, 0, 0);
 				syFieldActorWatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,
@@ -961,7 +962,7 @@ Sint32 scInit(void)
 				actor = fdActorGet(ACTOR_STORM_SMALL_ROCK);
 				actor->scaleX = toFIXED(3) / 10;
 				actor->scaleY = toFIXED(3) / 10;
-				fdActorSetSprFlags(fdActorGet(ACTOR_STORM_SMALL_ROCK), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_STORM_SMALL_ROCK), 0);
 				actor = fdActorGet(ACTOR_STORM_SMALL_ROCK_SHADOW);
 				actor->scaleX = toFIXED(3) / 5;
 				actor->scaleY = toFIXED(3) / 5;
@@ -970,7 +971,8 @@ Sint32 scInit(void)
 			} else {
 				if(gmFlagGet(FLAG_VALE_PARTY_LEFT) != 0) {
 					fdActorSetPos(ACTOR_FALLEN_STONE_SPOT, 331, 249);
-					fdActorSetSprFlags(fdActorGet(ACTOR_FALLEN_STONE_SPOT), 0);
+					fdActorSetSpriteFlags(
+						fdActorGet(ACTOR_FALLEN_STONE_SPOT), 0);
 				}
 			}
 			/* BUG: the test is meant for the stormy night, but the flag stays
@@ -1058,7 +1060,7 @@ static void scValePlazaSentToAidElders(void)
 		syFieldScriptShowMessageThenWait(
 			SPEAKER_WINDOW_ABOVE | ACTOR_STORM_GARETS_GRANDFATHER, 0, 10);
 #if VALE_PLAZA_SECOND_AIDE_PRIORITY_PINNED
-		fdActorSetSprPriority(ACTOR_STORM_SECOND_AIDE, 1);
+		fdActorSetSpritePriority(ACTOR_STORM_SECOND_AIDE, 1);
 #endif
 		fdActorSetSpeed(ACTOR_STORM_FIRST_AIDE, 1.6);
 		fdActorSetSpeed(ACTOR_STORM_SECOND_AIDE, 1.6);
@@ -1066,7 +1068,8 @@ static void scValePlazaSentToAidElders(void)
 		fdActorSetScript(ACTOR_STORM_FIRST_AIDE, ValePlazaAideRunActions);
 		fdScriptWait(20);
 #if VALE_PLAZA_SECOND_AIDE_PRIORITY_PINNED
-		fdActorGet(ACTOR_STORM_SECOND_AIDE)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_STORM_SECOND_AIDE)->priorityFlags |=
+			ACTOR_PRIORITY_AUTOMATIC;
 #endif
 		fdActorSetScript(ACTOR_STORM_SECOND_AIDE, ValePlazaAideRunActions);
 		fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -1209,7 +1212,7 @@ static void scValePlazaMeetSurvivingTravelers(void)
 	sySynch(1);
 	fdScriptAddPartyMember(GARET, 0);
 	fdScriptStartScreenTransition();
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdWeatherResumeLightning();
 	fdActorSetPos(ACTOR_FIRST_TRAVELER, 105, 267);
 	sySynch(1);
@@ -1220,8 +1223,8 @@ static void scValePlazaMeetSurvivingTravelers(void)
 	fdScriptShowMessage(ACTOR_FIRST_TRAVELER, 0);
 	/* The ominous music starts; the camera rises to the travelers and the
 	   second traveler walks in. */
-	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
-	camera->motionFlg = 0;
+	sySoundPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
+	camera->motionFlags = 0;
 	fdCameraSetSpeed(3);
 	fdCameraMoveTo(109, 176, 281, 1);
 	fdCameraWaitForMove();
@@ -1277,8 +1280,8 @@ static void scValePlazaFightTravelers(void)
 {
 	/* Garet, still out of sight, calls Isaac to wait; the travelers turn and
 	   look down at Isaac. */
-	fdActorSetSprColById(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_STORM_GARET), 0);
+	fdActorSetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_STORM_GARET), 0);
 	fdActorSetPos(ACTOR_STORM_GARET, 0, 331);
 	sySynch(1);
 	/* "Isaac! Wait!" */
@@ -1313,8 +1316,8 @@ static void scValePlazaFightTravelers(void)
 	fdActorFaceDirection(ACTOR_SECOND_TRAVELER, FACING_SOUTH_SOUTHWEST, 0);
 	/* Garet runs in from the west. The first traveler asks whether Isaac was
 	   eavesdropping; whatever he answers, Garet thinks they look scary. */
-	fdActorSetSprColById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(ACTOR_STORM_GARET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteColorById(ACTOR_STORM_GARET, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_STORM_GARET), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_STORM_GARET, 0, 331);
 	fdActorSetSpeed(ACTOR_STORM_GARET, 1.2);
 	fdActorWalkToAndWait(ACTOR_STORM_GARET, 37, 339);
@@ -1394,7 +1397,7 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 
 	/* The screen opens on Isaac and Garet lying beaten in the storm, the
 	   travelers standing over them. */
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
@@ -1409,10 +1412,10 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 	fdActorFaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
 	fdActorGet(ACTOR_PARTY_LEADER)->scaleX = -toFIXED(1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetAnimation(ACTOR_STORM_GARET, ANIM_GARET_CHILD_SPRAWLED);
-	fdActorGet(ACTOR_STORM_GARET)->spr->rotation = DEGtoANG(30);
-	fdActorSetSprFlags(fdActorGet(ACTOR_STORM_GARET), 0);
+	fdActorGet(ACTOR_STORM_GARET)->sprite->rotation = DEGtoANG(30);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_STORM_GARET), 0);
 	{
 		FIELD_STATE *state = FieldStateWork;
 
@@ -1429,8 +1432,8 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 	fdActorSetAnimationAndWait(ACTOR_SECOND_TRAVELER, ANIM_NOD);
 	fdActorFaceDirection(ACTOR_FIRST_TRAVELER, FACING_WEST, 10);
 	fdActorFaceDirection(ACTOR_SECOND_TRAVELER, FACING_WEST, 10);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
-	fdActorSetSprPriority(ACTOR_STORM_GARET, 3);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+	fdActorSetSpritePriority(ACTOR_STORM_GARET, 3);
 	fdActorSetSpeed(ACTOR_FIRST_TRAVELER, 2.4);
 	actor = fdActorGet(ACTOR_FIRST_TRAVELER);
 	actor->bounce = toFIXED(1) / 100;
@@ -1456,7 +1459,7 @@ static void scValePlazaTravelersLeaveAfterBattle(void)
 	sySynch(20);
 	fdWeatherStopLightning();
 	fdScriptWait(40);
-	FieldStateWork->transitionFrm = 120;
+	FieldStateWork->transitionFrame = 120;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	gmFlagClear(FLAG_VALE_STORM);
@@ -1470,7 +1473,7 @@ static void scValePlazaDepartForQuest(void)
 {
 	ACTOR		 *actor;
 	FIELD_STATE	 *state;
-	Sint32		  priFlg;
+	Sint32		  priorityFlags;
 	const Sint32 *faceActions;
 	const Sint32 *chaseActions;
 	const Sint32 *departureActions;
@@ -1483,17 +1486,17 @@ static void scValePlazaDepartForQuest(void)
 	fdCameraMoveTo(180, 16, 618, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FAREWELL_YOUNG_MAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FAREWELL_FAIR_HAIRED_WOMAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FAREWELL_FIRST_STRONGMAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FAREWELL_SECOND_STRONGMAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FAREWELL_THIRD_STRONGMAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FAREWELL_STOUT_MAN), 0);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
-	fdActorSetSprPriority(ACTOR_GARET, 1);
-	fdActorSetSprPriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);
-	fdActorSetSprPriority(ACTOR_FAREWELL_GARETS_SISTER, 1);
-	fdActorSetSprPriority(ACTOR_FAREWELL_GARETS_GRANDFATHER, 1);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FAREWELL_YOUNG_MAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FAREWELL_FAIR_HAIRED_WOMAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FAREWELL_FIRST_STRONGMAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FAREWELL_SECOND_STRONGMAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FAREWELL_THIRD_STRONGMAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FAREWELL_STOUT_MAN), 0);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
+	fdActorSetSpritePriority(ACTOR_GARET, 1);
+	fdActorSetSpritePriority(ACTOR_FAREWELL_GARETS_BROTHER, 1);
+	fdActorSetSpritePriority(ACTOR_FAREWELL_GARETS_SISTER, 1);
+	fdActorSetSpritePriority(ACTOR_FAREWELL_GARETS_GRANDFATHER, 1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 208, 814);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1628,12 +1631,12 @@ static void scValePlazaDepartForQuest(void)
 	if(actor != NULL) {
 		fdActorSetPosFX(ACTOR_FAREWELL_CAT, actor->x.fixed, actor->z.fixed);
 	}
-	priFlg = (Uint8)~ACTOR_PRIORITY_AUTOMATIC;
+	priorityFlags = (Uint8)~ACTOR_PRIORITY_AUTOMATIC;
 	sySynch(2);
-	fdActorGetById(ACTOR_FAREWELL_DOG)->priFlg &= priFlg;
-	fdActorGetById(ACTOR_FAREWELL_CAT)->priFlg &= priFlg;
-	fdActorSetSprPriority(ACTOR_FAREWELL_DOG, 2);
-	fdActorSetSprPriority(ACTOR_FAREWELL_CAT, 2);
+	fdActorGetById(ACTOR_FAREWELL_DOG)->priorityFlags &= priorityFlags;
+	fdActorGetById(ACTOR_FAREWELL_CAT)->priorityFlags &= priorityFlags;
+	fdActorSetSpritePriority(ACTOR_FAREWELL_DOG, 2);
+	fdActorSetSpritePriority(ACTOR_FAREWELL_CAT, 2);
 	fdActorSetSpeed(ACTOR_FAREWELL_CAT, 3.6);
 	fdActorSetAnimation(ACTOR_FAREWELL_CAT, ANIM_WALK);
 	chaseActions = ValePlazaFarewellChaseActions;
@@ -1667,7 +1670,7 @@ static void scValePlazaDepartForQuest(void)
 		ACTOR_FAREWELL_FIRST_CHILD, ValePlazaFarewellFirstChildActions);
 	fdScriptWait(10);
 	fdCameraSetSpeed(2.4);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(215, 16, 801, 1);
 	fdScriptWait(10);
 	fdActorSetScript(
@@ -1853,14 +1856,14 @@ static void scValePlazaDepartForQuest(void)
 	fdActorJump(ACTOR_FAREWELL_WOMAN_IN_GREEN, 4, 0);
 	/* "Farewell!" */
 	mnFieldMessageShow(MSGNO(MsgValeFarewell), 1);
-	priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	fdScriptWait(80);
-	fdActorGetById(ACTOR_PARTY_LEADER)->priFlg |= priFlg;
+	fdActorGetById(ACTOR_PARTY_LEADER)->priorityFlags |= priorityFlags;
 	{
 		ACTOR *garet = fdActorGetById(ACTOR_GARET);
-		Uint8  flg = priFlg | garet->priFlg;
+		Uint8  flags = priorityFlags | garet->priorityFlags;
 
-		garet->priFlg = flg;
+		garet->priorityFlags = flags;
 	}
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
@@ -1878,7 +1881,7 @@ static void scValePlazaDepartForQuest(void)
 	fdScriptWait(60);
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = 60;
+	state->transitionFrame = 60;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdActorStop(ACTOR_PARTY_LEADER);
@@ -1905,9 +1908,9 @@ static void scValePlazaFaceDirectionAndWait(
 static void scValePlazaFlashPsynergyPalette(ACTOR *actor)
 {
 	if((TickCount & 2) != 0) {
-		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	if((TickCount & 15) == 0) {
 		scValePlazaSpawnEffectPair(actor);
@@ -1919,7 +1922,7 @@ static void scValePlazaCyclePsynergyPaletteAndSpawnEffects(ACTOR *actor)
 {
 	if((TickCount & 1) != 0) {
 		Sint32 palette = syMathRemainderUnsigned(TickCount >> 1, 6);
-		fdActorSetColMode(actor, palette);
+		fdActorSetColorMode(actor, palette);
 	}
 	if((TickCount & 15) == 0) {
 		scValePlazaSpawnEffectPair(actor);
@@ -1932,7 +1935,7 @@ static void scValePlazaCyclePsynergyPalette(ACTOR *actor)
 {
 	if((TickCount & 1) != 0) {
 		Sint32 palette = syMathRemainderUnsigned(TickCount >> 1, 6);
-		fdActorSetColMode(actor, palette);
+		fdActorSetColorMode(actor, palette);
 	}
 }
 
@@ -1944,50 +1947,51 @@ static void scValePlazaSpawnEffectPair(ACTOR *parent)
 {
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
-	SPR				   *spr;
+	SPR				   *sprite;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	Sint32				i;
 
-	sySndPlay(SE_PSYNERGY_SPARKLE);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
 	for(i = 0; i < 2; ++i) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
 			parent->y.fixed, parent->z.fixed);
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			spr = child->spr;
-			child->motionFlg = 0;
-			child->tmr = 0;
+			sprite = child->sprite;
+			child->motionFlags = 0;
+			child->timer = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
-			if(spr != NULL) {
-				fdSprStartAnimation(spr, 0);
-				spr->flg = 0;
-				syVRAMCacheFreeEntry(spr->slot);
-				spr->slot = effectState->tileSlot;
-				spr->retainCacheEntry = 1;
-				spr->image.tile =
-					(VramCacheEntries[spr->slot].ofs >> 5) & OBJ_TILE_MASK;
-				spr->image.fullCol = 0;
-				spr->image.shape = RING_HALF_SHAPE;
-				spr->image.size = RING_HALF_SIZE;
-				spr->entries[0]->picture = 0;
+			if(sprite != NULL) {
+				fdSpriteStartAnimation(sprite, 0);
+				sprite->flags = 0;
+				syVRAMCacheFreeEntry(sprite->slot);
+				sprite->slot = effectState->tileSlot;
+				sprite->retainCacheEntry = 1;
+				sprite->image.tile =
+					(VramCacheEntries[sprite->slot].offset >> 5) &
+					OBJ_TILE_MASK;
+				sprite->image.fullColor = 0;
+				sprite->image.shape = RING_HALF_SHAPE;
+				sprite->image.size = RING_HALF_SIZE;
+				sprite->entries[0]->picture = 0;
 			}
 		}
 	}
 	{
 		ACTOR *effect = pair[0];
-		SPR	  *effectSpr = effect->spr;
+		SPR	  *effectSprite = effect->sprite;
 
 		effect->update = scFieldEffectRiseRingFrontHalf;
-		effectSpr->image.pri = 2;
+		effectSprite->image.priority = 2;
 	}
 	{
 		ACTOR *effect = pair[1];
-		SPR	  *effectSpr = effect->spr;
+		SPR	  *effectSprite = effect->sprite;
 
-		effectSpr->image.pri = 2;
+		effectSprite->image.priority = 2;
 		effect->update = scFieldEffectRiseRingBackHalf;
-		effect->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 

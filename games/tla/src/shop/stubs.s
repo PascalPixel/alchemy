@@ -19,7 +19,7 @@ StubsShop:
 	stub mnShopRestoreFieldPaletteStub, mnShopRestoreFieldPalette
 	stub mnItemPickerRunToDropStub, mnItemPickerRunToDrop
 	stub mnItemPickerRunToShowStub, mnItemPickerRunToShow
-	stub mnSndWaitForJingleStub, mnSndWaitForJingle
+	stub mnSoundWaitForJingleStub, mnSoundWaitForJingle
 	stub mnInnPlaySleepStub, mnInnPlaySleep
 	stub mnVRAMBlockLoadResourceStub, mnVRAMBlockLoadResource
 	stub mnForgePartyHasMaterialStub, mnForgePartyHasMaterial

@@ -36,8 +36,9 @@ LIGHT_OAM					 LightSpriteOams[16] BSS_DATA;
 Sint16 LightSpritesLarge	 BSS_DATA;
 Sint16 LightSpritePriority	 BSS_DATA;
 METATILE_TARGET CrackedTiles BSS_DATA;
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 void scJupiterLighthouseScatterWeedsSouthOfTheTeleporter(void);
 void scJupiterLighthouseScatterWeedsBelowTheStairs(void);
 void scJupiterLighthouseScatterEastWeeds(void);
@@ -143,7 +144,7 @@ void scJupiterLighthouseScatterWeedsOverMint(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, -16, 0);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -197,7 +198,7 @@ extern Sint32 PaletteCyclePausesInScripts;
 
 #include "shared/palette_cycle_set_pauses_in_scripts.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 extern Sint32 PaletteCycleTick;
 
@@ -243,7 +244,7 @@ Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 
 /* Unused: sets the priority the lit actors' sprites are drawn at; nothing in
    the entrance calls it. */
-UNUSED void scLightSprsSetPriority(Sint32 value)
+UNUSED void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -310,7 +311,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"

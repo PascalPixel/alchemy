@@ -16,8 +16,8 @@ typedef struct WORLD_MAP_ENCOUNTER_RULE {
 	/* The battle environment (BATTLE_ENVIRONMENT), which also picks the battle
 	   background (fdBattleBackgroundSelectForEnvironment), or -1 for any. */
 	Sint16 environment;
-	Sint16 flg;	 /* -1, or a flag that turns the rule off once set */
-	Sint16 zone; /* a row of encounter_zones.c */
+	Sint16 flags; /* -1, or a flag that turns the rule off once set */
+	Sint16 zone;  /* a row of encounter_zones.c */
 } WORLD_MAP_ENCOUNTER_RULE;
 
 /* A Djinni battle: the formation in slot `slot` of encounter zone `zone`. */

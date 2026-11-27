@@ -11,12 +11,13 @@
    abilities to teach. A row whose party member is DEBUG_PARAMETER_SET_END ends
    a parameter set. */
 typedef struct DEBUG_PARM_SET_ROW {
-	Sint8  unitId; /* the party member, or the end of a set */
-	Uint8  level;  /* the level the party member is raised to */
-	Sint8  djinnCnts[ELEMENT_COUNT]; /* Djinn of each element to give and Set */
-	Uint16 items[4];				 /* items to add and equip; 0 for none */
-	Uint16 abilities[2];			 /* abilities to teach; 0 for none */
-	Uint16 unused;					 /* 0 in every row */
+	Sint8 unitId; /* the party member, or the end of a set */
+	Uint8 level;  /* the level the party member is raised to */
+	Sint8
+		djinnCounts[ELEMENT_COUNT]; /* Djinn of each element to give and Set */
+	Uint16 items[4];				/* items to add and equip; 0 for none */
+	Uint16 abilities[2];			/* abilities to teach; 0 for none */
+	Uint16 unused;					/* 0 in every row */
 } DEBUG_PARM_SET_ROW;
 
 /* The party member of the row that ends a parameter set. */

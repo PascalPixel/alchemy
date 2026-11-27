@@ -319,7 +319,7 @@ void scMadraCatacombsUnlockWithRuinKey(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_STONE_RUMBLE);
+	fdScriptPlaySound(SE_STONE_RUMBLE);
 	for(i = 0; i < 120; i++) {
 		left->x.fixed += -(toFIXED(1) / 10);
 		right->x.fixed += toFIXED(1) / 10;
@@ -330,25 +330,25 @@ void scMadraCatacombsUnlockWithRuinKey(void)
 	fdCameraWaitForArrival();
 	fdCameraSetSpeed(0.4);
 	fdCameraMoveTo(160, CAMERA_KEEP, 186, 1);
-	fdScriptPlaySnd(SE_UNLOCK);
+	fdScriptPlaySound(SE_UNLOCK);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 4, 184, 258);
 	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 4, MadraCatacombsFlameFlaresUp);
 	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 4, MadraCatacombsFlameFlaresUp);
 	fdScriptWait(40);
-	fdScriptPlaySnd(SE_UNLOCK);
+	fdScriptPlaySound(SE_UNLOCK);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 3, 120, 226);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 3, 200, 226);
 	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 3, MadraCatacombsFlameFlaresUp);
 	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 3, MadraCatacombsFlameFlaresUp);
 	fdScriptWait(40);
-	fdScriptPlaySnd(SE_UNLOCK);
+	fdScriptPlaySound(SE_UNLOCK);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 2, 120, 194);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 2, 200, 194);
 	fdActorSetScript(ACTOR_FIRST_WEST_FLARE + 2, MadraCatacombsFlameFlaresUp);
 	fdActorSetScript(ACTOR_FIRST_EAST_FLARE + 2, MadraCatacombsFlameFlaresUp);
 	fdScriptWait(60);
-	fdScriptPlaySnd(SE_SPLASH);
+	fdScriptPlaySound(SE_SPLASH);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 1, 136, 162);
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE + 1, 184, 162);
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE, 136, 138);
@@ -404,10 +404,10 @@ void scMadraCatacombsHearEyesOfTruth(void)
 		fdScriptGetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) == 0) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(1);
-		fdScriptPlaySnd(SE_RATTLE);
+		fdScriptPlaySound(SE_RATTLE);
 		fdMapGridCopyMetatilesTo(72, 63, 36, 38, 1, 2);
 		fdScriptWait(40);
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 		fdMapGridCopyMetatilesTo(71, 66, 97, 39, 2, 2);
 		sySynch(2);
 		fdMapGridCopyMetatilesTo(73, 66, 97, 39, 2, 2);
@@ -442,8 +442,8 @@ void scMadraCatacombsShakeBookshelf(void)
 		if(x < (toFIXED(186))) {
 			fdScriptStart();
 			fdScriptEndLastingPsynergy(0);
-			fdScriptPlaySnd(SE_DUST_PUFF);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			fdScriptPlaySound(SE_DUST_PUFF);
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			sySynch(10);
 			fdActorSetPos(ACTOR_SHELF_CHEST, 0, 0);
 			fdScriptSetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL);
@@ -503,7 +503,7 @@ void scMadraCatacombsFinishMovingVinePillar(void)
 void scMadraCatacombsLightFlames(void)
 {
 	Uint32 i;
-	Sint32 tgt = ACTOR_FIRST_WEST_FLARE;
+	Sint32 target = ACTOR_FIRST_WEST_FLARE;
 	Sint32 actor = ACTOR_FIRST_FLAME_MARKER;
 
 	fdActorSetPos(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
@@ -518,8 +518,8 @@ void scMadraCatacombsLightFlames(void)
 	fdActorSetPos(ACTOR_FIRST_EAST_FLARE, 184, 138);
 	for(i = 0; i < FLARES_PER_SIDE * 2; i++) {
 		fdActorSetAnimation(actor, 0);
-		fdActorPlaceOnActor(actor, tgt);
-		tgt++;
+		fdActorPlaceOnActor(actor, target);
+		target++;
 		actor++;
 	}
 	fdMapGridCopyMetatileAttributes(0, 0, 2, 2, 9, 22);
@@ -533,16 +533,16 @@ void scMadraCatacombsRockChestWithBookshelf(void)
 {
 	ACTOR *bookshelf = fdActorGetById(ACTOR_BOOKSHELF);
 	ACTOR *chest = fdActorGetById(ACTOR_SHELF_CHEST);
-	SPR	  *spr = chest->spr;
+	SPR	  *sprite = chest->sprite;
 
-	spr->rotation = ((SPR *)bookshelf->spr)->rotation;
-	if(fdScriptGetFlag(FLAG_BOOKSHELF_LEANING) != 0 && spr->rotation == 0) {
-		fdScriptPlaySnd(SE_BOOKSHELF_SLIDE);
+	sprite->rotation = ((SPR *)bookshelf->sprite)->rotation;
+	if(fdScriptGetFlag(FLAG_BOOKSHELF_LEANING) != 0 && sprite->rotation == 0) {
+		fdScriptPlaySound(SE_BOOKSHELF_SLIDE);
 		chest->x.fixed += toFIXED(-2);
-		chest->velY = toFIXED(2);
+		chest->velocityY = toFIXED(2);
 		fdScriptClearFlag(FLAG_BOOKSHELF_LEANING);
 	}
-	if(spr->rotation != 0)
+	if(sprite->rotation != 0)
 		fdScriptSetFlag(FLAG_BOOKSHELF_LEANING);
 }
 
@@ -574,7 +574,7 @@ void scMadraCatacombsEnterDoor(void)
 	actor->facing = FACING_NORTH;
 	fdActorSetScript(party->leaderActorId, LeaderWalkThroughDoorScript);
 	sySynch(12);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
@@ -593,9 +593,9 @@ void scMadraCatacombsOpenDoorAndEnter(
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	if(width == 2)
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 	else
-		fdScriptPlaySnd(SE_DOOR_OPEN);
+		fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridCopyMetatilesTo(srcX, srcZ, x, z, width, height);
 	fdScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
@@ -611,7 +611,7 @@ void scMadraCatacombsOpenDoorAndEnter(
 	fdActorSetScript(
 		MainRoutineStateWork.leaderActorId, LeaderWalkThroughDoorScript);
 	sySynch(12);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
@@ -658,9 +658,10 @@ void scMadraCatacombsOpenTabletRoomDoor(void)
 		fdScriptStart(); \
 		fdScriptEndLastingPsynergy(0); \
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0); \
-		fdActorSetSprFlags( \
+		fdActorSetSpriteFlags( \
 			fdActorGetById(MainRoutineStateWork.leaderActorId), 0); \
-		fdActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId), \
+		fdActorSetSpriteColor( \
+			fdActorGetById(MainRoutineStateWork.leaderActorId), \
 			SPRITE_COLOR_HIDDEN); \
 		sySynch(1); \
 		fdScriptStartScreenTransition(); \
@@ -702,7 +703,7 @@ Sint32 scPrepareMap(void)
 void scMadraCatacombsSetUpVillage(void)
 {
 	fdScriptClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
-	fdActorSetSprPriority(ACTOR_VILLAGE_CHEST, 3);
+	fdActorSetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
 	fdRopeInit();
 	scFieldRopePlace(1, FLAG_VILLAGE_ROPE_TIED, ACTOR_VILLAGE_ROPE_LOW_POST,
 		ACTOR_VILLAGE_ROPE_HIGH_POST);
@@ -717,7 +718,8 @@ void scMadraCatacombsSetUpVillage(void)
 	fdActorPlaceBlocks(MadraCatacombsPushedPillar);
 	if(fdScriptGetFlag(FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED) != 0)
 		fdActorSetPos(ACTOR_VINE_PILLAR, 568, 280);
-	fdActorGetById(ACTOR_VINE_PILLAR)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_VINE_PILLAR)->priorityFlags &=
+		~ACTOR_PRIORITY_AUTOMATIC;
 	scPillarRaise(MadraCatacombsVinePillar);
 	fdFlagBlockPlaceAll(MadraCatacombsPuddles);
 	if(fdScriptGetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) != 0) {
@@ -773,8 +775,8 @@ void scMadraCatacombsSetUpBookshelfRoom(void)
 		fdActorSetPos(ACTOR_SHELF_CHEST, 0, 0);
 	} else {
 		actor = fdActorGetById(ACTOR_SHELF_CHEST);
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		actor->motionFlg = ACTOR_FALLS;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->y.fixed = toFIXED(32);
 		actor->groundHeight = toFIXED(32);
 		actor->update = scMadraCatacombsRockChestWithBookshelf;
@@ -793,8 +795,8 @@ void scMadraCatacombsSetUpTabletRoom(void)
 
 	left->scaleX = toFIXED(5) / 4;
 	right->scaleX = -toFIXED(5) / 4;
-	left->motionFlg = 0;
-	right->motionFlg = 0;
+	left->motionFlags = 0;
+	right->motionFlags = 0;
 	left->y.fixed = 0;
 	right->y.fixed = 0;
 	if(fdScriptGetFlag(FLAG_MADRA_CATACOMBS_TABLET_DOOR_OPEN) != 0) {

@@ -97,9 +97,9 @@ enum {
 
 /* The sprite priority of an actor's picture and of its shadow. */
 #define SET_IMAGE_PRIORITY(actor, level) \
-	((void)(actor->spr->image.pri = (level)))
+	((void)(actor->sprite->image.priority = (level)))
 #define SET_SHADOW_PRIORITY(actor, level) \
-	((void)(actor->spr->shadow.pri = (level)))
+	((void)(actor->sprite->shadow.priority = (level)))
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -157,10 +157,10 @@ const CUE *scGetCues(void)
 /* Runs the glow along the risen ship's hull, a colour at a time. */
 static void scShipGlowCyclePalette(void)
 {
-	Uint16 paletteIdx;
+	Uint16 paletteIndex;
 
-	paletteIdx = syMathDivideUnsigned(ShipGlowStep, SHIP_GLOW_STEP_TICKS);
-	syDMAXCopy(&ShipGlowPalettes[paletteIdx], (void *)&BG_PLTT_COLOR(7, 4),
+	paletteIndex = syMathDivideUnsigned(ShipGlowStep, SHIP_GLOW_STEP_TICKS);
+	syDMAXCopy(&ShipGlowPalettes[paletteIndex], (void *)&BG_PLTT_COLOR(7, 4),
 		DMA_COPY_HALFWORDS(SHIP_GLOW_COLORS), REG_DMA3);
 	ShipGlowStep++;
 	if(ShipGlowStep > SHIP_GLOW_COLORS * SHIP_GLOW_STEP_TICKS - 1)
@@ -175,10 +175,10 @@ enum { ANIM_DROP_BURST = 1 };
    spray and is released 20 ticks later by SprayFallScript. */
 static void scLemurianShipSprayUpdate(ACTOR *drop)
 {
-	if(drop->tmr != 0) {
+	if(drop->timer != 0) {
 		Sint32 drift;
 
-		drop->tmr--;
+		drop->timer--;
 		drift = syRandomNext() - syRandomNext();
 		drop->x.fixed += drift;
 		drop->y.fixed += toFIXED(4) / 5;
@@ -224,31 +224,31 @@ static void scShipUpdateSwell(void)
 	}
 	if(SwellActive != 0) {
 		swell = toFIXED(syMulFX(sySin(SwellPhase << 9), 2));
-		grid->layers[MAPGRID_LAYER_MIDDLE].ofsY = ShipHullY + swell;
-		grid->layers[MAPGRID_LAYER_OVERHEAD].ofsY = ShipDeckY + swell;
+		grid->layers[MAPGRID_LAYER_MIDDLE].offsetY = ShipHullY + swell;
+		grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY = ShipDeckY + swell;
 		if(LeaderDeckY != SHIP_NOT_ON_DECK) {
 			actor = fdActorGet(ACTOR_PARTY_LEADER);
 			actor->y.fixed = LeaderDeckY + swell;
 			actor->groundHeight = LeaderDeckY + swell;
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 		if(GaretDeckY != SHIP_NOT_ON_DECK) {
 			actor = fdActorGet(ACTOR_GARET);
 			actor->y.fixed = GaretDeckY + swell;
 			actor->groundHeight = LeaderDeckY + swell;
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 		if(MiaDeckY != SHIP_NOT_ON_DECK) {
 			actor = fdActorGet(ACTOR_MIA);
 			actor->y.fixed = MiaDeckY + swell;
 			actor->groundHeight = LeaderDeckY + swell;
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 		if(IvanDeckY != SHIP_NOT_ON_DECK) {
 			actor = fdActorGet(ACTOR_IVAN);
 			actor->y.fixed = IvanDeckY + swell;
 			actor->groundHeight = LeaderDeckY + swell;
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 		SwellPhase++;
 	}
@@ -267,12 +267,12 @@ static void scShipUpdateSwell(void)
 			sprayPosition.y, sprayPosition.z);
 		if(actor != NULL) {
 			actor->update = scLemurianShipSprayUpdate;
-			actor->tmr = 60;
+			actor->timer = 60;
 			actor->userValue = 1;
-			actor->motionFlg = 0;
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			actor->spr->image.pri = 2;
-			fdActorSetSprFlags(actor, ACTOR_BLEND_NORMAL);
+			actor->motionFlags = 0;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->sprite->image.priority = 2;
+			fdActorSetSpriteFlags(actor, ACTOR_BLEND_NORMAL);
 			fdActorSelectAnimation(actor, ANIM_STILL);
 		}
 	}
@@ -499,7 +499,7 @@ static void scLemurianShipSetSail(void)
 	fdScriptWait(20);
 	/* "Jenna is waiting for us!" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptWait(10);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
@@ -549,8 +549,8 @@ static void scLemurianShipSetSail(void)
 	/* The ship sails west and the curtains close: the sea's layer and the
 	   gangway's north piece slide away east past it, ever faster, and the
 	   camera pans along the deck to the stern. */
-	sySndPlay(MUS_THE_BROKEN_SEAL_ENDING);
-	sySndSetBGMTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
+	sySoundPlay(MUS_THE_BROKEN_SEAL_ENDING);
+	sySoundSetBGMTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
 	scCurtainStart();
 	fdScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_TICKS);
 	grid = MapGridState[0];
@@ -569,7 +569,7 @@ static void scLemurianShipSetSail(void)
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	IO_WRITE16(0, &PLTT_BACKDROP);
-	state->transitionFrm = 96;
+	state->transitionFrame = 96;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(30);
@@ -596,9 +596,9 @@ typedef struct RIPPLE_SCROLL_STATE {
 
 /* One line's ripple offset. */
 static inline Sint32 scLemurianShipWaveOffset(
-	Sint32 ang, FIXED amplitude, Uint16 base)
+	Sint32 angle, FIXED amplitude, Uint16 base)
 {
-	return (Uint16)(syMulFX(RippleSine[FIXEDtoINT(ang) &
+	return (Uint16)(syMulFX(RippleSine[FIXEDtoINT(angle) &
 								(LINE_SCROLL_WAVE_ENTRIES - 1)],
 						amplitude) /
 			   LINE_SCROLL_WAVE_SCALE) +
@@ -619,7 +619,7 @@ static void scLemurianShipRaiseTheShip(void)
 	Sint32				   white;
 	Sint32				   dark;
 	FIXED				   risen;
-	Uint16 cnt; /* each control, read into the tick by syIORead16 */
+	Uint16 count; /* each control, read into the tick by syIORead16 */
 
 	grid = MapGridState[0];
 
@@ -629,7 +629,7 @@ static void scLemurianShipRaiseTheShip(void)
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdScriptWait(40);
-	sySndPlay(SE_SPIN);
+	sySoundPlay(SE_SPIN);
 	for(i = 0; i <= RGB_LEVEL_MAX / 2; i++) {
 		IO_WRITE16(RGB(0, i, i * 2), &PLTT_BACKDROP);
 		fdScriptWait(10);
@@ -639,7 +639,7 @@ static void scLemurianShipRaiseTheShip(void)
 		Uint16 bright = BLEND_ALPHA(16, 16);
 
 		for(flash = 0; flash < 3; flash++) {
-			sySndPlay(SE_POWER_UP);
+			sySoundPlay(SE_POWER_UP);
 			REG_BLDALPHA = bright;
 			fdScriptWait(3);
 			IO_WRITE16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
@@ -653,7 +653,7 @@ static void scLemurianShipRaiseTheShip(void)
 	sySetTickEvent(scShipUpdateSwell, EVENT_PASS_TICK);
 	SprayActive = 1;
 	fdScriptWait(20);
-	sySndPlay(SE_RUSH);
+	sySoundPlay(SE_RUSH);
 	fdMapGridSetShake(1, 1, 1);
 	fdScriptWait(60);
 	SprayActive = 1;
@@ -665,27 +665,27 @@ static void scLemurianShipRaiseTheShip(void)
 	/* The ship rises 90 pixels, 0.2 pixels a tick. */
 	risen = 0;
 	do {
-		grid->layers[MAPGRID_LAYER_MIDDLE].ofsY += toFIXED(1) / 5;
-		grid->layers[MAPGRID_LAYER_OVERHEAD].ofsY += toFIXED(1) / 5;
+		grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += toFIXED(1) / 5;
+		grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += toFIXED(1) / 5;
 		risen += toFIXED(1) / 5;
 		sySynch(1);
 	} while(risen < toFIXED(90));
 	syCloseEvent(scOrbGlowFade);
 	SprayActive = 0;
-	syIORead16(&REG_BG3CNT, &cnt);
-	cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-	REG_BG3CNT = cnt;
-	syIORead16(&REG_BG2CNT, &cnt);
-	cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-	REG_BG2CNT = cnt;
-	syIORead16(&REG_BG1CNT, &cnt);
-	cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
-	REG_BG1CNT = cnt;
+	syIORead16(&REG_BG3CNT, &count);
+	count = (count & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+	REG_BG3CNT = count;
+	syIORead16(&REG_BG2CNT, &count);
+	count = (count & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+	REG_BG2CNT = count;
+	syIORead16(&REG_BG1CNT, &count);
+	count = (count & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+	REG_BG1CNT = count;
 	OrbGlowActive = 0;
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	sySynch(1);
 	/* A flash of white; the swell starts as it clears. */
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	IO_WRITE16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
 	for(white = 0; white <= BLEND_FADE_MAX; white++) {
 		REG_BLDY = white;
@@ -693,16 +693,16 @@ static void scLemurianShipRaiseTheShip(void)
 	}
 	fdScriptWait(40);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	ShipHullY = grid->layers[MAPGRID_LAYER_MIDDLE].ofsY;
-	ShipDeckY = grid->layers[MAPGRID_LAYER_OVERHEAD].ofsY;
+	ShipHullY = grid->layers[MAPGRID_LAYER_MIDDLE].offsetY;
+	ShipDeckY = grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
 	SwellActive = 1;
 	for(dark = BLEND_FADE_MAX; dark >= 0; dark--) {
 		REG_BLDY = dark;
 		fdScriptWait(8);
 	}
 	sySetTickEvent(scShipGlowCyclePalette, EVENT_PASS_TICK);
-	sySndPlay(MUS_PUZZLE_SOLVED);
-	mnSndWaitForJingle();
+	sySoundPlay(MUS_PUZZLE_SOLVED);
+	mnSoundWaitForJingle();
 	fdScriptWait(20);
 	fdScriptEnd();
 	scLemurianShipSetSail();
@@ -714,17 +714,17 @@ static void scLemurianShipRaiseTheShip(void)
 Sint32 scInit(void)
 {
 	MAP_GRID_SCROLL_STATE *grid;
-	Uint16 cnt; /* each control, read into the tick by syIORead16 */
+	Uint16 count; /* each control, read into the tick by syIORead16 */
 
 	grid = MapGridState[0];
 	if(MainRoutineStateWork.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
 		gmInventoryAddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
 	}
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdActorGet(ACTOR_GANGWAY_NORTH)->collisionFlg = 0;
-	fdActorGet(ACTOR_GANGWAY_NORTH)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_GANGWAY_SOUTH)->collisionFlg = 0;
-	fdActorGet(ACTOR_GANGWAY_SOUTH)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_GANGWAY_NORTH)->collisionFlags = 0;
+	fdActorGet(ACTOR_GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_GANGWAY_SOUTH)->collisionFlags = 0;
+	fdActorGet(ACTOR_GANGWAY_SOUTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	{
 		ACTOR *actor = fdActorGet(ACTOR_GANGWAY_NORTH);
 
@@ -759,15 +759,15 @@ Sint32 scInit(void)
 		SET_IMAGE_PRIORITY(actor, 1);
 		SET_SHADOW_PRIORITY(actor, 1);
 	}
-	syIORead16(&REG_BG3CNT, &cnt);
-	cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
-	REG_BG3CNT = cnt;
-	syIORead16(&REG_BG2CNT, &cnt);
-	cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-	REG_BG2CNT = cnt;
-	syIORead16(&REG_BG1CNT, &cnt);
-	cnt = (cnt & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
-	REG_BG1CNT = cnt;
+	syIORead16(&REG_BG3CNT, &count);
+	count = (count & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
+	REG_BG3CNT = count;
+	syIORead16(&REG_BG2CNT, &count);
+	count = (count & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+	REG_BG2CNT = count;
+	syIORead16(&REG_BG1CNT, &count);
+	count = (count & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
+	REG_BG1CNT = count;
 	IO_WRITE16(BLDCNT_TGT1_BG3 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1 |
 			BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BD,
 		&REG_BLDCNT);
@@ -775,9 +775,9 @@ Sint32 scInit(void)
 	{
 		MAP_GRID_LAYER_SCROLL *layer = grid->layers + 1;
 
-		layer->ofsY -= toFIXED(90);
+		layer->offsetY -= toFIXED(90);
 		layer = grid->layers + 2;
-		layer->ofsY -= toFIXED(90);
+		layer->offsetY -= toFIXED(90);
 	}
 	fdMapGridCenterOnFollowedPoint();
 	scRippleStart();
@@ -791,20 +791,20 @@ void fdLineScrollArmDMA(void)
 	RIPPLE_SCROLL_STATE *state;
 	Uint32				*src;
 	volatile Uint16		*dma0;
-	volatile Uint32		*dst;
+	volatile Uint32		*dest;
 
 	state = (RIPPLE_SCROLL_STATE *)LineScroll;
 	src = (Uint32 *)state->pages[state->page];
 
 	dma0 = REG_DMA0;
-	dst = (volatile Uint32 *)&REG_BG3HOFS;
+	dest = (volatile Uint32 *)&REG_BG3HOFS;
 	dma0[DMA_CNT_H_INDEX] &= ~DMA_START_TIMING_DRQ_REPEAT;
 	dma0[DMA_CNT_H_INDEX] &= ~DMA_ENABLE;
 	dma0[DMA_CNT_H_INDEX];
 
-	*dst = *src++;
+	*dest = *src++;
 	syDMAXCopy(
-		src, (void *)dst, DMA_HBLANK_WORD_PER_LINE, (volatile Uint32 *)dma0);
+		src, (void *)dest, DMA_HBLANK_WORD_PER_LINE, (volatile Uint32 *)dma0);
 }
 
 /* Builds the other ripple page and swaps it in. */
@@ -812,7 +812,7 @@ void fdLineScrollBuildPage(void)
 {
 	RIPPLE_SCROLL_STATE *state;
 	Uint16				*line;
-	Sint32				 ang;
+	Sint32				 angle;
 	Uint16				 base;
 	Sint32				 amplitude;
 	Sint32				 step;
@@ -823,21 +823,21 @@ void fdLineScrollBuildPage(void)
 	y = BgScrollWork[3].y;
 	line = state->pages[state->page ^ 1];
 	step = state->step[0];
-	ang = (state->phase + y) * state->frequency[0];
+	angle = (state->phase + y) * state->frequency[0];
 	amplitude = state->amplitude[0];
 	base = BgScrollWork[3].x;
 	for(i = 0; i != DISPLAY_HEIGHT; i++) {
-		*line = scLemurianShipWaveOffset(ang, amplitude, base);
-		ang += step;
+		*line = scLemurianShipWaveOffset(angle, amplitude, base);
+		angle += step;
 		line += 2;
 	}
 	line = state->pages[state->page ^ 1] + 1;
 	step = state->step[1];
-	ang = (state->phase + y) * state->frequency[1];
+	angle = (state->phase + y) * state->frequency[1];
 	amplitude = state->amplitude[1];
 	for(i = 0; i != DISPLAY_HEIGHT; i++) {
-		*line = scLemurianShipWaveOffset(ang, amplitude, y);
-		ang += step;
+		*line = scLemurianShipWaveOffset(angle, amplitude, y);
+		angle += step;
 		line += 2;
 	}
 	state->phase++;
@@ -891,7 +891,7 @@ static void scCurtainClose(void)
 	Sint32 edge;
 	Uint32 i;
 
-	tile = VramCacheEntries[CurtainVramSlot].ofs >> 5;
+	tile = VramCacheEntries[CurtainVramSlot].offset >> 5;
 #if FIX_TYPE_PUNNING
 	part = CurtainSprites;
 #else
@@ -920,7 +920,7 @@ static void scCurtainClose(void)
 		CURTAIN_PART(
 			OBJ_X(i * CURTAIN_PART_WIDTH) | edge | OBJ_SIZE_32X16, tile);
 	for(i = 0; i < 3 * CURTAIN_ROW_PARTS; i++)
-		syOAMAddSprAtDepth(&CurtainSprites[i], OAM_DEPTH_FRONT);
+		syOAMAddSpriteAtDepth(&CurtainSprites[i], OAM_DEPTH_FRONT);
 }
 
 /* Fills a curtain sprite's tiles with colour 1 and starts the curtains
@@ -930,7 +930,7 @@ static void scCurtainStart(void)
 	Uint8 *tiles;
 
 	tiles = syHeapCallAlternatePool(
-		syHeapAllocEWRAM, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);
+		syHeapAllocateEWRAM, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);
 	CurtainVramSlot = syVRAMCacheFindFreeEntry();
 	DMA_FILL32(
 		PIXELS_4BPP(1), tiles, CURTAIN_PART_WIDTH * CURTAIN_PART_HEIGHT / 2);

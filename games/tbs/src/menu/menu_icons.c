@@ -52,7 +52,7 @@ Sint32 mnIconLoadResourceIntoSlot(Sint32 abilityId, Sint32 slot)
 	ICON_TRANSFER *allocation;
 
 	allocation =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 	selectedSlot = slot;
 	mnAbilityBuildIconTilesStub(
 		abilityId, 0, &selectedSlot, &decodedResource, 1);
@@ -65,7 +65,7 @@ Sint32 mnIconLoadResourceIntoSlot(Sint32 abilityId, Sint32 slot)
    block, for the Djinn preview's Psynergy lists; with no block free, nothing.
    Returns no value; callers ignore it. */
 Sint32 mnIconCreatePsynergyIcon(
-	WINDOW *win, Sint32 x, Sint32 y, Sint32 abilityId)
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 abilityId)
 {
 	Sint32 slot;
 
@@ -73,7 +73,7 @@ Sint32 mnIconCreatePsynergyIcon(
 	/* VRAM_CACHE_ENTRY_COUNT means no slot was free. */
 	if(slot != VRAM_CACHE_ENTRY_COUNT) {
 		mnIconLoadResourceIntoSlot(abilityId, slot);
-		mnWindowSprCreateStub(slot, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+		mnWindowSpriteCreateStub(slot, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 	}
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
@@ -84,7 +84,7 @@ Sint32 mnIconCreatePsynergyIcon(
    arrow (STAT_ARROW_UP) or the down arrow at (x, y) of window, for the
    equipment preview (mnTextDrawStatComparison). */
 Sint32 mnIconCreateStatChangeArrow(
-	WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 variant)
 {
 	WINDOW_SPR		*object;
 	Uint32			 resource;
@@ -94,8 +94,8 @@ Sint32 mnIconCreateStatChangeArrow(
 		resource = menu->resourceSlots[0];
 	else
 		resource = menu->resourceSlots[1];
-	object =
-		mnWindowSprCreateStub(resource, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+	object = mnWindowSpriteCreateStub(
+		resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 	if(object == 0) {
 		/* FAKEMATCH(dead): a test whose two arms both return -1. */
 		if(variant || x)
@@ -104,7 +104,7 @@ Sint32 mnIconCreateStatChangeArrow(
 			return -1;
 	}
 	object->kind = 0;
-	object->anmStep = 0;
+	object->animationStep = 0;
 	object->motion = ICON_SHOWN;
 	return 1;
 }
@@ -112,7 +112,8 @@ Sint32 mnIconCreateStatChangeArrow(
 /* Shows the Djinn menu's up arrow (variant 0) or down arrow at (x, y) of
    window, as mnIconCreateStatChangeArrow does, raised 3 pixels for the up arrow
    and 4 for the down one. */
-Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
+Sint32 mnIconCreateDjinnArrow(
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 variant)
 {
 	WINDOW_SPR		*object;
 	Uint32			 resource;
@@ -125,8 +126,8 @@ Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
 		resource = menu->resourceSlots[1];
 		y -= 4;
 	}
-	object =
-		mnWindowSprCreateStub(resource, WINDOW_SPRITE_SIZE_16X16, win, x, y);
+	object = mnWindowSpriteCreateStub(
+		resource, WINDOW_SPRITE_SIZE_16X16, window, x, y);
 	if(object == 0) {
 		/* FAKEMATCH(dead): a test whose two arms both return -1. */
 		if(variant || x)
@@ -135,7 +136,7 @@ Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
 			return -1;
 	}
 	object->kind = 0;
-	object->anmStep = 0;
+	object->animationStep = 0;
 	object->motion = ICON_SHOWN;
 	return 1;
 }

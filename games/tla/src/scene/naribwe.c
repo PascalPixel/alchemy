@@ -130,12 +130,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 void scNaribwePrepareBlaze(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Sint8		*flg;
+	Sint8		*flag;
 
-	flg = &state->blazeLongSpray;
-	*flg = 1;
+	flag = &state->blazeLongSpray;
+	*flag = 1;
 	if(MainRoutineStateWork.entrance != NARIBWE_FIRE_LIT_ENTRANCE)
-		*flg = 0;
+		*flag = 0;
 }
 
 const CUE *scGetCues(void)
@@ -328,7 +328,7 @@ void scNaribweEnterDoor(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint16		*cue;
-	Sint32		 idx;
+	Sint32		 index;
 	Uint32		 id;
 
 	fdScriptStart();
@@ -337,19 +337,19 @@ void scNaribweEnterDoor(void)
 		ACTOR *actor = fdActorGetById(id);
 
 		if(actor != NULL) {
-			Uint8 *flg = &actor->motionFlg;
+			Uint8 *flags = &actor->motionFlags;
 
-			*flg = 0;
+			*flags = 0;
 		}
 	}
 	cue = &state->stepCue;
-	idx = *cue;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	idx -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
-	fdMapGridAnimateMetatiles(
-		NaribweDoors[idx].steps, NaribweDoors[idx].x, NaribweDoors[idx].y);
+	index = *cue;
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	index -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
+	fdMapGridAnimateMetatiles(NaribweDoors[index].steps, NaribweDoors[index].x,
+		NaribweDoors[index].y);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	syImportScriptSetExitRequest(*cue);
 	fdScriptFinishScreenTransition();
@@ -374,9 +374,9 @@ UNUSED void scNaribweSetRopeState(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	state->tgtX = 0;
-	state->tgtY = ACTOR_ROPE_POST;
-	state->tgtZ = ACTOR_ROPE_END;
+	state->targetX = 0;
+	state->targetY = ACTOR_ROPE_POST;
+	state->targetZ = ACTOR_ROPE_END;
 }
 
 /* Felix casts Reveal anywhere in the village: on the ledge of totem poles above
@@ -399,9 +399,9 @@ void scNaribweHideChest(void)
 Sint32 scInit(void)
 {
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_WEST_BRAZIER), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_EAST_BRAZIER), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_WEEDS), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_WEST_BRAZIER), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_EAST_BRAZIER), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_WEEDS), 0);
 	fdActorGetById(ACTOR_WEEDS)->scaleY = toFIXED(8) / 5;
 	fdActorGetById(ACTOR_ROCK_PILE)->scaleX = toFIXED(1) / 2;
 	fdActorGetById(ACTOR_ROCK_PILE)->scaleY = toFIXED(1) / 2;
@@ -410,7 +410,7 @@ Sint32 scInit(void)
 		fdActorSetPos(ACTOR_WEEDS, 0, 0);
 	fdRopeInit();
 	fdRopePlace(0, FLAG_NARIBWE_ROPE_TIED, ACTOR_ROPE_POST, ACTOR_ROPE_END);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_ROPE_POST), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_ROPE_POST), 0);
 	fdActorDisableById(ACTOR_ROPE_END);
 	return 0;
 }

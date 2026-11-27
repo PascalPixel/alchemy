@@ -52,9 +52,9 @@ typedef struct WHIRL_SPARK {
 	FIXED  x;
 	FIXED  y;
 	FIXED  z;
-	Sint32 ang;			   /* 1/65536 turns */
-	Sint32 unusedAfterAng; /* no code names it */
-	FIXED  radius;		   /* 16.16 fixed-point pixels */
+	Sint32 angle;			 /* 1/65536 turns */
+	Sint32 unusedAfterAngle; /* no code names it */
+	FIXED  radius;			 /* 16.16 fixed-point pixels */
 	Sint32 age;
 } WHIRL_SPARK;
 
@@ -80,12 +80,12 @@ typedef enum RETREAT_PARTICLE_STATE {
    whirlwind. */
 typedef struct CYCLONE_STATE {
 	Uint8  particleBurst[6920];
-	Sint16 cnt;
-	Uint8  unusedAfterCnt[2]; /* no code names it */
-	ACTOR *follower;		  /* the actor carried with the leader */
-	Sint16 state;			  /* the stage of the ride; 999 once it ends */
-	Sint16 tmr;				  /* ticks into the ride */
-	Sint32 ang;				  /* the whirlwind's turn, 1/65536 turns */
+	Sint16 count;
+	Uint8  unusedAfterCount[2]; /* no code names it */
+	ACTOR *follower;			/* the actor carried with the leader */
+	Sint16 state;				/* the stage of the ride; 999 once it ends */
+	Sint16 timer;				/* ticks into the ride */
+	Sint32 angle;				/* the whirlwind's turn, 1/65536 turns */
 	Sint32 radius;
 	FIXED  from[3]; /* where the ride starts, 16.16 pixels */
 	FIXED  to[3];	/* where it ends, 16.16 pixels */

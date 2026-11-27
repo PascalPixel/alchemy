@@ -27,21 +27,22 @@ Sint32			   btUnitProjectToScreen(Sint32 unit, Sint32 *screen);
 Sint32			   fdPartyCheckShortcut(Uint32 packed_id);
 void			   fdActorUpdateAllMotion(void);
 void			   fdActorUpdateAllOnField(void);
-void			   fdActorSystemProjectSprs(void);
+void			   fdActorSystemProjectSprites(void);
 Sint32			   fdActorFindLastActiveId(void);
 void			   btMotionProjectPosStub(Sint32, Sint32 *);
 Sint32			   gmUnitKnowsPsynergyStub(Sint32 group, Sint32 entry);
 Sint32			   mnPartyShowJoinedMessageStub(Sint32 event_id, Sint32 value);
 Sint32 mnPartyShowPairJoinedMessageStub(Sint32 first, Sint32 second);
 
-/* fdSprDissolveStep clears one pixel of each 8-bit tile a step, in
+/* fdSpriteDissolveStep clears one pixel of each 8-bit tile a step, in
    SpriteDissolvePixelOrder's order, so a tile is gone after this many. */
 #define DISSOLVE_TILE_PIXELS 64
 /* The step the first tile starts to dissolve at; each tile after it starts a
    step sooner. */
 #define DISSOLVE_FIRST_STEP	 64
-/* The steps a dissolve takes, four a tick: in the field, fdSprDissolveRun and
-   fdSprDissolveRunMany's, and in battle a felled enemy's (PLAY_FELLED). */
+/* The steps a dissolve takes, four a tick: in the field, fdSpriteDissolveRun
+   and fdSpriteDissolveRunMany's, and in battle a felled enemy's (PLAY_FELLED).
+ */
 #define DISSOLVE_STEPS		 (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
 
 struct SPR;
@@ -72,14 +73,14 @@ void btEffectRunFlurry(struct BATTLE_EFFECT_PARM *effect, Sint32 variant);
 void fdActorTurnPairToFaceEachOther(ACTOR *first, ACTOR *second);
 void fdPsynergyRunExtraHandler(void);
 
-Sint32 fdActorPlaySndInViewStub(ACTOR *interpreter, Sint32 value);
-void   fdActorSetSquareSpr(Uint32 objectId);
+Sint32 fdActorPlaySoundInViewStub(ACTOR *interpreter, Sint32 value);
+void   fdActorSetSquareSprite(Uint32 objectId);
 void   fdSuperLuckyDiceRun(void);
 void   gmFlagRefreshLureCapStub(void);
 void   fdMapGridCenterOnFollowedPointStub(void);
 FIXED  fdMapGridGetTerrainHeightStub(Sint32 layer, FIXED x, FIXED z);
 Bool   fdActorIsTargetUnset(ACTOR *actor);
-void   fdSetActorSprPriority(ACTOR *actor, Sint32 pri);
+void   fdSetActorSpritePriority(ACTOR *actor, Sint32 priority);
 void   fdActorStartCameraStub(void *actor, void *effect);
 void   fdEntranceEndArrivalAnimation(Sint32 effect);
 void   fdExitPrepareAnimation(Sint32 effect);
@@ -113,7 +114,7 @@ extern const FIELD_PSYNERGY_REACH FieldPsynergyReach[];
    FIELD_PSYNERGY_TREMOR). */
 #define REACH_SHAKEN_OBJECTS 256
 
-/* ACTOR.sprStorageKind, its low four bits: what the actor's sprite pointer
+/* ACTOR.spriteStorageKind, its low four bits: what the actor's sprite pointer
    holds. */
 typedef enum ACTOR_SPR_KIND {
 	ACTOR_SPRITE_NONE = 0, /* nothing drawn */
@@ -121,7 +122,7 @@ typedef enum ACTOR_SPR_KIND {
 	ACTOR_SPRITE_GROUP = 2 /* a list of up to four sprites, empty ones null */
 } ACTOR_SPR_KIND;
 
-/* ACTOR.sprStorageKind's low four bits, its ACTOR_SPR_KIND. */
+/* ACTOR.spriteStorageKind's low four bits, its ACTOR_SPR_KIND. */
 #define ACTOR_SPRITE_KIND_MASK 15
 
 /* fdActorCreate's id / 4096: what sprites the actor is made with. */
@@ -148,7 +149,7 @@ extern Uint8 WorldMapPalettes[];
 
 struct CUE_VIEW;
 
-typedef void (*DRAW_FN)(const void *src, void *dst, Sint32 param);
+typedef void (*DRAW_FN)(const void *src, void *dest, Sint32 param);
 
 typedef void (*UPLOAD_FN)(const void *src, Uint32 w, Uint32 h, void *vram);
 
@@ -249,14 +250,14 @@ typedef struct TIGHTROPE_NODE {
 	Sint8 kind; /* 0 while free; 1 a node the leader can step onto; 2 coiled */
 	Sint8 slot; /* the tightrope's index plus one while it is thrown, else 0 */
 	Uint8 unusedAfterSlot[2]; /* no code names it */
-	ANIMATION_SPR_PART spr;
+	ANIMATION_SPR_PART sprite;
 } TIGHTROPE_NODE;
 
 /* One of the eight tightropes: the two posts it runs between and its wobble. */
 typedef struct TIGHTROPE_SLOT {
 	Sint16			first;
 	Sint16			second;
-	Uint32			dir;	   /* the sprites' turn, along the tightrope */
+	Uint32			direction; /* the sprites' turn, along the tightrope */
 	Sint32			amplitude; /* the wobble's size, decaying each tick */
 	Uint8			unusedAfterAmplitude[4]; /* no code names it */
 	Sint32			phase;
@@ -295,25 +296,25 @@ typedef struct RISING_PARTICLE {
 			/* OAM attributes 0 to 2. */
 			Uint16 y : 8; /* screen pixels */
 			Uint16 attr0 : 2;
-			Uint16 objMode : 2;
+			Uint16 objectMode : 2;
 			Uint16 attr0b : 2;
 			Uint16 shape : 2;
 			Uint16 x : 9; /* screen pixels */
 			Uint16 attr1 : 5;
 			Uint16 size : 2;
 			Uint16 tile : 10;
-			Uint16 pri : 2;
-			Uint16 pal : 4;
-			Uint8  unusedAfterPal[2]; /* no code names it */
+			Uint16 priority : 2;
+			Uint16 palette : 4;
+			Uint8  unusedAfterPalette[2]; /* no code names it */
 		} attributes;
-	} spr;
+	} sprite;
 
 	Sint32 posX;
 	Sint32 posY;
 	Sint32 posZ;
 	Sint32 drift;
-	Uint16 tmr;
-	Uint8  unusedAfterTmr[2]; /* no code names it */
+	Uint16 timer;
+	Uint8  unusedAfterTimer[2]; /* no code names it */
 } RISING_PARTICLE;
 
 /* HEAP_SLOT_WEATHER while the rising particles run: their tiles' VRAM cache
@@ -330,7 +331,7 @@ typedef struct EFFECT_OWNER {
 	Uint8	unused[8]; /* no code names it */
 	VECTOR3 pos;
 	Uint8	unusedAfterPos[60]; /* no code names it */
-	SPR	   *spr;
+	SPR	   *sprite;
 } EFFECT_OWNER;
 
 /* The line scroll's state: two pages of BG1 to BG3 scroll offsets for each of
@@ -339,12 +340,15 @@ typedef struct LINE_SCROLL_STATE {
 	BG_SCROLL rows[2][160][3]; /* per page and scanline: BG3, BG2, BG1 */
 	Uint8	  page; /* the page the HBlank DMA shows; the other is built */
 	Uint8	  mode; /* set at the start; not read by name */
-	Uint16 frm; /* ticks built so far, added to BG3's y for the wave's phase */
-	Uint8  unused[4]; /* zeroed with the block; nothing reads or writes it */
-	FIXED  freqX; /* phase per tick and per BG3 row, 16.16 wave table entries */
-	FIXED  freqY; /* phase per tick and per BG3 row, 16.16 wave table entries */
-	FIXED  stepX; /* 16.16 wave table entries a scanline, 256 a cycle */
-	FIXED  stepY; /* 16.16 wave table entries a scanline, 256 a cycle */
+	Uint16
+		  frame; /* ticks built so far, added to BG3's y for the wave's phase */
+	Uint8 unused[4];  /* zeroed with the block; nothing reads or writes it */
+	FIXED frequencyX; /* phase per tick and per BG3 row, 16.16 wave table
+						 entries */
+	FIXED frequencyY; /* phase per tick and per BG3 row, 16.16 wave table
+						 entries */
+	FIXED stepX;	  /* 16.16 wave table entries a scanline, 256 a cycle */
+	FIXED stepY;	  /* 16.16 wave table entries a scanline, 256 a cycle */
 	FIXED
 	ampX; /* 16.16 scale on the sine entry, which is then divided by 256 */
 	FIXED
@@ -367,10 +371,10 @@ typedef struct ROPE_NODE {
 	Sint32			  x;
 	Sint32			  y;
 	Sint32			  z;
-	Uint16			  ang;	/* the sprite's turn, along the rope */
-	Sint8			  kind; /* ROPE_NODE_KIND */
+	Uint16			  angle; /* the sprite's turn, along the rope */
+	Sint8			  kind;	 /* ROPE_NODE_KIND */
 	Sint8 slot; /* the rope's index plus one while it is thrown, else 0 */
-	ANIMATION_SPR_PART spr;
+	ANIMATION_SPR_PART sprite;
 } ROPE_NODE;
 
 /* One of the eight ropes: the two posts it runs between and its swing. */
@@ -378,8 +382,8 @@ typedef struct ROPE_SLOT {
 	Sint16	   first;	 /* the post it coils at */
 	Sint16	   second;	 /* the post it is tied to */
 	Sint16	   segments; /* its nodes, less one */
-	Sint16	   pri;		 /* the sprites', the first post's */
-	Sint16	   flg;		 /* set while the rope is tied */
+	Sint16	   priority; /* the sprites', the first post's */
+	Sint16	   flags;	 /* set while the rope is tied */
 	Sint16	   state;	 /* 1 once thrown or tied */
 	Sint32	   amplitude;
 	Uint8	   unusedAfterAmplitude[4]; /* no code names it */
@@ -401,16 +405,16 @@ typedef struct ROPE_WORK {
 
 extern const Uint8 SuperLuckyDiceFaceTiles[];
 Sint32			   fdSuperLuckyDiceScaleRGB555Buffer(
-				Uint16 *src, Uint16 *dst, Sint32 scale, Sint32 cnt);
-void fdSuperLuckyDiceBrightenCols(
-	Uint16 *src, Uint16 *dst, Uint32 cnt, Sint32 ang);
+				Uint16 *src, Uint16 *dest, Sint32 scale, Sint32 count);
+void fdSuperLuckyDiceBrightenColors(
+	Uint16 *src, Uint16 *dest, Uint32 count, Sint32 angle);
 Sint32 fdSuperLuckyDiceScoreDice(Sint32 *dice);
-Sint32 fdSuperLuckyDiceDrawNum(Sint32 spr, Sint32 x, Sint32 y, Sint32 value,
-	Sint32 palette, Sint32 digits);
-Sint32 fdSuperLuckyDiceDrawLargeNum(Sint32 spr, Sint32 x, Sint32 y,
+Sint32 fdSuperLuckyDiceDrawNumber(Sint32 sprite, Sint32 x, Sint32 y,
+	Sint32 value, Sint32 palette, Sint32 digits);
+Sint32 fdSuperLuckyDiceDrawLargeNumber(Sint32 sprite, Sint32 x, Sint32 y,
 	Sint32 value, Sint32 palette, Sint32 digits);
 
-void mnPortraitCloseWindowStub(Sint32 spr);
+void mnPortraitCloseWindowStub(Sint32 sprite);
 
 extern const Sint32 GrowthLeafScript[];
 extern const Sint32 FieldEffectShortEffectScript[];
@@ -457,7 +461,7 @@ extern Uint8 GridDrawOutlineCodeSize[];
 
 extern const Uint8 SpriteColorTintTables[];
 
-Uint8 *fdDecompressLZ(const Uint8 *src, Uint8 *dst);
+Uint8 *fdDecompressLZ(const Uint8 *src, Uint8 *dest);
 
 Sint32 fdWorldMapGetCollisionStub(Sint32 *pos);
 
@@ -486,25 +490,25 @@ Sint32 fdUsePsynergy(Uint32 code);
 
 Sint16 *fdSceneItemGetRows(void);
 void	fdPlaceTreasureSpots(void);
-Sint32	fdActorGetSprShape(Uint32 objectId);
+Sint32	fdActorGetSpriteShape(Uint32 objectId);
 void	fdTreasureSpotLaunchMimic(Uint32 objectId);
 void	fdTreasureSpotOpenEmptyChest(Uint32 objectId);
 
 void   fdCameraResetViewDefaults(void);
 Sint32 fdLuckyDiceScaleRGB555Buffer(
-	Uint16 *src, Uint16 *dst, FIXED scale, Sint32 cnt);
+	Uint16 *src, Uint16 *dest, FIXED scale, Sint32 count);
 
 extern const Uint16 LuckyWheelsSparkMetatileOffsets[];
 
 Sint32 btEffectBuildBlitterStub(Sint32 slot, Sint32 widthShift,
-	Sint32 heightShift, Sint32 flg, Uint32 mode);
+	Sint32 heightShift, Sint32 flags, Uint32 mode);
 
 Sint32 fdWorldMapWriteLayerMetatileTile(
 	Sint32 layer, Sint32 x, Sint32 y, Sint32 tile, Sint32 update);
 
 void fdPaletteFadeLoadPaletteStub(void *palette);
 
-void fdTilesetAnimStartAll(const Uint16 *script);
+void fdTilesetAnimationStartAll(const Uint16 *script);
 
 void mnIconDrawItemStub(Sint32 item);
 
@@ -513,7 +517,7 @@ Sint32 fdSceneItemFindPos(Sint32 value, Sint32 *out);
 void fdMapGridSetMetatileBehaviorAtStub(
 	Sint32 terrain, Sint32 x, Sint32 z, Sint32 value);
 
-void fdSprAnimationClearStub(void *record);
+void fdSpriteAnimationClearStub(void *record);
 
 void mnDjinnShowJoinedMessageStub(Sint32 owner, Sint32 element, Sint32 djinni);
 
@@ -557,7 +561,7 @@ extern const Sint16 GroundParticlesOffsets[];
 
 void fdActorMoveWithCarriers(void);
 
-void fdActorSystemPlaceSprs(void);
+void fdActorSystemPlaceSprites(void);
 
 extern const Sint32 ActorKeyCheckScript[];
 extern const Sint32 ActorKeysScript[];
@@ -584,7 +588,7 @@ void fdMapGridUpdateLayerScroll(void);
 void fdWorldMapApplyAffinePage(void);
 
 Uint32 fdMapReadEditU16(Uint8 **cursor);
-void   fdMapApplyFlagEdits(Sint32 flg, Sint32 attributes);
+void   fdMapApplyFlagEdits(Sint32 flag, Sint32 attributes);
 
 void fdWorldMapMarkPlaceVisited(Sint32 id, Sint32 variant);
 

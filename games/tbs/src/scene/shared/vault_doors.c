@@ -8,7 +8,7 @@
    (25, 21)), the gem owner's, and goes in. */
 static void scVaultEnterGemOwnersHouse(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultGemOwnersHouseDoorMetatiles, 56, 19);
 	scVaultWalkThroughExit(408, 320, VAULT_GEM_OWNERS_HOUSE_EXIT);
 }
@@ -17,7 +17,7 @@ static void scVaultEnterGemOwnersHouse(void)
    child's home, and goes in. */
 static void scVaultEnterChildsHouse(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultChildsHouseDoorMetatiles, 50, 18);
 	scVaultWalkThroughExit(312, 304, VAULT_CHILDS_HOUSE_EXIT);
 }
@@ -26,7 +26,7 @@ static void scVaultEnterChildsHouse(void)
    goes in. */
 static void scVaultEnterInn(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultInnDoorMetatiles, 44, 17);
 	scVaultWalkThroughExit(216, 288, VAULT_INN_EXIT);
 }
@@ -40,13 +40,13 @@ static void scVaultEnterInn(void)
 static void scVaultEnterItemShop(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	SPR	  *spr = actor->spr;
+	SPR	  *sprite = actor->sprite;
 
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultItemShopDoorMetatiles, 54, 13);
 	fdMapGridCopyMetatileAttributes(33, 20, 1, 3, 23, 12);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 3;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 3;
 	scVaultWalkThroughExit(376, 224, VAULT_ITEM_SHOP_EXIT);
 }
 
@@ -56,13 +56,13 @@ static void scVaultEnterItemShop(void)
 static void scVaultEnterWeaponAndArmorShop(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_PARTY_LEADER);
-	SPR	  *spr = actor->spr;
+	SPR	  *sprite = actor->sprite;
 
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultWeaponAndArmorShopDoorMetatiles, 49, 10);
 	fdMapGridCopyMetatileAttributes(33, 20, 1, 3, 18, 10);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 3;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 3;
 	scVaultWalkThroughExit(296, 176, VAULT_WEAPON_AND_ARMOR_SHOP_EXIT);
 }
 
@@ -71,7 +71,7 @@ static void scVaultEnterWeaponAndArmorShop(void)
    Ivan waits there before he joins. */
 static void scVaultEnterMayorsHouse(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(VaultMayorsHouseDoorMetatiles, 38, 6);
 	scVaultWalkThroughExit(120, 144, VAULT_MAYORS_HOUSE_EXIT);
 }

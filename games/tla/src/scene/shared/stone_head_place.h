@@ -14,7 +14,7 @@ void scStoneHeadPlace(Sint32 id, Sint32 x, Sint32 y, Sint32 z)
 	actor->x.fixed = (x & FIELD_METATILE_MASK) + toFIXED(8);
 	actor->z.fixed = (z & FIELD_METATILE_MASK) + toFIXED(8);
 	actor->y.fixed = actor->z.fixed - FIELD_METATILE_ORIGIN(metatileZ);
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpriteFlags(actor, 0);
 }

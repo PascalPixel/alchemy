@@ -43,7 +43,7 @@
 #include "shop/shop.h"
 #include "field/field_particle.h"
 
-void mnWindowSprRedrawSavedRectStub(void *win);
+void mnWindowSpriteRedrawSavedRectStub(void *window);
 
 /* What the player chose at a shop's counter, in the order of its menu's */
 /* Buy, Sell, Artifacts and Repair, held in shop->action while it runs. The
@@ -140,7 +140,7 @@ typedef enum SANCTUM_SPARKLE_STATE {
 	SANCTUM_SPARKLE_LAST_FLIGHT = 2
 } SANCTUM_SPARKLE_STATE;
 
-/* The sanctum's particle slots (SHOP_STATE.effs), and the sparkles a burst
+/* The sanctum's particle slots (SHOP_STATE.effects), and the sparkles a burst
    sends of them. */
 #define SANCTUM_PARTICLE_COUNT 24
 #define SANCTUM_BURST_SPARKLES 18
@@ -177,12 +177,12 @@ typedef struct SHOP_STATE {
 	Sint32
 		/* the menu screens' chosen party member; not named here */
 		  selectedMember;
-	void *moneyWin; /* the coins window */
+	void *moneyWindow; /* the coins window */
 	/* The menu screens' first window and their two sides; not named here. */
 	Uint8 menuSides[20];
-	void *itemWin;
+	void *itemWindow;
 	/* The menu screens' windows, icons and cursor grid; not named here. */
-	Uint8  menuWins[208];
+	Uint8  menuWindows[208];
 	void  *partyMemberIcons[8]; /* the party row's sprites */
 	Sint16 partyMemberX[8];		/* pixels */
 	Sint16 partyMemberY[8];		/* pixels */
@@ -205,44 +205,45 @@ typedef struct SHOP_STATE {
 	Uint16 keeperGraphics; /* the shopkeeper's animation; picks the portrait */
 	Uint16 selectedItem;   /* the item being bought, sold or repaired */
 	Uint8  unusedAfterSelection[4]; /* no view of the menu state names it */
-	Sint16 stockCnt;
-	Sint8  partyMemberCnt;
-	Uint8  cursorFrm; /* the ticks the hand cursor takes to its next place */
-	Sint8  shopType;  /* the stock row's type (SHOP_TYPE) */
-	Sint8  action;	  /* the counter or service chosen (SHOP_ACTION or */
+	Sint16 stockCount;
+	Sint8  partyMemberCount;
+	Uint8  cursorFrame; /* the ticks the hand cursor takes to its next place */
+	Sint8  shopType;	/* the stock row's type (SHOP_TYPE) */
+	Sint8  action;		/* the counter or service chosen (SHOP_ACTION or */
 	/* SANCTUM_SERVICE) the sanctum's party member whose pose is randomized;
 	   -1 */
 	Sint8 burstMember;
 	/* none ITEM_MENU_STATE's: nonzero while mnUpdatePartyFigures places the
 	   party figures; cleared while a details window covers them. */
-	Uint8 memberSprsShown;
+	Uint8 memberSpritesShown;
 	Uint8 figuresShown; /* ITEM_MENU_STATE's; not named here */
 	/* The item picker's check: 0 for an item to drop, 1 for one to remove. */
 	Sint8 itemMode;
 	/* The sanctum service's particles. */
-	FIELD_PARTICLE effs[SANCTUM_PARTICLE_COUNT];
+	FIELD_PARTICLE effects[SANCTUM_PARTICLE_COUNT];
 	Uint8 menuIcons[72]; /* ITEM_MENU_STATE's five menu icons; not named here */
 	/* The item icon grid (mnItemIconGridShowInventory): a sprite and a VRAM
 	   cache slot (ICON_NONE when empty) for each inventory slot. */
-	ICON_SPR iconSprs[INVENTORY_SLOTS];
+	ICON_SPR iconSprites[INVENTORY_SLOTS];
 	Uint16	 iconSlots[INVENTORY_SLOTS];
 	Sint8 iconsVisible; /* nonzero while mnItemIconGridDraw queues the icons */
-	void *listWin; /* the party row's window at the sell and forge counters */
+	void
+		*listWindow; /* the party row's window at the sell and forge counters */
 } SHOP_STATE;
 
-STATIC_ASSERT(offsetof(SHOP_STATE, itemWin) == 36);
+STATIC_ASSERT(offsetof(SHOP_STATE, itemWindow) == 36);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberIcons) == 248);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberScale) == 312);
 STATIC_ASSERT(offsetof(SHOP_STATE, stockItemIds) == 624);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberIds) == 1226);
 STATIC_ASSERT(offsetof(SHOP_STATE, cursor) == 1244);
 STATIC_ASSERT(offsetof(SHOP_STATE, keeperGraphics) == 1274);
-STATIC_ASSERT(offsetof(SHOP_STATE, stockCnt) == 1282);
+STATIC_ASSERT(offsetof(SHOP_STATE, stockCount) == 1282);
 STATIC_ASSERT(offsetof(SHOP_STATE, action) == 1287);
-STATIC_ASSERT(offsetof(SHOP_STATE, effs) == 1292);
-STATIC_ASSERT(offsetof(SHOP_STATE, iconSprs) == 3092);
+STATIC_ASSERT(offsetof(SHOP_STATE, effects) == 1292);
+STATIC_ASSERT(offsetof(SHOP_STATE, iconSprites) == 3092);
 STATIC_ASSERT(offsetof(SHOP_STATE, iconsVisible) == 3302);
-STATIC_ASSERT(offsetof(SHOP_STATE, listWin) == 3304);
+STATIC_ASSERT(offsetof(SHOP_STATE, listWindow) == 3304);
 STATIC_ASSERT(sizeof(SHOP_STATE) == 3308);
 
 /* The quantity cursor's x, in pixels: buy.c and sell.c both place it, further

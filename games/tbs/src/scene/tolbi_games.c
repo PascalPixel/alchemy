@@ -276,11 +276,11 @@ enum {
    velocity and the ticks the prize rings still pull it. */
 typedef struct SPRING_TOSS_MOTION {
 	Uint8	unused[2]; /* nothing reads or writes it */
-	Sint16	launchFrm;
+	Sint16	launchFrame;
 	VECTOR3 trail[4]; /* 16.16 fixed-point pixels */
 	VECTOR3 shadow;
-	VECTOR3 vel; /* 16.16 fixed-point pixels per tick */
-	Sint32	attractionFrm;
+	VECTOR3 velocity; /* 16.16 fixed-point pixels per tick */
+	Sint32	attractionFrame;
 } SPRING_TOSS_MOTION;
 
 /* One of the four obstacles moving in the spring during a toss. */
@@ -289,11 +289,11 @@ typedef struct SPRING_OBSTACLE {
 	Sint16	heading;
 	Sint16	pauseOrPhase;
 	Sint16	speedMode;
-	Sint16	reactionFrm;
-	Sint16	hitCooldownFrm;
+	Sint16	reactionFrame;
+	Sint16	hitCooldownFrame;
 } SPRING_OBSTACLE;
 
-static inline void scIOSetBlendCtrl(Sint32 value)
+static inline void scIOSetBlendControl(Sint32 value)
 {
 	REG_BLDCNT = value;
 }
@@ -453,7 +453,7 @@ Sint32 scInit(void)
 {
 	Sint32 coinChange;
 	Sint8 *wonPrizes;
-	Sint32 prizeIdx;
+	Sint32 prizeIndex;
 	Sint32 item;
 
 	if(MainRoutineStateWork.next == SCENE_TOLBI_SPRING) {
@@ -468,15 +468,15 @@ Sint32 scInit(void)
 			ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS, ANIM_SIGN_GRASS);
 		fdActorGet(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->scaleX = -toFIXED(1);
 		fdActorGet(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->scaleX = -toFIXED(1);
-		fdActorGet(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->priFlg =
+		fdActorGet(ACTOR_TOLBI_SPRING_EAST_SIGN_GRASS)->priorityFlags =
 			ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->priFlg =
+		fdActorGet(ACTOR_TOLBI_SPRING_WEST_SIGN_GRASS)->priorityFlags =
 			ACTOR_PRIORITY_UNDERFOOT;
 		fdScriptStartScreenTransition();
 		if(MainRoutineStateWork.entrance == TOLBI_SPRING_FROM_TOLBI) {
 			scTolbiSpringInitTossSimulation();
 			if(gmFlagGet(FLAG_TOLBI_SPRING_DRAINED)) {
-				scIOSetBlendCtrl(
+				scIOSetBlendControl(
 					BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
 				scIOSetBlendAlpha(BLEND_ALPHA(0, 16));
 			}
@@ -490,18 +490,20 @@ Sint32 scInit(void)
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 		if(MainRoutineStateWork.entrance ==
 			STUCCO_ROOMS_C_LUCKY_DICE_FROM_TOLBI) {
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_LUCKY_WHEELS_ATTENDANT, SPRITE_COLOR_GRB);
-			fdActorSetSprColById(ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
+			fdActorSetSpriteColorById(
+				ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
 		}
 		/* Back from Lucky Dice, the attendant tells the coins won or lost. */
 		if(MainRoutineStateWork.entrance ==
 				STUCCO_ROOMS_C_AFTER_OFFER_LUCKY_DICE &&
 			!gmFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 			fdScriptStart();
-			fdActorSetSprColById(
+			fdActorSetSpriteColorById(
 				ACTOR_LUCKY_WHEELS_ATTENDANT, SPRITE_COLOR_GRB);
-			fdActorSetSprColById(ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
+			fdActorSetSpriteColorById(
+				ACTOR_LUCKY_DICE_ATTENDANT, SPRITE_COLOR_RBG);
 			fdScriptStartScreenTransition();
 			fdScriptWaitTransitionTicks();
 			fdScriptWait(10);
@@ -511,18 +513,18 @@ Sint32 scInit(void)
 				MainRoutineStateWork.holdings.coins - sLuckyDiceCoinsBefore;
 			if(coinChange > 0) {
 				if(coinChange >= LUCKY_DICE_LARGE_WIN) {
-					sySndPlay(MUS_SUPER_LUCKY);
+					sySoundPlay(MUS_SUPER_LUCKY);
 				} else if(coinChange >= LUCKY_DICE_MEDIUM_WIN) {
-					sySndPlay(MUS_VERY_LUCKY);
+					sySoundPlay(MUS_VERY_LUCKY);
 				} else {
-					sySndPlay(MUS_LUCKY);
+					sySoundPlay(MUS_LUCKY);
 				}
 				fdScriptWait(20);
 				fdScriptSetMessageId(MsgTolbiYaWonNumber);
 				mnMessageArgumentPush(coinChange, MESSAGE_ARGUMENT_NUMBER);
 				/* "Ya won ... coin! Talk about lucky!" */
 				fdScriptShowMessage(ACTOR_LUCKY_DICE_ATTENDANT, 0);
-				mnSndWaitForJingle();
+				mnSoundWaitForJingle();
 			} else if(coinChange < 0) {
 				fdScriptSetMessageId(MsgTolbiYaLostNumber);
 				mnMessageArgumentPush(-coinChange, MESSAGE_ARGUMENT_NUMBER);
@@ -547,16 +549,16 @@ Sint32 scInit(void)
 				/* "Congratulations!" */
 				fdScriptShowMessage(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
 				if(*wonPrizes != LUCKY_WHEELS_PRIZE_LIST_END) {
-					for(prizeIdx = 0;
-						wonPrizes[prizeIdx] != LUCKY_WHEELS_PRIZE_LIST_END;
-						prizeIdx++) {
-						if(prizeIdx == 0) {
+					for(prizeIndex = 0;
+						wonPrizes[prizeIndex] != LUCKY_WHEELS_PRIZE_LIST_END;
+						prizeIndex++) {
+						if(prizeIndex == 0) {
 							fdScriptSetMessageId(MsgTolbiWonItemGo);
 						} else {
 							fdScriptSetMessageId(MsgTolbiAndYouWonItem);
 						}
 						item = scStuccoRoomsCSelectLuckyWheelsPrize(
-							wonPrizes[prizeIdx]);
+							wonPrizes[prizeIndex]);
 						mnMessageArgumentPush(item, MESSAGE_ARGUMENT_ITEM);
 						/* "You won ...! Here you go.", then "And you won ...!
 						   Here you go." */
@@ -587,7 +589,7 @@ static inline void scTolbiSpringShowPrizePicture(
 	Sint32 srcColumn, Sint32 srcRow)
 {
 	fdMapGridCopyMetatilesTo(srcColumn, srcRow, 70, 0, 3, 8);
-	sySndPlay(SE_CAST);
+	sySoundPlay(SE_CAST);
 	fdScriptWait(8);
 }
 
@@ -606,7 +608,7 @@ static void scTolbiSpringRevealPrize(Sint32 item)
 {
 	fdScriptStart();
 	fdScriptWait(30);
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	fdScriptWait(100);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdScriptWait(40);
@@ -628,10 +630,10 @@ static void scTolbiSpringRevealPrize(Sint32 item)
 	scTolbiSpringShowPrizePicture(94, 29);
 	scTolbiSpringShowPrizePicture(97, 29);
 	fdMapGridCopyMetatilesTo(100, 29, 70, 0, 3, 8);
-	sySndPlay(SE_CAST);
+	sySoundPlay(SE_CAST);
 
 	fdScriptWait(70);
-	sySndPlay(SE_RECOVERY);
+	sySoundPlay(SE_RECOVERY);
 	gmItemShowFound(item, 3);
 	gmPartyGiveItem(item, 0);
 	fdScriptWait(20);
@@ -664,16 +666,16 @@ static void scTolbiSpringDrainSpring(void)
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	MAP_GRID_LAYER_SCROLL *spring;
 	const Uint16		  *alphaSteps;
-	Sint32				   stepIdx;
+	Sint32				   stepIndex;
 
-	sySndPlay(SE_BURST);
+	sySoundPlay(SE_BURST);
 	spring = &grid->layers[MAPGRID_LAYER_OVERHEAD];
-	for(stepIdx = 0; stepIdx < SPRING_WATER_SINK_PIXELS; stepIdx++) {
-		spring->ofsY -= toFIXED(1);
+	for(stepIndex = 0; stepIndex < SPRING_WATER_SINK_PIXELS; stepIndex++) {
+		spring->offsetY -= toFIXED(1);
 		sySynch(4);
 	}
 	alphaSteps = TolbiSpringAlphaSteps;
-	for(stepIdx = 0; stepIdx < 8; stepIdx++) {
+	for(stepIndex = 0; stepIndex < 8; stepIndex++) {
 		IO_WRITE16(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL,
 			&REG_BLDCNT);
 		IO_WRITE16(*alphaSteps++, &REG_BLDALPHA);
@@ -813,10 +815,10 @@ static Sint32 scTolbiSpringRunSpringGame(void)
 	Sint32	cancel = -1; /* what the menus answer when B is pressed */
 	Sint32	coins;
 	Sint32	medals;
-	WINDOW *win;
+	WINDOW *window;
 	Sint32	result;
 	Sint32	totalWeight;
-	Sint32	prizeIdx;
+	Sint32	prizeIndex;
 	Sint32	prizeRoll;
 	Sint32	msg;
 	MAIN_ROUTINE_STATE *routine;
@@ -832,14 +834,14 @@ prompt:
 	fdScriptSetMessageId(msg);
 	/* "What will you throw?" */
 	fdScriptOpenMessage(-1, 0);
-	win = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
+	window = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
 	text = MsgTolbiCoins;
-	mnTextDrawMessageAsTiles(text, win, 0, 0);
-	mnTextDrawNumInWindow(coins, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 0);
-	mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
-	mnTextDrawNumInWindow(medals, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 8);
+	mnTextDrawMessageAsTiles(text, window, 0, 0);
+	mnTextDrawNumberInWindow(coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+	mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
+	mnTextDrawNumberInWindow(medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
 	choice = mnSelectCoinsOrMedals(choice);
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 	mnMessageCloseFinishedWindows();
 	if(choice == cancel) {
 		fdScriptEnd();
@@ -870,27 +872,27 @@ prompt:
 			}
 		}
 	}
-	win = mnWindowCreate(
+	window = mnWindowCreate(
 		TOLBI_SPRING_TOSS_MENU_X, 15, TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
 	text = MsgTolbiToss;
-	mnTextDrawMessageAsTiles(text, win, 0, 0);
-	mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
+	mnTextDrawMessageAsTiles(text, window, 0, 0);
+	mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
 	sySynch(5);
-	sySndPlay(SE_TOLBI_SPRING_TOSS_PROMPT);
+	sySoundPlay(SE_TOLBI_SPRING_TOSS_PROMPT);
 	for(;;) {
 		if(PerPush & KEY_A) {
-			sySndPlay(SE_MENU_CONFIRM);
+			sySoundPlay(SE_MENU_CONFIRM);
 			result = 0;
 			break;
 		}
 		if(PerPush & KEY_B) {
-			sySndPlay(SE_MENU_CANCEL);
+			sySoundPlay(SE_MENU_CANCEL);
 			result = -1;
 			break;
 		}
 		sySynch(1);
 	}
-	mnWindowClose(win, 2);
+	mnWindowClose(window, 2);
 #else
 	for(;;) {
 		text = MsgTolbiCoins;
@@ -900,17 +902,19 @@ prompt:
 		fdScriptSetMessageId(msg);
 		/* "What will you throw?" */
 		fdScriptOpenMessage(-1, 0);
-		win = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
-		mnTextDrawMessageAsTiles(text, win, 0, 0);
-		mnTextDrawNumInWindow(coins, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 0);
+		window = mnWindowCreate(0, 0, TOLBI_SPRING_COUNT_WIDTH, 4, 2);
+		mnTextDrawMessageAsTiles(text, window, 0, 0);
+		mnTextDrawNumberInWindow(
+			coins, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 0);
 		/* The marker after each count, MsgTolbiCounterMarker, follows the medal
 		   label. */
-		mnTextDrawMessageAsTiles(text + 2, win, 104, 0);
-		mnTextDrawMessageAsTiles(text + 1, win, 0, 8);
-		mnTextDrawNumInWindow(medals, 6, win, TOLBI_SPRING_COUNT_NUMBER_X, 8);
-		mnTextDrawMessageAsTiles(text + 2, win, 104, 8);
+		mnTextDrawMessageAsTiles(text + 2, window, 104, 0);
+		mnTextDrawMessageAsTiles(text + 1, window, 0, 8);
+		mnTextDrawNumberInWindow(
+			medals, 6, window, TOLBI_SPRING_COUNT_NUMBER_X, 8);
+		mnTextDrawMessageAsTiles(text + 2, window, 104, 8);
 		choice = mnSelectCoinsOrMedals(choice);
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		mnMessageCloseFinishedWindows();
 		if(choice == cancel) {
 			fdScriptEnd();
@@ -943,27 +947,27 @@ prompt:
 				}
 			}
 		}
-		win = mnWindowCreate(
+		window = mnWindowCreate(
 			TOLBI_SPRING_TOSS_MENU_X, 15, TOLBI_SPRING_TOSS_MENU_WIDTH, 4, 2);
 		result = MsgTolbiToss;
-		mnTextDrawMessageAsTiles(result, win, 0, 0);
-		mnTextDrawMessageAsTiles(result + 1, win, 0, 8);
+		mnTextDrawMessageAsTiles(result, window, 0, 0);
+		mnTextDrawMessageAsTiles(result + 1, window, 0, 8);
 		sySynch(5);
-		sySndPlay(SE_TOLBI_SPRING_TOSS_PROMPT);
+		sySoundPlay(SE_TOLBI_SPRING_TOSS_PROMPT);
 		for(;;) {
 			if(PerPush & KEY_A) {
-				sySndPlay(SE_MENU_CONFIRM);
+				sySoundPlay(SE_MENU_CONFIRM);
 				result = 0;
 				break;
 			}
 			if(PerPush & KEY_B) {
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				result = -1;
 				break;
 			}
 			sySynch(1);
 		}
-		mnWindowClose(win, 2);
+		mnWindowClose(window, 2);
 		break;
 	}
 #endif
@@ -978,57 +982,59 @@ prompt:
 		if(choice == SPRING_TOSS_COIN) {
 			if(result != SPRING_RING_OUTSIDE) {
 				gmPartyAdjustCoins(TOLBI_SPRING_COIN_PRIZE(result));
-				sySndPlay(MUS_LUCKY);
+				sySoundPlay(MUS_LUCKY);
 				mnMessageArgumentPush(
 					TOLBI_SPRING_COIN_PRIZE(result), MESSAGE_ARGUMENT_NUMBER);
 				fdScriptSetMessageId(MsgTolbiWonNumberCoin);
 				/* "You won ... coin!" */
 				fdScriptShowMessage(-1, 0);
 			} else {
-				sySndPlay(SE_MENU_CANCEL);
+				sySoundPlay(SE_MENU_CANCEL);
 				fdScriptWait(10);
 			}
 		} else {
 			/* The prize ring limits the weighted pool of medal rewards. */
 			totalWeight = 0;
-			prizeIdx = 0;
-			if(prizeIdx < result * SPRING_MEDAL_PRIZES_PER_RING +
+			prizeIndex = 0;
+			if(prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
 					SPRING_MEDAL_PRIZES_PER_RING) {
 				do {
 					/* FAKEMATCH(temporary): weight, the prize's weight held for
 					 * the one sum; as the weight added directly. */
-					Sint8 weight = *(routine->holdings.prizeWeights + prizeIdx);
+					Sint8 weight =
+						*(routine->holdings.prizeWeights + prizeIndex);
 
 					totalWeight += weight;
-					prizeIdx++;
-				} while(prizeIdx < result * SPRING_MEDAL_PRIZES_PER_RING +
+					prizeIndex++;
+				} while(prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
 						SPRING_MEDAL_PRIZES_PER_RING);
 			}
 			prizeRoll = syRandomBelow(totalWeight);
-			for(prizeIdx = 0; prizeIdx < SPRING_MEDAL_PRIZES; prizeIdx++) {
-				prizeRoll -= routine->holdings.prizeWeights[prizeIdx];
+			for(prizeIndex = 0; prizeIndex < SPRING_MEDAL_PRIZES;
+				prizeIndex++) {
+				prizeRoll -= routine->holdings.prizeWeights[prizeIndex];
 				if(prizeRoll < 0) {
 					break;
 				}
 			}
-			if(prizeIdx == SPRING_MEDAL_PRIZES) {
-				prizeIdx = SPRING_MEDAL_PRIZES - 1;
+			if(prizeIndex == SPRING_MEDAL_PRIZES) {
+				prizeIndex = SPRING_MEDAL_PRIZES - 1;
 			}
-			scTolbiSpringRevealPrize(TolbiSpringPrizeItems[prizeIdx]);
+			scTolbiSpringRevealPrize(TolbiSpringPrizeItems[prizeIndex]);
 			/* FAKEMATCH(dead): stepping routine away and back. */
 			routine++;
 			routine--;
 			{
-				Sint32 slot = prizeIdx +
+				Sint32 slot = prizeIndex +
 					offsetof(MAIN_ROUTINE_STATE, holdings.prizeWeights) - 1;
 
-				if(routine->holdings.prizeWeights[prizeIdx] > 1) {
+				if(routine->holdings.prizeWeights[prizeIndex] > 1) {
 					/* FAKEMATCH(dead): the halving in both arms of a test of
 					 * slot. */
 					if(slot)
-						routine->holdings.prizeWeights[prizeIdx] /= 2;
+						routine->holdings.prizeWeights[prizeIndex] /= 2;
 					else
-						routine->holdings.prizeWeights[prizeIdx] /= 2;
+						routine->holdings.prizeWeights[prizeIndex] /= 2;
 				}
 			}
 		}
@@ -1069,36 +1075,37 @@ static Sint32 scStuccoRoomsCSelectLuckyWheelsPrize(Sint32 category)
 /* Places the actor at the three coordinates and sets its facing, animation
    speed and colours. */
 static void scTolbiSpringSetActorAppearance(Sint32 actorId,
-	const Sint32 *coordinate, Sint32 facing, Sint32 colVariant, Sint32 anmSpeed)
+	const Sint32 *coordinate, Sint32 facing, Sint32 colorVariant,
+	Sint32 animationSpeed)
 {
 	ACTOR *actor = fdActorGet(actorId);
-	SPR	  *spr;
-	Uint32 cnt;
+	SPR	  *sprite;
+	Uint32 count;
 
 	if(actor != NULL) {
 		actor->x.fixed = *coordinate++;
 		actor->y.fixed = *coordinate++;
 		actor->z.fixed = *coordinate;
 		actor->facing = facing;
-		actor->motionFlg = 0;
-		actor->spr->flg = 0;
-		fdActorSetAnimationSpeed(actor, anmSpeed);
+		actor->motionFlags = 0;
+		actor->sprite->flags = 0;
+		fdActorSetAnimationSpeed(actor, animationSpeed);
 	}
 	/* BUG: actor is read even when fdActorGet found none. */
-	spr = actor->spr;
-	cnt = spr->cnt;
-	if(cnt != 0) {
+	sprite = actor->sprite;
+	count = sprite->count;
+	if(count != 0) {
 		Sint32			noPicture = SPRITE_PICTURE_NONE;
-		SPR_ANIMATION **anm = spr->entries;
-		Uint32			left = cnt;
+		SPR_ANIMATION **animation = sprite->entries;
+		Uint32			left = count;
 
 		do {
-			SPR_ANIMATION *entry = *anm++;
+			SPR_ANIMATION *entry = *animation++;
 
-			if(entry->colMode != colVariant) {
+			if(entry->colorMode != colorVariant) {
 				Uint32 picture;
 
-				entry->colMode = colVariant;
+				entry->colorMode = colorVariant;
 				/* No picture is cached in the new colours yet. */
 				picture = entry->picture | noPicture;
 				entry->picture = picture;
@@ -1108,12 +1115,13 @@ static void scTolbiSpringSetActorAppearance(Sint32 actorId,
 }
 
 /* Sets whether the specified actor draws its sprite. */
-static void scTolbiSpringSetSprStorageKind(Sint32 actorId, Sint32 storageKind)
+static void scTolbiSpringSetSpriteStorageKind(
+	Sint32 actorId, Sint32 storageKind)
 {
 	ACTOR *actor = fdActorGet(actorId);
 
 	if(actor != NULL) {
-		actor->sprStorageKind = storageKind;
+		actor->spriteStorageKind = storageKind;
 	}
 }
 
@@ -1145,12 +1153,12 @@ static void scTolbiSpringUpdateTossSimulation(void)
 {
 	SPRING_TOSS_MOTION *toss;
 	SPRING_OBSTACLE	   *obstacle;
-	Sint32				idx;
+	Sint32				index;
 	Sint32				height;
 	FIXED				edgeInset;
 	Sint32				motionStep;
 	Sint32				speedMode;
-	Sint32				cycleFrm;
+	Sint32				cycleFrame;
 	FIXED				minX;
 	FIXED				maxX;
 	FIXED				minZ;
@@ -1161,23 +1169,23 @@ static void scTolbiSpringUpdateTossSimulation(void)
 
 	toss = &Toss;
 	/* Retain the previous three positions for the visible toss trail. */
-	for(idx = 3; idx != 0; idx--) {
-		toss->trail[idx].x = toss->trail[idx - 1].x;
-		toss->trail[idx].y = toss->trail[idx - 1].y;
-		toss->trail[idx].z = toss->trail[idx - 1].z;
+	for(index = 3; index != 0; index--) {
+		toss->trail[index].x = toss->trail[index - 1].x;
+		toss->trail[index].y = toss->trail[index - 1].y;
+		toss->trail[index].z = toss->trail[index - 1].z;
 	}
 
 	/* Delay motion until the leader's launch animation has played. */
-	if(toss->launchFrm > 31) {
-		toss->trail[0].x += toss->vel.x;
-		height = toss->trail[0].y + toss->vel.y;
+	if(toss->launchFrame > 31) {
+		toss->trail[0].x += toss->velocity.x;
+		height = toss->trail[0].y + toss->velocity.y;
 		toss->trail[0].y = height;
-		toss->trail[0].z += toss->vel.z;
+		toss->trail[0].z += toss->velocity.z;
 
 		if(height <= 0) {
 			toss->trail[0].y = 0;
-			if(toss->vel.y != 0) {
-				toss->vel.y = 0;
+			if(toss->velocity.y != 0) {
+				toss->velocity.y = 0;
 				if(TossKind == SPRING_TOSS_MEDAL) {
 					fdActorSelectAnimation(
 						fdActorGet(ACTOR_TOLBI_SPRING_MEDAL), ANIM_TOKEN_FLOAT);
@@ -1187,7 +1195,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				}
 			}
 
-			if(toss->attractionFrm > 0) {
+			if(toss->attractionFrame > 0) {
 				Sint32 deltaX;
 				Sint32 deltaZ;
 				Sint32 distance;
@@ -1196,46 +1204,46 @@ static void scTolbiSpringUpdateTossSimulation(void)
 				deltaZ = (TOLBI_SPRING_CENTER_Z - toss->trail[0].z) >> 8;
 				/* BUG: an exact center position leaves a zero divisor below. */
 				distance = sySquartIWRAM(deltaX * deltaX + deltaZ * deltaZ);
-				toss->vel.x += ((toFIXED(1) / 10) * deltaX) / distance;
-				toss->vel.z += ((toFIXED(1) / 10) * deltaZ) / distance;
-				toss->vel.x = toss->vel.x * SPRING_TOKEN_PULLED_DAMPING /
-					SPRING_TOKEN_DAMPING_SCALE;
-				toss->vel.z = toss->vel.z * SPRING_TOKEN_PULLED_DAMPING /
-					SPRING_TOKEN_DAMPING_SCALE;
-				toss->attractionFrm = toss->attractionFrm - 1;
+				toss->velocity.x += ((toFIXED(1) / 10) * deltaX) / distance;
+				toss->velocity.z += ((toFIXED(1) / 10) * deltaZ) / distance;
+				toss->velocity.x = toss->velocity.x *
+					SPRING_TOKEN_PULLED_DAMPING / SPRING_TOKEN_DAMPING_SCALE;
+				toss->velocity.z = toss->velocity.z *
+					SPRING_TOKEN_PULLED_DAMPING / SPRING_TOKEN_DAMPING_SCALE;
+				toss->attractionFrame = toss->attractionFrame - 1;
 			} else {
-				toss->vel.x = toss->vel.x * SPRING_TOKEN_SETTLING_DAMPING /
-					SPRING_TOKEN_DAMPING_SCALE;
-				toss->vel.z = toss->vel.z * SPRING_TOKEN_SETTLING_DAMPING /
-					SPRING_TOKEN_DAMPING_SCALE;
-				if(toss->vel.x > -toFIXED(1) / 64 &&
-					toss->vel.x < toFIXED(1) / 64) {
-					toss->vel.x = 0;
+				toss->velocity.x = toss->velocity.x *
+					SPRING_TOKEN_SETTLING_DAMPING / SPRING_TOKEN_DAMPING_SCALE;
+				toss->velocity.z = toss->velocity.z *
+					SPRING_TOKEN_SETTLING_DAMPING / SPRING_TOKEN_DAMPING_SCALE;
+				if(toss->velocity.x > -toFIXED(1) / 64 &&
+					toss->velocity.x < toFIXED(1) / 64) {
+					toss->velocity.x = 0;
 				}
-				if(toss->vel.z > -toFIXED(1) / 64 &&
-					toss->vel.z < toFIXED(1) / 64) {
-					toss->vel.z = 0;
+				if(toss->velocity.z > -toFIXED(1) / 64 &&
+					toss->velocity.z < toFIXED(1) / 64) {
+					toss->velocity.z = 0;
 				}
-				if(toss->vel.x == 0 && toss->vel.z == 0) {
+				if(toss->velocity.x == 0 && toss->velocity.z == 0) {
 					if(TossKind == SPRING_TOSS_MEDAL) {
 						fdActorSelectAnimation(
 							fdActorGet(ACTOR_TOLBI_SPRING_MEDAL),
 							ANIM_TOKEN_REST);
-						scTolbiSpringSetSprStorageKind(
+						scTolbiSpringSetSpriteStorageKind(
 							TOLBI_SPRING_MEDAL_TRAIL(1), 0);
-						scTolbiSpringSetSprStorageKind(
+						scTolbiSpringSetSpriteStorageKind(
 							TOLBI_SPRING_MEDAL_TRAIL(2), 0);
-						scTolbiSpringSetSprStorageKind(
+						scTolbiSpringSetSpriteStorageKind(
 							TOLBI_SPRING_MEDAL_TRAIL(3), 0);
 					} else {
 						fdActorSelectAnimation(
 							fdActorGet(ACTOR_TOLBI_SPRING_COIN),
 							ANIM_TOKEN_REST);
-						scTolbiSpringSetSprStorageKind(
+						scTolbiSpringSetSpriteStorageKind(
 							TOLBI_SPRING_COIN_TRAIL(1), 0);
-						scTolbiSpringSetSprStorageKind(
+						scTolbiSpringSetSpriteStorageKind(
 							TOLBI_SPRING_COIN_TRAIL(2), 0);
-						scTolbiSpringSetSprStorageKind(
+						scTolbiSpringSetSpriteStorageKind(
 							TOLBI_SPRING_COIN_TRAIL(3), 0);
 					}
 					{
@@ -1318,47 +1326,47 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			   speed. */
 			if(toss->trail[0].x < minX) {
 				toss->trail[0].x = minX;
-				if(toss->vel.x < 0) {
-					toss->vel.x = -toss->vel.x / 2;
+				if(toss->velocity.x < 0) {
+					toss->velocity.x = -toss->velocity.x / 2;
 				}
 			}
 			if(toss->trail[0].x > maxX) {
 				toss->trail[0].x = maxX;
-				if(toss->vel.x > 0) {
-					toss->vel.x = -toss->vel.x / 2;
+				if(toss->velocity.x > 0) {
+					toss->velocity.x = -toss->velocity.x / 2;
 				}
 			}
 			if(toss->trail[0].z < minZ) {
 				toss->trail[0].z = minZ;
-				if(toss->vel.z < 0) {
-					toss->vel.z = -toss->vel.z / 2;
+				if(toss->velocity.z < 0) {
+					toss->velocity.z = -toss->velocity.z / 2;
 				}
 			}
 			if(toss->trail[0].z > maxZ) {
 				toss->trail[0].z = maxZ;
-				if(toss->vel.z > 0) {
-					toss->vel.z = -toss->vel.z / 2;
+				if(toss->velocity.z > 0) {
+					toss->velocity.z = -toss->velocity.z / 2;
 				}
 			}
 		} else {
-			toss->vel.y -= toFIXED(1) / 4;
+			toss->velocity.y -= toFIXED(1) / 4;
 		}
 	}
 
 	/* The two crabs scuttle east and west; the two turtles swim round ellipses,
 	   the second hiding in its shell for the last quarter of every 512
 	   ticks. */
-	for(idx = 0; idx != 4; idx++) {
-		obstacle = &Obstacles[idx];
+	for(index = 0; index != 4; index++) {
+		obstacle = &Obstacles[index];
 
-		if(obstacle->reactionFrm > 0) {
-			obstacle->reactionFrm = obstacle->reactionFrm - 1;
+		if(obstacle->reactionFrame > 0) {
+			obstacle->reactionFrame = obstacle->reactionFrame - 1;
 		}
-		if(obstacle->hitCooldownFrm > 0) {
-			obstacle->hitCooldownFrm = obstacle->hitCooldownFrm - 1;
+		if(obstacle->hitCooldownFrame > 0) {
+			obstacle->hitCooldownFrame = obstacle->hitCooldownFrame - 1;
 		}
 
-		if(idx <= 1) {
+		if(index <= 1) {
 			speedMode = obstacle->speedMode;
 			motionStep = toFIXED(1);
 			if(speedMode == 1) {
@@ -1367,8 +1375,8 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			if(speedMode == 2) {
 				motionStep = motionStep * 3;
 			}
-			if(obstacle->reactionFrm > 0) {
-				if(idx == 0) {
+			if(obstacle->reactionFrame > 0) {
+				if(index == 0) {
 					fdActorSelectAnimation(
 						fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE),
 						ANIM_CRAB_RAISE_CLAWS);
@@ -1378,7 +1386,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 						ANIM_CRAB_RAISE_CLAWS);
 				}
 			} else {
-				if(idx == 0) {
+				if(index == 0) {
 					fdActorSelectAnimation(
 						fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE),
 						ANIM_CRAB_SCUTTLE);
@@ -1395,13 +1403,13 @@ static void scTolbiSpringUpdateTossSimulation(void)
 					}
 					if(obstacle->pos.x <= toFIXED(64)) {
 						obstacle->heading = CRAB_HEADING_EAST;
-						if(idx == 1) {
+						if(index == 1) {
 							obstacle->pauseOrPhase = SPRING_CRAB_REST_TICKS;
 						}
 					}
 					if(obstacle->pos.x > (toFIXED(176) - 1)) {
 						obstacle->heading = CRAB_HEADING_WEST;
-						if(idx == 1) {
+						if(index == 1) {
 							obstacle->pauseOrPhase = SPRING_CRAB_REST_TICKS;
 						}
 					}
@@ -1409,7 +1417,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 					obstacle->pauseOrPhase = obstacle->pauseOrPhase - 1;
 				}
 			}
-		} else if(idx == 2) {
+		} else if(index == 2) {
 			speedMode = obstacle->speedMode;
 			motionStep = -(TRIG_TURN / 1024);
 			if(speedMode == 1) {
@@ -1418,7 +1426,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			if(speedMode == 2) {
 				motionStep = motionStep * 3;
 			}
-			if(obstacle->reactionFrm > 0) {
+			if(obstacle->reactionFrame > 0) {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2),
 					ANIM_TURTLE_HIDE);
@@ -1428,12 +1436,12 @@ static void scTolbiSpringUpdateTossSimulation(void)
 					ANIM_TURTLE_SWIM);
 				obstacle->pos.x = sySin(obstacle->heading) * 48 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 40 + toFIXED(72);
-				cycleFrm = (Uint16)obstacle->heading + motionStep;
-				obstacle->heading = cycleFrm;
+				cycleFrame = (Uint16)obstacle->heading + motionStep;
+				obstacle->heading = cycleFrame;
 				obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
 			}
 		} else {
-			cycleFrm = obstacle->pauseOrPhase & 511;
+			cycleFrame = obstacle->pauseOrPhase & 511;
 			speedMode = obstacle->speedMode;
 			motionStep = TRIG_TURN / 1024;
 			if(speedMode == 1) {
@@ -1442,11 +1450,11 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			if(speedMode == 2) {
 				motionStep = motionStep * 3;
 			}
-			if(obstacle->reactionFrm > 0) {
+			if(obstacle->reactionFrame > 0) {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 3),
 					ANIM_TURTLE_HIDE);
-			} else if(cycleFrm <= 383) {
+			} else if(cycleFrame <= 383) {
 				obstacle->pos.x = sySin(obstacle->heading) * 52 + toFIXED(112);
 				obstacle->pos.z = syCos(obstacle->heading) * 24 + toFIXED(72);
 				obstacle->heading = obstacle->heading + motionStep;
@@ -1463,7 +1471,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 
 		/* A nearby obstacle redirects the token and shortens its attraction
 		   time. */
-		if(obstacle->hitCooldownFrm == 0 && toss->trail[0].y == 0) {
+		if(obstacle->hitCooldownFrame == 0 && toss->trail[0].y == 0) {
 			Sint32 deltaX;
 			Sint32 deltaZ;
 			Sint32 distanceSquared;
@@ -1471,21 +1479,21 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			deltaX = FIXEDtoINT(obstacle->pos.x - toss->trail[0].x);
 			deltaZ = FIXEDtoINT(obstacle->pos.z - toss->trail[0].z);
 			distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
-			if(distanceSquared <= 119 && toss->attractionFrm > 30) {
+			if(distanceSquared <= 119 && toss->attractionFrame > 30) {
 				FIXED  speed;
 				Sint32 nextMode;
 
 				speed = toFIXED(3);
-				if(idx <= 1) {
+				if(index <= 1) {
 					if(obstacle->heading == CRAB_HEADING_EAST) {
-						if(toss->vel.x < speed) {
-							toss->vel.x = speed;
-							toss->attractionFrm = toss->attractionFrm - 100;
+						if(toss->velocity.x < speed) {
+							toss->velocity.x = speed;
+							toss->attractionFrame = toss->attractionFrame - 100;
 						}
 					} else {
-						if(toss->vel.x > -speed) {
-							toss->vel.x = -speed;
-							toss->attractionFrm = toss->attractionFrm - 100;
+						if(toss->velocity.x > -speed) {
+							toss->velocity.x = -speed;
+							toss->attractionFrame = toss->attractionFrame - 100;
 						}
 					}
 				} else {
@@ -1493,19 +1501,19 @@ static void scTolbiSpringUpdateTossSimulation(void)
 
 					/* BUG: coincident positions leave a zero divisor below. */
 					distance = sySquartIWRAM(distanceSquared);
-					toss->vel.x = -deltaX * speed / distance;
-					toss->vel.z = -deltaZ * speed / distance;
-					toss->attractionFrm = toss->attractionFrm - 100;
+					toss->velocity.x = -deltaX * speed / distance;
+					toss->velocity.z = -deltaZ * speed / distance;
+					toss->attractionFrame = toss->attractionFrame - 100;
 				}
-				sySndPlay(SE_TOLBI_SPRING_OBSTACLE_HIT);
+				sySoundPlay(SE_TOLBI_SPRING_OBSTACLE_HIT);
 				nextMode = (obstacle->speedMode + 1) % 3;
-				obstacle->reactionFrm = 36;
+				obstacle->reactionFrame = 36;
 				obstacle->speedMode = nextMode;
-				obstacle->hitCooldownFrm = 30;
+				obstacle->hitCooldownFrame = 30;
 			}
 		}
 
-		switch(idx) {
+		switch(index) {
 		case 0:
 			scTolbiSpringSetActorAppearance(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE,
 				syVector3Coordinates(&obstacle->pos), 0,
@@ -1578,8 +1586,8 @@ static void scTolbiSpringUpdateTossSimulation(void)
 			fdActorGet(TOLBI_SPRING_COIN_TRAIL(3)), ANIM_TOKEN_GLINT);
 	}
 
-	if(toss->launchFrm != -1) {
-		toss->launchFrm = toss->launchFrm + 1;
+	if(toss->launchFrame != -1) {
+		toss->launchFrame = toss->launchFrame + 1;
 	}
 }
 
@@ -1588,7 +1596,7 @@ static void scTolbiSpringUpdateTossSimulation(void)
 static void scTolbiSpringInitTossSimulation(void)
 {
 	SPRING_TOSS_MOTION *toss = &Toss;
-	Sint32				obstacleIdx = 0;
+	Sint32				obstacleIndex = 0;
 	const Uint8		   *pixelX;
 	const Uint16	   *headings;
 	SPRING_OBSTACLE	   *obstacle;
@@ -1606,23 +1614,23 @@ static void scTolbiSpringInitTossSimulation(void)
 		obstacle->heading = *headings;
 		obstacle->pauseOrPhase = 0;
 		obstacle->speedMode = 0;
-		obstacle->reactionFrm = 0;
-		obstacle->hitCooldownFrm = 0;
+		obstacle->reactionFrame = 0;
+		obstacle->hitCooldownFrame = 0;
 
-		obstacleIdx++;
+		obstacleIndex++;
 		pixelX++;
 		pixelZ++;
 		headings++;
 		obstacle++;
-	} while(obstacleIdx != 4);
+	} while(obstacleIndex != 4);
 
 	toss->trail[0].x = -toFIXED(30);
 	toss->trail[0].y = 0;
 	toss->trail[0].z = toFIXED(100);
-	toss->vel.x = 0;
-	toss->vel.y = 0;
-	toss->vel.z = 0;
-	toss->attractionFrm = 0;
+	toss->velocity.x = 0;
+	toss->velocity.y = 0;
+	toss->velocity.z = 0;
+	toss->attractionFrame = 0;
 
 	fdActorSelectAnimation(
 		fdActorGet(ACTOR_TOLBI_SPRING_FIRST_OBSTACLE + 2), ANIM_TURTLE_SWIM);
@@ -1644,40 +1652,46 @@ static Sint32 scTolbiSpringRunToss(Sint32 tossKind)
 	toss->trail[3].y = 0;
 	TossKind = tossKind;
 	TossEnded = 0;
-	toss->launchFrm = -1;
+	toss->launchFrame = -1;
 	for(TossTick = 0;; TossTick++) {
 		if(TossTick == 50) {
-			sySndPlay(SE_TOLBI_SPRING_TOSS);
+			sySoundPlay(SE_TOLBI_SPRING_TOSS);
 		}
 		if(TossTick == 16) {
 			fdActorSetAnimation(
 				MainRoutineStateWork.leaderActorId, ANIM_LEADER_TOSS);
-			toss->launchFrm = 0;
-			toss->vel.x = toFIXED(13) / 10;
-			toss->vel.y = toFIXED(4);
-			toss->vel.z = -toFIXED(2);
+			toss->launchFrame = 0;
+			toss->velocity.x = toFIXED(13) / 10;
+			toss->velocity.y = toFIXED(4);
+			toss->velocity.z = -toFIXED(2);
 			toss->trail[0].x = toFIXED(120);
 			toss->trail[0].y = toFIXED(16);
 			toss->trail[0].z = toFIXED(152);
-			toss->attractionFrm = 300;
+			toss->attractionFrame = 300;
 			if(TossKind == SPRING_TOSS_MEDAL) {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_MEDAL_SHADOW),
 					ANIM_TOKEN_SHADOW);
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_MEDAL), ANIM_TOKEN_TUMBLE);
-				scTolbiSpringSetSprStorageKind(TOLBI_SPRING_MEDAL_TRAIL(1), 1);
-				scTolbiSpringSetSprStorageKind(TOLBI_SPRING_MEDAL_TRAIL(2), 1);
-				scTolbiSpringSetSprStorageKind(TOLBI_SPRING_MEDAL_TRAIL(3), 1);
+				scTolbiSpringSetSpriteStorageKind(
+					TOLBI_SPRING_MEDAL_TRAIL(1), 1);
+				scTolbiSpringSetSpriteStorageKind(
+					TOLBI_SPRING_MEDAL_TRAIL(2), 1);
+				scTolbiSpringSetSpriteStorageKind(
+					TOLBI_SPRING_MEDAL_TRAIL(3), 1);
 			} else {
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_COIN_SHADOW),
 					ANIM_TOKEN_SHADOW);
 				fdActorSelectAnimation(
 					fdActorGet(ACTOR_TOLBI_SPRING_COIN), ANIM_TOKEN_TUMBLE);
-				scTolbiSpringSetSprStorageKind(TOLBI_SPRING_COIN_TRAIL(1), 1);
-				scTolbiSpringSetSprStorageKind(TOLBI_SPRING_COIN_TRAIL(2), 1);
-				scTolbiSpringSetSprStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 1);
+				scTolbiSpringSetSpriteStorageKind(
+					TOLBI_SPRING_COIN_TRAIL(1), 1);
+				scTolbiSpringSetSpriteStorageKind(
+					TOLBI_SPRING_COIN_TRAIL(2), 1);
+				scTolbiSpringSetSpriteStorageKind(
+					TOLBI_SPRING_COIN_TRAIL(3), 1);
 			}
 		}
 		sySynch(1);

@@ -97,9 +97,9 @@ Sint32 syVRAMCacheFreeEntry(Uint32 id)
 
 	if(id >= VRAM_CACHE_ENTRY_COUNT)
 		return -1;
-	if(entry->ofs != VRAM_CACHE_OFFSET_FREE) {
+	if(entry->offset != VRAM_CACHE_OFFSET_FREE) {
 		syVRAMCacheFreeBlocks(id);
-		entry->ofs |= VRAM_CACHE_OFFSET_FREE;
+		entry->offset |= VRAM_CACHE_OFFSET_FREE;
 		entry->size = 0;
 	}
 	return 0;
@@ -127,8 +127,8 @@ Sint32 syVRAMCacheReleaseVRAM(Uint32 id)
 Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 {
 	VRAM_CACHE_ENTRY *entry;
-	Sint32			  ofs;
-	void			 *dst;
+	Sint32			  offset;
+	void			 *dest;
 
 	entry = &VramCacheEntries[id];
 	if(id >= VRAM_CACHE_ENTRY_COUNT)
@@ -139,28 +139,28 @@ Sint32 syVRAMCacheLoad(Uint32 id, Uint32 size, const void *src)
 	if(entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
 		if(entry->size != size) {
 			syVRAMCacheFreeEntry(id);
-			ofs = syVRAMCacheAllocateBlocks(id, size);
+			offset = syVRAMCacheAllocateBlocks(id, size);
 		} else {
-			ofs = entry->ofs;
+			offset = entry->offset;
 		}
 	} else {
-		ofs = syVRAMCacheAllocateBlocks(id, size);
+		offset = syVRAMCacheAllocateBlocks(id, size);
 	}
 
-	if(ofs != -1) {
+	if(offset != -1) {
 		/* Commit the allocation before copying, clearing or leaving its
 		   pixels. */
-		dst = (void *)(OBJ_VRAM0 + ofs);
+		dest = (void *)(OBJ_VRAM0 + offset);
 		entry->size = size;
-		entry->ofs = ofs;
+		entry->offset = offset;
 		if(src != 0) {
 			if(src == VRAM_CACHE_CLEAR) {
-				syWordsClear(dst, size);
+				syWordsClear(dest, size);
 			} else {
-				syDMAXCopy(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
+				syDMAXCopy(src, dest, DMA_COPY_WORDS(size >> 2), REG_DMA3);
 			}
 		}
-		return (Uint32)ofs / TILE_SIZE_4BPP;
+		return (Uint32)offset / TILE_SIZE_4BPP;
 	}
 	return 0;
 }
@@ -180,7 +180,7 @@ void syVRAMCacheReset(void)
 		VRAM_CACHE_ENTRY *entry = VramCacheEntries;
 
 		for(n = 0; n < VRAM_CACHE_ENTRY_COUNT; n++) {
-			entry->ofs |= VRAM_CACHE_OFFSET_FREE;
+			entry->offset |= VRAM_CACHE_OFFSET_FREE;
 			entry->size = 0;
 			entry++;
 		}
@@ -196,7 +196,7 @@ Sint32 syVRAMCacheFindFreeEntry(void)
 	VRAM_CACHE_ENTRY *entry = VramCacheEntries;
 
 	for(id = 0; id < VRAM_CACHE_ENTRY_COUNT; id++, entry++) {
-		if(entry->ofs == VRAM_CACHE_OFFSET_FREE) {
+		if(entry->offset == VRAM_CACHE_OFFSET_FREE) {
 			ret = id;
 			break;
 		}
@@ -206,7 +206,7 @@ Sint32 syVRAMCacheFindFreeEntry(void)
 
 /* Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
    its number. */
-Sint32 syVRAMCacheAllocEntry(Sint32 size)
+Sint32 syVRAMCacheAllocateEntry(Sint32 size)
 {
 	Sint32 id;
 

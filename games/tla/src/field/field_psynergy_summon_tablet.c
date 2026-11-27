@@ -8,30 +8,30 @@
    redrawn each tick; the fourth step leaves the outline as it was. */
 void fdSummonTabletCyclePictures(ACTOR *actor)
 {
-	SPR			  *spr = actor->spr;
-	SPR_ANIMATION *layer = spr->entries[0];
+	SPR			  *sprite = actor->sprite;
+	SPR_ANIMATION *layer = sprite->entries[0];
 
-	switch(actor->tmr & 3) {
+	switch(actor->timer & 3) {
 	case 0:
-		layer->colMode = SPRITE_COLOR_WHITE;
-		spr->dirty = 1;
-		spr->flg = SPRITE_FLAG_OUTLINED;
+		layer->colorMode = SPRITE_COLOR_WHITE;
+		sprite->dirty = 1;
+		sprite->flags = SPRITE_FLAG_OUTLINED;
 		break;
 	case 1:
-		spr->dirty = 1;
-		spr->flg = 0;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 		break;
 	case 2:
-		layer->colMode = SPRITE_COLOR_WHITE;
-		spr->dirty = 1;
-		spr->flg = 0;
+		layer->colorMode = SPRITE_COLOR_WHITE;
+		sprite->dirty = 1;
+		sprite->flags = 0;
 		break;
 	case 3:
-		layer->colMode = SPRITE_COLOR_NORMAL;
-		spr->dirty = 1;
+		layer->colorMode = SPRITE_COLOR_NORMAL;
+		sprite->dirty = 1;
 		break;
 	}
-	actor->tmr++;
+	actor->timer++;
 }
 
 /* A point on the screen chasing its target, 16.16 pixels, as
@@ -40,8 +40,8 @@ typedef struct CHASE {
 	FIXED x;
 	FIXED z;
 	FIXED unusedAfterZ; /* no code names it */
-	FIXED tgtX;
-	FIXED tgtZ;
+	FIXED targetX;
+	FIXED targetZ;
 } CHASE;
 
 /* The sign bit of a 32-bit number: two numbers' signs differ where their
@@ -51,20 +51,20 @@ typedef struct CHASE {
 /* Moves toward the target by speed, stopping on it on overshoot. */
 void fdMotionStepTowardTarget(CHASE *chase, FIXED speed)
 {
-	Sint32 dx = chase->tgtX - chase->x;
-	Sint32 dz = chase->tgtZ - chase->z;
+	Sint32 dx = chase->targetX - chase->x;
+	Sint32 dz = chase->targetZ - chase->z;
 	Uint16 angle = syAtan(dz, dx);
 
 	chase->x += syMulFX(syCos(angle), speed);
 	chase->z += syMulFX(sySin(angle), speed);
 	{
-		Sint32 nextDx = chase->tgtX - chase->x;
-		Sint32 nextDz = chase->tgtZ - chase->z;
+		Sint32 nextDx = chase->targetX - chase->x;
+		Sint32 nextDz = chase->targetZ - chase->z;
 
 		if((nextDx ^ dx) & SIGN_BIT)
-			chase->x = chase->tgtX;
+			chase->x = chase->targetX;
 		if((dz ^ nextDz) & SIGN_BIT)
-			chase->z = chase->tgtZ;
+			chase->z = chase->targetZ;
 	}
 }
 
@@ -78,11 +78,11 @@ typedef struct TABLET_PIECE {
 		   (fdAdvanceWithGravity3D's vector). */
 		struct {
 			FIXED pos[3];
-			FIXED vel[3];
+			FIXED velocity[3];
 		} pebble;
 	};
 
-	Sint32 tmr;
+	Sint32 timer;
 } TABLET_PIECE;
 
 /* The pebbles that fly off the tablet, a power of two: the next wraps by a
@@ -118,90 +118,92 @@ typedef struct SUMMON_TABLET_STATE {
 	   VRAM. */
 	Uint8		 pictures[2048];
 	TABLET_PIECE pebbles[TABLET_PEBBLE_COUNT];
-	EFFECT_SPR	 pebbleSprs[TABLET_PEBBLE_COUNT];
+	EFFECT_SPR	 pebbleSprites[TABLET_PEBBLE_COUNT];
 	TABLET_PIECE runes[TABLET_RUNE_COUNT];
-	EFFECT_SPR	 runeSprs[TABLET_RUNE_COUNT];
+	EFFECT_SPR	 runeSprites[TABLET_RUNE_COUNT];
 	Sint32		 originX;
 	Sint32		 originZ;
-	Sint32		 ang;
+	Sint32		 angle;
 	Sint32		 radius;
 	Sint32		 spacing;
 	Sint8		 state; /* RUNE_MOTION */
 	Sint8		 moving;
 	Uint16		 pebbleTile;
-	Sint32		 tgtX;
-	Sint32		 tgtZ;
+	Sint32		 targetX;
+	Sint32		 targetZ;
 } SUMMON_TABLET_STATE;
 
 /* Event of fdSummonTabletPlayRunes: moves and draws the runes and pebbles. */
 void fdSummonTabletUpdateRunes(void)
 {
-	SUMMON_TABLET_STATE *state = RamHeapSlots->battleEff;
+	SUMMON_TABLET_STATE *state = RamHeapSlots->battleEffect;
 	Sint32				 pos[3];
 	TABLET_PIECE		*piece;
-	EFFECT_SPR			*spr;
+	EFFECT_SPR			*sprite;
 	Sint32				 i;
 	Uint16				*tile;
 
 	if(state->moving != 0) {
 		pos[0] = state->originX;
 		pos[2] = state->originZ;
-		syVectorAddPolarOffset(state->radius, state->ang, pos);
+		syVectorAddPolarOffset(state->radius, state->angle, pos);
 		piece = state->runes;
-		piece->rune.tgtX = pos[0];
-		piece->rune.tgtZ = pos[2];
-		state->ang += TRIG_TURN * 3 / 128;
+		piece->rune.targetX = pos[0];
+		piece->rune.targetZ = pos[2];
+		state->angle += TRIG_TURN * 3 / 128;
 		for(i = 0; i < TABLET_RUNE_COUNT; i++, piece++) {
-			if(piece->tmr >= 0) {
+			if(piece->timer >= 0) {
 				if(i != 0) {
-					piece->rune.tgtX = pos[0];
-					piece->rune.tgtZ = pos[2];
+					piece->rune.targetX = pos[0];
+					piece->rune.targetZ = pos[2];
 				}
 				pos[0] = piece->rune.x;
 				pos[2] = piece->rune.z;
 				syVectorAddPolarOffset(state->spacing, 0, pos);
 			}
-			piece->tmr++;
+			piece->timer++;
 		}
 	}
 
 	piece = state->runes;
-	spr = state->runeSprs;
-	for(i = 0; i < TABLET_RUNE_COUNT; i++, spr++, piece++) {
+	sprite = state->runeSprites;
+	for(i = 0; i < TABLET_RUNE_COUNT; i++, sprite++, piece++) {
 		if(state->state == RUNES_LINE_UP) {
-			if(piece->tmr >= 0) {
+			if(piece->timer >= 0) {
 				fdMotionStepTowardTarget(&piece->rune, toFIXED(4));
-				spr->x = piece->rune.x;
-				spr->y = piece->rune.z;
-				fdEffectSprDraw(spr);
+				sprite->x = piece->rune.x;
+				sprite->y = piece->rune.z;
+				fdEffectSpriteDraw(sprite);
 			}
-			piece->tmr++;
+			piece->timer++;
 		} else if(state->state == RUNES_CIRCLE) {
 			fdMotionStepTowardTarget(&piece->rune, toFIXED(6));
-			spr->x = piece->rune.x;
-			spr->y = piece->rune.z;
-			fdEffectSprDraw(spr);
+			sprite->x = piece->rune.x;
+			sprite->y = piece->rune.z;
+			fdEffectSpriteDraw(sprite);
 		} else if(state->state == RUNES_GATHER) {
-			if(piece->rune.x != state->tgtX || piece->rune.z != state->tgtZ) {
+			if(piece->rune.x != state->targetX ||
+				piece->rune.z != state->targetZ) {
 				fdMotionStepTowardTarget(&piece->rune, toFIXED(6));
-				spr->x = piece->rune.x;
-				spr->y = piece->rune.z;
-				fdEffectSprDraw(spr);
+				sprite->x = piece->rune.x;
+				sprite->y = piece->rune.z;
+				fdEffectSpriteDraw(sprite);
 			}
 		}
 	}
 
 	piece = state->pebbles;
 	tile = &state->pebbleTile;
-	spr = state->pebbleSprs;
-	for(i = 0; i < TABLET_PEBBLE_COUNT; i++, spr++, piece++) {
-		if((Uint32)piece->tmr < PEBBLE_PICTURES * PEBBLE_PICTURE_TICKS) {
-			spr->oam.idx = *tile +
-				(piece->tmr / PEBBLE_PICTURE_TICKS & 7) * PEBBLE_PICTURE_TILES;
-			fdEffectSprDrawAtWorldPos(spr, piece->pebble.pos);
+	sprite = state->pebbleSprites;
+	for(i = 0; i < TABLET_PEBBLE_COUNT; i++, sprite++, piece++) {
+		if((Uint32)piece->timer < PEBBLE_PICTURES * PEBBLE_PICTURE_TICKS) {
+			sprite->oam.index = *tile +
+				(piece->timer / PEBBLE_PICTURE_TICKS & 7) *
+					PEBBLE_PICTURE_TILES;
+			fdEffectSpriteDrawAtWorldPos(sprite, piece->pebble.pos);
 			fdAdvanceWithGravity3D(
 				piece->pebble.pos, DAMPING_SCALE - 1, -(toFIXED(1) / 2));
-			piece->tmr++;
+			piece->timer++;
 		}
 	}
 }
@@ -226,50 +228,50 @@ extern const Uint8	MovementTypeSquashScript[];
    the stone tablet"): pebbles fly off the tablet as it is struck, and its runes
    light up and fly round the leader, with their sounds, before
    mnSummonShowLearnedMessage. */
-void fdSummonTabletPlayRunes(Sint32 tgtId)
+void fdSummonTabletPlayRunes(Sint32 targetId)
 {
-	SUMMON_TABLET_STATE *summonTabletState =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(SUMMON_TABLET_STATE));
+	SUMMON_TABLET_STATE *summonTabletState = syHeapSlotAllocate(
+		HEAP_SLOT_BATTLE_EFFECT, sizeof(SUMMON_TABLET_STATE));
 	Sint32		  ownerId = fdPartyGetLeaderActor();
 	ACTOR		 *owner = fdActorLookup(ownerId);
-	ACTOR		 *tgt = fdActorLookup(tgtId);
+	ACTOR		 *target = fdActorLookup(targetId);
 	Sint32		  state;
 	Sint32		  runeEntry;
 	Sint32		  pebbleEntry;
 	FIXED		  ownerX;
 	FIXED		  ownerZ;
-	FIXED		  tgtX;
-	FIXED		  tgtZ;
+	FIXED		  targetX;
+	FIXED		  targetZ;
 	Sint32		  newPebbles = 0;
 	Sint32		  nextPebble = 0;
 	FIXED		  pos[3];
-	EFFECT_SPR	 *spr;
+	EFFECT_SPR	 *sprite;
 	TABLET_PIECE *piece;
 	Sint32		  runeTile;
 	Sint32		  pebbleTile;
-	Sint32		  tmr;
-	Sint32		  runeFrm;
+	Sint32		  timer;
+	Sint32		  runeFrame;
 	Sint32		  delay;
-	Sint32		  ang;
+	Sint32		  angle;
 	Sint32		  i;
 	FIXED		  startX = toFIXED(130);
 	FIXED		  startZ = toFIXED(30);
 
-	fdStartColTransition(8, FieldPsynergyCastColors[TickCount & 7]);
+	fdStartColorTransition(8, FieldPsynergyCastColors[TickCount & 7]);
 	pos[0] = owner->x.fixed;
 	pos[1] = owner->y.fixed + toFIXED(24);
 	pos[2] = owner->z.fixed;
 	fdCameraWorldToScreen(pos);
 	ownerX = pos[0];
 	ownerZ = pos[2];
-	summonTabletState->tgtX = ownerX;
-	summonTabletState->tgtZ = ownerZ;
-	pos[0] = tgt->x.fixed;
-	pos[1] = tgt->y.fixed;
-	pos[2] = tgt->z.fixed;
+	summonTabletState->targetX = ownerX;
+	summonTabletState->targetZ = ownerZ;
+	pos[0] = target->x.fixed;
+	pos[1] = target->y.fixed;
+	pos[2] = target->z.fixed;
 	fdCameraWorldToScreen(pos);
-	tgtX = pos[0];
-	tgtZ = pos[2];
+	targetX = pos[0];
+	targetZ = pos[2];
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_RUNES), summonTabletState->pictures);
 	runeEntry = syVRAMCacheFindFreeEntry();
@@ -277,22 +279,22 @@ void fdSummonTabletPlayRunes(Sint32 tgtId)
 		summonTabletState->pictures);
 	piece = summonTabletState->runes;
 	i = 0;
-	spr = summonTabletState->runeSprs;
+	sprite = summonTabletState->runeSprites;
 	for(; i < TABLET_RUNE_COUNT; i++) {
-		fdEffectSprInit(spr, 4, 4, 0,
+		fdEffectSpriteInit(sprite, 4, 4, 0,
 			runeTile + (syRandom() * TABLET_RUNE_PICTURES >> 16) * 2);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 1;
-		spr->depth = OAM_DEPTH_WINDOW;
-		piece->rune.x = tgtX;
-		piece->rune.z = tgtZ;
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 1;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		piece->rune.x = targetX;
+		piece->rune.z = targetZ;
 		/* The runes line up on the screen in rows 12 pixels apart, the rows 24
 		   pixels apart, from (30, 30). */
-		piece->rune.tgtX = (i % TABLET_RUNE_ROW) * toFIXED(12) + toFIXED(30);
-		piece->rune.tgtZ = (i / TABLET_RUNE_ROW) * toFIXED(24) + toFIXED(30);
-		piece->tmr = -i;
-		spr++;
+		piece->rune.targetX = (i % TABLET_RUNE_ROW) * toFIXED(12) + toFIXED(30);
+		piece->rune.targetZ = (i / TABLET_RUNE_ROW) * toFIXED(24) + toFIXED(30);
+		piece->timer = -i;
+		sprite++;
 		piece++;
 	}
 	syDecompressTaggedLZ(
@@ -302,48 +304,48 @@ void fdSummonTabletPlayRunes(Sint32 tgtId)
 		sizeof(summonTabletState->pictures), summonTabletState->pictures);
 	summonTabletState->pebbleTile = pebbleTile;
 	piece = summonTabletState->pebbles;
-	spr = summonTabletState->pebbleSprs;
+	sprite = summonTabletState->pebbleSprites;
 	for(i = 0; i < TABLET_PEBBLE_COUNT; i++) {
-		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, pebbleTile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
-		piece->tmr = -1;
-		spr++;
+		fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, pebbleTile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		piece->timer = -1;
+		sprite++;
 		piece++;
 	}
 	sySynch(1);
-	sySndPlayStub(SE_DJINNI_SET);
-	fdActorSelectAnimationStub(tgt, 2);
+	sySoundPlayStub(SE_DJINNI_SET);
+	fdActorSelectAnimationStub(target, 2);
 	fdScriptWait(60);
-	tgt->tmr = 0;
-	tgt->update = fdSummonTabletCyclePictures;
-	sySndPlayStub(SE_SWIRL);
+	target->timer = 0;
+	target->update = fdSummonTabletCyclePictures;
+	sySoundPlayStub(SE_SWIRL);
 	fdScriptWait(80);
-	fdActorStartScriptStub(tgt, SummonTabletSquashScript);
+	fdActorStartScriptStub(target, SummonTabletSquashScript);
 	summonTabletState->moving = 0;
 	sySetEvent(fdSummonTabletUpdateRunes, EVENT_PASS_TICK);
 	state = TABLET_STRUCK;
-	tmr = 0;
+	timer = 0;
 	do {
 		switch(state) {
 		case TABLET_STRUCK:
 			summonTabletState->state = RUNES_LINE_UP;
-			if(tmr <= 39) {
-				if((tmr & 7) == 0)
-					sySndPlayStub(SE_IMPACT);
+			if(timer <= 39) {
+				if((timer & 7) == 0)
+					sySoundPlayStub(SE_IMPACT);
 				newPebbles = 1;
 			}
-			if(tmr == 40) {
-				sySndPlayStub(SE_HEAVY_IMPACT);
+			if(timer == 40) {
+				sySoundPlayStub(SE_HEAVY_IMPACT);
 				newPebbles = TABLET_PEBBLES_ON_IMPACT;
-				fdActorStartIdleStub(tgt);
-				tgt->scaleX = 0;
+				fdActorStartIdleStub(target);
+				target->scaleX = 0;
 			}
-			if(tmr == 80) {
+			if(timer == 80) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_RUNES_LIGHT:
@@ -351,133 +353,135 @@ void fdSummonTabletPlayRunes(Sint32 tgtId)
 			   across or down the rows. */
 			for(i = 0; i < TABLET_RUNE_COUNT; i++) {
 				EFFECT_SPR *rune;
-				runeFrm = i % TABLET_RUNE_ROW + i / TABLET_RUNE_ROW;
-				runeFrm = tmr - runeFrm;
-				rune = &summonTabletState->runeSprs[i];
-				if(runeFrm == 0)
-					rune->oam.idx += RUNE_LIT;
-				if(runeFrm == 3)
-					rune->oam.idx += -RUNE_LIT;
-				if(runeFrm == 8)
-					rune->oam.idx += RUNE_LIT;
-				if(runeFrm == 10)
-					rune->oam.idx += -RUNE_LIT;
-				if(runeFrm == 16)
-					rune->oam.idx += RUNE_LIT;
-				if(runeFrm == 18)
-					rune->oam.idx += -RUNE_LIT;
+				runeFrame = i % TABLET_RUNE_ROW + i / TABLET_RUNE_ROW;
+				runeFrame = timer - runeFrame;
+				rune = &summonTabletState->runeSprites[i];
+				if(runeFrame == 0)
+					rune->oam.index += RUNE_LIT;
+				if(runeFrame == 3)
+					rune->oam.index += -RUNE_LIT;
+				if(runeFrame == 8)
+					rune->oam.index += RUNE_LIT;
+				if(runeFrame == 10)
+					rune->oam.index += -RUNE_LIT;
+				if(runeFrame == 16)
+					rune->oam.index += RUNE_LIT;
+				if(runeFrame == 18)
+					rune->oam.index += -RUNE_LIT;
 			}
-			if(tmr == 0)
-				sySndPlayStub(SE_GLITTER);
-			if(tmr == 56) {
+			if(timer == 0)
+				sySoundPlayStub(SE_GLITTER);
+			if(timer == 56) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_LEADER_TURNS:
-			if(tmr == 0) {
+			if(timer == 0) {
 				fdActorFaceDirectionById(ownerId, FACING_SOUTH, 0);
 				break;
 			}
 			if(owner->script[owner->scriptCursor] == SCRIPT_COMMAND_END) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
-			if(tmr == 60) {
+			if(timer == 60) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_ARMS_RAISED:
-			if(tmr == 0)
+			if(timer == 0)
 				fdActorSelectAnimationStub(owner, ANIM_LEADER_ARMS_RAISED);
-			if(tmr == 10) {
+			if(timer == 10) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_RUNES_CIRCLE:
-			if(tmr == 0) {
+			if(timer == 0) {
 				piece = summonTabletState->runes;
 				delay = 0;
 				for(i = 0; i < TABLET_RUNE_COUNT; i++) {
-					piece->tmr = delay;
+					piece->timer = delay;
 					delay -= 3;
 					piece++;
 				}
 				summonTabletState->radius = toFIXED(60);
-				summonTabletState->ang = TRIG_TURN * 3 / 4;
+				summonTabletState->angle = TRIG_TURN * 3 / 4;
 				summonTabletState->originX = startX;
 				summonTabletState->originZ = startZ;
 				summonTabletState->moving = 1;
 				summonTabletState->spacing = toFIXED(4);
 				summonTabletState->state = RUNES_CIRCLE;
 			}
-			if(tmr == 0)
-				sySndPlayStub(SE_FALLING_LIGHT);
-			if(tmr == 48)
-				sySndPlayStub(SE_FALLING_LIGHT);
-			if(tmr == 96)
-				sySndPlayStub(SE_FALLING_LIGHT);
-			if(tmr == 100) {
+			if(timer == 0)
+				sySoundPlayStub(SE_FALLING_LIGHT);
+			if(timer == 48)
+				sySoundPlayStub(SE_FALLING_LIGHT);
+			if(timer == 96)
+				sySoundPlayStub(SE_FALLING_LIGHT);
+			if(timer == 100) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_RUNES_TO_LEADER:
-			summonTabletState->originX = tmr * (ownerX - startX) / 30 + startX;
-			summonTabletState->originZ = tmr * (ownerZ - startZ) / 30 + startZ;
-			if(tmr == 30) {
+			summonTabletState->originX =
+				timer * (ownerX - startX) / 30 + startX;
+			summonTabletState->originZ =
+				timer * (ownerZ - startZ) / 30 + startZ;
+			if(timer == 30) {
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_RUNES_CLOSE_IN:
-			if(tmr == 0)
+			if(timer == 0)
 				summonTabletState->spacing = 0;
 			summonTabletState->radius += -toFIXED(2);
 			if(summonTabletState->radius < 0) {
 				summonTabletState->radius = 0;
 				state++;
-				tmr = -1;
+				timer = -1;
 			}
 			break;
 		case TABLET_LEADER_SQUASHED:
-			if(tmr == 0)
+			if(timer == 0)
 				fdActorStartScriptStub(owner, MovementTypeSquashScript);
-			if((tmr & 3) == 0)
-				sySndPlayStub(SE_MAP_TRANSITION);
+			if((timer & 3) == 0)
+				sySoundPlayStub(SE_MAP_TRANSITION);
 			summonTabletState->state = RUNES_GATHER;
-			if(tmr == 60)
+			if(timer == 60)
 				state = FIELD_PSYNERGY_FINISHED;
 			break;
 		}
 		for(i = 0; i < newPebbles; i++) {
-			ang = syRandom();
+			angle = syRandom();
 			piece = &summonTabletState->pebbles[nextPebble];
-			piece->tmr = 0;
-			piece->pebble.pos[0] = tgt->x.fixed;
-			piece->pebble.pos[1] = tgt->y.fixed + toFIXED(12);
-			piece->pebble.pos[2] = tgt->z.fixed;
+			piece->timer = 0;
+			piece->pebble.pos[0] = target->x.fixed;
+			piece->pebble.pos[1] = target->y.fixed + toFIXED(12);
+			piece->pebble.pos[2] = target->z.fixed;
 			syVectorAddPolarOffset(
-				syRandom() * 4 + toFIXED(2), ang, piece->pebble.pos);
-			piece->pebble.vel[0] = 0;
-			piece->pebble.vel[1] = toFIXED(9) / 2;
-			piece->pebble.vel[2] = 0;
-			syVectorAddPolarOffset(syRandom() * 2 + toFIXED(2), ang,
-				summonTabletState->pebbles[nextPebble].pebble.vel);
+				syRandom() * 4 + toFIXED(2), angle, piece->pebble.pos);
+			piece->pebble.velocity[0] = 0;
+			piece->pebble.velocity[1] = toFIXED(9) / 2;
+			piece->pebble.velocity[2] = 0;
+			syVectorAddPolarOffset(syRandom() * 2 + toFIXED(2), angle,
+				summonTabletState->pebbles[nextPebble].pebble.velocity);
 			nextPebble = (nextPebble + 1) & (TABLET_PEBBLE_COUNT - 1);
 		}
 		newPebbles = 0;
 		sySynch(1);
-		tmr++;
+		timer++;
 	} while(state != FIELD_PSYNERGY_FINISHED);
 	fdActorStartIdleStub(owner);
 	owner->scaleX = toFIXED(1);
 	owner->scaleY = toFIXED(1);
 	fdScriptWait(10);
 	syCloseEvent(fdSummonTabletUpdateRunes);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	syVRAMCacheFreeEntry(runeEntry);
 	syVRAMCacheFreeEntry(pebbleEntry);
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
@@ -487,7 +491,7 @@ void fdSummonTabletPlayRunes(Sint32 tgtId)
    ended by ACTOR_LIST_END (fdFlagBlockPlaceAll). */
 typedef struct ACTOR_FLAG {
 	Uint16 actor;
-	Sint16 flg;
+	Sint16 flags;
 } ACTOR_FLAG;
 
 /* Sets up a scene's flag blocks, the puddles Frost turns into pillars of ice
@@ -506,17 +510,17 @@ void fdFlagBlockPlaceAll(ACTOR_FLAG *actors)
 
 	for(; actors->actor != ACTOR_LIST_END; actors++) {
 		ACTOR		 *actor = fdActorGetById(actors->actor);
-		Uint16		  flg = actors->flg;
+		Uint16		  flag = actors->flags;
 		Sint32		  slot = fdActorGetMetatileIndex(actor);
 		MAP_METATILE *metatile = &map->layers[actor->layer].metatiles[slot];
 
-		actor->motionFlg = 0;
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlagsStub(actor, 0);
+		actor->motionFlags = 0;
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlagsStub(actor, 0);
 		metatile->collisionCode = METATILE_BEHAVIOR_WALL;
-		if(syGameFlagGet(flg)) {
+		if(syGameFlagGet(flag)) {
 			fdActorSelectAnimationStub(actor, PUDDLE_ANIMATION_FROZEN);
-			syGameFlagClear(flg);
+			syGameFlagClear(flag);
 		} else {
 			fdActorSelectAnimationStub(actor, PUDDLE_ANIMATION_PUDDLE);
 		}

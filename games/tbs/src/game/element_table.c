@@ -15,7 +15,7 @@ const Sint32 ClassSeriesByElements[] = {
 };
 
 /* A character's base power and resistance in an element, by its whole element */
-/* level 0 to 15; gmUnitCalcBaseElements adds the level's tenths to both. */
+/* level 0 to 15; gmUnitCalculateBaseElements adds the level's tenths to both. */
 ELEMENT_LEVEL_BONUS ElementPowerResistByLevel[16]
 	__attribute__((section(".rodata"))) = {
 	{75, 85},   {80, 90},   {85, 95},   {90, 100},

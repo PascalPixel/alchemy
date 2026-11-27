@@ -78,7 +78,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
-	Uint8		  *sprs;
+	Uint8		  *sprites;
 	Sint32		   centerX;
 	Sint16		  *circles;
 	SCREEN_POINT   middle;
@@ -88,10 +88,10 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	RENDER_MODEL  *model;
 	void		  *vertices;
 	PARTICLE	  *p;
-	Sint32		   frm;
+	Sint32		   frame;
 	Sint32		   i;
 	Sint32		   size;
-	Sint32		   ofs;
+	Sint32		   offset;
 	Sint32		   x;
 	Sint32		   grow; /* also each bolt's first tick */
 	Sint32		   palette;
@@ -100,13 +100,13 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	Sint32		   orangeBase;
 	DRAW_RECTANGLE draw;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectShowLivingTargets(state->args);
-	btEffectCreateSprs(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
+	btEffectCreateSprites(TRIDENT_SPRITES, SPRITE_TRIDENT, 1);
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
 		WININ_WIN1_BG2 | WININ_WIN1_CLR;
 	REG_WINOUT = EFFECT_WINOUT;
@@ -123,7 +123,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
 	/* FAKEMATCH(dead): offset set to the cell buffer's address, which the disc
 	 * loop below sets again before any read. */
-	ofs = (Sint32)MapGridMetatileBuffer;
+	offset = (Sint32)MapGridMetatileBuffer;
 	btResourceLoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
 		state->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
 	orange = orangeBase + 4;
@@ -138,13 +138,13 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	}
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 		MapGridMetatileBuffer + TRIDENT_FLASH_BURST, 1, 0);
-	ofs = TRIDENT_DISC_PICTURES;
+	offset = TRIDENT_DISC_PICTURES;
 	for(i = 0; i != TRIDENT_DISC_SIZES; i++) {
 		/* As an integer sum, the offset first. */
 		btEffectDrawShadedCircles(
-			(Uint8 *)(ofs + (Sint32)cells), size, toFIXED(1));
-		circles[i] = ofs;
-		ofs += (i * 2 + 3) * size / 2;
+			(Uint8 *)(offset + (Sint32)cells), size, toFIXED(1));
+		circles[i] = offset;
+		offset += (i * 2 + 3) * size / 2;
 		size += 2;
 	}
 	btResourceLoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, cells, 0, 0);
@@ -152,78 +152,78 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 		RamMapMetatileBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_BILLOW_TEXTURE, RamMapMetatileBuffer + TRIDENT_BILLOW, 0, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	syWordsCopyEntry((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_F),
 		SHEET_PALETTE_BYTES);
 	for(i = 0, p = state->particles; i != TRIDENT_PARTICLES; i++, p++) {
 		Sint32 radius = i * 2;
-		Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
+		Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
 
 		/* DEAD: each place and life is set again, at tick 12 and as its disc
 		   is thrown or its flash starts, before anything reads it; the ROM
 		   keeps the stores, and the random draws move the random sequence. */
-		p->x = sySin(ang) * radius;
-		p->y = -(syCos(ang) * radius);
+		p->x = sySin(angle) * radius;
+		p->y = -(syCos(angle) * radius);
 		p->variant = i / 2 + 25;
 	}
 	btEffectGetTargetsMidpoint(&middle);
 	centerX = middle.x / 2;
 
-	for(frm = 0; frm != TRIDENT_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != TRIDENT_TICKS; frame++) {
+		if(frame == 0) {
 			syWordsCopyEntry((void *)BG_PLTT, syResourceGetTableEntry(palette),
 				SHEET_PALETTE_BYTES);
 		}
-		if(frm > 76) {
+		if(frame > 76) {
 			btEffectStepPaletteToResource(palette);
-		} else if(frm > 64) {
+		} else if(frame > 64) {
 			btEffectStepPaletteToResource(orange);
-		} else if(frm > 23) {
+		} else if(frame > 23) {
 			btEffectStepPaletteToResource(palette);
-		} else if(frm > 8) {
+		} else if(frame > 8) {
 			btEffectStepPaletteToResource(orange);
 		}
-		if(frm == 8) {
-			state->shakeFrm = frm;
-			for(i = 0; i != args->tgtCnt; i++) {
+		if(frame == 8) {
+			state->shakeFrame = frame;
+			for(i = 0; i != args->targetCount; i++) {
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+					args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
 			}
 		}
-		if(frm == 48) {
-			state->shakeFrm = 8;
+		if(frame == 48) {
+			state->shakeFrame = 8;
 		}
-		if(frm == TRIDENT_STRIKE_TICK) {
-			state->shakeFrm = 16;
+		if(frame == TRIDENT_STRIKE_TICK) {
+			state->shakeFrame = 16;
 			EFFECT_SHOW_DAMAGE(SE_CLATTER);
-			for(i = 0; i != args->tgtCnt; i++) {
-				btEffectStartActorMotion(
-					args->tgts[i], 1, toFIXED(2), toFIXED(8), toFIXED(8), 120);
+			for(i = 0; i != args->targetCount; i++) {
+				btEffectStartActorMotion(args->targets[i], 1, toFIXED(2),
+					toFIXED(8), toFIXED(8), 120);
 			}
 		}
-		if(frm == 0) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 0) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
-		if(frm == 4) {
-			sySndPlayStub(SE_CLATTER);
+		if(frame == 4) {
+			sySoundPlayStub(SE_CLATTER);
 		}
-		if(frm == 16) {
-			sySndPlayStub(SE_SCATTER);
+		if(frame == 16) {
+			sySoundPlayStub(SE_SCATTER);
 		}
-		if(frm == TRIDENT_STRIKE_TICK) {
-			sySndPlayStub(SE_CRASH);
+		if(frame == TRIDENT_STRIKE_TICK) {
+			sySoundPlayStub(SE_CRASH);
 		}
 
 		/* The Trident drops into place, 16 pixels a tick, and stays until the
 		   strike. */
-		if(frm < TRIDENT_STRIKE_TICK) {
+		if(frame < TRIDENT_STRIKE_TICK) {
 			Sint32 left = centerX - 8;
 			Sint32 visible = TRIDENT_HEIGHT;
 			Sint32 rise;
 
-			if(frm <= 9) {
-				rise = frm * 16 - 144;
+			if(frame <= 9) {
+				rise = frame * 16 - 144;
 			} else {
 				rise = 0;
 			}
@@ -242,24 +242,24 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 					placement[2] =
 						INTtoFIXED(rise + 40 + i * TRIDENT_SPRITE_HEIGHT);
 					fdRenderApplyProjectedPlacementStub(
-						state->sprs[i], placement, (Sint32 *)&src, 0);
+						state->sprites[i], placement, (Sint32 *)&src, 0);
 				}
 			}
 		}
 
 		/* A disc grows on the ground from tick 40, and discs are thrown up,
 		   one every other tick from tick 12. */
-		if((Uint32)(frm - 12) <= 52) {
-			if(frm == 12) {
+		if((Uint32)(frame - 12) <= 52) {
+			if(frame == 12) {
 				for(i = 0; i != TRIDENT_PARTICLES; i++) {
 					state->particles[i].variant = -2 * i;
 				}
 			}
-			for(i = 0, p = state->particles, grow = frm * 4 - 156;
+			for(i = 0, p = state->particles, grow = frame * 4 - 156;
 				i != TRIDENT_DISCS; i++, p++) {
 				p->variant++;
 				if(i == 0) {
-					if(frm > 39) {
+					if(frame > 39) {
 						Uint8 *disc = state->sheet + TRIDENT_GROUND_DISC;
 
 						btEffectDrawShadedCircles(disc, grow, toFIXED(1));
@@ -268,8 +268,8 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 					continue;
 				}
 				if(p->variant == 0) {
-					Sint32 ang = syRandom() & 0x7fff;
-					Sint32 heading = ang + DEGtoANG(90);
+					Sint32 angle = syRandom() & 0x7fff;
+					Sint32 heading = angle + DEGtoANG(90);
 					Sint32 speed = (syRandom() & 511) + 512;
 					FIXED  sine;
 
@@ -277,24 +277,24 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 					x = toFIXED(centerX);
 					p->x = (sine >> 4) + x;
 					p->y = ((syCos(heading) * speed) >> 3) + toFIXED(104);
-					ang += TRIG_TURN * 3 / 4;
-					p->velX = (sySin(ang) * speed) >> 9;
-					p->velY = (syCos(ang) * speed) >> 8;
-					p->velZ = (syRandom() & 7) + 4;
+					angle += TRIG_TURN * 3 / 4;
+					p->velocityX = (sySin(angle) * speed) >> 9;
+					p->velocityY = (syCos(angle) * speed) >> 8;
+					p->velocityZ = (syRandom() & 7) + 4;
 				}
 				/* A disc swells and shrinks over its life, half a turn of a
 				   sine. */
 				if((Uint32)p->variant < TRIDENT_DISC_TICKS) {
 					Sint32 diameter =
-						(FIXEDtoINT(
-							sySin(p->variant * (TRIG_TURN / 64)) * p->velZ)) *
+						(FIXEDtoINT(sySin(p->variant * (TRIG_TURN / 64)) *
+							p->velocityZ)) *
 						2;
-					Sint32 idx = diameter - 2;
+					Sint32 index = diameter - 2;
 
-					if((Uint32)idx <= 61) {
+					if((Uint32)index <= 61) {
 						Sint32 discX = FIXED_INTEGER_PART(p->x);
 						Sint32 discY = FIXED_INTEGER_PART(p->y);
-						Sint32 tier = idx >> 1;
+						Sint32 tier = index >> 1;
 
 						btParticleAdvanceWithGravity2D(
 							p, PARTICLE_DAMPING_NONE, 0);
@@ -307,17 +307,17 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 			}
 		}
 
-		if(frm > 7) {
+		if(frame > 7) {
 			Sint32 scale;
 
-			vertices = syHeapAllocEWRAM(1024);
+			vertices = syHeapAllocateEWRAM(1024);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 7;
 			texture.logHeight = 7;
 			texture.pixels = cells;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->texture = &texture;
-			model->flg = 0;
+			model->flags = 0;
 			model->mesh = BattleEffectCylinderMesh;
 			model->vertices = vertices;
 			model->scrollU = 0;
@@ -329,13 +329,13 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				Sint32 start = TridentRingStarts[i];
 				Sint32 shade;
 
-				if(frm <= start) {
+				if(frame <= start) {
 					continue;
 				}
-				scale = (frm - start) * TridentRingGrowth[i] *
+				scale = (frame - start) * TridentRingGrowth[i] *
 						CYLINDER_RING_GROWTH +
 					CYLINDER_RING_START_SCALE;
-				shade = (start - frm) * 8 + 56;
+				shade = (start - frame) * 8 + 56;
 				if(shade > 0) {
 					shade = 0;
 				}
@@ -347,14 +347,14 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				syTranslate(INTtoFIXED(centerX - 64),
 					toFIXED(TridentRingHeights[i]), 0);
 				syScale(scale, scale * 2, scale);
-				model->scrollU = ((frm + i * 5) & 7) << 4;
+				model->scrollU = ((frame + i * 5) & 7) << 4;
 				syRotX(TRIDENT_RING_TILT);
 				btRenderTransformVertices(
 					BattleEffectCylinderCorners, vertices, 32);
 				btRenderDrawModelList(model);
 			}
 
-			if(frm <= 71) {
+			if(frame <= 71) {
 				const Sint32 *spin;
 				PARTICLE	 *t;
 				PARTICLE	 *spinner;
@@ -367,12 +367,12 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				model->vertices = vertices;
 				model->scrollU = 0;
 				model->scrollV = 0;
-				if(frm == 8) {
+				if(frame == 8) {
 					for(i = 0, t = &state->particles[TRIDENT_PARTICLES],
 					spin = TridentSpins;
 						i != TRIDENT_BOLT_SPINS; i++, t++, spin += 2) {
 						t->z = spin[0];
-						t->velZ = spin[1];
+						t->velocityZ = spin[1];
 						t->variant = (i % 6) * 4;
 					}
 				}
@@ -381,7 +381,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 					i != TRIDENT_BOLTS; grow += 4, i++, spinner++) {
 
 					scale = i * 4;
-					if(frm < grow || frm >= scale + 42) {
+					if(frame < grow || frame >= scale + 42) {
 						continue;
 					}
 					x = (spinner->variant / 8) % 3;
@@ -400,7 +400,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 					if(i & 1) {
 						syRotY(DEGtoANG(180));
 					}
-					spinner->z += spinner->velZ;
+					spinner->z += spinner->velocityZ;
 					syScale(toFIXED(2), toFIXED(1) + 10000, toFIXED(1));
 					btRenderTransformVertices(
 						TridentProngCorners + x * 4, vertices, 4);
@@ -413,23 +413,23 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 
 		/* The strike: flashes, half along the Trident's length and half thrown
 		   out from its foot, and a burst of sparks. */
-		if(frm >= TRIDENT_STRIKE_TICK) {
+		if(frame >= TRIDENT_STRIKE_TICK) {
 			PARTICLE	*drawn;
-			const Uint8 *cellTbl;
+			const Uint8 *cellTable;
 
-			if(frm == TRIDENT_STRIKE_TICK) {
+			if(frame == TRIDENT_STRIKE_TICK) {
 				for(i = 0, p = state->particles, x = toFIXED(centerX);
 					i != TRIDENT_PARTICLES; i++, p++) {
-					Sint32 ang = syRandom();
+					Sint32 angle = syRandom();
 					Sint32 speed = (syRandom() & 511) + 512;
-					Sint32 velY;
+					Sint32 velocityY;
 
-					p->velX = (sySin(ang) * speed) >> 8;
-					velY = (syCos(ang) * speed) >> 7;
-					p->velY = velY;
+					p->velocityX = (sySin(angle) * speed) >> 8;
+					velocityY = (syCos(angle) * speed) >> 7;
+					p->velocityY = velocityY;
 					if(i >= TRIDENT_PARTICLES / 2) {
-						p->x = (p->velX << 2) + x;
-						p->y = (velY << 2) + toFIXED(100);
+						p->x = (p->velocityX << 2) + x;
+						p->y = (velocityY << 2) + toFIXED(100);
 						p->variant = (TRIDENT_PARTICLES / 2 - i) / 4;
 					} else {
 						p->x = x;
@@ -439,13 +439,13 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				}
 				for(i = 0, p = TRIDENT_SPARKS; i != TRIDENT_SPARK_COUNT;
 					i++, p++) {
-					Sint32 ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+					Sint32 angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 					Sint32 speed = (syRandom() & 511) + 512;
 
 					p->x = x;
 					p->y = toFIXED(100);
-					p->velX = (sySin(ang) * speed) >> 6;
-					p->velY = (syCos(ang) * speed) >> 5;
+					p->velocityX = (sySin(angle) * speed) >> 6;
+					p->velocityY = (syCos(angle) * speed) >> 5;
 					p->variant = (syRandom() & 15) + 16;
 				}
 			}
@@ -462,7 +462,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				}
 				drawn->variant++;
 			}
-			for(i = 0, cellTbl = (const Uint8 *)BattleEffectMotePictures,
+			for(i = 0, cellTable = (const Uint8 *)BattleEffectMotePictures,
 			drawn = TRIDENT_SPARKS;
 				i != TRIDENT_SPARK_COUNT; i++, drawn++) {
 				Sint32 moteSize;
@@ -473,7 +473,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				}
 				moteSize = (drawn->variant >> 3) + 1;
 				at = (moteSize - 1) * 2;
-				blit[0](canvas, sprs + *(const Uint16 *)(cellTbl + at),
+				blit[0](canvas, sprites + *(const Uint16 *)(cellTable + at),
 					FIXED_INTEGER_PART(drawn->x) - moteSize / 2,
 					FIXED_INTEGER_PART(drawn->y) - moteSize, moteSize,
 					moteSize * 2);
@@ -483,13 +483,13 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* Glints flash up and down the Trident. */
-		if((Uint32)(frm - 24) <= 39) {
+		if((Uint32)(frame - 24) <= 39) {
 			for(i = 0; i != 4; i++) {
 				Sint32 k = i & 3;
-				Sint32 ang = syRandom();
-				Sint32 x = centerX + (FIXEDtoINT(sySin(ang) << 3)) -
+				Sint32 angle = syRandom();
+				Sint32 x = centerX + (FIXEDtoINT(sySin(angle) << 3)) -
 					(BattleEffectGlintPictureWidths[k] >> 1);
-				Sint32 y = (i << 5) + (FIXEDtoINT(syCos(ang) << 4)) -
+				Sint32 y = (i << 5) + (FIXEDtoINT(syCos(angle) << 4)) -
 					(BattleEffectGlintPictureHeights[k] >> 1);
 				Uint32 flip = syRandom();
 
@@ -509,7 +509,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectTransferCanvas);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	for(i = 0; i != TRIDENT_SPRITES; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	btEffectEndCanvasLayer();
 }
@@ -604,20 +604,20 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	DRAW_RECTANGLE draw[2];
 	Uint8		  *graphics;
 	MOTION_OBJECT *caster;
-	MOTION_OBJECT *tgt;
+	MOTION_OBJECT *target;
 	Sint32		   stepX;
 	Sint32		   stepY;
 	Sint32		   homeX;
 	Sint32		   homeZ;
 	Sint32		   landed;
 	PARTICLE	  *spark;
-	Sint32		   frm;
+	Sint32		   frame;
 	Sint32		   i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
@@ -653,84 +653,84 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	for(i = 0; i != LEAPING_STRIKE_SPARK_COUNT; i++)
 		LEAPING_STRIKE_SPARKS[i].variant = 0;
 
-	caster = btObjectGetStub(args->user)->obj;
-	tgt = btObjectGetStub(args->tgts[0])->obj;
+	caster = btObjectGetStub(args->user)->object;
+	target = btObjectGetStub(args->targets[0])->object;
 	stepX = 0;
 	stepY = 0;
 	homeX = caster->x;
 	homeZ = caster->z;
 	landed = 0;
 
-	for(frm = 0; frm != LEAPING_STRIKE_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != LEAPING_STRIKE_TICKS; frame++) {
+		if(frame == 0) {
 			SET_POSITION(caster, homeX, 0, homeZ);
 			landed = 0;
 		}
-		if(frm > 17 || frm == 0) {
+		if(frame > 17 || frame == 0) {
 			btEffectPosProjectBattler(args->user, &pos);
 			pos.x /= 2;
 		}
 
 		/* Ticks 2-15: a flash, then a ring of flames spreading round the
 		   caster. */
-		if((Uint32)(frm - 2) <= 1)
+		if((Uint32)(frame - 2) <= 1)
 			draw[0](canvas, state->sheet, pos.x - FLASH_BURST_WIDTH / 2,
 				pos.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
 				FLASH_BURST_HEIGHT);
-		if((Uint32)(frm - 4) <= 11) {
+		if((Uint32)(frame - 4) <= 11) {
 			for(i = 0; i != LEAPING_STRIKE_FLAMES; i++) {
 				Sint32 x = pos.x +
-					(FIXEDtoINT(
-						frm * sySin(i * (TRIG_TURN / LEAPING_STRIKE_FLAMES))));
+					(FIXEDtoINT(frame *
+						sySin(i * (TRIG_TURN / LEAPING_STRIKE_FLAMES))));
 				Sint32 y = pos.y +
-					(FIXEDtoINT(
-						frm * syCos(i * (TRIG_TURN / LEAPING_STRIKE_FLAMES)))) -
-					frm;
+					(FIXEDtoINT(frame *
+						syCos(i * (TRIG_TURN / LEAPING_STRIKE_FLAMES)))) -
+					frame;
 
 				draw[0](canvas,
-					state->sheet + (frm - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
+					state->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
 					x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
 					FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
 			}
 		}
 
 		/* Tick 4: the leap, away from the caster's own side. */
-		if(frm == LEAPING_STRIKE_LEAP_TICK) {
+		if(frame == LEAPING_STRIKE_LEAP_TICK) {
 			caster->autoFaceMotion = 0;
 			caster->verticalMotionStrength = toFIXED(3) / 5;
-			caster->velY = toFIXED(15);
+			caster->velocityY = toFIXED(15);
 			if(caster->x < 0)
-				caster->velX = -toFIXED(8);
+				caster->velocityX = -toFIXED(8);
 			else
-				caster->velX = toFIXED(8);
+				caster->velocityX = toFIXED(8);
 			if(mode == LEAPING_STRIKE_PLANETARY)
-				caster->velX = -caster->velX;
+				caster->velocityX = -caster->velocityX;
 			fdActorSelectAnimationStub(caster, POSE_LEAP);
-			state->shakeFrm = 4;
-			sySndPlayStub(SE_WHOOSH);
+			state->shakeFrame = 4;
+			sySoundPlayStub(SE_WHOOSH);
 		}
 
 		/* Down at the target's depth, then sliding to it. */
-		if(frm == LEAPING_STRIKE_LAND_TICK) {
+		if(frame == LEAPING_STRIKE_LAND_TICK) {
 			Sint32 slide = LEAPING_STRIKE_SLIDE_TICKS;
 
 			caster->verticalMotionStrength = 0;
 			/* Planetary's depth of 0 is overwritten at once: both come down at
 			   the target's depth. */
 			if(mode == LEAPING_STRIKE_PLANET_DIVER)
-				caster->z = tgt->z;
+				caster->z = target->z;
 			else
 				caster->z = 0;
-			caster->z = tgt->z;
-			caster->velX = 0;
-			caster->velY = 0;
-			caster->velZ = 0;
-			stepX = (tgt->x * 60 / 100 - caster->x) / slide;
-			stepY = (tgt->y - caster->y) / slide;
+			caster->z = target->z;
+			caster->velocityX = 0;
+			caster->velocityY = 0;
+			caster->velocityZ = 0;
+			stepX = (target->x * 60 / 100 - caster->x) / slide;
+			stepY = (target->y - caster->y) / slide;
 			fdActorStartIdleStub(caster);
 		}
 
-		if(frm > 17) {
+		if(frame > 17) {
 			/* Sliding to the target while in the air. */
 			if(caster->y > 0) {
 				caster->x += stepX;
@@ -744,32 +744,32 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					spark = LEAPING_STRIKE_SPARKS;
 					for(i = 0; i != LEAPING_STRIKE_SPARK_COUNT; i++) {
 						Sint32 speed = 1023;
-						Sint32 ang;
+						Sint32 angle;
 
 						speed &= syRandom();
-						ang = syRandom() & TRIG_ANGLE_MASK;
+						angle = syRandom() & TRIG_ANGLE_MASK;
 
 						speed += LEAPING_STRIKE_SPARK_MIN_SPEED;
 						spark->x = toFIXED(pos.x);
 						spark->y = INTtoFIXED(pos.y - 24);
-						spark->velX = (sySin(ang) * speed) >> 6;
-						spark->velY = -((syCos(ang) * speed) << 1) >> 6;
+						spark->velocityX = (sySin(angle) * speed) >> 6;
+						spark->velocityY = -((syCos(angle) * speed) << 1) >> 6;
 						spark->variant = (syRandom() & 7) + 32;
 						spark++;
 					}
-					state->shakeFrm = 4;
+					state->shakeFrame = 4;
 					if(mode == LEAPING_STRIKE_PLANET_DIVER) {
 						EFFECT_SHOW_DAMAGE(SE_CRASH);
 						btMotionApplyKnockbackStub(
-							args->tgts[0], KNOCKBACK_HURL);
-						btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE,
-							POSE_DAMAGE, 0, 8);
+							args->targets[0], KNOCKBACK_HURL);
+						btEffectTintBattler(args->targets[0],
+							SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 					} else {
-						sySndPlayStub(SE_CRASH);
-						for(i = 0; i != args->tgtCnt; i++) {
+						sySoundPlayStub(SE_CRASH);
+						for(i = 0; i != args->targetCount; i++) {
 							btMotionApplyKnockbackStub(
-								args->tgts[i], KNOCKBACK_LAUNCH);
-							btEffectTintBattler(args->tgts[i],
+								args->targets[i], KNOCKBACK_LAUNCH);
+							btEffectTintBattler(args->targets[i],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
 						}
 					}
@@ -787,11 +787,11 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				void		 *projected;
 				Sint32		  shade;
 
-				projected = syHeapAllocEWRAM(1024);
+				projected = syHeapAllocateEWRAM(1024);
 				model = btRenderAllocateModelList(1);
 				shade = 0;
-				if(frm == LEAPING_STRIKE_WAVE_TICK)
-					state->shakeFrm = 14;
+				if(frame == LEAPING_STRIKE_WAVE_TICK)
+					state->shakeFrame = 14;
 
 				/* The claw, slashing until tick 45. */
 				texture.logWidth = 6;
@@ -802,7 +802,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				model->texture = &texture;
 				model->vertices = projected;
 				model->shade = shade;
-				if(frm <= 45) {
+				if(frame <= 45) {
 					syInitMatrix();
 					syTranslate(
 						INTtoFIXED(pos.x - 60), INTtoFIXED(pos.y - 80), 0);
@@ -830,30 +830,30 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Sint32 start =
 						LeapingStrikeWaveStarts[i] + LEAPING_STRIKE_WAVE_TICK;
 
-					if(frm > start) {
-						shade = (start - frm) * 8 + 56;
+					if(frame > start) {
+						shade = (start - frame) * 8 + 56;
 
 						if(shade > 0)
 							shade = 0;
 						if(shade > MODEL_SHADE_INVISIBLE) {
 							Sint32 scale;
 
-							start = frm - start;
+							start = frame - start;
 							scale = start * LeapingStrikeWaveGrowth[i] *
 									LEAPING_STRIKE_WAVE_GROWTH +
 								toFIXED(1) / 2;
 
 							model->shade = shade;
 							syInitMatrix();
-							model->scrollV = (frm * 8 + i * 16) & 63;
+							model->scrollV = (frame * 8 + i * 16) & 63;
 							syTranslate(INTtoFIXED(pos.x - 60),
 								toFIXED(LeapingStrikeWaveHeights[i]), 0);
 							syScale(scale >> 1, scale << 2, scale / 4);
 							syRotX(LEAPING_STRIKE_WAVE_TILT);
 							if(i & 1)
-								syRotY((i * 4 + frm) * (TRIG_TURN / 32));
+								syRotY((i * 4 + frame) * (TRIG_TURN / 32));
 							else
-								syRotY((i * 4 - frm) * (TRIG_TURN / 32));
+								syRotY((i * 4 - frame) * (TRIG_TURN / 32));
 							btRenderTransformVertices(
 								BattleEffectRingCorners, projected, 32);
 							btRenderDrawModelList(model);
@@ -873,12 +873,12 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						LeapingStrikeRingStarts[i] + LEAPING_STRIKE_PILLAR_TICK;
 					PARTICLE *base = &state->particles[i];
 
-					if(frm == start) {
+					if(frame == start) {
 						base->x = pos.x;
 						base->y = pos.y;
 					}
-					if(frm > start) {
-						shade = (start - frm) * 8 + 40;
+					if(frame > start) {
+						shade = (start - frame) * 8 + 40;
 
 						if(shade > 0)
 							shade = 0;
@@ -886,7 +886,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							Sint32 scale;
 							Sint32 scroll;
 
-							start = frm - start;
+							start = frame - start;
 							scale = start * LeapingStrikeRingGrowth[i] *
 									CYLINDER_RING_GROWTH +
 								CYLINDER_RING_START_SCALE;
@@ -894,7 +894,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							model->shade = shade;
 							/* Masked in place, the mask assigned first. */
 							scroll = 7;
-							scroll &= frm + i * 5;
+							scroll &= frame + i * 5;
 							model->scrollU = scroll << 4;
 							syInitMatrix();
 							syTranslate(INTtoFIXED(base->x - 60),
@@ -912,11 +912,11 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(mode == LEAPING_STRIKE_PLANETARY && frm == 50) {
+		if(mode == LEAPING_STRIKE_PLANETARY && frame == 50) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-			for(i = 0; i != args->tgtCnt; i++)
-				btEffectStartActorMotion(
-					args->tgts[i], 1, toFIXED(4), toFIXED(16), toFIXED(1), 250);
+			for(i = 0; i != args->targetCount; i++)
+				btEffectStartActorMotion(args->targets[i], 1, toFIXED(4),
+					toFIXED(16), toFIXED(1), 250);
 		}
 
 		/* The sparks fall, bounce off the ground at 112 and shrink. */
@@ -926,7 +926,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				spark->variant--;
 				btParticleAdvanceWithGravity2D(spark, 56, toFIXED(1) / 8);
 				if(spark->y > toFIXED(112)) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else if((Uint32)spark->x < toFIXED(127) && spark->y >= 0) {
 					Sint32 size = spark->variant / 8 + 1;
 
@@ -952,7 +952,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
    the effect state, so the backdrop's colour changes down the screen. */
 void btEffectArmMeteorBlowPaletteDMA(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	volatile Uint16		*channel = REG_DMA0;
 
 	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;

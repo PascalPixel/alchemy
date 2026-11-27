@@ -25,26 +25,26 @@ Sint32 gmUnitGetElementLevels(
 	Sint32 *cursor;
 
 	if(unitId > PIERS) {
-		Uint32 idx;
+		Uint32 index;
 
-		idx = gmEnemyGetDefinition(unitId)->elementPreset;
-		if(idx >= ENEMY_ELEMENT_PRESET_COUNT)
-			idx = 0;
+		index = gmEnemyGetDefinition(unitId)->elementPreset;
+		if(index >= ENEMY_ELEMENT_PRESET_COUNT)
+			index = 0;
 
 		i = 0;
 		cursor = output;
 		for(; i < ELEMENT_COUNT; i++)
-			*cursor++ = EnemyElementPresetTable[idx].elementLevels[i] *
+			*cursor++ = EnemyElementPresetTable[index].elementLevels[i] *
 				ELEMENT_LEVEL_SCALE;
 	} else {
 		cursor = output;
 		/* The counts of set Djinn by element follow the Djinn bits in the
 		   unit. */
-		djinnHeld += offsetof(UNIT, djinnSetCnts) - offsetof(UNIT, djinnHeld);
+		djinnHeld += offsetof(UNIT, djinnSetCounts) - offsetof(UNIT, djinnHeld);
 		for(i = 0; i < ELEMENT_COUNT; i++) {
-			Uint32 cnt = *djinnHeld++;
+			Uint32 count = *djinnHeld++;
 
-			*cursor++ = cnt * ELEMENT_LEVEL_SCALE;
+			*cursor++ = count * ELEMENT_LEVEL_SCALE;
 		}
 
 		if(unitId <= PIERS) {
@@ -77,17 +77,17 @@ Sint32 gmUnitGetElementLevel(Sint32 unitId, Sint32 element)
 Sint32 gmEnemyGetAttackElement(UNIT *unit)
 {
 	const ENEMY_DEFINITION *enemy = gmEnemyGetDefinition(unit->id);
-	Uint8					presetIdx = enemy->elementPreset;
+	Uint8					presetIndex = enemy->elementPreset;
 
-	if(presetIdx >= ENEMY_ELEMENT_PRESET_COUNT)
-		presetIdx = 0;
-	return EnemyElementPresetTable[presetIdx].attackElement;
+	if(presetIndex >= ENEMY_ELEMENT_PRESET_COUNT)
+		presetIndex = 0;
+	return EnemyElementPresetTable[presetIndex].attackElement;
 }
 
 /* Writes a unit's base Power and Resist in each element, from its element
    levels. */
 UNREAD_RESULT
-gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
+gmUnitCalculateBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dest)
 {
 	UNIT  *unit = gmUnitGet(unitId);
 	Sint32 levels[ELEMENT_COUNT];
@@ -101,7 +101,7 @@ gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
 		/* The copy returns from inside its loop, as the last element is
 		   written. */
 		for(i = 0;;) {
-			dst[i] = EnemyElementPresetTable[preset].stats[i];
+			dest[i] = EnemyElementPresetTable[preset].stats[i];
 			if(++i >= ELEMENT_COUNT)
 				RETURN_UNREAD(preset);
 		}
@@ -120,9 +120,9 @@ gmUnitCalcBaseElements(Sint32 unitId, BATTLE_ELEMENT_STATS *dst)
 			level = 0;
 		/* The pair is written as two halfwords in a row, power then
 		   resistance. */
-		((Sint16 *)dst)[i * 2] =
+		((Sint16 *)dest)[i * 2] =
 			ElementPowerResistByLevel[level].power + tenths;
-		((Sint16 *)dst)[i * 2 + 1] =
+		((Sint16 *)dest)[i * 2 + 1] =
 			ElementPowerResistByLevel[level].resistance + tenths;
 	}
 }
@@ -208,7 +208,7 @@ void gmUnitUpdateClass(Sint32 unitId)
 
 	unit->classId = gmClassDetermine(unit->id, (Uint8 *)unit->djinnHeld);
 	gmUnitRefreshPsynergy(unitId);
-	gmUnitCalcBaseElements(unitId, unit->baseElement);
+	gmUnitCalculateBaseElements(unitId, unit->baseElement);
 }
 
 #undef ELEMENT_LEVEL_SCALE

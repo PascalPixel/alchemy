@@ -12,7 +12,7 @@
    links as objects of their own, are parts here too, after the code. Where to
    start:
 
-	 Units           game_units.c: gmUnitCalc, gmUnitSetHp, gmUnitAddPp
+	 Units           game_units.c: gmUnitCalculate, gmUnitSetHp, gmUnitAddPp
 	 Items           game_inventory.c: gmInventoryAddItem, gmInventoryEquip,
 					 gmPartyInventoryAdd
 	 Levels          game_levels.c: gmUnitLearnPsynergy, gmUnitLevelUp

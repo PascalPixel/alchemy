@@ -549,7 +549,7 @@ extern Uint16 HelmSplitterPictures[];
 extern Sint8  HelmSplitterPictureBiasX[];
 extern Sint8  HelmSplitterPictureBiasY[];
 /* Where the sprites of a summon's formation stand, in pixels, one axis at a
-   time (btEffectPlaceFormationSprs). */
+   time (btEffectPlaceFormationSprites). */
 extern Uint8 SummonFormationNereidX[];
 extern Uint8 SummonFormationNereidZ[];
 extern Uint8 SummonFormationCybeleX[];

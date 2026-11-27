@@ -13,7 +13,7 @@
 #define SET_POSITION(p, newX, newY, newZ) \
 	((p)->x = (newX), (p)->y = (newY), (p)->z = (newZ))
 #define SET_VELOCITY(p, vx, vy, vz) \
-	((p)->velX = (vx), (p)->velY = (vy), (p)->velZ = (vz))
+	((p)->velocityX = (vx), (p)->velocityY = (vy), (p)->velocityZ = (vz))
 
 /* Keeps `v` within low to high, the low bound tested first. A plain block, so
    it cannot stand before an `else`. */

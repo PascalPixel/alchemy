@@ -13,19 +13,19 @@
 static void scFieldEffectRiseRingBackHalf(ACTOR *actor)
 {
 	ACTOR *anchor;
-	Sint32 frm;
+	Sint32 frame;
 	FIXED  amplitude;
 
 	anchor = (ACTOR *)actor->watchedActor;
-	actor->tmr = actor->tmr + 1;
-	frm = actor->tmr;
+	actor->timer = actor->timer + 1;
+	frame = actor->timer;
 
-	if(frm >= VERTICAL_EFFECT_TICKS) {
+	if(frame >= VERTICAL_EFFECT_TICKS) {
 		fdActorRelease(actor);
 		return;
 	}
 
-	amplitude = sySin(frm * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
+	amplitude = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
 	actor->scaleX = amplitude;
 	actor->scaleY = amplitude;
 	actor->x.fixed = anchor->x.fixed;
@@ -38,19 +38,19 @@ static void scFieldEffectRiseRingBackHalf(ACTOR *actor)
 static void scFieldEffectRiseRingFrontHalf(ACTOR *actor)
 {
 	ACTOR *anchor;
-	Sint32 frm;
+	Sint32 frame;
 	FIXED  amplitude;
 
 	anchor = (ACTOR *)actor->watchedActor;
-	actor->tmr = actor->tmr + 1;
-	frm = actor->tmr;
+	actor->timer = actor->timer + 1;
+	frame = actor->timer;
 
-	if(frm >= VERTICAL_EFFECT_TICKS) {
+	if(frame >= VERTICAL_EFFECT_TICKS) {
 		fdActorRelease(actor);
 		return;
 	}
 
-	amplitude = sySin(frm * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
+	amplitude = sySin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_TICKS));
 	actor->scaleX = amplitude;
 	actor->scaleY = -amplitude;
 	actor->x.fixed = anchor->x.fixed;

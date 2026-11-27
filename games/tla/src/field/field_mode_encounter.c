@@ -13,24 +13,24 @@ void fdWorldMapMarkPlaceVisited(Sint32 id, Sint32 variant)
 {
 	const WORLD_MAP_PLACE *entry = fdWorldMapPlacesGetTable();
 
-	for(; entry->flg != 0; entry++) {
+	for(; entry->flags != 0; entry++) {
 		if(entry->visitScene != id)
 			continue;
 		if(entry->visitEntrance != -1 && variant != entry->visitEntrance)
 			continue;
-		syGameFlagSet(FLAG_PLACE_VISITED(entry->flg));
+		syGameFlagSet(FLAG_PLACE_VISITED(entry->flags));
 		break;
 	}
 }
 
 /* Returns the value of the flag entry whose flag is flag, or 1 when there is
    none or its value is 0. */
-Sint32 fdFlagEntriesGetValue(Sint32 flg)
+Sint32 fdFlagEntriesGetValue(Sint32 flag)
 {
 	const WORLD_MAP_PLACE *entry = fdWorldMapPlacesGetTable();
 
-	for(; entry->flg != 0; entry++) {
-		if(entry->flg == flg && entry->value != 0)
+	for(; entry->flags != 0; entry++) {
+		if(entry->flags == flag && entry->value != 0)
 			return entry->value;
 	}
 	return 1;
@@ -57,7 +57,7 @@ void fdEncounterSelectMapZones(Sint32 useRules)
 				continue;
 			if(rule->entrance != -1 && rule->entrance != entrance)
 				continue;
-			if(rule->flg != -1 && syGameFlagGet(rule->flg))
+			if(rule->flags != -1 && syGameFlagGet(rule->flags))
 				continue;
 			first = rule->groundZone;
 			second = rule->secondZone;
@@ -106,7 +106,7 @@ Sint32 fdEncounterResolveWorldMapZoneAndBackdrop(void *pos)
 			continue;
 		if(rule->environment != -1 && rule->environment != environment)
 			continue;
-		if(rule->flg != -1 && syGameFlagGet(rule->flg) == 0)
+		if(rule->flags != -1 && syGameFlagGet(rule->flags) == 0)
 			continue;
 		zone = rule->zone;
 		break;
@@ -241,7 +241,7 @@ Uint16 fdEncounterGetDjinnFormation(Sint32 djinni)
 #endif
 }
 
-/* Chooses the current scene's field music (MainRoutineStateWork.snd) from the
+/* Chooses the current scene's field music (MainRoutineStateWork.sound) from the
    first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
    when none does. */
 void fdChooseMusic(void)
@@ -258,7 +258,7 @@ void fdChooseMusic(void)
 				continue;
 			if(rule->entrance != -1 && rule->entrance != entrance)
 				continue;
-			if(rule->flg != -1 && syGameFlagGet(rule->flg) == 0)
+			if(rule->flags != -1 && syGameFlagGet(rule->flags) == 0)
 				continue;
 			music = rule->music;
 			break;
@@ -267,7 +267,7 @@ void fdChooseMusic(void)
 				continue;
 			if(rule->entrance != -1 && rule->entrance != entrance)
 				continue;
-			if(rule->flg != -1 && syGameFlagGet(rule->flg) == 0)
+			if(rule->flags != -1 && syGameFlagGet(rule->flags) == 0)
 				continue;
 			music = rule->music;
 			break;
@@ -289,14 +289,14 @@ Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance)
 		if(rule->useSceneId) {
 			if(rule->id == sceneId) {
 				if(rule->entrance == -1 || rule->entrance == entrance) {
-					name = rule->areaNameIdx;
+					name = rule->areaNameIndex;
 					break;
 				}
 			}
 		} else {
 			if(rule->id == area) {
 				if(rule->entrance == -1 || rule->entrance == entrance) {
-					name = rule->areaNameIdx;
+					name = rule->areaNameIndex;
 					break;
 				}
 			}
@@ -395,19 +395,19 @@ Sint16 fdBattleBackgroundGetSelected(void)
    first. */
 void fdBattleBackgroundSelectForMap(void)
 {
-	Sint32		  tgt = MainRoutineStateWork.next;
-	const Sint32 *tbl = SceneBattleBackgroundRules;
-	Sint32		  entry = *tbl++;
+	Sint32		  target = MainRoutineStateWork.next;
+	const Sint32 *table = SceneBattleBackgroundRules;
+	Sint32		  entry = *table++;
 	/* The first scene_rules.c word names a battle background. */
 	Sint32 backdrop;
 
-	if(entry != 0 && entry != tgt) {
+	if(entry != 0 && entry != target) {
 		do {
 			if(entry & BATTLE_BACKGROUND_RULE) {
 				backdrop = entry & BATTLE_BACKGROUND_RULE_RESOURCE;
 			}
-			entry = *tbl++;
-		} while(entry != 0 && entry != tgt);
+			entry = *table++;
+		} while(entry != 0 && entry != target);
 	}
 	if(backdrop == RESOURCE_DRAGON_HALL_B_BACKDROP &&
 		syGameFlagGet(FLAG_MARS_LIGHTHOUSE_THAWED))
@@ -455,12 +455,12 @@ void fdBattleBackgroundSelectForEnvironment(Sint32 environment)
    the ones in battle. */
 Bool fdPartyIsInFrontRow(Sint32 owner)
 {
-	Sint32 cnt = gmPartyCountMembersStub();
+	Sint32 count = gmPartyCountMembersStub();
 	Sint32 i;
 
-	if(cnt > PARTY_BATTLE_SIZE)
-		cnt = PARTY_BATTLE_SIZE;
-	for(i = 0; i < cnt; i++) {
+	if(count > PARTY_BATTLE_SIZE)
+		count = PARTY_BATTLE_SIZE;
+	for(i = 0; i < count; i++) {
 		if(MainRoutineStateWork.party[i] == owner)
 			return TRUE;
 	}
@@ -476,7 +476,7 @@ Bool fdPartyIsInFrontRow(Sint32 owner)
 void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 {
 	Sint16		  key = (zone << 4) + slot;
-	const Sint16 *tbl = EncounterBattleMusic;
+	const Sint16 *table = EncounterBattleMusic;
 	Uint16		  music;
 	Uint16		  value;
 
@@ -484,7 +484,7 @@ void fdEncounterSelectBattleMusic(Sint32 zone, Sint32 slot)
 		music = SOUND_KEEP_BGM;
 	} else {
 		for(;;) {
-			value = *tbl++;
+			value = *table++;
 			if(value == 0)
 				break;
 			if(value == (Uint16)key)

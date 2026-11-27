@@ -42,7 +42,7 @@ const Sint16 FieldEffectTargetRangeByMode[25] = {
 	-1,
 };
 
-/* The palette cycle of Mind Read's caster (fdActorSetLayersColMode, */
+/* The palette cycle of Mind Read's caster (fdActorSetLayersColorMode, */
 /* (TickCount >> 1) & 7): palettes 1 to 4 and back to 0, two ticks each. */
 const Uint8 MindReadCasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
@@ -440,7 +440,7 @@ const Sint32 FieldEffectFragmentScript[] = {
 };
 
 /* An angle for each value of the right, left, up and down bits of the */
-/* +Control Pad; DPAD_ANGLE_NONE for none (fdInputGetDpadAng, */
+/* +Control Pad; DPAD_ANGLE_NONE for none (fdInputGetDpadAngle, */
 /* script_commands_move.c). */
 const Uint16 InputDpadAngles[16] = {
 	DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,

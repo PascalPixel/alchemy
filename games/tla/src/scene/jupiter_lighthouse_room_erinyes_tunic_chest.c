@@ -34,7 +34,7 @@ typedef struct PUSH_TARGET {
 	Sint32 z;
 	Sint32 rectangle; /* index into the rectangle table */
 	Sint32 id;
-	void  *func;
+	void  *callback;
 } PUSH_TARGET;
 
 /* Set once the column has been pushed off the ledge this visit. */
@@ -88,8 +88,8 @@ typedef enum JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_METATILE_BEHAVIOR {
 
 void scSetArrivalFlags(Sint32 a);
 Bool scPushTargetFillRectangle(Sint32 id);
-Bool scPushTargetFindStop(PUSH_TARGET *tgt);
-void scPushTargetPush(PUSH_TARGET tgt);
+Bool scPushTargetFindStop(PUSH_TARGET *target);
+void scPushTargetPush(PUSH_TARGET target);
 
 void				   scJupiterLighthouseStartMovingPillar(void);
 void				   scJupiterLighthouseLeaveByCyclone(void);
@@ -146,12 +146,12 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 /* The pushed column's update while Felix pushes it: once it reaches metatile
    (14, 12), at the raised floor's east edge, it is drawn a step further back
-   (`fdActorSetSprPriorityDirect`) for its fall into the trench. */
+   (`fdActorSetSpritePriorityDirect`) for its fall into the trench. */
 void scJupiterLighthouseDrawColumnBelowLedge(ACTOR *actor)
 {
 	if(FIELD_METATILE(actor->x.fixed) == LEDGE_EDGE_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == LEDGE_COLUMN_METATILE_Z)
-		fdActorSetSprPriorityDirect(actor, 2);
+		fdActorSetSpritePriorityDirect(actor, 2);
 }
 
 /* Felix walks into one of the fallen columns on the raised floor and pushes it;
@@ -162,22 +162,22 @@ void scJupiterLighthouseDrawColumnBelowLedge(ACTOR *actor)
 void scJupiterLighthousePushColumnOffTheLedge(void)
 {
 	ACTOR	   *actor = fdActorGet(ACTOR_LEDGE_COLUMN);
-	PUSH_TARGET tgt;
+	PUSH_TARGET target;
 	Sint32		i;
 	FIXED		x;
 
 	actor->update = (OBJECT_UPDATE)scJupiterLighthouseDrawColumnBelowLedge;
-	if(scPushTargetFindStop(&tgt))
-		scPushTargetPush(tgt);
+	if(scPushTargetFindStop(&target))
+		scPushTargetPush(target);
 	if(FIELD_METATILE(actor->x.fixed) == TRENCH_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == LEDGE_COLUMN_METATILE_Z &&
 		fdScriptGetFlag(FLAG_COLUMN_OFF_LEDGE) == 0) {
 		fdScriptSetFlag(FLAG_COLUMN_OFF_LEDGE);
-		scFieldActorSetSprPriority(ACTOR_LEDGE_COLUMN, 3);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		scFieldActorSetSpritePriority(ACTOR_LEDGE_COLUMN, 3);
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		syWait(5);
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
-		actor->motionFlg = ACTOR_FALLS;
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
+		actor->motionFlags = ACTOR_FALLS;
 		for(i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
 			syFieldMapGridSetMetatileHeight(toFIXED(256), x, 0, 0);
 			fdMapGridSetMetatileBehavior(toFIXED(256), x, 0, 0);
@@ -216,13 +216,13 @@ void scJupiterLighthouseFinishMovingPillar(Sint32 unused, Sint32 id)
 	}
 	if(placed) {
 		syWait(10);
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
 		for(i = 0; i < 30; i++) {
-			if(actor->y.fixed <= actor->groundHeight && actor->velY == 0)
+			if(actor->y.fixed <= actor->groundHeight && actor->velocityY == 0)
 				break;
 			syWait(1);
 		}
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
 	}
 }
@@ -270,7 +270,7 @@ Sint32 scPrepareMap(void)
 	scSetArrivalFlags(0);
 	if(fdScriptGetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
 		actor = fdActorGet(ACTOR_LEFT_PILLAR);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
 		actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
 		fdActorSetPos(ACTOR_LEFT_PILLAR, 328, 584);
@@ -278,21 +278,25 @@ Sint32 scPrepareMap(void)
 	}
 	if(fdScriptGetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
 		actor = fdActorGet(ACTOR_RIGHT_PILLAR);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
 		actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
 		fdActorSetPos(ACTOR_RIGHT_PILLAR, 520, 584);
 		fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 0);
 	}
-	fdActorGet(ACTOR_FIRST_COLUMN)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_SECOND_COLUMN)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_LEDGE_COLUMN)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_FOURTH_COLUMN)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	scFieldActorSetSprPriority(ACTOR_FIRST_COLUMN, 3);
-	scFieldActorSetSprPriority(ACTOR_LEDGE_COLUMN, 3);
-	scFieldActorSetSprPriority(ACTOR_SECOND_COLUMN, 3);
-	scFieldActorSetSprPriority(ACTOR_FOURTH_COLUMN, 3);
-	fdActorGet(ACTOR_LEDGE_COLUMN)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_FIRST_COLUMN)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_SECOND_COLUMN)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_LEDGE_COLUMN)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_FOURTH_COLUMN)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	scFieldActorSetSpritePriority(ACTOR_FIRST_COLUMN, 3);
+	scFieldActorSetSpritePriority(ACTOR_LEDGE_COLUMN, 3);
+	scFieldActorSetSpritePriority(ACTOR_SECOND_COLUMN, 3);
+	scFieldActorSetSpritePriority(ACTOR_FOURTH_COLUMN, 3);
+	fdActorGet(ACTOR_LEDGE_COLUMN)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorDisableById(ACTOR_FIRST_COLUMN);
 	fdActorDisableById(ACTOR_SECOND_COLUMN);
 	fdActorDisableById(ACTOR_LEDGE_COLUMN);
@@ -352,8 +356,9 @@ extern Sint32 WhirlwindEndScript[];
 Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "shared/whirlwind_update_lower.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -395,7 +400,7 @@ void scActorStopAtPushTarget(ACTOR *actor);
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -422,7 +427,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -437,7 +442,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 
 #undef METATILE_PUSH_SLOT_ENTRY
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/cracked_tile_drop_in.h"
 

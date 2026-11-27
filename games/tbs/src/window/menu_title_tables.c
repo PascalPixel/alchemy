@@ -3,7 +3,7 @@
 
 #include "graphics/graphics.h"
 
-/* The scale of mnWindowSprPulse's eight steps: about 1.10 up to 1.22 and
+/* The scale of mnWindowSpritePulse's eight steps: about 1.10 up to 1.22 and
    back. */
 const FIXED WindowSpritePulseScales[] = {
 	toFIXED(1.1),

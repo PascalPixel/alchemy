@@ -214,10 +214,10 @@ static void scSuhallaEnterDoor(void)
 	Uint16		 metatileX = SuhallaDoorMetatiles[exitCue][0];
 	Uint16		 metatileZ = SuhallaDoorMetatiles[exitCue][1];
 
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(SuhallaDoorOpenSteps, metatileX, metatileZ);
 	fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -16);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exitCue);
 }
 
@@ -233,10 +233,10 @@ static void scSuhallaEnterSanctumDoor(void)
 	Uint16		 metatileX = SuhallaDoorMetatiles[exitCue][0];
 	Uint16		 metatileZ = SuhallaDoorMetatiles[exitCue][1];
 
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(SuhallaWideDoorOpenSteps, metatileX, metatileZ);
 	fdActorWalkBy(ACTOR_PARTY_LEADER, 0, -16);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	syImportScriptSetExitRequest(exitCue);
 }
 
@@ -263,7 +263,7 @@ Sint32 scInit(void)
 
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = 24;
+	state->transitionFrame = 24;
 
 	if(gmFlagGet(FLAG_SUHALLA_SPROUT_GROWN) != 0) {
 		scSuhallaGrowSprout();

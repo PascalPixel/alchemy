@@ -36,7 +36,7 @@ enum {
 
 struct EFFECT_OPTIONS;
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 /* Hangs a vine from high above an actor down to its feet (fdHangingVinePlace,
    through the overlay's own import row). */
 void syImportHangingVinePlace(Sint32 id, Sint32 a);

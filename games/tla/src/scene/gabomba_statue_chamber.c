@@ -231,8 +231,8 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(MUS_JUPITER_LIGHTHOUSE);
-	sySndPlay(SE_POWER_UP);
+	sySoundPlay(MUS_JUPITER_LIGHTHOUSE);
+	sySoundPlay(SE_POWER_UP);
 	fdActorSetAnimationById(ACTOR_SEATED_IDOL, 3);
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, 2);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, 2);
@@ -240,7 +240,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	fdPaletteFadeSetTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
 	fdPaletteFadeStartInterpolation(40);
 	sySynch(40);
-	sySndPlay(SE_GABOMBA_VOICE);
+	sySoundPlay(SE_GABOMBA_VOICE);
 	sySynch(1);
 	if(GabombaStatueChamberShownItem != 0) {
 		for(i = 0; i < CRYSTAL_RISE_TICKS; i++) {
@@ -250,7 +250,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 			GabombaStatueChamberShownItem->y.fixed += toFIXED(1) / 2;
 			sySynch(1);
 		}
-		GabombaStatueChamberShownItem->motionFlg = ACTOR_FLOATS;
+		GabombaStatueChamberShownItem->motionFlags = ACTOR_FLOATS;
 	}
 	fdActorSetAnimationById(ACTOR_SEATED_IDOL, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
@@ -302,7 +302,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	sySynch(1);
 	fdActorPlaceOnActor(ACTOR_WITCH_DOCTOR, ACTOR_CHAMBER_AKAFUBU);
 	fdActorSetPos(ACTOR_CHAMBER_AKAFUBU, 0, 0);
-	sySndPlay(SE_CHIME);
+	sySoundPlay(SE_CHIME);
 	fdActorSetAnimationById(ACTOR_WITCH_DOCTOR, 5);
 	fdScriptWait(60);
 	fdScriptWait(20);
@@ -310,7 +310,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	fdActorSetAnimationById(ACTOR_SEATED_IDOL, 1);
 	fdScriptWait(40);
 	fdActorSetAnimationById(ACTOR_SEATED_IDOL, 3);
-	sySndPlay(SE_CHIME);
+	sySoundPlay(SE_CHIME);
 	fdActorSetAnimationById(ACTOR_WITCH_DOCTOR, 6);
 	fdScriptWait(60);
 	fdActorSetAnimationById(ACTOR_WITCH_DOCTOR, ANIM_STAND);
@@ -339,7 +339,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
 	fdActorFaceDirectionById(ACTOR_CHAMBER_KRADEN, FACING_EAST, 0);
-	fdActorGet(ACTOR_CHAMBER_CHEST)->motionFlg = 0;
+	fdActorGet(ACTOR_CHAMBER_CHEST)->motionFlags = 0;
 	fdActorSetMovementTypeAndWaitById(
 		ACTOR_CHAMBER_CHEST, GabombaStatueChamberChestDescendsScript);
 	fdScriptWait(20);
@@ -457,10 +457,10 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	fdScriptShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
 	/* "Follow that path, and you will find a cavern..." */
 	scGabombaStatueChamberStatueSpeaks();
-	sySndPlay(MUS_SILENCE);
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(MUS_SILENCE);
+	sySoundPlay(SE_SHIMMER);
 	fdActorSetAnimationById(ACTOR_SEATED_IDOL, 3);
-	fdActorSetSprCol(fdActorGetById(ACTOR_HOLE_COVER), SPRITE_COLOR_WHITE);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_HOLE_COVER), SPRITE_COLOR_WHITE);
 	fdActorSetPos(ACTOR_HOLE_COVER, 424, 104);
 	fdPaletteFadeSetTarget(RGB_WHITE, 0);
 	fdPaletteFadeStartInterpolation(40);
@@ -478,12 +478,12 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 1);
 	fdPaletteFadeStartInterpolation(20);
 	sySynch(20);
-	GabombaStatueChamberShownItem->motionFlg =
+	GabombaStatueChamberShownItem->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(10);
-	sySndPlay(SE_STAR_BOUNCE);
+	sySoundPlay(SE_STAR_BOUNCE);
 	fdScriptWait(40);
-	sySndPlay(MUS_INSIDE_THE_GABOMBA_STATUE);
+	sySoundPlay(MUS_INSIDE_THE_GABOMBA_STATUE);
 	fdScriptWait(40);
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_SOUTHEAST, 0);
@@ -500,7 +500,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	if(GabombaStatueChamberShownItem != 0) {
 		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 		actor = GabombaStatueChamberShownItem;
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdActorSetMoveTarget((Sint32)actor, leader->x.fixed,
 			leader->y.fixed + toFIXED(36), leader->z.fixed);
 		fdActorWaitForMove((Sint32)GabombaStatueChamberShownItem);
@@ -575,13 +575,13 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
 	sySynch(64);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	FieldStateWork->transitionFrm = 10;
+	FieldStateWork->transitionFrame = 10;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 0);
-	FieldStateWork->transitionFrm = 1;
+	FieldStateWork->transitionFrame = 1;
 	fdPaletteFadeStartInterpolation(1);
-	fdActorSystemSuspendProjectionAndShowSprs();
+	fdActorSystemSuspendProjectionAndShowSprites();
 	mnFieldMessageShowCentered(MsgCarriedTheMessage, 0, 3);
 	fdActorSystemResumeProjectionAndHideLayers();
 	syGameFlagSet(FLAG_GABOMBA_MESSAGE_CARRIED);
@@ -606,20 +606,21 @@ void scGabombaStatueChamberDropIntoHole(Sint32 x, Sint32 z)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1);
 	fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, x, z);
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 	fdActorWaitForScriptEndById(MainRoutineStateWork.leaderActorId);
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 	scFieldActorSetMoveTarget(actor, x, -12, z);
 	fdActorWaitForMove(actor);
 	fdActorSetAnimationById(
 		MainRoutineStateWork.leaderActorId, ANIM_LEADER_CLIMB);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
@@ -685,8 +686,8 @@ void scGabombaStatueChamberRideLiftBackUp(void)
 			REG_BLDALPHA = blend;
 			step++;
 		}
-		lower->ofsY += toFIXED(1);
-		upper->ofsY += toFIXED(1);
+		lower->offsetY += toFIXED(1);
+		upper->offsetY += toFIXED(1);
 	}
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
@@ -695,8 +696,8 @@ void scGabombaStatueChamberRideLiftBackUp(void)
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWaitById(MainRoutineStateWork.leaderActorId, 328, 184);
 	fdScriptWait(20);
-	sySndPlay(SE_MATERIALIZE);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
+	sySoundPlay(SE_MATERIALIZE);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
 	for(; i != 0; i--) {
 		if(i >= LIFT_ASCENT_BLEND_END &&
 			i < LIFT_ASCENT_BLEND_END + LIFT_BLEND_TICKS) {
@@ -706,14 +707,14 @@ void scGabombaStatueChamberRideLiftBackUp(void)
 			REG_BLDALPHA = blend;
 			step--;
 		}
-		lower->ofsY += -toFIXED(1);
-		upper->ofsY += -toFIXED(1);
+		lower->offsetY += -toFIXED(1);
+		upper->offsetY += -toFIXED(1);
 		sySynch(1);
 	}
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	sySndPlay(SE_STOP_EXIT_SE);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	sySoundPlay(SE_STOP_EXIT_SE);
 	sySynch(1);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdScriptWait(20);
 	syGameFlagSet(FLAG_LEADER_ON_LIFT);
 	fdScriptEnd();
@@ -742,9 +743,9 @@ void scGabombaStatueChamberRideLiftDown(void)
 	fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorFaceDirectionAndRefreshById(
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH);
-	sySndPlay(SE_MATERIALIZE);
+	sySoundPlay(SE_MATERIALIZE);
 	step = 1;
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
 	for(i = 0; i <= LIFT_TRAVEL - 1; i++) {
 		if((Uint32)(i - LIFT_DESCENT_BLEND_START) <= LIFT_BLEND_TICKS - 1) {
 			Sint32 blend = LIFT_BLEND_BOTTOM(step) << 8;
@@ -753,14 +754,14 @@ void scGabombaStatueChamberRideLiftDown(void)
 			REG_BLDALPHA = blend;
 			step++;
 		}
-		lower->ofsY += toFIXED(1);
-		upper->ofsY += toFIXED(1);
+		lower->offsetY += toFIXED(1);
+		upper->offsetY += toFIXED(1);
 		sySynch(1);
 	}
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	sySndPlay(SE_STOP_EXIT_SE);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	sySoundPlay(SE_STOP_EXIT_SE);
 	sySynch(1);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdScriptWait(20);
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->layer = 1;
 	syGameFlagSet(FLAG_LEADER_ON_LIFT);
@@ -822,26 +823,27 @@ void scGabombaStatueChamberShowDragonsEye(void)
 	Sint32 x = idol->x.fixed;
 	Sint32 z = idol->z.fixed;
 	ACTOR *item;
-	SPR	  *spr;
+	SPR	  *sprite;
 	Uint8 *icon;
 	Uint8  clear = 0;
 
 	GabombaStatueChamberShownItem = item =
 		syImportActorCreate(SPRITE_UNSEEN_MARKER, x, toFIXED(18), z);
 	if(item != NULL) {
-		spr = item->spr;
-		spr->image.fullCol = 0;
-		spr->image.pal = 0;
-		spr->image.pri = 2;
-		item->motionFlg = clear;
-		item->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+		sprite = item->sprite;
+		sprite->image.fullColor = 0;
+		sprite->image.palette = 0;
+		sprite->image.priority = 2;
+		item->motionFlags = clear;
+		item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 		item->update = scGabombaStatueChamberKeepItemWithIdol;
-		spr->flg = clear;
-		spr->cnt = clear;
-		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		sprite->flags = clear;
+		sprite->count = clear;
+		icon =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_DRAGONS_EYE);
 		syVRAMCacheLoad(
-			spr->slot, ICON_TILE_BYTES, ((ICON_TRANSFER *)icon)->tiles);
+			sprite->slot, ICON_TILE_BYTES, ((ICON_TRANSFER *)icon)->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 }
@@ -854,26 +856,27 @@ void scGabombaStatueChamberShowBlackCrystal(void)
 	Sint32 x = idol->x.fixed;
 	Sint32 z = idol->z.fixed;
 	ACTOR *item;
-	SPR	  *spr;
+	SPR	  *sprite;
 	Uint8 *icon;
 	Uint8  clear = 0;
 
 	GabombaStatueChamberShownItem = item =
 		syImportActorCreate(SPRITE_UNSEEN_MARKER, x, toFIXED(18), z);
 	if(item != NULL) {
-		spr = item->spr;
-		spr->image.fullCol = 0;
-		spr->image.pal = 0;
-		spr->image.pri = 2;
-		item->motionFlg = clear;
-		item->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+		sprite = item->sprite;
+		sprite->image.fullColor = 0;
+		sprite->image.palette = 0;
+		sprite->image.priority = 2;
+		item->motionFlags = clear;
+		item->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 		item->update = scGabombaStatueChamberKeepItemWithIdol;
-		spr->flg = clear;
-		spr->cnt = clear;
-		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		sprite->flags = clear;
+		sprite->count = clear;
+		icon =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_BLACK_CRYSTAL);
 		syVRAMCacheLoad(
-			spr->slot, ICON_TILE_BYTES, ((ICON_TRANSFER *)icon)->tiles);
+			sprite->slot, ICON_TILE_BYTES, ((ICON_TRANSFER *)icon)->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 }
@@ -923,7 +926,7 @@ extern Uint32 GabombaStatueChamberWalkOffScript[];
 void scGabombaStatueChamberWhereIsTheOrb(void)
 {
 	ACTOR	  *crystal = fdActorGetById(ACTOR_BLACK_CRYSTAL);
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Uint8	  *block;
 	Sint32	   westSideFacing, eastSideFacing;
 	Sint32	   leader;
@@ -946,17 +949,17 @@ void scGabombaStatueChamberWhereIsTheOrb(void)
 	fdActorSetPosAndFacing(
 		ACTOR_JENNA, toFIXED(408), toFIXED(184), eastSideFacing);
 	if(crystal != 0) {
-		spr = crystal->spr;
-		spr->flg = 0;
-		spr->cnt = 0;
-		spr->fullCol = 0;
-		spr->pal = 0;
-		spr->pri = 1;
-		crystal->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		block = (Uint8 *)syHeapSlotAlloc(
+		sprite = crystal->sprite;
+		sprite->flags = 0;
+		sprite->count = 0;
+		sprite->fullColor = 0;
+		sprite->palette = 0;
+		sprite->priority = 1;
+		crystal->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		block = (Uint8 *)syHeapSlotAllocate(
 			HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_BLACK_CRYSTAL);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES,
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES,
 			(Sint32)((ICON_TRANSFER *)block)->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
@@ -980,7 +983,7 @@ void scGabombaStatueChamberWhereIsTheOrb(void)
 	fdScriptShowMessageAndWait(ACTOR_JENNA, 0);
 	scFieldActorSetPosAndResetMotion(
 		fdActorGetById(ACTOR_BLACK_CRYSTAL), toFIXED(392), 0, toFIXED(340));
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdPaletteFadeSetTarget(PALETTE_TINT_SEPIA, 0);
 	fdPaletteFadeStartInterpolation(40);
 	sySynch(40);
@@ -999,7 +1002,7 @@ void scGabombaStatueChamberWhereIsTheOrb(void)
 	fdActorMoveToAndWait(ACTOR_BLACK_CRYSTAL, 392, 246);
 	fdActorSetAnimationById(ACTOR_LEFT_DRUM, 1);
 	fdActorSetAnimationById(ACTOR_RIGHT_DRUM, 1);
-	crystal->velY = toFIXED(3);
+	crystal->velocityY = toFIXED(3);
 	crystal->gravity = toFIXED(1) / 2;
 	fdActorSetSpeed(ACTOR_BLACK_CRYSTAL, 1.6);
 	fdActorMoveToAndWait(ACTOR_BLACK_CRYSTAL, 392, 234);
@@ -1047,10 +1050,10 @@ void scGabombaStatueChamberWhereIsTheOrb(void)
 	/* "There must be a room on the other side of this statue..." */
 	fdScriptShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
-	sySndPlay(MUS_SILENCE);
+	sySoundPlay(MUS_SILENCE);
 	{
 		Sint32 turn = FACING_NORTH_NORTHEAST;
-		fdActorSetHorizontalPosAndAngWithTerrain(
+		fdActorSetHorizontalPosAndAngleWithTerrain(
 			ACTOR_AKAFUBU, toFIXED(400), toFIXED(320), turn);
 	}
 	sySynch(1);
@@ -1178,11 +1181,11 @@ void scGabombaStatueChamberAkafubuOffersToHelp(void)
 	fdActorFaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
 	fdActorSetSpeed(ACTOR_AKAFUBU, 0.8);
 	fdActorWalkToAndWait(ACTOR_AKAFUBU, 392, 168);
-	fdScriptPlaySnd(SE_HIDDEN_PASSAGE_OPEN);
+	fdScriptPlaySound(SE_HIDDEN_PASSAGE_OPEN);
 	scGabombaStatueChamberShowDragonsEye();
 	syFieldScriptWait(40);
-	fdScriptPlaySnd(SE_PUSH);
-	fdActorGetById(ACTOR_SEATED_IDOL)->motionFlg = 0;
+	fdScriptPlaySound(SE_PUSH);
+	fdActorGetById(ACTOR_SEATED_IDOL)->motionFlags = 0;
 	scGabombaStatueChamberUncoverPassage();
 	fdActorSetSpeed(ACTOR_SEATED_IDOL, 0.4);
 	fdActorMoveToAndWait(ACTOR_SEATED_IDOL, 424, 152);
@@ -1263,7 +1266,7 @@ Sint32 scInit(void)
 	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	((ACTOR *)fdActorGetById(fdPartyGetLeaderActor()))->priFlg |=
+	((ACTOR *)fdActorGetById(fdPartyGetLeaderActor()))->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_GABOMBA_STATUE_CHAMBER_IDOL)
@@ -1346,8 +1349,8 @@ void scGabombaStatueChamberInitLift(void)
 					REG_BLDALPHA = blend;
 					step++;
 				}
-				front->ofsY += toFIXED(1);
-				back->ofsY += toFIXED(1);
+				front->offsetY += toFIXED(1);
+				back->offsetY += toFIXED(1);
 			}
 			fdMapGridCenterOnFollowedPoint();
 			sySynch(1);
@@ -1367,7 +1370,7 @@ void scGabombaStatueChamberInitWitchDoctor(void)
 	Uint32 i;
 
 	for(i = 0; i <= STONE_DOOR_HALVES - 1; i++)
-		fdActorSetSprPriority(i + ACTOR_FIRST_DOOR_HALF, 2);
+		fdActorSetSpritePriority(i + ACTOR_FIRST_DOOR_HALF, 2);
 	fdActorDisableById(ACTOR_SEATED_IDOL);
 	fdActorGetById(ACTOR_SEATED_IDOL)->y.fixed = 0;
 	if(syGameFlagGet(FLAG_GABOMBA_MESSAGE_CARRIED)) {

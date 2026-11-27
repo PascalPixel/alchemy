@@ -120,8 +120,8 @@ enum { LOG_STOP_NONE = 255 };
 
 /* One of a stop's links: the stop it leads to and the heading toward it. */
 typedef struct LOG_ROOMS_A_STOP_CONNECTION {
-	Uint8 stopIdx; /* the stop it leads to, or LOG_STOP_NONE */
-	Uint8 facing;  /* the heading toward it, a facing's high byte */
+	Uint8 stopIndex; /* the stop it leads to, or LOG_STOP_NONE */
+	Uint8 facing;	 /* the heading toward it, a facing's high byte */
 	Uint8 padding[2];
 } LOG_ROOMS_A_STOP_CONNECTION;
 
@@ -328,12 +328,12 @@ static void scLogRoomsAReturnStolenGoods(void);
 static void scLogRoomsAOpenWindowTransition(void);
 static void scLogRoomsAShowMessageAndWait(Sint32 actorId, Sint32 waitTicks);
 static void scLogRoomsAFaceActorAndWait(
-	Sint32 actorId, Sint32 tgtId, Sint32 waitTicks);
+	Sint32 actorId, Sint32 targetId, Sint32 waitTicks);
 static void scLogRoomsAFaceEachOtherAndWait(
 	Sint32 firstId, Sint32 secondId, Sint32 waitTicks);
 static void scLogRoomsAPlayAnimationAndWait(
-	Sint32 actorId, Sint32 anm, Sint32 waitTicks);
-static void scStartMindRead(Sint32 casterId, Sint32 tgtId);
+	Sint32 actorId, Sint32 animation, Sint32 waitTicks);
+static void scStartMindRead(Sint32 casterId, Sint32 targetId);
 static void scEndMindRead(void);
 static void scLogRoomsAUpdateCorneringChase(void);
 static void scLogRoomsASpreadOutToCornerSuspects(void);
@@ -360,20 +360,20 @@ const Uint32 *scGetExits(void)
    villager, the mayor, the thieves, their chests and the found treasures. */
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	ACTOR_PLACE *tbl;
+	ACTOR_PLACE *table;
 
 	switch(MainRoutineStateWork.entrance) {
 	case LOG_ROOMS_A_LOFT_FROM_CRATE_ROOM:
 	case LOG_ROOMS_A_LOFT_AFTER_LOSING_TO_THIEVES:
 	case LOG_ROOMS_A_LOFT_AFTER_THIEVES_DEFEATED:
-		tbl = LogRoomsALoftActorPlacements;
+		table = LogRoomsALoftActorPlacements;
 		break;
 	default:
-		tbl = LogRoomsAActorPlacements;
+		table = LogRoomsAActorPlacements;
 		break;
 	}
-	fdAssignViewFlags(tbl);
-	return tbl;
+	fdAssignViewFlags(table);
+	return table;
 }
 
 #if !JUMP_LANDS_ON_CELL_CENTER
@@ -382,28 +382,28 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 static Bool scLogRoomsATryJumpTo(FIELD_POS *pos)
 {
 	ACTOR *leader;
-	Uint8  savedMotionFlg;
+	Uint8  savedMotionFlags;
 
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	savedMotionFlg = leader->motionFlg;
+	savedMotionFlags = leader->motionFlags;
 	if(syFieldActorCheckMovementCollision(leader, pos) == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(leader, 0);
+		leader->velocityY = toFIXED(4);
+		leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(leader, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER,
 			((FIELD_COORDINATE *)&pos->x)->part[0].integer,
 			((FIELD_COORDINATE *)&pos->z)->part[0].integer);
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(leader, SPRITE_FLAG_SHADOW);
+		fdActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
 		sySynch(6);
-		leader->motionFlg = savedMotionFlg;
+		leader->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -739,31 +739,31 @@ static void scLogRoomsASuspectedLeaderDodges(void)
 	/* Pushed from the north he runs on along his route, from the south back. */
 	facing = FACING_SIXTEENTH(suspect->facing);
 	if(facing >= FACING_SOUTH_SOUTHWEST && facing <= FACING_NORTH_NORTHWEST) {
-		if(suspect->tmr <= LEADER_SPOT_EAST_BED_HEAD) {
+		if(suspect->timer <= LEADER_SPOT_EAST_BED_HEAD) {
 			fdActorSetScript(
-				ACTOR_SUSPECTED_LEADER, LogRoomsALeaderRunsOn[suspect->tmr]);
-			suspect->tmr++;
+				ACTOR_SUSPECTED_LEADER, LogRoomsALeaderRunsOn[suspect->timer]);
+			suspect->timer++;
 		} else {
-			fdActorSetScript(
-				ACTOR_SUSPECTED_LEADER, LogRoomsALeaderRunsBack[suspect->tmr]);
-			suspect->tmr--;
+			fdActorSetScript(ACTOR_SUSPECTED_LEADER,
+				LogRoomsALeaderRunsBack[suspect->timer]);
+			suspect->timer--;
 		}
 	} else {
-		if(suspect->tmr > LEADER_SPOT_EAST_BED_HEAD) {
+		if(suspect->timer > LEADER_SPOT_EAST_BED_HEAD) {
 			fdActorSetScript(
-				ACTOR_SUSPECTED_LEADER, LogRoomsALeaderRunsOn[suspect->tmr]);
-			suspect->tmr++;
+				ACTOR_SUSPECTED_LEADER, LogRoomsALeaderRunsOn[suspect->timer]);
+			suspect->timer++;
 		} else {
-			fdActorSetScript(
-				ACTOR_SUSPECTED_LEADER, LogRoomsALeaderRunsBack[suspect->tmr]);
-			suspect->tmr--;
+			fdActorSetScript(ACTOR_SUSPECTED_LEADER,
+				LogRoomsALeaderRunsBack[suspect->timer]);
+			suspect->timer--;
 		}
 	}
-	if(suspect->tmr > LEADER_SPOT_WEST_BED_FOOT) {
-		suspect->tmr = LEADER_SPOT_WEST_BED_HEAD;
+	if(suspect->timer > LEADER_SPOT_WEST_BED_FOOT) {
+		suspect->timer = LEADER_SPOT_WEST_BED_HEAD;
 	}
-	if(suspect->tmr < LEADER_SPOT_WEST_BED_HEAD) {
-		suspect->tmr = LEADER_SPOT_WEST_BED_FOOT;
+	if(suspect->timer < LEADER_SPOT_WEST_BED_HEAD) {
+		suspect->timer = LEADER_SPOT_WEST_BED_FOOT;
 	}
 	fdActorWaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
 	fdScriptEnd();
@@ -774,9 +774,9 @@ static void scLogRoomsASuspectedLeaderDodges(void)
 static inline void scLogRoomsAStartThiefRun(
 	ACTOR *actor, Sint32 scriptRow, Sint32 routePair, Uint16 routeDelta)
 {
-	fdActorSetScript(
-		ACTOR_SUSPECTED_THIEF, LogRoomsAThiefRuns[scriptRow * 4 + actor->tmr]);
-	actor->tmr = actor->tmr - routePair * 2 + routeDelta;
+	fdActorSetScript(ACTOR_SUSPECTED_THIEF,
+		LogRoomsAThiefRuns[scriptRow * 4 + actor->timer]);
+	actor->timer = actor->timer - routePair * 2 + routeDelta;
 }
 
 /* Talking to, or reading the mind of, the suspect in purple in the guests' room
@@ -790,23 +790,23 @@ static void scLogRoomsASuspectedThiefDodges(void)
 
 	actor = fdActorGet(ACTOR_SUSPECTED_THIEF);
 	facing = FACING_SIXTEENTH(actor->facing);
-	routePair = actor->tmr >> 1;
+	routePair = actor->timer >> 1;
 	fdScriptStart();
 	fdActorRunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
 	fdScriptSetMessageId(MsgVaultNoLeaveAlone);
 	/* "No! Leave me alone!" */
 	fdScriptShowMessage(ACTOR_SUSPECTED_THIEF, 0);
 	fdActorSetSpeed(ACTOR_SUSPECTED_THIEF, 3.5);
-	switch(actor->tmr) {
+	switch(actor->timer) {
 	case THIEF_SPOT_SOUTH_WALL:
 		if(facing > FACING_SOUTHEAST && facing < FACING_NORTHWEST) {
 			fdActorSetScript(
 				ACTOR_SUSPECTED_THIEF, LogRoomsASuspectAlongToSouthEastCorner);
-			actor->tmr = THIEF_SPOT_SOUTH_EAST_CORNER;
+			actor->timer = THIEF_SPOT_SOUTH_EAST_CORNER;
 		} else {
 			fdActorSetScript(
 				ACTOR_SUSPECTED_THIEF, LogRoomsASuspectAlongToSouthWestCorner);
-			actor->tmr = THIEF_SPOT_SOUTH_WEST_CORNER;
+			actor->timer = THIEF_SPOT_SOUTH_WEST_CORNER;
 		}
 		break;
 	case THIEF_SPOT_WEST_OF_BEDS:
@@ -826,7 +826,7 @@ static void scLogRoomsASuspectedThiefDodges(void)
 		}
 		break;
 	}
-	actor->tmr &= 3;
+	actor->timer &= 3;
 	fdActorWaitForScriptEndById(ACTOR_SUSPECTED_THIEF);
 	fdScriptEnd();
 }
@@ -1042,7 +1042,7 @@ static void scLogRoomsAMeetIvan(void)
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
 	fdActorSetSpeed(ACTOR_IVAN, 0.8);
 	/* Isaac steps up in front of Ivan and Garet comes out beside him. */
-	sySndPlay(MUS_SILENCE);
+	sySoundPlay(MUS_SILENCE);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorSetPos(ACTOR_GARET, 384, 408);
@@ -1056,7 +1056,7 @@ static void scLogRoomsAMeetIvan(void)
 		fdScriptWait(40);
 		scEndMindRead();
 		fdScriptSetMessageId(MsgVaultDoPossessStrangePowers);
-		sySndPlay(MUS_WIND_ADEPTS);
+		sySoundPlay(MUS_WIND_ADEPTS);
 		fdScriptWait(30);
 		scLogRoomsAPlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
 		scLogRoomsAShowMessageAndWait(ACTOR_IVAN, 30);
@@ -1102,7 +1102,7 @@ static void scLogRoomsAMeetIvan(void)
 		/* "Would you please help me get my master's rod back?" */
 		fdScriptOpenMessage(ACTOR_IVAN, 0);
 	} else {
-		sySndPlay(MUS_WIND_ADEPTS);
+		sySoundPlay(MUS_WIND_ADEPTS);
 		fdScriptSetMessageId(MsgVaultWouldReallyWouldHelpMe);
 		/* "Would you really? Would you help me find the rod?" */
 		fdScriptOpenMessage(ACTOR_IVAN, 0);
@@ -1158,10 +1158,10 @@ static void scLogRoomsAIvanJoinsRodSearch(void)
 	fdScriptWait(40);
 	scEndMindRead();
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 384, 424);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(30);
 	fdScriptShowMessage(ACTOR_IVAN, 0);
 	/* Demonstrate Mind Read and let Garet and Isaac react to Ivan's
@@ -1209,10 +1209,10 @@ static void scLogRoomsAIvanJoinsRodSearch(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
 	fdScriptWait(60);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 1);
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_GARET, 352, 408);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(10);
 	/* Garet backs off; Ivan asks whether Isaac could read Garet's mind, and the
 	   two read it together. "Just as I thought." */
@@ -1389,7 +1389,7 @@ static void scLogRoomsAFreeVillagerAndFightThieves(void)
 	/* The ominous music starts as the thieves' leader appears at the ladder and
 	   says "Looks like we've been found out!"; everyone turns to him. */
 	fdActorSetPos(ACTOR_THIEF_LEADER, 744, 408);
-	sySndPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
+	sySoundPlay(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 	scLogRoomsAShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
 	fdActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 1);
@@ -1538,7 +1538,7 @@ static void scLogRoomsAFreeVillagerAndFightThieves(void)
    floor below. */
 static void scLogRoomsALeaveGuestsRoom(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(LOG_ROOMS_A_INN_UPSTAIRS_TO_INN);
 }
 
@@ -1548,8 +1548,8 @@ static void scLogRoomsAEnterLoft(void)
 {
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 728, 408);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
-	sySndPlay(SE_MAP_EXIT);
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(LOG_ROOMS_A_CRATE_ROOM_TO_LOFT);
 }
 
@@ -1567,8 +1567,8 @@ static void scLogRoomsALeaveLoft(void)
 		fdScriptShowMessage(ACTOR_TIED_UP_VILLAGER, 0);
 		fdScriptEnd();
 	}
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
-	sySndPlay(SE_MAP_EXIT);
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(LOG_ROOMS_A_LOFT_TO_CRATE_ROOM);
 }
 
@@ -1621,8 +1621,8 @@ static void scLogRoomsAApproachSuspects(void)
 	/* The leader stands at the west bed's head but takes up his route as from
 	   the middle one's: his first run on goes straight to the east bed's
 	   head. */
-	suspectedLeader->tmr = LEADER_SPOT_MIDDLE_BED_HEAD;
-	suspectedThief->tmr = THIEF_SPOT_SOUTH_WEST_CORNER;
+	suspectedLeader->timer = LEADER_SPOT_MIDDLE_BED_HEAD;
+	suspectedThief->timer = THIEF_SPOT_SOUTH_WEST_CORNER;
 	fdScriptEnd();
 }
 
@@ -1640,13 +1640,13 @@ static void scLogRoomsADiscussSuspiciousGuests(void)
 	fdScriptStart();
 	syCloseEvent(scLogRoomsAFaceSuspectsTowardLeader);
 	gmFlagClear(FLAG_SUSPECTS_FLEEING);
-	if(suspectedLeader->tmr <= 3) {
+	if(suspectedLeader->timer <= 3) {
 		fdActorSetScript(
 			ACTOR_SUSPECTED_LEADER, LogRoomsASuspectRoundToWestBedFoot);
 	} else {
 		fdActorSetScript(ACTOR_SUSPECTED_LEADER, LogRoomsASuspectToWestBedFoot);
 	}
-	if(suspectedThief->tmr <= 2) {
+	if(suspectedThief->timer <= 2) {
 		fdActorSetScript(
 			ACTOR_SUSPECTED_THIEF, LogRoomsASuspectAcrossToWestOfBeds);
 	} else {
@@ -1754,8 +1754,8 @@ static void scLogRoomsAResetSuspectRoutes(void)
 		ACTOR_SUSPECTED_LEADER, LogRoomsASuspectRoundToWestBedHead);
 	fdActorWaitForScriptEndById(ACTOR_SUSPECTED_LEADER);
 	/* As scLogRoomsAApproachSuspects leaves them. */
-	fdActorGet(ACTOR_SUSPECTED_LEADER)->tmr = LEADER_SPOT_MIDDLE_BED_HEAD;
-	fdActorGet(ACTOR_SUSPECTED_THIEF)->tmr = THIEF_SPOT_SOUTH_WEST_CORNER;
+	fdActorGet(ACTOR_SUSPECTED_LEADER)->timer = LEADER_SPOT_MIDDLE_BED_HEAD;
+	fdActorGet(ACTOR_SUSPECTED_THIEF)->timer = THIEF_SPOT_SOUTH_WEST_CORNER;
 	fdMapGridCopyMetatileAttributes(14, 48, 4, 1, 14, 44);
 }
 
@@ -1764,16 +1764,16 @@ static void scLogRoomsAResetSuspectRoutes(void)
 static inline void scLogRoomsASetPartyImagePriority(void)
 {
 	{
-		SPR *sprite = fdActorGet(ACTOR_PARTY_LEADER)->spr;
-		sprite->image.pri = 1;
+		SPR *sprite = fdActorGet(ACTOR_PARTY_LEADER)->sprite;
+		sprite->image.priority = 1;
 	}
 	{
-		SPR *sprite = fdActorGet(ACTOR_GARET)->spr;
-		sprite->image.pri = 1;
+		SPR *sprite = fdActorGet(ACTOR_GARET)->sprite;
+		sprite->image.priority = 1;
 	}
 	{
-		SPR *sprite = fdActorGet(ACTOR_IVAN)->spr;
-		sprite->image.pri = 1;
+		SPR *sprite = fdActorGet(ACTOR_IVAN)->sprite;
+		sprite->image.priority = 1;
 	}
 }
 
@@ -1857,7 +1857,7 @@ static void scLogRoomsAReadCorneredSuspectsMinds(void)
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(40);
 	scLogRoomsASetPartyImagePriority();
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
@@ -1867,8 +1867,8 @@ static void scLogRoomsAReadCorneredSuspectsMinds(void)
 	   on. */
 	fdMapGridCopyMetatileAttributes(14, 45, 3, 1, 14, 44);
 	gmFlagSet(FLAG_VAULT_SUSPECTS_MIND_READ);
-	fdActorGet(ACTOR_SUSPECTED_LEADER)->tmr = LEADER_SPOT_WEST_BED_FOOT;
-	fdActorGet(ACTOR_SUSPECTED_THIEF)->tmr = THIEF_SPOT_SOUTH_WALL;
+	fdActorGet(ACTOR_SUSPECTED_LEADER)->timer = LEADER_SPOT_WEST_BED_FOOT;
+	fdActorGet(ACTOR_SUSPECTED_THIEF)->timer = THIEF_SPOT_SOUTH_WALL;
 	sySetTickEvent(scLogRoomsAFaceSuspectsTowardLeader, EVENT_PASS_TICK);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1885,11 +1885,12 @@ static void scLogRoomsADiscussMindReading(void)
 	Sint32 persistedWithQuestions;
 
 	gmPlayMusic();
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 	{
 		ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
 
-		leader->priFlg = ACTOR_PRIORITY_AUTOMATIC | leader->priFlg;
+		leader->priorityFlags =
+			ACTOR_PRIORITY_AUTOMATIC | leader->priorityFlags;
 	}
 	fdSetCameraBounds(toFIXED(32), toFIXED(576), toFIXED(400), toFIXED(936));
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
@@ -1911,7 +1912,7 @@ static void scLogRoomsADiscussMindReading(void)
 	{
 		FIELD_STATE *state = FieldStateWork;
 
-		state->transitionFrm = 24;
+		state->transitionFrame = 24;
 		state->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	}
@@ -2078,9 +2079,9 @@ static void scLogRoomsAAdvanceSuspectRoute(
 {
 	ACTOR *suspect = fdActorGet(actorId);
 
-	if(suspect->tmr == expected) {
+	if(suspect->timer == expected) {
 		fdActorSetScript(actorId, actions);
-		suspect->tmr = next;
+		suspect->timer = next;
 	}
 }
 
@@ -2095,7 +2096,7 @@ Sint32 scInit(void)
 	switch(MainRoutineStateWork.entrance) {
 	case LOG_ROOMS_A_FROM_VAULT_EAST_SOUTHEAST: {
 		/* The gem owner's house: he stands on the floor. */
-		fdActorGet(ACTOR_GEM_OWNER)->motionFlg = 0;
+		fdActorGet(ACTOR_GEM_OWNER)->motionFlags = 0;
 		fdActorGet(ACTOR_GEM_OWNER)->y.fixed = 0;
 		fdActorGet(ACTOR_GEM_OWNER)->groundHeight = 0;
 	} break;
@@ -2157,8 +2158,9 @@ Sint32 scInit(void)
 				fdMapGridCopyMetatileAttributes(14, 50, 3, 1, 14, 44);
 				break;
 			}
-			fdActorGet(ACTOR_SUSPECTED_LEADER)->tmr = LEADER_SPOT_WEST_BED_FOOT;
-			fdActorGet(ACTOR_SUSPECTED_THIEF)->tmr = THIEF_SPOT_SOUTH_WALL;
+			fdActorGet(ACTOR_SUSPECTED_LEADER)->timer =
+				LEADER_SPOT_WEST_BED_FOOT;
+			fdActorGet(ACTOR_SUSPECTED_THIEF)->timer = THIEF_SPOT_SOUTH_WALL;
 			sySetTickEvent(
 				scLogRoomsAFaceSuspectsTowardLeader, EVENT_PASS_TICK);
 		}
@@ -2178,8 +2180,8 @@ Sint32 scInit(void)
 		fdMapGridCopyMetatilesTo(54, 2, 35, 80, 2, 10);
 		fdMapGridCopyMetatilesTo(54, 2, 46, 21, 4, 8);
 		fdMapGridCopyMetatilesTo(54, 2, 46, 81, 4, 8);
-		fdActorGet(ACTOR_CRATE)->collisionFlg |= ACTOR_NEAR_TALK;
-		fdActorSetSprFlags(fdActorGet(ACTOR_CRATE), 0);
+		fdActorGet(ACTOR_CRATE)->collisionFlags |= ACTOR_NEAR_TALK;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_CRATE), 0);
 		/* The metatiles scLogRoomsACheckCrateMoved copies as it sets the flag,
 		   redrawn on arrival. */
 		if(gmFlagGet(FLAG_VAULT_CRATE_MOVED) != 0) {
@@ -2214,7 +2216,7 @@ Sint32 scInit(void)
 		fdActorSetAnimation(ACTOR_TIED_UP_VILLAGER,
 			YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_TIED_UP);
 		scLogRoomsAOpenWindowTransition();
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		fdScriptSetMessageId(MsgVaultUhnnUhnn);
 		scLogRoomsAShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 10);
 		fdScriptEnd();
@@ -2267,7 +2269,7 @@ static void scLogRoomsAFaceSuspectsTowardLeader(void)
    keep the tied-up young man as their hostage. */
 static void scLogRoomsALoseToThieves(void)
 {
-	Sint32 priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	Sint32 priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 
 	/* The party lies collapsed on the floor before the three thieves. */
 	fdScriptStart();
@@ -2285,12 +2287,12 @@ static void scLogRoomsALoseToThieves(void)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg = priFlg;
-	fdActorGet(ACTOR_GARET)->priFlg = priFlg;
-	fdActorGet(ACTOR_IVAN)->priFlg = priFlg;
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags = priorityFlags;
+	fdActorGet(ACTOR_GARET)->priorityFlags = priorityFlags;
+	fdActorGet(ACTOR_IVAN)->priorityFlags = priorityFlags;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorFaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH_NORTHWEST, 0);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2343,7 +2345,7 @@ static void scLogRoomsAFightThievesAgain(void)
 	fdCameraWaitForMove();
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	scLogRoomsAOpenWindowTransition();
 	fdScriptWait(60);
 	fdScriptSetMessageId(MsgVaultWontGoAway);
@@ -2380,7 +2382,7 @@ static void scLogRoomsAFightThievesAgain(void)
    party. */
 static Sint32 scLogRoomsAGetIvanVenusDjinnCount(void)
 {
-	return gmUnitGet(IVAN)->djinnHeldCnts[ELEMENT_VENUS];
+	return gmUnitGet(IVAN)->djinnHeldCounts[ELEMENT_VENUS];
 }
 
 #include "shared/vault_djinn.c"
@@ -2392,22 +2394,22 @@ static void scLogRoomsADefeatThieves(void)
 {
 	FIELD_STATE	 *state;
 	const Sint32 *actions;
-	SPR			 *secondThiefSpr;
+	SPR			 *secondThiefSprite;
 
-	secondThiefSpr = fdActorGet(ACTOR_SECOND_THIEF)->spr;
+	secondThiefSprite = fdActorGet(ACTOR_SECOND_THIEF)->sprite;
 	/* The beaten thieves lie gasping before the party. */
 	fdScriptStart();
 	fdActorSetPos(ACTOR_THIEF_LEADER, 792, 416);
 	fdActorSetPos(ACTOR_FIRST_THIEF, 800, 400);
 	fdActorSetPos(ACTOR_SECOND_THIEF, 776, 392);
-	fdActorSetSprFlags(fdActorGet(ACTOR_THIEF_LEADER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_THIEF), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_THIEF), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_THIEF_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_THIEF), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_THIEF), 0);
 	fdActorSetAnimation(ACTOR_THIEF_LEADER, ANIM_THIEF_BEATEN);
 	fdActorSetAnimation(ACTOR_FIRST_THIEF, ANIM_THIEF_BEATEN);
 	fdActorSetAnimation(ACTOR_SECOND_THIEF, ANIM_THIEF_BEATEN);
-	fdActorGet(ACTOR_SECOND_THIEF)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	secondThiefSpr->image.pri = 3;
+	fdActorGet(ACTOR_SECOND_THIEF)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	secondThiefSprite->image.priority = 3;
 	actions = LogRoomsABeatenThiefGasps;
 	fdActorSetScript(ACTOR_THIEF_LEADER, actions);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 792, 440);
@@ -2607,7 +2609,7 @@ static void scLogRoomsADefeatThieves(void)
 	scLogRoomsAPlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 50);
 	/* The window closes while the thieves are tied up. */
 	state = FieldStateWork;
-	state->transitionFrm = 30;
+	state->transitionFrame = 30;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
@@ -2637,7 +2639,7 @@ static void scLogRoomsAReturnStolenGoods(void)
 	{
 		ACTOR *actor = fdActorGet(ACTOR_SECOND_THIEF);
 
-		actor->priFlg = ACTOR_PRIORITY_AUTOMATIC | actor->priFlg;
+		actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | actor->priorityFlags;
 	}
 	fdActorMoveToAndWait(ACTOR_FIRST_CHEST, 872, 425);
 	fdActorMoveToAndWait(ACTOR_SECOND_CHEST, 872, 409);
@@ -2651,9 +2653,9 @@ static void scLogRoomsAReturnStolenGoods(void)
 	fdActorFaceActor(ACTOR_FIRST_THIEF, ACTOR_PARTY_LEADER, 0);
 	fdActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
 	fdActorFaceActor(ACTOR_SECOND_THIEF, ACTOR_PARTY_LEADER, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_THIEF_LEADER), SPRITE_FLAG_SHADOW);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_THIEF), SPRITE_FLAG_SHADOW);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_THIEF), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_THIEF_LEADER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_THIEF), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_THIEF), SPRITE_FLAG_SHADOW);
 	fdActorSetPos(ACTOR_LOFT_ESCORT, 768, 408);
 	fdActorSetPos(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 424);
 	fdActorMoveToAndWait(ACTOR_LOFT_MAYOR, 784, 424);
@@ -2668,7 +2670,7 @@ static void scLogRoomsAReturnStolenGoods(void)
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
 	fdActorFaceActor(ACTOR_GARET, ACTOR_THIEF_LEADER, 0);
 	fdActorFaceActor(ACTOR_IVAN, ACTOR_THIEF_LEADER, 0);
-	FieldStateWork->transitionFrm = 30;
+	FieldStateWork->transitionFrame = 30;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptStartScreenTransition();
@@ -2758,10 +2760,10 @@ static void scLogRoomsAReturnStolenGoods(void)
 	fdScriptWait(20);
 	/* The mayor opens the first chest and his urn rises out of it. */
 	fdActorRunRepeatedMotion(ACTOR_LOFT_MAYOR, 2);
-	sySndPlay(SE_CHEST_OPEN);
+	sySoundPlay(SE_CHEST_OPEN);
 	fdActorSetAnimation(ACTOR_FIRST_CHEST, CHEST_ANIMATION_OPEN_ON_TREASURE);
 	fdActorSetPos(ACTOR_FOUND_URN, 872, 424);
-	fdActorSetSprPriority(ACTOR_FOUND_URN, 1);
+	fdActorSetSpritePriority(ACTOR_FOUND_URN, 1);
 	fdActorSetSpeed(ACTOR_FOUND_URN, 0.8);
 	fdActorSetDestinationOffset(ACTOR_FOUND_URN, 0, -8);
 	fdActorWaitForMoveById(ACTOR_FOUND_URN);
@@ -2787,10 +2789,10 @@ static void scLogRoomsAReturnStolenGoods(void)
 	/* The strongman opens the second: the gold statue stolen from the
 	   Sanctum. */
 	fdActorRunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 2);
-	sySndPlay(SE_CHEST_OPEN);
+	sySoundPlay(SE_CHEST_OPEN);
 	fdActorSetAnimation(ACTOR_SECOND_CHEST, CHEST_ANIMATION_OPEN_ON_TREASURE);
-	fdActorGet(ACTOR_FOUND_STATUE)->motionFlg = 0;
-	fdActorSetSprPriority(ACTOR_FOUND_STATUE, 1);
+	fdActorGet(ACTOR_FOUND_STATUE)->motionFlags = 0;
+	fdActorSetSpritePriority(ACTOR_FOUND_STATUE, 1);
 	fdActorSetPos(ACTOR_FOUND_STATUE, 872, 408);
 	fdActorSetSpeed(ACTOR_FOUND_STATUE, 0.8);
 	fdActorSetDestinationOffset(ACTOR_FOUND_STATUE, 0, -8);
@@ -2936,14 +2938,14 @@ static void scLogRoomsAReturnStolenGoods(void)
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
 	temporaryActor = fdActorGet(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
 	{
-		Uint8 *pauseFlg = &temporaryActor->paused;
+		Uint8 *pauseFlag = &temporaryActor->paused;
 		Uint8  paused = 1;
 
-		*pauseFlg = paused;
+		*pauseFlag = paused;
 	}
-	temporaryActor->tgtX = ACTOR_NO_TARGET;
-	temporaryActor->tgtY = ACTOR_NO_TARGET;
-	temporaryActor->tgtZ = ACTOR_NO_TARGET;
+	temporaryActor->targetX = ACTOR_NO_TARGET;
+	temporaryActor->targetY = ACTOR_NO_TARGET;
+	temporaryActor->targetZ = ACTOR_NO_TARGET;
 	fdActorShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorSetAnimation(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ANIM_STAND);
 	fdScriptWait(50);
@@ -3119,9 +3121,9 @@ static void scLogRoomsAShowMessageAndWait(Sint32 actorId, Sint32 waitTicks)
 }
 
 static void scLogRoomsAFaceActorAndWait(
-	Sint32 actorId, Sint32 tgtId, Sint32 waitTicks)
+	Sint32 actorId, Sint32 targetId, Sint32 waitTicks)
 {
-	fdActorFaceActor(actorId, tgtId, 0);
+	fdActorFaceActor(actorId, targetId, 0);
 	fdScriptWait(waitTicks);
 }
 
@@ -3134,9 +3136,9 @@ static void scLogRoomsAFaceEachOtherAndWait(
 
 /* Plays the animation, waits until it has taken over, then waits waitTicks. */
 static void scLogRoomsAPlayAnimationAndWait(
-	Sint32 actorId, Sint32 anm, Sint32 waitTicks)
+	Sint32 actorId, Sint32 animation, Sint32 waitTicks)
 {
-	syImportActorSetAnimation(actorId, anm, waitTicks);
+	syImportActorSetAnimation(actorId, animation, waitTicks);
 	fdActorWaitForAnimationChange(actorId);
 	fdScriptWait(waitTicks);
 }
@@ -3175,39 +3177,40 @@ static LOG_ROOMS_A_STOP *scLogRoomsAChooseStopTowardFacing(
 	LOG_ROOMS_A_STOP *node, Sint16 *requestedFacing)
 {
 	LOG_ROOMS_A_STOP_CONNECTION *connection;
-	Sint32						 stopIdx;
+	Sint32						 stopIndex;
 	Sint32						 nearestDifference;
 	Sint32						 chosenFacing;
-	Sint32						 angDifference;
-	Uint32						 connectionIdx;
+	Sint32						 angleDifference;
+	Uint32						 connectionIndex;
 	Uint16						 connectionFacing;
 
-	stopIdx = -1;
+	stopIndex = -1;
 	chosenFacing = *requestedFacing;
 	connection = node->connections;
 	nearestDifference = DEGtoANG(180);
-	for(connectionIdx = 0; connectionIdx <= 2; connectionIdx++, connection++) {
+	for(connectionIndex = 0; connectionIndex <= 2;
+		connectionIndex++, connection++) {
 		connectionFacing = connection->facing << 8;
-		angDifference = (Sint16)(connectionFacing - *requestedFacing);
-		if(angDifference < 0)
-			angDifference = -angDifference;
-		if(connection->stopIdx != LOG_STOP_NONE &&
-			angDifference < nearestDifference) {
-			nearestDifference = angDifference;
+		angleDifference = (Sint16)(connectionFacing - *requestedFacing);
+		if(angleDifference < 0)
+			angleDifference = -angleDifference;
+		if(connection->stopIndex != LOG_STOP_NONE &&
+			angleDifference < nearestDifference) {
+			nearestDifference = angleDifference;
 			/* FAKEMATCH(dead): updates of chosenFacing that cancel out, under a
 			 * test of it against the difference. */
-			if(chosenFacing != angDifference) {
+			if(chosenFacing != angleDifference) {
 				chosenFacing++;
 				chosenFacing--;
 			}
-			stopIdx = connection->stopIdx;
+			stopIndex = connection->stopIndex;
 			chosenFacing = (Sint16)connectionFacing;
 		}
 	}
-	if(stopIdx == -1)
+	if(stopIndex == -1)
 		return 0;
 	*requestedFacing = chosenFacing;
-	return &LogRoomsAStops[stopIdx];
+	return &LogRoomsAStops[stopIndex];
 }
 
 /* Whether the actor's destination, or where it stands when it has none, is
@@ -3216,20 +3219,20 @@ static Sint32 scLogRoomsAIsWithinHalfMetatileOfStop(
 	Sint32 x, Sint32 z, Sint32 id)
 {
 	ACTOR *actor = fdActorLookup(id);
-	Sint32 tgtX = actor->tgtX;
-	Sint32 tgtZ;
+	Sint32 targetX = actor->targetX;
+	Sint32 targetZ;
 
-	if(tgtX == ACTOR_NO_TARGET) {
-		tgtX = actor->x.fixed;
+	if(targetX == ACTOR_NO_TARGET) {
+		targetX = actor->x.fixed;
 	}
-	tgtZ = actor->tgtZ;
-	if(tgtZ == ACTOR_NO_TARGET) {
-		tgtZ = actor->z.fixed;
+	targetZ = actor->targetZ;
+	if(targetZ == ACTOR_NO_TARGET) {
+		targetZ = actor->z.fixed;
 	}
 
-	tgtX = FIXEDtoINT(tgtX - x);
-	tgtZ = FIXEDtoINT(tgtZ - z);
-	if(tgtX * tgtX + tgtZ * tgtZ <=
+	targetX = FIXEDtoINT(targetX - x);
+	targetZ = FIXEDtoINT(targetZ - z);
+	if(targetX * targetX + targetZ * targetZ <=
 		(MAPGRID_METATILE_PIXELS / 2) * (MAPGRID_METATILE_PIXELS / 2))
 		return 1;
 	return 0;
@@ -3243,10 +3246,10 @@ static Bool scLogRoomsAIsWithinMetatileOfStop(Sint32 x, Sint32 z, Sint32 id)
 	Sint32 ax;
 	Sint32 az;
 
-	ax = actor->tgtX;
+	ax = actor->targetX;
 	if(ax == ACTOR_NO_TARGET)
 		ax = actor->x.fixed;
-	az = actor->tgtZ;
+	az = actor->targetZ;
 	if(az == ACTOR_NO_TARGET)
 		az = actor->z.fixed;
 	ax = FIXEDtoINT(ax - x);
@@ -3294,11 +3297,11 @@ static void scLogRoomsAUpdateCorneringChase(void)
 	ACTOR			 *actor;
 	FIELD_STATE		 *state;
 	LOG_ROOMS_A_STOP *entry;
-	LOG_ROOMS_A_STOP *dst;
+	LOG_ROOMS_A_STOP *dest;
 	Sint32			  dx;
 	Sint32			  dz;
 	Sint32			  blocked;
-	Uint16			  ang;
+	Uint16			  angle;
 	Sint16			  facing;
 	Sint16			  facingDifference;
 
@@ -3310,15 +3313,15 @@ static void scLogRoomsAUpdateCorneringChase(void)
 	   close by, and otherwise walks on the way he faces. */
 	actor = fdActorLookup(ACTOR_IVAN);
 	entry = scLogRoomsAFindStopAtPos(&actor->x.fixed);
-	if(entry != NULL && actor->tgtX == ACTOR_NO_TARGET) {
+	if(entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
 		dx = actor->x.fixed - leader->x.fixed;
 		dz = actor->z.fixed - leader->z.fixed;
 		facing = leader->facing;
-		ang = syAtan(dz, dx);
+		angle = syAtan(dz, dx);
 		dx = FIXEDtoINT(dx);
 		dz = FIXEDtoINT(dz);
 		if(state->blockedSteps > 0 && dx * dx + dz * dz <= 20 * 20 &&
-			(facingDifference = facing - ang) > -FACING_STEP &&
+			(facingDifference = facing - angle) > -FACING_STEP &&
 			facingDifference < FACING_STEP) {
 			/* Pushed toward from close by, he takes the leader's way. */
 			/* FAKEMATCH(dead): a dead store. */
@@ -3330,9 +3333,9 @@ static void scLogRoomsAUpdateCorneringChase(void)
 #endif
 			facing = actor->facing;
 		}
-		dst = scLogRoomsAChooseStopTowardFacing(entry, &facing);
-		if(scLogRoomsACheckStopBlocked(dst) == 0) {
-			scLogRoomsAMoveActorToStop(actor, dst);
+		dest = scLogRoomsAChooseStopTowardFacing(entry, &facing);
+		if(scLogRoomsACheckStopBlocked(dest) == 0) {
+			scLogRoomsAMoveActorToStop(actor, dest);
 			fdActorSelectAnimation(actor, ANIM_WALK);
 		} else {
 			fdActorSelectAnimation(actor, ANIM_STAND);
@@ -3345,18 +3348,18 @@ static void scLogRoomsAUpdateCorneringChase(void)
 	   with both ways taken he shakes his head. */
 	actor = fdActorLookup(ACTOR_SUSPECTED_LEADER);
 	entry = scLogRoomsAFindStopAtPos(&actor->x.fixed);
-	if(entry != NULL && actor->tgtX == ACTOR_NO_TARGET) {
+	if(entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
 		Uint32 turn = syRandomBelow(2);
-		Sint32 curFacing;
+		Sint32 currentFacing;
 
 		turn *= toFIXED(FACING_STEP * 6);
-		curFacing = actor->facing;
-		facing = FIXEDtoINT(turn - toFIXED(FACING_STEP * 3)) + curFacing;
-		dst = scLogRoomsAChooseStopTowardFacing(entry, &facing);
-		if(scLogRoomsACheckStopBlocked(dst) != 0) {
+		currentFacing = actor->facing;
+		facing = FIXEDtoINT(turn - toFIXED(FACING_STEP * 3)) + currentFacing;
+		dest = scLogRoomsAChooseStopTowardFacing(entry, &facing);
+		if(scLogRoomsACheckStopBlocked(dest) != 0) {
 			facing = actor->facing + DEGtoANG(180);
-			dst = scLogRoomsAChooseStopTowardFacing(entry, &facing);
-			if(scLogRoomsACheckStopBlocked(dst) == 0) {
+			dest = scLogRoomsAChooseStopTowardFacing(entry, &facing);
+			if(scLogRoomsACheckStopBlocked(dest) == 0) {
 				fdActorSetAttachedEffect(
 					ACTOR_SUSPECTED_LEADER, ATTACHED_EFFECT_ONCE);
 				goto leaderMoves;
@@ -3365,24 +3368,24 @@ static void scLogRoomsAUpdateCorneringChase(void)
 			blocked = 1;
 		} else {
 		leaderMoves:
-			scLogRoomsAMoveActorToStop(actor, dst);
+			scLogRoomsAMoveActorToStop(actor, dest);
 			fdActorSelectAnimation(actor, ANIM_WALK);
 		}
 	}
 	actor = fdActorLookup(ACTOR_SUSPECTED_THIEF);
 	entry = scLogRoomsAFindStopAtPos(&actor->x.fixed);
-	if(entry != NULL && actor->tgtX == ACTOR_NO_TARGET) {
+	if(entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
 		Uint32 turn = syRandomBelow(3);
-		Sint32 curFacing;
+		Sint32 currentFacing;
 
 		turn *= toFIXED(FACING_STEP * 3);
-		curFacing = actor->facing;
-		facing = FIXEDtoINT(turn - toFIXED(FACING_STEP * 3)) + curFacing;
-		dst = scLogRoomsAChooseStopTowardFacing(entry, &facing);
-		if(scLogRoomsACheckStopBlocked(dst) != 0) {
+		currentFacing = actor->facing;
+		facing = FIXEDtoINT(turn - toFIXED(FACING_STEP * 3)) + currentFacing;
+		dest = scLogRoomsAChooseStopTowardFacing(entry, &facing);
+		if(scLogRoomsACheckStopBlocked(dest) != 0) {
 			facing = actor->facing + DEGtoANG(180);
-			dst = scLogRoomsAChooseStopTowardFacing(entry, &facing);
-			if(scLogRoomsACheckStopBlocked(dst) == 0) {
+			dest = scLogRoomsAChooseStopTowardFacing(entry, &facing);
+			if(scLogRoomsACheckStopBlocked(dest) == 0) {
 				fdActorSetAttachedEffect(
 					ACTOR_SUSPECTED_THIEF, ATTACHED_EFFECT_ONCE);
 				goto thiefMoves;
@@ -3391,7 +3394,7 @@ static void scLogRoomsAUpdateCorneringChase(void)
 			blocked += 2;
 		} else {
 		thiefMoves:
-			scLogRoomsAMoveActorToStop(actor, dst);
+			scLogRoomsAMoveActorToStop(actor, dest);
 			fdActorSelectAnimation(actor, ANIM_WALK);
 		}
 	}
@@ -3439,7 +3442,7 @@ static void scLogRoomsASpreadOutToCornerSuspects(void)
 	   function sets or reads it; the ROM keeps the call that clears it. */
 	fdScriptClearFlag(FLAG_SYSTEM_LAST);
 	fdScriptEnd();
-	sySndPlay(MUS_TRY_YOUR_LUCK);
+	sySoundPlay(MUS_TRY_YOUR_LUCK);
 }
 
 /* clang-format off */

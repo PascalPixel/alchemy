@@ -68,7 +68,7 @@ void m4aSoundVSync(void);
 void SoundMain(void);
 /* The mixer's code as the ROM holds it, which m4aSoundInit copies to IWRAM
    (RamSoundMixer) to run from there. */
-void sySndMainRAMRom(void);
+void sySoundMainRAMRom(void);
 /* The callback that does nothing, for the driver's hooks until they are set. */
 void DummyFunc(void);
 /* The rate a PCM sample plays at for a key and a fine pitch. */

@@ -19,7 +19,7 @@ void mnAreaNameWindowShow(void)
 	Sint32		 y;
 	Sint32		 x;
 	Sint32		 areaMsg;
-	WINDOW		*nameWin;
+	WINDOW		*nameWindow;
 
 	notice = FieldStateWork;
 	x = 8;
@@ -30,9 +30,9 @@ void mnAreaNameWindowShow(void)
 	mnTextGetMessageSize(areaMsg, &x, &y, &width, &height);
 	x = (DISPLAY_TILE_WIDTH - width) >> 1;
 	y = (10 - height) >> 1;
-	nameWin = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
-	notice->areaNameWin = nameWin;
-	mnTextDrawMessage(areaMsg, nameWin, 0, 0);
+	nameWindow = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
+	notice->areaNameWindow = nameWindow;
+	mnTextDrawMessage(areaMsg, nameWindow, 0, 0);
 	notice->areaNameCountdown = AREA_NAME_WINDOW_TICKS;
 	sySetEvent(mnAreaNameWindowUpdate, EVENT_PASS_TICK);
 }
@@ -48,7 +48,7 @@ void mnAreaNameWindowUpdate(void)
 	notice->areaNameCountdown =
 		(ticksLeft = notice->areaNameCountdown + (Uint16)-1);
 	if(ticksLeft == 0) {
-		mnWindowClose(notice->areaNameWin, WINDOW_FLAG_INSTANT);
+		mnWindowClose(notice->areaNameWindow, WINDOW_FLAG_INSTANT);
 		syCloseEvent(mnAreaNameWindowUpdate);
 	}
 }
@@ -56,11 +56,11 @@ void mnAreaNameWindowUpdate(void)
 /* Closes the area name at once, if it is shown. */
 void mnAreaNameWindowHide(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 
-	win = FieldStateWork->areaNameWin;
-	if(win != NULL && win->flg != 0) {
-		mnWindowClose(win, WINDOW_FLAG_INSTANT);
+	window = FieldStateWork->areaNameWindow;
+	if(window != NULL && window->flags != 0) {
+		mnWindowClose(window, WINDOW_FLAG_INSTANT);
 		syCloseEvent(mnAreaNameWindowUpdate);
 	}
 }
@@ -81,12 +81,12 @@ Sint32 mnItemReturnTrue(void)
 /* Steps the window hue one step: back when keys contains LEFT, on otherwise. */
 UNUSED void mnSettingsMenuStepWindowHue(Sint32 keys)
 {
-	Uint8 hue = MainRoutineStateWork.winHue;
+	Uint8 hue = MainRoutineStateWork.windowHue;
 	if(keys & KEY_LEFT)
 		hue += (Uint8)-1;
 	else
 		hue += 1;
-	MainRoutineStateWork.winHue = hue;
+	MainRoutineStateWork.windowHue = hue;
 }
 
 /* A Psynergy the debug shortcut picker lists: its party member and the
@@ -109,7 +109,7 @@ void mnDebugSelectShortcuts(void)
 	WINDOW_SPR		   *cursor;
 	Uint32				first;
 	Uint32				second;
-	Uint32				cnt;
+	Uint32				count;
 	Sint32				done = 0;
 	Sint32				row = 0;
 	Sint32				redraw;
@@ -122,7 +122,7 @@ void mnDebugSelectShortcuts(void)
 	redraw = 1;
 	/* Build the debug shortcut candidates before creating their three
 	   windows. */
-	list = syHeapAlloc(SHORTCUT_LIST_ENTRIES * sizeof(ABILITY_LIST_ENTRY));
+	list = syHeapAllocate(SHORTCUT_LIST_ENTRIES * sizeof(ABILITY_LIST_ENTRY));
 	gmUnitLearnPsynergyStub(ISAAC, ABILITY_MOVE);
 	gmUnitLearnPsynergyStub(GARET, ABILITY_MOVE);
 	gmUnitLearnPsynergyStub(IVAN, ABILITY_MOVE);
@@ -132,8 +132,8 @@ void mnDebugSelectShortcuts(void)
 	gmUnitLearnPsynergyStub(JENNA, ABILITY_MOVE);
 	second = 0;
 	first = 0;
-	cnt = mnPartyListPsynergy(list);
-	if(cnt != 0) {
+	count = mnPartyListPsynergy(list);
+	if(count != 0) {
 		mnFindShortcutEntries(&first, &second, list);
 		picks = mnWindowCreate(4, 6, 20, 7, WINDOW_FLAG_INSTANT);
 		title = mnWindowCreate(4, 3, 20, 3, WINDOW_FLAG_INSTANT);
@@ -144,8 +144,8 @@ void mnDebugSelectShortcuts(void)
 		slot = syVRAMCacheFindFreeEntry();
 		if(slot != 0) {
 			syVRAMCacheLoad(slot, 128, PointingHandTiles);
-			cursor =
-				mnWindowSprCreate(slot, WINDOW_SPRITE_SIZE_16X16, picks, 0, 0);
+			cursor = mnWindowSpriteCreate(
+				slot, WINDOW_SPRITE_SIZE_16X16, picks, 0, 0);
 		}
 		/* The picker borrows the status panel's labels: "HP/Max" over it,
 		   "Status" over the picks, "Attack" and "Defense" (the two messages
@@ -159,13 +159,13 @@ void mnDebugSelectShortcuts(void)
 				redraw = 0;
 				/* Wrap both picks and the row; a step below 0 wraps through the
 				   unsigned sum. */
-				first = (first + cnt) % cnt;
-				second = (second + cnt) % cnt;
+				first = (first + count) % count;
+				second = (second + count) % count;
 				row = (row + 2) % 2;
 				y = (row << 4) + (picks->y << 3) + 28;
 				cursor->y = y;
-				cursor->spr.oam.y = y;
-				mnWindowSprRedrawSavedRect(picks);
+				cursor->sprite.oam.y = y;
+				mnWindowSpriteRedrawSavedRect(picks);
 				mnWindowDrawDividerLine(picks, 1, 2, 17, 2);
 				mnTextDrawMessageAsTiles(MsgPanelStatusLabel, picks, 48, 0);
 				mnTextDrawMessageAsTiles(
@@ -180,7 +180,7 @@ void mnDebugSelectShortcuts(void)
 					list[first].member + MsgCharacterName, picks, 104, 16);
 				mnTextDrawMessageAsTiles(
 					list[second].member + MsgCharacterName, picks, 104, 32);
-				mnWindowSprRedrawSavedRect(info);
+				mnWindowSpriteRedrawSavedRect(info);
 				mnTextDrawMessageAsTiles(MsgPsynergyNeedMorePp, info, 0, 16);
 				if(row != 0) {
 					cost = gmAbilityGetDirectStub(list[second].ability)->ppCost;
@@ -189,13 +189,13 @@ void mnDebugSelectShortcuts(void)
 					cost = gmAbilityGetDirectStub(list[first].ability)->ppCost;
 					ability = list[first].ability;
 				}
-				mnTextDrawNumAtOffset(cost, 2, info, 64, 16);
+				mnTextDrawNumberAtOffset(cost, 2, info, 64, 16);
 				mnTextDrawMessageAsTiles(
 					ability + MsgAbilityDescription, info, 0, 0);
 			}
 			sySynch(1);
 			if(PerRepeat & KEY_LEFT) {
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				if(row != 0)
 					second--;
 				else
@@ -203,7 +203,7 @@ void mnDebugSelectShortcuts(void)
 				redraw = 1;
 			}
 			if(PerRepeat & KEY_RIGHT) {
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				if(row != 0)
 					second++;
 				else
@@ -211,21 +211,21 @@ void mnDebugSelectShortcuts(void)
 				redraw = 1;
 			}
 			if(PerRepeat & KEY_UP) {
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				row--;
 				redraw = 1;
 			}
 			if(PerRepeat & KEY_DOWN) {
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				row++;
 				redraw = 1;
 			}
 			if(PerPush & KEY_A)
-				sySndPlayStub(SE_MENU_CONFIRM);
+				sySoundPlayStub(SE_MENU_CONFIRM);
 			else if(PerPush & KEY_B)
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 			else if(PerPush & KEY_START)
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 			else
 				continue;
 			done = 1;
@@ -252,61 +252,61 @@ void mnDebugSelectShortcuts(void)
 Sint32 mnPartyListPsynergy(ABILITY_LIST_ENTRY *output)
 {
 	Uint16 memberIds[14];
-	Sint32 outputCnt = 0;
-	Sint32 memberCnt = gmPartyListMembersStub(memberIds);
+	Sint32 outputCount = 0;
+	Sint32 memberCount = gmPartyListMembersStub(memberIds);
 	Sint32 i;
 
-	for(i = 0; i < memberCnt; i++) {
+	for(i = 0; i < memberCount; i++) {
 		UNIT  *unit;
 		Uint32 member;
-		Sint32 slotIdx;
+		Sint32 slotIndex;
 		Uint32 ability;
 
 		member = memberIds[i];
 		unit = gmUnitGetStub(member);
-		for(slotIdx = 0; slotIdx <
+		for(slotIndex = 0; slotIndex <
 			(Sint32)(sizeof(unit->psynergy) / sizeof(unit->psynergy[0]));
-			slotIdx++) {
-			ability = unit->psynergy[slotIdx].encodedAction & ACTION_ID_MASK;
+			slotIndex++) {
+			ability = unit->psynergy[slotIndex].encodedAction & ACTION_ID_MASK;
 			if(ability == 0)
 				break;
 			gmAbilityGetDirectStub(ability);
-			output[outputCnt].member = member;
-			output[outputCnt].ability = ability;
-			outputCnt++;
+			output[outputCount].member = member;
+			output[outputCount].ability = ability;
+			outputCount++;
 		}
 	}
 
-	return outputCnt;
+	return outputCount;
 }
 
 /* Finds the two Psynergy shortcuts in a list from mnPartyListPsynergy, and
    returns their indexes (0 for one not found). */
 void mnFindShortcutEntries(
-	Uint32 *firstIdx, Uint32 *secondIdx, const ABILITY_LIST_ENTRY *entries)
+	Uint32 *firstIndex, Uint32 *secondIndex, const ABILITY_LIST_ENTRY *entries)
 {
-	Sint32 entryIdx;
+	Sint32 entryIndex;
 
-	*firstIdx = 0;
-	*secondIdx = 0;
+	*firstIndex = 0;
+	*secondIndex = 0;
 
-	for(entryIdx = 0; entryIdx < SHORTCUT_LIST_ENTRIES; entryIdx++) {
-		if(entries[entryIdx].ability ==
+	for(entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
+		if(entries[entryIndex].ability ==
 				(MainRoutineStateWork.firstShortcut & SHORTCUT_ABILITY_MASK) &&
-			entries[entryIdx].member ==
+			entries[entryIndex].member ==
 				(MainRoutineStateWork.firstShortcut >> SHORTCUT_MEMBER_SHIFT)) {
-			*firstIdx = entryIdx;
+			*firstIndex = entryIndex;
 			break;
 		}
 	}
 
-	for(entryIdx = 0; entryIdx < SHORTCUT_LIST_ENTRIES; entryIdx++) {
-		if(entries[entryIdx].ability ==
+	for(entryIndex = 0; entryIndex < SHORTCUT_LIST_ENTRIES; entryIndex++) {
+		if(entries[entryIndex].ability ==
 				(MainRoutineStateWork.secondShortcut & SHORTCUT_ABILITY_MASK) &&
-			entries[entryIdx].member ==
+			entries[entryIndex].member ==
 				(MainRoutineStateWork.secondShortcut >>
 					SHORTCUT_MEMBER_SHIFT)) {
-			*secondIdx = entryIdx;
+			*secondIndex = entryIndex;
 			break;
 		}
 	}
@@ -330,9 +330,9 @@ typedef struct SELECTION_STATE {
 	/* Nonzero when secondResource is a VRAM cache entry to free on release. */
 	Uint16	secondActive;
 	Uint16	secondResource; /* a VRAM cache entry */
-	Uint8	unusedBeforeWin[4084 - 854];
-	WINDOW *win; /* closed, and waited for, on release */
-	Uint8	unusedAfterWin[12];
+	Uint8	unusedBeforeWindow[4084 - 854];
+	WINDOW *window; /* closed, and waited for, on release */
+	Uint8	unusedAfterWindow[12];
 } SELECTION_STATE;
 
 STATIC_ASSERT(sizeof(SELECTION_STATE) == 4100);
@@ -343,7 +343,7 @@ UNUSED void mnAllocateSelectionState(void)
 {
 	SELECTION_STATE *state;
 
-	state = syHeapSlotAllocEWRAM(
+	state = syHeapSlotAllocateEWRAM(
 		HEAP_SLOT_SELECTION_STATE, sizeof(SELECTION_STATE));
 	state->firstActive = 0;
 	state->secondActive = 0;
@@ -356,8 +356,8 @@ UNUSED void mnReleaseSelectionState(void)
 	SELECTION_STATE *state;
 
 	state = *(SELECTION_STATE **)SelectionStateWork;
-	mnWindowClose(state->win, 0);
-	while(mnWindowIsClosed(state->win) == 0) {
+	mnWindowClose(state->window, 0);
+	while(mnWindowIsClosed(state->window) == 0) {
 		sySynch(1);
 	}
 	if(state->firstActive != 0) {

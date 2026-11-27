@@ -255,9 +255,9 @@ void scAnkohlRuinsRaiseSecondSand(void);
 void scAnkohlRuinsSlideGreatFace(void);
 
 /* Whether the game flag is set. */
-static inline Sint32 scAnkohlRuinsFlagCheck(Sint32 flg)
+static inline Sint32 scAnkohlRuinsFlagCheck(Sint32 flag)
 {
-	return syGameFlagGet(flg);
+	return syGameFlagGet(flag);
 }
 
 #include "shared/scene_create_imported_actor.h"
@@ -312,10 +312,10 @@ static __inline__ void scAnkohlRuinsJumpActorDownLedge(
    dust (scAnkohlRuinsLandFromFall). */
 void scAnkohlRuinsJumpDownLedge(void)
 {
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
 	scAnkohlRuinsJumpActorDownLedge(MainRoutineStateWork.leaderActorId,
 		ANIM_LEADER_SPRING, LEDGE_JUMP_NO_LANDING_WAIT);
-	fdScriptPlaySnd(SE_FALL);
+	fdScriptPlaySound(SE_FALL);
 	fdScriptSetFlag(FLAG_ARRIVE_FALLING);
 	syFieldScriptSetExitRequest(
 		ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_TO_ANKOHL_RUINS_FACE_HALVES_SOUTHWEST);
@@ -337,8 +337,8 @@ void scAnkohlRuinsLandFromFall(void)
 	ACTOR		  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	EFFECT_OPTIONS options;
 	Uint32		   i;
-	Sint32		   ang;
-	FIXED		   vel[3];
+	Sint32		   angle;
+	FIXED		   velocity[3];
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -348,34 +348,34 @@ void scAnkohlRuinsLandFromFall(void)
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdScriptPlaySound(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(16) / 25;
 	options.startScaleY = toFIXED(16) / 25;
 	i = 0;
 	do {
-		ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = syMathSin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4) - (toFIXED(3) / 8);
-		vel[2] += syRandomBelow(toFIXED(3) / 8) - (toFIXED(3) / 16);
+		angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = syMathSin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4) - (toFIXED(3) / 8);
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) - (toFIXED(3) / 16);
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 		i++;
 	} while(i <= DUST_RING_PUFFS);
-	fdScriptPlaySnd(SE_THUMP);
+	fdScriptPlaySound(SE_THUMP);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_LEADER_SIT);
@@ -399,10 +399,10 @@ void scAnkohlRuinsLandFromFall(void)
    draws it at priority 2 and stands it four pixels lower. */
 Sint32 scAnkohlRuinsSetUpWeeds(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
-	((FIELD_SPR *)actor->spr)->pri = 2;
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	((FIELD_SPR *)actor->sprite)->priority = 2;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->motionFlags = 0;
 	actor->y.fixed -= toFIXED(4);
 	return 0;
 }
@@ -569,12 +569,12 @@ void scAnkohlRuinsPushStoneFaceOffLedge(Sint32 unused, Sint32 face)
 	Sint16 ticks = 60;
 
 	if(FIELD_METATILE(actor->z.fixed) == STONE_FACE_DROP_ROW) {
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		fdActorSetSprPriorityDirect(actor, 3);
-		fdScriptPlaySnd(SE_DUST_PUFF);
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		fdActorSetSpritePriorityDirect(actor, 3);
+		fdScriptPlaySound(SE_DUST_PUFF);
 		while(ticks != 0) {
 			syWait(1);
-			if(actor->velY == 0)
+			if(actor->velocityY == 0)
 				break;
 			ticks--;
 		}
@@ -598,10 +598,10 @@ void scAnkohlRuinsPushStoneFaceOffLedge(Sint32 unused, Sint32 face)
 
 #include "shared/actor_wait_to_land_with_snd.h"
 
-/* Sand pours down from above: `rows` rows of `cnt` grains a metatile apart,
+/* Sand pours down from above: `rows` rows of `count` grains a metatile apart,
    each row two pixels further south, `ticks` apart. */
 void scAnkohlRuinsPourSand(
-	Sint32 rows, Sint32 ticks, Sint32 x, Sint32 y, Sint32 startZ, Sint32 cnt)
+	Sint32 rows, Sint32 ticks, Sint32 x, Sint32 y, Sint32 startZ, Sint32 count)
 {
 	EFFECT_OPTIONS params;
 	Sint32		   row;
@@ -610,14 +610,14 @@ void scAnkohlRuinsPourSand(
 	Sint32		   dy;
 	Sint32		   z;
 
-	params.pal = SPRITE_COLOR_GRB;
+	params.palette = SPRITE_COLOR_GRB;
 	params.startScaleX = toFIXED(3) / 4;
 	params.startScaleY = toFIXED(3) / 4;
 	row = 0;
 	if(row < rows) {
 		z = startZ;
 		do {
-			for(left = 0; left < cnt; left++) {
+			for(left = 0; left < count; left++) {
 				{
 					Sint32 r = syRandom();
 					dx = 15;
@@ -652,15 +652,15 @@ void scAnkohlRuinsPlaceFaceHalves(Sint32 unused, Sint32 id)
 	Sint32 lowRow;
 	Sint32 highRow;
 	Sint32 height;
-	Sint32 cnt;
+	Sint32 count;
 
 	if(id == ACTOR_LEFT_FACE_HALF && column == 12 && row == 45) {
 		fdScriptSetFlag(FLAG_LEFT_FACE_HALF_PLACED);
-		scActorWaitToLandWithSnd(ACTOR_LEFT_FACE_HALF, SE_BOOM);
+		scActorWaitToLandWithSound(ACTOR_LEFT_FACE_HALF, SE_BOOM);
 	}
 	if(id == ACTOR_RIGHT_FACE_HALF && column == 14 && row == 45) {
 		fdScriptSetFlag(FLAG_RIGHT_FACE_HALF_PLACED);
-		scActorWaitToLandWithSnd(ACTOR_RIGHT_FACE_HALF, SE_BOOM);
+		scActorWaitToLandWithSound(ACTOR_RIGHT_FACE_HALF, SE_BOOM);
 	}
 	if(!syGameFlagGet(FLAG_RIGHT_FACE_HALF_PLACED) ||
 		!syGameFlagGet(FLAG_LEFT_FACE_HALF_PLACED))
@@ -670,30 +670,30 @@ void scAnkohlRuinsPlaceFaceHalves(Sint32 unused, Sint32 id)
 	fdMapGridSetShake(2, 2, 1);
 	fdCameraMoveTo(216, CAMERA_KEEP, 770, 1);
 	syFieldScriptWait(15);
-	fdScriptPlaySnd(SE_FLAME_FLARE);
+	fdScriptPlaySound(SE_FLAME_FLARE);
 	toColumn = 12;
 	highRow = 111;
 	fdMapGridCopyMetatilesLayered(12, 91, 3, 1, toColumn, highRow);
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(SE_ANKOHL_RUINS_PIECE);
+	fdScriptPlaySound(SE_ANKOHL_RUINS_PIECE);
 	lowRow = 47;
 	fdMapGridCopyMetatiles(16, 27, 3, 2, toColumn, lowRow);
 	fdMapGridCopyMetatiles(16, 91, 3, 2, toColumn, highRow);
 	height = -40;
-	scAnkohlRuinsPourSand(3, 15, 200, height, 744, cnt = 3);
+	scAnkohlRuinsPourSand(3, 15, 200, height, 744, count = 3);
 	fdMapGridCopyMetatiles(16, 27, 3, 3, toColumn, lowRow);
 	fdMapGridCopyMetatiles(16, 91, 3, 3, toColumn, highRow);
-	scAnkohlRuinsPourSand(3, 10, 200, height, 760, cnt);
+	scAnkohlRuinsPourSand(3, 10, 200, height, 760, count);
 	fdMapGridCopyMetatiles(16, 27, 3, 4, toColumn, lowRow);
 	fdMapGridCopyMetatiles(16, 91, 3, 4, toColumn, highRow);
-	scAnkohlRuinsPourSand(3, 10, 200, height, 776, cnt);
+	scAnkohlRuinsPourSand(3, 10, 200, height, 776, count);
 	fdMapGridCopyMetatiles(16, 27, 3, 5, toColumn, lowRow);
 	fdMapGridCopyMetatiles(16, 91, 3, 5, toColumn, highRow);
-	scAnkohlRuinsPourSand(3, 10, 200, height, 792, cnt);
+	scAnkohlRuinsPourSand(3, 10, 200, height, 792, count);
 	fdMapGridCopyMetatiles(16, 27, 3, 6, toColumn, lowRow);
 	fdMapGridCopyMetatiles(16, 91, 3, 6, toColumn, highRow);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	scAnkohlRuinsPourSand(3, 10, 200, height, 808, cnt);
+	scAnkohlRuinsPourSand(3, 10, 200, height, 808, count);
 	fdMapGridCopyMetatiles(16, 27, 3, 13, toColumn, lowRow);
 	fdMapGridCopyMetatiles(16, 91, 3, 13, toColumn, highRow);
 	fdScriptEnd();
@@ -713,16 +713,16 @@ void scAnkohlRuinsPlaceThanatosFaceHalf(Sint32 unused, Sint32 id)
 	if(id != ACTOR_THANATOS_FACE_HALF || column != 12 || row != 5)
 		return;
 	fdScriptSetFlag(FLAG_THANATOS_FACE_HALF_PLACED);
-	scActorWaitToLandWithSnd(ACTOR_THANATOS_FACE_HALF, SE_BOOM);
+	scActorWaitToLandWithSound(ACTOR_THANATOS_FACE_HALF, SE_BOOM);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	syFieldScriptWait(15);
-	fdScriptPlaySnd(SE_FLAME_FLARE);
+	fdScriptPlaySound(SE_FLAME_FLARE);
 	fdMapGridCopyMetatiles(29, 70, 3, 1, 12, 71);
 	fdCameraMoveTo(216, CAMERA_KEEP, 120, 1);
 	fdMapGridSetShake(2, 2, 1);
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(SE_ANKOHL_RUINS_PIECE);
+	fdScriptPlaySound(SE_ANKOHL_RUINS_PIECE);
 	fdMapGridCopyMetatiles(35, 6, 7, 2, 10, 7);
 	fdMapGridCopyMetatiles(35, 70, 7, 2, 10, 71);
 	scAnkohlRuinsPourSand(6, 10, 200, -40, 124, 3);
@@ -755,7 +755,7 @@ void scAnkohlRuinsPlaceGreatFaceHalf(Sint32 unused, Sint32 id)
 	Sint32 z = FIELD_METATILE(actor->z.fixed);
 
 	if(id == ACTOR_GREAT_FACE_HALF && x == 15 && z == 24) {
-		fdActorSetSprFlags(fdActorGetById(ACTOR_GREAT_FACE_HALF), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_GREAT_FACE_HALF), 0);
 		actor->y.fixed -= toFIXED(2);
 		syFieldScriptWait(1);
 		actor->y.fixed -= toFIXED(2);
@@ -766,10 +766,10 @@ void scAnkohlRuinsPlaceGreatFaceHalf(Sint32 unused, Sint32 id)
 		syFieldScriptWait(1);
 		fdActorSetAnimation(ACTOR_GREAT_FACE, 3);
 		fdActorSetPos(ACTOR_GREAT_FACE_HALF, 0, 0);
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 		syFieldScriptWait(45);
 		fdActorSetAnimation(ACTOR_GREAT_FACE, 4);
-		fdScriptPlaySnd(SE_EYES_GLOW);
+		fdScriptPlaySound(SE_EYES_GLOW);
 		fdScriptSetFlag(FLAG_GREAT_FACE_HALF_PLACED);
 	}
 }
@@ -790,7 +790,7 @@ void scAnkohlRuinsFlowWithSand(void)
 	ACTOR		 *companion = state->camera;
 	MAP_METATILE *ground;
 	MAP_METATILE *upper;
-	Sint32		  idx;
+	Sint32		  index;
 	FIXED		  pos[3];
 
 	if(fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS))
@@ -802,10 +802,10 @@ void scAnkohlRuinsFlowWithSand(void)
 		ground = map->layers[MAPGRID_LAYER_GROUND].metatiles;
 		upper = map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
 	}
-	idx = FIELD_METATILE(leader->x.fixed) +
+	index = FIELD_METATILE(leader->x.fixed) +
 		(FIELD_METATILE(leader->z.fixed) << 7);
-	ground += idx;
-	upper += idx;
+	ground += index;
+	upper += index;
 	if(((ground->attributeB & MAP_METATILE_FLOWING_SAND) |
 		   (upper->collisionCode & METATILE_BEHAVIOR_SAND)) !=
 		(MAP_METATILE_FLOWING_SAND | METATILE_BEHAVIOR_SAND))
@@ -833,17 +833,17 @@ void scAnkohlRuinsCarriedOffLedge(void)
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STILL);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	actor->motionFlg = 0;
-	actor->steeringFlg = 0;
+	actor->motionFlags = 0;
+	actor->steeringFlags = 0;
 	fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, 8);
 	scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 	fdActorShowEmoteById(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	syFieldScriptWait(10);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdScriptPlaySnd(SE_DUST_PUFF);
-	scActorWaitToLandWithSnd(MainRoutineStateWork.leaderActorId, SE_THUMP);
-	actor->steeringFlg = ACTOR_FACES_MOTION;
+	fdScriptPlaySound(SE_DUST_PUFF);
+	scActorWaitToLandWithSound(MainRoutineStateWork.leaderActorId, SE_THUMP);
+	actor->steeringFlags = ACTOR_FACES_MOTION;
 	fdScriptEnd();
 }
 
@@ -892,17 +892,17 @@ void scAnkohlRuinsDrawSand(void)
 	/* DEAD: viewY, subtracted from both y and z, cancels in screenY; the ROM
 	   keeps its load and its store to the stack. */
 	Sint32			  viewY = map->origin[1];
-	Sint32			  tile = VramCacheEntries[state->tile].ofs >> 5;
-	ANKOHL_RUINS_SPR *spr = state->sprs;
+	Sint32			  tile = VramCacheEntries[state->tile].offset >> 5;
+	ANKOHL_RUINS_SPR *sprite = state->sprites;
 	Sint32			  i;
 
 	if(fdScriptGetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN) == 0 &&
 		state->level < toFIXED(32)) {
 		for(i = 0; i <= 7; i++) {
-			Uint32 kind = spr->kind;
-			FIXED  x = spr->x;
-			Sint32 y = spr->y;
-			Sint32 z = spr->z;
+			Uint32 kind = sprite->kind;
+			FIXED  x = sprite->x;
+			Sint32 y = sprite->y;
+			Sint32 z = sprite->z;
 			Sint32 screenX, screenY;
 
 			switch(kind) {
@@ -943,19 +943,19 @@ void scAnkohlRuinsDrawSand(void)
 				screenY <= 239) {
 				screenX &= 511;
 				screenY &= 255;
-				spr->oam[0] = 0;
-				spr->oam[1] = screenY | OBJ_X(screenX) | OBJ_SIZE_16X16 |
+				sprite->oam[0] = 0;
+				sprite->oam[1] = screenY | OBJ_X(screenX) | OBJ_SIZE_16X16 |
 					OBJ_MODE(OBJ_MODE_WINDOW);
-				spr->oam[2] = tile | OBJ_PRIORITY(1);
-				syOAMAddSprAtDepthClamped(spr->oam, OAM_DEPTH_FRONT);
+				sprite->oam[2] = tile | OBJ_PRIORITY(1);
+				syOAMAddSpriteAtDepthClamped(sprite->oam, OAM_DEPTH_FRONT);
 			}
-			spr++;
+			sprite++;
 		}
 	}
 	{
 		MAP_LAYER *layer = &map->layers[MAPGRID_LAYER_MIDDLE];
 
-		layer->ofsY = state->baseOfsY + state->level;
+		layer->offsetY = state->baseOffsetY + state->level;
 	}
 }
 
@@ -965,11 +965,11 @@ void scAnkohlRuinsDrawSand(void)
 void scAnkohlRuinsInitSand(Sint32 unused)
 {
 	ANKOHL_RUINS_SPR_STATE *state = &AnkohlRuinsSand;
-	Uint32				   *tiles = syHeapAlloc(SAND_MASK_BYTES);
+	Uint32				   *tiles = syHeapAllocate(SAND_MASK_BYTES);
 	Uint32				   *pixel = tiles;
 	MAP_LAYER			   *layer =
 		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
-	ANKOHL_RUINS_SPR *spr = state->sprs;
+	ANKOHL_RUINS_SPR *sprite = state->sprites;
 	Sint32			  i;
 
 	if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
@@ -980,8 +980,8 @@ void scAnkohlRuinsInitSand(Sint32 unused)
 	*(Sint16 *)&state->tile = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(state->tile, SAND_MASK_BYTES, tiles);
 	syHeapRelease(tiles);
-	state->baseOfsX = layer->ofsX;
-	state->baseOfsY = layer->ofsY;
+	state->baseOffsetX = layer->offsetX;
+	state->baseOffsetY = layer->offsetY;
 	syIOWrite16(WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
 			WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_BG0 |
 			WINOUT_WINOBJ_BG1 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_OBJ,
@@ -992,60 +992,60 @@ void scAnkohlRuinsInitSand(Sint32 unused)
 			ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_GREAT_FACE ||
 		MainRoutineStateWork.entrance ==
 			ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
-		spr->x = toFIXED(40);
-		spr->kind = SAND_MASK_WEST;
-		spr->y = 0;
-		spr->z = toFIXED(120);
-		spr++;
-		spr->x = toFIXED(56);
-		spr->kind = SAND_MASK_WEST;
-		spr->y = 0;
-		spr->z = toFIXED(120);
-		spr++;
-		spr->x = toFIXED(216);
-		spr->y = 0;
-		spr->z = toFIXED(120);
-		spr->kind = SAND_MASK_EAST;
-		spr++;
-		spr->x = toFIXED(232);
-		spr->y = 0;
-		spr->z = toFIXED(120);
-		spr->kind = SAND_MASK_EAST;
-		spr++;
-		spr->x = toFIXED(184);
-		spr->z = toFIXED(88);
-		spr->y = 0;
-		spr->kind = SAND_MASK_UP_SHALLOW;
-		spr++;
+		sprite->x = toFIXED(40);
+		sprite->kind = SAND_MASK_WEST;
+		sprite->y = 0;
+		sprite->z = toFIXED(120);
+		sprite++;
+		sprite->x = toFIXED(56);
+		sprite->kind = SAND_MASK_WEST;
+		sprite->y = 0;
+		sprite->z = toFIXED(120);
+		sprite++;
+		sprite->x = toFIXED(216);
+		sprite->y = 0;
+		sprite->z = toFIXED(120);
+		sprite->kind = SAND_MASK_EAST;
+		sprite++;
+		sprite->x = toFIXED(232);
+		sprite->y = 0;
+		sprite->z = toFIXED(120);
+		sprite->kind = SAND_MASK_EAST;
+		sprite++;
+		sprite->x = toFIXED(184);
+		sprite->z = toFIXED(88);
+		sprite->y = 0;
+		sprite->kind = SAND_MASK_UP_SHALLOW;
+		sprite++;
 	}
 	if(*(Sint16 *)&MainRoutineStateWork.entrance ==
 			ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_SOUTH ||
 		*(Sint16 *)&MainRoutineStateWork.entrance ==
 			ANKOHL_RUINS_SAND_DOORS_FROM_ANKOHL_RUINS_FACE_HALVES_NORTH) {
-		spr->x = toFIXED(40);
-		spr->z = toFIXED(440);
-		spr->y = 0;
-		spr->kind = SAND_MASK_WEST;
-		spr++;
-		spr->x = toFIXED(56);
-		spr->z = toFIXED(440);
-		spr->y = 0;
-		spr->kind = SAND_MASK_WEST;
-		spr++;
-		spr->x = toFIXED(216);
-		spr->y = 0;
-		spr->z = toFIXED(408);
-		spr->kind = SAND_MASK_WEST_SHALLOW;
-		spr++;
-		spr->x = toFIXED(232);
-		spr->y = 0;
-		spr->z = toFIXED(408);
-		spr->kind = SAND_MASK_WEST;
-		spr++;
-		spr->x = toFIXED(72);
-		spr->z = toFIXED(376);
-		spr->y = 0;
-		spr->kind = SAND_MASK_UP_SHALLOW;
+		sprite->x = toFIXED(40);
+		sprite->z = toFIXED(440);
+		sprite->y = 0;
+		sprite->kind = SAND_MASK_WEST;
+		sprite++;
+		sprite->x = toFIXED(56);
+		sprite->z = toFIXED(440);
+		sprite->y = 0;
+		sprite->kind = SAND_MASK_WEST;
+		sprite++;
+		sprite->x = toFIXED(216);
+		sprite->y = 0;
+		sprite->z = toFIXED(408);
+		sprite->kind = SAND_MASK_WEST_SHALLOW;
+		sprite++;
+		sprite->x = toFIXED(232);
+		sprite->y = 0;
+		sprite->z = toFIXED(408);
+		sprite->kind = SAND_MASK_WEST;
+		sprite++;
+		sprite->x = toFIXED(72);
+		sprite->z = toFIXED(376);
+		sprite->y = 0;
+		sprite->kind = SAND_MASK_UP_SHALLOW;
 	}
 }
 
@@ -1088,10 +1088,10 @@ void scAnkohlRuinsRaiseFirstSand(void)
 
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STILL);
 	m = METATILE_HEIGHT_STEPS(state->level);
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	fdMapGridSetShake(4, 4, 1);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 	fdMapGridCopyMetatiles(22, 66, 3, 1, 7, 66);
 	fdMapGridCopyMetatiles(22, 1, 3, 5, 7, 1);
 	for(i = 0; i < SAND_RISE_MOVES; i++) {
@@ -1118,7 +1118,7 @@ void scAnkohlRuinsRaiseFirstSand(void)
 	}
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	syFieldScriptWait(5);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(state->level < toFIXED(32)) {
 		AnkohlRuinsSandTimer = 0;
 		sySetTickEvent(scAnkohlRuinsCountSandTime, EVENT_PASS_TICK);
@@ -1174,10 +1174,10 @@ void scAnkohlRuinsRaiseSecondSand(void)
 
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STILL);
 	level = METATILE_HEIGHT_STEPS(state->level);
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	fdMapGridSetShake(5, 5, 1);
 	syFieldScriptWait(30);
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 	fdMapGridCopyMetatiles(22, 66, 3, 1, 7, 84);
 	fdMapGridCopyMetatiles(22, 1, 3, 5, 7, 19);
 	for(i = 0; i < SAND_RISE_MOVES; i++) {
@@ -1204,7 +1204,7 @@ void scAnkohlRuinsRaiseSecondSand(void)
 	}
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	syFieldScriptWait(5);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	if(state->level < toFIXED(32)) {
 		AnkohlRuinsSandTimer = 0;
 		sySetTickEvent(scAnkohlRuinsCountSandTime, EVENT_PASS_TICK);
@@ -1252,9 +1252,9 @@ void scAnkohlRuinsPressFirstSandSwitch(void)
 
 	if(done == 0) {
 		syFieldScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SE_BUTTON_PRESS);
+		fdScriptPlaySound(SE_BUTTON_PRESS);
 		syFieldScriptWait(15);
-		fdScriptPlaySnd(SE_FLAME_FLARE);
+		fdScriptPlaySound(SE_FLAME_FLARE);
 		fdMapGridCopyMetatiles(18, 66, 3, 1, 7, 66);
 		fdMapGridSetShake(2, 2, 1);
 		syFieldScriptWait(15);
@@ -1277,12 +1277,12 @@ void scAnkohlRuinsPressFirstSandSwitch(void)
 	{ \
 		if(scAnkohlRuinsFlagCheck(n1) == 0) { \
 			fdScriptSetFlag(n1); \
-			fdScriptPlaySnd(SE_BUTTON_PRESS); \
+			fdScriptPlaySound(SE_BUTTON_PRESS); \
 			fdScriptStart(); \
 			syFieldScriptEndLastingPsynergy(0); \
 			fdMapGridCopyMetatiles(26, 70, 1, 3, n2, n3); \
 			syFieldScriptWait(20); \
-			fdScriptPlaySnd(SE_BOOM); \
+			fdScriptPlaySound(SE_BOOM); \
 			fdMapGridCopyMetatiles(26, 67, 1, 3, n2, n3); \
 			fdMapGridCopyMetatileAttributes(n4, n5, 1, 1, n2, n5); \
 			fdScriptEnd(); \
@@ -1308,9 +1308,9 @@ void scAnkohlRuinsPressSecondSandSwitch(void)
 
 	if(done == 0) {
 		syFieldScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SE_BUTTON_PRESS);
+		fdScriptPlaySound(SE_BUTTON_PRESS);
 		syFieldScriptWait(15);
-		fdScriptPlaySnd(SE_FLAME_FLARE);
+		fdScriptPlaySound(SE_FLAME_FLARE);
 		fdMapGridCopyMetatiles(18, 66, 3, 1, 7, 84);
 		fdMapGridSetShake(2, 2, 1);
 		syFieldScriptWait(15);
@@ -1389,7 +1389,7 @@ void scAnkohlRuinsSlideGreatFace(void)
 		fdScriptSetFlag(FLAG_GREAT_FACE_AT_REST);
 		fdScriptClearFlag(FLAG_NO_PLACE_TO_SAVE);
 		fdScriptClearFlag(FLAG_NO_ENCOUNTERS_IN_AREA);
-		fdScriptPlaySnd(SE_BANE_ESCAPE);
+		fdScriptPlaySound(SE_BANE_ESCAPE);
 	}
 }
 
@@ -1408,7 +1408,7 @@ void scAnkohlRuinsStartGreatFaceSliding(void)
 		if(found == -1) {
 			fdScriptStart();
 			syFieldScriptEndLastingPsynergy(0);
-			fdScriptPlaySnd(SE_RUSH);
+			fdScriptPlaySound(SE_RUSH);
 			fdMapGridSetShake(2, 2, 1);
 			syFieldScriptWait(10);
 			fdCameraMoveTo(232, CAMERA_KEEP, 392, 1);
@@ -1434,11 +1434,11 @@ void scAnkohlRuinsStartGreatFaceSlidingUpClose(void)
 	Sint32 z = FIELD_METATILE(fdActorGet(ACTOR_GREAT_FACE)->z.fixed);
 
 	if(fdScriptGetFlag(FLAG_GREAT_FACE_HALF_PLACED) != 0 && z == 24) {
-		void (*func)(void) = scAnkohlRuinsSlideGreatFace;
+		void (*callback)(void) = scAnkohlRuinsSlideGreatFace;
 
-		if(syFindEvent(func) == -1) {
+		if(syFindEvent(callback) == -1) {
 			fdMapGridSetShake(2, 2, 1);
-			sySetTickEvent(func, EVENT_PASS_TICK);
+			sySetTickEvent(callback, EVENT_PASS_TICK);
 			fdMapGridCopyMetatileAttributes(13, 30, 3, 2, 13, z);
 			fdMapGridCopyMetatileAttributes(14, 87, 1, 1, 14, 88);
 			fdScriptSetFlag(FLAG_NO_PLACE_TO_SAVE);
@@ -1468,8 +1468,8 @@ void scAnkohlRuinsPushFaceHalfIntoGap(void)
 	if(FIELD_METATILE(actor->x.fixed) == GAP_COLUMN &&
 		FIELD_METATILE(actor->z.fixed) == GAP_ROW) {
 		fdScriptSetFlag(FLAG_FACE_HALF_PUSHED_INTO_GAP);
-		fdScriptPlaySnd(SE_DUST_PUFF);
-		scActorWaitToLandWithSnd(ACTOR_FACE_HALF_FOR_THE_GAP, 0);
+		fdScriptPlaySound(SE_DUST_PUFF);
+		scActorWaitToLandWithSound(ACTOR_FACE_HALF_FOR_THE_GAP, 0);
 		fdActorSetPos(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
 		fdActorTableSnapshot();
 		syFieldScriptSetExitRequest(
@@ -1643,7 +1643,7 @@ Sint32 scInit(Sint32 unused)
 			Sint32 width;
 
 			actor = fdActorGetById(ACTOR_THANATOS_FACE_HALF);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			fdActorSetPos(ACTOR_THANATOS_FACE_HALF, 200, 88);
 			width = 10;
 			fdMapGridCopyMetatiles(35, 6, 7, 16, width, 7);
@@ -1652,7 +1652,7 @@ Sint32 scInit(Sint32 unused)
 					ANKOHL_RUINS_THANATOS_MACE_CHEST_FROM_ANKOHL_RUINS_GREAT_FACE_EAST ||
 				state->entrance == THANATOS_FACE_HALL_FROM_WEST_STAIRS ||
 				state->entrance == THANATOS_FACE_HALL_FROM_EAST_STAIRS)
-				fdScriptPlaySnd(SE_ANKOHL_RUINS_PIECE);
+				fdScriptPlaySound(SE_ANKOHL_RUINS_PIECE);
 		}
 	} else if(scene == SCENE_ANKOHL_RUINS_GREAT_FACE) {
 		if(syGameFlagGet(FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED)) {
@@ -1702,13 +1702,13 @@ Sint32 scInit(Sint32 unused)
 		}
 		if(syGameFlagGet(FLAG_LEFT_FACE_HALF_PLACED)) {
 			actor = fdActorGetById(ACTOR_LEFT_FACE_HALF);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			fdActorSetPos(ACTOR_LEFT_FACE_HALF, 200, 728);
 		}
 		if(syGameFlagGet(FLAG_RIGHT_FACE_HALF_PLACED)) {
 			actor = fdActorGetById(ACTOR_RIGHT_FACE_HALF);
 			fdActorSetPos(ACTOR_RIGHT_FACE_HALF, 232, 728);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		} else if(syGameFlagGet(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
 			!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 			fdActorSetPos(ACTOR_RIGHT_FACE_HALF, 328, 760);
@@ -1721,7 +1721,7 @@ Sint32 scInit(Sint32 unused)
 					FACE_HALVES_HALL_FIRST_ENTRANCE &&
 				MainRoutineStateWork.entrance <=
 					FACE_HALVES_HALL_SOUND_LAST_ENTRANCE)
-				fdScriptPlaySnd(SE_ANKOHL_RUINS_PIECE);
+				fdScriptPlaySound(SE_ANKOHL_RUINS_PIECE);
 			width = 12;
 			fdMapGridCopyMetatiles(16, 27, 3, 13, width, 47);
 			fdMapGridCopyMetatiles(16, 91, 3, 13, width, 111);
@@ -1754,13 +1754,13 @@ Sint32 scInit(Sint32 unused)
 				fdActorSetPos(ACTOR_RIGHT_FACE_HALF, 328, 760);
 				actor->y.fixed += toFIXED(128);
 				ticks = 60;
-				actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				for(; ticks != 0; ticks--) {
 					syWait(1);
-					if(actor->velY > -1)
+					if(actor->velocityY > -1)
 						break;
 				}
-				fdScriptPlaySnd(SE_THUMP);
+				fdScriptPlaySound(SE_THUMP);
 				syFieldScriptWait(60);
 				fdScriptSetFlag(FLAG_KEEP_PARTY_POSITION);
 				syFieldScriptSetExitRequest(
@@ -1781,7 +1781,7 @@ Sint32 scInit(Sint32 unused)
 		if(state->entrance == 1 ||
 			state->entrance ==
 				ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_FROM_ANKOHL_RUINS_LEFT_PRONG) {
-			fdScriptPlaySnd(SE_ANKOHL_RUINS_PIECE);
+			fdScriptPlaySound(SE_ANKOHL_RUINS_PIECE);
 			sySetTickEvent(scAnkohlRuinsFlowWithSand, EVENT_PASS_TICK);
 		}
 	} else if(scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
@@ -1855,7 +1855,7 @@ Sint32 scInit(Sint32 unused)
 	} else if(scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
 		actor = fdActorGetById(ACTOR_LEFT_PRONG_CHEST);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = toFIXED(72);
 			actor->y.fixed = toFIXED(72);
 			actor->update = (OBJECT_UPDATE)scProngSparkle;

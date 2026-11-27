@@ -131,7 +131,7 @@ bottom. This one opens a door and walks the leader through it:
 
 ```c
 static void scValeEnterJennasGrandparentsHouse(void) {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValeGrandparentsDoorOpens, 49, 69);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);

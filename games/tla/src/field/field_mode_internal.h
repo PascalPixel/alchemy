@@ -73,9 +73,9 @@ typedef struct SPAWN_ACTOR {
 /* An actor placement as fdAssignViewFlags reads it: its sprite, its condition
    and its place. */
 typedef struct VIEWED_PLACEMENT {
-	Sint16 spr; /* -1 ends the table */
+	Sint16 sprite; /* -1 ends the table */
 	Sint16 condition;
-	Uint8  unusedAfterFlg[4]; /* no code names it */
+	Uint8  unusedAfterFlags[4]; /* no code names it */
 	Sint32 x;
 	Uint8  unusedAfterX[4]; /* no code names it */
 	Sint32 z;
@@ -88,7 +88,7 @@ typedef struct VIEWED_PLACEMENT {
 typedef struct SCENE_ENCOUNTER_RULE {
 	Sint16 scene;
 	Sint16 entrance; /* -1 for any */
-	Sint16 flg;		 /* -1 for none; the rule applies while the flag is clear */
+	Sint16 flags;	 /* -1 for none; the rule applies while the flag is clear */
 	Uint8  groundZone; /* ordinary ground */
 	Uint8  secondZone; /* MAP_METATILE_SECOND_ZONE metatiles */
 } SCENE_ENCOUNTER_RULE;
@@ -120,7 +120,7 @@ typedef struct CONTAINER_ROW {
 	/* Lighthouse the chest on point 0 is "already open" until its flag is
 	   set. */
 	Sint16 point;
-	Sint16 flg; /* set once it has been opened; -1 for none */
+	Sint16 flags; /* set once it has been opened; -1 for none */
 	/* The item inside, 0 for none; a Mimic's formation slot; a Psynergy Stone's
 	   number; a tablet's summon. */
 	Sint16 contents;

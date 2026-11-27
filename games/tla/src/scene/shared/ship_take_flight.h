@@ -5,7 +5,7 @@ void scShipTakeFlight(void)
 	ACTOR *ship = fdActorGet(syFieldPartyGetLeaderActor());
 	Sint32 i;
 
-	fdScriptPlaySnd(SE_POWER_UP);
+	fdScriptPlaySound(SE_POWER_UP);
 	scActorSetFlightMode(ship, SHIP_POWERING_UP);
 	for(i = 0; i < 20; i++) {
 		Sint32 behavior = fdWorldMapGetBlockMetatileBehavior(&ship->x.fixed);

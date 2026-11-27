@@ -6,11 +6,11 @@ void scOrbitSparkSpawn(ORBITER *src)
 
 	spark->scaleY = toFIXED(2) / 5;
 	spark->scaleX = toFIXED(2) / 5;
-	spark->motionFlg = 0;
-	scFieldActorSetSprCol(spark, SPRITE_COLOR_RBG);
-	fdSetActorSprPriority(spark, 1);
+	spark->motionFlags = 0;
+	scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+	fdSetActorSpritePriority(spark, 1);
 	fdActorSelectAnimation(spark, 1);
-	fdActorSetSprFlags(spark, 0);
+	fdActorSetSpriteFlags(spark, 0);
 	fdActorSetBlendMode(spark, 1);
 	fdActorStartScript(spark, OrbitSparkScript);
 }

@@ -21,18 +21,18 @@ void scFlameUpdateForward(ACTOR *flame)
 	flame->sceneWord = dz - dz / 16;
 	flame->scaleX += flame->speedLimit;
 	flame->scaleY += flame->acceleration;
-	((FIELD_SPR *)flame->spr)->rotation += flame->tmr;
+	((FIELD_SPR *)flame->sprite)->rotation += flame->timer;
 	if(actor->y.fixed == actor->groundHeight &&
 		fdActorIsTouching(flame, actor) &&
 		MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		if(flame->sceneWord != 0) {
-			state->dir.x = 0;
+			state->direction.x = 0;
 			if(flame->sceneWord > 0)
-				state->dir.z = 1;
+				state->direction.z = 1;
 			else
-				state->dir.z = -1;
+				state->direction.z = -1;
 		}
-		flame->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		flame->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		{
 			Sint32 speed = flame->sceneWord;
 
@@ -51,7 +51,7 @@ void scFlameUpdateForward(ACTOR *flame)
 			if(state->slots[i].blocked == 0) {
 				FIXED speed;
 
-				flame->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+				flame->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 				speed = flame->sceneWord;
 				flame->sceneWord = 0;
 				flame->z.fixed -= speed;

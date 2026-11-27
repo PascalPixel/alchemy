@@ -15,7 +15,7 @@ extern Uint32 ScanlineAngle;
 /* The world map camera's pitch the scanline parameters were built for. */
 extern Uint32 ScanlinePitch;
 
-void fdWorldMapUpdateAffineLines(struct VECTOR3 *eye, struct VECTOR3 *tgt,
+void fdWorldMapUpdateAffineLines(struct VECTOR3 *eye, struct VECTOR3 *target,
 	struct WORLD_MAP_SCANLINE *line, struct WORLD_MAP_AFFINE_LINE *affine);
 
 #endif

@@ -12,42 +12,42 @@ static void scSpawnPsynergyRings(ACTOR *parent)
 {
 	ACTOR			   *pair[2];
 	ACTOR			   *child;
-	SPR				   *spr;
+	SPR				   *sprite;
 	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
 	Sint32				i;
 
-	sySndPlay(PSYNERGY_RINGS_SOUND);
+	sySoundPlay(PSYNERGY_RINGS_SOUND);
 	for(i = 0; i < 2; ++i) {
 		child = syFieldActorCreate(SPRITE_GOLDEN_RINGS, parent->x.fixed,
 			parent->y.fixed, parent->z.fixed);
 		pair[i] = child;
 		if(child != NULL) {
 			child->groundHeight = parent->groundHeight;
-			spr = child->spr;
-			child->motionFlg = 0;
-			child->tmr = 0;
+			sprite = child->sprite;
+			child->motionFlags = 0;
+			child->timer = 0;
 			child->watchedActor = (ACTOR_OR_EFFECT *)parent;
-			if(spr != NULL) {
-				fdSprStartAnimation(spr, 0);
-				spr->flg = 0;
-				syVRAMCacheFreeEntry(spr->slot);
-				spr->slot = effectState->tileSlot;
-				spr->retainCacheEntry = 1;
-				spr->image.tile =
-					(VramCacheEntries[spr->slot].ofs / TILE_SIZE_4BPP) &
+			if(sprite != NULL) {
+				fdSpriteStartAnimation(sprite, 0);
+				sprite->flags = 0;
+				syVRAMCacheFreeEntry(sprite->slot);
+				sprite->slot = effectState->tileSlot;
+				sprite->retainCacheEntry = 1;
+				sprite->image.tile =
+					(VramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &
 					OBJ_TILE_MASK;
-				spr->image.fullCol = 0;
-				spr->image.shape = RING_HALF_SHAPE;
-				spr->image.size = RING_HALF_SIZE;
-				spr->entries[0]->picture = 0;
+				sprite->image.fullColor = 0;
+				sprite->image.shape = RING_HALF_SHAPE;
+				sprite->image.size = RING_HALF_SIZE;
+				sprite->entries[0]->picture = 0;
 			}
 		}
 	}
 	pair[0]->update = scFieldEffectRiseRingFrontHalf;
-	pair[0]->spr->image.pri = parent->spr->image.pri;
-	pair[1]->spr->image.pri = parent->spr->image.pri;
+	pair[0]->sprite->image.priority = parent->sprite->image.priority;
+	pair[1]->sprite->image.priority = parent->sprite->image.priority;
 	pair[1]->update = scFieldEffectRiseRingBackHalf;
-	pair[1]->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	pair[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
 #undef PSYNERGY_RINGS_SOUND

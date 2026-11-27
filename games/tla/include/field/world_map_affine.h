@@ -15,7 +15,7 @@ typedef struct WORLD_MAP_SCANLINE {
 	/* The line's width scale and its signed ground distance, halved, both 16.16
 	   fixed point; both 0 for a line above the horizon. */
 	FIXED  scale, depth;
-	Sint32 ofsX, ofsY; /* 0 from fdWorldMapBuildScanlineTable */
+	Sint32 offsetX, offsetY; /* 0 from fdWorldMapBuildScanlineTable */
 	Sint16 pa, pc;
 } WORLD_MAP_SCANLINE;
 

@@ -93,7 +93,7 @@ void fdScreenTransitionUpdateScanlineTable(void)
 	ACTOR					*actor;
 	Uint32					 i;
 	Sint32					 k;
-	Sint32					 lineCnt;
+	Sint32					 lineCount;
 	Sint32					 value;
 	FIXED					 radiusSquaredFixed;
 	Sint32					 delta;
@@ -172,11 +172,11 @@ void fdScreenTransitionUpdateScanlineTable(void)
 		}
 		for(i = 0; i < 3; i++) {
 			span = &shape->spans[i];
-			lineCnt = span->cnt;
+			lineCount = span->count;
 			right = span->value;
-			if(lineCnt != 0) {
+			if(lineCount != 0) {
 				if(right != 0) {
-					for(k = 0; k < lineCnt; k++) {
+					for(k = 0; k < lineCount; k++) {
 						scanlineData[0] = right;
 						scanlineData += 2;
 					}
@@ -188,12 +188,12 @@ void fdScreenTransitionUpdateScanlineTable(void)
 					left = span->y0;
 					delta = span->x1;
 					right = span->y1;
-					for(k = 0; k < lineCnt; k++) {
+					for(k = 0; k < lineCount; k++) {
 						scanlineData[0] =
 							((radiusSquaredFixed +
-								 (delta - radiusSquaredFixed) * k / lineCnt)
+								 (delta - radiusSquaredFixed) * k / lineCount)
 								<< 8) +
-							(left + (right - left) * k / lineCnt);
+							(left + (right - left) * k / lineCount);
 						scanlineData += 2;
 					}
 				}
@@ -404,7 +404,7 @@ void fdScreenTransitionUpdateScanlineTable(void)
 void fdScreenTransitionStartWindowHeld(Sint32 mode)
 {
 	SCREEN_TRANSITION_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 
 	DMA_FILL32(0, state, sizeof(*state));
 	state->mode = mode;
@@ -429,7 +429,8 @@ SCREEN_TRANSITION_STATE *fdScreenTransitionAllocateAndClearState(void)
 {
 	SCREEN_TRANSITION_STATE *state;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+	state =
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 	DMA_FILL32(0, state, sizeof(*state));
 	return state;
 }
@@ -485,7 +486,7 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 ticks)
 			fdScreenTransitionAllocateAndClearState();
 		state->mode = variant;
 		state->value = TRANSITION_OPEN;
-		fdScreenTransitionFillTilemapAndColTile(DISSOLVE_COVER_COLOR);
+		fdScreenTransitionFillTilemapAndColorTile(DISSOLVE_COVER_COLOR);
 		sySynch(1);
 		sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
@@ -501,8 +502,8 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 ticks)
 
 		display = RamHeapSlots->mapGrid;
 		state = fdScreenTransitionAllocateAndClearState();
-		display->winTop = DISPLAY_HEIGHT / 2;
-		display->winBottom = DISPLAY_HEIGHT / 2;
+		display->windowTop = DISPLAY_HEIGHT / 2;
+		display->windowBottom = DISPLAY_HEIGHT / 2;
 		sySynch(1);
 		if(variant == CENTRE_LINE_STEADY) {
 			sySetEvent(fdScreenTransitionUpdate, EVENT_PASS_TICK);
@@ -566,7 +567,7 @@ void fdScreenTransitionFinish(Sint32 mode, Sint32 ticks)
 			fdScreenTransitionAllocateAndClearState();
 		state->mode = variant;
 		state->value = TRANSITION_OPEN;
-		fdScreenTransitionFillTilemapAndColTile(0);
+		fdScreenTransitionFillTilemapAndColorTile(0);
 		sySynch(1);
 		sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);
 		state->start = TRANSITION_OPEN;
@@ -637,13 +638,13 @@ void fdScreenTransitionHideBackgrounds(
 void fdScreenTransitionUpdate(void)
 {
 	SCREEN_TRANSITION_STATE *state;
-	MAP_VIEW_STATE			*win;
+	MAP_VIEW_STATE			*window;
 	Sint8					*duration;
 	Uint32					 edgeDistance;
 
 	state = RamHeapSlots->screenTransition;
 	duration = &state->duration;
-	win = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
+	window = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
 	if(*duration != 0) {
 		Sint8 *step = &state->step;
 
@@ -651,7 +652,7 @@ void fdScreenTransitionUpdate(void)
 			*duration = 0;
 			syCloseEvent(fdScreenTransitionUpdate);
 			syIntFunction(IRQ_HBLANK, 0, 0);
-			win->extraTiles = 3;
+			window->extraTiles = 3;
 			return;
 		} else {
 			Sint32 delta = state->end - state->start;
@@ -666,11 +667,11 @@ void fdScreenTransitionUpdate(void)
 	/* Once the lines meet at the centre they are put below the screen. */
 	edgeDistance = state->value;
 	if(edgeDistance >= DISPLAY_HEIGHT / 2) {
-		win->winTop = CENTER_LINE_HIDDEN_FIRST;
-		win->winBottom = CENTER_LINE_HIDDEN_SECOND;
+		window->windowTop = CENTER_LINE_HIDDEN_FIRST;
+		window->windowBottom = CENTER_LINE_HIDDEN_SECOND;
 	} else {
-		win->winTop = edgeDistance;
-		win->winBottom = DISPLAY_HEIGHT - 1 - edgeDistance;
+		window->windowTop = edgeDistance;
+		window->windowBottom = DISPLAY_HEIGHT - 1 - edgeDistance;
 	}
 }
 
@@ -678,13 +679,13 @@ void fdScreenTransitionUpdate(void)
 void fdScreenTransitionUpdateFromCenter(void)
 {
 	SCREEN_TRANSITION_STATE *state;
-	MAP_VIEW_STATE			*win;
+	MAP_VIEW_STATE			*window;
 	Sint8					*duration;
 	Uint16					 edgeDistance;
 
 	state = RamHeapSlots->screenTransition;
 	duration = &state->duration;
-	win = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
+	window = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
 	if(*duration != 0) {
 		Sint8 *step = &state->step;
 
@@ -695,24 +696,24 @@ void fdScreenTransitionUpdateFromCenter(void)
 			return;
 		} else {
 			Sint32 delta = state->end - state->start;
-			Sint32 edgeOfs;
+			Sint32 edgeOffset;
 
 			state->step++;
-			edgeOfs = syIntegerDivide(delta * state->step, state->duration);
-			state->value = state->start + edgeOfs;
+			edgeOffset = syIntegerDivide(delta * state->step, state->duration);
+			state->value = state->start + edgeOffset;
 		}
 	}
 
 	edgeDistance = state->value;
 	if(edgeDistance >= DISPLAY_HEIGHT / 2) {
-		win->winTop = CENTER_LINE_HIDDEN_FIRST;
-		win->winBottom = CENTER_LINE_HIDDEN_SECOND;
+		window->windowTop = CENTER_LINE_HIDDEN_FIRST;
+		window->windowBottom = CENTER_LINE_HIDDEN_SECOND;
 	} else if(edgeDistance != 0 && (TickCount & 1)) {
-		win->winTop = edgeDistance + DISPLAY_HEIGHT / 2;
-		win->winBottom = DISPLAY_HEIGHT / 2 - edgeDistance;
+		window->windowTop = edgeDistance + DISPLAY_HEIGHT / 2;
+		window->windowBottom = DISPLAY_HEIGHT / 2 - edgeDistance;
 	} else {
-		win->winTop = 0;
-		win->winBottom = DISPLAY_HEIGHT - 1;
+		window->windowTop = 0;
+		window->windowBottom = DISPLAY_HEIGHT - 1;
 	}
 }
 
@@ -785,8 +786,8 @@ void fdScreenTransitionUpdateDissolve(void)
 {
 	SCREEN_TRANSITION_DISSOLVE_STATE *state =
 		(SCREEN_TRANSITION_DISSOLVE_STATE *)RamHeapSlots->screenTransition;
-	Sint32 ditherIdx;
-	Sint32 colIdx;
+	Sint32 ditherIndex;
+	Sint32 colorIndex;
 	Uint32 i;
 
 	if(state->duration != 0) {
@@ -809,21 +810,22 @@ void fdScreenTransitionUpdateDissolve(void)
 		}
 	}
 
-	ditherIdx = state->value - 1;
+	ditherIndex = state->value - 1;
 	state->page ^= 1;
-	colIdx = 0;
-	if(ditherIdx & TRANSITION_OPEN)
-		colIdx = DISSOLVE_COVER_COLOR;
-	ditherIdx = (ditherIdx & (TRANSITION_OPEN - 1)) * 2;
+	colorIndex = 0;
+	if(ditherIndex & TRANSITION_OPEN)
+		colorIndex = DISSOLVE_COVER_COLOR;
+	ditherIndex = (ditherIndex & (TRANSITION_OPEN - 1)) * 2;
 	for(i = 0; i <= 1; i++) {
-		Uint8  pixelIdx = ScreenTransitionDitherTable[ditherIdx & (8 * 8 - 1)];
-		Uint8 *tileByte = &state->solidTilePixels[pixelIdx >> 1];
+		Uint8 pixelIndex =
+			ScreenTransitionDitherTable[ditherIndex & (8 * 8 - 1)];
+		Uint8 *tileByte = &state->solidTilePixels[pixelIndex >> 1];
 
-		if(pixelIdx & 1)
-			*tileByte = (*tileByte & 0x0f) | (colIdx << 4);
+		if(pixelIndex & 1)
+			*tileByte = (*tileByte & 0x0f) | (colorIndex << 4);
 		else
-			*tileByte = (*tileByte & 0xf0) | colIdx;
-		ditherIdx++;
+			*tileByte = (*tileByte & 0xf0) | colorIndex;
+		ditherIndex++;
 	}
 
 	IO_WRITE_QUEUE_PUSH((Uint32)BG_CHAR_BLOCK(0),
@@ -832,20 +834,20 @@ void fdScreenTransitionUpdateDissolve(void)
 
 /* Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
    color is -1, makes tile 0 solid color. */
-void fdScreenTransitionFillTilemapAndColTile(Sint32 col)
+void fdScreenTransitionFillTilemapAndColorTile(Sint32 color)
 {
 	SCREEN_TRANSITION_STATE *state = RamHeapSlots->screenTransition;
 	DMA_FILL32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
 		BG_SCREEN_BLOCK(4),
 		DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(Uint16));
-	if(col != -1) {
+	if(color != -1) {
 		/* A row of eight pixels is a word of eight nibbles; a tile is eight
 		   rows. */
 		Uint32	pattern = 0;
 		Sint32	i;
 		Uint32 *tile;
 		for(i = 0; i < 8; i++)
-			pattern = (pattern << 4) | col;
+			pattern = (pattern << 4) | color;
 		tile = state->solidTile;
 		for(i = 0; i < 8; i++)
 			*tile++ = pattern;
@@ -860,9 +862,10 @@ void fdScreenTransitionStartDissolveHeld(Sint32 mode)
 {
 	SCREEN_TRANSITION_STATE *state;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
+	state =
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 	DMA_FILL32(0, state, sizeof(*state));
-	fdScreenTransitionFillTilemapAndColTile(0);
+	fdScreenTransitionFillTilemapAndColorTile(0);
 	state->mode = mode;
 	state->value = 0;
 	sySetEvent(fdScreenTransitionUpdateDissolve, EVENT_PASS_TICK);

@@ -21,10 +21,10 @@
 #define TILE_ROW_FROM_BOTTOM(tile, up) \
 	((Uint32 *)((tile) * 32 - (up) * 4 + ((Sint32)BG_CHAR_BLOCK(0) + 7 * 4)))
 
-/* Works out where the party status window goes for `flg`: one column per
+/* Works out where the party status window goes for `flags`: one column per
    party member (those in battle when a battle is on), plus the Djinn column,
    right-aligned on the 30-tile screen row at the top. */
-void mnPartyStatBuildLayoutBounds(Sint32 flg)
+void mnPartyStatusBuildLayoutBounds(Sint32 flags)
 {
 	PARTY_STAT_WINDOW *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
 	WIN_STATE		  *state = WINDOW_STATE;
@@ -39,14 +39,14 @@ void mnPartyStatBuildLayoutBounds(Sint32 flg)
 	} else {
 		members = gmPartyCountMembersStub();
 	}
-	if(flg & PARTY_STATUS_SHOW_PP)
+	if(flags & PARTY_STATUS_SHOW_PP)
 		height++;
 	else
-		flg &= ~PARTY_STATUS_SHOW_DJINN;
+		flags &= ~PARTY_STATUS_SHOW_DJINN;
 
 	members *= PARTY_STATUS_COLUMN_WIDTH;
 	width = members + 1;
-	if(flg & PARTY_STATUS_SHOW_DJINN)
+	if(flags & PARTY_STATUS_SHOW_DJINN)
 		width += PARTY_STATUS_DJINN_WIDTH;
 
 	x = DISPLAY_TILE_WIDTH;
@@ -55,48 +55,48 @@ void mnPartyStatBuildLayoutBounds(Sint32 flg)
 	layout->y = 0;
 	layout->width = width;
 	layout->height = height;
-	layout->flg = flg;
+	layout->flags = flags;
 }
 
-/* Opens the party status window with `flg` (see PARTY_STATUS_*) in a new heap
-   block, HEAP_SLOT_PARTY_STATUS, which mnPartyStatClose frees, and draws it;
+/* Opens the party status window with `flags` (see PARTY_STATUS_*) in a new heap
+   block, HEAP_SLOT_PARTY_STATUS, which mnPartyStatusClose frees, and draws it;
    the tilemap upload is held back (holdTilemapUpload) while it is drawn. */
-void mnPartyStatCreateWindow(Sint32 flg)
+void mnPartyStatusCreateWindow(Sint32 flags)
 {
 	PARTY_STAT_WINDOW *layout;
 	Uint8			  *hold;
 	Sint32			   released;
 
-	layout = syHeapSlotAllocEWRAM(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
+	layout = syHeapSlotAllocateEWRAM(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
 	hold = &WINDOW_STATE->holdTilemapUpload;
 	released = 0;
 	*hold = 1;
-	mnPartyStatBuildLayoutBounds(flg);
-	layout->win = mnWindowCreate(
+	mnPartyStatusBuildLayoutBounds(flags);
+	layout->window = mnWindowCreate(
 		layout->x, layout->y, layout->width, layout->height, MENU_WINDOW_FLAGS);
-	mnPartyStatDraw(flg);
+	mnPartyStatusDraw(flags);
 	*hold = released;
 }
 
 /* Draws the vertical lines between the party members' columns of the party
-   status `win`, with their top and bottom joints, at the offsets listed in
+   status `window`, with their top and bottom joints, at the offsets listed in
    WindowPartyColumnOffsets (shifted right past the Djinn column, whose own
    line comes first in the list). */
-void mnWindowDrawColumnBorders(WINDOW *win, Uint32 flg)
+void mnWindowDrawColumnBorders(WINDOW *window, Uint32 flags)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Sint32	   first = 1;
 	Sint32	   shift = 0;
-	Uint32	   lastColumn = win->width - 1;
+	Uint32	   lastColumn = window->width - 1;
 	Sint32	   i;
-	Uint32	   rows = win->height;
+	Uint32	   rows = window->height;
 	Uint32	   column;
 	Uint32	   row;
 	Uint16	  *cell;
 
-	if((flg & PARTY_STATUS_SHOW_PP) == 0)
-		flg &= ~PARTY_STATUS_SHOW_DJINN;
-	if(flg & PARTY_STATUS_SHOW_DJINN) {
+	if((flags & PARTY_STATUS_SHOW_PP) == 0)
+		flags &= ~PARTY_STATUS_SHOW_DJINN;
+	if(flags & PARTY_STATUS_SHOW_DJINN) {
 		shift = PARTY_STATUS_DJINN_WIDTH;
 		first = 0;
 	}
@@ -104,8 +104,8 @@ void mnWindowDrawColumnBorders(WINDOW *win, Uint32 flg)
 		column = WindowPartyColumnOffsets[i] + shift;
 		if(column < lastColumn) {
 			for(row = 0; row != rows; row++) {
-				cell = (Uint16 *)(((win->y + row) * BG_SCREEN_WIDTH +
-									  (win->x + column)) *
+				cell = (Uint16 *)(((window->y + row) * BG_SCREEN_WIDTH +
+									  (window->x + column)) *
 						2 +
 					(Uint32)state->tilemap);
 				if(row == 0)
@@ -118,8 +118,8 @@ void mnWindowDrawColumnBorders(WINDOW *win, Uint32 flg)
 		}
 	}
 	if(state->battleMode) {
-		cell = state->tilemap + (win->y + win->height - 1) * BG_SCREEN_WIDTH +
-			win->x;
+		cell = state->tilemap +
+			(window->y + window->height - 1) * BG_SCREEN_WIDTH + window->x;
 		*cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
 		for(column = 1; column < lastColumn; column++) {
 			*cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
@@ -144,10 +144,10 @@ void mnWindowDrawColumnBorders(WINDOW *win, Uint32 flg)
 /* A 4bpp tile row: eight pixels of four bits, one word. */
 #define TILE_ROW_BITS			32
 
-/* Recolours the five bar tiles at (x, y) in `win` to show a bar `length`
+/* Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
    pixels long (0 to PARTY_STATUS_BAR_LENGTH). */
-UNREAD_RESULT mnPartyStatDrawBars(
-	WINDOW *win, Sint32 x, Sint32 y, Sint32 length)
+UNREAD_RESULT mnPartyStatusDrawBars(
+	WINDOW *window, Sint32 x, Sint32 y, Sint32 length)
 {
 	Sint32	   i;
 	WIN_STATE *state = WINDOW_STATE;
@@ -161,14 +161,14 @@ UNREAD_RESULT mnPartyStatDrawBars(
 	Uint32	   recoloured;
 
 	if(state->battleMode == WINDOW_FIELD) {
-		syDMAXCopy(syPaletteGetBasicSprCols(),
+		syDMAXCopy(syPaletteGetBasicSpriteColors(),
 			(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
 			DMA_COPY_HALFWORDS(16), REG_DMA3);
 		BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
 			BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
 	}
-	x += win->x;
-	y += win->y;
+	x += window->x;
+	y += window->y;
 	for(i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
 		/* This tile's eight pixels: filled up to `length`, empty after. */
 		tile = state->tilemap[y * BG_SCREEN_WIDTH + x];
@@ -212,17 +212,17 @@ UNREAD_RESULT mnPartyStatDrawBars(
 	}
 }
 
-/* Draws the party status window with `flg` (see PARTY_STATUS_*): each party
+/* Draws the party status window with `flags` (see PARTY_STATUS_*): each party
    member's name, HP and optionally PP with their bars, and in battle the
    standby Djinn of each element. */
-void mnPartyStatDraw(Sint32 flg)
+void mnPartyStatusDraw(Sint32 flags)
 {
 	PARTY_STAT_WINDOW *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
 	BATTLE_STATE	  *battle = BattleStateWork;
-	WINDOW			  *win = layout->win;
+	WINDOW			  *window = layout->window;
 	WIN_STATE		  *state = WINDOW_STATE;
 	Sint32			   x = 0;
-	Uint32			   cnt;
+	Uint32			   count;
 	Sint32			   y = 0;
 	Uint32			   i;
 	Uint16			   members[5];
@@ -231,28 +231,28 @@ void mnPartyStatDraw(Sint32 flg)
 	/* List the party members shown: those fighting in battle, the party
 	   otherwise. */
 	if(state->battleMode != WINDOW_FIELD) {
-		cnt = btPartyPrepareMembersStub(0);
+		count = btPartyPrepareMembersStub(0);
 		y = -1;
-		for(i = 0; i < cnt; i++) {
+		for(i = 0; i < count; i++) {
 			members[i] = battle->partyUnits[i];
 			if(members[i] == BATTLE_UNIT_LIST_END)
 				break;
 		}
 	} else {
-		cnt = gmPartyCountMembersStub();
-		for(i = 0; i < cnt; i++)
+		count = gmPartyCountMembersStub();
+		for(i = 0; i < count; i++)
 			members[i] = MainRoutineStateWork.party[i];
 		members[i] = BATTLE_UNIT_LIST_END;
 	}
-	cnt = i;
+	count = i;
 
-	if(flg == PARTY_STATUS_KEEP_FLAGS)
-		flg = layout->flg;
-	if(!(flg & PARTY_STATUS_SHOW_PP))
-		flg &= ~PARTY_STATUS_SHOW_DJINN;
+	if(flags == PARTY_STATUS_KEEP_FLAGS)
+		flags = layout->flags;
+	if(!(flags & PARTY_STATUS_SHOW_PP))
+		flags &= ~PARTY_STATUS_SHOW_DJINN;
 	if(state->battleMode == WINDOW_FIELD || btDjinnCountStandbyStub(0, 0) == 0)
-		flg &= ~PARTY_STATUS_SHOW_DJINN;
-	if(flg == PARTY_STATUS_CLOSED) {
+		flags &= ~PARTY_STATUS_SHOW_DJINN;
+	if(flags == PARTY_STATUS_CLOSED) {
 		mnWindowEraseBorderRect(
 			layout->x, layout->y, layout->width, layout->height);
 		return;
@@ -260,114 +260,114 @@ void mnPartyStatDraw(Sint32 flg)
 
 	/* Redraw the tick, laying it out again when the flags changed. */
 	state->holdTilemapUpload = 1;
-	if(layout->flg == flg) {
-		mnWindowSprRedrawSavedRect(win);
-		mnWindowDrawColumnBorders(win, flg);
+	if(layout->flags == flags) {
+		mnWindowSpriteRedrawSavedRect(window);
+		mnWindowDrawColumnBorders(window, flags);
 	} else {
 		mnWindowEraseBorderRect(
 			layout->x, layout->y, layout->width, layout->height);
-		mnPartyStatBuildLayoutBounds(flg);
-		win->width = layout->width;
-		win->height = layout->height;
-		win->x = layout->x;
+		mnPartyStatusBuildLayoutBounds(flags);
+		window->width = layout->width;
+		window->height = layout->height;
+		window->x = layout->x;
 		mnWindowDrawBorder(layout->x, layout->y, layout->width, layout->height);
-		mnWindowDrawColumnBorders(win, flg);
+		mnWindowDrawColumnBorders(window, flags);
 	}
 
 	/* Each party member's column: name, HP and PP, and their bars. */
-	if(flg & PARTY_STATUS_SHOW_DJINN)
+	if(flags & PARTY_STATUS_SHOW_DJINN)
 		x = PARTY_STATUS_DJINN_WIDTH;
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		UNIT  *unit = gmUnitGetStub(members[i]);
 		Sint32 hp = unit->hp;
 		Sint32 hpMax = unit->hpMax;
 		Sint32 barLength;
-		Sint32 cur;
+		Sint32 current;
 
 		if(hp == 0)
-			mnTextSetCol(TEXT_COLOR_RED);
+			mnTextSetColor(TEXT_COLOR_RED);
 		else if(hp <= hpMax / 4)
-			mnTextSetCol(TEXT_COLOR_YELLOW);
+			mnTextSetColor(TEXT_COLOR_YELLOW);
 		else
-			mnTextSetCol(TEXT_COLOR_WHITE);
-		state->textPal = HIGHLIGHT_PALETTE;
+			mnTextSetColor(TEXT_COLOR_WHITE);
+		state->textPalette = HIGHLIGHT_PALETTE;
 		if(state->battleMode != WINDOW_FIELD)
-			state->textPal = BASIC_COLORS_PALETTE;
-		mnTextDrawPrefixedNumAtOffset(
-			hp, win, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-		state->textPal = WINDOW_PALETTE;
+			state->textPalette = BASIC_COLORS_PALETTE;
+		mnTextDrawPrefixedNumberAtOffset(
+			hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
+		state->textPalette = WINDOW_PALETTE;
 		mnTextDrawStringAtOffset(
-			unit->name, win, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-		mnTextSetCol(TEXT_COLOR_WHITE);
+			unit->name, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
+		mnTextSetColor(TEXT_COLOR_WHITE);
 		if(unit->hpMax != 0) {
 			/* A party member with any HP left shows at least one pixel of
 			   bar. */
-			cur = unit->hp;
-			barLength = cur * PARTY_STATUS_BAR_LENGTH / unit->hpMax;
-			if(barLength == 0 && cur != 0)
+			current = unit->hp;
+			barLength = current * PARTY_STATUS_BAR_LENGTH / unit->hpMax;
+			if(barLength == 0 && current != 0)
 				barLength = 1;
-			mnPartyStatDrawBars(
-				win, x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 2, barLength);
+			mnPartyStatusDrawBars(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
+				y + 2, barLength);
 		}
-		if(flg & PARTY_STATUS_SHOW_PP) {
-			state->textPal = HIGHLIGHT_PALETTE;
+		if(flags & PARTY_STATUS_SHOW_PP) {
+			state->textPalette = HIGHLIGHT_PALETTE;
 			if(state->battleMode != WINDOW_FIELD)
-				state->textPal = BASIC_COLORS_PALETTE;
-			mnTextDrawPrefixedNumAtOffset(unit->pp, win,
+				state->textPalette = BASIC_COLORS_PALETTE;
+			mnTextDrawPrefixedNumberAtOffset(unit->pp, window,
 				(x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 16, 1);
 			if(unit->ppMax != 0) {
-				cur = unit->pp;
-				barLength = cur * PARTY_STATUS_BAR_LENGTH / unit->ppMax;
-				if(barLength == 0 && cur != 0)
+				current = unit->pp;
+				barLength = current * PARTY_STATUS_BAR_LENGTH / unit->ppMax;
+				if(barLength == 0 && current != 0)
 					barLength = 1;
-				mnPartyStatDrawBars(win, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
-					y + 3, barLength);
+				mnPartyStatusDrawBars(window,
+					x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 3, barLength);
 			}
 		}
 	}
-	state->textPal = WINDOW_PALETTE;
+	state->textPalette = WINDOW_PALETTE;
 
 	/* The Djinn column: each element's icon and its count of standby Djinn. */
-	if(state->battleMode != WINDOW_FIELD && (flg & PARTY_STATUS_SHOW_DJINN)) {
+	if(state->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {
 		Sint32 row = y;
 
-		if(flg & PARTY_STATUS_SHOW_PP)
+		if(flags & PARTY_STATUS_SHOW_PP)
 			row++;
 		btDjinnCountStandbyStub(0, standbyDjinn);
 		mnWindowSetTilemapEntry(
-			win, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS, 0, row, 0);
+			window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_VENUS, 0, row, 0);
 		mnWindowSetTilemapEntry(
-			win, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY, 2, row, 0);
+			window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MERCURY, 2, row, 0);
 		mnWindowSetTilemapEntry(
-			win, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MARS, 0, row + 1, 0);
+			window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_MARS, 0, row + 1, 0);
 		mnWindowSetTilemapEntry(
-			win, LIST_TILE_SUMMON_ELEMENT + ELEMENT_JUPITER, 2, row + 1, 0);
-		PARTY_STATUS_PUT_DIGIT(win, standbyDjinn[0] + '0', 1, row);
-		PARTY_STATUS_PUT_DIGIT(win, standbyDjinn[1] + '0', 3, row);
-		PARTY_STATUS_PUT_DIGIT(win, standbyDjinn[2] + '0', 1, row + 1);
-		PARTY_STATUS_PUT_DIGIT(win, standbyDjinn[3] + '0', 3, row + 1);
+			window, LIST_TILE_SUMMON_ELEMENT + ELEMENT_JUPITER, 2, row + 1, 0);
+		PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[0] + '0', 1, row);
+		PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[1] + '0', 3, row);
+		PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[2] + '0', 1, row + 1);
+		PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[3] + '0', 3, row + 1);
 	}
 	state->holdTilemapUpload = 0;
 }
 
 /* Closes the party status window and frees its heap block. */
-void mnPartyStatClose(void)
+void mnPartyStatusClose(void)
 {
-	mnWindowClose(((PARTY_STAT_WINDOW *)WindowStateWork[1])->win, 1);
+	mnWindowClose(((PARTY_STAT_WINDOW *)WindowStateWork[1])->window, 1);
 	syHeapSlotRelease(HEAP_SLOT_PARTY_STATUS);
 }
 
 /* Unused: sets (`set` 1) or clears (0) the lowest bit of the palette number of
    the tilemap entries of the `width` x `height` tile rectangle at (x, y) inside
-   `win`, clipped to the screen, so switching the rectangle between two
+   `window`, clipped to the screen, so switching the rectangle between two
    palettes, such as WINDOW_PALETTE and HIGHLIGHT_PALETTE. */
-UNUSED void mnWindowSetInteriorPaletteBit(const WINDOW *win, Sint32 x, Sint32 y,
-	Sint32 width, Sint32 height, Uint32 set)
+UNUSED void mnWindowSetInteriorPaletteBit(const WINDOW *window, Sint32 x,
+	Sint32 y, Sint32 width, Sint32 height, Uint32 set)
 {
 	WIN_STATE *state = WINDOW_STATE;
 
-	x += win->x + 1;
-	y += win->y + 1;
+	x += window->x + 1;
+	y += window->y + 1;
 	set &= 1;
 	set = BG_TILE_PALETTE(set);
 	if(x < 0) {

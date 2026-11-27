@@ -9,7 +9,7 @@
    in sprites.tsv's order) in order. A party member's field sprite shares its
    character number, so the field engine draws a character id as its sprite. The
    summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite: its
-   script creates its objects of it (btEffectCreateSprs), each playing one of
+   script creates its objects of it (btEffectCreateSprites), each playing one of
    its animations. A row sprites.tsv leaves empty, with no size and no pictures,
    shows nothing and has no name; the next named row's number is written after
    it. */
@@ -277,7 +277,7 @@ typedef enum SPR_ID {
 	SPRITE_OAR,
 	/* Isaac's tunic: placed beside his bed on the stormy night, and drawn as a
 	   second layer over the child sprites of Isaac and Garet while
-	   FLAG_ISAAC_WEARS_TUNIC is set (fdActorRegisterSprMetadata). */
+	   FLAG_ISAAC_WEARS_TUNIC is set (fdActorRegisterSpriteMetadata). */
 	SPRITE_TUNIC,
 	/* A puddle of water, which Frost freezes into a pillar of ice. */
 	SPRITE_PUDDLE,
@@ -462,7 +462,7 @@ typedef enum SPR_ID {
 	/* Jenna's for swords and light blades. */
 	SPRITE_WEAPON_JENNA_BLADE,
 	/* The status icons over a unit 32 pixels wide, in the order of
-	   battle_objects.c's ICON_ bits (btStatIconCycle); from
+	   battle_objects.c's ICON_ bits (btStatusIconCycle); from
 	   SPRITE_STATUS_WIDE_POISON on, the same over wider units. */
 	SPRITE_STATUS_POISON = 340,
 	SPRITE_STATUS_VENOM,
@@ -599,9 +599,9 @@ typedef enum SPR_ID {
 	   layer of every one-part body (SPRITE_BATTLE_SHADOW_NARROW on a body 32
 	   pixels wide). Its 64 by 64 picture holds only a 32 by 6 ellipse along its
 	   bottom edge, SPRITE_BATTLE_SHADOW_NARROW's a 16 by 3 one. It stays on the
-	   ground while the unit is off it (btObjectUpdateSprPriorities), and adding
-	   it clears the sprite's own shadow (SPR.flg bit 0), so a unit casts
-	   one. */
+	   ground while the unit is off it (btObjectUpdateSpritePriorities), and
+	   adding it clears the sprite's own shadow (SPR.flags bit 0), so a unit
+	   casts one. */
 	SPRITE_BATTLE_SHADOW = 510,
 	/* The shadow a body 32 pixels wide takes instead of
 	   SPRITE_BATTLE_SHADOW. */

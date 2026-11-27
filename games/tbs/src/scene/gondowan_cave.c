@@ -435,11 +435,11 @@ static void scGondowanCavePushPillar(void)
 }
 
 /* Hides the pillar and shows the actor that stands in for it in its place. */
-static inline void scGondowanCavePlaceDroppedPillar(Sint32 anm)
+static inline void scGondowanCavePlaceDroppedPillar(Sint32 animation)
 {
 	fdActorSetPos(ACTOR_PILLAR, 0, 0);
 	fdActorSetPos(ACTOR_DROPPED_PILLAR, 696, 288);
-	fdActorSetAnimation(ACTOR_DROPPED_PILLAR, anm);
+	fdActorSetAnimation(ACTOR_DROPPED_PILLAR, animation);
 }
 
 static void scGondowanCaveMovePillar(void)
@@ -450,7 +450,7 @@ static void scGondowanCaveMovePillar(void)
 		fdMapGridCopyMetatileAttributes(108, 17, 1, 1, 107, 17);
 		fdScriptWait(8);
 		scGondowanCavePlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
-		sySndPlay(SE_CAST);
+		sySoundPlay(SE_CAST);
 		gmFlagSet(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
 	}
 	fdScriptEnd();
@@ -464,7 +464,7 @@ static UNUSED void scGondowanCaveUnusedNoOperationA(void)
 /* Spins the leaping stump a sixty-fourth of a turn each tick. */
 static void scGondowanCaveSpinStump(ACTOR *actor)
 {
-	actor->spr->rotation -= TRIG_TURN / 64;
+	actor->sprite->rotation -= TRIG_TURN / 64;
 }
 
 /* Waits until the actor has come down to height (16.16), forty ticks at most:
@@ -492,46 +492,47 @@ static void scGondowanCaveWaitBelowHeight(ACTOR *actor, Sint32 height)
 static void scGondowanCaveLeapStump(Sint32 actorId)
 {
 	ACTOR  *actor;
-	Uint32	stepIdx;
-	VECTOR3 particleVel;
-	Sint32	ang;
+	Uint32	stepIndex;
+	VECTOR3 particleVelocity;
+	Sint32	angle;
 
 	actor = fdActorGet(actorId);
 	/* It winds up its spin in place. */
-	actor->motionFlg = 0;
-	for(stepIdx = 0; stepIdx < 9; stepIdx++) {
+	actor->motionFlags = 0;
+	for(stepIndex = 0; stepIndex < 9; stepIndex++) {
 		sySynch(1);
-		actor->spr->rotation -= TRIG_TURN / 256;
-		actor->x.fixed -= syCos(actor->spr->rotation) / 2;
-		actor->tgtX = ACTOR_NO_TARGET;
+		actor->sprite->rotation -= TRIG_TURN / 256;
+		actor->x.fixed -= syCos(actor->sprite->rotation) / 2;
+		actor->targetX = ACTOR_NO_TARGET;
 	}
 	actor->update = scGondowanCaveSpinStump;
-	sySndPlay(SE_WHOOSH);
+	sySoundPlay(SE_WHOOSH);
 	fdActorSetSpeed(actorId, 2);
 	fdActorSetDestination(actorId, 472, 288);
 	actor->gravity = toFIXED(4) / 5;
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->layer = 0;
 	fdActorWaitForMoveById(actorId);
 	scGondowanCaveWaitBelowHeight(actor, toFIXED(32));
 	fdMapGridSetShake(5, 5, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	for(stepIdx = 0; stepIdx <= TRIG_TURN / FACING_STEP; stepIdx++) {
-		ang = stepIdx * FACING_STEP;
-		particleVel.x = syCos(ang);
-		particleVel.y = 0;
-		particleVel.z = sySin(ang);
-		particleVel.x -= particleVel.x / 4;
-		particleVel.z -= particleVel.z / 2;
+	for(stepIndex = 0; stepIndex <= TRIG_TURN / FACING_STEP; stepIndex++) {
+		angle = stepIndex * FACING_STEP;
+		particleVelocity.x = syCos(angle);
+		particleVelocity.y = 0;
+		particleVelocity.z = sySin(angle);
+		particleVelocity.x -= particleVelocity.x / 4;
+		particleVelocity.z -= particleVelocity.z / 2;
 		fdEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			particleVel.x, particleVel.y, particleVel.z, 0, NULL);
+			particleVelocity.x, particleVelocity.y, particleVelocity.z, 0,
+			NULL);
 	}
 	fdActorSetDestination(actorId, 440, 308);
 	fdActorWaitForMoveById(actorId);
 	scGondowanCaveWaitBelowHeight(actor, toFIXED(32));
 	actor->update = NULL;
-	actor->spr->rotation = TRIG_TURN / 16;
-	sySndPlay(SE_CAST);
+	actor->sprite->rotation = TRIG_TURN / 16;
+	sySoundPlay(SE_CAST);
 	fdActorSetAnimation(actorId, STUMP_ANIMATION_SPLASH);
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(10);
@@ -576,7 +577,7 @@ Sint32 scInit(void)
 		if(gmFlagGet(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
 			scGondowanCavePlaceDroppedPillar(STUMP_ANIMATION_SINK);
 		}
-		fdActorSetSprFlags(fdActorGet(ACTOR_BOULDER_GAP), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_BOULDER_GAP), 0);
 	}
 	return 0;
 }

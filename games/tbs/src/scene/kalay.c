@@ -274,7 +274,7 @@ static void scKalayUpdateNutOrbit(void);
 /* Clears the flag a guide's script sets when it is done. */
 static inline void scKalayClearScriptDone(ACTOR *actor)
 {
-	actor->tmr = 0;
+	actor->timer = 0;
 }
 
 /* Talking to Scorch, a Mars Djinni on the ledge beyond the east hall's pool in
@@ -290,7 +290,7 @@ static void scKalayScorchJoins(void)
 static Sint32 scKalayUpdateWaitingTourist(ACTOR *actor)
 {
 	Uint32 action;
-	Uint32 nextTmr;
+	Uint32 nextTimer;
 
 	if(actor->userValue == 0) {
 		action = syRandomBelow(8);
@@ -306,8 +306,8 @@ static Sint32 scKalayUpdateWaitingTourist(ACTOR *actor)
 			actor->facing += syRandomBelow(32768);
 			break;
 		}
-		nextTmr = syRandomBelow(80);
-		actor->userValue = nextTmr;
+		nextTimer = syRandomBelow(80);
+		actor->userValue = nextTimer;
 	}
 	if(actor->userValue != 0) {
 		actor->userValue--;
@@ -544,12 +544,12 @@ static void scKalayOpenDoorAndExit(void)
 	for(i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_ID; i++) {
 		actor = fdActorGet(i);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 	cue = &state->stepCue;
 	door = *cue - 1;
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	{
 		Sint32 x = KalayDoorMetatiles[door].x;
 		Sint32 y = KalayDoorMetatiles[door].y;
@@ -557,7 +557,7 @@ static void scKalayOpenDoorAndExit(void)
 		fdMapGridAnimateMetatiles(KalayDoorMetatiles[door].steps, x, y);
 	}
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 2, -8);
 	fdScriptWait(10);
@@ -570,7 +570,7 @@ static void scKalayOpenDoorAndExit(void)
 /* The palace door opens in two ticks. */
 static inline void scKalayAnimatePalaceDoor(void)
 {
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridCopyMetatilesTo(36, 23, 43, 12, 2, 2);
 	sySynch(5);
 	fdMapGridCopyMetatilesTo(39, 23, 43, 12, 2, 2);
@@ -584,7 +584,7 @@ static void scKalayEnterPalace(void)
 	fdScriptStart();
 	scKalayAnimatePalaceDoor();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
 	fdScriptWait(10);
@@ -621,11 +621,11 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetPos(ACTOR_FIRST_TOURIST + 6, 332, 264);
 		fdActorSetPos(ACTOR_OURANOS, 332, 280);
 		fdActorSetPos(ACTOR_SECOND_GUIDE, 364, 272);
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		fdMessageSetVoiceFromActor(ACTOR_HEAD_GUIDE);
 		/* "OK! Are we all listening? Let's stop right here." */
 		mnFieldMessageShowCentered(MsgKalayOkListeningLets, 1, 0);
-		sySndPlay(MUS_TRY_YOUR_LUCK);
+		sySoundPlay(MUS_TRY_YOUR_LUCK);
 		fdScriptWait(10);
 		fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 		if(state->stepCue == 9) {
@@ -656,14 +656,14 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetScript(ACTOR_FIRST_TOURIST + 6, KalayTourGroupWalkScript);
 		fdActorSetScript(ACTOR_OURANOS, KalayTourGroupWalkScript);
 		last = fdActorGet(ACTOR_SECOND_GUIDE);
-		last->tmr = 0;
+		last->timer = 0;
 		fdActorSetScript(ACTOR_SECOND_GUIDE, KalayTourGroupWalkScript);
 		fdCameraMoveTo(186, CAMERA_KEEP, 272, 1);
 		fdActorWaitForScriptEndById(ACTOR_HEAD_GUIDE);
 		fdActorFaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
 		do {
 			sySynch(1);
-		} while(last->tmr == 0);
+		} while(last->timer == 0);
 		fdScriptWait(40);
 		fdActorRunRepeatedMotion(ACTOR_FIRST_TOURIST, 2);
 		fdActorFaceDirection(ACTOR_FIRST_TOURIST, FACING_SOUTH_SOUTHWEST, 20);
@@ -705,20 +705,20 @@ static void scKalayWatchTourGroupDeparture(void)
 		/* "Everything will be just fine, folks!" */
 		fdScriptShowMessageThenWait(ACTOR_HEAD_GUIDE, 0, 10);
 		fdActorRunRepeatedMotion(ACTOR_HEAD_GUIDE, 2);
-		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_HEAD_GUIDE, 172, 264);
 		fdScriptWait(1);
-		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorFaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 0);
 		fdActorFaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_WEST, 0);
 		fdActorFaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_WEST, 0);
 		fdActorFaceDirection(ACTOR_FIRST_TOURIST + 4, FACING_WEST, 20);
 		fdActorSetAnimationAndWait(ACTOR_HEAD_GUIDE, ANIM_NOD);
 		fdScriptWait(20);
-		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_HEAD_GUIDE, 172, 272);
 		fdScriptWait(1);
-		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlg |= ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_HEAD_GUIDE)->steeringFlags |= ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_HEAD_GUIDE, 180, 272);
 		fdActorFaceDirection(ACTOR_HEAD_GUIDE, FACING_EAST, 0);
 		/* "We're just checking to make sure no one is missing!" */
@@ -842,8 +842,8 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorStop(ACTOR_HEAD_GUIDE);
 		fdActorStop(ACTOR_SECOND_GUIDE);
 		sySynch(1);
-		fdActorGet(ACTOR_HEAD_GUIDE)->tmr = 0;
-		fdActorGet(ACTOR_SECOND_GUIDE)->tmr = 0;
+		fdActorGet(ACTOR_HEAD_GUIDE)->timer = 0;
+		fdActorGet(ACTOR_SECOND_GUIDE)->timer = 0;
 		fdActorSetSpeed(ACTOR_HEAD_GUIDE, 0.8);
 		fdActorSetSpeed(ACTOR_SECOND_GUIDE, 0.8);
 		fdActorSetScript(ACTOR_HEAD_GUIDE, KalayHeadGuideStopScript);
@@ -861,8 +861,8 @@ static void scKalayWatchTourGroupDeparture(void)
 		scKalayStartTouristWaiting(ACTOR_FIRST_TOURIST + 3);
 		do {
 			sySynch(1);
-		} while(fdActorGet(ACTOR_HEAD_GUIDE)->tmr == 0 ||
-			fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 1);
+		} while(fdActorGet(ACTOR_HEAD_GUIDE)->timer == 0 ||
+			fdActorGet(ACTOR_SECOND_GUIDE)->timer != 1);
 		fdActorSetScript(ACTOR_HEAD_GUIDE, KalayHeadGuideReturnScript);
 		fdActorSetScript(ACTOR_SECOND_GUIDE, KalaySecondGuideReturnScript);
 		fdActorStop(ACTOR_FIRST_TOURIST + 4);
@@ -1001,16 +1001,16 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetSpeed(ACTOR_FIRST_TOURIST + 6, 0.9);
 		fdActorSetSpeed(ACTOR_OURANOS, 0.9);
 		fdActorSetSpeed(ACTOR_SECOND_GUIDE, 0.85);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST + 1, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST + 2, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST + 3, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST + 5, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST + 4, 1);
-		fdActorSetSprPriority(ACTOR_FIRST_TOURIST + 6, 1);
-		fdActorSetSprPriority(ACTOR_OURANOS, 1);
-		fdActorSetSprPriority(ACTOR_HEAD_GUIDE, 1);
-		fdActorSetSprPriority(ACTOR_SECOND_GUIDE, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST + 1, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST + 2, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST + 3, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST + 5, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST + 4, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_TOURIST + 6, 1);
+		fdActorSetSpritePriority(ACTOR_OURANOS, 1);
+		fdActorSetSpritePriority(ACTOR_HEAD_GUIDE, 1);
+		fdActorSetSpritePriority(ACTOR_SECOND_GUIDE, 1);
 		fdActorStop(ACTOR_FIRST_TOURIST);
 		fdActorStop(ACTOR_FIRST_TOURIST + 1);
 		fdActorStop(ACTOR_FIRST_TOURIST + 2);
@@ -1032,11 +1032,11 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorSetScript(ACTOR_FIRST_TOURIST + 6, KalayTourGroupLeaveScript);
 		fdActorSetScript(ACTOR_OURANOS, KalayTourGroupLeaveScript);
 		closing = fdActorGet(ACTOR_SECOND_GUIDE);
-		closing->tmr = 0;
+		closing->timer = 0;
 		fdActorSetScript(ACTOR_SECOND_GUIDE, KalayTourGroupLeaveScript);
 		do {
 			sySynch(1);
-		} while(fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 1);
+		} while(fdActorGet(ACTOR_SECOND_GUIDE)->timer != 1);
 		fdScriptWait(80);
 		/* The late tourist finds that the rest of the group has already
 		   left. */
@@ -1066,11 +1066,11 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorJump(ACTOR_LATE_TOURIST, 4, 40);
 		fdActorSetSpeed(ACTOR_LATE_TOURIST, 1.2);
 		closing = fdActorGet(ACTOR_LATE_TOURIST);
-		closing->tmr = 0;
+		closing->timer = 0;
 		fdActorSetScript(ACTOR_LATE_TOURIST, KalayTourGroupLeaveScript);
 		do {
 			sySynch(1);
-		} while(fdActorGet(ACTOR_LATE_TOURIST)->tmr != 1);
+		} while(fdActorGet(ACTOR_LATE_TOURIST)->timer != 1);
 		fdActorSetPos(ACTOR_LATE_TOURIST, 359, 314);
 		fdActorGet(ACTOR_LATE_TOURIST)->facing = FACING_NORTH_NORTHEAST;
 		fdActorSetPos(ACTOR_HEAD_GUIDE, 455, 434);
@@ -1085,7 +1085,7 @@ static void scKalayWatchTourGroupDeparture(void)
 		fdActorReleaseById(ACTOR_FIRST_TOURIST + 5);
 		fdActorReleaseById(ACTOR_FIRST_TOURIST + 6);
 		fdActorReleaseById(ACTOR_OURANOS);
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		if(state->stepCue == 9) {
 			fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
 			fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
@@ -1096,7 +1096,7 @@ static void scKalayWatchTourGroupDeparture(void)
 		gmPlayMusic();
 		gmFlagSet(FLAG_KALAY_COLOSSO_TOUR_LEFT);
 	} else {
-		sySndPlay(SE_MAP_EXIT);
+		sySoundPlay(SE_MAP_EXIT);
 		syImportScriptSetExitRequest(state->stepCue);
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
@@ -1135,7 +1135,7 @@ static void scKalayStartTrackingLeader(void)
    again (ACTOR_PRIORITY_AUTOMATIC). */
 static void scKalayFreeLeaderPriority(void)
 {
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /* Nothing visible happens when Isaac steps onto metatile (14, 51) or (43, 51),
@@ -1145,7 +1145,7 @@ static void scKalayFreeLeaderPriority(void)
    is drawn whole in front of the water and the ledges' edges. */
 static void scKalayFixLeaderPriority(void)
 {
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /* Catch in Kalay pulls in the Nut circling there, until it is caught. */
@@ -1155,7 +1155,8 @@ static void scKalayCatchTownNut(void)
 	sySynch(1);
 	fdActorSetPos(ACTOR_TOWN_NUT, 0, 0);
 	gmFlagSet(FLAG_KALAY_TOWN_NUT_CAUGHT);
-	fdItemDispShowItem(ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
+	fdItemDisplayShowItem(
+		ITEM_NUT, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	fdPartyInventoryGiveItem(ITEM_NUT, 0);
 }
 
@@ -1202,7 +1203,7 @@ static void scKalayPrepareTown(void)
 {
 	ORBITING_MAP_ACTOR	   *nut;
 	ICON_TRANSFER		   *glyph;
-	ORBITING_MAP_ACTOR_SPR *spr;
+	ORBITING_MAP_ACTOR_SPR *sprite;
 
 	scKalayCatchUpWithLunpa();
 	if(MainRoutineStateWork.entrance == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
@@ -1210,25 +1211,26 @@ static void scKalayPrepareTown(void)
 	}
 	/* The second guide shares the first's sprite, drawn with its green and blue
 	   swapped to tell them apart. */
-	fdActorSetSprColById(ACTOR_SECOND_GUIDE, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_SECOND_GUIDE, SPRITE_COLOR_RBG);
 	if(gmFlagGet(FLAG_KALAY_TOWN_NUT_CAUGHT) != 0) {
 		fdActorSetPos(ACTOR_TOWN_NUT, 0, 0);
 	} else {
 		nut = (ORBITING_MAP_ACTOR *)fdActorGet(ACTOR_TOWN_NUT);
-		spr = nut->spr;
-		spr->pri = 1;
-		spr->fullCol = 0;
-		spr->palNum = 0;
-		spr->cnt = 0;
-		nut->retainSprCache = 1;
-		nut->motionFlg = 0;
+		sprite = nut->sprite;
+		sprite->priority = 1;
+		sprite->fullColor = 0;
+		sprite->paletteNumber = 0;
+		sprite->count = 0;
+		nut->retainSpriteCache = 1;
+		nut->motionFlags = 0;
 		nut->y = toFIXED(10);
 		nut->frozen = 1;
-		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		glyph =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_NUT);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
-		nut->orbitAng = 0;
+		nut->orbitAngle = 0;
 		nut->orbitCenterX = nut->x;
 		nut->orbitCenterY = nut->y;
 		nut->orbitCenterZ = nut->z;
@@ -1333,11 +1335,11 @@ static void scKalayPrepareTunnelTreasureRoom(void)
 			fdActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 			fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 9, 14);
 			fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 9, 45);
-			fdActorGet(ACTOR_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		}
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_STATUE), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_SECOND_STATUE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_STATUE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_SECOND_STATUE), 0);
 	sySetTickEvent(scKalayUpdateTunnelStatues, EVENT_PASS_TICK);
 	/* Once the tunnel is open, the man who waited for it stands here and the
 	   barred gate beside him stands open. */
@@ -1454,7 +1456,7 @@ static void scKalayStartTouristWaiting(Sint32 actorId)
 	Uint32 random;
 
 	actor = fdActorGet(actorId);
-	actor->tmr = actorId;
+	actor->timer = actorId;
 	random = syRandomNext();
 	actor->userValue = (random * 5) >> 12;
 	fdActorStartScript(actor, KalayWaitingTouristScript);
@@ -1480,28 +1482,28 @@ static void scKalayUpdatePacingGuides(void)
 		KalayPacingStep++;
 		break;
 	case 1:
-		if(fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 0) {
+		if(fdActorGet(ACTOR_SECOND_GUIDE)->timer != 0) {
 			scKalayClearScriptDone(fdActorGet(ACTOR_HEAD_GUIDE));
 			fdActorSetScript(ACTOR_HEAD_GUIDE, KalayGuidePaceScript);
 			KalayPacingStep++;
 		}
 		break;
 	case 2:
-		if(fdActorGet(ACTOR_HEAD_GUIDE)->tmr != 0) {
+		if(fdActorGet(ACTOR_HEAD_GUIDE)->timer != 0) {
 			scKalayClearScriptDone(fdActorGet(ACTOR_HEAD_GUIDE));
 			fdActorSetScript(ACTOR_HEAD_GUIDE, KalayGuideCountScript);
 			KalayPacingStep++;
 		}
 		break;
 	case 3:
-		if(fdActorGet(ACTOR_HEAD_GUIDE)->tmr != 0) {
+		if(fdActorGet(ACTOR_HEAD_GUIDE)->timer != 0) {
 			scKalayClearScriptDone(fdActorGet(ACTOR_SECOND_GUIDE));
 			fdActorSetScript(ACTOR_SECOND_GUIDE, KalayGuidePaceScript);
 			KalayPacingStep++;
 		}
 		break;
 	case 4:
-		if(fdActorGet(ACTOR_SECOND_GUIDE)->tmr != 0) {
+		if(fdActorGet(ACTOR_SECOND_GUIDE)->timer != 0) {
 			KalayPacingStep = 0;
 		}
 		break;
@@ -1521,7 +1523,7 @@ static void scKalayIvanMeetsPalaceGuards(void)
 	sySynch(1);
 	fdCameraSetSpeed(0.2);
 	fdCameraMoveTo(192, CAMERA_KEEP, 252, 1);
-	FieldStateWork->transitionFrm = 40;
+	FieldStateWork->transitionFrame = 40;
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 192, 278);
@@ -1530,14 +1532,14 @@ static void scKalayIvanMeetsPalaceGuards(void)
 	fdActorGet(ACTOR_PALACE_GUARD)->facing = FACING_SOUTH_SOUTHEAST;
 	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->facing = FACING_SOUTH_SOUTHWEST;
 	sySynch(1);
-	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_PALACE_GUARD, 184, 232);
 	fdActorWalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 198, 232);
 	fdActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	fdActorSetAnimationAndWait(ACTOR_PALACE_GUARD, ANIM_SHAKE_HEAD);
 	fdScriptSetMessageId(MsgKalayLordHammetsPalaceLordAway);
@@ -1683,14 +1685,14 @@ static void scKalayIvanMeetsPalaceGuards(void)
 	fdActorSetSpeed(ACTOR_SECOND_PALACE_GUARD, 0.8);
 	fdActorGet(ACTOR_PALACE_GUARD)->facing = FACING_EAST;
 	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->facing = FACING_WEST;
-	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkTo(ACTOR_PALACE_GUARD, 168, 232);
 	fdActorWalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 212, 232);
 	fdActorSetAnimation(ACTOR_PALACE_GUARD, ANIM_STAND);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SECOND_PALACE_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_IVAN, 192, 232);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	scKalayAnimatePalaceDoor();
@@ -1707,7 +1709,7 @@ static void scKalayIvanMeetsPalaceGuards(void)
 	fdActorWalkToAndWait(ACTOR_SECOND_PALACE_GUARD, 194, 212);
 	fdActorSetPos(ACTOR_PALACE_GUARD, 0, 0);
 	fdActorSetPos(ACTOR_SECOND_PALACE_GUARD, 0, 0);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
@@ -1731,14 +1733,14 @@ static void scKalayHammetReturnsToPalace(void)
 	sySynch(1);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
 	fdActorSetPos(ACTOR_WAGON, 440, 522);
-	fdActorSetSprFlags(fdActorGet(ACTOR_WAGON), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_WAGON), 0);
 	fdCameraMoveTo(440, CAMERA_KEEP, 522, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	fdScriptStartScreenTransition();
 	fdCameraSetSpeed(1.6);
 	fdCameraMoveTo(440, CAMERA_KEEP, 400, 1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetSpeed(ACTOR_WAGON, 1.6);
 	fdActorWalkToAndWait(ACTOR_WAGON, 440, 400);
 	fdCameraSetSpeed(0.75);
@@ -1746,7 +1748,7 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorSetSpeed(ACTOR_WAGON, 0.8);
 	fdActorWalkToAndWait(ACTOR_WAGON, 440, 300);
 	fdActorSetAnimation(ACTOR_WAGON, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(40);
 	fdActorSetSpeed(ACTOR_BUNZA, 0.8);
 	fdActorSetPos(ACTOR_BUNZA, 439, 306);
@@ -1944,13 +1946,13 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorFaceDirection(ACTOR_TUNNEL_GUARD, FACING_NORTH, 10);
 	fdActorRunRepeatedMotion(ACTOR_TUNNEL_GUARD, 2);
 	/* The guard opens the passage and Hammet goes in. */
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdMapGridCopyMetatilesTo(71, 60, 76, 11, 2, 1);
 	fdMapGridCopyMetatileAttributes(71, 60, 2, 1, 16, 11);
 	fdScriptWait(20);
 	fdActorWalkToAndWait(ACTOR_TUNNEL_GUARD, 246, 198);
 	fdActorFaceDirection(ACTOR_TUNNEL_GUARD, FACING_EAST, 20);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.6);
 	fdCameraMoveTo(248, CAMERA_KEEP, 170, 1);
 	fdActorWalkToAndWait(ACTOR_HAMMET, 270, 198);
@@ -1993,7 +1995,7 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 439, 312);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 439, 306);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdActorSetSpeed(ACTOR_WAGON, 0.8);
 	fdCameraSetSpeed(1);
 	fdCameraMoveTo(440, CAMERA_KEEP, 420, 1);
@@ -2003,9 +2005,9 @@ static void scKalayHammetReturnsToPalace(void)
 	fdActorSetSpeed(ACTOR_WAGON, 1.6);
 	fdActorWalkToAndWait(ACTOR_WAGON, 440, 500);
 	fdActorWalkTo(ACTOR_WAGON, 440, 600);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	state = FieldStateWork;
-	state->transitionFrm = 24;
+	state->transitionFrame = 24;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -2019,7 +2021,7 @@ static void scKalayHammetReturnsToPalace(void)
    one metatile, when there is room, with Isaac following it. */
 static void scKalayPushTunnelStatue(void)
 {
-	FIELD_POS dst;
+	FIELD_POS dest;
 	ACTOR	 *leader;
 	ACTOR	 *statue;
 	Sint32	  direction;
@@ -2034,23 +2036,23 @@ static void scKalayPushTunnelStatue(void)
 		(leader->z.part[0].integer + DIRECTION_STEP_Z(probeStep)) >> 4);
 	if(statue != NULL) {
 		statue->layer = MAPGRID_LAYER_OVERHEAD;
-		fdActorStepFrom(&dst, statue, PushedActorDirectionSteps[direction]);
-		if(syFieldActorCheckMovementCollision(statue, &dst) <= 0) {
+		fdActorStepFrom(&dest, statue, PushedActorDirectionSteps[direction]);
+		if(syFieldActorCheckMovementCollision(statue, &dest) <= 0) {
 			fdActorSelectAnimation(leader, ANIM_PUSH);
 			sySynch(15);
-			sySndPlay(SE_PUSH);
+			sySoundPlay(SE_PUSH);
 			statue->speedLimit = toFIXED(1) / 5;
 			statue->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(statue, dst.x, dst.y, dst.z);
+			syFieldActorSetMoveTargetFX(statue, dest.x, dest.y, dest.z);
 			leader->speedLimit = toFIXED(1) / 5;
 			leader->acceleration = toFIXED(1) / 5;
-			syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
+			syFieldActorSetMoveTargetFX(leader, dest.x, dest.y, dest.z);
 			fdActorWaitForMove(statue);
 			fdPlayQueuedMusic();
-			statue->x.fixed = dst.x;
-			statue->z.fixed = dst.z;
-			statue->velX = 0;
-			statue->velZ = 0;
+			statue->x.fixed = dest.x;
+			statue->z.fixed = dest.z;
+			statue->velocityX = 0;
+			statue->velocityZ = 0;
 			fdActorSelectAnimation(leader, ANIM_STAND);
 			scKalayUpdateTunnelPassages();
 		}
@@ -2214,27 +2216,27 @@ static Sint32 scKalayUpdateTunnelParticle(ACTOR *particle)
 static void scKalayUpdateTunnelParticle(ACTOR *particle)
 {
 #endif
-	Sint32 velX;
-	Sint32 velY;
+	Sint32 velocityX;
+	Sint32 velocityY;
 
-	if(particle->tmr == 0) {
+	if(particle->timer == 0) {
 		fdActorRelease(particle);
-	} else if(particle->tmr == 1) {
-		particle->velX = 0;
-		particle->velY = 0;
+	} else if(particle->timer == 1) {
+		particle->velocityX = 0;
+		particle->velocityY = 0;
 		particle->x.fixed = 0;
 		particle->y.fixed = 0;
 	} else {
 		particle->scaleX += toFIXED(1) / 32;
 		particle->scaleY += toFIXED(1) / 32;
 	}
-	particle->x.fixed += particle->velX;
-	particle->y.fixed += particle->velY;
-	velX = particle->velX;
-	velY = particle->velY;
-	particle->velX = velX - velX / TUNNEL_PARTICLE_DRAG_X;
-	particle->velY = velY - velY / TUNNEL_PARTICLE_DRAG_Y;
-	particle->tmr--;
+	particle->x.fixed += particle->velocityX;
+	particle->y.fixed += particle->velocityY;
+	velocityX = particle->velocityX;
+	velocityY = particle->velocityY;
+	particle->velocityX = velocityX - velocityX / TUNNEL_PARTICLE_DRAG_X;
+	particle->velocityY = velocityY - velocityY / TUNNEL_PARTICLE_DRAG_Y;
+	particle->timer--;
 #if FIX_FUNCTION_SIGNATURES
 	return 1;
 #endif
@@ -2267,14 +2269,14 @@ static void scKalayUpdateTunnelStatues(void)
 	if((Uint32)(firstStatue->x.part[0].integer - FIRST_STATUE_BY_GATE_WEST_X) <=
 			FIRST_STATUE_BY_GATE_EAST_X - FIRST_STATUE_BY_GATE_WEST_X &&
 		firstStatue->z.part[0].integer > FIRST_STATUE_BY_GATE_NORTH_Z) {
-		firstStatue->spr->image.pri =
-			fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
+		firstStatue->sprite->image.priority =
+			fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority;
 	} else if(!gmFlagGet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
 		firstStatue->x.part[0].integer <= FIRST_STATUE_SPARKLE_X &&
 		(TickCount & 1) == 0) {
 		if(!fdScriptGetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
 			fdQueueMusic(-1);
-			sySndPlay(SE_WATER_DRAIN);
+			sySoundPlay(SE_WATER_DRAIN);
 			gmFlagSet(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
 		}
 		scKalaySpawnTunnelParticle(
@@ -2285,7 +2287,7 @@ static void scKalayUpdateTunnelStatues(void)
 		(TickCount & 1) == 0) {
 		if(!fdScriptGetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
 			fdQueueMusic(-1);
-			sySndPlay(SE_WATER_DRAIN);
+			sySoundPlay(SE_WATER_DRAIN);
 			gmFlagSet(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
 		}
 		scKalaySpawnTunnelParticle(secondStatue->x.fixed, secondStatue->y.fixed,
@@ -2303,15 +2305,15 @@ static void scKalaySpawnTunnelParticle(Sint32 x, Sint32 height, Sint32 z)
 	particle = syFieldActorCreate(SPRITE_DUST_PUFF, x - toFIXED(8),
 		toFIXED(syRandomBelow(8)) + height + toFIXED(16), z);
 	if(particle != NULL) {
-		particle->motionFlg = 0;
-		particle->spr->image.pri = 2;
-		fdActorSetSprCol(particle, SPRITE_COLOR_BLUE_TINT);
-		fdActorSetSprFlags(particle, 0);
+		particle->motionFlags = 0;
+		particle->sprite->image.priority = 2;
+		fdActorSetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
+		fdActorSetSpriteFlags(particle, 0);
 		/* It drifts up to a pixel left and up to three up or down each
 		   tick. */
-		particle->velX = toFIXED((syRandomBelow(2)) - 1);
-		particle->velY = toFIXED((syRandomBelow(6)) - 3);
-		particle->tmr = 20;
+		particle->velocityX = toFIXED((syRandomBelow(2)) - 1);
+		particle->velocityY = toFIXED((syRandomBelow(6)) - 3);
+		particle->timer = 20;
 		particle->frozen = 1;
 		fdActorSelectAnimation(particle, 1);
 		fdActorStartScript(particle, KalayTunnelParticleScript);
@@ -2322,16 +2324,16 @@ static void scKalaySpawnTunnelParticle(Sint32 x, Sint32 height, Sint32 z)
 static void scKalayUpdateNutOrbit(void)
 {
 	ORBITING_MAP_ACTOR *nut = (ORBITING_MAP_ACTOR *)fdActorGet(ACTOR_TOWN_NUT);
-	SPR				   *sprite = (SPR *)nut->spr;
-	FIXED				offset = sySin(nut->orbitAng) * 2;
+	SPR				   *sprite = (SPR *)nut->sprite;
+	FIXED				offset = sySin(nut->orbitAngle) * 2;
 
 	if(offset > 0) {
 		offset = -offset;
 	}
-	nut->x = nut->orbitCenterX + syCos(nut->orbitAng) * 2;
+	nut->x = nut->orbitCenterX + syCos(nut->orbitAngle) * 2;
 	nut->y = nut->orbitCenterY + offset;
-	sprite->rotation = syCos(nut->orbitAng + DEGtoANG(180)) >> 3;
-	nut->orbitAng += syRandomBelow(512) + syRandomBelow(512) + TRIG_TURN / 64;
+	sprite->rotation = syCos(nut->orbitAngle + DEGtoANG(180)) >> 3;
+	nut->orbitAngle += syRandomBelow(512) + syRandomBelow(512) + TRIG_TURN / 64;
 }
 
 /* Frost on the puddle in the drained west pool of the Kalay Tunnel freezes it
@@ -2343,9 +2345,9 @@ static void scKalayFreezePuddle(void)
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 9, 14);
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 9, 45);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_TUNNEL_PUDDLE_FROZEN);
 }

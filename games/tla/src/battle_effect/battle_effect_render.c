@@ -18,7 +18,7 @@
 typedef struct SOLID_FACE {
 	Sint32 corner[3];
 	Uint8  unread[12]; /* the renderer skips them */
-	Uint8  col;
+	Uint8  color;
 	Uint8  padding[3];
 } SOLID_FACE;
 
@@ -28,50 +28,50 @@ typedef struct SOLID_FACE {
 	{ \
 		Sint32 left = FIXEDtoINT(xa); \
 		Sint32 right = FIXEDtoINT(xb); \
-		Sint32 rowOfs; \
+		Sint32 rowOffset; \
 		Sint32 x; \
 \
 		if(left > right) \
 			XOR_SWAP(left, right); \
-		rowOfs = CANVAS_ROW_OFFSET(row); \
+		rowOffset = CANVAS_ROW_OFFSET(row); \
 		for(x = left; x != right; x++) { \
-			Sint32 pixel = ((x >> 3) << 6) + (x & 7) + rowOfs; \
+			Sint32 pixel = ((x >> 3) << 6) + (x & 7) + rowOffset; \
 \
-			if(canvas[pixel] < col) \
-				canvas[pixel] = col; \
+			if(canvas[pixel] < color) \
+				canvas[pixel] = color; \
 		} \
 	}
 
 /* Unused: nothing calls it. A solid renderer, the filled twin of
-   btRenderDrawMeshWireframe. Transforms the vertexCnt points in the sheet
+   btRenderDrawMeshWireframe. Transforms the vertexCount points in the sheet
    block by the current matrix, then fills every face of the effect state's list
    that faces the camera into the canvas, centred at (64, 64), keeping the
    brighter colour where faces overlap. Each triangle is sorted by y and filled
    in two halves, top to middle and middle to bottom, along 16.16 edge
    slopes. */
-UNUSED void btRenderFillMesh(Sint32 vertexCnt, Sint32 faceCnt)
+UNUSED void btRenderFillMesh(Sint32 vertexCount, Sint32 faceCount)
 {
 	Uint8	   *canvas = RamHeapSlots->battleCanvas;
 	Sint32	   *vertices = RamHeapSlots->battleSheet;
-	SOLID_FACE *faces = (SOLID_FACE *)RamHeapSlots->battleEff;
+	SOLID_FACE *faces = (SOLID_FACE *)RamHeapSlots->battleEffect;
 	Sint32		i;
 	Sint32	   *ax, *bx, *cx, *cy, *ay, *by;
 	Sint32		facing;
 	Sint32 (*mul)(Sint32, Sint32);
 	FIXED  slopeA, slopeB;
 	Sint32 top, middle, bottom;
-	Uint8  col;
+	Uint8  color;
 	FIXED  edgeA, edgeB;
 	Sint32 row;
 
 	/* From here on, the count of words: three to a point. */
-	vertexCnt *= 3;
-	for(i = 0; i != vertexCnt; i += 3)
+	vertexCount *= 3;
+	for(i = 0; i != vertexCount; i += 3)
 		syCalcPoint(&vertices[i], &vertices[i]);
 
-	for(i = 0; i != faceCnt; i++) {
+	for(i = 0; i != faceCount; i++) {
 		/* The three corners of each face are copied after the vertices. */
-		ax = (Sint32 *)(vertexCnt * 4 + (Sint32)vertices);
+		ax = (Sint32 *)(vertexCount * 4 + (Sint32)vertices);
 		bx = ax + 3;
 		cx = ax + 6;
 		cy = ax + 7;
@@ -89,7 +89,7 @@ UNUSED void btRenderFillMesh(Sint32 vertexCnt, Sint32 faceCnt)
 		   away. */
 		facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
 		if(facing >= 0) {
-			col = faces[i].col;
+			color = faces[i].color;
 			*ax += toFIXED(64);
 			*ay += toFIXED(64);
 			*bx += toFIXED(64);
@@ -162,7 +162,7 @@ typedef struct MESH_POLYGON {
 	{ \
 		Uint8 *row = state->sheet; \
 		Sint32 left, right, u, v; \
-		Sint32 rowOfs; \
+		Sint32 rowOffset; \
 		Sint32 x; \
 \
 		row += ((FIXEDtoINT(vA)) << textureShift) + (FIXEDtoINT(uA)); \
@@ -172,11 +172,11 @@ typedef struct MESH_POLYGON {
 		v = 0; \
 		if(left > right) \
 			XOR_SWAP(left, right); \
-		rowOfs = CANVAS_ROW_OFFSET(y); \
+		rowOffset = CANVAS_ROW_OFFSET(y); \
 		for(x = left; x != right; x++) { \
 			Sint32 texel = \
 				(FIXEDtoINT(u)) + ((FIXEDtoINT(v)) << textureShift); \
-			Sint32 at = ((x >> 3) << 6) + (x & 7) + rowOfs; \
+			Sint32 at = ((x >> 3) << 6) + (x & 7) + rowOffset; \
 \
 			if(canvas[at] < row[texel]) \
 				canvas[at] = row[texel]; \
@@ -205,14 +205,14 @@ typedef struct MESH_POLYGON {
 			width, syMulFX(dvB, ax[4] - ax[1]) - (uv[1][1] - uv[0][1])); \
 	}
 
-/* Unused: nothing calls it. Transforms vertexCnt vertices (16.16 x, y, z in
+/* Unused: nothing calls it. Transforms vertexCount vertices (16.16 x, y, z in
    the heap's vertex buffer) in place, then draws each front-facing face of the
    mesh at the start of the effect state as an affine-textured triangle: uvs
    gives each face's three texture corners (16.16), the texture is the effect
    sprite sheet, textureShift its row length as a power of two. Coordinates are
    offset by 64 pixels into the canvas. */
-UNUSED void btRenderDrawTexturedMesh(
-	Sint32 vertexCnt, Sint32 faceCnt, Sint32 (*uvs)[3][2], Sint32 textureShift)
+UNUSED void btRenderDrawTexturedMesh(Sint32 vertexCount, Sint32 faceCount,
+	Sint32 (*uvs)[3][2], Sint32									textureShift)
 {
 	Sint32				 i;
 	Sint32				*vertices;
@@ -229,20 +229,20 @@ UNUSED void btRenderDrawTexturedMesh(
 	Uint32				 y;
 
 	vertices = RamHeapSlots->battleSheet;
-	faces = (MESH_POLYGON *)RamHeapSlots->battleEff;
+	faces = (MESH_POLYGON *)RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	vertexCnt *= 3;
-	for(i = 0; i != vertexCnt; i += 3)
+	vertexCount *= 3;
+	for(i = 0; i != vertexCount; i += 3)
 		syCalcPoint(&vertices[i], &vertices[i]);
 
-	for(i = 0; i != faceCnt; i++) {
+	for(i = 0; i != faceCount; i++) {
 		/* The three corners of each face are copied after the vertices. */
-		ax = (Sint32 *)(vertexCnt * 4 + (Sint32)vertices);
-		bx = &vertices[vertexCnt + 3];
-		cx = &vertices[vertexCnt + 6];
-		cy = &vertices[vertexCnt + 7];
-		ay = &vertices[vertexCnt + 1];
-		by = &vertices[vertexCnt + 4];
+		ax = (Sint32 *)(vertexCount * 4 + (Sint32)vertices);
+		bx = &vertices[vertexCount + 3];
+		cx = &vertices[vertexCount + 6];
+		cy = &vertices[vertexCount + 7];
+		ay = &vertices[vertexCount + 1];
+		by = &vertices[vertexCount + 4];
 		syDMAXCopy(
 			&vertices[faces[i].vertex[0]], ax, DMA_COPY_WORDS(3), REG_DMA3);
 		syDMAXCopy(
@@ -252,7 +252,7 @@ UNUSED void btRenderDrawTexturedMesh(
 
 		/* Back faces are skipped. */
 		if(syMulFX(*bx - *ax, *cy - *ay) - syMulFX(*cx - *ax, *by - *ay) >= 0) {
-			state = RamHeapSlots->battleEff;
+			state = RamHeapSlots->battleEffect;
 			syDMAXCopy(uvs[i], uv, DMA_COPY_WORDS(6), REG_DMA3);
 			*ax += toFIXED(64);
 			*ay += toFIXED(64);
@@ -371,30 +371,30 @@ UNUSED void btRenderDrawTexturedMesh(
 typedef struct WIRE_FACE {
 	Sint32 corner[3];
 	Uint8  unread[12]; /* the renderer skips them */
-	Uint8  col;
+	Uint8  color;
 	Uint8  padding[3];
 } WIRE_FACE;
 
-/* Unused: nothing calls it. A wireframe renderer. Transforms the vertexCnt
+/* Unused: nothing calls it. A wireframe renderer. Transforms the vertexCount
    points in the sheet block by the current matrix, then draws the three edges
    of every face of the effect state's list that faces the camera (its corners
    run counter-clockwise on screen) as clipped lines into the canvas, centred at
    (64, 64). */
-UNUSED void btRenderDrawMeshWireframe(Sint32 vertexCnt, Sint32 faceCnt)
+UNUSED void btRenderDrawMeshWireframe(Sint32 vertexCount, Sint32 faceCount)
 {
 	Sint32	  *vertices = RamHeapSlots->battleSheet;
-	WIRE_FACE *faces = (WIRE_FACE *)RamHeapSlots->battleEff;
+	WIRE_FACE *faces = (WIRE_FACE *)RamHeapSlots->battleEffect;
 	Sint32	   i;
 	Sint32	   facing;
-	Sint32	   col;
+	Sint32	   color;
 
-	vertexCnt *= 3;
-	for(i = 0; i != vertexCnt; i += 3)
+	vertexCount *= 3;
+	for(i = 0; i != vertexCount; i += 3)
 		syCalcPoint(&vertices[i], &vertices[i]);
 
 	/* The three corners of each face are copied after the vertices. */
-	for(i = 0; i != faceCnt; i++) {
-		Sint32 *x0 = (Sint32 *)(vertexCnt * 4 + (Sint32)vertices);
+	for(i = 0; i != faceCount; i++) {
+		Sint32 *x0 = (Sint32 *)(vertexCount * 4 + (Sint32)vertices);
 		Sint32 *x1 = x0 + 3;
 		Sint32 *x2 = x0 + 6;
 		Sint32 *y2 = x0 + 7;
@@ -412,7 +412,7 @@ UNUSED void btRenderDrawMeshWireframe(Sint32 vertexCnt, Sint32 faceCnt)
 		   away. */
 		facing = syMulFX(*x1 - *x0, *y2 - *y0) - syMulFX(*x2 - *x0, *y1 - *y0);
 		if(facing >= 0) {
-			col = faces[i].col;
+			color = faces[i].color;
 			*x0 += toFIXED(64);
 			*y0 += toFIXED(64);
 			*x1 += toFIXED(64);
@@ -421,23 +421,23 @@ UNUSED void btRenderDrawMeshWireframe(Sint32 vertexCnt, Sint32 faceCnt)
 			*y2 += toFIXED(64);
 			btEffectDrawClippedCanvasLine(FIXED_INTEGER_PART(*x0),
 				FIXED_INTEGER_PART(*y0), FIXED_INTEGER_PART(*x1),
-				FIXED_INTEGER_PART(*y1), col);
+				FIXED_INTEGER_PART(*y1), color);
 			btEffectDrawClippedCanvasLine(FIXED_INTEGER_PART(*x1),
 				FIXED_INTEGER_PART(*y1), FIXED_INTEGER_PART(*x2),
-				FIXED_INTEGER_PART(*y2), col);
+				FIXED_INTEGER_PART(*y2), color);
 			btEffectDrawClippedCanvasLine(FIXED_INTEGER_PART(*x0),
 				FIXED_INTEGER_PART(*y0), FIXED_INTEGER_PART(*x2),
-				FIXED_INTEGER_PART(*y2), col);
+				FIXED_INTEGER_PART(*y2), color);
 		}
 	}
 }
 
 /* btEffectBuildBlitter(slot, 7, 7, flags, mode) for a 128 by 128 canvas, with
    the flags and the mode packed into one word: mode << 4 | flags. */
-Sint32 btEffectLoadBlitter(Sint32 slot, Sint32 modeAndFlg)
+Sint32 btEffectLoadBlitter(Sint32 slot, Sint32 modeAndFlags)
 {
 	return btEffectBuildBlitter(
-		slot, 7, 7, modeAndFlg & 0xf, (Uint32)modeAndFlg >> 4);
+		slot, 7, 7, modeAndFlags & 0xf, (Uint32)modeAndFlags >> 4);
 }
 
 /* btEffectBuildBlitter walks The Lost Age's blitter template once and writes
@@ -447,28 +447,28 @@ Sint32 btEffectLoadBlitter(Sint32 slot, Sint32 modeAndFlg)
    from the first by its measured length. */
 
 /* Copies two words from source to destination with one block load and store. */
-static __inline__ void CopyWords2(const void *src, void *dst)
+static __inline__ void CopyWords2(const void *src, void *dest)
 {
 	ASM_REGISTER(const void *from, "r0") = src;
-	ASM_REGISTER(void *to, "r1") = dst;
+	ASM_REGISTER(void *to, "r1") = dest;
 	ASM_COPY_WORDS_2(from, to);
 }
 
 /* Copies three words from source to destination with one block load and
    store. */
-static __inline__ void CopyWords3(const void *src, void *dst)
+static __inline__ void CopyWords3(const void *src, void *dest)
 {
 	ASM_REGISTER(const void *from, "r0") = src;
-	ASM_REGISTER(void *to, "r1") = dst;
+	ASM_REGISTER(void *to, "r1") = dest;
 	ASM_COPY_WORDS_3(from, to);
 }
 
 /* Copies four words from source to destination with one block load and
    store. */
-static __inline__ void CopyWords4(const void *src, void *dst)
+static __inline__ void CopyWords4(const void *src, void *dest)
 {
 	ASM_REGISTER(const void *from, "r0") = src;
-	ASM_REGISTER(void *to, "r1") = dst;
+	ASM_REGISTER(void *to, "r1") = dest;
 	ASM_COPY_WORDS_4(from, to);
 }
 
@@ -485,15 +485,15 @@ static __inline__ void CopyWords4(const void *src, void *dst)
 #define BRANCH_FIELD(site, target) \
 	((((Uint32)(target) - (Uint32)(site) - 8) >> 2) & 0xffffff)
 
-/* Writing a blitter at dst: a word; words copied from a fragment, by CPU or
+/* Writing a blitter at dest: a word; words copied from a fragment, by CPU or
    DMA, once or twice; a branch to target; or the branch at site aimed here. */
 #define PUT(word) \
 	do { \
-		*dst++ = (word); \
+		*dest++ = (word); \
 	} while(0)
 #define COPY_FROM(from, n) \
-	CopyWords##n(from, dst); \
-	dst += (n)
+	CopyWords##n(from, dest); \
+	dest += (n)
 #define COPY(n) \
 	do { \
 		COPY_FROM(src, n); \
@@ -501,37 +501,37 @@ static __inline__ void CopyWords4(const void *src, void *dst)
 	} while(0)
 #define COPY_LONG(n) \
 	do { \
-		syDMAXCopy(src, dst, control | (n), REG_DMA3); \
-		dst += (n); \
+		syDMAXCopy(src, dest, control | (n), REG_DMA3); \
+		dest += (n); \
 		src += (n); \
 	} while(0)
 #define COPY_DMA(from, n) \
-	syDMAXCopy(from, dst, DMA_COPY_WORDS(n), REG_DMA3); \
-	dst += (n)
+	syDMAXCopy(from, dest, DMA_COPY_WORDS(n), REG_DMA3); \
+	dest += (n)
 #define COPY_TWICE(from, n) \
 	{ \
 		const Uint32 *part = (from); \
 		Uint32		  control = DMA_COPY_WORDS(n); \
-		syDMAXCopy(part, dst, control, REG_DMA3); \
-		dst += (n); \
-		syDMAXCopy(part, dst, control, REG_DMA3); \
-		dst += (n); \
+		syDMAXCopy(part, dest, control, REG_DMA3); \
+		dest += (n); \
+		syDMAXCopy(part, dest, control, REG_DMA3); \
+		dest += (n); \
 	}
 #define PUT_BRANCH(target) \
-	*dst = *src++ + BRANCH_FIELD(dst, target); \
-	dst++
+	*dest = *src++ + BRANCH_FIELD(dest, target); \
+	dest++
 #define PATCH(site) \
 	do { \
-		*(site) |= BRANCH_FIELD(site, dst); \
+		*(site) |= BRANCH_FIELD(site, dest); \
 	} while(0)
 
 /* Writes a drawing function for the canvas into heap slot `slot`, built from
    the template BlitterTemplate for one clip, mirroring and blend mode. */
-Sint32 btEffectBuildBlitter(
-	Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flg, Uint32 mode)
+Sint32 btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift,
+	Sint32 flags, Uint32 mode)
 {
 	const Uint32 *src;
-	Uint32		 *dst;
+	Uint32		 *dest;
 	Uint32		 *noRows;
 	Uint32		 *noColumns;
 	Uint32		 *row;
@@ -542,13 +542,13 @@ Sint32 btEffectBuildBlitter(
 	Uint32		  control;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	Uint32 frm[34];
+	Uint32 frame[34];
 
 	src = BlitterTemplate;
-	/* FAKEMATCH(signature): dst, a Uint32 *, holds the blitter's size before it
-	 * holds the allocation. */
-	dst = (Uint32 *)BLITTER_BYTES;
-	dst = syHeapSlotAlloc(slot, (Sint32)dst);
+	/* FAKEMATCH(signature): dest, a Uint32 *, holds the blitter's size before
+	 * it holds the allocation. */
+	dest = (Uint32 *)BLITTER_BYTES;
+	dest = syHeapSlotAllocate(slot, (Sint32)dest);
 
 	/* Block 1, the entry code. */
 	COPY(4);
@@ -556,27 +556,27 @@ Sint32 btEffectBuildBlitter(
 		COPY_FROM(BattleEffectMask, 3);
 	}
 
-	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
+	if((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
 		COPY_FROM(src, 3);
 	}
 	src += 3;
-	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {
+	if((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) {
 		COPY_FROM(src, 4);
 	}
 	src += 4;
-	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP) {
+	if((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) {
 		COPY_FROM(src, 3);
 	}
 	src += 3;
-	if((flg & COMPOSITE_FLIP) == 0) {
+	if((flags & COMPOSITE_FLIP) == 0) {
 		PUT(src[0]);
 	}
 	src += 1;
 
 	/* Block 2, the vertical clip: the height enters the last two words. */
-	if((flg & COMPOSITE_CLIP_Y) != 0) {
+	if((flags & COMPOSITE_CLIP_Y) != 0) {
 		COPY(2);
-		if((flg & COMPOSITE_FLIP_Y) != 0) {
+		if((flags & COMPOSITE_FLIP_Y) != 0) {
 			PUT(src[0]);
 		} else {
 			PUT(src[1]);
@@ -592,17 +592,17 @@ Sint32 btEffectBuildBlitter(
 	/* Block 3, the columns: the empty-rows skip, the width mask or the twelve
 	   clip words, the empty-columns skip, then the rest of the set-up. */
 	PUT(*src++);
-	noRows = dst;
+	noRows = dest;
 	PUT(*src++);
 
-	if((flg & COMPOSITE_CLIP_X) == 0) {
+	if((flags & COMPOSITE_CLIP_X) == 0) {
 		PUT(src[0] + (1 << widthShift) - 1);
 	}
 	src += 1;
-	if((flg & COMPOSITE_CLIP_X) != 0) {
+	if((flags & COMPOSITE_CLIP_X) != 0) {
 		PUT(src[0]);
 		PUT(src[1]);
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			PUT(src[2]);
 			PUT(src[3]);
 		} else {
@@ -612,7 +612,7 @@ Sint32 btEffectBuildBlitter(
 		PUT(src[6]);
 		PUT(src[7]);
 		PUT(src[8] + BlitterImmediatePowers[widthShift]);
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			PUT(src[9]);
 		} else {
 			PUT(src[10]);
@@ -622,14 +622,14 @@ Sint32 btEffectBuildBlitter(
 	src += 12;
 
 	PUT(*src++);
-	noColumns = dst;
+	noColumns = dest;
 	PUT(*src++);
 
 	control = DMA_COPY_WORDS(0);
 	COPY_LONG(6);
 
 	PUT(*src++);
-	if((flg & COMPOSITE_CLIP_X) == 0) {
+	if((flags & COMPOSITE_CLIP_X) == 0) {
 		PUT(src[0]);
 	}
 	src += 1;
@@ -638,34 +638,34 @@ Sint32 btEffectBuildBlitter(
 
 	/* Block 4, the row loop: its head, the leading partial run, the full-cell
 	   loop, the trailing partial run and the step back to the head. */
-	row = dst;
+	row = dest;
 	PUT(src[0]);
 	PUT(src[1] + (1 << (heightShift - 3)) - 1);
 	PUT(src[2] + ((widthShift - 3) << 7));
 	PUT(src[3]);
 	src += 4;
 
-	if((flg & COMPOSITE_CLIP_X) == 0) {
+	if((flags & COMPOSITE_CLIP_X) == 0) {
 		PUT(src[0]);
 	}
 	src += 1;
 
-	skip = dst + 1;
+	skip = dest + 1;
 	COPY(2);
-	if((flg & COMPOSITE_FLIP_X) != 0) {
+	if((flags & COMPOSITE_FLIP_X) != 0) {
 		PUT(src[0]);
 	} else {
 		PUT(src[1]);
 	}
 	src += 2;
 
-	run = dst;
-	runCopy = dst;
+	run = dest;
+	runCopy = dest;
 	switch(mode) {
 	default: {
 		const Uint32 *part;
 
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			part = BattleEffectCopyReverse;
 		} else {
 			part = BattleEffectCopyForward;
@@ -676,7 +676,7 @@ Sint32 btEffectBuildBlitter(
 	case BLITTER_TRANSPARENT: {
 		const Uint32 *part;
 
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			part = BattleEffectTransparentReverse;
 		} else {
 			part = BattleEffectTransparentForward;
@@ -687,7 +687,7 @@ Sint32 btEffectBuildBlitter(
 	case BLITTER_MAX: {
 		const Uint32 *part;
 
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			part = BattleEffectMaxReverse;
 		} else {
 			part = BattleEffectMaxForward;
@@ -696,7 +696,7 @@ Sint32 btEffectBuildBlitter(
 		break;
 	}
 	case BLITTER_ADDITIVE:
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			COPY_DMA(BattleEffectAdditiveReverse, 6);
 		} else {
 			COPY_DMA(BattleEffectAdditiveForward, 6);
@@ -706,43 +706,43 @@ Sint32 btEffectBuildBlitter(
 
 	PUT(*src++);
 	PUT_BRANCH(run);
-	runSize = (Uint8 *)dst - (Uint8 *)runCopy;
+	runSize = (Uint8 *)dest - (Uint8 *)runCopy;
 	PUT(*src++);
-	if((flg & COMPOSITE_CLIP_X) == 0) {
+	if((flags & COMPOSITE_CLIP_X) == 0) {
 		PUT(src[0]);
 		PUT(src[1]);
 	}
 	src += 2;
 	PATCH(skip);
 
-	skip = dst + 1;
+	skip = dest + 1;
 	COPY(2);
 
-	run = dst;
+	run = dest;
 	switch(mode) {
 	default:
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			COPY_DMA(BattleEffectCopy8Reverse, COPY8_WORDS);
 		} else {
 			COPY_DMA(BattleEffectCopy8Forward, COPY8_WORDS);
 		}
 		break;
 	case BLITTER_TRANSPARENT:
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			COPY_DMA(BattleEffectTransparent8Reverse, TRANSPARENT8_WORDS);
 		} else {
 			COPY_DMA(BattleEffectTransparent8Forward, TRANSPARENT8_WORDS);
 		}
 		break;
 	case BLITTER_MAX:
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			COPY_TWICE(BattleEffectMax4Reverse, MAX4_WORDS);
 		} else {
 			COPY_TWICE(BattleEffectMax4Forward, MAX4_WORDS);
 		}
 		break;
 	case BLITTER_ADDITIVE:
-		if((flg & COMPOSITE_FLIP_X) != 0) {
+		if((flags & COMPOSITE_FLIP_X) != 0) {
 			COPY_TWICE(BattleEffectColorReverse, COLOR_WORDS);
 		} else {
 			COPY_TWICE(BattleEffectColorForward, COLOR_WORDS);
@@ -751,7 +751,7 @@ Sint32 btEffectBuildBlitter(
 	}
 
 	PUT(*src++);
-	if((flg & COMPOSITE_CLIP_X) == 0) {
+	if((flags & COMPOSITE_CLIP_X) == 0) {
 		PUT(src[0]);
 		PUT(src[1]);
 	}
@@ -762,9 +762,9 @@ Sint32 btEffectBuildBlitter(
 	PATCH(skip);
 
 	PUT(*src++);
-	skip = dst;
+	skip = dest;
 	PUT(*src++);
-	if((flg & COMPOSITE_FLIP_X) != 0) {
+	if((flags & COMPOSITE_FLIP_X) != 0) {
 		PUT(src[0]);
 		src += 2;
 	} else {
@@ -772,16 +772,16 @@ Sint32 btEffectBuildBlitter(
 		src += 2;
 	}
 	{
-		Sint32 cnt = (Uint32)runSize / 4 * 4;
+		Sint32 count = (Uint32)runSize / 4 * 4;
 
 		/* FAKEMATCH(dead): the division by 4 rounded towards zero by hand,
 		 * under a test never true of a count of bytes. */
-		if(cnt < 0)
-			cnt += 3;
-		syDMAXCopy(runCopy, dst, DMA_COPY_WORDS(cnt >> 2), REG_DMA3);
-		dst += (Uint32)runSize / 4;
+		if(count < 0)
+			count += 3;
+		syDMAXCopy(runCopy, dest, DMA_COPY_WORDS(count >> 2), REG_DMA3);
+		dest += (Uint32)runSize / 4;
 		/* FAKEMATCH(dead): count set to 0, a store nothing reads. */
-		cnt = 0;
+		count = 0;
 	}
 	PATCH(skip);
 
@@ -800,39 +800,40 @@ Sint32 btEffectBuildBlitter(
 
 /* Unused: nothing calls it. Copies btRenderFillMeshKernel
    (render_fill_mesh_kernels.s), an ARM build of btRenderFillMesh: the same
-   transform of vertexCnt points centred at (64, 64), back faces dropped and
+   transform of vertexCount points centred at (64, 64), back faces dropped and
    each triangle sorted by y with XOR swaps, into a heap block (DMA 3, words),
    runs it there and frees the block. */
-UNUSED void btRenderRunFillMeshKernel(Sint32 vertexCnt, Sint32 faceCnt)
+UNUSED void btRenderRunFillMeshKernel(Sint32 vertexCount, Sint32 faceCount)
 {
 	void (*routine)(Sint32, Sint32);
 
 	RAM_CODE_LOAD(
 		routine, btRenderFillMeshKernel, btRenderFillMeshKernelCodeSize);
-	routine(vertexCnt, faceCnt);
+	routine(vertexCount, faceCount);
 	syHeapRelease(routine);
 }
 
 /* Copies the ARM vertex kernel into a heap block and runs it: count packed
    Sint8 vertices through the current transform into screen coordinates. */
-void btRenderTransformVertices(const void *corners, void *vertices, Sint32 cnt)
+void btRenderTransformVertices(
+	const void *corners, void *vertices, Sint32 count)
 {
 	void (*routine)(const void *, void *, Sint32);
 
 	RAM_CODE_LOAD(
 		routine, btRenderTransformKernel, btRenderTransformKernelCodeSize);
-	routine(corners, vertices, cnt);
+	routine(corners, vertices, count);
 	syHeapRelease(routine);
 }
 
 /* Projects count model vertices through syConvert3Dto2D into screen
    coordinates. */
 void btRenderProjectVertices(
-	MODEL_VERTEX *vertices, PROJECTED_VERTEX *screen, Sint32 cnt)
+	MODEL_VERTEX *vertices, PROJECTED_VERTEX *screen, Sint32 count)
 {
 	Sint32 point[3];
 
-	for(; cnt != 0; cnt--) {
+	for(; count != 0; count--) {
 		SET_VECTOR(point, toFIXED(vertices->x), toFIXED(vertices->y),
 			toFIXED(vertices->z));
 		syConvert3Dto2D(point, point);
@@ -855,12 +856,12 @@ typedef struct POOL_ENTRY {
 } POOL_ENTRY;
 
 /* Allocates count model entries plus a cleared one that ends the list. */
-RENDER_MODEL *btRenderAllocateModelList(Sint32 cnt)
+RENDER_MODEL *btRenderAllocateModelList(Sint32 count)
 {
-	POOL_ENTRY *entries = syHeapAllocEWRAM((cnt + 1) * sizeof(POOL_ENTRY));
+	POOL_ENTRY *entries = syHeapAllocateEWRAM((count + 1) * sizeof(POOL_ENTRY));
 	Sint32		i;
 
-	for(i = 0; i < cnt + 1; i++) {
+	for(i = 0; i < count + 1; i++) {
 		entries[i].head = 0;
 		entries[i].next = 0;
 		entries[i].tail = 0;
@@ -879,7 +880,7 @@ Bool btRenderCopyTextureToIWRAM(TEXTURE *src, TEXTURE *copy)
 	if(syHeapGetRemainingIWRAM() < size + 8)
 		return FALSE;
 	*(Uint16 *)copy = *(Uint16 *)src;
-	copy->pixels = syHeapAlloc(size + 8);
+	copy->pixels = syHeapAllocate(size + 8);
 	pixels = (Uint32)src->pixels;
 	misalign = pixels & 3;
 	syWordsCopyEntry(
@@ -896,7 +897,7 @@ typedef void (*MODEL_KERNEL)(RENDER_MODEL *model);
 /* Copies a kernel whose DMA control is a word of its own. */
 #define LOAD_KERNEL_WORDS(to, code, bytes, words) \
 	{ \
-		(to) = syHeapAlloc((Uint32)(bytes)); \
+		(to) = syHeapAllocate((Uint32)(bytes)); \
 		syDMAXCopy( \
 			(code), (to), DMA_COPY_WORDS(0) + (Uint32)(words), REG_DMA3); \
 	}
@@ -904,7 +905,7 @@ typedef void (*MODEL_KERNEL)(RENDER_MODEL *model);
 /* Copies the model's texture into IWRAM unless it is to stay in place. */
 #define COPY_TEXTURE() \
 	{ \
-		if(!(model->flg & MODEL_TEXTURE_IN_PLACE) && \
+		if(!(model->flags & MODEL_TEXTURE_IN_PLACE) && \
 			btRenderCopyTextureToIWRAM(texture, &copy)) \
 			model->texture = &copy; \
 	}

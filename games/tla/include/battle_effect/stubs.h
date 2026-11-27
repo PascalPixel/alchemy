@@ -31,6 +31,6 @@ void btEffectStartElementStreaksStub(Sint32 element);
 void btEffectEndElementStreaksStub(void);
 /* Loads a blitter for a 128 by 128 canvas into a heap slot, the flags and the
    mode packed into one word: mode << 4 | flags. */
-Sint32 btEffectLoadBlitterStub(Sint32 slot, Sint32 modeAndFlg);
+Sint32 btEffectLoadBlitterStub(Sint32 slot, Sint32 modeAndFlags);
 
 #endif

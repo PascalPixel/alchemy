@@ -12,11 +12,11 @@ ACTOR *fdActorCreateSilhouette(FIXED x, FIXED y, FIXED z, Sint32 type)
 	ACTOR *actor = syImportActorCreate(type, x, y, z);
 
 	if(actor != NULL) {
-		fdSetActorSprPriority(actor, 0);
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetSprCol(actor, SPRITE_COLOR_BLACK);
+		fdSetActorSpritePriority(actor, 0);
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_BLACK);
 		fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
 		return actor;
 	}

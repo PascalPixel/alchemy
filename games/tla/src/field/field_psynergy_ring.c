@@ -41,10 +41,10 @@ typedef enum RING_DRAW_PHASE {
 typedef struct RING_STATE {
 	/* the sparkle picture, then the motes', then the burst's */
 	Uint8					tiles[4096];
-	EFFECT_SPR				sparkSprs[RING_SPARK_COUNT];
+	EFFECT_SPR				sparkSprites[RING_SPARK_COUNT];
 	FIELD_PSYNERGY_PARTICLE sparks[RING_SPARK_COUNT];
 	/* The motes, placed round the caster; the event draws the first 16. */
-	EFFECT_SPR				sprs[RING_MOTE_COUNT];
+	EFFECT_SPR				sprites[RING_MOTE_COUNT];
 	FIELD_PSYNERGY_PARTICLE motes[RING_MOTE_COUNT];
 	Sint16					entry; /* the motes' VRAM cache entry */
 	Uint16					tile;  /* the motes' first tile */
@@ -59,16 +59,16 @@ typedef struct RING_STATE {
 /* Event of the Ring: its motes and colours each tick. */
 void fdPsynergyUpdateRing(void)
 {
-	RING_STATE	*state = RamHeapSlots->battleEff;
+	RING_STATE	*state = RamHeapSlots->battleEffect;
 	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 pos[3];
 	FIELD_PSYNERGY_PARTICLE *entry;
-	EFFECT_SPR				*spr;
+	EFFECT_SPR				*sprite;
 	Sint32					 x;
 	Sint32					 y;
 	Sint32					 i;
-	Sint32					 tmr;
+	Sint32					 timer;
 	Uint16					*phase;
 	Uint16					*tile;
 	Sint32					 red;
@@ -81,7 +81,7 @@ void fdPsynergyUpdateRing(void)
 	pos[2] = actor->z.fixed;
 	if(state->orbiting != 0)
 		syVectorAddPolarOffset(
-			toFIXED(2), -(field->ringFrm * (TRIG_TURN / 32)), pos);
+			toFIXED(2), -(field->ringFrame * (TRIG_TURN / 32)), pos);
 	fdCameraWorldToScreen(pos);
 	x = FIXEDtoINT(pos[0]);
 	BgScrollWork[0].x = 64 - x;
@@ -112,36 +112,36 @@ void fdPsynergyUpdateRing(void)
 
 	if(state->sparkling != 0) {
 		entry = state->motes;
-		spr = state->sprs;
+		sprite = state->sprites;
 		tile = &state->tile;
-		for(i = 0; i < RING_CIRCLING_MOTES; i++, spr++, entry++) {
-			tmr = entry->tmr;
-			if(tmr == 0) {
-				spr->ang = syRandom();
-				pos[2] = tmr;
-				pos[1] = tmr;
-				pos[0] = tmr;
-				syVectorAddPolarOffset(
-					toFIXED(RING_RADIUS + 2), spr->ang + DEGtoANG(45), pos);
+		for(i = 0; i < RING_CIRCLING_MOTES; i++, sprite++, entry++) {
+			timer = entry->timer;
+			if(timer == 0) {
+				sprite->angle = syRandom();
+				pos[2] = timer;
+				pos[1] = timer;
+				pos[0] = timer;
+				syVectorAddPolarOffset(toFIXED(RING_RADIUS + 2),
+					sprite->angle + DEGtoANG(45), pos);
 				SET_POSITION(entry, pos[0], pos[1] + toFIXED(16), pos[2]);
-				tmr = entry->tmr;
+				timer = entry->timer;
 			}
-			if(tmr >= 0) {
-				spr->oam.idx = *tile + ((tmr >> 2) & 3) * 4;
+			if(timer >= 0) {
+				sprite->oam.index = *tile + ((timer >> 2) & 3) * 4;
 				pos[0] = actor->x.fixed + entry->x;
 				pos[1] = actor->y.fixed + entry->y;
 				pos[2] = actor->z.fixed + entry->z;
-				fdEffectSprDrawAtWorldPos(spr, pos);
-				tmr = entry->tmr;
+				fdEffectSpriteDrawAtWorldPos(sprite, pos);
+				timer = entry->timer;
 			}
-			if((entry->tmr = tmr + 1) == 16)
-				entry->tmr = 0;
+			if((entry->timer = timer + 1) == 16)
+				entry->timer = 0;
 		}
 	}
 
-	if(field->ringTmrRunning != 0 && field->ringFrm != 0)
-		field->ringFrm--;
-	if(field->ringFrm == 0)
+	if(field->ringTimerRunning != 0 && field->ringFrame != 0)
+		field->ringFrame--;
+	if(field->ringFrame == 0)
 		field->psynergy = ABILITY_MAGNET | ACT_PACKED;
 }
 
@@ -153,36 +153,36 @@ void fdPsynergyUpdateRing(void)
 void fdPsynergyRing(void)
 {
 	RING_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof(RING_STATE));
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof(RING_STATE));
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*caster = scene->caster;
 	CANVAS_SPR_STATE		*canvas;
 	Sint32					 entry;
 	Sint32					 tile;
 	Sint32					 arcStart;
-	Sint32					 ang;
+	Sint32					 angle;
 	Sint32					 repeat;
 	Sint32					 drawing;
 	Sint32					*posPtr;
-	EFFECT_SPR				*spr;
+	EFFECT_SPR				*sprite;
 	FIELD_PSYNERGY_PARTICLE *mote;
 	Sint32					 pos[3];
 	Sint32					 phase;
-	Sint32					 tmr;
+	Sint32					 timer;
 	Sint32					 arc;
 	Sint32					 i;
 	Uint8					*picture;
 
 	arcStart = 0;
-	ang = 0;
+	angle = 0;
 	repeat = 1;
 	drawing = 0;
 	if(field->ringActive == 0) {
-		fdPsynergyFadeToCastCol();
+		fdPsynergyFadeToCastColor();
 		CpuLoadDisplayEnabled = 0;
-		fdBattleEffectStartCanvasSpr();
-		canvas = RamHeapSlots->canvasSpr;
+		fdBattleEffectStartCanvasSprite();
+		canvas = RamHeapSlots->canvasSprite;
 		canvas->mode = 0;
 		posPtr = pos;
 		posPtr[0] = scene->caster->x.fixed;
@@ -202,7 +202,7 @@ void fdPsynergyRing(void)
 		IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 2048, 0);
 
 		syHeapSlotRelease(HEAP_SLOT_BATTLE_CANVAS);
-		picture = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_CANVAS, 8192);
+		picture = syHeapSlotAllocateEWRAM(HEAP_SLOT_BATTLE_CANVAS, 8192);
 		IWRAM_FILL_WORDS(picture, 8192, 0);
 
 		sySynch(1);
@@ -214,26 +214,26 @@ void fdPsynergyRing(void)
 		entry = syVRAMCacheFindFreeEntry();
 		tile = syVRAMCacheLoad(entry, 256, state);
 		for(i = 0, mote = state->sparks; i < RING_SPARK_COUNT; i++, mote++) {
-			spr = &state->sparkSprs[i];
-			fdEffectSprInit(spr, 4, 4, 0, tile);
-			spr->oam.fullCol = 1;
-			spr->oam.pal = 0;
-			spr->oam.pri = 0;
-			spr->depth = OAM_DEPTH_WINDOW;
-			mote->tmr = -i / 4;
+			sprite = &state->sparkSprites[i];
+			fdEffectSpriteInit(sprite, 4, 4, 0, tile);
+			sprite->oam.fullColor = 1;
+			sprite->oam.palette = 0;
+			sprite->oam.priority = 0;
+			sprite->depth = OAM_DEPTH_WINDOW;
+			mote->timer = -i / 4;
 		}
 		state->sparkling = 0;
 		state->orbiting = 0;
 		state->cycling = 1;
 		state->phase = 0;
 		field->ringActive = 1;
-		field->ringTmrRunning = 1;
-		field->ringFrm = 999;
+		field->ringTimerRunning = 1;
+		field->ringFrame = 999;
 		sySetEvent(fdPsynergyUpdateRing, EVENT_PASS_TICK);
 		sySynch(1);
 		state->cycling = 0;
 		phase = RING_SPARKS_CIRCLE;
-		tmr = 0;
+		timer = 0;
 		do {
 			if(drawing) {
 				arc = arcStart;
@@ -252,9 +252,9 @@ void fdPsynergyRing(void)
 			}
 			for(i = 0, mote = state->sparks; i < RING_SPARK_COUNT;
 				i++, mote++) {
-				spr = &state->sparkSprs[i];
-				if(mote->tmr == 0) {
-					Sint32 heading = ang + (i & 1) * DEGtoANG(180);
+				sprite = &state->sparkSprites[i];
+				if(mote->timer == 0) {
+					Sint32 heading = angle + (i & 1) * DEGtoANG(180);
 
 					SET_POSITION(mote, caster->x.fixed,
 						caster->y.fixed + toFIXED(16), caster->z.fixed);
@@ -263,39 +263,39 @@ void fdPsynergyRing(void)
 					syVectorAddPolarOffset(
 						syRandom() * 6, syRandom(), &mote->x);
 				}
-				if((Uint32)mote->tmr <= 15) {
-					spr->oam.idx = tile + (mote->tmr & 3) * 2;
-					fdEffectSprDrawAtWorldPos(spr, mote);
+				if((Uint32)mote->timer <= 15) {
+					sprite->oam.index = tile + (mote->timer & 3) * 2;
+					fdEffectSpriteDrawAtWorldPos(sprite, mote);
 					mote->y += -toFIXED(1);
 				}
-				mote->tmr++;
-				if(repeat && mote->tmr == 16)
-					mote->tmr = 0;
+				mote->timer++;
+				if(repeat && mote->timer == 16)
+					mote->timer = 0;
 			}
 			switch(phase) {
 			case RING_SPARKS_CIRCLE:
-				ang = tmr * RING_ARC_STEP;
-				if(tmr == 32) {
+				angle = timer * RING_ARC_STEP;
+				if(timer == 32) {
 					phase = RING_DRAWN;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case RING_DRAWN:
 				drawing = 1;
-				ang = arcStart = tmr * RING_ARC_STEP;
-				if(tmr == 32) {
+				angle = arcStart = timer * RING_ARC_STEP;
+				if(timer == 32) {
 					phase = RING_SPARKS_DIE_OUT;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case RING_SPARKS_DIE_OUT:
 				repeat = 0;
-				if(tmr == 16)
+				if(timer == 16)
 					phase = FIELD_PSYNERGY_FINISHED;
 				break;
 			}
 			sySynch(1);
-			tmr++;
+			timer++;
 		} while(phase != FIELD_PSYNERGY_FINISHED);
 
 		syDecompressTaggedLZ(
@@ -315,13 +315,13 @@ void fdPsynergyRing(void)
 			state->orbiting = 1;
 			for(i = 0, mote = state->motes; i < RING_MOTE_COUNT; i++) {
 				heading = syRandom();
-				spr = &state->sprs[i];
-				fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, moteTile);
-				spr->depth = OAM_DEPTH_WINDOW;
-				spr->oam.pri = 0;
-				spr->oam.fullCol = 0;
-				spr->oam.pal = RING_PALETTE;
-				spr->ang = heading + DEGtoANG(90);
+				sprite = &state->sprites[i];
+				fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, moteTile);
+				sprite->depth = OAM_DEPTH_WINDOW;
+				sprite->oam.priority = 0;
+				sprite->oam.fullColor = 0;
+				sprite->oam.palette = RING_PALETTE;
+				sprite->angle = heading + DEGtoANG(90);
 				pos[0] = scene->caster->x.fixed;
 				pos[1] = scene->caster->y.fixed + toFIXED(16);
 				pos[2] = scene->caster->z.fixed;
@@ -329,17 +329,17 @@ void fdPsynergyRing(void)
 				syVectorAddPolarOffset(toFIXED(64), heading, pos);
 				mote->x = pos[0];
 				mote->y = pos[2];
-				mote->tmr = -i;
+				mote->timer = -i;
 				mote++;
 			}
 		}
 		syVRAMCacheFreeEntry(entry);
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 	}
 	state->cycling = 1;
 	field->ringActive = 1;
-	field->ringTmrRunning = 1;
-	field->ringFrm = RING_TICKS;
+	field->ringTimerRunning = 1;
+	field->ringFrame = RING_TICKS;
 	sySetEvent(fdPsynergyUpdateRing, EVENT_PASS_TICK);
 }
 
@@ -348,25 +348,25 @@ void fdPsynergyRing(void)
    fall for 40 ticks, and the window graphics come back to BG0. */
 void fdPsynergyEndRing(void)
 {
-	RING_STATE	*state = RamHeapSlots->battleEff;
+	RING_STATE	*state = RamHeapSlots->battleEffect;
 	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_PSYNERGY_PARTICLE *mote;
-	EFFECT_SPR				*spr;
+	EFFECT_SPR				*sprite;
 	Sint32					 slot;
 	Sint32					 tile;
-	Sint32					 ang;
+	Sint32					 angle;
 	Sint32					 i;
-	Sint32					 frm;
+	Sint32					 frame;
 
 	if(field->ringActive == 0)
 		return;
 	field->ringActive = 0;
-	field->ringTmrRunning = 0;
-	field->ringFrm = 0;
+	field->ringTimerRunning = 0;
+	field->ringFrame = 0;
 	syCloseEvent(fdPsynergyUpdateRing);
 	sySynch(1);
-	sySndPlayStub(SE_MAP_TRANSITION);
+	sySoundPlayStub(SE_MAP_TRANSITION);
 	IWRAM_FILL_WORDS(
 		(void *)BG_SCREEN_BLOCK(4), 1280, WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 	syWindowLoadGraphics();
@@ -381,46 +381,47 @@ void fdPsynergyEndRing(void)
 
 	i = 0;
 	mote = state->sparks;
-	spr = state->sparkSprs;
-	for(; i < RING_SPARK_COUNT; i++, spr++, mote++) {
-		ang = syRandom();
+	sprite = state->sparkSprites;
+	for(; i < RING_SPARK_COUNT; i++, sprite++, mote++) {
+		angle = syRandom();
 		SET_POSITION(
 			mote, actor->x.fixed, actor->y.fixed + toFIXED(16), actor->z.fixed);
 		syVectorAddPolarOffset(
-			syRandom() * 4 + toFIXED(RING_RADIUS), ang, &mote->x);
-		mote->velX = 0;
-		mote->velY = -toFIXED(4);
-		mote->velZ = 0;
-		syVectorAddPolarOffset(syRandom() * 3 + toFIXED(2), ang, &mote->velX);
-		mote->tmr = -i / 4;
-		fdEffectSprInit(spr, 4, 4, 0, tile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
+			syRandom() * 4 + toFIXED(RING_RADIUS), angle, &mote->x);
+		mote->velocityX = 0;
+		mote->velocityY = -toFIXED(4);
+		mote->velocityZ = 0;
+		syVectorAddPolarOffset(
+			syRandom() * 3 + toFIXED(2), angle, &mote->velocityX);
+		mote->timer = -i / 4;
+		fdEffectSpriteInit(sprite, 4, 4, 0, tile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
 	}
 	sySynch(1);
 
-	for(frm = 0; frm < 40; frm++) {
+	for(frame = 0; frame < 40; frame++) {
 		EFFECT_SPR *spark;
 		mote = state->sparks;
-		spark = state->sparkSprs;
+		spark = state->sparkSprites;
 		for(i = 0; i < RING_SPARK_COUNT; i++, spark++, mote++) {
-			if(mote->tmr >= 0) {
+			if(mote->timer >= 0) {
 				/* angle carries the spark's age here, as it carried each
 				   spark's heading above. */
-				ang = mote->tmr;
-				spark->oam.idx = tile + (ang & 3) * 2;
-				fdEffectSprDrawAtWorldPos(spark, mote);
+				angle = mote->timer;
+				spark->oam.index = tile + (angle & 3) * 2;
+				fdEffectSpriteDrawAtWorldPos(spark, mote);
 				fdAdvanceWithGravity3D(&mote->x, 62, toFIXED(1) / 2);
 			}
-			mote->tmr++;
+			mote->timer++;
 		}
 		sySynch(1);
 	}
 	syVRAMCacheFreeEntry(slot);
 	syVRAMCacheFreeEntry(state->entry);
-	fdBattleEffectEndCanvasSpr();
+	fdBattleEffectEndCanvasSprite();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -450,7 +451,7 @@ void fdViewMoveStart(Sint32 direction)
 	MAP_STATE		*map = RamHeapSlots->mapGrid;
 	Sint32			 viewX = FIXEDtoINT(map->view[0]);
 	Sint32			 viewZ = FIXEDtoINT(map->view[1]);
-	VIEW_MOVE_STATE *state = RamHeapSlots->battleEff;
+	VIEW_MOVE_STATE *state = RamHeapSlots->battleEffect;
 	MAP_BOUNDS		 bounds;
 	Sint32			 minX;
 	Sint32			 maxX;
@@ -529,7 +530,7 @@ void fdViewMoveStart(Sint32 direction)
 void fdViewMoveSwing(Sint32 direction, Sint32 phase, FIXED amplitude)
 {
 	FIELD_STATE		*field = RamHeapSlots->fieldState;
-	VIEW_MOVE_STATE *state = RamHeapSlots->battleEff;
+	VIEW_MOVE_STATE *state = RamHeapSlots->battleEffect;
 	ACTOR			*center = field->camera;
 	FIXED			 x;
 	FIXED			 z;
@@ -581,8 +582,8 @@ void fdViewMoveSwing(Sint32 direction, Sint32 phase, FIXED amplitude)
    instead, it only stops the shake. */
 void fdViewMoveEnd(void)
 {
-	VIEW_MOVE_STATE	   *state = RamHeapSlots->battleEff;
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	VIEW_MOVE_STATE	   *state = RamHeapSlots->battleEffect;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 
@@ -604,16 +605,16 @@ void fdViewMoveEnd(void)
 /* Gathers up to eight actors near enough to the caster to shake
    (fdMeasurePsynergyReach), with each one's sprite rotation, for Tremor's sway
    to rock. */
-void fdViewMoveSaveNearbySprs(void)
+void fdViewMoveSaveNearbySprites(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *state = RamHeapSlots->fieldState;
-	VIEW_MOVE_STATE	   *group = RamHeapSlots->battleEff;
+	VIEW_MOVE_STATE	   *group = RamHeapSlots->battleEffect;
 	ACTOR			  **actors;
 	ACTOR			   *actor;
 	Sint32				i;
 
-	group->cnt = 0;
+	group->count = 0;
 	actors = state->actors;
 	for(i = 0; i < FIELD_ACTOR_COUNT; i++) {
 		actor = *actors++;
@@ -623,21 +624,21 @@ void fdViewMoveSaveNearbySprs(void)
 			   (Sint16)(scene->fieldPsynergy | REACH_SHAKEN_OBJECTS),
 			   scene->casterId, i) == -1)
 			continue;
-		group->actors[group->cnt] = actor;
-		group->sprRotations[group->cnt] = ((SPR *)actor->spr)->rotation;
-		if(++group->cnt == ARRAY_COUNT(group->actors))
+		group->actors[group->count] = actor;
+		group->spriteRotations[group->count] = ((SPR *)actor->sprite)->rotation;
+		if(++group->count == ARRAY_COUNT(group->actors))
 			break;
 	}
 }
 
 /* Gives each gathered actor's sprite its saved rotation back. */
-void fdViewMoveRestoreNearbySprs(void)
+void fdViewMoveRestoreNearbySprites(void)
 {
-	VIEW_MOVE_STATE *group = RamHeapSlots->battleEff;
+	VIEW_MOVE_STATE *group = RamHeapSlots->battleEffect;
 	Sint32			 i;
 
-	for(i = 0; i < group->cnt; i++)
-		((SPR *)group->actors[i]->spr)->rotation = group->sprRotations[i];
+	for(i = 0; i < group->count; i++)
+		((SPR *)group->actors[i]->sprite)->rotation = group->spriteRotations[i];
 }
 
 #undef VIEW_EDGE_MARGIN

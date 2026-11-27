@@ -24,10 +24,10 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*particleSheet;
 	BATTLE_CAMERA		*camera;
-	MOTION_OBJECT		*tgtActor;
+	MOTION_OBJECT		*targetActor;
 	PARTICLE			*shard;
 	SCREEN_POINT		 pos;
 	SCREEN_POINT		 origin;
@@ -37,7 +37,7 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 	Sint32				 size;
 	Uint8				*burstPixels;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	particleSheet = RamHeapSlots->battleSheet;
 	camera = RamHeapSlots->cameraState;
@@ -47,36 +47,36 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
 	btResourceLoadAndDecompress(
 		RESOURCE_YELLOW_GLOW_SHEET, particleSheet, 0, 0);
-	btMotionApproachTargetStub(args->user, args->tgts[0], 4, 0);
+	btMotionApproachTargetStub(args->user, args->targets[0], 4, 0);
 	sySynch(1);
-	tgtActor = btObjectGetStub(args->tgts[0])->obj;
+	targetActor = btObjectGetStub(args->targets[0])->object;
 
 	/* Shards burst from the target. */
 	for(i = 0; i != SHARD_COUNT; i++) {
 		PARTICLE *seed = &state->particles[i];
 
-		SET_POSITION(seed, tgtActor->x, tgtActor->y, tgtActor->z);
-		seed->velX = (syRandom() & 255) << 11;
-		seed->velY = ((syRandom() & 255) - 127) << 12;
-		seed->velZ = ((syRandom() & 255) - 127) << 12;
+		SET_POSITION(seed, targetActor->x, targetActor->y, targetActor->z);
+		seed->velocityX = (syRandom() & 255) << 11;
+		seed->velocityY = ((syRandom() & 255) - 127) << 12;
+		seed->velocityZ = ((syRandom() & 255) - 127) << 12;
 		if(seed->x > 0)
-			seed->velX = -seed->velX;
+			seed->velocityX = -seed->velocityX;
 		seed->variant = i / 4 * 2 + SHARD_LIFE;
 	}
 
-	btEffectPosProjectScaledBattler(args->tgts[0], &origin);
+	btEffectPosProjectScaledBattler(args->targets[0], &origin);
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != ANNIHILATION_TICKS; frm++) {
-		if(frm == HIT_TICK)
+	for(frame = 0; frame != ANNIHILATION_TICKS; frame++) {
+		if(frame == HIT_TICK)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-		if(args->variant != EFFECT_VARIANT_BASIC && frm == HIT_TICK)
-			sySndPlayStub(SE_POWER_UP);
+		if(args->variant != EFFECT_VARIANT_BASIC && frame == HIT_TICK)
+			sySoundPlayStub(SE_POWER_UP);
 		btEffectPosProjectScaledBattler(args->user, &pos);
 		/* The fire streak in front of the user. */
-		if(frm >= STREAK_TICK && frm <= STREAK_TICK + 5) {
+		if(frame >= STREAK_TICK && frame <= STREAK_TICK + 5) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				EFFECT_LOAD_BLITTER(
 					HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
@@ -87,20 +87,20 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				blitters[0](canvas,
 					state->sheet +
-						(frm - STREAK_TICK) * PICTURE_BYTES(FIRE_STREAK),
+						(frame - STREAK_TICK) * PICTURE_BYTES(FIRE_STREAK),
 					pos.x / 2 - FIRE_STREAK_WIDTH / 2, pos.y - 24,
 					FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
 			else
 				blitters[0](canvas,
 					state->sheet +
-						(frm - STREAK_TICK) * PICTURE_BYTES(FIRE_STREAK),
+						(frame - STREAK_TICK) * PICTURE_BYTES(FIRE_STREAK),
 					pos.x / 2, pos.y - 24, FIRE_STREAK_WIDTH,
 					FIRE_STREAK_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 		}
 		/* The fire burst over the target grows. */
-		if(frm >= BURST_TICK && frm <= BURST_LAST_TICK) {
-			Sint32 step = (frm - BURST_TICK) / 2;
+		if(frame >= BURST_TICK && frame <= BURST_LAST_TICK) {
+			Sint32 step = (frame - BURST_TICK) / 2;
 			Sint32 strip;
 
 			EFFECT_LOAD_BLITTER(
@@ -123,12 +123,12 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 		}
 		/* The strike flashes the canvas. */
-		if(frm == HIT_TICK)
+		if(frame == HIT_TICK)
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		/* Shards shrink and fall. */
-		if(frm > 3) {
+		if(frame > 3) {
 			btEffectBuildCanvasBlitters(args->side, blitters);
 			for(i = 0; i != SHARD_COUNT; i++) {
 				Sint32 life;
@@ -149,16 +149,16 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			EFFECT_RELEASE_BLITTERS();
 		}
 		/* The strike throws the target back. */
-		if(frm == HIT_TICK) {
-			btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
-			state->shakeFrm = 4;
+		if(frame == HIT_TICK) {
+			btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HURL);
+			state->shakeFrame = 4;
 		}
-		if(frm == STREAK_TICK)
-			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_RED_TINT, TINT_KEEP, TINT_KEEP, 0);
-		if(frm == FLASH_TICK)
-			btEffectTintBattler(
-				args->tgts[0], SPRITE_COLOR_RED_TINT, TINT_KEEP, TINT_KEEP, 0);
+		if(frame == STREAK_TICK)
+			btEffectTintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
+				TINT_KEEP, TINT_KEEP, 0);
+		if(frame == FLASH_TICK)
+			btEffectTintBattler(args->targets[0], SPRITE_COLOR_RED_TINT,
+				TINT_KEEP, TINT_KEEP, 0);
 		btCameraShake(16, 16);
 		EFFECT_END_TICK(state);
 	}

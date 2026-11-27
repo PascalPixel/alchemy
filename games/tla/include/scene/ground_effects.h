@@ -14,9 +14,9 @@ typedef enum MAP_WADING {
 	MAP_WADING_MUD = 2 /* Taopo Swamp: the leader sinks into the mud */
 } MAP_WADING;
 
-/* MAP_STATE as far as groundEffs, read through its bits. */
+/* MAP_STATE as far as groundEffects, read through its bits. */
 typedef struct MAP_STATE_GROUND_EFFECTS {
-	Uint8 before[offsetof(MAP_STATE, groundEffs)];
+	Uint8 before[offsetof(MAP_STATE, groundEffects)];
 	Uint8 footprints : 2;
 	Uint8 wading : 2;
 	Uint8 unused : 4;

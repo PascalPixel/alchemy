@@ -76,23 +76,23 @@ typedef enum CREDITS_ALIGNMENT {
    palette half). */
 void mnCreditsClearBuffer(Sint32 alternate)
 {
-	Uint32			fillCol;
-	void		   *tileDst;
-	void		   *paletteDst;
+	Uint32			fillColor;
+	void		   *tileDest;
+	void		   *paletteDest;
 	volatile Uint32 dmaFill;
 
 	if(alternate == 0) {
-		fillCol = PIXELS_8BPP(1);
-		tileDst = BG_CHAR_BLOCK(0);
-		paletteDst = (void *)BG_PLTT;
+		fillColor = PIXELS_8BPP(1);
+		tileDest = BG_CHAR_BLOCK(0);
+		paletteDest = (void *)BG_PLTT;
 	} else {
-		fillCol = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS + 1);
-		tileDst = BG_CHAR_BLOCK(2);
-		paletteDst = (void *)&BG_PLTT_COLOR(
+		fillColor = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS + 1);
+		tileDest = BG_CHAR_BLOCK(2);
+		paletteDest = (void *)&BG_PLTT_COLOR(
 			BATTLE_BACKGROUND_COLORS / PALETTE_COLORS, 0);
 	}
-	DMA_FILL32_CELL(dmaFill, fillCol, tileDst, BATTLE_BACKGROUND_TILE_BYTES);
-	DMA_FILL32_CELL(dmaFill, 0, paletteDst, BATTLE_BACKGROUND_PALETTE_BYTES);
+	DMA_FILL32_CELL(dmaFill, fillColor, tileDest, BATTLE_BACKGROUND_TILE_BYTES);
+	DMA_FILL32_CELL(dmaFill, 0, paletteDest, BATTLE_BACKGROUND_PALETTE_BYTES);
 }
 
 typedef Sint32 (*PACKED_DECODER)(
@@ -141,9 +141,9 @@ const Uint32 CreditsBackgrounds[] = {
 void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 {
 	const Uint8 *resourceData;
-	Uint32		 paletteDst;
-	Uint32		 paletteOfs;
-	void		*tileDst;
+	Uint32		 paletteDest;
+	Uint32		 paletteOffset;
+	void		*tileDest;
 
 	if(resourceId == 0) {
 		mnCreditsClearBuffer(alternate);
@@ -151,13 +151,13 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 	}
 	resourceData = syResourceGetTableEntry(resourceId);
 	if(alternate == 0) {
-		paletteOfs = 0;
-		tileDst = BG_CHAR_BLOCK(0);
-		paletteDst = (Uint32)BG_PLTT;
+		paletteOffset = 0;
+		tileDest = BG_CHAR_BLOCK(0);
+		paletteDest = (Uint32)BG_PLTT;
 	} else {
-		paletteOfs = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS);
-		tileDst = BG_CHAR_BLOCK(2);
-		paletteDst = (Uint32)&BG_PLTT_COLOR(
+		paletteOffset = PIXELS_8BPP(BATTLE_BACKGROUND_COLORS);
+		tileDest = BG_CHAR_BLOCK(2);
+		paletteDest = (Uint32)&BG_PLTT_COLOR(
 			BATTLE_BACKGROUND_COLORS / PALETTE_COLORS, 0);
 	}
 	/* Offset every pixel into the selected palette half so both pictures can
@@ -165,18 +165,19 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnCreditsDecodeBackground,
 		CreditsDecodeBackgroundCodeSize);
 	((PACKED_DECODER)HeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
-		resourceData + BATTLE_BACKGROUND_PALETTE_BYTES, tileDst, paletteOfs);
+		resourceData + BATTLE_BACKGROUND_PALETTE_BYTES, tileDest,
+		paletteOffset);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);
 
 	/* Queue palette RAM writes for VBlank rather than transferring colours
 	   during the active display. */
-	IO_WRITE_QUEUE_PUSH(paletteDst, (Uint32)resourceData,
+	IO_WRITE_QUEUE_PUSH(paletteDest, (Uint32)resourceData,
 		DMA_COPY_WORDS(BATTLE_BACKGROUND_PALETTE_BYTES / 4));
 }
 
 /* Builds a battle background's tilemap: two blank rows, its tiles in order over
    fifteen rows, three blank rows, then a zeroed tail. */
-void mnCreditsBuildBackgroundTilemap(Uint32 *dst)
+void mnCreditsBuildBackgroundTilemap(Uint32 *dest)
 {
 	Sint32 i;
 	Uint32 blankTiles = MAP_ENTRY_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
@@ -184,16 +185,16 @@ void mnCreditsBuildBackgroundTilemap(Uint32 *dst)
 
 	/* Pad above and below the picture so vertical wrapping stays blank. */
 	for(i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
-		*dst++ = blankTiles;
+		*dest++ = blankTiles;
 	for(i = 0; i < BATTLE_BACKGROUND_TILES / 2; i++) {
-		*dst++ = tilePair;
+		*dest++ = tilePair;
 		tilePair += MAP_ENTRY_PAIR(2, 2);
 	}
 	for(i = 0; i < 3 * TILEMAP_ROW_WORDS; i++)
-		*dst++ = blankTiles;
+		*dest++ = blankTiles;
 	tilePair = 0;
 	for(i = 0; i < 12 * TILEMAP_ROW_WORDS; i++)
-		*dst++ = tilePair;
+		*dest++ = tilePair;
 }
 
 /* A VBlank event of the credits: drifts both pictures together, keeping their
@@ -243,7 +244,7 @@ Sint32 mnCreditsRun(void)
 			BLDCNT_TGT2_BD,
 		&REG_BLDCNT);
 	/* Give the names a five-second lead before the first picture. */
-	mnCreditsInitTextSprs();
+	mnCreditsInitTextSprites();
 	sySynch(300);
 	/* Alternate the hidden layer after each 64-tick crossfade. */
 	for(slide = 0;
@@ -967,14 +968,14 @@ const Uint8 CreditsGlyphWidths[96] = {
    carry. */
 #define FLAG_CREDITS_LINE_DRAWN FLAG_SCENE_TEMP_00
 
-/* A VBlank event added by mnCreditsInitTextSprs: maps the visible sixteen rows
-   onto the tile ring and uploads their sprites. */
-void mnCreditsUpdateTextSprs(void)
+/* A VBlank event added by mnCreditsInitTextSprites: maps the visible sixteen
+   rows onto the tile ring and uploads their sprites. */
+void mnCreditsUpdateTextSprites(void)
 {
-	Uint32 frm = CreditsScrollPosition;
-	Uint32 scrollWithinTile = frm & 7;
-	Sint32 tileIdx =
-		(((Sint16)frm / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
+	Uint32 frame = CreditsScrollPosition;
+	Uint32 scrollWithinTile = frame & 7;
+	Sint32 tileIndex =
+		(((Sint16)frame / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
 	Uint32 *oamWords = (Uint32 *)(SCROLL_OBJECTS + CREDITS_BORDER_SPRITES);
 	Sint32	row;
 
@@ -987,10 +988,10 @@ void mnCreditsUpdateTextSprs(void)
 		for(column = 0; column < CREDITS_COLUMNS; column++) {
 			*oamWords++ = (row * 8 + CREDITS_TEXT_TOP - scrollWithinTile) |
 				OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
-			*oamWords++ = tileIdx;
-			tileIdx += 4;
-			if(tileIdx == CREDITS_RING_TILES)
-				tileIdx = 0;
+			*oamWords++ = tileIndex;
+			tileIndex += 4;
+			if(tileIndex == CREDITS_RING_TILES)
+				tileIndex = 0;
 		}
 	}
 	syDMAXCopy(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
@@ -998,13 +999,13 @@ void mnCreditsUpdateTextSprs(void)
 		CreditsScrollPosition++;
 }
 
-/* A tick-pass event added by mnCreditsInitTextSprs: renders each entering line
-   sixteen rows ahead of the visible top, into the hidden half of the tile ring.
-   A null table entry latches the end-of-text state. */
+/* A tick-pass event added by mnCreditsInitTextSprites: renders each entering
+   line sixteen rows ahead of the visible top, into the hidden half of the tile
+   ring. A null table entry latches the end-of-text state. */
 void mnCreditsDrawEnteringLine(void)
 {
 	Uint32 scrollPos;
-	Sint32 lineIdx;
+	Sint32 lineIndex;
 
 	/* A line is 8 pixels, so a new one is drawn each time the scroll crosses
 	   into the next line, every 32 ticks. */
@@ -1012,17 +1013,17 @@ void mnCreditsDrawEnteringLine(void)
 		scrollPos = CreditsScrollPosition;
 		if((Sint16)CreditsScrollPosition / 8 !=
 			CREDITS_LAST_LINE_POSITION / 8) {
-			lineIdx = (Sint16)CreditsScrollPosition / 8;
+			lineIndex = (Sint16)CreditsScrollPosition / 8;
 			CREDITS_LAST_LINE_POSITION = scrollPos;
-			CREDITS_END_OF_TEXT = mnCreditsDrawLine(CreditsLines[lineIdx],
-				CREDITS_RING_LINE_TILE(lineIdx), CREDITS_ALIGN_CENTER);
+			CREDITS_END_OF_TEXT = mnCreditsDrawLine(CreditsLines[lineIndex],
+				CREDITS_RING_LINE_TILE(lineIndex), CREDITS_ALIGN_CENTER);
 		}
 	}
 }
 
 /* Allocates the credits sprites, builds the blank border and text rows, clears
    the tile ring and adds the scrolling and line-rendering events. */
-void mnCreditsInitTextSprs(void)
+void mnCreditsInitTextSprites(void)
 {
 	volatile Uint32 dmaFill;
 	Uint32		   *oamWords;
@@ -1030,7 +1031,7 @@ void mnCreditsInitTextSprs(void)
 	Uint32			column;
 
 	SCROLL_OBJECTS =
-		syHeapAllocEWRAM(CREDITS_OAM_ENTRIES * sizeof(CREDITS_OAM_ENTRY));
+		syHeapAllocateEWRAM(CREDITS_OAM_ENTRIES * sizeof(CREDITS_OAM_ENTRY));
 	/* Solid border sprites immediately after the ring mask the partial text
 	   rows at the top and bottom of the window. */
 	DMA_FILL32_CELL(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
@@ -1055,14 +1056,14 @@ void mnCreditsInitTextSprs(void)
 		*oamWords++ = OBJ_X(row * 32) | 152 | OBJ_SIZE_32X8;
 		*oamWords++ = CREDITS_RING_TILES;
 	}
-	/* The text sprites, as mnCreditsUpdateTextSprs rebuilds them each
+	/* The text sprites, as mnCreditsUpdateTextSprites rebuilds them each
 	   VBlank. */
 	for(row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
 		for(column = 0; column < CREDITS_COLUMNS; column++) {
-			Uint32 tileIdx = (row * 3) * 8 + column * 4;
+			Uint32 tileIndex = (row * 3) * 8 + column * 4;
 			*oamWords++ = (row * 8 + CREDITS_TEXT_TOP) |
 				OBJ_X(column * 32 + CREDITS_TEXT_LEFT) | OBJ_SIZE_32X8;
-			*oamWords++ = tileIdx;
+			*oamWords++ = tileIndex;
 		}
 	}
 	/* The last eight entries are parked off screen. */
@@ -1073,7 +1074,7 @@ void mnCreditsInitTextSprs(void)
 	CreditsScrollPosition = 0;
 	CREDITS_LAST_LINE_POSITION = 0;
 	CREDITS_END_OF_TEXT = 0;
-	sySetEvent(mnCreditsUpdateTextSprs, EVENT_PASS_VBLANK);
+	sySetEvent(mnCreditsUpdateTextSprites, EVENT_PASS_VBLANK);
 	sySetEvent(mnCreditsDrawEnteringLine, EVENT_PASS_TICK);
 	for(row = 0; row < CREDITS_RING_ROWS; row++)
 		mnCreditsDrawLine(
@@ -1087,19 +1088,19 @@ void mnCreditsInitTextSprs(void)
 /* Centers, right-aligns or left-aligns one credits line in a 192-pixel row. */
 Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 {
-	Uint8		*linePixels = syHeapAllocEWRAM(CREDITS_BUFFER_BYTES);
+	Uint8		*linePixels = syHeapAllocateEWRAM(CREDITS_BUFFER_BYTES);
 	Sint32		 startX = 0;
 	Sint32		 lineWidth = CREDITS_LINE_PIXELS;
 	const Uint8 *font = CreditsFont;
-	Sint32		 tileCnt;
+	Sint32		 tileCount;
 	Sint32		 textAdvance;
 	const Uint8 *srcBytes;
-	Uint8		*dst;
+	Uint8		*dest;
 	Uint32		 srcValue;
-	Sint32		 glyphIdx;
+	Sint32		 glyphIndex;
 	Sint32		 glyphWidth;
 	Sint32		 row;
-	Sint32		 columnIdx;
+	Sint32		 columnIndex;
 	Uint32		 glyphBits;
 	Uint32		 glyphMask;
 
@@ -1148,58 +1149,58 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	textAdvance = 0;
 	while((srcValue = *text++) != 0) {
 		if(srcValue >= ' ') {
-			glyphIdx = srcValue - ' ';
-			srcBytes = font + glyphIdx * 8;
-			dst = linePixels + startX + textAdvance;
+			glyphIndex = srcValue - ' ';
+			srcBytes = font + glyphIndex * 8;
+			dest = linePixels + startX + textAdvance;
 			for(row = 0; row < 8; row++) {
 				glyphBits = *srcBytes++;
 				glyphMask = 0x80;
-				for(columnIdx = 0; columnIdx < 8; columnIdx++) {
+				for(columnIndex = 0; columnIndex < 8; columnIndex++) {
 					if(glyphBits & glyphMask) {
-						dst[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;
-						dst[0] = CREDITS_TEXT_COLOR;
+						dest[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;
+						dest[0] = CREDITS_TEXT_COLOR;
 					}
-					dst++;
+					dest++;
 					glyphMask >>= 1;
 				}
-				dst += CREDITS_RASTER_STRIDE - 8;
+				dest += CREDITS_RASTER_STRIDE - 8;
 			}
 			glyphWidth = 1;
 			if(srcValue >= ' ')
-				glyphWidth = CreditsGlyphWidths[glyphIdx];
+				glyphWidth = CreditsGlyphWidths[glyphIndex];
 			textAdvance += glyphWidth;
 		}
 	}
 
 	/* Pack pairs of pixel indices into bytes, keeping the 256-pixel stride. */
-	tileCnt = lineWidth / 8;
+	tileCount = lineWidth / 8;
 	srcBytes = linePixels;
-	dst = linePixels;
+	dest = linePixels;
 	for(row = 0; row < 8; row++) {
-		for(columnIdx = 0; columnIdx < tileCnt * 4; columnIdx++) {
+		for(columnIndex = 0; columnIndex < tileCount * 4; columnIndex++) {
 			srcValue = *srcBytes++;
 			srcValue |= *srcBytes++ << 4;
-			*dst++ = srcValue;
+			*dest++ = srcValue;
 		}
-		dst += CREDITS_RASTER_STRIDE - tileCnt * 4;
-		srcBytes += CREDITS_RASTER_STRIDE - tileCnt * 8;
+		dest += CREDITS_RASTER_STRIDE - tileCount * 4;
+		srcBytes += CREDITS_RASTER_STRIDE - tileCount * 8;
 	}
 
 	/* Transpose raster rows into the tile ring used by the scrolling
 	   sprites. */
-	for(row = 0; row < tileCnt; row++) {
-		Sint32	tileIdx = firstTile + row;
+	for(row = 0; row < tileCount; row++) {
+		Sint32	tileIndex = firstTile + row;
 		Uint32 *words = (Uint32 *)linePixels + row;
 
 		/* A tile's eight rows of 4 bytes, each a 256-pixel raster row apart. */
-		OBJ_TILE_ROW(tileIdx, 0) = words[0];
-		OBJ_TILE_ROW(tileIdx, 1) = words[1 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIdx, 2) = words[2 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIdx, 3) = words[3 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIdx, 4) = words[4 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIdx, 5) = words[5 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIdx, 6) = words[6 * (CREDITS_RASTER_STRIDE / 4)];
-		OBJ_TILE_ROW(tileIdx, 7) = words[7 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 0) = words[0];
+		OBJ_TILE_ROW(tileIndex, 1) = words[1 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 2) = words[2 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 3) = words[3 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 4) = words[4 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 5) = words[5 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 6) = words[6 * (CREDITS_RASTER_STRIDE / 4)];
+		OBJ_TILE_ROW(tileIndex, 7) = words[7 * (CREDITS_RASTER_STRIDE / 4)];
 	}
 	syHeapRelease(linePixels);
 	return 0;

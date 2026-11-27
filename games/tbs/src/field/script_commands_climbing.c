@@ -17,9 +17,9 @@ Sint32 fdTryJumpForward(void)
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 result = -1;
 	Sint32		 angle = FACING_NEAREST_CARDINAL(leader->facing);
-	Uint8		 savedMotionFlg = leader->motionFlg;
+	Uint8		 savedMotionFlags = leader->motionFlags;
 	FIELD_STATE *state = FieldStateWork;
-	Sint32		 sprFlg = SPRITE_FLAG_SHADOW;
+	Sint32		 spriteFlags = SPRITE_FLAG_SHADOW;
 	FIELD_COORDINATE pos[3];
 	ACTOR			*platform;
 
@@ -40,22 +40,23 @@ again:
 		COLLISION_NONE) {
 		/* Suspend ground following and the shadow while airborne: 4 pixels a
 		   tick up, 3 a tick across. */
-		if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-			sprFlg = leader->spr->flg;
+		if(leader->spriteStorageKind == ACTOR_SPRITE_ONE)
+			spriteFlags = leader->sprite->flags;
 		fdScriptStart();
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlayStub(SE_JUMP);
+		sySoundPlayStub(SE_JUMP);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(3);
 		leader->acceleration = toFIXED(2);
-		leader->velY = toFIXED(4);
-		leader->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlagsStub(leader, sprFlg & (Uint8)~SPRITE_FLAG_SHADOW);
+		leader->velocityY = toFIXED(4);
+		leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlagsStub(
+			leader, spriteFlags & (Uint8)~SPRITE_FLAG_SHADOW);
 		fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId,
 			pos[0].part[0].integer, pos[2].part[0].integer);
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
-		fdActorSetSprFlagsStub(leader, sprFlg);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 
 		/* A log underfoot dips 2 pixels with the leader and comes back up. */
 		if((platform = fdActorFindNearestFacingTarget(
@@ -77,7 +78,7 @@ again:
 		} else {
 			sySynch(6);
 		}
-		leader->motionFlg = savedMotionFlg;
+		leader->motionFlags = savedMotionFlags;
 		fdScriptEnd();
 		if(state != NULL)
 			state->walkingDistance +=
@@ -138,9 +139,9 @@ Sint32 fdClimbDown(void)
 			fdActorFaceDirectionById(
 				MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
 			fdActorWaitForScriptEndById(MainRoutineStateWork.leaderActorId);
-			leader->steeringFlg = ACTOR_FACES_MOTION;
-			leader->motionFlg = 0;
-			fdActorSetSprFlagsStub(leader, 0);
+			leader->steeringFlags = ACTOR_FACES_MOTION;
+			leader->motionFlags = 0;
+			fdActorSetSpriteFlagsStub(leader, 0);
 			fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
 			fdActorSetMoveTargetStub(leader, toFIXED(gridX),
 				leader->y.fixed - toFIXED(16), toFIXED(gridZ) + toFIXED(16));
@@ -154,13 +155,13 @@ Sint32 fdClimbDown(void)
 		   a hop of 4 pixels a tick, the ground taken as where the leader is
 		   until the ground is read, and the shadow back. */
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		leader->velY = toFIXED(4);
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->velocityY = toFIXED(4);
 		leader->groundHeight = leader->y.fixed;
-		fdActorSetSprFlagsStub(leader, SPRITE_FLAG_SHADOW);
+		fdActorSetSpriteFlagsStub(leader, SPRITE_FLAG_SHADOW);
 		fdScriptWait(6);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-		leader->steeringFlg = ACTOR_FACES_MOTION;
+		leader->steeringFlags = ACTOR_FACES_MOTION;
 		leader->facing = FACING_NORTH;
 	}
 
@@ -178,15 +179,15 @@ failure:
 Sint32 fdClimbUp(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint16 sprFlg = SPRITE_FLAG_SHADOW;
+	Sint16 spriteFlags = SPRITE_FLAG_SHADOW;
 	Sint32 gridX = METATILE_MIDDLE(leader->x.part[0].integer);
 	Sint32 gridZ = METATILE_MIDDLE(leader->z.part[0].integer);
 	Sint32 result;
 
 	fdScriptStart();
 
-	if(leader->sprStorageKind == ACTOR_SPRITE_ONE)
-		sprFlg = leader->spr->flg;
+	if(leader->spriteStorageKind == ACTOR_SPRITE_ONE)
+		spriteFlags = leader->sprite->flags;
 
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		Sint32 index = gridX / MAPGRID_METATILE_PIXELS +
@@ -209,41 +210,41 @@ Sint32 fdClimbUp(void)
 
 			/* Step to the middle of the metatile, crouch, jump and grab the
 			   wall. */
-			leader->steeringFlg = 0;
+			leader->steeringFlags = 0;
 			fdActorMoveToAndWaitById(
 				MainRoutineStateWork.leaderActorId, gridX, gridZ);
 			fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 			sySynch(4);
 			fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAP);
-			leader->velY = toFIXED(4);
+			leader->velocityY = toFIXED(4);
 			sySynch(4);
-			leader->motionFlg = 0;
-			sprFlg &= (Uint8)~SPRITE_FLAG_SHADOW;
-			fdActorSetSprFlagsStub(leader, sprFlg);
+			leader->motionFlags = 0;
+			spriteFlags &= (Uint8)~SPRITE_FLAG_SHADOW;
+			fdActorSetSpriteFlagsStub(leader, spriteFlags);
 			leader->speedLimit = toFIXED(1);
-			leader->velY = 0;
+			leader->velocityY = 0;
 			fdActorSelectAnimationStub(leader, ANIM_LEADER_CLING);
 			sySynch(4);
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_CLIMB;
-			leader->steeringFlg = ACTOR_FACES_MOTION;
+			leader->steeringFlags = ACTOR_FACES_MOTION;
 			sySynch(8);
 		} else {
 			goto failure;
 		}
 	} else {
 		/* Climb over the top: up 8 pixels and a metatile north. */
-		leader->motionFlg = 0;
+		leader->motionFlags = 0;
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_CLIMB_OVER_TOP);
 		fdActorSetMoveTargetStub(leader, toFIXED(gridX),
 			leader->y.fixed + toFIXED(8), toFIXED(gridZ) - toFIXED(16));
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		sprFlg |= SPRITE_FLAG_SHADOW;
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		spriteFlags |= SPRITE_FLAG_SHADOW;
 		leader->groundHeight = leader->y.fixed;
-		fdActorSetSprFlagsStub(leader, sprFlg);
+		fdActorSetSpriteFlagsStub(leader, spriteFlags);
 		fdScriptWait(4);
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-		leader->steeringFlg = ACTOR_FACES_MOTION;
+		leader->steeringFlags = ACTOR_FACES_MOTION;
 	}
 
 	fdScriptEnd();

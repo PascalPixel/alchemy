@@ -14,7 +14,7 @@ StubsWindow:
 	stub mnMessageAllTypedStub, mnMessageAllTyped
 	stub mnWindowIsClosedStub, mnWindowIsClosed
 	stub mnMessageSetDecodeFlagsStub, mnMessageSetDecodeFlags
-	stub mnWindowSprPrepareForRedrawStub, mnWindowSprPrepareForRedraw
+	stub mnWindowSpritePrepareForRedrawStub, mnWindowSpritePrepareForRedraw
 	stub mnWindowClearInteriorTilesStub, mnWindowClearInteriorTiles
 	stub mnWindowDrawDividerLineStub, mnWindowDrawDividerLine
 	stub mnTextDrawMessageStub, mnTextDrawMessage
@@ -22,26 +22,26 @@ StubsWindow:
 	stub mnTextDrawStringStub, mnTextDrawString
 	stub mnTextDrawStringAtOffsetStub, mnTextDrawStringAtOffset
 	stub mnTextDrawStringInWindowStub, mnTextDrawStringInWindow
-	stub mnTextDrawNumStub, mnTextDrawNum
-	stub mnTextDrawNumAtOffsetStub, mnTextDrawNumAtOffset
-	stub mnTextDrawNumInWindowStub, mnTextDrawNumInWindow
-	stub mnTextSetColStub, mnTextSetCol
+	stub mnTextDrawNumberStub, mnTextDrawNumber
+	stub mnTextDrawNumberAtOffsetStub, mnTextDrawNumberAtOffset
+	stub mnTextDrawNumberInWindowStub, mnTextDrawNumberInWindow
+	stub mnTextSetColorStub, mnTextSetColor
 	unnamed_stub mnTextSetStyle
-	stub mnWindowSprCreateStub, mnWindowSprCreate
-	stub mnWindowSprCreateFromResourceStub, mnWindowSprCreateFromResource
+	stub mnWindowSpriteCreateStub, mnWindowSpriteCreate
+	stub mnWindowSpriteCreateFromResourceStub, mnWindowSpriteCreateFromResource
 	stub mnPortraitCreateStub, mnPortraitCreate
 	stub mnPortraitReloadStub, mnPortraitReload
-	unnamed_stub mnWindowSprSetMotion
-	unnamed_stub mnWindowSprSetPriority
+	unnamed_stub mnWindowSpriteSetMotion
+	unnamed_stub mnWindowSpriteSetPriority
 	stub mnPortraitOpenWindowStub, mnPortraitOpenWindow
 	stub mnPortraitCloseWindowStub, mnPortraitCloseWindow
 	stub mnTextGetMessageSizeStub, mnTextGetMessageSize
 	stub mnTextGetMessageSizeAllPagesStub, mnTextGetMessageSizeAllPages
 	stub mnMessageArgumentClearAllStub, mnMessageArgumentClearAll
 	stub mnMessageArgumentPushStub, mnMessageArgumentPush
-	stub mnPartyStatCreateWindowStub, mnPartyStatCreateWindow
-	stub mnPartyStatDrawStub, mnPartyStatDraw
-	stub mnPartyStatCloseStub, mnPartyStatClose
+	stub mnPartyStatusCreateWindowStub, mnPartyStatusCreateWindow
+	stub mnPartyStatusDrawStub, mnPartyStatusDraw
+	stub mnPartyStatusCloseStub, mnPartyStatusClose
 	stub mnMessageCloseFinishedWindowsStub, mnMessageCloseFinishedWindows
 	stub mnWindowCloseAllStub, mnWindowCloseAll
 	unnamed_stub mnSelectionMenuCreate
@@ -80,8 +80,8 @@ StubsWindow:
 	stub mnTextDrawWideStringAtOffsetStub, mnTextDrawWideStringAtOffset
 	unnamed_stub mnSettingsMenuSelectionNoOperation
 	stub mnScanlineWindowFillSpansStub, mnScanlineWindowFillSpans
-	stub mnWindowSprRedrawSavedRectStub, mnWindowSprRedrawSavedRect
-	stub mnWindowSprClearListStub, mnWindowSprClearList
+	stub mnWindowSpriteRedrawSavedRectStub, mnWindowSpriteRedrawSavedRect
+	stub mnWindowSpriteClearListStub, mnWindowSpriteClearList
 	stub mnWindowSetTilemapEntryStub, mnWindowSetTilemapEntry
 	stub mnDebugSceneSelectRunStub, mnDebugSceneSelectRun
 	stub mnDebugFlagEditorRunStub, mnDebugFlagEditorRun
@@ -89,11 +89,11 @@ StubsWindow:
 	unnamed_stub mnDebugSelectShortcuts
 	stub mnWindowMarkVisibleTextTilesStub, mnWindowMarkVisibleTextTiles
 	unnamed_stub mnItemIconCompose
-	stub mnPartyStatHighlightMembersStub, mnPartyStatHighlightMembers
+	stub mnPartyStatusHighlightMembersStub, mnPartyStatusHighlightMembers
 	unnamed_stub mnIconBuildItemIconTiles
 	unnamed_stub mnIconBuildAbilityIconTiles
-	stub mnWindowSprCreateLoadedStub, mnWindowSprCreateLoaded
-	unnamed_stub mnWindowSprCreateFromTable
+	stub mnWindowSpriteCreateLoadedStub, mnWindowSpriteCreateLoaded
+	unnamed_stub mnWindowSpriteCreateFromTable
 	unnamed_stub mnSaveWriteCurrentFile
 	stub mnSaveToChosenFileStub, mnSaveToChosenFile
 	stub mnSaveChooseAndLoadFileStub, mnSaveChooseAndLoadFile
@@ -110,10 +110,10 @@ StubsWindow:
 	stub mnDebugBrowserPortraitsStub, mnDebugBrowserPortraits
 	unnamed_stub mnItemReturnTrue
 	stub mnDjinnShowJoinedMessageStub, mnDjinnShowJoinedMessage
-	stub mnWindowColApplyStub, mnWindowColApply
+	stub mnWindowColorApplyStub, mnWindowColorApply
 	unnamed_stub mnSettingsMenuRun
 	stub mnPauseMenuRunStub, mnPauseMenuRun
-	unnamed_stub mnBgScrFillRect
+	unnamed_stub mnBgScreenFillRect
 	stub mnSelectShopCommandStub, mnSelectShopCommand
 	stub mnSelectSanctumServiceStub, mnSelectSanctumService
 	stub mnYesNoMenuRunStub, mnYesNoMenuRun
@@ -125,10 +125,10 @@ StubsWindow:
 	stub mnTextMeasureMessageStub, mnTextMeasureMessage
 	stub mnWindowHighlightRectStub, mnWindowHighlightRect
 	stub mnAbilityBuildIconTilesStub, mnAbilityBuildIconTiles
-	stub mnGraphicsExpandVRAMTilesByColTableStub, mnGraphicsExpandVRAMTilesByColTable
+	stub mnGraphicsExpandVRAMTilesByColorTableStub, mnGraphicsExpandVRAMTilesByColorTable
 	stub mnTextUseExtraTilesStub, mnTextUseExtraTiles
 	stub mnAnimateSelectionToEntryStub, mnAnimateSelectionToEntry
-	stub mnWindowSprGetPointerTilesStub, mnWindowSprGetPointerTiles
+	stub mnWindowSpriteGetPointerTilesStub, mnWindowSpriteGetPointerTiles
 	stub mnMessageOpenDecodedStub, mnMessageOpenDecoded
 	stub mnSaveCountFilesExcludingSentStub, mnSaveCountFilesExcludingSent
 	stub mnWindowDrawBorderStub, mnWindowDrawBorder

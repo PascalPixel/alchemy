@@ -297,7 +297,7 @@ static UNREAD_RESULT scLamakanDesertKickUpSand(ACTOR *actor)
 	Sint32		   phase;
 
 	if((TickCount & 7) == 0) {
-		sySndPlay(SE_FOOTSTEP);
+		sySoundPlay(SE_FOOTSTEP);
 	}
 	phase = TickCount & 15;
 	if(phase != 0) {
@@ -387,7 +387,7 @@ static void scLamakanDesertLeaveForTheWorldMap(void)
 			gmFlagSet(FLAG_HSU_RESCUED);
 		}
 	}
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
 	fdScriptEnd();
 }
@@ -554,14 +554,14 @@ static void scLamakanDesertFightManticore(void)
 static void scLamakanDesertComplainAboutHeat(Sint32 mark)
 {
 	Sint32 tries;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 member;
 
 	for(tries = 0; tries <= 2; tries++) {
 		member = syRandomBelow(3);
-		flg = member + FLAG_GARET_COMPLAINED;
-		if(gmFlagGet(flg) == 0) {
-			gmFlagSet(flg);
+		flag = member + FLAG_GARET_COMPLAINED;
+		if(gmFlagGet(flag) == 0) {
+			gmFlagSet(flag);
 			break;
 		}
 	}
@@ -647,7 +647,7 @@ static void scLamakanDesertBatheInOasis(void)
 	FIELD_STATE	  *state;
 	Sint32		   ticks;
 	FIXED		   best;
-	Sint32		   cnt;
+	Sint32		   count;
 	const Sint32  *oases;
 	Sint32		   total;
 	const Sint32  *oasis;
@@ -665,31 +665,31 @@ static void scLamakanDesertBatheInOasis(void)
 	gmFlagSet(FLAG_DESERT_SCRIPT_RUNNING);
 	scHeatGaugeSetHeld(1);
 	if(MainRoutineStateWork.next == SCENE_LAMAKAN_DESERT_EAST) {
-		cnt = 3;
+		count = 3;
 		oases = LamakanDesertEastOases;
 	} else if(MainRoutineStateWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
-		cnt = 5;
+		count = 5;
 		oases = LamakanDesertSmogOases;
 	} else {
-		cnt = 2;
+		count = 2;
 		oases = LamakanDesertOasesOther;
 	}
 	/* The distances are whole pixels and best starts at toFIXED(240), far
 	   beyond any of them, so the first oasis always counts; a tie goes to the
 	   later. */
-	total = cnt;
+	total = count;
 	oasis = oases;
-	if(cnt != 0) {
+	if(count != 0) {
 		do {
 			distance = scLamakanDesertPixelsToOasis(
 				&fdActorGet(ACTOR_PARTY_LEADER)->x.fixed, oasis);
 			if(distance <= best) {
 				best = distance;
-				nearest = total - cnt;
+				nearest = total - count;
 			}
-			cnt--;
-			oasis = &oases[(total - cnt) * 2];
-		} while(cnt != 0);
+			count--;
+			oasis = &oases[(total - count) * 2];
+		} while(count != 0);
 	}
 	/* The oasis's x, then its z. */
 	nearest <<= 1;
@@ -699,19 +699,19 @@ static void scLamakanDesertBatheInOasis(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 2);
 	syFieldActorSetMoveTargetFX(
 		fdActorGet(ACTOR_PARTY_LEADER), oases[nearest], 0, oases[nearest + 1]);
-	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(6);
-	sySndPlay(SE_JUMP);
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
+	sySoundPlay(SE_JUMP);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
 	scActorWaitBelowHeight(leader, fdActorGet(ACTOR_PARTY_LEADER)->y.fixed);
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	{
 		ACTOR *bather = fdActorGet(ACTOR_PARTY_LEADER);
 
 		splashIn.type = SPRITE_SPLASH;
 		splashIn.startScaleX = toFIXED(1) / 2;
 		splashIn.startScaleY = toFIXED(4) / 5;
-		splashIn.tgtScaleX = toFIXED(1);
-		splashIn.tgtScaleY = toFIXED(6) / 5;
+		splashIn.targetScaleX = toFIXED(1);
+		splashIn.targetScaleY = toFIXED(6) / 5;
 		fdEffectSpawn(bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, 0,
 			0,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
@@ -722,7 +722,7 @@ static void scLamakanDesertBatheInOasis(void)
 
 	/* A running Reveal's countdown stays full while the leader bathes, at least
 	   60 ticks and until the heat has drained. */
-	revealTicks = &state->revealFrm;
+	revealTicks = &state->revealFrame;
 	heat = &MainRoutineStateWork.hazardSteps;
 	{
 		Sint32 drained = 0;
@@ -750,19 +750,19 @@ static void scLamakanDesertBatheInOasis(void)
 		splashOut.type = SPRITE_SPLASH;
 		splashOut.startScaleX = toFIXED(1) / 2;
 		splashOut.startScaleY = toFIXED(4) / 5;
-		splashOut.tgtScaleX = toFIXED(1) / 2;
-		splashOut.tgtScaleY = toFIXED(6) / 5;
+		splashOut.targetScaleX = toFIXED(1) / 2;
+		splashOut.targetScaleY = toFIXED(6) / 5;
 		fdEffectSpawn(bather->x.fixed, bather->y.fixed, bather->z.fixed, 0,
 			ticks, ticks,
 			EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
 			&splashOut);
 	}
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_JUMP);
-	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(6);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_JUMP);
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdScriptWait(10);
-	state->revealFrm = ticks;
+	state->revealFrame = ticks;
 	scHeatGaugeSetHeld(0);
 }
 
@@ -780,7 +780,7 @@ static void scHeatGaugeCountStep(void)
 	Sint32		   phase;
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	state = FieldStateWork;
-	if(actor->tgtX == ACTOR_NO_TARGET) {
+	if(actor->targetX == ACTOR_NO_TARGET) {
 		return;
 	}
 	MainRoutineStateWork.hazardSteps++;
@@ -863,7 +863,7 @@ static void scLamakanDesertFallIntoPit(void)
 		}
 	}
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorFaceActor(ACTOR_PARTY_LEADER, best, 0);
 	fdScriptWait(20);
 	fdActorSetAttachedEffect(
@@ -890,7 +890,7 @@ static void scLamakanDesertFallIntoPit(void)
 	fdScriptWait(60);
 	fdActorSetAttachedEffect(
 		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorGet(ACTOR_PARTY_LEADER)->update = NULL;
 	fdRequestBattleFromEncounterTable(
 		ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
@@ -992,11 +992,11 @@ static void scLamakanDesertMeetManticore(void)
 	/* The heat stops rising while the leader faces the Manticore, and a running
 	   Reveal is kept full until it has risen. */
 	scHeatGaugeSetHeld(1);
-	state->revealFrm = REVEAL_TICKS;
-	fdActorGet(ACTOR_PARTY_LEADER)->velX = 0;
-	fdActorGet(ACTOR_PARTY_LEADER)->velZ = 0;
-	fdActorGet(ACTOR_PARTY_LEADER)->tgtX = ACTOR_NO_TARGET;
-	fdActorGet(ACTOR_PARTY_LEADER)->tgtZ = ACTOR_NO_TARGET;
+	state->revealFrame = REVEAL_TICKS;
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityX = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityZ = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->targetX = ACTOR_NO_TARGET;
+	fdActorGet(ACTOR_PARTY_LEADER)->targetZ = ACTOR_NO_TARGET;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_MANTICORE, 0);
 	fdScriptWait(40);
@@ -1006,7 +1006,7 @@ static void scLamakanDesertMeetManticore(void)
 	fdScriptWait(40);
 
 	/* The leader backs away 16 pixels, still facing the Manticore. */
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	backward.x = 0;
 	backward.y = 0;
 	backward.z = 0;
@@ -1018,17 +1018,17 @@ static void scLamakanDesertMeetManticore(void)
 		ACTOR_PARTY_LEADER, backward.x / toFIXED(1), backward.z / toFIXED(1));
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdScriptWait(2);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(30);
 
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	fdActorRunRepeatedMotion(ACTOR_MANTICORE, 2);
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_MANTICORE, 2.5);
 	fdActorWalkToAndWait(ACTOR_MANTICORE, 168, 104);
 	fdActorSetSpeed(ACTOR_MANTICORE, 0.5);
 	fdActorWalkToAndWait(ACTOR_MANTICORE, 168, 92);
-	state->revealFrm = REVEAL_TICKS;
+	state->revealFrame = REVEAL_TICKS;
 	scHeatGaugeSetHeld(0);
 }
 
@@ -1098,14 +1098,14 @@ static void scHeatGaugeDraw(void)
 {
 	Uint8					*buf;
 	Sint32					 tile;
-	Sint16					*cols;
-	Sint16					*col;
+	Sint16					*colors;
+	Sint16					*color;
 	SCREEN_TRANSITION_STATE *state;
 	Uint32					*pixels;
 	Uint32					*word;
-	Uint8					*frm;
+	Uint8					*frame;
 	Uint8					*bar;
-	MENU_SPR				*spr;
+	MENU_SPR				*sprite;
 	Sint32					 shown;
 	Uint32					 i;
 	Uint32					*palette;
@@ -1115,9 +1115,9 @@ static void scHeatGaugeDraw(void)
 	Sint32					 level;
 	Uint32					 attributes;
 	Sint32					 y;
-	Uint32					 ofs;
+	Uint32					 offset;
 
-	tile = VramCacheEntries[HeatGaugeVramSlot].ofs >> 5;
+	tile = VramCacheEntries[HeatGaugeVramSlot].offset >> 5;
 	if(HeatGaugeHeld != 0) {
 		HeatGaugeShown = 2;
 	} else if(gmFlagGet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
@@ -1151,13 +1151,13 @@ static void scHeatGaugeDraw(void)
 		}
 	}
 
-	buf = syHeapAlloc(sizeof(HeatGaugeTileBuffer));
+	buf = syHeapAllocate(sizeof(HeatGaugeTileBuffer));
 	syDMAXCopy(HeatGaugePalette, buf, DMA_COPY_HALFWORDS(16), REG_DMA3);
-	cols = (Sint16 *)buf + HEAT_GAUGE_TINTED_COLOR;
-	col = cols;
+	colors = (Sint16 *)buf + HEAT_GAUGE_TINTED_COLOR;
+	color = colors;
 	for(i = HEAT_GAUGE_TINTED_COLOR;
 		i < HEAT_GAUGE_TINTED_COLOR + HEAT_GAUGE_TINTED_COLORS; i++) {
-		Uint16 value = *col;
+		Uint16 value = *color;
 
 		red = RGB_RED(value);
 		green = RGB_GREEN(value);
@@ -1181,7 +1181,7 @@ static void scHeatGaugeDraw(void)
 		if(blue > RGB_LEVEL_MAX) {
 			blue = RGB_LEVEL_MAX;
 		}
-		*col++ = RGB(red, green, blue);
+		*color++ = RGB(red, green, blue);
 	}
 	palette =
 		(Uint32 *)&OBJ_PLTT_COLOR(HEAT_GAUGE_PALETTE, HEAT_GAUGE_TINTED_COLOR);
@@ -1227,9 +1227,9 @@ static void scHeatGaugeDraw(void)
 	}
 	/* Lay the tick's opaque pixels over the tube. */
 	bar = buf;
-	frm = buf + HEAT_GAUGE_TILE_BYTES;
+	frame = buf + HEAT_GAUGE_TILE_BYTES;
 	for(i = 0; i < HEAT_GAUGE_TILE_BYTES; i++) {
-		Uint8 pixel = *frm++;
+		Uint8 pixel = *frame++;
 
 		if(pixel != 0) {
 			*bar = pixel;
@@ -1241,21 +1241,22 @@ static void scHeatGaugeDraw(void)
 	/* Four 16x32 sprites down the screen's left edge and the 16x16 cap at the
 	   gauge's foot. */
 	attributes = OBJ_SIZE_16X32;
-	spr = HeatGaugeSprites;
-	for(i = 0, ofs = 0, y = HEAT_GAUGE_TOP; i < 5; i++) {
+	sprite = HeatGaugeSprites;
+	for(i = 0, offset = 0, y = HEAT_GAUGE_TOP; i < 5; i++) {
 		Uint32 x = (HeatGaugeShown * 8 - HEAT_GAUGE_WIDTH) & OBJ_X_MASK;
 
 		if(i == 4) {
 			attributes = OBJ_SIZE_16X16;
 		}
-		spr->next = NULL;
-		spr->oam.word.attr01 = OBJ_X(x) | y | attributes;
-		spr->oam.word.attr23 =
+		sprite->next = NULL;
+		sprite->oam.word.attr01 = OBJ_X(x) | y | attributes;
+		sprite->oam.word.attr23 =
 			tile | OBJ_PRIORITY(1) | OBJ_PALETTE(HEAT_GAUGE_PALETTE);
-		syOAMAddSprAtDepth(((Uint8 *)HeatGaugeSprites + ofs), OAM_DEPTH_FRONT);
-		spr++;
+		syOAMAddSpriteAtDepth(
+			((Uint8 *)HeatGaugeSprites + offset), OAM_DEPTH_FRONT);
+		sprite++;
 		tile += 8;
-		ofs += sizeof(*spr);
+		offset += sizeof(*sprite);
 		y += 32;
 	}
 	syHeapRelease(buf);

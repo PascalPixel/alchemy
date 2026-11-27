@@ -57,8 +57,8 @@ typedef enum JUPITER_LIGHTHOUSE_ROOM_BEAM_ACTOR_ID {
 #define BEAM_ROOM_GAP_METATILE_X 20
 #define BEAM_ROOM_GAP_METATILE_Z 39
 
-/* The energy block's glow, a picture of scLightSprsInitB's set: the lit channel
-   of a straight north-south path piece. */
+/* The energy block's glow, a picture of scLightSpritesInitB's set: the lit
+   channel of a straight north-south path piece. */
 enum { GLOW_PATH_NORTH_SOUTH = 0 };
 
 /* The empty socket at the east end of the grey blocks' row. */
@@ -84,9 +84,9 @@ typedef enum JUPITER_LIGHTHOUSE_ROOM_BEAM_METATILE_BEHAVIOR {
 
 void scActorRaiseFromMetatile(Sint32 id);
 
-void scLightSprsInitB(void);
+void scLightSpritesInitB(void);
 
-void scLightSprsAdd(Sint32 id, Sint32 value);
+void scLightSpritesAdd(Sint32 id, Sint32 value);
 
 EFFECT_SPR JupiterLighthouseGlowSprite BSS_DATA ALIGNED(16);
 /* Where the glow over the Cyclone pad in use stands. */
@@ -139,7 +139,7 @@ extern Uint32 FieldEffectShortScript[];
 extern Uint32 FieldEffectMediumScript[];
 extern Uint32 FieldEffectLongScript[];
 
-void fdEffectSprInitWithFadeOverlayBlended(
+void fdEffectSpriteInitWithFadeOverlayBlended(
 	const void *script, Sint32 a, Sint32 b, Sint32 c);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
@@ -185,7 +185,7 @@ void scJupiterLighthouseSetCyclonePadsForLeader(void)
 /* An event: draws the glow over the Cyclone pad in use. */
 void scJupiterLighthouseDrawGlow(void)
 {
-	fdEffectSprDrawAtWorldXYZ((Sint32)&JupiterLighthouseGlowSprite,
+	fdEffectSpriteDrawAtWorldXYZ((Sint32)&JupiterLighthouseGlowSprite,
 		JupiterLighthouseGlowPosition[0], JupiterLighthouseGlowPosition[1],
 		JupiterLighthouseGlowPosition[2]);
 }
@@ -198,20 +198,20 @@ void scJupiterLighthouseCycloneDropsLeader(Sint32 kind)
 	Sint32	owner = MainRoutineStateWork.leaderActorId;
 	ACTOR  *leader = fdActorGet(owner);
 	ACTOR  *effect;
-	Sint32	frm;
-	Sint32 *tgt;
+	Sint32	frame;
+	Sint32 *target;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	tgt = JupiterLighthouseGlowPosition;
+	target = JupiterLighthouseGlowPosition;
 	if(kind == CUE_CYCLONE_DOWN_WEST) {
-		tgt[0] = toFIXED(136);
-		tgt[1] = toFIXED(144);
-		tgt[2] = toFIXED(592);
+		target[0] = toFIXED(136);
+		target[1] = toFIXED(144);
+		target[2] = toFIXED(592);
 	} else {
-		tgt[0] = toFIXED(248);
-		tgt[1] = toFIXED(144);
-		tgt[2] = toFIXED(576);
+		target[0] = toFIXED(248);
+		target[1] = toFIXED(144);
+		target[2] = toFIXED(576);
 	}
 	{
 		Sint32 priority = EVENT_PASS_TICK;
@@ -219,7 +219,7 @@ void scJupiterLighthouseCycloneDropsLeader(Sint32 kind)
 		sySetTickEvent(scJupiterLighthouseDrawGlow, priority);
 	}
 	syScriptCameraFollowActor(owner, 1);
-	for(frm = 0; frm < 36; frm++) {
+	for(frame = 0; frame < 36; frame++) {
 		leader->y.fixed += -toFIXED(1);
 		syWait(1);
 	}
@@ -230,7 +230,7 @@ void scJupiterLighthouseCycloneDropsLeader(Sint32 kind)
 	fdActorSelectAnimation(effect, 2);
 	effect->scaleX = toFIXED(3) / 2;
 	effect->scaleY = toFIXED(1);
-	((FIELD_SPR *)effect->spr)->pri = 1;
+	((FIELD_SPR *)effect->sprite)->priority = 1;
 	while(leader->y.fixed > toFIXED(32)) {
 		leader->y.fixed += -toFIXED(1);
 		leader->facing += DEGtoANG(45);
@@ -240,15 +240,15 @@ void scJupiterLighthouseCycloneDropsLeader(Sint32 kind)
 		syWait(1);
 	}
 	fdActorSelectAnimation(effect, 6);
-	for(frm = 0; frm < 15; frm++) {
+	for(frame = 0; frame < 15; frame++) {
 		leader->facing += DEGtoANG(45);
 		syWait(1);
 	}
 	fdActorRelease(effect);
-	fdActorSetSprFlags(fdActorGet(owner), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(owner), SPRITE_FLAG_SHADOW);
 	leader->facing = FACING_SOUTH;
 	leader->layer = MAPGRID_LAYER_GROUND;
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldCloseEvent(scJupiterLighthouseDrawGlow);
 	scJupiterLighthouseSetCyclonePadsForLeader();
 	fdScriptEnd();
@@ -264,20 +264,20 @@ void scJupiterLighthouseCycloneLiftsLeader(Sint32 kind)
 	Sint32	owner = MainRoutineStateWork.leaderActorId;
 	ACTOR  *leader = fdActorGet(owner);
 	ACTOR  *effect;
-	Sint32 *tgt;
-	Sint32	frm;
+	Sint32 *target;
+	Sint32	frame;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	tgt = JupiterLighthouseGlowPosition;
+	target = JupiterLighthouseGlowPosition;
 	if(kind == CUE_CYCLONE_UP_WEST) {
-		tgt[0] = toFIXED(136);
-		tgt[1] = toFIXED(144);
-		tgt[2] = toFIXED(592);
+		target[0] = toFIXED(136);
+		target[1] = toFIXED(144);
+		target[2] = toFIXED(592);
 	} else {
-		tgt[0] = toFIXED(248);
-		tgt[1] = toFIXED(144);
-		tgt[2] = toFIXED(576);
+		target[0] = toFIXED(248);
+		target[1] = toFIXED(144);
+		target[2] = toFIXED(576);
 	}
 	{
 		Sint32 priority = EVENT_PASS_TICK;
@@ -292,7 +292,7 @@ void scJupiterLighthouseCycloneLiftsLeader(Sint32 kind)
 	fdActorSelectAnimation(effect, 2);
 	effect->scaleX = toFIXED(3) / 2;
 	effect->scaleY = toFIXED(1);
-	((FIELD_SPR *)effect->spr)->pri = 1;
+	((FIELD_SPR *)effect->sprite)->priority = 1;
 	while(leader->y.fixed < toFIXED(108)) {
 		leader->y.fixed += toFIXED(1);
 		leader->facing += DEGtoANG(45);
@@ -310,7 +310,7 @@ void scJupiterLighthouseCycloneLiftsLeader(Sint32 kind)
 	}
 	effect->scaleX = toFIXED(1) / 2;
 	effect->scaleY = toFIXED(3) / 4;
-	for(frm = 0; frm < 32; frm++) {
+	for(frame = 0; frame < 32; frame++) {
 		effect->scaleX += toFIXED(1) / 32;
 		effect->scaleY += toFIXED(1) / 128;
 		syWait(1);
@@ -320,17 +320,17 @@ void scJupiterLighthouseCycloneLiftsLeader(Sint32 kind)
 	fdActorSelectAnimation(effect, 6);
 	leader->scaleX = toFIXED(3) / 8;
 	leader->scaleY = toFIXED(3) / 8;
-	for(frm = 0; frm < 20; frm++) {
+	for(frame = 0; frame < 20; frame++) {
 		leader->facing += DEGtoANG(45);
 		leader->scaleX += toFIXED(1) / 32;
 		leader->scaleY = leader->scaleX;
 		syWait(1);
 	}
 	fdActorRelease(effect);
-	fdActorSetSprFlags(fdActorGet(owner), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(owner), SPRITE_FLAG_SHADOW);
 	leader->facing = FACING_SOUTH;
 	leader->layer = MAPGRID_LAYER_MIDDLE;
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	leader->y.fixed = toFIXED(144);
 	leader->groundHeight = toFIXED(144);
 	syFieldCloseEvent(scJupiterLighthouseDrawGlow);
@@ -344,7 +344,7 @@ void scJupiterLighthouseCycloneLiftsLeader(Sint32 kind)
 void scJupiterLighthouseCycloneUpOnWestPad(void)
 {
 	FIELD_STATE		   *event = RamHeapSlots->fieldState;
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 
 	event->raisedCue = CUE_CYCLONE_UP_WEST;
 	effect->sceneVariant = 1;
@@ -355,7 +355,7 @@ void scJupiterLighthouseCycloneUpOnWestPad(void)
 void scJupiterLighthouseCycloneUpOnEastPad(void)
 {
 	FIELD_STATE		   *event = RamHeapSlots->fieldState;
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 
 	event->raisedCue = CUE_CYCLONE_UP_EAST;
 	effect->sceneVariant = 1;
@@ -384,21 +384,21 @@ void scJupiterLighthouseRideTheBeam(void)
 {
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	Sint32 i;
-	Sint32 ang;
+	Sint32 angle;
 	FIXED  y;
 
 	y = actor->y.fixed;
 	if(y >= toFIXED(32)) {
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
-		scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+		scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 		fdActorWalkTo(MainRoutineStateWork.leaderActorId, 216, 680);
 		fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL * 4);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		for(i = 0; i < BEAM_RIDE_STEPS; i++) {
 			actor->y.fixed += toFIXED(3);
-			ang = actor->facing;
-			ang += TRIG_TURN * 3 / 32;
-			actor->facing = ang;
+			angle = actor->facing;
+			angle += TRIG_TURN * 3 / 32;
+			actor->facing = angle;
 			syWait(2);
 		}
 		syFieldScriptSetExitRequest(
@@ -409,12 +409,12 @@ void scJupiterLighthouseRideTheBeam(void)
 /* Nothing visible happens as Felix starts to push the energy block on the east
    ledge, by walking into it or with Move. The block stops following the ground
    while it slides, and it and Felix are raised a step in the sprites' drawing
-   order (`scFieldActorSetSprPriority`) for the push. */
+   order (`scFieldActorSetSpritePriority`) for the push. */
 void scJupiterLighthousePushEnergyBlock(Sint32 unused, Sint32 id)
 {
-	fdActorGet(id)->motionFlg = 0;
-	scFieldActorSetSprPriority(id, 1);
-	scFieldActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorGet(id)->motionFlags = 0;
+	scFieldActorSetSpritePriority(id, 1);
+	scFieldActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 }
 
 /* The energy block lands with a thump when Felix pushes it off the east ledge.
@@ -425,29 +425,29 @@ void scJupiterLighthouseDropEnergyBlock(Sint32 unused, Sint32 id)
 {
 	ACTOR			   *actor = fdActorGet(id);
 	MAIN_ROUTINE_STATE *party;
-	Sint32				frm;
+	Sint32				frame;
 
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorGet(id)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorGet(id)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	party = &MainRoutineStateWork;
-	fdActorGet(party->leaderActorId)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(party->leaderActorId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	if(FIELD_METATILE(actor->x.fixed) == BEAM_ROOM_GAP_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == BEAM_ROOM_GAP_METATILE_Z)
-		scFieldActorSetSprPriority(id, 3);
+		scFieldActorSetSpritePriority(id, 3);
 	if(actor->groundHeight !=
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed)) {
 		syWait(2);
-		for(frm = 0; frm <= 29 &&
-			(actor->y.fixed > actor->groundHeight || actor->velY != 0);
-			frm++)
+		for(frame = 0; frame <= 29 &&
+			(actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
+			frame++)
 			syWait(1);
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 	}
 	if(FIELD_METATILE(actor->x.fixed) == BEAM_ROOM_GAP_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == BEAM_ROOM_GAP_METATILE_Z) {
 		fdScriptSetFlag(FLAG_BEAM_ROOM_ENERGY_BLOCK_IN_GAP);
-		fdActorSetSprFlags(fdActorGet(id), 0);
-		scFieldActorSetSprPriority(id, 3);
+		fdActorSetSpriteFlags(fdActorGet(id), 0);
+		scFieldActorSetSpritePriority(id, 3);
 		fdActorSetPos(id, 0, 0);
 		/* The filled gap from just past the room's east edge, then the lit path
 		   down from it on the middle layer (from column 64), to the Hover
@@ -458,13 +458,13 @@ void scJupiterLighthouseDropEnergyBlock(Sint32 unused, Sint32 id)
 			28, 39, 1, 1, BEAM_ROOM_GAP_METATILE_X, BEAM_ROOM_GAP_METATILE_Z);
 		fdMapGridCopyMetatilesLayered(92, 39, 1, 1, 84, 39);
 		syFieldScriptWait(30);
-		fdScriptPlaySnd(SE_MAP_TRANSITION);
+		fdScriptPlaySound(SE_MAP_TRANSITION);
 		fdMapGridCopyMetatilesLayered(92, 40, 1, 1, 84, 40);
 		syFieldScriptWait(20);
-		fdScriptPlaySnd(SE_MAP_TRANSITION);
+		fdScriptPlaySound(SE_MAP_TRANSITION);
 		fdMapGridCopyMetatilesLayered(92, 41, 1, 1, 84, 41);
 		syFieldScriptWait(20);
-		fdScriptPlaySnd(SE_MAP_TRANSITION);
+		fdScriptPlaySound(SE_MAP_TRANSITION);
 		fdMapGridCopyMetatilesLayered(93, 41, 1, 1, 85, 41);
 		syFieldMapGridSetMetatileBehavior(toFIXED(336), toFIXED(656),
 			MAPGRID_LAYER_OVERHEAD, METATILE_BEHAVIOR_HOVER);
@@ -473,10 +473,10 @@ void scJupiterLighthouseDropEnergyBlock(Sint32 unused, Sint32 id)
 
 /* Nothing visible happens as Move takes hold of the rightmost of the five grey
    blocks in the north room; its sprite's drawing order is set
-   (`fdActorSetSprPriority`) for the slide onto the empty socket. */
+   (`fdActorSetSpritePriority`) for the slide onto the empty socket. */
 void scJupiterLighthouseMoveSocketBlock(Sint32 unused, Sint32 id)
 {
-	fdActorSetSprPriority(id, 2);
+	fdActorSetSpritePriority(id, 2);
 }
 
 /* The rightmost grey block in the north room, Moved one metatile west onto the
@@ -485,13 +485,13 @@ void scJupiterLighthouseMoveSocketBlock(Sint32 unused, Sint32 id)
 void scJupiterLighthouseRaiseSocketBlock(Sint32 unused, Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
-	Sint32 frm;
+	Sint32 frame;
 
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) &&
 		FIELD_METATILE(actor->x.fixed) == BEAM_ROOM_EMPTY_SOCKET_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == BEAM_ROOM_EMPTY_SOCKET_METATILE_Z) {
-		actor->motionFlg = 0;
-		for(frm = 0; frm < 16; frm++) {
+		actor->motionFlags = 0;
+		for(frame = 0; frame < 16; frame++) {
 			actor->y.fixed += toFIXED(2);
 			syWait(1);
 		}
@@ -531,22 +531,22 @@ const CUE *scGetCues(void)
    near half of the circle and behind it on the far half. */
 void scJupiterLighthouseCircleTheBeam(ACTOR *actor)
 {
-	Sint16 ang = actor->tmr;
+	Sint16 angle = actor->timer;
 	Sint16 height = actor->userValue;
 
 	SET_ACTOR_POSITION(actor,
-		syMulFX(syCos(ang), actor->speedLimit) + toFIXED(214),
+		syMulFX(syCos(angle), actor->speedLimit) + toFIXED(214),
 		(height * toFIXED(3)) + toFIXED(8), toFIXED(680));
 	/* Read signed, as the phase is above; the field is declared unsigned. */
 	if(actor->userValue == 0)
 		fdActorSelectAnimation(actor, 7);
 	if(actor->y.fixed > toFIXED(340))
 		actor->userValue = -1;
-	if(syMathSin(ang) < 0)
-		((FIELD_SPR *)actor->spr)->pri = 1;
+	if(syMathSin(angle) < 0)
+		((FIELD_SPR *)actor->sprite)->priority = 1;
 	else
-		((FIELD_SPR *)actor->spr)->pri = 2;
-	actor->tmr += actor->acceleration;
+		((FIELD_SPR *)actor->sprite)->priority = 2;
+	actor->timer += actor->acceleration;
 	actor->userValue++;
 }
 
@@ -560,16 +560,16 @@ void scJupiterLighthouseSpawnBeamParticles(void)
 
 	for(i = 0, phase = 0; i != BEAM_PARTICLES; i++, phase += 5) {
 		actor = (scFieldActorCreate(SPRITE_PARTICLE, 0, 0, 0));
-		actor->motionFlg = 0;
-		actor->priFlg = 0;
+		actor->motionFlags = 0;
+		actor->priorityFlags = 0;
 		actor->speedLimit = (syRandom() << 2) + toFIXED(6);
 		actor->acceleration = syRandomBelow(2048) + DEGtoANG(45) / 4;
 		actor->update = scJupiterLighthouseCircleTheBeam;
-		actor->tmr = syRandom();
+		actor->timer = syRandom();
 		actor->userValue = phase;
-		fdActorSetSprFlags(actor, 0);
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_RBG);
-		((FIELD_SPR *)actor->spr)->pri = 1;
+		fdActorSetSpriteFlags(actor, 0);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RBG);
+		((FIELD_SPR *)actor->sprite)->priority = 1;
 	}
 }
 
@@ -582,13 +582,13 @@ Sint32 scInit(void)
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	scFieldActorSetSprPriority(ACTOR_NORTHWEST_STATUE, 3);
-	scFieldActorSetSprPriority(ACTOR_NORTHEAST_STATUE, 3);
+	scFieldActorSetSpritePriority(ACTOR_NORTHWEST_STATUE, 3);
+	scFieldActorSetSpritePriority(ACTOR_NORTHEAST_STATUE, 3);
 	syIOWrite16(
 		BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
 	fdFadeOverlayFillTiles(0);
-	Call4((void (*)())fdEffectSprInitWithFadeOverlayBlended,
+	Call4((void (*)())fdEffectSpriteInitWithFadeOverlayBlended,
 		(Sint32)&JupiterLighthouseGlowSprite, 0, 0, OBJ_SIZE_32X32);
 	scJupiterLighthouseSetCyclonePadsForLeader();
 	scJupiterLighthouseSpawnBeamParticles();
@@ -602,8 +602,8 @@ Sint32 scInit(void)
 		syFieldMapGridSetMetatileBehavior(toFIXED(336), toFIXED(656),
 			MAPGRID_LAYER_OVERHEAD, METATILE_BEHAVIOR_HOVER);
 	} else {
-		scLightSprsInitB();
-		scLightSprsAdd(ACTOR_ENERGY_BLOCK, GLOW_PATH_NORTH_SOUTH);
+		scLightSpritesInitB();
+		scLightSpritesAdd(ACTOR_ENERGY_BLOCK, GLOW_PATH_NORTH_SOUTH);
 	}
 	/* Arriving in the north half, the leader may walk onto the hovering
 	   blocks. */
@@ -612,7 +612,7 @@ Sint32 scInit(void)
 			JUPITER_LIGHTHOUSE_ROOM_BEAM_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH_A ||
 		MainRoutineStateWork.entrance ==
 			JUPITER_LIGHTHOUSE_ROOM_BEAM_FROM_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_NORTH_B)
-		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
 		scActorRaiseFromMetatile(ACTOR_FIRST_HOVERING_BLOCK);
@@ -664,8 +664,9 @@ extern Sint32 WhirlwindEndScript[];
 
 #include "shared/whirlwind_update_lower.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -684,9 +685,9 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add.h"
 
 /* Unused: sets the priority the lit actors' sprites are drawn at. */
-UNUSED void scLightSprsSetPriority(Sint32 pri)
+UNUSED void scLightSpritesSetPriority(Sint32 priority)
 {
-	LightSpritePriority = pri;
+	LightSpritePriority = priority;
 }
 
 #include "../field/actor_set_sprite_priority.c"
@@ -699,7 +700,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"

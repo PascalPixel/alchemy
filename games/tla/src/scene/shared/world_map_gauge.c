@@ -33,7 +33,7 @@ void scGaugeDraw(Sint32 progress)
 {
 	Sint32 level = FIXEDtoINT(progress * GAUGE_LEVELS + toFIXED(1) / 2) + 1;
 	Sint32 kind = GAUGE_EMPTY;
-	Sint32 cnt, base, i;
+	Sint32 count, base, i;
 
 	if(progress != 0)
 		kind = GAUGE_SHOWN;
@@ -57,35 +57,35 @@ void scGaugeDraw(Sint32 progress)
 				4 * TILE_SIZE_4BPP);
 		/* Whole tiles of the lit bar first, then the rest a pixel at a time. */
 		base = 0;
-		cnt = level;
-		if(cnt >= GAUGE_TILE_PIXELS) {
+		count = level;
+		if(count >= GAUGE_TILE_PIXELS) {
 			GAUGE_COPY_WORDS(
 				GaugeTiles, GaugeSourceTiles[GAUGE_LIT_BAR], TILE_SIZE_4BPP);
 			base = GAUGE_TILE_PIXELS;
-			cnt -= GAUGE_TILE_PIXELS;
+			count -= GAUGE_TILE_PIXELS;
 		}
 		if(level >= 2 * GAUGE_TILE_PIXELS) {
 			GAUGE_COPY_WORDS(GaugeTiles[1], GaugeSourceTiles[GAUGE_LIT_BAR + 1],
 				TILE_SIZE_4BPP);
-			cnt = level;
+			count = level;
 			base = 2 * GAUGE_TILE_PIXELS;
-			cnt -= 2 * GAUGE_TILE_PIXELS;
+			count -= 2 * GAUGE_TILE_PIXELS;
 		}
 		if(level >= 3 * GAUGE_TILE_PIXELS) {
 			GAUGE_COPY_WORDS(GaugeTiles[2], GaugeSourceTiles[GAUGE_LIT_BAR + 2],
 				TILE_SIZE_4BPP);
-			cnt = level;
+			count = level;
 			base = 3 * GAUGE_TILE_PIXELS;
-			cnt -= 3 * GAUGE_TILE_PIXELS;
+			count -= 3 * GAUGE_TILE_PIXELS;
 		}
 		if(level > GAUGE_LEVELS) {
 			GAUGE_COPY_WORDS(GaugeTiles[3], GaugeSourceTiles[GAUGE_LIT_BAR + 3],
 				TILE_SIZE_4BPP);
 			base = 0;
-			cnt = 0;
+			count = 0;
 		}
-		if(cnt != 0) {
-			for(i = 0; i < cnt; i++) {
+		if(count != 0) {
+			for(i = 0; i < count; i++) {
 				Uint8 *src = &GaugeSourceTiles[GAUGE_LIT_BAR +
 								 base / GAUGE_TILE_PIXELS][4] +
 					i / 2;
@@ -117,7 +117,7 @@ void scGaugeDraw(Sint32 progress)
 void scGaugeUpdate(void)
 {
 	Uint32 *oam = GaugeSprite;
-	Sint32	tile = VramCacheEntries[GaugeVram].ofs >> 5;
+	Sint32	tile = VramCacheEntries[GaugeVram].offset >> 5;
 	ACTOR  *leader = fdActorGet(syFieldPartyGetLeaderActor());
 	Sint32	screen[3];
 	Uint32	attributes;
@@ -142,7 +142,7 @@ void scGaugeUpdate(void)
 		*oam++ = (y | OBJ_X(x)) | attributes;
 	}
 	*oam = tile | OBJ_PRIORITY(1);
-	syOAMAddSprAtDepthClamped(GaugeSprite, OAM_DEPTH_FRONT);
+	syOAMAddSpriteAtDepthClamped(GaugeSprite, OAM_DEPTH_FRONT);
 }
 
 /* Sets up the gauge. */

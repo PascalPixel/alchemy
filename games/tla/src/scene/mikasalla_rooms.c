@@ -289,7 +289,7 @@ Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(MainRoutineStateWork.next == SCENE_MIKASALLA_ROOMS_HOUSES) {
 		if(MainRoutineStateWork.entrance ==
@@ -301,19 +301,21 @@ Sint32 scInit(void)
 			fdScriptGetFlag(FLAG_REUNION))
 			fdActorSetPos(ACTOR_GALAHAD, 0, 0);
 		else
-			scFieldActorSetSprCol(fdActorGet(ACTOR_GALAHAD), SPRITE_COLOR_GBR);
+			scFieldActorSetSpriteColor(
+				fdActorGet(ACTOR_GALAHAD), SPRITE_COLOR_GBR);
 		return 0;
 	}
 	if(MainRoutineStateWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM) {
 		Sint32 entrance = MainRoutineStateWork.entrance;
 
 		if(entrance == MIKASALLA_ROOMS_SANCTUM_FROM_MIKASALLA) {
-			fdActorGet(ACTOR_MIKASALLA_HEALER)->collisionFlg |= ACTOR_NEAR_TALK;
-			scFieldActorSetSprPriority(ACTOR_MIKASALLA_HEALER, 2);
+			fdActorGet(ACTOR_MIKASALLA_HEALER)->collisionFlags |=
+				ACTOR_NEAR_TALK;
+			scFieldActorSetSpritePriority(ACTOR_MIKASALLA_HEALER, 2);
 		} else if(entrance == MIKASALLA_ROOMS_SANCTUM_FROM_APOJII_ISLANDS) {
 			fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
-			fdActorGet(ACTOR_APOJII_HEALER)->collisionFlg |= ACTOR_NEAR_TALK;
-			scFieldActorSetSprPriority(ACTOR_APOJII_HEALER, 2);
+			fdActorGet(ACTOR_APOJII_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
+			scFieldActorSetSpritePriority(ACTOR_APOJII_HEALER, 2);
 		} else if(entrance == MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM) {
 			fdScriptClearFlag(FLAG_SHOW_AREA_NAME);
 		}

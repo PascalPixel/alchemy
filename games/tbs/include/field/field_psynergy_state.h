@@ -14,14 +14,14 @@ struct ACTOR;
 /* The state of a field Psynergy: its caster and target, where it takes place,
    the map state it restores and its 24 field effect sprites. */
 typedef struct FIELD_EFFECT_STATE {
-	Sint32		  ang;		/* 1/65536 turns */
+	Sint32		  angle;	/* 1/65536 turns */
 	FIXED		  x;		/* 16.16 fixed-point pixels */
 	FIXED		  y;		/* 16.16 fixed-point pixels */
 	FIXED		  z;		/* 16.16 fixed-point pixels */
 	struct ACTOR *caster;	/* the caster's actor */
-	struct ACTOR *tgt;		/* the target's actor, or NULL */
+	struct ACTOR *target;	/* the target's actor, or NULL */
 	Sint16		  casterId; /* the caster's actor id */
-	Sint16		  tgtId;	/* the target's actor id, -1 for none */
+	Sint16		  targetId; /* the target's actor id, -1 for none */
 	Uint16		  ability;	/* the ability id */
 	Sint16 fieldPsynergy;	/* the ability's field kind (FIELD_PSYNERGY_) */
 	/* Set at the start: Force then aims in front of the caster; cleared once
@@ -30,20 +30,21 @@ typedef struct FIELD_EFFECT_STATE {
 	Uint8 mode; /* where it runs; ACTOR_SYSTEM_WORLD_MAP on the world map */
 	Sint8 flashCaster;	/* set at the start: the caster flashes with a sound */
 	Sint8 announceName; /* set at the start: the ability's name is announced */
-	void (*finishFunc)(void); /* run, when set, as Ply ends */
+	void (*finishCallback)(void); /* run, when set, as Ply ends */
 	Uint8 unusedAfterFinish[12];
 	/* Set by some scenes before a field Psynergy; Carry, Frost, Force and
 	   Reveal treat the target differently with it. */
 	Sint8 sceneVariant;
 	/* set by some scenes: Frost and Force leave the target be */
-	Sint8 leaveTgt;
-	Uint8 paddingAfterLeaveTgt[2]; /* up to the word savedFunc starts on */
+	Sint8 leaveTarget;
+	Uint8
+		paddingAfterLeaveTarget[2]; /* up to the word savedCallback starts on */
 	/* The target's update function and script, saved at the start and restored
 	   when Move or Carry lets it go. */
-	void (*savedFunc)(struct ACTOR *actor);
+	void (*savedCallback)(struct ACTOR *actor);
 	const Sint32 *savedScript;
 	Uint8		  unusedAfterSavedScript[4];
-	Uint8 savedPal; /* the target's first sprite's param, saved likewise */
+	Uint8 savedPalette; /* the target's first sprite's param, saved likewise */
 	Uint8
 		/* set in two Mercury Lighthouse scenes: Douse lets particles sway
 		   down */
@@ -65,7 +66,7 @@ typedef struct FIELD_EFFECT_STATE {
 STATIC_ASSERT(sizeof(FIELD_EFFECT_STATE) == 1824);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, caster) == 16);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, ability) == 28);
-STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, savedFunc) == 56);
+STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, savedCallback) == 56);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, tileSlot) == 70);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, savedShakeX) == 76);
 STATIC_ASSERT(offsetof(FIELD_EFFECT_STATE, particles) == 88);

@@ -20,7 +20,7 @@ void scKolimaUpdateCurseDust(void)
 {
 	ACTOR  *actor = NULL;
 	Sint32 *origin;
-	SPR	   *spr;
+	SPR	   *sprite;
 	Sint32	x;
 	FIXED	z;
 
@@ -50,23 +50,23 @@ void scKolimaUpdateCurseDust(void)
 		(actor = syFieldActorCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
 		origin = ((MAP_GRID_SCROLL_STATE *)MapGridState[0])->origin;
 		if((TickCount & 63) == 0)
-			sySndPlay(SE_GLITTER);
+			sySoundPlay(SE_GLITTER);
 		if(KolimaCurseDustState != KOLIMA_DUST_CENTRED)
 			x = origin[0] + ((syRandomBelow(KolimaCurseDustWidth)) << 8) +
 				KolimaCurseDustOffset;
 		else
 			x = origin[0] + (syRandomNext() << 8) - toFIXED(128);
 		z = origin[2] + (syRandomNext() << 8) - toFIXED(128);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(160);
-		spr = actor->spr;
+		sprite = actor->sprite;
 		actor->scaleX = toFIXED(9) / 10;
 		actor->scaleY = toFIXED(9) / 10;
 		actor->x.fixed = x;
 		actor->z.fixed = z;
-		spr->flg = 0;
-		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		spr->image.pri = 1;
+		sprite->flags = 0;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite->image.priority = 1;
 		fdActorSelectAnimation(actor, 1);
 		fdActorStartScript(actor, KolimaCurseDustScript);
 	}

@@ -6,7 +6,7 @@
 
 /* Each set is a palette and five tilesets: fdWorldMapLoadGraphics decodes the
    palette into BG palettes 0 to 13, the next four into the two halves of char
-   blocks 2 and 3, and the last into MapGridAnimTiles, where the tileset
+   blocks 2 and 3, and the last into MapGridAnimationTiles, where the tileset
    animations copy their pictures from. */
 Uint32 WorldMapGraphicsResources[2][6] = {
 	{

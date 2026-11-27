@@ -54,7 +54,7 @@ typedef enum INVENTORY_DISCARD_CHECK {
 	INVENTORY_DISCARD_INDISPENSABLE = -4
 } INVENTORY_DISCARD_CHECK;
 
-/* The bits of ITEM_DEFINITION.flg. */
+/* The bits of ITEM_DEFINITION.flags. */
 typedef enum ITEM_FLAGS {
 	ITEM_CURSED = 1, /* equipping it curses the wearer (UNIT.curse) */
 	/* Once equipped it cannot be taken off, or dropped while worn. */
@@ -104,7 +104,7 @@ typedef enum ITEM_TYPE {
 	ITEM_TYPE_SHIRT = 9 /* Mythril Shirt, Silk Shirt, Running Shirt */
 } ITEM_TYPE;
 
-/* How many effects an item has while equipped (ITEM_DEFINITION.effs). */
+/* How many effects an item has while equipped (ITEM_DEFINITION.effects). */
 #define EQUIP_EFFECT_SLOTS 4
 /* A multiplier of 10 tenths, which keeps a stat as it is: the classes' stats
    (CLASS_DEFINITION) and the EQUIP_EFFECT_SCALE_ effects are in tenths. */
@@ -142,8 +142,8 @@ typedef enum EQUIP_EFFECT_KIND {
 	   unleash chance and half a percent to a plain attack's chance of a
 	   critical hit. */
 	EQUIP_EFFECT_ADD_UNLEASH_CHANCE,
-	/* Summed by gmUnitCalc into equipBonus[1]; no item of item_table.c has it,
-	   the item menu draws no line for it, and nothing reads the total. */
+	/* Summed by gmUnitCalculate into equipBonus[1]; no item of item_table.c has
+	   it, the item menu draws no line for it, and nothing reads the total. */
 	EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE,
 	/* "The curse can be removed": sets CURSE_REMOVABLE, which lifts
 	   CURSE_BOUND. */
@@ -176,7 +176,7 @@ STATIC_ASSERT(offsetof(EQUIP_EFFECT, amount) == 1);
 typedef struct ITEM_DEFINITION {
 	Sint16 price;	  /* coins */
 	Uint8  type;	  /* ITEM_TYPE; 0 for an item that is not equipment */
-	Uint8  flg;		  /* ITEM_FLAGS */
+	Uint8  flags;	  /* ITEM_FLAGS */
 	Uint16 equipMask; /* one bit per character that can equip it, bit 0 Isaac */
 	Uint16 icon;	  /* indexes ItemIcons */
 	Sint16 attack;	  /* Attack added while equipped */
@@ -187,14 +187,14 @@ typedef struct ITEM_DEFINITION {
 	Uint8  padding[4];
 	long   element; /* a weapon's attack element; ELEMENT_NONE for none */
 	/* What it does while equipped. */
-	EQUIP_EFFECT effs[EQUIP_EFFECT_SLOTS];
+	EQUIP_EFFECT effects[EQUIP_EFFECT_SLOTS];
 	Uint16		 abilityId; /* the ability used, or taught as Psynergy */
 } ITEM_DEFINITION;
 
 STATIC_ASSERT(sizeof(ITEM_DEFINITION) == 44);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, price) == 0);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, type) == 2);
-STATIC_ASSERT(offsetof(ITEM_DEFINITION, flg) == 3);
+STATIC_ASSERT(offsetof(ITEM_DEFINITION, flags) == 3);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, equipMask) == 4);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, icon) == 6);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, attack) == 8);
@@ -203,7 +203,7 @@ STATIC_ASSERT(offsetof(ITEM_DEFINITION, unleashChance) == 11);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, useType) == 12);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, unleashAbility) == 14);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, element) == 20);
-STATIC_ASSERT(offsetof(ITEM_DEFINITION, effs) == 24);
+STATIC_ASSERT(offsetof(ITEM_DEFINITION, effects) == 24);
 STATIC_ASSERT(offsetof(ITEM_DEFINITION, abilityId) == 40);
 
 #endif

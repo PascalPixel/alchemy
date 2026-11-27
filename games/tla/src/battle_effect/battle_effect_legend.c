@@ -51,18 +51,18 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*graphics;
 	SCREEN_POINT		 start;
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	MODEL_TEXTURE		 texture;
 	PARTICLE			*step;
 	Sint32				 i;
 	Sint32				 j;
 	Uint8				*cells = RamMapMetatileBuffer;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 
@@ -88,23 +88,24 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cells, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != args->variant * LEGEND_SWORD_INTERVAL + LEGEND_TICKS;
-		frm++) {
+	for(frame = 0;
+		frame != args->variant * LEGEND_SWORD_INTERVAL + LEGEND_TICKS;
+		frame++) {
 		/* Tick 0: the swords set out from above and beside the target, on the
 		   user's side, toward it. */
-		if(frm == 0) {
-			btEffectPosProjectBattler(args->tgts[0], &tgt);
+		if(frame == 0) {
+			btEffectPosProjectBattler(args->targets[0], &target);
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				start.x = tgt.x + LEGEND_SWORD_START_DISTANCE;
+				start.x = target.x + LEGEND_SWORD_START_DISTANCE;
 			else
-				start.x = tgt.x - LEGEND_SWORD_START_DISTANCE;
-			start.y = tgt.y - LEGEND_SWORD_START_DISTANCE;
+				start.x = target.x - LEGEND_SWORD_START_DISTANCE;
+			start.y = target.y - LEGEND_SWORD_START_DISTANCE;
 			for(i = 0; i != 3; i++) {
 				step = &state->particles[i];
 				step->x = start.x * (toFIXED(1) / 2);
 				step->y = toFIXED(start.y);
-				step->velX = (tgt.x - start.x) * (toFIXED(1) / 32);
-				step->velY = (tgt.y - start.y) * (toFIXED(1) / 16);
+				step->velocityX = (target.x - start.x) * (toFIXED(1) / 32);
+				step->velocityY = (target.y - start.y) * (toFIXED(1) / 16);
 				step->variant = 0;
 			}
 			EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
@@ -113,39 +114,39 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 		/* The swords, one each LEGEND_SWORD_INTERVAL ticks. */
 		for(i = 0; i != args->variant + 1; i++) {
 			step = &state->particles[i];
-			if(frm == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_SOUND_TICK)
-				sySndPlayStub(SE_POWER_UP);
+			if(frame == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_SOUND_TICK)
+				sySoundPlayStub(SE_POWER_UP);
 
 			/* The strike: the target reels and flashes, and sparks fly up from
 			   it. The last sword ends the action. */
-			if(frm == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_STRIKE_TICK) {
+			if(frame == i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_STRIKE_TICK) {
 				if(i == args->variant)
 					EFFECT_SHOW_DAMAGE(SE_CLATTER);
 				else
-					sySndPlayStub(SE_CLATTER);
-				btEffectStartActorMotion(args->tgts[0], 1, 0, 0, 0, 100);
+					sySoundPlayStub(SE_CLATTER);
+				btEffectStartActorMotion(args->targets[0], 1, 0, 0, 0, 100);
 				btEffectTintBattler(
-					args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
-				state->shakeFrm = 4;
+					args->targets[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
+				state->shakeFrame = 4;
 				for(j = 0; j != LEGEND_SWORD_SPARKS; j++) {
 					PARTICLE *spark =
 						&EXTRA_PARTICLES[i * LEGEND_SWORD_SPARKS + j];
-					Sint32 ang;
+					Sint32 angle;
 					Sint32 force;
 
-					spark->x = tgt.x * (toFIXED(1) / 2);
+					spark->x = target.x * (toFIXED(1) / 2);
 					spark->y = toFIXED(96);
-					ang = syRandom() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
+					angle = syRandom() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
 					force = syRandom() & 127;
-					spark->velX = (sySin(ang) * force) >> 4;
-					spark->velY = (syCos(ang) * force) >> 3;
+					spark->velocityX = (sySin(angle) * force) >> 4;
+					spark->velocityY = (syCos(angle) * force) >> 3;
 					spark->variant = (syRandom() & 7) + 16;
 				}
 			}
 
 			/* The sword falls, faster each tick, until it sticks in the
 			   ground. */
-			if(frm >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_TICK) {
+			if(frame >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_TICK) {
 				Sint32 x = FIXED_INTEGER_PART(step->x) - LEGEND_SWORD_WIDTH / 2;
 				Sint32 y = FIXED_INTEGER_PART(step->y) - 50;
 				Sint32 height = LEGEND_SWORD_HEIGHT;
@@ -155,10 +156,11 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 				draw[0](canvas, state->sheet + LEGEND_BLADE_PICTURES, x, y,
 					LEGEND_SWORD_WIDTH, height);
 				if(step->variant <= LEGEND_SWORD_FALL_TICKS) {
-					step->x += step->velX;
-					step->y += step->velY;
-					step->velX += (tgt.x - start.x) * (toFIXED(1) / 128);
-					step->velY += (tgt.y - start.y) * (toFIXED(1) / 64);
+					step->x += step->velocityX;
+					step->y += step->velocityY;
+					step->velocityX +=
+						(target.x - start.x) * (toFIXED(1) / 128);
+					step->velocityY += (target.y - start.y) * (toFIXED(1) / 64);
 				}
 				step->variant++;
 			}
@@ -175,7 +177,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 					size);
 				if(step->y > toFIXED(SPARK_GROUND_Y)) {
 					step->y = toFIXED(SPARK_GROUND_Y);
-					step->velY = -step->velY / 2;
+					step->velocityY = -step->velocityY / 2;
 				}
 				btParticleAdvanceWithGravity2D(step, 62, toFIXED(1) / 4);
 				step->variant--;
@@ -188,7 +190,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 			void		 *vertices;
 			FIXED		  scale;
 
-			vertices = syHeapAllocEWRAM(32);
+			vertices = syHeapAllocateEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 7;
 			texture.logHeight = 7;
@@ -200,18 +202,18 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 
 			/* Ticks 16-107: the rune rises behind the target, turning, then
 			   fades. */
-			if(frm >= 16 && frm <= 107) {
-				Sint32 height = frm * 2 - 96;
+			if(frame >= 16 && frame <= 107) {
+				Sint32 height = frame * 2 - 96;
 				Sint32 alpha = 0;
 
-				scale = frm * (toFIXED(1) / 8) - toFIXED(2);
+				scale = frame * (toFIXED(1) / 8) - toFIXED(2);
 				if(height > -48)
 					height = -48;
 				/* It fades from 60 ticks after the last sword sets out, four
 				   levels a tick. */
-				if(frm >= args->variant * LEGEND_SWORD_INTERVAL + 60)
+				if(frame >= args->variant * LEGEND_SWORD_INTERVAL + 60)
 					alpha =
-						-((frm - args->variant * LEGEND_SWORD_INTERVAL) * 4 +
+						-((frame - args->variant * LEGEND_SWORD_INTERVAL) * 4 +
 							-240);
 				if(scale > toFIXED(2))
 					scale = toFIXED(2);
@@ -224,7 +226,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 					syRotY(TRIG_TURN * 25 / 256);
 				else
 					syRotY(-TRIG_TURN * 25 / 256);
-				syRotZ(frm * (TRIG_TURN / 128));
+				syRotZ(frame * (TRIG_TURN / 128));
 				syMatrixScaleUniform(scale);
 				syScale(toFIXED(1), toFIXED(1), toFIXED(1));
 				btRenderTransformVertices(
@@ -236,8 +238,9 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 			   lands, holds 8 ticks and fades over 8. */
 			texture.pixels = cells;
 			for(i = 0; i != args->variant + 1; i++) {
-				if(frm >= i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_TICK) {
-					Sint32 age = frm - i * LEGEND_SWORD_INTERVAL -
+				if(frame >=
+					i * LEGEND_SWORD_INTERVAL + LEGEND_SWORD_FALL_TICK) {
+					Sint32 age = frame - i * LEGEND_SWORD_INTERVAL -
 						LEGEND_SWORD_FALL_TICK;
 					Sint32 alpha = -MODEL_SHADE_INVISIBLE - age * 8;
 
@@ -254,7 +257,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 							syRotY(TRIG_TURN * 25 / 256);
 						else
 							syRotY(-TRIG_TURN * 25 / 256);
-						syRotZ(frm * (TRIG_TURN / 128));
+						syRotZ(frame * (TRIG_TURN / 128));
 						syMatrixScaleUniform(scale);
 						btRenderTransformVertices(
 							BattleEffectSquareCorners, vertices, 4);
@@ -265,7 +268,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 
 			/* Until the swords fall: the fan of flames opens, pulsing, and
 			   closes. */
-			if(frm < LEGEND_SWORD_FALL_TICK) {
+			if(frame < LEGEND_SWORD_FALL_TICK) {
 				texture.logWidth = 5;
 				texture.logHeight = 6;
 				texture.pixels = state->sheet + LEGEND_FLAME_GRADIENT;
@@ -276,14 +279,14 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					syTranslate(INTtoFIXED(start.x - 128), -toFIXED(80), 0);
 					syRotX(LEGEND_FAN_TILT);
-					syRotZ((frm + i * 16) << 9);
-					scale = frm * (toFIXED(1) / 16) - toFIXED(1) / 4;
+					syRotZ((frame + i * 16) << 9);
+					scale = frame * (toFIXED(1) / 16) - toFIXED(1) / 4;
 					if(scale > toFIXED(1))
 						scale = toFIXED(1);
-					if(frm > 31)
-						scale = toFIXED(3) - frm * (toFIXED(1) / 16);
+					if(frame > 31)
+						scale = toFIXED(3) - frame * (toFIXED(1) / 16);
 					syScale(toFIXED(1) / 2, toFIXED(1),
-						(sySin((frm + i * 8) << 9) / 8 + scale) * 2);
+						(sySin((frame + i * 8) << 9) / 8 + scale) * 2);
 					btRenderTransformVertices(
 						LegendFanFlameCorners, vertices, 4);
 					btRenderDrawModelList(model);
@@ -375,12 +378,12 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	DRAW_RECTANGLE		 draw[2];
 	Uint8				*graphics;
 	FIXED				 scale;
 	SCREEN_POINT		 card;
-	SCREEN_POINT		 tgts[8];
+	SCREEN_POINT		 targets[8];
 	SCREEN_POINT		 aim;
 	MODEL_TEXTURE		 texture;
 	RENDER_MODEL		*model;
@@ -389,7 +392,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 firstHit;
 	Sint32				 lastHit;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 
@@ -428,46 +431,46 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	REG_BLDCNT = 0;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
-	for(frm = 0; frm != ElementCardsTicks[mode]; frm++) {
+	for(frame = 0; frame != ElementCardsTicks[mode]; frame++) {
 		/* Tick 0: clear the particles, give each member a strike countdown,
 		   and find the user and every target. */
-		if(frm == 0) {
-			sySndPlayStub(SE_WARP);
+		if(frame == 0) {
+			sySoundPlayStub(SE_WARP);
 			EFFECT_FREE_PARTICLES(i, state->particles, CARD_PIECES);
-			for(i = 0; i != args->tgtCnt; i++)
+			for(i = 0; i != args->targetCount; i++)
 				state->particles[CARD_STRIKE_TIMERS + i].variant =
 					(syRandom() & 3) + 2;
 			EFFECT_FREE_PARTICLES(i, EXTRA_PARTICLES, LEGEND_SPARK_COUNT);
-			btEffectPosProjectSpr(args->user, &card);
-			for(i = 0; i != args->tgtCnt; i++)
-				btEffectPosProjectScaledBattler(args->tgts[i], &tgts[i]);
+			btEffectPosProjectSprite(args->user, &card);
+			for(i = 0; i != args->targetCount; i++)
+				btEffectPosProjectScaledBattler(args->targets[i], &targets[i]);
 			REG_BLDCNT = 0;
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 			scale = toFIXED(1) / 4;
 		}
 
 		/* The card rises and grows, and later rises faster and shrinks. */
-		if(frm < CARD_RISE_TICKS) {
+		if(frame < CARD_RISE_TICKS) {
 			card.y--;
 			scale += toFIXED(1) / 128;
 			if(scale > toFIXED(1) / 2)
 				scale = toFIXED(1) / 2;
 		}
-		if(frm >= CARD_SHRINK_TICK) {
+		if(frame >= CARD_SHRINK_TICK) {
 			scale -= toFIXED(1) / 128;
 			card.y -= 2;
 		}
 
 		/* The card shows its picture. */
-		if(frm == CARD_RISE_TICKS) {
+		if(frame == CARD_RISE_TICKS) {
 			if(mode == CARD_BRAMBLE)
-				sySndPlayStub(SE_BOSS_ROAR);
+				sySoundPlayStub(SE_BOSS_ROAR);
 			if(mode == CARD_FROST)
-				sySndPlayStub(SE_CLATTER);
+				sySoundPlayStub(SE_CLATTER);
 			if(mode == CARD_FLAME)
-				sySndPlayStub(SE_LAUNCH);
+				sySoundPlayStub(SE_LAUNCH);
 			if(mode == CARD_THUNDER)
-				sySndPlayStub(SE_RISE_WITH_SPARKS);
+				sySoundPlayStub(SE_RISE_WITH_SPARKS);
 			if(mode != CARD_BRAMBLE) {
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -476,7 +479,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 		}
 
-		if(frm >= CARD_RISE_TICKS) {
+		if(frame >= CARD_RISE_TICKS) {
 			/* The background steps toward the card's colours. */
 			if(mode != CARD_BRAMBLE) {
 				if(mode == CARD_FROST)
@@ -490,20 +493,20 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			/* The Frost and Flame cards throw one shard or puff of smoke a
 			   tick at a target in turn, until the card shrinks. */
 			if(mode == CARD_FROST || mode == CARD_FLAME) {
-				Sint32 member = frm % args->tgtCnt;
+				Sint32 member = frame % args->targetCount;
 
-				aim.x = tgts[member].x + (syRandom() & 63) - 32;
+				aim.x = targets[member].x + (syRandom() & 63) - 32;
 				if(mode == CARD_FROST)
-					aim.y = tgts[member].y + (syRandom() & 255) - 96;
+					aim.y = targets[member].y + (syRandom() & 255) - 96;
 				else if(mode == CARD_FLAME)
-					aim.y = tgts[member].y + (syRandom() & 63) + 32;
-				if(frm < CARD_SHRINK_TICK) {
-					PARTICLE *step = &state->particles[frm % CARD_PIECES];
+					aim.y = targets[member].y + (syRandom() & 63) + 32;
+				if(frame < CARD_SHRINK_TICK) {
+					PARTICLE *step = &state->particles[frame % CARD_PIECES];
 
 					step->x = card.x * (toFIXED(1) / 2);
 					step->y = toFIXED(card.y);
-					step->velX = (aim.x - card.x) * (toFIXED(1) / 32);
-					step->velY = (aim.y - card.y) * (toFIXED(1) / 32);
+					step->velocityX = (aim.x - card.x) * (toFIXED(1) / 32);
+					step->velocityY = (aim.y - card.y) * (toFIXED(1) / 32);
 					step->z = CARD_SHARD_TUMBLE_SPEED;
 					step->variant = 0;
 				}
@@ -540,9 +543,9 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						btParticleAdvanceWithGravity2D(
 							step, PARTICLE_DAMPING_NONE, 0);
 						if(step->y > toFIXED(CARD_GROUND_Y))
-							step->velY = -step->velY / 2;
+							step->velocityY = -step->velocityY / 2;
 						step->variant += step->z;
-						if(step->z > 1 && (frm & 1))
+						if(step->z > 1 && (frame & 1))
 							step->z--;
 					}
 				}
@@ -560,11 +563,11 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								FIXED_INTEGER_PART(step->x) - 12,
 								FIXED_INTEGER_PART(step->y) - 24,
 								SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-						step->x += step->velX;
-						step->y += step->velY;
+						step->x += step->velocityX;
+						step->y += step->velocityY;
 						if(step->y > toFIXED(CARD_GROUND_Y)) {
 							step->y = toFIXED(CARD_GROUND_Y);
-							step->velY = 0;
+							step->velocityY = 0;
 						}
 						step->variant++;
 						if(step->variant == SMOKE_PUFF_TICKS)
@@ -586,10 +589,10 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			lastHit = CARD_BRAMBLE_STRIKES_UNTIL;
 		else
 			lastHit = CARD_STRIKES_UNTIL;
-		if(frm >= firstHit && frm < lastHit) {
-			Sint32 speed = (frm - CARD_STRIKES_FROM) * 3;
+		if(frame >= firstHit && frame < lastHit) {
+			Sint32 speed = (frame - CARD_STRIKES_FROM) * 3;
 
-			for(i = 0; i != args->tgtCnt; i++) {
+			for(i = 0; i != args->targetCount; i++) {
 				PARTICLE *step = &state->particles[CARD_STRIKE_TIMERS + i];
 
 				if(--step->variant == 0) {
@@ -597,39 +600,39 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					Sint32 j;
 
 					step->variant = 5;
-					state->shakeFrm = 4;
+					state->shakeFrame = 4;
 					if(mode == CARD_FROST)
-						sySndPlayStub(SE_HEAVY_IMPACT);
+						sySoundPlayStub(SE_HEAVY_IMPACT);
 					else if(mode == CARD_THUNDER)
-						sySndPlayStub(SE_THUNDER_CARD);
+						sySoundPlayStub(SE_THUNDER_CARD);
 					else
-						sySndPlayStub(SE_IMPACT);
+						sySoundPlayStub(SE_IMPACT);
 					if(i == 0)
 						EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-					btEffectStartActorMotion(args->tgts[i], 1, toFIXED(2),
+					btEffectStartActorMotion(args->targets[i], 1, toFIXED(2),
 						toFIXED(8), toFIXED(1), 100 + speed);
 					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
+						args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 					burst = 0;
-					btEffectPosProjectScaledBattler(args->tgts[i], &aim);
+					btEffectPosProjectScaledBattler(args->targets[i], &aim);
 					for(j = 0; j != CARD_SPARKS_PER_TARGET; j++) {
 						PARTICLE *spark =
 							&EXTRA_PARTICLES[i * CARD_SPARKS_PER_TARGET + j];
 
 						if(spark->variant < 0) {
-							Sint32 ang;
+							Sint32 angle;
 							Sint32 force;
 
 							spark->x = aim.x * (toFIXED(1) / 2);
 							spark->y = INTtoFIXED(aim.y + 8);
-							ang =
+							angle =
 								syRandom() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
 							force = syRandom() & 127;
-							spark->velX = (sySin(ang) * force) >> 5;
-							spark->velY = (syCos(ang) * force) >> 4;
+							spark->velocityX = (sySin(angle) * force) >> 5;
+							spark->velocityY = (syCos(angle) * force) >> 4;
 							if(mode == CARD_THUNDER) {
-								spark->velX /= 2;
-								spark->velY /= 2;
+								spark->velocityX /= 2;
+								spark->velocityY /= 2;
 							}
 							spark->variant = (syRandom() & 7) + 16;
 							if(++burst == CARD_STRIKE_SPARKS)
@@ -641,7 +644,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* This tick's models: the card, then the textures. */
-		vertices = syHeapAllocEWRAM(32);
+		vertices = syHeapAllocateEWRAM(32);
 		model = btRenderAllocateModelList(1);
 		texture.logWidth = 5;
 		texture.logHeight = 6;
@@ -651,22 +654,22 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		model->mesh = BattleEffectTallMesh;
 		model->vertices = vertices;
 		/* DEAD: tick is never negative; the ROM keeps the test. */
-		if(frm >= 0) {
+		if(frame >= 0) {
 			/* The card: it swings from side to side as it rises, tilted
 			   back. */
 			syInitMatrix();
 			syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 			syTranslate(toFIXED(card.x) - toFIXED(128),
 				toFIXED(card.y) - toFIXED(64), 0);
-			if(frm < CARD_RISE_TICKS) {
-				syRotX((CARD_RISE_TICKS - frm) * (TRIG_TURN / 64));
+			if(frame < CARD_RISE_TICKS) {
+				syRotX((CARD_RISE_TICKS - frame) * (TRIG_TURN / 64));
 				if(args->side == EFFECT_SIDE_ENEMIES)
-					syTranslate(-sySin(frm * (TRIG_TURN / 96)) << 7, 0, 0);
+					syTranslate(-sySin(frame * (TRIG_TURN / 96)) << 7, 0, 0);
 				else
-					syTranslate(sySin(frm * (TRIG_TURN / 96)) << 7, 0, 0);
+					syTranslate(sySin(frame * (TRIG_TURN / 96)) << 7, 0, 0);
 			}
 			syRotY(CARD_TILT);
-			syRotZ(frm * (TRIG_TURN / 64));
+			syRotZ(frame * (TRIG_TURN / 64));
 			syMatrixScaleUniform(scale);
 			syScale(toFIXED(1), toFIXED(2), toFIXED(1));
 			btRenderTransformVertices(BattleEffectSquareCorners, vertices, 4);
@@ -682,11 +685,11 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		   the card's corners for 64 ticks; the bolts fade as the card
 		   shrinks. */
 		if((mode == CARD_THUNDER || mode == CARD_BRAMBLE) &&
-			(frm >= CARD_RISE_TICKS && frm <= 111)) {
+			(frame >= CARD_RISE_TICKS && frame <= 111)) {
 			Sint32 alpha = 0;
 
-			if(mode == CARD_THUNDER && frm >= CARD_SHRINK_TICK)
-				alpha = frm * -4 + 384;
+			if(mode == CARD_THUNDER && frame >= CARD_SHRINK_TICK)
+				alpha = frame * -4 + 384;
 			texture.logWidth = 5;
 			texture.logHeight = 7;
 			model->shade = alpha;
@@ -696,13 +699,13 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			if(mode == CARD_BRAMBLE) {
 				/* The vines sway, each from its own phase. */
 				model->kind = MODEL_SHADED;
-				if(frm == 48) {
+				if(frame == 48) {
 					Sint32 first = syRandom();
 
 					for(i = 0; i != 4; i++) {
 						PARTICLE *step = &state->particles[i];
 
-						step->velY = i * (TRIG_TURN / 8);
+						step->velocityY = i * (TRIG_TURN / 8);
 						step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
 							PICTURE_BYTES(CARD);
 					}
@@ -710,20 +713,21 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				for(i = 0; i != 4; i++) {
 					PARTICLE *step = &state->particles[i];
 
-					step->velZ = sySin(step->velY + frm * (TRIG_TURN / 64)) /
+					step->velocityZ =
+						sySin(step->velocityY + frame * (TRIG_TURN / 64)) /
 							CARD_VINE_SWAY +
 						CARD_VINE_ANGLE;
 				}
 			} else {
 				/* The bolts flicker every other tick. */
 				model->kind = MODEL_SHADED_ADDITIVE;
-				if((frm & 1) == 0) {
+				if((frame & 1) == 0) {
 					Sint32 first = syRandom();
 
 					for(i = 0; i != 4; i++) {
 						PARTICLE *step = &state->particles[i];
 
-						step->velZ = (syRandom() & 8191) + 8096;
+						step->velocityZ = (syRandom() & 8191) + 8096;
 						step->z = (first + i) % 3 * PICTURE_BYTES(CARD_STREAK) +
 							ELEMENT_CARDS_PICTURES;
 					}
@@ -744,14 +748,15 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 				if(args->side == EFFECT_SIDE_PARTY)
 					syRotY(DEGtoANG(180));
-				syRotZ(step->velZ);
+				syRotZ(step->velocityZ);
 				if(mode == CARD_BRAMBLE) {
-					Sint32 length = frm * (toFIXED(1) / 8) - toFIXED(6);
+					Sint32 length = frame * (toFIXED(1) / 8) - toFIXED(6);
 
 					if(length > toFIXED(2))
 						length = toFIXED(2);
-					if(frm >= CARD_SHRINK_TICK)
-						length = length - frm * (toFIXED(1) / 8) + toFIXED(12);
+					if(frame >= CARD_SHRINK_TICK)
+						length =
+							length - frame * (toFIXED(1) / 8) + toFIXED(12);
 					syScale(toFIXED(4), length, toFIXED(1));
 				} else {
 					syScale(toFIXED(2), toFIXED(2), toFIXED(1));
@@ -781,7 +786,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						FIXED_INTEGER_PART(step->y), size);
 					if(step->y > toFIXED(SPARK_GROUND_Y)) {
 						step->y = toFIXED(SPARK_GROUND_Y);
-						step->velY = -step->velY / 2;
+						step->velocityY = -step->velocityY / 2;
 					}
 					btParticleAdvanceWithGravity2D(step,
 						ElementCardsSparkMotions[mode].damping,

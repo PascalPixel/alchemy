@@ -285,26 +285,26 @@ Sint32 ImilFuchinFallsTrackLeader;
 /* The fields of EFFECT_OPTIONS that the dragon's fire sets, up to its scales,
    passed to scImilFuchinFallsSpawnDust in their place. */
 typedef struct CAVE_DUST_OPTIONS {
-	Sint32 pri;
-	Sint32 pal;
+	Sint32 priority;
+	Sint32 palette;
 	Sint32 startScaleX;
 	Sint32 startScaleY;
-	Sint32 tgtScaleX;
-	Sint32 tgtScaleY;
+	Sint32 targetScaleX;
+	Sint32 targetScaleY;
 } CAVE_DUST_OPTIONS;
 
+STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, priority) ==
+	offsetof(EFFECT_OPTIONS, priority));
 STATIC_ASSERT(
-	offsetof(CAVE_DUST_OPTIONS, pri) == offsetof(EFFECT_OPTIONS, pri));
-STATIC_ASSERT(
-	offsetof(CAVE_DUST_OPTIONS, pal) == offsetof(EFFECT_OPTIONS, pal));
+	offsetof(CAVE_DUST_OPTIONS, palette) == offsetof(EFFECT_OPTIONS, palette));
 STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, startScaleX) ==
 	offsetof(EFFECT_OPTIONS, startScaleX));
 STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, startScaleY) ==
 	offsetof(EFFECT_OPTIONS, startScaleY));
-STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, tgtScaleX) ==
-	offsetof(EFFECT_OPTIONS, tgtScaleX));
-STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, tgtScaleY) ==
-	offsetof(EFFECT_OPTIONS, tgtScaleY));
+STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, targetScaleX) ==
+	offsetof(EFFECT_OPTIONS, targetScaleX));
+STATIC_ASSERT(offsetof(CAVE_DUST_OPTIONS, targetScaleY) ==
+	offsetof(EFFECT_OPTIONS, targetScaleY));
 
 /* Talking to Fever, the Mars Djinni at the top of the ice in Imil Falls Cave,
    makes it join the party without a fight. */
@@ -446,7 +446,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    room's logs and their metatiles to rights. */
 static inline void scFuchinFallsCaveFinishLogMove(void (*rebuildLogs)(void))
 {
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	sySynch(2);
 	rebuildLogs();
 }
@@ -456,10 +456,10 @@ static inline void scFuchinFallsCaveFinishLogMove(void (*rebuildLogs)(void))
    to the east bank, by the doorway to Zephyr's room. */
 static void scFuchinFallsCaveEntranceMoveFirstLogEast(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 112, 0);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 112, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildEntranceLogs();
@@ -470,10 +470,10 @@ static void scFuchinFallsCaveEntranceMoveFirstLogEast(void)
    bank, by the doorway from the Arctic Blade's room. */
 static void scFuchinFallsCaveEntranceMoveFirstLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, -112, 0);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, -112, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ENTRANCE_FIRST_LOG_EAST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildEntranceLogs();
@@ -484,9 +484,9 @@ static void scFuchinFallsCaveEntranceMoveFirstLogWest(void)
    south shore, west of the tablet. */
 static void scFuchinFallsCaveEntranceMoveSecondLogSouth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, 0, 64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildEntranceLogs();
@@ -497,9 +497,9 @@ static void scFuchinFallsCaveEntranceMoveSecondLogSouth(void)
    north side, where a passage leads up to the room's north half. */
 static void scFuchinFallsCaveEntranceMoveSecondLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, 0, -64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ENTRANCE_SECOND_LOG_NORTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildEntranceLogs();
@@ -510,9 +510,9 @@ static void scFuchinFallsCaveEntranceMoveSecondLogNorth(void)
    shore, east of the tablet. */
 static void scFuchinFallsCaveEntranceMoveThirdLogSouth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildEntranceLogs();
@@ -523,9 +523,9 @@ static void scFuchinFallsCaveEntranceMoveThirdLogSouth(void)
    with the chest, which holds a Mimic. */
 static void scFuchinFallsCaveEntranceMoveThirdLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ENTRANCE_THIRD_LOG_NORTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildEntranceLogs();
@@ -539,9 +539,9 @@ static void scFuchinFallsCaveEntranceMoveThirdLogNorth(void)
    would lie across the way. */
 static void scFuchinFallsCaveZephyrRoomMoveFirstLogToEastEnd(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 144, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END);
 	sySynch(2);
 	scFuchinFallsCaveRebuildZephyrRoomLogs();
@@ -552,9 +552,9 @@ static void scFuchinFallsCaveZephyrRoomMoveFirstLogToEastEnd(void)
    below the stump. */
 static void scFuchinFallsCaveZephyrRoomMoveFirstLogToWestEnd(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, -144, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END);
 	sySynch(2);
@@ -569,9 +569,9 @@ static void scFuchinFallsCaveZephyrRoomMoveFirstLogToWestEnd(void)
    crosswise log at the south shore lands on the upright log. */
 static void scFuchinFallsCaveZephyrRoomNudgeFirstLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, -14, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_WEST_END);
 	sySynch(2);
 	scFuchinFallsCaveRebuildZephyrRoomLogs();
@@ -585,7 +585,7 @@ static void scFuchinFallsCaveZephyrRoomNudgeFirstLogWest(void)
    log only goes back the one metatile to where it started. */
 static void scFuchinFallsCaveZephyrRoomMoveFirstLogEast(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 
 	if(gmFlagGet(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH) != 0) {
 		scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 16, 0);
@@ -604,9 +604,9 @@ static void scFuchinFallsCaveZephyrRoomMoveFirstLogEast(void)
    it floats him across the pool to the south shore. */
 static void scFuchinFallsCaveZephyrRoomMoveSecondLogSouth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, 0, 64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildZephyrRoomLogs();
@@ -617,9 +617,9 @@ static void scFuchinFallsCaveZephyrRoomMoveSecondLogSouth(void)
    path down from the spiked floor. */
 static void scFuchinFallsCaveZephyrRoomMoveSecondLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, 0, -64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildZephyrRoomLogs();
@@ -631,10 +631,10 @@ static void scFuchinFallsCaveZephyrRoomMoveSecondLogNorth(void)
    south end. */
 static void scFuchinFallsCaveZephyrRoomMoveThirdLogSouth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 144);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 128);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildZephyrRoomLogs();
@@ -645,11 +645,11 @@ static void scFuchinFallsCaveZephyrRoomMoveThirdLogSouth(void)
    channel, past Zephyr's ledge, to the spiked floor below the north doorway. */
 static void scFuchinFallsCaveZephyrRoomMoveThirdLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -96);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -96);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -80);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_THIRD_LOG_NORTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildZephyrRoomLogs();
@@ -664,7 +664,7 @@ static void scFuchinFallsCaveZephyrRoomMoveThirdLogNorth(void)
    the middle of the pool, below the stump, instead. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 
 	if(gmFlagGet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP) !=
 			0 ||
@@ -686,7 +686,7 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogWest(void)
    the pool's east edge. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogEastFromMiddle(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 48, 0);
@@ -709,7 +709,7 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogWestIfClear(void)
 		return;
 	}
 
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
@@ -723,7 +723,7 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogWestIfClear(void)
    to its east edge. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogEastFromWestEnd(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 96, 0);
@@ -735,9 +735,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFirstLogEastFromWestEnd(void)
    him across to the pool's west side, by the doorway to the first room. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveSecondLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, -32, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildDragonsEyeRoomLogs();
@@ -748,9 +748,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveSecondLogWest(void)
    across to the pool's east side. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveSecondLogEast(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, 32, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_SECOND_LOG_WEST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildDragonsEyeRoomLogs();
@@ -769,7 +769,7 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveSecondLogEast(void)
    stopped. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogNorthFromSouthEnd(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	if(gmFlagGet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) != 0) {
 		scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -64);
 		gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
@@ -795,7 +795,7 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogNorthFromSouthEnd(void)
    otherwise all the way to the foot of the channel. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromNorthEnd(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 
 	if(gmFlagGet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) != 0) {
 		scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 16);
@@ -833,9 +833,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromNorthEnd(void)
    last metatile up to the head of the channel. */
 static void scFuchinFallsCaveDragonsEyeRoomNudgeThirdLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -16);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -854,7 +854,7 @@ static void scFuchinFallsCaveDragonsEyeRoomNudgeThirdLogNorth(void)
    put back where it was, and Isaac is left on the lower log. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromUpperStop(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	if(gmFlagGet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE) != 0) {
 		scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 48);
 		gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
@@ -885,9 +885,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromUpperStop(void)
    the head of the channel. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogNorthFromMiddle(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
 	sySynch(2);
@@ -900,9 +900,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogNorthFromMiddle(void)
    metatile from the channel's head. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromMiddle(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -920,9 +920,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromMiddle(void)
    move sets that flag. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogNorthFromLowerStop(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, -80);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -941,9 +941,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogNorthFromLowerStop(void)
    name: the room's step table holds both. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromLowerStop(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 0, 64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_NORTH_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_UPPER_STOP);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE);
@@ -963,7 +963,7 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveThirdLogSouthFromLowerStop(void)
    hop west onto the stump and reach the stairs down to the Dragon's Eye. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 
 	if(gmFlagGet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_WEST_END) != 0 ||
 		gmFlagGet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_THIRD_LOG_MIDDLE) != 0) {
@@ -1006,7 +1006,7 @@ static void scFuchinFallsCaveClearFourthLogStops(void)
    the upright log lies across the channel below it. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogSouthFromNorthEnd(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 128);
 	scFuchinFallsCaveClearFourthLogStops();
 	scFuchinFallsCaveFinishLogMove(scFuchinFallsCaveRebuildDragonsEyeRoomLogs);
@@ -1017,9 +1017,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogSouthFromNorthEnd(void)
    floats him one metatile further up. */
 static void scFuchinFallsCaveDragonsEyeRoomNudgeFourthLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FOURTH_LOG, 0, -16);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_NORTH_END);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_UPPER_STOP);
 	gmFlagClear(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FOURTH_LOG_MIDDLE);
@@ -1033,9 +1033,9 @@ static void scFuchinFallsCaveDragonsEyeRoomNudgeFourthLogNorth(void)
    floats him back to the foot of the channel. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogSouthFromUpperStop(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 112);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	scFuchinFallsCaveClearFourthLogStops();
 	sySynch(2);
 	scFuchinFallsCaveRebuildDragonsEyeRoomLogs();
@@ -1046,9 +1046,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogSouthFromUpperStop(void)
    floats him back to the foot of the channel. */
 static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogSouthFromMiddle(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 64);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	scFuchinFallsCaveClearFourthLogStops();
 	sySynch(2);
 	scFuchinFallsCaveRebuildDragonsEyeRoomLogs();
@@ -1069,9 +1069,9 @@ static void scFuchinFallsCaveDragonsEyeRoomMoveFourthLogSouthFromMiddle(void)
 static void
 scFuchinFallsCaveDragonsEyeRoomUnusedMoveFourthLogSouthFromLowerStop(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 80);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	scFuchinFallsCaveClearFourthLogStops();
 	sySynch(2);
 	scFuchinFallsCaveRebuildDragonsEyeRoomLogs();
@@ -1084,9 +1084,9 @@ scFuchinFallsCaveDragonsEyeRoomUnusedMoveFourthLogSouthFromLowerStop(void)
 static void scFuchinFallsCaveDragonsEyeRoomUnusedMoveFourthLogSouthFromLastStop(
 	void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FOURTH_LOG, 0, 48);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	scFuchinFallsCaveClearFourthLogStops();
 	sySynch(2);
 	scFuchinFallsCaveRebuildDragonsEyeRoomLogs();
@@ -1098,9 +1098,9 @@ static void scFuchinFallsCaveDragonsEyeRoomUnusedMoveFourthLogSouthFromLastStop(
    room's south half. */
 static void scFuchinFallsCaveArcticBladeRoomMoveFirstLogSouth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 0, 112);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildArcticBladeRoomLogs();
@@ -1111,9 +1111,9 @@ static void scFuchinFallsCaveArcticBladeRoomMoveFirstLogSouth(void)
    north shore, below the stairs. */
 static void scFuchinFallsCaveArcticBladeRoomMoveFirstLogNorth(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_FIRST_LOG, 0, -112);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_FIRST_LOG_SOUTH);
 	sySynch(2);
 	scFuchinFallsCaveRebuildArcticBladeRoomLogs();
@@ -1128,9 +1128,9 @@ static void scFuchinFallsCaveArcticBladeRoomMoveFirstLogNorth(void)
    shore it lies across the way. */
 static void scFuchinFallsCaveArcticBladeRoomMoveSecondLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, -128, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildArcticBladeRoomLogs();
@@ -1141,9 +1141,9 @@ static void scFuchinFallsCaveArcticBladeRoomMoveSecondLogWest(void)
    shore. */
 static void scFuchinFallsCaveArcticBladeRoomMoveSecondLogEast(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_SECOND_LOG, 128, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_SECOND_LOG_WEST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildArcticBladeRoomLogs();
@@ -1155,9 +1155,9 @@ static void scFuchinFallsCaveArcticBladeRoomMoveSecondLogEast(void)
    room's west bank. */
 static void scFuchinFallsCaveArcticBladeRoomMoveThirdLogEast(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, 160, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagSet(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildArcticBladeRoomLogs();
@@ -1168,9 +1168,9 @@ static void scFuchinFallsCaveArcticBladeRoomMoveThirdLogEast(void)
    across to the west end. */
 static void scFuchinFallsCaveArcticBladeRoomMoveThirdLogWest(void)
 {
-	sySndPlay(SE_WATER_MOVE);
+	sySoundPlay(SE_WATER_MOVE);
 	scActorFloatLogWithLeader(ACTOR_THIRD_LOG, -160, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmFlagClear(FLAG_FUCHIN_FALLS_ARCTIC_BLADE_ROOM_THIRD_LOG_EAST);
 	sySynch(2);
 	scFuchinFallsCaveRebuildArcticBladeRoomLogs();
@@ -1224,11 +1224,11 @@ static ACTOR *scFuchinFallsCaveCreateHiddenActor(
 	ACTOR *actor = syFieldActorCreate(resourceId, x, y, z);
 
 	if(actor != NULL) {
-		actor->spr->image.pri = 1;
-		actor->motionFlg = 0;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->sprite->image.priority = 1;
+		actor->motionFlags = 0;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		return actor;
 	}
 	return NULL;
@@ -1268,7 +1268,7 @@ static void scImilLeaveFallsCave(void)
 {
 	fdScriptStart();
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_SOUTH;
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(IMIL_FALLS_CAVE_TO_IMIL);
@@ -1290,9 +1290,9 @@ static void scFuchinFallsCavePlaceLogAtMetatile(
 	ACTOR *actor = fdActorGet(id);
 
 	if(actor != NULL) {
-		fdActorSetSprPriority(id, 3);
+		fdActorSetSpritePriority(id, 3);
 		actor->layer = 2;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		actor->x.fixed = toFIXED(column * 16) + toFIXED(8);
 		actor->z.fixed = toFIXED(row * 16) + toFIXED(8);
 	}
@@ -1550,7 +1550,7 @@ Sint32 scInit(void)
 static void scImilWalkTowardFever(void)
 {
 	fdScriptStart();
-	fdActorSetSprFlags(fdActorGet(ACTOR_FEVER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FEVER), 0);
 	fdScriptStartScreenTransition();
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 0.1);
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 264, 196);
@@ -1594,10 +1594,10 @@ static void scImilFuchinFallsPrepareRoom(void)
 		state = NULL;
 		actor = fdActorGet(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE);
 		ImilFuchinFallsTrackLeader = 0;
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = 0;
-		fdActorSetSprPriority(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
-		fdActorSetSprColById(
+		fdActorSetSpritePriority(ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, 1);
+		fdActorSetSpriteColorById(
 			ACTOR_INVISIBLE_DRAGON_ROOM_CRATE, SPRITE_COLOR_HIDDEN);
 		switch(MainRoutineStateWork.entrance) {
 		case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
@@ -1719,23 +1719,23 @@ static void scFuchinFallsCaveHopWest(void)
 static void scImilFuchinFallsPlaceDragonsEye(void)
 {
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *glyph;
 	Uint8		   clear = 0;
 
 	actor = syFieldActorCreate(
 		SPRITE_BLANK, toFIXED(248), toFIXED(8), toFIXED(152));
 	if(actor != NULL) {
-		spr = actor->spr;
-		spr->flg = clear;
-		spr->cnt = clear;
-		spr->image.fullCol = 0;
-		spr->image.pal = 0;
-		actor->motionFlg = clear;
-		actor->retainSprCache = 1;
-		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
+		sprite = actor->sprite;
+		sprite->flags = clear;
+		sprite->count = clear;
+		sprite->image.fullColor = 0;
+		sprite->image.palette = 0;
+		actor->motionFlags = clear;
+		actor->retainSpriteCache = 1;
+		glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(*glyph));
 		mnIconDrawItem(ITEM_DRAGONS_EYE);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		ImilFuchinFallsDragonsEye = actor;
 	}
@@ -1748,7 +1748,7 @@ static void scFuchinFallsCaveFindDragonsEye(void)
 	fdScriptStart();
 
 	if(ImilFuchinFallsDragonsEye != NULL) {
-		fdItemDispShowPicture(ImilFuchinFallsDragonsEye,
+		fdItemDisplayShowPicture(ImilFuchinFallsDragonsEye,
 			ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 	}
 
@@ -1767,9 +1767,9 @@ static void scFuchinFallsCaveUpdateDustMotion(ACTOR *actor)
 {
 	FIELD_EFFECT *puff = ((FIELD_EFFECT *)actor);
 
-	puff->x += puff->vel.x;
-	puff->y += puff->vel.y;
-	puff->z += puff->vel.z;
+	puff->x += puff->velocity.x;
+	puff->y += puff->velocity.y;
+	puff->z += puff->velocity.z;
 	puff->scaleX += puff->scaleRateX;
 	puff->scaleY += puff->scaleRateY;
 }
@@ -1777,17 +1777,18 @@ static void scFuchinFallsCaveUpdateDustMotion(ACTOR *actor)
 /* Hides a puff of the dragon's fire when its script has run out. */
 static Sint32 scFuchinFallsCaveHideDust(ACTOR *actor)
 {
-	fdActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 	return 0;
 }
 
 /* Creates one puff of the dust sprite, flying at the given speed, in the given
    colour and growing to the given size: the puffs of the dragon's fire. */
-void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velX,
-	Sint32 velY, Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *extra)
+void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *extra)
 {
 	FIELD_EFFECT *effect;
-	SPR			 *spr;
+	SPR			 *sprite;
 	const Sint32 *script;
 	const Sint32 *scripts[3] = {
 		ImilFuchinFallsShortDustScript,
@@ -1798,41 +1799,41 @@ void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velX,
 	effect = (FIELD_EFFECT *)fdActorCreate(SPRITE_DUST_PUFF, x, y, z);
 	if(effect == NULL)
 		return;
-	spr = effect->spr;
-	fdActorSelectAnimation(effect, (flg + 1) & EFFECT_SCRIPT_MASK);
-	fdActorStartScript((ACTOR *)effect, scripts[flg & EFFECT_SCRIPT_MASK]);
-	effect->motionFlg = 0;
-	spr->flg = 0;
+	sprite = effect->sprite;
+	fdActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
+	fdActorStartScript((ACTOR *)effect, scripts[flags & EFFECT_SCRIPT_MASK]);
+	effect->motionFlags = 0;
+	sprite->flags = 0;
 	effect->update = scFuchinFallsCaveUpdateDustMotion;
-	effect->vel.x = velX;
-	effect->vel.y = velY;
-	effect->vel.z = velZ;
+	effect->velocity.x = velocityX;
+	effect->velocity.y = velocityY;
+	effect->velocity.z = velocityZ;
 	effect->scaleRateX = 0;
 	effect->scaleRateY = 0;
-	spr->image.pri = 1;
-	if((flg & EFFECT_OPTION_MASK) == 0 || extra == NULL)
+	sprite->image.priority = 1;
+	if((flags & EFFECT_OPTION_MASK) == 0 || extra == NULL)
 		return;
-	if(flg & EFFECT_USE_PALETTE)
-		fdActorSetSprCol((ACTOR *)effect, extra->pal);
-	if(flg & EFFECT_USE_PRIORITY) {
-		effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		spr->image.pri = extra->pri;
+	if(flags & EFFECT_USE_PALETTE)
+		fdActorSetSpriteColor((ACTOR *)effect, extra->palette);
+	if(flags & EFFECT_USE_PRIORITY) {
+		effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite->image.priority = extra->priority;
 	}
-	if(flg & EFFECT_USE_START_SCALE) {
+	if(flags & EFFECT_USE_START_SCALE) {
 		effect->scaleX = extra->startScaleX;
 		effect->scaleY = extra->startScaleY;
 	}
-	if(flg & EFFECT_SCALE_TO_TARGET) {
-		script = scripts[flg & EFFECT_SCRIPT_MASK];
-		if(flg & EFFECT_USE_START_SCALE) {
-			effect->scaleRateX = (extra->tgtScaleX - effect->scaleX) /
+	if(flags & EFFECT_SCALE_TO_TARGET) {
+		script = scripts[flags & EFFECT_SCRIPT_MASK];
+		if(flags & EFFECT_USE_START_SCALE) {
+			effect->scaleRateX = (extra->targetScaleX - effect->scaleX) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (extra->tgtScaleY - effect->scaleY) /
+			effect->scaleRateY = (extra->targetScaleY - effect->scaleY) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
 		} else {
-			effect->scaleRateX = (extra->tgtScaleX - toFIXED(1)) /
+			effect->scaleRateX = (extra->targetScaleX - toFIXED(1)) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
-			effect->scaleRateY = (extra->tgtScaleY - toFIXED(1)) /
+			effect->scaleRateY = (extra->targetScaleY - toFIXED(1)) /
 				script[EFFECT_SCRIPT_REPEAT_COUNT];
 		}
 	}
@@ -1843,24 +1844,24 @@ void scImilFuchinFallsSpawnDust(FIXED x, FIXED y, FIXED z, Sint32 velX,
 static void scFuchinFallsCaveBreatheDragonFire(void)
 {
 	CAVE_DUST_OPTIONS options;
-	Sint32			  frmPhase;
-	FIXED			  velX;
-	FIXED			  velY;
+	Sint32			  framePhase;
+	FIXED			  velocityX;
+	FIXED			  velocityY;
 
-	frmPhase = TickCount & 3;
-	if(frmPhase != 0)
+	framePhase = TickCount & 3;
+	if(framePhase != 0)
 		return;
-	options.pal = SPRITE_COLOR_RED_TINT;
+	options.palette = SPRITE_COLOR_RED_TINT;
 	options.startScaleX = toFIXED(1) / 2;
 	options.startScaleY = toFIXED(1) / 2;
-	options.tgtScaleX = toFIXED(9) / 5;
-	options.tgtScaleY = toFIXED(9) / 5;
+	options.targetScaleX = toFIXED(9) / 5;
+	options.targetScaleY = toFIXED(9) / 5;
 	if((TickCount & 7) == 0)
-		sySndPlay(SE_WHOOSH);
-	velX = -toFIXED(1) - toFIXED(syRandomBelow(2));
-	velY = -((syRandomBelow(3)) * (toFIXED(1) / 5));
-	scImilFuchinFallsSpawnDust(toFIXED(308), toFIXED(64), toFIXED(222), velX,
-		velY, frmPhase,
+		sySoundPlay(SE_WHOOSH);
+	velocityX = -toFIXED(1) - toFIXED(syRandomBelow(2));
+	velocityY = -((syRandomBelow(3)) * (toFIXED(1) / 5));
+	scImilFuchinFallsSpawnDust(toFIXED(308), toFIXED(64), toFIXED(222),
+		velocityX, velocityY, framePhase,
 		EFFECT_SCRIPT_MEDIUM | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
 			EFFECT_SCALE_TO_TARGET,
 		(const EFFECT_OPTIONS *)&options);
@@ -1877,8 +1878,8 @@ static void scFuchinFallsCaveLightDragonWithEye(void)
 {
 	Uint32 pass;
 
-	sySndPlay(MUS_SILENCE);
-	sySndPlay(SE_GEM_SET);
+	sySoundPlay(MUS_SILENCE);
+	sySoundPlay(SE_GEM_SET);
 	fdScriptStart();
 	fdEndBusyAndReveal();
 

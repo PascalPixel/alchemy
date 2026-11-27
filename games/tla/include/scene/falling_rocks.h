@@ -18,8 +18,8 @@
 /* One falling rock: where it is, how it moves and how long it has fallen. */
 typedef struct ROCK {
 	Sint32 pos[3];
-	Sint32 vel[3];
-	Sint32 tmr;
+	Sint32 velocity[3];
+	Sint32 timer;
 } ROCK;
 
 /* The falling rocks' state, in the menu state's heap slot: their tiles, the
@@ -28,7 +28,7 @@ typedef struct ROCK {
 typedef struct ROCK_STATE {
 	Uint8	   tiles[ROCK_SHEET_BYTES];
 	ROCK	   rocks[ROCK_COUNT];
-	EFFECT_SPR sprs[ROCK_COUNT];
+	EFFECT_SPR sprites[ROCK_COUNT];
 	Sint16	   next;
 	Uint16	   tileBase;
 	Sint16	   resource;
@@ -48,7 +48,7 @@ typedef struct PARTICLE_SPR {
 	FIXED		y;
 	FIXED		scaleX;
 	FIXED		scaleY;
-	Uint16		ang;
+	Uint16		angle;
 	Sint16		depth;
 	Uint16		width;
 	Uint16		height;
@@ -62,7 +62,7 @@ typedef struct PARTICLE_SPR {
 typedef struct PARTICLE_STATE {
 	Uint8		 tiles[ROCK_SHEET_BYTES];
 	PARTICLE	 particles[64];
-	PARTICLE_SPR sprs[64];
+	PARTICLE_SPR sprites[64];
 	Sint16		 next;
 	Uint16		 tile;
 } PARTICLE_STATE;

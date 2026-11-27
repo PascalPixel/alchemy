@@ -21,8 +21,8 @@ UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, Sint32 acting)
 	const Sint8			   *actionStrategy;
 	const Uint8			   *itemActionMask;
 	Sint16					command;
-	Sint32					allyTgt;
-	Sint32					opponentTgt;
+	Sint32					allyTarget;
+	Sint32					opponentTarget;
 	Sint32					allyIsParty;
 	Sint32					opponentIsParty;
 	ITEM_DEFINITION		   *item;
@@ -32,9 +32,9 @@ UNREAD_RESULT btAIChooseAction(BATTLE_ACTION *request, Sint32 acting)
 	ABILITY_DEFINITION	   *ability;
 	UNIT				   *unit;
 	Sint32					abilityId;
-	Sint32					flg;
+	Sint32					flags;
 	Uint8					effect;
-	Uint8					tgtMode;
+	Uint8					targetMode;
 
 	/* Picks a place in the action list from a 0-255 roll and eight weights: the
 	   first place whose running total passes the roll, else place 0. */
@@ -124,12 +124,12 @@ select_again:
 	if(useItem != 0 && acting != 0) {
 		if(!(INVENTORY_ITEM_ID_MASK & unit->inventory[0])) {
 			useItem = 0;
-			if(enemy->tgtStrategy == TARGET_STRATEGY_MOST_HP) {
+			if(enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
 				request->command = COMMAND_ITEM;
 				/* BUG: the ability Can't Use, read by the item command as
 				   inventory slot 509; the enemy defends (README.md, "The
 				   party's commands"). */
-				request->prm = ABILITY_CANT_USE;
+				request->param = ABILITY_CANT_USE;
 				return;
 			}
 		}
@@ -140,9 +140,9 @@ select_again:
 				itemAction = gmAbilityGetDirectStub(item->abilityId);
 				abilityId = item->abilityId;
 				request->command = COMMAND_ITEM;
-				flg = itemAction->flg;
-				request->prm = 0;
-				switch(flg) {
+				flags = itemAction->flags;
+				request->param = 0;
+				switch(flags) {
 				case ABILITY_FORMULA_HEAL_HP:
 				case ABILITY_FORMULA_EFFECT:
 					break;
@@ -162,19 +162,19 @@ select_again:
 		/* A guard or a flight becomes its own command, aimed at the user
 		   itself. */
 		ability = gmAbilityGetDirectStub(abilityId);
-		effect = ability->eff;
+		effect = ability->effect;
 		switch(effect) {
 		case ABILITY_EFFECT_DEFEND:
 			request->command = COMMAND_DEFEND;
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		case ABILITY_EFFECT_TOTAL_DEFENSE:
 			request->command = COMMAND_TOTAL_DEFENSE;
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		case ABILITY_EFFECT_FLEE:
 			request->command = COMMAND_FLEE;
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		}
 
@@ -196,11 +196,11 @@ select_again:
 		if(request->command != COMMAND_ITEM &&
 			btAbilityIsPsynergy(abilityId) != 0) {
 			request->command = COMMAND_PSYNERGY;
-			request->prm = abilityId;
+			request->param = abilityId;
 			if((ability->ppCost > unit->pp &&
-				   enemy->tgtStrategy != TARGET_STRATEGY_MOST_HP) ||
+				   enemy->targetStrategy != TARGET_STRATEGY_MOST_HP) ||
 				(unit->psySeal != 0 &&
-					enemy->tgtStrategy == TARGET_STRATEGY_RANDOM))
+					enemy->targetStrategy == TARGET_STRATEGY_RANDOM))
 				goto next_candidate;
 		}
 		/* A challenged enemy won't flee, and when it acts it no longer chooses
@@ -214,7 +214,7 @@ select_again:
 			goto next_candidate;
 
 		if(command == COMMAND_ENEMY_ABILITY) {
-			request->prm = abilityId;
+			request->param = abilityId;
 			if(abilityId == ABILITY_ATTACK)
 				request->command = COMMAND_ATTACK;
 		}
@@ -222,41 +222,41 @@ select_again:
 		/* The target: with no one on the side, a random place on the enemy's
 		   own side; with no one worth it, the enemy picks again. */
 		request->range = ability->range;
-		tgtMode = ability->tgtMode;
-		switch(tgtMode) {
+		targetMode = ability->targetMode;
+		switch(targetMode) {
 		case ABILITY_TARGET_ALLIES:
 		case ABILITY_TARGET_SELF:
-			allyTgt = btAIChooseTarget(request->unitId, ability);
-			if(allyTgt == TARGET_PICK_SIDE_EMPTY) {
+			allyTarget = btAIChooseTarget(request->unitId, ability);
+			if(allyTarget == TARGET_PICK_SIDE_EMPTY) {
 				allyIsParty = 0;
 				if(request->unitId >= 0 && request->unitId <= ALLY_MAX)
 					allyIsParty = 1;
-				allyTgt = btAIChooseRandomTarget(allyIsParty);
+				allyTarget = btAIChooseRandomTarget(allyIsParty);
 			}
-			if(allyTgt != TARGET_PICK_NONE) {
-				request->tgt = allyTgt;
+			if(allyTarget != TARGET_PICK_NONE) {
+				request->target = allyTarget;
 				needsChoice = 0;
 			}
 			break;
 		case ABILITY_TARGET_FOES:
-			opponentTgt = btAIChooseTarget(request->unitId, ability);
-			if(opponentTgt == TARGET_PICK_SIDE_EMPTY) {
+			opponentTarget = btAIChooseTarget(request->unitId, ability);
+			if(opponentTarget == TARGET_PICK_SIDE_EMPTY) {
 				opponentIsParty = 0;
 				if(request->unitId >= 0 && request->unitId <= ALLY_MAX)
 					opponentIsParty = 1;
-				opponentTgt = btAIChooseRandomTarget(opponentIsParty);
+				opponentTarget = btAIChooseRandomTarget(opponentIsParty);
 			}
-			if(opponentTgt != TARGET_PICK_NONE) {
-				request->tgt = opponentTgt;
+			if(opponentTarget != TARGET_PICK_NONE) {
+				request->target = opponentTarget;
 				needsChoice = 0;
 			}
 			break;
 		case ABILITY_TARGET_UNUSED:
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		default:
-			opponentTgt = btFindUnitPlace(request->unitId);
-			request->tgt = opponentTgt;
+			opponentTarget = btFindUnitPlace(request->unitId);
+			request->target = opponentTarget;
 			needsChoice = 0;
 			break;
 		}

@@ -5,7 +5,7 @@
 #include "edition.h"
 
 /* clang-format off */
-/* Each 4bpp colour as mnGraphicsExpandVRAMTilesByColTable maps it: the */
+/* Each 4bpp colour as mnGraphicsExpandVRAMTilesByColorTable maps it: the */
 /* first sixteen with colour 1 as colour 10, then the sixteen unchanged. */
 Uint16 GraphicsExpandNibbleTable[32] = {
 	0, 10, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,

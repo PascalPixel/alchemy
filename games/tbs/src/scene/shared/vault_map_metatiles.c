@@ -29,15 +29,15 @@ static inline void scVaultDrawSanctumDoor(Sint32 srcColumn)
 static void scVaultOpenDoorwayAndEnter(void)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_PARTY_LEADER);
-	SPR	  *spr = actor->spr;
+	SPR	  *sprite = actor->sprite;
 
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	scVaultDrawSanctumDoor(VAULT_DOOR_OPENING_COLUMN);
 	fdScriptWait(4);
 	scVaultDrawSanctumDoor(VAULT_DOOR_OPEN_COLUMN);
 	fdScriptWait(4);
 	fdMapGridCopyMetatileAttributes(33, 21, 2, 2, 3, 16);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 3;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 3;
 	scVaultWalkThroughExit(64, 272, VAULT_TO_SANCTUM);
 }

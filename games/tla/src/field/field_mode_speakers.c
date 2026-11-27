@@ -10,13 +10,13 @@
 SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 {
 	SPEAKER_DEFINITION *entry = SpeakerDefinitions;
-	Uint32				definitionIdx = 0;
+	Uint32				definitionIndex = 0;
 
 	if(entry->id != id) {
 		do {
-			definitionIdx += 1;
+			definitionIndex += 1;
 			entry++;
-			if(definitionIdx >= SPEAKER_DEFINITION_COUNT)
+			if(definitionIndex >= SPEAKER_DEFINITION_COUNT)
 				break;
 		} while(entry->id != id);
 	}
@@ -25,15 +25,15 @@ SPEAKER_DEFINITION *fdSpeakerFindDefinition(Uint32 id)
 
 /* Returns the sprite actor actorId shows, or 0 when it shows no animated
    sprite. */
-Sint32 fdSpeakerGetActorSpr(Uint32 actorId)
+Sint32 fdSpeakerGetActorSprite(Uint32 actorId)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
-	if(actor->sprStorageKind != ACTOR_SPRITE_ONE || actor->spr == NULL ||
-		((SPR *)actor->spr)->entries[0] == NULL) {
+	if(actor->spriteStorageKind != ACTOR_SPRITE_ONE || actor->sprite == NULL ||
+		((SPR *)actor->sprite)->entries[0] == NULL) {
 		return 0;
 	}
-	return ((SPR *)actor->spr)->entries[0]->anmId;
+	return ((SPR *)actor->sprite)->entries[0]->animationId;
 }
 
 /* Returns the voice of sprite id's messages: the first of its four blip sounds,
@@ -56,7 +56,7 @@ Sint32 fdSpeakerGetVoice(Sint32 id)
    Halt passes it over (fdPsynergyFilterHaltTarget). */
 Sint32 fdSpeakerGetHaltedLines(Sint32 id)
 {
-	return fdSpeakerFindDefinition(fdSpeakerGetActorSpr(id))->haltedLines;
+	return fdSpeakerFindDefinition(fdSpeakerGetActorSprite(id))->haltedLines;
 }
 
 extern const Sint32 PairTable[];

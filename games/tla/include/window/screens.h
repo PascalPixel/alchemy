@@ -55,17 +55,17 @@ static __inline__ Uint32 mnXorWord(Uint32 word, Uint32 mask)
 #define RANGE_PATTERN_COUNT		6
 #define RANGE_ICON_ALL			(RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
 
-Sint32 mnCommandIconReloadSlot(Sint32 slot, Sint32 idx);
+Sint32 mnCommandIconReloadSlot(Sint32 slot, Sint32 index);
 void   mnBattleMenuUpdateEachTick(void);
 Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed);
 Sint32 mnBattleTargetRunSelection(
 	Sint32 selection, Sint32 mode, Uint32 spread, Uint32 kind);
-Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member);
+Sint32 mnBattleStatusScreenRun(Uint16 *list, Sint32 listCount, Sint32 member);
 Sint32 mnBattleRefuseFlee(void);
-Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 cnt);
+Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 count);
 Sint32 mnBattleSummonMenuRun(
 	Sint32 unusedA, Sint32 unusedB, const Uint8 *standby);
-Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 cnt);
+Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 count);
 Sint32 mnItemCheckBattleUse(Sint32 member, Sint32 item);
 Sint32 mnItemIconLoadIntoSlot(Sint32 item, Sint32 slot);
 void   mnIconMenuDrawIcons(void);
@@ -73,7 +73,7 @@ Sint32 mnLinkCreateCountdownLabelWindow(void);
 /* Shows the advance cursor bobbing at (x, y) and waits for A, B, L or R. */
 void btMessageWaitForAdvanceAtStub(Sint32 x, Sint32 y);
 /* Sets the BGM volume target (BGM_UNITY_SCALE full) and its step a frame. */
-void sySndSetBGMVolumeTargetStub(Sint32 tgt, Sint32 step);
+void sySoundSetBGMVolumeTargetStub(Sint32 target, Sint32 step);
 /* Plays the music fdQueueMusic remembered, if any. */
 void fdPlayQueuedMusicStub(void);
 /* Saves up to 32 actors into SnapshotObjects so that they can be put back. */
@@ -84,8 +84,8 @@ void mnDjinnFiguresInitTopRowStub(void);
 void mnDjinnFiguresReleaseTopRowStub(void);
 /* Shows the Djinn figures (nonzero) or hides them (0). */
 void mnDjinnFiguresSetShownStub(Sint32 shown);
-/* Moves Djinn figure `idx` to screen pixel (x, y), if it exists. */
-void   mnDjinnFiguresSetSlotPosStub(Sint32 idx, Sint32 x, Sint32 y);
+/* Moves Djinn figure `index` to screen pixel (x, y), if it exists. */
+void   mnDjinnFiguresSetSlotPosStub(Sint32 index, Sint32 x, Sint32 y);
 Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode);
 void   mnTitleBob(struct WINDOW_SPR *object);
 
@@ -105,8 +105,8 @@ typedef enum MENU_TITLE_PICTURE {
 } MENU_TITLE_PICTURE;
 
 struct WINDOW_SPR *mnTitleCreate(
-	Sint32 picture, struct WINDOW *win, Sint32 x, Sint32 y);
-void mnWindowSprPulse(struct WINDOW_SPR *obj);
+	Sint32 picture, struct WINDOW *window, Sint32 x, Sint32 y);
+void mnWindowSpritePulse(struct WINDOW_SPR *object);
 
 /* The file menu's choices, as mnFileListSelectAction returns them
    (MenuSaveSlotActionByPosition). */
@@ -136,7 +136,7 @@ typedef struct PREVIEW_SPR {
 		struct {
 			unsigned y : 8; /* screen pixels */
 			/* attribute 0's high byte: 0x04, semi-transparent */
-			unsigned flg : 8;
+			unsigned flags : 8;
 			unsigned x : 9;	   /* screen pixels */
 			unsigned high : 7; /* attribute 1's flip and size bits: 16 by 16 */
 		} bits;
@@ -147,8 +147,8 @@ typedef struct PREVIEW_SPR {
 		Uint32 value;
 
 		struct {
-			unsigned idx : 10; /* the tile in object VRAM */
-			unsigned high : 6; /* priority and palette, 0 here */
+			unsigned index : 10; /* the tile in object VRAM */
+			unsigned high : 6;	 /* priority and palette, 0 here */
 		} bits;
 	} tile;
 } PREVIEW_SPR;
@@ -237,7 +237,7 @@ void mnGraphicsMergeShiftedTileRows(
 extern Sint32 MenuTitlePictures[];
 /* The event that makes the file list's highlight glow. */
 void mnFileListUpdatePulse(void);
-/* The eight scales mnWindowSprPulse pulses the settings menu's selected icon
+/* The eight scales mnWindowSpritePulse pulses the settings menu's selected icon
    through. */
 extern const FIXED WindowSpritePulseScales[];
 /* Eight offsets, 0 to 3 and back, that make the name entry screen's caret

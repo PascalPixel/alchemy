@@ -187,30 +187,30 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frmCnt;
+	Sint32				 frameCount;
 	Sint32				 member;
-	Uint8				*sprs;
-	Sint32				 motesPerTgt;
+	Uint8				*sprites;
+	Sint32				 motesPerTarget;
 	Sint32				 canvasShiftX;
 	Sint32				 doubleWidth;
 	DRAW_RECTANGLE		*draw;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	Uint8				*resource;
 	Sint32				 origin[3];
-	Sint32				 tgt[3];
+	Sint32				 target[3];
 	SCREEN_POINT		 base;
 	SCREEN_POINT		 screen;
 	FIXED				 point[3];
 	DRAW_RECTANGLE		 blit[2];
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	canvasShiftX = 0;
 	btEffectStartCanvasLayer(0);
 	if(mode == HEALING_MODE_REVERSE_STAR)
-		state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+		state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 
 	/* The prelude: the Djinni appears; origin receives where. */
 	if(args->prelude == 1) {
@@ -229,11 +229,11 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			mode == HEALING_MODE_ETHER)
 			btEffectRunDjinniEntrance(args,
 				DJINNI_ENTRANCE(djinni, args->side, DJINNI_ANCHOR_OVER_TARGET),
-				origin, tgt);
+				origin, target);
 		else
 			btEffectRunDjinniEntrance(args,
 				DJINNI_ENTRANCE(djinni, args->side, DJINNI_ANCHOR_TARGET_X),
-				origin, tgt);
+				origin, target);
 		args->variant = EFFECT_VARIANT_BASIC;
 	}
 
@@ -241,7 +241,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	   first target; the rest show it at twice its width. */
 	if(mode == HEALING_MODE_PLY || mode == HEALING_MODE_SPRING ||
 		mode == HEALING_MODE_BREATH) {
-		btEffectPosProjectScaledBattler(args->tgts[0], &base);
+		btEffectPosProjectScaledBattler(args->targets[0], &base);
 		canvasShiftX = CANVAS_SIZE / 2 - base.x;
 		REG_BG2X = canvasShiftX << 8;
 		REG_BG2PA = Q_8_8(1);
@@ -251,7 +251,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	}
 
 	/* The pictures, Eddy's bubble narrowed, and the colours. */
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, state->sheet, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_BLUE_BEAM_SHEET, state->sheet + HEALING_BUBBLE_SHEET, 1, 0);
@@ -320,11 +320,11 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			spark->variant = 0;
 		}
 		if(mode == HEALING_MODE_BREATH)
-			frmCnt = 54;
+			frameCount = 54;
 		else if(mode == HEALING_MODE_SPRING)
-			frmCnt = 76;
+			frameCount = 76;
 		else
-			frmCnt = args->tgtCnt * 8 + 58;
+			frameCount = args->targetCount * 8 + 58;
 	} else if(mode == HEALING_MODE_SALT) {
 		/* From the feet, 48 pixels up, thrown out and up. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -333,12 +333,12 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			spark->y = toFIXED(48);
 			spark->x = 0;
 			spark->z = 0;
-			spark->velX = ((syRandom() & 255) - 127) << 8;
-			spark->velY = -((syRandom() & 127) + 64) << 9;
-			spark->velZ = ((syRandom() & 255) - 127) << 8;
+			spark->velocityX = ((syRandom() & 255) - 127) << 8;
+			spark->velocityY = -((syRandom() & 127) + 64) << 9;
+			spark->velocityZ = ((syRandom() & 255) - 127) << 8;
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 58;
+		frameCount = args->targetCount * 8 + 58;
 	} else if(mode == HEALING_MODE_EDDY) {
 		/* As Ply's. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -349,7 +349,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				((syRandom() & 255) - 127) << 15);
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 58;
+		frameCount = args->targetCount * 8 + 58;
 	} else if(mode == HEALING_MODE_WISH || mode == HEALING_MODE_REVERSE_STAR) {
 		/* 64 pixels each way. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -360,7 +360,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				((syRandom() & 255) - 127) << 15);
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 58;
+		frameCount = args->targetCount * 8 + 58;
 	} else if(mode == HEALING_MODE_AURA) {
 		/* A wide cloud, 100 pixels each way. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -370,7 +370,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				(syRandom() % 200 - 100) << 15, (syRandom() % 200 - 100) << 15);
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 46;
+		frameCount = args->targetCount * 8 + 46;
 	} else if(mode == HEALING_MODE_CURE) {
 		/* A ring 32-95 pixels across, 50 pixels down, rising. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -380,10 +380,10 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 			SET_POSITION(spark, sySin(heading) * radius, -toFIXED(50),
 				syCos(heading) * radius);
-			spark->velY = ((syRandom() & 31) + 32) << 13;
+			spark->velocityY = ((syRandom() & 31) + 32) << 13;
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 58;
+		frameCount = args->targetCount * 8 + 58;
 	} else if(mode == HEALING_MODE_CURE_POISON) {
 		/* 64 pixels across and deep, 32 up and down. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -394,7 +394,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				((syRandom() & 255) - 127) << 15);
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 58;
+		frameCount = args->targetCount * 8 + 58;
 	} else {
 		/* 64 pixels each way. */
 		for(i = 0; i != HEALING_SPARKS; i++) {
@@ -405,68 +405,69 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				((syRandom() & 255) - 127) << 15);
 			spark->variant = 0;
 		}
-		frmCnt = args->tgtCnt * 8 + 58;
+		frameCount = args->targetCount * 8 + 58;
 	}
 
 	/* Motes a target: half as many for the basic variant and twice for the
 	   strongest; Spring always takes twice and Eddy a quarter. */
-	motesPerTgt = HEALING_MOTES;
+	motesPerTarget = HEALING_MOTES;
 	if(args->variant == EFFECT_VARIANT_BASIC)
-		motesPerTgt = HEALING_MOTES / 2;
+		motesPerTarget = HEALING_MOTES / 2;
 	else if(args->variant == EFFECT_VARIANT_STRONGEST)
-		motesPerTgt = HEALING_MOTES * 2;
+		motesPerTarget = HEALING_MOTES * 2;
 	if(mode == HEALING_MODE_SPRING)
-		motesPerTgt = HEALING_MOTES * 2;
+		motesPerTarget = HEALING_MOTES * 2;
 	if(mode == HEALING_MODE_EDDY)
-		motesPerTgt = HEALING_MOTES / 4;
+		motesPerTarget = HEALING_MOTES / 4;
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != frmCnt; frm++) {
+	for(frame = 0; frame != frameCount; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		if(frm == 40)
+		if(frame == 40)
 			EFFECT_SHOW_DAMAGE(0);
-		if(mode == HEALING_MODE_SALT && (frm & 3) == 0)
+		if(mode == HEALING_MODE_SALT && (frame & 3) == 0)
 			btEffectStepPaletteToResource(RESOURCE_CYAN_PALETTE);
 
 		/* The Djinni sways, then from tick 32 rises two pixels a tick; for
 		   its first four ticks it is added over itself as well. */
 		if(args->prelude == 1) {
 			if(doubleWidth == 0) {
-				Sint32 x = FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) *
+				Sint32 x = FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) *
 							   HEALING_DJINNI_SWAY) +
 					origin[0] + canvasShiftX - DJINNI_WIDTH / 2;
-				Sint32 y = FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4) +
+				Sint32 y = FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4) +
 					origin[1] - 24;
 
-				if(frm > 32)
-					y = y - frm * 2 + 64;
+				if(frame > 32)
+					y = y - frame * 2 + 64;
 				blit[0](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
 					DJINNI_WIDTH, DJINNI_HEIGHT);
-				if(frm <= 3)
+				if(frame <= 3)
 					draw[1](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
 						DJINNI_WIDTH, DJINNI_HEIGHT);
 			} else {
-				Sint32 x = FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) *
+				Sint32 x = FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) *
 							   (HEALING_DJINNI_SWAY / 2)) +
 					origin[0] / 2 - SMALL_DJINNI_WIDTH / 2;
-				Sint32 y = FIXEDtoINT(syCos(frm * (TRIG_TURN / 32)) * 4) +
+				Sint32 y = FIXEDtoINT(syCos(frame * (TRIG_TURN / 32)) * 4) +
 					origin[1] - 24;
 
-				if(frm > 32)
-					y = y - frm * 2 + 64;
+				if(frame > 32)
+					y = y - frame * 2 + 64;
 				blit[0](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
 					SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-				if(frm <= 3)
+				if(frame <= 3)
 					draw[1](canvas, state->sheet + HEALING_DJINNI_PICTURE, x, y,
 						SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
 			}
 		}
 
-		for(member = 0; member != args->tgtCnt; member++) {
-			MOTION_OBJECT *object = btObjectGetStub(args->tgts[member])->obj;
-			Sint32		   start = member * 8;
+		for(member = 0; member != args->targetCount; member++) {
+			MOTION_OBJECT *object =
+				btObjectGetStub(args->targets[member])->object;
+			Sint32 start = member * 8;
 
 			/* The motes turn about a point 40 pixels above the target. */
 			syInitMatrix();
@@ -475,62 +476,62 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			point[1] = toFIXED(40);
 			point[2] = object->z;
 			syMatrixTranslateVector(point);
-			if(frm == start + 20)
-				sySndPlayStub(SE_RECOVERY);
+			if(frame == start + 20)
+				sySoundPlayStub(SE_RECOVERY);
 			if(mode == HEALING_MODE_SPRING) {
-				if(frm == start + 41)
-					btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
-						TINT_KEEP, member, 32);
+				if(frame == start + 41)
+					btEffectTintBattler(args->targets[member],
+						SPRITE_COLOR_WHITE, TINT_KEEP, member, 32);
 			} else if(mode == HEALING_MODE_AURA) {
-				if(frm == start + 24)
-					btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
-						TINT_KEEP, member, 28);
-			} else if(frm == start + 36) {
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+				if(frame == start + 24)
+					btEffectTintBattler(args->targets[member],
+						SPRITE_COLOR_WHITE, TINT_KEEP, member, 28);
+			} else if(frame == start + 36) {
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
 					TINT_KEEP, member, 28);
 			}
-			if(frm > start) {
+			if(frame > start) {
 				if(mode == HEALING_MODE_PLY ||
 					mode == HEALING_MODE_PSY_CRYSTAL ||
 					mode == HEALING_MODE_SALT || mode == HEALING_MODE_SPRING ||
 					mode == HEALING_MODE_ETHER || mode == HEALING_MODE_EDDY) {
-					syRotY((frm - start) * (TRIG_TURN / 128));
+					syRotY((frame - start) * (TRIG_TURN / 128));
 				} else if(mode == HEALING_MODE_BREATH) {
-					syRotY((frm - start) * (TRIG_TURN / 32));
+					syRotY((frame - start) * (TRIG_TURN / 32));
 				} else if(mode == HEALING_MODE_AURA) {
 					/* Aura's motes close in without turning. */
 				} else if(mode == HEALING_MODE_REVERSE_STAR) {
-					syRotZ(frm * (TRIG_TURN / 128));
+					syRotZ(frame * (TRIG_TURN / 128));
 				} else if(mode == HEALING_MODE_WISH) {
-					syRotX(frm * (TRIG_TURN / 128));
-					syRotZ(frm * (TRIG_TURN / 128));
+					syRotX(frame * (TRIG_TURN / 128));
+					syRotZ(frame * (TRIG_TURN / 128));
 				} else if(mode == HEALING_MODE_CURE ||
 					mode == HEALING_MODE_EDDY) {
-					syRotY((frm - member * HEALING_CURE_RING_LAG) *
+					syRotY((frame - member * HEALING_CURE_RING_LAG) *
 						(TRIG_TURN / 128));
 				} else if(mode == HEALING_MODE_CURE_POISON) {
-					syRotY((frm - start) * (TRIG_TURN / 128));
+					syRotY((frame - start) * (TRIG_TURN / 128));
 				} else {
-					syRotY((frm - start) * (TRIG_TURN / 128));
-					syRotX((frm - start) * (TRIG_TURN / 128));
+					syRotY((frame - start) * (TRIG_TURN / 128));
+					syRotX((frame - start) * (TRIG_TURN / 128));
 				}
 
 				/* Four motes appear each tick; Cure Poison's, Restore's and
 				   Tonic's go out one by one from 32 ticks on, Salt's from
 				   64. */
-				for(i = 0; i != motesPerTgt; i++) {
+				for(i = 0; i != motesPerTarget; i++) {
 					PARTICLE *spark = &PARTICLES[member * HEALING_MOTES + i];
-					Sint32	  endFrm;
+					Sint32	  endFrame;
 
 					if(mode == HEALING_MODE_CURE_POISON ||
 						mode == HEALING_MODE_RESTORE ||
 						mode == HEALING_MODE_TONIC)
-						endFrm = start + i / 2 + 32;
+						endFrame = start + i / 2 + 32;
 					else if(mode == HEALING_MODE_SALT)
-						endFrm = start + i / 2 + 64;
+						endFrame = start + i / 2 + 64;
 					else
-						endFrm = 65536;
-					if(frm > start + i / 4 && frm < endFrm) {
+						endFrame = 65536;
+					if(frame > start + i / 4 && frame < endFrame) {
 						Sint32 xx = (spark->x >> 8) * (spark->x >> 8);
 						Sint32 yy = (spark->y >> 8) * (spark->y >> 8);
 						Sint32 zz = (spark->z >> 8) * (spark->z >> 8);
@@ -563,14 +564,14 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 							if(mode == HEALING_MODE_PLY ||
 								mode == HEALING_MODE_SPRING ||
 								mode == HEALING_MODE_BREATH)
-								size = (i * 4 + frm) % 9;
+								size = (i * 4 + frame) % 9;
 							else if(mode == HEALING_MODE_AURA ||
 								mode == HEALING_MODE_REVERSE_STAR)
 								size = 4 -
 									(screen.depth - HEALING_MOTE_DEPTH_NEAR) /
 										HEALING_MOTE_DEPTH_STEP;
 							else if(mode == HEALING_MODE_SALT)
-								size = (i * 4 + frm) % 9;
+								size = (i * 4 + frame) % 9;
 							if(mode == HEALING_MODE_PLY ||
 								mode == HEALING_MODE_CURE_POISON ||
 								mode == HEALING_MODE_RESTORE ||
@@ -594,7 +595,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 									HEALING_BUBBLE_WIDTH,
 									HEALING_BUBBLE_HEIGHT);
 							} else {
-								EFFECT_DRAW_MOTE(draw[1], canvas, sprs,
+								EFFECT_DRAW_MOTE(draw[1], canvas, sprites,
 									screen.x, screen.y, size);
 							}
 
@@ -614,9 +615,9 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 								spark->z -= spark->z / distance;
 							}
 							if(mode == HEALING_MODE_SALT) {
-								spark->x += spark->velX;
-								spark->y += spark->velY;
-								spark->z += spark->velZ;
+								spark->x += spark->velocityX;
+								spark->y += spark->velocityY;
+								spark->z += spark->velocityZ;
 							}
 						}
 					}

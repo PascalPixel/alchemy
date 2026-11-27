@@ -18,7 +18,7 @@ static void scMercuryLighthouseCyclePalette(void)
 	Uint32			 i;
 	Sint32			 red;
 	Sint32			 greenAndBlue;
-	volatile Uint16 *col;
+	volatile Uint16 *color;
 
 	/* below is a halfword in the tick (its address taken, plain by ruling);
 	   the ROM clears it on entry, a store nothing reads. */
@@ -32,9 +32,9 @@ static void scMercuryLighthouseCyclePalette(void)
 		red = below;
 		if(i < SHIMMER_DIMMED_COLORS)
 			red -= red * 4 / 10;
-		col = &BG_PLTT_COLOR(SHIMMER_PALETTE, SHIMMER_LAST_COLOR - i);
+		color = &BG_PLTT_COLOR(SHIMMER_PALETTE, SHIMMER_LAST_COLOR - i);
 		greenAndBlue = RGB(0, PaletteCycleGreen, PaletteCycleBlue);
-		*col = red | greenAndBlue;
+		*color = red | greenAndBlue;
 	}
 	BG_PLTT_COLOR(SHIMMER_PALETTE, SHIMMER_FIRST_COLOR) =
 		PaletteCycleRed | greenAndBlue;

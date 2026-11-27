@@ -10,20 +10,20 @@ Bool scCrackedTileStep(void)
 	METATILE_TARGET_ENTRY *entry = state->entries;
 	Sint32				   i;
 
-	for(i = 0; i < state->cnt; i++, entry++) {
+	for(i = 0; i < state->count; i++, entry++) {
 		if(entry->x == x && entry->z == z) {
-			if(fdScriptGetFlag(entry->flg) == 0) {
+			if(fdScriptGetFlag(entry->flags) == 0) {
 				scCrackedTileCrack(state, entry);
-				fdScriptSetFlag(entry->flg);
-				state->cur = i;
+				fdScriptSetFlag(entry->flags);
+				state->current = i;
 				break;
 			}
-			if(i == state->cur)
+			if(i == state->current)
 				break;
-			state->cur = i;
+			state->current = i;
 			scCrackedTileFall(state, entry);
-			syGameFlagSetByte(state->flgByte, x);
-			syGameFlagSetByte(state->flgByte + 8, z);
+			syGameFlagSetByte(state->flagByte, x);
+			syGameFlagSetByte(state->flagByte + 8, z);
 			return TRUE;
 		}
 	}

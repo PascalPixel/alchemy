@@ -7,23 +7,23 @@
 Sint32 mnBattleClassifyEntryKind(const ABILITY_DEFINITION *act)
 {
 	Sint32 abilityKind;
-	Sint32 tgtKind;
+	Sint32 targetKind;
 
-	tgtKind = TARGET_HINT_NONE;
-	abilityKind = act->flg & ABILITY_FORMULA_MASK;
+	targetKind = TARGET_HINT_NONE;
+	abilityKind = act->flags & ABILITY_FORMULA_MASK;
 	if(abilityKind == ABILITY_FORMULA_HEAL_HP)
-		tgtKind = TARGET_HINT_HP;
+		targetKind = TARGET_HINT_HP;
 	if(abilityKind == ABILITY_FORMULA_HEAL_PP)
-		tgtKind = TARGET_HINT_PP;
-	if(act->eff == ABILITY_EFFECT_CURE_POISON)
-		tgtKind = TARGET_HINT_CURE_POISON;
-	if(act->eff == ABILITY_EFFECT_RESTORE)
-		tgtKind = TARGET_HINT_RESTORE;
-	if(act->eff == ABILITY_EFFECT_CURE_ALL)
-		tgtKind = TARGET_HINT_CURE_ALL;
-	if(gmBattleIsReviveEffectStub(act->eff) != 0)
-		tgtKind = TARGET_HINT_REVIVE;
-	return tgtKind;
+		targetKind = TARGET_HINT_PP;
+	if(act->effect == ABILITY_EFFECT_CURE_POISON)
+		targetKind = TARGET_HINT_CURE_POISON;
+	if(act->effect == ABILITY_EFFECT_RESTORE)
+		targetKind = TARGET_HINT_RESTORE;
+	if(act->effect == ABILITY_EFFECT_CURE_ALL)
+		targetKind = TARGET_HINT_CURE_ALL;
+	if(gmBattleIsReviveEffectStub(act->effect) != 0)
+		targetKind = TARGET_HINT_REVIVE;
+	return targetKind;
 }
 
 /* Lets the player choose which reserve member takes a party slot in battle,
@@ -34,29 +34,29 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 {
 	Uint16			   owners[6];
 	Uint16			   selected[2];
-	Sint32			   cnt = btPartyPrepareReserveOwnersStub(owners);
-	Sint32			   sel = 0;
+	Sint32			   count = btPartyPrepareReserveOwnersStub(owners);
+	Sint32			   selection = 0;
 	Bool			   redraw = TRUE;
 	BATTLE_STATE	  *battle = RamHeapSlots->battleState;
 	Sint32			   result = 0;
 	BATTLE_MENU_STATE *menu = RamHeapSlots->battleMenuState;
-	Sint32			   cur;
+	Sint32			   current;
 	Sint32			   newId;
 	Sint32			   i;
 
-	if(cnt <= 0)
+	if(count <= 0)
 		return -1;
 	/* mnBattleTargetRunSelection's PLACE_PARTY | place: the place is its low
 	   byte. */
 	slot &= 0xff;
-	cur = battle->partyUnits[slot];
-	sySndPlayStub(SE_MENU_CONFIRM);
+	current = battle->partyUnits[slot];
+	sySoundPlayStub(SE_MENU_CONFIRM);
 	for(;;) {
-		newId = battle->partyUnits[slot] = owners[sel];
+		newId = battle->partyUnits[slot] = owners[selection];
 		if(PerWork.push & KEY_B) {
-			battle->partyUnits[slot] = cur;
+			battle->partyUnits[slot] = current;
 			result = -1;
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			break;
 		}
 		/* Japanese also takes A on the first tick, before the first preview
@@ -69,27 +69,27 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 			/* The preview already stands in the slot: a swap that would leave
 			   no one standing is refused. */
 			if(btUnitListLivingIdsStub(BATTLE_SIDE_MASK_PARTY, 0) == 0) {
-				sySndPlayStub(SE_MENU_ERROR);
+				sySoundPlayStub(SE_MENU_ERROR);
 				continue;
 			}
-			sySndPlayStub(SE_CHIME);
-			menu->swappedUnit = cur;
+			sySoundPlayStub(SE_CHIME);
+			menu->swappedUnit = current;
 			menu->swappedPlace = slot;
 			for(i = 0; i < 8; i++) {
-				if(MainRoutineStateWork.party[i] == cur)
+				if(MainRoutineStateWork.party[i] == current)
 					MainRoutineStateWork.party[i] = newId;
 				else if(MainRoutineStateWork.party[i] == newId)
-					MainRoutineStateWork.party[i] = cur;
+					MainRoutineStateWork.party[i] = current;
 			}
 			break;
 		}
 		if(PerWork.repeat & KEY_LEFT) {
-			sel = (sel + cnt - 1) % cnt;
-			sySndPlayStub(SE_MENU_CONFIRM);
+			selection = (selection + count - 1) % count;
+			sySoundPlayStub(SE_MENU_CONFIRM);
 			redraw = TRUE;
 		} else if(PerWork.repeat & KEY_RIGHT) {
-			sel = (sel + 1) % cnt;
-			sySndPlayStub(SE_MENU_CONFIRM);
+			selection = (selection + 1) % count;
+			sySoundPlayStub(SE_MENU_CONFIRM);
 			redraw = TRUE;
 		}
 		if(redraw) {
@@ -99,28 +99,28 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 			ACTOR		  *place;
 
 			redraw = FALSE;
-			newId = battle->partyUnits[slot] = owners[sel];
-			from = btObjectGetStub(cur);
+			newId = battle->partyUnits[slot] = owners[selection];
+			from = btObjectGetStub(current);
 			to = btObjectGetStub(newId);
 			to->anchorX = from->anchorX;
-			place = (ACTOR *)from->obj;
-			actor = (ACTOR *)to->obj;
+			place = (ACTOR *)from->object;
+			actor = (ACTOR *)to->object;
 			to->anchorZ = from->anchorZ;
 			fdActorSetPosAndResetMotionStub(
 				actor, place->x.fixed, place->y.fixed, place->z.fixed);
-			mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
+			mnPartyStatusDraw(RamHeapSlots->battleState->partyStatus);
 			btObjectPutStub();
 			selected[0] = newId;
 			selected[1] = BATTLE_UNIT_LIST_END;
 			btHighlightSetModesStub(selected, HIGHLIGHT_PULSE);
-			mnPartyStatHighlightMembers(selected);
+			mnPartyStatusHighlightMembers(selected);
 		}
 		sySynch(1);
 	}
 	selected[0] = BATTLE_UNIT_LIST_END;
 	btHighlightSetModesStub(selected, HIGHLIGHT_OFF);
-	mnPartyStatHighlightMembers(selected);
-	mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
+	mnPartyStatusHighlightMembers(selected);
+	mnPartyStatusDraw(RamHeapSlots->battleState->partyStatus);
 	btObjectPutStub();
 	sySynch(1);
 	return result;
@@ -133,20 +133,20 @@ Sint32 btUnitListLivingStub(Sint32 sideMask, Uint16 *unitIds);
 /* The first half of The Broken Seal's BattleBuildPartyActions: each action of
    a living party member who is asleep, confused, charmed or stunned is lost
    (COMMAND_NONE) and written at *cursor, which moves past them, their count
-   going to *forcedCnt; every other member's actions are listed in ready to be
+   going to *forcedCount; every other member's actions are listed in ready to be
    chosen. Returns how many are listed. */
 Sint32 mnBattlePartySplitChoosers(
-	Uint16 *ready, BATTLE_ACTION_RECORD **cursor, Sint32 *forcedCnt)
+	Uint16 *ready, BATTLE_ACTION_RECORD **cursor, Sint32 *forcedCount)
 {
-	Uint16				 *unitIds = syHeapAllocEWRAM(9);
+	Uint16				 *unitIds = syHeapAllocateEWRAM(9);
 	BATTLE_ACTION_RECORD *entries = *cursor;
-	Sint32 cnt = btUnitListLivingStub(BATTLE_SIDE_MASK_PARTY, unitIds);
-	Sint32 readyCnt = 0;
+	Sint32 count = btUnitListLivingStub(BATTLE_SIDE_MASK_PARTY, unitIds);
+	Sint32 readyCount = 0;
 	Sint32 forced = 0;
 	Sint32 i;
 	Sint32 action;
 
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		UNIT *unit = syUnitGet(unitIds[i]);
 
 		for(action = 0; action < unit->actionsPerTurn; action++) {
@@ -155,19 +155,19 @@ Sint32 mnBattlePartySplitChoosers(
 				BATTLE_ACTION_RECORD *entry = &entries[forced];
 
 				entry->unitId = unitIds[i];
-				entry->pri = unit->agility;
+				entry->priority = unit->agility;
 				entry->command = COMMAND_NONE;
-				entry->prm = 0;
+				entry->param = 0;
 				/* The other side's place 0, as a lost action's target. */
-				entry->tgt = PLACE_ENEMY;
+				entry->target = PLACE_ENEMY;
 				forced++;
 			} else {
-				ready[readyCnt++] = unitIds[i];
+				ready[readyCount++] = unitIds[i];
 			}
 		}
 	}
-	*forcedCnt = forced;
+	*forcedCount = forced;
 	entries += forced;
 	*cursor = entries;
-	return readyCnt;
+	return readyCount;
 }

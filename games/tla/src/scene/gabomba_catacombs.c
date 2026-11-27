@@ -37,9 +37,9 @@ extern Uint32 GabombaCatacombsSplashScript[];
 /* A Mad Plant of the given sprite leaps out at Felix from (x, z) and
    attacks. */
 static __inline__ void scGabombaCatacombsMadPlantLeaps(
-	Sint32 spr, Sint32 x, Sint32 z)
+	Sint32 sprite, Sint32 x, Sint32 z)
 {
-	fdMadPlantLeapAtLeader(spr, x, z);
+	fdMadPlantLeapAtLeader(sprite, x, z);
 }
 
 extern Uint32		FieldEffectMediumScript[];
@@ -205,7 +205,7 @@ void scGabombaCatacombsUncoverMint(void)
 			LEADER_HOP();
 			fdActorSetDestinationOffsetById(
 				MainRoutineStateWork.leaderActorId, 16, 0);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -258,7 +258,7 @@ void scGabombaCatacombsUncoverFirstPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, 16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -277,7 +277,7 @@ void scGabombaCatacombsUncoverSecondPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, 16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -296,7 +296,7 @@ void scGabombaCatacombsUncoverThirdPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, -16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -315,7 +315,7 @@ void scGabombaCatacombsUncoverFourthPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, 16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -334,7 +334,7 @@ void scGabombaCatacombsUncoverFifthPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, 16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -353,7 +353,7 @@ void scGabombaCatacombsUncoverSixthPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, 16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -372,7 +372,7 @@ void scGabombaCatacombsUncoverSeventhPuddle(void)
 		LEADER_HOP();
 		fdActorSetDestinationOffsetById(
 			MainRoutineStateWork.leaderActorId, 16, 0);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -390,7 +390,7 @@ void scGabombaCatacombsUncoverStreamPuddle(void)
 	if(LEADER_ON_METATILE(leader, 17, 18)) {
 		LEADER_HOP();
 		fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, -16);
-		leader->velY = toFIXED(6);
+		leader->velocityY = toFIXED(6);
 		fdActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 		fdScriptEnd();
 	}
@@ -441,8 +441,8 @@ void scGabombaCatacombsFreezeFirstPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_FIRST_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(6, 23, 1, 1, 8, 23);
 }
 
@@ -458,8 +458,8 @@ void scGabombaCatacombsFreezeSecondPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_SECOND_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_SECOND_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(0, 4, 1, 1, 8, 15);
 }
 
@@ -470,8 +470,8 @@ void scGabombaCatacombsFreezeThirdPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_THIRD_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_THIRD_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(0, 4, 1, 1, 9, 16);
 }
 
@@ -483,8 +483,8 @@ void scGabombaCatacombsFreezeFourthPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_FOURTH_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_FOURTH_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(0, 4, 1, 1, 8, 17);
 }
 
@@ -496,8 +496,8 @@ void scGabombaCatacombsFreezeFifthPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_FIFTH_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_FIFTH_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(0, 4, 1, 1, 6, 17);
 }
 
@@ -508,8 +508,8 @@ void scGabombaCatacombsFreezeSixthPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_SIXTH_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_SIXTH_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(0, 4, 1, 1, 5, 16);
 }
 
@@ -521,8 +521,8 @@ void scGabombaCatacombsFreezeSeventhPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_SEVENTH_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_SEVENTH_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(0, 4, 1, 1, 6, 15);
 }
 
@@ -535,8 +535,8 @@ void scGabombaCatacombsFreezeStreamPuddle(void)
 	ACTOR *actor = fdActorGetById(ACTOR_STREAM_PUDDLE);
 
 	syGameFlagSet(FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(15, 18, 1, 1, 17, 18);
 }
 
@@ -584,11 +584,11 @@ void scGabombaCatacombsWadeStream(void)
 		splash = ((ACTOR *)syImportActorCreate(SPRITE_WADING_SPLASH,
 			leader->x.fixed, leader->y.fixed + toFIXED(6), leader->z.fixed));
 		if(splash) {
-			fdActorSetSprFlags(splash, 0);
+			fdActorSetSpriteFlags(splash, 0);
 			fdActorSelectAnimation(splash, 1);
 			fdActorStartScript(splash, GabombaCatacombsSplashScript);
 		}
-		sySndPlay(SE_WADE);
+		sySoundPlay(SE_WADE);
 	}
 	scGabombaCatacombsDriftWithStream(leader, toFIXED(17) / 20);
 }
@@ -629,21 +629,21 @@ void scGabombaCatacombsGabombaBestowsPower(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
 	fdPaletteFadeStartInterpolation(60);
 	fdCameraMoveTo(168, CAMERA_KEEP, 158, 1);
-	sySndPlay(MUS_JUPITER_LIGHTHOUSE);
+	sySoundPlay(MUS_JUPITER_LIGHTHOUSE);
 	fdScriptWait(60);
 	fdActorSetAnimationById(ACTOR_SEATED_IDOL, ANIM_SEATED_IDOL_GLOW);
-	sySndPlay(SE_STATUE_STIRS);
+	sySoundPlay(SE_STATUE_STIRS);
 	fdScriptWait(60);
 	fdScriptSetMessageId((Sint32)MsgByReachingThis);
 	TALK();
 	fdActorSetPos(FIELD_TREASURE_ACTOR, 168, 152);
-	treasure->motionFlg = ACTOR_FALLS | ACTOR_FLOATS;
+	treasure->motionFlags = ACTOR_FALLS | ACTOR_FLOATS;
 	treasure->groundHeight += toFIXED(16);
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	glow = ((ACTOR *)syImportActorCreate(SPRITE_FIREBALL, 0, 0, 0));
 	fdActorStartScript(glow, FieldEffectMediumScript);
-	fdActorSetSprColMode(glow, 1);
-	glow->motionFlg = 0;
+	fdActorSetSpriteColorMode(glow, 1);
+	glow->motionFlags = 0;
 	glow->x.fixed = treasure->x.fixed;
 	glow->y.fixed = treasure->y.fixed + toFIXED(8);
 	glow->z.fixed = treasure->z.fixed;
@@ -856,7 +856,7 @@ Sint32 scInit(void)
 		!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 		treasure = fdActorGetById(FIELD_TREASURE_ACTOR);
 		fdActorSetPos(FIELD_TREASURE_ACTOR, 168, 152);
-		treasure->motionFlg = ACTOR_FALLS | ACTOR_FLOATS;
+		treasure->motionFlags = ACTOR_FALLS | ACTOR_FLOATS;
 		treasure->groundHeight += toFIXED(16);
 	}
 	return 0;

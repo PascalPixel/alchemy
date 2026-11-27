@@ -53,17 +53,17 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*graphics;
 	SCREEN_POINT		 user;
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	DRAW_RECTANGLE		 draw[2];
 	MODEL_TEXTURE		 texture;
 	PARTICLE			*step;
 	Sint32				 i;
 	Sint32				 j;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 
@@ -136,7 +136,7 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* The pikes lunge; Blast Breath comes from 32 pixels in front of the
 	   user. */
 	if(mode == BREATH_PIKE)
-		btEffectSetApproachMotion(args->user, args->tgts[0], 10, 80);
+		btEffectSetApproachMotion(args->user, args->targets[0], 10, 80);
 	btEffectPosProjectBattler(args->user, &user);
 	if(mode == BREATH_BLAST) {
 		if(args->side == EFFECT_SIDE_ENEMIES)
@@ -145,12 +145,12 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			user.x += 32;
 		user.y -= 8;
 	}
-	btEffectPosProjectBattler(args->tgts[0], &tgt);
+	btEffectPosProjectBattler(args->targets[0], &target);
 
-	for(frm = 0; frm != BreathTicks[mode]; frm++) {
+	for(frame = 0; frame != BreathTicks[mode]; frame++) {
 		/* Tick 0: 32 motes wait around the mouth, each a tick later; the
 		   rolling ball sets out from the mouth toward the target. */
-		if(frm == 0) {
+		if(frame == 0) {
 			for(i = 0; i != BREATH_MOTE_COUNT; i++) {
 				step = &BREATH_MOTES[i];
 				step->variant = -i;
@@ -160,10 +160,10 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			step = &state->particles[0];
 			step->x = toFIXED(user.x / 2);
 			step->y = INTtoFIXED(user.y - 32);
-			step->velX = 0;
-			step->velY = 0;
-			step->z = (tgt.x / 2 - user.x / 2) * (toFIXED(1) / 64);
-			step->velZ = (tgt.y - user.y) * (toFIXED(1) / 64);
+			step->velocityX = 0;
+			step->velocityY = 0;
+			step->z = (target.x / 2 - user.x / 2) * (toFIXED(1) / 64);
+			step->velocityZ = (target.y - user.y) * (toFIXED(1) / 64);
 			step->variant = 0;
 		}
 		{
@@ -177,11 +177,11 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				mouthX = user.x / 2 + 8;
 
 			/* The Beam's glow swells and shrinks at the mouth, ticks 16-79. */
-			if(mode == BREATH_BEAM && (frm >= 16 && frm <= 79)) {
-				Sint32 size = frm - 16;
+			if(mode == BREATH_BEAM && (frame >= 16 && frame <= 79)) {
+				Sint32 size = frame - 16;
 
-				if(frm > 63)
-					size = BreathMaxSizes[args->variant] - frm + 64;
+				if(frame > 63)
+					size = BreathMaxSizes[args->variant] - frame + 64;
 				size = size / 2 * 2;
 				if(size > BreathMaxSizes[args->variant])
 					size = BreathMaxSizes[args->variant];
@@ -194,12 +194,12 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 
 			/* Blast Breath's glow, ticks 0-47, shrinking from tick 40. */
-			if(mode == BREATH_BLAST && (frm >= 0 && frm <= 47)) {
+			if(mode == BREATH_BLAST && (frame >= 0 && frame <= 47)) {
 				Sint32 size = BLAST_BREATH_GLOW_SIZE;
 				Sint32 half;
 
-				if(frm > 39)
-					size = 104 - frm * 2;
+				if(frame > 39)
+					size = 104 - frame * 2;
 				half = size >> 1;
 				size = half * 2;
 				btEffectDrawShadedCirclesMirrored(
@@ -208,19 +208,19 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					mouthX - (size >> 1), mouthY - size, size, half * 4);
 			}
 
-			if(frm >= BreathBurstTicks[mode]) {
+			if(frame >= BreathBurstTicks[mode]) {
 				/* The burst: the motes fly out of the mouth, away from the
 				   targets. */
-				if(frm == BreathBurstTicks[mode]) {
+				if(frame == BreathBurstTicks[mode]) {
 					for(i = 0; i != BREATH_MOTE_COUNT; i++) {
 						step = &BREATH_MOTES[i];
 						step->x = toFIXED(mouthX);
 						step->y = toFIXED(mouthY);
-						step->velY = ((syRandom() & 63) - 32) << 14;
+						step->velocityY = ((syRandom() & 63) - 32) << 14;
 						if(args->side == EFFECT_SIDE_ENEMIES)
-							step->velX = -(syRandom() & 63) << 13;
+							step->velocityX = -(syRandom() & 63) << 13;
 						else
-							step->velX = (syRandom() & 63) << 13;
+							step->velocityX = (syRandom() & 63) << 13;
 						step->variant = (syRandom() & 15) + 16;
 					}
 				}
@@ -265,10 +265,10 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			if(mode == BREATH_BEAM) {
 				/* From tick 56 the beam: four rings in a row, fading from
 				   tick 72. */
-				if(frm > 55) {
+				if(frame > 55) {
 					Sint32 x = user.x / 2;
 					Sint32 y = user.y;
-					Sint32 ring = frm - 72;
+					Sint32 ring = frame - 72;
 
 					if(ring < 0)
 						ring = 0;
@@ -289,7 +289,7 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			} else if(mode == BREATH_ROLLING_FLAME &&
-				frm >= BreathBurstTicks[mode]) {
+				frame >= BreathBurstTicks[mode]) {
 				/* The ball of dust rolls to the target. */
 				step = &state->particles[0];
 				draw[0](canvas, state->sheet,
@@ -297,16 +297,16 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					FIXED_INTEGER_PART(step->y) - DUST_BALL_HEIGHT / 2,
 					DUST_BALL_WIDTH, DUST_BALL_HEIGHT);
 				btParticleAdvanceWithGravity2D(step, 56, 0);
-				step->velX += step->z;
-				step->velY += step->velZ;
+				step->velocityX += step->z;
+				step->velocityY += step->velocityZ;
 				step->variant++;
 			}
 
-			if(frm >= BreathBurstTicks[mode]) {
+			if(frame >= BreathBurstTicks[mode]) {
 				void		 *vertices;
 				RENDER_MODEL *model;
 
-				vertices = syHeapAllocEWRAM(1024);
+				vertices = syHeapAllocateEWRAM(1024);
 				model = btRenderAllocateModelList(1);
 				texture.logWidth = 7;
 				texture.logHeight = 7;
@@ -320,7 +320,7 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				   tick; Blast Breath's is two, crossed. */
 				if(mode != BREATH_ROLLING_FLAME) {
 					Sint32 growth = BREATH_FLASH_GROWTH;
-					Sint32 age = frm - BreathBurstTicks[mode];
+					Sint32 age = frame - BreathBurstTicks[mode];
 					Sint32 scale = age * growth + toFIXED(1) / 2;
 					Sint32 shade = BREATH_FLASH_FULL * 8 - age * 8;
 
@@ -331,10 +331,10 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(shade > 0)
 						shade = 0;
 					if(shade > MODEL_SHADE_INVISIBLE) {
-						Sint32 cnt = 2 - (mode != BREATH_BLAST);
+						Sint32 count = 2 - (mode != BREATH_BLAST);
 
 						model->shade = shade;
-						for(i = 0; i != cnt; i++) {
+						for(i = 0; i != count; i++) {
 							syInitMatrix();
 							if(mode == BREATH_BLAST) {
 								syTranslate(INTtoFIXED(mouthX - 64),
@@ -371,12 +371,12 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					for(i = 0; i != 4; i++) {
 						Sint32 start = BreathRingStarts[mode * 4 + i];
 
-						if(frm > start) {
-							Sint32 scale = (frm - start) *
+						if(frame > start) {
+							Sint32 scale = (frame - start) *
 									BreathRingGrowth[mode * 4 + i] *
 									BREATH_RING_GROWTH +
 								BREATH_RING_START_SCALE;
-							Sint32 shade = (start - frm) * 8 + 56;
+							Sint32 shade = (start - frame) * 8 + 56;
 
 							if(shade > 0)
 								shade = 0;
@@ -410,7 +410,7 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								syScale(scale, scale, scale);
 								syRotY(BREATH_RING_SLANT);
 								syRotX(DEGtoANG(90));
-								syRotY(frm * (TRIG_TURN / 64));
+								syRotY(frame * (TRIG_TURN / 64));
 								btRenderTransformVertices(
 									BattleEffectCylinderCorners, vertices, 32);
 								btRenderDrawModelList(model);
@@ -423,10 +423,10 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				   from tick 32. */
 				if(mode == BREATH_BLAST) {
 					Sint32 shade = 0;
-					Sint32 ang = BLAST_BREATH_JET_ANGLE;
+					Sint32 angle = BLAST_BREATH_JET_ANGLE;
 
-					if(frm > 31)
-						shade = (32 - frm) * 4;
+					if(frame > 31)
+						shade = (32 - frame) * 4;
 					model->shade = shade;
 					texture.logWidth = 5;
 					texture.logHeight = 2;
@@ -437,12 +437,12 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syTranslate(
 						INTtoFIXED(mouthX - 64), INTtoFIXED(mouthY - 64), 0);
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1));
-					if(frm > 7)
-						ang = BLAST_BREATH_JET_ANGLE +
-							(frm - 8) * (TRIG_TURN / 512);
+					if(frame > 7)
+						angle = BLAST_BREATH_JET_ANGLE +
+							(frame - 8) * (TRIG_TURN / 512);
 					if(args->side == EFFECT_SIDE_PARTY)
-						ang = -ang;
-					syRotZ(ang);
+						angle = -angle;
+					syRotZ(angle);
 					syScale(toFIXED(4), toFIXED(2), toFIXED(1));
 					btRenderTransformVertices(
 						BattleEffectBeamCorners, vertices, 4);
@@ -453,51 +453,52 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 
 			if(mode == BREATH_BEAM) {
-				if(frm == 0)
-					sySndPlayStub(SE_SPIN);
+				if(frame == 0)
+					sySoundPlayStub(SE_SPIN);
 			} else if(mode == BREATH_PIKE) {
-				if(frm == 2)
-					sySndPlayStub(SE_POWER_UP);
+				if(frame == 2)
+					sySoundPlayStub(SE_POWER_UP);
 			}
 
 			if(mode == BREATH_BLAST) {
 				/* Blast Breath strikes each target in turn, every fourth
 				   tick. */
-				if(frm == 0) {
-					state->shakeFrm = 8;
-					sySndPlayStub(SE_RISE_WITH_SPARKS);
+				if(frame == 0) {
+					state->shakeFrame = 8;
+					sySoundPlayStub(SE_RISE_WITH_SPARKS);
 				}
-				if(frm == 16) {
-					sySndPlayStub(SE_HEAVY_IMPACT);
+				if(frame == 16) {
+					sySoundPlayStub(SE_HEAVY_IMPACT);
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 				}
-				for(i = 0; i != args->tgtCnt; i++) {
-					if(frm >= i * 4 + BreathBurstTicks[mode] &&
-						frm < BreathTicks[mode] - 8 && (frm & 3) == i) {
-						state->shakeFrm = 8;
+				for(i = 0; i != args->targetCount; i++) {
+					if(frame >= i * 4 + BreathBurstTicks[mode] &&
+						frame < BreathTicks[mode] - 8 && (frame & 3) == i) {
+						state->shakeFrame = 8;
 						/* DEAD: the burst shower's test for
 						   BURST_SHOWER_MODE_GREY, copied into these hits; no
 						   breath's mode has that value, and the ROM keeps the
 						   compare and the black tint's call. */
 						if(mode == BURST_SHOWER_MODE_GREY)
-							btEffectTintBattler(args->tgts[i],
+							btEffectTintBattler(args->targets[i],
 								SPRITE_COLOR_BLACK, POSE_DAMAGE, i, 3);
 						else
-							btEffectTintBattler(args->tgts[i],
+							btEffectTintBattler(args->targets[i],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 3);
-						btEffectStartActorMotion(args->tgts[i], 1, toFIXED(1),
-							toFIXED(4), toFIXED(2), frm + 100);
+						btEffectStartActorMotion(args->targets[i], 1,
+							toFIXED(1), toFIXED(4), toFIXED(2), frame + 100);
 					}
 				}
-			} else if(frm == BreathFlashTicks[mode]) {
+			} else if(frame == BreathFlashTicks[mode]) {
 				/* The others hit every target at once, and the screen
 				   flashes. */
-				for(i = 0; i != args->tgtCnt; i++) {
-					btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_HURL);
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+				for(i = 0; i != args->targetCount; i++) {
+					btMotionApplyKnockbackStub(
+						args->targets[i], KNOCKBACK_HURL);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 16);
 				}
-				state->shakeFrm = 8;
+				state->shakeFrame = 8;
 				EFFECT_SHOW_DAMAGE(SE_CLATTER);
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -550,27 +551,27 @@ typedef enum CRESCENT_SLASH_STEP {
    faintly. */
 void btEffectRunCrescentSlash(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	Uint8				*canvas = RamHeapSlots->battleCanvas;
 	Uint8				*cells = RamMapMetatileBuffer;
 	DRAW_RECTANGLE		 draw[2];
-	Sint32				 flg;
-	Sint32				 frm;
+	Sint32				 flags;
+	Sint32				 frame;
 	SCREEN_POINT		 pos;
 
 	/* Set up the canvas and a blitter that keeps the brighter pixel, mirrored
 	   to face the target and flipped upside down for Echo Cut. */
 	btEffectStartTiledCanvas(0);
 	if(mode == CRESCENT_SLASH_HUMAN_HUNT) {
-		flg = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
+		flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
 		if(args->side != EFFECT_SIDE_ENEMIES)
-			flg = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
+			flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
 	} else {
-		flg = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y;
+		flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_Y;
 		if(args->side != EFFECT_SIDE_ENEMIES)
-			flg = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
+			flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
 	}
-	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flg, BLITTER_MAX);
+	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_MAX);
 	draw[0] = RamHeapSlots->ramCode;
 
 	/* Load both crescents and set the blend. */
@@ -591,28 +592,28 @@ void btEffectRunCrescentSlash(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	/* The caster closes in on the target. */
-	btMotionApproachTargetStub(args->user, args->tgts[0], 8, toFIXED(4));
+	btMotionApproachTargetStub(args->user, args->targets[0], 8, toFIXED(4));
 
-	for(frm = 0; frm != CRESCENT_SLASH_TICKS; frm++) {
-		if(frm == 0)
-			btEffectPosProjectBattler(args->tgts[0], &pos);
-		if(frm == 8)
-			sySndPlayStub(SE_POWER_UP);
+	for(frame = 0; frame != CRESCENT_SLASH_TICKS; frame++) {
+		if(frame == 0)
+			btEffectPosProjectBattler(args->targets[0], &pos);
+		if(frame == 8)
+			sySoundPlayStub(SE_POWER_UP);
 
 		/* Tick 12: the hit. Echo Cut throws the target up. */
-		if(frm == 12) {
+		if(frame == 12) {
 			if(mode == CRESCENT_SLASH_ECHO_CUT)
 				EFFECT_SHOW_DAMAGE(SE_CLATTER);
 			else
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			btEffectStartActorMotion(
-				args->tgts[0], 1, toFIXED(4), toFIXED(16), toFIXED(4), 250);
-			state->shakeFrm = 4;
+				args->targets[0], 1, toFIXED(4), toFIXED(16), toFIXED(4), 250);
+			state->shakeFrame = 4;
 		}
 
 		/* From tick 8: the slash, one step every three ticks. */
-		if(frm > 7) {
-			Sint32 step = (frm - 8) / 3;
+		if(frame > 7) {
+			Sint32 step = (frame - 8) / 3;
 			Sint32 y = mode != CRESCENT_SLASH_HUMAN_HUNT ? ECHO_CUT_Y : 0;
 			Sint32 x;
 

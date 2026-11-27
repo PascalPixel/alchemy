@@ -106,11 +106,11 @@
    menu cue instead. */
 #define FLAG_MENUS_RAISE_CUE		   0x107
 /* Set while a field Psynergy's tint holds the palettes, from
-   fdStartColTransition until fdStartPaletteTransition. */
+   fdStartColorTransition until fdStartPaletteTransition. */
 #define FLAG_PSYNERGY_TINTED		   0x108
 /* Set, the highest of these picks the tint a field Psynergy fades toward,
    FieldPsynergyCastColors[n], in place of the tick counter's pick
-   (fdPsynergyFadeToCastCol). */
+   (fdPsynergyFadeToCastColor). */
 #define FLAG_PSYNERGY_TINT(n)		   (0x148 + (n))
 /* Set while the field mode handles its requests, and cleared while the party
    walks (fdModeRun). */

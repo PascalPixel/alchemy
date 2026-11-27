@@ -258,7 +258,7 @@ typedef struct LIGHT_WHEEL {
 	Sint16 phase;  /* WHEEL_SPEEDING_UP to WHEEL_STOPPED */
 	Sint16 ticks;  /* ticks into the phase */
 	Sint16 unused; /* nothing reads or writes it */
-	Uint16 ang;
+	Uint16 angle;
 	Uint16 speed;
 	/* How far the ring has turned since its last click. */
 	Uint16 travel;
@@ -455,7 +455,7 @@ static void scAltmillerCaveInitDarkness(void)
 	SCREEN_TRANSITION_STATE *state;
 
 	fieldState->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	fieldState->transitionFrm = 24;
+	fieldState->transitionFrame = 24;
 	sySynch(1);
 	fdScreenTransitionStartHeldWindow(WINDOW_TRANSITION_LEADER_LOW);
 	state = ScreenTransitionStateWork;
@@ -482,11 +482,11 @@ static void scAltmillerCaveStartReveal(void)
 		IO_WRITE16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
 	}
 	if(MainRoutineStateWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
-		fdActorSetSprColById(ACTOR_BLUE_ROCK, COLOR_BLUE);
-		fdActorSetSprColById(ACTOR_GREEN_ROCK, COLOR_GREEN);
-		fdActorSetSprColById(ACTOR_WHITE_ROCK, COLOR_WHITE);
-		fdActorSetSprColById(ACTOR_YELLOW_ROCK, COLOR_YELLOW);
-		fdActorSetSprColById(ACTOR_RED_ROCK, COLOR_RED);
+		fdActorSetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_BLUE);
+		fdActorSetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_GREEN);
+		fdActorSetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_WHITE);
+		fdActorSetSpriteColorById(ACTOR_YELLOW_ROCK, COLOR_YELLOW);
+		fdActorSetSpriteColorById(ACTOR_RED_ROCK, COLOR_RED);
 	}
 }
 
@@ -503,11 +503,11 @@ static void scAltmillerCaveEndReveal(void)
 		effectState->sceneVariant = 1;
 	}
 	if(MainRoutineStateWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
-		fdActorSetSprColById(ACTOR_BLUE_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_GREEN_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_WHITE_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_YELLOW_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_RED_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_YELLOW_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_RED_ROCK, COLOR_NONE);
 	}
 }
 
@@ -523,7 +523,7 @@ static void scAltmillerCaveStartRetreat(void)
 	effectState = (FIELD_EFFECT_STATE *)FieldEffectStateWork;
 	original = effectState->caster;
 	fdActorFaceDirection(effectState->casterId, FACING_SOUTH, 0);
-	fdActorSetSprColMode(original, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorMode(original, SPRITE_COLOR_NORMAL);
 	fdScriptWait(20);
 	replacement = syFieldActorCreate(
 		0, original->x.fixed, original->y.fixed, original->z.fixed);
@@ -532,7 +532,7 @@ static void scAltmillerCaveStartRetreat(void)
 			original, replacement, DMA_COPY_WORDS(sizeof(ACTOR) / 4), REG_DMA3);
 		original->update = 0;
 		effectState->caster = replacement;
-		original->sprStorageKind = 0;
+		original->spriteStorageKind = 0;
 	}
 }
 
@@ -546,9 +546,9 @@ static void scAltmillerCaveDropPillarIntoPit(void)
 
 	if(FIELD_METATILE(actor->x.fixed) == 30 &&
 		FIELD_METATILE(actor->z.fixed) == 20) {
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->groundHeight = 0;
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(30, 20, 1, 1, 32, 20);
 #if ALTMILLER_PILLAR_BRIDGE_KEPT_AFTER_BATTLE
 		gmFlagSet(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE);
@@ -570,15 +570,15 @@ static void scAltmillerCaveCheckPuddleCovered(void)
 {
 	FIELD_EFFECT_STATE *effectState =
 		(FIELD_EFFECT_STATE *)FieldEffectStateWork;
-	ACTOR	 *tgt = fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE);
+	ACTOR	 *target = fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE);
 	FIELD_POS pos;
 
-	pos.x = tgt->x.fixed;
-	pos.y = tgt->y.fixed;
-	pos.z = tgt->z.fixed;
+	pos.x = target->x.fixed;
+	pos.y = target->y.fixed;
+	pos.z = target->z.fixed;
 
-	if(syFieldActorCheckMovementCollision(tgt, &pos) > 0) {
-		effectState->leaveTgt = 1;
+	if(syFieldActorCheckMovementCollision(target, &pos) > 0) {
+		effectState->leaveTarget = 1;
 	}
 }
 
@@ -593,15 +593,15 @@ static void scAltmillerCaveFreezePuddle(void)
 	ACTOR *puddle = fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE);
 	Sint32 blocked;
 
-	blocked = effectState->leaveTgt;
+	blocked = effectState->leaveTarget;
 	if(blocked == 0) {
 		fdMapGridCopyMetatileAttributes(76, 16, 1, 1, 73, 17);
 		if(puddle != NULL) {
-			Sint32 motionFlg = ACTOR_FALLS;
-			puddle->motionFlg = motionFlg;
+			Sint32 motionFlags = ACTOR_FALLS;
+			puddle->motionFlags = motionFlags;
 			/* blocked is 0 here: the pillar is drawn as anything standing
 			   is. */
-			puddle->priFlg = blocked;
+			puddle->priorityFlags = blocked;
 		}
 		gmFlagSet(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN);
 	}
@@ -614,15 +614,15 @@ static void scAltmillerCaveFreezePuddle(void)
 static void scAltmillerCaveHopOverPuddle(void)
 {
 	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	Sint32 motionFlg = actor->motionFlg;
+	Sint32 motionFlags = actor->motionFlags;
 
 	union {
 		FIELD_POS		 pos;
 		Sint32			 coordinates[3];
 		FIELD_COORDINATE components[3];
-	} dst;
+	} dest;
 
-	FIELD_COORDINATE *components = dst.components;
+	FIELD_COORDINATE *components = dest.components;
 
 	components[0].fixed = actor->x.fixed;
 	components[1].fixed = actor->y.fixed;
@@ -630,24 +630,24 @@ static void scAltmillerCaveHopOverPuddle(void)
 	{
 		Sint32 angle = FACING_SIXTEENTH(actor->facing);
 
-		syVectorAddPolarOffset(toFIXED(32), angle, dst.coordinates);
+		syVectorAddPolarOffset(toFIXED(32), angle, dest.coordinates);
 	}
-	if(syFieldActorCheckMovementCollision(actor, &dst.pos) == 0) {
+	if(syFieldActorCheckMovementCollision(actor, &dest.pos) == 0) {
 		fdScriptStart();
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(actor, ANIM_LEADER_LEAP);
 		actor->speedLimit = toFIXED(3);
 		actor->acceleration = toFIXED(2);
-		actor->velY = toFIXED(4);
-		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(actor, 0);
+		actor->velocityY = toFIXED(4);
+		actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorMoveToAndWait(ACTOR_PARTY_LEADER, components[0].part[0].integer,
 			components[2].part[0].integer);
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
-		actor->motionFlg = motionFlg;
+		fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+		actor->motionFlags = motionFlags;
 		fdScriptEnd();
 	}
 }
@@ -658,12 +658,12 @@ static void scAltmillerCaveHopOverPuddle(void)
    through four sizes. */
 static void scAltmillerCavePulseLight(ACTOR *light)
 {
-	Sint32 scale = AltmillerCavePulseScales[(light->tmr >> 2) & 3];
+	Sint32 scale = AltmillerCavePulseScales[(light->timer >> 2) & 3];
 
 	light->scaleX = scale;
 	light->scaleY = scale;
-	light->tmr++;
-	light->tmr &= 15;
+	light->timer++;
+	light->timer &= 15;
 }
 
 /* Puts a light on the ring, radius pixels from its center above the rocks, at
@@ -687,13 +687,13 @@ static void scAltmillerCavePlaceLight(
 
 /* Spaces the five lights evenly around the ring, the first at the given
    angle. */
-static void scAltmillerCavePlaceLights(Sint32 ang)
+static void scAltmillerCavePlaceLights(Sint32 angle)
 {
 	Sint32 i;
 
 	for(i = 0; i < LIGHT_COUNT; i++) {
-		scAltmillerCavePlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), ang);
-		ang -= DEGtoANG(72);
+		scAltmillerCavePlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
+		angle -= DEGtoANG(72);
 	}
 }
 
@@ -721,11 +721,11 @@ static void scAltmillerCaveSpinLights(void)
 		}
 	} else if(phase == WHEEL_STOPPING) {
 		Sint32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
-		Sint32 chosenAng = syMathDivide(chosenLight * TRIG_TURN, LIGHT_COUNT);
-		Sint16 fromTop = wheel->ang - chosenAng - DEGtoANG(90);
+		Sint32 chosenAngle = syMathDivide(chosenLight * TRIG_TURN, LIGHT_COUNT);
+		Sint16 fromTop = wheel->angle - chosenAngle - DEGtoANG(90);
 
 		if(fromTop > -WHEEL_LOW_SPEED && fromTop < WHEEL_LOW_SPEED) {
-			wheel->ang = chosenAng + DEGtoANG(90);
+			wheel->angle = chosenAngle + DEGtoANG(90);
 			wheel->phase = WHEEL_STOPPED;
 			wheel->speed = 0;
 			fdActorGet(ACTOR_FIRST_LIGHT + chosenLight)->update =
@@ -735,12 +735,12 @@ static void scAltmillerCaveSpinLights(void)
 		moving = 0;
 	}
 	if(moving != 0) {
-		AltmillerCaveLightWheel->ang += AltmillerCaveLightWheel->speed;
-		scAltmillerCavePlaceLights(AltmillerCaveLightWheel->ang);
+		AltmillerCaveLightWheel->angle += AltmillerCaveLightWheel->speed;
+		scAltmillerCavePlaceLights(AltmillerCaveLightWheel->angle);
 		AltmillerCaveLightWheel->travel += AltmillerCaveLightWheel->speed;
 		if(AltmillerCaveLightWheel->travel > TRIG_TURN * 3 / 16) {
 			AltmillerCaveLightWheel->travel = 0;
-			sySndPlay(SE_CLICK);
+			sySoundPlay(SE_CLICK);
 		}
 	}
 	AltmillerCaveLightWheel->ticks++;
@@ -765,7 +765,7 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 	Sint32		 chosenLight;
 	Uint8		 prevLight;
 	FIXED		 radius;
-	Uint16		 ang;
+	Uint16		 angle;
 
 	fdScriptStart();
 	fdEndBusyAndReveal();
@@ -783,29 +783,29 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 	prevLight = ROCK_PUZZLE->chosenLight;
 	wheel = AltmillerCaveLightWheel;
 	chosenLight = ROCK_PUZZLE->chosenLight;
-	wheel->ang = (chosenLight * TRIG_TURN) / LIGHT_COUNT + DEGtoANG(90);
+	wheel->angle = (chosenLight * TRIG_TURN) / LIGHT_COUNT + DEGtoANG(90);
 	/* The leftmost rock, then the rightmost, before the rounds of lights. */
 	if(state == PUZZLE_START) {
 		if(rock == ACTOR_BLUE_ROCK) {
 			state = PUZZLE_LEFT_ROCK_TURNED;
-			sySndPlay(SE_CHIME);
+			sySoundPlay(SE_CHIME);
 		} else {
-			sySndPlay(SE_MENU_ERROR);
+			sySoundPlay(SE_MENU_ERROR);
 		}
 		CAVE_STATE(CAVE_ROUNDS_MATCHED) = 0;
 	} else if(state == PUZZLE_LEFT_ROCK_TURNED) {
 		if(rock == ACTOR_BLUE_ROCK) {
-			sySndPlay(SE_CHIME);
+			sySoundPlay(SE_CHIME);
 		} else if(rock == ACTOR_RED_ROCK) {
 			/* The lights grow in one by one, each with SE_LIGHT_APPEAR. */
 			state = PUZZLE_LIGHTS_SHOWN;
-			sySndPlay(SE_CHIME);
+			sySoundPlay(SE_CHIME);
 			sySynch(30);
-			ang = AltmillerCaveLightWheel->ang;
+			angle = AltmillerCaveLightWheel->angle;
 			for(i = 0; i < LIGHT_COUNT; i++) {
 				scAltmillerCavePlaceLight(
-					ACTOR_FIRST_LIGHT + i, toFIXED(24), ang);
-				sySndPlay(SE_LIGHT_APPEAR);
+					ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
+				sySoundPlay(SE_LIGHT_APPEAR);
 				actor = fdActorGet(ACTOR_FIRST_LIGHT + i);
 				actor->scaleX = 0;
 				scale = toFIXED(2) / 5;
@@ -815,23 +815,23 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 					sySynch(1);
 					scale += toFIXED(3) / 64;
 				} while(actor->scaleX < toFIXED(1));
-				ang -= DEGtoANG(72);
+				angle -= DEGtoANG(72);
 			}
 			sySynch(30);
 			correctRock = 1;
 		} else {
-			sySndPlay(SE_MENU_ERROR);
+			sySoundPlay(SE_MENU_ERROR);
 			state = PUZZLE_START;
 		}
 	} else if(state == PUZZLE_LIGHTS_SHOWN) {
 		if(rock != ACTOR_FIRST_ROCK + chosenLight) {
 			/* The wrong rock: the lights shrink away. */
 			state = PUZZLE_START;
-			sySndPlay(SE_MENU_ERROR);
+			sySoundPlay(SE_MENU_ERROR);
 			sySynch(30);
 			for(i = 0; i < LIGHT_COUNT; i++) {
 				actor = fdActorGet(ACTOR_FIRST_LIGHT + i);
-				sySndPlay(SE_LIGHT_APPEAR);
+				sySoundPlay(SE_LIGHT_APPEAR);
 				for(scale = actor->scaleX; actor->scaleX > toFIXED(2) / 5;
 					scale -= toFIXED(3) / 64) {
 					actor->scaleY = scale;
@@ -841,7 +841,7 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 				fdActorSetPos(ACTOR_FIRST_LIGHT + i, 0, 0);
 			}
 		} else {
-			sySndPlay(SE_CHIME);
+			sySoundPlay(SE_CHIME);
 			correctRock = 1;
 			sySynch(30);
 		}
@@ -865,7 +865,7 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 				sySynch(1);
 			}
 			sySynch(10);
-			sySndPlay(SE_CHIME);
+			sySoundPlay(SE_CHIME);
 		} else {
 			/* The third light matched: the ground shakes, the ring spirals in
 			   to nothing, and the wall bursts. */
@@ -879,27 +879,27 @@ static void scAltmillerCaveTurnRock(Sint32 rock)
 			fdScriptWait(20);
 			fdMapGridSetShake(4, 4, 1);
 			AltmillerCaveLightWheel->phase = WHEEL_STOPPED;
-			sySndPlay(SE_WARP);
+			sySoundPlay(SE_WARP);
 			radius = toFIXED(24);
-			ang = AltmillerCaveLightWheel->ang;
+			angle = AltmillerCaveLightWheel->angle;
 			do {
 				for(i = 0; i < LIGHT_COUNT; i++) {
 					actor = fdActorGet(ACTOR_FIRST_LIGHT + i);
 					actor->scaleX -= toFIXED(1) / 4096;
 					actor->scaleY -= toFIXED(1) / 4096;
 					scAltmillerCavePlaceLight(
-						ACTOR_FIRST_LIGHT + i, radius, ang);
-					ang -= DEGtoANG(72);
+						ACTOR_FIRST_LIGHT + i, radius, angle);
+					angle -= DEGtoANG(72);
 				}
 				radius -= toFIXED(1) / 5;
-				ang += WHEEL_TOP_SPEED;
+				angle += WHEEL_TOP_SPEED;
 				sySynch(1);
 			} while(radius > 0);
 			for(i = 0; i < LIGHT_COUNT; i++) {
 				fdActorSetPos(ACTOR_FIRST_LIGHT + i, 0, 0);
 			}
 			scAltmillerCaveReleaseWallBurst();
-			sySndPlay(MUS_PUZZLE_SOLVED);
+			sySoundPlay(MUS_PUZZLE_SOLVED);
 		}
 		syCloseEvent(scAltmillerCaveSpinLights);
 	}
@@ -967,13 +967,13 @@ static void scAltmillerCaveRestoreBabiAndInviteParty(void)
 	fdScriptWait(30);
 	fdActorRunRepeatedMotion(ACTOR_INVISIBLE_BABI, 2);
 	fdScriptWait(60);
-	sySndPlay(SOUND_FADE_OUT_BGM);
-	actor->spr->rotation = 0;
+	sySoundPlay(SOUND_FADE_OUT_BGM);
+	actor->sprite->rotation = 0;
 	fdActorJump(ACTOR_INVISIBLE_BABI, 10, 70);
 	for(i = 0; i < 30; i++) {
-		actor->spr->image.pri = 0;
+		actor->sprite->image.priority = 0;
 		fdScriptWait(2);
-		actor->spr->image.pri = 2;
+		actor->sprite->image.priority = 2;
 		fdScriptWait(2);
 	}
 	fdScriptWait(40);
@@ -986,24 +986,24 @@ static void scAltmillerCaveRestoreBabiAndInviteParty(void)
 		fdActorSetPos(ACTOR_INVISIBLE_BABI, 0, 0);
 		fdActorSetPos(ACTOR_BABI, x, z);
 	}
-	actor->spr->flg = 0;
-	sySndPlay(MUS_BABIS_THEME);
+	actor->sprite->flags = 0;
+	sySoundPlay(MUS_BABIS_THEME);
 	fdActorSetSpeed(ACTOR_BABI, 0.8);
 	fdActorWalkByAndWait(ACTOR_BABI, 32, 32);
 	fdActorFaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_MIA)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_IVAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_PARTY_LEADER, 0, 16);
 	fdActorWalkBy(ACTOR_GARET, 0, 16);
 	fdActorWalkBy(ACTOR_MIA, 0, 16);
 	fdActorWalkByAndWait(ACTOR_IVAN, 0, 16);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_MIA)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_IVAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -1740,7 +1740,7 @@ static void scAltmillerCaveRestoreBabiAndInviteParty(void)
 		fdScriptWait(30);
 		fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
 	}
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetSpeed(ACTOR_GARET, 1.2);
 	fdActorSetSpeed(ACTOR_IVAN, 1.2);
 	fdActorSetSpeed(ACTOR_MIA, 1.2);
@@ -1761,7 +1761,7 @@ static void scAltmillerCaveMeetInvisibleBabi(void)
 	Sint32 line;
 
 	gmFlagSet(FLAG_MET_INVISIBLE_BABI);
-	sySndPlay(MUS_CAVE_THEME);
+	sySoundPlay(MUS_CAVE_THEME);
 	fdScriptStart();
 	fdEndBusyAndReveal();
 	fdScriptSetMessageId(MsgAltmillerSee);
@@ -2046,7 +2046,7 @@ static void scAltmillerCaveMeetInvisibleBabi(void)
 	fdActorSetAnimation(ACTOR_GARET, ANIM_NOD);
 	fdActorSetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
 	fdScriptWait(30);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetSpeed(ACTOR_GARET, 1.2);
 	fdActorSetSpeed(ACTOR_IVAN, 1.2);
 	fdActorSetSpeed(ACTOR_MIA, 1.2);
@@ -2158,8 +2158,9 @@ const CUE *scGetCues(void)
 static void scAltmillerCaveMatchLeaderPriority(ACTOR *actor)
 {
 	if(actor != NULL) {
-		actor->priFlg = 0;
-		actor->spr->image.pri = fdActorGet(ACTOR_PARTY_LEADER)->spr->image.pri;
+		actor->priorityFlags = 0;
+		actor->sprite->image.priority =
+			fdActorGet(ACTOR_PARTY_LEADER)->sprite->image.priority;
 	}
 }
 
@@ -2224,9 +2225,9 @@ Sint32 scInit(void)
 			fdActorSetPos(ACTOR_INVISIBLE_BABI, 0, 0);
 		} else {
 			actor = fdActorGet(ACTOR_INVISIBLE_BABI);
-			actor->spr->image.pri = 1;
-			actor->spr->flg = SPRITE_FLAG_OUTLINED;
-			actor->spr->rotation = DEGtoANG(90);
+			actor->sprite->image.priority = 1;
+			actor->sprite->flags = SPRITE_FLAG_OUTLINED;
+			actor->sprite->rotation = DEGtoANG(90);
 		}
 	}
 	if(MainRoutineStateWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
@@ -2237,10 +2238,10 @@ Sint32 scInit(void)
 				ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 			fdMapGridCopyMetatileAttributes(76, 16, 1, 1, 73, 17);
 		} else {
-			fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE)->priFlg |=
+			fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE)->priorityFlags |=
 				ACTOR_PRIORITY_UNDERFOOT;
 		}
-		fdActorSetSprFlags(fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_SQUALL_ROOM_PUDDLE), 0);
 #if ALTMILLER_PILLAR_BRIDGE_KEPT_AFTER_BATTLE
 		/* The metatiles scAltmillerCaveDropPillarIntoPit copies as it sets the
 		   flag, redrawn on arrival. */
@@ -2290,38 +2291,38 @@ Sint32 scInit(void)
 		}
 		for(i = 0; i < LIGHT_COUNT; i++) {
 			actor = fdActorGet(ACTOR_FIRST_LIGHT + i);
-			actor->motionFlg = 0;
-			actor->collisionFlg = 0;
+			actor->motionFlags = 0;
+			actor->collisionFlags = 0;
 			actor->scaleX = toFIXED(1);
 			actor->scaleY = toFIXED(1);
-			fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_LIGHT + i), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_LIGHT + i), 0);
 			/* The lights glimmer alike, each starting six ticks after the one
 			   before, so that they do not glimmer in step. */
 			fdActorSetAnimation(ACTOR_FIRST_LIGHT + i, i + 1);
 		}
-		fdActorSetSprColById(ACTOR_BLUE_LIGHT, COLOR_BLUE);
-		fdActorSetSprColById(ACTOR_GREEN_LIGHT, COLOR_GREEN);
-		fdActorSetSprColById(ACTOR_WHITE_LIGHT, COLOR_WHITE);
-		fdActorSetSprColById(ACTOR_YELLOW_LIGHT, COLOR_YELLOW);
-		fdActorSetSprColById(ACTOR_RED_LIGHT, COLOR_RED);
-		fdActorSetSprColById(ACTOR_BLUE_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_GREEN_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_WHITE_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_YELLOW_ROCK, COLOR_NONE);
-		fdActorSetSprColById(ACTOR_RED_ROCK, COLOR_NONE);
-		fdActorGet(ACTOR_BLUE_ROCK)->spr->image.pri = 3;
-		fdActorGet(ACTOR_RED_ROCK)->spr->image.pri = 3;
-		fdActorGet(ACTOR_BLUE_ROCK)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_RED_ROCK)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprFlags(fdActorGet(ACTOR_BLUE_ROCK), 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_RED_ROCK), 0);
+		fdActorSetSpriteColorById(ACTOR_BLUE_LIGHT, COLOR_BLUE);
+		fdActorSetSpriteColorById(ACTOR_GREEN_LIGHT, COLOR_GREEN);
+		fdActorSetSpriteColorById(ACTOR_WHITE_LIGHT, COLOR_WHITE);
+		fdActorSetSpriteColorById(ACTOR_YELLOW_LIGHT, COLOR_YELLOW);
+		fdActorSetSpriteColorById(ACTOR_RED_LIGHT, COLOR_RED);
+		fdActorSetSpriteColorById(ACTOR_BLUE_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_GREEN_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_WHITE_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_YELLOW_ROCK, COLOR_NONE);
+		fdActorSetSpriteColorById(ACTOR_RED_ROCK, COLOR_NONE);
+		fdActorGet(ACTOR_BLUE_ROCK)->sprite->image.priority = 3;
+		fdActorGet(ACTOR_RED_ROCK)->sprite->image.priority = 3;
+		fdActorGet(ACTOR_BLUE_ROCK)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_RED_ROCK)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_BLUE_ROCK), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_RED_ROCK), 0);
 	}
 	if(gmFlagGet(FLAG_ALTMILLER_CAVE_DARK)) {
 		scAltmillerCaveInitDarkness();
 	} else {
 		FieldStateWork->transition = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-		FieldStateWork->transitionFrm = 24;
+		FieldStateWork->transitionFrame = 24;
 	}
 	return 0;
 }
@@ -2341,14 +2342,14 @@ static void scAltmillerCaveUpdateWallFragment(FIELD_PARTICLE *fragment)
 		fragment->x = startX;
 		pos[0] = startX;
 		syVectorAddPolarOffset(toFIXED(120), syRandomNext(), pos);
-		fragment->tgtX = pos[0];
-		fragment->tgtZ = pos[2];
+		fragment->targetX = pos[0];
+		fragment->targetZ = pos[2];
 		fragment->acceleration = toFIXED(5);
 		fragment->speedMax = toFIXED(5);
 		fragment->turnStepLimited = 0;
 		fragment->state++;
 		if((FrameCount & 3) == 0)
-			sySndPlay(SE_HEAVY_IMPACT);
+			sySoundPlay(SE_HEAVY_IMPACT);
 	} else if(fragment->state == 1) {
 		if(fdParticleHasPendingTarget(fragment) == 0) {
 			fragment->state--;
@@ -2369,7 +2370,7 @@ static void scAltmillerCaveReleaseWallBurst(void)
 	FIELD_EFFECT_STATE *effectState;
 	VECTOR3				pos;
 	FIELD_PARTICLE	   *fragment;
-	Sint32				fragmentIdx;
+	Sint32				fragmentIndex;
 
 	fdEffectInitSlots();
 	effectState = (FIELD_EFFECT_STATE *)FieldEffectStateWork;
@@ -2379,13 +2380,13 @@ static void scAltmillerCaveReleaseWallBurst(void)
 	pos.z = toFIXED(144);
 	fdCameraWorldToScreen(&pos);
 	fragment = effectState->particles;
-	for(fragmentIdx = 0; fragmentIdx < WALL_BURST_PIECES; fragmentIdx++) {
+	for(fragmentIndex = 0; fragmentIndex < WALL_BURST_PIECES; fragmentIndex++) {
 		FIXED scale;
 
 		fdParticleInit(fragment, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(fragment, scAltmillerCaveUpdateWallFragment);
 		fdParticleSetAnimation(fragment, PARTICLE_ANIMATION_FLICKER);
-		fdSprSetAnimationColModes(fragment->spr, syRandomBelow(7));
+		fdSpriteSetAnimationColorModes(fragment->sprite, syRandomBelow(7));
 		scale = syMathDivideUnsigned(syRandomNext(), 3) + toFIXED(3) / 2;
 		fragment->scaleY = scale;
 		fragment->scaleX = scale;
@@ -2398,11 +2399,11 @@ static void scAltmillerCaveReleaseWallBurst(void)
 	sySynch(50);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	sySynch(30);
-	for(fragmentIdx = 0;
-		fragmentIdx < (Sint32)ARRAY_COUNT(effectState->particles);
-		fragmentIdx++) {
-		if(effectState->particles[fragmentIdx].active)
-			effectState->particles[fragmentIdx].state = 2;
+	for(fragmentIndex = 0;
+		fragmentIndex < (Sint32)ARRAY_COUNT(effectState->particles);
+		fragmentIndex++) {
+		if(effectState->particles[fragmentIndex].active)
+			effectState->particles[fragmentIndex].state = 2;
 	}
 	fdMapGridWaitForShakeToSettle();
 	mnShopRestoreFieldPalette();

@@ -23,14 +23,14 @@
    Abilities: Helm Splitter, Skull Splitter. */
 void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	void				*canvas = RamHeapSlots->battleCanvas;
 	DRAW_RECTANGLE		 draw[2];
 	SCREEN_POINT		 pos;
 	PARTICLE			*sparks;
 	PARTICLE			*spark;
 	Sint32				*life;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 
 	/* Set up the canvas and load the swirl and the spark sprite sheets. */
@@ -77,9 +77,9 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 	/* The user leaps at the target. */
 	btMotionApproachTargetStub(
-		args->user, args->tgts[0], HELM_SPLITTER_LEAP_TICKS, toFIXED(7));
+		args->user, args->targets[0], HELM_SPLITTER_LEAP_TICKS, toFIXED(7));
 
-	for(frm = 0; frm != HELM_SPLITTER_TICKS; frm++) {
+	for(frame = 0; frame != HELM_SPLITTER_TICKS; frame++) {
 		/* The swirl grows, a picture every second tick. */
 		if(args->variant == EFFECT_VARIANT_BASIC) {
 			btEffectPosProjectBattler(args->user, &pos);
@@ -87,8 +87,8 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				REG_BG2X = (80 - pos.x) << 8;
 			else
 				REG_BG2X = (32 - pos.x) << 8;
-			if(frm >= 8 && frm <= 23) {
-				Sint32 picture = (frm - 8) / 2;
+			if(frame >= 8 && frame <= 23) {
+				Sint32 picture = (frame - 8) / 2;
 
 				if(picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
 					picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
@@ -110,9 +110,9 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				}
 			}
 		} else {
-			btEffectPosProjectBattler(args->tgts[0], &pos);
-			if(frm >= 8 && frm <= 23) {
-				Sint32 picture = (frm - 8) / 2;
+			btEffectPosProjectBattler(args->targets[0], &pos);
+			if(frame >= 8 && frame <= 23) {
+				Sint32 picture = (frame - 8) / 2;
 
 				if(picture > HELM_SPLITTER_SWIRL_PICTURES - 1)
 					picture = HELM_SPLITTER_SWIRL_PICTURES - 1;
@@ -137,11 +137,11 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 
 		/* The strike: the target flashes and reels, the screen shakes and the
 		   swirl bursts into sparks. */
-		if(frm == HELM_SPLITTER_STRIKE_TICK) {
-			btEffectPosProjectBattler(args->tgts[0], &pos);
+		if(frame == HELM_SPLITTER_STRIKE_TICK) {
+			btEffectPosProjectBattler(args->targets[0], &pos);
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_BOUNCE);
-			state->shakeFrm = 4;
+			state->shakeFrame = 4;
 			for(i = 0; i !=
 				args->variant * HELM_SPLITTER_SPARKS + HELM_SPLITTER_SPARKS;
 				i++) {
@@ -154,8 +154,8 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				else
 					spark->x = toFIXED(pos.x / 2);
 				spark->y = toFIXED(80);
-				spark->velX = (sySin(angle) * force) >> 7;
-				spark->velY = -(syCos(angle) * force) >> 6;
+				spark->velocityX = (sySin(angle) * force) >> 7;
+				spark->velocityY = -(syCos(angle) * force) >> 6;
 				spark->variant = (syRandom() & 15) + 16;
 			}
 		}
@@ -167,7 +167,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 				spark->variant--;
 				btParticleAdvanceWithGravity2D(spark, 60, 0);
 				if(spark->y > toFIXED(104)) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else if((spark->x >= 0 && spark->x < toFIXED(127)) &&
 					spark->y >= 0) {
 					Sint32 sx = FIXEDtoINT(spark->x);
@@ -176,7 +176,7 @@ void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 					if(args->variant == EFFECT_VARIANT_BASIC)
 						draw[0](canvas,
 							state->sheet + HELM_SPLITTER_SPARK_PICTURES +
-								((frm + i) / 4 % HELM_SPLITTER_STARS) *
+								((frame + i) / 4 % HELM_SPLITTER_STARS) *
 									HELM_SPLITTER_STAR_SIZE *
 									HELM_SPLITTER_STAR_SIZE,
 							sx - HELM_SPLITTER_STAR_SIZE / 2,

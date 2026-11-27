@@ -4,9 +4,9 @@
 /* The stub calls: how one module of the main image calls a function of another.
    A module's code moves whenever the module is rebuilt, so each module opens
    with a table of 8-byte stubs that never moves, and callers jump through it.
-   An entry is its target's name with Far added (mnTextDrawNumAtOffsetStub
-   reaches mnTextDrawNumAtOffset); each module's header here lists its entries
-   in the order of its table, the stubs.s of its own folder. */
+   An entry is its target's name with Far added (mnTextDrawNumberAtOffsetStub
+   reaches mnTextDrawNumberAtOffset); each module's header here lists its
+   entries in the order of its table, the stubs.s of its own folder. */
 
 #include "edition.h"
 #include "types.h"

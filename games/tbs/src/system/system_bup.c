@@ -32,30 +32,30 @@ Bool syBupInitState(void)
 	BUP_STATE		  *state;
 	BUP_SECTOR_HEADER  header;
 	BUP_SECTOR_HEADER *slot;
-	Uint32			   idx;
+	Uint32			   index;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_BUP, sizeof(*state));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_BUP, sizeof(*state));
 	DMA_FILL32(0, state, sizeof(*state));
 	SetFlashTimerIntr(BUP_FLASH_TIMER, &IrqHandlers[IRQ_TIMER2]);
 
 	/* Wait a tick after every failed probe, including the last one, before
 	   reporting that no flash chip answered. */
-	for(idx = 0; idx < BUP_FLASH_IDENTIFY_ATTEMPTS; idx++) {
+	for(index = 0; index < BUP_FLASH_IDENTIFY_ATTEMPTS; index++) {
 		if((Uint16)IdentifyFlash() == 0)
 			break;
 		sySynch(1);
 	}
-	if(idx >= BUP_FLASH_IDENTIFY_ATTEMPTS)
+	if(index >= BUP_FLASH_IDENTIFY_ATTEMPTS)
 		return TRUE;
 
-	for(idx = 0; idx < BUP_SECTOR_COUNT; idx++) {
-		Uint32 stat;
+	for(index = 0; index < BUP_SECTOR_COUNT; index++) {
+		Uint32 status;
 		Uint32 part;
 
-		state->occupied[idx] = 0;
-		state->partId[idx] = BUP_PART_NONE;
-		state->cnt[idx] = 0;
-		stat = syBupReadSector(idx);
+		state->occupied[index] = 0;
+		state->partId[index] = BUP_PART_NONE;
+		state->count[index] = 0;
+		status = syBupReadSector(index);
 		START_DMA(&state->slot, &header, DMA_COPY_WORDS(4));
 		WAIT_DMA();
 		/* FAKEMATCH(temporary): slot holds &header; as header. at its uses. */
@@ -65,22 +65,22 @@ Bool syBupInitState(void)
 		   free. */
 		if(syBupCompareBytes(slot->signature, (Uint8 *)BupSignature, 7) != 0)
 			continue;
-		state->cnt[idx] = slot->cnt;
+		state->count[index] = slot->count;
 		part = slot->partId;
 		if((Uint8)part >= BUP_PART_NONE)
 			continue;
-		if(stat != 0)
+		if(status != 0)
 			continue;
 
-		state->occupied[idx] = 1;
-		state->partId[idx] = part;
+		state->occupied[index] = 1;
+		state->partId[index] = part;
 		/* An interrupted replacement can leave both copies valid. */
-		for(; stat < idx; stat++) {
-			if(state->partId[stat] == (Uint8)part) {
-				if(state->cnt[stat] < slot->cnt)
-					state->occupied[stat] = 0;
+		for(; status < index; status++) {
+			if(state->partId[status] == (Uint8)part) {
+				if(state->count[status] < slot->count)
+					state->occupied[status] = 0;
 				else
-					state->occupied[idx] = 0;
+					state->occupied[index] = 0;
 			}
 		}
 	}
@@ -93,35 +93,35 @@ Bool syBupInitState(void)
 Uint32 syBupSelectWriteSector(Sint32 partId)
 {
 	Uint32 empty[BUP_SECTOR_COUNT];
-	Sint32 cnt;
-	Uint32 idx;
+	Sint32 count;
+	Uint32 index;
 	Uint8 *slot;
 	Uint8  value;
 
 	slot = BupStateWork->occupied;
-	cnt = 0;
-	for(idx = 0; idx < BUP_SECTOR_COUNT; idx += 1) {
+	count = 0;
+	for(index = 0; index < BUP_SECTOR_COUNT; index += 1) {
 		value = *slot++;
 		if(value == 0) {
-			empty[cnt++] = idx;
+			empty[count++] = index;
 		}
 	}
-	idx = BUP_SECTOR_COUNT;
-	if(cnt != 0) {
-		if(cnt == 1) {
-			idx = empty[0];
+	index = BUP_SECTOR_COUNT;
+	if(count != 0) {
+		if(count == 1) {
+			index = empty[0];
 			if(syBupFindLatestSector(partId) == BUP_SECTOR_COUNT) {
-				idx = BUP_SECTOR_COUNT;
+				index = BUP_SECTOR_COUNT;
 			}
 		} else {
 			/* A free sector at random, so the writes spread over the free
 			   sectors and no sector of the flash chip wears out first; nothing
 			   else depends on which free sector a part takes. */
-			idx = syRandom() % cnt;
-			idx = empty[idx];
+			index = syRandom() % count;
+			index = empty[index];
 		}
 	}
-	return idx;
+	return index;
 }
 
 /* Programs the save state's sector buffer into flash sector `sector` and
@@ -129,11 +129,11 @@ Uint32 syBupSelectWriteSector(Sint32 partId)
 Uint32 syBupWriteSector(Sint32 sector)
 {
 	BUP_STATE *state = BupStateWork;
-	Uint16	   idx = sector;
+	Uint16	   index = sector;
 
-	if(ProgramFlashSectorWork(idx, state->slot.bytes) != 0)
+	if(ProgramFlashSectorWork(index, state->slot.bytes) != 0)
 		return 1;
-	if(VerifyFlashSector(idx, state->slot.bytes) != 0)
+	if(VerifyFlashSector(index, state->slot.bytes) != 0)
 		return 1;
 	return 0;
 }
@@ -168,13 +168,13 @@ Bool syBupWritePart(Sint32 partId, void *src)
 {
 	BUP_STATE		 *state;
 	BUP_SECTOR_HEADER header;
-	Uint32			  cur;
+	Uint32			  current;
 	Uint32			  slot;
 
 	state = BupStateWork;
 	DMA_FILL32(0, &state->slot, sizeof(state->slot));
 	WAIT_DMA();
-	cur = syBupFindLatestSector(partId);
+	current = syBupFindLatestSector(partId);
 	slot = syBupSelectWriteSector(partId);
 	if(slot >= BUP_SECTOR_COUNT)
 		return TRUE;
@@ -188,7 +188,7 @@ Bool syBupWritePart(Sint32 partId, void *src)
 	WAIT_DMA();
 	header.partId = partId;
 	header.checksum = syBupChecksumSector();
-	header.cnt = syBupGetLatestCounter(partId) + 1;
+	header.count = syBupGetLatestCounter(partId) + 1;
 	START_DMA(&header, &state->slot.part.header, DMA_COPY_WORDS(4));
 	WAIT_DMA();
 
@@ -196,42 +196,42 @@ Bool syBupWritePart(Sint32 partId, void *src)
 		return TRUE;
 	/* A power loss before invalidation leaves two valid copies; the next scan
 	   chooses the new one by its higher counter. */
-	if(cur < BUP_SECTOR_COUNT && syBupInvalidateSector(cur) != 0)
+	if(current < BUP_SECTOR_COUNT && syBupInvalidateSector(current) != 0)
 		return TRUE;
 
-	if(header.cnt > BUP_COUNTER_LIMIT) {
+	if(header.count > BUP_COUNTER_LIMIT) {
 		/* Past the limit the count starts again at 1, rewritten over the old
 		   copy: the scan compares counters plainly, so a wrapped one would
 		   lose. */
-		header.cnt = 1;
+		header.count = 1;
 		START_DMA(&header, &state->slot.part.header, DMA_COPY_WORDS(4));
 		WAIT_DMA();
-		if(syBupWriteSector(cur) != 0)
+		if(syBupWriteSector(current) != 0)
 			return TRUE;
 		if(syBupInvalidateSector(slot) != 0)
 			return TRUE;
-		slot = cur;
+		slot = current;
 	}
 
 	state->occupied[slot] = 1;
 	state->partId[slot] = partId;
-	state->cnt[slot] = header.cnt;
+	state->count[slot] = header.count;
 	return FALSE;
 }
 
-/* Loads the current copy of part `partId` (4080 bytes) into `dst`.
+/* Loads the current copy of part `partId` (4080 bytes) into `dest`.
    Returns 1 when there is none and 0 otherwise. */
-Uint32 syBupReadPart(Sint32 partId, void *dst)
+Uint32 syBupReadPart(Sint32 partId, void *dest)
 {
 	BUP_STATE *state;
-	Uint32	   idx;
+	Uint32	   index;
 
 	state = BupStateWork;
-	idx = syBupFindLatestSector(partId);
-	if(idx >= BUP_SECTOR_COUNT)
+	index = syBupFindLatestSector(partId);
+	if(index >= BUP_SECTOR_COUNT)
 		return 1;
-	syBupReadSector(idx);
-	START_DMA(state->slot.part.payload, dst,
+	syBupReadSector(index);
+	START_DMA(state->slot.part.payload, dest,
 		DMA_COPY_WORDS(sizeof(state->slot.part.payload) / 4));
 	WAIT_DMA();
 	return 0;
@@ -241,13 +241,13 @@ Uint32 syBupReadPart(Sint32 partId, void *dst)
    erases a file. */
 Uint32 syBupDeletePart(Sint32 partId)
 {
-	Sint32 idx;
+	Sint32 index;
 
-	idx = syBupFindLatestSector(partId);
-	if((Uint32)idx >= BUP_SECTOR_COUNT) {
+	index = syBupFindLatestSector(partId);
+	if((Uint32)index >= BUP_SECTOR_COUNT) {
 		return 1U;
 	}
-	if(syBupInvalidateSector(idx) != 0) {
+	if(syBupInvalidateSector(index) != 0) {
 		return 1;
 	}
 	return 0;
@@ -259,21 +259,21 @@ Sint32 syBupChecksumSector(void)
 {
 	BUP_STATE *state;
 	Uint32	   limit;
-	Uint32	   ofs;
+	Uint32	   offset;
 	Sint32	   sum;
 
 	state = BupStateWork;
 	limit = BUP_CHECKSUM_BYTES - 1;
 	sum = 0;
-	for(ofs = 0; ofs <= limit; ofs += 8) {
-		sum += state->slot.part.payload[ofs + 0];
-		sum += state->slot.part.payload[ofs + 1];
-		sum += state->slot.part.payload[ofs + 2];
-		sum += state->slot.part.payload[ofs + 3];
-		sum += state->slot.part.payload[ofs + 4];
-		sum += state->slot.part.payload[ofs + 5];
-		sum += state->slot.part.payload[ofs + 6];
-		sum += state->slot.part.payload[ofs + 7];
+	for(offset = 0; offset <= limit; offset += 8) {
+		sum += state->slot.part.payload[offset + 0];
+		sum += state->slot.part.payload[offset + 1];
+		sum += state->slot.part.payload[offset + 2];
+		sum += state->slot.part.payload[offset + 3];
+		sum += state->slot.part.payload[offset + 4];
+		sum += state->slot.part.payload[offset + 5];
+		sum += state->slot.part.payload[offset + 6];
+		sum += state->slot.part.payload[offset + 7];
 	}
 	return sum;
 }
@@ -292,8 +292,8 @@ Uint32 syBupFindLatestSector(Sint32 partId)
 	latestCounter = 0;
 	for(i = 0; i < BUP_SECTOR_COUNT; i++) {
 		if(state->occupied[i] != 0 && partId == state->partId[i]) {
-			if(latestCounter < state->cnt[i]) {
-				latestCounter = state->cnt[i];
+			if(latestCounter < state->count[i]) {
+				latestCounter = state->count[i];
 				latestSlot = i;
 			}
 		}
@@ -301,9 +301,9 @@ Uint32 syBupFindLatestSector(Sint32 partId)
 	return latestSlot;
 }
 
-/* Overwrites sector `idx` with a header for no part (BUP_PART_NONE) and
+/* Overwrites sector `index` with a header for no part (BUP_PART_NONE) and
    clears its occupied entry. Returns 0 on success and 1 on failure. */
-Bool syBupInvalidateSector(Sint32 idx)
+Bool syBupInvalidateSector(Sint32 index)
 {
 	BUP_STATE		 *state;
 	BUP_SECTOR_HEADER header;
@@ -314,27 +314,27 @@ Bool syBupInvalidateSector(Sint32 idx)
 	START_DMA(BupHeaderTemplate, &header, DMA_COPY_WORDS(2));
 	WAIT_DMA();
 	header.partId = BUP_PART_NONE;
-	header.cnt = 0;
+	header.count = 0;
 	START_DMA(&header, &state->slot.part.header, DMA_COPY_WORDS(4));
 	WAIT_DMA();
-	if(syBupWriteSector(idx) != 0)
+	if(syBupWriteSector(index) != 0)
 		return TRUE;
-	state->occupied[idx] = 0;
-	state->partId[idx] = BUP_PART_NONE;
-	state->cnt[idx] = 0;
+	state->occupied[index] = 0;
+	state->partId[index] = BUP_PART_NONE;
+	state->count[index] = 0;
 	return FALSE;
 }
 
-/* Compares `cnt` bytes, as memcmp does. */
-Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 cnt)
+/* Compares `count` bytes, as memcmp does. */
+Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 count)
 {
 	Sint32 difference = 0;
 
-	while(cnt != 0) {
+	while(count != 0) {
 		difference = *left - *right;
 		if(difference != 0)
 			break;
-		cnt--;
+		count--;
 		left++;
 		right++;
 	}
@@ -352,8 +352,8 @@ Uint32 syBupGetLatestCounter(Sint32 partId)
 	latestCounter = 0;
 	for(i = 0; i < BUP_SECTOR_COUNT; i++) {
 		if(state->occupied[i] != 0 && partId == state->partId[i]) {
-			if(latestCounter < state->cnt[i])
-				latestCounter = state->cnt[i];
+			if(latestCounter < state->count[i])
+				latestCounter = state->count[i];
 		}
 	}
 	return latestCounter;
@@ -368,24 +368,24 @@ Sint32 syBupLoadFileSummaries(void)
 	BUP_STATE		 *state;
 	BUP_FILE_SUMMARY *summary;
 	Uint32			  group;
-	Sint32			  cnt;
+	Sint32			  count;
 
 	state = BupStateWork;
 	summary = state->summary;
-	cnt = 0;
+	count = 0;
 	group = 0;
 	do {
-		Uint32 idx;
+		Uint32 index;
 
 		DMA_FILL32(0, summary, sizeof(*summary));
-		idx = syBupFindLatestSector(group);
-		if(idx < BUP_SECTOR_COUNT) {
-			ReadFlash(idx, 0, (Uint8 *)summary, sizeof(*summary));
-			cnt++;
+		index = syBupFindLatestSector(group);
+		if(index < BUP_SECTOR_COUNT) {
+			ReadFlash(index, 0, (Uint8 *)summary, sizeof(*summary));
+			count++;
 		}
-		idx = syBupFindLatestSector(group + BUP_FILE_COUNT);
-		if(idx < BUP_SECTOR_COUNT)
-			ReadFlash(idx, BUP_SECOND_PLAY_TIME_OFFSET,
+		index = syBupFindLatestSector(group + BUP_FILE_COUNT);
+		if(index < BUP_SECTOR_COUNT)
+			ReadFlash(index, BUP_SECOND_PLAY_TIME_OFFSET,
 				(Uint8 *)&summary->secondPartPlayTime,
 				sizeof(summary->secondPartPlayTime));
 		else
@@ -393,7 +393,7 @@ Sint32 syBupLoadFileSummaries(void)
 		group++;
 		summary++;
 	} while(group < BUP_FILE_COUNT);
-	return cnt;
+	return count;
 }
 
 /* Removes the flash timer handler and frees the save state's heap slot, with

@@ -68,7 +68,7 @@ extern Uint8 MenuClassChangeArrowTile[];
 void   mnDjinnMenuDrawPage(struct DJINN_MENU_BACKDROP *backdrop, Sint32 first);
 void   fdScriptFinishScreenTransitionStub(void);
 void   mnItemMenuArrangeCategoryItemIcons(Uint16 *items);
-void   mnItemMenuDrawEquippedItemNames(Sint32 win, Uint16 *items);
+void   mnItemMenuDrawEquippedItemNames(Sint32 window, Uint16 *items);
 void   gmPartyAdjustCoinsStub(Sint32 amount);
 Sint32 gmPartyListMembersStub(Sint16 *unitIds);
 Sint32 gmPartySumDjinnCountsStub(Sint32 element);
@@ -107,14 +107,14 @@ Sint32 mnPsynergyMenuRun(void);
    background palettes and the window tiles it draws over, sets up the party
    row, the five command icons and, when the party has Djinn, the Djinn figures,
    runs the status pages, then puts everything back. */
-Sint32 mnStatScreenRun(void);
+Sint32 mnStatusScreenRun(void);
 /* Lets the player choose one party member, over the field. Returns the chosen
    party member's id, or -1 when the player backs out. Owns the menu state
    (HEAP_SLOT_MENU) while it runs and frees it before returning. */
 Sint32 mnPartyMemberChooserOpen(void);
 /* Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
    into a free VRAM block. */
-Sint32 mnIconCreateHandCursor(struct WINDOW *win, Sint32 x, Sint32 y);
+Sint32 mnIconCreateHandCursor(struct WINDOW *window, Sint32 x, Sint32 y);
 /* Shows an icon at its place, unscaled. */
 void mnIconShow(struct WINDOW_SPR *icon);
 /* Runs the Djinn menu over the field: the field menu's Djinn screen
@@ -128,13 +128,14 @@ void mnIconShow(struct WINDOW_SPR *icon);
 Sint32 mnDjinnMenuRun(void);
 /* Describes item in window with the entry's own count, through
    mnItemMenuDrawItemDetailsWithCount. */
-void mnItemMenuDrawItemDetails(Sint32 win, Sint32 item);
+void mnItemMenuDrawItemDetails(Sint32 window, Sint32 item);
 /* Describes an item (an inventory entry) in window, one 8-pixel row a line: its
    equip bonuses and effects, a curse, the Psynergy it bestows, its uses and its
    count, or failing all of these whether it is rare or important. count is the
    count to show, which only Japanese reads; mnItemMenuDrawItemDetails passes
    -1, the entry's own. */
-void mnItemMenuDrawItemDetailsWithCount(Sint32 win, Sint32 item, Sint32 cnt);
+void mnItemMenuDrawItemDetailsWithCount(
+	Sint32 window, Sint32 item, Sint32 count);
 /* Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite
    palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
    TEXT_BACKGROUND_COLOR. */
@@ -148,7 +149,7 @@ void mnCreatePartyFigures(Sint32 first);
 /* Creates the first four party members' figures in a row from tile (originX,
    originY) inside window, three tiles apart, and starts placing them each tick
    (mnUpdatePartyFigures). */
-void mnShowPartyFigures(struct WINDOW *win, Sint32 originX, Sint32 originY);
+void mnShowPartyFigures(struct WINDOW *window, Sint32 originX, Sint32 originY);
 /* Destroys the menu's party figures and stops placing them. */
 void mnReleasePartyFigures(void);
 /* Replaces the four Djinn figures with one Djinni of each element
@@ -162,14 +163,14 @@ void mnDjinnFiguresReleaseTopRow(void);
 void mnDjinnFiguresSetShown(Sint32 shown);
 /* Replaces Djinn figure index with a Djinni of element kind
    (DjinnFiguresSpriteIds) playing animation. */
-void mnDjinnFiguresReplaceSlot(Sint32 idx, Sint32 kind, Sint32 anm);
+void mnDjinnFiguresReplaceSlot(Sint32 index, Sint32 kind, Sint32 animation);
 /* Moves Djinn figure index to screen pixel (x, y), if it exists. */
-void mnDjinnFiguresSetSlotPos(Sint32 idx, Sint32 x, Sint32 y);
+void mnDjinnFiguresSetSlotPos(Sint32 index, Sint32 x, Sint32 y);
 /* Turns Djinn figure index to face facing (FACING), if it exists. */
-void mnDjinnFiguresSetSlotFacing(Sint32 idx, Sint32 facing);
+void mnDjinnFiguresSetSlotFacing(Sint32 index, Sint32 facing);
 /* Sets Djinn figure index's scale, if it exists: positive grows towards full
    size, negative holds at its size. */
-void mnDjinnFiguresSetSlotPhase(Sint32 idx, Sint32 scale);
+void mnDjinnFiguresSetSlotPhase(Sint32 index, Sint32 scale);
 
 /* The title module's functions in the order of its stub table. Shows the title
    screen from white: the Golden Sun logo over the valley and its lighthouse,

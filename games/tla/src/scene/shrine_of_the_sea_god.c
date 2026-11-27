@@ -205,8 +205,8 @@ typedef enum SHRINE_OF_THE_SEA_GOD_ISLAND_ACTOR_ID {
 	ACTOR_ISLAND_THIRD_LOG
 } SHRINE_OF_THE_SEA_GOD_ISLAND_ACTOR_ID;
 
-/* Where Breath stands on the ledge, kept in its ACTOR.sceneCnt: at a corner, or
-   stopped beside the torch on the north side, facing it. */
+/* Where Breath stands on the ledge, kept in its ACTOR.sceneCount: at a corner,
+   or stopped beside the torch on the north side, facing it. */
 typedef enum SHRINE_OF_THE_SEA_GOD_BREATH_PLACE {
 	BREATH_AT_SOUTHEAST_CORNER,
 	BREATH_AT_NORTHEAST_CORNER,
@@ -272,7 +272,7 @@ typedef enum SHRINE_OF_THE_SEA_GOD_METATILE {
 void scShrineOfTheSeaGodFightBreath(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Uint8 *place = &fdActorGetById(ACTOR_BREATH)->sceneCnt;
+	Uint8 *place = &fdActorGetById(ACTOR_BREATH)->sceneCount;
 	FIXED  y;
 
 	if((Uint8)(*place - BREATH_STOPPED_EAST_OF_TORCH) >
@@ -452,9 +452,9 @@ void scShrineOfTheSeaGodLiftWithWater(void)
 	ACTOR	  *secondLog = fdActorGetById(ACTOR_ISLAND_SECOND_LOG);
 	ACTOR	  *thirdLog = fdActorGetById(ACTOR_ISLAND_THIRD_LOG);
 
-	water->ofsY -= toFIXED(1) / 2;
-	ground->ofsY += toFIXED(1) / 2;
-	groundTop->ofsY += toFIXED(1) / 2;
+	water->offsetY -= toFIXED(1) / 2;
+	ground->offsetY += toFIXED(1) / 2;
+	groundTop->offsetY += toFIXED(1) / 2;
 	leader->z.fixed -= toFIXED(1) / 2;
 	camera->y.fixed -= toFIXED(1) / 2;
 	firstLog->z.fixed -= toFIXED(1) / 2;
@@ -470,7 +470,7 @@ void scShrineOfTheSeaGodRaiseWaterLayer(void)
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = &map->layers[0];
 
-	layer->ofsY += -toFIXED(1);
+	layer->offsetY += -toFIXED(1);
 	sySynch(4);
 }
 
@@ -485,8 +485,8 @@ void scShrineOfTheSeaGodRaiseWaterBand(Sint32 x, Sint32 y)
 
 	fdMapGridCopyMetatilesTo(x, y, 6, 56, 18, 6);
 	for(i = 0; i < 16; i++) {
-		water->ofsY -= toFIXED(1) / 8;
-		ground->ofsY -= toFIXED(1) / 8;
+		water->offsetY -= toFIXED(1) / 8;
+		ground->offsetY -= toFIXED(1) / 8;
 		sySynch(1);
 	}
 }
@@ -509,7 +509,7 @@ void scShrineOfTheSeaGodUseSeaGodsTear(void)
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH, 0);
 	fdCameraMoveWithinMapBounds(toFIXED(248), -1, toFIXED(168), 1);
 	fdCameraWaitForArrival();
-	sySndPlay(SE_SANDSTORM);
+	sySoundPlay(SE_SANDSTORM);
 	syIOWrite16(BLEND_ALPHA(1, 16), &REG_BLDALPHA);
 	sySynch(10);
 	syIOWrite16(BLEND_ALPHA(2, 16), &REG_BLDALPHA);
@@ -520,11 +520,11 @@ void scShrineOfTheSeaGodUseSeaGodsTear(void)
 	sySynch(10);
 	fdMapGridSetShakeFX(0, toFIXED(1), toFIXED(1));
 	fdMapGridCopyMetatilesTo(59, 124, 9, 12, 12, 3);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdActorSetSprPriority(ACTOR_ISLAND_FIRST_LOG, 1);
-	fdActorSetSprPriority(ACTOR_ISLAND_SECOND_LOG, 1);
-	fdActorSetSprPriority(ACTOR_ISLAND_THIRD_LOG, 1);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpritePriority(ACTOR_ISLAND_FIRST_LOG, 1);
+	fdActorSetSpritePriority(ACTOR_ISLAND_SECOND_LOG, 1);
+	fdActorSetSpritePriority(ACTOR_ISLAND_THIRD_LOG, 1);
 	fdMapGridCopyMetatilesTo(46, 51, 6, 56, 18, 25);
 	sySynch(10);
 	fdMapGridSetShakeFX(toFIXED(1), toFIXED(1), toFIXED(1));
@@ -578,9 +578,9 @@ void scShrineOfTheSeaGodLowerWithWater(void)
 	ACTOR	  *secondLog = fdActorGetById(ACTOR_ISLAND_SECOND_LOG);
 	ACTOR	  *thirdLog = fdActorGetById(ACTOR_ISLAND_THIRD_LOG);
 
-	water->ofsY += toFIXED(1) / 2;
-	ground->ofsY -= toFIXED(1) / 2;
-	groundTop->ofsY -= toFIXED(1) / 2;
+	water->offsetY += toFIXED(1) / 2;
+	ground->offsetY -= toFIXED(1) / 2;
+	groundTop->offsetY -= toFIXED(1) / 2;
 	leader->z.fixed += toFIXED(1) / 2;
 	camera->y.fixed += toFIXED(1) / 2;
 	firstLog->z.fixed += toFIXED(1) / 2;
@@ -596,7 +596,7 @@ void scShrineOfTheSeaGodLowerWaterLayer(void)
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = &map->layers[0];
 
-	layer->ofsY += toFIXED(1);
+	layer->offsetY += toFIXED(1);
 	sySynch(4);
 }
 
@@ -612,8 +612,8 @@ void scShrineOfTheSeaGodLowerWaterBand(Sint32 x, Sint32 y)
 
 	fdMapGridCopyMetatilesTo(x, y, 6, 56, 18, 6);
 	for(i = 0; i < 16; i++) {
-		water->ofsY += toFIXED(1) / 8;
-		ground->ofsY += toFIXED(1) / 8;
+		water->offsetY += toFIXED(1) / 8;
+		ground->offsetY += toFIXED(1) / 8;
 		sySynch(1);
 	}
 }
@@ -636,11 +636,11 @@ void scShrineOfTheSeaGodLowerWater(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdActorSetSprPriority(ACTOR_ISLAND_FIRST_LOG, 1);
-	fdActorSetSprPriority(ACTOR_ISLAND_SECOND_LOG, 1);
-	fdActorSetSprPriority(ACTOR_ISLAND_THIRD_LOG, 1);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpritePriority(ACTOR_ISLAND_FIRST_LOG, 1);
+	fdActorSetSpritePriority(ACTOR_ISLAND_SECOND_LOG, 1);
+	fdActorSetSpritePriority(ACTOR_ISLAND_THIRD_LOG, 1);
 	fdBlendScriptSuspend();
 	sySynch(1);
 	fdMapGridCopyMetatilesTo(46, 51, 6, 56, 18, 25);
@@ -648,9 +648,9 @@ void scShrineOfTheSeaGodLowerWater(void)
 	fdMapGridCopyMetatilesTo(59, 124, 9, 12, 12, 3);
 	syIOWrite16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
 	sySynch(1);
-	water->ofsY += -toFIXED(68);
-	ground->ofsY += -toFIXED(20);
-	groundTop->ofsY += toFIXED(12);
+	water->offsetY += -toFIXED(68);
+	ground->offsetY += -toFIXED(20);
+	groundTop->offsetY += toFIXED(12);
 	leader->z.fixed += -toFIXED(12);
 	camera->y.fixed += -toFIXED(12);
 	firstLog->z.fixed += -toFIXED(12);
@@ -663,7 +663,7 @@ void scShrineOfTheSeaGodLowerWater(void)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdMapGridSetShakeFX(toFIXED(1), toFIXED(1), toFIXED(1));
-	sySndPlay(SE_AMBIENT_STREAM);
+	sySoundPlay(SE_AMBIENT_STREAM);
 	/* One step more of each than the rise took: the water's layer ends a pixel
 	   and a half from where it began, the ground's half a pixel. */
 	i = 0;
@@ -701,7 +701,7 @@ void scShrineOfTheSeaGodLowerWater(void)
 	fdMapGridSetShakeFX(0, toFIXED(1), toFIXED(1));
 	syIOWrite16(BLEND_ALPHA(4, 16), &REG_BLDALPHA);
 	sySynch(10);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShakeFX(-1, -1, toFIXED(9) / 10);
 	syIOWrite16(BLEND_ALPHA(3, 16), &REG_BLDALPHA);
 	sySynch(10);
@@ -719,9 +719,9 @@ void scShrineOfTheSeaGodLowerWater(void)
 	scShrineOfTheSeaGodSetUpFloatingLog(ACTOR_ISLAND_FIRST_LOG);
 	scShrineOfTheSeaGodSetUpFloatingLog(ACTOR_ISLAND_SECOND_LOG);
 	scShrineOfTheSeaGodSetUpFloatingLog(ACTOR_ISLAND_THIRD_LOG);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	leader->y.fixed = 0;
 	leader->groundHeight = 0;
 	fdScriptEnd();
@@ -751,16 +751,16 @@ void scShrineOfTheSeaGodRiseOnWater(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_SANDSTORM);
+	sySoundPlay(SE_SANDSTORM);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdCameraMoveWithinMapBounds(toFIXED(344), -1, toFIXED(248), 0);
 	fdMapGridCopyMetatilesTo(62, 77, 62, 18, 19, 6);
 	sySynch(1);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-	leader->motionFlg = 0;
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+	leader->motionFlags = 0;
 	leader->y.fixed = -toFIXED(STATUE_ROOM_RISE);
 	leader->groundHeight = -toFIXED(STATUE_ROOM_RISE);
-	layer->ofsY += -toFIXED(STATUE_ROOM_RISE);
+	layer->offsetY += -toFIXED(STATUE_ROOM_RISE);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	FieldStateWork->transition =
@@ -770,15 +770,15 @@ void scShrineOfTheSeaGodRiseOnWater(void)
 	for(i = 0; i < STATUE_ROOM_RISE * 2; i++) {
 		leader->y.fixed += toFIXED(1) / 2;
 		leader->groundHeight += toFIXED(1) / 2;
-		layer->ofsY += toFIXED(1) / 2;
+		layer->offsetY += toFIXED(1) / 2;
 		sySynch(2);
 	}
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetScreenShake(0, 0, 0);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
 	fdMapGridCopyMetatilesTo(62, 69, 62, 18, 19, 6);
 	sySynch(1);
@@ -807,14 +807,14 @@ void scShrineOfTheSeaGodSinkWithWater(void)
 	fdMapGridCopyMetatilesTo(62, 77, 62, 18, 19, 6);
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_SOUTH, 20);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-	actor->motionFlg = 0;
-	sySndPlay(SE_AMBIENT_STREAM);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+	actor->motionFlags = 0;
+	sySoundPlay(SE_AMBIENT_STREAM);
 	fdMapGridSetShakeFX(toFIXED(1), toFIXED(1), toFIXED(1));
 	for(i = 0; i < STATUE_ROOM_RISE * 2; i++) {
 		actor->y.fixed -= toFIXED(1) / 2;
 		actor->groundHeight -= toFIXED(1) / 2;
-		layer->ofsY -= toFIXED(1) / 2;
+		layer->offsetY -= toFIXED(1) / 2;
 		sySynch(2);
 		if(i == STATUE_ROOM_RISE * 2 - STATUE_ROOM_CLOSE_STEPS) {
 			FieldStateWork->transition =
@@ -831,7 +831,7 @@ void scShrineOfTheSeaGodSinkWithWater(void)
 void scShrineOfTheSeaGodSetUpPuddle(Sint32 actor)
 {
 	fdActorDisableById(actor);
-	fdActorGetById(actor)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGetById(actor)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 }
 
 /* Frost on the westernmost of the three puddles west of Breath's ledge,
@@ -897,13 +897,13 @@ void scShrineOfTheSeaGodMovePillar(void)
 /* Lets a pillar fall to the ground with a thump. */
 void scShrineOfTheSeaGodDropPillar(ACTOR *actor)
 {
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	do {
 		sySynch(1);
-	} while(actor->velY != 0);
-	sySndPlay(SE_THUMP);
+	} while(actor->velocityY != 0);
+	sySoundPlay(SE_THUMP);
 	sySynch(10);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 }
 
 /* Pushed onto the hole, the pillar drops in and fills it. */
@@ -917,7 +917,7 @@ void scShrineOfTheSeaGodPushPillarIntoHole(void)
 		fdScriptEndLastingPsynergy(0);
 		scShrineOfTheSeaGodDropPillar(actor);
 		fdMapCopyMetatileAttributeRect(0, 0, 1, 1, 15, z);
-		fdActorSetSprPriority(ACTOR_HOLE_ROOM_PILLAR, 3);
+		fdActorSetSpritePriority(ACTOR_HOLE_ROOM_PILLAR, 3);
 		fdScriptEnd();
 		syGameFlagSet(FLAG_PILLAR_IN_HOLE);
 	}
@@ -935,11 +935,11 @@ void scShrineOfTheSeaGodLayerCrossroadsBridges(void)
 		ACTOR *actor = fdActorGetById(id);
 
 		if(leader->y.fixed > toFIXED(16)) {
-			fdActorSetSprPriority(id, 2);
-			actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpritePriority(id, 2);
+			actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		} else {
-			fdActorSetSprPriority(id, 1);
-			actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpritePriority(id, 1);
+			actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 		}
 	}
 }
@@ -968,18 +968,18 @@ void scShrineOfTheSeaGodLayerPuddles(void)
 	if(y < toFIXED(16)) {
 		z = leader->z.fixed;
 		if(z < toFIXED(296)) {
-			fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 1);
-			fdActorSetSprPriority(ACTOR_SECOND_PUDDLE, 1);
-			fdActorSetSprPriority(ACTOR_THIRD_PUDDLE, 2);
+			fdActorSetSpritePriority(ACTOR_FIRST_PUDDLE, 1);
+			fdActorSetSpritePriority(ACTOR_SECOND_PUDDLE, 1);
+			fdActorSetSpritePriority(ACTOR_THIRD_PUDDLE, 2);
 		} else {
-			fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 2);
-			fdActorSetSprPriority(ACTOR_SECOND_PUDDLE, 2);
-			fdActorSetSprPriority(ACTOR_THIRD_PUDDLE, 3);
+			fdActorSetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
+			fdActorSetSpritePriority(ACTOR_SECOND_PUDDLE, 2);
+			fdActorSetSpritePriority(ACTOR_THIRD_PUDDLE, 3);
 		}
 	} else {
-		fdActorSetSprPriority(ACTOR_FIRST_PUDDLE, 2);
-		fdActorSetSprPriority(ACTOR_SECOND_PUDDLE, 2);
-		fdActorSetSprPriority(ACTOR_THIRD_PUDDLE, 3);
+		fdActorSetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
+		fdActorSetSpritePriority(ACTOR_SECOND_PUDDLE, 2);
+		fdActorSetSpritePriority(ACTOR_THIRD_PUDDLE, 3);
 	}
 }
 
@@ -1001,18 +1001,18 @@ void scShrineOfTheSeaGodKeepFlameOnTorch(void)
    hole room sets on arrival (ACTOR_PRIORITY_IGNORES_RISES). */
 UNUSED void scShrineOfTheSeaGodClearLeaderIgnoresRises(void)
 {
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg &=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags &=
 		~ACTOR_PRIORITY_IGNORES_RISES;
 }
 
 /* Unused: keeps the leader in front of rising ground, as the hole room does. */
 UNUSED void scShrineOfTheSeaGodSetLeaderIgnoresRises(void)
 {
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 }
 
-void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 cnt);
+void scActorsSetDrawn(Sint32 show, Sint32 first, Uint32 count);
 
 /* Draws (show 1) or stops drawing the hole room's three unseen blocks. */
 void scShrineOfTheSeaGodSetBlocksShown(Sint32 show)
@@ -1044,7 +1044,7 @@ void scShrineOfTheSeaGodHideBlocks(void)
    one he walks across, until he comes down the ladder below them. */
 void scShrineOfTheSeaGodDrawLeaderInFront(void)
 {
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 	syGameFlagSet(FLAG_LEADER_IN_FRONT);
 }
 
@@ -1054,8 +1054,8 @@ void scShrineOfTheSeaGodDrawLeaderInFront(void)
    overhead. */
 void scShrineOfTheSeaGodDrawLeaderBehind(void)
 {
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 2);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
 	syGameFlagClear(FLAG_LEADER_IN_FRONT);
 }
@@ -1074,28 +1074,28 @@ FIXED ShrineOfTheSeaGodBridgeOffset[3] BSS_DATA;
    fall (scShrineOfTheSeaGodKeepWithLeader). */
 void scShrineOfTheSeaGodRockOnBridge(ACTOR *leader, ACTOR *middle)
 {
-	FIELD_SPR *spr = leader->spr;
+	FIELD_SPR *sprite = leader->sprite;
 	Uint32	   n;
 	Uint32	   i;
 
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-	sySndPlay(SE_HIDDEN_PASSAGE_OPEN);
-	leader->motionFlg = 0;
+	sySoundPlay(SE_HIDDEN_PASSAGE_OPEN);
+	leader->motionFlags = 0;
 	for(n = 0; n <= 1; n++) {
 		middle->y.fixed -= toFIXED(1);
 		for(i = 0; i <= 3; i++) {
-			spr->rotation += TRIG_TURN / 512;
+			sprite->rotation += TRIG_TURN / 512;
 			sySynch(1);
 		}
 		middle->y.fixed += toFIXED(1);
 		for(i = 0; i <= 7; i++) {
-			spr->rotation -= TRIG_TURN / 512;
+			sprite->rotation -= TRIG_TURN / 512;
 			sySynch(1);
 		}
 		middle->y.fixed -= toFIXED(1);
 		for(i = 0; i <= 3; i++) {
-			spr->rotation += TRIG_TURN / 512;
+			sprite->rotation += TRIG_TURN / 512;
 			sySynch(1);
 		}
 	}
@@ -1104,7 +1104,8 @@ void scShrineOfTheSeaGodRockOnBridge(ACTOR *leader, ACTOR *middle)
 	ShrineOfTheSeaGodBridgeOffset[0] = middle->x.fixed - leader->x.fixed;
 	ShrineOfTheSeaGodBridgeOffset[1] = middle->y.fixed - leader->y.fixed;
 	ShrineOfTheSeaGodBridgeOffset[2] = middle->z.fixed - leader->z.fixed;
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 }
 
 /* Keeps a broken bridge's middle where it lies against the leader as he
@@ -1112,10 +1113,10 @@ void scShrineOfTheSeaGodRockOnBridge(ACTOR *leader, ACTOR *middle)
 void scShrineOfTheSeaGodKeepWithLeader(ACTOR *actor)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIXED *ofs = ShrineOfTheSeaGodBridgeOffset;
+	FIXED *offset = ShrineOfTheSeaGodBridgeOffset;
 
-	SET_ACTOR_POSITION(actor, leader->x.fixed + ofs[0],
-		leader->y.fixed + ofs[1], leader->z.fixed + ofs[2]);
+	SET_ACTOR_POSITION(actor, leader->x.fixed + offset[0],
+		leader->y.fixed + offset[1], leader->z.fixed + offset[2]);
 }
 
 /* The event that carries the crossroads' broken bridge's middle along with the
@@ -1126,8 +1127,9 @@ void scShrineOfTheSeaGodKeepCrossroadsBridgeWithLeader(void)
 		fdActorGetById(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE));
 }
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* The spray the crossroads' bridge throws up as it hits the water: a drop every
    sixteenth of a turn, the first direction thrown twice. */
@@ -1139,7 +1141,7 @@ void scShrineOfTheSeaGodBreakCrossroadsBridge(void)
 {
 	ACTOR	  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR	  *middle = fdActorGetById(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE);
-	FIELD_SPR *spr = middle->spr;
+	FIELD_SPR *sprite = middle->sprite;
 	EFFECT_OPTIONS options;
 	Uint32		   i;
 
@@ -1150,48 +1152,48 @@ void scShrineOfTheSeaGodBreakCrossroadsBridge(void)
 	fdMapGridCopyMetatileAttributes(0, 50, 3, 1, 24, 70);
 	syGameFlagSet(FLAG_CROSSROADS_BRIDGE_BROKEN);
 	sySynch(1);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprPriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 3);
-	middle->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 3);
+	middle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	syFieldSetTickEvent(
 		scShrineOfTheSeaGodKeepCrossroadsBridgeWithLeader, EVENT_PASS_TICK);
 	do
 		sySynch(1);
-	while(leader->velY != 0);
-	sySndPlay(SE_TOPPLE);
+	while(leader->velocityY != 0);
+	sySoundPlay(SE_TOPPLE);
 	fdMapGridSetShakeFX(toFIXED(1), toFIXED(2), toFIXED(1));
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(64) / 100;
 	options.startScaleY = toFIXED(64) / 100;
 	for(i = 0; i <= SPRAY_DIRECTIONS;) {
-		FIXED vel[3];
+		FIXED velocity[3];
 
-		vel[0] = syCos(i * (TRIG_TURN / SPRAY_DIRECTIONS));
-		vel[1] = 0;
-		vel[2] = sySin(i * (TRIG_TURN / SPRAY_DIRECTIONS));
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4);
+		velocity[0] = syCos(i * (TRIG_TURN / SPRAY_DIRECTIONS));
+		velocity[1] = 0;
+		velocity[2] = sySin(i * (TRIG_TURN / SPRAY_DIRECTIONS));
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4);
 		i++;
-		vel[0] += -(toFIXED(3) / 8);
-		vel[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
+		velocity[0] += -(toFIXED(3) / 8);
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed - toFIXED(4),
-			leader->z.fixed, vel[0], vel[1], vel[2],
+			leader->z.fixed, velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
-	leader->velY = toFIXED(4);
+	leader->velocityY = toFIXED(4);
 	sySynch(2);
 	fdMapGridSetShakeFX(-1, -1, toFIXED(9) / 10);
 	syCloseEvent(scShrineOfTheSeaGodKeepCrossroadsBridgeWithLeader);
 	for(i = 0; i < 8; i++) {
-		spr->rotation += TRIG_TURN / 128;
+		sprite->rotation += TRIG_TURN / 128;
 		middle->z.fixed += toFIXED(1);
 		sySynch(1);
 	}
 	fdMapGridWaitForShakeToSettle();
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
 	leader->layer = 0;
 	sySynch(10);
@@ -1205,10 +1207,10 @@ void scShrineOfTheSeaGodLandBrokenBridge(ACTOR *actor, Sint32 bridge)
 {
 	do {
 		sySynch(1);
-	} while(actor->velY != 0);
-	sySndPlay(SE_LOG_FALL);
-	fdActorSetSprPriority(ACTOR_FIRST_BRIDGE_SPLASH + bridge, 3);
-	fdActorSetSprPriority(ACTOR_FIRST_BRIDGE_OTHER_SPLASH + bridge, 3);
+	} while(actor->velocityY != 0);
+	sySoundPlay(SE_LOG_FALL);
+	fdActorSetSpritePriority(ACTOR_FIRST_BRIDGE_SPLASH + bridge, 3);
+	fdActorSetSpritePriority(ACTOR_FIRST_BRIDGE_OTHER_SPLASH + bridge, 3);
 	fdActorSetPosAndResetMotion(
 		fdActorGetById(ACTOR_FIRST_BRIDGE_SPLASH + bridge), actor->x.fixed, 0,
 		actor->z.fixed);
@@ -1242,21 +1244,21 @@ void scShrineOfTheSeaGodBreakFirstBridge(void)
 	fdMapCopyMetatileAttributeRect(0, 0, 3, 1, 19, 13);
 	fdMapCopyMetatileAttributeRect(40, 0, 2, 1, 19, 33);
 	sySynch(1);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprPriority(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE, 3);
-	middle->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE, 3);
+	middle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	syFieldSetTickEvent(
 		scShrineOfTheSeaGodKeepFirstBridgeWithLeader, EVENT_PASS_TICK);
 	scShrineOfTheSeaGodLandBrokenBridge(leader, 0);
 	/* Down in the stream, the bridges it passes under are drawn over him. */
-	fdActorSetSprPriority(ACTOR_PILLAR_ROOM_SECOND_BRIDGE, 1);
-	fdActorGetById(ACTOR_PILLAR_ROOM_SECOND_BRIDGE)->priFlg &=
+	fdActorSetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_BRIDGE, 1);
+	fdActorGetById(ACTOR_PILLAR_ROOM_SECOND_BRIDGE)->priorityFlags &=
 		~ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE, 1);
-	fdActorGetById(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE)->priFlg &=
+	fdActorSetSpritePriority(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE, 1);
+	fdActorGetById(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE)->priorityFlags &=
 		~ACTOR_PRIORITY_UNDERFOOT;
-	leader->motionFlg = 0;
-	fdActorSetSprFlags(
+	leader->motionFlags = 0;
+	fdActorSetSpriteFlags(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeedAndAcceleration(
 		MainRoutineStateWork.leaderActorId, 0.6, 0.1);
@@ -1268,14 +1270,14 @@ void scShrineOfTheSeaGodBreakFirstBridge(void)
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 321, 400);
 	fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 321, 480);
 	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, 321, 536);
-	sySndPlay(SE_RATTLE);
-	fdActorSetSprPriority(ACTOR_PILLAR_ROOM_SECOND_BRIDGE, 2);
-	fdActorGetById(ACTOR_PILLAR_ROOM_SECOND_BRIDGE)->priFlg |=
+	sySoundPlay(SE_RATTLE);
+	fdActorSetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_BRIDGE, 2);
+	fdActorGetById(ACTOR_PILLAR_ROOM_SECOND_BRIDGE)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE, 2);
-	fdActorGetById(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE)->priFlg |=
+	fdActorSetSpritePriority(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE, 2);
+	fdActorGetById(ACTOR_PILLAR_ROOM_FOURTH_BRIDGE)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syCloseEvent(scShrineOfTheSeaGodKeepFirstBridgeWithLeader);
 	sySynch(1);
 	fdScriptEnd();
@@ -1304,20 +1306,20 @@ void scShrineOfTheSeaGodBreakSecondBridge(void)
 	fdMapCopyMetatileAttributeRect(0, 0, 3, 1, 24, 22);
 	fdMapCopyMetatileAttributeRect(40, 0, 2, 1, 24, 24);
 	sySynch(1);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	fdActorSetSprPriority(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE, 3);
-	middle->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	fdActorSetSpritePriority(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE, 3);
+	middle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	syFieldSetTickEvent(
 		scShrineOfTheSeaGodKeepSecondBridgeWithLeader, EVENT_PASS_TICK);
 	scShrineOfTheSeaGodLandBrokenBridge(
 		leader, ACTOR_SECOND_BRIDGE_SPLASH - ACTOR_FIRST_BRIDGE_SPLASH);
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		fdActorGetById(MainRoutineStateWork.leaderActorId), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeedAndAcceleration(
 		MainRoutineStateWork.leaderActorId, 0.6, 0.1);
 	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, 406, 360);
 	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, 400, 392);
-	sySndPlay(SE_RATTLE);
+	sySoundPlay(SE_RATTLE);
 	fdActorSetHorizontalPosWithTerrain(ACTOR_SECOND_BRIDGE_SPLASH, 0, 0);
 	fdActorSetHorizontalPosWithTerrain(ACTOR_SECOND_BRIDGE_OTHER_SPLASH, 0, 0);
 	syCloseEvent(scShrineOfTheSeaGodKeepSecondBridgeWithLeader);
@@ -1441,7 +1443,7 @@ void scShrineOfTheSeaGodLashRope(void)
 		return;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(340, CAMERA_KEEP, 176, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorSetSpeed(ACTOR_ROPE_ROOM_KRADEN, 0.8);
@@ -1471,32 +1473,32 @@ void scShrineOfTheSeaGodLashRope(void)
 	fdCameraSetSpeed(1.2);
 	fdCameraMoveTo(348, CAMERA_KEEP, 216, 1);
 	tavi = fdActorGetById(ACTOR_TAVI);
-	sprite = tavi->spr;
-	fdActorSetSprPriority(ACTOR_TAVI, 1);
+	sprite = tavi->sprite;
+	fdActorSetSpritePriority(ACTOR_TAVI, 1);
 	fdActorSetSpeed(ACTOR_TAVI, 1.6);
 	fdActorJump(ACTOR_TAVI, 4, 0);
 	fdActorMoveToAndWait(ACTOR_TAVI, 248, 168);
 	fdActorSetAnimationById(ACTOR_TAVI, 6);
 	tavi->scaleX = -toFIXED(1);
 	sprite->rotation = TRIG_TURN * 13 / 16;
-	tavi->motionFlg = 0;
+	tavi->motionFlags = 0;
 	tavi->y.fixed += toFIXED(6);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TAVI), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TAVI), 0);
 	fdActorSetSpeed(ACTOR_TAVI, 0.4);
 	scFieldActorSetMoveTarget(tavi, 328, 38, 168);
 	fdActorWaitForMoveById(ACTOR_TAVI);
-	tavi->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	tavi->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	tavi->groundHeight = toFIXED(32);
 	tavi->scaleX = toFIXED(1);
 	sprite->rotation = 0;
 	fdActorSetAnimationById(ACTOR_TAVI, 1);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_TAVI), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_TAVI), SPRITE_FLAG_SHADOW);
 	fdActorSetSpeed(ACTOR_TAVI, 1.6);
 	fdActorJump(ACTOR_TAVI, 4, 0);
 	fdActorMoveToAndWait(ACTOR_TAVI, 328, 184);
 	fdActorFaceDirection(ACTOR_TAVI, FACING_EAST, 20);
 	scFieldActorShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSprPriority(ACTOR_TAVI, 2);
+	fdActorSetSpritePriority(ACTOR_TAVI, 2);
 	/* "Who are you?" */
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_TAVI, 0);
 	/* "We're just passing through." */
@@ -1630,15 +1632,15 @@ void scShrineOfTheSeaGodDjinniFleesEast(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdCameraGetActor()->motionFlg = off;
+	fdCameraGetActor()->motionFlags = off;
 	fdCameraMoveWithinMapBounds(toFIXED(480), toFIXED(32), toFIXED(340), 1);
 	fdCameraWaitForArrival();
 	fdActorFaceActorById(
 		ACTOR_CROSSROADS_BREATH, MainRoutineStateWork.leaderActorId, 0);
 	fdActorShowEmoteById(
 		ACTOR_CROSSROADS_BREATH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_BREATH, 1);
-	fdActorGetById(ACTOR_CROSSROADS_BREATH)->motionFlg = off;
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_BREATH, 1);
+	fdActorGetById(ACTOR_CROSSROADS_BREATH)->motionFlags = off;
 	fdActorSetSpeed(ACTOR_CROSSROADS_BREATH, 1.6);
 	fdActorWalkToAndWait(ACTOR_CROSSROADS_BREATH, 500, 344);
 	fdActorWalkToAndWait(ACTOR_CROSSROADS_BREATH, 580, 344);
@@ -1657,15 +1659,15 @@ void scShrineOfTheSeaGodDjinniFleesSouth(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorStop(ACTOR_CROSSROADS_BREATH);
-	fdCameraGetActor()->motionFlg = off;
+	fdCameraGetActor()->motionFlags = off;
 	fdCameraMoveWithinMapBounds(toFIXED(564), toFIXED(32), toFIXED(344), 1);
 	fdCameraWaitForArrival();
 	fdActorFaceActorById(
 		ACTOR_CROSSROADS_BREATH, MainRoutineStateWork.leaderActorId, 0);
 	fdActorShowEmoteById(
 		ACTOR_CROSSROADS_BREATH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_BREATH, 1);
-	fdActorGetById(ACTOR_CROSSROADS_BREATH)->motionFlg = off;
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_BREATH, 1);
+	fdActorGetById(ACTOR_CROSSROADS_BREATH)->motionFlags = off;
 	fdActorSetSpeed(ACTOR_CROSSROADS_BREATH, 1.6);
 	fdActorWalkToAndWait(ACTOR_CROSSROADS_BREATH, 616, 376);
 	fdActorWalkToAndWait(ACTOR_CROSSROADS_BREATH, 616, 460);
@@ -1680,32 +1682,32 @@ void scShrineOfTheSeaGodDjinniFleesSouth(void)
 void scShrineOfTheSeaGodDjinniRunsNorth(void)
 {
 	ACTOR *bridge = fdActorGetById(ACTOR_LEDGE_ROOM_BRIDGE);
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdActorShowEmoteById(MainRoutineStateWork.leaderActorId,
 		EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraMoveTo(328, 32, 552, 1);
 	fdCameraWaitForArrival();
 	fdActorSetPosAndFacing(
 		ACTOR_BREATH, toFIXED(328), toFIXED(624), FACING_NORTH);
 	sySynch(1);
 	fdActorWatchAndSetScript(MainRoutineStateWork.leaderActorId, ACTOR_BREATH);
-	bridge->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprPriority(ACTOR_BREATH, 3);
+	bridge->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpritePriority(ACTOR_BREATH, 3);
 	fdActorSetSpeed(ACTOR_BREATH, 1.6);
 	fdActorWalkToAndWait(ACTOR_BREATH, 328, 568);
 	fdActorWalkToAndWait(ACTOR_BREATH, 328, 496);
 	fdActorWalkToAndWaitById(ACTOR_BREATH, 280, 432);
 	fdActorStop(MainRoutineStateWork.leaderActorId);
 	sySynch(1);
-	ang = FACING_SOUTH;
-	fdActorSetPosAndFacing(ACTOR_BREATH, toFIXED(280), toFIXED(328), ang);
-	fdActorSetSprPriority(ACTOR_BREATH, 2);
-	fdActorGetById(ACTOR_BREATH)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	bridge->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	angle = FACING_SOUTH;
+	fdActorSetPosAndFacing(ACTOR_BREATH, toFIXED(280), toFIXED(328), angle);
+	fdActorSetSpritePriority(ACTOR_BREATH, 2);
+	fdActorGetById(ACTOR_BREATH)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	bridge->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	sySynch(1);
 	syGameFlagSet(FLAG_DJINNI_RAN_PAST);
 	syGameFlagSet(FLAG_DJINNI_BY_LEDGE);
@@ -1722,7 +1724,7 @@ void scShrineOfTheSeaGodDjinniRunsWest(void)
 		fdScriptEndLastingPsynergy(0);
 		fdActorShowEmoteById(MainRoutineStateWork.leaderActorId,
 			EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-		fdCameraGetActor()->motionFlg = done;
+		fdCameraGetActor()->motionFlags = done;
 		fdCameraMoveWithinMapBounds(toFIXED(328), toFIXED(48), toFIXED(552), 1);
 		fdCameraWaitForArrival();
 		done = FACING_SOUTH;
@@ -1730,7 +1732,7 @@ void scShrineOfTheSeaGodDjinniRunsWest(void)
 		sySynch(1);
 		fdActorWatchAndSetScript(
 			MainRoutineStateWork.leaderActorId, ACTOR_BREATH);
-		fdActorSetSprPriority(ACTOR_BREATH, 1);
+		fdActorSetSpritePriority(ACTOR_BREATH, 1);
 		fdActorSetSpeed(ACTOR_BREATH, 1.6);
 		fdActorWalkToAndWait(ACTOR_BREATH, 380, 552);
 		fdActorWalkToAndWait(ACTOR_BREATH, 264, 552);
@@ -1738,8 +1740,8 @@ void scShrineOfTheSeaGodDjinniRunsWest(void)
 		fdActorStop(MainRoutineStateWork.leaderActorId);
 		sySynch(1);
 		fdActorSetHorizontalPosWithTerrain(ACTOR_BREATH, 0, 0);
-		fdActorSetSprPriority(ACTOR_BREATH, 2);
-		fdActorGetById(ACTOR_BREATH)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpritePriority(ACTOR_BREATH, 2);
+		fdActorGetById(ACTOR_BREATH)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 		sySynch(1);
 		syGameFlagSet(FLAG_DJINNI_RAN_PAST);
 		fdScriptEnd();
@@ -1755,7 +1757,7 @@ void scShrineOfTheSeaGodDjinniHopsOntoLedge(void)
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		off = 0;
-		fdCameraGetActor()->motionFlg = off;
+		fdCameraGetActor()->motionFlags = off;
 		fdCameraMoveWithinMapBounds(toFIXED(320), -1, toFIXED(300), 1);
 		scFieldActorShowEmote(
 			ACTOR_BREATH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -1764,7 +1766,7 @@ void scShrineOfTheSeaGodDjinniHopsOntoLedge(void)
 		fdActorWalkToAndWait(ACTOR_BREATH, 392, 296);
 		fdActorWatchAndSetScript(
 			ACTOR_BREATH, MainRoutineStateWork.leaderActorId);
-		fdActorGetById(ACTOR_BREATH)->sceneCnt = off;
+		fdActorGetById(ACTOR_BREATH)->sceneCount = off;
 		sySynch(10);
 		syGameFlagSet(FLAG_DJINNI_ON_LEDGE);
 		fdScriptEnd();
@@ -1777,7 +1779,7 @@ void scShrineOfTheSeaGodStartDjinniDash(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdActorStop(ACTOR_BREATH);
 	sySynch(1);
 	fdActorSetSpeed(ACTOR_BREATH, 2.4);
@@ -1800,7 +1802,7 @@ void scShrineOfTheSeaGodEndDjinniDash(void)
 		fdCameraMoveWithinMapBounds( \
 			toFIXED(toX), toFIXED(16), toFIXED(toZ), 1); \
 		fdActorWalkToAndWaitById(ACTOR_BREATH, toX, toZ); \
-		fdActorGetById(ACTOR_BREATH)->sceneCnt = place; \
+		fdActorGetById(ACTOR_BREATH)->sceneCount = place; \
 		scShrineOfTheSeaGodEndDjinniDash(); \
 	}
 
@@ -1825,7 +1827,7 @@ DEFINE_DJINNI_DASH(scShrineOfTheSeaGodDjinniSouthEastToNorthEast, 392, 216,
 		fdCameraMoveToFX(toFIXED(stopX), toFIXED(16), toFIXED(216), 1); \
 		fdActorWalkToAndWait(ACTOR_BREATH, stopX, 216); \
 		flag = syGameFlagGet(FLAG_TORCH_AT_NORTH_WALL); \
-		place = &djinni->sceneCnt; \
+		place = &djinni->sceneCount; \
 		if(flag) { \
 			djinni->facing = turnTo; \
 			fdActorSetAttachedEffect(ACTOR_BREATH, \
@@ -1837,12 +1839,12 @@ DEFINE_DJINNI_DASH(scShrineOfTheSeaGodDjinniSouthEastToNorthEast, 392, 216,
 			fdScriptWait(5); \
 			fdCameraMoveWithinMapBounds( \
 				toFIXED(cornerX), toFIXED(16), toFIXED(216), 1); \
-			sySndPlay(SE_HIGH_JUMP); \
-			fdActorSetSprFlags(fdActorGetById(ACTOR_BREATH), 0); \
+			sySoundPlay(SE_HIGH_JUMP); \
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_BREATH), 0); \
 			fdActorSetSpeed(ACTOR_BREATH, 4.8); \
-			djinni->velY = toFIXED(8); \
+			djinni->velocityY = toFIXED(8); \
 			fdActorMoveToAndWaitById(ACTOR_BREATH, landX, 216); \
-			fdActorSetSprFlags( \
+			fdActorSetSpriteFlags( \
 				fdActorGetById(ACTOR_BREATH), SPRITE_FLAG_SHADOW); \
 			fdScriptWait(10); \
 			fdActorSetSpeed(ACTOR_BREATH, 1.6); \
@@ -1870,7 +1872,7 @@ DEFINE_DJINNI_WALK_AND_JUMP(scShrineOfTheSeaGodDjinniNorthEastJumpsWest, 360,
 		fdActorWalkToAndWait(ACTOR_BREATH, fromX, 248); \
 		fdActorWalkToAndWait(ACTOR_BREATH, toX, 248); \
 		fdActorWalkToAndWaitById(ACTOR_BREATH, toX, toZ); \
-		fdActorGetById(ACTOR_BREATH)->sceneCnt = place; \
+		fdActorGetById(ACTOR_BREATH)->sceneCount = place; \
 		scShrineOfTheSeaGodEndDjinniDash(); \
 	}
 
@@ -1918,7 +1920,7 @@ DEFINE_DJINNI_DASH(scShrineOfTheSeaGodDjinniNorthEastToSouthEast, 392, 296,
 \
 		scShrineOfTheSeaGodStartDjinniDash(); \
 		flag = syGameFlagGet(FLAG_TORCH_AT_NORTH_WALL); \
-		place = &djinni->sceneCnt; \
+		place = &djinni->sceneCount; \
 		if(flag) { \
 			djinni->facing = turnTo; \
 			fdActorSetAttachedEffect(ACTOR_BREATH, \
@@ -1929,12 +1931,12 @@ DEFINE_DJINNI_DASH(scShrineOfTheSeaGodDjinniNorthEastToSouthEast, 392, 296,
 		} else { \
 			fdCameraMoveWithinMapBounds( \
 				toFIXED(cornerX), toFIXED(16), toFIXED(216), 1); \
-			sySndPlay(SE_HIGH_JUMP); \
-			fdActorSetSprFlags(fdActorGetById(ACTOR_BREATH), 0); \
+			sySoundPlay(SE_HIGH_JUMP); \
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_BREATH), 0); \
 			fdActorSetSpeed(ACTOR_BREATH, 4.8); \
-			djinni->velY = toFIXED(8); \
+			djinni->velocityY = toFIXED(8); \
 			fdActorMoveToAndWaitById(ACTOR_BREATH, landX, 216); \
-			fdActorSetSprFlags( \
+			fdActorSetSpriteFlags( \
 				fdActorGetById(ACTOR_BREATH), SPRITE_FLAG_SHADOW); \
 			fdScriptWait(10); \
 			fdActorSetSpeed(ACTOR_BREATH, 1.6); \
@@ -1980,61 +1982,61 @@ void scShrineOfTheSeaGodChaseDjinni(void)
 	actor = fdActorGetById(ACTOR_BREATH);
 	switch(state->stepCue) {
 	case STEP_LEDGE_SOUTHEAST_WAY_UP:
-		if(actor->sceneCnt == BREATH_AT_SOUTHEAST_CORNER)
+		if(actor->sceneCount == BREATH_AT_SOUTHEAST_CORNER)
 			scShrineOfTheSeaGodDjinniSouthEastToNorthEast();
 		syGameFlagClear(FLAG_DJINNI_TRAPPED);
 		break;
 	case STEP_LEDGE_EAST_SIDE_SOUTH:
-		if(actor->sceneCnt == BREATH_AT_SOUTHEAST_CORNER)
+		if(actor->sceneCount == BREATH_AT_SOUTHEAST_CORNER)
 			scShrineOfTheSeaGodDjinniSouthEastToSouthWest();
 		break;
 	case STEP_LEDGE_EAST_SIDE_NORTH: {
-		Uint8 cur = actor->sceneCnt;
+		Uint8 current = actor->sceneCount;
 
-		if(cur == BREATH_AT_NORTHEAST_CORNER)
+		if(current == BREATH_AT_NORTHEAST_CORNER)
 			scShrineOfTheSeaGodDjinniNorthEastJumpsWest();
-		else if(cur == BREATH_STOPPED_EAST_OF_TORCH &&
+		else if(current == BREATH_STOPPED_EAST_OF_TORCH &&
 			!syGameFlagGet(FLAG_DJINNI_TRAPPED))
 			scShrineOfTheSeaGodTrappedDjinniJumpsWest();
 	} break;
 	case STEP_LEDGE_NORTH_SIDE_EAST: {
-		Uint8 cur = actor->sceneCnt;
+		Uint8 current = actor->sceneCount;
 
-		if(cur == BREATH_AT_NORTHEAST_CORNER)
+		if(current == BREATH_AT_NORTHEAST_CORNER)
 			scShrineOfTheSeaGodDjinniNorthEastToSouthEast();
-		else if(cur == BREATH_STOPPED_WEST_OF_TORCH)
+		else if(current == BREATH_STOPPED_WEST_OF_TORCH)
 			scShrineOfTheSeaGodTrappedDjinniToNorthWest();
 	} break;
 	case STEP_LEDGE_NORTH_SIDE_WEST: {
-		Uint8 cur = actor->sceneCnt;
+		Uint8 current = actor->sceneCount;
 
-		if(cur == BREATH_AT_NORTHWEST_CORNER)
+		if(current == BREATH_AT_NORTHWEST_CORNER)
 			scShrineOfTheSeaGodDjinniNorthWestToSouthWest();
-		else if(cur == BREATH_STOPPED_EAST_OF_TORCH)
+		else if(current == BREATH_STOPPED_EAST_OF_TORCH)
 			scShrineOfTheSeaGodTrappedDjinniToNorthEast();
 	} break;
 	case STEP_LEDGE_WEST_SIDE_NORTH: {
-		Uint8 cur = actor->sceneCnt;
+		Uint8 current = actor->sceneCount;
 
-		if(cur == BREATH_AT_NORTHWEST_CORNER)
+		if(current == BREATH_AT_NORTHWEST_CORNER)
 			scShrineOfTheSeaGodDjinniNorthWestJumpsEast();
-		else if(cur == BREATH_STOPPED_WEST_OF_TORCH &&
+		else if(current == BREATH_STOPPED_WEST_OF_TORCH &&
 			!syGameFlagGet(FLAG_DJINNI_TRAPPED))
 			scShrineOfTheSeaGodTrappedDjinniJumpsEast();
 	} break;
 	case STEP_LEDGE_WEST_SIDE_SOUTH:
-		if(actor->sceneCnt == BREATH_AT_SOUTHWEST_CORNER)
+		if(actor->sceneCount == BREATH_AT_SOUTHWEST_CORNER)
 			scShrineOfTheSeaGodDjinniSouthWestToSouthEast();
 		break;
 	case STEP_LEDGE_SOUTHWEST_WAY_UP:
-		if(actor->sceneCnt == BREATH_AT_SOUTHWEST_CORNER)
+		if(actor->sceneCount == BREATH_AT_SOUTHWEST_CORNER)
 			scShrineOfTheSeaGodDjinniSouthWestToNorthWest();
 		syGameFlagClear(FLAG_DJINNI_TRAPPED);
 		break;
 	}
 }
 
-extern SHRINE_OF_THE_SEA_GOD_SPOT ShrineOfTheSeaGodFootprintsTbl[];
+extern SHRINE_OF_THE_SEA_GOD_SPOT ShrineOfTheSeaGodFootprintsTable[];
 
 /* Lights the torch: the pedestal in its burning animation, and the marker on
    its flame in its empty picture, disabled. */
@@ -2106,7 +2108,7 @@ ACTOR *scShrineOfTheSeaGodSetUpBridge(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
 
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	actor->y.fixed = toFIXED(12);
 	fdActorDisableById(id);
 	return actor;
@@ -2142,24 +2144,24 @@ void scShrineOfTheSeaGodSetUpBlocks(void)
    on the sand. */
 void scShrineOfTheSeaGodPlaceFootprints(void)
 {
-	const SHRINE_OF_THE_SEA_GOD_SPOT *spot = ShrineOfTheSeaGodFootprintsTbl;
+	const SHRINE_OF_THE_SEA_GOD_SPOT *spot = ShrineOfTheSeaGodFootprintsTable;
 	Uint32							  i;
 
 	for(i = 0; i <= ACTOR_LAST_FOOTPRINT - ACTOR_FIRST_FOOTPRINT; i++) {
 		Sint32	   id = i + ACTOR_FIRST_FOOTPRINT;
 		ACTOR	  *actor = fdActorGetById(id);
-		FIELD_SPR *spr;
+		FIELD_SPR *sprite;
 
 		fdActorDisableById(id);
 		fdActorSetAnimationById(id, 0);
-		fdActorSetSprPriority(id, 3);
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_DARK);
-		spr = actor->spr;
+		fdActorSetSpritePriority(id, 3);
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_DARK);
+		sprite = actor->sprite;
 		actor->x.fixed = spot->x;
 		actor->z.fixed = spot->z;
 		actor->scaleX = spot->scaleX;
-		spr->rotation = spot->rotation;
+		sprite->rotation = spot->rotation;
 		spot++;
 	}
 }
@@ -2194,9 +2196,9 @@ void scShrineOfTheSeaGodUpdateRikiTarget(void)
 	ACTOR *riki = fdActorGetById(ACTOR_SIDE_ROOM_RIKI);
 
 	if(riki->x.fixed > leader->x.fixed)
-		riki->collisionFlg |= ACTOR_NOT_TARGETED;
+		riki->collisionFlags |= ACTOR_NOT_TARGETED;
 	else
-		riki->collisionFlg &= ~ACTOR_NOT_TARGETED;
+		riki->collisionFlags &= ~ACTOR_NOT_TARGETED;
 }
 
 /* Sets up the side room: the plank bridge down over the stream, the torch, and
@@ -2205,7 +2207,7 @@ void scShrineOfTheSeaGodInitPlankBridge(void)
 {
 	scShrineOfTheSeaGodSetUpBridge(ACTOR_SIDE_ROOM_BRIDGE)->y.fixed =
 		-toFIXED(16);
-	fdActorSetSprPriority(ACTOR_SIDE_ROOM_BRIDGE, 3);
+	fdActorSetSpritePriority(ACTOR_SIDE_ROOM_BRIDGE, 3);
 	fdActorPlaceBlocks(ShrineOfTheSeaGodPushedActors);
 	scShrineOfTheSeaGodLightTorch();
 	syFieldSetTickEvent(scShrineOfTheSeaGodKeepFlameOnTorch, EVENT_PASS_TICK);
@@ -2214,7 +2216,7 @@ void scShrineOfTheSeaGodInitPlankBridge(void)
 	   returns NULL and these stores go through it. */
 #if !FIX_NULL_DEREFERENCE
 	fdActorDisableById(ACTOR_SIDE_ROOM_DISABLED);
-	fdActorGetById(ACTOR_SIDE_ROOM_DISABLED)->motionFlg = 0;
+	fdActorGetById(ACTOR_SIDE_ROOM_DISABLED)->motionFlags = 0;
 #endif
 	fdMapGridCopyMetatileAttributes(3, 15, 1, 1, 6, 15);
 	if(syGameFlagGet(FLAG_TAVI_RESCUED)) {
@@ -2225,9 +2227,9 @@ void scShrineOfTheSeaGodInitPlankBridge(void)
 		sySynch(1);
 		fdActorSetMovementTypeById(
 			ACTOR_SIDE_ROOM_RIKI, ShrineOfTheSeaGodRikiLooksAround);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(ACTOR_SIDE_ROOM_RIKI), SPRITE_FLAG_SHADOW);
-		fdActorGetById(ACTOR_SIDE_ROOM_RIKI)->collisionFlg = ACTOR_SOLID;
+		fdActorGetById(ACTOR_SIDE_ROOM_RIKI)->collisionFlags = ACTOR_SOLID;
 	}
 	syFieldSetTickEvent(scShrineOfTheSeaGodUpdateRikiTarget, EVENT_PASS_TICK);
 }
@@ -2249,20 +2251,20 @@ void scShrineOfTheSeaGodInitCrossroads(void)
 	fdActorSetAnimationById(ACTOR_CROSSROADS_LOG_BRIDGE, 0);
 	fdActorSetAnimationById(ACTOR_CROSSROADS_BROKEN_BRIDGE_ENDS, 0);
 	fdActorSetAnimationById(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 2);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_LOG_BRIDGE, 1);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_FIRST_BRIDGE, 1);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_SECOND_BRIDGE, 1);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_THIRD_BRIDGE, 1);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_ENDS, 1);
-	fdActorSetSprPriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 1);
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_LOG_BRIDGE, 1);
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_FIRST_BRIDGE, 1);
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_SECOND_BRIDGE, 1);
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_THIRD_BRIDGE, 1);
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_ENDS, 1);
+	fdActorSetSpritePriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 1);
 	syFieldSetTickEvent(
 		scShrineOfTheSeaGodLayerCrossroadsBridges, EVENT_PASS_TICK);
 	if(syGameFlagGet(FLAG_CROSSROADS_BRIDGE_BROKEN)) {
 		scFieldActorSetPosAndResetMotion(
 			middle, toFIXED(408), -toFIXED(13), toFIXED(336));
-		((FIELD_SPR *)middle->spr)->rotation = TRIG_TURN / 16;
-		fdActorSetSprPriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 3);
-		middle->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		((FIELD_SPR *)middle->sprite)->rotation = TRIG_TURN / 16;
+		fdActorSetSpritePriority(ACTOR_CROSSROADS_BROKEN_BRIDGE_MIDDLE, 3);
+		middle->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(0, 50, 3, 1, 24, 70);
 	}
 	if(syGameFlagGet(FLAG_CROSSROADS_PILLAR_MOVED))
@@ -2302,11 +2304,11 @@ void scShrineOfTheSeaGodInitBreath(void)
 			SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_NORTHEAST &&
 		MainRoutineStateWork.entrance <=
 			SHRINE_OF_THE_SEA_GOD_BREATH_FROM_SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_WEST) {
-		fdActorSetSprPriority(ACTOR_LEDGE_ROOM_BRIDGE, 3);
-		bridge->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpritePriority(ACTOR_LEDGE_ROOM_BRIDGE, 3);
+		bridge->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	} else {
-		fdActorSetSprPriority(ACTOR_LEDGE_ROOM_BRIDGE, 1);
-		bridge->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpritePriority(ACTOR_LEDGE_ROOM_BRIDGE, 1);
+		bridge->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 	}
 	scShrineOfTheSeaGodSetUpPuddle(ACTOR_FIRST_PUDDLE);
 	scShrineOfTheSeaGodSetUpPuddle(ACTOR_SECOND_PUDDLE);
@@ -2330,7 +2332,7 @@ void scShrineOfTheSeaGodInitBreath(void)
 
 		/* A fresh arrival finds Breath back at the south-east corner. */
 		if(moved == 0) {
-			djinni->sceneCnt = moved;
+			djinni->sceneCount = moved;
 			fdActorSetPos(ACTOR_BREATH, 392, 296);
 		}
 		fdActorWatchAndSetScript(
@@ -2347,19 +2349,19 @@ void scShrineOfTheSeaGodInitPillarHole(void)
 {
 	Sint32 open;
 
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprFlags(fdActorGetById(ACTOR_HOLE_ROOM_PILLAR), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_HOLE_ROOM_PILLAR), 0);
 	open = syGameFlagGet(FLAG_PILLAR_IN_HOLE);
 	if(open) {
 		fdActorSetPos(ACTOR_HOLE_ROOM_PILLAR, 248, 264);
-		fdActorSetSprPriority(ACTOR_HOLE_ROOM_PILLAR, 3);
-		fdActorGetById(ACTOR_HOLE_ROOM_PILLAR)->motionFlg = 0;
+		fdActorSetSpritePriority(ACTOR_HOLE_ROOM_PILLAR, 3);
+		fdActorGetById(ACTOR_HOLE_ROOM_PILLAR)->motionFlags = 0;
 		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 15, 16);
 		fdActorDisableById(ACTOR_HOLE_ROOM_PILLAR);
 	} else {
-		fdActorSetSprPriority(ACTOR_HOLE_ROOM_PILLAR, 1);
-		fdActorGetById(ACTOR_HOLE_ROOM_PILLAR)->motionFlg = open;
+		fdActorSetSpritePriority(ACTOR_HOLE_ROOM_PILLAR, 1);
+		fdActorGetById(ACTOR_HOLE_ROOM_PILLAR)->motionFlags = open;
 	}
 	scShrineOfTheSeaGodSetUpBlocks();
 }
@@ -2391,7 +2393,7 @@ void scShrineOfTheSeaGodInitPillars(void)
 		fdActorSetPosAndResetMotion(
 			fdActorGetById(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE), toFIXED(320),
 			-toFIXED(21), toFIXED(534));
-		fdActorSetSprPriority(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE, 3);
+		fdActorSetSpritePriority(ACTOR_FIRST_BROKEN_BRIDGE_MIDDLE, 3);
 	}
 	if(syGameFlagGet(FLAG_SECOND_BRIDGE_BROKEN)) {
 		fdMapCopyMetatileAttributeRect(0, 0, 3, 1, 24, 22);
@@ -2399,7 +2401,7 @@ void scShrineOfTheSeaGodInitPillars(void)
 		fdActorSetPosAndResetMotion(
 			fdActorGetById(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE), toFIXED(400),
 			-toFIXED(21), toFIXED(390));
-		fdActorSetSprPriority(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE, 3);
+		fdActorSetSpritePriority(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE, 3);
 	}
 	fdRopeInit();
 	Call4((void (*)())fdRopePlace, 0, FLAG_SHRINE_ROPE_TIED,
@@ -2407,17 +2409,17 @@ void scShrineOfTheSeaGodInitPillars(void)
 	fdRopePlace(1, FLAG_SHRINE_SECOND_ROPE_TIED, ACTOR_NORTH_ROPE_WEST_POST,
 		ACTOR_NORTH_ROPE_EAST_POST);
 	fdActorDisableById(ACTOR_FIRST_BRIDGE_SPLASH);
-	fdActorGetById(ACTOR_FIRST_BRIDGE_SPLASH)->motionFlg = 0;
+	fdActorGetById(ACTOR_FIRST_BRIDGE_SPLASH)->motionFlags = 0;
 	firstSplash = fdActorGetById(ACTOR_FIRST_BRIDGE_OTHER_SPLASH);
 	fdActorDisableById(ACTOR_FIRST_BRIDGE_OTHER_SPLASH);
-	firstSplash->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	firstSplash->motionFlg = 0;
+	firstSplash->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	firstSplash->motionFlags = 0;
 	fdActorDisableById(ACTOR_SECOND_BRIDGE_SPLASH);
-	fdActorGetById(ACTOR_SECOND_BRIDGE_SPLASH)->motionFlg = 0;
+	fdActorGetById(ACTOR_SECOND_BRIDGE_SPLASH)->motionFlags = 0;
 	secondSplash = fdActorGetById(ACTOR_SECOND_BRIDGE_OTHER_SPLASH);
 	fdActorDisableById(ACTOR_SECOND_BRIDGE_OTHER_SPLASH);
-	secondSplash->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	secondSplash->motionFlg = 0;
+	secondSplash->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	secondSplash->motionFlags = 0;
 }
 
 /* Sets up the island room: its floating logs, and the water sinking back when
@@ -2453,11 +2455,11 @@ void scShrineOfTheSeaGodInitRightProng(void)
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = &map->layers[2];
 
-	layer->ofsX += toFIXED(128);
+	layer->offsetX += toFIXED(128);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
 	if(actor != NULL) {
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(66);
 		actor->update = scProngSparkle;
 	}
@@ -2468,10 +2470,10 @@ void scShrineOfTheSeaGodSetUpFloatingLog(Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
 
-	fdActorSetSprPriority(id, 3);
+	fdActorSetSpritePriority(id, 3);
 	fdActorDisableById(id);
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	actor->motionFlg = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
 	actor->scaleX = toFIXED(8) / 10;
 	actor->scaleY = toFIXED(9) / 10;
 }
@@ -2549,7 +2551,7 @@ Sint16 ShrineOfTheSeaGodPushedActors[] = {
 
 /* The Djinni's footprints, laid by scShrineOfTheSeaGodPlaceFootprints: where */
 /* each lies, mirrored (a scale of -1) or not, and its turn. */
-SHRINE_OF_THE_SEA_GOD_SPOT ShrineOfTheSeaGodFootprintsTbl[] = {
+SHRINE_OF_THE_SEA_GOD_SPOT ShrineOfTheSeaGodFootprintsTable[] = {
 	{toFIXED(316), toFIXED(136), -toFIXED(1), TRIG_TURN * 16 / 32},
 	{toFIXED(318), toFIXED(142), toFIXED(1), TRIG_TURN * 14 / 32},
 	{toFIXED(324), toFIXED(154), -toFIXED(1), TRIG_TURN * 12 / 32},

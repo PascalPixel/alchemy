@@ -127,10 +127,10 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE			 blit[2];
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 savedScroll;
 	BATTLE_BACKGROUND_STATE *background;
-	Uint8					*sprs;
+	Uint8					*sprites;
 	BATTLE_STATE			*battle;
 	Sint32					 i;
 	Sint32					 j;
@@ -138,32 +138,32 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	Sint32					 bgX;
 	FIXED					 baseX;
 	FIXED					 baseY;
-	Sint32					 velX;
-	Sint32					 velY;
+	Sint32					 velocityX;
+	Sint32					 velocityY;
 	FIXED					 cx;
 	FIXED					 cy;
 	Uint32					 u;
-	Sint32					 cnt;
+	Sint32					 count;
 	Sint32					 ring;
 	Sint32					 shade;
-	Sint32					 ofs;
+	Sint32					 offset;
 	Uint8					*cells;
 	Sint32					 fade;
 	Sint16					 list[UNIT_MAX];
 	FIXED					 place[4];
-	SCALE					 req;
+	SCALE					 request;
 	MODEL_TEXTURE			 texture;
 	MODEL_TEXTURE			 breathTexture;
 	MODEL_TEXTURE			 landingTexture;
 	RENDER_MODEL			*model;
 	PARTICLE				*p;
-	SPR						*obj;
+	SPR						*object;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	savedScroll = BgScrollWork[1].x;
 	background = RamHeapSlots->battleBg;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	battle = RamHeapSlots->battleState;
 	btEffectStartCanvasLayer(0);
 	btEffectFillWhiteBand();
@@ -171,8 +171,8 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	/* The battle flashes away; then the sky and the dragon's sprites load. */
 	bgX = -80;
-	for(frm = 0; frm != SUMMON_OPENING_TICKS; frm++) {
-		if(frm == SUMMON_OPENING_LOAD_TICK) {
+	for(frame = 0; frame != SUMMON_OPENING_TICKS; frame++) {
+		if(frame == SUMMON_OPENING_LOAD_TICK) {
 			Uint8 *tiles;
 
 			list[0] = BATTLE_UNIT_LIST_END;
@@ -182,7 +182,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 			btBackgroundLoadStub(
 				BATTLE_BACKGROUND_FIXED, RESOURCE_EARTH_HORIZON_BACKDROP, 0);
-			state->scrollTmr = 0;
+			state->scrollTimer = 0;
 			state->scrollInterval = 1;
 			state->scrollStepX = -1;
 			state->scrollStepY = 0;
@@ -194,12 +194,12 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			syDecompressTaggedLZ(cells, MapGridMetatileBuffer);
 			tiles = MapGridMetatileBuffer;
 			for(i = 0; i != ECLIPSE_BODY_PICTURES; i++) {
-				obj = btEffectSprCreateWithTiles(
+				object = btEffectSpriteCreateWithTiles(
 					32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-				obj->image.pri = 2;
-				state->sprs[i] = obj;
+				object->image.priority = 2;
+				state->sprites[i] = object;
 				syWordsCopy(
-					(void *)OBJ_TILES(obj), tiles, OBJ_32X32_8BPP_BYTES);
+					(void *)OBJ_TILES(object), tiles, OBJ_32X32_8BPP_BYTES);
 				tiles += OBJ_32X32_8BPP_BYTES;
 			}
 			/* The head's first picture; the rest stay decoded for its open
@@ -208,11 +208,11 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			syWordsCopy((void *)OBJ_PLTT, cells, ECLIPSE_DRAGON_COLORS * 2);
 			cells += ECLIPSE_DRAGON_COLORS * 2;
 			syDecompressTaggedLZ(cells, MapGridMetatileBuffer);
-			obj = btEffectSprCreateWithTiles(
+			object = btEffectSpriteCreateWithTiles(
 				32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-			state->sprs[ECLIPSE_BODY_PICTURES] = obj;
-			obj->image.pri = 2;
-			syWordsCopy((void *)OBJ_TILES(obj), MapGridMetatileBuffer,
+			state->sprites[ECLIPSE_BODY_PICTURES] = object;
+			object->image.priority = 2;
+			syWordsCopy((void *)OBJ_TILES(object), MapGridMetatileBuffer,
 				OBJ_32X32_8BPP_BYTES);
 		}
 		bgX += 4;
@@ -221,13 +221,13 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	}
 	syWordsFill(canvas, CANVAS_VIEW_BYTES, 0);
 	syWordsFill((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
 	REG_BG2X = 0;
 	baseX = 0;
 	baseY = 0;
-	velX = 0;
-	velY = 0;
+	velocityX = 0;
+	velocityY = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = RamHeapSlots->ramCode;
@@ -239,79 +239,79 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 
 		/* The dragon looms over the horizon while rays of light spin out from
 		   its head, then breathes its blast; A or B cuts it short. */
-		for(frm = 0;
-			frm != ECLIPSE_DRAGON_TICKS && !(PerWork.repeat & (KEY_A | KEY_B));
-			frm++) {
-			if(frm == 0) {
+		for(frame = 0; frame != ECLIPSE_DRAGON_TICKS &&
+			!(PerWork.repeat & (KEY_A | KEY_B));
+			frame++) {
+			if(frame == 0) {
 				baseX = -toFIXED(48);
 				baseY = toFIXED(212);
-				velX = toFIXED(4);
-				velY = -toFIXED(10);
-				state->fadeFrm = 1;
-				state->fadeStep = frm;
-				ECLIPSE_ORB.variant = frm;
+				velocityX = toFIXED(4);
+				velocityY = -toFIXED(10);
+				state->fadeFrame = 1;
+				state->fadeStep = frame;
+				ECLIPSE_ORB.variant = frame;
 				btResourceLoadAndDecompress(
 					RESOURCE_SWIRL_TEXTURE, FLASHES, 0, 0);
 			}
-			if(frm == ECLIPSE_JAWS_OPEN) {
+			if(frame == ECLIPSE_JAWS_OPEN) {
 				/* The head's other pictures, still decoded after its first. */
-				Uint8 *dst = RamMapMetatileBuffer + OBJ_32X32_8BPP_BYTES;
+				Uint8 *dest = RamMapMetatileBuffer + OBJ_32X32_8BPP_BYTES;
 				for(i = 0; i != ECLIPSE_OPEN_JAW_PICTURES; i++) {
 					void *tiles = (void *)OBJ_TILES(
-						(SPR *)state->sprs[EclipseTileObjects[i]]);
+						(SPR *)state->sprites[EclipseTileObjects[i]]);
 					/* FAKEMATCH(dead): size zeroed before its value. */
 					Sint32 size = 0;
 
 					size = OBJ_32X32_8BPP_BYTES;
 					syWordsCopyEntry(
-						tiles, &dst[i * OBJ_32X32_8BPP_BYTES], size);
+						tiles, &dest[i * OBJ_32X32_8BPP_BYTES], size);
 				}
 			}
-			if(frm == ECLIPSE_RAYS_START) {
-				sySndPlayStub(SE_DJINNI_SET);
+			if(frame == ECLIPSE_RAYS_START) {
+				sySoundPlayStub(SE_DJINNI_SET);
 			}
-			if(frm == ECLIPSE_JAWS_OPEN) {
-				sySndPlayStub(SE_SPIN);
+			if(frame == ECLIPSE_JAWS_OPEN) {
+				sySoundPlayStub(SE_SPIN);
 			}
-			if(frm == ECLIPSE_BREATH) {
-				sySndPlayStub(SE_CLATTER);
+			if(frame == ECLIPSE_BREATH) {
+				sySoundPlayStub(SE_CLATTER);
 			}
 			for(i = 0; i != ECLIPSE_FILLS; i++) {
-				if(frm == EclipseFillTicks[i]) {
+				if(frame == EclipseFillTicks[i]) {
 					syWordsFill(
 						canvas, CANVAS_VIEW_BYTES, EclipseFillLevels[i]);
 				}
 			}
-			req = EclipseDragonScale;
+			request = EclipseDragonScale;
 			place[3] = 0;
 			place[1] = toFIXED(255);
-			baseX += velX;
-			baseY += velY;
-			if(frm >= ECLIPSE_BREATH) {
-				if(frm > 183) {
-					velX += -toFIXED(1) / 128;
-					velY += toFIXED(1) / 64;
+			baseX += velocityX;
+			baseY += velocityY;
+			if(frame >= ECLIPSE_BREATH) {
+				if(frame > 183) {
+					velocityX += -toFIXED(1) / 128;
+					velocityY += toFIXED(1) / 64;
 				}
-				if(frm <= 205) {
-					velX = velX * 54 / DAMPING_SCALE;
-					velY = velY * 54 / DAMPING_SCALE;
+				if(frame <= 205) {
+					velocityX = velocityX * 54 / DAMPING_SCALE;
+					velocityY = velocityY * 54 / DAMPING_SCALE;
 				}
 			} else {
-				if(velY < 0) {
-					velY += toFIXED(1) / 4;
+				if(velocityY < 0) {
+					velocityY += toFIXED(1) / 4;
 				}
-				if(velX > 0) {
-					velX += -toFIXED(1) / 8;
+				if(velocityX > 0) {
+					velocityX += -toFIXED(1) / 8;
 				}
-				if(frm >= ECLIPSE_BOB_START) {
-					baseY += sySin((frm - ECLIPSE_BOB_START) << 9) << 2 >> 4;
-					if(frm <= 159) {
+				if(frame >= ECLIPSE_BOB_START) {
+					baseY += sySin((frame - ECLIPSE_BOB_START) << 9) << 2 >> 4;
+					if(frame <= 159) {
 						baseX += toFIXED(1) / 4;
 					}
 				}
 			}
 			for(i = 0; i != ECLIPSE_DRAGON_SPRITES; i++) {
-				if(i == ECLIPSE_SNOUT_SPRITE && frm >= ECLIPSE_JAWS_OPEN) {
+				if(i == ECLIPSE_SNOUT_SPRITE && frame >= ECLIPSE_JAWS_OPEN) {
 					place[0] = baseX + toFIXED(32);
 					place[2] = baseY + toFIXED(64);
 				} else {
@@ -320,35 +320,36 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 				}
 				if(place[2] <= toFIXED(200) - 1) {
 					fdRenderApplyProjectedPlacementStub(
-						state->sprs[i], place, (Sint32 *)&req, 0);
+						state->sprites[i], place, (Sint32 *)&request, 0);
 				}
 			}
-			if(frm == ECLIPSE_JAWS_OPEN) {
-				state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+			if(frame == ECLIPSE_JAWS_OPEN) {
+				state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 				state->fadeStep = 0;
 			}
 			/* The orb's place, which shifts left and down as it swells. */
 			cx = baseX / 2 - ECLIPSE_ORB.variant * (toFIXED(1) / 8) +
 				toFIXED(28);
 			cy = baseY + ECLIPSE_ORB.variant * (toFIXED(1) / 4) + toFIXED(56);
-			u = frm - ECLIPSE_JAWS_OPEN;
+			u = frame - ECLIPSE_JAWS_OPEN;
 			if(u <= ECLIPSE_DRAGON_TICKS - ECLIPSE_JAWS_OPEN) {
-				if(frm == ECLIPSE_JAWS_OPEN) {
+				if(frame == ECLIPSE_JAWS_OPEN) {
 					ECLIPSE_ORB.variant = 4;
 					ECLIPSE_ORB.x = 0;
 					ECLIPSE_ORB.z = 0;
 					btEffectDrawShadedCircles(
 						state->sheet, ECLIPSE_ORB.variant * 2, toFIXED(1));
 				}
-				if(frm >= ECLIPSE_BREATH) {
-					if(frm == ECLIPSE_BREATH) {
+				if(frame >= ECLIPSE_BREATH) {
+					if(frame == ECLIPSE_BREATH) {
 						ECLIPSE_ORB.variant = ECLIPSE_ORB_BREATH;
 						btEffectDrawShadedCircles(
 							state->sheet, ECLIPSE_ORB_BREATH * 2, toFIXED(1));
-						velX = toFIXED(3);
-						velY = -toFIXED(3);
+						velocityX = toFIXED(3);
+						velocityY = -toFIXED(3);
 					}
-					if(frm >= ECLIPSE_BREATH_FADE && ECLIPSE_ORB.variant > 1) {
+					if(frame >= ECLIPSE_BREATH_FADE &&
+						ECLIPSE_ORB.variant > 1) {
 						ECLIPSE_ORB.variant -= 4;
 						if(ECLIPSE_ORB.variant <= 1) {
 							ECLIPSE_ORB.variant = 2;
@@ -356,9 +357,9 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 						btEffectDrawShadedCircles(
 							state->sheet, ECLIPSE_ORB.variant * 2, toFIXED(1));
 					}
-				} else if(frm >= ECLIPSE_JAWS_OPEN) {
-					velX += -toFIXED(1) / 32;
-					velY += toFIXED(1) / 32;
+				} else if(frame >= ECLIPSE_JAWS_OPEN) {
+					velocityX += -toFIXED(1) / 32;
+					velocityY += toFIXED(1) / 32;
 					if(++ECLIPSE_ORB.variant <= ECLIPSE_ORB_GATHERED) {
 						btEffectDrawShadedCircles(
 							state->sheet, ECLIPSE_ORB.variant * 2, toFIXED(1));
@@ -373,14 +374,14 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 						state->sheet, FIXEDtoINT(cx), FIXEDtoINT(cy), size * 2);
 				}
 			}
-			if(frm >= ECLIPSE_RAYS_START) {
+			if(frame >= ECLIPSE_RAYS_START) {
 				RENDER_MODEL *model;
 				void		 *verts;
 				Sint32		  modelShade;
 
 				/* Each ray has an angle (x), a spin (y) and an age
 				   (variant). */
-				if(frm == ECLIPSE_RAYS_START) {
+				if(frame == ECLIPSE_RAYS_START) {
 					for(i = 0; i != LIGHT_RAYS; i++) {
 						state->particles[i].x = syRandom() & TRIG_ANGLE_MASK;
 						state->particles[i].y = (syRandom() & 255) + 128;
@@ -394,7 +395,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 					btResourceLoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
 						state->sheet + ECLIPSE_GLOW_BAND_A, 0, 0);
 				}
-				verts = syHeapAllocEWRAM(32);
+				verts = syHeapAllocateEWRAM(32);
 				model = btRenderAllocateModelList(1);
 				modelShade = 0;
 				model->shade = modelShade;
@@ -430,7 +431,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 				}
 				/* As the jaws open a swirl turns in on the orb, shrinking and
 				   brightening. */
-				if(frm >= ECLIPSE_JAWS_OPEN && frm < ECLIPSE_BREATH) {
+				if(frame >= ECLIPSE_JAWS_OPEN && frame < ECLIPSE_BREATH) {
 					Sint32 s = toFIXED(4) - u * ECLIPSE_SWIRL_SHRINK;
 
 					modelShade = u * 4 + MODEL_SHADE_INVISIBLE;
@@ -450,23 +451,23 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 					syScale(s >> 1, s, s);
 					syRotX(DEGtoANG(45));
 					syRotZ(TRIG_TURN * 5 / 32);
-					syRotY(-frm * (TRIG_TURN / 64));
+					syRotY(-frame * (TRIG_TURN / 64));
 					btRenderTransformVertices(
 						BattleEffectGroundSquareCorners, verts, 4);
 					btRenderDrawModelList(model);
 				}
 				/* The breath: a beam from the orb, narrowing to nothing at the
 				   end. */
-				if(frm >= ECLIPSE_BREATH && frm <= ECLIPSE_DRAGON_TICKS) {
+				if(frame >= ECLIPSE_BREATH && frame <= ECLIPSE_DRAGON_TICKS) {
 					syInitMatrix();
 					syTranslate(cx - toFIXED(62), cy - toFIXED(66), 0);
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1));
 					syRotZ(TRIG_TURN * 5 / 32);
-					if(frm >= ECLIPSE_BREATH_FADE) {
-						Sint32 fadeFrm = frm - ECLIPSE_BREATH_FADE;
+					if(frame >= ECLIPSE_BREATH_FADE) {
+						Sint32 fadeFrame = frame - ECLIPSE_BREATH_FADE;
 
 						/* Half a unit narrower a tick. */
-						syScale(toFIXED(8) - fadeFrm * (toFIXED(1) / 2),
+						syScale(toFIXED(8) - fadeFrame * (toFIXED(1) / 2),
 							toFIXED(2), toFIXED(1));
 					} else {
 						syScale(toFIXED(8), toFIXED(2), toFIXED(1));
@@ -479,13 +480,13 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 				syHeapRelease(verts);
 			}
 			/* Glints sparkle about the orb, and then along the breath. */
-			if(frm >= 148 && frm < ECLIPSE_DRAGON_TICKS) {
+			if(frame >= 148 && frame < ECLIPSE_DRAGON_TICKS) {
 				for(j = 0; j != 4; j++) {
-					Sint32 t = (frm + j) & 3;
+					Sint32 t = (frame + j) & 3;
 					Sint32 x = 0;
 					Sint32 y = 0;
 
-					if(frm < ECLIPSE_BREATH) {
+					if(frame < ECLIPSE_BREATH) {
 						Sint32 size = ECLIPSE_ORB.variant * 2;
 
 						x = syRandom() % size + (FIXEDtoINT(cx)) - (size >> 1) -
@@ -521,18 +522,18 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	BgScrollWork[1].x = savedScroll;
 	background->busy = 0;
 	for(i = 0; i != ECLIPSE_DRAGON_SPRITES; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	fdActorShadowLoadTilesStub();
-	battle->arrowTiles = syVRAMCacheAllocEntry(128);
+	battle->arrowTiles = syVRAMCacheAllocateEntry(128);
 	btEffectShowLivingTargets(state->args);
-	for(i = 0; i != args->tgtCnt; i++) {
+	for(i = 0; i != args->targetCount; i++) {
 		btEffectTintBattler(
-			args->tgts[i], SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
+			args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
 		btEffectTintBattler(
-			args->tgts[i], SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
+			args->targets[i], SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 	}
-	syPaletteLoadBasicSprCols();
+	syPaletteLoadBasicSpriteColors();
 	REG_DISPCNT = DISPCNT_MODE_1;
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
 	btBackgroundLoadStub(
@@ -548,8 +549,8 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
 	syWordsFill(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-	args->tgts[args->tgtCnt] = BATTLE_UNIT_LIST_END;
-	btActorSpawnObjectsForListStub(args->tgts, 0);
+	args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
+	btActorSpawnObjectsForListStub(args->targets, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_GLOW_BAND_TEXTURE_B, state->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -565,31 +566,31 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	}
 	/* The blast whites out the battlefield. */
 	fade = 0;
-	for(frm = 0; frm != ECLIPSE_BLAST_TICKS; frm++) {
-		if(frm > 39) {
+	for(frame = 0; frame != ECLIPSE_BLAST_TICKS; frame++) {
+		if(frame > 39) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_BRIGHTEN, CANVAS_FILL_WORD(4));
 		}
-		if(frm == 16) {
-			sySndPlayStub(SE_SPIN);
+		if(frame == 16) {
+			sySoundPlayStub(SE_SPIN);
 		}
-		if(frm == 18) {
-			state->shakeFrm = 90;
-			sySndPlayStub(SE_CRASH);
+		if(frame == 18) {
+			state->shakeFrame = 90;
+			sySoundPlayStub(SE_CRASH);
 			syWordsFill(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-			for(i = 0; i != args->tgtCnt; i++) {
+			for(i = 0; i != args->targetCount; i++) {
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
+					args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 4);
 			}
 		}
 		/* DEAD: the blast ends before tick 110, so this test is always true;
 		   the ROM keeps its compare. */
-		if(frm <= 109) {
+		if(frame <= 109) {
 			RENDER_MODEL *model = 0;
 			void		 *verts = 0;
 
-			verts = syHeapAllocEWRAM(32);
+			verts = syHeapAllocateEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			breathTexture.logWidth = 5;
 			breathTexture.logHeight = 2;
@@ -601,18 +602,18 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			model->kind = MODEL_SHADED_MAX;
 			/* The blast's beam, its head sweeping down from the top right over
 			   four ticks. */
-			if(frm > 15) {
+			if(frame > 15) {
 				PARTICLE *q = &ECLIPSE_BLAST;
 
-				if(frm == 16) {
+				if(frame == 16) {
 					q->x = toFIXED(128);
 					q->y = -toFIXED(40);
 				}
-				if(frm <= 19) {
+				if(frame <= 19) {
 					q->x += -toFIXED(32);
 					q->y += toFIXED(64);
 				}
-				if(frm <= 27) {
+				if(frame <= 27) {
 					cells = state->sheet + ECLIPSE_BLAST_GLOW;
 					btEffectDrawShadedCircles(cells, 96, toFIXED(1));
 					btCanvasBlitMirroredQuarters(
@@ -635,11 +636,11 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 
 			/* DEAD: the blast ends before tick 110, so the shake stays at 8;
 			   the ROM keeps the three compares. */
-			if(frm > 130) {
+			if(frame > 130) {
 				r = 2;
-			} else if(frm > 120) {
+			} else if(frame > 120) {
 				r = 4;
-			} else if(frm > 110) {
+			} else if(frame > 110) {
 				r = 6;
 			}
 			btCameraShake(r, r);
@@ -647,7 +648,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 		EFFECT_END_TICK(state);
 	}
 	/* The blast lands on the land far below and spreads in rings of light. */
-	cnt = -1;
+	count = -1;
 	background->busy = 1;
 	btBackgroundLoadStub(
 		BATTLE_BACKGROUND_FIXED, RESOURCE_AERIAL_VIEW_BACKDROP, 0);
@@ -677,14 +678,14 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 		void	   *vertices = MapGridMetatileBuffer;
 		const void *bandMesh = ECLIPSE_BAND_MESH;
 
-		for(frm = 0; frm != ECLIPSE_LANDING_TICKS; frm++) {
+		for(frame = 0; frame != ECLIPSE_LANDING_TICKS; frame++) {
 			/* A or B ends the landing eight ticks later, the view
 			   whitening. */
-			if((PerWork.repeat & (KEY_A | KEY_B)) && cnt == -1) {
-				cnt = 8;
+			if((PerWork.repeat & (KEY_A | KEY_B)) && count == -1) {
+				count = 8;
 			}
-			if(frm <= 6 && cnt == -1) {
-				Sint32 b = RGB_LEVEL_MAX - frm * 8;
+			if(frame <= 6 && count == -1) {
+				Sint32 b = RGB_LEVEL_MAX - frame * 8;
 				Sint32 a = b;
 				Sint32 c = b;
 
@@ -699,9 +700,9 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 				}
 				btPaletteBrightenSavedBattleBg(a, b, c);
 			}
-			if(frm > 17 || cnt > 0) {
+			if(frame > 17 || count > 0) {
 				btPaletteBrightenBattleBg(4, 4, 4);
-				if(--cnt == 0) {
+				if(--count == 0) {
 					break;
 				}
 			}
@@ -709,17 +710,17 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			   tick. */
 			for(i = 0; i != ECLIPSE_MOTES_A_TICK; i++) {
 				PARTICLE *q = EXTRA_PARTICLES +
-					((frm * ECLIPSE_MOTES_A_TICK + i) &
+					((frame * ECLIPSE_MOTES_A_TICK + i) &
 						(ECLIPSE_MOTE_COUNT - 1));
 				Sint32 a = 0;
 				Sint32 r = 0;
 
 				a = syRandom();
-				r = (syRandom() & 15) + frm * 2;
+				r = (syRandom() & 15) + frame * 2;
 				q->x = sySin(a) * r + toFIXED(60);
 				q->y = syCos(a) * r + toFIXED(60);
-				q->velX = 0;
-				q->velY = 0;
+				q->velocityX = 0;
+				q->velocityY = 0;
 				q->variant = (syRandom() & 15) + 16;
 			}
 			for(i = 0; i != ECLIPSE_MOTE_COUNT; i++) {
@@ -727,7 +728,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 				if(p->variant >= 0) {
 					Sint32 n = (p->variant >> 3) + 1;
 
-					blit[0](canvas, sprs + BattleEffectMotePictures[n - 1],
+					blit[0](canvas, sprites + BattleEffectMotePictures[n - 1],
 						(FIXEDtoINT(p->x)) - n / 2, (FIXEDtoINT(p->y)) - n, n,
 						n * 2);
 					btParticleAdvanceWithGravity2D(p, 60, -toFIXED(1) / 4);
@@ -739,11 +740,11 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			/* The blast's last beam, which narrows from tick 16. */
 			/* DEAD: the landing ends before tick 32, so this test is always
 			   true; the ROM keeps its compare. */
-			if(frm <= 31) {
+			if(frame <= 31) {
 				Sint32 s = toFIXED(1);
 
-				if(frm > 15) {
-					s += toFIXED(1) - frm * (toFIXED(1) / 16);
+				if(frame > 15) {
+					s += toFIXED(1) - frame * (toFIXED(1) / 16);
 				}
 				landingTexture.logWidth = 5;
 				landingTexture.logHeight = 2;
@@ -764,24 +765,24 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			}
 			/* The dome's rings of vertices, from its top to its rim, and the
 			   rings' band. */
-			if(frm == 0) {
-				sySndPlayStub(SE_BANE_ESCAPE);
+			if(frame == 0) {
+				sySoundPlayStub(SE_BANE_ESCAPE);
 				btMeshBuildGrid(ECLIPSE_DOME_MESH, ECLIPSE_DOME_RING_VERTICES,
 					ECLIPSE_DOME_RINGS, 8, 8);
 				{
-					Sint32 ringAng = 0;
-					for(ring = 0, ofs = 0; ring != ECLIPSE_DOME_RINGS;
-						ringAng += DEGtoANG(12),
-					ofs += ECLIPSE_DOME_RING_VERTICES * sizeof(MODEL_VERTEX),
+					Sint32 ringAngle = 0;
+					for(ring = 0, offset = 0; ring != ECLIPSE_DOME_RINGS;
+						ringAngle += DEGtoANG(12),
+					offset += ECLIPSE_DOME_RING_VERTICES * sizeof(MODEL_VERTEX),
 					ring++) {
 						Sint32 y =
-							FIXEDtoINT(-syCos(ringAng) * ECLIPSE_DOME_HEIGHT);
+							FIXEDtoINT(-syCos(ringAngle) * ECLIPSE_DOME_HEIGHT);
 						Sint32 rr =
-							FIXEDtoINT(sySin(ringAng) * ECLIPSE_DOME_RADIUS);
+							FIXEDtoINT(sySin(ringAngle) * ECLIPSE_DOME_RADIUS);
 						MODEL_VERTEX *v = (MODEL_VERTEX *)ECLIPSE_DOME_VERTICES;
 
 						k = 0;
-						v = (MODEL_VERTEX *)((Uint8 *)v + ofs);
+						v = (MODEL_VERTEX *)((Uint8 *)v + offset);
 						for(; k != ECLIPSE_DOME_RING_VERTICES; k++) {
 							SET_POSITION(v,
 								FIXEDtoINT(
@@ -810,10 +811,10 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			model->vertices = vertices;
 			model->texture = &landingTexture;
 			model->shade = shade;
-			model->flg = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
+			model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
 			/* The dome swells from half its size, turning. */
 			{
-				Sint32 s = (frm << 9) + toFIXED(1) / 2;
+				Sint32 s = (frame << 9) + toFIXED(1) / 2;
 
 				if(s > toFIXED(1)) {
 					s = toFIXED(1);
@@ -821,7 +822,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 				syInitMatrix();
 				syTranslate(-toFIXED(2), toFIXED(12), 0);
 				syRotX(DEGtoANG(45));
-				syRotY(-frm * (TRIG_TURN / 64));
+				syRotY(-frame * (TRIG_TURN / 64));
 				syMatrixScaleUniform(s);
 				btRenderTransformVertices(ECLIPSE_DOME_VERTICES, vertices,
 					ECLIPSE_DOME_RINGS * ECLIPSE_DOME_RING_VERTICES);
@@ -833,14 +834,14 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			model->texture = &landingTexture;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->mesh = bandMesh;
-			model->flg = shade;
+			model->flags = shade;
 			model->vertices = vertices;
 			model->scrollU = shade;
 			model->scrollV = shade;
 			/* Four rings of flame spread from the dome one after another,
 			   fading in and out. */
 			for(i = 0; i != 4; i++) {
-				Sint32 t = frm + 24 - i * 6;
+				Sint32 t = frame + 24 - i * 6;
 
 				if(t >= 0 && t < ECLIPSE_RING_TICKS) {
 					Sint32 s = EclipseRingGrowth[i] * t * (toFIXED(1) / 64) +
@@ -858,7 +859,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 					syTranslate(-toFIXED(2), toFIXED(32), 0);
 					syScale(s / 4, s / 4, s / 4);
 					syRotX(ECLIPSE_RING_TILT);
-					syRotY((frm + i * 8) * (TRIG_TURN / 64));
+					syRotY((frame + i * 8) * (TRIG_TURN / 64));
 					syScale(toFIXED(1), toFIXED(6), toFIXED(1));
 					syTranslate(0, toFIXED(EclipseRingHeights[i]), 0);
 					btRenderTransformVertices(ECLIPSE_BAND_VERTICES, vertices,
@@ -884,7 +885,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	syWordsFill(
 		canvas, CANVAS_VIEW_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 	EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-	for(frm = 0; frm != 32; frm++) {
+	for(frame = 0; frame != 32; frame++) {
 		EFFECT_PRESENT_CANVAS(state);
 	}
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
@@ -942,12 +943,13 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 	void				*canvas;
 	DRAW_RECTANGLE		 draw[2];
 	Sint32				 ticks;
-	Sint32				 frm;
-	Sint32				 idx;
+	Sint32				 frame;
+	Sint32				 index;
 	Sint32				 i;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
-	canvas = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	state =
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
+	canvas = syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	state->framesSinceTransfer = 1;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -960,15 +962,15 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 	btResourceLoadAndDecompress(
 		RESOURCE_BILLOW_TEXTURE, FORM_CHANGE_BILLOW, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+	state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 
 	/* The last form's change runs on while the screen whitens. */
 	ticks = 100;
 	if(kind != FORMATION_DOOM_DRAGON_C)
 		ticks = 76;
-	for(frm = 0; frm != ticks; frm++) {
-		idx = (frm - FORM_CHANGE_BURST) * 2;
+	for(frame = 0; frame != ticks; frame++) {
+		index = (frame - FORM_CHANGE_BURST) * 2;
 		/* The effect's centre, beside or above the dragon. */
 		btEffectPosProjectBattler(args->user, &center);
 		if(kind == FORMATION_DOOM_DRAGON_A) {
@@ -984,7 +986,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 			center.y -= 48;
 		}
 
-		if(frm == 0) {
+		if(frame == 0) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			if(kind == FORMATION_DOOM_DRAGON_B)
 				syWordsCopyEntry((void *)BG_PLTT,
@@ -996,38 +998,38 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 					SHEET_PALETTE_BYTES);
 			/* DEAD: inside tick 0's block this test is always true; the ROM
 			   keeps its compare. */
-			if(frm == 0)
-				sySndPlayStub(SE_SPIN);
+			if(frame == 0)
+				sySoundPlayStub(SE_SPIN);
 		}
-		if(frm == FORM_CHANGE_BURST)
-			sySndPlayStub(SE_CLATTER);
+		if(frame == FORM_CHANGE_BURST)
+			sySoundPlayStub(SE_CLATTER);
 		/* The dragon roars after the burst, and shows white from tick 32 to
 		   68. */
-		if(frm == 56)
-			sySndPlayStub(SE_BOSS_ROAR);
-		if(frm == 32)
+		if(frame == 56)
+			sySoundPlayStub(SE_BOSS_ROAR);
+		if(frame == 32)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, -1);
-		if(frm == 68)
+		if(frame == 68)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, -1);
 		if(kind == FORMATION_DOOM_DRAGON_C) {
 			/* After the last form the screen whitens. */
-			if(frm >= FORM_CHANGE_SWAP) {
+			if(frame >= FORM_CHANGE_SWAP) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 					CANVAS_FILL_WORD(FORM_CHANGE_FINALE_LEVEL));
 				btPaletteBrightenBgEntries(2, 2, 2);
 			}
-		} else if(frm == FORM_CHANGE_SWAP) {
+		} else if(frame == FORM_CHANGE_SWAP) {
 			btChangeEnemyFormStub(kind);
 		}
 
 		/* The burst: shake, flash the canvas, and burst two flashes a tick
 		   from a point near the centre. */
-		if(frm >= FORM_CHANGE_BURST) {
+		if(frame >= FORM_CHANGE_BURST) {
 			PARTICLE *flashes;
 
-			if(frm == FORM_CHANGE_BURST) {
+			if(frame == FORM_CHANGE_BURST) {
 				{
 					Sint32 *variant = &FLASHES[0].variant;
 
@@ -1036,34 +1038,34 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 						variant += sizeof(PARTICLE) / sizeof(*variant);
 					}
 				}
-				state->shakeFrm = 8;
+				state->shakeFrame = 8;
 				syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			}
 			flashes = FLASHES;
-			if(frm >= FORM_CHANGE_BURST &&
-				frm < FORM_CHANGE_BURST + FORM_CHANGE_FLASHES / 2) {
+			if(frame >= FORM_CHANGE_BURST &&
+				frame < FORM_CHANGE_BURST + FORM_CHANGE_FLASHES / 2) {
 				Sint32 x = toFIXED((syRandom() & 63) + center.x / 2 - 32);
 				Sint32 y = toFIXED((syRandom() & 31) + center.y);
 				Sint32 k = 0;
 				/* Each flash starts within 8 pixels of the point. */
 				Sint32	  spread = 15;
-				PARTICLE *burst = &flashes[idx];
+				PARTICLE *burst = &flashes[index];
 
 				for(; k != 2; k++) {
 					PARTICLE *flash = &burst[k];
 					Sint32	  speed = FORM_CHANGE_FLASH_SPEED - 1;
-					Sint32	  ang;
+					Sint32	  angle;
 
 					speed &= syRandom();
-					ang = syRandom();
+					angle = syRandom();
 
 					flash->x = x + toFIXED((syRandom() & spread) - 8);
 					flash->y = y + toFIXED((syRandom() & spread) - 8);
-					flash->velX =
-						sySin(ang) * (speed + FORM_CHANGE_FLASH_SPEED) >> 3;
-					flash->velY =
-						syCos(ang) * (speed + FORM_CHANGE_FLASH_SPEED) >> 3;
+					flash->velocityX =
+						sySin(angle) * (speed + FORM_CHANGE_FLASH_SPEED) >> 3;
+					flash->velocityY =
+						syCos(angle) * (speed + FORM_CHANGE_FLASH_SPEED) >> 3;
 					flash->variant = 0;
 				}
 			}
@@ -1091,7 +1093,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 
 		/* DEAD: tick never falls below 0; the ROM keeps the compare and
 		   branch. */
-		if(frm >= 0) {
+		if(frame >= 0) {
 			FIXED		  cx = toFIXED(center.x / 2);
 			FIXED		  cy = toFIXED(center.y);
 			RENDER_MODEL *model;
@@ -1099,9 +1101,9 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 			Sint32		  bias;
 
 			/* The glow widens until it reaches FORM_CHANGE_GLOW_RADIUS. */
-			if(frm <= 63) {
+			if(frame <= 63) {
 				Sint32 size = FORM_CHANGE_GLOW_RADIUS * 2;
-				Sint32 radius = frm + 8;
+				Sint32 radius = frame + 8;
 
 				if(radius <= FORM_CHANGE_GLOW_RADIUS) {
 					size = radius * 2;
@@ -1114,7 +1116,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 
 			/* Each ray has an angle (x), a spin (y) and an age (variant), each
 			   starting 2 ticks after the last. */
-			if(frm == 0) {
+			if(frame == 0) {
 				for(i = 0; i != LIGHT_RAYS; i++) {
 					PARTICLE *ray = &state->particles[i];
 
@@ -1126,7 +1128,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 				}
 			}
 
-			corners = syHeapAllocEWRAM(512);
+			corners = syHeapAllocateEWRAM(512);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 5;
 			bias = 0;
@@ -1177,14 +1179,14 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 			for(i = 0; i != 4; i++) {
 				Sint32 start = FormChangeWaveStarts[i] + FORM_CHANGE_BURST;
 
-				model->scrollV = (frm * 8 + i * 32) & TEXTURE_SCROLL_MASK;
-				if(frm > start) {
-					bias = (start - frm) * 8 + 56;
+				model->scrollV = (frame * 8 + i * 32) & TEXTURE_SCROLL_MASK;
+				if(frame > start) {
+					bias = (start - frame) * 8 + 56;
 					if(bias > BAND_SHADE_BRIGHTEST)
 						bias = BAND_SHADE_BRIGHTEST;
 					if(bias > MODEL_SHADE_INVISIBLE) {
 						Sint32 growth =
-							(frm - start) * FormChangeWaveGrowth[i] * 2000 +
+							(frame - start) * FormChangeWaveGrowth[i] * 2000 +
 							toFIXED(1) / 4;
 
 						model->shade = bias;
@@ -1196,9 +1198,9 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 							growth / 4);
 						syRotX(FORM_CHANGE_COLUMN_TILT);
 						if(i & 1)
-							syRotY((i * 8 + frm) * (TRIG_TURN / 64));
+							syRotY((i * 8 + frame) * (TRIG_TURN / 64));
 						else
-							syRotY((i * 8 - frm) * (TRIG_TURN / 64));
+							syRotY((i * 8 - frame) * (TRIG_TURN / 64));
 						btRenderTransformVertices(
 							BattleEffectRingCorners, corners, 32);
 						btRenderDrawModelList(model);
@@ -1217,7 +1219,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	if(kind == FORMATION_DOOM_DRAGON_C) {
 		/* Put the battle's view back by hand. */
-		sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+		sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 		BgScrollWork[1].x = state->savedBg1X;
 		BgScrollWork[1].y = state->savedBg1Y;
 		ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -1234,7 +1236,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
    fades, darkens or brightens it as transferMode says. */
 void btEffectTransferCanvas(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	void				*src = RamHeapSlots->battleCanvas;
 	Uint32				 ime;
 
@@ -1252,17 +1254,17 @@ void btEffectTransferCanvas(void)
 			break;
 		case CANVAS_COPY_AND_FADE:
 			if(state->transferValue == CANVAS_FADE_HALF)
-				syColBufferHalve(src, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+				syColorBufferHalve(src, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			else
-				syColBufferScaleThreeQuarters(
+				syColorBufferScaleThreeQuarters(
 					src, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			break;
 		case CANVAS_COPY_AND_DARKEN:
-			syColBufferDarken(src, state->transferValue,
+			syColorBufferDarken(src, state->transferValue,
 				(void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			break;
 		case CANVAS_COPY_AND_BRIGHTEN:
-			syColBufferBrighten(src, state->transferValue,
+			syColorBufferBrighten(src, state->transferValue,
 				(void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
 			break;
 		}
@@ -1279,7 +1281,7 @@ void btEffectTransferCanvas(void)
    it, then clears the picture. */
 void btEffectProcessPendingStampTransfer(void)
 {
-	Uint8  *state = RamHeapSlots->battleEff;
+	Uint8  *state = RamHeapSlots->battleEffect;
 	Uint32	ime;
 	Sint32 *pending;
 
@@ -1301,7 +1303,7 @@ void btEffectProcessPendingStampTransfer(void)
    says. */
 void btEffectTransferFullScreenImage(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	void				*source = RamMapMetatileBuffer;
 	Uint32				 ime;
 
@@ -1321,14 +1323,14 @@ void btEffectTransferFullScreenImage(void)
 			break;
 		case CANVAS_COPY_AND_FADE:
 			if(state->transferValue == CANVAS_FADE_HALF)
-				syColBufferHalve(
+				syColorBufferHalve(
 					source, (void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
 			else
-				syColBufferScaleThreeQuarters(
+				syColorBufferScaleThreeQuarters(
 					source, (void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
 			break;
 		case CANVAS_COPY_AND_DARKEN:
-			syColBufferDarken(source, state->transferValue,
+			syColorBufferDarken(source, state->transferValue,
 				(void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
 			break;
 		}
@@ -1346,7 +1348,7 @@ void btEffectTransferFullScreenImage(void)
    take only its first CANVAS_VIEW_BYTES. */
 void btEffectProcessPendingBlock2Transfer(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	void				*src;
 	Uint32				 ime;
 
@@ -1365,14 +1367,14 @@ void btEffectProcessPendingBlock2Transfer(void)
 			break;
 		case CANVAS_COPY_AND_FADE:
 			if(state->transferValue == CANVAS_FADE_HALF)
-				syColBufferHalve(
+				syColorBufferHalve(
 					src, (void *)BG_CHAR_BLOCK(2), CANVAS_VIEW_BYTES);
 			else
-				syColBufferScaleThreeQuarters(
+				syColorBufferScaleThreeQuarters(
 					src, (void *)BG_CHAR_BLOCK(2), CANVAS_VIEW_BYTES);
 			break;
 		case CANVAS_COPY_AND_DARKEN:
-			syColBufferDarken(src, state->transferValue,
+			syColorBufferDarken(src, state->transferValue,
 				(void *)BG_CHAR_BLOCK(2), CANVAS_VIEW_BYTES);
 			break;
 		}
@@ -1420,7 +1422,7 @@ void btEffectBuildCanvasTilemap(void)
    all at once. */
 void btEffectApplyWindowBlendRegisters(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 
 	REG_WIN0H = state->win0h;
 	REG_WIN0V = state->win0v;
@@ -1435,9 +1437,9 @@ void btEffectApplyWindowBlendRegisters(void)
 
 /* Writes the effect's BG2 scale to BG2PA and BG2PD and its reference point to
    BG2X and BG2Y. */
-void btDispApplyBg2Affine(void)
+void btDisplayApplyBg2Affine(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 
 	REG_BG2PA = state->bg2pa;
 	REG_BG2PD = state->bg2pd;
@@ -1448,7 +1450,7 @@ void btDispApplyBg2Affine(void)
 /* Writes the effect's BG2 reference point to BG2X and BG2Y. */
 void btEffectApplyBg2Reference(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 
 	REG_BG2X = state->bg2x;
 	REG_BG2Y = state->bg2y;
@@ -1458,18 +1460,18 @@ void btEffectApplyBg2Reference(void)
    the effect stands out, for as many ticks as fadeTicks says. */
 void btEffectDarkenBackgroundStep(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	Sint32				*ticksLeft;
 	BATTLE_STATE		*battle;
 
-	ticksLeft = &state->fadeFrm;
+	ticksLeft = &state->fadeFrame;
 	battle = RamHeapSlots->battleState;
 
 	if(*ticksLeft > 0) {
 		Sint32 *step = &state->fadeStep;
 
 		(*step)++;
-		btColBufferScaleStub(battle->pal, (void *)&BG_PLTT_COLOR(6, 0),
+		btColorBufferScaleStub(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
 			toFIXED(1) - *step * BACKGROUND_LEVEL_STEP,
 			BATTLE_BACKGROUND_COLORS);
 		(*ticksLeft)--;
@@ -1479,9 +1481,9 @@ void btEffectDarkenBackgroundStep(void)
 /* Clears every target's flash timer. */
 void btEffectClearTintTimers(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 
-	syWordsClear(state->actorTmrs, sizeof state->actorTmrs);
+	syWordsClear(state->actorTimers, sizeof state->actorTimers);
 }
 
 /* Counts down each target's flash timer and gives it its own palette back when
@@ -1489,14 +1491,14 @@ void btEffectClearTintTimers(void)
 void btEffectCountDownBattlerTints(void)
 {
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 actorIdx;
+	Sint32				 actorIndex;
 
-	state = RamHeapSlots->battleEff;
-	for(actorIdx = 0; actorIdx != 8; actorIdx += 1) {
-		if(state->actorTmrs[actorIdx] != 0) {
-			if((state->actorTmrs[actorIdx] = state->actorTmrs[actorIdx] - 1) ==
-				0) {
-				btEffectTintBattler(state->args->tgts[actorIdx],
+	state = RamHeapSlots->battleEffect;
+	for(actorIndex = 0; actorIndex != 8; actorIndex += 1) {
+		if(state->actorTimers[actorIndex] != 0) {
+			if((state->actorTimers[actorIndex] =
+					   state->actorTimers[actorIndex] - 1) == 0) {
+				btEffectTintBattler(state->args->targets[actorIndex],
 					SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 			}
 		}
@@ -1523,15 +1525,15 @@ void btEffectSetupCanvasWindows(void)
    behind it. */
 void btEffectStartCanvasLayer(Sint32 bgControl)
 {
-	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEffect;
 	BATTLE_STATE			*battle = RamHeapSlots->battleState;
 	void					*canvas = RamHeapSlots->battleCanvas;
 	BATTLE_BACKGROUND_STATE *display = RamHeapSlots->battleBg;
 	Sint32					 row;
 	Sint32					 column;
-	Sint32					 ofs;
+	Sint32					 offset;
 
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	btEffectClearTintTimers();
 	display->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
 	sySynch(1);
@@ -1544,7 +1546,7 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_FIXED, battle->bg, 0);
-	state->fadeFrm = 0;
+	state->fadeFrame = 0;
 	state->fadeStep = 0;
 	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 
@@ -1570,14 +1572,14 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
 	IO_WRITE_QUEUE_PUSH(
 		(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 
-	ofs = 0;
+	offset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
 	}
 
 	syWordsClear(canvas, CANVAS_BYTES);
 	syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-	state->shakeFrm = 0;
+	state->shakeFrame = 0;
 	state->transferPending = 0;
 	state->savedBg1X = BgScrollWork[1].x;
 	state->savedBg1Y = BgScrollWork[1].y;
@@ -1589,13 +1591,13 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
    darkens; nothing calls it. */
 UNUSED void btEffectOpenCanvasLayer(Sint32 bgControl)
 {
-	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEffect;
 	BATTLE_STATE			*battle = RamHeapSlots->battleState;
 	void					*canvas = RamHeapSlots->battleCanvas;
 	BATTLE_BACKGROUND_STATE *display = RamHeapSlots->battleBg;
 	Sint32					 row;
 	Sint32					 column;
-	Sint32					 ofs;
+	Sint32					 offset;
 
 	btEffectClearTintTimers();
 	display->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
@@ -1609,7 +1611,7 @@ UNUSED void btEffectOpenCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 	btBackgroundSetModeStub(
 		BATTLE_BACKGROUND_FIXED, battle->bg, BATTLE_BACKGROUND_FADE_RESTORE);
-	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+	state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
@@ -1634,14 +1636,14 @@ UNUSED void btEffectOpenCanvasLayer(Sint32 bgControl)
 		(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 	sySynch(1);
 
-	ofs = 0;
+	offset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
 	}
 
 	syWordsClear(canvas, CANVAS_BYTES);
 	syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-	state->shakeFrm = 0;
+	state->shakeFrame = 0;
 	state->transferPending = 0;
 	sySynch(1);
 }
@@ -1651,16 +1653,16 @@ void btEffectStartTiledCanvas(Sint32 bgControl)
 {
 	Sint32 row;
 	Sint32 column;
-	Sint32 ofs;
+	Sint32 offset;
 
 	btEffectStartCanvasLayer(bgControl);
 	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7) | BGCNT_SIZE(1);
-	ofs = 0;
+	offset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
-		for(column = 0; column != 8; column++, ofs += 2) {
-			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + ofs) = 0;
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+		for(column = 0; column != 8; column++, offset += 2) {
+			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + offset) = 0;
 		}
 	}
 }
@@ -1675,16 +1677,16 @@ void btEffectStartTiledCanvasFilled(Sint32 bgControl)
 {
 	Sint32 row;
 	Sint32 column;
-	Sint32 ofs;
+	Sint32 offset;
 
 	btEffectStartCanvasLayer(bgControl);
 	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7) | BGCNT_SIZE(1);
-	ofs = 0;
+	offset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
-		for(column = 0; column != 8; column++, ofs += 2) {
-			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + ofs) =
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+		for(column = 0; column != 8; column++, offset += 2) {
+			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + offset) =
 				AFFINE_TILE_PAIR(CANVAS_TILES - 1);
 		}
 	}
@@ -1697,11 +1699,11 @@ void btEffectStartTiledCanvasFilled(Sint32 bgControl)
 /* Closes the canvas layer and brings the battle background's colours back. */
 void btEffectEndCanvasLayer(void)
 {
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	BATTLE_STATE		*battle = RamHeapSlots->battleState;
 	Sint32				 i;
 
-	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	BgScrollWork[1].x = state->savedBg1X;
 	BgScrollWork[1].y = state->savedBg1Y;
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -1743,11 +1745,11 @@ void btEffectEndCanvasLayer(void)
 void btEffectHideBg1AndRestoreBackdrop(void)
 {
 	BATTLE_STATE *battle;
-	Sint32		 *flg;
+	Sint32		 *flag;
 
-	flg = &(RamHeapSlots->battleBg)->bg1ScrollMode;
+	flag = &(RamHeapSlots->battleBg)->bg1ScrollMode;
 	battle = RamHeapSlots->battleState;
-	*flg = BATTLE_BACKGROUND_FIXED;
+	*flag = BATTLE_BACKGROUND_FIXED;
 	syIOWriteQueueStore16((Uint32)&REG_DISPCNT,
 		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
 			DISPCNT_OBJ_ON);
@@ -1778,7 +1780,7 @@ void btEffectSetupCanvasTileMap(void)
 	BATTLE_BACKGROUND_STATE *layer = RamHeapSlots->battleBg;
 	Sint32					 row;
 	Sint32					 column;
-	Sint32					 byteOfs;
+	Sint32					 byteOffset;
 
 	btEffectClearTintTimers();
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, screen->bg, 0);
@@ -1792,15 +1794,15 @@ void btEffectSetupCanvasTileMap(void)
 		(CANVAS_BG1_TOP_ROW - BATTLE_BACKGROUND_SCROLL_Y / 8) * MAP_ROW_BYTES,
 		-1);
 	/* The canvas's tiles, then the blank tile across the rest of each row. */
-	byteOfs = 0;
+	byteOffset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOfs += 2) {
+		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOffset += 2) {
 			if(column >= CANVAS_TILES)
 				*(volatile Uint16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
-					byteOfs) = CANVAS_BG1_BLANK_TILE;
+					byteOffset) = CANVAS_BG1_BLANK_TILE;
 			else
 				*(volatile Uint16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
-					byteOfs) =
+					byteOffset) =
 					row * CANVAS_TILES + CANVAS_BG1_FIRST_TILE + column;
 		}
 	}
@@ -1828,7 +1830,7 @@ void btEffectSetupCanvasTileMap(void)
 /* Draws a line on the canvas, keeping the brighter colour where it crosses what
    is drawn. */
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col)
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color)
 {
 	Sint32 dx = x1 - x0;
 	Sint32 dy = y1 - y0;
@@ -1839,7 +1841,7 @@ void btEffectDrawClippedCanvasLine(
 	Sint32 x;
 	Sint32 y;
 	Sint32 tmp;
-	Uint32 ofs;
+	Uint32 offset;
 
 	CLAMP(y0, 0, CANVAS_SIZE - 1);
 	CLAMP(y1, 0, CANVAS_SIZE - 1);
@@ -1867,9 +1869,9 @@ void btEffectDrawClippedCanvasLine(
 		else
 			dx = 1;
 		for(i = y0; i != y1; i++) {
-			ofs = CANVAS_PIXEL_OFFSET((Uint32)x, (Uint32)i);
-			if(canvas[ofs] < col)
-				canvas[ofs] = col;
+			offset = CANVAS_PIXEL_OFFSET((Uint32)x, (Uint32)i);
+			if(canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if(frac < 0) {
 				x += dx;
@@ -1898,9 +1900,9 @@ void btEffectDrawClippedCanvasLine(
 		else
 			dy = 1;
 		for(i = x0; i != x1; i++) {
-			ofs = CANVAS_PIXEL_OFFSET((Uint32)i, (Uint32)y);
-			if(canvas[ofs] < col)
-				canvas[ofs] = col;
+			offset = CANVAS_PIXEL_OFFSET((Uint32)i, (Uint32)y);
+			if(canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if(frac < 0) {
 				y += dy;

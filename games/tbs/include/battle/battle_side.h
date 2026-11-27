@@ -69,7 +69,7 @@ typedef struct BATTLE_SIDE_ORDER {
    to, and the turns until it is set again. */
 typedef struct DJINN_RECOVERY_ENTRY {
 	Uint8 element; /* ELEMENT */
-	Uint8 idx;	   /* the Djinni within its element */
+	Uint8 index;   /* the Djinni within its element */
 	Uint8 unitId;  /* the unit it belongs to */
 	/* Turns until it is set again, or DJINN_RECOVERY_AFTER_BATTLE or
 	   DJINN_RECOVERY_SUMMONED. */
@@ -81,7 +81,7 @@ STATIC_ASSERT(sizeof(DJINN_RECOVERY_ENTRY) == 4);
 /* One side's Djinn recovery list: up to 64 entries and their count. */
 typedef struct DJINN_RECOVERY_LIST {
 	DJINN_RECOVERY_ENTRY entries[64];
-	Sint32				 cnt; /* entries in use */
+	Sint32				 count; /* entries in use */
 } DJINN_RECOVERY_LIST;
 
 /* One side's Djinn recovery table, as gmDjinnGetRecoveryTable returns it: the

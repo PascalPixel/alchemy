@@ -544,21 +544,21 @@ static void scColosseumNavampaMatchStepOnScales(void)
 		}
 		fdActorWaitForMoveById(actorId);
 		log = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-		log->motionFlg = lowered;
+		log->motionFlags = lowered;
 		scColosseumNavampaMatchMoveOnScales(log, 32);
 		log = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
-		log->motionFlg = lowered;
+		log->motionFlags = lowered;
 		scColosseumNavampaMatchMoveOnScales(log, 4);
 		rider = fdActorGet(actorId);
-		rider->motionFlg = lowered;
+		rider->motionFlags = lowered;
 		scColosseumNavampaMatchMoveOnScales(rider, 4);
-		fdActorSetSprFlags(rider, SPRITE_FLAG_SHADOW);
+		fdActorSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
 		fdActorWaitForMoveById(actorId);
 		fdMapGridCopyMetatileAttributes(
 			SCALES_LEDGE_SUNK_COLUMN, SCALES_LEDGE_SUNK_ROW, 1, 1, 9, 12);
 		sySynch(2);
-		fdActorSetSprFlags(rider, SPRITE_FLAG_SHADOW);
-		rider->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		fdActorSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
+		rider->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		rider->groundHeight = rider->y.fixed;
 		gmFlagSet(FLAG_ON_SCALES);
 	}
@@ -572,11 +572,11 @@ static void scColosseumNavampaMatchStepOffScales(void)
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
 
 	actor = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	scColosseumNavampaMatchMoveOnScales(actor, 4);
 
 	actor = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	scColosseumNavampaMatchMoveOnScales(actor, 32);
 
 	fdActorWaitForMoveById(ACTOR_SCALES_WEST_LEDGE);
@@ -601,12 +601,12 @@ static void scColosseumNavampaMatchSetWeightOnScales(void)
 		z = FIELD_METATILE(probe->z.fixed);
 		if(z == 12) {
 			log = fdActorGet(ACTOR_SCALES_WEIGHT);
-			fdActorSetSprFlags(log, 0);
-			log->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			log->motionFlg = 0;
+			fdActorSetSpriteFlags(log, 0);
+			log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			log->motionFlags = 0;
 			scColosseumNavampaMatchMoveOnScales(log, 4);
 			upper = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-			upper->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			scColosseumNavampaMatchMoveOnScales(upper, 32);
 			scColosseumNavampaMatchMoveOnScales(
 				fdActorGet(ACTOR_SCALES_WEST_LEDGE), 4);
@@ -678,8 +678,8 @@ static void scColosseumNavampaMatchUpdateLogAreaStoneMetatiles(void)
 	for(slot = ACTOR_LOG_AREA_STONE_A; slot <= ACTOR_LOG_AREA_STONE_C; slot++) {
 		actor = fdActorGet(slot);
 		if(fdMapGridGetTerrainHeight(0, actor->x.fixed, actor->z.fixed) == 0) {
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			actor->motionFlg = 0;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->motionFlags = 0;
 			x = FIELD_METATILE(actor->x.fixed);
 			z = FIELD_METATILE(actor->z.fixed);
 			/* The metatile takes the behaviour of the area's east end, (83,
@@ -762,7 +762,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 	ACTOR		*rider;
 	ACTOR		*log;
 	FIELD_STATE *state;
-	Sint32		 ang;
+	Sint32		 angle;
 	Sint32		 actorId;
 	FIXED		 x;
 	FIXED		 z;
@@ -770,18 +770,19 @@ static void scColosseumNavampaMatchRollLongLog(void)
 	FIXED		 nextX;
 	Sint32		 column;
 	FIXED		 acceleration;
-	Sint32		 rollAnm;
+	Sint32		 rollAnimation;
 	Sint32		 step;
 	Sint32		 ahead[3];
 
 	rider = fdActorGet(MainRoutineStateWork.leaderActorId);
 	log = fdActorGet(ACTOR_LONG_LOG);
 	steps = 0;
-	ang = ColosseumNavampaMatchFacingAngles[FACING_EIGHTH_INDEX(rider->facing)];
+	angle =
+		ColosseumNavampaMatchFacingAngles[FACING_EIGHTH_INDEX(rider->facing)];
 	actorId = MainRoutineStateWork.leaderActorId;
 	SET_VECTOR(ahead, (rider->x.fixed & FIELD_METATILE_MASK) + toFIXED(8),
 		rider->y.fixed, (rider->z.fixed & FIELD_METATILE_MASK) + toFIXED(8));
-	syVectorAddPolarOffset(toFIXED(16), ang, ahead);
+	syVectorAddPolarOffset(toFIXED(16), angle, ahead);
 	x = log->x.fixed;
 	z = log->z.fixed;
 	/* Only a nearby rider rolls the log; other interactions push the actor
@@ -791,7 +792,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 		goto far;
 	}
 	if(PerData & KEY_LEFT) {
-		rollAnm = LONG_LOG_ANIMATION_ROLL_WEST;
+		rollAnimation = LONG_LOG_ANIMATION_ROLL_WEST;
 		step = -8;
 		for(;;) {
 			nextX = x - toFIXED(16);
@@ -806,7 +807,7 @@ static void scColosseumNavampaMatchRollLongLog(void)
 		if(!(PerData & KEY_RIGHT)) {
 			return;
 		}
-		rollAnm = LOG_ANIMATION_ROLL_WEST;
+		rollAnimation = LOG_ANIMATION_ROLL_WEST;
 		step = 8;
 		for(;;) {
 			nextX = x + toFIXED(16);
@@ -833,14 +834,14 @@ static void scColosseumNavampaMatchRollLongLog(void)
 	log->speedLimit = toFIXED(1) / 2;
 	acceleration = toFIXED(1) / 5;
 	log->acceleration = acceleration;
-	fdActorSelectAnimation(log, rollAnm);
+	fdActorSelectAnimation(log, rollAnimation);
 	syFieldActorSetMoveTargetFX(log, x, 0, z);
 	fdScriptWait(6);
 	fdActorSetAnimation(actorId, ANIM_WALK);
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	fdActorStartCamera(state->camera, (Sint32)log);
 	fdActorSetSpeedFX(actorId, toFIXED(1) / 2, acceleration);
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSelectAnimation(rider, ANIM_WALK);
 	syFieldActorSetMoveTargetFX(
 		rider, toFIXED(steps * step) + rider->x.fixed, 0, rider->z.fixed);
@@ -855,18 +856,18 @@ static void scColosseumNavampaMatchRollLongLog(void)
 		fdScriptWait(30);
 		fdActorSelectAnimation(log, LOG_ANIMATION_DROP_IN);
 		fdActorWaitForMove(log);
-		log->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		/* Fallen in, its metatiles (84, 10..12) are squares to hop across, as
 		   (86, 9..11) are. */
 		column = 84;
 		fdMapGridCopyMetatileAttributes(86, 10, 1, 2, column, 10);
 		fdMapGridCopyMetatileAttributes(86, 9, 1, 1, column, 12);
-		sySndPlay(SE_STOP_ACTION_SE);
-		sySndPlay(SE_LOG_FALL);
+		sySoundPlay(SE_STOP_ACTION_SE);
+		sySoundPlay(SE_LOG_FALL);
 	} else {
 		fdActorSelectAnimation(log, LOG_ANIMATION_AT_REST);
-		sySndPlay(SE_STOP_ACTION_SE);
-		sySndPlay(SE_HEAVY_STOP);
+		sySoundPlay(SE_STOP_ACTION_SE);
+		sySoundPlay(SE_HEAVY_STOP);
 		/* Its new column, on the ground and on layer 2, is the wall of (85,
 		   9..12). */
 		column = FIELD_METATILE(x);
@@ -885,10 +886,10 @@ far:
 static Sint32 scColosseumNavampaMatchShowActivatedSidewalkLayer(
 	ACTOR *interpreter)
 {
-	fdTilesetAnimPause(SIDEWALK_RUNNING_ANIMATION);
-	fdTilesetAnimResume(SIDEWALK_STOPPED_ANIMATION);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_FLOOR_SWITCH);
+	fdTilesetAnimationPause(SIDEWALK_RUNNING_ANIMATION);
+	fdTilesetAnimationResume(SIDEWALK_STOPPED_ANIMATION);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_FLOOR_SWITCH);
 	return 0;
 }
 
@@ -899,7 +900,7 @@ static void scColosseumNavampaMatchForceSidewalkLog(void)
 	FIXED  moveRate;
 
 	effect = fdActorGet(ACTOR_SIDEWALK_LOG);
-	effect->motionFlg = 0;
+	effect->motionFlags = 0;
 	moveRate = toFIXED(8) / 5;
 	effect->acceleration = moveRate;
 	effect->speedLimit = moveRate;
@@ -987,12 +988,12 @@ UNUSED static void scColosseumNavampaMatchUnusedNoOperation(void)
    Nothing calls it. Arriving at COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH it
    would ask a yes or no question and, on yes, make the character it names the
    one the player moves alone, as the friends' turns do. */
-UNUSED static void scColosseumNavampaMatchUnusedAskToCtrlCharacter(
+UNUSED static void scColosseumNavampaMatchUnusedAskToControlCharacter(
 	Sint32 characterId)
 {
 	FIELD_STATE *state;
 	Sint32		 actorId;
-	Sint32		 msgOfs;
+	Sint32		 msgOffset;
 	Sint32		 entrance;
 
 	state = FieldStateWork;
@@ -1000,22 +1001,22 @@ UNUSED static void scColosseumNavampaMatchUnusedAskToCtrlCharacter(
 	entrance = MainRoutineStateWork.entrance;
 	if(entrance == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
 		fdScriptStart();
-		msgOfs = characterId * 3;
-		fdScriptSetMessageId(msgOfs + MsgColossoDidntThinkBattles);
+		msgOffset = characterId * 3;
+		fdScriptSetMessageId(msgOffset + MsgColossoDidntThinkBattles);
 		fdScriptOpenMessage(characterId, 0);
 		if(fdScriptAskYesNoWithActorAnimation(actorId, 0) == 0) {
-			fdScriptSetMessageId(msgOfs + MsgColossoDidntThinkBattles + 1);
+			fdScriptSetMessageId(msgOffset + MsgColossoDidntThinkBattles + 1);
 			fdScriptShowMessage(characterId, 0);
 			state->transition =
 				SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-			state->transitionFrm = 15;
+			state->transitionFrame = 15;
 			fdScriptFinishScreenTransition();
 			fdScriptWaitTransitionTicks();
-			scColossoCtrlCharacterAlone(characterId);
+			scColossoControlCharacterAlone(characterId);
 			fdScriptStartScreenTransition();
 			fdScriptWaitTransitionTicks();
 		} else {
-			fdScriptSetMessageId(msgOfs + MsgColossoDidntThinkBattles + 2);
+			fdScriptSetMessageId(msgOffset + MsgColossoDidntThinkBattles + 2);
 			fdScriptShowMessage(characterId, 0);
 		}
 		fdScriptEnd();
@@ -1107,16 +1108,16 @@ Sint32 scInit(void)
 	fdMapGridCopyMetatileAttributes(
 		74, 60, 8, 6, LOG_LANE_STORE_COLUMN, LOG_LANE_STORE_ROW);
 
-	fdActorSetSprFlags(fdActorGet(ACTOR_PUDDLE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PUDDLE), 0);
 
 	actor = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(32);
 
 	actor = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(4);
 
 	if(gmFlagGet(FLAG_SCALES_FROZEN) != 0) {
@@ -1150,13 +1151,13 @@ Sint32 scInit(void)
 		fdMapGridCopyMetatileAttributes(SCALES_LEDGE_WEIGHTED_COLUMN,
 			SCALES_LEDGE_WEIGHTED_ROW, 1, 1, 9, 12);
 		actor = fdActorGet(ACTOR_SCALES_WEIGHT);
-		fdActorSetSprFlags(actor, 0);
-		actor->motionFlg = 0;
+		fdActorSetSpriteFlags(actor, 0);
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(2);
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		actor = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
 		actor->y.fixed = toFIXED(4);
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		actor = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
 		actor->y.fixed = toFIXED(32);
 	}
@@ -1167,8 +1168,8 @@ Sint32 scInit(void)
 	}
 	actor = fdActorGet(ACTOR_STONE);
 	actor->x.fixed = FIELD_METATILE_CENTER(column);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdMapGridCopyMetatileAttributes(18, 10, 3, 1, 18, 11);
 	fdMapGridCopyMetatileAttributes(17, 11, 1, 1, column, 11);
 
@@ -1176,8 +1177,8 @@ Sint32 scInit(void)
 		actor = fdActorGet(i);
 		height = fdMapGridGetTerrainHeight(0, actor->x.fixed, actor->z.fixed);
 		if(actor->y.fixed == 0 && height == 0) {
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			actor->motionFlg = height;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->motionFlags = height;
 			fdMapGridCopyMetatileAttributes(83, 13, 1, 1,
 				FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed));
 			fdMapGridCopyMetatileAttributes(83, 13, 1, 1,
@@ -1190,11 +1191,11 @@ Sint32 scInit(void)
 	if(gmFlagGet(FLAG_WALL_WEDGE_HALTED) != 0) {
 		for(i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
 			actor = fdActorGet(i);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			fdActorSelectAnimation(actor, PISTON_ANIMATION_HALF_OUT);
 			actor = fdActorGet(i + PISTON_COUNT);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			actor->motionFlg = 0;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->motionFlags = 0;
 			actor->y.fixed = toFIXED(32);
 			fdActorSelectAnimation(
 				actor, PISTON_ANIMATION_HALF_OUT + PISTON_ANIMATION_TIP);
@@ -1206,10 +1207,10 @@ Sint32 scInit(void)
 	} else {
 		for(i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
 			actor = fdActorGet(i);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 			actor = fdActorGet(i + PISTON_COUNT);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			actor->motionFlg = 0;
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			actor->motionFlags = 0;
 			actor->y.fixed = toFIXED(32);
 		}
 		sySetTickEvent(scColosseumNavampaMatchUpdateWallWedge, EVENT_PASS_TICK);
@@ -1221,22 +1222,22 @@ Sint32 scInit(void)
 	}
 
 	if(gmFlagGet(FLAG_SIDEWALK_LOG_KNOCKED_OFF) != 0) {
-		fdTilesetAnimPause(SIDEWALK_RUNNING_ANIMATION);
+		fdTilesetAnimationPause(SIDEWALK_RUNNING_ANIMATION);
 		actor = fdActorGet(ACTOR_SIDEWALK_LOG);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->x.fixed = toFIXED(1130);
 		actor->z.fixed = toFIXED(184);
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorSelectAnimation(actor, STANDING_LOG_ANIMATION_FALLEN);
 		fdActorStartScript(actor, ColosseumNavampaMatchSidewalkLogOffBelt);
 	} else {
-		fdTilesetAnimPause(SIDEWALK_STOPPED_ANIMATION);
+		fdTilesetAnimationPause(SIDEWALK_STOPPED_ANIMATION);
 	}
 
 	if(gmFlagGet(FLAG_LONG_LOG_IN_PLACE) != 0) {
 		actor = fdActorGet(ACTOR_LONG_LOG);
 		fdActorSelectAnimation(actor, LOG_ANIMATION_DROP_IN);
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(86, 10, 1, 2, 84, 10);
 		fdMapGridCopyMetatileAttributes(86, 9, 1, 1, 84, 12);
 	} else {
@@ -1248,19 +1249,19 @@ Sint32 scInit(void)
 	}
 
 	actor = fdActorGet(ACTOR_PUDDLE);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	actor = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	actor = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-	actor->motionFlg = 0;
-	actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	actor->motionFlags = 0;
+	actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	fdActorSetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
 	scColossoShowItemIcon(ACTOR_PRIZE_A, ITEM_CLAYMORE);
 	scColossoShowItemIcon(ACTOR_PRIZE_B, ITEM_HUNTERS_SWORD);
-	fdActorSetSprColById(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
 
 	/* Entrances: the race, the friends' turns, the tour, and the end of Colosso
 	   after a win or a loss. */
@@ -1279,8 +1280,8 @@ Sint32 scInit(void)
 		fdActorReleaseById(ACTOR_MOVING_SIDEWALK_ATTENDANT);
 		fdActorReleaseById(ACTOR_LOG_ROLLING_ATTENDANT);
 		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
-			sySndPlay(SOUND_FADE_OUT_BGM);
-			scColossoCtrlCharacterAlone(ISAAC);
+			sySoundPlay(SOUND_FADE_OUT_BGM);
+			scColossoControlCharacterAlone(ISAAC);
 			scColossoPlaceFriendsAtCheeringSpots();
 			fdActorWatchAndSetScript(ACTOR_GARET, ACTOR_PARTY_LEADER);
 			scColossoShowOpeningLettering(FINALS_MATCH);
@@ -1299,7 +1300,7 @@ Sint32 scInit(void)
 			break;
 		}
 		scColossoPlaceFriendsAtCheeringSpots();
-		scColossoCtrlCharacterAlone(GARET);
+		scColossoControlCharacterAlone(GARET);
 		scColossoShowOpeningLettering(LETTERING_LEND_A_HAND);
 		break;
 
@@ -1332,12 +1333,13 @@ Sint32 scInit(void)
    last match. */
 static Sint32 scColosseumNavampaMatchAdvanceSleepZ(ACTOR *particle)
 {
-	particle->x.fixed += particle->tmr * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
+	particle->x.fixed +=
+		particle->timer * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
 	particle->y.fixed +=
 		particle->userValue * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
 	particle->scaleX += toFIXED(1) / 40;
 	particle->scaleY += toFIXED(1) / 40;
-	particle->tmr += 5;
+	particle->timer += 5;
 	particle->userValue--;
 	return 0;
 }
@@ -1379,8 +1381,8 @@ static void scColosseumNavampaMatchSpawnSleepZ(void)
 	if(source != NULL) {
 		fdActorSetPosFX(actorId, source->x.fixed, source->z.fixed);
 	}
-	fdActorSetSprFlags(fdActorGet(actorId), 0);
-	particle->motionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGet(actorId), 0);
+	particle->motionFlags = 0;
 	particle->scaleX = toFIXED(2) / 5;
 	particle->scaleY = toFIXED(2) / 5;
 	{
@@ -1388,11 +1390,11 @@ static void scColosseumNavampaMatchSpawnSleepZ(void)
 		particle->x.fixed = x + height;
 		height += y;
 		particle->y.fixed = height;
-		particle->tgtY = height;
+		particle->targetY = height;
 	}
 	/* It drifts east ever faster and rises ever slower, from half a pixel a
 	   tick. */
-	particle->tmr = 25;
+	particle->timer = 25;
 	particle->userValue = SLEEP_Z_STEPS_PER_PIXEL / 2;
 	fdActorSetScript(actorId, ColosseumNavampaMatchSleepZScript);
 }
@@ -1407,7 +1409,7 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdActorReleaseById(ACTOR_PRIZE_A);
 	fdActorReleaseById(ACTOR_PRIZE_B);
 	gmPartyRestoreHpPp(1);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptStart();
 	fdActorSetPos(ACTOR_OPPONENT, 1544, 192);
 	if(battleResult < 0) {
@@ -1444,7 +1446,7 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_LEADER_FALL);
 	fdActorGet(ACTOR_PARTY_LEADER)->x.fixed += toFIXED(3);
 	fdScriptWait(10);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdScriptWait(20);
 	fdActorSetScript(ACTOR_PARTY_LEADER, ColosseumNavampaMatchLeaderActionB);
 	/* Let each companion react before the leader settles back to sleep.
@@ -1574,7 +1576,7 @@ static void scColosseumNavampaMatchPlayPostBattleReunion(Sint32 battleResult)
 	fdActorSetPos(ACTOR_GARET, 1512, 176);
 	fdActorSetPos(ACTOR_IVAN, 1464, 192);
 	fdActorSetPos(ACTOR_MIA, 1560, 200);
-	fdActorSystemSuspendProjectionAndShowSprs();
+	fdActorSystemSuspendProjectionAndShowSprites();
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
 	fdPaletteFadeStartInterpolation(1);
 	fdScriptSetMessageId(MsgColossoIsaacFellAsleep);
@@ -1697,18 +1699,18 @@ static void scColosseumNavampaMatchTalkToScalesAttendant(Sint32 guideId)
 		scColossoHidePointer();
 		sySynch(2);
 		westPan = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
-		westPan->motionFlg = 0;
+		westPan->motionFlags = 0;
 		scColosseumNavampaMatchMoveOnScales(westPan, 4);
 		eastPan = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-		eastPan->motionFlg = 0;
+		eastPan->motionFlags = 0;
 		scColosseumNavampaMatchMoveOnScales(eastPan, 32);
 		fdActorWaitForMove(eastPan);
 		fdScriptWait(45);
 		westPanAgain = fdActorGet(ACTOR_SCALES_WEST_LEDGE);
-		westPanAgain->motionFlg = 0;
+		westPanAgain->motionFlags = 0;
 		scColosseumNavampaMatchMoveOnScales(westPanAgain, 32);
 		eastPanAgain = fdActorGet(ACTOR_SCALES_EAST_LEDGE);
-		eastPanAgain->motionFlg = 0;
+		eastPanAgain->motionFlags = 0;
 		scColosseumNavampaMatchMoveOnScales(eastPanAgain, 4);
 		fdActorWaitForMove(eastPanAgain);
 		fdScriptWait(15);
@@ -1725,7 +1727,7 @@ static void scColosseumNavampaMatchTalkToScalesAttendant(Sint32 guideId)
 		scColossoHidePointer();
 		sySynch(2);
 		fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		scColossoRepeatStageNum(guideId, STAGE_SCALES_OF_JUSTICE);
+		scColossoRepeatStageNumber(guideId, STAGE_SCALES_OF_JUSTICE);
 	} else if(promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
 		fdScriptSetMessageId(MsgColossoObjectiveGetAcross);
 		/* "Here your objective is to get across the gaps as quickly as..." */
@@ -1785,7 +1787,7 @@ static void scColosseumNavampaMatchTalkToSteppingStoneAttendant(Sint32 guideId)
 		scColossoHidePointer();
 		scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 		fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		scColossoRepeatStageNum(guideId, STAGE_STEPPING_STONE);
+		scColossoRepeatStageNumber(guideId, STAGE_STEPPING_STONE);
 	} else if(promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
 		fdScriptSetMessageId(MsgColossoYourGoalInStageSimple);
 		/* "Your goal in this stage is simple: find the shortest path." */
@@ -1840,7 +1842,7 @@ static void scColosseumNavampaMatchTalkToWallWedgeAttendant(Sint32 guideId)
 			fdScriptShowMessage(guideId, 0);
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(guideId, STAGE_WALL_WEDGE);
+			scColossoRepeatStageNumber(guideId, STAGE_WALL_WEDGE);
 			state->raisedCue = RAISED_CUE_NONE;
 		} else if(promptResult == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoOperatorWallsCheer);
@@ -1912,7 +1914,7 @@ static void scColosseumNavampaMatchTalkToFreeClimbAttendant(Sint32 guideId)
 			fdScriptShowMessage(guideId, 0);
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(guideId, STAGE_FREE_CLIMB);
+			scColossoRepeatStageNumber(guideId, STAGE_FREE_CLIMB);
 		} else if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoClearStageMustAbleChange);
 			/* "To clear this stage, you must be able to change
@@ -2013,7 +2015,7 @@ static void scColosseumNavampaMatchTalkToMovingSidewalkAttendant(Sint32 guideId)
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_CLIMB;
 			scColossoRestoreWarrior(ACTOR_PARTY_LEADER);
 			fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-			scColossoRepeatStageNum(guideId, STAGE_MOVING_SIDEWALK);
+			scColossoRepeatStageNumber(guideId, STAGE_MOVING_SIDEWALK);
 		} else if(result == COLOSSO_GUIDE_OFFER_CHEERING) {
 			fdScriptSetMessageId(MsgColossoInStageMustTryOutpace);
 			/* "In this stage, you must try to outpace the conveyor belt." */
@@ -2061,7 +2063,7 @@ static void scColosseumNavampaMatchTalkToLogRollingAttendant(Sint32 actorId)
 		scColossoHidePointer();
 		fdScriptWait(2);
 		fdCameraFollowActor(ACTOR_PARTY_LEADER, 0);
-		scColossoRepeatStageNum(actorId, STAGE_LOG_ROLLING);
+		scColossoRepeatStageNumber(actorId, STAGE_LOG_ROLLING);
 	} else if(state == COLOSSO_GUIDE_OFFER_CHEERING) {
 		fdScriptSetMessageId(MsgColossoHereMustFigureOutHow);
 		/* "Here you must figure out how the logs and stones need to be..." */

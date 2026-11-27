@@ -81,9 +81,9 @@ FADE_DEFINE_BLEND(syScreenFadeFromWhite, 1, 0)
 	 start   : the starting brightness; above 16, the current target
 	 target  : the brightness to end at
 	 frames : how long the fade takes, in frames; with 0 nothing is
-			   written, but `tgt` still becomes the current target */
+			   written, but `target` still becomes the current target */
 void syScreenFadeStart(
-	Sint8 bright, Sint32 layer, Uint32 start, Sint32 tgt, Sint32 frames)
+	Sint8 bright, Sint32 layer, Uint32 start, Sint32 target, Sint32 frames)
 {
 	ScreenFadeToWhite = bright;
 	ScreenFadeLayers = layer & FADE_LAYER_MASK;
@@ -92,7 +92,7 @@ void syScreenFadeStart(
 	} else {
 		ScreenFadeStartLevel = start;
 	}
-	ScreenFadeTargetLevel = tgt;
+	ScreenFadeTargetLevel = target;
 	ScreenFadeFramesLeft = (ScreenFadeFrames = frames);
 }
 

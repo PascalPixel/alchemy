@@ -5,13 +5,13 @@ void scSmokeSpawn(Sint32 x, Sint32 y, Sint32 z)
 	ACTOR *actor = scFieldActorCreate(SPRITE_DUST_CLOUD, x, y, z);
 
 	if(actor != NULL) {
-		actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
-		actor->motionFlg = 0;
-		actor->tmr = 0;
-		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
-		((FIELD_SPR *)actor->spr)->pri = 1;
-		fdActorSetSprFlags(actor, 0);
+		actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
+		actor->motionFlags = 0;
+		actor->timer = 0;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
+		((FIELD_SPR *)actor->sprite)->priority = 1;
+		fdActorSetSpriteFlags(actor, 0);
 		actor->scaleX = toFIXED(1) / 2;
 		actor->scaleY = toFIXED(1) / 2;
 		*(Sint32 *)&actor->watchedActor = SMOKE_TICKS;

@@ -426,8 +426,8 @@ Sint32 scInit(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	actor = fdActorGet(ACTOR_BILIBIN_DINER_WITH_PICKAXE);
-	actor->priFlg = 0;
-	actor->spr->image.pri = 2;
+	actor->priorityFlags = 0;
+	actor->sprite->image.priority = 2;
 	return 0;
 }
 

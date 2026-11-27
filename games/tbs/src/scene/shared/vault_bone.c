@@ -14,7 +14,7 @@ static void scVaultFindBone(void)
 		/* "Wow, you have so many things. Aren't you a greedy lad!" */
 		fdScriptShowMessageAndWait(ACTOR_GIRL_AT_THE_INN, 0);
 	} else {
-		fdItemDispShowItem(
+		fdItemDisplayShowItem(
 			ITEM_BONE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 		fdPartyInventoryGiveItem(ITEM_BONE, 0);
 	}

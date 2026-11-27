@@ -9,11 +9,11 @@ void scVentUpdate(void)
 	state->hook();
 	for(i = sizeof(state->entries) / sizeof(*entry) - 1; i >= 0; i--, entry++) {
 		if(entry->active != 0) {
-			if(entry->tmr <= 0) {
+			if(entry->timer <= 0) {
 				scVentPuff(&entry->x, entry->value);
-				entry->tmr = 9;
+				entry->timer = 9;
 			} else {
-				entry->tmr--;
+				entry->timer--;
 			}
 		}
 	}

@@ -102,7 +102,7 @@ extern const Uint8 OwnerStatusKpString[];
 extern const Uint8 OwnerStatusPvString[];
 #endif
 
-void   btObjectSpawnObjectsForListStub(Uint16 *list, Sint32 cnt, Sint32 mode);
+void   btObjectSpawnObjectsForListStub(Uint16 *list, Sint32 count, Sint32 mode);
 Sint32 gmUnitGetExperienceForLevelStub(Sint32 member, Sint32 level);
 
 /* The four list-page scroll marks, one tile per page of four rows (Psynergy and
@@ -126,21 +126,21 @@ Sint32 gmUnitGetExperienceForLevelStub(Sint32 member, Sint32 level);
 /* Runs the Status screen for party member `member` until B is pressed or the
    link battle's time runs out: the party member's level, experience, HP and PP,
    class, stats, Djinn, elements and statuses, with a help line for the item
-   under the cursor. With `listCnt` nonzero, L and R step through the party
+   under the cursor. With `listCount` nonzero, L and R step through the party
    members of `list` (BATTLE_UNIT_LIST_END ends it, BATTLE_UNIT_REMOVED is an
    empty place). The link timer's window is closed while it is open
-   (BATTLE_MENU_STATE.tmrHidden), and the party status window is redrawn on the
-   way out. Returns 0. mnBattleCollectPartyCommands opens it from the Status
+   (BATTLE_MENU_STATE.timerHidden), and the party status window is redrawn on
+   the way out. Returns 0. mnBattleCollectPartyCommands opens it from the Status
    command and from L or R in a party member's command row. */
-Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
+Sint32 mnBattleStatusScreenRun(Uint16 *list, Sint32 listCount, Sint32 member)
 {
-	SUMMARY_OAM		   portraitSpr;
-	SUMMARY_OAM		   cursorSpr;
-	Sint32			   statSlots[STATUS_ICON_COUNT];
-	Sint8			   statKinds[STATUS_ICON_COUNT];
-	SUMMARY_OAM		   statSprs[STATUS_ICON_COUNT];
-	SUMMARY_OAM		   iconSprs[4];
-	SUMMARY_OAM		   nameSpr;
+	SUMMARY_OAM		   portraitSprite;
+	SUMMARY_OAM		   cursorSprite;
+	Sint32			   statusSlots[STATUS_ICON_COUNT];
+	Sint8			   statusKinds[STATUS_ICON_COUNT];
+	SUMMARY_OAM		   statusSprites[STATUS_ICON_COUNT];
+	SUMMARY_OAM		   iconSprites[4];
+	SUMMARY_OAM		   nameSprite;
 	STAT_CURSOR		   cursor;
 	Sint32			   iconSlots[4];
 	Uint16			   figureList[2];
@@ -148,22 +148,22 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 	Uint16			   itemText[64];
 	Uint16			   psynergyText[64];
 	WIN_STATE		  *state;
-	WINDOW			  *statWin;
+	WINDOW			  *statusWindow;
 	Sint32			   redraw;
-	WINDOW			  *helpWin;
-	Sint32			   memberIdx;
+	WINDOW			  *helpWindow;
+	Sint32			   memberIndex;
 	Sint32			   cursorSlot;
 	SUMMARY_POINT	   cursorPos;
 	Sint32			   portraitSlot;
-	Sint32			   statCnt;
+	Sint32			   statusCount;
 	Sint32			   hasDjinn;
 	Sint32			   shownMember;
 	Sint32			   page;
 	Bool			   figureShown;
 	Uint32			  *djinnList;
-	Sint32			   djinnCnt;
-	Sint32			   psynergyCnt;
-	Sint32			   itemCnt;
+	Sint32			   djinnCount;
+	Sint32			   psynergyCount;
+	Sint32			   itemCount;
 	Sint32			   keys;
 	UNIT			  *unit;
 	Sint32			   i;
@@ -172,77 +172,77 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 	Sint32			   rowBase;
 	Sint32			   row;
 	Sint32			   groupPos;
-	SUMMARY_OAM		  *spr;
+	SUMMARY_OAM		  *sprite;
 
-	state = (WIN_STATE *)RamHeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->windowState;
 	redraw = 1;
-	memberIdx = -1;
-	statCnt = 0;
+	memberIndex = -1;
+	statusCount = 0;
 	hasDjinn = gmPartySumDjinnCountsStub(-1);
 	page = 0;
 	figureShown = FALSE;
-	djinnList = syHeapAllocEWRAM(84 * sizeof(*djinnList));
-	itemCnt = psynergyCnt = djinnCnt = 0;
+	djinnList = syHeapAllocateEWRAM(84 * sizeof(*djinnList));
+	itemCount = psynergyCount = djinnCount = 0;
 	shownMember = figureList[0] = list[0];
 	figureList[1] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForListStub(figureList, 1);
-	portraitSlot = syVRAMCacheAllocEntry(512);
+	portraitSlot = syVRAMCacheAllocateEntry(512);
 	navigation = BattleMenuStateWork;
-	navigation->tmrHidden = redraw;
-	if(navigation->tmrWin != NULL) {
-		mnWindowClose(navigation->tmrWin, 1);
-		navigation->tmrWin = (void *)page;
+	navigation->timerHidden = redraw;
+	if(navigation->timerWindow != NULL) {
+		mnWindowClose(navigation->timerWindow, 1);
+		navigation->timerWindow = (void *)page;
 	}
-	sySndPlayStub(SE_MENU_CONFIRM);
+	sySoundPlayStub(SE_MENU_CONFIRM);
 
 	for(i = 4; i >= 0; i--)
 		cursor.groupPositions[i] = 0;
 	cursor.helpEntry = 0;
 	cursor.drawnHelpEntry = 0;
 	cursor.group = STATUS_CURSOR_GENERAL;
-	cursorSlot = syVRAMCacheAllocEntry(128);
+	cursorSlot = syVRAMCacheAllocateEntry(128);
 	for(i = 0; i < STATUS_ICON_COUNT; i++) {
-		statSlots[i] = syVRAMCacheAllocEntry(128);
-		statKinds[i] = OWNER_CONDITION_EMPTY;
+		statusSlots[i] = syVRAMCacheAllocateEntry(128);
+		statusKinds[i] = OWNER_CONDITION_EMPTY;
 	}
 	for(i = 0; i <= 3; i++) {
-		iconSlots[i] = syVRAMCacheAllocEntry(128);
-		iconSprs[i].oam.f.tile =
+		iconSlots[i] = syVRAMCacheAllocateEntry(128);
+		iconSprites[i].oam.f.tile =
 			syVRAMCacheReload(iconSlots[i], (const void *)-1);
 	}
-	if(listCnt != 0) {
+	if(listCount != 0) {
 		for(i = 0; i <= 5; i++) {
 			Sint32 kind = list[i];
 
 			if(kind == BATTLE_UNIT_LIST_END)
 				break;
 			if(kind != BATTLE_UNIT_REMOVED && kind == member) {
-				memberIdx = i;
+				memberIndex = i;
 				break;
 			}
 		}
 	}
 	cursorPos.x = 0;
 	cursorPos.y = 0;
-	statWin =
+	statusWindow =
 		mnWindowCreate(0, 0, 30, 20, WINDOW_FLAG_INSTANT | WINDOW_FLAG_UNREAD);
-	helpWin = mnWindowCreate(
+	helpWindow = mnWindowCreate(
 		0, 14, 30, 6, WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
 	mnWindowMarkVisibleTextTiles();
 
 	for(;;) {
 		keys = PerWork.repeat;
-		spr = &nameSpr;
-		mnBattleStatDrawPageArrows(STATUS_PAGE_ARROW_VRAM);
+		sprite = &nameSprite;
+		mnBattleStatusDrawPageArrows(STATUS_PAGE_ARROW_VRAM);
 		if(redraw != 0)
 			mnPortraitLoad(member, portraitSlot);
 		MENU_SPR_INIT(
-			*spr, OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-		spr->oam.f.tile = VramCacheEntries[portraitSlot].ofs >> 5;
-		spr->oam.f.x = 8;
-		spr->oam.f.y = 24;
-		spr->oam.f.pal = PORTRAIT_PALETTE;
-		syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW);
+			*sprite, OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+		sprite->oam.f.tile = VramCacheEntries[portraitSlot].offset >> 5;
+		sprite->oam.f.x = 8;
+		sprite->oam.f.y = 24;
+		sprite->oam.f.palette = PORTRAIT_PALETTE;
+		syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
 
 		switch(cursor.helpEntry) {
 		case OWNER_STATUS_HELP_NAME ... OWNER_STATUS_HELP_RESIST:
@@ -259,23 +259,23 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 			break;
 		case OWNER_STATUS_HELP_CONDITION ... OWNER_STATUS_HELP_LAST_CONDITION:
 			cursor.group = STATUS_CURSOR_CONDITIONS;
-			cursor.groupSize = statCnt;
+			cursor.groupSize = statusCount;
 			break;
 		case OWNER_STATUS_HELP_PSYNERGY_LIST:
 			cursor.group = STATUS_CURSOR_PSYNERGY;
-			cursor.groupSize = psynergyCnt;
+			cursor.groupSize = psynergyCount;
 			break;
 		case OWNER_STATUS_HELP_DJINN_LIST:
 			cursor.group = STATUS_CURSOR_DJINN;
-			cursor.groupSize = djinnCnt;
+			cursor.groupSize = djinnCount;
 			break;
 		case OWNER_STATUS_HELP_ITEM_LIST:
 			cursor.group = STATUS_CURSOR_ITEMS;
-			cursor.groupSize = itemCnt;
+			cursor.groupSize = itemCount;
 			break;
 		}
-		mnWindowHighlightRect(statWin->x, statWin->y, statWin->width,
-			statWin->height, WINDOW_PALETTE);
+		mnWindowHighlightRect(statusWindow->x, statusWindow->y,
+			statusWindow->width, statusWindow->height, WINDOW_PALETTE);
 
 		/* A turns the page; each list page starts its own group at the top. */
 		if(PerWork.push & KEY_A) {
@@ -292,15 +292,15 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 			else
 				cursor.helpEntry = page;
 			redraw = 1;
-			sySndPlayStub(SE_MENU_CONFIRM);
+			sySoundPlayStub(SE_MENU_CONFIRM);
 		}
 
-		if(statCnt != 0) {
+		if(statusCount != 0) {
 			if((Uint32)cursor.group <= STATUS_CURSOR_COMBAT_STATS) {
 				groupPos = cursor.groupPositions[cursor.group];
 				if(keys & KEY_DOWN) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					groupPos++;
 					if(groupPos >= cursor.groupSize) {
 						groupPos = 0;
@@ -311,7 +311,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					}
 				} else if(keys & KEY_UP) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					groupPos--;
 					if(groupPos < 0) {
 						groupPos = cursor.groupSize - 1;
@@ -322,10 +322,10 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					}
 				} else if(keys & KEYS_HORIZONTAL) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					cursor.group ^= STATUS_CURSOR_CONDITIONS;
 					if(PerWork.repeat & KEY_LEFT)
-						groupPos = statCnt - 1;
+						groupPos = statusCount - 1;
 					else
 						groupPos = 0;
 				}
@@ -344,7 +344,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 						cursor.group = STATUS_CURSOR_GENERAL;
 						groupPos = cursor.groupPositions[STATUS_CURSOR_GENERAL];
 					}
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				} else if(keys & KEY_LEFT) {
 					keys = 0;
 					groupPos--;
@@ -352,12 +352,12 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 						cursor.group = STATUS_CURSOR_GENERAL;
 						groupPos = cursor.groupPositions[STATUS_CURSOR_GENERAL];
 					}
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				} else if(keys & KEYS_VERTICAL) {
 					keys = 0;
 					cursor.group = STATUS_CURSOR_GENERAL;
 					groupPos = cursor.groupPositions[STATUS_CURSOR_GENERAL];
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 				}
 				cursor.groupPositions[cursor.group] = groupPos;
 			} else if(cursor.group == STATUS_CURSOR_PSYNERGY ||
@@ -367,21 +367,21 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 				groupPos = cursor.groupPositions[cursor.group];
 				if(keys & KEY_DOWN) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					groupPos++;
 					if(groupPos >= cursor.groupSize)
 						groupPos = 0;
 				} else if(keys & KEY_UP) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					groupPos--;
 					if(groupPos < 0)
 						groupPos = cursor.groupSize - 1;
 				} else if(keys & KEY_RIGHT) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					groupPos += 4;
 					if(groupPos >= cursor.groupSize) {
@@ -392,7 +392,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					}
 				} else if(keys & KEY_LEFT) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					groupPos -= 4;
 					if(groupPos < 0)
@@ -410,28 +410,28 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 
 				if(keys & KEY_DOWN) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					djinnPos++;
 					if(djinnPos >= cursor.groupSize)
 						djinnPos = 0;
 				} else if(keys & KEY_UP) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					djinnPos--;
 					if(djinnPos < 0)
 						djinnPos = cursor.groupSize - 1;
 				} else if(keys & KEY_RIGHT) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					djinnPos += 3;
 					if(djinnPos >= cursor.groupSize)
 						djinnPos = djinnPos % 3;
 				} else if(keys & KEY_LEFT) {
 					keys = 0;
-					sySndPlayStub(SE_MENU_CURSOR_MOVE);
+					sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 					redraw |= 2;
 					djinnPos -= 3;
 					if(djinnPos < 0)
@@ -456,9 +456,9 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 			cursor.helpEntry = stop->entry;
 			cursor.column = stop->column;
 			cursor.row = stop->row;
-			mnWindowHighlightRect(statWin->x + stop->highlightColumn + 1,
-				statWin->y + stop->highlightRow + 1, stop->highlightWidth, 1,
-				HIGHLIGHT_PALETTE);
+			mnWindowHighlightRect(statusWindow->x + stop->highlightColumn + 1,
+				statusWindow->y + stop->highlightRow + 1, stop->highlightWidth,
+				1, HIGHLIGHT_PALETTE);
 		} else if(cursor.group == STATUS_CURSOR_COMBAT_STATS) {
 			cursor.helpEntry =
 				OwnerStatusEquipmentCursors[cursor.groupPositions[cursor.group]]
@@ -479,12 +479,12 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 			cursor.row =
 				OwnerStatusConditionCursors[cursor.groupPositions[cursor.group]]
 					.row;
-			if(statKinds[0] == OWNER_CONDITION_NORMAL)
-				mnWindowHighlightRect(
-					statWin->x + 15, statWin->y + 1, 10, 1, HIGHLIGHT_PALETTE);
+			if(statusKinds[0] == OWNER_CONDITION_NORMAL)
+				mnWindowHighlightRect(statusWindow->x + 15, statusWindow->y + 1,
+					10, 1, HIGHLIGHT_PALETTE);
 			else
-				mnWindowHighlightRect(statWin->x + cursor.column + 1,
-					statWin->y + cursor.row + 1, 2, 2, HIGHLIGHT_PALETTE);
+				mnWindowHighlightRect(statusWindow->x + cursor.column + 1,
+					statusWindow->y + cursor.row + 1, 2, 2, HIGHLIGHT_PALETTE);
 		} else if(cursor.group == STATUS_CURSOR_PSYNERGY ||
 			cursor.group == STATUS_CURSOR_ITEMS) {
 			Sint8 pos = cursor.groupPositions[cursor.group];
@@ -494,15 +494,15 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 				cursor.column = -2;
 			else
 				cursor.column = -1;
-			mnWindowHighlightRect(statWin->x + 1, statWin->y + cursor.row + 1,
-				20, 1, HIGHLIGHT_PALETTE);
+			mnWindowHighlightRect(statusWindow->x + 1,
+				statusWindow->y + cursor.row + 1, 20, 1, HIGHLIGHT_PALETTE);
 		} else {
 			Sint32 pos = cursor.groupPositions[STATUS_CURSOR_DJINN];
 
 			cursor.row = (Sint8)(pos % 3) * 2 + 9;
 			cursor.column = (Sint8)(pos / 3) * 7 - 2;
-			mnWindowHighlightRect(statWin->x + cursor.column + 3,
-				statWin->y + cursor.row + 1, 7, 1, HIGHLIGHT_PALETTE);
+			mnWindowHighlightRect(statusWindow->x + cursor.column + 3,
+				statusWindow->y + cursor.row + 1, 7, 1, HIGHLIGHT_PALETTE);
 		}
 		if(cursor.drawnHelpEntry != cursor.helpEntry) {
 			cursor.drawnHelpEntry = cursor.helpEntry;
@@ -516,44 +516,45 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 		if(shownMember != member) {
 			spawnList[0] = member;
 			spawnList[1] = BATTLE_UNIT_LIST_END;
-			btObjectDestroySprsStub(shownMember);
+			btObjectDestroySpritesStub(shownMember);
 			shownMember = member;
 			btObjectSpawnObjectsForListStub(spawnList, 1, 0);
 			figureShown = FALSE;
 		}
 		{
-			SUMMARY_OAM *face = btObjectGetStub(member)->obj->records;
+			SUMMARY_OAM *face = btObjectGetStub(member)->object->records;
 
-			MENU_SPR_INIT(portraitSpr,
+			MENU_SPR_INIT(portraitSprite,
 				OBJ_SIZE_64X64 | OBJ_256_COLORS |
 					OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
 			if(face != NULL) {
-				portraitSpr.oam.f.tile = face->oam.f.tile;
-				portraitSpr.oam.f.x = 172;
-				portraitSpr.oam.f.y = 56;
+				portraitSprite.oam.f.tile = face->oam.f.tile;
+				portraitSprite.oam.f.x = 172;
+				portraitSprite.oam.f.y = 56;
 				if(figureShown != 0)
-					syOAMAddSprAtDepth(&portraitSpr, OAM_DEPTH_WINDOW);
+					syOAMAddSpriteAtDepth(&portraitSprite, OAM_DEPTH_WINDOW);
 				figureShown = TRUE;
 			}
 		}
 
 		MENU_SPR_INIT(
-			cursorSpr, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-		cursorSpr.oam.f.tile = syVRAMCacheReload(cursorSlot, PointingHandTiles);
+			cursorSprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+		cursorSprite.oam.f.tile =
+			syVRAMCacheReload(cursorSlot, PointingHandTiles);
 		{
 			Sint32 bob = TickCount & 4;
-			Sint32 x = statWin->x * 8 + cursorPos.x + 16;
+			Sint32 x = statusWindow->x * 8 + cursorPos.x + 16;
 
-			cursorSpr.oam.f.x =
+			cursorSprite.oam.f.x =
 				page == STATUS_PAGE_STATS ? x - bob / 4 : x + bob / 4;
 		}
-		cursorSpr.oam.f.y =
-			cursorPos.y + statWin->y * 8 - (Sint32)(TickCount & 4) / 4 + 16;
+		cursorSprite.oam.f.y = cursorPos.y + statusWindow->y * 8 -
+			(Sint32)(TickCount & 4) / 4 + 16;
 		if(page != STATUS_PAGE_STATS)
-			cursorSpr.oam.f.affineIdx = 0;
+			cursorSprite.oam.f.affineIndex = 0;
 		else
-			cursorSpr.oam.f.affineIdx = 8;
-		syOAMAddSprAtDepth(&cursorSpr, OAM_DEPTH_WINDOW + 1);
+			cursorSprite.oam.f.affineIndex = 8;
+		syOAMAddSpriteAtDepth(&cursorSprite, OAM_DEPTH_WINDOW + 1);
 
 		if(redraw != 0) {
 
@@ -564,34 +565,34 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 			if(page == STATUS_PAGE_ITEMS) {
 				/* Items: those the member can use in battle first. */
 				Uint16 *entries = BattleMenuStateWork->listAbilities;
-				Sint32	cnt;
-				Sint32	idx;
+				Sint32	count;
+				Sint32	index;
 				Sint32	item;
 				Sint32	row;
 
-				cnt = 0;
+				count = 0;
 				j = -1;
-				for(idx = 0; idx != INVENTORY_SLOTS &&
-					(item = unit->inventory[idx]) != 0;
-					idx++) {
+				for(index = 0; index != INVENTORY_SLOTS &&
+					(item = unit->inventory[index]) != 0;
+					index++) {
 					gmItemGetDirectStub(item);
 					if(mnItemCheckBattleUse(member, item) == 0)
-						entries[cnt++] = item;
+						entries[count++] = item;
 				}
-				for(idx = 0; idx != INVENTORY_SLOTS &&
-					(item = unit->inventory[idx]) != 0;
-					idx++) {
+				for(index = 0; index != INVENTORY_SLOTS &&
+					(item = unit->inventory[index]) != 0;
+					index++) {
 					gmItemGetDirectStub(item);
 					if(mnItemCheckBattleUse(member, item) != 0)
-						entries[cnt++] = item;
+						entries[count++] = item;
 				}
-				entries[cnt] = 0;
-				itemCnt = cnt;
-				if(cnt <= cursor.groupPositions[5])
-					cursor.groupPositions[5] = cnt - 1;
+				entries[count] = 0;
+				itemCount = count;
+				if(count <= cursor.groupPositions[5])
+					cursor.groupPositions[5] = count - 1;
 				rowBase = cursor.groupPositions[5] / 4 * 4;
 				row = (Sint8)(cursor.groupPositions[5] % 4);
-				if(cnt != 0) {
+				if(count != 0) {
 					Uint16 *entry = entries + rowBase + row;
 
 					if(mnItemCheckBattleUse(member, *entry) == 2)
@@ -607,70 +608,70 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					BATTLE_MENU_MESSAGE_COPY((Sint32)MsgBattleNoItems, itemText,
 						SUMMARY_HELP_CAPACITY);
 				}
-				mnWindowSprRedrawSavedRect(statWin);
-				mnWindowMapTextCanvasTiles(
-					helpWin->x, helpWin->y, helpWin->width, helpWin->height, 0);
+				mnWindowSpriteRedrawSavedRect(statusWindow);
+				mnWindowMapTextCanvasTiles(helpWindow->x, helpWindow->y,
+					helpWindow->width, helpWindow->height, 0);
 				mnTextFillCanvasBackground();
-				mnTextDrawWideStringAtOffset(itemText, helpWin, 0, 20);
+				mnTextDrawWideStringAtOffset(itemText, helpWindow, 0, 20);
 				if(rowBase != j) {
-					mnWindowDrawDividerLine(statWin, 0, 16, 29, 16);
+					mnWindowDrawDividerLine(statusWindow, 0, 16, 29, 16);
 					for(j = 0; j <= 3 && (item = entries[rowBase + j]) != 0;
 						j++) {
 						gmItemGetDirectStub(item);
-						mnTextSetCol(TEXT_COLOR_WHITE);
+						mnTextSetColor(TEXT_COLOR_WHITE);
 						if(mnItemCheckBattleUse(member, item) != 0)
-							mnTextSetCol(TEXT_COLOR_YELLOW);
+							mnTextSetColor(TEXT_COLOR_YELLOW);
 						else if(item & INVENTORY_BROKEN)
-							mnTextSetCol(TEXT_COLOR_RED);
+							mnTextSetColor(TEXT_COLOR_RED);
 						mnTextDrawMessageAsTiles(
 							(item & INVENTORY_ITEM_ID_MASK) +
 								(Sint32)MsgItemName,
-							statWin, 32, 64 + j * 16);
-						mnTextSetCol(TEXT_COLOR_WHITE);
-						iconSprs[j].oam.f.tile =
+							statusWindow, 32, 64 + j * 16);
+						mnTextSetColor(TEXT_COLOR_WHITE);
+						iconSprites[j].oam.f.tile =
 							mnItemIconLoadIntoSlot(item, iconSlots[j]);
 					}
 					/* FAKEMATCH(dead): a store nothing reads, which keeps the
 					 * list loop's exit on the fill loop's test. */
 					item = 0;
 					for(; j <= 3; j++)
-						iconSprs[j].oam.f.tile =
+						iconSprites[j].oam.f.tile =
 							syVRAMCacheReload(iconSlots[j], (const void *)-1);
 				}
-				if(cnt > 4)
-					SUMMARY_DRAW_PAGE_MARKS(statWin, cnt, rowBase);
+				if(count > 4)
+					SUMMARY_DRAW_PAGE_MARKS(statusWindow, count, rowBase);
 			} else if(page == STATUS_PAGE_PSYNERGY) {
 				/* Battle Psynergy: grey when it cannot be used in battle, red
 				   when the PP are short, another colour while Psynergy is
 				   sealed. */
 				Uint16 *entries = BattleMenuStateWork->listAbilities;
-				Sint32	cnt;
+				Sint32	count;
 				Sint32	shownRow;
-				Sint32	idx;
+				Sint32	index;
 				Sint32	id;
 
-				cnt = 0;
+				count = 0;
 				j = -1;
-				mnWindowSprRedrawSavedRect(statWin);
+				mnWindowSpriteRedrawSavedRect(statusWindow);
 				shownRow = j;
-				for(idx = 0; idx != PSYNERGY_SLOTS &&
-					(id = unit->psynergy[idx].encodedAction &
+				for(index = 0; index != PSYNERGY_SLOTS &&
+					(id = unit->psynergy[index].encodedAction &
 							PSYNERGY_ABILITY_MASK) != 0;
-					idx++) {
-					if(gmAbilityGetDirectStub(id)->flg &
+					index++) {
+					if(gmAbilityGetDirectStub(id)->flags &
 						ABILITY_USABLE_IN_BATTLE)
-						entries[cnt++] = id;
+						entries[count++] = id;
 				}
-				entries[cnt] = 0;
-				psynergyCnt = cnt;
-				if(cnt <= cursor.groupPositions[3])
-					cursor.groupPositions[3] = cnt - 1;
+				entries[count] = 0;
+				psynergyCount = count;
+				if(count <= cursor.groupPositions[3])
+					cursor.groupPositions[3] = count - 1;
 				rowBase = cursor.groupPositions[3] / 4 * 4;
 				row = (Sint8)(cursor.groupPositions[3] % 4);
 				if(rowBase != j || row != shownRow) {
 					state->holdTilemapUpload = 1;
 					mnTextFillCanvasBackground();
-					if(cnt != 0)
+					if(count != 0)
 						BATTLE_MENU_MESSAGE_COPY(
 							(entries[rowBase + row] & PSYNERGY_ABILITY_MASK) +
 								(Sint32)MsgAbilityDescription,
@@ -678,60 +679,62 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					else
 						BATTLE_MENU_MESSAGE_COPY((Sint32)MsgBattleNoPsynergy,
 							psynergyText, BATTLE_MENU_MESSAGE_CAPACITY);
-					mnWindowSprRedrawSavedRect(statWin);
-					mnWindowMapTextCanvasTiles(helpWin->x, helpWin->y,
-						helpWin->width, helpWin->height, 0);
-					mnTextDrawWideStringAtOffset(psynergyText, helpWin, 0, 20);
+					mnWindowSpriteRedrawSavedRect(statusWindow);
+					mnWindowMapTextCanvasTiles(helpWindow->x, helpWindow->y,
+						helpWindow->width, helpWindow->height, 0);
+					mnTextDrawWideStringAtOffset(
+						psynergyText, helpWindow, 0, 20);
 					if(rowBase != j) {
-						mnWindowDrawDividerLine(statWin, 0, 16, 29, 16);
+						mnWindowDrawDividerLine(statusWindow, 0, 16, 29, 16);
 						for(j = 0; j <= 3 && (id = entries[rowBase + j]) != 0;
 							j++) {
 							ABILITY_DEFINITION *ability =
 								gmAbilityGetDirectStub(id);
 							Sint32 range;
-							Sint32 tileFlg;
+							Sint32 tileFlags;
 
-							mnWindowSetTilemapEntry(statWin,
+							mnWindowSetTilemapEntry(statusWindow,
 								WINDOW_TILE_PP_LABEL, 11, j * 2 + 8, 0);
-							mnWindowSetTilemapEntry(statWin,
+							mnWindowSetTilemapEntry(statusWindow,
 								WINDOW_TILE_PP_LABEL_END, 12, j * 2 + 8, 0);
-							iconSprs[j].oam.f.tile =
+							iconSprites[j].oam.f.tile =
 								mnAbilityIconLoadIntoSlot(id, iconSlots[j]);
-							if(!(ability->flg & ABILITY_USABLE_IN_BATTLE))
-								mnTextSetCol(TEXT_COLOR_YELLOW);
+							if(!(ability->flags & ABILITY_USABLE_IN_BATTLE))
+								mnTextSetColor(TEXT_COLOR_YELLOW);
 							else if(ability->ppCost > unit->pp)
-								mnTextSetCol(TEXT_COLOR_RED);
+								mnTextSetColor(TEXT_COLOR_RED);
 							else if(unit->psySeal != 0)
-								mnTextSetCol(TEXT_COLOR_PINK);
-							tileFlg = 0;
-							state->textPal = 5;
+								mnTextSetColor(TEXT_COLOR_PINK);
+							tileFlags = 0;
+							state->textPalette = 5;
 							mnTextDrawMessageAsTiles(
-								id + (Sint32)MsgAbilityName, statWin, 16,
+								id + (Sint32)MsgAbilityName, statusWindow, 16,
 								64 + j * 16);
-							mnTextDrawNumAtOffset(
-								ability->ppCost, 2, statWin, 104, 64 + j * 16);
-							mnTextSetCol(TEXT_COLOR_WHITE);
-							state->textPal = WINDOW_PALETTE;
+							mnTextDrawNumberAtOffset(ability->ppCost, 2,
+								statusWindow, 104, 64 + j * 16);
+							mnTextSetColor(TEXT_COLOR_WHITE);
+							state->textPalette = WINDOW_PALETTE;
 							if(ability->element != ELEMENT_NONE)
-								mnWindowSetTilemapEntry(statWin,
+								mnWindowSetTilemapEntry(statusWindow,
 									ELEMENT_ICON_TILE + ability->element, 15,
-									j * 2 + 8, tileFlg);
+									j * 2 + 8, tileFlags);
 							range = ability->range;
 							if(range == ABILITY_RANGE_ALL)
 								range = RANGE_ICON_ALL;
 							else
 								range--;
-							mnRangeIconDraw(statWin, 16, j * 2 + 8, range, 0);
+							mnRangeIconDraw(
+								statusWindow, 16, j * 2 + 8, range, 0);
 						}
 						/* FAKEMATCH(dead): a store nothing reads, which keeps
 						 * the list loop's exit on the fill loop's test. */
 						id = 0;
 						for(; j <= 3; j++)
-							iconSprs[j].oam.f.tile = syVRAMCacheReload(
+							iconSprites[j].oam.f.tile = syVRAMCacheReload(
 								iconSlots[j], (const void *)-1);
 					}
-					if(cnt > 4)
-						SUMMARY_DRAW_PAGE_MARKS(statWin, cnt, rowBase);
+					if(count > 4)
+						SUMMARY_DRAW_PAGE_MARKS(statusWindow, count, rowBase);
 					state->dirty = 1;
 					state->holdTilemapUpload = 0;
 				}
@@ -746,17 +749,17 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 				Sint32 bit;
 				Uint32 entry;
 
-				mnWindowSprRedrawSavedRect(statWin);
-				mnWindowMapTextCanvasTiles(
-					helpWin->x, helpWin->y, helpWin->width, helpWin->height, 0);
-				mnWindowDrawDividerLine(statWin, 0, 16, 29, 16);
-				djinnCnt = 0;
+				mnWindowSpriteRedrawSavedRect(statusWindow);
+				mnWindowMapTextCanvasTiles(helpWindow->x, helpWindow->y,
+					helpWindow->width, helpWindow->height, 0);
+				mnWindowDrawDividerLine(statusWindow, 0, 16, 29, 16);
+				djinnCount = 0;
 				for(element = 0; element < ELEMENT_COUNT; element++) {
 					for(bit = 0; bit < DJINN_PER_ELEMENT; bit++) {
 						if(unit->djinnSet[element] & (1 << bit)) {
-							djinnList[djinnCnt] =
+							djinnList[djinnCount] =
 								(element << BATTLE_DJINN_ELEMENT_SHIFT) | bit;
-							djinnCnt++;
+							djinnCount++;
 						} else if(unit->djinnHeld[element] & (1 << bit)) {
 							DJINN_RECOVERY_LIST *recovery =
 								&((DJINN_RECOVERY_TABLE *)
@@ -766,29 +769,29 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 							Sint32 k;
 							Sint32 value;
 
-							for(k = 0; k < recovery->cnt &&
+							for(k = 0; k < recovery->count &&
 								!(recovery->entries[k].unitId == member &&
 									recovery->entries[k].element == element &&
-									recovery->entries[k].idx == bit);
+									recovery->entries[k].index == bit);
 								k++)
 								;
 							value = (element << BATTLE_DJINN_ELEMENT_SHIFT) |
 								bit | BATTLE_DJINN_UNSET;
-							djinnList[djinnCnt] = value;
+							djinnList[djinnCount] = value;
 							if(recovery->entries[k].turns > 0)
-								djinnList[djinnCnt] = value |
+								djinnList[djinnCount] = value |
 									(recovery->entries[k].turns
 										<< BATTLE_DJINN_TURNS_SHIFT);
-							djinnCnt++;
+							djinnCount++;
 						}
 					}
 				}
-				djinnList[djinnCnt] = BATTLE_DJINN_END;
-				if(cursor.groupPositions[STATUS_CURSOR_DJINN] >= djinnCnt)
-					cursor.groupPositions[STATUS_CURSOR_DJINN] = djinnCnt - 1;
+				djinnList[djinnCount] = BATTLE_DJINN_END;
+				if(cursor.groupPositions[STATUS_CURSOR_DJINN] >= djinnCount)
+					cursor.groupPositions[STATUS_CURSOR_DJINN] = djinnCount - 1;
 				entry = djinnList[cursor.groupPositions[STATUS_CURSOR_DJINN]];
 				state->holdTilemapUpload = 1;
-				if(djinnCnt != 0) {
+				if(djinnCount != 0) {
 					mnMessageArgumentClearAll();
 					if(entry & BATTLE_DJINN_UNSET) {
 						if(entry & BATTLE_DJINN_TURNS) {
@@ -814,7 +817,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 				}
 				state->holdTilemapUpload = released;
 				mnTextFillCanvasBackground();
-				mnTextDrawWideStringAtOffset(psynergyText, helpWin, 0, 20);
+				mnTextDrawWideStringAtOffset(psynergyText, helpWindow, 0, 20);
 				if(rowBase != shownBase) {
 					Uint32 shown;
 					Sint32 column;
@@ -828,280 +831,287 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 						tileRow = j % 3 * 2 + 9;
 						if(shown == BATTLE_DJINN_END)
 							break;
-						mnWindowSetTilemapEntry(statWin,
+						mnWindowSetTilemapEntry(statusWindow,
 							BATTLE_DJINN_ELEMENT_OF(shown) + ELEMENT_ICON_TILE,
 							column, tileRow, 0);
 						if(shown & BATTLE_DJINN_TURNS)
-							mnTextSetCol(TEXT_COLOR_YELLOW);
+							mnTextSetColor(TEXT_COLOR_YELLOW);
 						else if(shown & BATTLE_DJINN_UNSET)
-							mnTextSetCol(TEXT_COLOR_RED);
+							mnTextSetColor(TEXT_COLOR_RED);
 						mnTextDrawMessageAsTiles(
 							BATTLE_DJINNI(shown) + (Sint32)MsgDjinnName,
-							statWin, column * 8 + 8, tileRow * 8);
+							statusWindow, column * 8 + 8, tileRow * 8);
 /* Spanish and Italian leave a recovering Djinni's turns off the list. */
 #if !STATUS_DJINN_TURNS_HIDDEN
 						if(shown & BATTLE_DJINN_TURNS)
-							mnTextDrawNumAtOffset(
+							mnTextDrawNumberAtOffset(
 								(shown & BATTLE_DJINN_TURNS) >>
 									BATTLE_DJINN_TURNS_SHIFT,
-								2, statWin, column * 8 + 40, tileRow * 8);
+								2, statusWindow, column * 8 + 40, tileRow * 8);
 #endif
-						mnTextSetCol(TEXT_COLOR_WHITE);
+						mnTextSetColor(TEXT_COLOR_WHITE);
 					}
 				}
 				/* LEFTOVER(template): the scroll marks under a count past */
-				/* four, as mnBattleStatScreenRun's item and Psynergy pages draw
-				   theirs with SUMMARY_DRAW_PAGE_MARKS; this page's count stays
-				   0; as no arm. */
+				/* four, as mnBattleStatusScreenRun's item and Psynergy pages
+				   draw theirs with SUMMARY_DRAW_PAGE_MARKS; this page's count
+				   stays 0; as no arm. */
 				if(released > 4)
-					SUMMARY_DRAW_PAGE_MARKS(statWin, released, rowBase);
+					SUMMARY_DRAW_PAGE_MARKS(statusWindow, released, rowBase);
 				state->dirty = 1;
 				state->holdTilemapUpload = 0;
 			}
 
 			if(redraw != 0) {
 				if(page == STATUS_PAGE_STATS) {
-					mnWindowSprRedrawSavedRect(statWin);
-					mnWindowMapTextCanvasTiles(helpWin->x, helpWin->y,
-						helpWin->width, helpWin->height, page);
-					mnWindowDrawDividerLine(statWin, 0, 14, 29, 14);
+					mnWindowSpriteRedrawSavedRect(statusWindow);
+					mnWindowMapTextCanvasTiles(helpWindow->x, helpWindow->y,
+						helpWindow->width, helpWindow->height, page);
+					mnWindowDrawDividerLine(statusWindow, 0, 14, 29, 14);
 				}
-				mnTextDrawStringAtOffset(unit->name, statWin, 0, 0);
-				if(memberIdx > 3)
+				mnTextDrawStringAtOffset(unit->name, statusWindow, 0, 0);
+				if(memberIndex > 3)
 					mnTextDrawMessageAsTiles(
-						(Sint32)MsgInTheBack, statWin, 40, 16);
+						(Sint32)MsgInTheBack, statusWindow, 40, 16);
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 				/* The European editions share one image and choose the level's
 				   label, drawing the name again under it, at run time. */
 				switch(syGetLanguage()) {
 				case CARTRIDGE_LANGUAGE_FRENCH:
-					mnTextDrawStringAtOffset(unit->name, statWin, 0, 0);
+					mnTextDrawStringAtOffset(unit->name, statusWindow, 0, 0);
 					mnTextDrawStringAtOffset(
-						OwnerStatusNivString, statWin, 51, 0);
-					mnTextDrawNumInWindow(unit->level, 2, statWin, 72, 0);
+						OwnerStatusNivString, statusWindow, 51, 0);
+					mnTextDrawNumberInWindow(
+						unit->level, 2, statusWindow, 72, 0);
 					break;
 				case CARTRIDGE_LANGUAGE_SPANISH:
-					mnTextDrawStringAtOffset(unit->name, statWin, 0, 0);
+					mnTextDrawStringAtOffset(unit->name, statusWindow, 0, 0);
 					mnTextDrawStringAtOffset(
-						OwnerStatusNvString, statWin, 56, 0);
-					mnTextDrawNumInWindow(unit->level, 2, statWin, 72, 0);
+						OwnerStatusNvString, statusWindow, 56, 0);
+					mnTextDrawNumberInWindow(
+						unit->level, 2, statusWindow, 72, 0);
 					break;
 				default:
-					mnTextDrawStringAtOffset(unit->name, statWin, 0, 0);
+					mnTextDrawStringAtOffset(unit->name, statusWindow, 0, 0);
 					mnTextDrawStringAtOffset(
-						OwnerStatusLevelString, statWin, 56, 0);
-					mnTextDrawNumInWindow(unit->level, 2, statWin, 72, 0);
+						OwnerStatusLevelString, statusWindow, 56, 0);
+					mnTextDrawNumberInWindow(
+						unit->level, 2, statusWindow, 72, 0);
 					break;
 				}
 #else
 				mnTextDrawStringAtOffset(
-					OwnerStatusLevelString, statWin, 56, 0);
-				mnTextDrawNumInWindow(unit->level, 2, statWin, 72, 0);
+					OwnerStatusLevelString, statusWindow, 56, 0);
+				mnTextDrawNumberInWindow(unit->level, 2, statusWindow, 72, 0);
 #endif
-				mnTextDrawMessageAsTiles((Sint32)MsgExp, statWin, 0, 8);
-				mnTextDrawNumInWindow(unit->experience, 8, statWin, 40, 8);
+				mnTextDrawMessageAsTiles((Sint32)MsgExp, statusWindow, 0, 8);
+				mnTextDrawNumberInWindow(
+					unit->experience, 8, statusWindow, 40, 8);
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 				switch(syGetLanguage()) {
 				case CARTRIDGE_LANGUAGE_GERMAN:
 					mnTextDrawStringAtOffset(
-						OwnerStatusKpString, statWin, 40, 24);
+						OwnerStatusKpString, statusWindow, 40, 24);
 					break;
 				case CARTRIDGE_LANGUAGE_FRENCH:
 				case CARTRIDGE_LANGUAGE_SPANISH:
 					mnTextDrawStringAtOffset(
-						OwnerStatusPvString, statWin, 40, 24);
+						OwnerStatusPvString, statusWindow, 40, 24);
 					break;
 				case CARTRIDGE_LANGUAGE_ITALIAN:
 					mnTextDrawStringAtOffset(
-						OwnerStatusHpString, statWin, 40, 24);
+						OwnerStatusHpString, statusWindow, 40, 24);
 					break;
 				}
 #else
-				mnTextDrawStringAtOffset(OwnerStatusHpString, statWin, 40, 24);
+				mnTextDrawStringAtOffset(
+					OwnerStatusHpString, statusWindow, 40, 24);
 #endif
-				mnTextDrawNumInWindow(unit->hp, 4, statWin, 56, 24);
+				mnTextDrawNumberInWindow(unit->hp, 4, statusWindow, 56, 24);
 				mnTextDrawStringAtOffset(
-					OwnerStatusSlashString, statWin, 88, 24);
-				mnTextDrawNumInWindow(unit->hpMax, 4, statWin, 96, 24);
-				mnTextDrawStringAtOffset(OwnerStatusPpString, statWin, 40, 32);
-				mnTextDrawNumInWindow(unit->pp, 4, statWin, 56, 32);
+					OwnerStatusSlashString, statusWindow, 88, 24);
+				mnTextDrawNumberInWindow(unit->hpMax, 4, statusWindow, 96, 24);
 				mnTextDrawStringAtOffset(
-					OwnerStatusSlashString, statWin, 88, 32);
-				mnTextDrawNumInWindow(unit->ppMax, 4, statWin, 96, 32);
+					OwnerStatusPpString, statusWindow, 40, 32);
+				mnTextDrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
+				mnTextDrawStringAtOffset(
+					OwnerStatusSlashString, statusWindow, 88, 32);
+				mnTextDrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
 				mnTextDrawMessageAsTiles(
-					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK), statWin, 136,
-					16);
-				mnTextDrawNumInWindow(
-					unit->attack, 3, statWin, SUMMARY_STAT_VALUE_X, 16);
+					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK), statusWindow,
+					136, 16);
+				mnTextDrawNumberInWindow(
+					unit->attack, 3, statusWindow, SUMMARY_STAT_VALUE_X, 16);
 				mnTextDrawMessageAsTiles(
-					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE), statWin,
-					136, 24);
-				mnTextDrawNumInWindow(
-					unit->defense, 3, statWin, SUMMARY_STAT_VALUE_X, 24);
+					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE),
+					statusWindow, 136, 24);
+				mnTextDrawNumberInWindow(
+					unit->defense, 3, statusWindow, SUMMARY_STAT_VALUE_X, 24);
 				mnTextDrawMessageAsTiles(
-					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY), statWin,
-					136, 32);
-				mnTextDrawNumInWindow(
-					unit->agility, 3, statWin, SUMMARY_STAT_VALUE_X, 32);
+					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY),
+					statusWindow, 136, 32);
+				mnTextDrawNumberInWindow(
+					unit->agility, 3, statusWindow, SUMMARY_STAT_VALUE_X, 32);
 				mnTextDrawMessageAsTiles(
-					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK), statWin, 136,
-					40);
-				mnTextDrawNumInWindow(
-					unit->luck, 3, statWin, SUMMARY_STAT_VALUE_X, 40);
+					OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK), statusWindow,
+					136, 40);
+				mnTextDrawNumberInWindow(
+					unit->luck, 3, statusWindow, SUMMARY_STAT_VALUE_X, 40);
 				mnTextDrawMessageAsTiles(
-					(Sint32)MsgClassName + unit->classId, statWin, 0, 48);
+					(Sint32)MsgClassName + unit->classId, statusWindow, 0, 48);
 				if(page == STATUS_PAGE_STATS) {
 					if(hasDjinn != 0)
 						mnTextDrawMessageAsTiles(
 							OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DJINN),
-							statWin, 0, 72);
+							statusWindow, 0, 72);
 					mnTextDrawMessageAsTiles(
 						OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ELEMENT_LEVEL),
-						statWin, 0, 80);
+						statusWindow, 0, 80);
 					mnTextDrawMessageAsTiles(
-						OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_POWER), statWin,
-						0, 88);
+						OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_POWER),
+						statusWindow, 0, 88);
 					mnTextDrawMessageAsTiles(
-						OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST), statWin,
-						0, 96);
+						OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST),
+						statusWindow, 0, 96);
 					for(j = 0; j < ELEMENT_COUNT; j++) {
 						Sint32 iconRow = 1;
 
 						if(hasDjinn != 0)
 							iconRow = 0;
-						mnWindowSetTilemapEntry(statWin, ELEMENT_ICON_TILE + j,
-							7 + j * 4, iconRow + 8, 0);
+						mnWindowSetTilemapEntry(statusWindow,
+							ELEMENT_ICON_TILE + j, 7 + j * 4, iconRow + 8, 0);
 						if(hasDjinn != 0) {
-							mnTextDrawNumInWindow(unit->djinnSetCnts[j], 1,
-								statWin, 40 + j * 32, 72);
+							mnTextDrawNumberInWindow(unit->djinnSetCounts[j], 1,
+								statusWindow, 40 + j * 32, 72);
 							mnTextDrawStringAtOffset(OwnerStatusSlashString,
-								statWin, 48 + j * 32, 72);
-							mnTextDrawNumInWindow(unit->djinnHeldCnts[j], 1,
-								statWin, 48 + j * 32 + 8, 72);
+								statusWindow, 48 + j * 32, 72);
+							mnTextDrawNumberInWindow(unit->djinnHeldCounts[j],
+								1, statusWindow, 48 + j * 32 + 8, 72);
 						}
-						mnTextDrawNumInWindow(
-							gmUnitGetElementLevelStub(member, j), 2, statWin,
-							48 + j * 32, 80);
-						mnTextDrawNumInWindow(unit->element[j].power, 3,
-							statWin, 40 + j * 32, 88);
-						mnTextDrawNumInWindow(unit->element[j].resistance, 3,
-							statWin, 40 + j * 32, 96);
+						mnTextDrawNumberInWindow(
+							gmUnitGetElementLevelStub(member, j), 2,
+							statusWindow, 48 + j * 32, 80);
+						mnTextDrawNumberInWindow(unit->element[j].power, 3,
+							statusWindow, 40 + j * 32, 88);
+						mnTextDrawNumberInWindow(unit->element[j].resistance, 3,
+							statusWindow, 40 + j * 32, 96);
 					}
 				}
 
 				/* The status icons, as The Broken Seal orders them. */
 				i = 0;
 				if(unit->hp == 0) {
-					statKinds[0] = OWNER_CONDITION_DOWNED;
+					statusKinds[0] = OWNER_CONDITION_DOWNED;
 					i = 1;
 				}
 				do {
 					if(unit->curse != 0) {
-						statKinds[i++] = OWNER_CONDITION_CURSED_ITEM;
+						statusKinds[i++] = OWNER_CONDITION_CURSED_ITEM;
 					}
 					if(i > 7)
 						break;
 					if(unit->grimReaper != 0) {
-						statKinds[i++] = OWNER_CONDITION_GRIM_REAPER;
+						statusKinds[i++] = OWNER_CONDITION_GRIM_REAPER;
 					}
 					if(i > 7)
 						break;
 					if(unit->poison == 1) {
-						statKinds[i++] = OWNER_CONDITION_POISON;
+						statusKinds[i++] = OWNER_CONDITION_POISON;
 					}
 					if(i > 7)
 						break;
 					if(unit->poison == 2) {
-						statKinds[i++] = OWNER_CONDITION_DEADLY_POISON;
+						statusKinds[i++] = OWNER_CONDITION_DEADLY_POISON;
 					}
 					if(i > 7)
 						break;
 					if(unit->psySeal != 0) {
-						statKinds[i++] = OWNER_CONDITION_PSYNERGY_SEALED;
+						statusKinds[i++] = OWNER_CONDITION_PSYNERGY_SEALED;
 					}
 					if(i > 7)
 						break;
 					if(unit->stun != 0) {
-						statKinds[i++] = OWNER_CONDITION_STUN;
+						statusKinds[i++] = OWNER_CONDITION_STUN;
 					}
 					if(i > 7)
 						break;
 					if(unit->sleep != 0) {
-						statKinds[i++] = OWNER_CONDITION_SLEEP;
+						statusKinds[i++] = OWNER_CONDITION_SLEEP;
 					}
 					if(i > 7)
 						break;
 					if(unit->haunt != 0) {
-						statKinds[i++] = OWNER_CONDITION_HAUNT;
+						statusKinds[i++] = OWNER_CONDITION_HAUNT;
 					}
 					if(i > 7)
 						break;
 					if(unit->delusion != 0) {
-						statKinds[i++] = OWNER_CONDITION_DELUSION;
+						statusKinds[i++] = OWNER_CONDITION_DELUSION;
 					}
 					if(i > 7)
 						break;
 					if(unit->attackTurns != 0) {
 						if(unit->attackStage > 0) {
-							statKinds[i++] = OWNER_CONDITION_ATTACK_UP;
+							statusKinds[i++] = OWNER_CONDITION_ATTACK_UP;
 						}
 						if(unit->attackStage < 0) {
-							statKinds[i++] = OWNER_CONDITION_ATTACK_DOWN;
+							statusKinds[i++] = OWNER_CONDITION_ATTACK_DOWN;
 						}
 					}
 					if(i > 7)
 						break;
 					if(unit->defenseTurns != 0) {
 						if(unit->defenseStage > 0) {
-							statKinds[i++] = OWNER_CONDITION_DEFENSE_UP;
+							statusKinds[i++] = OWNER_CONDITION_DEFENSE_UP;
 						}
 						if(unit->defenseStage < 0) {
-							statKinds[i++] = OWNER_CONDITION_DEFENSE_DOWN;
+							statusKinds[i++] = OWNER_CONDITION_DEFENSE_DOWN;
 						}
 					}
 					if(i > 7)
 						break;
 					if(unit->resistanceTurns != 0) {
 						if(unit->resistanceStage > 0) {
-							statKinds[i++] = OWNER_CONDITION_RESISTANCE_UP;
+							statusKinds[i++] = OWNER_CONDITION_RESISTANCE_UP;
 						}
 						if(unit->resistanceStage < 0) {
-							statKinds[i++] = OWNER_CONDITION_RESISTANCE_DOWN;
+							statusKinds[i++] = OWNER_CONDITION_RESISTANCE_DOWN;
 						}
 					}
 					if(i > 7)
 						break;
 					if(unit->agilityStage > 0) {
-						statKinds[i++] = OWNER_CONDITION_AGILITY_UP;
+						statusKinds[i++] = OWNER_CONDITION_AGILITY_UP;
 					}
 					if(unit->agilityStage < 0) {
-						statKinds[i++] = OWNER_CONDITION_AGILITY_DOWN;
+						statusKinds[i++] = OWNER_CONDITION_AGILITY_DOWN;
 					}
 				} while(0);
 				for(j = 0; j < i; j++)
-					mnMiscIconLoadIntoSlot(statKinds[j], statSlots[j]);
+					mnMiscellaneousIconLoadIntoSlot(
+						statusKinds[j], statusSlots[j]);
 				if(i == 0) {
-					statKinds[0] = OWNER_CONDITION_NORMAL;
+					statusKinds[0] = OWNER_CONDITION_NORMAL;
 					i = 1;
 				}
 				if(i < STATUS_ICON_COUNT) {
 					for(j = i; j < STATUS_ICON_COUNT; j++)
-						statKinds[j] = OWNER_CONDITION_EMPTY;
+						statusKinds[j] = OWNER_CONDITION_EMPTY;
 				}
-				statCnt = i;
-				if(statKinds[0] == OWNER_CONDITION_NORMAL)
+				statusCount = i;
+				if(statusKinds[0] == OWNER_CONDITION_NORMAL)
 					mnTextDrawMessageAsTiles(unit->hp != 0
 							? (Sint32)MsgNormal
 							: (Sint32)MsgCantFight,
-						statWin, 112, 0);
+						statusWindow, 112, 0);
 			}
 
 			if(page == STATUS_PAGE_STATS) {
-				Uint16 *helpText =
-					syHeapAlloc(SUMMARY_HELP_TEXT_LENGTH * sizeof(*helpText));
+				Uint16 *helpText = syHeapAllocate(
+					SUMMARY_HELP_TEXT_LENGTH * sizeof(*helpText));
 
 				if((Uint32)cursor.helpEntry >= OWNER_STATUS_HELP_CONDITION) {
-					Sint32 statKind = statKinds[cursor.helpEntry -
+					Sint32 statusKind = statusKinds[cursor.helpEntry -
 						OWNER_STATUS_HELP_CONDITION];
 					UNIT  *savedUnit;
 					Sint32 attackDelta;
@@ -1109,9 +1119,9 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					Sint32 agilityDelta;
 					Sint32 helpValue;
 
-					if(statKind == OWNER_CONDITION_NORMAL && unit->hp == 0)
-						statKind = OWNER_CONDITION_DOWNED;
-					savedUnit = syHeapAlloc(sizeof(*savedUnit));
+					if(statusKind == OWNER_CONDITION_NORMAL && unit->hp == 0)
+						statusKind = OWNER_CONDITION_DOWNED;
+					savedUnit = syHeapAllocate(sizeof(*savedUnit));
 					syWordsCopyEntry(savedUnit, unit, sizeof(*savedUnit));
 					attackDelta = unit->attack;
 					defenseDelta = unit->defense;
@@ -1120,13 +1130,13 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					unit->attackStage = 0;
 					unit->defenseStage = 0;
 					unit->agilityStage = 0;
-					gmUnitCalcStub(member);
+					gmUnitCalculateStub(member);
 					attackDelta -= unit->attack;
 					defenseDelta -= unit->defense;
 					agilityDelta -= unit->agility;
 					syWordsCopyEntry(unit, savedUnit, sizeof(*savedUnit));
 					syHeapRelease(savedUnit);
-					switch(statKind) {
+					switch(statusKind) {
 					case OWNER_CONDITION_GRIM_REAPER:
 						helpValue = unit->grimReaper;
 						break;
@@ -1161,7 +1171,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 					 * calls. */
 					do {
 					} while(0);
-					mnMessageCopyExpanded(statKind + (Sint32)MsgNormalStatus,
+					mnMessageCopyExpanded(statusKind + (Sint32)MsgNormalStatus,
 						helpText, SUMMARY_HELP_TEXT_LENGTH);
 				} else if(cursor.helpEntry == OWNER_STATUS_HELP_EXPERIENCE &&
 					unit->level < UNIT_LEVEL_MAX) {
@@ -1176,7 +1186,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 						cursor.helpEntry + (Sint32)MsgOwnerStatusEntryHelp,
 						helpText, SUMMARY_HELP_TEXT_LENGTH);
 				}
-				mnTextDrawWideStringAtOffset(helpText, helpWin, 0, 4);
+				mnTextDrawWideStringAtOffset(helpText, helpWindow, 0, 4);
 				syHeapRelease(helpText);
 			}
 			redraw = 0;
@@ -1188,58 +1198,58 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 			Sint32			 *slot;
 			Sint32			  iconX;
 
-			spr = statSprs;
-			slot = statSlots;
+			sprite = statusSprites;
+			slot = statusSlots;
 			for(i = 0, entry = VramCacheEntries, iconX = 112;
 				i < STATUS_ICON_COUNT; i++) {
-				MENU_SPR_INIT(
-					*spr, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-				spr->oam.f.tile = entry[*slot++].ofs >> 5;
-				spr->oam.f.x = iconX;
-				spr->oam.f.y = statWin->y * 8 + 8;
-				if(statKinds[i] > OWNER_CONDITION_NORMAL)
-					syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW);
+				MENU_SPR_INIT(*sprite,
+					OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
+				sprite->oam.f.tile = entry[*slot++].offset >> 5;
+				sprite->oam.f.x = iconX;
+				sprite->oam.f.y = statusWindow->y * 8 + 8;
+				if(statusKinds[i] > OWNER_CONDITION_NORMAL)
+					syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
 				iconX += 15;
-				spr++;
+				sprite++;
 			}
 			if(page == STATUS_PAGE_PSYNERGY || page == STATUS_PAGE_ITEMS) {
 				VRAM_CACHE_ENTRY *iconEntry;
 				Sint32			  iconRow;
 
-				for(i = 0, iconEntry = VramCacheEntries, spr = iconSprs,
+				for(i = 0, iconEntry = VramCacheEntries, sprite = iconSprites,
 				iconRow = 0;
 					i <= 3; i++) {
-					MENU_SPR_INIT(*spr,
+					MENU_SPR_INIT(*sprite,
 						OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
-					spr->oam.f.tile = iconEntry[iconSlots[i]].ofs >> 5;
+					sprite->oam.f.tile = iconEntry[iconSlots[i]].offset >> 5;
 					if(page == STATUS_PAGE_ITEMS)
-						spr->oam.f.x = 24;
+						sprite->oam.f.x = 24;
 					else
-						spr->oam.f.x = 8;
-					spr->oam.f.y = (iconRow + statWin->y) * 8 + 68;
-					syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW);
-					spr++;
+						sprite->oam.f.x = 8;
+					sprite->oam.f.y = (iconRow + statusWindow->y) * 8 + 68;
+					syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
+					sprite++;
 					iconRow += 2;
 				}
 			}
 		}
-		if(BattleMenuStateWork->tmr == 0 || (PerWork.push & KEY_B))
+		if(BattleMenuStateWork->timer == 0 || (PerWork.push & KEY_B))
 			break;
-		if(listCnt != 0) {
+		if(listCount != 0) {
 			if(keys & KEY_R) {
-				memberIdx++;
-				if(memberIdx >= listCnt)
-					memberIdx = 0;
-				member = list[memberIdx];
+				memberIndex++;
+				if(memberIndex >= listCount)
+					memberIndex = 0;
+				member = list[memberIndex];
 				redraw = 1;
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			} else if(keys & KEY_L) {
-				memberIdx--;
-				if(memberIdx < 0)
-					memberIdx = listCnt - 1;
-				member = list[memberIdx];
+				memberIndex--;
+				if(memberIndex < 0)
+					memberIndex = listCount - 1;
+				member = list[memberIndex];
 				redraw = 1;
-				sySndPlayStub(SE_MENU_CURSOR_MOVE);
+				sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			}
 		}
 		sySynch(1);
@@ -1250,7 +1260,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 
 		for(i = 0; i < 4; i++)
 			syVRAMCacheFreeEntry(*slot++);
-		slot = statSlots;
+		slot = statusSlots;
 		for(i = 0; i < STATUS_ICON_COUNT; i++)
 			syVRAMCacheFreeEntry(*slot++);
 	}
@@ -1260,11 +1270,11 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 #if BATTLE_STATUS_FREES_UNSHOWN_TEXT_TILES_ON_CLOSE
 	mnWindowMarkVisibleTextTiles();
 #endif
-	mnWindowClose(statWin, 1);
-	mnWindowClose(helpWin, 1);
-	mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
-	BattleMenuStateWork->tmrHidden = 0;
-	btObjectDestroySprsStub(shownMember);
+	mnWindowClose(statusWindow, 1);
+	mnWindowClose(helpWindow, 1);
+	mnPartyStatusDraw(RamHeapSlots->battleState->partyStatus);
+	BattleMenuStateWork->timerHidden = 0;
+	btObjectDestroySpritesStub(shownMember);
 	btObjectPutStub();
 	sySynch(1);
 	syHeapRelease(djinnList);

@@ -346,28 +346,28 @@ static void scKolimaForestTreeRejectHermesWater(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(20);
 	sySynch(40);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	KolimaForestTreePlaySparkSound = 1;
 	sySetTickEvent(scKolimaForestTreeSpawnRepelSpark, EVENT_PASS_TICK);
 	sySynch(30);
 	KolimaForestTreePlaySparkSound = 0;
 	fdCameraMoveTo(328, CAMERA_KEEP, 235, 1);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
-	sySndPlay(SE_IMPACT);
-	leader->velY = toFIXED(5);
+	sySoundPlay(SE_IMPACT);
+	leader->velocityY = toFIXED(5);
 	leader->gravity = toFIXED(1) / 4;
 	leader->bounce = toFIXED(5) / 8;
 	fdActorMoveToAndWait(ACTOR_PARTY_LEADER, 335, 258);
-	while(leader->velY >= 0) {
+	while(leader->velocityY >= 0) {
 		sySynch(1);
 	}
 	do {
 		sySynch(1);
-	} while(leader->velY <= 0);
-	sySndPlay(SE_RATTLE);
+	} while(leader->velocityY <= 0);
+	sySoundPlay(SE_RATTLE);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
 	fdScriptWait(120);
 	syCloseEvent(scKolimaForestTreeSpawnRepelSpark);
@@ -375,7 +375,7 @@ static void scKolimaForestTreeRejectHermesWater(void)
 	leader->bounce = toFIXED(1) / 4;
 	{
 		ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-		leader->steeringFlg = ACTOR_FACES_MOTION | leader->steeringFlg;
+		leader->steeringFlags = ACTOR_FACES_MOTION | leader->steeringFlags;
 	}
 	fdScriptWait(80);
 	/* Hear the wrathful side's refusal, then restore the leader's motion. */
@@ -422,7 +422,7 @@ static void scKolimaForestTreeRestoreTret(void)
 	includeMia = gmFlagGet(FLAG_IN_PARTY(MIA));
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 328, 212);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	mnFieldMessageShow(MsgKolimaWaterHermesSeepedIntoTret, 1);
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
@@ -457,18 +457,18 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdCameraSetSpeed(3.2);
 	fdCameraMoveTo(256, CAMERA_KEEP, 254, 1);
 	fdCameraWaitForArrival();
-	sySndPlay(SE_GLITTER);
+	sySoundPlay(SE_GLITTER);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_SOUTHEAST, 20);
 	fdCameraMoveTo(413, CAMERA_KEEP, 261, 1);
 	fdCameraWaitForArrival();
-	sySndPlay(SE_GLITTER);
+	sySoundPlay(SE_GLITTER);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_MIA, FACING_SOUTH, 20);
 	fdCameraMoveTo(326, CAMERA_KEEP, 384, 1);
 	fdCameraWaitForArrival();
-	sySndPlay(SE_GLITTER);
+	sySoundPlay(SE_GLITTER);
 	while(KolimaForestTreePaletteTick != 24) {
 		sySynch(1);
 	}
@@ -490,7 +490,7 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdScriptWait(40);
 	scKolimaForestTreeChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
 	fdScriptWait(40);
-	sySndPlay(MUS_TRIAL_ROAD);
+	sySoundPlay(MUS_TRIAL_ROAD);
 	/* Tret and Laurel discover that their powers have returned. */
 	fdScriptSetMessageId(MsgKolimaFeelGreatPowerSpreadingThrough);
 	/* "I feel a great power spreading through me..." */
@@ -799,7 +799,7 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdActorFaceDirection(ACTOR_MIA, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_WEST, 10);
 	scNodTogether();
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	finalActions = KolimaForestTreeReturnToPartyActions;
 	fdActorSetScript(ACTOR_GARET, finalActions);
 	if(includeMia != 0) {
@@ -819,7 +819,7 @@ static void scKolimaForestTreeRestoreTret(void)
 	fdScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
 	fdActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
 	gmFlagSet(FLAG_KOLIMA_CURSE_LIFTED);
-	sySndPlay(MUS_TOWN_THEME);
+	sySoundPlay(MUS_TOWN_THEME);
 	scInventoryReplaceItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
@@ -838,7 +838,7 @@ Sint32 scInit(void)
 	tretsWrathfulSide = fdActorGet(ACTOR_TRETS_WRATHFUL_SIDE);
 	laurelBlank = fdActorGet(ACTOR_INVISIBLE_LAUREL);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_TRETS_WRATHFUL_SIDE, SPRITE_COLOR_HIDDEN);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	MainRoutineStateWork.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
@@ -850,27 +850,27 @@ Sint32 scInit(void)
 	fdActorGet(ACTOR_LAUREL)->radius = 6;
 	fdActorGet(ACTOR_TRET_STAND_IN)->radius = 6;
 	fdActorGet(ACTOR_LAUREL_STAND_IN)->radius = 6;
-	fdActorSetSprFlags(fdActorGet(ACTOR_TRETS_WRATHFUL_SIDE), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_INVISIBLE_TRET), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_INVISIBLE_LAUREL), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_TRET), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_LAUREL), 0);
-	fdActorSetSprPriority(ACTOR_TRET, 2);
-	fdActorSetSprPriority(ACTOR_TRETS_WRATHFUL_SIDE, 2);
-	fdActorSetSprPriority(ACTOR_LAUREL, 2);
-	tretBlank->motionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TRETS_WRATHFUL_SIDE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_INVISIBLE_TRET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_INVISIBLE_LAUREL), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_TRET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_LAUREL), 0);
+	fdActorSetSpritePriority(ACTOR_TRET, 2);
+	fdActorSetSpritePriority(ACTOR_TRETS_WRATHFUL_SIDE, 2);
+	fdActorSetSpritePriority(ACTOR_LAUREL, 2);
+	tretBlank->motionFlags = 0;
 	tretBlank->y.fixed = toFIXED(28);
-	laurelBlank->motionFlg = 0;
+	laurelBlank->motionFlags = 0;
 	laurelBlank->y.fixed = toFIXED(28);
-	tretsWrathfulSide->motionFlg = 0;
+	tretsWrathfulSide->motionFlags = 0;
 	tretsWrathfulSide->y.fixed = toFIXED(28);
 	fdActorSetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
 	fdActorSetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
-	fdActorGet(ACTOR_TRET)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_LAUREL)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_INVISIBLE_TRET)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_INVISIBLE_LAUREL)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGet(ACTOR_TRETS_WRATHFUL_SIDE)->collisionFlg |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_INVISIBLE_TRET)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_INVISIBLE_LAUREL)->collisionFlags |= ACTOR_NOT_TARGETED;
+	fdActorGet(ACTOR_TRETS_WRATHFUL_SIDE)->collisionFlags |= ACTOR_NOT_TARGETED;
 	return 0;
 }
 
@@ -882,26 +882,26 @@ Sint32 scInit(void)
 static void scKolimaForestTreeSpawnRepelSpark(void)
 {
 	ACTOR *effect;
-	SPR	  *spr;
+	SPR	  *sprite;
 	Sint32 phase;
 
 	phase = TickCount & 3;
 	if(phase != 0)
 		return;
 	if(KolimaForestTreePlaySparkSound != 0)
-		sySndPlay(SE_SPARKLE_FALL);
+		sySoundPlay(SE_SPARKLE_FALL);
 	effect = syFieldActorCreate(
 		SPRITE_GOLDEN_RINGS, toFIXED(326), toFIXED(32), toFIXED(192));
 	if(effect == NULL)
 		return;
-	spr = effect->spr;
-	spr->flg = phase;
-	effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 1;
+	sprite = effect->sprite;
+	sprite->flags = phase;
+	effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 1;
 	effect->scaleX = toFIXED(1) / 10;
 	effect->speedLimit = toFIXED(4);
 	effect->acceleration = toFIXED(4);
-	effect->motionFlg = phase;
+	effect->motionFlags = phase;
 	fdActorSelectAnimation(effect, 2);
 	syFieldActorSetMoveTargetFX(effect, toFIXED(326), 0, toFIXED(240));
 	fdActorStartScript(effect, KolimaForestTreeRepelRingScript);
@@ -1048,11 +1048,11 @@ static void scKolimaForestTreeChangeFace(Sint32 blankActorId, Sint32 change)
 static void scKolimaForestTreeUpdateOrbitSpark(ACTOR *spark)
 {
 	Sint32 pos[3];
-	Sint32 age = spark->tmr;
+	Sint32 age = spark->timer;
 	Sint32 heading;
 
 	if(age < ORBIT_SPARK_TICKS) {
-		SET_VECTOR(pos, spark->tgtX, spark->tgtY, spark->tgtZ);
+		SET_VECTOR(pos, spark->targetX, spark->targetY, spark->targetZ);
 		heading = spark->userValue;
 		syVectorAddPolarOffset(
 			toFIXED(age), age * ORBIT_SPARK_TURN + heading, pos);
@@ -1061,9 +1061,9 @@ static void scKolimaForestTreeUpdateOrbitSpark(ACTOR *spark)
 		spark->z.fixed = pos[2];
 		spark->scaleX += toFIXED(1) / 200;
 		spark->scaleY += toFIXED(1) / 200;
-		spark->tmr++;
+		spark->timer++;
 	} else {
-		syVRAMCacheFreeEntry(spark->spr->slot);
+		syVRAMCacheFreeEntry(spark->sprite->slot);
 		fdActorRelease(spark);
 	}
 }
@@ -1083,23 +1083,23 @@ static void scKolimaForestTreeSpawnOrbitSparks(void)
 	case 20:
 	case 30:
 	case 40:
-		sySndPlay(SE_SHIMMER);
+		sySoundPlay(SE_SHIMMER);
 		for(sparkIndex = 0; sparkIndex <= 5; sparkIndex++) {
 			spark = syFieldActorCreate(SPRITE_SPARKLE,
 				KolimaForestTreeSparkOrigin[0], KolimaForestTreeSparkOrigin[1],
 				KolimaForestTreeSparkOrigin[2]);
 			if(spark != NULL) {
 				previousSprite =
-					fdSprShareVRAMCacheEntry(spark->spr, previousSprite);
-				spark->motionFlg = 0;
-				spark->spr->image.pri = 1;
-				fdActorSetSprFlags(spark, 0);
+					fdSpriteShareVRAMCacheEntry(spark->sprite, previousSprite);
+				spark->motionFlags = 0;
+				spark->sprite->image.priority = 1;
+				fdActorSetSpriteFlags(spark, 0);
 				fdActorSelectAnimation(spark, 1);
-				spark->tmr = 0;
+				spark->timer = 0;
 				spark->userValue = DEGtoANG(sparkIndex * 60);
-				spark->tgtX = KolimaForestTreeSparkOrigin[0];
-				spark->tgtY = KolimaForestTreeSparkOrigin[1];
-				spark->tgtZ = KolimaForestTreeSparkOrigin[2];
+				spark->targetX = KolimaForestTreeSparkOrigin[0];
+				spark->targetY = KolimaForestTreeSparkOrigin[1];
+				spark->targetZ = KolimaForestTreeSparkOrigin[2];
 				spark->speedLimit = toFIXED(8) / 5;
 				spark->update = scKolimaForestTreeUpdateOrbitSpark;
 			}

@@ -4,5 +4,5 @@
 #include "field/sprite_viewer_scale.h"
 
 /* The sprite viewer's (x, y) sprite scale, 1.0 each (16.16), which
-   fdSprViewerPlaceRing reads. */
+   fdSpriteViewerPlaceRing reads. */
 const SPR_SCALE SpriteViewerScale = {{{toFIXED(1), toFIXED(1)}}};

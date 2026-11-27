@@ -35,8 +35,8 @@ typedef struct MODEL_TEXTURE {
    its faces and their transformed corners, its texture and its shade.
    btRenderAllocateModelList ends the list with a cleared entry. */
 typedef struct RENDER_MODEL {
-	long   kind; /* the rasterizer kernel that draws it; 0 ends the list */
-	Sint32 flg;	 /* MODEL_TEXTURE_IN_PLACE keeps the texture where it is */
+	long   kind;  /* the rasterizer kernel that draws it; 0 ends the list */
+	Sint32 flags; /* MODEL_TEXTURE_IN_PLACE keeps the texture where it is */
 	const Uint16  *mesh;	 /* the faces, as the effect tables write them */
 	Sint16		  *vertices; /* the corners btRenderTransformVertices wrote */
 	MODEL_TEXTURE *texture;
@@ -57,6 +57,6 @@ void btRenderDrawModelList(RENDER_MODEL *model);
 /* Projects count model vertices through syConvert3Dto2D into screen
    coordinates. */
 void btRenderProjectVertices(
-	MODEL_VERTEX *vertices, PROJECTED_VERTEX *screen, Sint32 cnt);
+	MODEL_VERTEX *vertices, PROJECTED_VERTEX *screen, Sint32 count);
 
 #endif

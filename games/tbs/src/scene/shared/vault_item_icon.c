@@ -5,22 +5,23 @@
 void scVaultPlaceItemIcon(Sint32 item, FIXED x, FIXED y, FIXED z)
 {
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	ICON_TRANSFER *icon;
 	Uint8		   clear = 0;
 
 	actor = fdActorCreate(SPRITE_BLANK, x, y, z);
 	if(actor != NULL) {
-		spr = actor->spr;
-		spr->flg = clear;
-		spr->cnt = clear;
-		spr->image.fullCol = 0;
-		spr->image.pal = 0;
-		actor->motionFlg = clear;
-		actor->retainSprCache = 1;
-		icon = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		sprite = actor->sprite;
+		sprite->flags = clear;
+		sprite->count = clear;
+		sprite->image.fullColor = 0;
+		sprite->image.palette = 0;
+		actor->motionFlags = clear;
+		actor->retainSpriteCache = 1;
+		icon =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(item);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, icon->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, icon->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 }

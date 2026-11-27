@@ -39,8 +39,8 @@ const Sint32 FieldEffectFragmentScript[] = {
 };
 
 /* The colour modes Mind Read's caster cycles through, two ticks each
-   (fdActorSetLayersColMode): its colour channels swapped one way after another
-   and back to its own; The Broken Seal's MindReadCasterPaletteCycle. */
+   (fdActorSetLayersColorMode): its colour channels swapped one way after
+   another and back to its own; The Broken Seal's MindReadCasterPaletteCycle. */
 const Uint8 MindReadCasterColorCycle[8] = {
 	SPRITE_COLOR_GRB,
 	SPRITE_COLOR_RBG,
@@ -55,7 +55,7 @@ const Uint8 MindReadCasterColorCycle[8] = {
 /* clang-format off */
 
 /* An angle for each value of the right, left, up and down bits of the */
-/* +Control Pad; DPAD_ANGLE_NONE for none (fdInputGetDpadAng, */
+/* +Control Pad; DPAD_ANGLE_NONE for none (fdInputGetDpadAngle, */
 /* script_commands_mind_read.c). */
 const Uint16 InputDpadAngles[16] = {
 	DPAD_ANGLE_NONE, FACING_EAST,     FACING_WEST,     DPAD_ANGLE_NONE,

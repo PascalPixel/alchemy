@@ -58,7 +58,7 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	BLITTER_PAIR   blit;
-	Sint32		   frm;
+	Sint32		   frame;
 	BATTLE_CAMERA *camera;
 	Uint8		  *motes;
 	Sint32		   focus[3];
@@ -67,13 +67,13 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	PARTICLE	  *p;
-	Sint32		   cnt;
+	Sint32		   count;
 	Sint32		   i;
 
 	mesh = DJINNI_CHARGE_FIREBALL_MESH;
 	projected = DJINNI_CHARGE_FIREBALL_PROJECTED;
 	cells = MapGridMetatileBuffer;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
 	motes = RamHeapSlots->battleSheet;
@@ -83,7 +83,7 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			ELEMENT_MARS, args->side, DjinniChargeEntranceFlags[mode]),
 		(Sint32 *)&screen, focus);
 	{
-		MOTION_OBJECT *tgt;
+		MOTION_OBJECT *target;
 		Sint16		   savedYaw;
 		void		  *caster;
 		Sint32		   ticks;
@@ -99,9 +99,9 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		blit[0] = RamHeapSlots->ramCode;
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
 		EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-		tgt = btObjectGetStub(args->tgts[0])->obj;
+		target = btObjectGetStub(args->targets[0])->object;
 		savedYaw = camera->yaw;
-		caster = btObjectGetStub(args->user)->obj;
+		caster = btObjectGetStub(args->user)->object;
 
 		/* The last two particles keep the Djinni's start and its step. */
 		state->particles[DJINNI_CHARGE_START].x = focus[0];
@@ -126,8 +126,8 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		REG_BG2PA = Q_8_8(0.5);
 		fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL * 15);
 
-		for(frm = 0; frm != ticks; frm++) {
-			if(frm == 0) {
+		for(frame = 0; frame != ticks; frame++) {
+			if(frame == 0) {
 				camera->yaw = savedYaw;
 				focus[0] = state->particles[DJINNI_CHARGE_START].x;
 				focus[1] = state->particles[DJINNI_CHARGE_START].y;
@@ -135,21 +135,23 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				state->particles[DJINNI_CHARGE_STEP].x = 0;
 				state->particles[DJINNI_CHARGE_STEP].y = 0;
 				state->particles[DJINNI_CHARGE_STEP].z = 0;
-				state->particles[DJINNI_CHARGE_STEP].velX = tgt->x - focus[0];
+				state->particles[DJINNI_CHARGE_STEP].velocityX =
+					target->x - focus[0];
 				/* DEAD: both arms alike; the ROM keeps the test. */
 				if(mode == DJINNI_CHARGE_CORE) {
-					state->particles[DJINNI_CHARGE_STEP].velY =
-						tgt->y - focus[1] + toFIXED(30);
+					state->particles[DJINNI_CHARGE_STEP].velocityY =
+						target->y - focus[1] + toFIXED(30);
 				} else {
-					state->particles[DJINNI_CHARGE_STEP].velY =
-						tgt->y - focus[1] + toFIXED(30);
+					state->particles[DJINNI_CHARGE_STEP].velocityY =
+						target->y - focus[1] + toFIXED(30);
 				}
-				state->particles[DJINNI_CHARGE_STEP].velZ = tgt->z - focus[2];
+				state->particles[DJINNI_CHARGE_STEP].velocityZ =
+					target->z - focus[2];
 				for(i = 0; i != DJINNI_CHARGE_START; i++) {
 					state->particles[i].variant = -1;
 				}
 				if(mode == DJINNI_CHARGE_CANNON) {
-					sySndPlayStub(SE_CRASH);
+					sySoundPlayStub(SE_CRASH);
 				}
 			}
 			syInitMatrix();
@@ -157,15 +159,15 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 			if(mode == DJINNI_CHARGE_CORE) {
 				/* The camera turns for the first 16 ticks. */
-				if((Uint32)frm <= 15) {
+				if((Uint32)frame <= 15) {
 					Sint32 turn;
 
 					/* DEAD: tick is at most 15 here, so the second arm never
 					   runs; the ROM keeps its test. */
-					if(frm <= 71) {
+					if(frame <= 71) {
 						turn = TRIG_TURN / 256;
 					} else {
-						turn = 2560 - (frm << 5);
+						turn = 2560 - (frame << 5);
 					}
 					if(args->side == EFFECT_SIDE_ENEMIES) {
 						camera->yaw -= turn;
@@ -173,20 +175,20 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						camera->yaw += turn;
 					}
 				}
-				if(frm <= 31) {
+				if(frame <= 31) {
 					/* Pull back... */
 					focus[0] -= state->particles[DJINNI_CHARGE_STEP].x;
 					focus[1] -= state->particles[DJINNI_CHARGE_STEP].y;
 					focus[2] -= state->particles[DJINNI_CHARGE_STEP].z;
-					if(frm <= 15) {
+					if(frame <= 15) {
 						state->particles[DJINNI_CHARGE_STEP].x +=
-							state->particles[DJINNI_CHARGE_STEP].velX >>
+							state->particles[DJINNI_CHARGE_STEP].velocityX >>
 							DJINNI_CHARGE_PULL_BACK_SHIFT;
 						state->particles[DJINNI_CHARGE_STEP].y +=
-							state->particles[DJINNI_CHARGE_STEP].velY >>
+							state->particles[DJINNI_CHARGE_STEP].velocityY >>
 							DJINNI_CHARGE_PULL_BACK_SHIFT;
 						state->particles[DJINNI_CHARGE_STEP].z +=
-							state->particles[DJINNI_CHARGE_STEP].velZ >>
+							state->particles[DJINNI_CHARGE_STEP].velocityZ >>
 							DJINNI_CHARGE_PULL_BACK_SHIFT;
 					}
 					state->particles[DJINNI_CHARGE_STEP].x =
@@ -198,51 +200,52 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					state->particles[DJINNI_CHARGE_STEP].z =
 						state->particles[DJINNI_CHARGE_STEP].z * 56 /
 						DAMPING_SCALE;
-					if(frm == 31) {
-						sySndPlayStub(SE_ITEM_BREAK);
+					if(frame == 31) {
+						sySoundPlayStub(SE_ITEM_BREAK);
 					}
-				} else if(frm <= 45) {
+				} else if(frame <= 45) {
 					/* ...drive in... */
 					focus[0] += state->particles[DJINNI_CHARGE_STEP].x;
 					focus[1] += state->particles[DJINNI_CHARGE_STEP].y;
 					focus[2] += state->particles[DJINNI_CHARGE_STEP].z;
 					state->particles[DJINNI_CHARGE_STEP].x +=
-						state->particles[DJINNI_CHARGE_STEP].velX >>
+						state->particles[DJINNI_CHARGE_STEP].velocityX >>
 						DJINNI_CHARGE_DRIVE_SHIFT;
 					state->particles[DJINNI_CHARGE_STEP].y +=
-						state->particles[DJINNI_CHARGE_STEP].velY >>
+						state->particles[DJINNI_CHARGE_STEP].velocityY >>
 						DJINNI_CHARGE_DRIVE_SHIFT;
 					state->particles[DJINNI_CHARGE_STEP].z +=
-						state->particles[DJINNI_CHARGE_STEP].velZ >>
+						state->particles[DJINNI_CHARGE_STEP].velocityZ >>
 						DJINNI_CHARGE_DRIVE_SHIFT;
-				} else if(frm <= 72 && !(frm & 3)) {
+				} else if(frame <= 72 && !(frame & 3)) {
 					Sint32 thrown = 0;
 
 					/* ...and strike, every fourth tick. */
 					focus[0] += state->particles[DJINNI_CHARGE_STEP].x / 2;
 					focus[1] += state->particles[DJINNI_CHARGE_STEP].y / 2;
 					focus[2] += state->particles[DJINNI_CHARGE_STEP].z / 2;
-					if(frm == 72) {
+					if(frame == 72) {
 						EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-						state->shakeFrm = 8;
+						state->shakeFrame = 8;
 					} else {
-						sySndPlayStub(SE_ITEM_BREAK);
-						state->shakeFrm = 2;
+						sySoundPlayStub(SE_ITEM_BREAK);
+						state->shakeFrame = 2;
 					}
-					btEffectTintBattler(
-						args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 6);
+					btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, 0, 6);
 					for(i = 0, p = state->particles; i != DJINNI_CHARGE_STEP;
 						i++, p++) {
 						if(p->variant != -1) {
 							continue;
 						}
-						SET_POSITION(p, tgt->x, tgt->y + toFIXED(5), tgt->z);
-						p->velX = ((syRandom() & 511) + 256) << 10;
+						SET_POSITION(
+							p, target->x, target->y + toFIXED(5), target->z);
+						p->velocityX = ((syRandom() & 511) + 256) << 10;
 						if(args->side == EFFECT_SIDE_PARTY) {
-							p->velX = -p->velX;
+							p->velocityX = -p->velocityX;
 						}
-						p->velY = ((syRandom() & 511) + 256) << 9;
-						p->velZ = 0;
+						p->velocityY = ((syRandom() & 511) + 256) << 9;
+						p->velocityZ = 0;
 						p->variant = (syRandom() & 15) + 16;
 						if(++thrown == DJINNI_CHARGE_STRIKE_DEBRIS) {
 							break;
@@ -250,31 +253,32 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			} else {
-				if((Uint32)frm <= 22) {
+				if((Uint32)frame <= 22) {
 					focus[0] += state->particles[DJINNI_CHARGE_STEP].x;
 					focus[1] += state->particles[DJINNI_CHARGE_STEP].y;
 					focus[2] += state->particles[DJINNI_CHARGE_STEP].z;
 					state->particles[DJINNI_CHARGE_STEP].x +=
-						state->particles[DJINNI_CHARGE_STEP].velX >>
+						state->particles[DJINNI_CHARGE_STEP].velocityX >>
 						DJINNI_CHARGE_DRIVE_SHIFT;
 					state->particles[DJINNI_CHARGE_STEP].y +=
-						state->particles[DJINNI_CHARGE_STEP].velY >>
+						state->particles[DJINNI_CHARGE_STEP].velocityY >>
 						DJINNI_CHARGE_DRIVE_SHIFT;
 					state->particles[DJINNI_CHARGE_STEP].z +=
-						state->particles[DJINNI_CHARGE_STEP].velZ >>
+						state->particles[DJINNI_CHARGE_STEP].velocityZ >>
 						DJINNI_CHARGE_DRIVE_SHIFT;
 				}
-				if(frm == 15) {
-					state->shakeFrm = 6;
+				if(frame == 15) {
+					state->shakeFrame = 6;
 					EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 					EFFECT_STRIKE_TARGET(args, 0, 6, KNOCKBACK_NUDGE);
 					for(i = 0; i != DJINNI_CHARGE_STEP; i++) {
-						Sint32 ang;
+						Sint32 angle;
 						Sint32 speed;
 
 						p = &state->particles[i];
-						SET_POSITION(p, tgt->x, tgt->y + toFIXED(10), tgt->z);
-						ang = (syRandom() & 0x7fff) - DEGtoANG(90);
+						SET_POSITION(
+							p, target->x, target->y + toFIXED(10), target->z);
+						angle = (syRandom() & 0x7fff) - DEGtoANG(90);
 						/* DEAD: both arms alike; the ROM keeps the test and
 						   both calls. */
 						if(i >= DJINNI_CHARGE_FIRST_BURST) {
@@ -282,9 +286,9 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						} else {
 							speed = (syRandom() & 511) + 256;
 						}
-						p->velX = (sySin(ang) * speed) >> 6;
-						p->velY = (syCos(ang) * speed) >> 6;
-						p->velZ = 0;
+						p->velocityX = (sySin(angle) * speed) >> 6;
+						p->velocityY = (syCos(angle) * speed) >> 6;
+						p->velocityZ = 0;
 						p->variant = (syRandom() & 15) + 16;
 					}
 				}
@@ -294,26 +298,26 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			   blast. */
 			btEffectPosProjectPoint(focus, &screen);
 			if(mode == DJINNI_CHARGE_CORE) {
-				if(frm <= 73) {
+				if(frame <= 73) {
 					blit[0](canvas, state->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
 						screen.x / 2 - SMALL_DJINNI_WIDTH / 2,
 						screen.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
 						SMALL_DJINNI_HEIGHT);
-				} else if(frm <= 93) {
+				} else if(frame <= 93) {
 					blit[0](canvas,
 						state->sheet + DJINNI_CHARGE_BURST_PICTURES +
-							((frm - 74) / 4) * PICTURE_BYTES(GLOW_ORB),
+							((frame - 74) / 4) * PICTURE_BYTES(GLOW_ORB),
 						screen.x / 2 - GLOW_ORB_WIDTH / 2,
 						screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
 						GLOW_ORB_HEIGHT);
 				}
-			} else if(frm <= 22) {
+			} else if(frame <= 22) {
 				blit[0](canvas, state->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
 					screen.x / 2 - SMALL_DJINNI_WIDTH / 2,
 					screen.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
 					SMALL_DJINNI_HEIGHT);
-				if(mode == DJINNI_CHARGE_CANNON && frm > 1) {
-					Sint32 picture = (frm / 4) & 3;
+				if(mode == DJINNI_CHARGE_CANNON && frame > 1) {
+					Sint32 picture = (frame / 4) & 3;
 					Sint32 x;
 
 					if(args->side == EFFECT_SIDE_ENEMIES) {
@@ -330,11 +334,11 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			}
 
 			/* Debris, bouncing. */
-			cnt = DJINNI_CHARGE_START;
+			count = DJINNI_CHARGE_START;
 			if(mode != DJINNI_CHARGE_CORE) {
-				cnt = DJINNI_CHARGE_FIRST_BURST;
+				count = DJINNI_CHARGE_FIRST_BURST;
 			}
-			for(i = 0; i != cnt; i++) {
+			for(i = 0; i != count; i++) {
 				Sint32 size = state->particles[i].variant;
 
 				if(size < 0) {
@@ -348,7 +352,8 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				btParticleAdvanceWithGravity3D(
 					&state->particles[i], 62, DjinniChargeDebrisGravity[i & 3]);
 				if(state->particles[i].y < 0) {
-					state->particles[i].velY = -state->particles[i].velY / 2;
+					state->particles[i].velocityY =
+						-state->particles[i].velocityY / 2;
 				}
 				state->particles[i].variant--;
 			}
@@ -375,31 +380,31 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 			}
 			if(mode == DJINNI_CHARGE_CORE) {
-				if(frm == 24) {
+				if(frame == 24) {
 					btEffectTintBattler(
 						args->user, TINT_KEEP, POSE_LEAP, 0, -1);
 				}
-			} else if(frm == 0) {
+			} else if(frame == 0) {
 				btEffectTintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
 			}
 
 			/* Core's ball of fire, its sphere built on the first tick. */
-			if(mode == DJINNI_CHARGE_CORE && frm <= 89) {
+			if(mode == DJINNI_CHARGE_CORE && frame <= 89) {
 				FIXED scale;
 
 				model = btRenderAllocateModelList(1);
-				if(frm == 0) {
+				if(frame == 0) {
 					Sint32 row;
-					Sint32 ang;
+					Sint32 angle;
 
 					btMeshBuildGrid(mesh, DJINNI_CHARGE_FIREBALL_RING_VERTICES,
 						DJINNI_CHARGE_FIREBALL_RINGS, 8, 8);
-					for(row = 0, ang = 0; row != DJINNI_CHARGE_FIREBALL_RINGS;
-						ang += DJINNI_CHARGE_FIREBALL_RING_TURN, row++) {
+					for(row = 0, angle = 0; row != DJINNI_CHARGE_FIREBALL_RINGS;
+						angle += DJINNI_CHARGE_FIREBALL_RING_TURN, row++) {
 						Sint32 y = FIXEDtoINT(
-							-syCos(ang) * DJINNI_CHARGE_FIREBALL_RADIUS);
+							-syCos(angle) * DJINNI_CHARGE_FIREBALL_RADIUS);
 						Sint32 radius = FIXEDtoINT(
-							sySin(ang) * DJINNI_CHARGE_FIREBALL_RADIUS);
+							sySin(angle) * DJINNI_CHARGE_FIREBALL_RADIUS);
 						MODEL_VERTEX *vertex = (MODEL_VERTEX *)cells;
 						Sint32		  k;
 
@@ -432,15 +437,15 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					syRotZ(TRIG_TURN - DJINNI_CHARGE_FIREBALL_TILT);
 				}
 				scale = toFIXED(5) / 8;
-				if(frm > 31) {
-					scale = frm * (toFIXED(1) / 64) + toFIXED(1) / 8;
+				if(frame > 31) {
+					scale = frame * (toFIXED(1) / 64) + toFIXED(1) / 8;
 				}
 				syMatrixScaleUniform(scale);
-				if(frm > 3) {
-					Sint32 shade = frm * 4 - 80;
+				if(frame > 3) {
+					Sint32 shade = frame * 4 - 80;
 
-					if(frm > 73) {
-						shade = (74 - frm) * 4;
+					if(frame > 73) {
+						shade = (74 - frame) * 4;
 					}
 					if(shade > 0) {
 						shade = 0;
@@ -449,10 +454,10 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					model->texture = &texture;
 					model->mesh = mesh;
 					model->vertices = projected;
-					model->scrollU = (frm / 4) & 63;
-					model->scrollV = frm & 63;
+					model->scrollU = (frame / 4) & 63;
+					model->scrollV = frame & 63;
 					model->shade = shade;
-					model->flg = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
+					model->flags = MODEL_ONE_SIDED | MODEL_CLOCKWISE;
 					btRenderProjectVertices(
 						cells, projected, DJINNI_CHARGE_FIREBALL_VERTICES);
 					btRenderDrawModelList(model);

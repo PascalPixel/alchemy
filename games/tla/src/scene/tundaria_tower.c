@@ -185,7 +185,7 @@ typedef enum TUNDARIA_TOWER_METATILE_BEHAVIOR {
 } TUNDARIA_TOWER_METATILE_BEHAVIOR;
 
 void scTundariaTowerAdvanceIceChip(FIELD_OBJECT *object);
-void scTundariaTowerScatterIceChips(VECTOR3 *pos, Sint32 cnt, FIXED scale);
+void scTundariaTowerScatterIceChips(VECTOR3 *pos, Sint32 count, FIXED scale);
 void scParticleUpdateFalling(void);
 void scTundariaTowerStartFallingRocks(void);
 void scTundariaTowerEndFallingRocks(void);
@@ -228,18 +228,18 @@ void scTundariaTowerSetColumnMetatile(ACTOR *actor)
 	Sint32 height = METATILE_HEIGHT_STEPS(
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
-	if(syGameFlagGet(actor->tmr)) {
+	if(syGameFlagGet(actor->timer)) {
 		attr2 &= ~METATILE_ATTRIBUTES(METATILE_BEHAVIOR_WALL, 0);
 		attr0 &= ~MAP_METATILE_JUMP;
 		if(METATILE_HEIGHT_STEPS(actor->groundHeight) != height)
 			height -= ICE_COLUMN_HEIGHT_STEPS;
-		fdSetActorSprPriority(actor, 3);
+		fdSetActorSpritePriority(actor, 3);
 	} else {
 		attr2 = METATILE_ATTRIBUTES(
 			METATILE_BEHAVIOR_WALL, attr2 & METATILE_ATTRIBUTE_BITS);
 		attr0 |= MAP_METATILE_JUMP;
 		height += ICE_COLUMN_HEIGHT_STEPS;
-		fdSetActorSprPriority(actor, 2);
+		fdSetActorSpritePriority(actor, 2);
 	}
 	scMapMetatileSetAttributes(MAPGRID_LAYER_GROUND, x, z, attr0);
 	scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD, x, z, attr2);
@@ -249,26 +249,26 @@ void scTundariaTowerSetColumnMetatile(ACTOR *actor)
 
 /* Sets each listed ice column, by its row of (actor, animation, flag), standing
    or pounded flat as its flag says (scTundariaTowerSetColumnMetatile). */
-void scTundariaTowerSetUpIceColumns(Uint16 *tbl)
+void scTundariaTowerSetUpIceColumns(Uint16 *table)
 {
 	Uint16		*row;
 	FIELD_ACTOR *object;
-	Sint16		 flg;
-	Sint16		 anm;
+	Sint16		 flag;
+	Sint16		 animation;
 
-	if(tbl[0] == ACTOR_LIST_END)
+	if(table[0] == ACTOR_LIST_END)
 		return;
-	for(row = tbl; row[0] != ACTOR_LIST_END; row += 3) {
+	for(row = table; row[0] != ACTOR_LIST_END; row += 3) {
 		object = ((FIELD_ACTOR *)fdActorGetById(row[0]));
-		anm = row[1];
-		flg = row[2];
+		animation = row[1];
+		flag = row[2];
 
-		fdActorSetSprFlags(object, 0);
+		fdActorSetSpriteFlags(object, 0);
 		fdActorSelectAnimation(
-			object, (Uint16)anm + syGameFlagGet((Uint16)flg));
-		object->motionFlg = 0;
-		object->collisionFlg &= ~ACTOR_SOLID;
-		object->tmr = flg;
+			object, (Uint16)animation + syGameFlagGet((Uint16)flag));
+		object->motionFlags = 0;
+		object->collisionFlags &= ~ACTOR_SOLID;
+		object->timer = flag;
 		scTundariaTowerSetColumnMetatile(object);
 	}
 }
@@ -357,19 +357,19 @@ void scTundariaTowerOpenDoor(void)
 	choice = &fieldState->stepCue;
 	if(*choice == METATILE_BEHAVIOR_TUNDARIA_TOWER_LEFT_DOOR)
 		x = 25;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridCopyMetatilesTo(30, 38, x, 49, 1, 2);
 	syFieldScriptWait(10);
 	fdMapGridCopyMetatilesTo(32, 38, x, 49, 1, 2);
 	syFieldScriptWait(10);
 	state = &MainRoutineStateWork;
 	fdActorSetSpeed(state->leaderActorId, 0.5);
-	fdActorGetById(state->leaderActorId)->motionFlg = 0;
+	fdActorGetById(state->leaderActorId)->motionFlags = 0;
 	metatile =
 		FIELD_HALF_METATILE(fdActorGetById(state->leaderActorId)->x.fixed) | 1;
 	fdActorWalkToAndWait(state->leaderActorId, metatile << 3,
 		FIXEDtoINT(fdActorGetById(state->leaderActorId)->z.fixed) | 1);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	metatile = fdActorGetById(state->leaderActorId)->x.fixed;
 	fdActorWalkTo(state->leaderActorId, FIELD_HALF_METATILE(metatile) << 3,
 		(FIXEDtoINT(fdActorGetById(state->leaderActorId)->z.fixed) | 1) - 16);
@@ -384,42 +384,42 @@ void scTundariaTowerOpenDoor(void)
 /* Each tick of a chip of ice: it moves and scales by its rates and falls. */
 void scTundariaTowerAdvanceIceChip(FIELD_OBJECT *object)
 {
-	object->eff.x += object->eff.vel.x;
-	object->eff.y += object->eff.vel.y;
-	object->eff.z += object->eff.vel.z;
-	object->eff.scaleX += object->eff.scaleRateX;
-	object->eff.scaleY += object->eff.scaleRateY;
-	object->eff.vel.y -= toFIXED(3) / 10;
+	object->effect.x += object->effect.velocity.x;
+	object->effect.y += object->effect.velocity.y;
+	object->effect.z += object->effect.velocity.z;
+	object->effect.scaleX += object->effect.scaleRateX;
+	object->effect.scaleY += object->effect.scaleRateY;
+	object->effect.velocity.y -= toFIXED(3) / 10;
 }
 
 /* Throws chips of ice (SPRITE_BLUE_CRYSTAL) off a point, each turned at random,
    to fall under scTundariaTowerAdvanceIceChip. */
-void scTundariaTowerScatterIceChips(VECTOR3 *pos, Sint32 cnt, FIXED scale)
+void scTundariaTowerScatterIceChips(VECTOR3 *pos, Sint32 count, FIXED scale)
 {
 	EFFECT_OPTIONS options;
 	Sint32		   i;
-	Sint32		   velX;
-	Sint32		   velY;
+	Sint32		   velocityX;
+	Sint32		   velocityY;
 	FIXED		   x;
 
-	options.pri = 1;
+	options.priority = 1;
 	options.type = SPRITE_BLUE_CRYSTAL;
-	options.tgtScaleY = toFIXED(8) / 10;
-	options.tgtScaleX = toFIXED(8) / 10;
+	options.targetScaleY = toFIXED(8) / 10;
+	options.targetScaleX = toFIXED(8) / 10;
 	options.startScaleY = scale;
 	options.startScaleX = scale;
 	options.update = scTundariaTowerAdvanceIceChip;
-	for(i = 0; i != cnt; i++) {
+	for(i = 0; i != count; i++) {
 		options.rotation = (syRandom() & 15) << 12;
-		velX = syRandom() & 15;
-		velX -= 8;
-		velX *= toFIXED(1) / 4;
-		velY = syRandom() & 15;
-		velY += 8;
-		velY *= toFIXED(1) / 4;
+		velocityX = syRandom() & 15;
+		velocityX -= 8;
+		velocityX *= toFIXED(1) / 4;
+		velocityY = syRandom() & 15;
+		velocityY += 8;
+		velocityY *= toFIXED(1) / 4;
 		x = pos->x - toFIXED(syRandom() & 31) + toFIXED(15);
-		scFieldEffectSpawn(x, pos->y + toFIXED(syRandom() & 15), pos->z, velX,
-			velY, 0,
+		scFieldEffectSpawn(x, pos->y + toFIXED(syRandom() & 15), pos->z,
+			velocityX, velocityY, 0,
 			EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
 				EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
 				EFFECT_USE_PRIORITY,
@@ -481,7 +481,7 @@ void scTundariaTowerFreeCenterProng(void)
 	syGameFlagSet(FLAG_CRYSTAL_BROKEN);
 	fdMapGridCopyMetatileAttributes(11, 22, 3, 2, 20, 22);
 	actor->gravity = toFIXED(1) / 2;
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdActorWaitUntilLanded(actor);
 	fdActorSetPos(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
 	fdActorSetPos(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
@@ -530,13 +530,13 @@ void scTundariaTowerRefluxAppears(void)
 	scTundariaTowerFadeFrom(toFIXED(1), 0);
 	fdPaletteFadeSetTarget(RGB_WHITE, 0);
 	fdPaletteFadeStartInterpolation(2);
-	sySndPlay(SE_WATER);
+	sySoundPlay(SE_WATER);
 	fdMapGridSetShake(5, 7, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdScriptWait(2);
 	fdPaletteFadeSetTarget(toFIXED(1), 0);
 	fdPaletteFadeStartInterpolation(2);
-	actor->steeringFlg = 0;
+	actor->steeringFlags = 0;
 	actor->update = 0;
 	fdActorSetDestination(ACTOR_REFLUX, 424, 536);
 	scTundariaTowerStartEffectScript(actor, TundariaTowerRefluxSpinScript);
@@ -557,22 +557,22 @@ void scTundariaTowerRefluxAppears(void)
 void scTundariaTowerShrinkIceColumn(Sint32 phase, Sint32 step)
 {
 	EFFECT_OPTIONS		options;
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
-	ACTOR			   *actor = fdActorGetById(effectState->tgtId);
-	Sint32				velX;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
+	ACTOR			   *actor = fdActorGetById(effectState->targetId);
+	Sint32				velocityX;
 
 	if(step < 8) {
 		options.type = SPRITE_BLUE_CRYSTAL;
 		options.startScaleY = toFIXED(1);
 		options.startScaleX = toFIXED(1);
-		options.pri = 0;
-		options.tgtScaleY = toFIXED(1) / 2;
-		options.tgtScaleX = toFIXED(1) / 2;
+		options.priority = 0;
+		options.targetScaleY = toFIXED(1) / 2;
+		options.targetScaleX = toFIXED(1) / 2;
 		options.rotation = (syRandom() & 15) << 12;
-		velX = ((syRandom() & 15) - 8) << 13;
+		velocityX = ((syRandom() & 15) - 8) << 13;
 		scFieldEffectSpawn(actor->x.fixed,
 			actor->y.fixed - toFIXED(step * 3) + toFIXED(16), actor->z.fixed,
-			velX, 0, 0,
+			velocityX, 0, 0,
 			EFFECT_USE_ROTATION | EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
 				EFFECT_USE_PRIORITY,
 			&options);
@@ -580,8 +580,8 @@ void scTundariaTowerShrinkIceColumn(Sint32 phase, Sint32 step)
 	}
 	if(phase == 1) {
 		actor->scaleY = toFIXED(1);
-		syGameFlagSet(actor->tmr);
-		scTundariaTowerSetColumnMetatile(fdActorGetById(effectState->tgtId));
+		syGameFlagSet(actor->timer);
+		scTundariaTowerSetColumnMetatile(fdActorGetById(effectState->targetId));
 		fdMapGridCopyMetatileTilesIndicesRect(67, 23,
 			(FIELD_METATILE(actor->x.fixed)) + 64,
 			FIELD_METATILE(actor->z.fixed), 1, 1);
@@ -608,7 +608,8 @@ void scTundariaTowerJumpDownSlide(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	leader->facing = FACING_SOUTH;
 	fdScriptWait(10);
 	fdActorSetAnimationById(
@@ -646,7 +647,7 @@ void scTundariaTowerStartPillarMove(void)
 
 		fdActorLiftTargetBlock(TundariaTowerPillarPuzzlePillars);
 		actor = state->movedBlock;
-		actor->tmr = ((FIELD_METATILE(actor->x.fixed)) << 8) |
+		actor->timer = ((FIELD_METATILE(actor->x.fixed)) << 8) |
 			((FIELD_METATILE(actor->z.fixed)) & START_METATILE_ROW_MASK);
 	} else if(party->next == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
 		fdActorLiftTargetBlock(TundariaTowerBurstBroochPillar);
@@ -668,9 +669,9 @@ void scTundariaTowerSlidePillar(Sint32 unused, Sint32 actorArg)
 	actor = state->movedBlock;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	dx = (FIELD_METATILE(actor->x.fixed)) - (actor->tmr >> 8);
+	dx = (FIELD_METATILE(actor->x.fixed)) - (actor->timer >> 8);
 	dz = (FIELD_METATILE(actor->z.fixed)) -
-		(actor->tmr & START_METATILE_ROW_MASK);
+		(actor->timer & START_METATILE_ROW_MASK);
 	actor->speedLimit = toFIXED(1) / 2;
 	while((fdMapMetatileGetAttributes(MAPGRID_LAYER_MIDDLE,
 			   (FIELD_METATILE(actor->x.fixed)) + dx,
@@ -709,11 +710,11 @@ void scTundariaTowerSetDownPillar(void)
 	if(fdMapGetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
 		actor->y.fixed) {
 		actor->layer = 2;
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdActorWaitUntilLanded(actor);
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		fdActorWaitUntilLanded(actor);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->layer = 0;
 	}
 	fdActorPlaceMovedBlock();
@@ -743,11 +744,11 @@ void scTundariaTowerEndRevealHiddenWay(void)
 		if(FIELD_METATILE(
 			   fdActorGetById(MainRoutineStateWork.leaderActorId)->z.fixed) ==
 			38) {
-			Sint16 ang =
+			Sint16 angle =
 				fdActorGetById(MainRoutineStateWork.leaderActorId)->facing;
 			Sint32 owner = MainRoutineStateWork.leaderActorId;
 
-			if(ang < 0)
+			if(angle < 0)
 				fdActorSetPos(owner, 872, 600);
 			else
 				fdActorSetPos(owner, 872, 632);
@@ -823,9 +824,9 @@ void scTundariaTowerResolveBeforePsynergy(void)
 
 /* Burst on the brown part of the outer wall in the Burst Brooch's room, from
    the ground below it: rocks fall as it breaks open into a shortcut. */
-void scTundariaTowerBurstBrownWall(Sint32 shake, Sint32 frm)
+void scTundariaTowerBurstBrownWall(Sint32 shake, Sint32 frame)
 {
-	if(frm == 0) {
+	if(frame == 0) {
 		scTundariaTowerStartFallingRocks();
 		syCloseEvent(scTundariaTowerUpdateBrownWallMetatile);
 	}
@@ -838,7 +839,7 @@ void scTundariaTowerBurstBrownWall(Sint32 shake, Sint32 frm)
 		scRockSpawn(toFIXED(232), toFIXED(16), toFIXED(280), 2);
 	if(shake == 3)
 		scRockSpawn(toFIXED(232), toFIXED(16), toFIXED(280), 30);
-	if(frm == FIELD_PSYNERGY_FINISHED)
+	if(frame == FIELD_PSYNERGY_FINISHED)
 		scTundariaTowerEndFallingRocks();
 }
 
@@ -867,8 +868,8 @@ const CUE *scGetCues(void)
 void scTundariaTowerReflectLeader(ACTOR *actor)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	SPR	  *leaderSpr = leader->spr;
-	SPR	  *reflection = actor->spr;
+	SPR	  *leaderSprite = leader->sprite;
+	SPR	  *reflection = actor->sprite;
 
 	if(leader->z.fixed <= actor->sceneWord) {
 		actor->z.fixed = 0;
@@ -882,7 +883,7 @@ void scTundariaTowerReflectLeader(ACTOR *actor)
 			actor->z.fixed = 0;
 			actor->x.fixed = 0;
 		} else {
-			SPR_ANIMATION *anm = reflection->entries[0];
+			SPR_ANIMATION *animation = reflection->entries[0];
 			SPR_ANIMATION *src;
 
 			actor->x.fixed = leader->x.fixed;
@@ -890,10 +891,10 @@ void scTundariaTowerReflectLeader(ACTOR *actor)
 			actor->z.fixed =
 				actor->sceneWord - (leader->z.fixed - actor->sceneWord);
 			actor->facing = ~leader->facing;
-			src = leaderSpr->entries[0];
-			anm->script = src->script;
-			anm->tmr = src->tmr;
-			anm->scriptOfs = src->scriptOfs;
+			src = leaderSprite->entries[0];
+			animation->script = src->script;
+			animation->timer = src->timer;
+			animation->scriptOffset = src->scriptOffset;
 		}
 	}
 }
@@ -907,7 +908,7 @@ union FIELD_OBJECT;
 
 void fdLeaderStopIfPending(void);
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flag, Sint32 layer);
 
 void scTundariaTowerScatterDust(Sint32 spread);
 void fdLeaderSetMetatileShapeAt(Sint32 a, Sint32 b);
@@ -937,8 +938,9 @@ void scTundariaTowerRevealHiddenWay(void);
 void scTundariaTowerStopSliding(void);
 void scTundariaTowerResolveBeforePsynergy(void);
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* At the foot of a black ice slide, Felix drops in from above and lands in a
    puff of dust with a thump that shakes the screen. */
@@ -946,7 +948,7 @@ void scTundariaTowerLandFromSlide(void)
 {
 	ACTOR		  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	EFFECT_OPTIONS options;
-	Sint32		   ang;
+	Sint32		   angle;
 	Uint32		   i;
 
 	fdScriptStart();
@@ -957,35 +959,35 @@ void scTundariaTowerLandFromSlide(void)
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	sySoundPlay(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
-	options.pal = 7;
+	options.palette = 7;
 	options.update = (void *)fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(8) / 10;
 	options.startScaleY = toFIXED(8) / 10;
 	i = 0;
 	do {
-		FIXED vel[3];
+		FIXED velocity[3];
 
-		ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = sySin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
-		vel[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
+		angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = sySin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
 			&options);
 		i++;
 	} while(i <= DUST_RING_PUFFS);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimationById(
@@ -1023,7 +1025,7 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 	Sint32 scene;
-	Sint32 flg;
+	Sint32 flag;
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1042,13 +1044,13 @@ Sint32 scInit(void)
 				scTundariaTowerParchRightWater();
 			break;
 		case CENTER_PRONG_CRYSTAL_CHAMBER:
-			flg = syGameFlagGet(FLAG_CENTER_PRONG_TAKEN);
-			if(flg == 0) {
+			flag = syGameFlagGet(FLAG_CENTER_PRONG_TAKEN);
+			if(flag == 0) {
 				actor = fdActorGetById(ACTOR_FROZEN_CENTER_PRONG);
-				fdActorSetSprFlags(
+				fdActorSetSpriteFlags(
 					fdActorGetById(ACTOR_FROZEN_CENTER_PRONG), 0);
-				actor->collisionFlg = 0;
-				actor->motionFlg = 0;
+				actor->collisionFlags = 0;
+				actor->motionFlags = 0;
 				actor->groundHeight = toFIXED(8);
 				actor->y.fixed = toFIXED(8);
 				fdActorSetItemIcon(actor, ITEM_CENTER_PRONG);
@@ -1101,10 +1103,10 @@ Sint32 scInit(void)
 			actor =
 				scFieldActorCreate(SPRITE_CRATE, toFIXED(472), 0, toFIXED(200));
 			if(actor != NULL) {
-				fdSetActorSprPriority((Sint32)actor, 1);
-				actor->motionFlg = 0;
-				fdActorSetSprFlags(actor, 0);
-				fdActorSetSprCol(actor, SPRITE_COLOR_BLACK);
+				fdSetActorSpritePriority((Sint32)actor, 1);
+				actor->motionFlags = 0;
+				fdActorSetSpriteFlags(actor, 0);
+				fdActorSetSpriteColor(actor, SPRITE_COLOR_BLACK);
 				fdActorSetBlendMode(actor, 1);
 			}
 			break;
@@ -1117,7 +1119,7 @@ Sint32 scInit(void)
 					fdActorSetPos(ACTOR_SECOND_LEDGE_PILLAR, 200, 136);
 			}
 			fdActorPlaceBlocks(TundariaTowerPillarPuzzlePillars);
-			fdActorSetSprPriority(ACTOR_SECOND_LEDGE_PILLAR, 2);
+			fdActorSetSpritePriority(ACTOR_SECOND_LEDGE_PILLAR, 2);
 			break;
 		case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_CENTER_PRONG_NORTH:
 		case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_CENTER_PRONG_SOUTH:
@@ -1133,8 +1135,8 @@ Sint32 scInit(void)
 					scFieldActorCreate(SPRITE_FELIX, 0, 0, 0);
 				effect->sceneWord = toFIXED(576);
 				effect->update = scTundariaTowerReflectLeader;
-				effect->motionFlg = 0;
-				fdSetActorSprPriority(effect, 3);
+				effect->motionFlags = 0;
+				fdSetActorSpritePriority(effect, 3);
 			}
 			break;
 		case TUNDARIA_TOWER_PILLAR_PUZZLE_FROM_TUNDARIA_TOWER_BURST_BROOCH_NORTH:
@@ -1145,8 +1147,8 @@ Sint32 scInit(void)
 				scFieldActorCreate(SPRITE_FELIX, 0, 0, 0);
 			effect->sceneWord = toFIXED(624);
 			effect->update = scTundariaTowerReflectLeader;
-			effect->motionFlg = 0;
-			fdSetActorSprPriority(effect, 3);
+			effect->motionFlags = 0;
+			fdSetActorSpritePriority(effect, 3);
 		} break;
 		case PILLAR_PUZZLE_FROM_SLIDE:
 			if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
@@ -1192,23 +1194,23 @@ void scLeaderSetSlideStopped(Sint32 value)
 #include "shared/leader_slide_on_ice_ahead.h"
 
 /* Unused: places each listed stake at its metatile, as Yampi Desert's do. */
-UNUSED void scTundariaTowerPlaceStakes(Uint16 *tbl)
+UNUSED void scTundariaTowerPlaceStakes(Uint16 *table)
 {
 	Uint16 *row;
 	Sint32	id;
 	ACTOR  *actor;
 	Sint16	x, z;
 
-	if(tbl[0] == ACTOR_LIST_END)
+	if(table[0] == ACTOR_LIST_END)
 		return;
-	for(row = tbl; row[0] != ACTOR_LIST_END; row += 3) {
+	for(row = table; row[0] != ACTOR_LIST_END; row += 3) {
 		id = row[0];
 		actor = fdActorGetById(id);
 		x = row[1];
 		z = row[2];
 
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlags(actor, 0);
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorSetMetatileOpen(id, (Uint16)x, (Uint16)z, actor->layer);
 	}
 }
@@ -1220,39 +1222,39 @@ UNUSED void scTundariaTowerPlaceStakes(Uint16 *tbl)
 /* Unused: Magma Rock's crumbling pillars on entering: each listed pillar from
    its two flags (fallen: moved away; else its metatile raised and its shape
    redrawn), then the leader lifted onto the ground under him. */
-UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *tbl)
+UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *table)
 {
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
-	Sint32		  flg;
-	Sint32		  nextFlg;
+	Sint32		  flag;
+	Sint32		  nextFlag;
 	MAP_METATILE *metatiles;
 	Uint8		 *shapes;
 	MAP_METATILE *metatile;
-	Sint32		  idx;
+	Sint32		  index;
 	ACTOR		 *leader;
 	Sint32		  ground;
 
-	if(*tbl != ACTOR_LIST_END) {
-		for(; *tbl != ACTOR_LIST_END; tbl += 2) {
-			id = tbl[0];
+	if(*table != ACTOR_LIST_END) {
+		for(; *table != ACTOR_LIST_END; table += 2) {
+			id = table[0];
 			actor = fdActorGetById(id);
-			flg = tbl[1];
-			nextFlg = flg + 1;
+			flag = table[1];
+			nextFlag = flag + 1;
 			metatiles = map->layers[actor->layer].metatiles;
 			shapes = RamMapShapeGrid +
 				(metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
-			if(syGameFlagGet(nextFlg)) {
+			if(syGameFlagGet(nextFlag)) {
 				fdActorSetPos(id, 0, 0);
 			} else {
 				Sint32 shape;
 				Uint8 *slot;
 				Sint32 height;
 
-				idx = fdActorGetMetatileIndex(actor);
-				metatile = &metatiles[idx];
-				slot = shapes + idx;
+				index = fdActorGetMetatileIndex(actor);
+				metatile = &metatiles[index];
+				slot = shapes + index;
 				shape = fdMapGridGetTerrainKind(
 					actor->layer, actor->x.fixed, actor->z.fixed);
 				height = fdMapGetTerrainHeight(
@@ -1261,7 +1263,7 @@ UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *tbl)
 				metatile->attributeB = MAP_METATILE_JUMP;
 				*slot = fdMapShapeFindOrAdd(
 					actor->layer, shape, FIELD_HALF_METATILE(height) + 4);
-				if(syGameFlagGet(flg))
+				if(syGameFlagGet(flag))
 					fdActorSelectAnimation(actor, 0);
 			}
 		}
@@ -1277,13 +1279,13 @@ UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *tbl)
 
 /* Unused: Magma Rock's crumbling floor: a listed pillar stepped on flashes the
    first time and crumbles under the leader the second. */
-UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *tbl)
+UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *table)
 {
 	ACTOR *leader;
 	ACTOR *trap;
 	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 second;
 
 	if(fdTryJumpForward() != 0)
@@ -1295,31 +1297,31 @@ UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *tbl)
 	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap == 0)
 		return;
-	while(*tbl != ACTOR_LIST_END) {
-		id = tbl[0];
+	while(*table != ACTOR_LIST_END) {
+		id = table[0];
 		if(fdActorGetById(id) != trap) {
-			tbl += 2;
+			table += 2;
 			continue;
 		}
-		flg = tbl[1];
+		flag = table[1];
 		fdScriptStart();
-		if(!syGameFlagGet(flg)) {
-			sySndPlay(SE_CHEST_CLOSE);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+		if(!syGameFlagGet(flag)) {
+			sySoundPlay(SE_CHEST_CLOSE);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 			sySynch(2);
 			fdActorSelectAnimation(trap, 0);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			sySynch(2);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_WHITE);
 			sySynch(4);
-			fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
+			fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 			scTundariaTowerScatterDust(0);
-			syGameFlagSet(flg);
+			syGameFlagSet(flag);
 		} else {
-			second = flg + 1;
+			second = flag + 1;
 			if(!syGameFlagGet(second)) {
-				leader->motionFlg = 0;
-				sySndPlay(SE_PUSH);
+				leader->motionFlags = 0;
+				sySoundPlay(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scTundariaTowerScatterDust(0);
 				sySynch(8);
@@ -1331,11 +1333,11 @@ UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *tbl)
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
 				fdActorSetPosAndResetMotion(trap, 0, 0, 0);
 				sySynch(2);
-				sySndPlay(SE_THUMP);
+				sySoundPlay(SE_THUMP);
 				scTundariaTowerSpawnDustRing();
 				sySynch(20);
 				syGameFlagSet(second);
@@ -1351,8 +1353,8 @@ UNUSED void scTundariaTowerCheckCrumblingStep(const Uint16 *tbl)
 UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
-	Sint32 flg;
-	Sint32 nextFlg;
+	Sint32 flag;
+	Sint32 nextFlag;
 
 	if(*row == ACTOR_LIST_END)
 		return;
@@ -1361,11 +1363,11 @@ UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 			row += 2;
 			continue;
 		}
-		flg = row[1];
+		flag = row[1];
 		fdScriptStart();
-		nextFlg = flg + 1;
-		if(!syGameFlagGet(nextFlg)) {
-			sySndPlay(SE_PUSH);
+		nextFlag = flag + 1;
+		if(!syGameFlagGet(nextFlag)) {
+			sySoundPlay(SE_PUSH);
 			fdMapGridSetShake(1, 4, 1);
 			scTundariaTowerScatterDust(0);
 			sySynch(8);
@@ -1377,11 +1379,11 @@ UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 			sySynch(8);
 			fdActorSetPosAndResetMotion(actor, 0, 0, 0);
 			sySynch(2);
-			sySndPlay(SE_THUMP);
+			sySoundPlay(SE_THUMP);
 			scTundariaTowerSpawnDustRing();
 			sySynch(20);
-			syGameFlagSet(flg);
-			syGameFlagSet(nextFlg);
+			syGameFlagSet(flag);
+			syGameFlagSet(nextFlag);
 		}
 		fdScriptEnd();
 		return;
@@ -1391,7 +1393,7 @@ UNUSED void scTundariaTowerCrumblePillar(Uint16 *row, Sint32 id)
 /* Keeps the pillar's sprite cached and stops it. */
 void scTundariaTowerFreezePillar(Sint32 id)
 {
-	fdActorGetById(id)->retainSprCache =
+	fdActorGetById(id)->retainSpriteCache =
 		ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
 	fdActorDisableById(id);
 }
@@ -1405,12 +1407,12 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
-	Sint32		  flg;
-	Sint32		  nextFlg;
+	Sint32		  flag;
+	Sint32		  nextFlag;
 	MAP_METATILE *metatiles;
 	Uint8		 *shapes;
 	MAP_METATILE *metatile;
-	Sint32		  idx;
+	Sint32		  index;
 	Uint8		 *grid = MapShapeGrid;
 
 	fdActorPlaceOnActor(ACTOR_FIRST_PLACED, MainRoutineStateWork.leaderActorId);
@@ -1432,22 +1434,22 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 		for(; *list != ACTOR_LIST_END; list += 2) {
 			id = list[0];
 			actor = fdActorGetById(id);
-			flg = list[1];
-			nextFlg = flg + 1;
+			flag = list[1];
+			nextFlag = flag + 1;
 			metatiles = map->layers[actor->layer].metatiles;
 			shapes = grid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
-			actor->retainSprCache =
+			actor->retainSpriteCache =
 				ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
-			if(syGameFlagGet(nextFlg)) {
+			if(syGameFlagGet(nextFlag)) {
 				fdActorSetPos(id, 0, 0);
 			} else {
 				Sint32 shape;
 				Uint8 *slot;
 				Sint32 height;
 
-				idx = fdActorGetMetatileIndex(actor);
-				metatile = &metatiles[idx];
-				slot = shapes + idx;
+				index = fdActorGetMetatileIndex(actor);
+				metatile = &metatiles[index];
+				slot = shapes + index;
 				shape = fdMapGridGetTerrainKind(
 					actor->layer, actor->x.fixed, actor->z.fixed);
 				height = fdMapGetTerrainHeight(
@@ -1456,7 +1458,7 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 				metatile->attributeB = MAP_METATILE_JUMP;
 				*slot = fdMapShapeFindOrAdd(
 					actor->layer, shape, FIELD_HALF_METATILE(height) + 4);
-				if(syGameFlagGet(flg))
+				if(syGameFlagGet(flag))
 					fdActorCopyGraphics(id, ACTOR_FIRST_PLACED + 1);
 			}
 		}
@@ -1468,14 +1470,14 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 
 /* Unused: Magma Rock's trap floor: a listed pillar stepped on flashes the first
    time and gives way under the leader the second. */
-UNUSED void scTundariaTowerStepOnTrap(const Uint16 *tbl)
+UNUSED void scTundariaTowerStepOnTrap(const Uint16 *table)
 {
 	ACTOR *leader;
 	ACTOR *partner;
 	ACTOR *trap;
 	FIXED  pos[3];
 	Sint32 id;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 second;
 	Uint8 *motion;
 
@@ -1488,45 +1490,45 @@ UNUSED void scTundariaTowerStepOnTrap(const Uint16 *tbl)
 	pos[2] = leader->z.fixed;
 	trap = fdActorFindAtMetatile(pos, 0);
 	if(trap != 0) {
-		while(*tbl != ACTOR_LIST_END) {
-			id = tbl[0];
+		while(*table != ACTOR_LIST_END) {
+			id = table[0];
 			if(fdActorGetById(id) != trap) {
-				tbl += 2;
+				table += 2;
 				continue;
 			}
-			flg = tbl[1];
+			flag = table[1];
 			fdScriptStart();
-			if(!syGameFlagGet(flg)) {
+			if(!syGameFlagGet(flag)) {
 				fdActorSelectAnimation(partner, 1);
 				scActorTakePlaceOf(partner, trap);
 				sySynch(1);
-				sySndPlay(SE_CHEST_CLOSE);
-				fdActorSetSprCol(
+				sySoundPlay(SE_CHEST_CLOSE);
+				fdActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_WHITE);
 				sySynch(2);
 				fdActorSelectAnimation(partner, 0);
 				fdActorCopyGraphics(id, ACTOR_FIRST_PLACED + 1);
-				fdActorSetSprCol(
+				fdActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_NORMAL);
 				sySynch(2);
-				fdActorSetSprCol(
+				fdActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_WHITE);
 				sySynch(4);
-				fdActorSetSprCol(
+				fdActorSetSpriteColor(
 					fdActorGetById(ACTOR_FIRST_PLACED), SPRITE_COLOR_NORMAL);
 				scTundariaTowerScatterDust(0);
 				scActorTakePlaceOf(trap, partner);
 				sySynch(1);
-				syGameFlagSet(flg);
+				syGameFlagSet(flag);
 			} else {
-				second = flg + 1;
+				second = flag + 1;
 				if(!syGameFlagGet(second)) {
 					fdActorSelectAnimation(partner, 0);
 					scActorTakePlaceOf(partner, trap);
-					motion = &leader->motionFlg;
+					motion = &leader->motionFlags;
 					sySynch(1);
 					*motion = 0;
-					sySndPlay(SE_PUSH);
+					sySoundPlay(SE_PUSH);
 					fdMapGridSetShake(1, 4, 1);
 					scTundariaTowerScatterDust(0);
 					sySynch(8);
@@ -1542,7 +1544,7 @@ UNUSED void scTundariaTowerStepOnTrap(const Uint16 *tbl)
 					sySynch(5);
 					fdActorSetPosAndResetMotion(partner, 0, 0, 0);
 					sySynch(2);
-					sySndPlay(SE_THUMP);
+					sySoundPlay(SE_THUMP);
 					scTundariaTowerSpawnDustRing();
 					sySynch(20);
 					syGameFlagSet(second);
@@ -1562,7 +1564,7 @@ void scTundariaTowerScatterDust(Sint32 spread)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_EFFECT *effect;
-	Uint32		  frm = 0;
+	Uint32		  frame = 0;
 	Uint32		  i;
 
 	for(i = 0; i <= 7; i++) {
@@ -1575,23 +1577,23 @@ void scTundariaTowerScatterDust(Sint32 spread)
 				leader->z.fixed);
 		}
 		if(effect != 0) {
-			frm = fdSprShareVRAMCacheEntry(effect->spr, frm);
-			effect->motionFlg = 0;
-			effect->collisionFlg = 0;
-			fdActorSetSprFlags(effect, 0);
+			frame = fdSpriteShareVRAMCacheEntry(effect->sprite, frame);
+			effect->motionFlags = 0;
+			effect->collisionFlags = 0;
+			fdActorSetSpriteFlags(effect, 0);
 			fdActorSelectAnimation(effect, 2);
 			scTundariaTowerStartEffectScript(effect, DustScatterScript);
 			effect->scaleY = effect->scaleX = toFIXED(7) / 10;
-			effect->spr->pri = 1;
+			effect->sprite->priority = 1;
 			if(spread != 0) {
-				effect->vel.x =
+				effect->velocity.x =
 					syMulFX(syCos(i * DEGtoANG(45)), toFIXED(6) / 5);
-				effect->vel.z = sySin(i * DEGtoANG(45));
+				effect->velocity.z = sySin(i * DEGtoANG(45));
 			} else {
-				effect->vel.x = spread;
-				effect->vel.z = spread;
+				effect->velocity.x = spread;
+				effect->velocity.z = spread;
 			}
-			effect->vel.y = -(syRandomBelow(16384) + (toFIXED(3) / 8));
+			effect->velocity.y = -(syRandomBelow(16384) + (toFIXED(3) / 8));
 			effect->spin = syRandomBelow(512) - (TRIG_TURN / 256);
 			effect->scaleRateX = -(toFIXED(1) / 32);
 			effect->scaleRateY = -(toFIXED(3) / 128);
@@ -1615,27 +1617,29 @@ void scTundariaTowerSpawnDustRing(void)
 					leader->x.fixed, leader->y.fixed, leader->z.fixed));
 
 			if(effect != NULL) {
-				Sint32 ang;
+				Sint32 angle;
 
-				state = fdSprShareVRAMCacheEntry(effect->spr, state);
-				effect->motionFlg = 0;
-				effect->collisionFlg = 0;
-				fdActorSetSprFlags(effect, 0);
+				state = fdSpriteShareVRAMCacheEntry(effect->sprite, state);
+				effect->motionFlags = 0;
+				effect->collisionFlags = 0;
+				fdActorSetSpriteFlags(effect, 0);
 				fdActorSelectAnimation(effect, 2);
 				scTundariaTowerStartEffectScript(effect, DustBurstScript);
-				ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-				effect->vel.x = syCos(ang);
-				effect->vel.y = 0;
-				effect->vel.z = sySin(ang);
-				effect->vel.x += effect->vel.x >> 1;
-				effect->vel.x += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
-				effect->vel.z +=
+				angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+				effect->velocity.x = syCos(angle);
+				effect->velocity.y = 0;
+				effect->velocity.z = sySin(angle);
+				effect->velocity.x += effect->velocity.x >> 1;
+				effect->velocity.x +=
+					syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
+				effect->velocity.z +=
 					syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 				effect->spin = syRandomBelow(4096) - (TRIG_TURN / 32);
 				effect->scaleRateX = 0;
 				effect->scaleRateY = 0;
 				effect->update = fdEffectAdvanceMotionAtLeaderPriority;
-				effect->spr->pri = ((FIELD_SPR *)leader->spr)->pri;
+				effect->sprite->priority =
+					((FIELD_SPR *)leader->sprite)->priority;
 			}
 		}
 	}
@@ -1655,11 +1659,11 @@ void scTundariaTowerSpawnDustRing(void)
    sprites, marks each rock idle and starts the event that spawns them. */
 void scTundariaTowerStartFallingRocks(void)
 {
-	ROCK_STATE *state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
+	ROCK_STATE *state = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(ROCK_STATE));
 	Sint32		resource;
 	Sint32		tile;
 	ROCK	   *rock;
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 	Sint32		i;
 
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_FALLING_ROCK), state);
@@ -1669,13 +1673,13 @@ void scTundariaTowerStartFallingRocks(void)
 	state->resource = resource;
 	rock = state->rocks;
 	for(i = 0; i < ROCK_COUNT; i++) {
-		spr = &state->sprs[i];
-		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
-		rock->tmr = -1;
+		sprite = &state->sprites[i];
+		fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		rock->timer = -1;
 		rock++;
 	}
 	state->next = 0;

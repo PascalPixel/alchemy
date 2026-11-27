@@ -1,6 +1,6 @@
 /* The title intro's tables: the prompt's blend levels, then the response curves
-   of mnTitlePaletteFadeBuildCols's tints, as The Broken Seal's title intro has
-   them. */
+   of mnTitlePaletteFadeBuildColors's tints, as The Broken Seal's title intro
+   has them. */
 
 #include "system.h"
 

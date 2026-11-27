@@ -17,7 +17,7 @@
 /* The ticks the hand cursor takes to glide into a newly opened list. */
 #define SHOP_CURSOR_ENTER_TICKS 12
 
-/* The particles a sanctum service's sparkles use (SHOP_STATE.effs), and how
+/* The particles a sanctum service's sparkles use (SHOP_STATE.effects), and how
    many of them fly in at the party member's icon in its burst. */
 #define SANCTUM_PARTICLE_COUNT 24
 #define SANCTUM_BURST_SPARKLES 18
@@ -34,12 +34,12 @@ typedef struct SHOP_STATE {
 	Sint32
 		/* the menu screens' chosen party member; not named here */
 				   selectedMember;
-	struct WINDOW *moneyWin; /* the coins window */
+	struct WINDOW *moneyWindow; /* the coins window */
 	/* The menu screens' first window and their two sides; not named here. */
 	Uint8		   menuSides[16];
-	struct WINDOW *itemWin;
+	struct WINDOW *itemWindow;
 	/* The menu screens' windows, icons and cursor grid; not named here. */
-	Uint8  menuWins[240];
+	Uint8  menuWindows[240];
 	SPR	  *partyMemberIcons[8]; /* the party row's sprites */
 	Sint16 partyMemberX[8];		/* pixels */
 	Sint16 partyMemberY[8];		/* pixels */
@@ -62,11 +62,11 @@ typedef struct SHOP_STATE {
 	Uint16 selectedItem;		  /* the item being bought, sold or repaired */
 	Uint8  unusedAfterSelection[4]; /* no view of the menu state names it */
 	Uint16 keeperGraphics; /* the shopkeeper's animation; picks the portrait */
-	Sint8  stockCnt;
-	Sint8  partyMemberCnt;
+	Sint8  stockCount;
+	Sint8  partyMemberCount;
 	/* The ticks the hand cursor's next move takes (mnCursorPlace):
 	   SHOP_CURSOR_ENTER_TICKS into a new list, then a few a step. */
-	Uint8 cursorFrm;
+	Uint8 cursorFrame;
 	/* The stock row's type (SHOP_TYPE), which picks the keeper's lines; an inn
 	   takes a weapon shop's, whose lines are given as they are. */
 	Uint8 shopType;
@@ -80,25 +80,25 @@ typedef struct SHOP_STATE {
 	Uint8 warriorShop;
 	Uint8 padding[3]; /* up to the word effects starts on */
 	/* the sanctum service's particles */
-	FIELD_PARTICLE effs[SANCTUM_PARTICLE_COUNT];
+	FIELD_PARTICLE effects[SANCTUM_PARTICLE_COUNT];
 } SHOP_STATE;
 
 STATIC_ASSERT(sizeof(SHOP_STATE) == 2672);
-STATIC_ASSERT(offsetof(SHOP_STATE, moneyWin) == 12);
-STATIC_ASSERT(offsetof(SHOP_STATE, itemWin) == 32);
+STATIC_ASSERT(offsetof(SHOP_STATE, moneyWindow) == 12);
+STATIC_ASSERT(offsetof(SHOP_STATE, itemWindow) == 32);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberIcons) == 276);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberScale) == 340);
 STATIC_ASSERT(offsetof(SHOP_STATE, stockItemIds) == 620);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberIds) == 878);
 STATIC_ASSERT(offsetof(SHOP_STATE, cursor) == 896);
-STATIC_ASSERT(offsetof(SHOP_STATE, stockCnt) == 934);
-STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberCnt) == 935);
+STATIC_ASSERT(offsetof(SHOP_STATE, stockCount) == 934);
+STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberCount) == 935);
 STATIC_ASSERT(offsetof(SHOP_STATE, action) == 938);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberX) == 308);
 STATIC_ASSERT(offsetof(SHOP_STATE, partyMemberY) == 324);
 STATIC_ASSERT(offsetof(SHOP_STATE, burstMember) == 939);
 STATIC_ASSERT(offsetof(SHOP_STATE, warriorShop) == 940);
-STATIC_ASSERT(offsetof(SHOP_STATE, effs) == 944);
+STATIC_ASSERT(offsetof(SHOP_STATE, effects) == 944);
 
 /* The shop's 16-by-16 sprites (graphics/ui/menu_sprites): the hand cursor, the
    gem and the list arrows. */
@@ -129,13 +129,14 @@ Sint32 mnSanctumRun(Sint32 keeperId);
 Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId);
 void   mnCursorAdvance(MENU_CURSOR *cursor);
 void   mnCursorMoveTowardTarget(MENU_CURSOR *cursor);
-void   mnCursorSet(MENU_CURSOR *cursor, Sint32 tgtX, Sint32 tgtY, Sint32 ticks);
+void   mnCursorSet(
+	  MENU_CURSOR *cursor, Sint32 targetX, Sint32 targetY, Sint32 ticks);
 void   mnCursorSetPosImmediate(MENU_CURSOR *cursor, Sint32 x, Sint32 y);
-void   mnQuantityBarFill(Sint32 itemCnt, Sint32 col, Uint8 *tileBuf);
+void   mnQuantityBarFill(Sint32 itemCount, Sint32 color, Uint8 *tileBuf);
 void   mnShopSaveAndTintFieldPalette(Sint32 tint);
 void   mnShopRestoreFieldPalette(void);
 Sint32 mnItemPickerRun(Sint32 *selectedUnit, Sint32 *selectedSlot);
-void   mnSndWaitForJingle(void);
+void   mnSoundWaitForJingle(void);
 void   mnInnPlaySleep(Sint32 roomPrice);
 
 /* A counter's state and the shop's visit, and what every counter shares: the
@@ -166,9 +167,9 @@ typedef enum QUANTITY_BAR_COL {
 /* The quantity bar and price sprites, the field's tint behind a counter and the
    hand cursor's moves (shop_cursor.c). */
 void		mnShopDrawPriceDigit(Sint32 digit, Uint8 *tileBuf, Uint32 digitPos);
-WINDOW_SPR *mnShopCreatePriceSpr(
-	Sint32 value, struct WINDOW *win, Sint32 x, Sint32 y);
-void mnCursorPlace(struct WINDOW *win, Sint32 x, Sint32 y);
+WINDOW_SPR *mnShopCreatePriceSprite(
+	Sint32 value, struct WINDOW *window, Sint32 x, Sint32 y);
+void mnCursorPlace(struct WINDOW *window, Sint32 x, Sint32 y);
 
 /* What mnShopDrawItemPrice says below an item whose price is 0. */
 typedef enum SHOP_PRICE_KIND {
@@ -180,15 +181,15 @@ typedef enum SHOP_PRICE_KIND {
 /* Buying, and the windows the other counters share: the coins, an item's price
    and description, the party and the quantity bar (shop_buy.c). */
 Sint32 mnShopSelectBuy(void);
-void   mnShopDrawStock(struct WINDOW *win, Sint32 selected);
+void   mnShopDrawStock(struct WINDOW *window, Sint32 selected);
 void   mnShopDrawMoney(void);
 void   mnShopDrawItemPrice(
-	  struct WINDOW *win, Sint32 itemId, Sint32 price, Sint32 priceKind);
-void mnShopDrawMessage(struct WINDOW *win, Sint32 msg);
-void mnShopDrawParty(struct WINDOW *win, Sint32 selected, Sint32 itemId);
+	  struct WINDOW *window, Sint32 itemId, Sint32 price, Sint32 priceKind);
+void mnShopDrawMessage(struct WINDOW *window, Sint32 msg);
+void mnShopDrawParty(struct WINDOW *window, Sint32 selected, Sint32 itemId);
 void mnShopDrawEquipComparison(
-	struct WINDOW *win, Sint32 unitId, Sint32 itemId);
-void   mnShopDrawCarriedItem(struct WINDOW *win, Sint32 unitId, Sint32 itemId);
+	struct WINDOW *window, Sint32 unitId, Sint32 itemId);
+void mnShopDrawCarriedItem(struct WINDOW *window, Sint32 unitId, Sint32 itemId);
 Sint32 mnShopSelectBuyCount(Sint32 unitId, Sint32 itemId);
 Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price);
 void   mnShopBuyDone(Sint32 unitId, Sint32 itemId, Sint32 quantity);
@@ -199,9 +200,9 @@ Sint32 mnShopSalePrice(Sint32 inventoryEntry);
 /* Selling, and the party member's item grid (shop_sell.c). */
 Sint32 mnShopChooseMember(void);
 Sint32 mnShopSelectSell(Sint32 unitId);
-void   mnShopDrawMemberItems(struct WINDOW *win, Sint32 unitId);
+void   mnShopDrawMemberItems(struct WINDOW *window, Sint32 unitId);
 Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot);
-void   mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt);
+void   mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 count);
 
 /* Repairing (shop_repair.c). */
 Sint32 mnShopRepairPrice(Sint32 inventoryEntry);
@@ -210,7 +211,7 @@ Sint32 mnShopSelectRepair(Sint32 unitId);
 void   mnShopRepairItem(Sint32 unitId, Sint32 slot);
 
 /* The Game Ticket and every shop's stock (shop_stock.c). */
-void   mnShopGiveGameTicket(struct WINDOW *win, struct WINDOW *itemWin);
+void   mnShopGiveGameTicket(struct WINDOW *window, struct WINDOW *itemWindow);
 Sint32 mnShopStockGetRowCount(void);
 void   mnShopStockAddArtifacts(Sint32 stockRow);
 Sint32 mnShopStockCopyItems(Sint32 stockRow, Sint16 *output);
@@ -225,8 +226,8 @@ void   mnSanctumShowKeeperMessage(Sint32 msgId);
 void   mnSanctumShowKeeperMessageHidingCursor(Sint32 msgId);
 Sint32 mnSanctumRunPartyService(void);
 void   mnSanctumApplyService(Sint32 unitId, Sint32 serviceKind);
-void   mnSanctumHighlightMembers(struct WINDOW *win, Sint32 selected);
-void   mnSanctumDrawFee(struct WINDOW *tgt, Sint32 unitId);
+void   mnSanctumHighlightMembers(struct WINDOW *window, Sint32 selected);
+void   mnSanctumDrawFee(struct WINDOW *target, Sint32 unitId);
 void   mnSanctumUpdateBurstSparkle(FIELD_PARTICLE *effect);
 void   mnSanctumUpdateBurst(void);
 void   mnSanctumRunMemberIconBurst(Sint32 member);
@@ -236,6 +237,6 @@ Sint32 mnInnRoomPrice(Sint32 innId);
 
 /* The item picker (shop_item_picker.c). */
 Sint32 mnItemPickerSelectItem(Sint32 unitId);
-void   mnItemPickerDrawItem(struct WINDOW *win, Sint32 unitId, Sint32 slot);
+void   mnItemPickerDrawItem(struct WINDOW *window, Sint32 unitId, Sint32 slot);
 
 #endif

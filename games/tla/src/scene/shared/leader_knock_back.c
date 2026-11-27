@@ -39,16 +39,18 @@ Sint32 KNOCK_BACK(void)
 
 				/* Sliding: 2 pixels a tick for up to 10 ticks, until the
 				   ground 8 pixels ahead stops them. */
-				actor->velX = (Sint16)state->dir.x * toFIXED(2);
-				actor->velZ = (Sint16)state->dir.z * toFIXED(2);
+				actor->velocityX = (Sint16)state->direction.x * toFIXED(2);
+				actor->velocityZ = (Sint16)state->direction.z * toFIXED(2);
 				actor->acceleration = toFIXED(1) / 16;
 				for(i = 0; i <= 9; i++) {
-					pos.x = actor->x.fixed + (Sint16)state->dir.x * toFIXED(8);
+					pos.x = actor->x.fixed +
+						(Sint16)state->direction.x * toFIXED(8);
 					pos.y = actor->y.fixed;
-					pos.z = actor->z.fixed + (Sint16)state->dir.z * toFIXED(8);
+					pos.z = actor->z.fixed +
+						(Sint16)state->direction.z * toFIXED(8);
 					if(KNOCK_BACK_CHECK_COLLISION(actor, &pos) != 0) {
-						actor->velX = 0;
-						actor->velZ = 0;
+						actor->velocityX = 0;
+						actor->velocityZ = 0;
 						break;
 					}
 					syWait(1);
@@ -59,7 +61,7 @@ Sint32 KNOCK_BACK(void)
 #if KNOCK_BACK_STOPS_AT_ACTORS
 				Sint32 radius;
 				ACTOR *other;
-				Uint8 *flg;
+				Uint8 *flags;
 				Sint32 x, z, off;
 				Sint32 i;
 #else
@@ -67,9 +69,11 @@ Sint32 KNOCK_BACK(void)
 				Sint32 off;
 #endif
 
-				pos.x = actor->x.fixed + (Sint16)state->dir.x * toFIXED(8);
+				pos.x =
+					actor->x.fixed + (Sint16)state->direction.x * toFIXED(8);
 				pos.y = actor->y.fixed;
-				pos.z = actor->z.fixed + (Sint16)state->dir.z * toFIXED(8);
+				pos.z =
+					actor->z.fixed + (Sint16)state->direction.z * toFIXED(8);
 				result = KNOCK_BACK_CHECK_COLLISION(actor, &pos);
 				if(result > 0)
 					break;
@@ -82,10 +86,10 @@ Sint32 KNOCK_BACK(void)
 #if KNOCK_BACK_STOPS_AT_ACTORS
 				radius = actor->radius - 2;
 				other = RamHeapSlots->actors;
-				flg = &other->collisionFlg;
+				flags = &other->collisionFlags;
 				for(i = 0; i < ACTOR_COUNT;
-					i++, flg += sizeof(ACTOR), other++) {
-					if(other->script != 0 && (*flg & ACTOR_SOLID) &&
+					i++, flags += sizeof(ACTOR), other++) {
+					if(other->script != 0 && (*flags & ACTOR_SOLID) &&
 						other != actor &&
 						scScriptCheckSpheresOverlap(&other->x.fixed, radius,
 							(Sint32 *)&pos, other->radius - 2) >= 0) {
@@ -96,8 +100,8 @@ Sint32 KNOCK_BACK(void)
 #endif
 				/* A step of 2 pixels, kept within a pixel of the metatile's
 				   middle across it. */
-				x = actor->x.fixed += (Sint16)state->dir.x * toFIXED(2);
-				z = actor->z.fixed + (Sint16)state->dir.z * toFIXED(2);
+				x = actor->x.fixed += (Sint16)state->direction.x * toFIXED(2);
+				z = actor->z.fixed + (Sint16)state->direction.z * toFIXED(2);
 				actor->z.fixed = z;
 				off = (x & ~FIELD_METATILE_MASK) - toFIXED(8);
 				if(off > toFIXED(1))
@@ -119,7 +123,7 @@ Sint32 KNOCK_BACK(void)
 	done:
 #endif
 		actor->update = 0;
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	/* UB: state is set only when renderMode is 0; otherwise the store goes
 	   through whatever its register holds. */

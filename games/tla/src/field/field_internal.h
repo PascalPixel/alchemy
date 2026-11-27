@@ -57,7 +57,7 @@ typedef struct ACTOR_CAMERA_POINT {
    stand in for them. */
 typedef struct ACTOR_CAMERA_FIXED {
 	ACTOR_CAMERA_POINT	eye;
-	ACTOR_CAMERA_POINT	tgt;
+	ACTOR_CAMERA_POINT	target;
 	ACTOR_CAMERA_POINT *followEye; /* when set, used as the eye */
 	ACTOR_CAMERA_POINT *followPos; /* when set, used as the target */
 } ACTOR_CAMERA_FIXED;
@@ -67,23 +67,23 @@ typedef struct ACTOR_CAMERA_FIXED {
 typedef struct PLAYER_SPR {
 	Uint8 unused[5]; /* no code names it */
 	Uint8 affine : 2;
-	Uint8 objMode : 2;
+	Uint8 objectMode : 2;
 	Uint8 mosaic : 1;
-	Uint8 fullCol : 1;
+	Uint8 fullColor : 1;
 	Uint8 shape : 2;
 	Uint8 unusedAfterShape[3]; /* no code names it */
 	Uint8 tileHigh : 2;		   /* tile number bits 9..8 */
-	Uint8 pri : 2;
-	Uint8 pal : 4;
-	Uint8 unusedAfterPal[7]; /* no code names it */
-	Uint8 cacheFlg : 2;		 /* retainCacheEntry and useOwnScale */
+	Uint8 priority : 2;
+	Uint8 palette : 4;
+	Uint8 unusedAfterPalette[7]; /* no code names it */
+	Uint8 cacheFlags : 2;		 /* retainCacheEntry and useOwnScale */
 	/* rows SPRITE_FLAG_SUNK sinks or SPRITE_FLAG_SHADED * shades */
 	Uint8  sunkRows : 6;
 	Uint16 rotation;
 	Uint8  unusedAfterRotation[5]; /* no code names it */
 	Uint8  dirty;
-	Uint8  flg;
-	Uint8  unusedAfterFlg[17]; /* no code names it */
+	Uint8  flags;
+	Uint8  unusedAfterFlags[17]; /* no code names it */
 	SPR_ANIMATION
 	*secondLayer; /* entries[1]; above priority 3 hidden */
 } PLAYER_SPR;
@@ -114,7 +114,7 @@ typedef struct MAP_HEADER {
 	/* The camera's bounds in 8-pixel tiles: left, top, right and bottom. */
 	Uint8 cameraBounds[4];
 	/* Each layer's BG priority, 1 to 3; 0 leaves the layer off. */
-	Uint8			 pri[3];
+	Uint8			 priority[3];
 	Uint8			 charBase[3]; /* each layer's BG char block */
 	Uint16			 reserved;	  /* nothing reads it */
 	MAP_HEADER_LAYER layers[3];
@@ -123,7 +123,7 @@ typedef struct MAP_HEADER {
 	Sint32 collision; /* into RamMapCollision */
 	Sint32 metatiles; /* into RamMapMetatileBuffer */
 	Sint32 shapes;	  /* into MapShapeGrid */
-	Sint32 anm;		  /* the tileset animation script, or 0 for none */
+	Sint32 animation; /* the tileset animation script, or 0 for none */
 	Sint32 blend;	  /* the blend script, or 0 for none */
 	/* Into RamMapCollision after its MAPGRID_SHAPE_TABLE_BYTES. */
 	Sint32 script;
@@ -150,9 +150,9 @@ typedef struct SPR_LAYER_VIEW {
 	Uint8 unused[9];	/* no code names it */
 	Uint8 tileHigh : 2; /* tile number bits 9..8 */
 	Uint8 layer : 2;
-	Uint8 pal : 4;
-	Uint8 unusedAfterPal[16]; /* no code names it */
-	Uint8 flg;
+	Uint8 palette : 4;
+	Uint8 unusedAfterPalette[16]; /* no code names it */
+	Uint8 flags;
 } SPR_LAYER_VIEW;
 
 /* The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
@@ -160,17 +160,17 @@ typedef struct SPR_LAYER_VIEW {
    compiles otherwise. */
 typedef struct WAITING_ACTOR {
 	Uint8  unused[56]; /* no code names it */
-	Sint32 tgtX;
-	Sint32 tgtY;
-	Sint32 tgtZ;
-	Uint8  unusedAfterTgtZ[18]; /* no code names it */
+	Sint32 targetX;
+	Sint32 targetY;
+	Sint32 targetZ;
+	Uint8  unusedAfterTargetZ[18]; /* no code names it */
 	Uint8  arrivalAxis;
 	Uint8  unusedAfterArrivalAxis[9]; /* no code names it */
 	Uint8  refused;
 } WAITING_ACTOR;
 
 /* SPR_ANIMATION.kind: the facing table a sprite animation's pictures follow
-   (fdSprComposePicture), as The Broken Seal names them; this game's five
+   (fdSpriteComposePicture), as The Broken Seal names them; this game's five
    pictures cover 64 sectors. */
 typedef enum ANIMATION_FACING_KIND {
 	ANIM_FACING_NONE = 0, /* the script's own picture whatever the facing */
@@ -207,8 +207,8 @@ typedef enum ANIMATION_FACING_KIND {
 /* A facing table entry's bit that mirrors its picture. */
 #define ANIM_FACING_MIRRORED	 (1 << 7)
 /* The sector a facing angle lies in, a turn cut into `sectors`. */
-#define FACING_SECTOR(dir, sectors) \
-	((dir) / (TRIG_TURN / (sectors)) % (sectors))
+#define FACING_SECTOR(direction, sectors) \
+	((direction) / (TRIG_TURN / (sectors)) % (sectors))
 
 /* The field's pool sizes, and a sprite animation's timer step at normal
    speed. */
@@ -221,8 +221,8 @@ enum {
 	SPRITE_ANIMATION_NORMAL_STEP = 16
 };
 
-/* What stopped the leader's step this tick (fdActorUpdatePlayerCtrl,
-   fdActorMoveOnWorldMap, fdActorUpdateHoverCtrl and the climbing and rope
+/* What stopped the leader's step this tick (fdActorUpdatePlayerControl,
+   fdActorMoveOnWorldMap, fdActorUpdateHoverControl and the climbing and rope
    controls). */
 typedef enum PLAYER_STEP_BLOCK {
 	PLAYER_STEP_BLOCKED_BY_MAP = 1, /* every heading tried runs into the map */
@@ -255,11 +255,11 @@ typedef enum METATILE_TILES_PACKING {
 } METATILE_TILES_PACKING;
 
 /* A row of SpritePictureCacheSources: the packed resource that holds an
-   animation number's pictures, which fdSprPictureCacheLoad decodes into a
+   animation number's pictures, which fdSpritePictureCacheLoad decodes into a
    sprite picture cache; a number of 0 ends the table. */
 typedef struct SPR_PICTURE_CACHE_SOURCE {
 	Uint16 resource;
-	Sint16 num;
+	Sint16 number;
 } SPR_PICTURE_CACHE_SOURCE;
 
 /* The size of fdWorldMapUpdateAffineLinesCode, an address equal to the size
@@ -295,7 +295,7 @@ extern Uint8 fdRenderCopyStridedCodeSize[];
 #define btRenderLoadDecoder() \
 	do { \
 		syDMAXCopy(fdRenderDecodePictureCode, \
-			syHeapSlotAlloc( \
+			syHeapSlotAllocate( \
 				HEAP_SLOT_TICK_SCRATCH, (Sint32)RenderDecodePictureBlockSize), \
 			DMA_COPY_WORDS((Uint32)(fdRenderDecodePictureCopyEnd - \
 							   fdRenderDecodePictureCode) >> \

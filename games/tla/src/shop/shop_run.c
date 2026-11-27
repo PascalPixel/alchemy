@@ -13,7 +13,7 @@
 Sint32 mnShopListAvailableArtifacts(void)
 {
 	SHOP_STATE *shop = RamHeapSlots->menuState;
-	Sint32		cnt = 0;
+	Sint32		count = 0;
 	Sint32		itemId;
 
 	/* Every 9-bit id is tried. */
@@ -27,11 +27,11 @@ Sint32 mnShopListAvailableArtifacts(void)
 			}
 		}
 		if(gmItemAdjustRareItemStockStub(itemId, 0) != 0)
-			shop->stockItemIds[cnt++] = itemId;
+			shop->stockItemIds[count++] = itemId;
 	}
-	shop->stockItemIds[cnt] = 0;
-	shop->stockCnt = cnt;
-	return cnt;
+	shop->stockItemIds[count] = 0;
+	shop->stockCount = count;
+	return count;
 }
 
 /* Advances the hand cursor one tick. Runs every tick as an event while a
@@ -51,13 +51,13 @@ void mnShopInitState(void)
 	SHOP_STATE *shop;
 	Sint32		resourceSlot;
 
-	shop = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(SHOP_STATE));
+	shop = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(SHOP_STATE));
 	fdScriptEndAllLastingPsynergyStub();
 	DMA_FILL32(0, shop, sizeof(SHOP_STATE));
 	/* The hand cursor's glides take SHOP_CURSOR_ENTER_TICKS until a screen
 	   changes it. */
-	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
-	shop->partyMemberCnt = gmPartyListMembersStub(shop->partyMemberIds);
+	shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
+	shop->partyMemberCount = gmPartyListMembersStub(shop->partyMemberIds);
 	mnPaletteLoadIconsIntoHighlightStub();
 	/* Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite */
 	resourceSlot = syVRAMCacheFindFreeEntry();
@@ -112,7 +112,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 {
 	SHOP_STATE *shop;
 	WINDOW_SPR *anchor;
-	WINDOW	   *win;
+	WINDOW	   *window;
 	Sint32		action = 0;
 
 	if(stockRow >= mnShopStockGetRowCount() || stockRow < 0)
@@ -122,14 +122,14 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 	shop = RamHeapSlots->menuState;
 	shop->shopType = mnShopStockGetType(stockRow);
 	shop->keeperGraphics =
-		((SPR *)fdActorGetByIdStub(keeperId)->spr)->entries[0]->anmId;
+		((SPR *)fdActorGetByIdStub(keeperId)->sprite)->entries[0]->animationId;
 	/* The shopkeeper's portrait window, or an empty one off the right edge when
 	   there is no portrait. */
-	win = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
-	if(win == 0)
-		win = mnWindowCreateStub(30, 0, 2, 2, WINDOW_FLAG_INSTANT);
-	anchor = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
+	window = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	if(window == 0)
+		window = mnWindowCreateStub(30, 0, 2, 2, WINDOW_FLAG_INSTANT);
+	anchor = mnWindowSpriteCreateStub(
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
 	anchor->depth = OAM_DEPTH_FRONT;
 	anchor->motion = WINDOW_SPRITE_MOTION_STILL;
 	anchor->kind = WINDOW_SPRITE_PLAIN;
@@ -141,7 +141,8 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 		action = mnSelectShopCommandStub(action);
 		shop->action = action;
 		if(action == SHOP_ACTION_BUY) {
-			shop->stockCnt = mnShopStockCopyItems(stockRow, shop->stockItemIds);
+			shop->stockCount =
+				mnShopStockCopyItems(stockRow, shop->stockItemIds);
 			mnShopShowKeeperMessage((Sint32)MsgWhatWouldYouLike);
 			mnShopSelectBuy();
 		} else if(action == SHOP_ACTION_SELL) {
@@ -165,7 +166,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 		mnShopShowKeeperMessage((Sint32)MsgAnythingElse);
 	}
 	mnShopShowKeeperMessage((Sint32)MsgShopFarewell);
-	mnWindowCloseStub(win, 2);
+	mnWindowCloseStub(window, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -199,9 +200,9 @@ Sint32 mnShopOpenDebugShop(void)
 /* Waits until the jingle playing has ended and the music it interrupted is
    back: the inn's night, the sanctum's healing and scripts that wait for a
    jingle. */
-void mnSndWaitForJingle(void)
+void mnSoundWaitForJingle(void)
 {
-	while(sySndGetBGMRestoreDelayStub() != 0) {
+	while(sySoundGetBGMRestoreDelayStub() != 0) {
 		sySynch(1);
 	}
 }
@@ -307,11 +308,11 @@ Sint32 mnSanctumAskYesNo(Sint32 choice)
 	return choice;
 }
 
-/* Moves a cursor over `cnt` entries laid out `columns` to a row by the d-pad:
+/* Moves a cursor over `count` entries laid out `columns` to a row by the d-pad:
    left and right wrap round, up and down stop at the ends. Plays the cursor
    sound when it moves. Returns how it moved (MENU_GRID_MOVE), a page being one
    row of `columns`. Called by every counter's lists. */
-Sint32 mnGridMoveCursor(Sint32 *cursor, Sint32 cnt, Sint32 columns)
+Sint32 mnGridMoveCursor(Sint32 *cursor, Sint32 count, Sint32 columns)
 {
 	Sint32 changed = MENU_GRID_STAYED;
 	Sint32 prev = *cursor;
@@ -319,24 +320,24 @@ Sint32 mnGridMoveCursor(Sint32 *cursor, Sint32 cnt, Sint32 columns)
 
 	if(PerWork.repeat & KEY_LEFT) {
 		pos--;
-		pos = (pos + cnt) % cnt;
+		pos = (pos + count) % count;
 	}
 	if(PerWork.repeat & KEY_RIGHT) {
 		pos++;
-		pos = (pos + cnt) % cnt;
+		pos = (pos + count) % count;
 	}
 	if(PerWork.repeat & KEY_UP) {
 		if(pos - columns >= 0)
 			pos -= columns;
 	}
 	if(PerWork.repeat & KEY_DOWN) {
-		if(pos + columns < (columns + cnt - 1) / columns * columns)
+		if(pos + columns < (columns + count - 1) / columns * columns)
 			pos += columns;
-		if(pos > cnt - 1)
-			pos = cnt - 1;
+		if(pos > count - 1)
+			pos = count - 1;
 	}
 	if(prev != pos) {
-		sySndPlayStub(SE_MENU_CURSOR_MOVE);
+		sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 		changed = MENU_GRID_MOVED;
 	}
 	if(prev / columns * columns != pos / columns * columns)

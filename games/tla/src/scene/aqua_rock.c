@@ -34,8 +34,8 @@ typedef struct AQUA_ROCK_BUBBLES {
 	ACTOR *anchor;
 	Uint16 vramEntry;
 	Uint16 next;
-	Sint16 dir;
-	Uint8  unusedAfterDir[2]; /* no code names it */
+	Sint16 direction;
+	Uint8  unusedAfterDirection[2]; /* no code names it */
 	BUBBLE bubbles[STREAM_BUBBLE_COUNT];
 } AQUA_ROCK_BUBBLES;
 
@@ -188,12 +188,12 @@ UNUSED ACTOR *scAquaRockCreateActor(Sint32 x, Sint32 y, Sint32 z, Sint32 kind)
 	ACTOR *actor = syImportActorCreate(kind, x, y, z);
 
 	if(actor != 0) {
-		fdSetActorSprPriority(actor, 1);
-		actor->motionFlg = 0;
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
-		actor->priFlg |=
+		fdSetActorSpritePriority(actor, 1);
+		actor->motionFlags = 0;
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
+		actor->priorityFlags |=
 			ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
 		return actor;
 	}
@@ -245,7 +245,7 @@ typedef struct AQUA_ROCK_STREAM {
 	Sint16 metatileX, metatileY; /* where its metatiles are copied */
 	Sint16 height;				 /* its rows */
 	/* The flag that stops it, or IF_FLAG_SET of one that sets it flowing. */
-	Sint16 flg;
+	Sint16 flags;
 	Sint16 shown;		 /* the flag's value it was last told */
 	Sint16 waveRow[2];	 /* each wave's row times four, or STREAM_NO_WAVE */
 	Sint16 waveStops[2]; /* whether each wave stops the stream or starts it */
@@ -315,7 +315,7 @@ again:
 		x = spot.x;
 		if(x < 0)
 			x += toFIXED(1) - 1;
-		dx = FIXEDtoINT(x) - actor->tmr;
+		dx = FIXEDtoINT(x) - actor->timer;
 		/* FAKEMATCH(temporary): coordinate, a copy of spot.z on which the
 		 * division by toFIXED(1) is written out by hand; as spot.z /
 		 * toFIXED(1). */
@@ -343,22 +343,22 @@ end:
 /* A fish's update: its sprite turns with its facing. */
 void scAquaRockTurnFish(ACTOR *actor)
 {
-	FIELD_SPR *spr;
-	Sint32	   ang;
+	FIELD_SPR *sprite;
+	Sint32	   angle;
 
-	ang = actor->facing;
-	spr = actor->spr;
-	spr->rotation = ang + DEGtoANG(90);
+	angle = actor->facing;
+	sprite = actor->sprite;
+	sprite->rotation = angle + DEGtoANG(90);
 }
 
 /* A fish's script call: takes away its shadow and gives it its speed and its
    turning update. */
 Sint32 scAquaRockStartFish(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	actor->speedLimit = toFIXED(1);
 	actor->acceleration = toFIXED(1) / 20;
-	actor->collisionFlg = 0;
+	actor->collisionFlags = 0;
 	actor->update = (OBJECT_UPDATE)scAquaRockTurnFish;
 	return 0;
 }
@@ -402,9 +402,9 @@ UNUSED void scAquaRockSpawnSparkleAtRandom(ACTOR *actor)
 		child = syImportActorCreate(
 			SPRITE_GLINT, x - toFIXED(24), actor->y.fixed, actor->z.fixed);
 		if(child != 0) {
-			fdActorSetSprFlags(child, 0);
+			fdActorSetSpriteFlags(child, 0);
 			child->update = (OBJECT_UPDATE)scAquaRockFlowSparkleUpStream;
-			child->motionFlg = 0;
+			child->motionFlags = 0;
 		}
 	}
 }
@@ -415,32 +415,32 @@ UNUSED void scAquaRockSpawnSparkleAtRandom(ACTOR *actor)
 void scAquaRockUpdateStreams(void)
 {
 	AQUA_ROCK_STREAM *entry;
-	Sint32			  n, i, flg;
+	Sint32			  n, i, flag;
 
 	entry = AquaRockStreams;
 	for(n = 0; n <= 4; n++, entry++) {
-		flg = syGameFlagGet(entry->flg & (CONDITION_FLAG_SET - 1));
-		if(entry->flg & CONDITION_FLAG_SET)
-			flg ^= 1;
-		if(entry->shown != flg) {
+		flag = syGameFlagGet(entry->flags & (CONDITION_FLAG_SET - 1));
+		if(entry->flags & CONDITION_FLAG_SET)
+			flag ^= 1;
+		if(entry->shown != flag) {
 			entry->waveRow[entry->nextWave] = 0;
-			entry->waveStops[entry->nextWave] = flg;
+			entry->waveStops[entry->nextWave] = flag;
 			if(++entry->nextWave > 1)
 				entry->nextWave = 0;
-			entry->shown = flg;
+			entry->shown = flag;
 		}
 		for(i = 0; i < 2; i++) {
 			Sint32 row = entry->waveRow[i];
 			if(row < entry->height * 4) {
 				Sint32 inverse;
 				row /= 4;
-				flg = entry->waveStops[i];
-				inverse = flg ^ 1;
+				flag = entry->waveStops[i];
+				inverse = flag ^ 1;
 				if(entry->waveRow[i] & 1) {
-					fdMapGridCopyMetatilesLayered(flg * 3 + entry->pictureSrcX,
+					fdMapGridCopyMetatilesLayered(flag * 3 + entry->pictureSrcX,
 						entry->pictureSrcY + row, 3, 1, entry->pictureX,
 						entry->pictureY + row);
-					fdMapGridCopyMetatiles(flg * 3 + entry->metatileSrcX,
+					fdMapGridCopyMetatiles(flag * 3 + entry->metatileSrcX,
 						entry->metatileSrcY + row, 3, 1, entry->metatileX,
 						entry->metatileY + row);
 				} else {
@@ -525,7 +525,7 @@ void scAquaRockTimeStreams(void)
 	(stream)->metatileX = (metatileX_); \
 	(stream)->metatileY = (metatileY_); \
 	(stream)->height = (height_); \
-	(stream)->flg = (flag_); \
+	(stream)->flags = (flag_); \
 	(stream)->shown = syGameFlagGet(flag_) ^ 1; \
 	(stream)->nextWave = 0; \
 	(stream)->waveRow[1] = STREAM_NO_WAVE; \
@@ -591,15 +591,15 @@ void scAquaRockSetUpStreams(void)
 UNUSED void scAquaRockFlashMoai(ACTOR *actor)
 {
 	if(TickCount & 2)
-		fdActorSetSprColMode(actor, SPRITE_COLOR_GREY);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_GREY);
 	else
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 }
 
 /* A flashing actor's last update: its sprite's colour back to normal. */
 void scAquaRockStopFlashing(ACTOR *actor)
 {
-	fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 	actor->update = 0;
 }
 
@@ -634,20 +634,20 @@ void scAquaRockDouseWaterStone(Sint32 unused, Sint32 id)
 		syGameFlagSet(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK);
 		fdMapGridCopyMetatiles(64, 64, 1, 2, 51, 82);
 		fdMapGridCopyMetatiles(66, 64, 1, 2, 115, 18);
-		fdTilesetAnimPause(STREAMS_DOWNHILL_ANIMATION);
-		fdTilesetAnimPause(STREAMS_DOWNHILL_ANIMATION + 1);
-		fdTilesetAnimResume(STREAMS_UPHILL_ANIMATION);
-		fdTilesetAnimResume(STREAMS_UPHILL_ANIMATION + 1);
+		fdTilesetAnimationPause(STREAMS_DOWNHILL_ANIMATION);
+		fdTilesetAnimationPause(STREAMS_DOWNHILL_ANIMATION + 1);
+		fdTilesetAnimationResume(STREAMS_UPHILL_ANIMATION);
+		fdTilesetAnimationResume(STREAMS_UPHILL_ANIMATION + 1);
 		actor->update = (OBJECT_UPDATE)scAquaRockStopFlashing;
 		scAquaRockSetBubbleAnchor(ACTOR_WATER_STONE);
 	} else {
 		syGameFlagClear(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK);
 		fdMapGridCopyMetatiles(65, 64, 1, 2, 51, 82);
 		fdMapGridCopyMetatiles(67, 64, 1, 2, 115, 18);
-		fdTilesetAnimPause(STREAMS_UPHILL_ANIMATION);
-		fdTilesetAnimPause(STREAMS_UPHILL_ANIMATION + 1);
-		fdTilesetAnimResume(STREAMS_DOWNHILL_ANIMATION);
-		fdTilesetAnimResume(STREAMS_DOWNHILL_ANIMATION + 1);
+		fdTilesetAnimationPause(STREAMS_UPHILL_ANIMATION);
+		fdTilesetAnimationPause(STREAMS_UPHILL_ANIMATION + 1);
+		fdTilesetAnimationResume(STREAMS_DOWNHILL_ANIMATION);
+		fdTilesetAnimationResume(STREAMS_DOWNHILL_ANIMATION + 1);
 		actor->update = (OBJECT_UPDATE)scAquaRockStopFlashing;
 		scAquaRockSetBubbleAnchor(0);
 	}
@@ -658,7 +658,7 @@ void scAquaRockDouseWaterStone(Sint32 unused, Sint32 id)
 	fdScriptEnd();
 }
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 /* Move on a pillar. The pillar by the top's red moai keeps its metatile in the
    area's flags, and stopped before one of them stops that moai's stream; the
@@ -759,8 +759,8 @@ void scAquaRockRideStreamUp(void)
 				return;
 			fdScriptStart();
 			fdScriptEndLastingPsynergy(0);
-			leader->motionFlg = 0;
-			fdActorSetSprFlags(leader, 0);
+			leader->motionFlags = 0;
+			fdActorSetSpriteFlags(leader, 0);
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_KEYS;
 			scActorSpawnWadingSplash(leader);
 			fdScriptWait(5);
@@ -797,9 +797,9 @@ void scAquaRockRideStreamUp(void)
 
 /* The attribute byte of a metatile of a layer. */
 static inline Uint8 MetatileAttribute(
-	MAP_METATILE *metatiles, Sint32 row, Sint32 col)
+	MAP_METATILE *metatiles, Sint32 row, Sint32 column)
 {
-	metatiles += row * MAPGRID_SIZE + col;
+	metatiles += row * MAPGRID_SIZE + column;
 	return metatiles->attributeB;
 }
 
@@ -814,18 +814,18 @@ void scAquaRockStepIntoCurrent(void)
 	MAP_STATE	*map = RamHeapSlots->mapGrid;
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32		 col;
+	Sint32		 column;
 	Sint32		 row;
 
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS) {
-		col = FIELD_METATILE(actor->x.fixed);
+		column = FIELD_METATILE(actor->x.fixed);
 		row = FIELD_METATILE(actor->z.fixed - actor->y.fixed - toFIXED(12));
-		if(MetatileAttribute(map->layers[1].metatiles, row, col) != 0)
+		if(MetatileAttribute(map->layers[1].metatiles, row, column) != 0)
 			state->raisedCue = CUE_DROP_DOWN_FALLS;
 	} else {
-		col = FIELD_METATILE(actor->x.fixed);
+		column = FIELD_METATILE(actor->x.fixed);
 		row = FIELD_METATILE(actor->z.fixed - actor->y.fixed);
-		if(MetatileAttribute(map->layers[1].metatiles, row, col) != 0)
+		if(MetatileAttribute(map->layers[1].metatiles, row, column) != 0)
 			scLeaderFlowWithStream();
 	}
 }
@@ -837,7 +837,7 @@ void scAquaRockDouseDryMoai(void)
 	fdMapGridCopyMetatileAttributes(62, 41, 1, 2, 33, 41);
 	fdMapGridCopyMetatileTilesMetatilesRect(125, 32, 3, 13, 96, 32);
 	fdMapGridCopyMetatileTilesMetatilesRect(61, 96, 3, 13, 32, 96);
-	fdActorSetSprCol(fdActorGetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
 	scAquaRockAddMoaiWater(ACTOR_DRY_MOAI);
 	syGameFlagSet(FLAG_AQUA_ROCK_DRY_MOAI_FILLED);
 }
@@ -856,7 +856,7 @@ void scAquaRockDropDownFalls(void)
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSelectAnimation(actor, ANIM_LEADER_FLAIL);
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	for(i = 0; i < 180; i++) {
 		sySynch(1);
 		if(actor->y.fixed <= actor->groundHeight)
@@ -865,7 +865,7 @@ void scAquaRockDropDownFalls(void)
 	state = &MainRoutineStateWork;
 	actor->gravity = saved;
 	fdEffectSetAttached(state->leaderActorId, ATTACHED_EFFECT_REMOVE);
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	fdActorSelectAnimation(actor, ANIM_STAND);
 	state->movementMode = LEADER_MOVEMENT_WALK;
 	fdScriptEnd();
@@ -878,8 +878,8 @@ void scAquaRockDropDownFalls(void)
 	{ \
 		ACTOR *actor = fdActorGetById(id); \
 \
-		actor->priFlg = 0; \
-		actor->motionFlg = 0; \
+		actor->priorityFlags = 0; \
+		actor->motionFlags = 0; \
 		fdMapGridCopyMetatileAttributes(sourceX, row, 1, 1, column, row); \
 		syGameFlagSet(flag); \
 	}
@@ -936,7 +936,7 @@ void scAquaRockDouseMistSabreChestWaterStone(Sint32 unused, Sint32 id)
 	actor->update = (OBJECT_UPDATE)scActorFlashWhite;
 	sySynch(30);
 	scGroundParticlesSetAnchor(ACTOR_MIST_SABRE_WATER_STONE);
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	for(i = 0; i < 4; i++) {
 		fdPaletteFadeSetTarget(syRandom() & 0x7fff, 0);
 		fdPaletteFadeStartInterpolation(15);
@@ -963,14 +963,14 @@ void scAquaRockDouseMistSabreChestWaterStone(Sint32 unused, Sint32 id)
 	fdCameraMoveTo(248, -32, 760, 1);
 	fdCameraWaitForArrival();
 	fdActorSetPos(ACTOR_WAY_INSIDE, 264, 792);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_WAY_INSIDE), 0);
-	fdActorGetById(ACTOR_WAY_INSIDE)->collisionFlg = 0;
-	fdActorGetById(ACTOR_WAY_INSIDE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_WAY_INSIDE), 0);
+	fdActorGetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
+	fdActorGetById(ACTOR_WAY_INSIDE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	fdActorGetById(ACTOR_WAY_INSIDE)->update =
 		(OBJECT_UPDATE)scActorEmitRipples;
 	fdScriptWait(30);
 	for(i = 0; i < 6; i++) {
-		sySndPlay(SE_WADE);
+		sySoundPlay(SE_WADE);
 		sySynch(10);
 	}
 	fdScriptWait(30);
@@ -996,15 +996,17 @@ void scAquaRockKeepLeaderPriority(void)
 	ACTOR *actor = fdActorGetById(fdPartyGetLeaderActor());
 
 	if(actor != 0 &&
-		(actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
-		FIELD_SPR *spr;
-		Sint32	   pri;
+		(actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+			ACTOR_SPRITE_ONE) {
+		FIELD_SPR *sprite;
+		Sint32	   priority;
 
-		spr = actor->spr;
-		pri = MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS ? 2 : 1;
-		spr->pri = pri;
-		spr->partPri = pri;
-		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite = actor->sprite;
+		priority =
+			MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS ? 2 : 1;
+		sprite->priority = priority;
+		sprite->partPriority = priority;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
 
@@ -1013,31 +1015,31 @@ void scAquaRockKeepLeaderPriority(void)
 void scAquaRockArriveFromInside(void)
 {
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32 saved = actor->motionFlg;
+	Sint32 saved = actor->motionFlags;
 	Sint32 i;
-	Sint32 ang;
+	Sint32 angle;
 	Sint32 up;
 	MAIN_ROUTINE_STATE *state;
 
-	sySndPlay(SE_SPIN_AWAY);
+	sySoundPlay(SE_SPIN_AWAY);
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 	actor->y.fixed = -toFIXED(16);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 	for(i = 0; i < 16; i++) {
 		actor->y.fixed += toFIXED(1);
-		ang = actor->facing;
-		ang += DEGtoANG(45);
-		actor->facing = ang;
+		angle = actor->facing;
+		angle += DEGtoANG(45);
+		actor->facing = angle;
 		sySynch(1);
 	}
 	scActorSpawnWadingSplash(actor);
-	actor->motionFlg = saved;
-	actor->velY = toFIXED(8);
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	actor->motionFlags = saved;
+	actor->velocityY = toFIXED(8);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	up = PerWork.data & KEY_UP;
 	state = &MainRoutineStateWork;
 	if(up)
@@ -1052,28 +1054,28 @@ void scAquaRockArriveFromInside(void)
 void scAquaRockArriveUpStream(void)
 {
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32 saved = actor->motionFlg;
+	Sint32 saved = actor->motionFlags;
 	Sint32 i;
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 	actor->y.fixed = -toFIXED(64);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 	for(i = 0; i < 24; i++) {
 		actor->y.fixed += toFIXED(2);
-		ang = actor->facing;
-		ang += DEGtoANG(45);
-		actor->facing = ang;
+		angle = actor->facing;
+		angle += DEGtoANG(45);
+		actor->facing = angle;
 		sySynch(1);
 	}
 	scActorSpawnWadingSplash(actor);
-	actor->motionFlg = saved;
-	actor->velY = toFIXED(12);
-	fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+	actor->motionFlags = saved;
+	actor->velocityY = toFIXED(12);
+	fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, 680, 912);
 	fdScriptEnd();
 }
@@ -1085,29 +1087,29 @@ void scAquaRockArriveUpStream(void)
    16 ticks to MOAI_SHAKE. */
 void scAquaRockShakeMoai(ACTOR *actor)
 {
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
 	/* timer is the phase of the shake and userValue its swing. */
-	actor->tmr += DEGtoANG(45);
+	actor->timer += DEGtoANG(45);
 	actor->userValue += MOAI_SHAKE / 16;
 	if(actor->userValue > MOAI_SHAKE)
 		actor->userValue = MOAI_SHAKE;
-	spr->rotation = syMulFX(sySin(actor->tmr), actor->userValue);
+	sprite->rotation = syMulFX(sySin(actor->timer), actor->userValue);
 }
 
 /* A guardian moai's update once it has moved: the swing dies away over 32
    ticks. */
 void scAquaRockStopShakingMoai(ACTOR *actor)
 {
-	FIELD_SPR *sprite = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
 	/* timer is the phase of the shake and userValue its swing. */
-	actor->tmr += DEGtoANG(45);
+	actor->timer += DEGtoANG(45);
 	actor->userValue -= MOAI_SHAKE / 32;
 	if(actor->userValue < 0) {
 		actor->userValue = 0;
 	}
-	sprite->rotation = syMulFX(sySin(actor->tmr), actor->userValue);
+	sprite->rotation = syMulFX(sySin(actor->timer), actor->userValue);
 }
 
 /* The last guardian moai rocks a sixty-fourth of a turn either way: its sine,
@@ -1120,10 +1122,10 @@ void scAquaRockStopShakingMoai(ACTOR *actor)
    little. */
 void scAquaRockRockMoai(ACTOR *actor)
 {
-	FIELD_SPR *sprite = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
-	actor->tmr += TRIG_TURN / 256;
-	sprite->rotation = sySin(actor->tmr) / MOAI_ROCK_DIVISOR + MOAI_LEAN;
+	actor->timer += TRIG_TURN / 256;
+	sprite->rotation = sySin(actor->timer) / MOAI_ROCK_DIVISOR + MOAI_LEAN;
 }
 
 /* Arriving by the north way, as Douse wakes the Apojii Islands' Aqua Stone: the
@@ -1140,7 +1142,7 @@ void scAquaRockMoaiStepAside(void)
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 0, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_POP_UP);
+	sySoundPlay(SE_POP_UP);
 	for(i = ACTOR_FIRST_GUARDIAN_MOAI; i <= ACTOR_FIRST_GUARDIAN_MOAI + 4;
 		i++) {
 		{
@@ -1149,7 +1151,7 @@ void scAquaRockMoaiStepAside(void)
 			actor->speedLimit = toFIXED(1) / 4;
 			actor->acceleration = toFIXED(1) / 64;
 			actor->update = (OBJECT_UPDATE)scAquaRockShakeMoai;
-			actor->tmr = syRandom();
+			actor->timer = syRandom();
 			actor->userValue = 0;
 		}
 	}
@@ -1166,13 +1168,13 @@ void scAquaRockMoaiStepAside(void)
 		i++) {
 		fdActorGetById(i)->update = (OBJECT_UPDATE)scAquaRockStopShakingMoai;
 	}
-	sySndPlay(SE_STOP_EXIT_SE);
+	sySoundPlay(SE_STOP_EXIT_SE);
 	fdScriptWait(60);
 	{
 		ACTOR *actor = fdActorGetById(ACTOR_FIRST_GUARDIAN_MOAI + 4);
 
 		actor->update = (OBJECT_UPDATE)scAquaRockRockMoai;
-		actor->tmr = 0;
+		actor->timer = 0;
 	}
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1205,17 +1207,20 @@ Sint32 scInit(void)
 	map->wading = MAP_WADING_UPPER_LEVEL;
 	fdQueueMusic(SE_AMBIENT_WATER);
 	if(scene == SCENE_AQUA_ROCK_MOAI) {
-		fdActorSetSprCol(fdActorGetById(ACTOR_FIRST_MOAI), SPRITE_COLOR_GBR);
-		fdActorSetSprCol(
+		fdActorSetSpriteColor(
+			fdActorGetById(ACTOR_FIRST_MOAI), SPRITE_COLOR_GBR);
+		fdActorSetSpriteColor(
 			fdActorGetById(ACTOR_FIRST_MOAI + 1), SPRITE_COLOR_GBR);
-		fdActorSetSprCol(
+		fdActorSetSpriteColor(
 			fdActorGetById(ACTOR_FIRST_MOAI + 2), SPRITE_COLOR_GBR);
-		fdActorSetSprCol(
+		fdActorSetSpriteColor(
 			fdActorGetById(ACTOR_FIRST_MOAI + 3), SPRITE_COLOR_GBR);
 		if(syGameFlagGet(FLAG_AQUA_ROCK_DRY_MOAI_FILLED))
-			fdActorSetSprCol(fdActorGetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
+			fdActorSetSpriteColor(
+				fdActorGetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
 		else
-			fdActorSetSprCol(fdActorGetById(ACTOR_DRY_MOAI), SPRITE_COLOR_GREY);
+			fdActorSetSpriteColor(
+				fdActorGetById(ACTOR_DRY_MOAI), SPRITE_COLOR_GREY);
 		scAquaRockAddMoaiWater(ACTOR_FIRST_MOAI);
 		scAquaRockAddMoaiWater(ACTOR_FIRST_MOAI + 1);
 		scAquaRockAddMoaiWater(ACTOR_FIRST_MOAI + 2);
@@ -1225,10 +1230,10 @@ Sint32 scInit(void)
 		for(id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
 			scAquaRockAddMoaiWater(id);
 		for(id = ACTOR_FIRST_MOAI; id < ACTOR_FIRST_BOTTOM_MOAI; id++)
-			fdActorSetSprPriority(id, 3);
+			fdActorSetSpritePriority(id, 3);
 		for(id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
-			fdActorSetSprPriority(id, 1);
-		fdActorGetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSprCache =
+			fdActorSetSpritePriority(id, 1);
+		fdActorGetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache =
 			ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSetAnimationById(ACTOR_FIRST_BOTTOM_MOAI, 3);
 		for(id = ACTOR_FIRST_BOTTOM_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
@@ -1242,23 +1247,23 @@ Sint32 scInit(void)
 		if(z != 0)
 			fdActorSetHorizontalPosWithTerrain(ACTOR_MOAI_PILLAR,
 				FIELD_METATILE_CENTER(x), FIELD_METATILE_CENTER(z));
-		fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+		fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 		sySetEvent(scAquaRockKeepLeaderPriority, EVENT_PASS_TICK);
-		fdActorSetSprPriority(ACTOR_FIRST_FISH + 1, 1);
-		fdActorSetSprPriority(ACTOR_MOAI_PILLAR, 1);
+		fdActorSetSpritePriority(ACTOR_FIRST_FISH + 1, 1);
+		fdActorSetSpritePriority(ACTOR_MOAI_PILLAR, 1);
 		scAquaRockStartBubbles();
 		fdGroundParticlesStart();
 		if(syGameFlagGet(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
 			scAquaRockSetBubbleAnchor(ACTOR_WATER_STONE);
 			scGroundParticlesSetAnchor(ACTOR_WATER_STONE);
-			fdTilesetAnimPause(STREAMS_DOWNHILL_ANIMATION);
-			fdTilesetAnimPause(STREAMS_DOWNHILL_ANIMATION + 1);
-			fdTilesetAnimResume(STREAMS_UPHILL_ANIMATION);
-			fdTilesetAnimResume(STREAMS_UPHILL_ANIMATION + 1);
+			fdTilesetAnimationPause(STREAMS_DOWNHILL_ANIMATION);
+			fdTilesetAnimationPause(STREAMS_DOWNHILL_ANIMATION + 1);
+			fdTilesetAnimationResume(STREAMS_UPHILL_ANIMATION);
+			fdTilesetAnimationResume(STREAMS_UPHILL_ANIMATION + 1);
 			fdActorGetById(ACTOR_WATER_STONE)->update = scAquaRockStopFlashing;
 		}
-		fdActorSetSprPriority(ACTOR_WATER_STONE, 1);
+		fdActorSetSpritePriority(ACTOR_WATER_STONE, 1);
 		if(MainRoutineStateWork.entrance == AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH)
 			scAquaRockMoaiStepAside();
 		if(syGameFlagGet(FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE)) {
@@ -1283,7 +1288,7 @@ Sint32 scInit(void)
 			AQUA_ROCK_MOAI_FROM_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST)
 			scAquaRockArriveFromPassage();
 	} else if(scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST) {
-		fdActorSetSprFlags(fdActorGetById(ACTOR_BUBBLE_MARKER), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_BUBBLE_MARKER), 0);
 		if(syGameFlagGet(FLAG_PUDDLE_A_FROZEN))
 			fdMapGridCopyMetatileAttributes(42, 32, 1, 1, 44, 32);
 		if(syGameFlagGet(FLAG_PUDDLE_B_FROZEN))
@@ -1312,12 +1317,12 @@ Sint32 scInit(void)
 				scAquaRockSetBubbleAnchor(ACTOR_BUBBLE_MARKER);
 				scGroundParticlesSetAnchor(ACTOR_BUBBLE_MARKER);
 			} else {
-				fdTilesetAnimPause(STREAMS_UPHILL_ANIMATION);
-				fdTilesetAnimPause(STREAMS_UPHILL_ANIMATION + 1);
-				fdTilesetAnimResume(STREAMS_DOWNHILL_ANIMATION);
-				fdTilesetAnimResume(STREAMS_DOWNHILL_ANIMATION + 1);
+				fdTilesetAnimationPause(STREAMS_UPHILL_ANIMATION);
+				fdTilesetAnimationPause(STREAMS_UPHILL_ANIMATION + 1);
+				fdTilesetAnimationResume(STREAMS_DOWNHILL_ANIMATION);
+				fdTilesetAnimationResume(STREAMS_DOWNHILL_ANIMATION + 1);
 			}
-			fdActorSetSprFlags(fdActorGetById(ACTOR_BUBBLE_MARKER), 0);
+			fdActorSetSpriteFlags(fdActorGetById(ACTOR_BUBBLE_MARKER), 0);
 		} else {
 			scAquaRockStartBubbles();
 			fdGroundParticlesStart();
@@ -1328,9 +1333,9 @@ Sint32 scInit(void)
 				scAquaRockSetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
 				scGroundParticlesSetAnchor(ACTOR_MIST_SABRE_WATER_STONE);
 				fdActorSetPos(ACTOR_WAY_INSIDE, 264, 792);
-				fdActorSetSprFlags(fdActorGetById(ACTOR_WAY_INSIDE), 0);
-				fdActorGetById(ACTOR_WAY_INSIDE)->collisionFlg = 0;
-				fdActorGetById(ACTOR_WAY_INSIDE)->priFlg |=
+				fdActorSetSpriteFlags(fdActorGetById(ACTOR_WAY_INSIDE), 0);
+				fdActorGetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
+				fdActorGetById(ACTOR_WAY_INSIDE)->priorityFlags |=
 					ACTOR_PRIORITY_UNDERFOOT;
 				fdActorGetById(ACTOR_WAY_INSIDE)->update = scActorEmitRipples;
 				fdMapCopyMetatileAttributeRect(15, 48, 1, 1, 16, 48);
@@ -1369,11 +1374,11 @@ void scAquaRockAddMoaiWater(Sint32 id)
 	ACTOR *actor = fdActorGetById(id);
 
 	if(actor != 0) {
-		SPR_ANIMATION *water =
-			(SPR_ANIMATION *)fdSprAddAnimation(actor->spr, SPRITE_MOAI_WATER);
+		SPR_ANIMATION *water = (SPR_ANIMATION *)fdSpriteAddAnimation(
+			actor->sprite, SPRITE_MOAI_WATER);
 
-		water->colMode = SPRITE_COLOR_NORMAL;
-		water->pri = 0;
+		water->colorMode = SPRITE_COLOR_NORMAL;
+		water->priority = 0;
 		fdActorSelectAnimation(actor, 0);
 		fdActorSelectAnimation(actor, 2);
 	}
@@ -1386,23 +1391,23 @@ void scAquaRockSinkInside(Sint32 exit)
 {
 	ACTOR *actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32 i;
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	sySndPlay(SE_SPLASH_SMALL);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+	sySoundPlay(SE_SPLASH_SMALL);
 	fdActorSelectAnimation(actor, ANIM_LEADER_TUMBLE_IN_WATER);
-	sySndPlay(SE_SPIN_AWAY);
+	sySoundPlay(SE_SPIN_AWAY);
 	for(i = 0; i < 60; i++) {
 		if(i == 30)
 			fdScriptFinishScreenTransition();
 		actor->y.fixed -= toFIXED(1) / 4;
-		ang = actor->facing;
-		ang += TRIG_TURN / 16;
-		actor->facing = ang;
+		angle = actor->facing;
+		angle += TRIG_TURN / 16;
+		actor->facing = angle;
 		if((i & 7) == 0)
 			scActorSpawnWadingSplash(fdActorGetById(ACTOR_WAY_INSIDE));
 		sySynch(1);
@@ -1422,15 +1427,15 @@ void scAquaRockEnterSparklingPassage(Sint32 entrance)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_SPARKLING_PASSAGE);
+	sySoundPlay(SE_SPARKLING_PASSAGE);
 	leader->update = (OBJECT_UPDATE)scActorEmitMist;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	leader->speedLimit = toFIXED(1) / 5;
 	fdActorSetAnimationById(*owner, 2);
 	fdActorSetDestinationOffsetById(*owner, 0, -8);
 	fdActorWaitForMoveById(*owner);
-	fdActorSetSprCol(fdActorGetById(*owner), SPRITE_COLOR_BLUE_TINT);
-	fdActorSetSprFlags(fdActorGetById(*owner), 0);
+	fdActorSetSpriteColor(fdActorGetById(*owner), SPRITE_COLOR_BLUE_TINT);
+	fdActorSetSpriteFlags(fdActorGetById(*owner), 0);
 	leader->update = 0;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1443,30 +1448,30 @@ void scAquaRockEnterSparklingPassage(Sint32 entrance)
 void scAquaRockArriveFromPassage(void)
 {
 	ACTOR  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	Sint32	flg = syGameFlagGet(FLAG_KEEP_PARTY_POSITION);
+	Sint32	flag = syGameFlagGet(FLAG_KEEP_PARTY_POSITION);
 	Sint32 *owner = &MainRoutineStateWork.leaderActorId;
 
-	if(flg == 0) {
+	if(flag == 0) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		leader->motionFlg = flg;
+		leader->motionFlags = flag;
 		fdActorSetHorizontalPosWithTerrain(*owner,
 			toFIXED(leader->x.part[0].integer),
 			toFIXED(leader->z.part[0].integer) - toFIXED(16));
-		fdActorSetSprCol(fdActorGetById(*owner), SPRITE_COLOR_BLUE_TINT);
-		fdActorSetSprFlags(fdActorGetById(*owner), 0);
+		fdActorSetSpriteColor(fdActorGetById(*owner), SPRITE_COLOR_BLUE_TINT);
+		fdActorSetSpriteFlags(fdActorGetById(*owner), 0);
 		fdScriptStartScreenTransition();
-		sySndPlay(SE_SPARKLING_PASSAGE);
+		sySoundPlay(SE_SPARKLING_PASSAGE);
 		leader->update = (OBJECT_UPDATE)scActorEmitMist;
 		fdActorSetSpeed(*owner, 0.4);
 		fdActorWalkByAndWaitById(*owner, 0, 8);
-		fdActorSetSprCol(fdActorGetById(*owner), SPRITE_COLOR_NORMAL);
-		fdActorSetSprFlags(fdActorGetById(*owner), SPRITE_FLAG_SHADOW);
-		((FIELD_SPR *)leader->spr)->pri = 1;
+		fdActorSetSpriteColor(fdActorGetById(*owner), SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteFlags(fdActorGetById(*owner), SPRITE_FLAG_SHADOW);
+		((FIELD_SPR *)leader->sprite)->priority = 1;
 		fdActorWalkByAndWaitById(*owner, 0, 10);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		leader->update = (OBJECT_UPDATE)flg;
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->update = (OBJECT_UPDATE)flag;
 		fdScriptNoOperation();
 		fdScriptWaitTransitionTicks();
 		fdScriptEnd();
@@ -1483,7 +1488,7 @@ void scAquaRockDrawRisingBubbles(void)
 	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32			   lift = map->origin[1];
 	AQUA_ROCK_BUBBLES *state = &AquaRockBubbles;
-	Uint32			   tile = VramCacheEntries[state->vramEntry].ofs >> 5;
+	Uint32			   tile = VramCacheEntries[state->vramEntry].offset >> 5;
 	ACTOR			  *src;
 	BUBBLE			  *entry;
 	Sint32			   i, x, y, z, screenX, screenY;
@@ -1534,7 +1539,7 @@ void scAquaRockDrawRisingBubbles(void)
 				entry->oam[0] = 0;
 				entry->oam[1] = screenY | OBJ_X(x) | OBJ_256_COLORS;
 				entry->oam[2] = (tile + (entry->age & 3) * 2) | OBJ_PRIORITY(1);
-				syOAMAddSprAtDepth(entry->oam, z);
+				syOAMAddSpriteAtDepth(entry->oam, z);
 			}
 		}
 	}
@@ -1550,7 +1555,7 @@ void scAquaRockDrawFallingBubbles(void)
 	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32			   lift = map->origin[1];
 	AQUA_ROCK_BUBBLES *state = &AquaRockBubbles;
-	Uint32			   tile = VramCacheEntries[state->vramEntry].ofs >> 5;
+	Uint32			   tile = VramCacheEntries[state->vramEntry].offset >> 5;
 	ACTOR			  *src;
 	BUBBLE			  *bubble;
 	Sint32			   i, x, y, depth, screenX, screenY, z, row;
@@ -1596,7 +1601,7 @@ void scAquaRockDrawFallingBubbles(void)
 				bubble->oam[1] = screenY | OBJ_X(x) | OBJ_256_COLORS;
 				bubble->oam[2] =
 					(tile + (bubble->age & 3) * 2) | OBJ_PRIORITY(1);
-				syOAMAddSprAtDepth(bubble->oam, depth);
+				syOAMAddSpriteAtDepth(bubble->oam, depth);
 			}
 		}
 	}
@@ -1605,7 +1610,7 @@ void scAquaRockDrawFallingBubbles(void)
 /* Each tick: the bubbles go up or down the stream, as their direction says. */
 void scAquaRockDrawBubbles(void)
 {
-	if(AquaRockBubbles.dir > 0)
+	if(AquaRockBubbles.direction > 0)
 		scAquaRockDrawRisingBubbles();
 	else
 		scAquaRockDrawFallingBubbles();
@@ -1619,7 +1624,7 @@ Sint32 scAquaRockStartBubbles(void)
 	void			  *buf;
 
 	syWordsClearEntry(state, sizeof(AQUA_ROCK_BUBBLES));
-	buf = syHeapCallAlternatePool(syHeapAlloc, 256);
+	buf = syHeapCallAlternatePool(syHeapAllocate, 256);
 	syDecompressTaggedLZ(AquaRockBubbleTiles, buf);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, 256, buf);
@@ -1638,9 +1643,9 @@ void scAquaRockSetBubbleAnchor(Sint32 id)
 	} else {
 		state->anchor = fdActorGetById(id);
 		if(id == ACTOR_MIST_SABRE_WATER_STONE)
-			state->dir = -1;
+			state->direction = -1;
 		else
-			state->dir = 1;
+			state->direction = 1;
 	}
 }
 

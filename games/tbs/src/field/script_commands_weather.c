@@ -27,30 +27,30 @@ void fdWeatherUpdateRain(void)
 	Uint32				   i;
 
 	for(i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
-		const Sint16 *frm;
+		const Sint16 *frame;
 		Sint32		  x;
 		Sint32		  y;
 
-		if(--particle->tmr == GROUND_PARTICLE_FREED)
+		if(--particle->timer == GROUND_PARTICLE_FREED)
 			continue;
 		/* BUG: freezing a timer of 16 indexes past the 16-tick table. */
 		if(gmFlagGetStub(FLAG_WEATHER_HELD))
-			particle->tmr++;
-		frm = &WeatherRainSplashFrames[5 * particle->tmr];
-		x = (particle->posX - cameraX) / toFIXED(1) + *frm++;
-		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frm++;
+			particle->timer++;
+		frame = &WeatherRainSplashFrames[5 * particle->timer];
+		x = (particle->posX - cameraX) / toFIXED(1) + *frame++;
+		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frame++;
 		if((x >= -16 && x <= DISPLAY_WIDTH - 1) && y >= -32 &&
 			y <= DISPLAY_HEIGHT - 1) {
-			particle->pri = 1;
+			particle->priority = 1;
 			particle->x = x;
 			particle->y = y;
-			particle->tile = state->tileBase + *(const Uint16 *)frm;
-			frm++;
-			particle->shape = *(const Uint8 *)frm;
-			particle->size = *(const Uint8 *)(frm + 1);
-			syOAMAddSprAtDepth(particle, OAM_DEPTH_WINDOW);
+			particle->tile = state->tileBase + *(const Uint16 *)frame;
+			frame++;
+			particle->shape = *(const Uint8 *)frame;
+			particle->size = *(const Uint8 *)(frame + 1);
+			syOAMAddSpriteAtDepth(particle, OAM_DEPTH_WINDOW);
 		}
-		if(particle->tmr == 0) {
+		if(particle->timer == 0) {
 			Sint32 *leader = grid->origin;
 
 			/* A new spot up to 128 pixels either way of the leader. */
@@ -60,7 +60,7 @@ void fdWeatherUpdateRain(void)
 			particle->posZ = y;
 			particle->posY = toFIXED(
 				fdMapGridGetTerrainHeightStub(0, FIXEDtoINT(x), FIXEDtoINT(y)));
-			particle->tmr = RAIN_SPLASH_FRAMES;
+			particle->timer = RAIN_SPLASH_FRAMES;
 		}
 	}
 }
@@ -72,19 +72,19 @@ void fdWeatherUpdateLightning(void)
 	FIELD_BLEND_STATE *state = FieldBlendStateWork[0];
 	PALETTE_FADE	  *target = PaletteFadeState;
 
-	if(state->tmr < 0)
+	if(state->timer < 0)
 		return;
 	if(gmFlagGetStub(FLAG_WEATHER_HELD))
-		state->tmr = 128;
-	switch(state->tmr--) {
+		state->timer = 128;
+	switch(state->timer--) {
 	case 0:
 		/* The burst ends: arm the next. */
 		if(state->enabled != 0) {
-			state->tmr = syRandom16Below(400) - syRandom16Below(100) + 150;
+			state->timer = syRandom16Below(400) - syRandom16Below(100) + 150;
 			if(state->loud != 0)
-				sySndPlayStub(SE_THUNDER_LOUD);
+				sySoundPlayStub(SE_THUNDER_LOUD);
 			else
-				sySndPlayStub(SE_THUNDER);
+				sySoundPlayStub(SE_THUNDER);
 		}
 		/* fall through */
 	case 5:
@@ -121,12 +121,12 @@ void fdWeatherStartRain(void)
 	Uint32	i;
 	Uint32	fill = 0;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
 	leader = ((MAP_GRID_SCROLL_STATE *)MapGridState[0])->origin;
 	fdQueueMusic(SE_AMBIENT_WATER);
 	particle = state->particles;
 	DMA_FILL32(fill, state, sizeof(WEATHER_STATE));
-	words = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	words = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(WeatherParticleTiles, words);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = syVRAMCacheLoad(state->entry, 768, words);
@@ -145,7 +145,7 @@ void fdWeatherStartRain(void)
 		particle->posZ = z;
 		particle->posY = toFIXED(
 			fdMapGridGetTerrainHeightStub(0, FIXEDtoINT(x), FIXEDtoINT(z)));
-		particle->tmr = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
+		particle->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
 		particle++;
 	}
 	IO_WRITE16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -175,15 +175,15 @@ void fdMotesUpdate(void)
 		Sint32 x;
 		Sint32 y;
 
-		if(--mote->tmr != GROUND_PARTICLE_FREED) {
+		if(--mote->timer != GROUND_PARTICLE_FREED) {
 			Sint32 cameraX = syMapGridScrollStateView(grid)[0];
 			Sint32 cameraZ = syMapGridScrollStateView(grid)[1];
-			Uint16 age = mote->tmr;
+			Uint16 age = mote->timer;
 			Uint32 firstJitterDraw;
 			Uint32 secondJitterDraw;
 
 			if(gmFlagGetStub(FLAG_WEATHER_HELD)) {
-				mote->tmr++;
+				mote->timer++;
 				mote->delay--;
 			}
 			/* x jitters by -1 or 0, and y is the ticks left in pixels above
@@ -195,11 +195,11 @@ void fdMotesUpdate(void)
 				(((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
 			y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - age;
 			if((Uint32)(x + 16) <= 255 && y >= -32 && y <= DISPLAY_HEIGHT - 1) {
-				if(mote->tmr < 60) {
+				if(mote->timer < 60) {
 					mote->tile =
 						state->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
 					mote->delay += 3;
-				} else if(mote->tmr < 90) {
+				} else if(mote->timer < 90) {
 					mote->tile =
 						state->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
 					mote->delay++;
@@ -213,12 +213,12 @@ void fdMotesUpdate(void)
 				mote->y = y - (mote->delay >> 2);
 				mote->shape = 0;
 				mote->size = 1;
-				syOAMAddSprAtDepth(mote, OAM_DEPTH_WINDOW);
+				syOAMAddSpriteAtDepth(mote, OAM_DEPTH_WINDOW);
 			} else {
-				mote->tmr = 0;
+				mote->timer = 0;
 			}
 		}
-		if(spawned < 8 && mote->tmr == 0) {
+		if(spawned < 8 && mote->timer == 0) {
 			Sint32 *leader = grid->origin;
 
 			x = leader[0] + (syRandom() << 8) - toFIXED(128);
@@ -227,7 +227,7 @@ void fdMotesUpdate(void)
 			mote->posX = x;
 			mote->posY = toFIXED(
 				fdMapGridGetTerrainHeightStub(0, FIXEDtoINT(x), FIXEDtoINT(y)));
-			mote->tmr = 120;
+			mote->timer = 120;
 			mote->delay = 0;
 			spawned++;
 		}
@@ -245,12 +245,12 @@ void fdMotesStart(void)
 	Uint32			  size;
 
 	size = sizeof(WEATHER_STATE);
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, size);
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_WEATHER, size);
 	mote = state->particles;
 	/* size, done with once the state is allocated, carries the fill's 0. */
 	size = 0;
 	DMA_FILL32(size, state, sizeof(*state));
-	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	tiles = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(FieldEffectMoteTiles, tiles);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = syVRAMCacheLoad(state->entry, 768, tiles);
@@ -273,7 +273,7 @@ void fdMotesStart(void)
 		mote->posY = toFIXED(fdMapGridGetTerrainHeightStub(
 			0, FIXEDtoINT((Sint32)p), FIXEDtoINT(z)));
 		/* Staggered as the raindrops are. */
-		mote->tmr = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
+		mote->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
 		mote++;
 	}
 	IO_WRITE16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -294,7 +294,7 @@ void fdEffectUpdateSparkles(void)
 	FIXED				   spawnX;
 	FIXED				   spawnZ;
 	WEATHER_PARTICLE	  *sparkle;
-	const Uint16		  *frm;
+	const Uint16		  *frame;
 	Sint32				  *leader;
 	Sint32				   cameraX;
 	Sint32				   cameraZ;
@@ -318,24 +318,24 @@ void fdEffectUpdateSparkles(void)
 	sx = 0;
 	sy = 0;
 	do {
-		if(sparkle->tmr != 0) {
+		if(sparkle->timer != 0) {
 			cameraX = camera[0];
 			cameraZ = camera[1];
 			if(gmFlagGetStub(FLAG_WEATHER_HELD) != 0)
-				sparkle->tmr++;
-			frm =
-				(const Uint16 *)&FieldEffectSparklePictures[sparkle->tmr >> 1];
+				sparkle->timer++;
+			frame = (const Uint16
+					*)&FieldEffectSparklePictures[sparkle->timer >> 1];
 			a = syRandom();
 			b = syRandom();
 			x = FIXEDtoINT(sparkle->posX - cameraX) +
 				(((a & 1) + (b & 1)) >> 1);
 			sx = x - 1;
 			sy = (sparkle->posZ - sparkle->posY - cameraZ) / toFIXED(1) +
-				*(const Sint16 *)frm;
-			frm++;
+				*(const Sint16 *)frame;
+			frame++;
 			if((Uint32)(x + 15) <= 255 && sy >= -32 &&
 				sy <= DISPLAY_HEIGHT - 1) {
-				sparkle->tile = state->tileBase + *frm;
+				sparkle->tile = state->tileBase + *frame;
 				sparkle->x = sx;
 				sparkle->shape = 0;
 				sparkle->size = 1;
@@ -347,19 +347,19 @@ void fdEffectUpdateSparkles(void)
 				ticks = *(unsigned long *)&TickCount;
 #endif
 				sparkle->y = sy;
-				sparkle->affineIdx = ((ticks >> 1) & 1) << 3;
-				syOAMAddSprAtDepth(sparkle, OAM_DEPTH_WINDOW);
+				sparkle->affineIndex = ((ticks >> 1) & 1) << 3;
+				syOAMAddSpriteAtDepth(sparkle, OAM_DEPTH_WINDOW);
 			}
-			sparkle->tmr--;
+			sparkle->timer--;
 		}
-		if(spawned <= 3 && sparkle->tmr == 0 && state->stopped == 0) {
+		if(spawned <= 3 && sparkle->timer == 0 && state->stopped == 0) {
 			if(delay != 0) {
 				/* The rest of a burst, on the first sparkle's spot. */
 				sparkle->posX = spawnX;
 				sparkle->posZ = spawnZ;
 				sparkle->posY = toFIXED(fdMapGridGetTerrainHeightStub(
 					0, FIXEDtoINT(sx), FIXEDtoINT(sy)));
-				sparkle->tmr = 62 - delay;
+				sparkle->timer = 62 - delay;
 				sparkle->delay = 0;
 				spawned++;
 				delay += 4;
@@ -372,7 +372,7 @@ void fdEffectUpdateSparkles(void)
 				sparkle->posZ = spawnZ;
 				sparkle->posY = toFIXED(fdMapGridGetTerrainHeightStub(
 					0, FIXEDtoINT(sx), FIXEDtoINT(sy)));
-				sparkle->tmr = 30;
+				sparkle->timer = 30;
 				sparkle->delay = delay;
 				spawned++;
 				delay = 4;
@@ -388,7 +388,7 @@ void fdEffectUpdateSparkles(void)
 void fdEffectInitSparkles(void)
 {
 	Uint32			  size = sizeof(WEATHER_STATE);
-	WEATHER_STATE	 *state = syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, size);
+	WEATHER_STATE	 *state = syHeapSlotAllocateEWRAM(HEAP_SLOT_WEATHER, size);
 	WEATHER_PARTICLE *sparkle = state->particles;
 	Uint8			 *tiles;
 	Uint32			  i;
@@ -396,7 +396,7 @@ void fdEffectInitSparkles(void)
 	/* size, done with once the state is allocated, carries the fill's 0. */
 	size = 0;
 	DMA_FILL32(size, state, sizeof(*state));
-	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+	tiles = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	syDecompressByteLZ(FieldEffectSparkleTiles, tiles);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = syVRAMCacheLoad(state->entry, 512, tiles);
@@ -405,25 +405,26 @@ void fdEffectInitSparkles(void)
 	do {
 		MAP_GRID_SCROLL_STATE *view = MapGridState[0];
 		Sint32				  *leader;
-		/* attr walks the sprite's attribute words, then holds the x. */
-		Uint32 attr;
+		/* attribute walks the sprite's attribute words, then holds the x. */
+		Uint32 attribute;
 		Sint32 z;
 
-		attr = (Uint32)sparkle;
-		*(Uint32 *)attr = 0;
-		attr += sizeof(PARTICLE_LINK_WORD);
+		attribute = (Uint32)sparkle;
+		*(Uint32 *)attribute = 0;
+		attribute += sizeof(PARTICLE_LINK_WORD);
 		leader = view->origin;
-		*(Uint32 *)attr = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-		attr += sizeof(PARTICLE_LINK_WORD);
-		*(Uint32 *)attr = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
-		attr = leader[0];
+		*(Uint32 *)attribute =
+			OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+		attribute += sizeof(PARTICLE_LINK_WORD);
+		*(Uint32 *)attribute = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
+		attribute = leader[0];
 		z = leader[2];
 		sparkle->posX = 0;
 		sparkle->posZ = 0;
 		sparkle->posY = toFIXED(fdMapGridGetTerrainHeightStub(
-			0, FIXEDtoINT((Sint32)attr), FIXEDtoINT(z)));
+			0, FIXEDtoINT((Sint32)attribute), FIXEDtoINT(z)));
 		/* Staggered as the raindrops are. */
-		sparkle->tmr = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
+		sparkle->timer = (i & (RAIN_SPLASH_FRAMES - 1)) + 1;
 		i++;
 		sparkle++;
 	} while(i < WEATHER_PARTICLE_COUNT);
@@ -438,15 +439,15 @@ void fdWeatherStartLightning(void)
 	FIELD_BLEND_STATE *state;
 	PALETTE_FADE	  *buffers;
 
-	state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
+	state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
 	buffers = PaletteFadeState;
 	DMA_FILL32(0, state, sizeof(FIELD_BLEND_STATE));
 	fdPaletteFadeBuild(PALETTE_TINT_DIM, buffers, state, 1);
 	fdPaletteFadeBuild(PALETTE_TINT_PALE, buffers, state->to, 1);
-	fdPaletteFadeCalcSteps(state->to, state->from, state->delta, 12);
-	fdPaletteFadeBuild((Sint32)state, 0, buffers->tgt, 1);
-	state->tmr = 600;
+	fdPaletteFadeCalculateSteps(state->to, state->from, state->delta, 12);
+	fdPaletteFadeBuild((Sint32)state, 0, buffers->target, 1);
+	state->timer = 600;
 	state->enabled = 1;
 	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_TICK);
 }
@@ -454,9 +455,9 @@ void fdWeatherStartLightning(void)
 /* Stops the lightning: no flash for 32767 ticks, and none after. */
 void fdWeatherStopLightning(void)
 {
-	FIELD_BLEND_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
-	state->tmr = 32767;
+	FIELD_BLEND_STATE *state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
+	state->timer = 32767;
 	state->enabled = 0;
 }
 
@@ -464,9 +465,9 @@ void fdWeatherStopLightning(void)
    fdWeatherUpdateLightning flashes at 11), then no more. */
 void fdWeatherLastLightning(void)
 {
-	FIELD_BLEND_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
-	state->tmr = 12;
+	FIELD_BLEND_STATE *state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
+	state->timer = 12;
 	state->enabled = 0;
 }
 
@@ -474,9 +475,9 @@ void fdWeatherLastLightning(void)
    118 ticks from now, and bursts repeat. */
 void fdWeatherResumeLightning(void)
 {
-	FIELD_BLEND_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
-	state->tmr = 128;
+	FIELD_BLEND_STATE *state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
+	state->timer = 128;
 	state->enabled = 1;
 }
 
@@ -487,18 +488,18 @@ void fdWeatherStartLightningFlash(Sint32 from, Sint32 to)
 {
 	FIELD_BLEND_STATE *state;
 	PALETTE_FADE	  *buffers;
-	Sint16			  *tgt;
+	Sint16			  *target;
 
-	state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
+	state = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
 	buffers = PaletteFadeState;
 	DMA_FILL32(0, state, sizeof(FIELD_BLEND_STATE));
 	fdPaletteFadeBuild(from, buffers, state, 1);
-	tgt = state->to;
-	fdPaletteFadeBuild(to, buffers, tgt, 1);
-	fdPaletteFadeCalcSteps(tgt, state->from, state->delta, 12);
-	fdPaletteFadeBuild((Sint32)state, 0, buffers->tgt, 1);
-	state->tmr = 120;
+	target = state->to;
+	fdPaletteFadeBuild(to, buffers, target, 1);
+	fdPaletteFadeCalculateSteps(target, state->from, state->delta, 12);
+	fdPaletteFadeBuild((Sint32)state, 0, buffers->target, 1);
+	state->timer = 120;
 	state->enabled = 0;
 	sySetEvent(fdWeatherUpdateLightning, EVENT_PASS_TICK);
 }

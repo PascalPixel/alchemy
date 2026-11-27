@@ -35,12 +35,12 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 	MODEL_TEXTURE		 texture;
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*graphics;
 	Sint32				 i;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	graphics = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -59,10 +59,10 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 	LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	btEffectPosProjectBattler(args->user, &from);
-	btEffectPosProjectBattler(args->tgts[0], &to);
+	btEffectPosProjectBattler(args->targets[0], &to);
 
-	for(frm = 0; frm != LIQUIFIER_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != LIQUIFIER_TICKS; frame++) {
+		if(frame == 0) {
 			PARTICLE *beam;
 
 			/* DEAD: the map cell buffer's particles marked free, which
@@ -77,34 +77,35 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 					toFIXED(to.y), (syRandom() & 8191) + toFIXED(7) / 16);
 			}
 		}
-		if(frm == 0) {
+		if(frame == 0) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frm == 12) {
+		if(frame == 12) {
 			EFFECT_SET_TRANSFER(
 				state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 		}
-		if(frm == LIQUIFIER_STRIKE_TICK) {
+		if(frame == LIQUIFIER_STRIKE_TICK) {
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frm == 0)
-			sySndPlayStub(SE_DJINNI_SET);
-		if(frm == 16)
-			sySndPlayStub(SE_HEAVY_IMPACT);
+		if(frame == 0)
+			sySoundPlayStub(SE_DJINNI_SET);
+		if(frame == 16)
+			sySoundPlayStub(SE_HEAVY_IMPACT);
 
-		if(frm > 15) {
+		if(frame > 15) {
 			/* The burst: sparks fly out of the user, upward and forward. */
-			if(frm == 16) {
+			if(frame == 16) {
 				PARTICLE *step = state->particles;
 
 				for(i = 0; i != LIQUIFIER_SPARKS; i++) {
-					Uint32 ang =
+					Uint32 angle =
 						syRandom() % (DEGtoANG(135) - 1) + TRIG_TURN * 5 / 16;
 					Sint32 speed = (syRandom() & 511) + 512;
 
-					step->velX = (sySin(ang) * speed) >> LIQUIFIER_BURST_SHIFT;
-					step->velY =
-						(syCos(ang) * speed) >> (LIQUIFIER_BURST_SHIFT - 1);
+					step->velocityX =
+						(sySin(angle) * speed) >> LIQUIFIER_BURST_SHIFT;
+					step->velocityY =
+						(syCos(angle) * speed) >> (LIQUIFIER_BURST_SHIFT - 1);
 					step->x = toFIXED(from.x / 2);
 					step->y = toFIXED(from.y - (syRandom() & 15) - 8);
 					step->variant = 0;
@@ -118,7 +119,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 				Sint32	  one = 1;
 				PARTICLE *step = &state->particles[i];
 
-				if(step->variant >= 0 && frm >= i / 4) {
+				if(step->variant >= 0 && frame >= i / 4) {
 					Sint32 odd = i & one;
 					Sint32 size = odd + 5;
 					Sint32 blend;
@@ -148,23 +149,23 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 
 			/* The gathering: sparks start 64 steps out and fall into the
 			   user. */
-			if(frm == 0) {
+			if(frame == 0) {
 				PARTICLE *step = state->particles;
 
 				for(i = 0; i != LIQUIFIER_SPARKS; i++) {
-					Sint32 ang =
+					Sint32 angle =
 						(syRandom() & (DEGtoANG(180) - 1)) - DEGtoANG(90);
 					Sint32 speed = (syRandom() & 511) + 512;
 					Sint32 y;
 
-					step->velX =
-						(sySin(ang) * speed) >> (LIQUIFIER_BURST_SHIFT + 2);
-					step->velY =
-						(syCos(ang) * speed) >> (LIQUIFIER_BURST_SHIFT + 1);
+					step->velocityX =
+						(sySin(angle) * speed) >> (LIQUIFIER_BURST_SHIFT + 2);
+					step->velocityY =
+						(syCos(angle) * speed) >> (LIQUIFIER_BURST_SHIFT + 1);
 					step->x = toFIXED(from.x / 2);
 					y = from.y - (syRandom() & 15) - 8;
-					step->x -= step->velX << 6;
-					step->y = toFIXED(y) - (step->velY << 6);
+					step->x -= step->velocityX << 6;
+					step->y = toFIXED(y) - (step->velocityY << 6);
 					step->variant = 0;
 					step++;
 				}
@@ -189,7 +190,7 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 		}
 
 		{
-			void		 *projected = syHeapAllocEWRAM(32);
+			void		 *projected = syHeapAllocateEWRAM(32);
 			RENDER_MODEL *model = btRenderAllocateModelList(1);
 			void		 *fireRing = EffectScratch;
 
@@ -205,11 +206,11 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 			for(i = 0; i != 8; i++) {
 				Sint32 start = LiquifierSplashStarts[i];
 
-				if(frm >= start && frm < start + 16) {
+				if(frame >= start && frame < start + 16) {
 					Sint32 age;
 
 					model->shade = 0;
-					age = frm - start;
+					age = frame - start;
 					syInitMatrix();
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					syTranslate(
@@ -237,10 +238,10 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 				PARTICLE *step = &state->particles[LIQUIFIER_FIRST_BEAM + i];
 				Sint32	  start = i * 2 + LIQUIFIER_STRIKE_TICK;
 
-				if(frm >= start && frm < start + 16) {
+				if(frame >= start && frame < start + 16) {
 					Sint32 scale;
 
-					scale = toFIXED(2) - (frm - start) * (toFIXED(1) / 8);
+					scale = toFIXED(2) - (frame - start) * (toFIXED(1) / 8);
 					model->shade = shade;
 					syInitMatrix();
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
@@ -263,10 +264,10 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 			model->kind = MODEL_SHADED_ADDITIVE;
 			for(i = 0; i != LIQUIFIER_BEAMS; i++) {
 				PARTICLE *step = &state->particles[i + LIQUIFIER_FIRST_BEAM];
-				Sint32	  age = frm - LIQUIFIER_STRIKE_TICK - i * 2;
+				Sint32	  age = frame - LIQUIFIER_STRIKE_TICK - i * 2;
 
-				if(frm >= i * 2 + LIQUIFIER_STRIKE_TICK &&
-					frm < i * 2 + LIQUIFIER_STRIKE_TICK + 16) {
+				if(frame >= i * 2 + LIQUIFIER_STRIKE_TICK &&
+					frame < i * 2 + LIQUIFIER_STRIKE_TICK + 16) {
 					Sint32 shade = -age * 4;
 					Sint32 scale = age * (toFIXED(1) / 4);
 
@@ -290,8 +291,8 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 			/* Two rings of fire about the user, from ticks 0 and 4 for 12
 			   ticks each, fading in as they close. */
 			for(i = 0; i != 2; i++) {
-				if(frm >= i * 4 && frm < i * 4 + 12) {
-					Sint32 age = frm - i * 4;
+				if(frame >= i * 4 && frame < i * 4 + 12) {
+					Sint32 age = frame - i * 4;
 					Sint32 shade = age * 8 + MODEL_SHADE_INVISIBLE;
 					Sint32 scale = toFIXED(3) / 2 - age * (toFIXED(1) / 8);
 
@@ -313,15 +314,15 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 
 			/* A strike every four ticks; the last shows the damage. */
 			for(i = 0; i != 8; i++) {
-				if(frm == i * 4 + LIQUIFIER_STRIKE_TICK) {
+				if(frame == i * 4 + LIQUIFIER_STRIKE_TICK) {
 					if(i == 7)
 						EFFECT_SHOW_DAMAGE(SE_CLATTER);
 					else
-						sySndPlayStub(SE_CLATTER);
-					btEffectStartActorMotion(args->tgts[0], 1, 0, 0, 0, 100);
-					btEffectTintBattler(
-						args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 5);
-					state->shakeFrm = 4;
+						sySoundPlayStub(SE_CLATTER);
+					btEffectStartActorMotion(args->targets[0], 1, 0, 0, 0, 100);
+					btEffectTintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, 0, 5);
+					state->shakeFrame = 4;
 				}
 			}
 			syHeapRelease(model);
@@ -370,7 +371,7 @@ void btEffectRunMineBall(BATTLE_EFFECT_PARM *args)
 {
 	ACTOR *actor;
 
-	actor = (ACTOR *)btObjectGetStub(args->user)->obj;
+	actor = (ACTOR *)btObjectGetStub(args->user)->object;
 	fdActorSelectAnimationStub(actor, POSE_LEAP);
 	fdActorSetAnimationSpeedStub(actor, ANIM_STEP_NORMAL * 7 / 4);
 	btEffectRunCanvasBurst(args, CANVAS_BURST_MINE_BALL);
@@ -383,27 +384,27 @@ void btEffectRunMineBall(BATTLE_EFFECT_PARM *args)
 /* Draws a disc of the given size from the discs in the map cell buffer as its
    four quarters about (x, y), the same quarter mirrored each way. */
 static inline void DrawDisc(void *canvas, Sint16 *discs, Sint32 cells, Sint32 x,
-	Sint32 y, Sint32 size, Sint32 idx)
+	Sint32 y, Sint32 size, Sint32 index)
 {
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	(RamHeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
+	(RamHeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[index] + cells),
 		x - (size >> 1), y - size, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	(RamHeapSlots->ramCodePaired)(
-		canvas, (Uint8 *)(discs[idx] + cells), x, y - size, size >> 1, size);
+		canvas, (Uint8 *)(discs[index] + cells), x, y - size, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-	(RamHeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
+	(RamHeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[index] + cells),
 		x - (size >> 1), y, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 	(RamHeapSlots->ramCodePaired)(
-		canvas, (Uint8 *)(discs[idx] + cells), x, y, size >> 1, size);
+		canvas, (Uint8 *)(discs[index] + cells), x, y, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 
@@ -447,20 +448,20 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	SCREEN_POINT		 to;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
 	Uint8		  *graphics;
 	Sint16		  *discs;
 	Sint32		   ticks;
-	Sint32		   hitFrm;
-	Sint32		   ofs;
+	Sint32		   hitFrame;
+	Sint32		   offset;
 	Sint32		   i;
 	Sint32		   j;
 	Sint32		   cells = (Sint32)RamMapMetatileBuffer;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	graphics = RamHeapSlots->battleSheet;
 	if(mode <= CANVAS_BURST_SMALL_BALL)
@@ -482,14 +483,14 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 	/* Discs of sizes 2 to 64 one after another in the map cell buffer, with
 	   their offsets at the start of the sheet. */
-	ofs = 0;
+	offset = 0;
 	for(i = 0; i != CANVAS_BURST_DISCS; i++) {
 		Sint32 size = i * 2 + 2;
 
 		btEffectDrawShadedCircles(
-			(Uint8 *)(ofs + cells), size, toFIXED(2673) / 2048);
-		discs[i] = ofs;
-		ofs += (i * 2 + 3) * size / 2;
+			(Uint8 *)(offset + cells), size, toFIXED(2673) / 2048);
+		discs[i] = offset;
+		offset += (i * 2 + 3) * size / 2;
 	}
 	if(mode == CANVAS_BURST_MINE_BALL)
 		syWordsCopy((void *)BG_PLTT,
@@ -502,16 +503,16 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 		state->sheet + CANVAS_BURST_FLASH_BURST_PICTURES, 1, 0);
 
-	for(frm = 0; frm != ticks; frm++) {
+	for(frame = 0; frame != ticks; frame++) {
 		btEffectPosProjectBattler(args->user, &from);
 		if(mode == CANVAS_BURST_MINE_BALL)
 			btEffectGetTargetsMidpoint(&to);
 		else
-			btEffectPosProjectBattler(args->tgts[0], &to);
-		if(mode == CANVAS_BURST_SHRED && frm == 0)
-			sySndPlayStub(SE_SPIN);
+			btEffectPosProjectBattler(args->targets[0], &to);
+		if(mode == CANVAS_BURST_SHRED && frame == 0)
+			sySoundPlayStub(SE_SPIN);
 
-		if(frm == 0) {
+		if(frame == 0) {
 			if(mode == CANVAS_BURST_SHRED) {
 				PARTICLE *step;
 
@@ -527,19 +528,19 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				   along. */
 				CANVAS_BURST_BALL->x = toFIXED(from.x / 2);
 				CANVAS_BURST_BALL->y = INTtoFIXED(from.y - 36);
-				CANVAS_BURST_BALL->velX = (to.x - from.x)
+				CANVAS_BURST_BALL->velocityX = (to.x - from.x)
 					<< CANVAS_BURST_BALL_STEP_SHIFT;
-				CANVAS_BURST_BALL->velY = (to.y - from.y)
+				CANVAS_BURST_BALL->velocityY = (to.y - from.y)
 					<< CANVAS_BURST_BALL_STEP_SHIFT;
-				CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velX * 7;
-				CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velY * 7;
+				CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velocityX * 7;
+				CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velocityY * 7;
 			}
 		}
 
 		if(mode == CANVAS_BURST_SHRED) {
 			/* Ticks 18-54: the glow grows at the target. */
-			if((Uint32)(frm - 18) <= 36) {
-				Sint32 size = frm * 2 - 32;
+			if((Uint32)(frame - 18) <= 36) {
+				Sint32 size = frame * 2 - 32;
 				Sint32 x;
 				Sint32 y;
 
@@ -549,10 +550,10 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				y = to.y - 32;
 				DrawDisc(canvas, discs, cells, x, y, size, (size - 2) >> 1);
 			}
-		} else if((Uint32)(frm - 2) <= 30) {
+		} else if((Uint32)(frame - 2) <= 30) {
 			/* Ticks 2-32: the ball flies, growing. */
-			Sint32 size = frm / 4 * 2 + 16;
-			Sint32 idx;
+			Sint32 size = frame / 4 * 2 + 16;
+			Sint32 index;
 			Sint32 x;
 			Sint32 y;
 
@@ -562,17 +563,17 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			} else if(size > CANVAS_BURST_LARGE_BALL_SIZE) {
 				size = CANVAS_BURST_LARGE_BALL_SIZE;
 			}
-			idx = (size - 2) >> 1;
+			index = (size - 2) >> 1;
 			x = FIXEDtoINT(CANVAS_BURST_BALL->x);
 			y = FIXEDtoINT(CANVAS_BURST_BALL->y);
-			CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velX;
-			CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velY;
-			DrawDisc(canvas, discs, cells, x, y, size, idx);
+			CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velocityX;
+			CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velocityY;
+			DrawDisc(canvas, discs, cells, x, y, size, index);
 		}
 
 		/* Shred, ticks 0-53: sixteen rays of motes close on the target, each
 		   from its own delay. */
-		if(mode == CANVAS_BURST_SHRED && frm <= 53) {
+		if(mode == CANVAS_BURST_SHRED && frame <= 53) {
 			PARTICLE *step = state->particles;
 
 			for(i = 0; i != CANVAS_BURST_RAYS; i++) {
@@ -604,37 +605,37 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		}
 
 		if(mode == CANVAS_BURST_SHRED)
-			hitFrm = 54;
+			hitFrame = 54;
 		else if(mode == CANVAS_BURST_MINE_BALL)
-			hitFrm = 24;
+			hitFrame = 24;
 		else
-			hitFrm = 32;
-		if(frm >= hitFrm) {
+			hitFrame = 32;
+		if(frame >= hitFrame) {
 			PARTICLE *newFlame;
 			PARTICLE *newSpark;
 			PARTICLE *flame;
 			PARTICLE *spark;
 
-			if(frm == hitFrm) {
+			if(frame == hitFrame) {
 				/* The hit: the targets are hurled (the small ball nudges them)
 				   and flash. */
 				if(mode == CANVAS_BURST_SHRED ||
 					mode == CANVAS_BURST_LARGE_BALL ||
 					mode == CANVAS_BURST_MINE_BALL) {
 					EFFECT_SHOW_DAMAGE(SE_CRASH);
-					for(i = 0; i != args->tgtCnt; i++)
+					for(i = 0; i != args->targetCount; i++)
 						btMotionApplyKnockbackStub(
-							args->tgts[i], KNOCKBACK_HURL);
+							args->targets[i], KNOCKBACK_HURL);
 				} else {
 					EFFECT_SHOW_DAMAGE(SE_IMPACT);
-					for(i = 0; i != args->tgtCnt; i++)
+					for(i = 0; i != args->targetCount; i++)
 						btMotionApplyKnockbackStub(
-							args->tgts[i], KNOCKBACK_NUDGE);
+							args->targets[i], KNOCKBACK_NUDGE);
 				}
-				for(i = 0; i != args->tgtCnt; i++)
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
-				state->shakeFrm = 8;
+				for(i = 0; i != args->targetCount; i++)
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 8);
+				state->shakeFrame = 8;
 
 				/* Sixteen flames, faster one by one. */
 				for(i = 0; i != CANVAS_BURST_FLAMES; i++) {
@@ -645,8 +646,8 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					speed = i * 4 + 4;
 					newFlame->x = toFIXED(to.x / 2);
 					newFlame->y = INTtoFIXED(to.y - 32);
-					newFlame->velX = (speed * sySin(angle)) >> 3;
-					newFlame->velY = -(speed * syCos(angle)) >> 3;
+					newFlame->velocityX = (speed * sySin(angle)) >> 3;
+					newFlame->velocityY = -(speed * syCos(angle)) >> 3;
 					newFlame->variant = i / 3 + CANVAS_BURST_LIFE;
 				}
 
@@ -659,11 +660,11 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 					newSpark->x = toFIXED(to.x / 2);
 					newSpark->y = INTtoFIXED(to.y - 32);
-					newSpark->velX = (sySin(angle) * speed) >> 6;
-					newSpark->velY = -(syCos(angle) * speed) >> 5;
+					newSpark->velocityX = (sySin(angle) * speed) >> 6;
+					newSpark->velocityY = -(syCos(angle) * speed) >> 5;
 					if(mode == CANVAS_BURST_SMALL_BALL) {
-						newSpark->velX /= 2;
-						newSpark->velY /= 2;
+						newSpark->velocityX /= 2;
+						newSpark->velocityY /= 2;
 					}
 					newSpark->variant = i / 3 + CANVAS_BURST_LIFE;
 				}
@@ -727,7 +728,7 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		   fade off and the backgrounds on again. */
 		BATTLE_STATE *battle = RamHeapSlots->battleState;
 
-		sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+		sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 		BgScrollWork[1].x = state->savedBg1X;
 		BgScrollWork[1].y = state->savedBg1Y;
 		REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |

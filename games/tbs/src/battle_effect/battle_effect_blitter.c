@@ -50,28 +50,28 @@
 		COPY_FROM(BattleEffectMask, 3); \
 	} \
 \
-	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) { \
+	if((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) { \
 		COPY_FROM(templateWords, 3); \
 	} \
 	templateWords += 3; \
-	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) { \
+	if((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP_Y) { \
 		COPY_FROM(templateWords, 4); \
 	} \
 	templateWords += 4; \
-	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP) { \
+	if((flags & COMPOSITE_FLIP) == COMPOSITE_FLIP) { \
 		COPY_FROM(templateWords, 3); \
 	} \
 	templateWords += 3; \
-	if((flg & COMPOSITE_FLIP) == 0) { \
+	if((flags & COMPOSITE_FLIP) == 0) { \
 		PUT(templateWords[0]); \
 	} \
 	templateWords += 1; \
 \
 	/* Block 2, the vertical clip: the height enters the last two words. */ \
-	if((flg & BLITTER_CLIP_Y) != 0) { \
+	if((flags & BLITTER_CLIP_Y) != 0) { \
 		PUT(templateWords[0]); \
 		PUT(templateWords[1]); \
-		if((flg & COMPOSITE_FLIP_Y) != 0) { \
+		if((flags & COMPOSITE_FLIP_Y) != 0) { \
 			PUT(templateWords[2]); \
 		} else { \
 			PUT(templateWords[3]); \
@@ -89,14 +89,14 @@
 	MARK(emptyRowsBranch); \
 	PUT(*templateWords++); \
 \
-	if((flg & BLITTER_CLIP_X) == 0) { \
+	if((flags & BLITTER_CLIP_X) == 0) { \
 		PUT(templateWords[0] + (1 << widthShift) - 1); \
 	} \
 	templateWords += 1; \
-	if((flg & BLITTER_CLIP_X) != 0) { \
+	if((flags & BLITTER_CLIP_X) != 0) { \
 		PUT(templateWords[0]); \
 		PUT(templateWords[1]); \
-		if((flg & COMPOSITE_FLIP_X) != 0) { \
+		if((flags & COMPOSITE_FLIP_X) != 0) { \
 			PUT(templateWords[2]); \
 			PUT(templateWords[3]); \
 		} else { \
@@ -106,7 +106,7 @@
 		PUT(templateWords[6]); \
 		PUT(templateWords[7]); \
 		PUT(templateWords[8] + BlitterImmediatePowers[widthShift]); \
-		if((flg & COMPOSITE_FLIP_X) != 0) { \
+		if((flags & COMPOSITE_FLIP_X) != 0) { \
 			PUT(templateWords[9]); \
 		} else { \
 			PUT(templateWords[10]); \
@@ -122,7 +122,7 @@
 	COPY(6); \
 \
 	PUT(*templateWords++); \
-	if((flg & BLITTER_CLIP_X) == 0) { \
+	if((flags & BLITTER_CLIP_X) == 0) { \
 		PUT(templateWords[0]); \
 	} \
 	templateWords += 1; \
@@ -138,7 +138,7 @@
 	PUT(templateWords[3]); \
 	templateWords += 4; \
 \
-	if((flg & BLITTER_CLIP_X) == 0) { \
+	if((flags & BLITTER_CLIP_X) == 0) { \
 		PUT(templateWords[0]); \
 	} \
 	templateWords += 1; \
@@ -146,7 +146,7 @@
 	PUT(*templateWords++); \
 	MARK(skipBranch); \
 	PUT(*templateWords++); \
-	if((flg & COMPOSITE_FLIP_X) != 0) { \
+	if((flags & COMPOSITE_FLIP_X) != 0) { \
 		PUT(templateWords[0]); \
 	} else { \
 		PUT(templateWords[1]); \
@@ -154,13 +154,13 @@
 	templateWords += 2; \
 \
 	MARK(partialRun); \
-	BLITTER_PARTIAL_RUN(mode, flg); \
+	BLITTER_PARTIAL_RUN(mode, flags); \
 	templateWords += 4; \
 \
 	PUT(*templateWords++); \
 	PUT_BRANCH(partialRun); \
 	PUT(*templateWords++); \
-	if((flg & BLITTER_CLIP_X) == 0) { \
+	if((flags & BLITTER_CLIP_X) == 0) { \
 		PUT(templateWords[0]); \
 		PUT(templateWords[1]); \
 	} \
@@ -181,7 +181,7 @@
 		Sint32 i; \
 \
 		for(i = 0; i < 8; i++) { \
-			if((flg & COMPOSITE_FLIP_X) != 0) { \
+			if((flags & COMPOSITE_FLIP_X) != 0) { \
 				COPY_FROM(BattleEffectCopyReverse, 2); \
 			} else { \
 				COPY_FROM(BattleEffectCopyForward, 2); \
@@ -189,21 +189,21 @@
 		} \
 	} break; \
 	case COMPOSITE_TRANSPARENT: \
-		if((flg & COMPOSITE_FLIP_X) != 0) { \
+		if((flags & COMPOSITE_FLIP_X) != 0) { \
 			COPY_FROM(BattleEffectTransparent8Reverse, 25); \
 		} else { \
 			COPY_FROM(BattleEffectTransparent8Forward, 25); \
 		} \
 		break; \
 	case COMPOSITE_LIGHTEN: \
-		if((flg & COMPOSITE_FLIP_X) != 0) { \
+		if((flags & COMPOSITE_FLIP_X) != 0) { \
 			COPY_TWICE(BattleEffectMax4Reverse, 16); \
 		} else { \
 			COPY_TWICE(BattleEffectMax4Forward, 16); \
 		} \
 		break; \
 	case COMPOSITE_ADDITIVE: \
-		if((flg & COMPOSITE_FLIP_X) != 0) { \
+		if((flags & COMPOSITE_FLIP_X) != 0) { \
 			COPY_TWICE(BattleEffectColorReverse, 14); \
 		} else { \
 			COPY_TWICE(BattleEffectColorForward, 14); \
@@ -213,7 +213,7 @@
 	templateWords += 4; \
 \
 	PUT(*templateWords++); \
-	if((flg & BLITTER_CLIP_X) == 0) { \
+	if((flags & BLITTER_CLIP_X) == 0) { \
 		PUT(templateWords[0]); \
 		PUT(templateWords[1]); \
 	} \
@@ -226,7 +226,7 @@
 	PUT(*templateWords++); \
 	MARK(skipBranch); \
 	PUT(*templateWords++); \
-	if((flg & COMPOSITE_FLIP_X) != 0) { \
+	if((flags & COMPOSITE_FLIP_X) != 0) { \
 		PUT(templateWords[0]); \
 	} else { \
 		PUT(templateWords[1]); \
@@ -234,7 +234,7 @@
 	templateWords += 2; \
 \
 	MARK(partialRun); \
-	BLITTER_PARTIAL_RUN(mode, flg); \
+	BLITTER_PARTIAL_RUN(mode, flags); \
 	templateWords += 4; \
 \
 	PUT(*templateWords++); \
@@ -253,8 +253,8 @@
 
 /* Writes a drawing function for the canvas into heap slot `slot`, built from
    the template BlitterTemplate for one clip, mirroring and blend mode. */
-Sint32 btEffectBuildBlitter(
-	Sint32 slot, Sint32 widthShift, Sint32 heightShift, Sint32 flg, Uint32 mode)
+Sint32 btEffectBuildBlitter(Sint32 slot, Sint32 widthShift, Sint32 heightShift,
+	Sint32 flags, Uint32 mode)
 {
 	const Uint32 *templateWords;
 	Uint32		 *codeWords;
@@ -264,25 +264,25 @@ Sint32 btEffectBuildBlitter(
 	Uint32		 *skipBranch;
 	Uint32		 *partialRun;
 	Uint32		 *fullCellLoop;
-	Sint32		  wordCnt;
+	Sint32		  wordCount;
 
 	/* XXX (no evidence): why blitters are generated, perhaps because one
 	   function testing every option for every pixel would be too slow and IWRAM
 	   too small to keep one blitter for each combination; the ROM holds the
 	   builder, not its author's reasons. */
-#define PUT(word) wordCnt++
+#define PUT(word) wordCount++
 #define COPY(n) \
-	wordCnt += (n); \
+	wordCount += (n); \
 	templateWords += (n)
-#define COPY_FROM(from, n) wordCnt += (n)
+#define COPY_FROM(from, n) wordCount += (n)
 #define COPY_TWICE(from, n) \
-	wordCnt += (n); \
-	wordCnt += (n)
-#define PUT_BRANCH(target) wordCnt++
+	wordCount += (n); \
+	wordCount += (n)
+#define PUT_BRANCH(target) wordCount++
 #define MARK(site)
 #define PATCH(site)
 
-	wordCnt = 0;
+	wordCount = 0;
 	templateWords = BlitterTemplate;
 
 	BLITTER_WALK();
@@ -325,7 +325,7 @@ Sint32 btEffectBuildBlitter(
 		*(site) |= BRANCH_FIELD(site, codeWords); \
 	} while(0)
 
-	codeWords = syHeapSlotAlloc(slot, wordCnt << 2);
+	codeWords = syHeapSlotAllocate(slot, wordCount << 2);
 	templateWords = BlitterTemplate;
 
 	BLITTER_WALK();

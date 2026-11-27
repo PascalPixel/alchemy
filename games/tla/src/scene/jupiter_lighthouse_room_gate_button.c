@@ -96,7 +96,7 @@ enum { GATES_STAND_OPEN, GATES_SLIDE_OPEN };
 void scJupiterLighthouseOpenGates(Sint32 how)
 {
 	if(how == GATES_SLIDE_OPEN) {
-		fdScriptPlaySnd(SE_IMPACT);
+		fdScriptPlaySound(SE_IMPACT);
 		fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 29);
 		fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 37);
 		syWait(6);
@@ -111,7 +111,7 @@ void scJupiterLighthouseOpenGates(Sint32 how)
    picture. */
 void scJupiterLighthouseCloseGates(void)
 {
-	fdScriptPlaySnd(SE_HEAVY_IMPACT);
+	fdScriptPlaySound(SE_HEAVY_IMPACT);
 	fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 29);
 	fdMapGridCopyMetatilesLayered(81, 20, 2, 3, 79, 37);
 	syWait(6);
@@ -192,7 +192,7 @@ Sint32 scPrepareMap(void)
 
 #include "shared/scene_set_arrival_flags.c"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 extern Sint32 PaletteCyclePausesInScripts;
 
@@ -222,8 +222,9 @@ Sint32 scPosFlatDistance(FIXED *from, FIXED *to);
 
 #include "shared/whirlwind_update_lower.h"
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -242,7 +243,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -312,7 +313,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 /* Unused: the cracked tiles' functions, found, cracked and fallen through; this

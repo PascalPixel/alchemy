@@ -81,7 +81,7 @@ typedef enum YALLAM_TREASURE_ACTOR_ID {
    is this near, in pixels. */
 #define LEADER_WALK_ON_RANGE 11
 
-/* The running children keep these flags in ACTOR.tmr. */
+/* The running children keep these flags in ACTOR.timer. */
 enum {
 	/* Set on the circles child, who runs after ACTOR_GAME_CHILD. */
 	CHILD_CHASES_GAME_CHILD = 1,
@@ -146,11 +146,11 @@ extern Uint16 YallamThirdDoorOpening[];
 extern Uint16 YallamSanctumDoorOpening[];
 
 /* Unused: turns an actor's sprite half a turn, as an actor script's call. */
-UNUSED Sint32 scYallamTurnSprAround(ACTOR *actor)
+UNUSED Sint32 scYallamTurnSpriteAround(ACTOR *actor)
 {
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
-	spr->rotation = DEGtoANG(180);
+	sprite->rotation = DEGtoANG(180);
 	return 0;
 }
 
@@ -158,7 +158,7 @@ UNUSED Sint32 scYallamTurnSprAround(ACTOR *actor)
    script has set it in place. */
 Sint32 scYallamHideShadow(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -170,9 +170,9 @@ void scYallamShowSongGame(void);
 /* A song game runner's Actor fields of the same names, kept while the game is
    paused for a talk. */
 typedef struct SONG_RUNNER_STATE {
-	Sint32 tmr;
+	Sint32 timer;
 	Sint32 userValue;
-	Sint32 sceneCnt;
+	Sint32 sceneCount;
 	Sint32 sceneByte;
 } SONG_RUNNER_STATE;
 
@@ -180,7 +180,7 @@ typedef struct SONG_RUNNER_STATE {
    which scYallamUpdateSongGame passes on and clears. */
 enum { SONG_GAME_GO = 1, SONG_GAME_HALT = 2, SONG_GAME_HALT_AND_STAND = 3 };
 
-/* A runner's sceneCnt in the song game: where it stands on its path. */
+/* A runner's sceneCount in the song game: where it stands on its path. */
 enum {
 	RUNNER_GOING = 0,			 /* walks on along its path */
 	RUNNER_HALTED = 1,			 /* waits where it stopped */
@@ -193,7 +193,7 @@ SONG_RUNNER_STATE YallamSavedSongGame[5] BSS_DATA ALIGNED(16);
 extern MAP_GRID_METATILE_ANIMATION				  YallamDoors[];
 
 Sint32 scYallamStopIfFacingNear(
-	ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force);
+	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force);
 void scYallamUpdateSongGame(void);
 
 /* Stops the actor (paused, standing) when the target is nearer than range
@@ -202,24 +202,24 @@ void scYallamUpdateSongGame(void);
    set). Returns 1 when it stopped. A target out of range sets it walking
    again. */
 Sint32 scYallamStopIfFacingNear(
-	ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
+	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
 {
 	Sint32	result = 0;
-	Sint32 *tgtPos;
+	Sint32 *targetPos;
 	Sint32 *actorPos;
 
 	if(actor->sceneByte != 0) {
 		actor->paused = 1;
 		return 1;
 	}
-	tgtPos = &tgt->x.fixed;
+	targetPos = &target->x.fixed;
 	actorPos = &actor->x.fixed;
-	if(scPosDistance(tgtPos, actorPos) < range || force != 0) {
-		Uint32 ang =
-			(Uint16)syAtan(tgt->z.fixed - actor->z.fixed, *tgtPos - *actorPos);
-		Uint32 left = FACING_SIXTEENTH(ang - FACING_STEP);
-		Uint32 right = FACING_SIXTEENTH(ang + FACING_STEP);
-		Uint32 ahead = FACING_SIXTEENTH(ang);
+	if(scPosDistance(targetPos, actorPos) < range || force != 0) {
+		Uint32 angle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, *targetPos - *actorPos);
+		Uint32 left = FACING_SIXTEENTH(angle - FACING_STEP);
+		Uint32 right = FACING_SIXTEENTH(angle + FACING_STEP);
+		Uint32 ahead = FACING_SIXTEENTH(angle);
 		Uint32 facing = FACING_SIXTEENTH(actor->facing);
 
 		if(ahead == facing || right == facing || left == facing || force != 0) {
@@ -240,11 +240,11 @@ Sint32 scYallamStopIfFacingNear(
    1 it walks on while the leader is right beside it. */
 Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 {
-	WIN_STATE	*state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE	*state = (WIN_STATE *)RamHeapSlots->windowState;
 	FIELD_STATE *event = RamHeapSlots->fieldState;
 	ACTOR		*leader;
-	ACTOR		*tgt;
-	Uint16		*flg;
+	ACTOR		*target;
+	Uint16		*flags;
 	Bool		 force = FALSE;
 
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
@@ -255,14 +255,15 @@ Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 		fdActorSelectAnimation(actor, ANIM_WALK);
 		return 0;
 	}
-	flg = (Uint16 *)&actor->tmr;
-	if(*flg & CHILD_CHASES_GAME_CHILD)
-		tgt = fdActorGet(ACTOR_GAME_CHILD);
+	flags = (Uint16 *)&actor->timer;
+	if(*flags & CHILD_CHASES_GAME_CHILD)
+		target = fdActorGet(ACTOR_GAME_CHILD);
 	else
-		tgt = fdActorGet(ACTOR_CIRCLES_CHILD);
-	if(scYallamStopIfFacingNear(actor, tgt, STOP_RANGE, 0) == 0) {
+		target = fdActorGet(ACTOR_CIRCLES_CHILD);
+	if(scYallamStopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
 		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-		if((event->talk != 0 || state->mindRead != 0) && (*flg & CHILD_TALKING))
+		if((event->talk != 0 || state->mindRead != 0) &&
+			(*flags & CHILD_TALKING))
 			force = TRUE;
 		scYallamStopIfFacingNear(actor, leader, STOP_RANGE, force);
 	}
@@ -271,20 +272,21 @@ Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 #else
 Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 {
-	WIN_STATE	*state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE	*state = (WIN_STATE *)RamHeapSlots->windowState;
 	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Bool		 force = FALSE;
-	ACTOR		*tgt;
-	Uint16		*flg = (Uint16 *)&actor->tmr;
+	ACTOR		*target;
+	Uint16		*flags = (Uint16 *)&actor->timer;
 
-	if(*flg & CHILD_CHASES_GAME_CHILD)
-		tgt = fdActorGet(ACTOR_GAME_CHILD);
+	if(*flags & CHILD_CHASES_GAME_CHILD)
+		target = fdActorGet(ACTOR_GAME_CHILD);
 	else
-		tgt = fdActorGet(ACTOR_CIRCLES_CHILD);
-	if(scYallamStopIfFacingNear(actor, tgt, STOP_RANGE, 0) == 0) {
+		target = fdActorGet(ACTOR_CIRCLES_CHILD);
+	if(scYallamStopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
 		ACTOR *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-		if((event->talk != 0 || state->mindRead != 0) && (*flg & CHILD_TALKING))
+		if((event->talk != 0 || state->mindRead != 0) &&
+			(*flags & CHILD_TALKING))
 			force = TRUE;
 		scYallamStopIfFacingNear(actor, leader, STOP_RANGE, force);
 	}
@@ -342,7 +344,7 @@ void scYallamEnterDoor(void)
 {
 	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Uint32		 i;
-	Sint32		 idx;
+	Sint32		 index;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -350,13 +352,13 @@ void scYallamEnterDoor(void)
 		ACTOR *actor = fdActorGet(i);
 
 		if(actor != NULL)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
-	idx = event->stepCue;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	idx--;
+	index = event->stepCue;
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	index--;
 	fdMapGridAnimateMetatiles(
-		YallamDoors[idx].steps, YallamDoors[idx].x, YallamDoors[idx].y);
+		YallamDoors[index].steps, YallamDoors[index].x, YallamDoors[index].y);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	{
@@ -364,7 +366,7 @@ void scYallamEnterDoor(void)
 
 		/* The sanctum's door is two metatiles wide: the leader walks straight
 		   in. */
-		if(idx == YALLAM_TO_MIKASALLA_ROOMS_SANCTUM - 1)
+		if(index == YALLAM_TO_MIKASALLA_ROOMS_SANCTUM - 1)
 			fdActorSetDestinationOffset(owner, 0, -4);
 		else
 			fdActorCenterAndWalk(owner, 2, -4);
@@ -424,7 +426,7 @@ void scYallamUncoverAntidote(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, 16, 0);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -461,7 +463,7 @@ void scYallamUncoverNut(void)
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdActorSetDestinationOffset(
 				MainRoutineStateWork.leaderActorId, 0, -16);
-			leader->velY = toFIXED(6);
+			leader->velocityY = toFIXED(6);
 			scFieldActorWaitForMoveById(MainRoutineStateWork.leaderActorId);
 			fdScriptEnd();
 		}
@@ -518,7 +520,7 @@ void scYallamTalkAboutSongCircles(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_CIRCLES_CHILD);
-	Sint16		 ang = actor->facing;
+	Sint16		 angle = actor->facing;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -536,7 +538,7 @@ void scYallamTalkAboutSongCircles(void)
 	}
 	fdScriptShowMessage(ACTOR_CIRCLES_CHILD, 0);
 	if(state->psynergy == 0)
-		actor->facing = ang;
+		actor->facing = angle;
 	actor->sceneByte = 0;
 	fdScriptEnd();
 }
@@ -575,9 +577,9 @@ void scYallamTalkAboutSongGame(void)
 /* Whether an actor has reached its target, which is then unset. */
 Bool scYallamHasArrived(ACTOR *actor)
 {
-	Sint32 x = actor->tgtX;
+	Sint32 x = actor->targetX;
 
-	if(x == ACTOR_NO_TARGET && actor->tgtZ == ACTOR_NO_TARGET)
+	if(x == ACTOR_NO_TARGET && actor->targetZ == ACTOR_NO_TARGET)
 		return TRUE;
 	return FALSE;
 }
@@ -588,12 +590,12 @@ Bool scYallamHasArrived(ACTOR *actor)
 void scYallamRunSongPath(Sint32 actorId)
 {
 	ACTOR  *actor = fdActorGetById(actorId);
-	Uint8	state = actor->sceneCnt;
-	Sint16 *tmr;
+	Uint8	state = actor->sceneCount;
+	Sint16 *timer;
 
 	if(state == RUNNER_HALTED)
 		return;
-	tmr = &actor->tmr;
+	timer = &actor->timer;
 	switch(state) {
 	case RUNNER_GOING:
 		fdActorSelectAnimation(actor, ANIM_WALK);
@@ -605,1485 +607,1485 @@ void scYallamRunSongPath(Sint32 actorId)
 	case RUNNER_HALTING:
 		fdActorSetMoveTarget(
 			actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-		*tmr &= ~1;
-		actor->sceneCnt = RUNNER_HALTED;
+		*timer &= ~1;
+		actor->sceneCount = RUNNER_HALTED;
 		return;
 	}
-	switch(*tmr) {
+	switch(*timer) {
 	/* The stars song: north past the twins and two swirls, then twice round the
 	   trunk. */
 	case 0:
 		fdActorSetDestination(actorId, 344, 824);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 1:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 2:
 		fdActorSetDestination(actorId, 324, 820);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 3:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 4:
 		fdActorSetDestination(actorId, 320, 808);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 5:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 6:
 		fdActorSetDestination(actorId, 324, 796);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 7:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 8:
 		fdActorSetDestination(actorId, 344, 792);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 9:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 10:
 		fdActorSetDestination(actorId, 364, 796);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 11:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 12:
 		fdActorSetDestination(actorId, 368, 808);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 13:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 14:
 		fdActorSetDestination(actorId, 364, 820);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 15:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 16:
 		fdActorSetDestination(actorId, 344, 824);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 17:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 18:
 		fdActorSetDestination(actorId, 324, 820);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 19:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 20:
 		fdActorSetDestination(actorId, 320, 808);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 21:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 22:
 		fdActorSetDestination(actorId, 324, 796);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 23:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 24:
 		fdActorSetDestination(actorId, 344, 792);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 25:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 26:
 		fdActorSetDestination(actorId, 364, 796);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 27:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 28:
 		fdActorSetDestination(actorId, 368, 808);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 29:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 30:
 		fdActorSetDestination(actorId, 364, 820);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 31:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 32:
 		fdActorSetDestination(actorId, 344, 824);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 33:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* East, then three to the north. */
 	case 34:
 		fdActorSetSpeedAndAcceleration(actorId, 1.8, 1.8);
 		fdActorSetDestination(actorId, 364, 820);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 35:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 36:
 		fdActorSetDestination(actorId, 368, 808);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 37:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 38:
 		fdActorSetDestination(actorId, 392, 808);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 39:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 40:
 		fdActorSetDestination(actorId, 392, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 41:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* Thrice round, then north to the stars. */
 	case 42:
 		fdActorSetSpeedAndAcceleration(actorId, 1.2, 1.2);
 		fdActorSetDestination(actorId, 372, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 43:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 44:
 		fdActorSetDestination(actorId, 368, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 45:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 46:
 		fdActorSetDestination(actorId, 372, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 47:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 48:
 		fdActorSetDestination(actorId, 392, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 49:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 50:
 		fdActorSetDestination(actorId, 412, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 51:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 52:
 		fdActorSetDestination(actorId, 416, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 53:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 54:
 		fdActorSetDestination(actorId, 412, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 55:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 56:
 		fdActorSetDestination(actorId, 392, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 57:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 58:
 		fdActorSetDestination(actorId, 372, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 59:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 60:
 		fdActorSetDestination(actorId, 368, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 61:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 62:
 		fdActorSetDestination(actorId, 372, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 63:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 64:
 		fdActorSetDestination(actorId, 392, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 65:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 66:
 		fdActorSetDestination(actorId, 412, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 67:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 68:
 		fdActorSetDestination(actorId, 416, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 69:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 70:
 		fdActorSetDestination(actorId, 412, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 71:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 72:
 		fdActorSetDestination(actorId, 392, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 73:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 74:
 		fdActorSetDestination(actorId, 372, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 75:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 76:
 		fdActorSetDestination(actorId, 368, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 77:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 78:
 		fdActorSetDestination(actorId, 372, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 79:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 80:
 		fdActorSetDestination(actorId, 392, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 81:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 82:
 		fdActorSetDestination(actorId, 412, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 83:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 84:
 		fdActorSetDestination(actorId, 416, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 85:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 86:
 		fdActorSetDestination(actorId, 412, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 87:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 88:
 		fdActorSetDestination(actorId, 392, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 89:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 90:
 		fdActorSetDestination(actorId, 372, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 91:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 92:
 		fdActorSetDestination(actorId, 368, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 93:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 94:
 		fdActorSetDestination(actorId, 372, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 95:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 96:
 		fdActorSetDestination(actorId, 392, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 97:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 98:
 		fdActorSetDestination(actorId, 392, 696);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 99:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 100:
 		fdActorSetDestination(actorId, 412, 692);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 101:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 102:
 		fdActorSetDestination(actorId, 416, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 103:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 104:
 		fdActorSetDestination(actorId, 412, 668);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 105:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 106:
 		fdActorSetDestination(actorId, 392, 664);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 107:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* The moon song's opening line. */
 	case 108:
 		fdActorSetDestination(actorId, 372, 668);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 109:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 110:
 		fdActorSetDestination(actorId, 368, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 111:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 112:
 		fdActorSetDestination(actorId, 320, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 113:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* West from the stars past three swirls, then twice round. */
 	case 114:
 		fdActorSetDestination(actorId, 316, 692);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 115:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 116:
 		fdActorSetDestination(actorId, 296, 696);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 117:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 118:
 		fdActorSetDestination(actorId, 276, 692);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 119:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 120:
 		fdActorSetDestination(actorId, 272, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 121:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 122:
 		fdActorSetDestination(actorId, 276, 668);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 123:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 124:
 		fdActorSetDestination(actorId, 296, 664);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 125:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 126:
 		fdActorSetDestination(actorId, 316, 668);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 127:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 128:
 		fdActorSetDestination(actorId, 320, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 129:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 130:
 		fdActorSetDestination(actorId, 316, 692);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 131:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 132:
 		fdActorSetDestination(actorId, 296, 696);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 133:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 134:
 		fdActorSetDestination(actorId, 276, 692);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 135:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 136:
 		fdActorSetDestination(actorId, 272, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 137:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 138:
 		fdActorSetDestination(actorId, 276, 668);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 139:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 140:
 		fdActorSetDestination(actorId, 296, 664);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 141:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 142:
 		fdActorSetDestination(actorId, 316, 668);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 143:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 144:
 		fdActorSetDestination(actorId, 320, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 145:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 146:
 		fdActorSetDestination(actorId, 316, 692);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 147:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 148:
 		fdActorSetDestination(actorId, 296, 696);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 149:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* South, then one swirl west. */
 	case 150:
 		fdActorSetDestination(actorId, 296, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 151:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 152:
 		fdActorSetDestination(actorId, 272, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 153:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* Thrice round, then south to the moon. */
 	case 154:
 		fdActorSetDestination(actorId, 268, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 155:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 156:
 		fdActorSetDestination(actorId, 248, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 157:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 158:
 		fdActorSetDestination(actorId, 228, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 159:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 160:
 		fdActorSetDestination(actorId, 224, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 161:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 162:
 		fdActorSetDestination(actorId, 228, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 163:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 164:
 		fdActorSetDestination(actorId, 248, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 165:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 166:
 		fdActorSetDestination(actorId, 268, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 167:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 168:
 		fdActorSetDestination(actorId, 272, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 169:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 170:
 		fdActorSetDestination(actorId, 268, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 171:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 172:
 		fdActorSetDestination(actorId, 248, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 173:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 174:
 		fdActorSetDestination(actorId, 228, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 175:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 176:
 		fdActorSetDestination(actorId, 224, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 177:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 178:
 		fdActorSetDestination(actorId, 228, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 179:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 180:
 		fdActorSetDestination(actorId, 248, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 181:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 182:
 		fdActorSetDestination(actorId, 268, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 183:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 184:
 		fdActorSetDestination(actorId, 272, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 185:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 186:
 		fdActorSetDestination(actorId, 268, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 187:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 188:
 		fdActorSetDestination(actorId, 248, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 189:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 190:
 		fdActorSetDestination(actorId, 228, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 191:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 192:
 		fdActorSetDestination(actorId, 224, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 193:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 194:
 		fdActorSetDestination(actorId, 228, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 195:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 196:
 		fdActorSetDestination(actorId, 248, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 197:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 198:
 		fdActorSetDestination(actorId, 268, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 199:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 200:
 		fdActorSetDestination(actorId, 272, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 201:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 202:
 		fdActorSetDestination(actorId, 268, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 203:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 204:
 		fdActorSetDestination(actorId, 248, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 205:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 206:
 		fdActorSetDestination(actorId, 248, 760);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 207:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 208:
 		fdActorSetDestination(actorId, 228, 764);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 209:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 210:
 		fdActorSetDestination(actorId, 224, 776);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 211:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 212:
 		fdActorSetDestination(actorId, 228, 788);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 213:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 214:
 		fdActorSetDestination(actorId, 248, 792);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 215:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* The sun song's opening line. */
 	case 216:
 		fdActorSetDestination(actorId, 248, 840);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 217:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* South from the moon through two swirls, then twice round. */
 	case 218:
 		fdActorSetDestination(actorId, 228, 844);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 219:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 220:
 		fdActorSetDestination(actorId, 224, 856);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 221:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 222:
 		fdActorSetDestination(actorId, 228, 868);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 223:
 		if(scYallamHasArrived(actor) != 0)
-			actor->tmr++;
+			actor->timer++;
 	case 224:
 		fdActorSetDestination(actorId, 248, 872);
-		actor->tmr++;
+		actor->timer++;
 		return;
 	case 225:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 226:
 		fdActorSetDestination(actorId, 268, 868);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 227:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 228:
 		fdActorSetDestination(actorId, 272, 856);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 229:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 230:
 		fdActorSetDestination(actorId, 268, 844);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 231:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 232:
 		fdActorSetDestination(actorId, 248, 840);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 233:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 234:
 		fdActorSetDestination(actorId, 228, 844);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 235:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 236:
 		fdActorSetDestination(actorId, 224, 856);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 237:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 238:
 		fdActorSetDestination(actorId, 228, 868);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 239:
 		if(scYallamHasArrived(actor) != 0)
-			actor->tmr++;
+			actor->timer++;
 	case 240:
 		fdActorSetDestination(actorId, 248, 872);
-		actor->tmr++;
+		actor->timer++;
 		return;
 	case 241:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 242:
 		fdActorSetDestination(actorId, 268, 868);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 243:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 244:
 		fdActorSetDestination(actorId, 272, 856);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 245:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 246:
 		fdActorSetDestination(actorId, 268, 844);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 247:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 248:
 		fdActorSetDestination(actorId, 248, 840);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 249:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 250:
 		fdActorSetDestination(actorId, 228, 844);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 251:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 252:
 		fdActorSetDestination(actorId, 224, 856);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 253:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* West, then six to the north. */
 	case 254:
 		fdActorSetSpeedAndAcceleration(actorId, 1.8, 1.8);
 		fdActorSetDestination(actorId, 200, 856);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 255:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 256:
 		fdActorSetDestination(actorId, 200, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 257:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	/* Thrice round, then north to the sun. */
 	case 258:
 		fdActorSetSpeedAndAcceleration(actorId, 1.2, 1.2);
 		fdActorSetDestination(actorId, 180, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 259:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 260:
 		fdActorSetDestination(actorId, 176, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 261:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 262:
 		fdActorSetDestination(actorId, 180, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 263:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 264:
 		fdActorSetDestination(actorId, 200, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 265:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 266:
 		fdActorSetDestination(actorId, 220, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 267:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 268:
 		fdActorSetDestination(actorId, 224, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 269:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 270:
 		fdActorSetDestination(actorId, 220, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 271:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 272:
 		fdActorSetDestination(actorId, 200, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 273:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 274:
 		fdActorSetDestination(actorId, 180, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 275:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 276:
 		fdActorSetDestination(actorId, 176, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 277:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 278:
 		fdActorSetDestination(actorId, 180, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 279:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 280:
 		fdActorSetDestination(actorId, 200, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 281:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 282:
 		fdActorSetDestination(actorId, 220, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 283:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 284:
 		fdActorSetDestination(actorId, 224, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 285:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 286:
 		fdActorSetDestination(actorId, 220, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 287:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 288:
 		fdActorSetDestination(actorId, 200, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 289:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 290:
 		fdActorSetDestination(actorId, 180, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 291:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 292:
 		fdActorSetDestination(actorId, 176, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 293:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 294:
 		fdActorSetDestination(actorId, 180, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 295:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 296:
 		fdActorSetDestination(actorId, 200, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 297:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 298:
 		fdActorSetDestination(actorId, 220, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 299:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 300:
 		fdActorSetDestination(actorId, 224, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 301:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 302:
 		fdActorSetDestination(actorId, 220, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 303:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 304:
 		fdActorSetDestination(actorId, 200, 744);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 305:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 306:
 		fdActorSetDestination(actorId, 180, 740);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 307:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 308:
 		fdActorSetDestination(actorId, 176, 728);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 309:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 310:
 		fdActorSetDestination(actorId, 180, 716);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 311:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 312:
 		fdActorSetDestination(actorId, 200, 712);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 313:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 314:
 		fdActorSetDestination(actorId, 200, 680);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 315:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 316:
 		fdActorSetDestination(actorId, 212, 676);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 317:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 318:
 		fdActorSetDestination(actorId, 216, 664);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 319:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 320:
 		fdActorSetDestination(actorId, 212, 652);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 321:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 322:
 		fdActorSetDestination(actorId, 200, 648);
-		(*tmr)++;
+		(*timer)++;
 		return;
 	case 323:
 		if(scYallamHasArrived(actor) == 0)
 			return;
-		(*tmr)++;
+		(*timer)++;
 		return;
 	default:
 		return;
 	}
-	(*tmr)++;
+	(*timer)++;
 }
 
 /* An event: sets every runner's mode from the lead child's and moves them
@@ -2099,25 +2101,25 @@ void scYallamUpdateSongGame(void)
 
 	switch(command) {
 	case SONG_GAME_GO:
-		songLeader->sceneCnt = RUNNER_GOING;
-		gameChild->sceneCnt = RUNNER_GOING;
-		circlesChild->sceneCnt = RUNNER_GOING;
-		storyChild->sceneCnt = RUNNER_GOING;
-		leader->sceneCnt = RUNNER_GOING;
+		songLeader->sceneCount = RUNNER_GOING;
+		gameChild->sceneCount = RUNNER_GOING;
+		circlesChild->sceneCount = RUNNER_GOING;
+		storyChild->sceneCount = RUNNER_GOING;
+		leader->sceneCount = RUNNER_GOING;
 		break;
 	case SONG_GAME_HALT:
-		songLeader->sceneCnt = RUNNER_HALTING;
-		gameChild->sceneCnt = RUNNER_HALTING;
-		circlesChild->sceneCnt = RUNNER_HALTING;
-		storyChild->sceneCnt = RUNNER_HALTING;
-		leader->sceneCnt = RUNNER_HALTING;
+		songLeader->sceneCount = RUNNER_HALTING;
+		gameChild->sceneCount = RUNNER_HALTING;
+		circlesChild->sceneCount = RUNNER_HALTING;
+		storyChild->sceneCount = RUNNER_HALTING;
+		leader->sceneCount = RUNNER_HALTING;
 		break;
 	case SONG_GAME_HALT_AND_STAND:
-		songLeader->sceneCnt = RUNNER_HALTING_TO_STAND;
-		gameChild->sceneCnt = RUNNER_HALTING_TO_STAND;
-		circlesChild->sceneCnt = RUNNER_HALTING_TO_STAND;
-		storyChild->sceneCnt = RUNNER_HALTING_TO_STAND;
-		leader->sceneCnt = RUNNER_HALTING_TO_STAND;
+		songLeader->sceneCount = RUNNER_HALTING_TO_STAND;
+		gameChild->sceneCount = RUNNER_HALTING_TO_STAND;
+		circlesChild->sceneCount = RUNNER_HALTING_TO_STAND;
+		storyChild->sceneCount = RUNNER_HALTING_TO_STAND;
+		leader->sceneCount = RUNNER_HALTING_TO_STAND;
 		break;
 	}
 	songLeader->userValue = 0;
@@ -2134,29 +2136,29 @@ void scYallamPauseSongGame(void)
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_SONG_LEADER);
-	YallamSavedSongGame[0].tmr = actor->tmr;
+	YallamSavedSongGame[0].timer = actor->timer;
 	YallamSavedSongGame[0].userValue = actor->userValue;
-	YallamSavedSongGame[0].sceneCnt = actor->sceneCnt;
+	YallamSavedSongGame[0].sceneCount = actor->sceneCount;
 	YallamSavedSongGame[0].sceneByte = actor->sceneByte;
 	actor = fdActorGet(ACTOR_GAME_CHILD);
-	YallamSavedSongGame[1].tmr = actor->tmr;
+	YallamSavedSongGame[1].timer = actor->timer;
 	YallamSavedSongGame[1].userValue = actor->userValue;
-	YallamSavedSongGame[1].sceneCnt = actor->sceneCnt;
+	YallamSavedSongGame[1].sceneCount = actor->sceneCount;
 	YallamSavedSongGame[1].sceneByte = actor->sceneByte;
 	actor = fdActorGet(ACTOR_CIRCLES_CHILD);
-	YallamSavedSongGame[2].tmr = actor->tmr;
+	YallamSavedSongGame[2].timer = actor->timer;
 	YallamSavedSongGame[2].userValue = actor->userValue;
-	YallamSavedSongGame[2].sceneCnt = actor->sceneCnt;
+	YallamSavedSongGame[2].sceneCount = actor->sceneCount;
 	YallamSavedSongGame[2].sceneByte = actor->sceneByte;
 	actor = fdActorGet(ACTOR_STORY_CHILD);
-	YallamSavedSongGame[3].tmr = actor->tmr;
+	YallamSavedSongGame[3].timer = actor->timer;
 	YallamSavedSongGame[3].userValue = actor->userValue;
-	YallamSavedSongGame[3].sceneCnt = actor->sceneCnt;
+	YallamSavedSongGame[3].sceneCount = actor->sceneCount;
 	YallamSavedSongGame[3].sceneByte = actor->sceneByte;
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	YallamSavedSongGame[4].tmr = actor->tmr;
+	YallamSavedSongGame[4].timer = actor->timer;
 	YallamSavedSongGame[4].userValue = actor->userValue;
-	YallamSavedSongGame[4].sceneCnt = actor->sceneCnt;
+	YallamSavedSongGame[4].sceneCount = actor->sceneCount;
 	YallamSavedSongGame[4].sceneByte = actor->sceneByte;
 	syFieldCloseEvent(scYallamUpdateSongGame);
 }
@@ -2167,29 +2169,29 @@ void scYallamResumeSongGame(void)
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_SONG_LEADER);
-	actor->tmr = YallamSavedSongGame[0].tmr;
+	actor->timer = YallamSavedSongGame[0].timer;
 	actor->userValue = YallamSavedSongGame[0].userValue;
-	actor->sceneCnt = YallamSavedSongGame[0].sceneCnt;
+	actor->sceneCount = YallamSavedSongGame[0].sceneCount;
 	actor->sceneByte = YallamSavedSongGame[0].sceneByte;
 	actor = fdActorGet(ACTOR_GAME_CHILD);
-	actor->tmr = YallamSavedSongGame[1].tmr;
+	actor->timer = YallamSavedSongGame[1].timer;
 	actor->userValue = YallamSavedSongGame[1].userValue;
-	actor->sceneCnt = YallamSavedSongGame[1].sceneCnt;
+	actor->sceneCount = YallamSavedSongGame[1].sceneCount;
 	actor->sceneByte = YallamSavedSongGame[1].sceneByte;
 	actor = fdActorGet(ACTOR_CIRCLES_CHILD);
-	actor->tmr = YallamSavedSongGame[2].tmr;
+	actor->timer = YallamSavedSongGame[2].timer;
 	actor->userValue = YallamSavedSongGame[2].userValue;
-	actor->sceneCnt = YallamSavedSongGame[2].sceneCnt;
+	actor->sceneCount = YallamSavedSongGame[2].sceneCount;
 	actor->sceneByte = YallamSavedSongGame[2].sceneByte;
 	actor = fdActorGet(ACTOR_STORY_CHILD);
-	actor->tmr = YallamSavedSongGame[3].tmr;
+	actor->timer = YallamSavedSongGame[3].timer;
 	actor->userValue = YallamSavedSongGame[3].userValue;
-	actor->sceneCnt = YallamSavedSongGame[3].sceneCnt;
+	actor->sceneCount = YallamSavedSongGame[3].sceneCount;
 	actor->sceneByte = YallamSavedSongGame[3].sceneByte;
 	actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	actor->tmr = YallamSavedSongGame[4].tmr;
+	actor->timer = YallamSavedSongGame[4].timer;
 	actor->userValue = YallamSavedSongGame[4].userValue;
-	actor->sceneCnt = YallamSavedSongGame[4].sceneCnt;
+	actor->sceneCount = YallamSavedSongGame[4].sceneCount;
 	actor->sceneByte = YallamSavedSongGame[4].sceneByte;
 	sySetTickEvent(scYallamUpdateSongGame, EVENT_PASS_TICK);
 }
@@ -2201,9 +2203,9 @@ void scYallamStartRunner(Sint32 id)
 
 	fdActorSetSpeedAndAcceleration(id, 1.2, 1.2);
 	fdActorSetAnimation(id, ANIM_WALK);
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->userValue = 0;
-	actor->sceneCnt = RUNNER_HALTED;
+	actor->sceneCount = RUNNER_HALTED;
 	actor->sceneByte = 0;
 }
 
@@ -2236,14 +2238,14 @@ void scYallamShowSongGame(void)
 	fdActorSetSpeed(ACTOR_GAME_CHILD, 1.6);
 	fdActorSetScript(ACTOR_CIRCLES_CHILD, YallamCirclesChildGathers);
 	fdActorSetScript(ACTOR_GAME_CHILD, YallamGameChildGathers);
-	(fdCameraGetActor())->motionFlg = 0;
+	(fdCameraGetActor())->motionFlags = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(304, CAMERA_KEEP, 878, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 296, 872);
 	fdActorFaceDirectionAndWait(
 		MainRoutineStateWork.leaderActorId, FACING_EAST);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdActorFaceDirection(ACTOR_SONG_LEADER, FACING_NORTH_NORTHWEST, 20);
 	fdActorFaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH_NORTHEAST);
 	scFieldActorJump(ACTOR_SONG_LEADER, 2, 10);
@@ -2277,7 +2279,7 @@ void scYallamShowSongGame(void)
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 344, 912);
 	fdActorFaceDirectionAndWait(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH);
-	fdScriptPlaySnd(MUS_CHILDRENS_SONG);
+	fdScriptPlaySound(MUS_CHILDRENS_SONG);
 	fdActorFaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH);
 	/* "If you want to go to the stars, if you want to go to the stars." */
 	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
@@ -2299,7 +2301,7 @@ void scYallamShowSongGame(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 34);
+	while(actor->timer != 34);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Haste without waste, and head to the east, past three to the north." */
@@ -2307,7 +2309,7 @@ void scYallamShowSongGame(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 42);
+	while(actor->timer != 42);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "There, run 'round thrice and wait for the waves. When they stop, run
@@ -2316,7 +2318,7 @@ void scYallamShowSongGame(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 108);
+	while(actor->timer != 108);
 	actor->userValue = SONG_GAME_HALT_AND_STAND;
 	syWait(1);
 	/* "If you race full of folly and take the wrong way, you'll find yourself a
@@ -2342,7 +2344,7 @@ void scYallamShowSongGame(void)
 		syFieldScriptShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		syFieldScriptWait(40);
 		syFieldScriptSetExitRequest(YALLAM_EXIT_SONG_GAME);
 	}
@@ -2370,7 +2372,7 @@ void scYallamSingMoonSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 114);
+	while(actor->timer != 114);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Face west from the stars and run straight past three swirls, then circle
@@ -2379,7 +2381,7 @@ void scYallamSingMoonSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 150);
+	while(actor->timer != 150);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Haste without waste, and head to the south, then one swirl west." */
@@ -2387,7 +2389,7 @@ void scYallamSingMoonSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 154);
+	while(actor->timer != 154);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "There, run 'round thrice and wait for the waves. When they stop, run
@@ -2396,7 +2398,7 @@ void scYallamSingMoonSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 216);
+	while(actor->timer != 216);
 	actor->userValue = SONG_GAME_HALT_AND_STAND;
 	syWait(1);
 	/* "If you race full of folly and take the wrong way, you'll find yourself a
@@ -2422,7 +2424,7 @@ void scYallamSingMoonSong(void)
 		syFieldScriptShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		syFieldScriptWait(40);
 		syFieldScriptSetExitRequest(YALLAM_EXIT_SONG_GAME);
 	}
@@ -2452,7 +2454,7 @@ void scYallamSingSunSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 218);
+	while(actor->timer != 218);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Face south from the moon and run straight through two swirls, then
@@ -2461,7 +2463,7 @@ void scYallamSingSunSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 254);
+	while(actor->timer != 254);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "Haste without waste, and head to the west, then six to the north." */
@@ -2469,7 +2471,7 @@ void scYallamSingSunSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 258);
+	while(actor->timer != 258);
 	actor->userValue = SONG_GAME_HALT;
 	syWait(1);
 	/* "There, run 'round thrice and wait for the waves. When they stop, run
@@ -2478,7 +2480,7 @@ void scYallamSingSunSong(void)
 	actor->userValue = SONG_GAME_GO;
 	do
 		syWait(1);
-	while(actor->tmr != 324);
+	while(actor->timer != 324);
 	actor->userValue = SONG_GAME_HALT_AND_STAND;
 	syWait(1);
 	/* "If you race full of folly and take the wrong way, you'll find yourself a
@@ -2486,7 +2488,7 @@ void scYallamSingSunSong(void)
 	fdScriptShowMessage(ACTOR_SONG_LEADER, 0);
 	scYallamPauseSongGame();
 	fdActorFaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST);
-	fdActorGet(ACTOR_SONG_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SONG_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_SONG_LEADER);
 	z = actor->z.fixed;
 	x = actor->x.fixed;
@@ -2497,7 +2499,7 @@ void scYallamSingSunSong(void)
 	scFieldActorSetMoveTargetFX(actor, x, 0, z);
 	syFieldScriptWait(5);
 	fdActorFaceDirectionAndWait(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST);
-	fdActorGet(ACTOR_GAME_CHILD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GAME_CHILD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_GAME_CHILD);
 	z = actor->z.fixed;
 	x = actor->x.fixed;
@@ -2508,7 +2510,7 @@ void scYallamSingSunSong(void)
 	scFieldActorSetMoveTargetFX(actor, x, 0, z);
 	syFieldScriptWait(5);
 	fdActorFaceDirectionAndWait(ACTOR_CIRCLES_CHILD, FACING_WEST);
-	fdActorGet(ACTOR_CIRCLES_CHILD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_CIRCLES_CHILD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_CIRCLES_CHILD);
 	z = actor->z.fixed;
 	x = actor->x.fixed;
@@ -2519,7 +2521,7 @@ void scYallamSingSunSong(void)
 	scFieldActorSetMoveTargetFX(actor, x, 0, z);
 	syFieldScriptWait(10);
 	fdActorFaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST);
-	fdActorGet(ACTOR_STORY_CHILD)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_STORY_CHILD)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_STORY_CHILD);
 	z = actor->z.fixed;
 	x = actor->x.fixed;
@@ -2534,10 +2536,10 @@ void scYallamSingSunSong(void)
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 186, 674);
 	fdActorFaceDirection(
 		MainRoutineStateWork.leaderActorId, FACING_NORTHEAST, 0);
-	fdActorGet(ACTOR_SONG_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_GAME_CHILD)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_CIRCLES_CHILD)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_STORY_CHILD)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SONG_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GAME_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_CIRCLES_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_STORY_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_GAME_CHILD, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_CIRCLES_CHILD, FACING_WEST, 0);
@@ -2547,7 +2549,7 @@ void scYallamSingSunSong(void)
 	syFieldScriptShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syFieldScriptWait(40);
 	syFieldScriptSetExitRequest(YALLAM_EXIT_SONG_GAME);
 }
@@ -2596,37 +2598,37 @@ void scYallamForceLogDown(void)
 	Sint32	   step;
 	Sint32	   i;
 	ACTOR	  *actor = fdActorGet(ACTOR_FALLING_LOG);
-	FIELD_SPR *spr = actor->spr;
+	FIELD_SPR *sprite = actor->sprite;
 
 	fdScriptSetFlag(FLAG_YALLAM_LOG_FALLEN);
 	actor->acceleration = toFIXED(3) / 2;
 	actor->speedLimit = toFIXED(8);
-	fdScriptPlaySnd(SE_TOPPLE);
+	fdScriptPlaySound(SE_TOPPLE);
 	scFieldActorSetMoveTarget(actor, 176, 40, 184);
 	step = 0;
 	for(i = 0; i < 16; i++) {
-		spr->rotation -= step;
+		sprite->rotation -= step;
 		syWait(1);
 		step += TOPPLE_SPIN_GAIN;
 	}
 	scFieldActorSetMoveTarget(actor, 168, 16, 184);
 	step = TOPPLE_ROLL_SPIN;
 	for(i = 0; i < 26; i++) {
-		spr->rotation -= step;
+		sprite->rotation -= step;
 		syWait(1);
 		step += TOPPLE_SPIN_GAIN;
 	}
 	scFieldActorWaitForMove(actor);
 	syFieldScriptWait(2);
-	fdScriptPlaySnd(SE_LOG_FALL);
+	fdScriptPlaySound(SE_LOG_FALL);
 	/* The log stands upright and still where it fell. */
 	i = 0;
-	spr->rotation = i;
+	sprite->rotation = i;
 	actor->x.fixed = toFIXED(168);
 	actor->z.fixed = toFIXED(192);
 	actor->y.fixed = i;
-	actor->velY = i;
-	actor->velX = i;
+	actor->velocityY = i;
+	actor->velocityX = i;
 	fdMapGridCopyMetatileAttributes(8, 12, 1, 1, 10, 12);
 }
 
@@ -2637,11 +2639,11 @@ void scYallamStartRunningChildren(void)
 	ACTOR *actor = fdActorGet(ACTOR_CIRCLES_CHILD);
 	ACTOR *other;
 
-	actor->tmr = CHILD_CHASES_GAME_CHILD;
+	actor->timer = CHILD_CHASES_GAME_CHILD;
 	actor->sceneByte = 0;
 	actor->update = scYallamUpdateRunningChild;
 	other = fdActorGet(ACTOR_GAME_CHILD);
-	other->tmr = 0;
+	other->timer = 0;
 	other->sceneByte = 0;
 	other->update = scYallamUpdateRunningChild;
 }

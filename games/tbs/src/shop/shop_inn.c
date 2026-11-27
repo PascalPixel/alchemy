@@ -27,15 +27,15 @@ static const Sint8 InnPricesPerGuest[12] = {
 Sint32 mnInnRoomPrice(Sint32 innId)
 {
 	SHOP_STATE *shop = MenuState;
-	Sint32		guestCnt = 0;
+	Sint32		guestCount = 0;
 	Sint32		pricePerGuest = InnPricesPerGuest[innId];
-	Sint32		memberIdx;
+	Sint32		memberIndex;
 
-	for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
-		if(gmUnitGetStub(shop->partyMemberIds[memberIdx])->hp != 0)
-			guestCnt++;
+	for(memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+		if(gmUnitGetStub(shop->partyMemberIds[memberIndex])->hp != 0)
+			guestCount++;
 	}
-	return pricePerGuest * guestCnt;
+	return pricePerGuest * guestCount;
 }
 
 /* Runs an inn's counter: the innkeeper names the price, and on Yes the party
@@ -44,7 +44,7 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 {
 	SHOP_STATE *inn;
 	ACTOR	   *innkeeper;
-	WINDOW	   *innkeeperWin;
+	WINDOW	   *innkeeperWindow;
 	Uint32		roomPrice;
 	Sint32		msgBase;
 
@@ -58,8 +58,8 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 		inn->warriorShop = 1;
 
 	innkeeper = fdActorGetByIdStub(actorId);
-	inn->keeperGraphics = innkeeper->spr->entries[0]->anmId;
-	innkeeperWin = mnPortraitOpenWindowStub(inn->keeperGraphics, 0, 0, 0);
+	inn->keeperGraphics = innkeeper->sprite->entries[0]->animationId;
+	innkeeperWindow = mnPortraitOpenWindowStub(inn->keeperGraphics, 0, 0, 0);
 
 	roomPrice = mnInnRoomPrice(innId);
 	mnMessageArgumentPushStub(roomPrice, MESSAGE_ARGUMENT_NUMBER);
@@ -67,7 +67,7 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 	/* "Welcome to our inn. It's (the price) coins for a room. Would you like to
 	   stay?" These are the inns' lines; Xian's says its own. */
 	mnShopShowKeeperMessage(msgBase);
-	inn->moneyWin = mnWindowCreateStub(
+	inn->moneyWindow = mnWindowCreateStub(
 		0, 16, SHOP_MONEY_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 	mnShopDrawMoney();
 
@@ -75,29 +75,30 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 		/* "Please come again." */
 		mnShopShowKeeperMessage(
 			msgBase + (INN_MESSAGE_COME_AGAIN - INN_MESSAGE_WELCOME));
-		mnWindowCloseStub(inn->moneyWin, 2);
+		mnWindowCloseStub(inn->moneyWindow, 2);
 	} else if(roomPrice > MainRoutineStateWork.holdings.coins) {
 		/* "I'm afraid you don't have enough." */
 		mnShopShowKeeperMessage(
 			msgBase + (INN_MESSAGE_NOT_ENOUGH_COINS - INN_MESSAGE_WELCOME));
-		mnWindowCloseStub(inn->moneyWin, 2);
+		mnWindowCloseStub(inn->moneyWindow, 2);
 	} else {
-		mnWindowCloseStub(inn->moneyWin, 2);
+		mnWindowCloseStub(inn->moneyWindow, 2);
 		/* "Please enjoy your stay." */
 		mnShopShowKeeperMessage(
 			msgBase + (INN_MESSAGE_ENJOY_YOUR_STAY - INN_MESSAGE_WELCOME));
-		mnWindowCloseStub(innkeeperWin, 2);
+		mnWindowCloseStub(innkeeperWindow, 2);
 		mnInnPlaySleep(roomPrice);
 
 		innkeeper = fdActorGetByIdStub(actorId);
-		inn->keeperGraphics = innkeeper->spr->entries[0]->anmId;
-		innkeeperWin = mnPortraitOpenWindowStub(inn->keeperGraphics, 0, 0, 0);
+		inn->keeperGraphics = innkeeper->sprite->entries[0]->animationId;
+		innkeeperWindow =
+			mnPortraitOpenWindowStub(inn->keeperGraphics, 0, 0, 0);
 		/* "I hope you slept well. Have a nice trip!" */
 		mnShopShowKeeperMessage(
 			msgBase + (INN_MESSAGE_SLEPT_WELL - INN_MESSAGE_WELCOME));
 	}
 
-	mnWindowCloseStub(innkeeperWin, 2);
+	mnWindowCloseStub(innkeeperWindow, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -107,21 +108,21 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 void mnInnPlaySleep(Sint32 roomPrice)
 {
 	Sint16		 partyMemberIds[8];
-	Sint32		 memberCnt;
-	Sint32		 memberIdx;
+	Sint32		 memberCount;
+	Sint32		 memberIndex;
 	UNIT		*unit;
 	FIELD_STATE *state;
 
-	memberCnt = gmPartyListMembersStub(partyMemberIds);
+	memberCount = gmPartyListMembersStub(partyMemberIds);
 	/* Charge once and restore only party members who are alive. */
 	gmPartyAdjustCoinsStub(-roomPrice);
 
-	for(memberIdx = 0; memberIdx < memberCnt; memberIdx++) {
-		unit = gmUnitGetStub(partyMemberIds[memberIdx]);
+	for(memberIndex = 0; memberIndex < memberCount; memberIndex++) {
+		unit = gmUnitGetStub(partyMemberIds[memberIndex]);
 		if(unit->hp != 0) {
 			unit->hp = unit->hpMax;
 			unit->pp = unit->ppMax;
-			gmUnitRecalculateGaugesStub(partyMemberIds[memberIdx]);
+			gmUnitRecalculateGaugesStub(partyMemberIds[memberIndex]);
 		}
 	}
 
@@ -129,15 +130,15 @@ void mnInnPlaySleep(Sint32 roomPrice)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	state->transitionFrm = 60;
+	state->transitionFrame = 60;
 	sySynch(20);
 	fdScriptFinishScreenTransitionStub();
 	fdScriptWaitTransitionTicksStub();
-	sySndPlayStub(MUS_OVERNIGHT_AT_THE_INN);
-	mnSndWaitForJingle();
+	sySoundPlayStub(MUS_OVERNIGHT_AT_THE_INN);
+	mnSoundWaitForJingle();
 	sySynch(10);
 	fdScriptStartScreenTransitionStub();
 	fdScriptWaitTransitionTicksStub();
 	sySynch(30);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 }

@@ -10,20 +10,20 @@
    under it. */
 void fdPsynergyGrowthOnTarget(Sint32 unused)
 {
-	ACTOR *tgt;
+	ACTOR *target;
 
-	tgt = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
-	if(tgt != NULL) {
+	target = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->target;
+	if(target != NULL) {
 		fdEffectSpawnBurstParticleField();
 		/* A sprout grows tall: sprout.tsv's animation 2, pictures 0 to 6. */
-		fdActorSelectAnimationStub(tgt, SPROUT_ANIMATION_GROW);
-		tgt->collisionFlg = 0;
-		fdActorSetSprFlagsStub(tgt, 0);
-		tgt->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSelectAnimationStub(target, SPROUT_ANIMATION_GROW);
+		target->collisionFlags = 0;
+		fdActorSetSpriteFlagsStub(target, 0);
+		target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		sySynch(10);
-		sySndPlayStub(SE_RECOVERY);
+		sySoundPlayStub(SE_RECOVERY);
 		sySynch(40);
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 	}
 }
 
@@ -37,7 +37,7 @@ void fdPsynergyGrowth(void)
 	Sint32				i;
 
 	fdEffectSpawnBurstParticleField();
-	sySndPlayStub(SE_HEAVY_IMPACT);
+	sySoundPlayStub(SE_HEAVY_IMPACT);
 	for(i = 0; i < 5; i++) {
 		ACTOR *particle;
 		FIXED  radius;
@@ -50,12 +50,12 @@ void fdPsynergyGrowth(void)
 		particle = fdActorSpawn(SPRITE_VINE, pos.x, pos.y, pos.z);
 		if(particle != 0) {
 			fdActorStartScriptStub(particle, GrowthLeafScript);
-			particle->motionFlg = ACTOR_FALLS;
+			particle->motionFlags = ACTOR_FALLS;
 		}
 		sySynch(((syRandom() * 2) >> 16) + 2);
 	}
 	sySynch(30);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Sends GROWTH_PARTICLE_MAX green sparks, one every 2 ticks, from in front of
@@ -65,28 +65,29 @@ void fdEffectSpawnBurstParticleField(void)
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *caster;
 	Sint32				pos[3];
-	Sint32				particleIdx;
+	Sint32				particleIndex;
 
 	effectState = FieldEffectStateWork;
 	caster = effectState->caster;
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 
-	for(particleIdx = 0; particleIdx < GROWTH_PARTICLE_MAX; particleIdx++) {
+	for(particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
+		particleIndex++) {
 		ACTOR			   *particle;
 		ANIMATION_SPR_PART *image;
 		ANIMATION_SPR_PART *shadow;
 		FIXED				radius;
 
-		if(effectState->ang == FACING_SOUTH) {
+		if(effectState->angle == FACING_SOUTH) {
 			SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),
 				caster->z.fixed);
-		} else if(effectState->ang == FACING_NORTH) {
+		} else if(effectState->angle == FACING_NORTH) {
 			SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(24),
 				caster->z.fixed);
 		} else {
 			SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),
 				caster->z.fixed);
-			syVectorAddPolarOffset(toFIXED(10), effectState->ang, pos);
+			syVectorAddPolarOffset(toFIXED(10), effectState->angle, pos);
 		}
 
 		/* The shadow part takes the image's colour mode, shape, size, tile and
@@ -94,36 +95,36 @@ void fdEffectSpawnBurstParticleField(void)
 		   drawn with the particle's picture. BUG: the copy comes before the
 		   NULL test, so a failed spawn (a full ActorsWork) is read through. */
 		particle = fdActorSpawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
-		image = &particle->spr->image;
-		shadow = &particle->spr->shadow;
-		shadow->fullCol = image->fullCol;
+		image = &particle->sprite->image;
+		shadow = &particle->sprite->shadow;
+		shadow->fullColor = image->fullColor;
 		shadow->shape = image->shape;
 		shadow->size = image->size;
 		shadow->tile = image->tile;
-		shadow->pal = image->pal;
+		shadow->palette = image->palette;
 
 		if(particle != 0) {
 			particle->scaleY = toFIXED(7) / 10;
 			particle->scaleX = toFIXED(7) / 10;
 			particle->acceleration = toFIXED(3) / 2;
 			particle->speedLimit = toFIXED(3) / 2;
-			particle->motionFlg = 0;
-			fdActorSetSprColModeStub(particle, SPRITE_COLOR_GREEN_TINT);
+			particle->motionFlags = 0;
+			fdActorSetSpriteColorModeStub(particle, SPRITE_COLOR_GREEN_TINT);
 			fdActorSelectAnimationStub(particle, 7);
 			/* From the shared script's SC_SYNC: released once it arrives. */
 			fdActorStartScriptStub(
 				particle, FieldEffectSharedParticleScript + 1);
-			fdActorSetSprFlagsStub(particle, SPRITE_FLAG_SHADOW);
+			fdActorSetSpriteFlagsStub(particle, SPRITE_FLAG_SHADOW);
 
 			/* Destination: 4 to 10 pixels from the Psynergy's position. */
 			SET_VECTOR(pos, effectState->x, effectState->y, effectState->z);
-			if(effectState->ang == FACING_NORTH)
-				syVectorAddPolarOffset(toFIXED(14), effectState->ang, pos);
+			if(effectState->angle == FACING_NORTH)
+				syVectorAddPolarOffset(toFIXED(14), effectState->angle, pos);
 			radius = syRandom() * 6 + toFIXED(4);
 			syVectorAddPolarOffset(radius, syRandom(), pos);
 			fdActorSetMoveTargetStub(particle, pos[0], pos[1], pos[2]);
 		}
-		sySndPlayStub(SE_PSYNERGY_SPARKLE);
+		sySoundPlayStub(SE_PSYNERGY_SPARKLE);
 		sySynch(2);
 	}
 	sySynch(8);

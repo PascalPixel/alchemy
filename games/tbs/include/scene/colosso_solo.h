@@ -28,7 +28,7 @@ typedef enum COLOSSO_SOLO_EXIT {
 void scColossoPlaceFriendsAtCheeringSpots(void);
 
 /* Makes the character the only party member, the one the player moves. */
-void scColossoCtrlCharacterAlone(Sint32 id);
+void scColossoControlCharacterAlone(Sint32 id);
 
 /* An event: a friend looking round alone takes a place when Psynergy is aimed
    at them. */
@@ -58,7 +58,7 @@ typedef enum COLOSSO_GUIDE_REPLY {
 /* A stage's guide names the stage; returns a COLOSSO_GUIDE_REPLY. */
 Sint32 scColossoGreetAtStage(Sint32 speaker, Sint32 warrior);
 /* A stage's guide names the stage again after describing it. */
-void scColossoRepeatStageNum(Sint32 speaker, Sint32 warrior);
+void scColossoRepeatStageNumber(Sint32 speaker, Sint32 warrior);
 /* UB: the scenes call this before its definition with no prototype, as a
    function returning int. */
 #if FIX_FUNCTION_SIGNATURES

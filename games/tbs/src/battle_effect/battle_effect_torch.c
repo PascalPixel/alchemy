@@ -36,11 +36,11 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	Sint32				 red;
 	Sint32				 green;
 	Sint32				 blue;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 swayPhase;
 	Sint32				 level;
 	Uint16				*ramp;
-	Sint32				 ang;
+	Sint32				 angle;
 	Sint32				*line;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -114,30 +114,30 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 
 	/* Fade the rings in, sway the lines, then fade them out. */
-	for(frm = 0; frm != TORCH_TICKS; frm++) {
-		if(frm <= TORCH_FADE_TICKS) {
-			level = frm * 2;
+	for(frame = 0; frame != TORCH_TICKS; frame++) {
+		if(frame <= TORCH_FADE_TICKS) {
+			level = frame * 2;
 			swayPhase = level;
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
 		} else {
-			swayPhase = frm * 2;
+			swayPhase = frame * 2;
 		}
-		if(frm > TORCH_TICKS - TORCH_FADE_TICKS)
-			REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_TICKS * 2 - frm * 2);
+		if(frame > TORCH_TICKS - TORCH_FADE_TICKS)
+			REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_TICKS * 2 - frame * 2);
 
 		/* Each line starts one canvas pixel further along than the one above,
 		   swayed either way by up to TORCH_SWAY. */
 		line = state->bg2xLines;
-		for(i = 0, ang = -(swayPhase << 9); i != DISPLAY_HEIGHT; i++) {
+		for(i = 0, angle = -(swayPhase << 9); i != DISPLAY_HEIGHT; i++) {
 			*line++ = CANVAS_WAVE_BG2X(
-				i * toFIXED(4) - sySin(ang) * TORCH_SWAY + toFIXED(4));
-			ang += TRIG_TURN / 128;
+				i * toFIXED(4) - sySin(angle) * TORCH_SWAY + toFIXED(4));
+			angle += TRIG_TURN / 128;
 		}
 
 		/* Rotate the colours so the rings run outward. */
 		/* DEAD: never true, as tick stays below TORCH_TICKS; the ROM keeps
 		   the compare and the store. */
-		if(frm > 127) {
+		if(frame > 127) {
 			state->transferPending = 1;
 		} else {
 			ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];

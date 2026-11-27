@@ -59,7 +59,7 @@ typedef struct MAP_SCREEN_STATE {
 	Sint16	namedMarker; /* actor whose name is drawn; -1 clears the name */
 	Uint8	unreadAfterName[4]; /* not read by this screen */
 	FIXED	cursorSpeed;		/* 16.16 screen pixels per tick */
-	WINDOW *nameWin;			/* owned until this screen closes */
+	WINDOW *nameWindow;			/* owned until this screen closes */
 	/* The visible areas' markers packed from the start, then the tick round
 	   the nearest; the last entry is the cursor. */
 	ANIMATION_SPR_PART markers[MAP_SCREEN_MARKER_CAPACITY + 1];
@@ -84,7 +84,7 @@ void fdMapScreenInit(void)
 	Uint32			  tile;
 	Uint32			  cursorAttributes;
 
-	markerTiles = syHeapAllocEWRAM(MAP_SCREEN_MARKER_ALLOCATION_SIZE);
+	markerTiles = syHeapAllocateEWRAM(MAP_SCREEN_MARKER_ALLOCATION_SIZE);
 	state = (MAP_SCREEN_STATE *)MapGridMetatileBuffer;
 	entryWords = (Uint32 *)state->markers;
 	actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -151,8 +151,8 @@ void fdMapScreenInit(void)
 				WORLD_MAP_WORLD_SIZE);
 	}
 	state->cursorVramBlock = mnPointingHandLoadIntoFreeSlotStub();
-	tile = VramCacheEntries[state->cursorVramBlock].ofs;
-	state->nameWin = mnWindowCreateStub(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
+	tile = VramCacheEntries[state->cursorVramBlock].offset;
+	state->nameWindow = mnWindowCreateStub(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
 	state->namedMarker = -1;
 	state->cursorSpeed = MAP_SCREEN_CURSOR_MIN_SPEED;
 	*entryWords++ = 0;
@@ -182,7 +182,7 @@ void fdMapScreenRelease(void)
 
 	syVRAMCacheFreeEntry(state->markerVramBlock);
 	syVRAMCacheFreeEntry(state->cursorVramBlock);
-	mnWindowCloseStub(state->nameWin, 2);
+	mnWindowCloseStub(state->nameWindow, 2);
 }
 
 /* Event of the map screen: shows a marker at each area whose flag is set, moves
@@ -209,24 +209,24 @@ void fdMapScreenUpdateMarkers(void)
 	Sint32				cursorY;
 	Sint32				tile;
 	Sint32				mode;
-	Sint32				flg;
-	Sint32				markerIdx;
+	Sint32				flag;
+	Sint32				markerIndex;
 	ANIMATION_SPR_PART *marker;
 	Sint32				x;
 	Sint32				y;
-	Sint32				ang;
+	Sint32				angle;
 
 #if MAP_SCREEN_CURSOR_SNAPS
 	leader = MainRoutineStateWork.leaderActorId;
 	state = (MAP_SCREEN_STATE *)RamMapGridMetatileBuffer;
 	marker = state->markers;
 	place = MapScreenAreaMarkers;
-	tileBase = VramCacheEntries[state->markerVramBlock].ofs >> 5;
+	tileBase = VramCacheEntries[state->markerVramBlock].offset >> 5;
 #else
 	state = (MAP_SCREEN_STATE *)RamMapGridMetatileBuffer;
 	leader = MainRoutineStateWork.leaderActorId;
 	place = MapScreenAreaMarkers;
-	tileBase = VramCacheEntries[state->markerVramBlock].ofs >> 5;
+	tileBase = VramCacheEntries[state->markerVramBlock].offset >> 5;
 	marker = state->markers;
 #endif
 	nearestMarker = -1;
@@ -254,12 +254,12 @@ void fdMapScreenUpdateMarkers(void)
 		}
 	} else {
 		/* The d-pad: faster the longer it is held. */
-		ang = WorldMapCursorDirectionAngles[DPAD_INDEX(PerData)];
-		if(ang != DPAD_ANGLE_NONE) {
+		angle = WorldMapCursorDirectionAngles[DPAD_INDEX(PerData)];
+		if(angle != DPAD_ANGLE_NONE) {
 			pos.x = state->cursorX.fixed;
 			pos.y = 0;
 			pos.z = state->cursorY.fixed;
-			syVectorAddPolarOffset(state->cursorSpeed, ang, (FIXED *)&pos);
+			syVectorAddPolarOffset(state->cursorSpeed, angle, (FIXED *)&pos);
 			if(pos.x < toFIXED(MAP_SCREEN_CURSOR_MIN_X))
 				pos.x = toFIXED(MAP_SCREEN_CURSOR_MIN_X);
 			if(pos.x > toFIXED(MAP_SCREEN_CURSOR_MAX_X))
@@ -280,35 +280,36 @@ void fdMapScreenUpdateMarkers(void)
 	}
 
 	/* Actor id 0 consumes no marker row. */
-	for(markerIdx = 0; markerIdx < MAP_SCREEN_MARKER_CAPACITY; markerIdx++) {
-		if(markerIdx != leader && markerIdx < WORLD_MAP_FIRST_AREA_ACTOR)
+	for(markerIndex = 0; markerIndex < MAP_SCREEN_MARKER_CAPACITY;
+		markerIndex++) {
+		if(markerIndex != leader && markerIndex < WORLD_MAP_FIRST_AREA_ACTOR)
 			continue;
-		if(markerIdx == 0) {
+		if(markerIndex == 0) {
 			if(gmFlagGetStub(FLAG_WORLD_MAP_LEFT))
 				continue;
 			tile = MAP_SCREEN_MARKER_PARTY;
-			flg = leader;
+			flag = leader;
 			mode = OBJ_MODE_NORMAL;
 		} else {
-			flg = *place++;
+			flag = *place++;
 			msg = *place++;
-			if(flg == 0)
+			if(flag == 0)
 				continue;
 #if MAP_SCREEN_CURSOR_SNAPS
-			if(flg == -1)
+			if(flag == -1)
 				break;
-			tile = MAP_SCREEN_AREA_MARKER_TILE(flg);
+			tile = MAP_SCREEN_AREA_MARKER_TILE(flag);
 			mode = OBJ_MODE_SEMI_TRANSPARENT;
 #else
-			tile = MAP_SCREEN_AREA_MARKER_TILE(flg);
+			tile = MAP_SCREEN_AREA_MARKER_TILE(flag);
 			mode = OBJ_MODE_SEMI_TRANSPARENT;
-			if(flg == -1)
+			if(flag == -1)
 				break;
 #endif
 		}
-		if(!gmFlagGetStub(flg))
+		if(!gmFlagGetStub(flag))
 			continue;
-		areaActor = fdActorLookup(markerIdx);
+		areaActor = fdActorLookup(markerIndex);
 		if(areaActor == NULL)
 			continue;
 
@@ -317,7 +318,7 @@ void fdMapScreenUpdateMarkers(void)
 			MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
 		y = areaActor->z.part[0].integer * MAP_SCREEN_HEIGHT /
 			WORLD_MAP_WORLD_SIZE;
-		marker->objMode = mode;
+		marker->objectMode = mode;
 		marker->tile = tileBase + tile;
 		marker->x = x - 1;
 		marker->y = y - 1;
@@ -326,19 +327,19 @@ void fdMapScreenUpdateMarkers(void)
 		if(width * width + height * height < nearestDistanceSquared) {
 			/* UB: marker 0 has no table message. */
 #if FIX_UNINITIALIZED_READ
-			if(markerIdx != 0)
+			if(markerIndex != 0)
 #endif
 				nearestName = msg;
 			/* These coordinates and the name are valid only with nearestMarker
 			   set. */
-			nearestMarker = markerIdx;
+			nearestMarker = markerIndex;
 			nearestDistanceSquared = width * width + height * height;
 			nearestX = x;
 			nearestY = y;
 		}
 		/* Blink the current area for eight ticks out of sixteen. */
-		if(markerIdx != 0 || (TickCount & 15) <= 7)
-			syOAMAddSprAtDepth(marker++, y);
+		if(markerIndex != 0 || (TickCount & 15) <= 7)
+			syOAMAddSpriteAtDepth(marker++, y);
 	}
 #if MAP_SCREEN_CURSOR_SNAPS
 	/* With the d-pad released, the cursor moves onto the nearest marker. */
@@ -351,11 +352,11 @@ void fdMapScreenUpdateMarkers(void)
 			} else {
 				if(state->cursorSpeed < toFIXED(2))
 					state->cursorSpeed = toFIXED(2);
-				ang = syAtan(nearestY - cursorY, nearestX - cursorX);
+				angle = syAtan(nearestY - cursorY, nearestX - cursorX);
 				pos.x = state->cursorX.fixed;
 				pos.y = 0;
 				pos.z = state->cursorY.fixed;
-				syVectorAddPolarOffset(state->cursorSpeed, (Uint16)ang, &pos);
+				syVectorAddPolarOffset(state->cursorSpeed, (Uint16)angle, &pos);
 				state->cursorX.fixed = pos.x;
 				state->cursorY.fixed = pos.z;
 				if(state->cursorSpeed < MAP_SCREEN_CURSOR_MAX_SPEED)
@@ -371,23 +372,23 @@ void fdMapScreenUpdateMarkers(void)
 
 	/* The blinking tick round the nearest marker. */
 	if(nearestMarker != -1 && (TickCount & 15) <= 7) {
-		marker->objMode = OBJ_MODE_NORMAL;
+		marker->objectMode = OBJ_MODE_NORMAL;
 		marker->tile = tileBase + MAP_SCREEN_MARKER_NEAREST;
 		marker->x = nearestX - 2;
 		marker->y = nearestY - 2;
-		syOAMAddSprAtDepth(marker, nearestY);
+		syOAMAddSpriteAtDepth(marker, nearestY);
 	}
 
 	marker = &state->markers[MAP_SCREEN_CURSOR_PART];
-	marker->affineIdx = 0;
+	marker->affineIndex = 0;
 	marker->x = cursorX - 17;
 	marker->y = cursorY + 1;
-	syOAMAddSprAtDepth(marker, MAP_SCREEN_CURSOR_DEPTH);
+	syOAMAddSpriteAtDepth(marker, MAP_SCREEN_CURSOR_DEPTH);
 
 	/* Redraw only when the selected marker changes, including to no marker. */
 	if(state->namedMarker != nearestMarker) {
 		state->namedMarker = nearestMarker;
-		mnWindowSprPrepareForRedrawStub(state->nameWin);
+		mnWindowSpritePrepareForRedrawStub(state->nameWindow);
 		if(nearestMarker != -1) {
 			/* The party's marker: "Present location." */
 			if(nearestMarker == 0)
@@ -408,7 +409,7 @@ void fdMapScreenUpdateMarkers(void)
 			if(cursorY < 0)
 				cursorY = 0;
 			mnTextDrawMessageStub(
-				nearestName, state->nameWin, cursorX, cursorY);
+				nearestName, state->nameWindow, cursorX, cursorY);
 		}
 	}
 
@@ -426,25 +427,26 @@ void fdMapScreenShow(Sint32 picture)
 {
 	MAP_GRID_SCROLL_STATE *gridState = MapGridState[0];
 	FIELD_STATE			  *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	ACTOR_SYSTEM_STATE *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTOR_SYSTEM);
 	Sint32				resource = RESOURCE_WORLD_MAP_PICTURE;
 	TILESET_ANIM	   *layer;
-	Uint8  savedFlg[sizeof(gridState->anms) / sizeof(gridState->anms[0])];
-	Sint32 i;
-	Uint8 *graphics;
-	Sint32 savedTransitionTicks;
+	Uint8				savedFlags[sizeof(gridState->animations) /
+		  sizeof(gridState->animations[0])];
+	Sint32				i;
+	Uint8			   *graphics;
+	Sint32				savedTransitionTicks;
 
 	if(state->mode != ACTOR_SYSTEM_WORLD_MAP)
 		return;
 	state->camera->paused = 1;
-	savedTransitionTicks = state->transitionFrm;
-	state->transitionFrm = 6;
+	savedTransitionTicks = state->transitionFrame;
+	state->transitionFrame = 6;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	layer = gridState->anms;
-	for(i = 0; i < (Sint32)(sizeof(savedFlg) / sizeof(savedFlg[0])); i++) {
-		savedFlg[i] = layer->paused;
+	layer = gridState->animations;
+	for(i = 0; i < (Sint32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
+		savedFlags[i] = layer->paused;
 		layer->paused = 1;
 		layer++;
 	}
@@ -485,15 +487,16 @@ void fdMapScreenShow(Sint32 picture)
 		fdWorldMapLoadAreaGraphicsStub();
 		IO_WRITE_QUEUE_PUSH(
 			(Uint32)&REG_BLDALPHA, (Uint16)blend, IO_WRITE_HALFWORD);
-		layer = gridState->anms;
-		for(i = 0; i < (Sint32)(sizeof(savedFlg) / sizeof(savedFlg[0])); i++) {
-			layer->paused = savedFlg[i];
+		layer = gridState->animations;
+		for(i = 0; i < (Sint32)(sizeof(savedFlags) / sizeof(savedFlags[0]));
+			i++) {
+			layer->paused = savedFlags[i];
 			layer++;
 		}
 		menu->suspended = 0;
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
-		state->transitionFrm = savedTransitionTicks;
+		state->transitionFrame = savedTransitionTicks;
 		state->camera->paused = 0;
 	}
 }
@@ -530,9 +533,9 @@ void fdUpdateActorVisibilityBounds(void)
 			FIXED oy = actor->z.fixed;
 
 			if(ox < left || ox > right || oy < top || oy > bottom) {
-				actor->sprStorageKind = ACTOR_SPRITE_NONE;
+				actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 			} else {
-				actor->sprStorageKind = ACTOR_SPRITE_ONE;
+				actor->spriteStorageKind = ACTOR_SPRITE_ONE;
 			}
 		}
 	}
@@ -543,7 +546,7 @@ void fdUpdateActorVisibilityBounds(void)
 void fdWorldMapZoomOutWhileLHeld(void)
 {
 	FIELD_STATE *state =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+		syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		sySuspendOverlayEvents();

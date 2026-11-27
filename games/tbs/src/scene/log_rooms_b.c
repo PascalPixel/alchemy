@@ -247,7 +247,7 @@ static void scLogRoomsBOfferBones(void)
 			/* "Wow, you have so many things. Aren't you a greedy lad!" */
 			fdScriptShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
 		} else {
-			fdItemDispShowItem(
+			fdItemDisplayShowItem(
 				ITEM_BONE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
 			fdPartyInventoryGiveItem(ITEM_BONE, 0);
 			gmFlagSet(FLAG_VAULT_BONE_RECEIVED);
@@ -402,7 +402,7 @@ Sint32 scInit(void)
 	if(entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHEAST) {
 		fdMapGridCopyMetatilesTo(0, 120, 8, 67, 4, 3);
 		/* As on the first visit, he stands on the floor. */
-		fdActorGet(ACTOR_GEM_OWNER)->motionFlg = 0;
+		fdActorGet(ACTOR_GEM_OWNER)->motionFlags = 0;
 		fdActorGet(ACTOR_GEM_OWNER)->y.fixed = 0;
 		fdActorGet(ACTOR_GEM_OWNER)->groundHeight = 0;
 	} else if(entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||

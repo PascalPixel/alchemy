@@ -9,7 +9,7 @@ static inline Sint32 scFieldActorCheckMovementCollision(
 /* Finds where the actor ahead stops when pushed: a metatile at a time, the
    whole of its rectangle (PushRectangles) until a wall blocks it; 1 when it
    moves at all. */
-Bool scPushTargetFindStop(PUSH_TARGET *tgt)
+Bool scPushTargetFindStop(PUSH_TARGET *target)
 {
 	ACTOR *actor;
 	Sint32 direction;
@@ -19,14 +19,14 @@ Bool scPushTargetFindStop(PUSH_TARGET *tgt)
 	Sint32 height;
 	Sint32 dx;
 	FIXED  dz;
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 row;
-	Sint32 col;
+	Sint32 column;
 	Uint8 *layer;
 
-	actor = scPushTargetFindAhead(&direction, &tgt->id, &tgt->rectangle);
+	actor = scPushTargetFindAhead(&direction, &target->id, &target->rectangle);
 	if(actor != 0) {
-		rectangle = tgt->rectangle;
+		rectangle = target->rectangle;
 		width = (ABS(PushRectangles[rectangle][0]) +
 					ABS(PushRectangles[rectangle][2])) >>
 			4;
@@ -36,18 +36,18 @@ Bool scPushTargetFindStop(PUSH_TARGET *tgt)
 		/* A push step holds x pixels in its high half and z in its low. */
 		dx = PushLeaderSteps[direction] & FIELD_PIXEL_MASK;
 		dz = toFIXED(PushLeaderSteps[direction]);
-		tgt->func = 0;
-		cnt = 0;
+		target->callback = 0;
+		count = 0;
 		layer = &actor->layer;
 		*layer = MAPGRID_LAYER_OVERHEAD;
-		tgt->x = actor->x.fixed + dx;
-		tgt->z = actor->z.fixed + dz;
+		target->x = actor->x.fixed + dx;
+		target->z = actor->z.fixed + dz;
 		pos[1] = actor->y.fixed;
 		for(;;) {
-			pos[2] = tgt->z + toFIXED(PushRectangles[rectangle][1]);
+			pos[2] = target->z + toFIXED(PushRectangles[rectangle][1]);
 			for(row = 0; row < height; row++) {
-				pos[0] = tgt->x + toFIXED(PushRectangles[rectangle][0]);
-				for(col = 0; col < width; col++) {
+				pos[0] = target->x + toFIXED(PushRectangles[rectangle][0]);
+				for(column = 0; column < width; column++) {
 					if(scFieldActorCheckMovementCollision(actor, pos) ==
 						COLLISION_IMPASSABLE)
 						goto blocked;
@@ -55,17 +55,17 @@ Bool scPushTargetFindStop(PUSH_TARGET *tgt)
 				}
 				pos[2] += toFIXED(MAPGRID_METATILE_PIXELS);
 			}
-			tgt->x += dx;
-			cnt++;
-			tgt->z += dz;
+			target->x += dx;
+			count++;
+			target->z += dz;
 		}
 	blocked:
 		*layer = MAPGRID_LAYER_GROUND;
-		if(cnt == 0)
+		if(count == 0)
 			return FALSE;
-		tgt->x = actor->x.fixed + dx * cnt;
-		tgt->y = actor->y.fixed;
-		tgt->z = actor->z.fixed + dz * cnt;
+		target->x = actor->x.fixed + dx * count;
+		target->y = actor->y.fixed;
+		target->z = actor->z.fixed + dz * count;
 		return TRUE;
 	}
 	return FALSE;

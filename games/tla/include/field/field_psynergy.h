@@ -20,12 +20,12 @@ struct SPR_ANIMATION;
    sprites and particles, the actor it scatters from, and its stage. */
 typedef struct SCATTER_STATE {
 	Uint8					tiles[4096];
-	EFFECT_SPR				sprs[SCATTER_PARTICLE_COUNT];
+	EFFECT_SPR				sprites[SCATTER_PARTICLE_COUNT];
 	FIELD_PSYNERGY_PARTICLE particles[SCATTER_PARTICLE_COUNT];
 	struct ACTOR		   *actor;
 	Sint16					phase;
-	Sint16					tmr;
-	Sint16					spawnCnt;
+	Sint16					timer;
+	Sint16					spawnCount;
 	Sint16					next;
 	Uint16					tileA;
 	Uint16					tileB;
@@ -49,9 +49,9 @@ typedef struct BOW_MOTION {
 	FIXED  x; /* 16.16 fixed-point pixels */
 	FIXED  y;
 	FIXED  z;
-	FIXED  velX; /* 16.16 fixed-point pixels a tick */
-	FIXED  velY;
-	FIXED  velZ;
+	FIXED  velocityX; /* 16.16 fixed-point pixels a tick */
+	FIXED  velocityY;
+	FIXED  velocityZ;
 	Sint32 delay;
 } BOW_MOTION;
 
@@ -65,7 +65,7 @@ typedef struct BOW_MOTION {
 /* The bow's six drawing poses, 32 by 32 pixels in 256 colours. */
 #define BOW_TILE_BYTES (6 * 32 * 32)
 
-/* BOW_STATE.frm while the bow holds its pose and is not drawing. */
+/* BOW_STATE.frame while the bow holds its pose and is not drawing. */
 #define BOW_TICK_IDLE 999
 
 /* The Arrow's state (fdPsynergyArrow, in heap slot */
@@ -79,11 +79,11 @@ typedef struct BOW_STATE {
 	BOW_MOTION bowMotion;
 	EFFECT_SPR bow;
 	Sint32	   start[3];
-	Sint32	   tgt[3];
+	Sint32	   target[3];
 	Sint16	   phase;
-	Sint16	   tmr;
+	Sint16	   timer;
 	Uint16	   bowTile;
-	Sint16	   frm;
+	Sint16	   frame;
 	Sint8	   bowGrowing;
 	Sint8	   bowShrinking;
 	Sint8	   sparking;
@@ -111,44 +111,44 @@ typedef struct DESCENDING_ARC_SPR {
 	Uint8 link[4];
 	Uint8 y;
 	Uint8 affine : 2;
-	Uint8 objMode : 2;
+	Uint8 objectMode : 2;
 	Uint8 mosaic : 1;
-	Uint8 fullCol : 1; /* 0 for 16 colours */
-	Uint8 shape : 2;   /* 1 wide */
+	Uint8 fullColor : 1; /* 0 for 16 colours */
+	Uint8 shape : 2;	 /* 1 wide */
 	Uint8 xLow;
 	Uint8 xHigh : 1;
-	Uint8 affineIdx : 5;
+	Uint8 affineIndex : 5;
 	Uint8 size : 2;
 
 	union {
 		struct {
 			Uint16 tile : 10; /* the first sprite tile in VRAM */
-			Uint16 pri : 2;
-			Uint16 pal : 4;
+			Uint16 priority : 2;
+			Uint16 palette : 4;
 		} half;
 
 		struct {
 			Uint8 tileLow;
 			Uint8 tileHigh : 2;
-			Uint8 pri : 2;
-			Uint8 pal : 4;
+			Uint8 priority : 2;
+			Uint8 palette : 4;
 		} byte;
-	} attr;
+	} attribute;
 
 	FIXED  scale;				 /* 16.16 fixed point, toFIXED(1) full size */
 	Uint8  slot;				 /* the VRAM cache entry holding its tiles */
 	Uint8  retainCacheEntry : 1; /* the borrowed tiles stay loaded */
 	Uint8  useOwnScale : 1;
-	Uint8  unusedFlg : 6;
+	Uint8  unusedFlags : 6;
 	Uint16 rotation;
 	Uint8  width;
 	Uint8  height;
-	Sint8  ofsX;
-	Sint8  ofsY;
+	Sint8  offsetX;
+	Sint8  offsetY;
 	Uint8  lastNo;
 	Uint8  dirty;
-	Uint8  flg; /* 0 drops the shadow */
-	Uint8  cnt;
+	Uint8  flags; /* 0 drops the shadow */
+	Uint8  count;
 	ANIMATION_SPR_PART shadow;
 	SPR_ANIMATION	  *firstEntry; /* entries[0], its first layer */
 } DESCENDING_ARC_SPR;

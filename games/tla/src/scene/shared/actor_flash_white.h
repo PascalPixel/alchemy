@@ -3,7 +3,7 @@
 void scActorFlashWhite(ACTOR *actor)
 {
 	if(TickCount & 2)
-		fdActorSetSprColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_WHITE);
 	else
-		fdActorSetSprColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 }

@@ -87,8 +87,8 @@ void					 fdScreenTransitionUpdate(void);
 void					 fdScreenTransitionUpdateFromCenter(void);
 void					 fdScreenTransitionUpdateScanline(void);
 void					 fdScreenTransitionUpdateDissolve(void);
-void					 fdScreenTransitionFillTilemapAndColTile(Sint32 col);
-void					 fdScreenTransitionUpdateScanlineTable(void);
-void					 fdEffectStartWindowHBlankDMA(void);
+void fdScreenTransitionFillTilemapAndColorTile(Sint32 color);
+void fdScreenTransitionUpdateScanlineTable(void);
+void fdEffectStartWindowHBlankDMA(void);
 
 #endif

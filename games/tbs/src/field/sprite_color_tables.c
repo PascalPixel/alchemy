@@ -1,7 +1,7 @@
 /* The colour tables of SpriteColorModes 1 to 5, which swap a sprite's colour
    channels, 256 bytes each: a pixel's colour number to the one it is drawn in.
    A sprite picture cache loaded with variant 1 to 5 is recoloured through the
-   same tables (fdSprPictureCacheLoad). */
+   same tables (fdSpritePictureCacheLoad). */
 
 #include "stubs.h"
 

@@ -230,8 +230,8 @@ void scKibomboMountainsFreezePuddle(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_PUDDLE);
 
-	actor->priFlg = 0;
-	actor->motionFlg = 0;
+	actor->priorityFlags = 0;
+	actor->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(24, 32, 1, 1, 22, 32);
 	fdScriptSetFlag(FLAG_WAFT_ROOM_PUDDLE_FROZEN);
 }
@@ -253,7 +253,7 @@ void scKibomboMountainsGrowVine(void)
 void scKibomboMountainsStartPushingGuardCrate(Sint32 unused, Sint32 id)
 {
 	if(id == ACTOR_GUARD_CRATE)
-		scFieldActorSetSprPriority(ACTOR_GUARD_CRATE, 1);
+		scFieldActorSetSpritePriority(ACTOR_GUARD_CRATE, 1);
 }
 
 extern Sint32 KibomboMountainsCrateJumpScript[];
@@ -283,15 +283,15 @@ void scKibomboMountainsDropOffLedge(Sint32 unused, Sint32 id)
 			scActorWaitToLand(ACTOR_DOG_PILLAR);
 			fdMapGridCopyMetatileAttributes(49, 28, 1, 1, x, z);
 			fdScriptSetFlag(FLAG_DOG_PILLAR_DROPPED);
-			fdActorSetSprPriority(ACTOR_DOG_PILLAR, 2);
+			fdActorSetSpritePriority(ACTOR_DOG_PILLAR, 2);
 			dog = fdActorGetById(ACTOR_GUARD_DOG);
 			metatile = FIELD_METATILE(dog->z.fixed);
 			if(metatile == DOG_PILLAR_METATILE_Z - 1) {
-				sySndPlay(SE_VOICE_ANIMAL_B);
+				sySoundPlay(SE_VOICE_ANIMAL_B);
 				dog->z.fixed = toFIXED(440);
 			} else if(metatile == DOG_PILLAR_METATILE_Z ||
 				metatile == DOG_PILLAR_METATILE_Z + 1) {
-				sySndPlay(SE_VOICE_ANIMAL_C);
+				sySoundPlay(SE_VOICE_ANIMAL_C);
 				dog->z.fixed = toFIXED(472);
 			}
 			if(pillar->z.fixed < dog->z.fixed)
@@ -299,7 +299,7 @@ void scKibomboMountainsDropOffLedge(Sint32 unused, Sint32 id)
 			else
 				fdScriptSetFlag(FLAG_DOG_SHUT_NORTH);
 		} else {
-			fdActorSetSprPriority(id, 1);
+			fdActorSetSpritePriority(id, 1);
 		}
 	}
 	if(id == ACTOR_GUARD_CRATE) {
@@ -312,12 +312,12 @@ void scKibomboMountainsDropOffLedge(Sint32 unused, Sint32 id)
 			FIXED dx;
 
 			scActorWaitToLand(ACTOR_GUARD_CRATE);
-			fdActorSetSprPriority(ACTOR_GUARD_CRATE, 2);
+			fdActorSetSpritePriority(ACTOR_GUARD_CRATE, 2);
 			guard = fdActorGetById(ACTOR_LOWER_GUARD);
 			dx = crate->x.fixed - guard->x.fixed;
 			if(dx >= 0 ? dx < toFIXED(8)
 					   : guard->x.fixed - crate->x.fixed < toFIXED(8)) {
-				guard->motionFlg = 0;
+				guard->motionFlags = 0;
 				guard->speedLimit = toFIXED(1);
 				scFieldActorSetMoveTargetFX(
 					guard, crate->x.fixed, crate->y.fixed, crate->z.fixed);
@@ -356,9 +356,9 @@ void scKibomboMountainsTremorDropsBone(void)
 	syFieldScriptEndLastingPsynergy(0);
 	fdActorSetDestination(ACTOR_BONE, 764, 384);
 	fdActorMoveToAndWait(ACTOR_BONE_CRATE, 746, 380);
-	fdActorGet(ACTOR_BONE)->velY = toFIXED(4);
+	fdActorGet(ACTOR_BONE)->velocityY = toFIXED(4);
 	scFieldActorWaitForMoveById(ACTOR_BONE);
-	fdActorGet(ACTOR_BONE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_BONE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	if(!fdScriptGetFlag(FLAG_KIBOMBO_LETS_PARTY_PASS) &&
 		!fdScriptGetFlag(FLAG_DOG_SHUT_SOUTH)) {
 		scFieldActorStop(ACTOR_GUARD_DOG);
@@ -393,8 +393,8 @@ void scKibomboMountainsFreezeFirstPuddle(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_FIRST_PUDDLE);
 
-	actor->priFlg = 0;
-	actor->motionFlg = 0;
+	actor->priorityFlags = 0;
+	actor->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(6, 16, 1, 1, 4, 16);
 	fdScriptSetFlag(FLAG_DISK_AXE_ROOM_FIRST_PUDDLE_FROZEN);
 }
@@ -405,8 +405,8 @@ void scKibomboMountainsFreezeSecondPuddle(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_SECOND_PUDDLE);
 
-	actor->priFlg = 0;
-	actor->motionFlg = 0;
+	actor->priorityFlags = 0;
+	actor->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(8, 30, 1, 1, 10, 30);
 	fdScriptSetFlag(FLAG_DISK_AXE_ROOM_SECOND_PUDDLE_FROZEN);
 }
@@ -511,20 +511,21 @@ Sint32 scInit(void)
 {
 	ACTOR *actor;
 	Sint16 scene;
-	Sint32 flg;
+	Sint32 flag;
 	Sint32 height;
 
 	FieldStateWork->transition = ROOM_TRANSITION;
-	fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+	fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_KIBOMBO_MOUNTAINS_WAFT) {
-		fdActorSetSprPriority(ACTOR_WAFT, 1);
-		fdActorSetSprPriority(ACTOR_UNSEEN_MARKER, 1);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_UNSEEN_MARKER), 0);
-		fdActorGetById(ACTOR_UNSEEN_MARKER)->collisionFlg = 0;
-		fdActorGetById(ACTOR_UNSEEN_MARKER)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGetById(ACTOR_SPROUT)->collisionFlg = 0;
+		fdActorSetSpritePriority(ACTOR_WAFT, 1);
+		fdActorSetSpritePriority(ACTOR_UNSEEN_MARKER, 1);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_UNSEEN_MARKER), 0);
+		fdActorGetById(ACTOR_UNSEEN_MARKER)->collisionFlags = 0;
+		fdActorGetById(ACTOR_UNSEEN_MARKER)->priorityFlags |=
+			ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGetById(ACTOR_SPROUT)->collisionFlags = 0;
 		if(syGameFlagGet(FLAG_SPROUT_GROWN)) {
 			fdMapCopyMetatileAttributeRect(30, 35, 1, 1, 28, 34);
 			fdMapCopyMetatileAttributeRect(30, 34, 1, 1, 28, 33);
@@ -534,19 +535,20 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_DOG_PILLAR_DROPPED))
 			fdMapGridCopyMetatileAttributes(49, 28, 1, 1, 47, 28);
 		else
-			fdActorSetSprPriority(ACTOR_DOG_PILLAR, 1);
+			fdActorSetSpritePriority(ACTOR_DOG_PILLAR, 1);
 		if(syGameFlagGet(FLAG_GUARD_CRATE_DROPPED))
 			fdMapGridCopyMetatileAttributes(53, 35, 1, 1, 53, 36);
-		flg = syGameFlagGet(FLAG_DOG_EATING_BONE);
-		if(flg == 0) {
+		flag = syGameFlagGet(FLAG_DOG_EATING_BONE);
+		if(flag == 0) {
 			ACTOR *lift;
 
-			fdActorGetById(ACTOR_BONE_CRATE)->priFlg |= ACTOR_PRIORITY_PLATFORM;
+			fdActorGetById(ACTOR_BONE_CRATE)->priorityFlags |=
+				ACTOR_PRIORITY_PLATFORM;
 			lift = fdActorGetById(ACTOR_BONE);
-			lift->priFlg |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+			lift->priorityFlags |= ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
 			lift->y.fixed = toFIXED(224);
 			lift->groundHeight = toFIXED(224);
-			lift->collisionFlg = flg;
+			lift->collisionFlags = flag;
 		} else {
 			fdActorSetAttachedEffect(ACTOR_GUARD_DOG,
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -557,8 +559,8 @@ Sint32 scInit(void)
 		else
 			fdActorGetById(ACTOR_CAVERN_BUSH)->scaleY = toFIXED(5) / 4;
 	} else if(scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST) {
-		fdActorSetSprPriority(ACTOR_WEST_ROPE_POST, 1);
-		fdActorSetSprPriority(ACTOR_EAST_ROPE_POST, 1);
+		fdActorSetSpritePriority(ACTOR_WEST_ROPE_POST, 1);
+		fdActorSetSpritePriority(ACTOR_EAST_ROPE_POST, 1);
 		fdRopeInit();
 		scFieldRopePlace(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_WEST_ROPE_POST,
 			ACTOR_EAST_ROPE_POST);
@@ -569,7 +571,7 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_KIBOMBO_FIRST_PILLAR_DROPPED)) {
 			actor = fdActorGetById(ACTOR_FIRST_DROPPED_PILLAR);
 			fdActorSetPos(ACTOR_FIRST_DROPPED_PILLAR, 72, 456);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			height = fdMapGetTerrainHeight(
 				MAPGRID_LAYER_GROUND, actor->x.fixed, actor->z.fixed);
 			actor->groundHeight = height;
@@ -579,7 +581,7 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_KIBOMBO_SECOND_PILLAR_DROPPED)) {
 			actor = fdActorGetById(ACTOR_SECOND_DROPPED_PILLAR);
 			fdActorSetPos(ACTOR_SECOND_DROPPED_PILLAR, 456, 488);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			height = fdMapGetTerrainHeight(
 				MAPGRID_LAYER_GROUND, actor->x.fixed, actor->z.fixed);
 			actor->groundHeight = height;
@@ -728,10 +730,10 @@ void scKibomboMountainsGuardsTurnPartyBack(void)
 	scFieldActorWatchAndSetScript(ACTOR_WARRIOR_E, leader);
 	scFieldActorWatchAndSetScript(ACTOR_WARRIOR_F, leader);
 	syFieldScriptWait(2);
-	fdActorGet(leader)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(leader, 256, 552);
 	syFieldScriptWait(1);
-	fdActorGet(leader)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(leader)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_WARRIOR_A, ANIM_STAND);
 	fdActorSetAnimation(ACTOR_WARRIOR_B, ANIM_STAND);
 	syFieldScriptWait(20);

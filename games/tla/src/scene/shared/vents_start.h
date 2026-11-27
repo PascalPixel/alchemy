@@ -23,7 +23,7 @@ void scVentsStart(Uint16 *points, Uint16 *ids, void (*cycle)(void))
 			point->y =
 				fdMapGetTerrainHeight(0, toFIXED(x), toFIXED(z) + toFIXED(16));
 			point->value = toFIXED(speed);
-			point->tmr = i++;
+			point->timer = i++;
 			points += 2;
 			point++;
 			if(i > VENT_MAX - 1)
@@ -50,8 +50,8 @@ void scVentsStart(Uint16 *points, Uint16 *ids, void (*cycle)(void))
 			REG_BLDALPHA = alpha;
 		}
 		{
-			Sint32 cnt = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-			REG_BLDCNT = cnt;
+			Sint32 count = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
+			REG_BLDCNT = count;
 		}
 	}
 	sySetTickEvent(scVentUpdate, EVENT_PASS_TICK);

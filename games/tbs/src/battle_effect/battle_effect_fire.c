@@ -13,7 +13,7 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BATTLE_CAMERA		*camera;
 	Uint8				*sheet;
 	FIXED				 bodyTop;
@@ -47,14 +47,14 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	bodyTop = user->y.fixed + btUnitGetEffectHeightStub(state->args->user);
 	for(i = 0; i != FIRE_EMBERS; i++) {
 		PARTICLE *ember = &PARTICLES[i];
-		Sint32	  ang;
+		Sint32	  angle;
 		Sint32	  speed;
 
-		ang = syRandom();
+		angle = syRandom();
 		speed = (syRandom() & 127) + 127;
-		SET_VELOCITY(ember, (sySin(ang) * speed) >> 6,
+		SET_VELOCITY(ember, (sySin(angle) * speed) >> 6,
 			(Sint32)toFIXED((syRandom() & 127) - 16) >> 6,
-			(syCos(ang) * speed) >> 6);
+			(syCos(angle) * speed) >> 6);
 		SET_POSITION(ember, user->x.fixed, bodyTop, user->z.fixed);
 		ember->variant = -1;
 	}
@@ -65,13 +65,14 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != (FireCounts[state->args->variant] >> 1) + 132; frm++) {
+	for(frame = 0; frame != (FireCounts[state->args->variant] >> 1) + 132;
+		frame++) {
 		/* The camera turns while the embers fly. */
-		if(frm > 16 && frm < 80)
+		if(frame > 16 && frame < 80)
 			state->cameraDelta = TRIG_TURN / 256;
 		else
 			state->cameraDelta = 0;
-		if(frm == (FireCounts[state->args->variant] >> 1) + 108)
+		if(frame == (FireCounts[state->args->variant] >> 1) + 108)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
 		EFFECT_VIEW_FROM_CAMERA(camera);
@@ -79,10 +80,10 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 		/* The embers in flight. */
 		for(i = 0; i != FireCounts[state->args->variant]; i++) {
 			PARTICLE *ember = &PARTICLES[i];
-			Sint32	  launchFrm;
+			Sint32	  launchFrame;
 
-			launchFrm = i / 2;
-			if(frm > launchFrm && ember->variant == -1) {
+			launchFrame = i / 2;
+			if(frame > launchFrame && ember->variant == -1) {
 				Sint32 size;
 
 				btProjectionPoint(ember, &screen);
@@ -90,27 +91,27 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 				CLAMP(screen.depth, MOTE_DEPTH_NEAR, MOTE_DEPTH_FAR);
 				size = MOTE_SIZE_MAX -
 					(screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
-				EFFECT_DRAW_MOTE(draw[frm < launchFrm + 48 ? 1 : 0], canvas,
+				EFFECT_DRAW_MOTE(draw[frame < launchFrame + 48 ? 1 : 0], canvas,
 					sheet, screen.x, screen.y, size);
-				ember->x += ember->velX;
-				ember->y += ember->velY;
-				ember->z += ember->velZ;
+				ember->x += ember->velocityX;
+				ember->y += ember->velocityY;
+				ember->z += ember->velocityZ;
 			}
 
 			/* An ember homes in on its target. */
-			if(frm > launchFrm + 48 && ember->variant == -1) {
-				ACTOR *tgt;
+			if(frame > launchFrame + 48 && ember->variant == -1) {
+				ACTOR *target;
 				Sint32 vx;
 				Sint32 vy;
 				Sint32 vz;
 
-				tgt =
-					btObjectGetStub(state->args->tgts[i % state->args->tgtCnt])
-						->actor;
-				vx = ember->velX += (tgt->x.fixed - ember->x) >> 9;
-				vy = ember->velY += (tgt->y.fixed - ember->y) >> 9;
-				vz = ember->velZ += (tgt->z.fixed - ember->z) >> 9;
-				if(frm < launchFrm + 85) {
+				target = btObjectGetStub(
+					state->args->targets[i % state->args->targetCount])
+							 ->actor;
+				vx = ember->velocityX += (target->x.fixed - ember->x) >> 9;
+				vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
+				vz = ember->velocityZ += (target->z.fixed - ember->z) >> 9;
+				if(frame < launchFrame + 85) {
 					SET_VELOCITY(ember, vx * 60 / DAMPING_SCALE,
 						vy * 60 / DAMPING_SCALE, vz * 60 / DAMPING_SCALE);
 				}
@@ -120,12 +121,12 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 					ember->variant = 0;
 					ember->x = screen.x;
 					ember->y = screen.y;
-					sySndPlayStub(SE_WHOOSH);
+					sySoundPlayStub(SE_WHOOSH);
 					btEffectTintBattler(
-						state->args->tgts[i % state->args->tgtCnt],
+						state->args->targets[i % state->args->targetCount],
 						SPRITE_COLOR_RED_TINT, POSE_DAMAGE,
-						i % state->args->tgtCnt, 4);
-					state->shakeFrm = 2;
+						i % state->args->targetCount, 4);
+					state->shakeFrame = 2;
 				}
 			}
 		}

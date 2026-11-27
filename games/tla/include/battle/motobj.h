@@ -19,7 +19,7 @@ struct ACTOR;
 typedef struct MOTION_OBJECT {
 	const Sint32 *script; /* the object script it runs; null when it is free */
 	Sint16		  scriptCursor; /* the script cursor, in words */
-	Uint16		  ang;			/* 1/65536 turns */
+	Uint16		  angle;		/* 1/65536 turns */
 	FIXED		  x;			/* 16.16 fixed-point pixels */
 	FIXED		  y;			/* 16.16 fixed-point pixels */
 	FIXED		  z;			/* 16.16 fixed-point pixels */
@@ -28,17 +28,17 @@ typedef struct MOTION_OBJECT {
 	FIXED		  scaleY;		/* 16.16 fixed point, toFIXED(1) full size */
 	Uint16		  height;		/* no code names it through this view */
 	Uint8		  layer; /* the map layer its ground height is read from */
-	Uint8		  priFlg;
-	FIXED		  velX;		  /* 16.16 fixed-point pixels per tick */
-	FIXED		  velY;		  /* 16.16 fixed-point pixels per tick */
-	FIXED		  velZ;		  /* 16.16 fixed-point pixels per tick */
+	Uint8		  priorityFlags;
+	FIXED		  velocityX;  /* 16.16 fixed-point pixels per tick */
+	FIXED		  velocityY;  /* 16.16 fixed-point pixels per tick */
+	FIXED		  velocityZ;  /* 16.16 fixed-point pixels per tick */
 	FIXED		  speedLimit; /* 16.16 fixed-point pixels per tick */
 	/* Horizontal speed gained each tick towards the target, or lost braking
 	   without one, in 16.16 fixed-point pixels per tick. */
 	FIXED acceleration;
-	FIXED tgtX; /* 16.16 fixed-point pixels; 0x80000000 for no target */
-	FIXED tgtY; /* 16.16 fixed-point pixels */
-	FIXED tgtZ; /* 16.16 fixed-point pixels */
+	FIXED targetX; /* 16.16 fixed-point pixels; 0x80000000 for no target */
+	FIXED targetY; /* 16.16 fixed-point pixels */
+	FIXED targetZ; /* 16.16 fixed-point pixels */
 	/* With motionFlags bit 1, the 16.16 share of velocityY kept on a bounce. */
 	FIXED verticalMotionPhase;
 	/* Gravity: taken from velocityY each tick above the ground with
@@ -49,19 +49,19 @@ typedef struct MOTION_OBJECT {
 	/* bits: 3..0 how records holds the sprites */
 	Uint8 recordStorageKind;
 	/* bits: 1 falls under gravity and bounces | 0 follows the terrain */
-	Uint8 motionFlg;
+	Uint8 motionFlags;
 	/* The ARRIVAL_AXIS_* watched for arrival at the target, as Actor's. */
 	Uint8  arrivalAxis;
 	Uint8  conditionResult; /* the object script's last flag test */
-	Uint8  snapToTgt;		/* nonzero: lands exactly on the target */
-	Uint8  collisionFlg;	/* ACTOR_COLLISION_FLAG bits */
+	Uint8  snapToTarget;	/* nonzero: lands exactly on the target */
+	Uint8  collisionFlags;	/* ACTOR_COLLISION_FLAG bits */
 	Uint8  autoFaceMotion;	/* bit 0 turns the object to face where it moves */
 	Uint8  paused; /* nonzero: the motion update leaves it where it is */
-	Uint8  retainSprCache; /* keeps its sprite's VRAM cache entry */
-	Uint8  repeatCnt;	   /* the object script's loop count */
-	Sint16 wait;		   /* the object script's wait, in ticks */
-	void  *func;		   /* Actor's hook; no battle code names it */
-	Sint32 tmr; /* Actor's timer and userValue; no battle code names it */
+	Uint8  retainSpriteCache; /* keeps its sprite's VRAM cache entry */
+	Uint8  repeatCount;		  /* the object script's loop count */
+	Sint16 wait;			  /* the object script's wait, in ticks */
+	void  *callback;		  /* Actor's hook; no battle code names it */
+	Sint32 timer; /* Actor's timer and userValue; no battle code names it */
 	struct ACTOR *watchedActor;
 	void (*update)(union FIELD_OBJECT *object);
 } MOTION_OBJECT;
@@ -72,15 +72,15 @@ typedef struct MOTION_OBJECT {
    leap or a lift give it this one back. */
 #define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
 
-void btSprDetachScripts(void *recordGroup);
-void btActorDetachSprScripts(MOTION_OBJECT *object);
+void btSpriteDetachScripts(void *recordGroup);
+void btActorDetachSpriteScripts(MOTION_OBJECT *object);
 
 STATIC_ASSERT(sizeof(MOTION_OBJECT) == 112);
 STATIC_ASSERT(offsetof(MOTION_OBJECT, scaleX) == 24);
 STATIC_ASSERT(offsetof(MOTION_OBJECT, x) == 8);
-STATIC_ASSERT(offsetof(MOTION_OBJECT, velX) == 36);
-STATIC_ASSERT(offsetof(MOTION_OBJECT, tgtX) == 56);
-STATIC_ASSERT(offsetof(MOTION_OBJECT, motionFlg) == 85);
+STATIC_ASSERT(offsetof(MOTION_OBJECT, velocityX) == 36);
+STATIC_ASSERT(offsetof(MOTION_OBJECT, targetX) == 56);
+STATIC_ASSERT(offsetof(MOTION_OBJECT, motionFlags) == 85);
 STATIC_ASSERT(offsetof(MOTION_OBJECT, records) == 80);
 STATIC_ASSERT(offsetof(MOTION_OBJECT, recordStorageKind) == 84);
 STATIC_ASSERT(offsetof(MOTION_OBJECT, update) == 108);

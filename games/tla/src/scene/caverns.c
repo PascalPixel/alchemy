@@ -138,10 +138,10 @@ void scCavernsPlaceAngaraBlocks(const Sint16 *data)
 
 	for(; *ids != ACTOR_LIST_END; ids++) {
 		actor = fdActorGetById(*ids);
-		actor->motionFlg = 0;
-		actor->collisionFlg = 0;
+		actor->motionFlags = 0;
+		actor->collisionFlags = 0;
 		actor->bounce = 0;
-		fdActorSetSprFlags((ACTOR *)actor, 0);
+		fdActorSetSpriteFlags((ACTOR *)actor, 0);
 		height = METATILE_HEIGHT_STEPS(
 					 fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed)) +
 			2;
@@ -157,8 +157,8 @@ void scCavernsPlaceAngaraBlocks(const Sint16 *data)
 		sySynch(1);
 		leader->y.fixed = leader->groundHeight = fdMapGetTerrainHeight(
 			leader->layer, leader->x.fixed, leader->z.fixed);
-		leader->velY = 0;
-		leader->tgtY = ACTOR_NO_TARGET;
+		leader->velocityY = 0;
+		leader->targetY = ACTOR_NO_TARGET;
 		fdCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
 	}
 }
@@ -231,25 +231,25 @@ void scCavernsStartMovingAngaraBlock(void)
 {
 	FIXED				pos[3];
 	FIELD_STATE		   *state = RamHeapSlots->fieldState;
-	FIELD_EFFECT_STATE *cur = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *current = RamHeapSlots->fieldEffectState;
 	const Uint16	   *ids = (const Uint16 *)CavernsAngaraBlocks;
 	ACTOR			   *actor = NULL;
 	ACTOR			   *leader;
 	Sint32				height;
-	Sint32				ang;
+	Sint32				angle;
 
 	state->movedBlock = NULL;
-	if(cur != NULL && state->psynergy != 0) {
-		actor = state->movedBlock = cur->tgt;
-		if(cur->ability != ABILITY_CARRY)
+	if(current != NULL && state->psynergy != 0) {
+		actor = state->movedBlock = current->target;
+		if(current->ability != ABILITY_CARRY)
 			scCavernsShiftAngaraMetatileHeights(1);
 	} else {
 		leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-		ang = FACING_QUARTER(leader->facing + DEGtoANG(45));
+		angle = FACING_QUARTER(leader->facing + DEGtoANG(45));
 		pos[0] = leader->x.fixed;
 		pos[1] = leader->y.fixed;
 		pos[2] = leader->z.fixed;
-		syVectorAddPolarOffset(toFIXED(16), ang, pos);
+		syVectorAddPolarOffset(toFIXED(16), angle, pos);
 		while(*ids != ACTOR_LIST_END) {
 			actor = fdActorGetById(*ids);
 			if(FIELD_METATILE(pos[0]) == FIELD_METATILE(actor->x.fixed) &&
@@ -281,16 +281,16 @@ enum { DUST_DRAG_X = 12, DUST_DRAG_Z = 10 };
    outwards, slows, grows and spins. */
 void scCavernsDriftDust(FIELD_OBJECT *object)
 {
-	FIELD_EFFECT *effect = &object->eff;
+	FIELD_EFFECT *effect = &object->effect;
 
-	effect->x += effect->vel.x;
-	effect->y += effect->vel.y;
-	effect->z += effect->vel.z;
-	effect->vel.x -= effect->vel.x / DUST_DRAG_X;
-	effect->vel.z -= effect->vel.z / DUST_DRAG_Z;
+	effect->x += effect->velocity.x;
+	effect->y += effect->velocity.y;
+	effect->z += effect->velocity.z;
+	effect->velocity.x -= effect->velocity.x / DUST_DRAG_X;
+	effect->velocity.z -= effect->velocity.z / DUST_DRAG_Z;
 	effect->scaleX += effect->scaleRateX;
 	effect->scaleY += effect->scaleRateY;
-	effect->spr->rotation += effect->spin;
+	effect->sprite->rotation += effect->spin;
 }
 
 /* The block stacked on top of the other, each tick: Felix is drawn in front of
@@ -300,9 +300,10 @@ void scCavernsLayerLeaderByTopBlock(ACTOR *actor)
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
 	if(leader->z.fixed > actor->z.fixed) {
-		leader->priFlg |= ACTOR_PRIORITY_OVERHEAD;
+		leader->priorityFlags |= ACTOR_PRIORITY_OVERHEAD;
 	} else {
-		leader->priFlg &= ~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
+		leader->priorityFlags &=
+			~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
 	}
 }
 
@@ -315,25 +316,25 @@ void scCavernsLayerLeaderByTopBlock(ACTOR *actor)
    a yellow block, and is gone. */
 void scCavernsFinishMovingAngaraBlock(void)
 {
-	FIXED				vel[3];
+	FIXED				velocity[3];
 	EFFECT_OPTIONS		options;
 	FIELD_STATE		   *state;
-	FIELD_EFFECT_STATE *cur;
+	FIELD_EFFECT_STATE *current;
 	ACTOR			   *actor;
 	ACTOR			   *other;
 	Sint32				kind;
 	Sint32				height;
 	Sint32				value;
-	Sint32				ang;
+	Sint32				angle;
 	Uint32				i;
 	ACTOR			   *spawned;
 	Sint32				sum;
 
 	state = RamHeapSlots->fieldState;
-	cur = RamHeapSlots->fieldEffState;
+	current = RamHeapSlots->fieldEffectState;
 	actor = state->movedBlock;
-	if(cur != NULL && state->psynergy != 0) {
-		if(cur->ability != ABILITY_CARRY)
+	if(current != NULL && state->psynergy != 0) {
+		if(current->ability != ABILITY_CARRY)
 			scCavernsShiftAngaraMetatileHeights(-1);
 	} else {
 		scCavernsShiftAngaraMetatileHeights(-1);
@@ -341,13 +342,13 @@ void scCavernsFinishMovingAngaraBlock(void)
 	if(fdMapGetTerrainHeight(0, actor->x.fixed, actor->z.fixed) !=
 		actor->y.fixed) {
 		actor->layer = 2;
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		actor->bounce = 0;
 		sySynch(1);
 		kind =
 			fdMapGridGetMetatileBehaviorAt(2, actor->x.fixed, actor->z.fixed);
 		if(kind != 0) {
-			actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			REG_BLDALPHA = BLEND_ALPHA(0, 16);
 			REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 			/* FAKEMATCH(temporary): sum holds kind + 2 for the one call; as
@@ -356,7 +357,7 @@ void scCavernsFinishMovingAngaraBlock(void)
 			spawned = fdActorCreateSilhouette(actor->x.fixed, 0,
 				actor->z.fixed + FIELD_METATILE_ORIGIN(sum),
 				SPRITE_YELLOW_BLOCK);
-			sySndPlay(SE_DUST_PUFF);
+			sySoundPlay(SE_DUST_PUFF);
 			fdActorWaitUntilLanded(actor);
 			fdActorWaitUntilLanded(actor);
 			actor->x.fixed = actor->y.fixed = actor->z.fixed = 0;
@@ -366,42 +367,43 @@ void scCavernsFinishMovingAngaraBlock(void)
 		} else {
 			fdActorWaitUntilLanded(actor);
 			fdActorWaitUntilLanded(actor);
-			sySndPlay(SE_THUMP);
-			options.pal = SPRITE_COLOR_WHITE;
-			options.pri = 2;
+			sySoundPlay(SE_THUMP);
+			options.palette = SPRITE_COLOR_WHITE;
+			options.priority = 2;
 			options.update = scCavernsDriftDust;
 			options.startScaleX = toFIXED(4) / 5;
 			options.startScaleY = toFIXED(4) / 5;
 			i = 0;
 			do {
-				ang = i * (TRIG_TURN / DUST_RING_PUFFS);
-				vel[0] = syCos(ang) * 2;
-				vel[1] = 0;
-				vel[2] = sySin(ang) * 2;
-				vel[0] += vel[0] >> 1;
-				vel[0] += (Uint16)(syRandom() * 3 >> 2) - (toFIXED(3) / 8);
-				vel[2] += (Uint16)(syRandom() * 3 >> 3) - (toFIXED(3) / 16);
+				angle = i * (TRIG_TURN / DUST_RING_PUFFS);
+				velocity[0] = syCos(angle) * 2;
+				velocity[1] = 0;
+				velocity[2] = sySin(angle) * 2;
+				velocity[0] += velocity[0] >> 1;
+				velocity[0] += (Uint16)(syRandom() * 3 >> 2) - (toFIXED(3) / 8);
+				velocity[2] +=
+					(Uint16)(syRandom() * 3 >> 3) - (toFIXED(3) / 16);
 				/* FAKEMATCH(dead): sum, never read again, assigned the flags
 				 * inside the call's arguments. */
 				scFieldEffectSpawn(actor->x.fixed, actor->y.fixed,
-					actor->z.fixed, vel[0], vel[1], vel[2],
+					actor->z.fixed, velocity[0], velocity[1], velocity[2],
 					sum = EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
 						EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
 					&options);
 				i++;
 			} while(i <= DUST_RING_PUFFS);
 		}
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->layer = 0;
 		/* The velocity array is reused for the position under the actor. */
-		vel[0] = actor->x.fixed;
-		vel[1] = actor->y.fixed - toFIXED(16);
-		vel[2] = actor->z.fixed;
-		other = fdActorFindAtMetatile(vel, 1);
+		velocity[0] = actor->x.fixed;
+		velocity[1] = actor->y.fixed - toFIXED(16);
+		velocity[2] = actor->z.fixed;
+		other = fdActorFindAtMetatile(velocity, 1);
 		if(other != NULL) {
 			actor->update = (OBJECT_UPDATE)scCavernsLayerLeaderByTopBlock;
-			actor->sceneCnt = 1;
-			other->sceneCnt = 1;
+			actor->sceneCount = 1;
+			other->sceneCount = 1;
 			syGameFlagSet(FLAG_ANGARA_BLOCK_ON_TOP);
 		}
 	}
@@ -476,12 +478,12 @@ void scCavernsInitIndra(void)
 {
 	ACTOR *actor;
 
-	fdActorGetById(ACTOR_FELIX)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdRopeInit();
 	fdRopePlace(
 		0, FLAG_INDRA_ROPE_TIED, ACTOR_LOWER_ROPE_POST, ACTOR_UPPER_ROPE_POST);
 	actor = fdActorGetById(ACTOR_PILLAR);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	{
 		Sint32 row = INDRA_PILLAR_ROW;
 
@@ -497,7 +499,7 @@ void scCavernsMoveIndraPillar(Sint32 unused, Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
 
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdMapCopyMetatileAttributeRect(13, 12, 2, 1, 13, INDRA_PILLAR_ROW);
 	fdMapCopyMetatileAttributeRect(INDRA_GAP_COLUMN, INDRA_PILLAR_ROW, 1, 1,
 		FIELD_METATILE(actor->x.fixed), INDRA_PILLAR_ROW);
@@ -505,7 +507,7 @@ void scCavernsMoveIndraPillar(Sint32 unused, Sint32 id)
 
 Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *pos)
 {
-	Sint32 saved = actor->motionFlg;
+	Sint32 saved = actor->motionFlags;
 	Sint32 blocked = fdMapGridCheckCollision(actor, pos);
 
 	if(blocked == 0) {
@@ -513,13 +515,13 @@ Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *pos)
 		fdScriptEndLastingPsynergy(0);
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(actor, ANIM_LEADER_LEAP);
 		actor->speedLimit = toFIXED(3);
 		actor->acceleration = toFIXED(2);
-		actor->velY = toFIXED(4);
-		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
-		fdActorSetSprFlags(actor, 0);
+		actor->velocityY = toFIXED(4);
+		actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
+		fdActorSetSpriteFlags(actor, 0);
 		{
 			MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 			Sint32				x = pos[0].part[0].integer;
@@ -529,8 +531,8 @@ Bool scCavernsJumpAcross(ACTOR *actor, FIELD_COORDINATE *pos)
 			fdActorMoveToAndWaitById(owner, x, z);
 		}
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
-		fdActorSetSprFlags(actor, 1);
-		actor->motionFlg = saved;
+		fdActorSetSpriteFlags(actor, 1);
+		actor->motionFlags = saved;
 		fdScriptEnd();
 		return TRUE;
 	}
@@ -599,15 +601,15 @@ void scCavernsWalkIntoPassage(void)
 		fdActorSetPos(ACTOR_PASSAGE_MARKER, 224, 224);
 	fdActorFaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
 	fdScriptWait(10);
-	fdActorGetById(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdMapGridCopyMetatilesTo(96, 14, 72, 14, 2, 1);
 	fdActorSetDestinationOffsetById(ACTOR_FELIX, 0, 4);
 	fdActorWaitForMoveById(ACTOR_FELIX);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FELIX), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FELIX), 0);
 	fdActorSetDestinationOffsetById(ACTOR_FELIX, 0, 16);
 	fdActorWaitForMoveById(ACTOR_FELIX);
 	fdActorSetAnimationById(ACTOR_FELIX, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptWait(14);
 	syImportScriptSetExitRequest(value);
 }
@@ -719,10 +721,14 @@ typedef enum CAVERNS_ANGARA_ACTOR_ID {
 void scCavernsInitAngara(void)
 {
 	scCavernsPlaceAngaraBlocks(CavernsAngaraBlocks);
-	fdActorGetById(ACTOR_FIRST_BLOCK)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGetById(ACTOR_SECOND_BLOCK)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGetById(ACTOR_WEST_CANDLESTICK)->collisionFlg |= ACTOR_NOT_TARGETED;
-	fdActorGetById(ACTOR_EAST_CANDLESTICK)->collisionFlg |= ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_FIRST_BLOCK)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGetById(ACTOR_SECOND_BLOCK)->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGetById(ACTOR_WEST_CANDLESTICK)->collisionFlags |=
+		ACTOR_NOT_TARGETED;
+	fdActorGetById(ACTOR_EAST_CANDLESTICK)->collisionFlags |=
+		ACTOR_NOT_TARGETED;
 }
 
 /* Walking north into the grey stone door at the west end of the small cave room
@@ -732,11 +738,11 @@ void scCavernsOpenAngaraDoor(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdScriptWait(10);
 	fdMapGridCopyMetatilesTo(7, 94, 6, 94, 1, 2);
 	fdScriptWait(16);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(METATILE_BEHAVIOR_HAURUS_DOOR);
 	fdScriptEnd();
 }

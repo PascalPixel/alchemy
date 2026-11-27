@@ -11,19 +11,20 @@
    name. The first line has the scene's code (MsgDebugSceneCode + scene) and,
    beside it, the area its entrance leads to (MsgDebugAreaName + area); the
    numbers, three digits each, go under them. */
-void mnDebugSceneSelectDrawRow(void *win, Sint16 scene, const Sint16 *entrance)
+void mnDebugSceneSelectDrawRow(
+	void *window, Sint16 scene, const Sint16 *entrance)
 {
 	Sint16 selected = scene;
 	Sint32 label =
 		fdAreaGetNameIndexStub(selected, *entrance) + (Sint32)MsgDebugAreaName;
 
-	mnWindowSprPrepareForRedraw(win);
-	mnTextDrawNum(selected, 3, win, 0, 14);
-	mnTextDrawNum(*entrance, 3, win, DEBUG_ROW_SECOND_X, 14);
-	mnTextDrawString(MenuColonString, win, DEBUG_ROW_COLON_X, 0);
-	mnTextDrawMessage(selected + (Sint32)MsgDebugSceneCode, win, 0, 0);
-	mnTextDrawString(MenuColonString, win, DEBUG_ROW_COLON_X, 14);
-	mnTextDrawMessage(label, win, DEBUG_ROW_SECOND_X, 0);
+	mnWindowSpritePrepareForRedraw(window);
+	mnTextDrawNumber(selected, 3, window, 0, 14);
+	mnTextDrawNumber(*entrance, 3, window, DEBUG_ROW_SECOND_X, 14);
+	mnTextDrawString(MenuColonString, window, DEBUG_ROW_COLON_X, 0);
+	mnTextDrawMessage(selected + (Sint32)MsgDebugSceneCode, window, 0, 0);
+	mnTextDrawString(MenuColonString, window, DEBUG_ROW_COLON_X, 14);
+	mnTextDrawMessage(label, window, DEBUG_ROW_SECOND_X, 0);
 }
 
 /* The debug destination menu: picks a scene and an entrance, starting from the
@@ -36,15 +37,15 @@ Sint16 mnDebugSceneSelectRun(void)
 	Sint16	 entrance;
 	MENU_SPR arrow;
 	Sint16	 scene;
-	WINDOW	*win;
+	WINDOW	*window;
 	Sint16	 result;
 
-	win = 0;
+	window = 0;
 	field = 0;
 	scene = MainRoutineStateWork.returnScene;
 	entrance = MainRoutineStateWork.returnEntrance;
-	win = mnWindowCreate(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
-	mnDebugSceneSelectDrawRow(win, scene, &entrance);
+	window = mnWindowCreate(0, 7, 30, 5, WINDOW_FLAG_INSTANT);
+	mnDebugSceneSelectDrawRow(window, scene, &entrance);
 	mnArrowCreate(&arrow, &arrowSlot);
 
 	while(PerWork.data != 0)
@@ -52,16 +53,16 @@ Sint16 mnDebugSceneSelectRun(void)
 
 	for(;;) {
 		result = (Sint16)mnDebugSceneSelectHandleRowInput(
-			win, scene, &entrance, &field);
+			window, scene, &entrance, &field);
 		if(result == -1) {
 			mnArrowRelease(arrowSlot);
-			mnWindowClose(win, 2);
+			mnWindowClose(window, 2);
 			fdScriptSetDestinationStub(scene, entrance);
 			return result;
 		}
 		if(result == -2) {
 			mnArrowRelease(arrowSlot);
-			mnWindowClose(win, 2);
+			mnWindowClose(window, 2);
 			return result;
 		}
 

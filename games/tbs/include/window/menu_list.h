@@ -34,14 +34,14 @@ typedef struct MENU_SPR {
 			Uint16 affine : 2;
 			Uint16 mode : 2;
 			Uint16 mosaic : 1;
-			Uint16 cols : 1;
+			Uint16 colors : 1;
 			Uint16 shape : 2;
 			Uint16 x : 9;
-			Uint16 affineIdx : 5;
+			Uint16 affineIndex : 5;
 			Uint16 size : 2;
 			Uint16 tile : 10;
-			Uint16 pri : 2;
-			Uint16 pal : 4;
+			Uint16 priority : 2;
+			Uint16 palette : 4;
 			Uint16 unused;
 		} f;
 	} oam;
@@ -55,14 +55,14 @@ typedef struct CURSOR_SPR {
 	Uint16			   affine : 2;
 	Uint16			   mode : 2;
 	Uint16			   mosaic : 1;
-	Uint16			   cols : 1;
+	Uint16			   colors : 1;
 	Uint16			   shape : 2;
 	Uint16			   x : 9;
-	Uint16			   affineIdx : 5;
+	Uint16			   affineIndex : 5;
 	Uint16			   size : 2;
 	Uint16			   tile : 10;
-	Uint16			   pri : 2;
-	Uint16			   pal : 4;
+	Uint16			   priority : 2;
+	Uint16			   palette : 4;
 	Uint16			   unused;
 } CURSOR_SPR;
 
@@ -76,16 +76,16 @@ typedef struct CURSOR_SPR {
 /* The party status window's layout: its window, its place and size, and what it
    shows (PARTY_STATUS_ flags). */
 typedef struct PARTY_STAT_WINDOW {
-	WINDOW *win;
+	WINDOW *window;
 	Uint16	x;		/* tiles */
 	Uint16	y;		/* tiles */
 	Uint16	width;	/* tiles */
 	Uint16	height; /* tiles */
-	Uint16	flg;	/* PARTY_STATUS_ flags */
+	Uint16	flags;	/* PARTY_STATUS_ flags */
 } PARTY_STAT_WINDOW;
 
 STATIC_ASSERT(sizeof(PARTY_STAT_WINDOW) == 16);
-STATIC_ASSERT(offsetof(PARTY_STAT_WINDOW, flg) == 12);
+STATIC_ASSERT(offsetof(PARTY_STAT_WINDOW, flags) == 12);
 
 /* A point on the screen where a menu shows its cursor. */
 typedef struct MENU_POINT {
@@ -109,12 +109,12 @@ typedef struct BATTLE_MENU_STATE {
 	MENU_SPR icons[BATTLE_MENU_ICON_COUNT];
 	/* whether each of icons is drawn */
 	Uint8 iconShown[BATTLE_MENU_ICON_COUNT];
-	Uint8 padding; /* up to the word tgtViewOfs starts on */
+	Uint8 padding; /* up to the word targetViewOffset starts on */
 	/* Where the battle view slides to (btCameraSetCommandView's vertical
 	   offset): -2 or 16 by the target menu's mode, 0 otherwise. */
-	Sint32 tgtViewOfs;
+	Sint32 targetViewOffset;
 	/* where the slide has reached; a third of the way a tick */
-	Sint32 viewOfs;
+	Sint32 viewOffset;
 	Sint32 row;			 /* the list row chosen last */
 	Sint32 page;		 /* the list page chosen last */
 	Sint32 preferredRow; /* the row to return to */
@@ -122,13 +122,13 @@ typedef struct BATTLE_MENU_STATE {
 	   [1] for a party member's commands. */
 	Sint32 commandSelection[2];
 	/* The window that shows the link battle's seconds left, or NULL. */
-	WINDOW *tmrWin;
+	WINDOW *timerWindow;
 	/* Set while the status screen is open, so the timer opens no window. */
-	Sint32 tmrHidden;
+	Sint32 timerHidden;
 	/* Ticks left to choose commands in a link battle; -1 outside link battles.
 	   At 0 a menu ends as if cancelled, or takes the first command. */
-	Sint32 tmr;
-	Sint32 linkTmr; /* 1 while the link battle's timer runs */
+	Sint32 timer;
+	Sint32 linkTimer; /* 1 while the link battle's timer runs */
 	/* The party's standby Djinn by element before each command: what the
 	   summons chosen by the earlier commands leave. */
 	Uint8  standbyDjinn[8][4];
@@ -149,11 +149,11 @@ typedef struct BATTLE_MENU_STATE {
 #define BATTLE_MENU_NO_DJINNI 0x80000000
 
 STATIC_ASSERT(sizeof(BATTLE_MENU_STATE) == 260);
-STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, tgtViewOfs) == 40);
+STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, targetViewOffset) == 40);
 STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, row) == 48);
 STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, commandSelection) == 60);
-STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, tmrWin) == 68);
-STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, tmr) == 76);
+STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, timerWindow) == 68);
+STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, timer) == 76);
 STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, standbyDjinn) == 84);
 STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, tutorialStep) == 216);
 STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, commandActor) == 224);

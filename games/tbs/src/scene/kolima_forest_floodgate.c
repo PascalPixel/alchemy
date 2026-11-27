@@ -74,7 +74,7 @@ struct ACTOR;
 /* A log's saved record: its sprite, first map metatile and orientation, then
    its actor once created. */
 typedef struct FLOODGATE_LOG {
-	Sint16 spr;		 /* sprite number; -1 ends the list */
+	Sint16 sprite;	 /* sprite number; -1 ends the list */
 	Sint16 x;		 /* map metatiles */
 	Sint16 z;		 /* map metatiles */
 	Sint16 vertical; /* nonzero runs north to south; zero west to east */
@@ -240,13 +240,14 @@ static void scKolimaForestFloodgateDrawWaterLevel(void)
 
 	/* Each log floats or rests, and on high water its four metatiles are
 	   drawn. */
-	for(; record->spr != -1; record++) {
+	for(; record->sprite != -1; record++) {
 		log = record->actor;
 
 		if(*KolimaForestFloodgateWaterHigh == 1) {
 			fdActorSelectAnimation(log, LOG_ANIMATION_FLOAT);
-			log->priFlg = ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
-			log->motionFlg = 0;
+			log->priorityFlags =
+				ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
+			log->motionFlags = 0;
 			log->y.fixed = toFIXED(26);
 
 			if(record->vertical != 0) {
@@ -256,8 +257,8 @@ static void scKolimaForestFloodgateDrawWaterLevel(void)
 			}
 		} else {
 			fdActorSelectAnimation(log, LOG_ANIMATION_AT_REST);
-			log->priFlg = ACTOR_PRIORITY_AUTOMATIC;
-			log->motionFlg = ACTOR_FALLS;
+			log->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+			log->motionFlags = ACTOR_FALLS;
 			log->y.fixed = 0;
 		}
 	}
@@ -310,13 +311,13 @@ static void scKolimaForestFloodgateChangeRiverLines(void)
 static void scKolimaForestFloodgateCaptureNewLevelScroll(void)
 {
 	const Uint32 *src = (const Uint32 *)&BgScrollWork[1];
-	Uint32		 *dst = KolimaForestFloodgateNewLevelScroll;
+	Uint32		 *dest = KolimaForestFloodgateNewLevelScroll;
 	BG_SCROLL	 *newLevel;
 
 	/* BG1 to BG3's offsets, each pair one word. */
-	*dst++ = *src++;
-	*dst++ = *src++;
-	*dst = *src;
+	*dest++ = *src++;
+	*dest++ = *src++;
+	*dest = *src;
 	newLevel = (BG_SCROLL *)KolimaForestFloodgateNewLevelScroll;
 	newLevel[0].y += NEW_LEVEL_OFFSET;
 	newLevel[1].y += NEW_LEVEL_OFFSET;
@@ -338,7 +339,7 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 	fdCameraMoveTo(264, CAMERA_KEEP, 448, 1);
 	fdCameraWaitForArrival();
 	mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-	sySndPlay(SE_CRUNCH);
+	sySoundPlay(SE_CRUNCH);
 	/* The switch's lever turns, then the gate drops shut, or lifts, a picture
 	   at a time. */
 	if(*KolimaForestFloodgateWaterHigh == 0) {
@@ -353,7 +354,7 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 		sySynch(6);
 		fdMapGridCopyMetatiles(69, 34, 2, 5, 79, 25);
 		fdActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_BURST);
-		sySndPlay(SE_LOG_FALL);
+		sySoundPlay(SE_LOG_FALL);
 		sySynch(6);
 		fdMapGridCopyMetatiles(71, 34, 2, 5, 79, 25);
 		sySynch(6);
@@ -377,7 +378,7 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 		fdMapGridCopyMetatiles(65, 45, 2, 4, 15, 28);
 		fdMapGridCopyMetatiles(71, 50, 2, 5, 79, 25);
 		fdActorSetAnimation(ACTOR_FLOODGATE_SPRAY, SPLASH_ANIMATION_CHURN);
-		sySndPlay(SE_WATER_DRAIN);
+		sySoundPlay(SE_WATER_DRAIN);
 		sySynch(6);
 		fdMapGridCopyMetatiles(69, 50, 2, 5, 79, 25);
 		sySynch(6);
@@ -404,14 +405,14 @@ static void scKolimaForestFloodgateFlipFloodgateSwitch(void)
 		scKolimaForestFloodgateCaptureNewLevelScroll, EVENT_PASS_TICK);
 	sySynch(1);
 	syIntFunction(IRQ_HBLANK, 0, scKolimaForestFloodgateChangeRiverLines);
-	sySndPlay(SE_WATER_LEVEL);
+	sySoundPlay(SE_WATER_LEVEL);
 	KolimaForestFloodgateNewLevelPercent = 0;
 	do {
 		sySynch(1);
 		nextPercent = KolimaForestFloodgateNewLevelPercent + 1;
 		KolimaForestFloodgateNewLevelPercent += 1;
 	} while(nextPercent <= 100);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	if(*KolimaForestFloodgateWaterHigh == 0) {
 		scMapGridDrawMetatilePanel(
 			9, 19, 16, 5, *KolimaForestFloodgateWaterHigh, 9, RIVER_PANEL_ROW);
@@ -440,7 +441,7 @@ static void scKolimaForestFloodgatePushBankLogWest(void)
 	fdScriptStart();
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
 	fdScriptWait(6);
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSetSpeedAndAcceleration(ACTOR_BANK_LOG, 0.5, 0.2);
 	fdActorSetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_ROLL_EAST);
 	fdActorSetDestination(ACTOR_BANK_LOG, 72, 176);
@@ -452,8 +453,8 @@ static void scKolimaForestFloodgatePushBankLogWest(void)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorWaitForMoveById(ACTOR_BANK_LOG);
 	fdActorSetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_AT_REST);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdMapGridCopyMetatileAttributes(5, 9, 1, 4, 6, 9);
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 4, 4, 9);
 	*KolimaForestFloodgateBankLogWest = 1;
@@ -468,7 +469,7 @@ static void scKolimaForestFloodgatePushBankLogEast(void)
 	fdScriptStart();
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
 	fdScriptWait(6);
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSetSpeedAndAcceleration(ACTOR_BANK_LOG, 0.5, 0.2);
 	fdActorSetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_ROLL_EAST);
 	fdActorSetDestination(ACTOR_BANK_LOG, 104, 176);
@@ -480,8 +481,8 @@ static void scKolimaForestFloodgatePushBankLogEast(void)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorWaitForMoveById(ACTOR_BANK_LOG);
 	fdActorSetAnimation(ACTOR_BANK_LOG, LOG_ANIMATION_AT_REST);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdMapGridCopyMetatileAttributes(5, 9, 1, 4, 4, 9);
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 4, 6, 9);
 	*KolimaForestFloodgateBankLogWest = 0;
@@ -518,7 +519,7 @@ Sint32 scInit(void)
 		KolimaForestFloodgateDefaultLogs, METATILE_BEHAVIOR_WALL);
 	scKolimaForestFloodgateDrawWaterLevel();
 	fdActorSetAnimation(ACTOR_FLOODGATE_SPRAY, 0);
-	fdActorGet(ACTOR_FLOODGATE_SPRAY)->motionFlg = 0;
+	fdActorGet(ACTOR_FLOODGATE_SPRAY)->motionFlags = 0;
 	actor = fdActorGet(ACTOR_SIGN);
 	actor->radius = 8;
 	actor->scaleX = toFIXED(3) / 4;
@@ -539,7 +540,7 @@ static void scKolimaForestFloodgateCreateLogs(FLOODGATE_LOG *entry)
 	Sint32 x;
 	Sint32 z;
 
-	for(; entry->spr != -1; entry++) {
+	for(; entry->sprite != -1; entry++) {
 		if(entry->vertical == 0) {
 			x = FIELD_METATILE_ORIGIN(entry->x) + toFIXED(32);
 			z = FIELD_METATILE_CENTER(entry->z);
@@ -547,13 +548,13 @@ static void scKolimaForestFloodgateCreateLogs(FLOODGATE_LOG *entry)
 			x = FIELD_METATILE_CENTER(entry->x);
 			z = FIELD_METATILE_ORIGIN(entry->z) + toFIXED(32);
 		}
-		actor = syFieldActorCreate(entry->spr, x, 0, z);
+		actor = syFieldActorCreate(entry->sprite, x, 0, z);
 		if(actor == NULL)
 			return;
 		entry->actor = actor;
 		fdActorSelectAnimation(actor, LOG_ANIMATION_AT_REST);
-		fdActorSetSprFlags(actor, 0);
-		actor->collisionFlg = 0;
+		fdActorSetSpriteFlags(actor, 0);
+		actor->collisionFlags = 0;
 		actor->radius = 32;
 		height = toFIXED(fdMapGridGetTerrainHeight(
 			0, actor->x.part[0].integer, actor->z.part[0].integer));
@@ -571,9 +572,9 @@ void scKolimaForestFloodgateMarkLogMetatiles(
 	Sint32				 row;
 	Sint32				 i;
 
-	if(record->spr == -1)
+	if(record->sprite == -1)
 		return;
-	for(; record->spr != -1; record++) {
+	for(; record->sprite != -1; record++) {
 		column = record->x;
 		row = record->z;
 		for(i = 0; i < 4; i++) {
@@ -592,7 +593,7 @@ void scKolimaForestFloodgateMarkLogMetatiles(
 static FLOODGATE_LOG *scKolimaForestFloodgateFindLogAt(
 	FLOODGATE_LOG *log, Sint32 x, Sint32 y)
 {
-	for(; log->spr != -1; log++) {
+	for(; log->sprite != -1; log++) {
 		Sint32 x0 = log->x;
 		Sint32 x1 = x0;
 		Sint32 y0 = log->z;
@@ -690,12 +691,12 @@ static void scKolimaForestFloodgateRollLog(FLOODGATE_LOG *logs)
 	fdScriptWait(6);
 	actor->speedLimit = toFIXED(1) / 2;
 	actor->acceleration = toFIXED(1) / 5;
-	sySndPlay(SE_HEAVY_MOVE);
+	sySoundPlay(SE_HEAVY_MOVE);
 	fdActorSelectAnimation(actor, KolimaForestFloodgatePushAnimations[quarter]);
 	syFieldActorSetMoveTargetFX(actor, x, 0, z);
 	fdScriptWait(6);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(*state));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(*state));
 	fdActorStartCamera(state->camera, (Sint32)actor);
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
 	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER,
@@ -705,8 +706,8 @@ static void scKolimaForestFloodgateRollLog(FLOODGATE_LOG *logs)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorWaitForMove(actor);
 	fdActorSelectAnimation(actor, LOG_ANIMATION_AT_REST);
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_HEAVY_STOP);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_HEAVY_STOP);
 	fdScriptWait(15);
 	fdScriptEnd();
 }

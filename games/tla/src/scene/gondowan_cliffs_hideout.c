@@ -100,15 +100,15 @@ Sint32 scInit(void)
 {
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FIRE_MARKER), 0);
-	fdActorSetSprFlags(fdActorGetById(ACTOR_FIRE), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FIRE_MARKER), 0);
+	fdActorSetSpriteFlags(fdActorGetById(ACTOR_FIRE), 0);
 	return 0;
 }
 
 /* The leader ignores the ground's rises in the hideout. */
 Sint32 scPrepareMap(void)
 {
-	fdActorGetById(fdPartyGetLeaderActor())->priFlg |=
+	fdActorGetById(fdPartyGetLeaderActor())->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	return 0;
 }

@@ -21,7 +21,7 @@ A few numbers are not sounds but controls: fade the music out, or keep
 whatever is playing. Every number has a name in
 [sounds.h](../../include/sounds.h), `MUS_` for music and jingles and
 `SE_` for effects, and the one function that takes them all is
-`sySndPlay` in `sound.c`.
+`sySoundPlay` in `sound.c`.
 
 Two sounds are heard together only if something plays each of them. There
 are eight players, each playing one sound at a time. Music has one, jingles
@@ -78,7 +78,7 @@ The songs and samples are ordinary files you can open, in
 
 ## Where the code is
 
-- `sound.c` here is the game's own layer: `sySndPlay`, the volume ramps and
+- `sound.c` here is the game's own layer: `sySoundPlay`, the volume ramps and
   the music's return.
 - [`games/common/sdk/sound`](../../../common/sdk/sound) is the driver both
   games build: its C, its handwritten functions and the mixer the game

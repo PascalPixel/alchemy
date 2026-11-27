@@ -13,7 +13,7 @@ const Sint32 ActorLaunchScript[] = {
 	SC_SYNC,
 	SC_WAIT(1),
 	SC_ANIMATION(1),
-	SC_CALL(fdActorStepAng),
+	SC_CALL(fdActorStepAngle),
 	SC_END,
 };
 /* clang-format on */
@@ -31,7 +31,7 @@ const Sint32 FieldEffectBurstParticleScriptB[] = {
 };
 
 const Sint32 ActorStepAngleScript[] = {
-	SC_CALL(fdActorStepAng),
+	SC_CALL(fdActorStepAngle),
 	SC_END,
 };
 
@@ -106,7 +106,7 @@ const Sint32 MovementTypeWanderScript[] = {
 const Sint32 MovementTypeStandScript[] = {SC_END};
 
 const Sint32 MovementTypeResetActionScript[] = {
-	SC_CALL(fdActorClearSprAndCollisionFlags),
+	SC_CALL(fdActorClearSpriteAndCollisionFlags),
 	SC_END,
 };
 

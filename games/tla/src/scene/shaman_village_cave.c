@@ -205,16 +205,16 @@ void scShamanVillageCaveDropPillarIntoGap(Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 	Sint32 ticks = 60;
 
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	while(ticks != 0) {
 		syWait(1);
-		if(actor->velY == 0)
+		if(actor->velocityY == 0)
 			break;
 		ticks--;
 	}
 	syWait(10);
-	fdActorSetSprFlags(actor, 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	actor->motionFlags = 0;
 }
 
 /* Nothing visible happens as Move takes hold of the stone pillar in the pillar
@@ -239,7 +239,7 @@ void scShamanVillageCaveFinishMovingPillar(Sint32 unused, Sint32 id)
 
 	if(x == 38) {
 		fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED);
-		actor->priFlg = 0;
+		actor->priorityFlags = 0;
 		scShamanVillageCaveDropPillarIntoGap(id);
 		fdMapGridCopyMetatileAttributes(40, 19, 1, 1, x, 19);
 	}
@@ -253,8 +253,8 @@ void scShamanVillageCaveFreezePuddle(void)
 	ACTOR *actor = fdActorGet(ACTOR_PUDDLE);
 
 	fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN);
-	actor->motionFlg = 0;
-	actor->priFlg = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags = 0;
 	fdMapGridCopyMetatileAttributes(8, 42, 1, 1, 6, 42);
 }
 
@@ -302,7 +302,7 @@ void scShamanVillageCaveEddyFlees(void)
 		fdActorSetAttachedEffect(
 			ACTOR_EDDY, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		syFieldScriptWait(30);
-		fdActorGetById(ACTOR_EDDY)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGetById(ACTOR_EDDY)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkBy(ACTOR_EDDY, 8, 0);
 		scFieldActorWaitForMoveById(ACTOR_EDDY);
 		syFieldScriptWait(30);
@@ -321,7 +321,7 @@ void scShamanVillageCaveEddyFlees(void)
 	fdActorSetDestinationOffset(ACTOR_EDDY, dx * 16, 0);
 	scFieldActorWaitForMoveById(ACTOR_EDDY);
 	fdActorSetDestinationOffset(ACTOR_EDDY, dx * 48, 0);
-	actor->velY = toFIXED(8);
+	actor->velocityY = toFIXED(8);
 	dz = -dz;
 	scFieldActorWaitForMoveById(ACTOR_EDDY);
 	fdActorSetDestinationOffset(ACTOR_EDDY, 0, dz);
@@ -342,9 +342,9 @@ void scShamanVillageCaveFightEddy(void)
    and are drawn at priority 2, the priority of the cave's walls. */
 Sint32 scShamanVillageCaveSetUpWeeds(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
-	((FIELD_SPR *)actor->spr)->pri = 2;
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	((FIELD_SPR *)actor->sprite)->priority = 2;
+	actor->motionFlags = 0;
 	return 0;
 }
 
@@ -409,23 +409,24 @@ void scShamanVillageCaveTakeGoldenShirt(void)
    them. */
 void scShamanVillageCavePlaceGladiators(void)
 {
-	Sint32 ang;
+	Sint32 angle;
 
-	ang = FACING_SOUTH_SOUTHWEST;
-	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(231), toFIXED(199), ang);
-	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(220), toFIXED(191), ang);
-	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(204), toFIXED(191), ang);
+	angle = FACING_SOUTH_SOUTHWEST;
+	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(231), toFIXED(199), angle);
+	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(220), toFIXED(191), angle);
+	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(204), toFIXED(191), angle);
 }
 
 /* The Golden Shirt lies where the gladiators left it
    (FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT). */
 void scShamanVillageCavePlaceGoldenShirt(void)
 {
-	Sint32 ang;
+	Sint32 angle;
 
 	scFieldActorShowItemIconById(ACTOR_GOLDEN_SHIRT, ITEM_GOLDEN_SHIRT);
-	ang = FACING_NORTH;
-	fdActorSetPosAndFacing(ACTOR_GOLDEN_SHIRT, toFIXED(212), toFIXED(199), ang);
+	angle = FACING_NORTH;
+	fdActorSetPosAndFacing(
+		ACTOR_GOLDEN_SHIRT, toFIXED(212), toFIXED(199), angle);
 	fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT);
 }
 
@@ -435,7 +436,7 @@ void scShamanVillageCavePlaceGoldenShirt(void)
    out of the middle passage, call the win a cheat and fight the party. */
 void scShamanVillageCaveMeetGladiators(void)
 {
-	Sint32 ang;
+	Sint32 angle;
 
 	if(fdScriptGetFlag(FLAG_TRANSFERRED_WON_COLOSSO) == 0)
 		return;
@@ -467,14 +468,14 @@ void scShamanVillageCaveMeetGladiators(void)
 	fdActorShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
 	fdCameraMoveTo(199, CAMERA_KEEP, 177, 1);
 	fdCameraWaitForArrival();
-	ang = FACING_SOUTH;
-	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(199), toFIXED(130), ang);
+	angle = FACING_SOUTH;
+	fdActorSetPosAndFacing(ACTOR_SATRAGE, toFIXED(199), toFIXED(130), angle);
 	fdActorWalkTo(ACTOR_SATRAGE, 231, 199);
 	syFieldScriptWait(20);
-	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(199), toFIXED(130), ang);
+	fdActorSetPosAndFacing(ACTOR_AZART, toFIXED(199), toFIXED(130), angle);
 	fdActorWalkTo(ACTOR_AZART, 220, 191);
 	syFieldScriptWait(20);
-	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(199), toFIXED(130), ang);
+	fdActorSetPosAndFacing(ACTOR_NAVAMPA, toFIXED(199), toFIXED(130), angle);
 	fdActorWalkTo(ACTOR_NAVAMPA, 204, 191);
 	fdCameraMoveTo(199, CAMERA_KEEP, 225, 1);
 	fdCameraWaitForArrival();
@@ -780,13 +781,13 @@ void scShamanVillageCaveEnterPassage(void)
 	for(id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
 		actor = fdActorGet(id);
 		if(actor)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
-	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_WALK);
 	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -8);
 	syFieldScriptWait(5);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	syFieldScriptSetExitRequest(state->stepCue);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -811,30 +812,31 @@ Sint32 scInit(void)
 		fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_STOPS_FLEEING);
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED)) {
 		actor = fdActorGet(ACTOR_PILLAR);
-		actor->motionFlg = 0;
-		actor->priFlg = 0;
+		actor->motionFlags = 0;
+		actor->priorityFlags = 0;
 		actor->x.fixed = toFIXED(616);
 		actor->y.fixed = 0;
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		fdMapGridCopyMetatileAttributes(40, 19, 1, 1, 38, 19);
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_PUDDLE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PUDDLE), 0);
 	fdActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN)) {
 		actor = fdActorGet(ACTOR_PUDDLE);
 		fdActorSetAnimation(ACTOR_PUDDLE, 5);
-		scFieldActorSetSprCol(fdActorGet(ACTOR_PUDDLE), SPRITE_COLOR_NORMAL);
-		actor->motionFlg = 0;
-		actor->priFlg = 0;
+		scFieldActorSetSpriteColor(
+			fdActorGet(ACTOR_PUDDLE), SPRITE_COLOR_NORMAL);
+		actor->motionFlags = 0;
+		actor->priorityFlags = 0;
 		actor->y.fixed = 0;
 		fdMapGridCopyMetatileAttributes(8, 42, 1, 1, 6, 42);
 	}
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_FOUGHT))
 		fdActorSetPos(ACTOR_EDDY, 328, 792);
 	/* The three gladiators share one sprite, told apart by its colours. */
-	scFieldActorSetSprCol(fdActorGet(ACTOR_SATRAGE), SPRITE_COLOR_GRB);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_AZART), SPRITE_COLOR_NORMAL);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_NAVAMPA), SPRITE_COLOR_RBG);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_SATRAGE), SPRITE_COLOR_GRB);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_AZART), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_NAVAMPA), SPRITE_COLOR_RBG);
 	if((!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) &&
 		   (MainRoutineStateWork.entrance ==
 				   ENTRANCE_AFTER_BEATING_GLADIATORS ||

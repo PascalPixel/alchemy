@@ -3,11 +3,11 @@
    0's ragged edge and the targets' sprites. Part of battle_effect.c. */
 
 /* Calls the empty btEffectNoOperation count times: a busy delay. */
-void btEffectCallNoOperation(Sint32 cnt)
+void btEffectCallNoOperation(Sint32 count)
 {
 	Sint32 i;
 
-	for(i = 0; i != cnt; i++)
+	for(i = 0; i != count; i++)
 		btEffectNoOperation();
 }
 
@@ -15,9 +15,9 @@ void btEffectCallNoOperation(Sint32 cnt)
    state and canvas, runs it and frees them again. */
 void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 {
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
 	if(args->kind == SUMMON_EFFECT_NONE) {
 		btEffectRunMeteor(args);
@@ -74,9 +74,9 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 	Sint32				 kind;
 	BATTLE_EFFECT_STATE *state;
 
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
-	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
+	syHeapSlotAllocate(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	state->args = args;
@@ -133,30 +133,30 @@ void btEffectBuildWindowEdgeTable(void)
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args)
 {
 	Sint16 list[UNIT_MAX];
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 i;
 
-	cnt = 0;
-	if(args->tgts[0] >= FIRST_ENEMY_UNIT) {
+	count = 0;
+	if(args->targets[0] >= FIRST_ENEMY_UNIT) {
 		for(i = 0; i != ENEMY_BATTLE_SIZE; i++) {
 			Sint32 id = i + FIRST_ENEMY_UNIT;
 
 			if(gmUnitGetStub(id)->hp > 0)
-				list[cnt++] = id;
+				list[count++] = id;
 		}
 	} else {
 		for(i = 0; i != PARTY_UNIT_COUNT; i++) {
 			if(gmUnitGetStub(i)->hp > 0)
-				list[cnt++] = i;
+				list[count++] = i;
 		}
 	}
-	list[cnt] = BATTLE_UNIT_LIST_END;
+	list[count] = BATTLE_UNIT_LIST_END;
 	btObjectSpawnObjectsForListStub(list, 0);
 }
 
 /* Shows the battle background, darkened as a canvas leaves it, behind a cleared
    canvas. */
-void btEffectSetupBlendedDisp(void)
+void btEffectSetupBlendedDisplay(void)
 {
 	void **slots = &HeapSlots[HEAP_SLOT_BATTLE];
 	Uint8 *canvas =
@@ -180,45 +180,45 @@ void btEffectSetupBlendedDisp(void)
 
 /* Tints one unit's sprite: every part but its shadow takes `palette`
    (SPRITE_COLOR_NORMAL gives the unit its own back), the sprite starts
-   `anm`, and timer `tmrSlot` of the effect counts `tmrTicks` down to
+   `animation`, and timer `timerSlot` of the effect counts `timerTicks` down to
    the tint's end (btEffectCountDownBattlerTints); TINT_KEEP leaves any of the
    three as it is. */
-void btEffectTintBattler(
-	Sint32 unitId, Sint32 palette, Sint32 anm, Sint32 tmrSlot, Sint32 tmrTicks)
+void btEffectTintBattler(Sint32 unitId, Sint32 palette, Sint32 animation,
+	Sint32 timerSlot, Sint32 timerTicks)
 {
 	BATTLE_OBJECT		*slot;
 	SPR					*group;
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 groupIdx;
+	Sint32				 groupIndex;
 
 	slot = btObjectGetStub(unitId);
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	for(groupIdx = 0;
-		(group = btActorGetSprStub(slot->actor, groupIdx)) != NULL;
-		groupIdx++) {
-		if(tmrSlot != TINT_KEEP) {
-			state->actorTmrs[tmrSlot] = tmrTicks;
+	for(groupIndex = 0;
+		(group = btActorGetSpriteStub(slot->actor, groupIndex)) != NULL;
+		groupIndex++) {
+		if(timerSlot != TINT_KEEP) {
+			state->actorTimers[timerSlot] = timerTicks;
 		}
 		if(slot->fading == 0) {
 			if(palette != TINT_KEEP) {
-				Sint32 partIdx;
+				Sint32 partIndex;
 
-				for(partIdx = 0; partIdx != group->cnt; partIdx++) {
-					SPR_ANIMATION *part = group->entries[partIdx];
+				for(partIndex = 0; partIndex != group->count; partIndex++) {
+					SPR_ANIMATION *part = group->entries[partIndex];
 
 					if(part != NULL && part != slot->shadowEntry &&
-						part != slot->anmEntry) {
+						part != slot->animationEntry) {
 						if(palette == SPRITE_COLOR_NORMAL)
-							part->colMode = btObjectGetPaletteStub(unitId);
+							part->colorMode = btObjectGetPaletteStub(unitId);
 						else
-							part->colMode = palette;
+							part->colorMode = palette;
 						part->picture = SPRITE_PICTURE_NONE;
 					}
 				}
 			}
-			if(anm != TINT_KEEP)
-				fdSprStartAnimationStub(group, anm);
+			if(animation != TINT_KEEP)
+				fdSpriteStartAnimationStub(group, animation);
 		}
 	}
 }

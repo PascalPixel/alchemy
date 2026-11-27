@@ -37,7 +37,7 @@ Sint32 syHeapGetRemainingEWRAM(void)
 
 /* Returns heap slot `slot`'s block, first allocating `size` bytes for it
    (rounded up to words), from IWRAM when they fit and EWRAM otherwise. */
-void *syHeapSlotAlloc(Sint32 slot, Sint32 size)
+void *syHeapSlotAllocate(Sint32 slot, Sint32 size)
 {
 	HEAP_STATE *state;
 	Sint32		alignedSize;
@@ -70,9 +70,9 @@ void *syHeapSlotAlloc(Sint32 slot, Sint32 size)
 	return (void *)cachedAddress;
 }
 
-/* As syHeapSlotAlloc, but tries EWRAM first, for blocks that need room more
+/* As syHeapSlotAllocate, but tries EWRAM first, for blocks that need room more
    than speed: the battle, shop and save state, among others. */
-void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
+void *syHeapSlotAllocateEWRAM(Sint32 slot, Sint32 size)
 {
 	HEAP_STATE *state;
 	Uint32		alignedSize;
@@ -106,7 +106,7 @@ void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
 
 /* Allocates `size` bytes (rounded up to words) with no heap slot, from IWRAM
    when they fit and EWRAM otherwise, and advances that pool's next address. */
-void *syHeapAlloc(Sint32 size)
+void *syHeapAllocate(Sint32 size)
 {
 	HEAP_STATE *state = (HEAP_STATE *)HeapSlots;
 	Uint32		nextAddress;
@@ -130,9 +130,9 @@ void *syHeapAlloc(Sint32 size)
 	return (void *)allocationAddress;
 }
 
-/* As syHeapAlloc, but tries EWRAM first. Called mostly by the battle code and
-   the credits for buffers too large to want IWRAM. */
-void *syHeapAllocEWRAM(Sint32 size)
+/* As syHeapAllocate, but tries EWRAM first. Called mostly by the battle code
+   and the credits for buffers too large to want IWRAM. */
+void *syHeapAllocateEWRAM(Sint32 size)
 {
 	HEAP_STATE *state = (HEAP_STATE *)HeapSlots;
 	Uint32		alternateNextAddress;

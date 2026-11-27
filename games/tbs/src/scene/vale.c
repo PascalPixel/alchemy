@@ -147,11 +147,12 @@ extern Sint32 ValeJennaWalksToTheHouse[];
 static void scValeJennaSaysKradenIsWaiting(void);
 static void scValeAskAboutSneakingToAleph(
 	const Sint32 *leaderActions, const Sint32 *guardActions);
-static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnmId,
-	Sint32 departureAnmId, Sint32 resumeMotion);
-static void scValeClimbDownRoofLadder(Sint32 actorId, Sint32 approachAnmId,
-	Sint32 departureAnmId, Sint32 resumeMotion);
-static void scValePlaceOrHideBoards(Sint32 first, Uint32 cnt, Sint32 mode);
+static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnimationId,
+	Sint32 departureAnimationId, Sint32 resumeMotion);
+static void scValeClimbDownRoofLadder(Sint32 actorId,
+	Sint32 approachAnimationId, Sint32 departureAnimationId,
+	Sint32 resumeMotion);
+static void scValePlaceOrHideBoards(Sint32 first, Uint32 count, Sint32 mode);
 static void scValeMendingTheRoof(void);
 static void scValeRoofMended(void);
 static void scValeUpdateGaretPaletteAndEffects(void);
@@ -163,10 +164,10 @@ static void scValeCycleThirdBoardPalette(void);
 static UNREAD_RESULT scValeHaveGuardWatchTheLeader(ACTOR *actor);
 static void			 scValeTrailSparkles(ACTOR *actor);
 static void			 scValeVanishMoveHand(ACTOR *emitter);
-static void			 fdActorSetTargetPosFromMagnitudeAng(
-			 ACTOR *actor, Sint32 magnitude, Sint32 ang);
+static void			 fdActorSetTargetPosFromMagnitudeAngle(
+			 ACTOR *actor, Sint32 magnitude, Sint32 angle);
 static void scValeMovePillarBelowCliff(void);
-static void scValePlayPsynergySparkleSnd(void);
+static void scValePlayPsynergySparkleSound(void);
 static void scValeSynchronizeAlephGuardPause(void);
 static void scValeSetPillarPriorityByLeaderHeight(void);
 static void scValeFlashActorAndSpawnEffects(ACTOR *actor);
@@ -664,7 +665,7 @@ static void scValeStepOffBridge(void)
    walks inside. */
 static void scValeEnterSanctum(void)
 {
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridAnimateMetatiles(ValeSanctumDoorOpens, 45, 11);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
 	syImportScriptSetExitRequest(VALE_TO_SANCTUM);
@@ -682,7 +683,7 @@ static void scValeApproachMtAleph(void)
 	if(gmFlagGet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
 		scValeJennaSaysKradenIsWaiting();
 	} else {
-		sySndPlay(SE_MAP_EXIT);
+		sySoundPlay(SE_MAP_EXIT);
 		syImportScriptSetExitRequest(VALE_TO_SOL_ENTRANCE);
 	}
 }
@@ -692,7 +693,7 @@ static void scValeApproachMtAleph(void)
    cottage. */
 static void scValeExitToValeKradensCottageNorth(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
@@ -701,7 +702,7 @@ static void scValeExitToValeKradensCottageNorth(void)
    village around Kraden's cottage. */
 static void scValeExitToValeKradensCottageSouth(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
@@ -710,7 +711,7 @@ static void scValeExitToValeKradensCottageSouth(void)
    town gate. */
 static void scValeExitToValePlaza(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	syImportScriptSetExitRequest(VALE_TO_VALE_PLAZA);
 }
 
@@ -720,7 +721,7 @@ static void scValeExitToValePlaza(void)
    The door opens with the same pictures as Isaac's (ValeIsaacsDoorOpens). */
 static void scValeEnterGaretsHouse(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValeIsaacsDoorOpens, 54, 32);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_EAST);
@@ -731,7 +732,7 @@ static void scValeEnterGaretsHouse(void)
    and his visitors. */
 static void scValeEnterCottageRoomsA(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValeGrandparentsDoorOpens, 45, 39);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 262, 805);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
@@ -762,7 +763,7 @@ static void scValeEnterIsaacsHouse(void)
 		}
 		fdScriptEnd();
 	} else {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(ValeIsaacsDoorOpens, 50, 44);
 		fdActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
 		syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_B);
@@ -774,7 +775,7 @@ static void scValeEnterIsaacsHouse(void)
    in. */
 static void scValeEnterJennasGrandparentsHouse(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValeGrandparentsDoorOpens, 49, 69);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
@@ -788,7 +789,7 @@ static void scValeEnterJennasGrandparentsHouse(void)
    COTTAGE_ROOMS_A_FROM_VALE_WEST, after its place on that map. */
 static void scValeEnterCottageRoomsAWest(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValeWestHouseDoorOpens, 52, 76);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_WEST);
@@ -803,7 +804,7 @@ static void scValeEnterCottageRoomsAWest(void)
    (scValePrologueUnusedLeaveToCottageRoomsAWestByWestBankDoor). */
 static void scValeUnusedEnterJennasGrandparentsHouseByWestBankDoor(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValeIsaacsDoorOpens, 35, 74);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 102, 1206);
 	syImportScriptSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR);
@@ -826,9 +827,9 @@ static void scValeJennaSaysKradenIsWaiting(void)
 	jenna->x.fixed = leader->x.fixed;
 	jenna->y.fixed = leader->y.fixed;
 	jenna->z.fixed = leader->z.fixed;
-	jenna->tgtX = ACTOR_NO_TARGET;
-	jenna->tgtY = ACTOR_NO_TARGET;
-	jenna->tgtZ = ACTOR_NO_TARGET;
+	jenna->targetX = ACTOR_NO_TARGET;
+	jenna->targetY = ACTOR_NO_TARGET;
+	jenna->targetZ = ACTOR_NO_TARGET;
 	SET_VELOCITY(jenna, 0, 0, 0);
 	jenna->groundHeight = leader->y.fixed;
 	sySynch(1);
@@ -865,7 +866,7 @@ static void scValeWatchThePuppies(void)
 	MAP_GRID_SCROLL_STATE *grid;
 	Sint32				  *savedOrigin;
 	ACTOR				  *leader;
-	Sint32				   frm;
+	Sint32				   frame;
 	FIXED				   cameraPos[3];
 
 	if(gmFlagGet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
@@ -884,21 +885,21 @@ static void scValeWatchThePuppies(void)
 			cameraPos, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 		savedOrigin = grid->origin;
 		grid->origin = cameraPos;
-		for(frm = 0; frm != 40; frm++) {
+		for(frame = 0; frame != 40; frame++) {
 			cameraPos[2] += toFIXED(2);
 			fdScriptWait(1);
 			fdMapGridCenterOnFollowedPoint();
 		}
 		fdScriptWait(60);
 		mnFieldMessageShow(MsgValePuppiesPlayingOver, 1);
-		frm = 0;
+		frame = 0;
 		fdScriptWait(6);
 		do {
 			cameraPos[2] -= toFIXED(2);
 			fdScriptWait(1);
-			frm++;
+			frame++;
 			fdMapGridCenterOnFollowedPoint();
-		} while(frm != 40);
+		} while(frame != 40);
 		grid->origin = savedOrigin;
 		fdScriptWait(60);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 70, 741);
@@ -984,10 +985,10 @@ static void scValeWarnAgainstSneakingUpMtAleph(void)
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
 	fdActorJump(ACTOR_PARTY_LEADER, 5, 0);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 215, 403);
-	guard->steeringFlg |= ACTOR_FACES_MOTION;
+	guard->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetPos(ACTOR_MAN_GUARDING_MT_ALEPH, 166, 375);
 	fdActorFaceDirection(ACTOR_MAN_GUARDING_MT_ALEPH, FACING_SOUTHEAST, 20);
-	guard->steeringFlg = (guard->steeringFlg ^ ACTOR_FACES_MOTION);
+	guard->steeringFlags = (guard->steeringFlags ^ ACTOR_FACES_MOTION);
 	fdActorSetSpeedAndAcceleration(ACTOR_MAN_GUARDING_MT_ALEPH, 2.5, 2.5);
 	fdActorJump(ACTOR_MAN_GUARDING_MT_ALEPH, 4, 0);
 	fdActorWalkToAndWait(ACTOR_MAN_GUARDING_MT_ALEPH, 202, 395);
@@ -1038,7 +1039,7 @@ static void scValeCatchSneakingOnThePath(void)
 {
 	ACTOR *guard = fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH);
 	if(gmFlagGet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-		if(guard->tmr == GUARD_ON_THE_PATH) {
+		if(guard->timer == GUARD_ON_THE_PATH) {
 			scValeAskAboutSneakingToAleph(
 				ValeLeaderRunsBackFromThePath, ValeGuardComesDownThePath);
 		}
@@ -1096,7 +1097,7 @@ static void scValeCatchSneakingBesideTheSanctum(void)
 {
 	ACTOR *guard = fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH);
 	if(gmFlagGet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-		if(guard->tmr == GUARD_BEFORE_THE_SANCTUM) {
+		if(guard->timer == GUARD_BEFORE_THE_SANCTUM) {
 			scValeAskAboutSneakingToAleph(
 				ValeLeaderRunsBackBeforeTheDoor, ValeGuardStepsBeforeTheDoor);
 		}
@@ -1113,7 +1114,7 @@ static void scValeCatchSneakingAtThePathsFoot(void)
 	ACTOR *guard = fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH);
 	if(gmFlagGet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
 		Sint32 stretch;
-		stretch = guard->tmr;
+		stretch = guard->timer;
 		if(stretch == GUARD_ON_THE_PATH) {
 			scValeAskAboutSneakingToAleph(
 				ValeLeaderRunsBackBeforeTheDoor, ValeGuardComesDownThePath);
@@ -1135,13 +1136,13 @@ UNUSED static void scValeUnusedRoofMended(void)
 {
 	ACTOR *leader;
 	ACTOR *actor;
-	Uint8  leaderMotionFlg;
+	Uint8  leaderMotionFlags;
 	Sint32 i;
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	actor = fdCameraGetActor();
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdCameraMoveTo(383, 160, 877, 0);
 	fdScriptWait(1);
 	fdMapGridCenterOnFollowedPoint();
@@ -1150,8 +1151,8 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdMapGridCopyMetatilesTo(1, 102, 83, 41, 1, 1);
 	fdMapGridCopyMetatilesTo(0, 103, 82, 42, 1, 1);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	leaderMotionFlg = leader->motionFlg;
-	leader->motionFlg = 0;
+	leaderMotionFlags = leader->motionFlags;
+	leader->motionFlags = 0;
 	fdActorSetPos(ACTOR_PARTY_LEADER, 407, 690);
 	fdActorSetPos(ACTOR_DORA, 392, 896);
 	fdActorSetPos(ACTOR_GARET, 298, 736);
@@ -1164,7 +1165,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	scValePlaceOrHideBoards(ACTOR_FIRST_BOARD, 2, 1);
 	FieldStateWork->transition = 0;
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_JENNA, 0.5);
 	fdActorSetSpeed(ACTOR_GARET, 0.5);
@@ -1186,16 +1187,16 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdScriptWait(20);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
-	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_RBG);
 	fdActorSetSpeed(ACTOR_FIRST_BOARD, 0.3);
 	fdActorMoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
 	fdScriptWait(80);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorMoveToAndWait(ACTOR_FIRST_BOARD, 402, 828);
 	fdScriptWait(80);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_FIRST_BOARD, 390, 842);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
@@ -1213,16 +1214,16 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdScriptWait(10);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
-	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_RBG);
 	fdActorSetSpeed(ACTOR_FIRST_BOARD, 0.3);
 	fdActorMoveToAndWait(ACTOR_FIRST_BOARD, 390, 832);
 	fdScriptWait(80);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorMoveToAndWait(ACTOR_FIRST_BOARD, 377, 828);
 	fdScriptWait(80);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_FIRST_BOARD, 0, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
@@ -1240,16 +1241,16 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorFaceDirection(ACTOR_DORA, FACING_NORTH_NORTHWEST, 10);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
-	fdActorSetSprColById(ACTOR_SECOND_BOARD, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_RBG);
 	fdActorSetSpeed(ACTOR_SECOND_BOARD, 0.3);
 	fdActorMoveToAndWait(ACTOR_SECOND_BOARD, 390, 832);
 	fdScriptWait(80);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorMoveToAndWait(ACTOR_SECOND_BOARD, 360, 842);
 	fdScriptWait(80);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_SECOND_BOARD, 0, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
@@ -1384,10 +1385,10 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorSetSpeed(ACTOR_JENNA, 0.3);
 	fdActorSetSpeed(ACTOR_GARET, 0.3);
 	fdActorWalkTo(ACTOR_GARET, 392, 843);
-	fdActorGet(ACTOR_JENNA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_JENNA, 408, 843);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_JENNA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_JENNA, FACING_WEST, 0);
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -1484,8 +1485,8 @@ UNUSED static void scValeUnusedRoofMended(void)
 	syFieldScriptShowTwoMessagesAndWait(
 		ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10, 14, 4, 14, 0);
 	actor = fdActorGet(ACTOR_DORA);
-	actor->spr->flg = 0;
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->sprite->flags = 0;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_DORA, 3);
 	fdActorWalkToAndWait(ACTOR_DORA, 364, 815);
 	fdScriptWait(4);
@@ -1507,7 +1508,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorJump(ACTOR_GARET, 2, 5);
 	fdMapGridSetShake(0, 4, 1);
 	fdMapGridCopyMetatilesTo(1, 102, 83, 41, 1, 1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 10);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 3);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1539,7 +1540,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorRunRepeatedMotion(ACTOR_DORA, 2);
 	fdScriptWait(30);
 	actor = fdActorGet(ACTOR_DORA);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	fdScriptShowMessageThenWait(ACTOR_DORA, 0, 80);
 	fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
 	fdActorFaceDirection(ACTOR_DORA, FACING_EAST, 60);
@@ -1557,12 +1558,12 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_GARET, 6, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdActorSetSpeed(ACTOR_GARET, 4);
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_GARET, 403, 827);
 	fdActorSetAttachedEffect(
 		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1574,7 +1575,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
 	fdActorJump(ACTOR_GARET, 2, 5);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdMapGridCopyMetatilesTo(2, 102, 84, 41, 2, 1);
 	fdMapGridSetShake(0, 4, 1);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
@@ -1638,7 +1639,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdScriptShowMessageThenWait(ACTOR_DORA, 0, 60);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdActorSetSpeed(ACTOR_GARET, 1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorJump(ACTOR_GARET, 4, 0);
 	fdActorWalkToAndWait(ACTOR_GARET, 398, 828);
 	fdScriptWait(60);
@@ -1650,9 +1651,9 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdScriptWait(60);
 
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_JENNA);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_JENNA, 1);
@@ -1679,7 +1680,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 		ANIM_LEADER_CLIMB_DOWN_FROM_TOP, ANIM_LEADER_CLIMB, 0);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	fdActorGet(ACTOR_DORA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
 	scValeClimbDownRoofLadder(
 		ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP, DORA_ANIMATION_CLIMB, 0);
 	fdActorWalkToAndWait(ACTOR_DORA, 373, 887);
@@ -1693,7 +1694,7 @@ UNUSED static void scValeUnusedRoofMended(void)
 	fdScriptWait(100);
 	gmFlagSet(FLAG_VALE_ROOF_JUST_MENDED);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
-	leader->motionFlg = leaderMotionFlg;
+	leader->motionFlags = leaderMotionFlags;
 	fdScriptEnd();
 }
 
@@ -1714,8 +1715,8 @@ Sint32 scInit(void)
 	Sint32 set;
 
 	if(MainRoutineStateWork.entrance == VALE_FROM_TITLE) {
-		mnWindowColApply(
-			MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+		mnWindowColorApply(MainRoutineStateWork.windowHue,
+			MainRoutineStateWork.windowBrightness);
 		scValeMendingTheRoof();
 	} else {
 		if(!gmFlagGet(FLAG_VALE_NUT_CAUGHT)) {
@@ -1730,7 +1731,7 @@ Sint32 scInit(void)
 		fdMapGridCopyMetatilesTo(2, 102, 84, 41, 2, 1);
 		fdMapGridCopyMetatilesTo(1, 102, 83, 41, 1, 1);
 		actor = fdActorGet((gmFlagGet(FLAG_KALAY_REACHED) != 0) + ACTOR_PILLAR);
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		if(gmFlagGet(FLAG_VALE_PILLAR_IN_WEST_COLUMN)) {
 			actor->x.fixed = toFIXED(PILLAR_WEST_X);
 		} else if(gmFlagGet(FLAG_VALE_PILLAR_IN_EAST_COLUMN)) {
@@ -1742,7 +1743,7 @@ Sint32 scInit(void)
 		actor->y.fixed = toFIXED(192);
 		scValeMovePillarBelowCliff();
 		actor->layer = 3;
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		sySetTickEvent(scValeSetPillarPriorityByLeaderHeight, EVENT_PASS_TICK);
 #if VALE_DORA_FIXED_PRIORITY_BEFORE_KALAY
 		if(gmFlagGet(FLAG_KALAY_REACHED)) {
@@ -1762,7 +1763,7 @@ Sint32 scInit(void)
 #endif
 			if(fdScriptGetFlag(FLAG_VALE_PARTY_LEFT)) {
 				actor = fdActorGet(ACTOR_DORA);
-				fdActorSetSprFlags(fdActorGet(ACTOR_DORA), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_DORA), 0);
 				actor->scaleX = toFIXED(1) / 100;
 				actor->scaleY = toFIXED(1) / 100;
 			}
@@ -1813,12 +1814,12 @@ Sint32 scInit(void)
 				}
 			}
 			{
-				Sint32 pri;
+				Sint32 priority;
 
 				/* DEAD: a byte shifted down 8 places is 0, so Dora's priority
 				   is 2; the ROM keeps the byte's mask and shift. */
-				pri = ((Uint32)(Uint8)set >> 8) + 2;
-				fdActorSetSprPriority(ACTOR_DORA, pri);
+				priority = ((Uint32)(Uint8)set >> 8) + 2;
+				fdActorSetSpritePriority(ACTOR_DORA, priority);
 			}
 #endif
 		}
@@ -1852,7 +1853,7 @@ static void scValeGaretMeetsHisSister(void)
 	Sint32 msg;
 
 	fdScriptStart();
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
 	fdActorFaceActor(ACTOR_GARETS_SISTER_AFTER_KALAY, ACTOR_PARTY_LEADER, 20);
 	msg = MsgValeAh;
 	fdScriptSetMessageId(msg);
@@ -2052,9 +2053,9 @@ UNUSED static void scValeUnusedWaterBurstsByTheRiver(void)
 	const Sint32 *actions;
 
 	fdScriptStart();
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER + 1), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER + 2), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_WATER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_WATER + 1), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_WATER + 2), 0);
 	fdActorSetAnimation(ACTOR_FIRST_WATER, 0);
 	fdActorSetAnimation(ACTOR_FIRST_WATER + 1, 0);
 	fdActorSetAnimation(ACTOR_FIRST_WATER + 2, 0);
@@ -2084,34 +2085,34 @@ UNUSED static void scValeUnusedWaterBurstsByTheRiver(void)
 }
 
 /* Walks an actor to the foot of the ladder beside Isaac's house and climbs it
-   onto the roof, in `approachAnmId` on the rungs and
-   `departureAnmId` over the eaves. */
-static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnmId,
-	Sint32 departureAnmId, Sint32 resumeMotion)
+   onto the roof, in `approachAnimationId` on the rungs and
+   `departureAnimationId` over the eaves. */
+static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnimationId,
+	Sint32 departureAnimationId, Sint32 resumeMotion)
 {
 	ACTOR *actor;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	actor = fdActorGet(actorId);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	fdActorSetSpeed(actorId, 1);
 	fdActorWalkToAndWait(actorId, 392, 886);
 	/* The leader, not actorId, is turned north. The player sees no turn: Isaac
 	   stays facing south on the roof while Dora climbs, and already faces north
 	   when Jenna and Garet do. */
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
-	actor->motionFlg = 0;
-	spr->flg = 0;
-	fdActorSetAnimation(actorId, approachAnmId);
+	actor->motionFlags = 0;
+	sprite->flags = 0;
+	fdActorSetAnimation(actorId, approachAnimationId);
 	fdActorSetSpeed(actorId, 0.3);
 	fdActorMoveToAndWait(actorId, 392, 875);
 	fdScriptWait(10);
-	fdActorSetAnimation(actorId, departureAnmId);
+	fdActorSetAnimation(actorId, departureAnimationId);
 	fdActorSetSpeed(actorId, 1);
 	fdActorMoveToAndWait(actorId, 392, 859);
-	spr->flg = SPRITE_FLAG_SHADOW;
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	if(resumeMotion != 0) {
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
 	fdScriptWait(10);
 	fdActorSetAnimation(actorId, ANIM_STAND);
@@ -2119,48 +2120,49 @@ static void scValeClimbUpRoofLadder(Sint32 actorId, Sint32 approachAnmId,
 
 /* Climbs an actor down the ladder beside Isaac's house from the roof, and
    restores falling motion if requested. */
-static void scValeClimbDownRoofLadder(Sint32 actorId, Sint32 approachAnmId,
-	Sint32 departureAnmId, Sint32 resumeMotion)
+static void scValeClimbDownRoofLadder(Sint32 actorId,
+	Sint32 approachAnimationId, Sint32 departureAnimationId,
+	Sint32 resumeMotion)
 {
 	ACTOR *actor;
-	SPR	  *spr;
+	SPR	  *sprite;
 
 	actor = fdActorGet(actorId);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	fdActorSetSpeed(actorId, 1);
 	fdActorWalkToAndWait(actorId, 392, 859);
 	fdActorFaceDirection(actorId, FACING_NORTH, 10);
-	actor->motionFlg = 0;
-	spr->flg = 0;
-	fdActorSetAnimation(actorId, approachAnmId);
+	actor->motionFlags = 0;
+	sprite->flags = 0;
+	fdActorSetAnimation(actorId, approachAnimationId);
 	fdActorSetSpeed(actorId, 1);
 	fdActorMoveToAndWait(actorId, 392, 875);
 	fdScriptWait(10);
 	fdActorSetSpeed(actorId, 0.3);
-	fdActorSetAnimation(actorId, departureAnmId);
+	fdActorSetAnimation(actorId, departureAnimationId);
 	fdActorMoveToAndWait(actorId, 392, 890);
-	actor->velY = toFIXED(2);
-	spr->flg = SPRITE_FLAG_SHADOW;
+	actor->velocityY = toFIXED(2);
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	if(resumeMotion != 0) {
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	}
 	fdActorSetAnimation(actorId, ANIM_STAND);
 }
 
-/* Lays `cnt` of the roof's boards, from actor `first` on, by the hole in the
+/* Lays `count` of the roof's boards, from actor `first` on, by the hole in the
    roof, still and without shadows; with any `mode` but 0 it puts them out of
    sight instead. */
-static void scValePlaceOrHideBoards(Sint32 first, Uint32 cnt, Sint32 mode)
+static void scValePlaceOrHideBoards(Sint32 first, Uint32 count, Sint32 mode)
 {
 	Sint32 actorId = first;
 	Uint32 i;
 
 	if(mode == 0) {
-		for(i = 0; i < cnt; i++) {
+		for(i = 0; i < count; i++) {
 			ACTOR *actor = fdActorGet(actorId);
 
-			actor->motionFlg = 0;
-			fdActorSetSprFlags(actor, 0);
+			actor->motionFlags = 0;
+			fdActorSetSpriteFlags(actor, 0);
 			actor->x.fixed = toFIXED(390);
 			actor->y.fixed = toFIXED(160);
 			actor->z.fixed = toFIXED(842);
@@ -2169,7 +2171,7 @@ static void scValePlaceOrHideBoards(Sint32 first, Uint32 cnt, Sint32 mode)
 		return;
 	}
 
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		fdActorSetPos(actorId, 0, 0);
 		actorId++;
 	}
@@ -2198,7 +2200,7 @@ static void scValeMendingTheRoof(void)
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	sySynch(1);
-	(fdCameraGetActor())->motionFlg = 0;
+	(fdCameraGetActor())->motionFlags = 0;
 	sySynch(1);
 	fdMapGridCopyMetatileAttributes(49, 53, 8, 4, 20, 50);
 	/* The hole in the roof, three metatiles of its picture, which the boards
@@ -2210,28 +2212,28 @@ static void scValeMendingTheRoof(void)
 	fdMapGridCopyMetatilesTo(1, 102, 83, 41, 1, 1);
 	fdMapGridCopyMetatilesTo(0, 103, 82, 42, 1, 1);
 	repairActor = fdActorGetById(ACTOR_OPENING_FIRST_BOARD);
-	repairActor->motionFlg = 0;
+	repairActor->motionFlags = 0;
 	repairActor->x.fixed = toFIXED(388);
 	repairActor->y.fixed = toFIXED(160);
 	repairActor->z.fixed = toFIXED(840);
-	fdActorSetSprFlags(repairActor, 0);
+	fdActorSetSpriteFlags(repairActor, 0);
 	repairActor = fdActorGetById(ACTOR_OPENING_SECOND_BOARD);
-	repairActor->motionFlg = 0;
+	repairActor->motionFlags = 0;
 	repairActor->y.fixed = toFIXED(160);
 	repairActor->z.fixed = toFIXED(844);
 	repairActor->x.fixed = toFIXED(388);
-	fdActorSetSprFlags(repairActor, 0);
+	fdActorSetSpriteFlags(repairActor, 0);
 	repairActor = fdActorGetById(ACTOR_OPENING_THIRD_BOARD);
-	repairActor->motionFlg = 0;
+	repairActor->motionFlags = 0;
 	repairActor->z.fixed = toFIXED(848);
 	repairActor->y.fixed = toFIXED(160);
 	repairActor->x.fixed = toFIXED(388);
-	fdActorSetSprFlags(repairActor, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_OPENING_FIRST_BOARD), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_OPENING_SECOND_BOARD), 0);
+	fdActorSetSpriteFlags(repairActor, 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_OPENING_FIRST_BOARD), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_OPENING_SECOND_BOARD), 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
-	fdActorSystemSuspendProjectionAndShowSprs();
+	fdActorSystemSuspendProjectionAndShowSprites();
 	msg = MsgValeRepairCaption;
 	mnFieldMessageShowCentered(msg, 0, 0);
 	fdActorSystemResumeProjectionAndHideLayers();
@@ -2246,7 +2248,7 @@ static void scValeMendingTheRoof(void)
 	fdActorSetSpeed(ACTOR_JENNA, 0.7);
 	fdActorWalkTo(ACTOR_JENNA, 420, 1068);
 	gmPlayMusic();
-	FieldStateWork->transitionFrm = 60;
+	FieldStateWork->transitionFrame = 60;
 	fdScriptStartScreenTransition();
 	fdActorWaitForMoveById(ACTOR_JENNA);
 	fdActorSetSpeed(ACTOR_JENNA, 1);
@@ -2334,16 +2336,16 @@ static void scValeMendingTheRoof(void)
 	fdActorSetAnimation(ACTOR_GARET, ANIM_CAST_PSYNERGY);
 	/* "Hyaaaa!" */
 	fdScriptShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARET, 0, 20);
-	sySndPlay(SE_PSYNERGY_SPARKLE);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
 	for(i = 0; i < 60; i++) {
 		scValeFlashActorAndSpawnEffects(fdActorGet(ACTOR_GARET));
 		sySynch(1);
 	}
-	fdActorSetSprPriority(ACTOR_GARET, 1);
+	fdActorSetSpritePriority(ACTOR_GARET, 1);
 	sySetTickEvent(scValeUpdateGaretPaletteAndEffects, EVENT_PASS_TICK);
 	sySetTickEvent(scValeCycleOpeningPillarPalette, EVENT_PASS_TICK);
-	fdActorSetSprFlags(fdActorGet(ACTOR_OPENING_MOVE_HAND), 0);
-	moveHand->motionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_OPENING_MOVE_HAND), 0);
+	moveHand->motionFlags = 0;
 	moveHand->x.fixed = toFIXED(428);
 	moveHand->y.fixed = toFIXED(208);
 	moveHand->z.fixed = toFIXED(584);
@@ -2364,13 +2366,13 @@ static void scValeMendingTheRoof(void)
 	syFieldScriptShowMessageThenWait(
 		SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
 	moveHand->update = NULL;
-	fdActorSetSprPriority(ACTOR_GARET, 2);
-	fdActorGet(ACTOR_GARET)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_GARET, 2);
+	fdActorGet(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	syCloseEvent(scValeUpdateGaretPaletteAndEffects);
 	syCloseEvent(scValeCycleOpeningPillarPalette);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_GARET, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_OPENING_PILLAR, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_GARET, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_OPENING_PILLAR, SPRITE_COLOR_NORMAL);
 	fdActorFaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	scValeVanishMoveHand(moveHand);
@@ -2537,7 +2539,7 @@ static void scValeMendingTheRoof(void)
 	fdActorWalkTo(ACTOR_JENNA, 450, 750);
 	fdActorWalkTo(ACTOR_GARET, 450, 750);
 	fdScriptWait(60);
-	FieldStateWork->transitionFrm = 60;
+	FieldStateWork->transitionFrame = 60;
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(VALE_TO_ROOF_MENDED);
@@ -2581,29 +2583,29 @@ static void scValeRoofMended(void)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
 	fdActorSetScript(ACTOR_PARTY_LEADER, ValeLeaderHammers);
 	actor = fdActorGet(ACTOR_FIRST_BOARD);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->x.fixed = toFIXED(388);
 	actor->y.fixed = toFIXED(160);
 	actor->z.fixed = toFIXED(840);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	actor = fdActorGet(ACTOR_SECOND_BOARD);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->x.fixed = toFIXED(388);
 	actor->y.fixed = toFIXED(160);
 	actor->z.fixed = toFIXED(844);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	actor = fdActorGet(ACTOR_THIRD_BOARD);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->x.fixed = toFIXED(388);
 	actor->y.fixed = toFIXED(160);
 	actor->z.fixed = toFIXED(848);
-	fdActorSetSprFlags(actor, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdActorSetSpriteFlags(actor, 0);
+	fdCameraGetActor()->motionFlags = 0;
 	sySynch(1);
 	fdCameraMoveTo(383, 160, 877, 0);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	FieldStateWork->transitionFrm = 32;
+	FieldStateWork->transitionFrame = 32;
 	fdScriptStartScreenTransition();
 	fdActorSetSpeedFX(ACTOR_JENNA, toFIXED(1) / 2, FACING_SOUTH);
 	fdActorSetSpeedFX(ACTOR_GARET, toFIXED(1) / 2, FACING_SOUTH);
@@ -2625,12 +2627,12 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
 	scStartScriptPsynergy();
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-	sySetTickEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_TICK);
+	sySetTickEvent(scValePlayPsynergySparkleSound, EVENT_PASS_TICK);
 	for(i = 0; i < 40; i++) {
 		scValeFlashActorAndSpawnEffects(leader);
 		sySynch(1);
 	}
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 
 	sySetTickEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_TICK);
 	sySetTickEvent(scValeCycleFirstBoardPalette, EVENT_PASS_TICK);
@@ -2639,14 +2641,14 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorMoveToAndWait(ACTOR_FIRST_BOARD, 400, 826);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	syCloseEvent(scValePlayPsynergySparkleSnd);
+	syCloseEvent(scValePlayPsynergySparkleSound);
 	syCloseEvent(scValeUpdateLeaderPaletteAndEffects);
 	syCloseEvent(scValeCycleFirstBoardPalette);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_FIRST_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_FIRST_BOARD, 0, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
@@ -2663,12 +2665,12 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-	sySetTickEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_TICK);
+	sySetTickEvent(scValePlayPsynergySparkleSound, EVENT_PASS_TICK);
 	for(i = 0; i < 40; i++) {
 		scValeFlashActorAndSpawnEffects(leader);
 		sySynch(1);
 	}
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 	sySetTickEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_TICK);
 	sySetTickEvent(scValeCycleSecondBoardPalette, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_SECOND_BOARD, 0.2);
@@ -2676,14 +2678,14 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorMoveToAndWait(ACTOR_SECOND_BOARD, 377, 828);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	syCloseEvent(scValePlayPsynergySparkleSnd);
+	syCloseEvent(scValePlayPsynergySparkleSound);
 	syCloseEvent(scValeUpdateLeaderPaletteAndEffects);
 	syCloseEvent(scValeCycleSecondBoardPalette);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_SECOND_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_SECOND_BOARD, 0, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
@@ -2701,12 +2703,12 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-	sySetTickEvent(scValePlayPsynergySparkleSnd, EVENT_PASS_TICK);
+	sySetTickEvent(scValePlayPsynergySparkleSound, EVENT_PASS_TICK);
 	for(i = 0; i < 40; i++) {
 		scValeFlashActorAndSpawnEffects(leader);
 		sySynch(1);
 	}
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 1);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
 	sySetTickEvent(scValeUpdateLeaderPaletteAndEffects, EVENT_PASS_TICK);
 	sySetTickEvent(scValeCycleThirdBoardPalette, EVENT_PASS_TICK);
 	fdActorSetSpeed(ACTOR_THIRD_BOARD, 0.2);
@@ -2714,14 +2716,14 @@ static void scValeRoofMended(void)
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorMoveToAndWait(ACTOR_THIRD_BOARD, 360, 837);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-	syCloseEvent(scValePlayPsynergySparkleSnd);
+	syCloseEvent(scValePlayPsynergySparkleSound);
 	syCloseEvent(scValeUpdateLeaderPaletteAndEffects);
 	syCloseEvent(scValeCycleThirdBoardPalette);
 	sySynch(1);
-	fdActorSetSprColById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprColById(ACTOR_THIRD_BOARD, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorById(ACTOR_THIRD_BOARD, SPRITE_COLOR_NORMAL);
 	fdActorSetPos(ACTOR_THIRD_BOARD, 0, 0);
 	fdScriptWait(20);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_HAMMER);
@@ -2854,10 +2856,10 @@ static void scValeRoofMended(void)
 	fdActorSetSpeed(ACTOR_JENNA, 0.3);
 	fdActorSetSpeed(ACTOR_GARET, 0.3);
 	fdActorWalkTo(ACTOR_GARET, 392, 843);
-	fdActorGet(ACTOR_JENNA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_JENNA, 408, 843);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_JENNA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_JENNA, FACING_WEST, 0);
 	fdActorWaitForMoveById(ACTOR_GARET);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -2962,10 +2964,10 @@ static void scValeRoofMended(void)
 	/* "Ahhh!" "Be careful, ma'am!" */
 	syFieldScriptShowTwoMessagesAndWait(
 		ACTOR_DORA, 14, 2, 24, 2, ACTOR_GARET, 10, 14, 4, 14, 0);
-	sySndPlay(SE_RATTLE);
+	sySoundPlay(SE_RATTLE);
 	actor = fdActorGet(ACTOR_DORA);
-	actor->spr->flg = 0;
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->sprite->flags = 0;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_DORA, 3);
 	fdActorWalkToAndWait(ACTOR_DORA, 364, 815);
 	fdScriptWait(4);
@@ -2989,10 +2991,10 @@ static void scValeRoofMended(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
 	fdActorJump(ACTOR_GARET, 2, 5);
-	sySndPlay(SE_CRACK);
+	sySoundPlay(SE_CRACK);
 	fdMapGridSetShake(0, 4, 1);
 	fdMapGridCopyMetatilesTo(1, 102, 83, 41, 1, 1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 10);
 	fdActorStartRepeatedMotion(ACTOR_GARET, 3);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -3023,7 +3025,7 @@ static void scValeRoofMended(void)
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_DORA, FACING_SOUTH, 20);
 	fdActorRunRepeatedMotion(ACTOR_DORA, 2);
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	/* "I'm sorry I scared you like that." */
 	fdScriptShowMessageThenWait(ACTOR_DORA, 0, 80);
 	fdActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
@@ -3043,12 +3045,12 @@ static void scValeRoofMended(void)
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_GARET, 6, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
 	fdActorSetSpeed(ACTOR_GARET, 4);
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_GARET, 403, VALE_GARET_REUNION_Z);
 	fdActorSetAttachedEffect(
 		ACTOR_JENNA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -3062,9 +3064,9 @@ static void scValeRoofMended(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_GARET_STARTLED);
 	fdActorJump(ACTOR_GARET, 2, 5);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdMapGridCopyMetatilesTo(2, 102, 84, 41, 2, 1);
-	sySndPlay(SE_CRACK);
+	sySoundPlay(SE_CRACK);
 	fdMapGridSetShake(0, 4, 1);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -3135,7 +3137,7 @@ static void scValeRoofMended(void)
 	fdScriptShowMessageThenWait(ACTOR_DORA, 0, 60);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdActorSetSpeed(ACTOR_GARET, 1);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorJump(ACTOR_GARET, 4, 0);
 	fdActorWalkToAndWait(ACTOR_GARET, 398, 828);
 	fdScriptWait(60);
@@ -3146,9 +3148,9 @@ static void scValeRoofMended(void)
 	fdActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
 	fdScriptWait(60);
 	actor = fdActorGet(ACTOR_GARET);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_JENNA);
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_JENNA, 1);
@@ -3175,7 +3177,7 @@ static void scValeRoofMended(void)
 		ANIM_LEADER_CLIMB_DOWN_FROM_TOP, ANIM_LEADER_CLIMB, 0);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-	fdActorGet(ACTOR_DORA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
 	scValeClimbDownRoofLadder(
 		ACTOR_DORA, DORA_ANIMATION_CLIMB_OVER_TOP, DORA_ANIMATION_CLIMB, 0);
 	fdActorWalkToAndWait(ACTOR_DORA, 373, 887);
@@ -3191,12 +3193,12 @@ static void scValeRoofMended(void)
 	gmFlagSet(FLAG_VALE_ROOF_JUST_MENDED);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
 #if VALE_ROOF_MENDED_LEADER_GROUNDED
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	leader->y.fixed = toFIXED(160);
-	leader->tgtY = ACTOR_NO_TARGET;
-	leader->velY = 0;
+	leader->targetY = ACTOR_NO_TARGET;
+	leader->velocityY = 0;
 #else
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 #endif
 	fdScriptEnd();
@@ -3263,43 +3265,44 @@ static Sint32 scValeDistanceInPixels(FIXED *first, FIXED *second)
 
    Returns 1 when he is stopped. */
 static Sint32 scValeTestFacing(
-	ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
+	ACTOR *actor, ACTOR *target, Sint32 range, Sint32 force)
 {
 	Sint32 result;
-	Uint32 ang;
+	Uint32 angle;
 	Uint32 left;
 	Uint32 right;
-	Uint32 dir;
+	Uint32 direction;
 
 	result = 0;
 	if(actor->paused == 1) {
-		if(actor->sceneCnt == 0) {
+		if(actor->sceneCount == 0) {
 			fdActorSelectAnimation(actor, ANIM_STAND);
 			return 1;
 		}
 	}
-	if(scValeDistanceInPixels(&tgt->x.fixed, &actor->x.fixed) < range ||
+	if(scValeDistanceInPixels(&target->x.fixed, &actor->x.fixed) < range ||
 		force != 0) {
-		ang = (Uint16)syAtan(
-			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
-		left = FACING_SIXTEENTH(ang - FACING_STEP);
-		right = FACING_SIXTEENTH(ang + FACING_STEP);
-		ang = FACING_SIXTEENTH(ang);
-		dir = FACING_SIXTEENTH(actor->facing);
-		if(ang == dir || right == dir || left == dir || force != 0) {
+		angle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
+		left = FACING_SIXTEENTH(angle - FACING_STEP);
+		right = FACING_SIXTEENTH(angle + FACING_STEP);
+		angle = FACING_SIXTEENTH(angle);
+		direction = FACING_SIXTEENTH(actor->facing);
+		if(angle == direction || right == direction || left == direction ||
+			force != 0) {
 			actor->paused = 1;
 			fdActorSelectAnimation(actor, ANIM_STAND);
 			result = 1;
-			actor->sceneCnt = result;
+			actor->sceneCount = result;
 		} else {
 			actor->paused = 0;
 			fdActorSelectAnimation(actor, ANIM_WALK);
-			actor->sceneCnt = 0;
+			actor->sceneCount = 0;
 		}
 	} else {
 		actor->paused = 0;
 		fdActorSelectAnimation(actor, ANIM_WALK);
-		actor->sceneCnt = 0;
+		actor->sceneCount = 0;
 	}
 	return result;
 }
@@ -3309,7 +3312,7 @@ static Sint32 scValeTestFacing(
 static UNREAD_RESULT scValeHaveGuardWatchTheLeader(ACTOR *guard)
 {
 	ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-	if(guard->tgtX == ACTOR_NO_TARGET && guard->tgtZ == ACTOR_NO_TARGET)
+	if(guard->targetX == ACTOR_NO_TARGET && guard->targetZ == ACTOR_NO_TARGET)
 		RETURN_UNREAD(0);
 	scValeTestFacing(guard, leader, 18, 0);
 	RETURN_UNREAD(0);
@@ -3329,26 +3332,26 @@ static void scValeTrailSparkles(ACTOR *src)
 	particle = syFieldActorCreate(
 		SPRITE_SPARKLE, spawnPos[0], spawnPos[1], spawnPos[2]);
 	if(particle != NULL) {
-		particle->motionFlg = ACTOR_FALLS;
+		particle->motionFlags = ACTOR_FALLS;
 		particle->gravity = toFIXED(1) / 10;
 		particle->wait = 12;
-		fdActorSetSprFlags(particle, 0);
+		fdActorSetSpriteFlags(particle, 0);
 		fdActorSelectAnimation(particle, 0);
 		fdActorStartScript(particle, ValeSparkleScript);
-		particle->spr->image.pri = 1;
+		particle->sprite->image.priority = 1;
 	}
-	sySndPlay(SE_ITEM_BREAK);
+	sySoundPlay(SE_ITEM_BREAK);
 }
 
 /* The Move hand rises, spins and shrinks for 31 ticks, bursts into eight
    sparkles with SE_PSYNERGY_SPARKLE, and is put out of sight. */
 static void scValeVanishMoveHand(ACTOR *emitter)
 {
-	Sint32 frm;
+	Sint32 frame;
 
-	sySndPlay(SE_CAST);
+	sySoundPlay(SE_CAST);
 
-	for(frm = 0; frm < 31; frm++) {
+	for(frame = 0; frame < 31; frame++) {
 		emitter->y.fixed += toFIXED(1);
 		emitter->facing = (Uint16)(emitter->facing + DEGtoANG(45));
 		emitter->scaleX -= toFIXED(1) / 32;
@@ -3356,37 +3359,37 @@ static void scValeVanishMoveHand(ACTOR *emitter)
 		sySynch(1);
 	}
 
-	for(frm = 0; frm < 8; frm++) {
+	for(frame = 0; frame < 8; frame++) {
 		ACTOR *particle = syFieldActorCreate(SPRITE_SPARKLE, emitter->x.fixed,
 			emitter->y.fixed, emitter->z.fixed);
 
 		if(particle != NULL) {
 			FIXED verticalSpeed;
 
-			fdActorSetSprFlags(particle, 0);
+			fdActorSetSpriteFlags(particle, 0);
 			fdActorStartScript(particle, (const void *)&ValeSparkleScript[1]);
 
 			verticalSpeed = syRandomNext() + toFIXED(1);
 			particle->acceleration = toFIXED(1);
 			particle->speedLimit = verticalSpeed;
-			particle->motionFlg = ACTOR_FALLS;
+			particle->motionFlags = ACTOR_FALLS;
 			particle->gravity = toFIXED(1) / 25;
 
-			particle->velY = syRandomNext() - syRandomNext();
+			particle->velocityY = syRandomNext() - syRandomNext();
 
-			fdActorSetTargetPosFromMagnitudeAng(particle,
+			fdActorSetTargetPosFromMagnitudeAngle(particle,
 				((syRandomNext() * 3) << 3) + toFIXED(8), syRandomNext());
 		}
 	}
 
-	sySndPlay(SE_PSYNERGY_SPARKLE);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
 
 	emitter->x.fixed = 0;
 	emitter->y.fixed = 0;
 	emitter->z.fixed = 0;
-	emitter->tgtX = ACTOR_NO_TARGET;
-	emitter->tgtY = ACTOR_NO_TARGET;
-	emitter->tgtZ = ACTOR_NO_TARGET;
+	emitter->targetX = ACTOR_NO_TARGET;
+	emitter->targetY = ACTOR_NO_TARGET;
+	emitter->targetZ = ACTOR_NO_TARGET;
 	SET_VELOCITY(emitter, 0, 0, 0);
 }
 
@@ -3456,10 +3459,10 @@ static void scValeMovePillarBelowCliff(void)
 
 /* The event that plays SE_PSYNERGY_SPARKLE every 16 ticks while Isaac's
    Psynergy lifts a board at the roof's end. */
-static void scValePlayPsynergySparkleSnd(void)
+static void scValePlayPsynergySparkleSound(void)
 {
 	if((TickCount & 15) == 0)
-		sySndPlay(SE_PSYNERGY_SPARKLE);
+		sySoundPlay(SE_PSYNERGY_SPARKLE);
 }
 
 /* Searching the door of the house the storm wrecked, on the west bank in the
@@ -3479,12 +3482,12 @@ static void scValeSearchTheLockedDoor(void)
    FLAG_VALE_MT_ALEPH_GUARD_PAUSED remembers that it stopped him. */
 static void scValeSynchronizeAlephGuardPause(void)
 {
-	Sint32 pauseFlg;
+	Sint32 pauseFlag;
 
 	if(fdScriptGetFlag(FLAG_VALE_MT_ALEPH_GUARD_PAUSED) != 0) {
-		pauseFlg = gmFlagGet(FLAG_MENU_OPEN);
-		if(pauseFlg == 0) {
-			fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = pauseFlg;
+		pauseFlag = gmFlagGet(FLAG_MENU_OPEN);
+		if(pauseFlag == 0) {
+			fdActorGet(ACTOR_MAN_GUARDING_MT_ALEPH)->paused = pauseFlag;
 			gmFlagClear(FLAG_VALE_MT_ALEPH_GUARD_PAUSED);
 		}
 	} else {
@@ -3510,10 +3513,10 @@ static void scValeSetPillarPriorityByLeaderHeight(void)
 		pillar = fdActorGet(ACTOR_PILLAR);
 	if(pillar != NULL) {
 		if(leader->y.fixed > toFIXED(200))
-			pillar->priFlg =
+			pillar->priorityFlags =
 				ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 		else
-			pillar->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+			pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	}
 }
 
@@ -3524,9 +3527,9 @@ static void scValeSetPillarPriorityByLeaderHeight(void)
 static void scValeFlashActorAndSpawnEffects(ACTOR *actor)
 {
 	if((TickCount & 2) != 0)
-		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetColorMode(actor, SPRITE_COLOR_WHITE);
 	else
-		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(actor, SPRITE_COLOR_NORMAL);
 	if((TickCount & 0xf) == 0)
 		scSpawnGoldenRing(actor);
 }
@@ -3535,7 +3538,7 @@ static void scValeFlashActorAndSpawnEffects(ACTOR *actor)
 static void scValeCycleActorPaletteAndSpawnEffects(ACTOR *actor)
 {
 	if((TickCount & 1) != 0)
-		fdActorSetColMode(actor, (TickCount >> 1) % 6);
+		fdActorSetColorMode(actor, (TickCount >> 1) % 6);
 	if((TickCount & 0xf) == 0)
 		scSpawnGoldenRing(actor);
 }
@@ -3545,7 +3548,7 @@ static void scValeCycleActorPaletteAndSpawnEffects(ACTOR *actor)
 static void scValeCycleActorPalette(ACTOR *actor)
 {
 	if((TickCount & 1) != 0)
-		fdActorSetColMode(actor, (TickCount >> 1) % 6);
+		fdActorSetColorMode(actor, (TickCount >> 1) % 6);
 }
 
 #include "shared/field_effect_vertical.c"

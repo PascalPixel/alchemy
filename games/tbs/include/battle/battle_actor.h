@@ -28,35 +28,35 @@ typedef struct BATTLE_ACTOR {
 	Sint32		  scaleY;
 	Uint16		  radius; /* half the first part's box height */
 	Uint8		  layer;
-	Uint8		  priFlg;
-	Sint32		  velX;
-	Sint32		  velY;
-	Sint32		  velZ;
+	Uint8		  priorityFlags;
+	Sint32		  velocityX;
+	Sint32		  velocityY;
+	Sint32		  velocityZ;
 	Sint32		  speedLimit;
 	Sint32		  acceleration;
-	Sint32		  tgtX;
-	Sint32		  tgtY;
-	Sint32		  tgtZ;
+	Sint32		  targetX;
+	Sint32		  targetY;
+	Sint32		  targetZ;
 	Sint32		  bounce;
 	Sint32		  gravity;
 	Sint32		  sceneWord;
-	void		 *spr; /* one sprite, or a list of a two-part enemy's two */
-	Uint8		  sprStorageKind;
-	Uint8		  motionFlg;
+	void		 *sprite; /* one sprite, or a list of a two-part enemy's two */
+	Uint8		  spriteStorageKind;
+	Uint8		  motionFlags;
 	Uint8		  arrivalAxis;
 	Uint8		  conditionResult;
-	Uint8		  snapToTgt;
-	Uint8		  collisionFlg;
-	Uint8		  steeringFlg;
+	Uint8		  snapToTarget;
+	Uint8		  collisionFlags;
+	Uint8		  steeringFlags;
 	Uint8		  paused;
-	Uint8		  retainSprCache;
-	Uint8		  repeatCnt;
+	Uint8		  retainSpriteCache;
+	Uint8		  repeatCount;
 	Uint16		  wait;
 	Uint8		  refused;
 	Uint8		  frozen;
-	Uint8		  sceneCnt;
+	Uint8		  sceneCount;
 	Uint8		  sceneByte;
-	Sint16		  tmr;
+	Sint16		  timer;
 	Uint16		  userValue;
 	struct BATTLE_ACTOR *watchedActor;
 	void (*update)(struct ACTOR *actor);
@@ -71,11 +71,11 @@ typedef struct BATTLE_ACTOR {
 STATIC_ASSERT(sizeof(BATTLE_ACTOR) == 112);
 STATIC_ASSERT(offsetof(BATTLE_ACTOR, scaleX) == 24);
 STATIC_ASSERT(offsetof(BATTLE_ACTOR, x) == 8);
-STATIC_ASSERT(offsetof(BATTLE_ACTOR, velX) == 36);
-STATIC_ASSERT(offsetof(BATTLE_ACTOR, tgtX) == 56);
-STATIC_ASSERT(offsetof(BATTLE_ACTOR, motionFlg) == 85);
-STATIC_ASSERT(offsetof(BATTLE_ACTOR, spr) == 80);
-STATIC_ASSERT(offsetof(BATTLE_ACTOR, sprStorageKind) == 84);
+STATIC_ASSERT(offsetof(BATTLE_ACTOR, velocityX) == 36);
+STATIC_ASSERT(offsetof(BATTLE_ACTOR, targetX) == 56);
+STATIC_ASSERT(offsetof(BATTLE_ACTOR, motionFlags) == 85);
+STATIC_ASSERT(offsetof(BATTLE_ACTOR, sprite) == 80);
+STATIC_ASSERT(offsetof(BATTLE_ACTOR, spriteStorageKind) == 84);
 STATIC_ASSERT(offsetof(BATTLE_ACTOR, update) == 108);
 
 #endif

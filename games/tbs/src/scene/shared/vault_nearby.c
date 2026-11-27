@@ -20,14 +20,14 @@ enum {
    way it faces. */
 static UNREAD_RESULT scVaultUpdateWalkingVillager(ACTOR *actor)
 {
-	Uint8		*winState = WindowStateWork[0];
+	Uint8		*windowState = WindowStateWork[0];
 	FIELD_STATE *state = FieldStateWork;
 	Sint32		 force = 0;
 	Sint32		 range = STOP_RANGE;
 	ACTOR		*partner;
 	ACTOR		*player;
 
-	if((actor->tmr & VILLAGER_IS_BOY) != 0) {
+	if((actor->timer & VILLAGER_IS_BOY) != 0) {
 		partner = fdActorGetById(ACTOR_GIRL_ROUND_THE_WELL);
 	} else {
 		partner = fdActorGetById(ACTOR_BOY_ROUND_THE_WELL);
@@ -39,9 +39,9 @@ static UNREAD_RESULT scVaultUpdateWalkingVillager(ACTOR *actor)
 	player = fdActorGetById(ACTOR_PARTY_LEADER);
 
 	if((Sint16)state->talk != 0 ||
-		winState[WINDOW_STATE_MIND_READ_OFFSET] != 0) {
+		windowState[WINDOW_STATE_MIND_READ_OFFSET] != 0) {
 		range = TALK_STOP_RANGE;
-		if((actor->tmr & VILLAGER_TALKED_TO) != 0) {
+		if((actor->timer & VILLAGER_TALKED_TO) != 0) {
 			force = 1;
 		}
 	}

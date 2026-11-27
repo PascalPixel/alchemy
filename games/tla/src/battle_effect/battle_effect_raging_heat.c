@@ -40,10 +40,10 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	BLITTER_PAIR		 draw;
-	Uint8				*sprs;
-	SCREEN_POINT		 tgts[8];
+	Uint8				*sprites;
+	SCREEN_POINT		 targets[8];
 	MODEL_TEXTURE		 texture;
 	Uint8				*buf;
 	Sint32				 centerX;
@@ -54,9 +54,9 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 
 	buf = RamMapMetatileBuffer;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = BLEND_ALPHA(16, 10);
 	EFFECT_LOAD_BLITTER(
@@ -65,14 +65,15 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 	draw[1] = RamHeapSlots->ramCodePaired;
-	for(i = 0; i != args->tgtCnt; i++) {
-		btEffectPosProjectScaledBattler(args->tgts[i], &tgts[i]);
+	for(i = 0; i != args->targetCount; i++) {
+		btEffectPosProjectScaledBattler(args->targets[i], &targets[i]);
 	}
-	centerX = tgts[0].x + (tgts[args->tgtCnt - 1].x - tgts[0].x) / 2;
-	baseY = tgts[0].y - 48;
+	centerX =
+		targets[0].x + (targets[args->targetCount - 1].x - targets[0].x) / 2;
+	baseY = targets[0].y - 48;
 	btResourceLoadAndDecompress(RESOURCE_CORNER_RUNE_B_SHEET, buf, 1, 1);
 	btPictureMirrorIntoQuadrants(buf, state->sheet, 64, 64);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 		state->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_PINK_BURST_SHEET, buf, 1, 0);
@@ -80,26 +81,26 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 		RESOURCE_FIRE_RING_TEXTURE, FIRE_RING_PIXELS, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != RAGING_HEAT_TICKS; frm++) {
-		if(frm == 0) {
+	for(frame = 0; frame != RAGING_HEAT_TICKS; frame++) {
+		if(frame == 0) {
 			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 				state->particles[i].variant = RAGING_HEAT_BURST_TICKS;
 			}
 			EFFECT_FREE_PARTICLES(i, EMBERS, RAGING_HEAT_EMBER_COUNT);
-			sySndPlayStub(SE_SPIN);
+			sySoundPlayStub(SE_SPIN);
 		}
 		/* The colours turn to the orange ramp over the 16 ticks before the
 		   fall. */
-		if((Uint32)(frm - (RAGING_HEAT_PILLAR_TICK - 16)) < 16) {
+		if((Uint32)(frame - (RAGING_HEAT_PILLAR_TICK - 16)) < 16) {
 			btEffectStepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
 		}
-		if(frm == RAGING_HEAT_PILLAR_TICK) {
-			sySndPlayStub(SE_CLATTER);
+		if(frame == RAGING_HEAT_PILLAR_TICK) {
+			sySoundPlayStub(SE_CLATTER);
 		}
 
 		/* The pillar falls eight lines a tick and bursts where it lands. */
-		if(frm >= RAGING_HEAT_PILLAR_TICK) {
-			Sint32 y = baseY + frm * 8 - 480;
+		if(frame >= RAGING_HEAT_PILLAR_TICK) {
+			Sint32 y = baseY + frame * 8 - 480;
 
 			if((Uint32)(y - 52) <= 7) {
 				for(i = 0, burst = state->particles;
@@ -113,30 +114,32 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 					random = syRandom();
 					spread =
 						RagingHeatStyles[args->variant][RAGING_HEAT_SPREAD];
-					burst->velX = ((random % spread) - (spread >> 1)) << 12;
-					burst->velY = (192 - (syRandom() & 255)) << 10;
+					burst->velocityX = ((random % spread) - (spread >> 1))
+						<< 12;
+					burst->velocityY = (192 - (syRandom() & 255)) << 10;
 				}
 				for(i = 0;
 					i != RagingHeatStyles[args->variant][RAGING_HEAT_EMBERS];
 					i++) {
-					Sint32 ang;
+					Sint32 angle;
 					Sint32 speed;
 
 					EMBERS[i].x = toFIXED(centerX / 2);
 					EMBERS[i].y = INTtoFIXED((syRandom() & 15) + y + 24);
-					ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+					angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 					speed = (syRandom() & 255) + 127;
-					EMBERS[i].velX = (sySin(ang) * speed) >> 5;
-					EMBERS[i].velY = (syCos(ang) * speed) >> 5;
+					EMBERS[i].velocityX = (sySin(angle) * speed) >> 5;
+					EMBERS[i].velocityY = (syCos(angle) * speed) >> 5;
 					EMBERS[i].variant = (syRandom() & 15) + 16;
 				}
 				EFFECT_SHOW_DAMAGE(SE_CRASH);
-				for(i = 0; i != args->tgtCnt; i++) {
-					btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_NUDGE);
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+				for(i = 0; i != args->targetCount; i++) {
+					btMotionApplyKnockbackStub(
+						args->targets[i], KNOCKBACK_NUDGE);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 16);
 				}
-				state->shakeFrm = 16;
+				state->shakeFrame = 16;
 			}
 			if(y <= 52) {
 				draw[0](canvas, buf, centerX / 2 - 24, y, 24, 64);
@@ -174,7 +177,7 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 					if(particle->variant >= 0) {
 						Sint32 size = (particle->variant >> 3) + 1;
 
-						EFFECT_DRAW_MOTE(draw[0], canvas, sprs,
+						EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
 							FIXED_INTEGER_PART(particle->x),
 							FIXED_INTEGER_PART(particle->y), size);
 						btParticleAdvanceWithGravity2D(
@@ -193,7 +196,7 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 			void  *vertices;
 			Sint32 shade;
 
-			vertices = syHeapAllocEWRAM(4 * sizeof(PROJECTED_VERTEX));
+			vertices = syHeapAllocateEWRAM(4 * sizeof(PROJECTED_VERTEX));
 			model = btRenderAllocateModelList(1);
 			shade = 0;
 			model->kind = MODEL_SHADED_ADDITIVE;
@@ -220,26 +223,26 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 						INTtoFIXED(baseY + 8) - toFIXED(64), 0);
 				}
 				syRotX(RAGING_HEAT_TILT);
-				if(frm < RUNE_CIRCLE_RIGHTED_TICK) {
-					syRotX((RUNE_CIRCLE_RIGHTED_TICK - frm) << 9);
+				if(frame < RUNE_CIRCLE_RIGHTED_TICK) {
+					syRotX((RUNE_CIRCLE_RIGHTED_TICK - frame) << 9);
 				}
 				if(i == 0) {
-					scale = (frm - 16) * step;
+					scale = (frame - 16) * step;
 					if(scale > largest) {
 						scale = largest;
 					}
-					if(frm > 60) {
-						scale = largest - step * (frm * 2 - 120);
+					if(frame > 60) {
+						scale = largest - step * (frame * 2 - 120);
 					}
 					texture.pixels = state->sheet;
-					syRotY(-frm * 3 << 8);
+					syRotY(-frame * 3 << 8);
 				} else {
-					scale = (frm - RAGING_HEAT_PILLAR_TICK) * 4 * step;
+					scale = (frame - RAGING_HEAT_PILLAR_TICK) * 4 * step;
 					if(scale < 0) {
 						continue;
 					}
 					scale += toFIXED(1) / 4;
-					shade = 512 - frm * 8;
+					shade = 512 - frame * 8;
 					model->shade = shade;
 					texture.pixels = FIRE_RING_PIXELS;
 				}
@@ -304,11 +307,11 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 caster;
 	SCREEN_POINT		 midpoint;
 	Sint32				 vector[3];
-	SCREEN_POINT		 tgt;
+	SCREEN_POINT		 target;
 	DRAW_RECTANGLE		 draw[2];
-	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEffect;
 	void				*canvas = RamHeapSlots->battleCanvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Uint8				*sparkPictures = RamHeapSlots->battleSheet;
 	PARTICLE			*ring = state->particles;
 	DRAW_RECTANGLE		*blitters;
@@ -338,58 +341,58 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 		}
 	}
 
-	for(frm = 0; frm != JUGGLE_TICKS; frm++) {
-		if(frm == JUGGLE_RING_SOUND_TICK)
-			sySndPlayStub(SE_LAUNCH);
-		if(frm == 0)
+	for(frame = 0; frame != JUGGLE_TICKS; frame++) {
+		if(frame == JUGGLE_RING_SOUND_TICK)
+			sySoundPlayStub(SE_LAUNCH);
+		if(frame == 0)
 			lift = 0;
 
 		/* The ring rises over the caster, and follows it until it is thrown. */
 		btEffectPosProjectBattler(args->user, &caster);
-		if(frm >= JUGGLE_RING_RISE_TICK)
+		if(frame >= JUGGLE_RING_RISE_TICK)
 			lift += JuggleStyles[args->variant][JUGGLE_RING_LIFT_STEP];
 		if(lift > JuggleStyles[args->variant][JUGGLE_RING_LIFT_MAX])
 			lift = JuggleStyles[args->variant][JUGGLE_RING_LIFT_MAX];
-		if(frm < JUGGLE_RING_THROW_TICK) {
+		if(frame < JUGGLE_RING_THROW_TICK) {
 			ring->x = toFIXED(caster.x);
 			ring->y = INTtoFIXED(caster.y - lift - 32);
 		} else {
 			/* The throw: z and velocityZ hold the pull toward the midpoint, and
 			   the ring keeps three quarters of its speed each tick. */
-			if(frm == JUGGLE_RING_THROW_TICK) {
+			if(frame == JUGGLE_RING_THROW_TICK) {
 				btEffectGetTargetsMidpoint(&midpoint);
 				ring->x = toFIXED(caster.x);
 				ring->y = INTtoFIXED(caster.y - lift - 32);
-				ring->velX = 0;
-				ring->velY = 0;
+				ring->velocityX = 0;
+				ring->velocityY = 0;
 				ring->z = (toFIXED(midpoint.x) - ring->x) / 64;
-				ring->velZ = (INTtoFIXED(midpoint.y - 32) - ring->y) / 64;
+				ring->velocityZ = (INTtoFIXED(midpoint.y - 32) - ring->y) / 64;
 			}
-			ring->x += ring->velX;
-			ring->y += ring->velY;
-			ring->velX += ring->z;
-			ring->velY += ring->velZ;
-			ring->velX = ring->velX * 48 / DAMPING_SCALE;
-			ring->velY = ring->velY * 48 / DAMPING_SCALE;
+			ring->x += ring->velocityX;
+			ring->y += ring->velocityY;
+			ring->velocityX += ring->z;
+			ring->velocityY += ring->velocityZ;
+			ring->velocityX = ring->velocityX * 48 / DAMPING_SCALE;
+			ring->velocityY = ring->velocityY * 48 / DAMPING_SCALE;
 		}
 
 		/* The flames: each one's place on the ring turned into the canvas, the
 		   second eight on a ring tipped on its side. A flame stands centred on
 		   its place, three quarters of its height above it. */
 		for(i = 0; i != JuggleStyles[args->variant][JUGGLE_RING_FLAMES]; i++) {
-			Sint32	picture = (frm / 2 + i * 4) & 3;
+			Sint32	picture = (frame / 2 + i * 4) & 3;
 			Sint32 *place;
 			Sint32	x;
 			Sint32	y;
 
 			syInitMatrix();
 			syTranslate(ring->x - toFIXED(128), ring->y - toFIXED(64), 0);
-			syRotZ(frm * (TRIG_TURN / 256));
-			syRotX(frm * (TRIG_TURN / 256) + JUGGLE_TILT);
+			syRotZ(frame * (TRIG_TURN / 256));
+			syRotX(frame * (TRIG_TURN / 256) + JUGGLE_TILT);
 			if(i > 7)
 				syRotX(DEGtoANG(90));
 			syRotY(
-				(frm * 4 +
+				(frame * 4 +
 					i * JuggleStyles[args->variant][JUGGLE_RING_FLAME_SPACING])
 				<< 8);
 			place = vector;
@@ -411,31 +414,31 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The strike: sparks burst from every target. */
-		if(frm == JUGGLE_RING_HIT_TICK) {
+		if(frame == JUGGLE_RING_HIT_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-			for(i = 0; i != args->tgtCnt; i++) {
-				btEffectPosProjectSpr(args->tgts[i], &tgt);
-				btMotionApplyKnockbackStub(args->tgts[i], KNOCKBACK_HURL);
+			for(i = 0; i != args->targetCount; i++) {
+				btEffectPosProjectSprite(args->targets[i], &target);
+				btMotionApplyKnockbackStub(args->targets[i], KNOCKBACK_HURL);
 				btEffectTintBattler(
-					args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+					args->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
 				for(j = 0; j != JuggleStyles[args->variant][JUGGLE_RING_SPARKS];
 					j++) {
 					PARTICLE *spark = &((PARTICLE *)
 							RamMapMetatileBuffer)[i * JUGGLE_SPARKS_PER_TARGET +
 						j];
-					Sint32	  ang;
+					Sint32	  angle;
 					Sint32	  speed;
 
-					spark->x = toFIXED(tgt.x / 2);
-					spark->y = toFIXED(tgt.y);
-					ang = syRandom();
+					spark->x = toFIXED(target.x / 2);
+					spark->y = toFIXED(target.y);
+					angle = syRandom();
 					speed = (syRandom() & 255) + 127;
-					spark->velX = (sySin(ang) * speed) >> 6;
-					spark->velY = (syCos(ang) * speed) >> 6;
+					spark->velocityX = (sySin(angle) * speed) >> 6;
+					spark->velocityY = (syCos(angle) * speed) >> 6;
 					spark->variant = (syRandom() & 15) + 24;
 				}
 			}
-			state->shakeFrm = JuggleStyles[args->variant][JUGGLE_RING_SHAKE];
+			state->shakeFrame = JuggleStyles[args->variant][JUGGLE_RING_SHAKE];
 		}
 
 		/* The sparks fly and burn down, drawn by turns with the two

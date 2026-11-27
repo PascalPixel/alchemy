@@ -177,7 +177,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 void scJupiterLighthouseRaiseBridge(Sint32 mode)
 {
 	if(mode == 1) {
-		fdScriptPlaySnd(SE_IMPACT);
+		fdScriptPlaySound(SE_IMPACT);
 		fdMapGridCopyMetatilesLayered(76, 42, 4, 3, 76, 35);
 		syWait(6);
 	}
@@ -188,7 +188,7 @@ void scJupiterLighthouseRaiseBridge(Sint32 mode)
 /* The bridge's two panels swing back up on end with a heavy thud. */
 void scJupiterLighthouseLowerBridge(void)
 {
-	fdScriptPlaySnd(SE_HEAVY_IMPACT);
+	fdScriptPlaySound(SE_HEAVY_IMPACT);
 	fdMapGridCopyMetatilesLayered(76, 42, 4, 3, 76, 35);
 	syWait(6);
 	fdMapGridCopyMetatilesLayered(71, 42, 4, 3, 76, 35);
@@ -293,17 +293,17 @@ Sint32 scJupiterLighthouseFindBlockGap(void)
 /* How many of the first two blocks lie in gaps. */
 Sint32 scJupiterLighthouseCountBlocksInGaps(void)
 {
-	Sint32 cnt = 0;
+	Sint32 count = 0;
 
 	if(fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
-		cnt = 1;
+		count = 1;
 	if(fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
-		cnt++;
-	return cnt;
+		count++;
+	return count;
 }
 
 /* Draws the east hall's floor for the blocks that lie in gaps: each filled gap,
@@ -393,7 +393,7 @@ Bool scJupiterLighthouseIsOnWestPath(ACTOR *actor)
 void scJupiterLighthouseLightWestPath(Sint32 mode)
 {
 	ACTOR *actor;
-	Sint32 i, frm;
+	Sint32 i, frame;
 
 	if(!fdScriptGetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
 		fdMapGridCopyMetatilesLayered(80, 46, 1, 7, 72, 9);
@@ -402,11 +402,11 @@ void scJupiterLighthouseLightWestPath(Sint32 mode)
 		fdMapGridSetMetatileHeight(
 			toFIXED(128), toFIXED(192), MAPGRID_LAYER_GROUND, 4);
 		if(mode == 1) {
-			for(frm = 0; frm <= 15; frm++) {
+			for(frame = 0; frame <= 15; frame++) {
 				for(i = 0; i <= 5; i++) {
 					actor = fdActorGet(ACTOR_FIRST_GREY_BLOCK + i);
 					if(scJupiterLighthouseIsOnWestPath(actor)) {
-						actor->motionFlg = 0;
+						actor->motionFlags = 0;
 						actor->y.fixed -= toFIXED(2);
 					}
 				}
@@ -416,7 +416,7 @@ void scJupiterLighthouseLightWestPath(Sint32 mode)
 		i = 0;
 		do {
 			actor = fdActorGet(ACTOR_FIRST_GREY_BLOCK + i);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			i++;
 			actor->y.fixed = actor->groundHeight;
 		} while(i <= 5);
@@ -429,11 +429,11 @@ void scJupiterLighthouseLightWestPath(Sint32 mode)
 		scFieldActorStop(MainRoutineStateWork.leaderActorId);
 		fdActorSetPos(ACTOR_THIRD_PATH_BLOCK, 0, 0);
 		if(mode == 1) {
-			for(frm = 0; frm <= 15; frm++) {
+			for(frame = 0; frame <= 15; frame++) {
 				for(i = 0; i <= 5; i++) {
 					actor = fdActorGet(ACTOR_FIRST_GREY_BLOCK + i);
 					if(scJupiterLighthouseIsOnWestPath(actor)) {
-						actor->motionFlg = 0;
+						actor->motionFlags = 0;
 						actor->y.fixed += toFIXED(2);
 					}
 				}
@@ -443,7 +443,7 @@ void scJupiterLighthouseLightWestPath(Sint32 mode)
 		for(i = 0; i <= 5; i++) {
 			actor = fdActorGet(ACTOR_FIRST_GREY_BLOCK + i);
 			if(scJupiterLighthouseIsOnWestPath(actor)) {
-				actor->motionFlg = ACTOR_FLOATS;
+				actor->motionFlags = ACTOR_FLOATS;
 				actor->y.fixed = toFIXED(65) / 2;
 			}
 		}
@@ -483,38 +483,39 @@ void scJupiterLighthousePlacePathBlock(Sint32 unused, Sint32 id)
 
 	if(actor->groundHeight !=
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed)) {
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		sySynch(2);
 		i = 0;
-		if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+		if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 			do {
 				sySynch(1);
 				i++;
 				if(i >= BLOCK_LANDING_TICKS)
 					break;
-			} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
+			} while(
+				actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
 		}
-		fdScriptPlaySnd(SE_THUMP);
-		actor->motionFlg = 0;
+		fdScriptPlaySound(SE_THUMP);
+		actor->motionFlags = 0;
 	}
 	if((Uint32)(id - ACTOR_STRAIGHT_PATH_BLOCK) <= 1) {
 		place = scJupiterLighthouseFindBlockGap();
 		if(place == -1)
 			return;
-		fdActorSetSprFlags(fdActorGetById(id), 0);
+		fdActorSetSpriteFlags(fdActorGetById(id), 0);
 		fdScriptWait(30);
 		scJupiterLighthouseDrawBlocksInGaps();
 		/* A sound as the lit path reaches the block. */
 		if(place == STRAIGHT_BLOCK_IN_EAST_GAP)
-			fdScriptPlaySnd(SE_MAP_TRANSITION);
+			fdScriptPlaySound(SE_MAP_TRANSITION);
 		if(place == CORNER_BLOCK_IN_EAST_GAP)
-			fdScriptPlaySnd(SE_MAP_TRANSITION);
+			fdScriptPlaySound(SE_MAP_TRANSITION);
 		if(place == CORNER_BLOCK_IN_WEST_GAP &&
 			fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)))
-			fdScriptPlaySnd(SE_MAP_TRANSITION);
+			fdScriptPlaySound(SE_MAP_TRANSITION);
 		if(place == STRAIGHT_BLOCK_IN_NORTH_GAP &&
 			fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
-			fdScriptPlaySnd(SE_MAP_TRANSITION);
+			fdScriptPlaySound(SE_MAP_TRANSITION);
 		/* The block is drawn into the floor now, its actor put away. */
 		fdActorStop(MainRoutineStateWork.leaderActorId);
 		fdActorSetPos(id, 0, 0);
@@ -529,9 +530,9 @@ void scJupiterLighthousePlacePathBlock(Sint32 unused, Sint32 id)
 		fdCameraMoveTo(664, CAMERA_KEEP, 136, 1);
 		fdCameraWaitForArrival();
 		fdScriptWait(20);
-		fdScriptPlaySnd(SE_LIGHT_APPEAR);
+		fdScriptPlaySound(SE_LIGHT_APPEAR);
 		fdActorSelectAnimation(actor, 3);
-		actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 		syFieldMapGridSetMetatileBehavior(actor->x.fixed, actor->z.fixed,
 			actor->layer, METATILE_BEHAVIOR_WALL);
 		fdScriptWait(30);
@@ -545,18 +546,18 @@ void scJupiterLighthousePlacePathBlock(Sint32 unused, Sint32 id)
 	if(FIELD_METATILE(actor->x.fixed) == THIRD_GAP_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == THIRD_GAP_METATILE_Z) {
 		fdScriptSetFlag(FLAG_THIRD_BLOCK_IN_GAP);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_THIRD_PATH_BLOCK), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_THIRD_PATH_BLOCK), 0);
 		fdScriptWait(30);
-		fdScriptPlaySnd(SE_MAP_TRANSITION);
+		fdScriptPlaySound(SE_MAP_TRANSITION);
 		scJupiterLighthouseLightWestPath(1);
 		if(!fdScriptGetFlag(FLAG_WEST_STAKE_SUNK))
 			return;
 		actor = fdActorGetById(ACTOR_WEST_STAKE);
 		fdScriptClearFlag(FLAG_WEST_STAKE_SUNK);
 		fdScriptWait(20);
-		fdScriptPlaySnd(SE_LIGHT_APPEAR);
+		fdScriptPlaySound(SE_LIGHT_APPEAR);
 		fdActorSelectAnimation(actor, 3);
-		actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 		syFieldMapGridSetMetatileBehavior(actor->x.fixed, actor->z.fixed,
 			actor->layer, METATILE_BEHAVIOR_WALL);
 	} else {
@@ -577,9 +578,9 @@ void scJupiterLighthouseStartPound(void)
 
 /* Pound hammers the cone-shaped stake in the east or the west hall down into
    the floor. */
-void scJupiterLighthouseSinkPoundTarget(Sint32 mode, Sint32 frm)
+void scJupiterLighthouseSinkPoundTarget(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(JupiterLighthouseWhorlPoundTargets, mode, frm);
+	fdPoundSinkTarget(JupiterLighthouseWhorlPoundTargets, mode, frame);
 }
 
 /* Throws a block up out of its gap at metatile (x, z) to land beside it. */
@@ -589,13 +590,13 @@ void scJupiterLighthouseThrowOutBlock(
 	ACTOR *actor = fdActorGet(id);
 
 	fdActorSetPosFX(id, FIELD_METATILE_CENTER(x), FIELD_METATILE_CENTER(z));
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	actor->groundHeight = GAP_FLOOR_HEIGHT;
 	actor->y.fixed = GAP_FLOOR_HEIGHT;
-	actor->velY = toFIXED(8);
+	actor->velocityY = toFIXED(8);
 	fdActorSetSpeed(id, 1.6);
 	fdActorSetDestinationOffset(id, dx, dz);
-	fdScriptPlaySnd(SE_WHIRLWIND);
+	fdScriptPlaySound(SE_WHIRLWIND);
 }
 
 /* Once Pound has hammered the east hall's stake down, the camera turns to the
@@ -648,26 +649,26 @@ void scJupiterLighthouseRaiseBlocksFromGaps(void)
 	syWait(2);
 	actor = fdActorGet(ACTOR_STRAIGHT_PATH_BLOCK);
 	i = 0;
-	if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+	if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 		do {
 			syWait(1);
 			i++;
 			if(i >= BLOCK_LANDING_TICKS)
 				break;
-		} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
+		} while(actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
 	}
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor = fdActorGet(ACTOR_CORNER_PATH_BLOCK);
 	i = 0;
-	if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+	if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 		do {
 			syWait(1);
 			i++;
 			if(i >= BLOCK_LANDING_TICKS)
 				break;
-		} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
+		} while(actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
 	}
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	syFieldScriptWait(30);
 	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
 	fdCameraWaitForArrival();
@@ -689,11 +690,11 @@ void scJupiterLighthouseRaiseThirdBlockFromGap(void)
 	syWait(2);
 	actor = fdActorGet(ACTOR_THIRD_PATH_BLOCK);
 	for(i = 0; i < BLOCK_LANDING_TICKS; i++) {
-		if(actor->y.fixed <= actor->groundHeight && actor->velY == 0)
+		if(actor->y.fixed <= actor->groundHeight && actor->velocityY == 0)
 			break;
 		syWait(1);
 	}
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 }
 
 /* Felix walks towards a gap from a metatile beside it, in the east hall or
@@ -766,8 +767,8 @@ const CUE *scGetCues(void)
 }
 
 void scActorsSetMetatilesOpen(const Uint16 *list);
-void scLightSprsInitB(void);
-void scLightSprsAddCounted(Sint32 id, Sint32 frm);
+void scLightSpritesInitB(void);
+void scLightSpritesAddCounted(Sint32 id, Sint32 frame);
 
 /* Sets up the rooms as the party enters: the archer statue at three quarters of
    its size, the stakes and the bridge as their flags leave them, the blocks'
@@ -780,7 +781,7 @@ Sint32 scInit(void)
 	   hidden behind the rises in front. */
 	if(MainRoutineStateWork.entrance >= ENTRANCE_EAST_HALL_FIRST &&
 		MainRoutineStateWork.entrance <= ENTRANCE_EAST_HALL_FIRST + 1)
-		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorGet(ACTOR_ARCHER_STATUE)->scaleX = toFIXED(3) / 4;
 	fdActorGet(ACTOR_ARCHER_STATUE)->scaleY = toFIXED(3) / 4;
@@ -793,11 +794,11 @@ Sint32 scInit(void)
 	if(fdScriptGetFlag(FLAG_BRIDGE_BUTTON_HELD)) {
 		scJupiterLighthouseRaiseBridge(0);
 	}
-	scLightSprsInitB();
-	scLightSprsSetPriority(2);
-	scLightSprsAddCounted(ACTOR_STRAIGHT_PATH_BLOCK, 2);
-	scLightSprsAddCounted(ACTOR_CORNER_PATH_BLOCK, 1);
-	scLightSprsAddCounted(ACTOR_THIRD_PATH_BLOCK, 0);
+	scLightSpritesInitB();
+	scLightSpritesSetPriority(2);
+	scLightSpritesAddCounted(ACTOR_STRAIGHT_PATH_BLOCK, 2);
+	scLightSpritesAddCounted(ACTOR_CORNER_PATH_BLOCK, 1);
+	scLightSpritesAddCounted(ACTOR_THIRD_PATH_BLOCK, 0);
 	if(fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
@@ -806,14 +807,19 @@ Sint32 scInit(void)
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) ||
 		fdScriptGetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
 		fdActorSetPos(ACTOR_CORNER_PATH_BLOCK, 0, 0);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-	fdActorGet(ACTOR_FIRST_GREY_BLOCK)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 1)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 2)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 3)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 4)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_LAST_GREY_BLOCK)->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FIRST_GREY_BLOCK)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 1)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 2)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 3)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FIRST_GREY_BLOCK + 4)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_LAST_GREY_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
 	return 0;
 }
 
@@ -855,9 +861,9 @@ Sint32 scPrepareMap(void)
 		fdScriptClearFlag(FLAG_THIRD_BLOCK_IN_GAP);
 	else
 		fdScriptSetFlag(FLAG_THIRD_BLOCK_IN_GAP);
-	fdActorGet(ACTOR_STRAIGHT_PATH_BLOCK)->motionFlg = 0;
-	fdActorGet(ACTOR_CORNER_PATH_BLOCK)->motionFlg = 0;
-	fdActorGet(ACTOR_THIRD_PATH_BLOCK)->motionFlg = 0;
+	fdActorGet(ACTOR_STRAIGHT_PATH_BLOCK)->motionFlags = 0;
+	fdActorGet(ACTOR_CORNER_PATH_BLOCK)->motionFlags = 0;
+	fdActorGet(ACTOR_THIRD_PATH_BLOCK)->motionFlags = 0;
 	scJupiterLighthouseDrawBlocksInGaps();
 	if(!fdScriptGetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
 		actor = fdActorGet(ACTOR_THIRD_PATH_BLOCK);
@@ -909,15 +915,16 @@ extern Uint32 FieldEffectShortScript[];
 extern Uint32 FieldEffectMediumScript[];
 extern Uint32 FieldEffectLongScript[];
 
-void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flg, Sint32 layer);
+void fdActorSetMetatileOpen(Sint32 id, Uint32 mode, Sint32 flag, Sint32 layer);
 
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
-void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 void scWhirlwindUpdate(ACTOR *self);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -942,7 +949,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add_counted.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Uint16 value)
+void scLightSpritesSetPriority(Uint16 value)
 {
 	LightSpritePriority = value;
 }
@@ -957,7 +964,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -973,12 +980,13 @@ struct METATILE_TARGET_ENTRY;
 #include "../field/field_effect_advance_motion.c"
 
 #undef METATILE_PUSH_SLOT_ENTRY
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 

@@ -64,7 +64,7 @@ the stat on the screen, with equipment, Djinn and class on top.
 
 The game never adjusts the stat on the screen. Whenever anything behind it
 changes, it throws the number away and works every stat out again from the
-base (`gmUnitCalc`). That is the one idea to hold on to in this folder.
+base (`gmUnitCalculate`). That is the one idea to hold on to in this folder.
 There is no code anywhere that undoes a bonus, so a bonus can never be left
 behind or applied twice, and a new kind of bonus only has to be added in
 one place.
@@ -173,6 +173,6 @@ action, so that both screens roll the same.
   Seal names its own); the item, ability and enemy tables are parts of one
   object with each item's rare item counter.
 - The game object is written as parts cut where The Broken Seal's are:
-  `gmUnitCalc` works a unit's stats out, `gmClassDetermine` its class,
+  `gmUnitCalculate` works a unit's stats out, `gmClassDetermine` its class,
   and the rest go by subject, Djinn, levels, items and the party.
 - `gmBattleGetElementMultiplier` and its neighbours are the sums.

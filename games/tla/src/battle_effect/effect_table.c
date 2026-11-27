@@ -755,7 +755,7 @@ void (*const BattleEffectHandlers[BATTLE_EFFECT_COUNT - 1])(
 	[BATTLE_EFFECT_COUNTER_RUSH - 1] = btEffectRunCounterRush,
 	[BATTLE_EFFECT_DJINNFEST - 1] = btEffectRunDjinnfest,
 	[BATTLE_EFFECT_HEAT_KISS - 1] = btEffectRunHeatKiss,
-	[BATTLE_EFFECT_ANGLE_SPIKE - 1] = btEffectRunAngSpike,
+	[BATTLE_EFFECT_ANGLE_SPIKE - 1] = btEffectRunAngleSpike,
 	[BATTLE_EFFECT_FIRE_BREATH - 1] = btEffectRunFireBreath,
 	[BATTLE_EFFECT_WATER_BREATH - 1] = btEffectRunWaterBreath,
 	[BATTLE_EFFECT_ICE_BLESSING - 1] = btEffectRunIceBlessing,
@@ -2056,7 +2056,7 @@ const Sint32 MirroredWallScales[] = {
 /* The wall's shade, by mode. */
 const Sint32 MirroredWallShades[] = {-8, -8, -8, 0};
 
-/* The shake, in pixels, one a tick of state->shakeFrm: what it moves rises by
+/* The shake, in pixels, one a tick of state->shakeFrame: what it moves rises by
    it. */
 const Sint8 DaedalusShakeOffsets[] = {0, -1, 1, -1, 0, 2, 1, 0, -1, -1, -2, -2,
 	-3, -3, -4, -4, -4, -3, -3, -3, -2, -2, -1, -1};

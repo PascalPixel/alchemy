@@ -25,8 +25,8 @@
 
 /* Sends an actor toward the point magnitude (16.16 pixels) away from it in
    direction angle (actor_polar_target.h). */
-void fdActorSetTargetPosFromMagnitudeAng(
-	ACTOR *actor, Sint32 magnitude, Sint32 ang);
+void fdActorSetTargetPosFromMagnitudeAngle(
+	ACTOR *actor, Sint32 magnitude, Sint32 angle);
 
 /* The field effect sprites of a field Psynergy
    (FIELD_EFFECT_STATE.particles). */
@@ -66,11 +66,11 @@ typedef enum PENDING_BATTLE_KIND {
    watches, on all three axes. */
 static inline void fdEffectMoveAfterimageHalfway(ACTOR *afterimage)
 {
-	ACTOR *tgt = (ACTOR *)afterimage->watchedActor;
+	ACTOR *target = (ACTOR *)afterimage->watchedActor;
 
-	afterimage->x.fixed += (tgt->x.fixed - afterimage->x.fixed) / 2;
-	afterimage->y.fixed += (tgt->y.fixed - afterimage->y.fixed) / 2;
-	afterimage->z.fixed += (tgt->z.fixed - afterimage->z.fixed) / 2;
+	afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
+	afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
+	afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
 }
 
 /* Runs the update of each of the 24 field effect sprites. */
@@ -108,10 +108,10 @@ typedef struct WAVE_EFFECT_SPR {
 	Uint32 linkAndPos[2];	 /* image.link and its first two attributes */
 	Uint8  tileLow;			 /* image.tile's low byte */
 	Uint32 tileHigh : 2;	 /* image.tile's high bits */
-	Uint32 pri : 2;			 /* image.pri */
-	Uint32 palBits : 4;		 /* image.pal */
+	Uint32 priority : 2;	 /* image.priority */
+	Uint32 paletteBits : 4;	 /* image.palette */
 	Uint8  attr3ToDirty[28]; /* image.attr3 to the sprite's dirty flag */
-	Uint8  flg;				 /* 0 drops shadow and outline */
+	Uint8  flags;			 /* 0 drops shadow and outline */
 } WAVE_EFFECT_SPR;
 
 /* Move's hand and Carry shed the same short-lived falling particle: it falls
@@ -121,7 +121,7 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 {
 	/* The caller spawns the fragment and places it. */
 	if(fragment != NULL) {
-		fragment->motionFlg = ACTOR_FALLS;
+		fragment->motionFlags = ACTOR_FALLS;
 		fragment->gravity = toFIXED(1) / 10;
 		fdActorSelectAnimationStub(fragment, 0);
 		fragment->wait = 12;
@@ -140,15 +140,15 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 	void name(void) \
 	{ \
 		FIELD_EFFECT_STATE *effectState; \
-		ACTOR			   *obj; \
+		ACTOR			   *object; \
 		ACTOR			   *pair[2]; \
 		VECTOR3				pos; \
 		ACTOR			  **walk; \
 		Sint32				n; \
-		Sint32				dist; \
+		Sint32				distance; \
 \
 		effectState = FieldEffectStateWork; \
-		fdPsynergyFadeToCastCol(); \
+		fdPsynergyFadeToCastColor(); \
 		pos.x = effectState->x; \
 		pos.y = effectState->y + toFIXED(16); \
 		pos.z = effectState->z; \
@@ -158,32 +158,33 @@ static inline void fdEffectInitFallingFragment(ACTOR *fragment)
 		sySynch(15); \
 		walk = pair; \
 		for(n = 0; n < 2; n++) { \
-			obj = *walk++; \
-			if(obj != 0) \
-				fdActorSetTargetPosFromMagnitudeAng( \
-					obj, toFIXED(24), obj->facing); \
+			object = *walk++; \
+			if(object != 0) \
+				fdActorSetTargetPosFromMagnitudeAngle( \
+					object, toFIXED(24), object->facing); \
 		} \
 \
 		fdActorWaitForMoveStub(pair[0]); \
-		sySndPlayStub(SE_HEAVY_IMPACT); \
+		sySoundPlayStub(SE_HEAVY_IMPACT); \
 		for(n = 0; n < CLAP_SPARKLE_COUNT; n++) { \
 			pos.x = effectState->x; \
 			pos.y = effectState->y + toFIXED(16); \
 			pos.z = effectState->z; \
-			obj = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z); \
-			if(obj != 0) { \
-				fdActorStartScriptStub(obj, FieldEffectFragmentScript); \
-				obj->speedLimit = syRandom() + toFIXED(2); \
-				obj->acceleration = toFIXED(2); \
-				obj->motionFlg = 0; \
-				dist = syRandom() * 24 + toFIXED(8); \
-				fdActorSetTargetPosFromMagnitudeAng(obj, dist, syRandom()); \
+			object = fdActorSpawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z); \
+			if(object != 0) { \
+				fdActorStartScriptStub(object, FieldEffectFragmentScript); \
+				object->speedLimit = syRandom() + toFIXED(2); \
+				object->acceleration = toFIXED(2); \
+				object->motionFlags = 0; \
+				distance = syRandom() * 24 + toFIXED(8); \
+				fdActorSetTargetPosFromMagnitudeAngle( \
+					object, distance, syRandom()); \
 			} \
 		} \
 \
 		fdActorReleaseStub(pair[0]); \
 		fdActorReleaseStub(pair[1]); \
-		fdPsynergyFadeFromCastCol(); \
+		fdPsynergyFadeFromCastColor(); \
 	}
 
 #define PSYNERGY_EFFECT_HEIGHT toFIXED(16) /* 16 pixels up */

@@ -98,8 +98,8 @@ void m4aSoundInit(void)
 {
 	s32 playerIndex;
 
-	/* sySndMainRAMRom is a Thumb symbol: its address has bit 0 set */
-	BiosCpuSet((void *)((u32)sySndMainRAMRom & ~1), RamSoundMixer,
+	/* sySoundMainRAMRom is a Thumb symbol: its address has bit 0 set */
+	BiosCpuSet((void *)((u32)sySoundMainRAMRom & ~1), RamSoundMixer,
 		CPU_SET_32BIT | (SOUND_MIXER_CODE_SIZE / 4));
 	SoundInit(&SoundInfoWork);
 	MPlayExtender(CgbChans);
@@ -187,8 +187,8 @@ UNUSED void m4aSongNumContinue(u16 songId)
 		MPlayContinue(player);
 }
 
-/* Unused: stops every music player. Only sySndStopAllMusicPlayers calls it, and
-   only a bare stub, which no code in the game names, leads there. */
+/* Unused: stops every music player. Only sySoundStopAllMusicPlayers calls it,
+   and only a bare stub, which no code in the game names, leads there. */
 UNUSED void m4aMPlayAllStop(void)
 {
 	s32 playerIndex;
@@ -203,8 +203,8 @@ UNUSED void m4aMPlayContinue(struct MusicPlayerInfo *player)
 	MPlayContinue(player);
 }
 
-/* Unused: resumes every music player. Only sySndResumeAllMusicPlayers calls it,
-   and only a bare stub, which no code in the game names, leads there. */
+/* Unused: resumes every music player. Only sySoundResumeAllMusicPlayers calls
+   it, and only a bare stub, which no code in the game names, leads there. */
 UNUSED void m4aMPlayAllContinue(void)
 {
 	s32 playerIndex;
@@ -214,7 +214,7 @@ UNUSED void m4aMPlayAllContinue(void)
 }
 
 /* Fades a player's song out over 16 * `period` frames, then stops it: how
-   sySndPlay's fade controls, such as SOUND_FADE_OUT_BGM, end their sounds. */
+   sySoundPlay's fade controls, such as SOUND_FADE_OUT_BGM, end their sounds. */
 void m4aMPlayFadeOut(struct MusicPlayerInfo *player, u16 period)
 {
 	MPlayFadeOut(player, period);

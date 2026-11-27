@@ -375,7 +375,7 @@ void scAirsRockInsideIgnoreStep(void);
 extern Uint32 FieldEffectMediumScript[];
 extern Uint32 AirsRockInsideWindStoneScript[];
 
-void fdActorPlaySndInView(ACTOR *actor, Sint32 snd);
+void fdActorPlaySoundInView(ACTOR *actor, Sint32 sound);
 
 void scAirsRockInsideSetStakeMetatiles(ACTOR *actor);
 
@@ -391,11 +391,11 @@ UNUSED void scPillarPlace(Sint16 *list)
 		Sint32 id = (Uint16)entry[0];
 		ACTOR *actor = fdActorGetById(id);
 		Sint32 kind = entry[1];
-		Sint32 flg = entry[2];
+		Sint32 flag = entry[2];
 
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flg, actor->layer);
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetMetatileOpen(id, (Uint16)kind, (Uint16)flag, actor->layer);
 	}
 }
 
@@ -434,8 +434,8 @@ void scAirsRockInsideScatterMote(ACTOR *actor)
 		actor->y.fixed = leader->y.fixed + toFIXED(syRandom() & 31);
 		actor->z.fixed = leader->z.fixed + toFIXED(syRandom() & 127);
 	}
-	actor->userValue = actor->tmr;
-	if(actor->tmr == PARTICLE_SLOW_LIFETIME)
+	actor->userValue = actor->timer;
+	if(actor->timer == PARTICLE_SLOW_LIFETIME)
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_SLOW_SWELL);
 	else
 		fdActorSelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
@@ -452,11 +452,11 @@ void scAirsRockInsideDriftMote(ACTOR *actor)
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0) {
 		fdActorSetAnimationSpeed(actor, 0);
-		fdTilesetAnimSuspendAll();
+		fdTilesetAnimationSuspendAll();
 		return;
 	}
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL);
-	fdTilesetAnimResumeAll();
+	fdTilesetAnimationResumeAll();
 	if(actor->sceneByte != 0) {
 		if((TickCount & 7) == 0)
 			actor->sceneByte--;
@@ -488,7 +488,7 @@ void scAirsRockInsideStartWhirlwind(void)
    scAirsRockInsideWakeVialChestStatue). */
 void scAirsRockInsideTakeOverWhirlwind(void)
 {
-	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->sceneVariant = 1;
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->sceneVariant = 1;
 }
 
 #include "shared/map_metatile_set.c"
@@ -510,8 +510,8 @@ void scAirsRockInsideSetStakeMetatiles(ACTOR *actor)
 	Sint32 metatile = fdMapMetatileGetAttributes(MAPGRID_LAYER_OVERHEAD, x, z);
 	Sint32 height = METATILE_HEIGHT_STEPS(
 		fdMapGetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
-	Sint32 set = syGameFlagGet(actor->tmr);
-	Uint8 *flg = &actor->priFlg;
+	Sint32 set = syGameFlagGet(actor->timer);
+	Uint8 *flags = &actor->priorityFlags;
 	Sint32 px = FIELD_METATILE_ORIGIN(x);
 	Sint32 pz = FIELD_METATILE_ORIGIN(z);
 
@@ -520,15 +520,15 @@ void scAirsRockInsideSetStakeMetatiles(ACTOR *actor)
 		ground = 0;
 		if(METATILE_HEIGHT_STEPS(actor->groundHeight) != height)
 			height -= 4;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdSetActorSprPriority(actor, 3);
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		fdSetActorSpritePriority(actor, 3);
 	} else {
 		metatile |= METATILE_ATTRIBUTES(METATILE_BEHAVIOR_WALL, 0);
 		ground |= METATILE_ATTRIBUTES(
 			METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_STAKE_TOP, MAP_METATILE_JUMP);
-		*flg &= ~ACTOR_PRIORITY_UNDERFOOT;
+		*flags &= ~ACTOR_PRIORITY_UNDERFOOT;
 		height += 4;
-		fdSetActorSprPriority(actor, 1);
+		fdSetActorSpritePriority(actor, 1);
 	}
 	scMapMetatileSetAttributes(MAPGRID_LAYER_GROUND, x, z, ground);
 	scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD, x, z, metatile);
@@ -553,23 +553,24 @@ enum { STAKE_ROW_TILES = 4, STAKE_DRAWN_TILES = 3, STAKE_TOP_ROWS = 3 };
    again (scAirsRockInsideSetStakeMetatiles). */
 void scAirsRockInsidePoundStake(Sint32 mode, Sint32 step)
 {
-	Sint16 *pair = &((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgtId;
-	Sint32	even = *pair - ((*(Uint16 *)pair & 1) << 1);
-	ACTOR  *first = fdActorGetById(*pair);
-	ACTOR  *second = fdActorGetById(even + 1);
-	FIELD_SPR		 *firstSpr, *secondSpr;
+	Sint16 *pair =
+		&((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->targetId;
+	Sint32			  even = *pair - ((*(Uint16 *)pair & 1) << 1);
+	ACTOR			 *first = fdActorGetById(*pair);
+	ACTOR			 *second = fdActorGetById(even + 1);
+	FIELD_SPR		 *firstSprite, *secondSprite;
 	VRAM_CACHE_ENTRY *entry;
 
 	if(step == 0) {
-		firstSpr = first->spr;
-		secondSpr = second->spr;
-		second->motionFlg = 0;
+		firstSprite = first->sprite;
+		secondSprite = second->sprite;
+		second->motionFlags = 0;
 		second->y.fixed -= toFIXED(28);
 		sySynch(1);
-		entry = &VramCacheEntries[secondSpr->slot];
-		second->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
-		entry = &VramCacheEntries[firstSpr->slot];
-		first->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
+		entry = &VramCacheEntries[secondSprite->slot];
+		second->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
+		entry = &VramCacheEntries[firstSprite->slot];
+		first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
 		DMA_FILL32(step, second->watchedActor, entry->size);
 		syDMAXCopy(first->watchedActor, second->watchedActor,
 			DMA_COPY_WORDS(STAKE_TOP_ROWS * STAKE_ROW_BYTES / 4), REG_DMA3);
@@ -591,10 +592,11 @@ void scAirsRockInsidePoundStake(Sint32 mode, Sint32 step)
 	if(mode == POUND_STAGE_LANDED) {
 		first->scaleY = toFIXED(1);
 		second->y.fixed = second->groundHeight;
-		syGameFlagSet(first->tmr);
-		syGameFlagClear(second->tmr);
-		fdActorSelectAnimation(first, ((FIELD_SPR *)first->spr)->lastNo + 1);
-		fdActorSelectAnimation(second, ((FIELD_SPR *)second->spr)->lastNo - 1);
+		syGameFlagSet(first->timer);
+		syGameFlagClear(second->timer);
+		fdActorSelectAnimation(first, ((FIELD_SPR *)first->sprite)->lastNo + 1);
+		fdActorSelectAnimation(
+			second, ((FIELD_SPR *)second->sprite)->lastNo - 1);
 		scAirsRockInsideSetStakeMetatiles(first);
 		scAirsRockInsideSetStakeMetatiles(second);
 	}
@@ -618,7 +620,7 @@ void scAirsRockInsidePlaceStakes(Uint16 *list)
 		actor = fdActorGetById(*entry);
 		pose = ((Sint16 *)entry)[1];
 		flag = ((Sint16 *)entry)[2];
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		{
 			Sint32 choice = syGameFlagGet((Uint16)flag);
 
@@ -627,9 +629,9 @@ void scAirsRockInsidePlaceStakes(Uint16 *list)
 			base += choice;
 		}
 		fdActorSelectAnimation(actor, base);
-		actor->motionFlg = 0;
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		actor->tmr = flag;
+		actor->motionFlags = 0;
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		actor->timer = flag;
 		scAirsRockInsideSetStakeMetatiles(actor);
 	}
 }
@@ -648,10 +650,10 @@ void scAirsRockInsideRideWhirlwind(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	leader->motionFlg = ACTOR_FLOATS;
-	fdActorSetSprFlags(leader, 0);
+	leader->motionFlags = ACTOR_FLOATS;
+	fdActorSetSpriteFlags(leader, 0);
 	syGameFlagSet(FLAG_RIDING_WHIRLWIND);
-	sySndPlay(SE_KIRIN);
+	sySoundPlay(SE_KIRIN);
 	rise = 0;
 	while(ride->sceneByte != 0) {
 		leader->x.fixed = ride->x.fixed;
@@ -660,10 +662,10 @@ void scAirsRockInsideRideWhirlwind(void)
 		if(rise < toFIXED(12))
 			rise += toFIXED(1) / 10;
 		leader->facing = (Uint8)TickCount * FACING_STEP;
-		leader->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
+		leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		sySynch(1);
 	}
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	/* The hall's whirlwind at x 312 lifts him into the Vial chest room. */
 	if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_HALL &&
 		FIELD_HALF_METATILE(leader->x.fixed) == 39) {
@@ -678,7 +680,7 @@ void scAirsRockInsideRideWhirlwind(void)
 		statue = &ride->watchedActor->actor;
 		dx = 0;
 		dz = 0;
-		leader->priFlg = ACTOR_PRIORITY_OVERHEAD;
+		leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
 		leader->x.fixed = FIELD_HALF_METATILE_ORIGIN(
 			(FIELD_HALF_METATILE(leader->x.fixed) & ~1) + 1);
 		leader->y.fixed = FIELD_HALF_METATILE_ORIGIN(
@@ -732,27 +734,27 @@ void scAirsRockInsideRideWhirlwind(void)
 			}
 		}
 	found:
-		/* The statue's sceneCnt holds the layer of the ledge he lands on. */
+		/* The statue's sceneCount holds the layer of the ledge he lands on. */
 		height = fdMapGetTerrainHeight(
-			statue->sceneCnt, ride->x.fixed + dx, ride->z.fixed + dz);
+			statue->sceneCount, ride->x.fixed + dx, ride->z.fixed + dz);
 		leader->y.fixed = height;
 		leader->groundHeight = height;
 		fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 		sySynch(6);
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 		leader->speedLimit = toFIXED(2);
 		leader->acceleration = toFIXED(1) / 2;
-		leader->velY = toFIXED(4);
-		leader->motionFlg = ACTOR_FALLS;
-		leader->priFlg = ACTOR_PRIORITY_AUTOMATIC;
-		leader->layer = statue->sceneCnt;
+		leader->velocityY = toFIXED(4);
+		leader->motionFlags = ACTOR_FALLS;
+		leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		leader->layer = statue->sceneCount;
 		fdActorSetMoveTarget(leader, leader->x.fixed + dx, leader->y.fixed,
 			leader->z.fixed + dz);
 		fdActorWaitUntilLanded(leader);
 		fdActorWaitForMove(leader);
-		fdActorSetSprFlags(leader, 1);
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		fdActorSetSpriteFlags(leader, 1);
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		break;
 	default:
 		angle = ride->facing;
@@ -761,16 +763,16 @@ void scAirsRockInsideRideWhirlwind(void)
 			(angle = FACING_EIGHTH_INDEX(angle)) - 1);
 		leader->z.fixed = FIELD_HALF_METATILE_ORIGIN(
 			(FIELD_HALF_METATILE(ride->z.fixed) & ~1) - (angle & 2) + 1);
-		fdActorSetSprFlags(leader, 1);
-		leader->velY = toFIXED(6);
-		leader->priFlg =
+		fdActorSetSpriteFlags(leader, 1);
+		leader->velocityY = toFIXED(6);
+		leader->priorityFlags =
 			ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_AUTOMATIC;
-		leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdCameraMoveToFX(-1, -1, -1, 0);
 		dust = fdCameraGetActor();
 		dust->speedLimit = toFIXED(8);
 		dust->acceleration = toFIXED(1);
-		dust->motionFlg = 0;
+		dust->motionFlags = 0;
 		fdActorSetMoveTarget(dust, leader->x.fixed,
 			fdMapGetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
 			leader->z.fixed);
@@ -778,7 +780,7 @@ void scAirsRockInsideRideWhirlwind(void)
 		fdActorWaitForMove(dust);
 		break;
 	}
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
 	fdCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
 	fdCameraWaitForArrival();
@@ -826,14 +828,14 @@ void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
 		METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END) {
 		shot->sceneByte = 0;
 		shot->update = 0;
-		Call2((void (*)())fdActorPlaySndInView, (Sint32)shot, SE_SAND_EMERGE);
+		Call2((void (*)())fdActorPlaySoundInView, (Sint32)shot, SE_SAND_EMERGE);
 		if(shot->facing == FACING_NORTH)
 			fdActorStartScript(shot, AirsRockInsideWhirlwindFadesScript);
 		else
 			fdActorStartScript(shot, AirsRockInsideWhirlwindRisesScript);
 		return;
 	}
-	if(shot->sceneCnt == 0) {
+	if(shot->sceneCount == 0) {
 		near = 0;
 		leaderPos = &leader->x.fixed;
 		shotPos = &shot->x.fixed;
@@ -852,11 +854,12 @@ void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
 		if(near && !fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
 			leader->facing = shot->facing;
 			leader->watchedActor = (FIELD_OBJECT *)shot;
-			leader->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			((FIELD_SPR *)leader->spr)->pri = ((FIELD_SPR *)shot->spr)->pri;
+			leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			((FIELD_SPR *)leader->sprite)->priority =
+				((FIELD_SPR *)shot->sprite)->priority;
 			state->raisedCue = RAISED_RIDE_WHIRLWIND;
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-			shot->sceneCnt = 1;
+			shot->sceneCount = 1;
 			shot->sceneByte = 1;
 		}
 	}
@@ -883,9 +886,9 @@ void scAirsRockInsideStatueBreathesWhirlwind(ACTOR *actor)
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0)
 		return;
-	if(actor->tmr == WHIRLWIND_BREATH_TICKS) {
+	if(actor->timer == WHIRLWIND_BREATH_TICKS) {
 		if(!syGameFlagGet(FLAG_RIDING_WHIRLWIND))
-			fdActorPlaySndInView(actor, SE_FLAME_FLARE);
+			fdActorPlaySoundInView(actor, SE_FLAME_FLARE);
 		if(actor->facing == FACING_NORTH) {
 			pos.x = actor->x.fixed;
 			pos.z = actor->z.fixed;
@@ -898,21 +901,21 @@ void scAirsRockInsideStatueBreathesWhirlwind(ACTOR *actor)
 		shot = (ACTOR *)syImportActorCreate(
 			SPRITE_WHIRLWIND, pos.x, actor->y.fixed, pos.z);
 		fdActorSelectAnimation(shot, 2);
-		fdActorSetSprFlags(shot, 0);
-		((FIELD_SPR *)shot->spr)->pri = 1;
-		shot->motionFlg = 0;
-		shot->sceneCnt = 0;
+		fdActorSetSpriteFlags(shot, 0);
+		((FIELD_SPR *)shot->sprite)->priority = 1;
+		shot->motionFlags = 0;
+		shot->sceneCount = 0;
 		shot->sceneByte = 0;
 		shot->facing = actor->facing;
 		shot->update = scAirsRockInsideMoveWhirlwind;
 		shot->watchedActor = (FIELD_OBJECT *)actor;
-		actor->tmr = 0;
-		options.pri = 1;
-		options.pal = 7;
+		actor->timer = 0;
+		options.priority = 1;
+		options.palette = 7;
 		scFieldEffectSpawn(pos.x, actor->y.fixed, pos.z - toFIXED(6), 0, 0, 0,
 			EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
 	}
-	actor->tmr++;
+	actor->timer++;
 }
 
 /* Wakes a statue unless the party keeps its place: it breathes its first
@@ -921,9 +924,9 @@ void scAirsRockInsideStatueBreathesWhirlwind(ACTOR *actor)
 void scAirsRockInsideWakeStatue(ACTOR *actor, Sint16 timer, Uint8 landingLayer)
 {
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-		actor->steeringFlg = 0;
-		actor->tmr = timer;
-		actor->sceneCnt = landingLayer;
+		actor->steeringFlags = 0;
+		actor->timer = timer;
+		actor->sceneCount = landingLayer;
 		actor->update = (Sint32)scAirsRockInsideStatueBreathesWhirlwind;
 	}
 }
@@ -950,13 +953,13 @@ void scAirsRockInsideMovePooledWhirlwind(ACTOR *shot)
 		   FIELD_METATILE(shot->x.fixed),
 		   FIELD_METATILE(shot->z.fixed - shot->y.fixed))) ==
 		METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END) {
-		Call2((void (*)())fdActorPlaySndInView, (Sint32)shot, SE_SAND_EMERGE);
+		Call2((void (*)())fdActorPlaySoundInView, (Sint32)shot, SE_SAND_EMERGE);
 		shot->sceneByte = 0;
 		shot->update = 0;
 		fdActorStartScript(shot, AirsRockInsidePooledWhirlwindFadesScript);
 		return;
 	}
-	if(shot->sceneCnt == 0) {
+	if(shot->sceneCount == 0) {
 		near = 0;
 		if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_KEYS) {
 			if(scPosDistanceAbove(&leader->x.fixed, &shot->x.fixed) <=
@@ -974,11 +977,12 @@ void scAirsRockInsideMovePooledWhirlwind(ACTOR *shot)
 		if(near && !fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
 			leader->facing = shot->facing;
 			leader->watchedActor = (FIELD_OBJECT *)shot;
-			leader->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			((FIELD_SPR *)leader->spr)->pri = ((FIELD_SPR *)shot->spr)->pri;
+			leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			((FIELD_SPR *)leader->sprite)->priority =
+				((FIELD_SPR *)shot->sprite)->priority;
 			state->raisedCue = RAISED_RIDE_WHIRLWIND;
 			MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-			shot->sceneCnt = 1;
+			shot->sceneCount = 1;
 			shot->sceneByte = 1;
 		}
 	}
@@ -1008,10 +1012,10 @@ void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 	   three calls. */
 	for(i = 0; i != 3;)
 		fdActorGetById(ACTOR_HALL_FIRST_WHIRLWIND + i++);
-	if(actor->tmr == WHIRLWIND_BREATH_TICKS) {
+	if(actor->timer == WHIRLWIND_BREATH_TICKS) {
 		shot = 0;
 		if(!syGameFlagGet(FLAG_RIDING_WHIRLWIND))
-			fdActorPlaySndInView(actor, SE_FLAME_FLARE);
+			fdActorPlaySoundInView(actor, SE_FLAME_FLARE);
 		if(actor->facing == FACING_NORTH) {
 			pos.x = actor->x.fixed;
 			pos.z = actor->z.fixed;
@@ -1030,22 +1034,22 @@ void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 		shot->y.fixed = actor->y.fixed;
 		shot->z.fixed = pos.z;
 		fdActorSelectAnimation(shot, 2);
-		fdActorSetSprFlags(shot, 0);
-		((FIELD_SPR *)shot->spr)->pri = 1;
-		shot->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-		shot->motionFlg = 0;
-		shot->sceneCnt = 0;
+		fdActorSetSpriteFlags(shot, 0);
+		((FIELD_SPR *)shot->sprite)->priority = 1;
+		shot->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+		shot->motionFlags = 0;
+		shot->sceneCount = 0;
 		shot->sceneByte = 0;
 		shot->facing = actor->facing;
 		shot->watchedActor = (FIELD_OBJECT *)actor;
 		shot->update = scAirsRockInsideMovePooledWhirlwind;
-		actor->tmr = 0;
-		options.pri = 1;
-		options.pal = 7;
+		actor->timer = 0;
+		options.priority = 1;
+		options.palette = 7;
 		scFieldEffectSpawn(pos.x, actor->y.fixed, pos.z - toFIXED(6), 0, 0, 0,
 			EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
 	}
-	actor->tmr++;
+	actor->timer++;
 }
 
 /* Wakes the hall's movable statue as scAirsRockInsideWakeStatue does. */
@@ -1053,11 +1057,11 @@ void scAirsRockInsideWakeMovableStatue(
 	ACTOR *actor, Sint16 timer, Uint8 landingLayer)
 {
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
-		actor->steeringFlg = 0;
-		actor->tmr = timer;
-		actor->sceneCnt = landingLayer;
+		actor->steeringFlags = 0;
+		actor->timer = timer;
+		actor->sceneCount = landingLayer;
 		actor->update = (Sint32)scAirsRockInsideStatueBreathesPooledWhirlwind;
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 	}
 }
 
@@ -1072,7 +1076,7 @@ void scAirsRockInsideUpdateVentPuff(ACTOR *actor)
 	Sint32		*pos;
 	Uint8		 i;
 
-	if(((PALETTE_FADE *)RamHeapSlots->palFade)->duration != 0)
+	if(((PALETTE_FADE *)RamHeapSlots->paletteFade)->duration != 0)
 		return;
 	if(state->transitionActive == 0)
 		return;
@@ -1082,7 +1086,7 @@ void scAirsRockInsideUpdateVentPuff(ACTOR *actor)
 		return;
 	}
 	fdActorSetAnimationSpeed(actor, ANIM_STEP_NORMAL);
-	if(actor->tmr == 0) {
+	if(actor->timer == 0) {
 		if(actor->x.fixed == 0) {
 			fdActorRelease(actor);
 		} else {
@@ -1117,7 +1121,7 @@ void scAirsRockInsideUpdateVentPuff(ACTOR *actor)
 			}
 		}
 	}
-	actor->tmr--;
+	actor->timer--;
 	actor->z.fixed += actor->speedLimit;
 	actor->x.fixed += actor->acceleration;
 	actor->speedLimit -= actor->sceneWord;
@@ -1131,12 +1135,12 @@ void scAirsRockInsidePuffVent(Sint32 x, Sint32 y, Sint32 z)
 	ACTOR *actor = syImportActorCreate(SPRITE_DUST_CLOUD, x, y, z);
 
 	fdActorSelectAnimation(actor, 1);
-	fdActorSetSprFlags(actor, 0);
-	fdActorSetSprCol(actor, SPRITE_COLOR_GREY);
+	fdActorSetSpriteFlags(actor, 0);
+	fdActorSetSpriteColor(actor, SPRITE_COLOR_GREY);
 	fdActorSetBlendMode(actor, 1);
-	actor->tmr = 27;
-	actor->motionFlg = 0;
-	actor->steeringFlg = 0;
+	actor->timer = 27;
+	actor->motionFlags = 0;
+	actor->steeringFlags = 0;
 	actor->scaleX = toFIXED(1) / 2;
 	actor->speedLimit = toFIXED(4);
 	actor->acceleration = ((syRandom() & 0x7fff) << 1) - (toFIXED(1) / 2 - 1);
@@ -1152,20 +1156,20 @@ void scAirsRockInsidePuffVent(Sint32 x, Sint32 y, Sint32 z)
 void scAirsRockInsidePuffVents(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Uint32		 frm;
+	Uint32		 frame;
 	Sint32		 scene;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0)
 		return;
-	frm = TickCount;
-	if((frm & 6) != 0)
+	frame = TickCount;
+	if((frame & 6) != 0)
 		return;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
 		FIXED x;
 
-		if((frm & 1) &&
+		if((frame & 1) &&
 			!syGameFlagGet(
 				FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
 			x = toFIXED(376);
@@ -1173,7 +1177,7 @@ void scAirsRockInsidePuffVents(void)
 			x = toFIXED(280);
 		scAirsRockInsidePuffVent(x, 0, toFIXED(616));
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
-		if(frm & 1) {
+		if(frame & 1) {
 			if(FIELD_HALF_METATILE(
 				   fdActorGetById(MainRoutineStateWork.leaderActorId)
 					   ->z.fixed) > 41) {
@@ -1218,17 +1222,17 @@ void scAirsRockInsidePuffVents(void)
    flickering. */
 void scAirsRockInsideFollowGust(ACTOR *actor)
 {
-	ACTOR *tgt = &actor->watchedActor->actor;
+	ACTOR *target = &actor->watchedActor->actor;
 
-	actor->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
+	actor->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 	SET_ACTOR_POSITION(
-		actor, tgt->x.fixed, tgt->y.fixed + toFIXED(8), tgt->z.fixed);
+		actor, target->x.fixed, target->y.fixed + toFIXED(8), target->z.fixed);
 }
 
 void scAirsRockInsideSpiralGust(ACTOR *actor);
 
 /* The actor the gust is cast at: the field effect's target. */
-#define TARGET(effect) ((effect)->tgt)
+#define TARGET(effect) ((effect)->target)
 
 /* The half metatile where a gust drops what it carries: x in the high half and
    z in the low. */
@@ -1240,17 +1244,18 @@ void scAirsRockInsideSpiralGust(ACTOR *actor);
 	do { \
 		(actor)->watchedActor = (FIELD_OBJECT *)gust; \
 		(actor)->update = scAirsRockInsideFollowGust; \
-		(actor)->motionFlg = 0; \
-		(actor)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC; \
-		fdActorSetSprFlags(actor, 0); \
-		((FIELD_SPR *)(actor)->spr)->pri = ((FIELD_SPR *)gust->spr)->pri; \
+		(actor)->motionFlags = 0; \
+		(actor)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC; \
+		fdActorSetSpriteFlags(actor, 0); \
+		((FIELD_SPR *)(actor)->sprite)->priority = \
+			((FIELD_SPR *)gust->sprite)->priority; \
 		gust->watchedActor = (FIELD_OBJECT *)(actor); \
 		carried = (at); \
 	} while(0)
 
 /* One shake of the walls, with the grinding of a gate. */
 #define SHAKE() \
-	(sySndPlay(SE_GATE_MOVE), fdMapGridSetShake(5, 5, 1), \
+	(sySoundPlay(SE_GATE_MOVE), fdMapGridSetShake(5, 5, 1), \
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9))
 
 /* Whirlwind on a Wind Stone: a gust rises from it and blows away from the
@@ -1261,26 +1266,27 @@ void scAirsRockInsideSpiralGust(ACTOR *actor);
 void scAirsRockInsideBlowGust(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 	ACTOR			   *gust, *spark, *actor;
-	VECTOR3				vel;
+	VECTOR3				velocity;
 	EFFECT_OPTIONS		glints, dust;
-	CELL				dir, metatile;
+	CELL				direction, metatile;
 	Sint32				i, steps = 0, carried;
 	Sint32				x, z;
 	Sint32				hit = 0;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_RUSH);
+	sySoundPlay(SE_RUSH);
 	gust = syImportActorCreate(
 		SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed, leader->z.fixed);
 	fdActorSelectAnimation(gust, 2);
-	fdActorSetSprFlags(gust, 0);
+	fdActorSetSpriteFlags(gust, 0);
 	gust->scaleX = toFIXED(17) / 10;
 	gust->scaleY = toFIXED(1) / 5;
-	gust->motionFlg = 0;
-	((FIELD_SPR *)gust->spr)->pri = ((FIELD_SPR *)TARGET(effect)->spr)->pri;
+	gust->motionFlags = 0;
+	((FIELD_SPR *)gust->sprite)->priority =
+		((FIELD_SPR *)TARGET(effect)->sprite)->priority;
 	fdActorSetMoveTarget(gust, TARGET(effect)->x.fixed, TARGET(effect)->y.fixed,
 		TARGET(effect)->z.fixed - toFIXED(1));
 	gust->groundHeight = fdMapGetTerrainHeight(0, gust->x.fixed, gust->z.fixed);
@@ -1295,8 +1301,8 @@ void scAirsRockInsideBlowGust(void)
 			spark =
 				syImportActorCreate(SPRITE_PARTICLE, TARGET(effect)->x.fixed,
 					TARGET(effect)->y.fixed, TARGET(effect)->z.fixed);
-			spark->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlg = 0;
+			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+			spark->motionFlags = 0;
 			spark->groundHeight =
 				fdMapGetTerrainHeight(0, spark->x.fixed, spark->z.fixed);
 			spark->bounce = spark->x.fixed;
@@ -1305,35 +1311,35 @@ void scAirsRockInsideBlowGust(void)
 			spark->speedLimit = syRandom() & 0xffff;
 			fdActorSelectAnimation(spark, 7);
 			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSprFlags(spark, 0);
-			fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
+			fdActorSetSpriteFlags(spark, 0);
+			fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
 			spark->update = scAirsRockInsideSpiralGust;
 		}
 		if(TickCount & 1) {
 			gust->scaleX += toFIXED(1) / 100;
 			gust->scaleY += toFIXED(1) / 100;
-			fdActorSetSprCol(TARGET(effect), SPRITE_COLOR_HIDDEN);
+			fdActorSetSpriteColor(TARGET(effect), SPRITE_COLOR_HIDDEN);
 		} else {
-			fdActorSetSprCol(TARGET(effect), SPRITE_COLOR_GBR);
+			fdActorSetSpriteColor(TARGET(effect), SPRITE_COLOR_GBR);
 		}
 		syFieldScriptWait(1);
 	}
-	fdActorSetSprCol(TARGET(effect), SPRITE_COLOR_NORMAL);
-	sySndPlay(SE_WHOOSH);
+	fdActorSetSpriteColor(TARGET(effect), SPRITE_COLOR_NORMAL);
+	sySoundPlay(SE_WHOOSH);
 	metatile.x = FIELD_METATILE(TARGET(effect)->x.fixed);
 	metatile.z = FIELD_METATILE(TARGET(effect)->z.fixed);
 	if(FIELD_METATILE(leader->x.fixed) < metatile.x) {
-		dir.x = 1;
-		dir.z = 0;
+		direction.x = 1;
+		direction.z = 0;
 	} else if(FIELD_METATILE(leader->x.fixed) > metatile.x) {
-		dir.x = -1;
-		dir.z = 0;
+		direction.x = -1;
+		direction.z = 0;
 	} else if(FIELD_METATILE(leader->z.fixed) < metatile.z) {
-		dir.x = 0;
-		dir.z = 1;
+		direction.x = 0;
+		direction.z = 1;
 	} else {
-		dir.x = 0;
-		dir.z = -1;
+		direction.x = 0;
+		direction.z = -1;
 	}
 	do {
 		hit = fdMapMetatileGetAttributes(
@@ -1342,15 +1348,15 @@ void scAirsRockInsideBlowGust(void)
 		if(fdMapGetTerrainHeight(2, FIELD_METATILE_ORIGIN(metatile.x),
 			   FIELD_METATILE_ORIGIN(metatile.z)) != gust->groundHeight)
 			hit = 0;
-		metatile.x += dir.x;
-		metatile.z += dir.z;
+		metatile.x += direction.x;
+		metatile.z += direction.z;
 		steps += 2;
 	} while(hit == 0);
 	fdMapMetatileGetAttributes(MAPGRID_LAYER_OVERHEAD, metatile.x, metatile.z);
 	steps -= 2;
-	x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
-	z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
-	((FIELD_SPR *)gust->spr)->pri = 1;
+	x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * direction.x) << 3);
+	z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * direction.z) << 3);
+	((FIELD_SPR *)gust->sprite)->priority = 1;
 	/* metatile takes the gust's target in pixels: the ROM stores both words in
 	   metatile's slots before the move, though nothing reads them. */
 	metatile.x = x;
@@ -1389,14 +1395,14 @@ void scAirsRockInsideBlowGust(void)
 				PICK_UP(actor, GUST_DROP(120, 408));
 		}
 		if((TickCount & 1) == 0) {
-			glints.pri = 1;
+			glints.priority = 1;
 			glints.type = SPRITE_GLINT;
-			glints.pal = 2;
-			vel.x = syCos((TickCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
-			vel.y = gust->y.fixed + toFIXED(syRandom() & 31);
-			vel.z = sySin((TickCount & 0x1ff) * (TRIG_TURN / 16));
-			scFieldEffectSpawn(gust->x.fixed, vel.y, gust->z.fixed, vel.x, 0,
-				vel.z,
+			glints.palette = 2;
+			velocity.x = syCos((TickCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
+			velocity.y = gust->y.fixed + toFIXED(syRandom() & 31);
+			velocity.z = sySin((TickCount & 0x1ff) * (TRIG_TURN / 16));
+			scFieldEffectSpawn(gust->x.fixed, velocity.y, gust->z.fixed,
+				velocity.x, 0, velocity.z,
 				EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
 				&glints);
 		}
@@ -1407,13 +1413,14 @@ void scAirsRockInsideBlowGust(void)
 		actor->x.fixed = FIELD_HALF_METATILE_ORIGIN(GUST_DROP_X(carried));
 		/* The x half shifts out, leaving the z one. */
 		actor->z.fixed = FIELD_HALF_METATILE_ORIGIN(carried);
-		actor->velY = toFIXED(8);
+		actor->velocityY = toFIXED(8);
 		actor->update = 0;
-		actor->motionFlg = ACTOR_FALLS;
-		actor->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-		actor->priFlg &= ~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
-		fdActorSetSprFlags(actor, 1);
-		fdSetActorSprPriority(actor, 2);
+		actor->motionFlags = ACTOR_FALLS;
+		actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+		actor->priorityFlags &=
+			~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
+		fdActorSetSpriteFlags(actor, 1);
+		fdSetActorSpritePriority(actor, 2);
 		if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
 			actor->groundHeight = -toFIXED(32);
 			fdMapGridCopyMetatileAttributes(19, 16, 1, 1, 19, 18);
@@ -1424,7 +1431,7 @@ void scAirsRockInsideBlowGust(void)
 			fdActorWaitUntilLanded(actor);
 			sySynch(1);
 			fdActorWaitUntilLanded(actor);
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->groundHeight = 0;
 			actor->y.fixed = 0;
 			fdMapGridSetMetatileHeight(toFIXED(320), toFIXED(832), 0, 4);
@@ -1433,8 +1440,8 @@ void scAirsRockInsideBlowGust(void)
 			fdActorWaitUntilLanded(actor);
 			sySynch(1);
 			fdActorWaitUntilLanded(actor);
-			fdActorSetSprFlags(actor, 0);
-			actor->motionFlg = 0;
+			fdActorSetSpriteFlags(actor, 0);
+			actor->motionFlags = 0;
 			actor->groundHeight = 0;
 			actor->y.fixed = 0;
 			fdMapGridSetMetatileHeight(toFIXED(120), toFIXED(408), 0, 4);
@@ -1443,10 +1450,10 @@ void scAirsRockInsideBlowGust(void)
 		}
 	}
 	if(hit == METATILE_BEHAVIOR_WALL) {
-		sySndPlay(SE_WHOOSH);
+		sySoundPlay(SE_WHOOSH);
 	} else {
-		metatile.x = FIXEDtoINT(gust->x.fixed) + dir.x * 48;
-		metatile.z = FIXEDtoINT(gust->z.fixed) + dir.z * 48;
+		metatile.x = FIXEDtoINT(gust->x.fixed) + direction.x * 48;
+		metatile.z = FIXEDtoINT(gust->z.fixed) + direction.z * 48;
 		gust->speedLimit = toFIXED(1) / 2;
 		gust->acceleration = toFIXED(1) / 2;
 		scFieldActorSetMoveTargetFX(gust, INTtoFIXED(metatile.x), gust->y.fixed,
@@ -1457,18 +1464,18 @@ void scAirsRockInsideBlowGust(void)
 			if(hit > GUST_STOP_LAST_BARRIER)
 				goto shrink;
 			if(i == 0) {
-				sySndPlay(SE_GUST);
+				sySoundPlay(SE_GUST);
 				i = 1;
 			}
 			if((TickCount & 1) == 0) {
-				dust.pri = 1;
+				dust.priority = 1;
 				dust.startScaleX = dust.startScaleY =
 					(syRandom() & 0xffff) + toFIXED(1);
-				vel.x = syCos((TickCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
-				vel.y = toFIXED(1);
-				vel.z = sySin((TickCount & 0x1ff) * (TRIG_TURN / 16));
+				velocity.x = syCos((TickCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
+				velocity.y = toFIXED(1);
+				velocity.z = sySin((TickCount & 0x1ff) * (TRIG_TURN / 16));
 				scFieldEffectSpawn(gust->x.fixed, gust->y.fixed, gust->z.fixed,
-					vel.x, vel.y, vel.z,
+					velocity.x, velocity.y, velocity.z,
 					EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
 			}
 			if((TickCount & 3) == 0) {
@@ -1514,14 +1521,14 @@ void scAirsRockInsideBlowGust(void)
 			}
 			syFieldScriptWait(1);
 		}
-		sySndPlay(SE_STOP_EXIT_SE);
+		sySoundPlay(SE_STOP_EXIT_SE);
 	}
 shrink:
 	gust->acceleration = 0;
 	gust->speedLimit = 0;
-	gust->tgtZ = 0;
-	gust->tgtY = 0;
-	gust->tgtX = 0;
+	gust->targetZ = 0;
+	gust->targetY = 0;
+	gust->targetX = 0;
 	for(i = 0; i != 8; i++) {
 		gust->scaleX -= toFIXED(3) / 20;
 		gust->scaleY -= toFIXED(1) / 4;
@@ -1559,22 +1566,24 @@ shrink:
 			if(FIELD_HALF_METATILE(
 				   fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
 				ELIXIR_CHEST_PILLAR_ON_BRIDGE_X) {
-				vel.x = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
+				velocity.x =
+					fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
 					toFIXED(8);
-				vel.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
-				vel.z = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed +
+				velocity.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
+				velocity.z =
+					fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed +
 					toFIXED(8);
-				fdActorSetSprPriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
+				fdActorSetSpritePriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
 				for(i = 0; i != 8; i++) {
-					dust.pri = 1;
-					scFieldEffectSpawn(vel.x + toFIXED(syRandom() & 15),
-						vel.y + toFIXED(syRandom() & 31), vel.z, 0, 0,
+					dust.priority = 1;
+					scFieldEffectSpawn(velocity.x + toFIXED(syRandom() & 15),
+						velocity.y + toFIXED(syRandom() & 31), velocity.z, 0, 0,
 						-(toFIXED(1) / 2), EFFECT_USE_PRIORITY, &dust);
 				}
 				sySynch(30);
 				SHAKE();
 				fdMapGridCopyMetatilesTo(64, 64, 32, 79, 5, 7);
-				fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->priFlg |=
+				fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->priorityFlags |=
 					ACTOR_PRIORITY_AUTOMATIC;
 			} else {
 				syFieldScriptWait(30);
@@ -1590,20 +1599,21 @@ shrink:
 			if(FIELD_HALF_METATILE(
 				   fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed) ==
 				ELIXIR_CHEST_PILLAR_ON_BRIDGE_X) {
-				vel.x = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
+				velocity.x =
+					fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed -
 					toFIXED(8);
-				vel.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
-				vel.z = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed;
+				velocity.y = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
+				velocity.z = fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed;
 				for(i = 0; i != 8; i++) {
-					dust.pri = 1;
-					scFieldEffectSpawn(vel.x + toFIXED(syRandom() & 15), vel.y,
-						vel.z - toFIXED(syRandom() & 31), 0, 0,
+					dust.priority = 1;
+					scFieldEffectSpawn(velocity.x + toFIXED(syRandom() & 15),
+						velocity.y, velocity.z - toFIXED(syRandom() & 31), 0, 0,
 						-(toFIXED(1) / 2), EFFECT_USE_PRIORITY, &dust);
 				}
 				sySynch(20);
 			} else {
 				fdMapGridCopyMetatilesTo(79, 64, 32, 79, 5, 7);
-				sySndPlay(SE_GATE_MOVE);
+				sySoundPlay(SE_GATE_MOVE);
 				syFieldScriptWait(30);
 				SHAKE();
 				fdMapGridCopyMetatilesTo(64, 64, 32, 79, 5, 7);
@@ -1679,7 +1689,7 @@ void scAirsRockInsideRestoreMetatileBehindLeader(void)
 	Sint32		 value;
 	FIELD_STATE *state;
 
-	if(actor->velX != 0 || actor->velZ != 0)
+	if(actor->velocityX != 0 || actor->velocityZ != 0)
 		return;
 	last = AirsRockInsideStampedMetatile;
 	if(last == -1 || key == last)
@@ -1831,11 +1841,11 @@ void scAirsRockInsideBurstDust(Sint32 x, Sint32 z)
 	VECTOR3		   spawn;
 	Sint32		   i;
 
-	options.pri = 1;
+	options.priority = 1;
 	options.startScaleX = toFIXED(2);
 	options.startScaleY = toFIXED(2);
-	options.tgtScaleX = toFIXED(1) / 2;
-	options.tgtScaleY = toFIXED(1) / 2;
+	options.targetScaleX = toFIXED(1) / 2;
+	options.targetScaleY = toFIXED(1) / 2;
 	for(i = 0; i != 8; i++) {
 		spawn.x = x + toFIXED(syRandom() & 63) - toFIXED(32);
 		spawn.y = (syRandom() & 15) << 12;
@@ -1860,7 +1870,7 @@ void scAirsRockInsideScatterSparks(Sint32 x, Sint32 z)
 	Sint32		   i;
 
 	options.type = SPRITE_PARTICLE;
-	options.pri = 1;
+	options.priority = 1;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(3);
 	for(i = 0; i != SCATTERED_SPARKS; i++) {
@@ -1907,16 +1917,17 @@ void scAirsRockInsideSpiralSpark(ACTOR *actor)
 		syMulFX(sySin((actor->speedLimit & 0xff) * (TRIG_TURN / 32)), radius);
 	actor->y.fixed += actor->gravity;
 	actor->speedLimit++;
-	fdActorSetSprCol(actor, ((TickCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
+	fdActorSetSpriteColor(
+		actor, ((TickCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
 /* A Whirlwind target's update while the gust gathers: it flickers to the colour
-   mode in sceneCnt (a SPR_COL_MODE), at the rate sceneByte sets. */
+   mode in sceneCount (a SPR_COL_MODE), at the rate sceneByte sets. */
 void scAirsRockInsideFlickerTarget(ACTOR *actor)
 {
 	Sint32 bit = ((TickCount & 3) >> actor->sceneByte) & 1;
 
-	fdActorSetSprCol(actor, (Uint8)(bit * actor->sceneCnt));
+	fdActorSetSpriteColor(actor, (Uint8)(bit * actor->sceneCount));
 }
 
 /* Felix casts Whirlwind on the twister rock in the great hall: it glows, a ball
@@ -1926,7 +1937,7 @@ void scAirsRockInsideFlickerTarget(ACTOR *actor)
    spent. */
 void scAirsRockInsideWakeHallStatue(void)
 {
-	Uint16 *buffer = syHeapAlloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
+	Uint16 *buffer = syHeapAllocate(LIGHTNING_TILES * TILE_SIZE_4BPP);
 	Uint16 *metatile;
 	ACTOR  *spark;
 	Uint32	i;
@@ -1942,7 +1953,7 @@ void scAirsRockInsideWakeHallStatue(void)
 	syHeapRelease(buffer);
 	DMA_FILL16(
 		0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
-	buffer = syHeapAlloc(
+	buffer = syHeapAllocate(
 		LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(Uint16));
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
@@ -1962,8 +1973,9 @@ void scAirsRockInsideWakeHallStatue(void)
 		metatile += LIGHTNING_MAP_COLUMNS;
 	}
 	syHeapRelease(buffer);
-	sySndPlay(SE_GLITTER);
-	fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->sceneCnt = SPRITE_COLOR_BLUE_TINT;
+	sySoundPlay(SE_GLITTER);
+	fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->sceneCount =
+		SPRITE_COLOR_BLUE_TINT;
 	fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->sceneByte = 1;
 	fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->update =
 		scAirsRockInsideFlickerTarget;
@@ -1973,19 +1985,19 @@ void scAirsRockInsideWakeHallStatue(void)
 				fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->x.fixed,
 				fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->y.fixed,
 				fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->z.fixed);
-			((FIELD_SPR *)spark->spr)->pri =
-				((FIELD_SPR *)fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->spr)
-					->pri;
-			spark->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlg = 0;
+			((FIELD_SPR *)spark->sprite)->priority =
+				((FIELD_SPR *)fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->sprite)
+					->priority;
+			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+			spark->motionFlags = 0;
 			spark->bounce = spark->x.fixed;
 			spark->gravity = toFIXED(3) / 2;
 			spark->sceneWord = spark->z.fixed;
 			spark->speedLimit = syRandom() & 0xffff;
 			fdActorSelectAnimation(spark, 7);
 			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSprFlags(spark, 0);
-			fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
+			fdActorSetSpriteFlags(spark, 0);
+			fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
 			spark->update = scAirsRockInsideSpiralSpark;
 		}
 		syFieldScriptWait(1);
@@ -1999,14 +2011,14 @@ void scAirsRockInsideWakeHallStatue(void)
 	fdCameraMoveToFX(toFIXED(312), -1, toFIXED(680), 1);
 	fdCameraWaitForArrival();
 	fdActorGetById(ACTOR_HALL_TWISTER_ROCK)->update = 0;
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_HALL_TWISTER_ROCK), SPRITE_COLOR_GREY);
 	REG_BLDALPHA = BLEND_ALPHA(16, 16);
 	REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	BgScrollWork[0].x = -104;
 	BgScrollWork[0].y = 42;
 	sySynch(30);
-	sySndPlay(SE_ITEM_BREAK);
+	sySoundPlay(SE_ITEM_BREAK);
 	fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(1);
@@ -2027,33 +2039,33 @@ void scAirsRockInsideWakeHallStatue(void)
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(30);
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	scAirsRockInsideBurstDust(toFIXED(312), toFIXED(720));
 	fdMapGridCopyMetatilesTo(64, 78, 18, 105, 3, 5);
-	fdCameraSetSpeedParms(toFIXED(3) / 2, toFIXED(3) / 16);
+	fdCameraSetSpeedParams(toFIXED(3) / 2, toFIXED(3) / 16);
 	fdCameraMoveToActorById(ACTOR_HALL_TWISTER_STATUE, 1);
 	fdCameraWaitForArrival();
-	sySndPlay(SE_ENEMY_CRY);
-	fdActorSetSprColById(ACTOR_HALL_TWISTER_STATUE, SPRITE_COLOR_BLINK);
+	sySoundPlay(SE_ENEMY_CRY);
+	fdActorSetSpriteColorById(ACTOR_HALL_TWISTER_STATUE, SPRITE_COLOR_BLINK);
 	scAirsRockInsideScatterSparks(
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->x.fixed,
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->z.fixed);
-	fdActorConfigureSprCol(ACTOR_HALL_TWISTER_STATUE, SPRITE_COLOR_NORMAL);
-	fdActorSetSprCol(
+	fdActorConfigureSpriteColor(ACTOR_HALL_TWISTER_STATUE, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE), SPRITE_COLOR_WHITE);
 	sySynch(3);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_HALL_WEST_STATUE), SPRITE_COLOR_NORMAL);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_HALL_EAST_STATUE), SPRITE_COLOR_NORMAL);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE), SPRITE_COLOR_NORMAL);
 	sySynch(40);
 	scAirsRockInsideWakeStatue(fdActorGetById(ACTOR_HALL_TWISTER_STATUE), 8, 0);
 	syWindowLoadGraphics();
 	syPrintClear();
-	mnWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	REG_BLDALPHA = BLEND_ALPHA(8, 16);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -2078,7 +2090,7 @@ void scAirsRockInsideOpenTabletRoomDoor(void)
 		return;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	width = 1;
 	height = 2;
 	fdMapGridCopyMetatileTilesIndicesRect(65, 76, 19, 92, width, height);
@@ -2089,11 +2101,11 @@ void scAirsRockInsideOpenTabletRoomDoor(void)
 	syFieldScriptWait(8);
 	fdMapGridCopyMetatileTilesIndicesRect(62, 76, 19, 92, width, height);
 	syFieldScriptWait(15);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
 	fdActorGetById(MainRoutineStateWork.leaderActorId)->speedLimit =
 		fdActorGetById(MainRoutineStateWork.leaderActorId)->acceleration =
 			toFIXED(1) / 2;
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdActorWalkToById(MainRoutineStateWork.leaderActorId, 312, 792);
 	syFieldScriptWait(5);
 	fdScriptSetExitRequest(
@@ -2125,7 +2137,7 @@ void scAirsRockInsideStartPushingPillar(void)
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_FACE_VENTS) {
 		fdActorLiftTargetBlock(AirsRockInsideFaceVentsPillars);
 	} else if(scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
-		fdActorGetById(ACTOR_COINS_CHEST_STATUE)->tmr = 0;
+		fdActorGetById(ACTOR_COINS_CHEST_STATUE)->timer = 0;
 		fdActorLiftTargetBlock(AirsRockInsideCoinsChestPillars);
 	}
 }
@@ -2148,11 +2160,11 @@ void scAirsRockInsideFinishPushingPillar(void)
 	if(fdMapGetTerrainHeight(2, pushed->x.fixed, pushed->z.fixed) !=
 		pushed->y.fixed) {
 		pushed->layer = 2;
-		pushed->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		pushed->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		fdActorWaitUntilLanded(pushed);
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 		fdActorWaitUntilLanded(pushed);
-		pushed->motionFlg = 0;
+		pushed->motionFlags = 0;
 		pushed->layer = 0;
 	}
 	x = FIELD_HALF_METATILE(pushed->x.fixed);
@@ -2254,7 +2266,7 @@ void scAirsRockInsideFinishPushingPillar(void)
    rock turns grey, spent. */
 void scAirsRockInsideWakeVialChestStatue(void)
 {
-	Uint16 *buf = syHeapAlloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
+	Uint16 *buf = syHeapAllocate(LIGHTNING_TILES * TILE_SIZE_4BPP);
 	Uint16 *metatile;
 	ACTOR  *spark;
 	Uint32	i;
@@ -2270,7 +2282,7 @@ void scAirsRockInsideWakeVialChestStatue(void)
 	syHeapRelease(buf);
 	DMA_FILL16(
 		0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
-	buf = syHeapAlloc(
+	buf = syHeapAllocate(
 		LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(Uint16));
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buf);
 	metatile = buf;
@@ -2289,8 +2301,8 @@ void scAirsRockInsideWakeVialChestStatue(void)
 		metatile += LIGHTNING_MAP_COLUMNS;
 	}
 	syHeapRelease(buf);
-	sySndPlay(SE_GLITTER);
-	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->sceneCnt =
+	sySoundPlay(SE_GLITTER);
+	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->sceneCount =
 		SPRITE_COLOR_BLUE_TINT;
 	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->sceneByte = 1;
 	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update =
@@ -2301,20 +2313,20 @@ void scAirsRockInsideWakeVialChestStatue(void)
 				fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->x.fixed,
 				fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->y.fixed,
 				fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->z.fixed);
-			((FIELD_SPR *)spark->spr)->pri =
+			((FIELD_SPR *)spark->sprite)->priority =
 				((FIELD_SPR *)fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)
-						->spr)
-					->pri;
-			spark->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlg = 0;
+						->sprite)
+					->priority;
+			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+			spark->motionFlags = 0;
 			spark->bounce = spark->x.fixed;
 			spark->gravity = toFIXED(3) / 2;
 			spark->sceneWord = spark->z.fixed;
 			spark->speedLimit = syRandom() & 0xffff;
 			fdActorSelectAnimation(spark, 7);
 			fdActorStartScript(spark, FieldEffectMediumScript);
-			fdActorSetSprFlags(spark, 0);
-			fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
+			fdActorSetSpriteFlags(spark, 0);
+			fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
 			spark->update = scAirsRockInsideSpiralSpark;
 		}
 		syFieldScriptWait(1);
@@ -2328,14 +2340,14 @@ void scAirsRockInsideWakeVialChestStatue(void)
 	fdCameraMoveToFX(toFIXED(216), -1, toFIXED(224), 1);
 	fdCameraWaitForArrival();
 	fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update = 0;
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK), SPRITE_COLOR_GREY);
 	REG_BLDALPHA = BLEND_ALPHA(16, 16);
 	REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	BgScrollWork[0].x = -104;
 	BgScrollWork[0].y = 42;
 	sySynch(30);
-	sySndPlay(SE_ITEM_BREAK);
+	sySoundPlay(SE_ITEM_BREAK);
 	fdPaletteFadeApplySource(PALETTE_TINT_WARM, PALETTES_ALL);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(1);
@@ -2356,29 +2368,29 @@ void scAirsRockInsideWakeVialChestStatue(void)
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(30);
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	scAirsRockInsideBurstDust(toFIXED(216), toFIXED(301));
 	fdMapGridCopyMetatilesTo(68, 84, 12, 77, 3, 6);
-	fdCameraSetSpeedParms(toFIXED(3) / 2, toFIXED(3) / 16);
+	fdCameraSetSpeedParams(toFIXED(3) / 2, toFIXED(3) / 16);
 	fdCameraMoveToActorById(ACTOR_VIAL_CHEST_STATUE, 1);
 	fdCameraWaitForArrival();
-	sySndPlay(SE_ENEMY_CRY);
-	fdActorSetSprColById(ACTOR_VIAL_CHEST_STATUE, SPRITE_COLOR_BLINK);
+	sySoundPlay(SE_ENEMY_CRY);
+	fdActorSetSpriteColorById(ACTOR_VIAL_CHEST_STATUE, SPRITE_COLOR_BLINK);
 	scAirsRockInsideScatterSparks(
 		fdActorGetById(ACTOR_VIAL_CHEST_STATUE)->x.fixed,
 		fdActorGetById(ACTOR_VIAL_CHEST_STATUE)->z.fixed + toFIXED(32));
-	fdActorConfigureSprCol(ACTOR_VIAL_CHEST_STATUE, SPRITE_COLOR_NORMAL);
-	fdActorSetSprCol(
+	fdActorConfigureSpriteColor(ACTOR_VIAL_CHEST_STATUE, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_VIAL_CHEST_STATUE), SPRITE_COLOR_WHITE);
 	sySynch(3);
-	fdActorSetSprCol(
+	fdActorSetSpriteColor(
 		fdActorGetById(ACTOR_VIAL_CHEST_STATUE), SPRITE_COLOR_NORMAL);
 	sySynch(40);
 	scAirsRockInsideWakeStatue(fdActorGetById(ACTOR_VIAL_CHEST_STATUE), 8, 0);
 	syWindowLoadGraphics();
 	syPrintClear();
-	mnWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	REG_BLDALPHA = BLEND_ALPHA(8, 16);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -2415,13 +2427,13 @@ void scAirsRockInsideRideClarityCircletVent(void)
 		return;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_SOL_SANCTUM_LIGHT_UP);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	sySoundPlay(SE_SOL_SANCTUM_LIGHT_UP);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
-	fdActorSetSpeedParms(
+	fdActorSetSpeedParams(
 		MainRoutineStateWork.leaderActorId, toFIXED(4), toFIXED(2));
 	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, 376, 668);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	fdScriptEnd();
 }
@@ -2430,23 +2442,23 @@ void scAirsRockInsideRideClarityCircletVent(void)
 void scAirsRockInsideVanishStone(Sint32 x, Sint32 y)
 {
 	ACTOR	  *marker;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Sint32	   i, metatileX, metatileY;
 
 	marker =
 		syImportActorCreate(SPRITE_STACKED_CRATES, toFIXED(x), 0, toFIXED(y));
 	REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-	fdSetActorSprPriority(marker, 0);
-	fdActorSetSprFlags(marker, 0);
-	spr = marker->spr;
-	spr->objMode = OBJ_MODE_WINDOW;
+	fdSetActorSpritePriority(marker, 0);
+	fdActorSetSpriteFlags(marker, 0);
+	sprite = marker->sprite;
+	sprite->objectMode = OBJ_MODE_WINDOW;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_BG1 | WINOUT_WIN01_BG2 |
 		WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_ALL;
 	REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-	sySndPlay(SE_DRIP);
+	sySoundPlay(SE_DRIP);
 	for(i = 0; i != BLEND_WEIGHT_MAX / 2; i++) {
 		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, i * 2);
 		sySynch(1);
@@ -2561,23 +2573,23 @@ Bool scAirsRockInsideOrbitAnchor(ORBITER *orbiter)
 {
 	ACTOR *anchor = orbiter->anchor;
 
-	orbiter->ang += (Sint16)orbiter->speed >> 1;
+	orbiter->angle += (Sint16)orbiter->speed >> 1;
 	orbiter->x = anchor->x.fixed;
 	orbiter->y = anchor->y.fixed + toFIXED(8);
 	orbiter->z = anchor->z.fixed;
 	syFieldVectorAddPolarOffsetFX(
-		orbiter->orbitRadius, orbiter->ang, (Sint32)&orbiter->x);
+		orbiter->orbitRadius, orbiter->angle, (Sint32)&orbiter->x);
 	if(--orbiter->countdown == 0)
 		return FALSE;
 	if(orbiter->orbitRadius == toFIXED(2))
 		return TRUE;
 	scOrbitSparkSpawn(orbiter);
 	orbiter->orbitRadius -= toFIXED(4);
-	orbiter->ang += (Sint16)orbiter->speed >> 1;
+	orbiter->angle += (Sint16)orbiter->speed >> 1;
 	orbiter->x = anchor->x.fixed;
 	orbiter->y = anchor->y.fixed + toFIXED(8);
 	orbiter->z = anchor->z.fixed;
-	syVectorAddPolarOffset(orbiter->orbitRadius, orbiter->ang, &orbiter->x);
+	syVectorAddPolarOffset(orbiter->orbitRadius, orbiter->angle, &orbiter->x);
 	scOrbitSparkSpawn(orbiter);
 	orbiter->orbitRadius -= toFIXED(4);
 	return TRUE;
@@ -2622,39 +2634,39 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 	 * touches. */
 	Sint32 unused[3];
 
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	syFieldScriptWait(30);
-	fdCameraSetSpeedParms(toFIXED(1) / 2, toFIXED(1) / 16);
+	fdCameraSetSpeedParams(toFIXED(1) / 2, toFIXED(1) / 16);
 	fdCameraMoveWithinMapBounds(toFIXED(tablet->x.part[0].integer),
 		toFIXED(tablet->y.part[0].integer), toFIXED(tablet->z.part[0].integer),
 		1);
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdMapGridSetShake(2, 2, 1);
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeSetTarget(PALETTE_TINT_WARM, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
-	tablet->motionFlg = 0;
+	tablet->motionFlags = 0;
 	tablet->acceleration = toFIXED(1) / 5;
 	tablet->speedLimit = toFIXED(1) / 5;
 	fdActorSetMovementTypeById(tabletId, LessonTabletRiseScript);
-	sySndPlay(SE_TABLET_RISE);
+	sySoundPlay(SE_TABLET_RISE);
 	syFieldScriptWait(45);
-	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_BLINK);
+	fdActorConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
 	REG_BLDALPHA = BLEND_ALPHA(8, 16);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	for(i = 0; i != TABLET_SPARKS; i++) {
 		ACTOR *spark = syImportActorCreate(
 			SPRITE_PARTICLE, tablet->x.fixed, tablet->y.fixed, tablet->z.fixed);
-		sySndPlay(SE_GLITTER);
+		sySoundPlay(SE_GLITTER);
 		spark->x.fixed += toFIXED((syRandom() & 31) - 16);
 		spark->y.fixed += toFIXED((syRandom() & 15) - 8);
 		spark->speedLimit = toFIXED(8);
 		spark->acceleration = toFIXED(1) / 5;
-		spark->motionFlg = 0;
-		fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
-		fdSetActorSprPriority(spark, 1);
+		spark->motionFlags = 0;
+		fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+		fdSetActorSpritePriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
 		fdActorStartScript(spark, AirsRockInsideRisingSparkScript);
 		REG_BLDALPHA = BLEND_ALPHA(4, 16);
@@ -2671,61 +2683,61 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 	for(i = 0; i != ORBITING_SPARKS; i++) {
 		ACTOR *spark = scFieldActorCreate(
 			SPRITE_PARTICLE, sheba->x.fixed, sheba->y.fixed, sheba->z.fixed);
-		sySndPlay(SE_SPARKS);
-		spark->tmr = (syRandom() & 0x7fff) + DEGtoANG(180);
+		sySoundPlay(SE_SPARKS);
+		spark->timer = (syRandom() & 0x7fff) + DEGtoANG(180);
 		spark->userValue = ((i & 1) * 2 - 1) << ((syRandom() & 3) + 9);
-		spark->motionFlg = 0;
+		spark->motionFlags = 0;
 		spark->sceneWord = toFIXED(122);
 		spark->watchedActor = (FIELD_OBJECT *)sheba;
 		/* All spirals end together, 15 ticks after the loop's last wait. */
-		spark->sceneCnt = (ORBITING_SPARKS - i) * ORBITING_SPARK_TICKS + 15;
-		fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
-		fdSetActorSprPriority(spark, 1);
+		spark->sceneCount = (ORBITING_SPARKS - i) * ORBITING_SPARK_TICKS + 15;
+		fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
+		fdSetActorSpritePriority(spark, 1);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
 		syFieldVectorAddPolarOffsetFX(
-			spark->sceneWord, spark->tmr, (Sint32)&spark->x.fixed);
+			spark->sceneWord, spark->timer, (Sint32)&spark->x.fixed);
 		fdActorStartScript(spark, AirsRockInsideOrbitingSparkScript);
 		if(i == 3) {
-			fdActorSetSprColById(shebaId, SPRITE_COLOR_BLINK);
-			sheba->motionFlg = 0;
+			fdActorSetSpriteColorById(shebaId, SPRITE_COLOR_BLINK);
+			sheba->motionFlags = 0;
 			sheba->acceleration = toFIXED(1) / 5;
 			sheba->speedLimit = toFIXED(1) / 5;
 			fdActorSetMovementTypeById(shebaId, LessonAdeptRiseScript);
 		}
 		sySynch(ORBITING_SPARK_TICKS);
 	}
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(16);
 	for(i = 2; i != SEEKING_SPARK_PHASES; i += 2) {
 		ACTOR *spark = scFieldActorCreate(SPRITE_PARTICLE, sheba->x.fixed,
 			sheba->y.fixed + toFIXED(i) - toFIXED(8), sheba->z.fixed);
-		spark->tmr = syRandom();
+		spark->timer = syRandom();
 		spark->userValue = TRIG_TURN / 32;
-		spark->sceneCnt = i;
+		spark->sceneCount = i;
 		spark->sceneByte = 1;
 		spark->bounce = spark->x.fixed;
 		spark->sceneWord = 0;
 		spark->gravity = spark->z.fixed;
 		spark->watchedActor = (FIELD_OBJECT *)sheba;
-		spark->motionFlg = 0;
-		spark->priFlg = ACTOR_PRIORITY_AUTOMATIC;
-		fdActorSetSprCol(spark, SPRITE_COLOR_RBG);
+		spark->motionFlags = 0;
+		spark->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
 		fdActorSelectAnimation(spark, 7);
-		fdActorSetSprFlags(spark, 0);
+		fdActorSetSpriteFlags(spark, 0);
 		fdActorSetBlendMode(spark, 1);
 		fdActorStartScript(spark, LessonSeekingSparkScript);
 	}
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(50);
 	fdPaletteFadeSetTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(8);
 	sySynch(16);
 	fdMapGridSetShake(0, 0, 0);
-	fdActorConfigureSprCol(tabletId, SPRITE_COLOR_NORMAL);
-	fdActorConfigureSprCol(shebaId, SPRITE_COLOR_NORMAL);
-	sySndPlay(SE_FLASH);
+	fdActorConfigureSpriteColor(tabletId, SPRITE_COLOR_NORMAL);
+	fdActorConfigureSpriteColor(shebaId, SPRITE_COLOR_NORMAL);
+	sySoundPlay(SE_FLASH);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(80);
 	fdActorSetMovementTypeById(tabletId, LessonTabletSettleScript);
@@ -2733,7 +2745,7 @@ void scAirsRockInsideShebaLearnsReveal(Sint32 tabletId, Sint32 shebaId)
 	sheba->update = scActorEmitSparkles;
 	sySynch(120);
 	sheba->update = 0;
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	gmPlayMusic();
 	sySynch(1);
 }
@@ -2907,7 +2919,7 @@ void		  scAirsRockInsideSetStakeMetatiles(ACTOR *actor);
 void scAirsRockInsideStepOntoStake(void)
 {
 	ACTOR			 *first = 0, *second = 0, *leader;
-	FIELD_SPR		 *firstSpr, *secondSpr;
+	FIELD_SPR		 *firstSprite, *secondSprite;
 	VRAM_CACHE_ENTRY *entry;
 	Uint16			 *pair;
 	Uint32			  id, i;
@@ -2934,15 +2946,15 @@ void scAirsRockInsideStepOntoStake(void)
 		return;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	firstSpr = first->spr;
-	secondSpr = second->spr;
-	second->motionFlg = busy;
+	firstSprite = first->sprite;
+	secondSprite = second->sprite;
+	second->motionFlags = busy;
 	second->y.fixed -= toFIXED(28);
 	sySynch(1);
-	entry = &VramCacheEntries[secondSpr->slot];
-	second->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
-	entry = &VramCacheEntries[firstSpr->slot];
-	first->watchedActor = (void *)(entry->ofs + OBJ_VRAM0);
+	entry = &VramCacheEntries[secondSprite->slot];
+	second->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
+	entry = &VramCacheEntries[firstSprite->slot];
+	first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
 	DMA_FILL32(busy, second->watchedActor, entry->size);
 	syDMAXCopy(first->watchedActor, second->watchedActor,
 		DMA_COPY_WORDS(STAKE_TOP_ROWS * STAKE_ROW_BYTES / 4), REG_DMA3);
@@ -2950,7 +2962,7 @@ void scAirsRockInsideStepOntoStake(void)
 		STAKE_TOP_ROWS * STAKE_ROW_BYTES);
 	second->watchedActor = (void *)((Uint8 *)second->watchedActor +
 		STAKE_TOP_ROWS * STAKE_ROW_BYTES);
-	leader->motionFlg = busy;
+	leader->motionFlags = busy;
 	for(i = 0; i != 8; i++) {
 		if(i <= 4) {
 			second->y.fixed += toFIXED(26) / 5;
@@ -2967,13 +2979,13 @@ void scAirsRockInsideStepOntoStake(void)
 		first->scaleY += -(toFIXED(31) / 256);
 		sySynch(1);
 	}
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	first->scaleY = toFIXED(1);
 	second->y.fixed = second->groundHeight;
-	syGameFlagSet(first->tmr);
-	syGameFlagClear(second->tmr);
-	fdActorSelectAnimation(first, ((FIELD_SPR *)first->spr)->lastNo + 1);
-	fdActorSelectAnimation(second, ((FIELD_SPR *)second->spr)->lastNo - 1);
+	syGameFlagSet(first->timer);
+	syGameFlagClear(second->timer);
+	fdActorSelectAnimation(first, ((FIELD_SPR *)first->sprite)->lastNo + 1);
+	fdActorSelectAnimation(second, ((FIELD_SPR *)second->sprite)->lastNo - 1);
 	scAirsRockInsideSetStakeMetatiles(first);
 	scAirsRockInsideSetStakeMetatiles(second);
 	syFieldScriptWait(10);
@@ -2994,10 +3006,10 @@ void scAirsRockInsideRideFaceVent(void)
 		return;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_SOL_SANCTUM_LIGHT_UP);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	sySoundPlay(SE_SOL_SANCTUM_LIGHT_UP);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
-	fdActorSetSpeedParms(
+	fdActorSetSpeedParams(
 		MainRoutineStateWork.leaderActorId, toFIXED(4), toFIXED(2));
 	switch(*vent) {
 	case METATILE_BEHAVIOR_AIRS_ROCK_INSIDE_SOUTHWEST_VENT:
@@ -3030,7 +3042,7 @@ void scAirsRockInsideRideFaceVent(void)
 		break;
 	}
 	fdActorMoveToAndWaitById(MainRoutineStateWork.leaderActorId, x, z);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	fdScriptEnd();
 }
@@ -3045,7 +3057,7 @@ void scAirsRockInsideCheckPsynergyStone(void)
 	msg = MsgCheckedThePsynergy;
 	/* "Felix checked the Psynergy Stone." */
 	mnFieldMessageShow(msg, FIELD_MESSAGE_ZOOM);
-	sySndPlay(SE_RECOVERY);
+	sySoundPlay(SE_RECOVERY);
 	fdPartyAddPp(PARTY_PP_REPLENISH, 0);
 	syFieldScriptWait(10);
 	syGameFlagClear(FLAG_NOTHING_HAPPENS);
@@ -3088,40 +3100,40 @@ void scAirsRockInsideRiseOnLift(void)
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR *prepared, *lift;
 #if LIFT_RESTORES_LEADER_PRIORITY
-	Uint8 priFlg;
+	Uint8 priorityFlags;
 #endif
 	Sint32 height;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 #if LIFT_RESTORES_LEADER_PRIORITY
-	priFlg = leader->priFlg;
+	priorityFlags = leader->priorityFlags;
 #endif
 	prepared = fdActorCreateSilhouette(
 		toFIXED(216), -toFIXED(32), toFIXED(544), SPRITE_CRATE);
-	leader->motionFlg = 0;
-	fdActorSetSprFlags(leader, 0);
+	leader->motionFlags = 0;
+	fdActorSetSpriteFlags(leader, 0);
 	leader->speedLimit = toFIXED(3) / 2;
 	leader->acceleration = toFIXED(3) / 2;
 	lift = syImportActorCreate(SPRITE_WHIRLWIND, leader->x.fixed,
 		leader->y.fixed - toFIXED(8), leader->z.fixed);
 	fdActorSelectAnimation(lift, 2);
-	fdActorSetSprFlags(lift, 0);
-	lift->motionFlg = 0;
+	fdActorSetSpriteFlags(lift, 0);
+	lift->motionFlags = 0;
 	lift->speedLimit = toFIXED(7) / 5;
 	lift->acceleration = toFIXED(7) / 5;
 	fdActorSetMoveTarget(leader, leader->x.fixed, leader->y.fixed + toFIXED(80),
 		leader->z.fixed);
 	fdActorSetMoveTarget(
 		lift, lift->x.fixed, lift->y.fixed + toFIXED(72), lift->z.fixed);
-	sySndPlay(SE_KIRIN);
+	sySoundPlay(SE_KIRIN);
 	fdScriptStartScreenTransition();
 	while(!fdActorHasArrived(leader)) {
 		leader->facing = (Uint8)TickCount * FACING_STEP;
-		leader->priFlg ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
+		leader->priorityFlags ^= ACTOR_PRIORITY_UNDERFOOT << (TickCount & 1);
 		sySynch(1);
 	}
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 	syFieldScriptWait(10);
 	fdActorFaceDirectionById(
 		MainRoutineStateWork.leaderActorId, FACING_NORTH, 0);
@@ -3131,13 +3143,13 @@ void scAirsRockInsideRiseOnLift(void)
 	leader->groundHeight = height;
 	fdActorSelectAnimation(leader, ANIM_LEADER_SPRING);
 	sySynch(6);
-	sySndPlay(SE_JUMP);
+	sySoundPlay(SE_JUMP);
 	fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 	leader->speedLimit = toFIXED(2);
 	leader->acceleration = toFIXED(1) / 2;
-	leader->velY = toFIXED(4);
-	leader->motionFlg = ACTOR_FALLS;
-	leader->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	leader->velocityY = toFIXED(4);
+	leader->motionFlags = ACTOR_FALLS;
+	leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
 		leader->z.fixed - toFIXED(16));
 	fdActorWaitUntilLanded(leader);
@@ -3146,11 +3158,11 @@ void scAirsRockInsideRiseOnLift(void)
 	fdActorSelectAnimation(lift, 5);
 	sySynch(12);
 	fdActorRelease(lift);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	leader->groundHeight = leader->y.fixed;
-	fdActorSetSprFlags(leader, 1);
+	fdActorSetSpriteFlags(leader, 1);
 #if LIFT_RESTORES_LEADER_PRIORITY
-	leader->priFlg = priFlg;
+	leader->priorityFlags = priorityFlags;
 #endif
 	fdActorRelease(prepared);
 	sySynch(1);
@@ -3164,25 +3176,25 @@ void scAirsRockInsideSpawnMotes(void)
 {
 	ACTOR	  *actor;
 	Sint32	   i;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 
 	for(i = 0; i != 8; i++) {
 		actor = syImportActorCreate(SPRITE_PARTICLE, 0, 0, 0);
-		spr = actor->spr;
-		spr->pri = 1;
+		sprite = actor->sprite;
+		sprite->priority = 1;
 		actor->sceneByte = i << 4;
-		actor->motionFlg = 0;
-		actor->priFlg = 0;
+		actor->motionFlags = 0;
+		actor->priorityFlags = 0;
 		actor->acceleration = actor->speedLimit =
 			i * (toFIXED(1) / 16) + (toFIXED(1) / 2);
 		actor->update = scAirsRockInsideDriftMote;
-		fdActorSetSprFlags(actor, 0);
-		fdActorSetSprCol(actor, SPRITE_COLOR_RBG);
+		fdActorSetSpriteFlags(actor, 0);
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_RBG);
 		if(i & 1) {
-			actor->tmr = PARTICLE_SLOW_LIFETIME;
+			actor->timer = PARTICLE_SLOW_LIFETIME;
 			actor->userValue = 0;
 		} else {
-			actor->tmr = PARTICLE_QUICK_LIFETIME;
+			actor->timer = PARTICLE_QUICK_LIFETIME;
 			actor->userValue = 0;
 		}
 		fdActorSetBlendMode(actor, 1);
@@ -3199,7 +3211,7 @@ void scAirsRockInsideSetLedgeMetatilesByLevel(void)
 	ACTOR *actor = fdActorGetById(fdPartyGetLeaderActor());
 	Sint32 level;
 
-	actor->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	if(actor->y.fixed + toFIXED(32) >= toFIXED(312))
 		level = 2;
 	else if(actor->y.fixed + toFIXED(32) >= toFIXED(216))
@@ -3259,37 +3271,37 @@ void scAirsRockInsideLandInHall(void)
 	leader->y.fixed = toFIXED(130);
 	leader->gravity = toFIXED(1) / 2;
 	leader->bounce = 0;
-	leader->motionFlg = 0;
+	leader->motionFlags = 0;
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	leader->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	sySoundPlay(SE_DUST_PUFF);
+	leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	syFieldScriptWait(24);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
 	/* A puff each sixteenth of a turn, the last over the first. */
 	for(i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
-		Sint32 ang;
-		FIXED  vel[3];
+		Sint32 angle;
+		FIXED  velocity[3];
 
-		ang = i * FACING_STEP;
-		vel[0] = syCos(ang);
-		vel[1] = 0;
-		vel[2] = sySin(ang);
-		vel[0] += vel[0] >> 1;
-		vel[0] += syRandomBelow(toFIXED(3) / 4);
-		vel[0] += -(toFIXED(3) / 8);
-		vel[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
+		angle = i * FACING_STEP;
+		velocity[0] = syCos(angle);
+		velocity[1] = 0;
+		velocity[2] = sySin(angle);
+		velocity[0] += velocity[0] >> 1;
+		velocity[0] += syRandomBelow(toFIXED(3) / 4);
+		velocity[0] += -(toFIXED(3) / 8);
+		velocity[2] += syRandomBelow(toFIXED(3) / 8) + -(toFIXED(3) / 16);
 		scFieldEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-			vel[0], vel[1], vel[2],
+			velocity[0], velocity[1], velocity[2],
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdEffectSetAttached(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimationById(
@@ -3315,7 +3327,7 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	syGameFlagSet(FLAG_TIGHTROPES_GUST_PATH_CLEARED);
 	syGameFlagSet(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
@@ -3345,27 +3357,27 @@ Sint32 scInit(void)
 					ACTOR_HALL_MOVABLE_STATUE, toFIXED(824), toFIXED(328));
 			fdActorPlaceBlocks(AirsRockInsideHallPillars);
 		}
-		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->motionFlg = 0;
+		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->motionFlags = 0;
 		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->y.fixed = 0;
-		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->priFlg =
+		fdActorGetById(ACTOR_HALL_TWISTER_STATUE)->priorityFlags =
 			ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprPriority(ACTOR_HALL_TWISTER_STATUE, 3);
+		fdActorSetSpritePriority(ACTOR_HALL_TWISTER_STATUE, 3);
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_HALL_STATUE_WOKEN)) {
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_HALL_TWISTER_STATUE), SPRITE_COLOR_GREY);
 		} else {
 			scAirsRockInsideWakeStatue(
 				fdActorGetById(ACTOR_HALL_TWISTER_STATUE), 8, 0);
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_HALL_TWISTER_ROCK), SPRITE_COLOR_GREY);
 			fdMapGridCopyMetatilesTo(64, 78, 18, 105, 3, 5);
 		}
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_HALL_WEST_STATUE), SPRITE_COLOR_GREY);
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_HALL_EAST_STATUE), SPRITE_COLOR_GREY);
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_HALL_MOVABLE_STATUE), SPRITE_COLOR_GREY);
 		} else {
 			scAirsRockInsideWakeStatue(
@@ -3375,9 +3387,9 @@ Sint32 scInit(void)
 			scAirsRockInsideWakeMovableStatue(
 				fdActorGetById(ACTOR_HALL_MOVABLE_STATUE), 60, 0);
 		}
-		fdActorSetSprFlags(fdActorGetById(ACTOR_HALL_WEST_STATUE), 0);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_HALL_EAST_STATUE), 0);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_HALL_MOVABLE_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_HALL_WEST_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_HALL_EAST_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_HALL_MOVABLE_STATUE), 0);
 		if(MainRoutineStateWork.entrance == ENTRANCE_HALL_LANDING &&
 			!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
 			scAirsRockInsideLandInHall();
@@ -3393,16 +3405,16 @@ Sint32 scInit(void)
 				ACTOR_VIAL_CHEST_WEST_PILLAR, toFIXED(104), toFIXED(392));
 		fdActorPlaceBlocks(AirsRockInsideVialChestPillars);
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_VIAL_CHEST_STATUE), SPRITE_COLOR_GREY);
 		} else {
 			scAirsRockInsideWakeStatue(
 				fdActorGetById(ACTOR_VIAL_CHEST_STATUE), 60, 0);
-			fdActorSetSprCol(fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK),
+			fdActorSetSpriteColor(fdActorGetById(ACTOR_VIAL_CHEST_TWISTER_ROCK),
 				SPRITE_COLOR_GREY);
 			fdMapGridCopyMetatilesTo(68, 84, 12, 77, 3, 6);
 		}
-		fdActorSetSprFlags(fdActorGetById(ACTOR_VIAL_CHEST_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_VIAL_CHEST_STATUE), 0);
 		if(MainRoutineStateWork.entrance == ENTRANCE_VIAL_CHEST_ON_THE_LIFT &&
 			!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
 			scAirsRockInsideRiseOnLift();
@@ -3427,13 +3439,13 @@ Sint32 scInit(void)
 				toFIXED(472), toFIXED(520));
 		fdActorPlaceBlocks(AirsRockInsideClarityCircletChestPillars);
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A),
 				SPRITE_COLOR_GREY);
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B),
 				SPRITE_COLOR_GREY);
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C),
 				SPRITE_COLOR_GREY);
 		} else {
@@ -3444,14 +3456,14 @@ Sint32 scInit(void)
 			scAirsRockInsideWakeStatue(
 				fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C), 200, 0);
 		}
-		fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A)->steeringFlg = 0;
-		fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B)->steeringFlg = 0;
-		fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C)->steeringFlg = 0;
-		fdActorSetSprFlags(
+		fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A)->steeringFlags = 0;
+		fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B)->steeringFlags = 0;
+		fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C)->steeringFlags = 0;
+		fdActorSetSpriteFlags(
 			fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A), 0);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B), 0);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			fdActorGetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_C), 0);
 	} else if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_TIGHTROPES) {
 		fdTightropeInit();
@@ -3460,7 +3472,7 @@ Sint32 scInit(void)
 		fdTightropePlace(2, ACTOR_TIGHTROPES_POST_E, ACTOR_TIGHTROPES_POST_F);
 		fdTightropePlace(3, ACTOR_TIGHTROPES_POST_G, ACTOR_TIGHTROPES_POST_H);
 		fdTightropePlace(4, ACTOR_TIGHTROPES_POST_I, ACTOR_TIGHTROPES_POST_J);
-		fdActorGetById(ACTOR_TIGHTROPES_POST_H)->sceneCnt = 1;
+		fdActorGetById(ACTOR_TIGHTROPES_POST_H)->sceneCount = 1;
 		if(syGameFlagGet(FLAG_TIGHTROPES_BRIDGE_TURNED)) {
 			fdMapGridCopyMetatilesTo(69, 64, 29, 85, 5, 7);
 			fdMapGridCopyMetatileAttributes(46, 20, 5, 5, 29, 21);
@@ -3494,7 +3506,7 @@ Sint32 scInit(void)
 					METATILE_ATTRIBUTES(METATILE_BEHAVIOR_WALL, 0));
 			}
 		}
-		fdActorGetById(ACTOR_REVEAL_TABLET)->motionFlg = 0;
+		fdActorGetById(ACTOR_REVEAL_TABLET)->motionFlags = 0;
 		actor = fdActorGetById(ACTOR_REVEAL_TABLET);
 		fdActorGetById(ACTOR_REVEAL_TABLET)->groundHeight = toFIXED(16);
 		actor->y.fixed = toFIXED(16);
@@ -3527,8 +3539,9 @@ Sint32 scInit(void)
 		if(syGameFlagGet(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED)) {
 			fdActorSetPosFX(
 				ACTOR_ELIXIR_CHEST_PILLAR, toFIXED(312), toFIXED(296));
-			fdActorSetSprPriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
-			fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->motionFlg = ACTOR_FALLS;
+			fdActorSetSpritePriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
+			fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->motionFlags =
+				ACTOR_FALLS;
 			fdActorGetById(ACTOR_ELIXIR_CHEST_PILLAR)->groundHeight =
 				-toFIXED(32);
 			fdMapGridCopyMetatileAttributes(19, 16, 1, 1, 19, 18);
@@ -3536,10 +3549,10 @@ Sint32 scInit(void)
 	} else if(MainRoutineStateWork.next ==
 		SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES) {
 		scAirsRockInsideStartRestoringMetatiles();
-		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_A)->sceneCnt = 1;
-		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_B)->sceneCnt = 1;
-		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_C)->sceneCnt = 1;
-		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_D)->sceneCnt = 1;
+		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_A)->sceneCount = 1;
+		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_B)->sceneCount = 1;
+		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_C)->sceneCount = 1;
+		fdActorGetById(ACTOR_PAIRED_STAKES_STAKE_D)->sceneCount = 1;
 		if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 			syGameFlagSet(FLAG_STAKE_B_DOWN);
 			syGameFlagSet(FLAG_STAKE_C_DOWN);
@@ -3575,7 +3588,7 @@ Sint32 scInit(void)
 				ACTOR_FACE_VENTS_THIRD_PILLAR, toFIXED(184), toFIXED(616));
 			syGameFlagSet(FLAG_SOUTHEAST_VENT_STILL);
 		}
-		fdActorSetSprPriority(ACTOR_FACE_VENTS_SECOND_PILLAR, 2);
+		fdActorSetSpritePriority(ACTOR_FACE_VENTS_SECOND_PILLAR, 2);
 		fdActorPlaceBlocks(AirsRockInsideFaceVentsPillars);
 		scMapMetatileSetAttributes(MAPGRID_LAYER_OVERHEAD,
 			FIELD_METATILE(
@@ -3590,12 +3603,12 @@ Sint32 scInit(void)
 				fdActorGetById(ACTOR_FACE_VENTS_SECOND_PILLAR)->z.fixed),
 			0);
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_FACE_VENTS_STATUE), SPRITE_COLOR_GREY);
 		else
 			scAirsRockInsideWakeStatue(
 				fdActorGetById(ACTOR_FACE_VENTS_STATUE), 8, 0);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_FACE_VENTS_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_FACE_VENTS_STATUE), 0);
 	} else if(MainRoutineStateWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
 		scAirsRockInsideStartRestoringMetatiles();
 		if(syGameFlagGet(FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED))
@@ -3606,14 +3619,14 @@ Sint32 scInit(void)
 			FIELD_METATILE(fdActorGetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
 			FIELD_METATILE(fdActorGetById(ACTOR_COINS_CHEST_STATUE)->z.fixed),
 			0);
-		fdActorGetById(ACTOR_COINS_CHEST_STATUE)->steeringFlg = 0;
+		fdActorGetById(ACTOR_COINS_CHEST_STATUE)->steeringFlags = 0;
 		if(!syGameFlagGet(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN))
-			fdActorSetSprCol(
+			fdActorSetSpriteColor(
 				fdActorGetById(ACTOR_COINS_CHEST_STATUE), SPRITE_COLOR_GREY);
 		else
 			scAirsRockInsideWakeStatue(
 				fdActorGetById(ACTOR_COINS_CHEST_STATUE), 60, 0);
-		fdActorSetSprFlags(fdActorGetById(ACTOR_COINS_CHEST_STATUE), 0);
+		fdActorSetSpriteFlags(fdActorGetById(ACTOR_COINS_CHEST_STATUE), 0);
 		if(syGameFlagGet(FLAG_COINS_CHEST_BARRIER_BLOWN_AWAY)) {
 			fdMapGridCopyMetatilesTo(15, 80, 15, 77, 2, 3);
 			fdMapGridCopyMetatileAttributes(15, 80, 1, 1, 15, 79);

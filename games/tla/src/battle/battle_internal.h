@@ -119,13 +119,13 @@
 #define ENEMY_DEFEATED_FLAG_COUNT	 512
 
 /* Stub calls the parts make, each passing its own view of the record:
-   fdSprAddAnimation and fdSprAnimationStart (field.c, resource_slot/) take the
-   metadata slot state and the animation entry. Adds a sprite animation to a
-   sprite in its first free slot; returns it, 0 when none could be taken, or -1
-   when all four are in use. */
-Sint32 fdSprAddAnimationStub(void *state, Sint32 id);
+   fdSpriteAddAnimation and fdSpriteAnimationStart (field.c, resource_slot/)
+   take the metadata slot state and the animation entry. Adds a sprite animation
+   to a sprite in its first free slot; returns it, 0 when none could be taken,
+   or -1 when all four are in use. */
+Sint32 fdSpriteAddAnimationStub(void *state, Sint32 id);
 /* Removes a sprite animation from a sprite and clears it. */
-void fdSprRemoveAnimationStub(void *state, Sint32 handle);
+void fdSpriteRemoveAnimationStub(void *state, Sint32 handle);
 
 #include "battle/battle_type.h"
 #include "field/sprite.h"
@@ -183,7 +183,7 @@ STATIC_ASSERT(sizeof(SNAPSHOT) == 168);
 /* The packet the two consoles exchange each turn of a link battle: how many
    actions follow, a random check, and the random seed both sides then use. */
 typedef struct BATTLE_LINK_HEADER {
-	Sint32 cnt;
+	Sint32 count;
 	Sint32 check;
 	Sint32 seed;
 	Uint8  unused[28]; /* no code names it */
@@ -202,9 +202,9 @@ typedef struct BATTLE_LINK_HEADER {
    them. */
 #define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-/* Runs a battle effect by its ability's effect word (Ability.battleEff): with
-   EFFECT_BY_ID_RANGE from the second range of kinds (btEffectRunByIdRangeStub),
-   otherwise from the handler table. */
+/* Runs a battle effect by its ability's effect word (Ability.battleEffect):
+   with EFFECT_BY_ID_RANGE from the second range of kinds
+   (btEffectRunByIdRangeStub), otherwise from the handler table. */
 #define BATTLE_EFFECT_RUN(args, battleEffect) \
 	((battleEffect) & EFFECT_BY_ID_RANGE ? btEffectRunByIdRangeStub(args) \
 										 : btEffectRunFromTableStub(args))
@@ -231,15 +231,15 @@ typedef struct BATTLE_LINK_HEADER {
 #define ACTION_REPORTED		   -1 /* the action failed and its message is shown */
 #define ACTION_NOTHING_TO_SHOW -2 /* nothing to stage or show */
 
-/* BATTLE_PLAN.tgtCritical: the critical hit rolled for each target. */
+/* BATTLE_PLAN.targetCritical: the critical hit rolled for each target. */
 typedef enum BATTLE_CRITICAL {
 	CRITICAL_NONE,
 	CRITICAL_HIT,	/* an attack's: a quarter more damage */
 	CRITICAL_STRONG /* an ability's (effects 36 to 40): half as much again */
 } BATTLE_CRITICAL;
 
-/* BATTLE_PLAN.tgtHit while the hit is still to be rolled, as the ability lands;
-   btActionRunBuild rolls it ahead only for Annihilation and Whorl. */
+/* BATTLE_PLAN.targetHit while the hit is still to be rolled, as the ability
+   lands; btActionRunBuild rolls it ahead only for Annihilation and Whorl. */
 #define HIT_NOT_ROLLED -1
 
 /* BATTLE_PLAN.failure: why a cast plays no effect, which the staging shows. */
@@ -298,7 +298,8 @@ extern const Sint32 BattleObjectEmptyScript[];
    -2, 2 and on. */
 extern const Sint8 BattleFormationCenteredOffsets[];
 
-/* Each character's battle sprite for each weapon kind (btUnitGetWeaponSpr). */
+/* Each character's battle sprite for each weapon kind (btUnitGetWeaponSprite).
+ */
 extern const Uint16 BattleUnitWeaponAnimationsIsaac[];
 
 extern const Uint16 BattleUnitWeaponAnimationsGaret[];
@@ -316,7 +317,7 @@ extern const Uint16 BattleUnitWeaponAnimationsSheba[];
 extern const Uint16 BattleUnitWeaponAnimationsPiers[];
 
 /* The battle background's colours: BG palettes 6 to 13, filled from
-   BATTLE_STATE.pal, darkened or not. */
+   BATTLE_STATE.palette, darkened or not. */
 #define BATTLE_BG_PALETTE ((Uint16 *)&BG_PLTT_COLOR(6, 0))
 
 /* BG1 during a battle: 256 colours, priority 3, its map in screen block
@@ -325,7 +326,7 @@ extern const Uint16 BattleUnitWeaponAnimationsPiers[];
 	(BGCNT_PRIORITY(3) | BGCNT_256_COLORS | \
 		BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
 
-/* BATTLE_ACTION_RECORD.tgt of a held unit's lost action (COMMAND_NONE, from
+/* BATTLE_ACTION_RECORD.target of a held unit's lost action (COMMAND_NONE, from
    btBuildEnemyActions): as a place code, place 0 of the other side, the party's
    for an enemy and the enemies' for a party member. */
 #define TARGET_NONE_ENEMY PLACE_PARTY

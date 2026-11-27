@@ -12,26 +12,26 @@ typedef struct WEATHER_PARTICLE {
 	Uint8  unused[4]; /* no code names it */
 	Uint16 y : 8;
 	Uint16 affine : 2;
-	Uint16 objMode : 2;
+	Uint16 objectMode : 2;
 	Uint16 mosaic : 1;
-	Uint16 fullCol : 1;
+	Uint16 fullColor : 1;
 	Uint16 shape : 2;
 	Uint16 x : 9;
-	Uint16 affineIdx : 5;
+	Uint16 affineIndex : 5;
 	Uint16 size : 2;
 	Uint16 tile : 10;
-	Uint16 pri : 2;
-	Uint16 pal : 4;
-	Uint8  unusedAfterPal[2]; /* no code names it */
+	Uint16 priority : 2;
+	Uint16 palette : 4;
+	Uint8  unusedAfterPalette[2]; /* no code names it */
 	FIXED  posX;
 	FIXED  posY;
 	FIXED  posZ;
 	Sint32 delay;
-	Uint16 tmr;
-	Uint8  unusedAfterTmr[2]; /* no code names it */
+	Uint16 timer;
+	Uint8  unusedAfterTimer[2]; /* no code names it */
 } WEATHER_PARTICLE;
 
-/* WEATHER_PARTICLE.tmr after the decrement that counts a live particle down,
+/* WEATHER_PARTICLE.timer after the decrement that counts a live particle down,
    when it was already free (0): the Uint16 wraps. */
 #define GROUND_PARTICLE_FREED 65535
 /* The frames of a ground particle's splash (WeatherRainSplashFrames, or a

@@ -177,7 +177,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 	if(sceneId == SCENE_STUCCO_ROOMS_A) {
 		Sint32		 entrance = MainRoutineStateWork.entrance;
-		ACTOR_PLACE *tbl;
+		ACTOR_PLACE *table;
 
 		switch(entrance) {
 		case STUCCO_ROOMS_A_INN_FROM_INN_PASSAGE:
@@ -188,14 +188,14 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 		case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
 		case STUCCO_ROOMS_A_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
 		case STUCCO_ROOMS_A_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-			tbl = StuccoRoomsAInnActorPlacements;
+			table = StuccoRoomsAInnActorPlacements;
 			break;
 		default:
-			tbl = StuccoRoomsAHouseActorPlacements;
+			table = StuccoRoomsAHouseActorPlacements;
 			break;
 		}
-		fdAssignViewFlags(tbl);
-		return tbl;
+		fdAssignViewFlags(table);
+		return table;
 	}
 	if(sceneId == SCENE_KALAY_SANCTUM) {
 		return StuccoRoomsASanctumActorPlacements;
@@ -325,7 +325,7 @@ static void scStuccoRoomsAOpenDoorAndExit(void)
 {
 	FIELD_STATE *state = FieldStateWork;
 	Uint32		 slot;
-	Sint32		 doorIdx;
+	Sint32		 doorIndex;
 
 	fdScriptStart();
 
@@ -334,40 +334,40 @@ static void scStuccoRoomsAOpenDoorAndExit(void)
 		ACTOR *actor = fdActorGet(slot);
 
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 
 	switch(state->stepCue) {
 	case STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHWEST:
-		doorIdx = 0;
+		doorIndex = 0;
 		break;
 	case STUCCO_ROOMS_A_INN_PASSAGE_TO_GUEST_ROOM_NORTHEAST:
-		doorIdx = 1;
+		doorIndex = 1;
 		break;
 	case STUCCO_ROOMS_A_GUEST_ROOM_SOUTHEAST_TO_INN_PASSAGE:
-		doorIdx = 2;
+		doorIndex = 2;
 		break;
 	case STUCCO_ROOMS_A_GUEST_ROOM_SOUTHWEST_TO_INN_PASSAGE:
-		doorIdx = 3;
+		doorIndex = 3;
 		break;
 	default:
 		return;
 	}
 
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 
 	{
-		Uint32 x = StuccoRoomsADoorMetatiles[doorIdx].x;
-		Uint32 y = StuccoRoomsADoorMetatiles[doorIdx].y;
+		Uint32 x = StuccoRoomsADoorMetatiles[doorIndex].x;
+		Uint32 y = StuccoRoomsADoorMetatiles[doorIndex].y;
 
 		fdMapGridAnimateMetatiles(
-			StuccoRoomsADoorMetatiles[doorIdx].steps, x, y);
+			StuccoRoomsADoorMetatiles[doorIndex].steps, x, y);
 	}
 
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.5);
 
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
 	fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -8);
@@ -422,7 +422,8 @@ static void scStuccoRoomsAApplyRoomState(void)
 			fdActorReleaseById(ACTOR_SEAN);
 			fdActorReleaseById(ACTOR_FOURTH_TOURIST);
 		} else {
-			fdActorSetSprColById(ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
+			fdActorSetSpriteColorById(
+				ACTOR_SECOND_TOUR_GUIDE, SPRITE_COLOR_RBG);
 		}
 		return;
 	default:

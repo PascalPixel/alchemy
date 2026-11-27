@@ -100,7 +100,7 @@ enum {
 /* A torch's script call: the torches stand without a shadow. */
 Sint32 scMarsLighthouseStarRoomSetUpTorch(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -151,7 +151,7 @@ void scMarsLighthouseStarRoomEndBlazeOnWestTorch(void)
 {
 }
 
-void scActorSetupScriptedPart(ACTOR *actor, Sint32 pri);
+void scActorSetupScriptedPart(ACTOR *actor, Sint32 priority);
 
 /* Creates one of the dragon hall's effects at a point in the room. */
 static __inline__ ACTOR *scMarsLighthouseStarRoomCreateActor(
@@ -187,16 +187,16 @@ void scMarsLighthouseStarRoomScatterIceChips(Sint32 id)
 			speed = syRandom();
 			scale = ((Uint32)syRandom() >> 1) + toFIXED(1) / 4;
 			fdActorStartScript(actor, DebrisScript);
-			fdActorSetSprFlags(actor, 0);
-			actor->velY = heading * 4 + toFIXED(2);
-			actor->velZ = syMulFX(speed * 8, syCos(heading));
-			actor->velX = syMulFX(speed * 8, syMathSin(heading));
+			fdActorSetSpriteFlags(actor, 0);
+			actor->velocityY = heading * 4 + toFIXED(2);
+			actor->velocityZ = syMulFX(speed * 8, syCos(heading));
+			actor->velocityX = syMulFX(speed * 8, syMathSin(heading));
 			actor->acceleration = 0;
 			actor->gravity = toFIXED(33) / 100;
 			actor->scaleX = scale;
 			actor->scaleY = scale;
 			actor->bounce = toFIXED(1) / 2;
-			fdActorSetSprColMode(actor, SPRITE_COLOR_GRB);
+			fdActorSetSpriteColorMode(actor, SPRITE_COLOR_GRB);
 		}
 	}
 }
@@ -216,7 +216,7 @@ void scMarsLighthouseStarRoomWestFireballCracksIce(void)
 	if(fdScriptGetFlag(FLAG_DRAGON_ICE_BURST) == 0 &&
 		fdScriptGetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
-		fdScriptPlaySnd(SE_ICE_CRACK);
+		fdScriptPlaySound(SE_ICE_CRACK);
 		actor->x.fixed = toFIXED(actor->homeX);
 		actor->z.fixed = toFIXED(actor->homeZ);
 		if(fdScriptGetFlag(FLAG_DRAGON_ICE_CRACKED) == 0) {
@@ -241,7 +241,7 @@ void scMarsLighthouseStarRoomEastFireballCracksIce(void)
 	if(fdScriptGetFlag(FLAG_DRAGON_ICE_BURST) == 0 &&
 		fdScriptGetFlag(FLAG_FLAME_DRAGONS_BEATEN) == 0) {
 #endif
-		fdScriptPlaySnd(SE_ICE_CRACK);
+		fdScriptPlaySound(SE_ICE_CRACK);
 		fdScriptSetFlag(FLAG_BURST_CAN_BREAK_DRAGON_ICE);
 		actor->x.fixed = toFIXED(actor->homeX);
 		actor->z.fixed = toFIXED(actor->homeZ);
@@ -256,10 +256,10 @@ void scMarsLighthouseStarRoomClearDragonIce(void);
 /* Felix casts Burst on the cracked ice the Flame Dragons sleep in, metatiles
    (41, 14) to (43, 14): a flash, the ice gone, chips flying, and the dragons
    wake. */
-void scMarsLighthouseStarRoomBurstIce(Sint32 phase, Sint32 frm)
+void scMarsLighthouseStarRoomBurstIce(Sint32 phase, Sint32 frame)
 {
 	if(phase == 1) {
-		fdScriptPlaySnd(SE_FLASH);
+		fdScriptPlaySound(SE_FLASH);
 		fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 		fdPaletteFadeInterpolate(60);
 		scMarsLighthouseStarRoomClearDragonIce();
@@ -270,9 +270,9 @@ void scMarsLighthouseStarRoomBurstIce(Sint32 phase, Sint32 frm)
 		FieldStateWork->raisedCue = DRAGON_WAKE_CUE;
 	}
 	/* From tick 97 to 271, chips burst from the ice every 30 ticks. */
-	if((Uint32)(frm - 97) <= 174 && frm % 30 == 0)
+	if((Uint32)(frame - 97) <= 174 && frame % 30 == 0)
 		scMarsLighthouseStarRoomScatterIceChips(ACTOR_ICE_CRACK);
-	if(frm == 276) {
+	if(frame == 276) {
 		fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 		fdPaletteFadeInterpolate(20);
 	}
@@ -342,8 +342,8 @@ Sint32 scInit(void)
 		if(entrance == ENTRANCE_HALL_SOUTH_END ||
 			entrance == MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE) {
 			if(!fdScriptGetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
-				scFieldActorSetSprPriority(ACTOR_AGATIO_DRAGON, 3);
-				scFieldActorSetSprPriority(ACTOR_KARST_DRAGON, 3);
+				scFieldActorSetSpritePriority(ACTOR_AGATIO_DRAGON, 3);
+				scFieldActorSetSpritePriority(ACTOR_KARST_DRAGON, 3);
 				fdActorGetById(ACTOR_KARST_DRAGON)->scaleX = -toFIXED(1);
 			}
 			if(fdScriptGetFlag(FLAG_FLAME_DRAGONS_BEATEN)) {
@@ -399,9 +399,9 @@ void scMarsLighthouseStarRoomWakeFlameDragons(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	scMarsLighthouseStarRoomClearDragonIce();
-	fdScriptPlaySnd(MUS_SILENCE);
+	fdScriptPlaySound(MUS_SILENCE);
 	syFieldScriptWait(40);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 		ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -410,7 +410,7 @@ void scMarsLighthouseStarRoomWakeFlameDragons(void)
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 4, 10);
 	fdActorSetDestinationOffset(MainRoutineStateWork.leaderActorId, 0, 16);
 	scFieldActorJump(MainRoutineStateWork.leaderActorId, 6, 20);
-	fdScriptPlaySnd(MUS_BATTLE_WITH_FLAME_DRAGON);
+	fdScriptPlaySound(MUS_BATTLE_WITH_FLAME_DRAGON);
 	fdActorSetAnimation(ACTOR_AGATIO_DRAGON, 2);
 	fdActorSetAnimation(ACTOR_KARST_DRAGON, 2);
 	syFieldScriptWait(24);
@@ -418,15 +418,15 @@ void scMarsLighthouseStarRoomWakeFlameDragons(void)
 	fdActorSetPos(ACTOR_KARST_DRAGON, 664, 232);
 	fdActorSetAnimation(ACTOR_AGATIO_DRAGON, 3);
 	fdActorSetAnimation(ACTOR_KARST_DRAGON, 3);
-	fdScriptPlaySnd(SE_TREMOR);
+	fdScriptPlaySound(SE_TREMOR);
 	fdMapGridSetShake(2, 4, 1);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(1, 2, 1);
 	syFieldScriptWait(20);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(SE_BOSS_ROAR);
+	fdScriptPlaySound(SE_BOSS_ROAR);
 	fdActorSetAnimation(ACTOR_AGATIO_DRAGON, 4);
 	fdActorSetAnimation(ACTOR_KARST_DRAGON, 4);
 	syFieldScriptWait(60);
@@ -459,17 +459,19 @@ void scMarsLighthouseStarRoomWakeAfterBattle(void)
 	syFieldScriptEndLastingPsynergy(0);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	scMarsLighthouseStarRoomClearDragonIce();
-	fdActorSetSprFlags(fdActorGet(ACTOR_AGATIO), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_KARST), 0);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_AGATIO_LIGHT), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_KARST_LIGHT), SPRITE_COLOR_WHITE);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_AGATIO), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_KARST), 0);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_AGATIO_LIGHT), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_KARST_LIGHT), SPRITE_COLOR_WHITE);
 	syWait(1);
 	scFieldActorSetPosAndResetMotion(
 		dragon, dragon->x.fixed, 0, dragon->z.fixed - toFIXED(8));
-	agatioLight->motionFlg = 0;
+	agatioLight->motionFlags = 0;
 	agatioLight->scaleX = toFIXED(1) / 4;
 	agatioLight->scaleY = toFIXED(1) / 4;
-	karstLight->motionFlg = 0;
+	karstLight->motionFlags = 0;
 	karstLight->scaleX = toFIXED(1) / 4;
 	karstLight->scaleY = toFIXED(1) / 4;
 	fdCameraMoveTo(680, CAMERA_KEEP, 228, 0);
@@ -479,15 +481,17 @@ void scMarsLighthouseStarRoomWakeAfterBattle(void)
 	syWait(1);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_AGATIO_DRAGON), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_KARST_DRAGON), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_AGATIO), SPRITE_COLOR_WHITE);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_KARST), SPRITE_COLOR_WHITE);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_AGATIO_DRAGON), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(
+		fdActorGet(ACTOR_KARST_DRAGON), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_AGATIO), SPRITE_COLOR_WHITE);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_KARST), SPRITE_COLOR_WHITE);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(SE_WARP);
+	fdScriptPlaySound(SE_WARP);
 	fdActorPlaceOnActor(ACTOR_AGATIO_LIGHT, ACTOR_AGATIO_DRAGON);
 	fdActorPlaceOnActor(ACTOR_KARST_LIGHT, ACTOR_KARST_DRAGON);
 	syWait(1);
@@ -506,8 +510,8 @@ void scMarsLighthouseStarRoomWakeAfterBattle(void)
 	fdActorRunScriptAndWait(
 		ACTOR_KARST_LIGHT, (Sint32)&MarsLighthouseStarRoomLightSinkScript);
 	syFieldScriptWait(10);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_AGATIO), SPRITE_COLOR_NORMAL);
-	scFieldActorSetSprCol(fdActorGet(ACTOR_KARST), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_AGATIO), SPRITE_COLOR_NORMAL);
+	scFieldActorSetSpriteColor(fdActorGet(ACTOR_KARST), SPRITE_COLOR_NORMAL);
 	syFieldScriptWait(80);
 	fdActorRunRepeatedMotion(ACTOR_AGATIO, 2);
 	fdActorSetAnimation(ACTOR_AGATIO, 5);
@@ -517,7 +521,7 @@ void scMarsLighthouseStarRoomWakeAfterBattle(void)
 	syFieldScriptShowMessageThenWait(ACTOR_AGATIO, 0, 80);
 	fdActorRunRepeatedMotion(ACTOR_AGATIO, 1);
 	syFieldScriptWait(20);
-	fdScriptPlaySnd(MUS_KARST_AND_AGATIO);
+	fdScriptPlaySound(MUS_KARST_AND_AGATIO);
 	/* "Wait, I think I remember... We were going to light the beacon..." */
 	syFieldScriptShowMessageThenWait(ACTOR_AGATIO, 0, 20);
 	fdActorRunRepeatedMotion(ACTOR_KARST, 1);
@@ -592,7 +596,8 @@ void scMarsLighthouseStarRoomDrawStarWithLeader(ACTOR *actor)
 {
 	ACTOR *owner = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-	((FIELD_SPR *)actor->spr)->pri = ((FIELD_SPR *)owner->spr)->pri;
+	((FIELD_SPR *)actor->sprite)->priority =
+		((FIELD_SPR *)owner->sprite)->priority;
 }
 
 /* The Mars Star as an actor on the floor by Agatio, rising first when asked. */
@@ -601,7 +606,7 @@ void scMarsLighthouseStarRoomCreateMarsStar(Sint32 rise)
 	ACTOR		 **slot = &MarsLighthouseStarRoomMarsStar;
 	ICON_TRANSFER *glyph;
 	ACTOR		  *actor;
-	FIELD_SPR	  *spr;
+	FIELD_SPR	  *sprite;
 	Sint32		   size;
 	Uint8		   clear = 0;
 
@@ -610,27 +615,27 @@ void scMarsLighthouseStarRoomCreateMarsStar(Sint32 rise)
 	*slot = actor;
 	if(actor == NULL)
 		return;
-	spr = actor->spr;
-	spr->fullCol = 0;
-	spr->pal = 0;
-	spr->pri = 1;
-	actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-	actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
+	sprite = actor->sprite;
+	sprite->fullColor = 0;
+	sprite->palette = 0;
+	sprite->priority = 1;
+	actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
 	actor->update = scMarsLighthouseStarRoomDrawStarWithLeader;
 	size = sizeof(ICON_TRANSFER);
-	spr->flg = clear;
-	spr->cnt = clear;
-	glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, size);
+	sprite->flags = clear;
+	sprite->count = clear;
+	glyph = syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, size);
 	gmItemLoadIcon(ITEM_MARS_STAR);
-	mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+	mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	if(rise) {
 		syWait(1);
-		(*slot)->velY = toFIXED(5) / 2;
+		(*slot)->velocityY = toFIXED(5) / 2;
 		syWait(4);
-		fdScriptPlaySnd(SE_CLICK);
+		fdScriptPlaySound(SE_CLICK);
 		syWait(8);
-		fdScriptPlaySnd(SE_CLICK);
+		fdScriptPlaySound(SE_CLICK);
 	}
 }
 
@@ -676,13 +681,13 @@ void scMarsLighthouseStarRoomTakeMarsStar(void)
 		fdActorSetAnimation(
 			MainRoutineStateWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
 		actor = MarsLighthouseStarRoomMarsStar;
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->speedLimit = toFIXED(4);
 		actor->acceleration = toFIXED(2);
 		scFieldActorSetMoveTargetFX(actor, leader->x.fixed,
 			leader->y.fixed + toFIXED(32), leader->z.fixed);
 		scFieldActorWaitForMove(MarsLighthouseStarRoomMarsStar);
-		fdScriptPlaySnd(MUS_TREASURE_FOUND);
+		fdScriptPlaySound(MUS_TREASURE_FOUND);
 		gmPartyInventoryRemove(ITEM_MYTHRIL_BAG);
 		gmInventoryAddItem(FELIX, ITEM_MYTHRIL_BAG_MARS_STAR);
 		/* "Felix got the Mars Star!" */
@@ -732,11 +737,11 @@ void scMarsLighthouseStarRoomLayDownAdept(Sint32 id)
 {
 	ACTOR *actor = fdActorGet(id);
 
-	fdActorSetSprFlags(fdActorGet(id), 0);
-	scFieldActorSetSprPriority(id, 3);
-	actor->motionFlg = 0;
-	actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-	actor->collisionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGet(id), 0);
+	scFieldActorSetSpritePriority(id, 3);
+	actor->motionFlags = 0;
+	actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+	actor->collisionFlags = 0;
 	if(id == ACTOR_AGATIO) {
 		fdActorSetPos(ACTOR_AGATIO, 700, 224);
 		fdActorSetAnimation(ACTOR_AGATIO, 10);
@@ -775,44 +780,45 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 {
 	ACTOR		 **slot;
 	ACTOR		  *actor;
-	FIELD_SPR	  *spr;
+	FIELD_SPR	  *sprite;
 	ICON_TRANSFER *glyph;
 	PALETTE_FADE  *fade;
 
-	fade = RamHeapSlots->palFade;
+	fade = RamHeapSlots->paletteFade;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	/* "Felix used the Mars Star!" */
 	mnMessageShowCentered(
 		(Sint32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syWait(1);
-	fdScriptPlaySnd(SE_GEM_SET);
+	fdScriptPlaySound(SE_GEM_SET);
 	slot = &MarsLighthouseStarRoomMarsStar;
 	actor = scFieldActorCreate(
 		SPRITE_UNSEEN_MARKER, toFIXED(680), toFIXED(8), toFIXED(147));
 	*slot = actor;
 	if(actor != 0) {
-		spr = actor->spr;
-		spr->flg = 0;
-		spr->fullCol = 0;
-		spr->pal = 0;
-		spr->pri = 2;
-		actor->motionFlg = 0;
-		actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		spr->cnt = 0;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		glyph = syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+		sprite = actor->sprite;
+		sprite->flags = 0;
+		sprite->fullColor = 0;
+		sprite->palette = 0;
+		sprite->priority = 2;
+		actor->motionFlags = 0;
+		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		sprite->count = 0;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		glyph =
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_MARS_STAR);
-		mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+		mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 	syFieldScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 680, 186);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 40);
-	fdScriptPlaySnd(MUS_SILENCE);
-	fdScriptPlaySnd(SE_RUMBLE);
+	fdScriptPlaySound(MUS_SILENCE);
+	fdScriptPlaySound(SE_RUMBLE);
 	fdMapGridSetShake(2, 2, 1);
 	syFieldScriptWait(20);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
@@ -829,7 +835,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdCameraWaitForArrival();
 	syFieldScriptWait(80);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(80);
 	syWait(60);
@@ -843,7 +849,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdMapGridCopyMetatilesLayered(76, 64, 9, 22, 102, 23);
 	fdMapCopyPalette(
 		MainRoutineStateWork.mapId + MARS_LIGHTHOUSE_THAWED_MAPS, fade);
-	fade->pal[0] = RGB(0, 0, 0); /* the backdrop */
+	fade->palette[0] = RGB(0, 0, 0); /* the backdrop */
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeInterpolate(120);
 	syWait(160);
@@ -852,36 +858,36 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	syFieldScriptWait(40);
 	actor = *slot;
 	if(actor != 0) {
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		actor->velY = toFIXED(2);
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->velocityY = toFIXED(2);
 		actor->speedLimit = toFIXED(2);
 		actor->acceleration = toFIXED(1);
 		scFieldActorSetMoveTarget(actor, 672, 0, 160);
 		scFieldActorWaitForMove(*slot);
-		fdScriptPlaySnd(SE_CLICK);
+		fdScriptPlaySound(SE_CLICK);
 		actor = *slot;
 		actor->acceleration = toFIXED(1) / 2;
-		actor->velY = toFIXED(4);
+		actor->velocityY = toFIXED(4);
 		actor->speedLimit = toFIXED(1);
 		scFieldActorSetMoveTarget(actor, 664, 0, 158);
 		scFieldActorWaitForMove(*slot);
 	}
 	syFieldScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 670, 170);
 	syFieldScriptWait(1);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	actor = *slot;
 	if(actor != 0)
 		fdActorRelease(actor);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 680, 186);
 	syFieldScriptWait(1);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	gmPlayMusic();
 	fdScriptSetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
@@ -897,42 +903,42 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
    back out. */
 void scMarsLighthouseStarRoomUseMarsStar(void)
 {
-	Sint32		   flg;
+	Sint32		   flag;
 	ACTOR		 **slot, **placedStarSlot;
 	ACTOR		  *actor, *placedStar;
-	FIELD_SPR	  *spr, *placedStarSpr;
+	FIELD_SPR	  *sprite, *placedStarSprite;
 	ICON_TRANSFER *glyph, *placedStarGlyph;
 	Uint16		  *palette;
 
-	flg = fdScriptGetFlag(FLAG_MARS_STAR_SET);
-	if(flg == 0) {
+	flag = fdScriptGetFlag(FLAG_MARS_STAR_SET);
+	if(flag == 0) {
 	} else {
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		/* "Felix used the Mars Star!" */
 		mnMessageShowCentered(
 			(Sint32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		syWait(1);
-		fdScriptPlaySnd(SE_GEM_SET);
+		fdScriptPlaySound(SE_GEM_SET);
 		slot = &MarsLighthouseStarRoomMarsStar;
 		actor = (ACTOR *)scFieldActorCreate(
 			SPRITE_UNSEEN_MARKER, toFIXED(680), toFIXED(8), toFIXED(147));
 		*slot = actor;
 		if(actor != 0) {
-			spr = actor->spr;
-			spr->flg = 0;
-			spr->fullCol = 0;
-			spr->pal = 0;
-			spr->pri = 2;
-			actor->motionFlg = 0;
-			actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-			spr->cnt = 0;
-			actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-			glyph =
-				syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+			sprite = actor->sprite;
+			sprite->flags = 0;
+			sprite->fullColor = 0;
+			sprite->palette = 0;
+			sprite->priority = 2;
+			actor->motionFlags = 0;
+			actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+			sprite->count = 0;
+			actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+			glyph = syHeapSlotAllocate(
+				HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 			gmItemLoadIcon(ITEM_MARS_STAR);
-			mnVRAMLoad(spr->slot, ICON_TILE_BYTES, glyph->tiles);
+			mnVRAMLoad(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
 			syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 		}
 		syFieldScriptWait(20);
@@ -944,27 +950,27 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 			EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
 		actor = *slot;
 		if(actor != 0) {
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-			actor->velY = toFIXED(2);
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->velocityY = toFIXED(2);
 			actor->speedLimit = toFIXED(2);
 			actor->acceleration = toFIXED(1);
 			scFieldActorSetMoveTarget(actor, 672, 0, 160);
 			scFieldActorWaitForMove((Sint32)*slot);
-			fdScriptPlaySnd(SE_CLICK);
+			fdScriptPlaySound(SE_CLICK);
 			actor = *slot;
 			actor->acceleration = toFIXED(1) / 2;
-			actor->velY = toFIXED(4);
+			actor->velocityY = toFIXED(4);
 			actor->speedLimit = toFIXED(1);
 			scFieldActorSetMoveTarget(actor, 664, 0, 158);
 			scFieldActorWaitForMove((Sint32)*slot);
 		}
 		syFieldScriptWait(20);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
-		fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+		fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 			~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 670, 170);
 		syFieldScriptWait(1);
-		fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+		fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 			ACTOR_FACES_MOTION;
 		actor = *slot;
 		if(actor != 0)
@@ -975,42 +981,42 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 		fdScriptEnd();
 		return;
 	}
-	palette = (Uint16 *)RamHeapSlots->palFade;
+	palette = (Uint16 *)RamHeapSlots->paletteFade;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	/* "Felix used the Mars Star!" */
 	mnMessageShowCentered(
 		(Sint32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	syWait(1);
-	fdScriptPlaySnd(SE_GEM_SET);
+	fdScriptPlaySound(SE_GEM_SET);
 	placedStarSlot = &MarsLighthouseStarRoomMarsStar;
 	placedStar = scFieldActorCreate(
 		SPRITE_UNSEEN_MARKER, toFIXED(680), toFIXED(8), toFIXED(147));
 	*placedStarSlot = placedStar;
 	if(placedStar != 0) {
-		placedStarSpr = placedStar->spr;
-		placedStarSpr->flg = 0;
-		placedStarSpr->cnt = 0;
-		placedStarSpr->fullCol = 0;
-		placedStarSpr->pal = 0;
-		placedStarSpr->pri = 2;
-		placedStar->motionFlg = 0;
-		placedStar->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		placedStar->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		placedStarSprite = placedStar->sprite;
+		placedStarSprite->flags = 0;
+		placedStarSprite->count = 0;
+		placedStarSprite->fullColor = 0;
+		placedStarSprite->palette = 0;
+		placedStarSprite->priority = 2;
+		placedStar->motionFlags = 0;
+		placedStar->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		placedStarGlyph =
-			syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		gmItemLoadIcon(ITEM_MARS_STAR);
 		mnVRAMLoad(
-			placedStarSpr->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
+			placedStarSprite->slot, ICON_TILE_BYTES, placedStarGlyph->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 	syFieldScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 680, 186);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_NORTH, 40);
-	fdScriptPlaySnd(MUS_SILENCE);
-	fdScriptPlaySnd(SE_RUMBLE);
+	fdScriptPlaySound(MUS_SILENCE);
+	fdScriptPlaySound(SE_RUMBLE);
 	fdMapGridSetShake(2, 2, 1);
 	syFieldScriptWait(20);
 	fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
@@ -1027,7 +1033,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	fdCameraWaitForArrival();
 	syFieldScriptWait(80);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdPaletteFadeApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
 	fdPaletteFadeInterpolate(80);
 	syWait(60);
@@ -1050,27 +1056,27 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	syFieldScriptWait(40);
 	placedStar = *placedStarSlot;
 	if(placedStar != 0) {
-		placedStar->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-		placedStar->velY = toFIXED(2);
+		placedStar->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		placedStar->velocityY = toFIXED(2);
 		placedStar->speedLimit = toFIXED(2);
 		placedStar->acceleration = toFIXED(1);
 		scFieldActorSetMoveTarget(placedStar, 672, 0, 160);
 		scFieldActorWaitForMove((Sint32)*placedStarSlot);
-		fdScriptPlaySnd(SE_CLICK);
+		fdScriptPlaySound(SE_CLICK);
 		placedStar = *placedStarSlot;
 		placedStar->acceleration = toFIXED(1) / 2;
-		placedStar->velY = toFIXED(4);
+		placedStar->velocityY = toFIXED(4);
 		placedStar->speedLimit = toFIXED(1);
 		scFieldActorSetMoveTarget(placedStar, 664, 0, 158);
 		scFieldActorWaitForMove((Sint32)*placedStarSlot);
 	}
 	syFieldScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg &=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags &=
 		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 670, 170);
 	syFieldScriptWait(1);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 		ACTOR_FACES_MOTION;
 	placedStar = *placedStarSlot;
 	if(placedStar != 0)
@@ -1116,18 +1122,18 @@ void scMarsLighthouseStarRoomUpdateRisingSpark(ACTOR *actor)
 /* While the lighthouse thaws, sparks rise from the floor every other tick. */
 void scMarsLighthouseStarRoomSpawnRisingSparks(void)
 {
-	Uint32	   frm = TickCount;
+	Uint32	   frame = TickCount;
 	ACTOR	  *actor;
-	FIELD_SPR *spr;
+	FIELD_SPR *sprite;
 	Uint32	   x, r;
 	Sint32	   z;
 	Sint32	   left;
 
-	if(frm & 1)
+	if(frame & 1)
 		return;
 	/* Each side makes its own spark, in turn: x is a random 28 pixels from the
 	   strip's west edge, z a random 120 from SPARKS_Z. */
-	if((frm >> 1) & 1) {
+	if((frame >> 1) & 1) {
 		r = syRandom();
 		x = r << 3;
 		x -= r;
@@ -1161,13 +1167,13 @@ void scMarsLighthouseStarRoomSpawnRisingSparks(void)
 			SPRITE_DUST_CLOUD, x, toFIXED(32), z);
 	}
 	if(actor != NULL) {
-		actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
-		actor->motionFlg = 0;
-		actor->tmr = 0;
-		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		spr = actor->spr;
-		spr->pri = 2;
-		fdActorSetSprFlags(actor, 0);
+		actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
+		actor->motionFlags = 0;
+		actor->timer = 0;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		sprite = actor->sprite;
+		sprite->priority = 2;
+		fdActorSetSpriteFlags(actor, 0);
 		actor->scaleX = toFIXED(1) / 2;
 		actor->scaleY = toFIXED(1) / 2;
 		RISING_SPARK_TICKS_LEFT(actor) = RISING_SPARK_TICKS;
@@ -1201,9 +1207,9 @@ extern Sint32 ScriptedPartScript[];
 
 #include "shared/actor_reset_scripted_for.h"
 
-/* A flame thrower's flame sent forward from `pos` at `speed`; `flg` keeps
+/* A flame thrower's flame sent forward from `pos` at `speed`; `flags` keeps
    its sprite when off screen. */
-void scFlameThrowerSendForward(Sint32 *pos, Sint32 speed, Sint32 flg)
+void scFlameThrowerSendForward(Sint32 *pos, Sint32 speed, Sint32 flag)
 {
 	ACTOR *actor =
 		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
@@ -1214,8 +1220,8 @@ void scFlameThrowerSendForward(Sint32 *pos, Sint32 speed, Sint32 flg)
 		actor->sceneWord = speed;
 		scActorResetScriptedFor(actor, 2);
 		actor->update = scFlameUpdateForward;
-		if(flg != 0)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+		if(flag != 0)
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1228,9 +1234,9 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 #include "shared/actor_setup_scripted_part.h"
 
 /* Defines a flame thrower's flame sent backward from `pos` at `speed`
-   under `updateRoutine`; `flg` keeps its sprite when off screen. */
+   under `updateRoutine`; `flags` keeps its sprite when off screen. */
 #define DEFINE_RIDE_SPAWN_BACKWARD(name, updateRoutine) \
-	void name(Sint32 *pos, Sint32 speed, Sint32 flg) \
+	void name(Sint32 *pos, Sint32 speed, Sint32 flags) \
 	{ \
 		ACTOR *actor = \
 			scFieldActorCreate(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]); \
@@ -1241,8 +1247,8 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 			actor->sceneWord = -speed; \
 			scActorSetupScriptedPart(actor, 3); \
 			actor->update = updateRoutine; \
-			if(flg != 0) \
-				actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN; \
+			if(flags != 0) \
+				actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN; \
 			fdActorSelectAnimation(actor, 2); \
 		} \
 	}
@@ -1250,7 +1256,7 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 DEFINE_RIDE_SPAWN_BACKWARD(scFlameThrowerSendBackward, scFlameUpdateForward)
 
 /* A flame thrower's flame that lands as it goes forward from `pos`. */
-void scFlameThrowerSendEast(Sint32 *pos, Sint32 speed, Sint32 flg)
+void scFlameThrowerSendEast(Sint32 *pos, Sint32 speed, Sint32 flag)
 {
 	ACTOR *actor =
 		scFieldActorCreate(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
@@ -1261,8 +1267,8 @@ void scFlameThrowerSendEast(Sint32 *pos, Sint32 speed, Sint32 flg)
 		actor->sceneWord = speed;
 		scActorSetupScriptedPart(actor, 3);
 		actor->update = scFlameUpdateSideways;
-		if(flg != 0)
-			actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
+		if(flag != 0)
+			actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
 		fdActorSelectAnimation(actor, 2);
 	}
 }
@@ -1290,7 +1296,7 @@ void scFlameThrowerSendSpark(Sint32 *pos, Sint32 base, Sint32 mode)
 		actor->gravity = (Uint16)syRandom();
 		actor->sceneWord = (Uint16)(syRandom() << 1) + base;
 		spin = (Uint16)syRandom() - DEGtoANG(180);
-		actor->tmr = spin;
+		actor->timer = spin;
 		scActorSetupScriptedFor(actor, 2);
 		actor->update = scFlameThrowerUpdateSpark;
 		fdActorSetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
@@ -1316,7 +1322,7 @@ void scFlameThrowersSetMode(Sint16 value)
 
 Sint32 scFlameThrowersGetCounter(void)
 {
-	return FLAME_THROWERS_STATE->cnt;
+	return FLAME_THROWERS_STATE->count;
 }
 
 #include "shared/flame_throwers_advance_counter.h"
@@ -1360,7 +1366,7 @@ Sint32 scFireballCarryLeader(void)
 	UNUSED Sint32 unused[3];
 
 	if(event->transitionActive == 0) {
-		fdScreenTransitionStart(event->transition, event->transitionFrm);
+		fdScreenTransitionStart(event->transition, event->transitionFrame);
 		event->transitionActive = 1;
 	}
 	fdScriptClearFlag(FLAG_MENU_OPEN);
@@ -1386,7 +1392,7 @@ Sint32 scFireballCarryLeader(void)
 	leader->update = (OBJECT_UPDATE)fdActorBlink;
 	leader->facing = FACING_SOUTH;
 	fdActorSelectAnimation(leader, ANIM_LEADER_SIT);
-	while(ride->car->tmr == 0) {
+	while(ride->car->timer == 0) {
 		if(fdMapGridGetTerrainKindOrBumpAt(
 			   0, leader->x.fixed, leader->z.fixed) != TERRAIN_ROUNDED_SQUARE) {
 			leader->x.fixed += ride->car->stepX;
@@ -1404,7 +1410,7 @@ Sint32 scFireballCarryLeader(void)
 	}
 	syFieldScriptWait(30);
 	leader->update = NULL;
-	fdActorSetSprColMode(leader, 0);
+	fdActorSetSpriteColorMode(leader, 0);
 	ride->active = 0;
 #if FIX_FUNCTION_SIGNATURES
 	return 0;
@@ -1479,7 +1485,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepth
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepth
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -1495,7 +1501,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #undef METATILE_PUSH_SLOT_ENTRY
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 

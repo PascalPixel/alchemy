@@ -8,18 +8,18 @@
 static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor)
 {
 	ACTOR *leader;
-	Uint8  flg;
+	Uint8  flag;
 	leader = fdActorGetById(ACTOR_PARTY_LEADER);
-	flg = actor->priFlg | ACTOR_PRIORITY_UNDERFOOT;
-	actor->priFlg = flg;
+	flag = actor->priorityFlags | ACTOR_PRIORITY_UNDERFOOT;
+	actor->priorityFlags = flag;
 	if(leader->z.fixed < actor->z.fixed) {
 		FIXED reach = actor->z.fixed - leader->z.fixed;
 		FIXED top;
 		reach += toFIXED(4);
 		top = actor->y.fixed + reach;
 		if(leader->y.fixed <= top) {
-			flg &= ~ACTOR_PRIORITY_UNDERFOOT;
-			actor->priFlg = flg;
+			flag &= ~ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags = flag;
 		}
 	}
 	RETURN_UNREAD(0);
@@ -29,7 +29,7 @@ static UNREAD_RESULT scActorUpdateBlockDrawOrder(ACTOR *actor)
    second: unless it already is, the two trade places and the game waits a
    tick. Nothing visible changes, since the pillars of a pair look alike, and
    the scenes that call it treat the two alike afterwards. */
-static void scActorSwapPossByDepth(Sint32 first, Sint32 second)
+static void scActorSwapPositionsByDepth(Sint32 first, Sint32 second)
 {
 	ACTOR *a = fdActorGetById(first);
 	ACTOR *b = fdActorGetById(second);

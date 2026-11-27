@@ -13,15 +13,15 @@
 struct WINDOW;
 struct WINDOW_SPR;
 
-struct WINDOW_SPR *mnWindowSprCreateOverlaidIcon(
-	Sint32 icon, struct WINDOW *win, Sint32 x, Sint32 y);
+struct WINDOW_SPR *mnWindowSpriteCreateOverlaidIcon(
+	Sint32 icon, struct WINDOW *window, Sint32 x, Sint32 y);
 
-void		  mnPartyStatBuildLayoutBounds(Sint32 flg);
-void		  mnWindowDrawColumnBorders(struct WINDOW *win, Uint32 flg);
-UNREAD_RESULT mnPartyStatDrawBars(
-	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 length);
-void mnWindowSetInteriorPaletteBit(const struct WINDOW *win, Sint32 x, Sint32 y,
-	Sint32 width, Sint32 height, Uint32 set);
+void		  mnPartyStatusBuildLayoutBounds(Sint32 flags);
+void		  mnWindowDrawColumnBorders(struct WINDOW *window, Uint32 flags);
+UNREAD_RESULT mnPartyStatusDrawBars(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 length);
+void mnWindowSetInteriorPaletteBit(const struct WINDOW *window, Sint32 x,
+	Sint32 y, Sint32 width, Sint32 height, Uint32 set);
 
 struct BUP_FILE_SUMMARY;
 
@@ -33,14 +33,14 @@ void   mnFileListUpdatePulse(void);
 void   mnFileListStartPulse(void);
 void   mnFileListStopPulse(void);
 void   mnWindowFillTilemapRect(
-	  struct WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
-void mnFileListShowPartySprs(
-	struct WINDOW *win, Sint32 x, Sint32 y, struct BUP_FILE_SUMMARY *summary);
-void mnFileListHidePartySprs(void);
-void mnFileListPlacePartySprs(void);
-void mnFileListShowDjinnSprs(struct WINDOW *win, Sint32 x, Sint32 y);
-void mnFileListHideDjinnSprs(void);
-void mnFileListPlaceDjinnSprs(void);
+	  struct WINDOW *window, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
+void mnFileListShowPartySprites(struct WINDOW *window, Sint32 x, Sint32 y,
+	struct BUP_FILE_SUMMARY *summary);
+void mnFileListHidePartySprites(void);
+void mnFileListPlacePartySprites(void);
+void mnFileListShowDjinnSprites(struct WINDOW *window, Sint32 x, Sint32 y);
+void mnFileListHideDjinnSprites(void);
+void mnFileListPlaceDjinnSprites(void);
 
 /* What the file list is choosing a file for, which decides the files the cursor
    may stop on. */
@@ -50,32 +50,32 @@ typedef enum FILE_MENU_MODE {
 	FILE_LIST_COPY,		/* copying: any file with data */
 	FILE_LIST_ERASE,	/* erasing: any file with data */
 	/* The title's Battle: files whose party has found a Djinni
-	   (BUP_FILE_SUMMARY.djinnCnt). */
+	   (BUP_FILE_SUMMARY.djinnCount). */
 	FILE_LIST_BATTLE,
 	FILE_LIST_CLEARED /* the title's Send: cleared files only */
 } FILE_MENU_MODE;
 
 void mnFileListDrawDjinnCounts(
-	struct WINDOW *win, struct BUP_FILE_SUMMARY *summary);
+	struct WINDOW *window, struct BUP_FILE_SUMMARY *summary);
 void mnFileListDrawSummary(
-	struct WINDOW *win, struct BUP_FILE_SUMMARY *summary);
+	struct WINDOW *window, struct BUP_FILE_SUMMARY *summary);
 Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode);
 Bool   mnNameEntryAcceptsMark(Sint32 mark, Sint32 letter);
 Sint32 mnNameEntryCountLetters(const Uint8 *name);
-void   mnWindowCopyTilemapRegion(const struct WINDOW *win, const void *src);
-void   mnWindowSetInteriorPalette(const struct WINDOW *win, Sint32 x, Sint32 y,
-	  Sint32 width, Sint32 height, Uint32 palette);
-Sint32 mnTextSetString(const Uint8 *str);
-void   mnNameEntryDrawName(struct WINDOW *win, Uint8 *name);
-Sint32 mnPartyGetMemberPortraitSpr(Uint32 member);
-void   mnTitleLoad(Sint32 picture, Sint32 slot);
+void   mnWindowCopyTilemapRegion(const struct WINDOW *window, const void *src);
+void mnWindowSetInteriorPalette(const struct WINDOW *window, Sint32 x, Sint32 y,
+	Sint32 width, Sint32 height, Uint32 palette);
+Sint32			   mnTextSetString(const Uint8 *str);
+void			   mnNameEntryDrawName(struct WINDOW *window, Uint8 *name);
+Sint32			   mnPartyGetMemberPortraitSprite(Uint32 member);
+void			   mnTitleLoad(Sint32 picture, Sint32 slot);
 struct WINDOW_SPR *mnTitleCreate(
-	Sint32 picture, struct WINDOW *win, Sint32 x, Sint32 y);
-void			   mnTitleBob(struct WINDOW_SPR *spr);
+	Sint32 picture, struct WINDOW *window, Sint32 x, Sint32 y);
+void			   mnTitleBob(struct WINDOW_SPR *sprite);
 void			   mnCommandIconLoad(Sint32 icon, Sint32 slot, Sint32 remap);
 struct WINDOW_SPR *mnCommandIconCreate(
-	Sint32 icon, Sint32 remap, struct WINDOW *win, Sint32 x, Sint32 y);
-void mnWindowSprPulse(struct WINDOW_SPR *spr);
+	Sint32 icon, Sint32 remap, struct WINDOW *window, Sint32 x, Sint32 y);
+void mnWindowSpritePulse(struct WINDOW_SPR *sprite);
 
 struct BATTLE_ACTION;
 struct ABILITY_DEFINITION;
@@ -85,41 +85,41 @@ struct BATTLE_COMMAND_ROW_STATE;
 
 UNREAD_RESULT mnRangeIconBuildTiles(void);
 UNREAD_RESULT mnRangeIconDraw(
-	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused);
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 pattern, Sint32 unused);
 void mnGraphicsMergeShiftedTileRows(
 	Uint32 *first, Uint32 *second, Uint32 *output, Sint32 shift);
-Sint32		   mnStatIconLoadIntoSlot(Sint32 resource, Sint32 idx);
-Sint32		   mnItemIconLoadIntoSlot(Sint32 resource, Sint32 idx);
-Sint32		   mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 idx);
+Sint32		   mnStatusIconLoadIntoSlot(Sint32 resource, Sint32 index);
+Sint32		   mnItemIconLoadIntoSlot(Sint32 resource, Sint32 index);
+Sint32		   mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 index);
 Sint32		   mnPortraitLoad(Uint32 member, Sint32 cacheSlot);
 void		   mnIconDecompress(ICON_TRANSFER *state);
 struct WINDOW *mnLinkCreateCountdownLabelWindow(void);
-Sint32		   mnCommandIconReloadSlot(Sint32 slotIdx, Sint32 icon);
+Sint32		   mnCommandIconReloadSlot(Sint32 slotIndex, Sint32 icon);
 void		   mnBattleCommandRowLoadIconTiles(
 			  ICON_PALETTE *palette, Sint32 glyph, Sint32 tile);
 void mnBattleCommandRowLoadIcon(
-	struct BATTLE_COMMAND_ROW_STATE *state, Sint32 idx, Uint32 icon);
+	struct BATTLE_COMMAND_ROW_STATE *state, Sint32 index, Uint32 icon);
 void		   mnCommandRowPutBg1Behind(void);
 void		   mnCommandRowPutBg1InFront(void);
 void		   mnGraphicsInstallBg1VCountHandler(void);
 struct WINDOW *mnMessageShowAndWait(Sint32 msg, Sint32 x, Sint32 y);
 Sint32		   mnBattleCommandRowRun(Sint32 mode);
-UNREAD_RESULT  mnStringFormatNumToHalfwords(Sint16 *out, Sint32 value);
+UNREAD_RESULT  mnStringFormatNumberToHalfwords(Sint16 *out, Sint32 value);
 Sint32		   mnBattleDjinnMenuListChangedAbilities(
 			const struct PSYNERGY_ENTRY *oldGrid, const struct PSYNERGY_ENTRY *newGrid,
 			Uint16 *out, Sint32 *gained, Sint32 *lost);
-UNREAD_RESULT mnWindowSprCreateAbilityIcon(
-	struct WINDOW *win, Sint32 x, Sint32 y, Sint32 abilityId);
-struct WINDOW *mnBattleDjinnMenuShowChangePreview(struct WINDOW *win,
-	Sint32 member, Sint32 encodedDjinn, Sint32 page, Sint32 *pageCnt);
-Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member);
+UNREAD_RESULT mnWindowSpriteCreateAbilityIcon(
+	struct WINDOW *window, Sint32 x, Sint32 y, Sint32 abilityId);
+struct WINDOW *mnBattleDjinnMenuShowChangePreview(struct WINDOW *window,
+	Sint32 member, Sint32 encodedDjinn, Sint32 page, Sint32 *pageCount);
+Sint32 mnBattleStatusScreenRun(Uint16 *list, Sint32 listCount, Sint32 member);
 Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused);
 Sint32 mnBattleSummonMenuRun(
 	Sint32 unusedA, Sint32 unusedB, const Uint8 *standby);
 Sint32 mnItemCheckBattleUse(Sint32 unit, Sint32 itemId);
-void   mnVRAMCopyTile(Uint32 srcTile, Uint32 dstTile);
-Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 cnt);
-Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 cnt);
+void   mnVRAMCopyTile(Uint32 srcTile, Uint32 destTile);
+Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 count);
+Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 count);
 Sint32 mnBattleTargetRunSelection(
 	Sint32 selection, Sint32 mode, Uint32 spread, Uint32 kind);
 void   mnBattleMenuUpdate(void);
@@ -131,7 +131,7 @@ void  *mnIconMenuOpen(void);
 void   mnIconMenuClose(void);
 Sint32 mnIconMenuRun(Sint32 init);
 Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal);
-void   mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 idx);
+void   mnCommandIconLoadIntoSlot(Sint32 slot, Sint32 index);
 void   mnIconMenuAddIcon(Sint32 icon);
 void   mnIconMenuCenter(Sint32 row, Sint32 width, Sint32 resourceBase);
 void   mnIconMenuLayoutIcons(
@@ -185,15 +185,15 @@ void   mnTransferMethodDrawHelp(void);
 
 void mnDebugSceneSelectSchedule(void);
 void mnDebugSceneSelectDrawRow(
-	struct WINDOW *win, Sint32 sceneId, const Sint16 *entrance);
-Sint32 mnDebugSceneSelectHandleRowInput(struct WINDOW *win, Sint16 sceneId,
+	struct WINDOW *window, Sint32 sceneId, const Sint16 *entrance);
+Sint32 mnDebugSceneSelectHandleRowInput(struct WINDOW *window, Sint16 sceneId,
 	Sint16 *entrance, Sint16 *selectedField);
-void   mnStringFormatHexDigits(Uint32 value, Uint32 cnt, Uint8 *out);
-void   mnDebugFlagEditorDrawTable(struct WINDOW *win, Sint32 page);
+void   mnStringFormatHexDigits(Uint32 value, Uint32 count, Uint8 *out);
+void   mnDebugFlagEditorDrawTable(struct WINDOW *window, Sint32 page);
 Sint32 mnDebugFlagEditorHandleInput(
-	struct WINDOW *win, Sint32 *page, Sint32 *cursor);
+	struct WINDOW *window, Sint32 *page, Sint32 *cursor);
 void mnReservedNoOperation(void);
-void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 idx);
+void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 index);
 
 /* The Japanese name entry screen's second keyboard, which Select switches
    to. */

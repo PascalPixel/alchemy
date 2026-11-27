@@ -28,7 +28,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 pillar;
 	Uint8				*sheet;
 	SCREEN_POINT		 screen;
@@ -63,7 +63,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 	for(i = 0; i != VOLCANO_SPARK_POOL; i++)
 		PARTICLES[i].variant = 0;
 
-	actor = btObjectGetStub(state->args->tgts[0])->actor;
+	actor = btObjectGetStub(state->args->targets[0])->actor;
 	/* Each pillar stands 72 to 87 pixels out on the first target's side of the
 	   field, at its own depth. */
 	for(i = 0; i != VOLCANO_MOST_PILLARS; i++) {
@@ -80,32 +80,32 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	for(frm = 0; frm != VOLCANO_TICKS; frm++) {
+	for(frame = 0; frame != VOLCANO_TICKS; frame++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
 		if(state->args->variant == EFFECT_VARIANT_STRONGEST &&
-			frm < VOLCANO_PILLAR_TICKS) {
+			frame < VOLCANO_PILLAR_TICKS) {
 			if(state->args->side == EFFECT_SIDE_ENEMIES)
 				camera->yaw += VOLCANO_CAMERA_SPIN;
 			else
 				camera->yaw -= VOLCANO_CAMERA_SPIN;
 		}
-		if(frm == 16)
+		if(frame == 16)
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		EFFECT_VIEW_FROM_CAMERA(camera);
 
-		if(frm < VOLCANO_PILLAR_TICKS) {
+		if(frame < VOLCANO_PILLAR_TICKS) {
 			for(pillar = 0; pillar != VolcanoCounts[state->args->variant];
 				pillar++) {
 				btProjectionPoint(&state->particles[pillar], &screen);
 				screen.x /= 2;
 				screen.y -= 8;
-				if(frm == VolcanoStartTicks[pillar])
-					sySndPlayStub(SE_CRASH);
+				if(frame == VolcanoStartTicks[pillar])
+					sySoundPlayStub(SE_CRASH);
 				/* The column scrolls up over its flickering flame. */
-				if(frm >= VolcanoStartTicks[pillar] + 4) {
+				if(frame >= VolcanoStartTicks[pillar] + 4) {
 					Sint32 scroll =
-						(frm * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
+						(frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
 					draw[pillar & 1](canvas, state->sheet,
 						screen.x - FIRE_PILLAR_WIDTH / 2,
@@ -114,7 +114,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 					draw[pillar & 1](canvas, state->sheet,
 						screen.x - FIRE_PILLAR_WIDTH / 2, screen.y - scroll,
 						FIRE_PILLAR_WIDTH, scroll);
-					if(frm & 1) {
+					if(frame & 1) {
 						draw[0](canvas,
 							state->sheet + VOLCANO_FLAME_PICTURE_ODD,
 							screen.x - FIRE_PILLAR_FLAME_WIDTH, screen.y - 24,
@@ -135,8 +135,8 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				/* Sparks: a fountain at the start, then a few a tick. */
-				if(frm == VolcanoStartTicks[pillar] ||
-					frm >= VolcanoStartTicks[pillar] + 16) {
+				if(frame == VolcanoStartTicks[pillar] ||
+					frame >= VolcanoStartTicks[pillar] + 16) {
 					Sint32 spawned = 0;
 
 					for(i = 0; i != VOLCANO_SPARK_POOL; i++) {
@@ -144,17 +144,17 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 
 						if(spark->variant == 0) {
 							Sint32 speed;
-							Sint32 ang;
+							Sint32 angle;
 
 							speed = (syRandom() & 0x3ff) + 32;
-							ang = (syRandom() & 0x7fff) - DEGtoANG(90);
+							angle = (syRandom() & 0x7fff) - DEGtoANG(90);
 							SET_POSITION(spark, screen.x << 8,
 								(screen.y << 8) + (16 << 8),
-								FIXEDtoINT_TWICE(sySin(ang) * speed));
-							spark->velY =
-								FIXEDtoINT_TWICE(-(syCos(ang) * speed * 2));
+								FIXEDtoINT_TWICE(sySin(angle) * speed));
+							spark->velocityY =
+								FIXEDtoINT_TWICE(-(syCos(angle) * speed * 2));
 							spawned++;
-							if(frm == VolcanoStartTicks[pillar]) {
+							if(frame == VolcanoStartTicks[pillar]) {
 								spark->variant = (syRandom() & 7) + 48;
 								if(spawned == VOLCANO_ERUPTION)
 									break;
@@ -166,13 +166,13 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 						}
 					}
 				}
-				if(frm == VolcanoStartTicks[pillar]) {
-					state->shakeFrm = 2;
+				if(frame == VolcanoStartTicks[pillar]) {
+					state->shakeFrame = 2;
 					EFFECT_FOR_EACH_TARGET(i, state->args) {
-						btEffectTintBattler(state->args->tgts[i],
+						btEffectTintBattler(state->args->targets[i],
 							SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i, 8);
 						btMotionApplyKnockbackStub(
-							state->args->tgts[i], KNOCKBACK_HOP);
+							state->args->targets[i], KNOCKBACK_HOP);
 					}
 				}
 			}
@@ -190,15 +190,15 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 
 				spark->variant = life - 1;
 				x = spark->x += spark->z;
-				y = spark->y += spark->velY;
+				y = spark->y += spark->velocityY;
 				spark->z = spark->z * 60 / DAMPING_SCALE;
-				spark->velY =
-					spark->velY * 60 / DAMPING_SCALE - VOLCANO_SPARK_GRAVITY;
+				spark->velocityY = spark->velocityY * 60 / DAMPING_SCALE -
+					VOLCANO_SPARK_GRAVITY;
 				drawY = y / 256;
 				/* A spark bounces at half its speed off the foot of the battle
 				   view. */
 				if(drawY > BATTLE_VIEW_HEIGHT) {
-					spark->velY = -spark->velY / 2;
+					spark->velocityY = -spark->velocityY / 2;
 				} else if(x >= 0 && x >> 8 <= 126 && y >= 0) {
 					Sint32 drawX = x >> 8;
 					Sint32 size = VOLCANO_SPARK_SIZE(life);

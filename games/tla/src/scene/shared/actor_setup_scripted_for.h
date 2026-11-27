@@ -4,13 +4,13 @@
    second on. */
 void scActorSetupScriptedFor(ACTOR *actor, Sint32 unused)
 {
-	actor->motionFlg = 0;
-	actor->collisionFlg = 0;
-	fdActorSetSprFlags(actor, 0);
+	actor->motionFlags = 0;
+	actor->collisionFlags = 0;
+	fdActorSetSpriteFlags(actor, 0);
 	fdActorSelectAnimation(actor, 2);
 	fdActorStartScript(actor, ScriptedPartScript);
-	scFieldActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
-	actor->tmr = 0;
+	scFieldActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
+	actor->timer = 0;
 	actor->speedLimit = 0;
 	actor->acceleration = 0;
 }

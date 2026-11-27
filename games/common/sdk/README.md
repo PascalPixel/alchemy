@@ -52,7 +52,7 @@ ROM that no longer matches.
 The rest comes from each game as it does for any of its code: `types.h`,
 the hardware registers in `system/definitions.h`, `BiosCpuSet`, the music
 player and song tables in `games/<game>/sound`, and the symbols its linker
-script defines, `sySndMainRAMRom` and `MixerCallViaR3Rom`.
+script defines, `sySoundMainRAMRom` and `MixerCallViaR3Rom`.
 
 ## What stays with each game
 

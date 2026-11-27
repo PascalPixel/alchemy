@@ -4,7 +4,7 @@
    and stretches back to its own shape over six ticks. */
 static Sint32 scSquashAndStretch(ACTOR *state)
 {
-	switch(state->tmr) {
+	switch(state->timer) {
 	case 6:
 		state->scaleX -= toFIXED(1) / 4;
 		state->scaleY += toFIXED(1) / 8;
@@ -20,9 +20,9 @@ static Sint32 scSquashAndStretch(ACTOR *state)
 	case 0:
 		state->scaleX = toFIXED(1);
 		state->scaleY = toFIXED(1);
-		state->tmr = SQUASH_AND_STRETCH_PAUSE();
+		state->timer = SQUASH_AND_STRETCH_PAUSE();
 		break;
 	}
-	state->tmr--;
+	state->timer--;
 	return 1;
 }

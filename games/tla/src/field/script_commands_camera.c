@@ -25,7 +25,7 @@ void fdCameraMoveWithinMapBounds(
 	posY = requestedY;
 	panning = pan;
 	posZ = requestedZ;
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	actor = state->camera;
 	map = RamHeapSlots->mapGrid;
 	/* Keep the screen inside the map: the view centre stays 120 pixels from
@@ -94,7 +94,7 @@ void fdCameraMoveToActor(Sint32 actorId, Sint32 pan)
    camera to arrive, then 2 ticks more. */
 void fdCameraWaitForArrival(void)
 {
-	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	fdActorWaitForMoveStub(((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 								HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 			->camera);
 	fdScriptWait(2);
@@ -104,26 +104,26 @@ void fdCameraWaitForArrival(void)
    view centres on. */
 ACTOR *fdCameraGetActor(void)
 {
-	return ((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	return ((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 				HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 		->camera;
 }
 
-/* Unused: makes the camera follow target; unless keepCurPos is set it
+/* Unused: makes the camera follow target; unless keepCurrentPos is set it
    jumps there at once. */
-UNUSED void fdCameraFollow(ACTOR *tgt, Sint32 keepCurPos)
+UNUSED void fdCameraFollow(ACTOR *target, Sint32 keepCurrentPos)
 {
 	ACTOR *camera;
 
-	camera = ((FIELD_STATE *)syHeapSlotAllocEWRAM(
+	camera = ((FIELD_STATE *)syHeapSlotAllocateEWRAM(
 				  HEAP_SLOT_FIELD, sizeof(FIELD_STATE)))
 				 ->camera;
-	if(tgt != NULL) {
+	if(target != NULL) {
 		fdActorStartCameraStub(camera, 0);
-		camera->watchedActor = (union FIELD_OBJECT *)tgt;
-		if(keepCurPos == 0) {
+		camera->watchedActor = (union FIELD_OBJECT *)target;
+		if(keepCurrentPos == 0) {
 			SET_ACTOR_POSITION(
-				camera, tgt->x.fixed, tgt->y.fixed, tgt->z.fixed);
+				camera, target->x.fixed, target->y.fixed, target->z.fixed);
 		}
 	}
 }

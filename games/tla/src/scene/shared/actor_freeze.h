@@ -4,8 +4,8 @@ void scActorFreeze(Sint32 id)
 	ACTOR *actor = fdActorGet(id);
 
 	if(actor != NULL) {
-		fdActorSetSprFlags(actor, 0);
-		actor->collisionFlg = 0;
-		actor->motionFlg = 0;
+		fdActorSetSpriteFlags(actor, 0);
+		actor->collisionFlags = 0;
+		actor->motionFlags = 0;
 	}
 }

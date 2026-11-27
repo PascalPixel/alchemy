@@ -88,14 +88,14 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 {
 	static SPR_SCALE		 unitScale = {{{toFIXED(3) / 2, toFIXED(3) / 2}}};
 	SPR_PLACEMENT			 place;
-	SCREEN_POINT			 tgtPos;
+	SCREEN_POINT			 targetPos;
 	void					*canvas;
 	Uint8					*motes;
-	Sint32					 winEdgeStep;
+	Sint32					 windowEdgeStep;
 	FIXED					 neptuneX;
 	FIXED					 neptuneZ;
-	Sint32					 neptuneVelX;
-	Sint32					 neptuneVelZ;
+	Sint32					 neptuneVelocityX;
+	Sint32					 neptuneVelocityZ;
 	Sint32					 savedBg1ScrollX;
 	BATTLE_BACKGROUND_STATE *view;
 	Sint32					 j;
@@ -103,8 +103,8 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	Sint32					 dropOriginX;
 	Uint32					*heap;
 	BATTLE_EFFECT_STATE		*state;
-	Sint32					 frm;
-	Sint32					 flareFrm;
+	Sint32					 frame;
+	Sint32					 flareFrame;
 	Sint32					 beamLines;
 	Sint32					 span;
 	Sint32					 i;
@@ -124,7 +124,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		heap, HEAP_SLOT_BATTLE_CANVAS, HEAP_SLOT_BATTLE_SHEET);
 	state->args = args;
 	btEffectStartCanvasLayer(0);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	PLTT_BACKDROP = 0;
 	BG_PLTT_COLOR(0, 1) = 0;
 	sySetEvent(btEffectResetBg2Pa, EVENT_PASS_VBLANK);
@@ -137,7 +137,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	btEffectWipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
 	REG_WIN0H = WIN_RANGE(240, 240);
 	btEffectShowLivingTargets(state->args);
-	btEffectCreateSprs(NEPTUNE_SPRITES, SPRITE_NEPTUNE, 1);
+	btEffectCreateSprites(NEPTUNE_SPRITES, SPRITE_NEPTUNE, 1);
 	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 	sySynch(1);
 	btBackgroundLoadStub(
@@ -147,11 +147,11 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(
 		RESOURCE_BLUE_GLOW_SHEET, state->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
 	EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
-	winEdgeStep = 1;
+	windowEdgeStep = 1;
 	neptuneX = toFIXED(280);
 	neptuneZ = toFIXED(200);
-	neptuneVelX = -toFIXED(4);
-	neptuneVelZ = -toFIXED(8);
+	neptuneVelocityX = -toFIXED(4);
+	neptuneVelocityZ = -toFIXED(8);
 	savedBg1ScrollX = BgScrollWork[1].x;
 	view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 	EFFECT_SET_TRANSFER(
@@ -176,8 +176,8 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		flareSeed = &state->particles[i];
 		flareSeed->x = (sySin(a) * r) >> 2;
 		flareSeed->y = (syCos(a) * r) >> 2;
-		flareSeed->velX = -flareSeed->x / NEPTUNE_FLARE_TICKS;
-		flareSeed->velY = -flareSeed->y / NEPTUNE_FLARE_TICKS;
+		flareSeed->velocityX = -flareSeed->x / NEPTUNE_FLARE_TICKS;
+		flareSeed->velocityY = -flareSeed->y / NEPTUNE_FLARE_TICKS;
 		flareSeed->variant = 0;
 	}
 	/* The first spray around Neptune. */
@@ -186,32 +186,33 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		Sint32 a = syRandom() & TRIG_ANGLE_MASK;
 		PARTICLES[i].x = ((sySin(a) * r) >> 3) + toFIXED(128);
 		PARTICLES[i].y = ((syCos(a) * r) >> 4) + toFIXED(96);
-		PARTICLES[i].velX = (-(syRandom() & 0x1fff) - toFIXED(1) / 32) << 5;
-		PARTICLES[i].velY = (-(syRandom() & 0xfff) - toFIXED(3) / 32) << 5;
+		PARTICLES[i].velocityX = (-(syRandom() & 0x1fff) - toFIXED(1) / 32)
+			<< 5;
+		PARTICLES[i].velocityY = (-(syRandom() & 0xfff) - toFIXED(3) / 32) << 5;
 		PARTICLES[i].variant = 0;
 	}
 
-	for(frm = 0; frm != NEPTUNE_LEAP_TICKS &&
-		(frm <= 16 || !(PerRepeat & (KEY_A | KEY_B)));
-		frm++) {
+	for(frame = 0; frame != NEPTUNE_LEAP_TICKS &&
+		(frame <= 16 || !(PerRepeat & (KEY_A | KEY_B)));
+		frame++) {
 		/* The first stage: Neptune leaps from the sea and the beam joins it to
 		   the sky. */
-		if(frm == 24) {
-			sySndPlayStub(SE_WAVE);
+		if(frame == 24) {
+			sySoundPlayStub(SE_WAVE);
 		}
-		if(frm == 76) {
-			sySndPlayStub(SE_SCATTER);
+		if(frame == 76) {
+			sySoundPlayStub(SE_SCATTER);
 		}
-		if(frm == 154) {
-			sySndPlayStub(SE_SWIRL);
+		if(frame == 154) {
+			sySoundPlayStub(SE_SWIRL);
 		}
-		if(frm == NEPTUNE_BURST_TICK) {
-			sySndPlayStub(SE_CRASH);
+		if(frame == NEPTUNE_BURST_TICK) {
+			sySoundPlayStub(SE_CRASH);
 		}
 		/* The window opens with a ragged edge. */
-		if(frm >= 0 && frm < 16) {
+		if(frame >= 0 && frame < 16) {
 			Uint16 *phase = WINDOW_EDGE_RIGHT;
-			if(frm == 1) {
+			if(frame == 1) {
 				Uint8 *noise = WINDOW_EDGE_INSETS;
 				Sint32 k;
 				for(k = 0; k != WINDOW_EDGE_INSET_LINES; k++) {
@@ -220,42 +221,42 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 				*phase = 0;
 				sySetEvent(btEffectBuildWindowEdgeTable, EVENT_PASS_VBLANK);
 			}
-			*phase += winEdgeStep;
-			winEdgeStep += 3;
-			if(frm == 15) {
+			*phase += windowEdgeStep;
+			windowEdgeStep += 3;
+			if(frame == 15) {
 				syCloseEvent(btEffectBuildWindowEdgeTable);
 			}
 		}
 
 		/* Neptune leaps in and settles. */
-		if(frm > 21) {
+		if(frame > 21) {
 			scale = unitScale;
-			if(frm <= 83) {
-				if(frm > 48) {
-					neptuneVelX = neptuneVelX * 60 / DAMPING_SCALE;
+			if(frame <= 83) {
+				if(frame > 48) {
+					neptuneVelocityX = neptuneVelocityX * 60 / DAMPING_SCALE;
 				}
-				neptuneVelZ = neptuneVelZ * 60 / DAMPING_SCALE;
+				neptuneVelocityZ = neptuneVelocityZ * 60 / DAMPING_SCALE;
 				if(neptuneZ > toFIXED(132)) {
-					neptuneVelZ -= toFIXED(1) / 8;
+					neptuneVelocityZ -= toFIXED(1) / 8;
 				} else {
-					neptuneVelZ += toFIXED(1) / 8;
+					neptuneVelocityZ += toFIXED(1) / 8;
 				}
-				neptuneX += neptuneVelX;
-				neptuneZ += neptuneVelZ;
-			} else if(frm <= 170) {
-				if(frm <= 107) {
-					neptuneVelX += toFIXED(1) / 8;
+				neptuneX += neptuneVelocityX;
+				neptuneZ += neptuneVelocityZ;
+			} else if(frame <= 170) {
+				if(frame <= 107) {
+					neptuneVelocityX += toFIXED(1) / 8;
 				}
-				neptuneVelX = neptuneVelX * 60 / DAMPING_SCALE;
-				neptuneX += neptuneVelX;
-				if(frm <= 117) {
+				neptuneVelocityX = neptuneVelocityX * 60 / DAMPING_SCALE;
+				neptuneX += neptuneVelocityX;
+				if(frame <= 117) {
 					if(neptuneZ > toFIXED(138)) {
-						neptuneVelZ -= toFIXED(1) / 8;
+						neptuneVelocityZ -= toFIXED(1) / 8;
 					} else {
-						neptuneVelZ += toFIXED(1) / 8;
+						neptuneVelocityZ += toFIXED(1) / 8;
 					}
-					neptuneVelZ = neptuneVelZ * 56 / DAMPING_SCALE;
-					neptuneZ += neptuneVelZ;
+					neptuneVelocityZ = neptuneVelocityZ * 56 / DAMPING_SCALE;
+					neptuneZ += neptuneVelocityZ;
 				}
 			}
 			place.groundHeight = 0;
@@ -266,11 +267,11 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 				place.y = toFIXED((NeptuneObjectY[i] * 3) >> 1) + neptuneZ -
 					toFIXED(24);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[i], &place, &scale, 0);
+					state->sprites[i], &place, &scale, 0);
 			}
 		}
 
-		if(frm == 76) {
+		if(frame == 76) {
 			for(i = 0; i != PARTICLE_POOL_COUNT; i++) {
 				/* A second spray. */
 				if(PARTICLES[i].variant == -1) {
@@ -278,26 +279,26 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					Sint32 a = syRandom() & TRIG_ANGLE_MASK;
 					PARTICLES[i].x = ((sySin(a) * r) >> 3) + toFIXED(64);
 					PARTICLES[i].y = ((syCos(a) * r) >> 4) + toFIXED(96);
-					PARTICLES[i].velX = (32 - (syRandom() & 63)) << 12;
-					PARTICLES[i].velY = (-(syRandom() & 31) - 16) << 13;
+					PARTICLES[i].velocityX = (32 - (syRandom() & 63)) << 12;
+					PARTICLES[i].velocityY = (-(syRandom() & 31) - 16) << 13;
 					PARTICLES[i].variant = 0;
 				}
 			}
 		}
-		if(frm == NEPTUNE_FLARES_TICK) {
+		if(frame == NEPTUNE_FLARES_TICK) {
 			syIntFunction(IRQ_VCOUNT, NEPTUNE_NARROW_LINES,
 				btEffectSetBg2AffineScaleHalf);
-			state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+			state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 			state->fadeStep = 0;
 		}
 
 		/* Flares converge on Neptune's head. */
-		flareFrm = frm - NEPTUNE_FLARES_TICK;
-		if(flareFrm >= 0 && flareFrm < NEPTUNE_FLARES_WINDOW) {
+		flareFrame = frame - NEPTUNE_FLARES_TICK;
+		if(flareFrame >= 0 && flareFrame < NEPTUNE_FLARES_WINDOW) {
 			for(i = 0; i != NEPTUNE_FLARE_COUNT; i++) {
 				flare = &state->particles[i];
-				if(frm >= i / 4 + NEPTUNE_FLARES_TICK &&
-					frm < i / 4 + NEPTUNE_FLARES_TICK + NEPTUNE_FLARE_TICKS) {
+				if(frame >= i / 4 + NEPTUNE_FLARES_TICK &&
+					frame < i / 4 + NEPTUNE_FLARES_TICK + NEPTUNE_FLARE_TICKS) {
 					Sint32 fx = FIXEDtoINT(flare->x) + NEPTUNE_FLARES_X;
 					Sint32 fy = FIXEDtoINT(flare->y) + NEPTUNE_FLARES_Y;
 					Sint32 size = (i & 3) + 5;
@@ -306,8 +307,8 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 						state->sheet + BattleEffectFlarePictures[size - 1] +
 							NEPTUNE_FLARE_SHEET,
 						fx - size, fy - size, span, span);
-					flare->x += flare->velX;
-					flare->y += flare->velY;
+					flare->x += flare->velocityX;
+					flare->y += flare->velocityY;
 				}
 			}
 		}
@@ -318,7 +319,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		   tick, so it shows at its start and once or twice lower and is off
 		   the canvas's foot within three ticks, never to start again. In a
 		   recording they are too brief to pick out under the burst's flash. */
-		if(frm == NEPTUNE_BURST_TICK) {
+		if(frame == NEPTUNE_BURST_TICK) {
 			for(i = 0; i != NEPTUNE_BURST_SPARKS; i++) {
 				burstSeed = &state->particles[i];
 				burstSeed->x = (syRandom() & 15) - 8;
@@ -335,27 +336,27 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 				}
 				burstSeed->x += 100;
 				burstSeed->y += 52;
-				burstSeed->velX = -6;
+				burstSeed->velocityX = -6;
 				burstSeed->z = burstSeed->x;
-				burstSeed->velY = burstSeed->y;
+				burstSeed->velocityY = burstSeed->y;
 				burstSeed->variant = 0;
 			}
 		}
-		if(frm >= NEPTUNE_BURST_TICK) {
+		if(frame >= NEPTUNE_BURST_TICK) {
 			Uint16 *pictures = BattleEffectFlarePictures;
 
 			for(i = 0; i != NEPTUNE_BURST_SPARKS; i++) {
 				/* The smallest flare's size. */
 				Sint32 r = 1;
-				if(frm >= i / 2 + NEPTUNE_BURST_TICK) {
+				if(frame >= i / 2 + NEPTUNE_BURST_TICK) {
 					blit[0](canvas,
 						state->sheet + pictures[r - 1] + NEPTUNE_FLARE_SHEET,
 						state->particles[i].x - r, state->particles[i].y - r,
 						r * 2, r * 2);
-					state->particles[i].x += state->particles[i].velX;
-					state->particles[i].y += state->particles[i].velY;
+					state->particles[i].x += state->particles[i].velocityX;
+					state->particles[i].y += state->particles[i].velocityY;
 					if(state->particles[i].y < 0) {
-						state->particles[i].y = state->particles[i].velY;
+						state->particles[i].y = state->particles[i].velocityY;
 						state->particles[i].x = state->particles[i].z;
 					}
 				}
@@ -363,12 +364,12 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The beam runs from the top of the canvas to the burst. */
-		if(frm >= NEPTUNE_BEAM_TICK) {
+		if(frame >= NEPTUNE_BEAM_TICK) {
 			beamLines = NEPTUNE_BEAM_THIN;
-			if(frm >= NEPTUNE_BURST_TICK) {
+			if(frame >= NEPTUNE_BURST_TICK) {
 				beamLines = NEPTUNE_BEAM_FLASH;
-				if(frm != NEPTUNE_BURST_TICK + 1 &&
-					frm != NEPTUNE_BURST_TICK + 2) {
+				if(frame != NEPTUNE_BURST_TICK + 1 &&
+					frame != NEPTUNE_BURST_TICK + 2) {
 					beamLines = NEPTUNE_BEAM_WIDE;
 				}
 			}
@@ -379,8 +380,8 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 			}
 			for(i = 0; i != beamLines; i++) {
 				Sint32 level;
-				Sint32 ofs = (i + 1) / 2;
-				level = beamLines * 2 - ofs * 4;
+				Sint32 offset = (i + 1) / 2;
+				level = beamLines * 2 - offset * 4;
 				if(level < NEPTUNE_BEAM_LEVEL_MIN) {
 					level = NEPTUNE_BEAM_LEVEL_MIN;
 				}
@@ -388,44 +389,44 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					level = CANVAS_LEVEL_BRIGHTEST;
 				}
 				if(i & 1) {
-					ofs = -ofs;
+					offset = -offset;
 				}
-				btEffectDrawClippedCanvasLine(
-					ofs + 48, 0, ofs / 2 + 111, 63 - (ofs + 1) / 2, level);
+				btEffectDrawClippedCanvasLine(offset + 48, 0, offset / 2 + 111,
+					63 - (offset + 1) / 2, level);
 			}
 		}
 
 		/* The flare at the burst grows, then the splash covers it. */
-		if(flareFrm >= 0 &&
-			flareFrm < NEPTUNE_SWELL_TICK - NEPTUNE_FLARES_TICK) {
+		if(flareFrame >= 0 &&
+			flareFrame < NEPTUNE_SWELL_TICK - NEPTUNE_FLARES_TICK) {
 			Sint32 size;
-			size = flareFrm / 2 + 1;
+			size = flareFrame / 2 + 1;
 			if(size > 4) {
 				size = 4;
 			}
 			EFFECT_DRAW_FLARE(blit[1], canvas,
 				state->sheet + NEPTUNE_FLARE_SHEET, 108, 60, size);
 		}
-		if(frm >= NEPTUNE_SWELL_TICK && frm < NEPTUNE_SECOND_SWELL_TICK) {
+		if(frame >= NEPTUNE_SWELL_TICK && frame < NEPTUNE_SECOND_SWELL_TICK) {
 			Sint32 size;
-			size = (frm - NEPTUNE_SWELL_TICK) / 2 + 3;
+			size = (frame - NEPTUNE_SWELL_TICK) / 2 + 3;
 			if(size > 6) {
 				size = 6;
 			}
 			EFFECT_DRAW_FLARE(blit[1], canvas,
 				state->sheet + NEPTUNE_FLARE_SHEET, 108, 60, size);
 		}
-		if(frm >= NEPTUNE_SECOND_SWELL_TICK) {
+		if(frame >= NEPTUNE_SECOND_SWELL_TICK) {
 			Sint32 size;
-			Sint32 swellFrm = frm - NEPTUNE_SECOND_SWELL_TICK;
-			size = swellFrm / 4 + 5;
+			Sint32 swellFrame = frame - NEPTUNE_SECOND_SWELL_TICK;
+			size = swellFrame / 4 + 5;
 			if(size > 8) {
 				size = 8;
 			}
 			EFFECT_DRAW_FLARE(blit[1], canvas,
 				state->sheet + NEPTUNE_FLARE_SHEET, 108, 60, size);
-			if(frm < NEPTUNE_SPLASH_TICK) {
-				size = swellFrm / 4 + 1;
+			if(frame < NEPTUNE_SPLASH_TICK) {
+				size = swellFrame / 4 + 1;
 				if(size > 4) {
 					size = 4;
 				}
@@ -433,9 +434,9 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					state->sheet + NEPTUNE_FLARE_SHEET, 100, 52, size);
 			}
 		}
-		if(frm >= NEPTUNE_SPLASH_TICK && frm < NEPTUNE_BURST_TICK) {
+		if(frame >= NEPTUNE_SPLASH_TICK && frame < NEPTUNE_BURST_TICK) {
 			Sint32 picture;
-			picture = (frm - NEPTUNE_SPLASH_TICK) / 4;
+			picture = (frame - NEPTUNE_SPLASH_TICK) / 4;
 			if(picture > 2) {
 				picture = 2;
 			}
@@ -444,9 +445,9 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					picture * PICTURE_BYTES(WATER_SPLASH),
 				63, 18, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
 		}
-		if(frm >= NEPTUNE_BURST_TICK) {
+		if(frame >= NEPTUNE_BURST_TICK) {
 			Sint32 picture;
-			picture = (frm - NEPTUNE_BURST_TICK) / 2 % 4 + 3;
+			picture = (frame - NEPTUNE_BURST_TICK) / 2 % 4 + 3;
 			blit[0](canvas,
 				state->sheet + NEPTUNE_SPLASH +
 					picture * PICTURE_BYTES(WATER_SPLASH),
@@ -460,7 +461,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		}
 
 		/* The spray falls. */
-		if(frm > 27) {
+		if(frame > 27) {
 			DRAW_RECTANGLE draw = blit[1];
 			for(i = 0; i != PARTICLE_POOL_COUNT; i++) {
 				if(PARTICLES[i].variant >= 0) {
@@ -471,7 +472,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					btParticleAdvanceWithGravity2D(
 						&PARTICLES[i], 62, NeptuneGravity[i & 3]);
 					PARTICLES[i].variant++;
-					if(PARTICLES[i].velY > 0 &&
+					if(PARTICLES[i].velocityY > 0 &&
 						FIXEDtoINT(PARTICLES[i].y) >
 							NEPTUNE_SEA_Y + WATER_WAVE_HEIGHT / 2) {
 						PARTICLES[i].variant = -1;
@@ -482,7 +483,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != 5; i++) {
 			/* The sea scrolls along the bottom. */
 			blit[1](canvas, state->sheet,
-				i * WATER_WAVE_WIDTH + ((frm / 4) & 31) - WATER_WAVE_WIDTH,
+				i * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH,
 				NEPTUNE_SEA_Y, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
 		}
 		EFFECT_PRESENT_CANVAS(state);
@@ -492,7 +493,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	BgScrollWork[1].x = savedBg1ScrollX;
 	view->busy = 0;
 	syIntFunction(IRQ_VCOUNT, 0, 0);
-	btEffectSetupBlendedDisp();
+	btEffectSetupBlendedDisplay();
 	syCloseEvent(btEffectResetBg2Pa);
 	REG_WIN0H = WIN_RANGE(0, 240);
 	EFFECT_SET_TRANSFER(
@@ -506,28 +507,28 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 		state->particles[i].variant = 0;
 	}
 	EFFECT_FOR_EACH_TARGET(i, state->args) {
-		btProjectionScaledUnit(state->args->tgts[i], &tgtPos);
-		state->particles[i].x = tgtPos.x / 2;
+		btProjectionScaledUnit(state->args->targets[i], &targetPos);
+		state->particles[i].x = targetPos.x / 2;
 	}
 	btResourceLoadAndDecompress(RESOURCE_BLUE_FLAME_SHEET, state->sheet, 1, 1);
-	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	REG_BG2PA = Q_8_8(0.5);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-	for(frm = 0; frm != NEPTUNE_COLUMN_TICKS; frm++) {
-		if(frm == 96) {
+	for(frame = 0; frame != NEPTUNE_COLUMN_TICKS; frame++) {
+		if(frame == 96) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
 		for(i = 0; i != NEPTUNE_COLUMNS; i++) {
 			column = &state->particles[i];
-			if(frm == i * NEPTUNE_COLUMN_INTERVAL + 7) {
-				sySndPlayStub(SE_CAST);
+			if(frame == i * NEPTUNE_COLUMN_INTERVAL + 7) {
+				sySoundPlayStub(SE_CAST);
 			}
 			/* A column falls. */
-			if(frm >= i * NEPTUNE_COLUMN_INTERVAL &&
+			if(frame >= i * NEPTUNE_COLUMN_INTERVAL &&
 				column->variant < NEPTUNE_COLUMN_LANDED_TICKS) {
 				Sint32 wobble =
-					frm * NEPTUNE_COLUMN_SPEED % BLUE_FLAME_COLUMN_HEIGHT;
+					frame * NEPTUNE_COLUMN_SPEED % BLUE_FLAME_COLUMN_HEIGHT;
 				blit[1](canvas, state->sheet,
 					column->x - BLUE_FLAME_COLUMN_WIDTH / 2,
 					column->y + wobble - 216, BLUE_FLAME_COLUMN_WIDTH,
@@ -549,7 +550,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					emittedDrops = 0;
 					dropOriginX = column->x;
 					if(column->variant < NEPTUNE_COLUMN_SHAKE_TICKS) {
-						state->shakeFrm = 4;
+						state->shakeFrame = 4;
 					}
 					for(j = 0; j != PARTICLE_POOL_COUNT; j++) {
 						if(PARTICLES[j].variant == 0) {
@@ -559,8 +560,8 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 							a = (syRandom() & 0x7fff) - DEGtoANG(90);
 							PARTICLES[j].x = toFIXED(dropOriginX);
 							PARTICLES[j].y = toFIXED(ground);
-							PARTICLES[j].velX = (sySin(a) * r) >> 7;
-							PARTICLES[j].velY = -(syCos(a) * r * 2) >> 7;
+							PARTICLES[j].velocityX = (sySin(a) * r) >> 7;
+							PARTICLES[j].velocityY = -(syCos(a) * r * 2) >> 7;
 							PARTICLES[j].variant = (syRandom() & 7) + 32;
 							if(++emittedDrops == 4) {
 								break;
@@ -571,11 +572,11 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		EFFECT_FOR_EACH_TARGET(i, state->args) {
-			if(frm == i * NEPTUNE_COLUMN_INTERVAL + 8) {
-				btEffectTintBattler(state->args->tgts[i], SPRITE_COLOR_WHITE,
+			if(frame == i * NEPTUNE_COLUMN_INTERVAL + 8) {
+				btEffectTintBattler(state->args->targets[i], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, i, 8);
 				btMotionApplyKnockbackStub(
-					state->args->tgts[i], KNOCKBACK_LEAP);
+					state->args->targets[i], KNOCKBACK_LEAP);
 			}
 		}
 		for(i = 0; i != PARTICLE_POOL_COUNT; i++) {
@@ -588,7 +589,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 					&PARTICLES[i], 60, toFIXED(1) / 4);
 				y = FIXEDtoINT(PARTICLES[i].y);
 				if(y > 120) {
-					PARTICLES[i].velY = -PARTICLES[i].velY / 2;
+					PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
 				} else if(PARTICLES[i].x >= 0 &&
 					(x = FIXEDtoINT(PARTICLES[i].x)) <= 126 &&
 					PARTICLES[i].y >= 0) {
@@ -602,7 +603,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	}
 
 	for(i = 0; i != NEPTUNE_SPRITES; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	EFFECT_FINISH_CANVAS();
 }

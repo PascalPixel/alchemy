@@ -32,9 +32,9 @@ enum {
 Sint32 scMercuryLighthouseFlickerGlint(ACTOR *actor)
 {
 	if((MercuryLighthouseGlintTicks >> 1) & 1)
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_HIDDEN);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 	else
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
 	return 0;
 }
 
@@ -42,14 +42,14 @@ Sint32 scMercuryLighthouseFlickerGlint(ACTOR *actor)
    turns between two headings, as if looking around for them. */
 void scMercuryLighthouseLookAround(ACTOR *actor)
 {
-	Uint8 *tmr = &actor->sceneCnt;
+	Uint8 *timer = &actor->sceneCount;
 	Uint8 *state;
 
-	if(*tmr != 0) {
-		(*tmr)--;
+	if(*timer != 0) {
+		(*timer)--;
 		return;
 	}
-	*tmr = (syRandomBelow(80)) + 40;
+	*timer = (syRandomBelow(80)) + 40;
 	state = &actor->sceneByte;
 	switch(*state) {
 	case 0:
@@ -121,23 +121,24 @@ void scMercuryLighthouseSpawnGlints(void)
 {
 	ACTOR *actor;
 
-	fdActorSetSprPriority(ACTOR_BOY, 3);
-	fdActorSetSprPriority(ACTOR_GIRL, 3);
-	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
+	fdActorSetSpritePriority(ACTOR_BOY, 3);
+	fdActorSetSpritePriority(ACTOR_GIRL, 3);
+	fdActorSetSpriteFlags(
+		fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	if((TickCount & 15) == 0) {
 		actor = syImportActorCreate(SPRITE_GLINT, 0, 0, 0);
 		if(actor != NULL) {
-			FIELD_SPR *sprite = actor->spr;
+			FIELD_SPR *sprite = actor->sprite;
 			FIXED	   x = syRandom() * 40 + toFIXED(812);
 			FIXED	   z = toFIXED(696);
 
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->x.fixed = x;
 			actor->y.fixed = toFIXED(160);
 			actor->z.fixed = z;
-			fdActorSetSprFlags(actor, 0);
-			actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			sprite->pri = 2;
+			fdActorSetSpriteFlags(actor, 0);
+			actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			sprite->priority = 2;
 			fdActorStartScript(actor, MercuryLighthouseGlintScript);
 			fdActorSelectAnimation(actor, 1);
 		}
@@ -156,14 +157,15 @@ void scMercuryLighthouseHearVoices(void)
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	scFieldActorSetSprCol(fdActorGetById(MainRoutineStateWork.leaderActorId),
+	scFieldActorSetSpriteColor(
+		fdActorGetById(MainRoutineStateWork.leaderActorId),
 		SPRITE_COLOR_HIDDEN);
 	sySynch(1);
 	MercuryLighthouseGlintTicks = 0;
 	sySetEvent(scMercuryLighthouseSpawnGlints, EVENT_PASS_TICK);
-	fdActorSetSprPriority(ACTOR_BOY, 2);
-	fdActorSetSprPriority(ACTOR_GIRL, 2);
-	FieldStateWork->transitionFrm = 40;
+	fdActorSetSpritePriority(ACTOR_BOY, 2);
+	fdActorSetSpritePriority(ACTOR_GIRL, 2);
+	FieldStateWork->transitionFrame = 40;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(40);
@@ -200,12 +202,12 @@ void scMercuryLighthouseHearVoices(void)
 	fdScriptShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_OLD_MAN, 0);
 	actor = fdActorGetById(ACTOR_OLD_MAN);
 	delay = (syRandomBelow(80)) + 40;
-	actor->sceneCnt = delay;
+	actor->sceneCount = delay;
 	actor->sceneByte = 0;
 	actor->update = (OBJECT_UPDATE)scMercuryLighthouseLookAround;
 	actor = fdActorGetById(ACTOR_OLD_WOMAN);
 	delay = (syRandomBelow(80)) + 40;
-	actor->sceneCnt = delay;
+	actor->sceneCount = delay;
 	actor->sceneByte = 2;
 	actor->update = (OBJECT_UPDATE)scMercuryLighthouseLookAround;
 	fdPsynergyStartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
@@ -267,7 +269,7 @@ void scMercuryLighthouseHearVoices(void)
 	/* The backdrop, black. */
 	BG_PLTT_COLOR(0, 0) = RGB(0, 0, 0);
 	sySynch(1);
-	FieldStateWork->transitionFrm = 16;
+	FieldStateWork->transitionFrame = 16;
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptFinishScreenTransition();
@@ -284,7 +286,7 @@ Sint32 scInit(void)
 		fdScriptEndLastingPsynergy(0);
 		fdScriptStartScreenTransition();
 		fdScriptWaitTransitionTicks();
-		fdScriptPlaySnd(SE_ASCEND);
+		fdScriptPlaySound(SE_ASCEND);
 		fdPaletteFadeSetTarget(RGB_WHITE, 0);
 		fdPaletteFadeStartInterpolation(20);
 		sySynch(20);

@@ -6,6 +6,6 @@ Sint32 scActorStepToWatched(ACTOR *actor)
 	actor->x.fixed += actor->bounce;
 	actor->y.fixed += actor->sceneWord;
 	actor->z.fixed += actor->gravity;
-	left = --actor->sceneCnt;
+	left = --actor->sceneCount;
 	return left != 0;
 }

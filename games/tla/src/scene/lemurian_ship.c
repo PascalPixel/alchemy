@@ -413,14 +413,14 @@ void scLemurianShipOpenDoor(void)
 	for(i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
 		actor = ((ACTOR *)fdActorGetById(i));
 		if(actor != NULL)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
 	for(i = 0; i < CABIN_DOOR_COUNT; i++) {
 		if(state->stepCue == LemurianShipDoors[i].exit)
 			found = i;
 	}
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 	fdMapGridCopyMetatilesTo(
 		0, 0, LemurianShipDoors[found].x, LemurianShipDoors[found].z, 1, 2);
 	fdMapGridAnimateMetatiles(LemurianShipDoors[found].value,
@@ -462,7 +462,7 @@ void scLemurianShipOpenLowerDoor(void)
 	for(i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
 		actor = ((ACTOR *)fdActorGetById(i));
 		if(actor != NULL)
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 	}
 	for(i = 0; i < LOWER_DOOR_COUNT; i++) {
 		if(state->stepCue == LemurianShipLowerDoors[i].exit)
@@ -471,8 +471,8 @@ void scLemurianShipOpenLowerDoor(void)
 	if(found < 2 && fdScriptGetFlag(FLAG_AQUA_HYDRA_BEATEN) &&
 		fdScriptGetFlag(FLAG_HOLD_PARCHED) == 0)
 		found += LOWER_DOOR_COUNT;
-	fdScriptPlaySnd(SE_DOOR_OPEN);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
+	fdScriptPlaySound(SE_DOOR_OPEN);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
 	fdMapGridCopyMetatilesTo(0, 0, LemurianShipLowerDoors[found].x,
 		LemurianShipLowerDoors[found].z, 1, 2);
 	fdMapGridAnimateMetatiles(LemurianShipLowerDoors[found].value,
@@ -511,7 +511,7 @@ void scLemurianShipWalkIntoPassage(void)
 		leader->facing = FACING_NORTH;
 		fdActorSetScript(party->leaderActorId, LeaderWalkThroughDoorScript);
 		sySynch(12);
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
 		syImportScriptSetExitRequest(state->stepCue);
@@ -582,7 +582,7 @@ void scLemurianShipExamineLiftSwitch(void)
 	fdScriptEndLastingPsynergy(0);
 	if(fdScriptGetFlag(FLAG_SHIP_ENGINE_RUNNING)) {
 		if(fdScriptGetFlag(FLAG_LIFT_LOWERED)) {
-			fdScriptPlaySnd(SE_CRUNCH);
+			fdScriptPlaySound(SE_CRUNCH);
 			scFieldActorSetPosAndResetMotion(
 				((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE)),
 				toFIXED(824), -toFIXED(32), toFIXED(72));
@@ -594,9 +594,9 @@ void scLemurianShipExamineLiftSwitch(void)
 			fdScriptClearFlag(FLAG_LIFT_LOWERED);
 		} else if(fdScriptGetFlag(
 					  (FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_A))) {
-			fdScriptPlaySnd(SE_ITEM_REMOVE);
+			fdScriptPlaySound(SE_ITEM_REMOVE);
 		} else {
-			fdScriptPlaySnd(SE_CRUNCH);
+			fdScriptPlaySound(SE_CRUNCH);
 			fdActorSetPos(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE, 0, 0);
 			scLemurianShipDrawLiftLowered();
 			fdMapGridCopyMetatileAttributes(102, 16, 3, 2, 110, 4);
@@ -650,14 +650,14 @@ void scLemurianShipPushCrateOffLedge(void)
 		fdScriptEndLastingPsynergy(0);
 		fdMapGridCopyMetatileAttributes(16, 47, 1, 1, x, 46);
 		sySynch(1);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		do {
 			sySynch(1);
-			moving = actor->velY;
+			moving = actor->velocityY;
 		} while(moving != 0);
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 		sySynch(10);
-		actor->motionFlg = moving;
+		actor->motionFlags = moving;
 		fdScriptSetFlag(FLAG_CRATE_DROPPED);
 		fdMapGridCopyMetatileAttributes(14, 46, 1, 1, 16, 46);
 		fdScriptEnd();
@@ -715,7 +715,7 @@ void scLemurianShipStepOnLift(void)
 		jellyBeaten =
 			fdScriptGetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A));
 		if(jellyBeaten) {
-			fdScriptPlaySnd(SE_LEMURIAN_SHIP_LIFT);
+			fdScriptPlaySound(SE_LEMURIAN_SHIP_LIFT);
 			fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdMapGridSetShake(0, 2, 1);
@@ -728,21 +728,21 @@ void scLemurianShipStepOnLift(void)
 			fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 			fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 840, 88);
 			fdScriptWait(20);
-			fdScriptPlaySnd(SE_CRUNCH);
+			fdScriptPlaySound(SE_CRUNCH);
 			scLemurianShipDrawLiftRaised();
 			fdScriptWait(20);
 			leader->layer = 1;
 		} else {
 			jelly = ((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_JELLY_A));
-			fdActorSetSprPriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2);
+			fdActorSetSpritePriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2);
 			fdActorSetSpeed(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2.4);
 			((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
-				->steeringFlg &= ~ACTOR_FACES_MOTION;
+				->steeringFlags &= ~ACTOR_FACES_MOTION;
 			fdActorWalkToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 824, 88);
 			fdScriptWait(1);
 			((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
-				->steeringFlg |= ACTOR_FACES_MOTION;
-			fdScriptPlaySnd(SE_LEMURIAN_SHIP_LIFT);
+				->steeringFlags |= ACTOR_FACES_MOTION;
+			fdScriptPlaySound(SE_LEMURIAN_SHIP_LIFT);
 			fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdMapGridSetShake(0, 2, 1);
@@ -769,7 +769,7 @@ void scLemurianShipStepOnLift(void)
 			fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 			fdScriptWait(20);
-			fdScriptPlaySnd(SE_CRUNCH);
+			fdScriptPlaySound(SE_CRUNCH);
 			scLemurianShipDrawLiftRaised();
 			fdScriptWait(20);
 			fdActorStop(MainRoutineStateWork.leaderActorId);
@@ -796,7 +796,7 @@ void scLemurianShipStepOnLiftWestSide(void)
 		fdScriptEndLastingPsynergy(0);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
 		fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 812, 72);
-		fdScriptPlaySnd(SE_LEMURIAN_SHIP_LIFT);
+		fdScriptPlaySound(SE_LEMURIAN_SHIP_LIFT);
 		fdActorSetAttachedEffect(MainRoutineStateWork.leaderActorId,
 			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 		fdMapGridSetShake(0, 2, 1);
@@ -809,7 +809,7 @@ void scLemurianShipStepOnLiftWestSide(void)
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 3.2);
 		fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 812, 88);
 		fdScriptWait(20);
-		fdScriptPlaySnd(SE_CRUNCH);
+		fdScriptPlaySound(SE_CRUNCH);
 		scLemurianShipDrawLiftRaised();
 		fdScriptWait(20);
 		leader->layer = 1;
@@ -862,7 +862,7 @@ void scLemurianShipLeapIntoHydra(Sint32 id)
 
 	fdActorSetSpeed(id, 3.2);
 	actor->gravity = toFIXED(1) / 2;
-	actor->velY = toFIXED(8);
+	actor->velocityY = toFIXED(8);
 	fdActorSetDestination(id, 120, 120);
 }
 
@@ -873,14 +873,14 @@ void scLemurianShipFightAquaHydra(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(MUS_SILENCE);
+	fdScriptPlaySound(MUS_SILENCE);
 	fdActorStartRepeatedMotion(ACTOR_HOLD_JELLY_B, 2);
 	fdActorStartRepeatedMotion(ACTOR_HOLD_JELLY_C, 2);
 	fdActorStartRepeatedMotion(ACTOR_HOLD_JELLY_D, 2);
 	fdActorStartRepeatedMotion(ACTOR_HOLD_JELLY_E, 2);
 	fdActorRunRepeatedMotion(ACTOR_HOLD_JELLY_F, 2);
 	fdScriptWait(20);
-	fdScriptPlaySnd(SE_BEAST_CRY);
+	fdScriptPlaySound(SE_BEAST_CRY);
 	scLemurianShipLeapIntoHydra(ACTOR_HOLD_JELLY_B);
 	scLemurianShipLeapIntoHydra(ACTOR_HOLD_JELLY_C);
 	scLemurianShipLeapIntoHydra(ACTOR_HOLD_JELLY_D);
@@ -893,7 +893,7 @@ void scLemurianShipFightAquaHydra(void)
 	fdActorSetPos(ACTOR_HOLD_JELLY_E, 0, 0);
 	fdActorSetPos(ACTOR_HOLD_JELLY_F, 0, 0);
 	fdScriptWait(20);
-	fdScriptPlaySnd(MUS_AQUA_HYDRA);
+	fdScriptPlaySound(MUS_AQUA_HYDRA);
 	fdActorRunScriptAndWait(ACTOR_HOLD_JELLY_A, LemurianShipHydraForms);
 
 	MainRoutineStateWork.battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -914,7 +914,7 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 	ACTOR *leader;
 	Sint32 column;
 	Sint32 row;
-	Uint32 frm;
+	Uint32 frame;
 	Sint32 done;
 
 	done = fdScriptGetFlag(FLAG_RIGHT_PILLAR_SUNK);
@@ -929,15 +929,15 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 				fdScriptStart();
 				fdScriptEndLastingPsynergy(0);
 				fdScriptWait(20);
-				fdScriptPlaySnd(SE_STONE_RUMBLE);
+				fdScriptPlaySound(SE_STONE_RUMBLE);
 				fdMapGridCopyMetatilesTo(35, 68, 35, 69, 1, 1);
 				fdMapGridCopyMetatileAttributes(35, 0, 1, 1, column, row);
-				actor->motionFlg = done;
-				fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, 3);
+				actor->motionFlags = done;
+				fdActorSetSpritePriority(ACTOR_RIGHT_PILLAR, 3);
 				if(actor->z.fixed > leader->z.fixed)
-					fdActorSetSprPriority(
+					fdActorSetSpritePriority(
 						MainRoutineStateWork.leaderActorId, 3);
-				for(frm = 0; frm < 128; frm++) {
+				for(frame = 0; frame < 128; frame++) {
 					actor->y.fixed -= toFIXED(1) / 8;
 					sySynch(1);
 				}
@@ -946,11 +946,11 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 				fdScriptWait(20);
 				fdScriptSetFlag(FLAG_RIGHT_PILLAR_SUNK);
 				if(actor->z.fixed > leader->z.fixed) {
-					fdActorSetSprPriority(
+					fdActorSetSpritePriority(
 						MainRoutineStateWork.leaderActorId, 2);
 					((ACTOR *)fdActorGetById(
 						 MainRoutineStateWork.leaderActorId))
-						->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+						->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 				}
 				fdScriptEnd();
 			}
@@ -968,15 +968,15 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 				fdScriptStart();
 				fdScriptEndLastingPsynergy(0);
 				fdScriptWait(20);
-				fdScriptPlaySnd(SE_STONE_RUMBLE);
+				fdScriptPlaySound(SE_STONE_RUMBLE);
 				fdMapGridCopyMetatilesTo(29, 68, 29, 69, 1, 1);
 				fdMapGridCopyMetatileAttributes(35, 0, 1, 1, column, row);
-				actor->motionFlg = done;
-				fdActorSetSprPriority(ACTOR_LEFT_PILLAR, 3);
+				actor->motionFlags = done;
+				fdActorSetSpritePriority(ACTOR_LEFT_PILLAR, 3);
 				if(actor->z.fixed > leader->z.fixed)
-					fdActorSetSprPriority(
+					fdActorSetSpritePriority(
 						MainRoutineStateWork.leaderActorId, 3);
-				for(frm = 0; frm < 128; frm++) {
+				for(frame = 0; frame < 128; frame++) {
 					actor->y.fixed -= toFIXED(1) / 8;
 					sySynch(1);
 				}
@@ -985,11 +985,11 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 				fdScriptWait(20);
 				fdScriptSetFlag(FLAG_LEFT_PILLAR_SUNK);
 				if(actor->z.fixed > leader->z.fixed) {
-					fdActorSetSprPriority(
+					fdActorSetSpritePriority(
 						MainRoutineStateWork.leaderActorId, 2);
 					((ACTOR *)fdActorGetById(
 						 MainRoutineStateWork.leaderActorId))
-						->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+						->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 				}
 				fdScriptEnd();
 			}
@@ -999,7 +999,7 @@ void scLemurianShipCheckPillarsOnDropTiles(void)
 		fdScriptGetFlag(FLAG_LEFT_PILLAR_SUNK)) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 		fdMapGridCopyMetatilesTo(4, 124, 31, 64, 3, 2);
 		fdScriptWait(20);
 		fdScriptSetFlag(FLAG_PILLAR_WAY_OPEN);
@@ -1028,7 +1028,7 @@ void scLemurianShipSetDownPillar(void)
 #define DEFINE_DOUSE_PILLAR(name, pillar, fullFlag) \
 	void name(void) \
 	{ \
-		sySndPlay(SE_DRIP); \
+		sySoundPlay(SE_DRIP); \
 		fdActorSetAnimationById(pillar, SINKING_PILLAR_FULL); \
 		syGameFlagSet(fullFlag); \
 		scLemurianShipCheckPillarsOnDropTiles(); \
@@ -1049,7 +1049,7 @@ DEFINE_DOUSE_PILLAR(
    water, unseen until now, shows as it freezes into a pillar of ice. */
 void scLemurianShipShowRightPillarPuddle(void)
 {
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		((ACTOR *)fdActorGetById(ACTOR_RIGHT_PILLAR_PUDDLE)), 0);
 }
 
@@ -1058,7 +1058,7 @@ void scLemurianShipShowRightPillarPuddle(void)
    sunk pillar. */
 void scLemurianShipShowLeftPillarPuddle(void)
 {
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		((ACTOR *)fdActorGetById(ACTOR_LEFT_PILLAR_PUDDLE)), 0);
 }
 
@@ -1078,15 +1078,15 @@ void scLemurianShipShowLeftPillarPuddle(void)
 		syGameFlagClear(loweredFlag); \
 		syGameFlagClear(fullFlag); \
 		fdScriptWait(20); \
-		sySndPlay(SE_SOL_SANCTUM_LIGHT_UP); \
+		sySoundPlay(SE_SOL_SANCTUM_LIGHT_UP); \
 		for(tick = 0; tick <= 63; tick++) { \
 			actor->y.fixed += toFIXED(1) / 4; \
 			sySynch(1); \
 		} \
-		fdActorSetSprPriority(pillar, 2); \
+		fdActorSetSpritePriority(pillar, 2); \
 		fdMapGridCopyMetatileTilesIndicesRect(4, 123, column, 69, 1, 1); \
 		fdMapGridCopyMetatileAttributes(36, 0, 1, 1, column, 9); \
-		sySndPlay(SE_THUMP); \
+		sySoundPlay(SE_THUMP); \
 		fdMapGridCopyMetatilesTo(7, 124, 31, 64, 3, 2); \
 		syGameFlagClear(FLAG_PILLAR_WAY_OPEN); \
 		fdScriptWait(20); \
@@ -1131,7 +1131,8 @@ void scLemurianShipParchHold(void)
 	actor = ((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR));
 	fdActorSetPosFX(
 		FIELD_TREASURE_ACTOR, actor->x.fixed, actor->z.fixed - toFIXED(304));
-	scFieldActorSetSprCol(((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR)), 0);
+	scFieldActorSetSpriteColor(
+		((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR)), 0);
 	sySynch(10);
 	fdCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
 	sySynch(1);
@@ -1161,10 +1162,11 @@ void scLemurianShipStartParch(void)
 	{ \
 		ACTOR *actor = ((ACTOR *)fdActorGetById(id)); \
 \
-		((ACTOR *)fdActorGetById(id))->priFlg |= ACTOR_PRIORITY_IGNORES_RISES; \
-		fdActorSetSprPriority(id, priority); \
-		actor->priFlg &= ~ACTOR_PRIORITY_UNDERFOOT; \
-		actor->sceneCnt = 1; \
+		((ACTOR *)fdActorGetById(id))->priorityFlags |= \
+			ACTOR_PRIORITY_IGNORES_RISES; \
+		fdActorSetSpritePriority(id, priority); \
+		actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT; \
+		actor->sceneCount = 1; \
 	}
 
 /* Keeps a frozen puddle flat on the floor, drawn at sprite priority 1. */
@@ -1180,11 +1182,11 @@ DEFINE_SET_UP_PUDDLE(scLemurianShipSetUpLowPuddle, 2)
 /* Keeps the room of six jellies' puddles flat on the floor. */
 void scLemurianShipKeepSixJellyRoomPuddles(void)
 {
-	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE))->priFlg |=
-		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE, 3);
-	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE))->priFlg &=
-		~ACTOR_PRIORITY_UNDERFOOT;
+	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE))
+		->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorSetSpritePriority(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE, 3);
+	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE))
+		->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 	scLemurianShipSetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_A);
 	scLemurianShipSetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_B);
 	scLemurianShipSetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_C);
@@ -1290,10 +1292,10 @@ void scLemurianShipDrawLightToOrb(void)
 	actor =
 		((ACTOR *)syImportActorCreate(SPRITE_GLINT, pos[0], pos[1], pos[2]));
 	if(actor != NULL) {
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->speedLimit = toFIXED(2);
 		actor->acceleration = toFIXED(1) / 2;
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 		fdActorSelectAnimation(actor, 0);
 		scFieldActorSetMoveTarget(actor, 808, 8, 140);
 		fdActorStartScript(actor, LemurianShipLightToOrb);
@@ -1309,7 +1311,7 @@ void scLemurianShipSetBlackCrystal(void)
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgLemurianShipHowDidAllTheseMonsters);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.8);
@@ -1343,14 +1345,14 @@ void scLemurianShipSetBlackCrystal(void)
 	fdActorSetAnimationAndWait(MainRoutineStateWork.leaderActorId, ANIM_NOD);
 	fdActorWalkToAndWait(ACTOR_PIERS, 808, 148);
 	fdActorRunRepeatedMotion(ACTOR_PIERS, 2);
-	fdActorSetSprPriority(ACTOR_PIERS, 1);
-	fdScriptPlaySnd(SE_SHIMMER);
+	fdActorSetSpritePriority(ACTOR_PIERS, 1);
+	fdScriptPlaySound(SE_SHIMMER);
 	sySetEvent(scLemurianShipDrawLightToOrb, EVENT_PASS_TICK);
 	fdScriptWait(60);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	fdScriptWait(20);
 	syCloseEvent(scLemurianShipDrawLightToOrb);
-	fdScriptPlaySnd(SE_BLACK_CRYSTAL_SET);
+	fdScriptPlaySound(SE_BLACK_CRYSTAL_SET);
 	fdSetCameraBounds(toFIXED(688), 0, toFIXED(928), toFIXED(544));
 	fdCameraMoveTo(808, CAMERA_KEEP, 448, 0);
 	fdActorSetPos(MainRoutineStateWork.leaderActorId, 808, 480);
@@ -1360,7 +1362,7 @@ void scLemurianShipSetBlackCrystal(void)
 	fdActorSetPos(ACTOR_ENGINE_ROOM_KRADEN, 792, 488);
 	fdMapGridCenterOnFollowedPoint();
 	fdScriptWait(20);
-	fdScriptPlaySnd(SE_GLITTER);
+	fdScriptPlaySound(SE_GLITTER);
 	fdScriptWait(80);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	fdScriptFinishScreenTransition();
@@ -1400,7 +1402,7 @@ void scLemurianShipMeltJellyIntoPuddle(Sint32 jelly, Sint32 puddle)
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
-	fdScriptPlaySnd(SE_CURSE);
+	fdScriptPlaySound(SE_CURSE);
 	fdActorSetScript(jelly, LemurianShipJellyMelts);
 	fdActorRunScriptAndWait(puddle, LemurianShipPuddleSpreads);
 	fdScriptWait(20);
@@ -1443,13 +1445,13 @@ void scLemurianShipJellyFlees(void)
 		ACTOR_SIX_JELLY_ROOM_JELLY_A, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorRunRepeatedMotion(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2);
 	actor->gravity = toFIXED(1) / 2;
-	fdActorSetSprPriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 1);
+	fdActorSetSpritePriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 1);
 	fdActorSetSpeed(ACTOR_SIX_JELLY_ROOM_JELLY_A, 0.8);
 	fdActorJump(ACTOR_SIX_JELLY_ROOM_JELLY_A, 6, 0);
 	fdActorMoveToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 832, 88);
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_SIX_JELLY_ROOM_JELLY_A, 1.6);
-	fdActorSetSprPriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 3);
+	fdActorSetSpritePriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 3);
 	fdActorMoveToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 824, 72);
 	fdActorFaceDirection(
 		ACTOR_SIX_JELLY_ROOM_JELLY_A, FACING_SOUTH_SOUTHEAST, 40);
@@ -1462,7 +1464,7 @@ void scLemurianShipFloodHold(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_SCATTER);
+	fdScriptPlaySound(SE_SCATTER);
 	fdScriptWait(120);
 	fdScriptEnd();
 }
@@ -1554,11 +1556,11 @@ Sint32 scPrepareMap(void)
    jelly just beaten melting into its puddle. */
 void scLemurianShipSetUpTwoJellyRoom(void)
 {
-	Sint32 flg;
+	Sint32 flag;
 
 	if(fdScriptGetFlag(FLAG_JELLIES_BEATEN)) {
-		flg = fdScriptGetFlag(FLAG_JELLY_MELTING);
-		if(flg != 0) {
+		flag = fdScriptGetFlag(FLAG_JELLY_MELTING);
+		if(flag != 0) {
 			fdMapGridCopyMetatileAttributes(0, 25, 1, 3, 6, 25);
 			fdActorSetPosAndResetMotion(
 				((ACTOR *)fdActorGetById(ACTOR_TWO_JELLY_ROOM_PUDDLE_A)),
@@ -1578,7 +1580,7 @@ void scLemurianShipSetUpTwoJellyRoom(void)
 	}
 	if(fdScriptGetFlag((FLAG_JELLIES_BEATEN + JELLY_TWO_JELLY_ROOM_B))) {
 		if(fdScriptGetFlag((FLAG_JELLY_MELTING + JELLY_TWO_JELLY_ROOM_B)))
-			fdActorSetSprPriority(ACTOR_TWO_JELLY_ROOM_JELLY_B, 1);
+			fdActorSetSpritePriority(ACTOR_TWO_JELLY_ROOM_JELLY_B, 1);
 		else
 			fdActorSetPos(ACTOR_TWO_JELLY_ROOM_JELLY_B, 0, 0);
 		scFieldActorSetPosAndResetMotion(
@@ -1586,7 +1588,7 @@ void scLemurianShipSetUpTwoJellyRoom(void)
 			toFIXED(104), -toFIXED(32), toFIXED(536));
 		((ACTOR *)fdActorGetById(ACTOR_TWO_JELLY_ROOM_PUDDLE_B))->groundHeight =
 			-toFIXED(32);
-		fdActorSetSprPriority(ACTOR_TWO_JELLY_ROOM_PUDDLE_B, 1);
+		fdActorSetSpritePriority(ACTOR_TWO_JELLY_ROOM_PUDDLE_B, 1);
 		sySynch(1);
 	}
 	fdFlagBlockPlaceAll(LemurianShipTwoJellyRoomPuddles);
@@ -1606,9 +1608,10 @@ void scLemurianShipSetUpLowerFloorJelly(Sint32 id)
 {
 	ACTOR *actor = ((ACTOR *)fdActorGetById(id));
 
-	((ACTOR *)fdActorGetById(id))->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(id, 1);
-	actor->motionFlg = 0;
+	((ACTOR *)fdActorGetById(id))->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorSetSpritePriority(id, 1);
+	actor->motionFlags = 0;
 	actor->y.fixed = -toFIXED(32);
 	actor->groundHeight = -toFIXED(32);
 }
@@ -1625,19 +1628,19 @@ void scLemurianShipSetUpLowerFloorJelly(Sint32 id)
    beaten. */
 void scLemurianShipSetUpSixJellyRoom(void)
 {
-	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
-		ACTOR_PRIORITY_IGNORES_RISES;
+	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
+		->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorPlaceBlocks(LemurianShipCrate);
-	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_CRATE))->priFlg |=
+	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_CRATE))->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(ACTOR_SIX_JELLY_ROOM_CRATE, 1);
-	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))->priFlg |=
+	fdActorSetSpritePriority(ACTOR_SIX_JELLY_ROOM_CRATE, 1);
+	((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	if(fdScriptGetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A))) {
 		ACTOR *actor =
 			((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE));
 
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		scFieldActorSetPosAndResetMotion(
 			((ACTOR *)fdActorGetById(ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE)),
 			toFIXED(824), -toFIXED(32), toFIXED(72));
@@ -1776,7 +1779,8 @@ void scLemurianShipMatchCratePriority(void)
 	ACTOR *leader =
 		((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId));
 
-	fdActorSetSprPriority(ACTOR_LEDGE_CRATE, ((FIELD_SPR *)leader->spr)->pri);
+	fdActorSetSpritePriority(
+		ACTOR_LEDGE_CRATE, ((FIELD_SPR *)leader->sprite)->priority);
 }
 
 /* The room of the crate on the ledge. Flag 0x8, which would give metatile (16,
@@ -1796,9 +1800,10 @@ void scLemurianShipSetUpJelly(Sint32 id)
 {
 	ACTOR *actor = ((ACTOR *)fdActorGetById(id));
 
-	((ACTOR *)fdActorGetById(id))->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(id, 1);
-	actor->motionFlg = 0;
+	((ACTOR *)fdActorGetById(id))->priorityFlags |=
+		ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorSetSpritePriority(id, 1);
+	actor->motionFlags = 0;
 	actor->y.fixed = 0;
 	actor->groundHeight = 0;
 }
@@ -1807,12 +1812,12 @@ void scLemurianShipSetUpJelly(Sint32 id)
    metatile. */
 void scLemurianShipSetUpPipeRoom(void)
 {
-	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
-		ACTOR_PRIORITY_IGNORES_RISES;
+	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
+		->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorPlaceBlocks(LemurianShipCrate);
-	((ACTOR *)fdActorGetById(ACTOR_PIPE_ROOM_CRATE))->priFlg |=
+	((ACTOR *)fdActorGetById(ACTOR_PIPE_ROOM_CRATE))->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorSetSprPriority(ACTOR_PIPE_ROOM_CRATE, 1);
+	fdActorSetSpritePriority(ACTOR_PIPE_ROOM_CRATE, 1);
 	if(fdScriptGetFlag((FLAG_JELLIES_BEATEN + JELLY_PIPE_ROOM_A))) {
 		fdMapGridCopyMetatileAttributes(44, 0, 1, 1, 48, 32);
 		fdActorSetPosAndResetMotion(
@@ -1923,18 +1928,18 @@ void scLemurianShipSetUpHold(void)
 {
 	ACTOR *actor;
 
-	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
-		ACTOR_PRIORITY_IGNORES_RISES;
+	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
+		->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	sySetEvent(scLemurianShipRippleAroundLeader, EVENT_PASS_TICK);
 	if(fdScriptGetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
 		actor = ((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR));
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdActorSetPosAndResetMotion(
 			((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR)), toFIXED(136),
 			-toFIXED(32), toFIXED(392));
 		actor->groundHeight = -toFIXED(16);
-		fdActorSetSprPriority(FIELD_TREASURE_ACTOR, 3);
-		scFieldActorSetSprCol(
+		fdActorSetSpritePriority(FIELD_TREASURE_ACTOR, 3);
+		scFieldActorSetSpriteColor(
 			((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR)), 1);
 		fdActorSetPos(ACTOR_HOLD_JELLY_A, 0, 0);
 		fdActorSetPos(ACTOR_HOLD_JELLY_B, 0, 0);
@@ -1949,7 +1954,7 @@ void scLemurianShipSetUpHold(void)
 
 		fdActorSetPosFX(FIELD_TREASURE_ACTOR, chest->x.fixed,
 			chest->z.fixed - toFIXED(304));
-		scFieldActorSetSprCol(
+		scFieldActorSetSpriteColor(
 			((ACTOR *)fdActorGetById(FIELD_TREASURE_ACTOR)), 0);
 		fdMapGridCopyMetatileAttributes(6, 0, 1, 2, 6, 4);
 		fdMapGridSetCameraBounds(
@@ -1969,23 +1974,23 @@ void scLemurianShipSetUpPillarRoom(void)
 {
 	ACTOR *actor;
 
-	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->priFlg |=
-		ACTOR_PRIORITY_IGNORES_RISES;
+	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
+		->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorPlaceBlocks(LemurianShipPillars);
 	if(fdScriptGetFlag(FLAG_PILLAR_WAY_OPEN)) {
 		fdMapGridCopyMetatilesTo(4, 124, 31, 64, 3, 2);
 		fdScriptSetFlag(FLAG_RIGHT_PILLAR_SUNK);
 		fdScriptSetFlag(FLAG_LEFT_PILLAR_SUNK);
 	}
-	fdActorSetSprFlags(((ACTOR *)fdActorGetById(ACTOR_RIGHT_PILLAR)), 0);
+	fdActorSetSpriteFlags(((ACTOR *)fdActorGetById(ACTOR_RIGHT_PILLAR)), 0);
 	if(fdScriptGetFlag(FLAG_RIGHT_PILLAR_SUNK)) {
 		actor = ((ACTOR *)fdActorGetById(ACTOR_RIGHT_PILLAR));
 		fdMapGridCopyMetatilesTo(35, 68, 35, 69, 1, 1);
 		fdMapGridCopyMetatileAttributes(35, 0, 1, 1, 35, 9);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		scFieldActorSetPosAndResetMotion(
 			actor, toFIXED(568), -toFIXED(16), toFIXED(152));
-		fdActorSetSprPriority(ACTOR_RIGHT_PILLAR, 3);
+		fdActorSetSpritePriority(ACTOR_RIGHT_PILLAR, 3);
 		fdScriptSetFlag(FLAG_RIGHT_PILLAR_FULL);
 		fdActorSetPos(ACTOR_RIGHT_PILLAR_PUDDLE, 568, 152);
 	}
@@ -1995,16 +2000,16 @@ void scLemurianShipSetUpPillarRoom(void)
 		else
 			fdActorSetAnimation(ACTOR_RIGHT_PILLAR, SINKING_PILLAR_FULL);
 	}
-	fdActorSetSprFlags(((ACTOR *)fdActorGetById(ACTOR_LEFT_PILLAR)), 0);
+	fdActorSetSpriteFlags(((ACTOR *)fdActorGetById(ACTOR_LEFT_PILLAR)), 0);
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION))
 		fdScriptSetFlag(FLAG_LEFT_PILLAR_SUNK);
 	if(fdScriptGetFlag(FLAG_LEFT_PILLAR_SUNK)) {
 		actor = ((ACTOR *)fdActorGetById(ACTOR_LEFT_PILLAR));
 		fdMapGridCopyMetatilesTo(29, 68, 29, 69, 1, 1);
 		fdMapGridCopyMetatileAttributes(35, 0, 1, 1, 29, 9);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = -toFIXED(16);
-		fdActorSetSprPriority(ACTOR_LEFT_PILLAR, 3);
+		fdActorSetSpritePriority(ACTOR_LEFT_PILLAR, 3);
 		fdScriptSetFlag(FLAG_LEFT_PILLAR_FULL);
 		fdActorSetPos(ACTOR_LEFT_PILLAR_PUDDLE, 472, 152);
 	}
@@ -2018,11 +2023,11 @@ void scLemurianShipSetUpPillarRoom(void)
 	fdFlagBlockPlaceAll(LemurianShipTwoJellyRoomPuddles);
 	syFieldSetTickEvent(scLemurianShipKeepPillarRoomPuddles, EVENT_PASS_TICK);
 	if(!fdScriptGetFlag(FLAG_RIGHT_PILLAR_PUDDLE_FROZEN))
-		scFieldActorSetSprCol(
+		scFieldActorSetSpriteColor(
 			((ACTOR *)fdActorGetById(ACTOR_RIGHT_PILLAR_PUDDLE)),
 			SPRITE_COLOR_HIDDEN);
 	if(!fdScriptGetFlag(FLAG_LEFT_PILLAR_PUDDLE_FROZEN))
-		scFieldActorSetSprCol(
+		scFieldActorSetSpriteColor(
 			((ACTOR *)fdActorGetById(ACTOR_LEFT_PILLAR_PUDDLE)),
 			SPRITE_COLOR_HIDDEN);
 	sySetEvent(scLemurianShipWatchPillarPuddles, EVENT_PASS_TICK);

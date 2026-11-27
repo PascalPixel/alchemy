@@ -53,7 +53,7 @@
 #ifdef MODERN
 /* The window code calls these before any declaration of them. */
 void mnWindowPutGlyph(
-	WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode);
+	WINDOW *window, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode);
 void mnWindowClearTextTilesInRect(
 	Sint32 x, Sint32 y, Uint32 width, Uint32 height);
 #endif
@@ -72,7 +72,8 @@ void mnWindowClearTextTilesInRect(
 #define WINDOW_CLOSE_TICKS 4
 
 /* Scratch capacities are in bytes unless the name says halfwords. */
-#define TEXT_NUMBER_BUFFER_SIZE		 16 /* mnStringFormatNum writes 14 of them */
+/* mnStringFormatNumber writes 14 of them. */
+#define TEXT_NUMBER_BUFFER_SIZE		 16
 /* A byte string widened to codes: 255 bytes and the terminator. */
 #define TEXT_WIDE_STRING_BUFFER_SIZE 512
 /* A name the decoder writes out into a message, decoded first into a buffer of

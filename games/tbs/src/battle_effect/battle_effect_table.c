@@ -1124,9 +1124,9 @@ Sint8  HelmSplitterPictureBiasY[] = {2, 3, 3, 3, 4, 14, 29};
 /* battle_effect_helm_splitter.c: Sprite formation coordinates and impact burst
    pictures. */
 
-/* The offsets of btEffectPlaceFormationSprs' formations in pixels, one axis at
-   a time: Nereid's twelve in rows of 1, 3, 4 and 4; Cybele's eight in rows of
-   3, 2 and 3; Tiamat's eight drawn at 1.25 times their size. Thor's, a 3x3
+/* The offsets of btEffectPlaceFormationSprites' formations in pixels, one axis
+   at a time: Nereid's twelve in rows of 1, 3, 4 and 4; Cybele's eight in rows
+   of 3, 2 and 3; Tiamat's eight drawn at 1.25 times their size. Thor's, a 3x3
    grid, needs no table. */
 Uint8 SummonFormationNereidX[] = {
 	52, 25, 57, 89, 7, 39, 71, 103, 21, 53, 85, 117};

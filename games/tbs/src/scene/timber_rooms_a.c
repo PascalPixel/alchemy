@@ -272,7 +272,7 @@ static void scTimberRoomsAIodemQuestionsWoundedSoldiers(void)
 	ACTOR *leader;
 	gmFlagSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
 	if(gmFlagGet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-		sySndPlay(MUS_BABIS_THEME);
+		sySoundPlay(MUS_BABIS_THEME);
 		fdScriptStart();
 		fdCameraMoveTo(368, CAMERA_KEEP, 104, 1);
 		fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);
@@ -558,7 +558,7 @@ static void scTimberRoomsAIodemQuestionsWoundedSoldiers(void)
 		fdScriptWait(20);
 		fdActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
 		fdScriptWait(30);
-		sySndPlay(MUS_BABIS_THEME);
+		sySoundPlay(MUS_BABIS_THEME);
 		fdActorSetSpeed(ACTOR_IODEM, 1.2);
 		fdActorSetAnimation(ACTOR_IODEM, ANIM_WALK);
 		/* Iodem walks into the leader and is hidden: he travels in the
@@ -597,19 +597,19 @@ Sint32 scInit(void)
 		gmFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	/* Nearer to talk to, across their counters. */
-	fdActorGet(ACTOR_MERCHANT)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_INNKEEPER)->collisionFlg |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
 	/* Each soldier lies a quarter turn over, with no shadow. */
 	actor = fdActorGet(ACTOR_SOLDIER_SOUTH);
-	actor->spr->flg = 0;
-	actor->spr->rotation = DEGtoANG(90);
-	actor->spr->image.pri = 1;
+	actor->sprite->flags = 0;
+	actor->sprite->rotation = DEGtoANG(90);
+	actor->sprite->image.priority = 1;
 	actor = fdActorGet(ACTOR_SOLDIER_NORTH);
-	actor->spr->flg = 0;
-	actor->spr->rotation = DEGtoANG(90);
-	actor->motionFlg = ACTOR_FALLS;
+	actor->sprite->flags = 0;
+	actor->sprite->rotation = DEGtoANG(90);
+	actor->motionFlags = ACTOR_FALLS;
 	actor->y.fixed = 0;
 	return 0;
 }

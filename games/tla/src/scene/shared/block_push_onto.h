@@ -1,75 +1,75 @@
 /* Pushes the block ahead onto another, if nothing blocks the way. */
 void scMagmaRockInsidePushBlockOnto(void)
 {
-	POS	   dst;
+	POS	   dest;
 	ACTOR *lead;
 	ACTOR *next;
 	ACTOR *blocker;
-	Sint32 dir;
+	Sint32 direction;
 	Uint32 step;
 	Sint32 rate;
 
 	lead = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	dir = lead->facing / FACING_STEP;
+	direction = lead->facing / FACING_STEP;
 	/* A push step holds x pixels in its high half and z in its low
 	   (PUSH_STEP). */
-	step = PushLeaderSteps[dir];
-	dst.x = lead->x.fixed + (step & FIELD_PIXEL_MASK);
-	dst.y = lead->y.fixed;
+	step = PushLeaderSteps[direction];
+	dest.x = lead->x.fixed + (step & FIELD_PIXEL_MASK);
+	dest.y = lead->y.fixed;
 	step = toFIXED(step);
-	dst.z = lead->z.fixed + step;
-	next = fdActorFindInMetatile(&dst, lead);
+	dest.z = lead->z.fixed + step;
+	next = fdActorFindInMetatile(&dest, lead);
 	if(next == 0)
 		return;
 
-	step = PushLeaderSteps[dir];
-	dst.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
-	dst.y = next->y.fixed;
+	step = PushLeaderSteps[direction];
+	dest.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
+	dest.y = next->y.fixed;
 	step = toFIXED(step);
-	dst.z = next->z.fixed + step;
-	blocker = fdActorFindInMetatile(&dst, next);
-	if(blocker != 0 && (blocker->collisionFlg & ACTOR_SOLID) != 0)
+	dest.z = next->z.fixed + step;
+	blocker = fdActorFindInMetatile(&dest, next);
+	if(blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
 		return;
 
-	dst.x = next->x.fixed;
-	dst.y = next->y.fixed + toFIXED(16);
-	dst.z = next->z.fixed;
-	blocker = fdActorFindInMetatile(&dst, next);
-	if(blocker != 0 && (blocker->collisionFlg & ACTOR_SOLID) != 0)
+	dest.x = next->x.fixed;
+	dest.y = next->y.fixed + toFIXED(16);
+	dest.z = next->z.fixed;
+	blocker = fdActorFindInMetatile(&dest, next);
+	if(blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
 		return;
 
 	next->layer = MAPGRID_LAYER_OVERHEAD;
-	step = PushLeaderSteps[dir];
-	dst.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
-	dst.y = next->y.fixed;
+	step = PushLeaderSteps[direction];
+	dest.x = next->x.fixed + (step & FIELD_PIXEL_MASK);
+	dest.y = next->y.fixed;
 	step = toFIXED(step);
-	dst.z = next->z.fixed + step;
-	if(fdMapGridCheckCollision(next, &dst) > 0)
+	dest.z = next->z.fixed + step;
+	if(fdMapGridCheckCollision(next, &dest) > 0)
 		return;
 
-	if(next->sceneCnt != 0)
+	if(next->sceneCount != 0)
 		return;
 
 	fdActorSelectAnimation(lead, ANIM_PUSH);
 	rate = toFIXED(0.2);
 	syWait(15);
-	fdScriptPlaySnd(SE_PUSH);
+	fdScriptPlaySound(SE_PUSH);
 	next->speedLimit = rate;
 	next->acceleration = rate;
-	scFieldActorSetMoveTargetFX(next, dst.x, dst.y, dst.z);
+	scFieldActorSetMoveTargetFX(next, dest.x, dest.y, dest.z);
 	lead->speedLimit = rate;
 	lead->acceleration = rate;
-	scFieldActorSetMoveTargetFX(lead, dst.x, dst.y, dst.z);
+	scFieldActorSetMoveTargetFX(lead, dest.x, dest.y, dest.z);
 	scFieldActorWaitForMove(next);
 	fdScriptNoOperation();
-	next->x.fixed = dst.x;
-	next->z.fixed = dst.z;
-	next->velX = 0;
-	next->velZ = 0;
-	lead->tgtX = ACTOR_NO_TARGET;
-	lead->tgtZ = ACTOR_NO_TARGET;
-	lead->velX = 0;
-	lead->velZ = 0;
+	next->x.fixed = dest.x;
+	next->z.fixed = dest.z;
+	next->velocityX = 0;
+	next->velocityZ = 0;
+	lead->targetX = ACTOR_NO_TARGET;
+	lead->targetZ = ACTOR_NO_TARGET;
+	lead->velocityX = 0;
+	lead->velocityZ = 0;
 	lead->x.fixed = toFIXED(lead->x.part[0].integer);
 	lead->z.fixed = toFIXED(lead->z.part[0].integer);
 	fdActorSelectAnimation(lead, ANIM_STAND);

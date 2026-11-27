@@ -56,8 +56,8 @@ extern Uint16 LinkPeerSignatures[][12];
 
 /* The affine group. Sprite rotation and scaling: a sprite's transform and the
    OAM matrices this tick hands out for it. Matrices handed out this tick
-   (syOAMMatrixAllocFromTransform), up to 32; syOAMResetTick sets it back to 0
-   after each VBlank. */
+   (syOAMMatrixAllocateFromTransform), up to 32; syOAMResetTick sets it back to
+   0 after each VBlank. */
 extern Uint8 OamMatrixCount;
 /* This tick's 32 matrices, copied into OAM with the sprites. */
 extern AFFINE_MATRIX OamMatrices[];
@@ -250,7 +250,7 @@ extern Uint8 MapGridShapes[];
    copied on. */
 extern Uint8 DecodeBuffer[];
 /* The tileset animations' tiles, 16 KB of EWRAM. */
-extern Uint8 MapGridAnimTiles[];
+extern Uint8 MapGridAnimationTiles[];
 /* The map's scene data in EWRAM, loaded from its resource: its entrance stream,
    then from the halfword offsets after it its edits and its bounds. */
 extern Uint8 MapScene[];
@@ -272,7 +272,7 @@ extern Uint8 SeracMeshEnd[];
 /* Inside EffectScratch: FLORA_WORK from its second tile number on, read at its
    fixed place. */
 extern Uint16 FloraPetalTiles[];
-/* Inside EffectScratch: FLORA_WORK.pal, the object palette as it fades. */
+/* Inside EffectScratch: FLORA_WORK.palette, the object palette as it fades. */
 extern Uint16 FloraSpritePalettes[];
 /* In the map metatile buffer: Haures's mound's faces, eight bytes a quad. */
 extern Uint8 HauresMoundStrip[];
@@ -416,7 +416,7 @@ extern volatile Uint8 SerialBlockNumber;
    it. */
 extern Uint8 LinkExchangeState;
 /* Link status, written by the VBlank exchange handler while
-   sySerialWaitForStatMask and the link screens poll it. */
+   sySerialWaitForStatusMask and the link screens poll it. */
 extern volatile Uint16 LinkStatusWork;
 
 /* The screen_fade group. The screen fade's state, which syScreenFadeUpdate
@@ -460,8 +460,9 @@ extern struct MusicPlayerInfo MPlayInfoSE5;
 /* Plays jingles; the music returns once it stops. */
 extern struct MusicPlayerInfo MPlayInfoJingle;
 /* The mixer's PCM output: SoundDriverEnterVBlankUpdate hands it to
-   IwramSoundMixEntry, and sySndSetFixedSampleFreq clears it and points DMA 1 at
-   its start (the right speaker) and DMA 2 at its second half (the left). */
+   IwramSoundMixEntry, and sySoundSetFixedSampleFrequency clears it and points
+   DMA 1 at its start (the right speaker) and DMA 2 at its second half (the
+   left). */
 extern Uint8 MixerPcmBuffer[];
 /* The sound mixer's workspace at the top of IWRAM; the IWRAM heap ends where it
    starts (syHeapGetRemainingIWRAM). */
@@ -473,10 +474,10 @@ extern Sint32 SoundMixerClipped;
 /* volatile: the VBlank handler and the tick wait share it. Who runs the sound
    update this tick: the tick wait or the VBlank handler. */
 extern volatile struct SoundVBlankState SoundVBlankStateWork;
-/* The music playing, which sySndPlay sets from each music id it starts. */
+/* The music playing, which sySoundPlay sets from each music id it starts. */
 extern Uint16 CurrentBgm;
-/* One bit for each sound id, set once the sound has played (sySndFlagSet); the
-   link lobby offers only the tunes heard. */
+/* One bit for each sound id, set once the sound has played (sySoundFlagSet);
+   the link lobby offers only the tunes heard. */
 extern Uint8 SoundFlags[];
 /* The sound effect from SOUND_SE_FIRST up each player last started, by player
    (MUSIC_PLAYER_COUNT of them); SOUND_FADE_OUT_ACTION_SE and
@@ -503,9 +504,9 @@ extern Uint16 BgmTempoPitchTarget;
 extern Uint16 BgmTempoPitch;
 /* How far BgmTempoPitch moves each VBlank. */
 extern Uint16 BgmTempoPitchStep;
-/* Set by sySndUpdateCommandMask; nothing reads it. */
+/* Set by sySoundUpdateCommandMask; nothing reads it. */
 extern Uint8 SoundCommandMask;
-/* An EWRAM byte sySndInit clears and nothing reads. */
+/* An EWRAM byte sySoundInit clears and nothing reads. */
 extern Uint8 SoundUnreadByte;
 
 /* The vram_cache group. The VRAM cache's entries and the blocks they own. The

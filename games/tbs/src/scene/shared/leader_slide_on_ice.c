@@ -13,11 +13,11 @@ static void scActorSteerByPad(ACTOR *actor)
 	Uint16 facing;
 	Sint32 turn;
 
-	if(actor->tmr != 0) {
-		actor->tmr--;
+	if(actor->timer != 0) {
+		actor->timer--;
 		return;
 	}
-	actor->steeringFlg = 0;
+	actor->steeringFlags = 0;
 	heading = IceKeyHeadings[DPAD_INDEX(PerData)];
 	if(heading == KEY_HEADING_NONE) {
 		fdActorSelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
@@ -78,7 +78,7 @@ static void scLeaderSlideOnIce(void)
 		probe.z = z;
 		actor->speedLimit = toFIXED(2);
 		actor->acceleration = toFIXED(1) / 10;
-		actor->tmr = 0;
+		actor->timer = 0;
 		syFieldActorSetMoveTargetFX(actor, x, actor->y.fixed, z);
 
 		fdActorSelectAnimation(actor, ANIM_WALK);
@@ -119,7 +119,7 @@ static void scLeaderSlideOnIce(void)
 blocked:
 	/* Sliding off the ice ends the slide and gives back normal steering. */
 	actor->update = NULL;
-	actor->steeringFlg |= ACTOR_FACES_MOTION;
+	actor->steeringFlags |= ACTOR_FACES_MOTION;
 
 	actor->acceleration = toFIXED(1) / 4;
 

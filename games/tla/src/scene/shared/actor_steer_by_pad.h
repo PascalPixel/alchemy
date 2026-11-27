@@ -3,23 +3,23 @@
    around. */
 void fdActorSteerByPad(ACTOR *actor)
 {
-	Sint32 ang;
+	Sint32 angle;
 	Sint32 turn;
 
-	if(actor->tmr != 0) {
-		actor->tmr--;
+	if(actor->timer != 0) {
+		actor->timer--;
 		return;
 	}
-	actor->steeringFlg = 0;
+	actor->steeringFlags = 0;
 	if(fdScriptGetFlag(FLAG_MENU_OPEN))
-		ang = -1;
+		angle = -1;
 	else
-		ang = SlideOnIceSteerAngles[(PerWork.data >> 4) & 0xf];
-	if(ang == -1) {
+		angle = SlideOnIceSteerAngles[(PerWork.data >> 4) & 0xf];
+	if(angle == -1) {
 		fdActorSelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
 		return;
 	}
-	turn = (Sint16)(ang - actor->facing);
+	turn = (Sint16)(angle - actor->facing);
 	if(turn > FACING_STEP)
 		turn = FACING_STEP;
 	if(turn < -FACING_STEP)

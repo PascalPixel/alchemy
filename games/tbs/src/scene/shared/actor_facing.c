@@ -10,16 +10,17 @@ static Sint32 scTurnTowardTarget(ACTOR *actor)
 {
 	Sint32 delta;
 	Uint16 facing;
-	Sint32 ang;
-	ACTOR *tgt;
+	Sint32 angle;
+	ACTOR *target;
 
-	tgt = (ACTOR *)actor->watchedActor;
-	if(tgt != NULL) {
-		actor->steeringFlg = ((Uint8)~ACTOR_FACES_MOTION & actor->steeringFlg);
-		ang = (Uint16)syAtan(
-			tgt->z.fixed - actor->z.fixed, tgt->x.fixed - actor->x.fixed);
+	target = (ACTOR *)actor->watchedActor;
+	if(target != NULL) {
+		actor->steeringFlags =
+			((Uint8)~ACTOR_FACES_MOTION & actor->steeringFlags);
+		angle = (Uint16)syAtan(
+			target->z.fixed - actor->z.fixed, target->x.fixed - actor->x.fixed);
 		facing = actor->facing;
-		delta = (Sint16)(ang - facing);
+		delta = (Sint16)(angle - facing);
 		if(delta != 0) {
 			if(delta > FACING_STEP) {
 				delta = FACING_STEP;

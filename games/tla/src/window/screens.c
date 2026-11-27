@@ -31,7 +31,7 @@ extern const Sint16 PortraitSpriteMap[];
 typedef struct BATTLE_COMMAND_ROW_ICON {
 	/* The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
 	   the others show as tiles of BG1. */
-	MENU_SPR spr;
+	MENU_SPR sprite;
 	/* resource: the VRAM cache entry its sprite's tiles go into, one 1 KB entry
 	   that every icon of the row shares, reloaded with the selected icon.
 	   unused is never read. */
@@ -45,7 +45,7 @@ typedef struct BATTLE_COMMAND_ROW_ICON {
 typedef struct COMMAND_ROW_AFFINE {
 	Uint16 scaleX;
 	Uint16 scaleY;
-	Uint16 ang;
+	Uint16 angle;
 } COMMAND_ROW_AFFINE;
 
 /* The command row's state: the icons' shared palette, up to six icons, the
@@ -53,18 +53,18 @@ typedef struct COMMAND_ROW_AFFINE {
 typedef struct BATTLE_COMMAND_ROW_STATE {
 	/* BG palette slots for the icons' 256-colour pixels, filled as each icon is
 	   loaded (mnBattleCommandRowLoadIconTiles). */
-	ICON_PALETTE			pal;
+	ICON_PALETTE			palette;
 	BATTLE_COMMAND_ROW_ICON entries[6];
-	void				   *win;
-	Sint32					iconCnt;
+	void				   *window;
+	Sint32					iconCount;
 	COMMAND_ROW_AFFINE		affine;
-	Sint32					affineIdx;
-	Sint32					selectedIdx;
-	Sint32					drawnIdx;
+	Sint32					affineIndex;
+	Sint32					selectedIndex;
+	Sint32					drawnIndex;
 	Sint32					commandKinds[6];
 } BATTLE_COMMAND_ROW_STATE;
 
-/* A sprite as the summary screen queues it (syOAMAddSprAtDepth): the depth
+/* A sprite as the summary screen queues it (syOAMAddSpriteAtDepth): the depth
    queue's link, then its OAM attributes as words or as fields. */
 typedef struct SUMMARY_OAM {
 	Uint8 link[4];
@@ -79,11 +79,11 @@ typedef struct SUMMARY_OAM {
 			Uint8  y;
 			Uint8  attr0high;
 			Uint16 x : 9;
-			Uint16 affineIdx : 5;
+			Uint16 affineIndex : 5;
 			Uint16 size : 2;
 			Uint16 tile : 10;
-			Uint16 pri : 2;
-			Uint16 pal : 4;
+			Uint16 priority : 2;
+			Uint16 palette : 4;
 			Uint16 high;
 		} f;
 	} oam;
@@ -110,7 +110,7 @@ typedef struct STAT_CURSOR {
 /* The name entry screen's cursors: the hand on the keyboard and the caret under
    the name, each a window sprite moved as a MENU_CURSOR. */
 typedef union NAME_CURSOR {
-	WINDOW_SPR *spr;
+	WINDOW_SPR *sprite;
 	MENU_CURSOR cursor;
 } NAME_CURSOR;
 
@@ -219,8 +219,8 @@ typedef struct TARGET_POINT {
 typedef struct TARGET_TRACK {
 	Uint8 x;
 	Uint8 y;
-	Uint8 flg;
-	Sint8 idx;
+	Uint8 flags;
+	Sint8 index;
 } TARGET_TRACK;
 
 /* One line's horizontal window edges, each a WIN_RANGE value. */
@@ -232,7 +232,7 @@ typedef struct WINDOW_LINE {
 /* A page of the icon menu's window shape: one WINDOW_LINE for each of the
    screen's 160 lines. */
 typedef struct WINDOW_BUFFER {
-	Uint8		winInOut[4]; /* WININ and WINOUT, not touched here */
+	Uint8		windowInOut[4]; /* WININ and WINOUT, not touched here */
 	WINDOW_LINE lines[160];
 } WINDOW_BUFFER;
 

@@ -596,9 +596,9 @@ struct MusicPlayer {
    it. */
 struct Song {
 	const struct SongHeader *header;
-	/* The row of MPlayTable that plays it (enum MusicPlayerId); sySndPlay gives
-	   a song on MUSIC_PLAYER_SE_LAST the first music player from 7 down to 4
-	   with no active track, else 7. */
+	/* The row of MPlayTable that plays it (enum MusicPlayerId); sySoundPlay
+	   gives a song on MUSIC_PLAYER_SE_LAST the first music player from 7 down
+	   to 4 with no active track, else 7. */
 	u16 ms;
 	u16 me; /* The same value as ms in every entry; nothing reads it. */
 };

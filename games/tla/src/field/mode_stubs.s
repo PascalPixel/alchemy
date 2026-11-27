@@ -23,7 +23,7 @@ StubsOverworld:
 	stub fdPartyLearnAbilityStub, fdPartyLearnAbility
 	stub fdActorGetByIdStub, fdActorGetById
 	stub fdActorReleaseByIdStub, fdActorReleaseById
-	stub fdActorSetSpeedParmsStub, fdActorSetSpeedParms
+	stub fdActorSetSpeedParamsStub, fdActorSetSpeedParams
 	stub fdActorSetMovementTypeByIdStub, fdActorSetMovementTypeById
 	stub fdActorWaitForScriptEndByIdStub, fdActorWaitForScriptEndById
 	stub fdActorStopStub, fdActorStop
@@ -36,7 +36,7 @@ StubsOverworld:
 	stub fdActorSetDestinationOffsetByIdStub, fdActorSetDestinationOffsetById
 	stub fdActorWaitForMoveByIdStub, fdActorWaitForMoveById
 	stub fdActorSetHorizontalPosWithTerrainStub, fdActorSetHorizontalPosWithTerrain
-	stub fdActorSetHorizontalPosAndAngWithTerrainStub, fdActorSetHorizontalPosAndAngWithTerrain
+	stub fdActorSetHorizontalPosAndAngleWithTerrainStub, fdActorSetHorizontalPosAndAngleWithTerrain
 	stub fdActorSetPosWithTerrainStub, fdActorSetPosWithTerrain
 	stub fdActorPlaceOnActorStub, fdActorPlaceOnActor
 	stub fdActorSetAnimationByIdStub, fdActorSetAnimationById
@@ -49,8 +49,8 @@ StubsOverworld:
 	stub fdActorJumpDownLedgeStub, fdActorJumpDownLedge
 	stub fdActorFaceActorByIdStub, fdActorFaceActorById
 	stub fdActorTurnToFaceEachOtherStub, fdActorTurnToFaceEachOther
-	stub fdActorConfigureSprColStub, fdActorConfigureSprCol
-	stub fdActorSetSprColStub, fdActorSetSprCol
+	stub fdActorConfigureSpriteColorStub, fdActorConfigureSpriteColor
+	stub fdActorSetSpriteColorStub, fdActorSetSpriteColor
 	stub fdActorWatchAndStartScriptStub, fdActorWatchAndStartScript
 	stub fdScriptSetMessageIdStub, fdScriptSetMessageId
 	stub fdMessageShowAtActorStub, fdMessageShowAtActor
@@ -68,13 +68,13 @@ StubsOverworld:
 	stub fdActorClosePortraitStub, fdActorClosePortrait
 	stub fdScriptShowTwoMessagesAndWaitStub, fdScriptShowTwoMessagesAndWait
 	stub fdMessageSetVoiceFromActorStub, fdMessageSetVoiceFromActor
-	stub fdActorSetSprPriorityStub, fdActorSetSprPriority
+	stub fdActorSetSpritePriorityStub, fdActorSetSpritePriority
 	stub fdActorDisableByIdStub, fdActorDisableById
 	stub fdActorShowEmoteByIdStub, fdActorShowEmoteById
 	stub fdEffectSetAttachedStub, fdEffectSetAttached
 	stub fdActorCopyGraphicsStub, fdActorCopyGraphics
 	stub fdCameraFollowActorStub, fdCameraFollowActor
-	stub fdCameraSetSpeedParmsStub, fdCameraSetSpeedParms
+	stub fdCameraSetSpeedParamsStub, fdCameraSetSpeedParams
 	stub fdCameraMoveWithinMapBoundsStub, fdCameraMoveWithinMapBounds
 	stub fdCameraWaitForArrivalStub, fdCameraWaitForArrival
 	stub fdCameraMoveToActorByIdStub, fdCameraMoveToActorById
@@ -91,7 +91,7 @@ StubsOverworld:
 	stub fdScriptLeaveForStub, fdScriptLeaveFor
 	stub fdActorGetScreenPosStub, fdActorGetScreenPos
 	stub fdActorGetCueMetatileAheadOfCurrentStub, fdActorGetCueMetatileAheadOfCurrent
-	stub fdPartyGetCharacterSprStub, fdPartyGetCharacterSpr
+	stub fdPartyGetCharacterSpriteStub, fdPartyGetCharacterSprite
 	stub fdFindNearbyTalkTargetStub, fdFindNearbyTalkTarget
 	stub fdPsynergySteerPushedTargetStub, fdPsynergySteerPushedTarget
 	stub fdPsynergyStartCloakStub, fdPsynergyStartCloak
@@ -117,7 +117,7 @@ StubsOverworld:
 	stub fdPaletteFadeInitStub, fdPaletteFadeInit
 	stub fdPaletteFadeSetTargetStub, fdPaletteFadeSetTarget
 	stub fdPaletteFadeSetSourceStub, fdPaletteFadeSetSource
-	stub fdPaletteFadeCalcStepsStub, fdPaletteFadeCalcSteps
+	stub fdPaletteFadeCalculateStepsStub, fdPaletteFadeCalculateSteps
 	stub fdPaletteFadeStartInterpolationStub, fdPaletteFadeStartInterpolation
 	stub fdPaletteFadeReleaseStub, fdPaletteFadeRelease
 	stub fdPaletteFadeSetBackdropStub, fdPaletteFadeSetBackdrop
@@ -127,8 +127,8 @@ StubsOverworld:
 	stub fdLineScrollInitWaveStub, fdLineScrollInitWave
 	stub fdLineScrollStopStub, fdLineScrollStop
 	stub fdChestOpenAndShowItemStub, fdChestOpenAndShowItem
-	stub fdItemDispShowPictureStub, fdItemDispShowPicture
-	stub fdItemDispShowItemStub, fdItemDispShowItem
+	stub fdItemDisplayShowPictureStub, fdItemDisplayShowPicture
+	stub fdItemDisplayShowItemStub, fdItemDisplayShowItem
 	stub fdTreasureSpotGetActorStub, fdTreasureSpotGetActor
 	stub fdTreasureSpotOpenChestStub, fdTreasureSpotOpenChest
 	stub fdTreasureSpotCloseChestStub, fdTreasureSpotCloseChest
@@ -136,7 +136,7 @@ StubsOverworld:
 	stub fdTreasureSpotSetActorPosStub, fdTreasureSpotSetActorPos
 	stub fdTreasureSpotRemoveStub, fdTreasureSpotRemove
 	stub fdTreasureSpotMoveLeaderAwayStub, fdTreasureSpotMoveLeaderAway
-	stub fdActorSetWideSprStub, fdActorSetWideSpr
+	stub fdActorSetWideSpriteStub, fdActorSetWideSprite
 	stub fdActorReturnHomeStub, fdActorReturnHome
 	stub fdWorldMapFreezeStub, fdWorldMapFreeze
 	stub fdWorldMapReloadPendingAreaGraphicsStub, fdWorldMapReloadPendingAreaGraphics
@@ -157,8 +157,8 @@ StubsOverworld:
 	stub fdBattleEffectStopMainActorStub, fdBattleEffectStopMainActor
 	stub fdPsynergyEndStub, fdPsynergyEnd
 	stub fdPsynergyStartCastStub, fdPsynergyStartCast
-	stub fdPsynergyFadeToCastColStub, fdPsynergyFadeToCastCol
-	stub fdPsynergyFadeFromCastColStub, fdPsynergyFadeFromCastCol
+	stub fdPsynergyFadeToCastColorStub, fdPsynergyFadeToCastColor
+	stub fdPsynergyFadeFromCastColorStub, fdPsynergyFadeFromCastColor
 	stub fdScriptEndAllLastingPsynergyStub, fdScriptEndAllLastingPsynergy
 	stub fdScriptEndLastingPsynergyStub, fdScriptEndLastingPsynergy
 	stub fdPsynergyStartMindReadWaveStub, fdPsynergyStartMindReadWave
@@ -167,7 +167,7 @@ StubsOverworld:
 	stub fdPsynergyRestoreMindReadPaletteStub, fdPsynergyRestoreMindReadPalette
 	stub fdHasPsynergyCueStub, fdHasPsynergyCue
 	stub fdHasItemCueStub, fdHasItemCue
-	stub fdSprShareVRAMCacheEntryStub, fdSprShareVRAMCacheEntry
+	stub fdSpriteShareVRAMCacheEntryStub, fdSpriteShareVRAMCacheEntry
 	stub fdBattleBackgroundGetSelectedStub, fdBattleBackgroundGetSelected
 	stub fdEffectSpawnMoveHandStub, fdEffectSpawnMoveHand
 	stub fdEffectGrowHandAndWaitStub, fdEffectGrowHandAndWait
@@ -199,8 +199,8 @@ StubsOverworld:
 	stub fdActorWatchAndSetScriptStub, fdActorWatchAndSetScript
 	stub fdPsynergyHaltActorStub, fdPsynergyHaltActor
 	stub fdPsynergyResumeHaltedActorStub, fdPsynergyResumeHaltedActor
-	stub fdActorFindBySprStub, fdActorFindBySpr
-	stub fdActorGetSprByIdStub, fdActorGetSprById
+	stub fdActorFindBySpriteStub, fdActorFindBySprite
+	stub fdActorGetSpriteByIdStub, fdActorGetSpriteById
 	stub fdActorTableSnapshotStub, fdActorTableSnapshot
 	stub fdActorRestoreStub, fdActorRestore
 	stub fdWorldMapStartZoomStub, fdWorldMapStartZoom
@@ -249,17 +249,17 @@ StubsOverworld:
 	stub fdHangingVineSwingStub, fdHangingVineSwing
 	stub fdExitPrepareActorAnimationStub, fdExitPrepareActorAnimation
 	stub fdActorAppearInSparksStub, fdActorAppearInSparks
-	stub fdActorSetSprRotationByIdStub, fdActorSetSprRotationById
+	stub fdActorSetSpriteRotationByIdStub, fdActorSetSpriteRotationById
 	stub fdActorFallOverByIdStub, fdActorFallOverById
 	stub fdActorFallOverWithAnimationByIdStub, fdActorFallOverWithAnimationById
-	stub fdEffectSprInitStub, fdEffectSprInit
-	stub fdEffectSprDrawStub, fdEffectSprDraw
-	stub fdEffectSprDrawAtWorldPosStub, fdEffectSprDrawAtWorldPos
+	stub fdEffectSpriteInitStub, fdEffectSpriteInit
+	stub fdEffectSpriteDrawStub, fdEffectSpriteDraw
+	stub fdEffectSpriteDrawAtWorldPosStub, fdEffectSpriteDrawAtWorldPos
 	stub fdBattleEffectStepVector2Stub, fdBattleEffectStepVector2
 	stub fdBattleEffectStepVector3Stub, fdBattleEffectStepVector3
-	stub fdActorGetSprPriorityStub, fdActorGetSprPriority
-	stub fdActorGetSprDepthStub, fdActorGetSprDepth
-	stub fdStartColTransitionStub, fdStartColTransition
+	stub fdActorGetSpritePriorityStub, fdActorGetSpritePriority
+	stub fdActorGetSpriteDepthStub, fdActorGetSpriteDepth
+	stub fdStartColorTransitionStub, fdStartColorTransition
 	stub fdStartPaletteTransitionStub, fdStartPaletteTransition
 	stub fdBattleEffectStartArcEffectStub, fdBattleEffectStartArcEffect
 	stub fdBattleEffectEndArcEffectStub, fdBattleEffectEndArcEffect
@@ -282,22 +282,22 @@ StubsOverworld:
 	stub fdScoopDropFromHandStub, fdScoopDropFromHand
 	stub fdScriptShowMessageAndOfferScoopStub, fdScriptShowMessageAndOfferScoop
 	stub fdFadeOverlayFillTilesStub, fdFadeOverlayFillTiles
-	stub fdEffectSprInitWithFadeOverlayStub, fdEffectSprInitWithFadeOverlay
-	stub fdEffectSprDrawAtWorldXYZStub, fdEffectSprDrawAtWorldXYZ
-	.global fdEffectSprInitWithFadeOverlayBlendedStub
+	stub fdEffectSpriteInitWithFadeOverlayStub, fdEffectSpriteInitWithFadeOverlay
+	stub fdEffectSpriteDrawAtWorldXYZStub, fdEffectSpriteDrawAtWorldXYZ
+	.global fdEffectSpriteInitWithFadeOverlayBlendedStub
 	.thumb_func
-fdEffectSprInitWithFadeOverlayBlendedStub:
+fdEffectSpriteInitWithFadeOverlayBlendedStub:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte fdEffectSprInitWithFadeOverlayBlended
-	stub fdActorCycleSprColsStub, fdActorCycleSprCols
+	.4byte fdEffectSpriteInitWithFadeOverlayBlended
+	stub fdActorCycleSpriteColorsStub, fdActorCycleSpriteColors
 @ Why assembly: 8-byte stubs: ldr r4, the target's word, bx r4.
-	.global fdActorPlaySndInViewStub
+	.global fdActorPlaySoundInViewStub
 	.thumb_func
-fdActorPlaySndInViewStub:
+fdActorPlaySoundInViewStub:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte fdActorPlaySndInView
+	.4byte fdActorPlaySoundInView
 	stub fdCycloneCopyTouchedMetatilesStub, fdCycloneCopyTouchedMetatiles
 	.global fdTeleportPlayWhirlStub
 	.thumb_func

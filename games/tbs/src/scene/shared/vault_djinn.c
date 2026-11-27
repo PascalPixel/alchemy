@@ -11,8 +11,8 @@ static UNREAD_RESULT scVaultReturnIsaacsDjinni(void)
 	if((gmUnitGet(IVAN)->djinnHeld[ELEMENT_VENUS] &
 		   (1 << DJINNI_INDEX(DJINNI_FLINT))) != 0) {
 		gmDjinnTransfer(IVAN, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_FLINT), ISAAC);
-		sySndPlay(SE_RECOVERY);
-		gmUnitCalc(ISAAC);
-		gmUnitCalc(IVAN);
+		sySoundPlay(SE_RECOVERY);
+		gmUnitCalculate(ISAAC);
+		gmUnitCalculate(IVAN);
 	}
 }

@@ -49,9 +49,9 @@ Sint32 scInit(void)
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-	fdActorSetSprPriority(ACTOR_HEALER, 2);
-	fdActorGetById(ACTOR_HEALER)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGetById(ACTOR_HEALER)->collisionFlg |= ACTOR_NEAR_PSYNERGY;
+	fdActorSetSpritePriority(ACTOR_HEALER, 2);
+	fdActorGetById(ACTOR_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGetById(ACTOR_HEALER)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
 	return 0;
 }
 

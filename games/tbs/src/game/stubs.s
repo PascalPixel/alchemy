@@ -4,7 +4,7 @@
 StubsGame:
 	stub gmDjinnGetRecoveryTableStub, gmDjinnGetRecoveryTable
 	stub gmUnitGetStub, gmUnitGet
-	stub gmUnitCalcStub, gmUnitCalc
+	stub gmUnitCalculateStub, gmUnitCalculate
 	stub gmItemGetDirectStub, gmItemGetDirect
 	stub gmInventoryGetQuantityStub, gmInventoryGetQuantity
 	stub gmInventoryAddItemStub, gmInventoryAddItem
@@ -50,9 +50,9 @@ StubsGame:
 	stub gmPartyRemoveMemberStub, gmPartyRemoveMember
 	stub gmUnitGetAttackElementStub, gmUnitGetAttackElement
 	stub gmBattleRollEffectSuccessStub, gmBattleRollEffectSuccess
-	stub gmBattleCalcAttackDamageStub, gmBattleCalcAttackDamage
-	stub gmBattleCalcPsynergyPowerStub, gmBattleCalcPsynergyPower
-	stub gmBattleCalcRecoveryStub, gmBattleCalcRecovery
+	stub gmBattleCalculateAttackDamageStub, gmBattleCalculateAttackDamage
+	stub gmBattleCalculatePsynergyPowerStub, gmBattleCalculatePsynergyPower
+	stub gmBattleCalculateRecoveryStub, gmBattleCalculateRecovery
 	stub gmEnemyGetDefinitionStub, gmEnemyGetDefinition
 	stub gmBattleRandomStub, gmBattleRandom
 	stub gmDjinnGiveStub, gmDjinnGive

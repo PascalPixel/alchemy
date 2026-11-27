@@ -26,7 +26,7 @@ void btObjectPutKeepingPoses(void)
 /* Returns the palette of a unit's battle object. */
 Sint32 btMotionGetSlotPalette(Sint32 id)
 {
-	return btObjectGet(id)->pal;
+	return btObjectGet(id)->palette;
 }
 
 /* The battle has six enemy sprite slots; a large enemy takes two side by side,
@@ -35,24 +35,24 @@ Sint32 btMotionGetSlotPalette(Sint32 id)
 
 /* Returns 1 if an enemy of the class would find room among the enemy sprite
    slots, two side by side for a large one. */
-Sint32 btEnemyHasSprRoom(Sint32 classId)
+Sint32 btEnemyHasSpriteRoom(Sint32 classId)
 {
 	BATTLE_STATE *battle;
 	Sint32		  needsSingleSlot;
-	Sint32		  sprSlot;
+	Sint32		  spriteSlot;
 
-	needsSingleSlot = btSprIsSmall(classId);
+	needsSingleSlot = btSpriteIsSmall(classId);
 	battle = RamHeapSlots->battleState;
-	for(sprSlot = 0; sprSlot < ENEMY_SPRITE_SLOTS; sprSlot++) {
-		if(battle->sprSlots[sprSlot] != 0)
+	for(spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
+		if(battle->spriteSlots[spriteSlot] != 0)
 			continue;
 		if(needsSingleSlot != 0)
 			break;
-		if(sprSlot < ENEMY_SPRITE_SLOTS - 1 &&
-			battle->sprSlots[sprSlot + 1] == 0)
+		if(spriteSlot < ENEMY_SPRITE_SLOTS - 1 &&
+			battle->spriteSlots[spriteSlot + 1] == 0)
 			break;
 	}
-	return sprSlot != ENEMY_SPRITE_SLOTS;
+	return spriteSlot != ENEMY_SPRITE_SLOTS;
 }
 
 /* Each enemy sprite slot owns 16 KB of the sprite buffers, ActorSpriteSlots. */
@@ -62,20 +62,20 @@ Sint32 btEnemyHasSprRoom(Sint32 classId)
    slot, or two neighbouring ones for a large enemy. A few sprites load a second
    part into the next free slots. Returns (slot << RESOURCE_SLOT_SHIFT) |
    sprite, or 0 when a load fails. */
-Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
+Sint32 btEnemySpriteLoadIntoSlots(Sint32 unitId)
 {
-	Sint32		  sprPart;
+	Sint32		  spritePart;
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	UNIT		 *unit = syUnitGet(unitId);
-	Sint32		  needsSingleSlot = btSprIsSmall(unit->enemyId);
+	Sint32		  needsSingleSlot = btSpriteIsSmall(unit->enemyId);
 	Sint32		  result;
-	Sint32		  spr;
-	Uint8		 *sprBuffers;
+	Sint32		  sprite;
+	Uint8		 *spriteBuffers;
 
-	result = sprPart = 0;
-	spr = btSprGetSpr(unit->enemyId);
+	result = spritePart = 0;
+	sprite = btSpriteGetSprite(unit->enemyId);
 	/* Once for the sprite, and again for its second part if it has one. */
-	for(sprPart = 0; sprPart <= 1; sprPart++) {
+	for(spritePart = 0; spritePart <= 1; spritePart++) {
 		Sint32 slot;
 
 		/* A unit with a class is no enemy: nothing is loaded and the result
@@ -85,40 +85,41 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 
 		/* The first free slot (and, for a large enemy, the one after it). */
 		for(slot = 0; slot < ENEMY_SPRITE_SLOTS; slot++) {
-			if(battle->sprSlots[slot] != 0)
+			if(battle->spriteSlots[slot] != 0)
 				continue;
 			if(needsSingleSlot)
 				break;
-			if(slot < ENEMY_SPRITE_SLOTS - 1 && battle->sprSlots[slot + 1] == 0)
+			if(slot < ENEMY_SPRITE_SLOTS - 1 &&
+				battle->spriteSlots[slot + 1] == 0)
 				break;
 		}
 
 		if(slot == ENEMY_SPRITE_SLOTS)
 			break;
 
-		sprBuffers = ActorSpriteSlots;
+		spriteBuffers = ActorSpriteSlots;
 		{
-			Sint32 palette = btSprGetPalette(unit->enemyId);
-			Uint8 *sprBuf = sprBuffers + slot * ENEMY_SPRITE_SLOT_SIZE;
+			Sint32 palette = btSpriteGetPalette(unit->enemyId);
+			Uint8 *spriteBuf = spriteBuffers + slot * ENEMY_SPRITE_SLOT_SIZE;
 
-			if(fdSprPictureCacheLoadStub(
-				   slot, (Uint32 *)sprBuf, spr + sprPart, palette) == 0)
+			if(fdSpritePictureCacheLoadStub(slot, (Uint32 *)spriteBuf,
+				   sprite + spritePart, palette) == 0)
 				return 0;
 		}
 
-		if(sprPart == 0)
-			result = (slot << RESOURCE_SLOT_SHIFT) | spr;
+		if(spritePart == 0)
+			result = (slot << RESOURCE_SLOT_SHIFT) | sprite;
 
-		battle->sprSlots[slot] = unitId;
+		battle->spriteSlots[slot] = unitId;
 		if(!needsSingleSlot)
-			battle->sprSlots[slot + 1] = unitId;
+			battle->spriteSlots[slot + 1] = unitId;
 
-		if(spr != SPRITE_BATTLE_SERPENT && spr != SPRITE_BATTLE_KRAKEN &&
-			spr != SPRITE_BATTLE_FUSION_DRAGON &&
-			spr != SPRITE_BATTLE_POSEIDON &&
-			spr != SPRITE_BATTLE_DOOM_DRAGON_A &&
-			spr != SPRITE_BATTLE_DOOM_DRAGON_E &&
-			spr != SPRITE_BATTLE_DOOM_DRAGON_H)
+		if(sprite != SPRITE_BATTLE_SERPENT && sprite != SPRITE_BATTLE_KRAKEN &&
+			sprite != SPRITE_BATTLE_FUSION_DRAGON &&
+			sprite != SPRITE_BATTLE_POSEIDON &&
+			sprite != SPRITE_BATTLE_DOOM_DRAGON_A &&
+			sprite != SPRITE_BATTLE_DOOM_DRAGON_E &&
+			sprite != SPRITE_BATTLE_DOOM_DRAGON_H)
 			break;
 	}
 
@@ -126,16 +127,16 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 }
 
 /* Frees every enemy sprite slot unit unitId holds, unloading its sprite. Clears
-   those BATTLE_STATE.sprSlots. */
-void btObjectReleaseSprSlots(Sint32 unitId)
+   those BATTLE_STATE.spriteSlots. */
+void btObjectReleaseSpriteSlots(Sint32 unitId)
 {
 	BATTLE_STATE *battle = RamHeapSlots->battleState;
-	Sint32		  sprSlot;
+	Sint32		  spriteSlot;
 
-	for(sprSlot = 0; sprSlot < ENEMY_SPRITE_SLOTS; sprSlot++) {
-		if(battle->sprSlots[sprSlot] == unitId) {
-			fdSprPictureCacheLoadStub(sprSlot, 0, 0, 0);
-			battle->sprSlots[sprSlot] = 0;
+	for(spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
+		if(battle->spriteSlots[spriteSlot] == unitId) {
+			fdSpritePictureCacheLoadStub(spriteSlot, 0, 0, 0);
+			battle->spriteSlots[spriteSlot] = 0;
 		}
 	}
 }
@@ -164,7 +165,7 @@ Sint32 btUnitGetWeaponKind(Sint32 itemId)
 
 /* Returns the battle sprite of a character holding its equipped weapon, from
    that character's table by the weapon's kind, or 0 with no weapon. */
-Sint32 btUnitGetWeaponSpr(Sint32 owner)
+Sint32 btUnitGetWeaponSprite(Sint32 owner)
 {
 	UNIT  *unit = syUnitGet(owner);
 	Sint32 slot = gmInventoryFindEquippedStub(owner, EQUIP_WEAPON);

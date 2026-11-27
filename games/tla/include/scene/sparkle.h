@@ -14,7 +14,7 @@ struct ACTOR;
    risen (from 0 to RING_CLIMB - 1; RING_NOT_STARTED before it starts) and the
    pair to start next. */
 typedef struct SPARKLE_STATE {
-	EFFECT_SPR	  sprs[4];
+	EFFECT_SPR	  sprites[4];
 	Sint16		  heights[2];
 	Sint16		  vramEntry;
 	Sint16		  nextPair;

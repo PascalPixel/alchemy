@@ -10,11 +10,11 @@ Sint32 mnShopListAvailableArtifacts(void)
 	SHOP_STATE *shop;
 	Sint16	   *stockItems;
 	Sint32		itemId;
-	Sint32		cnt;
+	Sint32		count;
 	Sint8		equipmentGroup;
 
 	shop = MenuState;
-	cnt = 0;
+	count = 0;
 	itemId = 0;
 	stockItems = shop->stockItemIds;
 	/* The shop's type is the equipment group it sells (SHOP_TYPE). Every 9-bit
@@ -24,13 +24,13 @@ Sint32 mnShopListAvailableArtifacts(void)
 		if(equipmentGroup == gmItemGetEquipmentGroupStub(itemId) &&
 			gmItemAdjustRareItemStockStub(itemId, 0) != 0) {
 			*stockItems = itemId;
-			cnt++;
+			count++;
 			stockItems++;
 		}
 	}
-	shop->stockItemIds[cnt] = 0;
-	shop->stockCnt = cnt;
-	return cnt;
+	shop->stockItemIds[count] = 0;
+	shop->stockCount = count;
+	return count;
 }
 
 /* Advances the hand cursor one tick. Runs every tick as an event while a
@@ -47,11 +47,11 @@ void mnShopInitState(void)
 	SHOP_STATE *shop;
 	Sint32		resourceSlot;
 
-	shop = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(SHOP_STATE));
+	shop = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(SHOP_STATE));
 	fdEndBusyAndRevealStub();
 	DMA_FILL32(0, shop, sizeof(SHOP_STATE));
-	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
-	shop->partyMemberCnt = gmPartyListMembersStub(shop->partyMemberIds);
+	shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
+	shop->partyMemberCount = gmPartyListMembersStub(shop->partyMemberIds);
 	/* Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite */
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->cursorIcon = resourceSlot;
@@ -99,7 +99,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 {
 	SHOP_STATE *shop;
 	WINDOW_SPR *anchor;
-	WINDOW	   *win;
+	WINDOW	   *window;
 	Sint32		action = 0;
 
 	if(stockRow >= mnShopStockGetRowCount() || stockRow < 0)
@@ -119,14 +119,14 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 	if(stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
 		shop->warriorShop = 1;
 	shop->keeperGraphics =
-		(fdActorGetByIdStub(keeperId))->spr->entries[0]->anmId;
+		(fdActorGetByIdStub(keeperId))->sprite->entries[0]->animationId;
 	/* The shopkeeper's portrait window, or an empty one off the left edge when
 	   there is no portrait. */
-	win = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
-	if(win == 0)
-		win = mnWindowCreateStub(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
-	anchor = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, win, 0, 0);
+	window = mnPortraitOpenWindowStub(shop->keeperGraphics, 0, 0, 0);
+	if(window == 0)
+		window = mnWindowCreateStub(-5, 0, 5, 5, WINDOW_FLAG_INSTANT);
+	anchor = mnWindowSpriteCreateStub(
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, window, 0, 0);
 	anchor->motion = WINDOW_SPRITE_MOTION_STILL;
 	/* The hand's icon is the shop's, freed by mnShopReleaseState, not the
 	   sprite's. */
@@ -141,7 +141,8 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 		action = mnSelectShopCommandStub(action);
 		shop->action = action;
 		if(action == SHOP_ACTION_BUY) {
-			shop->stockCnt = mnShopStockCopyItems(stockRow, shop->stockItemIds);
+			shop->stockCount =
+				mnShopStockCopyItems(stockRow, shop->stockItemIds);
 			/* "What would you like?" */
 			mnShopShowKeeperMessage(MsgWhatWouldYouLike);
 			mnShopSelectBuy();
@@ -172,7 +173,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 	}
 	/* "Feel free to drop in anytime." */
 	mnShopShowKeeperMessage(MsgShopFarewell);
-	mnWindowCloseStub(win, 2);
+	mnWindowCloseStub(window, 2);
 	mnShopReleaseState();
 	return 0;
 }
@@ -210,9 +211,9 @@ Sint32 mnShopOpenDebugShop(Sint32 unused)
 
 /* Waits a tick at a time while a jingle holds back the music, as the inn's
    does through the night. */
-void mnSndWaitForJingle(void)
+void mnSoundWaitForJingle(void)
 {
-	while(sySndGetBGMRestoreDelayStub() != 0) {
+	while(sySoundGetBGMRestoreDelayStub() != 0) {
 		sySynch(1);
 	}
 }
@@ -308,15 +309,15 @@ Sint32 mnSanctumAskYesNo(Sint32 choice)
 	return choice;
 }
 
-/* Returns the node `state->cnt` next links on from `state->node`. Nothing calls
-   it. */
+/* Returns the node `state->count` next links on from `state->node`. Nothing
+   calls it. */
 UNUSED SELECTION_NODE_LINK_VIEW *syNodeChainGetNodeAtIndex(
 	SELECTION_MENU_CURSOR_VIEW *state)
 {
 	SELECTION_NODE_LINK_VIEW *node = state->node;
-	Sint32					  linkIdx;
+	Sint32					  linkIndex;
 
-	for(linkIdx = 0; linkIdx != state->cnt; ++linkIdx) {
+	for(linkIndex = 0; linkIndex != state->count; ++linkIndex) {
 		node = node->next;
 	}
 	return node;

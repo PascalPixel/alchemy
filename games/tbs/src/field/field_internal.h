@@ -91,7 +91,7 @@ typedef enum METATILE_TILES_PACKING {
    animation number's pictures, ending at number 0. */
 typedef struct SPR_PICTURE_CACHE_SOURCE {
 	Uint16 resource;
-	Sint16 num;
+	Sint16 number;
 } SPR_PICTURE_CACHE_SOURCE;
 
 extern SPR_PICTURE_CACHE_SOURCE SpritePictureCacheSources[];

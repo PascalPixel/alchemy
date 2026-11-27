@@ -479,8 +479,8 @@ static void scRockRoomsTalkToArmorMerchant(void)
 
 /* Entering the house beside Suhalla Gate makes it the place a defeated party
    wakes, and shows no area name. In every room, the three invisible counter
-   actors are given no shadow (`fdActorSetSprFlags` with no flags), so nothing
-   shows where they stand. */
+   actors are given no shadow (`fdActorSetSpriteFlags` with no flags), so
+   nothing shows where they stand. */
 Sint32 scInit(void)
 {
 	Sint16 entrance;
@@ -493,9 +493,9 @@ Sint32 scInit(void)
 		MainRoutineStateWork.restartScene = SCENE_ROCK_ROOMS;
 		MainRoutineStateWork.restartEntrance = entrance;
 	}
-	fdActorSetSprFlags(fdActorGet(ACTOR_WEAPON_COUNTER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ARMOR_COUNTER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ITEM_COUNTER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_WEAPON_COUNTER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ARMOR_COUNTER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ITEM_COUNTER), 0);
 	return 0;
 }
 

@@ -49,20 +49,20 @@ typedef struct INTRO_STATE {
 	Sint32 backRows;  /* rows of the clouds copied in as they scroll */
 	Sint32 frontRows; /* rows of the peak copied in */
 	/* The intro's tick, which a skip moves on to INTRO_APPROACH_TICK */
-	Sint32 frm;
-	/* Frames counted by mnTitleUpdateIntroSprs, which pace the scroll and the
-	   flare's rise */
-	Sint32 frmCnt;
+	Sint32 frame;
+	/* Frames counted by mnTitleUpdateIntroSprites, which pace the scroll and
+	   the flare's rise */
+	Sint32 frameCount;
 	Sint32 state; /* an INTRO_PHASE */
 	Sint32 rise;  /* how far the lens flare's lower end has risen */
 
 	union {
-		OAM_WORDS objs[INTRO_OBJECT_COUNT];
+		OAM_WORDS objects[INTRO_OBJECT_COUNT];
 
 		struct {
 			/* The lens flare's entries and the sun's, still the intro's. */
-			OAM_WORDS flareObjs[FLARE_OBJECT_COUNT + 1];
-			INTRO_SPR sprs[8];
+			OAM_WORDS flareObjects[FLARE_OBJECT_COUNT + 1];
+			INTRO_SPR sprites[8];
 		} prompt;
 	} area;
 } INTRO_STATE;
@@ -125,7 +125,7 @@ const Uint8 TitlePromptBlendLevels[PROMPT_PULSE_TICKS] = {
 };
 /* clang-format on */
 
-#define INTRO_OBJ(i) (state->area.objs[i])
+#define INTRO_OBJ(i) (state->area.objects[i])
 
 /* Brings `v` into a sprite's y, 0 to 255, by whole turns */
 #define WRAP_OBJ_Y(v) \
@@ -188,10 +188,10 @@ const Uint8 TitlePromptBlendLevels[PROMPT_PULSE_TICKS] = {
    the lens flare's pieces along a line down from the sun, which swings up as
    the intro goes on, alternating two sets of three every other VBlank so all
    six show, hides the rest, adds the sun and copies the list to OAM. */
-void mnTitleUpdateIntroSprs(void)
+void mnTitleUpdateIntroSprites(void)
 {
 	INTRO_STATE *state;
-	Uint32		 sprCnt;
+	Uint32		 spriteCount;
 	Sint32		 lineLeftY;
 	Sint32		 lineRightY;
 	Sint32		 x;
@@ -199,56 +199,57 @@ void mnTitleUpdateIntroSprs(void)
 	Sint32		 sunY;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
-	sprCnt = 0;
+	spriteCount = 0;
 	if(DebugPaused == 0) {
-		if((++state->frmCnt & 3) == 0)
+		if((++state->frameCount & 3) == 0)
 			state->rise++;
 	}
 	lineLeftY = 48 - BgScrollWork[1].y;
 	lineRightY = 144 - state->rise;
-	if(state->frm < INTRO_FLASH_TICK) {
-		if((state->frmCnt & 1) == 0) {
+	if(state->frame < INTRO_FLASH_TICK) {
+		if((state->frameCount & 1) == 0) {
 			PLACE_ON_FLARE_LINE(0, FLARE_DISC_RADIUS);
-			MIRRORED_QUAD(sprCnt, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
+			MIRRORED_QUAD(spriteCount, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
 				FLARE_WHITE_DISC_TILE);
-			sprCnt += 4;
+			spriteCount += 4;
 			PLACE_ON_FLARE_LINE(2, FLARE_DISC_RADIUS);
-			INTRO_OBJ(sprCnt).attr01 = OBJ_X(x + 4) | y | OBJ_SIZE_32X32 |
+			INTRO_OBJ(spriteCount).attr01 = OBJ_X(x + 4) | y | OBJ_SIZE_32X32 |
 				OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_256_COLORS;
-			INTRO_OBJ(sprCnt).attr2 = FLARE_ORANGE_DISC_TILE;
-			sprCnt++;
+			INTRO_OBJ(spriteCount).attr2 = FLARE_ORANGE_DISC_TILE;
+			spriteCount++;
 			PLACE_ON_FLARE_LINE(4, FLARE_RING_RADIUS);
-			MIRRORED_QUAD(sprCnt, FLARE_RING_RADIUS, OBJ_SIZE_32X32,
+			MIRRORED_QUAD(spriteCount, FLARE_RING_RADIUS, OBJ_SIZE_32X32,
 				FLARE_GREEN_RING_TILE);
-			sprCnt += 4;
+			spriteCount += 4;
 		} else {
 			PLACE_ON_FLARE_LINE(1, FLARE_DISC_RADIUS);
-			MIRRORED_QUAD(sprCnt, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
+			MIRRORED_QUAD(spriteCount, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
 				FLARE_WHITE_DISC_TILE);
-			sprCnt += 4;
+			spriteCount += 4;
 			PLACE_ON_FLARE_LINE(3, FLARE_DISC_RADIUS);
-			MIRRORED_QUAD(sprCnt, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
+			MIRRORED_QUAD(spriteCount, FLARE_DISC_RADIUS, OBJ_SIZE_16X16,
 				FLARE_GREEN_DISC_TILE);
-			sprCnt += 4;
+			spriteCount += 4;
 			PLACE_ON_FLARE_LINE(5, FLARE_RING_RADIUS);
-			MIRRORED_QUAD(sprCnt, FLARE_RING_RADIUS, OBJ_SIZE_32X32,
+			MIRRORED_QUAD(spriteCount, FLARE_RING_RADIUS, OBJ_SIZE_32X32,
 				FLARE_RAINBOW_RING_TILE);
-			sprCnt += 4;
+			spriteCount += 4;
 		}
 	}
-	for(; sprCnt < INTRO_OBJECT_COUNT; sprCnt++)
-		INTRO_OBJ(sprCnt).attr01 =
+	for(; spriteCount < INTRO_OBJECT_COUNT; spriteCount++)
+		INTRO_OBJ(spriteCount).attr01 =
 			DISPLAY_HEIGHT | OBJ_SIZE_16X16 | OBJ_256_COLORS;
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_BLDALPHA = BLEND_ALPHA(14, 14);
-	syDMAXCopy(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS((sprCnt * 8) >> 2), REG_DMA3);
+	syDMAXCopy(
+		&INTRO_OBJ(0), OAM, DMA_COPY_WORDS((spriteCount * 8) >> 2), REG_DMA3);
 	/* The sun goes in the OAM entry after the list. */
 	sunY = SUN_Y - BgScrollWork[1].y;
 	WRAP_OBJ_Y(sunY);
 	INTRO_OBJ(FLARE_OBJECT_COUNT).attr01 =
 		sunY | OBJ_X(SUN_X) | OBJ_SIZE_64X64 | OBJ_256_COLORS;
 	INTRO_OBJ(FLARE_OBJECT_COUNT).attr2 = OBJ_PRIORITY(2) | SUN_TILE;
-	syDMAXCopy(&INTRO_OBJ(FLARE_OBJECT_COUNT), (Uint8 *)OAM + sprCnt * 8,
+	syDMAXCopy(&INTRO_OBJ(FLARE_OBJECT_COUNT), (Uint8 *)OAM + spriteCount * 8,
 		DMA_COPY_WORDS(2), REG_DMA3);
 	/* DEAD: the first four entries copied to OAM again, unchanged; the ROM
 	   keeps the copy. */
@@ -256,12 +257,12 @@ void mnTitleUpdateIntroSprs(void)
 }
 
 /* Writes map rows `first` to `last` at tilemap: each row the screen's width of
-   tiles numbered on from tileIdx, then two columns past the edge that show
+   tiles numbered on from tileIndex, then two columns past the edge that show
    offscreenTile. */
 #define FILL_INTRO_MAP_ROWS(first, last) \
 	for(row = (first); row <= (last); row++) { \
 		for(column = 0; column < DISPLAY_TILE_WIDTH; column++) \
-			*tilemap++ = tileIdx++; \
+			*tilemap++ = tileIndex++; \
 		*tilemap++ = offscreenTile; \
 		*tilemap++ = offscreenTile; \
 	}
@@ -276,7 +277,7 @@ void mnTitleLoadIntroBackgrounds(void)
 	Uint16		*tilemap;
 	Sint32		 column;
 	Sint32		 row;
-	Uint16		 tileIdx;
+	Uint16		 tileIndex;
 
 	introState = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
 	REG_DISPCNT = 0;
@@ -305,15 +306,16 @@ void mnTitleLoadIntroBackgrounds(void)
 		/* Map rows from INTRO_FIRST_MAP_ROW show the VRAM rows from the first;
 		   the rows above it show the last ones. */
 		tilemap = (Uint16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
-		tileIdx = PEAK_FIRST_TILE +
+		tileIndex = PEAK_FIRST_TILE +
 			(INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
 		FILL_INTRO_MAP_ROWS(0, INTRO_FIRST_MAP_ROW - 1);
-		tileIdx = PEAK_FIRST_TILE;
+		tileIndex = PEAK_FIRST_TILE;
 		FILL_INTRO_MAP_ROWS(INTRO_FIRST_MAP_ROW, INTRO_MAP_ROWS - 1);
 		tilemap = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
-		tileIdx = (INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
+		tileIndex =
+			(INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
 		FILL_INTRO_MAP_ROWS(0, INTRO_FIRST_MAP_ROW - 1);
-		tileIdx = 0;
+		tileIndex = 0;
 		FILL_INTRO_MAP_ROWS(INTRO_FIRST_MAP_ROW, INTRO_MAP_ROWS - 1);
 
 		REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_MOSAIC |
@@ -332,10 +334,10 @@ void mnTitleLoadIntroBackgrounds(void)
 		}
 		BgScrollWork[1].y = INTRO_SCROLL_START;
 		BgScrollWork[2].y = INTRO_SCROLL_START;
-		introState->frm = 0;
+		introState->frame = 0;
 		introState->backRows = 0;
 		introState->frontRows = 0;
-		introState->frmCnt = 0;
+		introState->frameCount = 0;
 		introState->rise = 0;
 		introState->state = INTRO_STATE_SCROLLING;
 		syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
@@ -408,9 +410,9 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 	/* BUG: the block is sized for the prompt's sprites, but the intro's OAM
 	   list runs on past its end. */
 #if FIX_TITLE_INTRO_STATE_ALLOCATION
-	introState = syHeapSlotAlloc(HEAP_SLOT_TITLE_INTRO, sizeof(INTRO_STATE));
+	introState = syHeapSlotAllocate(HEAP_SLOT_TITLE_INTRO, sizeof(INTRO_STATE));
 #else
-	introState = syHeapSlotAlloc(HEAP_SLOT_TITLE_INTRO,
+	introState = syHeapSlotAllocate(HEAP_SLOT_TITLE_INTRO,
 		offsetof(INTRO_STATE, area) + sizeof(introState->area.prompt));
 #endif
 	syPrintClear();
@@ -430,31 +432,31 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 			DISPCNT_OBJWIN_ON,
 		IO_WRITE_HALFWORD);
 	mnTitlePaletteFadeStart(60);
-	sySetEvent(mnTitleUpdateIntroSprs, EVENT_PASS_VBLANK);
+	sySetEvent(mnTitleUpdateIntroSprites, EVENT_PASS_VBLANK);
 
 	for(;;) {
-		Sint32 frm;
-		Sint32 nextFrm;
-		Sint32 frmCnt;
+		Sint32 frame;
+		Sint32 nextFrame;
+		Sint32 frameCount;
 
 		/* A or Start skips to the approach, which still plays out to the
 		   flash. */
-		frm = introState->frm;
-		if(frm > INTRO_SKIP_AFTER_TICK && frm < INTRO_APPROACH_TICK &&
+		frame = introState->frame;
+		if(frame > INTRO_SKIP_AFTER_TICK && frame < INTRO_APPROACH_TICK &&
 			(PerPush & (KEY_A | KEY_START)) != 0) {
 			introState->state = INTRO_STATE_APPROACH;
-			introState->frm = INTRO_APPROACH_TICK;
-			frm = INTRO_APPROACH_TICK;
+			introState->frame = INTRO_APPROACH_TICK;
+			frame = INTRO_APPROACH_TICK;
 		}
-		nextFrm = frm + 1;
-		introState->frm = nextFrm;
-		if(nextFrm <= INTRO_FLASH_TICK - 2) {
+		nextFrame = frame + 1;
+		introState->frame = nextFrame;
+		if(nextFrame <= INTRO_FLASH_TICK - 2) {
 			/* The clouds (BG1) scroll a pixel every third tick and the peak
 			   (BG2) every other one; as a new row of tiles comes into view, its
 			   row of the picture is copied over the VRAM row leaving at the
 			   bottom. */
-			frmCnt = introState->frmCnt;
-			if(frmCnt % 3 == 0) {
+			frameCount = introState->frameCount;
+			if(frameCount % 3 == 0) {
 				Sint32 y;
 
 				BgScrollWork[1].y--;
@@ -466,10 +468,10 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 							introState->backRows * CLOUD_ROW_BYTES,
 						DMA_COPY_HALFWORDS(CLOUD_ROW_BYTES / 2), REG_DMA3);
 					introState->backRows++;
-					frmCnt = introState->frmCnt;
+					frameCount = introState->frameCount;
 				}
 			}
-			if((frmCnt & 1) == 0) {
+			if((frameCount & 1) == 0) {
 				Sint32 y;
 
 				BgScrollWork[2].y--;
@@ -506,19 +508,19 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 					introState->frontRows++;
 				}
 			}
-			if(introState->frm == INTRO_APPROACH_TICK)
+			if(introState->frame == INTRO_APPROACH_TICK)
 				introState->state = INTRO_STATE_APPROACH;
-		} else if(nextFrm == INTRO_FLASH_TICK + 1) {
+		} else if(nextFrame == INTRO_FLASH_TICK + 1) {
 			/* Unused: the loop ends at the flash, before these ticks. */
 			introState->state = INTRO_STATE_AFTER_FLASH;
-		} else if(nextFrm == INTRO_FLASH_TICK + 9) {
+		} else if(nextFrame == INTRO_FLASH_TICK + 9) {
 			introState->state = INTRO_STATE_SCROLLING;
-		} else if(nextFrm == INTRO_FLASH_TICK) {
+		} else if(nextFrame == INTRO_FLASH_TICK) {
 			/* The flash: behind the white the intro's sprites stop, OAM goes
 			   back to the tick's own sprite list and the title picture is put
 			   up. */
 			syScreenFadeToWhite(1);
-			syCloseEvent(mnTitleUpdateIntroSprs);
+			syCloseEvent(mnTitleUpdateIntroSprites);
 			OamCopyEnabled = 1;
 			sySynch(1);
 			REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
@@ -552,8 +554,8 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 	syWindowLoadGraphics();
 	syPrintClear();
 	if(prompt != 0) {
-		Uint8	  *buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-		INTRO_SPR *spr = introState->area.prompt.sprs;
+		Uint8	  *buf = syHeapSlotAllocateEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
+		INTRO_SPR *sprite = introState->area.prompt.sprites;
 
 		syDecompressByteLZ(TitlePromptTiles, buf);
 		/* The pictures are packed one after another, each half the size of a
@@ -561,13 +563,13 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 		for(i = 0; i < PROMPT_TILES; i++) {
 			Sint32	vramBlock = syVRAMCacheLoad(syVRAMCacheFindFreeEntry(),
 				 PROMPT_SPRITE_BYTES, buf + i * (4 * TILE_SIZE_8BPP) / 2);
-			Uint32 *sprWords = (Uint32 *)spr;
+			Uint32 *spriteWords = (Uint32 *)sprite;
 
 			/* Unlinked, 32 by 8, and its tiles. */
-			*sprWords++ = 0;
-			spr++;
-			*sprWords++ = OBJ_SIZE_32X8;
-			*sprWords = vramBlock;
+			*spriteWords++ = 0;
+			sprite++;
+			*spriteWords++ = OBJ_SIZE_32X8;
+			*spriteWords = vramBlock;
 		}
 		syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	}
@@ -581,7 +583,7 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 		holdTicks = TITLE_HOLD_TICKS;
 	for(i = 0; i < holdTicks; i++) {
 		if(prompt != 0) {
-			INTRO_SPR *spr = introState->area.prompt.sprs;
+			INTRO_SPR *sprite = introState->area.prompt.sprites;
 			Uint32	   level;
 			Sint32	   x;
 #if LANGUAGE == LANGUAGE_GERMAN
@@ -591,21 +593,21 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 			for(row = 0, y = PROMPT_Y; row < PROMPT_ROWS;
 				y += PROMPT_ROW_HEIGHT, row++) {
 				for(j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
-					spr->x = x;
-					spr->y = y;
-					syOAMAddSprAtDepth(spr, 0);
+					sprite->x = x;
+					sprite->y = y;
+					syOAMAddSpriteAtDepth(sprite, 0);
 					x += 32;
-					spr++;
+					sprite++;
 				}
 			}
 #else
 
 			for(j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
-				spr->x = x;
-				spr->y = PROMPT_Y;
-				syOAMAddSprAtDepth(spr, 0);
+				sprite->x = x;
+				sprite->y = PROMPT_Y;
+				syOAMAddSpriteAtDepth(sprite, 0);
 				x += 32;
-				spr++;
+				sprite++;
 			}
 #endif
 			/* The prompt pulses once a second: its blend weight over the
@@ -653,11 +655,11 @@ Sint32 mnTitleShowPublisherLogo(Sint32 fadeOut)
 	Uint16 *tilemap;
 	Uint32	column;
 	Uint32	i;
-	Uint16	tileIdx;
+	Uint16	tileIndex;
 	Sint32	offscreenTile = OFFSCREEN_TILE;
 	Sint32	resourceId;
 
-	sySndPlayStub(SE_CHIME);
+	sySoundPlayStub(SE_CHIME);
 	OamCopyEnabled = 1;
 	resourceId = RESOURCE_PUBLISHER_LOGO;
 	syInitEvent();
@@ -678,11 +680,11 @@ Sint32 mnTitleShowPublisherLogo(Sint32 fadeOut)
 	syDMAXCopy(RamMapGridMetatileBuffer, BG_CHAR_BLOCK(1),
 		DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
 	/* Pad the 30-tile picture to the hardware map's 32-tile row width. */
-	tileIdx = PUBLISHER_LOGO_TILE;
+	tileIndex = PUBLISHER_LOGO_TILE;
 	tilemap = (Uint16 *)BG_SCREEN_BLOCK(PICTURE_SCREEN);
 	for(i = 0; i < DISPLAY_TILE_HEIGHT; i++) {
 		for(column = 0; column < DISPLAY_TILE_WIDTH; column++)
-			*tilemap++ = tileIdx++;
+			*tilemap++ = tileIndex++;
 		*tilemap++ = offscreenTile;
 		*tilemap++ = offscreenTile;
 	}
@@ -814,20 +816,20 @@ UNUSED void mnTitleAfterIntroNoOperation(void)
 
 /* Computes each of the 1536 colour components' change per tick from the
    current components to the target (nothing when `ticks` is not positive). */
-void mnTitlePaletteFadeCalcSteps(Sint16 *srcComponents, Sint16 *tgtComponents,
-	Sint16 *componentSteps, Sint32 ticks)
+void mnTitlePaletteFadeCalculateSteps(Sint16 *srcComponents,
+	Sint16 *targetComponents, Sint16 *componentSteps, Sint32 ticks)
 {
 	Sint32 i;
 	Sint32 srcValue;
-	Sint32 tgtValue;
+	Sint32 targetValue;
 
 	if(ticks > 0) {
 		for(i = 0; i < TITLE_PALETTE_FADE_CHANNELS; i++) {
 			srcValue = *srcComponents;
-			tgtValue = *tgtComponents;
-			*componentSteps = syIntegerDivide(tgtValue - srcValue, ticks);
+			targetValue = *targetComponents;
+			*componentSteps = syIntegerDivide(targetValue - srcValue, ticks);
 			srcComponents++;
-			tgtComponents++;
+			targetComponents++;
 			componentSteps++;
 		}
 	}
@@ -841,42 +843,42 @@ void mnTitlePaletteFadeUpdate(void)
 {
 	TITLE_PALETTE_FADE *state = (TITLE_PALETTE_FADE *)PaletteFadeState;
 	Uint16			   *componentSteps = state->delta;
-	Uint16			   *curComponents;
-	Uint16			   *packedCols;
+	Uint16			   *currentComponents;
+	Uint16			   *packedColors;
 	Sint32				i;
 	Uint16			   *pagePalettes;
 
 	if(state->duration == 0)
 		return;
 	if((Sint8)++state->step < state->duration) {
-		curComponents = state->cur;
+		currentComponents = state->current;
 		for(i = 0; i <= TITLE_PALETTE_FADE_CHANNELS - 1; i++)
-			*curComponents++ += *componentSteps++;
+			*currentComponents++ += *componentSteps++;
 	} else {
-		syDMAXCopy(state->tgt, state->cur,
-			DMA_COPY_WORDS(sizeof(state->cur) / 4), REG_DMA3);
+		syDMAXCopy(state->target, state->current,
+			DMA_COPY_WORDS(sizeof(state->current) / 4), REG_DMA3);
 		state->duration = 0;
 	}
 	/* Pack into the page not queued last tick, which VBlank may still read. */
-	packedCols = state->packed[state->page ^ 1];
+	packedColors = state->packed[state->page ^ 1];
 	{
 		Sint32 blueMask = BLUE_BITS;
 
 		i = PLTT_COLORS;
-		curComponents = state->cur;
+		currentComponents = state->current;
 		for(; i != 0; i--) {
-			*packedCols++ = (curComponents[0] & blueMask) |
-				(((Sint16)curComponents[1] >> (BLUE_SHIFT - GREEN_SHIFT)) &
+			*packedColors++ = (currentComponents[0] & blueMask) |
+				(((Sint16)currentComponents[1] >> (BLUE_SHIFT - GREEN_SHIFT)) &
 					GREEN_BITS) |
-				(((Sint16)curComponents[2] >> BLUE_SHIFT) & RED_BITS);
-			curComponents += 3;
+				(((Sint16)currentComponents[2] >> BLUE_SHIFT) & RED_BITS);
+			currentComponents += 3;
 		}
 		state->page ^= 1;
 		pagePalettes = state->packed[state->page];
 		{
-			Uint16 *backgroundCols = pagePalettes;
+			Uint16 *backgroundColors = pagePalettes;
 
-			IO_WRITE_QUEUE_PUSH((Uint32)BG_PLTT, (Uint32)backgroundCols,
+			IO_WRITE_QUEUE_PUSH((Uint32)BG_PLTT, (Uint32)backgroundColors,
 				DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
 		}
 		IO_WRITE_QUEUE_PUSH((Uint32)OBJ_PLTT,
@@ -888,11 +890,11 @@ void mnTitlePaletteFadeUpdate(void)
 /* PALETTE_TINT_DIMMER: red halved, green cut by a third, then red and green
    raised and blue lowered, each channel through its own curve. */
 #define BUILD_DIMMER_COLORS() \
-	for(colIdx = 0; colIdx < colorCount; colIdx++) { \
-		col = *src++; \
-		red = RGB_RED(col); \
-		green = RGB_GREEN(col); \
-		blue = RGB_BLUE(col); \
+	for(colorIndex = 0; colorIndex < colorCount; colorIndex++) { \
+		color = *src++; \
+		red = RGB_RED(color); \
+		green = RGB_GREEN(color); \
+		blue = RGB_BLUE(color); \
 		red -= (Uint32)red >> 1; \
 		green -= green / 3; \
 		red += 6; \
@@ -901,10 +903,10 @@ void mnTitlePaletteFadeUpdate(void)
 		red = mnTitlePaletteFadeClampChannel(red); \
 		green = mnTitlePaletteFadeClampChannel(green); \
 		blue = mnTitlePaletteFadeClampChannel(blue); \
-		SET_VECTOR(dst, TitlePaletteFadeChannelCurveContrast[blue], \
+		SET_VECTOR(dest, TitlePaletteFadeChannelCurveContrast[blue], \
 			TitlePaletteFadeChannelCurveLight[green], \
 			TitlePaletteFadeChannelCurve[red]); \
-		dst += 3; \
+		dest += 3; \
 	}
 
 /* Tints 512 source colours into destination components (three per colour, each
@@ -914,14 +916,14 @@ void mnTitlePaletteFadeUpdate(void)
    are the whole-palette filters; the CUSTOM, BLEND and SPLIT flags carry a
    colour in their low bits; anything else is the address of components to copy.
    `selectedPalettes` is an enum PALETTE_SELECTION. */
-void mnTitlePaletteFadeBuildCols(
-	Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 selectedPalettes)
+void mnTitlePaletteFadeBuildColors(
+	Uint32 mode, Uint16 *src, Uint16 *dest, Sint32 selectedPalettes)
 {
-	Uint32 colIdx;
+	Uint32 colorIndex;
 	Uint32 colorCount = PLTT_COLORS;
 	Sint32 red;
 	Sint32 blue;
-	Uint32 col;
+	Uint32 color;
 	Sint32 green;
 
 	if(mode == PALETTE_TINT_FROM_SOURCE)
@@ -929,41 +931,42 @@ void mnTitlePaletteFadeBuildCols(
 	if(selectedPalettes == PALETTES_BG) {
 		colorCount = BG_PLTT_COLORS;
 	} else if(selectedPalettes == PALETTES_SPRITES) {
-		dst += 3 * BG_PLTT_COLORS;
+		dest += 3 * BG_PLTT_COLORS;
 		src += BG_PLTT_COLORS;
 		colorCount = BG_PLTT_COLORS;
 	}
 
 	if(mode < PALETTE_TINT_FROM_SOURCE) {
-		*dst++ = mode & BLUE_BITS;
-		*dst++ = (mode & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
-		*dst++ = (mode & RED_BITS) << BLUE_SHIFT;
-		syDMAXCopy(dst - 3, dst,
+		*dest++ = mode & BLUE_BITS;
+		*dest++ = (mode & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
+		*dest++ = (mode & RED_BITS) << BLUE_SHIFT;
+		syDMAXCopy(dest - 3, dest,
 			DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
 	} else if(mode < PALETTE_TINT_FLAGS) {
 		switch(mode) {
 		case PALETTE_TINT_GRAYSCALE:
-			for(colIdx = 0; colIdx < colorCount; colIdx++) {
-				col = *src++;
-				red = ((col << BRIGHTNESS_RED_SHIFT) &
+			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+				color = *src++;
+				red = ((color << BRIGHTNESS_RED_SHIFT) &
 					(RED_BITS << BRIGHTNESS_RED_SHIFT));
-				green = ((col << BRIGHTNESS_GREEN_SHIFT) &
+				green = ((color << BRIGHTNESS_GREEN_SHIFT) &
 					(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-				blue = (col & BLUE_BITS);
-				col = syIntegerDivide(red + green + blue, 7);
-				*dst++ = col;
-				*dst++ = col;
-				*dst++ = col;
+				blue = (color & BLUE_BITS);
+				color = syIntegerDivide(red + green + blue, 7);
+				*dest++ = color;
+				*dest++ = color;
+				*dest++ = color;
 			}
 			break;
 		case PALETTE_TINT_SEPIA:
-			for(colIdx = 0; colIdx < colorCount; colIdx++) {
-				col = *src++;
-				red = RGB_RED(col);
-				col = syIntegerDivide(
-					red + RGB_GREEN(col) + RGB_BLUE(col), SEPIA_SHADE_DIVISOR);
-				red = col * 4 + 5;
-				blue = col * 3 + 5;
+			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+				color = *src++;
+				red = RGB_RED(color);
+				color =
+					syIntegerDivide(red + RGB_GREEN(color) + RGB_BLUE(color),
+						SEPIA_SHADE_DIVISOR);
+				red = color * 4 + 5;
+				blue = color * 3 + 5;
 				green = blue;
 				if(red < SEPIA_LEVEL_MIN)
 					red = SEPIA_LEVEL_MIN;
@@ -977,9 +980,9 @@ void mnTitlePaletteFadeBuildCols(
 					green = SEPIA_LEVEL_MAX;
 				if(blue > SEPIA_LEVEL_MAX)
 					blue = SEPIA_LEVEL_MAX;
-				*dst++ = TitlePaletteFadeChannelCurveLight[blue];
-				*dst++ = TitlePaletteFadeChannelCurveLight[green];
-				*dst++ = TitlePaletteFadeChannelCurveLight[red];
+				*dest++ = TitlePaletteFadeChannelCurveLight[blue];
+				*dest++ = TitlePaletteFadeChannelCurveLight[green];
+				*dest++ = TitlePaletteFadeChannelCurveLight[red];
 			}
 			break;
 		case PALETTE_TINT_DIM:
@@ -988,11 +991,11 @@ void mnTitlePaletteFadeBuildCols(
 			BUILD_DIMMER_COLORS();
 			break;
 		case PALETTE_TINT_MUTED:
-			for(colIdx = 0; colIdx < colorCount; colIdx++) {
-				col = *src++;
-				red = RGB_RED(col);
-				green = RGB_GREEN(col);
-				blue = RGB_BLUE(col);
+			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+				color = *src++;
+				red = RGB_RED(color);
+				green = RGB_GREEN(color);
+				blue = RGB_BLUE(color);
 				if(red < MUTED_RED_MIN)
 					red = MUTED_RED_MIN;
 				if(green < MUTED_GREEN_MIN)
@@ -1010,19 +1013,19 @@ void mnTitlePaletteFadeBuildCols(
 				red = mnTitlePaletteFadeClampChannel(red);
 				green = mnTitlePaletteFadeClampChannel(green);
 				blue = mnTitlePaletteFadeClampChannel(blue);
-				*dst++ = TitlePaletteFadeChannelCurve[blue];
-				*dst++ = TitlePaletteFadeChannelCurve[green];
-				*dst++ = TitlePaletteFadeChannelCurve[red];
+				*dest++ = TitlePaletteFadeChannelCurve[blue];
+				*dest++ = TitlePaletteFadeChannelCurve[green];
+				*dest++ = TitlePaletteFadeChannelCurve[red];
 			}
 			break;
 		case PALETTE_TINT_PALE:
-			for(colIdx = 0; colIdx < colorCount; colIdx++) {
+			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
 				Sint32 mean;
 
-				col = *src++;
-				red = RGB_RED(col);
-				green = RGB_GREEN(col);
-				blue = RGB_BLUE(col);
+				color = *src++;
+				red = RGB_RED(color);
+				green = RGB_GREEN(color);
+				blue = RGB_BLUE(color);
 				mean = mnTitlePaletteFadeClampChannel((red + green + blue) / 3);
 				red = (red >> 1) + mean;
 				green = (green >> 1) + mean;
@@ -1030,38 +1033,38 @@ void mnTitlePaletteFadeBuildCols(
 				red = mnTitlePaletteFadeClampChannel(red);
 				green = mnTitlePaletteFadeClampChannel(green);
 				blue = mnTitlePaletteFadeClampChannel(blue);
-				SET_VECTOR(dst, TitlePaletteFadeChannelCurveContrast[blue],
+				SET_VECTOR(dest, TitlePaletteFadeChannelCurveContrast[blue],
 					TitlePaletteFadeChannelCurveContrast[green],
 					TitlePaletteFadeChannelCurveContrast[red]);
-				dst += 3;
+				dest += 3;
 			}
 			break;
 		case PALETTE_TINT_RED:
-			for(colIdx = 0; colIdx < colorCount; colIdx++) {
-				col = *src++;
-				red = RGB_RED(col);
-				green = RGB_GREEN(col);
-				blue = RGB_BLUE(col);
+			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+				color = *src++;
+				red = RGB_RED(color);
+				green = RGB_GREEN(color);
+				blue = RGB_BLUE(color);
 				red += ((green >> 3) + (blue >> 3));
 				red = mnTitlePaletteFadeClampChannel(red);
 				green -= green / 3;
 				blue -= blue / 3;
-				SET_VECTOR(dst, TitlePaletteFadeChannelCurve[blue],
+				SET_VECTOR(dest, TitlePaletteFadeChannelCurve[blue],
 					TitlePaletteFadeChannelCurve[green],
 					TitlePaletteFadeChannelCurveLight[red]);
-				dst += 3;
+				dest += 3;
 			}
 			break;
 		case PALETTE_TINT_DIMMER:
 			BUILD_DIMMER_COLORS();
 			break;
 		default:
-			for(colIdx = 0; colIdx < colorCount; colIdx++) {
-				col = *src++;
-				dst[colIdx * 3 + 0] = col & BLUE_BITS;
-				dst[colIdx * 3 + 1] = (col & GREEN_BITS)
+			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+				color = *src++;
+				dest[colorIndex * 3 + 0] = color & BLUE_BITS;
+				dest[colorIndex * 3 + 1] = (color & GREEN_BITS)
 					<< (BLUE_SHIFT - GREEN_SHIFT);
-				dst[colIdx * 3 + 2] = (col & RED_BITS) << BLUE_SHIFT;
+				dest[colorIndex * 3 + 2] = (color & RED_BITS) << BLUE_SHIFT;
 			}
 			break;
 		}
@@ -1075,23 +1078,23 @@ void mnTitlePaletteFadeBuildCols(
 		tintRed = RGB_RED(mode);
 		tintGreen = RGB_GREEN(mode);
 		tintBlue = RGB_BLUE(mode);
-		for(colIdx = 0; colIdx < colorCount; colIdx++) {
-			col = *src++;
-			red = ((col << BRIGHTNESS_RED_SHIFT) &
+		for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+			color = *src++;
+			red = ((color << BRIGHTNESS_RED_SHIFT) &
 				(RED_BITS << BRIGHTNESS_RED_SHIFT));
-			green = ((col << BRIGHTNESS_GREEN_SHIFT) &
+			green = ((color << BRIGHTNESS_GREEN_SHIFT) &
 				(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-			blue = (col & BLUE_BITS);
-			col = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
-			red = col * tintRed;
-			green = col * tintGreen;
-			blue = col * tintBlue;
+			blue = (color & BLUE_BITS);
+			color = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
+			red = color * tintRed;
+			green = color * tintGreen;
+			blue = color * tintBlue;
 			red = mnTitlePaletteFadeClampShiftedChannel(red);
 			green = mnTitlePaletteFadeClampShiftedChannel(green);
 			blue = mnTitlePaletteFadeClampShiftedChannel(blue);
-			*dst++ = blue;
-			*dst++ = green;
-			*dst++ = red;
+			*dest++ = blue;
+			*dest++ = green;
+			*dest++ = red;
 		}
 	} else if(mode & PALETTE_TINT_BLEND) {
 		Uint32 tintRed;
@@ -1104,39 +1107,40 @@ void mnTitlePaletteFadeBuildCols(
 		tintRed = RGB_RED(mode);
 		tintGreen = RGB_GREEN(mode);
 		tintBlue = RGB_BLUE(mode);
-		for(colIdx = 0; colIdx < colorCount; colIdx++) {
-			col = *src++;
-			red = RGB_RED(col);
-			col = syIntegerDivide((red + RGB_GREEN(col) + RGB_BLUE(col)) << 4,
-				tintRed + tintGreen + tintBlue);
+		for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+			color = *src++;
+			red = RGB_RED(color);
+			color =
+				syIntegerDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
+					tintRed + tintGreen + tintBlue);
 			blendedRed = syMulFX(
-				toFIXED((col * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
-			blendedGreen = syMulFX(toFIXED((col * tintGreen) >> 4),
+				toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
+			blendedGreen = syMulFX(toFIXED((color * tintGreen) >> 4),
 				(Sint32)toFIXED(tintGreen) >> 4);
-			blendedBlue = syMulFX(
-				toFIXED((col * tintBlue) >> 4), (Sint32)toFIXED(tintBlue) >> 4);
+			blendedBlue = syMulFX(toFIXED((color * tintBlue) >> 4),
+				(Sint32)toFIXED(tintBlue) >> 4);
 			blendedRed =
 				mnTitlePaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedRed));
 			blendedGreen = mnTitlePaletteFadeClampChannel(
 				FIXEDtoINT((Uint32)blendedGreen));
 			blendedBlue =
 				mnTitlePaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedBlue));
-			*dst++ = TitlePaletteFadeChannelCurve[blendedBlue];
-			*dst++ = TitlePaletteFadeChannelCurve[blendedGreen];
-			*dst++ = TitlePaletteFadeChannelCurve[blendedRed];
+			*dest++ = TitlePaletteFadeChannelCurve[blendedBlue];
+			*dest++ = TitlePaletteFadeChannelCurve[blendedGreen];
+			*dest++ = TitlePaletteFadeChannelCurve[blendedRed];
 		}
 	} else if(mode & PALETTE_TINT_SPLIT) {
-		for(colIdx = 0; colIdx < colorCount; colIdx++) {
-			col = *src++;
-			dst[colIdx * 3 + 0] = col & BLUE_BITS;
-			dst[colIdx * 3 + 1] = (col & GREEN_BITS)
+		for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+			color = *src++;
+			dest[colorIndex * 3 + 0] = color & BLUE_BITS;
+			dest[colorIndex * 3 + 1] = (color & GREEN_BITS)
 				<< (BLUE_SHIFT - GREEN_SHIFT);
-			dst[colIdx * 3 + 2] = (col & RED_BITS) << BLUE_SHIFT;
+			dest[colorIndex * 3 + 2] = (color & RED_BITS) << BLUE_SHIFT;
 		}
 	} else {
 		if(selectedPalettes == PALETTES_SPRITES)
 			mode += 3 * BG_PLTT_SIZE;
-		syDMAXCopy((const void *)mode, dst,
+		syDMAXCopy((const void *)mode, dest,
 			DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
 	}
 }
@@ -1147,14 +1151,14 @@ void mnTitlePaletteFadeInit(void)
 {
 	TITLE_PALETTE_FADE *buf;
 
-	buf = syHeapSlotAllocEWRAM(HEAP_SLOT_PALETTE_FADE, sizeof(*buf));
+	buf = syHeapSlotAllocateEWRAM(HEAP_SLOT_PALETTE_FADE, sizeof(*buf));
 	DMA_FILL32(0, buf, sizeof(*buf));
 	syDMAXCopy(
 		(void *)BG_PLTT, buf, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
-	syDMAXCopy((void *)OBJ_PLTT, &buf->pal[BG_PLTT_COLORS],
+	syDMAXCopy((void *)OBJ_PLTT, &buf->palette[BG_PLTT_COLORS],
 		DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
-	mnTitlePaletteFadeBuildCols(
-		PALETTE_TINT_NONE, buf->pal, buf->tgt, PALETTES_ALL);
+	mnTitlePaletteFadeBuildColors(
+		PALETTE_TINT_NONE, buf->palette, buf->target, PALETTES_ALL);
 	sySetEvent(mnTitlePaletteFadeUpdate, EVENT_PASS_TICK);
 }
 
@@ -1172,8 +1176,8 @@ UNUSED void mnTitlePaletteFadeSetTarget(Sint32 mode, Sint32 selectedPalettes)
 	TITLE_PALETTE_FADE *fade = (TITLE_PALETTE_FADE *)PaletteFadeState;
 
 	if(fade != NULL)
-		mnTitlePaletteFadeBuildCols(
-			mode, fade->pal, fade->tgt, selectedPalettes);
+		mnTitlePaletteFadeBuildColors(
+			mode, fade->palette, fade->target, selectedPalettes);
 }
 
 /* Sets the colours shown now by tinting the saved palettes. */
@@ -1182,17 +1186,17 @@ void mnTitlePaletteFadeSetCurrent(Sint32 mode, Sint32 selectedPalettes)
 	TITLE_PALETTE_FADE *fade = (TITLE_PALETTE_FADE *)PaletteFadeState;
 
 	if(fade != NULL)
-		mnTitlePaletteFadeBuildCols(
-			mode, fade->pal, fade->cur, selectedPalettes);
+		mnTitlePaletteFadeBuildColors(
+			mode, fade->palette, fade->current, selectedPalettes);
 }
 
 /* Unused: replaces the first saved colour, the backdrop. */
-UNUSED void mnTitlePaletteFadeSetBackdrop(Sint32 col)
+UNUSED void mnTitlePaletteFadeSetBackdrop(Sint32 color)
 {
 	TITLE_PALETTE_FADE *fade = (TITLE_PALETTE_FADE *)PaletteFadeState;
 
 	if(fade != NULL)
-		fade->pal[0] = col;
+		fade->palette[0] = color;
 }
 
 /* Starts fading the shown colours to the target over the requested ticks: each
@@ -1206,8 +1210,8 @@ void mnTitlePaletteFadeStart(Sint32 ticks)
 	if(fade != NULL) {
 		fade->duration = ticks;
 		fade->step = 0;
-		mnTitlePaletteFadeCalcSteps((Sint16 *)fade->cur, (Sint16 *)fade->tgt,
-			(Sint16 *)fade->delta, ticks);
+		mnTitlePaletteFadeCalculateSteps((Sint16 *)fade->current,
+			(Sint16 *)fade->target, (Sint16 *)fade->delta, ticks);
 	}
 }
 
@@ -1230,7 +1234,7 @@ Sint32 mnTitlePaletteFadeClampShiftedChannel(Sint32 value)
 	return value;
 }
 
-/* The response curves of mnTitlePaletteFadeBuildCols's filters. */
+/* The response curves of mnTitlePaletteFadeBuildColors's filters. */
 
 /* Maps a channel (0..31) to a component (0..31 << 10). */
 /* clang-format off */

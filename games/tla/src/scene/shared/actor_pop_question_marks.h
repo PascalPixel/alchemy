@@ -6,18 +6,18 @@ void scActorPopQuestionMarks(Sint32 id)
 
 	scQuestionMarkPop(actor->x.fixed + toFIXED(8), actor->y.fixed + toFIXED(28),
 		actor->z.fixed, TRIG_TURN / 16, 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 	scQuestionMarkPop(actor->x.fixed - toFIXED(8), actor->y.fixed + toFIXED(28),
 		actor->z.fixed, TRIG_TURN * 15 / 16, 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 	scQuestionMarkPop(actor->x.fixed + toFIXED(8), actor->y.fixed + toFIXED(28),
 		actor->z.fixed, TRIG_TURN / 16, 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 	scQuestionMarkPop(actor->x.fixed - toFIXED(8), actor->y.fixed + toFIXED(28),
 		actor->z.fixed, TRIG_TURN * 15 / 16, 15);
-	fdScriptPlaySnd(SE_LIGHT_APPEAR);
+	fdScriptPlaySound(SE_LIGHT_APPEAR);
 	syFieldScriptWait(15);
 }

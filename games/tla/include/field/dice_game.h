@@ -23,9 +23,9 @@ typedef struct DICE_PARTICLE {
 	FIXED  x;
 	FIXED  y;
 	FIXED  z;
-	FIXED  velX;
-	FIXED  velY;
-	FIXED  velZ;
+	FIXED  velocityX;
+	FIXED  velocityY;
+	FIXED  velocityZ;
 	Sint32 variant;
 } DICE_PARTICLE;
 
@@ -39,9 +39,9 @@ typedef struct DICE_STATE {
 typedef struct DICE_SPR {
 	Uint8		   filler[196];
 	OAM_WORDS	   oam[128];
-	struct WINDOW *coinsWin;
-	struct WINDOW *betWin;
-	struct WINDOW *helpWin;
+	struct WINDOW *coinsWindow;
+	struct WINDOW *betWindow;
+	struct WINDOW *helpWindow;
 } DICE_SPR;
 
 /* The dice games' camera: the eye and the point it looks at, 16.16. */
@@ -89,9 +89,9 @@ typedef struct DICE_CAMERA {
 typedef struct LUCKY_DICE_SPR {
 	Uint8		   filler[196];
 	OAM_WORDS	   oam[128];
-	struct WINDOW *coinsWin;
-	struct WINDOW *winningsWin;
-	struct WINDOW *helpWin;
+	struct WINDOW *coinsWindow;
+	struct WINDOW *winningsWindow;
+	struct WINDOW *helpWindow;
 } LUCKY_DICE_SPR;
 
 /* A Lucky Wheels reel: its turn, its 21 symbols, whether it is held and where
@@ -111,13 +111,13 @@ typedef struct REEL_EFFECT_STATE {
 	Uint8  unusedAfterParticles[1792 -
 		 LUCKY_WHEELS_TITLE_LETTERS * sizeof(PARTICLE)];
 	Uint16 bgShade[256];
-	Uint16 sprShade[256];
-	Uint8  unusedAfterSprShade[27776]; /* no code names it */
+	Uint16 spriteShade[256];
+	Uint8  unusedAfterSpriteShade[27776]; /* no code names it */
 	Sint32 transferMode;
 	Sint32 transferValue;
 	Uint8  unusedAfterTransferValue[4]; /* no code names it */
-	Sint32 frm;
-	Uint8  unusedAfterFrm[344]; /* no code names it */
+	Sint32 frame;
+	Uint8  unusedAfterFrame[344]; /* no code names it */
 	Sint32 transferPending;
 } REEL_EFFECT_STATE;
 

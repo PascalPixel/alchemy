@@ -11,32 +11,32 @@
 #define SCREEN_BLOCK_METATILES (BG_SCREEN_WIDTH / 2)
 
 /* Draws the width by height metatiles from metatile (x, y) of the layout into
-   screen block 5 at metatile (dstX, dstY), wrapping every
+   screen block 5 at metatile (destX, destY), wrapping every
    SCREEN_BLOCK_METATILES metatiles. The block is cut into horizontal planes of
    SCREEN_BLOCK_METATILES metatile rows; plane picks which one is drawn into. */
 static void scMapGridDrawMetatilePanel(Sint32 x, Sint32 y, Sint32 width,
-	Sint32 height, Sint32 plane, Sint32 dstX, Sint32 dstY)
+	Sint32 height, Sint32 plane, Sint32 destX, Sint32 destY)
 {
 	Uint32 *metatile =
 		(Uint32 *)RamMapGridMetatileBuffer + (y * MAPGRID_SIZE + x);
 	Sint32 row;
-	Sint32 col;
+	Sint32 column;
 
-	for(row = dstY; row < dstY + height; row++) {
-		for(col = dstX; col < dstX + width; col++) {
+	for(row = destY; row < destY + height; row++) {
+		for(column = destX; column < destX + width; column++) {
 			/* A metatile's tiles are four tile map entries, two rows of two, 8
 			   bytes; a metatile row of the screen block is two rows of
 			   BG_SCREEN_WIDTH entries, BG_SCREEN_WIDTH words. */
 			Uint32 tile = *metatile++ & MAPGRID_METATILE_TILES_ID_MASK;
-			Sint32 idx = (plane * SCREEN_BLOCK_METATILES +
-							 (row & (SCREEN_BLOCK_METATILES - 1))) *
+			Sint32 index = (plane * SCREEN_BLOCK_METATILES +
+							   (row & (SCREEN_BLOCK_METATILES - 1))) *
 					BG_SCREEN_WIDTH +
-				(col & (SCREEN_BLOCK_METATILES - 1));
+				(column & (SCREEN_BLOCK_METATILES - 1));
 			Uint32 *from;
 			Uint32 *to;
 			Uint32	picture;
 
-			to = (Uint32 *)BG_SCREEN_BLOCK(5) + idx;
+			to = (Uint32 *)BG_SCREEN_BLOCK(5) + index;
 			picture = tile * 2;
 			from = (Uint32 *)RamMetatileTiles;
 			from += picture;

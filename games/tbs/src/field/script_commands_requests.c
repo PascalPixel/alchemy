@@ -82,23 +82,23 @@ void fdScriptLeaveFor(Uint16 sceneId, Uint16 entrance)
 	state->exit = EXIT_KEEP_DESTINATION;
 }
 
-/* Changes the scene's music to sndId and remembers it for fdPlayQueuedMusic;
+/* Changes the scene's music to soundId and remembers it for fdPlayQueuedMusic;
    -1 fades the music out and remembers none. */
-void fdQueueMusic(Sint32 sndId)
+void fdQueueMusic(Sint32 soundId)
 {
-	FieldStateWork->queuedSnd = sndId;
-	if((Sint16)sndId == -1) {
-		sndId = SOUND_FADE_OUT_ACTION_SE;
+	FieldStateWork->queuedSound = soundId;
+	if((Sint16)soundId == -1) {
+		soundId = SOUND_FADE_OUT_ACTION_SE;
 	}
-	sySndPlayStub(SE_STOP_EXIT_SE);
-	sySndPlayStub(sndId);
+	sySoundPlayStub(SE_STOP_EXIT_SE);
+	sySoundPlayStub(soundId);
 }
 
 /* Plays the sound fdQueueMusic remembered, if any. */
 void fdPlayQueuedMusic(void)
 {
-	Sint16 sndId = FieldStateWork->queuedSnd;
+	Sint16 soundId = FieldStateWork->queuedSound;
 
-	if(sndId != -1)
-		sySndPlayStub(sndId);
+	if(soundId != -1)
+		sySoundPlayStub(soundId);
 }

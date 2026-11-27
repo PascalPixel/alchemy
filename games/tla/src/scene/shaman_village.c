@@ -302,8 +302,8 @@ void   scShamanVillageBlowAwaySand(void);
 void   scShamanVillageHopFortuneTeller(void);
 void   scShamanVillageStartLettering(Sint32 shape, Sint32 secondHalf);
 void   scShamanVillageLoadLettering(Sint32 picture);
-void   scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 dstX,
-	  Sint32 dstY, Sint32 width, Sint32 height);
+void   scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 destX,
+	  Sint32 destY, Sint32 width, Sint32 height);
 Sint32 scShamanVillageIsFacingCounter(void);
 void   scShamanVillageExplainTrialRules(void);
 void   scShamanVillageStepBackFromTrial(void);
@@ -393,12 +393,12 @@ void scShamanVillageDriftSandLayer(void)
 {
 	MAP_LAYER *sand = fdMapGridGetLayer(2);
 
-	sand->ofsX -= toFIXED(2);
+	sand->offsetX -= toFIXED(2);
 
-	sand->ofsY += toFIXED(2);
-	if(sand->ofsY > toFIXED(1040)) {
-		sand->ofsX = 0;
-		sand->ofsY = toFIXED(1024);
+	sand->offsetY += toFIXED(2);
+	if(sand->offsetY > toFIXED(1040)) {
+		sand->offsetX = 0;
+		sand->offsetY = toFIXED(1024);
 	}
 }
 
@@ -407,7 +407,7 @@ void scShamanVillageFlickerRock(ACTOR *actor)
 {
 	Sint32 bit = (((Uint32)TickCount & 3) >> actor->flickerShift) & 1;
 
-	scFieldActorSetSprCol(actor, (Uint8)(bit * actor->flickerCol));
+	scFieldActorSetSpriteColor(actor, (Uint8)(bit * actor->flickerColor));
 }
 
 /* A spark of the gathering Whirlwind: it circles the centre it keeps in bounce
@@ -427,7 +427,7 @@ void scShamanVillageSpiralSpark(ACTOR *actor)
 		syMulFX(sySin((actor->speedLimit & 0xff) * (TRIG_TURN / 32)), radius);
 	actor->y.fixed += actor->gravity;
 	actor->speedLimit++;
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		actor, ((TickCount & 2) >> 1) * SPRITE_COLOR_BLUE_TINT);
 }
 
@@ -450,16 +450,17 @@ void scShamanVillageSwirlSandGrain(ACTOR *actor)
 		actor->scaleY = actor->scaleX -= toFIXED(2) / 100;
 	}
 	if(actor->bounce > 0)
-		fdSetActorSprPriority(actor, 1);
+		fdSetActorSpritePriority(actor, 1);
 	else
-		fdSetActorSprPriority(actor, 2);
-	((FIELD_SPR *)actor->spr)->rotation += TRIG_TURN * 3 / 32;
+		fdSetActorSpritePriority(actor, 2);
+	((FIELD_SPR *)actor->sprite)->rotation += TRIG_TURN * 3 / 32;
 }
 
 extern Uint32 FieldEffectMediumScript[];
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 void scShamanVillageDriftSandLayer(void);
 
 /* Sheba's Whirlwind at the foot of Trial Road: the purple twister rock flickers
@@ -474,7 +475,7 @@ void scShamanVillageBlowAwaySand(void)
 	Uint32	i;
 	Uint32	j;
 
-	buf = syHeapAlloc(1664);
+	buf = syHeapAllocate(1664);
 	REG_DISPCNT &= ~DISPCNT_BG0_ON;
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_WHIRLWIND_TILES), buf);
@@ -484,15 +485,15 @@ void scShamanVillageBlowAwaySand(void)
 		BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
 		DMA_COPY_WORDS(WHIRLWIND_ROW_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
 	syHeapRelease(buf);
-	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 1);
-	fdActorSetSprPriority(ACTOR_TWISTER_ROCK, 1);
+	fdActorSetSpritePriority(MainRoutineStateWork.leaderActorId, 1);
+	fdActorSetSpritePriority(ACTOR_TWISTER_ROCK, 1);
 	syIOWrite16(BGCNT_SCREEN_BASE(4) | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(1),
 		&REG_BG0CNT);
 	REG_BG0CNT &= ~BGCNT_PRIORITY(3);
 	REG_BG0CNT |= BGCNT_PRIORITY(1);
 	DMA_FILL16(WHIRLWIND_FILL_TILE, WINDOW_TILEMAP_VRAM,
 		DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(Uint16));
-	buf = syHeapAlloc(576);
+	buf = syHeapAllocate(576);
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_WHIRLWIND_MAP), buf);
 	for(i = 0, metatile = buf; i != WHIRLWIND_MAP_WIDTH * WHIRLWIND_MAP_HEIGHT;
 		i++, metatile++) {
@@ -511,8 +512,8 @@ void scShamanVillageBlowAwaySand(void)
 			WINDOW_TILEMAP_VRAM + 15 + i * BG_SCREEN_WIDTH * sizeof(Uint16),
 			DMA_COPY_WORDS(WHIRLWIND_MAP_WIDTH / 2), REG_DMA3);
 	syHeapRelease(buf);
-	fdScriptPlaySnd(SE_GLITTER);
-	fdActorGetById(ACTOR_TWISTER_ROCK)->flickerCol = SPRITE_COLOR_BLUE_TINT;
+	fdScriptPlaySound(SE_GLITTER);
+	fdActorGetById(ACTOR_TWISTER_ROCK)->flickerColor = SPRITE_COLOR_BLUE_TINT;
 	fdActorGetById(ACTOR_TWISTER_ROCK)->flickerShift = 1;
 	fdActorGetById(ACTOR_TWISTER_ROCK)->update = scShamanVillageFlickerRock;
 	for(i = 0; i != 45; i++) {
@@ -521,18 +522,19 @@ void scShamanVillageBlowAwaySand(void)
 				fdActorGetById(ACTOR_TWISTER_ROCK)->x.fixed,
 				fdActorGetById(ACTOR_TWISTER_ROCK)->y.fixed,
 				fdActorGetById(ACTOR_TWISTER_ROCK)->z.fixed);
-			((FIELD_SPR *)spark->spr)->pri =
-				((FIELD_SPR *)fdActorGetById(ACTOR_TWISTER_ROCK)->spr)->pri;
-			spark->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-			spark->motionFlg = 0;
+			((FIELD_SPR *)spark->sprite)->priority =
+				((FIELD_SPR *)fdActorGetById(ACTOR_TWISTER_ROCK)->sprite)
+					->priority;
+			spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+			spark->motionFlags = 0;
 			spark->bounce = spark->x.fixed;
 			spark->gravity = toFIXED(3) / 2;
 			spark->sceneWord = spark->z.fixed;
 			spark->speedLimit = syRandom() & 0xffff;
 			syImportActorSelectAnimation((ACTOR *)spark, 7);
 			syImportActorStartScript((ACTOR *)spark, FieldEffectMediumScript);
-			fdActorSetSprFlags(spark, 0);
-			scFieldActorSetSprCol(spark, SPRITE_COLOR_RBG);
+			fdActorSetSpriteFlags(spark, 0);
+			scFieldActorSetSpriteColor(spark, SPRITE_COLOR_RBG);
 			spark->update = scShamanVillageSpiralSpark;
 		}
 		fdScriptWait(1);
@@ -543,7 +545,7 @@ void scShamanVillageBlowAwaySand(void)
 	fdCameraMoveTo(168, CAMERA_KEEP, 424, 1);
 	fdCameraWaitForArrival();
 	sySetEvent(scShamanVillageWaveWhirlwindLines, EVENT_PASS_VBLANK);
-	fdScriptPlaySnd(SE_RUSH);
+	fdScriptPlaySound(SE_RUSH);
 	REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX - 1);
 	REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -551,7 +553,7 @@ void scShamanVillageBlowAwaySand(void)
 	i = 0;
 	do {
 		REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
-		fdActorGetById(ACTOR_TWISTER_ROCK)->flickerCol = syRandom() & 7;
+		fdActorGetById(ACTOR_TWISTER_ROCK)->flickerColor = syRandom() & 7;
 		i++;
 		fdScriptWait(1);
 	} while(i != 64);
@@ -566,7 +568,7 @@ void scShamanVillageBlowAwaySand(void)
 	i = 0;
 	do {
 		REG_BLDALPHA = ((BLEND_WEIGHT_MAX - (i >> 2)) << 8) | (i >> 2);
-		fdActorGetById(ACTOR_TWISTER_ROCK)->flickerCol = syRandom() & 7;
+		fdActorGetById(ACTOR_TWISTER_ROCK)->flickerColor = syRandom() & 7;
 		i++;
 		fdScriptWait(1);
 	} while(i != 68);
@@ -589,26 +591,26 @@ void scShamanVillageBlowAwaySand(void)
 		j = 0;
 		do {
 			if((j & 3) == 0) {
-				Sint32		   vel[3];
+				Sint32		   velocity[3];
 				EFFECT_OPTIONS options;
 
-				options.pri = 1;
+				options.priority = 1;
 				options.update = scShamanVillageSwirlSandGrain;
-				vel[0] = 0;
-				vel[2] = -toFIXED(2);
-				vel[1] = 0;
+				velocity[0] = 0;
+				velocity[2] = -toFIXED(2);
+				velocity[1] = 0;
 				{
 					FIXED x = toFIXED(syRandom() & 127) + toFIXED(104);
 
 					scFieldEffectSpawn(x, 0, toFIXED(472 - (syRandom() & 127)),
-						vel[0], vel[1], vel[2],
+						velocity[0], velocity[1], velocity[2],
 						EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY |
 							EFFECT_SCRIPT_MEDIUM,
 						&options);
 				}
 			}
 			REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
-			fdActorGetById(ACTOR_TWISTER_ROCK)->flickerCol = syRandom() & 7;
+			fdActorGetById(ACTOR_TWISTER_ROCK)->flickerColor = syRandom() & 7;
 			sySynch(1);
 			j++;
 		} while(j != 64);
@@ -635,7 +637,7 @@ void scShamanVillageBlowAwaySand(void)
 	i = 0;
 	do {
 		REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
-		fdActorGetById(ACTOR_TWISTER_ROCK)->flickerCol = syRandom() & 7;
+		fdActorGetById(ACTOR_TWISTER_ROCK)->flickerColor = syRandom() & 7;
 		i++;
 		fdScriptWait(1);
 	} while(i != 68);
@@ -646,8 +648,8 @@ void scShamanVillageBlowAwaySand(void)
 	REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	REG_BLDALPHA = BLEND_ALPHA(15, 0);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
-	fdActorGetById(ACTOR_TWISTER_ROCK)->flickerCol = SPRITE_COLOR_GREY;
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+	fdActorGetById(ACTOR_TWISTER_ROCK)->flickerColor = SPRITE_COLOR_GREY;
 	for(i = 0; i != 65; i++) {
 		Uint32 q = i >> 2;
 
@@ -658,20 +660,21 @@ void scShamanVillageBlowAwaySand(void)
 	fdActorGetById(ACTOR_TWISTER_ROCK)->flickerShift = 0;
 	sySynch(30);
 	fdActorGetById(ACTOR_TWISTER_ROCK)->update = (void *)0;
-	scFieldActorSetSprCol(
+	scFieldActorSetSpriteColor(
 		fdActorGetById(ACTOR_TWISTER_ROCK), SPRITE_COLOR_GREY);
 	fdMapGridWaitForShakeToSettle();
 	fdScriptWait(60);
 	REG_BLDCNT = 0;
 	syWindowLoadGraphics();
 	syPrintClear();
-	syFieldWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg &=
+	syFieldWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags &=
 		~ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGetById(ACTOR_TWISTER_ROCK)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGetById(ACTOR_TWISTER_ROCK)->priorityFlags |=
+		ACTOR_PRIORITY_AUTOMATIC;
 	REG_DISPCNT |= DISPCNT_BG2_ON;
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
@@ -1029,7 +1032,7 @@ void scShamanVillageHopFortuneTeller(void)
 	fdActorStop(ACTOR_FORTUNE_TELLER);
 	sySynch(1);
 	fdActorJump(ACTOR_FORTUNE_TELLER, 4, 20);
-	fdScriptPlaySnd(SE_SPLASH);
+	fdScriptPlaySound(SE_SPLASH);
 	sySynch(2);
 	fdActorRunScriptAndWait(
 		ACTOR_FORTUNE_TELLERS_FLAME, ShamanVillageHopFortuneTellerScript);
@@ -1054,7 +1057,7 @@ void scShamanVillageTellFortune(void)
 		   serious..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 	} else {
-		fdScriptPlaySnd(MUS_SILENCE);
+		fdScriptPlaySound(MUS_SILENCE);
 		if(fdScriptGetFlag(FLAG_JUPITER_BEACON_LIT))
 			fdScriptSetMessageId((Sint32)MsgShamanFortuneOfferAfterTrial);
 		else
@@ -1070,7 +1073,7 @@ void scShamanVillageTellFortune(void)
 			FieldStateWork->msg++;
 			/* "Well, you caught me in a good mood... I'll do it!" */
 			fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
-			fdScriptPlaySnd(MUS_RITUALS);
+			fdScriptPlaySound(MUS_RITUALS);
 			fdActorSetAnimation(ACTOR_FORTUNE_TELLER, 5);
 			/* "Hoolabaloo!" */
 			fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -1114,7 +1117,7 @@ void scShamanVillageExplainTrialRules(void)
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_EXPLANATION_AGAIN)) {
 		fdScriptSetMessageId((Sint32)MsgShamanTrialRulesAreSimple);
 	} else {
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdCameraSetSpeed(1.6);
@@ -1123,7 +1126,7 @@ void scShamanVillageExplainTrialRules(void)
 		fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 182, 280);
 		fdActorFaceDirection(
 			MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
-		fdScriptPlaySnd(MUS_TRIAL_ROAD);
+		fdScriptPlaySound(MUS_TRIAL_ROAD);
 		fdActorFaceDirection(ACTOR_MOAPA, FACING_WEST, 0);
 		fdActorFaceDirection(ACTOR_WEST_KNIGHT, FACING_WEST, 0);
 		fdActorFaceDirectionAndWait(ACTOR_EAST_KNIGHT, FACING_WEST);
@@ -1266,7 +1269,7 @@ void scShamanVillageChallengeMoapa(void)
 		fdScriptOpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
 		if(fdScriptAskYesNoWithActorAnimation(
 			   MainRoutineStateWork.leaderActorId, 0) == 0) {
-			fdScriptPlaySnd(MUS_TRIAL_ROAD);
+			fdScriptPlaySound(MUS_TRIAL_ROAD);
 			/* "Thick-witted outsiders." */
 			fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
 			fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_EXPLANATION_AGAIN);
@@ -1290,7 +1293,7 @@ void scShamanVillageTakeLeftPath(void)
 {
 	ACTOR *owner;
 	ACTOR *shaman;
-	ACTOR *tgt;
+	ACTOR *target;
 
 	owner = ((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId));
 	shaman = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
@@ -1304,10 +1307,10 @@ void scShamanVillageTakeLeftPath(void)
 	fdActorSetAnimationAndWait(ACTOR_WEST_KNIGHT, 3);
 	fdActorSetSpeed(ACTOR_WEST_KNIGHT, 1.6);
 	fdActorSetAnimation(ACTOR_WEST_KNIGHT, 2);
-	tgt = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
-	if(tgt != NULL)
-		fdActorSetDestination(
-			ACTOR_WEST_KNIGHT, tgt->x.part[0].integer, tgt->z.part[0].integer);
+	target = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
+	if(target != NULL)
+		fdActorSetDestination(ACTOR_WEST_KNIGHT, target->x.part[0].integer,
+			target->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_WEST_KNIGHT);
 	fdActorSetPos(ACTOR_WEST_KNIGHT, 0, 0);
 	fdActorSetAnimation(ACTOR_MOAPA, 3);
@@ -1319,10 +1322,10 @@ void scShamanVillageTakeLeftPath(void)
 	fdActorFaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHEAST);
 	fdActorSetAnimationAndWait(ACTOR_EAST_KNIGHT, 3);
 	fdActorSetAnimation(ACTOR_EAST_KNIGHT, 2);
-	tgt = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
-	if(tgt != NULL)
-		fdActorSetDestination(
-			ACTOR_EAST_KNIGHT, tgt->x.part[0].integer, tgt->z.part[0].integer);
+	target = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
+	if(target != NULL)
+		fdActorSetDestination(ACTOR_EAST_KNIGHT, target->x.part[0].integer,
+			target->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_EAST_KNIGHT);
 	fdActorSetPos(ACTOR_EAST_KNIGHT, 0, 0);
 	fdActorFaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
@@ -1364,7 +1367,7 @@ void scShamanVillageTakeRightPath(void)
 {
 	ACTOR *owner;
 	ACTOR *shaman;
-	ACTOR *tgt;
+	ACTOR *target;
 
 	owner = ((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId));
 	shaman = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
@@ -1378,10 +1381,10 @@ void scShamanVillageTakeRightPath(void)
 	fdActorSetAnimationAndWait(ACTOR_EAST_KNIGHT, 3);
 	fdActorSetSpeed(ACTOR_EAST_KNIGHT, 1.6);
 	fdActorSetAnimation(ACTOR_EAST_KNIGHT, 2);
-	tgt = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
-	if(tgt != NULL)
-		fdActorSetDestination(
-			ACTOR_EAST_KNIGHT, tgt->x.part[0].integer, tgt->z.part[0].integer);
+	target = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
+	if(target != NULL)
+		fdActorSetDestination(ACTOR_EAST_KNIGHT, target->x.part[0].integer,
+			target->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_EAST_KNIGHT);
 	fdActorSetPos(ACTOR_EAST_KNIGHT, 0, 0);
 	fdActorSetAnimation(ACTOR_MOAPA, 3);
@@ -1393,10 +1396,10 @@ void scShamanVillageTakeRightPath(void)
 	fdActorFaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
 	fdActorSetAnimationAndWait(ACTOR_WEST_KNIGHT, 3);
 	fdActorSetAnimation(ACTOR_WEST_KNIGHT, 2);
-	tgt = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
-	if(tgt != NULL)
-		fdActorSetDestination(
-			ACTOR_WEST_KNIGHT, tgt->x.part[0].integer, tgt->z.part[0].integer);
+	target = ((ACTOR *)fdActorGetById(ACTOR_MOAPA));
+	if(target != NULL)
+		fdActorSetDestination(ACTOR_WEST_KNIGHT, target->x.part[0].integer,
+			target->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_WEST_KNIGHT);
 	fdActorSetPos(ACTOR_WEST_KNIGHT, 0, 0);
 	fdActorFaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHEAST);
@@ -1449,13 +1452,13 @@ void scShamanVillageDropPillar(void)
 		FIELD_METATILE(actor->z.fixed) == PILLAR_BRIDGE_METATILE_Z) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		do {
 			sySynch(1);
-		} while(actor->velY != 0);
-		fdScriptPlaySnd(SE_THUMP);
+		} while(actor->velocityY != 0);
+		fdScriptPlaySound(SE_THUMP);
 		sySynch(10);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		fdMapGridCopyMetatileAttributes(PILLAR_BRIDGE_ATTRIBUTES_METATILE_X,
 			PILLAR_BRIDGE_METATILE_Z, 1, 1, PILLAR_BRIDGE_METATILE_X,
 			PILLAR_BRIDGE_METATILE_Z);
@@ -1475,22 +1478,22 @@ void scShamanVillageMeetMoapa(void)
 {
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_DOOR_OPEN);
+	fdScriptPlaySound(SE_DOOR_OPEN);
 	fdMapGridCopyMetatilesTo(43, 40, 7, 6, 1, 2);
 	fdScriptWait(20);
 	fdActorSetPos(ACTOR_MOAPA, 120, 194);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2.4);
 	fdActorJump(MainRoutineStateWork.leaderActorId, 4, 0);
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
-		->steeringFlg &= ~ACTOR_FACES_MOTION;
+		->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 120, 220);
 	fdScriptWait(1);
 	{
-		Uint8 *flg =
+		Uint8 *flags =
 			&((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
-				 ->steeringFlg;
+				 ->steeringFlags;
 
-		*flg |= ACTOR_FACES_MOTION;
+		*flags |= ACTOR_FACES_MOTION;
 	}
 	fdActorSetSpeed(ACTOR_MOAPA, 0.4);
 	fdActorWalkToAndWait(ACTOR_MOAPA, 120, 208);
@@ -1510,7 +1513,7 @@ void scShamanVillageMeetMoapa(void)
 	   up...." */
 	fdScriptShowMessage(ACTOR_MOAPA, 0);
 	fdCameraSetSpeed(0.8);
-	((ACTOR *)fdCameraGetActor())->motionFlg = 0;
+	((ACTOR *)fdCameraGetActor())->motionFlags = 0;
 	fdCameraMoveTo(120, 50, 224, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 120, 256);
@@ -1518,11 +1521,11 @@ void scShamanVillageMeetMoapa(void)
 		MainRoutineStateWork.leaderActorId, FACING_NORTH);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.4);
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
-		->steeringFlg &= ~ACTOR_FACES_MOTION;
+		->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 120, 264);
 	fdScriptWait(1);
 	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))
-		->steeringFlg |= ACTOR_FACES_MOTION;
+		->steeringFlags |= ACTOR_FACES_MOTION;
 	scFieldActorShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
 	/* "Who have we here? Strangers in Shaman Village? What is your
 	   purpose..." */
@@ -1559,19 +1562,19 @@ ACTOR *scShamanVillageCreateRodIcon(void)
 	if(actor == NULL)
 		return NULL;
 	{
-		FIELD_SPR *spr = actor->spr;
+		FIELD_SPR *sprite = actor->sprite;
 
-		spr->fullCol = 0;
-		spr->pal = 0;
-		spr->pri = 1;
-		actor->motionFlg = 0;
-		actor->retainSprCache = ACTOR_KEEP_SPRITE_VRAM;
-		spr->flg = 0;
-		spr->cnt = 0;
+		sprite->fullColor = 0;
+		sprite->palette = 0;
+		sprite->priority = 1;
+		actor->motionFlags = 0;
+		actor->retainSpriteCache = ACTOR_KEEP_SPRITE_VRAM;
+		sprite->flags = 0;
+		sprite->count = 0;
 		transfer =
-			syHeapSlotAlloc(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
+			syHeapSlotAllocate(HEAP_SLOT_ICON_TRANSFER, sizeof(ICON_TRANSFER));
 		mnIconDrawItem(ITEM_SHAMANS_ROD);
-		syVRAMCacheLoad(spr->slot, ICON_TILE_BYTES, transfer->tiles);
+		syVRAMCacheLoad(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
 		syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	}
 	return actor;
@@ -1587,16 +1590,17 @@ void scShamanVillageShowShamansRod(void)
 {
 	ACTOR *rod;
 	ACTOR *actor;
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
-	ang = FACING_NORTH;
-	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->facing = ang;
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
+	angle = FACING_NORTH;
+	((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId))->facing =
+		angle;
 	sySynch(1);
 	fdCameraSetSpeed(0.8);
-	((ACTOR *)fdCameraGetActor())->motionFlg = 0;
+	((ACTOR *)fdCameraGetActor())->motionFlags = 0;
 	fdCameraMoveTo(120, 40, 246, 1);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.2);
 	fdActorWalkToAndWait(MainRoutineStateWork.leaderActorId, 120, 264);
@@ -1606,7 +1610,7 @@ void scShamanVillageShowShamansRod(void)
 	scFieldActorShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
 	fdActorSetSpeed(ACTOR_MOAPA, 2.4);
 	fdActorWalkToAndWait(ACTOR_MOAPA, 120, 242);
-	fdScriptPlaySnd(MUS_TUNDARIA_TOWER);
+	fdScriptPlaySound(MUS_TUNDARIA_TOWER);
 	fdScriptSetMessageId((Sint32)MsgShamanRecognizeShamanRod);
 	/* "That's the Shaman's Rod!" */
 	fdScriptShowMessage(ACTOR_MOAPA, 0);
@@ -1614,7 +1618,7 @@ void scShamanVillageShowShamansRod(void)
 	if(rod != NULL)
 		fdActorRelease(rod);
 	fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-	fdActorFaceDirectionAndWait(MainRoutineStateWork.leaderActorId, ang);
+	fdActorFaceDirectionAndWait(MainRoutineStateWork.leaderActorId, angle);
 	fdActorPlaceOnActor(ACTOR_KRADEN, MainRoutineStateWork.leaderActorId);
 	fdActorPlaceOnActor(ACTOR_PIERS, MainRoutineStateWork.leaderActorId);
 	fdActorPlaceOnActor(ACTOR_JENNA, MainRoutineStateWork.leaderActorId);
@@ -1769,7 +1773,7 @@ void scShamanVillageShowShamansRod(void)
 		ACTOR_EAST_KNIGHT, ShamanVillageEastKnightLeavesHouseScript);
 	fdActorSetScript(
 		ACTOR_WEST_KNIGHT, ShamanVillageWestKnightLeavesHouseScript);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	do {
 		sySynch(1);
 	} while(actor->sceneByte == 0);
@@ -1862,7 +1866,7 @@ void scShamanVillageShowItemToEastKnight(void)
 void scShamanVillageFortuneTellerCallsOut(void)
 {
 	if(fdScriptGetFlag(FLAG_MOAPA_BEATEN)) {
-		fdScriptPlaySnd(MUS_SILENCE);
+		fdScriptPlaySound(MUS_SILENCE);
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdScriptSetMessageId((Sint32)MsgShamanFortuneGreeting);
@@ -1908,7 +1912,7 @@ void scShamanVillageStepBackFromTrial(void)
 void scShamanVillageCheckTrialEntry(void)
 {
 	Sint16	owners[10];
-	Sint32	cnt;
+	Sint32	count;
 	Sint32	i;
 	Sint32	slot;
 	Uint8	remaining;
@@ -1924,10 +1928,10 @@ void scShamanVillageCheckTrialEntry(void)
 		scShamanVillageStepBackFromTrial();
 		return;
 	}
-	cnt = syFieldPartyListMembers(owners);
+	count = syFieldPartyListMembers(owners);
 	owner = owners;
 	remaining = TRIAL_ROAD_CHEST_ITEMS;
-	for(i = 0; i < cnt; i++) {
+	for(i = 0; i < count; i++) {
 		/* slot holds the owner's id until the item loop reuses it. */
 		slot = *owner++;
 		items = syUnitGet(slot)->inventory;
@@ -1974,11 +1978,12 @@ void scShamanVillageUpdateLettering(void)
 	Uint32 *write = ShamanVillageLetteringSprites;
 	/* Each lettering piece is queued as a sprite part written as three words:
 	   the queue link, attributes 0 and 1, and attribute 2. */
-	ANIMATION_SPR_PART *spr = (ANIMATION_SPR_PART *)write;
-	Sint32 tile = VramCacheEntries[ShamanVillageLetteringVramEntry[0]].ofs >> 5;
-	Uint32 flg;
-	Sint32 blend, scale, speed, centerX;
-	Sint32 matrix, i, x, y, left;
+	ANIMATION_SPR_PART *sprite = (ANIMATION_SPR_PART *)write;
+	Sint32				tile =
+		VramCacheEntries[ShamanVillageLetteringVramEntry[0]].offset >> 5;
+	Uint32			 flags;
+	Sint32			 blend, scale, speed, centerX;
+	Sint32			 matrix, i, x, y, left;
 	AFFINE_TRANSFORM state;
 
 commands:
@@ -2024,11 +2029,11 @@ commands:
 		if(duration == 0) {
 			scale = ShamanVillageLetteringScale;
 		} else {
-			Sint32 start, progress, tgt;
+			Sint32 start, progress, target;
 			start = ShamanVillageLetteringScaleFrom;
-			tgt = ShamanVillageLetteringScale;
+			target = ShamanVillageLetteringScale;
 			progress = ++ShamanVillageLetteringScaleTick;
-			scale = start + (tgt - start) * progress / duration;
+			scale = start + (target - start) * progress / duration;
 			if(progress >= duration)
 				ShamanVillageLetteringScaleTicks = 0;
 		}
@@ -2039,11 +2044,11 @@ commands:
 		if(duration == 0) {
 			blend = ShamanVillageLetteringBlend;
 		} else {
-			Sint32 start, progress, tgt;
+			Sint32 start, progress, target;
 			start = ShamanVillageLetteringBlendFrom;
-			tgt = ShamanVillageLetteringBlend;
+			target = ShamanVillageLetteringBlend;
 			progress = ++ShamanVillageLetteringBlendTick;
-			blend = start + (tgt - start) * progress / duration;
+			blend = start + (target - start) * progress / duration;
 			if(progress >= duration)
 				ShamanVillageLetteringBlendTicks = 0;
 		}
@@ -2054,18 +2059,18 @@ commands:
 		if(duration == 0) {
 			speed = ShamanVillageLetteringSpeed;
 		} else {
-			Sint32 start, progress, tgt;
+			Sint32 start, progress, target;
 			start = ShamanVillageLetteringSpeedFrom;
-			tgt = ShamanVillageLetteringSpeed;
+			target = ShamanVillageLetteringSpeed;
 			progress = ++ShamanVillageLetteringSpeedTick;
-			speed = start + (tgt - start) * progress / duration;
+			speed = start + (target - start) * progress / duration;
 			if(progress >= duration)
 				ShamanVillageLetteringSpeedTicks = 0;
 		}
-		state.ang = 0;
+		state.angle = 0;
 		state.scaleX = scale;
 		state.scaleY = scale;
-		matrix = (Sint16)syOAMMatrixAllocFromTransform(&state);
+		matrix = (Sint16)syOAMMatrixAllocateFromTransform(&state);
 	}
 	ShamanVillageLetteringX += speed;
 	centerX = ShamanVillageLetteringX / LETTERING_SUBPIXELS;
@@ -2073,16 +2078,16 @@ commands:
 	case LETTERING_SHAPE_TITLE: {
 		for(i = 0; i < 4; i++) {
 			y = 56;
-			flg = OBJ_SIZE_32X16;
+			flags = OBJ_SIZE_32X16;
 			x = centerX + scale * LETTERING_PIECE_X(i, 4) / 256;
 			left = x + 88;
 			if((Uint32)(x + 152) < 304) {
 				x = left & OBJ_X_MASK;
 				*write++ = 0;
-				*write++ = OBJ_X(x) | y | flg | OBJ_AFFINE_MATRIX(matrix) |
+				*write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
 					LETTERING_OBJ_MODE;
 				*write++ = LETTERING_ATTRIBUTES | tile;
-				syOAMAddSprAtDepth(spr++, LETTERING_DEPTH);
+				syOAMAddSpriteAtDepth(sprite++, LETTERING_DEPTH);
 			}
 			tile += 8;
 		}
@@ -2091,17 +2096,17 @@ commands:
 	case LETTERING_SHAPE_RESULT: {
 		for(i = 0; i < 2; i++) {
 			y = 48;
-			flg = OBJ_SIZE_32X16;
+			flags = OBJ_SIZE_32X16;
 			x = centerX + scale * LETTERING_PIECE_X(i, 2) / 256;
 			left = x + 88;
 			if((Uint32)(x + 152) < 304) {
 				x = left & OBJ_X_MASK;
 				*write++ = 0;
-				*write++ = OBJ_X(x) | y | flg | OBJ_AFFINE_MATRIX(matrix) |
+				*write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
 					LETTERING_OBJ_MODE;
 				*write++ = LETTERING_ATTRIBUTES |
 					(tile + ShamanVillageLetteringTileOffset);
-				syOAMAddSprAtDepth(spr++, LETTERING_DEPTH);
+				syOAMAddSpriteAtDepth(sprite++, LETTERING_DEPTH);
 			}
 			tile += 8;
 		}
@@ -2111,17 +2116,17 @@ commands:
 	case LETTERING_SHAPE_GO: {
 		for(i = 0; i < 2; i++) {
 			y = 64;
-			flg = OBJ_SIZE_32X16;
+			flags = OBJ_SIZE_32X16;
 			x = centerX + scale * LETTERING_PIECE_X(i, 2) / 256;
 			left = x + 88;
 			if((Uint32)(x + 152) < 304) {
 				x = left & OBJ_X_MASK;
 				*write++ = 0;
-				*write++ = OBJ_X(x) | y | flg | OBJ_AFFINE_MATRIX(matrix) |
+				*write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
 					LETTERING_OBJ_MODE;
 				*write++ = LETTERING_ATTRIBUTES |
 					(tile + ShamanVillageLetteringTileOffset);
-				syOAMAddSprAtDepth(spr++, LETTERING_DEPTH);
+				syOAMAddSpriteAtDepth(sprite++, LETTERING_DEPTH);
 			}
 			tile += 8;
 		}
@@ -2130,31 +2135,31 @@ commands:
 #else
 	case LETTERING_SHAPE_GO:
 		y = 48;
-		flg = OBJ_SIZE_64X32;
+		flags = OBJ_SIZE_64X32;
 		left = centerX + 56;
 		if((Uint32)(centerX + 120) < 304) {
 			x = left & OBJ_X_MASK;
 			*write++ = 0;
-			*write++ = OBJ_X(x) | y | flg | OBJ_AFFINE_MATRIX(matrix) |
+			*write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
 				LETTERING_OBJ_MODE;
 			*write++ = LETTERING_ATTRIBUTES |
 				(tile + ShamanVillageLetteringTileOffset);
-			syOAMAddSprAtDepth(spr, LETTERING_DEPTH);
+			syOAMAddSpriteAtDepth(sprite, LETTERING_DEPTH);
 		}
 		break;
 #endif
 	case LETTERING_SHAPE_DIGIT:
 		y = 48;
-		flg = OBJ_SIZE_32X32;
+		flags = OBJ_SIZE_32X32;
 		left = centerX + 88;
 		if((Uint32)(centerX + 152) < 304) {
 			x = left & OBJ_X_MASK;
 			*write++ = 0;
-			*write++ = OBJ_X(x) | y | flg | OBJ_AFFINE_MATRIX(matrix) |
+			*write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
 				LETTERING_OBJ_MODE;
 			*write++ = LETTERING_ATTRIBUTES |
 				(tile + ShamanVillageLetteringTileOffset);
-			syOAMAddSprAtDepth(spr, LETTERING_DEPTH);
+			syOAMAddSpriteAtDepth(sprite, LETTERING_DEPTH);
 		}
 		break;
 	}
@@ -2207,7 +2212,7 @@ void scShamanVillageStartLettering(Sint32 shape, Sint32 secondHalf)
 /* The decoded lettering sprite sheet: its palette rows, then eight pictures of
    32 tiles each. */
 typedef struct LETTERING_SHEET {
-	Uint8 pals[LETTERING_PALETTE_ROWS][32];
+	Uint8 palettes[LETTERING_PALETTE_ROWS][32];
 	Uint8 pictures[8][1024];
 } LETTERING_SHEET;
 
@@ -2218,10 +2223,10 @@ void scShamanVillageLoadLettering(Sint32 picture)
 	/* BUG: this holds seven pictures of the sprite sheet's eight, so decoding
 	   the sprite sheet writes 1024 bytes past the block. */
 #if FIX_SHAMAN_VILLAGE_LETTERING_OVERRUN
-	LETTERING_SHEET *sheet = syHeapAllocEWRAM(sizeof(LETTERING_SHEET));
+	LETTERING_SHEET *sheet = syHeapAllocateEWRAM(sizeof(LETTERING_SHEET));
 #else
 	LETTERING_SHEET *sheet =
-		syHeapAllocEWRAM((224 + LETTERING_PALETTE_ROWS) * 32);
+		syHeapAllocateEWRAM((224 + LETTERING_PALETTE_ROWS) * 32);
 #endif
 	DMA_REGISTERS volatile *dma;
 	Sint32					palette;
@@ -2233,13 +2238,13 @@ void scShamanVillageLoadLettering(Sint32 picture)
 		picture = LETTERING_PICTURE_WIN_LOSE;
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_LETTERING_BANNER), sheet);
-	syDMAXCopy(sheet->pals[0] + palette,
+	syDMAXCopy(sheet->palettes[0] + palette,
 		(void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0), DMA_COPY_WORDS(8),
 		REG_DMA3);
 	mnVRAMLoad(ShamanVillageLetteringVramEntry[0], sizeof(sheet->pictures[0]),
 		sheet->pictures[picture]);
 	dma = (DMA_REGISTERS volatile *)REG_DMA3;
-	while((Sint32)dma->ctrl < 0)
+	while((Sint32)dma->control < 0)
 		;
 	syHeapRelease(sheet);
 }
@@ -2253,41 +2258,41 @@ void scShamanVillageCountDownToStart(void)
 	ShamanVillageLetteringTitleScript[LETTERING_TITLE_HOLD] =
 		3 * TICKS_PER_SECOND;
 	fdScriptWait(30);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	scShamanVillageLoadLettering(LETTERING_PICTURE_COUNTDOWN_START);
 	scShamanVillageStartLettering(LETTERING_SHAPE_DIGIT, 0);
-	fdScriptPlaySnd(SE_COLOSSO_COUNTDOWN);
+	fdScriptPlaySound(SE_COLOSSO_COUNTDOWN);
 	fdScriptWait(60);
 	scShamanVillageStartLettering(LETTERING_SHAPE_DIGIT, 1);
-	fdScriptPlaySnd(SE_COLOSSO_COUNTDOWN);
+	fdScriptPlaySound(SE_COLOSSO_COUNTDOWN);
 	fdScriptWait(60);
 	scShamanVillageLoadLettering(LETTERING_PICTURE_COUNTDOWN_END);
 	scShamanVillageStartLettering(LETTERING_SHAPE_DIGIT, 0);
-	fdScriptPlaySnd(SE_COLOSSO_COUNTDOWN);
+	fdScriptPlaySound(SE_COLOSSO_COUNTDOWN);
 	fdScriptWait(60);
 	scShamanVillageLoadLettering(LETTERING_PICTURE_GO);
 	scShamanVillageStartLettering(LETTERING_SHAPE_GO, 0);
-	fdScriptPlaySnd(SE_COLOSSO_GO);
-	fdScriptPlaySnd(MUS_TRIAL_ROAD);
+	fdScriptPlaySound(SE_COLOSSO_GO);
+	fdScriptPlaySound(MUS_TRIAL_ROAD);
 }
 
 /* Moapa's first test: Sheba steps up and casts Whirlwind on the purple rock,
    and the sand is gone. */
 void scShamanVillageShebaClearsSand(void)
 {
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 	ACTOR			   *actor = ((ACTOR *)fdActorGetById(ACTOR_WEST_KNIGHT));
 
 	Sint32 result;
 	Sint32 owner;
-	Sint32 ang;
+	Sint32 angle;
 	Uint8 *done;
 
 	effect->flashCaster = 0;
 	effect->announceName = 0;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(MUS_SILENCE);
+	fdScriptPlaySound(MUS_SILENCE);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdCameraSetSpeed(0.4);
 	fdCameraMoveTo(168, CAMERA_KEEP, 528, 1);
@@ -2327,7 +2332,7 @@ void scShamanVillageShebaClearsSand(void)
 	fdActorFaceDirection(ACTOR_WEST_KNIGHT, FACING_NORTH, 0);
 	fdCameraSetSpeed(1.6);
 	scShamanVillageCastWhirlwindOnSand();
-	fdScriptPlaySnd(MUS_TUNDARIA_TOWER);
+	fdScriptPlaySound(MUS_TUNDARIA_TOWER);
 	fdCameraSetSpeed(4.8);
 	fdCameraMoveTo(168, CAMERA_KEEP, 540, 1);
 	fdCameraWaitForArrival();
@@ -2576,7 +2581,7 @@ void scShamanVillageShebaClearsSand(void)
 	fdScriptWait(20);
 	fdActorSetScript(ACTOR_EAST_KNIGHT, ShamanVillageHeadForTrialRoadScript);
 	fdActorSetScript(ACTOR_WEST_KNIGHT, ShamanVillageHeadForTrialRoadScript);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	do {
 		sySynch(1);
 	} while(*done == 0);
@@ -2589,10 +2594,12 @@ void scShamanVillageShebaClearsSand(void)
 	fdCameraSetSpeed(4.8);
 	fdCameraMoveTo(168, CAMERA_KEEP, 540, 1);
 	fdScriptWait(20);
-	ang = FACING_SOUTH;
-	fdActorSetPosAndFacing(ACTOR_MOAPA, toFIXED(224), toFIXED(280), ang);
-	fdActorSetPosAndFacing(ACTOR_WEST_KNIGHT, toFIXED(208), toFIXED(264), ang);
-	fdActorSetPosAndFacing(ACTOR_EAST_KNIGHT, toFIXED(240), toFIXED(264), ang);
+	angle = FACING_SOUTH;
+	fdActorSetPosAndFacing(ACTOR_MOAPA, toFIXED(224), toFIXED(280), angle);
+	fdActorSetPosAndFacing(
+		ACTOR_WEST_KNIGHT, toFIXED(208), toFIXED(264), angle);
+	fdActorSetPosAndFacing(
+		ACTOR_EAST_KNIGHT, toFIXED(240), toFIXED(264), angle);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_WEST, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
 	fdActorFaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -2628,8 +2635,8 @@ void scShamanVillageShebaClearsSand(void)
 /* Sheba casts Whirlwind on the twister rock and blows the sand away. */
 void scShamanVillageCastWhirlwindOnSand(void)
 {
-	fdActorSetSprPriority(ACTOR_SHEBA, 1);
-	fdScriptPlaySnd(SE_PSYNERGY_SPARKLE);
+	fdActorSetSpritePriority(ACTOR_SHEBA, 1);
+	fdScriptPlaySound(SE_PSYNERGY_SPARKLE);
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
 		fdActorGet(ACTOR_SHEBA), CASTER_LOOK_CYCLING_COLORS);
@@ -2639,17 +2646,17 @@ void scShamanVillageCastWhirlwindOnSand(void)
 	fdBattleEffectWaitForArcGroups();
 	fdBattleEffectEndArcEffect();
 	scShamanVillageBlowAwaySand();
-	fdActorSetSprPriority(ACTOR_SHEBA, 2);
+	fdActorSetSpritePriority(ACTOR_SHEBA, 2);
 }
 
 /* Felix walks into a house's door: it opens (its open picture copied, width by
-   height metatiles from srcX, srcY to dstX, dstY), with a
+   height metatiles from srcX, srcY to destX, destY), with a
    thump for a door two metatiles wide and SE_DOOR_OPEN for one; through a door
    one metatile wide Felix first steps to the middle of its metatile and faces
    north. He walks in, the screen fades, and the party leaves by the exit whose
    number the metatile he stood on holds. */
-void scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 dstX,
-	Sint32 dstY, Sint32 width, Sint32 height)
+void scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 destX,
+	Sint32 destY, Sint32 width, Sint32 height)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
@@ -2658,10 +2665,10 @@ void scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 dstX,
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	if(width == 2)
-		fdScriptPlaySnd(SE_THUMP);
+		fdScriptPlaySound(SE_THUMP);
 	else
-		fdScriptPlaySnd(SE_DOOR_OPEN);
-	fdMapGridCopyMetatilesTo(srcX, srcY, dstX, dstY, width, height);
+		fdScriptPlaySound(SE_DOOR_OPEN);
+	fdMapGridCopyMetatilesTo(srcX, srcY, destX, destY, width, height);
 	fdScriptWait(20);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
 	if(width == 1) {
@@ -2678,7 +2685,7 @@ void scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 dstX,
 	fdActorSetScript(
 		MainRoutineStateWork.leaderActorId, LeaderWalkThroughDoorScript);
 	sySynch(12);
-	fdScriptPlaySnd(SE_MAP_EXIT);
+	fdScriptPlaySound(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(state->stepCue);
@@ -2730,7 +2737,7 @@ void scShamanVillageEnterMoapasHouse(void)
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN)) {
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
-		fdScriptPlaySnd(SE_MAP_EXIT);
+		fdScriptPlaySound(SE_MAP_EXIT);
 		fdScriptFinishScreenTransition();
 		fdScriptWaitTransitionTicks();
 		syImportScriptSetExitRequest(
@@ -2744,7 +2751,7 @@ void scShamanVillageEnterMoapasHouse(void)
    again. */
 void scShamanVillageRestartTrial(void)
 {
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptClearFlag(FLAG_KEEP_MUSIC_HELD);
 	fdScriptStart();
@@ -2756,11 +2763,13 @@ void scShamanVillageRestartTrial(void)
 	sySynch(1);
 	fdMapGridCenterOnFollowedPoint();
 	sySynch(1);
-	ang = FACING_SOUTH;
+	angle = FACING_SOUTH;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	fdActorSetPosAndFacing(ACTOR_WEST_KNIGHT, toFIXED(184), toFIXED(128), ang);
-	fdActorSetPosAndFacing(ACTOR_EAST_KNIGHT, toFIXED(264), toFIXED(128), ang);
+	fdActorSetPosAndFacing(
+		ACTOR_WEST_KNIGHT, toFIXED(184), toFIXED(128), angle);
+	fdActorSetPosAndFacing(
+		ACTOR_EAST_KNIGHT, toFIXED(264), toFIXED(128), angle);
 	fdActorSetSpeed(ACTOR_WEST_KNIGHT, 1.6);
 	fdActorSetSpeed(ACTOR_EAST_KNIGHT, 1.6);
 	fdCameraSetSpeed(0.8);
@@ -2773,8 +2782,8 @@ void scShamanVillageRestartTrial(void)
 	fdActorWalkToAndWait(ACTOR_EAST_KNIGHT, 240, 264);
 	fdActorSetAnimation(ACTOR_WEST_KNIGHT, 1);
 	fdScriptWait(10);
-	fdActorFaceDirection(ACTOR_WEST_KNIGHT, ang, 0);
-	fdActorFaceDirection(ACTOR_EAST_KNIGHT, ang, 0);
+	fdActorFaceDirection(ACTOR_WEST_KNIGHT, angle, 0);
+	fdActorFaceDirection(ACTOR_EAST_KNIGHT, angle, 0);
 	fdActorFaceDirectionAndWait(ACTOR_MOAPA, FACING_WEST);
 	fdActorFaceDirection(MainRoutineStateWork.leaderActorId, FACING_EAST, 0);
 	fdCameraWaitForArrival();
@@ -2792,7 +2801,7 @@ void scShamanVillageRestartTrial(void)
 		if(fdScriptAskYesNoWithActorAnimation(
 			   MainRoutineStateWork.leaderActorId, 0) == 0) {
 			fdActorSetAnimationAndWait(ACTOR_MOAPA, 3);
-			fdScriptPlaySnd(MUS_TRIAL_ROAD);
+			fdScriptPlaySound(MUS_TRIAL_ROAD);
 			/* "Do all outlanders share your thickwittedness?" */
 			fdScriptShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
 			fdScriptSetFlag(FLAG_SHAMAN_VILLAGE_EXPLANATION_AGAIN);
@@ -2877,7 +2886,7 @@ void scShamanVillageSetUpTrialGrounds(void)
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED)) {
 		fdMapGridCopyMetatilesTo(47, 19, 38, 19, 9, 11);
 		fdMapGridCopyMetatileAttributes(1, 5, 9, 1, 6, 29);
-		scFieldActorSetSprCol(
+		scFieldActorSetSpriteColor(
 			((ACTOR *)fdActorGetById(ACTOR_TWISTER_ROCK)), SPRITE_COLOR_GREY);
 	} else if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION)) {
 		fdActorSetPosAndFacing(
@@ -2930,7 +2939,7 @@ void scShamanVillageSetUpNorthEnd(void)
 	fdActorSetAnimation(ACTOR_FIRST_TORCH + 3, 2);
 	fdActorSetAnimation(ACTOR_FIRST_TORCH + 4, 2);
 	fdActorSetAnimation(ACTOR_LAST_TORCH, 2);
-	((ACTOR *)fdActorGetById(ACTOR_AROMA_ROOM_PILLAR))->motionFlg = 0;
+	((ACTOR *)fdActorGetById(ACTOR_AROMA_ROOM_PILLAR))->motionFlags = 0;
 	if(fdScriptGetFlag(FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED)) {
 		fdActorSetPosAndResetMotion(
 			((ACTOR *)fdActorGetById(ACTOR_AROMA_ROOM_PILLAR)),
@@ -2951,10 +2960,10 @@ void scShamanVillageSetUpNorthEnd(void)
 	else
 		fdActorSetPos(ACTOR_FORTUNE_TELLER, 0, 0);
 	actor = ((ACTOR *)fdActorGetById(ACTOR_FORTUNE_TELLERS_FLAME));
-	actor->collisionFlg = ACTOR_NOT_TARGETED;
+	actor->collisionFlags = ACTOR_NOT_TARGETED;
 	actor->scaleX = toFIXED(8) / 10;
 	actor->scaleY = toFIXED(8) / 10;
-	fdActorSetSprFlags(
+	fdActorSetSpriteFlags(
 		((ACTOR *)fdActorGetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
 
@@ -2968,14 +2977,14 @@ void scShamanVillageSpawnSmoke(Sint32 x, Sint32 y, Sint32 z)
 	ACTOR *actor = ((ACTOR *)syImportActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
 	if(actor != NULL) {
-		actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN;
-		actor->motionFlg = 0;
-		actor->tmr = 0;
-		actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		scFieldActorSetSprCol(actor, SPRITE_COLOR_WHITE);
-		((FIELD_SPR *)actor->spr)->pri = 1;
-		actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprFlags(actor, 0);
+		actor->retainSpriteCache = ACTOR_COMPOSE_OFF_SCREEN;
+		actor->motionFlags = 0;
+		actor->timer = 0;
+		actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+		scFieldActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
+		((FIELD_SPR *)actor->sprite)->priority = 1;
+		actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(actor, 0);
 		actor->scaleX = toFIXED(1) / 2;
 		actor->scaleY = toFIXED(1) / 2;
 		/* Its ticks left, which scSmokeDrift counts down. */
@@ -3000,12 +3009,12 @@ void scShamanVillageBlowChimneySmoke(void)
 #define DEFINE_LEADER_LAYER_TASK(name, first, second) \
 	void name(void) \
 	{ \
-		FIELD_SPR *spr = \
-			fdActorGetById(MainRoutineStateWork.leaderActorId)->spr; \
-		Sint32 variant = spr->pri; \
+		FIELD_SPR *sprite = \
+			fdActorGetById(MainRoutineStateWork.leaderActorId)->sprite; \
+		Sint32 variant = sprite->priority; \
 \
-		fdActorSetSprPriority(first, variant); \
-		fdActorSetSprPriority(second, variant); \
+		fdActorSetSpritePriority(first, variant); \
+		fdActorSetSpritePriority(second, variant); \
 	}
 
 /* An event: the sprout and the girl below the cave take the leader's sprite
@@ -3060,7 +3069,7 @@ void scShamanVillageSetUpHouses(void)
 
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	((ACTOR *)fdActorGetById(ACTOR_INN_COUNTER))->collisionFlg =
+	((ACTOR *)fdActorGetById(ACTOR_INN_COUNTER))->collisionFlags =
 		ACTOR_NOT_TARGETED;
 	if(fdScriptGetFlag(FLAG_MOAPA_BEATEN)) {
 		fdActorSetPosAndFacing(ACTOR_WOMAN_IN_MOAPAS_HOUSE, toFIXED(88),
@@ -3081,7 +3090,7 @@ void scShamanVillageSetUpHouses(void)
 		fdScriptEndLastingPsynergy(0);
 		fdActorSetAnimation(
 			MainRoutineStateWork.leaderActorId, ANIM_LEADER_LIE_ON_BACK);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId)), 0);
 		sySynch(1);
 		fdScriptStartScreenTransition();
@@ -3104,7 +3113,7 @@ void scShamanVillageSetUpHouses(void)
 		fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
 		fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 1.6);
 		fdActorMoveToAndWait(MainRoutineStateWork.leaderActorId, 813, 120);
-		fdActorSetSprFlags(
+		fdActorSetSpriteFlags(
 			((ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId)), 1);
 		fdScriptEnd();
 		if(MainRoutineStateWork.entrance ==

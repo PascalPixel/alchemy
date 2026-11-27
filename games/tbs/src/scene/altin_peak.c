@@ -360,13 +360,13 @@ static Sint32 scAltinPeakFlyDebris(ACTOR *actor)
 	FIXED  rise;
 	Sint32 growth;
 
-	actor->x.fixed += actor->velX;
-	rise = actor->velY;
+	actor->x.fixed += actor->velocityX;
+	rise = actor->velocityY;
 	actor->y.fixed += rise;
-	growth = actor->velZ;
+	growth = actor->velocityZ;
 	actor->scaleX += growth;
 	actor->scaleY += growth;
-	actor->velY = rise - actor->gravity;
+	actor->velocityY = rise - actor->gravity;
 	return 0;
 }
 
@@ -484,10 +484,10 @@ static void scAltinPeakRideCart(Sint32 cartId)
 	fdScriptStart();
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
 	fdScriptWait(10);
-	sySndPlay(SE_JUMP);
+	sySoundPlay(SE_JUMP);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 3.2);
 	/* Leap by the height between leader and cart, in quarter pixels, plus 4. */
-	leader->velY =
+	leader->velocityY =
 		((ABS(cart->y.fixed - leader->y.fixed) >> QUARTER_PIXEL_SHIFT)
 			<< QUARTER_PIXEL_SHIFT) +
 		toFIXED(4);
@@ -495,7 +495,7 @@ static void scAltinPeakRideCart(Sint32 cartId)
 	syFieldActorSetMoveTargetFX(
 		leader, cart->x.fixed, cart->y.fixed, cart->z.fixed);
 	sySynch(10);
-	leader->spr->image.pri = 3;
+	leader->sprite->image.priority = 3;
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 
 	for(;;) {
@@ -505,7 +505,7 @@ static void scAltinPeakRideCart(Sint32 cartId)
 		sySynch(1);
 	}
 	fdScriptEnd();
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	scAltinPeakRollCart(cartId, 0);
 	sySynch(20);
 	fdPlayQueuedMusic();
@@ -567,8 +567,8 @@ static void scAltinPeakSettleSpritzRoomPillar(void)
 		} else {
 			fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 24, 26);
 		}
-		fdActorSetSprFlags(pillar, 0);
-		pillar->motionFlg = 0;
+		fdActorSetSpriteFlags(pillar, 0);
+		pillar->motionFlags = 0;
 		fdMapGridCenterOnFollowedPoint();
 		sySynch(1);
 	}
@@ -587,9 +587,9 @@ static void scAltinPeakFreezeFirstWaterBeastRoomPuddle(void)
 	puddle = fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
 	fdMapGridCopyMetatileAttributes(7, 13, 1, 1, 9, 13);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
@@ -608,7 +608,7 @@ static void scAltinPeakFreezeFirstWaterBeastRoomSecondPuddle(void)
 	puddle = fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
 	fdMapGridCopyMetatileAttributes(29, 1, 3, 1, 17, 13);
 	if(puddle != NULL) {
-		puddle->motionFlg = ACTOR_FALLS;
+		puddle->motionFlags = ACTOR_FALLS;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
@@ -623,9 +623,9 @@ static void scAltinPeakFreezeSpritzRoomPuddle(void)
 	puddle = fdActorGet(ACTOR_SPRITZ_ROOM_PUDDLE);
 	fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 26, 26);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
@@ -640,9 +640,9 @@ static void scAltinPeakFreezeThirdWaterBeastRoomPuddle(void)
 	puddle = fdActorGet(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
 	fdMapGridCopyMetatileAttributes(23, 13, 1, 1, 25, 13);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
@@ -657,9 +657,9 @@ static void scAltinPeakFreezePoolRoomPuddle(void)
 	puddle = fdActorGet(ACTOR_POOL_ROOM_PUDDLE);
 	fdMapGridCopyMetatileAttributes(45, 41, 1, 1, 43, 41);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
@@ -677,9 +677,9 @@ static void scAltinPeakFreezeSpritzRoomSecondPuddle(void)
 	puddle = fdActorGet(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
 	fdMapGridCopyMetatileAttributes(1, 0, 1, 1, 17, 10);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
@@ -694,9 +694,9 @@ static void scAltinPeakFreezeSpritzRoomThirdPuddle(void)
 	puddle = fdActorGet(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
 	fdMapGridCopyMetatileAttributes(1, 0, 1, 1, 26, 15);
 	if(puddle != NULL) {
-		fdActorSetSprFlags(puddle, 0);
+		fdActorSetSpriteFlags(puddle, 0);
 		puddle->y.fixed -= toFIXED(32);
-		puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	}
 	gmFlagSet(FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN);
 }
@@ -724,7 +724,7 @@ static inline void scAltinPeakFlickerWaterAway(void)
 	} while(++AltinPeakFlickerTimer <= 100);
 	sySynch(1);
 	syIntFunction(IRQ_HBLANK, 0, 0);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdScriptWait(30);
 }
@@ -745,12 +745,12 @@ static void scAltinPeakDrainFirstWater(void)
 	MAP_GRID_LAYER_SCROLL *water;
 	Sint32				   step;
 
-	sySndPlay(SE_WATER_DRAIN);
+	sySoundPlay(SE_WATER_DRAIN);
 	fdMapGridSetShake(2, 2, 1);
 	fdScriptWait(10);
 	water = &grid->layers[MAPGRID_LAYER_OVERHEAD];
 	for(step = 0; step < DRAIN_SINK_PIXELS; step++) {
-		water->ofsY -= toFIXED(1);
+		water->offsetY -= toFIXED(1);
 		sySynch(4);
 		if(step == 8) {
 			fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE)->scaleX =
@@ -779,12 +779,12 @@ static void scAltinPeakDrainSecondWater(void)
 	Sint32				   step;
 
 	fdMapGridCopyMetatiles(93, 41, 16, 4, 77, 28);
-	sySndPlay(SE_WATER_DRAIN);
+	sySoundPlay(SE_WATER_DRAIN);
 	fdMapGridSetShake(2, 2, 1);
 	fdScriptWait(10);
 	water = &grid->layers[MAPGRID_LAYER_OVERHEAD];
 	for(step = 0; step < DRAIN_SINK_PIXELS; step++) {
-		water->ofsY -= toFIXED(1);
+		water->offsetY -= toFIXED(1);
 		sySynch(4);
 	}
 	scAltinPeakFlickerWaterAway();
@@ -807,12 +807,12 @@ static void scAltinPeakDrainThirdWater(void)
 	fdMapGridCopyMetatilesTo(113, 31, 103, 17, 1, 1);
 	fdMapGridCopyMetatilesTo(111, 32, 104, 18, 3, 2);
 	fdMapGridCopyMetatilesTo(64, 32, 103, 18, 1, 2);
-	sySndPlay(SE_WATER_DRAIN);
+	sySoundPlay(SE_WATER_DRAIN);
 	fdMapGridSetShake(2, 2, 1);
 	fdScriptWait(10);
 	water = &grid->layers[MAPGRID_LAYER_OVERHEAD];
 	for(step = 0; step < DRAIN_SINK_PIXELS; step++) {
-		water->ofsY -= toFIXED(1);
+		water->offsetY -= toFIXED(1);
 		sySynch(4);
 	}
 	scAltinPeakFlickerWaterAway();
@@ -851,7 +851,7 @@ static void scAltinPeakFlipSecondWaterBeastRoomSwitch(void)
 {
 	fdScriptStart();
 	mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	scAltinPeakToggleSecondWaterBeastRoomSwitchMetatiles();
 	sySynch(20);
 	fdPlayQueuedMusic();
@@ -885,7 +885,7 @@ static void scAltinPeakFlipThirdWaterBeastRoomSwitch(void)
 {
 	fdScriptStart();
 	mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	scAltinPeakToggleThirdWaterBeastRoomSwitchMetatiles();
 	sySynch(20);
 	fdPlayQueuedMusic();
@@ -903,7 +903,7 @@ static void scAltinPeakFlipPoolRoomSwitch(void)
 {
 	fdScriptStart();
 	mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	if(fdScriptGetFlag(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
 		fdMapGridCopyMetatileAttributes(15, 93, 1, 1, 16, 92);
 		fdMapGridCopyMetatilesTo(47, 29, 16, 28, 1, 2);
@@ -929,7 +929,7 @@ static void scAltinPeakFlipSpritzRoomSwitch(void)
 {
 	fdScriptStart();
 	mnFieldMessageShow(MsgFieldFlippedSwitch, 1);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	if(fdScriptGetFlag(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
 		fdMapGridCopyMetatileAttributes(28, 82, 1, 1, 29, 81);
 		fdMapGridCopyMetatilesTo(47, 28, 29, 17, 1, 2);
@@ -952,7 +952,7 @@ static void scAltinPeakFlipSpritzRoomSwitch(void)
    scAltinPeakRestorePillarAutomaticPriority clears it at the ladder's foot. */
 static void scAltinPeakPlacePillarUnderLeader(void)
 {
-	fdActorGet(ACTOR_SPRITZ_ROOM_PILLAR)->priFlg =
+	fdActorGet(ACTOR_SPRITZ_ROOM_PILLAR)->priorityFlags =
 		ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 }
 
@@ -962,7 +962,8 @@ static void scAltinPeakPlacePillarUnderLeader(void)
    before he climbed up. */
 static void scAltinPeakRestorePillarAutomaticPriority(void)
 {
-	fdActorGet(ACTOR_SPRITZ_ROOM_PILLAR)->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_SPRITZ_ROOM_PILLAR)->priorityFlags =
+		ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /* Walking east into the stone pillar in Spritz's room from metatile (23, 26),
@@ -975,10 +976,10 @@ static void scAltinPeakPushSpritzRoomPillar(void)
 {
 	fdScriptStart();
 	fdMapGridCopyMetatileAttributes(24, 27, 2, 1, 24, 26);
-	sySndPlay(SE_PUSH);
+	sySoundPlay(SE_PUSH);
 	fdActorSetSpeed(ACTOR_SPRITZ_ROOM_PILLAR, 0.2);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
-	fdActorGet(ACTOR_SPRITZ_ROOM_PILLAR)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_SPRITZ_ROOM_PILLAR)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 400, 424);
 	fdActorSetDestination(ACTOR_SPRITZ_ROOM_PILLAR, 408, 424);
@@ -998,7 +999,7 @@ static void scAltinPeakPushSpritzRoomPillar(void)
 static void scAltinPeakForceLogOver(void)
 {
 	ACTOR *actor;
-	SPR	  *spr;
+	SPR	  *sprite;
 	FIXED  originX;
 	FIXED  originHeight;
 	FIXED  cosine;
@@ -1006,14 +1007,14 @@ static void scAltinPeakForceLogOver(void)
 	Uint16 rotationStep;
 
 	actor = fdActorGet(ACTOR_STANDING_LOG);
-	spr = actor->spr;
+	sprite = actor->sprite;
 	originX = actor->x.fixed;
 	originHeight = actor->y.fixed;
 	fdScriptStart();
-	sySndPlay(SE_RUMBLE);
+	sySoundPlay(SE_RUMBLE);
 	fdMapGridSetShake(2, 1, 1);
 	fdScriptWait(10);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdScriptWait(20);
 
@@ -1021,10 +1022,10 @@ static void scAltinPeakForceLogOver(void)
 	rotationStep = 0;
 	while(1) {
 		rotationStep += 8;
-		spr->rotation += rotationStep;
-		cosine = syCos(spr->rotation + DEGtoANG(90));
+		sprite->rotation += rotationStep;
+		cosine = syCos(sprite->rotation + DEGtoANG(90));
 		actor->x.fixed = (cosine << 4) + originX;
-		if(spr->rotation > TRIG_TURN * 9 / 16 - 1) {
+		if(sprite->rotation > TRIG_TURN * 9 / 16 - 1) {
 			break;
 		}
 		sySynch(1);
@@ -1032,10 +1033,10 @@ static void scAltinPeakForceLogOver(void)
 	rotationStep = 0;
 	while(1) {
 		rotationStep += 8;
-		spr->rotation -= rotationStep;
-		cosine = syCos(spr->rotation + DEGtoANG(90));
+		sprite->rotation -= rotationStep;
+		cosine = syCos(sprite->rotation + DEGtoANG(90));
 		actor->x.fixed = (cosine << 4) + originX;
-		if(spr->rotation <= TRIG_TURN * 7 / 16) {
+		if(sprite->rotation <= TRIG_TURN * 7 / 16) {
 			break;
 		}
 		sySynch(1);
@@ -1043,24 +1044,24 @@ static void scAltinPeakForceLogOver(void)
 	rotationStep = 8;
 	while(1) {
 		rotationStep += rotationStep >> 3;
-		spr->rotation += rotationStep;
-		cosine = syCos(spr->rotation + DEGtoANG(90));
-		sine = sySin(spr->rotation + DEGtoANG(180));
+		sprite->rotation += rotationStep;
+		cosine = syCos(sprite->rotation + DEGtoANG(90));
+		sine = sySin(sprite->rotation + DEGtoANG(180));
 		actor->x.fixed = (cosine << 4) + originX;
-		if(spr->rotation > DEGtoANG(180)) {
+		if(sprite->rotation > DEGtoANG(180)) {
 			actor->y.fixed = originHeight - (sine << 3);
 		}
-		if(spr->rotation + rotationStep > TRIG_TURN * 3 / 4 - 1) {
+		if(sprite->rotation + rotationStep > TRIG_TURN * 3 / 4 - 1) {
 			break;
 		}
 		sySynch(1);
 	}
 	sySynch(1);
-	spr->rotation = TRIG_TURN * 3 / 4;
-	sySndPlay(SE_STONE_RUMBLE);
+	sprite->rotation = TRIG_TURN * 3 / 4;
+	sySoundPlay(SE_STONE_RUMBLE);
 	fdMapGridSetShake(3, 3, 1);
 	fdScriptWait(20);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	scAltinPeakRunBoulderChase(5);
 	fdScriptEnd();
@@ -1098,12 +1099,12 @@ static void scAltinPeakRunBoulderChase(Sint32 boulderDelay)
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 100);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-	sySndPlay(SE_STONE_RUMBLE);
+	sySoundPlay(SE_STONE_RUMBLE);
 	fdMapGridSetShake(3, 3, 1);
 	fdScriptWait(20);
 	shadow->scaleX = toFIXED(6) / 5;
 	shadow->scaleY = toFIXED(6) / 5;
-	shadow->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	shadow->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 #if FIX_FUNCTION_SIGNATURES
 	shadow->update = scAltinPeakShadowFollowBoulder;
 #else
@@ -1117,23 +1118,23 @@ static void scAltinPeakRunBoulderChase(Sint32 boulderDelay)
 	boulder->scaleX = toFIXED(2);
 	boulder->scaleY = toFIXED(2);
 	fdScriptWait(10);
-	sySndPlay(SE_STONE_RUMBLE);
+	sySoundPlay(SE_STONE_RUMBLE);
 	fdMapGridSetShake(4, 2, 1);
 	fdScriptWait(20);
 	rock->x.fixed += toFIXED(14);
 	rock->y.fixed -= toFIXED(8);
-	rock->spr->rotation = TRIG_TURN * 3 / 4;
-	sySndPlay(SE_TREMOR);
+	rock->sprite->rotation = TRIG_TURN * 3 / 4;
+	sySoundPlay(SE_TREMOR);
 	fdMapGridSetShake(1, 1, 1);
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-	sySndPlay(MUS_TEST_YOUR_SKILLS);
+	sySoundPlay(MUS_TEST_YOUR_SKILLS);
 	fdMapGridSetShake(1, 3, 1);
-	fdActorSetSprPriority(ACTOR_FALLING_BOULDER, 0);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 0);
+	fdActorSetSpritePriority(ACTOR_FALLING_BOULDER, 0);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 0);
 	fdActorSetAttachedEffect(
 		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 2.5);
-	leader->tmr = 0;
+	leader->timer = 0;
 	fdActorSetScript(ACTOR_PARTY_LEADER, AltinPeakLeaderFleePath);
 	if(gmFlagGet(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
 		fdActorSetPos(ACTOR_GARET, 878, 528);
@@ -1142,20 +1143,20 @@ static void scAltinPeakRunBoulderChase(Sint32 boulderDelay)
 	fdCameraSetSpeed(1.25);
 	fdCameraMoveTo(786, CAMERA_KEEP, 556, 1);
 	fdScriptWait(boulderDelay);
-	fdActorSetSprPriority(ACTOR_FALLING_BOULDER, 1);
+	fdActorSetSpritePriority(ACTOR_FALLING_BOULDER, 1);
 	fdActorSetSpeed(ACTOR_FALLING_BOULDER, 1.585);
-	boulder->tmr = 0;
+	boulder->timer = 0;
 	fdActorSetScript(ACTOR_FALLING_BOULDER, AltinPeakBoulderPath);
 	do {
 		sySynch(1);
-	} while(leader->tmr == 0);
+	} while(leader->timer == 0);
 	fdActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0);
 	do {
 		sySynch(1);
-	} while(boulder->tmr == 0);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	} while(boulder->timer == 0);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	shadow->x.fixed = toFIXED(786);
 	shadow->update = NULL;
@@ -1164,7 +1165,7 @@ static void scAltinPeakRunBoulderChase(Sint32 boulderDelay)
 	fdActorSetSpeed(ACTOR_FALLING_BOULDER, 1.6);
 	boulder->bounce = toFIXED(1) / 10;
 	boulder->gravity = toFIXED(1) / 5;
-	boulder->velY = toFIXED(4);
+	boulder->velocityY = toFIXED(4);
 	fdActorMoveToAndWait(ACTOR_FALLING_BOULDER, 786, 604);
 	fdActorSetSpeed(ACTOR_FALLING_BOULDER, 3.2);
 	fdActorSetDestination(ACTOR_FALLING_BOULDER, 786, 644);
@@ -1178,7 +1179,7 @@ static void scAltinPeakRunBoulderChase(Sint32 boulderDelay)
 	fdScriptWait(80);
 	syCloseEvent(scAltinPeakSpawnDebris);
 	fdScriptWait(60);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdScriptWait(120);
 	if(fdScriptGetFlag(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
@@ -1196,7 +1197,7 @@ static void scAltinPeakRunBoulderChase(Sint32 boulderDelay)
 	fdActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 	fdCameraMoveTo(788, -64, 610, 1);
 	fdCameraWaitForMove();
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	fdScriptWait(240);
 	if(gmFlagGet(FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS) != 0) {
 		fdCameraSetSpeed(4);
@@ -1255,23 +1256,23 @@ static void scAltinPeakReadFallingRockSign(void)
 		fdScriptShowMessageThenWait(ACTOR_GARET, 0, 10);
 		fdActorJump(ACTOR_GARET, 6, 0);
 		fdActorSetSpeed(ACTOR_GARET, 1.6);
-		fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_GARET, 792, 110);
 		fdScriptWait(1);
-		fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
-		sySndPlay(SE_RATTLE);
+		fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+		sySoundPlay(SE_RATTLE);
 		fdMapGridSetShake(2, 1, 1);
-		fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkToAndWait(ACTOR_GARET, 792, 120);
 		fdScriptWait(1);
 		{
 			ACTOR *actor = fdActorGet(ACTOR_GARET);
 
-			actor->steeringFlg = ACTOR_FACES_MOTION | actor->steeringFlg;
+			actor->steeringFlags = ACTOR_FACES_MOTION | actor->steeringFlags;
 		}
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdScriptWait(80);
-		sySndPlay(SE_RUMBLE);
+		sySoundPlay(SE_RUMBLE);
 		fdMapGridSetShake(1, 1, 1);
 		fdScriptWait(40);
 		fdActorShowEmote(
@@ -1313,39 +1314,39 @@ static void scAltinPeakReadFallingRockSign(void)
    lowered its water: the beast is gone and its two puddles can be frozen. */
 const CUE *scGetCues(void)
 {
-	const CUE *tbl;
+	const CUE *table;
 
 	if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_FIRST_WATER_BEAST) {
 		if(gmFlagGet(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
-			tbl = AltinPeakFirstWaterBeastCuesDrained;
+			table = AltinPeakFirstWaterBeastCuesDrained;
 		} else {
-			tbl = AltinPeakFirstWaterBeastCues;
+			table = AltinPeakFirstWaterBeastCues;
 		}
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_RAIL_TUNNEL) {
-		tbl = AltinPeakRailTunnelCues;
+		table = AltinPeakRailTunnelCues;
 	} else if(MainRoutineStateWork.next ==
 		SCENE_ALTIN_PEAK_SECOND_WATER_BEAST) {
-		tbl = AltinPeakSecondWaterBeastCues;
+		table = AltinPeakSecondWaterBeastCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_SOUTH_ENTRANCE) {
-		tbl = AltinPeakSouthEntranceCues;
+		table = AltinPeakSouthEntranceCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_THIRD_WATER_BEAST) {
-		tbl = AltinPeakThirdWaterBeastCues;
+		table = AltinPeakThirdWaterBeastCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_POOL) {
-		tbl = AltinPeakPoolCues;
+		table = AltinPeakPoolCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_SPRITZ) {
-		tbl = AltinPeakSpritzCues;
+		table = AltinPeakSpritzCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_JUNCTION) {
-		tbl = AltinPeakJunctionCues;
+		table = AltinPeakJunctionCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_FALLING_ROCKS) {
-		tbl = AltinPeakFallingRocksCues;
+		table = AltinPeakFallingRocksCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_HYDROS_STATUE) {
-		tbl = AltinPeakHydrosStatueCues;
+		table = AltinPeakHydrosStatueCues;
 	} else if(MainRoutineStateWork.next == SCENE_ALTIN_PEAK_WEST_EXIT) {
-		tbl = AltinPeakWestExitCues;
+		table = AltinPeakWestExitCues;
 	} else {
-		tbl = AltinPeakCuesOther;
+		table = AltinPeakCuesOther;
 	}
-	return tbl;
+	return table;
 }
 
 /* The ticks from one of a water beast's hops to the next. */
@@ -1367,12 +1368,12 @@ static void scAltinPeakUpdateBeastHops(ACTOR *updated)
 		if(--beast->userValue == 1)
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	}
-	if(beast->velY == 0) {
+	if(beast->velocityY == 0) {
 		fdActorSelectAnimation(updated, ANIM_STAND);
 		beast->y.fixed -= toFIXED(3) / 2;
 		if(beast->y.fixed < beast->groundHeight) {
 			if(((FIELD_EFFECT *)updated)->countdown != 0) {
-				sySndPlay(SE_SPLASH);
+				sySoundPlay(SE_SPLASH);
 				((FIELD_EFFECT *)updated)->countdown = 0;
 				/* Four ticks of shake. */
 				beast->userValue = 4;
@@ -1384,14 +1385,14 @@ static void scAltinPeakUpdateBeastHops(ACTOR *updated)
 	} else {
 		beast->paused = 0;
 	}
-	if(beast->tmr == 0) {
-		sySndPlay(SE_JUMP);
+	if(beast->timer == 0) {
+		sySoundPlay(SE_JUMP);
 		((FIELD_EFFECT *)updated)->countdown = 1;
 		fdActorSelectAnimation(updated, WATER_BEAST_ANIMATION_LEAP);
-		beast->velY = toFIXED(3);
+		beast->velocityY = toFIXED(3);
 	}
-	if(++beast->tmr == WATER_BEAST_HOP_PERIOD)
-		beast->tmr = 0;
+	if(++beast->timer == WATER_BEAST_HOP_PERIOD)
+		beast->timer = 0;
 }
 
 /* The beast lands with a splash, shaking the screen by amplitude pixels for
@@ -1399,7 +1400,7 @@ static void scAltinPeakUpdateBeastHops(ACTOR *updated)
 static inline void scAltinPeakPlayLandingShake(
 	Sint32 amplitude, Sint32 holdTicks)
 {
-	sySndPlay(SE_SPLASH);
+	sySoundPlay(SE_SPLASH);
 	fdMapGridSetShakeFX(toFIXED(amplitude), 0, toFIXED(1));
 	fdScriptWait(holdTicks);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -1425,13 +1426,13 @@ static void scAltinPeakShowFirstBeastRoute(void)
 	fdCameraSetSpeed(2.4);
 	fdCameraMoveTo(298, CAMERA_KEEP, 337, 1);
 	fdCameraWaitForMove();
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
 	fdScriptWait(40);
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(295, 32, 212, 1);
 	((FIELD_EFFECT *)beast)->countdown = 0;
-	beast->tmr = 0;
+	beast->timer = 0;
 	beast->userValue = 0;
 	beast->gravity = toFIXED(2) / 5;
 	beast->update = scAltinPeakUpdateBeastHops;
@@ -1453,7 +1454,7 @@ static void scAltinPeakShowFirstBeastRoute(void)
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 40);
 	fdCameraMoveTo(334, CAMERA_KEEP, 244, 1);
 	((FIELD_EFFECT *)beast)->countdown = 0;
-	beast->tmr = 0;
+	beast->timer = 0;
 	beast->userValue = 0;
 	beast->update = scAltinPeakUpdateBeastHops;
 	fdActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 320, 232);
@@ -1466,8 +1467,8 @@ static void scAltinPeakShowFirstBeastRoute(void)
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST_NORTHEAST, 20);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHEAST, 40);
-	sySndPlay(SE_HIGH_JUMP);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velY = toFIXED(4);
+	sySoundPlay(SE_HIGH_JUMP);
+	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velocityY = toFIXED(4);
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_LEAP);
 	fdActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 380, 248);
 	fdScriptWait(10);
@@ -1479,7 +1480,7 @@ static void scAltinPeakShowFirstBeastRoute(void)
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
 	fdCameraMoveTo(304, CAMERA_KEEP, 215, 1);
 	((FIELD_EFFECT *)beast)->countdown = 0;
-	beast->tmr = 0;
+	beast->timer = 0;
 	beast->userValue = 0;
 	beast->update = scAltinPeakUpdateBeastHops;
 	fdActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 329, 219);
@@ -1489,23 +1490,24 @@ static void scAltinPeakShowFirstBeastRoute(void)
 	scAltinPeakPlayLandingShake(1, 4);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlg = 0;
+	fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
 	fdMapGridCopyMetatileAttributes(3, 0, 1, 1, 17, 13);
 	fdMapGridCopyMetatileAttributes(3, 0, 1, 1, 18, 13);
 	fdMapGridCopyMetatileAttributes(3, 0, 1, 1, 19, 13);
 	fdActorSetSpeed(ACTOR_FIRST_WATER_BEAST, 1.4);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER_BEAST), 0);
-	sySndPlay(SE_HIGH_JUMP);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_WATER_BEAST), 0);
+	sySoundPlay(SE_HIGH_JUMP);
 	jumpSpeed = toFIXED(5);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velY = jumpSpeed;
+	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velocityY = jumpSpeed;
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
 	fdActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 295, 215);
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER_BEAST), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(
+		fdActorGet(ACTOR_FIRST_WATER_BEAST), SPRITE_FLAG_SHADOW);
 	scAltinPeakPlayLandingShake(1, 4);
 	fdScriptWait(40);
-	sySndPlay(SE_HIGH_JUMP);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velY = jumpSpeed;
+	sySoundPlay(SE_HIGH_JUMP);
+	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velocityY = jumpSpeed;
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
 	fdActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 260, 215);
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
@@ -1513,7 +1515,7 @@ static void scAltinPeakShowFirstBeastRoute(void)
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
 	fdScriptWait(40);
 	fdMapGridCopyMetatileAttributes(4, 0, 1, 1, 17, 13);
@@ -1549,7 +1551,7 @@ static void scAltinPeakFirstBeastHopsAway(void)
 	fdCameraSetSpeed(2.4);
 	fdCameraMoveTo(279, 64, 216, 1);
 	fdCameraWaitForMove();
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
@@ -1558,7 +1560,7 @@ static void scAltinPeakFirstBeastHopsAway(void)
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(128, 64, 202, 1);
 	((FIELD_EFFECT *)actor)->countdown = 0;
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->userValue = 0;
 	actor->gravity = toFIXED(2) / 5;
 	actor->update = scAltinPeakUpdateBeastHops;
@@ -1572,23 +1574,24 @@ static void scAltinPeakFirstBeastHopsAway(void)
 	scAltinPeakPlayLandingShake(1, 4);
 	fdScriptWait(20);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 40);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FIRST_WATER_BEAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER_BEAST), 0);
-	sySndPlay(SE_HIGH_JUMP);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velY = toFIXED(4);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_WATER_BEAST), 0);
+	sySoundPlay(SE_HIGH_JUMP);
+	fdActorGet(ACTOR_FIRST_WATER_BEAST)->velocityY = toFIXED(4);
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
 	fdActorMoveToAndWait(ACTOR_FIRST_WATER_BEAST, 86, 214);
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, ANIM_STAND);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_WATER_BEAST), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlags(
+		fdActorGet(ACTOR_FIRST_WATER_BEAST), SPRITE_FLAG_SHADOW);
 	fdScriptWait(10);
 	scAltinPeakPlayLandingShake(2, 8);
 	fdScriptWait(40);
-	fdActorGet(ACTOR_FIRST_WATER_BEAST)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FIRST_WATER_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHEAST, 20);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST, 40);
 	((FIELD_EFFECT *)actor)->countdown = 0;
-	actor->tmr = 0;
+	actor->timer = 0;
 	actor->userValue = 0;
 	actor->update = scAltinPeakUpdateBeastHops;
 	fdActorSetSpeed(ACTOR_FIRST_WATER_BEAST, 1.2);
@@ -1600,7 +1603,7 @@ static void scAltinPeakFirstBeastHopsAway(void)
 	scAltinPeakPlayLandingShake(1, 4);
 	fdScriptWait(40);
 	fdActorFaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_EAST, 10);
-	sySndPlay(SE_BEAST_CRY);
+	sySoundPlay(SE_BEAST_CRY);
 	fdActorRunRepeatedMotion(ACTOR_FIRST_WATER_BEAST, 2);
 	fdScriptWait(80);
 	fdActorSetAnimation(ACTOR_FIRST_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
@@ -1666,25 +1669,25 @@ static void scAltinPeakRestoreFirstWaterBeastRoom(void)
 	} else {
 		actor = fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
 		if(actor != NULL) {
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			fdActorSetSprFlags(actor, 0);
+			actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorSetSpriteFlags(actor, 0);
 		}
 	}
 	actor = fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
 	if(actor != NULL) {
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprFlags(actor, 0);
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(actor, 0);
 	}
 	if(gmFlagGet(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
-		fdActorSetSprColById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+		fdActorSetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 		if(gmFlagGet(FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY) != 0) {
 			/* SPRITE_PUDDLE's first animation holds the ice pillar. */
 			fdActorSetAnimation(
 				ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, ANIM_STILL);
 			fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
 				fdEffectUpdateFrostGlint;
-			fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlg =
-				0;
+			fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)
+				->motionFlags = 0;
 			fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->y.fixed =
 				toFIXED(32);
 			fdMapGridCopyMetatileAttributes(2, 0, 1, 1, 18, 13);
@@ -1702,7 +1705,7 @@ static void scAltinPeakRestoreFirstWaterBeastRoom(void)
 			ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, ANIM_STILL);
 		fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->update =
 			fdEffectUpdateFrostGlint;
-		fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlg = 0;
+		fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->motionFlags = 0;
 		fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)->y.fixed =
 			toFIXED(32);
 		fdMapGridCopyMetatileAttributes(2, 0, 1, 1, 18, 13);
@@ -1714,7 +1717,7 @@ static void scAltinPeakRestoreFirstWaterBeastRoom(void)
 		grid = MapGridState[0];
 		fdActorSetPos(ACTOR_FIRST_WATER_BEAST, 0, 0);
 		fdMapGridCopyMetatileAttributes(0, 0, 1, 2, 3, 14);
-		grid->flg &= ~DISPCNT_BG1_ON;
+		grid->flags &= ~DISPCNT_BG1_ON;
 		scAltinPeakMarkActorTerrainMetatile(
 			ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
 		if(gmFlagGet(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
@@ -1723,7 +1726,7 @@ static void scAltinPeakRestoreFirstWaterBeastRoom(void)
 			fdMapGridCopyMetatileAttributes(7, 13, 1, 1, 9, 13);
 			actor = fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE);
 			actor->y.fixed = 0;
-			actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		}
 		scAltinPeakMarkActorTerrainMetatile(
 			ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
@@ -1733,7 +1736,7 @@ static void scAltinPeakRestoreFirstWaterBeastRoom(void)
 			fdMapGridCopyMetatileAttributes(29, 1, 3, 1, 17, 13);
 			actor = fdActorGet(ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
 			actor->y.fixed = toFIXED(32);
-			actor->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		}
 	}
 }
@@ -1744,7 +1747,7 @@ static void scAltinPeakRestoreFirstWaterBeastRoom(void)
 static void scAltinPeakRestoreSecondWaterBeastRoom(void)
 {
 	if(gmFlagGet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
-		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flg &= ~DISPCNT_BG1_ON;
+		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flags &= ~DISPCNT_BG1_ON;
 		fdActorSetPos(ACTOR_SECOND_WATER_BEAST, 0, 0);
 	} else {
 		scAltinPeakStartPaletteAnimation();
@@ -1755,7 +1758,7 @@ static void scAltinPeakRestoreSecondWaterBeastRoom(void)
 			fdMapGridCopyMetatileAttributes(38, 24, 1, 2, 37, 24);
 			fdMapGridCopyMetatileAttributes(44, 23, 1, 2, 45, 23);
 			if(gmFlagGet(FLAG_ALTIN_MINE_SECOND_DRAIN) == 0) {
-				fdActorSetSprColById(
+				fdActorSetSpriteColorById(
 					ACTOR_SECOND_WATER_BEAST, SPRITE_COLOR_RBG);
 				fdActorSetAnimation(
 					ACTOR_SECOND_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
@@ -1777,7 +1780,7 @@ static void scAltinPeakRestoreSecondWaterBeastRoom(void)
 static void scAltinPeakRestoreSouthEntranceRoom(void)
 {
 	if(gmFlagGet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
-		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flg &= ~DISPCNT_BG1_ON;
+		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flags &= ~DISPCNT_BG1_ON;
 	} else {
 		fdMapGridCopyMetatileAttributes(52, 42, 1, 1, 53, 42);
 	}
@@ -1795,7 +1798,7 @@ static void scAltinPeakRestoreSouthEntranceRoom(void)
 static void scAltinPeakRestoreThirdWaterBeastRoom(void)
 {
 	if(gmFlagGet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flg &= ~DISPCNT_BG1_ON;
+		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flags &= ~DISPCNT_BG1_ON;
 		fdActorSetPos(ACTOR_THIRD_WATER_BEAST, 0, 0);
 	} else {
 		if(gmFlagGet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1805,7 +1808,8 @@ static void scAltinPeakRestoreThirdWaterBeastRoom(void)
 		}
 		scAltinPeakStartPaletteAnimation();
 		if(gmFlagGet(FLAG_ALTIN_MINE_THIRD_DRAIN) == 0) {
-			fdActorSetSprColById(ACTOR_THIRD_WATER_BEAST, SPRITE_COLOR_RBG);
+			fdActorSetSpriteColorById(
+				ACTOR_THIRD_WATER_BEAST, SPRITE_COLOR_RBG);
 			fdActorSetAnimation(
 				ACTOR_THIRD_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
 			scAltinPeakStartSpitting(748, 8, 280, FACING_WEST);
@@ -1818,7 +1822,8 @@ static void scAltinPeakRestoreThirdWaterBeastRoom(void)
 		fdMapGridCopyMetatileAttributes(23, 13, 1, 1, 25, 13);
 		{
 			ACTOR *actor = fdActorGet(ACTOR_THIRD_WATER_BEAST_ROOM_PUDDLE);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT | actor->priFlg;
+			actor->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
 		}
 	}
 	if(gmFlagGet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
@@ -1847,10 +1852,11 @@ static void scAltinPeakRestorePoolRoom(void)
 		pillar = fdActorGet(ACTOR_POOL_ROOM_PUDDLE);
 		fdActorSetAnimation(ACTOR_POOL_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 		fdMapGridCopyMetatileAttributes(45, 41, 1, 1, 43, 41);
-		pillar->priFlg = ACTOR_PRIORITY_UNDERFOOT | pillar->priFlg;
+		pillar->priorityFlags =
+			ACTOR_PRIORITY_UNDERFOOT | pillar->priorityFlags;
 	}
 	if(gmFlagGet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flg &= ~DISPCNT_BG1_ON;
+		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flags &= ~DISPCNT_BG1_ON;
 	}
 	/* The metatiles scAltinPeakFlipPoolRoomSwitch copies as it sets the flag,
 	   redrawn on arrival. */
@@ -1870,7 +1876,7 @@ static void scAltinPeakRestoreSpritzRoom(void)
 	ACTOR *actor;
 
 	actor = fdActorGet(ACTOR_SPRITZ_ROOM_PUDDLE);
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	scAltinPeakSettleSpritzRoomPillar();
 	scAltinPeakMarkActorTerrainMetatile(ACTOR_SPRITZ_ROOM_PUDDLE);
 	if(gmFlagGet(FLAG_ALTIN_PEAK_PUDDLE_FROZEN) != 0) {
@@ -1878,7 +1884,8 @@ static void scAltinPeakRestoreSpritzRoom(void)
 		fdMapGridCopyMetatileAttributes(0, 0, 1, 1, 26, 26);
 		{
 			ACTOR *actor = fdActorGet(ACTOR_SPRITZ_ROOM_PUDDLE);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT | actor->priFlg;
+			actor->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
 		}
 	}
 	scAltinPeakMarkActorTerrainMetatile(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
@@ -1888,7 +1895,8 @@ static void scAltinPeakRestoreSpritzRoom(void)
 		fdMapGridCopyMetatileAttributes(1, 0, 1, 1, 17, 10);
 		{
 			ACTOR *actor = fdActorGet(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT | actor->priFlg;
+			actor->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
 		}
 	}
 	scAltinPeakMarkActorTerrainMetatile(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
@@ -1898,7 +1906,8 @@ static void scAltinPeakRestoreSpritzRoom(void)
 		fdMapGridCopyMetatileAttributes(1, 0, 1, 1, 26, 15);
 		{
 			ACTOR *actor = fdActorGet(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE);
-			actor->priFlg = ACTOR_PRIORITY_UNDERFOOT | actor->priFlg;
+			actor->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
 		}
 	}
 	sySetTickEvent(scAltinPeakUpdateFrostPillarPriority, EVENT_PASS_TICK);
@@ -1924,17 +1933,17 @@ static void scAltinPeakRestoreFallingRocksRoom(void)
 	actor = fdActorGet(ACTOR_STANDING_LOG);
 	fdActorSetPos(ACTOR_FALLING_BOULDER, 0, 0);
 	fdActorSetPos(ACTOR_BOULDER_SHADOW, 0, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BOULDER_SHADOW), 0);
-	actor->motionFlg = 0;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BOULDER_SHADOW), 0);
+	actor->motionFlags = 0;
 	actor->scaleX = toFIXED(9) / 10;
 	actor->scaleY = toFIXED(3) / 5;
-	actor->spr->rotation = DEGtoANG(180);
-	fdActorGet(ACTOR_FALLING_ROCK_SIGN)->motionFlg = 0;
+	actor->sprite->rotation = DEGtoANG(180);
+	fdActorGet(ACTOR_FALLING_ROCK_SIGN)->motionFlags = 0;
 	fdActorGet(ACTOR_FALLING_ROCK_SIGN)->y.fixed = -toFIXED(28);
 	if(fdScriptGetFlag(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
 		actor->x.fixed += toFIXED(14);
 		actor->y.fixed -= toFIXED(8);
-		actor->spr->rotation = TRIG_TURN * 3 / 4;
+		actor->sprite->rotation = TRIG_TURN * 3 / 4;
 	}
 	/* The metatiles scAltinPeakRunBoulderChase copies as it sets the flag,
 	   redrawn on arrival. */
@@ -1969,11 +1978,11 @@ static void scAltinPeakRestoreHydrosStatueRoom(void)
 		fdActorSetPos(ACTOR_STATUE, 0, 0);
 		fdActorSetPos(ACTOR_STATUE_SHADOW, 0, 0);
 	} else {
-		fdActorSetSprFlags(fdActorGet(ACTOR_STATUE), 0);
-		fdActorSetSprPriority(ACTOR_STATUE_SHADOW, 3);
-		fdActorSetSprFlags(fdActorGet(ACTOR_STATUE_SHADOW), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_STATUE), 0);
+		fdActorSetSpritePriority(ACTOR_STATUE_SHADOW, 3);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_STATUE_SHADOW), 0);
 		/* statuesDefeated is 0 here: nothing about the shadow is solid. */
-		fdActorGet(ACTOR_STATUE_SHADOW)->collisionFlg = statuesDefeated;
+		fdActorGet(ACTOR_STATUE_SHADOW)->collisionFlags = statuesDefeated;
 	}
 	entrance = MainRoutineStateWork.entrance;
 	if(entrance == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
@@ -1995,7 +2004,7 @@ static void scAltinPeakRestoreHydrosStatueRoom(void)
    pillar stands a metatile west of its first place, at (184, 328). */
 static void scAltinPeakRestoreWestExitRoom(void)
 {
-	fdActorSetSprFlags(fdActorGet(ACTOR_WEST_EXIT_ROOM_PILLAR), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_WEST_EXIT_ROOM_PILLAR), 0);
 	if(MainRoutineStateWork.entrance ==
 		ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
 		fdActorSetPos(ACTOR_WEST_EXIT_ROOM_PILLAR, 184, 328);
@@ -2006,10 +2015,10 @@ static void scAltinPeakRestoreWestExitRoom(void)
    at 0.3 scale. */
 static void scAltinPeakInitSpit(ACTOR *spit)
 {
-	spit->motionFlg = 0;
-	spit->spr->image.pri = 1;
-	fdActorSetSprCol(spit, SPRITE_COLOR_BGR);
-	fdActorSetSprFlags(spit, 0);
+	spit->motionFlags = 0;
+	spit->sprite->image.priority = 1;
+	fdActorSetSpriteColor(spit, SPRITE_COLOR_BGR);
+	fdActorSetSpriteFlags(spit, 0);
 	spit->scaleX = toFIXED(3) / 10;
 	spit->scaleY = toFIXED(3) / 10;
 }
@@ -2023,15 +2032,15 @@ static void scAltinPeakDriftSpit(ACTOR *spit)
 {
 	switch(AltinPeakSpitDirection) {
 	case FACING_EAST:
-		spit->x.fixed += spit->tmr * (toFIXED(1) / 16) +
+		spit->x.fixed += spit->timer * (toFIXED(1) / 16) +
 			((Sint32)toFIXED(syRandomBelow(2) - 1) >> 1);
 		break;
 	case FACING_WEST:
-		spit->x.fixed -= spit->tmr * (toFIXED(1) / 16) +
+		spit->x.fixed -= spit->timer * (toFIXED(1) / 16) +
 			((Sint32)toFIXED(syRandomBelow(2) - 1) >> 1);
 		break;
 	}
-	if(spit->tmr <= 3) {
+	if(spit->timer <= 3) {
 		switch(AltinPeakSpitDirection) {
 		case FACING_EAST:
 			spit->x.fixed += toFIXED(1) / 2;
@@ -2047,12 +2056,12 @@ static void scAltinPeakDriftSpit(ACTOR *spit)
 		spit->scaleX += toFIXED(3) / 100;
 		spit->scaleY += toFIXED(3) / 100;
 	}
-	if(syRandomBelow(spit->tmr) == 0)
-		fdActorSetSprCol(spit, SPRITE_COLOR_WHITE);
-	if(spit->tmr != 0)
-		spit->tmr -= 2;
+	if(syRandomBelow(spit->timer) == 0)
+		fdActorSetSpriteColor(spit, SPRITE_COLOR_WHITE);
+	if(spit->timer != 0)
+		spit->timer -= 2;
 	else
-		spit->tmr = (syRandomBelow(5)) * 2 + 2;
+		spit->timer = (syRandomBelow(5)) * 2 + 2;
 	if(--((FIELD_EFFECT *)spit)->countdown == 0)
 		fdActorRelease(spit);
 }
@@ -2069,7 +2078,7 @@ static void scAltinPeakSpawnSpit(void)
 		AltinPeakSpitOrigin[1], AltinPeakSpitOrigin[2]);
 	if(spit == NULL)
 		return;
-	spit->tmr = 30;
+	spit->timer = 30;
 	spit->userValue = 1;
 	((FIELD_EFFECT *)spit)->countdown = 20;
 	scAltinPeakInitSpit(spit);
@@ -2104,19 +2113,19 @@ static void scAltinPeakSpawnDebris(void)
 		if(debris != NULL) {
 			if(TickCount % 9 == 0) {
 				if(syRandomBelow(2) != 0)
-					sySndPlay(SE_CRASH);
+					sySoundPlay(SE_CRASH);
 				else
-					sySndPlay(SE_CLATTER);
+					sySoundPlay(SE_CLATTER);
 			}
-			debris->motionFlg = 0;
+			debris->motionFlags = 0;
 			scale = (syRandomBelow(32768)) + toFIXED(3) / 10;
 			debris->gravity = toFIXED(2) / 5;
 			debris->scaleY = scale;
 			debris->scaleX = scale;
 			debris->frozen = 1;
-			fdActorSetSprFlags(debris, 0);
-			debris->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			debris->spr->image.pri = 1;
+			fdActorSetSpriteFlags(debris, 0);
+			debris->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			debris->sprite->image.priority = 1;
 			fdActorSelectAnimation(debris, ANIM_STAND);
 			fdActorStartScript(debris, AltinPeakDebrisScript);
 			SET_VELOCITY(debris, toFIXED(syRandomBelow(6) - 3), toFIXED(8),
@@ -2126,7 +2135,7 @@ static void scAltinPeakSpawnDebris(void)
 }
 
 /* The glint of the ice the first beast leaves in the gap of its cave. */
-DEFINE_FROST_GLINT(static, fdActorSetSprCol)
+DEFINE_FROST_GLINT(static, fdActorSetSpriteColor)
 
 /* The first water beast casts Frost on the puddle in the gap of its cave, the
    screen turning red as when the party casts it, and the puddle freezes into an
@@ -2140,14 +2149,14 @@ static void scAltinPeakBeastFreezesSecondPuddle(void)
 	fdPsynergySetupActorPair(
 		ACTOR_FIRST_WATER_BEAST, ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
 	fdPsynergyStartCast();
-	fdActorSetSprColById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 	fdPsynergyRunHandler(1);
-	fdActorSetSprColById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 	fdPsynergyStopCasterUpdate();
-	fdActorSetSprColById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+	fdActorSetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 	fdPsynergyEnd();
-	sySndPlay(SE_STOP_ACTION_SE);
-	fdActorSetSprColById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	fdActorSetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 }
 
 /* Back from the first water beast's battle, on the west ledge where it last
@@ -2168,7 +2177,7 @@ static void scAltinPeakAwardFrostJewelAndDrain(void)
 	fdScriptWait(20);
 	gmItemShowFound(ITEM_FROST_JEWEL, 3);
 	gmPartyGiveItem(ITEM_FROST_JEWEL, 0);
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(1.6);
 	fdCameraMoveTo(100, 0, 249, 1);
 	fdCameraWaitForMove();
@@ -2232,7 +2241,7 @@ static void scAltinPeakPlayHydrosRumble(void)
 {
 	AltinPeakRumbleTicks++;
 	if(AltinPeakRumbleTicks == 60) {
-		sySndPlay(SE_STONE_RUMBLE);
+		sySoundPlay(SE_STONE_RUMBLE);
 		AltinPeakRumbleTicks = 0;
 	}
 }
@@ -2248,7 +2257,7 @@ static void scAltinPeakStartHydrosBattle(void)
 	fdCameraMoveTo(328, CAMERA_KEEP, 87, 1);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 328, 116);
-	sySndPlay(SE_BOSS_ROAR);
+	sySoundPlay(SE_BOSS_ROAR);
 	sySetTickEvent(scAltinPeakPlayHydrosRumble, EVENT_PASS_TICK);
 	fdMapGridSetShake(1, 1, 1);
 	fdActorSetSpeed(ACTOR_STATUE, 0.1);
@@ -2272,9 +2281,9 @@ static void scAltinPeakStartHydrosBattle(void)
 static void scAltinPeakFlickerStatue(void)
 {
 	if(((TickCount >> 1) & 1) != 0) {
-		fdActorSetSprColById(ACTOR_STATUE, SPRITE_COLOR_WHITE);
+		fdActorSetSpriteColorById(ACTOR_STATUE, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetSprColById(ACTOR_STATUE, SPRITE_COLOR_GREY);
+		fdActorSetSpriteColorById(ACTOR_STATUE, SPRITE_COLOR_GREY);
 	}
 }
 
@@ -2298,7 +2307,7 @@ static void scAltinPeakCelebrateHydrosVictory(void)
 	fdActorSetAnimation(ACTOR_STATUE, HYDROS_STATUE_ANIMATION_STONE);
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = 40;
+	state->transitionFrame = 40;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
@@ -2359,10 +2368,10 @@ static void scAltinPeakCelebrateHydrosVictory(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-	sySndPlay(SE_WARP);
-	fdActorSetSprColById(ACTOR_STATUE, SPRITE_COLOR_WHITE);
+	sySoundPlay(SE_WARP);
+	fdActorSetSpriteColorById(ACTOR_STATUE, SPRITE_COLOR_WHITE);
 	fdScriptWait(10);
-	sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_GARET, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
@@ -2371,7 +2380,7 @@ static void scAltinPeakCelebrateHydrosVictory(void)
 	fdActorShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-	sySndPlay(SE_CURSE);
+	sySoundPlay(SE_CURSE);
 	update = scAltinPeakFlickerStatue;
 	sySetTickEvent(update, EVENT_PASS_TICK);
 	celebrate = AltinPeakStatueSinkScript;
@@ -2410,7 +2419,7 @@ static void scAltinPeakCelebrateHydrosVictory(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	gmFlagClear(FLAG_SHOW_AREA_NAME);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	gmFlagSet(FLAG_HYDROS_STATUES_DEFEATED);
 	fdScriptEnd();
 }
@@ -2429,11 +2438,11 @@ UNUSED static void scAltinPeakRequestPsynergy(void)
 static void scAltinPeakUpdateFrostPillarPriority(void)
 {
 	if(fdActorGet(ACTOR_PARTY_LEADER)->y.fixed > toFIXED(48)) {
-		fdActorGet(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE)->priFlg |=
+		fdActorGet(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE)->priorityFlags |=
 			ACTOR_PRIORITY_UNDERFOOT;
-		fdActorSetSprPriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 3);
+		fdActorSetSpritePriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 3);
 	} else {
-		fdActorSetSprPriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 2);
+		fdActorSetSpritePriority(ACTOR_SPRITZ_ROOM_THIRD_PUDDLE, 2);
 	}
 }
 
@@ -2444,7 +2453,7 @@ static void scAltinPeakMarkActorTerrainMetatile(Sint32 actorId)
 	ACTOR *actor;
 
 	actor = fdActorGet(actorId);
-	actor->collisionFlg &= (Uint8)~ACTOR_SOLID;
+	actor->collisionFlags &= (Uint8)~ACTOR_SOLID;
 
 	fdMapGridSetMetatileBehaviorAt(
 		0, actor->x.fixed, actor->z.fixed, METATILE_BEHAVIOR_WALL);
@@ -2457,11 +2466,11 @@ static void scAltinPeakStopCartAndJumpOff(ACTOR *actor)
 	Sint32 x;
 	Sint32 z;
 	FIXED  centerZ;
-	SPR	  *spr;
+	SPR	  *sprite;
 	ACTOR *leader;
 
-	sySndPlay(SE_STOP_ACTION_SE);
-	sySndPlay(SE_CRUNCH);
+	sySoundPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_CRUNCH);
 	x = actor->x.fixed & FIELD_METATILE_MASK;
 	centerZ = toFIXED(8);
 	z = actor->z.fixed & FIELD_METATILE_MASK;
@@ -2473,30 +2482,30 @@ static void scAltinPeakStopCartAndJumpOff(ACTOR *actor)
 	actor->layer = 0;
 	actor->x.fixed = x;
 	actor->z.fixed = centerZ;
-	actor->velX = 0;
-	actor->velZ = 0;
+	actor->velocityX = 0;
+	actor->velocityZ = 0;
 	fdActorSelectAnimation(actor, MINE_CART_ANIMATION_ROLL);
 	sySynch(15);
 	fdActorSelectAnimation(actor, ANIM_STAND);
 	sySynch(30);
-	spr = actor->spr;
-	spr->cnt = 1;
-	fdSprAnimationClear(spr->entries[1]);
-	spr->entries[1] = NULL;
-	spr->dirty = 1;
+	sprite = actor->sprite;
+	sprite->count = 1;
+	fdSpriteAnimationClear(sprite->entries[1]);
+	sprite->entries[1] = NULL;
+	sprite->dirty = 1;
 	leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	sySndPlay(SE_JUMP);
+	sySoundPlay(SE_JUMP);
 	leader->x.fixed = x;
-	leader->velY = toFIXED(6);
+	leader->velocityY = toFIXED(6);
 	leader->gravity = toFIXED(1);
 	leader->z.fixed = centerZ;
-	leader->spr->image.pri = 0;
+	leader->sprite->image.priority = 0;
 	fdActorSelectAnimation(leader, ANIM_LEADER_LEAP);
 	syFieldActorSetMoveTargetFX(leader, x, leader->y.fixed, z + toFIXED(24));
 	leader->facing = FACING_SOUTH;
 	sySynch(20);
-	leader->spr->image.pri = 2;
-	sySndPlay(SE_DOOR_CLOSE);
+	leader->sprite->image.priority = 2;
+	sySoundPlay(SE_DOOR_CLOSE);
 }
 
 /* Unused: does nothing, and nothing calls it. */
@@ -2508,60 +2517,60 @@ UNUSED static void scAltinPeakReservedNoOperation(void)
 static void scAltinPeakTurnCartRight(ACTOR *actor)
 {
 	FIELD_POS pos;
-	Sint32	  ang;
+	Sint32	  angle;
 	Sint32	  x;
 	Sint32	  z;
-	Sint32	  turnFrm;
+	Sint32	  turnFrame;
 
-	ang = FACING_QUARTER(actor->facing + DEGtoANG(90));
+	angle = FACING_QUARTER(actor->facing + DEGtoANG(90));
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	syFieldVectorAddPolarOffset(24, ang, &pos);
+	syFieldVectorAddPolarOffset(24, angle, &pos);
 	x = (pos.x + toFIXED(8)) & FIELD_METATILE_MASK;
 	z = (pos.z + toFIXED(8)) & FIELD_METATILE_MASK;
-	ang += DEGtoANG(180);
+	angle += DEGtoANG(180);
 	fdActorSelectAnimation(actor, MINE_CART_ANIMATION_TURN_RIGHT);
-	sySndPlay(SE_CART_TURN);
-	for(turnFrm = 0; turnFrm < 16; turnFrm++) {
-		ang += TRIG_TURN / 64;
+	sySoundPlay(SE_CART_TURN);
+	for(turnFrame = 0; turnFrame < 16; turnFrame++) {
+		angle += TRIG_TURN / 64;
 		pos.x = x;
 		pos.z = z;
-		syFieldVectorAddPolarOffset(24, ang, &pos);
+		syFieldVectorAddPolarOffset(24, angle, &pos);
 		actor->x.fixed = pos.x;
 		actor->z.fixed = pos.z;
-		actor->facing = ang + DEGtoANG(90);
+		actor->facing = angle + DEGtoANG(90);
 		sySynch(1);
 	}
-	sySndPlay(SE_CART_ROLL);
+	sySoundPlay(SE_CART_ROLL);
 }
 
 /* The cart turns a quarter turn left. */
 static void scAltinPeakTurnCartLeft(ACTOR *actor)
 {
 	FIELD_POS pos;
-	Sint32	  ang;
+	Sint32	  angle;
 	Sint32	  x;
 	Sint32	  z;
-	Sint32	  turnFrm;
+	Sint32	  turnFrame;
 
-	ang = FACING_QUARTER(actor->facing - DEGtoANG(90));
+	angle = FACING_QUARTER(actor->facing - DEGtoANG(90));
 	SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	syFieldVectorAddPolarOffset(24, ang, &pos);
+	syFieldVectorAddPolarOffset(24, angle, &pos);
 	x = (pos.x + toFIXED(8)) & FIELD_METATILE_MASK;
 	z = (pos.z + toFIXED(8)) & FIELD_METATILE_MASK;
-	ang += DEGtoANG(180);
+	angle += DEGtoANG(180);
 	fdActorSelectAnimation(actor, MINE_CART_ANIMATION_TURN_LEFT);
-	sySndPlay(SE_CART_TURN);
-	for(turnFrm = 0; turnFrm < 16; turnFrm++) {
-		ang -= TRIG_TURN / 64;
+	sySoundPlay(SE_CART_TURN);
+	for(turnFrame = 0; turnFrame < 16; turnFrame++) {
+		angle -= TRIG_TURN / 64;
 		pos.x = x;
 		pos.z = z;
-		syFieldVectorAddPolarOffset(24, ang, &pos);
+		syFieldVectorAddPolarOffset(24, angle, &pos);
 		actor->x.fixed = pos.x;
 		actor->z.fixed = pos.z;
-		actor->facing = ang - DEGtoANG(90);
+		actor->facing = angle - DEGtoANG(90);
 		sySynch(1);
 	}
-	sySndPlay(SE_CART_ROLL);
+	sySoundPlay(SE_CART_ROLL);
 }
 
 /* A countdown metatile's ticks: SE_CART_TURN plays with CART_COUNTDOWN_TURN
@@ -2574,7 +2583,7 @@ enum { CART_COUNTDOWN_TICKS = 33, CART_COUNTDOWN_TURN = 20 };
 static void scAltinPeakStartCartCountdown(ACTOR *actor)
 {
 	actor->userValue = CART_COUNTDOWN_TICKS;
-	sySndPlay(SE_STOP_ACTION_SE);
+	sySoundPlay(SE_STOP_ACTION_SE);
 }
 
 /* Rolls the cart on by a tick and picks its animation from the terrain ahead
@@ -2589,13 +2598,13 @@ static void scAltinPeakAdvanceCart(ACTOR *actor)
 
 	angle &= actor->facing;
 	speed = actor->y.fixed / toFIXED(1);
-	speed = AltinPeakCartSpeeds[actor->tmr - speed + 16];
+	speed = AltinPeakCartSpeeds[actor->timer - speed + 16];
 	if(actor->userValue != 0) {
 		if(--actor->userValue == CART_COUNTDOWN_TURN) {
-			sySndPlay(SE_CART_TURN);
+			sySoundPlay(SE_CART_TURN);
 		}
 		if(actor->userValue == 0) {
-			sySndPlay(SE_CART_ROLL);
+			sySoundPlay(SE_CART_ROLL);
 		}
 	}
 	SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -2667,7 +2676,7 @@ static void scAltinPeakRollCart(Sint32 id, Sint32 heading)
 	actor->layer = MAPGRID_LAYER_OVERHEAD;
 	leader->x.fixed = 0;
 	leader->z.fixed = 0;
-	fdSprAddAnimation(actor->spr, SPRITE_CART_RIDER);
+	fdSpriteAddAnimation(actor->sprite, SPRITE_CART_RIDER);
 	fdCameraFollowActor(id, 1);
 	fdCameraWaitForMove();
 	fdCameraSetSpeed(16);
@@ -2675,7 +2684,7 @@ static void scAltinPeakRollCart(Sint32 id, Sint32 heading)
 	actor->speedLimit = toFIXED(2);
 	actor->acceleration = toFIXED(1) / 20;
 	actor->paused = 0;
-	actor->tmr = actor->y.fixed / toFIXED(1);
+	actor->timer = actor->y.fixed / toFIXED(1);
 	actor->userValue = 0;
 	position.x = actor->x.fixed;
 	position.y = actor->y.fixed;
@@ -2683,7 +2692,7 @@ static void scAltinPeakRollCart(Sint32 id, Sint32 heading)
 	syFieldVectorAddPolarOffset(24, heading, &position);
 	syFieldActorSetMoveTargetFX(actor, position.x, actor->y.fixed, position.z);
 	fdActorWaitForMove(actor);
-	sySndPlay(SE_CART_ROLL);
+	sySoundPlay(SE_CART_ROLL);
 	/* The route metatiles select turns, a countdown sound, and the
 	   destination. */
 	for(;;) {
@@ -2715,19 +2724,19 @@ static void scAltinPeakStepPaletteAnimation(void)
 {
 	/* The palette cycle borrows RGB555 colours from the palette fade's source
 	   palette; each step replaces BG colours 3 to 11. */
-	Uint16 *palette = PaletteFadeState->pal;
+	Uint16 *palette = PaletteFadeState->palette;
 
 	if(AltinPeakPaletteHold <= 0) {
-		Sint32 frm;
+		Sint32 frame;
 
 	next:
-		frm = AltinPeakPaletteScript[AltinPeakPaletteStep++];
-		if(frm == -1) {
+		frame = AltinPeakPaletteScript[AltinPeakPaletteStep++];
+		if(frame == -1) {
 			AltinPeakPaletteStep = 0;
 			goto next;
 		}
 		AltinPeakPaletteHold = AltinPeakPaletteScript[AltinPeakPaletteStep++];
-		palette += frm;
+		palette += frame;
 		syDMAXCopy(palette, (void *)&BG_PLTT_COLOR(0, 3), DMA_COPY_HALFWORDS(9),
 			REG_DMA3);
 	}

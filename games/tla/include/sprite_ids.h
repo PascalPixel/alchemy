@@ -769,8 +769,8 @@ typedef enum SPR_ID {
 	SPRITE_MOAPA_SHADOW,
 	SPRITE_BATTLE_SHADOW = 686,
 	SPRITE_BATTLE_SHADOW_NARROW,
-	/* The status icons btStatIconCycle shows in turn over a battler wider than
-	   32 pixels, one for each condition. */
+	/* The status icons btStatusIconCycle shows in turn over a battler wider
+	   than 32 pixels, one for each condition. */
 	SPRITE_STATUS_WIDE_POISON,
 	SPRITE_STATUS_WIDE_VENOM,
 	SPRITE_STATUS_WIDE_STUN,

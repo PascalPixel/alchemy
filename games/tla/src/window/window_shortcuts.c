@@ -14,7 +14,7 @@ void mnAreaNameWindowShow(void)
 	Sint32				y;
 	Sint32				x;
 	Sint32				areaMsg;
-	WINDOW			   *nameWin;
+	WINDOW			   *nameWindow;
 	MAIN_ROUTINE_STATE *state;
 
 	fieldState = FieldStateWork;
@@ -26,10 +26,10 @@ void mnAreaNameWindowShow(void)
 	mnTextGetMessageSize(areaMsg, &x, &y, &width, &height);
 	x = (DISPLAY_TILE_WIDTH - width) >> 1;
 	y = (10 - height) >> 1;
-	nameWin = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
-	fieldState->noticeWin = nameWin;
-	mnTextDrawMessage(areaMsg, (Sint32)nameWin, 0, 0);
-	fieldState->noticeFrm = AREA_NAME_WINDOW_TICKS;
+	nameWindow = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
+	fieldState->noticeWindow = nameWindow;
+	mnTextDrawMessage(areaMsg, (Sint32)nameWindow, 0, 0);
+	fieldState->noticeFrame = AREA_NAME_WINDOW_TICKS;
 	sySetEvent(mnAreaNameWindowUpdate, EVENT_PASS_TICK);
 }
 
@@ -40,9 +40,9 @@ void mnAreaNameWindowUpdate(void)
 	Uint16		 ticksLeft;
 
 	state = FieldStateWork;
-	state->noticeFrm = ticksLeft = state->noticeFrm - 1;
+	state->noticeFrame = ticksLeft = state->noticeFrame - 1;
 	if(ticksLeft == 0) {
-		mnWindowClose(state->noticeWin, WINDOW_FLAG_INSTANT);
+		mnWindowClose(state->noticeWindow, WINDOW_FLAG_INSTANT);
 		syCloseEvent(mnAreaNameWindowUpdate);
 	}
 }
@@ -50,11 +50,11 @@ void mnAreaNameWindowUpdate(void)
 /* Closes the area name at once, if it is shown. */
 void mnAreaNameWindowHide(void)
 {
-	WINDOW *win;
+	WINDOW *window;
 
-	win = FieldStateWork->noticeWin;
-	if(win != NULL && win->flg != 0) {
-		mnWindowClose(win, WINDOW_FLAG_INSTANT);
+	window = FieldStateWork->noticeWindow;
+	if(window != NULL && window->flags != 0) {
+		mnWindowClose(window, WINDOW_FLAG_INSTANT);
 		syCloseEvent(mnAreaNameWindowUpdate);
 	}
 }

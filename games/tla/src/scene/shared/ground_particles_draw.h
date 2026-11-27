@@ -13,28 +13,28 @@ void fdGroundParticlesDraw(void)
 	Uint32				   i;
 
 	for(i = 0; i < ARRAY_COUNT(state->particles); i++, particle++) {
-		Sint16 *frm;
+		Sint16 *frame;
 		Sint32	x;
 		Sint32	y;
 
-		if(--particle->tmr == GROUND_PARTICLE_FREED)
+		if(--particle->timer == GROUND_PARTICLE_FREED)
 			continue;
 		if(syGameFlagGet(FLAG_WEATHER_HELD))
-			particle->tmr++;
-		frm = &GroundParticleFrames[5 * particle->tmr];
-		x = (particle->posX - cameraX) / toFIXED(1) + *frm++;
-		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frm++;
+			particle->timer++;
+		frame = &GroundParticleFrames[5 * particle->timer];
+		x = (particle->posX - cameraX) / toFIXED(1) + *frame++;
+		y = (particle->posZ - particle->posY - cameraZ) / toFIXED(1) + *frame++;
 		if(x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
-			particle->pri = 1;
+			particle->priority = 1;
 			particle->x = x;
 			particle->y = y;
-			particle->tile = state->tileBase + *(Uint16 *)frm;
-			frm++;
-			particle->shape = *(Uint8 *)frm;
-			particle->size = *(Uint8 *)(frm + 1);
-			syOAMAddSprAtDepth(particle, OAM_DEPTH_WINDOW);
+			particle->tile = state->tileBase + *(Uint16 *)frame;
+			frame++;
+			particle->shape = *(Uint8 *)frame;
+			particle->size = *(Uint8 *)(frame + 1);
+			syOAMAddSpriteAtDepth(particle, OAM_DEPTH_WINDOW);
 		}
-		if(particle->tmr == 0) {
+		if(particle->timer == 0) {
 			Sint32 *leader = state->leader;
 
 			if(leader != NULL) {
@@ -45,12 +45,12 @@ void fdGroundParticlesDraw(void)
 				particle->posX = x;
 				particle->posZ = y;
 				particle->posY = fdMapGetTerrainHeight(0, x, y);
-				particle->tmr = 16;
+				particle->timer = 16;
 			} else {
 				particle->posX = 0;
 				particle->posZ = 0;
 				particle->posY = 0;
-				particle->tmr = 16;
+				particle->timer = 16;
 			}
 		}
 	}

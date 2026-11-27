@@ -102,9 +102,9 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	DRAW_RECTANGLE		 drawUpper;
 	BATTLE_CAMERA		*camera;
 	MOTION_OBJECT		*src;
-	MOTION_OBJECT		*tgt;
+	MOTION_OBJECT		*target;
 	Sint32				 resource;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 j;
 	Sint32				 streaks = STREAK_MAX;
 	Sint32				 lift = toFIXED(20);
@@ -112,7 +112,7 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* FAKEMATCH(dead): heap set through its own address; as heap =
 	 * RamHeapSlots. */
 	*&heap = RamHeapSlots;
-	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
+	state = (BATTLE_EFFECT_STATE *)heap->battleEffect;
 	canvas = heap->battleCanvas;
 	camera = heap->cameraState;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
@@ -160,29 +160,29 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* Each transfer halves the canvas, leaving a trail. */
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	src = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->object;
 	{
 		/* The loop counts STREAK_SPACING for each streak though targets are
 		   STREAK_TARGET_DELAY apart, so with three or four targets it stops
 		   before the last one's second flash. */
-		Sint32 totalTicks = streaks * args->tgtCnt * STREAK_SPACING + 48;
+		Sint32 totalTicks = streaks * args->targetCount * STREAK_SPACING + 48;
 
 		/* Each streak flies from lift above the user to lift above its
 		   target. */
 		EFFECT_FOR_EACH_TARGET(k, args) {
-			tgt = btObjectGetStub(args->tgts[k])->obj;
+			target = btObjectGetStub(args->targets[k])->object;
 			for(j = 0; j != streaks; j++) {
 				PARTICLE *streak = &state->particles[k * streaks + j];
 
 				SET_POSITION(streak, src->x, src->y + lift, src->z);
-				SET_VELOCITY(streak, (tgt->x - streak->x) / STREAK_FLIGHT,
-					(tgt->y + lift - streak->y) / STREAK_FLIGHT,
-					(tgt->z - streak->z) / STREAK_FLIGHT);
+				SET_VELOCITY(streak, (target->x - streak->x) / STREAK_FLIGHT,
+					(target->y + lift - streak->y) / STREAK_FLIGHT,
+					(target->z - streak->z) / STREAK_FLIGHT);
 				streak->variant = 0; /* ticks since the streak set off */
 			}
 		}
 
-		for(frm = 0; frm != totalTicks; frm++) {
+		for(frame = 0; frame != totalTicks; frame++) {
 			Sint32 *row = state->bg2xLines;
 
 			/* A sine wave of BG2X offsets for the wave HBlank DMA, which
@@ -190,28 +190,28 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			   ticks fade out. */
 			for(k = 0; k != DISPLAY_HEIGHT; k++)
 				*row++ = CANVAS_WAVE_BG2X(
-					toFIXED(8) - sySin((frm + k) * (TRIG_TURN / 16)) * 2);
-			if(frm > totalTicks - 16)
-				REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalTicks - frm);
+					toFIXED(8) - sySin((frame + k) * (TRIG_TURN / 16)) * 2);
+			if(frame > totalTicks - 16)
+				REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalTicks - frame);
 
 			EFFECT_VIEW_FROM_CAMERA(camera);
 			EFFECT_FOR_EACH_TARGET(k, args) {
 				/* Each target's streaks set out with the style's cry. */
-				if(frm == k * STREAK_TARGET_DELAY) {
+				if(frame == k * STREAK_TARGET_DELAY) {
 					if(mode == STREAK_STYLE_LIME)
-						sySndPlayStub(SE_SHRIEK);
+						sySoundPlayStub(SE_SHRIEK);
 					if(mode == STREAK_STYLE_VIOLET)
-						sySndPlayStub(SE_STONE_GRIND);
+						sySoundPlayStub(SE_STONE_GRIND);
 					if(mode == STREAK_STYLE_RED)
-						sySndPlayStub(SE_BOSS_ROAR);
+						sySoundPlayStub(SE_BOSS_ROAR);
 					if(mode == STREAK_STYLE_CYAN)
-						sySndPlayStub(SE_ITEM_BREAK);
+						sySoundPlayStub(SE_ITEM_BREAK);
 				}
-				if(frm >= k * STREAK_TARGET_DELAY) {
+				if(frame >= k * STREAK_TARGET_DELAY) {
 					for(j = 0; j != streaks; j++) {
 						/* From here lift holds the streak's start tick. */
 						lift = k * STREAK_TARGET_DELAY + j * STREAK_SPACING;
-						if(frm >= lift) {
+						if(frame >= lift) {
 							PARTICLE *streak =
 								&state->particles[k * streaks + j];
 							Sint32 step;
@@ -226,7 +226,7 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 							if(STREAK_VALUE(mode, STREAK_ANIMATE)) {
 								Uint8 *picture =
 									&state->sheet[step * PICTURE_BYTES(STREAK) +
-										frm / 2 % 3 * STREAK_FRAME_BYTES];
+										frame / 2 % 3 * STREAK_FRAME_BYTES];
 
 								drawUpper(canvas, picture,
 									pos.x - STREAK_WIDTH / 2,
@@ -257,41 +257,40 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					/* From 6 ticks after the hit, tremble the target sideways
 					   for 32 ticks. */
 					if(STREAK_VALUE(mode, STREAK_SHAKE) &&
-						frm >= k * STREAK_TARGET_DELAY + 30 &&
-						frm < k * STREAK_TARGET_DELAY + 62) {
+						frame >= k * STREAK_TARGET_DELAY + 30 &&
+						frame < k * STREAK_TARGET_DELAY + 62) {
 						MOTION_OBJECT *struck =
-							btObjectGetStub(args->tgts[k])->obj;
+							btObjectGetStub(args->targets[k])->object;
 
-						struck->x += toFIXED(
-							StreakTremble[(frm - k * STREAK_TARGET_DELAY - 30) %
-								8]);
+						struck->x += toFIXED(StreakTremble
+								[(frame - k * STREAK_TARGET_DELAY - 30) % 8]);
 						if(struck->x > 0)
 							struck->x += toFIXED(1) / 2;
 						else
 							struck->x -= toFIXED(1) / 2;
-						btEffectTintBattler(args->tgts[k], TINT_KEEP,
+						btEffectTintBattler(args->targets[k], TINT_KEEP,
 							POSE_DAMAGE, TINT_KEEP, 0);
 					}
 
 					/* The hit: a sound and two flashes, 16 ticks apart. The
 					   first hit lets the battle show its results. */
 					if(STREAK_VALUE(mode, STREAK_HIT)) {
-						if(frm == k * STREAK_TARGET_DELAY + 24) {
-							sySndPlayStub(SE_IMPACT);
+						if(frame == k * STREAK_TARGET_DELAY + 24) {
+							sySoundPlayStub(SE_IMPACT);
 							if(k == 0)
 								EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-							btEffectTintBattler(args->tgts[k],
+							btEffectTintBattler(args->targets[k],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
 						}
-						if(frm == k * STREAK_TARGET_DELAY + 40)
-							btEffectTintBattler(args->tgts[k],
+						if(frame == k * STREAK_TARGET_DELAY + 40)
+							btEffectTintBattler(args->targets[k],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 8);
 					}
 					if(STREAK_VALUE(mode, STREAK_MOTION) != -1 &&
-						frm == k * STREAK_TARGET_DELAY + 24) {
-						state->shakeFrm = 4;
-						btMotionApplyKnockbackStub(
-							args->tgts[k], STREAK_VALUE(mode, STREAK_MOTION));
+						frame == k * STREAK_TARGET_DELAY + 24) {
+						state->shakeFrame = 4;
+						btMotionApplyKnockbackStub(args->targets[k],
+							STREAK_VALUE(mode, STREAK_MOTION));
 					}
 				}
 			}
@@ -367,12 +366,12 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	MOTION_OBJECT		*src;
 	PARTICLE			*mote;
 	Sint32				 resource;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	/* four groups set out, 8 ticks apart */
 	Sint32 group = MOTE_VISIBLE_COUNT / 4;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	camera = RamHeapSlots->cameraState;
 	sheet = RamHeapSlots->battleSheet;
@@ -403,52 +402,52 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* Launch every mote from the user, with a speed and a direction of its own.
 	   Slaver throws them up, faster, in a half-circle fan turned by the user's
 	   side, from up to 16 pixels higher. */
-	src = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->object;
 	for(i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
 		Sint32 speed;
-		Sint32 ang;
+		Sint32 angle;
 
 		mote = &PARTICLES[i];
 		if(mode == MOTE_FOUNTAIN_SLAVER) {
 			if(args->side == EFFECT_SIDE_ENEMIES)
-				ang = (syRandom() & 0x7fff) + DEGtoANG(180);
+				angle = (syRandom() & 0x7fff) + DEGtoANG(180);
 			else
-				ang = syRandom() & 0x7fff;
+				angle = syRandom() & 0x7fff;
 			speed = (syRandom() & 0x3ff) + 2048;
 			mote->y = src->y + (syRandom() << 4) + toFIXED(5);
 		} else {
-			ang = syRandom();
+			angle = syRandom();
 			speed = (syRandom() & 0x3ff) + 32;
 			mote->y = src->y + toFIXED(5);
 		}
 		mote->x = src->x;
 		mote->z = src->z;
-		mote->velX = sySin(ang) * speed >> 8;
+		mote->velocityX = sySin(angle) * speed >> 8;
 		if(mode == MOTE_FOUNTAIN_SLAVER) {
-			mote->velY = ((syRandom() & 255) + 128) << 10;
-			mote->velZ = -(syCos(ang) * speed) >> 9;
+			mote->velocityY = ((syRandom() & 255) + 128) << 10;
+			mote->velocityZ = -(syCos(angle) * speed) >> 9;
 		} else {
-			mote->velY = ((syRandom() & 255) - 32) << 9;
-			mote->velZ = -(syCos(ang) * speed << 1) >> 8;
+			mote->velocityY = ((syRandom() & 255) - 32) << 9;
+			mote->velocityZ = -(syCos(angle) * speed << 1) >> 8;
 		}
 		mote->variant = (syRandom() & 31) + 48;
 		if(mode == MOTE_FOUNTAIN_HEALING) {
-			mote->velX /= 2;
-			mote->velZ /= 2;
+			mote->velocityX /= 2;
+			mote->velocityZ /= 2;
 		}
 	}
 
 	ticks = MOTE_FOUNTAIN_SLAVER_TICKS;
 	if(mode != MOTE_FOUNTAIN_SLAVER)
 		ticks = MOTE_FOUNTAIN_TICKS;
-	for(frm = 0; frm != ticks; frm++) {
+	for(frame = 0; frame != ticks; frame++) {
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(mode == MOTE_FOUNTAIN_SLAVER && frm == 0)
-			sySndPlayStub(SE_CURSE);
+		if(mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
+			sySoundPlayStub(SE_CURSE);
 
 		for(i = 0; i != MOTE_VISIBLE_COUNT; i++) {
 			mote = &PARTICLES[i];
-			if(frm >= i / group * 8 && mote->variant >= 0) {
+			if(frame >= i / group * 8 && mote->variant >= 0) {
 				Sint32 size;
 
 				/* Motes wobble and grow as they near the camera. */
@@ -471,15 +470,15 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				if(mode == MOTE_FOUNTAIN_SLAVER) {
 					btParticleAdvanceWithGravity3D(mote, 62, -toFIXED(1) / 8);
 					if(mote->y < toFIXED(5))
-						mote->velY = -mote->velY;
+						mote->velocityY = -mote->velocityY;
 				} else {
 					btParticleAdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
 				}
 				if(mode == MOTE_FOUNTAIN_DRIFTING) {
 					if(src->x < 0)
-						mote->velX += toFIXED(1) / 8;
+						mote->velocityX += toFIXED(1) / 8;
 					else
-						mote->velX -= toFIXED(1) / 8;
+						mote->velocityX -= toFIXED(1) / 8;
 				}
 				mote->variant--;
 			}
@@ -488,20 +487,20 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		/* From tick 48, flash the targets one after another, 8 ticks
 		   apart. */
 		if(mode == MOTE_FOUNTAIN_DRIFTING) {
-			for(i = 0; i != args->tgtCnt; i++) {
-				if(frm == i * 8 + 48) {
+			for(i = 0; i != args->targetCount; i++) {
+				if(frame == i * 8 + 48) {
 					EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 8);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 8);
 				}
 			}
 		} else if(mode == MOTE_FOUNTAIN_HEALING) {
-			for(i = 0; i != args->tgtCnt; i++) {
-				if(frm == i * 8 + 48) {
-					sySndPlayStub(SE_RECOVERY);
+			for(i = 0; i != args->targetCount; i++) {
+				if(frame == i * 8 + 48) {
+					sySoundPlayStub(SE_RECOVERY);
 					EFFECT_SHOW_DAMAGE(HIT_SOUND_NONE);
 					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
+						args->targets[i], SPRITE_COLOR_WHITE, TINT_KEEP, i, 8);
 				}
 			}
 		}

@@ -56,9 +56,9 @@ void fdScriptEnd(void);
 #endif
 /* Rebuilds the leader's actor from its placement row (fdActorResetForLeader),
    waits a tick and returns the leader's actor. */
-struct ACTOR *fdScriptResetLeaderAndWait(Sint32 tbl);
+struct ACTOR *fdScriptResetLeaderAndWait(Sint32 table);
 /* Spawns the actors of an actor placement table after the last actor in use. */
-void fdScriptSpawnActorsAfterLast(Sint32 tbl);
+void fdScriptSpawnActorsAfterLast(Sint32 table);
 /* Gives each actor placement with condition 0 a condition saying whether it
    lies within the map's view bounds, so that only those inside appear. */
 void fdAssignViewFlags(struct VIEWED_PLACEMENT *entry);
@@ -88,7 +88,7 @@ Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actor, Sint32 forceBottom);
 /* Gives the party item from actor: with no room it shows the item, says it was
    found and left behind and returns -1; otherwise it adds the item, sets flag
    (unless -1) and returns 0. */
-Sint32 fdScriptPickUpItem(Sint32 actor, Sint32 item, Sint32 flg);
+Sint32 fdScriptPickUpItem(Sint32 actor, Sint32 item, Sint32 flag);
 /* Teaches unit the Psynergy ability and says so with its jingle, waiting for
    the player to read it. */
 void fdPartyLearnAbility(Sint32 unit, Sint32 ability);
@@ -99,7 +99,8 @@ struct ACTOR *fdActorGetById(Uint32 actorId);
 void fdActorReleaseById(Sint32 actorId);
 /* The script command "set actor speed": its top speed and acceleration, 16.16
    pixels per tick. Writes the actor's speedLimit and acceleration. */
-void fdActorSetSpeedParms(Sint32 actorId, FIXED speedLimit, FIXED acceleration);
+void fdActorSetSpeedParams(
+	Sint32 actorId, FIXED speedLimit, FIXED acceleration);
 /* Gives an actor a movement type or actor script (fdActorSetMovementType) and
    makes it face where it moves (ACTOR_FACES_MOTION). */
 void fdActorSetMovementTypeById(Sint32 actorId, const void *script);
@@ -128,11 +129,12 @@ void fdActorWalkToById(Sint32 actorId, Sint32 x, Sint32 z);
 void fdActorWalkToAndWaitById(Sint32 actorId, Sint32 x, Sint32 z);
 /* The script command "center actor and walk": walks the actor sideways to the
    middle of its 16-pixel column, sets its sprite priority to priority
-   (fdActorSetSprPriority), then sends it zOfs pixels along z. */
-void fdActorCenterOnColumn(Uint32 actorId, Sint32 pri, Sint32 zOfs);
-/* The script command "set actor destination offset": the actor heads (xOfs,
-   zOfs) pixels from where it stands. */
-void fdActorSetDestinationOffsetById(Sint32 actorId, Sint32 xOfs, Sint32 zOfs);
+   (fdActorSetSpritePriority), then sends it zOffset pixels along z. */
+void fdActorCenterOnColumn(Uint32 actorId, Sint32 priority, Sint32 zOffset);
+/* The script command "set actor destination offset": the actor heads (xOffset,
+   zOffset) pixels from where it stands. */
+void fdActorSetDestinationOffsetById(
+	Sint32 actorId, Sint32 xOffset, Sint32 zOffset);
 /* The script command "wait for actor": waits (at most 600 ticks) for the actor
    to arrive and stands it still. */
 void fdActorWaitForMoveById(Sint32 actorId);
@@ -142,8 +144,8 @@ void fdActorWaitForMoveById(Sint32 actorId);
 void fdActorSetHorizontalPosWithTerrain(Uint32 actorId, FIXED x, FIXED z);
 /* As fdActorSetHorizontalPosWithTerrain, and turns the actor to angle. Written
    in the old style: the angle arrives as a word and is taken as a halfword. */
-void fdActorSetHorizontalPosAndAngWithTerrain(
-	Sint32 actorId, Sint32 x, Sint32 z, Sint32 ang);
+void fdActorSetHorizontalPosAndAngleWithTerrain(
+	Sint32 actorId, Sint32 x, Sint32 z, Sint32 angle);
 /* Puts the actor at (x, y, z), 16.16 pixels, at rest, raised by the ground
    height there if it follows the ground. */
 void fdActorSetPosWithTerrain(Uint32 actorId, FIXED x, FIXED y, FIXED z);
@@ -152,12 +154,12 @@ void fdActorSetPosWithTerrain(Uint32 actorId, FIXED x, FIXED y, FIXED z);
 void fdActorPlaceOnActor(Uint32 actorId, Uint32 otherId);
 /* The script command "set actor animation" (an ACTOR_ANIMATION: ANIM_STAND,
    ANIM_WALK, ANIM_NOD, ANIM_SHAKE_HEAD and so on). */
-void fdActorSetAnimationById(Uint32 actorId, Sint32 anm);
+void fdActorSetAnimationById(Uint32 actorId, Sint32 animation);
 /* Sets the animation timer steps of each of an actor's sprites. */
 void fdActorSetAnimationSpeedById(Sint32 actorId, Sint32 steps);
 /* The script command "set actor animation and wait": plays the animation and
    waits for it to end. */
-void fdActorSetAnimationAndWait(Sint32 actorId, Sint32 anm);
+void fdActorSetAnimationAndWait(Sint32 actorId, Sint32 animation);
 /* Waits, at most 90 ticks, for an actor's animation to change or for its first
    sprite animation's script to reach its hold command (ANIMCMD_HOLD). Only an
    actor drawn as a sprite (ACTOR_SPRITE_ONE) is waited for. */
@@ -167,10 +169,10 @@ void fdActorWaitForAnimationChange(Uint32 actorId);
 void fdActorJump(Sint32 actorId, Sint32 speed, Sint32 ticks);
 /* The script command "start repeated motion": the actor squashes and springs
    back count times (1 to REPEATED_MOTION_MAX), through ActorVariantScripts. */
-void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 cnt);
+void fdActorStartRepeatedMotion(Uint32 actorId, Sint32 count);
 /* The script command "run repeated motion": as fdActorStartRepeatedMotion, then
    waits for it to end. */
-void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 cnt);
+void fdActorRunRepeatedMotion(Uint32 actorId, Sint32 count);
 /* Makes an actor jump down off a ledge in front of it: it shows pose for 10
    ticks, hops 12 pixels south from the middle of its 16-pixel column, turns
    toward FACING_SOUTH_SOUTHWEST while sinking 28 pixels with a dust puff every
@@ -185,19 +187,19 @@ void fdActorFaceActorById(Sint32 firstId, Sint32 secondId, Sint32 ticks);
    other, then waits the given number of ticks. */
 void fdActorTurnToFaceEachOther(Sint32 firstId, Sint32 secondId, Sint32 ticks);
 /* The script command "set actor sprite colour": gives every sprite animation of
-   the actor the colour mode (fdActorSetSprCol); with SPRITE_COLOR_BLINK the
-   actor blinks instead (fdActorUpdateBlink). */
-void fdActorConfigureSprCol(Sint32 actorId, Sint32 colMode);
+   the actor the colour mode (fdActorSetSpriteColor); with SPRITE_COLOR_BLINK
+   the actor blinks instead (fdActorUpdateBlink). */
+void fdActorConfigureSpriteColor(Sint32 actorId, Sint32 colorMode);
 /* Sets the colour mode (SPR_COL_MODE) of every running sprite animation of an
    actor's sprite. Scripts set SPRITE_COLOR_NORMAL or SPRITE_COLOR_HIDDEN, and
    alternate the two to make an actor flash. */
-void fdActorSetSprCol(struct ACTOR *actor, Sint32 colMode);
-/* Makes an actor follow the actor in tgtId's ACTOR_WATCH_ACTOR_MASK bits and
-   starts script on it. Unless tgtId has ACTOR_WATCH_KEEP_MOTION it keeps
+void fdActorSetSpriteColor(struct ACTOR *actor, Sint32 colorMode);
+/* Makes an actor follow the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits and
+   starts script on it. Unless targetId has ACTOR_WATCH_KEEP_MOTION it keeps
    FOLLOW_DISTANCE, takes the target's top speed with twice its acceleration, to
    keep up with it, and no collision flags, so it cannot block the target. */
 void fdActorWatchAndStartScript(
-	Uint32 actorId, Sint32 tgtId, const void *script);
+	Uint32 actorId, Sint32 targetId, const void *script);
 /* The script command "set message": the number of the script's next message,
    written to the field state's message. */
 void fdScriptSetMessageId(Sint32 msg);
@@ -208,18 +210,18 @@ Sint32 fdMessageShowAtActor(Sint32 speaker, Sint32 unused);
 /* Opens the script's current message at the speaker and waits for its window;
    after ten seconds, or with Select, R, L and A held, the text is finished at
    once. */
-void fdMessageShowAtActorAndWait(Sint32 speaker, Sint32 flg);
+void fdMessageShowAtActorAndWait(Sint32 speaker, Sint32 flags);
 /* The script command "show message and wait": shows the message, then waits the
    given number of ticks. */
-void fdScriptShowMessageThenWait(Sint32 speaker, Sint32 flg, Sint32 ticks);
+void fdScriptShowMessageThenWait(Sint32 speaker, Sint32 flags, Sint32 ticks);
 /* The script command "show message": opens the current message at the speaker
    (fdMessageShowAtActor) and waits until it has been read and its window has
    closed; the speaker's portrait is closed once the text is typed out. */
-void fdScriptShowMessageAndWait(Sint32 speaker, Sint32 flg);
+void fdScriptShowMessageAndWait(Sint32 speaker, Sint32 flags);
 /* The script command "ask yes or no": opens the question at the speaker, lets
    the leader answer, then shows the next message for yes or the one after it
    for no. */
-Sint32 fdScriptAskYesNoAndShowResponse(Sint32 speaker, Sint32 flg);
+Sint32 fdScriptAskYesNoAndShowResponse(Sint32 speaker, Sint32 flags);
 /* An empty hook; it does nothing in the released game. */
 void fdScriptNoOperationUpdate(void);
 /* Unused: nothing calls it. It would record the speaker, open the message near
@@ -238,12 +240,12 @@ void fdScriptForwardShowMessageAtPos(
 void fdScriptShowMessageAtPos(
 	Sint32 unusedA, Sint32 unusedB, Sint32 x, Sint32 y);
 /* The script command "actor face direction": the actor turns toward angle
-   (TRIG_TURN a full turn; fdActorStepAng), then the script waits the given
+   (TRIG_TURN a full turn; fdActorStepAngle), then the script waits the given
    number of ticks. */
-void fdActorFaceDirectionById(Sint32 actorId, Sint32 ang, Sint32 ticks);
+void fdActorFaceDirectionById(Sint32 actorId, Sint32 angle, Sint32 ticks);
 /* Turns an actor a step toward angle (ActorStepAngleScript) and waits for the
    script to end. */
-void fdActorFaceDirectionAndRefreshById(Sint32 actorId, Sint32 ang);
+void fdActorFaceDirectionAndRefreshById(Sint32 actorId, Sint32 angle);
 /* Clears an actor's destination, starts its idle script and stands it still. */
 void fdActorClearDestinationAndStand(Uint32 actorId);
 /* Closes the portrait of an actor's sprite, if it has one. */
@@ -262,7 +264,7 @@ void fdMessageSetVoiceFromActor(Sint32 key);
 /* The script command "set actor sprite priority": fixes the priority of the
    actor's sprite and its shadow, which then no longer follow its depth: clears
    ACTOR_PRIORITY_AUTOMATIC. */
-void fdActorSetSprPriority(Uint32 actorId, Sint32 pri);
+void fdActorSetSpritePriority(Uint32 actorId, Sint32 priority);
 /* Stops actor id moving and colliding and hides it. */
 void fdActorDisableById(Uint32 id);
 /* The script command "actor show emote": shows an emote bubble (SPRITE_EMOTE)
@@ -272,16 +274,16 @@ struct ACTOR *fdActorShowEmoteById(Sint32 actorId, Sint32 emote, Sint32 ticks);
    removes the actor attached to an actor, attaches one (SPRITE_RAY_ARC,
    animation 1) unless one already is, or shows a one-off one (animation 2) that
    ends by itself (ActorWaitScript). */
-void fdEffectSetAttached(Sint32 actorId, Sint32 flg);
+void fdEffectSetAttached(Sint32 actorId, Sint32 flags);
 /* Makes the target actor's sprite show the source actor's graphics (its VRAM
    block and tile). Neither actor is checked for NULL. */
-void fdActorCopyGraphics(Uint32 tgtId, Uint32 srcId);
+void fdActorCopyGraphics(Uint32 targetId, Uint32 srcId);
 /* The script command "camera follow actor": the camera follows the actor, put
    on it at once unless keepPos leaves it where it is to set out from. */
 void fdCameraFollowActor(Sint32 actorId, Sint32 keepPos);
 /* The script command "camera set speed": the camera's top speed and
    acceleration, 16.16 pixels per tick. */
-void fdCameraSetSpeedParms(FIXED speed, FIXED acceleration);
+void fdCameraSetSpeedParams(FIXED speed, FIXED acceleration);
 /* The script command "camera move to": sends the camera to the requested axes,
    16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
    screen never shows past its edge. With pan 0 the camera cuts there at once;
@@ -320,7 +322,7 @@ void fdRequestBattleFromEncounterTable(Sint32 row, Sint32 column);
    element's last Djinni stands for the one of The Broken Seal's chosen for it
    (SCENE_STATE_CHOSEN_DJINN; none: nothing happens). The low 8 bits of flags
    are the Djinni's actor, which hops first unless DJINN_NO_HOP is set. */
-void fdRequestDjinnBattle(Uint32 flg, Uint32 djinn);
+void fdRequestDjinnBattle(Uint32 flags, Uint32 djinn);
 /* Sets the after-battle destination (MainRoutineStateWork.afterBattleScene and
    afterBattleEntrance), where the party goes once the coming battle is won. */
 void fdScriptSetAfterBattleDestination(Sint32 sceneId, Sint32 entrance);
@@ -346,7 +348,7 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void);
    (PLACEMENT_SHIP) is SPRITE_WINGED_SHIP_SMALL on the world map and
    SPRITE_WINGED_SHIP elsewhere, each one's flying picture once FLAG_SHIP_FLIES
    is set. */
-Sint32 fdPartyGetCharacterSpr(Sint32 character);
+Sint32 fdPartyGetCharacterSprite(Sint32 character);
 /* Picks the actor nearest actor id, under 32 pixels away and 48 pixels in
    height. Distances to treasure spots count double and to actors with
    ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the actor must also lie
@@ -452,8 +454,8 @@ void fdPaletteFadeSetSource(Sint32 mode, Sint32 half);
 /* Sets each colour channel of step to the amount to add each tick for source
    to reach target in ticks ticks; with ticks 0 or less step is left as it
    was. */
-void fdPaletteFadeCalcSteps(
-	Sint16 *src, Sint16 *tgt, Sint16 *step, Sint32 ticks);
+void fdPaletteFadeCalculateSteps(
+	Sint16 *src, Sint16 *target, Sint16 *step, Sint32 ticks);
 /* Starts the fade from the shown colours to the target colours, over ticks
    ticks. */
 void fdPaletteFadeStartInterpolation(Sint32 ticks);
@@ -461,7 +463,7 @@ void fdPaletteFadeStartInterpolation(Sint32 ticks);
 void fdPaletteFadeRelease(void);
 /* Sets the backdrop colour (BG colour 0) of the palette fade's copy of the
    palettes, from which it builds its colours. */
-void fdPaletteFadeSetBackdrop(Uint32 col);
+void fdPaletteFadeSetBackdrop(Uint32 color);
 /* The script command "open screen": starts the script's screen transition and
    sets transitionActive. */
 void fdScriptStartScreenTransition(void);
@@ -469,27 +471,27 @@ void fdScriptStartScreenTransition(void);
    and clears transitionActive. */
 void fdScriptFinishScreenTransition(void);
 /* The script command "wait for screen": waits as long as the transition runs
-   (transitionFrm). */
+   (transitionFrame). */
 void fdScriptWaitTransitionTicks(void);
 /* Starts the line scroll: its state (heap slot HEAP_SLOT_LINE_SCROLL) holds the
    mode and, for x and y, how fast the wave runs from tick to tick, its step
    from one scanline to the next and its amplitude; two events, one in the
    vertical blank pass and one in the tick pass, build and send each tick's
    line offsets. */
-void fdLineScrollInitWave(Sint32 mode, Sint32 freqX, Sint32 stepX, Sint32 ampX,
-	Sint32 freqY, Sint32 stepY, Sint32 ampY);
+void fdLineScrollInitWave(Sint32 mode, Sint32 frequencyX, Sint32 stepX,
+	Sint32 ampX, Sint32 frequencyY, Sint32 stepY, Sint32 ampY);
 /* Stops the line scroll: removes its two events and stops DMA 0. */
 void fdLineScrollStop(void);
 /* Unused: only the stub table refers to it. Opens a chest: if actor target
    exists, plays SE_CHEST_OPEN, opens its lid and, 12 ticks later, shows itemId
    in front of actor actorId with sparkles. */
-Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 tgt, Sint32 itemId);
+Sint32 fdChestOpenAndShowItem(Sint32 actorId, Sint32 target, Sint32 itemId);
 /* Shows a found item's picture as flags choose (ITEM_DISPLAY_FLAG), with waits
    of 60 and 80 ticks around its raising when both are set. */
-void fdItemDispShowPicture(struct ACTOR *actor, Sint32 flg);
+void fdItemDisplayShowPicture(struct ACTOR *actor, Sint32 flags);
 /* Shows the picture of item 36 pixels above the party leader for 80 ticks, as
    flags choose (ITEM_DISPLAY_FLAG). */
-void fdItemDispShowItem(Sint32 item, Sint32 flg);
+void fdItemDisplayShowItem(Sint32 item, Sint32 flags);
 /* Returns the actor, or NULL. */
 struct ACTOR *fdTreasureSpotGetActor(Uint32 actorId);
 /* Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 ticks. */
@@ -511,11 +513,11 @@ void fdTreasureSpotMoveLeaderAway(void);
 /* TREASURE_SPOT_PUT_AWAY moves the actor to x and z 0 and marks it with
    sceneWord TREASURE_SPOT_ON_METATILE; any other mode draws its sprite wide, 16
    by 8 pixels, 4 pixels lower. */
-void fdActorSetWideSpr(Uint32 actorId, Sint32 mode);
+void fdActorSetWideSprite(Uint32 actorId, Sint32 mode);
 /* RETURN_HOME_CLEAR_Z moves the actor to z 0; RETURN_HOME_DUG_UP sets flag,
    draws a moved actor square again and drops it back home (homeX, homeZ) at
    Scoop's anchor. */
-void fdActorReturnHome(Sint32 mode, Uint32 actorId, Sint32 flg);
+void fdActorReturnHome(Sint32 mode, Uint32 actorId, Sint32 flag);
 /* On the World Map, with no area graphics already pending: marks them pending,
    pauses the camera's actor and, when a screen transition is running, ends it
    at once and waits 2 ticks; then shows the still image
@@ -528,13 +530,13 @@ void fdWorldMapReloadPendingAreaGraphics(void);
    fdActorResetForLeader does: the party leader where the main routine's state
    puts it, the scene's placement table from actor slot 8, and the camera that
    follows the leader; it also chooses the leader's control mode. */
-void fdActorResetForLeader(Sint32 tbl);
+void fdActorResetForLeader(Sint32 table);
 /* Creates the actors of a scene's actor placement table (ended by sprite -1),
    and records the table among the scene's tables. */
 void fdScriptSpawnActorTable(struct ACTOR_PLACE *entry, Sint32 slot);
-/* Releases the actor in slot actorIdx of the field state's table, if there is
+/* Releases the actor in slot actorIndex of the field state's table, if there is
    one, and empties the slot. */
-void fdActorReleaseAtIndex(Uint32 actorIdx);
+void fdActorReleaseAtIndex(Uint32 actorIndex);
 /* Returns the actor in slot actorId (below LOOKUP_ID_COUNT), or NULL. */
 struct ACTOR *fdActorLookup(Uint32 actorId);
 /* Looks point id up in the map's scene points (its scene_points.tsv, ended by
@@ -563,12 +565,12 @@ void fdBlankOverlayResume(void);
    does when it ends. */
 void fdPsynergyRunHandler(Sint32 kind);
 /* Prepares the state of the field Psynergy for ability (heap slot
-   fieldEffState): its kind, the free VRAM it starts with, the map's shake to
+   fieldEffectState): its kind, the free VRAM it starts with, the map's shake to
    restore, and whether the place is lit. While another field Psynergy is
    resolving, only the ability and kind are set. */
 void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode);
 /* Records the caster and the target of a field Psynergy. */
-void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId);
+void fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId);
 /* Takes the caster out of its casting update and waits a tick. */
 void fdBattleEffectStopMainActor(void);
 /* Ends a field Psynergy: frees the field effect sprites still in use and,
@@ -581,12 +583,12 @@ void fdPsynergyStartCast(void);
 /* Tints the field for a Psynergy animation: a tint chosen by the tick counter
    (so each cast looks a little different), fixed for some animations, and
    forced by the tint flags; then fades towards it over eight ticks. The
-   palettes are copied by fdStartColTransition. */
-void fdPsynergyFadeToCastCol(void);
+   palettes are copied by fdStartColorTransition. */
+void fdPsynergyFadeToCastColor(void);
 /* Fades the palettes back from a cast's colours to the saved ones over 8
    ticks; while Reveal is active the BG half fades to Reveal's grey instead
    (PALETTE_TINT_GRAYSCALE). */
-void fdPsynergyFadeFromCastCol(void);
+void fdPsynergyFadeFromCastColor(void);
 /* Ends every lasting Psynergy (fdScriptEndLastingPsynergy with none
    skipped). */
 void fdScriptEndAllLastingPsynergy(void);
@@ -598,7 +600,7 @@ void fdScriptEndLastingPsynergy(Sint32 skip);
    (HEAP_SLOT_MIND_READ): a hue taken from the tick count, the field faded
    toward it, the message window greyed for thoughts, and
    fdPsynergyUpdateMindReadWave run each tick. */
-void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId);
+void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 targetId);
 /* Stops the wave effect: restores the caster's colours and the palettes and
    releases the Psynergy's state. */
 void fdPsynergyStopMindReadWave(void);
@@ -613,9 +615,9 @@ void fdPsynergyRestoreMindReadPalette(void);
 Bool fdHasPsynergyCue(Sint32 fieldPsynergy);
 /* Returns whether the scene has a script for item and what the leader faces. */
 Uint32 fdHasItemCue(Uint16 item);
-/* Makes srcSpr share sharedSpr's VRAM block, releasing its own; with
-   no sharedSpr it keeps its block. */
-void *fdSprShareVRAMCacheEntry(void *srcSpr, void *sharedSpr);
+/* Makes srcSprite share sharedSprite's VRAM block, releasing its own; with
+   no sharedSprite it keeps its block. */
+void *fdSpriteShareVRAMCacheEntry(void *srcSprite, void *sharedSprite);
 /* Returns the battle background chosen for the current scene. */
 Sint16 fdBattleBackgroundGetSelected(void);
 /* Move's hand appears at a quarter size 16 pixels above the caster, with a
@@ -646,7 +648,7 @@ Uint16 fdEncounterGetFormationAtSlot(Sint32 zone, Sint32 slot);
 Uint16 fdEncounterGetDjinnFormation(Sint32 djinni);
 /* Starts the current scene's field music, chosen by fdChooseMusic. */
 void gmPlayMusic(void);
-/* Chooses the current scene's field music (MainRoutineStateWork.snd) from the
+/* Chooses the current scene's field music (MainRoutineStateWork.sound) from the
    first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
    when none does. */
 void fdChooseMusic(void);
@@ -668,7 +670,7 @@ void fdParticleSetPos(FIELD_PARTICLE *effect, Sint32 x, Sint32 z);
 /* Sets the animation of a field effect sprite. */
 void fdParticleSetAnimation(FIELD_PARTICLE *effect, Sint32 mode);
 /* Gives a field effect sprite its per-tick callback, starting at state 0. */
-void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK func);
+void fdParticleSetCallback(FIELD_PARTICLE *effect, EFFECT_CALLBACK callback);
 /* Starts a field particle with a sprite of the given kind at (x, z), at full
    size and in front of everything: it will fly to its target at up to 2 pixels
    a tick, turning a limited step at a time, and stop there. */
@@ -695,16 +697,16 @@ void fdEffectInitSlots(void);
    in use and releases their heap block, the field Psynergy's state with it. */
 void fdEffectReleaseSlots(void);
 /* Places an actor on the leader, a pixel nearer the back, and sends it walking
-   (xOfs, zOfs) pixels away at speed 0.8 and acceleration 0.4, through the
+   (xOffset, zOffset) pixels away at speed 0.8 and acceleration 0.4, through the
    launch script; the actor then takes movement type action. */
 void fdActorLaunchFromLeader(
-	Sint32 actorId, Sint32 xOfs, Sint32 zOfs, Sint32 action);
-/* Walks the actor (xOfs, zOfs) pixels from where it stands, through the
+	Sint32 actorId, Sint32 xOffset, Sint32 zOffset, Sint32 action);
+/* Walks the actor (xOffset, zOffset) pixels from where it stands, through the
    offset script. */
-void fdActorWalkByById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs);
-/* Walks the actor (xOfs, zOfs) pixels, waits for it to arrive and stands
+void fdActorWalkByById(Uint32 actorId, Sint32 xOffset, Sint32 zOffset);
+/* Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and stands
    it still. */
-void fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOfs, Sint32 zOfs);
+void fdActorWalkByAndWaitById(Uint32 actorId, Sint32 xOffset, Sint32 zOffset);
 /* Makes an actor follow another (the watched actor script): writes its
    watchedActor. */
 void fdActorWatchAndSetScript(Sint32 actorId, Sint32 watchedActorId);
@@ -716,11 +718,11 @@ void fdPsynergyHaltActor(Sint32 actorId);
    fdPsynergyHaltActor. */
 void fdPsynergyResumeHaltedActor(Sint32 actorId);
 /* Returns the first of the scene's placed actors (from ACTOR_FIRST_PLACED)
-   showing sprId, or -1. */
-Sint32 fdActorFindBySpr(Sint32 sprId);
+   showing spriteId, or -1. */
+Sint32 fdActorFindBySprite(Sint32 spriteId);
 /* Returns the sprite (the first animation's id) of the actor whose id is key's
    under SPEAKER_ACTOR_MASK, or -1 if there is no such animated actor. */
-Sint32 fdActorGetSprById(Sint32 key);
+Sint32 fdActorGetSpriteById(Sint32 key);
 /* Saves up to 32 actors into SnapshotObjects, with each one's slot, animation,
    sprite flags and priority, so that they can be put back. */
 void fdActorTableSnapshot(void);
@@ -762,11 +764,11 @@ void fdHeadingClose(void);
 /* Starts an actor's movement type: an MOVEMENT_TYPE, or any other value as the
    actor script to run itself. */
 void fdActorSetMovementType(struct ACTOR *actor, Sint32 kind);
-/* Plays SE_STOP_EXIT_SE, then sndId (SOUND_FADE_OUT_ACTION_SE for -1), and
-   remembers sndId for fdPlayQueuedMusic in the field state's queuedSnd; -1 is
-   remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE now and nothing
+/* Plays SE_STOP_EXIT_SE, then soundId (SOUND_FADE_OUT_ACTION_SE for -1), and
+   remembers soundId for fdPlayQueuedMusic in the field state's queuedSound; -1
+   is remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE now and nothing
    later. */
-void fdQueueMusic(Sint32 sndId);
+void fdQueueMusic(Sint32 soundId);
 /* A script that does nothing. */
 void fdScriptNoOperation(void);
 /* Plays the sound fdQueueMusic remembered, if any. */
@@ -780,20 +782,20 @@ void fdRopeInit(void);
    the rope wound round them. A unit whose ROM code is compiled against another
    form defines OWN_fdRopeTie and declares that form itself. */
 #ifndef OWN_fdRopeTie
-void fdRopeTie(Sint32 idx, Sint32 id, Sint32 other);
+void fdRopeTie(Sint32 index, Sint32 id, Sint32 other);
 #endif
 /* Coils rope index at post firstId, its length reaching post secondId: the rope
    as it waits to be lashed. */
-void fdRopeCoil(Sint32 idx, Sint32 firstId, Sint32 secondId);
+void fdRopeCoil(Sint32 index, Sint32 firstId, Sint32 secondId);
 /* Lash: throws rope index from post fromId to post toId and winds it round
    both. A rope coiled too short to reach falls back to its post. A unit whose
    ROM code is compiled against another form defines OWN_fdRopeLash and declares
    that form itself. */
 #ifndef OWN_fdRopeLash
-void fdRopeLash(Sint32 idx, Sint32 fromId, Sint32 toId);
+void fdRopeLash(Sint32 index, Sint32 fromId, Sint32 toId);
 #endif
 /* Unties rope index between posts fromId and toId (fdRopeRecoil). */
-void fdRopeUntie(Sint32 idx, Sint32 fromId, Sint32 toId);
+void fdRopeUntie(Sint32 index, Sint32 fromId, Sint32 toId);
 /* Allocates the tightropes' state, loads their node picture and starts
    fdTightropeDraw and fdTightropeUpdate. */
 void fdTightropeInit(void);
@@ -802,11 +804,11 @@ void fdTightropeInit(void);
    returns no value; no caller reads one. */
 Sint32 fdTightropePlace(Sint32 slotNo, Sint32 firstId, Sint32 secondId);
 /* Returns rope index's ROPE_SLOT_STATE, or -1 while the ropes have no state. */
-Sint32 fdRopeGetState(Sint32 idx);
+Sint32 fdRopeGetState(Sint32 index);
 /* Gives rope index its flag and places it between posts firstId and secondId:
    tied when the flag is set, else coiled at the first. A scene places each of
    its ropes with it. */
-void fdRopePlace(Sint32 idx, Sint32 flg, Sint32 firstId, Sint32 secondId);
+void fdRopePlace(Sint32 index, Sint32 flag, Sint32 firstId, Sint32 secondId);
 /* Returns the flag entry table, 20-byte entries ended by a zero flag. */
 const struct WORLD_MAP_PLACE *fdWorldMapPlacesGetTable(void);
 /* Sets up a scene's flag blocks, the puddles Frost turns into pillars of ice
@@ -879,7 +881,7 @@ struct ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z);
    OWN_fdTileCopiesCopyTouchedMetatiles and declares that form itself. */
 #ifndef OWN_fdTileCopiesCopyTouchedMetatiles
 void fdTileCopiesCopyTouchedMetatiles(Sint32 srcX, Sint32 srcZ, Sint32 width,
-	Sint32 height, Sint32 winX, Sint16 winZ, Sint32 layerIdx);
+	Sint32 height, Sint32 windowX, Sint16 windowZ, Sint32 layerIndex);
 #endif
 /* Whether the leader can move as sand on the metatile at (x, z): the overhead
    layer's METATILE_BEHAVIOR_SAND, or on the world map collision
@@ -920,28 +922,29 @@ void fdExitPrepareActorAnimation(Sint32 actorId, Sint32 side);
    shows again, and the sparks stop coming APPEAR_SPAWN_TICKS later. */
 void fdActorAppearInSparks(Sint32 actorId);
 /* Turns actor id's sprite to rotation (1/65536 turns). */
-void fdActorSetSprRotationById(Sint32 id, Sint32 rotation);
+void fdActorSetSpriteRotationById(Sint32 id, Sint32 rotation);
 /* Lays actor id down along angle, a quarter turn rounded: shows its first tick
    turned, shifted by the side it falls to, and blocks its metatile and the
    metatile beyond it. */
-void fdActorFallOverById(Uint32 id, Uint32 ang);
+void fdActorFallOverById(Uint32 id, Uint32 angle);
 /* fdActorFallOverById with an animation of the actor's sprite sheet (-1 for
    none) and the fall moving the actor itself half a metatile the way it
    falls. */
-void fdActorFallOverWithAnimationById(Sint32 id, Uint32 ang, Sint32 anm);
+void fdActorFallOverWithAnimationById(
+	Sint32 id, Uint32 angle, Sint32 animation);
 /* Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
    256 colours), the tiles, unscaled and unrotated at depth 255, and the
    picture's size from its shape, pivoted at (pivotX, pivotY). */
-void fdEffectSprInit(struct EFFECT_SPR *spr, Sint32 pivotX, Sint32 pivotY,
+void fdEffectSpriteInit(struct EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY,
 	Uint32 attributes, Sint32 tile);
 /* Draws a field effect's sprite. An unscaled, unrotated sprite needs no affine
    matrix; any other takes one, and one scaled past 1 is drawn in a double-size
    box. The picture's pivot is turned and scaled with it, so the pivot stays on
    the sprite's position. A sprite wholly off screen is not queued; the rest
    join the OAM bucket of their depth. */
-void fdEffectSprDraw(struct EFFECT_SPR *spr);
+void fdEffectSpriteDraw(struct EFFECT_SPR *sprite);
 /* Places sprite at the screen position of world position and draws it. */
-void fdEffectSprDrawAtWorldPos(struct EFFECT_SPR *spr, Sint32 *pos);
+void fdEffectSpriteDrawAtWorldPos(struct EFFECT_SPR *sprite, Sint32 *pos);
 /* Moves a 2D point by its velocity, damped and pulled by gravity
    (fdAdvanceWithGravity2D). */
 void fdBattleEffectStepVector2(Sint32 *vector, Sint32 damping, Sint32 gravity);
@@ -949,15 +952,15 @@ void fdBattleEffectStepVector2(Sint32 *vector, Sint32 damping, Sint32 gravity);
    (fdAdvanceWithGravity3D). */
 void fdBattleEffectStepVector3(Sint32 *vector, Sint32 damping, Sint32 gravity);
 /* Returns the OBJ priority of the actor's sprite. */
-Sint32 fdActorGetSprPriority(struct ACTOR *actor);
+Sint32 fdActorGetSpritePriority(struct ACTOR *actor);
 /* Returns the depth slot the actor's sprite takes, so that a sprite drawn with
    it sorts with it: from its projected depth on the world map, otherwise from
    its screen row. */
-Sint32 fdActorGetSprDepth(struct ACTOR *actor);
+Sint32 fdActorGetSpriteDepth(struct ACTOR *actor);
 /* Fades the palettes to color over ticks ticks, keeping the field's colours
    for fdStartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it holds. */
-void fdStartColTransition(Sint32 ticks, Sint32 col);
-/* Fades the palettes back from fdStartColTransition's colour over ticks
+void fdStartColorTransition(Sint32 ticks, Sint32 color);
+/* Fades the palettes back from fdStartColorTransition's colour over ticks
    ticks, the BG half to grey while Reveal is active; clears
    FLAG_PSYNERGY_TINTED. */
 void fdStartPaletteTransition(Sint32 ticks);
@@ -1002,9 +1005,9 @@ Uint8 fdMapGridClearAttributeBBitsAt(
    coins (SCOOPED_COINS) COIN_ICON_ITEM's. */
 void fdActorShowItemIconById(Sint32 id, Sint32 item);
 /* Frees tightrope index's nodes; it is no longer drawn. */
-void fdTightropeRelease(Sint32 idx);
+void fdTightropeRelease(Sint32 index);
 /* Stops tightrope index's wobble and marks its nodes not to be walked. */
-void fdTightropeSettle(Sint32 idx);
+void fdTightropeSettle(Sint32 index);
 /* Gives an actor the leader's sprite priority, so it is drawn in front of and
    behind what he is, and keeps it there. A unit whose ROM code is compiled
    against another form defines OWN_fdActorTakeLeaderLayer and declares that
@@ -1033,20 +1036,20 @@ void fdScriptShowMessageAndOfferScoop(Sint32 msg);
    with PIXELS_8BPP(1) when solid is set, which in these 16-colour tiles is
    colour 1 in every other column (no caller sets it), else clears them. */
 void fdFadeOverlayFillTiles(Sint32 solid);
-/* Sets up sprite through fdEffectSprInit with the overlay's tiles
+/* Sets up sprite through fdEffectSpriteInit with the overlay's tiles
    (VRAM_CACHE_ENTRY_FADE_OVERLAY), at priority 1 in palette 0. */
-void fdEffectSprInitWithFadeOverlay(
-	struct EFFECT_SPR *spr, Sint32 pivotX, Sint32 pivotY, Uint32 attributes);
+void fdEffectSpriteInitWithFadeOverlay(
+	struct EFFECT_SPR *sprite, Sint32 pivotX, Sint32 pivotY, Uint32 attributes);
 /* Projects the world position (x, y, z) to the screen, stores it as the effect
    sprite's position and draws the sprite. */
-void fdEffectSprDrawAtWorldXYZ(
-	struct EFFECT_SPR *spr, Sint32 x, Sint32 y, Sint32 z);
+void fdEffectSpriteDrawAtWorldXYZ(
+	struct EFFECT_SPR *sprite, Sint32 x, Sint32 y, Sint32 z);
 /* Per-tick update: sets every part of an actor's sprite to colour mode tick %
    6, which cycles its colours. A unit whose ROM code is compiled against
-   another form defines OWN_fdActorCycleSprCols and declares that form
+   another form defines OWN_fdActorCycleSpriteColors and declares that form
    itself. */
-#ifndef OWN_fdActorCycleSprCols
-void fdActorCycleSprCols(struct ACTOR *actor);
+#ifndef OWN_fdActorCycleSpriteColors
+void fdActorCycleSpriteColors(struct ACTOR *actor);
 #endif
 /* Clears the weeds the Cyclone blew away: for each metatile it touched (the
    field state's list from fdPsynergyGatherNearbyMetatiles) inside the width by
@@ -1056,14 +1059,14 @@ void fdActorCycleSprCols(struct ACTOR *actor);
    whose ROM code is compiled against another form defines
    OWN_fdCycloneCopyTouchedMetatiles and declares that form itself. */
 #ifndef OWN_fdCycloneCopyTouchedMetatiles
-void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
+void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIndex,
 	Sint16 width, Sint16 height, Sint32 toX, Sint32 toZ);
 #endif
 /* Runs fdTeleportPlaySparks, fades the palettes back to the saved ones and
    waits 10 ticks. */
 void fdTeleportPlaySparksAndFade(void);
 /* Keeps an actor turning to face another. */
-void fdActorWatchActor(struct ACTOR *actor, struct ACTOR *tgt);
+void fdActorWatchActor(struct ACTOR *actor, struct ACTOR *target);
 /* As fdActorStop, and also clears the actor's target and velocity, so it stands
    where it is. */
 void fdActorResetTargetsAndVelocity(Uint32 actorId);
@@ -1082,7 +1085,7 @@ void fdMotesStart(void);
    drops' sprite words and places it on the ground at the map's focus with its
    first fall staggered, turns on alpha blending of all layers at 16/16,
    schedules the update and, when asked, plays SE_KIRIN (fdQueueMusic). */
-void fdWeatherStartRain(Sint32 withSnd);
+void fdWeatherStartRain(Sint32 withSound);
 /* Stops fdWeatherStartRain's particles. Unused: nothing calls
    fdWeatherStopRainStub. */
 void fdWeatherStopRain(void);
@@ -1090,7 +1093,7 @@ void fdWeatherStopRain(void);
    the stone tablet"): pebbles fly off the tablet as it is struck, and its runes
    light up and fly round the leader, with their sounds, before
    mnSummonShowLearnedMessage. */
-void fdSummonTabletPlayRunes(Sint32 tgtId);
+void fdSummonTabletPlayRunes(Sint32 targetId);
 /* Counts one more weird answer Felix gives
    (MainRoutineStateWork.weirdAnswers). */
 void fdScriptCountAnswer(void);
@@ -1111,7 +1114,7 @@ void fdWorldMapSetReturnLeavingScene(Sint32 scene, Sint32 entrance);
    it grows, turns to the leader, hops twice and leaps at the leader in an arc
    before the battle. The Gabomba Catacombs, Taopo Swamp and Gaia Rock each hide
    one. */
-void fdMadPlantLeapAtLeader(Sint32 spr, Sint32 x, Sint32 z);
+void fdMadPlantLeapAtLeader(Sint32 sprite, Sint32 x, Sint32 z);
 /* Returns 1 while fdScreenTransitionUpdateScanline is the HBlank handler, that
    is, while a centre-line transition runs. */
 Bool fdScreenTransitionIsScanlineActive(void);
@@ -1124,12 +1127,12 @@ Sint32 fdPartyCheckItemLimit(Sint32 item);
    fdRunPushMetatile runs for an actor pushed and for the metatile pushed
    against, answer any target; the facing test alone is skipped while
    MainRoutineStateWork.movementMode is LEADER_MOVEMENT_KEYS. */
-struct CUE_VIEW *fdFindCue(Sint32 kind, Sint32 tgt);
+struct CUE_VIEW *fdFindCue(Sint32 kind, Sint32 target);
 /* Packs the target colours, three channels each, back into the palette copy as
    RGB555. */
 void fdPaletteFadePackTarget(void);
 /* Takes colors as the BG colours of the palette copy and makes them, unchanged,
    the BG colours' target. */
-void fdPaletteFadeLoadPalette(const Uint16 *cols);
+void fdPaletteFadeLoadPalette(const Uint16 *colors);
 
 #endif

@@ -23,9 +23,10 @@ Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *pos)
 	z = actor->z.fixed - cameraZ - actor->y.fixed;
 	*pos++ = x / toFIXED(1);
 	*pos = z / toFIXED(1);
-	if((actor->sprStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
-		*pos -= syResourceGetMetadataRecordStub(actor->spr->entries[0]->anmId)
-					->sprTop;
+	if((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
+		*pos -= syResourceGetMetadataRecordStub(
+			actor->sprite->entries[0]->animationId)
+					->spriteTop;
 	return 0;
 }
 
@@ -49,9 +50,9 @@ UNREAD_RESULT fdStartEncounterTransition(Sint32 unused)
 	Sint32		 i;
 	Sint32		 level;
 
-	sySndPlayStub(MainRoutineStateWork.battleMusic);
-	sySndPlayStub(SE_STOP_ACTION_SE);
-	sySndPlayStub(SE_BEAST_CRY);
+	sySoundPlayStub(MainRoutineStateWork.battleMusic);
+	sySoundPlayStub(SE_STOP_ACTION_SE);
+	sySoundPlayStub(SE_BEAST_CRY);
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		/* On the World Map the flash colours the window palette's black
 		   instead, and the screen closes toward the centre line from its middle
@@ -88,31 +89,31 @@ UNREAD_RESULT fdStartEncounterTransition(Sint32 unused)
 /* Starts the leader's animation for leaving through an exit: centres it on its
    metatile, at the metatile's south edge, stops it and plays animation over 18
    ticks. */
-void fdExitPrepareAnimation(Sint32 anm)
+void fdExitPrepareAnimation(Sint32 animation)
 {
 	ACTOR		  *actor;
-	SPR			  *spr;
+	SPR			  *sprite;
 	SPR_ANIMATION *doorway;
 
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	spr = actor->spr;
-	doorway = (SPR_ANIMATION *)fdSprAddAnimationStub(spr, SPRITE_DOORWAY);
+	sprite = actor->sprite;
+	doorway = (SPR_ANIMATION *)fdSpriteAddAnimationStub(sprite, SPRITE_DOORWAY);
 	{
 		Uint32 cleared = 0;
 		Uint8  hidden = SPRITE_COLOR_HIDDEN;
 
 		/* No shadow as the leader leaves. */
-		spr->flg = cleared;
-		doorway->colMode = hidden;
+		sprite->flags = cleared;
+		doorway->colorMode = hidden;
 		/* Keep the metatile and put the leader at its middle in x and its south
 		   edge in z. */
 		actor->x.fixed = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 		actor->z.fixed = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(16);
-		actor->velX = cleared;
-		actor->velZ = cleared;
-		actor->tgtX = ACTOR_NO_TARGET;
-		actor->tgtZ = ACTOR_NO_TARGET;
-		fdActorSelectAnimationStub(actor, anm);
+		actor->velocityX = cleared;
+		actor->velocityZ = cleared;
+		actor->targetX = ACTOR_NO_TARGET;
+		actor->targetZ = ACTOR_NO_TARGET;
+		fdActorSelectAnimationStub(actor, animation);
 		sySynch(18);
 	}
 }
@@ -137,24 +138,24 @@ void fdExitStartStairsDown(void)
 /* Plays the leader's arrival animation through an exit: centred on its metatile
    at the metatile's north edge, the leader plays animation for 30 ticks, loses
    the hidden doorway part and walks 8 pixels south. */
-void fdEntrancePlayArrivalAnimation(Sint32 anm)
+void fdEntrancePlayArrivalAnimation(Sint32 animation)
 {
 	ACTOR		  *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	SPR			  *spr = leader->spr;
+	SPR			  *sprite = leader->sprite;
 	SPR_ANIMATION *doorway =
-		(SPR_ANIMATION *)fdSprAddAnimationStub(spr, SPRITE_DOORWAY);
-	spr->flg = 0;
-	doorway->colMode = SPRITE_COLOR_HIDDEN;
+		(SPR_ANIMATION *)fdSpriteAddAnimationStub(sprite, SPRITE_DOORWAY);
+	sprite->flags = 0;
+	doorway->colorMode = SPRITE_COLOR_HIDDEN;
 	leader->x.fixed = (leader->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	leader->z.fixed &= FIELD_METATILE_MASK;
-	fdActorSelectAnimationStub(leader, anm);
+	fdActorSelectAnimationStub(leader, animation);
 	sySynch(30);
 	/* Back to one sprite part, with its shadow, walking 8 pixels south at 1
 	   pixel a tick. */
-	spr->cnt = 1;
-	fdSprAnimationClearStub(spr->entries[1]);
-	spr->entries[1] = NULL;
-	spr->flg = SPRITE_FLAG_SHADOW;
+	sprite->count = 1;
+	fdSpriteAnimationClearStub(sprite->entries[1]);
+	sprite->entries[1] = NULL;
+	sprite->flags = SPRITE_FLAG_SHADOW;
 	leader->acceleration = toFIXED(1);
 	leader->speedLimit = toFIXED(1);
 	fdActorSetMoveTargetStub(
@@ -199,10 +200,11 @@ Sint32 fdEntrancePlayArrival(void)
 				fdCameraMoveWithinMapBounds(
 					CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 				/* Until the next tick's fall would reach the ground. */
-				while(leader->y.fixed + leader->velY > leader->groundHeight) {
+				while(leader->y.fixed + leader->velocityY >
+					leader->groundHeight) {
 					sySynch(1);
 				}
-				sySndPlayStub(SE_DOOR_CLOSE);
+				sySoundPlayStub(SE_DOOR_CLOSE);
 				leader->y.fixed = leader->groundHeight;
 				fdActorSelectAnimationStub(leader, ANIM_LEADER_LEAN_BACK);
 				fdScriptWait(15);

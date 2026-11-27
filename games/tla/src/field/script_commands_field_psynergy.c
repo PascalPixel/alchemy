@@ -4,15 +4,15 @@
 #include "field/field_effect.h"
 
 /* If the scene's sprite is active, stops its update callback
-   (fdPsynergyDrawCanvasSpr) and frees its VRAM cache entry. */
-void fdPsynergyReleaseSceneSpr(void)
+   (fdPsynergyDrawCanvasSprite) and frees its VRAM cache entry. */
+void fdPsynergyReleaseSceneSprite(void)
 {
-	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffectState;
 
-	if(effectState->sprActive != 0) {
-		effectState->sprActive = 0;
-		syCloseEvent(fdPsynergyDrawCanvasSpr);
-		syVRAMCacheFreeEntry(effectState->sprVramSlot);
+	if(effectState->spriteActive != 0) {
+		effectState->spriteActive = 0;
+		syCloseEvent(fdPsynergyDrawCanvasSprite);
+		syVRAMCacheFreeEntry(effectState->spriteVramSlot);
 	}
 }
 
@@ -191,24 +191,24 @@ Uint8 fdMapGridSetMetatileAttributesAt(
 Uint8 fdMapGridSetMetatileAttributeBitsAt(
 	Sint32 x, Sint32 z, Sint32 layer, Sint32 bits)
 {
-	Sint32		  flg = fdMapGridGetMetatileAttributesAt(x, z, layer);
+	Sint32		  flags = fdMapGridGetMetatileAttributesAt(x, z, layer);
 	MAP_METATILE *metatile = fdMapGridGetMetatileAt(x, z, layer);
 
-	flg |= bits;
-	metatile->attributeB = flg;
-	return flg;
+	flags |= bits;
+	metatile->attributeB = flags;
+	return flags;
 }
 
 /* Clears bits in the attribute byte of the map metatile at x, z in layer. */
 Uint8 fdMapGridClearAttributeBBitsAt(
 	Sint32 x, Sint32 z, Sint32 layer, Sint32 bits)
 {
-	Sint32		  flg = fdMapGridGetMetatileAttributesAt(x, z, layer);
+	Sint32		  flags = fdMapGridGetMetatileAttributesAt(x, z, layer);
 	MAP_METATILE *metatile = fdMapGridGetMetatileAt(x, z, layer);
 
-	flg &= ~bits;
-	metatile->attributeB = flg;
-	return flg;
+	flags &= ~bits;
+	metatile->attributeB = flags;
+	return flags;
 }
 
 /* Returns 1 when two upright cylinders overlap, their centres closer on the
@@ -236,13 +236,13 @@ Sint32 fdPsynergyCheckOverlap(
    a quarter to full size. */
 void fdPsynergyGrowFromCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	ACTOR			   *mainActor = scene->caster;
 	FIXED				start[3];
 	Sint32				i = 0;
 
-	if(scene->ang != TRIG_TURN * 3 / 4)
-		fdActorSetSprPriorityDirectStub(actor, 0);
+	if(scene->angle != TRIG_TURN * 3 / 4)
+		fdActorSetSpritePriorityDirectStub(actor, 0);
 	start[0] = mainActor->x.fixed;
 	start[1] = mainActor->y.fixed + toFIXED(16);
 	start[2] = mainActor->z.fixed;
@@ -261,7 +261,7 @@ void fdPsynergyGrowFromCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 void fdPsynergyShrinkToCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 {
 	ACTOR *mainActor =
-		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
+		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffectState)->caster;
 	FIXED  start[3];
 	Sint32 i;
 
@@ -290,12 +290,12 @@ ACTOR *fdBattleEffectSpawnScatterParticle(Sint32 x, Sint32 y, Sint32 z)
 		fdActorStartScriptStub(actor, FieldEffectFragmentScript);
 		actor->speedLimit = syRandom() + toFIXED(1);
 		actor->acceleration = toFIXED(1);
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->gravity = toFIXED(1) / 25;
 		magnitude = syRandom();
 		magnitude -= syRandom();
-		actor->velY = magnitude;
-		fdActorSetTargetPosFromMagnitudeAng(
+		actor->velocityY = magnitude;
+		fdActorSetTargetPosFromMagnitudeAngle(
 			actor, syRandom() * 24 + toFIXED(8), syRandom());
 	}
 	return actor;
@@ -305,39 +305,39 @@ ACTOR *fdBattleEffectSpawnScatterParticle(Sint32 x, Sint32 y, Sint32 z)
 Sint32 fdResourceTableCountFreeBlocks(void)
 {
 	Uint8 *marker = VramCacheBlockOwners;
-	Sint32 freeCnt;
+	Sint32 freeCount;
 	Sint32 remaining;
 
-	freeCnt = 0;
+	freeCount = 0;
 	remaining = VRAM_BLOCK_COUNT;
 	do {
 		if(*marker++ == VRAM_BLOCK_OWNER_FREE) {
-			freeCnt++;
+			freeCount++;
 		}
 		remaining--;
 	} while(remaining != 0);
-	return freeCnt;
+	return freeCount;
 }
 
-/* Makes srcSpr share sharedSpr's VRAM block, releasing its own; with
-   no sharedSpr it keeps its block. */
-void *fdSprShareVRAMCacheEntry(void *srcSpr, void *sharedSpr)
+/* Makes srcSprite share sharedSprite's VRAM block, releasing its own; with
+   no sharedSprite it keeps its block. */
+void *fdSpriteShareVRAMCacheEntry(void *srcSprite, void *sharedSprite)
 {
 	SPR *shared;
-	SPR *spr;
+	SPR *sprite;
 
-	spr = srcSpr;
+	sprite = srcSprite;
 	shared = NULL;
-	if(spr != NULL) {
-		if(sharedSpr == NULL) {
-			spr->retainCacheEntry = 1;
+	if(sprite != NULL) {
+		if(sharedSprite == NULL) {
+			sprite->retainCacheEntry = 1;
 		} else {
-			syVRAMCacheFreeEntry(spr->slot);
-			spr->slot = ((SPR *)sharedSpr)->slot;
-			spr->retainCacheEntry = 1;
-			spr = sharedSpr;
+			syVRAMCacheFreeEntry(sprite->slot);
+			sprite->slot = ((SPR *)sharedSprite)->slot;
+			sprite->retainCacheEntry = 1;
+			sprite = sharedSprite;
 		}
-		shared = spr;
+		shared = sprite;
 	}
 	return shared;
 }
@@ -349,20 +349,20 @@ void *fdSprShareVRAMCacheEntry(void *srcSpr, void *sharedSpr)
    sprite priority 0 and animation 1. */
 ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	ACTOR			   *actor;
 
 	actor = fdActorCreateStub(kind, x, y, z);
 	if(actor != NULL) {
-		if(actor->sprStorageKind == ACTOR_SPRITE_NONE) {
+		if(actor->spriteStorageKind == ACTOR_SPRITE_NONE) {
 			fdActorReleaseStub(actor);
 			return NULL;
 		}
 		actor->groundHeight = scene->caster->groundHeight;
-		actor->motionFlg = ACTOR_FLOATS;
-		actor->priFlg = ACTOR_PRIORITY_OVERHEAD;
-		((SPR *)actor->spr)->image.pri = 0;
-		fdActorSetSprFlagsStub(actor, 0);
+		actor->motionFlags = ACTOR_FLOATS;
+		actor->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
+		((SPR *)actor->sprite)->image.priority = 0;
+		fdActorSetSpriteFlagsStub(actor, 0);
 		fdActorSelectAnimationStub(actor, 1);
 	}
 	return actor;
@@ -370,7 +370,8 @@ ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 
 /* Pauses or resumes every actor but the Halted one and excluded, and sets their
    animation speed, as Sand stills the field around the leader. */
-void fdActorSetOthersPaused(ACTOR *excluded, Sint32 paused, Sint32 anmSpeed)
+void fdActorSetOthersPaused(
+	ACTOR *excluded, Sint32 paused, Sint32 animationSpeed)
 {
 	Sint16 *haltedId;
 	ACTOR  *actor;
@@ -382,7 +383,7 @@ void fdActorSetOthersPaused(ACTOR *excluded, Sint32 paused, Sint32 anmSpeed)
 		actor = fdActorLookup(actorId);
 		if(actorId != *haltedId && actor != NULL && actor != excluded) {
 			actor->paused = paused;
-			fdActorSetAnimationSpeedStub(actor, anmSpeed);
+			fdActorSetAnimationSpeedStub(actor, animationSpeed);
 		}
 		actorId++;
 		/* BUG: one past the actor table: fdActorLookup(FIELD_ACTOR_COUNT) reads
@@ -399,32 +400,33 @@ void fdActorSetOthersPaused(ACTOR *excluded, Sint32 paused, Sint32 anmSpeed)
 
 /* Fades the palettes to color over ticks ticks, keeping the field's colours
    for fdStartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it holds. */
-void fdStartColTransition(Sint32 ticks, Sint32 col)
+void fdStartColorTransition(Sint32 ticks, Sint32 color)
 {
 	FIELD_STATE	 *field = RamHeapSlots->fieldState;
-	PALETTE_FADE *state = RamHeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->paletteFade;
 
 	/* The OBJ colours are kept always, the BG colours only while Reveal has not
 	   greyed them. */
-	syDMAXCopy(&state->tgt[BG_CHANNELS], &field->savedFadeTgt[BG_CHANNELS],
+	syDMAXCopy(&state->target[BG_CHANNELS],
+		&field->savedFadeTarget[BG_CHANNELS],
 		DMA_COPY_WORDS((PALETTE_FADE_CHANNELS - BG_CHANNELS) / 2), REG_DMA3);
 	if(field->revealActive == 0)
-		syDMAXCopy(state->tgt, field->savedFadeTgt,
+		syDMAXCopy(state->target, field->savedFadeTarget,
 			DMA_COPY_WORDS(BG_CHANNELS / 2), REG_DMA3);
-	syDMAXCopy(state->tgt, state->cur, DMA_COPY_WORDS(sizeof state->cur / 4),
-		REG_DMA3);
-	fdPaletteFadeSetTarget(PALETTE_TINT_CUSTOM | col, PALETTES_BG);
+	syDMAXCopy(state->target, state->current,
+		DMA_COPY_WORDS(sizeof state->current / 4), REG_DMA3);
+	fdPaletteFadeSetTarget(PALETTE_TINT_CUSTOM | color, PALETTES_BG);
 	syGameFlagSet(FLAG_PSYNERGY_TINTED);
 	fdPaletteFadeStartInterpolation(ticks);
 }
 
-/* Fades the palettes back from fdStartColTransition's colour over ticks
+/* Fades the palettes back from fdStartColorTransition's colour over ticks
    ticks, the BG half to grey while Reveal is active; clears
    FLAG_PSYNERGY_TINTED. */
 void fdStartPaletteTransition(Sint32 ticks)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
-	Sint32		 savedPalettes = (Sint32)state->savedFadeTgt;
+	Sint32		 savedPalettes = (Sint32)state->savedFadeTarget;
 
 	fdPaletteFadeSetTarget(savedPalettes, PALETTES_OBJECTS);
 	if(state->revealActive != 0)
@@ -438,34 +440,34 @@ void fdStartPaletteTransition(Sint32 ticks)
 /* Tints the field for a Psynergy animation: a tint chosen by the tick counter
    (so each cast looks a little different), fixed for some animations, and
    forced by the tint flags; then fades towards it over eight ticks. The
-   palettes are copied by fdStartColTransition. */
-void fdPsynergyFadeToCastCol(void)
+   palettes are copied by fdStartColorTransition. */
+void fdPsynergyFadeToCastColor(void)
 {
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
 	Sint32				tint;
-	Sint32				anm;
+	Sint32				animation;
 
 	tint = TickCount & 7;
-	anm = scene->fieldPsynergy;
-	if(anm == FIELD_PSYNERGY_POUND)
+	animation = scene->fieldPsynergy;
+	if(animation == FIELD_PSYNERGY_POUND)
 		tint = PSYNERGY_TINT_BLUE;
-	if(anm == FIELD_PSYNERGY_BLAZE)
+	if(animation == FIELD_PSYNERGY_BLAZE)
 		tint = PSYNERGY_TINT_RED;
-	if(anm == FIELD_PSYNERGY_SAND)
+	if(animation == FIELD_PSYNERGY_SAND)
 		tint = PSYNERGY_TINT_GREY;
-	if(anm == FIELD_PSYNERGY_CYCLONE)
+	if(animation == FIELD_PSYNERGY_CYCLONE)
 		tint = PSYNERGY_TINT_BLUE;
-	if(anm == FIELD_PSYNERGY_SCOOP)
+	if(animation == FIELD_PSYNERGY_SCOOP)
 		tint = PSYNERGY_TINT_YELLOW;
-	if(anm == FIELD_PSYNERGY_ARROW)
+	if(animation == FIELD_PSYNERGY_ARROW)
 		tint = PSYNERGY_TINT_BLUE;
-	if(anm == FIELD_PSYNERGY_PARCH)
+	if(animation == FIELD_PSYNERGY_PARCH)
 		tint = PSYNERGY_TINT_GREY;
-	if(anm == FIELD_PSYNERGY_TREMOR)
+	if(animation == FIELD_PSYNERGY_TREMOR)
 		tint = PSYNERGY_TINT_DARK_GREY;
-	if(anm == FIELD_PSYNERGY_GRIND)
+	if(animation == FIELD_PSYNERGY_GRIND)
 		tint = PSYNERGY_TINT_BLUE;
-	if(anm == FIELD_PSYNERGY_BURST)
+	if(animation == FIELD_PSYNERGY_BURST)
 		tint = PSYNERGY_TINT_GREY;
 	if(scene->fieldPsynergy == FIELD_PSYNERGY_TELEPORT)
 		tint = PSYNERGY_TINT_DARK_GREY;
@@ -486,7 +488,7 @@ void fdPsynergyFadeToCastCol(void)
 		tint = PSYNERGY_TINT_DARK_GREY;
 	if(syGameFlagGet(FLAG_PSYNERGY_TINT(PSYNERGY_TINT_GREY)))
 		tint = PSYNERGY_TINT_GREY;
-	fdStartColTransition(8, FieldPsynergyCastColors[tint]);
+	fdStartColorTransition(8, FieldPsynergyCastColors[tint]);
 }
 
 #undef fdActorSetAnimationSpeedStub

@@ -46,10 +46,10 @@
 #include "field/field_sprite.h"
 
 struct EFFECT_SPR;
-void *btEffectSprAcquire(
+void *btEffectSpriteAcquire(
 	Sint32 width, Sint32 height, Uint32 shape, Sint32 mode);
-void *btEffectSprCreateWithTiles(
-	Sint32 width, Sint32 height, Sint32 attributes, Sint32 flg);
+void *btEffectSpriteCreateWithTiles(
+	Sint32 width, Sint32 height, Sint32 attributes, Sint32 flags);
 
 /* A point of a streak: x, y and z. */
 typedef struct STREAK_POINT {
@@ -72,10 +72,10 @@ typedef struct PLUNGE_STREAK {
 /* The element streaks' state, which btEffectStartElementStreaks allocates in
    the HEAP_SLOT_BATTLE_EFFECT heap slot in place of the battle effect state. */
 typedef struct ELEMENT_STREAKS_STATE {
-	Sint32 frm;			 /* the streaks' tick count (btEffectDrawStreaks) */
+	Sint32 frame;		 /* the streaks' tick count (btEffectDrawStreaks) */
 	Sint32 halvePending; /* the streaks are drawn: halve the canvas into VRAM */
 	/* Ticks of the background's fade left (btEffectDimBackgroundStep). */
-	Sint32 fadeFrm;
+	Sint32 fadeFrame;
 	Sint32 fadeStep; /* the fade's steps so far, BACKGROUND_LEVEL_STEP each */
 } ELEMENT_STREAKS_STATE;
 
@@ -83,18 +83,18 @@ typedef struct ELEMENT_STREAKS_STATE {
    palette, as fields or as one halfword. */
 typedef struct RUIN_OBJECT {
 	/* the sprite's next and OAM attributes 0 and 1 */
-	Uint8 unusedBeforeAttr[8];
+	Uint8 unusedBeforeAttribute[8];
 
 	union {
 		struct {
 			Uint16 tile : 10;
-			Uint16 pri : 2;
-			Uint16 pal : 4;
+			Uint16 priority : 2;
+			Uint16 palette : 4;
 		} bits;
 
 		Uint16 all;
 		Uint8  bytes[2];
-	} attr;
+	} attribute;
 } RUIN_OBJECT;
 
 /* The map cell buffer holds WIN0's line table and then the droplets Douse's
@@ -163,7 +163,7 @@ extern const SCALE ProcneUnitScale; /* the comets' unit scale */
 
 /* The VRAM address of a sprite's tiles, from its VRAM cache entry. */
 #define OBJ_TILES(sprite) \
-	(OBJ_VRAM0 + VramCacheEntries[((SPR *)(sprite))->slot].ofs)
+	(OBJ_VRAM0 + VramCacheEntries[((SPR *)(sprite))->slot].offset)
 
 /* Index of DMAxCNT_H, the control half, in a channel's 16-bit registers. */
 #define DMA_CONTROL_HALF 5
@@ -220,11 +220,11 @@ extern const SCALE ProcneUnitScale; /* the comets' unit scale */
 /* Writes one row of BG2's map for the canvas, two tiles at a time. */
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset) \
 	for((column) = 0; (column) != 8; (column)++, (offset) += 2) { \
-		Sint32 tileIdx; \
+		Sint32 tileIndex; \
 		Sint16 pair; \
 \
-		tileIdx = (row) * 16 + (column) * 2; \
-		pair = ((tileIdx + 1) << 8) | tileIdx; \
+		tileIndex = (row) * 16 + (column) * 2; \
+		pair = ((tileIndex + 1) << 8) | tileIndex; \
 		*(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair; \
 	}
 
@@ -254,7 +254,7 @@ extern const SCALE ProcneUnitScale; /* the comets' unit scale */
 #define SUMMON_PROJECTION_CENTER_Y 240
 
 /* The ticks the battle background darkens behind an effect's canvas
-   (state->fadeFrm, btEffectDarkenBackgroundStep). */
+   (state->fadeFrame, btEffectDarkenBackgroundStep). */
 #define BACKGROUND_DARKEN_TICKS	  24
 /* The level btBackgroundLoadStub darkens the battle's own background to as it
    comes back after an effect: as dark as the canvas's fade left it. */
@@ -338,7 +338,7 @@ typedef enum MODEL_KIND {
 	MODEL_SOLID_NARROW		 /* MODEL_SOLID into a narrow target */
 } MODEL_KIND;
 
-/* RENDER_MODEL.flg that the rasterizer kernels read: a one-sided model draws
+/* RENDER_MODEL.flags that the rasterizer kernels read: a one-sided model draws
    only the faces wound one way round on the screen, clockwise with
    MODEL_CLOCKWISE and anticlockwise without it, and skips the others. */
 #define MODEL_ONE_SIDED 2
@@ -658,8 +658,8 @@ typedef enum TARGET_STRIKE_STYLE {
    by `motion`. */
 #define EFFECT_STRIKE_TARGET(effect, i, ticks, motion) \
 	(btEffectTintBattler( \
-		 (effect)->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks), \
-		btMotionApplyKnockbackStub((effect)->tgts[i], motion))
+		 (effect)->targets[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, ticks), \
+		btMotionApplyKnockbackStub((effect)->targets[i], motion))
 
 /* A blitter that clips its rectangles to the canvas. */
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -910,7 +910,7 @@ struct STRIP_QUAD;
 
 /* display.c */
 void btEffectAdvanceScrollOnInterval(void);
-void btEffectConfigureEffectDisp(void);
+void btEffectConfigureEffectDisplay(void);
 void btEffectAdvanceBg2OnInterval(void);
 
 /* canvas.c */
@@ -922,14 +922,14 @@ void btEffectCountDownBattlerTints(void);
 void btEffectStartTiledCanvas(Sint32 bgControl);
 void btEffectStartTiledCanvasFilled(Sint32 bgControl);
 void btEffectProcessPendingBlock2Transfer(void);
-void btDispApplyBg2Affine(void);
+void btDisplayApplyBg2Affine(void);
 /* Sets up the canvas tile map on BG1. */
 void btEffectSetupCanvasTileMap(void);
 /* Marks the transition done and shows the battle view again. */
 void btEffectHideBg1AndRestoreBackdrop(void);
 void btEffectTransferFullScreenImage(void);
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col);
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color);
 void btEffectBuildCanvasTilemap(void);
 /* The 64x64 stamp Haures draws in 256 colours: the VRAM address of its sprite's
    tiles, two words before the state's end, past what struct BATTLE_EFFECT_STATE
@@ -947,7 +947,7 @@ void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out);
 
 /* prism.c */
 void btEffectUpdatePhasePalette(
-	Sint32 frm, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
+	Sint32 frame, Sint32 redPhase, Sint32 greenPhase, Sint32 bluePhase);
 
 /* djinn_heal.c state->cameraPhase, which btCameraApplyPhasedDelta and the
    effects that turn the camera through it (Fire, Froth) pass between them. */
@@ -962,14 +962,14 @@ void btCameraApplyPhasedDelta(void);
 
 /* dispatch.c */
 void btEffectShowLivingTargets(BATTLE_EFFECT_PARM *args);
-void btEffectCallNoOperation(Sint32 cnt);
+void btEffectCallNoOperation(Sint32 count);
 void btEffectBuildWindowEdgeTable(void);
 
 /* battler_tint.c Shows a battler in a palette and a pose, for `ticks` ticks
-   counted in timer slot `tmrSlot`; TINT_KEEP leaves any of them as it is. */
+   counted in timer slot `timerSlot`; TINT_KEEP leaves any of them as it is. */
 void btEffectTintBattler(
-	Sint32 unitId, Sint32 palette, Sint32 pose, Sint32 tmrSlot, Sint32 ticks);
-void btEffectSetupBlendedDisp(void);
+	Sint32 unitId, Sint32 palette, Sint32 pose, Sint32 timerSlot, Sint32 ticks);
+void btEffectSetupBlendedDisplay(void);
 
 /* stat_change.c */
 void btEffectRunImpair(BATTLE_EFFECT_PARM *args);
@@ -977,7 +977,7 @@ void btEffectRunDull(BATTLE_EFFECT_PARM *args);
 void btEffectRunWeaken(BATTLE_EFFECT_PARM *args);
 
 /* eruption.c */
-void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri);
+void btEffectCreateSprites(Sint32 count, Sint32 spriteId, Uint32 priority);
 
 /* projectiles.c */
 void btParticleAdvanceWithGravity3D(
@@ -987,13 +987,13 @@ void btParticleAdvanceWithGravity2D(
 void btEffectRunDjinniEntrance(
 	BATTLE_EFFECT_PARM *effect, Uint32 packed, Sint32 *screen, Sint32 *world);
 void btEffectSetApproachMotion(
-	Sint32 id, Sint32 tgtId, Sint32 ticks, Sint32 rate);
+	Sint32 id, Sint32 targetId, Sint32 ticks, Sint32 rate);
 
 /* djinn_attacks.c */
 void btResourceLoadAndDecompress(
-	Sint32 id, void *dst, Sint32 skipPalette, Sint32 copyPalette);
+	Sint32 id, void *dest, Sint32 skipPalette, Sint32 copyPalette);
 
-/* hail.c Shakes the camera while state->shakeFrm lasts. */
+/* hail.c Shakes the camera while state->shakeFrame lasts. */
 void btCameraShake(Sint32 rangeX, Uint32 rangeY);
 void btCameraApplyVerticalShake(Sint32 range);
 
@@ -1002,11 +1002,11 @@ SPR_ANIMATION *btAnimationObjectAllocateEmpty(void);
 
 /* spider_web.c */
 void btEffectStartActorMotion(Sint32 id, Sint32 force, Sint32 acceleration,
-	Sint32 speedLimit, Sint32 velY, Sint32 percent);
+	Sint32 speedLimit, Sint32 velocityY, Sint32 percent);
 void btRenderBuildQuadStrip(
-	struct STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 cnt);
+	struct STRIP_QUAD *quad, Sint32 width, Sint32 height, Sint32 count);
 void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *effect, Sint32 mode);
-void btPaletteMirrorBgCols(void);
+void btPaletteMirrorBgColors(void);
 void btGraphicsLoadGreyRamp(void);
 
 /* azul.c */
@@ -1015,8 +1015,8 @@ void btEffectPosProjectBattler(Sint32 id, SCREEN_POINT *pos);
 void btEffectGetTargetsMidpoint(SCREEN_POINT *pos);
 void btMeshBuildGrid(MESH_TRIANGLE *triangles, Sint32 columns, Sint32 rows,
 	Sint32 cellWidth, Sint32 cellHeight);
-void btColBufferScaleStub(void *src, void *dst, Sint32 scale, Sint32 cnt);
-void btEffectPosProjectSpr(Sint32 id, SCREEN_POINT *pos);
+void btColorBufferScaleStub(void *src, void *dest, Sint32 scale, Sint32 count);
+void btEffectPosProjectSprite(Sint32 id, SCREEN_POINT *pos);
 
 /* positions.c */
 void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind);
@@ -1031,11 +1031,11 @@ void btEffectStepPaletteToResource(Sint32 resource);
 void btEffectWipeCanvas(Sint32 direction, Sint32 fill);
 
 /* particle_streams.c */
-void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z);
+void btEffectPlaceFormationSprites(Sint32 formation, Sint32 x, Sint32 z);
 void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y);
 void btEffectArmPaletteHBlankDMA(void);
 void fdRenderApplyProjectedPlacementStub(
-	SPR *spr, Sint32 *pos, Sint32 *scale, Sint32 mode);
+	SPR *sprite, Sint32 *pos, Sint32 *scale, Sint32 mode);
 
 /* ramses.c An actor's recoil motion, through a stub call. */
 void btMotionApplyKnockbackStub(Sint32 actor, Sint32 motion);
@@ -1048,7 +1048,7 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *effect, Sint32 variant);
 
 /* undead_sword.c */
 void btPictureMirrorIntoQuadrants(
-	Uint8 *src, Uint8 *dst, Sint32 width, Sint32 height);
+	Uint8 *src, Uint8 *dest, Sint32 width, Sint32 height);
 void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *effect, Sint32 mode);
 
@@ -1104,15 +1104,16 @@ void btEffectRunBallAttack(BATTLE_EFFECT_PARM *effect);
 /* odyssey.c The five-argument blitter builder's stub call, which only a call in
    odyssey.c that is never taken names. */
 Sint32 btEffectBuildBlitterStub(Sint32 slot, Sint32 widthShift,
-	Sint32 heightShift, Sint32 flg, Uint32 mode);
+	Sint32 heightShift, Sint32 flags, Uint32 mode);
 void   btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void));
 void   btIrisRestoreBattle(void);
 void   btEffectBuildSteepShadeRampWave(
-	  Uint8 *tbl, Uint32 cnt, Uint32 repeats, Sint32 scale);
+	  Uint8 *table, Uint32 count, Uint32 repeats, Sint32 scale);
 
 /* moloch.c */
-RENDER_MODEL *btRenderAllocateModelList(Sint32 cnt);
-void btRenderTransformVertices(const void *corners, void *vertices, Sint32 cnt);
+RENDER_MODEL *btRenderAllocateModelList(Sint32 count);
+void		  btRenderTransformVertices(
+			 const void *corners, void *vertices, Sint32 count);
 
 /* target_motes.c Glowing orbs spiral in on each target.
 
@@ -1120,14 +1121,15 @@ void btRenderTransformVertices(const void *corners, void *vertices, Sint32 cnt);
 void btEffectRunMysticFlame(BATTLE_EFFECT_PARM *args);
 
 /* Functions of other modules the parts call. */
-Sint32 fdSprStartAnimationStub(void *object, Sint32 value);
+Sint32 fdSpriteStartAnimationStub(void *object, Sint32 value);
 void   btActorSpawnObjectsForListStub(Sint16 *list, Sint32 mode);
 void   btBackgroundLoadStub(Sint32 mode, Sint32 resource, Sint32 level);
 void   btBackgroundSetModeStub(Sint32 mode, Sint32 resource, Sint32 speed);
 void   btBackgroundSetPaletteLevelStub(Sint32 background, Sint32 level);
 /* Turns the battle camera, over `ticks` ticks, to look at the point between
    two units. */
-void btCameraSetViewAtPairMidpointStub(Sint32 actor, Sint32 tgt, Sint32 ticks);
+void btCameraSetViewAtPairMidpointStub(
+	Sint32 actor, Sint32 target, Sint32 ticks);
 void btCameraSetViewStub(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom);
 void btObjectPutStub(void);
 /* Spawns the battle objects of a list of units through its stub call. */
@@ -1136,11 +1138,11 @@ void btObjectSpawnObjectsForListStub(
 /* btPlaybackStart through its stub call. */
 void btPlaybackStartStub(Sint32 phase);
 /* Whether an enemy's sprite takes the heavy impact, through its stub call. */
-Sint32 btSprHasHeavyImpactStub(Sint32 enemyId);
+Sint32 btSpriteHasHeavyImpactStub(Sint32 enemyId);
 Sint32 btUnitGetEffectHeightStub(Sint32 unit);
-void  *btActorGetSprStub(void *object, Sint32 idx);
-void   btObjectDestroySprsStub(Sint32 actor);
-void   fdSprRemoveAnimationStub(void *record, Sint32 entry);
+void  *btActorGetSpriteStub(void *object, Sint32 index);
+void   btObjectDestroySpritesStub(Sint32 actor);
+void   fdSpriteRemoveAnimationStub(void *record, Sint32 entry);
 void   fdActorShadowLoadTilesStub(void);
 void   fdActorShadowFreeTilesStub(void);
 

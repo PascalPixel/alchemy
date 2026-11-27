@@ -293,7 +293,7 @@ static void scLeaderSlideOnIce(void);
 /* A sick person trembles: a quick squash, then a pause. */
 static Sint32 scImilUpdateTremble(ACTOR *actor)
 {
-	switch(actor->tmr) {
+	switch(actor->timer) {
 	case 6:
 		actor->scaleX -= toFIXED(1) / 4;
 		actor->scaleY += toFIXED(1) / 8;
@@ -310,13 +310,13 @@ static Sint32 scImilUpdateTremble(ACTOR *actor)
 		actor->scaleX += toFIXED(1) / 16;
 		actor->scaleY -= toFIXED(1) / 32;
 		if(actor->userValue != 0) {
-			actor->tmr = (Uint32)syRandomNext() % 40 + 40;
+			actor->timer = (Uint32)syRandomNext() % 40 + 40;
 		} else {
-			actor->tmr = (Uint32)syRandomNext() % 20 + 20;
+			actor->timer = (Uint32)syRandomNext() % 20 + 20;
 		}
 		break;
 	}
-	actor->tmr--;
+	actor->timer--;
 	return 1;
 }
 
@@ -518,7 +518,7 @@ static void scImilTalkToOldMan(void)
 			fdScriptEnd();
 		} else {
 			fdScriptStart();
-			fdActorGet(ACTOR_OLD_MAN)->tmr = 10;
+			fdActorGet(ACTOR_OLD_MAN)->timer = 10;
 			fdActorSetScript(ACTOR_OLD_MAN, ImilTrembleScript);
 			fdScriptSetMessageId(MsgMercuryOoohHelpMe);
 			/* "Oooh... Help me..." */
@@ -545,7 +545,7 @@ static void scImilTalkToOldMan(void)
 			fdActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
 			/* "Get Mia... Please, get Mia!" */
 			fdScriptShowMessage(ACTOR_OLD_WOMAN, 0);
-			fdActorGet(ACTOR_OLD_WOMAN)->collisionFlg ^= ACTOR_PUSHABLE;
+			fdActorGet(ACTOR_OLD_WOMAN)->collisionFlags ^= ACTOR_PUSHABLE;
 			syImportGameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
 			fdScriptEnd();
 		}
@@ -702,14 +702,14 @@ static void scImilOpenDoorAndExit(void)
 	for(i = ACTOR_FIRST_PLACED; i <= ACTOR_LAST_ID; i++) {
 		actor = fdActorGet(i);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 		}
 	}
 	exit = (Sint16)(state->stepCue - EXIT_METATILE_BEHAVIOR_OFFSET);
 	if(exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
-		sySndPlay(SE_THUMP);
+		sySoundPlay(SE_THUMP);
 	} else {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 	}
 	{
 		Sint32 x = ImilDoorMetatilePoints[exit - 1][0];
@@ -722,10 +722,10 @@ static void scImilOpenDoorAndExit(void)
 	if(exit == IMIL_TO_ICE_ROOMS_NORTHEAST) {
 		fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
 		fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-		fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
+		fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
 		fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
 	} else {
-		fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+		fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 		fdActorCenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
 	}
 	fdScriptWait(16);
@@ -946,11 +946,11 @@ Sint32 scInit(void)
 			gmFlagClear(FLAG_IMIL_NO_FOOTPRINTS);
 			gmFlagClear(FLAG_IMIL_FOOTPRINTS);
 		}
-		leader->tmr = 0;
+		leader->timer = 0;
 		leader->userValue = 0;
 		sySetTickEvent(scImilSpawnChimneySmoke, EVENT_PASS_TICK);
 		sySetTickEvent(scImilUpdateFootprints, EVENT_PASS_TICK);
-		fdActorSetSprPriority(ACTOR_SNOWMAN, 1);
+		fdActorSetSpritePriority(ACTOR_SNOWMAN, 1);
 		if(gmFlagGet(FLAG_IMIL_SNOWMAN_MOVED)) {
 			scImilPlaceMovedSnowman();
 		}
@@ -963,10 +963,11 @@ Sint32 scInit(void)
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 		entrance = MainRoutineStateWork.entrance;
 		if(entrance == ICE_ROOMS_HOUSE_SOUTHWEST) {
-			fdActorSetSprColById(ACTOR_INVISIBLE_CRATE, SPRITE_COLOR_HIDDEN);
-			fdActorGet(ACTOR_INVISIBLE_CRATE)->collisionFlg |=
+			fdActorSetSpriteColorById(
+				ACTOR_INVISIBLE_CRATE, SPRITE_COLOR_HIDDEN);
+			fdActorGet(ACTOR_INVISIBLE_CRATE)->collisionFlags |=
 				ACTOR_NOT_TARGETED;
-			fdActorSetSprPriority(ACTOR_INVISIBLE_CRATE, 1);
+			fdActorSetSpritePriority(ACTOR_INVISIBLE_CRATE, 1);
 			if(gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
 				fdMapGridCopyMetatileAttributes(10, 7, 1, 1, 10, 8);
 				fdMapGridCopyMetatilesTo(3, 125, 9, 69, 3, 3);
@@ -977,9 +978,9 @@ Sint32 scInit(void)
 				fdActorSetPos(ACTOR_OLD_MANS_BED, 0, 0);
 			} else if(gmFlagGet(FLAG_IMIL_MIA_SENT_FOR) &&
 				gmFlagGet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
-				fdActorSetSprFlags(fdActorGet(ACTOR_OLD_MANS_BED), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_OLD_MANS_BED), 0);
 				fdActorSetPos(ACTOR_OLD_MAN, 174, 164);
-				fdActorSetSprFlags(fdActorGet(ACTOR_OLD_MAN), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_OLD_MAN), 0);
 				fdActorSetAnimation(
 					ACTOR_OLD_MAN, OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
 				fdActorSetPos(ACTOR_OLD_WOMAN, 168, 152);
@@ -1010,29 +1011,29 @@ Sint32 scInit(void)
 		} else if(entrance == ICE_ROOMS_HOUSE_NORTHEAST) {
 			if(gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
 				fdActorSetPos(ACTOR_WEAPON_MERCHANT, 364, 578);
-				fdActorSetSprPriority(ACTOR_WEAPON_MERCHANT, 2);
-				fdActorGet(ACTOR_WEAPON_MERCHANT)->collisionFlg |=
+				fdActorSetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
+				fdActorGet(ACTOR_WEAPON_MERCHANT)->collisionFlags |=
 					ACTOR_NEAR_TALK;
 				fdMapGridCopyMetatilesTo(6, 125, 22, 88, 3, 3);
 				fdActorSetPos(ACTOR_ARMOR_MERCHANT, 492, 578);
-				fdActorSetSprPriority(ACTOR_ARMOR_MERCHANT, 2);
-				fdActorGet(ACTOR_ARMOR_MERCHANT)->collisionFlg |=
+				fdActorSetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
+				fdActorGet(ACTOR_ARMOR_MERCHANT)->collisionFlags |=
 					ACTOR_NEAR_TALK;
 				fdMapGridCopyMetatilesTo(9, 125, 28, 88, 3, 3);
 			} else {
 				fdActorGet(ACTOR_WEAPON_MERCHANT)->scaleX = -toFIXED(1);
-				fdActorSetSprFlags(fdActorGet(ACTOR_WEAPON_MERCHANT), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_WEAPON_MERCHANT), 0);
 				fdActorSetAnimation(ACTOR_WEAPON_MERCHANT,
 					OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
-				fdActorSetSprFlags(fdActorGet(ACTOR_ARMOR_MERCHANT), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_ARMOR_MERCHANT), 0);
 				fdActorSetAnimation(ACTOR_ARMOR_MERCHANT,
 					OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
 			}
 		} else if(entrance == ICE_ROOMS_HOUSE_WEST) {
 			if(gmFlagGet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
 				fdActorSetPos(ACTOR_ITEM_MERCHANT, 460, 258);
-				fdActorSetSprPriority(ACTOR_ITEM_MERCHANT, 2);
-				fdActorGet(ACTOR_ITEM_MERCHANT)->collisionFlg |=
+				fdActorSetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
+				fdActorGet(ACTOR_ITEM_MERCHANT)->collisionFlags |=
 					ACTOR_NEAR_TALK;
 				fdActorSetPos(ACTOR_ITEM_MERCHANTS_DAUGHTER, 408, 264);
 				fdActorGet(ACTOR_ITEM_MERCHANTS_DAUGHTER)->facing =
@@ -1040,11 +1041,11 @@ Sint32 scInit(void)
 				fdMapGridCopyMetatilesTo(12, 125, 26, 70, 3, 3);
 			} else {
 				fdActorSetPos(ACTOR_ITEM_MERCHANTS_DAUGHTER, 460, 258);
-				fdActorSetSprPriority(ACTOR_ITEM_MERCHANTS_DAUGHTER, 2);
-				fdActorGet(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlg |=
+				fdActorSetSpritePriority(ACTOR_ITEM_MERCHANTS_DAUGHTER, 2);
+				fdActorGet(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |=
 					ACTOR_NEAR_TALK;
 				fdActorGet(ACTOR_ITEM_MERCHANT)->scaleX = -toFIXED(1);
-				fdActorSetSprFlags(fdActorGet(ACTOR_ITEM_MERCHANT), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_ITEM_MERCHANT), 0);
 				fdActorSetAnimation(
 					ACTOR_ITEM_MERCHANT, IMIL_ANIMATION_LIE_IN_BED);
 			}
@@ -1065,7 +1066,7 @@ Sint32 scInit(void)
 
 static void scImilMeetMiaAtOldCouplesHouse(void)
 {
-	const Sint32 *tbl;
+	const Sint32 *table;
 	FIELD_STATE	 *state;
 
 	fdScriptStart();
@@ -1076,7 +1077,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdCameraMoveTo(140, CAMERA_KEEP, 164, 1);
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = 40;
+	state->transitionFrame = 40;
 	fdScriptStartScreenTransition();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.4);
 	fdActorSetSpeed(ACTOR_GARET, 0.4);
@@ -1095,8 +1096,8 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	syFieldActorWatchAndStartScript(
 		ACTOR_IVAN, ACTOR_WATCH_KEEP_MOTION | ACTOR_MIA, ImilFaceTargetScript);
 	fdCameraWaitForMove();
-	tbl = ImilBobScript;
-	fdActorSetScript(ACTOR_OLD_MAN, tbl);
+	table = ImilBobScript;
+	fdActorSetScript(ACTOR_OLD_MAN, table);
 	fdScriptWait(40);
 	fdActorSetAttachedEffect(
 		ACTOR_MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1105,7 +1106,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdScriptSetMessageId(MSGNO(MsgImilHowFeeling));
 	/* "How are you feeling?" */
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 20);
-	fdActorSetScript(ACTOR_OLD_MAN, tbl);
+	fdActorSetScript(ACTOR_OLD_MAN, table);
 	/* "Cough... Cough..." */
 	fdScriptShowMessageThenWait(ACTOR_OLD_MAN, 0, 20);
 	fdActorFaceDirection(ACTOR_MIA, FACING_WEST, 20);
@@ -1119,7 +1120,7 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorFaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTH_SOUTHEAST, 20);
 	/* "You'll feel better soon." */
 	fdScriptShowMessageThenWait(ACTOR_MIA, 0, 10);
-	fdActorSetScript(ACTOR_OLD_MAN, tbl);
+	fdActorSetScript(ACTOR_OLD_MAN, table);
 
 	scImilMiaCastsPlyOnOldMan();
 	fdActorShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1157,9 +1158,9 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorSetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
 	fdScriptWait(40);
 	fdActorSetSpeed(ACTOR_MIA, 1);
-	fdActorGet(ACTOR_MIA)->tmr = 0;
+	fdActorGet(ACTOR_MIA)->timer = 0;
 	fdActorSetScript(ACTOR_MIA, ImilMiaCheckRoomScript);
-	while(fdActorGet(ACTOR_MIA)->tmr == 0) {
+	while(fdActorGet(ACTOR_MIA)->timer == 0) {
 		sySynch(1);
 	}
 	fdCameraMoveTo(140, CAMERA_KEEP, 198, 1);
@@ -1171,14 +1172,14 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdScriptWait(10);
 	/* "Can I help you?" */
 	fdScriptShowMessage(ACTOR_MIA, 0);
-	sySndPlay(SE_PSYNERGY_SPARKLE);
+	sySoundPlay(SE_PSYNERGY_SPARKLE);
 	/* The lighthouse interrupts the visit; Mia leaves and the party follows. */
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeApplyTarget(
 		PALETTE_TINT_CUSTOM | RGB(31, 20, 31), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(10);
 	sySynch(1);
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	sySynch(40);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(60);
@@ -1208,9 +1209,9 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorStop(ACTOR_GARET);
 	fdActorStop(ACTOR_IVAN);
 	fdActorSetSpeed(ACTOR_MIA, 3);
-	fdActorGet(ACTOR_MIA)->tmr = 0;
+	fdActorGet(ACTOR_MIA)->timer = 0;
 	fdActorSetScript(ACTOR_MIA, ImilMiaRunOutScript);
-	while(fdActorGet(ACTOR_MIA)->tmr == 0) {
+	while(fdActorGet(ACTOR_MIA)->timer == 0) {
 		sySynch(1);
 	}
 	fdActorFaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -1219,29 +1220,29 @@ static void scImilMeetMiaAtOldCouplesHouse(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 4);
 	fdActorSetSpeed(ACTOR_GARET, 4);
 	fdActorSetSpeed(ACTOR_IVAN, 4);
-	sySndPlay(SE_JUMP);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_GARET)->steeringFlg &= ~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_IVAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	sySoundPlay(SE_JUMP);
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetDestination(ACTOR_PARTY_LEADER, 132, 206);
 	fdActorSetDestination(ACTOR_GARET, 136, 221);
 	fdActorSetDestination(ACTOR_IVAN, 122, 238);
 	fdActorWaitForScriptEndById(ACTOR_MIA);
 	fdScriptWait(80);
-	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_GARET)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_IVAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
 	fdActorSetSpeed(ACTOR_IVAN, 0.8);
-	tbl = ImilFollowMiaOutScript;
-	fdActorSetScript(ACTOR_GARET, tbl);
-	fdActorRunScriptAndWait(ACTOR_IVAN, tbl);
+	table = ImilFollowMiaOutScript;
+	fdActorSetScript(ACTOR_GARET, table);
+	fdActorRunScriptAndWait(ACTOR_IVAN, table);
 	fdScriptWait(20);
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-	state->transitionFrm = 24;
+	state->transitionFrame = 24;
 	syImportGameFlagSet(FLAG_IMIL_MET_MIA);
 	fdScriptEnd();
 }
@@ -1258,8 +1259,8 @@ UNUSED static void scImilUpdateSpiralIn(ACTOR *actor)
 	Sint32 t;
 
 	if(actor != NULL) {
-		n = (Uint16)actor->tmr - 1;
-		actor->tmr = n;
+		n = (Uint16)actor->timer - 1;
+		actor->timer = n;
 		t = (Sint16)n;
 		if(t != 0) {
 			buf[0] = ImilEffectCenter[0];
@@ -1286,9 +1287,9 @@ UNUSED static void scImilSwayAndSpark(ACTOR *actor)
 	Sint32 radius;
 
 	actor->x.fixed = ImilEffectCenter[0] +
-		syMulFX(toFIXED(6), sySin(actor->tmr * (TRIG_TURN / 64)));
-	actor->tmr++;
-	actor->tmr = (actor->tmr + 64) % 64;
+		syMulFX(toFIXED(6), sySin(actor->timer * (TRIG_TURN / 64)));
+	actor->timer++;
+	actor->timer = (actor->timer + 64) % 64;
 	if(TickCount % 3 == 0) {
 		SET_VECTOR(
 			pos, actor->x.fixed, actor->y.fixed + toFIXED(2), actor->z.fixed);
@@ -1296,20 +1297,20 @@ UNUSED static void scImilSwayAndSpark(ACTOR *actor)
 		syVectorAddPolarOffset(radius * 6, syRandomNext(), pos);
 		spark = syFieldActorCreate(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
 		if(spark != NULL) {
-			spark->spr->image.pri = 0;
-			fdActorSetSprFlags(spark, 0);
+			spark->sprite->image.priority = 0;
+			fdActorSetSpriteFlags(spark, 0);
 			fdActorSelectAnimation(spark, 1);
 			spark->scaleX = toFIXED(3) / 5;
 			spark->scaleY = toFIXED(3) / 5;
-			spark->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-			spark->motionFlg = 0;
-			fdActorSetSprCol(spark, SPRITE_COLOR_BLUE_TINT);
+			spark->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+			spark->motionFlags = 0;
+			fdActorSetSpriteColor(spark, SPRITE_COLOR_BLUE_TINT);
 			fdActorStartScript(spark, ImilSparkScript);
 		}
 	}
 }
 
-/* The old man bobs and speaks as Ply ends (its finishFunc). */
+/* The old man bobs and speaks as Ply ends (its finishCallback). */
 static void scImilOldManBobsAndSpeaks(void)
 {
 	fdActorSetScript(ACTOR_OLD_MAN, ImilBobScript);
@@ -1324,7 +1325,7 @@ static void scImilMiaCastsPlyOnOldMan(void)
 	fdPsynergyLoadResources(ABILITY_PLY, 1);
 	effectState = FieldEffectStateWork;
 	fdPsynergySetupActorPair(ACTOR_MIA, ACTOR_OLD_MAN);
-	effectState->finishFunc = scImilOldManBobsAndSpeaks;
+	effectState->finishCallback = scImilOldManBobsAndSpeaks;
 	fdPsynergyStartCast();
 	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
 	fdPsynergyStopCasterUpdate();
@@ -1335,17 +1336,17 @@ static void scImilMiaCastsPlyOnOldMan(void)
    tinted blue and half its size. */
 static void scImilInitSmoke(ACTOR *smoke)
 {
-	SPR *spr;
+	SPR *sprite;
 
-	smoke->motionFlg = 0;
-	smoke->tmr = 0;
-	smoke->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	smoke->motionFlags = 0;
+	smoke->timer = 0;
+	smoke->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 
-	spr = smoke->spr;
-	spr->image.pri = 1;
+	sprite = smoke->sprite;
+	sprite->image.priority = 1;
 
-	fdActorSetSprCol(smoke, SPRITE_COLOR_BLUE_TINT);
-	fdActorSetSprFlags(smoke, 0);
+	fdActorSetSpriteColor(smoke, SPRITE_COLOR_BLUE_TINT);
+	fdActorSetSpriteFlags(smoke, 0);
 
 	smoke->scaleX = toFIXED(1) / 2;
 	smoke->scaleY = toFIXED(1) / 2;
@@ -1415,8 +1416,8 @@ static void scImilUpdateFootprints(void)
 	FIXED				   x;
 	Sint32				   column;
 	Sint32				   isSet;
-	Sint32				   zoneFlg = FLAG_IMIL_NO_FOOTPRINTS;
-	Sint32				   otherZoneFlg = FLAG_IMIL_FOOTPRINTS;
+	Sint32				   zoneFlag = FLAG_IMIL_NO_FOOTPRINTS;
+	Sint32				   otherZoneFlag = FLAG_IMIL_FOOTPRINTS;
 	MAP_GRID_SCROLL_STATE *grid;
 
 	actor = fdActorGet(ACTOR_PARTY_LEADER);
@@ -1427,12 +1428,12 @@ static void scImilUpdateFootprints(void)
 		((FIELD_HALF_METATILE(actor->z.fixed) >= 36 &&
 			 FIELD_HALF_METATILE(actor->z.fixed) <= 45) &&
 			(column >= 22 && column <= 31))) {
-		isSet = gmFlagGet(zoneFlg);
+		isSet = gmFlagGet(zoneFlag);
 		if(isSet != 0)
 			return;
 		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->footprints = isSet;
-		syImportGameFlagSet(zoneFlg);
-		gmFlagClear(otherZoneFlg);
+		syImportGameFlagSet(zoneFlag);
+		gmFlagClear(otherZoneFlag);
 		return;
 	}
 	/* On the raised ground under the big tree. */
@@ -1440,17 +1441,17 @@ static void scImilUpdateFootprints(void)
 		actor->z.fixed > toFIXED(212)) {
 		grid = MapGridState[0];
 		grid->footprints = 0;
-		syImportGameFlagSet(zoneFlg);
-		gmFlagClear(otherZoneFlg);
+		syImportGameFlagSet(zoneFlag);
+		gmFlagClear(otherZoneFlag);
 		return;
 	}
-	isSet = gmFlagGet(otherZoneFlg);
+	isSet = gmFlagGet(otherZoneFlag);
 	if(isSet != 0)
 		return;
 	grid = MapGridState[0];
 	grid->footprints = 1;
-	syImportGameFlagSet(otherZoneFlg);
-	gmFlagClear(zoneFlg);
+	syImportGameFlagSet(otherZoneFlag);
+	gmFlagClear(zoneFlag);
 	return;
 }
 
@@ -1469,10 +1470,10 @@ static void scImilPlaceMovedSnowman(void)
 	if(row != SNOWMAN_MOVED_ROW)
 		return;
 	syImportGameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
-	fdActorSetSprPriority(ACTOR_SNOWMAN, 3);
+	fdActorSetSpritePriority(ACTOR_SNOWMAN, 3);
 #else
 	syImportGameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
-	fdActorSetSprPriority(ACTOR_SNOWMAN, 3);
+	fdActorSetSpritePriority(ACTOR_SNOWMAN, 3);
 	column = SNOWMAN_MOVED_COLUMN;
 	row = SNOWMAN_MOVED_ROW;
 #endif
@@ -1486,7 +1487,7 @@ static void scImilLeaveNorth(void)
 {
 	fdScriptStart();
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syImportScriptSetExitRequest(IMIL_TO_IMIL_FALLS_CAVE);
@@ -1510,12 +1511,12 @@ static void scImilMiaSaysFarewellToApprentices(void)
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.6);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 690, 200);
 
-	fdCameraGetActor()->motionFlg = 0;
+	fdCameraGetActor()->motionFlags = 0;
 	fdCameraSetSpeed(0.8);
 	fdCameraMoveTo(690, 0, 164, 1);
 	state = FieldStateWork;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	state->transitionFrm = 48;
+	state->transitionFrame = 48;
 	fdScriptStartScreenTransition();
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1577,10 +1578,10 @@ static void scImilMiaSaysFarewellToApprentices(void)
 	fdActorFaceDirection(ACTOR_JUSTIN, FACING_SOUTH_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_MEGAN, FACING_SOUTH_SOUTHEAST, 20);
 	fdActorSetSpeed(ACTOR_MEGAN, 1);
-	fdActorGet(ACTOR_MEGAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_MEGAN, 656, 166);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_MEGAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MEGAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdScriptWait(20);
 	/* "You have something to say? What is it?" */
 	syFieldScriptShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_MEGAN, 0, 10);
@@ -1656,10 +1657,10 @@ static void scImilMiaSaysFarewellToApprentices(void)
 	fdScriptWait(20);
 	fdActorWalkToAndWait(ACTOR_MIA, 688, 200);
 	fdActorSetPos(ACTOR_MIA, 0, 0);
-	fdActorGet(ACTOR_MEGAN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_MEGAN, 644, 166);
 	fdScriptWait(1);
-	fdActorGet(ACTOR_MEGAN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MEGAN)->steeringFlags |= ACTOR_FACES_MOTION;
 	/* FAKEMATCH(dead): the transition's store alone in a once-only block; as
 	 * the plain store. */
 	do {

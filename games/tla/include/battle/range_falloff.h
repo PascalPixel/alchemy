@@ -24,18 +24,18 @@ extern Sint32 RangeFalloffEffectDamage[];
    farther it is from the aimed unit (gmBattleRollEffectSuccess); returns 1 when
    it does. */
 Sint32 gmBattleRollEffectSuccessStub(
-	Sint32 actor, Sint32 tgt, Sint32 range, Sint32 effect, Sint32 tbl);
+	Sint32 actor, Sint32 target, Sint32 range, Sint32 effect, Sint32 table);
 /* Scales max(attack - defense, 0) plus twice the added power by half the
-   element multiplier, then halves it (gmBattleCalcAttackDamage). */
-Sint32 gmBattleCalcAttackDamageStub(
+   element multiplier, then halves it (gmBattleCalculateAttackDamage). */
+Sint32 gmBattleCalculateAttackDamageStub(
 	Sint32 amount, Sint32 reduction, Sint32 adjustment, Sint32 selector);
 /* Returns Psynergy's power times the element multiplier and powerMultiplier
-   (gmBattleCalcPsynergyPower). */
-Sint32 gmBattleCalcPsynergyPowerStub(
+   (gmBattleCalculatePsynergyPower). */
+Sint32 gmBattleCalculatePsynergyPowerStub(
 	Sint32 value, Sint32 selector, Sint32 multiplier);
 /* Returns the amount healed: power times powerMultiplier and the multiplier for
-   the healer's element power above 100 (gmBattleCalcRecovery). */
-Sint32 gmBattleCalcRecoveryStub(
+   the healer's element power above 100 (gmBattleCalculateRecovery). */
+Sint32 gmBattleCalculateRecoveryStub(
 	Sint32 value, Sint32 selector, Sint32 multiplier);
 /* Adds amount to the unit's PP, kept between 0 and its maximum, updates its
    gauges and returns the new PP. */

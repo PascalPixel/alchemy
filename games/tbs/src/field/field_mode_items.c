@@ -33,11 +33,11 @@ const CUE *fdFindItemCue(Sint32 item)
 			(requiresFacing == 0 ||
 				(Uint16)(eventFacing - facing + (TRIG_TURN * 3 / 32 - 1)) <=
 					TRIG_TURN * 3 / 16 - 2)) {
-			Uint32 flg = cue->kind;
+			Uint32 flags = cue->kind;
 			Sint32 eventItem = ((const Uint8 *)&cue->kind)[1];
 
 			if(item == 0 || eventItem == item) {
-				if((flg & CUE_ITEM_ON_ACTOR) != 0) {
+				if((flags & CUE_ITEM_ON_ACTOR) != 0) {
 					if(eventTarget == actorAhead)
 						return cue;
 				} else if(eventTarget == tileAhead) {
@@ -60,10 +60,10 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 	UNIT		*unit;
 	const CUE	*cue;
 	Sint32		 inventorySlot;
-	Sint32		 partyIdx;
+	Sint32		 partyIndex;
 	Sint32		 mostMatchingSlots;
 	Sint32		 matchingSlots;
-	Sint32		 partyCnt;
+	Sint32		 partyCount;
 	FIELD_STATE *state;
 
 	result = -1;
@@ -73,12 +73,12 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 	   whoever holds it in the most slots, the earlier on a tie. */
 	{
 		mostMatchingSlots = 0;
-		partyCnt = gmPartyCountMembersStub();
+		partyCount = gmPartyCountMembersStub();
 
 		if(actorId == UNIT_NONE) {
 			actorId = 0;
-			for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
-				unit = gmUnitGetStub(MainRoutineStateWork.party[partyIdx]);
+			for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+				unit = gmUnitGetStub(MainRoutineStateWork.party[partyIndex]);
 				matchingSlots = 0;
 				for(inventorySlot = 0; inventorySlot < INVENTORY_SLOTS;
 					inventorySlot++) {
@@ -89,7 +89,7 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 
 				if(mostMatchingSlots < matchingSlots) {
 					mostMatchingSlots = matchingSlots;
-					actorId = MainRoutineStateWork.party[partyIdx];
+					actorId = MainRoutineStateWork.party[partyIndex];
 				}
 			}
 		} else {
@@ -153,10 +153,10 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 				mnFieldMessageShowStub(MsgUseItemQuestion,
 					FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
 						FIELD_MESSAGE_LOWER);
-				/* partyIdx now holds the answer: 0 is yes. */
-				partyIdx = fdYesNoAsk(1);
+				/* partyIndex now holds the answer: 0 is yes. */
+				partyIndex = fdYesNoAsk(1);
 				mnMessageCloseFinishedWindowsStub();
-				if(partyIdx != 0)
+				if(partyIndex != 0)
 					return 0;
 
 				MainRoutineStateWork.next = MainRoutineStateWork.retreatScene;
@@ -196,9 +196,9 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 
 /* Returns the scene's Psynergy cue (CUE_PSYNERGY) for Psynergy of the given
    group that applies to what the leader faces, or NULL; stores the actor the
-   Psynergy would target in *target. eventFlg gives the script's phase and
+   Psynergy would target in *target. eventFlags gives the script's phase and
    kind (PSYNERGY_CUE_ANY for any phase). */
-void *fdFindPsynergyCue(Sint32 eventFlg, Sint32 group, Sint32 *tgt)
+void *fdFindPsynergyCue(Sint32 eventFlags, Sint32 group, Sint32 *target)
 {
 	FIELD_STATE *state = FieldStateWork;
 	const CUE	*cue = state->cues;
@@ -209,10 +209,10 @@ void *fdFindPsynergyCue(Sint32 eventFlg, Sint32 group, Sint32 *tgt)
 	Sint32 tileAhead;
 	Sint32 anyPhase = 0;
 
-	*tgt = actorAhead;
+	*target = actorAhead;
 	/* The target output is filled even when no script ultimately matches. */
 	tileAhead = fdGetCollisionAheadOfLeader();
-	if(eventFlg == PSYNERGY_CUE_ANY)
+	if(eventFlags == PSYNERGY_CUE_ANY)
 		anyPhase = 1;
 
 	for(; cue->kind != -1; cue++) {
@@ -229,7 +229,7 @@ void *fdFindPsynergyCue(Sint32 eventFlg, Sint32 group, Sint32 *tgt)
 					->fieldPsynergy == group &&
 			(anyPhase ||
 				(cue->kind & (PSYNERGY_PHASE_MASK | CUE_KIND_MASK)) ==
-					eventFlg)) {
+					eventFlags)) {
 			/* Any Psynergy of the same field kind (fieldPsynergy) as the
 			   script's matches. */
 			if((cue->kind & CUE_PSYNERGY_ANYWHERE) != 0)
@@ -251,7 +251,7 @@ void *fdFindPsynergyCue(Sint32 eventFlg, Sint32 group, Sint32 *tgt)
    Psynergy (bits 0 to 9) and its user (bits 10 to 13). */
 Sint32 fdRunPsynergyEndScripts(Sint32 packed)
 {
-	Sint32 tgt;
+	Sint32 target;
 	Sint32 abilityId;
 	Sint32 userId;
 	Uint8  group;
@@ -263,16 +263,16 @@ Sint32 fdRunPsynergyEndScripts(Sint32 packed)
 	group = gmAbilityGetDirectStub(abilityId)->fieldPsynergy;
 	/* The leader is looked up and the result is not used. */
 	fdActorLookup(MainRoutineStateWork.leaderActorId);
-	beforeEvent =
-		fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_BEFORE_END), group, &tgt);
-	afterEvent =
-		fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_END), group, &tgt);
+	beforeEvent = fdFindPsynergyCue(
+		PSYNERGY_CUE(PSYNERGY_PHASE_BEFORE_END), group, &target);
+	afterEvent = fdFindPsynergyCue(
+		PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_END), group, &target);
 	fdPsynergyLoadResources(abilityId, 0);
-	fdPsynergySetupActorPair(MainRoutineStateWork.leaderActorId, tgt);
-	fdRunPsynergyScript(beforeEvent, userId, tgt);
+	fdPsynergySetupActorPair(MainRoutineStateWork.leaderActorId, target);
+	fdRunPsynergyScript(beforeEvent, userId, target);
 	fdPsynergyRunExtraHandler();
 	fdPsynergyStopCasterUpdate();
-	fdRunPsynergyScript(afterEvent, userId, tgt);
+	fdRunPsynergyScript(afterEvent, userId, target);
 	fdPsynergyEnd();
 	return 0;
 }

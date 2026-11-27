@@ -9,21 +9,21 @@
 void fdEffectBlinkAvoidCaster(void)
 {
 	ACTOR		  *caster;
-	SPR			  *spr;
+	SPR			  *sprite;
 	SPR_ANIMATION *entry;
 	Sint32		   phase;
 
 	caster = fdActorLookup(MainRoutineStateWork.leaderActorId);
-	spr = caster->spr;
-	entry = spr->entries[0];
+	sprite = caster->sprite;
+	entry = sprite->entries[0];
 	phase = TickCount % 5;
 	if(phase == 0) {
-		spr->dirty = 1;
-		spr->flg = SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED;
+		sprite->dirty = 1;
+		sprite->flags = SPRITE_FLAG_SHADOW | SPRITE_FLAG_OUTLINED;
 	} else if(phase == 2) {
-		entry->colMode = SPRITE_COLOR_NORMAL; /* restore its colours */
-		spr->dirty = 1;
-		spr->flg = SPRITE_FLAG_SHADOW;
+		entry->colorMode = SPRITE_COLOR_NORMAL; /* restore its colours */
+		sprite->dirty = 1;
+		sprite->flags = SPRITE_FLAG_SHADOW;
 	}
 }
 
@@ -35,7 +35,7 @@ void fdEffectUpdateAvoidCaster(ACTOR *caster)
 	Sint32 elapsedTicks;
 
 	phase = caster->arcPhase;
-	elapsedTicks = caster->arcFrm++;
+	elapsedTicks = caster->arcFrame++;
 
 	if(MainRoutineStateWork.mapId == MAP_INDEX_WORLD) {
 		if(elapsedTicks % 7 == 0)
@@ -74,17 +74,17 @@ void fdPsynergyAvoid(void)
 {
 	FIELD_EFFECT_STATE *effectState;
 	ACTOR			   *actor;
-	SPR				   *spr;
+	SPR				   *sprite;
 	SPR_ANIMATION	   *entry;
-	Uint32				ang;
+	Uint32				angle;
 	Sint32				slot;
-	Sint32				cnt;
+	Sint32				count;
 
 	effectState = FieldEffectStateWork;
 	actor = effectState->caster;
-	spr = actor->spr;
-	entry = spr->entries[0];
-	ang = actor->facing;
+	sprite = actor->sprite;
+	entry = sprite->entries[0];
+	angle = actor->facing;
 	slot = syVRAMCacheFindFreeEntry();
 	/* The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
 	   distance is 2,400 pixels in 16.16. */
@@ -92,38 +92,38 @@ void fdPsynergyAvoid(void)
 	syVRAMCacheLoad((Sint16)slot, 256, FieldEffectArcSparkTiles);
 	MainRoutineStateWork.avoidDistance = toFIXED(2400);
 	MainRoutineStateWork.avoidByItem = gmFlagGetStub(FLAG_PSYNERGY_FROM_ITEM);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	actor->update = fdEffectUpdateAvoidCaster;
 	actor->arcPhase = 0;
-	actor->arcFrm = 0;
-	sySndPlayStub(SE_SPIN);
+	actor->arcFrame = 0;
+	sySoundPlayStub(SE_SPIN);
 	sySynch(15);
 	actor->arcPhase = 1;
 	sySynch(10);
 	/* Flash white for 2 ticks in every 5. */
-	for(cnt = 0; cnt < AVOID_FLASHES; cnt++) {
-		entry->colMode = SPRITE_COLOR_WHITE;
-		spr->dirty = 1;
+	for(count = 0; count < AVOID_FLASHES; count++) {
+		entry->colorMode = SPRITE_COLOR_WHITE;
+		sprite->dirty = 1;
 		sySynch(2);
-		spr->dirty = 1;
-		entry->colMode = SPRITE_COLOR_NORMAL;
-		spr->flg = SPRITE_FLAG_SHADOW;
+		sprite->dirty = 1;
+		entry->colorMode = SPRITE_COLOR_NORMAL;
+		sprite->flags = SPRITE_FLAG_SHADOW;
 		sySynch(3);
 	}
 	actor->update = NULL;
-	actor->facing = ang;
+	actor->facing = angle;
 	sySetEvent(fdEffectBlinkAvoidCaster, EVENT_PASS_TICK);
 	sySynch(AVOID_NOTE_TICK);
-	sySndPlayStub(SE_NOTE_MID);
+	sySoundPlayStub(SE_NOTE_MID);
 	sySynch(AVOID_BLINK_TICKS - AVOID_NOTE_TICK);
 	syCloseEvent(fdEffectBlinkAvoidCaster);
 	/* Back to the caster's own look: outlined while Cloak is on, else with its
 	   shadow. */
 	if(MainRoutineStateWork.cloaked != 0)
-		fdActorSetSprFlagsStub(actor, SPRITE_FLAG_OUTLINED);
+		fdActorSetSpriteFlagsStub(actor, SPRITE_FLAG_OUTLINED);
 	else
-		fdActorSetSprFlagsStub(actor, SPRITE_FLAG_SHADOW);
-	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteFlagsStub(actor, SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteColorModeStub(actor, SPRITE_COLOR_NORMAL);
 	syVRAMCacheFreeEntry(effectState->arcTileSlot);
 	/* "Monsters won't attack so often now." */
 	mnFieldMessageShowStub(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);

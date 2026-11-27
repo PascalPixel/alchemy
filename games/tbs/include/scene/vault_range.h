@@ -11,7 +11,7 @@ struct ACTOR;
 /* Stops the actor when the target is nearer than range pixels ahead of it;
    returns 1 when it stopped. */
 Sint32 scVaultStopIfFacingNear(
-	struct ACTOR *actor, struct ACTOR *tgt, Sint32 range, Sint32 force);
+	struct ACTOR *actor, struct ACTOR *target, Sint32 range, Sint32 force);
 
 /* How near in front of it, in pixels, a walker stops for its partner, and for
    the leader: STOP_RANGE, or TALK_STOP_RANGE while a talk is pending or Mind

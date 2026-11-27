@@ -3,8 +3,8 @@
    battle.c. */
 
 /* The target's checks, effect and messages */
-/* A stat stage changes the stat by an eighth of it (gmUnitCalc), from half at
-   the lowest to one and a half at the highest. */
+/* A stat stage changes the stat by an eighth of it (gmUnitCalculate), from half
+   at the lowest to one and a half at the highest. */
 #define STAT_STAGE_MIN		  -4
 #define STAT_STAGE_MAX		  4
 /* Zephyr's Agility stage, beyond the usual highest: twice the Agility. */
@@ -19,8 +19,8 @@
 /* The Grim Reaper's countdown. */
 #define CURSE_TURNS			 7
 
-/* The rate gmBattleCalcPsynergyPowerStub and gmBattleCalcRecoveryStub scale by:
-   256 is 1. */
+/* The rate gmBattleCalculatePsynergyPowerStub and gmBattleCalculateRecoveryStub
+   scale by: 256 is 1. */
 #define FULL_RATE 256
 
 /* A message operand that shows nothing: the event only waits for the player. */
@@ -97,7 +97,7 @@
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex) \
 	{ \
 		(applies) = 0; \
-		switch((action)->eff) { \
+		switch((action)->effect) { \
 		case ABILITY_EFFECT_ATTACK_UP_SHARPLY: \
 		case ABILITY_EFFECT_ATTACK_UP: \
 			if((unit)->attackStage + 1 <= STAT_STAGE_MAX) \
@@ -205,10 +205,11 @@
 			(applies) = 1; \
 			break; \
 		} \
-		if((unit)->hp == 0 && gmBattleIsReviveEffectStub((action)->eff) == 0) \
+		if((unit)->hp == 0 && \
+			gmBattleIsReviveEffectStub((action)->effect) == 0) \
 			(applies) = 0; \
 		if((applies) == 0) { \
-			(kindIndex) = ((action)->flg & ABILITY_FORMULA_MASK) - 1; \
+			(kindIndex) = ((action)->flags & ABILITY_FORMULA_MASK) - 1; \
 			switch(kindIndex) { \
 			case ABILITY_FORMULA_ATTACK - 1: \
 			case ABILITY_FORMULA_ATTACK_MULTIPLIED - 1: \
@@ -252,104 +253,106 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 {
 	Uint16		  orderPositions[6];
 	Sint32		  unitIds[6];
-	Sint32		  tgtPositions[6];
+	Sint32		  targetPositions[6];
 	BATTLE_STATE *turnOrder;
 	UNIT		 *unit;
 	UNIT		 *nextUnit;
 	UNIT		 *thisUnit;
-	Sint32		  candidateCnt;
-	Sint32		  tgtIdx;
-	Sint32		  tgtCnt;
-	Sint32		  innerIdx;
+	Sint32		  candidateCount;
+	Sint32		  targetIndex;
+	Sint32		  targetCount;
+	Sint32		  innerIndex;
 	Sint32		  selected;
 	Sint32		  unitId;
 	Sint32		  value;
 	Sint32		  nextValue;
 	Sint32		  swap;
 	Sint32		  ownSide;
-	Sint32		  kindIdx;
+	Sint32		  kindIndex;
 	Sint32		  applies;
 	Uint32		  roll;
 	Sint16		 *slot;
 
-	candidateCnt = 0;
+	candidateCount = 0;
 	turnOrder = RamHeapSlots->battleState;
-	tgtCnt = 0;
+	targetCount = 0;
 
 	/* The candidates: every unit on the side the ability may target. */
-	if(action->tgtMode != ABILITY_TARGET_ONE) {
+	if(action->targetMode != ABILITY_TARGET_ONE) {
 		ownSide = 0;
-		if(action->tgtMode == ABILITY_TARGET_ALLIES ||
-			action->tgtMode == ABILITY_TARGET_SELF)
+		if(action->targetMode == ABILITY_TARGET_ALLIES ||
+			action->targetMode == ABILITY_TARGET_SELF)
 			ownSide = 1;
 
 		if(((userId < 0 || userId > ALLY_MAX) && ownSide == 0) ||
 			(userId >= 0 && userId <= ALLY_MAX && ownSide != 0)) {
-			for(tgtIdx = 0;
-				turnOrder->partyUnits[tgtIdx] != BATTLE_UNIT_LIST_END;
-				tgtIdx++) {
-				slot = &turnOrder->partyUnits[tgtIdx];
+			for(targetIndex = 0;
+				turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END;
+				targetIndex++) {
+				slot = &turnOrder->partyUnits[targetIndex];
 				unitId = *slot;
 				if(unitId != BATTLE_UNIT_REMOVED) {
-					if(action->tgtMode != ABILITY_TARGET_SELF ||
+					if(action->targetMode != ABILITY_TARGET_SELF ||
 						unitId == userId) {
-						unitIds[candidateCnt] = unitId;
-						orderPositions[candidateCnt] = PLACE_PARTY;
-						orderPositions[candidateCnt] |= tgtIdx;
-						candidateCnt++;
+						unitIds[candidateCount] = unitId;
+						orderPositions[candidateCount] = PLACE_PARTY;
+						orderPositions[candidateCount] |= targetIndex;
+						candidateCount++;
 					}
 				}
 			}
 		} else {
-			for(tgtIdx = 0; turnOrder->enemyIds[tgtIdx] != BATTLE_UNIT_LIST_END;
-				tgtIdx++) {
-				unitId = turnOrder->enemyIds[tgtIdx];
+			for(targetIndex = 0;
+				turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END;
+				targetIndex++) {
+				unitId = turnOrder->enemyIds[targetIndex];
 				if(unitId != BATTLE_UNIT_REMOVED) {
-					if(action->tgtMode != ABILITY_TARGET_SELF ||
+					if(action->targetMode != ABILITY_TARGET_SELF ||
 						unitId == userId) {
-						unitIds[candidateCnt] = unitId;
-						orderPositions[candidateCnt] = PLACE_ENEMY;
-						orderPositions[candidateCnt] |= tgtIdx;
-						candidateCnt++;
+						unitIds[candidateCount] = unitId;
+						orderPositions[candidateCount] = PLACE_ENEMY;
+						orderPositions[candidateCount] |= targetIndex;
+						candidateCount++;
 					}
 				}
 			}
 		}
 	}
 
-	if(candidateCnt == 0)
+	if(candidateCount == 0)
 		return TARGET_PICK_SIDE_EMPTY;
 
 	/* Keep the candidates the ability would affect, in place. */
-	for(tgtIdx = 0; tgtIdx < candidateCnt; tgtIdx++) {
-		unit = syUnitGet(unitIds[tgtIdx]);
-		CHECK_EFFECT_TARGET(unit, action, applies, kindIdx);
+	for(targetIndex = 0; targetIndex < candidateCount; targetIndex++) {
+		unit = syUnitGet(unitIds[targetIndex]);
+		CHECK_EFFECT_TARGET(unit, action, applies, kindIndex);
 		if(applies != 0) {
-			unitIds[tgtCnt] = unitIds[tgtIdx];
-			tgtPositions[tgtCnt] = orderPositions[tgtIdx];
-			tgtCnt++;
+			unitIds[targetCount] = unitIds[targetIndex];
+			targetPositions[targetCount] = orderPositions[targetIndex];
+			targetCount++;
 		}
 	}
 
-	if(tgtCnt == 0)
+	if(targetCount == 0)
 		return TARGET_PICK_NONE;
 
-	if(action->tgtMode == ABILITY_TARGET_FOES && action->range == 1 &&
-		gmEnemyGetDefinitionStub(syUnitGet(userId)->enemyId)->tgtStrategy !=
+	if(action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
+		gmEnemyGetDefinitionStub(syUnitGet(userId)->enemyId)->targetStrategy !=
 			TARGET_STRATEGY_RANDOM &&
-		(Uint32)((action->flg & ABILITY_FORMULA_MASK) -
+		(Uint32)((action->flags & ABILITY_FORMULA_MASK) -
 			ABILITY_FORMULA_ATTACK) <=
 			ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
 		/* Sort the targets by HP, the most first. */
 		/* BUG: each pass starts one place later, so HP 1, 2 and 3 end as 2, 3
 		   and 1. */
 		selected = -1;
-		for(tgtIdx = 0; tgtIdx < tgtCnt; tgtIdx++) {
-			for(innerIdx = tgtIdx; innerIdx < tgtCnt - 1; innerIdx++) {
-				thisUnit = syUnitGet(unitIds[innerIdx]);
-				nextUnit = syUnitGet(unitIds[innerIdx + 1]);
+		for(targetIndex = 0; targetIndex < targetCount; targetIndex++) {
+			for(innerIndex = targetIndex; innerIndex < targetCount - 1;
+				innerIndex++) {
+				thisUnit = syUnitGet(unitIds[innerIndex]);
+				nextUnit = syUnitGet(unitIds[innerIndex + 1]);
 				if(gmEnemyGetDefinitionStub(syUnitGet(userId)->enemyId)
-						->tgtStrategy == TARGET_STRATEGY_MOST_HP) {
+						->targetStrategy == TARGET_STRATEGY_MOST_HP) {
 					value = thisUnit->hp;
 					nextValue = nextUnit->hp;
 				} else {
@@ -357,12 +360,13 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 					nextValue = nextUnit->hpMax;
 				}
 				if(value < nextValue) {
-					swap = unitIds[innerIdx];
-					unitIds[innerIdx] = unitIds[innerIdx + 1];
-					unitIds[innerIdx + 1] = swap;
-					swap = tgtPositions[innerIdx];
-					tgtPositions[innerIdx] = tgtPositions[innerIdx + 1];
-					tgtPositions[innerIdx + 1] = swap;
+					swap = unitIds[innerIndex];
+					unitIds[innerIndex] = unitIds[innerIndex + 1];
+					unitIds[innerIndex + 1] = swap;
+					swap = targetPositions[innerIndex];
+					targetPositions[innerIndex] =
+						targetPositions[innerIndex + 1];
+					targetPositions[innerIndex + 1] = swap;
 				}
 			}
 		}
@@ -370,7 +374,7 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 		/* Weighted toward the front: of a roll's outcomes the first target
 		   takes 6, the second 5, the third 4 and the fourth 3; five or more
 		   fall through to an even roll. */
-		switch(tgtCnt) {
+		switch(targetCount) {
 		case 1:
 			selected = 0;
 			break;
@@ -403,9 +407,9 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 		}
 
 		if(selected >= 0)
-			return tgtPositions[selected];
+			return targetPositions[selected];
 	}
-	return tgtPositions[syRandomBelow(tgtCnt)];
+	return targetPositions[syRandomBelow(targetCount)];
 }
 
 /* Clears every status and stat change of a unit that goes down and works out
@@ -444,8 +448,8 @@ void btUnitClearStatuses(Sint32 unitId)
 	unit->agilityStage = 0;
 	unit->challenge = 0;
 
-	gmUnitCalcStub(unitId);
-	btUnitBuildStatFlags(unitId, btObjectGet(unitId));
+	gmUnitCalculateStub(unitId);
+	btUnitBuildStatusFlags(unitId, btObjectGet(unitId));
 }
 
 /* Waits for the player to advance a battle message: once the window has
@@ -456,11 +460,11 @@ void btMessageWaitForAdvance(void)
 {
 	MENU_SPR *prompt;
 	MENU_SPR  promptStorage;
-	Sint32	  frm;
+	Sint32	  frame;
 	Sint32	  tileSlot;
 	Sint32	  pictureTiles;
 	Sint32	  sheet;
-	WINDOW	 *win;
+	WINDOW	 *window;
 	MESSAGE	 *msg;
 
 	while(!mnMessageAllTypedStub())
@@ -469,11 +473,11 @@ void btMessageWaitForAdvance(void)
 	 * members at its uses. */
 	prompt = &promptStorage;
 	sheet = (Sint32)BattleMessageAdvanceArrowTiles;
-	tileSlot = syVRAMCacheAllocEntry(128);
-	for(frm = 0;; frm++) {
+	tileSlot = syVRAMCacheAllocateEntry(128);
+	for(frame = 0;; frame++) {
 		/* Cycle the eight pictures, one every four ticks. */
 		pictureTiles = ((TickCount >> 2) & 7) * 128 + sheet;
-		win = RamHeapSlots->battleMsg->win;
+		window = RamHeapSlots->battleMsg->window;
 		msg = RamHeapSlots->battleMsg->msg;
 		syIOWriteQueueClearBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_BG2);
 		syIOWriteQueueSetBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_OBJ);
@@ -484,18 +488,18 @@ void btMessageWaitForAdvance(void)
 			OBJ_SIZE_8X16 | OBJ_256_COLORS |
 				OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
 		prompt->oam.f.tile = syVRAMCacheReload(tileSlot, pictureTiles);
-		prompt->oam.f.x = win->x * 8 + (msg->x >> 8) + 4;
+		prompt->oam.f.x = window->x * 8 + (msg->x >> 8) + 4;
 		/* Bob up and down by up to 2 pixels, once every 16 ticks. */
-		prompt->oam.f.y = CURSOR_BOB_Y() + win->y * 8 + (msg->y >> 8) + 6;
-		syOAMAddSprAtDepth(prompt, OAM_DEPTH_WINDOW);
+		prompt->oam.f.y = CURSOR_BOB_Y() + window->y * 8 + (msg->y >> 8) + 6;
+		syOAMAddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
 		/* A held advance key counts only after 16 ticks, so one still held
 		   from the previous message does not skip this one. */
 		if((PerWork.data & KEY_B) || (PerWork.push & KEY_ADVANCE) ||
-			(frm > 15 && (PerWork.data & KEY_ADVANCE)))
+			(frame > 15 && (PerWork.data & KEY_ADVANCE)))
 			break;
 		sySynch(1);
 	}
-	sySndPlayStub(SE_MENU_CURSOR_MOVE);
+	sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 	syVRAMCacheFreeEntry(tileSlot);
 	sySynch(1);
 }
@@ -510,7 +514,7 @@ Sint32 btMessageWaitForAdvanceAt(Sint32 x, Sint32 y)
 	MENU_SPR  *prompt;
 	Sint32	   tileSlot;
 
-	ptrTiles = mnWindowSprGetPointerTilesStub(0);
+	ptrTiles = mnWindowSpriteGetPointerTilesStub(0);
 	pos.x = x;
 	pos.y = y;
 	while(!mnMessageAllTypedStub())
@@ -518,7 +522,7 @@ Sint32 btMessageWaitForAdvanceAt(Sint32 x, Sint32 y)
 	/* FAKEMATCH(temporary): prompt holds &promptStorage; as promptStorage's
 	 * members at its uses. */
 	prompt = &promptStorage;
-	tileSlot = syVRAMCacheAllocEntry(128);
+	tileSlot = syVRAMCacheAllocateEntry(128);
 	while(1) {
 		syIOWriteQueueClearBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_BG2);
 		syIOWriteQueueSetBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_OBJ);
@@ -527,7 +531,7 @@ Sint32 btMessageWaitForAdvanceAt(Sint32 x, Sint32 y)
 		prompt->oam.f.tile = syVRAMCacheReload(tileSlot, ptrTiles);
 		prompt->oam.f.x = pos.x + ((TickCount & 4) >> 1) - 4;
 		prompt->oam.f.y = pos.y - ((TickCount & 4) >> 2) - 8;
-		syOAMAddSprAtDepth(prompt, OAM_DEPTH_WINDOW);
+		syOAMAddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
 		if(PerWork.push & KEY_ADVANCE)
 			break;
 		sySynch(1);
@@ -560,8 +564,8 @@ Sint32 btUnitRemoveEnemy(Sint32 unitId)
 		btObjectRemoveFromLists(unitId);
 		btObjectMarkForRelease(unitId);
 		runtime = btObjectGet(unitId);
-		fdActorReleaseStub((ACTOR *)runtime->obj);
-		runtime->obj = 0;
+		fdActorReleaseStub((ACTOR *)runtime->object);
+		runtime->object = 0;
 		runtime->active = 0;
 	}
 }
@@ -584,7 +588,7 @@ Uint32 btPlaybackRunAll(void)
 	runtime = &battle->events;
 	queue = &runtime->queue;
 
-	for(i = 0; i < queue->cnt; i++) {
+	for(i = 0; i < queue->count; i++) {
 		Uint8 opcode = queue->opcodes[i];
 		if(opcode <= PLAYBACK_BLOW_AWAY)
 			switch(opcode) {
@@ -630,8 +634,8 @@ Uint32 btPlaybackRunAll(void)
 				mnMessageArgumentClearAllStub();
 				break;
 			case PLAYBACK_HIT:
-				if(runtime->pendingSnd > 0)
-					sySndPlayStub(runtime->pendingSnd);
+				if(runtime->pendingSound > 0)
+					sySoundPlayStub(runtime->pendingSound);
 				btMotionFlashHit(queue->operands[i], 0, 0);
 				break;
 			case PLAYBACK_DEFEAT:
@@ -640,10 +644,10 @@ Uint32 btPlaybackRunAll(void)
 				btMotionShowDowned(queue->operands[i]);
 				break;
 			case PLAYBACK_DRAW_STATUS:
-				mnPartyStatDrawStub(RamHeapSlots->battleState->partyStat);
+				mnPartyStatusDrawStub(RamHeapSlots->battleState->partyStatus);
 				break;
 			case PLAYBACK_REFRESH_UNIT:
-				btUnitBuildStatFlags(
+				btUnitBuildStatusFlags(
 					queue->operands[i], btObjectGet(queue->operands[i]));
 				btObjectUpdatePose(queue->operands[i]);
 				break;
@@ -660,11 +664,11 @@ Uint32 btPlaybackRunAll(void)
 void btPlaybackPush(Uint32 opcode, Uint32 operand)
 {
 	BATTLE_PLAYBACK_QUEUE *queue = &RamHeapSlots->battleState->events.queue;
-	Uint32				   idx = queue->cnt;
+	Uint32				   index = queue->count;
 
-	queue->opcodes[idx] = opcode;
-	queue->operands[idx] = operand;
-	queue->cnt = idx + 1;
+	queue->opcodes[index] = opcode;
+	queue->operands[index] = operand;
+	queue->count = index + 1;
 }
 
 /* Returns 1 for an effect that still applies when the ability's damage has just
@@ -698,7 +702,7 @@ Bool btUnitKeepsOneHp(Sint32 unitId)
    or appends it: where a Star Magician's ball takes its place. */
 void btPartyInsertUnitCentered(Uint16 *list, Sint32 unit)
 {
-	Sint32	cnts[2] = {0, 0};
+	Sint32	counts[2] = {0, 0};
 	Sint32	side;
 	Sint32	slot;
 	Sint32	divider;
@@ -727,7 +731,7 @@ void btPartyInsertUnitCentered(Uint16 *list, Sint32 unit)
 				side ^= 1;
 				divider = i;
 			}
-			cnts[side]++;
+			counts[side]++;
 		}
 		i++;
 	} while(i <= 5);
@@ -818,23 +822,23 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 	Sint32 affinity;	/* -1 a resisted element, 1 a weakness, else 0 */
 	/* A copy of the target as it was, to measure each stat's change; a heap
 	   block freed at the end. */
-	UNIT  *savedTgt;
+	UNIT  *savedTarget;
 	Sint32 elementPower; /* the user's power in the ability's element */
 	Sint32 hp;
 	Sint32 drained;
 	Sint32 defense;
 	Sint32 pass;
-	Uint8  tgtId;
+	Uint8  targetId;
 	Sint8 *resistance;
-	UNIT  *tgt;
-	Uint32 actionIdx;
+	UNIT  *target;
+	Uint32 actionIndex;
 	Sint32 value;
 	Sint32 amount; /* the damage, or the HP or PP restored */
 	Sint32 power;
 	Sint8 *agility;
 	Sint32 guard;
 	Sint16 enemyList[8];
-	Sint32 enemyIdx;
+	Sint32 enemyIndex;
 	Sint32 restored;
 	Sint32 unitSize;
 
@@ -847,7 +851,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 	skipDamage = 0;
 	affinity = 0;
 	unitSize = sizeof(UNIT);
-	savedTgt = syHeapAlloc(unitSize);
+	savedTarget = syHeapAllocate(unitSize);
 
 	/* Meld and Mold strike with the stats of the unit that joins the user. */
 	/* BUG: abilityId is tested before it is read from the plan, so this reads a
@@ -856,25 +860,26 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		unitId = plan->partnerId;
 	else
 		unitId = plan->unitId;
-	tgtId = plan->tgtIds[slot];
+	targetId = plan->targetIds[slot];
 	abilityId = plan->abilityId;
 	element = plan->element;
-	multiplier = plan->tgtMultiplier[slot];
-	critical = plan->tgtCritical[slot];
+	multiplier = plan->targetMultiplier[slot];
+	critical = plan->targetCritical[slot];
 
 	ability = gmAbilityGetDirectStub(abilityId);
 	actor = syUnitGet(unitId);
-	tgt = syUnitGet(tgtId);
-	syWordsCopyEntry(savedTgt, tgt, unitSize);
+	target = syUnitGet(targetId);
+	syWordsCopyEntry(savedTarget, target, unitSize);
 
 	/* What turns an opponent's ability away untouched: a Sentinel dissipates
 	   Psynergy, Poseidon's force field stands until the Trident breaks it, and
 	   Haze leaves nothing to hit. */
-	switch(tgt->enemyId) {
+	switch(target->enemyId) {
 	case ENEMY_SENTINEL:
-		if(plan->command == COMMAND_PSYNERGY && ARE_OPPONENTS(unitId, tgtId)) {
-			btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+		if(plan->command == COMMAND_PSYNERGY &&
+			ARE_OPPONENTS(unitId, targetId)) {
+			btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			PUSH_MESSAGE(MsgDissipated);
 			goto done;
 		}
@@ -883,17 +888,18 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 	case ENEMY_POSEIDON_SECOND_ACTION:
 	case ENEMY_POSEIDON_3:
 		if(abilityId != ABILITY_TRIDENT && battle->forceField != 0 &&
-			ARE_OPPONENTS(unitId, tgtId)) {
-			btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			ARE_OPPONENTS(unitId, targetId)) {
+			btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			PUSH_MESSAGE(MsgFieldProtects);
 			goto done;
 		}
 		break;
 	}
-	if(tgt->defendLevel == DEFEND_VANISHED && ARE_OPPONENTS(unitId, tgtId)) {
-		btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-		btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+	if(target->defendLevel == DEFEND_VANISHED &&
+		ARE_OPPONENTS(unitId, targetId)) {
+		btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+		btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 		PUSH_MESSAGE(MsgNoEffect);
 		goto done;
 	}
@@ -901,7 +907,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 	/* An ability that reaches the whole side treats every target as aimed
 	   at. */
 	if(ability->range != ABILITY_RANGE_ALL) {
-		distance = plan->tgtOfs[slot];
+		distance = plan->targetOffset[slot];
 		if(distance < 0)
 			distance = -distance;
 	} else {
@@ -912,14 +918,16 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 	if(element != ELEMENT_NONE) {
 		Sint32 i;
 
-		value = tgt->baseElement[element].resistance;
-		for(i = 0; i < ELEMENT_COUNT && value >= tgt->baseElement[i].resistance;
+		value = target->baseElement[element].resistance;
+		for(i = 0;
+			i < ELEMENT_COUNT && value >= target->baseElement[i].resistance;
 			i++)
 			;
 		if(i == ELEMENT_COUNT)
 			affinity = -1;
 
-		for(i = 0; i < ELEMENT_COUNT && value <= tgt->baseElement[i].resistance;
+		for(i = 0;
+			i < ELEMENT_COUNT && value <= target->baseElement[i].resistance;
 			i++)
 			;
 		if(i == ELEMENT_COUNT)
@@ -939,7 +947,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		affinity > 0) {
 		Sint32 chance;
 
-		chance = elementPower - tgt->element[plan->element].resistance;
+		chance = elementPower - target->element[plan->element].resistance;
 		chance += DJINN_BONUS_CHANCE;
 		/* Percent to a fraction of the 16-bit random range. */
 		chance *= toFIXED(1) / 100;
@@ -949,22 +957,22 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 
 	/* Abilities that knock the target's Djinn to standby. */
 	if(abilityId == ABILITY_DJINNFEST || abilityId == ABILITY_FUGUE)
-		btUnitDrainDjinn(tgtId, 0, 0);
+		btUnitDrainDjinn(targetId, 0, 0);
 	if(abilityId == ABILITY_DJINN_BLAST || abilityId == ABILITY_DJINN_STORM)
-		btUnitDrainDjinn(tgtId, 1, 0);
+		btUnitDrainDjinn(targetId, 1, 0);
 	if(abilityId == ABILITY_DJINN_STUN)
-		btUnitDrainDjinn(tgtId, 1, 1);
+		btUnitDrainDjinn(targetId, 1, 1);
 
 	/* Whether the effect lands: a roll made when the action was built, or one
 	   made now, less likely the farther the target is. */
-	kind = ability->flg & ABILITY_FORMULA_MASK;
+	kind = ability->flags & ABILITY_FORMULA_MASK;
 	{
 		Sint32 plannedHit;
 
-		plannedHit = plan->tgtHit[slot];
+		plannedHit = plan->targetHit[slot];
 		if(plannedHit == HIT_NOT_ROLLED)
-			hit = gmBattleRollEffectSuccessStub(unitId, tgtId, element,
-				ability->eff, RangeFalloffEffectChance[distance]);
+			hit = gmBattleRollEffectSuccessStub(unitId, targetId, element,
+				ability->effect, RangeFalloffEffectChance[distance]);
 		else
 			hit = plannedHit;
 	}
@@ -972,10 +980,10 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 	/* 3. Calling an ally; Speed Surge is an enemy splitting in two. A Star
 	   Magician calls one of its four balls, any other caller a Sea Fighter, and
 	   Regen Dance the next enemy waiting in the queue. */
-	if(ability->eff == ABILITY_EFFECT_CALL_ALLY ||
-		ability->eff == ABILITY_EFFECT_CALL_HELP ||
-		ability->eff == ABILITY_EFFECT_CALL_REINFORCEMENT ||
-		ability->eff == ABILITY_EFFECT_CALL_QUEUED) {
+	if(ability->effect == ABILITY_EFFECT_CALL_ALLY ||
+		ability->effect == ABILITY_EFFECT_CALL_HELP ||
+		ability->effect == ABILITY_EFFECT_CALL_REINFORCEMENT ||
+		ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
 		Sint32 classId;
 		Sint32 newUnitId;
 		Sint32 suffix;
@@ -983,22 +991,22 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		classId = actor->enemyId;
 		suffix = -1;
 		newUnitId = btEnemyGetFreeUnitId();
-		if(ability->eff == ABILITY_EFFECT_CALL_HELP) {
+		if(ability->effect == ABILITY_EFFECT_CALL_HELP) {
 			classId = btFormationGetRandomMember(battle->formation);
-		} else if(ability->eff == ABILITY_EFFECT_CALL_REINFORCEMENT) {
+		} else if(ability->effect == ABILITY_EFFECT_CALL_REINFORCEMENT) {
 			if(actor->enemyId == ENEMY_STAR_MAGICIAN)
 				classId = (gmBattleRandomStub() & 3) + ENEMY_REFRESH_BALL;
 			else
 				classId = ENEMY_SEA_FIGHTER;
-		} else if(ability->eff == ABILITY_EFFECT_CALL_QUEUED) {
-			if(battle->spoils.queueCnt != 0) {
+		} else if(ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
+			if(battle->spoils.queueCount != 0) {
 				classId =
 					battle->spoils.queuedSummons[battle->spoils.queueHead];
 				suffix = battle->spoils.queuedLetters[battle->spoils.queueHead];
 			} else
 				hit = 0;
 		}
-		if(hit != 0 && btEnemyHasSprRoom(classId) != 0 && newUnitId >= 0) {
+		if(hit != 0 && btEnemyHasSpriteRoom(classId) != 0 && newUnitId >= 0) {
 			/* The newcomer's name letter; on the first duplicate the enemy
 			   already there takes a letter too. */
 			if(suffix == -1) {
@@ -1007,8 +1015,8 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 					btEnemyLetterFirstOfKind(classId);
 			}
 			gmBattleUnitSetStub(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
-			if(ability->eff == ABILITY_EFFECT_CALL_QUEUED) {
-				battle->spoils.queueCnt--;
+			if(ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
+				battle->spoils.queueCount--;
 				battle->spoils.queueHead = (battle->spoils.queueHead + 1) % 2;
 			}
 			/* A Star Magician's ball takes the place nearest the middle; any
@@ -1043,14 +1051,14 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			}
 			btObjectPut();
 			{
-				Sint32 enemyCnt;
+				Sint32 enemyCount;
 
-				enemyCnt = btEnemyList(enemyList);
-				for(enemyIdx = 0; enemyIdx < enemyCnt; enemyIdx++)
-					btMotionReturnToSpot((Uint16)enemyList[enemyIdx]);
+				enemyCount = btEnemyList(enemyList);
+				for(enemyIndex = 0; enemyIndex < enemyCount; enemyIndex++)
+					btMotionReturnToSpot((Uint16)enemyList[enemyIndex]);
 			}
 			btPlaybackPush(PLAYBACK_UNIT_NAME, newUnitId);
-			if(ability->eff == ABILITY_EFFECT_CALL_QUEUED)
+			if(ability->effect == ABILITY_EFFECT_CALL_QUEUED)
 				PUSH_MESSAGE(MsgUpToFight);
 			else if(abilityId != ABILITY_SPEED_SURGE)
 				PUSH_MESSAGE(MsgAppears);
@@ -1065,45 +1073,45 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 
 	/* 4. Effects that change how the damage step works. */
 	if(hit != 0) {
-		if(ability->eff == ABILITY_EFFECT_GROUND ||
-			ability->eff == ABILITY_EFFECT_ULYSSES) {
+		if(ability->effect == ABILITY_EFFECT_GROUND ||
+			ability->effect == ABILITY_EFFECT_ULYSSES) {
 			/* Ground holds only a target that has not yet acted this turn. */
 			hit = 0;
-			for(actionIdx = 0; actionIdx < BATTLE_ACTION_CAPACITY;
-				actionIdx++) {
-				if(battle->actions[actionIdx].unitId == tgtId) {
+			for(actionIndex = 0; actionIndex < BATTLE_ACTION_CAPACITY;
+				actionIndex++) {
+				if(battle->actions[actionIndex].unitId == targetId) {
 					hit = 1;
 					break;
 				}
 			}
-		} else if(ability->eff == ABILITY_EFFECT_HALVE_DEFENSE) {
+		} else if(ability->effect == ABILITY_EFFECT_HALVE_DEFENSE) {
 			defenseCut = DEFENSE_HALVED;
-		} else if(ability->eff == ABILITY_EFFECT_LEAVE_ONE_HP) {
+		} else if(ability->effect == ABILITY_EFFECT_LEAVE_ONE_HP) {
 			leaveOneHp = 1;
-		} else if(ability->eff == ABILITY_EFFECT_INSTANT_DEATH) {
+		} else if(ability->effect == ABILITY_EFFECT_INSTANT_DEATH) {
 			skipDamage = 1;
-		} else if(ability->eff == ABILITY_EFFECT_SELF_DESTRUCT) {
+		} else if(ability->effect == ABILITY_EFFECT_SELF_DESTRUCT) {
 			/* The user leaves the battle (btUnitRemoveEnemy). */
 			if(actor->hp != 0)
 				btPlaybackPush(PLAYBACK_REMOVE_UNIT, unitId);
-		} else if(ability->eff == ABILITY_EFFECT_DRAIN_PP) {
+		} else if(ability->effect == ABILITY_EFFECT_DRAIN_PP) {
 			/* Psy Drain does PP damage, and misses a target with no PP. */
-			if(tgt->pp != 0)
+			if(target->pp != 0)
 				kind = ABILITY_FORMULA_PP_DAMAGE;
 			else
 				hit = 0;
-		} else if(ability->eff == ABILITY_EFFECT_SLAY_DRAGON) {
+		} else if(ability->effect == ABILITY_EFFECT_SLAY_DRAGON) {
 			defenseCut = DEFENSE_IGNORED;
-		} else if(ability->eff == ABILITY_EFFECT_SLAY_SEA_CREATURE) {
+		} else if(ability->effect == ABILITY_EFFECT_SLAY_SEA_CREATURE) {
 			defenseCut = DEFENSE_IGNORED;
 		}
 	}
 
 	/* 5. Damage and healing; a downed target is skipped unless the ability
 	   revives, and Shine's damage falls on its first target alone. */
-	if((ability->eff != ABILITY_EFFECT_DAZZLE || slot == 0) &&
+	if((ability->effect != ABILITY_EFFECT_DAZZLE || slot == 0) &&
 		skipDamage == 0 &&
-		(tgt->hp != 0 || gmBattleIsReviveEffectStub(ability->eff) != 0)) {
+		(target->hp != 0 || gmBattleIsReviveEffectStub(ability->effect) != 0)) {
 		Sint32 pp;
 		Sint32 newHp;
 
@@ -1114,10 +1122,10 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		case ABILITY_FORMULA_ATTACK_MULTIPLIED: {
 			Sint32 baseDefense;
 
-			if(tgt->defendLevel == DEFEND_VANISHED)
+			if(target->defendLevel == DEFEND_VANISHED)
 				break;
-			hp = tgt->hp;
-			baseDefense = tgt->defense;
+			hp = target->hp;
+			baseDefense = target->defense;
 			defense = baseDefense;
 			if(defenseCut != 0) {
 				if(defenseCut == DEFENSE_IGNORED)
@@ -1129,12 +1137,12 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			do {
 				if(element != ELEMENT_NONE)
 					elementBonus =
-						elementPower - tgt->element[element].resistance;
+						elementPower - target->element[element].resistance;
 				if(pass == 0)
 					elementBonus = 0;
 				power = ability->power;
 				if(kind == ABILITY_FORMULA_ATTACK_MULTIPLIED)
-					amount = gmBattleCalcAttackDamageStub(
+					amount = gmBattleCalculateAttackDamageStub(
 								 actor->attack, defense, 0, elementBonus) *
 						power / 10;
 				else {
@@ -1146,7 +1154,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 						if(abilityId == ABILITY_MELD)
 							attack += syUnitGet(plan->partnerId)->attack / 4;
 					}
-					amount = gmBattleCalcAttackDamageStub(
+					amount = gmBattleCalculateAttackDamageStub(
 						attack, defense, power, elementBonus);
 				}
 				amount *= multiplier;
@@ -1155,21 +1163,21 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 						amount = amount * 5 / 4;
 					else
 						amount = amount * 3 / 2;
-					amount += (tgt->level / 5) + 6;
+					amount += (target->level / 5) + 6;
 					if(pass == 0) {
 						btPlaybackPush(PLAYBACK_MARK, 0);
 						{
 							Sint32 msg;
 
 							msg = (Sint32)MsgCritical;
-							if(IS_PARTY_UNIT(tgtId))
+							if(IS_PARTY_UNIT(targetId))
 								msg += 1;
 							btPlaybackPush(PLAYBACK_MESSAGE_NO_WAIT, msg);
 						}
 					}
 				}
 				amount += gmBattleRandomStub() & 3;
-				REDUCE_BY_GUARD(amount, tgt);
+				REDUCE_BY_GUARD(amount, target);
 				if(amount <= 0)
 					amount = 1;
 				if(leaveOneHp != 0) {
@@ -1186,63 +1194,64 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 				pass++;
 			} while(pass <= 1);
 			hp -= amount;
-			btPlaybackPush(PLAYBACK_HIT, tgtId);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			btPlaybackPush(PLAYBACK_HIT, targetId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			btPlaybackPush(PLAYBACK_NUMBER, amount);
 			{
 				Sint32 msg;
 
-				if(IS_PARTY_UNIT(tgtId))
+				if(IS_PARTY_UNIT(targetId))
 					msg = (Sint32)MsgDmgEmphP + affinity;
 				else
 					msg = (Sint32)MsgDmgEmphE + affinity;
 				btPlaybackPush(PLAYBACK_MESSAGE, msg);
 			}
 
-			if(hp <= 0 && btUnitKeepsOneHp(tgtId) != 0)
+			if(hp <= 0 && btUnitKeepsOneHp(targetId) != 0)
 				hp = 1;
 			if(hp <= 0) {
 				hp = 0;
-				btPlaybackPush(PLAYBACK_DEFEAT, tgtId);
-				if(tgt->enemyId != ENEMY_DOOM_DRAGON_A &&
-					tgt->enemyId != ENEMY_DOOM_DRAGON_E) {
-					btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
-					PUSH_SIDE_MESSAGE(tgtId, MsgGoesDown, MsgFelled);
+				btPlaybackPush(PLAYBACK_DEFEAT, targetId);
+				if(target->enemyId != ENEMY_DOOM_DRAGON_A &&
+					target->enemyId != ENEMY_DOOM_DRAGON_E) {
+					btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
+					PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
 				}
 			} else
-				btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			damageDealt = tgt->hp - hp;
-			tgt->hp = hp;
-			gmUnitRecalculateGaugesStub(tgtId);
+				btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			damageDealt = target->hp - hp;
+			target->hp = hp;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
 		case ABILITY_FORMULA_PP_DAMAGE: {
-			if(tgt->defendLevel == DEFEND_VANISHED)
+			if(target->defendLevel == DEFEND_VANISHED)
 				break;
 			if(ability->power == 0)
 				break;
-			pp = tgt->pp;
+			pp = target->pp;
 			if(element != ELEMENT_NONE)
-				elementBonus = elementPower - tgt->element[element].resistance;
+				elementBonus =
+					elementPower - target->element[element].resistance;
 			power = ability->power;
-			amount =
-				gmBattleCalcPsynergyPowerStub(power, elementBonus, FULL_RATE);
+			amount = gmBattleCalculatePsynergyPowerStub(
+				power, elementBonus, FULL_RATE);
 			amount = amount * RangeFalloffPpLoss[distance] / 100;
 			amount *= multiplier;
-			REDUCE_BY_GUARD(amount, tgt);
-			if(ability->eff == ABILITY_EFFECT_DRAIN_PP && amount > pp)
+			REDUCE_BY_GUARD(amount, target);
+			if(ability->effect == ABILITY_EFFECT_DRAIN_PP && amount > pp)
 				amount = pp;
 			if(amount > pp)
 				amount = pp;
 
-			btPlaybackPush(PLAYBACK_HIT, tgtId);
+			btPlaybackPush(PLAYBACK_HIT, targetId);
 			btPlaybackPush(PLAYBACK_NUMBER, amount);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			{
 				Sint32 msg;
 
-				if(IS_PARTY_UNIT(tgtId))
+				if(IS_PARTY_UNIT(targetId))
 					msg = (Sint32)MsgPpLossP;
 				else
 					msg = (Sint32)MsgPpLossE;
@@ -1251,68 +1260,69 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			}
 			if(pp <= 0)
 				pp = 0;
-			btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			damageDealt = tgt->pp - pp;
-			tgt->pp = pp;
-			gmUnitRecalculateGaugesStub(tgtId);
+			btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			damageDealt = target->pp - pp;
+			target->pp = pp;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
 		case ABILITY_FORMULA_HEAL_HP: {
 			if(ability->power == 0)
 				break;
-			newHp = tgt->hp;
+			newHp = target->hp;
 			if(newHp == 0)
 				break;
 
 			power = ability->power;
-			amount = gmBattleCalcRecoveryStub(power,
+			amount = gmBattleCalculateRecoveryStub(power,
 				element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
 				FULL_RATE);
 			amount = amount * RangeFalloffHealHp[distance] / 100;
 			amount *= multiplier;
 			amount += gmBattleRandomStub() & 3;
 			newHp += amount;
-			if(newHp > tgt->hpMax) {
-				newHp = tgt->hpMax;
-				amount = newHp - tgt->hp;
+			if(newHp > target->hpMax) {
+				newHp = target->hpMax;
+				amount = newHp - target->hp;
 			}
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
-			if(newHp == tgt->hpMax)
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
+			if(newHp == target->hpMax)
 				PUSH_MESSAGE(MsgHpFull);
 			else {
 				btPlaybackPush(PLAYBACK_NUMBER, amount);
 				PUSH_MESSAGE(MsgHpRecover);
 			}
-			damageDealt = tgt->hp - newHp;
-			tgt->hp = newHp;
-			gmUnitRecalculateGaugesStub(tgtId);
+			damageDealt = target->hp - newHp;
+			target->hp = newHp;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
 		/* Unused: no formula is -1. PP damage again, by the PP-damage falloff
 		   and with the plain damage message. */
 		case -1: {
-			if(tgt->defendLevel == DEFEND_VANISHED)
+			if(target->defendLevel == DEFEND_VANISHED)
 				break;
 			if(ability->power == 0)
 				break;
-			pp = tgt->pp;
+			pp = target->pp;
 			if(element != ELEMENT_NONE)
-				elementBonus = elementPower - tgt->element[element].resistance;
+				elementBonus =
+					elementPower - target->element[element].resistance;
 			power = ability->power;
-			amount =
-				gmBattleCalcPsynergyPowerStub(power, elementBonus, FULL_RATE);
+			amount = gmBattleCalculatePsynergyPowerStub(
+				power, elementBonus, FULL_RATE);
 			amount = amount * RangeFalloffPpDamage[distance] / 100;
 			amount *= multiplier;
-			REDUCE_BY_GUARD(amount, tgt);
-			btPlaybackPush(PLAYBACK_HIT, tgtId);
+			REDUCE_BY_GUARD(amount, target);
+			btPlaybackPush(PLAYBACK_HIT, targetId);
 			btPlaybackPush(PLAYBACK_NUMBER, amount);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			{
 				Sint32 msg;
 
-				if(IS_PARTY_UNIT(tgtId))
+				if(IS_PARTY_UNIT(targetId))
 					msg = (Sint32)MsgDmgP;
 				else
 					msg = (Sint32)MsgDmgE;
@@ -1321,9 +1331,9 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			}
 			if(pp <= 0)
 				pp = 0;
-			btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			tgt->pp = pp;
-			gmUnitRecalculateGaugesStub(tgtId);
+			btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			target->pp = pp;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
@@ -1332,16 +1342,16 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		case ABILITY_FORMULA_SUMMON: {
 			Sint32 pass;
 
-			if(tgt->defendLevel == DEFEND_VANISHED)
+			if(target->defendLevel == DEFEND_VANISHED)
 				break;
 			if(ability->power == 0)
 				break;
-			newHp = tgt->hp;
+			newHp = target->hp;
 			pass = 1;
 			do {
 				if(element != ELEMENT_NONE)
 					elementBonus =
-						elementPower - tgt->element[element].resistance;
+						elementPower - target->element[element].resistance;
 				if(pass == 0)
 					elementBonus = 0;
 				power = ability->power;
@@ -1424,12 +1434,12 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 						maxHpPercent = 40;
 						break;
 					}
-					value = tgt->hpMax;
+					value = target->hpMax;
 					if(value > SUMMON_BONUS_HP_MAX)
 						value = SUMMON_BONUS_HP_MAX;
 					power += value * maxHpPercent / 100;
 				}
-				amount = gmBattleCalcPsynergyPowerStub(
+				amount = gmBattleCalculatePsynergyPowerStub(
 					power, elementBonus, FULL_RATE);
 				amount *= multiplier;
 				/* FAKEMATCH(dead): the ability kind masked again. */
@@ -1446,7 +1456,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 					break;
 				}
 				amount += gmBattleRandomStub() & 3;
-				REDUCE_BY_GUARD(amount, tgt);
+				REDUCE_BY_GUARD(amount, target);
 				if((MainRoutineStateWork.battleType == BATTLE_TYPE_LOST ||
 					   (syGameFlagGet(FLAG_DJINN_LESSON) != 0 &&
 						   plan->command == COMMAND_SUMMON)) &&
@@ -1455,13 +1465,13 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 				}
 				pass++;
 			} while(pass <= 1);
-			btPlaybackPush(PLAYBACK_HIT, tgtId);
+			btPlaybackPush(PLAYBACK_HIT, targetId);
 			btPlaybackPush(PLAYBACK_NUMBER, amount);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			{
 				Sint32 msg;
 
-				if(IS_PARTY_UNIT(tgtId))
+				if(IS_PARTY_UNIT(targetId))
 					msg = (Sint32)MsgDmgEmphP + affinity;
 				else
 					msg = (Sint32)MsgDmgEmphE + affinity;
@@ -1469,55 +1479,55 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 				newHp -= amount;
 			}
 
-			if(newHp <= 0 && btUnitKeepsOneHp(tgtId) != 0)
+			if(newHp <= 0 && btUnitKeepsOneHp(targetId) != 0)
 				newHp = 1;
 			if(MainRoutineStateWork.battleType == BATTLE_TYPE_LOST)
 				newHp = 0;
 			if(newHp <= 0) {
-				btPlaybackPush(PLAYBACK_DEFEAT, tgtId);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_DEFEAT, targetId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				{
 					Sint32 msg;
 
 					newHp = 0;
-					if(IS_PARTY_UNIT(tgtId))
+					if(IS_PARTY_UNIT(targetId))
 						msg = (Sint32)MsgGoesDown;
 					else
 						msg = (Sint32)MsgFelled;
 					btPlaybackPush(PLAYBACK_MESSAGE, msg);
 				}
 			} else
-				btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			damageDealt = tgt->hp - newHp;
-			tgt->hp = newHp;
-			gmUnitRecalculateGaugesStub(tgtId);
+				btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			damageDealt = target->hp - newHp;
+			target->hp = newHp;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
 		case ABILITY_FORMULA_HEAL_PP: {
 			if(ability->power == 0)
 				break;
-			pp = tgt->pp;
+			pp = target->pp;
 			power = ability->power;
-			amount = gmBattleCalcRecoveryStub(power,
+			amount = gmBattleCalculateRecoveryStub(power,
 				element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
 				FULL_RATE);
 			amount = amount * RangeFalloffHealPp[distance] / 100;
 			amount *= multiplier;
 			pp += amount;
-			if(pp > tgt->ppMax) {
-				pp = tgt->ppMax;
-				amount = pp - tgt->pp;
+			if(pp > target->ppMax) {
+				pp = target->ppMax;
+				amount = pp - target->pp;
 			}
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
-			if(pp == tgt->ppMax)
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
+			if(pp == target->ppMax)
 				PUSH_MESSAGE(MsgPpFull);
 			else {
 				btPlaybackPush(PLAYBACK_NUMBER, amount);
 				PUSH_MESSAGE(MsgPpRecover);
 			}
-			tgt->pp = pp;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->pp = pp;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
@@ -1527,28 +1537,28 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			break;
 
 		case ABILITY_FORMULA_EFFECT:
-			if(tgt->defendLevel == DEFEND_VANISHED)
+			if(target->defendLevel == DEFEND_VANISHED)
 				break;
 			if(hit != 0) {
 				if(ability->power == 0)
 					break;
-				newHp = tgt->hp;
+				newHp = target->hp;
 				if(element != ELEMENT_NONE)
 					elementBonus =
-						elementPower - tgt->element[element].resistance;
+						elementPower - target->element[element].resistance;
 				power = ability->power;
-				amount = gmBattleCalcPsynergyPowerStub(
+				amount = gmBattleCalculatePsynergyPowerStub(
 					power, elementBonus, FULL_RATE);
 				amount *= multiplier;
 				amount = amount * RangeFalloffEffectDamage[distance] / 100;
-				REDUCE_BY_GUARD(amount, tgt);
-				btPlaybackPush(PLAYBACK_HIT, tgtId);
+				REDUCE_BY_GUARD(amount, target);
+				btPlaybackPush(PLAYBACK_HIT, targetId);
 				btPlaybackPush(PLAYBACK_NUMBER, amount);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				{
 					Sint32 msg;
 
-					if(IS_PARTY_UNIT(tgtId))
+					if(IS_PARTY_UNIT(targetId))
 						msg = (Sint32)MsgDmgP;
 					else
 						msg = (Sint32)MsgDmgE;
@@ -1556,25 +1566,25 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 					newHp -= amount;
 				}
 
-				if(newHp <= 0 && btUnitKeepsOneHp(tgtId) != 0)
+				if(newHp <= 0 && btUnitKeepsOneHp(targetId) != 0)
 					newHp = 1;
 				if(newHp <= 0) {
-					btPlaybackPush(PLAYBACK_DEFEAT, tgtId);
+					btPlaybackPush(PLAYBACK_DEFEAT, targetId);
 					newHp = 0;
-					if(tgt->enemyId != ENEMY_DOOM_DRAGON_A &&
-						tgt->enemyId != ENEMY_DOOM_DRAGON_E) {
-						btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
-						PUSH_SIDE_MESSAGE(tgtId, MsgGoesDown, MsgFelled);
+					if(target->enemyId != ENEMY_DOOM_DRAGON_A &&
+						target->enemyId != ENEMY_DOOM_DRAGON_E) {
+						btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
+						PUSH_SIDE_MESSAGE(targetId, MsgGoesDown, MsgFelled);
 					}
 				} else
-					btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-				damageDealt = tgt->hp - newHp;
-				tgt->hp = newHp;
-				gmUnitRecalculateGaugesStub(tgtId);
+					btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+				damageDealt = target->hp - newHp;
+				target->hp = newHp;
+				gmUnitRecalculateGaugesStub(targetId);
 				break;
 			}
-			btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			PUSH_MESSAGE(MsgNoEffect);
 			break;
 		}
@@ -1582,90 +1592,90 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 
 	/* The Trident breaks Poseidon's force field. */
 	if(battle->forceField != 0 && abilityId == ABILITY_TRIDENT) {
-		btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+		btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 		PUSH_MESSAGE(MsgFieldBroken);
 		battle->forceField = 0;
 	}
 	/* 6. The added effect; each message after the first pushes the name again.
 	   Shine's falls on the targets after its first. */
-	btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
-	if((ability->eff != ABILITY_EFFECT_DAZZLE || slot != 0) &&
-		(gmBattleIsReviveEffectStub(ability->eff) != 0 || tgt->hp != 0 ||
-			btAbilityEffectAppliesToDowned(ability->eff) != 0) &&
+	btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
+	if((ability->effect != ABILITY_EFFECT_DAZZLE || slot != 0) &&
+		(gmBattleIsReviveEffectStub(ability->effect) != 0 || target->hp != 0 ||
+			btAbilityEffectAppliesToDowned(ability->effect) != 0) &&
 		hit != 0) {
-		switch(ability->eff) {
+		switch(ability->effect) {
 
 		/* Tonic cures every ailment. */
 		case ABILITY_EFFECT_CURE_ALL:
-			if(tgt->delusion != 0) {
-				tgt->delusion = 0;
+			if(target->delusion != 0) {
+				target->delusion = 0;
 				PUSH_MESSAGE(MsgCureDelusion);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			}
-			if(tgt->stun != 0) {
-				tgt->stun = 0;
+			if(target->stun != 0) {
+				target->stun = 0;
 				btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				PUSH_MESSAGE(MsgCureStun);
 			}
-			if(tgt->sleep != 0) {
-				tgt->sleep = 0;
+			if(target->sleep != 0) {
+				target->sleep = 0;
 				PUSH_MESSAGE(MsgWakes);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			}
-			if(tgt->psySeal != 0) {
-				tgt->psySeal = 0;
+			if(target->psySeal != 0) {
+				target->psySeal = 0;
 				PUSH_MESSAGE(MsgCureSeal);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			}
-			if(tgt->grimReaper != 0) {
-				tgt->grimReaper = 0;
+			if(target->grimReaper != 0) {
+				target->grimReaper = 0;
 				PUSH_MESSAGE(MsgCureCurse);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			}
-			if(tgt->haunt != 0) {
-				tgt->haunt = 0;
+			if(target->haunt != 0) {
+				target->haunt = 0;
 				PUSH_MESSAGE(MsgCureSpirit);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			}
-			if(tgt->poison != 0) {
+			if(target->poison != 0) {
 				PUSH_MESSAGE(MsgCurePoison);
-				tgt->poison = 0;
+				target->poison = 0;
 			}
 			btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
 			break;
 
 		/* Restore cures what Tonic does, but not the evil spirit or poison. */
 		case ABILITY_EFFECT_RESTORE:
-			if(tgt->delusion != 0) {
-				tgt->delusion = 0;
+			if(target->delusion != 0) {
+				target->delusion = 0;
 				btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				PUSH_MESSAGE(MsgCureDelusion);
 			}
-			if(tgt->stun != 0) {
-				tgt->stun = 0;
+			if(target->stun != 0) {
+				target->stun = 0;
 				btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				PUSH_MESSAGE(MsgCureStun);
 			}
-			if(tgt->sleep != 0) {
-				tgt->sleep = 0;
+			if(target->sleep != 0) {
+				target->sleep = 0;
 				btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				PUSH_MESSAGE(MsgWakes);
 			}
-			if(tgt->psySeal != 0) {
-				tgt->psySeal = 0;
+			if(target->psySeal != 0) {
+				target->psySeal = 0;
 				btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				PUSH_MESSAGE(MsgCureSeal);
 			}
-			if(tgt->grimReaper == 0)
+			if(target->grimReaper == 0)
 				break;
-			tgt->grimReaper = 0;
+			target->grimReaper = 0;
 			btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
-			btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+			btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 			PUSH_MESSAGE(MsgCureCurse);
 			break;
 
@@ -1689,51 +1699,51 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			   stat twice, unsigned and signed; the member reads behind UBFIX
 			   share one load each. */
 #if FIX_POINTER_OUTSIDE_OBJECT
-			before = (Uint16)tgt->hp;
-			heal = tgt->hp;
+			before = (Uint16)target->hp;
+			heal = target->hp;
 #else
-			stat = (Uint16 *)&tgt->hp;
+			stat = (Uint16 *)&target->hp;
 			before = *stat--;
 			heal = *(Sint16 *)(stat + 1);
 #endif
-			if(ability->eff == ABILITY_EFFECT_BREATH) {
+			if(ability->effect == ABILITY_EFFECT_BREATH) {
 				Sint32 fullHp;
 
 #if FIX_POINTER_OUTSIDE_OBJECT
-				limit = (Uint16)tgt->hpMax;
-				fullHp = tgt->hpMax;
+				limit = (Uint16)target->hpMax;
+				fullHp = target->hpMax;
 #else
 				stat--;
 				limit = *stat--;
 				fullHp = *(Sint16 *)(stat + 1);
 #endif
 				heal += fullHp * 2 / 5;
-			} else if(ability->eff == ABILITY_EFFECT_SPRING) {
+			} else if(ability->effect == ABILITY_EFFECT_SPRING) {
 #if FIX_POINTER_OUTSIDE_OBJECT
-				limit = (Uint16)tgt->hpMax;
-				maximum = tgt->hpMax;
+				limit = (Uint16)target->hpMax;
+				maximum = target->hpMax;
 #else
 				stat--;
 				limit = *stat--;
 				maximum = *(Sint16 *)(stat + 1);
 #endif
 				heal += maximum * 7 / 10;
-			} else if(ability->eff == ABILITY_EFFECT_CRYSTAL) {
-				limit = (Uint16)tgt->hpMax;
+			} else if(ability->effect == ABILITY_EFFECT_CRYSTAL) {
+				limit = (Uint16)target->hpMax;
 				heal += (Sint16)limit / 2;
 				/* FAKEMATCH(dead): updates of limit that cancel out. */
 				limit++;
 				limit--;
 			} else {
 #if FIX_POINTER_OUTSIDE_OBJECT
-				limit = (Uint16)tgt->hpMax;
-				maximum = tgt->hpMax;
+				limit = (Uint16)target->hpMax;
+				maximum = target->hpMax;
 #else
 				stat--;
 				limit = *stat--;
 				maximum = *(Sint16 *)(stat + 1);
 #endif
-				if(ability->eff == ABILITY_EFFECT_FIZZ)
+				if(ability->effect == ABILITY_EFFECT_FIZZ)
 					heal += maximum * 60 / 100;
 				else
 					heal += maximum * 30 / 100;
@@ -1749,8 +1759,8 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 				btPlaybackPush(PLAYBACK_NUMBER, restored);
 				PUSH_MESSAGE(MsgHpRecover);
 			}
-			tgt->hp = heal;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->hp = heal;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
@@ -1770,21 +1780,21 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 			   stat twice, unsigned and signed; the member reads behind UBFIX
 			   share one load each. */
 #if FIX_POINTER_OUTSIDE_OBJECT
-			before = (Uint16)tgt->pp;
-			heal = tgt->pp;
+			before = (Uint16)target->pp;
+			heal = target->pp;
 #else
-			stat = (Uint16 *)&tgt->pp;
+			stat = (Uint16 *)&target->pp;
 			before = *stat--;
 			heal = *(Sint16 *)(stat + 1);
 #endif
-			if(ability->eff == ABILITY_EFFECT_AROMA) {
-				maximum = tgt->ppMax;
-				limit = (Uint16)tgt->ppMax;
+			if(ability->effect == ABILITY_EFFECT_AROMA) {
+				maximum = target->ppMax;
+				limit = (Uint16)target->ppMax;
 				heal += (Sint16)maximum / 10;
-			} else if(ability->eff == ABILITY_EFFECT_ETHER) {
+			} else if(ability->effect == ABILITY_EFFECT_ETHER) {
 #if FIX_POINTER_OUTSIDE_OBJECT
-				limit = (Uint16)tgt->ppMax;
-				maximum = tgt->ppMax;
+				limit = (Uint16)target->ppMax;
+				maximum = target->ppMax;
 #else
 				stat--;
 				limit = *stat--;
@@ -1793,8 +1803,8 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 				heal += maximum * 3 / 10;
 			} else {
 #if FIX_POINTER_OUTSIDE_OBJECT
-				limit = (Uint16)tgt->ppMax;
-				maximum = tgt->ppMax;
+				limit = (Uint16)target->ppMax;
+				maximum = target->ppMax;
 #else
 				stat--;
 				limit = *stat--;
@@ -1813,272 +1823,282 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 				btPlaybackPush(PLAYBACK_NUMBER, restored);
 				PUSH_MESSAGE(MsgPpRecover);
 			}
-			tgt->pp = heal;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->pp = heal;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 		}
 
 		/* The stat changes show how far the stat itself moved, 0 at its limit;
 		   Zephyr and Vine set Agility's stage outright. */
 		case ABILITY_EFFECT_AGILITY_UP:
-			tgt->agilityStage = AGILITY_STAGE_DOUBLED;
-			tgt->agilityTurns = AGILITY_CHANGE_TURNS;
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, tgt->agility - savedTgt->agility);
+			target->agilityStage = AGILITY_STAGE_DOUBLED;
+			target->agilityTurns = AGILITY_CHANGE_TURNS;
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, target->agility - savedTarget->agility);
 			PUSH_MESSAGE(MsgAgiUp);
 			break;
 
 		case ABILITY_EFFECT_AGILITY_DOWN:
-			agility = &tgt->agilityStage;
+			agility = &target->agilityStage;
 			{
 				Uint8 stage;
 
 				stage = STAT_STAGE_MIN;
 				*agility = stage;
 			}
-			tgt->agilityTurns = AGILITY_CHANGE_TURNS;
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, savedTgt->agility - tgt->agility);
+			target->agilityTurns = AGILITY_CHANGE_TURNS;
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, savedTarget->agility - target->agility);
 			PUSH_MESSAGE(MsgAgiDown);
 			break;
 
 		case ABILITY_EFFECT_ATTACK_DOWN:
-			tgt->attackStage -= 1;
-			CLAMP_STAT_STAGE(tgt->attackStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, savedTgt->attack - tgt->attack);
+			target->attackStage -= 1;
+			CLAMP_STAT_STAGE(target->attackStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, savedTarget->attack - target->attack);
 			PUSH_MESSAGE(MsgAtkDown);
-			tgt->attackTurns = STAT_CHANGE_TURNS;
+			target->attackTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
-			tgt->attackStage -= 2;
-			CLAMP_STAT_STAGE(tgt->attackStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, savedTgt->attack - tgt->attack);
+			target->attackStage -= 2;
+			CLAMP_STAT_STAGE(target->attackStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, savedTarget->attack - target->attack);
 			PUSH_MESSAGE(MsgAtkDown);
-			tgt->attackTurns = STAT_CHANGE_TURNS;
+			target->attackTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_ATTACK_UP:
-			tgt->attackStage += 1;
-			CLAMP_STAT_STAGE(tgt->attackStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, tgt->attack - savedTgt->attack);
+			target->attackStage += 1;
+			CLAMP_STAT_STAGE(target->attackStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, target->attack - savedTarget->attack);
 			PUSH_MESSAGE(MsgAtkUp);
-			tgt->attackTurns = STAT_CHANGE_TURNS;
+			target->attackTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_ATTACK_UP_SHARPLY:
-			tgt->attackStage += 2;
-			CLAMP_STAT_STAGE(tgt->attackStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, tgt->attack - savedTgt->attack);
+			target->attackStage += 2;
+			CLAMP_STAT_STAGE(target->attackStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, target->attack - savedTarget->attack);
 			PUSH_MESSAGE(MsgAtkUp);
-			tgt->attackTurns = STAT_CHANGE_TURNS;
+			target->attackTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_DEFENSE_DOWN:
-			tgt->defenseStage -= 1;
-			CLAMP_STAT_STAGE(tgt->defenseStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, savedTgt->defense - tgt->defense);
+			target->defenseStage -= 1;
+			CLAMP_STAT_STAGE(target->defenseStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, savedTarget->defense - target->defense);
 			PUSH_MESSAGE(MsgDefDown);
-			tgt->defenseTurns = STAT_CHANGE_TURNS;
+			target->defenseTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:
-			tgt->defenseStage -= 2;
-			CLAMP_STAT_STAGE(tgt->defenseStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, savedTgt->defense - tgt->defense);
+			target->defenseStage -= 2;
+			CLAMP_STAT_STAGE(target->defenseStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, savedTarget->defense - target->defense);
 			PUSH_MESSAGE(MsgDefDown);
-			tgt->defenseTurns = STAT_CHANGE_TURNS;
+			target->defenseTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_DEFENSE_UP:
-			tgt->defenseStage += 1;
-			CLAMP_STAT_STAGE(tgt->defenseStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, tgt->defense - savedTgt->defense);
+			target->defenseStage += 1;
+			CLAMP_STAT_STAGE(target->defenseStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, target->defense - savedTarget->defense);
 			PUSH_MESSAGE(MsgDefUp);
-			tgt->defenseTurns = STAT_CHANGE_TURNS;
+			target->defenseTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:
-			tgt->defenseStage += 2;
-			CLAMP_STAT_STAGE(tgt->defenseStage);
-			gmUnitCalcStub(tgtId);
-			btPlaybackPush(PLAYBACK_NUMBER, tgt->defense - savedTgt->defense);
+			target->defenseStage += 2;
+			CLAMP_STAT_STAGE(target->defenseStage);
+			gmUnitCalculateStub(targetId);
+			btPlaybackPush(
+				PLAYBACK_NUMBER, target->defense - savedTarget->defense);
 			PUSH_MESSAGE(MsgDefUp);
-			tgt->defenseTurns = STAT_CHANGE_TURNS;
+			target->defenseTurns = STAT_CHANGE_TURNS;
 			break;
 
 		/* The revivals bring back a downed target with all, half, 80% or 60% of
 		   its HP. */
 		case ABILITY_EFFECT_REVIVE:
-			if(tgt->hp != 0)
+			if(target->hp != 0)
 				break;
 			PUSH_MESSAGE(MsgRevived);
-			tgt->hp = tgt->hpMax;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->hp = target->hpMax;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 
 		case ABILITY_EFFECT_REVIVE_HALF:
-			if(tgt->hp != 0)
+			if(target->hp != 0)
 				break;
 			PUSH_MESSAGE(MsgRevived);
-			tgt->hp = tgt->hpMax / 2;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->hp = target->hpMax / 2;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 
 		case ABILITY_EFFECT_DEW:
-			if(tgt->hp != 0)
+			if(target->hp != 0)
 				break;
 			PUSH_MESSAGE(MsgRevived);
-			tgt->hp = tgt->hpMax * 8 / 10;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->hp = target->hpMax * 8 / 10;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 
 		case ABILITY_EFFECT_BALM:
-			if(tgt->hp != 0)
+			if(target->hp != 0)
 				break;
 			PUSH_MESSAGE(MsgRevived);
-			tgt->hp = (Sint16)(tgt->hpMax * 6 / 10);
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->hp = (Sint16)(target->hpMax * 6 / 10);
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 
 		case ABILITY_EFFECT_CURE_POISON:
-			if(tgt->poison != 0)
+			if(target->poison != 0)
 				PUSH_MESSAGE(MsgCurePoison);
-			tgt->poison = 0;
+			target->poison = 0;
 			break;
 
 		/* A Resistance change needs no recalculation to show: it is the change
 		   in stages times RESISTANCE_PER_STAGE. */
 		case ABILITY_EFFECT_RESISTANCE_DOWN:
-			tgt->resistanceStage--;
-			CLAMP_STAT_STAGE(tgt->resistanceStage);
+			target->resistanceStage--;
+			CLAMP_STAT_STAGE(target->resistanceStage);
 			btPlaybackPush(PLAYBACK_NUMBER,
-				(savedTgt->resistanceStage - tgt->resistanceStage) *
+				(savedTarget->resistanceStage - target->resistanceStage) *
 					RESISTANCE_PER_STAGE);
 			PUSH_MESSAGE(MsgResDown);
-			tgt->resistanceTurns = STAT_CHANGE_TURNS;
+			target->resistanceTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY: {
-			tgt->resistanceStage -= 2;
-			if(STAT_STAGE_MIN > tgt->resistanceStage)
-				tgt->resistanceStage = STAT_STAGE_MIN;
-			if(tgt->resistanceStage > STAT_STAGE_MAX)
-				tgt->resistanceStage = STAT_STAGE_MAX;
+			target->resistanceStage -= 2;
+			if(STAT_STAGE_MIN > target->resistanceStage)
+				target->resistanceStage = STAT_STAGE_MIN;
+			if(target->resistanceStage > STAT_STAGE_MAX)
+				target->resistanceStage = STAT_STAGE_MAX;
 			btPlaybackPush(PLAYBACK_NUMBER,
-				(savedTgt->resistanceStage - tgt->resistanceStage) *
+				(savedTarget->resistanceStage - target->resistanceStage) *
 					RESISTANCE_PER_STAGE);
 			PUSH_MESSAGE(MsgResDown);
-			tgt->resistanceTurns = STAT_CHANGE_TURNS;
+			target->resistanceTurns = STAT_CHANGE_TURNS;
 		} break;
 
 		case ABILITY_EFFECT_RESISTANCE_UP:
-			tgt->resistanceStage++;
-			CLAMP_STAT_STAGE(tgt->resistanceStage);
+			target->resistanceStage++;
+			CLAMP_STAT_STAGE(target->resistanceStage);
 			btPlaybackPush(PLAYBACK_NUMBER,
-				(tgt->resistanceStage - savedTgt->resistanceStage) *
+				(target->resistanceStage - savedTarget->resistanceStage) *
 					RESISTANCE_PER_STAGE);
 			PUSH_MESSAGE(MsgResUp);
-			tgt->resistanceTurns = STAT_CHANGE_TURNS;
+			target->resistanceTurns = STAT_CHANGE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY: {
-			tgt->resistanceStage += 2;
-			if(*(resistance = &tgt->resistanceStage) < STAT_STAGE_MIN)
-				tgt->resistanceStage = STAT_STAGE_MIN;
-			if(tgt->resistanceStage > STAT_STAGE_MAX)
-				tgt->resistanceStage = STAT_STAGE_MAX;
+			target->resistanceStage += 2;
+			if(*(resistance = &target->resistanceStage) < STAT_STAGE_MIN)
+				target->resistanceStage = STAT_STAGE_MIN;
+			if(target->resistanceStage > STAT_STAGE_MAX)
+				target->resistanceStage = STAT_STAGE_MAX;
 			btPlaybackPush(PLAYBACK_NUMBER,
-				(tgt->resistanceStage - savedTgt->resistanceStage) *
+				(target->resistanceStage - savedTarget->resistanceStage) *
 					RESISTANCE_PER_STAGE);
 			PUSH_MESSAGE(MsgResUp);
-			tgt->resistanceTurns = STAT_CHANGE_TURNS;
+			target->resistanceTurns = STAT_CHANGE_TURNS;
 		} break;
 
 		/* Poison does nothing to a poisoned target, deadly poison nothing to
 		   one that already has it. */
 		case ABILITY_EFFECT_POISON:
-			if(tgt->poison != 0)
+			if(target->poison != 0)
 				break;
 			PUSH_MESSAGE(MsgPoisoned);
-			tgt->poison = POISON_NORMAL;
+			target->poison = POISON_NORMAL;
 			break;
 
 		case ABILITY_EFFECT_VENOM:
-			if(tgt->poison > POISON_NORMAL)
+			if(target->poison > POISON_NORMAL)
 				break;
 			PUSH_MESSAGE(MsgVenom);
-			tgt->poison = POISON_VENOM;
+			target->poison = POISON_VENOM;
 			break;
 
 		case ABILITY_EFFECT_DELUSION:
 		case ABILITY_EFFECT_DAZZLE:
 			PUSH_MESSAGE(MsgDelusion);
-			tgt->delusion = STATUS_TURNS;
+			target->delusion = STATUS_TURNS;
 			break;
 
 		case ABILITY_EFFECT_CONFUSION:
 			PUSH_MESSAGE(MsgConfused);
-			tgt->confusion = STATUS_TURNS;
+			target->confusion = STATUS_TURNS;
 			break;
 
 		case ABILITY_EFFECT_CHARM:
 			PUSH_MESSAGE(MsgCharmed);
-			tgt->charm = STATUS_TURNS;
+			target->charm = STATUS_TURNS;
 			break;
 
 		case ABILITY_EFFECT_STUN:
 		case ABILITY_EFFECT_STUN_THREE_ROLLS:
 			PUSH_MESSAGE(MsgStunned);
-			tgt->stun = STATUS_TURNS;
+			target->stun = STATUS_TURNS;
 			break;
 
 		case ABILITY_EFFECT_SLEEP:
 			PUSH_MESSAGE(MsgAsleep);
-			tgt->sleep = STATUS_TURNS;
+			target->sleep = STATUS_TURNS;
 			break;
 
 		case ABILITY_EFFECT_SEAL:
-			PUSH_SIDE_MESSAGE(tgtId, MsgPsyBlock, MsgPsySeal);
-			tgt->psySeal |= PSY_SEAL_BIND;
+			PUSH_SIDE_MESSAGE(targetId, MsgPsyBlock, MsgPsySeal);
+			target->psySeal |= PSY_SEAL_BIND;
 			break;
 
 		case ABILITY_EFFECT_SEAL_2_TURNS:
-			PUSH_SIDE_MESSAGE(tgtId, MsgPsyBlock, MsgPsySeal);
-			tgt->psySeal |= PSY_SEAL_LUFF;
+			PUSH_SIDE_MESSAGE(targetId, MsgPsyBlock, MsgPsySeal);
+			target->psySeal |= PSY_SEAL_LUFF;
 			break;
 
 		/* Instant death: "X goes down!" on the party, Drown's "X suffocates!"
 		   or "X's spirit has been drained!" on an enemy. */
 		case ABILITY_EFFECT_INSTANT_DEATH:
-			if(btUnitKeepsOneHp(tgtId) != 0)
+			if(btUnitKeepsOneHp(targetId) != 0)
 				break;
-			btPlaybackPush(PLAYBACK_DEFEAT, tgtId);
-			if(tgt->side == BATTLE_SIDE_PARTY)
+			btPlaybackPush(PLAYBACK_DEFEAT, targetId);
+			if(target->side == BATTLE_SIDE_PARTY)
 				PUSH_MESSAGE(MsgKoDown);
 			else if(abilityId == ABILITY_DROWN)
 				PUSH_MESSAGE(MsgSuffocate);
 			else
 				PUSH_MESSAGE(MsgSpiritDrain);
-			tgt->hp = 0;
-			gmUnitRecalculateGaugesStub(tgtId);
+			target->hp = 0;
+			gmUnitRecalculateGaugesStub(targetId);
 			break;
 
 		case ABILITY_EFFECT_REGENERATE:
 			PUSH_MESSAGE(MsgHpRegen);
-			tgt->regenerate = REGENERATE_TURNS;
+			target->regenerate = REGENERATE_TURNS;
 			break;
 
 		case ABILITY_EFFECT_REFLECT:
 			PUSH_MESSAGE(MsgReflect);
-			tgt->reflect = STATUS_TURNS;
+			target->reflect = STATUS_TURNS;
 			break;
 
 		/* The drains give the damage dealt back to the user: Drain all of it as
@@ -2087,7 +2107,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		case ABILITY_EFFECT_DRAIN_HALF_HP:
 			amount = actor->hp;
 			power = damageDealt;
-			if(ability->eff == ABILITY_EFFECT_DRAIN_HALF_HP)
+			if(ability->effect == ABILITY_EFFECT_DRAIN_HALF_HP)
 				power /= 2;
 			drained = power;
 			amount += drained;
@@ -2136,70 +2156,70 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		   and the user has room. */
 		case ABILITY_EFFECT_PSY_LEECH:
 			amount = damageDealt / 10;
-			if(tgt->pp < amount)
-				amount = tgt->pp;
+			if(target->pp < amount)
+				amount = target->pp;
 			if(actor->pp + amount > actor->ppMax)
 				amount = actor->ppMax - actor->pp;
 			if(amount == 0)
 				break;
 			btPlaybackPush(PLAYBACK_NUMBER, amount);
-			PUSH_SIDE_MESSAGE(tgtId, MsgLeechTake, MsgLeechGain);
+			PUSH_SIDE_MESSAGE(targetId, MsgLeechTake, MsgLeechGain);
 			gmUnitAddPpStub(unitId, amount);
 			break;
 
 		/* Catastrophe also takes a tenth of the target's max PP, as far as it
 		   has it. */
 		case ABILITY_EFFECT_CATASTROPHE:
-			amount = (Sint16)(tgt->ppMax / 10);
-			if(tgt->pp < amount)
-				amount = tgt->pp;
+			amount = (Sint16)(target->ppMax / 10);
+			if(target->pp < amount)
+				amount = target->pp;
 			if(amount == 0)
 				break;
 			btPlaybackPush(PLAYBACK_NUMBER, amount);
-			PUSH_SIDE_MESSAGE(tgtId, MsgMorePpLossP, MsgMorePpLossE);
-			gmUnitAddPpStub(tgtId, -amount);
+			PUSH_SIDE_MESSAGE(targetId, MsgMorePpLossP, MsgMorePpLossE);
+			gmUnitAddPpStub(targetId, -amount);
 			break;
 
 		/* Break returns raised Attack, Defense, Resistance and Agility stages
 		   to 0, leaving lowered ones, and takes away a summon's boost. */
 		case ABILITY_EFFECT_BREAK:
-			if(tgt->attackStage > 0) {
-				tgt->attackStage = 0;
-				tgt->attackTurns = 0;
+			if(target->attackStage > 0) {
+				target->attackStage = 0;
+				target->attackTurns = 0;
 			}
-			if(tgt->defenseStage > 0) {
-				tgt->defenseStage = 0;
-				tgt->defenseTurns = 0;
+			if(target->defenseStage > 0) {
+				target->defenseStage = 0;
+				target->defenseTurns = 0;
 			}
-			if(tgt->resistanceStage > 0) {
-				tgt->resistanceStage = 0;
-				tgt->resistanceTurns = 0;
+			if(target->resistanceStage > 0) {
+				target->resistanceStage = 0;
+				target->resistanceTurns = 0;
 			}
-			if(tgt->agilityStage > 0)
-				tgt->agilityStage = 0;
-			tgt->summonBoost[ELEMENT_VENUS] = 0;
-			tgt->summonBoost[ELEMENT_MERCURY] = 0;
-			tgt->summonBoost[ELEMENT_MARS] = 0;
-			tgt->summonBoost[ELEMENT_JUPITER] = 0;
+			if(target->agilityStage > 0)
+				target->agilityStage = 0;
+			target->summonBoost[ELEMENT_VENUS] = 0;
+			target->summonBoost[ELEMENT_MERCURY] = 0;
+			target->summonBoost[ELEMENT_MARS] = 0;
+			target->summonBoost[ELEMENT_JUPITER] = 0;
 			PUSH_MESSAGE(MsgBuffsReset);
 			break;
 
 		case ABILITY_EFFECT_HAUNT:
 			PUSH_MESSAGE(MsgEvilSpirit);
-			tgt->haunt = 1;
+			target->haunt = 1;
 			break;
 
 		case ABILITY_EFFECT_CURSE:
 		case ABILITY_EFFECT_CURSE_THREE_ROLLS:
-			if(tgt->grimReaper == 0) {
+			if(target->grimReaper == 0) {
 				PUSH_MESSAGE(MsgDeathCurse);
-				tgt->grimReaper = CURSE_TURNS;
+				target->grimReaper = CURSE_TURNS;
 				break;
 			}
-			if(tgt->grimReaper <= 1)
+			if(target->grimReaper <= 1)
 				break;
-			tgt->grimReaper -= 1;
-			btPlaybackPush(PLAYBACK_NUMBER, tgt->grimReaper);
+			target->grimReaper -= 1;
+			btPlaybackPush(PLAYBACK_NUMBER, target->grimReaper);
 			PUSH_MESSAGE(MsgDeathCount);
 			break;
 
@@ -2207,16 +2227,16 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		   turn's end). */
 		case ABILITY_EFFECT_ACT_TWICE:
 			PUSH_MESSAGE(MsgReadies);
-			tgt->ready = 2;
+			target->ready = 2;
 			break;
 
 		/* The target rises to the challenge and won't flee; on the party, no
 		   one may run ("No time to run!"). */
 		case ABILITY_EFFECT_CHALLENGE:
 			PUSH_MESSAGE(MsgChallenge);
-			tgt->challenge = 1;
-			if(IS_PARTY_UNIT(tgtId))
-				battle->challengeFlg |= 2;
+			target->challenge = 1;
+			if(IS_PARTY_UNIT(targetId))
+				battle->challengeFlag |= 2;
 			break;
 
 		/* The target loses its next action (btActionRunBuild). */
@@ -2224,7 +2244,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		case ABILITY_EFFECT_ULYSSES:
 
 			PUSH_MESSAGE(MsgImmobile);
-			tgt->immobile = 1;
+			target->immobile = 1;
 			break;
 
 		/* The guards: the message shows either way, but a guard is never
@@ -2232,31 +2252,31 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		case ABILITY_EFFECT_DEFEND:
 
 			PUSH_MESSAGE(MsgDefendAura);
-			if(tgt->defendLevel > 0)
+			if(target->defendLevel > 0)
 				break;
-			tgt->defendLevel = DEFEND_NORMAL;
+			target->defendLevel = DEFEND_NORMAL;
 			break;
 
 		case ABILITY_EFFECT_SHIELD:
 			PUSH_MESSAGE(MsgDefendAura);
-			if((Uint32)tgt->defendLevel > DEFEND_NORMAL)
+			if((Uint32)target->defendLevel > DEFEND_NORMAL)
 				break;
-			tgt->defendLevel = DEFEND_SHIELD;
+			target->defendLevel = DEFEND_SHIELD;
 			break;
 
 		case ABILITY_EFFECT_TOTAL_DEFENSE:
 		case ABILITY_EFFECT_GUARD_AURA:
 			PUSH_MESSAGE(MsgTotalDefenseAura);
-			if(tgt->defendLevel > DEFEND_SHIELD)
+			if(target->defendLevel > DEFEND_SHIELD)
 				break;
-			tgt->defendLevel = DEFEND_TOTAL;
+			target->defendLevel = DEFEND_TOTAL;
 			break;
 
 		case ABILITY_EFFECT_VANISH:
 			PUSH_MESSAGE(MsgVanished);
-			if((Uint32)tgt->defendLevel > DEFEND_TOTAL)
+			if((Uint32)target->defendLevel > DEFEND_TOTAL)
 				break;
-			tgt->defendLevel = DEFEND_VANISHED;
+			target->defendLevel = DEFEND_VANISHED;
 			break;
 
 		/* Contain, Threaten and Tremble do nothing; the player only reads their
@@ -2273,14 +2293,14 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 		/* Gale blows the target out of the battle, as one that flees. */
 		case ABILITY_EFFECT_BLOW_AWAY:
 			PUSH_MESSAGE(MsgBlownAway);
-			btPlaybackPush(PLAYBACK_BLOW_AWAY, tgtId);
+			btPlaybackPush(PLAYBACK_BLOW_AWAY, targetId);
 			break;
 
 		/* The second equipment total doubles as the readiness to
 		   counterattack. */
 		case ABILITY_EFFECT_COUNTER:
 			PUSH_MESSAGE(MsgCounterReady);
-			tgt->equipBonus[1] = 1;
+			target->equipBonus[1] = 1;
 			break;
 
 		default:
@@ -2293,28 +2313,28 @@ done:
 	btPlaybackPush(PLAYBACK_CLEAR_ARGUMENTS, 0);
 	/* A unit ready to counterattack remembers who struck it. */
 	if(plan->command != COMMAND_DJINN_COUNTER &&
-		(Sint8)tgt->equipBonus[1] != 0 &&
-		ability->tgtMode == ABILITY_TARGET_FOES && tgt->hp != 0) {
-		battle->counterUnitId = tgtId;
-		battle->counterTgtId = unitId;
+		(Sint8)target->equipBonus[1] != 0 &&
+		ability->targetMode == ABILITY_TARGET_FOES && target->hp != 0) {
+		battle->counterUnitId = targetId;
+		battle->counterTargetId = unitId;
 	}
 
 	/* Damage wakes a sleeping target one time in four, unless it fell asleep
 	   this turn. */
-	if(tgt->hp != 0) {
-		if(tgt->sleep != 0)
-			if(tgt->sleep < STATUS_TURNS && damageDealt > 0 &&
+	if(target->hp != 0) {
+		if(target->sleep != 0)
+			if(target->sleep < STATUS_TURNS && damageDealt > 0 &&
 				(3 & gmBattleRandomStub()) == 0) {
-				tgt->sleep = 0;
-				btPlaybackPush(PLAYBACK_UNIT_NAME, tgtId);
+				target->sleep = 0;
+				btPlaybackPush(PLAYBACK_UNIT_NAME, targetId);
 				PUSH_MESSAGE(MsgWakes);
 			}
 	}
-	syHeapRelease(savedTgt);
-	gmUnitCalcStub(tgtId);
-	mnPartyStatDrawStub(RamHeapSlots->battleState->partyStat);
-	if(tgt->hp != 0)
-		btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
+	syHeapRelease(savedTarget);
+	gmUnitCalculateStub(targetId);
+	mnPartyStatusDrawStub(RamHeapSlots->battleState->partyStatus);
+	if(target->hp != 0)
+		btPlaybackPush(PLAYBACK_REFRESH_UNIT, targetId);
 	/* A haunted unit pays, one time in four, a quarter of what it took, at the
 	   end of its action; Daedalus's second strike does not count. */
 	if(abilityId != ABILITY_DAEDALUS_STRIKE && actor->haunt != 0 &&
@@ -2369,8 +2389,8 @@ Sint32 btAIChooseAction(BATTLE_ACTION_RECORD *request, Sint32 retry)
 	const Sint8				*actionStrategy;
 	const Uint8				*itemActionMask;
 	Sint16					 command;
-	Sint32					 allyTgt;
-	Sint32					 opponentTgt;
+	Sint32					 allyTarget;
+	Sint32					 opponentTarget;
 	Bool					 allyIsParty;
 	Bool					 opponentIsParty;
 	BATTLE_STATE			*battle;
@@ -2379,9 +2399,9 @@ Sint32 btAIChooseAction(BATTLE_ACTION_RECORD *request, Sint32 retry)
 	Sint8					 strategyKind;
 	ABILITY_DEFINITION		*ability;
 	Sint32					 abilityId;
-	Uint8					 cnts[4];
+	Uint8					 counts[4];
 	Uint8					 summons[36];
-	Sint32					 summonIdx;
+	Sint32					 summonIndex;
 	Sint32					 element;
 	const SUMMON_DEFINITION *summon;
 
@@ -2430,15 +2450,15 @@ Sint32 btAIChooseAction(BATTLE_ACTION_RECORD *request, Sint32 retry)
 		selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
 		switch(request->turnAction) {
 		case 1:
-			AI_BATTLE->actingAnm = DOOM_DRAGON_POSE_LOW;
+			AI_BATTLE->actingAnimation = DOOM_DRAGON_POSE_LOW;
 			enemy = gmEnemyGetDefinitionStub(ENEMY_DOOM_DRAGON_C);
 			break;
 		case 2:
-			AI_BATTLE->actingAnm = POSE_CAST;
+			AI_BATTLE->actingAnimation = POSE_CAST;
 			enemy = gmEnemyGetDefinitionStub(ENEMY_DOOM_DRAGON_B);
 			break;
 		case 3:
-			AI_BATTLE->actingAnm = DOOM_DRAGON_POSE_HIGH;
+			AI_BATTLE->actingAnimation = DOOM_DRAGON_POSE_HIGH;
 			enemy = gmEnemyGetDefinitionStub(ENEMY_DOOM_DRAGON_D);
 			break;
 		}
@@ -2446,18 +2466,18 @@ Sint32 btAIChooseAction(BATTLE_ACTION_RECORD *request, Sint32 retry)
 		selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
 		switch(request->turnAction) {
 		case 1:
-			AI_BATTLE->actingAnm = DOOM_DRAGON_POSE_LOW;
+			AI_BATTLE->actingAnimation = DOOM_DRAGON_POSE_LOW;
 			enemy = gmEnemyGetDefinitionStub(ENEMY_DOOM_DRAGON_G);
 			break;
 		case 2:
-			AI_BATTLE->actingAnm = POSE_CAST;
+			AI_BATTLE->actingAnimation = POSE_CAST;
 			enemy = gmEnemyGetDefinitionStub(ENEMY_DOOM_DRAGON_F);
 			break;
 		}
 	} else if(unit->enemyId == ENEMY_DOOM_DRAGON_H) {
 		selectionMemory = &AI_BATTLE->aiStates[request->turnAction];
 		if(request->turnAction == 1) {
-			AI_BATTLE->actingAnm = POSE_CAST;
+			AI_BATTLE->actingAnimation = POSE_CAST;
 			enemy = gmEnemyGetDefinitionStub(ENEMY_DOOM_DRAGON_I);
 		}
 	} else if(unit->enemyId == ENEMY_DULLAHAN) {
@@ -2521,12 +2541,12 @@ select_again:
 	if(useItem != 0 && retry != 0) {
 		if(!(INVENTORY_ITEM_ID_MASK & unit->inventory[0])) {
 			useItem = 0;
-			if(enemy->tgtStrategy == TARGET_STRATEGY_MOST_HP) {
+			if(enemy->targetStrategy == TARGET_STRATEGY_MOST_HP) {
 				request->command = COMMAND_ITEM;
 				{
 					Sint32 cantUse = ABILITY_CANT_USE;
 
-					request->prm = cantUse;
+					request->param = cantUse;
 				}
 				goto done;
 			}
@@ -2539,7 +2559,7 @@ select_again:
 				gmAbilityGetDirectStub(item->abilityId);
 				abilityId = item->abilityId;
 				request->command = COMMAND_ITEM;
-				request->prm = 0;
+				request->param = 0;
 			}
 		}
 		if(useItem == 0)
@@ -2548,23 +2568,23 @@ select_again:
 
 	if(needsChoice != 0) {
 		ability = gmAbilityGetDirectStub(abilityId);
-		switch(ability->eff) {
+		switch(ability->effect) {
 		case ABILITY_EFFECT_DEFEND:
 			request->command = COMMAND_DEFEND;
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		case ABILITY_EFFECT_TOTAL_DEFENSE:
 			request->command = COMMAND_TOTAL_DEFENSE;
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		case ABILITY_EFFECT_FLEE:
 			request->command = COMMAND_FLEE;
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		case ABILITY_EFFECT_COUNTER:
 		case ABILITY_EFFECT_GUARD_AURA:
 			if(retry == 0)
-				request->pri += PRIORITY_FIRST_IN_TURN;
+				request->priority += PRIORITY_FIRST_IN_TURN;
 			break;
 		}
 
@@ -2581,12 +2601,12 @@ select_again:
 		if(request->command != COMMAND_ITEM &&
 			btAbilityIsPsynergy(abilityId) != 0) {
 			request->command = COMMAND_PSYNERGY;
-			request->prm = abilityId;
+			request->param = abilityId;
 			if(ability->ppCost > unit->pp &&
-				enemy->tgtStrategy != TARGET_STRATEGY_MOST_HP)
+				enemy->targetStrategy != TARGET_STRATEGY_MOST_HP)
 				goto next_candidate;
 			if(unit->psySeal != 0 &&
-				enemy->tgtStrategy == TARGET_STRATEGY_RANDOM)
+				enemy->targetStrategy == TARGET_STRATEGY_RANDOM)
 				goto next_candidate;
 		}
 		command = request->command;
@@ -2597,82 +2617,83 @@ select_again:
 			goto next_candidate;
 
 		if(command == COMMAND_ABILITY) {
-			request->prm = abilityId;
+			request->param = abilityId;
 			if(abilityId == ABILITY_ATTACK)
 				request->command = COMMAND_ATTACK;
 			if(abilityId == ABILITY_CRUCIBLE) {
 				request->command = COMMAND_SUMMON;
-				btDjinnCountStandby(0, cnts);
-				summonIdx = gmSummonListLearnedStub(summons);
-				for(summonIdx--; summonIdx >= 0; summonIdx--) {
-					summon = gmSummonDefinitionGetNearStub(summons[summonIdx]);
+				btDjinnCountStandby(0, counts);
+				summonIndex = gmSummonListLearnedStub(summons);
+				for(summonIndex--; summonIndex >= 0; summonIndex--) {
+					summon =
+						gmSummonDefinitionGetNearStub(summons[summonIndex]);
 					for(element = 0; element <= ELEMENT_JUPITER &&
-						summon->djinnRequired[element] <= cnts[element];
+						summon->djinnRequired[element] <= counts[element];
 						element++)
 						;
 					if(element == ELEMENT_COUNT)
 						break;
 				}
-				if(summonIdx < 0)
+				if(summonIndex < 0)
 					goto next_candidate;
-				request->prm = summons[summonIdx];
-				abilityId = gmSummonDefinitionGetNearStub(summons[summonIdx])
+				request->param = summons[summonIndex];
+				abilityId = gmSummonDefinitionGetNearStub(summons[summonIndex])
 								->abilityId;
 				ability = gmAbilityGetDirectStub(abilityId);
 			}
 		}
 
 		request->range = ability->range;
-		switch(ability->tgtMode) {
+		switch(ability->targetMode) {
 		case ABILITY_TARGET_ALLIES:
 		case ABILITY_TARGET_SELF:
 			if(abilityId == ABILITY_GUARD_AURA ||
 				abilityId == ABILITY_EARNEST_PLY)
-				allyTgt = btAIChooseTarget(FIRST_ENEMY_UNIT, ability);
+				allyTarget = btAIChooseTarget(FIRST_ENEMY_UNIT, ability);
 			else
-				allyTgt = btAIChooseTarget(request->unitId, ability);
-			if(allyTgt == TARGET_PICK_SIDE_EMPTY) {
+				allyTarget = btAIChooseTarget(request->unitId, ability);
+			if(allyTarget == TARGET_PICK_SIDE_EMPTY) {
 				allyIsParty = FALSE;
 				if((Uint16)request->unitId <= ALLY_MAX)
 					allyIsParty = TRUE;
-				allyTgt = btAIChooseRandomTarget(allyIsParty);
+				allyTarget = btAIChooseRandomTarget(allyIsParty);
 			}
-			if(allyTgt != TARGET_PICK_NONE) {
-				request->tgt = allyTgt;
+			if(allyTarget != TARGET_PICK_NONE) {
+				request->target = allyTarget;
 				needsChoice = FALSE;
 			}
 			break;
 		case ABILITY_TARGET_FOES:
-			opponentTgt = btAIChooseTarget(request->unitId, ability);
-			if(opponentTgt == TARGET_PICK_SIDE_EMPTY) {
+			opponentTarget = btAIChooseTarget(request->unitId, ability);
+			if(opponentTarget == TARGET_PICK_SIDE_EMPTY) {
 				opponentIsParty = FALSE;
 				if((Uint16)request->unitId <= ALLY_MAX)
 					opponentIsParty = TRUE;
-				opponentTgt = btAIChooseRandomTarget(opponentIsParty);
+				opponentTarget = btAIChooseRandomTarget(opponentIsParty);
 			}
-			if(opponentTgt != TARGET_PICK_NONE) {
-				request->tgt = opponentTgt;
+			if(opponentTarget != TARGET_PICK_NONE) {
+				request->target = opponentTarget;
 				needsChoice = FALSE;
 			}
 			break;
 		case 3: /* Unused: no ability's target mode is 3. */
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			break;
 		default:
-			if(ability->eff == ABILITY_EFFECT_CALL_REINFORCEMENT &&
-				!btEnemyHasSprRoom(unit->enemyId == ENEMY_STAR_MAGICIAN
+			if(ability->effect == ABILITY_EFFECT_CALL_REINFORCEMENT &&
+				!btEnemyHasSpriteRoom(unit->enemyId == ENEMY_STAR_MAGICIAN
 						? ENEMY_REFRESH_BALL
 						: ENEMY_SEA_FIGHTER))
 				break;
 			battle = (BATTLE_STATE *)RamHeapSlots->battleState;
-			if(ability->eff == ABILITY_EFFECT_CALL_QUEUED) {
-				if(battle->spoils.queueCnt == 0)
+			if(ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
+				if(battle->spoils.queueCount == 0)
 					break;
-				if(!btEnemyHasSprRoom(
+				if(!btEnemyHasSpriteRoom(
 					   battle->spoils.queuedSummons[battle->spoils.queueHead]))
 					break;
 			}
-			request->tgt = btFindUnitPlace(request->unitId);
+			request->target = btFindUnitPlace(request->unitId);
 			needsChoice = FALSE;
 			break;
 		}
@@ -2698,7 +2719,7 @@ done:
    it drops. */
 void btDMAStopDMA3(void)
 {
-	syMathUnsignedMulHigh(5, 0);
+	syMathUnsignedMultiplyHigh(5, 0);
 	syDMAXCopy(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
 	syDMAXCopy(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
 	syDMAXCopy(0, 0, DMA_COPY_WORDS(0), REG_DMA3);

@@ -14,14 +14,14 @@ typedef struct CURSOR_SPR {
 	Uint16			   affine : 2;
 	Uint16			   mode : 2;
 	Uint16			   mosaic : 1;
-	Uint16			   cols : 1;
+	Uint16			   colors : 1;
 	Uint16			   shape : 2;
 	Uint16			   x : 9;
-	Uint16			   affineIdx : 5;
+	Uint16			   affineIndex : 5;
 	Uint16			   size : 2;
 	Uint16			   tile : 10;
-	Uint16			   pri : 2;
-	Uint16			   pal : 4;
+	Uint16			   priority : 2;
+	Uint16			   palette : 4;
 	Uint16 affineParam; /* OAM's fourth halfword, the affine parameter slot */
 } CURSOR_SPR;
 
@@ -47,14 +47,14 @@ typedef struct MENU_SPR {
 			Uint16 affine : 2;
 			Uint16 mode : 2;
 			Uint16 mosaic : 1;
-			Uint16 cols : 1;
+			Uint16 colors : 1;
 			Uint16 shape : 2;
 			Uint16 x : 9;
-			Uint16 affineIdx : 5;
+			Uint16 affineIndex : 5;
 			Uint16 size : 2;
 			Uint16 tile : 10;
-			Uint16 pri : 2;
-			Uint16 pal : 4;
+			Uint16 priority : 2;
+			Uint16 palette : 4;
 			Uint16 unused;
 		} f;
 	} oam;
@@ -68,12 +68,12 @@ typedef struct BATTLE_MENU_STATE {
 	   portrait. */
 	MENU_SPR icons[3];
 	Uint8	 iconShown[3]; /* whether each of icons is drawn */
-	Uint8	 padding;	   /* up to the word tgtViewOfs starts on */
+	Uint8	 padding;	   /* up to the word targetViewOffset starts on */
 	/* Where the battle view slides to (btCameraSetCommandView's vertical
 	   offset): -2 or 16 by the target menu's mode, 0 otherwise. */
-	Sint32 tgtViewOfs;
+	Sint32 targetViewOffset;
 	/* where the slide has reached; a third of the way a tick */
-	Sint32 viewOfs;
+	Sint32 viewOffset;
 	Sint32 row;			 /* the list row chosen last */
 	Sint32 page;		 /* the list page chosen last */
 	Sint32 preferredRow; /* the row to return to */
@@ -81,13 +81,13 @@ typedef struct BATTLE_MENU_STATE {
 	   [1] for a party member's commands. */
 	Sint32 commandSelection[2];
 	/* The window that shows the link battle's seconds left, or NULL. */
-	struct WINDOW *tmrWin;
+	struct WINDOW *timerWindow;
 	/* Set while the status screen is open, so the timer opens no window. */
-	Sint32 tmrHidden;
+	Sint32 timerHidden;
 	/* Ticks left to choose commands in a link battle; -1 outside link battles.
 	   At 0 a menu ends as if cancelled, or takes the first command. */
-	Sint32 tmr;
-	Sint32 linkTmr; /* 1 while the link battle's timer runs */
+	Sint32 timer;
+	Sint32 linkTimer; /* 1 while the link battle's timer runs */
 	/* The party's standby Djinn by element before each command: what the
 	   summons chosen by the earlier commands leave. */
 	Uint8  standbyDjinn[8][4];
@@ -106,7 +106,7 @@ typedef struct BATTLE_MENU_STATE {
 	Sint32 swappedPlace; /* its party place */
 	/* The target mnBattleTargetRunSelection chose last, where it starts
 	   again. */
-	Sint32 lastTgt;
+	Sint32 lastTarget;
 } BATTLE_MENU_STATE;
 
 /* BATTLE_MENU_STATE.chosenDjinn of a command that has chosen no Djinni. */
@@ -114,12 +114,12 @@ typedef struct BATTLE_MENU_STATE {
 
 /* The party status window and the rectangle it last drew. */
 typedef struct PARTY_STAT_WINDOW {
-	struct WINDOW *win;
+	struct WINDOW *window;
 	Uint16		   x;
 	Uint16		   y;
 	Uint16		   width;
 	Uint16		   height;
-	Uint16		   flg;
+	Uint16		   flags;
 } PARTY_STAT_WINDOW;
 
 /* The rows a battle list window shows. */

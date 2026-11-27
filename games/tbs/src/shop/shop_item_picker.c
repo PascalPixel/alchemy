@@ -10,8 +10,8 @@ Sint32 mnItemPickerRun(Sint32 *selectedUnit, Sint32 *selectedSlot)
 {
 	SHOP_STATE *shop;
 	WINDOW_SPR *cursorAnchor;
-	WINDOW	   *partyWin;
-	Sint32		memberIdx = 0;
+	WINDOW	   *partyWindow;
+	Sint32		memberIndex = 0;
 	Bool		redraw = TRUE;
 	Sint32		unitId = 0;
 	Sint32		itemSlot;
@@ -19,41 +19,41 @@ Sint32 mnItemPickerRun(Sint32 *selectedUnit, Sint32 *selectedSlot)
 
 	mnShopInitState();
 	shop = MenuState;
-	shop->itemWin = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
-	partyWin = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
-	cursorAnchor = mnWindowSprCreateStub(
-		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, partyWin, 0, 0);
+	shop->itemWindow = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
+	partyWindow = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
+	cursorAnchor = mnWindowSpriteCreateStub(
+		shop->cursorIcon, WINDOW_SPRITE_SIZE_16X16, partyWindow, 0, 0);
 	cursorAnchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
 	cursorAnchor->kind = WINDOW_SPRITE_PLAIN;
 	mnCursorSetPosImmediate(&shop->cursor, -32, 112);
 	shop->cursor.anchor = cursorAnchor;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
-	mnCreatePartyFiguresStub(partyWin, 2, 0, 8, 0);
+	shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
+	mnCreatePartyFiguresStub(partyWindow, 2, 0, 8, 0);
 
 	while(1) {
 		if(redraw != 0) {
 			redraw = FALSE;
-			memberIdx =
-				(memberIdx + shop->partyMemberCnt) % shop->partyMemberCnt;
-			unitId = shop->partyMemberIds[memberIdx];
-			mnCursorPlace(partyWin, memberIdx * 24 - 12, 0);
-			shop->cursorFrm = 3;
-			mnShopDrawParty(partyWin, memberIdx, 0);
-			mnShopDrawMemberItems(shop->itemWin, unitId);
+			memberIndex =
+				(memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
+			unitId = shop->partyMemberIds[memberIndex];
+			mnCursorPlace(partyWindow, memberIndex * 24 - 12, 0);
+			shop->cursorFrame = 3;
+			mnShopDrawParty(partyWindow, memberIndex, 0);
+			mnShopDrawMemberItems(shop->itemWindow, unitId);
 		}
 
 		sySynch(1);
 		if((PerPush & KEY_A) != 0) {
 			if(gmInventoryCountStub(unitId) == 0) {
-				sySndPlayStub(SE_MENU_CANCEL);
+				sySoundPlayStub(SE_MENU_CANCEL);
 				continue;
 			}
 
-			sySndPlayStub(SE_MENU_CONFIRM);
+			sySoundPlayStub(SE_MENU_CONFIRM);
 			itemSlot = mnItemPickerSelectItem(unitId);
 			if(itemSlot == -1) {
 				shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-				shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+				shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
 				redraw = TRUE;
 				continue;
 			}
@@ -64,7 +64,7 @@ Sint32 mnItemPickerRun(Sint32 *selectedUnit, Sint32 *selectedSlot)
 		}
 
 		if((PerPush & KEY_B) != 0) {
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			*selectedUnit = -1;
 			*selectedSlot = -1;
 			result = -1;
@@ -72,20 +72,20 @@ Sint32 mnItemPickerRun(Sint32 *selectedUnit, Sint32 *selectedSlot)
 		}
 
 		if((PerRepeat & KEY_LEFT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIdx--;
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+			memberIndex--;
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
-			memberIdx++;
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
+			memberIndex++;
 			redraw = TRUE;
 		}
 	}
 
 	mnReleasePartyFiguresStub();
-	mnWindowCloseStub(partyWin, 2);
-	mnWindowCloseStub(shop->itemWin, 2);
+	mnWindowCloseStub(partyWindow, 2);
+	mnWindowCloseStub(shop->itemWindow, 2);
 	sySynch(1);
 	mnShopReleaseState();
 	return result;
@@ -106,69 +106,69 @@ Sint32 mnItemPickerRun(Sint32 *selectedUnit, Sint32 *selectedSlot)
 Sint32 mnItemPickerSelectItem(Sint32 unitId)
 {
 	SHOP_STATE *shop = MenuState;
-	WINDOW	   *descriptionWin;
-	WINDOW	   *priceWin;
+	WINDOW	   *descriptionWindow;
+	WINDOW	   *priceWindow;
 	UNIT	   *unit;
 	Sint32		slot;
 	Bool		redraw;
-	Sint32		inventoryCnt;
+	Sint32		inventoryCount;
 	Sint32		selectionResult;
-	Sint32		discardStat;
+	Sint32		discardStatus;
 	Sint32		itemId;
-	WINDOW	   *win;
+	WINDOW	   *window;
 	Sint32		x;
 	Sint32		y;
 
 	unit = gmUnitGetStub(unitId);
-	inventoryCnt = 1;
+	inventoryCount = 1;
 	selectionResult = 0;
 	redraw = TRUE;
-	priceWin = mnWindowCreateStub(ITEM_PICKER_WINDOW_X, 8,
+	priceWindow = mnWindowCreateStub(ITEM_PICKER_WINDOW_X, 8,
 		ITEM_PICKER_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
-	descriptionWin = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
+	descriptionWindow = mnWindowCreateStub(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-	shop->cursorFrm = SHOP_CURSOR_ENTER_TICKS;
+	shop->cursorFrame = SHOP_CURSOR_ENTER_TICKS;
 	slot = 0;
 
 	while(1) {
 		if(redraw != 0) {
 			redraw = FALSE;
-			inventoryCnt = gmInventoryCountStub(unitId);
-			if(slot > inventoryCnt - 1)
-				slot = inventoryCnt - 1;
+			inventoryCount = gmInventoryCountStub(unitId);
+			if(slot > inventoryCount - 1)
+				slot = inventoryCount - 1;
 
 			itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
-			win = shop->itemWin;
+			window = shop->itemWindow;
 			x = slot % SHOP_INVENTORY_COLUMNS << 4;
 			y = (slot / SHOP_INVENTORY_COLUMNS << 4) + 8;
-			mnCursorPlace(win, x, y);
-			shop->cursorFrm = 3;
-			mnItemPickerDrawItem(priceWin, unitId, slot);
-			mnShopDrawMessage(descriptionWin, itemId + MsgItemPlainName);
+			mnCursorPlace(window, x, y);
+			shop->cursorFrame = 3;
+			mnItemPickerDrawItem(priceWindow, unitId, slot);
+			mnShopDrawMessage(descriptionWindow, itemId + MsgItemPlainName);
 		}
 
 		sySynch(1);
 
 		if((PerPush & KEY_A) != 0) {
-			discardStat = gmInventoryCheckDiscardStub(unitId, slot);
-			if(discardStat == INVENTORY_DISCARD_ALLOWED) {
-				sySndPlayStub(SE_MENU_CONFIRM);
+			discardStatus = gmInventoryCheckDiscardStub(unitId, slot);
+			if(discardStatus == INVENTORY_DISCARD_ALLOWED) {
+				sySoundPlayStub(SE_MENU_CONFIRM);
 				selectionResult = slot;
 				break;
 			}
 			/* BUG: default code selects the error using selectionResult, still
 			   zero. */
-			if(discardStat == INVENTORY_DISCARD_INDISPENSABLE) {
+			if(discardStatus == INVENTORY_DISCARD_INDISPENSABLE) {
 				/* "You can't drop it!" */
 				mnMessageOpenWindowStub(
 					MsgCannotDropIt, 8, 1, MESSAGE_WINDOW_UNREAD);
-			} else if(SHOP_CANNOT_REMOVE_STATUS(discardStat, selectionResult) ==
-				INVENTORY_DISCARD_STUCK) {
+			} else if(SHOP_CANNOT_REMOVE_STATUS(discardStatus,
+						  selectionResult) == INVENTORY_DISCARD_STUCK) {
 				/* "You can't remove it!" */
 				mnMessageOpenWindowStub(
 					MsgCannotRemoveIt, 8, 1, MESSAGE_WINDOW_UNREAD);
 			}
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			while(mnMessageAllTypedStub() == 0)
 				sySynch(1);
 			mnMessageCloseFinishedWindowsStub();
@@ -176,71 +176,71 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
 		}
 
 		if((PerPush & KEY_B) != 0) {
-			sySndPlayStub(SE_MENU_CANCEL);
+			sySoundPlayStub(SE_MENU_CANCEL);
 			selectionResult = -1;
 			break;
 		}
 
 		if((PerRepeat & KEY_LEFT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			slot--;
-			slot = (slot + inventoryCnt) % inventoryCnt;
+			slot = (slot + inventoryCount) % inventoryCount;
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_RIGHT) != 0) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			slot++;
-			slot = (slot + inventoryCnt) % inventoryCnt;
+			slot = (slot + inventoryCount) % inventoryCount;
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_UP) != 0) {
 			slot -= SHOP_INVENTORY_COLUMNS;
 			if(slot < 0)
 				slot += INVENTORY_SLOTS;
-			while(slot >= inventoryCnt)
+			while(slot >= inventoryCount)
 				slot -= SHOP_INVENTORY_COLUMNS;
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			redraw = TRUE;
 		}
 		if((PerRepeat & KEY_DOWN) != 0) {
 			slot += SHOP_INVENTORY_COLUMNS;
-			if(slot >= inventoryCnt)
+			if(slot >= inventoryCount)
 				slot -= INVENTORY_SLOTS;
 			while(slot < 0)
 				slot += SHOP_INVENTORY_COLUMNS;
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			redraw = TRUE;
 		}
 	}
 
-	mnWindowCloseStub(descriptionWin, 2);
-	mnWindowCloseStub(priceWin, 2);
+	mnWindowCloseStub(descriptionWindow, 2);
+	mnWindowCloseStub(priceWindow, 2);
 	sySynch(1);
 	return selectionResult;
 }
 
 /* Draws the slot's item name and, below it, why it cannot be dropped or what
    the whole stack would sell for. */
-void mnItemPickerDrawItem(WINDOW *win, Sint32 unitId, Sint32 slot)
+void mnItemPickerDrawItem(WINDOW *window, Sint32 unitId, Sint32 slot)
 {
 	UNIT  *unit = gmUnitGetStub(unitId);
 	Sint32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	Uint32 inventoryEntry = unit->inventory[slot];
 	Sint32 quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;
 
-	if(win != 0) {
-		Sint32 discardStat;
+	if(window != 0) {
+		Sint32 discardStatus;
 
-		mnWindowSprRedrawSavedRectStub(win);
-		mnTextDrawMessageAsTilesStub(itemId + MsgItemName, win, 0, 0);
+		mnWindowSpriteRedrawSavedRectStub(window);
+		mnTextDrawMessageAsTilesStub(itemId + MsgItemName, window, 0, 0);
 
-		discardStat = gmInventoryCheckDiscardStub(unitId, slot);
-		if(discardStat == INVENTORY_DISCARD_INDISPENSABLE) {
+		discardStatus = gmInventoryCheckDiscardStub(unitId, slot);
+		if(discardStatus == INVENTORY_DISCARD_INDISPENSABLE) {
 			mnTextDrawMessageAsTilesStub(
-				MsgCannotDrop, win, SHOP_ITEM_NOTE_X, 8);
-		} else if(discardStat == INVENTORY_DISCARD_STUCK) {
+				MsgCannotDrop, window, SHOP_ITEM_NOTE_X, 8);
+		} else if(discardStatus == INVENTORY_DISCARD_STUCK) {
 			mnTextDrawMessageAsTilesStub(
-				MsgCannotRemove, win, SHOP_ITEM_NOTE_X, 8);
+				MsgCannotRemove, window, SHOP_ITEM_NOTE_X, 8);
 		} else {
 			Sint32 unitSalePrice;
 			Sint32 stackSalePrice;
@@ -249,11 +249,11 @@ void mnItemPickerDrawItem(WINDOW *win, Sint32 unitId, Sint32 slot)
 			stackSalePrice = quantity * unitSalePrice;
 
 			mnTextDrawMessageAsTilesStub(
-				MsgPriceHeading, win, ITEM_PICKER_PRICE_LABEL_X, 8);
-			mnTextDrawNumInWindowStub(
-				stackSalePrice, 5, win, ITEM_PICKER_PRICE_NUMBER_X, 8);
+				MsgPriceHeading, window, ITEM_PICKER_PRICE_LABEL_X, 8);
+			mnTextDrawNumberInWindowStub(
+				stackSalePrice, 5, window, ITEM_PICKER_PRICE_NUMBER_X, 8);
 			mnTextDrawMessageAsTilesStub(
-				MsgPriceHeading - ITEM_PICKER_COINS_MESSAGE_OFFSET, win,
+				MsgPriceHeading - ITEM_PICKER_COINS_MESSAGE_OFFSET, window,
 				ITEM_PICKER_COINS_LABEL_X, 8);
 		}
 	}

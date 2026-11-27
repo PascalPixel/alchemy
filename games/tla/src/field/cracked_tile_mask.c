@@ -3,7 +3,7 @@
    lists the metatiles its map watches in its own CrackedTiles. While he drops
    through the tile (scCrackedTileFall), the mask is drawn into the OBJ window,
    where no sprite shows, so that he sinks out of sight through the hole. The
-   including file names its overlay's import of syOAMAddSprAtDepth
+   including file names its overlay's import of syOAMAddSpriteAtDepth
    (METATILE_PUSH_SLOT_ENTRY). */
 
 #include "field/field_mode_functions.h"
@@ -21,40 +21,40 @@
 extern METATILE_TARGET CrackedTiles;
 
 Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
-void   METATILE_PUSH_SLOT_ENTRY(void *entry, Sint32 pri);
+void   METATILE_PUSH_SLOT_ENTRY(void *entry, Sint32 priority);
 
 /* Clears the current entry once the leader has left its metatile; while the
    leader stays on it and the mask is shown, draws the mask over the metatile at
    the height of the ground there, unless it is off screen. */
 void fdCrackedTileUpdate(void)
 {
-	METATILE_TARGET		  *tbl = &CrackedTiles;
+	METATILE_TARGET		  *table = &CrackedTiles;
 	METATILE_TARGET_ENTRY *entry;
 	ACTOR				  *leader;
 	MAP_STATE			  *map;
 	Sint32				   viewX, viewZ, viewY, tile;
 	Sint32				   screenX, height, z, screenY, depth;
 
-	if(tbl->cur == -1)
+	if(table->current == -1)
 		return;
-	entry = &tbl->entries[tbl->cur];
+	entry = &table->entries[table->current];
 	leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	if((FIELD_METATILE(leader->x.fixed)) != entry->x ||
 		(FIELD_METATILE(leader->z.fixed)) != entry->z)
-		tbl->cur = -1;
+		table->current = -1;
 	{
-		Sint16 cur = tbl->cur;
+		Sint16 current = table->current;
 
-		if(cur == -1)
+		if(current == -1)
 			return;
 	}
-	if(tbl->shown == 0)
+	if(table->shown == 0)
 		return;
 	map = RamHeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	viewY = map->origin[1];
-	tile = VramCacheEntries[tbl->tile].ofs >> 5;
+	tile = VramCacheEntries[table->tile].offset >> 5;
 	screenX = FIELD_METATILE_ORIGIN(entry->x) - viewX;
 	height = fdMapGetTerrainHeight(0, FIELD_METATILE_ORIGIN(entry->x),
 				 FIELD_METATILE_ORIGIN(entry->z)) -
@@ -74,11 +74,11 @@ void fdCrackedTileUpdate(void)
 		return;
 	screenX &= OBJ_X_MASK;
 	screenY &= OBJ_Y_MASK;
-	tbl->oam[0] = 0;
-	tbl->oam[1] =
+	table->oam[0] = 0;
+	table->oam[1] =
 		screenY | OBJ_X(screenX) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
-	tbl->oam[2] = tile | OBJ_PRIORITY(1);
-	METATILE_PUSH_SLOT_ENTRY(tbl->oam, depth);
+	table->oam[2] = tile | OBJ_PRIORITY(1);
+	METATILE_PUSH_SLOT_ENTRY(table->oam, depth);
 }
 
 #undef HOLE_MASK_WIDTH

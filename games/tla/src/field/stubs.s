@@ -8,19 +8,19 @@ StubsField:
 	stub fdActorSystemConfigureStub, fdActorSystemConfigure
 	stub fdRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement
 	stub fdRenderApplyProjectedPlacementAtDepthStub, fdRenderApplyProjectedPlacementAtDepth
-	stub fdRenderPlaceProjectedSprStub, fdRenderPlaceProjectedSpr
-	stub fdSprResetAnimationsStub, fdSprResetAnimations
-	stub fdSprStartAnimationStub, fdSprStartAnimation
-	stub fdSprSetAnimationTimersStub, fdSprSetAnimationTimers
-	stub fdSprCreateStub, fdSprCreate
-	stub fdSprDestroyStub, fdSprDestroy
-	stub fdRenderPlaceSprPartPairStub, fdRenderPlaceSprPartPair
-	stub fdSprAddAnimationStub, fdSprAddAnimation
-	stub fdSprRemoveAnimationStub, fdSprRemoveAnimation
-	stub fdSprRemoveAnimationAtStub, fdSprRemoveAnimationAt
-	stub fdSprAnimationClearStub, fdSprAnimationClear
-	stub fdSprAnimationResetStub, fdSprAnimationReset
-	stub fdSprAnimationStartStub, fdSprAnimationStart
+	stub fdRenderPlaceProjectedSpriteStub, fdRenderPlaceProjectedSprite
+	stub fdSpriteResetAnimationsStub, fdSpriteResetAnimations
+	stub fdSpriteStartAnimationStub, fdSpriteStartAnimation
+	stub fdSpriteSetAnimationTimersStub, fdSpriteSetAnimationTimers
+	stub fdSpriteCreateStub, fdSpriteCreate
+	stub fdSpriteDestroyStub, fdSpriteDestroy
+	stub fdRenderPlaceSpritePartPairStub, fdRenderPlaceSpritePartPair
+	stub fdSpriteAddAnimationStub, fdSpriteAddAnimation
+	stub fdSpriteRemoveAnimationStub, fdSpriteRemoveAnimation
+	stub fdSpriteRemoveAnimationAtStub, fdSpriteRemoveAnimationAt
+	stub fdSpriteAnimationClearStub, fdSpriteAnimationClear
+	stub fdSpriteAnimationResetStub, fdSpriteAnimationReset
+	stub fdSpriteAnimationStartStub, fdSpriteAnimationStart
 	stub fdActorSystemInitStub, fdActorSystemInit
 	stub fdActorSelectAnimationStub, fdActorSelectAnimation
 	stub fdActorSetAnimationSpeedStub, fdActorSetAnimationSpeed
@@ -30,13 +30,13 @@ StubsField:
 	stub fdActorFindFreeStub, fdActorFindFree
 	stub fdActorCreateStub, fdActorCreate
 	stub fdActorReleaseStub, fdActorRelease
-	stub fdActorSetSprRotationStub, fdActorSetSprRotation
+	stub fdActorSetSpriteRotationStub, fdActorSetSpriteRotation
 	stub fdActorStartCameraStub, fdActorStartCamera
 	stub fdActorStartApproachWatchedStub, fdActorStartApproachWatched
 	stub fdActorSetPosAndResetMotionStub, fdActorSetPosAndResetMotion
-	stub fdSprDissolveStepStub, fdSprDissolveStep
-	stub fdSprDissolveRunStub, fdSprDissolveRun
-	stub fdSprDissolveRunManyStub, fdSprDissolveRunMany
+	stub fdSpriteDissolveStepStub, fdSpriteDissolveStep
+	stub fdSpriteDissolveRunStub, fdSpriteDissolveRun
+	stub fdSpriteDissolveRunManyStub, fdSpriteDissolveRunMany
 	stub fdMapGridLoadMapStub, fdMapGridLoadMap
 	stub fdWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
 	stub fdMapGridSetCameraCenterStub, fdMapGridSetCameraCenter
@@ -55,8 +55,8 @@ StubsField:
 	stub fdMapApplySetFlagEditsStub, fdMapApplySetFlagEdits
 	stub fdMapSetFlagAndApplyEditsStub, fdMapSetFlagAndApplyEdits
 	stub fdMapSetFlagAndApplyAttributeEditsStub, fdMapSetFlagAndApplyAttributeEdits
-	stub fdTilesetAnimResumeStub, fdTilesetAnimResume
-	stub fdTilesetAnimPauseStub, fdTilesetAnimPause
+	stub fdTilesetAnimationResumeStub, fdTilesetAnimationResume
+	stub fdTilesetAnimationPauseStub, fdTilesetAnimationPause
 	stub fdBlendScriptResumeStub, fdBlendScriptResume
 	stub fdBlendScriptSuspendStub, fdBlendScriptSuspend
 	stub fdBlendScriptStartStub, fdBlendScriptStart
@@ -71,32 +71,32 @@ StubsField:
 	stub fdWorldMapSetWindowMetatileTileStub, fdWorldMapSetWindowMetatileTile
 	stub fdWorldMapSetWindowMetatileTileAndDrawStub, fdWorldMapSetWindowMetatileTileAndDraw
 	stub fdMapGridCheckCollisionStub, fdMapGridCheckCollision
-	stub fdActorSetSprFlagsStub, fdActorSetSprFlags
+	stub fdActorSetSpriteFlagsStub, fdActorSetSpriteFlags
 	stub fdActorSetBlendModeStub, fdActorSetBlendMode
 	stub fdMapGridSetScreenShakeStub, fdMapGridSetScreenShake
 	stub fdMapGridWaitForShakeToSettleStub, fdMapGridWaitForShakeToSettle
-	stub fdActorSetFirstSprAnimationStub, fdActorSetFirstSprAnimation
-	stub fdActorSystemSuspendProjectionAndShowSprsStub, fdActorSystemSuspendProjectionAndShowSprs
+	stub fdActorSetFirstSpriteAnimationStub, fdActorSetFirstSpriteAnimation
+	stub fdActorSystemSuspendProjectionAndShowSpritesStub, fdActorSystemSuspendProjectionAndShowSprites
 	stub fdActorSystemResumeProjectionAndHideLayersStub, fdActorSystemResumeProjectionAndHideLayers
 	stub fdActorSetOwnScaleStub, fdActorSetOwnScale
 	stub fdMapGridIsWallAtStub, fdMapGridIsWallAt
-	stub fdActorRegisterSprMetadataStub, fdActorRegisterSprMetadata
+	stub fdActorRegisterSpriteMetadataStub, fdActorRegisterSpriteMetadata
 	stub fdWorldMapStartStillImageStub, fdWorldMapStartStillImage
 	stub fdWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
-	stub fdActorSetSprColModeStub, fdActorSetSprColMode
-	stub fdSprSetAnimationColModesStub, fdSprSetAnimationColModes
-	stub fdSprSetFirstAnimationColModeStub, fdSprSetFirstAnimationColMode
-	stub fdActorSetSprPriorityDirectStub, fdActorSetSprPriorityDirect
+	stub fdActorSetSpriteColorModeStub, fdActorSetSpriteColorMode
+	stub fdSpriteSetAnimationColorModesStub, fdSpriteSetAnimationColorModes
+	stub fdSpriteSetFirstAnimationColorModeStub, fdSpriteSetFirstAnimationColorMode
+	stub fdActorSetSpritePriorityDirectStub, fdActorSetSpritePriorityDirect
 	stub fdActorScriptCheckOverlapStub, fdActorScriptCheckOverlap
 	stub fdMapGridSetShownLayersStub, fdMapGridSetShownLayers
-	stub fdSprAnimationSumCommandLengthsStub, fdSprAnimationSumCommandLengths
+	stub fdSpriteAnimationSumCommandLengthsStub, fdSpriteAnimationSumCommandLengths
 	stub fdWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
-	stub fdSprPictureCacheLoadStub, fdSprPictureCacheLoad
+	stub fdSpritePictureCacheLoadStub, fdSpritePictureCacheLoad
 	stub fdMapGridSetMetatileBehaviorAtStub, fdMapGridSetMetatileBehaviorAt
-	stub fdSprSetAnimationSpeedStub, fdSprSetAnimationSpeed
-	stub fdSprColRemapPixelsStub, fdSprColRemapPixels
-	stub fdTilesetAnimSuspendAllStub, fdTilesetAnimSuspendAll
-	stub fdTilesetAnimResumeAllStub, fdTilesetAnimResumeAll
+	stub fdSpriteSetAnimationSpeedStub, fdSpriteSetAnimationSpeed
+	stub fdSpriteColorRemapPixelsStub, fdSpriteColorRemapPixels
+	stub fdTilesetAnimationSuspendAllStub, fdTilesetAnimationSuspendAll
+	stub fdTilesetAnimationResumeAllStub, fdTilesetAnimationResumeAll
 	stub fdActorScriptFindOverlappingActorStub, fdActorScriptFindOverlappingActor
 	stub fdMapGridGetTerrainKindStub, fdMapGridGetTerrainKind
 	stub fdActorHasArrivedStub, fdActorHasArrived
@@ -106,18 +106,18 @@ StubsField:
 	stub fdWorldMapIsWalkableStub, fdWorldMapIsWalkable
 	stub fdWorldMapIsSailableStub, fdWorldMapIsSailable
 	stub fdMapGetCameraBoundsStub, fdMapGetCameraBounds
-	stub fdActorGetSprIdStub, fdActorGetSprId
-	stub fdSprWaitForTrackEndStub, fdSprWaitForTrackEnd
+	stub fdActorGetSpriteIdStub, fdActorGetSpriteId
+	stub fdSpriteWaitForTrackEndStub, fdSpriteWaitForTrackEnd
 	stub fdActorWaitForTrackEndStub, fdActorWaitForTrackEnd
 	stub fdCheckSpheresOverlapStub, fdCheckSpheresOverlap
 	stub fdWorldMapGetBlockMetatileBehaviorStub, fdWorldMapGetBlockMetatileBehavior
 	stub fdWorldMapGetCollisionStub, fdWorldMapGetCollision
 	stub fdMapGridSetMetatileHeightStub, fdMapGridSetMetatileHeight
 	stub fdMapGridGetMetatileHeightStub, fdMapGridGetMetatileHeight
-	stub fdSprSkipToStopStub, fdSprSkipToStop
+	stub fdSpriteSkipToStopStub, fdSpriteSkipToStop
 	stub fdMapLoadMetatilesAndShapesStub, fdMapLoadMetatilesAndShapes
 	stub fdActorShadowFreeTilesStub, fdActorShadowFreeTiles
 	stub fdActorShadowLoadTilesStub, fdActorShadowLoadTiles
 	stub fdMapCopyPaletteStub, fdMapCopyPalette
-	stub fdSprViewerRunStub, fdSprViewerRun
+	stub fdSpriteViewerRunStub, fdSpriteViewerRun
 	stub fdActorSpawnWaterSplashStub, fdActorSpawnWaterSplash

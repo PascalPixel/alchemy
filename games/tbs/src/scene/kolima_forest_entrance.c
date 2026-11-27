@@ -104,13 +104,13 @@ static Sint32 scKolimaForestEntranceFlashHitPsynergyFields(ACTOR *actor)
 /* Each tick, a ground sparkle's timer runs on at random. */
 static Sint32 scKolimaForestEntranceTwinkleGroundSparkle(ACTOR *actor)
 {
-	actor->tmr = (actor->tmr + (syRandomBelow(100)));
-	if(actor->tmr > 1000)
-		fdActorSetSprCol(actor, SPRITE_COLOR_WHITE);
+	actor->timer = (actor->timer + (syRandomBelow(100)));
+	if(actor->timer > 1000)
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_WHITE);
 	else
-		fdActorSetSprCol(actor, SPRITE_COLOR_RED_TINT);
-	if(actor->tmr > 1200) {
-		actor->tmr = 0;
+		fdActorSetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
+	if(actor->timer > 1200) {
+		actor->timer = 0;
 	}
 	return 1;
 }
@@ -155,16 +155,17 @@ static void scKolimaForestEntrancePushLog(void)
 			fdActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
 			fdActorSetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
 			fdScriptWait(30);
-			sySndPlay(SE_LOG_FALL);
+			sySoundPlay(SE_LOG_FALL);
 			fdActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
 			/* It floats under the party's feet, and the river's metatiles under
 			   it become ground to cross on. */
-			fdActorGet(ACTOR_RIVER_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGet(ACTOR_RIVER_LOG)->priorityFlags =
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdMapGridCopyMetatileAttributes(0, 17, 2, 4, 19, 17);
 			scMapGridFillCollisionRectangle(
 				2, 20, 17, 1, 4, METATILE_BEHAVIOR_NORMAL);
 			gmFlagSet(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER);
-			fdActorSetSprFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
+			fdActorSetSpriteFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
 		}
 	}
 
@@ -185,11 +186,11 @@ Sint32 scInit(void)
 {
 	scPushedActorBlockFootprint(ACTOR_RIVER_LOG);
 	if(gmFlagGet(FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER) != 0) {
-		fdActorGet(ACTOR_RIVER_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(0, 17, 2, 4, 19, 17);
 		scMapGridFillCollisionRectangle(
 			2, 20, 17, 1, 4, METATILE_BEHAVIOR_NORMAL);
-		fdActorSetSprFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
 	}
 	scPushedActorBlockFootprint(ACTOR_FIRST_LOG);
 	scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 1);
@@ -228,15 +229,15 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdCameraMoveTo(246, CAMERA_KEEP, 604, 0);
 	party = &KolimaForestEntranceMiaInParty;
 	*party = gmFlagGet(FLAG_IN_PARTY(MIA));
-	fdActorSetSprFlags(fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_MIA_PSYNERGY_FIELD), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET_PSYNERGY_FIELD), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 1), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 2), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 3), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_LAST_GROUND_SPARKLE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_MIA_PSYNERGY_FIELD), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET_PSYNERGY_FIELD), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 1), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 2), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FIRST_GROUND_SPARKLE + 3), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_LAST_GROUND_SPARKLE), 0);
 	sparkleAction = KolimaForestEntranceGroundSparkleAction;
 	fdActorSetScript(ACTOR_FIRST_GROUND_SPARKLE, sparkleAction);
 	fdActorSetScript(ACTOR_FIRST_GROUND_SPARKLE + 1, sparkleAction);
@@ -324,8 +325,8 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	scKolimaForestEntranceFaceActorAndWait(
 		ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 20);
 	scKolimaForestEntranceFaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
-	sySndPlay(SOUND_FADE_OUT_BGM);
-	sySndPlay(SE_CURSE_FALL);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SE_CURSE_FALL);
 	fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(1);
 	sySynch(1);
@@ -357,34 +358,34 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	}
 	fdScriptWait(20);
 	if(KolimaForestEntranceMiaInParty != 0) {
-		fdActorGet(ACTOR_MIA)->velY = toFIXED(2);
+		fdActorGet(ACTOR_MIA)->velocityY = toFIXED(2);
 		fdScriptWait(10);
 		fdActorSetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
 		fdActorSetDestinationOffset(ACTOR_MIA, -2, 0);
 		fdActorSetScript(ACTOR_MIA, KolimaPartyRestoreScaleScript);
-		fdActorSetSprFlags(fdActorGet(ACTOR_MIA), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_MIA), 0);
 		fdActorSetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
 		fdScriptWait(10);
 	}
-	fdActorGet(ACTOR_PARTY_LEADER)->velY = toFIXED(2);
+	fdActorGet(ACTOR_PARTY_LEADER)->velocityY = toFIXED(2);
 	fdScriptWait(10);
 	fdActorSetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
 	restoreScaleAction = KolimaPartyRestoreScaleScript;
 	fdActorSetScript(ACTOR_PARTY_LEADER, restoreScaleAction);
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_GARET)->velY = toFIXED(2);
+	fdActorGet(ACTOR_GARET)->velocityY = toFIXED(2);
 	fdScriptWait(10);
 	fdActorSetSpeedAndAcceleration(ACTOR_GARET, 2, 2);
 	fdActorSetScript(ACTOR_GARET, restoreScaleAction);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
 	fdScriptWait(40);
-	fdActorGet(ACTOR_IVAN)->velY = toFIXED(2);
+	fdActorGet(ACTOR_IVAN)->velocityY = toFIXED(2);
 	fdScriptWait(10);
 	fdActorSetScript(ACTOR_IVAN, restoreScaleAction);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_COLLAPSE);
 	KolimaForestEntranceSparkleSoundOn = 0;
 	fdScriptWait(160);
@@ -398,7 +399,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	KolimaCurseDustState = KOLIMA_DUST_CLOSING;
 	sySetTickEvent(scKolimaUpdateCurseDust, EVENT_PASS_TICK);
 	fdScriptWait(180);
-	sySndPlay(MUS_FOREST_THEME);
+	sySoundPlay(MUS_FOREST_THEME);
 	/* "What is that? Something's falling from the sky!" */
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_GARET, 80);
 	/* "It's sparkling! Could this be what turned those people into..." */
@@ -436,37 +437,39 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 		FieldStateWork->msg += 1;
 	}
 	KolimaCurseDustState = KOLIMA_DUST_DRIFTING;
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_GARET)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_IVAN)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_MIA)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
-	fdActorSetSprPriority(ACTOR_GARET, 3);
-	fdActorSetSprPriority(ACTOR_IVAN, 3);
-	fdActorSetSprPriority(ACTOR_MIA, 3);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_IVAN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+	fdActorSetSpritePriority(ACTOR_GARET, 3);
+	fdActorSetSpritePriority(ACTOR_IVAN, 3);
+	fdActorSetSpritePriority(ACTOR_MIA, 3);
 	KolimaForestEntrancePsynergyFieldHit = 0;
 	sySetTickEvent(
 		scKolimaForestEntranceFlickerPsynergyFields, EVENT_PASS_TICK);
-	sySndPlay(SE_SHIMMER);
-	fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD)->priFlg &=
+	sySoundPlay(SE_SHIMMER);
+	fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD)->priorityFlags &=
 		~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
+	fdActorSetSpritePriority(ACTOR_LEADER_PSYNERGY_FIELD, 2);
 	fdActorSetPos(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
 	growFieldAction = KolimaForestEntrancePsynergyFieldGrowAction;
 	fdActorSetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldAction);
-	fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_IVAN_PSYNERGY_FIELD, 2);
+	fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD)->priorityFlags &=
+		~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_IVAN_PSYNERGY_FIELD, 2);
 	fdActorSetPos(ACTOR_IVAN_PSYNERGY_FIELD, 233, 629);
 	fdActorSetScript(ACTOR_IVAN_PSYNERGY_FIELD, growFieldAction);
 	if(KolimaForestEntranceMiaInParty != 0) {
-		fdActorGet(ACTOR_MIA_PSYNERGY_FIELD)->priFlg &=
+		fdActorGet(ACTOR_MIA_PSYNERGY_FIELD)->priorityFlags &=
 			~ACTOR_PRIORITY_AUTOMATIC;
-		fdActorSetSprPriority(ACTOR_MIA_PSYNERGY_FIELD, 2);
+		fdActorSetSpritePriority(ACTOR_MIA_PSYNERGY_FIELD, 2);
 		fdActorSetPos(ACTOR_MIA_PSYNERGY_FIELD, 207, 609);
 		fdActorSetScript(ACTOR_MIA_PSYNERGY_FIELD, growFieldAction);
 	}
-	fdActorGet(ACTOR_GARET_PSYNERGY_FIELD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
+	fdActorGet(ACTOR_GARET_PSYNERGY_FIELD)->priorityFlags &=
+		~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_GARET_PSYNERGY_FIELD, 2);
 	fdActorSetPos(ACTOR_GARET_PSYNERGY_FIELD, 227, 580);
 	fdActorSetScript(ACTOR_GARET_PSYNERGY_FIELD, growFieldAction);
 	while(KolimaCurseDustState != KOLIMA_DUST_CENTRED) {
@@ -475,7 +478,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdScriptWait(300);
 	syCloseEvent(scKolimaUpdateCurseDust);
 	fdScriptWait(120);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(60);
@@ -527,9 +530,9 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 40);
 	fdActorRunRepeatedMotion(ACTOR_GARET, 3);
 	fdScriptWait(40);
-	fdActorSetSprPriority(ACTOR_GARET, 2);
-	fdActorGet(ACTOR_GARET)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
+	fdActorSetSpritePriority(ACTOR_GARET, 2);
+	fdActorGet(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_GARET, 6, 0);
 	fdActorSetDestinationOffset(ACTOR_GARET, -3, 0);
 	fdActorSetAnimation(ACTOR_GARET, ANIM_STAND);
@@ -560,9 +563,9 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 		fdScriptWait(60);
 		fdActorRunRepeatedMotion(ACTOR_MIA, 2);
 		fdScriptWait(80);
-		fdActorSetSprPriority(ACTOR_MIA, 2);
-		fdActorGet(ACTOR_MIA)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-		fdActorSetSprFlags(fdActorGet(ACTOR_MIA), SPRITE_FLAG_SHADOW);
+		fdActorSetSpritePriority(ACTOR_MIA, 2);
+		fdActorGet(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_MIA), SPRITE_FLAG_SHADOW);
 		fdActorJump(ACTOR_MIA, 4, 0);
 		fdActorSetDestinationOffset(ACTOR_MIA, -2, 0);
 		fdActorSetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -586,17 +589,17 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	fdScriptWait(40);
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
 	fdScriptWait(20);
-	fdActorSetSprPriority(ACTOR_IVAN, 2);
-	fdActorGet(ACTOR_IVAN)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
+	fdActorSetSpritePriority(ACTOR_IVAN, 2);
+	fdActorGet(ACTOR_IVAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_IVAN, 4, 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_STAND);
 	fdActorFaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 	fdActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
 	fdScriptWait(10);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_PARTY_LEADER), SPRITE_FLAG_SHADOW);
 	fdActorJump(ACTOR_PARTY_LEADER, 4, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
 	scKolimaForestEntranceFaceActorAndWait(
@@ -713,7 +716,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	/* Yes: "Yeah! Let's start trying to master this power!" No: "You... You're
 	   not really into this, are you?" */
 	fdScriptShowMessage(ACTOR_GARET, 0);
-	sySndPlay(MUS_FOREST_THEME);
+	sySoundPlay(MUS_FOREST_THEME);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(60);
@@ -737,16 +740,16 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	if(KolimaForestEntranceMiaInParty != 0) {
 		scKolimaForestEntranceFaceActorAndWait(ACTOR_MIA, FACING_NORTH, 10);
 	}
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_GARET)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_IVAN)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_MIA)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
-	fdActorSetSprPriority(ACTOR_GARET, 3);
-	fdActorSetSprPriority(ACTOR_IVAN, 3);
-	fdActorSetSprPriority(ACTOR_MIA, 3);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_GARET)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_IVAN)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+	fdActorSetSpritePriority(ACTOR_GARET, 3);
+	fdActorSetSpritePriority(ACTOR_IVAN, 3);
+	fdActorSetSpritePriority(ACTOR_MIA, 3);
 	KolimaCurseDustState = KOLIMA_DUST_CLOSING_WIDE;
-	sySndPlay(SE_SHIMMER);
+	sySoundPlay(SE_SHIMMER);
 	fdActorSetPos(ACTOR_LEADER_PSYNERGY_FIELD, 253, 603);
 	growFieldAction = KolimaForestEntrancePsynergyFieldGrowAction;
 	fdActorSetScript(ACTOR_LEADER_PSYNERGY_FIELD, growFieldAction);
@@ -895,14 +898,14 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 	}
 	fdActorRunScriptAndWait(ACTOR_GARET_PSYNERGY_FIELD, shrinkFieldAction);
 	fdScriptWait(20);
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
-	fdActorSetSprPriority(ACTOR_GARET, 2);
-	fdActorSetSprPriority(ACTOR_IVAN, 2);
-	fdActorSetSprPriority(ACTOR_MIA, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_GARET)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_IVAN)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_MIA)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+	fdActorSetSpritePriority(ACTOR_GARET, 2);
+	fdActorSetSpritePriority(ACTOR_IVAN, 2);
+	fdActorSetSpritePriority(ACTOR_MIA, 2);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_IVAN)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_MIA)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorRunRepeatedMotion(ACTOR_IVAN, 2);
 	scKolimaForestEntranceFaceActorAndWait(ACTOR_IVAN, FACING_NORTHEAST, 10);
 	/* "Isaac... Isn't there anything we can do?" */
@@ -1075,7 +1078,7 @@ static void scKolimaForestEntranceWitnessForestCurse(void)
 			scKolimaForestEntranceShowMessageAndWait(ACTOR_IVAN, 20);
 		}
 	}
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdActorSetSpeed(ACTOR_GARET, 1.2);
 	fdActorSetSpeed(ACTOR_IVAN, 1.2);
 	fdActorSetSpeed(ACTOR_MIA, 1.2);
@@ -1144,26 +1147,26 @@ static void scKolimaForestEntranceFaceActorAndWait(
 static void scKolimaForestEntranceSpawnCurseSparkle(void)
 {
 	ACTOR *sparkle;
-	SPR	  *spr;
-	Sint32 frmPhase;
+	SPR	  *sprite;
+	Sint32 framePhase;
 
-	frmPhase = TickCount & 7;
-	if(frmPhase != 0)
+	framePhase = TickCount & 7;
+	if(framePhase != 0)
 		return;
 	if(KolimaForestEntranceSparkleSoundOn != 0)
-		sySndPlay(SE_SPARKLE_FALL);
+		sySoundPlay(SE_SPARKLE_FALL);
 	sparkle =
 		syFieldActorCreate(SPRITE_GOLDEN_RINGS, toFIXED(231), 0, toFIXED(460));
 	if(sparkle == NULL)
 		return;
-	spr = sparkle->spr;
-	spr->flg = frmPhase;
-	sparkle->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	spr->image.pri = 1;
+	sprite = sparkle->sprite;
+	sprite->flags = framePhase;
+	sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	sprite->image.priority = 1;
 	sparkle->scaleX = toFIXED(1) / 10;
 	sparkle->speedLimit = toFIXED(8);
 	sparkle->acceleration = toFIXED(8);
-	sparkle->motionFlg = frmPhase;
+	sparkle->motionFlags = framePhase;
 	fdActorSelectAnimation(sparkle, 2);
 	syFieldActorSetMoveTargetFX(sparkle, toFIXED(231), 0, toFIXED(624));
 	fdActorStartScript(sparkle, KolimaForestEntranceSparkleScript);
@@ -1198,7 +1201,7 @@ static Sint32 scKolimaForestEntranceBurstOnPsynergyField(ACTOR *sparkle)
 							 sparkle->z.fixed < toFIXED(632))))) {
 		return 0;
 	}
-	sySndPlay(SE_DRIP);
+	sySoundPlay(SE_DRIP);
 	/* UB: this function returns void; call it through its declared type. */
 #if FIX_FUNCTION_SIGNATURES
 	fdActorStartScript(sparkle, KolimaSparkleBurstScript);
@@ -1223,7 +1226,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 
 	p = fdActorGet(ACTOR_LEADER_PSYNERGY_FIELD);
 	if(p != NULL) {
-		p->motionFlg = 0;
+		p->motionFlags = 0;
 		if((TickCount & 1) == 0) {
 			p->y.fixed = 0;
 		} else {
@@ -1232,7 +1235,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	}
 	p = fdActorGet(ACTOR_IVAN_PSYNERGY_FIELD);
 	if(p != NULL) {
-		p->motionFlg = 0;
+		p->motionFlags = 0;
 		if((TickCount & 1) != 0) {
 			p->y.fixed = 0;
 		} else {
@@ -1241,7 +1244,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	}
 	p = fdActorGet(ACTOR_MIA_PSYNERGY_FIELD);
 	if(p != NULL) {
-		p->motionFlg = 0;
+		p->motionFlags = 0;
 		if((TickCount & 1) == 0) {
 			p->y.fixed = 0;
 		} else {
@@ -1250,7 +1253,7 @@ static void scKolimaForestEntranceFlickerPsynergyFields(void)
 	}
 	p = fdActorGet(ACTOR_GARET_PSYNERGY_FIELD);
 	if(p != NULL) {
-		p->motionFlg = 0;
+		p->motionFlags = 0;
 		if((TickCount & 1) != 0) {
 			p->y.fixed = 0;
 		} else {

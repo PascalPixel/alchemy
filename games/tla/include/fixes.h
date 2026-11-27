@@ -202,10 +202,10 @@
 #define FIX_ENEMY_ID_BOUND 0
 #endif
 
-/* Frost's ice chips get a sideways velocity (velX) of 0 when they burst, so
-   they fall straight. The original never sets it, so each chip drifts sideways
-   by whatever word its PARTICLES slot last held: the field's map grid cells, or
-   an earlier effect's particles. */
+/* Frost's ice chips get a sideways velocity (velocityX) of 0 when they burst,
+   so they fall straight. The original never sets it, so each chip drifts
+   sideways by whatever word its PARTICLES slot last held: the field's map grid
+   cells, or an earlier effect's particles. */
 #ifndef FIX_FROST_CHIP_DRIFT
 #define FIX_FROST_CHIP_DRIFT 0
 #endif
@@ -345,9 +345,9 @@
 #endif
 
 /* Procne's strike sparks keep their up-and-down speed and move in depth by
-   their own random depth speed, kept in velZ. The original writes the depth
-   speed over velY, so the up-and-down speed is lost and each spark's height and
-   depth move together. */
+   their own random depth speed, kept in velocityZ. The original writes the
+   depth speed over velocityY, so the up-and-down speed is lost and each spark's
+   height and depth move together. */
 #ifndef FIX_PROCNE_SPARK_DEPTH
 #define FIX_PROCNE_SPARK_DEPTH 0
 #endif

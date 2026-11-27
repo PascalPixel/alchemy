@@ -2,13 +2,13 @@
    ticks, and it stands still again. */
 void fdActorDropAndWait(ACTOR *actor)
 {
-	Uint8 *flg = &actor->motionFlg;
+	Uint8 *flags = &actor->motionFlags;
 
-	*flg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+	*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	do {
 		sySynch(1);
-	} while(actor->velY != 0);
-	sySndPlay(SE_THUMP);
+	} while(actor->velocityY != 0);
+	sySoundPlay(SE_THUMP);
 	sySynch(10);
-	*flg = 0;
+	*flags = 0;
 }

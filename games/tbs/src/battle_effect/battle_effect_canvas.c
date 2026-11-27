@@ -191,14 +191,14 @@ void btEffectDarkenBackgroundStep(void)
 	BATTLE_STATE		*battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	if(state->fadeFrm > 0) {
+	if(state->fadeFrame > 0) {
 		Sint32 step = ++state->fadeStep;
 
-		btGraphicsScaleRGB555ClampedStub(battle->pal,
+		btGraphicsScaleRGB555ClampedStub(battle->palette,
 			(void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0),
 			toFIXED(1) - step * BACKGROUND_LEVEL_STEP,
 			BATTLE_BACKGROUND_COLORS);
-		state->fadeFrm--;
+		state->fadeFrame--;
 	}
 }
 
@@ -207,7 +207,7 @@ void btEffectClearTintTimers(void)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-	syWordsClear(state->actorTmrs, sizeof state->actorTmrs);
+	syWordsClear(state->actorTimers, sizeof state->actorTimers);
 }
 
 /* Counts down each target's flash timer and gives it its own palette back when
@@ -215,14 +215,15 @@ void btEffectClearTintTimers(void)
 void btEffectCountDownBattlerTints(void)
 {
 	BATTLE_EFFECT_STATE *state;
-	Sint32				 actorIdx;
+	Sint32				 actorIndex;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	for(actorIdx = 0; actorIdx != ARRAY_COUNT(state->actorTmrs); actorIdx++) {
-		if(state->actorTmrs[actorIdx] != 0) {
-			if((state->actorTmrs[actorIdx] = state->actorTmrs[actorIdx] - 1) ==
-				0) {
-				btEffectTintBattler(state->args->tgts[actorIdx],
+	for(actorIndex = 0; actorIndex != ARRAY_COUNT(state->actorTimers);
+		actorIndex++) {
+		if(state->actorTimers[actorIndex] != 0) {
+			if((state->actorTimers[actorIndex] =
+					   state->actorTimers[actorIndex] - 1) == 0) {
+				btEffectTintBattler(state->args->targets[actorIndex],
 					SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 			}
 		}
@@ -251,7 +252,7 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_FIXED, battle->bg, 0);
-	state->fadeFrm = 0;
+	state->fadeFrame = 0;
 	state->fadeStep = 0;
 	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 
@@ -281,15 +282,15 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
 		(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 
 	{
-		Sint32 ofs = 0;
+		Sint32 offset = 0;
 
 		for(row = 0; row != CANVAS_TILES; row++) {
-			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
+			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
 		}
 
 		syWordsClear(canvas, CANVAS_BYTES);
 		syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-		state->shakeFrm = 0;
+		state->shakeFrame = 0;
 		state->savedBg1X = BgScrollWork[1].x;
 		state->savedBg1Y = BgScrollWork[1].y;
 		sySynch(1);
@@ -320,7 +321,7 @@ void btEffectOpenCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 	btBackgroundSetModeStub(
 		BATTLE_BACKGROUND_FIXED, battle->bg, BATTLE_BACKGROUND_FADE_RESTORE);
-	state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+	state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 	state->fadeStep = 0;
 	sySetEvent(btEffectDarkenBackgroundStep, EVENT_PASS_TICK);
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
@@ -350,10 +351,10 @@ void btEffectOpenCanvasLayer(Sint32 bgControl)
 	sySynch(1);
 
 	{
-		Sint32 ofs = 0;
+		Sint32 offset = 0;
 
 		for(row = 0; row != CANVAS_TILES; row++) {
-			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
+			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
 		}
 
 		syWordsClear(canvas, CANVAS_BYTES);
@@ -369,16 +370,16 @@ void btEffectStartTiledCanvas(Sint32 bgControl)
 {
 	Sint32 row;
 	Sint32 column;
-	Sint32 ofs;
+	Sint32 offset;
 
 	btEffectStartCanvasLayer(bgControl);
 	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
-	ofs = 0;
+	offset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, ofs);
-		for(column = 0; column != 8; column++, ofs += 2) {
-			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + ofs) = 0;
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+		for(column = 0; column != 8; column++, offset += 2) {
+			*(volatile Uint16 *)((Uint8 *)BG_CANVAS_MAP + offset) = 0;
 		}
 	}
 }
@@ -394,7 +395,7 @@ void btEffectEndCanvasLayer(void)
 	BATTLE_STATE		*battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 	Sint32				 i;
 
-	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	sySoundPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	BgScrollWork[1].x = state->savedBg1X;
 	BgScrollWork[1].y = state->savedBg1Y;
 	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -484,7 +485,7 @@ void btEffectSetupCanvasTileMap(void)
 #endif
 	Sint32 row;
 	Sint32 column;
-	Sint32 byteOfs;
+	Sint32 byteOffset;
 
 	btEffectClearTintTimers();
 	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, screen->bg, 0);
@@ -498,15 +499,15 @@ void btEffectSetupCanvasTileMap(void)
 		(CANVAS_BG1_TOP_ROW - BATTLE_BACKGROUND_SCROLL_Y / 8) * MAP_ROW_BYTES,
 		-1);
 	/* The canvas's tiles, then the blank tile across the rest of each row. */
-	byteOfs = 0;
+	byteOffset = 0;
 	for(row = 0; row != CANVAS_TILES; row++) {
-		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOfs += 2) {
+		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOffset += 2) {
 			if(column >= CANVAS_TILES)
 				*(volatile Uint16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
-					byteOfs) = CANVAS_BG1_BLANK_TILE;
+					byteOffset) = CANVAS_BG1_BLANK_TILE;
 			else
 				*(volatile Uint16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
-					byteOfs) =
+					byteOffset) =
 					row * CANVAS_TILES + CANVAS_BG1_FIRST_TILE + column;
 		}
 	}
@@ -527,7 +528,7 @@ void btEffectSetupCanvasTileMap(void)
 /* Draws a line on the canvas, keeping the brighter colour where it crosses what
    is drawn; the line's ends are clipped to the canvas's rows only. */
 void btEffectDrawClippedCanvasLine(
-	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 col)
+	Sint32 x0, Sint32 y0, Sint32 x1, Sint32 y1, Sint32 color)
 {
 	Sint32 dx = x1 - x0;
 	Sint32 dy = y1 - y0;
@@ -540,7 +541,7 @@ void btEffectDrawClippedCanvasLine(
 	Sint32 x;
 	Sint32 y;
 	Sint32 tmp;
-	Uint32 ofs;
+	Uint32 offset;
 
 	CLAMP(y0, 0, CANVAS_SIZE - 1);
 	CLAMP(y1, 0, CANVAS_SIZE - 1);
@@ -562,9 +563,9 @@ void btEffectDrawClippedCanvasLine(
 		step = ABS(x1 - x0) * Q_8_8(1) / ABS(y1 - y0);
 		x = x0;
 		for(i = y0; i != y1; i++) {
-			ofs = CANVAS_PIXEL_OFFSET((Uint32)x, (Uint32)i);
-			if(canvas[ofs] < col)
-				canvas[ofs] = col;
+			offset = CANVAS_PIXEL_OFFSET((Uint32)x, (Uint32)i);
+			if(canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if(frac & Q_8_8(1)) {
 				if(dx > 0)
@@ -591,9 +592,9 @@ void btEffectDrawClippedCanvasLine(
 		step = ABS(y1 - y0) * Q_8_8(1) / ABS(x1 - x0);
 		y = y0;
 		for(i = x0; i != x1; i++) {
-			ofs = CANVAS_PIXEL_OFFSET((Uint32)i, (Uint32)y);
-			if(canvas[ofs] < col)
-				canvas[ofs] = col;
+			offset = CANVAS_PIXEL_OFFSET((Uint32)i, (Uint32)y);
+			if(canvas[offset] < color)
+				canvas[offset] = color;
 			frac += step;
 			if(frac & Q_8_8(1)) {
 				if(dy > 0)

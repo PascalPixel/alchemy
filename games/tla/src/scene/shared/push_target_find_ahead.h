@@ -14,7 +14,8 @@ ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *slot, Sint32 *kind)
 	for(i = ACTOR_FIRST_PLACED; i <= FIELD_TREASURE_ACTOR - 1; i++) {
 		actor = state->actors[i];
 		for(k = 0; k <= PUSH_KINDS - 1; k++) {
-			if(((SPR *)actor->spr)->entries[0]->anmId == PushKinds[k]) {
+			if(((SPR *)actor->sprite)->entries[0]->animationId ==
+				PushKinds[k]) {
 				x = (PIXEL_PART(leader->x.fixed) +
 						PUSH_STEP_X(PushLeaderSteps[*direction])) >>
 					4;

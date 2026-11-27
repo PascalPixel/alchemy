@@ -138,8 +138,8 @@ void fdWorldMapBuildScanlineTable(
 			scanline->scale = 0;
 			scanline->depth = 0;
 		}
-		scanline->ofsX = 0;
-		scanline->ofsY = 0;
+		scanline->offsetX = 0;
+		scanline->offsetY = 0;
 		scanline++;
 	}
 }

@@ -51,9 +51,9 @@ STATIC_ASSERT(sizeof(POLAR_OFFSET_POS) == 12);
 /* A scene's encounter zones (SceneEncounterRules, encounter_rules.s), ended by
    scene -1. */
 typedef struct SCENE_ENCOUNTER_RULE {
-	Sint16 sceneId;	 /* -1 ends the table */
-	Sint16 entrance; /* -1 for any entrance */
-	Sint16 flg : 15; /* -1, or a flag that turns the rule off once set */
+	Sint16 sceneId;	   /* -1 ends the table */
+	Sint16 entrance;   /* -1 for any entrance */
+	Sint16 flags : 15; /* -1, or a flag that turns the rule off once set */
 	Sint16 firstZoneOnGround : 1; /* the first zone is for ground 0, not 1 */
 	/* The first of up to seven consecutive zones, rows of encounter_zones.c; 0
 	   for none on any ground. */
@@ -70,7 +70,7 @@ typedef struct MAP_MUSIC_RULE {
 	Sint16 id;			  /* a scene, or an area */
 	Sint16 entrance : 15; /* -1 for any entrance */
 	Uint16 idIsMap : 1;	  /* 1 when id is a scene, 0 when it is an area */
-	Sint16 flg;			  /* -1, or a flag that must be set */
+	Sint16 flags;		  /* -1, or a flag that must be set */
 	Sint16 music;		  /* sounds.h's MUS_ numbers */
 } MAP_MUSIC_RULE;
 
@@ -87,7 +87,7 @@ typedef struct AREA_NAME_RULE {
 	/* The area name, as an offset that most readers add to MsgDebugAreaName. 0
 	   is the Title's name (area 0's rule), which a scene no rule matches also
 	   gets. */
-	Sint32 areaNameIdx;
+	Sint32 areaNameIndex;
 } AREA_NAME_RULE;
 
 /* The area name rules; the first that matches the scene or its area and the
@@ -98,7 +98,7 @@ extern const AREA_NAME_RULE AreaNameRules[];
    line, or, when that is 0, edges moving from left x0 and right y0 to left x1
    and right y1 down the run. */
 typedef struct TRANSITION_SPAN {
-	Uint16 cnt; /* lines; 0 for an unused run */
+	Uint16 count; /* lines; 0 for an unused run */
 	/* The (left << 8 | right) pair every line of the run takes, or 0 for the
 	   sloped edges below. */
 	Uint16 value;

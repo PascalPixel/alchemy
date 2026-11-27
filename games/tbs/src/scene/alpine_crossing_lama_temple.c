@@ -181,9 +181,9 @@ enum { TREASURE_SPOT_WATER_OF_LIFE = METATILE_BEHAVIOR_LAMA_TEMPLE_CHEST };
    priority off. */
 static Sint32 scActorDrawBehindBackground(ACTOR *actor)
 {
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	actor->spr->image.pri = 3;
-	actor->spr->shadow.pri = 3;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	actor->sprite->image.priority = 3;
+	actor->sprite->shadow.priority = 3;
 	return 0;
 }
 
@@ -282,9 +282,9 @@ static void scLamaTempleTalkToChiMonk(void)
    open with a thump, and Isaac steps through into Hama's room. */
 static void scLamaTempleEnterHamasRoom(void)
 {
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridAnimateMetatiles(LamaTempleDoorOpenMetatiles, DOOR_X, DOOR_Y);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -416,12 +416,12 @@ static void scLamaTempleRunHamasFarewell(void)
 	fdActorFaceDirection(ACTOR_TEMPLE_HAMA, FACING_NORTH, 30);
 	/* The door slides open with SE_THUMP, Hama walks through, and it slides
 	   shut. */
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridAnimateMetatiles(LamaTempleDoorOpenMetatiles, DOOR_X, DOOR_Y);
 	fdActorSetSpeed(ACTOR_TEMPLE_HAMA, 0.8);
 	fdActorWalkToAndWait(ACTOR_TEMPLE_HAMA, 136, 136);
 	fdActorSetPos(ACTOR_TEMPLE_HAMA, 0, 0);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdMapGridAnimateMetatiles(LamaTempleDoorCloseMetatiles, DOOR_X, DOOR_Y);
 	fdScriptWait(60);
 	fdPlayQueuedMusic();
@@ -608,9 +608,9 @@ static void scAlpineCrossingFeizhiArrives(void)
 			fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
 		}
 		fdActorSetSpeed(ACTOR_FEIZHI, 2);
-		fdActorSetSprPriority(ACTOR_FEIZHI, 2);
+		fdActorSetSpritePriority(ACTOR_FEIZHI, 2);
 		fdActorWalkToAndWait(ACTOR_FEIZHI, 408, 216);
-		fdActorGet(ACTOR_FEIZHI)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+		fdActorGet(ACTOR_FEIZHI)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 		fdScriptWait(10);
 		fdActorFaceDirection(ACTOR_FEIZHI, FACING_WEST, 20);
 		/* "My vision... It came true." */
@@ -753,8 +753,8 @@ static void scAlpineCrossingLiftBoulder(void)
 	fdScriptWait(20);
 	/* "Ready yourself, Hsu. I am going to pull. One, two, three!" */
 	fdScriptShowMessageThenWait(ACTOR_HAMA, 0, 20);
-	fdActorGet(ACTOR_HAMA)->steeringFlg &= (Uint8)~ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_FEIZHI)->steeringFlg &= (Uint8)~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_HAMA)->steeringFlags &= (Uint8)~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FEIZHI)->steeringFlags &= (Uint8)~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_HAMA, 0.2);
 	fdActorSetSpeed(ACTOR_FEIZHI, 0.2);
 
@@ -762,7 +762,7 @@ static void scAlpineCrossingLiftBoulder(void)
 	fdActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
 	fdActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
 	fdScriptWait(20);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetDestinationOffset(ACTOR_HAMA, 2, 0);
 	fdActorSetDestinationOffset(ACTOR_HSU, 2, 0);
 	fdActorSetDestinationOffset(ACTOR_FEIZHI, 2, 0);
@@ -771,7 +771,7 @@ static void scAlpineCrossingLiftBoulder(void)
 	fdActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
 	fdActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
 	fdScriptWait(20);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetDestinationOffset(ACTOR_HAMA, 4, 0);
 	fdActorSetDestinationOffset(ACTOR_HSU, 4, 0);
 	fdActorSetDestinationOffset(ACTOR_FEIZHI, 4, 0);
@@ -798,7 +798,7 @@ static void scAlpineCrossingLiftBoulder(void)
 	fdActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
 	fdActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
 	fdScriptWait(20);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetDestinationOffset(ACTOR_HAMA, 2, 0);
 	fdActorSetDestinationOffset(ACTOR_HSU, 2, 0);
 	fdActorSetDestinationOffset(ACTOR_FEIZHI, 2, 0);
@@ -807,7 +807,7 @@ static void scAlpineCrossingLiftBoulder(void)
 	fdActorSetAnimation(ACTOR_HAMA, ANIM_HAMA_PULL);
 	fdActorSetAnimation(ACTOR_FEIZHI, ANIM_FEIZHI_PULL);
 	fdScriptWait(20);
-	sySndPlay(SE_CHEST_CLOSE);
+	sySoundPlay(SE_CHEST_CLOSE);
 	fdActorSetDestinationOffset(ACTOR_HAMA, 4, 0);
 	fdActorSetDestinationOffset(ACTOR_HSU, 4, 0);
 	fdActorSetDestinationOffset(ACTOR_FEIZHI, 4, 0);
@@ -828,7 +828,7 @@ static void scAlpineCrossingLiftBoulder(void)
 	fdScriptShowMessageThenWait(ACTOR_HAMA, 0, 20);
 
 	/* Feizhi steps back; they agree to send for Master Feh. */
-	fdActorGet(ACTOR_FEIZHI)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FEIZHI)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_FEIZHI, 0.8);
 	fdActorWalkToAndWait(ACTOR_FEIZHI, 168, 296);
 	fdActorFaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHEAST, 20);
@@ -891,9 +891,9 @@ static void scAlpineCrossingHidePath(void)
 static UNREAD_RESULT scAlpineCrossingSortPillarAgainstLeader(ACTOR *pillar)
 {
 	if(fdActorGet(ACTOR_PARTY_LEADER)->y.fixed > pillar->y.fixed) {
-		pillar->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		pillar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 	} else {
-		pillar->priFlg &= (Uint8)~ACTOR_PRIORITY_UNDERFOOT;
+		pillar->priorityFlags &= (Uint8)~ACTOR_PRIORITY_UNDERFOOT;
 	}
 }
 
@@ -907,7 +907,7 @@ static void scAlpineCrossingPrepareFrost(void)
 	ACTOR *puddle = fdActorGet(ACTOR_PUDDLE);
 
 	if(leader->z.fixed <= puddle->z.fixed) {
-		fdActorSetSprPriority(ACTOR_PUDDLE, 1);
+		fdActorSetSpritePriority(ACTOR_PUDDLE, 1);
 	}
 }
 
@@ -919,9 +919,9 @@ static void scAlpineCrossingFreezePuddle(void)
 {
 	fdScriptStart();
 
-	fdActorGet(ACTOR_PUDDLE)->priFlg &= (Uint8)~ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_PUDDLE)->collisionFlg &= (Uint8)~ACTOR_PUSHABLE;
-	fdActorGet(ACTOR_PUDDLE)->motionFlg = 0;
+	fdActorGet(ACTOR_PUDDLE)->priorityFlags &= (Uint8)~ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_PUDDLE)->collisionFlags &= (Uint8)~ACTOR_PUSHABLE;
+	fdActorGet(ACTOR_PUDDLE)->motionFlags = 0;
 	fdActorGet(ACTOR_PUDDLE)->update =
 		(void (*)(ACTOR *))scAlpineCrossingSortPillarAgainstLeader;
 
@@ -930,7 +930,7 @@ static void scAlpineCrossingFreezePuddle(void)
 
 	sySynch(1);
 	gmFlagSet(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN);
-	fdActorSetSprPriority(ACTOR_PUDDLE, 2);
+	fdActorSetSpritePriority(ACTOR_PUDDLE, 2);
 	fdScriptEnd();
 }
 
@@ -941,7 +941,7 @@ static void scAlpineCrossingGrowSprout(void)
 {
 	fdScriptStart();
 	fdMapGridCopyMetatileAttributes(14, 6, 1, 2, 21, 11);
-	fdActorGet(ACTOR_SPROUT)->collisionFlg = (Uint8)~ACTOR_SOLID;
+	fdActorGet(ACTOR_SPROUT)->collisionFlags = (Uint8)~ACTOR_SOLID;
 	gmFlagSet(FLAG_ALPINE_CROSSING_SPROUT_GROWN);
 	fdScriptEnd();
 }
@@ -983,8 +983,8 @@ Sint32 scInit(void)
 		}
 	} else if(MainRoutineStateWork.next == MAP_ALPINE_CROSSING) {
 		/* Alpine Crossing: restore the Psynergy puzzles already solved. */
-		fdActorSetSprFlags(fdActorGet(ACTOR_PUDDLE), 0);
-		fdActorGet(ACTOR_PUDDLE)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_PUDDLE), 0);
+		fdActorGet(ACTOR_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		if(gmFlagGet(FLAG_ALPINE_CROSSING_PUDDLE_FROZEN)) {
 			fdActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PILLAR);
 			scAlpineCrossingFreezePuddle();

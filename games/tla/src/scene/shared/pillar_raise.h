@@ -15,28 +15,28 @@ void scPillarRaise(Uint16 *list)
 			fdMapGridGetTerrainKind(*layer, actor->x.fixed, actor->z.fixed);
 		Sint32 level =
 			fdMapGetTerrainHeight(*layer, actor->x.fixed, actor->z.fixed);
-		Sint32 idx;
+		Sint32 index;
 		Uint8 *metatiles;
 		Uint8 *shapes;
 		Uint8  newShape;
 		Uint8 *grid;
 
 		level = METATILE_HEIGHT_STEPS(level);
-		idx = fdActorGetMetatileIndex(actor);
+		index = fdActorGetMetatileIndex(actor);
 		metatiles = (Uint8 *)map->layers[*layer].metatiles;
 		grid = RamMapShapeGrid;
 		shapes = grid +
 			(((MAP_METATILE *)metatiles) -
 				(MAP_METATILE *)RamMapMetatileBuffer);
-		actor->motionFlg = 0;
-		actor->collisionFlg = 0;
-		fdActorSetSprFlags(actor, 0);
+		actor->motionFlags = 0;
+		actor->collisionFlags = 0;
+		fdActorSetSpriteFlags(actor, 0);
 		level += METATILE_HEIGHT_STEPS(toFIXED(32));
 		newShape = fdMapShapeFindOrAdd(*layer, shape, level);
-		shapes += idx;
-		idx <<= 2;
+		shapes += index;
+		index <<= 2;
 		((SHAPE_METATILE *)shapes)->shape = newShape;
-		metatiles += idx;
+		metatiles += index;
 		((MAP_METATILE *)metatiles)->attributeB |=
 			MAP_METATILE_JUMP | MAP_METATILE_CLIMBABLE;
 		metatiles += MAPGRID_SIZE * sizeof(MAP_METATILE);

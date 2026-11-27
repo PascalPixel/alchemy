@@ -53,9 +53,9 @@ typedef enum ANGEL_RISE {
 /* The archer an archer's beam comes from (scJupiterLighthouseStartBeam). */
 typedef enum BEAM_SIDE { BEAM_LEFT, BEAM_RIGHT } BEAM_SIDE;
 
-/* The path blocks' glows, pictures of scLightSprsInitB's set: the lit channel
-   of the path piece each block carries, from east round to south on the left
-   block and from west round to south on the right. */
+/* The path blocks' glows, pictures of scLightSpritesInitB's set: the lit
+   channel of the path piece each block carries, from east round to south on the
+   left block and from west round to south on the right. */
 enum { GLOW_PATH_EAST_SOUTH = 3, GLOW_PATH_WEST_SOUTH = 5 };
 
 /* The metatiles of the gaps at the ends of the archers' paths, which a path
@@ -117,17 +117,18 @@ struct EFFECT_OPTIONS;
 struct EFFECT_SPR;
 struct LIGHT_OAM;
 
-void scLightSprsSetPriority(Sint32 value);
+void scLightSpritesSetPriority(Sint32 value);
 
 void scJupiterLighthouseStartBeamFlicker(ACTOR *actor);
 void scJupiterLighthouseStopBeamFlicker(ACTOR *actor);
 
 void scJupiterLighthouseStartBeam(Sint32 archerId, Sint32 angelId, Sint32 side);
-void scLightSprsInitB(void);
-void scLightSprsAdd(Sint32 id, Sint32 value);
+void scLightSpritesInitB(void);
+void scLightSpritesAdd(Sint32 id, Sint32 value);
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 void scJupiterLighthouseUpdateBeam(void);
 
@@ -150,8 +151,8 @@ void scCrackedTileDropIn(void);
 struct BEAM_SPARK;
 struct FIELD_EFFECT;
 
-/* Draws an effect sprite (fdEffectSprDraw, through the overlay's import). */
-void syImportEffectSprDraw(EFFECT_SPR *spr);
+/* Draws an effect sprite (fdEffectSpriteDraw, through the overlay's import). */
+void syImportEffectSpriteDraw(EFFECT_SPR *sprite);
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -181,27 +182,27 @@ void scJupiterLighthouseRaiseAngels(Sint32 mode)
 	ACTOR	  *left = fdActorGet(ACTOR_LEFT_ANGEL);
 	ACTOR	  *right = fdActorGet(ACTOR_RIGHT_ANGEL);
 	ACTOR	  *lid = fdActorGet(ACTOR_LID);
-	FIELD_SPR *spr = lid->spr;
+	FIELD_SPR *sprite = lid->sprite;
 	Sint32	   i;
 
 	scFieldActorSetPosAndResetMotion(
 		lid, lid->x.fixed, lid->y.fixed, lid->z.fixed);
 	if(mode == RISE_LEFT_ANGEL || mode == RISE_LEFT_ANGEL_AND_LID) {
-		fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+		fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 		for(i = 0; i < ANGEL_RISE_TICKS; i++) {
 			left->y.fixed += toFIXED(1) / 10;
 			lid->y.fixed += toFIXED(3) / 100;
 			lid->x.fixed -= toFIXED(1) / 25;
-			spr->rotation += TRIG_TURN / 32 / ANGEL_RISE_TICKS;
+			sprite->rotation += TRIG_TURN / 32 / ANGEL_RISE_TICKS;
 			syWait(1);
 		}
 	} else {
-		fdScriptPlaySnd(SE_RISE_WITH_SPARKS_HIGH);
+		fdScriptPlaySound(SE_RISE_WITH_SPARKS_HIGH);
 		for(i = 0; i < ANGEL_RISE_TICKS; i++) {
 			right->y.fixed += toFIXED(1) / 10;
 			lid->y.fixed += toFIXED(3) / 100;
 			lid->x.fixed += toFIXED(1) / 25;
-			spr->rotation -= TRIG_TURN / 32 / ANGEL_RISE_TICKS;
+			sprite->rotation -= TRIG_TURN / 32 / ANGEL_RISE_TICKS;
 			syWait(1);
 		}
 	}
@@ -210,21 +211,21 @@ void scJupiterLighthouseRaiseAngels(Sint32 mode)
 	syFieldScriptWait(30);
 	scJupiterLighthouseStartBeamFlicker(left);
 	scJupiterLighthouseStartBeamFlicker(right);
-	fdScriptPlaySnd(SE_JUPITER_LIGHTHOUSE_BEAMS);
+	fdScriptPlaySound(SE_JUPITER_LIGHTHOUSE_BEAMS);
 	for(i = 0; i < LID_LIFT_TICKS; i++) {
 		fdActorGet(ACTOR_LEFT_ANGEL)->y.fixed += toFIXED(1) / 10;
 		fdActorGet(ACTOR_RIGHT_ANGEL)->y.fixed += toFIXED(1) / 10;
 		lid->y.fixed += toFIXED(1) / 10;
 		syWait(1);
 	}
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 	syFieldScriptWait(40);
-	fdScriptPlaySnd(MUS_PUZZLE_SOLVED);
+	fdScriptPlaySound(MUS_PUZZLE_SOLVED);
 	syFieldScriptWait(10);
-	mnSndWaitForJingle();
-	left->motionFlg = ACTOR_FLOATS;
-	right->motionFlg = ACTOR_FLOATS;
-	lid->motionFlg = ACTOR_FLOATS;
+	mnSoundWaitForJingle();
+	left->motionFlags = ACTOR_FLOATS;
+	right->motionFlags = ACTOR_FLOATS;
+	lid->motionFlags = ACTOR_FLOATS;
 }
 
 /* The left archer shoots its beam at the left angel, which rises; the second
@@ -308,25 +309,25 @@ void scJupiterLighthousePlacePathBlock(Sint32 unused, Sint32 id)
 		if(FIELD_METATILE(actor->x.fixed) == LEFT_GAP_METATILE_X &&
 			FIELD_METATILE(actor->z.fixed) == GAP_METATILE_Z) {
 			fdScriptSetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			syWait(2);
 			i = 0;
-			if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+			if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 				do {
 					syWait(1);
 					i++;
 					if(i > PATH_BLOCK_LANDING_TICKS - 1)
 						break;
-				} while(
-					actor->y.fixed > actor->groundHeight || actor->velY != 0);
+				} while(actor->y.fixed > actor->groundHeight ||
+					actor->velocityY != 0);
 			}
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			scFieldActorStop(MainRoutineStateWork.leaderActorId);
 			fdActorSetPos(id, 0, 0);
-			fdScriptPlaySnd(SE_HEAVY_IMPACT);
+			fdScriptPlaySound(SE_HEAVY_IMPACT);
 			scJupiterLighthouseFillLeftGap();
 			syFieldScriptWait(30);
-			fdScriptPlaySnd(SE_MAP_TRANSITION);
+			fdScriptPlaySound(SE_MAP_TRANSITION);
 			scJupiterLighthouseLightLeftPath();
 			syFieldScriptWait(20);
 			scJupiterLighthouseShootAtLeftAngel();
@@ -339,25 +340,25 @@ void scJupiterLighthousePlacePathBlock(Sint32 unused, Sint32 id)
 		if(FIELD_METATILE(actor->x.fixed) == RIGHT_GAP_METATILE_X &&
 			FIELD_METATILE(actor->z.fixed) == GAP_METATILE_Z) {
 			fdScriptSetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT);
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 			syWait(2);
 			i = 0;
-			if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+			if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 				do {
 					syWait(1);
 					i++;
 					if(i > PATH_BLOCK_LANDING_TICKS - 1)
 						break;
-				} while(
-					actor->y.fixed > actor->groundHeight || actor->velY != 0);
+				} while(actor->y.fixed > actor->groundHeight ||
+					actor->velocityY != 0);
 			}
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			scFieldActorStop(MainRoutineStateWork.leaderActorId);
 			fdActorSetPos(id, 0, 0);
-			fdScriptPlaySnd(SE_HEAVY_IMPACT);
+			fdScriptPlaySound(SE_HEAVY_IMPACT);
 			scJupiterLighthouseFillRightGap();
 			syFieldScriptWait(30);
-			fdScriptPlaySnd(SE_MAP_TRANSITION);
+			fdScriptPlaySound(SE_MAP_TRANSITION);
 			scJupiterLighthouseLightRightPath();
 			syFieldScriptWait(20);
 			scJupiterLighthouseShootAtRightAngel();
@@ -387,19 +388,25 @@ Sint32 scInit(void)
 			JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_WEST ||
 		MainRoutineStateWork.entrance ==
 			JUPITER_LIGHTHOUSE_AERIE_FROM_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST)
-		fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+		fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 	scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_BY_FLAG);
 	syImportHangingVinePlace(ACTOR_WEST_CHAIN, 1);
 	syImportHangingVinePlace(ACTOR_EAST_CHAIN, 1);
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-	fdActorGet(ACTOR_FLOATING_PLATFORM_A)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FLOATING_PLATFORM_B)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FLOATING_PLATFORM_C)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FLOATING_PLATFORM_D)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FLOATING_PLATFORM_E)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-	fdActorGet(ACTOR_FLOATING_PLATFORM_F)->priFlg |= ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FLOATING_PLATFORM_A)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FLOATING_PLATFORM_B)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FLOATING_PLATFORM_C)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FLOATING_PLATFORM_D)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FLOATING_PLATFORM_E)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
+	fdActorGet(ACTOR_FLOATING_PLATFORM_F)->priorityFlags |=
+		ACTOR_PRIORITY_PLATFORM;
 	scJupiterLighthousePlaceRaisedActors();
 	return 0;
 }
@@ -411,18 +418,18 @@ Sint32 scPrepareMap(void)
 	ACTOR *actor;
 
 	scSetArrivalFlags(0);
-	scLightSprsInitB();
+	scLightSpritesInitB();
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT)) {
 		fdActorSetPos(ACTOR_LEFT_PATH_BLOCK, 0, 0);
 		scJupiterLighthouseFillLeftGap();
 		scJupiterLighthouseLightLeftPath();
 	} else {
-		scLightSprsAdd(ACTOR_LEFT_PATH_BLOCK, GLOW_PATH_EAST_SOUTH);
-		fdActorGet(ACTOR_LEFT_PATH_BLOCK)->priFlg |=
+		scLightSpritesAdd(ACTOR_LEFT_PATH_BLOCK, GLOW_PATH_EAST_SOUTH);
+		fdActorGet(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 	}
 	actor = fdActorGet(ACTOR_LEFT_PATH_BLOCK);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdMapGridSetMetatileHeight(
 		actor->x.fixed, actor->z.fixed, 0, PATH_BLOCK_TOP_HEIGHT);
 	if(fdScriptGetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
@@ -430,16 +437,16 @@ Sint32 scPrepareMap(void)
 		scJupiterLighthouseFillRightGap();
 		scJupiterLighthouseLightRightPath();
 	} else {
-		scLightSprsAdd(ACTOR_RIGHT_PATH_BLOCK, GLOW_PATH_WEST_SOUTH);
-		fdActorGet(ACTOR_RIGHT_PATH_BLOCK)->priFlg |=
+		scLightSpritesAdd(ACTOR_RIGHT_PATH_BLOCK, GLOW_PATH_WEST_SOUTH);
+		fdActorGet(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |=
 			ACTOR_PRIORITY_IGNORES_RISES;
 	}
 	actor = fdActorGet(ACTOR_RIGHT_PATH_BLOCK);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	fdMapGridSetMetatileHeight(
 		actor->x.fixed, actor->z.fixed, 0, PATH_BLOCK_TOP_HEIGHT);
-	fdActorGet(ACTOR_LEFT_ARCHER)->sceneCnt = 1;
-	fdActorGet(ACTOR_RIGHT_ARCHER)->sceneCnt = 1;
+	fdActorGet(ACTOR_LEFT_ARCHER)->sceneCount = 1;
+	fdActorGet(ACTOR_RIGHT_ARCHER)->sceneCount = 1;
 	return 0;
 }
 
@@ -481,14 +488,14 @@ void scJupiterLighthouseFlickerBeam(ACTOR *actor)
 	*fill = 2;
 	switch(phase) {
 	case 1:
-		fdActorSetSprColMode(actor, SPRITE_COLOR_FILL);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_FILL);
 		break;
 	case 0:
 	case 2:
-		fdActorSetSprColMode(actor, SPRITE_COLOR_GBR);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_GBR);
 		break;
 	case 3:
-		fdActorSetSprColMode(actor, SPRITE_COLOR_GBR);
+		fdActorSetSpriteColorMode(actor, SPRITE_COLOR_GBR);
 		break;
 	}
 	(*step)++;
@@ -505,7 +512,7 @@ void scJupiterLighthouseStartBeamFlicker(ACTOR *actor)
 void scJupiterLighthouseStopBeamFlicker(ACTOR *actor)
 {
 	actor->update = 0;
-	fdActorSetSprColMode(actor, SPRITE_COLOR_GBR);
+	fdActorSetSpriteColorMode(actor, SPRITE_COLOR_GBR);
 }
 
 /* The beam's pictures, at a byte a pixel: four 8 by 8 sparkles, and the 32 by
@@ -518,7 +525,7 @@ void scJupiterLighthouseStopBeamFlicker(ACTOR *actor)
    its steps have reached. */
 typedef struct BEAM_STATE {
 	Uint8	   tiles[TRIDENT_BYTES];
-	EFFECT_SPR sprs[32];
+	EFFECT_SPR sprites[32];
 	BEAM_SPARK sparks[32];
 	EFFECT_SPR large;
 	Uint8	   unusedAfterLarge[28];
@@ -528,7 +535,7 @@ typedef struct BEAM_STATE {
 	Sint32	   pointA[3];
 	Sint32	   pointB[3];
 	Sint16	   step;
-	Sint16	   frm;
+	Sint16	   frame;
 	Uint16	   largeTile;
 	Uint16	   smallTile;
 	Sint8	   duration;
@@ -565,7 +572,7 @@ void scJupiterLighthouseUpdateBeam(void)
 {
 	BEAM_STATE *state = RamHeapSlots->menuState;
 	ACTOR	   *carrier = FieldStateWork->camera;
-	Sint32		t = state->frm;
+	Sint32		t = state->frame;
 	Sint32		position[3];
 	FIXED		a[3];
 	FIXED		b[3];
@@ -594,9 +601,9 @@ void scJupiterLighthouseUpdateBeam(void)
 		state->pointB[0] = LERP(a[0], b[0], t, state->duration);
 		state->pointB[1] = LERP(a[1], b[1], t, state->duration);
 		state->pointB[2] = LERP(a[2], b[2], t, state->duration);
-		if(state->frm == state->duration) {
+		if(state->frame == state->duration) {
 			state->step++;
-			state->frm = -1;
+			state->frame = -1;
 		}
 		break;
 	case BEAM_GROW:
@@ -615,26 +622,26 @@ void scJupiterLighthouseUpdateBeam(void)
 		state->pointB[1] = state->pointA[1];
 		state->pointB[2] = state->pointA[2];
 		large = &state->large;
-		large->scaleY = large->scaleX = toFIXED(1) * state->frm / 60;
-		if(state->frm == state->duration) {
+		large->scaleY = large->scaleX = toFIXED(1) * state->frame / 60;
+		if(state->frame == state->duration) {
 			state->step++;
-			state->frm = -1;
+			state->frame = -1;
 		}
 		break;
 	case BEAM_SPREAD:
-		if(state->frm == 0)
+		if(state->frame == 0)
 			state->still = 1;
 		aside = state->side == BEAM_LEFT ? toFIXED(1) / 2 : -toFIXED(1) / 2;
 		state->pointA[0] += aside;
 		state->pointB[0] += aside;
-		if(state->frm == 14) {
+		if(state->frame == 14) {
 			state->step++;
-			state->frm = -1;
+			state->frame = -1;
 		}
 		break;
 	case BEAM_CARRY:
 		if(t == 0)
-			sySndPlay(SE_PSYNERGY_SPARKLE);
+			sySoundPlay(SE_PSYNERGY_SPARKLE);
 		state->carried[0] = ((state->from[0] >> 2) +
 								((state->to[0] >> 2) - (state->from[0] >> 2)) *
 									t / BEAM_CARRY_TICKS)
@@ -652,14 +659,14 @@ void scJupiterLighthouseUpdateBeam(void)
 		state->pointB[0] = state->pointA[0];
 		state->pointB[1] = state->pointA[1];
 		state->pointB[2] = state->pointA[2];
-		if(state->frm == BEAM_CARRY_TICKS) {
+		if(state->frame == BEAM_CARRY_TICKS) {
 			state->step++;
-			state->frm = -1;
+			state->frame = -1;
 		}
 		break;
 	case BEAM_SHRINK:
-		if(state->frm == 0) {
-			sySndPlay(SE_SHIMMER);
+		if(state->frame == 0) {
+			sySoundPlay(SE_SHIMMER);
 			scJupiterLighthouseStartBeamFlicker(state->angel);
 		}
 		large = &state->large;
@@ -667,13 +674,13 @@ void scJupiterLighthouseUpdateBeam(void)
 		if(large->scaleX < toFIXED(1) / 5) {
 			large->scaleX = 0;
 			state->step++;
-			state->frm = -1;
+			state->frame = -1;
 		}
 		break;
 	case BEAM_FADE:
-		if(state->frm == 0)
+		if(state->frame == 0)
 			state->loop = 0;
-		if(state->frm == BEAM_SPARK_TICKS)
+		if(state->frame == BEAM_SPARK_TICKS)
 			state->step = BEAM_DONE;
 		break;
 	}
@@ -690,8 +697,8 @@ void scJupiterLighthouseUpdateBeam(void)
 	fdCameraWorldToScreen(pos);
 	large->x = pos[0];
 	large->y = pos[2];
-	syImportEffectSprDraw(large);
-	for(i = 0, spark = state->sparks, sprite = state->sprs; i <= 7;
+	syImportEffectSpriteDraw(large);
+	for(i = 0, spark = state->sparks, sprite = state->sprites; i <= 7;
 		i++, sprite++, spark++) {
 		if(spark->age == 0) {
 			if(i & 1) {
@@ -713,15 +720,15 @@ void scJupiterLighthouseUpdateBeam(void)
 			}
 		}
 		if(spark->age < BEAM_SPARK_TICKS) {
-			sprite->oam.idx = state->smallTile + (spark->age & 3) * 2;
-			fdEffectSprDrawAtWorldPos(sprite, spark);
+			sprite->oam.index = state->smallTile + (spark->age & 3) * 2;
+			fdEffectSpriteDrawAtWorldPos(sprite, spark);
 			spark->pos[1] -= spark->drift;
 		}
 		spark->age++;
 		if(state->loop != 0 && spark->age == BEAM_SPARK_TICKS)
 			spark->age = 0;
 	}
-	state->frm++;
+	state->frame++;
 }
 
 #undef LERP
@@ -730,9 +737,9 @@ void scJupiterLighthouseUpdateBeam(void)
    VRAM and holds the script until the beam's event has finished. */
 void scJupiterLighthouseStartBeam(Sint32 archerId, Sint32 angelId, Sint32 side)
 {
-	BEAM_STATE *state = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(BEAM_STATE));
+	BEAM_STATE *state = syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(BEAM_STATE));
 	ACTOR	   *carrier = FieldStateWork->camera;
-	EFFECT_SPR *spr;
+	EFFECT_SPR *sprite;
 	BEAM_SPARK *spark;
 	Sint32		smallEntry;
 	Sint32		largeEntry;
@@ -751,12 +758,12 @@ void scJupiterLighthouseStartBeam(Sint32 archerId, Sint32 angelId, Sint32 side)
 	spark = state->sparks;
 	age = 0;
 	for(i = 0; i < 32; age -= 2, i++, spark++) {
-		spr = &state->sprs[i];
-		fdEffectSprInit(spr, 4, 4, OBJ_SIZE_8X8, smallTile);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
+		sprite = &state->sprites[i];
+		fdEffectSpriteInit(sprite, 4, 4, OBJ_SIZE_8X8, smallTile);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
 		spark->age = age;
 	}
 	syDecompressTaggedLZ(
@@ -764,14 +771,14 @@ void scJupiterLighthouseStartBeam(Sint32 archerId, Sint32 angelId, Sint32 side)
 	largeEntry = syVRAMCacheFindFreeEntry();
 	largeTile = mnVRAMLoad(largeEntry, TRIDENT_BYTES, state);
 	state->largeTile = largeTile;
-	spr = &state->large;
-	syFieldEffectSprInit(spr, 30, 7, OBJ_SIZE_32X16, largeTile);
-	spr->depth = OAM_DEPTH_WINDOW;
-	spr->oam.pri = 1;
-	spr->oam.fullCol = 1;
-	spr->oam.pal = 0;
-	spr->scaleX = 0;
-	spr->scaleY = 0;
+	sprite = &state->large;
+	syFieldEffectSpriteInit(sprite, 30, 7, OBJ_SIZE_32X16, largeTile);
+	sprite->depth = OAM_DEPTH_WINDOW;
+	sprite->oam.priority = 1;
+	sprite->oam.fullColor = 1;
+	sprite->oam.palette = 0;
+	sprite->scaleX = 0;
+	sprite->scaleY = 0;
 	if(side == BEAM_LEFT) {
 		state->from[0] = toFIXED(152);
 		state->from[1] = toFIXED(32);
@@ -795,12 +802,12 @@ void scJupiterLighthouseStartBeam(Sint32 archerId, Sint32 angelId, Sint32 side)
 	fdActorStartIdle(carrier);
 	scFieldActorSetMoveTargetFX(
 		carrier, state->carried[0], state->carried[1], state->carried[2]);
-	fdScriptPlaySnd(SE_SWIRL);
+	fdScriptPlaySound(SE_SWIRL);
 	scJupiterLighthouseStartBeamFlicker(state->archer);
 	syFieldScriptWait(40);
 	state->side = side;
 	state->step = BEAM_GATHER;
-	state->frm = 0;
+	state->frame = 0;
 	state->loop = 1;
 	state->still = 0;
 	sySetTickEvent(scJupiterLighthouseUpdateBeam, EVENT_PASS_TICK);
@@ -823,7 +830,7 @@ void scJupiterLighthouseStartBeam(Sint32 archerId, Sint32 angelId, Sint32 side)
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -838,7 +845,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -866,14 +873,14 @@ UNUSED void scCrackedTilePlaceLanding(Sint32 dx, Sint32 dz, Sint32 transition)
 	ACTOR			*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIELD_STATE		*field = RamHeapSlots->fieldState;
 	METATILE_TARGET *state = &CrackedTiles;
-	Sint32			 x = scFieldGameFlagGetByte(state->flgByte);
-	Sint32			 z = scFieldGameFlagGetByte(state->flgByte + 8);
+	Sint32			 x = scFieldGameFlagGetByte(state->flagByte);
+	Sint32			 z = scFieldGameFlagGetByte(state->flagByte + 8);
 
 	if(x != 0 || z != 0) {
 		ACTOR *camera;
 
-		syGameFlagSetByte(state->flgByte, 0);
-		syGameFlagSetByte(state->flgByte + 8, 0);
+		syGameFlagSetByte(state->flagByte, 0);
+		syGameFlagSetByte(state->flagByte + 8, 0);
 		actor->x.fixed = FIELD_METATILE_CENTER(x + dx);
 		actor->z.fixed = FIELD_METATILE_CENTER(z + dz);
 		camera = field->camera;

@@ -107,9 +107,9 @@ Sint16 LightSpritePriority BSS_DATA;
    one the leader steps on. */
 METATILE_TARGET CrackedTiles BSS_DATA;
 
-void scCrackedTileCrack(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileCrack(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
-void scCrackedTileFall(METATILE_TARGET *tbl, METATILE_TARGET_ENTRY *entry);
+void scCrackedTileFall(METATILE_TARGET *table, METATILE_TARGET_ENTRY *entry);
 
 /* The ROM's callers here are compiled against this form, which returns an
    Sint32 where the definition returns a Uint8. */
@@ -118,9 +118,9 @@ Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
 #include "scene/lighthouse_palettes.h"
 
 /* An action script's call: clears the actor's sprite flags. */
-Sint32 scJupiterLighthouseClearScriptedActorSprFlags(Sint32 object)
+Sint32 scJupiterLighthouseClearScriptedActorSpriteFlags(Sint32 object)
 {
-	fdActorSetSprFlags(object, 0);
+	fdActorSetSpriteFlags(object, 0);
 	return 0;
 }
 
@@ -286,14 +286,14 @@ void scJupiterLighthouseFlashSky(void)
 	}
 	REG_DISPCNT &= ~DISPCNT_BG0_ON;
 	syIOWrite16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
-	buf = syHeapAlloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
+	buf = syHeapAllocate(LIGHTNING_TILES * TILE_SIZE_4BPP);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_LIGHTNING_TILES), buf);
 	syDMAXCopy(buf, (void *)BG_CHAR_BLOCK(0),
 		DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
 	syHeapRelease(buf);
 	DMA_FILL16(0, BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK), BG_SCREEN_SIZE);
-	buf = syHeapAlloc(
+	buf = syHeapAllocate(
 		LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(Uint16));
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_LIGHTNING_MAP), buf);
 	p = buf;
@@ -322,12 +322,12 @@ void scJupiterLighthouseFlashSky(void)
 	fdPaletteFadeApplyTarget(PALETTE_TINT_WARM, 0);
 	fdPaletteFadeInterpolate(8);
 	REG_DISPCNT |= DISPCNT_BG0_ON;
-	fdScriptPlaySnd(SE_CLATTER);
+	fdScriptPlaySound(SE_CLATTER);
 	fdMapGridSetShake(5, 7, 1);
 	fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 2);
 	scFieldActorJump(ACTOR_FELIX, 6, 0);
-	fdActorGet(ACTOR_FELIX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkBy(ACTOR_FELIX, -16, 0);
 	fdActorGet(ACTOR_ENERGY_BLOCK)->update = scActorEmitSmoke;
 	for(i = 0; i != 2 * BLEND_WEIGHT_MAX; i++) {
@@ -341,8 +341,8 @@ void scJupiterLighthouseFlashSky(void)
 	fdPaletteFadeInterpolate(60);
 	syWindowLoadGraphics();
 	syPrintClear();
-	syFieldWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	syFieldWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	REG_BLDALPHA = BLEND_ALPHA(8, 16);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	REG_DISPCNT |= DISPCNT_BG0_ON;
@@ -390,19 +390,20 @@ void scJupiterLighthouseFinishMovingBlock(Sint32 unused, Sint32 id)
 	if(FIELD_METATILE(actor->x.fixed) == ENERGY_BLOCK_GAP_METATILE_X &&
 		FIELD_METATILE(actor->z.fixed) == ENERGY_BLOCK_GAP_METATILE_Z) {
 		fdScriptSetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		syWait(2);
 		ticks = 0;
-		if(actor->y.fixed > actor->groundHeight || actor->velY != 0) {
+		if(actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
 			do {
 				syWait(1);
 				ticks++;
 				if(ticks > 29)
 					break;
-			} while(actor->y.fixed > actor->groundHeight || actor->velY != 0);
+			} while(
+				actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
 		}
-		actor->motionFlg = 0;
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
+		actor->motionFlags = 0;
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
 		fdCameraMoveTo(1016, CAMERA_KEEP, 232, 1);
@@ -448,7 +449,7 @@ void scJupiterLighthouseFinishMovingBlock(Sint32 unused, Sint32 id)
 		scPaletteCycleSetPausesInScripts(0);
 		scJupiterLighthouseFlashSky();
 		fdActorSetAnimation(MainRoutineStateWork.leaderActorId, ANIM_STAND);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlg |=
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->steeringFlags |=
 			ACTOR_FACES_MOTION;
 		scFieldActorStartRepeatedMotion(ACTOR_FELIX, 3);
 		fdActorSetAttachedEffect(
@@ -460,8 +461,8 @@ void scJupiterLighthouseFinishMovingBlock(Sint32 unused, Sint32 id)
 		fdCameraWaitForArrival();
 		syFieldScriptWait(10);
 		actor->update = 0;
-		fdScriptPlaySnd(MUS_PUZZLE_SOLVED);
-		mnSndWaitForJingle();
+		fdScriptPlaySound(MUS_PUZZLE_SOLVED);
+		mnSoundWaitForJingle();
 		syFieldScriptWait(10);
 		fdCameraMoveTo(984, -64, 248, 1);
 		fdCameraWaitForArrival();
@@ -491,11 +492,11 @@ void scJupiterLighthouseOpenFloor(void)
 	syGameFlagSet(FLAG_TRAPDOOR_OPEN);
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_CHEST_OPEN);
+	sySoundPlay(SE_CHEST_OPEN);
 	fdCameraMoveTo(776, CAMERA_KEEP, 208, 1);
 	fdCameraWaitForArrival();
 	fdScriptWait(6);
-	sySndPlay(SE_FLOOR_SWITCH);
+	sySoundPlay(SE_FLOOR_SWITCH);
 	fdMapGridCopyMetatilesLayered(49, 103, 4, 3, 49, 76);
 	fdScriptWait(6);
 	fdMapGridCopyMetatilesLayered(49, 106, 4, 3, 49, 76);
@@ -518,9 +519,9 @@ void scJupiterLighthouseOpenFloor(void)
 		fdCameraSetSpeed(4);
 		syScriptCameraFollowActor(ACTOR_GRAY_BLOCK, 1);
 		fdCameraWaitForArrival();
-		sySndPlay(SE_FALL);
+		sySoundPlay(SE_FALL);
 		actor->gravity = toFIXED(1) / 2;
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->groundHeight = toFIXED(-80);
 		ticks = 0;
 		if(actor->y.fixed > actor->groundHeight) {
@@ -532,9 +533,9 @@ void scJupiterLighthouseOpenFloor(void)
 			} while(actor->y.fixed > actor->groundHeight);
 		}
 		fdMapGridSetShake(3, 3, 0.95);
-		sySndPlay(SE_HEAVY_IMPACT);
+		sySoundPlay(SE_HEAVY_IMPACT);
 		actor->gravity = toFIXED(1);
-		actor->velY = toFIXED(6);
+		actor->velocityY = toFIXED(6);
 		fdActorSetSpeed(ACTOR_GRAY_BLOCK, 1.5);
 		if(spot == 2)
 			fdActorSetDestinationOffset(ACTOR_GRAY_BLOCK, -32, 0);
@@ -546,25 +547,25 @@ void scJupiterLighthouseOpenFloor(void)
 		actor->groundHeight = toFIXED(-240);
 		fdScriptWait(80);
 		fdMapGridSetShake(5, 5, 1);
-		sySndPlay(SE_CLATTER);
+		sySoundPlay(SE_CLATTER);
 		fdScriptWait(20);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdActorSetPos(ACTOR_GRAY_BLOCK, 0, 0);
 		fdScriptWait(10);
 	} else if(spot == 1 || spot == 4) {
-		scFieldActorSetSprPriority(ACTOR_GRAY_BLOCK, 1);
+		scFieldActorSetSpritePriority(ACTOR_GRAY_BLOCK, 1);
 		fdCameraSetSpeed(4);
 		syScriptCameraFollowActor(ACTOR_GRAY_BLOCK, 1);
 		fdCameraWaitForArrival();
-		sySndPlay(SE_FALL);
+		sySoundPlay(SE_FALL);
 		actor->gravity = toFIXED(1) / 2;
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->groundHeight = toFIXED(-240);
 		fdScriptWait(20);
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 		fdScriptWait(60);
 		fdMapGridSetShake(5, 5, 1);
-		sySndPlay(SE_CLATTER);
+		sySoundPlay(SE_CLATTER);
 		fdScriptWait(20);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdActorSetPos(ACTOR_GRAY_BLOCK, 0, 0);
@@ -586,13 +587,13 @@ void scJupiterLighthouseCloseFloor(void)
 	fdScriptClearFlag(FLAG_TRAPDOOR_OPEN);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_CHEST_CLOSE);
+	fdScriptPlaySound(SE_CHEST_CLOSE);
 	fdCameraMoveTo(776, CAMERA_KEEP, 208, 1);
 	fdCameraWaitForArrival();
 	syFieldScriptWait(6);
 	fdMapGridCopyMetatilesLayered(49, 103, 4, 3, 49, 76);
 	syFieldScriptWait(6);
-	fdScriptPlaySnd(SE_IMPACT);
+	fdScriptPlaySound(SE_IMPACT);
 	fdMapGridCopyMetatilesLayered(49, 100, 4, 3, 49, 76);
 	syFieldScriptWait(20);
 	syScriptCameraFollowActor(MainRoutineStateWork.leaderActorId, 1);
@@ -659,16 +660,16 @@ Sint32 scJupiterLighthouseKeepGaretHanging(void)
 	ACTOR *actor = fdActorGet(ACTOR_GARET);
 
 	if(actor != NULL) {
-		SPR *spr = actor->spr;
+		SPR *sprite = actor->sprite;
 
 		if((TickCount & 127) == 0)
 			fdActorSetAttachedEffect(ACTOR_GARETS_GRIP,
 				ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-		if(spr != NULL) {
+		if(sprite != NULL) {
 			/* Drawn down and to the left of his point, below his grip. */
-			spr->ofsY = 30;
-			spr->ofsX = -4;
-			spr->rotation =
+			sprite->offsetY = 30;
+			sprite->offsetX = -4;
+			sprite->rotation =
 				syMathSin(TickCount * DEGtoANG(4)) / GARET_SWING_DIVISOR -
 				TRIG_TURN / 32;
 		}
@@ -678,27 +679,27 @@ Sint32 scJupiterLighthouseKeepGaretHanging(void)
 
 /* An action script's call during the fight: the sound of one of five blows, at
    random. */
-Sint32 scJupiterLighthousePlayRandomBlowSnd(void)
+Sint32 scJupiterLighthousePlayRandomBlowSound(void)
 {
 	switch(syRandom() & 7) {
 	case 0:
-		fdScriptPlaySnd(SE_RECOVERY);
+		fdScriptPlaySound(SE_RECOVERY);
 		break;
 	case 1:
-		fdScriptPlaySnd(SE_POWER_UP);
+		fdScriptPlaySound(SE_POWER_UP);
 		break;
 	case 2:
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
 		break;
 	case 3:
 	case 5:
 	case 6:
 	default:
-		fdScriptPlaySnd(SE_IMPACT);
+		fdScriptPlaySound(SE_IMPACT);
 		break;
 	case 4:
 	case 7:
-		fdScriptPlaySnd(SE_CAST);
+		fdScriptPlaySound(SE_CAST);
 		break;
 	}
 	return 0;
@@ -707,7 +708,7 @@ Sint32 scJupiterLighthousePlayRandomBlowSnd(void)
 /* An action script's call: stops the actor turning to face where it moves. */
 Sint32 scJupiterLighthouseStopFacingMotion(ACTOR *actor)
 {
-	actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+	actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	return 0;
 }
 
@@ -750,7 +751,7 @@ void scJupiterLighthousePlaceForTheFight(void)
 	PLACE(ACTOR_MIA, 816, 285, FACING_SOUTHEAST);
 	PLACE(ACTOR_GARET, 824, 302, FACING_NORTH);
 	PLACE(ACTOR_GARETS_GRIP, 821, 302, FACING_NORTH);
-	fdActorSetSprFlags(fdActorGet(ACTOR_GARET), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_GARET), 0);
 	fdActorSetScript(ACTOR_GARET, JupiterLighthouseGaretHangsScript);
 	{
 		Sint32 priority = EVENT_PASS_TICK;
@@ -777,16 +778,16 @@ extern Uint32 JupiterLighthouseKarstStepsUpScript[];
 void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 {
 	ACTOR *actor;
-	Sint32 ang;
+	Sint32 angle;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptSetMessageId(MsgAhhhh);
-	fdScriptPlaySnd(SE_CHEST_OPEN);
+	fdScriptPlaySound(SE_CHEST_OPEN);
 	syFieldScriptWait(26);
-	fdScriptPlaySnd(SE_FLOOR_SWITCH);
+	fdScriptPlaySound(SE_FLOOR_SWITCH);
 	fdActorSetScript(ACTOR_FELIX, JupiterLighthouseFelixLooksAroundScript);
 	/* Mia's and Garet's cries, then Isaac's and Ivan's, in windows on the
 	   screen's right (tile column 20 or 21) when the party is on the west side,
@@ -797,9 +798,9 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 		/* "Ahhhh!!!" and "Mia!" */
 		syFieldScriptShowTwoMessagesAndWait(
 			ACTOR_MIA, 20, 9, 15, 8, ACTOR_GARET, 20, 2, 15, 1, 25);
-		fdScriptPlaySnd(SE_FALL);
+		fdScriptPlaySound(SE_FALL);
 		syFieldScriptWait(30);
-		fdScriptPlaySnd(SE_CLATTER);
+		fdScriptPlaySound(SE_CLATTER);
 		/* "Noooo!!!" and "Oof!" */
 		syFieldScriptShowTwoMessagesAndWait(
 			ACTOR_MIA, 21, 9, 16, 8, ACTOR_GARET, 21, 2, 16, 1, 0);
@@ -810,9 +811,9 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 		/* "Ahhhh!!!" and "Mia!" */
 		syFieldScriptShowTwoMessagesAndWait(
 			ACTOR_MIA, 5, 9, 0, 8, ACTOR_GARET, 5, 2, 0, 1, 25);
-		fdScriptPlaySnd(SE_FALL);
+		fdScriptPlaySound(SE_FALL);
 		syFieldScriptWait(30);
-		fdScriptPlaySnd(SE_CLATTER);
+		fdScriptPlaySound(SE_CLATTER);
 		/* "Noooo!!!" and "Oof!" */
 		syFieldScriptShowTwoMessagesAndWait(
 			ACTOR_MIA, 5, 9, 0, 8, ACTOR_GARET, 5, 2, 0, 1, 0);
@@ -910,12 +911,12 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	scFieldActorWaitForScriptEndById(ACTOR_SHEBA);
 	scFieldActorWaitForScriptEndById(ACTOR_KRADEN);
 	syFieldScriptWait(20);
-	ang = FACING_SOUTHEAST;
-	fdActorSetPosAndFacing(ACTOR_IVAN, toFIXED(741), toFIXED(232), ang);
+	angle = FACING_SOUTHEAST;
+	fdActorSetPosAndFacing(ACTOR_IVAN, toFIXED(741), toFIXED(232), angle);
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(800, 0, 270, 1);
 	fdCameraWaitForArrival();
-	fdScriptPlaySnd(MUS_ALEX);
+	fdScriptPlaySound(MUS_ALEX);
 	syFieldScriptWait(50);
 	fdActorRunRepeatedMotion(ACTOR_ISAAC, 2);
 	/* "Hang on, Mia! Don't worry, Garet! Everything will be fine!" */
@@ -924,7 +925,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorFaceDirectionAndWait(ACTOR_MIA, FACING_NORTHWEST);
 	/* "Don't worry about me... I'm fine, but Garet..." */
 	syFieldScriptShowMessageThenWait(ACTOR_MIA, 0, 5);
-	fdActorFaceDirectionAndWait(ACTOR_MIA, ang);
+	fdActorFaceDirectionAndWait(ACTOR_MIA, angle);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
 	/* "Garet, you're only using one arm to hang on... What's the matter?" */
 	syFieldScriptShowMessageThenWait(ACTOR_MIA, 0, 5);
@@ -943,7 +944,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	/* "Oh, Mia, don't blame yourself... I wasn't going to leave you down
 	   there!" */
 	syFieldScriptShowMessageThenWait(ACTOR_GARET, 0, 5);
-	fdActorGet(ACTOR_MIA)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MIA)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorSetSpeed(ACTOR_MIA, 0.1);
 	fdActorSetDestinationOffset(ACTOR_MIA, 4, 2);
 	scFieldActorWaitForMoveById(ACTOR_MIA);
@@ -968,7 +969,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorAnimateThenWait(ACTOR_MIA, ANIM_SHAKE_HEAD, 33);
 	/* "It's no use! I can't pull you up, Garet! I'm not strong enough!" */
 	syFieldScriptShowMessageThenWait(ACTOR_MIA, 0, 5);
-	fdActorGet(ACTOR_MIA)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_MIA)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetDestinationOffset(ACTOR_MIA, -2, -8);
 	scFieldActorWaitForMoveById(ACTOR_MIA);
 	fdActorSetAnimation(ACTOR_MIA, ANIM_STAND);
@@ -986,9 +987,9 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorAnimateThenWait(ACTOR_IVAN, ANIM_NOD, 20);
 	syFieldScriptWait(10);
 	fdActorSetScript(ACTOR_MIA, JupiterLighthouseMiaScript);
-	fdActorSetPosAndFacing(ACTOR_AGATIO, toFIXED(665), toFIXED(128), ang);
-	fdActorSetPosAndFacing(ACTOR_KARST, toFIXED(641), toFIXED(128), ang);
-	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+	fdActorSetPosAndFacing(ACTOR_AGATIO, toFIXED(665), toFIXED(128), angle);
+	fdActorSetPosAndFacing(ACTOR_KARST, toFIXED(641), toFIXED(128), angle);
+	fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 	/* "No, I'm afraid you won't be doing that..." */
 	syFieldScriptShowMessageThenWait(ACTOR_AGATIO, 0, 5);
 	fdActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -997,8 +998,8 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorFaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
 	syFieldScriptWait(10);
 	fdCameraMoveTo(720, 0, 210, 1);
-	fdActorSetSpeedFX(ACTOR_AGATIO, toFIXED(1) / 4, ang);
-	fdActorSetSpeedFX(ACTOR_KARST, toFIXED(1) / 4, ang);
+	fdActorSetSpeedFX(ACTOR_AGATIO, toFIXED(1) / 4, angle);
+	fdActorSetSpeedFX(ACTOR_KARST, toFIXED(1) / 4, angle);
 	fdActorWalkTo(ACTOR_AGATIO, 714, 193);
 	fdActorWalkTo(ACTOR_KARST, 698, 209);
 	fdActorSetScript(ACTOR_AGATIO, JupiterLighthouseAgatioStepsUpScript);
@@ -1007,7 +1008,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
 	/* "Who are you!?" */
 	syFieldScriptShowMessageThenWait(ACTOR_IVAN, 0, 5);
-	fdScriptPlaySnd(MUS_KARST_AND_AGATIO);
+	fdScriptPlaySound(MUS_KARST_AND_AGATIO);
 	fdActorShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
 	/* "Me? Why, I'm Karst." */
 	syFieldScriptShowMessageThenWait(ACTOR_KARST, 0, 5);
@@ -1062,7 +1063,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	syFieldScriptWait(5);
 	/* "It matters not! For soon, Prox will recover its lost power..." */
 	syFieldScriptShowMessageThenWait(ACTOR_KARST, 0, 5);
-	fdActorFaceDirectionAndWait(ACTOR_AGATIO, ang);
+	fdActorFaceDirectionAndWait(ACTOR_AGATIO, angle);
 	syFieldScriptWait(10);
 	/* "We shall bring Prox back from the edge, and then all the people
 	   of..." */
@@ -1099,7 +1100,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	/* "You mean to tell us that you would leave your friend...hanging?" */
 	syFieldScriptShowMessageThenWait(ACTOR_KARST, 0, 5);
 	fdActorShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-	fdActorFaceDirectionAndWait(ACTOR_ISAAC, ang);
+	fdActorFaceDirectionAndWait(ACTOR_ISAAC, angle);
 	fdActorSetAnimation(ACTOR_ISAAC, ANIM_ISAAC_STAGGER);
 	fdCameraMoveTo(784, 0, 274, 1);
 	fdCameraWaitForArrival();
@@ -1118,8 +1119,8 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
 	/* "Cowards! Stop playing dirty and fight fair!" */
 	syFieldScriptShowMessageThenWait(ACTOR_IVAN, 0, 5);
-	fdActorFaceDirection(ACTOR_AGATIO, ang, 0);
-	fdActorFaceDirectionAndWait(ACTOR_KARST, ang);
+	fdActorFaceDirection(ACTOR_AGATIO, angle, 0);
+	fdActorFaceDirectionAndWait(ACTOR_KARST, angle);
 	fdActorAnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
 	syFieldScriptWait(10);
 	/* "If you really are the brats who killed Saturos and Menardi, then..." */
@@ -1173,7 +1174,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	syFieldScriptShowMessageThenWait(ACTOR_KARST, 0, 5);
 	/* "What's wrong, Karst?" */
 	syFieldScriptShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-	fdActorFaceDirectionAndWait(ACTOR_KARST, ang);
+	fdActorFaceDirectionAndWait(ACTOR_KARST, angle);
 	syFieldScriptWait(10);
 	/* "It's Alex! He's gone!" */
 	syFieldScriptShowMessageThenWait(ACTOR_KARST, 0, 5);
@@ -1194,7 +1195,7 @@ void scJupiterLighthousePartyArrivesAtTheFight(Sint32 west)
 	fdActorShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
 	/* "Forget about him! Honestly, I was planning to do the same to him..." */
 	syFieldScriptShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-	fdActorFaceDirectionAndWait(ACTOR_AGATIO, ang);
+	fdActorFaceDirectionAndWait(ACTOR_AGATIO, angle);
 	syFieldScriptWait(10);
 	fdActorShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
 	/* "My only regret is that I won't be able to wipe that sneering
@@ -1324,7 +1325,7 @@ void scJupiterLighthouseIsaacAndIvanAreHurt(void)
 	fdCameraMoveTo(705, 0, 177, 1);
 	fdCameraWaitForArrival();
 	syFieldScriptWait(30);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_IVAN_LIE_BEATEN);
 	syFieldScriptWait(10);
 	fdActorFaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHWEST);
@@ -1352,8 +1353,8 @@ void scJupiterLighthouseIsaacAndIvanAreHurt(void)
 	gmPartyRemoveMember(GARET);
 	scFieldUnitAddHp(IVAN, -ALL_HP_OR_PP);
 	scFieldUnitAddHp(ISAAC, -ALL_HP_OR_PP);
-	gmUnitCalc(ISAAC);
-	gmUnitCalc(IVAN);
+	gmUnitCalculate(ISAAC);
+	gmUnitCalculate(IVAN);
 	scFieldUnitAddHp(ISAAC, ISAAC_HP_IN_THE_FIGHT);
 	scFieldUnitAddPp(IVAN, -ALL_HP_OR_PP);
 	gmUnitAddPp(ISAAC, -ALL_HP_OR_PP);
@@ -1367,9 +1368,9 @@ void scJupiterLighthousePlaceTheHurt(void)
 {
 	PLACE(ACTOR_ISAAC, 761, 219, FACING_NORTHWEST);
 	PLACE(ACTOR_IVAN, 741, 232, FACING_NORTHWEST);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ISAAC), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ISAAC), 0);
 	fdActorSetAnimation(ACTOR_ISAAC, ANIM_ISAAC_LIE_BEATEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_IVAN_LIE_BEATEN);
 	PLACE(ACTOR_JENNA, 761, 203, FACING_SOUTH);
 	PLACE(ACTOR_SHEBA, 725, 232, FACING_EAST);
@@ -1383,7 +1384,7 @@ void scJupiterLighthousePlaceTheHurt(void)
    one (ITEM_MYTHRIL_BAG_B) that Felix equips. */
 void scJupiterLighthouseIsaacAndIvanFall(void)
 {
-	Sint32 idx;
+	Sint32 index;
 	Sint32 answer;
 
 	fdScriptStart();
@@ -1410,9 +1411,9 @@ void scJupiterLighthouseIsaacAndIvanFall(void)
 	fdActorSetPosAndFacing(
 		ACTOR_IVAN, toFIXED(741), toFIXED(232), FACING_NORTHWEST);
 	fdActorSetScript(ACTOR_MIA, (Sint32)JupiterLighthouseMiaScript);
-	fdActorSetSprFlags(fdActorGet(ACTOR_ISAAC), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_ISAAC), 0);
 	fdActorSetAnimation(ACTOR_ISAAC, ANIM_ISAAC_LIE_BEATEN);
-	fdActorSetSprFlags(fdActorGet(ACTOR_IVAN), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_IVAN), 0);
 	fdActorSetAnimation(ACTOR_IVAN, ANIM_IVAN_LIE_BEATEN);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
@@ -1444,7 +1445,7 @@ void scJupiterLighthouseIsaacAndIvanFall(void)
 	syFieldScriptWait(20);
 	fdActorAnimateThenWait(ACTOR_AGATIO, ANIM_NOD, 20);
 	syFieldScriptWait(10);
-	syScriptCameraGetActor()->motionFlg = 0;
+	syScriptCameraGetActor()->motionFlags = 0;
 	syScriptCameraFollowActor(ACTOR_FELIX, 1);
 	syFieldScriptWait(20);
 	scFieldActorLaunchFromLeader(ACTOR_SHEBA, 0, 0, FACING_SOUTH);
@@ -1741,11 +1742,11 @@ void scJupiterLighthouseIsaacAndIvanFall(void)
 	gmPartyInventoryAdd(ITEM_MYTHRIL_BAG_B);
 	/* "Felix took the Mars Star." */
 	mnMessageShowCentered((Sint16)FieldStateWork->msg++, 5);
-	idx = 0;
-	for(idx = 0; idx <= INVENTORY_SLOTS - 1; idx++) {
-		if((syUnitGet(FELIX)->inventory[idx] & INVENTORY_ITEM_ID_MASK) ==
+	index = 0;
+	for(index = 0; index <= INVENTORY_SLOTS - 1; index++) {
+		if((syUnitGet(FELIX)->inventory[index] & INVENTORY_ITEM_ID_MASK) ==
 			ITEM_MYTHRIL_BAG_B) {
-			gmInventoryEquip(FELIX, idx);
+			gmInventoryEquip(FELIX, index);
 			break;
 		}
 	}
@@ -1845,11 +1846,11 @@ Sint32 scInit(void)
 		ACTOR_WEST_ROPE_POST);
 	WhirlwindRiding = 0;
 	actor = fdActorGet(ACTOR_WEST_UPPER_GUST);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = 0;
 	actor->groundHeight = 0;
 	actor = fdActorGet(ACTOR_EAST_UPPER_GUST);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(32);
 	actor->groundHeight = toFIXED(32);
 	if(fdScriptGetFlag(FLAG_TRAPDOOR_OPEN)) {
@@ -1887,7 +1888,7 @@ Sint32 scInit(void)
 			}
 		}
 	}
-	fdActorGet(ACTOR_GRAY_BLOCK)->motionFlg = 0;
+	fdActorGet(ACTOR_GRAY_BLOCK)->motionFlags = 0;
 	if(fdScriptGetFlag(FLAG_GRAY_BLOCK_DROPPED))
 		fdActorSetPos(ACTOR_GRAY_BLOCK, 0, 0);
 	if(MainRoutineStateWork.entrance == ENTRANCE_ISAAC_AND_IVAN_FALL)
@@ -1895,8 +1896,8 @@ Sint32 scInit(void)
 	return 0;
 }
 
-void scLightSprsInitC();
-void scLightSprsAdd();
+void scLightSpritesInitC();
+void scLightSpritesAdd();
 
 /* Loads the lighthouse's palettes and the energy block's light; once the block
    is in its gap, sets it there with the lit path and the Hover pad beyond. */
@@ -1906,14 +1907,14 @@ Sint32 scPrepareMap(void)
 
 	scSetArrivalFlags(0);
 	scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_LIT);
-	scLightSprsInitC();
-	scLightSprsAdd(ACTOR_ENERGY_BLOCK, 0);
+	scLightSpritesInitC();
+	scLightSpritesAdd(ACTOR_ENERGY_BLOCK, 0);
 	actor = fdActorGet(ACTOR_ENERGY_BLOCK);
 	if(fdScriptGetFlag(FLAG_ENERGY_BLOCK_IN_GAP)) {
 		fdActorSetPos(ACTOR_ENERGY_BLOCK, 1016, 248);
 		scJupiterLighthouseLightPathToHoverPad();
 	}
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	Call4(fdMapGridSetMetatileHeight, actor->x.fixed, actor->z.fixed, 0, -6);
 	return 0;
 }
@@ -1947,8 +1948,9 @@ extern Sint32 WhirlwindEndScript[];
 #include "shared/whirlwind_update.h"
 
 void scWhirlwindUpdate(ACTOR *self);
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 #include "shared/whirlwind_spawn.h"
 
@@ -1967,7 +1969,7 @@ void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
 #include "shared/light_sprites_add.h"
 
 /* Sets the priority the lit actors' sprites are drawn at. */
-void scLightSprsSetPriority(Sint32 value)
+void scLightSpritesSetPriority(Sint32 value)
 {
 	LightSpritePriority = value;
 }
@@ -1983,7 +1985,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-#define METATILE_PUSH_SLOT_ENTRY syOAMAddSprAtDepthClamped
+#define METATILE_PUSH_SLOT_ENTRY syOAMAddSpriteAtDepthClamped
 #include "../field/cracked_tile_mask.c"
 
 #include "shared/cracked_tile_find.h"
@@ -2002,7 +2004,7 @@ struct METATILE_TARGET_ENTRY;
 
 #include "shared/cracked_tile_drop_in.h"
 
-void syGameFlagSetByte(Sint32 flg, Sint32 value);
+void syGameFlagSetByte(Sint32 flag, Sint32 value);
 
 #include "shared/cracked_tile_step.h"
 
@@ -2110,7 +2112,7 @@ extern Sint32 JupiterLighthouseShowGustScript[];
 #include "shared/field_effect_duration_scripts.c"
 
 LATE_DATA Sint32 JupiterLighthouseShowGustScript[] = {
-	SC_CALL(scJupiterLighthouseClearScriptedActorSprFlags),
+	SC_CALL(scJupiterLighthouseClearScriptedActorSpriteFlags),
 	SC_END,
 };
 
@@ -2232,7 +2234,7 @@ LATE_DATA Uint32 JupiterLighthouseIsaacFightsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_WAIT(4),
 	SC_MOVE_XZ(776, 202),
-	SC_CALL(scJupiterLighthousePlayRandomBlowSnd),
+	SC_CALL(scJupiterLighthousePlayRandomBlowSound),
 	SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -2255,7 +2257,7 @@ LATE_DATA Uint32 JupiterLighthouseIvanFightsScript[] = {
 	SC_ANIMATION(ANIM_WALK),
 	SC_WAIT(4),
 	SC_MOVE_XZ(731, 232),
-	SC_CALL(scJupiterLighthousePlayRandomBlowSnd),
+	SC_CALL(scJupiterLighthousePlayRandomBlowSound),
 	SC_SYNC,
 	SC_ANIMATION(ANIM_STAND),
 	SC_WAIT(53),

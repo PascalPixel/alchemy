@@ -217,51 +217,51 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE			 blit[2];
 	Sint32					 savedScroll;
 	BATTLE_BACKGROUND_STATE *background;
-	Uint8					*sprs;
+	Uint8					*sprites;
 	BATTLE_STATE			*battle;
-	FIXED					 camZ;
+	FIXED					 cameraZ;
 	Sint32					 swapped;
 	Sint32					 drift;
 	Sint32					 sway;
-	Sint32					 flashTmr;
+	Sint32					 flashTimer;
 	Sint32					 flash;
 	void					*verts;
 	Sint32					 shade;
 	RENDER_MODEL			*model;
 	RENDER_MODEL			*aerialModel;
 	RENDER_MODEL			*sweepModel;
-	Sint32					 frm;
+	Sint32					 frame;
 	Sint32					 i;
 	Sint32					 j;
 	PARTICLE				*p;
 	PARTICLE				*q;
-	SPR						*obj;
+	SPR						*object;
 	MODEL_TEXTURE			 aerialTexture;
 	Sint16					 list[UNIT_MAX];
 	FIXED					 place[4];
 	SCREEN_POINT			 pos;
-	SCALE					 sprScale;
+	SCALE					 spriteScale;
 	MODEL_TEXTURE			 texture;
 	MODEL_TEXTURE			 sweepTexture;
 	PARTICLE				*bolt;
 	PARTICLE				*spark;
 	PARTICLE				*burst;
-	Uint16					*backdropCol;
+	Uint16					*backdropColor;
 	Uint8					*resource;
 	Uint8					*cellBuffer = RamMapMetatileBuffer;
 	Sint32					 span = toFIXED(8);
 	Sint32					 rowStep = 8;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	savedScroll = BgScrollWork[1].x;
 	background = RamHeapSlots->battleBg;
-	sprs = RamHeapSlots->battleSheet;
+	sprites = RamHeapSlots->battleSheet;
 	battle = RamHeapSlots->battleState;
 	syVRAMCacheFreeEntry(battle->arrowTiles);
 	fdActorShadowFreeTilesStub();
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	PLTT_BACKDROP = 0;
 	BG_PLTT_COLOR(0, 1) = 0;
 	EFFECT_LOAD_BLITTER(
@@ -313,23 +313,23 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		cells = RamMapMetatileBuffer;
 		for(i = 0; i != CATASTROPHE_DEMON_TILED;
 			cells += OBJ_32X32_8BPP_BYTES, i++) {
-			obj = btEffectSprCreateWithTiles(
+			object = btEffectSpriteCreateWithTiles(
 				32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-			obj->image.pri = 2;
-			state->sprs[i] = obj;
-			syWordsCopy((void *)OBJ_TILES(obj), cells, OBJ_32X32_8BPP_BYTES);
+			object->image.priority = 2;
+			state->sprites[i] = object;
+			syWordsCopy((void *)OBJ_TILES(object), cells, OBJ_32X32_8BPP_BYTES);
 		}
 		{
 			Uint8 *cells =
 				RamMapMetatileBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES;
 
 			for(i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
-				obj = btEffectSprAcquire(
+				object = btEffectSpriteAcquire(
 					32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-				state->sprs[CATASTROPHE_DEMON_SWAPPED + i] = obj;
-				syWordsCopy(obj, state->sprs[i], offsetof(SPR, lastNo));
+				state->sprites[CATASTROPHE_DEMON_SWAPPED + i] = object;
+				syWordsCopy(object, state->sprites[i], offsetof(SPR, lastNo));
 				syWordsCopy((void *)OBJ_TILES(
-								state->sprs[CATASTROPHE_DEMON_SWAPPED + i]),
+								state->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
 					cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
 			}
 		}
@@ -338,9 +338,10 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			CATASTROPHE_DEMON_SWAPPED_COUNT * OBJ_32X32_8BPP_BYTES);
 	}
 	for(i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
-		obj = btEffectSprAcquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-		state->sprs[CATASTROPHE_MIRRORED_DEMON + i] = obj;
-		syWordsCopy(obj, state->sprs[i], offsetof(SPR, lastNo));
+		object =
+			btEffectSpriteAcquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
+		state->sprites[CATASTROPHE_MIRRORED_DEMON + i] = object;
+		syWordsCopy(object, state->sprites[i], offsetof(SPR, lastNo));
 	}
 	{
 		Uint8 *cells;
@@ -353,11 +354,11 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		cells = state->sheet;
 		for(i = 0; i != CATASTROPHE_SHIELD_COUNT;
 			cells += OBJ_32X32_4BPP_BYTES, i++) {
-			obj = btEffectSprCreateWithTiles(32, 32, OBJ_SIZE_32X32,
+			object = btEffectSpriteCreateWithTiles(32, 32, OBJ_SIZE_32X32,
 				OBJ_PALETTE(CATASTROPHE_SHIELD_PALETTE));
-			obj->image.pri = 1;
-			state->sprs[CATASTROPHE_SHIELD + i] = obj;
-			syWordsCopy((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
+			object->image.priority = 1;
+			state->sprites[CATASTROPHE_SHIELD + i] = object;
+			syWordsCopy((void *)OBJ_TILES(object), cells, OBJ_32X32_4BPP_BYTES);
 		}
 	}
 	{
@@ -371,11 +372,11 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		cells = state->sheet;
 		for(i = 0; i != CATASTROPHE_HILT_COUNT;
 			cells += OBJ_32X32_4BPP_BYTES, i++) {
-			obj = btEffectSprCreateWithTiles(
+			object = btEffectSpriteCreateWithTiles(
 				32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_HILT_PALETTE));
-			obj->image.pri = 1;
-			state->sprs[CATASTROPHE_SWORD + i] = obj;
-			syWordsCopy((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
+			object->image.priority = 1;
+			state->sprites[CATASTROPHE_SWORD + i] = object;
+			syWordsCopy((void *)OBJ_TILES(object), cells, OBJ_32X32_4BPP_BYTES);
 		}
 	}
 	{
@@ -389,11 +390,11 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		cells = state->sheet;
 		for(i = 0; i != CATASTROPHE_BLADE_COUNT;
 			cells += OBJ_32X32_4BPP_BYTES, i++) {
-			obj = btEffectSprCreateWithTiles(
+			object = btEffectSpriteCreateWithTiles(
 				32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_BLADE_PALETTE));
-			obj->image.pri = 1;
-			state->sprs[CATASTROPHE_BLADE + i] = obj;
-			syWordsCopy((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
+			object->image.priority = 1;
+			state->sprites[CATASTROPHE_BLADE + i] = object;
+			syWordsCopy((void *)OBJ_TILES(object), cells, OBJ_32X32_4BPP_BYTES);
 		}
 	}
 	syWordsCopy(state->sheet + CATASTROPHE_SAVED_OBJ_PALETTE, (void *)OBJ_PLTT,
@@ -404,35 +405,35 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 	syWordsCopy((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
 		SHEET_PALETTE_BYTES);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_SWIRL_TEXTURE, RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
-	camZ = 0;
+	cameraZ = 0;
 	swapped = 0;
 	drift = 0;
 	sway = 0;
-	flashTmr = 0;
+	flashTimer = 0;
 	flash = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = RamHeapSlots->ramCode;
 	/* Act one: the demon breaks out of its chains and drives down its sword. */
-	frm = 0;
-	while(frm != CATASTROPHE_ACT_ONE_TICKS) {
+	frame = 0;
+	while(frame != CATASTROPHE_ACT_ONE_TICKS) {
 		Sint32 level;
 		Sint32 d;
 
 		/* The backdrop fades in over the first 16 ticks; A or B skips the
 		   act. */
-		if(frm <= 15) {
-			Sint32 v = frm * 2 - 30;
+		if(frame <= 15) {
+			Sint32 v = frame * 2 - 30;
 
 			btPaletteBrightenSavedBattleBg(v, v, v);
 		}
 		if(PerWork.repeat & (KEY_A | KEY_B)) {
 			break;
 		}
-		if(frm == 0) {
+		if(frame == 0) {
 			REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) |
 				BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 			for(i = CATASTROPHE_STRIKES; i != ARRAY_COUNT(state->particles);
@@ -440,102 +441,102 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				state->particles[i].variant = -1;
 			}
 		}
-		if(frm == CATASTROPHE_CANVAS_FRONT_TICK) {
+		if(frame == CATASTROPHE_CANVAS_FRONT_TICK) {
 			REG_BG2CNT =
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 		}
-		if(frm <= 369) {
-			camZ = toFIXED(frm * 334 / 379) + -toFIXED(282);
-		} else if((Uint32)(d = frm - CATASTROPHE_BOB_TICK) <= 19) {
-			camZ = sySin(d * (TRIG_TURN / 40)) * 9 + toFIXED(43);
-		} else if((Uint32)(frm - CATASTROPHE_SINK_TICK) <= 95) {
-			camZ += -toFIXED(1) / 2;
-		} else if((Uint32)(frm - CATASTROPHE_SWING_END_TICK) <= 19) {
-			camZ += -toFIXED(1);
-		} else if((Uint32)(frm - CATASTROPHE_DIVE_TICK) <= 47) {
-			Sint32 v =
-				(frm - CATASTROPHE_DIVE_TICK) * CATASTROPHE_DIVE_ACCELERATION +
+		if(frame <= 369) {
+			cameraZ = toFIXED(frame * 334 / 379) + -toFIXED(282);
+		} else if((Uint32)(d = frame - CATASTROPHE_BOB_TICK) <= 19) {
+			cameraZ = sySin(d * (TRIG_TURN / 40)) * 9 + toFIXED(43);
+		} else if((Uint32)(frame - CATASTROPHE_SINK_TICK) <= 95) {
+			cameraZ += -toFIXED(1) / 2;
+		} else if((Uint32)(frame - CATASTROPHE_SWING_END_TICK) <= 19) {
+			cameraZ += -toFIXED(1);
+		} else if((Uint32)(frame - CATASTROPHE_DIVE_TICK) <= 47) {
+			Sint32 v = (frame - CATASTROPHE_DIVE_TICK) *
+					CATASTROPHE_DIVE_ACCELERATION +
 				CATASTROPHE_DIVE_SPEED_START;
 
 			if(v > CATASTROPHE_DIVE_SPEED_MAX) {
 				v = CATASTROPHE_DIVE_SPEED_MAX;
 			}
-			camZ -= v << 1;
+			cameraZ -= v << 1;
 		}
-		if(frm <= 379) {
-			BgScrollWork[1].y = 104 - frm * 104 / 379;
+		if(frame <= 379) {
+			BgScrollWork[1].y = 104 - frame * 104 / 379;
 		} else {
 			Sint32 v;
 
-			BgScrollWork[1].y = v = (frm - 380) / 4;
+			BgScrollWork[1].y = v = (frame - 380) / 4;
 			if((Uint32)toFIXED(v) > toFIXED(104)) {
 				BgScrollWork[1].y = 104;
 			}
 		}
 		{
-			Sint32 swayFrm = frm - CATASTROPHE_BOB_TICK;
-			if((Uint32)swayFrm <= 59) {
-				sway = sySin(swayFrm * (TRIG_TURN / 240) / 2) << 4;
+			Sint32 swayFrame = frame - CATASTROPHE_BOB_TICK;
+			if((Uint32)swayFrame <= 59) {
+				sway = sySin(swayFrame * (TRIG_TURN / 240) / 2) << 4;
 			}
 		}
-		if((Uint32)(frm - CATASTROPHE_DRAW_BACK_TICK) <= 51) {
-			drift = (CATASTROPHE_DRAW_BACK_TICK - frm) * (toFIXED(1) / 16);
+		if((Uint32)(frame - CATASTROPHE_DRAW_BACK_TICK) <= 51) {
+			drift = (CATASTROPHE_DRAW_BACK_TICK - frame) * (toFIXED(1) / 16);
 			sway += -toFIXED(1) / 4;
-		} else if((Uint32)(frm - CATASTROPHE_SWING_TICK) <= 13) {
-			Sint32 swingFrm = frm - CATASTROPHE_SWING_TICK;
+		} else if((Uint32)(frame - CATASTROPHE_SWING_TICK) <= 13) {
+			Sint32 swingFrame = frame - CATASTROPHE_SWING_TICK;
 
-			drift =
-				drift - swingFrm * (toFIXED(1) / 16) + CATASTROPHE_SWING_DRIFT;
+			drift = drift - swingFrame * (toFIXED(1) / 16) +
+				CATASTROPHE_SWING_DRIFT;
 			sway += CATASTROPHE_SWING_SINK;
-		} else if((Uint32)(frm - CATASTROPHE_SWING_END_TICK) <= 8) {
+		} else if((Uint32)(frame - CATASTROPHE_SWING_END_TICK) <= 8) {
 			drift += toFIXED(0.125);
 			sway -=
-				sySin((frm - CATASTROPHE_SWING_END_TICK) * (TRIG_TURN / 512));
-		} else if((Uint32)(frm - CATASTROPHE_ORB_TICK) <= 29) {
+				sySin((frame - CATASTROPHE_SWING_END_TICK) * (TRIG_TURN / 512));
+		} else if((Uint32)(frame - CATASTROPHE_ORB_TICK) <= 29) {
 			sway += -toFIXED(1);
-		} else if((Uint32)(frm - 584) <= 9) {
+		} else if((Uint32)(frame - 584) <= 9) {
 			sway += -toFIXED(8);
 		}
-		if(frm == 0) {
-			flashTmr = -1;
+		if(frame == 0) {
+			flashTimer = -1;
 			flash = 0;
 		}
 		/* Each clap of thunder flashes the backdrop blue, fading over its
 		   length. */
 		if(flash < CATASTROPHE_FLASHES) {
 			level = -1;
-			if(frm == CatastropheFlashTicks[flash]) {
-				flashTmr = CatastropheFlashLengths[flash];
+			if(frame == CatastropheFlashTicks[flash]) {
+				flashTimer = CatastropheFlashLengths[flash];
 				switch(flash & 3) {
 				case 0:
-					sySndPlayStub(SE_TOPPLE);
+					sySoundPlayStub(SE_TOPPLE);
 					break;
 				case 1:
-					sySndPlayStub(SE_THUNDER);
+					sySoundPlayStub(SE_THUNDER);
 					break;
 				case 2:
-					sySndPlayStub(SE_BANE_ESCAPE);
+					sySoundPlayStub(SE_BANE_ESCAPE);
 					break;
 				case 3:
-					sySndPlayStub(SE_THUNDER_LOUD);
+					sySoundPlayStub(SE_THUNDER_LOUD);
 					break;
 				}
 			}
-			if(flashTmr >= 0) {
+			if(flashTimer >= 0) {
 				level =
-					flashTmr * RGB_LEVEL_MAX / CatastropheFlashLengths[flash];
-				if(--flashTmr == -1) {
+					flashTimer * RGB_LEVEL_MAX / CatastropheFlashLengths[flash];
+				if(--flashTimer == -1) {
 					flash++;
 				}
 			}
 			if(level >= 0) {
-				Uint16 *dst = (Uint16 *)&BG_PLTT_COLOR(6, 0);
-				backdropCol = battle->pal;
+				Uint16 *dest = (Uint16 *)&BG_PLTT_COLOR(6, 0);
+				backdropColor = battle->palette;
 
 				for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
-					Sint32 r = RGB_RED(*backdropCol);
-					Sint32 g = RGB_GREEN(*backdropCol);
-					Sint32 b = RGB_BLUE(*backdropCol) + level;
+					Sint32 r = RGB_RED(*backdropColor);
+					Sint32 g = RGB_GREEN(*backdropColor);
+					Sint32 b = RGB_BLUE(*backdropColor) + level;
 
 					if(r > RGB_LEVEL_MAX) {
 						r = RGB_LEVEL_MAX;
@@ -546,8 +547,8 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					if(b > RGB_LEVEL_MAX) {
 						b = RGB_LEVEL_MAX;
 					}
-					backdropCol++;
-					*dst++ = RGB(r, g, b);
+					backdropColor++;
+					*dest++ = RGB(r, g, b);
 				}
 			}
 		}
@@ -563,60 +564,61 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			fadeRed = 0;
 			fadeGreen = 0;
 			fadeBlue = 0;
-			if(frm == 0) {
+			if(frame == 0) {
 				fadeGreen = -RGB_LEVEL_MAX;
 				fadeRed = fadeGreen;
 				fadeBlue = fadeGreen;
 				apply[0] = 1;
-			} else if(frm == CATASTROPHE_BLADE_TICK) {
+			} else if(frame == CATASTROPHE_BLADE_TICK) {
 				fadeGreen = -RGB_LEVEL_MAX;
 				fadeRed = fadeGreen;
 				fadeBlue = -15;
 				apply[0] = 1;
-			} else if((Uint32)(frm - CATASTROPHE_GLEAM_TICK) <= 59) {
-				Sint32 h = (frm - CATASTROPHE_GLEAM_TICK) / 2;
+			} else if((Uint32)(frame - CATASTROPHE_GLEAM_TICK) <= 59) {
+				Sint32 h = (frame - CATASTROPHE_GLEAM_TICK) / 2;
 
 				fadeGreen = 5 - h * 2;
 				fadeRed = fadeGreen;
 				fadeBlue = 5 - h;
 				apply[0] = 1;
-			} else if((Uint32)(frm - CATASTROPHE_EMERGE_TICK) <= 15) {
-				fadeGreen = (frm - CATASTROPHE_EMERGE_TICK) / 2 - RGB_LEVEL_MAX;
+			} else if((Uint32)(frame - CATASTROPHE_EMERGE_TICK) <= 15) {
+				fadeGreen =
+					(frame - CATASTROPHE_EMERGE_TICK) / 2 - RGB_LEVEL_MAX;
 				fadeRed = fadeGreen;
-				fadeBlue = frm - 257;
+				fadeBlue = frame - 257;
 				apply[0] = 1;
-			} else if(frm == CATASTROPHE_BLUE_TICK) {
+			} else if(frame == CATASTROPHE_BLUE_TICK) {
 				fadeRed = -24;
 				fadeGreen = -RGB_LEVEL_MAX;
 				apply[0] = 1;
-			} else if((Uint32)(frm - CATASTROPHE_DARKEN_TICK) <= 21) {
-				Sint32 d = frm - CATASTROPHE_DARKEN_TICK;
+			} else if((Uint32)(frame - CATASTROPHE_DARKEN_TICK) <= 21) {
+				Sint32 d = frame - CATASTROPHE_DARKEN_TICK;
 
 				fadeRed = -24 - d * 2;
 				fadeGreen = -RGB_LEVEL_MAX - d * 2;
 				fadeBlue = -d;
 				apply[0] = 1;
-			} else if((Uint32)(frm - CATASTROPHE_GLIMPSE_TICK) <= 40) {
-				Sint32 d = frm - CATASTROPHE_GLIMPSE_TICK;
+			} else if((Uint32)(frame - CATASTROPHE_GLIMPSE_TICK) <= 40) {
+				Sint32 d = frame - CATASTROPHE_GLIMPSE_TICK;
 
 				fadeGreen = -d;
 				fadeRed = fadeGreen;
 				fadeBlue = 16 - d;
 				apply[0] = 1;
-			} else if(frm == CATASTROPHE_REVEAL_TICK) {
+			} else if(frame == CATASTROPHE_REVEAL_TICK) {
 				fadeRed = RGB_LEVEL_MAX;
 				fadeGreen = RGB_LEVEL_MAX;
 				fadeBlue = RGB_LEVEL_MAX;
 				apply[0] = 1;
 				apply[1] = 1;
-			} else if((Uint32)(frm - CATASTROPHE_REVEAL_FADE_TICK) <= 59) {
-				fadeGreen = 30 - (frm - CATASTROPHE_REVEAL_FADE_TICK) / 2;
+			} else if((Uint32)(frame - CATASTROPHE_REVEAL_FADE_TICK) <= 59) {
+				fadeGreen = 30 - (frame - CATASTROPHE_REVEAL_FADE_TICK) / 2;
 				apply[0] = 1;
 				fadeRed = fadeGreen;
 				fadeBlue = fadeGreen;
 				apply[1] = 1;
-			} else if((Uint32)(frm - CATASTROPHE_STRIKE_TICK) <= 42) {
-				Sint32 d = frm - CATASTROPHE_STRIKE_TICK;
+			} else if((Uint32)(frame - CATASTROPHE_STRIKE_TICK) <= 42) {
+				Sint32 d = frame - CATASTROPHE_STRIKE_TICK;
 
 				fadeRed = d / 4;
 				fadeGreen = d / 6;
@@ -626,17 +628,17 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			for(j = 0; j != 2; j++) {
 				if(apply[j] != 0) {
 					Uint16 *src;
-					Uint16 *dst;
+					Uint16 *dest;
 					Sint32	n;
 
 					if(j == 0) {
 						src = (Uint16 *)(state->sheet +
 							CATASTROPHE_SAVED_OBJ_PALETTE + 2);
 						n = CATASTROPHE_SAVED_OBJ_COLORS;
-						dst = (Uint16 *)&OBJ_PLTT_COLOR(0, 1);
+						dest = (Uint16 *)&OBJ_PLTT_COLOR(0, 1);
 					} else {
-						dst = (Uint16 *)&BG_PLTT_COLOR(6, 0);
-						src = battle->pal;
+						dest = (Uint16 *)&BG_PLTT_COLOR(6, 0);
+						src = battle->palette;
 						n = BATTLE_BACKGROUND_COLORS;
 					}
 					for(i = 1; i != n; i++) {
@@ -662,56 +664,57 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						if(b < 0) {
 							b = 0;
 						}
-						*dst++ = RGB(r, g, b);
+						*dest++ = RGB(r, g, b);
 						src++;
 					}
 				}
 			}
 		}
 		/* The red haze dims by a 64th every other tick, to about half. */
-		if((Uint32)(frm - CATASTROPHE_ORB_TICK) <= 31 &&
-			!((frm - CATASTROPHE_ORB_TICK) & 1)) {
-			Sint32 dimFrm = frm - CATASTROPHE_ORB_TICK;
+		if((Uint32)(frame - CATASTROPHE_ORB_TICK) <= 31 &&
+			!((frame - CATASTROPHE_ORB_TICK) & 1)) {
+			Sint32 dimFrame = frame - CATASTROPHE_ORB_TICK;
 
-			btColBufferScaleStub(battle->pal, (void *)&BG_PLTT_COLOR(6, 0),
-				toFIXED(1) - dimFrm * (toFIXED(1) / 64),
+			btColorBufferScaleStub(battle->palette,
+				(void *)&BG_PLTT_COLOR(6, 0),
+				toFIXED(1) - dimFrame * (toFIXED(1) / 64),
 				BATTLE_BACKGROUND_COLORS);
 		}
 		/* The top row's pictures stand in for the lowest four's. */
 		if(swapped == 0) {
-			if(frm == CATASTROPHE_ROW_SWAP_TICK) {
+			if(frame == CATASTROPHE_ROW_SWAP_TICK) {
 				swapped = 1;
 				for(i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
 					void *tiles = (void *)OBJ_TILES(
-						state->sprs[CATASTROPHE_DEMON_SWAPPED + i]);
+						state->sprites[CATASTROPHE_DEMON_SWAPPED + i]);
 
 					syWordsCopy(tiles, cellBuffer + i * OBJ_32X32_8BPP_BYTES,
 						OBJ_32X32_8BPP_BYTES);
 				}
 			}
-		} else if(frm == CATASTROPHE_ROW_RESTORE_TICK) {
+		} else if(frame == CATASTROPHE_ROW_RESTORE_TICK) {
 			Uint8 *cells;
 
 			swapped = 0;
 			cells = RamMapMetatileBuffer + CATASTROPHE_DEMON_KEPT_PICTURES;
 			for(i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
 				syWordsCopy((void *)OBJ_TILES(
-								state->sprs[CATASTROPHE_DEMON_SWAPPED + i]),
+								state->sprites[CATASTROPHE_DEMON_SWAPPED + i]),
 					cells + i * OBJ_32X32_8BPP_BYTES, OBJ_32X32_8BPP_BYTES);
 			}
 		}
-		if(frm <= 593) {
-			sprScale = CatastropheUnitScale;
+		if(frame <= 593) {
+			spriteScale = CatastropheUnitScale;
 			place[3] = 0;
 			place[1] = toFIXED(255);
 
 			for(i = 0; i != CATASTROPHE_DEMON_COUNT; i++) {
 				place[0] = toFIXED(CatastropheDemonX[i]) + toFIXED(8);
-				place[2] = toFIXED(CatastropheDemonZ[i]) + camZ;
+				place[2] = toFIXED(CatastropheDemonZ[i]) + cameraZ;
 				if(place[2] > toFIXED(16) - 1) {
 					if(place[2] <= toFIXED(168)) {
-						fdRenderApplyProjectedPlacementStub(
-							state->sprs[i], place, (Sint32 *)&sprScale, 0);
+						fdRenderApplyProjectedPlacementStub(state->sprites[i],
+							place, (Sint32 *)&spriteScale, 0);
 					}
 				}
 			}
@@ -719,42 +722,42 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				Sint32 row = i / 2;
 
 				place[0] = toFIXED((i - row * 2) * 32) + drift + toFIXED(72);
-				place[2] = toFIXED(row * 32) + camZ + sway + toFIXED(60);
+				place[2] = toFIXED(row * 32) + cameraZ + sway + toFIXED(60);
 				if(place[2] > toFIXED(16) - 1) {
 					if(place[2] <= toFIXED(168)) {
 						fdRenderApplyProjectedPlacementStub(
-							state->sprs[CATASTROPHE_SHIELD + i], place,
-							(Sint32 *)&sprScale, 0);
+							state->sprites[CATASTROPHE_SHIELD + i], place,
+							(Sint32 *)&spriteScale, 0);
 					}
 				}
 			}
 			for(i = 0; i != CATASTROPHE_SWORD_COUNT; i++) {
 				place[0] =
 					toFIXED(CatastropheArmourX[i]) - drift + toFIXED(132);
-				place[2] =
-					toFIXED(CatastropheArmourZ[i]) + camZ + sway + toFIXED(29);
+				place[2] = toFIXED(CatastropheArmourZ[i]) + cameraZ + sway +
+					toFIXED(29);
 				if(place[2] > toFIXED(16) - 1) {
 					if(place[2] <= toFIXED(168)) {
 						fdRenderApplyProjectedPlacementStub(
-							state->sprs[CATASTROPHE_SWORD + i], place,
-							(Sint32 *)&sprScale, 0);
+							state->sprites[CATASTROPHE_SWORD + i], place,
+							(Sint32 *)&spriteScale, 0);
 					}
 				}
 			}
-			sprScale.x = -(toFIXED(1) + 1);
+			spriteScale.x = -(toFIXED(1) + 1);
 			for(i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
 				place[0] = toFIXED(CatastropheMirroredDemonX[i]) + toFIXED(8);
-				place[2] = toFIXED(CatastropheMirroredDemonZ[i]) + camZ;
+				place[2] = toFIXED(CatastropheMirroredDemonZ[i]) + cameraZ;
 				if(place[2] > toFIXED(16) - 1) {
 					if(place[2] <= toFIXED(168)) {
 						fdRenderApplyProjectedPlacementStub(
-							state->sprs[CATASTROPHE_MIRRORED_DEMON + i], place,
-							(Sint32 *)&sprScale, 0);
+							state->sprites[CATASTROPHE_MIRRORED_DEMON + i],
+							place, (Sint32 *)&spriteScale, 0);
 					}
 				}
 			}
 		}
-		verts = syHeapAllocEWRAM(512);
+		verts = syHeapAllocateEWRAM(512);
 		model = btRenderAllocateModelList(1);
 		texture.logWidth = 5;
 		shade = 0;
@@ -768,10 +771,10 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != 7; i++) {
 			Sint32 st = CatastropheForkStarts[i];
 
-			if(frm >= st && frm < st + 8) {
+			if(frame >= st && frame < st + 8) {
 				Sint32 c = CatastropheForkPictures[i];
 
-				shade = (st - frm) << 3;
+				shade = (st - frame) << 3;
 				model->shade = shade;
 				texture.pixels =
 					state->sheet + c * PICTURE_BYTES(LIGHTNING_FORK);
@@ -784,7 +787,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				btRenderDrawModelList(model);
 			}
 		}
-		if(frm == CATASTROPHE_STRIKE_TICK) {
+		if(frame == CATASTROPHE_STRIKE_TICK) {
 			for(i = 0; i != CATASTROPHE_STRIKES; i++) {
 				state->particles[i].variant = 0;
 			}
@@ -794,7 +797,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			if(p->variant >= 0) {
 				Sint32 n = (p->variant >> 3) + 1;
 
-				blit[0](canvas, sprs + BattleEffectMotePictures[n - 1],
+				blit[0](canvas, sprites + BattleEffectMotePictures[n - 1],
 					FIXED_INTEGER_PART(p->x) - n / 2,
 					FIXED_INTEGER_PART(p->y) - n, n, n * 2);
 				btParticleAdvanceWithGravity2D(p, 63, 0);
@@ -804,17 +807,17 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != CATASTROPHE_CANVAS_FLASHES; i++) {
 			Uint16 t = CatastropheCanvasFlashTicks[i];
 
-			if(frm == t + CATASTROPHE_CANVAS_FLASH_START) {
+			if(frame == t + CATASTROPHE_CANVAS_FLASH_START) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 					CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
 			}
-			if(frm == t + CATASTROPHE_CANVAS_FLASH_START + 1) {
+			if(frame == t + CATASTROPHE_CANVAS_FLASH_START + 1) {
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			}
 		}
-		if((Uint32)(frm - CATASTROPHE_FLICKER_TICK) <= 55) {
-			if(frm & 1) {
+		if((Uint32)(frame - CATASTROPHE_FLICKER_TICK) <= 55) {
+			if(frame & 1) {
 				EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
 					CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
 			} else {
@@ -822,14 +825,14 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 			}
 		}
-		if(frm == CATASTROPHE_REVEAL_TICK) {
-			sySndPlayStub(SE_CURSE_FALL);
+		if(frame == CATASTROPHE_REVEAL_TICK) {
+			sySoundPlayStub(SE_CURSE_FALL);
 		}
-		if(frm == CATASTROPHE_SEAL_TICK + 8) {
-			sySndPlayStub(SE_SHIMMER);
+		if(frame == CATASTROPHE_SEAL_TICK + 8) {
+			sySoundPlayStub(SE_SHIMMER);
 		}
-		if(frm == CATASTROPHE_LANDING_TICK) {
-			sySndPlayStub(SE_CRASH);
+		if(frame == CATASTROPHE_LANDING_TICK) {
+			sySoundPlayStub(SE_CRASH);
 		}
 		texture.logWidth = 5;
 		texture.logHeight = 7;
@@ -841,27 +844,27 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		/* From CATASTROPHE_STRIKE_TICK three strikes step through their tables
 		   at half speed: each step turns its jagged streak, plays its sound and
 		   throws sparks. */
-		if((Uint32)(frm - CATASTROPHE_STRIKE_TICK) <= 130) {
+		if((Uint32)(frame - CATASTROPHE_STRIKE_TICK) <= 130) {
 			shade = 0;
 			for(i = 0; i != 3; i++) {
 				Sint32 off;
-				Sint32 idx;
+				Sint32 index;
 
 				p = &state->particles[i];
 				off = i * CATASTROPHE_STRIKE_STEPS;
-				idx = p->variant;
+				index = p->variant;
 
-				if(frm ==
+				if(frame ==
 					(CatastropheStrikeTicks[i * (CATASTROPHE_STRIKE_STEPS + 1) +
-						 idx] -
+						 index] -
 						492) /
 							2 +
 						CATASTROPHE_STRIKE_TICK) {
-					Sint32		  cnt = 0;
-					const Sint16 *tbl = CatastropheStrikeRolls;
-					Sint32		  n = off + idx;
+					Sint32		  count = 0;
+					const Sint16 *table = CatastropheStrikeRolls;
+					Sint32		  n = off + index;
 					Sint32		  k = n * 2;
-					Sint32		  a = *(const Sint16 *)((Sint32)tbl + k);
+					Sint32		  a = *(const Sint16 *)((Sint32)table + k);
 					Uint8		 *src;
 					Sint32		  bx;
 					Sint32		  height;
@@ -875,31 +878,31 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						SET_POSITION(p, CatastropheStrikeX[n] << 3,
 							CatastropheStrikeY[n] << 3, a << 8);
 					}
-					p->velY = CatastropheStrikeSpeedsY[p->variant + off];
-					p->velZ = CatastropheStrikeTurns[p->variant + off];
-					p->velX = CatastropheStrikePictures[p->variant + off];
+					p->velocityY = CatastropheStrikeSpeedsY[p->variant + off];
+					p->velocityZ = CatastropheStrikeTurns[p->variant + off];
+					p->velocityX = CatastropheStrikePictures[p->variant + off];
 					p->variant++;
-					if(p->velX == -1) {
+					if(p->velocityX == -1) {
 						continue;
 					}
 					width = 10;
 					height = 20;
-					src = sprs + BattleEffectMotePictures[MOTE_PICTURES - 1];
+					src = sprites + BattleEffectMotePictures[MOTE_PICTURES - 1];
 					x0 = p->x / 8 - 5;
 					bx = span - drift;
 					x = x0 + (FIXEDtoINT(bx / 2));
 					y0 = p->y / 8 - 10;
-					y = y0 + (FIXEDtoINT(camZ + sway));
+					y = y0 + (FIXEDtoINT(cameraZ + sway));
 					blit[0](canvas, src, x, y, width, height);
 					switch(i) {
 					case 0:
-						sySndPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
+						sySoundPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
 						break;
 					case 1:
-						sySndPlayStub(SE_FALLING_LIGHT);
+						sySoundPlayStub(SE_FALLING_LIGHT);
 						break;
 					case 2:
-						sySndPlayStub(SE_WHIRLWIND);
+						sySoundPlayStub(SE_WHIRLWIND);
 						break;
 					}
 					{
@@ -911,25 +914,25 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						half = (span - drift) / 2;
 						for(; j != ARRAY_COUNT(state->particles); j++, q++) {
 							if(q->variant < 0) {
-								Sint32 ang;
+								Sint32 angle;
 								Sint32 speed;
 
 								q->x = p->x * (toFIXED(1) / 8) + half;
-								q->y = p->y * (toFIXED(1) / 8) + camZ + sway;
-								ang = syRandom();
+								q->y = p->y * (toFIXED(1) / 8) + cameraZ + sway;
+								angle = syRandom();
 								speed = (syRandom() & 255) + 127;
-								q->velX = sySin(ang) * speed >> 6;
-								q->velY = syCos(ang) * speed >> 6;
+								q->velocityX = sySin(angle) * speed >> 6;
+								q->velocityY = syCos(angle) * speed >> 6;
 								q->variant = (syRandom() & 7) + 16;
-								if(++cnt == CATASTROPHE_STRIKE_SPARKS) {
+								if(++count == CATASTROPHE_STRIKE_SPARKS) {
 									break;
 								}
 							}
 						}
 					}
 				}
-				if(p->velX != -1) {
-					Sint32 cell = p->velX;
+				if(p->velocityX != -1) {
+					Sint32 cell = p->velocityX;
 
 					model->shade = shade;
 					texture.pixels = state->sheet + CATASTROPHE_JAGGED_STREAKS +
@@ -940,7 +943,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						Sint32 b = span - drift;
 
 						syTranslate(INTtoFIXED(t - CANVAS_SIZE / 2) + b / 2,
-							INTtoFIXED(p->y / 8 - CANVAS_SIZE / 2) + camZ +
+							INTtoFIXED(p->y / 8 - CANVAS_SIZE / 2) + cameraZ +
 								sway,
 							0);
 					}
@@ -950,26 +953,26 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					btRenderTransformVertices(
 						BattleEffectLongBeamCorners, verts, 4);
 					btRenderDrawModelList(model);
-					p->y += p->velY * 2;
-					p->z += p->velZ * 2;
+					p->y += p->velocityY * 2;
+					p->z += p->velocityZ * 2;
 				}
 			}
 		}
-		if(frm == CATASTROPHE_LANDING_TICK) {
+		if(frame == CATASTROPHE_LANDING_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 		}
-		if(frm == CATASTROPHE_AFTERFLASH_TICK) {
+		if(frame == CATASTROPHE_AFTERFLASH_TICK) {
 			syWordsFillEntry(canvas, CANVAS_BYTES,
 				CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
 		}
-		if(frm == CATASTROPHE_AFTERFLASH_TICK + 4) {
+		if(frame == CATASTROPHE_AFTERFLASH_TICK + 4) {
 			syWordsFillEntry(canvas, CANVAS_BYTES,
 				CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
 		}
-		if((Uint32)(frm - CATASTROPHE_SEAL_TICK) <= 43) {
+		if((Uint32)(frame - CATASTROPHE_SEAL_TICK) <= 43) {
 			p = state->particles;
-			if(!(frm & 1)) {
+			if(!(frame & 1)) {
 				p->y = (syRandom() & 0x3fff) + toFIXED(0.375);
 				p->z = syRandom() % 3 * PICTURE_BYTES(JAGGED_STREAK) +
 					CATASTROPHE_JAGGED_STREAKS;
@@ -977,7 +980,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			texture.pixels = state->sheet + p->z;
 			syInitMatrix();
 			syTranslate(
-				(span - drift) / 2 + toFIXED(4), camZ + toFIXED(204), 0);
+				(span - drift) / 2 + toFIXED(4), cameraZ + toFIXED(204), 0);
 			syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1));
 			syRotZ(p->y);
 			syScale(toFIXED(4), toFIXED(1) + 20000, toFIXED(1) / 2);
@@ -985,24 +988,24 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			btRenderDrawModelList(model);
 		}
 		/* Jagged streaks burst where the orb lands, and at the afterflashes. */
-		if((Uint32)(frm - CATASTROPHE_LANDING_TICK) <= 15 ||
-			(Uint32)(frm - CATASTROPHE_AFTERFLASH_TICK) <= 3) {
+		if((Uint32)(frame - CATASTROPHE_LANDING_TICK) <= 15 ||
+			(Uint32)(frame - CATASTROPHE_AFTERFLASH_TICK) <= 3) {
 			Sint32 n = 1;
 			Sint32 sx = toFIXED(5);
 			Sint32 base = syRandom() % 3;
 			Sint32 spread = 8;
 
-			if(frm > CATASTROPHE_LANDING_TICK + 9) {
-				sx -= (frm - (CATASTROPHE_LANDING_TICK + 10)) *
+			if(frame > CATASTROPHE_LANDING_TICK + 9) {
+				sx -= (frame - (CATASTROPHE_LANDING_TICK + 10)) *
 					CATASTROPHE_LANDING_BURST_SHRINK;
 			}
 			if(sx < toFIXED(1)) {
 				sx = toFIXED(1);
 			}
-			if(frm <= 613) {
-				if(frm > 605) {
+			if(frame <= 613) {
+				if(frame > 605) {
 					n = 3;
-				} else if(frm > 603) {
+				} else if(frame > 603) {
 					n = 2;
 				}
 			}
@@ -1012,7 +1015,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				PARTICLE *p4 = &state->particles[i];
 
 				SET_POSITION(p4, toFIXED(syRandom() % spread - spread / 2),
-					camZ + toFIXED(200),
+					cameraZ + toFIXED(200),
 					(base + i) % 3 * PICTURE_BYTES(JAGGED_STREAK) +
 						CATASTROPHE_JAGGED_STREAKS);
 				texture.pixels = state->sheet + p4->z;
@@ -1027,31 +1030,31 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				btRenderDrawModelList(model);
 			}
 		}
-		if(frm == CATASTROPHE_SEAL_TICK) {
+		if(frame == CATASTROPHE_SEAL_TICK) {
 			btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
 				RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
 		}
-		if(frm == CATASTROPHE_SEAL_TICK - 1) {
+		if(frame == CATASTROPHE_SEAL_TICK - 1) {
 			btResourceLoadAndDecompress(
 				RESOURCE_TRIANGLE_SEAL_TEXTURE, state->sheet, 0, 0);
 			btResourceLoadAndDecompress(RESOURCE_PENTAGON_SEAL_TEXTURE,
 				state->sheet + CATASTROPHE_PENTAGON_SEAL, 0, 0);
 		}
-		if(frm == CATASTROPHE_LANDING_TICK) {
+		if(frame == CATASTROPHE_LANDING_TICK) {
 			btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
 				RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
 		}
-		if((Uint32)(frm - CATASTROPHE_LANDING_TICK) <= 6) {
-			camZ += toFIXED(16);
+		if((Uint32)(frame - CATASTROPHE_LANDING_TICK) <= 6) {
+			cameraZ += toFIXED(16);
 		}
 		/* From CATASTROPHE_SEAL_TICK the seal: the pentagon spins as it
 		   swells, its triangles fold up from its edges from tick 580, and the
 		   swirl spins over it. */
 		{
-			Sint32 sealFrm = frm - CATASTROPHE_SEAL_TICK;
+			Sint32 sealFrame = frame - CATASTROPHE_SEAL_TICK;
 
-			if((Uint32)sealFrm <= 58) {
-				Sint32 s = sealFrm * 4424;
+			if((Uint32)sealFrame <= 58) {
+				Sint32 s = sealFrame * 4424;
 				Sint32 a;
 				Sint32 b;
 
@@ -1069,10 +1072,10 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				texture.pixels = state->sheet + CATASTROPHE_PENTAGON_SEAL;
 				syInitMatrix();
 				b = span - drift;
-				syTranslate(b / 2 + toFIXED(5), camZ + toFIXED(230), 0);
+				syTranslate(b / 2 + toFIXED(5), cameraZ + toFIXED(230), 0);
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 				syRotX(CATASTROPHE_SEAL_TILT);
-				a = -frm * (TRIG_TURN / 64);
+				a = -frame * (TRIG_TURN / 64);
 				syRotZ(a);
 				syMatrixScaleUniform(s);
 				syTranslate(0, -toFIXED(15), 0);
@@ -1089,8 +1092,8 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 							-24 - (FIXEDtoINT(syCos(phase + a) << 3));
 					}
 					syTranslate(0, -toFIXED(16), 0);
-					if(frm > 579) {
-						Sint32 v = (frm - 580) * 1096;
+					if(frame > 579) {
+						Sint32 v = (frame - 580) * 1096;
 
 						if(v > CATASTROPHE_SEAL_SIDE_TILT) {
 							v = CATASTROPHE_SEAL_SIDE_TILT;
@@ -1102,21 +1105,21 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					btRenderDrawModelList(model);
 					syPopMatrix();
 				}
-				if(frm > 589) {
-					s += (frm - 590) * 11060;
+				if(frame > 589) {
+					s += (frame - 590) * 11060;
 				}
-				if(s > 0 && frm <= 601) {
+				if(s > 0 && frame <= 601) {
 					shade = -16;
-					if(frm > 589) {
-						shade -= (frm - 590) * 2;
+					if(frame > 589) {
+						shade -= (frame - 590) * 2;
 					}
 					if(shade > MODEL_SHADE_INVISIBLE) {
 						model->shade = shade;
 						texture.pixels =
 							RamMapMetatileBuffer + CATASTROPHE_RING;
 						syInitMatrix();
-						if(frm > CATASTROPHE_ORB_TICK - 1) {
-							Sint32 v = (CATASTROPHE_ORB_TICK - frm) *
+						if(frame > CATASTROPHE_ORB_TICK - 1) {
+							Sint32 v = (CATASTROPHE_ORB_TICK - frame) *
 								CATASTROPHE_SWIRL_RISE;
 
 							if(v < -CATASTROPHE_SWIRL_RISE_TICKS *
@@ -1127,9 +1130,9 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 							syTranslate(0, v, 0);
 						}
 						syTranslate((span - drift) / 2 + toFIXED(5),
-							camZ + toFIXED(220), 0);
+							cameraZ + toFIXED(220), 0);
 						syScale(toFIXED(1), 32000, toFIXED(1));
-						syRotZ(frm * (TRIG_TURN / 32));
+						syRotZ(frame * (TRIG_TURN / 32));
 						syMatrixScaleUniform(s);
 						btRenderTransformVertices(
 							BattleEffectSquareCorners, verts, 4);
@@ -1139,14 +1142,14 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* From the landing a ring of fire spreads, fading ten ticks on. */
-		if(frm > 601) {
+		if(frame > 601) {
 			Sint32 s =
-				(frm - CATASTROPHE_LANDING_TICK) * CATASTROPHE_RING_GROWTH +
+				(frame - CATASTROPHE_LANDING_TICK) * CATASTROPHE_RING_GROWTH +
 				toFIXED(0.125);
 
 			shade = 0;
-			if(frm > 611) {
-				shade -= (frm - 612) * 8;
+			if(frame > 611) {
+				shade -= (frame - 612) * 8;
 			}
 			if(shade > MODEL_SHADE_INVISIBLE) {
 				model->shade = shade;
@@ -1158,7 +1161,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				syInitMatrix();
 				syTranslate(toFIXED(1), -toFIXED(16), 0);
 				syScale(toFIXED(1), 32000, toFIXED(1));
-				syRotZ(frm * (TRIG_TURN / 64));
+				syRotZ(frame * (TRIG_TURN / 64));
 				syMatrixScaleUniform(s);
 				btRenderTransformVertices(BattleEffectSquareCorners, verts, 4);
 				btRenderDrawModelList(model);
@@ -1168,12 +1171,12 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		syHeapRelease(verts);
 		/* The orb swells, rising a little, and from the tick before the
 		   landing it falls. */
-		if((Uint32)(frm - CATASTROPHE_ORB_TICK) <= 51) {
-			Sint32 radius = frm - (CATASTROPHE_ORB_TICK - 1);
-			Sint32 y = 90 - (frm - CATASTROPHE_ORB_TICK) / 2;
+		if((Uint32)(frame - CATASTROPHE_ORB_TICK) <= 51) {
+			Sint32 radius = frame - (CATASTROPHE_ORB_TICK - 1);
+			Sint32 y = 90 - (frame - CATASTROPHE_ORB_TICK) / 2;
 
-			if(frm > 600) {
-				y += (frm - 601) * 16;
+			if(frame > 600) {
+				y += (frame - 601) * 16;
 			}
 			if(y <= 63) {
 				y = 64;
@@ -1187,24 +1190,24 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			btCanvasBlitMirroredQuarters(cellBuffer, 62, y, radius);
 		}
 		EFFECT_PRESENT_CANVAS(state);
-		frm++;
+		frame++;
 	}
 	for(i = 0; i != CATASTROPHE_SPRITES; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	fdActorShadowLoadTilesStub();
-	battle->arrowTiles = syVRAMCacheAllocEntry(128);
+	battle->arrowTiles = syVRAMCacheAllocateEntry(128);
 	btEffectShowLivingTargets(state->args);
-	for(i = 0; i != args->tgtCnt; i++) {
+	for(i = 0; i != args->targetCount; i++) {
 		btEffectTintBattler(
-			args->tgts[i], SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
+			args->targets[i], SPRITE_COLOR_GRB, TINT_KEEP, TINT_KEEP, 0);
 		btEffectTintBattler(
-			args->tgts[i], SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
+			args->targets[i], SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 	}
-	syPaletteLoadBasicSprCols();
-	btEffectSetupBlendedDisp();
+	syPaletteLoadBasicSpriteColors();
+	btEffectSetupBlendedDisplay();
 	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
-	state->fadeFrm = 0;
+	state->fadeFrame = 0;
 	state->fadeStep = 0;
 	/* Act two: the land seen from the sky, where the orb falls and bursts. */
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
@@ -1229,7 +1232,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					(Uint8 *)state + (boltTexture + y * BOLT_TEXTURE_WIDTH);
 				Sint32 offset =
 					i * LIGHTNING_BOLT_PICTURE_BYTES + y * LIGHTNING_BOLT_WIDTH;
-				Uint8 *dst = line +
+				Uint8 *dest = line +
 					(offsetof(BATTLE_EFFECT_STATE, sheet) +
 						CATASTROPHE_BOLT_TEXTURES +
 						(BOLT_TEXTURE_WIDTH - LIGHTNING_BOLT_WIDTH) / 2);
@@ -1237,7 +1240,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				Sint32 x;
 
 				for(x = 0; x != LIGHTNING_BOLT_WIDTH; x++) {
-					*dst++ = *src++;
+					*dest++ = *src++;
 				}
 			}
 		}
@@ -1258,10 +1261,10 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 
 		rise = 0;
 		EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-		frm = 0;
+		frame = 0;
 		if(!(PerWork.repeat & (KEY_A | KEY_B))) {
 			do {
-				if(frm == 0) {
+				if(frame == 0) {
 					syWordsFillEntry(canvas, CANVAS_BYTES, 0);
 					rise = -toFIXED(64);
 					btPaletteBrightenSavedBattleBg(0, -16, -16);
@@ -1275,17 +1278,17 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					rise += toFIXED(1);
 				}
 				{
-					Sint32 launchFrm = frm - 96;
+					Sint32 launchFrame = frame - 96;
 
-					if((Uint32)launchFrm <= 23) {
+					if((Uint32)launchFrame <= 23) {
 						btPaletteBrightenSavedBattleBg(
-							-launchFrm, -16, frm - 112);
-						state->shakeFrm = 8;
+							-launchFrame, -16, frame - 112);
+						state->shakeFrame = 8;
 					}
 				}
-				if(frm > 139) {
+				if(frame > 139) {
 					state->transferMode = CANVAS_COPY_AND_CLEAR;
-					if(frm > 153) {
+					if(frame > 153) {
 						state->transferValue =
 							CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
 					} else {
@@ -1294,43 +1297,43 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					}
 					btPaletteBrightenBgEntries(1, 1, 1);
 				}
-				if(frm == 80 || frm == 83) {
+				if(frame == 80 || frame == 83) {
 					Uint16 *c = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 					for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
 						*c ^= RGB_WHITE;
 					}
 				}
-				if(frm == 82) {
-					state->shakeFrm = 8;
-					sySndPlayStub(SE_BANE_ESCAPE);
+				if(frame == 82) {
+					state->shakeFrame = 8;
+					sySoundPlayStub(SE_BANE_ESCAPE);
 					IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
 						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				}
-				if(frm == 96) {
-					sySndPlayStub(SE_LAUNCH);
+				if(frame == 96) {
+					sySoundPlayStub(SE_LAUNCH);
 				}
-				if(frm == 128) {
+				if(frame == 128) {
 					Uint16 *c;
 
-					state->shakeFrm = 16;
+					state->shakeFrame = 16;
 					c = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 					for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {
 						*c ^= RGB_WHITE;
 					}
 				}
-				if(frm > 128) {
-					Sint32 d = (frm - 128) << 1;
+				if(frame > 128) {
+					Sint32 d = (frame - 128) << 1;
 
-					btPaletteBrightenSavedBattleBg(d - 11, frm - 136, 3 - d);
+					btPaletteBrightenSavedBattleBg(d - 11, frame - 136, 3 - d);
 				}
 				radius = 16;
 				ry = FIXEDtoINT(rise);
-				if(frm > 92) {
-					radius = frm - 75;
+				if(frame > 92) {
+					radius = frame - 75;
 				}
-				if(frm <= 79) {
-					radius += FIXEDtoINT(sySin(frm * (TRIG_TURN / 32)) * 2);
+				if(frame <= 79) {
+					radius += FIXEDtoINT(sySin(frame * (TRIG_TURN / 32)) * 2);
 				}
 				if(radius <= 64) {
 					btEffectDrawShadedCircles(
@@ -1342,18 +1345,19 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				btCanvasBlitMirroredQuarters(
 					state->sheet, CATASTROPHE_ORB_CENTER, top, radius);
 				/* From tick 96 glints sparkle around the orb. */
-				if(frm > 95) {
+				if(frame > 95) {
 					{
 						for(i = 0; i != 4; i++) {
 							Sint32 n = i & 3;
-							Sint32 ang = syRandom();
-							Sint32 x = (FIXEDtoINT(sySin(ang) * radius) >> 1) +
+							Sint32 angle = syRandom();
+							Sint32 x =
+								(FIXEDtoINT(sySin(angle) * radius) >> 1) +
 								CATASTROPHE_ORB_CENTER;
 							Sint32 y;
 							Uint32 flip;
 
 							x -= BattleEffectGlintPictureWidths[n] >> 1;
-							y = top + (FIXEDtoINT(syCos(ang) * radius) >> 1) -
+							y = top + (FIXEDtoINT(syCos(angle) * radius) >> 1) -
 								(BattleEffectGlintPictureHeights[n] >> 1);
 							flip = syRandom();
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -1369,21 +1373,21 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						}
 					}
 				}
-				aerialVertices = syHeapAllocEWRAM(512);
+				aerialVertices = syHeapAllocateEWRAM(512);
 				aerialModel = btRenderAllocateModelList(1);
 				/* Until tick 127 the seal turns under the orb, swelling from
 				   tick 72, its triangles folding down from tick 64. */
-				if(frm <= 127) {
+				if(frame <= 127) {
 					Sint32 s = CATASTROPHE_AERIAL_SEAL_SCALE;
 					Sint32 a;
 
-					if(frm > 71) {
-						s = (frm - 72) * (toFIXED(1) / 32) +
+					if(frame > 71) {
+						s = (frame - 72) * (toFIXED(1) / 32) +
 							CATASTROPHE_AERIAL_SEAL_SCALE;
 					}
 					aerialShade = -16;
-					if(frm > 119) {
-						aerialShade = 944 - frm * 8;
+					if(frame > 119) {
+						aerialShade = 944 - frame * 8;
 					}
 					if(s > CATASTROPHE_SEAL_SCALE_MAX) {
 						s = CATASTROPHE_SEAL_SCALE_MAX;
@@ -1401,7 +1405,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					syTranslate(-toFIXED(2), rise, 0);
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					syRotX(CATASTROPHE_SEAL_TILT);
-					a = frm * (TRIG_TURN / 128);
+					a = frame * (TRIG_TURN / 128);
 					syRotZ(a);
 					syMatrixScaleUniform(s);
 					syTranslate(0, -toFIXED(15), 0);
@@ -1421,8 +1425,8 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						aerialModel->shade = sideShade;
 						syTranslate(0, -toFIXED(16), 0);
 						v = CATASTROPHE_SEAL_SIDE_TILT;
-						if(frm > 63) {
-							v -= (frm - 64) * (TRIG_TURN / 64);
+						if(frame > 63) {
+							v -= (frame - 64) * (TRIG_TURN / 64);
 						}
 						if(v < 0) {
 							v = 0;
@@ -1442,21 +1446,21 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					Sint32 start = delay + 80;
 					Sint32 s;
 
-					if(frm < start) {
+					if(frame < start) {
 						continue;
 					}
 					aerialShade = 0;
 					if(i == 0) {
-						s = (frm - start) * CATASTROPHE_RING_GROWTH +
+						s = (frame - start) * CATASTROPHE_RING_GROWTH +
 							toFIXED(0.125);
-						if(frm >= delay + 96) {
-							aerialShade = (start - frm) * 8 + 128;
+						if(frame >= delay + 96) {
+							aerialShade = (start - frame) * 8 + 128;
 						}
 					} else {
-						s = (frm - start) * (CATASTROPHE_RING_GROWTH / 2) +
+						s = (frame - start) * (CATASTROPHE_RING_GROWTH / 2) +
 							toFIXED(0.125);
-						if(frm >= delay + 112) {
-							aerialShade = (start - frm) * 8 + 256;
+						if(frame >= delay + 112) {
+							aerialShade = (start - frame) * 8 + 256;
 						}
 					}
 					if(aerialShade > MODEL_SHADE_INVISIBLE) {
@@ -1470,7 +1474,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						syInitMatrix();
 						syTranslate(0, toFIXED(16), 0);
 						syScale(toFIXED(1), 32000, toFIXED(1));
-						syRotZ(frm * (TRIG_TURN / 64));
+						syRotZ(frame * (TRIG_TURN / 64));
 						syMatrixScaleUniform(s);
 						btRenderTransformVertices(
 							BattleEffectSquareCorners, aerialVertices, 4);
@@ -1483,30 +1487,30 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				aerialModel->mesh = BattleEffectColumnMesh;
 				shade = 0;
 				aerialModel->shade = shade;
-				if(frm == 0) {
+				if(frame == 0) {
 					p = state->particles;
 					for(i = 0; i != CATASTROPHE_BOLTS; p++, i++) {
 						p->z = CatastropheBoltRolls[i];
-						p->velZ = (syRandom() & 255) + 128;
+						p->velocityZ = (syRandom() & 255) + 128;
 						if(syRandom() & 1) {
-							p->velZ = -p->velZ;
+							p->velocityZ = -p->velocityZ;
 						}
 						p->variant = syRandom() & 3;
 					}
 				}
 				for(i = 0; i != 8; i++) {
-					if(frm == 128 + i * 4) {
-						sySndPlayStub(SE_CLATTER);
+					if(frame == 128 + i * 4) {
+						sySoundPlayStub(SE_CLATTER);
 					}
 				}
 				/* The bolts shoot out from the middle, one a tick from tick
 				   128, each turning as it grows. */
 				p = state->particles;
 				for(i = 0; i != CATASTROPHE_BOLTS; i++, p++) {
-					Sint32 startFrm = i + 128;
+					Sint32 startFrame = i + 128;
 
-					if(frm >= startFrm && frm < i + 144) {
-						Sint32 s = (frm - startFrm) * (toFIXED(1) / 8);
+					if(frame >= startFrame && frame < i + 144) {
+						Sint32 s = (frame - startFrame) * (toFIXED(1) / 8);
 
 						if(s > toFIXED(1)) {
 							s = toFIXED(1);
@@ -1516,7 +1520,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 							p->variant * PICTURE_BYTES(BOLT_TEXTURE);
 						syInitMatrix();
 						syRotZ(p->z);
-						p->z += p->velZ;
+						p->z += p->velocityZ;
 						syScale(s << 2, s, toFIXED(1));
 						btRenderTransformVertices(
 							BattleEffectTaperedBeamCorners, aerialVertices, 4);
@@ -1526,21 +1530,21 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				syHeapRelease(aerialModel);
 				syHeapRelease(aerialVertices);
 				/* At tick 134 sparks ring the orb and twinkle out. */
-				if(frm > 133) {
-					if(frm == 134) {
+				if(frame > 133) {
+					if(frame == 134) {
 						PARTICLE *p;
 
 						i = 0;
 						p = &state->particles[CATASTROPHE_BOLTS];
 						for(; i != CATASTROPHE_SPARKS; i++, p++) {
 							Sint32 random = syRandom();
-							Sint32 ang = i * (TRIG_TURN / CATASTROPHE_SPARKS);
+							Sint32 angle = i * (TRIG_TURN / CATASTROPHE_SPARKS);
 							Sint32 distance = (random & 31) + 32;
 
 							SET_POSITION(p,
-								(FIXEDtoINT(sySin(ang) * distance)) +
+								(FIXEDtoINT(sySin(angle) * distance)) +
 									CATASTROPHE_ORB_CENTER,
-								(FIXEDtoINT(syCos(ang) * distance)) +
+								(FIXEDtoINT(syCos(angle) * distance)) +
 									CATASTROPHE_ORB_CENTER,
 								(syRandom() & 3) + 5);
 							p->variant = -(syRandom() & 15);
@@ -1556,13 +1560,13 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 								1;
 
 							blit[0](canvas,
-								sprs + BattleEffectMotePictures[n - 1],
+								sprites + BattleEffectMotePictures[n - 1],
 								spark->x - n / 2, spark->y - n, n, n * 2);
 						}
 						spark->variant++;
 					}
 				}
-				if(state->shakeFrm > 0) {
+				if(state->shakeFrame > 0) {
 					Sint32 m = 7;
 					Sint32 a = syRandom();
 					Sint32 b = syRandom();
@@ -1573,14 +1577,14 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					b += BATTLE_BACKGROUND_SCROLL_Y - 4;
 					BgScrollWork[1].x = a;
 					BgScrollWork[1].y = b;
-					state->shakeFrm--;
+					state->shakeFrame--;
 				} else {
 					BgScrollWork[1].x = 0;
 					BgScrollWork[1].y = state->savedBg1Y;
 				}
 				EFFECT_PRESENT_CANVAS(state);
-				frm++;
-			} while(frm != 160 && !(PerWork.repeat & (KEY_A | KEY_B)));
+				frame++;
+			} while(frame != 160 && !(PerWork.repeat & (KEY_A | KEY_B)));
 		}
 	}
 	{
@@ -1608,19 +1612,19 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
 		btResourceLoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
 			state->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
-		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+		btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 		btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
 			state->sheet + CATASTROPHE_FLASH_BURST_PICTURES, 1, 0);
 		btResourceLoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET, bolts, 1, 0);
 		btRenderBuildQuadStrip(strip, 4, 32, 11);
 		REG_BG2CNT =
 			BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-		frm = 0;
+		frame = 0;
 		do {
-			if((PerWork.repeat & (KEY_A | KEY_B)) && frm > 2 && frm <= 87) {
-				frm = 88;
+			if((PerWork.repeat & (KEY_A | KEY_B)) && frame > 2 && frame <= 87) {
+				frame = 88;
 			}
-			if(frm == 88) {
+			if(frame == 88) {
 				syWordsFillEntry(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				EFFECT_SET_TRANSFER(
@@ -1630,7 +1634,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				state->scrollStepX = 0;
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 			}
-			if(frm == 0) {
+			if(frame == 0) {
 				IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
 					CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 				state->scrollStepX = -CATASTROPHE_PAN_SPEED;
@@ -1647,70 +1651,70 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				slide = toFIXED(128);
 				slideStep = 0;
 			}
-			if(frm == 16) {
+			if(frame == 16) {
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 			}
-			if((Uint32)(frm - 16) <= 47) {
+			if((Uint32)(frame - 16) <= 47) {
 				btEffectStepPaletteToResource(RESOURCE_VIOLET_PALETTE_F);
 			}
 			/* At tick 66 the targets are struck: thrown back, flashing white,
 			   debris flying from each. */
-			if(frm == 66) {
-				for(i = 0; i != args->tgtCnt; i++) {
-					btEffectStartActorMotion(args->tgts[i], 1, toFIXED(4),
+			if(frame == 66) {
+				for(i = 0; i != args->targetCount; i++) {
+					btEffectStartActorMotion(args->targets[i], 1, toFIXED(4),
 						toFIXED(8), toFIXED(4), 150);
-					btEffectTintBattler(
-						args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
+					btEffectTintBattler(args->targets[i], SPRITE_COLOR_WHITE,
+						POSE_DAMAGE, i, 16);
 					{
-						Sint32 a = args->tgts[i];
+						Sint32 a = args->targets[i];
 						Sint32 k = CATASTROPHE_TARGET_DEBRIS * sizeof(PARTICLE);
 						btEffectPosProjectBattler(a, &pos);
 						j = 0;
 						q = (PARTICLE *)(i * k + (Sint32)debris);
 					}
 					for(; j != CATASTROPHE_TARGET_DEBRIS; j++, q++) {
-						Sint32 ang;
+						Sint32 angle;
 						Sint32 speed;
 
 						q->x = toFIXED(pos.x / 2);
 						q->y = toFIXED(80);
-						ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+						angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 						speed = (syRandom() & 127) + 128;
-						q->velX = sySin(ang) * speed >> 5;
-						q->velY = syCos(ang) * speed >> 4;
+						q->velocityX = sySin(angle) * speed >> 5;
+						q->velocityY = syCos(angle) * speed >> 4;
 						q->variant = CATASTROPHE_DEBRIS_LIFE;
 					}
 				}
-				state->shakeFrm = 16;
-				sySndPlayStub(SE_CRASH);
+				state->shakeFrame = 16;
+				sySoundPlayStub(SE_CRASH);
 			}
-			if((Uint32)(frm - 72) <= 15) {
+			if((Uint32)(frame - 72) <= 15) {
 				EFFECT_SET_TRANSFER(
 					state, CANVAS_COPY_AND_BRIGHTEN, CANVAS_FILL_WORD(1));
 				btPaletteBrightenBgEntries(1, 1, 1);
 			}
-			if(frm >= 0) {
+			if(frame >= 0) {
 				Sint32 x = 0;
 
-				if(frm > 71) {
-					x -= (frm - 72) * 8;
+				if(frame > 71) {
+					x -= (frame - 72) * 8;
 				}
 				for(i = 0; i != 2; i++) {
 					Sint32	  sum = x + 116;
 					PARTICLE *base =
-						(PARTICLE *)((frm & 31) * (2 * sizeof(PARTICLE)) +
+						(PARTICLE *)((frame & 31) * (2 * sizeof(PARTICLE)) +
 							(Sint32)bursts);
 					PARTICLE *q = &base[i];
-					Sint32	  ang;
+					Sint32	  angle;
 					Sint32	  speed;
 
 					q->x = toFIXED(sum);
 					q->y = INTtoFIXED(syRandom() % 112 + 4);
-					ang = (syRandom() & 0x7fff) + DEGtoANG(180);
+					angle = (syRandom() & 0x7fff) + DEGtoANG(180);
 					speed = (syRandom() & 127) + 128;
-					q->velX = sySin(ang) * speed >> 6;
-					q->velY = syCos(ang) * speed >> 6;
+					q->velocityX = sySin(angle) * speed >> 6;
+					q->velocityY = syCos(angle) * speed >> 6;
 					q->variant = 0;
 				}
 				burst = CATASTROPHE_PARTICLES;
@@ -1729,7 +1733,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			if(frm <= 87) {
+			if(frame <= 87) {
 				Sint32 off;
 				Sint32 jitter = 0;
 				Sint32 z;
@@ -1753,7 +1757,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						SET_POSITION(v,
 							x +
 								(FIXEDtoINT(
-									sySin((frm + j * 2) * (TRIG_TURN / 64)) *
+									sySin((frame + j * 2) * (TRIG_TURN / 64)) *
 									2)) +
 								jitter - 5,
 							y, z);
@@ -1767,16 +1771,16 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				sweepModel->shade = 0;
 				sweepModel->scrollV = 0;
 				sweepModel->vertices = quads;
-				if(frm == 16) {
+				if(frame == 16) {
 					slideStep = -toFIXED(8);
 				}
-				if((Uint32)(frm - 48) <= 5) {
+				if((Uint32)(frame - 48) <= 5) {
 					slideStep = toFIXED(8);
 				}
-				if(frm > 59) {
+				if(frame > 59) {
 					slideStep = -toFIXED(16);
 				}
-				if(frm > 31) {
+				if(frame > 31) {
 					slideStep = slideStep * 48 / DAMPING_SCALE;
 				}
 				slide += slideStep;
@@ -1784,11 +1788,11 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				sweepTexture.logHeight = 5;
 				sweepTexture.pixels = state->sheet;
 				sweepModel->mesh = strip;
-				sweepModel->scrollU = (frm << 3) & TEXTURE_SCROLL_MASK;
+				sweepModel->scrollU = (frame << 3) & TEXTURE_SCROLL_MASK;
 				syInitMatrix();
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
-				a = frm * CATASTROPHE_SWEEP_WAVE;
-				b = frm * (TRIG_TURN / 8);
+				a = frame * CATASTROPHE_SWEEP_WAVE;
+				b = frame * (TRIG_TURN / 8);
 				c = sySin(a);
 				syTranslate(slide, (c << 5) + syCos(b) * 24, 0);
 				syMatrixScaleUniform(CATASTROPHE_SWEEP_SCALE);
@@ -1804,7 +1808,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				sweepModel->scrollU = 0;
 				sweepTexture.pixels = state->sheet + CATASTROPHE_SWEEP_PICTURES;
 				syTranslate(-toFIXED(2),
-					(sySin(frm * (TRIG_TURN / 64)) << 2) - toFIXED(6), 0);
+					(sySin(frame * (TRIG_TURN / 64)) << 2) - toFIXED(6), 0);
 				syRotZ(-TRIG_TURN / 32);
 				{
 					FIXED  s0 = sySin(a);
@@ -1822,7 +1826,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				btRenderTransformVertices(BattleEffectSquareCorners, quads, 4);
 				btRenderDrawModelList(sweepModel);
 				syHeapRelease(sweepModel);
-				if(frm <= 87) {
+				if(frame <= 87) {
 
 					/* Six bolts strike, one every eight ticks from tick 16,
 					   each with a clap, a shake and debris thrown up where it
@@ -1831,24 +1835,24 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					bolt = state->particles;
 
 					for(; i != 6; bolt++, i++) {
-						Sint32 strikeFrm = i * 8 + 16;
+						Sint32 strikeFrame = i * 8 + 16;
 
-						if(frm == strikeFrm) {
+						if(frame == strikeFrame) {
 							bolt->x = (syRandom() & 31) + 64;
 							bolt->variant = syRandom();
-							state->shakeFrm = 4;
+							state->shakeFrame = 4;
 							switch(i & 3) {
 							case 0:
-								sySndPlayStub(SE_TOPPLE);
+								sySoundPlayStub(SE_TOPPLE);
 								break;
 							case 1:
-								sySndPlayStub(SE_THUNDER);
+								sySoundPlayStub(SE_THUNDER);
 								break;
 							case 2:
-								sySndPlayStub(SE_BANE_ESCAPE);
+								sySoundPlayStub(SE_BANE_ESCAPE);
 								break;
 							case 3:
-								sySndPlayStub(SE_THUNDER_LOUD);
+								sySoundPlayStub(SE_THUNDER_LOUD);
 								break;
 							}
 							j = 0;
@@ -1857,19 +1861,19 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 										sizeof(PARTICLE)) +
 								(Sint32)debris);
 							for(; j != CATASTROPHE_BOLT_DEBRIS; j++, q++) {
-								Sint32 ang;
+								Sint32 angle;
 								Sint32 speed;
 
 								q->x = toFIXED(bolt->x);
 								q->y = toFIXED(104);
-								ang = (syRandom() & 0x7fff) + DEGtoANG(90);
+								angle = (syRandom() & 0x7fff) + DEGtoANG(90);
 								speed = (syRandom() & 127) + 128;
-								q->velX = sySin(ang) * speed >> 5;
-								q->velY = syCos(ang) * speed >> 4;
+								q->velocityX = sySin(angle) * speed >> 5;
+								q->velocityY = syCos(angle) * speed >> 4;
 								q->variant = CATASTROPHE_DEBRIS_LIFE;
 							}
 						}
-						if(frm >= strikeFrm && frm < strikeFrm + 8) {
+						if(frame >= strikeFrame && frame < strikeFrame + 8) {
 							Uint8 *src = RamMapMetatileBuffer +
 								CATASTROPHE_BOLT_PICTURES;
 
@@ -1892,12 +1896,12 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 								Sint32 h = n * 2;
 
 								blit[0](canvas,
-									sprs + BattleEffectMotePictures[n - 1],
+									sprites + BattleEffectMotePictures[n - 1],
 									FIXED_INTEGER_PART(d->x) - n / 2,
 									FIXED_INTEGER_PART(d->y) - n, n, h);
 								btParticleAdvanceWithGravity2D(
 									d, 56, toFIXED(1) / 8);
-								d->velX -=
+								d->velocityX -=
 									state->scrollStepX * (toFIXED(1) / 16);
 								d->variant--;
 							}
@@ -1908,7 +1912,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			ProjectionWork.centerX -= state->scrollStepX;
 			BgScrollWork[1].x += state->scrollStepX;
 			for(i = 0; i != CATASTROPHE_PAN_SPEED; i++) {
-				if(frm == i + 62) {
+				if(frame == i + 62) {
 					state->scrollStepX++;
 				}
 			}
@@ -1917,11 +1921,11 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			{
 				Sint32 *pending = &state->transferPending;
 
-				frm++;
+				frame++;
 				*pending = 1;
 			}
 			sySynch(1);
-		} while(frm != 104);
+		} while(frame != 104);
 		background->busy = 0;
 		EFFECT_FINISH_CANVAS_ONE_BLITTER();
 	}

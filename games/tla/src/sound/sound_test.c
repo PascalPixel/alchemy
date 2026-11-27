@@ -1,6 +1,6 @@
 /* The sound test, which nothing in the game calls; the heard-sound flags the
    link lobby offers its tunes by; and the fixed 31536 Hz output rate the game
-   sets at start-up. Linked after sySndPlay's object, with the BIOS sound call
+   sets at start-up. Linked after sySoundPlay's object, with the BIOS sound call
    between them. */
 
 #include "sound/sound.h"
@@ -9,28 +9,28 @@
 
 /* Unused: the sound test's own empty function, as
    games/common/sdk/sound/sound.c keeps UnusedDummyFunc; nothing calls it. */
-void sySndTestUnusedDummyFunc(void)
+void sySoundTestUnusedDummyFunction(void)
 {
 }
 
 /* The sounds the test's three selectors start on: one each for music, jingles
    and sound effects. */
-static const SND_TEST_SNDS SoundTestSnds = {
+static const SND_TEST_SNDS SoundTestSounds = {
 	{0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST}};
 
 /* Unused: the sound test, which never returns. Up and Down choose a selector
    (music, jingles, sound effects), Left and Right step its sound by 1 and L and
    R by 10, A plays it, B silences the music and Start fades it, and Select
    fades the action sounds and steps the reverb code, from SOUND_REVERB_LONG,
-   which this game's sySndLoadReverbCode ignores. */
-void sySndTestRun(void)
+   which this game's sySoundLoadReverbCode ignores. */
+void sySoundTestRun(void)
 {
-	SND_TEST_SNDS snds;
+	SND_TEST_SNDS sounds;
 	Sint32		  reverbCode;
 	Sint32		  row;
-	Sint32		  tmr;
+	Sint32		  timer;
 
-	snds = SoundTestSnds;
+	sounds = SoundTestSounds;
 	row = 0;
 	reverbCode = SOUND_REVERB_LONG;
 	/* Clears the build stamp's first word, as The Broken Seal's test does.
@@ -38,31 +38,31 @@ void sySndTestRun(void)
 	   it at power-on, so nothing on screen changes. */
 	syIOWrite32(0, &BuildStampWork[0]);
 	SoundVBlankStateWork.soundTestActive = 1;
-	tmr = 20;
+	timer = 20;
 
 	for(;;) {
 		/* A countdown, restarted whenever the mixer has clipped a sample since
 		   the last tick; nothing reads it. */
-		if(tmr != 0)
-			tmr--;
+		if(timer != 0)
+			timer--;
 
 		if(SoundMixerClipped != 0) {
 			SoundMixerClipped = 0;
-			tmr = 2;
+			timer = 2;
 		}
 
 		if(PerWork.repeat & KEY_SELECT) {
 			reverbCode = (reverbCode + 1) % 5;
-			sySndLoadReverbCode(reverbCode);
+			sySoundLoadReverbCode(reverbCode);
 		}
 		if(PerWork.repeat & KEY_R)
-			snds.snd[row] += 10;
+			sounds.sound[row] += 10;
 		if(PerWork.repeat & KEY_L)
-			snds.snd[row] -= 10;
+			sounds.sound[row] -= 10;
 		if(PerWork.repeat & KEY_RIGHT)
-			snds.snd[row] += 1;
+			sounds.sound[row] += 1;
 		if(PerWork.repeat & KEY_LEFT)
-			snds.snd[row] -= 1;
+			sounds.sound[row] -= 1;
 		if(PerWork.repeat & KEY_UP) {
 			if(row > 0)
 				row--;
@@ -72,13 +72,13 @@ void sySndTestRun(void)
 				row++;
 		}
 		if(PerWork.repeat & KEY_A)
-			sySndPlay(snds.snd[row]);
+			sySoundPlay(sounds.sound[row]);
 		if(PerWork.repeat & KEY_B)
-			sySndPlay(MUS_SILENCE);
+			sySoundPlay(MUS_SILENCE);
 		if(PerWork.repeat & KEY_START)
-			sySndPlay(SOUND_FADE_OUT_BGM);
+			sySoundPlay(SOUND_FADE_OUT_BGM);
 		if(PerWork.repeat & KEY_SELECT)
-			sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+			sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 
 		sySynch(1);
 	}
@@ -86,7 +86,7 @@ void sySndTestRun(void)
 
 /* Unused: replaces SoundCommandMask, or flips the bits named with
    AUDIO_COMMAND_TOGGLE. Nothing calls it and nothing reads the mask. */
-void sySndUpdateCommandMask(Uint32 command)
+void sySoundUpdateCommandMask(Uint32 command)
 {
 	Uint32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
@@ -97,9 +97,9 @@ void sySndUpdateCommandMask(Uint32 command)
 		SoundCommandMask = command;
 }
 
-/* Returns the music sySndPlay last started: MUS_SILENCE before any and after a
-   fade. */
-Uint16 sySndGetCurrentBGM(void)
+/* Returns the music sySoundPlay last started: MUS_SILENCE before any and after
+   a fade. */
+Uint16 sySoundGetCurrentBGM(void)
 {
 	return CurrentBgm;
 }
@@ -107,46 +107,46 @@ Uint16 sySndGetCurrentBGM(void)
 /* The sound ids SoundFlags has a bit for. */
 enum { SOUND_FLAG_COUNT = 1024 };
 
-/* Returns sound `snd`'s bit in SoundFlags, one bit for each of the
+/* Returns sound `sound`'s bit in SoundFlags, one bit for each of the
    SOUND_FLAG_COUNT sound ids. */
-Bool sySndFlagTest(Sint32 snd)
+Bool sySoundFlagTest(Sint32 sound)
 {
 	Sint32 mask;
 	Uint8 *bytes;
 
-	mask = 1 << (7 & snd);
-	snd = (snd & (SOUND_FLAG_COUNT - 1)) >> 3;
+	mask = 1 << (7 & sound);
+	sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
 	bytes = SoundFlags;
-	if(bytes[snd] & mask)
+	if(bytes[sound] & mask)
 		return TRUE;
 	return FALSE;
 }
 
-/* Sets sound `snd`'s bit in SoundFlags. */
-void sySndFlagSet(Sint32 snd)
+/* Sets sound `sound`'s bit in SoundFlags. */
+void sySoundFlagSet(Sint32 sound)
 {
 	Sint32 mask;
 	Uint8 *bytes;
 
-	mask = 1 << (7 & snd);
+	mask = 1 << (7 & sound);
 	bytes = SoundFlags;
-	snd = (snd & (SOUND_FLAG_COUNT - 1)) >> 3;
-	bytes[snd] = (Uint8)(bytes[snd] | mask);
+	sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
+	bytes[sound] = (Uint8)(bytes[sound] | mask);
 }
 
-/* Clears sound `snd`'s bit in SoundFlags. */
-void sySndFlagClear(Sint32 snd)
+/* Clears sound `sound`'s bit in SoundFlags. */
+void sySoundFlagClear(Sint32 sound)
 {
 	Sint32 mask;
 	Uint8 *bytes;
 
-	mask = 1 << (7 & snd);
+	mask = 1 << (7 & sound);
 	bytes = SoundFlags;
-	snd = (snd & (SOUND_FLAG_COUNT - 1)) >> 3;
-	bytes[snd] = (Uint8)(bytes[snd] & ~mask);
+	sound = (sound & (SOUND_FLAG_COUNT - 1)) >> 3;
+	bytes[sound] = (Uint8)(bytes[sound] & ~mask);
 }
 
-/* The fixed output rate sySndInit sets for the whole game. */
+/* The fixed output rate sySoundInit sets for the whole game. */
 enum {
 	/* samples a second: SOUND_MODE_FREQ_GAME's rate */
 	SOUND_FIXED_RATE = 31536,
@@ -158,7 +158,7 @@ enum {
    SOUND_FIXED_SAMPLES_PER_VBLANK samples a frame, keeping mode's rate nibble,
    clears the two PCM buffers and points DMA 1 and 2 at them, then restarts
    timer 0 as the screen's last line begins. */
-void sySndSetFixedSampleFreq(Uint32 mode)
+void sySoundSetFixedSampleFrequency(Uint32 mode)
 {
 	struct SoundInfo *work = SOUND_INFO_PTR;
 	Uint32			  samples;

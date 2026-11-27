@@ -11,7 +11,7 @@
 /* clang-format off */
 
 /* A heading for each value of the right, left, up and down bits of the */
-/* +Control Pad, in eight ways (fdInputGetDpadAngEightWay); the same */
+/* +Control Pad, in eight ways (fdInputGetDpadAngleEightWay); the same */
 /* as The Broken Seal's WorldMapCursorDirectionAngles. */
 const Uint16 InputDpadAnglesEightWay[16] = {
 	DPAD_ANGLE_NONE, FACING_EAST,      FACING_WEST,      DPAD_ANGLE_NONE,
@@ -100,7 +100,7 @@ const Sint8 FieldPsynergyNearbyMetatileOffsets[42] = {
 			-1,  2,  0,  2,  1,  2,
 };
 
-/* The tints fdPsynergyBlaze passes to fdStartColTransition, one for */
+/* The tints fdPsynergyBlaze passes to fdStartColorTransition, one for */
 /* each look of the flame. */
 const Sint32 BlazeTintColors[4] = {
 	RGB(16, 4, 4), RGB(12, 2, 12), RGB(12, 12, 2), RGB(2, 10, 10),

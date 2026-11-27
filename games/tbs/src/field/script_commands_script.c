@@ -18,16 +18,16 @@
 #endif
 
 /* Shows the message for an item the party has just received. */
-static inline void fdItemGiftShowGotItem(Sint32 item, Sint32 flg)
+static inline void fdItemGiftShowGotItem(Sint32 item, Sint32 flags)
 {
 #if LANGUAGE == LANGUAGE_GERMAN
 	if(item == ITEM_BLACK_ORB) {
-		mnFieldMessageShowStub(MsgGotBlackOrb, flg);
+		mnFieldMessageShowStub(MsgGotBlackOrb, flags);
 		return;
 	}
 #endif
 	mnMessageArgumentPushStub(item, MESSAGE_ARGUMENT_ITEM);
-	mnFieldMessageShowStub(MsgGotItem, flg);
+	mnFieldMessageShowStub(MsgGotItem, flags);
 }
 
 /* Debug only: while debug mode is on, R makes every script wait (fdScriptWait)
@@ -65,10 +65,10 @@ void fdLeaderStopMoving(void)
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
 	actor->speedLimit = toFIXED(1);
 	actor->acceleration = toFIXED(1) / 2;
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
-	actor->velX = 0;
-	actor->velZ = 0;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
+	actor->velocityX = 0;
+	actor->velocityZ = 0;
 	if(MainRoutineStateWork.movementMode == LEADER_MOVEMENT_CLIMB) {
 		fdActorSelectAnimationStub(actor, ANIM_LEADER_CLING);
 		return;
@@ -92,7 +92,7 @@ void fdScriptStart(void)
 	/* Every script starts with no name window and normal waits. */
 	fieldState->choiceMsg = 0;
 	fieldState->choiceWidth = 0;
-	fieldState->transitionFrm = MAP_TRANSITION_TICKS;
+	fieldState->transitionFrame = MAP_TRANSITION_TICKS;
 	fieldState->fastForward = 0;
 	fieldState->unusedAfterMsg = -1;
 	fieldState->unusedBeforeCamera[0] = -1;
@@ -104,7 +104,7 @@ void fdScriptStart(void)
 	   flag. */
 	gmFlagClearStub(0x132);
 	fieldState->speaker = MainRoutineStateWork.leaderActorId;
-	fieldState->msgWin = 0;
+	fieldState->msgWindow = 0;
 }
 
 /* Ends a script: stops the debug fast-forward event, gives the camera back to
@@ -128,18 +128,18 @@ void fdScriptNoOperationUpdate(void)
 
 /* Respawns the scene's actors from an actor placement table and waits one tick
    for them to appear. */
-void fdScriptRunActorUpdateAndWait(ACTOR_PLACE *tbl)
+void fdScriptRunActorUpdateAndWait(ACTOR_PLACE *table)
 {
 	fdScriptNoOperationUpdate();
-	fdActorResetForLeader(tbl);
+	fdActorResetForLeader(table);
 	sySynch(1);
 	fdActorLookup(MainRoutineStateWork.leaderActorId);
 }
 
 /* Spawns the actors of an actor placement table after the last actor in use. */
-void fdScriptAppendActorPlacements(ACTOR_PLACE *tbl)
+void fdScriptAppendActorPlacements(ACTOR_PLACE *table)
 {
-	fdScriptSpawnActorPlacements(tbl, fdActorFindLastActiveId());
+	fdScriptSpawnActorPlacements(table, fdActorFindLastActiveId());
 }
 
 /* Sets the scene's cue table, which the field checks as the leader moves: Altin
@@ -204,8 +204,8 @@ void fdPartyClearUnusableShortcuts(void)
 void fdPartyRemoveMemberRestored(Sint32 unit)
 {
 	UNIT  *vitals;
-	Sint32 partyIdx;
-	Sint32 partyCnt;
+	Sint32 partyIndex;
+	Sint32 partyCount;
 	Sint32 survivingMembers;
 
 	gmPartyRemoveMemberStub(unit);
@@ -217,9 +217,9 @@ void fdPartyRemoveMemberRestored(Sint32 unit)
 	vitals->poison = 0;
 	/* Count the party members who remain and still have HP. */
 	survivingMembers = 0;
-	partyCnt = gmPartyCountMembersStub();
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++) {
-		vitals = gmUnitGetStub(MainRoutineStateWork.party[partyIdx]);
+	partyCount = gmPartyCountMembersStub();
+	for(partyIndex = 0; partyIndex < partyCount; partyIndex++) {
+		vitals = gmUnitGetStub(MainRoutineStateWork.party[partyIndex]);
 		if(vitals->hp != 0)
 			survivingMembers++;
 	}
@@ -234,16 +234,16 @@ void fdPartyRemoveMemberRestored(Sint32 unit)
    carries at most INVENTORY_STACK_MAX of one item. */
 Sint32 fdPartyCheckItemLimit(Sint32 item)
 {
-	Sint32 partyCnt;
+	Sint32 partyCount;
 	Sint32 heldQuantity = 0;
-	Sint32 partyIdx;
+	Sint32 partyIndex;
 
-	partyCnt = gmPartyCountMembersStub();
-	for(partyIdx = 0; partyIdx < partyCnt; partyIdx++)
+	partyCount = gmPartyCountMembersStub();
+	for(partyIndex = 0; partyIndex < partyCount; partyIndex++)
 		heldQuantity += gmInventoryCountItemStub(
-			MainRoutineStateWork.party[partyIdx], item);
+			MainRoutineStateWork.party[partyIndex], item);
 
-	if(heldQuantity >= partyCnt * INVENTORY_STACK_MAX) {
+	if(heldQuantity >= partyCount * INVENTORY_STACK_MAX) {
 		mnMessageArgumentPushStub(item, MESSAGE_ARGUMENT_ITEM);
 		/* "Isaac's party cannot carry any more <item>s..." */
 		mnFieldMessageShowStub(MsgCannotCarryMore, FIELD_MESSAGE_ZOOM);
@@ -264,7 +264,7 @@ Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 	Sint32		 owner;
 	Sint32		 result;
 	Sint32		 discardQuantity;
-	Sint32		 discardIdx;
+	Sint32		 discardIndex;
 	Sint32		 member;
 	Sint32		 slot;
 
@@ -283,7 +283,7 @@ Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 		if(result == -1) {
 			/* Cancelled: drop the new item instead, unless it is indispensable
 			   ("That <item>'s valuable! You must get it!"). */
-			if(gmItemGetDirectStub(item)->flg & ITEM_INDISPENSABLE) {
+			if(gmItemGetDirectStub(item)->flags & ITEM_INDISPENSABLE) {
 				mnMessageArgumentPushStub(item, MESSAGE_ARGUMENT_ITEM);
 				mnFieldMessageShowStub(
 					MsgWhatWillYouDrop + 4, FIELD_MESSAGE_ZOOM);
@@ -324,10 +324,11 @@ Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 				goto retry;
 			}
 #endif
-			for(discardIdx = 0; discardIdx < discardQuantity; discardIdx++)
+			for(discardIndex = 0; discardIndex < discardQuantity;
+				discardIndex++)
 				gmInventoryDiscardStub(member, slot);
 			owner = gmPartyInventoryAddStub(item);
-			sySndPlayStub(MUS_TREASURE_FOUND);
+			sySoundPlayStub(MUS_TREASURE_FOUND);
 			if(owner == MainRoutineStateWork.leaderActorId) {
 				fdItemGiftShowGotItem(
 					item, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
@@ -343,7 +344,7 @@ Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 	} else {
 		/* There was room: "Isaac got <item>.", and "Isaac gave <item> to
 		   <member>." when someone other than the leader carries it. */
-		sySndPlayStub(MUS_TREASURE_FOUND);
+		sySoundPlayStub(MUS_TREASURE_FOUND);
 		fdItemGiftShowGotItem(
 			item, FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 		if(owner != MainRoutineStateWork.leaderActorId) {
@@ -377,17 +378,17 @@ void fdInventoryReservedNoOperation(void)
 
 /* Waits, at most 90 ticks, for an actor's animation to stop being animation:
    the actor has finished a one-off animation such as a nod. */
-void fdActorWaitForAnimationEnd(Sint32 actorId, Sint32 anm)
+void fdActorWaitForAnimationEnd(Sint32 actorId, Sint32 animation)
 {
 	ACTOR *actor = fdActorLookup(actorId);
 
-	if(actor != 0 && actor->sprStorageKind == ACTOR_SPRITE_ONE) {
+	if(actor != 0 && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
 		Sint32 ticks = 0;
-		Uint8 *anmNum = &actor->spr->lastNo;
+		Uint8 *animationNumber = &actor->sprite->lastNo;
 
 		for(; ticks < 90; ticks++) {
 			sySynch(1);
-			if(anm != *anmNum) {
+			if(animation != *animationNumber) {
 				break;
 			}
 		}
@@ -405,9 +406,9 @@ void fdActorWaitForAnimationEnd(Sint32 actorId, Sint32 anm)
 Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actorId, Sint32 forceBottom)
 {
 	FIELD_STATE *state = FieldStateWork;
-	Sint32		 spr = fdFindActorPlacement(state->speaker)->spr;
-	WINDOW		*win = (WINDOW *)state->msgWin;
-	WINDOW		*side = (WINDOW *)state->sideWin;
+	Sint32		 sprite = fdFindActorPlacement(state->speaker)->sprite;
+	WINDOW		*window = (WINDOW *)state->msgWindow;
+	WINDOW		*side = (WINDOW *)state->sideWindow;
 	Bool		 useBottom = TRUE;
 	Sint32		 answer;
 
@@ -423,7 +424,7 @@ Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actorId, Sint32 forceBottom)
 	/* The question goes above the message windows when they reach too low, so
 	   it does not cover them. */
 	if(forceBottom == 0) {
-		Sint32 bottom = win->y + win->height;
+		Sint32 bottom = window->y + window->height;
 
 		if(side != 0) {
 			Sint32 sideBottom = side->y + side->height;
@@ -439,12 +440,12 @@ Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actorId, Sint32 forceBottom)
 		mnYesNoMenuRunStub(useBottom, state->choiceMsg, state->choiceWidth, 0);
 	if(answer != 0) {
 		fdActorSetAnimationById(actorId, ANIM_SHAKE_HEAD);
-		mnPortraitCloseWindowStub(spr);
+		mnPortraitCloseWindowStub(sprite);
 		mnMessageCloseFinishedWindowsStub();
 		fdActorWaitForAnimationEnd(actorId, ANIM_SHAKE_HEAD);
 	} else {
 		fdActorSetAnimationById(actorId, ANIM_NOD);
-		mnPortraitCloseWindowStub(spr);
+		mnPortraitCloseWindowStub(sprite);
 		mnMessageCloseFinishedWindowsStub();
 		fdActorWaitForAnimationEnd(actorId, ANIM_NOD);
 	}
@@ -466,7 +467,7 @@ void fdPartyLearnAbility(Sint32 unit, Sint32 ability)
 	/* gmUnitLearnPsynergyStub is declared without parameters: it learns this
 	   function's own unit and ability, passed on unchanged. */
 	gmUnitLearnPsynergyStub();
-	sySndPlayStub(MUS_TREASURE_FOUND);
+	sySoundPlayStub(MUS_TREASURE_FOUND);
 	mnMessageArgumentPushStub(unit, MESSAGE_ARGUMENT_ACTOR);
 	mnMessageArgumentPushStub(ability, MESSAGE_ARGUMENT_ABILITY);
 	mnFieldMessageShowStub(MsgAbilityLearned,
@@ -474,12 +475,13 @@ void fdPartyLearnAbility(Sint32 unit, Sint32 ability)
 }
 
 /* Starts the script's screen transition, as FIELD_STATE.transition and
-   transitionFrm give it. */
+   transitionFrame give it. */
 void fdScriptStartScreenTransition(void)
 {
 	FIELD_STATE *fieldState = FieldStateWork;
 
-	fdScreenTransitionStart(fieldState->transition, fieldState->transitionFrm);
+	fdScreenTransitionStart(
+		fieldState->transition, fieldState->transitionFrame);
 	fieldState->transitionActive = 1;
 }
 
@@ -488,14 +490,15 @@ void fdScriptFinishScreenTransition(void)
 {
 	FIELD_STATE *fieldState = FieldStateWork;
 
-	fdScreenTransitionFinish(fieldState->transition, fieldState->transitionFrm);
+	fdScreenTransitionFinish(
+		fieldState->transition, fieldState->transitionFrame);
 	fieldState->transitionActive = 0;
 }
 
 /* Waits as long as the script's screen transition runs. */
 void fdScriptWaitTransitionTicks(void)
 {
-	sySynch(FieldStateWork->transitionFrm);
+	sySynch(FieldStateWork->transitionFrame);
 }
 
 /* Makes the script leave for the given entrance of the given scene: raises the

@@ -1,8 +1,8 @@
 /* Window zoom and borders, and opening and waiting on message windows. Part of
    window.c. */
 
-void mnWindowDrawZoomBorder(WINDOW *win, Sint32 savePos);
-void mnWindowDrawOpened(WINDOW *win);
+void mnWindowDrawZoomBorder(WINDOW *window, Sint32 savePos);
+void mnWindowDrawOpened(WINDOW *window);
 
 /* A tilemap entry's tile number and flip bits, below its palette. */
 #define TILE_NUMBER_AND_FLIPS (TILE_NUMBER_MASK | TILE_HFLIP | TILE_VFLIP)
@@ -13,49 +13,49 @@ void mnWindowDrawOpened(WINDOW *win);
 void mnWindowUpdateZooms(void)
 {
 	WIN_STATE *state = WINDOW_STATE;
-	WINDOW	  *win = state->wins;
-	Sint32	   idx = 0;
+	WINDOW	  *window = state->windows;
+	Sint32	   index = 0;
 
 	do {
-		if(win->flg != 0) {
-			if(win->zoomStage != 0) {
-				mnWindowDrawZoomBorder(win, 0);
-				win->zoomStage--;
-			} else if(win->duration != 0) {
-				mnWindowDrawOpened(win);
+		if(window->flags != 0) {
+			if(window->zoomStage != 0) {
+				mnWindowDrawZoomBorder(window, 0);
+				window->zoomStage--;
+			} else if(window->duration != 0) {
+				mnWindowDrawOpened(window);
 			}
-		} else if(win->duration != 0) {
-			if(win->zoomStage != win->duration) {
-				mnWindowEraseBorderRect(
-					win->prevX, win->prevY, win->prevWidth, win->prevHeight);
-				mnWindowDrawZoomBorder(win, 1);
-				win->zoomStage++;
+		} else if(window->duration != 0) {
+			if(window->zoomStage != window->duration) {
+				mnWindowEraseBorderRect(window->prevX, window->prevY,
+					window->prevWidth, window->prevHeight);
+				mnWindowDrawZoomBorder(window, 1);
+				window->zoomStage++;
 				state->dirty = 1;
 			} else {
-				mnWindowEraseBorderRect(
-					win->prevX, win->prevY, win->prevWidth, win->prevHeight);
-				win->sprs.head = NULL;
-				win->sprs.tailLink = NULL;
-				win->width = 0;
-				win->height = 0;
-				win->x = 0;
-				win->y = 0;
-				win->opened = 0;
-				win->anm = 0;
-				win->state = 0;
-				win->flg = 0;
-				win->zoomStage = 0;
-				win->duration = 0;
-				win->prevX = 0;
-				win->prevY = 0;
-				win->prevWidth = 0;
-				win->prevHeight = 0;
+				mnWindowEraseBorderRect(window->prevX, window->prevY,
+					window->prevWidth, window->prevHeight);
+				window->sprites.head = NULL;
+				window->sprites.tailLink = NULL;
+				window->width = 0;
+				window->height = 0;
+				window->x = 0;
+				window->y = 0;
+				window->opened = 0;
+				window->animation = 0;
+				window->state = 0;
+				window->flags = 0;
+				window->zoomStage = 0;
+				window->duration = 0;
+				window->prevX = 0;
+				window->prevY = 0;
+				window->prevWidth = 0;
+				window->prevHeight = 0;
 				state->dirty = 1;
 			}
 		}
-		idx++;
-		win++;
-	} while(idx != WINDOW_COUNT);
+		index++;
+		window++;
+	} while(index != WINDOW_COUNT);
 }
 
 /* Scratch values for a stage of a window's zoom, as in The Broken Seal: the
@@ -69,7 +69,7 @@ typedef struct WINDOW_ZOOM_SCRATCH {
 /* Draws a zooming window at its size for this tick: the window grows from its
    centre as zoomStage counts down to 0. With savePos set (when closing)
    the drawn rectangle is remembered, for the next tick to erase. */
-void mnWindowDrawZoomBorder(WINDOW *win, Sint32 savePos)
+void mnWindowDrawZoomBorder(WINDOW *window, Sint32 savePos)
 {
 	WINDOW_ZOOM_SCRATCH scratch;
 	Sint32				stage;
@@ -80,51 +80,51 @@ void mnWindowDrawZoomBorder(WINDOW *win, Sint32 savePos)
 	Sint32				width;
 	Sint32				height;
 
-	stage = win->zoomStage;
-	duration = win->duration;
+	stage = window->zoomStage;
+	duration = window->duration;
 	remaining = duration - stage;
 	/* syDivFX(d, v) is v / d in 16.16 fixed point, as in The Broken Seal: the
 	   left edge moves in by stage / duration of half the width, and the width
 	   is (duration - stage) / duration of the whole, twice that half; the same
 	   for the top and the height. */
-	scratch.scaledPart = toFIXED(stage * win->width);
+	scratch.scaledPart = toFIXED(stage * window->width);
 	scratch.scaledDuration = toFIXED(2 * duration);
 	scratch.result = syDivFX(scratch.scaledDuration, scratch.scaledPart);
-	x = FIXEDtoINT(scratch.result) + win->x;
+	x = FIXEDtoINT(scratch.result) + window->x;
 
-	scratch.scaledPart = toFIXED(remaining * win->width);
+	scratch.scaledPart = toFIXED(remaining * window->width);
 	scratch.result = syDivFX(scratch.scaledDuration, scratch.scaledPart);
 	{
-		Sint32 part = stage * win->height;
+		Sint32 part = stage * window->height;
 		width = FIXEDtoINT_TWICE(scratch.result);
 		scratch.scaledPart = toFIXED(part);
 	}
-	scratch.scaledDuration = toFIXED(2 * win->duration);
+	scratch.scaledDuration = toFIXED(2 * window->duration);
 	scratch.result = syDivFX(scratch.scaledDuration, scratch.scaledPart);
-	y = FIXEDtoINT(scratch.result) + win->y;
+	y = FIXEDtoINT(scratch.result) + window->y;
 
-	scratch.scaledPart = toFIXED(remaining * win->height);
+	scratch.scaledPart = toFIXED(remaining * window->height);
 	scratch.result = syDivFX(scratch.scaledDuration, scratch.scaledPart);
 	height = FIXEDtoINT_TWICE(scratch.result);
 
 	mnWindowDrawBorder(x, y, width, height);
 	if(savePos != 0) {
-		win->prevX = x;
-		win->prevY = y;
-		win->prevWidth = width;
-		win->prevHeight = height;
+		window->prevX = x;
+		window->prevY = y;
+		window->prevWidth = width;
+		window->prevHeight = height;
 	}
 }
 
-/* Fills count halfwords at dst with value and returns the position after the
+/* Fills count halfwords at dest with value and returns the position after the
    fill. */
-Uint16 *mnMemoryFillHalfwordsDMA(Uint16 *dst, Sint32 value, Sint32 cnt)
+Uint16 *mnMemoryFillHalfwordsDMA(Uint16 *dest, Sint32 value, Sint32 count)
 {
-	if(cnt > 0) {
-		DMA_FILL16(value, dst, cnt * 2);
-		dst += cnt;
+	if(count > 0) {
+		DMA_FILL16(value, dest, count * 2);
+		dest += count;
 	}
-	return dst;
+	return dest;
 }
 
 /* Draws an empty window: a border around a filled interior, at tile (x, y) of
@@ -252,7 +252,7 @@ Bool mnMessageAllTyped(void)
 
 	msg = WINDOW_STATE->msgs;
 	for(i = 0; i != MESSAGE_COUNT; i++, msg++) {
-		if(msg->win != NULL && msg->win->state == 0)
+		if(msg->window != NULL && msg->window->state == 0)
 			return FALSE;
 	}
 	return TRUE;
@@ -260,11 +260,11 @@ Bool mnMessageAllTyped(void)
 
 /* Returns 1 when a window is fully closed (its slot free), and 0 while it is
    open or closing. */
-Bool mnWindowIsClosed(WINDOW *win)
+Bool mnWindowIsClosed(WINDOW *window)
 {
-	if(win == NULL)
+	if(window == NULL)
 		return TRUE;
-	if(win->flg == 0 && win->duration == 0)
+	if(window->flags == 0 && window->duration == 0)
 		return TRUE;
 	return FALSE;
 }
@@ -329,9 +329,9 @@ void mnBattleMessageClose(void)
 {
 	BATTLE_MESSAGE_STATE *slot = RamHeapSlots->battleMsg;
 
-	if(slot->win != NULL) {
-		mnWindowClose(slot->win, 1);
-		slot->win = NULL;
+	if(slot->window != NULL) {
+		mnWindowClose(slot->window, 1);
+		slot->window = NULL;
 	}
 }
 
@@ -345,7 +345,7 @@ void mnBattleMessageOpen(Sint32 msg)
 	Sint32				  entry;
 	BATTLE_MESSAGE_STATE *slot;
 	WINDOW				 *prev;
-	WINDOW				 *win;
+	WINDOW				 *window;
 	WIN_STATE			 *state;
 	MESSAGE				 *typing;
 
@@ -358,22 +358,22 @@ void mnBattleMessageOpen(Sint32 msg)
 	entry = mnMessageDecode(msg, 1);
 	state->battleMode = WINDOW_BATTLE;
 	if(state->textBuf[entry] != 0) {
-		prev = slot->win;
+		prev = slot->window;
 		if(prev == NULL) {
-			win = mnWindowCreate(
+			window = mnWindowCreate(
 				0, 15, 30, 6, WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS);
-			slot->win = win;
+			slot->window = window;
 			mnWindowMapTextCanvasTiles(0, 15, 30, 6, 1);
 			slot->marked = 0;
 		} else {
-			win = prev;
+			window = prev;
 		}
-		if(win != NULL) {
-			typing = mnBattleMessageCont(win, entry, slot->marked);
+		if(window != NULL) {
+			typing = mnBattleMessageContinue(window, entry, slot->marked);
 			slot->msg = typing;
 			slot->marked = 0;
 			if(typing == NULL)
-				mnWindowClose(win, 1);
+				mnWindowClose(window, 1);
 		}
 	}
 }
@@ -391,23 +391,23 @@ void mnBattleMessageShowAndWait(Sint32 msg)
 
 /* Decodes message and starts it typing in window, which is already open;
    returns 0 when the message is empty or there is no window. */
-Sint32 mnMessageOpenDecoded(Sint32 win, Sint32 msg)
+Sint32 mnMessageOpenDecoded(Sint32 window, Sint32 msg)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Sint32	   entry;
 	Sint32	   result = 0;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
-	UNUSED Uint16 frmReserve[4];
+	UNUSED Uint16 frameReserve[4];
 
-	state->speakerVoiceSnd = 0;
+	state->speakerVoiceSound = 0;
 	state->speakerVoiceCountdown = 0;
 	entry = mnMessageDecode(msg, 1);
 	if(state->textBuf[entry] == 0)
 		return 0;
-	if(win == 0)
+	if(window == 0)
 		return 0;
-	result = (Sint32)mnMessageStart((WINDOW *)win, entry, 0, 0, 0, 1);
+	result = (Sint32)mnMessageStart((WINDOW *)window, entry, 0, 0, 0, 1);
 	if(result == 0)
 		return 0;
 	return result;
@@ -420,16 +420,16 @@ Sint32 mnMessageOpenDecoded(Sint32 win, Sint32 msg)
    characters in English and Japanese. Flags already set stay set: only
    mnMessageOpenWindow clears both, once it has started a message typing, so
    they also apply to every message decoded before that. */
-void mnMessageSetDecodeFlags(Uint32 flg)
+void mnMessageSetDecodeFlags(Uint32 flags)
 {
 	WIN_STATE *state;
 
 	state = WINDOW_STATE;
 	if(state == NULL)
 		return;
-	if(flg & MESSAGE_DECODE_HALTING_SPEECH)
+	if(flags & MESSAGE_DECODE_HALTING_SPEECH)
 		state->haltingSpeech = 1;
-	if(flg & MESSAGE_DECODE_SPACING_AFTER)
+	if(flags & MESSAGE_DECODE_SPACING_AFTER)
 		state->spacingAfter = 1;
 }
 
@@ -443,17 +443,17 @@ WINDOW *mnMessageOpenWindow(Sint32 msg, Sint32 x, Sint32 y, Uint32 packed)
 	Uint32	   height;
 	Uint32	   width;
 	Uint16	   bounds[4];
-	Sint32	   flg;
+	Sint32	   flags;
 	Uint16	  *out;
-	WINDOW	  *win;
+	WINDOW	  *window;
 	WIN_STATE *state;
 
 	state = WINDOW_STATE;
-	state->speakerVoiceSnd = MESSAGE_WINDOW_VOICE_OF(packed);
-	win = NULL;
+	state->speakerVoiceSound = MESSAGE_WINDOW_VOICE_OF(packed);
+	window = NULL;
 	state->speakerVoiceCountdown = 0;
 	packed &= MESSAGE_WINDOW_OPTIONS_MASK;
-	flg = 0;
+	flags = 0;
 	entry = mnMessageDecode(msg, 1);
 	if(state->textBuf[entry] == 0)
 		return NULL;
@@ -461,23 +461,23 @@ WINDOW *mnMessageOpenWindow(Sint32 msg, Sint32 x, Sint32 y, Uint32 packed)
 	if(width == 0 && height == 0)
 		return NULL;
 	if(!(packed & MESSAGE_WINDOW_ZOOM))
-		flg |= WINDOW_FLAG_INSTANT;
+		flags |= WINDOW_FLAG_INSTANT;
 	if(packed & MESSAGE_WINDOW_TEXT_CANVAS)
-		flg |= WINDOW_FLAG_TEXT_CANVAS;
+		flags |= WINDOW_FLAG_TEXT_CANVAS;
 	if(packed & MESSAGE_WINDOW_ANCHOR_BOTTOM)
-		flg |= WINDOW_FLAG_ANCHOR_BOTTOM;
+		flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
 	if(packed & MESSAGE_WINDOW_FIXED_X)
-		flg |= WINDOW_FLAG_FIXED_X;
-	win = mnWindowCreate(x, y, width, height, flg);
-	if(win == NULL)
+		flags |= WINDOW_FLAG_FIXED_X;
+	window = mnWindowCreate(x, y, width, height, flags);
+	if(window == NULL)
 		return NULL;
-	if(mnMessageStart(win, entry, 0, 0, out, 0) == 0) {
-		mnWindowClose(win, 1);
+	if(mnMessageStart(window, entry, 0, 0, out, 0) == 0) {
+		mnWindowClose(window, 1);
 		return NULL;
 	}
 	state->haltingSpeech = 0;
 	state->spacingAfter = 0;
-	return win;
+	return window;
 }
 
 /* The tile rows a field message is centred in, from the top of the screen. */
@@ -485,7 +485,7 @@ WINDOW *mnMessageOpenWindow(Sint32 msg, Sint32 x, Sint32 y, Uint32 packed)
 
 /* Shows a message in a window centred on the screen, waits until it is typed
    out and closes it, as its flags say. */
-void mnFieldMessageShow(Sint32 msg, Sint32 flg)
+void mnFieldMessageShow(Sint32 msg, Sint32 flags)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Sint32	   zoom;
@@ -499,10 +499,10 @@ void mnFieldMessageShow(Sint32 msg, Sint32 flg)
 	Sint32	   rows;
 
 	y = x = 0;
-	zoom = flg & FIELD_MESSAGE_ZOOM;
+	zoom = flags & FIELD_MESSAGE_ZOOM;
 
-	if(flg & FIELD_MESSAGE_WAITING_FOR_SOUND) {
-		state->waitingForSnd = 1;
+	if(flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
+		state->waitingForSound = 1;
 	}
 
 	mnTextGetMessageSize(msg, &x, &y, (Uint32 *)&width, (Uint32 *)&height);
@@ -513,9 +513,9 @@ void mnFieldMessageShow(Sint32 msg, Sint32 flg)
 	x = margin >> 1;
 	y = (FIELD_MESSAGE_TOP_ROWS - rows) >> 1;
 
-	if(flg & FIELD_MESSAGE_LOWER) {
+	if(flags & FIELD_MESSAGE_LOWER) {
 		y = y + 4;
-	} else if(flg & FIELD_MESSAGE_LOWEST) {
+	} else if(flags & FIELD_MESSAGE_LOWEST) {
 		y = y + 12;
 	} else {
 		Sint32 actorTileY;
@@ -537,11 +537,11 @@ void mnFieldMessageShow(Sint32 msg, Sint32 flg)
 			sySynch(1);
 		}
 
-		if(flg & FIELD_MESSAGE_HOLD_UPLOAD) {
+		if(flags & FIELD_MESSAGE_HOLD_UPLOAD) {
 			WINDOW_STATE->holdTilemapUpload = 1;
 		}
 
-		if(!(flg & FIELD_MESSAGE_KEEP_OPEN)) {
+		if(!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
 			mnWindowClose(window, zoom);
 			while(mnWindowIsClosed(window) == 0) {
 				sySynch(1);
@@ -549,8 +549,8 @@ void mnFieldMessageShow(Sint32 msg, Sint32 flg)
 		}
 	}
 
-	state->waitingForSnd = 0;
-	state->speakerVoiceSnd = 0;
+	state->waitingForSound = 0;
+	state->speakerVoiceSound = 0;
 	state->speakerVoiceCountdown = 0;
 	sySynch(3);
 }
@@ -561,7 +561,7 @@ void mnWindowSystemUpdate(void)
 {
 	mnWindowUpdateZooms();
 	mnMessageUpdateAll();
-	mnWindowSprUpdateAll();
+	mnWindowSpriteUpdateAll();
 }
 
 /* The window system's per-tick event in battle: windows, messages and sprite
@@ -571,7 +571,7 @@ void mnWindowSystemUpdateBattle(void)
 	if(RamHeapSlots->battleMenuState != 0) {
 		mnWindowUpdateZooms();
 		mnMessageUpdateAll();
-		mnWindowSprUpdateAll();
+		mnWindowSpriteUpdateAll();
 	} else {
 		mnMessageUpdateAll();
 	}

@@ -8,8 +8,9 @@
 static Sint32 scFieldEffectStretchUntilArrived(ACTOR *streak)
 {
 	streak->scaleX += toFIXED(3) / 25;
-	if(streak->tgtX == ACTOR_NO_TARGET && streak->tgtY == ACTOR_NO_TARGET &&
-		streak->tgtZ == ACTOR_NO_TARGET) {
+	if(streak->targetX == ACTOR_NO_TARGET &&
+		streak->targetY == ACTOR_NO_TARGET &&
+		streak->targetZ == ACTOR_NO_TARGET) {
 		fdActorRelease(streak);
 	}
 	return 1;

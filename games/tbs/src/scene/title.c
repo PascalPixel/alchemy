@@ -62,8 +62,8 @@ Sint32 scInit(void)
 	if(MainRoutineStateWork.entrance == TITLE_FROM_WORLD_MAP) {
 		/* "To Be Continued": after 120 ticks the logo waits up to 3600 ticks
 		   (a minute) for a key press. */
-		fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
-		sySndPlay(MUS_TO_BE_CONTINUED);
+		fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlags = 0;
+		sySoundPlay(MUS_TO_BE_CONTINUED);
 		scTitleRevealScreen(0);
 		sySynch(120);
 		for(waitTicks = 0; waitTicks < 3600 && PerPush == 0; waitTicks++)
@@ -72,14 +72,14 @@ Sint32 scInit(void)
 		return 0;
 	}
 	if(MainRoutineStateWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
-		sySndPlay(MUS_THE_BROKEN_SEAL_ENDING);
+		sySoundPlay(MUS_THE_BROKEN_SEAL_ENDING);
 		/* The staff credits (mnCreditsRun). */
 		syImportCreditsRun(0);
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 		syScreenFadeToBlack(60);
 		syScreenFadeWait();
 		fdScriptWait(240);
-		sySndPlay(MUS_SILENCE);
+		sySoundPlay(MUS_SILENCE);
 		fdScriptSetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_TITLE);
 		return 0;
 	}
@@ -90,7 +90,7 @@ Sint32 scInit(void)
 	syDummyNoOperationHook(RESOURCE_TITLE_STUBS);
 	if(MainRoutineStateWork.entrance == TITLE_AFTER_RUN) {
 		for(;;) {
-			sySndPlay(MUS_SILENCE);
+			sySoundPlay(MUS_SILENCE);
 			/* The publisher's logo, then the Camelot logo
 			   (mnTitleShowCamelotLogo). */
 			mnTitleShowPublisherLogo(0);
@@ -98,12 +98,12 @@ Sint32 scInit(void)
 			/* With no save file (or no backup memory) there is no title
 			   intro. */
 			if(mnSaveScanFileSummaries() > 0) {
-				sySndPlay(MUS_MAIN_THEME_TITLE);
+				sySoundPlay(MUS_MAIN_THEME_TITLE);
 				/* mnTitleShowTitleScreen with its prompt returns 0 when a
 				   minute passes without A or Start: fade out and start again
 				   from the logos. */
 				if(mnTitleShowTitleScreen(1) == 0) {
-					sySndPlay(SOUND_FADE_OUT_BGM);
+					sySoundPlay(SOUND_FADE_OUT_BGM);
 					syScreenFadeToBlack(30);
 					syScreenFadeWait();
 					waitTicks = 0;
@@ -123,17 +123,17 @@ Sint32 scInit(void)
 	} else {
 		/* TITLE_FROM_VALE_PLAZA: the intro without its prompt holds the title
 		   five seconds. */
-		sySndPlay(MUS_THE_PASSAGE_OF_TIME);
+		sySoundPlay(MUS_THE_PASSAGE_OF_TIME);
 		mnTitleShowTitleScreen(0);
 		gmPartyEndChildhood();
 		fdScriptSetDestination(SCENE_VALE, VALE_FROM_TITLE);
-		sySndPlay(SOUND_FADE_OUT_BGM);
+		sySoundPlay(SOUND_FADE_OUT_BGM);
 	}
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	syScreenFadeToBlack(30);
 	syScreenFadeWait();
 	fdScriptWait(60);
-	sySndPlay(MUS_SILENCE);
+	sySoundPlay(MUS_SILENCE);
 	return 0;
 }
 
@@ -145,15 +145,15 @@ enum { LETTERING_PALETTE = 15 };
 enum { LETTERING_ROWS = 32 };
 
 /* Loads the "To Be Continued" lettering's sprites and their palette. */
-static void scTitleLoadSprs(Sint32 unused)
+static void scTitleLoadSprites(Sint32 unused)
 {
-	Uint8			*decodedSprs;
+	Uint8			*decodedSprites;
 	volatile Uint32 *dma3;
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_SPANISH || \
 	LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
 	Uint8 *encodedGraphics;
 
-	decodedSprs = syHeapAllocEWRAM(DISPLAY_WIDTH * DISPLAY_HEIGHT);
+	decodedSprites = syHeapAllocateEWRAM(DISPLAY_WIDTH * DISPLAY_HEIGHT);
 	encodedGraphics =
 		syResourceGetTableEntry(RESOURCE_TO_BE_CONTINUED_LETTERING);
 	if(TitleVramBlock == -1)
@@ -162,40 +162,41 @@ static void scTitleLoadSprs(Sint32 unused)
 	syDMAXCopy(encodedGraphics, (void *)OBJ_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
 	encodedGraphics += LOGO_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ(encodedGraphics, decodedSprs);
+	syFieldDecompressTaggedLZ(encodedGraphics, decodedSprites);
 	/* The picture is a whole screen in 256 colours (to_be_continued_de.png and
 	   the others). The lettering is its bottom LETTERING_ROWS rows: 120 sprites
 	   of one 64-byte tile. The tiles of one colour above it are not loaded. */
 	mnVRAMLoad(TitleVramBlock, DISPLAY_WIDTH * LETTERING_ROWS,
-		decodedSprs + DISPLAY_WIDTH * (DISPLAY_HEIGHT - LETTERING_ROWS));
+		decodedSprites + DISPLAY_WIDTH * (DISPLAY_HEIGHT - LETTERING_ROWS));
 #else
 	/* The decoded data opens with its 16-colour palette, then 40 4-bit tiles of
 	   lettering. */
-	decodedSprs = syHeapAllocEWRAM(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
+	decodedSprites =
+		syHeapAllocateEWRAM(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
 	if(TitleVramBlock == -1)
 		TitleVramBlock = syVRAMCacheFindFreeEntry();
 	syFieldDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_TO_BE_CONTINUED_LETTERING),
-		decodedSprs);
-	syDMAXCopy(decodedSprs, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+		decodedSprites);
+	syDMAXCopy(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
 		DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
-	mnVRAMLoad(
-		TitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprs + PALETTE_COLORS * 2);
+	mnVRAMLoad(TitleVramBlock, 40 * TILE_SIZE_4BPP,
+		decodedSprites + PALETTE_COLORS * 2);
 #endif
 	dma3 = REG_DMA3;
 	while(dma3[2] & DMA_BUSY)
 		;
-	syHeapRelease(decodedSprs);
+	syHeapRelease(decodedSprites);
 }
 
 /* The event that queues the "To Be Continued" lettering each tick, writing it
    in from the left a column every two ticks, each new column flickering for
    its first few. */
-static void scTitleUpdateSprReveal(void)
+static void scTitleUpdateSpriteReveal(void)
 {
 	Uint32	  *attributes;
-	TITLE_SPR *spr;
-	Sint32	   tileIdx;
+	TITLE_SPR *sprite;
+	Sint32	   tileIndex;
 	Sint32	   column;
 	Sint32	   revealAge;
 	Sint32	   screenY;
@@ -209,9 +210,9 @@ static void scTitleUpdateSprReveal(void)
 	/* Four rows of 30 8-by-8 sprites across the screen at y 128 to 152, in 256
 	   colours and semi-transparent. A 256-colour tile is two of the 32-byte
 	   tile numbers the cache offset counts in. */
-	spr = TitleSprites;
-	attributes = TitleSprites[0].attr;
-	tileIdx = VramCacheEntries[TitleVramBlock].ofs >> 5;
+	sprite = TitleSprites;
+	attributes = TitleSprites[0].attribute;
+	tileIndex = VramCacheEntries[TitleVramBlock].offset >> 5;
 	row = 0;
 	screenY = 128;
 	for(; row <= 3; row++) {
@@ -219,21 +220,21 @@ static void scTitleUpdateSprReveal(void)
 #if FIX_POINTER_OUTSIDE_OBJECT
 			/* Stay inside each sprite's three-word array instead of walking
 			   into the next struct. */
-			attributes = spr->attr;
+			attributes = sprite->attribute;
 #endif
 			*attributes++ = 0;
 			*attributes++ = OBJ_X(column * 8) | screenY | OBJ_256_COLORS |
 				OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-			*attributes++ = tileIdx;
+			*attributes++ = tileIndex;
 			revealAge = TitleRevealTick / 2 - column;
 			if(revealAge < 0)
 				revealAge = 0;
 			if(revealAge <= 2 && (TickCount & 1))
 				revealAge = 0;
 			if(revealAge != 0)
-				syOAMAddSprAtDepth(spr, OAM_DEPTH_FRONT);
-			spr++;
-			tileIdx += 2;
+				syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
+			sprite++;
+			tileIndex += 2;
 		}
 		screenY += 8;
 	}
@@ -241,28 +242,28 @@ static void scTitleUpdateSprReveal(void)
 
 	/* One row of 18 semi-transparent sprites of 8 by 16 pixels at y 136 and x
 	   88 to 224. */
-	spr = TitleSprites;
-	attributes = TitleSprites[0].attr;
-	tileIdx = VramCacheEntries[TitleVramBlock].ofs >> 5;
+	sprite = TitleSprites;
+	attributes = TitleSprites[0].attribute;
+	tileIndex = VramCacheEntries[TitleVramBlock].offset >> 5;
 	column = 0;
 	screenY = 136;
 	for(; column <= 17; column++) {
 		screenX = 232 - (18 - column) * 8;
 #if FIX_POINTER_OUTSIDE_OBJECT
-		attributes = TitleSprites[column].attr;
+		attributes = TitleSprites[column].attribute;
 #endif
 		*attributes++ = 0;
 		*attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
 			OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-		*attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIdx;
+		*attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIndex;
 		revealAge = TitleRevealTick / 2 - column;
 		if(revealAge < 0)
 			revealAge = 0;
 		if(revealAge <= 2 && (TickCount & 1))
 			revealAge = 0;
 		if(revealAge != 0)
-			syOAMAddSprAtDepth(spr++, OAM_DEPTH_FRONT);
-		tileIdx += 2;
+			syOAMAddSpriteAtDepth(sprite++, OAM_DEPTH_FRONT);
+		tileIndex += 2;
 	}
 #endif
 	TitleRevealTick++;
@@ -277,8 +278,8 @@ static void scTitleRevealScreen(Sint32 unused)
 	scTitleLoadBackground();
 	fdScriptWait(30);
 	TitleRevealTick = 0;
-	scTitleLoadSprs(0);
-	sySetTickEvent(scTitleUpdateSprReveal, EVENT_PASS_TICK);
+	scTitleLoadSprites(0);
+	sySetTickEvent(scTitleUpdateSpriteReveal, EVENT_PASS_TICK);
 	/* Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened, so the
 	   logo on BG2 is black; the semi-transparent lettering is blended onto the
 	   layers under it at full weight. */
@@ -301,10 +302,10 @@ static void scTitleRevealScreen(Sint32 unused)
 		sySynch(3);
 	}
 	FieldStateWork->transition = 0;
-	FieldStateWork->transitionFrm = 1;
+	FieldStateWork->transitionFrame = 1;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	FieldStateWork->transitionFrm = 60;
+	FieldStateWork->transitionFrame = 60;
 }
 
 /* Loads the Golden Sun logo onto BG2 (title.h's LOGO_ map) with the screen
@@ -316,7 +317,7 @@ static void scTitleLoadBackground(void)
 	Uint16		*tilemap;
 	Uint32		 screenX;
 	Uint32		 screenY;
-	Uint16		 tileIdx;
+	Uint16		 tileIndex;
 	SCROLL_PAIR *bgScroll;
 	Sint32		 offscreenTile = OFFSCREEN_TILE;
 
@@ -332,10 +333,10 @@ static void scTitleLoadBackground(void)
 	syDMAXCopy((void *)RamMapGridMetatileBuffer, LOGO_TILES,
 		DMA_COPY_WORDS(9600), REG_DMA3);
 	tilemap = LOGO_MAP;
-	tileIdx = LOGO_FIRST_TILE;
+	tileIndex = LOGO_FIRST_TILE;
 	for(screenY = 0; screenY <= 19; screenY++) {
 		for(screenX = 0; screenX <= 29; screenX++)
-			*tilemap++ = tileIdx++;
+			*tilemap++ = tileIndex++;
 		*tilemap++ = offscreenTile;
 		*tilemap++ = offscreenTile;
 	}
@@ -346,7 +347,7 @@ static void scTitleLoadBackground(void)
 		bgScroll++;
 	}
 	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-	((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flg =
+	((MAP_GRID_SCROLL_STATE *)MapGridState[0])->flags =
 		DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
@@ -365,5 +366,5 @@ CUE TitleCues[] = {
 };
 
 /* The VRAM cache entry holding the lettering's tiles, which is -1 until
-   scTitleLoadSprs takes one. */
+   scTitleLoadSprites takes one. */
 Sint16 TitleVramBlock = -1;

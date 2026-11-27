@@ -18,19 +18,19 @@ void scFlameUpdateSideways(ACTOR *actor)
 	actor->sceneWord = dz - dz / 16;
 	actor->scaleX += actor->speedLimit;
 	actor->scaleY += actor->acceleration;
-	((FIELD_SPR *)actor->spr)->rotation += actor->tmr;
+	((FIELD_SPR *)actor->sprite)->rotation += actor->timer;
 	if(other->y.fixed == other->groundHeight &&
 		fdActorIsTouching(actor, other) &&
 		MainRoutineStateWork.movementMode == LEADER_MOVEMENT_WALK) {
 		if(actor->sceneWord != 0) {
-			state->dir.z = 0;
-			direction = &state->dir;
+			state->direction.z = 0;
+			direction = &state->direction;
 			if(actor->sceneWord > 0)
 				direction->x = 1;
 			else
 				direction->x = -1;
 		}
-		actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 		actor->z.fixed -= actor->bounce;
 		actor->gravity += actor->bounce >> 2;
 		actor->sceneWord = 0;
@@ -46,7 +46,7 @@ void scFlameUpdateSideways(ACTOR *actor)
 		if(other->y.fixed == other->groundHeight &&
 			fdActorIsBeside(actor, other)) {
 			if(state->slots[i].blocked == 0) {
-				actor->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+				actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 				actor->z.fixed -= actor->sceneWord;
 				actor->gravity += actor->sceneWord >> 2;
 				actor->sceneWord = 0;

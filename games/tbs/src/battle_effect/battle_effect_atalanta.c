@@ -105,7 +105,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	Sint32					 point[3];
 	SCREEN_POINT			 screen;
 	SPR_PLACEMENT			 pos;
-	SCREEN_POINT			 tgt;
+	SCREEN_POINT			 target;
 	BLITTER_PAIR			 draw;
 	BATTLE_BACKGROUND_STATE *view;
 	void				   **slots;
@@ -114,7 +114,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	Sint8					*path;
 	Sint32					 i;
 	Sint32					 j;
-	Sint32					 frm;
+	Sint32					 frame;
 	Uint8					*sheet;
 	Sint32					 scrollX;
 	Sint32					 pathX;
@@ -134,14 +134,14 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	state->args = args;
 	/* The screen wipes to black before Atalanta appears. */
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
-	btEffectConfigureEffectDisp();
+	btEffectConfigureEffectDisplay();
 	BG_PLTT[0] = 0;
 	BG_PLTT[1] = 0;
 	state->transferMode = CANVAS_COPY;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	btEffectWipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
 	btEffectShowLivingTargets(state->args);
-	btEffectCreateSprs(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
+	btEffectCreateSprites(ATALANTA_SPRITES, SPRITE_ATALANTA, 1);
 	btResourceLoadAndDecompress(RESOURCE_SLASH_SHEET, state->sheet, 1, 1);
 	syWordsCopy(BG_PLTT, syResourceGetTableEntry(RESOURCE_LIME_PALETTE),
 		SHEET_PALETTE_BYTES);
@@ -158,7 +158,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	/* The violet sky scrolls. */
 	btBackgroundLoadStub(
 		BATTLE_BACKGROUND_FIXED, RESOURCE_VIOLET_SKY_BACKDROP, 0);
-	state->scrollTmr = 0;
+	state->scrollTimer = 0;
 	state->scrollInterval = 4;
 	state->scrollStepX = -1;
 	state->scrollStepY = 0;
@@ -174,8 +174,8 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 
 		shaft->x = INTtoFIXED(syRandom() % 96 + 12);
 		shaft->y = INTtoFIXED((syRandom() & 63) + 32);
-		shaft->velX = 0;
-		shaft->velY = 0;
+		shaft->velocityX = 0;
+		shaft->velocityY = 0;
 		shaft->variant = 0;
 		for(j = 0; j != ATALANTA_TRAIL_MOTES; j++) {
 			PARTICLES[i * ATALANTA_TRAIL_MOTES + j].x = (syRandom() & 15) + 48;
@@ -191,10 +191,10 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7);
 	/* The gathering (A or B ends it). */
-	for(frm = 0; frm != 220 && !(PerRepeat & (KEY_A | KEY_B)); frm++) {
+	for(frame = 0; frame != 220 && !(PerRepeat & (KEY_A | KEY_B)); frame++) {
 		/* Atalanta flies along her path. */
-		if(frm <= 209) {
-			if(frm == 0) {
+		if(frame <= 209) {
+			if(frame == 0) {
 				pathX = (path[0] << 8) + (Uint8)path[1];
 				pathY = (path[2] << 8) + (Uint8)path[3];
 				path += 4;
@@ -210,16 +210,16 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 					pos.x = INTtoFIXED(pathX + 80 + column * 32);
 					pos.y = INTtoFIXED(64 - pathY + row * 32);
 					fdRenderApplyProjectedPlacementStub(
-						state->sprs[row * ATALANTA_SPRITE_ROWS + column], &pos,
-						&AtalantaUnitScale, 0);
+						state->sprites[row * ATALANTA_SPRITE_ROWS + column],
+						&pos, &AtalantaUnitScale, 0);
 				}
 			}
 		}
 		point[1] = 0;
 		point[2] = 0;
 		/* The battle background starts to darken. */
-		if(frm == 48) {
-			state->fadeFrm = BACKGROUND_DARKEN_TICKS;
+		if(frame == 48) {
+			state->fadeFrame = BACKGROUND_DARKEN_TICKS;
 			state->fadeStep = 0;
 		}
 		/* The shafts appear one after another. */
@@ -227,27 +227,28 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 			Sint32 start =
 				i * ATALANTA_SHAFT_INTERVAL + ATALANTA_SHAFT_FIRST_TICK;
 
-			if(frm >= start) {
+			if(frame >= start) {
 				PARTICLE *shaft = &state->particles[i];
 				Sint32	  x = FIXEDtoINT(shaft->x);
 				Sint32	  y = FIXEDtoINT(shaft->y);
 
-				if(frm ==
+				if(frame ==
 					start + ATALANTA_TRAIL_TICKS + ATALANTA_FLASH_TICKS - 1)
-					sySndPlayStub(SE_POWER_UP);
-				if(frm >= start + ATALANTA_TRAIL_TICKS + ATALANTA_FLASH_TICKS) {
-					shaft->x += shaft->velX;
-					shaft->y += shaft->velY;
-					shaft->velX -= toFIXED(1);
-					shaft->velY += toFIXED(2);
+					sySoundPlayStub(SE_POWER_UP);
+				if(frame >=
+					start + ATALANTA_TRAIL_TICKS + ATALANTA_FLASH_TICKS) {
+					shaft->x += shaft->velocityX;
+					shaft->y += shaft->velocityY;
+					shaft->velocityX -= toFIXED(1);
+					shaft->velocityY += toFIXED(2);
 					EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 						ATALANTA_SHAFT_TOP, x + 4, y - 40);
 					EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 						ATALANTA_SHAFT_MIDDLE, x - 16, y - 19);
 					EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 						ATALANTA_SHAFT_BOTTOM, x - 20, y + 16);
-				} else if(frm >= start + ATALANTA_TRAIL_TICKS) {
-					switch(frm - start - ATALANTA_TRAIL_TICKS) {
+				} else if(frame >= start + ATALANTA_TRAIL_TICKS) {
+					switch(frame - start - ATALANTA_TRAIL_TICKS) {
 					case 0:
 						EFFECT_DRAW_PICTURE(draw[0], canvas, state->sheet,
 							ATALANTA_SHAFT_FLASH_A, x - 7, y - 14);
@@ -306,9 +307,9 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectAdvanceScrollOnInterval);
 	view->busy = 0;
 	BgScrollWork[1].x = scrollX;
-	btEffectSetupBlendedDisp();
+	btEffectSetupBlendedDisplay();
 	for(i = 0; i != ATALANTA_SPRITES; i++)
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	REG_BG2PA = Q_8_8(0.5);
 	REG_DISPCNT = EFFECT_DISPCNT;
 	btResourceLoadAndDecompress(
@@ -320,10 +321,10 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 		PARTICLE *shaft = &state->particles[i];
 		Sint32	  member = i % ENEMY_BATTLE_SIZE;
 
-		if(member < state->args->tgtCnt) {
-			btProjectionScaledUnit(state->args->tgts[member], &tgt);
+		if(member < state->args->targetCount) {
+			btProjectionScaledUnit(state->args->targets[member], &target);
 			shaft->y = -((syRandom() & 31) + 40);
-			shaft->x = tgt.x / 2 + (80 - shaft->y) / 2;
+			shaft->x = target.x / 2 + (80 - shaft->y) / 2;
 		} else {
 			shaft->x = (syRandom() & 63) + 80;
 			shaft->y = -((syRandom() & 31) + 40);
@@ -331,11 +332,11 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 		shaft->variant = -1;
 	}
 	/* The shafts rain down on the targets. */
-	for(frm = 0; frm != ATALANTA_FALL_TICKS; frm++) {
+	for(frame = 0; frame != ATALANTA_FALL_TICKS; frame++) {
 		for(i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
 			PARTICLE *shaft = &state->particles[i];
 
-			if(frm >= i * 2 || frm > 40) {
+			if(frame >= i * 2 || frame > 40) {
 				/* A landed shaft bursts in light. */
 				if(shaft->variant >= 0) {
 					if(shaft->variant < ATALANTA_BURST_PICTURES *
@@ -397,14 +398,14 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 						Sint32 member;
 
 						shaft->variant = 0;
-						state->shakeFrm = 2;
-						sySndPlayStub(SE_HEAVY_IMPACT);
+						state->shakeFrame = 2;
+						sySoundPlayStub(SE_HEAVY_IMPACT);
 						member = i % ENEMY_BATTLE_SIZE;
-						if(member < state->args->tgtCnt) {
-							btEffectTintBattler(state->args->tgts[member],
+						if(member < state->args->targetCount) {
+							btEffectTintBattler(state->args->targets[member],
 								SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 8);
 							btMotionApplyKnockbackStub(
-								state->args->tgts[member], KNOCKBACK_HOP);
+								state->args->targets[member], KNOCKBACK_HOP);
 						}
 					}
 				}

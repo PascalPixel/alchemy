@@ -139,9 +139,9 @@ static void scGomaCaveEntranceMoveEastPillar(void)
 	column = fdActorGet(ACTOR_EAST_PILLAR)->x.fixed / toFIXED(16);
 	if(column == 23) {
 		fdScriptWait(10);
-		fdActorGet(ACTOR_EAST_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_EAST_PILLAR)->motionFlg = 0;
-		fdActorSetSprFlags(fdActorGet(ACTOR_EAST_PILLAR), 0);
+		fdActorGet(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_EAST_PILLAR)->motionFlags = 0;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_EAST_PILLAR), 0);
 		fdMapGridCopyMetatileAttributes(54, 17, 1, 1, column, 17);
 		gmFlagSet(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE);
 	}
@@ -156,7 +156,7 @@ enum { CUE_PUSH_WEST_PILLAR_EAST = 5, CUE_PUSH_WEST_PILLAR_WEST = 6 };
 static void scGomaCaveEntrancePushWestPillar(void)
 {
 	FIELD_STATE *state;
-	Sint32		 ofsX;
+	Sint32		 offsetX;
 
 	state = FieldStateWork;
 	fdScriptStart();
@@ -164,14 +164,14 @@ static void scGomaCaveEntrancePushWestPillar(void)
 	fdScriptWait(20);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.2);
 	fdActorSetSpeed(ACTOR_WEST_PILLAR, 0.2);
-	sySndPlay(SE_PUSH);
+	sySoundPlay(SE_PUSH);
 	/* A metatile east from CUE_PUSH_WEST_PILLAR_EAST, west from
 	   CUE_PUSH_WEST_PILLAR_WEST. */
-	ofsX = CUE_PUSH_WEST_PILLAR_EAST + CUE_PUSH_WEST_PILLAR_WEST -
+	offsetX = CUE_PUSH_WEST_PILLAR_EAST + CUE_PUSH_WEST_PILLAR_WEST -
 		state->stepCue * 2;
-	ofsX *= MAPGRID_METATILE_PIXELS;
-	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, ofsX, 0);
-	fdActorSetDestinationOffset(ACTOR_WEST_PILLAR, ofsX, 0);
+	offsetX *= MAPGRID_METATILE_PIXELS;
+	fdActorSetDestinationOffset(ACTOR_PARTY_LEADER, offsetX, 0);
+	fdActorSetDestinationOffset(ACTOR_WEST_PILLAR, offsetX, 0);
 	fdActorWaitForMoveById(ACTOR_PARTY_LEADER);
 	fdActorWaitForMoveById(ACTOR_WEST_PILLAR);
 	fdScriptWait(20);
@@ -212,18 +212,18 @@ Sint32 scInit(void)
 	fdScriptWait(10);
 	fdQueueMusic(SE_AMBIENT_WATER);
 	fdActorSetAnimation(ACTOR_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
-	fdActorGet(ACTOR_SUNKEN_STUMP)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorGet(ACTOR_SUNKEN_STUMP)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 	{
 		ACTOR *stump = fdActorGet(ACTOR_STUMP);
 
-		stump->collisionFlg = ACTOR_NEAR_PSYNERGY | stump->collisionFlg;
+		stump->collisionFlags = ACTOR_NEAR_PSYNERGY | stump->collisionFlags;
 	}
 	/* The player never targets the stump's ivy; only Ivan's Whirlwind in
 	   scGomaCaveEntranceIvanJoins removes it. */
 	{
 		ACTOR *ivy = fdActorGet(ACTOR_STUMP_IVY);
 
-		ivy->collisionFlg = ACTOR_NOT_TARGETED | ivy->collisionFlg;
+		ivy->collisionFlags = ACTOR_NOT_TARGETED | ivy->collisionFlags;
 	}
 	/* The metatile scGomaCaveEntranceIvanJoins copies once the stump's ivy is
 	   gone, copied again on each arrival. */
@@ -232,7 +232,7 @@ Sint32 scInit(void)
 	}
 	if(gmFlagGet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
 		fdActorSetPos(ACTOR_STUMP, 136, 196);
-		fdActorGet(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdActorSetAnimation(ACTOR_STUMP, STUMP_ANIMATION_SINK);
 		fdMapGridCopyMetatileAttributes(39, 12, 3, 1, 8, 12);
 		fdMapGridCopyMetatileAttributes(43, 11, 3, 1, 12, 11);
@@ -253,9 +253,9 @@ Sint32 scInit(void)
 	}
 	if(gmFlagGet(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
 		fdActorSetPos(ACTOR_EAST_PILLAR, 376, 280);
-		fdActorGet(ACTOR_EAST_PILLAR)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-		fdActorGet(ACTOR_EAST_PILLAR)->motionFlg = 0;
-		fdActorSetSprFlags(fdActorGet(ACTOR_EAST_PILLAR), 0);
+		fdActorGet(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_EAST_PILLAR)->motionFlags = 0;
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_EAST_PILLAR), 0);
 		fdMapGridCopyMetatileAttributes(54, 17, 1, 1, 23, 17);
 	}
 	return 0;
@@ -513,7 +513,7 @@ static void scGomaCaveEntranceMoveStump(void)
 	column = FIELD_METATILE(fdActorGet(ACTOR_STUMP)->x.fixed);
 	if(column == 11) {
 		scLeapStump(ACTOR_STUMP);
-		fdActorGet(ACTOR_STUMP)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+		fdActorGet(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 		fdMapGridCopyMetatileAttributes(39, 12, 3, 1, 8, 12);
 		fdMapGridCopyMetatileAttributes(43, 11, 3, 1, 12, 11);
 		gmFlagSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
@@ -525,13 +525,13 @@ static void scGomaCaveEntranceMoveStump(void)
 static void scGomaCaveEntranceWhirlwindOnStumpIvy(void)
 {
 	FIELD_EFFECT_STATE *effectState;
-	Uint8				flg;
+	Uint8				flags;
 
 	effectState = FieldEffectStateWork;
 	fdPsynergyLoadResources(ABILITY_WHIRLWIND, 1);
 	fdPsynergySetupActorPair(ACTOR_IVAN, ACTOR_STUMP_IVY);
-	flg = (Uint8)effectState->msgMode | FIELD_MESSAGE_LOWER;
-	effectState->msgMode = flg;
+	flags = (Uint8)effectState->msgMode | FIELD_MESSAGE_LOWER;
+	effectState->msgMode = flags;
 	fdPsynergyStartCast();
 	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
 	fdPsynergyStopCasterUpdate();
@@ -571,7 +571,7 @@ retry:
 #if SHAMANS_ROD_SPARES_INDISPENSABLE_ITEMS
 		for(i = 0; i <= INVENTORY_SLOTS - 1; i++) {
 			item = gmItemGetDirect(member->inventory[i]);
-			if(item->flg != ITEM_INDISPENSABLE) {
+			if(item->flags != ITEM_INDISPENSABLE) {
 				gmInventoryDiscard(IVAN, i);
 				break;
 			}
@@ -591,7 +591,7 @@ retry:
 		for(i = 0; i <= INVENTORY_SLOTS - 1; i++) {
 			item = gmItemGetDirect(member->inventory[i]);
 			if(item->type == ITEM_TYPE_NONE &&
-				(item->flg & ITEM_INDISPENSABLE) == 0 &&
+				(item->flags & ITEM_INDISPENSABLE) == 0 &&
 				item->useType == ITEM_USE_CONSUMED) {
 				gmInventoryDiscard(IVAN, i);
 				goto retry;

@@ -31,14 +31,14 @@
 /* The menu object calls these window functions with no prototype in scope, so
    their arguments take the old promotions (window/window.h lists them); a
    current GCC, which refuses implicit declarations, gets them here. */
-void	 mnWindowSprAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *node);
+void	 mnWindowSpriteAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *node);
 MESSAGE *mnMessageStart(WINDOW *window, Sint32 entry, Sint32 x, Sint32 y,
 	Uint16 *spacing, Sint32 flags);
 void	 mnTextDrawWideStringInWindow(
 		Sint16 *text, WINDOW *window, Sint32 x, Sint32 y);
 void mnWindowPutGlyph(
-	WINDOW *win, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode);
-void mnTextDrawPrefixedNumAtOffset(Sint32 value, const WINDOW *window,
+	WINDOW *window, Uint32 tile, Uint32 x, Uint32 y, Sint32 mode);
+void mnTextDrawPrefixedNumberAtOffset(Sint32 value, const WINDOW *window,
 	Sint32 offsetX, Sint32 offsetY, Sint32 variant);
 #endif
 
@@ -229,7 +229,7 @@ typedef enum BATTLE_TARGET_HINT {
 	TARGET_HINT_SET_DJINNI = 7 /* setting a Djinni: "Set Djinni" */
 } BATTLE_TARGET_HINT;
 
-#define BATTLE_OK 0x80 /* ABILITY_DEFINITION.flg: usable in battle */
+#define BATTLE_OK 0x80 /* ABILITY_DEFINITION.flags: usable in battle */
 
 /* Whether a party member can use an item in battle (mnItemCheckBattleUse). */
 typedef enum BATTLE_ITEM_USE {
@@ -244,7 +244,7 @@ typedef enum BATTLE_ITEM_USE {
 } BATTLE_ITEM_USE;
 
 /* What mnSaveScanFileSummaries adds to its count of files when every file is
-   cleared (its sendFlg set by saving at the game's end). */
+   cleared (its sendFlag set by saving at the game's end). */
 #define SAVE_SCAN_ALL_CLEARED 100
 
 /* One icon of the command row (BATTLE_COMMAND_ROW_STATE): its sprite, where it
@@ -253,7 +253,7 @@ typedef enum BATTLE_ITEM_USE {
 typedef struct BATTLE_COMMAND_ROW_ICON {
 	/* The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
 	   the others show as tiles of BG1. */
-	MENU_SPR spr;
+	MENU_SPR sprite;
 	/* resource: the VRAM cache entry its sprite's tiles go into, one 1 KB entry
 	   that every icon of the row shares, reloaded with the selected icon.
 	   unused is never read. */
@@ -268,17 +268,17 @@ typedef struct BATTLE_COMMAND_ROW_ICON {
 typedef struct BATTLE_COMMAND_ROW_STATE {
 	/* BG palette slots for the icons' 256-colour pixels, filled as each icon is
 	   loaded (mnBattleCommandRowLoadIconTiles). */
-	ICON_PALETTE			pal;
+	ICON_PALETTE			palette;
 	BATTLE_COMMAND_ROW_ICON entries[6];
-	WINDOW				   *win; /* shows the selected command's name */
-	Sint32					iconCnt;
+	WINDOW				   *window; /* shows the selected command's name */
+	Sint32					iconCount;
 	/* The selected icon's scale, 8.8 fixed point: it pulses between 304 and 336
 	   (1.19 and 1.31 times) every 16 ticks. */
 	AFFINE_TRANSFORM affine;
 	/* affineIndex: the OAM matrix built from affine this tick. selectedIndex:
-	   the icon under the cursor. drawnIdx: the icon whose name the window
+	   the icon under the cursor. drawnIndex: the icon whose name the window
 	   shows, -1 before the first is drawn. */
-	Sint32 affineIdx, selectedIdx, drawnIdx;
+	Sint32 affineIndex, selectedIndex, drawnIndex;
 	/* The commands in row order, ended by -1 when fewer than six (see
 	   mnBattleCommandRowRun for the kinds). */
 	Sint32 commandKinds[6];

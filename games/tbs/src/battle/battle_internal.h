@@ -43,7 +43,7 @@
 #define BATTLE_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 /* The battle background's colours: BG palettes 6 to 13, filled from
-   BATTLE_STATE.pal, darkened or not. */
+   BATTLE_STATE.palette, darkened or not. */
 #define BATTLE_BG_PALETTE ((Uint16 *)&BG_PLTT_COLOR(6, 0))
 
 /* The opening curtain's tiles: 4-bit tiles 128 to 136 of character block 1,
@@ -61,7 +61,7 @@
    three enemy ids from FIRST_ENEMY_UNIT. */
 #define LINK_PARTY_SIZE 3
 
-/* BATTLE_STATE.objIdx of a unit with no place on the battlefield:
+/* BATTLE_STATE.objectIndex of a unit with no place on the battlefield:
    btUnitRefreshPlacement fills the list with it, and btObjectGet returns NULL
    for it. */
 #define BATTLE_OBJECT_NONE 255
@@ -126,7 +126,7 @@ typedef enum BATTLE_CAST_KIND {
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE	   -1
 
-/* BATTLE_ACTION.tgt of a held unit's lost action (COMMAND_NONE, from
+/* BATTLE_ACTION.target of a held unit's lost action (COMMAND_NONE, from
    btBuildEnemyActions and btBuildPartyActions): as a place code, place 0 of the
    other side, the party's for an enemy and the enemies' for a party member. */
 #define TARGET_NONE_ENEMY PLACE_PARTY
@@ -146,9 +146,9 @@ typedef enum BATTLE_CAST_KIND {
    every layer, to fade them. */
 #define BLEND_SPRITES_OVER_ALL (BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
-/* Runs a battle effect by its ability's effect word (Ability.battleEff): with
-   EFFECT_BY_ID_RANGE from the second range of kinds (btEffectRunByIdRangeStub),
-   otherwise from the handler table. */
+/* Runs a battle effect by its ability's effect word (Ability.battleEffect):
+   with EFFECT_BY_ID_RANGE from the second range of kinds
+   (btEffectRunByIdRangeStub), otherwise from the handler table. */
 #define BATTLE_EFFECT_RUN(args, battleEffect) \
 	((battleEffect) & EFFECT_BY_ID_RANGE ? btEffectRunByIdRangeStub(args) \
 										 : btEffectRunFromTableStub(args))
@@ -156,8 +156,8 @@ typedef enum BATTLE_CAST_KIND {
 /* The keys that take the player on past a message: A, B, L and R. */
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
-/* A stat stage changes the stat by an eighth of it (gmUnitCalc), from half at
-   the lowest to one and a half at the highest. */
+/* A stat stage changes the stat by an eighth of it (gmUnitCalculate), from half
+   at the lowest to one and a half at the highest. */
 #define STAT_STAGE_MIN -4
 #define STAT_STAGE_MAX 4
 

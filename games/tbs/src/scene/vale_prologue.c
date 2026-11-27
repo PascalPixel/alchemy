@@ -120,7 +120,7 @@ static void scValePrologueFlashPaletteAndSpawnEffects(ACTOR *actor);
 static void scSpawnPsynergyRings(ACTOR *parent);
 static void scValePrologueUpdateBoulderMapEffects(void);
 static void scValePrologueCycleBoulderPalette(void);
-static void scValePrologueCopyLeaderSprPriority(void);
+static void scValePrologueCopyLeaderSpritePriority(void);
 
 /* The placed actors, numbered in the order of ValePrologueActorPlacements. The
    elders holding back the Boulder (ValePrologueBoulderElders) follow them. */
@@ -339,15 +339,15 @@ static Sint32 ShakeShift;
 /* The step of ValePrologueLookAroundScript. */
 static Sint32 scValePrologueLookAround(ACTOR *actor)
 {
-	Sint32 tmr = actor->tmr;
-	Sint32 countdown = (Sint16)tmr;
+	Sint32 timer = actor->timer;
+	Sint32 countdown = (Sint16)timer;
 
-	if(tmr == 0) {
+	if(timer == 0) {
 		actor->facing = syRandomNext();
 		countdown = VALE_PROLOGUE_GLANCE_PAUSE();
-		actor->tmr = countdown;
+		actor->timer = countdown;
 	}
-	actor->tmr = countdown - 1;
+	actor->timer = countdown - 1;
 	return 1;
 }
 
@@ -430,7 +430,7 @@ static void scValePrologueStepOffBridge(void)
    cue names it, and nothing else takes that exit. */
 UNUSED static void scValePrologueUnusedOpenSanctumDoor(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(ValePrologueSanctumDoorOpens, 45, 11);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
 	fdScriptWait(3);
@@ -448,7 +448,7 @@ UNUSED static void scValePrologueUnusedOpenSanctumDoor(void)
    VALE_PLAZA_FROM_COTTAGE_ROOMS_A_NORTH, instead. */
 static void scValePrologueLeaveNorthwestToValePlaza(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scValeRequestBackdropExit(VALE_TO_SOL_ENTRANCE);
 }
 
@@ -456,7 +456,7 @@ static void scValePrologueLeaveNorthwestToValePlaza(void)
    paths off its west edge (metatiles (0, 38..41)), toward Kraden's cottage. */
 static void scValePrologueLeaveToValeKradensCottageNorth(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
@@ -464,7 +464,7 @@ static void scValePrologueLeaveToValeKradensCottageNorth(void)
    paths off its west edge (metatiles (0, 49..50)), toward Kraden's cottage. */
 static void scValePrologueLeaveToValeKradensCottageSouth(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	scValeRequestBackdropExit(VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
@@ -476,7 +476,7 @@ static void scValePrologueLeaveToValeKradensCottageSouth(void)
    first (scValePrologueGaretFollowsIsaac). */
 static void scValePrologueLeaveToValePlaza(void)
 {
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	if(gmFlagGet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
 		gmFlagGet(FLAG_VALE_STORM_GARET_LEFT) == 0) {
 		scValePrologueGaretFollowsIsaac();
@@ -488,7 +488,7 @@ static void scValePrologueLeaveToValePlaza(void)
    46)) and goes in. */
 static void scValePrologueLeaveToCottageRoomsAEast(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(ValePrologueIsaacsDoorOpens, 54, 32);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 406, 727);
 	fdScriptWait(3);
@@ -502,7 +502,7 @@ static void scValePrologueLeaveToCottageRoomsAEast(void)
 static void scValePrologueLeaveToCottageRoomsA(void)
 {
 	if(fdScriptGetFlag(FLAG_VALE_SHOVING_MANS_DOOR_OPEN) == 0) {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorOpens, 45, 39);
 	}
 	if(gmFlagGet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
@@ -522,7 +522,7 @@ static void scValePrologueLeaveToCottageRoomsA(void)
 static void scValePrologueLeaveToIsaacsHouse(void)
 {
 	if(gmFlagGet(FLAG_VALE_ISAACS_DOOR_OPEN) == 0) {
-		sySndPlay(SE_DOOR_OPEN);
+		sySoundPlay(SE_DOOR_OPEN);
 		fdMapGridPlayMapEdit(ValePrologueIsaacsDoorOpens, 50, 44);
 	}
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
@@ -534,7 +534,7 @@ static void scValePrologueLeaveToIsaacsHouse(void)
    the river's east bank (metatile (20, 71)), and goes in. */
 static void scValePrologueLeaveToCottageRoomsANorth(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(ValePrologueGrandparentsDoorOpens, 49, 69);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
 	fdScriptWait(3);
@@ -545,7 +545,7 @@ static void scValePrologueLeaveToCottageRoomsANorth(void)
    grandparents', on the river's east bank (metatile (23, 78)), and goes in. */
 static void scValePrologueLeaveToCottageRoomsAWest(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridPlayMapEdit(ValePrologueWestHouseDoorOpens, 52, 76);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
 	fdScriptWait(3);
@@ -557,7 +557,7 @@ static void scValePrologueLeaveToCottageRoomsAWest(void)
    carries its row's metatile behavior, so it never opens. */
 static void scValePrologueUnusedLeaveToCottageRoomsAWestByWestBankDoor(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 35, 74);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 102, 1206);
 	fdScriptWait(3);
@@ -569,7 +569,7 @@ static void scValePrologueUnusedLeaveToCottageRoomsAWestByWestBankDoor(void)
    west bank (metatile (6, 75)) and goes in. */
 static void scValePrologueLeaveToCottageRoomsBWest(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 35, 73);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 102, 1206);
 	fdScriptWait(3);
@@ -581,7 +581,7 @@ static void scValePrologueLeaveToCottageRoomsBWest(void)
    in. */
 static void scValePrologueLeaveToCottageRoomsBEast(void)
 {
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorOpens, 38, 72);
 	fdActorWalkTo(ACTOR_PARTY_LEADER, 146, 1182);
 	fdScriptWait(3);
@@ -616,14 +616,14 @@ Sint32 scInit(void)
 	}
 	/* The rocks are big, so the leader can talk to them from further off: the
 	   talk target search counts their distance at 10/13 (ACTOR_NEAR_TALK). */
-	fdActorGet(ACTOR_FIRST_ROCK)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 1)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 2)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 3)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 4)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 5)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 6)->collisionFlg |= ACTOR_NEAR_TALK;
-	fdActorGet(ACTOR_FIRST_ROCK + 7)->collisionFlg |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 1)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 2)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 3)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 4)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 5)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 6)->collisionFlags |= ACTOR_NEAR_TALK;
+	fdActorGet(ACTOR_FIRST_ROCK + 7)->collisionFlags |= ACTOR_NEAR_TALK;
 	/* Garet walks with the party once he has joined. */
 	if(gmFlagGet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
 		fdActorSetPos(ACTOR_GARET_CHILD, 0, 0);
@@ -642,7 +642,7 @@ Sint32 scInit(void)
 		fdActorSetScript(ACTOR_BOULDER, ValePrologueBoulderWaits);
 	}
 	if(gmFlagGet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
-		const Sint32 *tbl;
+		const Sint32 *table;
 		scValePrologueRebuildRiverbank();
 		fdActorSetPos(ACTOR_DORA, 165, 1229);
 		{
@@ -650,10 +650,10 @@ Sint32 scInit(void)
 
 			actor = fdActorGet(ACTOR_DORA);
 			actor->facing = FACING_NORTHEAST;
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
-			tbl = ValePrologueSquashAndStretchScript;
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
+			table = ValePrologueSquashAndStretchScript;
 			actor->userValue = 1;
-			fdActorSetScript(ACTOR_DORA, tbl);
+			fdActorSetScript(ACTOR_DORA, table);
 		}
 		fdActorSetPos(ACTOR_JENNA_CHILD, 165, 1254);
 		{
@@ -661,9 +661,9 @@ Sint32 scInit(void)
 
 			actor = fdActorGet(ACTOR_JENNA_CHILD);
 			actor->facing = FACING_NORTHEAST;
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
 			actor->userValue = 2;
-			fdActorSetScript(ACTOR_JENNA_CHILD, tbl);
+			fdActorSetScript(ACTOR_JENNA_CHILD, table);
 		}
 		fdActorSetPos(ACTOR_GARET_CHILD, 152, 1285);
 		{
@@ -671,9 +671,9 @@ Sint32 scInit(void)
 
 			actor = fdActorGet(ACTOR_GARET_CHILD);
 			actor->facing = FACING_NORTHEAST;
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
 			actor->userValue = 3;
-			fdActorSetScript(ACTOR_GARET_CHILD, tbl);
+			fdActorSetScript(ACTOR_GARET_CHILD, table);
 		}
 		fdActorSetPos(ACTOR_EXHAUSTED_STRONGMAN, 184, 1304);
 		{
@@ -681,16 +681,17 @@ Sint32 scInit(void)
 
 			actor = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN);
 			actor->facing = FACING_NORTHEAST;
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
 			actor->userValue = 4;
-			fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, tbl);
+			fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
 		}
 		fdActorSetAnimation(
 			ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
-		fdActorGet(ACTOR_GARET_CHILD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-		fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->priFlg &=
+		fdActorGet(ACTOR_GARET_CHILD)->priorityFlags &=
 			~ACTOR_PRIORITY_AUTOMATIC;
-		sySetTickEvent(scValePrologueCopyLeaderSprPriority, EVENT_PASS_TICK);
+		fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
+			~ACTOR_PRIORITY_AUTOMATIC;
+		sySetTickEvent(scValePrologueCopyLeaderSpritePriority, EVENT_PASS_TICK);
 		fdActorSetPos(ACTOR_JENNAS_FATHER, 0, 0);
 		fdActorSetPos(ACTOR_JENNAS_MOTHER, 0, 0);
 		fdActorSetPos(ACTOR_FELIX_CHILD, 0, 0);
@@ -701,7 +702,7 @@ Sint32 scInit(void)
 		/* While they try to save Felix: Kyle and Jenna's parents at the river,
 		   Felix in it. */
 	} else if(gmFlagGet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
-		const Sint32 *tbl;
+		const Sint32 *table;
 		fdActorSetPos(ACTOR_KYLE, 192, 1214);
 		fdActorFaceDirection(ACTOR_KYLE, FACING_SOUTHEAST, 0);
 		fdActorSetAnimation(ACTOR_KYLE, ANIM_KYLE_REACH_OUT);
@@ -709,10 +710,10 @@ Sint32 scInit(void)
 			ACTOR *actor;
 
 			actor = fdActorGet(ACTOR_KYLE);
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
 		}
-		tbl = ValePrologueSquashAndStretchScript;
-		fdActorSetScript(ACTOR_KYLE, tbl);
+		table = ValePrologueSquashAndStretchScript;
+		fdActorSetScript(ACTOR_KYLE, table);
 		fdActorSetPos(ACTOR_JENNAS_FATHER, 227, 1214);
 		fdActorFaceDirection(ACTOR_JENNAS_FATHER, FACING_SOUTH, 0);
 		fdActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
@@ -720,9 +721,9 @@ Sint32 scInit(void)
 			ACTOR *actor;
 
 			actor = fdActorGet(ACTOR_JENNAS_FATHER);
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
 		}
-		fdActorSetScript(ACTOR_JENNAS_FATHER, tbl);
+		fdActorSetScript(ACTOR_JENNAS_FATHER, table);
 		fdActorSetPos(ACTOR_JENNAS_MOTHER, 247, 1214);
 		fdActorFaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTH, 0);
 		fdActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
@@ -730,12 +731,12 @@ Sint32 scInit(void)
 			ACTOR *actor;
 
 			actor = fdActorGet(ACTOR_JENNAS_MOTHER);
-			actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+			actor->timer = SQUASH_AND_STRETCH_PAUSE();
 		}
-		fdActorSetScript(ACTOR_JENNAS_MOTHER, tbl);
+		fdActorSetScript(ACTOR_JENNAS_MOTHER, table);
 		fdActorSetPos(ACTOR_FELIX_CHILD, 243, 1277);
 		fdActorFaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
-		fdActorSetSprFlags(fdActorGet(ACTOR_FELIX_CHILD), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_FELIX_CHILD), 0);
 		fdActorSetPos(ACTOR_FIRST_ROCK + 6, 0, 0);
 		fdActorSetPos(ACTOR_FIRST_ROCK + 7, 0, 0);
 	} else {
@@ -762,10 +763,10 @@ Sint32 scInit(void)
 		ACTOR *actor;
 
 		actor = fdActorGet(ACTOR_GARETS_CHEST);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed = toFIXED(192);
-		actor->collisionFlg = ACTOR_NOT_TARGETED;
-		fdActorSetSprFlags(actor, 0);
+		actor->collisionFlags = ACTOR_NOT_TARGETED;
+		fdActorSetSpriteFlags(actor, 0);
 	}
 	sySynch(1);
 	if(gmFlagGet(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
@@ -796,7 +797,7 @@ Sint32 scInit(void)
 		fdScriptEnd();
 	}
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = 24;
+	FieldStateWork->transitionFrame = 24;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdWeatherResumeLightning();
@@ -821,12 +822,12 @@ static void scValePrologueDoraSendsIsaacToThePlaza(void)
 	fdActorSetPos(ACTOR_KYLE, 294, 868);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = MAP_TRANSITION_TICKS;
+	FieldStateWork->transitionFrame = MAP_TRANSITION_TICKS;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdWeatherResumeLightning();
 	/* Dora and Isaac come out of the door. */
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 50, 44);
 	fdActorSetAttachedEffect(
 		ACTOR_GARET_CHILD, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -924,34 +925,34 @@ static void scValePrologueDoraSendsIsaacToThePlaza(void)
 static void scValePrologueFirstRockFalls(void)
 {
 	ACTOR *rock;
-	FIXED  tgtHeight;
-	SPR	  *rockSpr;
+	FIXED  targetHeight;
+	SPR	  *rockSprite;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) == 0) {
 		fdScriptStart();
 		if(fdScriptGetFlag(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
 			rock = fdActorGet(ACTOR_FIRST_ROCK);
-			rockSpr = rock->spr;
+			rockSprite = rock->sprite;
 			/* A rumble, a crash, and the rock bounces down from the east. */
 			fdMapGridSetShake(4, 4, 1);
-			sySndPlay(SE_RUMBLE);
+			sySoundPlay(SE_RUMBLE);
 			sySynch(40);
-			sySndPlay(SE_CRASH);
-			rock->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			rockSpr->image.pri = 1;
+			sySoundPlay(SE_CRASH);
+			rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			rockSprite->image.priority = 1;
 			fdActorSetPos(ACTOR_FIRST_ROCK, 473, 932);
 			rock->speedLimit = toFIXED(3) / 2;
 			rock->acceleration = toFIXED(3) / 2;
-			tgtHeight = (rock->y.fixed + toFIXED(240));
+			targetHeight = (rock->y.fixed + toFIXED(240));
 			rock->y.fixed += toFIXED(240);
-			rock->tgtY = tgtHeight;
+			rock->targetY = targetHeight;
 			rock->bounce = toFIXED(2) / 5;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK, 344, 932);
-			rockSpr->image.pri = 3;
-			rock->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+			rockSprite->image.priority = 3;
+			rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 			fdScriptWait(40);
 			/* It lands: the rumble fades and the shaking dies down. */
-			sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+			sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			fdMapGridWaitForShakeToSettle();
 			fdPlayQueuedMusic();
@@ -995,7 +996,7 @@ static void scValePrologueApplyFirstRockCollision(void)
 static void scValePrologueSecondRockFalls(void)
 {
 	ACTOR *rock;
-	FIXED  tgtHeight;
+	FIXED  targetHeight;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) == 0) {
 		fdScriptStart();
@@ -1004,24 +1005,24 @@ static void scValePrologueSecondRockFalls(void)
 			/* A rumble, then the rock rolls down the slope from the
 			   north-east. */
 			fdMapGridSetShake(4, 4, 1);
-			sySndPlay(SE_RUMBLE);
+			sySoundPlay(SE_RUMBLE);
 			sySynch(40);
-			sySndPlay(SE_CRASH);
+			sySoundPlay(SE_CRASH);
 			fdActorSetPos(ACTOR_FIRST_ROCK + 1, 381, 808);
 			rock->speedLimit = toFIXED(3) / 2;
 			rock->acceleration = toFIXED(3) / 2;
-			tgtHeight = (rock->y.fixed + toFIXED(256));
+			targetHeight = (rock->y.fixed + toFIXED(256));
 			rock->y.fixed += toFIXED(256);
-			rock->tgtY = tgtHeight;
+			rock->targetY = targetHeight;
 			rock->bounce = toFIXED(1) / 2;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 1, 290, 833);
-			fdActorSetSprPriority(ACTOR_FIRST_ROCK + 1, 1);
+			fdActorSetSpritePriority(ACTOR_FIRST_ROCK + 1, 1);
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 1, 258, 852);
-			fdActorSetSprPriority(ACTOR_FIRST_ROCK + 1, 2);
+			fdActorSetSpritePriority(ACTOR_FIRST_ROCK + 1, 2);
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 1, 224, 872);
 			fdScriptWait(40);
 			/* It lands: the rumble fades and the shaking dies down. */
-			sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+			sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			fdMapGridWaitForShakeToSettle();
 			fdPlayQueuedMusic();
@@ -1073,34 +1074,36 @@ static void scValePrologueThirdRockFalls(void)
 		if(fdScriptGetFlag(FLAG_VALE_STORM_THIRD_ROCK_FELL) == 0) {
 			ACTOR *actor = fdActorGet(ACTOR_FIRST_ROCK + 2);
 			ACTOR *leader = fdActorGet(ACTOR_PARTY_LEADER);
-			Uint16 pri = leader->spr->image.pri;
-			Uint8  flg = leader->priFlg;
+			Uint16 priority = leader->sprite->image.priority;
+			Uint8  flags = leader->priorityFlags;
 
 			/* A rumble, then the rock drops in from the west while Isaac is
 			   drawn behind it. */
 			fdMapGridSetShake(4, 4, 1);
-			sySndPlay(SE_RUMBLE);
+			sySoundPlay(SE_RUMBLE);
 			sySynch(40);
-			sySndPlay(SE_CRASH);
-			fdActorSetSprPriority(ACTOR_PARTY_LEADER, 3);
-			fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			sySoundPlay(SE_CRASH);
+			fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+			fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |=
+				ACTOR_PRIORITY_UNDERFOOT;
 			fdActorSetPos(ACTOR_FIRST_ROCK + 2, 0, 703);
 			actor->speedLimit = toFIXED(3) / 2;
 			actor->acceleration = toFIXED(3) / 2;
 			actor->y.fixed += toFIXED(80);
-			actor->tgtY = actor->y.fixed;
+			actor->targetY = actor->y.fixed;
 			actor->bounce = toFIXED(1) / 2;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 2, 64, 703);
 			fdScriptWait(40);
 			/* It lands: the rumble fades, and Isaac is drawn as before. */
-			sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+			sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			fdMapGridWaitForShakeToSettle();
 			fdPlayQueuedMusic();
 			gmFlagSet(FLAG_VALE_STORM_THIRD_ROCK_FELL);
-			fdActorSetSprPriority(ACTOR_PARTY_LEADER, pri);
-			fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
-			leader->priFlg = flg;
+			fdActorSetSpritePriority(ACTOR_PARTY_LEADER, priority);
+			fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |=
+				ACTOR_PRIORITY_AUTOMATIC;
+			leader->priorityFlags = flags;
 		}
 		scValePrologueApplyThirdRockCollision();
 		gmFlagSet(FLAG_VALE_STORM_THIRD_ROCK_PASSED);
@@ -1140,7 +1143,7 @@ static void scValePrologueApplyThirdRockCollision(void)
 static void scValePrologueFourthRockFalls(void)
 {
 	ACTOR *rock;
-	FIXED  tgtHeight;
+	FIXED  targetHeight;
 
 	if(fdScriptGetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) == 0) {
 		fdScriptStart();
@@ -1148,20 +1151,20 @@ static void scValePrologueFourthRockFalls(void)
 			rock = fdActorGet(ACTOR_FIRST_ROCK + 3);
 			/* A rumble, then the rock rolls in from the east. */
 			fdMapGridSetShake(4, 4, 1);
-			sySndPlay(SE_RUMBLE);
+			sySoundPlay(SE_RUMBLE);
 			sySynch(40);
-			sySndPlay(SE_CRASH);
+			sySoundPlay(SE_CRASH);
 			fdActorSetPos(ACTOR_FIRST_ROCK + 3, 474, 1147);
 			rock->speedLimit = toFIXED(1);
 			rock->acceleration = toFIXED(1);
-			tgtHeight = (rock->y.fixed + toFIXED(72));
+			targetHeight = (rock->y.fixed + toFIXED(72));
 			rock->y.fixed += toFIXED(72);
-			rock->tgtY = tgtHeight;
+			rock->targetY = targetHeight;
 			rock->bounce = toFIXED(1) / 2;
 			fdActorWalkToAndWait(ACTOR_FIRST_ROCK + 3, 432, 1147);
 			fdScriptWait(40);
 			/* It lands: the rumble fades and the shaking dies down. */
-			sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+			sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 			fdMapGridWaitForShakeToSettle();
 			fdPlayQueuedMusic();
@@ -1477,11 +1480,11 @@ static void scValePrologueWatchBoulderFall(void)
 		fdScriptAppendActorPlacements(ValePrologueBoulderElders);
 		scStartScriptPsynergy();
 		sySynch(1);
-		sySndPlay(SE_RUMBLE);
+		sySoundPlay(SE_RUMBLE);
 		fdMapGridSetShake(2, 2, 1);
 		fdScriptWait(30);
 		fdMapGridSetShake(3, 3, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		fdScriptWait(30);
 		actor = fdActorGet(ACTOR_PARTY_LEADER);
 		if(actor != NULL) {
@@ -1498,10 +1501,10 @@ static void scValePrologueWatchBoulderFall(void)
 		fdActorShowEmote(
 			ACTOR_GARET_CHILD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 		fdMapGridSetShake(4, 4, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		fdScriptWait(40);
 		fdMapGridSetShake(5, 5, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		fdScriptWait(20);
 		fdActorSetAttachedEffect(ACTOR_PARTY_LEADER,
 			ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1515,10 +1518,10 @@ static void scValePrologueWatchBoulderFall(void)
 		fdActorSetAnimation(ACTOR_ELDER_FAR_WEST,
 			YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_HOLD_BACK);
 		fdActorGet(ACTOR_ELDER_FAR_EAST)->scaleX = -toFIXED(1);
-		fdActorSetSprPriority(ACTOR_ELDER_EAST, 2);
-		fdActorSetSprPriority(ACTOR_ELDER_WEST, 2);
-		fdActorSetSprPriority(ACTOR_ELDER_FAR_EAST, 3);
-		fdActorSetSprPriority(ACTOR_ELDER_FAR_WEST, 3);
+		fdActorSetSpritePriority(ACTOR_ELDER_EAST, 2);
+		fdActorSetSpritePriority(ACTOR_ELDER_WEST, 2);
+		fdActorSetSpritePriority(ACTOR_ELDER_FAR_EAST, 3);
+		fdActorSetSpritePriority(ACTOR_ELDER_FAR_WEST, 3);
 		fdScriptSetMessageId(MsgValeTheBoulderIsFalling);
 		/* "Ahhh! The Boulder! It's falling!" */
 		fdScriptShowMessageThenWait(ACTOR_ELDER_EAST_STAND_IN, 0, 20);
@@ -1551,37 +1554,37 @@ static void scValePrologueWatchBoulderFall(void)
 		movingActor = fdActorGet(ACTOR_BOULDER);
 		boulderHeight = movingActor->y.fixed + toFIXED(64);
 		movingActor->y.fixed = boulderHeight;
-		movingActor->tgtY = boulderHeight;
+		movingActor->targetY = boulderHeight;
 		fdActorSetSpeed(ACTOR_BOULDER, 0.8);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		fdActorMoveToAndWait(ACTOR_BOULDER, 114, 333);
 		fdActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
 		fdMapGridSetShake(2, 2, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		*shakeShift = 0;
 		fdActorSetSpeed(ACTOR_BOULDER, 0.4);
 		fdActorMoveToAndWait(ACTOR_BOULDER, 114, 300);
 		fdActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
 		fdMapGridSetShake(5, 5, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		*shakeShift = 2;
 		fdActorSetSpeed(ACTOR_BOULDER, 0.8);
 		fdActorMoveToAndWait(ACTOR_BOULDER, 114, 333);
 		fdActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
 		fdMapGridSetShake(2, 2, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		*shakeShift = 0;
 		fdActorSetSpeed(ACTOR_BOULDER, 0.4);
 		fdActorMoveToAndWait(ACTOR_BOULDER, 114, 300);
 		fdActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
 		fdMapGridSetShake(4, 4, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		*shakeShift = 2;
 		fdActorSetSpeed(ACTOR_BOULDER, 0.8);
 		fdActorMoveToAndWait(ACTOR_BOULDER, 114, 333);
 		fdActorSetAnimation(ACTOR_BOULDER, ANIM_WALK);
 		fdMapGridSetShake(2, 2, 1);
-		sySndPlay(SE_CRASH);
+		sySoundPlay(SE_CRASH);
 		*shakeShift = 1;
 		fdScriptWait(20);
 		fdActorSetAttachedEffect(
@@ -1604,7 +1607,7 @@ static void scValePrologueWatchBoulderFall(void)
 		ShakeDone = 1;
 		fdActorSetAnimation(ACTOR_ELDER_FAR_WEST, ANIM_STAND);
 		sySynch(1);
-		fdActorSetSprColById(ACTOR_ELDER_FAR_WEST, SPRITE_COLOR_NORMAL);
+		fdActorSetSpriteColorById(ACTOR_ELDER_FAR_WEST, SPRITE_COLOR_NORMAL);
 		fdActorShowEmote(
 			ACTOR_ELDER_FAR_WEST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
 		fdActorFaceDirection(ACTOR_ELDER_FAR_WEST, FACING_WEST, 40);
@@ -1620,7 +1623,7 @@ static void scValePrologueWatchBoulderFall(void)
 		fdScriptWait(10);
 		/* "Hurry, boys! Run!!! It's just a little farther!" */
 		fdScriptShowMessageThenWait(ACTOR_ELDER_FAR_WEST, 0, 20);
-		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+		sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		fdCameraSetSpeed(6);
 		fdCameraMoveTo(84, CAMERA_KEEP, 564, 1);
@@ -1656,29 +1659,29 @@ static void scValePrologueWatchBoulderFall(void)
 /* Sets the colour mode of every part of a one-sprite actor to `mode` - 1, or
    with mode 0 flashes it white and plain in turn, two ticks each
    (ValePrologueFlashColorModes). */
-static void scValePrologueSetActorColMode(ACTOR *actor, Sint32 mode)
+static void scValePrologueSetActorColorMode(ACTOR *actor, Sint32 mode)
 {
-	if((actor->sprStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
-		SPR	  *anm = actor->spr;
-		Sint32 anmParameter = mode - 1;
-		Uint8  cnt;
+	if((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+		SPR	  *animation = actor->sprite;
+		Sint32 animationParameter = mode - 1;
+		Uint8  count;
 		if(mode == 0) {
-			anmParameter = ValePrologueFlashColorModes[(TickCount >> 1) &
-				(actor->sprStorageKind & 0xf)];
+			animationParameter = ValePrologueFlashColorModes[(TickCount >> 1) &
+				(actor->spriteStorageKind & 0xf)];
 		}
-		cnt = anm->cnt;
-		if(cnt != 0) {
-			SPR_ANIMATION **entries = anm->entries;
-			Sint32			remainingEntries = cnt;
+		count = animation->count;
+		if(count != 0) {
+			SPR_ANIMATION **entries = animation->entries;
+			Sint32			remainingEntries = count;
 			do {
 				SPR_ANIMATION *entry = *entries++;
 				if(entry != NULL && entry->script != NULL) {
-					entry->colMode = anmParameter;
+					entry->colorMode = animationParameter;
 				}
 				remainingEntries--;
 			} while(remainingEntries != 0);
 		}
-		anm->dirty = 1;
+		animation->dirty = 1;
 	}
 }
 
@@ -1687,15 +1690,15 @@ static void scValePrologueSetActorColMode(ACTOR *actor, Sint32 mode)
 UNUSED static void scValePrologueFlashBoulderMapAnimationEntries(void)
 {
 	if(((TickCount >> ShakeShift) & 3) != 0) {
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_EAST), 1);
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_WEST), 1);
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_FAR_EAST), 1);
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_FAR_WEST), 1);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_EAST), 1);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_WEST), 1);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_FAR_EAST), 1);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_FAR_WEST), 1);
 	} else {
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_EAST), 8);
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_WEST), 8);
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_FAR_EAST), 8);
-		scValePrologueSetActorColMode(fdActorGet(ACTOR_ELDER_FAR_WEST), 8);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_EAST), 8);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_WEST), 8);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_FAR_EAST), 8);
+		scValePrologueSetActorColorMode(fdActorGet(ACTOR_ELDER_FAR_WEST), 8);
 	}
 }
 
@@ -1719,7 +1722,7 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 		actor = fdActorGet(ACTOR_KYLE);
 		pulseDelay = SQUASH_AND_STRETCH_PAUSE();
 		pulseScript = ValePrologueSquashAndStretchScript;
-		actor->tmr = pulseDelay;
+		actor->timer = pulseDelay;
 		fdActorSetScript(ACTOR_KYLE, pulseScript);
 	}
 	fdActorSetPos(ACTOR_DORA, 192, 1189);
@@ -1732,7 +1735,7 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 		Sint32 pulseDelay;
 		actor = fdActorGet(ACTOR_JENNAS_FATHER);
 		pulseDelay = SQUASH_AND_STRETCH_PAUSE();
-		actor->tmr = pulseDelay;
+		actor->timer = pulseDelay;
 		fdActorSetScript(ACTOR_JENNAS_FATHER, pulseScript);
 	}
 	fdActorSetPos(ACTOR_JENNAS_MOTHER, 250, 1214);
@@ -1743,14 +1746,14 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 		Sint32 pulseDelay;
 		actor = fdActorGet(ACTOR_JENNAS_MOTHER);
 		pulseDelay = SQUASH_AND_STRETCH_PAUSE();
-		actor->tmr = pulseDelay;
+		actor->timer = pulseDelay;
 		fdActorSetScript(ACTOR_JENNAS_MOTHER, pulseScript);
 	}
 	fdActorSetPos(ACTOR_JENNA_CHILD, 227, 1189);
 	fdActorFaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorSetPos(ACTOR_FELIX_CHILD, 243, 1277);
 	fdActorFaceDirection(ACTOR_FELIX_CHILD, FACING_NORTH, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_FELIX_CHILD), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_FELIX_CHILD), 0);
 	sySynch(3);
 	fdScriptSetMessageId(MsgValeNoBrother);
 	/* "Oh no! My brother!" */
@@ -1788,7 +1791,7 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 	fdCameraMoveTo(232, CAMERA_KEEP, 1253, 1);
 	fdCameraWaitForMove();
 	fdScriptWait(20);
-	sySndPlay(SE_HEAVY_IMPACT);
+	sySoundPlay(SE_HEAVY_IMPACT);
 	fdActorJump(ACTOR_FELIX_CHILD, 4, 0);
 	fdActorSetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_UNDER_WATER);
 	fdScriptWait(10);
@@ -1842,11 +1845,11 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 	fdCameraWaitForMove();
 	fdActorSetPos(ACTOR_FELIX_CHILD, 243, 1277);
 	sySynch(1);
-	sySndPlay(SE_DRIP);
+	sySoundPlay(SE_DRIP);
 	{
 		ACTOR *actor;
 		actor = fdActorGet(ACTOR_FELIX_CHILD);
-		actor->velY = toFIXED(2);
+		actor->velocityY = toFIXED(2);
 	}
 	fdScriptWait(6);
 	fdActorSetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING);
@@ -1867,19 +1870,19 @@ static void scValePrologueWatchAttemptToSaveFelix(void)
 	{
 		ACTOR *actor;
 		actor = fdActorGet(ACTOR_JENNAS_MOTHER);
-		actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	}
 	{
 		ACTOR *actor;
 		actor = fdActorGet(ACTOR_JENNA_CHILD);
-		actor->steeringFlg &= ~ACTOR_FACES_MOTION;
+		actor->steeringFlags &= ~ACTOR_FACES_MOTION;
 	}
 	fdActorSetSpeed(ACTOR_JENNAS_MOTHER, 0.6);
 	fdActorSetSpeed(ACTOR_JENNA_CHILD, 0.6);
 	fdActorSetDestination(ACTOR_JENNAS_MOTHER, 247, 1210);
 	fdActorMoveToAndWait(ACTOR_JENNA_CHILD, 227, 1189);
-	fdActorGet(ACTOR_JENNAS_MOTHER)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGet(ACTOR_JENNA_CHILD)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNAS_MOTHER)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGet(ACTOR_JENNA_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_JENNA_CHILD, FACING_SOUTHWEST, 0);
 	fdActorFaceDirection(ACTOR_JENNAS_MOTHER, FACING_WEST, 10);
 	fdActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_SHAKE_HEAD);
@@ -1986,7 +1989,7 @@ static void scValePrologueDoraGoesForHelp(void)
 	fdActorSetScript(
 		ACTOR_JENNA_CHILD, ValePrologueJennaRunsIntoRiversideHouse);
 	fdActorRunScriptAndWait(ACTOR_DORA, ValePrologueDoraRunsIntoRiversideHouse);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorOpens, 38, 72);
 	fdScriptWait(10);
 	fdActorWalkToAndWait(ACTOR_DORA, 149, 1175);
@@ -2000,23 +2003,23 @@ static void scValePrologueDoraGoesForHelp(void)
 	fdActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
 	fdActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
 	villager = fdActorGet(ACTOR_KYLE);
-	villager->tmr = SQUASH_AND_STRETCH_PAUSE();
+	villager->timer = SQUASH_AND_STRETCH_PAUSE();
 	villager = fdActorGet(ACTOR_JENNAS_FATHER);
-	villager->tmr = SQUASH_AND_STRETCH_PAUSE();
+	villager->timer = SQUASH_AND_STRETCH_PAUSE();
 	villager = fdActorGet(ACTOR_JENNAS_MOTHER);
-	villager->tmr = SQUASH_AND_STRETCH_PAUSE();
+	villager->timer = SQUASH_AND_STRETCH_PAUSE();
 	script = ValePrologueSquashAndStretchScript;
 	fdActorSetScript(ACTOR_KYLE, script);
 	fdActorSetScript(ACTOR_JENNAS_FATHER, script);
 	fdActorSetScript(ACTOR_JENNAS_MOTHER, script);
 	fdActorWaitForScriptEndById(ACTOR_JENNA_CHILD);
 	fdScriptWait(10);
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	fdMapGridAnimateMetatiles(ValePrologueGrandparentsDoorCloses, 38, 72);
 	fdScriptWait(30);
 	fdPlayQueuedMusic();
 	fdCameraMoveTo(112, CAMERA_KEEP, 1225, 1);
-	sySndPlay(SE_DOOR_OPEN);
+	sySoundPlay(SE_DOOR_OPEN);
 	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorOpens, 35, 73);
 	fdScriptWait(20);
 	fdPlayQueuedMusic();
@@ -2025,7 +2028,7 @@ static void scValePrologueDoraGoesForHelp(void)
 	fdActorSetScript(
 		ACTOR_JENNA_CHILD, ValePrologueJennaComesOutOfRiversideHouse);
 	fdScriptWait(40);
-	sySndPlay(SE_DOOR_CLOSE);
+	sySoundPlay(SE_DOOR_CLOSE);
 	fdMapGridAnimateMetatiles(ValePrologueIsaacsDoorCloses, 35, 73);
 	fdActorWaitForScriptEndById(ACTOR_JENNA_CHILD);
 	fdPlayQueuedMusic();
@@ -2131,7 +2134,7 @@ static void scValePrologueTalkAboutSavingFelix(void)
 		villager = fdActorGet(ACTOR_KYLE);
 		pulseDelay = SQUASH_AND_STRETCH_PAUSE();
 		pulseScript = ValePrologueSquashAndStretchScript;
-		villager->tmr = pulseDelay;
+		villager->timer = pulseDelay;
 		fdActorSetScript(ACTOR_KYLE, pulseScript);
 	}
 	fdScriptWait(20);
@@ -2174,13 +2177,13 @@ static void scValePrologueBoulderSweepsThemAway(void)
 			fdActorSetPos(ACTOR_JENNAS_MOTHER, 247, 1210);
 			fdActorFaceDirection(ACTOR_JENNAS_MOTHER, FACING_SOUTHWEST, 0);
 			actor = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN);
-			sprite = actor->spr;
-			actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			sprite->image.pri = 1;
+			sprite = actor->sprite;
+			actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			sprite->image.priority = 1;
 			leader = fdActorGet(ACTOR_PARTY_LEADER);
-			sprite = leader->spr;
-			leader->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-			sprite->image.pri = 2;
+			sprite = leader->sprite;
+			leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+			sprite->image.priority = 2;
 			actor = fdActorGet(ACTOR_PARTY_LEADER);
 			if(actor != NULL) {
 				fdActorSetPosFX(
@@ -2256,9 +2259,9 @@ static void scValePrologueBoulderSweepsThemAway(void)
 			fdActorSetAnimation(ACTOR_JENNA_CHILD, ANIM_NOD);
 			fdActorSetAnimation(ACTOR_GARET_CHILD, ANIM_NOD);
 			fdActorSetAnimationAndWait(ACTOR_EXHAUSTED_STRONGMAN, ANIM_NOD);
-			leader->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+			leader->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 			actor = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN);
-			actor->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+			actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 			scValePrologueShowBoulderSweepingDownriver();
 			gmFlagSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
 			fdScriptEnd();
@@ -2272,10 +2275,10 @@ static inline void scValeProloguePlaceActor(
 {
 	actor->x.fixed = horizontalPos;
 	actor->y.fixed = horizontalPos;
-	actor->tgtX = horizontalPos;
-	actor->tgtY = horizontalPos;
+	actor->targetX = horizontalPos;
+	actor->targetY = horizontalPos;
 	actor->z.fixed = groundPos;
-	actor->tgtZ = groundPos;
+	actor->targetZ = groundPos;
 }
 
 /* One crash of the Boulder coming down, made of a shake of shakeAmplitude
@@ -2285,7 +2288,7 @@ static inline void scValeProloguePlayImpactBeat(
 {
 	fdMapGridSetShakeFX(
 		toFIXED(shakeAmplitude), toFIXED(shakeAmplitude), toFIXED(1));
-	sySndPlay(SE_CRASH);
+	sySoundPlay(SE_CRASH);
 	fdScriptWait(ticks);
 }
 
@@ -2293,10 +2296,10 @@ static inline void scValeProloguePlayImpactBeat(
    away. */
 static void scValePrologueShowBoulderSweepingDownriver(void)
 {
-	SPR *boulderSpr;
+	SPR *boulderSprite;
 	/* The actor being set up and its sprite: the Boulder's shadow, and while
 	   the lightning flashes Kyle and each of Jenna's parents in turn. */
-	SPR			 *figureSpr;
+	SPR			 *figureSprite;
 	ACTOR		 *actor;
 	ACTOR		 *lookingActor;
 	ACTOR		 *figure;
@@ -2306,8 +2309,8 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 
 	actor = fdActorGet(ACTOR_BOULDER);
 	figure = fdActorGet(ACTOR_BOULDER_SHADOW);
-	boulderSpr = actor->spr;
-	figureSpr = figure->spr;
+	boulderSprite = actor->sprite;
+	figureSprite = figure->sprite;
 	fdCameraSetSpeed(1);
 	fdCameraMoveTo(110, CAMERA_KEEP, 1419, 1);
 	fdActorSetSpeed(ACTOR_EXHAUSTED_STRONGMAN, 1.2);
@@ -2350,15 +2353,15 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdActorFaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
 	fdScriptWait(20);
 	lookingActor = fdActorGet(ACTOR_PARTY_LEADER);
-	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
+	lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
 	lookingActor = fdActorGet(ACTOR_GARET_CHILD);
-	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
+	lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
 	lookingActor = fdActorGet(ACTOR_JENNA_CHILD);
-	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
+	lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
 	lookingActor = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN);
-	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
+	lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
 	lookingActor = fdActorGet(ACTOR_DORA);
-	lookingActor->tmr = VALE_PROLOGUE_GLANCE_PAUSE();
+	lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
 	lookAroundActions = ValePrologueLookAroundScript;
 	fdActorSetScript(ACTOR_DORA, lookAroundActions);
 	fdScriptWait(30);
@@ -2367,7 +2370,7 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdActorSetScript(ACTOR_GARET_CHILD, lookAroundActions);
 	fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, lookAroundActions);
 	fdScriptWait(10);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	scValeProloguePlayImpactBeat(3, 30);
 	fdMapGridSetShake(1, 1, 1);
 	fdScriptWait(120);
@@ -2389,23 +2392,23 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 	fdPaletteFadeStartInterpolation(40);
 	sySynch(40);
-	fdActorSetSprColById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BOULDER), 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_BOULDER_SHADOW), 0);
+	fdActorSetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BOULDER), 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_BOULDER_SHADOW), 0);
 	figure->scaleX = toFIXED(4) / 5;
 	figure->scaleY = toFIXED(4) / 5;
-	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	figureSpr->image.pri = 1;
+	figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	figureSprite->image.priority = 1;
 	scValeProloguePlaceActor(actor, toFIXED(200), toFIXED(898));
-	actor->motionFlg = 0;
-	actor->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	boulderSpr->image.pri = 0;
-	fdCameraGetActor()->tgtX = ACTOR_NO_TARGET;
-	fdCameraGetActor()->tgtY = ACTOR_NO_TARGET;
-	fdCameraGetActor()->tgtZ = ACTOR_NO_TARGET;
-	fdCameraGetActor()->velX = 0;
-	fdCameraGetActor()->velY = 0;
-	fdCameraGetActor()->velZ = 0;
+	actor->motionFlags = 0;
+	actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	boulderSprite->image.priority = 0;
+	fdCameraGetActor()->targetX = ACTOR_NO_TARGET;
+	fdCameraGetActor()->targetY = ACTOR_NO_TARGET;
+	fdCameraGetActor()->targetZ = ACTOR_NO_TARGET;
+	fdCameraGetActor()->velocityX = 0;
+	fdCameraGetActor()->velocityY = 0;
+	fdCameraGetActor()->velocityZ = 0;
 	sySynch(1);
 	fdCameraMoveTo(247, 128, 917, 0);
 	fdMapGridCenterOnFollowedPoint();
@@ -2425,26 +2428,26 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(60);
 	fdMapGridWaitForShakeToSettle();
-	fdCameraGetActor()->tgtX = ACTOR_NO_TARGET;
-	fdCameraGetActor()->tgtY = ACTOR_NO_TARGET;
-	fdCameraGetActor()->tgtZ = ACTOR_NO_TARGET;
-	fdCameraGetActor()->velX = 0;
-	fdCameraGetActor()->velY = 0;
-	fdCameraGetActor()->velZ = 0;
+	fdCameraGetActor()->targetX = ACTOR_NO_TARGET;
+	fdCameraGetActor()->targetY = ACTOR_NO_TARGET;
+	fdCameraGetActor()->targetZ = ACTOR_NO_TARGET;
+	fdCameraGetActor()->velocityX = 0;
+	fdCameraGetActor()->velocityY = 0;
+	fdCameraGetActor()->velocityZ = 0;
 	syCloseEvent(scValePrologueUpdateBoulderShadow);
 	fdActorStop(ACTOR_BOULDER);
 	sySynch(1);
 	fdActorSetAnimation(ACTOR_BOULDER, ANIM_STILL);
 	figure->scaleX = toFIXED(5) / 4;
 	figure->scaleY = toFIXED(5) / 4;
-	figureSpr->ofsY = 2;
-	figureSpr->scale = toFIXED(5) / 4;
+	figureSprite->offsetY = 2;
+	figureSprite->scale = toFIXED(5) / 4;
 	actor->scaleX = toFIXED(2);
 	actor->scaleY = toFIXED(2);
 	actor->x.fixed = 0;
 	actor->z.fixed = 0;
-	actor->tgtX = 0;
-	actor->tgtZ = 0;
+	actor->targetX = 0;
+	actor->targetZ = 0;
 	sySynch(1);
 	fdActorSetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING_STILL);
 	fdActorSetPos(ACTOR_DORA, 169, 1264);
@@ -2464,10 +2467,10 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdActorSetAnimation(ACTOR_GARET_CHILD, ANIM_STILL);
 	fdCameraMoveTo(166, 0, 1337, 0);
 	fdMapGridCenterOnFollowedPoint();
-	actor->motionFlg = 0;
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtY = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
+	actor->motionFlags = 0;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
 	scValePrologueFlashLightning();
 	fdActorSetPos(ACTOR_BOULDER_SHADOW, 218, 1176);
 	fdCameraMoveTo(210, 0, 1196, 0);
@@ -2482,49 +2485,49 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	/* Kyle and Jenna's parents freeze in the flash, drawn in front of all
 	   else. */
 	figure = fdActorGet(ACTOR_KYLE);
-	figureSpr = figure->spr;
-	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	figureSprite = figure->sprite;
+	figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	figure->scaleX = toFIXED(1);
 	figure->scaleY = toFIXED(1);
 	figure->facing = FACING_NORTH_NORTHEAST;
-	figureSpr->image.pri = 0;
+	figureSprite->image.priority = 0;
 	fdActorSetAnimation(ACTOR_KYLE, ANIM_STILL);
 	figure = fdActorGet(ACTOR_JENNAS_FATHER);
-	figureSpr = figure->spr;
-	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	figureSprite = figure->sprite;
+	figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	figure->scaleX = toFIXED(1);
 	figure->scaleY = toFIXED(1);
 	figure->facing = FACING_NORTH_NORTHWEST;
-	figureSpr->image.pri = 0;
+	figureSprite->image.priority = 0;
 	fdActorSetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_RECOIL);
 	figure = fdActorGet(ACTOR_JENNAS_MOTHER);
-	figureSpr = figure->spr;
-	figure->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
+	figureSprite = figure->sprite;
+	figure->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 	figure->scaleX = toFIXED(1);
 	figure->scaleY = toFIXED(1);
 	figure->facing = FACING_NORTH_NORTHWEST;
-	figureSpr->image.pri = 0;
+	figureSprite->image.priority = 0;
 	fdActorSetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
 	figure = fdActorGet(ACTOR_BOULDER_SHADOW);
-	figureSpr = figure->spr;
+	figureSprite = figure->sprite;
 	scValePrologueFlashLightning();
 	actor->y.fixed = toFIXED(48);
 	actor->x.fixed = toFIXED(214);
 	actor->z.fixed = toFIXED(1216);
-	actor->tgtX = ACTOR_NO_TARGET;
-	actor->tgtY = ACTOR_NO_TARGET;
-	actor->tgtZ = ACTOR_NO_TARGET;
-	figureSpr->image.pri = 1;
+	actor->targetX = ACTOR_NO_TARGET;
+	actor->targetY = ACTOR_NO_TARGET;
+	actor->targetZ = ACTOR_NO_TARGET;
+	figureSprite->image.priority = 1;
 	fdActorSetPos(ACTOR_BOULDER_SHADOW, 214, 1216);
 	fdActorFaceDirection(ACTOR_JENNAS_FATHER, FACING_NORTH, 0);
 	fdActorFaceDirection(ACTOR_JENNAS_MOTHER, FACING_NORTH, 20);
 	fdScriptSetFlag(FLAG_WEATHER_HELD);
-	fdTilesetAnimPause(0);
-	fdTilesetAnimPause(1);
-	fdTilesetAnimPause(2);
-	fdTilesetAnimPause(3);
-	fdTilesetAnimPause(4);
-	fdTilesetAnimPause(5);
+	fdTilesetAnimationPause(0);
+	fdTilesetAnimationPause(1);
+	fdTilesetAnimationPause(2);
+	fdTilesetAnimationPause(3);
+	fdTilesetAnimationPause(4);
+	fdTilesetAnimationPause(5);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
 	fdPaletteFadeStartInterpolation(120);
@@ -2535,20 +2538,20 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdScriptWait(80);
 	fdScriptWait(100);
 	syCloseEvent(scValePrologueFlickerBoulderShadow);
-	figureSpr->scale = figure->scaleX;
+	figureSprite->scale = figure->scaleX;
 	gmFlagClear(FLAG_WEATHER_HELD);
-	fdTilesetAnimResume(0);
-	fdTilesetAnimResume(1);
-	fdTilesetAnimResume(2);
-	fdTilesetAnimResume(3);
-	fdTilesetAnimResume(4);
-	fdTilesetAnimResume(5);
+	fdTilesetAnimationResume(0);
+	fdTilesetAnimationResume(1);
+	fdTilesetAnimationResume(2);
+	fdTilesetAnimationResume(3);
+	fdTilesetAnimationResume(4);
+	fdTilesetAnimationResume(5);
 	scValePrologueRebuildRiverbank();
 	fdActorSetPos(ACTOR_DORA, 165, 1229);
 	fdActorSetAnimation(ACTOR_DORA, ANIM_STAND);
 	actor = fdActorGet(ACTOR_DORA);
 	actor->facing = FACING_NORTHEAST;
-	actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+	actor->timer = SQUASH_AND_STRETCH_PAUSE();
 	departureActions = ValePrologueSquashAndStretchScript;
 	actor->userValue = 1;
 	fdActorSetScript(ACTOR_DORA, departureActions);
@@ -2556,27 +2559,28 @@ static void scValePrologueShowBoulderSweepingDownriver(void)
 	fdActorSetAnimation(ACTOR_JENNA_CHILD, ANIM_STAND);
 	actor = fdActorGet(ACTOR_JENNA_CHILD);
 	actor->facing = FACING_NORTHEAST;
-	actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+	actor->timer = SQUASH_AND_STRETCH_PAUSE();
 	actor->userValue = 2;
 	fdActorSetScript(ACTOR_JENNA_CHILD, departureActions);
 	fdActorSetPos(ACTOR_GARET_CHILD, 152, 1285);
 	fdActorSetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
 	actor = fdActorGet(ACTOR_GARET_CHILD);
 	actor->facing = FACING_NORTHEAST;
-	actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+	actor->timer = SQUASH_AND_STRETCH_PAUSE();
 	actor->userValue = 3;
 	fdActorSetScript(ACTOR_GARET_CHILD, departureActions);
 	fdActorSetPos(ACTOR_EXHAUSTED_STRONGMAN, 180, 1311);
 	actor = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN);
 	actor->facing = FACING_NORTHEAST;
-	actor->tmr = SQUASH_AND_STRETCH_PAUSE();
+	actor->timer = SQUASH_AND_STRETCH_PAUSE();
 	actor->userValue = 4;
 	fdActorSetScript(ACTOR_EXHAUSTED_STRONGMAN, departureActions);
 	fdActorSetAnimation(
 		ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
-	fdActorGet(ACTOR_GARET_CHILD)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	sySetTickEvent(scValePrologueCopyLeaderSprPriority, EVENT_PASS_TICK);
+	fdActorGet(ACTOR_GARET_CHILD)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->priorityFlags &=
+		~ACTOR_PRIORITY_AUTOMATIC;
+	sySetTickEvent(scValePrologueCopyLeaderSpritePriority, EVENT_PASS_TICK);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 181, 1273);
 	fdActorGet(ACTOR_PARTY_LEADER)->facing = FACING_NORTHEAST;
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2606,12 +2610,12 @@ static void scValePrologueFlashLightning(void)
 {
 	sySynch(20);
 	fdScriptSetFlag(FLAG_WEATHER_HELD);
-	fdTilesetAnimPause(0);
-	fdTilesetAnimPause(1);
-	fdTilesetAnimPause(2);
-	fdTilesetAnimPause(3);
-	fdTilesetAnimPause(4);
-	fdTilesetAnimPause(5);
+	fdTilesetAnimationPause(0);
+	fdTilesetAnimationPause(1);
+	fdTilesetAnimationPause(2);
+	fdTilesetAnimationPause(3);
+	fdTilesetAnimationPause(4);
+	fdTilesetAnimationPause(5);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_DIM, PALETTES_BG);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_SPRITES);
 	fdPaletteFadeStartInterpolation(1);
@@ -2620,12 +2624,12 @@ static void scValePrologueFlashLightning(void)
 	fdPaletteFadeStartInterpolation(60);
 	sySynch(60);
 	gmFlagClear(FLAG_WEATHER_HELD);
-	fdTilesetAnimResume(0);
-	fdTilesetAnimResume(1);
-	fdTilesetAnimResume(2);
-	fdTilesetAnimResume(3);
-	fdTilesetAnimResume(4);
-	fdTilesetAnimResume(5);
+	fdTilesetAnimationResume(0);
+	fdTilesetAnimationResume(1);
+	fdTilesetAnimationResume(2);
+	fdTilesetAnimationResume(3);
+	fdTilesetAnimationResume(4);
+	fdTilesetAnimationResume(5);
 }
 
 /* The event that keeps ACTOR_BOULDER_SHADOW on the Boulder as it comes down the
@@ -2634,32 +2638,32 @@ static void scValePrologueUpdateBoulderShadow(void)
 {
 	ACTOR  *src;
 	ACTOR  *shadow;
-	SPR	   *spr;
-	Sint16 *tmr;
+	SPR	   *sprite;
+	Sint16 *timer;
 
 	src = fdActorGet(ACTOR_BOULDER);
 	shadow = fdActorGet(ACTOR_BOULDER_SHADOW);
-	spr = shadow->spr;
-	tmr = &src->tmr;
-	if(*tmr != 0) {
-		if(*tmr == 60) {
+	sprite = shadow->sprite;
+	timer = &src->timer;
+	if(*timer != 0) {
+		if(*timer == 60) {
 			fdMapGridSetShake(3, 3, 1);
 		}
-		if(*tmr == 40) {
+		if(*timer == 40) {
 			fdMapGridSetShake(4, 4, 1);
 		}
-		if(*tmr == 30) {
+		if(*timer == 30) {
 			fdMapGridSetShake(2, 2, 1);
 		}
-		if(*tmr == 20) {
+		if(*timer == 20) {
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 		}
-		(*tmr)--;
+		(*timer)--;
 	}
 	shadow->x.fixed = src->x.fixed;
 	shadow->z.fixed = src->z.fixed;
-	shadow->tgtX = shadow->x.fixed;
-	spr->ofsY = 10;
+	shadow->targetX = shadow->x.fixed;
+	sprite->offsetY = 10;
 	if(TickCount & 1) {
 		switch(src->userValue) {
 		case 1:
@@ -2681,9 +2685,9 @@ static void scValePrologueUpdateBoulderShadow(void)
 			shadow->scaleY -= toFIXED(3) / 100;
 			break;
 		}
-		spr->scale = shadow->scaleX;
+		sprite->scale = shadow->scaleX;
 	} else {
-		spr->scale = 0;
+		sprite->scale = 0;
 	}
 }
 
@@ -2692,13 +2696,13 @@ static void scValePrologueUpdateBoulderShadow(void)
 static void scValePrologueFlickerBoulderShadow(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_BOULDER_SHADOW);
-	Uint32 frm = TickCount;
-	SPR	  *spr = actor->spr;
+	Uint32 frame = TickCount;
+	SPR	  *sprite = actor->sprite;
 
-	if(frm & 1) {
-		spr->ofsY = 2;
+	if(frame & 1) {
+		sprite->offsetY = 2;
 	} else {
-		spr->ofsY = 64;
+		sprite->offsetY = 64;
 	}
 }
 
@@ -2784,11 +2788,11 @@ static void scValePrologueGaretFollowsIsaac(void)
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 	fdActorStop(ACTOR_GARET_CHILD);
-	syCloseEvent(scValePrologueCopyLeaderSprPriority);
+	syCloseEvent(scValePrologueCopyLeaderSpritePriority);
 	fdActorWalkToAndWait(ACTOR_PARTY_LEADER, 480, 1392);
 	fdActorSetPos(ACTOR_PARTY_LEADER, 0, 0);
 	fdActorFaceDirection(ACTOR_GARET_CHILD, FACING_SOUTH_SOUTHEAST, 20);
-	fdActorGet(ACTOR_GARET_CHILD)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_GARET_CHILD)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	fdActorSetPos(ACTOR_GARET_CHILD, 249, 1240);
 	sySynch(1);
 	fdScriptSetMessageId(MsgValeIsaac);
@@ -2850,7 +2854,7 @@ static void scValePrologueFightThirdMonster(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	state->transitionFrm = 64;
+	state->transitionFrame = 64;
 	gmFlagSet(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
 	gmFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
@@ -2868,7 +2872,7 @@ static void scValePrologueFightFourthMonster(void)
 	state = FieldStateWork;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	state->transitionFrm = 64;
+	state->transitionFrame = 64;
 	gmFlagSet(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
 	gmFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
@@ -2882,15 +2886,15 @@ static void scValePrologueFlashPaletteAndSpawnEffects(ACTOR *actor)
 	Sint32 spawnInterval;
 
 	if((TickCount & 2) != 0) {
-		fdActorSetColMode(actor, SPRITE_COLOR_WHITE);
+		fdActorSetColorMode(actor, SPRITE_COLOR_WHITE);
 	} else {
-		fdActorSetColMode(actor, SPRITE_COLOR_NORMAL);
+		fdActorSetColorMode(actor, SPRITE_COLOR_NORMAL);
 	}
 	{
-		volatile Uint32 *frm = &TickCount;
+		volatile Uint32 *frame = &TickCount;
 
 		spawnInterval = ShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
-		if(syMathRemainderUnsigned(*frm, spawnInterval) == 0) {
+		if(syMathRemainderUnsigned(*frame, spawnInterval) == 0) {
 			scSpawnPsynergyRings(actor);
 		}
 	}
@@ -2901,13 +2905,13 @@ static void scValePrologueFlashPaletteAndSpawnEffects(ACTOR *actor)
    scValePrologueFlashPaletteAndSpawnEffects. */
 static void scValePrologueCyclePaletteAndSpawnEffects(ACTOR *actor)
 {
-	Sint32 paletteFrm;
+	Sint32 paletteFrame;
 	Sint32 spawnInterval;
 
 	if((TickCount & 1) != 0) {
-		paletteFrm = (TickCount >> 1);
-		fdActorSetColMode(
-			actor, syMathRemainderUnsigned(paletteFrm, SWAPPED_COLOR_MODES));
+		paletteFrame = (TickCount >> 1);
+		fdActorSetColorMode(
+			actor, syMathRemainderUnsigned(paletteFrame, SWAPPED_COLOR_MODES));
 	}
 	spawnInterval = ShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
 	if(syMathRemainderUnsigned(TickCount, spawnInterval) == 0) {
@@ -2919,12 +2923,12 @@ static void scValePrologueCyclePaletteAndSpawnEffects(ACTOR *actor)
    tick. */
 static void scValePrologueCycleActorPalettes(ACTOR *actor)
 {
-	Sint32 paletteFrm;
+	Sint32 paletteFrame;
 
 	if((TickCount & 1) != 0) {
-		paletteFrm = (TickCount >> 1);
-		fdActorSetColMode(
-			actor, syMathRemainderUnsigned(paletteFrm, SWAPPED_COLOR_MODES));
+		paletteFrame = (TickCount >> 1);
+		fdActorSetColorMode(
+			actor, syMathRemainderUnsigned(paletteFrame, SWAPPED_COLOR_MODES));
 	}
 }
 
@@ -2955,23 +2959,24 @@ static void scValePrologueCycleBoulderPalette(void)
 
 /* Keeps Garet and the man who came to help (ACTOR_EXHAUSTED_STRONGMAN) at the
    leader's sprite priority while they stand by the river. */
-static void scValePrologueCopyLeaderSprPriority(void)
+static void scValePrologueCopyLeaderSpritePriority(void)
 {
-	SPR *srcSpr;
+	SPR *srcSprite;
 #if !VALE_PROLOGUE_SHADOWS_TAKE_LEADER_PRIORITY
-	SPR *tgtSpr;
-	SPR *secondTgtSpr;
+	SPR *targetSprite;
+	SPR *secondTargetSprite;
 #endif
 
-	srcSpr = fdActorGet(ACTOR_PARTY_LEADER)->spr;
+	srcSprite = fdActorGet(ACTOR_PARTY_LEADER)->sprite;
 #if VALE_PROLOGUE_SHADOWS_TAKE_LEADER_PRIORITY
-	fdActorSetSprPriority(ACTOR_GARET_CHILD, srcSpr->image.pri);
-	fdActorSetSprPriority(ACTOR_EXHAUSTED_STRONGMAN, srcSpr->image.pri);
+	fdActorSetSpritePriority(ACTOR_GARET_CHILD, srcSprite->image.priority);
+	fdActorSetSpritePriority(
+		ACTOR_EXHAUSTED_STRONGMAN, srcSprite->image.priority);
 #else
-	tgtSpr = fdActorGet(ACTOR_GARET_CHILD)->spr;
-	tgtSpr->image.pri = srcSpr->image.pri;
-	secondTgtSpr = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->spr;
-	secondTgtSpr->image.pri = srcSpr->image.pri;
+	targetSprite = fdActorGet(ACTOR_GARET_CHILD)->sprite;
+	targetSprite->image.priority = srcSprite->image.priority;
+	secondTargetSprite = fdActorGet(ACTOR_EXHAUSTED_STRONGMAN)->sprite;
+	secondTargetSprite->image.priority = srcSprite->image.priority;
 #endif
 }
 
@@ -2995,8 +3000,8 @@ static void scValePrologueSearchValuablesChest(void)
 	fdScriptEnd();
 }
 
-/* The colour modes scValePrologueSetActorColMode's mode 0 steps through, a step
-   every two ticks. */
+/* The colour modes scValePrologueSetActorColorMode's mode 0 steps through, a
+   step every two ticks. */
 Uint8 ValePrologueFlashColorModes[] = {SPRITE_COLOR_WHITE, SPRITE_COLOR_NORMAL,
 	SPRITE_COLOR_NORMAL, SPRITE_COLOR_NORMAL};
 

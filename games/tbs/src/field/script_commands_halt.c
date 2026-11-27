@@ -15,7 +15,7 @@ void fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect)
 {
 	FIELD_EFFECT_STATE *effectState;
 	VECTOR3				pos;
-	Sint16				ang;
+	Sint16				angle;
 	Sint32				state;
 
 	effectState = FieldEffectStateWork;
@@ -24,11 +24,11 @@ top:
 	if(state == OUT_AND_BACK_AIM_OUT) {
 		pos.x = effect->originX;
 		pos.z = effect->originZ;
-		ang = syRandom();
+		angle = syRandom();
 		syVectorAddPolarOffset(
-			syRandom() * 30 + toFIXED(40), (Uint16)ang, (FIXED *)&pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+			syRandom() * 30 + toFIXED(40), (Uint16)angle, (FIXED *)&pos);
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->acceleration = toFIXED(4);
 		effect->speedMax = toFIXED(4);
 		effect->turnStepLimited = state;
@@ -47,8 +47,8 @@ top:
 		pos.z = effectState->z;
 		fdCameraWorldToScreen(&pos);
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), (FIXED *)&pos);
-		effect->tgtX = pos.x;
-		effect->tgtZ = pos.z;
+		effect->targetX = pos.x;
+		effect->targetZ = pos.z;
 		effect->turnStepMax = TRIG_TURN / 16;
 		effect->turnStepLimited = 1;
 		effect->state++;
@@ -59,12 +59,12 @@ top:
 		fdEffectClearOwnedSlot(effect);
 }
 
-/* Pauses the target (effectState->tgt) and runs fdPsynergyHalt. */
+/* Pauses the target (effectState->target) and runs fdPsynergyHalt. */
 void fdPsynergyHaltOnTarget(Sint32 unused)
 {
-	ACTOR *tgt = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->tgt;
+	ACTOR *target = ((FIELD_EFFECT_STATE *)FieldEffectStateWork)->target;
 
-	tgt->paused = 1;
+	target->paused = 1;
 	fdPsynergyHalt();
 }
 
@@ -92,7 +92,7 @@ void fdPsynergyHalt(void)
 
 	/* From 16 pixels above the caster to 8 pixels above the Psynergy's
 	   position. */
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	from.x = caster->x.fixed;
 	from.y = caster->y.fixed + toFIXED(16);
 	from.z = caster->z.fixed;
@@ -121,13 +121,13 @@ void fdPsynergyHalt(void)
 	   to its second animation. */
 	sySynch(5);
 	fdActorSelectAnimationStub(stopwatch, 1);
-	sySndPlayStub(SE_TRIPLE_TONE_LOW);
+	sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 	sySynch(10);
-	sySndPlayStub(SE_TRIPLE_TONE_LOW);
+	sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 	sySynch(10);
-	sySndPlayStub(SE_TRIPLE_TONE_LOW);
+	sySoundPlayStub(SE_TRIPLE_TONE_LOW);
 	sySynch(10);
-	sySndPlayStub(SE_TRIPLE_TONE_HIGH);
+	sySoundPlayStub(SE_TRIPLE_TONE_HIGH);
 
 	/* Sparkles 4 pixels round it fly out, then come back to the Psynergy's
 	   position. */
@@ -140,7 +140,7 @@ void fdPsynergyHalt(void)
 		syVectorAddPolarOffset(toFIXED(4), syRandom(), &pos.x);
 		fdParticleInit(effect, SPRITE_SPARKLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateHaltParticle);
-		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_WHITE);
+		fdSpriteSetAnimationColorModesStub(effect->sprite, SPRITE_COLOR_WHITE);
 		effect++;
 	}
 
@@ -151,7 +151,7 @@ void fdPsynergyHalt(void)
 	fdActorReleaseStub(stopwatch);
 	sySynch(4);
 	sySynch(30);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 }
 
 /* Per-tick update of a halted actor: gives its sprite one of eight colour
@@ -159,9 +159,9 @@ void fdPsynergyHalt(void)
 void fdPsynergyUpdateHaltedActor(ACTOR *actor)
 {
 	void		*object = (void *)actor;
-	const Sint8 *tbl = HaltFlickerColorModes;
+	const Sint8 *table = HaltFlickerColorModes;
 	Sint32		 random = syRandom();
-	fdActorSetSprColModeStub(object, tbl[(Uint32)(random * 8) >> 16]);
+	fdActorSetSpriteColorModeStub(object, table[(Uint32)(random * 8) >> 16]);
 }
 
 /* Halts actorId, keeping its per-tick update and, if it is animated, its first
@@ -174,11 +174,11 @@ void fdPsynergyHaltActor(Sint32 actorId)
 	actor = fdActorLookup(actorId);
 	if(actor != NULL) {
 		MainRoutineStateWork.haltedUpdate = (Uint32)actor->update;
-		MainRoutineStateWork.haltedColMode = 0;
-		if(actor->sprStorageKind == ACTOR_SPRITE_ONE) {
-			entry = actor->spr->entries[0];
+		MainRoutineStateWork.haltedColorMode = 0;
+		if(actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
+			entry = actor->sprite->entries[0];
 			if(entry != NULL) {
-				MainRoutineStateWork.haltedColMode = entry->colMode;
+				MainRoutineStateWork.haltedColorMode = entry->colorMode;
 			}
 		}
 		actor->update = fdPsynergyUpdateHaltedActor;
@@ -196,7 +196,7 @@ void fdPsynergyResumeHaltedActor(Sint32 actorId)
 			MAIN_ROUTINE_STATE *mainState = &MainRoutineStateWork;
 			actor->update = (void (*)(ACTOR *))mainState->haltedUpdate;
 			mainState->haltedUpdate = 0;
-			fdActorSetSprColModeStub(actor, mainState->haltedColMode);
+			fdActorSetSpriteColorModeStub(actor, mainState->haltedColorMode);
 		}
 		actor->paused = 0;
 		fdActorSetAnimationSpeedStub(actor, ANIM_STEP_NORMAL);

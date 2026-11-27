@@ -21,11 +21,11 @@ static __inline__ void fdEffectGetPosAboveActor(ACTOR *actor, VECTOR3 *pos)
 
 /* Flashes burst from over the caster's head, then a fist (SPRITE_MOVE_HAND)
    appears in front of it, grows and flies forward with three afterimages; what
-   it hits (effectState->tgt) is pushed 16 pixels. */
+   it hits (effectState->target) is pushed 16 pixels. */
 void fdPsynergyForce(void)
 {
-	ACTOR			   *tgt;
-	Sint32				eventTgt;
+	ACTOR			   *target;
+	Sint32				eventTarget;
 	ACTOR			   *copies[4];
 	VECTOR3				pos;
 	ACTOR			   *projectile;
@@ -33,16 +33,16 @@ void fdPsynergyForce(void)
 	ACTOR			   *caster;
 	FIELD_EFFECT_STATE *effectState;
 	FIELD_PARTICLE	   *effect;
-	SPR				   *sharedSpr;
+	SPR				   *sharedSprite;
 	void			   *event;
 	Sint32				scale;
 	Sint32				i;
 	Uint8				resourceSlot;
 
 	effectState = FieldEffectStateWork;
-	tgt = effectState->tgt;
-	fdPsynergyFadeToCastCol();
-	sySndPlayStub(SE_PSYNERGY_START);
+	target = effectState->target;
+	fdPsynergyFadeToCastColor();
+	sySoundPlayStub(SE_PSYNERGY_START);
 	effect = effectState->particles;
 
 	for(i = 0; i < FORCE_FLASHES; i++) {
@@ -52,7 +52,8 @@ void fdPsynergyForce(void)
 		fdParticleInit(effect, SPRITE_PARTICLE, pos.x, pos.z);
 		fdParticleSetCallback(effect, fdEffectUpdateRadialBurst);
 		fdParticleSetAnimation(effect, PARTICLE_ANIMATION_FLICKER);
-		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_BLUE_TINT);
+		fdSpriteSetAnimationColorModesStub(
+			effect->sprite, SPRITE_COLOR_BLUE_TINT);
 		effect->scaleY = toFIXED(7) / 10;
 		effect->scaleX = toFIXED(7) / 10;
 		sySynch(2);
@@ -65,20 +66,20 @@ void fdPsynergyForce(void)
 	pos.x = caster->x.fixed;
 	pos.y = caster->y.fixed + PSYNERGY_EFFECT_HEIGHT;
 	pos.z = caster->z.fixed;
-	syVectorAddPolarOffset(toFIXED(8), effectState->ang, (FIXED *)&pos);
+	syVectorAddPolarOffset(toFIXED(8), effectState->angle, (FIXED *)&pos);
 	projectile = fdActorSpawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
 	if(projectile == NULL) {
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 		return;
 	}
 	projectile->scaleY = toFIXED(1) / 4;
 	projectile->scaleX = toFIXED(1) / 4;
-	projectile->facing = effectState->ang;
+	projectile->facing = effectState->angle;
 	projectile->speedLimit = toFIXED(4);
 	projectile->acceleration = toFIXED(4);
-	projectile->motionFlg = 0;
+	projectile->motionFlags = 0;
 	fdActorSelectAnimationStub(projectile, MOVE_HAND_ANIMATION_FIST);
-	fdActorSetSprColModeStub(projectile, SPRITE_COLOR_BGR);
+	fdActorSetSpriteColorModeStub(projectile, SPRITE_COLOR_BGR);
 	scale = projectile->scaleX;
 	if(scale < toFIXED(1)) {
 		do {
@@ -92,23 +93,24 @@ void fdPsynergyForce(void)
 	sySynch(3);
 
 	/* Three afterimages, sharing one set of graphics. */
-	sharedSpr = NULL;
+	sharedSprite = NULL;
 	for(i = 2; i >= 0; i--) {
 		copy = copies[i] = fdActorSpawn(SPRITE_MOVE_HAND, projectile->x.fixed,
 			projectile->y.fixed, projectile->z.fixed);
 		if(copy != NULL) {
 			copy->scaleY = AFTERIMAGE_SCALE;
 			copy->scaleX = AFTERIMAGE_SCALE;
-			copy->facing = effectState->ang;
+			copy->facing = effectState->angle;
 			copy->speedLimit = toFIXED(4);
 			copy->acceleration = toFIXED(4);
-			copy->motionFlg = 0;
+			copy->motionFlags = 0;
 			fdActorSelectAnimationStub(copy, MOVE_HAND_ANIMATION_FIST);
-			fdActorSetSprColModeStub(copy, SPRITE_COLOR_RBG);
-			sharedSpr = fdSprShareVRAMCacheEntry((SPR *)copy->spr, sharedSpr);
+			fdActorSetSpriteColorModeStub(copy, SPRITE_COLOR_RBG);
+			sharedSprite =
+				fdSpriteShareVRAMCacheEntry((SPR *)copy->sprite, sharedSprite);
 		}
 	}
-	resourceSlot = sharedSpr->slot;
+	resourceSlot = sharedSprite->slot;
 
 	/* Destination: 56 pixels in front of the caster with effectState->aimAhead
 	   set (no cue named the target), otherwise the Psynergy's position. */
@@ -117,7 +119,7 @@ void fdPsynergyForce(void)
 		pos.x = caster->x.fixed;
 		pos.y = caster->y.fixed + PSYNERGY_EFFECT_HEIGHT;
 		pos.z = caster->z.fixed;
-		syVectorAddPolarOffset(toFIXED(56), effectState->ang, (FIXED *)&pos);
+		syVectorAddPolarOffset(toFIXED(56), effectState->angle, (FIXED *)&pos);
 	} else {
 		pos.x = effectState->x;
 		pos.y = effectState->y + PSYNERGY_EFFECT_HEIGHT;
@@ -143,29 +145,29 @@ void fdPsynergyForce(void)
 	   way:
 	   the ground there must be within a step (fdMapGridCheckCollision 0) and
 	   free of actors. */
-	if(tgt != NULL && effectState->leaveTgt == 0) {
+	if(target != NULL && effectState->leaveTarget == 0) {
 		if(effectState->sceneVariant != 0)
-			tgt->velY = toFIXED(8);
-		pos.x = tgt->x.fixed;
-		pos.y = tgt->y.fixed;
-		pos.z = tgt->z.fixed;
-		syVectorAddPolarOffset(toFIXED(16), effectState->ang, (FIXED *)&pos);
-		if(fdMapGridCheckCollisionStub(tgt, (FIELD_POS *)&pos) ==
+			target->velocityY = toFIXED(8);
+		pos.x = target->x.fixed;
+		pos.y = target->y.fixed;
+		pos.z = target->z.fixed;
+		syVectorAddPolarOffset(toFIXED(16), effectState->angle, (FIXED *)&pos);
+		if(fdMapGridCheckCollisionStub(target, (FIELD_POS *)&pos) ==
 				COLLISION_NONE &&
-			fdActorScriptCheckOverlapStub(tgt, (Sint32 *)&pos) == 0) {
-			tgt->acceleration = toFIXED(1);
-			tgt->speedLimit = toFIXED(1);
-			fdActorSetMoveTargetStub(tgt, pos.x, pos.y, pos.z);
+			fdActorScriptCheckOverlapStub(target, (Sint32 *)&pos) == 0) {
+			target->acceleration = toFIXED(1);
+			target->speedLimit = toFIXED(1);
+			fdActorSetMoveTargetStub(target, pos.x, pos.y, pos.z);
 		}
 	}
 
 	event = fdFindPsynergyCue(
-		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FORCE, &eventTgt);
+		PSYNERGY_CUE(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_FORCE, &eventTarget);
 	if(event != NULL)
 		fdRunPsynergyScript(
-			event, MainRoutineStateWork.leaderActorId, eventTgt);
+			event, MainRoutineStateWork.leaderActorId, eventTarget);
 	sySynch(10);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	sySynch(20);
 	/* VRAM_CACHE_ENTRY_COUNT means no entry to free. */
 	if(resourceSlot != VRAM_CACHE_ENTRY_COUNT)

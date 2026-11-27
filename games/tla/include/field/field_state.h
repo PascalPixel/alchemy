@@ -115,7 +115,7 @@ typedef enum SHIP_TERRAIN_KIND {
 typedef struct FIELD_STATE {
 	/* The actor placement tables placed so far, recorded by
 	   ScriptSpawnActorPlacements. */
-	const ACTOR_PLACE *tbls[4];
+	const ACTOR_PLACE *tables[4];
 	const CUE_VIEW	  *cues; /* the scene's cue table */
 	/* The actors by actor id: 0 to 7 the party's characters, 8 on the placed
 	   actors, FIELD_TREASURE_ACTOR on the treasure spots. */
@@ -140,8 +140,8 @@ typedef struct FIELD_STATE {
 	/* A raised cue's number for fdRunRaisedCue, or an enum */
 	/* FIELD_RAISED_CUE. */
 	Sint16 raisedCue;
-	Sint16 fallenCnt;		/* the characters who fell this step */
-	Sint16 survivorCnt;		/* 0 when the whole party fell */
+	Sint16 fallenCount;		/* the characters who fell this step */
+	Sint16 survivorCount;	/* 0 when the whole party fell */
 	Sint16 fallenOwners[9]; /* the characters who fell, from the active party */
 	Sint16 itemSlot;		/* the inventory slot fdUseItem receives */
 	/* Ticks the leader has pushed against something, counted by the player
@@ -167,7 +167,7 @@ typedef struct FIELD_STATE {
 	   PP, Djinn recover and poison hurts (fdUpdateWalking). */
 	FIXED walkingDistance;
 	/* the metatile the leader last stepped onto */
-	struct MAP_METATILE *curMetatile;
+	struct MAP_METATILE *currentMetatile;
 	struct MAP_METATILE *prevMetatile; /* the metatile before it */
 	/* A SCENE_TRANSITION(style, variant): a TRANSITION_BACKDROP_FADE on
 	   entry. */
@@ -176,7 +176,7 @@ typedef struct FIELD_STATE {
 	Uint16 transitionActive; /* set once the opening transition has started */
 	/* The transition's ticks: MAP_TRANSITION_TICKS on entry and at each
 	   script. */
-	Sint32 transitionFrm;
+	Sint32 transitionFrame;
 	Sint32 fastForward; /* debug: skip timed script waits and actor messages */
 	Uint8  unusedAfterFastForward[8];
 	Sint16 msg; /* the next message, advanced as each window opens */
@@ -187,29 +187,29 @@ typedef struct FIELD_STATE {
 	struct ACTOR  *camera; /* the actor the map view follows */
 	Uint8		   unusedAfterCamera[16];
 	Sint32		   speaker; /* the actor speaking; the leader at each script */
-	struct WINDOW *msgWin;	/* the open message window, NULL for none */
-	struct WINDOW *sideWin; /* the speaker's portrait window */
+	struct WINDOW *msgWindow;  /* the open message window, NULL for none */
+	struct WINDOW *sideWindow; /* the speaker's portrait window */
 	/* The leader's two-row actor placement table (its row and an end row),
 	   which fdActorResetForLeader builds. */
 	ACTOR_PLACE	   leaderPlacements[2];
-	struct WINDOW *noticeWin; /* a scene's timed notice */
-	Uint16		   noticeFrm;
+	struct WINDOW *noticeWindow; /* a scene's timed notice */
+	Uint16		   noticeFrame;
 	/* The palette a field Psynergy's tint fades back to, as a palette fade's
 	   target (BG half, then sprite half), saved as the tint starts. */
-	Uint16 savedFadeTgt[448 * 3];
+	Uint16 savedFadeTarget[448 * 3];
 	/* Set while a raised or step cue runs; fdScriptStart then ends the lasting
 	   Psynergy. */
 	Sint16 busy;
-	Sint8  revealActive;  /* nonzero while Reveal is active */
-	Sint8  effTmrRunning; /* lets the Reveal countdown advance */
-	Sint16 revealFrm;	  /* the ticks Reveal has left */
-	Sint16 revealCenterX; /* where Reveal was cast, in pixels */
+	Sint8  revealActive;	   /* nonzero while Reveal is active */
+	Sint8  effectTimerRunning; /* lets the Reveal countdown advance */
+	Sint16 revealFrame;		   /* the ticks Reveal has left */
+	Sint16 revealCenterX;	   /* where Reveal was cast, in pixels */
 	Sint16 revealCenterY;
 	/* FIELD_PSYNERGY_RING's ring is shown (fdPsynergyRing); A, Select, Start or
 	   a shortcut ends it. */
 	Sint8  ringActive;
-	Sint8  ringTmrRunning; /* off while another field Psynergy is cast */
-	Sint16 ringFrm;		   /* ticks left of the ring; 0 ends it */
+	Sint8  ringTimerRunning; /* off while another field Psynergy is cast */
+	Sint16 ringFrame;		 /* ticks left of the ring; 0 ends it */
 	/* The first of the two names the next yes/no choice shows in place of Yes
 	   and No (mnYesNoMenuRun), 0 for those. */
 	Sint16 choiceMsg;
@@ -217,17 +217,17 @@ typedef struct FIELD_STATE {
 	Sint16 choiceSelection; /* the answer the choice starts on */
 	Sint8  psynergyActing;	/* set while Psynergy takes effect */
 	Sint8  castStarted;		/* set once a cast has been announced */
-	Sint16 queuedSnd;		/* a sound fdPlayQueuedMusic plays; -1 for none */
-	Uint8  unusedAfterQueuedSnd[2]; /* no code names it */
+	Sint16 queuedSound;		/* a sound fdPlayQueuedMusic plays; -1 for none */
+	Uint8  unusedAfterQueuedSound[2]; /* no code names it */
 	/* the block fdActorLiftTargetBlock lifted, for fdActorPlaceMovedBlock */
 	struct ACTOR *movedBlock;
 	/* The metatiles a Psynergy touches, as metatile coordinates, ended by
 	   -1. */
 	Sint16 psynergyMetatiles[56];
-	Sint8  psynergyHitObj;
-	Sint8  tgtX;
-	Sint8  tgtY;
-	Sint8  tgtZ;
+	Sint8  psynergyHitObject;
+	Sint8  targetX;
+	Sint8  targetY;
+	Sint8  targetZ;
 	/* The item Scoop dug up (or its coins, SCOOPED_COINS | count), given when
 	   the leader examines it (SCOOPED_ITEM_ACTOR). */
 	Sint16 scoopedItem;
@@ -248,12 +248,12 @@ typedef struct FIELD_STATE {
 	Sint16 glow;
 	Sint16 glowHeld;
 	Sint16 standing;
-	Uint16 sandTrailPri;
-	Uint16 psynergyDrawFlg;
+	Uint16 sandTrailPriority;
+	Uint16 psynergyDrawFlags;
 	Uint8  padding[2];
 } FIELD_STATE;
 
-/* FIELD_STATE.psynergyDrawFlg, which a scene sets for Pound and Scoop to draw
+/* FIELD_STATE.psynergyDrawFlags, which a scene sets for Pound and Scoop to draw
    in its room. */
 #define PSYNERGY_DRAW_NO_SCENE_SPRITE 0x1 /* nor Pound's glow on the ground */
 /* The fist or hand at priority 1, not sorted by depth. */
@@ -270,24 +270,24 @@ STATIC_ASSERT(offsetof(FIELD_STATE, blockedSteps) == 388);
 STATIC_ASSERT(offsetof(FIELD_STATE, mode) == 394);
 STATIC_ASSERT(offsetof(FIELD_STATE, encounterZones) == 396);
 STATIC_ASSERT(offsetof(FIELD_STATE, transition) == 428);
-STATIC_ASSERT(offsetof(FIELD_STATE, transitionFrm) == 436);
+STATIC_ASSERT(offsetof(FIELD_STATE, transitionFrame) == 436);
 STATIC_ASSERT(offsetof(FIELD_STATE, msg) == 452);
 STATIC_ASSERT(offsetof(FIELD_STATE, camera) == 460);
 STATIC_ASSERT(offsetof(FIELD_STATE, speaker) == 480);
 STATIC_ASSERT(offsetof(FIELD_STATE, leaderPlacements) == 492);
-STATIC_ASSERT(offsetof(FIELD_STATE, noticeWin) == 540);
-STATIC_ASSERT(offsetof(FIELD_STATE, savedFadeTgt) == 546);
+STATIC_ASSERT(offsetof(FIELD_STATE, noticeWindow) == 540);
+STATIC_ASSERT(offsetof(FIELD_STATE, savedFadeTarget) == 546);
 STATIC_ASSERT(offsetof(FIELD_STATE, busy) == 3234);
 STATIC_ASSERT(offsetof(FIELD_STATE, revealActive) == 3236);
 STATIC_ASSERT(offsetof(FIELD_STATE, choiceMsg) == 3248);
 STATIC_ASSERT(offsetof(FIELD_STATE, psynergyActing) == 3254);
-STATIC_ASSERT(offsetof(FIELD_STATE, queuedSnd) == 3256);
+STATIC_ASSERT(offsetof(FIELD_STATE, queuedSound) == 3256);
 STATIC_ASSERT(offsetof(FIELD_STATE, psynergyMetatiles) == 3264);
-STATIC_ASSERT(offsetof(FIELD_STATE, tgtX) == 3377);
+STATIC_ASSERT(offsetof(FIELD_STATE, targetX) == 3377);
 STATIC_ASSERT(offsetof(FIELD_STATE, sceneAttributeLow) == 3382);
 STATIC_ASSERT(offsetof(FIELD_STATE, hoverReady) == 3385);
 STATIC_ASSERT(offsetof(FIELD_STATE, glow) == 3396);
-STATIC_ASSERT(offsetof(FIELD_STATE, psynergyDrawFlg) == 3404);
+STATIC_ASSERT(offsetof(FIELD_STATE, psynergyDrawFlags) == 3404);
 
 /* The running field scene's state, in HEAP_SLOT_FIELD; fdModeRun takes it and
    frees it. */

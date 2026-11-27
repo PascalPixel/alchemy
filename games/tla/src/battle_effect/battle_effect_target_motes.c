@@ -140,10 +140,10 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 {
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 total;
 	Sint32				 member;
-	Sint32				 cnt;
+	Sint32				 count;
 	SCREEN_POINT		 screen;
 	FIXED				 point[3];
 	SCREEN_POINT		 base;
@@ -152,9 +152,9 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	Sint32				*row;
 	Sint32				 i;
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
-	cnt = TARGET_MOTES_PER_TARGET;
+	count = TARGET_MOTES_PER_TARGET;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
 	if(mode == TARGET_MOTES_TAINT) {
@@ -172,12 +172,12 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			RESOURCE_GLOW_ORB_SHEET, state->sheet, 1, 0);
 		palette = syResourceGetTableEntry(RESOURCE_GLOW_ORB_SHEET);
 	} else if(mode == TARGET_MOTES_DEMON_FIRE) {
-		cnt = DEMON_FIRE_ORBS;
+		count = DEMON_FIRE_ORBS;
 		btResourceLoadAndDecompress(
 			RESOURCE_GLOW_ORB_SHEET, state->sheet, 1, 0);
 		palette = syResourceGetTableEntry(RESOURCE_MARS_DJINN_SHEET);
 	} else {
-		cnt = DROWN_DROPS;
+		count = DROWN_DROPS;
 		btResourceLoadAndDecompress(RESOURCE_VORTEX_SHEET, state->sheet, 1, 0);
 		palette = syResourceGetTableEntry(RESOURCE_VORTEX_SHEET);
 	}
@@ -204,50 +204,52 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	}
 
 	if(TARGET_MOTES_START_WIDE(mode))
-		total = args->tgtCnt * TARGET_MOTES_STAGGER + TARGET_MOTES_WIDE_RUN_ON;
+		total =
+			args->targetCount * TARGET_MOTES_STAGGER + TARGET_MOTES_WIDE_RUN_ON;
 	else
-		total = args->tgtCnt * TARGET_MOTES_STAGGER + TARGET_MOTES_RUN_ON;
+		total = args->targetCount * TARGET_MOTES_STAGGER + TARGET_MOTES_RUN_ON;
 	if(TARGET_MOTES_RIPPLE(mode))
 		sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
-	for(frm = 0; frm != total; frm++) {
+	for(frame = 0; frame != total; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* Demonfire: the user steps up to the first target and strikes it. */
 		if(mode == TARGET_MOTES_DEMON_FIRE) {
-			if(frm ==
+			if(frame ==
 				total - TARGET_MOTES_DAMAGE_END_TICKS - DEMON_FIRE_LEAP_TICKS)
 				btMotionApproachTargetStub(
-					args->user, args->tgts[0], DEMON_FIRE_APPROACH_TICKS, 0);
-			if(frm == total - TARGET_MOTES_DAMAGE_END_TICKS) {
+					args->user, args->targets[0], DEMON_FIRE_APPROACH_TICKS, 0);
+			if(frame == total - TARGET_MOTES_DAMAGE_END_TICKS) {
 				EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-				btMotionApplyKnockbackStub(args->tgts[0], KNOCKBACK_HURL);
-				state->shakeFrm = 8;
+				btMotionApplyKnockbackStub(args->targets[0], KNOCKBACK_HURL);
+				state->shakeFrame = 8;
 			}
-		} else if(frm == total - TARGET_MOTES_DAMAGE_END_TICKS) {
+		} else if(frame == total - TARGET_MOTES_DAMAGE_END_TICKS) {
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 		}
 
 		row = state->bg2xLines;
 		for(i = 0; i != DISPLAY_HEIGHT; i++)
 			*row++ = CANVAS_WAVE_BG2X(toFIXED(4) -
-				sySin(frm * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4);
+				sySin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4);
 
 		EFFECT_FOR_EACH_TARGET(member, args) {
-			MOTION_OBJECT *object = btObjectGetStub(args->tgts[member])->obj;
+			MOTION_OBJECT *object =
+				btObjectGetStub(args->targets[member])->object;
 
 			/* Paralyze's glints sparkle near the target. */
 			if(mode == TARGET_MOTES_PARALYZE &&
-				frm > member * TARGET_MOTES_STAGGER &&
-				frm < member * TARGET_MOTES_STAGGER + 32) {
-				btEffectPosProjectScaledBattler(args->tgts[member], &base);
+				frame > member * TARGET_MOTES_STAGGER &&
+				frame < member * TARGET_MOTES_STAGGER + 32) {
+				btEffectPosProjectScaledBattler(args->targets[member], &base);
 
 				for(i = 0; i != 2; i++) {
 					Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
-					Sint32 picture = frm & 3;
+					Sint32 picture = frame & 3;
 					Sint32 radius = (syRandom() & 31) + 4;
 					Sint32 x = base.x / 2 +
 						(FIXEDtoINT(sySin(angle) * radius) >> 1) -
@@ -282,17 +284,17 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			point[2] = object->z;
 			syMatrixTranslateVector(point);
 
-			if(frm > member * TARGET_MOTES_STAGGER) {
-				syRotY(frm << 9);
+			if(frame > member * TARGET_MOTES_STAGGER) {
+				syRotY(frame << 9);
 				if(mode <= TARGET_MOTES_PINK_SMOKE ||
 					mode == TARGET_MOTES_HEARTRENDER)
-					syRotX(frm << 9);
-				for(i = 0; i != cnt; i++) {
+					syRotX(frame << 9);
+				for(i = 0; i != count; i++) {
 					PARTICLE *mote =
 						&PARTICLES[member * TARGET_MOTES_SLOTS + i];
 					Sint32 distance;
 
-					if(frm > member * TARGET_MOTES_STAGGER + i) {
+					if(frame > member * TARGET_MOTES_STAGGER + i) {
 						Sint32 xx = (mote->x >> 8) * (mote->x >> 8);
 						Sint32 yy = (mote->y >> 8) * (mote->y >> 8);
 						Sint32 zz = (mote->z >> 8) * (mote->z >> 8);
@@ -354,12 +356,12 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 			}
 			EFFECT_RELEASE_BLITTERS();
 
-			if(frm == member * TARGET_MOTES_STAGGER + 16) {
-				Sint32 delay = total - frm;
+			if(frame == member * TARGET_MOTES_STAGGER + 16) {
+				Sint32 delay = total - frame;
 
 				if(delay > 31)
 					delay = 31;
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, member, delay);
 			}
 		}
@@ -406,7 +408,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	Sint32				 member;
 
 	flock = (PARTICLE *)RamMapMetatileBuffer;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	scroll = 0;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
@@ -425,7 +427,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 		sheep = &flock[i];
 		sheep->x = INTtoFIXED((syRandom() & 63) + 32);
 		sheep->y = -toFIXED(32);
-		sheep->velY = syRandom() & 0;
+		sheep->velocityY = syRandom() & 0;
 		sheep->z = syRandom() & 3;
 		sheep->variant = syRandom() & 255;
 	}
@@ -443,7 +445,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	}
 	REG_BG2X = -middle.x << 8;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	sySndPlayStub(SE_SWIRL);
+	sySoundPlayStub(SE_SWIRL);
 
 	for(tick = 0; tick != SLEEP_TICKS; tick++) {
 		BATTLE_CAMERA *camera;
@@ -457,7 +459,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 		EFFECT_FOR_EACH_TARGET(member, args) {
 			MOTION_OBJECT *object;
 
-			object = btObjectGetStub(args->tgts[member])->obj;
+			object = btObjectGetStub(args->targets[member])->object;
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
 			anchor[0] = object->x;
@@ -465,7 +467,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 			anchor[2] = object->z;
 			syMatrixTranslateVector(anchor);
 			if(tick == member * 16 + 64)
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_NORMAL,
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
 					POSE_DAMAGE, TINT_KEEP, 0);
 		}
 
@@ -492,22 +494,22 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 						scroll + FIXEDtoINT(sheep->x) - SHEEP_WIDTH / 2,
 						FIXEDtoINT(sheep->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
 						SHEEP_HEIGHT);
-				sheep->y += sheep->velY;
-				sheep->velY += toFIXED(1) / 8;
+				sheep->y += sheep->velocityY;
+				sheep->velocityY += toFIXED(1) / 8;
 				sheep->variant += sheep->z;
 				/* BUG: meant to bounce a sheep off the ground, tumbling faster,
 				   but it tests for a speed of exactly 0 just after gravity was
 				   added, so the sheep fall on through. BUGFIX bounces any sheep
 				   that is falling. */
 #if FIX_SLEEP_SHEEP_BOUNCE
-				if(sheep->y > GROUND_Y && sheep->velY > 0) {
+				if(sheep->y > GROUND_Y && sheep->velocityY > 0) {
 #else
-				if(sheep->y > GROUND_Y && sheep->velY == 0) {
+				if(sheep->y > GROUND_Y && sheep->velocityY == 0) {
 #endif
-					Sint32 speed = sheep->velY + 1;
+					Sint32 speed = sheep->velocityY + 1;
 					sheep->y = GROUND_Y;
 					sheep->z += 4;
-					sheep->velY = -speed / 2;
+					sheep->velocityY = -speed / 2;
 				}
 			}
 		}
@@ -539,14 +541,14 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE		 draw[2];
 	PARTICLE			*flame;
 	Sint32				 i;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 start;
 	Sint32				 picture;
 	Sint32				 y;
 	SCREEN_POINT		 pos;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
 	btResourceLoadAndDecompress(
@@ -566,22 +568,22 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 		state->particles[i].variant = syRandom() & 63;
 	}
 
-	for(frm = 0; frm != (args->tgtCnt << 5) + 32; frm += 1) {
-		if(frm == 32) {
+	for(frame = 0; frame != (args->targetCount << 5) + 32; frame += 1) {
+		if(frame == 32) {
 			EFFECT_SHOW_DAMAGE(0);
 		}
 		i = 0;
-		if(args->tgtCnt != 0) {
-			for(; i != args->tgtCnt; i++) {
+		if(args->targetCount != 0) {
+			for(; i != args->targetCount; i++) {
 				start = i * CURSE_STAGGER;
-				if(frm == start) {
-					sySndPlayStub(SE_CRACK);
+				if(frame == start) {
+					sySoundPlayStub(SE_CRACK);
 				}
-				if(frm >= start && frm < start + CURSE_CANDLE_TICKS) {
+				if(frame >= start && frame < start + CURSE_CANDLE_TICKS) {
 					/* The candle on the target's head, then its flame, six
 					   ticks a picture. */
 					flame = &state->particles[i];
-					btEffectPosProjectScaledBattler(args->tgts[i], &pos);
+					btEffectPosProjectScaledBattler(args->targets[i], &pos);
 					if(args->side == EFFECT_SIDE_PARTY) {
 						pos.x -= NARROW_CANVAS_PARTY_X;
 					}
@@ -591,8 +593,8 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 						pos.x - CURSE_CANDLE_WIDTH / 2, y - CURSE_CANDLE_HEIGHT,
 						CURSE_CANDLE_WIDTH, CURSE_CANDLE_HEIGHT);
 					/* DEAD: always true here; the ROM keeps the test. */
-					if(frm >= start) {
-						picture = ((frm - start) + flame->variant) / 6 %
+					if(frame >= start) {
+						picture = ((frame - start) + flame->variant) / 6 %
 							CURSE_FLAME_PICTURES;
 						draw[0](canvas,
 							state->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
@@ -649,10 +651,10 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	DRAW_RECTANGLE		*draw;
 	MOTION_OBJECT		*actor;
 	MOTION_OBJECT		*goal;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 i;
 	FIXED				 pos[3];
-	FIXED				 tgt[3];
+	FIXED				 target[3];
 	FIXED				 delta[3];
 	Sint32				 bob[3];
 	SCREEN_POINT		 screen;
@@ -660,7 +662,7 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 view;
 	DRAW_RECTANGLE		 blitters[2];
 
-	state = RamHeapSlots->battleEff;
+	state = RamHeapSlots->battleEffect;
 	canvas = RamHeapSlots->battleCanvas;
 	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
@@ -668,8 +670,8 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 		RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	btEffectBuildCanvasBlitters(args->side ^ 1, draw = blitters);
-	actor = btObjectGetStub(args->user)->obj;
-	goal = btObjectGetStub(args->tgts[0])->obj;
+	actor = btObjectGetStub(args->user)->object;
+	goal = btObjectGetStub(args->targets[0])->object;
 
 	/* The motes, thrown out level about the user. */
 	for(i = 0; i != DJINN_HEAL_SWIRL_SLOTS; i++) {
@@ -678,9 +680,9 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 		Sint32	  speed = (syRandom() & 0xff) + 128;
 
 		SET_POSITION(spark, 0, INTtoFIXED((syRandom() & 31) + 20), 0);
-		spark->velX = (sySin(heading) * speed) >> 5;
-		spark->velY = 0;
-		spark->velZ = (syCos(heading) * speed) >> 5;
+		spark->velocityX = (sySin(heading) * speed) >> 5;
+		spark->velocityY = 0;
+		spark->velocityZ = (syCos(heading) * speed) >> 5;
 		spark->variant = 0;
 	}
 	EFFECT_START_TRANSFER(
@@ -690,23 +692,23 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	pos[0] = actor->x;
 	pos[1] = 0;
 	pos[2] = actor->z;
-	tgt[0] = goal->x;
-	tgt[1] = toFIXED(90);
-	tgt[2] = 0;
-	delta[0] = (tgt[0] - pos[0]) / DJINN_HEAL_TRAVEL_TICKS;
-	delta[1] = (tgt[1] - pos[1]) / DJINN_HEAL_TRAVEL_TICKS;
-	delta[2] = (tgt[2] - pos[2]) / DJINN_HEAL_TRAVEL_TICKS;
+	target[0] = goal->x;
+	target[1] = toFIXED(90);
+	target[2] = 0;
+	delta[0] = (target[0] - pos[0]) / DJINN_HEAL_TRAVEL_TICKS;
+	delta[1] = (target[1] - pos[1]) / DJINN_HEAL_TRAVEL_TICKS;
+	delta[2] = (target[2] - pos[2]) / DJINN_HEAL_TRAVEL_TICKS;
 
-	for(frm = 0; frm != DJINN_HEAL_SWIRL_TICKS; frm++) {
+	for(frame = 0; frame != DJINN_HEAL_SWIRL_TICKS; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
-		if(frm == 8)
-			sySndPlayStub(SE_POWER_UP);
-		if(frm == 80)
-			sySndPlayStub(SE_SWIRL);
+		if(frame == 8)
+			sySoundPlayStub(SE_POWER_UP);
+		if(frame == 80)
+			sySoundPlayStub(SE_SWIRL);
 		syInitMatrix();
 		syLookAtLoad(camera->eye, camera->focus);
-		if(frm >= 30 && frm < 30 + DJINN_HEAL_TRAVEL_TICKS) {
+		if(frame >= 30 && frame < 30 + DJINN_HEAL_TRAVEL_TICKS) {
 			pos[0] += delta[0];
 			pos[1] += delta[1];
 			pos[2] += delta[2];
@@ -714,10 +716,10 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 		syMatrixTranslateVector(pos);
 
 		/* The user flashes for the first 24 ticks. */
-		if(frm == 0)
+		if(frame == 0)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_WHITE, TINT_KEEP, TINT_KEEP, 0);
-		if(frm == 24)
+		if(frame == 24)
 			btEffectTintBattler(
 				args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
 
@@ -726,23 +728,23 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 		for(i = 0; i != DJINN_HEAL_SWIRL_MOTES; i++) {
 			PARTICLE *spark = &PARTICLES[i];
 
-			if(frm > i && spark->variant == 0) {
+			if(frame > i && spark->variant == 0) {
 				Sint32 size;
 
 				syPushMatrix();
 				switch(i & 3) {
 				case 0:
-					syRotY(frm * DJINN_HEAL_MOTE_SPIN(i));
+					syRotY(frame * DJINN_HEAL_MOTE_SPIN(i));
 					break;
 				case 1:
-					syRotX(-frm * DJINN_HEAL_MOTE_SPIN(i));
+					syRotX(-frame * DJINN_HEAL_MOTE_SPIN(i));
 					break;
 				case 2:
-					syRotZ(-frm * DJINN_HEAL_MOTE_SPIN(i));
+					syRotZ(-frame * DJINN_HEAL_MOTE_SPIN(i));
 					break;
 				case 3:
-					syRotX(-frm * DJINN_HEAL_MOTE_SPIN(i));
-					syRotZ(-frm * DJINN_HEAL_MOTE_SPIN(i));
+					syRotX(-frame * DJINN_HEAL_MOTE_SPIN(i));
+					syRotZ(-frame * DJINN_HEAL_MOTE_SPIN(i));
 					break;
 				}
 				btEffectPosProjectPoint((Sint32 *)spark, &screen);
@@ -756,22 +758,22 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 				EFFECT_DRAW_MOTE(
 					blitters[0], canvas, sheet, screen.x, screen.y, size);
 				btParticleAdvanceWithGravity3D(spark, 60, 0);
-				if(frm > i + 30) {
+				if(frame > i + 30) {
 					Sint32 dx = -spark->x >> 8;
 					Sint32 dy = -spark->y >> 8;
 					Sint32 dz = -spark->z >> 8;
 
-					spark->velX += dx;
-					spark->velY += dy;
-					spark->velZ += dz;
+					spark->velocityX += dx;
+					spark->velocityY += dy;
+					spark->velocityZ += dz;
 				}
 			}
 		}
 
 		/* The Djinni appears and bobs, for the last 15 ticks. */
-		if(frm > 82) {
+		if(frame > 82) {
 			bob[0] = 0;
-			bob[1] = sySin(frm * (TRIG_TURN / 64)) * 4;
+			bob[1] = sySin(frame * (TRIG_TURN / 64)) * 4;
 			bob[2] = 0;
 			btEffectPosProjectPoint(bob, &screen);
 			screen.x >>= 1;
@@ -793,18 +795,19 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	}
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, sheet, 0, 0);
 
-	for(frm = 0; frm != args->tgtCnt * 8 + 72; frm++) {
+	for(frame = 0; frame != args->targetCount * 8 + 72; frame++) {
 		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* The Djinni sways over the targets, then rises away for the last 32
 		   ticks. */
 		syInitMatrix();
 		syLookAtLoad(camera->eye, camera->focus);
-		if(frm >= args->tgtCnt * 8 + 40)
-			tgt[1] += toFIXED(4);
-		point[0] = tgt[0];
-		point[1] = tgt[1];
-		point[2] = tgt[2] + sySin(frm * (TRIG_TURN / 32)) * DJINN_HEAL_SWAY;
+		if(frame >= args->targetCount * 8 + 40)
+			target[1] += toFIXED(4);
+		point[0] = target[0];
+		point[1] = target[1];
+		point[2] =
+			target[2] + sySin(frame * (TRIG_TURN / 32)) * DJINN_HEAL_SWAY;
 		btEffectPosProjectPoint(point, &view);
 		view.x >>= 1;
 		blitters[0](canvas, state->sheet, view.x - SMALL_DJINNI_WIDTH / 2,
@@ -814,8 +817,9 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 		/* Each target in turn, eight ticks apart: its sparkles close in around
 		   it, and it flashes from 40 to 64 ticks into its turn. */
 		EFFECT_FOR_EACH_TARGET(member, args) {
-			MOTION_OBJECT *object = btObjectGetStub(args->tgts[member])->obj;
-			Sint32		   start = member * 8;
+			MOTION_OBJECT *object =
+				btObjectGetStub(args->targets[member])->object;
+			Sint32 start = member * 8;
 
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
@@ -823,28 +827,28 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 			pos[1] = toFIXED(40);
 			pos[2] = object->z;
 			syMatrixTranslateVector(pos);
-			if(frm == start + 30)
-				sySndPlayStub(SE_RECOVERY);
-			if(frm == start + 40)
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+			if(frame == start + 30)
+				sySoundPlayStub(SE_RECOVERY);
+			if(frame == start + 40)
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_WHITE,
 					TINT_KEEP, TINT_KEEP, 0);
-			if(frm == start + 64)
-				btEffectTintBattler(args->tgts[member], SPRITE_COLOR_NORMAL,
+			if(frame == start + 64)
+				btEffectTintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
 					TINT_KEEP, TINT_KEEP, 0);
-			if(frm > start) {
-				syRotY((frm - start) << 9);
+			if(frame > start) {
+				syRotY((frame - start) << 9);
 				for(i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
 					PARTICLE *spark =
 						&PARTICLES[member * DJINN_HEAL_SPARKS_PER_TARGET + i];
 
-					if(frm > start + i / 2) {
+					if(frame > start + i / 2) {
 						Sint32 xx = (spark->x >> 8) * (spark->x >> 8);
 						Sint32 yy = (spark->y >> 8) * (spark->y >> 8);
 						Sint32 zz = (spark->z >> 8) * (spark->z >> 8);
 						Sint32 distance = sySquartIWRAM(xx + yy + zz) >> 9;
 
 						if(distance != 0) {
-							Sint32 pictureIdx;
+							Sint32 pictureIndex;
 
 							btEffectPosProjectPoint((Sint32 *)spark, &view);
 							view.x >>= 1;
@@ -856,15 +860,15 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 							 * as this does; as both lines removed. */
 							CLAMP(view.depth, DJINN_HEAL_SPARKLE_DEPTH_NEAR,
 								DJINN_HEAL_SPARKLE_DEPTH_FAR);
-							pictureIdx = 3 -
+							pictureIndex = 3 -
 								(view.depth - DJINN_HEAL_SPARKLE_DEPTH_NEAR) /
 									DJINN_HEAL_SPARKLE_DEPTH_STEP;
-							pictureIdx = (i * 4 + frm) % 9;
+							pictureIndex = (i * 4 + frame) % 9;
 							{
 								Uint8 *picture = sheet +
-									BattleEffectSparklePictures[pictureIdx];
+									BattleEffectSparklePictures[pictureIndex];
 								Uint32 edge =
-									BattleEffectSparkleSizes[pictureIdx];
+									BattleEffectSparkleSizes[pictureIndex];
 								Uint32 half = edge >> 1;
 
 								draw[1](canvas, picture, view.x - half,

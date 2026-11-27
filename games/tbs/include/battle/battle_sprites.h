@@ -11,19 +11,19 @@
 /* A unit's row of BattleSprites: an enemy's battle sprite, size, attack effect,
    palette and defeat-sound kind. */
 typedef struct BATTLE_SPR_DEFINITION {
-	Uint16 anm;			/* the enemy's battle sprite */
+	Uint16 animation;	/* the enemy's battle sprite */
 	Uint8  isSmall : 1; /* 1 for a small enemy, which takes one sprite slot */
 	/* The beam its attack plays, an BEAM_KIND (battle_effect_beams.c); 0 reads
 	   as 1. */
-	Uint8 attackEff : 4;
+	Uint8 attackEffect : 4;
 	/* how high it hops as it runs up to attack, in pixels */
 	Uint8 attackHop : 3;
 	Uint8 heavyImpact : 1; /* 1 for an enemy whose beam blow lands heavily */
-	Uint8 pal : 4;		   /* the sprite's palette */
-	Uint8 defeatSnd : 3;   /* the defeat-sound kind; above 4 reads as none */
+	Uint8 palette : 4;	   /* the sprite's palette */
+	Uint8 defeatSound : 3; /* the defeat-sound kind; above 4 reads as none */
 	/* The height a battle effect is drawn at over the enemy, in pixels; 0 for
 	   its size's default. */
-	Uint8 effHeight;
+	Uint8 effectHeight;
 	Uint8 reserved[3]; /* 0 in every row */
 } BATTLE_SPR_DEFINITION;
 

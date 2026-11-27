@@ -46,9 +46,9 @@ static inline void gmItemLoadIcon(Sint32 item)
 }
 
 /* Holds an item's picture up over the leader, as when the party finds it. */
-static inline void gmItemShowFound(Sint32 item, Sint32 flg)
+static inline void gmItemShowFound(Sint32 item, Sint32 flags)
 {
-	fdItemDispShowItem(item, flg);
+	fdItemDisplayShowItem(item, flags);
 }
 
 /* Redraws the room around the point the camera follows, after a script has
@@ -60,16 +60,16 @@ static inline void fdMapGridRedraw(void)
 
 /* Shows a message in the middle of the screen rather than in a speech
    window. */
-static inline void mnMessageShowCentered(Sint32 msg, Sint32 flg)
+static inline void mnMessageShowCentered(Sint32 msg, Sint32 flags)
 {
-	mnFieldMessageShow(msg, flg);
+	mnFieldMessageShow(msg, flags);
 }
 
 /* Gives the party an item from a script and says who got it; -1 when it was
    left behind. */
-static inline Sint32 gmPartyGiveItem(Sint32 item, Sint32 flg)
+static inline Sint32 gmPartyGiveItem(Sint32 item, Sint32 flags)
 {
-	return fdPartyInventoryGiveItem(item, flg);
+	return fdPartyInventoryGiveItem(item, flags);
 }
 
 /* Ends a script's wave effect and restores the colours it changed. */
@@ -87,15 +87,16 @@ static inline Sint32 mnVRAMLoad(Sint32 block, Sint32 size, const void *data)
 
 /* fdActorSetDestinationOffset, by a second inline over the same function. */
 static inline void syFieldActorSetDestinationOffset(
-	Sint32 actorId, Sint32 xOfs, Sint32 zOfs)
+	Sint32 actorId, Sint32 xOffset, Sint32 zOffset)
 {
-	fdActorSetDestinationOffsetById(actorId, xOfs, zOfs);
+	fdActorSetDestinationOffsetById(actorId, xOffset, zOffset);
 }
 
 /* sySetTickEvent (system_call.h) under a second name. */
-static inline Sint32 sySetOrUpdateTickEvent(EVENT_FUNC func, Sint32 pri)
+static inline Sint32 sySetOrUpdateTickEvent(
+	EVENT_FUNC callback, Sint32 priority)
 {
-	return sySetTickEvent(func, pri);
+	return sySetTickEvent(callback, priority);
 }
 
 /* Changes the metatile behavior of the metatile at (x, y), in whole pixels,
@@ -126,9 +127,9 @@ static inline void syFieldActorLaunchFromLeader(
 /* Makes an actor follow another and starts a script on it
    (fdActorWatchAndStartScript). */
 static inline void syFieldActorWatchAndStartScript(
-	Sint32 object, Sint32 tgt, const Sint32 *actions)
+	Sint32 object, Sint32 target, const Sint32 *actions)
 {
-	fdActorWatchAndStartScript(object, tgt, actions);
+	fdActorWatchAndStartScript(object, target, actions);
 }
 
 /* Moves a point radius, in 16.16 fixed point, along a heading on the ground

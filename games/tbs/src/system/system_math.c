@@ -13,15 +13,15 @@ Uint32 syRandom(void)
 	return (Uint16)(value >> 8);
 }
 
-/* Moves the point `pos` by `radius` in direction `ang` on the ground
+/* Moves the point `pos` by `radius` in direction `angle` on the ground
    plane: x by the cosine, z by the sine. */
-void syVectorAddPolarOffset(FIXED radius, ANGLE ang, POINT pos)
+void syVectorAddPolarOffset(FIXED radius, ANGLE angle, POINT pos)
 {
 	FIXED *coordinate = pos;
 
-	*coordinate++ += syMulFX(radius, sySin(ang + DEGtoANG(90)));
+	*coordinate++ += syMulFX(radius, sySin(angle + DEGtoANG(90)));
 	coordinate++;
-	*coordinate += syMulFX(radius, sySin(ang));
+	*coordinate += syMulFX(radius, sySin(angle));
 }
 
 /* The entries of MathTanTable in a quarter turn, which syAtan searches, the
@@ -36,7 +36,7 @@ void syVectorAddPolarOffset(FIXED radius, ANGLE ang, POINT pos)
    binary-searches the tangent table to ATAN_ENTRY_ANGLE. */
 ANGLE syAtan(FIXED x, FIXED y)
 {
-	const Uint16 *tbl;
+	const Uint16 *table;
 	Sint32		  value;
 	Sint32		  ratio;
 	Sint32		  result;
@@ -65,52 +65,52 @@ ANGLE syAtan(FIXED x, FIXED y)
 			   decides one bit of the entry's index, from the highest down, and
 			   so of the angle, from an eighth of a turn down to
 			   ATAN_ENTRY_ANGLE. */
-			tbl = &MathTanTable[ATAN_ENTRIES / 2 - 1];
+			table = &MathTanTable[ATAN_ENTRIES / 2 - 1];
 			result = 0;
 
-			value = *tbl;
-			tbl -= ATAN_ENTRIES / 4;
+			value = *table;
+			table -= ATAN_ENTRIES / 4;
 			if(ratio > value) {
 				result = TRIG_TURN / 8;
-				tbl += ATAN_ENTRIES / 2;
+				table += ATAN_ENTRIES / 2;
 			}
-			value = *tbl;
-			tbl -= ATAN_ENTRIES / 8;
+			value = *table;
+			table -= ATAN_ENTRIES / 8;
 			if(ratio > value) {
 				result |= TRIG_TURN / 16;
-				tbl += ATAN_ENTRIES / 4;
+				table += ATAN_ENTRIES / 4;
 			}
-			value = *tbl;
-			tbl -= ATAN_ENTRIES / 16;
+			value = *table;
+			table -= ATAN_ENTRIES / 16;
 			if(ratio > value) {
 				result |= TRIG_TURN / 32;
-				tbl += ATAN_ENTRIES / 8;
+				table += ATAN_ENTRIES / 8;
 			}
-			value = *tbl;
-			tbl -= ATAN_ENTRIES / 32;
+			value = *table;
+			table -= ATAN_ENTRIES / 32;
 			if(ratio > value) {
 				result |= TRIG_TURN / 64;
-				tbl += ATAN_ENTRIES / 16;
+				table += ATAN_ENTRIES / 16;
 			}
-			value = *tbl;
-			tbl -= ATAN_ENTRIES / 64;
+			value = *table;
+			table -= ATAN_ENTRIES / 64;
 			if(ratio > value) {
 				result |= TRIG_TURN / 128;
-				tbl += ATAN_ENTRIES / 32;
+				table += ATAN_ENTRIES / 32;
 			}
-			value = *tbl;
-			tbl -= ATAN_ENTRIES / 128;
+			value = *table;
+			table -= ATAN_ENTRIES / 128;
 			if(ratio > value) {
 				result |= TRIG_TURN / 256;
-				tbl += ATAN_ENTRIES / 64;
+				table += ATAN_ENTRIES / 64;
 			}
-			value = *tbl;
-			tbl--;
+			value = *table;
+			table--;
 			if(ratio > value) {
 				result |= TRIG_TURN / 512;
-				tbl += 2;
+				table += 2;
 			}
-			value = *tbl;
+			value = *table;
 			if(ratio > value)
 				result |= ATAN_ENTRY_ANGLE;
 		}
@@ -158,7 +158,7 @@ FIXED sySquartFX(FIXED value)
 }
 
 /* Returns the basic sprite palettes (BasicSpritePalettes). */
-const Uint8 *syPaletteGetBasicSprCols(void)
+const Uint8 *syPaletteGetBasicSpriteColors(void)
 {
 	return BasicSpritePalettes;
 }

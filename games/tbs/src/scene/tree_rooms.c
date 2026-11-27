@@ -140,7 +140,7 @@ typedef enum TREE_ROOMS_METATILE_BEHAVIOR {
 #define FALL_ENTRANCE_STEP \
 	(TREE_ROOMS_FALL_THROUGH_B - TREE_ROOMS_FALL_THROUGH_C)
 
-static void scTretPaletteSaveMapCols(void);
+static void scTretPaletteSaveMapColors(void);
 static void scTretPaletteUpdateMapTint(void);
 
 /* The face changes scTreeRoomsChangeFace plays on Tret. Each starts from the
@@ -264,47 +264,47 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    below, except from the fifth floor's centre leaf, whose fall goes on down
    through the rooms (scInit). */
 static void scTreeRoomsStepOnLeaf(
-	Sint32 leafFlg, Sint32 srcColumn, Sint32 srcRow, Sint32 entrance)
+	Sint32 leafFlag, Sint32 srcColumn, Sint32 srcRow, Sint32 entrance)
 {
-	Sint32 dstColumn;
-	Sint32 dstRow;
+	Sint32 destColumn;
+	Sint32 destRow;
 	Sint32 leaderActorId;
 	ACTOR *actor;
-	Sint32 spinFrm;
+	Sint32 spinFrame;
 
-	dstColumn = FIELD_METATILE(MainRoutineStateWork.x) + 64;
-	dstRow = FIELD_METATILE(MainRoutineStateWork.z);
+	destColumn = FIELD_METATILE(MainRoutineStateWork.x) + 64;
+	destRow = FIELD_METATILE(MainRoutineStateWork.z);
 	leaderActorId = MainRoutineStateWork.leaderActorId;
 	actor = fdActorGet(leaderActorId);
 	if(entrance == *LastLeaf)
 		return;
 	*LastLeaf = entrance;
-	if(gmFlagGet(leafFlg) == 0) {
-		fdMapGridCopyMetatiles(srcColumn, srcRow, 1, 1, dstColumn, dstRow);
-		gmFlagSet(leafFlg);
+	if(gmFlagGet(leafFlag) == 0) {
+		fdMapGridCopyMetatiles(srcColumn, srcRow, 1, 1, destColumn, destRow);
+		gmFlagSet(leafFlag);
 		return;
 	}
 	/* Landing on a torn leaf: draw the hole and spin Isaac down through the
 	   web. */
 	*LastLeaf = -1;
-	fdMapGridCopyMetatiles(srcColumn, srcRow + 1, 1, 1, dstColumn, dstRow);
-	sySndPlay(SE_CURSE_FALL);
+	fdMapGridCopyMetatiles(srcColumn, srcRow + 1, 1, 1, destColumn, destRow);
+	sySoundPlay(SE_CURSE_FALL);
 	fdScriptStart();
 	fdScriptSetDestination(SCENE_TREE_ROOMS, entrance);
 	fdActorSetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
-	fdActorSetSprFlags(fdActorGet(leaderActorId), 0);
+	fdActorSetSpriteFlags(fdActorGet(leaderActorId), 0);
 	fdActorSetAttachedEffect(
 		leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdScriptWait(30);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	actor->motionFlg = ACTOR_FALLS;
+	actor->motionFlags = ACTOR_FALLS;
 	actor->groundHeight = -toFIXED(160);
 	actor->gravity = toFIXED(1) / 2;
-	sySndPlay(SE_DUST_PUFF);
+	sySoundPlay(SE_DUST_PUFF);
 	fdScriptWait(3);
 	actor->layer = 2;
-	fdActorSetSprPriority(leaderActorId, 3);
-	for(spinFrm = 0; spinFrm < LEAF_FALL_SPIN_TICKS; spinFrm++) {
+	fdActorSetSpritePriority(leaderActorId, 3);
+	for(spinFrame = 0; spinFrame < LEAF_FALL_SPIN_TICKS; spinFrame++) {
 		actor->facing += 2 * FACING_STEP;
 		sySynch(1);
 	}
@@ -485,19 +485,19 @@ static void scTreeRoomsFightTret(void)
 
 	hasMia = gmFlagGet(FLAG_IN_PARTY(MIA));
 	fdScriptStart();
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptSetMessageId(MsgTretHmHrooom);
 	/* "Hm HROOOM!!!" */
 	fdScriptShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-	sySndPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
+	sySoundPlay(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 1);
 	fdActorSetSpeed(ACTOR_GARET, 1);
 	fdActorSetSpeed(ACTOR_IVAN, 1);
 	fdActorSetSpeed(ACTOR_MIA, 1);
-	fdActorGet(ACTOR_MIA)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_MIA, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
+	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_MIA, 2);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	scPlaceAtLeader(ACTOR_GARET);
 	scPlaceAtLeader(ACTOR_IVAN);
 	if(hasMia != 0) {
@@ -553,7 +553,7 @@ static void scTreeRoomsFightTret(void)
 	fdScriptShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-	FieldStateWork->transitionFrm = 64;
+	FieldStateWork->transitionFrame = 64;
 	SET_BATTLE_TYPE(BATTLE_TYPE_SCRIPTED);
 	fdScriptSetAfterBattleDestination(
 		SCENE_TREE_ROOMS, TREE_ROOMS_AFTER_FIGHT_TRET);
@@ -578,12 +578,12 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	const Sint32 *actions;
 
 	hasMia = gmFlagGet(FLAG_IN_PARTY(MIA));
-	fdActorGet(ACTOR_MIA)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_MIA, 2);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC;
-	fdActorSetSprPriority(ACTOR_PARTY_LEADER, 2);
+	fdActorGet(ACTOR_MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_MIA, 2);
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+	fdActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
 	gmPartyInventoryFindMember(ITEM_HERMES_WATER);
-	sySndPlay(SOUND_FADE_OUT_BGM);
+	sySoundPlay(SOUND_FADE_OUT_BGM);
 	fdScriptStart();
 	fdActorSetSpeed(ACTOR_PARTY_LEADER, 0.8);
 	fdActorSetSpeed(ACTOR_GARET, 0.8);
@@ -602,7 +602,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
 	sySynch(10);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-	FieldStateWork->transitionFrm = 48;
+	FieldStateWork->transitionFrame = 48;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	fdScriptWait(20);
@@ -610,7 +610,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	fdCameraMoveTo(168, CAMERA_KEEP, 152, 1);
 	fdCameraWaitForMove();
 	fdScriptWait(10);
-	sySndPlay(SE_MAP_EXIT);
+	sySoundPlay(SE_MAP_EXIT);
 	fdMapGridCopyMetatileAttributes(26, 3, 1, 2, 10, 8);
 	fdMapGridCopyMetatiles(26, 38, 1, 1, 10, 43);
 	sySynch(4);
@@ -634,7 +634,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	fdScriptWait(40);
 	scTreeRoomsChangeFace(TRET_FACE_CHANGE_OPEN_EYES);
 	fdScriptWait(60);
-	sySndPlay(MUS_FOREST_THEME);
+	sySoundPlay(MUS_FOREST_THEME);
 	scTreeRoomsChangeFace(TRET_FACE_CHANGE_BLINK);
 	/* "What has happened to me?" */
 	syFieldScriptShowMessageThenWait(
@@ -791,7 +791,7 @@ static void scTreeRoomsPlayPostBattleConversation(void)
 	}
 	fdActorRunScriptAndWait(ACTOR_IVAN, actions);
 	fdScriptWait(20);
-	fdActorGet(ACTOR_PARTY_LEADER)->priFlg |= ACTOR_PRIORITY_AUTOMATIC;
+	fdActorGet(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 	gmFlagSet(FLAG_TRET_DEFEATED);
 	sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
 	fdScriptEnd();
@@ -830,7 +830,7 @@ static void scTreeRoomsApplyPostBattleState(Sint32 playRecoveryEvent)
    floor, a room at a time, until he lands before Tret
    (scTreeRoomsLandFromFall). Back from the battle with Tret, the conversation
    after it plays. The setup also saves the rooms' colours for the swell
-   (scTretPaletteSaveMapCols) and sets the map's first layer to scroll at nine
+   (scTretPaletteSaveMapColors) and sets the map's first layer to scroll at nine
    tenths of the pace of the view, offset to the room. */
 Sint32 scInit(void)
 {
@@ -845,14 +845,14 @@ Sint32 scInit(void)
 
 	tret = fdActorGet(ACTOR_TRET);
 	LastLeaf = (Sint16 *)SceneLocalState;
-	scTretPaletteSaveMapCols();
-	tret->motionFlg = 0;
+	scTretPaletteSaveMapColors();
+	tret->motionFlags = 0;
 	tret->y.fixed = -toFIXED(10);
 	secondTret = fdActorGet(ACTOR_SECOND_TRET);
 
-	secondTret->motionFlg = 0;
+	secondTret->motionFlags = 0;
 	secondTret->y.fixed = -toFIXED(10);
-	fdActorSetSprColById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
+	fdActorSetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
 	scTreeRoomsChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
 	if(MainRoutineStateWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
 		sySetTickEvent(scTretPaletteUpdateMapTint, EVENT_PASS_TICK);
@@ -865,8 +865,8 @@ Sint32 scInit(void)
 	grid = MapGridState[0];
 	/* Match the first layer's parallax offset and scale to the room bounds. */
 	layer = &grid->layers[0];
-	layer->ofsX += syMulFX(grid->minX + toFIXED(160), toFIXED(1) / 10);
-	layer->ofsY += syMulFX(grid->minY + toFIXED(136), toFIXED(1) / 10);
+	layer->offsetX += syMulFX(grid->minX + toFIXED(160), toFIXED(1) / 10);
+	layer->offsetY += syMulFX(grid->minY + toFIXED(136), toFIXED(1) / 10);
 	layer->scaleX = toFIXED(9) / 10;
 	layer->scaleY = toFIXED(9) / 10;
 	/* The layout draws four leaves already torn, so the first landing on them
@@ -892,19 +892,19 @@ Sint32 scInit(void)
 		entrance == TREE_ROOMS_FALL_THROUGH_C) {
 		fdScriptStartScreenTransition();
 		fdActorSetAnimation(leaderActorId, ANIM_LEADER_WALK_BACKWARDS);
-		fdActorSetSprFlags(fdActorGet(leaderActorId), 0);
+		fdActorSetSpriteFlags(fdActorGet(leaderActorId), 0);
 		fdActorSetAttachedEffect(
 			leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 		fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-		actor->motionFlg = ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FALLS;
 		actor->y.fixed = toFIXED(100);
 		actor->groundHeight = -toFIXED(160);
 		actor->gravity = toFIXED(1) / 2;
-		sySndPlay(SE_DUST_PUFF);
+		sySoundPlay(SE_DUST_PUFF);
 		fdScriptSetDestination(SCENE_TREE_ROOMS, entrance - FALL_ENTRANCE_STEP);
 		fdScriptWait(20);
 		actor->layer = 2;
-		fdActorSetSprPriority(leaderActorId, 3);
+		fdActorSetSpritePriority(leaderActorId, 3);
 		fdScriptWait(2);
 		fdActorSetAttachedEffect(
 			leaderActorId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
@@ -920,9 +920,9 @@ Sint32 scInit(void)
 
 /* Saves background palettes 0 to 13, the rooms' own colours, which the light's
    slow swell inside Tret brightens (scTretPaletteUpdateMapTint). */
-static void scTretPaletteSaveMapCols(void)
+static void scTretPaletteSaveMapColors(void)
 {
-	syDMAXCopy((const void *)BG_PLTT, PaletteFadeState->pal,
+	syDMAXCopy((const void *)BG_PLTT, PaletteFadeState->palette,
 		DMA_COPY_WORDS(112), REG_DMA3);
 }
 
@@ -935,49 +935,50 @@ static void scTretPaletteSaveMapCols(void)
    time; each later palette takes a weaker step. */
 static void scTretPaletteUpdateMapTint(void)
 {
-	Uint16		 *srcCols;
-	Uint16		 *dstCols;
-	Uint32		  colIdx;
+	Uint16		 *srcColors;
+	Uint16		 *destColors;
+	Uint32		  colorIndex;
 	Sint32		  redStep;
 	Sint32		  greenStep;
 	Sint32		  blueStep;
 	Sint32		  red;
 	Sint32		  green;
 	Sint32		  blue;
-	Uint32		  col;
+	Uint32		  color;
 	FIELD_STATE	 *state;
 	PALETTE_FADE *paletteState;
 
 	state = FieldStateWork;
 	paletteState = PaletteFadeState;
-	srcCols = paletteState->pal;
+	srcColors = paletteState->palette;
 	if(state->psynergy != 0)
 		return;
 	if((TickCount & 31) != 0)
 		return;
-	srcCols += PALETTE_COLORS;
-	dstCols = (Uint16 *)&BG_PLTT_COLOR(1, 0);
-	for(colIdx = 0; colIdx < TRET_TINT_COLOR_COUNT; colIdx++, srcCols++) {
+	srcColors += PALETTE_COLORS;
+	destColors = (Uint16 *)&BG_PLTT_COLOR(1, 0);
+	for(colorIndex = 0; colorIndex < TRET_TINT_COLOR_COUNT;
+		colorIndex++, srcColors++) {
 		redStep = TreeRoomsTintSteps[TreeRoomsTintIndex];
 		greenStep = TreeRoomsTintSteps[TreeRoomsTintIndex + 1];
 		blueStep = TreeRoomsTintSteps[TreeRoomsTintIndex + 2];
-		if(colIdx >= 3 * PALETTE_COLORS) {
+		if(colorIndex >= 3 * PALETTE_COLORS) {
 			redStep -= redStep / 2 + redStep / 3;
 			greenStep -= greenStep / 2 + greenStep / 3;
 			blueStep -= blueStep / 2 + blueStep / 3;
-		} else if(colIdx >= 2 * PALETTE_COLORS) {
+		} else if(colorIndex >= 2 * PALETTE_COLORS) {
 			redStep -= redStep / 3 + redStep / 4;
 			greenStep -= greenStep / 3 + greenStep / 4;
 			blueStep -= blueStep / 3 + blueStep / 4;
-		} else if(colIdx >= PALETTE_COLORS) {
+		} else if(colorIndex >= PALETTE_COLORS) {
 			redStep -= redStep / 4 + redStep / 5;
 			greenStep -= greenStep / 4 + greenStep / 5;
 			blueStep -= blueStep / 4 + blueStep / 5;
 		}
-		col = *srcCols;
-		red = RGB_RED(col);
-		green = RGB_GREEN(col);
-		blue = RGB_BLUE(col);
+		color = *srcColors;
+		red = RGB_RED(color);
+		green = RGB_GREEN(color);
+		blue = RGB_BLUE(color);
 		red += redStep;
 		green += greenStep;
 		blue += blueStep;
@@ -993,7 +994,7 @@ static void scTretPaletteUpdateMapTint(void)
 			green = 0;
 		if(blue < 0)
 			blue = 0;
-		*dstCols++ = RGB(red, green, blue);
+		*destColors++ = RGB(red, green, blue);
 	}
 	TreeRoomsTintIndex += (syRandomNext() & 7) * 3;
 	if(TreeRoomsTintSteps[TreeRoomsTintIndex] == TRET_TINT_END)
@@ -1082,29 +1083,29 @@ static void scTreeRoomsChangeFace(Sint32 change)
 static void scTreeRoomsUpdateSwirlSpark(ACTOR *spark)
 {
 	FIELD_POS pos;
-	Sint32	  frm;
+	Sint32	  frame;
 
-	frm = spark->tmr;
-	if(frm <= SWIRL_SPARK_LAST_TICK) {
-		pos.x = spark->tgtX;
-		pos.y = spark->tgtY;
-		pos.z = spark->tgtZ;
+	frame = spark->timer;
+	if(frame <= SWIRL_SPARK_LAST_TICK) {
+		pos.x = spark->targetX;
+		pos.y = spark->targetY;
+		pos.z = spark->targetZ;
 		{
-			Sint32 initAng = spark->userValue;
+			Sint32 initAngle = spark->userValue;
 
 			syVectorAddPolarOffset(
-				toFIXED(frm), ((frm * 3) << 8) + initAng, (FIXED *)&pos);
+				toFIXED(frame), ((frame * 3) << 8) + initAngle, (FIXED *)&pos);
 		}
 		spark->x.fixed = pos.x;
 		spark->y.fixed = pos.y;
 		spark->z.fixed = pos.z;
-		if(spark->tmr <= SWIRL_SPARK_SHRINK_LAST_TICK) {
+		if(spark->timer <= SWIRL_SPARK_SHRINK_LAST_TICK) {
 			spark->scaleX -= toFIXED(1) / 50;
 			spark->scaleY -= toFIXED(1) / 50;
 		}
-		spark->tmr++;
+		spark->timer++;
 	} else {
-		syVRAMCacheFreeEntry(spark->spr->slot);
+		syVRAMCacheFreeEntry(spark->sprite->slot);
 		fdActorRelease(spark);
 	}
 }
@@ -1129,31 +1130,31 @@ static void scTreeRoomsSpawnSwirlSparks(void)
 	case 20:
 	case 30:
 	case 40:
-		sySndPlay(SE_SHIMMER);
+		sySoundPlay(SE_SHIMMER);
 		/* Waves of 6, 5, 4, 3 and 2 sparks, spread evenly round a turn. */
 		for(sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
 			spark = syFieldActorCreate(
 				SPRITE_SPARKLE, SparkOrigin.x, SparkOrigin.y, SparkOrigin.z);
 			if(spark != NULL) {
-				previousResourceEntry =
-					fdSprShareVRAMCacheEntry(spark->spr, previousResourceEntry);
-				spark->motionFlg = 0;
-				spark->spr->image.pri = 0;
-				fdActorSetSprFlags(spark, 0);
+				previousResourceEntry = fdSpriteShareVRAMCacheEntry(
+					spark->sprite, previousResourceEntry);
+				spark->motionFlags = 0;
+				spark->sprite->image.priority = 0;
+				fdActorSetSpriteFlags(spark, 0);
 				fdActorSelectAnimation(spark, 1);
-				spark->tmr = 0;
+				spark->timer = 0;
 				spark->userValue =
 					DEGtoANG(360 / (Uint32)(6 - wave) * sparkIndex);
-				spark->tgtX = SparkOrigin.x;
-				spark->tgtY = SparkOrigin.y;
-				spark->tgtZ = SparkOrigin.z;
+				spark->targetX = SparkOrigin.x;
+				spark->targetY = SparkOrigin.y;
+				spark->targetZ = SparkOrigin.z;
 				spark->speedLimit = toFIXED(8) / 5;
 				spark->update = scTreeRoomsUpdateSwirlSpark;
 			}
 		}
 		/* fall through */
 	case 44:
-		sySndPlay(SOUND_FADE_OUT_ACTION_SE);
+		sySoundPlay(SOUND_FADE_OUT_ACTION_SE);
 		break;
 	}
 	if(++SparkTick > 120) {
@@ -1165,17 +1166,18 @@ static void scTreeRoomsSpawnSwirlSparks(void)
    the party left them. */
 static void scTreeRoomsApplyFlaggedMapPatches(void)
 {
-	Sint32 patchOfs;
+	Sint32 patchOffset;
 
-	for(patchOfs = 0; TreeRoomsMapPatches[patchOfs] != -1;
-		patchOfs += MAP_PATCH_ROW_LENGTH) {
-		if(gmFlagGet(TreeRoomsMapPatches[patchOfs + MAP_PATCH_FLAG]) &&
-			TreeRoomsMapPatches[patchOfs + MAP_PATCH_REDRAWN] != 0)
+	for(patchOffset = 0; TreeRoomsMapPatches[patchOffset] != -1;
+		patchOffset += MAP_PATCH_ROW_LENGTH) {
+		if(gmFlagGet(TreeRoomsMapPatches[patchOffset + MAP_PATCH_FLAG]) &&
+			TreeRoomsMapPatches[patchOffset + MAP_PATCH_REDRAWN] != 0)
 			fdMapGridCopyMetatilesTo(
-				TreeRoomsMapPatches[patchOfs + MAP_PATCH_SOURCE_X],
-				TreeRoomsMapPatches[patchOfs + MAP_PATCH_SOURCE_Y],
-				TreeRoomsMapPatches[patchOfs + MAP_PATCH_DESTINATION_X],
-				TreeRoomsMapPatches[patchOfs + MAP_PATCH_DESTINATION_Y], 1, 1);
+				TreeRoomsMapPatches[patchOffset + MAP_PATCH_SOURCE_X],
+				TreeRoomsMapPatches[patchOffset + MAP_PATCH_SOURCE_Y],
+				TreeRoomsMapPatches[patchOffset + MAP_PATCH_DESTINATION_X],
+				TreeRoomsMapPatches[patchOffset + MAP_PATCH_DESTINATION_Y], 1,
+				1);
 	}
 }
 
@@ -1196,11 +1198,11 @@ static void scTreeRoomsCastReveal(void)
 static void scTreeRoomsLandFromFall(void)
 {
 	EFFECT_OPTIONS options;
-	FIELD_POS	   vel;
+	FIELD_POS	   velocity;
 	ACTOR		  *leader;
-	Uint32		   particleIdx;
-	Sint32		   velX;
-	FIXED		   velZ;
+	Uint32		   particleIndex;
+	Sint32		   velocityX;
+	FIXED		   velocityZ;
 
 	fdScriptStart();
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1209,34 +1211,34 @@ static void scTreeRoomsLandFromFall(void)
 	fdActorGet(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
 	fdActorGet(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 2;
 	fdActorGet(ACTOR_PARTY_LEADER)->bounce = 0;
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg = 0;
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags = 0;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
-	sySndPlay(SE_DUST_PUFF);
-	fdActorGet(ACTOR_PARTY_LEADER)->motionFlg =
+	sySoundPlay(SE_DUST_PUFF);
+	fdActorGet(ACTOR_PARTY_LEADER)->motionFlags =
 		ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 	fdScriptWait(24);
 	leader = fdActorGet(ACTOR_PARTY_LEADER);
-	options.pal = SPRITE_COLOR_WHITE;
+	options.palette = SPRITE_COLOR_WHITE;
 	options.update = scFieldEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
-	for(particleIdx = 0; particleIdx <= TRIG_TURN / FACING_STEP;
-		particleIdx++) {
-		vel.x = syCos(particleIdx * FACING_STEP);
-		vel.y = 0;
-		velZ = sySin(particleIdx * FACING_STEP);
-		velX = vel.x;
-		vel.z = velZ;
-		velX += velX / 2;
-		vel.x = velX;
-		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velX,
-			vel.y, velZ,
+	for(particleIndex = 0; particleIndex <= TRIG_TURN / FACING_STEP;
+		particleIndex++) {
+		velocity.x = syCos(particleIndex * FACING_STEP);
+		velocity.y = 0;
+		velocityZ = sySin(particleIndex * FACING_STEP);
+		velocityX = velocity.x;
+		velocity.z = velocityZ;
+		velocityX += velocityX / 2;
+		velocity.x = velocityX;
+		fdEffectSpawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+			velocityX, velocity.y, velocityZ,
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 	}
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	fdActorSetAttachedEffect(
 		ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
 	fdActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);

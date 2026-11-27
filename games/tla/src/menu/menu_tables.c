@@ -75,7 +75,7 @@ Sint32 ItemMenuCommandColumnXTable[6] = {
 /* clang-format on */
 
 /* The highlight's width in tiles over each label of the Status screen's rows
-   (mnStatScreenDrawSelectionCursor), fitted to each language's words. */
+   (mnStatusScreenDrawSelectionCursor), fitted to each language's words. */
 #if (LANGUAGE == LANGUAGE_FRENCH)
 Uint8 StatusScreenCursorWidths[5] = {6, 7, 7, 6, 6};
 #else

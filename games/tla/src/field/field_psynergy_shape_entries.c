@@ -13,13 +13,13 @@ void fdFlagBlockPlaceAllMarkingEdges(ACTOR_FLAG *list)
 
 	for(; list->actor != ACTOR_LIST_END; list++) {
 		ACTOR		 *actor = fdActorGetById(list->actor);
-		Uint16		  flg = list->flg;
+		Uint16		  flag = list->flags;
 		Sint32		  slot = fdActorGetMetatileIndex(actor);
 		MAP_METATILE *metatile = &map->layers[actor->layer].metatiles[slot];
 
-		actor->motionFlg = 0;
-		actor->collisionFlg &= ~ACTOR_SOLID;
-		fdActorSetSprFlagsStub(actor, 0);
+		actor->motionFlags = 0;
+		actor->collisionFlags &= ~ACTOR_SOLID;
+		fdActorSetSpriteFlagsStub(actor, 0);
 		metatile->collisionCode = METATILE_BEHAVIOR_WALL;
 		fdMapGridMarkJumpIfOpen(
 			actor->x.fixed + toFIXED(MAPGRID_METATILE_PIXELS), actor->z.fixed,
@@ -33,9 +33,9 @@ void fdFlagBlockPlaceAllMarkingEdges(ACTOR_FLAG *list)
 		fdMapGridMarkJumpIfOpen(actor->x.fixed,
 			actor->z.fixed - toFIXED(MAPGRID_METATILE_PIXELS), actor->layer,
 			actor->groundHeight);
-		if(syGameFlagGet(flg)) {
+		if(syGameFlagGet(flag)) {
 			fdActorSelectAnimationStub(actor, PUDDLE_ANIMATION_FROZEN);
-			syGameFlagClear(flg);
+			syGameFlagClear(flag);
 		} else {
 			fdActorSelectAnimationStub(actor, PUDDLE_ANIMATION_PUDDLE);
 		}
@@ -63,14 +63,14 @@ void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 	for(; list->actor != ACTOR_LIST_END; list++) {
 		Sint32 change = 0;
 		ACTOR *actor = fdActorGetById(list->actor);
-		Uint8  anm = ((SPR *)actor->spr)->lastNo;
-		Uint16 flg = list->flg;
+		Uint8  animation = ((SPR *)actor->sprite)->lastNo;
+		Uint16 flag = list->flags;
 
-		if(syGameFlagGet(flg)) {
-			if(anm != PUDDLE_ANIMATION_FROZEN)
+		if(syGameFlagGet(flag)) {
+			if(animation != PUDDLE_ANIMATION_FROZEN)
 				change = 1;
 		} else {
-			if(anm != PUDDLE_ANIMATION_PUDDLE)
+			if(animation != PUDDLE_ANIMATION_PUDDLE)
 				change = 1;
 		}
 		if(change) {
@@ -91,19 +91,19 @@ void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 				actor->layer, actor->x.fixed, actor->z.fixed));
 
 			field->movedBlock = actor;
-			if(syGameFlagGet(flg)) {
+			if(syGameFlagGet(flag)) {
 				height -= METATILE_HEIGHT_STEPS(toFIXED(32));
-				syGameFlagClear(flg);
+				syGameFlagClear(flag);
 			} else {
 				height += METATILE_HEIGHT_STEPS(toFIXED(32));
-				syGameFlagSet(flg);
+				syGameFlagSet(flag);
 			}
 			if((actor->x.fixed | actor->z.fixed) != 0) {
 
 				metatiles += slot;
 				shapes += slot;
 				*shapes = fdMapShapeFindOrAdd(actor->layer, kind, height);
-				if(syGameFlagGet(flg)) {
+				if(syGameFlagGet(flag)) {
 					Sint32 bits;
 
 					metatiles->collisionCode = METATILE_BEHAVIOR_NORMAL;

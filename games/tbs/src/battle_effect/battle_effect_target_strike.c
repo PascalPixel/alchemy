@@ -157,17 +157,17 @@ void btEffectRunDrainFang(BATTLE_EFFECT_PARM *args)
 void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	SCREEN_POINT		 ground;
-	SCREEN_POINT		 tgtPos;
+	SCREEN_POINT		 targetPos;
 	SCREEN_POINT		 alternate;
 	SCREEN_POINT		 pos;
 	BLITTER_PAIR		 draw;
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
-	Sint32				 frm;
+	Sint32				 frame;
 	Sint32				 k;
 	Uint8				*motes;
 	BATTLE_CAMERA		*camera;
-	ACTOR				*tgt;
+	ACTOR				*target;
 	ACTOR				*user;
 	Sint32				 resource;
 	Sint32				 i;
@@ -224,11 +224,11 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	 * only, as btEffectRunDrain (battle_effect_drain.c) seeds each target's
 	 * motes over every target; as its body once with k 0. */
 	for(k = 0; k != 1; k++) {
-		tgt = btObjectGetStub(state->args->tgts[k])->actor;
+		target = btObjectGetStub(state->args->targets[k])->actor;
 		for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 			PARTICLE *puff = &state->particles[i];
 
-			btProjectionUnit(state->args->tgts[k], &ground);
+			btProjectionUnit(state->args->targets[k], &ground);
 			SET_POSITION(puff, toFIXED(ground.x / 2), toFIXED(80), 0);
 			SET_VELOCITY(puff, ((syRandom() & 255) - 128) << 9,
 				((syRandom() & 255) - 128) << 9, 0);
@@ -237,39 +237,44 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		for(i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
 			PARTICLE *mote = &PARTICLES[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
-			SET_POSITION(mote, tgt->x.fixed, toFIXED(20), tgt->z.fixed);
+			SET_POSITION(mote, target->x.fixed, toFIXED(20), target->z.fixed);
 			SET_VELOCITY(mote, ((syRandom() & 255) - 128) << 11,
 				((syRandom() & 255) - 128) << 11,
 				((syRandom() & 255) - 128) << 11);
 			mote->variant = -1;
 		}
 		for(i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++) {
-			TARGET_STRIKE_SPARKS[i].x = tgt->x.fixed;
+			TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
 			TARGET_STRIKE_SPARKS[i].y = toFIXED(20);
-			TARGET_STRIKE_SPARKS[i].z = tgt->z.fixed;
+			TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
 			if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) ==
 				STRIKE_KIND_BITE) {
-				TARGET_STRIKE_SPARKS[i].velX = ((syRandom() & 255) - 128) << 11;
-				TARGET_STRIKE_SPARKS[i].velY = ((syRandom() & 255) - 128) << 11;
-				TARGET_STRIKE_SPARKS[i].velZ = ((syRandom() & 255) - 128) << 11;
+				TARGET_STRIKE_SPARKS[i].velocityX = ((syRandom() & 255) - 128)
+					<< 11;
+				TARGET_STRIKE_SPARKS[i].velocityY = ((syRandom() & 255) - 128)
+					<< 11;
+				TARGET_STRIKE_SPARKS[i].velocityZ = ((syRandom() & 255) - 128)
+					<< 11;
 			} else {
 				if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) &
 					STRIKE_HEAVY) {
-					TARGET_STRIKE_SPARKS[i].velX = (syRandom() & 0x1ff) << 11;
-					TARGET_STRIKE_SPARKS[i].velY = ((syRandom() & 0x1ff) - 256)
+					TARGET_STRIKE_SPARKS[i].velocityX = (syRandom() & 0x1ff)
 						<< 11;
-					TARGET_STRIKE_SPARKS[i].velZ = ((syRandom() & 0x1ff) - 256)
-						<< 11;
+					TARGET_STRIKE_SPARKS[i].velocityY =
+						((syRandom() & 0x1ff) - 256) << 11;
+					TARGET_STRIKE_SPARKS[i].velocityZ =
+						((syRandom() & 0x1ff) - 256) << 11;
 				} else {
-					TARGET_STRIKE_SPARKS[i].velX = (syRandom() & 255) << 11;
-					TARGET_STRIKE_SPARKS[i].velY = ((syRandom() & 255) - 128)
+					TARGET_STRIKE_SPARKS[i].velocityX = (syRandom() & 255)
 						<< 11;
-					TARGET_STRIKE_SPARKS[i].velZ = ((syRandom() & 255) - 128)
-						<< 11;
+					TARGET_STRIKE_SPARKS[i].velocityY =
+						((syRandom() & 255) - 128) << 11;
+					TARGET_STRIKE_SPARKS[i].velocityZ =
+						((syRandom() & 255) - 128) << 11;
 				}
 				if(TARGET_STRIKE_SPARKS[i].x > 0)
-					TARGET_STRIKE_SPARKS[i].velX =
-						-TARGET_STRIKE_SPARKS[i].velX;
+					TARGET_STRIKE_SPARKS[i].velocityX =
+						-TARGET_STRIKE_SPARKS[i].velocityX;
 			}
 			TARGET_STRIKE_SPARKS[i].variant = -1;
 		}
@@ -278,11 +283,12 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	btProjectionScaledUnit(state->args->tgts[0], &tgtPos);
-	btProjectionUnit(state->args->tgts[0], &alternate);
-	tgtPos.y += (alternate.y - tgtPos.y) / 2;
+	btProjectionScaledUnit(state->args->targets[0], &targetPos);
+	btProjectionUnit(state->args->targets[0], &alternate);
+	targetPos.y += (alternate.y - targetPos.y) / 2;
 
-	for(frm = 0; frm != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_TICKS); frm++) {
+	for(frame = 0; frame != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_TICKS);
+		frame++) {
 		Sint32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
 			TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS);
 		Sint32 length = span * 4;
@@ -290,8 +296,8 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 		if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH) {
 			/* Slashes sweep across the target from the user's side. */
-			if(frm < span * 6) {
-				Sint32 picture = frm /
+			if(frame < span * 6) {
+				Sint32 picture = frame /
 					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) % 6;
 
 				if(state->args->side == EFFECT_SIDE_PARTY) {
@@ -300,9 +306,9 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
 						state->sheet + TargetStrikePictures[picture],
-						tgtPos.x / 2 - (TargetStrikeReach[picture] / 2) -
+						targetPos.x / 2 - (TargetStrikeReach[picture] / 2) -
 							TargetStrikeWidths[picture] + 8,
-						tgtPos.y - (TargetStrikeHeights[picture] / 2),
+						targetPos.y - (TargetStrikeHeights[picture] / 2),
 						TargetStrikeWidths[picture],
 						TargetStrikeHeights[picture]);
 				} else {
@@ -310,13 +316,13 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
 						state->sheet + TargetStrikePictures[picture],
-						tgtPos.x / 2 + (TargetStrikeReach[picture] / 2) - 8,
-						tgtPos.y - (TargetStrikeHeights[picture] / 2),
+						targetPos.x / 2 + (TargetStrikeReach[picture] / 2) - 8,
+						targetPos.y - (TargetStrikeHeights[picture] / 2),
 						TargetStrikeWidths[picture],
 						TargetStrikeHeights[picture]);
 				}
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
-				if(frm %
+				if(frame %
 						(TARGET_STRIKE_VALUE(
 							 mode, TARGET_STRIKE_PICTURE_TICKS) *
 							6) ==
@@ -325,25 +331,25 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
 						EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 					} else {
-						sySndPlayStub(SE_IMPACT);
+						sySoundPlayStub(SE_IMPACT);
 						EFFECT_SHOW_DAMAGE(SE_IMPACT);
 					}
 					if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) &
 						STRIKE_HEAVY) {
-						state->shakeFrm = 8;
+						state->shakeFrame = 8;
 						EFFECT_STRIKE_TARGET(
 							state->args, 0, 12, KNOCKBACK_HURL);
 						for(i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++)
 							TARGET_STRIKE_SPARKS[i].variant =
 								(syRandom() & 15) + 15;
 					} else {
-						state->shakeFrm = 4;
-						btEffectTintBattler(state->args->tgts[0],
+						state->shakeFrame = 4;
+						btEffectTintBattler(state->args->targets[0],
 							SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
 						for(i = 0; i != TARGET_STRIKE_SPARKS_PER_SLASH; i++) {
 							PARTICLE *spark =
 								&TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(
-														  mode, frm) *
+														  mode, frame) *
 										TARGET_STRIKE_SPARKS_PER_SLASH +
 									i];
 
@@ -352,7 +358,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 					for(i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
 						PARTICLE *puff =
-							&state->particles[TARGET_STRIKE_HIT(mode, frm) *
+							&state->particles[TARGET_STRIKE_HIT(mode, frame) *
 									TARGET_STRIKE_HIT_BLOCK +
 								i];
 
@@ -360,15 +366,15 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					}
 				}
 			}
-			if(frm >= 12 && frm <= 31)
+			if(frame >= 12 && frame <= 31)
 				glint = 1;
-		} else if(frm < length + 4) {
+		} else if(frame < length + 4) {
 			/* Bites: rows of fangs close above and below the target and meet in
 			   a flash. */
 			Sint32 stage;
 
-			if(frm < length) {
-				Sint32 picture = frm /
+			if(frame < length) {
+				Sint32 picture = frame /
 					TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS);
 
 				while(picture > 4)
@@ -382,8 +388,9 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
 				state->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
 					TARGET_STRIKE_BITE_PICTURES,
-				tgtPos.x / 2 - TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_Y,
-				TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
+				targetPos.x / 2 - TARGET_STRIKE_BITE_WIDTH,
+				TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
+				TARGET_STRIKE_BITE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -391,10 +398,10 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas,
 				state->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
 					TARGET_STRIKE_BITE_PICTURES,
-				tgtPos.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
+				targetPos.x / 2, TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
 				TARGET_STRIKE_BITE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
-			if(frm %
+			if(frame %
 					(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) *
 						4) ==
 				TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS) * 3) {
@@ -402,18 +409,18 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				   the damage. Hits are counted six pictures apart, as a slash's
 				   are, so a third bite relights the second's sparks and smoke
 				   rather than a block of its own. */
-				btEffectTintBattler(state->args->tgts[0], SPRITE_COLOR_WHITE,
+				btEffectTintBattler(state->args->targets[0], SPRITE_COLOR_WHITE,
 					POSE_DAMAGE, 0, 8);
-				state->shakeFrm = 4;
-				if(frm >
+				state->shakeFrame = 4;
+				if(frame >
 					(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) * 4 - 4) *
 						TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_PICTURE_TICKS))
 					EFFECT_SHOW_DAMAGE(SE_IMPACT);
 				else
-					sySndPlayStub(SE_IMPACT);
+					sySoundPlayStub(SE_IMPACT);
 				for(i = 0; i != TARGET_STRIKE_SPARKS_PER_BITE; i++) {
 					PARTICLE *spark =
-						&TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(mode, frm) *
+						&TARGET_STRIKE_SPARKS[TARGET_STRIKE_HIT(mode, frame) *
 								TARGET_STRIKE_SPARKS_PER_BITE +
 							i];
 
@@ -421,14 +428,14 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				}
 				for(i = 0; i != TARGET_STRIKE_PUFFS_PER_HIT; i++) {
 					PARTICLE *puff =
-						&state->particles[TARGET_STRIKE_HIT(mode, frm) *
+						&state->particles[TARGET_STRIKE_HIT(mode, frame) *
 								TARGET_STRIKE_HIT_BLOCK +
 							i];
 
 					puff->variant = 0;
 				}
 				for(i = 0; i != TARGET_STRIKE_HIT_BLOCK; i++)
-					PARTICLES[TARGET_STRIKE_HIT(mode, frm) *
+					PARTICLES[TARGET_STRIKE_HIT(mode, frame) *
 							TARGET_STRIKE_HIT_BLOCK +
 						i]
 						.variant = 0;
@@ -441,15 +448,15 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		if((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
 			glint) {
 			for(i = 0; i != 3; i++) {
-				Sint32 image = frm & 3;
+				Sint32 image = frame & 3;
 				Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
 				Sint32 radius = (syRandom() & 31) + 4;
 				Sint32 x;
 				Sint32 y;
 
-				x = tgtPos.x / 2 + (FIXEDtoINT(sySin(angle) * radius) >> 1) -
+				x = targetPos.x / 2 + (FIXEDtoINT(sySin(angle) * radius) >> 1) -
 					(BattleEffectGlintPictureWidths[image] / 2);
-				y = tgtPos.y - (FIXEDtoINT(syCos(angle) * radius) >> 1) -
+				y = targetPos.y - (FIXEDtoINT(syCos(angle) * radius) >> 1) -
 					(BattleEffectGlintPictureHeights[image] / 2);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					TargetStrikeGlintDrawFlags[syRandom() & 3] |
@@ -504,10 +511,10 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				if(mode == TARGET_STRIKE_STYLE_MARS_ADDITIVE_DRAIN_BITES)
 					size = 8;
-				if(frm == 55)
+				if(frame == 55)
 					btEffectTintBattler(state->args->user, SPRITE_COLOR_WHITE,
 						TINT_KEEP, TINT_KEEP, 0);
-				if(frm == 90)
+				if(frame == 90)
 					btEffectTintBattler(state->args->user, SPRITE_COLOR_NORMAL,
 						TINT_KEEP, TINT_KEEP, 0);
 				for(i = 0; i != TARGET_STRIKE_DRAIN_MOTES; i++) {
@@ -526,9 +533,9 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 								(user->y.fixed - mote->y + toFIXED(20)) >> 8;
 							Sint32 dz = (user->z.fixed - mote->z) >> 8;
 
-							mote->velX += dx;
-							mote->velY += dy;
-							mote->velZ += dz;
+							mote->velocityX += dx;
+							mote->velocityY += dy;
+							mote->velocityZ += dz;
 							if((dx > -(toFIXED(1) / 16) &&
 								   dx < toFIXED(1) / 16) &&
 								(dz > -(toFIXED(1) / 16) &&

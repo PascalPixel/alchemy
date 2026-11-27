@@ -7,59 +7,60 @@ Sint32 btAutoBattleBuildActions(BATTLE_ACTION_RECORD *entries)
 {
 	BATTLE_ACTION_RECORD  swap;
 	Uint16				  unitIds[UNIT_MAX];
-	Sint32				  partyCnt;
-	Sint32				  cnt = 0;
-	Sint32				  enemyCnt;
-	Sint32				  tgtRange;
-	Sint32				  idx;
+	Sint32				  partyCount;
+	Sint32				  count = 0;
+	Sint32				  enemyCount;
+	Sint32				  targetRange;
+	Sint32				  index;
 	BATTLE_ACTION_RECORD *entry;
 	UNIT				 *unit;
 
 	/* The party's actions. */
-	partyCnt = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
+	partyCount = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
 	/* DEAD: syUnitGet's results are not used; the ROM keeps the calls. */
-	for(idx = 0; idx != PARTY_BATTLE_SIZE; idx++)
-		syUnitGet(idx);
-	for(idx = 0; idx < partyCnt; idx++) {
-		Sint32 unitId = unitIds[idx];
+	for(index = 0; index != PARTY_BATTLE_SIZE; index++)
+		syUnitGet(index);
+	for(index = 0; index < partyCount; index++) {
+		Sint32 unitId = unitIds[index];
 
 		unit = syUnitGet(unitId);
-		entry = &entries[idx];
+		entry = &entries[index];
 		entry->unitId = unitId;
-		entry->pri = unit->agility;
+		entry->priority = unit->agility;
 		entry->command = COMMAND_ATTACK;
-		entry->prm = 0;
-		entry->tgt = FIRST_ENEMY_UNIT;
-		cnt++;
+		entry->param = 0;
+		entry->target = FIRST_ENEMY_UNIT;
+		count++;
 	}
 	/* The enemies attack a random party member, replaced when the action plays
 	   if it is down. */
-	enemyCnt = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
-	entry = &entries[partyCnt];
-	tgtRange = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
-	for(idx = 0; idx < enemyCnt; idx++) {
-		Sint32 unitId = unitIds[idx];
+	enemyCount = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
+	entry = &entries[partyCount];
+	targetRange = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
+	for(index = 0; index < enemyCount; index++) {
+		Sint32 unitId = unitIds[index];
 
 		unit = syUnitGet(unitId);
 		entry->unitId = unitId;
-		entry->pri = unit->agility >> 1;
-		if(entry->pri != 0)
-			entry->pri += (Uint32)(syRandom() * unit->agility) >> 16;
+		entry->priority = unit->agility >> 1;
+		if(entry->priority != 0)
+			entry->priority += (Uint32)(syRandom() * unit->agility) >> 16;
 		entry->command = COMMAND_ATTACK;
-		entry->prm = 0;
-		entry->tgt = syRandomBelow(tgtRange);
-		cnt++;
+		entry->param = 0;
+		entry->target = syRandomBelow(targetRange);
+		count++;
 		entry++;
 	}
 	/* Bubble the faster units forward. */
 	/* BUG: one pass short of a full sort; with two actions nothing is
 	   sorted. */
-	for(idx = cnt - 2; idx > 0; idx--) {
+	for(index = count - 2; index > 0; index--) {
 		Sint32 swaps = 0;
 		Sint32 pos;
 
-		for(pos = cnt - 1; pos > 0; pos--) {
-			if((Sint16)entries[pos].pri > (Sint16)entries[pos - 1].pri) {
+		for(pos = count - 1; pos > 0; pos--) {
+			if((Sint16)entries[pos].priority >
+				(Sint16)entries[pos - 1].priority) {
 				syDMAXCopy(&entries[pos], &swap, DMA_COPY_WORDS(4), REG_DMA3);
 				syDMAXCopy(&entries[pos - 1], &entries[pos], DMA_COPY_WORDS(4),
 					REG_DMA3);
@@ -71,7 +72,7 @@ Sint32 btAutoBattleBuildActions(BATTLE_ACTION_RECORD *entries)
 		if(swaps == 0)
 			break;
 	}
-	return cnt;
+	return count;
 }
 
 /* Unused: turns the battle camera while L or R is held, a 128th of a turn each
@@ -106,7 +107,7 @@ Sint32 btAutoBattleRunAction(BATTLE_ACTION_RECORD *action)
 	if(actor->hp == 0)
 		return -1;
 
-	action->tgt = btAbilityReplaceDefeated(action);
+	action->target = btAbilityReplaceDefeated(action);
 	background = RamHeapSlots->battleBg;
 	/* Here any unit id above Felix's counts as an enemy, Jenna, Sheba and Piers
 	   included. */
@@ -114,7 +115,7 @@ Sint32 btAutoBattleRunAction(BATTLE_ACTION_RECORD *action)
 		yaw = YAW_ENEMY_ACTION;
 	else
 		yaw = YAW_PARTY_ACTION;
-	background->tgtYaw = yaw;
+	background->targetYaw = yaw;
 	background->ticks = 60;
 	mnMessageArgumentClearAllStub();
 
@@ -215,47 +216,47 @@ Sint32 btAutoBattleRunPsynergy(BATTLE_ACTION_RECORD *action)
 	Uint16					  visibleUnits[UNIT_MAX];
 	BATTLE_PRESENTATION_STATE context;
 	Sint32					  actorId;
-	Sint32					  tgtId;
+	Sint32					  targetId;
 	Uint32					  sideStart;
-	Uint32					  sideCnt;
-	Uint32					  livingCnt;
+	Uint32					  sideCount;
+	Uint32					  livingCount;
 	MOTION_OBJECT			 *actorRecord;
-	Uint32					  idx;
+	Uint32					  index;
 
-	livingCnt = 0;
+	livingCount = 0;
 	actorId = action->unitId;
 	if(btObjectIsValidId(actorId) < 0)
 		return -1;
-	tgtId = action->tgt;
-	if(btObjectIsValidId(tgtId) < 0)
+	targetId = action->target;
+	if(btObjectIsValidId(targetId) < 0)
 		return -1;
 
 	{
 		BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 		/* An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
 		   YAW_ENEMY_ACTION. */
-		background->tgtYaw =
+		background->targetYaw =
 			action->unitId > FELIX ? YAW_BEHIND_ENEMIES : YAW_PARTY_ACTION;
 		background->ticks = 60;
 	}
 	sySynch(10);
 	/* A roll nothing uses, which still advances the random number generator. */
 	syRandom();
-	actorRecord = btObjectGet(actorId)->obj;
+	actorRecord = btObjectGet(actorId)->object;
 
 	/* The caster's side, taken as the side the target is not on, and the
-	   caster's POSE_CAST when its id is among that side's first sideCnt
+	   caster's POSE_CAST when its id is among that side's first sideCount
 	   ids. */
-	if(tgtId >= 0 && tgtId <= ALLY_MAX) {
-		sideCnt = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
+	if(targetId >= 0 && targetId <= ALLY_MAX) {
+		sideCount = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
 		sideStart = FIRST_ENEMY_UNIT;
 	} else {
-		sideCnt = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
+		sideCount = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
 		sideStart = 0;
 	}
 
-	for(idx = 0; idx != sideCnt; idx++) {
-		if(idx + sideStart == actorId)
+	for(index = 0; index != sideCount; index++) {
+		if(index + sideStart == actorId)
 			fdActorSelectAnimationStub((ACTOR *)actorRecord, POSE_CAST);
 	}
 
@@ -263,38 +264,38 @@ Sint32 btAutoBattleRunPsynergy(BATTLE_ACTION_RECORD *action)
 	   window. */
 	sySynch(30);
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-	for(idx = 0; idx != sideCnt; idx++)
-		btHighlightSetSprMode(idx + sideStart, SPRITE_SEMI_TRANSPARENT);
-	for(idx = 0; idx != BLEND_WEIGHT_MAX; idx++) {
-		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - idx, BLEND_WEIGHT_MAX);
+	for(index = 0; index != sideCount; index++)
+		btHighlightSetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
+	for(index = 0; index != BLEND_WEIGHT_MAX; index++) {
+		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - index, BLEND_WEIGHT_MAX);
 		sySynch(1);
 	}
-	mnPartyStatDrawStub(PARTY_STATUS_CLOSED);
+	mnPartyStatusDrawStub(PARTY_STATUS_CLOSED);
 
 	/* Ready only the target side's living units, and play the effect. */
-	if(tgtId >= FIRST_ENEMY_UNIT) {
-		Uint32 cnt = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
-		for(idx = 0; livingCnt != cnt; idx++) {
-			Uint32 unit = idx + FIRST_ENEMY_UNIT;
+	if(targetId >= FIRST_ENEMY_UNIT) {
+		Uint32 count = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
+		for(index = 0; livingCount != count; index++) {
+			Uint32 unit = index + FIRST_ENEMY_UNIT;
 			if(syUnitGet(unit)->hp > 0)
-				visibleUnits[livingCnt++] = unit;
+				visibleUnits[livingCount++] = unit;
 		}
 	} else {
-		Uint32 cnt = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
-		for(idx = 0; livingCnt != cnt; idx++) {
-			if(syUnitGet(idx)->hp > 0)
-				visibleUnits[livingCnt++] = idx;
+		Uint32 count = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
+		for(index = 0; livingCount != count; index++) {
+			if(syUnitGet(index)->hp > 0)
+				visibleUnits[livingCount++] = index;
 		}
 	}
-	visibleUnits[livingCnt] = BATTLE_UNIT_LIST_END;
+	visibleUnits[livingCount] = BATTLE_UNIT_LIST_END;
 	btActorSpawnObjectsForList((Sint16 *)visibleUnits, 0);
 
-	context.kind = action->prm;
+	context.kind = action->param;
 	context.actor = actorId;
-	for(idx = 0; idx != livingCnt; idx++)
-		context.actors[idx] = visibleUnits[idx];
-	context.cnt = livingCnt;
-	if(tgtId >= 0 && tgtId <= ALLY_MAX)
+	for(index = 0; index != livingCount; index++)
+		context.actors[index] = visibleUnits[index];
+	context.count = livingCount;
+	if(targetId >= 0 && targetId <= ALLY_MAX)
 		context.side = EFFECT_SIDE_PARTY;
 	else
 		context.side = EFFECT_SIDE_ENEMIES;
@@ -304,14 +305,14 @@ Sint32 btAutoBattleRunPsynergy(BATTLE_ACTION_RECORD *action)
 	sySynch(10);
 	btObjectPut();
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-	for(idx = 0; idx != sideCnt; idx++)
-		btHighlightSetSprMode(idx + sideStart, SPRITE_SEMI_TRANSPARENT);
-	for(idx = 0; idx != BLEND_WEIGHT_MAX; idx++) {
-		REG_BLDALPHA = BLEND_ALPHA(idx, BLEND_WEIGHT_MAX);
+	for(index = 0; index != sideCount; index++)
+		btHighlightSetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
+	for(index = 0; index != BLEND_WEIGHT_MAX; index++) {
+		REG_BLDALPHA = BLEND_ALPHA(index, BLEND_WEIGHT_MAX);
 		sySynch(1);
 	}
-	for(idx = 0; idx != sideCnt; idx++)
-		btHighlightSetSprMode(idx + sideStart, SPRITE_OPAQUE);
+	for(index = 0; index != sideCount; index++)
+		btHighlightSetSpriteMode(index + sideStart, SPRITE_OPAQUE);
 	btCameraSetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 	sySynch(3);
 	return 0;
@@ -325,11 +326,11 @@ UNUSED Sint32 btAutoBattleRunApproachAttack(BATTLE_ACTION_RECORD *action)
 	BATTLE_PRESENTATION_STATE state;
 
 	/* A short wait when the camera already faces the party's side. */
-	if(RamHeapSlots->battleBg->tgtYaw == YAW_PARTY_ACTION) {
-		RamHeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
+	if(RamHeapSlots->battleBg->targetYaw == YAW_PARTY_ACTION) {
+		RamHeapSlots->battleBg->targetYaw = YAW_PARTY_ACTION;
 		sySynch(10);
 	} else {
-		RamHeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
+		RamHeapSlots->battleBg->targetYaw = YAW_PARTY_ACTION;
 		sySynch(30);
 	}
 
@@ -337,7 +338,7 @@ UNUSED Sint32 btAutoBattleRunApproachAttack(BATTLE_ACTION_RECORD *action)
 	if(btObjectIsValidId(state.actor) < 0)
 		return -1;
 
-	state.actors[0] = action->tgt;
+	state.actors[0] = action->target;
 	if(btObjectIsValidId(state.actors[0]) < 0)
 		return -1;
 
@@ -350,10 +351,10 @@ UNUSED Sint32 btAutoBattleRunApproachAttack(BATTLE_ACTION_RECORD *action)
 	mnBattleMessageShowAndWaitStub((Sint32)MsgActorAttacks);
 	btMotionApproachTarget(state.actor, state.actors[0], 13, 0);
 	fdActorSetAnimationSpeedStub(
-		(ACTOR *)btObjectGet(state.actor)->obj, ANIM_STEP_NORMAL);
+		(ACTOR *)btObjectGet(state.actor)->object, ANIM_STEP_NORMAL);
 	btObjectGet(state.actors[0]);
 
-	state.cnt = 1;
+	state.count = 1;
 	if((Uint16)state.actors[0] <= ALLY_MAX)
 		state.side = EFFECT_SIDE_PARTY;
 	else
@@ -375,57 +376,57 @@ Sint32 btAutoBattleRunAttackOrItem(BATTLE_ACTION_RECORD *action)
 	BATTLE_PRESENTATION_STATE state;
 	BATTLE_BACKGROUND_STATE	 *background = RamHeapSlots->battleBg;
 	MOTION_OBJECT			 *object;
-	Sint32					  tgtYaw;
+	Sint32					  targetYaw;
 	Sint32					  i;
 
 	if(action->unitId > FELIX)
-		tgtYaw = YAW_ENEMY_ACTION;
+		targetYaw = YAW_ENEMY_ACTION;
 	else
-		tgtYaw = YAW_PARTY_ACTION;
-	if(background->tgtYaw == tgtYaw) {
+		targetYaw = YAW_PARTY_ACTION;
+	if(background->targetYaw == targetYaw) {
 		background->ticks = 40;
 		sySynch(40);
 	} else {
-		background->tgtYaw = tgtYaw;
+		background->targetYaw = targetYaw;
 		background->ticks = 40;
 		sySynch(40);
 	}
-	state.kind = action->prm;
+	state.kind = action->param;
 	state.range = action->range;
 	state.actor = action->unitId;
-	state.firstTgt = action->tgt;
+	state.firstTarget = action->target;
 	if(btObjectIsValidId(state.actor) < 0)
 		return -1;
-	if(state.firstTgt >= FIRST_ENEMY_UNIT)
-		state.cnt =
+	if(state.firstTarget >= FIRST_ENEMY_UNIT)
+		state.count =
 			btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, (Uint16 *)state.actors);
 	else
-		state.cnt =
+		state.count =
 			btUnitListLiving(BATTLE_SIDE_MASK_PARTY, (Uint16 *)state.actors);
 	/* The status window without its PP row (see PARTY_STATUS_SUMMONS). */
-	mnPartyStatDrawStub(
-		RamHeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
+	mnPartyStatusDrawStub(
+		RamHeapSlots->battleState->partyStatus & ~PARTY_STATUS_SHOW_PP);
 	/* The unit raises its hand (POSE_CAST); then only the first living unit of
 	   the target's side takes the effect. */
-	object = btObjectGet(state.actor)->obj;
+	object = btObjectGet(state.actor)->object;
 	fdActorSelectAnimationStub((ACTOR *)object, POSE_CAST);
 	fdActorSetAnimationSpeedStub((ACTOR *)object, ANIM_STEP_NORMAL);
-	if((Uint16)action->tgt <= ALLY_MAX) {
+	if((Uint16)action->target <= ALLY_MAX) {
 		state.side = EFFECT_SIDE_PARTY;
 		btUnitListLiving(BATTLE_SIDE_MASK_PARTY, (Uint16 *)state.actors);
-		state.cnt = 1;
+		state.count = 1;
 	} else {
 		state.side = EFFECT_SIDE_ENEMIES;
 		btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, (Uint16 *)state.actors);
-		state.cnt = 1;
+		state.count = 1;
 	}
 	/* Keep each target's sprite entries' parameters for the effect. */
-	for(i = 0; i != state.cnt; i++) {
-		SPR	  *anm = (SPR *)btObjectGet(state.actors[i])->obj->records;
+	for(i = 0; i != state.count; i++) {
+		SPR	  *animation = (SPR *)btObjectGet(state.actors[i])->object->records;
 		Sint32 j;
 
-		for(j = 0; j != anm->cnt - 1; j++)
-			state.params[i][j] = anm->entries[j]->colMode;
+		for(j = 0; j != animation->count - 1; j++)
+			state.params[i][j] = animation->entries[j]->colorMode;
 	}
 	state.kind = ELEMENT_VENUS;
 	state.variant = 0;
@@ -441,7 +442,7 @@ Sint32 btAutoBattleRunAttackOrItem(BATTLE_ACTION_RECORD *action)
 	   EFFECT_BY_ID_RANGE: it runs from the handler table. */
 	BATTLE_EFFECT_RUN(&state, state.kind);
 	fdActorSelectAnimationStub((ACTOR *)object, POSE_STANDING);
-	for(i = 0; i != state.cnt; i++)
+	for(i = 0; i != state.count; i++)
 		btMotionReturnToSpot(state.actors[i]);
 	btMotionReturnToSpot(state.actor);
 	return 0;
@@ -470,8 +471,8 @@ UNUSED void btAutoBattleApplyDamage(
 		character->hp = 0;
 
 	slot = btObjectGet(unitId);
-	fdActorSelectAnimationStub((ACTOR *)slot->obj, POSE_DAMAGE);
-	mnPartyStatDrawStub(PARTY_STATUS_HP_ONLY);
+	fdActorSelectAnimationStub((ACTOR *)slot->object, POSE_DAMAGE);
+	mnPartyStatusDrawStub(PARTY_STATUS_HP_ONLY);
 	mnMessageArgumentClearAllStub();
 
 	if(unitId <= ALLY_MAX) {
@@ -501,7 +502,7 @@ UNUSED void btAutoBattleApplyDamage(
 	}
 
 	slot = btObjectGet(unitId);
-	fdActorSelectAnimationStub((ACTOR *)slot->obj, POSE_STANDING);
+	fdActorSelectAnimationStub((ACTOR *)slot->object, POSE_STANDING);
 }
 
 /* Unused, as its one caller, btAutoBattleApplyDamage, is: for a unit whose HP
@@ -509,17 +510,17 @@ UNUSED void btAutoBattleApplyDamage(
    object for release (btObjectMarkForRelease). */
 void btMotionPlayFall(Sint32 unitId)
 {
-	SPR			  *anm;
+	SPR			  *animation;
 	SPR_ANIMATION *entry;
 
 	if(syUnitGet(unitId)->hp <= 0) {
-		anm = btObjectGet(unitId)->obj->records;
-		fdSprStartAnimationStub(anm, POSE_DAMAGE);
-		entry = anm->entries[0];
-		entry->colMode = SPRITE_COLOR_GREY;
+		animation = btObjectGet(unitId)->object->records;
+		fdSpriteStartAnimationStub(animation, POSE_DAMAGE);
+		entry = animation->entries[0];
+		entry->colorMode = SPRITE_COLOR_GREY;
 		entry->picture = SPRITE_PICTURE_NONE;
 		sySynch(4);
-		fdSprDissolveRunStub(anm);
+		fdSpriteDissolveRunStub(animation);
 		btObjectMarkForRelease(unitId);
 	}
 }
@@ -533,23 +534,23 @@ void btMotionPlayFall(Sint32 unitId)
 Sint32 btAbilityReplaceDefeated(const BATTLE_ACTION_RECORD *action)
 {
 	Sint16 livingUnits[UNIT_MAX];
-	Sint32 tgtId;
-	Sint32 livingCnt;
+	Sint32 targetId;
+	Sint32 livingCount;
 
-	tgtId = action->tgt;
-	if(syUnitGet(tgtId)->hp != 0) {
-		return tgtId;
+	targetId = action->target;
+	if(syUnitGet(targetId)->hp != 0) {
+		return targetId;
 	}
 
-	if(tgtId >= FIRST_ENEMY_UNIT) {
-		livingCnt = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
+	if(targetId >= FIRST_ENEMY_UNIT) {
+		livingCount = btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
 	} else {
-		livingCnt = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
+		livingCount = btUnitListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
 	}
 
-	if(livingCnt == 0) {
+	if(livingCount == 0) {
 		return TARGET_SIDE_DEFEATED;
 	}
 
-	return livingUnits[(Uint32)(syRandom() * livingCnt) >> 16];
+	return livingUnits[(Uint32)(syRandom() * livingCount) >> 16];
 }

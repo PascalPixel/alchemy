@@ -15,21 +15,21 @@
 
 /* One OAM entry in a sprite list: the arrow that waits for the player to
    advance a battle message. The playback pushes it each tick it waits
-   (syOAMAddSprAtDepth), and the three halfwords after the link are OAM
+   (syOAMAddSpriteAtDepth), and the three halfwords after the link are OAM
    attributes 0 to 2 as bit-fields. */
 typedef struct ADVANCE_ARROW_SPR {
-	/* The depth slot's next entry, set by syOAMAddSprAtDepth. */
+	/* The depth slot's next entry, set by syOAMAddSpriteAtDepth. */
 	struct ADVANCE_ARROW_SPR *next;
 	Uint16 y : 8; /* pixels; bobs with a sine of the tick count */
 	/* attribute 0's high byte: 0xa0, a tall 256-colour sprite */
-	Uint16 flg : 8;
+	Uint16 flags : 8;
 	Uint16 x : 9; /* pixels */
 	/* Attribute 1's flip and size bits; 0, which with the tall shape is 8 by 16
 	   pixels. */
 	Uint16 size : 7;
 	Uint16 tile : 10; /* the arrow picture's VRAM tile, reloaded each tick */
 	/* Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here. */
-	Uint16 pal : 6;
+	Uint16 palette : 6;
 	/* OAM's fourth halfword, the affine parameter slot; cleared with the tile
 	   word each tick. */
 	Uint16 affineParam;
@@ -40,16 +40,16 @@ struct WINDOW;
 /* The battle message, as far as its offset in the window:
    the advance arrow is drawn at the window's corner plus this offset. */
 typedef struct BATTLE_MESSAGE_OFFSET {
-	struct WINDOW *win; /* MESSAGE.win; not named here */
-	Uint16		   x;	/* 1/256 pixels */
-	Uint16		   y;	/* 1/256 pixels */
+	struct WINDOW *window; /* MESSAGE.window; not named here */
+	Uint16		   x;	   /* 1/256 pixels */
+	Uint16		   y;	   /* 1/256 pixels */
 } BATTLE_MESSAGE_OFFSET;
 
 /* The battle message window: its window, its message and whether the next
    message is marked. */
 typedef struct BATTLE_MESSAGE_STATE {
-	struct WINDOW		  *win; /* the message window */
-	BATTLE_MESSAGE_OFFSET *ofs; /* its message */
+	struct WINDOW		  *window; /* the message window */
+	BATTLE_MESSAGE_OFFSET *offset; /* its message */
 	Sint32 marked; /* set by PLAYBACK_MARK; passed to the next message */
 } BATTLE_MESSAGE_STATE;
 
@@ -67,12 +67,12 @@ STATIC_ASSERT(offsetof(BATTLE_MESSAGE_STATE, marked) == 8);
 typedef struct BATTLE_PLAYBACK_STATE {
 	BATTLE_PLAYBACK_QUEUE queue; /* the action's playback, in play order */
 	Sint32				  phase; /* BATTLE_PLAYBACK_PHASE, or a message phase */
-	Sint32				  eventIdx; /* the next queued entry to play */
-	Sint32 tmr; /* ticks to wait, or ticks waited for the advance key */
+	Sint32				  eventIndex; /* the next queued entry to play */
+	Sint32 timer; /* ticks to wait, or ticks waited for the advance key */
 	ADVANCE_ARROW_SPR arrow; /* the advance arrow */
 	Sint32 arrowResource; /* the arrow's resource entry; -1 until it is shown */
 	Sint32 unitId;		  /* the unit of the hit or defeat being played */
-	Sint32 pendingSnd;	  /* hit sound (an SE_ id), played on the next hit */
+	Sint32 pendingSound;  /* hit sound (an SE_ id), played on the next hit */
 	/* PLAYBACK_FLAG_DJINN_BONUS: the Djinn bonus, for the enemies that fall
 	   during the action */
 	Sint32 djinnBonus;
@@ -94,12 +94,12 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
    transfer or wait for the partner's commands under way. */
 #define LINK_MAX_MISSED_TICKS 24
 
-/* BATTLE_STATE.challengeFlg's bit: the challenge effect landed on a party
+/* BATTLE_STATE.challengeFlag's bit: the challenge effect landed on a party
    member ("This is no time to be running away!"). */
 #define BATTLE_CHALLENGED_PARTY 2
 
 /* The battle has six enemy sprite slots; a large enemy takes two side by side,
-   a small one (btSprIsSmall) one. */
+   a small one (btSpriteIsSmall) one. */
 #define ENEMY_SPRITE_SLOTS 6
 
 /* The battle's own state: its enemies, units and their battle objects, the
@@ -113,7 +113,7 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 typedef struct BATTLE_STATE {
 	Sint32 formation; /* the encounter's enemy formation */
 	/* The unit in each enemy sprite slot, 0 when free. */
-	Sint16 sprSlots[ENEMY_SPRITE_SLOTS];
+	Sint16 spriteSlots[ENEMY_SPRITE_SLOTS];
 	/* The enemies met so far, for their name letters, and the first enemy to
 	   fall (firstDefeated). */
 	Uint16 enemyKinds[6];
@@ -126,14 +126,15 @@ typedef struct BATTLE_STATE {
 	Uint16 firstDefeated;
 	/* DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER */
 	Uint16 defeatState;
-	Uint8  enemyKindCnt; /* enemies listed in enemyKinds, at most 5 */
-	Uint8  partyStat; /* PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS; the */
+	Uint8  enemyKindCount; /* enemies listed in enemyKinds, at most 5 */
+	Uint8
+		partyStatus; /* PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS; the */
 	/* staging draws it less PARTY_STATUS_SHOW_PP, names and HP only the
 	   formation's FORMATION_LAYOUT_; SHUFFLED in a link battle */
 	Uint8 layout;
 	/* BATTLE_CHALLENGED_PARTY once a party member was challenged; while
 	   nonzero, the party cannot run. */
-	Uint8 challengeFlg;
+	Uint8 challengeFlag;
 	Uint8 isLink;	   /* 1 in a link battle */
 	Uint8 firstStrike; /* BATTLE_FIRST_STRIKE: who strikes first */
 	/* Failed attempts to run; each adds 2000 to the base chance of 5000. */
@@ -152,12 +153,12 @@ typedef struct BATTLE_STATE {
 	Sint16 partyUnits[7];					/* ends with BATTLE_UNIT_LIST_END */
 	Sint16 enemyIds[ENEMY_BATTLE_SIZE + 1]; /* ends with BATTLE_UNIT_LIST_END */
 	/* The units' battle objects, reached through placement (btObjectGet). */
-	BATTLE_OBJECT objs[UNIT_MAX];
+	BATTLE_OBJECT objects[UNIT_MAX];
 	/* Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
 	   for enemy unit FIRST_ENEMY_UNIT + n: a party unit's place in the active
 	   party, an enemy's own 8 + n; 0xff for a party unit with no battle
 	   object. */
-	Uint8 objIdx[UNIT_MAX];
+	Uint8 objectIndex[UNIT_MAX];
 	Uint8 unusedAfterPlacement[2]; /* no code names it */
 	/* The actions chosen for the turn. */
 	BATTLE_ACTION actions[BATTLE_ACTION_CAPACITY];
@@ -166,7 +167,7 @@ typedef struct BATTLE_STATE {
 	   what btRun returns after a win or a broken link. */
 	BATTLE_SPOILS spoils;
 	/* the battle background's colours, before scaling */
-	Uint16 pal[BATTLE_BACKGROUND_COLORS];
+	Uint16 palette[BATTLE_BACKGROUND_COLORS];
 	/* the battle background's brightness, 16.16, toFIXED(1) full */
 	FIXED  brightness;
 	Uint16 bg;				 /* the battle background's id */
@@ -183,15 +184,15 @@ typedef struct BATTLE_STATE {
 
 STATIC_ASSERT(sizeof(BATTLE_STATE) == 2092);
 
-STATIC_ASSERT(offsetof(BATTLE_STATE, partyStat) == 65);
-STATIC_ASSERT(offsetof(BATTLE_STATE, challengeFlg) == 67);
+STATIC_ASSERT(offsetof(BATTLE_STATE, partyStatus) == 65);
+STATIC_ASSERT(offsetof(BATTLE_STATE, challengeFlag) == 67);
 STATIC_ASSERT(offsetof(BATTLE_STATE, partyUnits) == 88);
 STATIC_ASSERT(offsetof(BATTLE_STATE, enemyIds) == 102);
-STATIC_ASSERT(offsetof(BATTLE_STATE, objs) == 116);
-STATIC_ASSERT(offsetof(BATTLE_STATE, objIdx) == 732);
+STATIC_ASSERT(offsetof(BATTLE_STATE, objects) == 116);
+STATIC_ASSERT(offsetof(BATTLE_STATE, objectIndex) == 732);
 STATIC_ASSERT(offsetof(BATTLE_STATE, actions) == 748);
 STATIC_ASSERT(offsetof(BATTLE_STATE, spoils) == 1328);
-STATIC_ASSERT(offsetof(BATTLE_STATE, pal) == 1348);
+STATIC_ASSERT(offsetof(BATTLE_STATE, palette) == 1348);
 STATIC_ASSERT(offsetof(BATTLE_STATE, brightness) == 1604);
 STATIC_ASSERT(offsetof(BATTLE_STATE, bg) == 1608);
 STATIC_ASSERT(offsetof(BATTLE_STATE, actionRun) == 1620);

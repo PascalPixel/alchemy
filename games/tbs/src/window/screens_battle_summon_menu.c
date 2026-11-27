@@ -15,68 +15,68 @@ Sint32 mnBattleSummonMenuRun(
 	Sint32 unusedA, Sint32 unusedB, const Uint8 *standby)
 {
 	MENU_SPR   cursorStorage;
-	MENU_SPR   sprs[SUMMON_LIST_ROWS];
+	MENU_SPR   sprites[SUMMON_LIST_ROWS];
 	Uint8	   learnedSummons[33]; /* in menu order */
 	Uint8	   orderedSummons[33]; /* those standby can pay for first */
 	Uint16	   text[64];
 	Sint32	   iconSlots[SUMMON_LIST_ROWS];
 	Uint8	   visibleSummons[SUMMON_LIST_ROWS];
 	Sint32	   glyph;
-	Sint32	   cnt;
-	WINDOW	  *win;
+	Sint32	   count;
+	WINDOW	  *window;
 	WIN_STATE *state;
 	Sint32	   drawnRow, drawnFirstEntry, selectedRow, firstEntry;
 	Sint32	   cursorHandle;
-	WINDOW	  *description, *cnts;
+	WINDOW	  *description, *counts;
 	Sint32	   mask, preferredRow;
 	MENU_POINT cursorPos;
 	const SUMMON_DEFINITION *summon;
 	BATTLE_MENU_STATE		*navigation;
-	MENU_SPR				*spr;
-	MENU_SPR				*cur;
-	Sint32					 orderedCnt;
+	MENU_SPR				*sprite;
+	MENU_SPR				*current;
+	Sint32					 orderedCount;
 	Sint32					 id, tile, affordable;
 	Sint32					 pressed, repeated, result;
-	Sint32					 idx;
+	Sint32					 index;
 
 	state = WINDOW_STATE;
 	drawnRow = -1;
 	drawnFirstEntry = -1;
 	/* One 16x16 sprite. */
-	cursorHandle = (Sint16)syVRAMCacheAllocEntry(128);
+	cursorHandle = (Sint16)syVRAMCacheAllocateEntry(128);
 	description = mnWindowCreate(0, 4, 30, 4,
 		WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
 			WINDOW_FLAG_BORDERED_CANVAS);
-	cnts = mnWindowCreate(20, 8, 10, 3, MENU_WINDOW_FLAGS);
+	counts = mnWindowCreate(20, 8, 10, 3, MENU_WINDOW_FLAGS);
 	mask = 0;
 	BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-	win = mnWindowCreate(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9,
-		MENU_WINDOW_FLAGS);
+	window = mnWindowCreate(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH,
+		9, MENU_WINDOW_FLAGS);
 
 	/* Icon sprites for each row. */
-	for(idx = 0; idx < SUMMON_LIST_ROWS; idx++) {
-		Sint32 y = idx * 2;
+	for(index = 0; index < SUMMON_LIST_ROWS; index++) {
+		Sint32 y = index * 2;
 
-		spr = &sprs[idx];
-		MENU_SPR_INIT(sprs[idx], OBJ_SIZE_16X16);
-		spr->oam.f.x = win->x * 8 + 8;
-		spr->oam.f.y = (y + win->y) * 8 + 4;
+		sprite = &sprites[index];
+		MENU_SPR_INIT(sprites[index], OBJ_SIZE_16X16);
+		sprite->oam.f.x = window->x * 8 + 8;
+		sprite->oam.f.y = (y + window->y) * 8 + 4;
 	}
-	for(idx = 0; idx < SUMMON_LIST_ROWS; idx++) {
-		Sint32 slot = syVRAMCacheAllocEntry(128);
-		iconSlots[idx] = slot;
-		sprs[idx].oam.f.tile = syVRAMCacheReload(slot, -1);
+	for(index = 0; index < SUMMON_LIST_ROWS; index++) {
+		Sint32 slot = syVRAMCacheAllocateEntry(128);
+		iconSlots[index] = slot;
+		sprites[index].oam.f.tile = syVRAMCacheReload(slot, -1);
 	}
 
 	/* Move usable summons to the front in reverse traversal; keep others in
 	   order. */
-	cnt = gmSummonListLearnedStub(learnedSummons);
+	count = gmSummonListLearnedStub(learnedSummons);
 	/* FAKEMATCH(dead): the first scan in a once-only block. */
 	do {
 		Sint32 i;
 
-		orderedCnt = 0;
-		for(i = cnt - 1; i >= 0; i--) {
+		orderedCount = 0;
+		for(i = count - 1; i >= 0; i--) {
 			const SUMMON_DEFINITION *definition;
 			Sint32					 n, k;
 
@@ -87,7 +87,7 @@ Sint32 mnBattleSummonMenuRun(
 					break;
 			}
 			if(n == ELEMENT_COUNT) {
-				orderedSummons[orderedCnt++] = k;
+				orderedSummons[orderedCount++] = k;
 				learnedSummons[i] = SUMMON_END;
 			}
 		}
@@ -95,24 +95,24 @@ Sint32 mnBattleSummonMenuRun(
 	{
 		Sint32 i, k;
 
-		for(i = 0; i < cnt; i++) {
+		for(i = 0; i < count; i++) {
 			k = learnedSummons[i];
 			if(k != SUMMON_END)
-				orderedSummons[orderedCnt++] = k;
+				orderedSummons[orderedCount++] = k;
 		}
 	}
-	orderedSummons[orderedCnt] = SUMMON_END;
+	orderedSummons[orderedCount] = SUMMON_END;
 
 	for(;;) {
-		/* FAKEMATCH(temporary): cur holds &cursorStorage beside sprite, which
-		 * names the cursor below; as &cursorStorage at each use. */
-		cur = &cursorStorage;
+		/* FAKEMATCH(temporary): current holds &cursorStorage beside sprite,
+		 * which names the cursor below; as &cursorStorage at each use. */
+		current = &cursorStorage;
 
 		/* Redraw when the page or row changes. */
 		if(firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
 			state->holdTilemapUpload = 1;
-			mnWindowHighlightRect(win->x + 1, win->y + drawnRow * 2 + 1,
-				win->width - 2, 1, WINDOW_PALETTE);
+			mnWindowHighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+				window->width - 2, 1, WINDOW_PALETTE);
 			mnTextFillCanvasBackground();
 
 			/* Description and required Djinni elements: mask has bit n for each
@@ -137,26 +137,27 @@ Sint32 mnBattleSummonMenuRun(
 
 			/* Standby counts and the four summons on this page. */
 			if(firstEntry != drawnFirstEntry) {
-				mnWindowSprRedrawSavedRect(win);
+				mnWindowSpriteRedrawSavedRect(window);
 				{
 					Sint32 element;
 
 					for(element = 0; element < ELEMENT_COUNT; element++) {
-						mnWindowSetTilemapEntry(cnts,
+						mnWindowSetTilemapEntry(counts,
 							element + LIST_TILE_SUMMON_ELEMENT, element * 2, 0,
 							0);
-						mnWindowPutGlyph(cnts, standby[element] + '0',
+						mnWindowPutGlyph(counts, standby[element] + '0',
 							element * 2 + 1, 0, GLYPH_DRAW_CHARACTER);
 					}
 				}
 				{
-					Sint32 element, col, y;
+					Sint32 element, column, y;
 
-					idx = 0;
-					if((id = orderedSummons[firstEntry + idx]) != SUMMON_END) {
+					index = 0;
+					if((id = orderedSummons[firstEntry + index]) !=
+						SUMMON_END) {
 					next:
 						summon = gmSummonDefinitionGetNearStub(id);
-						col = 0;
+						column = 0;
 						for(element = 0; element < ELEMENT_COUNT; element++) {
 							if(summon->djinnRequired[element] >
 								standby[element])
@@ -165,78 +166,79 @@ Sint32 mnBattleSummonMenuRun(
 						affordable = element == ELEMENT_COUNT;
 						mnAbilityBuildIconTiles(
 							summon->abilityId & ACTION_ID_MASK, 0,
-							&iconSlots[idx], &glyph, 1);
-						y = idx * 2;
-						sprs[idx].oam.f.tile = glyph;
+							&iconSlots[index], &glyph, 1);
+						y = index * 2;
+						sprites[index].oam.f.tile = glyph;
 						/* A summon the party cannot afford is drawn in
 						   TEXT_COLOR_RED. */
 						if(!affordable)
-							mnTextSetCol(TEXT_COLOR_RED);
+							mnTextSetColor(TEXT_COLOR_RED);
 						mnTextDrawMessageAsTiles(
 							gmSummonDefinitionGetNearStub(id)->abilityId +
 								MsgAbilityName,
-							win, 16, idx * 16);
+							window, 16, index * 16);
 						for(element = 0; element < ELEMENT_COUNT; element++) {
 							if(summon->djinnRequired[element] != 0) {
-								mnWindowSetTilemapEntry(win,
+								mnWindowSetTilemapEntry(window,
 									element + LIST_TILE_SUMMON_ELEMENT,
-									col * 2 + SUMMON_COST_X, y, 0);
-								mnWindowPutGlyph(win,
+									column * 2 + SUMMON_COST_X, y, 0);
+								mnWindowPutGlyph(window,
 									summon->djinnRequired[element] + '0',
-									col * 2 + SUMMON_COST_X + 1, y,
+									column * 2 + SUMMON_COST_X + 1, y,
 									GLYPH_DRAW_CHARACTER);
-								col++;
+								column++;
 							}
 						}
-						mnTextSetCol(TEXT_COLOR_WHITE);
-						visibleSummons[idx++] = 1;
-						if(idx < SUMMON_LIST_ROWS &&
-							(id = orderedSummons[firstEntry + idx]) !=
+						mnTextSetColor(TEXT_COLOR_WHITE);
+						visibleSummons[index++] = 1;
+						if(index < SUMMON_LIST_ROWS &&
+							(id = orderedSummons[firstEntry + index]) !=
 								SUMMON_END)
 							goto next;
 					}
-					while(idx < SUMMON_LIST_ROWS)
-						visibleSummons[idx++] = 0;
+					while(index < SUMMON_LIST_ROWS)
+						visibleSummons[index++] = 0;
 				}
 				drawnFirstEntry = firstEntry;
 			}
 
 			/* The page numbers. */
-			if(cnt > SUMMON_LIST_ROWS) {
-				for(idx = 0;
-					idx < (cnt + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS;
-					idx++) {
-					tile = idx + PAGE_NUMBER_TILE;
-					if(idx == firstEntry / SUMMON_LIST_ROWS)
-						tile = idx + PAGE_NUMBER_LIT_TILE;
-					mnWindowSetTilemapEntry(win, tile,
-						win->width -
-							(cnt + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS +
-							idx - 2,
+			if(count > SUMMON_LIST_ROWS) {
+				for(index = 0;
+					index < (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS;
+					index++) {
+					tile = index + PAGE_NUMBER_TILE;
+					if(index == firstEntry / SUMMON_LIST_ROWS)
+						tile = index + PAGE_NUMBER_LIT_TILE;
+					mnWindowSetTilemapEntry(window, tile,
+						window->width -
+							(count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS +
+							index - 2,
 						-1, 0);
 				}
 			}
-			mnWindowHighlightRect(win->x + 1, win->y + selectedRow * 2 + 1,
-				win->width - 2, 1, HIGHLIGHT_PALETTE);
+			mnWindowHighlightRect(window->x + 1,
+				window->y + selectedRow * 2 + 1, window->width - 2, 1,
+				HIGHLIGHT_PALETTE);
 			state->dirty = 1;
 			state->holdTilemapUpload = 0;
 		}
 
 		/* Each tick: the row icons and the cursor. */
-		for(idx = 0; idx < SUMMON_LIST_ROWS; idx++) {
-			if(visibleSummons[idx] != 0)
-				syOAMAddSprAtDepth(&sprs[idx], OAM_DEPTH_WINDOW);
+		for(index = 0; index < SUMMON_LIST_ROWS; index++) {
+			if(visibleSummons[index] != 0)
+				syOAMAddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
 		}
 
 		/* The cursor wobbles every four ticks. */
-		MENU_PLACE_CURSOR(cursorPos, win, selectedRow, 2, cur);
-		cur->oam.f.tile =
+		MENU_PLACE_CURSOR(cursorPos, window, selectedRow, 2, current);
+		current->oam.f.tile =
 			syVRAMCacheReload((Uint16)cursorHandle, (Sint32)PointingHandTiles);
-		cur->oam.f.x = cursorPos.x + ((TickCount & 4) >> 1) - 4;
-		cur->oam.f.y = cursorPos.y - ((TickCount & 4) >> 2) - 8;
+		current->oam.f.x = cursorPos.x + ((TickCount & 4) >> 1) - 4;
+		current->oam.f.y = cursorPos.y - ((TickCount & 4) >> 2) - 8;
 		/* sprite, done with the row icons, now names the cursor. */
-		spr = &cursorStorage;
-		syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW + 2);
+		sprite = &cursorStorage;
+		syOAMAddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
 		/* The standby counts of the elements the summon under the cursor needs
 		   blink every eight ticks. */
@@ -250,31 +252,32 @@ Sint32 mnBattleSummonMenuRun(
 				if((1 << element & mask) == 0)
 					palette = WINDOW_PALETTE;
 				mnWindowHighlightRect(
-					cnts->x + element * 2 + 1, cnts->y + 1, 2, 1, palette);
+					counts->x + element * 2 + 1, counts->y + 1, 2, 1, palette);
 			}
 		}
 
 		/* Page numbers (current page blinking) and left/right arrows. */
-		if(cnt > SUMMON_LIST_ROWS) {
-			for(idx = 0; idx < (cnt + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS;
-				idx++) {
-				tile = idx + PAGE_NUMBER_TILE;
+		if(count > SUMMON_LIST_ROWS) {
+			for(index = 0;
+				index < (count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS;
+				index++) {
+				tile = index + PAGE_NUMBER_TILE;
 				if((TickCount & 15) <= 11 &&
-					idx == firstEntry / SUMMON_LIST_ROWS)
-					tile = idx + PAGE_NUMBER_LIT_TILE;
-				mnWindowSetTilemapEntry(win, tile,
-					win->width -
-						(cnt + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS + idx -
-						2,
+					index == firstEntry / SUMMON_LIST_ROWS)
+					tile = index + PAGE_NUMBER_LIT_TILE;
+				mnWindowSetTilemapEntry(window, tile,
+					window->width -
+						(count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS +
+						index - 2,
 					-1, 0);
 			}
-			mnWindowSetTilemapEntry(win, LIST_TILE_PAGES_LEFT,
-				win->width - (cnt + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS -
-					3,
+			mnWindowSetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
+				window->width -
+					(count + SUMMON_LIST_ROWS - 1) / SUMMON_LIST_ROWS - 3,
 				-1, 0);
 			mnWindowSetTilemapEntry(
-				win, LIST_TILE_PAGES_RIGHT, win->width - 2, -1, 0);
-			mnWindowMarkTilemapRow(state, win->y - 1);
+				window, LIST_TILE_PAGES_RIGHT, window->width - 2, -1, 0);
+			mnWindowMarkTilemapRow(state, window->y - 1);
 		}
 
 		BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -300,35 +303,35 @@ Sint32 mnBattleSummonMenuRun(
 			result = orderedSummons[firstEntry + selectedRow];
 			break;
 		}
-		if(BattleMenuStateWork->tmr == 0 || (pressed & KEY_B)) {
-			sySndPlayStub(SE_MENU_CANCEL);
+		if(BattleMenuStateWork->timer == 0 || (pressed & KEY_B)) {
+			sySoundPlayStub(SE_MENU_CANCEL);
 			result = -1;
 			break;
 		}
 		if(repeated & KEY_DOWN) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			selectedRow++;
 			if(selectedRow == SUMMON_LIST_ROWS ||
-				firstEntry + selectedRow == cnt)
+				firstEntry + selectedRow == count)
 				selectedRow = 0;
 			preferredRow = selectedRow;
 		} else if(repeated & KEY_UP) {
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			selectedRow--;
 			if(selectedRow < 0) {
 				/* On the last page the cursor goes to its last entry. */
 				if(firstEntry ==
-					((cnt - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS)
-					selectedRow = cnt - firstEntry - 1;
+					((count - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS)
+					selectedRow = count - firstEntry - 1;
 				else
 					selectedRow = SUMMON_LIST_ROWS - 1;
 			}
 			preferredRow = selectedRow;
 		} else if(repeated & KEY_RIGHT) {
 			/* Next page, wrapping from last to first. */
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			syInputResetKeyRepeat();
-			if(firstEntry + SUMMON_LIST_ROWS >= cnt) {
+			if(firstEntry + SUMMON_LIST_ROWS >= count) {
 				if(firstEntry != 0) {
 					firstEntry = 0;
 					selectedRow = preferredRow;
@@ -337,24 +340,25 @@ Sint32 mnBattleSummonMenuRun(
 				firstEntry += SUMMON_LIST_ROWS;
 				selectedRow = preferredRow;
 				if(firstEntry ==
-					((cnt - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS) {
-					selectedRow = cnt - firstEntry - 1;
+					((count - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS) {
+					selectedRow = count - firstEntry - 1;
 					if(selectedRow > preferredRow)
 						selectedRow = preferredRow;
 				}
 			}
 		} else if(repeated & KEY_LEFT) {
 			/* Previous page, wrapping from first to last. */
-			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			sySoundPlayStub(SE_MENU_CURSOR_MOVE);
 			syInputResetKeyRepeat();
 			if(firstEntry != 0) {
 				firstEntry -= SUMMON_LIST_ROWS;
 				selectedRow = preferredRow;
 			} else {
-				firstEntry = ((cnt - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS;
+				firstEntry =
+					((count - 1) / SUMMON_LIST_ROWS) * SUMMON_LIST_ROWS;
 				selectedRow = preferredRow;
 				if(firstEntry != 0) {
-					selectedRow = cnt - firstEntry - 1;
+					selectedRow = count - firstEntry - 1;
 					if(selectedRow > preferredRow)
 						selectedRow = preferredRow;
 				}
@@ -364,12 +368,12 @@ Sint32 mnBattleSummonMenuRun(
 	}
 
 	sySynch(1);
-	for(idx = 0; idx < SUMMON_LIST_ROWS; idx++)
-		syVRAMCacheFreeEntry(iconSlots[idx]);
+	for(index = 0; index < SUMMON_LIST_ROWS; index++)
+		syVRAMCacheFreeEntry(iconSlots[index]);
 	syVRAMCacheFreeEntry((Uint16)cursorHandle);
-	mnWindowClose(cnts, 1);
+	mnWindowClose(counts, 1);
 	mnWindowClose(description, 1);
-	mnWindowClose(win, 1);
+	mnWindowClose(window, 1);
 	sySynch(1);
 	return result;
 }

@@ -14,25 +14,25 @@ void fdParticleBurstUpdate(void)
 {
 	PARTICLE_BURST_STATE *state;
 	BURST_PARTICLE		 *particle;
-	EFFECT_SPR			 *spr;
+	EFFECT_SPR			 *sprite;
 	Sint32				  pos[3];
 	Sint32				  i;
 
-	state = (PARTICLE_BURST_STATE *)RamHeapSlots->battleEff;
+	state = (PARTICLE_BURST_STATE *)RamHeapSlots->battleEffect;
 	particle = state->particles;
 
 	for(i = 0; i < PARTICLE_BURST_COUNT; i++, particle++) {
-		spr = &state->sprs[i];
+		sprite = &state->sprites[i];
 		if((Uint32)particle->delay < 64) {
-			spr->oam.idx = state->tile + (particle->delay >> 3) % 6 * 2;
+			sprite->oam.index = state->tile + (particle->delay >> 3) % 6 * 2;
 			pos[0] = particle->x;
 			pos[1] = particle->y;
 			pos[2] = particle->z;
 			syVectorAddPolarOffset(toFIXED(48), particle->heading, pos);
 			fdCameraWorldToScreen(pos);
-			spr->x = pos[0];
-			spr->y = pos[2];
-			fdEffectSprDraw(spr);
+			sprite->x = pos[0];
+			sprite->y = pos[2];
+			fdEffectSpriteDraw(sprite);
 			particle->heading += particle->spin;
 			particle->y += particle->speed;
 			particle->spin =
@@ -41,18 +41,18 @@ void fdParticleBurstUpdate(void)
 		particle->delay++;
 	}
 	state->flash = 0;
-	if(state->frm == 30)
+	if(state->frame == 30)
 		state->flash = 1;
-	if(state->frm == 112)
+	if(state->frame == 112)
 		state->active = 0;
-	state->frm++;
+	state->frame++;
 }
 
 /* Ends the particle burst (fdParticleBurstStart): stops its event and frees its
    tiles. */
 void fdParticleBurstEnd(void)
 {
-	PARTICLE_BURST_STATE *state = RamHeapSlots->battleEff;
+	PARTICLE_BURST_STATE *state = RamHeapSlots->battleEffect;
 
 	syCloseEvent((Uint32)fdParticleBurstUpdate);
 	syVRAMCacheFreeEntry(state->cacheEntry);
@@ -70,35 +70,36 @@ void fdParticleBurstEnd(void)
    it. */
 void fdCycloneCarryLeader(void)
 {
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
-	CYCLONE_STATE	   *state = RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
+	CYCLONE_STATE	   *state = RamHeapSlots->battleEffect;
 	ACTOR			   *owner = effect->caster;
-	Sint32				tmr = state->tmr;
+	Sint32				timer = state->timer;
 	Sint32				pos[3];
 
 	switch(state->state) {
 	case 0:
-		state->radius = sySin(tmr * (TRIG_TURN / 2 / CYCLONE_CARRY_TICKS)) << 5;
-		state->ang += CYCLONE_CARRY_TURN_STEP;
+		state->radius = sySin(timer * (TRIG_TURN / 2 / CYCLONE_CARRY_TICKS))
+			<< 5;
+		state->angle += CYCLONE_CARRY_TURN_STEP;
 		pos[0] = state->from[0] +
-			(state->to[0] - state->from[0]) * tmr / CYCLONE_CARRY_TICKS;
+			(state->to[0] - state->from[0]) * timer / CYCLONE_CARRY_TICKS;
 		pos[1] = state->from[1] +
-			(state->to[1] - state->from[1]) * tmr / CYCLONE_CARRY_TICKS +
-			(sySin(tmr * (TRIG_TURN / 2 / CYCLONE_CARRY_TICKS)) << 6);
+			(state->to[1] - state->from[1]) * timer / CYCLONE_CARRY_TICKS +
+			(sySin(timer * (TRIG_TURN / 2 / CYCLONE_CARRY_TICKS)) << 6);
 		pos[2] = state->from[2] +
-			(state->to[2] - state->from[2]) * tmr / CYCLONE_CARRY_TICKS;
-		syVectorAddPolarOffset(state->radius, state->ang, pos);
+			(state->to[2] - state->from[2]) * timer / CYCLONE_CARRY_TICKS;
+		syVectorAddPolarOffset(state->radius, state->angle, pos);
 		SET_ACTOR_POSITION(owner, pos[0], pos[1], pos[2]);
-		if(tmr >= CYCLONE_CARRY_TICKS) {
+		if(timer >= CYCLONE_CARRY_TICKS) {
 			state->state++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	case 1:
 		state->state = FIELD_PSYNERGY_FINISHED;
 		break;
 	}
-	state->tmr++;
+	state->timer++;
 	state->follower->x.fixed = owner->x.fixed;
 	state->follower->y.fixed = owner->y.fixed;
 	state->follower->z.fixed = owner->z.fixed;
@@ -108,46 +109,47 @@ void fdCycloneCarryLeader(void)
    carried there 32 pixels up, circling, without the arc. */
 void fdCycloneLiftLeader(void)
 {
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
-	CYCLONE_STATE	   *state = RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
+	CYCLONE_STATE	   *state = RamHeapSlots->battleEffect;
 	ACTOR			   *owner = effect->caster;
-	Sint32				tmr = state->tmr;
+	Sint32				timer = state->timer;
 	Sint32				pos[3];
 
 	switch(state->state) {
 	case 0:
-		state->radius = sySin(tmr * (TRIG_TURN / 2 / CYCLONE_CARRY_TICKS)) << 5;
-		state->ang += CYCLONE_CARRY_TURN_STEP;
+		state->radius = sySin(timer * (TRIG_TURN / 2 / CYCLONE_CARRY_TICKS))
+			<< 5;
+		state->angle += CYCLONE_CARRY_TURN_STEP;
 		pos[0] = state->from[0] +
-			(state->to[0] - state->from[0]) * tmr / CYCLONE_CARRY_TICKS;
+			(state->to[0] - state->from[0]) * timer / CYCLONE_CARRY_TICKS;
 		pos[1] = state->from[1] +
-			(state->to[1] - state->from[1]) * tmr / CYCLONE_CARRY_TICKS;
+			(state->to[1] - state->from[1]) * timer / CYCLONE_CARRY_TICKS;
 		pos[2] = state->from[2] +
-			(state->to[2] - state->from[2]) * tmr / CYCLONE_CARRY_TICKS;
-		syVectorAddPolarOffset(state->radius, state->ang, pos);
+			(state->to[2] - state->from[2]) * timer / CYCLONE_CARRY_TICKS;
+		syVectorAddPolarOffset(state->radius, state->angle, pos);
 		SET_ACTOR_POSITION(owner, pos[0], pos[1], pos[2]);
-		if(tmr >= CYCLONE_CARRY_TICKS) {
+		if(timer >= CYCLONE_CARRY_TICKS) {
 			state->state++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	case 1:
 		owner->y.fixed -= toFIXED(2) / 5;
 		if(effect->sceneVariant == 1) {
-			if(tmr == 40)
+			if(timer == 40)
 				state->state = FIELD_PSYNERGY_FINISHED;
-		} else if(tmr == 40) {
+		} else if(timer == 40) {
 			state->state++;
-			state->tmr = -1;
+			state->timer = -1;
 		}
 		break;
 	case 2:
 		owner->y.fixed += toFIXED(19) / 5;
-		if(tmr == 40)
+		if(timer == 40)
 			state->state = FIELD_PSYNERGY_FINISHED;
 		break;
 	}
-	state->tmr++;
+	state->timer++;
 	state->follower->x.fixed = owner->x.fixed;
 	state->follower->y.fixed = owner->y.fixed;
 	state->follower->z.fixed = owner->z.fixed;
@@ -156,7 +158,7 @@ void fdCycloneLiftLeader(void)
 /* Per-tick update: turns an actor 1/16 turn a tick. */
 void fdActorUpdateSpin(MOTION_OBJECT *object)
 {
-	object->ang += TRIG_TURN / 16;
+	object->angle += TRIG_TURN / 16;
 }
 
 /* Cyclone cast on a target: runs fdPsynergyCyclone. */
@@ -187,9 +189,9 @@ void fdPsynergyCycloneOnTarget(void)
 void fdPsynergyCyclone(void)
 {
 	CYCLONE_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(CYCLONE_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(CYCLONE_STATE));
 	FIELD_STATE		   *field = RamHeapSlots->fieldState;
-	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffectState;
 	ACTOR			   *owner = effect->caster;
 	Sint16			   *points = &field->psynergyMetatiles[0];
 	FIXED				spread = toFIXED(4);
@@ -201,16 +203,16 @@ void fdPsynergyCyclone(void)
 	Uint16			   *palette;
 	FIXED				pos[3];
 	Sint32				mode;
-	Sint32				frm;
+	Sint32				frame;
 	Sint32				i, j;
 	Sint32				blue, c;
 	Sint32				point;
 
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	fdPsynergyGatherNearbyMetatiles();
 	fdBattleEffectSetObjectUpdateMode(effect->caster, CASTER_LOOK_NORMAL);
 	owner->update = fdActorUpdateSpin;
-	owner->tmr = owner->facing;
+	owner->timer = owner->facing;
 	/* The whirl's colours: blue full, red and green rising from half to
 	   full. */
 	palette = (Uint16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
@@ -220,22 +222,22 @@ void fdPsynergyCyclone(void)
 		syIOWrite16(RGB(0, c, 0) | blue | c, palette);
 		palette++;
 	}
-	fdBattleEffectStartCanvasSpr();
-	canvas = RamHeapSlots->canvasSpr;
+	fdBattleEffectStartCanvasSprite();
+	canvas = RamHeapSlots->canvasSprite;
 	pos[0] = effect->caster->x.fixed;
 	pos[1] = effect->caster->y.fixed;
 	pos[2] = effect->caster->z.fixed;
 	fdCameraWorldToScreen(pos);
 	canvas->x = (Sint16)FIXEDtoINT(pos[0]);
 	canvas->y = (Sint16)FIXEDtoINT(pos[2]);
-	canvas->pri = 1;
+	canvas->priority = 1;
 	canvas->depth = OAM_DEPTH_WINDOW;
 	canvas->mode = CANVAS_SPRITE_KEPT;
 	canvas->scaleX = toFIXED(3) / 2;
 	canvas->scaleY = toFIXED(3) / 2;
-	fdEffectSprInit(&canvas->spr, 32, 32, OBJ_SIZE_64X64, canvas->tile);
-	canvas->spr.oam.fullCol = 1;
-	canvas->spr.oam.pal = 0;
+	fdEffectSpriteInit(&canvas->sprite, 32, 32, OBJ_SIZE_64X64, canvas->tile);
+	canvas->sprite.oam.fullColor = 1;
+	canvas->sprite.oam.palette = 0;
 	offsets = RamHeapSlots->canvasMap;
 	pixels = RamHeapSlots->battleCanvas;
 	whirlwind = fdActorSpawn(SPRITE_WHIRLWIND, owner->x.fixed,
@@ -244,7 +246,7 @@ void fdPsynergyCyclone(void)
 	whirlwind->scaleX = toFIXED(3) / 2;
 	whirlwind->scaleY = 0;
 	sySynch(1);
-	sySndPlayStub(SE_RUSH);
+	sySoundPlayStub(SE_RUSH);
 	for(i = 0; i < CYCLONE_WHIRLWIND_RISE_TICKS; i++) {
 		whirlwind->scaleY = toFIXED(1) * i / CYCLONE_WHIRLWIND_RISE_TICKS;
 		sySynch(1);
@@ -258,11 +260,11 @@ void fdPsynergyCyclone(void)
 		if(spread > toFIXED(28))
 			spread = toFIXED(28);
 		step = step * CYCLONE_SPREAD_KEPT / CYCLONE_SPREAD_SCALE;
-		canvas->ang += TRIG_TURN / 64;
+		canvas->angle += TRIG_TURN / 64;
 		canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
 		sySynch(1);
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	state->follower = whirlwind;
 	state->from[0] = owner->x.fixed;
 	state->from[1] = owner->y.fixed;
@@ -270,9 +272,9 @@ void fdPsynergyCyclone(void)
 	state->to[0] = owner->x.fixed;
 	state->to[1] = owner->y.fixed;
 	state->to[2] = owner->z.fixed;
-	state->ang = 0;
+	state->angle = 0;
 	state->state = 0;
-	state->tmr = 0;
+	state->timer = 0;
 	state->state = 0;
 	if(field->cycloneLiftX != -1)
 		mode = CYCLONE_METATILE_LIFT;
@@ -287,26 +289,26 @@ void fdPsynergyCyclone(void)
 		if(state->kind)
 			fdParticleBurstStart();
 		for(i = 0; i < CYCLONE_SPIN_TICKS; i++) {
-			canvas->ang += TRIG_TURN / 64;
+			canvas->angle += TRIG_TURN / 64;
 			canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
 			sySynch(1);
 		}
 		fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 		fdActorSetPosAndResetMotionStub(
 			owner, owner->x.fixed, owner->y.fixed, owner->z.fixed);
-		fdActorSetSprFlagsStub(owner, 0);
-		fdActorSetSprPriority(effect->casterId, 1);
-		owner->motionFlg = 0;
-		frm = 0;
+		fdActorSetSpriteFlagsStub(owner, 0);
+		fdActorSetSpritePriority(effect->casterId, 1);
+		owner->motionFlags = 0;
+		frame = 0;
 		sySynch(1);
 		state->to[0] = toFIXED(field->cycloneLiftX);
 		state->to[1] = owner->y.fixed + toFIXED(32);
 		state->to[2] = toFIXED(field->cycloneLiftZ);
 		sySetEvent(fdCycloneLiftLeader, EVENT_PASS_TICK);
 		while(state->state != FIELD_PSYNERGY_FINISHED) {
-			if(frm == 30)
+			if(frame == 30)
 				fdPsynergyRunTouchedScripts();
-			frm++;
+			frame++;
 			sySynch(1);
 		}
 		syCloseEvent(fdCycloneLiftLeader);
@@ -319,25 +321,25 @@ void fdPsynergyCyclone(void)
 		if(state->kind)
 			fdParticleBurstStart();
 		for(i = 0; i < CYCLONE_SPIN_TICKS; i++) {
-			canvas->ang += TRIG_TURN / 64;
+			canvas->angle += TRIG_TURN / 64;
 			canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
 			sySynch(1);
 		}
 		fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
 		fdActorSetPosAndResetMotionStub(
 			owner, owner->x.fixed, owner->y.fixed, owner->z.fixed);
-		fdActorSetSprFlagsStub(owner, 0);
-		owner->motionFlg = 0;
+		fdActorSetSpriteFlagsStub(owner, 0);
+		owner->motionFlags = 0;
 		sySynch(1);
 		state->to[0] = toFIXED(field->cycloneCarryX);
 		state->to[1] = owner->y.fixed;
 		state->to[2] = toFIXED(field->cycloneCarryZ);
 		sySetEvent(fdCycloneCarryLeader, EVENT_PASS_TICK);
-		frm = 0;
+		frame = 0;
 		while(state->state != FIELD_PSYNERGY_FINISHED) {
-			if(frm == 30)
+			if(frame == 30)
 				fdPsynergyRunTouchedScripts();
-			frm++;
+			frame++;
 			sySynch(1);
 		}
 		syCloseEvent(fdCycloneCarryLeader);
@@ -356,41 +358,41 @@ void fdPsynergyCyclone(void)
 		if(state->kind)
 			fdParticleBurstEnd();
 	} else if(mode == CYCLONE_METATILE_BURST) {
-		sySndPlayStub(SE_WHOOSH);
+		sySoundPlayStub(SE_WHOOSH);
 		fdActorSelectAnimationStub(whirlwind, 6);
 		if(state->kind)
 			fdParticleBurstStart();
 		for(i = 0; i < CYCLONE_SPIN_TICKS; i++) {
-			canvas->ang += TRIG_TURN / 64;
+			canvas->angle += TRIG_TURN / 64;
 			canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
 			sySynch(1);
 		}
 		owner->update = NULL;
-		owner->facing = owner->tmr;
-		frm = 0;
-		while(state->cnt != 0) {
-			if(frm == 30)
+		owner->facing = owner->timer;
+		frame = 0;
+		while(state->count != 0) {
+			if(frame == 30)
 				fdPsynergyRunTouchedScripts();
 			sySynch(1);
-			frm++;
+			frame++;
 		}
 		if(state->kind)
 			fdParticleBurstEnd();
 	} else {
-		sySndPlayStub(SE_WHOOSH);
+		sySoundPlayStub(SE_WHOOSH);
 		fdActorSelectAnimationStub(whirlwind, 6);
 		for(i = 0; i < CYCLONE_SPIN_TICKS; i++) {
 			owner->facing += FACING_STEP;
-			canvas->ang += TRIG_TURN / 64;
+			canvas->angle += TRIG_TURN / 64;
 			canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
 			sySynch(1);
 		}
 	}
-	sySndPlayStub(SE_WHOOSH);
+	sySoundPlayStub(SE_WHOOSH);
 	fdActorReleaseStub(whirlwind);
 	owner->update = NULL;
-	owner->facing = owner->tmr;
-	fdBattleEffectEndCanvasSpr();
+	owner->facing = owner->timer;
+	fdBattleEffectEndCanvasSprite();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -405,7 +407,7 @@ void fdActorDepartInRing(Sint32 actorId)
 {
 	ACTOR *actor = fdActorGetById(actorId);
 	Sint32 angle = actor->facing;
-	Uint8  motionFlags = actor->motionFlg;
+	Uint8  motionFlags = actor->motionFlags;
 	ACTOR *whirlwind;
 	FIXED  x, y, z;
 	Sint32 spin;
@@ -413,7 +415,7 @@ void fdActorDepartInRing(Sint32 actorId)
 	Sint32 i;
 
 	fdCameraMoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->update = fdActorUpdateSpin;
 	whirlwind = fdActorSpawn(
 		SPRITE_WHIRLWIND, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -440,13 +442,13 @@ void fdActorDepartInRing(Sint32 actorId)
 		sySynch(1);
 	}
 	fdActorSetPosAndResetMotionStub(actor, x, y, z);
-	sySndPlayStub(SE_WHOOSH);
+	sySoundPlayStub(SE_WHOOSH);
 	fdActorSelectAnimationStub(whirlwind, 6);
 	fdScriptWait(15);
 	fdActorReleaseStub(whirlwind);
 	actor->update = NULL;
 	actor->facing = angle;
-	actor->motionFlg = motionFlags;
+	actor->motionFlags = motionFlags;
 	sySynch(1);
 	fdCameraFollowActor(actorId, 1);
 }
@@ -458,7 +460,7 @@ void fdActorDepartInRing(Sint32 actorId)
 void fdActorArriveInRing(Sint32 actorId)
 {
 	ACTOR *actor = fdActorGetById(actorId);
-	Sint32 ang = actor->facing;
+	Sint32 angle = actor->facing;
 	ACTOR *whirlwind;
 	Sint32 i;
 
@@ -466,7 +468,7 @@ void fdActorArriveInRing(Sint32 actorId)
 	actor->scaleX = 0;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	fdActorSetSprFlagsStub(fdActorGetById(actorId), 0);
+	fdActorSetSpriteFlagsStub(fdActorGetById(actorId), 0);
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	whirlwind = fdActorSpawn(
@@ -481,18 +483,18 @@ void fdActorArriveInRing(Sint32 actorId)
 	}
 	whirlwind->scaleX = toFIXED(3) / 2;
 	whirlwind->scaleY = toFIXED(1);
-	sySndPlayStub(SE_WHOOSH);
+	sySoundPlayStub(SE_WHOOSH);
 	fdActorSelectAnimationStub(whirlwind, 6);
 	actor->scaleY = actor->scaleX = toFIXED(1) / 2;
 	for(i = 0; i < ACTOR_RESIZE_TICKS; i++) {
 		actor->scaleY = actor->scaleX = actor->scaleX + WHIRLWIND_RESIZE_STEP;
 		sySynch(1);
 	}
-	fdActorSetSprFlagsStub(fdActorGetById(actorId), SPRITE_FLAG_SHADOW);
+	fdActorSetSpriteFlagsStub(fdActorGetById(actorId), SPRITE_FLAG_SHADOW);
 	fdScriptWait(10);
 	fdActorReleaseStub(whirlwind);
 	actor->update = NULL;
-	actor->facing = ang;
+	actor->facing = angle;
 }
 
 /* What Blaze does (BLAZE_STATE.mode). */
@@ -523,9 +525,9 @@ typedef struct BLAZE_STATE {
 	Sint32					origin[3];
 	Uint16					flameTile;
 	Uint16					puffTile;
-	Uint16					ang;
-	Uint16					tgtAng;
-	Sint16					hitObj;
+	Uint16					angle;
+	Uint16					targetAngle;
+	Sint16					hitObject;
 	Sint8					hit;
 	Sint8					emitting;
 	Sint32					speed;
@@ -545,27 +547,27 @@ typedef struct BLAZE_STATE {
    most 1/64 turn a tick. */
 void fdBlazeUpdateSpray(void)
 {
-	BLAZE_STATE				*state = (BLAZE_STATE *)RamHeapSlots->battleEff;
-	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	BLAZE_STATE				*state = (BLAZE_STATE *)RamHeapSlots->battleEffect;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffectState;
 	FIELD_STATE				*field = RamHeapSlots->fieldState;
-	EFFECT_SPR				*spr;
+	EFFECT_SPR				*sprite;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	FIELD_PSYNERGY_PARTICLE *puff;
 	Sint32					 pos[3];
 	Sint32					 i;
 	Sint32					 j;
-	Uint16					 tgt;
+	Uint16					 target;
 	Sint32					 turn;
 
 	if(state->emitting != 0 && (TickCount & 3) == 0) {
 		particle = state->flameMotion;
 		for(i = 0; i < BLAZE_FLAMES; i++, particle++) {
-			if(particle->tmr == -1) {
-				spr = &state->flames[i];
-				if(scene->tgt != NULL)
-					spr->depth = fdActorGetSprDepth(scene->tgt);
+			if(particle->timer == -1) {
+				sprite = &state->flames[i];
+				if(scene->target != NULL)
+					sprite->depth = fdActorGetSpriteDepth(scene->target);
 				else
-					spr->depth = fdActorGetSprDepth(scene->caster);
+					sprite->depth = fdActorGetSpriteDepth(scene->caster);
 				if(state->mode == BLAZE_LONG_SPRAY) {
 					state->speed = toFIXED(12) / 5;
 					state->lifetime = BLAZE_LONG_FLAME_TICKS;
@@ -577,12 +579,12 @@ void fdBlazeUpdateSpray(void)
 				}
 				SET_POSITION(particle, state->origin[0], state->origin[1],
 					state->origin[2]);
-				particle->velX = 0;
-				particle->velY = -(toFIXED(6) / 5);
-				particle->velZ = 0;
+				particle->velocityX = 0;
+				particle->velocityY = -(toFIXED(6) / 5);
+				particle->velocityZ = 0;
 				syVectorAddPolarOffset(
-					state->speed, state->ang, &particle->velX);
-				particle->tmr = 0;
+					state->speed, state->angle, &particle->velocityX);
+				particle->timer = 0;
 				break;
 			}
 		}
@@ -591,29 +593,30 @@ void fdBlazeUpdateSpray(void)
 	state->hit = 0;
 	particle = state->flameMotion;
 	for(i = 0; i < BLAZE_FLAMES; i++, particle++) {
-		if(particle->tmr == -1)
+		if(particle->timer == -1)
 			continue;
-		spr = &state->flames[i];
-		spr->scaleY = spr->scaleX =
-			particle->tmr * (toFIXED(1) / 25) + toFIXED(1) / 2;
-		spr->oam.idx = state->flameTile + (((particle->tmr >> 1) + i) & 3) * 32;
-		if(state->ang > DEGtoANG(180))
-			spr->depth--;
+		sprite = &state->flames[i];
+		sprite->scaleY = sprite->scaleX =
+			particle->timer * (toFIXED(1) / 25) + toFIXED(1) / 2;
+		sprite->oam.index =
+			state->flameTile + (((particle->timer >> 1) + i) & 3) * 32;
+		if(state->angle > DEGtoANG(180))
+			sprite->depth--;
 		else
-			spr->depth++;
-		fdEffectSprDrawAtWorldPos(spr, particle);
-		if(++particle->tmr == state->lifetime)
-			particle->tmr = -1;
+			sprite->depth++;
+		fdEffectSpriteDrawAtWorldPos(sprite, particle);
+		if(++particle->timer == state->lifetime)
+			particle->timer = -1;
 		for(j = 0; j < FIELD_ACTOR_COUNT; j++) {
 			ACTOR *other = field->actors[j];
 			if(other != NULL && other->script != NULL &&
-				(other->collisionFlg & ACTOR_SOLID) && other != scene->caster &&
-				other != scene->tgt &&
+				(other->collisionFlags & ACTOR_SOLID) &&
+				other != scene->caster && other != scene->target &&
 				fdPsynergyCheckOverlap(
 					&particle->x, 2, &other->x.fixed, other->radius - 2) >= 0) {
 				state->hit = 1;
-				state->hitObj = j;
-				particle->tmr = -1;
+				state->hitObject = j;
+				particle->timer = -1;
 				break;
 			}
 		}
@@ -623,18 +626,18 @@ void fdBlazeUpdateSpray(void)
 			pos[1] = particle->y;
 			pos[2] = particle->z;
 			if(fdMapGridCheckCollisionStub(scene->caster, pos) > 0)
-				particle->tmr = -1;
+				particle->timer = -1;
 		}
-		if(particle->tmr == -1 && (i & 1)) {
+		if(particle->timer == -1 && (i & 1)) {
 			pos[0] = particle->x;
 			pos[1] = particle->y - (syRandom() << 2);
 			pos[2] = particle->z;
 			syVectorAddPolarOffset(
-				toFIXED(10), state->ang + DEGtoANG(180), pos);
+				toFIXED(10), state->angle + DEGtoANG(180), pos);
 			syVectorAddPolarOffset(toFIXED(12), syRandom(), pos);
 			puff = &state->puffMotion[i];
 			SET_POSITION(puff, pos[0], pos[1], pos[2]);
-			puff->tmr = 0;
+			puff->timer = 0;
 		}
 		if(state->hit != 0)
 			break;
@@ -643,33 +646,35 @@ void fdBlazeUpdateSpray(void)
 
 	particle = state->puffMotion;
 	for(i = 0; i < BLAZE_FLAMES; i++, particle++) {
-		if(particle->tmr >= 0) {
-			spr = &state->puffs[i];
-			spr->oam.idx = state->puffTile + ((particle->tmr >> 2) & 7) * 8;
+		if(particle->timer >= 0) {
+			sprite = &state->puffs[i];
+			sprite->oam.index =
+				state->puffTile + ((particle->timer >> 2) & 7) * 8;
 			pos[0] = particle->x;
 			pos[1] = particle->y;
 			pos[2] = particle->z;
 			fdCameraWorldToScreen(pos);
-			spr->x = pos[0];
-			spr->y = pos[2];
-			fdEffectSprDraw(spr);
+			sprite->x = pos[0];
+			sprite->y = pos[2];
+			fdEffectSpriteDraw(sprite);
 			particle->y += toFIXED(4) / 5;
-			if(++particle->tmr == 32)
-				particle->tmr = -1;
+			if(++particle->timer == 32)
+				particle->timer = -1;
 		}
 	}
 
-	tgt = scene->ang8 - DEGtoANG(90);
-	turn = (Sint16)(state->tgtAng - state->ang);
-	if((Uint16)(state->tgtAng - tgt) - (Uint16)(state->ang - tgt) ==
+	target = scene->angle8 - DEGtoANG(90);
+	turn = (Sint16)(state->targetAngle - state->angle);
+	if((Uint16)(state->targetAngle - target) -
+			(Uint16)(state->angle - target) ==
 		TRIG_TURN / 2) {
-		state->ang = state->ang + TRIG_TURN / 64;
+		state->angle = state->angle + TRIG_TURN / 64;
 	} else {
 		if(turn > TRIG_TURN / 64)
 			turn = TRIG_TURN / 64;
 		if(turn < -(TRIG_TURN / 64))
 			turn = -(TRIG_TURN / 64);
-		state->ang = state->ang + turn;
+		state->angle = state->angle + turn;
 	}
 }
 

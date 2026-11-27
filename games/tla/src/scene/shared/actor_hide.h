@@ -3,7 +3,7 @@
 void scActorHide(Sint32 id)
 {
 	fdActorDisableById(id);
-	fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_HIDDEN);
-	fdActorSetSprPriority(id, 1);
-	fdActorGetById(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpriteColor(fdActorGetById(id), SPRITE_COLOR_HIDDEN);
+	fdActorSetSpritePriority(id, 1);
+	fdActorGetById(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }

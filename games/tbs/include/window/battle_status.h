@@ -105,19 +105,19 @@ extern const Uint8 BattleStatusScreenKpString[];
 extern const Uint8 BattleStatusScreenPvString[];
 #endif
 
-/* The party status window's flags (mnPartyStatDraw, mnPartyStatCreateWindow):
-   one column of six tiles per party member (name, HP and, when shown, PP with a
-   bar under each), and in battle an optional five-tile column of standby Djinn
-   counts on its left. */
+/* The party status window's flags (mnPartyStatusDraw,
+   mnPartyStatusCreateWindow): one column of six tiles per party member (name,
+   HP and, when shown, PP with a bar under each), and in battle an optional
+   five-tile column of standby Djinn counts on its left. */
 typedef enum PARTY_STAT_FLAG {
 	PARTY_STATUS_HP_ONLY = 0,	  /* names and HP */
 	PARTY_STATUS_SHOW_PP = 1,	  /* add the PP row */
 	PARTY_STATUS_SHOW_DJINN = 2,  /* add the Djinn column (needs the PP row) */
 	PARTY_STATUS_CLOSED = 9,	  /* erase the window */
 	PARTY_STATUS_KEEP_FLAGS = -1, /* redraw with the flags it has */
-	/* BATTLE_STATE.partyStat while the party cannot summon. */
+	/* BATTLE_STATE.partyStatus while the party cannot summon. */
 	PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
-	/* BATTLE_STATE.partyStat while it can, drawn only while a Djinni is on
+	/* BATTLE_STATE.partyStatus while it can, drawn only while a Djinni is on
 	   standby. */
 	PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
 } PARTY_STAT_FLAG;

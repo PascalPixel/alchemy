@@ -97,19 +97,20 @@ const CUE *scGetCues(void)
 
 /* Moves each of count colours one step of red, green and blue toward its target
    colour. */
-void scMtAlephSummitStepColsToward(Uint16 *cols, Uint16 *tgt, Sint32 cnt)
+void scMtAlephSummitStepColorsToward(
+	Uint16 *colors, Uint16 *target, Sint32 count)
 {
 	Sint32 i = 0;
 
-	if(cnt == 0)
+	if(count == 0)
 		return;
 	do {
-		Sint32 to_r = RGB_RED(*tgt);
-		Sint32 to_g = RGB_GREEN(*tgt);
-		Sint32 to_b = RGB_BLUE(*tgt);
-		Sint32 r = RGB_RED(*cols);
-		Sint32 g = RGB_GREEN(*cols);
-		Sint32 b = RGB_BLUE(*cols);
+		Sint32 to_r = RGB_RED(*target);
+		Sint32 to_g = RGB_GREEN(*target);
+		Sint32 to_b = RGB_BLUE(*target);
+		Sint32 r = RGB_RED(*colors);
+		Sint32 g = RGB_GREEN(*colors);
+		Sint32 b = RGB_BLUE(*colors);
 
 		if(r < to_r)
 			r++;
@@ -123,27 +124,27 @@ void scMtAlephSummitStepColsToward(Uint16 *cols, Uint16 *tgt, Sint32 cnt)
 			b++;
 		else if(b > to_b)
 			b--;
-		*cols = RGB(r, g, b);
+		*colors = RGB(r, g, b);
 		i++;
-		tgt++;
-		cols++;
-	} while(i != cnt);
+		target++;
+		colors++;
+	} while(i != count);
 }
 
 /* Adds delta to each of count colours' red, green and blue, kept within 0 to
    31. */
-void scMtAlephSummitShiftCols(Uint16 *cols, Sint32 cnt, Sint32 delta)
+void scMtAlephSummitShiftColors(Uint16 *colors, Sint32 count, Sint32 delta)
 {
 	Sint32 i;
 	Sint32 r, g, b;
 
 	i = 0;
-	if(cnt == 0)
+	if(count == 0)
 		return;
-	for(; i != cnt; i++) {
-		r = RGB_RED(*cols) + delta;
-		g = RGB_GREEN(*cols) + delta;
-		b = RGB_BLUE(*cols) + delta;
+	for(; i != count; i++) {
+		r = RGB_RED(*colors) + delta;
+		g = RGB_GREEN(*colors) + delta;
+		b = RGB_BLUE(*colors) + delta;
 		if(r > RGB_LEVEL_MAX)
 			r = RGB_LEVEL_MAX;
 		if(r < 0)
@@ -156,21 +157,21 @@ void scMtAlephSummitShiftCols(Uint16 *cols, Sint32 cnt, Sint32 delta)
 			b = RGB_LEVEL_MAX;
 		if(b < 0)
 			b = 0;
-		*cols++ = RGB(r, g, b);
+		*colors++ = RGB(r, g, b);
 	}
 }
 
 /* An event: background palette 4's colours 1 to 15 pulse up to two levels
    brighter and darker than palette 6's, once every 64 ticks. */
-void scMtAlephSummitPulseCols(void)
+void scMtAlephSummitPulseColors(void)
 {
 	Uint16 *src = (Uint16 *)&BG_PLTT_COLOR(6, 1);
-	Uint16 *dst = (Uint16 *)&BG_PLTT_COLOR(4, 1);
+	Uint16 *dest = (Uint16 *)&BG_PLTT_COLOR(4, 1);
 	/* The pulse turns a 64th of a turn a tick. */
 	Sint32 delta = FIXEDtoINT(syMathSin(TickCount * (TRIG_TURN / 32) / 2) * 2);
 	Sint32 i;
 
-	for(i = 0; i != PALETTE_COLORS - 1; i++, src++, dst++) {
+	for(i = 0; i != PALETTE_COLORS - 1; i++, src++, dest++) {
 		Sint32 r = RGB_RED(*src) + delta;
 		Sint32 g = RGB_GREEN(*src) + delta;
 		Sint32 b = RGB_BLUE(*src) + delta;
@@ -187,7 +188,7 @@ void scMtAlephSummitPulseCols(void)
 			b = RGB_LEVEL_MAX;
 		if(b < 0)
 			b = 0;
-		*dst = RGB(r, g, b);
+		*dest = RGB(r, g, b);
 	}
 }
 
@@ -227,44 +228,46 @@ CUE SceneCues[] = {
 
 /* The summit's scripts: the Golden Sun's formation and what follows it. */
 
-void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY,
-	Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options);
+void scFieldEffectSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX,
+	Sint32 velocityY, Sint32 velocityZ, Uint32 flags,
+	const EFFECT_OPTIONS *options);
 
 /* Scatters count dust puffs in a ring of radius around Alex. */
-void scMtAlephSummitScatterDustRing(Sint32 radius, Uint32 cnt)
+void scMtAlephSummitScatterDustRing(Sint32 radius, Uint32 count)
 {
 	ACTOR		  *actor;
 	EFFECT_OPTIONS options;
-	VECTOR3		   dir;
+	VECTOR3		   direction;
 	Uint32		   i;
-	Sint32		   ang;
+	Sint32		   angle;
 
 	actor = fdActorGet(ACTOR_ALEX);
 	options.update = fdEffectAdvanceMotion;
 	options.startScaleX = toFIXED(4) / 5;
 	options.startScaleY = toFIXED(4) / 5;
-	options.pri = ((FIELD_SPR *)actor->spr)->pri;
+	options.priority = ((FIELD_SPR *)actor->sprite)->priority;
 	i = 0;
 	do {
-		ang = i * (TRIG_TURN / (Sint32)cnt);
-		dir.x = syCos(ang) * radius / 256;
-		dir.y = 0;
-		dir.z = syMathSin(ang) * radius / 256;
-		dir.x += dir.x >> 1;
-		dir.x += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
-		dir.z += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
+		angle = i * (TRIG_TURN / (Sint32)count);
+		direction.x = syCos(angle) * radius / 256;
+		direction.y = 0;
+		direction.z = syMathSin(angle) * radius / 256;
+		direction.x += direction.x >> 1;
+		direction.x += syRandomBelow(toFIXED(3) / 4) - toFIXED(3) / 8;
+		direction.z += syRandomBelow(toFIXED(3) / 8) - toFIXED(3) / 16;
 		scFieldEffectSpawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-			dir.x, dir.y, dir.z,
+			direction.x, direction.y, direction.z,
 			EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
 				EFFECT_SCRIPT_MEDIUM,
 			&options);
 		i++;
-	} while(i <= cnt);
+	} while(i <= count);
 }
 
-void scMtAlephSummitStepColsToward(Uint16 *cols, Uint16 *tgt, Sint32 cnt);
-void scMtAlephSummitShiftCols(Uint16 *cols, Sint32 cnt, Sint32 delta);
-void scMtAlephSummitPulseCols(void);
+void scMtAlephSummitStepColorsToward(
+	Uint16 *colors, Uint16 *target, Sint32 count);
+void scMtAlephSummitShiftColors(Uint16 *colors, Sint32 count, Sint32 delta);
+void scMtAlephSummitPulseColors(void);
 
 /* Alex's climb as the Golden Sun forms: he creeps up the mountain's side a
    pixel every 30 ticks for CREEP_STEPS steps, the camera drifting after him
@@ -319,16 +322,16 @@ Sint32 scInit(void)
 	FIXED			 scale;
 	Sint32			 r, g, b, value;
 	Sint32			 c;
-	Uint16			*col, *out;
+	Uint16			*color, *out;
 	ACTOR			*actor;
 	volatile Uint32 *held;
 	HEAP_SLOTS		*heap;
 	MAP_STATE		*map;
 
-	buf = syHeapAllocEWRAM(BG_PLTT_SIZE);
+	buf = syHeapAllocateEWRAM(BG_PLTT_SIZE);
 	syWindowLoadGraphics();
-	mnWindowColApply(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApply(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	fdActorSetPos(ACTOR_FELIX, 0, 0);
 	mode = MainRoutineStateWork.entrance;
 	if(mode == ENTRANCE_SKIP_TO_CREDITS) {
@@ -337,7 +340,7 @@ Sint32 scInit(void)
 	} else if(mode == ENTRANCE_GOLDEN_SUN_FORMS) {
 		fdCameraMoveTo(256, CAMERA_KEEP, 128, 0);
 		fdCameraSetSpeed(1);
-		fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
 		fdActorSetAnimation(ACTOR_ALEX, 12);
 		fdActorSetAnimationSpeedById(ACTOR_ALEX, ANIM_STEP_NORMAL / 2);
 		FieldStateWork->transition = 0;
@@ -368,9 +371,9 @@ Sint32 scInit(void)
 		   rises and blue falls to no less than 8. */
 		for(j = 0; j != SKY_GOLD_STEPS; j++) {
 			out = (Uint16 *)&BG_PLTT_COLOR(0, 7);
-			col = out;
+			color = out;
 			for(i = 0; i != 8; i++) {
-				c = *col;
+				c = *color;
 				r = RGB_RED(c);
 				g = RGB_GREEN((Uint16)c);
 				b = RGB_BLUE((Uint16)c);
@@ -389,7 +392,7 @@ Sint32 scInit(void)
 				if(b > RGB_LEVEL_MAX)
 					b = RGB_LEVEL_MAX;
 				*out = RGB(r, g, b);
-				col++;
+				color++;
 				out++;
 			}
 			syWait(4);
@@ -419,7 +422,7 @@ Sint32 scInit(void)
 		fdScriptSetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_TO_BEACONS);
 	} else if(mode == ENTRANCE_ALEX_TAKES_THE_POWER) {
 		heap = RamHeapSlots;
-		fade = heap->palFade;
+		fade = heap->paletteFade;
 		syWordsCopy(buf, (void *)&BG_PLTT_COLOR(0, 0),
 			PALETTE_FADE_BG_COLORS * sizeof(Uint16));
 		fdCameraMoveTo(256, CAMERA_KEEP, 144, 0);
@@ -451,7 +454,7 @@ Sint32 scInit(void)
 		}
 		fdActorSetAnimation(ACTOR_ALEX, 15);
 		syWait(60);
-		fdScriptPlaySnd(SE_POWER_UP);
+		fdScriptPlaySound(SE_POWER_UP);
 		REG_BG1CNT &= ~BGCNT_PRIORITY(3);
 		REG_BG1CNT |= BGCNT_PRIORITY(1);
 		REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -459,15 +462,15 @@ Sint32 scInit(void)
 			BLEND_ALPHA(2, BLEND_WEIGHT_MAX), IO_WRITE_HALFWORD);
 		for(j = 0; j != POWER_STEPS; j++) {
 			if(j == POWER_ALEX_GOLDEN) {
-				fdScriptPlaySnd(SE_SPIN);
+				fdScriptPlaySound(SE_SPIN);
 				fdActorSetAnimation(ACTOR_ALEX, 16);
 			}
 			if(j == POWER_TREMOR) {
-				fdScriptPlaySnd(SE_TREMOR);
+				fdScriptPlaySound(SE_TREMOR);
 				syWordsCopyEntry(buf, (void *)&BG_PLTT_COLOR(0, 0),
 					PALETTE_FADE_BG_COLORS * sizeof(Uint16));
-				syWordsCopyEntry(&fade->tgt[4 * PALETTE_CHANNELS],
-					&fade->tgt[6 * PALETTE_CHANNELS],
+				syWordsCopyEntry(&fade->target[4 * PALETTE_CHANNELS],
+					&fade->target[6 * PALETTE_CHANNELS],
 					PALETTE_CHANNELS * sizeof(Uint16));
 			}
 			if(j >= POWER_ALEX_GOLDEN && j <= POWER_BLEND_PAUSE) {
@@ -481,31 +484,31 @@ Sint32 scInit(void)
 					BLEND_ALPHA(value, BLEND_WEIGHT_MAX), IO_WRITE_HALFWORD);
 			}
 			if(j >= POWER_SUMMIT_GOLDEN && j <= POWER_TREMOR)
-				scMtAlephSummitStepColsToward((Uint16 *)&BG_PLTT_COLOR(4, 0),
+				scMtAlephSummitStepColorsToward((Uint16 *)&BG_PLTT_COLOR(4, 0),
 					(Uint16 *)&BG_PLTT_COLOR(6, 0), 16);
 			if(j >= POWER_WHITEN)
-				scMtAlephSummitShiftCols(
+				scMtAlephSummitShiftColors(
 					(Uint16 *)&BG_PLTT_COLOR(0, 0), PALETTE_FADE_BG_COLORS, 1);
 			syWait(4);
 		}
-		scFieldActorSetSprPriority(ACTOR_ALEX, 3);
+		scFieldActorSetSpritePriority(ACTOR_ALEX, 3);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-		fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+		fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 		fdCameraMoveTo(256, CAMERA_KEEP, 318, 0);
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BG1CNT,
 			(REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3),
 			IO_WRITE_HALFWORD);
-		fdScriptPlaySnd(SE_POWER_UP);
+		fdScriptPlaySound(SE_POWER_UP);
 		syWait(1);
-		sySetTickEvent(scMtAlephSummitPulseCols, EVENT_PASS_TICK);
+		sySetTickEvent(scMtAlephSummitPulseColors, EVENT_PASS_TICK);
 		/* The background walks back to the saved colours, a level a step, as
 		   many steps as a channel has levels. */
 		for(j = 0; j != RGB_LEVEL_MAX + 1; j++) {
-			scMtAlephSummitStepColsToward(
+			scMtAlephSummitStepColorsToward(
 				(Uint16 *)&BG_PLTT_COLOR(0, 0), buf, PALETTE_FADE_BG_COLORS);
 			syWait(4);
 		}
-		scFieldActorSetSprPriority(ACTOR_ALEX, 1);
+		scFieldActorSetSpritePriority(ACTOR_ALEX, 1);
 		fdActorSetAnimation(ACTOR_ALEX, 1);
 		fdCameraMoveTo(256, CAMERA_KEEP, 128, 1);
 		fdCameraSetSpeed(1);
@@ -514,7 +517,7 @@ Sint32 scInit(void)
 		fdActorWalkToAndWait(ACTOR_ALEX, 248, 128);
 		fdActorRunRepeatedMotion(ACTOR_ALEX, 2);
 		syFieldScriptWait(5);
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		syFieldScriptSetMessageId((Sint32)MsgGoldenSunEternalLifeAndPower);
 		/* "At last! I have it! Eternal life...and limitless power!" */
 		syFieldScriptShowMessageThenWait(
@@ -551,7 +554,7 @@ Sint32 scInit(void)
 		syFieldScriptWait(50);
 		fdActorRunRepeatedMotion(ACTOR_ALEX, 2);
 		syFieldScriptWait(5);
-		fdActorSetSprFlags(fdActorGet(ACTOR_WISE_ONE), 0);
+		fdActorSetSpriteFlags(fdActorGet(ACTOR_WISE_ONE), 0);
 		fdActorWalkToAndWait(ACTOR_WISE_ONE, 216, 96);
 		fdActorFaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
 		fdActorShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -560,13 +563,13 @@ Sint32 scInit(void)
 		/* "Wh-Who are you?" */
 		syFieldScriptShowMessageThenWait(
 			SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
-		fdScriptPlaySnd(MUS_ELEMENTAL_STARS);
+		fdScriptPlaySound(MUS_ELEMENTAL_STARS);
 		/* "I am called the Wise One..." */
 		syFieldScriptShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
 		fdActorSetAnimation(ACTOR_ALEX, 1);
 		fdActorFaceDirection(ACTOR_ALEX, FACING_NORTHWEST, 0);
 		fdActorShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-		fdActorGet(ACTOR_ALEX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_ALEX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkTo(ACTOR_ALEX, 256, 136);
 		fdActorSetSpeed(ACTOR_ALEX, 0.6);
 		syFieldScriptWait(20);
@@ -606,8 +609,8 @@ Sint32 scInit(void)
 		fdBattleEffectStartArcEffect();
 		fdBattleEffectSetObjectUpdateMode(
 			fdActorGet(ACTOR_ALEX), CASTER_LOOK_CYCLING_COLORS);
-		fdScriptPlaySnd(SE_GATHERING_POWER);
-		fdScriptStartColTransition(8, RGB(4, 4, 16));
+		fdScriptPlaySound(SE_GATHERING_POWER);
+		fdScriptStartColorTransition(8, RGB(4, 4, 16));
 		syFieldScriptWait(20);
 		fdActorSetAnimation(ACTOR_WISE_ONE, 3);
 		fdActorSetSpeed(ACTOR_WISE_ONE, 0.1);
@@ -615,13 +618,14 @@ Sint32 scInit(void)
 			if(j & 1) {
 				fdActorWalkToAndWait(ACTOR_WISE_ONE, 216, 96);
 			} else {
-				fdActorGet(ACTOR_WISE_ONE)->steeringFlg &= ~ACTOR_FACES_MOTION;
+				fdActorGet(ACTOR_WISE_ONE)->steeringFlags &=
+					~ACTOR_FACES_MOTION;
 				fdActorWalkTo(ACTOR_WISE_ONE, 208, 88);
 			}
 			for(i = 0; i != WISE_ONE_BLINKS; i++) {
-				fdActorSetSprColById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
+				fdActorSetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
 				syFieldScriptWait(3);
-				fdActorSetSprColById(ACTOR_WISE_ONE, 0);
+				fdActorSetSpriteColorById(ACTOR_WISE_ONE, 0);
 				syFieldScriptWait(3);
 			}
 		}
@@ -639,7 +643,7 @@ Sint32 scInit(void)
 		fdBattleEffectSetObjectUpdateMode(
 			fdActorGet(ACTOR_WISE_ONE), CASTER_LOOK_CYCLING_COLORS);
 		syWait(30);
-		fdScriptPlaySnd(SE_POWER_UP);
+		fdScriptPlaySound(SE_POWER_UP);
 		fdMapGridSetShake(16, 16, 1);
 		for(i = 0; i != 4; i++) {
 			fdPaletteFadeApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
@@ -652,22 +656,22 @@ Sint32 scInit(void)
 		fdMapGridSetShake(0, 0, 0);
 		fdActorRunRepeatedMotion(ACTOR_ALEX, 2);
 		fdStartPaletteTransition(1);
-		fdScriptStartColTransition(8, RGB(16, 8, 4));
+		fdScriptStartColorTransition(8, RGB(16, 8, 4));
 		syFieldScriptWait(20);
 		fdActorSetSpeed(ACTOR_ALEX, 8);
 		scMtAlephSummitScatterDustRing(128, 8);
-		fdActorGet(ACTOR_ALEX)->steeringFlg &= ~ACTOR_FACES_MOTION;
+		fdActorGet(ACTOR_ALEX)->steeringFlags &= ~ACTOR_FACES_MOTION;
 		fdActorWalkTo(ACTOR_ALEX, 280, 160);
 		fdActorSetAnimation(ACTOR_ALEX, 17);
-		fdScriptPlaySnd(SE_HEAVY_IMPACT);
+		fdScriptPlaySound(SE_HEAVY_IMPACT);
 		syFieldScriptWait(2);
 		scMtAlephSummitScatterDustRing(128, 8);
 		syFieldScriptWait(2);
 		scMtAlephSummitScatterDustRing(128, 8);
 		syFieldScriptWait(56);
-		fdScriptPlaySnd(SE_GATHERING_POWER);
+		fdScriptPlaySound(SE_GATHERING_POWER);
 		i = 0;
-		fdActorGet(ACTOR_ALEX)->motionFlg = i;
+		fdActorGet(ACTOR_ALEX)->motionFlags = i;
 		for(; i != 64; i++) {
 			if(i == 16)
 				fdActorSetAnimation(ACTOR_ALEX, 18);
@@ -684,14 +688,14 @@ Sint32 scInit(void)
 			fdActorGet(ACTOR_ALEX)->y.fixed += toFIXED(1);
 			syFieldScriptWait(1);
 		}
-		fdActorGet(ACTOR_ALEX)->motionFlg = ACTOR_FOLLOWS_TERRAIN;
+		fdActorGet(ACTOR_ALEX)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
 		for(i = 0; i != 5; i++) {
 			fdActorGet(ACTOR_ALEX)->y.fixed -= toFIXED(832) / 100;
 			syFieldScriptWait(1);
 		}
 		scMtAlephSummitScatterDustRing(256, 16);
 		fdActorSetAnimation(ACTOR_ALEX, 17);
-		fdScriptPlaySnd(SE_CRASH);
+		fdScriptPlaySound(SE_CRASH);
 		fdMapGridSetShake(16, 16, 1);
 		syFieldScriptWait(10);
 		fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -699,7 +703,7 @@ Sint32 scInit(void)
 			fdActorGet(ACTOR_WISE_ONE), CASTER_LOOK_NORMAL);
 		fdBattleEffectWaitForArcGroups();
 		fdBattleEffectEndArcEffect();
-		fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+		fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 		fdActorSetAnimation(ACTOR_WISE_ONE, 4);
 		fdStartPaletteTransition(32);
 		syFieldScriptWait(10);
@@ -722,7 +726,7 @@ Sint32 scInit(void)
 		syFieldScriptShowMessageThenWait(
 			SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
 		syFieldScriptWait(120);
-		fdScriptPlaySnd(SE_TREMOR);
+		fdScriptPlaySound(SE_TREMOR);
 		for(i = 0; i != 2; i++) {
 			fdMapGridSetShakeFX(
 				toFIXED(i) + toFIXED(1), toFIXED(i) + toFIXED(1), toFIXED(1));
@@ -777,19 +781,19 @@ Sint32 scInit(void)
 				fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 				fdPaletteFadeInterpolate(64);
 			}
-			map->layers[1].ofsY -= toFIXED(1);
+			map->layers[1].offsetY -= toFIXED(1);
 			fdActorGet(ACTOR_ALEX)->z.fixed += toFIXED(1);
 			syWait(1);
 		}
-		fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
+		fdScriptPlaySound(SOUND_FADE_OUT_BGM);
 		syFieldScriptWait(32);
-		fdScriptPlaySnd(SE_BANE_ESCAPE);
+		fdScriptPlaySound(SE_BANE_ESCAPE);
 		syFieldScriptWait(120);
-		syFieldCloseEvent(scMtAlephSummitPulseCols);
+		syFieldCloseEvent(scMtAlephSummitPulseColors);
 		fdPaletteFadeApplyTarget(RGB_WHITE, PALETTES_ALL);
 		fdPaletteFadeInterpolate(1);
 		syWait(1);
-		fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
+		fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
 		fdPaletteFadeApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
 		fdPaletteFadeInterpolate(120);
 		syWait(300);
@@ -805,7 +809,7 @@ Sint32 scInit(void)
 			if(*held & KEY_A)
 				break;
 			if(j == 0) {
-				fdActorSetSprFlags(fdActorGet(ACTOR_ALEX), 0);
+				fdActorSetSpriteFlags(fdActorGet(ACTOR_ALEX), 0);
 				fdActorSetAnimation(ACTOR_ALEX, 12);
 			}
 		}

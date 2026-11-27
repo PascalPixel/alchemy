@@ -4,7 +4,7 @@ void fdPaletteCycleFade(void)
 	Sint32			 step;
 	Uint32			 i;
 	Uint16			*src;
-	volatile Uint16 *dst;
+	volatile Uint16 *dest;
 	int				 red, green, blue;
 
 	step = 0;
@@ -20,15 +20,15 @@ void fdPaletteCycleFade(void)
 		return;
 	src = PaletteCycleColors;
 	for(i = 0; i < PaletteCycleLength; i++) {
-		dst =
+		dest =
 			&BG_PLTT[PaletteCycleSlots[PaletteCycleIndex * PaletteCycleLength +
 				i]];
 		red = *src++;
 		green = *src++;
 		blue = *src++;
-		SET_RGB(*dst, red, green, blue);
+		SET_RGB(*dest, red, green, blue);
 	}
-	dst = &BG_PLTT[PaletteSlots[PaletteCycleLength]];
+	dest = &BG_PLTT[PaletteSlots[PaletteCycleLength]];
 	if(PaletteCycleBright != 0)
 		src = PaletteColors + PaletteCycleLength * 3;
 	else
@@ -36,7 +36,7 @@ void fdPaletteCycleFade(void)
 	red = *src++;
 	green = *src++;
 	blue = *src++;
-	SET_RGB(*dst, red, green, blue);
+	SET_RGB(*dest, red, green, blue);
 	PaletteCycleBright ^= 1;
 	if(++PaletteCycleIndex == PaletteCycleLength)
 		PaletteCycleIndex = 0;

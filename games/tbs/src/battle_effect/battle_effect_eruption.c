@@ -56,7 +56,7 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BLITTER_PAIR draw;
 	Sint32		 variant;
 	SCREEN_POINT screen;
-	Sint32		 frm;
+	Sint32		 frame;
 	Sint32		 i;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -114,13 +114,14 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-	for(frm = 0; frm != EruptionCounts[variant][ERUPTION_FIELD_TICKS]; frm++) {
+	for(frame = 0; frame != EruptionCounts[variant][ERUPTION_FIELD_TICKS];
+		frame++) {
 		BATTLE_CAMERA *camera = BattleCameraWork;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
-		if(frm == 2)
-			sySndPlayStub(SE_CLATTER);
-		if(frm == EruptionCounts[variant][ERUPTION_FIELD_TICKS] - 48)
+		if(frame == 2)
+			sySoundPlayStub(SE_CLATTER);
+		if(frame == EruptionCounts[variant][ERUPTION_FIELD_TICKS] - 48)
 			EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
 		/* The motes fall. */
@@ -148,12 +149,12 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		}
 
 		/* The puffs. */
-		if(frm > 2) {
+		if(frame > 2) {
 			for(i = 0; i != EruptionCounts[variant][ERUPTION_FIELD_PUFFS];
 				i++) {
 				PARTICLE *puff = &state->particles[i];
 
-				if(i < frm && puff->y >= 0) {
+				if(i < frame && puff->y >= 0) {
 					btProjectionPoint(puff, &screen);
 					screen.x >>= 1;
 					screen.x += state->args->side * 32 - 16;
@@ -189,22 +190,22 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		/* The hits, one target a tick; Blast's targets also recoil. */
 		if(mode == ERUPTION_BLAST) {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frm == i + 6) {
-					btEffectTintBattler(state->args->tgts[i],
+				if(frame == i + 6) {
+					btEffectTintBattler(state->args->targets[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 					btMotionApplyKnockbackStub(
-						state->args->tgts[i], KNOCKBACK_LEAP);
+						state->args->targets[i], KNOCKBACK_LEAP);
 				}
 			}
 		} else {
 			EFFECT_FOR_EACH_TARGET(i, state->args) {
-				if(frm == i + 6)
-					btEffectTintBattler(state->args->tgts[i],
+				if(frame == i + 6)
+					btEffectTintBattler(state->args->targets[i],
 						SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 10);
 			}
 		}
-		if(frm == 2)
-			state->shakeFrm = 6;
+		if(frame == 2)
+			state->shakeFrame = 6;
 		btCameraShake(16, 16);
 		EFFECT_END_TICK(state);
 	}
@@ -212,25 +213,25 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/* Creates the `cnt` sprites a summon's figure is drawn from, all of sprite
-   `sprId`, into state->sprs: sprite n plays animation n, its piece of the
-   figure, at BG priority `pri`. */
-void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri)
+/* Creates the `count` sprites a summon's figure is drawn from, all of sprite
+   `spriteId`, into state->sprites: sprite n plays animation n, its piece of the
+   figure, at BG priority `priority`. */
+void btEffectCreateSprites(Sint32 count, Sint32 spriteId, Uint32 priority)
 {
 	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	Sint32				 piece = 0;
 
-	if(cnt == 0) {
+	if(count == 0) {
 		return;
 	}
-	for(; piece != cnt; piece++) {
-		SPR *spr = fdSprCreateStub(sprId);
+	for(; piece != count; piece++) {
+		SPR *sprite = fdSpriteCreateStub(spriteId);
 
-		state->sprs[piece] = spr;
-		if(spr != 0) {
-			spr->flg = 0;
-			fdSprStartAnimationStub(spr, piece);
-			state->sprs[piece]->image.pri = pri;
+		state->sprites[piece] = sprite;
+		if(sprite != 0) {
+			sprite->flags = 0;
+			fdSpriteStartAnimationStub(sprite, piece);
+			state->sprites[piece]->image.priority = priority;
 		}
 	}
 }

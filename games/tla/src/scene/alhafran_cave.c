@@ -14,8 +14,8 @@
 
 /* This unit declares its own form of fdActorTakeLeaderLayer, below. */
 #define OWN_fdActorTakeLeaderLayer
-/* This unit declares its own form of fdActorCycleSprCols, below. */
-#define OWN_fdActorCycleSprCols
+/* This unit declares its own form of fdActorCycleSpriteColors, below. */
+#define OWN_fdActorCycleSpriteColors
 
 #include "scene/script_layer.h"
 #include "game/game.h"
@@ -31,7 +31,7 @@
 #include "field/actor_script.h"
 #include "scene/dehkan_plateau.h"
 
-void		  scPillarPlace(const Uint16 *tbl);
+void		  scPillarPlace(const Uint16 *table);
 void		  scAlhafranCaveTakeLeadersLayer(void);
 extern Sint32 AlhafranCaveGuardStepsAsideScript[];
 extern Uint32 AlhafranCaveVisitorsLeaveScript[];
@@ -133,7 +133,7 @@ const Uint32 *scGetExits(void)
 
 /* The ROM's caller here is compiled against this form, which takes nothing
    where the definition takes the actor. */
-void fdActorCycleSprCols(void);
+void fdActorCycleSpriteColors(void);
 /* The ROM's caller here is compiled against this form, which takes nothing and
    returns nothing where the definition takes the actor and returns an
    Sint32. */
@@ -167,9 +167,9 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 
 /* Felix casts Pound on the stake in the caves beyond the jail and drives it
    into the ground. */
-void scAlhafranCavePoundStake(Sint32 mode, Sint32 frm)
+void scAlhafranCavePoundStake(Sint32 mode, Sint32 frame)
 {
-	fdPoundSinkTarget(AlhafranCavePoundStakes, mode, frm);
+	fdPoundSinkTarget(AlhafranCavePoundStakes, mode, frame);
 }
 
 /* Nothing more than the move itself happens as Felix starts casting Move on the
@@ -255,7 +255,7 @@ void scAlhafranCaveCastSand(void)
 {
 	FIELD_STATE *state = RamHeapSlots->fieldState;
 
-	state->sandTrailPri = 2;
+	state->sandTrailPriority = 2;
 }
 
 /* The current scene's cues: the cave's or the jail's. */
@@ -283,11 +283,11 @@ void scAlhafranCaveCheckUpperLevel(void)
 }
 
 /* The jail's event: draws the crate's top where the crate stands. */
-Sint32 scAlhafranCaveDrawCrateSpr(void)
+Sint32 scAlhafranCaveDrawCrateSprite(void)
 {
 	ACTOR *actor = fdActorGet(ACTOR_CRATE);
 
-	fdEffectSprDrawAtWorldXYZ(&AlhafranCaveCrateSprite, actor->x.fixed,
+	fdEffectSpriteDrawAtWorldXYZ(&AlhafranCaveCrateSprite, actor->x.fixed,
 		actor->y.fixed + toFIXED(28), actor->z.fixed);
 	return 0;
 }
@@ -333,64 +333,64 @@ void scAlhafranCaveSetUpCave(void)
 		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 	ACTOR *actor;
 
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	map->wading = MAP_WADING_UPPER_LEVEL;
 	sySetTickEvent(scAlhafranCaveCheckUpperLevel, EVENT_PASS_TICK);
 	if(fdScriptGetFlag(FLAG_BRIDGE_METATILES_RAISED))
 		scAlhafranCaveRaiseBridgeMetatiles();
 	actor = fdActorGet(ACTOR_CAVE_FIRST_BRIDGE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(12);
 	actor = fdActorGet(ACTOR_CAVE_SECOND_BRIDGE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(12);
 	actor = fdActorGet(ACTOR_CAVE_THIRD_BRIDGE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(12);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_CAVE_FIRST_BRIDGE), SPRITE_COLOR_GREY);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_CAVE_SECOND_BRIDGE), SPRITE_COLOR_GREY);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_CAVE_THIRD_BRIDGE), SPRITE_COLOR_GREY);
 	actor = fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(16);
 	actor = fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->y.fixed = toFIXED(16);
-	scFieldActorSetSprRotationById(
+	scFieldActorSetSpriteRotationById(
 		ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE, TRIG_TURN / 16);
 	fdActorSetAnimation(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END, 2);
 	fdActorSetAnimation(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END, 3);
 	fdActorSetAnimation(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE, 2);
-	scFieldActorSetSprPriority(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END, 2);
-	scFieldActorSetSprPriority(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END, 2);
-	scFieldActorSetSprPriority(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE, 3);
-	fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END)->priFlg |=
+	scFieldActorSetSpritePriority(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END, 2);
+	scFieldActorSetSpritePriority(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END, 2);
+	scFieldActorSetSpritePriority(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE, 3);
+	fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END)->priFlg |=
+	fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE)->priFlg |=
+	fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_WEST_END), SPRITE_COLOR_GREY);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_EAST_END), SPRITE_COLOR_GREY);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_CAVE_BROKEN_BRIDGE_MIDDLE), SPRITE_COLOR_GREY);
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
 		fdActorSetPos(ACTOR_CAVE_PILLAR_AT_LADDER, 200, 136);
 		fdActorSetPos(ACTOR_CAVE_PILLAR_IN_PASSAGE, 392, 360);
 	}
 	actor = fdActorGet(ACTOR_CAVE_PILLAR_AT_LADDER);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->groundHeight = 0;
 	actor->y.fixed = 0;
 	fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 4);
 	actor = fdActorGet(ACTOR_CAVE_PILLAR_IN_PASSAGE);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->groundHeight = 0;
 	actor->y.fixed = 0;
 	fdMapGridSetMetatileHeight(actor->x.fixed, actor->z.fixed, 0, 4);
@@ -414,49 +414,49 @@ void scAlhafranCaveSetUpJail(void)
 	EFFECT_SPR	*crate;
 	FIELD_STATE *state;
 
-	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
+	fdActorGet(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_CRATE)->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	fdActorGet(ACTOR_CRATE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	crate = &AlhafranCaveCrateSprite;
 	fdFadeOverlayFillTiles(0);
-	Call4((void (*)())fdEffectSprInitWithFadeOverlay, (Sint32)crate, 8, 15,
+	Call4((void (*)())fdEffectSpriteInitWithFadeOverlay, (Sint32)crate, 8, 15,
 		OBJ_SIZE_16X16);
-	syFieldSetTickEvent(scAlhafranCaveDrawCrateSpr, EVENT_PASS_TICK);
+	syFieldSetTickEvent(scAlhafranCaveDrawCrateSprite, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
 		MainRoutineStateWork.entrance == ENTRANCE_UNDER_CRATE) {
 		state = RamHeapSlots->fieldState;
 
-		state->psynergyDrawFlg =
+		state->psynergyDrawFlags =
 			PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
 	}
 	fdRopeInit();
 	fdRopePlace(0, FLAG_JAIL_ROPE_TIED, ACTOR_JAIL_ROPE_LOW_POST,
 		ACTOR_JAIL_ROPE_HIGH_POST);
-	fdActorGet(ACTOR_JAIL_ROPE_LOW_POST)->priFlg |=
+	fdActorGet(ACTOR_JAIL_ROPE_LOW_POST)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	fdActorGet(ACTOR_JAIL_ROPE_HIGH_POST)->priFlg |=
+	fdActorGet(ACTOR_JAIL_ROPE_HIGH_POST)->priorityFlags |=
 		ACTOR_PRIORITY_IGNORES_RISES;
 	scPillarPlace(AlhafranCavePoundStakes);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JAIL_STAKE), 0);
-	scFieldActorSetSprRotationById(
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JAIL_STAKE), 0);
+	scFieldActorSetSpriteRotationById(
 		ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE, TRIG_TURN / 16);
 	fdActorSetAnimation(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END, 0);
 	fdActorSetAnimation(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END, 1);
 	fdActorSetAnimation(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE, 2);
-	scFieldActorSetSprPriority(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END, 1);
-	scFieldActorSetSprPriority(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END, 1);
-	fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END)->priFlg |=
+	scFieldActorSetSpritePriority(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END, 1);
+	scFieldActorSetSpritePriority(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END, 1);
+	fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END)->priFlg |=
+	fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE)->priFlg |=
+	fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE)->priorityFlags |=
 		ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_WEST_END), SPRITE_COLOR_GREY);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_EAST_END), SPRITE_COLOR_GREY);
-	fdActorSetSprColMode(
+	fdActorSetSpriteColorMode(
 		fdActorGet(ACTOR_JAIL_BROKEN_BRIDGE_MIDDLE), SPRITE_COLOR_GREY);
 	if(fdScriptGetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
 		fdActorSetPos(ACTOR_JAIL_KEY, 0, 0);
@@ -471,11 +471,11 @@ void scAlhafranCaveSetUpJail(void)
 		fdActorGet(ACTOR_BORED_GUARD)->update = scAlhafranCaveTakeLeadersLayer;
 	} else if(fdScriptGetFlag(FLAG_BRIGGS_CAUGHT)) {
 		fdActorSetPos(ACTOR_BORED_GUARD, 0, 0);
-		scFieldActorSetSprPriority(ACTOR_BRIGGS, 2);
-		scFieldActorSetSprPriority(ACTOR_PIRATE_WHO_HATES_PRISON, 2);
-		scFieldActorSetSprPriority(ACTOR_PIRATE_ON_THE_BOAT, 2);
-		scFieldActorSetSprPriority(ACTOR_PIRATE_BLAMING_THE_PARTY, 2);
-		scFieldActorSetSprPriority(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 2);
+		scFieldActorSetSpritePriority(ACTOR_BRIGGS, 2);
+		scFieldActorSetSpritePriority(ACTOR_PIRATE_WHO_HATES_PRISON, 2);
+		scFieldActorSetSpritePriority(ACTOR_PIRATE_ON_THE_BOAT, 2);
+		scFieldActorSetSpritePriority(ACTOR_PIRATE_BLAMING_THE_PARTY, 2);
+		scFieldActorSetSpritePriority(ACTOR_PIRATE_GUARDING_EOLEOS_SECRET, 2);
 		if(!fdScriptGetFlag(FLAG_FAMILY_VISITED_BRIGGS)) {
 			fdActorSetPos(ACTOR_PIRATE_ON_THE_BOAT, 712, 216);
 			fdActorSetPos(ACTOR_PIRATE_BLAMING_THE_PARTY, 744, 216);
@@ -526,7 +526,7 @@ void scAlhafranCaveIdleEvent(void)
 
 extern Uint8 MsgYouHereTo[];
 
-void scAlhafranCaveCycleKeyCols(void);
+void scAlhafranCaveCycleKeyColors(void);
 
 /* Felix walks west into the jail after Briggs is caught (metatiles (49, 16) to
    (49, 19)): the guard asks if he is here to see Briggs, and Briggs's wife
@@ -627,11 +627,11 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	syFieldScriptShowMessageThenWait(ACTOR_GUARD, 0, 10);
 	eoleo = fdActorGet(ACTOR_EOLEO);
 	key = fdActorGet(ACTOR_JAIL_KEY);
-	fdScriptStartColTransition(8, RGB(16, 16, 4));
+	fdScriptStartColorTransition(8, RGB(16, 16, 4));
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
 		fdActorGet(ACTOR_EOLEO), CASTER_LOOK_CYCLING_COLORS);
-	fdScriptPlaySnd(SE_ASCEND);
+	fdScriptPlaySound(SE_ASCEND);
 	syFieldScriptWait(40);
 	effect = fdEffectSpawnMoveHand(eoleo);
 	pos[0] = key->x.fixed;
@@ -642,7 +642,7 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	scFieldActorSetMoveTargetFX(effect, pos[0], pos[1], pos[2]);
 	fdEffectGrowHandAndWait(effect);
 	fdActorSelectAnimation(effect, 4);
-	key->update = scAlhafranCaveCycleKeyCols;
+	key->update = scAlhafranCaveCycleKeyColors;
 	fdActorFaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
 	syFieldScriptWait(20);
 	fdActorFaceDirection(ACTOR_PIRATE_ON_THE_BOAT, FACING_EAST, 0);
@@ -682,7 +682,7 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	syFieldScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 20);
 	fdActorShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
 	key->update = 0;
-	fdActorSetSprColMode(key, 0);
+	fdActorSetSpriteColorMode(key, 0);
 	fdEffectBurstHand(effect);
 	fdBattleEffectSetObjectUpdateMode(
 		fdActorGet(ACTOR_EOLEO), CASTER_LOOK_NORMAL);
@@ -723,11 +723,11 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 	syFieldScriptWait(10);
 	fdActorFaceDirection(ACTOR_EOLEO, FACING_SOUTH_SOUTHEAST, 0);
 	syFieldScriptWait(20);
-	fdStartColTransition(8, RGB(16, 16, 4));
+	fdStartColorTransition(8, RGB(16, 16, 4));
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
 		fdActorGet(ACTOR_EOLEO), CASTER_LOOK_CYCLING_COLORS);
-	fdScriptPlaySnd(SE_ASCEND);
+	fdScriptPlaySound(SE_ASCEND);
 	syFieldScriptWait(40);
 	/* "Eoleo!" */
 	syFieldScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
@@ -853,8 +853,8 @@ void scAlhafranCaveChauchaAndEoleoVisit(void)
 		ACTOR_CHAUCHA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(40);
 	scFieldActorWatchAndSetScript(ACTOR_FELIX, ACTOR_EOLEO);
-	scFieldActorSetSprPriority(ACTOR_CHAUCHA, 2);
-	scFieldActorSetSprPriority(ACTOR_EOLEO, 2);
+	scFieldActorSetSpritePriority(ACTOR_CHAUCHA, 2);
+	scFieldActorSetSpritePriority(ACTOR_EOLEO, 2);
 	fdActorSetScript(ACTOR_CHAUCHA, AlhafranCaveVisitorsLeaveScript);
 	syFieldScriptWait(10);
 	fdActorSetScript(ACTOR_EOLEO, AlhafranCaveVisitorsLeaveScript);
@@ -887,9 +887,9 @@ void scAlhafranCaveTakeLeadersLayer(void)
 }
 
 /* The key's update while Eoleo's Psynergy holds it: its colours cycle. */
-void scAlhafranCaveCycleKeyCols(void)
+void scAlhafranCaveCycleKeyColors(void)
 {
-	fdActorCycleSprCols();
+	fdActorCycleSpriteColors();
 }
 
 #include "shared/pillar_place.h"

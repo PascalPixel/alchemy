@@ -11,11 +11,11 @@
 typedef struct PAGED_LIST {
 	Sint32 memberState; /* the party member's UNIT, as a word */
 	Sint32 unused;
-	Sint32 page;		/* the page shown, from 0 */
-	Sint32 pageCnt;		/* pages in the list */
-	Sint32 row;			/* the cursor's row on the page */
-	Sint32 entryCnt;	/* entries in the list */
-	Sint32 selectedIdx; /* the entry under the cursor: page * rows + row */
+	Sint32 page;		  /* the page shown, from 0 */
+	Sint32 pageCount;	  /* pages in the list */
+	Sint32 row;			  /* the cursor's row on the page */
+	Sint32 entryCount;	  /* entries in the list */
+	Sint32 selectedIndex; /* the entry under the cursor: page * rows + row */
 } PAGED_LIST;
 
 STATIC_ASSERT(sizeof(PAGED_LIST) == 28);

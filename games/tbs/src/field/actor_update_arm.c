@@ -39,13 +39,13 @@ void fdActorUpdateAll(void)
 	Sint32			z;
 	Sint32			deltaX;
 	Sint32			deltaZ;
-	FIXED			velX;
-	FIXED			velZ;
+	FIXED			velocityX;
+	FIXED			velocityZ;
 	Sint32			distance;
 	Sint32			speedRatio;
 	Sint32			groundY;
 	Sint32			turnDelta;
-	Uint16			travelAng;
+	Uint16			travelAngle;
 
 	for(slot = 0, actor = HEAP_SLOT_BLOCK(HEAP_SLOT_ACTORS); slot < ACTOR_SLOTS;
 		slot = nextSlot, actor = nextActor) {
@@ -93,138 +93,141 @@ void fdActorUpdateAll(void)
 #endif
 		if(actor->frozen == 0) {
 			arrived = 0;
-			if(actor->tgtX != ACTOR_NO_TARGET) {
+			if(actor->targetX != ACTOR_NO_TARGET) {
 				/* Accelerate towards the target. */
-				deltaX = (actor->tgtX - x) / toFIXED(1);
-				deltaZ = (actor->tgtZ - z) / toFIXED(1);
+				deltaX = (actor->targetX - x) / toFIXED(1);
+				deltaZ = (actor->targetZ - z) / toFIXED(1);
 				distance =
 					toFIXED(syIWRAMSquart(deltaX * deltaX + deltaZ * deltaZ));
 				if(distance <= toFIXED(256) - 1) {
-					deltaX = actor->tgtX - x;
-					deltaZ = actor->tgtZ - z;
+					deltaX = actor->targetX - x;
+					deltaZ = actor->targetZ - z;
 					distance = syIWRAMSquart(syMulFXArm(deltaX, deltaX) +
 								   syMulFXArm(deltaZ, deltaZ))
 						<< 8;
 				}
 				if(distance == 0) {
-					x = actor->tgtX;
-					z = actor->tgtZ;
+					x = actor->targetX;
+					z = actor->targetZ;
 				} else {
 					/* speedRatio is acceleration / distance in 16.16. */
 					speedRatio = syIWRAMDivFX(distance, actor->acceleration);
-					velX = actor->velX + syMulFXArm(deltaX, speedRatio);
-					actor->velX = velX;
+					velocityX =
+						actor->velocityX + syMulFXArm(deltaX, speedRatio);
+					actor->velocityX = velocityX;
 					/* Limit the combined horizontal velocity after accelerating
 					   both axes. */
-					velZ = actor->velZ + syMulFXArm(deltaZ, speedRatio);
-					actor->velZ = velZ;
-					distance = syIWRAMSquart(syMulFXArm(velX, velX) +
-								   syMulFXArm(velZ, velZ))
+					velocityZ =
+						actor->velocityZ + syMulFXArm(deltaZ, speedRatio);
+					actor->velocityZ = velocityZ;
+					distance = syIWRAMSquart(syMulFXArm(velocityX, velocityX) +
+								   syMulFXArm(velocityZ, velocityZ))
 						<< 8;
 					if(distance > actor->speedLimit) {
 						/* Too fast: scale the velocity back to the speed
 						   limit. */
 						speedRatio = syIWRAMDivFX(distance, actor->speedLimit);
-						actor->velX = syMulFXArm(velX, speedRatio);
-						actor->velZ = syMulFXArm(velZ, speedRatio);
+						actor->velocityX = syMulFXArm(velocityX, speedRatio);
+						actor->velocityZ = syMulFXArm(velocityZ, speedRatio);
 					}
 				}
 			} else {
 				/* No target: brake by the acceleration until the actor
 				   stops. */
-				deltaX = actor->velX;
-				deltaZ = actor->velZ;
+				deltaX = actor->velocityX;
+				deltaZ = actor->velocityZ;
 				distance = fdMathSqrtStubArm(syMulFXArm(deltaX, deltaX) +
 							   syMulFXArm(deltaZ, deltaZ))
 					<< 8;
 				if(distance != 0) {
 					if(distance - actor->acceleration < 0) {
-						actor->velX = 0;
-						actor->velZ = 0;
+						actor->velocityX = 0;
+						actor->velocityZ = 0;
 					} else {
 						speedRatio = fdFixedDivStubArm(
 							distance, distance - actor->acceleration);
-						actor->velX = syMulFXArm(deltaX, speedRatio);
-						actor->velZ = syMulFXArm(deltaZ, speedRatio);
+						actor->velocityX = syMulFXArm(deltaX, speedRatio);
+						actor->velocityZ = syMulFXArm(deltaZ, speedRatio);
 					}
 				} else {
-					actor->velX = 0;
-					actor->velZ = 0;
+					actor->velocityX = 0;
+					actor->velocityZ = 0;
 				}
 			}
 
 			/* Gravity for an actor that falls, and a bounce that loses energy
 			   on landing. */
-			if(actor->motionFlg & ACTOR_FALLS) {
+			if(actor->motionFlags & ACTOR_FALLS) {
 				groundY = actor->groundHeight;
 				if(y > groundY)
-					actor->velY -= actor->gravity;
-				if(y <= groundY && actor->velY < 0) {
+					actor->velocityY -= actor->gravity;
+				if(y <= groundY && actor->velocityY < 0) {
 					y = groundY;
-					actor->velY =
-						-syMulFXArm(actor->velY, actor->vertical.bounce);
-					if((actor->velY < 0 ? -actor->velY : actor->velY) <=
-						actor->gravity)
-						actor->velY = 0;
+					actor->velocityY =
+						-syMulFXArm(actor->velocityY, actor->vertical.bounce);
+					if((actor->velocityY < 0
+							   ? -actor->velocityY
+							   : actor->velocityY) <= actor->gravity)
+						actor->velocityY = 0;
 				}
 			}
 		}
 
 		/* Integrate velocity even when the acceleration and gravity step is
 		   frozen. */
-		x += actor->velX;
-		y += actor->velY;
-		z += actor->velZ;
+		x += actor->velocityX;
+		y += actor->velocityY;
+		z += actor->velocityZ;
 
 		/* Arrived: the watched axis reached the target, or crossed it this
 		   tick (the sign of the offset changed). */
 		switch(actor->arrivalAxis) {
 		case ARRIVAL_AXIS_X:
-			if(x == actor->tgtX ||
-				((actor->x - actor->tgtX) ^ (x - actor->tgtX)) < 0)
+			if(x == actor->targetX ||
+				((actor->x - actor->targetX) ^ (x - actor->targetX)) < 0)
 				arrived = 1;
 			break;
 		case ARRIVAL_AXIS_Y:
-			if(y == actor->tgtY ||
-				((actor->y - actor->tgtY) ^ (y - actor->tgtY)) < 0)
+			if(y == actor->targetY ||
+				((actor->y - actor->targetY) ^ (y - actor->targetY)) < 0)
 				arrived = 1;
 			break;
 		case ARRIVAL_AXIS_Z:
-			if(z == actor->tgtZ ||
-				((actor->z - actor->tgtZ) ^ (z - actor->tgtZ)) < 0)
+			if(z == actor->targetZ ||
+				((actor->z - actor->targetZ) ^ (z - actor->targetZ)) < 0)
 				arrived = 1;
 			break;
 		}
 		/* Snapping stops the actor on the target; it takes the target's height
 		   too only when its motion flags are all clear. */
 		if(arrived) {
-			if(actor->snapToTgt) {
-				x = actor->tgtX;
-				actor->velX = 0;
-				z = actor->tgtZ;
-				actor->velZ = 0;
-				if(actor->motionFlg == 0) {
-					y = actor->tgtY;
-					actor->velY = 0;
+			if(actor->snapToTarget) {
+				x = actor->targetX;
+				actor->velocityX = 0;
+				z = actor->targetZ;
+				actor->velocityZ = 0;
+				if(actor->motionFlags == 0) {
+					y = actor->targetY;
+					actor->velocityY = 0;
 				}
 			}
-			actor->tgtX = ACTOR_NO_TARGET;
-			actor->tgtY = ACTOR_NO_TARGET;
-			actor->tgtZ = ACTOR_NO_TARGET;
+			actor->targetX = ACTOR_NO_TARGET;
+			actor->targetY = ACTOR_NO_TARGET;
+			actor->targetZ = ACTOR_NO_TARGET;
 			actor->arrivalAxis = ARRIVAL_AXIS_NONE;
 		}
 		SET_POSITION(actor, x, y, z);
 
 		/* An actor that faces its motion turns toward its direction of
 		   travel. */
-		if(actor->steeringFlg & ACTOR_FACES_MOTION) {
-			x = actor->velX;
-			z = actor->velZ;
+		if(actor->steeringFlags & ACTOR_FACES_MOTION) {
+			x = actor->velocityX;
+			z = actor->velocityZ;
 			if(x != 0 || z != 0) {
-				travelAng = fdTrigAtanStubArm(z, x);
+				travelAngle = fdTrigAtanStubArm(z, x);
 				/* As a signed halfword the difference is the shorter way
 				   round. */
-				turnDelta = (Sint16)(travelAng - actor->facing);
+				turnDelta = (Sint16)(travelAngle - actor->facing);
 				if(turnDelta > TURN_MAX)
 					turnDelta = TURN_MAX;
 				if(turnDelta < -TURN_MAX)

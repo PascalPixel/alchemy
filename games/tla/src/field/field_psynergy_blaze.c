@@ -4,7 +4,7 @@
 extern const Sint32 BlazeTintColors[];
 
 /* The first layer of an actor's sprite. */
-#define ACTOR_FIRST_LAYER(actor) (((SPR *)(actor)->spr)->entries[0])
+#define ACTOR_FIRST_LAYER(actor) (((SPR *)(actor)->sprite)->entries[0])
 
 /* The jet's longest spray, in ticks; B ends it sooner. */
 #define BLAZE_SPRAY_TICKS 80
@@ -35,7 +35,7 @@ void fdPsynergyBlaze(void)
 	FIELD_EFFECT_STATE *scene;
 	ACTOR			   *caster;
 	ACTOR			   *actor;
-	EFFECT_SPR		   *spr;
+	EFFECT_SPR		   *sprite;
 
 	union {
 		ACTOR					*actor;
@@ -59,14 +59,14 @@ void fdPsynergyBlaze(void)
 	Sint32 k;
 	Sint32 mode;
 
-	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BLAZE_STATE));
-	scene = RamHeapSlots->fieldEffState;
+	state = syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(BLAZE_STATE));
+	scene = RamHeapSlots->fieldEffectState;
 	event = RamHeapSlots->fieldState;
 	caster = scene->caster;
 	look = BLAZE_RED;
-	actor = scene->tgt;
-	if(fdActorGetSprIdStub(actor) == SPRITE_MARS_TORCH_LIT) {
-		kind = ACTOR_FIRST_LAYER(actor)->colMode;
+	actor = scene->target;
+	if(fdActorGetSpriteIdStub(actor) == SPRITE_MARS_TORCH_LIT) {
+		kind = ACTOR_FIRST_LAYER(actor)->colorMode;
 		if(kind == SPRITE_COLOR_GBR)
 			look = BLAZE_VIOLET;
 		if(kind == SPRITE_COLOR_GRB)
@@ -74,7 +74,7 @@ void fdPsynergyBlaze(void)
 		if(kind == SPRITE_COLOR_BGR)
 			look = BLAZE_BLUE;
 	}
-	fdStartColTransition(8, BlazeTintColors[look]);
+	fdStartColorTransition(8, BlazeTintColors[look]);
 	state->mode = BLAZE_FLICKER;
 	if(scene->aimAhead != 0) {
 		state->origin[0] = scene->x;
@@ -83,7 +83,7 @@ void fdPsynergyBlaze(void)
 		best = BEYOND_REACH;
 		for(i = 0; i < FIELD_ACTOR_COUNT; i++) {
 			cursor.actor = event->actors[i];
-			id = ACTOR_FIRST_LAYER(cursor.actor)->anmId;
+			id = ACTOR_FIRST_LAYER(cursor.actor)->animationId;
 			if(cursor.actor != NULL && cursor.actor->script != NULL &&
 				(id == SPRITE_EXCLAMATION_BUBBLE || id == SPRITE_BRAZIER ||
 					id == SPRITE_LIT_CANDLESTICK ||
@@ -92,14 +92,14 @@ void fdPsynergyBlaze(void)
 					scene->fieldPsynergy, scene->casterId, i);
 				if(distance != -1 && best > distance) {
 					height = toFIXED((Sint8)fdResourceGetMetadataRecordStubStub(
-						ACTOR_FIRST_LAYER(cursor.actor)->anmId)
-							->sprTop);
+						ACTOR_FIRST_LAYER(cursor.actor)->animationId)
+							->spriteTop);
 					state->mode = BLAZE_LIGHT_TORCH;
 					state->origin[0] = cursor.actor->x.fixed;
 					state->origin[1] = cursor.actor->y.fixed + height;
 					state->origin[2] = cursor.actor->z.fixed;
-					scene->tgtId = i;
-					scene->tgt = cursor.actor;
+					scene->targetId = i;
+					scene->target = cursor.actor;
 					best = distance;
 				}
 			}
@@ -109,10 +109,10 @@ void fdPsynergyBlaze(void)
 			state->mode = BLAZE_SPRAY;
 		else
 			state->mode = BLAZE_LONG_SPRAY;
-		if(scene->tgt != NULL)
+		if(scene->target != NULL)
 			height = toFIXED((Sint8)fdResourceGetMetadataRecordStubStub(
-				ACTOR_FIRST_LAYER(scene->tgt)->anmId)
-					->sprTop);
+				ACTOR_FIRST_LAYER(scene->target)->animationId)
+					->spriteTop);
 		else
 			height = toFIXED(20);
 		state->origin[0] = scene->x;
@@ -127,11 +127,11 @@ void fdPsynergyBlaze(void)
 		pos[2] = state->origin[2];
 		actor = fdActorSpawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
 		if(actor != NULL) {
-			actor->motionFlg = 0;
+			actor->motionFlags = 0;
 			actor->scaleX = toFIXED(5) / 4;
 			actor->scaleY = toFIXED(5) / 4;
 			fdActorSelectAnimationStub(actor, 2);
-			sySndPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
+			sySoundPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
 			sySynch(50);
 			fdActorReleaseStub(actor);
 			sySynch(10);
@@ -142,19 +142,19 @@ void fdPsynergyBlaze(void)
 		pos[2] = state->origin[2];
 		actor = fdActorSpawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
 		if(actor != NULL) {
-			actor->motionFlg = mode;
+			actor->motionFlags = mode;
 			fdActorSelectAnimationStub(actor, 2);
-			sySndPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
+			sySoundPlayStub(SE_SOL_SANCTUM_LIGHT_UP);
 			sySynch(45);
 			fdActorReleaseStub(actor);
 			sySynch(10);
 		}
 	} else {
 
-		sySndPlayStub(SE_RUSH);
+		sySoundPlayStub(SE_RUSH);
 		fdBattleEffectSetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
-		state->ang = scene->ang8;
-		state->tgtAng = scene->ang8;
+		state->angle = scene->angle8;
+		state->targetAngle = scene->angle8;
 		switch(look) {
 		case BLAZE_RED:
 			resourceId = RESOURCE_RED_FLAME_BURST;
@@ -178,14 +178,14 @@ void fdPsynergyBlaze(void)
 		state->flameTile = tile;
 		cursor.particle = state->flameMotion;
 		for(j = 0; j < BLAZE_FLAMES; j++) {
-			spr = &state->flames[j];
+			sprite = &state->flames[j];
 
-			fdEffectSprInit(spr, 15, 24, OBJ_SIZE_32X32, tile);
-			spr->depth = fdActorGetSprDepth(caster) + BLAZE_FLAME_DEPTH;
-			spr->oam.pri = fdActorGetSprPriority(caster);
-			spr->oam.fullCol = 1;
-			spr->oam.pal = 0;
-			cursor.particle->tmr = -1;
+			fdEffectSpriteInit(sprite, 15, 24, OBJ_SIZE_32X32, tile);
+			sprite->depth = fdActorGetSpriteDepth(caster) + BLAZE_FLAME_DEPTH;
+			sprite->oam.priority = fdActorGetSpritePriority(caster);
+			sprite->oam.fullColor = 1;
+			sprite->oam.palette = 0;
+			cursor.particle->timer = -1;
 			cursor.particle++;
 		}
 		syDecompressTaggedLZ(
@@ -195,15 +195,15 @@ void fdPsynergyBlaze(void)
 		state->puffTile = tile;
 		cursor.particle = state->puffMotion;
 		for(j = 0; j < BLAZE_FLAMES; j++) {
-			spr = &state->puffs[j];
+			sprite = &state->puffs[j];
 
-			fdEffectSprInit(spr, 8, 15, OBJ_SIZE_16X16, tile);
-			spr->scaleY = spr->scaleX = toFIXED(3) / 4;
-			spr->depth = EFFECT_SPRITE_FRONT_DEPTH;
-			spr->oam.pri = 0;
-			spr->oam.fullCol = 1;
-			spr->oam.pal = 0;
-			cursor.particle->tmr = -1;
+			fdEffectSpriteInit(sprite, 8, 15, OBJ_SIZE_16X16, tile);
+			sprite->scaleY = sprite->scaleX = toFIXED(3) / 4;
+			sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
+			sprite->oam.priority = 0;
+			sprite->oam.fullColor = 1;
+			sprite->oam.palette = 0;
+			cursor.particle->timer = -1;
 			cursor.particle++;
 		}
 		sySynch(1);
@@ -214,26 +214,26 @@ void fdPsynergyBlaze(void)
 			if(state->hit != 0) {
 				pending = fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_HITS),
 					scene->fieldPsynergy,
-					(Sint16)(state->hitObj | PSYNERGY_TARGET_ACTOR));
+					(Sint16)(state->hitObject | PSYNERGY_TARGET_ACTOR));
 				if(pending != NULL)
 					fdRunPsynergyScript(
-						pending, scene->casterId, state->hitObj);
+						pending, scene->casterId, state->hitObject);
 				if(fdFindPsynergyCue(PSYNERGY_CUE(PSYNERGY_PHASE_AFTER_END),
 					   scene->fieldPsynergy,
-					   (Sint16)(state->hitObj | PSYNERGY_TARGET_ACTOR)) !=
+					   (Sint16)(state->hitObject | PSYNERGY_TARGET_ACTOR)) !=
 					NULL) {
-					event->psynergyHitObj = state->hitObj;
+					event->psynergyHitObject = state->hitObject;
 					break;
 				}
 			}
 			if(PerWork.push & KEY_B)
 				break;
 		}
-		sySndPlayStub(SOUND_FADE_OUT_EXIT_SE);
+		sySoundPlayStub(SOUND_FADE_OUT_EXIT_SE);
 		state->emitting = 0;
 		for(k = 0; k < 60; k++) {
 			cursor.particle = state->flameMotion;
-			for(j = 0; j < BLAZE_FLAMES && cursor.particle->tmr == -1;
+			for(j = 0; j < BLAZE_FLAMES && cursor.particle->timer == -1;
 				j++, cursor.particle++)
 				;
 			if(j == BLAZE_FLAMES)
@@ -244,7 +244,7 @@ void fdPsynergyBlaze(void)
 		syVRAMCacheFreeEntry(flameSlot);
 		syVRAMCacheFreeEntry(puffSlot);
 	}
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
@@ -270,7 +270,7 @@ Sint32 fdActorCheckBlocked(ACTOR *actor)
 	}
 	other = RamHeapSlots->actors;
 	for(i = 0; i < ACTOR_COUNT; i++, other++) {
-		if(other->script != NULL && (other->collisionFlg & ACTOR_SOLID) &&
+		if(other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
 			other != actor) {
 			if(fdCheckSpheresOverlapStub(&actor->x.fixed, actor->radius - 2,
 				   &other->x.fixed, other->radius - 2) >= 0)

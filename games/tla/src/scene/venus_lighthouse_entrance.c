@@ -131,7 +131,7 @@ void scVenusLighthouseEntrancePointToMeetingSpot(void);
 typedef struct DUST_PUFF_STATE {
 	Uint8 pictures[2048]; /* decompressed, then loaded into the VRAM cache */
 	SPARK_STATE states[DUST_PUFFS];
-	EFFECT_SPR	sprs[DUST_PUFFS];
+	EFFECT_SPR	sprites[DUST_PUFFS];
 	Sint16		next;	  /* the next puff to emit, taken in turn */
 	Uint16		tileBase; /* the pictures' first tile */
 	Sint16		resource; /* their VRAM cache entry */
@@ -168,7 +168,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    without starting it, and the bushes stop her there. */
 void scVenusLighthouseEntranceBlastActorWithPsynergy(void *soldierId)
 {
-	fdStartColTransition(8, RGB(4, 4, 16));
+	fdStartColorTransition(8, RGB(4, 4, 16));
 	fdBattleEffectStartArcEffect();
 	fdBattleEffectSetObjectUpdateMode(
 		fdActorGet(ACTOR_JENNA), CASTER_LOOK_CYCLING_COLORS);
@@ -187,8 +187,8 @@ void scVenusLighthouseEntranceKickUpDust(ACTOR *actor)
 {
 	scVenusLighthouseEntranceEmitDust(
 		actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-	if(++actor->tmr % 8 == 0)
-		fdScriptPlaySnd(SE_CHEST_CLOSE);
+	if(++actor->timer % 8 == 0)
+		fdScriptPlaySound(SE_CHEST_CLOSE);
 }
 
 /* Talking to the soldier captain, before the ambush: he dashes off north-east a
@@ -201,11 +201,11 @@ void scVenusLighthouseEntranceRunAndKickUpDust(Sint32 actorId)
 
 	scVenusLighthouseEntranceStartDust();
 	actor->update = scVenusLighthouseEntranceKickUpDust;
-	actor->priFlg = 0;
+	actor->priorityFlags = 0;
 	fdActorWalkByAndWait(actorId, 96, -96);
 	fdActorWalkByAndWait(actorId, -96, 96);
 	actor->update = 0;
-	actor->priFlg = ACTOR_PRIORITY_AUTOMATIC;
+	actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 	syFieldScriptWait(30);
 	scVenusLighthouseEntranceStopDust();
 }
@@ -225,13 +225,13 @@ Sint32 scInit(void)
 
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	leader->priFlg |= ACTOR_PRIORITY_IGNORES_RISES;
+	leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 	fdActorSetAnimation(ACTOR_WEST_BIRD, 5);
-	scFieldActorSetSprPriority(ACTOR_WEST_BIRD, 1);
+	scFieldActorSetSpritePriority(ACTOR_WEST_BIRD, 1);
 	fdActorSetAnimation(ACTOR_EAST_BIRD, 5);
-	scFieldActorSetSprPriority(ACTOR_EAST_BIRD, 1);
-	scFieldActorSetSprPriority(ACTOR_DOUBTING_SOLDIER, 2);
-	scFieldActorSetSprPriority(ACTOR_EAGER_WORKMAN, 2);
+	scFieldActorSetSpritePriority(ACTOR_EAST_BIRD, 1);
+	scFieldActorSetSpritePriority(ACTOR_DOUBTING_SOLDIER, 2);
+	scFieldActorSetSpritePriority(ACTOR_EAGER_WORKMAN, 2);
 	if(fdScriptGetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF)) {
 		fdActorSetPos(ACTOR_WEST_BIRD, 0, 0);
 		fdActorSetPos(ACTOR_EAST_BIRD, 0, 0);
@@ -277,14 +277,14 @@ Sint32 scInit(void)
 	}
 	if(!fdScriptGetFlag(FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN)) {
 		fdActorSetAnimation(ACTOR_WAITING_RUFFIAN, 5);
-		scFieldActorSetSprPriority(ACTOR_WAITING_RUFFIAN, 1);
+		scFieldActorSetSpritePriority(ACTOR_WAITING_RUFFIAN, 1);
 	} else {
 		fdActorSetPos(ACTOR_WAITING_RUFFIAN, 40, 248);
 		ruffian = fdActorGet(ACTOR_WAITING_RUFFIAN);
 		ruffian->facing = FACING_SOUTH;
 		fdActorFallOverWithAnimationById(
 			ACTOR_WAITING_RUFFIAN, FACING_SOUTH, 0);
-		scFieldActorSetSprPriority(ACTOR_WAITING_RUFFIAN, 3);
+		scFieldActorSetSpritePriority(ACTOR_WAITING_RUFFIAN, 3);
 		fdActorSetMovementType(
 			fdActorGet(ACTOR_WAITING_RUFFIAN), MOVEMENT_TYPE_SQUASH);
 	}
@@ -305,14 +305,14 @@ void scVenusLighthouseEntranceBirdsLand(void)
 
 	fdScriptSetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED);
 	westBird = fdActorGet(ACTOR_WEST_BIRD);
-	westBird->motionFlg = 0;
+	westBird->motionFlags = 0;
 	westBird->gravity = toFIXED(1) / 100;
 	westBird->speedLimit = toFIXED(3) / 2;
 	westBird->acceleration = toFIXED(1) / 2;
 	scFieldActorSetPosAndResetMotion(
 		westBird, toFIXED(216), toFIXED(96), toFIXED(176));
 	eastBird = fdActorGet(ACTOR_EAST_BIRD);
-	eastBird->motionFlg = 0;
+	eastBird->motionFlags = 0;
 	eastBird->gravity = toFIXED(3) / 100;
 	eastBird->speedLimit = toFIXED(3) / 2;
 	eastBird->acceleration = toFIXED(1) / 2;
@@ -324,7 +324,7 @@ void scVenusLighthouseEntranceBirdsLand(void)
 	fdScriptWaitTransitionTicks();
 	westBird = fdActorGet(ACTOR_WEST_BIRD);
 	fdActorSetAnimation(ACTOR_WEST_BIRD, 4);
-	fdScriptPlaySnd(SE_BIRD_WINGS);
+	fdScriptPlaySound(SE_BIRD_WINGS);
 	scFieldActorSetMoveTarget(westBird, 352, 8, 176);
 	fdActorStartScript(westBird, (Sint32)VenusLighthouseEntranceBirdLands);
 	syFieldScriptWait(25);
@@ -334,7 +334,7 @@ void scVenusLighthouseEntranceBirdsLand(void)
 	scFieldActorSetMoveTarget(eastBird, 416, 8, 152);
 	fdActorStartScript(eastBird, (Sint32)VenusLighthouseEntranceBirdLands);
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(SE_BIRD_WINGS);
+	fdScriptPlaySound(SE_BIRD_WINGS);
 	scFieldActorWaitForMoveById(ACTOR_WEST_BIRD);
 	scFieldActorWaitForMoveById(ACTOR_EAST_BIRD);
 	fdCameraWaitForArrival();
@@ -352,19 +352,19 @@ void scVenusLighthouseEntranceBirdsFlyOff(void)
 	fdScriptSetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
-	fdScriptPlaySnd(SE_BIRD_WINGS);
+	fdScriptPlaySound(SE_BIRD_WINGS);
 	fdActorSetAnimation(ACTOR_WEST_BIRD, 3);
 	scFieldActorSetAnimation(ACTOR_EAST_BIRD, 3);
 	syFieldScriptWait(21);
 	westBird = fdActorGet(ACTOR_WEST_BIRD);
-	westBird->motionFlg = 0;
+	westBird->motionFlags = 0;
 	westBird->speedLimit = toFIXED(2);
 	westBird->acceleration = toFIXED(1) / 2;
 	fdActorSetAnimation(ACTOR_WEST_BIRD, 4);
 	scFieldActorSetMoveTarget(westBird, 616, 96, 176);
 	fdActorStartScript(westBird, (Sint32)VenusLighthouseEntranceBirdFlies);
 	eastBird = fdActorGet(ACTOR_EAST_BIRD);
-	eastBird->motionFlg = 0;
+	eastBird->motionFlags = 0;
 	eastBird->speedLimit = toFIXED(2);
 	eastBird->acceleration = toFIXED(1) / 2;
 	fdActorSetAnimation(ACTOR_EAST_BIRD, 4);
@@ -698,12 +698,12 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	fdBattleEffectStartArcEffect();
 	actor = fdActorGetById(ACTOR_ALEX);
 	fdBattleEffectSetObjectUpdateMode(actor, CASTER_LOOK_CYCLING_COLORS);
-	fdScriptPlaySnd(SE_GATHERING_POWER);
+	fdScriptPlaySound(SE_GATHERING_POWER);
 	syFieldScriptWait(20);
-	fdStartColTransition(8, RGB(4, 4, 16));
+	fdStartColorTransition(8, RGB(4, 4, 16));
 	syFieldScriptWait(60);
-	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
-	scFieldActorSetSprPriority(ACTOR_SHOUTING_SOLDIER, 0);
+	fdScriptPlaySound(SOUND_FADE_OUT_ACTION_SE);
+	scFieldActorSetSpritePriority(ACTOR_SHOUTING_SOLDIER, 0);
 	scVenusLighthouseEntranceBlastActorSkyward(ACTOR_SHOUTING_SOLDIER);
 	fdActorShowEmote(
 		ACTOR_SCOLDING_WORKMAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -718,7 +718,7 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 		ACTOR_DOUBTING_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
 	fdActorShowEmote(
 		ACTOR_SOLDIER_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-	scFieldActorSetSprPriority(ACTOR_SURPRISED_SOLDIER, 1);
+	scFieldActorSetSpritePriority(ACTOR_SURPRISED_SOLDIER, 1);
 	scVenusLighthouseEntranceBlastActorSkyward(ACTOR_SURPRISED_SOLDIER);
 	syFieldScriptWait(30);
 	actor = fdActorGetById(ACTOR_ALEX);
@@ -808,13 +808,13 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	fdActorSetSpeed(ACTOR_INDIGNANT_WORKMAN, 1.8);
 	fdActorSetSpeed(ACTOR_SCOLDING_WORKMAN, 1.8);
 	workman = fdActorGetById(ACTOR_WORKMAN_BOSS);
-	workman->tmr = 0;
+	workman->timer = 0;
 	workman->update = scVenusLighthouseEntranceKickUpDust;
 	workman = fdActorGetById(ACTOR_EAGER_WORKMAN);
-	workman->tmr = 0;
+	workman->timer = 0;
 	workman->update = scVenusLighthouseEntranceKickUpDust;
 	workman = fdActorGetById(ACTOR_INDIGNANT_WORKMAN);
-	workman->tmr = 0;
+	workman->timer = 0;
 	workman->update = scVenusLighthouseEntranceKickUpDust;
 	fdActorSetAnimation(ACTOR_WORKMAN_BOSS, 10);
 	fdActorSetAnimation(ACTOR_EAGER_WORKMAN, 10);
@@ -836,7 +836,7 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	scFieldActorJump(ACTOR_SCOLDING_WORKMAN, 6, 15);
 	scFieldActorJump(ACTOR_SCOLDING_WORKMAN, 6, 25);
 	workman = fdActorGetById(ACTOR_SCOLDING_WORKMAN);
-	workman->tmr = 0;
+	workman->timer = 0;
 	workman->update = scVenusLighthouseEntranceKickUpDust;
 	fdActorSetAnimation(ACTOR_SCOLDING_WORKMAN, 10);
 	fdActorSetDestinationOffset(ACTOR_SCOLDING_WORKMAN, -20, 20);
@@ -845,29 +845,29 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	fdActorSetDestinationOffset(ACTOR_SCOLDING_WORKMAN, -20, 20);
 	scFieldActorWaitForMoveById(ACTOR_SCOLDING_WORKMAN);
 	fdActorSetAnimation(ACTOR_SCOLDING_WORKMAN, ANIM_STAND);
-	fdScriptPlaySnd(SE_IMPACT);
+	fdScriptPlaySound(SE_IMPACT);
 	workman->x.fixed += toFIXED(8);
 	workman->update = NULL;
 	workman->z.fixed += -toFIXED(8);
 	workman->facing = FACING_NORTH;
-	((FIELD_SPR *)workman->spr)->rotation = TRIG_TURN * 5 / 8;
+	((FIELD_SPR *)workman->sprite)->rotation = TRIG_TURN * 5 / 8;
 	syFieldScriptWait(55);
 	workman->x.fixed += -toFIXED(4);
 	workman->z.fixed += toFIXED(4);
 	workman->facing = FACING_SOUTH;
-	((FIELD_SPR *)workman->spr)->rotation = 0;
+	((FIELD_SPR *)workman->sprite)->rotation = 0;
 	scFieldActorJump(ACTOR_SCOLDING_WORKMAN, 6, 40);
 	fdActorSetAnimation(ACTOR_SCOLDING_WORKMAN, 11);
-	fdScriptPlaySnd(SE_CLICK);
+	fdScriptPlaySound(SE_CLICK);
 	syFieldScriptWait(14);
-	fdScriptPlaySnd(SE_CLICK);
+	fdScriptPlaySound(SE_CLICK);
 	syFieldScriptWait(14);
-	fdScriptPlaySnd(SE_CLICK);
+	fdScriptPlaySound(SE_CLICK);
 	syFieldScriptWait(14);
-	fdScriptPlaySnd(SE_CLICK);
+	fdScriptPlaySound(SE_CLICK);
 	syFieldScriptWait(14);
 	syFieldScriptWait(20);
-	workman->tmr = 0;
+	workman->timer = 0;
 	workman->update = scVenusLighthouseEntranceKickUpDust;
 	fdActorSetAnimation(ACTOR_SCOLDING_WORKMAN, 10);
 	fdActorMoveToAndWait(ACTOR_SCOLDING_WORKMAN, 224, 472);
@@ -910,12 +910,13 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	syFieldScriptWait(10);
 	fdActorRunRepeatedMotion(ACTOR_DOUBTING_SOLDIER, 2);
 	syFieldScriptWait(10);
-	scFieldActorSetSprPriority(ACTOR_DOUBTING_SOLDIER, 3);
+	scFieldActorSetSpritePriority(ACTOR_DOUBTING_SOLDIER, 3);
 	fdActorSetSpeed(ACTOR_DOUBTING_SOLDIER, 2);
-	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &=
+		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorFaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHWEST, 0);
 	fdActorSetSpeed(ACTOR_DOUBTING_SOLDIER, 1);
 	syFieldScriptWait(20);
@@ -929,10 +930,10 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
 	fdActorSetSpeed(ACTOR_SOLDIER_CAPTAIN, 1);
-	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 456, 440);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
 	syFieldScriptWait(10);
 	fdActorShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
 	/* "Let's go meet them together, shall we?" */
@@ -951,14 +952,15 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	syFieldScriptWait(20);
 	fdActorSetSpeed(ACTOR_DOUBTING_SOLDIER, 0.5);
 	fdActorSetSpeed(ACTOR_SOLDIER_CAPTAIN, 0.5);
-	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &=
+		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_DOUBTING_SOLDIER, 488, 424);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlg |= ACTOR_FACES_MOTION;
-	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 488, 440);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_ALEX, 456, 432);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_EAST, 0);
 	syFieldScriptWait(10);
@@ -973,15 +975,16 @@ void scVenusLighthouseEntranceSoldiersAmbushParty(void)
 	fdActorSetAttachedEffect(
 		ACTOR_SOLDIER_CAPTAIN, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
 	syFieldScriptWait(50);
-	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &=
+		~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_DOUBTING_SOLDIER, 504, 424);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetPos(ACTOR_DOUBTING_SOLDIER, 0, 0);
-	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlg &= ~ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
 	fdActorWalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 504, 440);
 	syFieldScriptWait(1);
-	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlg |= ACTOR_FACES_MOTION;
+	fdActorGetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
 	fdActorSetPos(ACTOR_SOLDIER_CAPTAIN, 0, 0);
 	syFieldScriptWait(10);
 	fdActorSetSpeed(ACTOR_ALEX, 0.8);
@@ -1159,11 +1162,11 @@ void scVenusLighthouseEntranceWakeUp(void)
 	fdActorFaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
 	fdActorFaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
 	fdActorFaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
-	scFieldActorSetSprPriority(ACTOR_KRADEN, 2);
-	fdActorSetSprRotationById(ACTOR_JENNA, DEGtoANG(90));
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 0);
+	scFieldActorSetSpritePriority(ACTOR_KRADEN, 2);
+	fdActorSetSpriteRotationById(ACTOR_JENNA, DEGtoANG(90));
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 0);
 	fdCameraMoveToActorById(ACTOR_JENNA, 0);
-	FieldStateWork->transitionFrm = 60;
+	FieldStateWork->transitionFrame = 60;
 	fdScriptStartScreenTransition();
 	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(20);
@@ -1184,8 +1187,8 @@ void scVenusLighthouseEntranceWakeUp(void)
 	fdActorRunRepeatedMotion(ACTOR_JENNA, 2);
 	syFieldScriptWait(30);
 	fdActorSetPos(ACTOR_JENNA, 376, 164);
-	fdActorSetSprRotationById(ACTOR_JENNA, 0);
-	fdActorSetSprFlags(fdActorGet(ACTOR_JENNA), 1);
+	fdActorSetSpriteRotationById(ACTOR_JENNA, 0);
+	fdActorSetSpriteFlags(fdActorGet(ACTOR_JENNA), 1);
 	scFieldActorJump(ACTOR_JENNA, 6, 50);
 	fdActorSetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
 	syFieldScriptWait(20);
@@ -1263,7 +1266,7 @@ void scVenusLighthouseEntranceWakeUp(void)
 	}
 	scFieldActorWaitForMoveById(ACTOR_KRADEN);
 	fdActorSetPos(ACTOR_KRADEN, 0, 0);
-	FieldStateWork->transitionFrm = 8;
+	FieldStateWork->transitionFrame = 8;
 	fdScriptEnd();
 }
 
@@ -1281,7 +1284,7 @@ void scVenusLighthouseEntranceWakeUp(void)
    left under him. */
 typedef struct BLAST_COLUMN_STATE {
 	Uint8 pictures[1024]; /* decompressed, then loaded into the VRAM cache */
-	EFFECT_SPR	sprs[BLAST_COLUMN_PIECES];
+	EFFECT_SPR	sprites[BLAST_COLUMN_PIECES];
 	SPARK_STATE states[BLAST_COLUMN_PIECES];
 	ACTOR	   *soldier;
 	ACTOR	   *puddle;
@@ -1289,7 +1292,7 @@ typedef struct BLAST_COLUMN_STATE {
 	FIXED		y;
 	FIXED		z;
 	Sint16		stage; /* BLAST_FINISHED once the column has burnt out */
-	Sint16		tmr;   /* ticks into the stage */
+	Sint16		timer; /* ticks into the stage */
 	Uint16		columnTile;
 	Uint16		topTile;
 	Sint16		height;	  /* the column's height in pixels */
@@ -1303,54 +1306,54 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 	ACTOR			   *puddle = blastColumnState->puddle;
 	Sint32				i, y;
 	FIXED				scale;
-	Sint32				frmStep;
+	Sint32				frameStep;
 	Sint32				mask;
 	SPARK_STATE		   *state;
-	EFFECT_SPR		   *spr;
+	EFFECT_SPR		   *sprite;
 
 	switch(blastColumnState->stage) {
 	case 0: /* the first tick */
-		if(blastColumnState->tmr == 0) {
+		if(blastColumnState->timer == 0) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	case 1: /* the column rises under the soldier, 4 pixels a tick */
 		blastColumnState->height += 4;
 		if(blastColumnState->height > 31) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	case 2: /* it holds him up for a second and a half */
-		if(blastColumnState->tmr == 90) {
+		if(blastColumnState->timer == 90) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	case 3: /* it shoots up and hurls him off the top of the screen */
-		if(blastColumnState->tmr == 0) {
-			actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-			actor->velY = toFIXED(24);
+		if(blastColumnState->timer == 0) {
+			actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+			actor->velocityY = toFIXED(24);
 			blastColumnState->carrying = 0;
-			sySndPlay(SE_HEAVY_IMPACT);
+			sySoundPlay(SE_HEAVY_IMPACT);
 		}
 		blastColumnState->height += 8;
 		if(blastColumnState->height > 79) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	case 4: { /* out of sight, he is taken off the stage */
-		Sint16 *tmr = &blastColumnState->tmr;
+		Sint16 *timer = &blastColumnState->timer;
 
-		if(blastColumnState->tmr == 10) {
+		if(blastColumnState->timer == 10) {
 			actor->z.fixed = 0;
 			actor->x.fixed = 0;
 		}
-		if(*tmr == 30) {
+		if(*timer == 30) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	}
@@ -1358,11 +1361,11 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 		blastColumnState->height -= 8;
 		if(blastColumnState->height <= 0) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	case 6: { /* the puddle dries away, with the sound of a fall */
-		Sint16 *tmr;
+		Sint16 *timer;
 
 		scale = puddle->scaleX;
 		if(scale > 0) {
@@ -1373,27 +1376,27 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 			puddle->scaleX = 0;
 			puddle->scaleY = 0;
 		}
-		tmr = &blastColumnState->tmr;
-		if(blastColumnState->tmr == 10)
-			sySndPlay(SE_FALL);
-		if(*tmr == 90) {
+		timer = &blastColumnState->timer;
+		if(blastColumnState->timer == 10)
+			sySoundPlay(SE_FALL);
+		if(*timer == 90) {
 			blastColumnState->stage++;
-			blastColumnState->tmr = -1;
+			blastColumnState->timer = -1;
 		}
 		break;
 	}
 	case 7: { /* a clatter, and the ground shakes for half a second */
-		Sint16 *tmr = &blastColumnState->tmr;
+		Sint16 *timer = &blastColumnState->timer;
 
-		if(blastColumnState->tmr == 0) {
-			sySndPlay(SE_CLATTER);
+		if(blastColumnState->timer == 0) {
+			sySoundPlay(SE_CLATTER);
 			fdMapGridSetShake(3, 3, 1);
 		}
-		if(*tmr == 30) {
+		if(*timer == 30) {
 			fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-			if(blastColumnState->tmr == 30) {
+			if(blastColumnState->timer == 30) {
 				blastColumnState->stage = BLAST_FINISHED;
-				blastColumnState->tmr = -1;
+				blastColumnState->timer = -1;
 			}
 		}
 		break;
@@ -1408,32 +1411,32 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 			state->x = blastColumnState->x;
 			state->y = blastColumnState->y + toFIXED(y) + toFIXED(8);
 			state->z = blastColumnState->z;
-			spr = &blastColumnState->sprs[i];
-			state->frm++;
-			frmStep = state->frm >> 2;
+			sprite = &blastColumnState->sprites[i];
+			state->frame++;
+			frameStep = state->frame >> 2;
 			mask = 3;
-			spr->oam.idx = blastColumnState->columnTile +
-				(frmStep & mask) * BLAST_PICTURE_TILES;
-			fdEffectSprDrawAtWorldPos(spr, &state->x);
+			sprite->oam.index = blastColumnState->columnTile +
+				(frameStep & mask) * BLAST_PICTURE_TILES;
+			fdEffectSpriteDrawAtWorldPos(sprite, &state->x);
 		}
 		if(i < BLAST_COLUMN_PIECES) {
 			state = &blastColumnState->states[i];
 			state->x = blastColumnState->x;
 			state->y = blastColumnState->y + toFIXED(blastColumnState->height);
 			state->z = blastColumnState->z;
-			state->frm++;
+			state->frame++;
 			state->y += syMathMulFX(-toFIXED(2),
-							syMathSin(state->frm * (TRIG_TURN / 16))) -
+							syMathSin(state->frame * (TRIG_TURN / 16))) -
 				toFIXED(2);
-			spr = &blastColumnState->sprs[i];
-			spr->oam.idx = blastColumnState->topTile +
-				((state->frm >> 2) & 3) * BLAST_PICTURE_TILES;
-			fdEffectSprDrawAtWorldPos(spr, &state->x);
+			sprite = &blastColumnState->sprites[i];
+			sprite->oam.index = blastColumnState->topTile +
+				((state->frame >> 2) & 3) * BLAST_PICTURE_TILES;
+			fdEffectSpriteDrawAtWorldPos(sprite, &state->x);
 			if(blastColumnState->carrying != 0)
 				actor->y.fixed = state->y;
 		}
 	}
-	blastColumnState->tmr++;
+	blastColumnState->timer++;
 }
 
 /* A column of water rises under a soldier, holds him up, then hurls him off the
@@ -1441,10 +1444,10 @@ void scVenusLighthouseEntranceUpdateBlastColumn(void)
 void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 {
 	BLAST_COLUMN_STATE *blastColumnState =
-		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(BLAST_COLUMN_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(BLAST_COLUMN_STATE));
 	ACTOR		*actor = fdActorGet(id);
 	ACTOR		*puddle;
-	EFFECT_SPR	*spr;
+	EFFECT_SPR	*sprite;
 	SPARK_STATE *state;
 	Sint32		 resource, tile, i;
 	Uint8		 unpaused = 0;
@@ -1461,33 +1464,33 @@ void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 	blastColumnState->columnTile =
 		tile + BLAST_COLUMN_TICKS * BLAST_PICTURE_TILES;
 	state = blastColumnState->states;
-	spr = blastColumnState->sprs;
+	sprite = blastColumnState->sprites;
 	for(i = BLAST_COLUMN_PIECES - 1; i >= 0;) {
-		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tile);
-		spr->depth = fdActorGetSprDepth(actor) - 2;
-		spr->oam.pri = fdActorGetSprPriority(actor);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		state->frm = -1;
+		fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, tile);
+		sprite->depth = fdActorGetSpriteDepth(actor) - 2;
+		sprite->oam.priority = fdActorGetSpritePriority(actor);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		state->frame = -1;
 		i--;
-		spr++;
+		sprite++;
 		state++;
 	}
 	puddle = (scFieldActorCreate(
 		SPRITE_PUDDLE, actor->x.fixed, actor->y.fixed, actor->z.fixed));
 	blastColumnState->puddle = puddle;
 	fdActorSelectAnimation(puddle, 1);
-	fdActorSetSprFlags(puddle, 0);
-	puddle->priFlg = ACTOR_PRIORITY_UNDERFOOT;
-	fdActorSetSprFlags(actor, 0);
-	((SPR *)actor->spr)->rotation = DEGtoANG(90);
+	fdActorSetSpriteFlags(puddle, 0);
+	puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+	fdActorSetSpriteFlags(actor, 0);
+	((SPR *)actor->sprite)->rotation = DEGtoANG(90);
 	actor->x.fixed += -toFIXED(12);
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	blastColumnState->stage = 0;
-	blastColumnState->tmr = 0;
+	blastColumnState->timer = 0;
 	blastColumnState->height = 0;
 	blastColumnState->carrying = 1;
-	fdScriptPlaySnd(SE_RISE_WITH_SPARKS);
+	fdScriptPlaySound(SE_RISE_WITH_SPARKS);
 	sySetTickEvent(scVenusLighthouseEntranceUpdateBlastColumn, EVENT_PASS_TICK);
 	while(blastColumnState->stage != BLAST_FINISHED)
 		syWait(1);
@@ -1501,18 +1504,18 @@ void scVenusLighthouseEntranceUpdateDust(void)
 {
 	DUST_PUFF_STATE *dustPuffState = RamHeapSlots->menuState;
 	SPARK_STATE		*state = dustPuffState->states;
-	EFFECT_SPR		*spr = dustPuffState->sprs;
-	Sint32			 frm;
+	EFFECT_SPR		*sprite = dustPuffState->sprites;
+	Sint32			 frame;
 	Sint32			 i;
 
-	for(i = 0; i < DUST_PUFFS; i++, spr++, state++) {
-		frm = state->frm;
-		if((Uint32)frm < DUST_PUFF_TICKS) {
-			spr->oam.idx = dustPuffState->tileBase +
-				((frm >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
-			fdEffectSprDrawAtWorldPos(spr, &state->x);
+	for(i = 0; i < DUST_PUFFS; i++, sprite++, state++) {
+		frame = state->frame;
+		if((Uint32)frame < DUST_PUFF_TICKS) {
+			sprite->oam.index = dustPuffState->tileBase +
+				((frame >> 1) & 7) * SPRITE_TILES_8BPP(16, 16);
+			fdEffectSpriteDrawAtWorldPos(sprite, &state->x);
 			fdBattleEffectStepVector3(state, 64, 0);
-			state->frm++;
+			state->frame++;
 		}
 	}
 }
@@ -1520,22 +1523,23 @@ void scVenusLighthouseEntranceUpdateDust(void)
 void scVenusLighthouseEntranceEmitDust(ACTOR *src, Sint32 x, Sint32 y, Sint32 z)
 {
 	DUST_PUFF_STATE *dustPuffState = RamHeapSlots->menuState;
-	Sint32			 ang = syRandom();
+	Sint32			 angle = syRandom();
 	Sint16			*next = &dustPuffState->next;
-	EFFECT_SPR		*spr = &dustPuffState->sprs[*next];
+	EFFECT_SPR		*sprite = &dustPuffState->sprites[*next];
 	SPARK_STATE		*state = &dustPuffState->states[*next];
 
-	spr->oam.pri = fdActorGetSprPriority(src);
-	spr->depth = fdActorGetSprDepth(src);
-	state->frm = 0;
+	sprite->oam.priority = fdActorGetSpritePriority(src);
+	sprite->depth = fdActorGetSpriteDepth(src);
+	state->frame = 0;
 	state->x = x;
 	state->y = y;
 	state->z = z;
-	syFieldVectorAddPolarOffsetFX(syRandom() * 2 + toFIXED(2), ang, &state->x);
-	state->velX = 0;
-	state->velY = (syRandom() >> 1) + toFIXED(3) / 4;
-	state->velZ = 0;
-	syFieldVectorAddPolarOffsetFX(syRandom() >> 2, ang, &state->velX);
+	syFieldVectorAddPolarOffsetFX(
+		syRandom() * 2 + toFIXED(2), angle, &state->x);
+	state->velocityX = 0;
+	state->velocityY = (syRandom() >> 1) + toFIXED(3) / 4;
+	state->velocityZ = 0;
+	syFieldVectorAddPolarOffsetFX(syRandom() >> 2, angle, &state->velocityX);
 	*next = *next + 1;
 	*next = *next % DUST_PUFFS;
 }
@@ -1543,12 +1547,12 @@ void scVenusLighthouseEntranceEmitDust(ACTOR *src, Sint32 x, Sint32 y, Sint32 z)
 void scVenusLighthouseEntranceStartDust(void)
 {
 	DUST_PUFF_STATE *dustPuffState =
-		syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(DUST_PUFF_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_MENU, sizeof(DUST_PUFF_STATE));
 	Sint32		 resource;
 	Sint32		 tileBase;
 	Sint32		 i;
 	SPARK_STATE *state;
-	EFFECT_SPR	*spr;
+	EFFECT_SPR	*sprite;
 
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_DUST_PUFF_A), dustPuffState);
@@ -1558,13 +1562,13 @@ void scVenusLighthouseEntranceStartDust(void)
 	dustPuffState->resource = resource;
 	state = dustPuffState->states;
 	for(i = 0; i < DUST_PUFFS; i++) {
-		spr = &dustPuffState->sprs[i];
-		fdEffectSprInit(spr, 8, 8, OBJ_SIZE_16X16, tileBase);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = 0;
-		spr->depth = OAM_DEPTH_WINDOW;
-		state->frm = -1;
+		sprite = &dustPuffState->sprites[i];
+		fdEffectSpriteInit(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority = 0;
+		sprite->depth = OAM_DEPTH_WINDOW;
+		state->frame = -1;
 		state++;
 	}
 	dustPuffState->next = 0;

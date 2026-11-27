@@ -211,7 +211,7 @@ typedef enum ACTOR_SCRIPT_VALUE {
 	SW_BOUNCE = 20,
 	SW_GRAVITY = 21,
 	SW_GROUND = 22,
-	/* ACTOR.sprStorageKind: ACTOR_SPRITE_NONE hides its sprite and
+	/* ACTOR.spriteStorageKind: ACTOR_SPRITE_NONE hides its sprite and
 	   ACTOR_SPRITE_ONE shows it again. */
 	SW_SPRITE_KIND = 25,
 	SW_MOTION = 26,
@@ -223,7 +223,7 @@ typedef enum ACTOR_SCRIPT_VALUE {
 	SW_PAUSED = 32,
 	SW_REPEAT = 33,
 	SW_WAIT = 34,
-	/* ACTOR.tmr, the parameter an actor script reads. */
+	/* ACTOR.timer, the parameter an actor script reads. */
 	SW_TIMER = 35,
 	/* ACTOR.userValue, scene scratch: a script sets it for the scene code that
 	   reads or waits on it. */
@@ -232,7 +232,7 @@ typedef enum ACTOR_SCRIPT_VALUE {
 	   fireball calls when it crashes (scActorRollAndCrumble). */
 	SW_WATCHED_ACTOR = 37,
 	SW_HOOK = 38,
-	SW_SCENE_COUNTER = 39, /* ACTOR.sceneCnt, scene code's own byte */
+	SW_SCENE_COUNTER = 39, /* ACTOR.sceneCount, scene code's own byte */
 	SW_SCENE_BYTE = 40	   /* ACTOR.sceneByte, scene code's own byte */
 } ACTOR_SCRIPT_VALUE;
 

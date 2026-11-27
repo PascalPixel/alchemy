@@ -8,9 +8,9 @@
 
 struct UNIT;
 struct ENEMY_DEFINITION;
-/* Levels character unitId up one level at a time until tgtLevel, then
+/* Levels character unitId up one level at a time until targetLevel, then
    recomputes its stats. */
-void gmUnitLevelUpToStub(Sint32 unitId, Sint32 tgtLevel);
+void gmUnitLevelUpToStub(Sint32 unitId, Sint32 targetLevel);
 /* Teaches character owner ability `ability` for good (or makes a class action
    permanent by clearing its marks), then rebuilds its list. */
 void gmUnitLearnPsynergyStub(Sint32 owner, Sint32 ability);
@@ -20,14 +20,14 @@ Sint32 gmInventoryEquipStub(Sint32 unitId, Sint32 slot);
 /* Returns the id of the unit's equipped item of `type`, or 0. */
 Sint32 gmInventoryGetEquippedItemStub(struct UNIT *unit, Sint32 type);
 /* Returns 1 when the unit holds the Djinni and it can be set. */
-Sint32 gmDjinnCanSetStub(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32 gmDjinnCanSetStub(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Returns the slot of the equipped item of `type`, or -1. */
 Sint32 gmInventoryFindEquippedStub(Sint32 unitId, Sint32 type);
 /* Returns 1 when the Djinni is set on the unit. */
-Sint32 gmDjinnIsSetStub(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+Sint32 gmDjinnIsSetStub(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Puts a unit's Djinni at the end of its side's list on standby. */
 Uint32 *gmDjinnRecoveryAddStandbyStub(
-	Uint32 unitId, Uint32 element, Uint32 djinnIdx);
+	Uint32 unitId, Uint32 element, Uint32 djinnIndex);
 /* Returns the element the unit attacks with (ELEMENT_NONE for none). */
 Sint32 gmUnitGetAttackElementStub(Sint32 unitId);
 /* Returns the unleash chance, in percent, that a unit's equipment adds
@@ -42,7 +42,7 @@ const struct ENEMY_DEFINITION *gmEnemyGetDefinitionStub(Sint32 enemyId);
    SUMMON_END, and returns how many. */
 Sint32 gmSummonListLearnedStub(Uint8 *output);
 /* Takes a set Djinni off the unit and works out its class again. */
-void gmDjinnPutOnStandbyStub(Sint32 unitId, Sint32 element, Sint32 djinnIdx);
+void gmDjinnPutOnStandbyStub(Sint32 unitId, Sint32 element, Sint32 djinnIndex);
 /* Returns the average level of the party members, rounded down (0 with no party
    members). */
 Sint32 gmPartyGetAverageLevelStub(void);
@@ -94,7 +94,7 @@ Uint32 gmBuildStampGetTimeStub();
 /* Starts a new game's state. */
 void gmMainRoutineStateInitDefaultsStub(void);
 /* Returns the ability the Djinni performs when it is unleashed. */
-Sint32 gmDjinnGetAbilityIdStub(Sint32 element, Sint32 idx);
+Sint32 gmDjinnGetAbilityIdStub(Sint32 element, Sint32 index);
 /* Returns how many of the item in `slot` the unit carries (0 for an empty
    slot). */
 Sint32 gmInventoryGetQuantityStub(Sint32 unitId, Sint32 slot);

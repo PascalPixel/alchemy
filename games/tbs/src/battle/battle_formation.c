@@ -30,29 +30,29 @@ Sint32 btFormationAverageLevel(Sint32 formationId)
 {
 	const FORMATION		   *formation;
 	const ENEMY_DEFINITION *enemy;
-	Uint32					memberIdx;
+	Uint32					memberIndex;
 	Sint32					enemyId;
 	Sint32					levelTotal;
-	Sint32					enemyCnt;
+	Sint32					enemyCount;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	UNUSED Sint32 levels[7];
 
-	enemyCnt = 0;
+	enemyCount = 0;
 	levelTotal = 0;
 	formation = &Formations[formationId];
-	for(memberIdx = 0; memberIdx < FORMATION_MEMBERS; memberIdx++) {
-		if(formation->minCnts[memberIdx] != 0)
+	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
+		if(formation->minCounts[memberIndex] != 0)
 			break;
 	}
-	if(memberIdx == FORMATION_MEMBERS)
+	if(memberIndex == FORMATION_MEMBERS)
 		return FORMATION_NO_SURE_MEMBER;
 	/* The average counts each member that may appear once, whatever its
 	   numbers. */
-	for(memberIdx = 0; memberIdx < FORMATION_MEMBERS; memberIdx++) {
-		if(formation->maxCnts[memberIdx] == 0)
+	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
+		if(formation->maxCounts[memberIndex] == 0)
 			continue;
-		enemyId = formation->memberIds[memberIdx];
+		enemyId = formation->memberIds[memberIndex];
 		enemy = gmEnemyGetDefinitionStub(enemyId + ENEMY_ID_FIRST);
 		if(enemy == 0)
 			continue;
@@ -61,11 +61,11 @@ Sint32 btFormationAverageLevel(Sint32 formationId)
 			!gmFlagGetStub(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
 			return FORMATION_UNMET_ENEMY;
 		levelTotal += enemy->level;
-		enemyCnt++;
+		enemyCount++;
 	}
-	if(enemyCnt == 0)
+	if(enemyCount == 0)
 		return FORMATION_NO_ENEMY;
-	return levelTotal / enemyCnt;
+	return levelTotal / enemyCount;
 }
 
 /* A formation that may be chosen for the party's level, with its enemies'
@@ -77,7 +77,9 @@ typedef struct FORMATION_CANDIDATE {
 
 /* The sprite slots one of member's enemies takes: two for a large enemy. */
 #define FORMATION_MEMBER_SLOTS(formation, member) \
-	(2 - (btSprIsSmall((formation)->memberIds[member] + ENEMY_ID_FIRST) != 0))
+	(2 - \
+		(btSpriteIsSmall((formation)->memberIds[member] + ENEMY_ID_FIRST) != \
+			0))
 
 /* The most formations a monster battle chooses among. */
 #define FORMATION_POOL_SIZE		  32
@@ -96,11 +98,11 @@ typedef struct BATTLE_BASE_STATS {
 	Uint16 baseAttack;
 	Uint16 baseDefense;
 	Uint16 baseAgility;
-	Uint8  baseLuck;  /* copied, not read */
-	Uint8  actionCnt; /* copied, not read */
-	Uint8  hpRegen;	  /* copied, not read */
-	Uint8  ppRegen;	  /* copied, not read */
-	Uint8  unused[2]; /* Unit's baseUnused */
+	Uint8  baseLuck;	/* copied, not read */
+	Uint8  actionCount; /* copied, not read */
+	Uint8  hpRegen;		/* copied, not read */
+	Uint8  ppRegen;		/* copied, not read */
+	Uint8  unused[2];	/* Unit's baseUnused */
 	BATTLE_ELEMENT_STATS
 	element[ELEMENT_COUNT]; /* the base power is read */
 } BATTLE_BASE_STATS;
@@ -110,15 +112,15 @@ typedef struct BATTLE_BASE_STATS {
    levels its enemies must gain in outMargin. */
 Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
 {
-	Sint32				 matchCnt = 0;
+	Sint32				 matchCount = 0;
 	FORMATION_CANDIDATE *pool =
-		syHeapAllocEWRAM(FORMATION_POOL_SIZE * sizeof *pool);
+		syHeapAllocateEWRAM(FORMATION_POOL_SIZE * sizeof *pool);
 	Uint16 party[8];
 	Sint32 levelTotal = 0;
 	Sint32 partySize = btPartyPrepareMembers(party);
 	Sint32 i;
 	Sint32 entry;
-	Sint32 tgtLevel;
+	Sint32 targetLevel;
 	Sint32 result;
 
 	if(partySize > 0) {
@@ -131,12 +133,12 @@ Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
 	}
 
 	/* The flag byte is -1 once a series has ended, which takes a level off. */
-	tgtLevel = levelTotal / partySize;
-	tgtLevel += (Sint8)gmFlagGetByteStub(FLAG_MONSTER_BATTLE_WINS);
-	if(tgtLevel <= 0)
-		tgtLevel = 1;
-	if(tgtLevel > UNIT_LEVEL_MAX)
-		tgtLevel = UNIT_LEVEL_MAX;
+	targetLevel = levelTotal / partySize;
+	targetLevel += (Sint8)gmFlagGetByteStub(FLAG_MONSTER_BATTLE_WINS);
+	if(targetLevel <= 0)
+		targetLevel = 1;
+	if(targetLevel > UNIT_LEVEL_MAX)
+		targetLevel = UNIT_LEVEL_MAX;
 
 	for(i = 0; i < FORMATION_POOL_SIZE; i++)
 		pool[i].score = -1;
@@ -152,33 +154,33 @@ Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
 	for(i = 0; i < ARRAY_COUNT(Formations); i++) {
 		Sint32 score = btFormationAverageLevel(i);
 
-		if(score >= 0 && score <= tgtLevel + FORMATION_LEVEL_MARGIN) {
-			Sint32 lowestIdx = -1;
+		if(score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
+			Sint32 lowestIndex = -1;
 			Sint32 lowestLevel = FORMATION_SCORE_ABOVE_ALL;
 
 			for(entry = 0; entry < FORMATION_POOL_SIZE; entry++) {
 				if(pool[entry].score < lowestLevel) {
 					lowestLevel = pool[entry].score;
-					lowestIdx = entry;
+					lowestIndex = entry;
 				}
 			}
-			if(lowestIdx >= 0) {
-				pool[lowestIdx].score = score;
-				pool[lowestIdx].formationId = i;
-				matchCnt++;
+			if(lowestIndex >= 0) {
+				pool[lowestIndex].score = score;
+				pool[lowestIndex].formationId = i;
+				matchCount++;
 			}
 		}
 	}
 
-	/* matchCnt includes formations evicted from the pool. */
-	if(matchCnt > FORMATION_POOL_SIZE)
-		matchCnt = FORMATION_POOL_SIZE;
+	/* matchCount includes formations evicted from the pool. */
+	if(matchCount > FORMATION_POOL_SIZE)
+		matchCount = FORMATION_POOL_SIZE;
 
-	if(matchCnt != 0) {
-		FORMATION_CANDIDATE *chosen = &pool[syRandom16Below(matchCnt)];
+	if(matchCount != 0) {
+		FORMATION_CANDIDATE *chosen = &pool[syRandom16Below(matchCount)];
 
 		result = chosen->formationId;
-		*outMargin = tgtLevel - chosen->score;
+		*outMargin = targetLevel - chosen->score;
 	} else {
 		*outMargin = 0;
 		result = FORMATION_FALLBACK;
@@ -196,7 +198,7 @@ Sint32 btFormationSelectLevelMatchedCandidate(Sint32 *outMargin)
    fixed amount a level and no lower than 70 percent of what it was. */
 UNREAD_RESULT btEnemyAdjustLevel(Sint32 unitId, Sint32 levels)
 {
-	BATTLE_BASE_STATS *base = syHeapAllocEWRAM(sizeof *base);
+	BATTLE_BASE_STATS *base = syHeapAllocateEWRAM(sizeof *base);
 	UNIT			  *unit = gmUnitGetStub(unitId);
 	Sint32			   value;
 	Sint32			   element;
@@ -230,7 +232,7 @@ UNREAD_RESULT btEnemyAdjustLevel(Sint32 unitId, Sint32 levels)
 	}
 
 	unit->level += levels;
-	gmUnitCalcStub(unitId);
+	gmUnitCalculateStub(unitId);
 	syHeapRelease(base);
 }
 
@@ -240,43 +242,43 @@ UNREAD_RESULT btEnemyAdjustLevel(Sint32 unitId, Sint32 levels)
 Sint32 btEnemyClaimNameLetter(Sint32 enemyId, Sint32 unused)
 {
 	BATTLE_STATE *battle;
-	Sint32		  kindCnt;
-	Sint32		  kindIdx;
+	Sint32		  kindCount;
+	Sint32		  kindIndex;
 	Sint32		  attempt;
 	Sint32		  suffix;
 
 	battle = BattleStateWork;
-	kindCnt = battle->enemyKindCnt;
-	for(kindIdx = 0; kindIdx < kindCnt; kindIdx++) {
-		if(battle->enemyKinds[kindIdx] == enemyId)
+	kindCount = battle->enemyKindCount;
+	for(kindIndex = 0; kindIndex < kindCount; kindIndex++) {
+		if(battle->enemyKinds[kindIndex] == enemyId)
 			break;
 	}
-	if(kindIdx != kindCnt) {
+	if(kindIndex != kindCount) {
 		attempt = 0;
 		/* The second of its kind: letters 0 and 1 both taken. */
-		if(battle->lastNameLetter[kindIdx] < 0) {
-			battle->lastNameLetter[kindIdx] = 1;
-			battle->nameLetterMasks[kindIdx] = 3;
+		if(battle->lastNameLetter[kindIndex] < 0) {
+			battle->lastNameLetter[kindIndex] = 1;
+			battle->nameLetterMasks[kindIndex] = 3;
 			return ENEMY_LETTER_FIRST_TOO | 1;
 		}
 		/* The next letter after the last given that is free; after
 		   NAME_LETTER_MASK_BITS tries the last one tried is reused. */
 		for(; attempt < NAME_LETTER_MASK_BITS; attempt++) {
-			suffix =
-				(battle->lastNameLetter[kindIdx] + 1) % ENEMY_NAME_SUFFIX_COUNT;
-			battle->lastNameLetter[kindIdx] = suffix;
-			if((battle->nameLetterMasks[kindIdx] & (1 << (Sint8)suffix)) == 0)
+			suffix = (battle->lastNameLetter[kindIndex] + 1) %
+				ENEMY_NAME_SUFFIX_COUNT;
+			battle->lastNameLetter[kindIndex] = suffix;
+			if((battle->nameLetterMasks[kindIndex] & (1 << (Sint8)suffix)) == 0)
 				break;
 		}
-		battle->nameLetterMasks[kindIdx] |= 1
-			<< battle->lastNameLetter[kindIdx];
-		return battle->lastNameLetter[kindIdx];
+		battle->nameLetterMasks[kindIndex] |= 1
+			<< battle->lastNameLetter[kindIndex];
+		return battle->lastNameLetter[kindIndex];
 	}
-	if(kindCnt <= 4) {
-		battle->lastNameLetter[kindCnt] = -1;
-		battle->enemyKinds[kindCnt] = enemyId;
-		battle->nameLetterMasks[kindCnt] = 0;
-		battle->enemyKindCnt = kindCnt + 1;
+	if(kindCount <= 4) {
+		battle->lastNameLetter[kindCount] = -1;
+		battle->enemyKinds[kindCount] = enemyId;
+		battle->nameLetterMasks[kindCount] = 0;
+		battle->enemyKindCount = kindCount + 1;
 		return ENEMY_NAME_SUFFIX_COUNT;
 	}
 	return -1;
@@ -287,10 +289,10 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 {
 	BATTLE_STATE *battle = BattleStateWork;
 	UNIT		 *unit;
-	Sint32		  cnt = battle->enemyKindCnt;
-	Sint32		  idx;
+	Sint32		  count = battle->enemyKindCount;
+	Sint32		  index;
 	Sint32		  nameLength;
-	Sint32		  suffixIdx;
+	Sint32		  suffixIndex;
 	Sint32		  enemyId;
 
 	unit = gmUnitGetStub(unitId);
@@ -298,11 +300,11 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 		return;
 
 	enemyId = unit->id;
-	for(idx = 0; idx < cnt; idx++) {
-		if(battle->enemyKinds[idx] == enemyId)
+	for(index = 0; index < count; index++) {
+		if(battle->enemyKinds[index] == enemyId)
 			break;
 	}
-	if(idx == cnt || battle->nameLetterMasks[idx] == 0)
+	if(index == count || battle->nameLetterMasks[index] == 0)
 		return;
 
 	for(nameLength = 0; nameLength < UNIT_NAME_SIZE - 1; nameLength++) {
@@ -314,13 +316,13 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 	   none, and that letter is freed. */
 	/* UB: an empty name shifts 1 by NAME_LETTER_MASK_BITS, past the mask, which
 	   the hardware gives as 0, so no letter is freed; UBFIX skips the clear. */
-	suffixIdx = NAME_LETTER_MASK_BITS;
+	suffixIndex = NAME_LETTER_MASK_BITS;
 	if(nameLength > 0)
-		suffixIdx = unit->name[nameLength - 1] - ENEMY_NAME_LETTER_FIRST;
+		suffixIndex = unit->name[nameLength - 1] - ENEMY_NAME_LETTER_FIRST;
 #if FIX_UNDEFINED_SHIFT
-	if(suffixIdx < NAME_LETTER_MASK_BITS)
+	if(suffixIndex < NAME_LETTER_MASK_BITS)
 #endif
-		battle->nameLetterMasks[idx] &= ~(1 << suffixIdx);
+		battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
 }
 
 /* Gives the first enemy of the kind on the field the first letter (0), appended
@@ -328,20 +330,20 @@ UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 UNREAD_RESULT btEnemyLetterFirstOfKind(Sint32 enemyId)
 {
 	UNIT  *unit;
-	Sint32 enemyIdx;
-	Sint32 nameIdx;
+	Sint32 enemyIndex;
+	Sint32 nameIndex;
 
-	for(enemyIdx = 0; enemyIdx <= ENEMY_BATTLE_SIZE - 1; enemyIdx++) {
-		unit = gmUnitGetStub(enemyIdx + FIRST_ENEMY_UNIT);
+	for(enemyIndex = 0; enemyIndex <= ENEMY_BATTLE_SIZE - 1; enemyIndex++) {
+		unit = gmUnitGetStub(enemyIndex + FIRST_ENEMY_UNIT);
 		if(unit->side != BATTLE_SIDE_ENEMY)
 			continue;
 		if(unit->id != enemyId)
 			continue;
 		/* The name's end, then the letter and a new terminator after it. */
-		for(nameIdx = 0; nameIdx <= UNIT_NAME_SIZE - 2; nameIdx++) {
-			if(unit->name[nameIdx] == 0) {
-				unit->name[nameIdx] = ENEMY_NAME_LETTER_FIRST;
-				unit->name[nameIdx + 1] = 0;
+		for(nameIndex = 0; nameIndex <= UNIT_NAME_SIZE - 2; nameIndex++) {
+			if(unit->name[nameIndex] == 0) {
+				unit->name[nameIndex] = ENEMY_NAME_LETTER_FIRST;
+				unit->name[nameIndex + 1] = 0;
 				break;
 			}
 		}
@@ -354,18 +356,18 @@ Sint32 btFormationGetRandomMember(Sint32 formationId)
 {
 	Sint32			 choices[FORMATION_MEMBERS];
 	const FORMATION *formation;
-	Uint32			 choiceCnt = 0;
+	Uint32			 choiceCount = 0;
 	Sint32			 member;
 
 	if(formationId < 0 || formationId >= FORMATION_COUNT)
 		formationId = FORMATION_FALLBACK;
 	formation = &Formations[formationId];
 	for(member = 0; member < FORMATION_MEMBERS; member++) {
-		if(formation->maxCnts[member] != 0)
-			choices[choiceCnt++] =
+		if(formation->maxCounts[member] != 0)
+			choices[choiceCount++] =
 				formation->memberIds[member] + ENEMY_ID_FIRST;
 	}
-	return choices[syRandom16Below(choiceCnt)];
+	return choices[syRandom16Below(choiceCount)];
 }
 
 /* Builds the battle's enemies from a formation and returns how many there are:
@@ -377,49 +379,49 @@ Sint32 btFormationBuildEnemyList(Sint32 formationId)
 	Uint16		 *enemyKinds;
 	BATTLE_STATE *battle;
 	FORMATION	 *formation;
-	Sint32		  enemyCnt;
+	Sint32		  enemyCount;
 	Sint32		  levelAdjustment;
 	Uint16		  listBuf[UNIT_MAX];
-	Sint32		  extraCnts[FORMATION_MEMBERS];
-	Sint32		  memberCnts[FORMATION_MEMBERS];
+	Sint32		  extraCounts[FORMATION_MEMBERS];
+	Sint32		  memberCounts[FORMATION_MEMBERS];
 	Sint32		  memberOrder[FORMATION_MEMBERS];
-	Sint32		  freeSprSlots;
+	Sint32		  freeSpriteSlots;
 	Bool		  changed;
 	Sint32		  additionalRoom;
-	Sint32		  sprSlots;
-	Sint32		  fittingCnt;
+	Sint32		  spriteSlots;
+	Sint32		  fittingCount;
 	Sint32		  enemyId;
 	Sint32		  j;
 	Sint32		  remainingKinds;
 	Sint32		  copies;
 	Uint32		  i;
-	Sint32		  memberIdx;
+	Sint32		  memberIndex;
 
 	battle = BattleStateWork;
 	levelAdjustment = 0;
-	battle->enemyKindCnt = 0;
+	battle->enemyKindCount = 0;
 	enemyKinds = listBuf;
 	if(gmFlagGetStub(FLAG_MONSTER_BATTLE))
 		formationId = btFormationSelectLevelMatchedCandidate(&levelAdjustment);
 	if(formationId < 0 || formationId >= FORMATION_COUNT)
 		formationId = FORMATION_FALLBACK;
 	formation = &Formations[formationId];
-	for(memberIdx = 0;
-		memberIdx < FORMATION_MEMBERS && formation->minCnts[memberIdx] == 0;
-		memberIdx++)
+	for(memberIndex = 0; memberIndex < FORMATION_MEMBERS &&
+		formation->minCounts[memberIndex] == 0;
+		memberIndex++)
 		;
-	if(memberIdx == FORMATION_MEMBERS)
+	if(memberIndex == FORMATION_MEMBERS)
 		formation = &Formations[FORMATION_FALLBACK];
 
 	/* The enemy sprite slots left once every member's minimum is placed; a
 	   large enemy takes two. */
-	freeSprSlots = ENEMY_SPRITE_SLOTS;
-	enemyCnt = 0;
+	freeSpriteSlots = ENEMY_SPRITE_SLOTS;
+	enemyCount = 0;
 	for(i = 0; i < FORMATION_MEMBERS; i++) {
-		if(formation->minCnts[i] != 0) {
+		if(formation->minCounts[i] != 0) {
 			Sint32 requiredSlots = FORMATION_MEMBER_SLOTS(formation, i);
 
-			freeSprSlots -= requiredSlots * formation->minCnts[i];
+			freeSpriteSlots -= requiredSlots * formation->minCounts[i];
 		}
 	}
 
@@ -429,18 +431,18 @@ Sint32 btFormationBuildEnemyList(Sint32 formationId)
 		Sint32 minimum;
 		Sint32 maximum;
 
-		memberCnts[i] = minimum = formation->minCnts[i];
-		maximum = formation->maxCnts[i];
+		memberCounts[i] = minimum = formation->minCounts[i];
+		maximum = formation->maxCounts[i];
 		additionalRoom = maximum - minimum;
 		if(additionalRoom > 0) {
 			Sint32 memberSlots = FORMATION_MEMBER_SLOTS(formation, i);
 
-			fittingCnt = freeSprSlots / memberSlots;
-			if(fittingCnt < additionalRoom)
-				additionalRoom = fittingCnt;
-			extraCnts[i] = ((additionalRoom + 1) * syRandom()) >> 16;
+			fittingCount = freeSpriteSlots / memberSlots;
+			if(fittingCount < additionalRoom)
+				additionalRoom = fittingCount;
+			extraCounts[i] = ((additionalRoom + 1) * syRandom()) >> 16;
 		} else {
-			extraCnts[i] = 0;
+			extraCounts[i] = 0;
 		}
 	}
 
@@ -450,14 +452,14 @@ Sint32 btFormationBuildEnemyList(Sint32 formationId)
 		changed = FALSE;
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
 			enemyId = formation->memberIds[i] + ENEMY_ID_FIRST;
-			if(extraCnts[i] != 0) {
-				sprSlots = 2 - (btSprIsSmall(enemyId) != 0);
-				if(sprSlots > freeSprSlots) {
-					extraCnts[i] = 0;
+			if(extraCounts[i] != 0) {
+				spriteSlots = 2 - (btSpriteIsSmall(enemyId) != 0);
+				if(spriteSlots > freeSpriteSlots) {
+					extraCounts[i] = 0;
 				} else {
-					memberCnts[i]++;
-					extraCnts[i]--;
-					freeSprSlots -= sprSlots;
+					memberCounts[i]++;
+					extraCounts[i]--;
+					freeSpriteSlots -= spriteSlots;
 					changed = TRUE;
 				}
 			}
@@ -480,11 +482,11 @@ Sint32 btFormationBuildEnemyList(Sint32 formationId)
 			memberOrder[second] = swap;
 		}
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
-			Sint32 copyIdx;
+			Sint32 copyIndex;
 			Sint32 slot = memberOrder[i];
 
-			for(copyIdx = 0; copyIdx < memberCnts[slot]; copyIdx++)
-				enemyKinds[enemyCnt++] =
+			for(copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
+				enemyKinds[enemyCount++] =
 					formation->memberIds[slot] + ENEMY_ID_FIRST;
 		}
 		break;
@@ -493,28 +495,28 @@ Sint32 btFormationBuildEnemyList(Sint32 formationId)
 		for(;;) {
 			remainingKinds = 0;
 			for(i = 0; i < FORMATION_MEMBERS; i++) {
-				if(memberCnts[i] != 0)
+				if(memberCounts[i] != 0)
 					memberOrder[remainingKinds++] = i;
 			}
 			if(remainingKinds == 0)
 				break;
 			j = memberOrder[syRandom16Below(remainingKinds)];
-			enemyKinds[enemyCnt++] = formation->memberIds[j] + ENEMY_ID_FIRST;
-			memberCnts[j]--;
+			enemyKinds[enemyCount++] = formation->memberIds[j] + ENEMY_ID_FIRST;
+			memberCounts[j]--;
 		}
 		break;
 	default:
 		for(i = 0; i < FORMATION_MEMBERS; i++) {
-			copies = memberCnts[i];
+			copies = memberCounts[i];
 			for(j = 0; j < copies; j++)
-				enemyKinds[enemyCnt++] =
+				enemyKinds[enemyCount++] =
 					formation->memberIds[i] + ENEMY_ID_FIRST;
 		}
 		break;
 	}
 	/* No kind has fallen yet (a slot past the last), and the enemy units start
 	   cleared. */
-	enemyKinds[enemyCnt] = 0;
+	enemyKinds[enemyCount] = 0;
 	battle->firstDefeated = ENEMY_BATTLE_SIZE;
 	battle->defeatState = DEFEAT_ONE;
 	for(i = FIRST_ENEMY_UNIT; i < FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE; i++)

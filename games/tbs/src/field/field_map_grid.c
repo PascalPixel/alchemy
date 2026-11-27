@@ -38,13 +38,13 @@
 /* A map's palette: the first 14 of the 16 BG palettes, 224 colours. */
 #define MAP_PALETTE_BYTES			 (14 * PALETTE_COLORS * sizeof(Uint16))
 
-/* Remaps byteCnt bytes in place through SpriteColorGreyTable. */
-void fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCnt)
+/* Remaps byteCount bytes in place through SpriteColorGreyTable. */
+void fdSpriteColorRemapPixels(Uint8 *bytes, Sint32 byteCount)
 {
-	Uint8 *remapTbl = (Uint8 *)SpriteColorGreyTable;
+	Uint8 *remapTable = (Uint8 *)SpriteColorGreyTable;
 
-	while(byteCnt-- != 0) {
-		*bytes = remapTbl[*bytes];
+	while(byteCount-- != 0) {
+		*bytes = remapTable[*bytes];
 		bytes++;
 	}
 }
@@ -52,31 +52,31 @@ void fdSprColRemapPixels(Uint8 *bytes, Sint32 byteCnt)
 /* Unpacks the staged metatile tiles into MetatileTiles. */
 void fdTileMapDecodeStagedBuffer(Sint32 size)
 {
-	Uint16 *dstWords;
+	Uint16 *destWords;
 	Uint16 *srcWords;
-	Sint32	wordCnt;
+	Sint32	wordCount;
 	Sint32	i;
 
 	srcWords = (Uint16 *)(RamMapGridMetatileBuffer + 2);
-	dstWords = (Uint16 *)MetatileTiles;
-	wordCnt = (size - 1) / 2;
+	destWords = (Uint16 *)MetatileTiles;
+	wordCount = (size - 1) / 2;
 	if(size & 1) {
 		switch(((Uint8 *)MapGridMetatileBuffer)[1]) {
 		case METATILE_TILES_PACKING_RAW:
-			for(i = 0; i < wordCnt; i++)
-				*dstWords++ = *srcWords++;
+			for(i = 0; i < wordCount; i++)
+				*destWords++ = *srcWords++;
 			break;
 		case METATILE_TILES_PACKING_SPLIT_DELTA: {
 			/* The high bytes, then the low bytes, each word XORed with the
 			   last. */
 			Uint32 prevWord = 0;
 			Uint8 *highBytes = RamMapGridMetatileBuffer + 2;
-			Uint8 *lowBytes = highBytes + wordCnt;
+			Uint8 *lowBytes = highBytes + wordCount;
 
-			for(i = 0; i < wordCnt; i++) {
+			for(i = 0; i < wordCount; i++) {
 				Uint32 decodedWord =
 					((*highBytes++ << 8) | *lowBytes++) ^ prevWord;
-				*dstWords++ = decodedWord;
+				*destWords++ = decodedWord;
 				prevWord = decodedWord;
 			}
 			break;
@@ -84,9 +84,9 @@ void fdTileMapDecodeStagedBuffer(Sint32 size)
 		case METATILE_TILES_PACKING_DELTA: {
 			Sint32 prevWord = 0;
 
-			for(i = 0; i < wordCnt; i++) {
+			for(i = 0; i < wordCount; i++) {
 				Sint32 decodedWord = *srcWords++ ^ prevWord;
-				*dstWords++ = decodedWord;
+				*destWords++ = decodedWord;
 				prevWord = decodedWord;
 			}
 			break;
@@ -96,7 +96,7 @@ void fdTileMapDecodeStagedBuffer(Sint32 size)
 }
 
 typedef void (*TILEMAP_CONVERT_FN)(
-	void *dst, const void *src, const void *saved);
+	void *dest, const void *src, const void *saved);
 
 /* Unused: gives each map metatile whose metatile tiles are number 0xfff (a
    placeholder) a number of its own, counting up from 0 in map order. */
@@ -128,7 +128,7 @@ void fdTileMapConvertBuffer(void)
 	Uint8			  *savedMetatiles;
 	TILEMAP_CONVERT_FN convertGrid;
 
-	savedMetatiles = syHeapAllocEWRAM(MAPGRID_BYTE_PLANES_BYTES);
+	savedMetatiles = syHeapAllocateEWRAM(MAPGRID_BYTE_PLANES_BYTES);
 	syWordsCopy(
 		savedMetatiles, RamMapGridMetatileBuffer, MAPGRID_BYTE_PLANES_BYTES);
 	RAM_CODE_LOAD(
@@ -142,36 +142,37 @@ void fdTileMapConvertBuffer(void)
 /* Copies one tile column of a metatile's tiles into a BG map: its top and
    bottom tile entries, choosing the left or right half with tileHalf. */
 static __inline__ void fdMapGridCopyMetatileTilesHalfColumn(Uint32 *metatile,
-	Uint8 *screenMap, Uint32 screenRowOfs, Uint32 screenColumnOfs,
+	Uint8 *screenMap, Uint32 screenRowOffset, Uint32 screenColumnOffset,
 	Uint32 tileHalf)
 {
 	Uint16 *entry;
 	Uint8  *screenTile;
-	Uint32	idx = ((*metatile << MAPGRID_METATILE_TILES_SHIFT) >>
-					  (MAPGRID_METATILE_TILES_SHIFT - 2)) +
+	Uint32	index = ((*metatile << MAPGRID_METATILE_TILES_SHIFT) >>
+						(MAPGRID_METATILE_TILES_SHIFT - 2)) +
 		tileHalf;
 
-	entry = (Uint16 *)RamMetatileTiles + idx;
-	screenTile = screenMap + (screenRowOfs + screenColumnOfs + tileHalf) * 2;
+	entry = (Uint16 *)RamMetatileTiles + index;
+	screenTile =
+		screenMap + (screenRowOffset + screenColumnOffset + tileHalf) * 2;
 	*(Uint16 *)screenTile = *entry;
-	entry = (Uint16 *)(RamMetatileTiles + 4) + idx;
+	entry = (Uint16 *)(RamMetatileTiles + 4) + index;
 	*(Uint16 *)(screenTile + MAPGRID_SCREEN_ROW_BYTES) = *entry;
 }
 
 /* Copies all four of a metatile's tiles into a BG map: its top two tile entries
    and its bottom two, a map row (64 bytes) below. */
-static __inline__ void fdMapGridCopyMetatileTilesToScr(Uint32 *metatile,
-	Uint8 *screenMap, Uint32 screenRowOfs, Uint32 screenColumnOfs)
+static __inline__ void fdMapGridCopyMetatileTilesToScreen(Uint32 *metatile,
+	Uint8 *screenMap, Uint32 screenRowOffset, Uint32 screenColumnOffset)
 {
 	Uint32 *rows;
 	Uint8  *screenTile;
-	Uint32	idx = (*metatile << MAPGRID_METATILE_TILES_SHIFT) >>
+	Uint32	index = (*metatile << MAPGRID_METATILE_TILES_SHIFT) >>
 		(MAPGRID_METATILE_TILES_SHIFT - 1);
 
-	rows = (Uint32 *)RamMetatileTiles + idx;
-	screenTile = screenMap + screenRowOfs * 2 + screenColumnOfs * 2;
+	rows = (Uint32 *)RamMetatileTiles + index;
+	screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
 	*(Uint32 *)screenTile = *rows;
-	rows = (Uint32 *)(RamMetatileTiles + 4) + idx;
+	rows = (Uint32 *)(RamMetatileTiles + 4) + index;
 	*(Uint32 *)(screenTile + MAPGRID_SCREEN_ROW_BYTES) = *rows;
 }
 
@@ -195,7 +196,7 @@ typedef struct MAP_HEADER {
 	/* The camera's bounds in 8-pixel tiles: left, top, right and bottom. */
 	Uint8 cameraBounds[4];
 	/* Each layer's BG priority, 1 to 3; 0 leaves the layer off. */
-	Uint8	  pri[3];
+	Uint8	  priority[3];
 	Uint8	  charBase[3]; /* each layer's BG char block */
 	Uint16	  reserved; /* 0 in every layout of both games; nothing reads it */
 	MAP_LAYER layers[3];
@@ -205,7 +206,7 @@ typedef struct MAP_HEADER {
 	Sint32 metatileTiles;
 	Sint32 shapes;	  /* the shapes, into RamMapGridShapes */
 	Sint32 metatiles; /* the metatiles, into RamMapGridMetatileBuffer */
-	Sint32 anm;		  /* the tileset animation script, or 0 for none */
+	Sint32 animation; /* the tileset animation script, or 0 for none */
 	Sint32 blend;	  /* the blend script, or 0 for none */
 	Sint32 markers; /* the chests and Psynergy stones (fdPlaceTreasureSpots) */
 } MAP_HEADER;
@@ -219,14 +220,14 @@ typedef struct MAP_HEADER {
    background layers' origins, parallax and wrap from the layout header; loads
    the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
    loaded; and starts the layer scrolling. */
-Sint32 fdMapGridLoadMap(Sint32 idx)
+Sint32 fdMapGridLoadMap(Sint32 index)
 {
 	MAP_RESOURCES		  *mapResources;
 	MAP_GRID_SCROLL_STATE *grid;
 	MAP_HEADER			  *mapHeader;
 	MAP_GRID_LAYER_SCROLL *layer;
 	MAP_LAYER			  *layerSrc;
-	Sint32				   layerIdx;
+	Sint32				   layerIndex;
 	Uint8				  *graphicsBuf;
 	Sint32				   backdrop;
 	Uint8				  *packed;
@@ -238,9 +239,9 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 	REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
 		DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
 	syScreenFadeFromBlack(0);
-	mapResources = (MAP_RESOURCES *)&MapsWork[idx];
-	grid =
-		syHeapSlotAllocEWRAM(HEAP_SLOT_MAP_GRID, sizeof(MAP_GRID_SCROLL_STATE));
+	mapResources = (MAP_RESOURCES *)&MapsWork[index];
+	grid = syHeapSlotAllocateEWRAM(
+		HEAP_SLOT_MAP_GRID, sizeof(MAP_GRID_SCROLL_STATE));
 	syWordsClear(grid, sizeof(MAP_GRID_SCROLL_STATE));
 	mapHeader = MAPGRID_RESOURCE(mapResources->header);
 	/* The header's offsets count from the header itself. */
@@ -253,10 +254,10 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 	syDecompressTaggedLZ(packed, RamMapGridMetatileBuffer);
 	fdTileMapConvertBuffer();
 	/* The tileset animation and blend scripts are optional (offset 0). */
-	if(mapHeader->anm != 0) {
-		packed = (Uint8 *)mapHeader + mapHeader->anm;
+	if(mapHeader->animation != 0) {
+		packed = (Uint8 *)mapHeader + mapHeader->animation;
 		syDecompressTaggedLZ(packed, MAPGRID_ANIMATION_SCRIPT);
-		fdTilesetAnimStartAll((const Uint16 *)MAPGRID_ANIMATION_SCRIPT);
+		fdTilesetAnimationStartAll((const Uint16 *)MAPGRID_ANIMATION_SCRIPT);
 	}
 	if(mapHeader->blend != 0) {
 		packed = (Uint8 *)mapHeader + mapHeader->blend;
@@ -275,19 +276,19 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 	*viewX = 0;
 	viewY = &grid->view[1];
 	*viewY = 0;
-	grid->enabled[0] = mapHeader->pri[0];
-	grid->enabled[1] = mapHeader->pri[1];
-	grid->enabled[2] = mapHeader->pri[2];
+	grid->enabled[0] = mapHeader->priority[0];
+	grid->enabled[1] = mapHeader->priority[1];
+	grid->enabled[2] = mapHeader->priority[2];
 	layer = grid->layers;
 	layerSrc = mapHeader->layers;
-	for(layerIdx = 0; layerIdx < 3; layerIdx++) {
+	for(layerIndex = 0; layerIndex < 3; layerIndex++) {
 		Uint32 x = layerSrc->x;
 		Uint32 y = layerSrc->y;
 		Sint32 scaleX, scaleY;
-		FIXED  ofsX, ofsY;
+		FIXED  offsetX, offsetY;
 
-		layer->ofsX = ofsX = toFIXED(x * 8);
-		layer->ofsY = ofsY = toFIXED(y * 8);
+		layer->offsetX = offsetX = toFIXED(x * 8);
+		layer->offsetY = offsetY = toFIXED(y * 8);
 		/* Parallax and drift are signed sixteenths. */
 		scaleX = layerSrc->scrollX * (toFIXED(1) / 16);
 		scaleY = layerSrc->scrollY * (toFIXED(1) / 16);
@@ -303,20 +304,20 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 		   metatile is 2x2 tiles, 128 metatiles to a row). */
 		layer->metatiles = (MAP_GRID_METATILE *)RamMapGridMetatileBuffer +
 			(y / 2) * MAPGRID_SIZE + x / 2;
-		layer->x = syMulFX(*viewX, scaleX) + ofsX;
-		layer->y = syMulFX(*viewY, scaleY) + ofsY;
+		layer->x = syMulFX(*viewX, scaleX) + offsetX;
+		layer->y = syMulFX(*viewY, scaleY) + offsetY;
 		layerSrc++;
 		layer++;
 	}
 	/* The ground, middle and overhead layers show on BG3, BG2 and BG1, a layer
 	   only where its priority is not zero. */
-	grid->flg = DISPCNT_OBJ_ON;
+	grid->flags = DISPCNT_OBJ_ON;
 	if(grid->enabled[0] != 0)
-		grid->flg = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
+		grid->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
 	if(grid->enabled[1] != 0)
-		grid->flg |= DISPCNT_BG2_ON;
+		grid->flags |= DISPCNT_BG2_ON;
 	if(grid->enabled[2] != 0)
-		grid->flg |= DISPCNT_BG1_ON;
+		grid->flags |= DISPCNT_BG1_ON;
 	control = grid->enabled[0] | BGCNT_CHAR_BASE(mapHeader->charBase[0]) |
 		BGCNT_SCREEN_BASE(5);
 	REG_BG3CNT = control;
@@ -333,14 +334,14 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 	} else {
 		/* One 16 KB buffer takes each resource in turn: the palette, the three
 		   16 KB tilesets, and last the tileset animations' tiles, which decode
-		   straight to MapGridAnimTiles. */
-		graphicsBuf = syHeapAlloc(BG_CHAR_SIZE);
+		   straight to MapGridAnimationTiles. */
+		graphicsBuf = syHeapAllocate(BG_CHAR_SIZE);
 		if(graphicsBuf != NULL) {
 			/* Colour 0 of BG palette 0 is the backdrop; it survives the new
 			   palette. */
 			backdrop = *(Sint16 *)PLTT;
 			syDecompressTaggedLZ(
-				MAPGRID_RESOURCE(mapResources->pal), graphicsBuf);
+				MAPGRID_RESOURCE(mapResources->palette), graphicsBuf);
 			*(Sint16 *)graphicsBuf = backdrop;
 			/* These four copies call the IWRAM function at its fixed address,
 			   not through syWordsCopy. */
@@ -355,12 +356,13 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 				MAPGRID_RESOURCE(mapResources->tiles[2]), graphicsBuf);
 			syWordsCopyEntry(BG_CHAR_BLOCK(3), graphicsBuf, BG_CHAR_SIZE);
 			syDecompressMoveToFrontLZ(
-				MAPGRID_RESOURCE(mapResources->anmTiles), MapGridAnimTiles);
+				MAPGRID_RESOURCE(mapResources->animationTiles),
+				MapGridAnimationTiles);
 			syHeapRelease(graphicsBuf);
 		}
 	}
 	/* Only BG0, the windows, is shown here; fdScreenTransitionStart ORs
-	   map->flg into REG_DISPCNT when the map fades in. */
+	   map->flags into REG_DISPCNT when the map fades in. */
 	control = 0;
 	REG_MOSAIC = control;
 	REG_BLDCNT = control;
@@ -403,20 +405,21 @@ void fdMapGridRenderMetatileTilesRow(Uint32 layer, Sint32 tileX, Sint32 tileY)
 	Uint32 screenRowOffset =
 		(tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
 	Uint32 srcColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
-	Uint32 screenColumnOfs = tileX & MAPGRID_SCREEN_TILE_MASK;
-	Uint32 metatileTilesIdx;
+	Uint32 screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
+	Uint32 metatileTilesIndex;
 
 	/* A metatile's tiles are 2x2, so the BG map's tile row and column are kept
 	   even and wrap at 32; the grid wraps at 128 metatiles. */
-	for(metatileTilesIdx = 0; metatileTilesIdx < MAPGRID_SCREEN_METATILES;
-		metatileTilesIdx++) {
+	for(metatileTilesIndex = 0; metatileTilesIndex < MAPGRID_SCREEN_METATILES;
+		metatileTilesIndex++) {
 		Uint32 *metatile = MAPGRID_METATILE_WORDS;
 
 		metatile += sourceRow + srcColumn;
-		fdMapGridCopyMetatileTilesToScr(
-			metatile, screenMap, screenRowOffset, screenColumnOfs);
+		fdMapGridCopyMetatileTilesToScreen(
+			metatile, screenMap, screenRowOffset, screenColumnOffset);
 		srcColumn = (srcColumn + 1) & (MAPGRID_SIZE - 1);
-		screenColumnOfs = (screenColumnOfs + 2) & MAPGRID_SCREEN_TILE_MASK;
+		screenColumnOffset =
+			(screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
 	}
 }
 
@@ -430,18 +433,18 @@ void fdMapGridRenderMetatileTilesColumn(
 	Uint32 screenRowOffset =
 		(tileY & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
 	Uint32 srcColumn = (tileX / 2) & (MAPGRID_SIZE - 1);
-	Uint32 screenColumnOfs = tileX & MAPGRID_SCREEN_TILE_MASK;
+	Uint32 screenColumnOffset = tileX & MAPGRID_SCREEN_TILE_MASK;
 	Uint32 tileHalf = tileX & 1;
-	Uint32 metatileTilesIdx;
+	Uint32 metatileTilesIndex;
 
 	/* Both the metatiles and the BG map wrap. */
-	for(metatileTilesIdx = 0; metatileTilesIdx < MAPGRID_COLUMN_METATILES;
-		metatileTilesIdx++) {
+	for(metatileTilesIndex = 0; metatileTilesIndex < MAPGRID_COLUMN_METATILES;
+		metatileTilesIndex++) {
 		Uint32 *metatile = MAPGRID_METATILE_WORDS;
 
 		metatile += sourceRow + srcColumn;
 		fdMapGridCopyMetatileTilesHalfColumn(
-			metatile, screenMap, screenRowOffset, screenColumnOfs, tileHalf);
+			metatile, screenMap, screenRowOffset, screenColumnOffset, tileHalf);
 
 		sourceRow =
 			(sourceRow + MAPGRID_SIZE) & ((MAPGRID_SIZE - 1) * MAPGRID_SIZE);
@@ -463,7 +466,7 @@ void fdMapGridUpdateLayerScroll(void)
 	Sint32				   x, y;
 	Sint32				   minX, minY, maxX, maxY;
 	Sint32				   baseX, baseY;
-	Uint32				   layerIdx;
+	Uint32				   layerIndex;
 
 	grid = MapGridState[0];
 	origin = grid->origin;
@@ -509,7 +512,7 @@ void fdMapGridUpdateLayerScroll(void)
 	}
 	grid->view[0] = baseX;
 	grid->view[1] = baseY;
-	for(layerIdx = 0; layerIdx < 3; layerIdx++, layer++) {
+	for(layerIndex = 0; layerIndex < 3; layerIndex++, layer++) {
 		baseX = syMulFX(grid->view[0], layer->scaleX);
 		baseY = syMulFX(grid->view[1], layer->scaleY);
 		/* A drifting layer wraps at its period: maskX and maskY are in 8-pixel
@@ -524,28 +527,28 @@ void fdMapGridUpdateLayerScroll(void)
 			baseY = (baseY + layer->phaseY) &
 				(layer->maskY * toFIXED(8) | (toFIXED(8) - 1));
 		}
-		baseX += layer->ofsX;
-		baseY += layer->ofsY;
+		baseX += layer->offsetX;
+		baseY += layer->offsetY;
 		/* x and y are in 8-pixel tiles. */
 		x = baseX / toFIXED(8);
 		y = baseY / toFIXED(8);
 		if((layer->x ^ baseX) & toFIXED(8)) {
 			if(layer->x < baseX)
 				fdMapGridRenderMetatileTilesColumn(
-					layerIdx, x + DISPLAY_WIDTH / 8, y);
+					layerIndex, x + DISPLAY_WIDTH / 8, y);
 			else
-				fdMapGridRenderMetatileTilesColumn(layerIdx, x, y);
+				fdMapGridRenderMetatileTilesColumn(layerIndex, x, y);
 		}
 		if((layer->y ^ baseY) & toFIXED(16)) {
 			if(layer->y < baseY)
 				fdMapGridRenderMetatileTilesRow(
-					layerIdx, x, y + DISPLAY_HEIGHT / 8);
+					layerIndex, x, y + DISPLAY_HEIGHT / 8);
 			else
-				fdMapGridRenderMetatileTilesRow(layerIdx, x, y);
+				fdMapGridRenderMetatileTilesRow(layerIndex, x, y);
 		}
 		/* MAPGRID_LAYER_GROUND scrolls BG3, MAPGRID_LAYER_OVERHEAD BG1. */
-		BgScrollWork[3 - layerIdx].x = FIXEDtoINT(baseX);
-		BgScrollWork[3 - layerIdx].y = FIXEDtoINT(baseY);
+		BgScrollWork[3 - layerIndex].x = FIXEDtoINT(baseX);
+		BgScrollWork[3 - layerIndex].y = FIXEDtoINT(baseY);
 		layer->x = baseX;
 		layer->y = baseY;
 	}
@@ -555,7 +558,7 @@ void fdMapGridUpdateLayerScroll(void)
    redraws every enabled layer's BG map around it. */
 void fdMapGridSetCameraCenter(FIXED x, FIXED y)
 {
-	Uint32				   layerIdx;
+	Uint32				   layerIndex;
 	Uint8				  *screenMap;
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	MAP_GRID_LAYER_SCROLL *layer = grid->layers;
@@ -567,10 +570,10 @@ void fdMapGridSetCameraCenter(FIXED x, FIXED y)
 	grid->view[0] = x;
 	grid->view[1] = y;
 
-	for(layerIdx = 0; layerIdx < 3; layerIdx++) {
-		if(grid->enabled[layerIdx]) {
+	for(layerIndex = 0; layerIndex < 3; layerIndex++) {
+		if(grid->enabled[layerIndex]) {
 			Uint32 rows = 2 * MAPGRID_COLUMN_METATILES;
-			Uint32 srcRow, srcColumn, screenRowOfs, screenColumnOfs,
+			Uint32 srcRow, srcColumn, screenRowOffset, screenColumnOffset,
 				metatileTilesRow, metatileTilesColumn;
 
 			x = syMulFX(grid->view[0], layer->scaleX);
@@ -588,35 +591,35 @@ void fdMapGridSetCameraCenter(FIXED x, FIXED y)
 				   rows a scrolling column draws. */
 				rows = 2 * MAPGRID_SCREEN_METATILES;
 			}
-			x += layer->ofsX;
-			y += layer->ofsY;
+			x += layer->offsetX;
+			y += layer->offsetY;
 			layer++;
 			/* Divided by 8 pixels in 16.16, x and y become tiles. */
 			x /= toFIXED(8);
 			y /= toFIXED(8);
 			screenMap =
-				BG_SCREEN_BLOCK(5) + layerIdx * MAPGRID_LAYER_SCREEN_BYTES;
+				BG_SCREEN_BLOCK(5) + layerIndex * MAPGRID_LAYER_SCREEN_BYTES;
 			srcRow = ((y / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
-			screenRowOfs = (y & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
+			screenRowOffset = (y & MAPGRID_SCREEN_TILE_MASK) * BG_SCREEN_WIDTH;
 			for(metatileTilesRow = 0; metatileTilesRow < rows / 2;
 				metatileTilesRow++) {
 				srcColumn = (x / 2) & (MAPGRID_SIZE - 1);
-				screenColumnOfs = x & MAPGRID_SCREEN_TILE_MASK;
+				screenColumnOffset = x & MAPGRID_SCREEN_TILE_MASK;
 				for(metatileTilesColumn = 0;
 					metatileTilesColumn < MAPGRID_SCREEN_METATILES;
 					metatileTilesColumn++) {
 					Uint32 *metatile = MAPGRID_METATILE_WORDS;
 
 					metatile += srcRow + srcColumn;
-					fdMapGridCopyMetatileTilesToScr(
-						metatile, screenMap, screenRowOfs, screenColumnOfs);
+					fdMapGridCopyMetatileTilesToScreen(metatile, screenMap,
+						screenRowOffset, screenColumnOffset);
 					srcColumn = (srcColumn + 1) & (MAPGRID_SIZE - 1);
-					screenColumnOfs =
-						(screenColumnOfs + 2) & MAPGRID_SCREEN_TILE_MASK;
+					screenColumnOffset =
+						(screenColumnOffset + 2) & MAPGRID_SCREEN_TILE_MASK;
 				}
 				srcRow = (srcRow + MAPGRID_SIZE) &
 					((MAPGRID_SIZE - 1) * MAPGRID_SIZE);
-				screenRowOfs = (screenRowOfs + 2 * BG_SCREEN_WIDTH) &
+				screenRowOffset = (screenRowOffset + 2 * BG_SCREEN_WIDTH) &
 					MAPGRID_SCREEN_ROW_MASK;
 			}
 		}
@@ -642,7 +645,7 @@ typedef struct MAP_GRID_TILE_POS {
 	visibleLayer = visibleLayers; \
 	place = row << 5; \
 	place += column; \
-	ofs = place * 4; \
+	offset = place * 4; \
 	do { \
 		if(visibleLayer->x <= (metatileX) && \
 			visibleLayer->x + MAPGRID_VISIBLE_WIDTH > (metatileX) && \
@@ -651,7 +654,7 @@ typedef struct MAP_GRID_TILE_POS {
 			Uint8 *screen, *metatileTiles; \
 \
 			screen = BG_SCREEN_BLOCK(5); \
-			screen += ofs; \
+			screen += offset; \
 			bytes = metatileTilesId * 8; \
 			metatileTiles = RamMetatileTiles; \
 			metatileTiles += bytes; \
@@ -659,28 +662,28 @@ typedef struct MAP_GRID_TILE_POS {
 			metatileTiles = RamMetatileTiles + 4; \
 			metatileTiles += bytes; \
 			screen = BG_SCREEN_BLOCK(5) + MAPGRID_SCREEN_ROW_BYTES; \
-			screen += ofs; \
+			screen += offset; \
 			*(Uint32 *)screen = *(Uint32 *)metatileTiles; \
 			break; \
 		} \
 		bytes = MAPGRID_LAYER_SCREEN_BYTES; \
-		ofs += bytes; \
+		offset += bytes; \
 		visibleLayer++; \
 		i++; \
 	} while(i < 3)
 
 /* Copies the metatile tiles numbers of a rectangle of metatiles from (srcX,
-   srcY) to (dstX, dstY), width by height metatiles, keeping each
+   srcY) to (destX, destY), width by height metatiles, keeping each
    destination's attributes, and redraws the copied metatiles that are on
    screen. */
 void fdMapGridCopyMetatileTilesIndicesRect(Sint32 srcX, Sint32 srcY,
-	Uint32 dstX, Uint32 dstY, Uint32 width, Uint32 height)
+	Uint32 destX, Uint32 destY, Uint32 width, Uint32 height)
 {
 	Uint32	y;
 	Uint32 *srcMetatiles =
 		MAPGRID_METATILE_WORDS + (srcY * MAPGRID_SIZE + srcX);
-	Uint32 *dstMetatiles =
-		MAPGRID_METATILE_WORDS + (dstY * MAPGRID_SIZE + dstX);
+	Uint32 *destMetatiles =
+		MAPGRID_METATILE_WORDS + (destY * MAPGRID_SIZE + destX);
 	MAP_GRID_LAYER_SCROLL *layer =
 		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers;
 	MAP_GRID_TILE_POS  visibleLayers[3];
@@ -694,22 +697,22 @@ void fdMapGridCopyMetatileTilesIndicesRect(Sint32 srcX, Sint32 srcY,
 		visibleLayer++;
 		layer++;
 	}
-	for(y = dstY; y < dstY + height; y++) {
-		for(x = dstX; x < dstX + width; x++) {
+	for(y = destY; y < destY + height; y++) {
+		for(x = destX; x < destX + width; x++) {
 			Uint32 metatile = *srcMetatiles++;
 			Uint32 metatileTilesId = metatile & MAPGRID_METATILE_TILES_ID_MASK;
-			Uint32 column, row, place, ofs, bytes;
+			Uint32 column, row, place, offset, bytes;
 
-			*dstMetatiles =
-				(*dstMetatiles & MAPGRID_ATTRIBUTE_MASK) | metatileTilesId;
+			*destMetatiles =
+				(*destMetatiles & MAPGRID_ATTRIBUTE_MASK) | metatileTilesId;
 			column = x & (MAPGRID_SCREEN_METATILES - 1);
-			dstMetatiles++;
+			destMetatiles++;
 			i = 0;
 			row = y & (MAPGRID_SCREEN_METATILES - 1);
 			MAPGRID_REDRAW_COPIED_METATILE((Sint32)x, (Sint32)y);
 		}
 		srcMetatiles += MAPGRID_SIZE - width;
-		dstMetatiles += MAPGRID_SIZE - width;
+		destMetatiles += MAPGRID_SIZE - width;
 	}
 }
 
@@ -727,9 +730,9 @@ STATIC_ASSERT(sizeof(MAP_GRID_METATILE_ANIMATION_STEP) == 10);
 
 /* Plays a map edit (MAP_GRID_METATILE_ANIMATION_STEP entries, ended by a source
    of MAPGRID_ANIMATION_STEPS_END): copies each entry's rectangle of metatile
-   tiles numbers to (dstX, dstY) and waits its delay in
+   tiles numbers to (destX, destY) and waits its delay in
    ticks. */
-void fdMapGridPlayMapEdit(Uint16 *steps, Sint32 dstX, Uint32 dstY)
+void fdMapGridPlayMapEdit(Uint16 *steps, Sint32 destX, Uint32 destY)
 {
 	/* Each entry is read in turn: its source, then its signed y, width, height
 	   and delay (MAP_GRID_METATILE_ANIMATION_STEP). */
@@ -741,21 +744,21 @@ void fdMapGridPlayMapEdit(Uint16 *steps, Sint32 dstX, Uint32 dstY)
 		Sint32 delay = (Sint16)*steps++;
 
 		fdMapGridCopyMetatileTilesIndicesRect(
-			src, (Uint16)srcY, dstX, dstY, (Uint16)width, (Uint16)height);
+			src, (Uint16)srcY, destX, destY, (Uint16)width, (Uint16)height);
 		sySynch((Uint16)delay);
 	}
 }
 
 /* Copies a rectangle of metatiles (16x16 pixels each) as they are, from
-   (srcX, srcY) to (dstX, dstY), width by height metatiles. */
+   (srcX, srcY) to (destX, destY), width by height metatiles. */
 void fdMapGridCopyMetatileTilesMetatilesRect(Sint32 srcX, Sint32 srcY,
-	Sint32 width, Sint32 height, Sint32 dstX, Sint32 dstY)
+	Sint32 width, Sint32 height, Sint32 destX, Sint32 destY)
 {
 	Sint32	y;
 	Uint32 *srcMetatiles =
 		MAPGRID_METATILE_WORDS + (srcY * MAPGRID_SIZE + srcX);
-	Uint32 *dstMetatiles =
-		MAPGRID_METATILE_WORDS + (dstY * MAPGRID_SIZE + dstX);
+	Uint32 *destMetatiles =
+		MAPGRID_METATILE_WORDS + (destY * MAPGRID_SIZE + destX);
 	MAP_GRID_LAYER_SCROLL *layer =
 		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers;
 	MAP_GRID_TILE_POS  visibleLayers[3];
@@ -769,41 +772,41 @@ void fdMapGridCopyMetatileTilesMetatilesRect(Sint32 srcX, Sint32 srcY,
 		visibleLayer++;
 		layer++;
 	}
-	for(y = dstY; y < dstY + height; y++) {
-		for(x = dstX; x < dstX + width; x++) {
+	for(y = destY; y < destY + height; y++) {
+		for(x = destX; x < destX + width; x++) {
 			Uint32 metatile = *srcMetatiles++;
 			Uint32 metatileTilesId;
-			Uint32 column, row, place, ofs, bytes;
+			Uint32 column, row, place, offset, bytes;
 
-			*dstMetatiles = metatile;
+			*destMetatiles = metatile;
 			metatileTilesId = metatile & MAPGRID_METATILE_TILES_ID_MASK;
 			column = x & (MAPGRID_SCREEN_METATILES - 1);
-			dstMetatiles++;
+			destMetatiles++;
 			i = 0;
 			row = y & (MAPGRID_SCREEN_METATILES - 1);
 			MAPGRID_REDRAW_COPIED_METATILE(x, y);
 		}
 		srcMetatiles += MAPGRID_SIZE - width;
-		dstMetatiles += MAPGRID_SIZE - width;
+		destMetatiles += MAPGRID_SIZE - width;
 	}
 }
 
 /* Copies only the attributes of a rectangle of metatiles, from (srcX,
-   srcY) to (dstX, dstY), width by height metatiles, keeping each destination
+   srcY) to (destX, destY), width by height metatiles, keeping each destination
    metatile's metatile tiles number. */
 void fdMapGridCopyMetatileAttributeRect(Sint32 srcX, Sint32 srcY, Sint32 width,
-	Sint32 height, Sint32 dstX, Sint32 dstY)
+	Sint32 height, Sint32 destX, Sint32 destY)
 {
-	Uint32 *dstMetatiles = MAPGRID_METATILE_WORDS;
-	Uint32 *srcMetatiles = dstMetatiles;
+	Uint32 *destMetatiles = MAPGRID_METATILE_WORDS;
+	Uint32 *srcMetatiles = destMetatiles;
 	Uint16	row;
 	Uint16	column;
 
-	dstMetatiles += dstY * MAPGRID_SIZE + dstX;
+	destMetatiles += destY * MAPGRID_SIZE + destX;
 	srcMetatiles += srcY * MAPGRID_SIZE + srcX;
 
 	for(row = 0; row < height; row++) {
-		Uint32 *destinationMetatile = dstMetatiles + row * MAPGRID_SIZE;
+		Uint32 *destinationMetatile = destMetatiles + row * MAPGRID_SIZE;
 		Uint32 *sourceMetatile = srcMetatiles + row * MAPGRID_SIZE;
 
 		for(column = 0; column < width; column++) {
@@ -816,7 +819,7 @@ void fdMapGridCopyMetatileAttributeRect(Sint32 srcX, Sint32 srcY, Sint32 width,
 }
 
 /* Copies only the metatile tiles numbers of a rectangle of metatiles, from
-   (srcX, srcY) to (dstX, dstY), width by height metatiles, keeping each
+   (srcX, srcY) to (destX, destY), width by height metatiles, keeping each
    destination metatile's attributes; metatiles in a visible area update the BG
    maps too.
 
@@ -824,13 +827,13 @@ void fdMapGridCopyMetatileAttributeRect(Sint32 srcX, Sint32 srcY, Sint32 width,
    the destination and signed metatiles: the game has both, and scripts call
    each. */
 void fdMapGridCopyMetatileIndexRect(Sint32 srcX, Sint32 srcY, Sint32 width,
-	Sint32 height, Sint32 dstX, Sint32 dstY)
+	Sint32 height, Sint32 destX, Sint32 destY)
 {
 	Sint32	y;
 	Uint32 *srcMetatiles =
 		MAPGRID_METATILE_WORDS + (srcY * MAPGRID_SIZE + srcX);
-	Uint32 *dstMetatiles =
-		MAPGRID_METATILE_WORDS + (dstY * MAPGRID_SIZE + dstX);
+	Uint32 *destMetatiles =
+		MAPGRID_METATILE_WORDS + (destY * MAPGRID_SIZE + destX);
 	MAP_GRID_LAYER_SCROLL *layer =
 		((MAP_GRID_SCROLL_STATE *)MapGridState[0])->layers;
 	MAP_GRID_TILE_POS  visibleLayers[3];
@@ -844,37 +847,38 @@ void fdMapGridCopyMetatileIndexRect(Sint32 srcX, Sint32 srcY, Sint32 width,
 		visibleLayer++;
 		layer++;
 	}
-	for(y = dstY; y < dstY + height; y++) {
-		for(x = dstX; x < dstX + width; x++) {
+	for(y = destY; y < destY + height; y++) {
+		for(x = destX; x < destX + width; x++) {
 			Uint32 metatile = *srcMetatiles++;
 			Uint32 metatileTilesId = metatile & MAPGRID_METATILE_TILES_ID_MASK;
-			Uint32 column, row, place, ofs, bytes;
+			Uint32 column, row, place, offset, bytes;
 
-			*dstMetatiles =
-				(*dstMetatiles & MAPGRID_ATTRIBUTE_MASK) | metatileTilesId;
+			*destMetatiles =
+				(*destMetatiles & MAPGRID_ATTRIBUTE_MASK) | metatileTilesId;
 			column = x & (MAPGRID_SCREEN_METATILES - 1);
-			dstMetatiles++;
+			destMetatiles++;
 			i = 0;
 			row = y & (MAPGRID_SCREEN_METATILES - 1);
 			MAPGRID_REDRAW_COPIED_METATILE(x, y);
 		}
 		srcMetatiles += MAPGRID_SIZE - width;
-		dstMetatiles += MAPGRID_SIZE - width;
+		destMetatiles += MAPGRID_SIZE - width;
 	}
 }
 
 /* Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
-   REG_DISPCNT) from layerFlg, keeping its other flags. */
-void fdMapGridSetShownLayers(Uint32 layerFlg)
+   REG_DISPCNT) from layerFlags, keeping its other flags. */
+void fdMapGridSetShownLayers(Uint32 layerFlags)
 {
 	MAP_GRID_SCROLL_STATE *grid = MapGridState[0];
 	Uint32				   shown =
-		layerFlg & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
-	Uint32 flg = grid->flg;
+		layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
+	Uint32 flags = grid->flags;
 
-	flg = (flg & (Uint16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
+	flags =
+		(flags & (Uint16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
 		shown;
-	grid->flg = flg;
+	grid->flags = flags;
 }
 
 #undef MAPGRID_METATILE_WORDS

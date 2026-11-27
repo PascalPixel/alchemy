@@ -8,30 +8,30 @@
    priority, so the effect is drawn at the leader's depth. */
 void fdEffectAdvanceMotionAtLeaderPriority(FIELD_OBJECT *object)
 {
-	FIELD_EFFECT	   *effect = &object->eff;
-	Sint32				velX = effect->vel.x;
-	Sint32				velZ;
+	FIELD_EFFECT	   *effect = &object->effect;
+	Sint32				velocityX = effect->velocity.x;
+	Sint32				velocityZ;
 	MAIN_ROUTINE_STATE *party;
-	FIELD_SPR		   *spr;
+	FIELD_SPR		   *sprite;
 	ACTOR			   *leader;
 	PLACED_SPR		   *to;
 	PLACED_SPR		   *from;
 
-	effect->x += velX;
-	effect->y += effect->vel.y;
-	velZ = effect->vel.z;
-	effect->z += velZ;
-	effect->vel.x = velX - velX / FIELD_EFFECT_DRAG_X;
-	effect->vel.z = velZ - velZ / FIELD_EFFECT_DRAG_Z;
+	effect->x += velocityX;
+	effect->y += effect->velocity.y;
+	velocityZ = effect->velocity.z;
+	effect->z += velocityZ;
+	effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+	effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 	effect->scaleX += effect->scaleRateX;
-	spr = effect->spr;
+	sprite = effect->sprite;
 	effect->scaleY += effect->scaleRateY;
-	spr->rotation += effect->spin;
+	sprite->rotation += effect->spin;
 
 	party = &MainRoutineStateWork;
 
 	leader = fdActorGetById(party->leaderActorId);
-	to = (PLACED_SPR *)effect->spr;
-	from = (PLACED_SPR *)leader->spr;
-	to->pri = from->pri;
+	to = (PLACED_SPR *)effect->sprite;
+	from = (PLACED_SPR *)leader->sprite;
+	to->priority = from->priority;
 }

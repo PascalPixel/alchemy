@@ -50,7 +50,7 @@ typedef struct MAP_GRID_METATILE {
 	/* bits: 15..14 the priority an actor standing on it takes, if not 0 (also
 	   read by fdMapGridGetMetatileHighFlags) | 13..12 the layer such an actor
 	   takes, + 1, if not 0 | 11..0 metatile tiles (ACTOR_CAMERA_TILE) */
-	Uint16 metatileTilesAndFlg;
+	Uint16 metatileTilesAndFlags;
 	Uint8  behavior; /* an METATILE_BEHAVIOR */
 	/* Indexes the 4-byte shape table (MapGridShapes): the shape's kind in the
 	   first byte's low four bits, then its height samples. */
@@ -70,12 +70,12 @@ typedef struct BLEND_SCRIPT_STATE {
 } BLEND_SCRIPT_STATE;
 
 /* One of the 16 tileset animations, which copy tiles into VRAM by script
-   (fdTilesetAnimUpdate): groups of four halfwords, the source tile, the count,
-   the destination tile and the ticks to wait. */
+   (fdTilesetAnimationUpdate): groups of four halfwords, the source tile, the
+   count, the destination tile and the ticks to wait. */
 typedef struct TILESET_ANIM {
 	const Uint16 *start;  /* where 0xffff loops back to; null for none */
 	const Uint16 *cursor; /* the next group */
-	Uint16		  tmr;	  /* ticks left of the current wait */
+	Uint16		  timer;  /* ticks left of the current wait */
 	Uint16		  paused; /* nonzero, set by a scene, holds the animation */
 } TILESET_ANIM;
 
@@ -108,7 +108,7 @@ extern Uint32 MetatileTiles[];
 #define WORLD_MAP_BLOCKS_ACROSS 32
 
 /* The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. */
-extern Uint8 MapGridAnimTiles[];
+extern Uint8 MapGridAnimationTiles[];
 
 /* The map's shape table, 16 KB of EWRAM at 0x0202c000: 4-byte entries that
    MAP_GRID_METATILE.shape indexes. */
@@ -144,9 +144,9 @@ extern Uint8 BgTileBuffer[];
    ResourceIdEmptyMap. */
 typedef struct MAP_RESOURCES {
 	Uint16 header;
-	Uint16 pal;
-	Uint16 tiles[3]; /* For char blocks 1, 2 and 3. */
-	Uint16 anmTiles; /* Into MapGridAnimTiles. */
+	Uint16 palette;
+	Uint16 tiles[3];	   /* For char blocks 1, 2 and 3. */
+	Uint16 animationTiles; /* Into MapGridAnimationTiles. */
 } MAP_RESOURCES;
 
 /* Every layout's resources, by map number (src/map/resources.s). */

@@ -21,25 +21,25 @@ typedef void (*OAM_BUILD_ROUTINE)(void *work);
 
 /* Hands out the next OAM affine matrix for a sprite drawn with `src`'s scale
    and rotation and fills it in. Returns the matrix number, 0 to 31. */
-Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
+Sint32 syOAMMatrixAllocateFromTransform(AFFINE_TRANSFORM *src)
 {
 	OAM_MATRIX *matrix;
 	Sint16	   *coefficient;
 	Sint32		xScale;
 	Sint32		yScale;
-	Sint32		ang;
-	Uint8		idx;
+	Sint32		angle;
+	Uint8		index;
 
-	idx = OamMatrixCount;
+	index = OamMatrixCount;
 	xScale = (Sint16)src->scaleX;
 	yScale = (Sint16)src->scaleY;
-	ang = src->ang;
-	if(idx >= OBJ_AFFINE_MATRIX_COUNT)
+	angle = src->angle;
+	if(index >= OBJ_AFFINE_MATRIX_COUNT)
 		return 0;
 
-	matrix = &OamMatrices[idx];
+	matrix = &OamMatrices[index];
 	coefficient = matrix->coefficients;
-	if((xScale == yScale || -xScale == yScale) && ang == 0) {
+	if((xScale == yScale || -xScale == yScale) && angle == 0) {
 		/* Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
 		   reciprocals (toFIXED(1) / scale, the 8.8 inverse of an 8.8 scale), pb
 		   and pc 0, two halfwords to a row. */
@@ -59,8 +59,8 @@ Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
 		FIXED sine;
 		FIXED cosine;
 
-		sine = sySin(ang);
-		cosine = syCos(ang);
+		sine = sySin(angle);
+		cosine = syCos(angle);
 		*coefficient = cosine / xScale;
 		coefficient++;
 		*coefficient = sine / xScale;
@@ -70,13 +70,13 @@ Sint32 syOAMMatrixAllocFromTransform(AFFINE_TRANSFORM *src)
 		*coefficient = cosine / yScale;
 	}
 
-	OamMatrixCount = idx + 1;
-	return idx;
+	OamMatrixCount = index + 1;
+	return index;
 }
 
 /* Links a sprite entry into depth slot `slot` (clamped to the
    RENDER_DEPTH_SLOT_COUNT slots) for this tick. */
-void syOAMAddSprAtDepth(void *slotEntry, Sint32 slot)
+void syOAMAddSpriteAtDepth(void *slotEntry, Sint32 slot)
 {
 	void **head;
 	void  *prevHead;

@@ -9,7 +9,8 @@
 #include "system.h"
 
 /* A battle sprite id's low twelve bits, the sprite. The bits above hold the
-   enemy sprite slot its pictures are loaded into (btEnemySprLoadIntoSlots). */
+   enemy sprite slot its pictures are loaded into (btEnemySpriteLoadIntoSlots).
+ */
 #define SPRITE_ID_MASK	   0xfff
 /* What a two-part enemy's second part adds to its first (the Serpent, the
    Kraken, the Fusion Dragon, Poseidon and the Doom Dragon): the next sprite,
@@ -26,8 +27,8 @@ struct SPR;
 
 /* Creates a sprite for animation `resource`, taking one of the 64 free sprites
    and a VRAM cache entry for its tiles. */
-struct RESOURCE_OBJECT *fdSprCreateStub(Sint32 resource);
+struct RESOURCE_OBJECT *fdSpriteCreateStub(Sint32 resource);
 /* Releases a sprite and, unless it keeps it, its VRAM cache entry. */
-void fdSprDestroyStub(SPR *spr);
+void fdSpriteDestroyStub(SPR *sprite);
 
 #endif

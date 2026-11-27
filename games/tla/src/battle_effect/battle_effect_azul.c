@@ -107,14 +107,14 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 {
 	Uint8				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Uint8				*sprs;
+	Uint8				*sprites;
 	DRAW_RECTANGLE		 alternateBlit;
 	DRAW_RECTANGLE		 blit;
-	Sint32				 frm;
+	Sint32				 frame;
 	BATTLE_STATE		*battle;
 	POINT2_D			 base;
 	POINT2_D			 pos;
-	POINT2_D			 vel;
+	POINT2_D			 velocity;
 	MODEL_VERTEX		*meshVertices;
 	AZUL_FACE			*faces;
 	Uint8				*sphere;
@@ -123,30 +123,30 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 	Sint32				 j;
 	Sint32				 k;
 	Sint32		  n; /* a byte along a line of the background, then a shard */
-	Uint32		  shatterFrm;
-	Uint32		  sphereFrm;
+	Uint32		  shatterFrame;
+	Uint32		  sphereFrame;
 	FIXED		  place[4];
 	MODEL_TEXTURE texture;
 	MODEL_TEXTURE scratchTexture;
 	PARTICLE	 *particle;
 	RENDER_MODEL *model;
 	void		 *vertices;
-	SPR			 *spr;
+	SPR			 *sprite;
 	const Uint8	 *objectX;
 	Uint8		 *mapCells;
 	Uint8		 *planes;
 	Sint32		  wispBottom;
 
 	canvas = RamHeapSlots->battleCanvas;
-	state = RamHeapSlots->battleEff;
-	sprs = RamHeapSlots->battleSheet;
-	btEffectConfigureEffectDisp();
+	state = RamHeapSlots->battleEffect;
+	sprites = RamHeapSlots->battleSheet;
+	btEffectConfigureEffectDisplay();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(3));
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	blit = RamHeapSlots->ramCode;
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
 	btEffectShowLivingTargets(state->args);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	/* The water's colour for each line streams in by DMA, armed early in each
@@ -176,69 +176,71 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 	}
 	{
 		Uint8 *cells = state->sheet + AZUL_BLUE_BEAM;
-		Uint8 *dst;
-		Sint32 cnt;
+		Uint8 *dest;
+		Sint32 count;
 
 		btResourceLoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, cells, 1, 1);
 		i = 0;
-		cnt = PICTURE_BYTES(AZUL_BUBBLE);
-		dst = state->sheet + AZUL_BUBBLE;
-		for(; i != cnt; i++) {
-			*dst++ = *cells;
+		count = PICTURE_BYTES(AZUL_BUBBLE);
+		dest = state->sheet + AZUL_BUBBLE;
+		for(; i != count; i++) {
+			*dest++ = *cells;
 			cells += 2;
 		}
 	}
 	sySynch(1);
-	btEffectCreateSprs(AZUL_SERPENT_OBJECTS, SPRITE_AZUL, 1);
+	btEffectCreateSprites(AZUL_SERPENT_OBJECTS, SPRITE_AZUL, 1);
 	for(i = 0; i != AZUL_BODY_COPIES; i++) {
-		spr = btEffectSprAcquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-		state->sprs[i + AZUL_SERPENT_OBJECTS] = spr;
-		syWordsCopyEntry(spr, state->sprs[AZUL_BODY_SEGMENT + (i & 3)],
+		sprite =
+			btEffectSpriteAcquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
+		state->sprites[i + AZUL_SERPENT_OBJECTS] = sprite;
+		syWordsCopyEntry(sprite, state->sprites[AZUL_BODY_SEGMENT + (i & 3)],
 			offsetof(SPR, lastNo));
-		((SPR *)state->sprs[i])->image.pri = 1;
+		((SPR *)state->sprites[i])->image.priority = 1;
 	}
 	mapCells = MapGridMetatileBuffer;
 	planes = RamMapMetatileBuffer + AZUL_TEXTURES;
 	/* The wisps are turned a quarter as they are copied: each row of a picture
 	   in WispSheet becomes a column of its wisp, from the bottom up. */
 	wispBottom = AZUL_WISPS + (AZUL_WISP_HEIGHT - 1) * AZUL_WISP_WIDTH;
-	for(frm = 0; frm != AZUL_TICKS; frm++) {
+	for(frame = 0; frame != AZUL_TICKS; frame++) {
 		/* A or B skips to the burst in a white flash. */
-		if((PerWork.repeat & (KEY_A | KEY_B)) && frm >= AZUL_BUBBLES_TICK &&
-			frm < AZUL_BURST_TICK) {
+		if((PerWork.repeat & (KEY_A | KEY_B)) && frame >= AZUL_BUBBLES_TICK &&
+			frame < AZUL_BURST_TICK) {
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			EFFECT_PRESENT_CANVAS(state);
-			frm = AZUL_BURST_TICK;
+			frame = AZUL_BURST_TICK;
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			for(i = 0; i != AZUL_OBJECTS; i++) {
-				((SPR *)state->sprs[i])->rotation = DEGtoANG(90);
+				((SPR *)state->sprites[i])->rotation = DEGtoANG(90);
 			}
 		}
 		/* The battlefield's colours come up from dark over the first ticks. */
-		if(frm <= 8) {
-			Sint32 fade = 24 - frm * 3;
+		if(frame <= 8) {
+			Sint32 fade = 24 - frame * 3;
 
-			btColBufferScaleStub(battle->pal, (void *)&BG_PLTT_COLOR(6, 0),
+			btColorBufferScaleStub(battle->palette,
+				(void *)&BG_PLTT_COLOR(6, 0),
 				toFIXED(1) - fade * BACKGROUND_LEVEL_STEP,
 				BATTLE_BACKGROUND_COLORS);
 		}
-		if(frm == AZUL_BURST_TICK) {
+		if(frame == AZUL_BURST_TICK) {
 			base.x = toFIXED(48);
 			base.y = toFIXED(66.00005);
-			vel.x = 0;
-			vel.y = -toFIXED(6);
+			velocity.x = 0;
+			velocity.y = -toFIXED(6);
 		}
-		if(frm == 0) {
+		if(frame == 0) {
 			REG_BLDALPHA = BLEND_ALPHA(16, 0);
-			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, frm);
+			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, frame);
 			for(i = 0; i != AZUL_OBJECTS; i++) {
-				((SPR *)state->sprs[i])->rotation = TRIG_TURN * 3 / 4;
+				((SPR *)state->sprites[i])->rotation = TRIG_TURN * 3 / 4;
 			}
 			base.x = toFIXED(120);
 			base.y = -toFIXED(120);
-			vel.x = 0;
-			vel.y = toFIXED(12);
+			velocity.x = 0;
+			velocity.y = toFIXED(12);
 			IO_WRITE_QUEUE_PUSH(
 				(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 			for(n = 0; n != AZUL_PARTS; n++) {
@@ -275,20 +277,20 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 							faces[n * 3 + 1].corner[i] + 1][1];
 				}
 			}
-			for(i = 0; i != args->tgtCnt; i++) {
-				btObjectGetStub(args->tgts[i])->obj->y = 0;
+			for(i = 0; i != args->targetCount; i++) {
+				btObjectGetStub(args->targets[i])->object->y = 0;
 			}
 			REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) |
 				BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 		}
 		/* The canvas fades in over the shattering. */
-		shatterFrm = frm - AZUL_SHATTER_TICK;
-		if(shatterFrm <= BLEND_WEIGHT_MAX) {
-			REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, shatterFrm);
+		shatterFrame = frame - AZUL_SHATTER_TICK;
+		if(shatterFrame <= BLEND_WEIGHT_MAX) {
+			REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, shatterFrame);
 		}
 		/* Bubbles rise round the foes for 64 ticks. */
-		if((Uint32)(frm - AZUL_BUBBLES_TICK) <= 63) {
-			if(frm == AZUL_BUBBLES_TICK) {
+		if((Uint32)(frame - AZUL_BUBBLES_TICK) <= 63) {
+			if(frame == AZUL_BUBBLES_TICK) {
 				Sint32 mask;
 
 				i = 0;
@@ -297,8 +299,8 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				for(; i != AZUL_BUBBLE_COUNT; i++, particle++) {
 					particle->x = INTtoFIXED((syRandom() & 63) + 32);
 					particle->y = INTtoFIXED((syRandom() & 15) + 120);
-					particle->velX = ((syRandom() & mask) - 16) << 13;
-					particle->velY = ((syRandom() & mask) - 63) << 12;
+					particle->velocityX = ((syRandom() & mask) - 16) << 13;
+					particle->velocityY = ((syRandom() & mask) - 63) << 12;
 					particle->variant =
 						FIXEDtoINT(
 							syCos(i * (TRIG_TURN / 128)) * AZUL_BUBBLE_DELAY) -
@@ -310,7 +312,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 			for(; i != AZUL_BUBBLE_COUNT; i++, particle++) {
 				if(particle->variant >= 0) {
 					FIXED sway = sySin(
-						frm * (TRIG_TURN / 64) + i * AZUL_BUBBLE_PHASE_STEP);
+						frame * (TRIG_TURN / 64) + i * AZUL_BUBBLE_PHASE_STEP);
 
 					blit(canvas, state->sheet + AZUL_BUBBLE,
 						(FIXEDtoINT(particle->x + (sway << 4))) -
@@ -325,12 +327,12 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* The water behind the foes deepens. */
-		if(frm <= 95 || (Uint32)(frm - AZUL_DEEPEN_TICK) <= 31) {
+		if(frame <= 95 || (Uint32)(frame - AZUL_DEEPEN_TICK) <= 31) {
 			Uint16 *c = state->backdropLines;
-			Sint32	level = frm / 8;
+			Sint32	level = frame / 8;
 
-			if(frm >= AZUL_DEEPEN_TICK) {
-				level = (frm - AZUL_DEEPEN_TICK) / 4 + AZUL_WATER_DEPTH;
+			if(frame >= AZUL_DEEPEN_TICK) {
+				level = (frame - AZUL_DEEPEN_TICK) / 4 + AZUL_WATER_DEPTH;
 				if(level > AZUL_WATER_DEEPEST) {
 					level = AZUL_WATER_DEEPEST;
 				}
@@ -375,39 +377,40 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 		}
 		/* DEAD: tick never falls below 0; the ROM keeps the compare and
 		   branch. */
-		if(frm >= 0) {
-			base.x += vel.x;
-			base.y += vel.y;
+		if(frame >= 0) {
+			base.x += velocity.x;
+			base.y += velocity.y;
 		}
 		/* The serpent rises from below and lifts the foes. */
-		if(frm == AZUL_RISE_TICK) {
+		if(frame == AZUL_RISE_TICK) {
 			base.x = toFIXED(48);
 			base.y = toFIXED(168);
-			vel.x = 0;
-			vel.y = -toFIXED(6);
+			velocity.x = 0;
+			velocity.y = -toFIXED(6);
 			for(i = 0; i != AZUL_OBJECTS; i++) {
-				((SPR *)state->sprs[i])->rotation = DEGtoANG(90);
+				((SPR *)state->sprites[i])->rotation = DEGtoANG(90);
 			}
-			for(i = 0; i != args->tgtCnt; i++) {
-				MOTION_OBJECT *actor = btObjectGetStub(args->tgts[i])->obj;
+			for(i = 0; i != args->targetCount; i++) {
+				MOTION_OBJECT *actor =
+					btObjectGetStub(args->targets[i])->object;
 
 				btEffectStartActorMotion(
-					args->tgts[i], 1, 0, 0, toFIXED(4), 100);
+					args->targets[i], 1, 0, 0, toFIXED(4), 100);
 				actor->verticalMotionStrength = 0;
 			}
 		}
-		if(frm == AZUL_BURST_TICK) {
-			vel.y = -toFIXED(16);
+		if(frame == AZUL_BURST_TICK) {
+			velocity.y = -toFIXED(16);
 		}
 		/* The serpent upright, plunging and then rising. */
-		if((frm < AZUL_SWIM_TICK || frm >= AZUL_RISE_TICK) &&
-			frm < AZUL_DAMAGE_TICK) {
+		if((frame < AZUL_SWIM_TICK || frame >= AZUL_RISE_TICK) &&
+			frame < AZUL_DAMAGE_TICK) {
 			place[3] = 0;
 			place[1] = toFIXED(255);
-			if(frm >= AZUL_RISE_TICK) {
+			if(frame >= AZUL_RISE_TICK) {
 				pos.y -= toFIXED(6);
 			}
-			if(frm < AZUL_SWIM_TICK) {
+			if(frame < AZUL_SWIM_TICK) {
 				for(i = 0; i != AZUL_SERPENT_OBJECTS; i++) {
 					place[0] = toFIXED(40 - AzulObjectX[i]) + base.x;
 					place[2] = toFIXED(128 - AzulObjectZ[i] * 31 / 32) + base.y;
@@ -416,7 +419,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 					}
 					CLAMP_Y(place);
 					fdRenderApplyProjectedPlacementStub(
-						state->sprs[i], place, (Sint32 *)&AzulUnitScale, 0);
+						state->sprites[i], place, (Sint32 *)&AzulUnitScale, 0);
 				}
 				for(i = 0; i != AZUL_BODY_COPIES; i++) {
 					place[0] =
@@ -428,12 +431,12 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 							i / 4 * 60) +
 						base.y + toFIXED(66);
 					CLAMP_Y(place);
-					spr = state->sprs[i + AZUL_SERPENT_OBJECTS];
-					spr->image.tile =
-						((SPR *)state->sprs[(i & 3) + AZUL_BODY_SEGMENT])
+					sprite = state->sprites[i + AZUL_SERPENT_OBJECTS];
+					sprite->image.tile =
+						((SPR *)state->sprites[(i & 3) + AZUL_BODY_SEGMENT])
 							->image.tile;
 					fdRenderApplyProjectedPlacementStub(
-						spr, place, (Sint32 *)&AzulUnitScale, 0);
+						sprite, place, (Sint32 *)&AzulUnitScale, 0);
 				}
 			} else {
 				for(i = 0; i != AZUL_SERPENT_OBJECTS; i++) {
@@ -444,7 +447,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 					}
 					CLAMP_Y(place);
 					fdRenderApplyProjectedPlacementStub(
-						state->sprs[i], place, (Sint32 *)&AzulUnitScale, 0);
+						state->sprites[i], place, (Sint32 *)&AzulUnitScale, 0);
 				}
 				i = 0;
 				objectX = AzulObjectX;
@@ -456,78 +459,78 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 					place[2] = toFIXED(AzulObjectZ[row] + i / 4 * 64) + base.y +
 						toFIXED(64);
 					CLAMP_Y(place);
-					spr = state->sprs[i + AZUL_SERPENT_OBJECTS];
-					spr->image.tile =
-						((SPR *)state->sprs[segment + AZUL_BODY_SEGMENT])
+					sprite = state->sprites[i + AZUL_SERPENT_OBJECTS];
+					sprite->image.tile =
+						((SPR *)state->sprites[segment + AZUL_BODY_SEGMENT])
 							->image.tile;
 					fdRenderApplyProjectedPlacementStub(
-						spr, place, (Sint32 *)&AzulUnitScale, 0);
+						sprite, place, (Sint32 *)&AzulUnitScale, 0);
 				}
 			}
-		} else if(frm >= AZUL_SWIM_TICK && frm < AZUL_RISE_TICK) {
+		} else if(frame >= AZUL_SWIM_TICK && frame < AZUL_RISE_TICK) {
 			/* The serpent swims in from the right and circles, then darts
 			   off. */
 			Sint32 x;
 			Sint32 y;
 
-			if(frm == AZUL_SWIM_TICK) {
+			if(frame == AZUL_SWIM_TICK) {
 				for(i = 0; i != AZUL_OBJECTS; i++) {
-					((SPR *)state->sprs[i])->rotation = 0;
+					((SPR *)state->sprites[i])->rotation = 0;
 				}
 				base.x = toFIXED(256);
 				base.y = toFIXED(72);
-				vel.x = -toFIXED(6);
-				vel.y = 0;
+				velocity.x = -toFIXED(6);
+				velocity.y = 0;
 			}
-			if(frm == AZUL_DART_TICK) {
-				vel.x = toFIXED(8);
+			if(frame == AZUL_DART_TICK) {
+				velocity.x = toFIXED(8);
 			}
 			place[3] = 0;
 			place[1] = toFIXED(255);
-			vel.x = vel.x * 56 / DAMPING_SCALE;
-			vel.y = vel.y * 56 / DAMPING_SCALE;
-			if(frm < AZUL_DART_TICK) {
-				pos.x = (sySin(frm << 9) << 4) + base.x;
+			velocity.x = velocity.x * 56 / DAMPING_SCALE;
+			velocity.y = velocity.y * 56 / DAMPING_SCALE;
+			if(frame < AZUL_DART_TICK) {
+				pos.x = (sySin(frame << 9) << 4) + base.x;
 				x = pos.x;
-				pos.y = (syCos(frm << 9) << 3) + base.y;
+				pos.y = (syCos(frame << 9) << 3) + base.y;
 				y = pos.y;
 			} else {
-				x = base.x + (sySin(frm << 9) << 4);
-				y = (syCos(frm << 9) << 3) + base.y;
+				x = base.x + (sySin(frame << 9) << 4);
+				y = (syCos(frame << 9) << 3) + base.y;
 			}
 			for(i = 0; i != 8; i++) {
 				place[0] = toFIXED(AzulLateObjectX[i]) + x;
 				place[2] = toFIXED(AzulLateObjectZ[i]) + y;
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[i], place, (Sint32 *)&AzulLateUnitScale, 0);
+					state->sprites[i], place, (Sint32 *)&AzulLateUnitScale, 0);
 			}
 		}
 		/* The sphere drifts left as the serpent darts off, then back. */
-		if((Uint32)(frm - AZUL_DART_TICK) <= 29) {
+		if((Uint32)(frame - AZUL_DART_TICK) <= 29) {
 			Sint32 drift = -toFIXED(2);
 
-			if(frm >= AZUL_SWIRL_TICK) {
-				drift = frm * (toFIXED(1) / 8) - toFIXED(21);
+			if(frame >= AZUL_SWIRL_TICK) {
+				drift = frame * (toFIXED(1) / 8) - toFIXED(21);
 			}
 			pos.x = pos.x + drift;
 		}
-		if(frm == AZUL_SPHERE_TICK) {
-			sySndPlayStub(SE_SPIN);
+		if(frame == AZUL_SPHERE_TICK) {
+			sySoundPlayStub(SE_SPIN);
 		}
-		if(frm == AZUL_DART_TICK) {
-			sySndPlayStub(SE_LAUNCH);
+		if(frame == AZUL_DART_TICK) {
+			sySoundPlayStub(SE_LAUNCH);
 		}
-		if(frm == AZUL_SWIRL_TICK) {
-			sySndPlayStub(SE_WAVE_HIGH);
+		if(frame == AZUL_SWIRL_TICK) {
+			sySoundPlayStub(SE_WAVE_HIGH);
 		}
-		if(frm == 7) {
-			sySndPlayStub(SE_POWER_UP);
+		if(frame == 7) {
+			sySoundPlayStub(SE_POWER_UP);
 		}
 		/* The battlefield shatters into shards. */
-		if(frm == AZUL_SHATTER_TICK) {
+		if(frame == AZUL_SHATTER_TICK) {
 			const Uint8 *piece;
 
-			sySndPlayStub(SE_CLATTER);
+			sySoundPlayStub(SE_CLATTER);
 			i = 0;
 			particle = state->particles;
 			piece = AzulPartPoints[0];
@@ -543,11 +546,11 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				   64th down, for each pixel it lies from the centre. */
 				dx = cx - AZUL_SHATTER_CENTER;
 				dy = cy - AZUL_SHATTER_CENTER;
-				particle->velX = dx * (toFIXED(1) / 16);
-				particle->velY = dy * (toFIXED(1) / 64);
-				particle->velZ = ((syRandom() & 127) << 2) + 512;
+				particle->velocityX = dx * (toFIXED(1) / 16);
+				particle->velocityY = dy * (toFIXED(1) / 64);
+				particle->velocityZ = ((syRandom() & 127) << 2) + 512;
 				if(syRandom() & 1) {
-					particle->velZ = -particle->velZ;
+					particle->velocityZ = -particle->velocityZ;
 				}
 			}
 			IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
@@ -558,43 +561,45 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 		}
 		/* The foes are tinted blue and float up at the shattering, and stand
 		   again at the burst. */
-		if(frm == AZUL_SHATTER_TICK || frm == AZUL_BURST_TICK) {
-			for(i = 0; i != args->tgtCnt; i++) {
-				BATTLE_OBJECT *slot = btObjectGetStub(args->tgts[i]);
-				MOTION_OBJECT *actor = slot->obj;
+		if(frame == AZUL_SHATTER_TICK || frame == AZUL_BURST_TICK) {
+			for(i = 0; i != args->targetCount; i++) {
+				BATTLE_OBJECT *slot = btObjectGetStub(args->targets[i]);
+				MOTION_OBJECT *actor = slot->object;
 				void		  *record;
 
-				if(frm == AZUL_BURST_TICK) {
-					btObjectDestroySprsStub(args->tgts[i]);
+				if(frame == AZUL_BURST_TICK) {
+					btObjectDestroySpritesStub(args->targets[i]);
 				}
-				if(frm == AZUL_SHATTER_TICK) {
-					for(j = 0; (record = btActorGetSprStub(slot->obj, j)) != 0;
+				if(frame == AZUL_SHATTER_TICK) {
+					for(j = 0;
+						(record = btActorGetSpriteStub(slot->object, j)) != 0;
 						j++) {
-						fdSprRemoveAnimationStub(
+						fdSpriteRemoveAnimationStub(
 							record, (Sint32)slot->shadowEntry);
 					}
-					btEffectTintBattler(args->tgts[i], SPRITE_COLOR_BLUE_TINT,
-						POSE_DAMAGE, i, 8);
-					btEffectStartActorMotion(args->tgts[i], 1, 0, 0,
+					btEffectTintBattler(args->targets[i],
+						SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, i, 8);
+					btEffectStartActorMotion(args->targets[i], 1, 0, 0,
 						(syRandom() << 1) + toFIXED(1), 100);
 					actor->verticalMotionStrength = 0;
 				}
 			}
-			if(frm == AZUL_BURST_TICK) {
-				args->tgts[args->tgtCnt] = BATTLE_UNIT_LIST_END;
-				btObjectSpawnObjectsForListStub(args->tgts, 0, 0);
+			if(frame == AZUL_BURST_TICK) {
+				args->targets[args->targetCount] = BATTLE_UNIT_LIST_END;
+				btObjectSpawnObjectsForListStub(args->targets, 0, 0);
 			}
 		}
-		if(frm >= AZUL_SHATTER_TICK) {
-			for(i = 0; i != args->tgtCnt; i++) {
-				MOTION_OBJECT *actor = btObjectGetStub(args->tgts[i])->obj;
+		if(frame >= AZUL_SHATTER_TICK) {
+			for(i = 0; i != args->targetCount; i++) {
+				MOTION_OBJECT *actor =
+					btObjectGetStub(args->targets[i])->object;
 
-				actor->velY = actor->velY * 60 / DAMPING_SCALE;
+				actor->velocityY = actor->velocityY * 60 / DAMPING_SCALE;
 			}
 		}
 		/* The shards tumble away until the serpent swims in. */
-		if(shatterFrm <= 43) {
-			vertices = syHeapAllocEWRAM(32);
+		if(shatterFrame <= 43) {
+			vertices = syHeapAllocateEWRAM(32);
 			model = btRenderAllocateModelList(1);
 			texture.logWidth = 8;
 			texture.logHeight = 7;
@@ -630,8 +635,8 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				}
 				btRenderTransformVertices(&meshVertices[i * 4], vertices, 4);
 				btParticleAdvanceWithGravity3D(particle, 62, 0);
-				if(frm >= (8 - i) * 2 + 16) {
-					particle->velY += -toFIXED(1) / 2;
+				if(frame >= (8 - i) * 2 + 16) {
+					particle->velocityY += -toFIXED(1) / 2;
 				}
 				btRenderDrawModelList(model);
 			}
@@ -639,23 +644,24 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 			syHeapRelease(vertices);
 		}
 		/* The sphere's rings, and the foam, rune and ring textures. */
-		if(frm == AZUL_SPHERE_TICK) {
-			Sint32 ang;
-			Sint32 ofs;
+		if(frame == AZUL_SPHERE_TICK) {
+			Sint32 angle;
+			Sint32 offset;
 
 			btMeshBuildGrid(
 				grid, AZUL_SPHERE_RING_VERTICES, AZUL_SPHERE_RINGS, 8, 8);
 			k = 0;
-			ang = 0;
-			ofs = 0;
-			for(; k != AZUL_SPHERE_RINGS; ang += DEGtoANG(12),
-				ofs += AZUL_SPHERE_RING_VERTICES * sizeof(MODEL_VERTEX), k++) {
-				Sint32 y = FIXEDtoINT(-syCos(ang) * AZUL_SPHERE_RADIUS);
-				Sint32 radius = FIXEDtoINT(sySin(ang) * AZUL_SPHERE_RADIUS);
+			angle = 0;
+			offset = 0;
+			for(; k != AZUL_SPHERE_RINGS; angle += DEGtoANG(12),
+				offset += AZUL_SPHERE_RING_VERTICES * sizeof(MODEL_VERTEX),
+				k++) {
+				Sint32 y = FIXEDtoINT(-syCos(angle) * AZUL_SPHERE_RADIUS);
+				Sint32 radius = FIXEDtoINT(sySin(angle) * AZUL_SPHERE_RADIUS);
 				MODEL_VERTEX *v;
 
 				j = 0;
-				v = (MODEL_VERTEX *)(sphere + ofs);
+				v = (MODEL_VERTEX *)(sphere + offset);
 				for(; j != AZUL_SPHERE_RING_VERTICES; j++) {
 					SET_POSITION(v,
 						FIXEDtoINT(
@@ -688,13 +694,13 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				RamMapMetatileBuffer + AZUL_TEXTURES, 0, 0);
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
-		if(frm == AZUL_SWIRL_TICK) {
+		if(frame == AZUL_SWIRL_TICK) {
 			btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
 				RamMapMetatileBuffer + AZUL_TEXTURES, 0, 0);
 		}
 		/* The water sphere grows round the foes. */
-		sphereFrm = frm - (AZUL_SPHERE_TICK + 2);
-		if(sphereFrm <= 107) {
+		sphereFrame = frame - (AZUL_SPHERE_TICK + 2);
+		if(sphereFrame <= 107) {
 			Sint32 scale;
 			Sint32 shade;
 			Sint32 size;
@@ -702,7 +708,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 			REG_BG2CNT =
 				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 			/* Foam streams up beside the rising serpent. */
-			if((Uint32)(frm - AZUL_RISE_TICK) <= 17) {
+			if((Uint32)(frame - AZUL_RISE_TICK) <= 17) {
 				Sint32 y;
 				Sint32 wisp;
 				Sint32 width;
@@ -715,7 +721,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				y = (FIXEDtoINT(base.y)) - 32;
 				width = AZUL_WISP_WIDTH;
 				height = AZUL_WISP_HEIGHT;
-				wisp = frm;
+				wisp = frame;
 				for(; i != 2; i++, wisp += 3) {
 					Uint8 *cells = state->sheet + AZUL_WISPS +
 						wisp % AZUL_WISP_PICTURES * PICTURE_BYTES(AZUL_WISP);
@@ -725,9 +731,9 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				}
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			}
-			if(frm < AZUL_BURST_TICK) {
+			if(frame < AZUL_BURST_TICK) {
 				model = btRenderAllocateModelList(1);
-				scale = sphereFrm * 3 << 8;
+				scale = sphereFrame * 3 << 8;
 				shade = 0;
 				if(scale > toFIXED(1)) {
 					scale = toFIXED(1);
@@ -746,13 +752,13 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				syTranslate(pos.x / 2 - toFIXED(68), pos.y - toFIXED(80), 0);
 				syScale(scale, scale * 2, scale);
 				syTranslate(-toFIXED(40), 0, 0);
-				syRotX(frm * (TRIG_TURN / 64));
-				syRotY(frm * (TRIG_TURN / 64));
+				syRotX(frame * (TRIG_TURN / 64));
+				syRotY(frame * (TRIG_TURN / 64));
 				btRenderTransformVertices(sphere, meshVertices, 256);
 				btRenderDrawModelList(model);
-				if(frm >= AZUL_DART_TICK) {
-					shade = 1444 - frm * 10;
-					size = frm * (toFIXED(1) / 8) + -toFIXED(17);
+				if(frame >= AZUL_DART_TICK) {
+					shade = 1444 - frame * 10;
+					size = frame * (toFIXED(1) / 8) + -toFIXED(17);
 
 					if(shade > 0) {
 						shade = 0;
@@ -773,10 +779,10 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 						btRenderDrawModelList(model);
 					}
 				}
-				if(frm >= AZUL_SWIRL_TICK) {
-					state->shakeFrm = 2;
+				if(frame >= AZUL_SWIRL_TICK) {
+					state->shakeFrame = 2;
 					shade = 0;
-					size = frm * (toFIXED(1) / 8) + -toFIXED(19);
+					size = frame * (toFIXED(1) / 8) + -toFIXED(19);
 					scratchTexture.logWidth = 6;
 					scratchTexture.logHeight = 6;
 					scratchTexture.pixels =
@@ -786,7 +792,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 					syInitMatrix();
 					syTranslate(-toFIXED(16), pos.y - toFIXED(80), 0);
 					syScale(size >> 1, size, size >> 1);
-					syRotZ(frm * (TRIG_TURN / 32));
+					syRotZ(frame * (TRIG_TURN / 32));
 					btRenderTransformVertices(
 						BattleEffectSquareCorners, meshVertices, 4);
 					btRenderDrawModelList(model);
@@ -795,20 +801,20 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* The sphere bursts into drops that fall and bounce. */
-		if(frm >= AZUL_BURST_TICK) {
-			if(frm == AZUL_BURST_TICK) {
+		if(frame >= AZUL_BURST_TICK) {
+			if(frame == AZUL_BURST_TICK) {
 				PARTICLE *drop = (PARTICLE *)MapGridMetatileBuffer;
 
 				for(i = 0; i != AZUL_DROPS; i++, drop++) {
-					Sint32 ang = i * (TRIG_TURN / AZUL_DROPS);
+					Sint32 angle = i * (TRIG_TURN / AZUL_DROPS);
 					Sint32 r = syRandom() & 127;
 					Sint32 vy;
 
-					drop->velX = sySin(ang) * r >> 5;
-					vy = syCos(ang) * r >> 4;
-					drop->x = drop->velX * 6 + toFIXED(48);
+					drop->velocityX = sySin(angle) * r >> 5;
+					vy = syCos(angle) * r >> 4;
+					drop->x = drop->velocityX * 6 + toFIXED(48);
 					drop->y = vy * 5;
-					drop->velY = vy;
+					drop->velocityY = vy;
 					drop->variant = (syRandom() & 31) + 32;
 				}
 			}
@@ -822,36 +828,36 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 						AZUL_BUBBLE_WIDTH, AZUL_BUBBLE_HEIGHT);
 					btParticleAdvanceWithGravity2D(particle, 63, toFIXED(1));
 					if(particle->y > toFIXED(96)) {
-						particle->velY = -particle->velY / 2;
-						particle->velX <<= 2;
+						particle->velocityY = -particle->velocityY / 2;
+						particle->velocityX <<= 2;
 						particle->variant -= 8;
 					}
 				}
 				particle->variant--;
 			}
 		}
-		if(frm == AZUL_BURST_TICK) {
+		if(frame == AZUL_BURST_TICK) {
 			btBackgroundLoadStub(
 				BATTLE_BACKGROUND_FIXED, battle->bg, BACKGROUND_DARKEN_TICKS);
 			syWordsFillEntry(
 				canvas, CANVAS_BYTES, CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			IO_WRITE_QUEUE_PUSH(
 				(Uint32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
-			for(i = 0; i != args->tgtCnt; i++) {
+			for(i = 0; i != args->targetCount; i++) {
 				EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);
 			}
-			sySndPlayStub(SE_CRASH);
-			state->shakeFrm = 16;
+			sySoundPlayStub(SE_CRASH);
+			state->shakeFrame = 16;
 		}
-		if(frm == AZUL_DAMAGE_TICK) {
+		if(frame == AZUL_DAMAGE_TICK) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
-		if(frm >= AZUL_BURST_TICK) {
+		if(frame >= AZUL_BURST_TICK) {
 			btCameraShake(8, 8);
 		} else {
 			btCameraShake(2, 2);
 		}
-		if(frm >= AZUL_BURST_TICK) {
+		if(frame >= AZUL_BURST_TICK) {
 			btEffectCountDownBattlerTints();
 		}
 		EFFECT_PRESENT_CANVAS(state);
@@ -860,7 +866,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectArmPaletteHBlankDMA);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	for(i = 0; i != AZUL_OBJECTS; i++) {
-		fdSprDestroyStub(state->sprs[i]);
+		fdSpriteDestroyStub(state->sprites[i]);
 	}
 	btEffectEndCanvasLayer();
 }
@@ -871,9 +877,9 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 UNUSED void btEffectPosAdvanceWithGravity3D(
 	PARTICLE *step, Sint32 damping, Sint32 gravity)
 {
-	Sint32 vx = step->velX;
-	Sint32 vy = step->velY;
-	Sint32 vz = step->velZ;
+	Sint32 vx = step->velocityX;
+	Sint32 vy = step->velocityY;
+	Sint32 vz = step->velocityZ;
 
 	step->x += vx;
 	step->y += vy;
@@ -888,13 +894,13 @@ UNUSED void btEffectPosAdvanceWithGravity2D(
 	PARTICLE *step, Sint32 damping, Sint32 gravity)
 {
 	Sint32 x = step->x;
-	Sint32 vx = step->velX;
-	Sint32 vy = step->velY;
+	Sint32 vx = step->velocityX;
+	Sint32 vy = step->velocityY;
 
 	step->x = x + vx;
 	step->y += vy;
-	step->velX = vx * damping / DAMPING_SCALE;
-	step->velY = (vy + gravity) * damping / DAMPING_SCALE;
+	step->velocityX = vx * damping / DAMPING_SCALE;
+	step->velocityY = (vy + gravity) * damping / DAMPING_SCALE;
 }
 
 /* Projects a 16.16 point onto the screen through the current transform, 16
@@ -908,7 +914,7 @@ Sint32 btEffectPosProjectPoint(const void *point, SCREEN_POINT *pos)
 
 /* Projects a unit's sprite onto the screen, raised by half its height, 16
    pixels higher. */
-void btEffectPosProjectSpr(Sint32 id, SCREEN_POINT *pos)
+void btEffectPosProjectSprite(Sint32 id, SCREEN_POINT *pos)
 {
 	btUnitProjectToScreen(id, syScreenPointCoordinates(pos));
 	pos->y -= 16;
@@ -935,10 +941,10 @@ void btEffectGetTargetsMidpoint(SCREEN_POINT *pos)
 	SCREEN_POINT		 first;
 	SCREEN_POINT		 last;
 
-	state = RamHeapSlots->battleEff;
-	btEffectPosProjectBattler(state->args->tgts[0], &first);
+	state = RamHeapSlots->battleEffect;
+	btEffectPosProjectBattler(state->args->targets[0], &first);
 	btEffectPosProjectBattler(
-		state->args->tgts[state->args->tgtCnt - 1], &last);
+		state->args->targets[state->args->targetCount - 1], &last);
 	pos->x = first.x + (last.x - first.x) / 2;
 	pos->y = first.y;
 	pos->depth = first.depth;

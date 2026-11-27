@@ -15,7 +15,7 @@ typedef struct PARCH_PUFF {
 	Sint32 sway;
 	Sint32 rise;
 	Sint32 swayRate;
-	Sint32 tmr;
+	Sint32 timer;
 } PARCH_PUFF;
 
 /* The puffs of steam Parch keeps, a power of two: the next wraps by a mask. */
@@ -61,7 +61,7 @@ typedef struct PARCH_STATE {
 	Sint32	   discY;
 	Sint32	   discScaleX;
 	Sint32	   discScaleY;
-	EFFECT_SPR sprs[PARCH_PUFF_COUNT];
+	EFFECT_SPR sprites[PARCH_PUFF_COUNT];
 	PARCH_PUFF particles[PARCH_PUFF_COUNT];
 } PARCH_STATE;
 
@@ -73,22 +73,22 @@ void fdBattleEffectFadeToSavedPalettes(Sint32 ticks);
 void fdPsynergyParch(void)
 {
 	PARCH_STATE *state =
-		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(PARCH_STATE));
+		syHeapSlotAllocate(HEAP_SLOT_BATTLE_EFFECT, sizeof(PARCH_STATE));
 	HEAP_SLOTS		   *heap;
-	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
-	WIN_STATE		   *winState = (WIN_STATE *)RamHeapSlots->winState;
-	Sint32				ofs; /* into the field state's actor list */
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffectState;
+	WIN_STATE		   *windowState = (WIN_STATE *)RamHeapSlots->windowState;
+	Sint32				offset; /* into the field state's actor list */
 	ACTOR			   *caster;
 	ACTOR			   *actor;
-	SPR				   *actorSpr;
-	EFFECT_SPR		   *spr;
+	SPR				   *actorSprite;
+	EFFECT_SPR		   *sprite;
 	EFFECT_SPR		   *fresh;
 	PARCH_PUFF		   *particle;
 	FIXED				screen[3];
 	FIXED				pos[3];
 	Sint32				phase;
-	Sint32				tmr;
-	Sint32				frm;
+	Sint32				timer;
+	Sint32				frame;
 	Sint32				entry;
 	Sint32				tile;
 	Sint32				next;
@@ -108,32 +108,33 @@ void fdPsynergyParch(void)
 	Sint32				add;
 	Sint32				packed;
 	Sint32				i;
-	Uint8			   *dst;
+	Uint8			   *dest;
 
 	caster = scene->caster;
 	found = -1;
 	fade = -1;
 	pending = NULL;
-	fdPsynergyFadeToCastCol();
+	fdPsynergyFadeToCastColor();
 	pos[0] = caster->x.fixed;
 	pos[1] = caster->y.fixed;
 	pos[2] = caster->z.fixed;
-	syVectorAddPolarOffset(toFIXED(32), scene->ang, pos);
+	syVectorAddPolarOffset(toFIXED(32), scene->angle, pos);
 
 	i = 0;
 	kind = SPRITE_PUDDLE;
 	heap = RamHeapSlots;
-	for(ofs = offsetof(FIELD_STATE, actors); i < FIELD_ACTOR_COUNT;
-		i++, ofs += sizeof(ACTOR *)) {
-		actor = *(ACTOR **)((Uint8 *)heap->fieldState + ofs);
-		actorSpr = actor->spr;
-		if(actor->script != NULL && actorSpr->entries[0]->anmId == kind &&
-			actorSpr->lastNo == PUDDLE_ANIMATION_PUDDLE &&
+	for(offset = offsetof(FIELD_STATE, actors); i < FIELD_ACTOR_COUNT;
+		i++, offset += sizeof(ACTOR *)) {
+		actor = *(ACTOR **)((Uint8 *)heap->fieldState + offset);
+		actorSprite = actor->sprite;
+		if(actor->script != NULL &&
+			actorSprite->entries[0]->animationId == kind &&
+			actorSprite->lastNo == PUDDLE_ANIMATION_PUDDLE &&
 			fdPsynergyCheckOverlap(
 				pos, 4, &actor->x.fixed, actor->radius - 2) >= 0) {
 			result = PARCH_DRIES;
 			found = i;
-			fdActorGetById(i)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
+			fdActorGetById(i)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 			goto loaded;
 		}
 	}
@@ -153,11 +154,11 @@ void fdPsynergyParch(void)
 	}
 loaded: {
 	void *src = syResourceGetTableEntry(RESOURCE_GLOW_DISC);
-	dst = (Uint8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
-		winState->glyphTiles * TILE_SIZE_4BPP;
+	dest = (Uint8 *)OBJ_VRAM0 + PARCH_DISC_TILE_OFFSET * TILE_SIZE_4BPP +
+		windowState->glyphTiles * TILE_SIZE_4BPP;
 	syDecompressTaggedLZ(src, state);
 }
-	syDMAXCopy(state, dst, DMA_COPY_WORDS(1024), REG_DMA3);
+	syDMAXCopy(state, dest, DMA_COPY_WORDS(1024), REG_DMA3);
 	screen[0] = pos[0];
 	screen[1] = pos[1];
 	screen[2] = pos[2];
@@ -171,28 +172,28 @@ loaded: {
 	tile = syVRAMCacheLoad(entry, 2048, state);
 	particle = state->particles;
 	for(i = 0; i < PARCH_PUFF_COUNT; i++) {
-		fresh = &state->sprs[i];
-		fdEffectSprInit(fresh, 8, 15, OBJ_SIZE_16X16, tile);
+		fresh = &state->sprites[i];
+		fdEffectSpriteInit(fresh, 8, 15, OBJ_SIZE_16X16, tile);
 		fresh->depth = EFFECT_SPRITE_FRONT_DEPTH;
-		fresh->oam.pri = 0;
-		fresh->oam.fullCol = 1;
-		fresh->oam.pal = 0;
-		particle->tmr = -1;
+		fresh->oam.priority = 0;
+		fresh->oam.fullColor = 1;
+		fresh->oam.palette = 0;
+		particle->timer = -1;
 		particle++;
 	}
-	sySndPlayStub(SE_PSYNERGY_START);
+	sySoundPlayStub(SE_PSYNERGY_START);
 	sySynch(1);
 	next = 0;
 	spawn = 0;
 	phase = PARCH_SWELLS;
-	tmr = 0;
-	frm = 0;
+	timer = 0;
+	frame = 0;
 	do {
 		for(i = spawn; i != 0; i--) {
 			Sint32 slot = next & (PARCH_PUFF_COUNT - 1);
-			spr = &state->sprs[slot];
-			spr->scaleX = toFIXED(1) / 5;
-			spr->scaleY = toFIXED(1) / 5;
+			sprite = &state->sprites[slot];
+			sprite->scaleX = toFIXED(1) / 5;
+			sprite->scaleY = toFIXED(1) / 5;
 			particle = &state->particles[slot];
 			SET_POSITION(particle, pos[0], pos[1], pos[2]);
 			syVectorAddPolarOffset(
@@ -200,36 +201,36 @@ loaded: {
 			particle->sway = syRandomBelow(32);
 			particle->swayRate = syRandomBelow(512) + 256;
 			particle->rise = syRandom() + toFIXED(1) / 5;
-			particle->tmr = 0;
+			particle->timer = 0;
 			next = (next + 1) & (PARCH_PUFF_COUNT - 1);
 		}
 		for(i = 0, particle = state->particles; i < PARCH_PUFF_COUNT;
 			i++, particle++) {
-			if(particle->tmr >= 0) {
+			if(particle->timer >= 0) {
 				Sint32 grown;
 
-				spr = &state->sprs[i];
-				spr->oam.idx = tile + ((particle->tmr >> 2) & 7) * 8;
-				grown = spr->scaleX + toFIXED(1) / 10;
+				sprite = &state->sprites[i];
+				sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
+				grown = sprite->scaleX + toFIXED(1) / 10;
 				/* DEAD: stored again after the clamp; the ROM keeps both
 				   stores. */
-				spr->scaleX = grown;
+				sprite->scaleX = grown;
 				if(grown > toFIXED(1))
 					grown = toFIXED(1);
-				spr->scaleX = grown;
-				spr->scaleY = grown;
+				sprite->scaleX = grown;
+				sprite->scaleY = grown;
 				screen[0] = particle->x;
 				screen[1] = particle->y;
 				screen[2] = particle->z;
 				fdCameraWorldToScreen(screen);
-				spr->x = screen[0] +
+				sprite->x = screen[0] +
 					(sySin(particle->sway * particle->swayRate) << 3);
-				spr->y = screen[2];
-				fdEffectSprDraw(spr);
+				sprite->y = screen[2];
+				fdEffectSpriteDraw(sprite);
 				particle->sway++;
 				particle->y += particle->rise;
-				if(++particle->tmr == 32)
-					particle->tmr = -1;
+				if(++particle->timer == 32)
+					particle->timer = -1;
 			}
 		}
 
@@ -238,9 +239,10 @@ loaded: {
 				add = 0;
 			else
 				add = fade / 4;
-			blue = sySin((frm / 2 + i) * (TRIG_TURN / 32)); /* green's sine */
+			blue = sySin((frame / 2 + i) * (TRIG_TURN / 32)); /* green's sine */
 			green = FIXEDtoINT(blue * GLOW_GREEN_SWING) + GLOW_GREEN;
-			blue = sySin((frm / 4 + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
+			blue =
+				sySin((frame / 4 + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
 			blue = FIXEDtoINT(blue * GLOW_BLUE_SWING) + GLOW_BLUE;
 			red = add + GLOW_RED;
 			if(red > RGB_LEVEL_MAX)
@@ -261,35 +263,36 @@ loaded: {
 		y = state->discY;
 		scaleX = state->discScaleX;
 		scaleY = state->discScaleY;
-		packed = winState->glyphTiles + PARCH_DISC_TILE_OFFSET;
-		spr = &state->disc;
-		fdEffectSprInit(spr, 31, 31, OBJ_SIZE_64X64, packed);
-		spr->oam.fullCol = 1;
-		spr->oam.pal = 0;
-		spr->oam.pri = fdPsynergyGetCanvasPriority(scene->caster, scene->ang);
-		spr->depth = 1;
-		spr->x = x;
-		spr->y = y;
-		spr->scaleX = scaleX;
-		spr->scaleY = scaleY;
-		fdEffectSprDraw(spr);
+		packed = windowState->glyphTiles + PARCH_DISC_TILE_OFFSET;
+		sprite = &state->disc;
+		fdEffectSpriteInit(sprite, 31, 31, OBJ_SIZE_64X64, packed);
+		sprite->oam.fullColor = 1;
+		sprite->oam.palette = 0;
+		sprite->oam.priority =
+			fdPsynergyGetCanvasPriority(scene->caster, scene->angle);
+		sprite->depth = 1;
+		sprite->x = x;
+		sprite->y = y;
+		sprite->scaleX = scaleX;
+		sprite->scaleY = scaleY;
+		fdEffectSpriteDraw(sprite);
 
 		if(result == PARCH_NOTHING) {
 			switch(phase) {
 			case PARCH_SWELLS:
-				if(tmr == 10)
-					sySndPlayStub(SE_PARCH);
+				if(timer == 10)
+					sySoundPlayStub(SE_PARCH);
 				state->discScaleX += toFIXED(3) / 256;
 				state->discScaleY = state->discScaleX;
 				if(state->discScaleX > toFIXED(0.25) - 1) {
 					phase = PARCH_HOLDS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_HOLDS:
-				if(tmr == 30) {
+				if(timer == 30) {
 					phase = PARCH_EMPTY_SHRINKS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_EMPTY_SHRINKS:
@@ -304,27 +307,27 @@ loaded: {
 		if(result == PARCH_WATER) {
 			switch(phase) {
 			case PARCH_SWELLS:
-				if(tmr == 30)
-					sySndPlayStub(SE_SPIN);
+				if(timer == 30)
+					sySoundPlayStub(SE_SPIN);
 				state->discScaleX += toFIXED(3) / 256;
 				state->discScaleY = state->discScaleX;
 				if(state->discScaleX > toFIXED(0.75) - 1) {
 					phase = PARCH_STEAMS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_STEAMS:
 				spawn = 2;
-				if(tmr == 40) {
+				if(timer == 40) {
 					phase = PARCH_STEAM_THINS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_STEAM_THINS:
 				spawn = 1;
-				if(tmr == 40) {
+				if(timer == 40) {
 					phase = PARCH_STEAM_SHRINKS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_STEAM_SHRINKS:
@@ -339,37 +342,37 @@ loaded: {
 		if(result == PARCH_DRIES) {
 			switch(phase) {
 			case PARCH_SWELLS:
-				if(tmr == 40)
-					sySndPlayStub(SE_SPIN);
+				if(timer == 40)
+					sySoundPlayStub(SE_SPIN);
 				state->discScaleX += toFIXED(3) / 256;
 				state->discScaleY = state->discScaleX;
 				if(state->discScaleX > toFIXED(0.75) - 1) {
 					phase = PARCH_STEAMS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_STEAMS:
-				if(tmr == 40) {
+				if(timer == 40) {
 					fade = 0;
 					fdPaletteFadeSetTarget(RGB_WHITE, 0);
 					fdPaletteFadeStartInterpolation(100);
 				}
 				spawn = 2;
-				if(tmr == 100) {
+				if(timer == 100) {
 					phase = PARCH_STEAM_THINS;
-					tmr = -1;
+					timer = -1;
 				}
 				break;
 			case PARCH_STEAM_THINS:
 				spawn = 1;
-				if(tmr == 80)
+				if(timer == 80)
 					phase = FIELD_PSYNERGY_FINISHED;
 				break;
 			}
 		}
 		sySynch(1);
-		tmr++;
-		frm++;
+		timer++;
+		frame++;
 	} while(phase != FIELD_PSYNERGY_FINISHED);
 
 	if(found != -1) {
@@ -379,24 +382,26 @@ loaded: {
 		fdActorSetHorizontalPosWithTerrain(found, 0, 0);
 	}
 	if(pending != NULL)
-		fdRunPsynergyScript(pending, scene->casterId, scene->tgtId);
+		fdRunPsynergyScript(pending, scene->casterId, scene->targetId);
 	syVRAMCacheFreeEntry(entry);
 	if(result == PARCH_DRIES)
 		fdBattleEffectFadeToSavedPalettes(100);
 	else
-		fdPsynergyFadeFromCastCol();
+		fdPsynergyFadeFromCastColor();
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 col);
+void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 color);
 
 /* Plots one pixel of the 128x64 canvas on a circle around its bottom middle
    (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
    upward. */
-void fdCanvasPlotPolarPixel(Sint32 unused, FIXED radius, Sint32 ang, Sint32 col)
+void fdCanvasPlotPolarPixel(
+	Sint32 unused, FIXED radius, Sint32 angle, Sint32 color)
 {
-	fdBattleEffectPlotCanvasPixel(63 - FIXEDtoINT(syMulFX(syCos(ang), radius)),
-		63 - FIXEDtoINT(syMulFX(sySin(ang), radius)), col);
+	fdBattleEffectPlotCanvasPixel(
+		63 - FIXEDtoINT(syMulFX(syCos(angle), radius)),
+		63 - FIXEDtoINT(syMulFX(sySin(angle), radius)), color);
 }
 
 extern const Uint16 ParchPictureTiles[];

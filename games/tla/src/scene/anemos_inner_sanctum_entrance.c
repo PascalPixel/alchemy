@@ -84,8 +84,8 @@ extern Sint32 AnemosInnerSanctumEntranceLightGrowsScript[];
 extern Sint32 AnemosInnerSanctumEntranceLightShrinksScript[];
 extern Sint32 AnemosInnerSanctumEntranceShadowScript[];
 extern Sint8  AnemosInnerSanctumEntranceBlockOrder[];
-void		  scAnemosInnerSanctumEntranceStartLightSprs(void);
-void		  scAnemosInnerSanctumEntranceSetLightPriority(Uint16 pri);
+void		  scAnemosInnerSanctumEntranceStartLightSprites(void);
+void		  scAnemosInnerSanctumEntranceSetLightPriority(Uint16 priority);
 void		  scAnemosInnerSanctumEntranceOpenTheWay(void);
 
 extern Sint32 AnemosInnerSanctumEntranceDragonStatueScript[];
@@ -96,7 +96,7 @@ Sint16 LightSpriteTile	BSS_DATA;
 Sint16 LightSpriteCount BSS_DATA;
 /* The actors that carry a glow, LightSpriteCount of them. */
 ACTOR *LightSpriteActors[16] BSS_DATA;
-/* The glows' sprite attributes, built each tick by scLightSprsDraw. */
+/* The glows' sprite attributes, built each tick by scLightSpritesDraw. */
 LIGHT_OAM									  LightSpriteOams[16] BSS_DATA;
 Sint16 LightSpritesLarge					  BSS_DATA;
 Sint16 LightSpritePriority					  BSS_DATA;
@@ -108,7 +108,7 @@ Sint16 AnemosInnerSanctumEntranceLightPicture BSS_DATA;
    shadow is no longer drawn. */
 Sint32 scAnemosInnerSanctumEntranceRemoveShadow(ACTOR *actor)
 {
-	fdActorSetSprFlags(actor, 0);
+	fdActorSetSpriteFlags(actor, 0);
 	return 0;
 }
 
@@ -166,16 +166,16 @@ void scAnemosInnerSanctumEntranceLightRises(void)
 {
 	ACTOR *actor = fdActorGetById(ACTOR_LIGHT);
 
-	actor->motionFlg = 0;
+	actor->motionFlags = 0;
 	actor->scaleX = toFIXED(1) / 4;
 	actor->scaleY = toFIXED(1) / 4;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
-	sySndPlay(SE_LIGHT_APPEAR);
-	fdActorSetSprCol(fdActorGetById(ACTOR_SHADOW), SPRITE_COLOR_WHITE);
-	fdActorSetSprCol(fdActorGetById(ACTOR_LIGHT), SPRITE_COLOR_WHITE);
+	sySoundPlay(SE_LIGHT_APPEAR);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_SHADOW), SPRITE_COLOR_WHITE);
+	fdActorSetSpriteColor(fdActorGetById(ACTOR_LIGHT), SPRITE_COLOR_WHITE);
 	fdScriptWait(20);
-	sySndPlay(SE_WARP);
+	sySoundPlay(SE_WARP);
 	fdActorPlaceOnActor(ACTOR_LIGHT, ACTOR_SHADOW);
 	sySynch(1);
 	fdActorSetMovementTypeById(
@@ -197,7 +197,7 @@ void scAnemosInnerSanctumEntrancePlaceBlocks(void)
 	for(i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
 		ACTOR *actor = fdActorGetById(i);
 
-		actor->sceneCnt = 1;
+		actor->sceneCount = 1;
 		actor->update = 0;
 	}
 }
@@ -208,9 +208,9 @@ void scAnemosInnerSanctumEntranceShadowByHeight(ACTOR *actor)
 {
 	if((actor->groundHeight = fdMapGetTerrainHeight(
 			0, actor->x.fixed, actor->z.fixed)) >= -toFIXED(32))
-		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+		fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 	else
-		fdActorSetSprFlags(actor, 0);
+		fdActorSetSpriteFlags(actor, 0);
 }
 
 extern Sint8 AnemosInnerSanctumEntranceBlockSpots[];
@@ -243,7 +243,7 @@ void scAnemosInnerSanctumEntranceMoveBlock(Sint32 unused, Sint32 block)
 		}
 	}
 	syGameFlagSet(FLAG_SYMBOLS_LIT);
-	sySndPlay(SE_ASCEND);
+	sySoundPlay(SE_ASCEND);
 	scAnemosInnerSanctumEntranceSetLightPicture(1);
 	scAnemosInnerSanctumEntrancePlaceBlocks();
 }
@@ -314,15 +314,15 @@ void scAnemosInnerSanctumEntranceOpenTheWay(void)
 	   AnemosInnerSanctumEntranceBlockOrder; BUGFIX stops at the sixth. */
 	do {
 		actor = fdActorGetById(AnemosInnerSanctumEntranceBlockOrder[i]);
-		actor->motionFlg = 0;
+		actor->motionFlags = 0;
 		actor->y.fixed += toFIXED(1) / 2;
 		actor->acceleration = toFIXED(1) / 16;
 		actor->speedLimit = toFIXED(2);
-		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
+		fdActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
 		fdActorSetMoveTarget(
 			actor, actor->x.fixed, -toFIXED(8), actor->z.fixed);
 		actor->update = scAnemosInnerSanctumEntranceShadowByHeight;
-		sySndPlay(SE_JUMP);
+		sySoundPlay(SE_JUMP);
 		sySynch((syRandomBelow(4)) + 3);
 #if FIX_ANEMOS_BLOCK_HOP_OVERRUN
 	} while(++i < 6);
@@ -330,7 +330,7 @@ void scAnemosInnerSanctumEntranceOpenTheWay(void)
 	} while(++i <= 6);
 #endif
 	sySynch(40);
-	sySndPlay(SE_KOLIMA_BRIDGE_POST);
+	sySoundPlay(SE_KOLIMA_BRIDGE_POST);
 	for(i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
 		actor = fdActorGetById(i);
 		{
@@ -344,11 +344,11 @@ void scAnemosInnerSanctumEntranceOpenTheWay(void)
 	for(i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
 		actor = fdActorGetById(i);
 		actor->z.fixed = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-		actor->motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+		actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 		actor->update = 0;
 	}
 	sySynch(3);
-	sySndPlay(SE_THUMP);
+	sySoundPlay(SE_THUMP);
 	sySynch(10);
 	if(!syGameFlagGet(FLAG_DULLAHAN_BEATEN) && shift > 0)
 		scAnemosInnerSanctumEntranceShadowChallenges();
@@ -379,25 +379,30 @@ Sint32 scInit(void)
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	if(MainRoutineStateWork.next ==
 		(Sint32)&SceneIdAnemosInnerSanctumEntrance) {
-		scAnemosInnerSanctumEntranceStartLightSprs();
+		scAnemosInnerSanctumEntranceStartLightSprites();
 		scAnemosInnerSanctumEntranceSetLightPriority(2);
-		/* scLightSprsAdd, defined below, is called with no prototype in
+		/* scLightSpritesAdd, defined below, is called with no prototype in
 		   scope. */
-		scLightSprsAdd(ACTOR_SYMBOL_BLOCK_A, 0);
-		scLightSprsAdd(ACTOR_SYMBOL_BLOCK_B, 1);
-		scLightSprsAdd(ACTOR_SYMBOL_BLOCK_C, 2);
-		scLightSprsAdd(ACTOR_SYMBOL_BLOCK_D, 3);
-		scLightSprsAdd(ACTOR_SYMBOL_BLOCK_E, LIGHT_SPRITE_MIRRORED | 0);
-		scLightSprsAdd(ACTOR_SYMBOL_BLOCK_F, LIGHT_SPRITE_MIRRORED | 1);
-		fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
+		scLightSpritesAdd(ACTOR_SYMBOL_BLOCK_A, 0);
+		scLightSpritesAdd(ACTOR_SYMBOL_BLOCK_B, 1);
+		scLightSpritesAdd(ACTOR_SYMBOL_BLOCK_C, 2);
+		scLightSpritesAdd(ACTOR_SYMBOL_BLOCK_D, 3);
+		scLightSpritesAdd(ACTOR_SYMBOL_BLOCK_E, LIGHT_SPRITE_MIRRORED | 0);
+		scLightSpritesAdd(ACTOR_SYMBOL_BLOCK_F, LIGHT_SPRITE_MIRRORED | 1);
+		fdActorGetById(MainRoutineStateWork.leaderActorId)->priorityFlags |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-		fdActorGetById(ACTOR_SYMBOL_BLOCK_A)->priFlg |=
+		fdActorGetById(ACTOR_SYMBOL_BLOCK_A)->priorityFlags |=
 			ACTOR_PRIORITY_WALKS_ON_PLATFORMS | ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_SYMBOL_BLOCK_B)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_SYMBOL_BLOCK_C)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_SYMBOL_BLOCK_D)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_SYMBOL_BLOCK_E)->priFlg |= ACTOR_PRIORITY_PLATFORM;
-		fdActorGetById(ACTOR_SYMBOL_BLOCK_F)->priFlg |= ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_SYMBOL_BLOCK_B)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_SYMBOL_BLOCK_C)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_SYMBOL_BLOCK_D)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_SYMBOL_BLOCK_E)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
+		fdActorGetById(ACTOR_SYMBOL_BLOCK_F)->priorityFlags |=
+			ACTOR_PRIORITY_PLATFORM;
 		if(syGameFlagGet(FLAG_SYMBOLS_LIT)) {
 			scAnemosInnerSanctumEntranceSetLightPicture(1);
 			scAnemosInnerSanctumEntrancePlaceBlocks();
@@ -419,7 +424,7 @@ Sint32 scPrepareMap(void)
 
 /* Draws each listed actor's glow: a small 16-pixel glow on its tick, or, in
    the large mode, a 32 by 64 one. */
-void scLightSprsDraw(void)
+void scLightSpritesDraw(void)
 {
 	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX, viewZ, picture, tile, viewY;
@@ -428,7 +433,7 @@ void scLightSprsDraw(void)
 
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
-	tile = VramCacheEntries[LightSpriteTile].ofs >> 5;
+	tile = VramCacheEntries[LightSpriteTile].offset >> 5;
 	viewY = map->origin[1];
 	oam = LightSpriteOams;
 	picture = AnemosInnerSanctumEntranceLightPicture *
@@ -447,7 +452,7 @@ void scLightSprsDraw(void)
 			Uint32 *word;
 
 			if(mode == 0) {
-				Sint32 frm = actor->tmr;
+				Sint32 frame = actor->timer;
 				Sint32 pixelX = FIXEDtoINT(screenX);
 				Sint32 pixelY = FIXEDtoINT(screenY);
 				screenX = pixelX - 8;
@@ -460,18 +465,18 @@ void scLightSprsDraw(void)
 				word = (Uint32 *)oam;
 				*word++ = 0;
 				*word++ = screenY | OBJ_X(screenX) |
-					(frm & LIGHT_SPRITE_MIRRORED) *
+					(frame & LIGHT_SPRITE_MIRRORED) *
 						(OBJ_HFLIP / LIGHT_SPRITE_MIRRORED) |
 					OBJ_SIZE_16X16 | OBJ_256_COLORS;
-				*word = (tile + picture + (frm & 7) * 8) | OBJ_PRIORITY(2);
+				*word = (tile + picture + (frame & 7) * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
-					oam->pri = fdActorGetSprPriority(actor);
+					oam->priority = fdActorGetSpritePriority(actor);
 				else
-					oam->pri = LightSpritePriority;
-				syOAMAddSprAtDepthClamped(oam, depth);
+					oam->priority = LightSpritePriority;
+				syOAMAddSpriteAtDepthClamped(oam, depth);
 				oam++;
 			} else {
-				Sint32 frm = actor->tmr;
+				Sint32 frame = actor->timer;
 				Sint32 pixelX = FIXEDtoINT(screenX);
 				Sint32 pixelY = FIXEDtoINT(screenY);
 				screenX = pixelX - 8;
@@ -485,12 +490,12 @@ void scLightSprsDraw(void)
 				*word++ = 0;
 				*word++ =
 					screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
-				*word = (tile + frm * 8) | OBJ_PRIORITY(2);
+				*word = (tile + frame * 8) | OBJ_PRIORITY(2);
 				if(LightSpritePriority == -1)
-					oam->pri = fdActorGetSprPriority(actor);
+					oam->priority = fdActorGetSpritePriority(actor);
 				else
-					oam->pri = LightSpritePriority;
-				syOAMAddSprAtDepthClamped(oam, depth);
+					oam->priority = LightSpritePriority;
+				syOAMAddSpriteAtDepthClamped(oam, depth);
 				oam++;
 			}
 		}
@@ -501,16 +506,16 @@ void scLightSprsDraw(void)
 
 /* Sets up the glow sprites from the field engine's cached tiles D, with no
    picture row chosen yet. */
-void scAnemosInnerSanctumEntranceStartLightSprs(void)
+void scAnemosInnerSanctumEntranceStartLightSprites(void)
 {
-	Uint8 *buf = syHeapCallAlternatePool(syHeapAlloc, 6144);
+	Uint8 *buf = syHeapCallAlternatePool(syHeapAllocate, 6144);
 
 	syWordsClearEntry(LightSpriteActors, sizeof(LightSpriteActors));
 	syDecompressTaggedLZ(FieldCachedTilesD, buf);
 	LightSpriteTile = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(LightSpriteTile, 6144, buf);
 	syHeapRelease(buf);
-	sySetEvent(scLightSprsDraw, EVENT_PASS_TICK);
+	sySetEvent(scLightSpritesDraw, EVENT_PASS_TICK);
 	LightSpriteCount = 0;
 	LightSpritesLarge = 0;
 	LightSpritePriority = -1;
@@ -519,12 +524,12 @@ void scAnemosInnerSanctumEntranceStartLightSprs(void)
 
 /* Gives actor `id` a glow: `glow` is its tick, with LIGHT_SPRITE_MIRRORED to
    draw it mirrored. */
-void scLightSprsAdd(Sint32 id, Sint32 glow)
+void scLightSpritesAdd(Sint32 id, Sint32 glow)
 {
 	ACTOR *actor = fdActorGetById(id);
 
 	if(actor != NULL) {
-		actor->tmr = glow;
+		actor->timer = glow;
 		LightSpriteActors[LightSpriteCount] = actor;
 		LightSpriteCount++;
 	}

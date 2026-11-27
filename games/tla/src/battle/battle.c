@@ -26,7 +26,7 @@
 
 /* The view battle_turn.c keeps ends here; the parts below see the name as its
    header declares it. */
-#undef gmUnitCalcStub
+#undef gmUnitCalculateStub
 
 #include "battle_motion_graphics.c"
 #include "battle_strongest_unit.c"

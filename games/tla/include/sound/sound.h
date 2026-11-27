@@ -1,7 +1,7 @@
 #ifndef ALCHEMY_SOUND_H
 #define ALCHEMY_SOUND_H
 
-/* The game's sound: sySndPlay and the music's volume and tempo ramps
+/* The game's sound: sySoundPlay and the music's volume and tempo ramps
    (sound_play.c), the sound test and the heard-sound flags (sound_test.c), over
    the development kit's sound driver (sdk/sound_driver.h). */
 
@@ -16,76 +16,76 @@ void m4aSoundMain(void);
 /* Starts the sound driver at power-on: no music, the volume and tempo ramps at
    rest, no player's last sound, and the fixed 31536 Hz output rate. As The
    Broken Seal's, but here no music is MUS_SILENCE, sound 0. */
-void sySndInit(void);
+void sySoundInit(void);
 /* Plays a sound number, the game's one way of playing a sound: a fade control,
    a sound effect, a jingle or music, as The Broken Seal's with this game's
    ranges (enum SoundControl). Every sound is first marked as heard
-   (sySndFlagSet), and none plays while the tick wait runs the driver's
+   (sySoundFlagSet), and none plays while the tick wait runs the driver's
    update. */
-void sySndPlay(Sint32 id);
+void sySoundPlay(Sint32 id);
 /* Runs the sound driver's VBlank work: the DMA restart count The Broken Seal's
-   sySndUpdateBGMRamps ran at its end. Reached through the stub call slot that
+   sySoundUpdateBGMRamps ran at its end. Reached through the stub call slot that
    function had. */
-void sySndVSync(void);
+void sySoundVSync(void);
 /* Sets the BGM tempo scale directly; BGM_UNITY_SCALE preserves its native
    tempo. */
-void sySndSetBGMTempo(Uint16 tempoScale);
+void sySoundSetBGMTempo(Uint16 tempoScale);
 /* Applies a pitch offset, in 1/256 semitone, to the music's tracks 0 to 7. */
-void sySndSetBGMPitch(Uint16 pitch);
+void sySoundSetBGMPitch(Uint16 pitch);
 /* Sets the target and per-VBlank step of the combined BGM tempo/pitch ramp
    (BGM_UNITY_SCALE the music's own). */
-void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step);
+void sySoundSetBGMTempoPitchTarget(Uint16 targetScale, Uint16 step);
 /* Sets BGM volume (BGM_UNITY_SCALE full) immediately and cancels any
    outstanding volume ramp. */
-void sySndSetBGMVolume(Sint16 volume);
+void sySoundSetBGMVolume(Sint16 volume);
 /* Sets the BGM volume target (BGM_UNITY_SCALE full) and its per-VBlank step. */
-void sySndSetBGMVolumeTarget(Uint16 tgtVolume, Uint16 step);
+void sySoundSetBGMVolumeTarget(Uint16 targetVolume, Uint16 step);
 /* Returns nonzero while a jingle holds the music: from its start until its
    player falls silent and the music begins to fade back in. */
-Uint8 sySndGetBGMRestoreDelay(void);
+Uint8 sySoundGetBGMRestoreDelay(void);
 /* Unused: the sound test, which never returns. Up and Down choose a selector
    (music, jingles, sound effects), Left and Right step its sound by 1 and L and
    R by 10, A plays it, B silences the music and Start fades it, and Select
    fades the action sounds and steps the reverb code, from SOUND_REVERB_LONG,
-   which this game's sySndLoadReverbCode ignores. */
-void sySndTestRun(void);
+   which this game's sySoundLoadReverbCode ignores. */
+void sySoundTestRun(void);
 /* Stops every sound player while preserving its state for a later resume. */
-void sySndStopAllMusicPlayers(void);
+void sySoundStopAllMusicPlayers(void);
 /* Resumes every player, each from where m4aMPlayAllStop stopped it. */
-void sySndResumeAllMusicPlayers(void);
+void sySoundResumeAllMusicPlayers(void);
 /* Unused: replaces SoundCommandMask, or flips the bits named with
    AUDIO_COMMAND_TOGGLE. Nothing calls it and nothing reads the mask. */
-void sySndUpdateCommandMask(Uint32 command);
-/* Returns the music sySndPlay last started: MUS_SILENCE before any and after a
-   fade. */
-Uint16 sySndGetCurrentBGM(void);
+void sySoundUpdateCommandMask(Uint32 command);
+/* Returns the music sySoundPlay last started: MUS_SILENCE before any and after
+   a fade. */
+Uint16 sySoundGetCurrentBGM(void);
 /* Waits until a jingle has ended and the music has begun to come back, giving
    up after BGM_WAIT_TIMEOUT_TICKS. */
-void sySndWaitForBGMRestore(void);
+void sySoundWaitForBGMRestore(void);
 /* Stops the sound DMA and its timer; the soft reset calls it first. */
-void sySndSuspendDirectSnd(void);
+void sySoundSuspendDirectSound(void);
 /* Restores BGM after a jingle and steps its volume and combined tempo/pitch
    ramps once per frame, clamping each ramp when it crosses its target, as The
-   Broken Seal's without the DMA restart count (sySndVSync here). */
-void sySndUpdateBGMRamps(void);
-/* Returns sound `snd`'s bit in SoundFlags, one bit for each of the
+   Broken Seal's without the DMA restart count (sySoundVSync here). */
+void sySoundUpdateBGMRamps(void);
+/* Returns sound `sound`'s bit in SoundFlags, one bit for each of the
    SOUND_FLAG_COUNT sound ids. */
-Bool sySndFlagTest(Sint32 snd);
-/* Sets sound `snd`'s bit in SoundFlags. */
-void sySndFlagSet(Sint32 snd);
-/* Clears sound `snd`'s bit in SoundFlags. */
-void sySndFlagClear(Sint32 snd);
+Bool sySoundFlagTest(Sint32 sound);
+/* Sets sound `sound`'s bit in SoundFlags. */
+void sySoundFlagSet(Sint32 sound);
+/* Clears sound `sound`'s bit in SoundFlags. */
+void sySoundFlagClear(Sint32 sound);
 /* Unused: does nothing; the stub table exports it. */
-void sySndNoOperation(void);
+void sySoundNoOperation(void);
 
-Sint32 sySndGetReverbCode(Sint32 snd);
+Sint32 sySoundGetReverbCode(Sint32 sound);
 
 /* Returns nonzero while a jingle holds the music. */
-Sint32 sySndGetBGMRestoreDelayStub(void);
+Sint32 sySoundGetBGMRestoreDelayStub(void);
 
 /* The three sounds the sound test's selectors start on. */
 typedef struct SND_TEST_SNDS {
-	Sint32 snd[3];
+	Sint32 sound[3];
 } SND_TEST_SNDS;
 
 enum {
@@ -99,12 +99,12 @@ enum {
 	MUSIC_PLAYER_COUNT = 8, /* MusicPlayerLastSound's entries, one a player. */
 	/* Frames after a jingle starts before the music waits for it to end. */
 	BGM_RESTORE_DELAY_FRAMES = 10,
-	/* sySndWaitForBGMRestore gives up after this many ticks, about five
+	/* sySoundWaitForBGMRestore gives up after this many ticks, about five
 	   seconds. */
 	BGM_WAIT_TIMEOUT_TICKS = 300
 };
 
-void sySndSetFixedSampleFreq(Uint32 mode);
+void sySoundSetFixedSampleFrequency(Uint32 mode);
 
 /* The byte `member` of the sound driver's state `info` (struct SoundInfo), read
    through SoundInfoPointer's bytes without the struct's volatile. */

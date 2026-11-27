@@ -17,7 +17,7 @@ void fdBattleEffectFadeToSavedPalettes(Sint32 ticks)
 /* Fades the palettes back from a cast's colours to the saved ones over 8
    ticks; while Reveal is active the BG half fades to Reveal's grey instead
    (PALETTE_TINT_GRAYSCALE). */
-void fdPsynergyFadeFromCastCol(void)
+void fdPsynergyFadeFromCastColor(void)
 {
 	fdStartPaletteTransition(8);
 }
@@ -56,13 +56,13 @@ void fdBattleEffectUpdateAllEffectSlots(void)
 	FIELD_EFFECT_STATE *scene;
 	Sint32				i;
 
-	scene = RamHeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffectState;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
 		fdParticleUpdate(&scene->particles[i]);
 }
 
 /* Prepares the state of the field Psynergy for ability (heap slot
-   fieldEffState): its kind, the free VRAM it starts with, the map's shake to
+   fieldEffectState): its kind, the free VRAM it starts with, the map's shake to
    restore, and whether the place is lit. While another field Psynergy is
    resolving, only the ability and kind are set. */
 void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
@@ -73,10 +73,10 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	Sint32				running;
 
 	if(event->psynergyActing == 0) {
-		state = syHeapSlotAlloc(HEAP_SLOT_FIELD_EFFECT, sizeof(*state));
+		state = syHeapSlotAllocate(HEAP_SLOT_FIELD_EFFECT, sizeof(*state));
 		IWRAM_FILL_WORDS(state, sizeof(*state), 0);
 	} else {
-		state = RamHeapSlots->fieldEffState;
+		state = RamHeapSlots->fieldEffectState;
 	}
 	state->ability = abilityId;
 	state->fieldPsynergy = gmAbilityGetDirectStub(abilityId)->fieldPsynergy;
@@ -91,8 +91,8 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	state->msgMode = 1;
 	state->msgShown = 0;
 	state->stage = running;
-	state->frm = -1;
-	state->sprActive = running;
+	state->frame = -1;
+	state->spriteActive = running;
 	state->savedShakeX = map->shakeX;
 	state->savedShakeY = map->shakeY;
 	state->savedShakeDecay = map->shakeDecay;
@@ -113,56 +113,56 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 		state->lit = 1;
 	fdPsynergySetupActorPair(MainRoutineStateWork.leaderActorId, -1);
 	if(state->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
-		event->effTmrRunning = 0;
+		event->effectTimerRunning = 0;
 	if(state->fieldPsynergy != FIELD_PSYNERGY_RING)
-		event->ringTmrRunning = 0;
-	event->tgtX = 0;
-	event->tgtY = 0;
-	event->tgtZ = 0;
+		event->ringTimerRunning = 0;
+	event->targetX = 0;
+	event->targetY = 0;
+	event->targetZ = 0;
 	event->blazeLongSpray = 0;
-	event->psynergyHitObj = -1;
+	event->psynergyHitObject = -1;
 	fdBattleEffectStartArcEffect();
 	sySetEvent(fdBattleEffectUpdateAllEffectSlots, EVENT_PASS_TICK);
 }
 
 /* Records the caster and the target of a field Psynergy. */
-void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
+void fdPsynergySetupActorPair(Sint32 userId, Sint32 targetId)
 {
 	ACTOR			   *user;
-	ACTOR			   *tgt;
+	ACTOR			   *target;
 	FIELD_EFFECT_STATE *scene;
 
-	scene = RamHeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffectState;
 	scene->casterId = userId;
 	user = fdActorLookup((Sint16)userId);
-	scene->tgtId = tgtId;
+	scene->targetId = targetId;
 	scene->caster = user;
-	tgt = fdActorLookup((Sint16)tgtId);
+	target = fdActorLookup((Sint16)targetId);
 	/* The facing rounded to four directions, and to eight. */
-	scene->ang = (user->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
-	scene->ang8 = (user->facing + FACING_STEP) & TRIG_TURN * 7 / 8;
-	scene->tgt = tgt;
+	scene->angle = (user->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+	scene->angle8 = (user->facing + FACING_STEP) & TRIG_TURN * 7 / 8;
+	scene->target = target;
 	if(user != NULL) {
-		Uint8 priFlg;
+		Uint8 priorityFlags;
 
-		priFlg = user->priFlg;
+		priorityFlags = user->priorityFlags;
 
-		scene->savedPriFlg = priFlg;
-		scene->savedSprPri = ((SPR *)user->spr)->image.pri;
+		scene->savedPriorityFlags = priorityFlags;
+		scene->savedSpritePriority = ((SPR *)user->sprite)->image.priority;
 	}
-	if(tgt != NULL) {
+	if(target != NULL) {
 		/* Save target motion and colors for later restoration. */
-		scene->savedFunc = tgt->update;
-		scene->savedScript = tgt->script;
-		scene->savedPal = ((SPR *)tgt->spr)->entries[0]->colMode;
-		scene->x = tgt->x.fixed;
-		scene->z = tgt->z.fixed;
-		scene->y = tgt->y.fixed;
+		scene->savedCallback = target->update;
+		scene->savedScript = target->script;
+		scene->savedPalette = ((SPR *)target->sprite)->entries[0]->colorMode;
+		scene->x = target->x.fixed;
+		scene->z = target->z.fixed;
+		scene->y = target->y.fixed;
 	} else {
 		scene->x = user->x.fixed;
 		scene->z = user->z.fixed;
 		scene->y = user->y.fixed;
-		syVectorAddPolarOffset(toFIXED(16), scene->ang, &scene->x);
+		syVectorAddPolarOffset(toFIXED(16), scene->angle, &scene->x);
 	}
 }
 
@@ -172,20 +172,20 @@ void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
    (ANIM_CAST_PSYNERGY_END) and keeps its glow. */
 void fdPsynergyStartCast(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *event = RamHeapSlots->fieldState;
 	ACTOR			   *actor = state->caster;
 	Sint32				ability = state->ability;
 
 	fdActorSelectAnimationStub(actor, ANIM_CAST_PSYNERGY_START);
-	actor->tgtX = actor->x.fixed;
-	actor->velX = 0;
-	actor->tgtY = actor->y.fixed;
-	actor->velY = 0;
-	actor->tgtZ = actor->z.fixed;
-	actor->velZ = 0;
+	actor->targetX = actor->x.fixed;
+	actor->velocityX = 0;
+	actor->targetY = actor->y.fixed;
+	actor->velocityY = 0;
+	actor->targetZ = actor->z.fixed;
+	actor->velocityZ = 0;
 	if(state->flashCaster != 0) {
-		sySndPlayStub(SE_POWER_UP);
+		sySoundPlayStub(SE_POWER_UP);
 		fdBattleEffectSetObjectUpdateMode(actor, CASTER_LOOK_FLASHING_WHITE);
 	}
 	if(state->announceName != 0) {
@@ -210,7 +210,7 @@ void fdPsynergyStartCast(void)
 /* Takes the caster out of its casting update and waits a tick. */
 void fdBattleEffectStopMainActor(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 
 	fdBattleEffectSetObjectUpdateMode(state->caster, CASTER_LOOK_NORMAL);
 	sySynch(1);
@@ -221,9 +221,9 @@ void fdBattleEffectStopMainActor(void)
    restores the map's shake and releases the state. */
 void fdPsynergyEnd(void)
 {
-	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffectState;
 	FIELD_STATE		   *event = RamHeapSlots->fieldState;
-	PALETTE_FADE	   *fade = RamHeapSlots->palFade;
+	PALETTE_FADE	   *fade = RamHeapSlots->paletteFade;
 	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	ACTOR			   *owner = state->caster;
 	Sint32				i;
@@ -254,19 +254,19 @@ void fdPsynergyEnd(void)
 		}
 	}
 	event->castStarted = 0;
-	fdPsynergyReleaseSceneSpr();
+	fdPsynergyReleaseSceneSprite();
 	syCloseEvent(fdBattleEffectUpdateAllEffectSlots);
 	map->shakeX = state->savedShakeX;
 	map->shakeY = state->savedShakeY;
 	map->shakeDecay = state->savedShakeDecay;
 	if(owner != NULL) {
-		owner->priFlg = state->savedPriFlg;
-		((SPR *)owner->spr)->image.pri = state->savedSprPri;
+		owner->priorityFlags = state->savedPriorityFlags;
+		((SPR *)owner->sprite)->image.priority = state->savedSpritePriority;
 	}
 	if(state->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
-		event->effTmrRunning = 1;
+		event->effectTimerRunning = 1;
 	if(state->fieldPsynergy != FIELD_PSYNERGY_RING)
-		event->ringTmrRunning = 1;
+		event->ringTimerRunning = 1;
 	fdScriptNoOperation();
 	syHeapSlotRelease(HEAP_SLOT_FIELD_EFFECT);
 }
@@ -286,18 +286,18 @@ void fdPsynergyMarkWorldMapTilesUsed(void)
    (HEAP_SLOT_MIND_READ): a hue taken from the tick count, the field faded
    toward it, the message window greyed for thoughts, and
    fdPsynergyUpdateMindReadWave run each tick. */
-void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId)
+void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 targetId)
 {
 	MIND_READ_STATE *state;
 
-	state = syHeapSlotAllocEWRAM(HEAP_SLOT_MIND_READ, sizeof(*state));
+	state = syHeapSlotAllocateEWRAM(HEAP_SLOT_MIND_READ, sizeof(*state));
 	DMA_FILL32(0, state, sizeof(*state));
 	state->hue = (TickCount * 2) % HUE_DEGREES;
 	state->srcId = casterId;
-	state->tgtId = tgtId;
+	state->targetId = targetId;
 	state->delay = 8;
-	state->cnt = 0;
-	fdPsynergyFadeToCastCol();
+	state->count = 0;
+	fdPsynergyFadeToCastColor();
 	fdMindReadAdvanceTint();
 	fdPaletteFadeSetTarget(
 		RGB(state->red, state->green, state->blue) | PALETTE_TINT_CUSTOM,
@@ -315,9 +315,9 @@ void fdPsynergyStopMindReadWave(void)
 
 	fdPsynergyRestoreMindReadPalette();
 	syCloseEvent(fdPsynergyUpdateMindReadWave);
-	fdActorSetLayersColMode(
+	fdActorSetLayersColorMode(
 		fdActorGetById(state->srcId), SPRITE_COLOR_NORMAL + 1);
-	fdPsynergyFadeFromCastCol();
+	fdPsynergyFadeFromCastColor();
 	syHeapSlotRelease(HEAP_SLOT_MIND_READ);
 }
 
@@ -330,7 +330,7 @@ void fdPsynergyGreyMindReadPalette(void)
 {
 	volatile Uint16 *p;
 
-	((WIN_STATE *)RamHeapSlots->winState)->mindRead = 1;
+	((WIN_STATE *)RamHeapSlots->windowState)->mindRead = 1;
 	p = &BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE);
 	*p = MIND_READ_GREY;
 	p += 2;
@@ -359,14 +359,14 @@ void fdPsynergyGreyMindReadPalette(void)
 /* Stops the BG0 line scroll and restores WINDOW_PALETTE. */
 void fdPsynergyRestoreMindReadPalette(void)
 {
-	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->windowState;
 
 	syCloseEvent((EVENT_FUNC)fdMindReadStartRipple);
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE) = RGB_WHITE;
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK) = RGB(0, 0, 0);
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_DARK_GREY) = RGB(10, 10, 10);
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_LIGHT_GREY) = RGB(20, 20, 20);
-	mnWindowColApplyStub(
-		MainRoutineStateWork.winHue, MainRoutineStateWork.winBrightness);
+	mnWindowColorApplyStub(
+		MainRoutineStateWork.windowHue, MainRoutineStateWork.windowBrightness);
 	state->mindRead = 0;
 }

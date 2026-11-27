@@ -27,25 +27,25 @@ void VENT_BOUNCE(ACTOR *actor)
 {
 	VENT_WORK *state = VENT_STATE;
 	ACTOR	  *other = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIXED	   velX = actor->bounce;
-	FIXED	   velZ;
-	SPR		  *spr;
+	FIXED	   velocityX = actor->bounce;
+	FIXED	   velocityZ;
+	SPR		  *sprite;
 	Sint32	   i;
 
-	actor->x.fixed += velX;
+	actor->x.fixed += velocityX;
 	actor->y.fixed += actor->gravity;
-	velZ = actor->sceneWord;
-	actor->z.fixed += velZ;
-	actor->bounce = velX - velX / 18;
-	actor->sceneWord = velZ - velZ / 16;
+	velocityZ = actor->sceneWord;
+	actor->z.fixed += velocityZ;
+	actor->bounce = velocityX - velocityX / 18;
+	actor->sceneWord = velocityZ - velocityZ / 16;
 	actor->scaleX += actor->speedLimit;
-	spr = actor->spr;
+	sprite = actor->sprite;
 	{
 		Sint32 scaleStepY = actor->acceleration;
 
 		actor->scaleY += scaleStepY;
 	}
-	spr->rotation += actor->tmr;
+	sprite->rotation += actor->timer;
 	/* Meeting an actor turns a quarter of the z velocity into y velocity. */
 	if(other->y.fixed == other->groundHeight && VENT_TOUCHING(actor, other)) {
 		actor->z.fixed -= actor->sceneWord;

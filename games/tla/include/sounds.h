@@ -9,7 +9,7 @@
    which plays nothing, has no name, and the next named row's number is written
    after it. A sound effect is named for what it sounds like; one that no code,
    table or actor script plays has UNUSED in its name. Four rows are controls no
-   sound plays from. sySndPlay tests the controls first, then the ranges: from
+   sound plays from. sySoundPlay tests the controls first, then the ranges: from
    SOUND_SE_FIRST to SOUND_SE_END on the player its SongTable row names, from
    SOUND_JINGLE_FIRST jingles, music otherwise (sound_driver_symbols.h). */
 

@@ -16,7 +16,7 @@ typedef struct FIELD_BLEND_STATE {
 	Sint16 to[1344];	/* the lit colours (PALETTE_TINT_PALE), as from */
 	Sint16 delta[1344]; /* the 12-tick steps from to back to from */
 	/* Ticks to the next flash; below 0 stops the lightning. */
-	Sint16 tmr;
+	Sint16 timer;
 	/* Nonzero arms the next flash a random 51 to 549 ticks after each, with a
 	   thunderclap. */
 	Sint16 enabled;
@@ -27,7 +27,7 @@ typedef struct FIELD_BLEND_STATE {
 STATIC_ASSERT(sizeof(FIELD_BLEND_STATE) == 8072);
 STATIC_ASSERT(offsetof(FIELD_BLEND_STATE, to) == 2688);
 STATIC_ASSERT(offsetof(FIELD_BLEND_STATE, delta) == 5376);
-STATIC_ASSERT(offsetof(FIELD_BLEND_STATE, tmr) == 8064);
+STATIC_ASSERT(offsetof(FIELD_BLEND_STATE, timer) == 8064);
 STATIC_ASSERT(offsetof(FIELD_BLEND_STATE, loud) == 8068);
 
 #endif

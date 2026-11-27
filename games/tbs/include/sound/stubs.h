@@ -5,12 +5,12 @@
    update each frame. */
 
 void   m4aSoundMainStub(void);
-void   sySndInitStub(void);
-void   sySndPlayStub(Sint32 id);
-void   sySndUpdateBGMRampsStub(void);
-void   sySndSetBGMTempoStub(Uint16 tempoScale);
-Sint32 sySndGetBGMRestoreDelayStub(void);
-Sint32 sySndGetCurrentBGMStub(void);
-void   sySndWaitForBGMRestoreStub(void);
+void   sySoundInitStub(void);
+void   sySoundPlayStub(Sint32 id);
+void   sySoundUpdateBGMRampsStub(void);
+void   sySoundSetBGMTempoStub(Uint16 tempoScale);
+Sint32 sySoundGetBGMRestoreDelayStub(void);
+Sint32 sySoundGetCurrentBGMStub(void);
+void   sySoundWaitForBGMRestoreStub(void);
 
 #endif

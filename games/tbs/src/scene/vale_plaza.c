@@ -895,7 +895,7 @@ static void scValePlazaBlowAwayThirdIvy(void)
 Sint32 scInit(void)
 {
 	ACTOR *actor;
-	Sint32 flag;
+	Sint32 flg;
 	FIXED  verticalScale;
 
 	if(gmFlagGet(FLAG_VALE_FIRST_IVY_BLOWN_AWAY) != 0) {
@@ -937,8 +937,8 @@ Sint32 scInit(void)
 			fdWeatherStartRain();
 			fdWeatherStartLightning();
 			fdMapGridCopyMetatileAttributes(21, 38, 1, 1, 18, 41);
-			flag = gmFlagGet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
-			if(flag != 0) {
+			flg = gmFlagGet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
+			if(flg != 0) {
 				fdActorSetPos(ACTOR_STORM_FIRST_AIDE, 0, 0);
 				fdActorSetPos(ACTOR_STORM_SECOND_AIDE, 0, 0);
 				syFieldActorWatchAndStartScript(ACTOR_STORM_GARETS_GRANDFATHER,

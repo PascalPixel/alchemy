@@ -234,7 +234,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8				*sheet;
 	BATTLE_CAMERA		*camera;
 	MOTION_OBJECT		*tgt;
-	MOTION_OBJECT		*source;
+	MOTION_OBJECT		*src;
 	Sint32				 resource;
 	Sint32				 i;
 
@@ -664,7 +664,7 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		/* DEAD: a loop that runs once, for the user; the ROM keeps its counter,
 		   its test against 1 and its branch back. */
 		for(k = 0; k != 1; k++) {
-			source = btObjectGetStub(args->user)->obj;
+			src = btObjectGetStub(args->user)->obj;
 
 			/* Wisps of smoke rise and spread for SMOKE_PUFF_TICKS. */
 			if(TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
@@ -736,10 +736,9 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						btParticleAdvanceWithGravity3D(mote, 60, 0);
 						mote->variant++;
 						if(mote->variant > TARGET_STRIKE_MOTE_FLIGHT_TICKS) {
-							Sint32 dx = (source->x - mote->x) >> 8;
-							Sint32 dy =
-								(source->y - mote->y + toFIXED(20)) >> 8;
-							Sint32 dz = (source->z - mote->z) >> 8;
+							Sint32 dx = (src->x - mote->x) >> 8;
+							Sint32 dy = (src->y - mote->y + toFIXED(20)) >> 8;
+							Sint32 dz = (src->z - mote->z) >> 8;
 
 							mote->velX += dx;
 							mote->velY += dy;

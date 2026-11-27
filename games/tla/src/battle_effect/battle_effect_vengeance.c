@@ -1496,20 +1496,20 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 {
 	Uint8				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Uint8				*sprites;
-	Uint8				*cellBuffer = MapGridMetatileBuffer;
+	Uint8				*sprs;
+	Uint8				*cellBuf = MapGridMetatileBuffer;
 	/* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE blit[2];
 	POINT2_D	   grid;
 	Sint32		   skip;
-	Uint16		  *table;
+	Uint16		  *tbl;
 	Sint32		   tick;
 	Sint32		   i;
 	Sint32		   k;
 	Sint32		   y;
 	Sint32		   lift;
-	Sint32		   color;
+	Sint32		   col;
 	Sint32		   scale;
 	Sint32		   shade;
 	Sint32		   rise;
@@ -1523,12 +1523,12 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT  bubbleScreen;
 	MODEL_TEXTURE texture;
 	MODEL_TEXTURE washTexture;
-	SPR			 *sprite;
+	SPR			 *spr;
 	PARTICLE	 *bubble;
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
 	btEffectFillWhiteBand();
@@ -1543,16 +1543,16 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 	zero = 0;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	blit[0] = Ram_HeapSlots->ramCode;
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	table = state->backdropLines;
+	tbl = state->backdropLines;
 	lift = -8;
-	color = 0;
+	col = 0;
 	for(i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
-		*table++ = color;
+		*tbl++ = col;
 	}
-	FILL_GRADIENT(table, i, lift, color);
+	FILL_GRADIENT(tbl, i, lift, col);
 	sySetEvent(btEffectArmPaletteHBlankDMA, EVENT_PASS_VBLANK + 126);
 	skip = 0;
 	btMeshBuildCylinderBand(
@@ -1563,26 +1563,25 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 		Uint8 *tiles = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
 
 		syWordsCopy((void *)OBJ_PLTT, tiles, OBJ_PLTT_SIZE);
-		syDecompressTaggedLZ(tiles + OBJ_PLTT_SIZE, cellBuffer);
+		syDecompressTaggedLZ(tiles + OBJ_PLTT_SIZE, cellBuf);
 		{
 			Uint8 *cells;
 
 			i = 0;
 			cells = MapGridMetatileBuffer;
 			for(; i != COATLICUE_SPRITES; cells += OBJ_32X32_8BPP_BYTES, i++) {
-				sprite = btEffectSprCreateWithTiles(
+				spr = btEffectSprCreateWithTiles(
 					32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
-				sprite->image.pri = 2;
-				state->sprs[i] = sprite;
+				spr->image.pri = 2;
+				state->sprs[i] = spr;
 				syWordsCopy(
-					(void *)OBJ_TILES(sprite), cells, OBJ_32X32_8BPP_BYTES);
+					(void *)OBJ_TILES(spr), cells, OBJ_32X32_8BPP_BYTES);
 			}
 		}
 	}
 	btGraphicsLoadGreyRamp();
-	btResourceLoadAndDecompress(RESOURCE_COG_TEXTURE, cellBuffer, 0, 0);
-	btPictureMirrorIntoQuadrants(
-		cellBuffer, state->sheet + COATLICUE_COG, 64, 64);
+	btResourceLoadAndDecompress(RESOURCE_COG_TEXTURE, cellBuf, 0, 0);
+	btPictureMirrorIntoQuadrants(cellBuf, state->sheet + COATLICUE_COG, 64, 64);
 	btResourceLoadAndDecompress(
 		RESOURCE_SCALE_TEXTURE, state->sheet + COATLICUE_SCALES, 0, 0);
 	{
@@ -1593,7 +1592,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 			state->sheet[COATLICUE_DIM_BUBBLE_PICTURES + i] = src[i] >> 1;
 		}
 	}
-	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cellBuffer, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, cellBuf, 0, 0);
 	IO_WRITE_QUEUE_PUSH((Uint32)&REG_DISPCNT,
 		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
 			DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON,
@@ -1683,9 +1682,9 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 			if(brightness > 8) {
 				brightness = 8;
 			}
-			color = 0;
+			col = 0;
 			for(i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
-				*row++ = color;
+				*row++ = col;
 			}
 			if(tick > 539) {
 				brightness = (tick - 540) / 2 + 8;
@@ -1701,7 +1700,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			i = BATTLE_VIEW_TOP - 1;
-			FILL_GRADIENT(row, i, brightness, color);
+			FILL_GRADIENT(row, i, brightness, col);
 		}
 		/* From tick 282 every sprite colour is one cyan, brightening: her
 		   silhouette. */
@@ -1709,7 +1708,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 			Sint32	green = (tick - 282) / 2 + 14;
 			Uint16 *dst = (Uint16 *)OBJ_PLTT;
 			Sint32	blue = tick - 253;
-			Uint32	color;
+			Uint32	col;
 
 			if(green > RGB_LEVEL_MAX) {
 				green = RGB_LEVEL_MAX;
@@ -1718,16 +1717,16 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 				blue = RGB_LEVEL_MAX;
 			}
 			i = 0;
-			color = RGB(0, green, blue);
+			col = RGB(0, green, blue);
 			for(; i != OBJ_PLTT_SIZE / 2; i++) {
-				*dst++ = color;
+				*dst++ = col;
 			}
 		}
 		/* From tick 300 every sprite colour steps two levels a tick toward
 		   Coatlicue's own, lifted by redLift, greenLift and blueLift: first to
 		   white, then to a pale cyan, then to her colours. */
 		if(tick > 299) {
-			Uint16 *source = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
+			Uint16 *src = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
 			Uint16 *dst = (Uint16 *)OBJ_PLTT;
 			Sint32	redLift = RGB_LEVEL_MAX;
 			Sint32	greenLift = RGB_LEVEL_MAX;
@@ -1743,13 +1742,13 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 				greenLift = 0;
 				blueLift = 0;
 			}
-			for(i = 0; i != OBJ_PLTT_SIZE / 2; i++, source++, dst++) {
+			for(i = 0; i != OBJ_PLTT_SIZE / 2; i++, src++, dst++) {
 				Sint32 blue = RGB_BLUE(*dst);
 				Sint32 green = RGB_GREEN(*dst);
 				Sint32 red = RGB_RED(*dst);
-				Sint32 goalBlue = RGB_BLUE(*source) + blueLift;
-				Sint32 goalGreen = RGB_GREEN(*source) + greenLift;
-				Sint32 goalRed = RGB_RED(*source) + redLift;
+				Sint32 goalBlue = RGB_BLUE(*src) + blueLift;
+				Sint32 goalGreen = RGB_GREEN(*src) + greenLift;
+				Sint32 goalRed = RGB_RED(*src) + redLift;
 
 				if(blue < goalBlue - 1) {
 					blue += 2;
@@ -1790,20 +1789,20 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 		/* From tick 520 her colours brighten, red fastest and blue slowest. */
 		if(tick > 519) {
 			Sint32	lift = tick - 520;
-			Uint16 *source = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
+			Uint16 *src = syResourceGetTableEntry(RESOURCE_COATLICUE_TILES);
 			Uint16 *dst = (Uint16 *)OBJ_PLTT;
 			Sint32	half;
 
 			i = 0;
 			half = lift / 2;
-			for(; i != OBJ_PLTT_SIZE / 2; i++, source++, dst++) {
+			for(; i != OBJ_PLTT_SIZE / 2; i++, src++, dst++) {
 				Sint32 blue;
 				Sint32 green;
 				Sint32 red;
 
-				red = RGB_RED(*source) + lift;
-				green = RGB_GREEN(*source) + half;
-				blue = RGB_BLUE(*source) + lift / 4;
+				red = RGB_RED(*src) + lift;
+				green = RGB_GREEN(*src) + half;
+				blue = RGB_BLUE(*src) + lift / 4;
 
 				if(red > RGB_LEVEL_MAX) {
 					red = RGB_LEVEL_MAX;
@@ -2156,7 +2155,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 			   294. */
 			if((Uint32)(tick - 274) <= 27) {
 				scale = (tick - 266) * (toFIXED(1) / 32);
-				texture.pixels = cellBuffer;
+				texture.pixels = cellBuf;
 				model->kind = MODEL_SHADED_ADDITIVE;
 				shade = 0;
 				if(tick > 293) {
@@ -2220,7 +2219,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 						tick < CoatlicueFlashTicks[i] + 10) {
 						Sint32 d = tick - CoatlicueFlashTicks[i];
 						scale = toFIXED(5) / 4 - d * (toFIXED(1) / 8);
-						texture.pixels = cellBuffer;
+						texture.pixels = cellBuf;
 						model->kind = MODEL_SHADED_ADDITIVE;
 						shade = d * COATLICUE_FLASH_SHADE_STEP +
 							COATLICUE_FLASH_SHADE;

@@ -2498,7 +2498,7 @@ void scWorldMapUpdateTransitionBlend(void)
    rumbles and shakes the ground. */
 void scWorldMapPlayLighthouseTransition(Sint32 mode)
 {
-	Uint8 *buffer;
+	Uint8 *buf;
 
 	syWait(1);
 	fdScriptClearFlag(FLAG_KEEP_PARTY_POSITION);
@@ -2512,14 +2512,14 @@ void scWorldMapPlayLighthouseTransition(Sint32 mode)
 		fdScriptPlaySnd(SE_RUMBLE);
 	}
 	fdWorldMapFreeze();
-	buffer = syHeapAllocEWRAM(16384);
-	syDecompressTaggedLZ(WorldMapPackedTiles, buffer);
+	buf = syHeapAllocEWRAM(16384);
+	syDecompressTaggedLZ(WorldMapPackedTiles, buf);
 	syDecompressTaggedLZ(
-		WorldMapPackedPictures, buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
+		WorldMapPackedPictures, buf + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
 		(Uint32)(WorldMapPalettes + mode * PALETTE_COLORS * 2),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS));
-	IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (Uint32)buffer,
+	IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (Uint32)buf,
 		DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
 	sySetTickEvent(scWorldMapUpdateTransitionBlend, EVENT_PASS_TICK);
 	fdScriptStart();
@@ -2592,7 +2592,7 @@ void scWorldMapPlayLighthouseTransition(Sint32 mode)
 		scQueueIOWrite16((Uint32)&REG_BLDALPHA, WorldMapBlend);
 		scQueueIOWrite16((Uint32)&REG_BLDCNT, 0);
 	}
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 	fdScriptSetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 

@@ -177,13 +177,13 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 	{
 		Uint8 *cells = state->sheet + AZUL_BLUE_BEAM;
 		Uint8 *dst;
-		Sint32 count;
+		Sint32 cnt;
 
 		btResourceLoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, cells, 1, 1);
 		i = 0;
-		count = PICTURE_BYTES(AZUL_BUBBLE);
+		cnt = PICTURE_BYTES(AZUL_BUBBLE);
 		dst = state->sheet + AZUL_BUBBLE;
-		for(; i != count; i++) {
+		for(; i != cnt; i++) {
 			*dst++ = *cells;
 			cells += 2;
 		}

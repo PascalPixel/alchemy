@@ -28,17 +28,17 @@ typedef struct SOLID_FACE {
 	{ \
 		Sint32 left = FIXEDtoINT(xa); \
 		Sint32 right = FIXEDtoINT(xb); \
-		Sint32 rowOffset; \
+		Sint32 rowOfs; \
 		Sint32 x; \
 \
 		if(left > right) \
 			XOR_SWAP(left, right); \
-		rowOffset = CANVAS_ROW_OFFSET(row); \
+		rowOfs = CANVAS_ROW_OFFSET(row); \
 		for(x = left; x != right; x++) { \
-			Sint32 pixel = ((x >> 3) << 6) + (x & 7) + rowOffset; \
+			Sint32 pixel = ((x >> 3) << 6) + (x & 7) + rowOfs; \
 \
-			if(canvas[pixel] < color) \
-				canvas[pixel] = color; \
+			if(canvas[pixel] < col) \
+				canvas[pixel] = col; \
 		} \
 	}
 
@@ -60,7 +60,7 @@ UNUSED void btRenderFillMesh(Sint32 vertexCnt, Sint32 faceCnt)
 	Sint32 (*mul)(Sint32, Sint32);
 	FIXED  slopeA, slopeB;
 	Sint32 top, middle, bottom;
-	Uint8  color;
+	Uint8  col;
 	FIXED  edgeA, edgeB;
 	Sint32 row;
 
@@ -89,7 +89,7 @@ UNUSED void btRenderFillMesh(Sint32 vertexCnt, Sint32 faceCnt)
 		   away. */
 		facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
 		if(facing >= 0) {
-			color = faces[i].col;
+			col = faces[i].col;
 			*ax += toFIXED(64);
 			*ay += toFIXED(64);
 			*bx += toFIXED(64);
@@ -162,7 +162,7 @@ typedef struct MESH_POLYGON {
 	{ \
 		Uint8 *row = state->sheet; \
 		Sint32 left, right, u, v; \
-		Sint32 rowOffset; \
+		Sint32 rowOfs; \
 		Sint32 x; \
 \
 		row += ((FIXEDtoINT(vA)) << textureShift) + (FIXEDtoINT(uA)); \
@@ -172,11 +172,11 @@ typedef struct MESH_POLYGON {
 		v = 0; \
 		if(left > right) \
 			XOR_SWAP(left, right); \
-		rowOffset = CANVAS_ROW_OFFSET(y); \
+		rowOfs = CANVAS_ROW_OFFSET(y); \
 		for(x = left; x != right; x++) { \
 			Sint32 texel = \
 				(FIXEDtoINT(u)) + ((FIXEDtoINT(v)) << textureShift); \
-			Sint32 at = ((x >> 3) << 6) + (x & 7) + rowOffset; \
+			Sint32 at = ((x >> 3) << 6) + (x & 7) + rowOfs; \
 \
 			if(canvas[at] < row[texel]) \
 				canvas[at] = row[texel]; \
@@ -870,17 +870,17 @@ RENDER_MODEL *btRenderAllocateModelList(Sint32 cnt)
 
 /* Copies a texture's pixels into a heap block when IWRAM has room for them;
    returns 1 with copy set up, 0 when there is no room. */
-Bool btRenderCopyTextureToIWRAM(TEXTURE *source, TEXTURE *copy)
+Bool btRenderCopyTextureToIWRAM(TEXTURE *src, TEXTURE *copy)
 {
-	Sint32 size = (1 << source->logWidth) << source->logHeight;
+	Sint32 size = (1 << src->logWidth) << src->logHeight;
 	Uint32 pixels;
 	Sint32 misalign;
 
 	if(syHeapGetRemainingIWRAM() < size + 8)
 		return FALSE;
-	*(Uint16 *)copy = *(Uint16 *)source;
+	*(Uint16 *)copy = *(Uint16 *)src;
 	copy->pixels = syHeapAlloc(size + 8);
-	pixels = (Uint32)source->pixels;
+	pixels = (Uint32)src->pixels;
 	misalign = pixels & 3;
 	syWordsCopyEntry(
 		copy->pixels, (void *)(pixels - misalign), (size + misalign + 3) & -4);

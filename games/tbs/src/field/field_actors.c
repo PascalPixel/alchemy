@@ -322,9 +322,9 @@ void fdActorStartScript(ACTOR *actor, const Sint32 *script)
 	void name(actor_type rawActor, Sint32 value) \
 	{ \
 		ACTOR *actor; \
-		void **sprites; \
+		void **sprs; \
 		Sint32 part; \
-		void  *sprite; \
+		void  *spr; \
 \
 		actor = rawActor; \
 		if(actor != 0) { \
@@ -333,11 +333,11 @@ void fdActorStartScript(ACTOR *actor, const Sint32 *script)
 				apply(actor->spr, value); \
 				break; \
 			case ACTOR_SPRITE_GROUP: \
-				sprites = (void **)actor->spr; \
+				sprs = (void **)actor->spr; \
 				for(part = 0; part < 4; part++) { \
-					sprite = *sprites++; \
-					if(sprite != 0) \
-						apply(sprite, value); \
+					spr = *sprs++; \
+					if(spr != 0) \
+						apply(spr, value); \
 				} \
 				break; \
 			} \

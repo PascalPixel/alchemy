@@ -880,11 +880,11 @@ void scKandoreanTempleCastLash(void)
 #define DEFINE_KANDOREAN_TEMPLE_VENT(name, blowing, period, x, z, strength) \
 	void name(void) \
 	{ \
-		Sint32 position[3]; \
+		Sint32 pos[3]; \
 \
 		if(blowing != 0 && TickCount % period == 0) { \
-			SET_VECTOR(position, x, 0, z); \
-			scKandoreanTempleBlowSteam(position, strength); \
+			SET_VECTOR(pos, x, 0, z); \
+			scKandoreanTempleBlowSteam(pos, strength); \
 		} \
 	}
 
@@ -1043,7 +1043,7 @@ typedef enum VENT_TICK {
 	pillarOnOther) \
 	void name(void) \
 	{ \
-		Sint32 *timer = &timerVar; \
+		Sint32 *tmr = &timerVar; \
 		ACTOR  *cover; \
 		ACTOR  *leader; \
 		Uint16 *phase; \
@@ -1052,7 +1052,7 @@ typedef enum VENT_TICK {
 		Sint32	last; \
 		Sint32	t; \
 \
-		t = *timer; \
+		t = *tmr; \
 		if(t < VENT_BLOW) { \
 			if(isBlocked() != 0) \
 				return; \
@@ -1067,7 +1067,7 @@ typedef enum VENT_TICK {
 			if(t <= last) { \
 				cover = fdActorGetById(coverId); \
 				raised = syGameFlagGet(pillarOnOther); \
-				t = *timer; \
+				t = *tmr; \
 				if(raised) { \
 					if(t <= VENT_RISE_END) { \
 						cover->y.fixed += toFIXED(9) / 2; \
@@ -1082,7 +1082,7 @@ typedef enum VENT_TICK {
 						scKandoreanTempleGrowColumn(foot, 0, limit); \
 					} else if(t < VENT_FLOAT_END) { \
 						if(syGameFlagGet(onLift) && \
-							*timer == VENT_CARRY_LEADER) { \
+							*tmr == VENT_CARRY_LEADER) { \
 							fdMapGridCopyMetatileAttributes( \
 								carryMetatile, 0, 1, 1, metatileX, metatileZ); \
 							syCloseEvent(name); \
@@ -1094,7 +1094,7 @@ typedef enum VENT_TICK {
 						phase = &phaseVar; \
 						if(*phase == 0) { \
 							blowingVar = 0; \
-							*timer = VENT_SINK - 1; \
+							*tmr = VENT_SINK - 1; \
 							syGameFlagClear(blowingFlag); \
 						} \
 						cover->y.fixed += sySin(*phase) >> 1; \
@@ -1111,7 +1111,7 @@ typedef enum VENT_TICK {
 							lower, toFIXED(3) / 4, limit); \
 						scKandoreanTempleShrinkColumn(foot, 0, limit); \
 						if(fdActorGetById(foot)->scaleY <= limit) \
-							*timer = last; \
+							*tmr = last; \
 					} \
 				} else { \
 					if(t <= VENT_RISE_END) { \
@@ -1129,7 +1129,7 @@ typedef enum VENT_TICK {
 						phase = &phaseVar; \
 						if(*phase == 0) { \
 							blowingVar = 0; \
-							*timer = VENT_SINK - 1; \
+							*tmr = VENT_SINK - 1; \
 							syGameFlagClear(blowingFlag); \
 						} \
 						cover->y.fixed += sySin(*phase) >> 1; \
@@ -1143,7 +1143,7 @@ typedef enum VENT_TICK {
 							upper, toFIXED(3) / 4, limit); \
 						scKandoreanTempleShrinkColumn(middle, 0, limit); \
 						if(fdActorGetById(middle)->scaleY <= limit) \
-							*timer = last; \
+							*tmr = last; \
 					} \
 				} \
 				if(syGameFlagGet(onLift)) { \
@@ -1182,9 +1182,9 @@ typedef enum VENT_TICK {
 \
 				if(none != 0) \
 					return; \
-				*timer += syRandomBelow(128); \
-				if((Uint32)*timer > (syRandomBelow(10000)) + 10000) \
-					*timer = none; \
+				*tmr += syRandomBelow(128); \
+				if((Uint32)*tmr > (syRandomBelow(10000)) + 10000) \
+					*tmr = none; \
 			} \
 		} \
 		timerVar++; \
@@ -1238,9 +1238,9 @@ typedef enum LIFT_TICK {
 	{ \
 		ACTOR  *lift = fdActorGetById(liftId); \
 		ACTOR  *base = fdActorGetById(columnId); \
-		Sint32 *timer = &timerVar; \
+		Sint32 *tmr = &timerVar; \
 \
-		if(*timer == LIFT_RISE) { \
+		if(*tmr == LIFT_RISE) { \
 			fdQueueMusic(SE_WAVE); \
 			scFieldActorSetPosAndResetMotion(fdActorGetById(liftId), \
 				toFIXED(x), toFIXED(LIFT_SUNK_HEIGHT), toFIXED(z)); \
@@ -1252,7 +1252,7 @@ typedef enum LIFT_TICK {
 			base->scaleY = toFIXED(1) / 64; \
 			fdActorSetAnimationById(liftId, 0); \
 			fdActorSetAnimationById(columnId, 2); \
-		} else if(*timer > LIFT_RISE && *timer < LIFT_RISEN) { \
+		} else if(*tmr > LIFT_RISE && *tmr < LIFT_RISEN) { \
 			lift->y.fixed += toFIXED(4); \
 			scKandoreanTempleGrowColumn(columnId, toFIXED(0.3), toFIXED(0.3)); \
 			if(lift->y.fixed > -toFIXED(5)) \
@@ -1260,23 +1260,23 @@ typedef enum LIFT_TICK {
 			if(lift->y.fixed >= 0) { \
 				fdMapGridCopyMetatileAttributes( \
 					0, 0, 1, 1, metatileX, metatileZ); \
-				*timer = LIFT_RISEN; \
+				*tmr = LIFT_RISEN; \
 			} \
-		} else if(*timer < LIFT_SINK) { \
+		} else if(*tmr < LIFT_SINK) { \
 			Uint16 *phase = &phaseVar; \
 \
 			lift->y.fixed += sySin(*phase) >> 1; \
 			*phase += TRIG_TURN / 16; \
-			if(*timer == LIFT_WALL_OFF) \
+			if(*tmr == LIFT_WALL_OFF) \
 				fdMapGridCopyMetatileAttributes( \
 					metatileX, (metatileZ) - 2, 1, 1, metatileX, metatileZ); \
-			if(*timer > LIFT_FLOAT_END && *phase == 0) { \
+			if(*tmr > LIFT_FLOAT_END && *phase == 0) { \
 				if(syGameFlagGet(onLift)) { \
 					fdMapGridCopyMetatileAttributes( \
 						carryMetatile, 0, 1, 1, metatileX, metatileZ); \
 					syCloseEvent(name); \
 				} else { \
-					*timer = LIFT_SINK; \
+					*tmr = LIFT_SINK; \
 				} \
 			} \
 		} else { \
@@ -2457,10 +2457,10 @@ void scKandoreanTempleSinkIntoTheSteam(void)
 		fdActorSetSprPriority(liftId, 2); \
 		fdActorSetSprPriority(columnId, 3); \
 		{ \
-			Uint8 *flags = &second->priFlg; \
-			Sint32 c = ACTOR_PRIORITY_UNDERFOOT | *flags; \
+			Uint8 *flg = &second->priFlg; \
+			Sint32 c = ACTOR_PRIORITY_UNDERFOOT | *flg; \
 \
-			*flags = c; \
+			*flg = c; \
 		} \
 		second->scaleY = toFIXED(1) / 64; \
 		fdActorSetAnimationById(liftId, 4); \

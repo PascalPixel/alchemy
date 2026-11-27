@@ -83,7 +83,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	Sint16		  *circles;
 	SCREEN_POINT   middle;
 	FIXED		   placement[4];
-	SCALE		   source;
+	SCALE		   src;
 	MODEL_TEXTURE  texture;
 	RENDER_MODEL  *model;
 	void		  *vertices;
@@ -234,7 +234,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 			/* DEAD: always true, as rise is at most 0; the ROM keeps the
 			   test. */
 			if(visible > 0) {
-				source = TridentUnitScale;
+				src = TridentUnitScale;
 				placement[3] = 0;
 				placement[1] = toFIXED(255);
 				for(i = 0; i != TRIDENT_SPRITES; i++) {
@@ -242,7 +242,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 					placement[2] =
 						INTtoFIXED(rise + 40 + i * TRIDENT_SPRITE_HEIGHT);
 					fdRenderApplyProjectedPlacementStub(
-						state->sprs[i], placement, (Sint32 *)&source, 0);
+						state->sprs[i], placement, (Sint32 *)&src, 0);
 				}
 			}
 		}

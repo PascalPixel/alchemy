@@ -614,10 +614,10 @@ Sint16 speed;
 	for(i = 0; i != SPARK_RING_STEPS;) {
 		ACTOR *orb =
 			(scFieldActorCreate(SPRITE_PARTICLE, x, y, toFIXED(TORCH_ROW_Z)));
-		Sint32 angle = i * (TRIG_TURN / SPARK_RING_STEPS);
+		Sint32 ang = i * (TRIG_TURN / SPARK_RING_STEPS);
 
-		syFieldVectorAddPolarOffset(32, angle, &orb->x.fixed);
-		orb->tmr = angle;
+		syFieldVectorAddPolarOffset(32, ang, &orb->x.fixed);
+		orb->tmr = ang;
 		orb->userValue = speed;
 		orb->sceneCnt = i;
 		orb->sceneByte = palette;

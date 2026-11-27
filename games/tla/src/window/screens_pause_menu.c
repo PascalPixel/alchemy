@@ -41,16 +41,16 @@ again:
 }
 
 /* Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the `width` x
-   `height` tile rectangle at (x, y) inside `window`, clipped to the screen: bit
+   `height` tile rectangle at (x, y) inside `win`, clipped to the screen: bit
    12 is the lowest bit of the entry's palette number, so this switches the
    rectangle between two palettes, such as 15 and 14. Nothing calls it. */
-UNUSED void mnWindowSetTextTileBitRect(const WINDOW *window, Sint32 x, Sint32 y,
+UNUSED void mnWindowSetTextTileBitRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 set)
 {
 	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
 
-	x += window->x + 1;
-	y += window->y + 1;
+	x += win->x + 1;
+	y += win->y + 1;
 	set &= 1;
 	set = BG_TILE_PALETTE(set);
 	if(x < 0) {

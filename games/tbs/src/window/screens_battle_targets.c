@@ -28,7 +28,7 @@
    stands against it instead. */
 #define TARGET_HELP_COLUMN(back, windowWidth) \
 	{ \
-		Sint32 anchor = selectedPosition.x / 8; \
+		Sint32 anchor = selectedPos.x / 8; \
 \
 		helpColumn = anchor - (back); \
 		if(anchor + (windowWidth) - (back) > DISPLAY_TILE_WIDTH - 1) \
@@ -40,7 +40,7 @@
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 #define TARGET_CONDITION_LIST_WINDOW() \
 	{ \
-		Sint32 anchor = selectedPosition.x / 8; \
+		Sint32 anchor = selectedPos.x / 8; \
 \
 		helpColumn = anchor - 7; \
 		if(syGetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) { \
@@ -48,23 +48,23 @@
 				DISPLAY_TILE_WIDTH - 1) \
 				helpColumn = \
 					DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH_SPANISH; \
-			conditionWindow = mnWindowCreate(helpColumn, helpRow, \
-				TARGET_CONDITION_LIST_WIDTH_SPANISH, count + 2, \
+			conditionWin = mnWindowCreate(helpColumn, helpRow, \
+				TARGET_CONDITION_LIST_WIDTH_SPANISH, cnt + 2, \
 				MENU_WINDOW_FLAGS); \
 		} else { \
 			if(anchor + TARGET_CONDITION_LIST_WIDTH - 7 > \
 				DISPLAY_TILE_WIDTH - 1) \
 				helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH; \
-			conditionWindow = mnWindowCreate(helpColumn, helpRow, \
-				TARGET_CONDITION_LIST_WIDTH, count + 2, MENU_WINDOW_FLAGS); \
+			conditionWin = mnWindowCreate(helpColumn, helpRow, \
+				TARGET_CONDITION_LIST_WIDTH, cnt + 2, MENU_WINDOW_FLAGS); \
 		} \
 	}
 #else
 #define TARGET_CONDITION_LIST_WINDOW() \
 	{ \
 		TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH); \
-		conditionWindow = mnWindowCreate(helpColumn, helpRow, \
-			TARGET_CONDITION_LIST_WIDTH, count + 2, MENU_WINDOW_FLAGS); \
+		conditionWin = mnWindowCreate(helpColumn, helpRow, \
+			TARGET_CONDITION_LIST_WIDTH, cnt + 2, MENU_WINDOW_FLAGS); \
 	}
 #endif
 
@@ -127,7 +127,7 @@ Sint32 mnBattleTargetRunSelection(
 	SCREEN_POINT	 actorPos;
 	Uint16			 spreadActorIds[UNIT_MAX];
 	Uint8			 spreadTrackIndices[8];
-	SCREEN_POINT	 selectedPosition;
+	SCREEN_POINT	 selectedPos;
 	Uint16			 tgtName[UNIT_NAME_SIZE];
 	SCREEN_POINT	 namePos;
 	SCREEN_POINT	 markerPos;
@@ -135,7 +135,7 @@ Sint32 mnBattleTargetRunSelection(
 	UNIT			*unit;
 	BATTLE_STATE	*battle;
 	WINDOW			*win;
-	WINDOW			*conditionWindow;
+	WINDOW			*conditionWin;
 	Sint32			 tgtIdx;
 	Sint32			 tgtCnt;
 	Sint32			 candidateCnt;
@@ -146,7 +146,7 @@ Sint32 mnBattleTargetRunSelection(
 	Sint32			 found;
 	Sint32			 helpColumn;
 	Sint32			 helpRow;
-	Sint32			 count;
+	Sint32			 cnt;
 	Sint32			 i;
 	Sint32			 j;
 	Sint32			 n;
@@ -166,7 +166,7 @@ Sint32 mnBattleTargetRunSelection(
 	tgtCnt = 0;
 	redraw = TARGET_REDRAW_ALL;
 	cursorSlot = syVRAMCacheAllocEntry(256);
-	conditionWindow = NULL;
+	conditionWin = NULL;
 	if(spread == 0)
 		spread = 1;
 	if(mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
@@ -276,7 +276,7 @@ Sint32 mnBattleTargetRunSelection(
 			if(t == 0)
 				t = 0;
 			btMotionProjectCursorPointStub(
-				*(Uint16 *)((Uint8 *)candidateIds + t), &selectedPosition);
+				*(Uint16 *)((Uint8 *)candidateIds + t), &selectedPos);
 		}
 		/* The cursor: 32 ticks (256 bytes each), a tick every four ticks,
 		   bobbing 2 pixels each way every 16 ticks. */
@@ -284,35 +284,34 @@ Sint32 mnBattleTargetRunSelection(
 		((Sint32 *)firstSpr)[2] = 0;
 		firstSpr->tile = syVRAMCacheReload(cursorSlot,
 			(((TickCount >> 2) & 31) << 8) + (Sint32)Menu_AnimatedCursorTiles);
-		selectedPosition.y += CURSOR_BOB_Y();
-		y = selectedPosition.y;
+		selectedPos.y += CURSOR_BOB_Y();
+		y = selectedPos.y;
 		/* Ease halfway each tick; the other markers show once the cursor is
 		   within 7 pixels of its target. */
 		if(cursorTracks[0].flg & CURSOR_EASING) {
-			cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
+			cursorX = (selectedPos.x + cursorTracks[0].x) / 2;
 			cursorY = (y + cursorTracks[0].y) / 2;
-			if((selectedPosition.x - cursorX < 0
-					   ? -(selectedPosition.x - cursorX)
-					   : selectedPosition.x - cursorX) <= 7)
+			if((selectedPos.x - cursorX < 0 ? -(selectedPos.x - cursorX)
+											: selectedPos.x - cursorX) <= 7)
 				drawCursors = 1;
-			selectedPosition.x = cursorX;
+			selectedPos.x = cursorX;
 			cursorTracks[0].x = cursorX;
 			cursorTracks[0].y = cursorY;
-			selectedPosition.y = cursorY;
+			selectedPos.y = cursorY;
 		} else if(cursorTracks[0].flg < CURSOR_HOLD_TICK) {
-			cursorTracks[0].x = selectedPosition.x;
-			selectedPosition.y = y;
+			cursorTracks[0].x = selectedPos.x;
+			selectedPos.y = y;
 			cursorTracks[0].y = y;
 			cursorTracks[0].flg = CURSOR_EASING;
 		} else {
-			selectedPosition.x = cursorTracks[0].x;
-			selectedPosition.y = cursorTracks[0].y;
+			selectedPos.x = cursorTracks[0].x;
+			selectedPos.y = cursorTracks[0].y;
 			cursorTracks[0].flg = cursorTracks[0].flg - CURSOR_HOLD_TICK;
 			if(cursorTracks[0].flg < CURSOR_HOLD_TICK)
 				cursorTracks[0].flg = CURSOR_EASING;
 		}
-		firstSpr->x = selectedPosition.x - 8;
-		firstSpr->y = selectedPosition.y - 16;
+		firstSpr->x = selectedPos.x - 8;
+		firstSpr->y = selectedPos.y - 16;
 		syOAMAddSprAtDepth(firstSpr, OAM_DEPTH_WINDOW);
 		/* The other markers' scale: 11/16 beside an aimed one, full size when
 		   the action takes every unit. */
@@ -394,18 +393,18 @@ Sint32 mnBattleTargetRunSelection(
 				if(spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
 					unit = gmUnitGetStub(candidateIds[tgtIdx]);
 					btMotionProjectCursorPointStub(
-						candidateIds[tgtIdx], &selectedPosition);
-					if(conditionWindow != 0)
-						mnWindowClose(conditionWindow, 1);
+						candidateIds[tgtIdx], &selectedPos);
+					if(conditionWin != 0)
+						mnWindowClose(conditionWin, 1);
 					/* FAKEMATCH(dead): cancelling updates of
-					 * conditionWindow. */
-					conditionWindow++;
-					conditionWindow--;
+					 * conditionWin. */
+					conditionWin++;
+					conditionWin--;
 					switch(kind) {
 					case TARGET_HINT_SET_DJINNI:
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 					{
-						Sint32 anchor = selectedPosition.x / 8;
+						Sint32 anchor = selectedPos.x / 8;
 
 						helpColumn = anchor - 4;
 						if(syGetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
@@ -413,7 +412,7 @@ Sint32 mnBattleTargetRunSelection(
 								DISPLAY_TILE_WIDTH - 1)
 								helpColumn = DISPLAY_TILE_WIDTH -
 									TARGET_SET_DJINNI_WIDTH_ITALIAN;
-							conditionWindow = mnWindowCreate(helpColumn, 8,
+							conditionWin = mnWindowCreate(helpColumn, 8,
 								TARGET_SET_DJINNI_WIDTH_ITALIAN, 3,
 								MENU_WINDOW_FLAGS);
 						} else if(syGetLanguage() ==
@@ -422,7 +421,7 @@ Sint32 mnBattleTargetRunSelection(
 								DISPLAY_TILE_WIDTH - 1)
 								helpColumn = DISPLAY_TILE_WIDTH -
 									TARGET_SET_DJINNI_WIDTH_SPANISH;
-							conditionWindow = mnWindowCreate(helpColumn, 8,
+							conditionWin = mnWindowCreate(helpColumn, 8,
 								TARGET_SET_DJINNI_WIDTH_SPANISH, 3,
 								MENU_WINDOW_FLAGS);
 						} else {
@@ -430,7 +429,7 @@ Sint32 mnBattleTargetRunSelection(
 								DISPLAY_TILE_WIDTH - 1)
 								helpColumn = DISPLAY_TILE_WIDTH -
 									TARGET_SET_DJINNI_WIDTH;
-							conditionWindow = mnWindowCreate(helpColumn, 8,
+							conditionWin = mnWindowCreate(helpColumn, 8,
 								TARGET_SET_DJINNI_WIDTH, 3, MENU_WINDOW_FLAGS);
 						}
 					}
@@ -443,202 +442,200 @@ Sint32 mnBattleTargetRunSelection(
 #else
 						TARGET_HELP_COLUMN(4, TARGET_SET_DJINNI_WIDTH);
 #endif
-						conditionWindow = mnWindowCreate(helpColumn, 8,
+						conditionWin = mnWindowCreate(helpColumn, 8,
 							TARGET_SET_DJINNI_WIDTH, 3, MENU_WINDOW_FLAGS);
 #endif
 						mnTextSetCol(TEXT_COLOR_RED);
 						mnTextDrawMessageAsTiles(
-							MsgTargetSetDjinni, conditionWindow, 0, 0);
+							MsgTargetSetDjinni, conditionWin, 0, 0);
 						mnTextSetCol(TEXT_COLOR_WHITE);
 						break;
 					case TARGET_HINT_HP:
 						TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
-						conditionWindow = mnWindowCreate(helpColumn, 8,
+						conditionWin = mnWindowCreate(helpColumn, 8,
 							TARGET_GAUGE_WIDTH, 3, MENU_WINDOW_FLAGS);
 #if BATTLE_LABELS_BY_HEADER_LANGUAGE
 						switch(syGetLanguage()) {
 						case CARTRIDGE_LANGUAGE_GERMAN:
 							mnTextDrawStringAtOffset(
 								(Uint8 *)BattleStatusScreenKpString,
-								conditionWindow, 0, 0);
+								conditionWin, 0, 0);
 							break;
 						case CARTRIDGE_LANGUAGE_FRENCH:
 							mnTextDrawStringAtOffset(
 								(Uint8 *)BattleStatusScreenPvString,
-								conditionWindow, 0, 0);
+								conditionWin, 0, 0);
 							break;
 						case CARTRIDGE_LANGUAGE_SPANISH:
 							mnTextDrawStringAtOffset(
 								(Uint8 *)BattleStatusScreenPvString,
-								conditionWindow, 0, 0);
+								conditionWin, 0, 0);
 							break;
 						case CARTRIDGE_LANGUAGE_ITALIAN:
 							mnTextDrawStringAtOffset(
 								(Uint8 *)BattleStatusScreenHpString,
-								conditionWindow, 0, 0);
+								conditionWin, 0, 0);
 							break;
 						}
 #else
 						mnTextDrawStringAtOffset(
-							(Uint8 *)BattleStatusScreenHpString,
-							conditionWindow, 0, 0);
+							(Uint8 *)BattleStatusScreenHpString, conditionWin,
+							0, 0);
 #endif
-						mnTextDrawNumInWindow(
-							unit->hp, 4, conditionWindow, 16, 0);
+						mnTextDrawNumInWindow(unit->hp, 4, conditionWin, 16, 0);
 						mnTextDrawStringAtOffset(
 							(Uint8 *)BattleStatusScreenSlashString,
-							conditionWindow, 48, 0);
+							conditionWin, 48, 0);
 						mnTextDrawNumInWindow(
-							unit->hpMax, 4, conditionWindow, 56, 0);
+							unit->hpMax, 4, conditionWin, 56, 0);
 						break;
 					case TARGET_HINT_PP:
 						TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
-						conditionWindow = mnWindowCreate(helpColumn, 8,
+						conditionWin = mnWindowCreate(helpColumn, 8,
 							TARGET_GAUGE_WIDTH, 3, MENU_WINDOW_FLAGS);
 						mnTextDrawStringAtOffset(
-							(Uint8 *)BattleStatusScreenPpString,
-							conditionWindow, 0, 0);
-						mnTextDrawNumInWindow(
-							unit->pp, 4, conditionWindow, 16, 0);
+							(Uint8 *)BattleStatusScreenPpString, conditionWin,
+							0, 0);
+						mnTextDrawNumInWindow(unit->pp, 4, conditionWin, 16, 0);
 						mnTextDrawStringAtOffset(
 							(Uint8 *)BattleStatusScreenSlashString,
-							conditionWindow, 48, 0);
+							conditionWin, 48, 0);
 						mnTextDrawNumInWindow(
-							unit->ppMax, 4, conditionWindow, 56, 0);
+							unit->ppMax, 4, conditionWin, 56, 0);
 						break;
 					case TARGET_HINT_REVIVE:
 						TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
-						conditionWindow = mnWindowCreate(helpColumn, 8,
+						conditionWin = mnWindowCreate(helpColumn, 8,
 							TARGET_ONE_LINE_WIDTH, 3, MENU_WINDOW_FLAGS);
 						if(unit->hp != 0)
 							goto no_condition;
 						mnTextDrawMessageAsTiles(
-							MsgTargetDowned, conditionWindow, 0, 0);
+							MsgTargetDowned, conditionWin, 0, 0);
 						break;
 					case TARGET_HINT_CURE_POISON:
 						TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
-						conditionWindow = mnWindowCreate(helpColumn, 8,
+						conditionWin = mnWindowCreate(helpColumn, 8,
 							TARGET_ONE_LINE_WIDTH, 3, MENU_WINDOW_FLAGS);
 						if(unit->poison == 0)
 							goto no_condition;
 						mnTextDrawMessageAsTiles(
-							MsgTargetCurePoison, conditionWindow, 0, 0);
+							MsgTargetCurePoison, conditionWin, 0, 0);
 						break;
 					case TARGET_HINT_RESTORE:
-						count = 0;
+						cnt = 0;
 						if(unit->delusion != 0)
-							count = 1;
+							cnt = 1;
 						if(unit->stun != 0)
-							count++;
+							cnt++;
 						if(unit->sleep != 0)
-							count++;
+							cnt++;
 						if(unit->psySeal != 0)
-							count++;
+							cnt++;
 						if(unit->grimReaper != 0)
-							count++;
-						if(count == 0)
-							count = 1;
+							cnt++;
+						if(cnt == 0)
+							cnt = 1;
 						/* The list ends on row 10, as the one-line windows do,
 						   and starts no higher than row 4. */
-						helpRow = 9 - count;
+						helpRow = 9 - cnt;
 						if(helpRow <= 3)
 							helpRow = 4;
 						TARGET_CONDITION_LIST_WINDOW();
-						count = 0;
+						cnt = 0;
 						if(unit->delusion != 0) {
 							mnTextDrawMessageAsTiles(
-								MsgTargetCureDelusion, conditionWindow, 0, 0);
-							count = 1;
+								MsgTargetCureDelusion, conditionWin, 0, 0);
+							cnt = 1;
 						}
 						if(unit->stun != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureStun,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureStun, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->sleep != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureSleep,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureSleep, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->psySeal != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureSeal,
-								conditionWindow, 0, count * 8);
-							++count;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureSeal, conditionWin, 0, cnt * 8);
+							++cnt;
 						}
 						if(unit->grimReaper != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureCurse,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureCurse, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
-						if(count == 0)
+						if(cnt == 0)
 							goto no_condition;
 						break;
 					default:
 						break;
 					case TARGET_HINT_CURE_ALL:
-						count = 0;
+						cnt = 0;
 						if(unit->poison != 0)
-							count = 1;
+							cnt = 1;
 						if(unit->delusion != 0)
-							count++;
+							cnt++;
 						if(unit->stun != 0)
-							count++;
+							cnt++;
 						if(unit->sleep != 0)
-							count++;
+							cnt++;
 						if(unit->psySeal != 0)
-							count++;
+							cnt++;
 						if(unit->grimReaper != 0)
-							count++;
+							cnt++;
 						if(unit->haunt != 0)
-							count++;
-						if(count == 0)
-							count = 1;
-						helpRow = 9 - count;
+							cnt++;
+						if(cnt == 0)
+							cnt = 1;
+						helpRow = 9 - cnt;
 						if(helpRow <= 3)
 							helpRow = 4;
 						TARGET_CONDITION_LIST_WINDOW();
-						count = 0;
+						cnt = 0;
 						if(unit->poison != 0) {
 							mnTextDrawMessageAsTiles(
-								MsgTargetCurePoison, conditionWindow, 0, 0);
-							count = 1;
+								MsgTargetCurePoison, conditionWin, 0, 0);
+							cnt = 1;
 						}
 						if(unit->delusion != 0) {
 							mnTextDrawMessageAsTiles(MsgTargetCureDelusion,
-								conditionWindow, 0, count * 8);
-							count++;
+								conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->stun != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureStun,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureStun, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->sleep != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureSleep,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureSleep, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->psySeal != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureSeal,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureSeal, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->grimReaper != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureCurse,
-								conditionWindow, 0, count * 8);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureCurse, conditionWin, 0, cnt * 8);
+							cnt++;
 						}
 						if(unit->haunt != 0) {
-							mnTextDrawMessageAsTiles(MsgTargetCureHaunt,
-								conditionWindow, 0, 8 * count);
-							count++;
+							mnTextDrawMessageAsTiles(
+								MsgTargetCureHaunt, conditionWin, 0, 8 * cnt);
+							cnt++;
 						}
-						if(count != 0)
+						if(cnt != 0)
 							break;
 					no_condition:
 						mnTextSetCol(TEXT_COLOR_RED);
 						mnTextDrawMessageAsTiles(
-							MsgTargetNoEffect, conditionWindow, 0, 0);
+							MsgTargetNoEffect, conditionWin, 0, 0);
 						mnTextSetCol(TEXT_COLOR_WHITE);
 						break;
 					}
@@ -780,8 +777,8 @@ Sint32 mnBattleTargetRunSelection(
 	} while(redraw != 0);
 	sySynch(1);
 	syVRAMCacheFreeEntry(cursorSlot);
-	if(conditionWindow != 0)
-		mnWindowClose(conditionWindow, 1);
+	if(conditionWin != 0)
+		mnWindowClose(conditionWin, 1);
 	mnWindowClose(win, 1);
 	btHighlightSetModesStub(candidateIds, HIGHLIGHT_OFF);
 	BattleMenuStateWork->tgtViewOfs = 0;

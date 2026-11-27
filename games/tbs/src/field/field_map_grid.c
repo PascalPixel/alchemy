@@ -642,7 +642,7 @@ typedef struct MAP_GRID_TILE_POS {
 	visibleLayer = visibleLayers; \
 	place = row << 5; \
 	place += column; \
-	offset = place * 4; \
+	ofs = place * 4; \
 	do { \
 		if(visibleLayer->x <= (metatileX) && \
 			visibleLayer->x + MAPGRID_VISIBLE_WIDTH > (metatileX) && \
@@ -651,7 +651,7 @@ typedef struct MAP_GRID_TILE_POS {
 			Uint8 *screen, *metatileTiles; \
 \
 			screen = BG_SCREEN_BLOCK(5); \
-			screen += offset; \
+			screen += ofs; \
 			bytes = metatileTilesId * 8; \
 			metatileTiles = Ram_MetatileTiles; \
 			metatileTiles += bytes; \
@@ -659,12 +659,12 @@ typedef struct MAP_GRID_TILE_POS {
 			metatileTiles = Ram_MetatileTiles + 4; \
 			metatileTiles += bytes; \
 			screen = BG_SCREEN_BLOCK(5) + MAPGRID_SCREEN_ROW_BYTES; \
-			screen += offset; \
+			screen += ofs; \
 			*(Uint32 *)screen = *(Uint32 *)metatileTiles; \
 			break; \
 		} \
 		bytes = MAPGRID_LAYER_SCREEN_BYTES; \
-		offset += bytes; \
+		ofs += bytes; \
 		visibleLayer++; \
 		i++; \
 	} while(i < 3)
@@ -698,7 +698,7 @@ void fdMapGridCopyMetatileTilesIndicesRect(Sint32 srcX, Sint32 srcY,
 		for(x = dstX; x < dstX + width; x++) {
 			Uint32 metatile = *srcMetatiles++;
 			Uint32 metatileTilesId = metatile & MAPGRID_METATILE_TILES_ID_MASK;
-			Uint32 column, row, place, offset, bytes;
+			Uint32 column, row, place, ofs, bytes;
 
 			*dstMetatiles =
 				(*dstMetatiles & MAPGRID_ATTRIBUTE_MASK) | metatileTilesId;
@@ -773,7 +773,7 @@ void fdMapGridCopyMetatileTilesMetatilesRect(Sint32 srcX, Sint32 srcY,
 		for(x = dstX; x < dstX + width; x++) {
 			Uint32 metatile = *srcMetatiles++;
 			Uint32 metatileTilesId;
-			Uint32 column, row, place, offset, bytes;
+			Uint32 column, row, place, ofs, bytes;
 
 			*dstMetatiles = metatile;
 			metatileTilesId = metatile & MAPGRID_METATILE_TILES_ID_MASK;
@@ -848,7 +848,7 @@ void fdMapGridCopyMetatileIndexRect(Sint32 srcX, Sint32 srcY, Sint32 width,
 		for(x = dstX; x < dstX + width; x++) {
 			Uint32 metatile = *srcMetatiles++;
 			Uint32 metatileTilesId = metatile & MAPGRID_METATILE_TILES_ID_MASK;
-			Uint32 column, row, place, offset, bytes;
+			Uint32 column, row, place, ofs, bytes;
 
 			*dstMetatiles =
 				(*dstMetatiles & MAPGRID_ATTRIBUTE_MASK) | metatileTilesId;

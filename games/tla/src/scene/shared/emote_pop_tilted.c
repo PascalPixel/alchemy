@@ -16,16 +16,16 @@ void   syEmotePopTilted(x, y, z, rotation) Sint32 x, y, z;
 Sint16 rotation;
 {
 	ACTOR	  *object;
-	FIELD_SPR *sprite;
+	FIELD_SPR *spr;
 
 	object = syImportActorCreate(SPRITE_EMOTE, x, y, z);
 	if(object != 0) {
-		sprite = object->spr;
+		spr = object->spr;
 		sySndPlay(SE_LIGHT_APPEAR);
 		syImportActorSelectAnimation(object, 1);
 		syImportActorStartScript(object, EmotePopTiltedScript);
 		object->motionFlg = 0;
-		sprite->flg = 0;
-		sprite->rotation = rotation;
+		spr->flg = 0;
+		spr->rotation = rotation;
 	}
 }

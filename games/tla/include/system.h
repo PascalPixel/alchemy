@@ -487,14 +487,14 @@ void Bios_CpuSet(const void *src, void *dst, Uint32 control);
 
 /* Starts a transfer on DMA channel `channel`: its source, destination and
    control written in one store. */
-static __inline__ void syDMAXCopy(const void *source, void *destination,
-	Uint32 control, volatile Uint32 *channel)
+static __inline__ void syDMAXCopy(
+	const void *src, void *dst, Uint32 control, volatile Uint32 *channel)
 {
 	ASM_REGISTER(volatile Uint32 *dma, "r3") = channel;
-	ASM_REGISTER(Uint32 src, "r0") = (Uint32)source;
-	ASM_REGISTER(Uint32 dst, "r1") = (Uint32)destination;
+	ASM_REGISTER(Uint32 srcReg, "r0") = (Uint32)src;
+	ASM_REGISTER(Uint32 dstReg, "r1") = (Uint32)dst;
 	ASM_REGISTER(Uint32 cnt, "r2") = control;
-	ASM_DMA_STORE(src, cnt, dma, dst);
+	ASM_DMA_STORE(srcReg, cnt, dma, dstReg);
 }
 
 /* The tick group. The tick loop's globals: the frames a tick takes, the CPU
@@ -617,14 +617,14 @@ void syIOWriteQueueFlushPending(void);
 	{ \
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork; \
 		Uint32			saved; \
-		Sint32			count; \
+		Sint32			cnt; \
 \
 		IRQ_LOCK(saved); \
-		count = *&q->cnt; \
-		if(count < IO_WRITE_QUEUE_SIZE) { \
-			Uint32 *entry = q->entries[count]; \
+		cnt = *&q->cnt; \
+		if(cnt < IO_WRITE_QUEUE_SIZE) { \
+			Uint32 *entry = q->entries[cnt]; \
 \
-			*&q->cnt = count + 1; \
+			*&q->cnt = cnt + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -638,16 +638,16 @@ void syIOWriteQueueFlushPending(void);
 	{ \
 		IO_WRITE_QUEUE *q; \
 		Uint32			saved; \
-		Sint32			count; \
+		Sint32			cnt; \
 \
 		q = &IoWriteQueueWork; \
 		IME_SAVE(ime, saved); \
 		IME_DISABLE(ime); \
-		count = *&q->cnt; \
-		if(count < IO_WRITE_QUEUE_SIZE) { \
-			Uint32 *entry = q->entries[count]; \
+		cnt = *&q->cnt; \
+		if(cnt < IO_WRITE_QUEUE_SIZE) { \
+			Uint32 *entry = q->entries[cnt]; \
 \
-			*&q->cnt = count + 1; \
+			*&q->cnt = cnt + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -707,31 +707,29 @@ static inline Uint32 syIntegerDivideUnsigned(Uint32 dividend, Uint32 divisor)
    223 leaving that many less 223 bytes there untouched, and returns NULL; one
    whose first halfword is 0 is not packed, and comes back as the data after
    that halfword for the caller to decode. */
-static inline void *syDecompressSprPicture(
-	const void *source, void *destination)
+static inline void *syDecompressSprPicture(const void *src, void *dst)
 {
-	return syDecompressSprPictureEntry(source, destination);
+	return syDecompressSprPictureEntry(src, dst);
 }
 
 /* Clears size bytes, rounded down to whole words, from destination. Returns the
    address after the last word. */
-static inline Sint32 syWordsClear(void *destination, Sint32 size)
+static inline Sint32 syWordsClear(void *dst, Sint32 size)
 {
-	return syWordsClearEntry(destination, size);
+	return syWordsClearEntry(dst, size);
 }
 
 /* As syWordsClear, filling with value. */
-static inline Sint32 syWordsFill(void *destination, Sint32 size, Uint32 value)
+static inline Sint32 syWordsFill(void *dst, Sint32 size, Uint32 value)
 {
-	return syWordsFillEntry(destination, size, value);
+	return syWordsFillEntry(dst, size, value);
 }
 
 /* Copies size bytes, rounded down to whole words, from source to
    destination. */
-static inline void syWordsCopy(
-	void *destination, const void *source, Sint32 size)
+static inline void syWordsCopy(void *dst, const void *src, Sint32 size)
 {
-	syWordsCopyEntry(destination, source, size);
+	syWordsCopyEntry(dst, src, size);
 }
 
 /* syWordsFill as a statement of its own, as twelve fills in the battle engine,

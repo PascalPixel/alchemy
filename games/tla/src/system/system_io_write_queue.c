@@ -1,12 +1,12 @@
 /* The register write queue that VBlank carries out after each finished tick.
    Part of system.c. */
 
-/* The queued register writers: each adds a write of `value` to `address` that
+/* The queued register writers: each adds a write of `value` to `adr` that
    the VBlank handler carries out once the tick loop has finished the tick. */
 #define IO_QUEUE_DEFINE_WRITE(name, control) \
-	void name(Uint32 address, Uint32 value) \
+	void name(Uint32 adr, Uint32 value) \
 	{ \
-		IO_WRITE_QUEUE_PUSH(address, value, control); \
+		IO_WRITE_QUEUE_PUSH(adr, value, control); \
 	}
 
 /* Queues a byte store. */

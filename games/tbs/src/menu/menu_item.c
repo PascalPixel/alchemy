@@ -149,8 +149,7 @@ typedef enum ITEM_MENU_STEP {
 /* Runs the item menu: choose a party member, one of their items and a command
    (Use, Equip, Give, Drop, Remove or Inspect), then carry it out, until the
    player backs out or presses Start. */
-Sint32 mnItemMenuRunCommands(
-	Sint32 *memberOut, Sint32 *targetOut, Sint32 *itemOut)
+Sint32 mnItemMenuRunCommands(Sint32 *memberOut, Sint32 *tgtOut, Sint32 *itemOut)
 {
 	Sint32 done;
 #if !ITEM_EVENT_USED_BY_SHOWN_HOLDER
@@ -159,24 +158,24 @@ Sint32 mnItemMenuRunCommands(
 #endif
 	Sint32			 selection;
 	Sint32			 menuResult;
-	UNIT			*sourceUnit;
-	UNIT			*targetUnit;
+	UNIT			*srcUnit;
+	UNIT			*tgtUnit;
 	ITEM_MENU_STATE *menu;
 	ITEM_DEFINITION *item;
-	UNIT			*sourceCopy;
-	UNIT			*targetCopy;
+	UNIT			*srcCopy;
+	UNIT			*tgtCopy;
 	Uint32			 state;
 	Sint32			 command;
 	Sint32			 result;
-	Sint32			 heldCount;
+	Sint32			 heldCnt;
 	Sint32			 amount;
 	Sint32			 transferFailed;
-	Sint32			 removedCount;
+	Sint32			 removedCnt;
 #if ITEM_EVENT_USED_BY_SHOWN_HOLDER
-	Sint32 giveTarget;
+	Sint32 giveTgt;
 #endif
-	Uint8 sourceQuantity;
-	Uint8 targetQuantity;
+	Uint8 srcQuantity;
+	Uint8 tgtQuantity;
 	Sint8 stackSize;
 
 	done = 0;
@@ -264,11 +263,11 @@ Sint32 mnItemMenuRunCommands(
 					   inventory entry. */
 #if ITEM_EVENT_USED_BY_SHOWN_HOLDER
 					*memberOut = menu->sideMember[0];
-					*targetOut = command;
+					*tgtOut = command;
 					*itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
 #else
 					*memberOut = member;
-					*targetOut = chosen;
+					*tgtOut = chosen;
 					*itemOut = selection;
 #endif
 					menuResult = 1;
@@ -297,7 +296,7 @@ Sint32 mnItemMenuRunCommands(
 					result == ITEM_USE_MODE_FROM_FIELD) {
 					done = 1;
 					*memberOut = menu->sideMember[0];
-					*targetOut = menu->sideMember[1];
+					*tgtOut = menu->sideMember[1];
 					*itemOut = menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK;
 					menuResult = 1;
 				}
@@ -370,9 +369,9 @@ Sint32 mnItemMenuRunCommands(
 			mnTextDrawMessageAsTilesStub(
 				MsgGiveToWhom, menu->questionWin, 16, 16);
 #if ITEM_EVENT_USED_BY_SHOWN_HOLDER
-			giveTarget = mnItemMenuSelectTarget(ITEM_TARGET_GIVE);
+			giveTgt = mnItemMenuSelectTarget(ITEM_TARGET_GIVE);
 			state = ITEM_STEP_GIVE;
-			if(giveTarget == -1) {
+			if(giveTgt == -1) {
 #else
 			chosen = mnItemMenuSelectTarget(ITEM_TARGET_GIVE);
 			state = ITEM_STEP_GIVE;
@@ -391,11 +390,11 @@ Sint32 mnItemMenuRunCommands(
 				menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
 			result = 0;
 			if((item->flg & ITEM_STACKABLE) != 0) {
-				heldCount =
+				heldCnt =
 					(menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
-				if(heldCount > 1) {
+				if(heldCnt > 1) {
 					mnItemMenuDrawItemHead();
-					result = mnItemMenuSelectGiveQuantity(0, heldCount, 1);
+					result = mnItemMenuSelectGiveQuantity(0, heldCnt, 1);
 				}
 			}
 			if(result == -1) {
@@ -419,8 +418,7 @@ Sint32 mnItemMenuRunCommands(
 #if ITEM_EVENT_USED_BY_SHOWN_HOLDER
 				command = menu->sideMember[0];
 				gmUnitGetStub(command);
-				for(removedCount = 0; removedCount < result + 1;
-					removedCount++) {
+				for(removedCnt = 0; removedCnt < result + 1; removedCnt++) {
 					gmInventoryRemoveStub(command, menu->selectedSlots[0]);
 					gmItemAdjustRareItemStockStub(
 						menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK, 1);
@@ -429,8 +427,7 @@ Sint32 mnItemMenuRunCommands(
 #else
 				member = menu->sideMember[0];
 				gmUnitGetStub(member);
-				for(removedCount = 0; removedCount < result + 1;
-					removedCount++) {
+				for(removedCnt = 0; removedCnt < result + 1; removedCnt++) {
 					gmInventoryRemoveStub(member, menu->selectedSlots[0]);
 					gmItemAdjustRareItemStockStub(
 						menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK, 1);
@@ -462,22 +459,22 @@ Sint32 mnItemMenuRunCommands(
 			if((item->flg & ITEM_STACKABLE) != 0) {
 				/* A receiver with a full stack of it takes none; one with no
 				   free slot and none of it must trade. */
-				heldCount = mnItemMenuGetItemQuantity(menu->sideMember[1],
+				heldCnt = mnItemMenuGetItemQuantity(menu->sideMember[1],
 					menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
-				if(heldCount == INVENTORY_STACK_MAX) {
+				if(heldCnt == INVENTORY_STACK_MAX) {
 					transferFailed = 1;
 				}
 				if(mnItemMenuCountItems(menu->sideMember[1]) ==
 						INVENTORY_SLOTS &&
-					heldCount == 0) {
+					heldCnt == 0) {
 					state = ITEM_STEP_TRADE;
 					break;
 				}
 				stackSize =
 					(menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
 				if(transferFailed == 0) {
-					if(heldCount + stackSize > INVENTORY_STACK_MAX) {
-						amount = INVENTORY_STACK_MAX - heldCount;
+					if(heldCnt + stackSize > INVENTORY_STACK_MAX) {
+						amount = INVENTORY_STACK_MAX - heldCnt;
 					} else {
 						amount = stackSize;
 					}
@@ -493,13 +490,13 @@ Sint32 mnItemMenuRunCommands(
 					/* Move result + 1 one at a time; the broken bit goes with
 					   each, the equipped bit and the quantity do not. */
 					for(command = 0; command < result + 1; command++) {
-						heldCount = gmInventoryAddItemStub(menu->sideMember[1],
+						heldCnt = gmInventoryAddItemStub(menu->sideMember[1],
 							menu->selectedItems[0] &
 								(INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
-						if(heldCount != -1) {
+						if(heldCnt != -1) {
 							gmInventoryRemoveStub(
 								menu->sideMember[0], menu->selectedSlots[0]);
-							menu->selectedSlots[1] = heldCount;
+							menu->selectedSlots[1] = heldCnt;
 						} else {
 							transferFailed = 1;
 						}
@@ -586,18 +583,18 @@ Sint32 mnItemMenuRunCommands(
 			}
 			/* Snapshot both inventories so any failed part of the trade can
 			   roll back. */
-			sourceUnit = gmUnitGetStub(menu->sideMember[0]);
-			targetUnit = gmUnitGetStub(menu->sideMember[1]);
-			sourceCopy = syHeapAlloc(BATTLE_UNIT_SIZE);
-			targetCopy = syHeapAlloc(BATTLE_UNIT_SIZE);
-			ITEM_IWRAM_COPY_WORDS(sourceCopy, sourceUnit, BATTLE_UNIT_SIZE);
-			ITEM_IWRAM_COPY_WORDS(targetCopy, targetUnit, BATTLE_UNIT_SIZE);
+			srcUnit = gmUnitGetStub(menu->sideMember[0]);
+			tgtUnit = gmUnitGetStub(menu->sideMember[1]);
+			srcCopy = syHeapAlloc(BATTLE_UNIT_SIZE);
+			tgtCopy = syHeapAlloc(BATTLE_UNIT_SIZE);
+			ITEM_IWRAM_COPY_WORDS(srcCopy, srcUnit, BATTLE_UNIT_SIZE);
+			ITEM_IWRAM_COPY_WORDS(tgtCopy, tgtUnit, BATTLE_UNIT_SIZE);
 			/* Take both whole stacks out, one item at a time (at most
 			   INVENTORY_STACK_MAX): gmInventoryRemoveStub returns
 			   INVENTORY_REMOVE_LAST for the last one and
 			   INVENTORY_REMOVE_EMPTY_SLOT for an empty slot. */
-			for(sourceQuantity = 0; sourceQuantity < INVENTORY_STACK_MAX;
-				sourceQuantity++) {
+			for(srcQuantity = 0; srcQuantity < INVENTORY_STACK_MAX;
+				srcQuantity++) {
 				result = gmInventoryRemoveStub(
 					menu->sideMember[0], menu->selectedSlots[0]);
 				if(result == INVENTORY_REMOVE_LAST) {
@@ -608,9 +605,9 @@ Sint32 mnItemMenuRunCommands(
 					break;
 				}
 			}
-			sourceQuantity++;
-			for(targetQuantity = 0; targetQuantity < INVENTORY_STACK_MAX;
-				targetQuantity++) {
+			srcQuantity++;
+			for(tgtQuantity = 0; tgtQuantity < INVENTORY_STACK_MAX;
+				tgtQuantity++) {
 				/* The receiver cannot trade away a worn item that will not come
 				   off. */
 				if((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
@@ -630,9 +627,9 @@ Sint32 mnItemMenuRunCommands(
 					break;
 				}
 			}
-			targetQuantity++;
+			tgtQuantity++;
 			/* Then give each the other's items. */
-			while(sourceQuantity != 0) {
+			while(srcQuantity != 0) {
 				result = gmInventoryAddItemStub(menu->sideMember[1],
 					menu->selectedItems[0] &
 						(INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
@@ -641,9 +638,9 @@ Sint32 mnItemMenuRunCommands(
 					break;
 				}
 				menu->selectedSlots[1] = result;
-				sourceQuantity--;
+				srcQuantity--;
 			}
-			while(targetQuantity != 0) {
+			while(tgtQuantity != 0) {
 				result = gmInventoryAddItemStub(menu->sideMember[0],
 					menu->selectedItems[1] &
 						(INVENTORY_ITEM_ID_MASK | INVENTORY_BROKEN));
@@ -652,12 +649,12 @@ Sint32 mnItemMenuRunCommands(
 					break;
 				}
 				menu->selectedSlots[0] = result;
-				targetQuantity--;
+				tgtQuantity--;
 			}
 			sySynch(1);
 			if(transferFailed == 1) {
-				syWordsCopy(sourceUnit, sourceCopy, BATTLE_UNIT_SIZE);
-				syWordsCopy(targetUnit, targetCopy, BATTLE_UNIT_SIZE);
+				syWordsCopy(srcUnit, srcCopy, BATTLE_UNIT_SIZE);
+				syWordsCopy(tgtUnit, tgtCopy, BATTLE_UNIT_SIZE);
 				mnWindowSprClearListStub(menu->descriptionWin);
 				mnItemMenuShowMessage(MsgCannotTrade, ITEM_CANNOT_TRADE_X, 14);
 #if LANGUAGE == LANGUAGE_FRENCH
@@ -699,8 +696,8 @@ Sint32 mnItemMenuRunCommands(
 					}
 				}
 			}
-			syHeapRelease(targetCopy);
-			syHeapRelease(sourceCopy);
+			syHeapRelease(tgtCopy);
+			syHeapRelease(srcCopy);
 			fdPartyClearUnusableShortcutsStub();
 			state = ITEM_STEP_MEMBER;
 			break;
@@ -778,12 +775,12 @@ Sint32 mnItemMenuRunCommands(
 			break;
 
 		/* Unused: not reached from any command. Chooses a quantity and keeps it
-		   in heldCount, which nothing reads. */
+		   in heldCnt, which nothing reads. */
 		case ITEM_STEP_QUANTITY:
 			result = mnItemMenuSelectGiveQuantity(0, INVENTORY_STACK_MAX, 0);
 			if(result != -1) {
 				/* Unused: the quantity chosen, which nothing reads. */
-				heldCount = result;
+				heldCnt = result;
 			}
 			state = ITEM_STEP_ITEM;
 			break;
@@ -2589,7 +2586,7 @@ Sint32 mnItemMenuConfirmEquip(Sint32 unused)
 	ITEM_MENU_STATE *menu = MenuState;
 	UNIT			*unit = gmUnitGetStub(menu->sideMember[1]);
 	UNIT			*saved;
-	WINDOW			*window;
+	WINDOW			*win;
 	Sint32			 slot;
 	Sint32			 member;
 
@@ -2598,7 +2595,7 @@ Sint32 mnItemMenuConfirmEquip(Sint32 unused)
 	mnItemMenuDrawEquipPreview(member, slot, 0, member);
 	saved = syHeapAlloc(BATTLE_UNIT_SIZE);
 	syWordsCopy(saved, unit, BATTLE_UNIT_SIZE);
-	window = menu->questionWin;
+	win = menu->questionWin;
 	/* Equip it now; INVENTORY_EQUIP_REFUSED or INVENTORY_EQUIP_STUCK means it
 	   cannot be equipped. */
 	if((Uint32)(gmInventoryEquipStub(
@@ -2608,16 +2605,16 @@ Sint32 mnItemMenuConfirmEquip(Sint32 unused)
 		selection = 1;
 	} else {
 #if LANGUAGE != LANGUAGE_JAPANESE
-		mnTextDrawMessageAsTilesStub(MsgYes, window, 24, 24);
-		mnTextDrawMessageAsTilesStub(MsgYes + 1, window, 72, 24);
-		mnWindowClearInteriorTilesStub((void *)window, 16, 16, 96, 24);
-		mnTextDrawMessageAsTilesStub(MsgEquipThisItem, window, 0, 16);
+		mnTextDrawMessageAsTilesStub(MsgYes, win, 24, 24);
+		mnTextDrawMessageAsTilesStub(MsgYes + 1, win, 72, 24);
+		mnWindowClearInteriorTilesStub((void *)win, 16, 16, 96, 24);
+		mnTextDrawMessageAsTilesStub(MsgEquipThisItem, win, 0, 16);
 		mnCursorSlide(110, 32);
 #else
-		mnTextDrawMessageAsTilesStub(MsgYes, window, 96, 0);
-		mnTextDrawMessageAsTilesStub(MsgYes + 1, window, 96, 16);
-		mnWindowClearInteriorTilesStub((void *)window, 16, 16, 96, 24);
-		mnTextDrawMessageAsTilesStub(MsgEquipThisItem, window, 8, 16);
+		mnTextDrawMessageAsTilesStub(MsgYes, win, 96, 0);
+		mnTextDrawMessageAsTilesStub(MsgYes + 1, win, 96, 16);
+		mnWindowClearInteriorTilesStub((void *)win, 16, 16, 96, 24);
+		mnTextDrawMessageAsTilesStub(MsgEquipThisItem, win, 8, 16);
 		mnCursorSlide(184, 5);
 #endif
 		for(;;) {

@@ -1526,9 +1526,9 @@ Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 	void name(void) \
 	{ \
 		if((TickCount & 7) == 0 && (Uint32)syRandom() < 16384) { \
-			Sint32 offset = syRandom() << 5; \
-			Sint32 x = offset + x0; \
-			Sint32 z = z0 - offset; \
+			Sint32 ofs = syRandom() << 5; \
+			Sint32 x = ofs + x0; \
+			Sint32 z = z0 - ofs; \
 			Sint32 y = toFIXED(160); \
 			ACTOR *actor = scFieldActorCreate(SPRITE_DROPLET, x, y, z); \
 			Sint32 scale = toFIXED(33) / 100; \

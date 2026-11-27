@@ -108,13 +108,13 @@ void mnTextMeasureMessage(Sint32 msg, Sint32 *x, Sint32 *y)
    0 when the message is empty. */
 #define DEFINE_MESSAGE_SIZE(name, flags) \
 	Sint32 name( \
-		Sint32 message, Sint32 *x, Sint32 *y, Uint32 *width, Uint32 *height) \
+		Sint32 msg, Sint32 *x, Sint32 *y, Uint32 *width, Uint32 *height) \
 	{ \
 		WIN_STATE *state; \
 		Sint32	   entry; \
 \
 		state = WINDOW_STATE; \
-		entry = mnMessageDecode(message, 0); \
+		entry = mnMessageDecode(msg, 0); \
 		if(state->textBuf[entry] == 0) { \
 			return 0; \
 		} \

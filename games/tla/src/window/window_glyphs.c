@@ -226,8 +226,7 @@ Sint32 mnTextGetWideStringWidth(Uint16 *text)
 /* Draws a zero-terminated string of 16-bit character codes into a text canvas
    window at pixel (x, y), running its colour, outline, line spacing and new
    line codes; other control codes are skipped with their arguments. */
-void mnTextDrawWideStringAtOffset(
-	Uint16 *text, WINDOW *window, Sint32 x, Sint32 y)
+void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state;
 	Uint32	   c;
@@ -308,7 +307,7 @@ void mnTextDrawWideStringAtOffset(
 #else
 			/* Two characters narrow enough to share a glyph's 16-pixel cell are
 			   drawn as one sprite. */
-			if((window->flg & WINDOW_FLAG_TEXT_CANVAS) == 0) {
+			if((win->flg & WINDOW_FLAG_TEXT_CANVAS) == 0) {
 				next = *text;
 #if OUTLINED_GLYPH_PAIRS_FIT_CELL
 				if(c > TEXT_SPACE && next > TEXT_SPACE) {
@@ -336,7 +335,7 @@ void mnTextDrawWideStringAtOffset(
 #endif
 			}
 #endif
-			x += mnGlyphDraw(window, c, x, y, GLYPH_DRAW_CHARACTER);
+			x += mnGlyphDraw(win, c, x, y, GLYPH_DRAW_CHARACTER);
 		}
 	}
 }
@@ -373,8 +372,7 @@ UNUSED void mnTextDrawWideStringAsTiles(
 /* Draws a string of wide (16-bit) codes into the window, one glyph per cell,
    skipping the control codes and their arguments; TEXT_NEWLINE starts a new
    line. With no text, the decoded text in WIN_STATE.textBuf is drawn. */
-void mnTextDrawWideStringInWindow(
-	Sint16 *text, WINDOW *window, Sint32 x, Sint32 y)
+void mnTextDrawWideStringInWindow(Sint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 {
 	WIN_STATE *state;
 	Uint16	   c;
@@ -419,7 +417,7 @@ void mnTextDrawWideStringInWindow(
 					break;
 				}
 			} else {
-				mnWindowPutGlyph(window, c, x, y, GLYPH_DRAW_CHARACTER);
+				mnWindowPutGlyph(win, c, x, y, GLYPH_DRAW_CHARACTER);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || \
 	(LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 				x++;

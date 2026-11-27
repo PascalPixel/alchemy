@@ -34,11 +34,11 @@ Sint32 fdGetPsynergyTargetRange(Sint32 kind)
    degrees) of the direction it faces. */
 Sint32 fdFindNearbyTalkTarget(Sint32 id)
 {
-	ACTOR *source;
+	ACTOR *src;
 	ACTOR *candidate;
 	Sint32 nearestActorId;
 	Sint32 nearestDistance;
-	Sint32 actorIndex;
+	Sint32 actorIdx;
 	Sint32 dx;
 	Sint32 dy;
 	Sint32 dz;
@@ -47,40 +47,40 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 	Sint32 squaredZ;
 	Sint32 squaredDistance;
 	Sint32 distance;
-	Sint32 angle;
+	Sint32 ang;
 
 	nearestActorId = -1;
 	nearestDistance = 32;
-	source = fdActorLookup(id);
-	if(source != 0) {
+	src = fdActorLookup(id);
+	if(src != 0) {
 		/* BUG: one past the actor table: fdActorLookup(ACTOR_ID_COUNT) is the
 		   first treasure spot's actor, so the map's first chest or Psynergy
 		   Stone is a candidate too. */
 #if FIX_FIRST_TREASURE_SPOT_IN_ACTOR_LOOPS
-		for(actorIndex = 0; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
+		for(actorIdx = 0; actorIdx < ACTOR_ID_COUNT; actorIdx++) {
 #else
-		for(actorIndex = 0; actorIndex <= ACTOR_ID_COUNT; actorIndex++) {
+		for(actorIdx = 0; actorIdx <= ACTOR_ID_COUNT; actorIdx++) {
 #endif
-			if(actorIndex == id)
+			if(actorIdx == id)
 				continue;
 
-			candidate = fdActorLookup(actorIndex);
+			candidate = fdActorLookup(actorIdx);
 			if(candidate == 0 ||
 				(candidate->collisionFlg & ACTOR_NOT_TARGETED) != 0)
 				continue;
 
 			/* y is height: an actor more than 48 pixels above or below is out
 			   of reach. */
-			if(candidate->y.fixed - source->y.fixed >= 0) {
-				if(candidate->y.fixed - source->y.fixed >= toFIXED(48))
+			if(candidate->y.fixed - src->y.fixed >= 0) {
+				if(candidate->y.fixed - src->y.fixed >= toFIXED(48))
 					continue;
-			} else if(source->y.fixed - candidate->y.fixed >= toFIXED(48)) {
+			} else if(src->y.fixed - candidate->y.fixed >= toFIXED(48)) {
 				continue;
 			}
 
-			dx = (candidate->x.fixed - source->x.fixed) / toFIXED(1);
-			dy = (candidate->y.fixed - source->y.fixed) / toFIXED(1);
-			dz = (candidate->z.fixed - source->z.fixed) / toFIXED(1);
+			dx = (candidate->x.fixed - src->x.fixed) / toFIXED(1);
+			dy = (candidate->y.fixed - src->y.fixed) / toFIXED(1);
+			dz = (candidate->z.fixed - src->z.fixed) / toFIXED(1);
 
 			squaredX = dx * dx;
 			squaredY = dy * dy;
@@ -92,18 +92,18 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
 			if(distance >= nearestDistance)
 				continue;
 
-			angle = (Uint16)syAtan(candidate->z.fixed - source->z.fixed,
-				candidate->x.fixed - source->x.fixed);
+			ang = (Uint16)syAtan(candidate->z.fixed - src->z.fixed,
+				candidate->x.fixed - src->x.fixed);
 			if(distance > 11) {
-				Sint32 angleDifference = (Sint16)(angle - source->facing);
+				Sint32 angDifference = (Sint16)(ang - src->facing);
 
-				if(angleDifference < -(TRIG_TURN * 3 / 16 - 1))
+				if(angDifference < -(TRIG_TURN * 3 / 16 - 1))
 					continue;
-				if(angleDifference > TRIG_TURN * 3 / 16 - 1)
+				if(angDifference > TRIG_TURN * 3 / 16 - 1)
 					continue;
 			}
 
-			nearestActorId = actorIndex;
+			nearestActorId = actorIdx;
 			nearestDistance = distance;
 		}
 	}
@@ -117,39 +117,39 @@ Sint32 fdFindNearbyTalkTarget(Sint32 id)
    quarter turn, narrower beyond 19 pixels and wider for Mind Read. */
 Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 {
-	ACTOR *source;
+	ACTOR *src;
 	ACTOR *candidate;
 	Sint32 nearestActorId;
 	Sint32 nearestDistance;
 	Sint32 facingQuadrant;
-	Sint32 actorIndex;
+	Sint32 actorIdx;
 	FIXED  heightLimit;
 	Sint32 dx;
 	FIXED  dz;
 	Sint32 pixelZ;
 	Sint32 distance;
-	Sint32 angle;
-	Sint32 coneHalfAngle;
+	Sint32 ang;
+	Sint32 coneHalfAng;
 
 	nearestActorId = -1;
 	nearestDistance = fdGetPsynergyTargetRange(kind);
-	source = fdActorLookup(id);
-	if(source == 0)
+	src = fdActorLookup(id);
+	if(src == 0)
 		return nearestActorId;
 
-	facingQuadrant = FACING_NEAREST_CARDINAL(source->facing);
+	facingQuadrant = FACING_NEAREST_CARDINAL(src->facing);
 	/* BUG: one past the actor table: fdActorLookup(ACTOR_ID_COUNT) is the first
 	   treasure spot's actor, so the map's first chest or Psynergy Stone is a
 	   candidate too. */
 #if FIX_FIRST_TREASURE_SPOT_IN_ACTOR_LOOPS
-	for(actorIndex = 0; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
+	for(actorIdx = 0; actorIdx < ACTOR_ID_COUNT; actorIdx++) {
 #else
-	for(actorIndex = 0; actorIndex <= ACTOR_ID_COUNT; actorIndex++) {
+	for(actorIdx = 0; actorIdx <= ACTOR_ID_COUNT; actorIdx++) {
 #endif
-		if(actorIndex == id)
+		if(actorIdx == id)
 			continue;
 
-		candidate = fdActorLookup(actorIndex);
+		candidate = fdActorLookup(actorIdx);
 		if(candidate == 0 ||
 			(candidate->collisionFlg & ACTOR_NOT_TARGETED) != 0)
 			continue;
@@ -163,19 +163,19 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 			heightLimit = toFIXED(16);
 
 		{
-			FIXED dy = candidate->y.fixed - source->y.fixed;
+			FIXED dy = candidate->y.fixed - src->y.fixed;
 			if(dy >= 0) {
 				if(dy > heightLimit)
 					continue;
-			} else if(source->y.fixed - candidate->y.fixed > heightLimit) {
+			} else if(src->y.fixed - candidate->y.fixed > heightLimit) {
 				continue;
 			}
 		}
 
 		/* The distance in whole pixels, rounded toward 0. */
-		dx = (candidate->x.fixed - source->x.fixed) / toFIXED(1);
+		dx = (candidate->x.fixed - src->x.fixed) / toFIXED(1);
 
-		dz = candidate->z.fixed - source->z.fixed;
+		dz = candidate->z.fixed - src->z.fixed;
 		pixelZ = dz / toFIXED(1);
 
 		distance = sySquartIWRAM(dx * dx + pixelZ * pixelZ);
@@ -184,23 +184,23 @@ Sint32 fdFindNearbyPsynergyTarget(Sint32 id, Sint32 kind)
 		if(distance >= nearestDistance)
 			continue;
 
-		angle = (Uint16)syAtan(candidate->z.fixed - source->z.fixed,
-			candidate->x.fixed - source->x.fixed);
-		coneHalfAngle = DEGtoANG(33.75);
+		ang = (Uint16)syAtan(candidate->z.fixed - src->z.fixed,
+			candidate->x.fixed - src->x.fixed);
+		coneHalfAng = DEGtoANG(33.75);
 		if(distance > 19)
-			coneHalfAngle = DEGtoANG(22.5);
+			coneHalfAng = DEGtoANG(22.5);
 		if(kind == FIELD_PSYNERGY_MIND_READ)
-			coneHalfAngle = DEGtoANG(45);
+			coneHalfAng = DEGtoANG(45);
 
 		if(distance > 11) {
-			Sint32 angleDifference = (Sint16)(angle - facingQuadrant);
-			if(angleDifference < 0)
-				angleDifference = -angleDifference;
-			if(angleDifference >= coneHalfAngle)
+			Sint32 angDifference = (Sint16)(ang - facingQuadrant);
+			if(angDifference < 0)
+				angDifference = -angDifference;
+			if(angDifference >= coneHalfAng)
 				continue;
 		}
 
-		nearestActorId = actorIndex;
+		nearestActorId = actorIdx;
 		nearestDistance = distance;
 	}
 

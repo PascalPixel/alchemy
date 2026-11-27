@@ -359,15 +359,15 @@ void mnPartyStatClose(void)
 
 /* Unused: sets (`set` 1) or clears (0) the lowest bit of the palette number of
    the tilemap entries of the `width` x `height` tile rectangle at (x, y) inside
-   `window`, clipped to the screen, so switching the rectangle between two
+   `win`, clipped to the screen, so switching the rectangle between two
    palettes, such as WINDOW_PALETTE and HIGHLIGHT_PALETTE. */
-UNUSED void mnWindowSetInteriorPaletteBit(const WINDOW *window, Sint32 x,
-	Sint32 y, Sint32 width, Sint32 height, Uint32 set)
+UNUSED void mnWindowSetInteriorPaletteBit(const WINDOW *win, Sint32 x, Sint32 y,
+	Sint32 width, Sint32 height, Uint32 set)
 {
 	WIN_STATE *state = WINDOW_STATE;
 
-	x += window->x + 1;
-	y += window->y + 1;
+	x += win->x + 1;
+	y += win->y + 1;
 	set &= 1;
 	set = BG_TILE_PALETTE(set);
 	if(x < 0) {

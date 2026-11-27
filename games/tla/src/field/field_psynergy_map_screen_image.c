@@ -199,10 +199,10 @@ void fdMapScreenUpdateMarkers(void)
 	FIXED				   step;
 	Sint32				   cursorX;
 	Sint32				   cursorY;
-	Uint16				   angle;
+	Uint16				   ang;
 	Sint32				   tile;
 	Sint32				   always;
-	Sint32				   flag;
+	Sint32				   flg;
 	Sint32				   i;
 
 	/* DEAD: the leader looked up and never used; the ROM keeps the call. */
@@ -247,12 +247,12 @@ void fdMapScreenUpdateMarkers(void)
 			state->z += dz;
 		}
 	} else {
-		angle = WorldMapCursorDirectionAngles[DPAD_INDEX(PerWork.data)];
-		if(angle != WORLD_MAP_KEY_HEADING_NONE) {
+		ang = WorldMapCursorDirectionAngles[DPAD_INDEX(PerWork.data)];
+		if(ang != WORLD_MAP_KEY_HEADING_NONE) {
 			pos[0] = state->x;
 			pos[1] = 0;
 			pos[2] = state->z;
-			syVectorAddPolarOffset(state->speed, angle, pos);
+			syVectorAddPolarOffset(state->speed, ang, pos);
 			if(pos[0] < toFIXED(WORLD_MAP_CURSOR_MIN_X))
 				pos[0] = toFIXED(WORLD_MAP_CURSOR_MIN_X);
 			if(pos[0] > toFIXED(WORLD_MAP_CURSOR_MAX_X))
@@ -287,7 +287,7 @@ void fdMapScreenUpdateMarkers(void)
 		} else {
 			name = place->visitScene;
 			entrance = place->visitEntrance;
-			flag = FLAG_PLACE_VISITED(place->flg);
+			flg = FLAG_PLACE_VISITED(place->flg);
 			tile = fdWorldMapPlaceGetMarker(place);
 			if(tile == WORLD_MAP_MARKER_NONE)
 				continue;
@@ -302,7 +302,7 @@ void fdMapScreenUpdateMarkers(void)
 				placeX = MAP_SCREEN_X(FIXEDtoINT(MainRoutineStateWork.shipX));
 				placeY = MAP_SCREEN_Y(FIXEDtoINT(MainRoutineStateWork.shipZ));
 			} else {
-				if(!syGameFlagGet(flag))
+				if(!syGameFlagGet(flg))
 					continue;
 				always = 1;
 				placeX = MAP_SCREEN_X(place->x);
@@ -347,11 +347,11 @@ void fdMapScreenUpdateMarkers(void)
 				state->z = toFIXED(nearestY);
 				state->speed = WORLD_MAP_CURSOR_MIN_SPEED;
 			} else {
-				angle = syAtan(nearestY - cursorY, nearestX - cursorX);
+				ang = syAtan(nearestY - cursorY, nearestX - cursorX);
 				pos[0] = state->x;
 				pos[1] = 0;
 				pos[2] = state->z;
-				syVectorAddPolarOffset(state->speed, (Uint16)angle, pos);
+				syVectorAddPolarOffset(state->speed, (Uint16)ang, pos);
 				state->x = pos[0];
 				state->z = pos[2];
 			}

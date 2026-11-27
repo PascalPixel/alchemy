@@ -101,7 +101,7 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	DRAW_RECTANGLE		 drawLower;
 	DRAW_RECTANGLE		 drawUpper;
 	BATTLE_CAMERA		*camera;
-	MOTION_OBJECT		*source;
+	MOTION_OBJECT		*src;
 	MOTION_OBJECT		*tgt;
 	Sint32				 resource;
 	Sint32				 frm;
@@ -160,7 +160,7 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* Each transfer halves the canvas, leaving a trail. */
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-	source = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->obj;
 	{
 		/* The loop counts STREAK_SPACING for each streak though targets are
 		   STREAK_TARGET_DELAY apart, so with three or four targets it stops
@@ -174,7 +174,7 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			for(j = 0; j != streaks; j++) {
 				PARTICLE *streak = &state->particles[k * streaks + j];
 
-				SET_POSITION(streak, source->x, source->y + lift, source->z);
+				SET_POSITION(streak, src->x, src->y + lift, src->z);
 				SET_VELOCITY(streak, (tgt->x - streak->x) / STREAK_FLIGHT,
 					(tgt->y + lift - streak->y) / STREAK_FLIGHT,
 					(tgt->z - streak->z) / STREAK_FLIGHT);
@@ -364,7 +364,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	BATTLE_CAMERA		*camera;
 	Uint8				*sheet;
 	Sint32				 ticks;
-	MOTION_OBJECT		*source;
+	MOTION_OBJECT		*src;
 	PARTICLE			*mote;
 	Sint32				 resource;
 	Sint32				 frm;
@@ -403,7 +403,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* Launch every mote from the user, with a speed and a direction of its own.
 	   Slaver throws them up, faster, in a half-circle fan turned by the user's
 	   side, from up to 16 pixels higher. */
-	source = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->obj;
 	for(i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
 		Sint32 speed;
 		Sint32 ang;
@@ -415,14 +415,14 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			else
 				ang = syRandom() & 0x7fff;
 			speed = (syRandom() & 0x3ff) + 2048;
-			mote->y = source->y + (syRandom() << 4) + toFIXED(5);
+			mote->y = src->y + (syRandom() << 4) + toFIXED(5);
 		} else {
 			ang = syRandom();
 			speed = (syRandom() & 0x3ff) + 32;
-			mote->y = source->y + toFIXED(5);
+			mote->y = src->y + toFIXED(5);
 		}
-		mote->x = source->x;
-		mote->z = source->z;
+		mote->x = src->x;
+		mote->z = src->z;
 		mote->velX = sySin(ang) * speed >> 8;
 		if(mode == MOTE_FOUNTAIN_SLAVER) {
 			mote->velY = ((syRandom() & 255) + 128) << 10;
@@ -476,7 +476,7 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					btParticleAdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
 				}
 				if(mode == MOTE_FOUNTAIN_DRIFTING) {
-					if(source->x < 0)
+					if(src->x < 0)
 						mote->velX += toFIXED(1) / 8;
 					else
 						mote->velX -= toFIXED(1) / 8;

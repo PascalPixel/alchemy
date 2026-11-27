@@ -265,8 +265,8 @@ static void scVaultCavePushPillarAhead(void)
 	Sint32	  direction = FACING_INDEX(leader->facing);
 	ACTOR	 *pillar;
 	ACTOR	 *beyond;
-	FIELD_POS destination;
-	Sint32	  fallingIndex;
+	FIELD_POS dst;
+	Sint32	  fallingIdx;
 	Sint32	  column;
 	Sint32	  row;
 
@@ -287,8 +287,8 @@ static void scVaultCavePushPillarAhead(void)
 	}
 	/* SceneId_VaultCaveMouth's water drops are never pushed; in
 	   SceneId_VaultCaveVambrace these slots hold water drops too. */
-	for(fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
-		if(pillar == fdActorGet(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP)) {
+	for(fallingIdx = 0; fallingIdx <= 3; fallingIdx++) {
+		if(pillar == fdActorGet(fallingIdx + ACTOR_FIRST_TIMED_WATER_DROP)) {
 			return;
 		}
 	}
@@ -303,8 +303,8 @@ static void scVaultCavePushPillarAhead(void)
 		return;
 	}
 	pillar->layer = 2;
-	fdActorStepFrom(&destination, pillar, PushedActorDirectionSteps[direction]);
-	if(syFieldActorCheckMovementCollision(pillar, &destination) > 0) {
+	fdActorStepFrom(&dst, pillar, PushedActorDirectionSteps[direction]);
+	if(syFieldActorCheckMovementCollision(pillar, &dst) > 0) {
 		return;
 	}
 	fdActorSelectAnimation(leader, ANIM_PUSH);
@@ -312,16 +312,14 @@ static void scVaultCavePushPillarAhead(void)
 	sySndPlay(SE_PUSH_STEP);
 	pillar->speedLimit = toFIXED(1) / 5;
 	pillar->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(
-		pillar, destination.x, destination.y, destination.z);
+	syFieldActorSetMoveTargetFX(pillar, dst.x, dst.y, dst.z);
 	leader->speedLimit = toFIXED(1) / 5;
 	leader->acceleration = toFIXED(1) / 5;
-	syFieldActorSetMoveTargetFX(
-		leader, destination.x, destination.y, destination.z);
+	syFieldActorSetMoveTargetFX(leader, dst.x, dst.y, dst.z);
 	fdActorWaitForMove(pillar);
 	sySndPlay(SE_STOP_ACTION_SE);
-	pillar->x.fixed = destination.x;
-	pillar->z.fixed = destination.z;
+	pillar->x.fixed = dst.x;
+	pillar->z.fixed = dst.z;
 	pillar->velX = 0;
 	pillar->velZ = 0;
 	leader->velX = 0;

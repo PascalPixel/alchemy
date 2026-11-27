@@ -130,7 +130,7 @@ void mnWindowCloseAll(void)
 	MESSAGE	  *msg;
 	WINDOW	  *win;
 	Uint32	   done;
-	WINDOW	  *window;
+	WINDOW	  *msgWin;
 	WINDOW	  *pollWin;
 	Sint32	   i;
 
@@ -139,9 +139,9 @@ void mnWindowCloseAll(void)
 	win = state->wins;
 	i = 0;
 	do {
-		window = msg->win;
-		if(window != 0 && window->flg != 0)
-			mnWindowClose(window, 0);
+		msgWin = msg->win;
+		if(msgWin != 0 && msgWin->flg != 0)
+			mnWindowClose(msgWin, 0);
 		i++;
 		msg++;
 	} while(i != ARRAY_COUNT(state->msgs));

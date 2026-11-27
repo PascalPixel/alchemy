@@ -188,11 +188,11 @@ Sint32 fdActorScriptTestFlag(ACTOR *interpreter)
 #define SCRIPT_DEFINE_FLAG_COMMAND(name, change) \
 	Sint32 name(ACTOR *interpreter) \
 	{ \
-		Sint32 flagId; \
+		Sint32 flgId; \
 \
-		flagId = interpreter->script[interpreter->scriptCursor + 1]; \
-		interpreter->conditionResult = gmFlagGetStub(flagId); \
-		change(flagId); \
+		flgId = interpreter->script[interpreter->scriptCursor + 1]; \
+		interpreter->conditionResult = gmFlagGetStub(flgId); \
+		change(flgId); \
 		interpreter->scriptCursor += 2; \
 		return 1; \
 	}

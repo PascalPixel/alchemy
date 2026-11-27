@@ -339,7 +339,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 	Sint32				 savedMotionStrength;
 	Sint32				 savedX;
 	Sint32				 savedZ;
-	SCREEN_POINT		 source;
+	SCREEN_POINT		 src;
 	SCREEN_POINT		 tgt;
 	MODEL_TEXTURE		 texture;
 	RENDER_MODEL		*model;
@@ -372,7 +372,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 	savedMotionStrength = victim->verticalMotionStrength;
 	savedX = victim->x;
 	savedZ = victim->z;
-	btEffectPosProjectBattler(args->tgts[0], &source);
+	btEffectPosProjectBattler(args->tgts[0], &src);
 	btEffectPosProjectBattler(args->tgts[0], &tgt);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
@@ -399,7 +399,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 				Sint32 ang;
 				Sint32 speed;
 
-				spawned->x = toFIXED(source.x / 2);
+				spawned->x = toFIXED(src.x / 2);
 				spawned->y = toFIXED(120);
 				ang = (syRandom() & 0x7fff) + DEGtoANG(90);
 				speed = (syRandom() & 1023) + 32;
@@ -540,7 +540,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 				victim->y = toFIXED(294 - height);
 				victim->z = -(sySin(frm * RISING_DRAGON_ENEMY_SWAY_STEP) * 8);
 				if(frm == 60) {
-					btEffectPosProjectBattler(args->tgts[0], &source);
+					btEffectPosProjectBattler(args->tgts[0], &src);
 				}
 				btEffectPosProjectBattler(args->tgts[0], &tgt);
 			}
@@ -586,7 +586,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 				syInitMatrix();
 				syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 				syPushMatrix();
-				syTranslate(INTtoFIXED(source.x - 128), toFIXED(height), 0);
+				syTranslate(INTtoFIXED(src.x - 128), toFIXED(height), 0);
 				if(args->side == EFFECT_SIDE_PARTY) {
 					syRotY(DEGtoANG(180));
 				}
@@ -622,7 +622,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 						Sint32 ang;
 						Sint32 speed;
 
-						scatter->x = toFIXED(source.x / 2);
+						scatter->x = toFIXED(src.x / 2);
 						scatter->y = 0;
 						ang = (syRandom() & 0x7fff) - DEGtoANG(90);
 						speed = (syRandom() & 255) + 32;
@@ -639,7 +639,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 						Sint32	  ang;
 						Sint32	  speed;
 
-						burst->x = toFIXED(source.x / 2);
+						burst->x = toFIXED(src.x / 2);
 						burst->y = 0;
 						ang = (syRandom() & 0x7fff) - DEGtoANG(90);
 						speed = (syRandom() & 255) + 32;
@@ -690,7 +690,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 						Sint32 random;
 						Sint32 ang;
 						Sint32 speed;
-						Sint32 x = source.x / 2;
+						Sint32 x = src.x / 2;
 
 						trail->y = startY;
 						trail->x = toFIXED(x);

@@ -164,10 +164,10 @@ void fdPsynergyRing(void)
 	Sint32					 ang;
 	Sint32					 repeat;
 	Sint32					 drawing;
-	Sint32					*pos;
+	Sint32					*posPtr;
 	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *mote;
-	Sint32					 position[3];
+	Sint32					 pos[3];
 	Sint32					 phase;
 	Sint32					 tmr;
 	Sint32					 arc;
@@ -184,19 +184,19 @@ void fdPsynergyRing(void)
 		fdBattleEffectStartCanvasSpr();
 		canvas = Ram_HeapSlots->canvasSpr;
 		canvas->mode = 0;
-		pos = position;
-		pos[0] = scene->caster->x.fixed;
-		pos[1] = scene->caster->y.fixed + toFIXED(16);
-		pos[2] = scene->caster->z.fixed;
-		fdCameraWorldToScreen(pos);
+		posPtr = pos;
+		posPtr[0] = scene->caster->x.fixed;
+		posPtr[1] = scene->caster->y.fixed + toFIXED(16);
+		posPtr[2] = scene->caster->z.fixed;
+		fdCameraWorldToScreen(posPtr);
 		/* BG0's 128-pixel ring picture is centred on the caster's place on
 		   screen, its whole pixels. */
 		{
-			Sint32 x = ((FIELD_COORDINATE *)pos)[0].part[0].integer;
+			Sint32 x = ((FIELD_COORDINATE *)posPtr)[0].part[0].integer;
 			Sint32 y;
 
 			BgScrollWork[0].x = 64 - x;
-			y = ((FIELD_COORDINATE *)pos)[2].part[0].integer;
+			y = ((FIELD_COORDINATE *)posPtr)[2].part[0].integer;
 			BgScrollWork[0].y = 64 - y;
 		}
 		IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 2048, 0);
@@ -322,13 +322,13 @@ void fdPsynergyRing(void)
 				spr->oam.fullCol = 0;
 				spr->oam.pal = RING_PALETTE;
 				spr->ang = heading + DEGtoANG(90);
-				position[0] = scene->caster->x.fixed;
-				position[1] = scene->caster->y.fixed + toFIXED(16);
-				position[2] = scene->caster->z.fixed;
-				fdCameraWorldToScreen(position);
-				syVectorAddPolarOffset(toFIXED(64), heading, position);
-				mote->x = position[0];
-				mote->y = position[2];
+				pos[0] = scene->caster->x.fixed;
+				pos[1] = scene->caster->y.fixed + toFIXED(16);
+				pos[2] = scene->caster->z.fixed;
+				fdCameraWorldToScreen(pos);
+				syVectorAddPolarOffset(toFIXED(64), heading, pos);
+				mote->x = pos[0];
+				mote->y = pos[2];
 				mote->tmr = -i;
 				mote++;
 			}

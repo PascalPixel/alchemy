@@ -38,51 +38,49 @@ static inline void scFieldEffectInitMotion(FIELD_EFFECT *effect, SPR *spr,
 
 /* Defines `name`, which places a field effect at (x, y, z) moving at the
    velocity given, with its duration script, and applies the options that
-   `flags` asks for; `create`, `selectAnimation` and `startScript` are the actor
+   `flg` asks for; `create`, `selectAnimation` and `startScript` are the actor
    functions it reaches them through, called directly in an overlay and through
    stub calls in the main image. */
 #define EFFECT_SPAWN(name, create, selectAnimation, startScript) \
-	void name(Sint32 x, Sint32 y, Sint32 z, Sint32 velocityX, \
-		Sint32 velocityY, Sint32 velocityZ, Uint32 flags, \
-		const EFFECT_OPTIONS *options) \
+	void name(Sint32 x, Sint32 y, Sint32 z, Sint32 velX, Sint32 velY, \
+		Sint32 velZ, Uint32 flg, const EFFECT_OPTIONS *options) \
 	{ \
 		ACTOR		 *leader = fdActorGet(ACTOR_PARTY_LEADER); \
 		FIELD_EFFECT *effect; \
-		SPR			 *sprite; \
+		SPR			 *spr; \
 		const Sint32 *script; \
 \
-		if((flags & EFFECT_USE_TYPE) != 0 && options != NULL) \
+		if((flg & EFFECT_USE_TYPE) != 0 && options != NULL) \
 			effect = (FIELD_EFFECT *)create(options->type, x, y, z); \
 		else \
 			effect = (FIELD_EFFECT *)create(EFFECT_DEFAULT_TYPE, x, y, z); \
 		if(effect == NULL) \
 			return; \
 \
-		sprite = effect->spr; \
-		selectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK); \
+		spr = effect->spr; \
+		selectAnimation(effect, (flg + 1) & EFFECT_SCRIPT_MASK); \
 		startScript((void *)effect, \
-			FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]); \
+			FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK]); \
 		effect->motionFlg = 0; \
-		sprite->flg = 0; \
+		spr->flg = 0; \
 		effect->update = scFieldEffectUpdateMotionScaleAndSpin; \
-		scFieldEffectInitMotion( \
-			effect, sprite, leader, velocityX, velocityY, velocityZ); \
+		scFieldEffectInitMotion(effect, spr, leader, velX, velY, velZ); \
 \
-		if((flags & EFFECT_OPTION_MASK) == 0 || options == NULL) \
+		if((flg & EFFECT_OPTION_MASK) == 0 || options == NULL) \
 			return; \
-		if((flags & EFFECT_USE_PALETTE) != 0) \
+		if((flg & EFFECT_USE_PALETTE) != 0) \
 			fdActorSetSprCol((ACTOR *)effect, options->pal); \
-		if((flags & EFFECT_USE_PRIORITY) != 0) { \
+		if((flg & EFFECT_USE_PRIORITY) != 0) { \
 			effect->priFlg &= ~ACTOR_PRIORITY_AUTOMATIC; \
-			sprite->image.pri = options->pri; \
+			spr->image.pri = options->pri; \
 		} \
-		if((flags & EFFECT_USE_START_SCALE) != 0) { \
+		if((flg & EFFECT_USE_START_SCALE) != 0) { \
 			effect->scaleX = options->startScaleX; \
 			effect->scaleY = options->startScaleY; \
 		} \
-		if((flags & EFFECT_SCALE_TO_TARGET) != 0) { \
-			script = FieldEffectDurationScripts[flags & EFFECT_SCRIPT_MASK]; \
-			if((flags & EFFECT_USE_START_SCALE) != 0) { \
+		if((flg & EFFECT_SCALE_TO_TARGET) != 0) { \
+			script = FieldEffectDurationScripts[flg & EFFECT_SCRIPT_MASK]; \
+			if((flg & EFFECT_USE_START_SCALE) != 0) { \
 				effect->scaleRateX = (options->tgtScaleX - effect->scaleX) / \
 					script[EFFECT_SCRIPT_REPEAT_COUNT]; \
 				effect->scaleRateY = (options->tgtScaleY - effect->scaleY) / \
@@ -94,15 +92,15 @@ static inline void scFieldEffectInitMotion(FIELD_EFFECT *effect, SPR *spr,
 					script[EFFECT_SCRIPT_REPEAT_COUNT]; \
 			} \
 		} \
-		if((flags & EFFECT_USE_SCRIPT) != 0) { \
+		if((flg & EFFECT_USE_SCRIPT) != 0) { \
 			selectAnimation(effect, 1); \
 			startScript((void *)effect, options->script); \
 		} \
-		if((flags & EFFECT_USE_ROTATION) != 0) \
-			sprite->rotation = options->rotation; \
-		if((flags & EFFECT_USE_SPIN) != 0) \
+		if((flg & EFFECT_USE_ROTATION) != 0) \
+			spr->rotation = options->rotation; \
+		if((flg & EFFECT_USE_SPIN) != 0) \
 			effect->spin = options->spin; \
-		if((flags & EFFECT_USE_UPDATE) != 0) \
+		if((flg & EFFECT_USE_UPDATE) != 0) \
 			effect->update = options->update; \
 	}
 

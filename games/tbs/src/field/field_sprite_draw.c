@@ -389,10 +389,10 @@ void fdRenderPlaceSprPartPair(SPR *spr, FIXED screenX, Sint32 height,
 #define PLACEMENT_SHADOW_SLOT 2
 
 /* Places a sprite for the scrolling camera and queues it for drawing. */
-void fdRenderApplyProjectedPlacement(SPR *spr, const SPR_PLACEMENT *position,
-	const SPR_SCALE *scale, Sint32 facing)
+void fdRenderApplyProjectedPlacement(
+	SPR *spr, const SPR_PLACEMENT *pos, const SPR_SCALE *scale, Sint32 facing)
 {
-	const Sint32 *pos = sySprPlacementReadValues(position);
+	const Sint32 *posValues = sySprPlacementReadValues(pos);
 	const Sint32 *scaleValues = scale->values;
 	Sint32		  matrix;
 	Uint32		  halfWidth = spr->width >> 1;
@@ -401,11 +401,11 @@ void fdRenderApplyProjectedPlacement(SPR *spr, const SPR_PLACEMENT *position,
 	Sint32		  shadowHalfHeight = SHADOW_HALF_HEIGHT;
 	Sint32		  affine;
 	Sint32		  scaleX = *scaleValues++;
-	Sint32		  screenX = *pos++;
+	Sint32		  screenX = *posValues++;
 	Sint32		  scaleY = *scaleValues;
-	Sint32		  height = *pos++;
-	Sint32		  screenY = *pos++;
-	Sint32		  groundHeight = *pos;
+	Sint32		  height = *posValues++;
+	Sint32		  screenY = *posValues++;
+	Sint32		  groundHeight = *posValues;
 	Sint32		  imageSlot;
 	/* LEFTOVER(frame): two unused locals the ROM's frame reserves and never
 	 * touches. */

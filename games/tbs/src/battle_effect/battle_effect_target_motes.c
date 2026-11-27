@@ -398,13 +398,13 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	void				*canvas;
 	Sint32				 anchor[3];
-	PARTICLE			*current;
+	PARTICLE			*cur;
 	PARTICLE			*sheep;
-	Sint32				 particleIndex;
+	Sint32				 particleIdx;
 	Sint32				 tick;
 	DRAW_RECTANGLE		 drawFlipped;
 	DRAW_RECTANGLE		 drawUpright;
-	Sint32				 targetIndex;
+	Sint32				 tgtIdx;
 
 	sheep = PARTICLES;
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -420,13 +420,13 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_TRANSPARENT);
 	drawFlipped = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
-	for(particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
-		current = &sheep[particleIndex];
-		current->x = INTtoFIXED((syRandom() & 63) + 32);
-		current->y = -toFIXED(32);
-		current->velY = syRandom() & 0; /* a random number drawn for nothing */
-		current->z = syRandom() & 3;
-		current->variant = syRandom() & 255;
+	for(particleIdx = 0; particleIdx != SLEEP_SEEDED; particleIdx++) {
+		cur = &sheep[particleIdx];
+		cur->x = INTtoFIXED((syRandom() & 63) + 32);
+		cur->y = -toFIXED(32);
+		cur->velY = syRandom() & 0; /* a random number drawn for nothing */
+		cur->z = syRandom() & 3;
+		cur->variant = syRandom() & 255;
 	}
 	if(state->args->side == EFFECT_SIDE_PARTY)
 		REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
@@ -437,54 +437,54 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 
 		if(tick == SLEEP_DAMAGE_TICK)
 			EFFECT_SHOW_DAMAGE(0);
-		EFFECT_FOR_EACH_TARGET(targetIndex, state->args) {
-			ACTOR *target;
+		EFFECT_FOR_EACH_TARGET(tgtIdx, state->args) {
+			ACTOR *tgt;
 
-			target = btObjectGetStub(state->args->tgts[targetIndex])->actor;
+			tgt = btObjectGetStub(state->args->tgts[tgtIdx])->actor;
 			EFFECT_VIEW_FROM_CAMERA(camera);
-			SET_VECTOR(anchor, target->x.fixed, toFIXED(40), target->z.fixed);
+			SET_VECTOR(anchor, tgt->x.fixed, toFIXED(40), tgt->z.fixed);
 			syMatrixTranslateVector(anchor);
-			if(tick == targetIndex * SLEEP_TARGET_STAGGER + SLEEP_ASLEEP_TICK)
-				btEffectTintBattler(state->args->tgts[targetIndex],
+			if(tick == tgtIdx * SLEEP_TARGET_STAGGER + SLEEP_ASLEEP_TICK)
+				btEffectTintBattler(state->args->tgts[tgtIdx],
 					SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP, 0);
 		}
-		for(particleIndex = 0; particleIndex != SLEEP_SHEEP; particleIndex++) {
-			current = &sheep[particleIndex];
-			if(tick > particleIndex * SLEEP_SHEEP_STAGGER &&
-				current->y <= toFIXED(CANVAS_SIZE) - 1) {
+		for(particleIdx = 0; particleIdx != SLEEP_SHEEP; particleIdx++) {
+			cur = &sheep[particleIdx];
+			if(tick > particleIdx * SLEEP_SHEEP_STAGGER &&
+				cur->y <= toFIXED(CANVAS_SIZE) - 1) {
 				Sint32 picture;
 
-				picture = (current->variant / SHEEP_TUMBLE_STEP) &
+				picture = (cur->variant / SHEEP_TUMBLE_STEP) &
 					(SHEEP_PICTURES * 2 - 1);
 				if(picture < SHEEP_PICTURES)
 					drawUpright(canvas,
 						state->sheet + picture * PICTURE_BYTES(SHEEP),
-						FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
-						FIXEDtoINT(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+						FIXEDtoINT(cur->x) - SHEEP_WIDTH / 2,
+						FIXEDtoINT(cur->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
 						SHEEP_HEIGHT);
 				else
 					drawFlipped(canvas,
 						state->sheet + picture * PICTURE_BYTES(SHEEP) -
 							SHEEP_PICTURES * PICTURE_BYTES(SHEEP),
-						FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
-						FIXEDtoINT(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+						FIXEDtoINT(cur->x) - SHEEP_WIDTH / 2,
+						FIXEDtoINT(cur->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
 						SHEEP_HEIGHT);
-				current->y += current->velY;
-				current->velY += toFIXED(1) / 8;
-				current->variant += current->z;
+				cur->y += cur->velY;
+				cur->velY += toFIXED(1) / 8;
+				cur->variant += cur->z;
 				/* BUG: meant to bounce a sheep off the ground, tumbling faster,
 				   but it tests for a speed of exactly 0 just after gravity was
 				   added, so the sheep almost always fall on through. BUGFIX
 				   bounces any sheep that is falling. */
 #if FIX_SLEEP_SHEEP_BOUNCE
-				if(current->y > SLEEP_GROUND_Y && current->velY > 0) {
+				if(cur->y > SLEEP_GROUND_Y && cur->velY > 0) {
 #else
-				if(current->y > SLEEP_GROUND_Y && current->velY == 0) {
+				if(cur->y > SLEEP_GROUND_Y && cur->velY == 0) {
 #endif
-					Sint32 speed = current->velY + 1;
-					current->y = SLEEP_GROUND_Y;
-					current->z += 4;
-					current->velY = -speed / 2;
+					Sint32 speed = cur->velY + 1;
+					cur->y = SLEEP_GROUND_Y;
+					cur->z += 4;
+					cur->velY = -speed / 2;
 				}
 			}
 		}

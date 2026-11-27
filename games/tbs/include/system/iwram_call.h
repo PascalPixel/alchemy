@@ -24,15 +24,15 @@ static inline FIXED syDivFX(FIXED divisor, FIXED value)
 
 /* Clears size bytes, rounded down to whole words, from destination. Returns the
    address after the last word. */
-static inline Sint32 syWordsClear(void *destination, Sint32 size)
+static inline Sint32 syWordsClear(void *dst, Sint32 size)
 {
-	return syWordsClearEntry(destination, size);
+	return syWordsClearEntry(dst, size);
 }
 
 /* As syWordsClear, filling with value. */
-static inline Sint32 syWordsFill(void *destination, Sint32 size, Uint32 value)
+static inline Sint32 syWordsFill(void *dst, Sint32 size, Uint32 value)
 {
-	return syWordsFillEntry(destination, size, value);
+	return syWordsFillEntry(dst, size, value);
 }
 
 /* The integer square root, rounded down, of a value from 0; 0 for a negative
@@ -72,18 +72,17 @@ static inline Uint32 syIntegerDivideUnsigned(Uint32 dividend, Uint32 divisor)
    where a byte above 223 skips that many less 223 transparent pixels, and
    returns null. A picture whose two-byte packed size is 0 is stored unpacked:
    it returns the picture after that size, for the caller to draw. */
-static inline void *syDecompressSprPicture(
-	const void *source, void *destination)
+static inline void *syDecompressSprPicture(const void *src, void *dst)
 {
-	return syDecompressSprPictureEntry(source, destination);
+	return syDecompressSprPictureEntry(src, dst);
 }
 
 /* Copies size bytes, rounded down to whole words, from source to
    destination. */
 static inline void syWordsCopy(
-	volatile void *destination, const volatile void *source, Sint32 size)
+	volatile void *dst, const volatile void *src, Sint32 size)
 {
-	syWordsCopyEntry((void *)destination, (const void *)source, size);
+	syWordsCopyEntry((void *)dst, (const void *)src, size);
 }
 
 /* syWordsCopy as a statement of its own: how the link battle and the Battle

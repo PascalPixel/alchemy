@@ -21,7 +21,7 @@
 extern METATILE_TARGET CrackedTiles;
 
 Sint32 fdMapGetTerrainHeight(Sint32 layer, Sint32 x, Sint32 z);
-void   METATILE_PUSH_SLOT_ENTRY(void *entry, Sint32 priority);
+void   METATILE_PUSH_SLOT_ENTRY(void *entry, Sint32 pri);
 
 /* Clears the current entry once the leader has left its metatile; while the
    leader stays on it and the mask is shown, draws the mask over the metatile at

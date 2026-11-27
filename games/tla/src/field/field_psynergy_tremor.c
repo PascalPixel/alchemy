@@ -299,13 +299,13 @@ void fdPsynergyTremor(void)
 void fdBattleEffectShiftRowsDown(Uint8 *base, Sint32 stride, Sint32 rows)
 {
 	Uint8 *src = base + (rows - 2) * stride;
-	Uint8 *destination = base + (rows - 1) * stride;
+	Uint8 *dst = base + (rows - 1) * stride;
 	Sint32 i;
 
 	for(i = rows - 1; i != 1; i--) {
-		syDMAXCopy(src, destination, DMA_COPY_WORDS(stride / 4), REG_DMA3);
+		syDMAXCopy(src, dst, DMA_COPY_WORDS(stride / 4), REG_DMA3);
 		src -= stride;
-		destination -= stride;
+		dst -= stride;
 	}
 	syWordsFillEntry(base, stride, 0);
 }

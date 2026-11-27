@@ -742,21 +742,21 @@ Sint32 mnSaveEraseSelectedFile(void)
    sine wave of the tick counter, eight ticks behind the one before. */
 void mnFileListUpdatePulse(void)
 {
-	Sint32			*frameCnt;
+	Sint32			*frmCnt;
 	volatile Uint16 *palette;
 	Sint32			 colour;
 	FIXED			 sine;
 	Sint32			 i;
 
-	frameCnt = (Sint32 *)&FrameCount;
+	frmCnt = (Sint32 *)&FrameCount;
 	palette = (volatile Uint16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
 	for(i = 0; i <= 3; i++) {
 #if FIX_SIGNED_OVERFLOW
 		/* Wrap the tick phase before sySin takes its low sixteen bits. */
-		sine = sySin((((Uint32)*frameCnt + i * 8U) * (TRIG_TURN * 3 / 256U)) &
+		sine = sySin((((Uint32)*frmCnt + i * 8U) * (TRIG_TURN * 3 / 256U)) &
 			TRIG_ANGLE_MASK);
 #else
-		sine = sySin((*frameCnt + i * 8) * (TRIG_TURN * 3 / 256));
+		sine = sySin((*frmCnt + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
 		colour = sine / (toFIXED(1) / 4);
 		{

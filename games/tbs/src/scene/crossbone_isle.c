@@ -1096,19 +1096,19 @@ static void scCrossboneIsleStepOnLogI(void)
    others at the middle of the metatile 32 pixels ahead. */
 static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 {
-	Sint32 savedMotionFlags = actor->motionFlg;
+	Sint32 savedMotionFlg = actor->motionFlg;
 #if JUMP_LANDS_ON_CELL_CENTER
-	FIELD_POS destination;
+	FIELD_POS dst;
 
-	destination.x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
-	destination.y = actor->y.fixed;
-	destination.z = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	dst.x = (actor->x.fixed & FIELD_METATILE_MASK) + toFIXED(8);
+	dst.y = actor->y.fixed;
+	dst.z = (actor->z.fixed & FIELD_METATILE_MASK) + toFIXED(8);
 	{
 		Sint32 direction = FACING_NEAREST_CARDINAL(actor->facing);
 
-		syVectorAddPolarOffset(toFIXED(32), direction, (FIXED *)&destination);
+		syVectorAddPolarOffset(toFIXED(32), direction, (FIXED *)&dst);
 	}
-	if(syFieldActorCheckMovementCollision(actor, &destination) == 0) {
+	if(syFieldActorCheckMovementCollision(actor, &dst) == 0) {
 #else
 	if(syFieldActorCheckMovementCollision(actor, requested) == 0) {
 #endif
@@ -1123,8 +1123,8 @@ static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 		actor->motionFlg &= ACTOR_JUMP_KEEPS_MOTION;
 		fdActorSetSprFlags(actor, 0);
 #if JUMP_LANDS_ON_CELL_CENTER
-		fdActorMoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(destination.x),
-			FIXEDtoINT(destination.z));
+		fdActorMoveToAndWait(
+			ACTOR_PARTY_LEADER, FIXEDtoINT(dst.x), FIXEDtoINT(dst.z));
 #else
 		{
 			Sint16 *pixelCoordinates = (Sint16 *)requested;
@@ -1135,7 +1135,7 @@ static Bool scCrossboneIsleTryHop(ACTOR *actor, FIELD_POS *requested)
 #endif
 		fdActorSelectAnimation(actor, ANIM_LEADER_SPRING);
 		fdActorSetSprFlags(actor, SPRITE_FLAG_SHADOW);
-		actor->motionFlg = savedMotionFlags;
+		actor->motionFlg = savedMotionFlg;
 		fdScriptEnd();
 		return TRUE;
 	}

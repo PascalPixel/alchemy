@@ -343,21 +343,20 @@ void syInputUpdateKeyRepeatAndDirection(void)
 	syIOWrite16(held, &PerWork.prevData);
 }
 
-/* Copies 16 bytes from `source` to `destination` with one four-register load
+/* Copies 16 bytes from `src` to `dst` with one four-register load
    and store. */
-static __inline__ void Copy16Bytes(
-	const void *source, volatile void *destination)
+static __inline__ void Copy16Bytes(const void *src, volatile void *dst)
 {
-	ASM_REGISTER(const void *src, "r0") = source;
-	ASM_REGISTER(volatile void *dst, "r1") = destination;
-	ASM_COPY_WORDS_4(src, dst);
+	ASM_REGISTER(const void *srcReg, "r0") = src;
+	ASM_REGISTER(volatile void *dstReg, "r1") = dst;
+	ASM_COPY_WORDS_4(srcReg, dstReg);
 }
 
 /* The VBlank interrupt handler, installed by syInit. */
 void syVBlankHandler(void)
 {
 	Uint32 keys;
-	Uint32 frameCnt;
+	Uint32 frmCnt;
 	void (*hook)(void);
 
 	/* The display writes come first, while the blank lasts: OAM can be written
@@ -417,8 +416,8 @@ void syVBlankHandler(void)
 		cnt = &FrameCount;
 		((volatile INPUT_STATE *)&PerWork)->prevVblankData = keys;
 		snd = &SoundVBlankStateWork;
-		frameCnt = *cnt;
-		if(snd->lastFrame != (Uint8)frameCnt && snd->updating == 0) {
+		frmCnt = *cnt;
+		if(snd->lastFrame != (Uint8)frmCnt && snd->updating == 0) {
 			snd->transferCountdown =
 				SOUND_INFO_BYTE(SoundInfoPointer, transferCountdown);
 			sySndUpdateBGMRampsStub();
@@ -427,9 +426,9 @@ void syVBlankHandler(void)
 
 				render(8);
 			}
-			snd->lastFrame = frameCnt;
+			snd->lastFrame = frmCnt;
 		}
-		*cnt = frameCnt + 1;
+		*cnt = frmCnt + 1;
 	}
 	syIOWrite32(TickFrames + 1, &TickFrames);
 	VBlankDone = 1;

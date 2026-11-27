@@ -768,7 +768,7 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	Sint32		 tileCnt;
 	Sint32		 textAdvance;
 	const Uint8 *srcBytes;
-	Uint8		*destination;
+	Uint8		*dst;
 	Uint32		 srcValue;
 	Sint32		 glyphIdx;
 	Sint32		 glyphWidth;
@@ -823,20 +823,19 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 		if(srcValue >= ' ') {
 			glyphIdx = srcValue - ' ';
 			srcBytes = font + glyphIdx * 8;
-			destination = linePixels + startX + textAdvance;
+			dst = linePixels + startX + textAdvance;
 			for(row = 0; row < 8; row++) {
 				glyphBits = *srcBytes++;
 				glyphMask = CREDITS_GLYPH_LEFT_PIXEL_BIT;
 				for(columnIdx = 0; columnIdx < 8; columnIdx++) {
 					if(glyphBits & glyphMask) {
-						destination[CREDITS_RASTER_STRIDE + 1] =
-							CREDITS_SHADOW_COLOR;
-						destination[0] = CREDITS_TEXT_COLOR;
+						dst[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;
+						dst[0] = CREDITS_TEXT_COLOR;
 					}
-					destination++;
+					dst++;
 					glyphMask >>= 1;
 				}
-				destination += CREDITS_RASTER_STRIDE - 8;
+				dst += CREDITS_RASTER_STRIDE - 8;
 			}
 			glyphWidth = 1;
 			if(srcValue >= ' ')
@@ -848,14 +847,14 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	/* Pack pairs of pixel indices into bytes, keeping the 256-pixel stride. */
 	tileCnt = lineWidth / 8;
 	srcBytes = linePixels;
-	destination = linePixels;
+	dst = linePixels;
 	for(row = 0; row < 8; row++) {
 		for(columnIdx = 0; columnIdx < tileCnt * 4; columnIdx++) {
 			srcValue = *srcBytes++;
 			srcValue |= *srcBytes++ << 4;
-			*destination++ = srcValue;
+			*dst++ = srcValue;
 		}
-		destination += CREDITS_RASTER_STRIDE - tileCnt * 4;
+		dst += CREDITS_RASTER_STRIDE - tileCnt * 4;
 		srcBytes += CREDITS_RASTER_STRIDE - tileCnt * 8;
 	}
 

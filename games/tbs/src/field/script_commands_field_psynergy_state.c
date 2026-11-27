@@ -294,7 +294,7 @@ void fdPsynergyFadeFromCastCol(void)
 
 /* Converts a world position (16.16 pixels) to the screen: x and z receive the
    screen's x and y and y becomes 0. */
-void fdCameraWorldToScreen(VECTOR3 *position)
+void fdCameraWorldToScreen(VECTOR3 *pos)
 {
 #if FIX_POINTER_OUTSIDE_OBJECT
 	FIELD_STATE *fieldState = FieldStateWork;
@@ -307,10 +307,10 @@ void fdCameraWorldToScreen(VECTOR3 *position)
 #endif
 		Sint32 result[3];
 
-		syConvert3Dto2D((const FIXED *)position, result);
-		position->x = toFIXED(result[0]);
-		position->z = toFIXED(result[1]);
-		position->y = 0;
+		syConvert3Dto2D((const FIXED *)pos, result);
+		pos->x = toFIXED(result[0]);
+		pos->z = toFIXED(result[1]);
+		pos->y = 0;
 	} else {
 #if FIX_POINTER_OUTSIDE_OBJECT
 		MAP_GRID_SCROLL_STATE *state = MapGridState[0];
@@ -326,10 +326,10 @@ void fdCameraWorldToScreen(VECTOR3 *position)
 
 		/* Relative to the view's whole-pixel corner; height lifts a point up
 		   the screen. */
-		position->x -= x;
-		position->z -= position->y;
-		position->z -= z;
-		position->y = 0;
+		pos->x -= x;
+		pos->z -= pos->y;
+		pos->z -= z;
+		pos->y = 0;
 	}
 }
 

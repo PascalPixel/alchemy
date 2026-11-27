@@ -13,19 +13,19 @@
    the table gives the first. */
 ABILITY_DEFINITION *gmAbilityGetDirect(Sint32 abilityId)
 {
-	Uint32 entryIndex;
+	Uint32 entryIdx;
 
-	entryIndex = abilityId & PSYNERGY_ABILITY_MASK;
+	entryIdx = abilityId & PSYNERGY_ABILITY_MASK;
 	/* BUG: the bound is one past the table's rows, so id ABILITY_COUNT reads
 	   the enemy table's first bytes as an action. */
 #if FIX_ABILITY_ID_BOUND
-	if(entryIndex >= ABILITY_COUNT) {
+	if(entryIdx >= ABILITY_COUNT) {
 #else
-	if(entryIndex >= ABILITY_COUNT + 1) {
+	if(entryIdx >= ABILITY_COUNT + 1) {
 #endif
-		entryIndex = 0;
+		entryIdx = 0;
 	}
-	return (ABILITY_DEFINITION *)&AbilityDefinitions[entryIndex];
+	return (ABILITY_DEFINITION *)&AbilityDefinitions[entryIdx];
 }
 
 /* Returns 1 when `abilityId` is in the unit's Psynergy list. */

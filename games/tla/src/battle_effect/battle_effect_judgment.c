@@ -375,7 +375,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		/* Judgment's colours brighten toward a pale blue as the glow swells,
 		   turn white at the crash and come back over the next 8 ticks. */
 		{
-			Sint32 flag = 0;
+			Sint32 flg = 0;
 
 			if(frm >= 108 && frm <= 142) {
 				Sint32 t = (frm - 108) / 2;
@@ -383,19 +383,19 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 				addR = t / 4;
 				addG = t / 2;
 				addB = t;
-				flag = 1;
+				flg = 1;
 			}
 			if(frm == JUDGMENT_BEAM_TICK - 1) {
 				addB = addG = addR = RGB_LEVEL_MAX;
-				flag = 1;
+				flg = 1;
 			}
 			if(frm >= JUDGMENT_BEAM_TICK && frm <= JUDGMENT_BEAM_TICK + 8) {
 				/* FAKEMATCH(dead): step assigned to itself as it is set. */
 				step = step = 304 - frm * 2;
 				addB = addR = addG = step;
-				flag = 1;
+				flg = 1;
 			}
-			if(flag == 1) {
+			if(flg == 1) {
 				Uint16 *src =
 					syResourceGetTableEntry(RESOURCE_WINGED_KNIGHT_C_TILES);
 				volatile Uint16 *dst = (volatile Uint16 *)OBJ_PLTT;
@@ -426,18 +426,18 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		   down. */
 		if(frm >= JUDGMENT_BEAM_TICK) {
 			Sint32 y = frm * 16 - (JUDGMENT_BEAM_TICK - 2) * 16;
-			Sint32 flags;
+			Sint32 flg;
 
-			flags = EFFECT_CLIP_BOUNDS;
+			flg = EFFECT_CLIP_BOUNDS;
 			EFFECT_LOAD_BLITTER(
-				HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
+				HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_ADDITIVE);
 			(Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
 				JUDGMENT_BURST_X - JUDGMENT_BEAM_WIDTH, y, JUDGMENT_BEAM_WIDTH,
 				JUDGMENT_BEAM_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-			flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 			EFFECT_LOAD_BLITTER(
-				HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_ADDITIVE);
+				HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_ADDITIVE);
 			(Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
 				JUDGMENT_BURST_X, y, JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -706,34 +706,34 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 		if(frm < JUDGMENT_SWEEP_EXPLOSION) {
 			Uint8 *sheet;
 			Sint32 top = frm - 4;
-			Sint32 flags;
+			Sint32 flg;
 
 			if((frm & 7) < 4) {
 				sheet = state->sheet + JUDGMENT_SHEET_FLARE_A;
 			} else {
 				sheet = state->sheet + JUDGMENT_SHEET_FLARE_B;
 			}
-			flags = EFFECT_CLIP_BOUNDS;
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+			flg = EFFECT_CLIP_BOUNDS;
+			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 			(Ram_HeapSlots->ramCodePaired)(canvas, sheet,
 				JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH,
 				top - JUDGMENT_FLARE_HEIGHT, JUDGMENT_FLARE_WIDTH,
 				JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-			flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
+			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 			(Ram_HeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
 				top - JUDGMENT_FLARE_HEIGHT, JUDGMENT_FLARE_WIDTH,
 				JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-			flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y;
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y;
+			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 			(Ram_HeapSlots->ramCodePaired)(canvas, sheet,
 				JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH, top - 1,
 				JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
-			flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
-			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, BLITTER_MAX);
+			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
+			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
 			(Ram_HeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
 				top - 1, JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);

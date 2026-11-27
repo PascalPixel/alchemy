@@ -44,14 +44,14 @@ void mnDjinnFiguresInitTopRow(void *win, Sint32 unused)
 	void name(void) \
 	{ \
 		ITEM_MENU_STATE *state = MenuState; \
-		Sint32			 index; \
+		Sint32			 idx; \
 \
-		for(index = 0; index < 4; index++) { \
-			SPR *figure = state->figures[index]; \
+		for(idx = 0; idx < 4; idx++) { \
+			SPR *figure = state->figures[idx]; \
 \
 			if(figure != NULL) { \
 				fdSprDestroyStub(figure); \
-				state->figures[index] = NULL; \
+				state->figures[idx] = NULL; \
 			} \
 		} \
 		syCloseEvent(update); \

@@ -542,7 +542,7 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 		}
 		if(frm == METEOR_BLOW_BURST_TICK) {
 			PARTICLE *p;
-			Sint32	  count = METEOR_BLOW_SPARKS;
+			Sint32	  cnt = METEOR_BLOW_SPARKS;
 
 			p = (PARTICLE *)MapGridMetatileBuffer;
 			i = 0;
@@ -551,14 +551,14 @@ void btEffectRunMeteorBlow(BATTLE_EFFECT_PARM *args)
 			 * halved for the sparks' start. */
 			meteorX++;
 			meteorX--;
-			for(; i != count; i++, p++) {
+			for(; i != cnt; i++, p++) {
 				Sint32 r;
 				Sint32 a;
 
 				/* FAKEMATCH(dead): updates of count. */
-				count++;
-				count--;
-				r = (syRandom() & 511) + count;
+				cnt++;
+				cnt--;
+				r = (syRandom() & 511) + cnt;
 				a = (syRandom() & (DEGtoANG(180) - 1)) + DEGtoANG(90);
 
 				p->x = canvasX;

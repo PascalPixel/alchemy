@@ -13,7 +13,7 @@ void WAVE_SCROLL(void)
 {
 	Sint16			*line = WAVE_SCROLL_LINES;
 	Sint32			 i;
-	Sint16			*source;
+	Sint16			*src;
 	volatile Uint16 *scroll;
 	volatile Uint16 *dma;
 
@@ -39,8 +39,8 @@ void WAVE_SCROLL(void)
 	dma = REG_DMA0;
 	dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
 	dma[5] &= ~DMA_ENABLE;
-	source = line + 1;
+	src = line + 1;
 	(void)dma[5];
-	syDMAXCopy(source, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
+	syDMAXCopy(src, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
 		(volatile Uint32 *)dma);
 }

@@ -328,7 +328,7 @@ ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 
 /* Pauses or resumes every actor but the player's and except, and sets their
    animations' speed. */
-void fdActorSetOthersPaused(ACTOR *except, Sint32 paused, Sint32 animationSpeed)
+void fdActorSetOthersPaused(ACTOR *except, Sint32 paused, Sint32 anmSpeed)
 {
 	Sint16 *player;
 	ACTOR  *actor;
@@ -340,7 +340,7 @@ void fdActorSetOthersPaused(ACTOR *except, Sint32 paused, Sint32 animationSpeed)
 		actor = fdActorLookup(actorId);
 		if(actorId != *player && actor != NULL && actor != except) {
 			actor->paused = paused;
-			fdActorSetAnimationSpeedStub(actor, animationSpeed);
+			fdActorSetAnimationSpeedStub(actor, anmSpeed);
 		}
 		actorId++;
 		/* BUG: one past the actor table: fdActorLookup(ACTOR_ID_COUNT) is the

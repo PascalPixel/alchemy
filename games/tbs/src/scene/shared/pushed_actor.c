@@ -457,7 +457,7 @@ UNUSED static Sint32 scPushedActorBlockFootprint(Sint32 id)
 	ACTOR				  *actor = fdActorGetById(id);
 	PUSHED_ACTOR_PROBE	   probe;
 	Uint32				   idx = 0;
-	Sint32				   index;
+	Sint32				   rectangleIdx;
 	Sint32				   width;
 	Sint32				   height;
 	Sint32				   x0;
@@ -479,23 +479,23 @@ UNUSED static Sint32 scPushedActorBlockFootprint(Sint32 id)
 	probe.pos.x = actor->x.fixed;
 	probe.pos.y = actor->y.fixed;
 	probe.pos.z = actor->z.fixed;
-	index = probe.rectangleIdx;
-	z0 = PushedActorRectangles[index].z0;
+	rectangleIdx = probe.rectangleIdx;
+	z0 = PushedActorRectangles[rectangleIdx].z0;
 	if(z0 < 0)
 		z0 = -z0;
-	z1 = PushedActorRectangles[index].z1;
+	z1 = PushedActorRectangles[rectangleIdx].z1;
 	if(z1 < 0)
 		z1 = -z1;
 	height = (z0 + z1) >> 4;
-	x0 = PushedActorRectangles[index].x0;
+	x0 = PushedActorRectangles[rectangleIdx].x0;
 	if(x0 < 0)
 		x0 = -x0;
-	x1 = PushedActorRectangles[index].x1;
+	x1 = PushedActorRectangles[rectangleIdx].x1;
 	if(x1 < 0)
 		x1 = -x1;
 	width = (x0 + x1) >> 4;
-	probe.pos.x += toFIXED(PushedActorRectangles[index].x0);
-	probe.pos.z += toFIXED(PushedActorRectangles[index].z0);
+	probe.pos.x += toFIXED(PushedActorRectangles[rectangleIdx].x0);
+	probe.pos.z += toFIXED(PushedActorRectangles[rectangleIdx].z0);
 	probe.pos.x = FIELD_METATILE(probe.pos.x);
 	probe.pos.z = FIELD_METATILE(probe.pos.z);
 	idx = FIELD_METATILE(grid->layers[1].ofsX);

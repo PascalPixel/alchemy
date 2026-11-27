@@ -143,13 +143,13 @@ enum {
 /* The German, Spanish, French and Italian form: the bare forms take no article,
    the others the article of the name's class, capitalised at the start of a
    sentence. */
-Uint32 mnMessageAppendArticleName(Sint32 inBattleMessage, Uint16 *name,
-	Uint32 writePosition, Uint16 *entries, Sint32 articleForm, Sint32 plural,
+Uint32 mnMessageAppendArticleName(Sint32 inBattleMsg, Uint16 *name,
+	Uint32 writePos, Uint16 *entries, Sint32 articleForm, Sint32 plural,
 	Sint32 *lastLetter)
 {
-	struct ARTICLE_TABLE table;
+	struct ARTICLE_TABLE tbl;
 #if LANGUAGE == LANGUAGE_SPANISH
-	struct ARTICLE_TABLE indefiniteTable;
+	struct ARTICLE_TABLE indefiniteTbl;
 	Uint16				 form;
 	Sint16				 indefinite;
 #endif
@@ -158,16 +158,16 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMessage, Uint16 *name,
 	Uint16 code;
 	Sint8 *p;
 	Sint8  letter;
-	Sint32 letterIndex;
+	Sint32 letterIdx;
 
 #if LANGUAGE == LANGUAGE_SPANISH
 	form = articleForm & ARTICLE_FORM_MASK;
 	indefinite = articleForm & ARTICLE_FORM_INDEFINITE;
 #endif
-	if(inBattleMessage != 0) {
-		TEXT_APPEND(entries, writePosition, ' ');
-		TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-		TEXT_APPEND(entries, writePosition, TEXT_DEFAULT_LINE_SPACING);
+	if(inBattleMsg != 0) {
+		TEXT_APPEND(entries, writePos, ' ');
+		TEXT_APPEND(entries, writePos, TEXT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, TEXT_DEFAULT_LINE_SPACING);
 	}
 	/* A name's leading article class (MESSAGE_ARTICLE_CLASS and its operand) is
 	   never copied. */
@@ -184,9 +184,9 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMessage, Uint16 *name,
 
 	else {
 		kind = 0;
-		table = ArticleTable;
+		tbl = ArticleTable;
 #if LANGUAGE == LANGUAGE_SPANISH
-		indefiniteTable = ArticleIndefinite;
+		indefiniteTbl = ArticleIndefinite;
 #endif
 		if(name[0] == MESSAGE_ARTICLE_CLASS) {
 			kind = name[1];
@@ -194,24 +194,24 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMessage, Uint16 *name,
 		}
 #if LANGUAGE == LANGUAGE_SPANISH
 		if(indefinite == 0)
-			p = table.text[kind & ARTICLE_KIND_MASK];
+			p = tbl.text[kind & ARTICLE_KIND_MASK];
 		else
-			p = indefiniteTable.text[kind & ARTICLE_KIND_MASK];
+			p = indefiniteTbl.text[kind & ARTICLE_KIND_MASK];
 #else
-		p = table.text[kind & ARTICLE_KIND_MASK];
+		p = tbl.text[kind & ARTICLE_KIND_MASK];
 #endif
 		/* The first letter is capitalised at the start of a sentence. */
-		for(letterIndex = 0; letterIndex < ARTICLE_MAX_LETTERS; letterIndex++) {
+		for(letterIdx = 0; letterIdx < ARTICLE_MAX_LETTERS; letterIdx++) {
 			if((letter = *p++) == 0)
 				break;
-			if(letterIndex == 0 && *lastLetter == LAST_LETTER_SENTENCE_END)
+			if(letterIdx == 0 && *lastLetter == LAST_LETTER_SENTENCE_END)
 				letter -= 'a' - 'A';
-			TEXT_APPEND(entries, writePosition, letter);
+			TEXT_APPEND(entries, writePos, letter);
 		}
 	}
 	while(*name != 0) {
 		code = *name++;
-		TEXT_APPEND(entries, writePosition, code);
+		TEXT_APPEND(entries, writePos, code);
 #if LANGUAGE == LANGUAGE_GERMAN
 		if(code == 's' || code == 'S' || code == 'z' || code == 'Z')
 			*lastLetter = LAST_LETTER_S;
@@ -224,12 +224,12 @@ Uint32 mnMessageAppendArticleName(Sint32 inBattleMessage, Uint16 *name,
 			*lastLetter = LAST_LETTER_OTHER;
 #endif
 	}
-	if(inBattleMessage != 0) {
-		TEXT_APPEND(entries, writePosition, TEXT_LINE_SPACING);
-		TEXT_APPEND(entries, writePosition, 8);
-		TEXT_APPEND(entries, writePosition, ' ');
+	if(inBattleMsg != 0) {
+		TEXT_APPEND(entries, writePos, TEXT_LINE_SPACING);
+		TEXT_APPEND(entries, writePos, 8);
+		TEXT_APPEND(entries, writePos, ' ');
 	}
-	return writePosition;
+	return writePos;
 }
 #endif
 

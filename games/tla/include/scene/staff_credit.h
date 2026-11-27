@@ -34,7 +34,7 @@ static inline void scQueueIOWrite16(Uint32 adr, Uint32 value)
    (scWorldMapPlayLighthouseTransition and the credits' unused copy of it). */
 #define PUSH_PICTURE(frame) \
 	IO_WRITE_QUEUE_PUSH(PICTURE_MAP, \
-		(Uint32)(buffer + PICTURE_FIRST + (frame) * PICTURE_STRIDE), \
+		(Uint32)(buf + PICTURE_FIRST + (frame) * PICTURE_STRIDE), \
 		DMA_COPY_WORDS(PICTURE_MAP_BYTES / 4))
 
 /* The PP gauge shown over the leader on the world map: a 32x16 sprite of eight

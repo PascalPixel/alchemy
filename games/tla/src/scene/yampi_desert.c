@@ -573,9 +573,9 @@ void scYampiDesertPoundBlitzStake(Sint32 mode, Sint32 cnt)
    (fdPoundSinkTarget), and once down it raises the watch for whether the King
    Scorpion is stopped. */
 #define DEFINE_POUND_STAKE_STOPPING_SCORPION(name, stakes) \
-	void name(Sint32 mode, Sint32 count) \
+	void name(Sint32 mode, Sint32 cnt) \
 	{ \
-		fdPoundSinkTarget(stakes, mode, count); \
+		fdPoundSinkTarget(stakes, mode, cnt); \
 		if(mode == POUND_STAGE_LANDED) { \
 			if(YampiDesertRaisedCue == 0) \
 				YampiDesertRaisedCue = RAISED_WATCH_SCORPION_STOP; \

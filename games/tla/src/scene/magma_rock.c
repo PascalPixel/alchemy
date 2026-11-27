@@ -2339,10 +2339,10 @@ UNUSED void scMagmaRockStepOnTrap(Uint16 *list)
 			continue;
 		}
 		{
-			Sint32 flag = list[1];
+			Sint32 flg = list[1];
 
 			fdScriptStart();
-			if(!fdScriptGetFlag(flag)) {
+			if(!fdScriptGetFlag(flg)) {
 				fdActorSelectAnimation(firstPlaced, 1);
 				scActorTakePlaceOf(firstPlaced, tgt);
 				sySynch(1);
@@ -2363,15 +2363,15 @@ UNUSED void scMagmaRockStepOnTrap(Uint16 *list)
 				scDustScatter(0);
 				scActorTakePlaceOf(tgt, firstPlaced);
 				sySynch(1);
-				fdScriptSetFlag(flag);
-			} else if(!fdScriptGetFlag(flag + 1)) {
-				Uint8 *flags;
+				fdScriptSetFlag(flg);
+			} else if(!fdScriptGetFlag(flg + 1)) {
+				Uint8 *motionFlg;
 
 				fdActorSelectAnimation(firstPlaced, 0);
 				scActorTakePlaceOf(firstPlaced, tgt);
 				sySynch(1);
-				flags = &leader->motionFlg;
-				*flags = 0;
+				motionFlg = &leader->motionFlg;
+				*motionFlg = 0;
 				fdScriptPlaySnd(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
@@ -2384,14 +2384,14 @@ UNUSED void scMagmaRockStepOnTrap(Uint16 *list)
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				*motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
 				fdActorSetPosAndResetMotion(firstPlaced, 0, 0, 0);
 				sySynch(2);
 				fdScriptPlaySnd(SE_THUMP);
 				scMagmaRockSpawnDustRing();
 				sySynch(20);
-				fdScriptSetFlag(flag + 1);
+				fdScriptSetFlag(flg + 1);
 			}
 			scMagmaRockEndScript();
 			return;

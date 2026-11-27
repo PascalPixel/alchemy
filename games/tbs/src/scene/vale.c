@@ -1813,12 +1813,12 @@ Sint32 scInit(void)
 				}
 			}
 			{
-				Sint32 priority;
+				Sint32 pri;
 
 				/* DEAD: a byte shifted down 8 places is 0, so Dora's priority
 				   is 2; the ROM keeps the byte's mask and shift. */
-				priority = ((Uint32)(Uint8)set >> 8) + 2;
-				fdActorSetSprPriority(ACTOR_DORA, priority);
+				pri = ((Uint32)(Uint8)set >> 8) + 2;
+				fdActorSetSprPriority(ACTOR_DORA, pri);
 			}
 #endif
 		}

@@ -67,7 +67,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 	void					*caster;
 	Sint32					 screenB[3];
 	Sint32					 screenA[3];
-	SCREEN_POINT			 source;
+	SCREEN_POINT			 src;
 	SCREEN_POINT			 tgt;
 	MODEL_TEXTURE			 texture;
 	MODEL_TEXTURE			 billow;
@@ -141,7 +141,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 		BATTLE_BACKGROUND_WIDTH / GEODE_CLOD_RING_VERTICES, GEODE_RING_SPACING);
 
 	for(frm = 0; frm != GEODE_TICKS; frm++) {
-		btEffectPosProjectBattler(args->user, &source);
+		btEffectPosProjectBattler(args->user, &src);
 		btEffectPosProjectBattler(args->tgts[0], &tgt);
 
 		/* The backdrop's colours come down from the entrance's white to its
@@ -195,7 +195,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				IO_WRITE_HALFWORD);
 			syWordsClearEntry(canvas, CANVAS_VIEW_BYTES);
 			BgScrollWork[1].y = 78;
-			BgScrollWork[1].x = CANVAS_SIZE / 2 - source.x;
+			BgScrollWork[1].x = CANVAS_SIZE / 2 - src.x;
 			REG_BG1CNT &= ~BGCNT_PRIORITY(3);
 			REG_BG1CNT |= BGCNT_PRIORITY(1);
 			REG_BG2CNT =
@@ -246,7 +246,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 			if(t > GEODE_FLIGHT_TICKS) {
 				t = GEODE_FLIGHT_TICKS;
 			}
-			x = source.x + (tgt.x - source.x) * t / GEODE_FLIGHT_TICKS;
+			x = src.x + (tgt.x - src.x) * t / GEODE_FLIGHT_TICKS;
 			y = t * 64 / GEODE_FLIGHT_TICKS + 16;
 			BgScrollWork[1].x = CANVAS_SIZE / 2 - x;
 			BgScrollWork[1].y = t * -46 / GEODE_FLIGHT_TICKS + 78;
@@ -288,8 +288,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 				if(f > GEODE_ROLL_TICKS) {
 					f = GEODE_ROLL_TICKS;
 				}
-				centerX =
-					(source.x - DISPLAY_WIDTH / 2) * f / GEODE_ROLL_TICKS +
+				centerX = (src.x - DISPLAY_WIDTH / 2) * f / GEODE_ROLL_TICKS +
 					DISPLAY_WIDTH / 2;
 				centerY = 46 * f / GEODE_ROLL_TICKS - 16;
 			}

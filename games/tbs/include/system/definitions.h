@@ -993,10 +993,10 @@ typedef struct IO_WRITE_QUEUE {
 	FIXED_ADDRESS( \
 		(Sint32 (*)(Sint32 divisor, Sint32 value)), 0x0300013c, syIWRAMDivFX)
 #define syWordsClearEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *destination, Sint32 size)), 0x03000164, \
-		syIWRAMWordsClear)
+	FIXED_ADDRESS( \
+		(Sint32 (*)(void *dst, Sint32 size)), 0x03000164, syIWRAMWordsClear)
 #define syWordsFillEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *destination, Sint32 size, Uint32 value)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dst, Sint32 size, Uint32 value)), \
 		0x03000168, syIWRAMWordsFill)
 #define sySquartEntry \
 	FIXED_ADDRESS((Sint32 (*)(Sint32 value)), 0x030001d8, syIWRAMSquart)
@@ -1019,11 +1019,10 @@ typedef struct IO_WRITE_QUEUE {
 	FIXED_ADDRESS((Uint32 (*)(Uint32 dividend, Uint32 divisor)), 0x030003f0, \
 		syIWRAMUnsignedDivide)
 #define syDecompressSprPictureEntry \
-	FIXED_ADDRESS((void *(*)(const void *source, void *destination)), \
-		0x030005c0, syIWRAMDecompress)
+	FIXED_ADDRESS((void *(*)(const void *src, void *dst)), 0x030005c0, \
+		syIWRAMDecompress)
 #define syWordsCopyEntry \
-	FIXED_ADDRESS( \
-		(Sint32 (*)(void *destination, const void *source, Sint32 size)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dst, const void *src, Sint32 size)), \
 		0x03001388, syIWRAMWordsCopy)
 
 /* Three IWRAM functions' distances in bytes from syIWRAMIRQMain, for code that

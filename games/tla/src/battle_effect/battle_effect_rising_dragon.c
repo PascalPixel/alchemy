@@ -53,7 +53,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	Uint8				*sprs;
 	void				*caster;
 	Sint32				 arcs[4];
-	SCREEN_POINT		 source;
+	SCREEN_POINT		 src;
 	SCREEN_POINT		 tgt;
 	SCREEN_POINT		 hit;
 	MODEL_TEXTURE		 texture;
@@ -84,7 +84,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 		caster = btObjectGetStub(args->user)->obj;
 		fdActorSetAnimationSpeedStub(caster, ANIM_STEP_NORMAL * 3);
 		fdActorSelectAnimationStub(caster, POSE_LEAP);
-		btEffectPosProjectBattler(args->user, &source);
+		btEffectPosProjectBattler(args->user, &src);
 		btEffectPosProjectBattler(args->tgts[0], &tgt);
 		btResourceLoadAndDecompress(
 			RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
@@ -194,7 +194,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 
 				/* The first dragon arcs over, the second under. */
 				for(j = 0; j != DRAGON_SEGMENTS; j++) {
-					Sint32 distance = source.x / 4 - tgt.x / 4;
+					Sint32 distance = src.x / 4 - tgt.x / 4;
 					Sint32 ang =
 						j * (arcs[0] - arcs[1]) + arcs[1] * DRAGON_SEGMENTS;
 					Sint32 height;
@@ -228,7 +228,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					}
 				}
 				for(j = 0; j != DRAGON_SEGMENTS; j++) {
-					Sint32 distance = source.x / 4 - tgt.x / 4;
+					Sint32 distance = src.x / 4 - tgt.x / 4;
 					Sint32 ang =
 						j * (arcs[2] - arcs[3]) + arcs[3] * DRAGON_SEGMENTS;
 					Sint32 height;
@@ -283,11 +283,11 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					model->scrollU = TEXTURE_SCROLL_MASK & ~(frm << 3);
 					syInitMatrix();
 					if(args->side == EFFECT_SIDE_ENEMIES) {
-						syTranslate(INTtoFIXED(source.x / 2 - 68),
-							toFIXED(source.y) - toFIXED(96), 0);
+						syTranslate(INTtoFIXED(src.x / 2 - 68),
+							toFIXED(src.y) - toFIXED(96), 0);
 					} else {
-						syTranslate(INTtoFIXED(source.x / 2 - 52),
-							toFIXED(source.y) - toFIXED(96), 0);
+						syTranslate(INTtoFIXED(src.x / 2 - 52),
+							toFIXED(src.y) - toFIXED(96), 0);
 					}
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
 					if(args->side == EFFECT_SIDE_PARTY) {

@@ -85,17 +85,17 @@ void mnWindowCopyTilemapRegion(const WINDOW *win, const void *src)
 }
 
 /* Puts the tilemap entries of the `width` x `height` tile rectangle at (x, y)
-   inside `window` in `palette`, clipped to the screen: the key or choice under
+   inside `win` in `palette`, clipped to the screen: the key or choice under
    the cursor flashes so between WINDOW_PALETTE and HIGHLIGHT_PALETTE. Only the
    palette number's lowest bit is cleared before `palette` is ORed in, as those
    two differ in it alone. */
-void mnWindowSetInteriorPalette(const WINDOW *window, Sint32 x, Sint32 y,
+void mnWindowSetInteriorPalette(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 palette)
 {
 	Uint8 *tilemap = WindowStateWork[0];
 
-	x += window->x + 1;
-	y += window->y + 1;
+	x += win->x + 1;
+	y += win->y + 1;
 	palette = BG_TILE_PALETTE(palette);
 	if(x < 0) {
 		width += x;

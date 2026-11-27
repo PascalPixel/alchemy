@@ -109,7 +109,7 @@ static void scColossoTakePlaceForMatch(void)
 	ACTOR		*supporter = fdActorGetById(supporterId);
 	Sint32		 actorId;
 	Sint32		*transition;
-	Sint32		 flagBase;
+	Sint32		 flgBase;
 
 	fdScriptStart();
 	/* BUG: one past the actor table: fdActorLookup(ACTOR_ID_COUNT) is the first
@@ -154,13 +154,13 @@ static void scColossoTakePlaceForMatch(void)
 	fdScriptWait(20);
 	fdScriptFinishScreenTransition();
 	fdScriptWaitTransitionTicks();
-	flagBase = COLOSSO_CHEER_SLOT(supporterId);
+	flgBase = COLOSSO_CHEER_SLOT(supporterId);
 	syFieldGameFlagSetByte(
-		flagBase + COLOSSO_CHEER_COLUMN, FIELD_METATILE(supporter->x.fixed));
+		flgBase + COLOSSO_CHEER_COLUMN, FIELD_METATILE(supporter->x.fixed));
 	{
 		Sint32 metatileRow = FIELD_METATILE(supporter->z.fixed);
 
-		syFieldGameFlagSetByte(flagBase + COLOSSO_CHEER_ROW, metatileRow);
+		syFieldGameFlagSetByte(flgBase + COLOSSO_CHEER_ROW, metatileRow);
 	}
 	supporterId++;
 	if(supporterId > MIA) {

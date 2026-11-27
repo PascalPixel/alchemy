@@ -39,8 +39,8 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 	Sint32		 width;
 	Sint32		 colour;
 	Sint32		 shadowColour;
-	Sint32		 firstIndex;
-	Sint32		 secondIndex;
+	Sint32		 firstIdx;
+	Sint32		 secondIdx;
 	Uint16		 secondWidth;
 	Uint8		*pixel;
 	Sint32		 tileColumn;
@@ -50,7 +50,7 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 	Uint32		 tileLine;
 
 	state = WINDOW_STATE;
-	secondIndex = GLYPH_PAIR_SECOND(code);
+	secondIdx = GLYPH_PAIR_SECOND(code);
 	code = GLYPH_PAIR_FIRST(code);
 	syWordsClear(pixels, sizeof(pixels));
 	if(state->mindRead != 0) {
@@ -60,8 +60,8 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 		shadowColour = GLYPH_SHADOW_COLOR;
 		colour = state->colour;
 	}
-	firstIndex = code - TEXT_SPACE;
-	glyph = firstIndex * sizeof(GLYPH) + (const Uint8 *)Font_Glyphs;
+	firstIdx = code - TEXT_SPACE;
+	glyph = firstIdx * sizeof(GLYPH) + (const Uint8 *)Font_Glyphs;
 	width = ((const GLYPH *)glyph)->width;
 	glyph = (const Uint8 *)((const GLYPH *)glyph)->rows;
 	/* Outlined text is the glyph drawn twice a pixel apart, over its shadow
@@ -77,14 +77,14 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 		syDecompressBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
 	}
 	/* The second character follows the first, starting width pixels along. */
-	if((Uint16)secondIndex != 0) {
+	if((Uint16)secondIdx != 0) {
 #if FIX_POINTER_OUTSIDE_OBJECT
 		/* Form only the actual glyph address: &glyphs[-TEXT_SPACE] is already
 		   outside the array before the later byte offset is added. */
-		glyph = (const Uint8 *)&Font_Glyphs[(Uint16)secondIndex - TEXT_SPACE];
+		glyph = (const Uint8 *)&Font_Glyphs[(Uint16)secondIdx - TEXT_SPACE];
 #else
-		glyph = (const Uint8 *)&Font_Glyphs[-TEXT_SPACE] +
-			((Uint16)secondIndex << 5);
+		glyph =
+			(const Uint8 *)&Font_Glyphs[-TEXT_SPACE] + ((Uint16)secondIdx << 5);
 #endif
 		secondWidth = *(const Uint16 *)glyph;
 		glyph += 2;

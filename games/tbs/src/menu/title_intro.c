@@ -256,12 +256,12 @@ void mnTitleUpdateIntroSprs(void)
 }
 
 /* Writes map rows `first` to `last` at tilemap: each row the screen's width of
-   tiles numbered on from tileIndex, then two columns past the edge that show
+   tiles numbered on from tileIdx, then two columns past the edge that show
    offscreenTile. */
 #define FILL_INTRO_MAP_ROWS(first, last) \
 	for(row = (first); row <= (last); row++) { \
 		for(column = 0; column < DISPLAY_TILE_WIDTH; column++) \
-			*tilemap++ = tileIndex++; \
+			*tilemap++ = tileIdx++; \
 		*tilemap++ = offscreenTile; \
 		*tilemap++ = offscreenTile; \
 	}
@@ -276,7 +276,7 @@ void mnTitleLoadIntroBackgrounds(void)
 	Uint16		*tilemap;
 	Sint32		 column;
 	Sint32		 row;
-	Uint16		 tileIndex;
+	Uint16		 tileIdx;
 
 	introState = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
 	REG_DISPCNT = 0;
@@ -305,16 +305,15 @@ void mnTitleLoadIntroBackgrounds(void)
 		/* Map rows from INTRO_FIRST_MAP_ROW show the VRAM rows from the first;
 		   the rows above it show the last ones. */
 		tilemap = (Uint16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
-		tileIndex = PEAK_FIRST_TILE +
+		tileIdx = PEAK_FIRST_TILE +
 			(INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
 		FILL_INTRO_MAP_ROWS(0, INTRO_FIRST_MAP_ROW - 1);
-		tileIndex = PEAK_FIRST_TILE;
+		tileIdx = PEAK_FIRST_TILE;
 		FILL_INTRO_MAP_ROWS(INTRO_FIRST_MAP_ROW, INTRO_MAP_ROWS - 1);
 		tilemap = (Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
-		tileIndex =
-			(INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
+		tileIdx = (INTRO_VRAM_ROWS - INTRO_FIRST_MAP_ROW) * DISPLAY_TILE_WIDTH;
 		FILL_INTRO_MAP_ROWS(0, INTRO_FIRST_MAP_ROW - 1);
-		tileIndex = 0;
+		tileIdx = 0;
 		FILL_INTRO_MAP_ROWS(INTRO_FIRST_MAP_ROW, INTRO_MAP_ROWS - 1);
 
 		REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_MOSAIC |
@@ -889,11 +888,11 @@ void mnTitlePaletteFadeUpdate(void)
 /* PALETTE_TINT_DIMMER: red halved, green cut by a third, then red and green
    raised and blue lowered, each channel through its own curve. */
 #define BUILD_DIMMER_COLORS() \
-	for(colorIndex = 0; colorIndex < colorCount; colorIndex++) { \
-		color = *source++; \
-		red = RGB_RED(color); \
-		green = RGB_GREEN(color); \
-		blue = RGB_BLUE(color); \
+	for(colIdx = 0; colIdx < colorCount; colIdx++) { \
+		col = *src++; \
+		red = RGB_RED(col); \
+		green = RGB_GREEN(col); \
+		blue = RGB_BLUE(col); \
 		red -= (Uint32)red >> 1; \
 		green -= green / 3; \
 		red += 6; \
@@ -902,10 +901,10 @@ void mnTitlePaletteFadeUpdate(void)
 		red = mnTitlePaletteFadeClampChannel(red); \
 		green = mnTitlePaletteFadeClampChannel(green); \
 		blue = mnTitlePaletteFadeClampChannel(blue); \
-		SET_VECTOR(destination, TitlePaletteFadeChannelCurveContrast[blue], \
+		SET_VECTOR(dst, TitlePaletteFadeChannelCurveContrast[blue], \
 			TitlePaletteFadeChannelCurveLight[green], \
 			TitlePaletteFadeChannelCurve[red]); \
-		destination += 3; \
+		dst += 3; \
 	}
 
 /* Tints 512 source colours into destination components (three per colour, each
@@ -916,56 +915,55 @@ void mnTitlePaletteFadeUpdate(void)
    colour in their low bits; anything else is the address of components to copy.
    `selectedPalettes` is an enum PALETTE_SELECTION. */
 void mnTitlePaletteFadeBuildCols(
-	Uint32 mode, Uint16 *source, Uint16 *destination, Sint32 selectedPalettes)
+	Uint32 mode, Uint16 *src, Uint16 *dst, Sint32 selectedPalettes)
 {
-	Uint32 colorIndex;
+	Uint32 colIdx;
 	Uint32 colorCount = PLTT_COLORS;
 	Sint32 red;
 	Sint32 blue;
-	Uint32 color;
+	Uint32 col;
 	Sint32 green;
 
 	if(mode == PALETTE_TINT_FROM_SOURCE)
-		mode = *source;
+		mode = *src;
 	if(selectedPalettes == PALETTES_BG) {
 		colorCount = BG_PLTT_COLORS;
 	} else if(selectedPalettes == PALETTES_SPRITES) {
-		destination += 3 * BG_PLTT_COLORS;
-		source += BG_PLTT_COLORS;
+		dst += 3 * BG_PLTT_COLORS;
+		src += BG_PLTT_COLORS;
 		colorCount = BG_PLTT_COLORS;
 	}
 
 	if(mode < PALETTE_TINT_FROM_SOURCE) {
-		*destination++ = mode & BLUE_BITS;
-		*destination++ = (mode & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
-		*destination++ = (mode & RED_BITS) << BLUE_SHIFT;
-		syDMAXCopy(destination - 3, destination,
+		*dst++ = mode & BLUE_BITS;
+		*dst++ = (mode & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT);
+		*dst++ = (mode & RED_BITS) << BLUE_SHIFT;
+		syDMAXCopy(dst - 3, dst,
 			DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
 	} else if(mode < PALETTE_TINT_FLAGS) {
 		switch(mode) {
 		case PALETTE_TINT_GRAYSCALE:
-			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-				color = *source++;
-				red = ((color << BRIGHTNESS_RED_SHIFT) &
+			for(colIdx = 0; colIdx < colorCount; colIdx++) {
+				col = *src++;
+				red = ((col << BRIGHTNESS_RED_SHIFT) &
 					(RED_BITS << BRIGHTNESS_RED_SHIFT));
-				green = ((color << BRIGHTNESS_GREEN_SHIFT) &
+				green = ((col << BRIGHTNESS_GREEN_SHIFT) &
 					(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-				blue = (color & BLUE_BITS);
-				color = syIntegerDivide(red + green + blue, 7);
-				*destination++ = color;
-				*destination++ = color;
-				*destination++ = color;
+				blue = (col & BLUE_BITS);
+				col = syIntegerDivide(red + green + blue, 7);
+				*dst++ = col;
+				*dst++ = col;
+				*dst++ = col;
 			}
 			break;
 		case PALETTE_TINT_SEPIA:
-			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-				color = *source++;
-				red = RGB_RED(color);
-				color =
-					syIntegerDivide(red + RGB_GREEN(color) + RGB_BLUE(color),
-						SEPIA_SHADE_DIVISOR);
-				red = color * 4 + 5;
-				blue = color * 3 + 5;
+			for(colIdx = 0; colIdx < colorCount; colIdx++) {
+				col = *src++;
+				red = RGB_RED(col);
+				col = syIntegerDivide(
+					red + RGB_GREEN(col) + RGB_BLUE(col), SEPIA_SHADE_DIVISOR);
+				red = col * 4 + 5;
+				blue = col * 3 + 5;
 				green = blue;
 				if(red < SEPIA_LEVEL_MIN)
 					red = SEPIA_LEVEL_MIN;
@@ -979,9 +977,9 @@ void mnTitlePaletteFadeBuildCols(
 					green = SEPIA_LEVEL_MAX;
 				if(blue > SEPIA_LEVEL_MAX)
 					blue = SEPIA_LEVEL_MAX;
-				*destination++ = TitlePaletteFadeChannelCurveLight[blue];
-				*destination++ = TitlePaletteFadeChannelCurveLight[green];
-				*destination++ = TitlePaletteFadeChannelCurveLight[red];
+				*dst++ = TitlePaletteFadeChannelCurveLight[blue];
+				*dst++ = TitlePaletteFadeChannelCurveLight[green];
+				*dst++ = TitlePaletteFadeChannelCurveLight[red];
 			}
 			break;
 		case PALETTE_TINT_DIM:
@@ -990,11 +988,11 @@ void mnTitlePaletteFadeBuildCols(
 			BUILD_DIMMER_COLORS();
 			break;
 		case PALETTE_TINT_MUTED:
-			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-				color = *source++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+			for(colIdx = 0; colIdx < colorCount; colIdx++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				if(red < MUTED_RED_MIN)
 					red = MUTED_RED_MIN;
 				if(green < MUTED_GREEN_MIN)
@@ -1012,19 +1010,19 @@ void mnTitlePaletteFadeBuildCols(
 				red = mnTitlePaletteFadeClampChannel(red);
 				green = mnTitlePaletteFadeClampChannel(green);
 				blue = mnTitlePaletteFadeClampChannel(blue);
-				*destination++ = TitlePaletteFadeChannelCurve[blue];
-				*destination++ = TitlePaletteFadeChannelCurve[green];
-				*destination++ = TitlePaletteFadeChannelCurve[red];
+				*dst++ = TitlePaletteFadeChannelCurve[blue];
+				*dst++ = TitlePaletteFadeChannelCurve[green];
+				*dst++ = TitlePaletteFadeChannelCurve[red];
 			}
 			break;
 		case PALETTE_TINT_PALE:
-			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
+			for(colIdx = 0; colIdx < colorCount; colIdx++) {
 				Sint32 mean;
 
-				color = *source++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				mean = mnTitlePaletteFadeClampChannel((red + green + blue) / 3);
 				red = (red >> 1) + mean;
 				green = (green >> 1) + mean;
@@ -1032,40 +1030,38 @@ void mnTitlePaletteFadeBuildCols(
 				red = mnTitlePaletteFadeClampChannel(red);
 				green = mnTitlePaletteFadeClampChannel(green);
 				blue = mnTitlePaletteFadeClampChannel(blue);
-				SET_VECTOR(destination,
-					TitlePaletteFadeChannelCurveContrast[blue],
+				SET_VECTOR(dst, TitlePaletteFadeChannelCurveContrast[blue],
 					TitlePaletteFadeChannelCurveContrast[green],
 					TitlePaletteFadeChannelCurveContrast[red]);
-				destination += 3;
+				dst += 3;
 			}
 			break;
 		case PALETTE_TINT_RED:
-			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-				color = *source++;
-				red = RGB_RED(color);
-				green = RGB_GREEN(color);
-				blue = RGB_BLUE(color);
+			for(colIdx = 0; colIdx < colorCount; colIdx++) {
+				col = *src++;
+				red = RGB_RED(col);
+				green = RGB_GREEN(col);
+				blue = RGB_BLUE(col);
 				red += ((green >> 3) + (blue >> 3));
 				red = mnTitlePaletteFadeClampChannel(red);
 				green -= green / 3;
 				blue -= blue / 3;
-				SET_VECTOR(destination, TitlePaletteFadeChannelCurve[blue],
+				SET_VECTOR(dst, TitlePaletteFadeChannelCurve[blue],
 					TitlePaletteFadeChannelCurve[green],
 					TitlePaletteFadeChannelCurveLight[red]);
-				destination += 3;
+				dst += 3;
 			}
 			break;
 		case PALETTE_TINT_DIMMER:
 			BUILD_DIMMER_COLORS();
 			break;
 		default:
-			for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-				color = *source++;
-				destination[colorIndex * 3 + 0] = color & BLUE_BITS;
-				destination[colorIndex * 3 + 1] = (color & GREEN_BITS)
+			for(colIdx = 0; colIdx < colorCount; colIdx++) {
+				col = *src++;
+				dst[colIdx * 3 + 0] = col & BLUE_BITS;
+				dst[colIdx * 3 + 1] = (col & GREEN_BITS)
 					<< (BLUE_SHIFT - GREEN_SHIFT);
-				destination[colorIndex * 3 + 2] = (color & RED_BITS)
-					<< BLUE_SHIFT;
+				dst[colIdx * 3 + 2] = (col & RED_BITS) << BLUE_SHIFT;
 			}
 			break;
 		}
@@ -1079,23 +1075,23 @@ void mnTitlePaletteFadeBuildCols(
 		tintRed = RGB_RED(mode);
 		tintGreen = RGB_GREEN(mode);
 		tintBlue = RGB_BLUE(mode);
-		for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-			color = *source++;
-			red = ((color << BRIGHTNESS_RED_SHIFT) &
+		for(colIdx = 0; colIdx < colorCount; colIdx++) {
+			col = *src++;
+			red = ((col << BRIGHTNESS_RED_SHIFT) &
 				(RED_BITS << BRIGHTNESS_RED_SHIFT));
-			green = ((color << BRIGHTNESS_GREEN_SHIFT) &
+			green = ((col << BRIGHTNESS_GREEN_SHIFT) &
 				(GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
-			blue = (color & BLUE_BITS);
-			color = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
-			red = color * tintRed;
-			green = color * tintGreen;
-			blue = color * tintBlue;
+			blue = (col & BLUE_BITS);
+			col = syIntegerDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
+			red = col * tintRed;
+			green = col * tintGreen;
+			blue = col * tintBlue;
 			red = mnTitlePaletteFadeClampShiftedChannel(red);
 			green = mnTitlePaletteFadeClampShiftedChannel(green);
 			blue = mnTitlePaletteFadeClampShiftedChannel(blue);
-			*destination++ = blue;
-			*destination++ = green;
-			*destination++ = red;
+			*dst++ = blue;
+			*dst++ = green;
+			*dst++ = red;
 		}
 	} else if(mode & PALETTE_TINT_BLEND) {
 		Uint32 tintRed;
@@ -1108,40 +1104,39 @@ void mnTitlePaletteFadeBuildCols(
 		tintRed = RGB_RED(mode);
 		tintGreen = RGB_GREEN(mode);
 		tintBlue = RGB_BLUE(mode);
-		for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-			color = *source++;
-			red = RGB_RED(color);
-			color =
-				syIntegerDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
-					tintRed + tintGreen + tintBlue);
+		for(colIdx = 0; colIdx < colorCount; colIdx++) {
+			col = *src++;
+			red = RGB_RED(col);
+			col = syIntegerDivide((red + RGB_GREEN(col) + RGB_BLUE(col)) << 4,
+				tintRed + tintGreen + tintBlue);
 			blendedRed = syMulFX(
-				toFIXED((color * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
-			blendedGreen = syMulFX(toFIXED((color * tintGreen) >> 4),
+				toFIXED((col * tintRed) >> 4), (Sint32)toFIXED(tintRed) >> 4);
+			blendedGreen = syMulFX(toFIXED((col * tintGreen) >> 4),
 				(Sint32)toFIXED(tintGreen) >> 4);
-			blendedBlue = syMulFX(toFIXED((color * tintBlue) >> 4),
-				(Sint32)toFIXED(tintBlue) >> 4);
+			blendedBlue = syMulFX(
+				toFIXED((col * tintBlue) >> 4), (Sint32)toFIXED(tintBlue) >> 4);
 			blendedRed =
 				mnTitlePaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedRed));
 			blendedGreen = mnTitlePaletteFadeClampChannel(
 				FIXEDtoINT((Uint32)blendedGreen));
 			blendedBlue =
 				mnTitlePaletteFadeClampChannel(FIXEDtoINT((Uint32)blendedBlue));
-			*destination++ = TitlePaletteFadeChannelCurve[blendedBlue];
-			*destination++ = TitlePaletteFadeChannelCurve[blendedGreen];
-			*destination++ = TitlePaletteFadeChannelCurve[blendedRed];
+			*dst++ = TitlePaletteFadeChannelCurve[blendedBlue];
+			*dst++ = TitlePaletteFadeChannelCurve[blendedGreen];
+			*dst++ = TitlePaletteFadeChannelCurve[blendedRed];
 		}
 	} else if(mode & PALETTE_TINT_SPLIT) {
-		for(colorIndex = 0; colorIndex < colorCount; colorIndex++) {
-			color = *source++;
-			destination[colorIndex * 3 + 0] = color & BLUE_BITS;
-			destination[colorIndex * 3 + 1] = (color & GREEN_BITS)
+		for(colIdx = 0; colIdx < colorCount; colIdx++) {
+			col = *src++;
+			dst[colIdx * 3 + 0] = col & BLUE_BITS;
+			dst[colIdx * 3 + 1] = (col & GREEN_BITS)
 				<< (BLUE_SHIFT - GREEN_SHIFT);
-			destination[colorIndex * 3 + 2] = (color & RED_BITS) << BLUE_SHIFT;
+			dst[colIdx * 3 + 2] = (col & RED_BITS) << BLUE_SHIFT;
 		}
 	} else {
 		if(selectedPalettes == PALETTES_SPRITES)
 			mode += 3 * BG_PLTT_SIZE;
-		syDMAXCopy((const void *)mode, destination,
+		syDMAXCopy((const void *)mode, dst,
 			DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
 	}
 }

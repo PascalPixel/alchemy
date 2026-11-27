@@ -417,16 +417,16 @@ typedef enum SUPER_LUCKY_DICE_STATE {
 #define DICE_GAME_THROW(dice, spinRate) \
 	{ \
 		DICE_PARTICLE *die; \
-		for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) { \
-			die = &(dice)->particles[index]; \
+		for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++) { \
+			die = &(dice)->particles[idx]; \
 			die->z = 0; \
 			die->y = toFIXED(96); \
-			die->x = toFIXED(index * 24 - 108); \
+			die->x = toFIXED(idx * 24 - 108); \
 			die->velX = ((syRandom() & 127) - 64) << 12; \
 			die->velY = ((syRandom() & 15) + 48) << 13; \
 			die->velZ = ((syRandom() & 127) + 64) << 13; \
 			die->variant = syRandom() % DICE_ROLL_TURN; \
-			(spinRate)[index] = DICE_THROW_SPIN; \
+			(spinRate)[idx] = DICE_THROW_SPIN; \
 		} \
 	}
 
@@ -466,7 +466,7 @@ void fdSuperLuckyDiceRun(void)
 	Sint32 sprCnt;
 	Sint32 stoppedDice;
 	struct WINDOW *win;
-	Sint32		   index;
+	Sint32		   idx;
 	Sint32		   otherIdx;
 	Sint32		   digits;
 
@@ -486,12 +486,12 @@ void fdSuperLuckyDiceRun(void)
 	{
 		Sint32 tileX;
 		Sint32 tileY;
-		index = 0;
+		idx = 0;
 		for(tileY = 0; tileY != DISPLAY_TILE_HEIGHT; tileY++) {
 			for(tileX = 0; tileX != BG_SCREEN_WIDTH; tileX++) {
-				*(volatile Uint16 *)(BG_SCREEN_BLOCK(6) + index) =
+				*(volatile Uint16 *)(BG_SCREEN_BLOCK(6) + idx) =
 					tileX + tileY * DISPLAY_TILE_WIDTH;
-				index += 2;
+				idx += 2;
 			}
 		}
 	}
@@ -563,7 +563,7 @@ void fdSuperLuckyDiceRun(void)
 		   green and blue the red. */
 		dst = sprPalette + DICE_PALETTE_PALE_DIGITS * PALETTE_COLORS;
 		src = (Uint16 *)resourceAdr;
-		for(index = 0; index != PALETTE_COLORS; index++) {
+		for(idx = 0; idx != PALETTE_COLORS; idx++) {
 			blue = RGB_BLUE(*src) + 4;
 			red = RGB_RED(*src) + 4;
 			if(red > RGB_LEVEL_MAX)
@@ -629,20 +629,20 @@ void fdSuperLuckyDiceRun(void)
 		DICE_PARTICLE *die;
 
 		die = dice->particles;
-		for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
+		for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++) {
 			/* DEAD: a random place, replaced at once by one on the circle (its
 			   two rolls still advance the random numbers); the ROM keeps its
 			   stores. */
 			SET_POSITION(die, ((syRandom() & 127) - 64) << 16, 0,
 				((syRandom() & 127) - 64) << 16);
-			SET_POSITION(die, sySin(index * DEGtoANG(90)) * DICE_START_RADIUS,
-				0, syCos(index * DEGtoANG(90)) * DICE_START_RADIUS);
+			SET_POSITION(die, sySin(idx * DEGtoANG(90)) * DICE_START_RADIUS, 0,
+				syCos(idx * DEGtoANG(90)) * DICE_START_RADIUS);
 			die->velX = ((syRandom() & 127) - 64) << 14;
 			die->velY = ((syRandom() & 31) + 32) << 12;
 			die->velZ = ((syRandom() & 127) - 64) << 14;
 			die->variant = (syRandom() % DICE_FACE_COUNT) * DICE_ROLL_PER_FACE;
-			spinRate[index] = DICE_THROW_SPIN;
-			numbers[index] = 0;
+			spinRate[idx] = DICE_THROW_SPIN;
+			numbers[idx] = 0;
 			die++;
 		}
 	}
@@ -849,10 +849,10 @@ void fdSuperLuckyDiceRun(void)
 			DICE_PARTICLE *other;
 
 			stoppedDice = 0;
-			for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
+			for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++) {
 				Sint32 wallX, wallZ;
 
-				die = &dice->particles[index];
+				die = &dice->particles[idx];
 
 				die->x += die->velX;
 				die->y += die->velY;
@@ -860,7 +860,7 @@ void fdSuperLuckyDiceRun(void)
 				for(otherIdx = 0; otherIdx != SUPER_LUCKY_DICE_COUNT;
 					otherIdx++) {
 					other = &dice->particles[otherIdx];
-					if(index != otherIdx) {
+					if(idx != otherIdx) {
 						Sint32 separationX, separationY, separationZ,
 							separation;
 
@@ -925,8 +925,8 @@ void fdSuperLuckyDiceRun(void)
 						die->velX = die->velX * 56 / DAMPING_SCALE;
 						die->velZ = die->velZ * 56 / DAMPING_SCALE;
 					}
-					if(spinRate[index] >= DICE_BOUNCE_SPIN_LOSS)
-						spinRate[index] -= DICE_BOUNCE_SPIN_LOSS;
+					if(spinRate[idx] >= DICE_BOUNCE_SPIN_LOSS)
+						spinRate[idx] -= DICE_BOUNCE_SPIN_LOSS;
 					if(die->velY < toFIXED(3)) {
 						Sint32 spin;
 						Sint32 facing;
@@ -934,7 +934,7 @@ void fdSuperLuckyDiceRun(void)
 						die->velX = 0;
 						die->velY = 0;
 						die->velZ = 0;
-						spinRate[index] = 0;
+						spinRate[idx] = 0;
 						spin = die->variant;
 						facing =
 							spin / DICE_ROLL_PER_TILE % DICE_TILES_PER_FACE;
@@ -947,14 +947,14 @@ void fdSuperLuckyDiceRun(void)
 				die->velX = die->velX * 63 / DAMPING_SCALE;
 				die->velY = die->velY * 63 / DAMPING_SCALE;
 				die->velZ = die->velZ * 63 / DAMPING_SCALE;
-				die->variant += spinRate[index];
+				die->variant += spinRate[idx];
 				if(die->variant > DICE_ROLL_TURN - 1)
 					die->variant -= DICE_ROLL_TURN;
-				if(spinRate[index] > 0)
-					spinRate[index]--;
+				if(spinRate[idx] > 0)
+					spinRate[idx]--;
 				if(die->velX == 0 && die->velY == 0 && die->velZ == 0 &&
 					die->y == 0) {
-					numbers[index] = die->variant / DICE_ROLL_PER_FACE;
+					numbers[idx] = die->variant / DICE_ROLL_PER_FACE;
 					stoppedDice++;
 				}
 			}
@@ -962,8 +962,8 @@ void fdSuperLuckyDiceRun(void)
 				state = SUPER_LUCKY_DICE_RESULT;
 				tmr = 0;
 				total = 0;
-				for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++)
-					total = total + numbers[index] + 1;
+				for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++)
+					total = total + numbers[idx] + 1;
 			}
 		} else if(state == SUPER_LUCKY_DICE_RESULT) {
 			/* The total and the banner fly in, with the result's music at tick
@@ -1239,7 +1239,7 @@ void fdSuperLuckyDiceRun(void)
 					   red. */
 					dst = sprPalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS;
 					src = (Uint16 *)resourceAdr;
-					for(index = 0; index != PALETTE_COLORS; index++) {
+					for(idx = 0; idx != PALETTE_COLORS; idx++) {
 						blue = RGB_BLUE(*src) + 4;
 						red = RGB_RED(*src) + 4;
 						if(red > RGB_LEVEL_MAX)
@@ -1344,31 +1344,31 @@ void fdSuperLuckyDiceRun(void)
 		if(hiLoGame > 0) {
 			Sint32 multiplierDigits;
 
-			for(index = 0; index != 4; index++) {
+			for(idx = 0; idx != 4; idx++) {
 				sprs->oam[sprCnt].attr01 =
-					OBJ_POSITION(OBJ_X_TURN + index * 16, 2) | OBJ_SIZE_16X16;
+					OBJ_POSITION(OBJ_X_TURN + idx * 16, 2) | OBJ_SIZE_16X16;
 				sprs->oam[sprCnt].attr2 =
-					(SMALL_DOUBLE_UP_TILES + index * SPRITE_TILES(16, 16)) |
+					(SMALL_DOUBLE_UP_TILES + idx * SPRITE_TILES(16, 16)) |
 					OBJ_PALETTE(DICE_PALETTE_SMALL_DOUBLE_UP);
 				sprCnt++;
 			}
 			if(hiLoGame == DICE_FINAL_GAME) {
-				for(index = 0; index != 5; index++) {
+				for(idx = 0; idx != 5; idx++) {
 					sprs->oam[sprCnt].attr01 =
-						OBJ_POSITION(OBJ_X_TURN + 72 + index * 16, 2) |
+						OBJ_POSITION(OBJ_X_TURN + 72 + idx * 16, 2) |
 						OBJ_SIZE_16X16;
 					sprs->oam[sprCnt].attr2 =
-						(FINAL_GAME_TILES + index * SPRITE_TILES(16, 16)) |
+						(FINAL_GAME_TILES + idx * SPRITE_TILES(16, 16)) |
 						OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
 					sprCnt++;
 				}
 			} else {
-				for(index = 0; index != 3; index++) {
+				for(idx = 0; idx != 3; idx++) {
 					sprs->oam[sprCnt].attr01 =
-						OBJ_POSITION(GAME_BANNER_X + index * 16, 2) |
+						OBJ_POSITION(GAME_BANNER_X + idx * 16, 2) |
 						OBJ_SIZE_16X16;
 					sprs->oam[sprCnt].attr2 =
-						(GAME_TILES + index * SPRITE_TILES(16, 16)) |
+						(GAME_TILES + idx * SPRITE_TILES(16, 16)) |
 						OBJ_PALETTE(DICE_PALETTE_FINAL_GAME);
 					sprCnt++;
 				}
@@ -1390,12 +1390,12 @@ void fdSuperLuckyDiceRun(void)
 				sprCnt++;
 #endif
 			}
-			for(index = 0; index != 2; index++) {
+			for(idx = 0; idx != 2; idx++) {
 				sprs->oam[sprCnt].attr01 =
-					OBJ_POSITION(OBJ_X_TURN + 64 + index * 16, 24) |
+					OBJ_POSITION(OBJ_X_TURN + 64 + idx * 16, 24) |
 					OBJ_SIZE_16X16;
 				sprs->oam[sprCnt].attr2 =
-					(OR_TILES + index * SPRITE_TILES(16, 16)) |
+					(OR_TILES + idx * SPRITE_TILES(16, 16)) |
 					OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
 				sprCnt++;
 			}
@@ -1449,7 +1449,7 @@ void fdSuperLuckyDiceRun(void)
 			if(tgt > DICE_LOWEST_TOTAL)
 				sprCnt = fdSuperLuckyDiceDrawNum(sprCnt, left - 110,
 					94 - wobble, tgt - 1, DICE_PALETTE_RELOADED_D, 2);
-			for(index = 0; index != 3; index++) {
+			for(idx = 0; idx != 3; idx++) {
 				Sint32 column;
 
 				column = CHOICE_COLUMN_X;
@@ -1458,10 +1458,10 @@ void fdSuperLuckyDiceRun(void)
 				column += slide * 15;
 				column -= 120;
 				sprs->oam[sprCnt].attr01 =
-					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 52) |
+					OBJ_POSITION(column + idx * 32 + OBJ_X_TURN, 52) |
 					OBJ_SIZE_32X32;
 				sprs->oam[sprCnt].attr2 = OBJ_PALETTE(DICE_PALETTE_RELOADED_A) |
-					(HIGHER_TILES + index * SPRITE_TILES(32, 32));
+					(HIGHER_TILES + idx * SPRITE_TILES(32, 32));
 				sprCnt++;
 				column = CHOICE_COLUMN_X;
 				if(tmr > 0 && lower == 0)
@@ -1469,10 +1469,10 @@ void fdSuperLuckyDiceRun(void)
 				column += slide * 15;
 				column -= 120;
 				sprs->oam[sprCnt].attr01 =
-					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 92) |
+					OBJ_POSITION(column + idx * 32 + OBJ_X_TURN, 92) |
 					OBJ_SIZE_32X32;
 				sprs->oam[sprCnt].attr2 =
-					(LOWER_TILES + index * SPRITE_TILES(32, 32)) |
+					(LOWER_TILES + idx * SPRITE_TILES(32, 32)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_B);
 				sprCnt++;
 			}
@@ -1481,7 +1481,7 @@ void fdSuperLuckyDiceRun(void)
 		/* Double Up and Cash Out; once A is pressed the one not chosen slides
 		   away. */
 		if(state == SUPER_LUCKY_DICE_DOUBLE_UP) {
-			for(index = 0; index != 5; index++) {
+			for(idx = 0; idx != 5; idx++) {
 				Sint32 column;
 
 				column = CHOICE_COLUMN_X;
@@ -1490,10 +1490,10 @@ void fdSuperLuckyDiceRun(void)
 				column += slide * 15;
 				column -= 120;
 				sprs->oam[sprCnt].attr01 =
-					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 52) |
+					OBJ_POSITION(column + idx * 32 + OBJ_X_TURN, 52) |
 					OBJ_SIZE_32X32;
 				sprs->oam[sprCnt].attr2 =
-					(DOUBLE_UP_TILES + index * SPRITE_TILES(32, 32)) |
+					(DOUBLE_UP_TILES + idx * SPRITE_TILES(32, 32)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_C);
 				sprCnt++;
 				column = CHOICE_COLUMN_X;
@@ -1502,10 +1502,10 @@ void fdSuperLuckyDiceRun(void)
 				column += slide * 15;
 				column -= 120;
 				sprs->oam[sprCnt].attr01 =
-					OBJ_POSITION(column + index * 32 + OBJ_X_TURN, 84) |
+					OBJ_POSITION(column + idx * 32 + OBJ_X_TURN, 84) |
 					OBJ_SIZE_32X32;
 				sprs->oam[sprCnt].attr2 =
-					(CASH_OUT_TILES + index * SPRITE_TILES(32, 32)) |
+					(CASH_OUT_TILES + idx * SPRITE_TILES(32, 32)) |
 					OBJ_PALETTE(DICE_PALETTE_RELOADED_D);
 				sprCnt++;
 			}
@@ -1598,40 +1598,40 @@ void fdSuperLuckyDiceRun(void)
 
 		/* The dice in order of depth (an insertion sort), each scaled by its
 		   distance. */
-		for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++)
-			drawOrder[index] = index;
-		for(index = 1; index != SUPER_LUCKY_DICE_COUNT; index++) {
+		for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++)
+			drawOrder[idx] = idx;
+		for(idx = 1; idx != SUPER_LUCKY_DICE_COUNT; idx++) {
 			Sint32 sortedDie;
 
-			sortedDie = drawOrder[index];
-			for(otherIdx = index - 1; otherIdx >= 0 &&
+			sortedDie = drawOrder[idx];
+			for(otherIdx = idx - 1; otherIdx >= 0 &&
 				dice->particles[drawOrder[otherIdx]].z >
 					dice->particles[sortedDie].z;
 				otherIdx--)
 				drawOrder[otherIdx + 1] = drawOrder[otherIdx];
 			drawOrder[otherIdx + 1] = sortedDie;
 		}
-		for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
+		for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++) {
 			DICE_PARTICLE *die;
 			Sint32		   x;
 			Sint32		   y;
 
-			die = &dice->particles[drawOrder[index]];
+			die = &dice->particles[drawOrder[idx]];
 			syConvert3Dto2D((const FIXED *)die, screen);
 			if(screen[2] < DICE_NEAREST_DEPTH)
 				screen[2] = DICE_NEAREST_DEPTH;
 			if(screen[2] > DICE_FARTHEST_DEPTH)
 				screen[2] = DICE_FARTHEST_DEPTH;
-			sprDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
+			sprDepth[drawOrder[idx]] = screen[2] - DICE_NEAREST_DEPTH;
 			x = screen[0] -
 				DIE_CORNER_X * (DICE_NEAREST_SCALE / 2) /
-					(sprDepth[drawOrder[index]] / 4 + DICE_NEAREST_SCALE / 2);
+					(sprDepth[drawOrder[idx]] / 4 + DICE_NEAREST_SCALE / 2);
 			y = screen[1] -
 				DIE_CORNER_Y * (DICE_NEAREST_SCALE / 2) /
-					(sprDepth[drawOrder[index]] / 4 + DICE_NEAREST_SCALE / 2);
+					(sprDepth[drawOrder[idx]] / 4 + DICE_NEAREST_SCALE / 2);
 			if(y + 92 > -16) {
 				sprs->oam[sprCnt].attr01 =
-					(OBJ_AFFINE_MATRIX(drawOrder[index]) |
+					(OBJ_AFFINE_MATRIX(drawOrder[idx]) |
 						OBJ_X((x + 632) & OBJ_X_MASK) | ((y + 348) & 255)) |
 					OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE |
 					OBJ_AFFINE;
@@ -1647,12 +1647,12 @@ void fdSuperLuckyDiceRun(void)
 		{
 			DICE_PARTICLE *die;
 
-			for(index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
+			for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT; idx++) {
 				Sint32 x;
 				Sint32 y;
 				Sint32 scale;
 
-				die = &dice->particles[index];
+				die = &dice->particles[idx];
 
 				groundPoint[0] = die->x;
 				groundPoint[1] = 0;
@@ -1662,17 +1662,17 @@ void fdSuperLuckyDiceRun(void)
 					screen[2] = DICE_NEAREST_DEPTH;
 				if(screen[2] > DICE_FARTHEST_DEPTH)
 					screen[2] = DICE_FARTHEST_DEPTH;
-				sprDepth[SUPER_LUCKY_DICE_COUNT + index] =
+				sprDepth[SUPER_LUCKY_DICE_COUNT + idx] =
 					screen[2] - DICE_NEAREST_DEPTH;
-				sprDepth[SUPER_LUCKY_DICE_COUNT + index] +=
+				sprDepth[SUPER_LUCKY_DICE_COUNT + idx] +=
 					(Sint16)FIXEDtoINT(die->y);
-				scale = sprDepth[SUPER_LUCKY_DICE_COUNT + index] / 2 +
+				scale = sprDepth[SUPER_LUCKY_DICE_COUNT + idx] / 2 +
 					DICE_NEAREST_SCALE;
 				x = screen[0] - SHADOW_CORNER_X * DICE_NEAREST_SCALE / scale;
 				y = screen[1] - SHADOW_CORNER_Y * DICE_NEAREST_SCALE / scale;
 				if(y + 92 > -16) {
 					sprs->oam[sprCnt].attr01 =
-						(OBJ_AFFINE_MATRIX(SUPER_LUCKY_DICE_COUNT + index) |
+						(OBJ_AFFINE_MATRIX(SUPER_LUCKY_DICE_COUNT + idx) |
 							OBJ_X((x + DISPLAY_WIDTH / 2 + OBJ_X_TURN) &
 								OBJ_X_MASK)) |
 						((y + 92 + OBJ_Y_TURN) & OBJ_Y_MASK) | OBJ_SIZE_16X16 |
@@ -1691,7 +1691,7 @@ void fdSuperLuckyDiceRun(void)
 				OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
 			sprs->oam[sprCnt].attr2 = 0;
 		}
-		for(index = 0; index != SUPER_LUCKY_DICE_COUNT * 2; index++) {
+		for(idx = 0; idx != SUPER_LUCKY_DICE_COUNT * 2; idx++) {
 			/* The sprite's matrix: its scale on the diagonal and no shear
 			   across, each element stored through its address. */
 			Uint16 affineA;
@@ -1702,16 +1702,16 @@ void fdSuperLuckyDiceRun(void)
 			Sint16 scaleY;
 			Sint32 shear = 0;
 
-			scaleX = sprDepth[index] / 4 + DICE_NEAREST_SCALE;
+			scaleX = sprDepth[idx] / 4 + DICE_NEAREST_SCALE;
 			*&affineA = scaleX;
 			*&affineB = shear;
 			*&affineC = shear;
-			scaleY = sprDepth[index] / 4 + DICE_NEAREST_SCALE;
+			scaleY = sprDepth[idx] / 4 + DICE_NEAREST_SCALE;
 			*&affineD = scaleY;
-			sprs->oam[index * 4 + 0].attr2 |= OBJ_AFFINE_PARAMETER(affineA);
-			sprs->oam[index * 4 + 1].attr2 |= OBJ_AFFINE_PARAMETER(affineB);
-			sprs->oam[index * 4 + 2].attr2 |= OBJ_AFFINE_PARAMETER(affineC);
-			sprs->oam[index * 4 + 3].attr2 |= OBJ_AFFINE_PARAMETER(affineD);
+			sprs->oam[idx * 4 + 0].attr2 |= OBJ_AFFINE_PARAMETER(affineA);
+			sprs->oam[idx * 4 + 1].attr2 |= OBJ_AFFINE_PARAMETER(affineB);
+			sprs->oam[idx * 4 + 2].attr2 |= OBJ_AFFINE_PARAMETER(affineC);
+			sprs->oam[idx * 4 + 3].attr2 |= OBJ_AFFINE_PARAMETER(affineD);
 		}
 		syDMAXCopy(
 			sprs->oam, (void *)OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
@@ -1720,11 +1720,11 @@ void fdSuperLuckyDiceRun(void)
 	}
 
 	/* Fade out and free the game's state. */
-	for(index = 0; index != DICE_FADE_TICKS + 1; index++) {
+	for(idx = 0; idx != DICE_FADE_TICKS + 1; idx++) {
 		fdSuperLuckyDiceScaleRGB555Buffer(sprPalette, (Uint16 *)OBJ_PLTT,
-			toFIXED(1) - index * (toFIXED(1) / DICE_FADE_TICKS), 256);
+			toFIXED(1) - idx * (toFIXED(1) / DICE_FADE_TICKS), 256);
 		fdSuperLuckyDiceScaleRGB555Buffer(bgPalette, (Uint16 *)BG_PLTT,
-			toFIXED(1) - index * (toFIXED(1) / DICE_FADE_TICKS), 256);
+			toFIXED(1) - idx * (toFIXED(1) / DICE_FADE_TICKS), 256);
 		sySynch(1);
 	}
 	syHeapSlotRelease(HEAP_SLOT_CAMERA);

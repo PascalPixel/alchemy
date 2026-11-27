@@ -522,18 +522,17 @@ void fdSprViewerLayOutRing(
 	}
 }
 
-/* Defines name(layerIndex, value), which sets `field` of sprite animation
-   layerIndex (0 to 3) of each of the viewer's ten sprites to value. */
+/* Defines name(layerIdx, value), which sets `field` of sprite animation
+   layerIdx (0 to 3) of each of the viewer's ten sprites to value. */
 #define SPRITE_VIEWER_DEFINE_SET_LAYER(name, field) \
-	void name(Sint32 layerIndex, Sint32 value) \
+	void name(Sint32 layerIdx, Sint32 value) \
 	{ \
 		SPR	  *spriteGroup = SpritesWork; \
-		Sint32 spriteIndex; \
+		Sint32 sprIdx; \
 \
-		layerIndex &= ANIM_LAYER_COUNT - 1; \
-		for(spriteIndex = 0; spriteIndex < SPRITE_VIEWER_COPY_COUNT; \
-			spriteIndex++) { \
-			spriteGroup->entries[layerIndex]->field = value; \
+		layerIdx &= ANIM_LAYER_COUNT - 1; \
+		for(sprIdx = 0; sprIdx < SPRITE_VIEWER_COPY_COUNT; sprIdx++) { \
+			spriteGroup->entries[layerIdx]->field = value; \
 			spriteGroup++; \
 		} \
 	}

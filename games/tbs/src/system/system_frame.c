@@ -94,7 +94,7 @@ void sySynch(Sint32 ticks)
 	Uint32 frmIdx;
 	Uint8 *base;
 	Uint32 line;
-	Sint32 delayFrame;
+	Sint32 delayFrm;
 	Sint16 savedDisplayControl;
 	Sint16 savedBackdropCol;
 
@@ -208,8 +208,7 @@ void sySynch(Sint32 ticks)
 			if(SleepRequested == 1) {
 				IO_WRITE16(0, &REG_DISPCNT);
 				IO_WRITE16(RGB_WHITE, &PLTT_BACKDROP);
-				for(delayFrame = 0; delayFrame < SLEEP_WHITE_FRAMES;
-					delayFrame++) {
+				for(delayFrm = 0; delayFrm < SLEEP_WHITE_FRAMES; delayFrm++) {
 					SYNCH_WAIT_VBLANK();
 				}
 				SleepActive = 1;
@@ -221,8 +220,7 @@ void sySynch(Sint32 ticks)
 				SleepActive = 0;
 				IO_WRITE16((Uint16)savedDisplayControl, &REG_DISPCNT);
 				IO_WRITE16((Uint16)savedBackdropCol, &PLTT_BACKDROP);
-				for(delayFrame = 0; delayFrame < SLEEP_WAKE_FRAMES;
-					delayFrame++) {
+				for(delayFrm = 0; delayFrm < SLEEP_WAKE_FRAMES; delayFrm++) {
 					SYNCH_WAIT_VBLANK();
 				}
 				SleepRequested = 0;

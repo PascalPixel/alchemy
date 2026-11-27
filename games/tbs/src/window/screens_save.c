@@ -491,22 +491,22 @@ Sint32 mnSaveEraseSelectedFile(void)
    sine wave of the tick counter, eight ticks behind the one before. */
 void mnFileListUpdatePulse(void)
 {
-	Sint32			*frameCnt;
+	Sint32			*frmCnt;
 	volatile Uint16 *palette;
 	Sint32			 colour;
 	FIXED			 sine;
 	Sint32			 i;
 
-	frameCnt = (Sint32 *)&FrameCount;
+	frmCnt = (Sint32 *)&FrameCount;
 	palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
 	i = 0;
 	do {
 #if FIX_SIGNED_OVERFLOW
 		/* Wrap the tick phase before sySin takes its low sixteen bits. */
-		sine = sySin((((Uint32)*frameCnt + i * 8U) * (TRIG_TURN * 3 / 256U)) &
+		sine = sySin((((Uint32)*frmCnt + i * 8U) * (TRIG_TURN * 3 / 256U)) &
 			TRIG_ANGLE_MASK);
 #else
-		sine = sySin((*frameCnt + i * 8) * (TRIG_TURN * 3 / 256));
+		sine = sySin((*frmCnt + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
 		colour = sine / (toFIXED(1) / 4);
 		{
@@ -822,50 +822,50 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 	WINDOW *fileList;
 #if FILE_LIST_GLOW_BAR_CURSOR
 	BUP_STATE		 *save;
-	WINDOW			 *summaryWindow;
-	WINDOW			 *partyWindow;
-	WINDOW			 *djinnWindow;
+	WINDOW			 *summaryWin;
+	WINDOW			 *partyWin;
+	WINDOW			 *djinnWin;
 	BUP_FILE_SUMMARY *summary;
 	WINDOW_SPR		 *modePicture;
 	Bool			  summaryDirty;
 	WIN_STATE		 *state;
 	Uint32			  buildStamp;
-	SHOP_STATE		 *spriteState;
+	SHOP_STATE		 *sprState;
 	Sint32			  result;
 	Sint32			  i;
 	Sint32			  y;
 #else
-	WINDOW			 *summaryWindow;
+	WINDOW			 *summaryWin;
 	BUP_STATE		 *save;
-	WINDOW			 *partyWindow;
-	WINDOW			 *djinnWindow;
+	WINDOW			 *partyWin;
+	WINDOW			 *djinnWin;
 	BUP_FILE_SUMMARY *summary;
 	WINDOW_SPR		 *modePicture;
 	Sint32			  cursorStyle;
 	Bool			  summaryDirty;
 	WIN_STATE		 *state;
 	Uint32			  buildStamp;
-	SHOP_STATE		 *spriteState;
+	SHOP_STATE		 *sprState;
 	MENU_CURSOR		  fileCursor;
 	Sint32			  result;
 	Sint32			  i;
 	Sint32			  x;
 	Sint32			  y;
 	Sint32			  vramSlot;
-	WINDOW_SPR		 *cursorSprite;
+	WINDOW_SPR		 *cursorSpr;
 #endif
 
-	spriteState = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(*spriteState));
+	sprState = syHeapSlotAlloc(HEAP_SLOT_MENU, sizeof(*sprState));
 	save = BupStateWork;
-	summaryWindow = NULL;
-	partyWindow = NULL;
-	djinnWindow = NULL;
+	summaryWin = NULL;
+	partyWin = NULL;
+	djinnWin = NULL;
 	summaryDirty = TRUE;
 	state = WINDOW_STATE;
 	buildStamp = gmBuildStampGetTimeStub();
 	/* Start on the first file the mode allows. */
 	/* BUG: when none is, the jump to done returns FILE_LIST_NO_FILE without
-	   releasing spriteState's HEAP_SLOT_MENU block. */
+	   releasing sprState's HEAP_SLOT_MENU block. */
 	if(selectedFile < 0)
 		selectedFile = 0;
 #if FILE_LIST_GLOW_BAR_CURSOR
@@ -923,7 +923,7 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 	}
 
 	/* The file list, and the mode's sprite above it. */
-	DMA_FILL32(0, spriteState, sizeof(*spriteState));
+	DMA_FILL32(0, sprState, sizeof(*sprState));
 	mnFileListStartPulse();
 	fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 	summary = save->summary;
@@ -1004,7 +1004,7 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 	}
 
 	/* The file list, and the mode's sprite above it. */
-	DMA_FILL32(0, spriteState, sizeof(*spriteState));
+	DMA_FILL32(0, sprState, sizeof(*sprState));
 	fileList = mnWindowCreate(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
 
 	for(i = 0, summary = save->summary; i < BUP_FILE_COUNT; i++, summary++) {
@@ -1034,10 +1034,10 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 		syVRAMCacheLoad(vramSlot, 128, PointingHandTiles);
 		x = -12;
 		y = selectedFile * 16 + 4;
-		cursorSprite = mnWindowSprCreate(
+		cursorSpr = mnWindowSprCreate(
 			vramSlot, WINDOW_SPRITE_SIZE_16X16, fileList, x, y);
-		cursorSprite->motion = WINDOW_SPRITE_MOTION_STILL;
-		fileCursor.anchor = cursorSprite;
+		cursorSpr->motion = WINDOW_SPRITE_MOTION_STILL;
+		fileCursor.anchor = cursorSpr;
 	}
 	cursorStyle = 1;
 #endif
@@ -1050,47 +1050,46 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 			if(save->summary[selectedFile].level != 0) {
 				mnWindowColApply(save->summary[selectedFile].winHue,
 					save->summary[selectedFile].winBrightness);
-				if(summaryWindow == NULL)
-					summaryWindow =
+				if(summaryWin == NULL)
+					summaryWin =
 						mnWindowCreate(1, 10, 14, 9, WINDOW_FLAG_INSTANT);
-				mnFileListDrawSummary(
-					summaryWindow, &save->summary[selectedFile]);
+				mnFileListDrawSummary(summaryWin, &save->summary[selectedFile]);
 				sySynch(1);
-				if(partyWindow == NULL)
-					partyWindow =
+				if(partyWin == NULL)
+					partyWin =
 						mnWindowCreate(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
 				mnFileListHidePartySprs();
 				mnFileListShowPartySprs(
-					partyWindow, 0, 0, &save->summary[selectedFile]);
+					partyWin, 0, 0, &save->summary[selectedFile]);
 				sySynch(1);
 				if(save->summary[selectedFile].djinn[0] +
 						save->summary[selectedFile].djinn[1] +
 						save->summary[selectedFile].djinn[2] +
 						save->summary[selectedFile].djinn[3] !=
 					0) {
-					if(djinnWindow == NULL)
-						djinnWindow =
+					if(djinnWin == NULL)
+						djinnWin =
 							mnWindowCreate(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
 					mnFileListDrawDjinnCounts(
-						djinnWindow, &save->summary[selectedFile]);
+						djinnWin, &save->summary[selectedFile]);
 					mnFileListHideDjinnSprs();
-					mnFileListShowDjinnSprs(djinnWindow, 0, 0);
+					mnFileListShowDjinnSprs(djinnWin, 0, 0);
 				} else {
 					mnFileListHideDjinnSprs();
-					mnWindowClose(djinnWindow, 2);
-					djinnWindow = NULL;
+					mnWindowClose(djinnWin, 2);
+					djinnWin = NULL;
 				}
 			} else {
 				mnWindowColApply(MainRoutineStateWork.winHue,
 					MainRoutineStateWork.winBrightness);
 				mnFileListHideDjinnSprs();
 				mnFileListHidePartySprs();
-				mnWindowClose(djinnWindow, 2);
-				mnWindowClose(partyWindow, 2);
-				mnWindowClose(summaryWindow, 2);
-				djinnWindow = NULL;
-				partyWindow = NULL;
-				summaryWindow = NULL;
+				mnWindowClose(djinnWin, 2);
+				mnWindowClose(partyWin, 2);
+				mnWindowClose(summaryWin, 2);
+				djinnWin = NULL;
+				partyWin = NULL;
+				summaryWin = NULL;
 			}
 #if FILE_LIST_GLOW_BAR_CURSOR
 			mnWindowSprRedrawSavedRect(fileList);
@@ -1153,9 +1152,9 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 	/* Close the menu and return to the current game's palette glow. */
 	mnFileListHideDjinnSprs();
 	mnFileListHidePartySprs();
-	mnWindowClose(djinnWindow, 2);
-	mnWindowClose(partyWindow, 2);
-	mnWindowClose(summaryWindow, 2);
+	mnWindowClose(djinnWin, 2);
+	mnWindowClose(partyWin, 2);
+	mnWindowClose(summaryWin, 2);
 	mnWindowClose(fileList, 2);
 #if FILE_LIST_GLOW_BAR_CURSOR
 	mnFileListStopPulse();

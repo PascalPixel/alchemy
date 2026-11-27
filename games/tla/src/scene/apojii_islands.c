@@ -972,7 +972,7 @@ enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
    VRAM. */
 #define COPY_TILES(fromTile, toTile) \
 	syDMAXCopy((void *)(BG_CHAR_BLOCK(1) + (fromTile) * TILE_SIZE_4BPP), \
-		(void *)(offset + OBJ_VRAM0 + (toTile) * TILE_SIZE_4BPP), \
+		(void *)(ofs + OBJ_VRAM0 + (toTile) * TILE_SIZE_4BPP), \
 		DMA_COPY_WORDS(2 * TILE_SIZE_4BPP / 4), REG_DMA3)
 /* Copies the map's picture `from` to marker picture `to`, upper half first. */
 #define COPY_PICTURE(from, to) \
@@ -993,7 +993,7 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 	   keeps its load and its store to the stack. */
 	Sint32 viewY = map->origin[1];
 	Uint32 tile = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs >> 5;
-	Uint32 offset = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs;
+	Uint32 ofs = VramCacheEntries[ApojiiIslandsMetatileMarkers.block].ofs;
 	METATILE_MARKER *record;
 	Sint32			 i;
 

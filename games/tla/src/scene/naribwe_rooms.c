@@ -342,7 +342,7 @@ void scNaribweRoomsReadFortune(void)
 {
 	Sint32				   slot, unit;
 	UNIT				  *unitData;
-	const Uint8			  *message, *refuse;
+	const Uint8			  *msg, *refuse;
 	const ITEM_DEFINITION *info;
 #if !FORTUNE_TELLER_READS_EQUIPPED_TRIDENT
 	Sint32 item;
@@ -390,8 +390,8 @@ void scNaribweRoomsReadFortune(void)
 		mnMessageArgumentPush(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
 		/* "... placed on the table." */
 		mnMessageShowCentered(MsgPlacedOnThe, 1);
-		message = MsgNaribweRoomsAreYouPrepared;
-		syFieldScriptSetMessageId(message);
+		msg = MsgNaribweRoomsAreYouPrepared;
+		syFieldScriptSetMessageId(msg);
 		/* "Are you prepared?" */
 		fdScriptOpenMessage(ACTOR_FORTUNE_TELLER, 0);
 		if(syFieldScriptAskYesNoWithActorAnimation(
@@ -400,21 +400,21 @@ void scNaribweRoomsReadFortune(void)
 			mnMessageArgumentPush(
 				unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
 			/* "... changed his mind and took back the item." */
-			mnMessageShowCentered(message + 1, 1);
-			syFieldScriptSetMessageId(message + 2);
+			mnMessageShowCentered(msg + 1, 1);
+			syFieldScriptSetMessageId(msg + 2);
 			/* "Shall I give you another reading for a different item?" */
 			fdScriptOpenMessage(ACTOR_FORTUNE_TELLER, 0);
 			if(syFieldScriptAskYesNoWithActorAnimation(
 				   syFieldPartyGetLeaderActor(), 0) != 1)
 				continue;
-			syFieldScriptSetMessageId(message + 3);
+			syFieldScriptSetMessageId(msg + 3);
 			/* "Then away with you." */
 			fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 			return;
 		}
 		break;
 	}
-	syFieldScriptSetMessageId(message + 4);
+	syFieldScriptSetMessageId(msg + 4);
 	/* "I shall begin my reading..." */
 	fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 	fdPaletteFadeApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -472,17 +472,17 @@ void scNaribweRoomsReadFortune(void)
 		ITEM_CENTER_PRONG - ITEM_RIGHT_PRONG) {
 		scNaribweRoomsReadProng();
 	} else if((Uint16)item == ITEM_TRIDENT) {
-		syFieldScriptSetMessageId(message + TRIDENT_FEARSOME_WEAPON);
+		syFieldScriptSetMessageId(msg + TRIDENT_FEARSOME_WEAPON);
 		/* "That object you have placed before me... It is a fearsome weapon
 		   to..." */
 		fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		if(!fdScriptGetFlag(FLAG_SEA_OF_TIME_OPENED)) {
-			syFieldScriptSetMessageId(message + TRIDENT_DEFEAT_THE_BEAST);
+			syFieldScriptSetMessageId(msg + TRIDENT_DEFEAT_THE_BEAST);
 			/* "If you wield this weapon, you can defeat the legendary
 			   beast!" */
 			fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);
 		} else {
-			syFieldScriptSetMessageId(message + TRIDENT_NO_MORE_BEASTS);
+			syFieldScriptSetMessageId(msg + TRIDENT_NO_MORE_BEASTS);
 			/* "But there are no more beasts for you to fear in this part of
 			   the..." */
 			fdScriptShowMessage(ACTOR_FORTUNE_TELLER, 0);

@@ -1025,10 +1025,10 @@ typedef struct IO_WRITE_QUEUE {
    and copies, the matrix multiply and the picture decoder. Fixed addresses of
    the functions resident in IWRAM. */
 #define syWordsClearEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *destination, Sint32 size)), 0x03000258, \
-		syIWRAMWordsClear)
+	FIXED_ADDRESS( \
+		(Sint32 (*)(void *dst, Sint32 size)), 0x03000258, syIWRAMWordsClear)
 #define syWordsFillEntry \
-	FIXED_ADDRESS((Sint32 (*)(void *destination, Sint32 size, Uint32 value)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dst, Sint32 size, Uint32 value)), \
 		0x03000260, syIWRAMWordsFill)
 /* (left * right) >> 16 with a 64-bit product: the 16.16 product of two 16.16
    numbers. */
@@ -1065,11 +1065,10 @@ typedef struct IO_WRITE_QUEUE {
 	FIXED_ADDRESS((Uint32 (*)(Uint32 dividend, Uint32 divisor)), 0x03000534, \
 		syIWRAMUnsignedDivide)
 #define syDecompressSprPictureEntry \
-	FIXED_ADDRESS((void *(*)(const void *source, void *destination)), \
-		0x03000694, syIWRAMDecompress)
+	FIXED_ADDRESS((void *(*)(const void *src, void *dst)), 0x03000694, \
+		syIWRAMDecompress)
 #define syWordsCopyEntry \
-	FIXED_ADDRESS( \
-		(Sint32 (*)(void *destination, const void *source, Sint32 size)), \
+	FIXED_ADDRESS((Sint32 (*)(void *dst, const void *src, Sint32 size)), \
 		0x03000730, syIWRAMWordsCopy)
 
 /* syWordsCopy's offset from syIWRAMIRQMain, for the callers that reach it from

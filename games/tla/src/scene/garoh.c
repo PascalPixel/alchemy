@@ -1175,17 +1175,17 @@ Sint16 rotation;
 Sint32 ticks;
 {
 	ACTOR *object;
-	SPR	  *sprite;
+	SPR	  *spr;
 
 	object = scFieldActorCreate(SPRITE_EMOTE, x, y, z);
 	if(object != NULL) {
-		sprite = object->spr;
+		spr = object->spr;
 		fdActorSelectAnimation(object, EMOTE_QUESTION);
 		fdActorStartScript(object, GarohQuestionMarkScript);
 		object->motionFlg = 0;
 		object->wait = ticks;
-		sprite->flg = 0;
-		sprite->rotation = rotation;
+		spr->flg = 0;
+		spr->rotation = rotation;
 	}
 }
 
@@ -1269,8 +1269,8 @@ void scGarohWerewolfRunsPast(void)
 {
 	ACTOR  *werewolf;
 	Sint32	i;
-	Sint32	position[3];
-	Sint32 *pos;
+	Sint32	pos[3];
+	Sint32 *posPtr;
 	FIXED	x, z;
 	FIXED	toX, toZ;
 
@@ -1332,18 +1332,18 @@ void scGarohWerewolfRunsPast(void)
 		Sint32 wave;
 
 		wave = syMathSin(i * (DEGtoANG(45)));
-		pos = position;
-		pos[0] =
+		posPtr = pos;
+		posPtr[0] =
 			scGarohPathStep(toFIXED(104), toFIXED(88), i) - wave * WEAVE_ACROSS;
 		wave = syMathSin(i * (DEGtoANG(45)));
-		position[2] =
+		pos[2] =
 			scGarohPathStep(toFIXED(32), toFIXED(120), i) - wave * WEAVE_DOWN;
-		position[1] = 0;
+		pos[1] = 0;
 		tenths = syRandomBelow(10) + 4;
 		fdActorSetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),
 			tenths * (toFIXED(1) / 20));
 		fdActorWalkToAndWait(
-			ACTOR_WEREWOLF, position[0] / toFIXED(1), position[2] / toFIXED(1));
+			ACTOR_WEREWOLF, pos[0] / toFIXED(1), pos[2] / toFIXED(1));
 	}
 	fdActorSetAnimation(ACTOR_WEREWOLF, ANIM_STAND);
 	syFieldScriptWait(10);
@@ -1367,14 +1367,14 @@ void scGarohWerewolfRunsPast(void)
 		FIXED  wave;
 
 		wave = syMathSin(i * (DEGtoANG(45)));
-		position[0] = scGarohPathStep(x, toX, i) - wave * 4;
-		position[2] = scGarohPathStep(z, toZ, i);
-		position[1] = 0;
+		pos[0] = scGarohPathStep(x, toX, i) - wave * 4;
+		pos[2] = scGarohPathStep(z, toZ, i);
+		pos[1] = 0;
 		tenths = syRandomBelow(10) + 4;
 		fdActorSetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),
 			tenths * (toFIXED(1) / 20));
 		fdActorWalkToAndWait(
-			ACTOR_WEREWOLF, position[0] / toFIXED(1), position[2] / toFIXED(1));
+			ACTOR_WEREWOLF, pos[0] / toFIXED(1), pos[2] / toFIXED(1));
 	}
 	fdActorSetAnimation(ACTOR_WEREWOLF, ANIM_STAND);
 	fdActorFaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHEAST, 0);

@@ -44,12 +44,12 @@
 #define TITAN_BLADE_LIGHT_DUST(dust, originX) \
 	{ \
 		Sint32 radius; \
-		Sint32 angle; \
+		Sint32 ang; \
 \
 		radius = syRandom() & 63; \
-		angle = syRandom() & TRIG_ANGLE_MASK; \
-		(dust)->x = ((sySin(angle) * radius) >> 3) + (originX); \
-		(dust)->y = ((syCos(angle) * radius) >> 2) + toFIXED(96); \
+		ang = syRandom() & TRIG_ANGLE_MASK; \
+		(dust)->x = ((sySin(ang) * radius) >> 3) + (originX); \
+		(dust)->y = ((syCos(ang) * radius) >> 2) + toFIXED(96); \
 		(dust)->velX = ((syRandom() & 63) - 32) << 14; \
 		(dust)->velY = (-(syRandom() & 63) - 8) << 13; \
 		(dust)->variant = 0; \
@@ -111,10 +111,10 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		PARTICLE *flash = &state->particles[i];
 
 		Sint32 distance = i * 2;
-		Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
+		Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
 
-		flash->x = sySin(angle) * distance;
-		flash->y = -(syCos(angle) * distance);
+		flash->x = sySin(ang) * distance;
+		flash->y = -(syCos(ang) * distance);
 		flash->variant = i / 2 + TITAN_BLADE_FLASH_START;
 	}
 
@@ -128,14 +128,14 @@ void btEffectRunTitanBlade(BATTLE_EFFECT_PARM *args)
 		PARTICLE *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
 		Sint32 speed;
-		Sint32 angle;
+		Sint32 ang;
 
 		speed = (syRandom() & 0x1ff) + 32;
-		angle = syRandom() & TRIG_ANGLE_MASK;
+		ang = syRandom() & TRIG_ANGLE_MASK;
 		spark->x = sparkOriginX;
 		spark->y = toFIXED(88);
-		spark->velX = (sySin(angle) * speed) >> 5;
-		spark->velY = -(syCos(angle) * speed) >> 6;
+		spark->velX = (sySin(ang) * speed) >> 5;
+		spark->velY = -(syCos(ang) * speed) >> 6;
 		spark->variant = (syRandom() & 7) + 32;
 	}
 

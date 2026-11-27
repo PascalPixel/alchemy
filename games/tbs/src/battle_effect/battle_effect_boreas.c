@@ -80,7 +80,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 {
 	static SPR_SCALE	 unitScale = {{{toFIXED(1), toFIXED(1)}}};
 	UNUSED Sint32		 crystalPoints[32][2];
-	SPR_PLACEMENT		 position;
+	SPR_PLACEMENT		 pos;
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
 	Sint32				 tick;
@@ -89,7 +89,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	Uint8				*sparkleSheet;
 	Sint32				 edgeSpeed;
 	Sint32				 row;
-	Sint32				 count;
+	Sint32				 cnt;
 	Sint32				 i;
 	Sint32				 j;
 	Sint32				 shakeX;
@@ -154,7 +154,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 
 	/* First half: the crystals, the big ice block and the spray. */
 	for(tick = 0; tick != BOREAS_OPENING_TICKS; tick++) {
-		count = BOREAS_POINTS;
+		cnt = BOREAS_POINTS;
 		if((PerRepeat & (KEY_A | KEY_B)) && tick > 16) {
 			break;
 		}
@@ -179,11 +179,11 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		}
 
 		if(tick >= BOREAS_CRUMBLE_C_TICK) {
-			count = 0;
+			cnt = 0;
 		} else if(tick >= BOREAS_CRUMBLE_B_TICK) {
-			count = BOREAS_CRYSTALS_AFTER_CRUMBLE_B;
+			cnt = BOREAS_CRYSTALS_AFTER_CRUMBLE_B;
 		} else if(tick >= BOREAS_CRUMBLE_A_TICK) {
-			count = BOREAS_CRYSTALS_AFTER_CRUMBLE_A;
+			cnt = BOREAS_CRYSTALS_AFTER_CRUMBLE_A;
 		}
 
 		if(tick <= 167) {
@@ -205,7 +205,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 			BgScrollWork[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
 		}
 
-		for(i = 0; i != count; i++) {
+		for(i = 0; i != cnt; i++) {
 			Sint32 picture = i % 3;
 			draw(canvas, state->sheet + BoreasCrystalPictures[picture],
 				BOREAS_POINT_X(i) - shakeX,
@@ -230,15 +230,14 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		   keeps the stores. */
 		scale.x = toFIXED(1);
 		scale.y = toFIXED(1);
-		position.groundHeight = 0;
-		position.height = toFIXED(255);
+		pos.groundHeight = 0;
+		pos.height = toFIXED(255);
 		for(row = 0; row != BOREAS_SPRITE_ROWS; row++) {
 			for(j = 0; j != BOREAS_SPRITE_ROWS; j++) {
-				position.x = INTtoFIXED(j * 32 + 144 - shakeX);
-				position.y = INTtoFIXED(row * 32 + 76 - shakeY);
+				pos.x = INTtoFIXED(j * 32 + 144 - shakeX);
+				pos.y = INTtoFIXED(row * 32 + 76 - shakeY);
 				fdRenderApplyProjectedPlacementStub(
-					state->sprs[row * BOREAS_SPRITE_ROWS + j], &position,
-					&scale, 0);
+					state->sprs[row * BOREAS_SPRITE_ROWS + j], &pos, &scale, 0);
 			}
 		}
 
@@ -419,7 +418,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	}
 
 	for(tick = 0; tick != BOREAS_TORRENT_TICKS; tick++) {
-		count = 0;
+		cnt = 0;
 		if(tick == 96) {
 			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 		}
@@ -428,9 +427,9 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 		}
 		/* Crystals rise among the targets. */
 		if(tick > BOREAS_TORRENT_RISE_TICK) {
-			count = (tick - BOREAS_TORRENT_RISE_TICK) / 2;
-			if(count > BOREAS_POINTS) {
-				count = BOREAS_POINTS;
+			cnt = (tick - BOREAS_TORRENT_RISE_TICK) / 2;
+			if(cnt > BOREAS_POINTS) {
+				cnt = BOREAS_POINTS;
 			}
 		}
 		if(tick >= 9 && tick < BOREAS_TORRENT_CRASH_TICK && (tick & 3) == 0) {
@@ -445,7 +444,7 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 				tick * 14 - 992, BOREAS_STREAK_WIDTH, BOREAS_STREAK_HEIGHT);
 		}
 		if(tick < BOREAS_TORRENT_CRASH_TICK) {
-			for(i = 0; i != count; i++) {
+			for(i = 0; i != cnt; i++) {
 				Sint32 picture = i % 3;
 				draw(canvas,
 					state->sheet + BoreasRisingCrystalPictures[picture],
@@ -472,11 +471,11 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		if(tick >= BOREAS_TORRENT_CRASH_TICK) {
-			count = BOREAS_TORRENT_CRYSTALS / 2;
+			cnt = BOREAS_TORRENT_CRYSTALS / 2;
 			if(tick != BOREAS_TORRENT_CRASH_TICK) {
-				count = BOREAS_TORRENT_CRYSTALS;
+				cnt = BOREAS_TORRENT_CRYSTALS;
 			}
-			for(i = 0; i != count; i++) {
+			for(i = 0; i != cnt; i++) {
 				PARTICLE *crystal = &state->particles[i];
 				y = FIXEDtoINT(crystal->y);
 				if(y <= 135) {

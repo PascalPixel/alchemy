@@ -261,7 +261,7 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 kind)
 	BATTLE_BACKGROUND_STATE	 *view;
 	HEAP_SLOTS				 *heap;
 	Sint32					  ownerCnt;
-	Sint32					  count;
+	Sint32					  cnt;
 	Uint32					  i;
 
 	heap = Ram_HeapSlots;
@@ -403,17 +403,17 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 kind)
 		syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
 		syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
 		REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-		count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, shown);
-		shown[count] = BATTLE_UNIT_LIST_END;
+		cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, shown);
+		shown[cnt] = BATTLE_UNIT_LIST_END;
 		btActorSpawnObjectsForList((Sint16 *)shown, 0);
-		count = btUnitListIds(BATTLE_SIDE_MASK_PARTY, shown);
-		for(i = 0; i != count; i++)
+		cnt = btUnitListIds(BATTLE_SIDE_MASK_PARTY, shown);
+		for(i = 0; i != cnt; i++)
 			btHighlightSetSprMode(shown[i], SPRITE_SEMI_TRANSPARENT);
 		for(i = 0; i != BLEND_WEIGHT_MAX; i++) {
 			REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
 			sySynch(1);
 		}
-		for(i = 0; i != count; i++)
+		for(i = 0; i != cnt; i++)
 			btHighlightSetSprMode(shown[i], SPRITE_OPAQUE);
 		btIntroAnnounceEncounter(enemyCnt);
 		BgScrollWork[0].y = 0;

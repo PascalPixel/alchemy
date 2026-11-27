@@ -714,10 +714,10 @@ extern Uint32 SeaOfTimeWaveState;
 #define STEP_SEA_TOWARD_WAVES(palette, i, changed) \
 	for(i = 1, palette = &BG_PLTT_COLOR(SEA_PALETTE, 1); i != SEA_COLORS; \
 		i++, palette++) { \
-		Uint16 color = *palette; \
-		Uint16 r = RGB_RED(color); \
-		Uint16 g = RGB_GREEN(color); \
-		Uint16 b = RGB_BLUE(color); \
+		Uint16 col = *palette; \
+		Uint16 r = RGB_RED(col); \
+		Uint16 g = RGB_GREEN(col); \
+		Uint16 b = RGB_BLUE(col); \
 \
 		STEP_TOWARD(r, WAVE_RED, changed); \
 		STEP_TOWARD(g, WAVE_GREEN, changed); \
@@ -731,14 +731,14 @@ extern Uint32 SeaOfTimeWaveState;
 	palette = &BG_PLTT_COLOR(SEA_PALETTE, 0); \
 	for(i = 1, saved = &SeaOfTimeSavedColors, j = 0; i != SEA_COLORS + 1; \
 		i++, j++) { \
-		Uint16 color = palette[i]; \
-		Uint16 target = saved->cols[j]; \
-		Uint16 r = RGB_RED(color); \
-		Uint16 g = RGB_GREEN(color); \
-		Uint16 b = RGB_BLUE(color); \
-		Uint16 tr = RGB_RED(target); \
-		Uint16 tg = RGB_GREEN(target); \
-		Uint16 tb = RGB_BLUE(target); \
+		Uint16 col = palette[i]; \
+		Uint16 tgt = saved->cols[j]; \
+		Uint16 r = RGB_RED(col); \
+		Uint16 g = RGB_GREEN(col); \
+		Uint16 b = RGB_BLUE(col); \
+		Uint16 tr = RGB_RED(tgt); \
+		Uint16 tg = RGB_GREEN(tgt); \
+		Uint16 tb = RGB_BLUE(tgt); \
 \
 		STEP_TOWARD(r, tr, changed); \
 		STEP_TOWARD(g, tg, changed); \

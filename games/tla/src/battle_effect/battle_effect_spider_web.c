@@ -468,13 +468,12 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 			Sint32 k = (frm / 4) % ULYSSES_FLAKE_PICTURES;
 			Sint32 x = 60 - (FIXEDtoINT(sySin(frm * ULYSSES_FLAKE_SWAY) << 3));
 			Sint32 y = frm - 8;
-			Uint8 *source =
-				state->sheet + ULYSSES_PICTURES + UlyssesPictures[k];
+			Uint8 *src = state->sheet + ULYSSES_PICTURES + UlyssesPictures[k];
 			Uint8  w = UlyssesPictureWidths[k];
 			Sint32 left = x - (w >> 1);
 			Uint8  h = UlyssesPictureHeights[k];
 
-			blit[1](canvas, source, left, y - (h >> 1), w, h);
+			blit[1](canvas, src, left, y - (h >> 1), w, h);
 		}
 		/* A flame bursts where it lands. */
 		if(frm >= ULYSSES_RUNE_CIRCLES_TICK && frm < ULYSSES_APPEAR_TICK) {
@@ -484,11 +483,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 				if((Uint32)p->variant < ULYSSES_BURST_FLAME_TICKS) {
 					Sint32 k = p->variant / 3;
 					Sint32 side = i & 1;
-					Uint8 *source =
+					Uint8 *src =
 						state->sheet + BattleEffectEmberStreakPictures[k];
 					Uint8 w = BattleEffectEmberStreakPictureWidths[k];
 
-					blit[side](canvas, source, p->x - (w >> 1),
+					blit[side](canvas, src, p->x - (w >> 1),
 						p->y + BattleEffectEmberStreakPictureBiasY[k] - 32, w,
 						BattleEffectEmberStreakPictureHeights[k]);
 				}
@@ -662,11 +661,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 				/* Violet flames at the mage's hand. */
 				if((Uint32)t < ULYSSES_STRIKE_FLAME_TICKS) {
 					Sint32 k = (t / 6) % 6;
-					Uint8 *source =
+					Uint8 *src =
 						state->sheet + BattleEffectEmberStreakPictures[k];
 					Uint8 w = BattleEffectEmberStreakPictureWidths[k];
 
-					blits[0](canvas, source, FIXEDtoINT(particle->x) - (w >> 1),
+					blits[0](canvas, src, FIXEDtoINT(particle->x) - (w >> 1),
 						FIXEDtoINT(particle->y) +
 							BattleEffectEmberStreakPictureBiasY[k] - 36,
 						w, BattleEffectEmberStreakPictureHeights[k]);
@@ -677,7 +676,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 					ULYSSES_STRIKE_FLAKE_TICKS) {
 					Sint32 k = ((t - ULYSSES_STRIKE_FLAKE_TICK) / 4) %
 						ULYSSES_FLAKE_PICTURES;
-					Uint8 *source =
+					Uint8 *src =
 						state->sheet + ULYSSES_PICTURES + UlyssesPictures[k];
 					Sint32 x = FIXEDtoINT(particle->x);
 					Uint8  w = UlyssesPictureWidths[k];
@@ -685,7 +684,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 					Sint32 y = FIXEDtoINT(particle->y);
 					Uint8  h = UlyssesPictureHeights[k];
 
-					blit[1](canvas, source, left, y - (h >> 1), w, h);
+					blit[1](canvas, src, left, y - (h >> 1), w, h);
 					t = particle->variant;
 				}
 				/* The crescent of light sweeps round the targets, wobbling, and
@@ -903,11 +902,11 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 				if((Uint32)particle->variant < ULYSSES_FLARE_FLAME_TICKS &&
 					draw) {
 					Sint32 k = (particle->variant / 4) % 6;
-					Uint8 *source =
+					Uint8 *src =
 						state->sheet + BattleEffectEmberStreakPictures[k];
 					Uint8 w = BattleEffectEmberStreakPictureWidths[k];
 
-					blits[0](canvas, source, particle->x - (w >> 1),
+					blits[0](canvas, src, particle->x - (w >> 1),
 						particle->y + BattleEffectEmberStreakPictureBiasY[k] -
 							48,
 						w, BattleEffectEmberStreakPictureHeights[k]);
@@ -935,9 +934,9 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 	sySynch(1);
 	/* FAKEMATCH(dead): a once-only block. */
 	{
-		void *destination = Ram_HeapSlots->battleCanvas;
+		void *dst = Ram_HeapSlots->battleCanvas;
 
-		IWRAM_FILL_WORDS(destination, CANVAS_BYTES, 0);
+		IWRAM_FILL_WORDS(dst, CANVAS_BYTES, 0);
 	}
 	IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
 	syWordsFill((void *)BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES, 0);

@@ -1227,13 +1227,13 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 
 #include "shared/actor_setup_scripted_part.h"
 
-/* Defines a flame thrower's flame sent backward from `position` at `speed`
-   under `updateRoutine`; `flag` keeps its sprite when off screen. */
+/* Defines a flame thrower's flame sent backward from `pos` at `speed`
+   under `updateRoutine`; `flg` keeps its sprite when off screen. */
 #define DEFINE_RIDE_SPAWN_BACKWARD(name, updateRoutine) \
-	void name(Sint32 *position, Sint32 speed, Sint32 flag) \
+	void name(Sint32 *pos, Sint32 speed, Sint32 flg) \
 	{ \
-		ACTOR *actor = scFieldActorCreate( \
-			SPRITE_BLAZE_FLAME, position[0], position[1], position[2]); \
+		ACTOR *actor = \
+			scFieldActorCreate(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]); \
 \
 		if(actor != NULL) { \
 			actor->bounce = 0; \
@@ -1241,7 +1241,7 @@ Bool fdActorIsBeside(ACTOR *a, ACTOR *b);
 			actor->sceneWord = -speed; \
 			scActorSetupScriptedPart(actor, 3); \
 			actor->update = updateRoutine; \
-			if(flag != 0) \
+			if(flg != 0) \
 				actor->retainSprCache = ACTOR_COMPOSE_OFF_SCREEN; \
 			fdActorSelectAnimation(actor, 2); \
 		} \

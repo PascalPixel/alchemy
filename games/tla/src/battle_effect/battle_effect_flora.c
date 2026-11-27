@@ -157,7 +157,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	PARTICLE				*p;
 	Uint8					*cells;
 	Uint16					*phase;
-	Uint8					*source;
+	Uint8					*src;
 	Uint8					*resource;
 	SCREEN_POINT			 out;
 	SCREEN_POINT			 pos;
@@ -172,7 +172,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	savedScroll = BgScrollWork[1].x;
 	backdrop = Ram_HeapSlots->battleBg;
 	petals = EffectScratch;
-	source = Ram_MapMetatileBuffer;
+	src = Ram_MapMetatileBuffer;
 	motes = Ram_HeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
@@ -197,7 +197,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			syWordsCopyEntry((void *)&OBJ_PLTT_COLOR(FLORA_PETAL_PALETTE, 0),
 				resource, PALETTE_BANK_BYTES);
 			resource += PALETTE_BANK_BYTES;
-			syDecompressTaggedLZ(resource, source);
+			syDecompressTaggedLZ(resource, src);
 			cells = Ram_MapMetatileBuffer;
 			for(i = 0; i != FLORA_PETAL_PICTURE_COUNT; i++) {
 				SPR *obj = btEffectSprCreateWithTiles(
@@ -229,7 +229,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			resource =
 				syResourceGetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 			resource += FLORA_COLORS * 2;
-			syDecompressTaggedLZ(resource, source);
+			syDecompressTaggedLZ(resource, src);
 			cells = Ram_MapMetatileBuffer;
 			for(i = 0; i != FLORA_FIGURE_PIECES; i++) {
 				SPR *obj = btEffectSprCreateWithTiles(
@@ -246,14 +246,14 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 		REG_BG2X = bgX << 8;
 		EFFECT_PRESENT_CANVAS(state);
 	}
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, source, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, src, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 	/* DEAD: the dimmed mote copies, which nothing reads; the ROM keeps the
 	   loop. */
 	size = FLORA_DIMMED_MOTE;
 	for(i = 0; i != FLORA_DIMMED_MOTE_COPIES; i++) {
 		for(j = 0; j != FLORA_DIMMED_MOTE_BYTES; j++) {
-			Sint32 v = source[BattleEffectMotePictures[size - 1] + j];
+			Sint32 v = src[BattleEffectMotePictures[size - 1] + j];
 
 			if(v > 0) {
 				v = CANVAS_LEVEL_BRIGHTEST - i * 7;
@@ -322,7 +322,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			REG_BG2X = 0;
 			/* A quarter of each of the four glows: 8, 16, 32 and 48 pixels
 			   tall. */
-			btEffectDrawShadedCircles(source, 8, toFIXED(1));
+			btEffectDrawShadedCircles(src, 8, toFIXED(1));
 			btEffectDrawShadedCircles(
 				Ram_MapMetatileBuffer + FLORA_GLOW_BYTES(8), 16,
 				toFIXED(3) / 4);
@@ -342,7 +342,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			Sint32 n = FloraPetalSizes[k] * 2;
 
 			btCanvasBlitMirroredQuarters(
-				source + FloraPetalPictures[k], FLORA_GLOW_X, FLORA_GLOW_Y, n);
+				src + FloraPetalPictures[k], FLORA_GLOW_X, FLORA_GLOW_Y, n);
 		}
 		/* Flora fades in from white, a level a tick. */
 		shown = frm - FLORA_APPEAR_TICK;
@@ -919,7 +919,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	}
 	for(frm = 0; frm != FLORA_STORM_TICKS; frm++) {
 		if(frm == 0) {
-			p = (PARTICLE *)source;
+			p = (PARTICLE *)src;
 			for(i = 0; i != FLORA_STORM_PETALS; i++, p++) {
 				p->x = INTtoFIXED((syRandom() & 63) + 96);
 				p->y = toFIXED(-(syRandom() & 63));
@@ -932,7 +932,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		/* Each petal tumbles a picture every four ticks as it falls. */
-		p = (PARTICLE *)source;
+		p = (PARTICLE *)src;
 		for(i = 0; i != FLORA_STORM_DRAWN; i++, p++) {
 			if(frm > i) {
 				draw[0](canvas,

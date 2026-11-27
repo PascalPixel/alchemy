@@ -432,7 +432,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 i;
 	Sint32				 k;
 	Sint32				 total;
-	MOTION_OBJECT		*source;
+	MOTION_OBJECT		*src;
 	BATTLE_CAMERA		*camera;
 	Uint8				*palette;
 	FIXED				 height;
@@ -479,7 +479,7 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* The shells leave the user at the style's height, each aimed at its target
 	   with a little spread in depth. */
 	EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
-	source = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->obj;
 	if(mode == LOBBED_SHELLS_MUD)
 		height = toFIXED(40);
 	else if(mode == LOBBED_SHELLS_RISING_VENOM)
@@ -493,10 +493,10 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			PARTICLE *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 			FIXED	  aimZ;
 
-			SET_POSITION(shot, source->x, height, source->z);
+			SET_POSITION(shot, src->x, height, src->z);
 			aimZ = tgt->z + toFIXED(((syRandom() & 31) - 16) * 2);
-			SET_VELOCITY(shot, (tgt->x - source->x) >> 4, toFIXED(4),
-				(aimZ - source->z) >> 4);
+			SET_VELOCITY(
+				shot, (tgt->x - src->x) >> 4, toFIXED(4), (aimZ - src->z) >> 4);
 			shot->variant = 0;
 		}
 	}

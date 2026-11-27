@@ -53,9 +53,9 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 	Uint8				*spraySheet = OCEAN_FIST_SPRAY_SHEET;
 	void				*canvas;
 	BATTLE_EFFECT_STATE *state;
-	Uint8				*sprites;
+	Uint8				*sprs;
 	BLITTER_PAIR		 blitters;
-	SCREEN_POINT		 target;
+	SCREEN_POINT		 tgt;
 	PARTICLE			*drops = (PARTICLE *)MapGridMetatileBuffer;
 	PARTICLE			*drop;
 	PARTICLE			*spray;
@@ -67,17 +67,17 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 
 	canvas = Ram_HeapSlots->battleCanvas;
 	state = Ram_HeapSlots->battleEff;
-	sprites = Ram_HeapSlots->battleSheet;
+	sprs = Ram_HeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, blitters);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, spraySheet, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, state->sheet, 1, 0);
-	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	LOAD_BG_PALETTE(RESOURCE_BLUE_FLAME_SHEET);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	btEffectPosProjectBattler(args->tgts[0], &target);
+	btEffectPosProjectBattler(args->tgts[0], &tgt);
 
 	{
 		Sint32 scroll = 0;
@@ -126,7 +126,7 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 			if(tick >= 0 && tick < OCEAN_FIST_COLUMN_TICKS) {
 				Sint32 top = BATTLE_VIEW_HEIGHT - scroll;
 				Sint32 picture = tick % OCEAN_FIST_COLUMN_PICTURES;
-				Sint32 x = target.x / 2;
+				Sint32 x = tgt.x / 2;
 				Sint32 phase = scroll % OCEAN_FIST_COLUMN_HEIGHT;
 
 				if(top < 0) {
@@ -172,7 +172,7 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 					btParticleAdvanceWithGravity2D(spray, 62, -toFIXED(1) / 8);
 				}
 				if(++spray->variant == 0) {
-					spray->x = toFIXED((syRandom() & 31) + target.x / 2 - 16);
+					spray->x = toFIXED((syRandom() & 31) + tgt.x / 2 - 16);
 					spray->y = INTtoFIXED((syRandom() & 7) + 88);
 					spray->velX = ((syRandom() & 255) - 128) << 11;
 					spray->velY = 0;
@@ -209,8 +209,7 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 
 				for(i = 0, drop = drops; i != OCEAN_FIST_DROPS; i++, drop++) {
 					if(drop->variant == -1) {
-						drop->x =
-							toFIXED((syRandom() & 31) + target.x / 2 - 16);
+						drop->x = toFIXED((syRandom() & 31) + tgt.x / 2 - 16);
 						drop->y = toFIXED(OCEAN_FIST_COLUMN_FOOT_Y);
 						drop->velX = ((syRandom() & 63) - 32) << 14;
 						drop->velY = (-(syRandom() & 63) - 8) << 13;
@@ -225,7 +224,7 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 				if(drop->variant >= 0) {
 					Sint32 size = i % 3 + 3;
 
-					EFFECT_DRAW_MOTE(blitters[i & 1], canvas, sprites,
+					EFFECT_DRAW_MOTE(blitters[i & 1], canvas, sprs,
 						FIXED_INTEGER_PART(drop->x),
 						FIXED_INTEGER_PART(drop->y), size);
 					if(tick >= OCEAN_FIST_STRIKE_TICK) {

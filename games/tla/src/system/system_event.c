@@ -36,7 +36,7 @@ void sySortEvents(void)
 	EVENT  saved;
 	EVENT *event = EventBuf;
 	Sint32 pass;
-	Sint32 index;
+	Sint32 idx;
 
 	/* BUG: the last pass, which would settle the first two events, never runs,
 	   so the events in slots 0 and 1 can stay out of order */
@@ -46,7 +46,7 @@ void sySortEvents(void)
 	for(pass = EVENT_COUNT - 1; pass > 1; pass--) {
 #endif
 		event = EventBuf;
-		for(index = 0; index < pass; index++) {
+		for(idx = 0; idx < pass; idx++) {
 			if((Sint16)event[1].pri > (Sint16)event->pri) {
 				memcpy(&saved, event, sizeof(saved));
 				memcpy(event, event + 1, sizeof(saved));

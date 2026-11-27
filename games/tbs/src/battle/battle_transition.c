@@ -261,7 +261,7 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 encounterId)
 	Sint32					 tile;
 	Uint32					 idx;
 	Uint32					 column;
-	Sint32					 count;
+	Sint32					 cnt;
 	Sint32					 id;
 	BATTLE_OBJECT			*battleObject;
 	BATTLE_STATE			*battle;
@@ -351,8 +351,8 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 encounterId)
 		battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 		view->secondMode = BATTLE_BACKGROUND_FIXED;
 		view->busy = 0;
-		count = btUnitListIds(BATTLE_SIDE_MASK_BOTH, (Uint16 *)unitIds);
-		for(idx = 0; idx != count; idx++) {
+		cnt = btUnitListIds(BATTLE_SIDE_MASK_BOTH, (Uint16 *)unitIds);
+		for(idx = 0; idx != cnt; idx++) {
 			/* BUG: unitIds is never read; the index is taken as a unit id, and
 			   a gap among the party's ids makes the scale store go near address
 			   0. */

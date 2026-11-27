@@ -467,13 +467,13 @@ Sint32 sySerialStartReceive(void *dst)
 #define SERIAL_DEFINE_WAIT(name, pending) \
 	void name(void) \
 	{ \
-		Uint32 count = 0; \
+		Uint32 cnt = 0; \
 \
 		if(pending != 0) { \
 			do { \
 				sySynch(1); \
-				count++; \
-			} while(count < SERIAL_TRANSFER_TIMEOUT_TICKS && pending != 0); \
+				cnt++; \
+			} while(cnt < SERIAL_TRANSFER_TIMEOUT_TICKS && pending != 0); \
 		} \
 	}
 

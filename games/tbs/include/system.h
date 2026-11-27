@@ -380,14 +380,14 @@ extern Uint32 RandomSeed;
 
 /* Starts a DMA transfer: stores the source, destination and control words into
    `channel`'s registers with one stmia. */
-static __inline__ void syDMAXCopy(const volatile void *source,
-	volatile void *destination, Uint32 control, volatile Uint32 *channel)
+static __inline__ void syDMAXCopy(const volatile void *src, volatile void *dst,
+	Uint32 control, volatile Uint32 *channel)
 {
 	ASM_REGISTER(volatile Uint32 *dma, "r3") = channel;
-	ASM_REGISTER(Uint32 src, "r0") = (Uint32)source;
-	ASM_REGISTER(Uint32 dst, "r1") = (Uint32)destination;
+	ASM_REGISTER(Uint32 srcReg, "r0") = (Uint32)src;
+	ASM_REGISTER(Uint32 dstReg, "r1") = (Uint32)dst;
 	ASM_REGISTER(Uint32 cnt, "r2") = control;
-	ASM_DMA_STORE(src, cnt, dma, dst);
+	ASM_DMA_STORE(srcReg, cnt, dma, dstReg);
 }
 
 /* Waits until `channel`'s transfer is done: SGL's slDMAWait. */
@@ -485,14 +485,14 @@ static inline void syIRQUnlock(volatile Uint32 *saved)
 	{ \
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork; \
 		Uint32			saved; \
-		Sint32			count; \
+		Sint32			cnt; \
 \
 		IRQ_LOCK(saved); \
-		count = *&q->cnt; \
-		if(count <= 31) { \
-			Uint32 *entry = q->entries[count]; \
+		cnt = *&q->cnt; \
+		if(cnt <= 31) { \
+			Uint32 *entry = q->entries[cnt]; \
 \
-			*&q->cnt = count + 1; \
+			*&q->cnt = cnt + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \
@@ -506,16 +506,16 @@ static inline void syIRQUnlock(volatile Uint32 *saved)
 	{ \
 		IO_WRITE_QUEUE *q; \
 		Uint32			saved; \
-		Sint32			count; \
+		Sint32			cnt; \
 \
 		q = &IoWriteQueueWork; \
 		IME_SAVE(ime, saved); \
 		IME_DISABLE(ime); \
-		count = *&q->cnt; \
-		if(count <= 31) { \
-			Uint32 *entry = q->entries[count]; \
+		cnt = *&q->cnt; \
+		if(cnt <= 31) { \
+			Uint32 *entry = q->entries[cnt]; \
 \
-			*&q->cnt = count + 1; \
+			*&q->cnt = cnt + 1; \
 			*entry++ = (value); \
 			*entry++ = (address); \
 			*entry = (control); \

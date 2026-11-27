@@ -13,7 +13,7 @@ Sint32 KNOCK_BACK(void)
 {
 	MAIN_ROUTINE_STATE *main = &MainRoutineStateWork;
 	FLAME_HIT_STATE	   *state;
-	VECTOR3				position;
+	VECTOR3				pos;
 
 	if(main->movementMode == LEADER_MOVEMENT_WALK) {
 		ACTOR *actor;
@@ -43,12 +43,10 @@ Sint32 KNOCK_BACK(void)
 				actor->velZ = (Sint16)state->dir.z * toFIXED(2);
 				actor->acceleration = toFIXED(1) / 16;
 				for(i = 0; i <= 9; i++) {
-					position.x =
-						actor->x.fixed + (Sint16)state->dir.x * toFIXED(8);
-					position.y = actor->y.fixed;
-					position.z =
-						actor->z.fixed + (Sint16)state->dir.z * toFIXED(8);
-					if(KNOCK_BACK_CHECK_COLLISION(actor, &position) != 0) {
+					pos.x = actor->x.fixed + (Sint16)state->dir.x * toFIXED(8);
+					pos.y = actor->y.fixed;
+					pos.z = actor->z.fixed + (Sint16)state->dir.z * toFIXED(8);
+					if(KNOCK_BACK_CHECK_COLLISION(actor, &pos) != 0) {
 						actor->velX = 0;
 						actor->velZ = 0;
 						break;
@@ -61,7 +59,7 @@ Sint32 KNOCK_BACK(void)
 #if KNOCK_BACK_STOPS_AT_ACTORS
 				Sint32 radius;
 				ACTOR *other;
-				Uint8 *flags;
+				Uint8 *flg;
 				Sint32 x, z, off;
 				Sint32 i;
 #else
@@ -69,10 +67,10 @@ Sint32 KNOCK_BACK(void)
 				Sint32 off;
 #endif
 
-				position.x = actor->x.fixed + (Sint16)state->dir.x * toFIXED(8);
-				position.y = actor->y.fixed;
-				position.z = actor->z.fixed + (Sint16)state->dir.z * toFIXED(8);
-				result = KNOCK_BACK_CHECK_COLLISION(actor, &position);
+				pos.x = actor->x.fixed + (Sint16)state->dir.x * toFIXED(8);
+				pos.y = actor->y.fixed;
+				pos.z = actor->z.fixed + (Sint16)state->dir.z * toFIXED(8);
+				result = KNOCK_BACK_CHECK_COLLISION(actor, &pos);
 				if(result > 0)
 					break;
 				if(result < 0) {
@@ -84,13 +82,13 @@ Sint32 KNOCK_BACK(void)
 #if KNOCK_BACK_STOPS_AT_ACTORS
 				radius = actor->radius - 2;
 				other = Ram_HeapSlots->actors;
-				flags = &other->collisionFlg;
+				flg = &other->collisionFlg;
 				for(i = 0; i < ACTOR_COUNT;
-					i++, flags += sizeof(ACTOR), other++) {
-					if(other->script != 0 && (*flags & ACTOR_SOLID) &&
+					i++, flg += sizeof(ACTOR), other++) {
+					if(other->script != 0 && (*flg & ACTOR_SOLID) &&
 						other != actor &&
 						scScriptCheckSpheresOverlap(&other->x.fixed, radius,
-							(Sint32 *)&position, other->radius - 2) >= 0) {
+							(Sint32 *)&pos, other->radius - 2) >= 0) {
 						syWait(1);
 						goto done;
 					}

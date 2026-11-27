@@ -97,11 +97,11 @@
 			index++, spark++) { \
 			if(spark->variant == 0) { \
 				Sint32 speed = (syRandom() & 0x3ff) + 32; \
-				Sint32 angle = angleExpr; \
+				Sint32 ang = angleExpr; \
 				spark->x = startX; \
 				spark->y = startY; \
-				spark->velX = (sySin(angle) * speed) >> 7; \
-				spark->velY = -((syCos(angle) * speed) << 1) >> 7; \
+				spark->velX = (sySin(ang) * speed) >> 7; \
+				spark->velY = -((syCos(ang) * speed) << 1) >> 7; \
 				spark->variant = (syRandom() & 7) + 32; \
 				if(++spawned == (max)) { \
 					break; \
@@ -523,9 +523,9 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 				}
 				{
 					Sint32 radius = (syRandom() & 7) + 8;
-					Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
-					glowX = FIXEDtoINT(sySin(angle) * radius) + 72;
-					glowY = 32 - FIXEDtoINT(syCos(angle) * radius);
+					Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
+					glowX = FIXEDtoINT(sySin(ang) * radius) + 72;
+					glowY = 32 - FIXEDtoINT(syCos(ang) * radius);
 				}
 				btCanvasBlitMirroredQuarters(
 					state->sheet + THOR_HAMMER_GLOW_PICTURE, glowX, glowY,
@@ -536,11 +536,11 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 					i++, spark++) {
 					if(spark->variant == 0) {
 						Sint32 speed = (syRandom() & 63) + 64;
-						Sint32 angle = syRandom() & TRIG_ANGLE_MASK;
+						Sint32 ang = syRandom() & TRIG_ANGLE_MASK;
 						spark->x = toFIXED(glowX);
 						spark->y = toFIXED(glowY);
-						spark->velX = (sySin(angle) * speed) >> 7;
-						spark->velY = -((syCos(angle) * speed) << 1) >> 7;
+						spark->velX = (sySin(ang) * speed) >> 7;
+						spark->velY = -((syCos(ang) * speed) << 1) >> 7;
 						spark->variant = (syRandom() & 7) + 16;
 						if(++spawned == THOR_HAMMER_GLOW_SPARKS) {
 							break;
@@ -596,16 +596,16 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 				Sint32 thorScreenX;
 				for(i = 0, thorScreenX = FIXEDtoINT(thorX) >> 1; i != 3; i++) {
 					Sint32 cell;
-					Sint32 angle;
+					Sint32 ang;
 					Sint32 x;
 					Sint32 y;
 					Uint32 flip;
 					cell = i & 3;
-					angle = syRandom() & TRIG_ANGLE_MASK;
-					x = (FIXEDtoINT(sySin(angle) * THOR_CRACKLE_RADIUS_X)) +
+					ang = syRandom() & TRIG_ANGLE_MASK;
+					x = (FIXEDtoINT(sySin(ang) * THOR_CRACKLE_RADIUS_X)) +
 						thorScreenX -
 						(BattleEffectGlintPictureWidths[cell] >> 1);
-					y = (FIXEDtoINT(syCos(angle) * THOR_CRACKLE_RADIUS_Y)) -
+					y = (FIXEDtoINT(syCos(ang) * THOR_CRACKLE_RADIUS_Y)) -
 						(BattleEffectGlintPictureHeights[cell] >> 1);
 					flip = syRandom();
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,

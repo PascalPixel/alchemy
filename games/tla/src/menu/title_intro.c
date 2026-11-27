@@ -659,9 +659,9 @@ extern Sint16 TitleIntroGullPath[];
 /* Unpacks a picture of `The Lost Age`, its three pieces, into sprite tiles. */
 #define LOAD_LOGO_TILES(id) \
 	{ \
-		Uint8 *buffer = TitleIntroLogoTileBuffer; \
-		syDecompressByteLZ(syResourceGetTableEntry(id), buffer); \
-		syDMAXCopy(buffer, (void *)OBJ_VRAM0, \
+		Uint8 *buf = TitleIntroLogoTileBuffer; \
+		syDecompressByteLZ(syResourceGetTableEntry(id), buf); \
+		syDMAXCopy(buf, (void *)OBJ_VRAM0, \
 			DMA_COPY_WORDS(3 * LOGO_PIECE_BYTES / 4), REG_DMA3); \
 	}
 

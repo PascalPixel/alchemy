@@ -702,7 +702,7 @@ void scStaffCreditUpdateTransitionBlend(void)
    view of a lighthouse lit, which the credits never call. */
 UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 {
-	Uint8 *buffer;
+	Uint8 *buf;
 
 	syWait(1);
 	fdScriptClearFlag(FLAG_KEEP_PARTY_POSITION);
@@ -716,25 +716,25 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 		fdScriptPlaySnd(SE_RUMBLE);
 	}
 	fdWorldMapFreeze();
-	buffer = syHeapAllocEWRAM(16384);
-	syDecompressTaggedLZ(WorldMapPackedTiles, buffer);
+	buf = syHeapAllocEWRAM(16384);
+	syDecompressTaggedLZ(WorldMapPackedTiles, buf);
 	syDecompressTaggedLZ(
-		WorldMapPackedPictures, buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
+		WorldMapPackedPictures, buf + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
 	IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
 		(Uint32)(WorldMapPalettes + mode * PALETTE_COLORS * 2),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS));
 	{
 		IO_WRITE_QUEUE *q = &IoWriteQueueWork;
 		Uint32			saved;
-		Sint32			count;
+		Sint32			cnt;
 
 		IRQ_LOCK(saved);
-		count = q->cnt;
-		if(count < (Sint32)ARRAY_COUNT(q->entries)) {
-			Uint32 *entry = q->entries[count];
+		cnt = q->cnt;
+		if(cnt < (Sint32)ARRAY_COUNT(q->entries)) {
+			Uint32 *entry = q->entries[cnt];
 
-			*entry++ = (Uint32)buffer;
-			q->cnt = count + 1;
+			*entry++ = (Uint32)buf;
+			q->cnt = cnt + 1;
 			*entry++ = PICTURE_TILES;
 			*entry = DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4);
 		}
@@ -811,7 +811,7 @@ UNUSED void scStaffCreditPlayLighthouseTransition(Sint32 mode)
 		scQueueIOWrite16((Uint32)&REG_BLDALPHA, StaffCreditTransitionBlend);
 		scQueueIOWrite16((Uint32)&REG_BLDCNT, 0);
 	}
-	syHeapRelease(buffer);
+	syHeapRelease(buf);
 	fdScriptSetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 

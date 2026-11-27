@@ -220,11 +220,11 @@ extern const SCALE ProcneUnitScale; /* the comets' unit scale */
 /* Writes one row of BG2's map for the canvas, two tiles at a time. */
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset) \
 	for((column) = 0; (column) != 8; (column)++, (offset) += 2) { \
-		Sint32 tileIndex; \
+		Sint32 tileIdx; \
 		Sint16 pair; \
 \
-		tileIndex = (row) * 16 + (column) * 2; \
-		pair = ((tileIndex + 1) << 8) | tileIndex; \
+		tileIdx = (row) * 16 + (column) * 2; \
+		pair = ((tileIdx + 1) << 8) | tileIdx; \
 		*(volatile Sint16 *)((Uint8 *)BG_CANVAS_MAP + (offset)) = pair; \
 	}
 

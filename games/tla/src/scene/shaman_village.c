@@ -3000,9 +3000,9 @@ void scShamanVillageBlowChimneySmoke(void)
 #define DEFINE_LEADER_LAYER_TASK(name, first, second) \
 	void name(void) \
 	{ \
-		FIELD_SPR *sprite = \
+		FIELD_SPR *spr = \
 			fdActorGetById(MainRoutineStateWork.leaderActorId)->spr; \
-		Sint32 variant = sprite->pri; \
+		Sint32 variant = spr->pri; \
 \
 		fdActorSetSprPriority(first, variant); \
 		fdActorSetSprPriority(second, variant); \

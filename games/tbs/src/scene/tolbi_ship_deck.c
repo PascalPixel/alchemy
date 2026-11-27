@@ -2098,8 +2098,8 @@ typedef enum TOLBI_SHIP_DECK_ROWER_REPLY {
 #define TOLBI_SHIP_DECK_TAKE_ROWER(passenger, reply) \
 	do { \
 		member = (passenger); \
-		for(index = 0; index <= 3; index++) { \
-			if(roster[index] == member) { \
+		for(idx = 0; idx <= 3; idx++) { \
+			if(roster[idx] == member) { \
 				matched[found] = member; \
 				category[found] = (reply); \
 				found++; \
@@ -2115,16 +2115,16 @@ static void scTolbiShipDeckRowersDisembark(void)
 	Sint32 roster[4];
 	Sint32 matched[4];
 	Sint32 category[4];
-	Uint32 index;
+	Uint32 idx;
 	Sint32 found;
 	Sint32 actorId;
 	Sint32 member;
 	ACTOR *actor;
 
 	found = 0;
-	for(index = 0; index <= 3; index++) {
-		roster[index] = scTolbiShipDeckGetRowerAtSeat(index);
-		category[index] = 0;
+	for(idx = 0; idx <= 3; idx++) {
+		roster[idx] = scTolbiShipDeckGetRowerAtSeat(idx);
+		category[idx] = 0;
 	}
 
 	/* The first four in this order take the first four replies; three others
@@ -2164,10 +2164,10 @@ static void scTolbiShipDeckRowersDisembark(void)
 
 	fdScriptWait(10);
 
-	for(index = 0; index <= 3; index++) {
-		actorId = matched[index];
+	for(idx = 0; idx <= 3; idx++) {
+		actorId = matched[idx];
 		fdActorSetPos(actorId, 216, 584);
-		if(category[index] == ROWER_REPLY_OLD_MAN) {
+		if(category[idx] == ROWER_REPLY_OLD_MAN) {
 			fdActorSetSpeed(actorId, 0.8);
 		} else {
 			fdActorSetSpeed(actorId, 1);
@@ -2176,7 +2176,7 @@ static void scTolbiShipDeckRowersDisembark(void)
 		fdActorWalkToAndWait(actorId, 192, 618);
 		fdActorWalkToAndWait(actorId, 192, 656);
 
-		switch(category[index]) {
+		switch(category[idx]) {
 		case ROWER_REPLY_FINALLY_LUCKY:
 			fdActorShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 			/* "We made it? Finally! We're lucky to be alive after all those

@@ -34,27 +34,27 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 {
 	Uint16			   owners[6];
 	Uint16			   selected[2];
-	Sint32			   count = btPartyPrepareReserveOwnersStub(owners);
+	Sint32			   cnt = btPartyPrepareReserveOwnersStub(owners);
 	Sint32			   sel = 0;
 	Bool			   redraw = TRUE;
 	BATTLE_STATE	  *battle = Ram_HeapSlots->battleState;
 	Sint32			   result = 0;
 	BATTLE_MENU_STATE *menu = Ram_HeapSlots->battleMenuState;
-	Sint32			   current;
+	Sint32			   cur;
 	Sint32			   newId;
 	Sint32			   i;
 
-	if(count <= 0)
+	if(cnt <= 0)
 		return -1;
 	/* mnBattleTargetRunSelection's PLACE_PARTY | place: the place is its low
 	   byte. */
 	slot &= 0xff;
-	current = battle->partyUnits[slot];
+	cur = battle->partyUnits[slot];
 	sySndPlayStub(SE_MENU_CONFIRM);
 	for(;;) {
 		newId = battle->partyUnits[slot] = owners[sel];
 		if(PerWork.push & KEY_B) {
-			battle->partyUnits[slot] = current;
+			battle->partyUnits[slot] = cur;
 			result = -1;
 			sySndPlayStub(SE_MENU_CANCEL);
 			break;
@@ -73,22 +73,22 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 				continue;
 			}
 			sySndPlayStub(SE_CHIME);
-			menu->swappedUnit = current;
+			menu->swappedUnit = cur;
 			menu->swappedPlace = slot;
 			for(i = 0; i < 8; i++) {
-				if(MainRoutineStateWork.party[i] == current)
+				if(MainRoutineStateWork.party[i] == cur)
 					MainRoutineStateWork.party[i] = newId;
 				else if(MainRoutineStateWork.party[i] == newId)
-					MainRoutineStateWork.party[i] = current;
+					MainRoutineStateWork.party[i] = cur;
 			}
 			break;
 		}
 		if(PerWork.repeat & KEY_LEFT) {
-			sel = (sel + count - 1) % count;
+			sel = (sel + cnt - 1) % cnt;
 			sySndPlayStub(SE_MENU_CONFIRM);
 			redraw = TRUE;
 		} else if(PerWork.repeat & KEY_RIGHT) {
-			sel = (sel + 1) % count;
+			sel = (sel + 1) % cnt;
 			sySndPlayStub(SE_MENU_CONFIRM);
 			redraw = TRUE;
 		}
@@ -100,7 +100,7 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 
 			redraw = FALSE;
 			newId = battle->partyUnits[slot] = owners[sel];
-			from = btObjectGetStub(current);
+			from = btObjectGetStub(cur);
 			to = btObjectGetStub(newId);
 			to->anchorX = from->anchorX;
 			place = (ACTOR *)from->obj;

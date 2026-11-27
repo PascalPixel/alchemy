@@ -984,25 +984,25 @@ static inline void scCursorShow(MENU_CURSOR *cursor, Sint32 x, Sint32 y)
    into the lower window. */
 #define DRAW_KEYS(window) \
 	{ \
-		message = (Sint32)MsgFieldPasswordKana; \
-		mnTextDrawMessageAsTiles(message++, window, 0, 0); \
-		mnTextDrawMessageAsTiles(message++, window, 0, 8); \
-		mnTextDrawMessageAsTiles(message++, window, 0, 16); \
-		mnTextDrawMessageAsTiles(message++, window, 0, 24); \
-		mnTextDrawMessageAsTiles(message++, window, 48, 0); \
-		mnTextDrawMessageAsTiles(message++, window, 48, 8); \
-		mnTextDrawMessageAsTiles(message++, window, 48, 16); \
-		mnTextDrawMessageAsTiles(message++, window, 48, 24); \
-		mnTextDrawMessageAsTiles(message++, window, 96, 0); \
-		mnTextDrawMessageAsTiles(message++, window, 96, 8); \
-		mnTextDrawMessageAsTiles(message++, window, 96, 16); \
-		mnTextDrawMessageAsTiles(message++, window, 96, 24); \
-		mnTextDrawMessageAsTiles(message++, window, 144, 0); \
-		mnTextDrawMessageAsTiles(message++, window, 144, 8); \
+		msg = (Sint32)MsgFieldPasswordKana; \
+		mnTextDrawMessageAsTiles(msg++, window, 0, 0); \
+		mnTextDrawMessageAsTiles(msg++, window, 0, 8); \
+		mnTextDrawMessageAsTiles(msg++, window, 0, 16); \
+		mnTextDrawMessageAsTiles(msg++, window, 0, 24); \
+		mnTextDrawMessageAsTiles(msg++, window, 48, 0); \
+		mnTextDrawMessageAsTiles(msg++, window, 48, 8); \
+		mnTextDrawMessageAsTiles(msg++, window, 48, 16); \
+		mnTextDrawMessageAsTiles(msg++, window, 48, 24); \
+		mnTextDrawMessageAsTiles(msg++, window, 96, 0); \
+		mnTextDrawMessageAsTiles(msg++, window, 96, 8); \
+		mnTextDrawMessageAsTiles(msg++, window, 96, 16); \
+		mnTextDrawMessageAsTiles(msg++, window, 96, 24); \
+		mnTextDrawMessageAsTiles(msg++, window, 144, 0); \
+		mnTextDrawMessageAsTiles(msg++, window, 144, 8); \
 		mnWindowDrawDividerLine(window, 24, 0, 24, 5); \
-		mnTextDrawMessageAsTiles(message++, window, 192, 0); \
-		mnTextDrawMessageAsTiles(message++, window, 192, 8); \
-		mnTextDrawMessageAsTiles(message, window, 192, 24); \
+		mnTextDrawMessageAsTiles(msg++, window, 192, 0); \
+		mnTextDrawMessageAsTiles(msg++, window, 192, 8); \
+		mnTextDrawMessageAsTiles(msg, window, 192, 24); \
 	}
 #else
 /* Draws the symbols to choose from and the side column's Space, Return and
@@ -1013,11 +1013,11 @@ static inline void scCursorShow(MENU_CURSOR *cursor, Sint32 x, Sint32 y)
 		mnTextDrawStringInWindow(ClearSecondPasswordRow, window, 0, 8); \
 		mnTextDrawStringInWindow(ClearThirdPasswordRow, window, 0, 16); \
 		mnTextDrawStringInWindow(ClearFourthPasswordRow, window, 0, 24); \
-		message = (Sint32)MsgFieldSpace; \
+		msg = (Sint32)MsgFieldSpace; \
 		mnWindowDrawDividerLine(window, 20, 0, 20, 5); \
-		mnTextDrawMessageAsTiles(message++, window, 160, 0); \
-		mnTextDrawMessageAsTiles(message++, window, 160, 8); \
-		mnTextDrawMessageAsTiles(message, window, 160, 24); \
+		mnTextDrawMessageAsTiles(msg++, window, 160, 0); \
+		mnTextDrawMessageAsTiles(msg++, window, 160, 8); \
+		mnTextDrawMessageAsTiles(msg, window, 160, 24); \
 	}
 #endif
 
@@ -1077,7 +1077,7 @@ Sint32 scClearEnterPassword(void)
 	Sint32			cnt;
 	Sint32			page;
 	Sint32			i;
-	Sint32			message;
+	Sint32			msg;
 	Sint32			frm;
 	Sint32			crcLength;
 	Sint32			entry;

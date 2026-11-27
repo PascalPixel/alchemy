@@ -5,13 +5,13 @@
 /* Like mnWindowSetTextTileBitRect, but ORs all of `palette` into the palette
    number of each entry after clearing only the bit in which WINDOW_PALETTE and
    HIGHLIGHT_PALETTE differ. */
-void mnWindowSetTextTileRect(const WINDOW *window, Sint32 x, Sint32 y,
+void mnWindowSetTextTileRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 palette)
 {
 	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
 
-	x += window->x + 1;
-	y += window->y + 1;
+	x += win->x + 1;
+	y += win->y + 1;
 	palette = BG_TILE_PALETTE(palette);
 	if(x < 0) {
 		width += x;

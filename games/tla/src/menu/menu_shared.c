@@ -1080,13 +1080,13 @@ void mnPagedListDrawPageNumbers(Sint32 win, Sint32 itemCnt, Sint32 pageSize,
 /* Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
    HIGHLIGHT_PALETTE (the highlight made by mnPaletteLightenHighlight): palette
    is the new palette number. */
-void mnWindowSetHighlightRect(const WINDOW *window, Sint32 x, Sint32 y,
+void mnWindowSetHighlightRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 palette)
 {
 	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
 
-	x += window->x + 1;
-	y += window->y + 1;
+	x += win->x + 1;
+	y += win->y + 1;
 	palette = BG_TILE_PALETTE(palette);
 	if(x < 0) {
 		width += x;

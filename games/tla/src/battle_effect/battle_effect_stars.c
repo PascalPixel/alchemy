@@ -47,7 +47,7 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 	Uint8		  *graphics;
 	BATTLE_CAMERA *camera;
 	ACTOR		  *caster;
-	ACTOR		  *source;
+	ACTOR		  *src;
 	ACTOR		  *tgt;
 	PARTICLE	  *point;
 	PARTICLE	  *star;
@@ -77,11 +77,11 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 
 	/* The stars leave from above the caster and reach the target in twelve
 	   ticks; the second and third aim past it. */
-	source = (ACTOR *)btObjectGetStub(args->user)->obj;
+	src = (ACTOR *)btObjectGetStub(args->user)->obj;
 	tgt = (ACTOR *)btObjectGetStub(args->tgts[0])->obj;
 	for(i = 0, point = state->particles; i != 3; i++) {
-		SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
-			source->z.fixed);
+		SET_POSITION(
+			point, src->x.fixed, src->y.fixed + toFIXED(40), src->z.fixed);
 		if(i == 0)
 			point->velX = (tgt->x.fixed - point->x) / 12;
 		else
@@ -218,7 +218,7 @@ void btEffectRunShiningStar(BATTLE_EFFECT_PARM *args)
 	Sint32		   i;
 	Uint8		  *graphics;
 	BATTLE_CAMERA *camera;
-	MOTION_OBJECT *source;
+	MOTION_OBJECT *src;
 	MOTION_OBJECT *tgt;
 	PARTICLE	  *point;
 	PARTICLE	  *star;
@@ -242,12 +242,12 @@ void btEffectRunShiningStar(BATTLE_EFFECT_PARM *args)
 
 	/* Each star leaves from above the caster on its own course to the target,
 	   the later ones after a longer delay (held in variant). */
-	source = btObjectGetStub(args->user)->obj;
+	src = btObjectGetStub(args->user)->obj;
 	tgt = btObjectGetStub(args->tgts[0])->obj;
 	for(i = 0, point = state->particles; i != 8; i++) {
 		Sint32 delay = i * 8;
 
-		SET_POSITION(point, source->x / 2, source->y + toFIXED(120), source->z);
+		SET_POSITION(point, src->x / 2, src->y + toFIXED(120), src->z);
 		point->velX =
 			(tgt->x + toFIXED((Sint32)((syRandom() & 0x7f) - 64)) - point->x) /
 			12;

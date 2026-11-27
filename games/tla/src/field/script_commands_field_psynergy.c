@@ -370,8 +370,7 @@ ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 
 /* Pauses or resumes every actor but the Halted one and excluded, and sets their
    animation speed, as Sand stills the field around the leader. */
-void fdActorSetOthersPaused(
-	ACTOR *excluded, Sint32 paused, Sint32 animationSpeed)
+void fdActorSetOthersPaused(ACTOR *excluded, Sint32 paused, Sint32 anmSpeed)
 {
 	Sint16 *haltedId;
 	ACTOR  *actor;
@@ -383,7 +382,7 @@ void fdActorSetOthersPaused(
 		actor = fdActorLookup(actorId);
 		if(actorId != *haltedId && actor != NULL && actor != excluded) {
 			actor->paused = paused;
-			fdActorSetAnimationSpeedStub(actor, animationSpeed);
+			fdActorSetAnimationSpeedStub(actor, anmSpeed);
 		}
 		actorId++;
 		/* BUG: one past the actor table: fdActorLookup(FIELD_ACTOR_COUNT) reads

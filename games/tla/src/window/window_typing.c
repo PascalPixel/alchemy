@@ -103,7 +103,7 @@ Bool mnTextCheckTextDismissed(MESSAGE *msg);
    glyphs a tick (MessageSpeedSteps) outside battle, where a space or a
    control code also ends it; in battle it is 8 glyphs, 13 after a tick that
    took two frames and 18 after one that took three or more. */
-Sint32 mnMessageType(MESSAGE *message)
+Sint32 mnMessageType(MESSAGE *msg)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	/* DEAD: the held keys are read here and never used; the ROM keeps the
@@ -113,15 +113,15 @@ Sint32 mnMessageType(MESSAGE *message)
 	Sint32	tickFrames;
 	Uint32	code;
 	Uint32	nextCode;
-	WINDOW *window;
+	WINDOW *win;
 	Sint32	x;
 	Sint32	y;
 	Uint32	newWidth;
 	Uint32	newHeight;
 	Sint32	oldWidth;
 	Sint32	oldHeight;
-	Sint32	entryIndex;
-	Sint32	nextEntryIndex;
+	Sint32	entryIdx;
+	Sint32	nextEntryIdx;
 	Sint32	pixelX;
 	Sint32	pixelY;
 	Sint32	voiceGap;
@@ -139,20 +139,20 @@ Sint32 mnMessageType(MESSAGE *message)
 		glyphsLeft = tickFrames * 5 + 3;
 	}
 
-	if(message->scrollFrm != 0) {
+	if(msg->scrollFrm != 0) {
 		mnTextScrollCanvasUp(1);
-		message->scrollFrm = (Sint16)message->scrollFrm - 1;
+		msg->scrollFrm = (Sint16)msg->scrollFrm - 1;
 		return MESSAGE_STEP_RUNNING;
 	}
-	if(PerWork.data == 0 && message->glyphDelay != 0) {
-		message->glyphDelay--;
+	if(PerWork.data == 0 && msg->glyphDelay != 0) {
+		msg->glyphDelay--;
 		return MESSAGE_STEP_RUNNING;
 	}
 
 	do {
 		code = TEXT_END;
-		if(message->ended == 0)
-			code = state->textBuf[message->textIdx];
+		if(msg->ended == 0)
+			code = state->textBuf[msg->textIdx];
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 		if(code < TEXT_COMMANDS || code == TEXT_EM_DASH) {
@@ -161,29 +161,29 @@ Sint32 mnMessageType(MESSAGE *message)
 #endif
 			switch(code) {
 			case TEXT_NEWLINE:
-				message->x = message->startX;
-				if(message->win->flg & WINDOW_FLAG_TEXT_CANVAS) {
-					if(message->y >= 13 << 8) {
-						mnTextStartCanvasScroll(message);
+				msg->x = msg->startX;
+				if(msg->win->flg & WINDOW_FLAG_TEXT_CANVAS) {
+					if(msg->y >= 13 << 8) {
+						mnTextStartCanvasScroll(msg);
 						glyphsLeft = 1;
 					} else {
-						message->y += 13 << 8;
+						msg->y += 13 << 8;
 					}
 				} else {
-					message->y += 15 << 8;
-					if(message->line <= 2)
-						message->line++;
+					msg->y += 15 << 8;
+					if(msg->line <= 2)
+						msg->line++;
 				}
 				break;
 
 			case TEXT_PAGE:
-				if(message->countdown == 0) {
-					message->countdown = MessageSpeedHeldPageDelays[TEXT_SPEED];
+				if(msg->countdown == 0) {
+					msg->countdown = MessageSpeedHeldPageDelays[TEXT_SPEED];
 					if(state->mindRead != 0)
 						PerWork.pendingPush = 0;
 				}
-				if(mnTextCheckTextDismissed(message) == 0) {
-					WINDOW *pane = message->win;
+				if(mnTextCheckTextDismissed(msg) == 0) {
+					WINDOW *pane = msg->win;
 
 					if(pane->width == 0 || pane->height == 0 ||
 						state->pageArrowShown != 0)
@@ -193,150 +193,149 @@ Sint32 mnMessageType(MESSAGE *message)
 					state->pageArrowShown = 1;
 					break;
 				}
-				window = message->win;
-				entryIndex = message->textIdx;
-				x = window->x;
-				y = window->y;
-				oldWidth = window->width;
-				oldHeight = window->height;
+				win = msg->win;
+				entryIdx = msg->textIdx;
+				x = win->x;
+				y = win->y;
+				oldWidth = win->width;
+				oldHeight = win->height;
 				state->pageArrowShown = 0;
-				mnWindowSprPrepareForRedraw(window);
-				if(message->flg == 0 && (window->width | window->height) != 0)
+				mnWindowSprPrepareForRedraw(win);
+				if(msg->flg == 0 && (win->width | win->height) != 0)
 					mnWindowEraseBorderRect(
-						window->x, window->y, window->width, window->height);
-				entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
-				if(state->textBuf[entryIndex] != 0 &&
-					(window->width | window->height) != 0) {
-					if(message->flg != 0) {
-						mnWindowEraseBorderRect(window->x, window->y,
-							window->width, window->height);
+						win->x, win->y, win->width, win->height);
+				entryIdx = (entryIdx + 1) & TEXT_BUFFER_MASK;
+				if(state->textBuf[entryIdx] != 0 &&
+					(win->width | win->height) != 0) {
+					if(msg->flg != 0) {
+						mnWindowEraseBorderRect(
+							win->x, win->y, win->width, win->height);
 					} else {
-						mnWindowFitOnScreen(entryIndex, &x, &y, &newWidth,
-							&newHeight, message->spacing, 0);
-						if(window->flg & WINDOW_FLAG_ANCHOR_BOTTOM) {
+						mnWindowFitOnScreen(entryIdx, &x, &y, &newWidth,
+							&newHeight, msg->spacing, 0);
+						if(win->flg & WINDOW_FLAG_ANCHOR_BOTTOM) {
 							if(oldHeight != newHeight)
 								y -= newHeight - oldHeight;
 							if(y < 0)
 								y = 0;
 						}
-						if(!(window->flg & WINDOW_FLAG_FIXED_X)) {
+						if(!(win->flg & WINDOW_FLAG_FIXED_X)) {
 							x += (Sint32)(oldWidth - newWidth) / 4;
-							mnWindowFitOnScreen(entryIndex, &x, &y, &newWidth,
-								&newHeight, message->spacing,
+							mnWindowFitOnScreen(entryIdx, &x, &y, &newWidth,
+								&newHeight, msg->spacing,
 								WINDOW_FIT_SIZE_GIVEN);
 						}
-						window->x = x;
-						window->y = y;
-						window->width = newWidth;
-						window->height = newHeight;
+						win->x = x;
+						win->y = y;
+						win->width = newWidth;
+						win->height = newHeight;
 					}
-					mnWindowDrawBorder(
-						window->x, window->y, window->width, window->height);
+					mnWindowDrawBorder(win->x, win->y, win->width, win->height);
 				}
-				message->x = message->startX;
-				message->y = 0;
-				message->line = 0;
-				message->colour = TEXT_COLOR_WHITE;
-				message->outline = TEXT_STYLE_PLAIN;
-				message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-				mnMessageApplyStyle(message);
+				msg->x = msg->startX;
+				msg->y = 0;
+				msg->line = 0;
+				msg->colour = TEXT_COLOR_WHITE;
+				msg->outline = TEXT_STYLE_PLAIN;
+				msg->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+				mnMessageApplyStyle(msg);
 				syVRAMCacheFreeEntry(state->glyphResource);
 				state->glyphResource = NO_GLYPH_RESOURCE;
 				break;
 
 			case TEXT_WAIT_KEY:
-				if(message->countdown == 0) {
-					message->countdown = MessageSpeedHeldPageDelays[TEXT_SPEED];
+				if(msg->countdown == 0) {
+					msg->countdown = MessageSpeedHeldPageDelays[TEXT_SPEED];
 					if(state->mindRead != 0)
 						PerWork.pendingPush = 0;
 				}
-				if(mnTextCheckTextDismissed(message) != 0)
+				if(mnTextCheckTextDismissed(msg) != 0)
 					return MESSAGE_STEP_CLOSE;
 				break;
 
 			case TEXT_PAUSE_SHORT:
-				if(message->countdown == 0)
-					message->countdown = 20;
+				if(msg->countdown == 0)
+					msg->countdown = 20;
 				state->speakerVoiceCountdown = 0;
-				mnTextCheckPauseSkipped(message);
+				mnTextCheckPauseSkipped(msg);
 				break;
 
 			case TEXT_PAUSE_LONGEST:
-				if(message->countdown == 0)
-					message->countdown = 120;
+				if(msg->countdown == 0)
+					msg->countdown = 120;
 				state->speakerVoiceCountdown = 0;
-				mnTextCheckPauseSkipped(message);
+				mnTextCheckPauseSkipped(msg);
 				break;
 
 			case TEXT_PAUSE_LONG:
-				if(message->countdown == 0)
-					message->countdown = 60;
+				if(msg->countdown == 0)
+					msg->countdown = 60;
 				state->speakerVoiceCountdown = 0;
 				break;
 
 			case TEXT_COLOR:
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
-				message->colour = state->textBuf[message->textIdx];
-				mnMessageApplyStyle(message);
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->colour = state->textBuf[msg->textIdx];
+				mnMessageApplyStyle(msg);
 				break;
 
 			case TEXT_OUTLINE:
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
-				message->outline = state->textBuf[message->textIdx];
-				mnMessageApplyStyle(message);
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->outline = state->textBuf[msg->textIdx];
+				mnMessageApplyStyle(msg);
 				break;
 
 			case TEXT_LINE_SPACING:
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
-				message->lineSpacing = state->textBuf[message->textIdx];
-				mnMessageApplyStyle(message);
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->lineSpacing = state->textBuf[msg->textIdx];
+				mnMessageApplyStyle(msg);
 				break;
 
 			case TEXT_COLORS_RESET:
-				message->colour = TEXT_COLOR_WHITE;
-				message->outline = TEXT_STYLE_PLAIN;
-				message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-				mnMessageApplyStyle(message);
+				msg->colour = TEXT_COLOR_WHITE;
+				msg->outline = TEXT_STYLE_PLAIN;
+				msg->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+				mnMessageApplyStyle(msg);
 				break;
 
 			case TEXT_WINDOW_ANIMATION:
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
-				message->win->anm = state->textBuf[message->textIdx];
-				message->countdown = 11;
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->win->anm = state->textBuf[msg->textIdx];
+				msg->countdown = 11;
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 				break;
 
 			case TEXT_END:
 			case TEXT_END_ALT:
-				message->ended = 1;
+				msg->ended = 1;
 				return MESSAGE_STEP_ENDED;
 			}
 
 			if(state->battleMode == WINDOW_FIELD)
 				glyphsLeft = 1;
 		} else {
-			pixelX = (message->x + 128) / 256;
-			pixelY = (message->y + 128) / 256;
+			pixelX = (msg->x + 128) / 256;
+			pixelY = (msg->y + 128) / 256;
 			voiceGap = MessageSpeedVoiceGaps[TEXT_SPEED];
-			nextEntryIndex = message->textIdx;
+			nextEntryIdx = msg->textIdx;
 #if !MIND_READ_TEXT_NOT_INDENTED
 			if(state->mindRead != 0)
 				pixelX += 8;
 #endif
-			nextEntryIndex = (nextEntryIndex + 1) & TEXT_BUFFER_MASK;
-			nextCode = state->textBuf[nextEntryIndex];
+			nextEntryIdx = (nextEntryIdx + 1) & TEXT_BUFFER_MASK;
+			nextCode = state->textBuf[nextEntryIdx];
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
 			if(nextCode == TEXT_MARK_VOICED) {
 				code |= TEXT_CODE_VOICED;
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 			} else if(nextCode == TEXT_MARK_SEMIVOICED) {
 				code |= TEXT_CODE_SEMIVOICED;
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 			}
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
 #if OUTLINED_GLYPH_PAIRS_FIT_CELL
-			if(!(message->win->flg & WINDOW_FLAG_TEXT_CANVAS) &&
+			if(!(msg->win->flg & WINDOW_FLAG_TEXT_CANVAS) &&
 				code > TEXT_SPACE && nextCode > TEXT_SPACE) {
 				Sint16 pairWidth = Font_Glyphs[code - TEXT_SPACE].width +
 					Font_Glyphs[nextCode - TEXT_SPACE].width;
@@ -344,30 +343,28 @@ Sint32 mnMessageType(MESSAGE *message)
 				if(state->outline == TEXT_STYLE_OUTLINED) {
 					if((Uint16)pairWidth <= 14) {
 						code |= nextCode << 8;
-						message->textIdx =
-							(message->textIdx + 1) & TEXT_BUFFER_MASK;
+						msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 					}
 				} else if((Uint16)pairWidth <= 15) {
 					code |= nextCode << 8;
-					message->textIdx =
-						(message->textIdx + 1) & TEXT_BUFFER_MASK;
+					msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 				}
 			}
 #else
-			if(!(message->win->flg & WINDOW_FLAG_TEXT_CANVAS) &&
+			if(!(msg->win->flg & WINDOW_FLAG_TEXT_CANVAS) &&
 				code > TEXT_SPACE && nextCode > TEXT_SPACE &&
 				(Uint16)(Font_Glyphs[code - TEXT_SPACE].width +
 					Font_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
 				code |= nextCode << 8;
-				message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
+				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 			}
 #endif
 #endif
-			if(state->textMode != 0 && message->compressLines != 0)
-				pixelY = (message->y + 128) / 320 - 3;
+			if(state->textMode != 0 && msg->compressLines != 0)
+				pixelY = (msg->y + 128) / 320 - 3;
 			glyphWidth = mnGlyphDraw(
-				message->win, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
-			message->glyphDelay = MessageSpeedDelays[TEXT_SPEED];
+				msg->win, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
+			msg->glyphDelay = MessageSpeedDelays[TEXT_SPEED];
 			if(glyphWidth == 0)
 				return MESSAGE_STEP_CLOSE;
 			if(state->speakerVoiceSnd != 0) {
@@ -382,22 +379,22 @@ Sint32 mnMessageType(MESSAGE *message)
 			}
 			glyphAdvance = glyphWidth << 8;
 #if LANGUAGE == LANGUAGE_JAPANESE
-			glyphAdvance += message->spacing[message->line];
+			glyphAdvance += msg->spacing[msg->line];
 #elif !RAGGED_LINES
 			if(code == TEXT_SPACE)
-				glyphAdvance += message->spacing[message->line];
+				glyphAdvance += msg->spacing[msg->line];
 #endif
-			message->x += glyphAdvance;
+			msg->x += glyphAdvance;
 			if(code == TEXT_SPACE && state->battleMode == WINDOW_FIELD)
 				glyphsLeft = 1;
 		}
 
-		if(message->countdown != 0) {
-			message->countdown--;
-			if(message->countdown != 0)
+		if(msg->countdown != 0) {
+			msg->countdown--;
+			if(msg->countdown != 0)
 				continue;
 		}
-		message->textIdx = (message->textIdx + 1) & TEXT_BUFFER_MASK;
+		msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 	} while(--glyphsLeft != 0);
 
 	return MESSAGE_STEP_RUNNING;

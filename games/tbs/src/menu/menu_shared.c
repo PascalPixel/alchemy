@@ -410,7 +410,7 @@ UNUSED Sint32 mnIconCreateHandCursorUnusedArgument(
 
 /* Creates the menu's hand cursor sprite in window at (x, y), loading the hand's
    tiles into a free VRAM block. */
-Sint32 mnIconCreateHandCursor(WINDOW *window, Sint32 x, Sint32 y)
+Sint32 mnIconCreateHandCursor(WINDOW *win, Sint32 x, Sint32 y)
 {
 	Sint32 block;
 	Sint32 icon;
@@ -428,7 +428,7 @@ Sint32 mnIconCreateHandCursor(WINDOW *window, Sint32 x, Sint32 y)
 #endif
 		syVRAMCacheLoad(block, ICON_TILE_BYTES, Icon_ResourceTiles);
 		icon = (Sint32)mnWindowSprCreateStub(
-			block, WINDOW_SPRITE_SIZE_16X16, window, x, y);
+			block, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 	}
 	return icon;
 }
@@ -1058,14 +1058,14 @@ void mnPagedListDrawPageNumbers(WINDOW *win, Sint32 itemCnt, Sint32 pageSize,
 /* Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
    HIGHLIGHT_PALETTE (the highlight made by mnPaletteLightenHighlight): palette
    is the new palette number. */
-void mnWindowSetHighlightRect(const WINDOW *window, Sint32 x, Sint32 y,
+void mnWindowSetHighlightRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 palette)
 {
 	WIN_STATE *state = WINDOW_STATE;
 	Uint8	  *tilemap = (Uint8 *)state->tilemap;
 
-	x += window->x + 1;
-	y += window->y + 1;
+	x += win->x + 1;
+	y += win->y + 1;
 	palette = BG_TILE_PALETTE(palette);
 	if(x < 0) {
 		width += x;

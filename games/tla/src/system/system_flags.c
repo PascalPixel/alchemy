@@ -37,36 +37,36 @@ Sint32 syGameFlagGet(Sint32 flg)
 	return (GameFlagBytes[flg] >> bit) & 1;
 }
 
-/* Sets `flag` and returns its byte number. */
-Sint32 syGameFlagSet(Sint32 flag)
+/* Sets `flg` and returns its byte number. */
+Sint32 syGameFlagSet(Sint32 flg)
 {
-	Sint32 bit = GAME_FLAG_BIT(flag);
-	Uint8 *flags = GameFlagBytes;
-	flag = GAME_FLAG_BYTE(flag);
+	Sint32 bit = GAME_FLAG_BIT(flg);
+	Uint8 *flgBytes = GameFlagBytes;
+	flg = GAME_FLAG_BYTE(flg);
 
-	flags[flag] |= bit;
-	return flag;
+	flgBytes[flg] |= bit;
+	return flg;
 }
 
-/* Clears `flag`. */
-void syGameFlagClear(Sint32 flag)
+/* Clears `flg`. */
+void syGameFlagClear(Sint32 flg)
 {
-	Sint32 bit = GAME_FLAG_BIT(flag);
-	Uint8 *flags = GameFlagBytes;
-	flag = GAME_FLAG_BYTE(flag);
+	Sint32 bit = GAME_FLAG_BIT(flg);
+	Uint8 *flgBytes = GameFlagBytes;
+	flg = GAME_FLAG_BYTE(flg);
 
-	flags[flag] &= ~bit;
+	flgBytes[flg] &= ~bit;
 }
 
-/* Unused: flips `flag` and returns its new value. */
-Uint32 syGameFlagToggle(Sint32 flag)
+/* Unused: flips `flg` and returns its new value. */
+Uint32 syGameFlagToggle(Sint32 flg)
 {
-	Sint32 bit = GAME_FLAG_BIT(flag);
-	Uint8 *flags = GameFlagBytes;
-	flag = GAME_FLAG_BYTE(flag);
+	Sint32 bit = GAME_FLAG_BIT(flg);
+	Uint8 *flgBytes = GameFlagBytes;
+	flg = GAME_FLAG_BYTE(flg);
 
-	flags[flag] ^= bit;
-	if(flags[flag] & bit)
+	flgBytes[flg] ^= bit;
+	if(flgBytes[flg] & bit)
 		return 1;
 	return 0;
 }
@@ -89,27 +89,27 @@ Uint32 syGameFlagSetByte(Uint32 flg, Uint8 value)
 /* The most a counter byte among the flags holds. */
 #define GAME_FLAG_BYTE_MAX 255
 
-/* Unused: adds 1 to the byte `flag` is in, stopping at GAME_FLAG_BYTE_MAX, and
+/* Unused: adds 1 to the byte `flg` is in, stopping at GAME_FLAG_BYTE_MAX, and
    returns it. */
-Uint8 syGameFlagIncrementByte(Sint32 flag)
+Uint8 syGameFlagIncrementByte(Sint32 flg)
 {
-	Uint8 *flags = GameFlagBytes;
-	flag = GAME_FLAG_BYTE(flag);
+	Uint8 *flgBytes = GameFlagBytes;
+	flg = GAME_FLAG_BYTE(flg);
 
-	if(flags[flag] < GAME_FLAG_BYTE_MAX)
-		flags[flag]++;
-	return flags[flag];
+	if(flgBytes[flg] < GAME_FLAG_BYTE_MAX)
+		flgBytes[flg]++;
+	return flgBytes[flg];
 }
 
-/* Unused: takes 1 from the byte `flag` is in, stopping at 0, and returns it. */
-Uint8 syGameFlagDecrementByte(Sint32 flag)
+/* Unused: takes 1 from the byte `flg` is in, stopping at 0, and returns it. */
+Uint8 syGameFlagDecrementByte(Sint32 flg)
 {
-	Uint8 *flags = GameFlagBytes;
-	flag = GAME_FLAG_BYTE(flag);
+	Uint8 *flgBytes = GameFlagBytes;
+	flg = GAME_FLAG_BYTE(flg);
 
-	if(flags[flag] != 0)
-		flags[flag]--;
-	return flags[flag];
+	if(flgBytes[flg] != 0)
+		flgBytes[flg]--;
+	return flgBytes[flg];
 }
 
 /* The bits of a nibble flag, low or high in its byte by its number's bit 2. */
@@ -125,14 +125,14 @@ Sint32 syGameFlagGetNibble(Uint32 flg)
 	return (GameFlagBytes[flg] & mask) >> shift;
 }
 
-/* Unused: sets the four bits `flag` is in. */
-void syGameFlagSetNibble(Sint32 flag, Sint32 value)
+/* Unused: sets the four bits `flg` is in. */
+void syGameFlagSetNibble(Sint32 flg, Sint32 value)
 {
 	Sint32 nibble = GAME_FLAG_NIBBLE_MASK;
-	Sint32 shift = flag & 4;
+	Sint32 shift = flg & 4;
 	Sint32 mask = nibble << shift;
-	Uint8 *flags = GameFlagBytes;
-	flag = GAME_FLAG_BYTE(flag);
+	Uint8 *flgBytes = GameFlagBytes;
+	flg = GAME_FLAG_BYTE(flg);
 
-	flags[flag] = (flags[flag] & ~mask) | ((value & nibble) << shift);
+	flgBytes[flg] = (flgBytes[flg] & ~mask) | ((value & nibble) << shift);
 }

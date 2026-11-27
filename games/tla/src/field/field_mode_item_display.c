@@ -50,18 +50,18 @@ static inline void fdActorInitSparkle(ACTOR *actor)
    sparkling a found item's picture and a Reveal marker share. */
 #define SPAWN_SPARKLE_NEAR(source) \
 	{ \
-		POLAR_OFFSET_POS position; \
+		POLAR_OFFSET_POS pos; \
 		ACTOR			*sparkle; \
 		Uint32			 randomRadius; \
 \
-		position.vector.x = (source)->x.fixed; \
-		position.vector.y = (source)->y.fixed; \
-		position.vector.z = (source)->z.fixed; \
+		pos.vector.x = (source)->x.fixed; \
+		pos.vector.y = (source)->y.fixed; \
+		pos.vector.z = (source)->z.fixed; \
 		randomRadius = syRandom(); \
 		syVectorAddPolarOffset( \
-			randomRadius << 4, syRandom(), position.coordinates); \
-		sparkle = fdActorSpawn(SPRITE_SPARKLE, position.vector.x, \
-			position.vector.y, position.vector.z); \
+			randomRadius << 4, syRandom(), pos.coordinates); \
+		sparkle = fdActorSpawn( \
+			SPRITE_SPARKLE, pos.vector.x, pos.vector.y, pos.vector.z); \
 		fdActorInitSparkle(sparkle); \
 	}
 

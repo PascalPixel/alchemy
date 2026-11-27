@@ -761,9 +761,9 @@ UNIT_DEFINE_SET(gmUnitSetPp, pp, ppMax)
 	type name(Sint32 unitId, Sint32 delta) \
 	{ \
 		UNIT  *unit = gmUnitGet(unitId); \
-		Sint32 current = unit->field; \
+		Sint32 cur = unit->field; \
 		Sint32 limit = unit->maximum; \
-		Sint32 value = current + delta; \
+		Sint32 value = cur + delta; \
 		Sint32 result; \
 \
 		result = gmUnitClampGaugeValue(value, limit); \

@@ -88,10 +88,10 @@ void scCrumblingPillarStep(Uint16 *list)
 			continue;
 		}
 		{
-			Sint32 flag = list[1];
+			Sint32 flg = list[1];
 
 			fdScriptStart();
-			if(!syGameFlagGet(flag)) {
+			if(!syGameFlagGet(flg)) {
 				sySndPlay(SE_CHEST_CLOSE);
 				fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_WHITE);
 				sySynch(2);
@@ -102,11 +102,11 @@ void scCrumblingPillarStep(Uint16 *list)
 				sySynch(4);
 				fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_NORMAL);
 				scDustScatter(0);
-				syGameFlagSet(flag);
-			} else if(!syGameFlagGet(flag + 1)) {
-				Uint8 *flags = &leader->motionFlg;
+				syGameFlagSet(flg);
+			} else if(!syGameFlagGet(flg + 1)) {
+				Uint8 *motionFlg = &leader->motionFlg;
 
-				*flags = 0;
+				*motionFlg = 0;
 				sySndPlay(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
@@ -119,14 +119,14 @@ void scCrumblingPillarStep(Uint16 *list)
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				*motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
 				fdActorSetPosAndResetMotion(pillar, 0, 0, 0);
 				sySynch(2);
 				sySndPlay(SE_THUMP);
 				scDustBurst();
 				sySynch(20);
-				syGameFlagSet(flag + 1);
+				syGameFlagSet(flg + 1);
 			}
 			fdScriptEnd();
 			return;
@@ -276,10 +276,10 @@ void scCrumblingPillarStepWithStandIn(Uint16 *list)
 			continue;
 		}
 		{
-			Sint32 flag = list[1];
+			Sint32 flg = list[1];
 
 			fdScriptStart();
-			if(!syGameFlagGet(flag)) {
+			if(!syGameFlagGet(flg)) {
 				fdActorSelectAnimation(standIn, 1);
 				scActorTakePlaceOf(standIn, pillar);
 				sySynch(1);
@@ -300,15 +300,15 @@ void scCrumblingPillarStepWithStandIn(Uint16 *list)
 				scDustScatter(0);
 				scActorTakePlaceOf(pillar, standIn);
 				sySynch(1);
-				syGameFlagSet(flag);
-			} else if(!syGameFlagGet(flag + 1)) {
-				Uint8 *flags;
+				syGameFlagSet(flg);
+			} else if(!syGameFlagGet(flg + 1)) {
+				Uint8 *motionFlg;
 
 				fdActorSelectAnimation(standIn, 0);
 				scActorTakePlaceOf(standIn, pillar);
 				sySynch(1);
-				flags = &leader->motionFlg;
-				*flags = 0;
+				motionFlg = &leader->motionFlg;
+				*motionFlg = 0;
 				sySndPlay(SE_PUSH);
 				fdMapGridSetShake(1, 4, 1);
 				scDustScatter(0);
@@ -321,14 +321,14 @@ void scCrumblingPillarStepWithStandIn(Uint16 *list)
 				sySynch(4);
 				fdMapGridSetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 				sySynch(8);
-				*flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+				*motionFlg = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 				sySynch(5);
 				fdActorSetPosAndResetMotion(standIn, 0, 0, 0);
 				sySynch(2);
 				sySndPlay(SE_THUMP);
 				scDustBurst();
 				sySynch(20);
-				syGameFlagSet(flag + 1);
+				syGameFlagSet(flg + 1);
 			}
 			fdScriptEnd();
 			return;

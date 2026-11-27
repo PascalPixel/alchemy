@@ -1,6 +1,6 @@
 /* The grounds of McCoy's Palace, at the top of Bilibin.
 
-   The grounds are their own scene, SceneId_McCoyPalaceGrounds, sharing the area
+   The grounds are their own scene, SceneIdMcCoyPalaceGrounds, sharing the area
    name McCoy's Palace with the palace itself (mccoy_palace.c). Steps lead up
    from Bilibin to a sandy yard before the palace door, where two soldiers in
    spiked helmets stand guard. West of the yard, workers with pickaxes have been
@@ -521,7 +521,7 @@ Uint32 McCoyPalaceGroundsExits[] = {
 };
 
 /* Unused: the getters return it for any scene but */
-/* SceneId_McCoyPalaceGrounds, and the overlay serves no other. */
+/* SceneIdMcCoyPalaceGrounds, and the overlay serves no other. */
 ACTOR_PLACE McCoyPalaceGroundsNoActorPlacements[] = {
 	{ SCENE_TABLE_END },
 };

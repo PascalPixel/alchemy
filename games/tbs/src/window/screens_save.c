@@ -781,7 +781,7 @@ void mnFileListDrawSummary(WINDOW *win, BUP_FILE_SUMMARY *summary)
 		mnTextDrawStringAtOffset(summary->name, win, 0, 0);
 		y = 0;
 		SUMMARY_DRAW_LEVEL(
-			StatusScreen_LevelLetterString, win, SUMMARY_LEVEL_X, 0);
+			StatusScreenLevelLetterString, win, SUMMARY_LEVEL_X, 0);
 		mnTextDrawNumAtOffset(summary->level, 2, win, 80, y);
 		mnTextDrawMessageAsTiles(summary->classId + MsgClassName, win, 0, 16);
 #if LANGUAGE == LANGUAGE_JAPANESE

@@ -1,4 +1,4 @@
-/* Kolima Forest (SceneId_KolimaForestEntrance and SceneId_KolimaForestCliff):
+/* Kolima Forest (SceneIdKolimaForestEntrance and SceneIdKolimaForestCliff):
    the hop east from the bank onto the log floating in the river
    (ACTOR_RIVER_LOG, which each scene names). */
 

@@ -35,7 +35,7 @@ Sint32 mnDjinnMenuPlacePartyFigures(Sint32 yOfs)
 	DJINN_MENU_STATE *menu;
 	Sint32			  memberX;
 	Sint32			  memberIdx;
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	yOfs += 61;
 	memberX = 32;
 	for(memberIdx = 0; memberIdx < 4; memberIdx++) {
@@ -77,7 +77,7 @@ Sint32 mnDjinnMenuRun(void)
 	menu = syHeapSlotAlloc(HEAP_SLOT_MENU, MENU_STATE_SIZE);
 	savedMsgSpeed = MainRoutineStateWork.msgSpeed;
 	MainRoutineStateWork.msgSpeed = MESSAGE_SPEED_FAST;
-	enabled = Ram_HeapSlots->actorSystem->suspended = 1;
+	enabled = RamHeapSlots->actorSystem->suspended = 1;
 	mnWindowDrawBorderStub(0, 0, 30, 20);
 	sySynch(1);
 	mnInitState(0);
@@ -121,7 +121,7 @@ Sint32 mnDjinnMenuRun(void)
 	sySynch(1);
 	mnItemMenuClose();
 	mnWindowDrawBorderStub(0, 0, 30, 20);
-	Ram_HeapSlots->actorSystem->suspended = 0;
+	RamHeapSlots->actorSystem->suspended = 0;
 	mnWindowMarkVisibleTextTilesStub();
 	mnTextUseExtraTilesStub(0);
 	syWordsCopy(
@@ -213,7 +213,7 @@ Sint32 mnDjinnMenuRunScreen(void)
 	done = FALSE;
 	result = 0;
 	menuResult = 0;
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	icon = menu->cursor;
 	icon->motion = ICON_HIDDEN;
 	icon->anmStep = 0;
@@ -486,7 +486,7 @@ void mnGraphicsExpandVRAMTilesByColTableStub(void *tiles);
    the list window's corners. */
 void mnOpenBackdropScreen(void)
 {
-	DJINN_MENU_STATE	*menu = Ram_HeapSlots->menuState;
+	DJINN_MENU_STATE	*menu = RamHeapSlots->menuState;
 	DJINN_MENU_BACKDROP *backdrop = menu->backdrop;
 	WINDOW				*win;
 	WINDOW_SPR			*icon;
@@ -505,7 +505,7 @@ void mnOpenBackdropScreen(void)
 	mnGraphicsExpandVRAMTilesByColTableStub(
 		BG_CHAR_BLOCK(1) + DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP);
 	syWordsCopy(
-		DJINN_BACKDROP_BORDER_VRAM, Menu_BackdropBorderTile, TILE_SIZE_4BPP);
+		DJINN_BACKDROP_BORDER_VRAM, MenuBackdropBorderTile, TILE_SIZE_4BPP);
 	syDMAXCopy(syPaletteGetBasicSprCols(),
 		(void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0), DMA_COPY_HALFWORDS(16),
 		REG_DMA3);
@@ -619,7 +619,7 @@ Sint32 mnDjinnListUnitEntries(
    into the backdrop's lists, with their counts. */
 void mnDjinnMenuBuildLists(DJINN_MENU_BACKDROP *backdrop)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	Sint32			 i;
 
 	for(i = 0; i < menu->partyCnt; i++) {
@@ -675,8 +675,8 @@ void mnDjinnMenuDrawEntry(Sint32 win, Sint32 x, Sint32 y, Sint32 entry)
    unleash effects when the party has few enough Djinn to show them. */
 void mnDjinnMenuDrawPage(DJINN_MENU_BACKDROP *backdrop, Sint32 page)
 {
-	DJINN_MENU_STATE *menu = Ram_HeapSlots->menuState;
-	WIN_STATE		 *state = Ram_HeapSlots->winState;
+	DJINN_MENU_STATE *menu = RamHeapSlots->menuState;
+	WIN_STATE		 *state = RamHeapSlots->winState;
 	Sint32			  win = menu->listWin;
 	Sint32			  owners;
 	Sint32			  column;
@@ -735,7 +735,7 @@ void mnDjinnMenuDrawPage(DJINN_MENU_BACKDROP *backdrop, Sint32 page)
 	state->holdTilemapUpload = 0;
 	sySynch(3);
 #else
-	((WIN_STATE *)Ram_HeapSlots->winState)->dirty = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->dirty = 1;
 	state->holdTilemapUpload = 0;
 #endif
 }
@@ -780,7 +780,7 @@ void mnUiPanelHighlightGridCell(
 void mnWindowSetRectPalette(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 palette)
 {
-	WIN_STATE *tiles = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *tiles = (WIN_STATE *)RamHeapSlots->winState;
 
 	palette = BG_TILE_PALETTE(palette);
 
@@ -866,9 +866,9 @@ Sint32 mnDjinnMenuShowHelp(void)
 	Sint32			  helpIdx;
 	Sint32			  listMsg;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	selection = 0;
-	render = (WIN_STATE *)Ram_HeapSlots->winState;
+	render = (WIN_STATE *)RamHeapSlots->winState;
 	result = 0;
 	prev = 0;
 	mnWindowSprClearListStub(menu->listWin);
@@ -938,7 +938,7 @@ Sint32 mnDjinnMenuShowHelp(void)
 			syVRAMCacheFreeEntry(render->glyphResource);
 			render->glyphResource = NO_GLYPH_RESOURCE;
 		}
-		((WIN_STATE *)Ram_HeapSlots->winState)->pageArrowShown = 0;
+		((WIN_STATE *)RamHeapSlots->winState)->pageArrowShown = 0;
 		mnWindowSprPrepareForRedrawStub(helpWin);
 		{
 			WINDOW *win = channel->win;
@@ -949,7 +949,7 @@ Sint32 mnDjinnMenuShowHelp(void)
 		}
 		channel->win = 0;
 	} while(result == 0);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 1;
 	mnWindowSprClearListStub(statWin);
 	mnWindowSprClearListStub(helpWin);
 	sySynch(1);
@@ -961,7 +961,7 @@ Sint32 mnDjinnMenuShowHelp(void)
 		mnWindowSprPrepareForRedrawStub(menu->helpWin);
 		mnWindowSprPrepareForRedrawStub(menu->listWin);
 		mnWindowSprPrepareForRedrawStub(menu->statWin);
-		((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+		((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	}
 	sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
 	return result;
@@ -1024,7 +1024,7 @@ Sint32 mnDjinnMenuSelectDjinn(Sint32 mode)
 {
 	Sint8				 columnFlg[8];
 	Uint8				 requiresTrade[16];
-	DJINN_MENU_STATE	*menu = Ram_HeapSlots->menuState;
+	DJINN_MENU_STATE	*menu = RamHeapSlots->menuState;
 	DJINN_MENU_BACKDROP *backdrop = menu->backdrop;
 	Sint32				 helpWin = menu->helpWin;
 	Sint32				 listWin = menu->listWin;
@@ -1287,7 +1287,7 @@ Sint32 mnDjinnMenuSelectDjinn(Sint32 mode)
 				mnWindowClearInteriorTilesStub(listWin, 0, 96, 224, 104);
 #endif
 			}
-			((WIN_STATE *)Ram_HeapSlots->winState)->dirty = 1;
+			((WIN_STATE *)RamHeapSlots->winState)->dirty = 1;
 			redraw = 0;
 		}
 		sySynch(1);
@@ -1744,7 +1744,7 @@ Sint32 mnDjinnMenuDrawPairPreview(Sint32 mode, Sint32 pageIdx)
 	Uint8			  owner;
 	DJINN_MENU_STATE *menu;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	if(mode == DJINN_COMPARE_TRADE) {
 		savedMode = mode;
 		first = menu->pairMember[1];
@@ -1840,7 +1840,7 @@ Sint32 mnDjinnMenuDrawStatPreview(Sint32 win, Sint32 x, Sint32 y,
 	DJINN_MENU_STATE *menu;
 
 	unit = syUnitGet(ownerId);
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	giveElement = menu->pairElement[removePairSlot];
 	giveIdx = menu->pairIdx[removePairSlot];
 	giveSet = menu->pairEntries[removePairSlot] & DJINN_ENTRY_IS_SET;
@@ -2098,7 +2098,7 @@ Sint32 mnDjinnMenuDrawStatPreview(Sint32 win, Sint32 x, Sint32 y,
 			mnTextSetColStub(TEXT_COLOR_NORMAL);
 			mnWindowDrawDividerLineStub(win, 0, 11, 13, 11);
 		}
-		((WIN_STATE *)Ram_HeapSlots->winState)->dirty = 1;
+		((WIN_STATE *)RamHeapSlots->winState)->dirty = 1;
 	}
 
 	size = sizeof(UNIT);

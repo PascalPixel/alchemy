@@ -8,7 +8,7 @@
 /* Draws a glow sprite over each listed actor. */
 void scLightSprsDraw(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX, viewZ, tile, viewY;
 	LIGHT_OAM *oam;
 	Sint32	   i;

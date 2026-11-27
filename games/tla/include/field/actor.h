@@ -40,7 +40,7 @@ typedef enum CENTRE_LINE_VARIANT {
 /* The actor id that ends a list of actors, or of rows that start with one. */
 #define ACTOR_LIST_END 65535
 
-/* The actors of Ram_HeapSlots->actors. */
+/* The actors of RamHeapSlots->actors. */
 #define ACTOR_COUNT 64
 
 /* Sets an actor's position in one statement, as SET_POSITION does for a

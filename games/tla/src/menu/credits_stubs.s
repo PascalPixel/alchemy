@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Credits
-Stubs_Credits:
+	.global StubsCredits
+StubsCredits:
 	stub mnCreditsRunStub, mnCreditsRun
 	stub mnEndingImageStartStub, mnEndingImageStart
 	stub mnEndingImageShowStub, mnEndingImageShow

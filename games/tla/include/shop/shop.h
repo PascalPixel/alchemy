@@ -101,7 +101,7 @@ void   mnItemIconGridShowInventory(
 
 /* The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
    sprite's tiles (mnShopDrawPriceDigit). */
-extern Uint8 Shop_GlyphBytes[];
+extern Uint8 ShopGlyphBytes[];
 Sint32		 mnSanctumNeedsService(Sint32 unitId, Sint32 serviceKind);
 
 struct MENU_CURSOR;

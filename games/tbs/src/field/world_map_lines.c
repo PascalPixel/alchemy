@@ -43,7 +43,7 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 
 		depth = tgtZ - eyeZ;
 		tgtDeltaX -= eyeX;
-		ang = (Uint16)Stubs_System.arcTan2.tgt(tgtDeltaX >> 4, depth >> 4);
+		ang = (Uint16)StubsSystem.arcTan2.tgt(tgtDeltaX >> 4, depth >> 4);
 	}
 	/* The texture origin: the target at half scale. */
 	originX = syMulFXArm(tgt->x, toFIXED(1) / 2);
@@ -51,8 +51,8 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 	if(ang != ScanlineAngle) {
 		/* The camera turned: recompute every scanline's rotation terms. */
 		ScanlineAngle = ang;
-		sinYaw = Stubs_System.sin.tgt(ang);
-		cosYaw = Stubs_System.cos.tgt(ang);
+		sinYaw = StubsSystem.sin.tgt(ang);
+		cosYaw = StubsSystem.cos.tgt(ang);
 		negativeSinYaw = -sinYaw;
 		for(scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
 			FIXED  widthScale = line->scale;

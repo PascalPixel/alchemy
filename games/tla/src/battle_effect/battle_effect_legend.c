@@ -60,11 +60,11 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*step;
 	Sint32				 i;
 	Sint32				 j;
-	Uint8				*cells = Ram_MapMetatileBuffer;
+	Uint8				*cells = RamMapMetatileBuffer;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 
 	/* Set up the canvas and a clipped additive blitter, mirrored to face the
 	   target; mirror the rune's corner into the sheet; load the sparks, the
@@ -77,7 +77,7 @@ void btEffectRunLegend(BATTLE_EFFECT_PARM *args)
 	else
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET, cells, 1, 1);
 	btPictureMirrorIntoQuadrants(cells, state->sheet, 64, 64);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
@@ -389,9 +389,9 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 firstHit;
 	Sint32				 lastHit;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 
 	/* Set up the canvas, a clipped additive blitter, the sparks, and the card's
 	   picture and its extras. */
@@ -399,7 +399,7 @@ void btEffectRunElementCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	scale = 0;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
 	if(mode == CARD_BRAMBLE) {

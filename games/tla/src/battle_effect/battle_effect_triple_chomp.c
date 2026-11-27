@@ -46,11 +46,11 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 	PARTICLE	 *spark;
 	Sint32		  i;
 	Sint32		  j;
-	Uint8		 *pixels = Ram_MapMetatileBuffer;
+	Uint8		 *pixels = RamMapMetatileBuffer;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 
 	/* Set up the canvas, then let the user lunge. */
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
@@ -63,7 +63,7 @@ void btEffectRunTripleChomp(BATTLE_EFFECT_PARM *args)
 	   ring's texture, the spark sprite sheet and the blue flame's colours. */
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
 	syWordsCopyEntry((void *)BG_PLTT,

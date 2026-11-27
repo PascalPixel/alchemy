@@ -689,9 +689,9 @@ enum {
 typedef void (*INTERRUPT_HANDLER)(void);
 
 /* Where syInstallIWRAMAndIRQs copies the resident IWRAM code. */
-#define Ram_IwramIrqMain FIXED_ADDRESS((Uint8 *), 0x03000100, syIWRAMIRQMain)
+#define RamIwramIrqMain FIXED_ADDRESS((Uint8 *), 0x03000100, syIWRAMIRQMain)
 /* The BIOS's interrupt vector at the top of IWRAM. */
-#define Ram_IrqVector	 FIXED_ADDRESS((void **), 0x03007ffc, IrqVector)
+#define RamIrqVector	FIXED_ADDRESS((void **), 0x03007ffc, IrqVector)
 
 /* The heap group. The heap's slots.
 
@@ -794,7 +794,7 @@ typedef struct HEAP_SLOTS {
 		Sint32 y, Sint32 width, Sint32 height);
 	void *unusedAfterRamCodePaired; /* no code allocates or reads this slot */
 	void *unusedBeforeMsgDecoder;	/* no code allocates or reads this slot */
-	/* The message decoder function (Text_DecodeSymbol), copied here to run for
+	/* The message decoder function (TextDecodeSymbol), copied here to run for
 	   the length of one message's decoding. */
 	void *msgDecoder;
 	void *bupState;		/* the save workspace, around each save or load */
@@ -876,7 +876,7 @@ typedef enum HEAP_SLOT {
 	HEAP_SLOT_DJINNI_HINTS = offsetof(HEAP_SLOTS, djinniHints)
 } HEAP_SLOT;
 
-#define Ram_HeapSlots FIXED_ADDRESS((HEAP_SLOTS *), 0x03000000, HeapSlotsWork)
+#define RamHeapSlots FIXED_ADDRESS((HEAP_SLOTS *), 0x03000000, HeapSlotsWork)
 
 /* Heap slot `kind` of the heap's words `state`, by its byte offset (enum
    HEAP_SLOT): the block, or null while none is allocated. */
@@ -1006,7 +1006,7 @@ typedef struct IO_WRITE_QUEUE {
 } IO_WRITE_QUEUE;
 
 /* A control word's bits 16 and 17 give a register write's width and bits 18 and
-   19 its operation, as Resource_ExecuteTransfer reads them
+   19 its operation, as ResourceExecuteTransfer reads them
    (system/decompress_tagged_lz.s); a word with no width is a DMA. */
 
 /* Writes a byte. */
@@ -1139,40 +1139,40 @@ typedef struct PROJECTION {
    linked symbol beside it), and the scene's own state. EWRAM's buffers at fixed
    addresses: the map's metatiles, the decode buffer, the map's collision
    shapes, its scene points and the BG tiles. */
-#define Ram_MapMetatileBuffer \
+#define RamMapMetatileBuffer \
 	FIXED_ADDRESS((Uint8 *), 0x02010000, MapGridMetatileBuffer)
-#define Ram_DecodeBuffer   FIXED_ADDRESS((Uint8 *), 0x0201c000, DecodeBuffer)
-#define Ram_MapCollision   FIXED_ADDRESS((Uint8 *), 0x0202c000, MapGridShapes)
-#define Ram_MapScenePoints FIXED_ADDRESS((Uint8 *), 0x0202e008, MapScenePoints)
-#define Ram_BgTileBuffer   FIXED_ADDRESS((Uint8 *), 0x02038000, BgTileBuffer)
+#define RamDecodeBuffer	  FIXED_ADDRESS((Uint8 *), 0x0201c000, DecodeBuffer)
+#define RamMapCollision	  FIXED_ADDRESS((Uint8 *), 0x0202c000, MapGridShapes)
+#define RamMapScenePoints FIXED_ADDRESS((Uint8 *), 0x0202e008, MapScenePoints)
+#define RamBgTileBuffer	  FIXED_ADDRESS((Uint8 *), 0x02038000, BgTileBuffer)
 /* The metatile tiles table (MetatileTiles), as fdMapGridRenderMetatileTilesRow
    reads it. */
-#define syRamMapBlocks	   FIXED_ADDRESS((Uint8 *), 0x02020000, MetatileTiles)
-#define Ram_MapShapeGrid   FIXED_ADDRESS((Uint8 *), 0x02024000, MapShapeGrid)
+#define syRamMapBlocks	  FIXED_ADDRESS((Uint8 *), 0x02020000, MetatileTiles)
+#define RamMapShapeGrid	  FIXED_ADDRESS((Uint8 *), 0x02024000, MapShapeGrid)
 
 /* The end of the IWRAM heap, which the allocators test against, and the bottom
    of the stacks. */
-#define Ram_IwramHeapEnd \
+#define RamIwramHeapEnd \
 	FIXED_ADDRESS((Uint8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
 /* The tick counter, as the overlays of Airs Rock, Atteka Inlet and Ancient
    Lemuria read it. */
-#define Ram_TickCount FIXED_ADDRESS((Uint32 *), 0x0300122c, TickCount)
+#define RamTickCount FIXED_ADDRESS((Uint32 *), 0x0300122c, TickCount)
 
 /* The map screen's scroll (x, then y, 16.16 pixels), as fdMapScreenUpdateScroll
    reads it. */
-#define Ram_WorldMapScroll \
+#define RamWorldMapScroll \
 	FIXED_ADDRESS((Sint32 *), 0x0202a630, MapScreenScrollX)
 
 /* The map screen's state, as its setup (fdMapScreenInit) reaches it. */
-#define Ram_WorldMapState \
+#define RamWorldMapState \
 	FIXED_ADDRESS((struct WORLD_MAP_STATE *), 0x0202a000, WorldMapStateWork)
 /* Where fdMapScreenUpdateScroll reads the cursor from (x, then y, 16.16
    pixels): the setup points it at the state's cursor. */
-#define Ram_WorldMapCursor \
+#define RamWorldMapCursor \
 	FIXED_ADDRESS((Sint32 **), 0x0202a62c, MapScreenCursor)
 /* The cursor's place when the screen opens (x, then y, 16.16 pixels). */
-#define Ram_WorldMapCursorStart \
+#define RamWorldMapCursorStart \
 	FIXED_ADDRESS((Sint32 *), 0x0202a64c, MapScreenCursorStartX)
 /* Where SceneLocalState keeps, by element, the Djinni gmPartyAddIsaacsParty
    picked at random from The Broken Seal's Djinn the party lacks: its place in
@@ -1689,7 +1689,7 @@ STATIC_ASSERT(offsetof(SERIAL_TRANSFER_STATE, payload) == 4);
 #define SERIAL_RUNTIME (&SerialStateWork)
 
 /* The sprite_metadata group. A sprite's animation metadata, its row of
-   Sprite_AnimationMetadata. An animation's metadata: the sprite's size, scale
+   SpriteAnimationMetadata. An animation's metadata: the sprite's size, scale
    and offsets, how its pictures are drawn and decoded, its pictures and its
    animation scripts. */
 typedef struct ANIMATION_METADATA {
@@ -1723,7 +1723,7 @@ STATIC_ASSERT(offsetof(ANIMATION_METADATA, pictures) == 12);
 STATIC_ASSERT(offsetof(ANIMATION_METADATA, anm) == 16);
 
 /* Looks up animation metadata using the descriptor ID in the low twelve bits:
-   that row of Sprite_AnimationMetadata (graphics/sprite/sprites.s), with no
+   that row of SpriteAnimationMetadata (graphics/sprite/sprites.s), with no
    bounds check. */
 ANIMATION_METADATA *syResourceGetMetadataRecord(Uint32 num);
 ANIMATION_METADATA *fdResourceGetMetadataRecordStubStub(Uint32 num);

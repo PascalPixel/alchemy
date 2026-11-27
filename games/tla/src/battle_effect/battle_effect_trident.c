@@ -23,7 +23,7 @@ extern const SCALE TridentUnitScale;
 #define TRIDENT_WINDOW_HEIGHT (TRIDENT_WINDOW_BOTTOM - TRIDENT_WINDOW_TOP)
 
 /* The sparks the strike throws, in the map cell buffer. */
-#define TRIDENT_SPARKS		((PARTICLE *)(Ram_MapMetatileBuffer + 10596))
+#define TRIDENT_SPARKS		((PARTICLE *)(RamMapMetatileBuffer + 10596))
 #define TRIDENT_SPARK_COUNT 128
 /* The state's particles: the discs thrown up, the first one growing on the
    ground, then the strike's flashes, which live six pictures of four ticks. */
@@ -100,9 +100,9 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	Sint32		   orangeBase;
 	DRAW_RECTANGLE draw;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectShowLivingTargets(state->args);
@@ -113,7 +113,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	REG_WIN0V = WIN_RANGE(TRIDENT_WINDOW_TOP, TRIDENT_WINDOW_BOTTOM);
 	REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	blit[0] = draw;
 	/* FAKEMATCH(temporary): the orange palette's id in a local. */
@@ -149,9 +149,9 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 	}
 	btResourceLoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, cells, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_FLAME_ZIGZAG_TEXTURE,
-		Ram_MapMetatileBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
+		RamMapMetatileBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
 	btResourceLoadAndDecompress(
-		RESOURCE_BILLOW_TEXTURE, Ram_MapMetatileBuffer + TRIDENT_BILLOW, 0, 0);
+		RESOURCE_BILLOW_TEXTURE, RamMapMetatileBuffer + TRIDENT_BILLOW, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	syWordsCopyEntry((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_VIOLET_PALETTE_F),
@@ -453,7 +453,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				i++, drawn++) {
 				if((Uint32)drawn->variant < TRIDENT_FLASH_TICKS) {
 					blit[0](canvas,
-						Ram_MapMetatileBuffer + TRIDENT_FLASH_BURST +
+						RamMapMetatileBuffer + TRIDENT_FLASH_BURST +
 							(drawn->variant / 4) * PICTURE_BYTES(FLASH_BURST),
 						FIXED_INTEGER_PART(drawn->x) - FLASH_BURST_WIDTH / 2,
 						FIXED_INTEGER_PART(drawn->y) - FLASH_BURST_HEIGHT / 2,
@@ -496,7 +496,7 @@ void btEffectRunTrident(BATTLE_EFFECT_PARM *args)
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					TridentGlintFlips[flip & 3] | EFFECT_CLIP_BOUNDS,
 					BLITTER_MAX);
-				(Ram_HeapSlots->ramCodePaired)(canvas,
+				(RamHeapSlots->ramCodePaired)(canvas,
 					state->sheet + BattleEffectGlintPictures[k], x, y,
 					BattleEffectGlintPictureWidths[k],
 					BattleEffectGlintPictureHeights[k]);
@@ -564,7 +564,7 @@ void btEffectRunPlanetary(BATTLE_EFFECT_PARM *args)
 /* The flames that ring the caster as it leaps. */
 #define LEAPING_STRIKE_FLAMES		   16
 /* The sparks that burst from the caster as it lands, in the map cell buffer. */
-#define LEAPING_STRIKE_SPARKS		   ((PARTICLE *)(Ram_MapMetatileBuffer + 24576))
+#define LEAPING_STRIKE_SPARKS		   ((PARTICLE *)(RamMapMetatileBuffer + 24576))
 #define LEAPING_STRIKE_SPARK_COUNT	   256
 #define LEAPING_STRIKE_SPARK_MIN_SPEED 32
 /* Planetary's claw: tilted, and drawn about two and a half times its size. */
@@ -614,9 +614,9 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32		   frm;
 	Sint32		   i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -643,7 +643,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	else
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	state->transferMode = CANVAS_COPY_AND_FADE;
 	if(mode == LEAPING_STRIKE_PLANET_DIVER)
 		state->transferValue = CANVAS_FADE_THREE_QUARTERS;
@@ -952,7 +952,7 @@ void btEffectRunLeapingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
    the effect state, so the backdrop's colour changes down the screen. */
 void btEffectArmMeteorBlowPaletteDMA(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	volatile Uint16		*channel = REG_DMA0;
 
 	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;

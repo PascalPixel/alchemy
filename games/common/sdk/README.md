@@ -39,8 +39,8 @@ holds what differs between them:
 
 | Setting              | The Broken Seal | The Lost Age | What it is                                         |
 | -------------------- | --------------- | ------------ | -------------------------------------------------- |
-| `Ram_MPlayJumpTable` | `0x02004000`    | `0x02006800` | where the driver's jump table sits in EWRAM        |
-| `Ram_SoundMixer`     | `0x03007000`    | `0x03006000` | where `m4aSoundInit` copies the mixer in IWRAM     |
+| `RamMPlayJumpTable`  | `0x02004000`    | `0x02006800` | where the driver's jump table sits in EWRAM        |
+| `RamSoundMixer`      | `0x03007000`    | `0x03006000` | where `m4aSoundInit` copies the mixer in IWRAM     |
 | `SOUND_GAME_MODE`    | `0x0097F800`    | `0x0099FA00` | the sound mode the driver starts in: notes, rate   |
 
 They stay numbers. Written as a linked name, the jump table's address makes
@@ -50,9 +50,9 @@ in the game's linker script, and a wrong value anywhere shows up only as a
 ROM that no longer matches.
 
 The rest comes from each game as it does for any of its code: `types.h`,
-the hardware registers in `system/definitions.h`, `Bios_CpuSet`, the music
+the hardware registers in `system/definitions.h`, `BiosCpuSet`, the music
 player and song tables in `games/<game>/sound`, and the symbols its linker
-script defines, `sySndMainRAMRom` and `Mixer_CallViaR3Rom`.
+script defines, `sySndMainRAMRom` and `MixerCallViaR3Rom`.
 
 ## What stays with each game
 

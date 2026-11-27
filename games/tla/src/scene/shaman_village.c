@@ -813,7 +813,7 @@ void scShamanVillageTalkToWestKnight(void)
    waiting to be shown something. */
 void scShamanVillageTellOutsidersToLeave(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -830,7 +830,7 @@ void scShamanVillageTellOutsidersToLeave(void)
    menu opens. */
 void scShamanVillageWarnOfMoapasPower(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -847,7 +847,7 @@ void scShamanVillageWarnOfMoapasPower(void)
    opens. */
 void scShamanVillageSendToMoapa(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -2275,7 +2275,7 @@ void scShamanVillageCountDownToStart(void)
    and the sand is gone. */
 void scShamanVillageShebaClearsSand(void)
 {
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor = ((ACTOR *)fdActorGetById(ACTOR_WEST_KNIGHT));
 
 	Sint32 result;
@@ -2651,7 +2651,7 @@ void scShamanVillageCastWhirlwindOnSand(void)
 void scShamanVillageEnterDoor(Sint32 srcX, Sint32 srcY, Sint32 dstX,
 	Sint32 dstY, Sint32 width, Sint32 height)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Sint32		 metatile;
 
@@ -3011,7 +3011,7 @@ void scShamanVillageBlowChimneySmoke(void)
 /* An event: the sprout and the girl below the cave take the leader's sprite
    priority each tick, so they pass behind what he passes behind. */
 DEFINE_LEADER_LAYER_TASK(
-	ShamanVillage_LayerVillageActors, ACTOR_SPROUT, ACTOR_GIRL_BELOW_THE_CAVE)
+	ShamanVillageLayerVillageActors, ACTOR_SPROUT, ACTOR_GIRL_BELOW_THE_CAVE)
 
 /* The village: Moapa and his Knights at his door once met, until the Shaman's
    Rod is shown, and the Knights alone there once he is beaten; his door left
@@ -3047,7 +3047,7 @@ void scShamanVillageSetUpVillage(void)
 		scShamanVillageGrowVine();
 	REG_BLDALPHA = BLEND_ALPHA(8, 12);
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-	syFieldSetTickEvent(ShamanVillage_LayerVillageActors, EVENT_PASS_TICK);
+	syFieldSetTickEvent(ShamanVillageLayerVillageActors, EVENT_PASS_TICK);
 	syFieldSetTickEvent(scShamanVillageBlowChimneySmoke, EVENT_PASS_TICK);
 }
 
@@ -3117,18 +3117,18 @@ void scShamanVillageSetUpHouses(void)
 
 /* An event: the sanctum's two shamans take the leader's sprite priority each
    tick. */
-DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors,
+DEFINE_LEADER_LAYER_TASK(ShamanVillageLayerSanctumActors,
 	ACTOR_SANCTUM_SHAMAN_A, ACTOR_SANCTUM_SHAMAN_B)
 
 /* The sanctum: its two villagers there only once Moapa is beaten. */
 void scShamanVillageSetUpSanctum(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	if(fdScriptGetFlag(FLAG_MOAPA_BEATEN)) {
-		sySetEvent(ShamanVillage_LayerSanctumActors, EVENT_PASS_TICK);
+		sySetEvent(ShamanVillageLayerSanctumActors, EVENT_PASS_TICK);
 	} else {
 		fdActorSetPos(ACTOR_SANCTUM_SHAMAN_A, 0, 0);
 		fdActorSetPos(ACTOR_SANCTUM_SHAMAN_B, 0, 0);

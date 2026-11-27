@@ -63,10 +63,10 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32		   k;
 	Uint8		  *buf;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
-	buf = Ram_MapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
+	buf = RamMapMetatileBuffer;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	if(mode == BALL_LIGHTNING_THUNDER_MINE) {
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -74,7 +74,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX / 2);
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	ballSize = 0;
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET,
 		state->sheet + BALL_LIGHTNING_TORNADO_PICTURES, 1, 0);
@@ -238,7 +238,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					EFFECT_CLIP_BOUNDS | BoltTrailGlintFlips[syRandom() & 3];
 				EFFECT_LOAD_BLITTER(
 					HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-				(Ram_HeapSlots->ramCodePaired)(canvas,
+				(RamHeapSlots->ramCodePaired)(canvas,
 					state->sheet + BALL_LIGHTNING_TORNADO_PICTURES +
 						BattleEffectGlintPictures[picture],
 					glintX, glintY, BattleEffectGlintPictureWidths[picture],
@@ -339,7 +339,7 @@ void btEffectRunBallLightning(BATTLE_EFFECT_PARM *args, Sint32 mode)
 #define MEGAERA_SPARK_COUNT 512
 /* Megaera's glints, bolts of lightning and sparkles, in the map cell buffer
    from its second 16 KB on. */
-#define MEGAERA_PICTURES	(Ram_MapMetatileBuffer + 16384)
+#define MEGAERA_PICTURES	(RamMapMetatileBuffer + 16384)
 extern const SCALE MegaeraUnitScale;
 
 /* Where FlashBurstSheet, LightningBoltSheet and SparkleDots are decoded in the
@@ -403,9 +403,9 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 j;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sprs = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sprs = RamHeapSlots->battleSheet;
 	pictures = MEGAERA_PICTURES;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
@@ -721,7 +721,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 								EFFECT_CLIP_BOUNDS |
 									MegaeraGlintFlips[flip & 3],
 								MegaeraGlintModes[args->variant]);
-							(Ram_HeapSlots->ramCodePaired)(canvas,
+							(RamHeapSlots->ramCodePaired)(canvas,
 								MEGAERA_PICTURES + BattleEffectGlintPictures[k],
 								glintX - 4, glintY + 40,
 								BattleEffectGlintPictureWidths[k],
@@ -733,7 +733,7 @@ void btEffectRunMegaera(BATTLE_EFFECT_PARM *args)
 			}
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				BLITTER_ADDITIVE);
-			rects[1] = Ram_HeapSlots->ramCodePaired;
+			rects[1] = RamHeapSlots->ramCodePaired;
 			if(frm <= 69) {
 				for(i = 0, p = PARTICLES; i != MEGAERA_SPARK_COUNT; i++, p++) {
 					Sint32 size;
@@ -816,11 +816,11 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 	Uint8				*buf;
 	Sint32				 size;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sprs = Ram_HeapSlots->battleSheet;
-	buf = Ram_MapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sprs = RamHeapSlots->battleSheet;
+	buf = RamMapMetatileBuffer;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(
 		RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
@@ -884,8 +884,8 @@ void btEffectRunVoidBeam(BATTLE_EFFECT_PARM *args)
 		HEAP_SLOT_RAM_CODE, flip | EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		flip | EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	state->cameraDelta = 0;
 	state->cameraPhase = 0;
 	sySetEvent(btCameraApplyPhasedDelta, EVENT_PASS_TICK);

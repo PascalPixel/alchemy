@@ -23,12 +23,12 @@ void fdGroundParticlesStart(void)
 	Uint32	fill = 0;
 
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_WEATHER, sizeof(WEATHER_STATE));
-	leader = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->origin;
+	leader = ((MAP_STATE *)RamHeapSlots->mapGrid)->origin;
 	fdQueueMusic(SE_AMBIENT_WATER);
 	particle = state->particles;
 	DMA_FILL32(fill, state, sizeof(WEATHER_STATE));
 	words = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(Weather_ParticleTiles, words);
+	syDecompressByteLZ(WeatherParticleTiles, words);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase =
 		syVRAMCacheLoad(state->entry, 6 * WEATHER_PICTURE_BYTES, words);
@@ -63,7 +63,7 @@ void fdGroundParticlesStart(void)
    two tiles every 8 ticks. */
 void fdRisingParticlesUpdate(void)
 {
-	RISING_PARTICLE_STATE *state = Ram_HeapSlots->weather;
+	RISING_PARTICLE_STATE *state = RamHeapSlots->weather;
 	RISING_PARTICLE		  *particle = state->particles;
 	FIELD_COORDINATE	   screen[3];
 	Uint32				   i;
@@ -133,7 +133,7 @@ void fdRisingParticlesStart(void)
 	z = 0;
 	DMA_FILL32_CELL(fill, z, state, sizeof(WEATHER_STATE));
 	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(FieldEffect_MoteTiles, tiles);
+	syDecompressByteLZ(FieldEffectMoteTiles, tiles);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	state->tile =
 		syVRAMCacheLoad(state->vramEntry, 6 * WEATHER_PICTURE_BYTES, tiles);
@@ -163,8 +163,8 @@ void fdRisingParticlesStart(void)
    every 8 ticks; FLAG_WEATHER_HELD holds them where they are. */
 void fdMotesUpdate(void)
 {
-	WEATHER_STATE	 *state = Ram_HeapSlots->weather;
-	MAP_STATE		 *map = Ram_HeapSlots->mapGrid;
+	WEATHER_STATE	 *state = RamHeapSlots->weather;
+	MAP_STATE		 *map = RamHeapSlots->mapGrid;
 	Uint32			  spawned = 0;
 	Uint32			  i;
 	WEATHER_PARTICLE *mote;

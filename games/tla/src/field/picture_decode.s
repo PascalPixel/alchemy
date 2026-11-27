@@ -11,10 +11,10 @@ fdRenderDecodePictureCode:
 	.thumb_func
 fdRenderDecodePicture:
 	bx	pc
-AlchemyUncredited_08020daa:
+AlchemyUncredited08020daa:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08020daa:
+AlchemyUncreditedEnd08020daa:
 	cmp	r2, #0
 	bne	.L_08020ec4
 	mov	r4, #255
@@ -22,10 +22,10 @@ AlchemyUncreditedEnd_08020daa:
 	ldm	r0!, {r3}
 	add	r2, r2, r2, lsl #2
 	add	pc, pc, r2, lsl #2
-AlchemyUncredited_08020dc8:
+AlchemyUncredited08020dc8:
 	nop
 .L_08020dcc:
-AlchemyUncreditedEnd_08020dc8:
+AlchemyUncreditedEnd08020dc8:
 	ands	r2, r4, r3
 	bxeq	lr
 	subs	ip, r2, #223

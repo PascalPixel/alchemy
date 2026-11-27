@@ -77,7 +77,7 @@ typedef enum BURST_SHOWER_SHEET {
    table into BG2X, one word a line. */
 void btEffectArmBg2AffineHBlankDMA(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	volatile Uint16		*channel = REG_DMA0;
 	Uint16				 control = channel[DMA_CONTROL_HALF];
 
@@ -92,7 +92,7 @@ void btEffectArmBg2AffineHBlankDMA(void)
    layer 1. */
 void btEffectArmBg1HBlankDMA(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	volatile Uint16		*channel = REG_DMA0;
 	Uint16				 control = channel[DMA_CONTROL_HALF];
 
@@ -299,9 +299,9 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	SCREEN_POINT   screen;
 	DRAW_RECTANGLE pair[2];
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sheet = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sheet = RamHeapSlots->battleSheet;
 	if(mode == BURST_SHOWER_MODE_AGING_GAS ||
 		mode == BURST_SHOWER_MODE_FIRE_DANCE ||
 		mode == BURST_SHOWER_MODE_SAND_BREATH ||
@@ -347,30 +347,30 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		} else {
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-			pair[0] = Ram_HeapSlots->ramCode;
+			pair[0] = RamHeapSlots->ramCode;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 
-			pair[1] = Ram_HeapSlots->ramCodePaired;
+			pair[1] = RamHeapSlots->ramCodePaired;
 		}
 	} else if(mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-		pair[0] = Ram_HeapSlots->ramCode;
+		pair[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 
-		pair[1] = Ram_HeapSlots->ramCodePaired;
+		pair[1] = RamHeapSlots->ramCodePaired;
 		REG_BLDALPHA = BLEND_ALPHA(16, 3);
 	} else if(mode == BURST_SHOWER_MODE_FACES ||
 		mode == BURST_SHOWER_MODE_DARKSOL_GASP) {
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		pair[0] = Ram_HeapSlots->ramCode;
+		pair[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 
-		pair[1] = Ram_HeapSlots->ramCodePaired;
+		pair[1] = RamHeapSlots->ramCodePaired;
 	} else {
 		btEffectBuildCanvasBlitters(args->side, pair);
 	}
@@ -920,7 +920,7 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 								BurstShowerGlintFlips[flip & 3] |
 									EFFECT_CLIP_BOUNDS,
 								BLITTER_ADDITIVE);
-							(Ram_HeapSlots->ramCodePaired)(canvas,
+							(RamHeapSlots->ramCodePaired)(canvas,
 								state->sheet +
 									BattleEffectGlintPictures[picture],
 								x, y, BattleEffectGlintPictureWidths[picture],
@@ -991,7 +991,7 @@ void btEffectRunBurstShower(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 				object = btObjectGetStub(args->user)->obj;
 				half = btUnitGetEffectHeightStub(args->user) / 2;
-				camera = Ram_HeapSlots->cameraState;
+				camera = RamHeapSlots->cameraState;
 				syInitMatrix();
 				syLookAtLoad(camera->eye, camera->focus);
 				for(i = 0; i != AGING_GAS_DRAWN_MOTES; i++) {

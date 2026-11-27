@@ -40,7 +40,7 @@ extern Uint8 *ItemIcons[];
 /* The end of ItemIcons, so mnIconCountItemIcons can count them. */
 extern Uint8 *ItemIconsEnd[];
 /* The other compressed icons, among them the Status screen's status icons. */
-extern Uint8 *Icon_MiscIconPointers[];
+extern Uint8 *IconMiscIconPointers[];
 /* The compressed Psynergy icons, drawn over the shared icon base. */
 extern Uint8 *PsynergyIcons[];
 /* The end of PsynergyIcons, for mnIconCountPsynergyIcons. */
@@ -82,7 +82,7 @@ static __inline__ Uint32 mnXorWord(Uint32 word, Uint32 mask)
 }
 
 /* The credits' 8x8 one-bit font, ASCII 32 to 127. */
-extern const Uint8 Credits_Font[];
+extern const Uint8 CreditsFont[];
 /* The order in which the dissolve sets the 64 pixels of its tile. */
 extern const Uint8 ScreenTransitionDitherTable[];
 /* Pixels: how far each line's edge of Reveal's rippling ellipse moves out. */
@@ -102,7 +102,7 @@ extern const Uint16 GraphicsExpandNibbleTable[];
 #define SpritesWork (*(struct SPR **)&HeapSlots[HEAP_SLOT_SPRITES])
 /* The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside its
    left-pointing twin. */
-extern const Uint8 Menu_CursorActorTiles[];
+extern const Uint8 MenuCursorActorTiles[];
 /* 224 zeroed bytes right after fdRenderDecodePicture's code and tables; its
    address ends the stretch the field sprites' draw copies to RAM. */
 extern const Uint8 fdRenderDecodePictureEnd[];
@@ -115,12 +115,12 @@ extern Uint8 PointingHandTiles[];
 extern const Uint8 mnCreditsDecodeBackground[];
 /* mnCreditsDecodeBackground with its command table, copied into
    HEAP_SLOT_RAM_CODE_TEMP for each slide. */
-extern Uint8 Credits_DecodeBackgroundCodeSize[];
+extern Uint8 CreditsDecodeBackgroundCodeSize[];
 /* Decodes one Huffman-coded symbol of a message for a MESSAGE_READER. */
-extern const Uint8 Text_DecodeSymbol[];
-/* Text_DecodeSymbol, which the message decoders copy into
+extern const Uint8 TextDecodeSymbol[];
+/* TextDecodeSymbol, which the message decoders copy into
    HEAP_SLOT_MESSAGE_DECODER. */
-extern Uint8 Text_DecodeSymbolCodeSize[];
+extern Uint8 TextDecodeSymbolCodeSize[];
 /* mnScanlineWindowBuildEdges, copied to the heap by mnScanlineWindowFillSpans
    for each tick of a window transition. */
 extern Uint8 mnScanlineWindowBuildEdgesCodeSize[];
@@ -133,19 +133,19 @@ extern Uint8 fdTileConvertMapGridCodeSize[];
 extern const Uint8 mnTileDecompress4bpp[];
 /* mnTileDecompress4bpp, which mnIconDecode copies into
    HEAP_SLOT_RAM_CODE_TEMP. */
-extern Uint8 Tile_Decompress4bppCodeSize[];
+extern Uint8 TileDecompress4bppCodeSize[];
 /* Packs an unpacked icon into 4bpp tiles over the layers already drawn
    there. */
 extern const Uint8 mnTileExpandMasked[];
 /* mnTileExpandMasked, which mnIconDecode loads for an icon's upper layers. */
-extern Uint8 Tile_ExpandMaskedCodeSize[];
+extern Uint8 TileExpandMaskedCodeSize[];
 /* Packs an unpacked icon into 4bpp tiles, overwriting every pixel. */
 extern const Uint8 mnTileExpandOpaque[];
 /* mnTileExpandOpaque, which mnIconDecode loads for an icon's first layer. */
-extern Uint8 Tile_ExpandOpaqueCodeSize[];
+extern Uint8 TileExpandOpaqueCodeSize[];
 /* The title screen's "Press Start" prompt, byte-LZ compressed, in each
    language. */
-extern const Uint8 Title_PromptTiles[];
+extern const Uint8 TitlePromptTiles[];
 /* The eight scales, in 1/65536, that mnWindowSprPulse pulses the settings
    menu's selected icon through. */
 extern const Sint32 WindowSpritePulseScales[];
@@ -159,15 +159,15 @@ extern Uint8 *IconBasePointerTable[];
    item, 1 on an equipped one and 2 on a cursed one. */
 extern Uint8 *IconMarkPointers[];
 /* The command icons' overlays, all 43 entries the same picture. */
-extern Uint8 *Icon_OverlayPointerTable[];
+extern Uint8 *IconOverlayPointerTable[];
 /* The menus' hand cursor and gem, 16x16 4bpp sprites; the hand is loaded by
    mnIconCreateHandCursor. */
-extern Uint8 Icon_ResourceTiles[];
+extern Uint8 IconResourceTiles[];
 /* Pixels: the hop a window's sprite makes, one step a tick. */
 extern const Sint8 WindowSpriteBounceOffsets[];
 /* The animated page arrow's pictures, 8x16 sprites of 256 colours, 128 bytes
    each. */
-extern const Uint8 WindowSprite_PageArrowTiles[];
+extern const Uint8 WindowSpritePageArrowTiles[];
 /* Pixels: the x and y a window's wobbling sprite is moved by, one step every
    other tick. */
 extern const Sint8 WindowSpriteWobbleOffsets[][2];
@@ -177,7 +177,7 @@ extern const Uint8 FontColorPens[];
 /* mnGlyphDrawArm, copied to the heap for each character drawn. */
 extern Uint8 mnGlyphDrawCodeSize[];
 /* Each main font glyph's width in pixels, from the space (32) on. */
-extern const Uint8 Font_GlyphWidths[];
+extern const Uint8 FontGlyphWidths[];
 /* Points a MESSAGE_READER at a message's compressed bits and first context. */
 extern const Uint8 mnMessageFindArm[];
 /* mnMessageFindArm; mnMessageFind frees its copy on return. */

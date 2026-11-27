@@ -9,10 +9,10 @@ mnTileDecompress4bppCode:
 	.thumb_func
 mnTileDecompress4bpp:
 	bx	pc
-AlchemyUncredited_08038b16:
+AlchemyUncredited08038b16:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08038b16:
+AlchemyUncreditedEnd08038b16:
 	push	{r5, r6}
 	add	r5, pc, #40
 	ldm	r5, {r2, r3}

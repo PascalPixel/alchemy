@@ -137,15 +137,15 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 	Uint8		 *planes;
 	Sint32		  wispBottom;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sprs = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(3));
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit = Ram_HeapSlots->ramCode;
+	blit = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	btEffectShowLivingTargets(state->args);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -154,7 +154,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 	   first. */
 	sySetEvent(btEffectArmPaletteHBlankDMA, EVENT_PASS_VBLANK + 126);
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	meshVertices = (MODEL_VERTEX *)state->sheet;
 	faces = (AZUL_FACE *)(state->sheet + AZUL_FACES);
 	sphere = state->sheet + AZUL_SPHERE;
@@ -198,7 +198,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 		((SPR *)state->sprs[i])->image.pri = 1;
 	}
 	mapCells = MapGridMetatileBuffer;
-	planes = Ram_MapMetatileBuffer + AZUL_TEXTURES;
+	planes = RamMapMetatileBuffer + AZUL_TEXTURES;
 	/* The wisps are turned a quarter as they are copied: each row of a picture
 	   in WispSheet becomes a column of its wisp, from the bottom up. */
 	wispBottom = AZUL_WISPS + (AZUL_WISP_HEIGHT - 1) * AZUL_WISP_WIDTH;
@@ -669,7 +669,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			btResourceLoadAndDecompress(RESOURCE_WISP_SHEET,
-				Ram_MapMetatileBuffer + AZUL_TEXTURES, 1, 0);
+				RamMapMetatileBuffer + AZUL_TEXTURES, 1, 0);
 			for(i = 0; i != AZUL_WISP_PICTURES; i++) {
 				for(k = 0; k != AZUL_WISP_WIDTH; k++) {
 					for(j = 0; j != AZUL_WISP_HEIGHT; j++) {
@@ -681,16 +681,16 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 				}
 			}
 			btResourceLoadAndDecompress(RESOURCE_CORNER_RUNE_A_SHEET,
-				(Ram_MapMetatileBuffer + AZUL_TEXTURES), 1, 0);
-			btPictureMirrorIntoQuadrants(Ram_MapMetatileBuffer + AZUL_TEXTURES,
+				(RamMapMetatileBuffer + AZUL_TEXTURES), 1, 0);
+			btPictureMirrorIntoQuadrants(RamMapMetatileBuffer + AZUL_TEXTURES,
 				MapGridMetatileBuffer, 64, 64);
 			btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
-				Ram_MapMetatileBuffer + AZUL_TEXTURES, 0, 0);
+				RamMapMetatileBuffer + AZUL_TEXTURES, 0, 0);
 			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		}
 		if(frm == AZUL_SWIRL_TICK) {
 			btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
-				Ram_MapMetatileBuffer + AZUL_TEXTURES, 0, 0);
+				RamMapMetatileBuffer + AZUL_TEXTURES, 0, 0);
 		}
 		/* The water sphere grows round the foes. */
 		sphereFrm = frm - (AZUL_SPHERE_TICK + 2);
@@ -710,7 +710,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-				alternateBlit = Ram_HeapSlots->ramCodePaired;
+				alternateBlit = RamHeapSlots->ramCodePaired;
 				i = 0;
 				y = (FIXEDtoINT(base.y)) - 32;
 				width = AZUL_WISP_WIDTH;
@@ -759,7 +759,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 					}
 					if(shade > MODEL_SHADE_INVISIBLE) {
 						scratchTexture.pixels =
-							Ram_MapMetatileBuffer + AZUL_TEXTURES;
+							RamMapMetatileBuffer + AZUL_TEXTURES;
 						scratchTexture.logWidth = 7;
 						model->mesh = BattleEffectLargeSquareMesh;
 						scratchTexture.logHeight = 7;
@@ -780,7 +780,7 @@ void btEffectRunAzul(BATTLE_EFFECT_PARM *args)
 					scratchTexture.logWidth = 6;
 					scratchTexture.logHeight = 6;
 					scratchTexture.pixels =
-						Ram_MapMetatileBuffer + AZUL_TEXTURES;
+						RamMapMetatileBuffer + AZUL_TEXTURES;
 					model->shade = shade;
 					model->mesh = BattleEffectSquareMesh;
 					syInitMatrix();
@@ -935,7 +935,7 @@ void btEffectGetTargetsMidpoint(SCREEN_POINT *pos)
 	SCREEN_POINT		 first;
 	SCREEN_POINT		 last;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	btEffectPosProjectBattler(state->args->tgts[0], &first);
 	btEffectPosProjectBattler(
 		state->args->tgts[state->args->tgtCnt - 1], &last);

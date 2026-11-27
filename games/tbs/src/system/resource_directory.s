@@ -1,920 +1,920 @@
 @ The resource directory: every packed file of the ROM by number, which
-@ syResourceGetTableEntry looks up. A named row gives ResourceId_NAME its number,
+@ syResourceGetTableEntry looks up. A named row gives ResourceIdNAME its number,
 @ which C reads at link time (resource_ids.h); a row of 0 is unused.
 @ A row's number is its place, so a row added or moved renumbers every row
 @ after it, and everything naming a resource by its symbol follows.
 	.macro resource name, place:req
 	.ifnb \name
-	.global ResourceId_\name
-	.equiv ResourceId_\name, (. - syResourceDirectoryTable) / 4
+	.global ResourceId\name
+	.equiv ResourceId\name, (. - syResourceDirectoryTable) / 4
 	.endif
 	.4byte \place
 	.endm
 
 @ A map's resource: a row that gives its place the number the map table
-@ (map/resources.s) names it by, MapResource_PLACE, counted from the empty
+@ (map/resources.s) names it by, MapResourcePLACE, counted from the empty
 @ map's row.
 	.macro map_resource place:req
-	.global MapResource_\place
-	.equiv MapResource_\place, (. - syResourceDirectoryTable) / 4 - ResourceId_EmptyMap
+	.global MapResource\place
+	.equiv MapResource\place, (. - syResourceDirectoryTable) / 4 - ResourceIdEmptyMap
 	.4byte \place
 	.endm
 
-@ An overlay's resource: a row that gives OverlayId_NAME its number, by which
+@ An overlay's resource: a row that gives OverlayIdNAME its number, by which
 @ the scene table (field/scenes.s) names the overlay a scene loads. Its packed
-@ image is Overlay_NAME (system/overlay/overlays.list.tsv), linked from the
+@ image is OverlayNAME (system/overlay/overlays.list.tsv), linked from the
 @ block of that name in system/overlay/overlay.ld.
 	.macro overlay name:req
-	.global OverlayId_\name
-	.equiv OverlayId_\name, (. - syResourceDirectoryTable) / 4
-	.4byte Overlay_\name
+	.global OverlayId\name
+	.equiv OverlayId\name, (. - syResourceDirectoryTable) / 4
+	.4byte Overlay\name
 	.endm
 
 	.section .rodata
 	.balign 4
 	.global syResourceDirectoryTable
 syResourceDirectoryTable:
-	resource , Rom_Start
+	resource , RomStart
 	resource , syResourceDirectoryTable
-	resource BuildStamp, Resource_BuildStamp
-	resource , Stubs_Field
-	resource , Stubs_Window
-	resource , Stubs_Game
-	resource , Stubs_Overworld
-	resource , Stubs_Menu
-	resource , Stubs_Shop
-	resource , Stubs_Battle
-	resource , Stubs_Credits
-	resource TitleStubs, Stubs_Title
+	resource BuildStamp, ResourceBuildStamp
+	resource , StubsField
+	resource , StubsWindow
+	resource , StubsGame
+	resource , StubsOverworld
+	resource , StubsMenu
+	resource , StubsShop
+	resource , StubsBattle
+	resource , StubsCredits
+	resource TitleStubs, StubsTitle
 	resource BattleEffectStubs, btStubsBattleEffect
-	resource , Stubs_LuckyDice
-	resource , Stubs_LuckyWheels
-	resource , Stubs_Sound
-	resource , Stubs_Sound
-	resource ResourceStubs, Stubs_Resource
-	resource ResourceStubsAlternate, Stubs_Resource
-	resource WindowTiles, Window_Tiles
-	resource SmallFont, Text_SmallFont
-	resource IntroSun, Title_IntroSun
-	resource TitleScreen, Title_TitleScreen
-	resource IntroPeak, Title_IntroPeak
-	resource PublisherLogo, Title_PublisherLogo
-	resource CamelotLogo, Title_CamelotLogo
-	resource GoldenSunLogo, Title_GoldenSunLogo
-	resource WorldMapPicture, Field_WorldMapPicture
-	resource ToBeContinuedLettering, Title_ToBeContinuedLettering
-	resource SuhallaGateBackdrop, Battle_SuhallaGateBackdrop
-	resource PirateShipBackdrop, Battle_PirateShipBackdrop
-	resource CrossboneIsleCaveBackdrop, Battle_CrossboneIsleCaveBackdrop
-	resource ColossoBackdrop, Battle_ColossoBackdrop
-	resource VenusLighthouseAerieStormBackdrop, Battle_VenusLighthouseAerieStormBackdrop
-	resource VenusLighthouseAerieBackdrop, Battle_VenusLighthouseAerieBackdrop
-	resource VenusLighthouseBackdrop, Battle_VenusLighthouseBackdrop
-	resource SuhallaDesertBackdrop, Battle_SuhallaDesertBackdrop
-	resource AltmillerCaveBackdrop, Battle_AltmillerCaveBackdrop
-	resource TunnelRuinsBackdrop, Battle_TunnelRuinsBackdrop
-	resource BabiLighthouseBackdrop, Battle_BabiLighthouseBackdrop
-	resource LamakanDesertBackdrop, Battle_LamakanDesertBackdrop
-	resource MogallForestBackdrop, Battle_MogallForestBackdrop
-	resource MercuryLighthouseAerieBackdrop, Battle_MercuryLighthouseAerieBackdrop
-	resource TolbiShipRoomsBackdrop, Battle_TolbiShipRoomsBackdrop
-	resource FuchinFallsCaveBackdrop, Battle_FuchinFallsCaveBackdrop
-	resource KolimaForestBackdrop, Battle_KolimaForestBackdrop
-	resource TretTreeRoomsBackdrop, Battle_TretTreeRoomsBackdrop
-	resource GomaCaveBackdrop, Battle_GomaCaveBackdrop
-	resource RoomsBackdrop, Battle_RoomsBackdrop
-	resource AltinPeakBackdrop, Battle_AltinPeakBackdrop
-	resource TolbiShipDeckBackdrop, Battle_TolbiShipDeckBackdrop
-	resource MercuryLighthouseBackdrop, Battle_MercuryLighthouseBackdrop
-	resource ValeStormBackdrop, Battle_ValeStormBackdrop
-	resource TretTreeBranchBackdrop, Battle_TretTreeBranchBackdrop
-	resource BeachBackdrop, Battle_BeachBackdrop
-	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
-	resource GrasslandBackdrop, Battle_GrasslandBackdrop
-	resource SolSanctumBackdrop, Battle_SolSanctumBackdrop
-	resource ForestBackdrop, Battle_ForestBackdrop
-	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
-	resource DesertBackdrop, Battle_DesertBackdrop
-	resource DuskCloudsBackdrop, Battle_DuskCloudsBackdrop
-	resource AerialViewBackdrop, Battle_AerialViewBackdrop
-	resource LuckyWheelsMachinePicture, LuckyWheels_MachinePicture
-	resource LuckyWheelsIcons, LuckyWheels_Icons
-	resource LuckyWheelsJackpot, LuckyWheels_Jackpot
-	resource LuckyDiceBoard, LuckyDice_Board
-	resource LuckyDiceSprites, LuckyDice_Sprites
-	resource ShatteringOpeningSheet, BattleEffect_ShatteringOpeningSheet
-	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
-	resource DeathPlungeVioletPalette, BattleEffect_DeathPlungeVioletPalette
-	resource DeathPlungeRedPalette, BattleEffect_DeathPlungeRedPalette
-	resource DeathPlungeYellowPalette, BattleEffect_DeathPlungeYellowPalette
-	resource StarBurstSheet, BattleEffect_StarBurstSheet
-	resource CrescentSheet, BattleEffect_CrescentSheet
-	resource VorpalSlashImageA, BattleEffect_VorpalSlashImageA
-	resource VorpalSlashImageB, BattleEffect_VorpalSlashImageB
-	resource QuickStrikeImageA, BattleEffect_QuickStrikeImageA
-	resource QuickStrikeImageB, BattleEffect_QuickStrikeImageB
-	resource UnusedFlashingStrikeImageA, BattleEffect_UnusedFlashingStrikeImageA
-	resource UnusedFlashingStrikeImageB, BattleEffect_UnusedFlashingStrikeImageB
-	resource LimeColumnSheet, BattleEffect_LimeColumnSheet
-	resource RainSheet, BattleEffect_RainSheet
-	resource FlameSheetA, BattleEffect_FlameSheetA
-	resource DemonFaceSheet, BattleEffect_DemonFaceSheet
-	resource FlameBladeSheet, BattleEffect_FlameBladeSheet
-	resource SwordSheet, BattleEffect_SwordSheet
-	resource IceTileSheet, BattleEffect_IceTileSheet
-	resource FlameArcSheet, BattleEffect_FlameArcSheet
-	resource SpiderWebSheet, BattleEffect_SpiderWebSheet
-	resource VioletLightningSheetA, BattleEffect_VioletLightningSheetA
-	resource YellowSparkSheet, BattleEffect_YellowSparkSheet
-	resource ProjectileVolleyImage, BattleEffect_ProjectileVolleyImage
-	resource ShurikenSheet, BattleEffect_ShurikenSheet
-	resource FlareSheet, BattleEffect_FlareSheet
-	resource FlareImage, BattleEffect_FlareImage
-	resource PlasmaVioletPalette, BattleEffect_PlasmaVioletPalette
-	resource FireSwirlSheet, BattleEffect_FireSwirlSheet
-	resource VioletLightningSheetB, BattleEffect_VioletLightningSheetB
-	resource FireBurstSheet, BattleEffect_FireBurstSheet
-	resource BlueCrescentSheet, BattleEffect_BlueCrescentSheet
-	resource JudgmentFlashSheet, BattleEffect_JudgmentFlashSheet
-	resource VioletMoteSheet, BattleEffect_VioletMoteSheet
-	resource JudgmentBurstSheet, BattleEffect_JudgmentBurstSheet
-	resource FireballSheet, BattleEffect_FireballSheet
-	resource GatheringLightsImage, BattleEffect_GatheringLightsImage
-	resource SlashSheet, BattleEffect_SlashSheet
-	resource WaveSheet, BattleEffect_WaveSheet
-	resource TargetBurstImage, BattleEffect_TargetBurstImage
-	resource PinkStarSheet, BattleEffect_PinkStarSheet
-	resource WaterSpraySheet, BattleEffect_WaterSpraySheet
-	resource BlueFlameSheet, BattleEffect_BlueFlameSheet
-	resource ExplosionSheet, BattleEffect_ExplosionSheet
-	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
-	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
-	resource YellowGlowSheet, BattleEffect_YellowGlowSheet
-	resource PaleBlueGlowSheet, BattleEffect_PaleBlueGlowSheet
-	resource BlueTallGlowSheet, BattleEffect_BlueTallGlowSheet
-	resource BlueGlowSheet, BattleEffect_BlueGlowSheet
-	resource GreenPalette, BattleEffect_GreenPalette
-	resource SwordSlashSheet, BattleEffect_SwordSlashSheet
-	resource RuneSheet, BattleEffect_RuneSheet
-	resource FlameColumnSheet, BattleEffect_FlameColumnSheet
-	resource EarthWallSheet, BattleEffect_EarthWallSheet
-	resource GaiaOrangePalette, BattleEffect_GaiaOrangePalette
-	resource FlashBurstSheet, BattleEffect_FlashBurstSheet
-	resource ThornSheet, BattleEffect_ThornSheet
-	resource SlashCometSheet, BattleEffect_SlashCometSheet
-	resource WindSlashCometSheet, BattleEffect_WindSlashCometSheet
-	resource SonicSlashCometSheet, BattleEffect_SonicSlashCometSheet
-	resource WhirlwindSheet, BattleEffect_WhirlwindSheet
-	resource GreenPillarSheet, BattleEffect_GreenPillarSheet
-	resource VineSheet, BattleEffect_VineSheet
-	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
-	resource VolcanoRedPalette, BattleEffect_VolcanoRedPalette
-	resource VolcanoOrangePalette, BattleEffect_VolcanoOrangePalette
-	resource VioletCometSheet, BattleEffect_VioletCometSheet
-	resource FlameballSheet, BattleEffect_FlameballSheet
-	resource BoulderSheet, BattleEffect_BoulderSheet
-	resource RockWallSheet, BattleEffect_RockWallSheet
-	resource StarDotSheet, BattleEffect_StarDotSheet
-	resource MarsDjinnSheet, BattleEffect_MarsDjinnSheet
-	resource MarsDjinnSmallSheet, BattleEffect_MarsDjinnSmallSheet
-	resource JupiterDjinnSheet, BattleEffect_JupiterDjinnSheet
-	resource JupiterDjinnSmallSheet, BattleEffect_JupiterDjinnSmallSheet
-	resource MercuryDjinnSheet, BattleEffect_MercuryDjinnSheet
-	resource MercuryDjinnSmallSheet, BattleEffect_MercuryDjinnSmallSheet
-	resource VenusDjinnSheet, BattleEffect_VenusDjinnSheet
-	resource VenusDjinnSmallSheet, BattleEffect_VenusDjinnSmallSheet
-	resource FireBlobSheet, BattleEffect_FireBlobSheet
-	resource FireStreakSheet, BattleEffect_FireStreakSheet
-	resource LavaOrbSheet, BattleEffect_LavaOrbSheet
-	resource YellowRingSheet, BattleEffect_YellowRingSheet
-	resource YellowOrbSheet, BattleEffect_YellowOrbSheet
-	resource BubbleSheet, BattleEffect_BubbleSheet
-	resource ShieldSheet, BattleEffect_ShieldSheet
-	resource DaggerSheet, BattleEffect_DaggerSheet
-	resource StatReductionShardSheet, BattleEffect_StatReductionShardSheet
-	resource SmokeSheet, BattleEffect_SmokeSheet
-	resource BluePalette, BattleEffect_BluePalette
-	resource LimePalette, BattleEffect_LimePalette
-	resource PinkPalette, BattleEffect_PinkPalette
-	resource VioletPaletteC, BattleEffect_VioletPaletteC
-	resource CyanPalette, BattleEffect_CyanPalette
-	resource TanPalette, BattleEffect_TanPalette
-	resource WispSheet, BattleEffect_WispSheet
-	resource GreenVineSheet, BattleEffect_GreenVineSheet
-	resource PortalSheet, BattleEffect_PortalSheet
-	resource SheepSheet, BattleEffect_SheepSheet
-	resource SkullSheet, BattleEffect_SkullSheet
-	resource HeartSheet, BattleEffect_HeartSheet
-	resource ReaperSheet, BattleEffect_ReaperSheet
-	resource RedCrescentSheetA, BattleEffect_RedCrescentSheetA
-	resource BlueBeastSheet, BattleEffect_BlueBeastSheet
-	resource RedCrescentSheetB, BattleEffect_RedCrescentSheetB
-	resource SpiralSheet, BattleEffect_SpiralSheet
-	resource VioletStreakSheet, BattleEffect_VioletStreakSheet
-	resource CrescentMoonSheet, BattleEffect_CrescentMoonSheet
-	resource ThornVineSheet, BattleEffect_ThornVineSheet
-	resource IceShardSheet, BattleEffect_IceShardSheet
-	resource EmberStreakSheet, BattleEffect_EmberStreakSheet
-	resource BlueArcSheetA, BattleEffect_BlueArcSheetA
-	resource BlueArcSheetB, BattleEffect_BlueArcSheetB
-	resource GlowOrbSheet, BattleEffect_GlowOrbSheet
-	resource IceChipSheet, BattleEffect_IceChipSheet
-	resource IceBlockSheet, BattleEffect_IceBlockSheet
-	resource SparkleDots, BattleEffect_SparkleDots
-	resource PinkBurstSheet, BattleEffect_PinkBurstSheet
-	resource LightFanSheet, BattleEffect_LightFanSheet
-	resource BlueBurstSheet, BattleEffect_BlueBurstSheet
-	resource DustPuffSheet, BattleEffect_DustPuffSheet
-	resource GoldShellSheet, BattleEffect_GoldShellSheet
-	resource BlastSheet, BattleEffect_BlastSheet
-	resource FlameSheetB, BattleEffect_FlameSheetB
-	resource FirePillarSheetB, BattleEffect_FirePillarSheetB
-	resource RockSpireSheet, BattleEffect_RockSpireSheet
-	resource LightningBoltSheet, BattleEffect_LightningBoltSheet
-	resource BeamImage, BattleEffect_BeamImage
-	resource BlueDropletSheet, BattleEffect_BlueDropletSheet
-	resource WindStreakSheet, BattleEffect_WindStreakSheet
-	resource VenusStarFieldPalette, BattleEffect_VenusStarFieldPalette
-	resource BlueRingSheet, BattleEffect_BlueRingSheet
-	resource MarsStarFieldPalette, BattleEffect_MarsStarFieldPalette
-	resource JupiterStarFieldPalette, BattleEffect_JupiterStarFieldPalette
-	resource BlueBeamSheet, BattleEffect_BlueBeamSheet
-	resource VortexSheet, BattleEffect_VortexSheet
-	resource TornadoSheet, BattleEffect_TornadoSheet
-	resource CrystalSheet, BattleEffect_CrystalSheet
-	resource WaterSparkleSheet, BattleEffect_WaterSparkleSheet
-	resource LightningPillarSheet, BattleEffect_LightningPillarSheet
-	resource AtalantaPath, BattleEffect_AtalantaPath
-	resource DragonCloudFlamePath, BattleEffect_DragonCloudFlamePath
-	resource WorldMapPerspectiveTiles, Field_WorldMapPerspectiveTiles
-	resource DefaultGridMetatiles, Field_DefaultGridMetatiles
-	resource DefaultTileAnimation, Field_DefaultTileAnimation
-	resource DefaultMetatileTilesAttributes, Field_DefaultMetatileTilesAttributes
-	resource WorldMapPaletteA, WorldMap_PaletteA
-	resource WorldMapTilesA, WorldMap_TilesA
-	resource WorldMapTilesB, WorldMap_TilesB
-	resource WorldMapTilesC, WorldMap_TilesC
-	resource WorldMapTilesD, WorldMap_TilesD
-	resource WorldMapTilesE, WorldMap_TilesE
-	resource WorldMapPaletteB, WorldMap_PaletteB
-	resource WorldMapTilesF, WorldMap_TilesF
-	resource WorldMapTilesG, WorldMap_TilesG
-	resource WorldMapTilesH, WorldMap_TilesH
-	resource WorldMapTilesI, WorldMap_TilesI
-	resource WorldMapTilesJ, WorldMap_TilesJ
-	resource AzartOpponentPath, Colosso_AzartOpponentPath
-	resource SatrageOpponentPath, Colosso_SatrageOpponentPath
-	resource NavampaOpponentPath, Colosso_NavampaOpponentPath
-	resource Lettering, Colosso_Lettering
-	resource MenuCursorPictures, MenuCursor_PictureA
-	resource , MenuCursor_PictureB
-	resource , MenuCursor_PictureC
-	resource , MenuCursor_PictureD
-	resource , MenuCursor_PictureE
-	resource , MenuCursor_PictureF
-	resource , MenuCursor_PictureG
-	resource , MenuCursor_PictureH
-	resource Icons, Ui_Icons
-	resource CommandIcons, Ui_CommandIcons
-	resource AxeGoblinSprites, Monster_AxeGoblinSprites
-	resource GhoulSprites, Monster_GhoulSprites
-	resource HarpySprites, Monster_HarpySprites
-	resource TrollSprites, Monster_TrollSprites
-	resource WitchSprites, Monster_WitchSprites
-	resource GriffinSprites, Monster_GriffinSprites
-	resource ShieldKnightSprites, Monster_ShieldKnightSprites
-	resource OrcSprites, Monster_OrcSprites
-	resource ChimeraSprites, Monster_ChimeraSprites
-	resource LivingArmorSprites, Monster_LivingArmorSprites
-	resource ManticoreSprites, Monster_ManticoreSprites
-	resource OrcLordSprites, Monster_OrcLordSprites
-	resource GargoyleSprites, Monster_GargoyleSprites
-	resource LizardManSprites, Monster_LizardManSprites
-	resource OgreSprites, Monster_OgreSprites
-	resource TailedImpSprites, Monster_TailedImpSprites
-	resource WispGhostSprites, Monster_WispGhostSprites
-	resource SalamanderSprites, Monster_SalamanderSprites
-	resource AquaBeastSprites, Monster_AquaBeastSprites
-	resource HoundSprites, Monster_HoundSprites
-	resource BearSprites, Monster_BearSprites
-	resource SirenSprites, Monster_SirenSprites
-	resource BlueWispSprites, Monster_BlueWispSprites
-	resource MushroomSprites, Monster_MushroomSprites
-	resource RedWormSprites, Monster_RedWormSprites
-	resource FairySprites, Monster_FairySprites
-	resource BatSprites, Monster_BatSprites
-	resource SmallLizardSprites, Monster_SmallLizardSprites
-	resource WalkingPlantSprites, Monster_WalkingPlantSprites
-	resource FlySprites, Monster_FlySprites
-	resource CrabSprites, Monster_CrabSprites
-	resource SmallBirdSprites, Monster_SmallBirdSprites
-	resource MothSprites, Monster_MothSprites
-	resource FrogSprites, Monster_FrogSprites
-	resource ManedLionSprites, Monster_ManedLionSprites
-	resource SerpentSprites, Monster_SerpentSprites
-	resource WingedDragonSprites, Monster_WingedDragonSprites
-	resource BlueMageSprites, Monster_BlueMageSprites
-	resource SkeletonSprites, Monster_SkeletonSprites
-	resource FlameSkullSprites, Monster_FlameSkullSprites
-	resource FireDragonSprites, Monster_FireDragonSprites
-	resource CrawlerSprites, Monster_CrawlerSprites
-	resource MimicSprites, Monster_MimicSprites
-	resource SeaBeastSprites, Monster_SeaBeastSprites
-	resource SpiritHorseSprites, Monster_SpiritHorseSprites
-	resource KrakenSprites, Monster_KrakenSprites
-	resource SlimeSprites, Monster_SlimeSprites
-	resource SaturosSprites, Monster_SaturosSprites
-	resource MenardiSprites, Monster_MenardiSprites
-	resource GhostHeadSprites, Monster_GhostHeadSprites
-	resource FusionDragonSprites, Monster_FusionDragonSprites
-	resource PurpleBeastSprites, Monster_PurpleBeastSprites
-	resource RedWarriorSprites, Monster_RedWarriorSprites
-	resource SwordGirlSprites, Monster_SwordGirlSprites
-	resource EmptyMap, Field_EmptyMap
-	.global MapResource_Field_EmptyMap
-	.equiv MapResource_Field_EmptyMap, 0
-	map_resource Tileset_BlankPalette
-	map_resource Tileset_BlankTilesA
-	map_resource Tileset_BlankTilesB
-	map_resource Tileset_BlankTilesC
-	map_resource Tileset_BlankTilesD
-	map_resource Field_ValePrologue
-	map_resource Tileset_ValeProloguePalette
-	map_resource Tileset_ValePrologueTilesA
-	map_resource Tileset_ValePrologueTilesB
-	map_resource Tileset_ValePrologueTilesC
-	map_resource Tileset_ValePrologueTilesD
-	map_resource Field_Vale
-	map_resource Tileset_ValePalette
-	map_resource Tileset_ValeTilesA
-	map_resource Tileset_ValeTilesB
-	map_resource Tileset_ValeTilesC
-	map_resource Tileset_ValeTilesD
-	map_resource Field_ValePlaza
-	map_resource Tileset_ValePlazaPalette
-	map_resource Tileset_ValePlazaTilesA
-	map_resource Tileset_ValePlazaTilesB
-	map_resource Tileset_ValePlazaTilesC
-	map_resource Tileset_ValePlazaTilesD
-	map_resource Field_ValeKradensCottage
-	map_resource Tileset_ValeKradensCottagePalette
-	map_resource Tileset_ValeKradensCottageTilesA
-	map_resource Tileset_ValeKradensCottageTilesB
-	map_resource Tileset_ValeKradensCottageTilesC
-	map_resource Tileset_ValeKradensCottageTilesD
-	map_resource Field_CottageRoomsA
-	map_resource Tileset_CottageRoomsAPalette
-	map_resource Tileset_CottageRoomsATilesA
-	map_resource Tileset_CottageRoomsATilesB
-	map_resource Tileset_CottageRoomsATilesC
-	map_resource Tileset_CottageRoomsATilesD
-	map_resource Field_CottageRoomsB
-	map_resource Tileset_CottageRoomsBPalette
-	map_resource Tileset_CottageRoomsBTilesA
-	map_resource Tileset_CottageRoomsBTilesB
-	map_resource Tileset_CottageRoomsBTilesC
-	map_resource Tileset_CottageRoomsBTilesD
-	map_resource Field_Sanctum
-	map_resource Tileset_SanctumPalette
-	map_resource Tileset_SanctumTilesA
-	map_resource Tileset_SanctumTilesB
-	map_resource Tileset_SanctumTilesC
-	map_resource Tileset_SanctumTilesD
-	map_resource Field_SolEntrance
-	map_resource Tileset_SolEntrancePalette
-	map_resource Tileset_SolEntranceTilesA
-	map_resource Tileset_SolEntranceTilesB
-	map_resource Tileset_SolEntranceTilesC
-	map_resource Tileset_SolEntranceTilesD
-	map_resource Field_SolSanctumLunaSolRooms
-	map_resource Tileset_SolSanctumLunaSolRoomsPalette
-	map_resource Tileset_SolSanctumLunaSolRoomsTilesA
-	map_resource Tileset_SolSanctumLunaSolRoomsTilesB
-	map_resource Tileset_SolSanctumLunaSolRoomsTilesC
-	map_resource Tileset_SolSanctumLunaSolRoomsTilesD
-	map_resource Field_SolSanctumStatue
-	map_resource Tileset_SolSanctumStatuePalette
-	map_resource Tileset_SolSanctumStatueTilesA
-	map_resource Tileset_SolSanctumStatueTilesB
-	map_resource Tileset_SolSanctumStatueTilesC
-	map_resource Field_SolSanctumPsynergyStone
-	map_resource Tileset_SolSanctumPsynergyStonePalette
-	map_resource Tileset_SolSanctumPsynergyStoneTilesA
-	map_resource Tileset_SolSanctumPsynergyStoneTilesB
-	map_resource Tileset_SolSanctumPsynergyStoneTilesC
-	map_resource Tileset_SolSanctumPsynergyStoneTilesD
-	map_resource Field_SolSanctumMaze
-	map_resource Field_SolSanctumCorridor
-	map_resource Tileset_SolSanctumCorridorPalette
-	map_resource Tileset_SolSanctumCorridorTilesA
-	map_resource Tileset_SolSanctumCorridorTilesB
-	map_resource Tileset_SolSanctumCorridorTilesC
-	map_resource Tileset_SolSanctumCorridorTilesD
-	map_resource Field_SolSanctumElementalStarRoom
-	map_resource Tileset_SolSanctumElementalStarRoomPalette
-	map_resource Tileset_SolSanctumElementalStarRoomTilesA
-	map_resource Tileset_SolSanctumElementalStarRoomTilesB
-	map_resource Tileset_SolSanctumElementalStarRoomTilesC
-	map_resource Tileset_SolSanctumElementalStarRoomTilesD
-	map_resource Field_SolSanctumEruption
-	map_resource Tileset_SolSanctumEruptionPalette
-	map_resource Tileset_SolSanctumEruptionTilesA
-	map_resource Tileset_SolSanctumEruptionTilesB
-	map_resource Tileset_SolSanctumEruptionTilesC
-	map_resource Tileset_SolSanctumEruptionTilesD
-	map_resource Field_SolSanctumReliefs
-	map_resource Tileset_PaletteSolSanctumReliefs
-	map_resource Field_Vault
-	map_resource Tileset_VaultPalette
-	map_resource Tileset_VaultTilesA
-	map_resource Tileset_VaultTilesB
-	map_resource Tileset_VaultTilesC
-	map_resource Tileset_VaultTilesD
-	map_resource Field_VaultLogRooms
-	map_resource Tileset_VaultLogRoomsPalette
-	map_resource Tileset_VaultLogRoomsTilesA
-	map_resource Tileset_VaultLogRoomsTilesB
-	map_resource Tileset_VaultLogRoomsTilesC
-	map_resource Tileset_VaultLogRoomsTilesD
-	map_resource Field_StoneRooms
-	map_resource Tileset_StoneRoomsPalette
-	map_resource Tileset_StoneRoomsTilesA
-	map_resource Tileset_StoneRoomsTilesB
-	map_resource Tileset_StoneRoomsTilesC
-	map_resource Tileset_StoneRoomsTilesD
-	map_resource Field_GomaCaveEntrance
-	map_resource Tileset_GomaCaveEntrancePalette
-	map_resource Tileset_GomaCaveEntranceTilesA
-	map_resource Tileset_GomaCaveEntranceTilesB
-	map_resource Tileset_GomaCaveEntranceTilesC
-	map_resource Tileset_GomaCaveEntranceTilesD
-	map_resource Field_GomaCavePond
-	map_resource Tileset_GomaCavePondPalette
-	map_resource Tileset_GomaCavePondTilesA
-	map_resource Tileset_GomaCavePondTilesB
-	map_resource Tileset_GomaCavePondTilesC
-	map_resource Tileset_GomaCavePondTilesD
-	map_resource Field_GomaCavePillar
-	map_resource Tileset_GomaCavePillarPalette
-	map_resource Tileset_GomaCavePillarTilesA
-	map_resource Tileset_GomaCavePillarTilesB
-	map_resource Tileset_GomaCavePillarTilesC
-	map_resource Tileset_GomaCavePillarTilesD
-	map_resource Field_GomaCaveStream
-	map_resource Field_GomaCaveBridge
-	map_resource Field_VaultCavePassage
-	map_resource Tileset_VaultCavePassagePalette
-	map_resource Tileset_VaultCavePassageTilesA
-	map_resource Tileset_VaultCavePassageTilesB
-	map_resource Tileset_VaultCavePassageTilesC
-	map_resource Tileset_VaultCavePassageTilesD
-	map_resource Field_VaultCaveVambrace
-	map_resource Field_VaultCaveMouth
-	map_resource Field_ValeCaveMouth
-	map_resource Tileset_ValeCaveMouthPalette
-	map_resource Tileset_ValeCaveMouthTilesA
-	map_resource Tileset_ValeCaveMouthTilesB
-	map_resource Tileset_ValeCaveMouthTilesC
-	map_resource Tileset_ValeCaveMouthTilesD
-	map_resource Field_ValeCaveKite
-	map_resource Tileset_ValeCaveKitePalette
-	map_resource Tileset_ValeCaveKiteTilesA
-	map_resource Tileset_ValeCaveKiteTilesB
-	map_resource Tileset_ValeCaveKiteTilesC
-	map_resource Field_ValeCaveLogs
-	map_resource Field_Bilibin
-	map_resource Tileset_BilibinPalette
-	map_resource Tileset_BilibinTilesA
-	map_resource Tileset_BilibinTilesB
-	map_resource Tileset_BilibinTilesC
-	map_resource Tileset_BilibinTilesD
-	map_resource Field_CottageRoomsC
-	map_resource Tileset_CottageRoomsCPalette
-	map_resource Tileset_CottageRoomsCTilesA
-	map_resource Tileset_CottageRoomsCTilesB
-	map_resource Field_BilibinTreasury
-	map_resource Tileset_BilibinTreasuryPalette
-	map_resource Tileset_BilibinTreasuryTilesA
-	map_resource Field_BilibinBarricade
-	map_resource Tileset_BilibinBarricadePalette
-	map_resource Tileset_BilibinBarricadeTilesA
-	map_resource Tileset_BilibinBarricadeTilesB
-	map_resource Tileset_BilibinBarricadeTilesC
-	map_resource Field_McCoyPalaceGrounds
-	map_resource Tileset_MccoyPalaceGroundsPalette
-	map_resource Tileset_MccoyPalaceGroundsTilesA
-	map_resource Tileset_MccoyPalaceGroundsTilesB
-	map_resource Tileset_MccoyPalaceGroundsTilesC
-	map_resource Tileset_MccoyPalaceGroundsTilesD
-	map_resource Field_McCoyPalace
-	map_resource Tileset_MccoyPalacePalette
-	map_resource Tileset_MccoyPalaceTilesA
-	map_resource Tileset_MccoyPalaceTilesB
-	map_resource Tileset_MccoyPalaceTilesC
-	map_resource Tileset_MccoyPalaceTilesD
-	map_resource Field_Kolima
-	map_resource Tileset_KolimaPalette
-	map_resource Tileset_KolimaTilesA
-	map_resource Tileset_KolimaTilesB
-	map_resource Tileset_KolimaTilesC
-	map_resource Tileset_KolimaTilesD
-	map_resource Field_LogRoomsC
-	map_resource Tileset_LogRoomsCPalette
-	map_resource Tileset_LogRoomsCTilesA
-	map_resource Field_KolimaBridge
-	map_resource Tileset_KolimaBridgePalette
-	map_resource Tileset_KolimaBridgeTilesA
-	map_resource Tileset_KolimaBridgeTilesB
-	map_resource Tileset_KolimaBridgeTilesC
-	map_resource Tileset_KolimaBridgeTilesD
-	map_resource Field_KolimaTunnel
-	map_resource Tileset_PaletteKolimaTunnel
-	map_resource Field_KolimaForestEntrance
-	map_resource Tileset_KolimaForestPalette
-	map_resource Tileset_KolimaForestTilesA
-	map_resource Tileset_KolimaForestTilesB
-	map_resource Tileset_KolimaForestTilesC
-	map_resource Tileset_KolimaForestTilesD
-	map_resource Field_KolimaForestGlade
-	map_resource Tileset_KolimaForestGladePalette
-	map_resource Tileset_KolimaForestGladeTilesA
-	map_resource Field_KolimaForestCliff
-	map_resource Tileset_PaletteKolimaForestCliff
-	map_resource Field_KolimaForestFloodgate
-	map_resource Tileset_KolimaForestFloodgatePalette
-	map_resource Tileset_KolimaForestFloodgateTilesA
-	map_resource Tileset_KolimaForestFloodgateTilesB
-	map_resource Tileset_KolimaForestFloodgateTilesC
-	map_resource Tileset_KolimaForestFloodgateTilesD
-	map_resource Field_KolimaForestTree
-	map_resource Tileset_KolimaForestTreePalette
-	map_resource Tileset_KolimaForestTreeTilesA
-	map_resource Tileset_KolimaForestTreeTilesB
-	map_resource Tileset_KolimaForestTreeTilesC
-	map_resource Tileset_KolimaForestTreeTilesD
-	map_resource Field_TreeRooms
-	map_resource Tileset_TreeRoomsPalette
-	map_resource Tileset_TreeRoomsTilesA
-	map_resource Tileset_TreeRoomsTilesB
-	map_resource Tileset_TreeRoomsTilesC
-	map_resource Tileset_TreeRoomsTilesD
-	map_resource Field_TretTreeBranch
-	map_resource Tileset_TretTreeBranchPalette
-	map_resource Tileset_TretTreeBranchTilesA
-	map_resource Tileset_TretTreeBranchTilesB
-	map_resource Tileset_TretTreeBranchTilesC
-	map_resource Tileset_TretTreeBranchTilesD
-	map_resource Field_BilibinCaveEntrance
-	map_resource Tileset_BilibinCaveEntrancePalette
-	map_resource Tileset_BilibinCaveEntranceTilesA
-	map_resource Field_BilibinCaveRapier
-	map_resource Tileset_BilibinCaveRapierPalette
-	map_resource Tileset_BilibinCaveRapierTilesA
-	map_resource Field_BilibinCaveIce
-	map_resource Tileset_BilibinCaveIcePalette
-	map_resource Tileset_BilibinCaveIceTilesA
-	map_resource Field_Imil
-	map_resource Tileset_ImilPalette
-	map_resource Tileset_ImilTilesA
-	map_resource Tileset_ImilTilesB
-	map_resource Tileset_ImilTilesC
-	map_resource Tileset_ImilTilesD
-	map_resource Field_IceRooms
-	map_resource Tileset_IceRoomsPalette
-	map_resource Tileset_IceRoomsTilesA
-	map_resource Tileset_IceRoomsTilesB
-	map_resource Tileset_IceRoomsTilesC
-	map_resource Tileset_IceRoomsTilesD
-	map_resource Field_ImilFallsCave
-	map_resource Field_MercuryLighthouseEntrance
-	map_resource Tileset_MercuryLighthouseEntrancePalette
-	map_resource Tileset_MercuryLighthouseEntranceTilesA
-	map_resource Tileset_MercuryLighthouseEntranceTilesB
-	map_resource Tileset_MercuryLighthouseEntranceTilesC
-	map_resource Tileset_MercuryLighthouseEntranceTilesD
-	map_resource Field_MercuryLighthouseLower
-	map_resource Field_MercuryLighthouseMiddle
-	map_resource Field_MercuryLighthouseUpper
-	map_resource Field_MercuryLighthouseExterior
-	map_resource Field_MercuryLighthouseAerie
-	map_resource Field_FuchinTempleGrounds
-	map_resource Tileset_MercuryLighthousePalette
-	map_resource Tileset_MercuryLighthouseTilesA
-	map_resource Field_LacquerRoomsA
-	map_resource Tileset_LacquerRoomsAPalette
-	map_resource Tileset_LacquerRoomsATilesA
-	map_resource Tileset_LacquerRoomsATilesB
-	map_resource Tileset_LacquerRoomsATilesC
-	map_resource Tileset_LacquerRoomsATilesD
-	map_resource Field_FuchinFallsCaveEntrance
-	map_resource Tileset_PaletteFuchinFallsCave
-	map_resource Field_FuchinFallsCaveZephyr
-	map_resource Field_FuchinFallsCaveDragonsEye
-	map_resource Field_FuchinFallsCaveArcticBlade
-	map_resource Field_FuchinFallsCaveOrbOfForce
-	map_resource Field_FuchinFallsCaveDragonStatue
-	map_resource Field_MogallForestSign
-	map_resource Tileset_MogallForestPalette
-	map_resource Tileset_MogallForestTilesA
-	map_resource Tileset_MogallForestTilesB
-	map_resource Tileset_MogallForestTilesC
-	map_resource Tileset_MogallForestTilesD
-	map_resource Field_MogallForestQuartz
-	map_resource Field_MogallForestKillerApe
-	map_resource Field_MogallForestSidePaths
-	map_resource Field_Xian
-	map_resource Field_LacquerRoomsB
-	map_resource Tileset_LacquerRoomsBPalette
-	map_resource Tileset_LacquerRoomsBTilesA
-	map_resource Tileset_LacquerRoomsBTilesB
-	map_resource Tileset_LacquerRoomsBTilesC
-	map_resource Tileset_LacquerRoomsBTilesD
-	map_resource Field_AlpineCrossing
-	map_resource Tileset_PaletteAlpineCrossing
-	map_resource Field_Altin
-	map_resource Tileset_AltinPalette
-	map_resource Tileset_AltinTilesA
-	map_resource Tileset_AltinTilesB
-	map_resource Tileset_AltinTilesC
-	map_resource Tileset_AltinTilesD
-	map_resource Field_CottageRoomsD
-	map_resource Tileset_CottageRoomsDPalette
-	map_resource Tileset_CottageRoomsDTilesA
-	map_resource Field_AltinPeakFirstWaterBeast
-	map_resource Tileset_PaletteAltinPeak
-	map_resource Field_AltinPeakRailTunnel
-	map_resource Field_AltinPeakSecondWaterBeast
-	map_resource Field_AltinPeakSouthEntrance
-	map_resource Field_AltinPeakThirdWaterBeast
-	map_resource Field_AltinPeakPool
-	map_resource Field_AltinPeakSpritz
-	map_resource Field_AltinPeakJunction
-	map_resource Field_AltinPeakFallingRocks
-	map_resource Field_AltinPeakHydrosStatue
-	map_resource Tileset_PaletteAltinPeakHydrosStatue
-	map_resource Field_AltinPeakWestExit
-	map_resource Field_LamakanDesertCave
-	map_resource Tileset_PaletteLamakanDesertCave
-	map_resource Field_LamaTemple
-	map_resource Field_LamakanDesertEast
-	map_resource Tileset_LamakanDesertEastPalette
-	map_resource Tileset_LamakanDesertEastTilesA
-	map_resource Tileset_LamakanDesertEastTilesB
-	map_resource Tileset_LamakanDesertEastTilesC
-	map_resource Tileset_LamakanDesertEastTilesD
-	map_resource Field_LamakanDesertSmog
-	map_resource Field_LamakanDesertManticore
-	map_resource Field_Kalay
-	map_resource Tileset_KalayPalette
-	map_resource Tileset_KalayTilesA
-	map_resource Tileset_KalayTilesB
-	map_resource Tileset_KalayTilesC
-	map_resource Tileset_KalayTilesD
-	map_resource Field_StuccoRoomsA
-	map_resource Tileset_StuccoRoomsAPalette
-	map_resource Tileset_StuccoRoomsATilesA
-	map_resource Tileset_StuccoRoomsATilesB
-	map_resource Tileset_StuccoRoomsATilesC
-	map_resource Tileset_StuccoRoomsATilesD
-	map_resource Field_KalaySanctum
-	map_resource Field_HammetPalaceGrounds
-	map_resource Field_HammetPalace
-	map_resource Tileset_PaletteHammetPalace
-	map_resource Field_Lunpa
-	map_resource Tileset_LunpaPalette
-	map_resource Tileset_LunpaTilesA
-	map_resource Tileset_LunpaTilesB
-	map_resource Field_RockRooms
-	map_resource Tileset_PaletteRockRooms
-	map_resource Field_WestLunpaCave
-	map_resource Tileset_PaletteWestLunpaCave
-	map_resource Field_KalayDocks
-	map_resource Tileset_KalayDocksPalette
-	map_resource Tileset_KalayDocksTilesA
-	map_resource Tileset_KalayDocksTilesB
-	map_resource Tileset_KalayDocksTilesC
-	map_resource Field_CottageRoomsE
-	map_resource Tileset_CottageRoomsEPalette
-	map_resource Tileset_CottageRoomsETilesA
-	map_resource Field_TolbiShipDeck
-	map_resource Tileset_TolbiShipDeckPalette
-	map_resource Tileset_TolbiShipDeckTilesA
-	map_resource Tileset_TolbiShipDeckTilesB
-	map_resource Tileset_TolbiShipDeckTilesC
-	map_resource Tileset_TolbiShipDeckTilesD
-	map_resource Field_TolbiShipMast
-	map_resource Tileset_PaletteTolbiShipMast
-	map_resource Field_ShipRooms
-	map_resource Tileset_ShipRoomsPalette
-	map_resource Tileset_ShipRoomsTilesA
-	map_resource Tileset_ShipRoomsTilesB
-	map_resource Tileset_ShipRoomsTilesC
-	map_resource Tileset_ShipRoomsTilesD
-	map_resource Field_TolbiDocks
-	map_resource Tileset_PaletteTolbiDocks
-	map_resource Field_CrossboneIsle
-	map_resource Tileset_PaletteCrossboneIsle
-	map_resource Field_BabiLighthouseRooms
-	map_resource Tileset_BabiLighthousePalette
-	map_resource Tileset_BabiLighthouseTilesA
-	map_resource Tileset_BabiLighthouseTilesB
-	map_resource Tileset_BabiLighthouseTilesC
-	map_resource Tileset_BabiLighthouseTilesD
-	map_resource Field_CrossboneIsleIcePillars
-	map_resource Tileset_PaletteCrossboneIsleIcePillars
-	map_resource Field_CrossboneIsleKeysAndBane
-	map_resource Tileset_PaletteCrossboneIsleKeys
-	map_resource Field_CrossboneIsleStatues
-	map_resource Tileset_PaletteCrossboneIsleStatues
-	map_resource Field_CrossboneIsleFloodgate
-	map_resource Tileset_PaletteCrossboneIsleFloodgate
-	map_resource Tileset_PaletteCrossboneIsleBane
-	map_resource Field_CrossboneIsleStackedPillars
-	map_resource Tileset_PaletteCrossboneIsleStackedPillars
-	map_resource Field_CrossboneIsleDragonStatue
-	map_resource Tileset_PaletteCrossboneIsleDragonStatue
-	map_resource Field_CrossboneIsleFloatingLogs
-	map_resource Tileset_PaletteCrossboneIsleFloatingLogs
-	map_resource Field_CrossboneIslePier
-	map_resource Tileset_PaletteCrossboneIslePier
-	map_resource Field_PirateShip
-	map_resource Tileset_PalettePirateShip
-	map_resource Field_CrossboneIsleCave
-	map_resource Tileset_PaletteCrossboneIsleCave
-	map_resource Field_Tolbi
-	map_resource Tileset_PaletteTolbi
-	map_resource Field_StuccoRoomsB
-	map_resource Tileset_PaletteStuccoRooms
-	map_resource Field_StuccoRoomsC
-	map_resource Field_BabiPalaceEntrance
-	map_resource Tileset_PaletteBabiPalaceEntrance
-	map_resource Field_BabiPalace
-	map_resource Tileset_PaletteBabiPalace
-	map_resource Field_ColosseumTunnel
-	map_resource Tileset_ColosseumTunnelPalette
-	map_resource Tileset_ColosseumTunnelTilesA
-	map_resource Tileset_ColosseumTunnelTilesB
-	map_resource Tileset_ColosseumTunnelTilesC
-	map_resource Tileset_ColosseumTunnelTilesD
-	map_resource Field_Colosseum
-	map_resource Tileset_PaletteColosseum
-	map_resource Field_ColosseumEntrance
-	map_resource Tileset_PaletteColosseumEntrance
-	map_resource Field_ColosseumAzartMatch
-	map_resource Tileset_ColosseumAzartMatchPalette
-	map_resource Tileset_ColosseumAzartMatchTilesA
-	map_resource Tileset_ColosseumAzartMatchTilesB
-	map_resource Tileset_ColosseumAzartMatchTilesC
-	map_resource Tileset_ColosseumAzartMatchTilesD
-	map_resource Field_ColosseumSatrageMatch
-	map_resource Tileset_ColosseumSatrageMatchPalette
-	map_resource Tileset_ColosseumSatrageMatchTilesA
-	map_resource Tileset_ColosseumSatrageMatchTilesB
-	map_resource Tileset_ColosseumSatrageMatchTilesC
-	map_resource Tileset_ColosseumSatrageMatchTilesD
-	map_resource Field_ColosseumNavampaMatch
-	map_resource Tileset_ColosseumNavampaMatchPalette
-	map_resource Tileset_ColosseumNavampaMatchTilesA
-	map_resource Tileset_ColosseumNavampaMatchTilesB
-	map_resource Tileset_ColosseumNavampaMatchTilesC
-	map_resource Tileset_ColosseumNavampaMatchTilesD
-	map_resource Field_AltmillerCaveEntrance
-	map_resource Tileset_PaletteAltmillerCaveEntrance
-	map_resource Field_AltmillerCaveBabi
-	map_resource Field_AltmillerCaveVialChest
-	map_resource Field_AltmillerCaveSquall
-	map_resource Tileset_PaletteAltmillerCave
-	map_resource Field_AltmillerCaveCookieChest
-	map_resource Field_AltmillerCaveDraught
-	map_resource Field_GondowanPassage
-	map_resource Tileset_PaletteGondowanPassage
-	map_resource Field_GondowanCaveRiver
-	map_resource Tileset_PaletteGondowanCave
-	map_resource Field_GondowanCave
-	map_resource Field_LunpaFortressGates
-	map_resource Tileset_PaletteLunpaFortressGates
-	map_resource Field_LunpaFortressGroundFloor
-	map_resource Tileset_PaletteLunpaFortress
-	map_resource Field_LunpaFortressUpperFloor
-	map_resource Field_LunpaFortressCave
-	map_resource Field_LunpaFortressToadonpa
-	map_resource Field_KalayTunnelEntrance
-	map_resource Tileset_PaletteKalayTunnelEntrance
-	map_resource Field_KalayTunnelCave
-	map_resource Tileset_PaletteKalayTunnelCave
-	map_resource Field_KalayTunnelPassage
-	map_resource Tileset_KalayTunnelPalette
-	map_resource Tileset_KalayTunnelTilesA
-	map_resource Field_KalayTunnelTreasureRoom
-	map_resource Field_SuhallaDesertNorth
-	map_resource Tileset_PaletteSuhallaDesert
-	map_resource Field_SuhallaDesertSouth
-	map_resource Field_SuhallaDesertCaves
-	map_resource Tileset_PaletteSuhallaDesertCaves
-	map_resource Field_Suhalla
-	map_resource Tileset_SuhallaPalette
-	map_resource Tileset_SuhallaTilesA
-	map_resource Tileset_SuhallaTilesB
-	map_resource Tileset_SuhallaTilesC
-	map_resource Tileset_SuhallaTilesD
-	map_resource Field_TimberRoomsA
-	map_resource Tileset_TimberRoomsPalette
-	map_resource Tileset_TimberRoomsTilesA
-	map_resource Tileset_TimberRoomsTilesB
-	map_resource Tileset_TimberRoomsTilesC
-	map_resource Tileset_TimberRoomsTilesD
-	map_resource Field_SuhallaGateCheckpoint
-	map_resource Tileset_PaletteSuhallaGate
-	map_resource Field_SuhallaGateDew
-	map_resource Field_GatewayCave
-	map_resource Tileset_PaletteGatewayCave
-	map_resource Field_TunnelRuinsGreatStatue
-	map_resource Tileset_PaletteTunnelRuins
-	map_resource Field_TunnelRuinsLadyStatues
-	map_resource Field_BabiLighthouseEntry
-	map_resource Tileset_PaletteBabiLighthouseEntry
-	map_resource Tileset_PaletteBabiLighthouseLuff
-	map_resource Field_BabiLighthouseStoneDoor
-	map_resource Tileset_PaletteBabiLighthouseStoneDoor
-	map_resource Field_Lalivero
-	map_resource Tileset_PaletteLalivero
-	map_resource Field_TimberRoomsB
-	map_resource Tileset_PaletteTimberRooms
-	map_resource Field_TimberRoomsC
-	map_resource Field_RoadToBabiLighthouse
-	map_resource Field_VenusEntrance
-	map_resource Tileset_PaletteVenusEntrance
-	map_resource Field_VenusLighthouseGroundFloor
-	map_resource Tileset_PaletteVenusLighthouseGroundFloor
-	map_resource Field_VenusLighthouseFirstFloor
-	map_resource Tileset_PaletteVenusLighthouse
-	map_resource Field_VenusLighthouseSecondFloor
-	map_resource Field_VenusLighthouseThirdFloor
-	map_resource Field_VenusLighthouseFourthFloor
-	map_resource Field_VenusLighthouseAerie
-	map_resource Tileset_PaletteVenusLighthouseAerie
-	map_resource Field_LemurianShip
-	map_resource Tileset_LemurianShipPalette
-	map_resource Tileset_LemurianShipTilesA
-	map_resource Tileset_LemurianShipTilesB
-	map_resource Tileset_LemurianShipTilesC
-	map_resource Tileset_LemurianShipTilesD
-	map_resource Field_TolbiSpring
-	map_resource Tileset_TolbiSpringPalette
-	map_resource Tileset_TolbiSpringTilesA
-	map_resource Tileset_TolbiSpringTilesB
-	map_resource Tileset_TolbiSpringTilesC
-	map_resource Tileset_TolbiSpringTilesD
-	map_resource Field_BattleArena
-	map_resource Tileset_PaletteBattleArena
-	map_resource Field_Test0
-	map_resource Tileset_Test0Palette
-	map_resource Tileset_Test0TilesA
-	map_resource Tileset_Test0TilesB
-	map_resource Tileset_Test0TilesC
-	map_resource Tileset_Test0TilesD
-	map_resource Field_Test1
-	map_resource Tileset_Test1Palette
-	map_resource Tileset_Test1TilesA
-	map_resource Tileset_Test1TilesB
-	map_resource Tileset_Test1TilesC
-	map_resource Tileset_Test1TilesD
-	map_resource Field_Test2
-	map_resource Tileset_Test2Palette
-	map_resource Tileset_Test2TilesA
-	map_resource Tileset_Test2TilesB
-	map_resource Tileset_Test2TilesC
-	map_resource Tileset_Test2TilesD
-	map_resource Field_Test3
-	map_resource Tileset_Test3Palette
-	map_resource Tileset_Test3TilesA
-	map_resource Tileset_Test3TilesB
-	map_resource Tileset_Test3TilesC
-	map_resource Tileset_Test3TilesD
-	map_resource Field_Test4
-	map_resource Tileset_Test4Palette
-	map_resource Tileset_Test4TilesA
-	map_resource Tileset_Test4TilesB
-	map_resource Tileset_Test4TilesC
-	map_resource Tileset_Test4TilesD
-	map_resource Field_Test5
-	map_resource Tileset_Test5Palette
-	map_resource Tileset_Test5TilesA
-	map_resource Tileset_Test5TilesB
-	map_resource Tileset_Test5TilesC
-	map_resource Tileset_Test5TilesD
-	map_resource Field_Test6
-	map_resource Tileset_Test6Palette
-	map_resource Tileset_Test6TilesA
-	map_resource Tileset_Test6TilesB
-	map_resource Tileset_Test6TilesC
-	map_resource Tileset_Test6TilesD
-	map_resource Field_Test7
-	map_resource Tileset_Test7Palette
-	map_resource Tileset_Test7TilesA
-	map_resource Tileset_Test7TilesB
-	map_resource Tileset_Test7TilesC
-	map_resource Tileset_Test7TilesD
+	resource , StubsLuckyDice
+	resource , StubsLuckyWheels
+	resource , StubsSound
+	resource , StubsSound
+	resource ResourceStubs, StubsResource
+	resource ResourceStubsAlternate, StubsResource
+	resource WindowTiles, WindowTiles
+	resource SmallFont, TextSmallFont
+	resource IntroSun, TitleIntroSun
+	resource TitleScreen, TitleTitleScreen
+	resource IntroPeak, TitleIntroPeak
+	resource PublisherLogo, TitlePublisherLogo
+	resource CamelotLogo, TitleCamelotLogo
+	resource GoldenSunLogo, TitleGoldenSunLogo
+	resource WorldMapPicture, FieldWorldMapPicture
+	resource ToBeContinuedLettering, TitleToBeContinuedLettering
+	resource SuhallaGateBackdrop, BattleSuhallaGateBackdrop
+	resource PirateShipBackdrop, BattlePirateShipBackdrop
+	resource CrossboneIsleCaveBackdrop, BattleCrossboneIsleCaveBackdrop
+	resource ColossoBackdrop, BattleColossoBackdrop
+	resource VenusLighthouseAerieStormBackdrop, BattleVenusLighthouseAerieStormBackdrop
+	resource VenusLighthouseAerieBackdrop, BattleVenusLighthouseAerieBackdrop
+	resource VenusLighthouseBackdrop, BattleVenusLighthouseBackdrop
+	resource SuhallaDesertBackdrop, BattleSuhallaDesertBackdrop
+	resource AltmillerCaveBackdrop, BattleAltmillerCaveBackdrop
+	resource TunnelRuinsBackdrop, BattleTunnelRuinsBackdrop
+	resource BabiLighthouseBackdrop, BattleBabiLighthouseBackdrop
+	resource LamakanDesertBackdrop, BattleLamakanDesertBackdrop
+	resource MogallForestBackdrop, BattleMogallForestBackdrop
+	resource MercuryLighthouseAerieBackdrop, BattleMercuryLighthouseAerieBackdrop
+	resource TolbiShipRoomsBackdrop, BattleTolbiShipRoomsBackdrop
+	resource FuchinFallsCaveBackdrop, BattleFuchinFallsCaveBackdrop
+	resource KolimaForestBackdrop, BattleKolimaForestBackdrop
+	resource TretTreeRoomsBackdrop, BattleTretTreeRoomsBackdrop
+	resource GomaCaveBackdrop, BattleGomaCaveBackdrop
+	resource RoomsBackdrop, BattleRoomsBackdrop
+	resource AltinPeakBackdrop, BattleAltinPeakBackdrop
+	resource TolbiShipDeckBackdrop, BattleTolbiShipDeckBackdrop
+	resource MercuryLighthouseBackdrop, BattleMercuryLighthouseBackdrop
+	resource ValeStormBackdrop, BattleValeStormBackdrop
+	resource TretTreeBranchBackdrop, BattleTretTreeBranchBackdrop
+	resource BeachBackdrop, BattleBeachBackdrop
+	resource SnowfieldBackdrop, BattleSnowfieldBackdrop
+	resource GrasslandBackdrop, BattleGrasslandBackdrop
+	resource SolSanctumBackdrop, BattleSolSanctumBackdrop
+	resource ForestBackdrop, BattleForestBackdrop
+	resource VioletSkyBackdrop, BattleVioletSkyBackdrop
+	resource DesertBackdrop, BattleDesertBackdrop
+	resource DuskCloudsBackdrop, BattleDuskCloudsBackdrop
+	resource AerialViewBackdrop, BattleAerialViewBackdrop
+	resource LuckyWheelsMachinePicture, LuckyWheelsMachinePicture
+	resource LuckyWheelsIcons, LuckyWheelsIcons
+	resource LuckyWheelsJackpot, LuckyWheelsJackpot
+	resource LuckyDiceBoard, LuckyDiceBoard
+	resource LuckyDiceSprites, LuckyDiceSprites
+	resource ShatteringOpeningSheet, BattleEffectShatteringOpeningSheet
+	resource CyanSparkSheet, BattleEffectCyanSparkSheet
+	resource DeathPlungeVioletPalette, BattleEffectDeathPlungeVioletPalette
+	resource DeathPlungeRedPalette, BattleEffectDeathPlungeRedPalette
+	resource DeathPlungeYellowPalette, BattleEffectDeathPlungeYellowPalette
+	resource StarBurstSheet, BattleEffectStarBurstSheet
+	resource CrescentSheet, BattleEffectCrescentSheet
+	resource VorpalSlashImageA, BattleEffectVorpalSlashImageA
+	resource VorpalSlashImageB, BattleEffectVorpalSlashImageB
+	resource QuickStrikeImageA, BattleEffectQuickStrikeImageA
+	resource QuickStrikeImageB, BattleEffectQuickStrikeImageB
+	resource UnusedFlashingStrikeImageA, BattleEffectUnusedFlashingStrikeImageA
+	resource UnusedFlashingStrikeImageB, BattleEffectUnusedFlashingStrikeImageB
+	resource LimeColumnSheet, BattleEffectLimeColumnSheet
+	resource RainSheet, BattleEffectRainSheet
+	resource FlameSheetA, BattleEffectFlameSheetA
+	resource DemonFaceSheet, BattleEffectDemonFaceSheet
+	resource FlameBladeSheet, BattleEffectFlameBladeSheet
+	resource SwordSheet, BattleEffectSwordSheet
+	resource IceTileSheet, BattleEffectIceTileSheet
+	resource FlameArcSheet, BattleEffectFlameArcSheet
+	resource SpiderWebSheet, BattleEffectSpiderWebSheet
+	resource VioletLightningSheetA, BattleEffectVioletLightningSheetA
+	resource YellowSparkSheet, BattleEffectYellowSparkSheet
+	resource ProjectileVolleyImage, BattleEffectProjectileVolleyImage
+	resource ShurikenSheet, BattleEffectShurikenSheet
+	resource FlareSheet, BattleEffectFlareSheet
+	resource FlareImage, BattleEffectFlareImage
+	resource PlasmaVioletPalette, BattleEffectPlasmaVioletPalette
+	resource FireSwirlSheet, BattleEffectFireSwirlSheet
+	resource VioletLightningSheetB, BattleEffectVioletLightningSheetB
+	resource FireBurstSheet, BattleEffectFireBurstSheet
+	resource BlueCrescentSheet, BattleEffectBlueCrescentSheet
+	resource JudgmentFlashSheet, BattleEffectJudgmentFlashSheet
+	resource VioletMoteSheet, BattleEffectVioletMoteSheet
+	resource JudgmentBurstSheet, BattleEffectJudgmentBurstSheet
+	resource FireballSheet, BattleEffectFireballSheet
+	resource GatheringLightsImage, BattleEffectGatheringLightsImage
+	resource SlashSheet, BattleEffectSlashSheet
+	resource WaveSheet, BattleEffectWaveSheet
+	resource TargetBurstImage, BattleEffectTargetBurstImage
+	resource PinkStarSheet, BattleEffectPinkStarSheet
+	resource WaterSpraySheet, BattleEffectWaterSpraySheet
+	resource BlueFlameSheet, BattleEffectBlueFlameSheet
+	resource ExplosionSheet, BattleEffectExplosionSheet
+	resource MagentaSwirlSheet, BattleEffectMagentaSwirlSheet
+	resource MagentaTailSheet, BattleEffectMagentaTailSheet
+	resource YellowGlowSheet, BattleEffectYellowGlowSheet
+	resource PaleBlueGlowSheet, BattleEffectPaleBlueGlowSheet
+	resource BlueTallGlowSheet, BattleEffectBlueTallGlowSheet
+	resource BlueGlowSheet, BattleEffectBlueGlowSheet
+	resource GreenPalette, BattleEffectGreenPalette
+	resource SwordSlashSheet, BattleEffectSwordSlashSheet
+	resource RuneSheet, BattleEffectRuneSheet
+	resource FlameColumnSheet, BattleEffectFlameColumnSheet
+	resource EarthWallSheet, BattleEffectEarthWallSheet
+	resource GaiaOrangePalette, BattleEffectGaiaOrangePalette
+	resource FlashBurstSheet, BattleEffectFlashBurstSheet
+	resource ThornSheet, BattleEffectThornSheet
+	resource SlashCometSheet, BattleEffectSlashCometSheet
+	resource WindSlashCometSheet, BattleEffectWindSlashCometSheet
+	resource SonicSlashCometSheet, BattleEffectSonicSlashCometSheet
+	resource WhirlwindSheet, BattleEffectWhirlwindSheet
+	resource GreenPillarSheet, BattleEffectGreenPillarSheet
+	resource VineSheet, BattleEffectVineSheet
+	resource FirePillarSheetA, BattleEffectFirePillarSheetA
+	resource VolcanoRedPalette, BattleEffectVolcanoRedPalette
+	resource VolcanoOrangePalette, BattleEffectVolcanoOrangePalette
+	resource VioletCometSheet, BattleEffectVioletCometSheet
+	resource FlameballSheet, BattleEffectFlameballSheet
+	resource BoulderSheet, BattleEffectBoulderSheet
+	resource RockWallSheet, BattleEffectRockWallSheet
+	resource StarDotSheet, BattleEffectStarDotSheet
+	resource MarsDjinnSheet, BattleEffectMarsDjinnSheet
+	resource MarsDjinnSmallSheet, BattleEffectMarsDjinnSmallSheet
+	resource JupiterDjinnSheet, BattleEffectJupiterDjinnSheet
+	resource JupiterDjinnSmallSheet, BattleEffectJupiterDjinnSmallSheet
+	resource MercuryDjinnSheet, BattleEffectMercuryDjinnSheet
+	resource MercuryDjinnSmallSheet, BattleEffectMercuryDjinnSmallSheet
+	resource VenusDjinnSheet, BattleEffectVenusDjinnSheet
+	resource VenusDjinnSmallSheet, BattleEffectVenusDjinnSmallSheet
+	resource FireBlobSheet, BattleEffectFireBlobSheet
+	resource FireStreakSheet, BattleEffectFireStreakSheet
+	resource LavaOrbSheet, BattleEffectLavaOrbSheet
+	resource YellowRingSheet, BattleEffectYellowRingSheet
+	resource YellowOrbSheet, BattleEffectYellowOrbSheet
+	resource BubbleSheet, BattleEffectBubbleSheet
+	resource ShieldSheet, BattleEffectShieldSheet
+	resource DaggerSheet, BattleEffectDaggerSheet
+	resource StatReductionShardSheet, BattleEffectStatReductionShardSheet
+	resource SmokeSheet, BattleEffectSmokeSheet
+	resource BluePalette, BattleEffectBluePalette
+	resource LimePalette, BattleEffectLimePalette
+	resource PinkPalette, BattleEffectPinkPalette
+	resource VioletPaletteC, BattleEffectVioletPaletteC
+	resource CyanPalette, BattleEffectCyanPalette
+	resource TanPalette, BattleEffectTanPalette
+	resource WispSheet, BattleEffectWispSheet
+	resource GreenVineSheet, BattleEffectGreenVineSheet
+	resource PortalSheet, BattleEffectPortalSheet
+	resource SheepSheet, BattleEffectSheepSheet
+	resource SkullSheet, BattleEffectSkullSheet
+	resource HeartSheet, BattleEffectHeartSheet
+	resource ReaperSheet, BattleEffectReaperSheet
+	resource RedCrescentSheetA, BattleEffectRedCrescentSheetA
+	resource BlueBeastSheet, BattleEffectBlueBeastSheet
+	resource RedCrescentSheetB, BattleEffectRedCrescentSheetB
+	resource SpiralSheet, BattleEffectSpiralSheet
+	resource VioletStreakSheet, BattleEffectVioletStreakSheet
+	resource CrescentMoonSheet, BattleEffectCrescentMoonSheet
+	resource ThornVineSheet, BattleEffectThornVineSheet
+	resource IceShardSheet, BattleEffectIceShardSheet
+	resource EmberStreakSheet, BattleEffectEmberStreakSheet
+	resource BlueArcSheetA, BattleEffectBlueArcSheetA
+	resource BlueArcSheetB, BattleEffectBlueArcSheetB
+	resource GlowOrbSheet, BattleEffectGlowOrbSheet
+	resource IceChipSheet, BattleEffectIceChipSheet
+	resource IceBlockSheet, BattleEffectIceBlockSheet
+	resource SparkleDots, BattleEffectSparkleDots
+	resource PinkBurstSheet, BattleEffectPinkBurstSheet
+	resource LightFanSheet, BattleEffectLightFanSheet
+	resource BlueBurstSheet, BattleEffectBlueBurstSheet
+	resource DustPuffSheet, BattleEffectDustPuffSheet
+	resource GoldShellSheet, BattleEffectGoldShellSheet
+	resource BlastSheet, BattleEffectBlastSheet
+	resource FlameSheetB, BattleEffectFlameSheetB
+	resource FirePillarSheetB, BattleEffectFirePillarSheetB
+	resource RockSpireSheet, BattleEffectRockSpireSheet
+	resource LightningBoltSheet, BattleEffectLightningBoltSheet
+	resource BeamImage, BattleEffectBeamImage
+	resource BlueDropletSheet, BattleEffectBlueDropletSheet
+	resource WindStreakSheet, BattleEffectWindStreakSheet
+	resource VenusStarFieldPalette, BattleEffectVenusStarFieldPalette
+	resource BlueRingSheet, BattleEffectBlueRingSheet
+	resource MarsStarFieldPalette, BattleEffectMarsStarFieldPalette
+	resource JupiterStarFieldPalette, BattleEffectJupiterStarFieldPalette
+	resource BlueBeamSheet, BattleEffectBlueBeamSheet
+	resource VortexSheet, BattleEffectVortexSheet
+	resource TornadoSheet, BattleEffectTornadoSheet
+	resource CrystalSheet, BattleEffectCrystalSheet
+	resource WaterSparkleSheet, BattleEffectWaterSparkleSheet
+	resource LightningPillarSheet, BattleEffectLightningPillarSheet
+	resource AtalantaPath, BattleEffectAtalantaPath
+	resource DragonCloudFlamePath, BattleEffectDragonCloudFlamePath
+	resource WorldMapPerspectiveTiles, FieldWorldMapPerspectiveTiles
+	resource DefaultGridMetatiles, FieldDefaultGridMetatiles
+	resource DefaultTileAnimation, FieldDefaultTileAnimation
+	resource DefaultMetatileTilesAttributes, FieldDefaultMetatileTilesAttributes
+	resource WorldMapPaletteA, WorldMapPaletteA
+	resource WorldMapTilesA, WorldMapTilesA
+	resource WorldMapTilesB, WorldMapTilesB
+	resource WorldMapTilesC, WorldMapTilesC
+	resource WorldMapTilesD, WorldMapTilesD
+	resource WorldMapTilesE, WorldMapTilesE
+	resource WorldMapPaletteB, WorldMapPaletteB
+	resource WorldMapTilesF, WorldMapTilesF
+	resource WorldMapTilesG, WorldMapTilesG
+	resource WorldMapTilesH, WorldMapTilesH
+	resource WorldMapTilesI, WorldMapTilesI
+	resource WorldMapTilesJ, WorldMapTilesJ
+	resource AzartOpponentPath, ColossoAzartOpponentPath
+	resource SatrageOpponentPath, ColossoSatrageOpponentPath
+	resource NavampaOpponentPath, ColossoNavampaOpponentPath
+	resource Lettering, ColossoLettering
+	resource MenuCursorPictures, MenuCursorPictureA
+	resource , MenuCursorPictureB
+	resource , MenuCursorPictureC
+	resource , MenuCursorPictureD
+	resource , MenuCursorPictureE
+	resource , MenuCursorPictureF
+	resource , MenuCursorPictureG
+	resource , MenuCursorPictureH
+	resource Icons, UiIcons
+	resource CommandIcons, UiCommandIcons
+	resource AxeGoblinSprites, MonsterAxeGoblinSprites
+	resource GhoulSprites, MonsterGhoulSprites
+	resource HarpySprites, MonsterHarpySprites
+	resource TrollSprites, MonsterTrollSprites
+	resource WitchSprites, MonsterWitchSprites
+	resource GriffinSprites, MonsterGriffinSprites
+	resource ShieldKnightSprites, MonsterShieldKnightSprites
+	resource OrcSprites, MonsterOrcSprites
+	resource ChimeraSprites, MonsterChimeraSprites
+	resource LivingArmorSprites, MonsterLivingArmorSprites
+	resource ManticoreSprites, MonsterManticoreSprites
+	resource OrcLordSprites, MonsterOrcLordSprites
+	resource GargoyleSprites, MonsterGargoyleSprites
+	resource LizardManSprites, MonsterLizardManSprites
+	resource OgreSprites, MonsterOgreSprites
+	resource TailedImpSprites, MonsterTailedImpSprites
+	resource WispGhostSprites, MonsterWispGhostSprites
+	resource SalamanderSprites, MonsterSalamanderSprites
+	resource AquaBeastSprites, MonsterAquaBeastSprites
+	resource HoundSprites, MonsterHoundSprites
+	resource BearSprites, MonsterBearSprites
+	resource SirenSprites, MonsterSirenSprites
+	resource BlueWispSprites, MonsterBlueWispSprites
+	resource MushroomSprites, MonsterMushroomSprites
+	resource RedWormSprites, MonsterRedWormSprites
+	resource FairySprites, MonsterFairySprites
+	resource BatSprites, MonsterBatSprites
+	resource SmallLizardSprites, MonsterSmallLizardSprites
+	resource WalkingPlantSprites, MonsterWalkingPlantSprites
+	resource FlySprites, MonsterFlySprites
+	resource CrabSprites, MonsterCrabSprites
+	resource SmallBirdSprites, MonsterSmallBirdSprites
+	resource MothSprites, MonsterMothSprites
+	resource FrogSprites, MonsterFrogSprites
+	resource ManedLionSprites, MonsterManedLionSprites
+	resource SerpentSprites, MonsterSerpentSprites
+	resource WingedDragonSprites, MonsterWingedDragonSprites
+	resource BlueMageSprites, MonsterBlueMageSprites
+	resource SkeletonSprites, MonsterSkeletonSprites
+	resource FlameSkullSprites, MonsterFlameSkullSprites
+	resource FireDragonSprites, MonsterFireDragonSprites
+	resource CrawlerSprites, MonsterCrawlerSprites
+	resource MimicSprites, MonsterMimicSprites
+	resource SeaBeastSprites, MonsterSeaBeastSprites
+	resource SpiritHorseSprites, MonsterSpiritHorseSprites
+	resource KrakenSprites, MonsterKrakenSprites
+	resource SlimeSprites, MonsterSlimeSprites
+	resource SaturosSprites, MonsterSaturosSprites
+	resource MenardiSprites, MonsterMenardiSprites
+	resource GhostHeadSprites, MonsterGhostHeadSprites
+	resource FusionDragonSprites, MonsterFusionDragonSprites
+	resource PurpleBeastSprites, MonsterPurpleBeastSprites
+	resource RedWarriorSprites, MonsterRedWarriorSprites
+	resource SwordGirlSprites, MonsterSwordGirlSprites
+	resource EmptyMap, FieldEmptyMap
+	.global MapResourceFieldEmptyMap
+	.equiv MapResourceFieldEmptyMap, 0
+	map_resource TilesetBlankPalette
+	map_resource TilesetBlankTilesA
+	map_resource TilesetBlankTilesB
+	map_resource TilesetBlankTilesC
+	map_resource TilesetBlankTilesD
+	map_resource FieldValePrologue
+	map_resource TilesetValeProloguePalette
+	map_resource TilesetValePrologueTilesA
+	map_resource TilesetValePrologueTilesB
+	map_resource TilesetValePrologueTilesC
+	map_resource TilesetValePrologueTilesD
+	map_resource FieldVale
+	map_resource TilesetValePalette
+	map_resource TilesetValeTilesA
+	map_resource TilesetValeTilesB
+	map_resource TilesetValeTilesC
+	map_resource TilesetValeTilesD
+	map_resource FieldValePlaza
+	map_resource TilesetValePlazaPalette
+	map_resource TilesetValePlazaTilesA
+	map_resource TilesetValePlazaTilesB
+	map_resource TilesetValePlazaTilesC
+	map_resource TilesetValePlazaTilesD
+	map_resource FieldValeKradensCottage
+	map_resource TilesetValeKradensCottagePalette
+	map_resource TilesetValeKradensCottageTilesA
+	map_resource TilesetValeKradensCottageTilesB
+	map_resource TilesetValeKradensCottageTilesC
+	map_resource TilesetValeKradensCottageTilesD
+	map_resource FieldCottageRoomsA
+	map_resource TilesetCottageRoomsAPalette
+	map_resource TilesetCottageRoomsATilesA
+	map_resource TilesetCottageRoomsATilesB
+	map_resource TilesetCottageRoomsATilesC
+	map_resource TilesetCottageRoomsATilesD
+	map_resource FieldCottageRoomsB
+	map_resource TilesetCottageRoomsBPalette
+	map_resource TilesetCottageRoomsBTilesA
+	map_resource TilesetCottageRoomsBTilesB
+	map_resource TilesetCottageRoomsBTilesC
+	map_resource TilesetCottageRoomsBTilesD
+	map_resource FieldSanctum
+	map_resource TilesetSanctumPalette
+	map_resource TilesetSanctumTilesA
+	map_resource TilesetSanctumTilesB
+	map_resource TilesetSanctumTilesC
+	map_resource TilesetSanctumTilesD
+	map_resource FieldSolEntrance
+	map_resource TilesetSolEntrancePalette
+	map_resource TilesetSolEntranceTilesA
+	map_resource TilesetSolEntranceTilesB
+	map_resource TilesetSolEntranceTilesC
+	map_resource TilesetSolEntranceTilesD
+	map_resource FieldSolSanctumLunaSolRooms
+	map_resource TilesetSolSanctumLunaSolRoomsPalette
+	map_resource TilesetSolSanctumLunaSolRoomsTilesA
+	map_resource TilesetSolSanctumLunaSolRoomsTilesB
+	map_resource TilesetSolSanctumLunaSolRoomsTilesC
+	map_resource TilesetSolSanctumLunaSolRoomsTilesD
+	map_resource FieldSolSanctumStatue
+	map_resource TilesetSolSanctumStatuePalette
+	map_resource TilesetSolSanctumStatueTilesA
+	map_resource TilesetSolSanctumStatueTilesB
+	map_resource TilesetSolSanctumStatueTilesC
+	map_resource FieldSolSanctumPsynergyStone
+	map_resource TilesetSolSanctumPsynergyStonePalette
+	map_resource TilesetSolSanctumPsynergyStoneTilesA
+	map_resource TilesetSolSanctumPsynergyStoneTilesB
+	map_resource TilesetSolSanctumPsynergyStoneTilesC
+	map_resource TilesetSolSanctumPsynergyStoneTilesD
+	map_resource FieldSolSanctumMaze
+	map_resource FieldSolSanctumCorridor
+	map_resource TilesetSolSanctumCorridorPalette
+	map_resource TilesetSolSanctumCorridorTilesA
+	map_resource TilesetSolSanctumCorridorTilesB
+	map_resource TilesetSolSanctumCorridorTilesC
+	map_resource TilesetSolSanctumCorridorTilesD
+	map_resource FieldSolSanctumElementalStarRoom
+	map_resource TilesetSolSanctumElementalStarRoomPalette
+	map_resource TilesetSolSanctumElementalStarRoomTilesA
+	map_resource TilesetSolSanctumElementalStarRoomTilesB
+	map_resource TilesetSolSanctumElementalStarRoomTilesC
+	map_resource TilesetSolSanctumElementalStarRoomTilesD
+	map_resource FieldSolSanctumEruption
+	map_resource TilesetSolSanctumEruptionPalette
+	map_resource TilesetSolSanctumEruptionTilesA
+	map_resource TilesetSolSanctumEruptionTilesB
+	map_resource TilesetSolSanctumEruptionTilesC
+	map_resource TilesetSolSanctumEruptionTilesD
+	map_resource FieldSolSanctumReliefs
+	map_resource TilesetPaletteSolSanctumReliefs
+	map_resource FieldVault
+	map_resource TilesetVaultPalette
+	map_resource TilesetVaultTilesA
+	map_resource TilesetVaultTilesB
+	map_resource TilesetVaultTilesC
+	map_resource TilesetVaultTilesD
+	map_resource FieldVaultLogRooms
+	map_resource TilesetVaultLogRoomsPalette
+	map_resource TilesetVaultLogRoomsTilesA
+	map_resource TilesetVaultLogRoomsTilesB
+	map_resource TilesetVaultLogRoomsTilesC
+	map_resource TilesetVaultLogRoomsTilesD
+	map_resource FieldStoneRooms
+	map_resource TilesetStoneRoomsPalette
+	map_resource TilesetStoneRoomsTilesA
+	map_resource TilesetStoneRoomsTilesB
+	map_resource TilesetStoneRoomsTilesC
+	map_resource TilesetStoneRoomsTilesD
+	map_resource FieldGomaCaveEntrance
+	map_resource TilesetGomaCaveEntrancePalette
+	map_resource TilesetGomaCaveEntranceTilesA
+	map_resource TilesetGomaCaveEntranceTilesB
+	map_resource TilesetGomaCaveEntranceTilesC
+	map_resource TilesetGomaCaveEntranceTilesD
+	map_resource FieldGomaCavePond
+	map_resource TilesetGomaCavePondPalette
+	map_resource TilesetGomaCavePondTilesA
+	map_resource TilesetGomaCavePondTilesB
+	map_resource TilesetGomaCavePondTilesC
+	map_resource TilesetGomaCavePondTilesD
+	map_resource FieldGomaCavePillar
+	map_resource TilesetGomaCavePillarPalette
+	map_resource TilesetGomaCavePillarTilesA
+	map_resource TilesetGomaCavePillarTilesB
+	map_resource TilesetGomaCavePillarTilesC
+	map_resource TilesetGomaCavePillarTilesD
+	map_resource FieldGomaCaveStream
+	map_resource FieldGomaCaveBridge
+	map_resource FieldVaultCavePassage
+	map_resource TilesetVaultCavePassagePalette
+	map_resource TilesetVaultCavePassageTilesA
+	map_resource TilesetVaultCavePassageTilesB
+	map_resource TilesetVaultCavePassageTilesC
+	map_resource TilesetVaultCavePassageTilesD
+	map_resource FieldVaultCaveVambrace
+	map_resource FieldVaultCaveMouth
+	map_resource FieldValeCaveMouth
+	map_resource TilesetValeCaveMouthPalette
+	map_resource TilesetValeCaveMouthTilesA
+	map_resource TilesetValeCaveMouthTilesB
+	map_resource TilesetValeCaveMouthTilesC
+	map_resource TilesetValeCaveMouthTilesD
+	map_resource FieldValeCaveKite
+	map_resource TilesetValeCaveKitePalette
+	map_resource TilesetValeCaveKiteTilesA
+	map_resource TilesetValeCaveKiteTilesB
+	map_resource TilesetValeCaveKiteTilesC
+	map_resource FieldValeCaveLogs
+	map_resource FieldBilibin
+	map_resource TilesetBilibinPalette
+	map_resource TilesetBilibinTilesA
+	map_resource TilesetBilibinTilesB
+	map_resource TilesetBilibinTilesC
+	map_resource TilesetBilibinTilesD
+	map_resource FieldCottageRoomsC
+	map_resource TilesetCottageRoomsCPalette
+	map_resource TilesetCottageRoomsCTilesA
+	map_resource TilesetCottageRoomsCTilesB
+	map_resource FieldBilibinTreasury
+	map_resource TilesetBilibinTreasuryPalette
+	map_resource TilesetBilibinTreasuryTilesA
+	map_resource FieldBilibinBarricade
+	map_resource TilesetBilibinBarricadePalette
+	map_resource TilesetBilibinBarricadeTilesA
+	map_resource TilesetBilibinBarricadeTilesB
+	map_resource TilesetBilibinBarricadeTilesC
+	map_resource FieldMcCoyPalaceGrounds
+	map_resource TilesetMccoyPalaceGroundsPalette
+	map_resource TilesetMccoyPalaceGroundsTilesA
+	map_resource TilesetMccoyPalaceGroundsTilesB
+	map_resource TilesetMccoyPalaceGroundsTilesC
+	map_resource TilesetMccoyPalaceGroundsTilesD
+	map_resource FieldMcCoyPalace
+	map_resource TilesetMccoyPalacePalette
+	map_resource TilesetMccoyPalaceTilesA
+	map_resource TilesetMccoyPalaceTilesB
+	map_resource TilesetMccoyPalaceTilesC
+	map_resource TilesetMccoyPalaceTilesD
+	map_resource FieldKolima
+	map_resource TilesetKolimaPalette
+	map_resource TilesetKolimaTilesA
+	map_resource TilesetKolimaTilesB
+	map_resource TilesetKolimaTilesC
+	map_resource TilesetKolimaTilesD
+	map_resource FieldLogRoomsC
+	map_resource TilesetLogRoomsCPalette
+	map_resource TilesetLogRoomsCTilesA
+	map_resource FieldKolimaBridge
+	map_resource TilesetKolimaBridgePalette
+	map_resource TilesetKolimaBridgeTilesA
+	map_resource TilesetKolimaBridgeTilesB
+	map_resource TilesetKolimaBridgeTilesC
+	map_resource TilesetKolimaBridgeTilesD
+	map_resource FieldKolimaTunnel
+	map_resource TilesetPaletteKolimaTunnel
+	map_resource FieldKolimaForestEntrance
+	map_resource TilesetKolimaForestPalette
+	map_resource TilesetKolimaForestTilesA
+	map_resource TilesetKolimaForestTilesB
+	map_resource TilesetKolimaForestTilesC
+	map_resource TilesetKolimaForestTilesD
+	map_resource FieldKolimaForestGlade
+	map_resource TilesetKolimaForestGladePalette
+	map_resource TilesetKolimaForestGladeTilesA
+	map_resource FieldKolimaForestCliff
+	map_resource TilesetPaletteKolimaForestCliff
+	map_resource FieldKolimaForestFloodgate
+	map_resource TilesetKolimaForestFloodgatePalette
+	map_resource TilesetKolimaForestFloodgateTilesA
+	map_resource TilesetKolimaForestFloodgateTilesB
+	map_resource TilesetKolimaForestFloodgateTilesC
+	map_resource TilesetKolimaForestFloodgateTilesD
+	map_resource FieldKolimaForestTree
+	map_resource TilesetKolimaForestTreePalette
+	map_resource TilesetKolimaForestTreeTilesA
+	map_resource TilesetKolimaForestTreeTilesB
+	map_resource TilesetKolimaForestTreeTilesC
+	map_resource TilesetKolimaForestTreeTilesD
+	map_resource FieldTreeRooms
+	map_resource TilesetTreeRoomsPalette
+	map_resource TilesetTreeRoomsTilesA
+	map_resource TilesetTreeRoomsTilesB
+	map_resource TilesetTreeRoomsTilesC
+	map_resource TilesetTreeRoomsTilesD
+	map_resource FieldTretTreeBranch
+	map_resource TilesetTretTreeBranchPalette
+	map_resource TilesetTretTreeBranchTilesA
+	map_resource TilesetTretTreeBranchTilesB
+	map_resource TilesetTretTreeBranchTilesC
+	map_resource TilesetTretTreeBranchTilesD
+	map_resource FieldBilibinCaveEntrance
+	map_resource TilesetBilibinCaveEntrancePalette
+	map_resource TilesetBilibinCaveEntranceTilesA
+	map_resource FieldBilibinCaveRapier
+	map_resource TilesetBilibinCaveRapierPalette
+	map_resource TilesetBilibinCaveRapierTilesA
+	map_resource FieldBilibinCaveIce
+	map_resource TilesetBilibinCaveIcePalette
+	map_resource TilesetBilibinCaveIceTilesA
+	map_resource FieldImil
+	map_resource TilesetImilPalette
+	map_resource TilesetImilTilesA
+	map_resource TilesetImilTilesB
+	map_resource TilesetImilTilesC
+	map_resource TilesetImilTilesD
+	map_resource FieldIceRooms
+	map_resource TilesetIceRoomsPalette
+	map_resource TilesetIceRoomsTilesA
+	map_resource TilesetIceRoomsTilesB
+	map_resource TilesetIceRoomsTilesC
+	map_resource TilesetIceRoomsTilesD
+	map_resource FieldImilFallsCave
+	map_resource FieldMercuryLighthouseEntrance
+	map_resource TilesetMercuryLighthouseEntrancePalette
+	map_resource TilesetMercuryLighthouseEntranceTilesA
+	map_resource TilesetMercuryLighthouseEntranceTilesB
+	map_resource TilesetMercuryLighthouseEntranceTilesC
+	map_resource TilesetMercuryLighthouseEntranceTilesD
+	map_resource FieldMercuryLighthouseLower
+	map_resource FieldMercuryLighthouseMiddle
+	map_resource FieldMercuryLighthouseUpper
+	map_resource FieldMercuryLighthouseExterior
+	map_resource FieldMercuryLighthouseAerie
+	map_resource FieldFuchinTempleGrounds
+	map_resource TilesetMercuryLighthousePalette
+	map_resource TilesetMercuryLighthouseTilesA
+	map_resource FieldLacquerRoomsA
+	map_resource TilesetLacquerRoomsAPalette
+	map_resource TilesetLacquerRoomsATilesA
+	map_resource TilesetLacquerRoomsATilesB
+	map_resource TilesetLacquerRoomsATilesC
+	map_resource TilesetLacquerRoomsATilesD
+	map_resource FieldFuchinFallsCaveEntrance
+	map_resource TilesetPaletteFuchinFallsCave
+	map_resource FieldFuchinFallsCaveZephyr
+	map_resource FieldFuchinFallsCaveDragonsEye
+	map_resource FieldFuchinFallsCaveArcticBlade
+	map_resource FieldFuchinFallsCaveOrbOfForce
+	map_resource FieldFuchinFallsCaveDragonStatue
+	map_resource FieldMogallForestSign
+	map_resource TilesetMogallForestPalette
+	map_resource TilesetMogallForestTilesA
+	map_resource TilesetMogallForestTilesB
+	map_resource TilesetMogallForestTilesC
+	map_resource TilesetMogallForestTilesD
+	map_resource FieldMogallForestQuartz
+	map_resource FieldMogallForestKillerApe
+	map_resource FieldMogallForestSidePaths
+	map_resource FieldXian
+	map_resource FieldLacquerRoomsB
+	map_resource TilesetLacquerRoomsBPalette
+	map_resource TilesetLacquerRoomsBTilesA
+	map_resource TilesetLacquerRoomsBTilesB
+	map_resource TilesetLacquerRoomsBTilesC
+	map_resource TilesetLacquerRoomsBTilesD
+	map_resource FieldAlpineCrossing
+	map_resource TilesetPaletteAlpineCrossing
+	map_resource FieldAltin
+	map_resource TilesetAltinPalette
+	map_resource TilesetAltinTilesA
+	map_resource TilesetAltinTilesB
+	map_resource TilesetAltinTilesC
+	map_resource TilesetAltinTilesD
+	map_resource FieldCottageRoomsD
+	map_resource TilesetCottageRoomsDPalette
+	map_resource TilesetCottageRoomsDTilesA
+	map_resource FieldAltinPeakFirstWaterBeast
+	map_resource TilesetPaletteAltinPeak
+	map_resource FieldAltinPeakRailTunnel
+	map_resource FieldAltinPeakSecondWaterBeast
+	map_resource FieldAltinPeakSouthEntrance
+	map_resource FieldAltinPeakThirdWaterBeast
+	map_resource FieldAltinPeakPool
+	map_resource FieldAltinPeakSpritz
+	map_resource FieldAltinPeakJunction
+	map_resource FieldAltinPeakFallingRocks
+	map_resource FieldAltinPeakHydrosStatue
+	map_resource TilesetPaletteAltinPeakHydrosStatue
+	map_resource FieldAltinPeakWestExit
+	map_resource FieldLamakanDesertCave
+	map_resource TilesetPaletteLamakanDesertCave
+	map_resource FieldLamaTemple
+	map_resource FieldLamakanDesertEast
+	map_resource TilesetLamakanDesertEastPalette
+	map_resource TilesetLamakanDesertEastTilesA
+	map_resource TilesetLamakanDesertEastTilesB
+	map_resource TilesetLamakanDesertEastTilesC
+	map_resource TilesetLamakanDesertEastTilesD
+	map_resource FieldLamakanDesertSmog
+	map_resource FieldLamakanDesertManticore
+	map_resource FieldKalay
+	map_resource TilesetKalayPalette
+	map_resource TilesetKalayTilesA
+	map_resource TilesetKalayTilesB
+	map_resource TilesetKalayTilesC
+	map_resource TilesetKalayTilesD
+	map_resource FieldStuccoRoomsA
+	map_resource TilesetStuccoRoomsAPalette
+	map_resource TilesetStuccoRoomsATilesA
+	map_resource TilesetStuccoRoomsATilesB
+	map_resource TilesetStuccoRoomsATilesC
+	map_resource TilesetStuccoRoomsATilesD
+	map_resource FieldKalaySanctum
+	map_resource FieldHammetPalaceGrounds
+	map_resource FieldHammetPalace
+	map_resource TilesetPaletteHammetPalace
+	map_resource FieldLunpa
+	map_resource TilesetLunpaPalette
+	map_resource TilesetLunpaTilesA
+	map_resource TilesetLunpaTilesB
+	map_resource FieldRockRooms
+	map_resource TilesetPaletteRockRooms
+	map_resource FieldWestLunpaCave
+	map_resource TilesetPaletteWestLunpaCave
+	map_resource FieldKalayDocks
+	map_resource TilesetKalayDocksPalette
+	map_resource TilesetKalayDocksTilesA
+	map_resource TilesetKalayDocksTilesB
+	map_resource TilesetKalayDocksTilesC
+	map_resource FieldCottageRoomsE
+	map_resource TilesetCottageRoomsEPalette
+	map_resource TilesetCottageRoomsETilesA
+	map_resource FieldTolbiShipDeck
+	map_resource TilesetTolbiShipDeckPalette
+	map_resource TilesetTolbiShipDeckTilesA
+	map_resource TilesetTolbiShipDeckTilesB
+	map_resource TilesetTolbiShipDeckTilesC
+	map_resource TilesetTolbiShipDeckTilesD
+	map_resource FieldTolbiShipMast
+	map_resource TilesetPaletteTolbiShipMast
+	map_resource FieldShipRooms
+	map_resource TilesetShipRoomsPalette
+	map_resource TilesetShipRoomsTilesA
+	map_resource TilesetShipRoomsTilesB
+	map_resource TilesetShipRoomsTilesC
+	map_resource TilesetShipRoomsTilesD
+	map_resource FieldTolbiDocks
+	map_resource TilesetPaletteTolbiDocks
+	map_resource FieldCrossboneIsle
+	map_resource TilesetPaletteCrossboneIsle
+	map_resource FieldBabiLighthouseRooms
+	map_resource TilesetBabiLighthousePalette
+	map_resource TilesetBabiLighthouseTilesA
+	map_resource TilesetBabiLighthouseTilesB
+	map_resource TilesetBabiLighthouseTilesC
+	map_resource TilesetBabiLighthouseTilesD
+	map_resource FieldCrossboneIsleIcePillars
+	map_resource TilesetPaletteCrossboneIsleIcePillars
+	map_resource FieldCrossboneIsleKeysAndBane
+	map_resource TilesetPaletteCrossboneIsleKeys
+	map_resource FieldCrossboneIsleStatues
+	map_resource TilesetPaletteCrossboneIsleStatues
+	map_resource FieldCrossboneIsleFloodgate
+	map_resource TilesetPaletteCrossboneIsleFloodgate
+	map_resource TilesetPaletteCrossboneIsleBane
+	map_resource FieldCrossboneIsleStackedPillars
+	map_resource TilesetPaletteCrossboneIsleStackedPillars
+	map_resource FieldCrossboneIsleDragonStatue
+	map_resource TilesetPaletteCrossboneIsleDragonStatue
+	map_resource FieldCrossboneIsleFloatingLogs
+	map_resource TilesetPaletteCrossboneIsleFloatingLogs
+	map_resource FieldCrossboneIslePier
+	map_resource TilesetPaletteCrossboneIslePier
+	map_resource FieldPirateShip
+	map_resource TilesetPalettePirateShip
+	map_resource FieldCrossboneIsleCave
+	map_resource TilesetPaletteCrossboneIsleCave
+	map_resource FieldTolbi
+	map_resource TilesetPaletteTolbi
+	map_resource FieldStuccoRoomsB
+	map_resource TilesetPaletteStuccoRooms
+	map_resource FieldStuccoRoomsC
+	map_resource FieldBabiPalaceEntrance
+	map_resource TilesetPaletteBabiPalaceEntrance
+	map_resource FieldBabiPalace
+	map_resource TilesetPaletteBabiPalace
+	map_resource FieldColosseumTunnel
+	map_resource TilesetColosseumTunnelPalette
+	map_resource TilesetColosseumTunnelTilesA
+	map_resource TilesetColosseumTunnelTilesB
+	map_resource TilesetColosseumTunnelTilesC
+	map_resource TilesetColosseumTunnelTilesD
+	map_resource FieldColosseum
+	map_resource TilesetPaletteColosseum
+	map_resource FieldColosseumEntrance
+	map_resource TilesetPaletteColosseumEntrance
+	map_resource FieldColosseumAzartMatch
+	map_resource TilesetColosseumAzartMatchPalette
+	map_resource TilesetColosseumAzartMatchTilesA
+	map_resource TilesetColosseumAzartMatchTilesB
+	map_resource TilesetColosseumAzartMatchTilesC
+	map_resource TilesetColosseumAzartMatchTilesD
+	map_resource FieldColosseumSatrageMatch
+	map_resource TilesetColosseumSatrageMatchPalette
+	map_resource TilesetColosseumSatrageMatchTilesA
+	map_resource TilesetColosseumSatrageMatchTilesB
+	map_resource TilesetColosseumSatrageMatchTilesC
+	map_resource TilesetColosseumSatrageMatchTilesD
+	map_resource FieldColosseumNavampaMatch
+	map_resource TilesetColosseumNavampaMatchPalette
+	map_resource TilesetColosseumNavampaMatchTilesA
+	map_resource TilesetColosseumNavampaMatchTilesB
+	map_resource TilesetColosseumNavampaMatchTilesC
+	map_resource TilesetColosseumNavampaMatchTilesD
+	map_resource FieldAltmillerCaveEntrance
+	map_resource TilesetPaletteAltmillerCaveEntrance
+	map_resource FieldAltmillerCaveBabi
+	map_resource FieldAltmillerCaveVialChest
+	map_resource FieldAltmillerCaveSquall
+	map_resource TilesetPaletteAltmillerCave
+	map_resource FieldAltmillerCaveCookieChest
+	map_resource FieldAltmillerCaveDraught
+	map_resource FieldGondowanPassage
+	map_resource TilesetPaletteGondowanPassage
+	map_resource FieldGondowanCaveRiver
+	map_resource TilesetPaletteGondowanCave
+	map_resource FieldGondowanCave
+	map_resource FieldLunpaFortressGates
+	map_resource TilesetPaletteLunpaFortressGates
+	map_resource FieldLunpaFortressGroundFloor
+	map_resource TilesetPaletteLunpaFortress
+	map_resource FieldLunpaFortressUpperFloor
+	map_resource FieldLunpaFortressCave
+	map_resource FieldLunpaFortressToadonpa
+	map_resource FieldKalayTunnelEntrance
+	map_resource TilesetPaletteKalayTunnelEntrance
+	map_resource FieldKalayTunnelCave
+	map_resource TilesetPaletteKalayTunnelCave
+	map_resource FieldKalayTunnelPassage
+	map_resource TilesetKalayTunnelPalette
+	map_resource TilesetKalayTunnelTilesA
+	map_resource FieldKalayTunnelTreasureRoom
+	map_resource FieldSuhallaDesertNorth
+	map_resource TilesetPaletteSuhallaDesert
+	map_resource FieldSuhallaDesertSouth
+	map_resource FieldSuhallaDesertCaves
+	map_resource TilesetPaletteSuhallaDesertCaves
+	map_resource FieldSuhalla
+	map_resource TilesetSuhallaPalette
+	map_resource TilesetSuhallaTilesA
+	map_resource TilesetSuhallaTilesB
+	map_resource TilesetSuhallaTilesC
+	map_resource TilesetSuhallaTilesD
+	map_resource FieldTimberRoomsA
+	map_resource TilesetTimberRoomsPalette
+	map_resource TilesetTimberRoomsTilesA
+	map_resource TilesetTimberRoomsTilesB
+	map_resource TilesetTimberRoomsTilesC
+	map_resource TilesetTimberRoomsTilesD
+	map_resource FieldSuhallaGateCheckpoint
+	map_resource TilesetPaletteSuhallaGate
+	map_resource FieldSuhallaGateDew
+	map_resource FieldGatewayCave
+	map_resource TilesetPaletteGatewayCave
+	map_resource FieldTunnelRuinsGreatStatue
+	map_resource TilesetPaletteTunnelRuins
+	map_resource FieldTunnelRuinsLadyStatues
+	map_resource FieldBabiLighthouseEntry
+	map_resource TilesetPaletteBabiLighthouseEntry
+	map_resource TilesetPaletteBabiLighthouseLuff
+	map_resource FieldBabiLighthouseStoneDoor
+	map_resource TilesetPaletteBabiLighthouseStoneDoor
+	map_resource FieldLalivero
+	map_resource TilesetPaletteLalivero
+	map_resource FieldTimberRoomsB
+	map_resource TilesetPaletteTimberRooms
+	map_resource FieldTimberRoomsC
+	map_resource FieldRoadToBabiLighthouse
+	map_resource FieldVenusEntrance
+	map_resource TilesetPaletteVenusEntrance
+	map_resource FieldVenusLighthouseGroundFloor
+	map_resource TilesetPaletteVenusLighthouseGroundFloor
+	map_resource FieldVenusLighthouseFirstFloor
+	map_resource TilesetPaletteVenusLighthouse
+	map_resource FieldVenusLighthouseSecondFloor
+	map_resource FieldVenusLighthouseThirdFloor
+	map_resource FieldVenusLighthouseFourthFloor
+	map_resource FieldVenusLighthouseAerie
+	map_resource TilesetPaletteVenusLighthouseAerie
+	map_resource FieldLemurianShip
+	map_resource TilesetLemurianShipPalette
+	map_resource TilesetLemurianShipTilesA
+	map_resource TilesetLemurianShipTilesB
+	map_resource TilesetLemurianShipTilesC
+	map_resource TilesetLemurianShipTilesD
+	map_resource FieldTolbiSpring
+	map_resource TilesetTolbiSpringPalette
+	map_resource TilesetTolbiSpringTilesA
+	map_resource TilesetTolbiSpringTilesB
+	map_resource TilesetTolbiSpringTilesC
+	map_resource TilesetTolbiSpringTilesD
+	map_resource FieldBattleArena
+	map_resource TilesetPaletteBattleArena
+	map_resource FieldTest0
+	map_resource TilesetTest0Palette
+	map_resource TilesetTest0TilesA
+	map_resource TilesetTest0TilesB
+	map_resource TilesetTest0TilesC
+	map_resource TilesetTest0TilesD
+	map_resource FieldTest1
+	map_resource TilesetTest1Palette
+	map_resource TilesetTest1TilesA
+	map_resource TilesetTest1TilesB
+	map_resource TilesetTest1TilesC
+	map_resource TilesetTest1TilesD
+	map_resource FieldTest2
+	map_resource TilesetTest2Palette
+	map_resource TilesetTest2TilesA
+	map_resource TilesetTest2TilesB
+	map_resource TilesetTest2TilesC
+	map_resource TilesetTest2TilesD
+	map_resource FieldTest3
+	map_resource TilesetTest3Palette
+	map_resource TilesetTest3TilesA
+	map_resource TilesetTest3TilesB
+	map_resource TilesetTest3TilesC
+	map_resource TilesetTest3TilesD
+	map_resource FieldTest4
+	map_resource TilesetTest4Palette
+	map_resource TilesetTest4TilesA
+	map_resource TilesetTest4TilesB
+	map_resource TilesetTest4TilesC
+	map_resource TilesetTest4TilesD
+	map_resource FieldTest5
+	map_resource TilesetTest5Palette
+	map_resource TilesetTest5TilesA
+	map_resource TilesetTest5TilesB
+	map_resource TilesetTest5TilesC
+	map_resource TilesetTest5TilesD
+	map_resource FieldTest6
+	map_resource TilesetTest6Palette
+	map_resource TilesetTest6TilesA
+	map_resource TilesetTest6TilesB
+	map_resource TilesetTest6TilesC
+	map_resource TilesetTest6TilesD
+	map_resource FieldTest7
+	map_resource TilesetTest7Palette
+	map_resource TilesetTest7TilesA
+	map_resource TilesetTest7TilesB
+	map_resource TilesetTest7TilesC
+	map_resource TilesetTest7TilesD
 	overlay Title
 	overlay FileScreen
 	overlay WorldMap
@@ -1039,8 +1039,8 @@ syResourceDirectoryTable:
 
 @ When the edition was built: year, month, day, hour, minute and second, two
 @ digits each. gmBuildStampGetTime reads its digits.
-	.global Resource_BuildStamp
-Resource_BuildStamp:
+	.global ResourceBuildStamp
+ResourceBuildStamp:
 	.ifdef TBS_EDITION_JA
 	.asciz "010628184502\n"
 	.endif

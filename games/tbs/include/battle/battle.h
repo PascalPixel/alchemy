@@ -19,7 +19,7 @@ struct ACTOR;
    (battle_tables.c). */
 extern const Sint8 BattlePlacementSpots[];
 /* Each weapon's kind: bits 15..9 the kind, which indexes the
-   BattleUnit_WeaponAnimations tables, and 8..0 the item id; ended by 0xffff
+   BattleUnitWeaponAnimations tables, and 8..0 the item id; ended by 0xffff
    (btUnitGetWeaponKind). */
 extern const Uint16 BattleUnitWeaponKinds[];
 
@@ -110,12 +110,12 @@ extern const struct BATTLE_SIDE_ORDER BattleTurnEndSideOrder;
 extern const Sint32 BattleObjectEmptyScript[];
 /* The advance arrow beside a battle message: eight 128-byte pictures of a
    256-colour sprite, one every four ticks. */
-extern Uint8 BattleMessage_AdvanceArrowTiles[];
+extern Uint8 BattleMessageAdvanceArrowTiles[];
 /* The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each. */
-extern const Uint8 BattleTransition_CurtainTiles[];
+extern const Uint8 BattleTransitionCurtainTiles[];
 /* Eight curtain tiles, 32 bytes each, of which the transition copies one at a
    time into the curtain's first tile. */
-extern const Uint8 BattleTransition_CurtainVariants[];
+extern const Uint8 BattleTransitionCurtainVariants[];
 /* Garet's weapon sprite by weapon kind (btUnitGetWeaponSpr). */
 extern const Uint16 BattleUnitWeaponAnimationsGaret[];
 /* Ivan's weapon sprite by weapon kind. */
@@ -127,7 +127,7 @@ extern const Uint16 BattleUnitWeaponAnimationsJenna[];
 /* The size of btBitDecoderDecodeImage, which btBackgroundLoad copies to
    HEAP_SLOT_RAM_CODE_TEMP; ld_script.ld defines it as an address equal to the
    size. */
-extern Uint8 BitDecoder_Size[];
+extern Uint8 BitDecoderSize[];
 /* The extra matrix the battle camera's projection applies first while commands
    are chosen (FLAG_CHOOSING_COMMANDS), in 16.16 words. */
 extern const FIXED BattleCameraCommandMatrix[];

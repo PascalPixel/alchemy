@@ -1,6 +1,6 @@
 /* Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-   Karagol Sea, and the cottage at each (SceneId_KalayDocks, SceneId_TolbiDocks
-   and SceneId_CottageRoomsE, the rooms map that holds both cottages' rooms).
+   Karagol Sea, and the cottage at each (SceneIdKalayDocks, SceneIdTolbiDocks
+   and SceneIdCottageRoomsE, the rooms map that holds both cottages' rooms).
    The three scenes share one overlay.
 
    What is there changes three times: when the Colosso tour group has left Kalay

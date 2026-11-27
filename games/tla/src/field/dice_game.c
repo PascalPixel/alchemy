@@ -139,7 +139,7 @@ Sint32 fdSuperLuckyDiceStart(void)
    to 147/256 of a turn and 510 pixels away, following nothing. */
 void fdSuperLuckyDiceResetViewDefaults(void)
 {
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	Sint32		   ofs[3];
 	Uint32		   nearPlane;
 
@@ -245,7 +245,7 @@ Sint32 fdSuperLuckyDiceDrawNum(
 	Sint32	  i;
 	Sint32	  k;
 
-	sprs = (DICE_SPR *)Ram_HeapSlots->canvasMap;
+	sprs = (DICE_SPR *)RamHeapSlots->canvasMap;
 	started = 0;
 	x -= digits * 10;
 	for(i = 0; i != digits; i++) {
@@ -280,7 +280,7 @@ Sint32 fdSuperLuckyDiceDrawLargeNum(
 	Sint32	  i;
 	Sint32	  k;
 
-	sprs = (DICE_SPR *)Ram_HeapSlots->canvasMap;
+	sprs = (DICE_SPR *)RamHeapSlots->canvasMap;
 	started = 0;
 	for(i = 0; i != digits; i++) {
 		digit = value;

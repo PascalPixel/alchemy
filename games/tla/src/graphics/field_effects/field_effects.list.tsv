@@ -1,43 +1,43 @@
 name	file	section	align	left	pad	edition
-FieldEffect_SparkTiles	spark.4bpp32x16					
-FieldEffect_ArcSparkTiles	arc_spark.4bpp32x16					
-FieldEffect_GlowDisc	glow_disc.8bpp.lz	a				
-FieldEffect_RingOrb	ring_orb.8bpp.lz	a				
-FieldEffect_RingArcs	ring_arcs.8bpp.lz	a				
-FieldEffect_RedFlameBurst	red_flame_burst.8bpp.lz	a				
-FieldEffect_VioletFlameBurst	violet_flame_burst.8bpp.lz	a		05		
-FieldEffect_YellowFlameBurst	yellow_flame_burst.8bpp.lz	a		50		
-FieldEffect_BlueFlameBurst	blue_flame_burst.8bpp.lz	a		27		
-FieldEffect_Leaves	leaves.8bpp.lz	a		08d7		
-FieldEffect_DustPuffA	dust_puff.8bpp.lz	a				
-FieldEffect_DustPuffB	dust_puff.8bpp.lz	a				
-FieldEffect_UnusedFillingBox	unused_filling_box.4bpp16x16.lz	a		88		
-FieldEffect_GoldStar	gold_star.8bpp.lz	a		3e		
-FieldEffect_GoldCrystal	gold_crystal.8bpp.lz	a		c7b9		
-FieldEffect_FlamingArrow	flaming_arrow.8bpp.lz	a				
-FieldEffect_BowDraw	bow_draw.8bpp.lz	a		68ea		
-FieldEffect_Explosion	explosion.4bpp16x16.lz	a				
-FieldEffect_ScoopEarth	scoop_earth.bitmap.lz	a		592f		
-FieldEffect_SparkleFade	sparkle_fade.8bpp.lz	a				
-FieldEffect_RingWaves	ring_waves.4bpp16x16.lz	b				
-FieldEffect_ShakeTiles	shake_tiles.4bpp.lz	b		9f42		
-FieldEffect_FallingRock	falling_rock.8bpp.lz	c		de472f		
-FieldEffect_WaterSplash	water_splash.8bpp.lz	c		1b3e01		
-FieldEffect_IceShard	ice_shard.8bpp.lz	c		08		
-FieldEffect_WhiteSparkle	white_sparkle.8bpp.lz	c		d2e2		
-FieldEffect_Runes	runes.8bpp.lz	c			4	
-FieldEffect_Pebbles	pebbles.8bpp.lz	c		49		
-FieldEffect_GoldenTrident	golden_trident.8bpp.lz	c				
-FieldEffect_FireColumn	fire_column.8bpp.lz	c		eed3		
-FieldEffect_StarSparkleFade	star_sparkle_fade.8bpp.lz	d			4	ja
-FieldEffect_StarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		en
-FieldEffect_StarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		de
-FieldEffect_StarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		es
-FieldEffect_StarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		fr
-FieldEffect_StarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		it
-FieldEffect_WhitePuff	white_puff.8bpp.lz	d		000b		ja
-FieldEffect_WhitePuff	white_puff.8bpp.lz	d		1240		en
-FieldEffect_WhitePuff	white_puff.8bpp.lz	d		1240		de
-FieldEffect_WhitePuff	white_puff.8bpp.lz	d		1240		es
-FieldEffect_WhitePuff	white_puff.8bpp.lz	d		1240		fr
-FieldEffect_WhitePuff	white_puff.8bpp.lz	d		1240		it
+FieldEffectSparkTiles	spark.4bpp32x16					
+FieldEffectArcSparkTiles	arc_spark.4bpp32x16					
+FieldEffectGlowDisc	glow_disc.8bpp.lz	a				
+FieldEffectRingOrb	ring_orb.8bpp.lz	a				
+FieldEffectRingArcs	ring_arcs.8bpp.lz	a				
+FieldEffectRedFlameBurst	red_flame_burst.8bpp.lz	a				
+FieldEffectVioletFlameBurst	violet_flame_burst.8bpp.lz	a		05		
+FieldEffectYellowFlameBurst	yellow_flame_burst.8bpp.lz	a		50		
+FieldEffectBlueFlameBurst	blue_flame_burst.8bpp.lz	a		27		
+FieldEffectLeaves	leaves.8bpp.lz	a		08d7		
+FieldEffectDustPuffA	dust_puff.8bpp.lz	a				
+FieldEffectDustPuffB	dust_puff.8bpp.lz	a				
+FieldEffectUnusedFillingBox	unused_filling_box.4bpp16x16.lz	a		88		
+FieldEffectGoldStar	gold_star.8bpp.lz	a		3e		
+FieldEffectGoldCrystal	gold_crystal.8bpp.lz	a		c7b9		
+FieldEffectFlamingArrow	flaming_arrow.8bpp.lz	a				
+FieldEffectBowDraw	bow_draw.8bpp.lz	a		68ea		
+FieldEffectExplosion	explosion.4bpp16x16.lz	a				
+FieldEffectScoopEarth	scoop_earth.bitmap.lz	a		592f		
+FieldEffectSparkleFade	sparkle_fade.8bpp.lz	a				
+FieldEffectRingWaves	ring_waves.4bpp16x16.lz	b				
+FieldEffectShakeTiles	shake_tiles.4bpp.lz	b		9f42		
+FieldEffectFallingRock	falling_rock.8bpp.lz	c		de472f		
+FieldEffectWaterSplash	water_splash.8bpp.lz	c		1b3e01		
+FieldEffectIceShard	ice_shard.8bpp.lz	c		08		
+FieldEffectWhiteSparkle	white_sparkle.8bpp.lz	c		d2e2		
+FieldEffectRunes	runes.8bpp.lz	c			4	
+FieldEffectPebbles	pebbles.8bpp.lz	c		49		
+FieldEffectGoldenTrident	golden_trident.8bpp.lz	c				
+FieldEffectFireColumn	fire_column.8bpp.lz	c		eed3		
+FieldEffectStarSparkleFade	star_sparkle_fade.8bpp.lz	d			4	ja
+FieldEffectStarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		en
+FieldEffectStarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		de
+FieldEffectStarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		es
+FieldEffectStarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		fr
+FieldEffectStarSparkleFade	star_sparkle_fade.8bpp.lz	d		010000		it
+FieldEffectWhitePuff	white_puff.8bpp.lz	d		000b		ja
+FieldEffectWhitePuff	white_puff.8bpp.lz	d		1240		en
+FieldEffectWhitePuff	white_puff.8bpp.lz	d		1240		de
+FieldEffectWhitePuff	white_puff.8bpp.lz	d		1240		es
+FieldEffectWhitePuff	white_puff.8bpp.lz	d		1240		fr
+FieldEffectWhitePuff	white_puff.8bpp.lz	d		1240		it

@@ -107,7 +107,7 @@ void mnSettingsMenuAnimateCursors(void)
 	Sint32				 selectedOption;
 	SETTINGS_MENU_STATE *state;
 
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	selectedOption = state->page;
 	mnCursorAdvanceStub(&state->cursor.cursor);
 	mnCursorMoveTowardTargetStub(&state->marker[0].cursor);
@@ -197,8 +197,8 @@ void mnSettingsMenuRelease(void)
 
 extern const Uint8 PointingHandTiles[];
 /* The hue and brightness sliders' picture and colours. */
-extern const Uint8	SettingsMenu_SliderTiles[];
-extern const Uint16 SettingsMenu_SliderPalette[];
+extern const Uint8	SettingsMenuSliderTiles[];
+extern const Uint16 SettingsMenuSliderPalette[];
 
 extern Sint8 SettingsMenuSpeedIcons[];
 extern Sint8 SettingsMenuSpeechIcons[];
@@ -222,7 +222,7 @@ WINDOW *mnSettingsMenuOpen(void)
 	Sint32				 y;
 	Sint32				 msg;
 
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	win = mnWindowCreate(
 		OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, WINDOW_FLAG_INSTANT);
 	mnWindowDrawDividerLine(win, 0, 2, OPTION_DIVIDER_END, 2);
@@ -253,10 +253,10 @@ WINDOW *mnSettingsMenuOpen(void)
 
 	x = syVRAMCacheFindFreeEntry();
 	if(x < VRAM_CACHE_ENTRY_COUNT) {
-		syDMAXCopy(SettingsMenu_SliderPalette,
+		syDMAXCopy(SettingsMenuSliderPalette,
 			(void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY_HALFWORDS(32),
 			REG_DMA3);
-		syVRAMCacheLoad(x, 256, SettingsMenu_SliderTiles);
+		syVRAMCacheLoad(x, 256, SettingsMenuSliderTiles);
 		y = 0;
 		out = mnWindowSprCreate(
 			x, WINDOW_SPRITE_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);
@@ -385,7 +385,7 @@ Sint32 mnSettingsMenuRun(void)
 	redraw = TRUE;
 	selectedOption = 0;
 	mnSettingsMenuInitState();
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	helpWin = mnWindowCreate(SETTINGS_HELP_WINDOW_X, 2,
 		SETTINGS_HELP_WINDOW_WIDTH, 3, WINDOW_FLAG_INSTANT);
 	settingsWin = mnSettingsMenuOpen();
@@ -568,7 +568,7 @@ Sint32 mnSettingsMenuRun(void)
    entry's icon. */
 void mnPauseMenuAnimateCursor(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 
 	mnCursorAdvanceStub(&state->cursor.cursor);
 	mnWindowSprPulse(state->icon[state->page]);
@@ -620,7 +620,7 @@ WINDOW *mnPauseMenuOpen(void)
 	Sint32				 i;
 
 	rows = PAUSE_MENU_ROWS;
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	settingsOnly = syGameFlagGet(FLAG_IN_BATTLE_ARENA);
 	first = 0;
 	if(settingsOnly != 0) {
@@ -706,7 +706,7 @@ Sint32 mnPauseMenuChoose(Sint32 init)
 	settingsOnly = syGameFlagGet(FLAG_IN_BATTLE_ARENA);
 	first = 0;
 	mnPauseMenuInit();
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	sySynch(1);
 	win = mnPauseMenuOpen();
 	pair = mnTitleCreate(MENU_TITLE_PAUSE, win, 40, HEADING_Y);

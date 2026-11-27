@@ -39,7 +39,7 @@ WINDOW_SPR *mnWindowSprCreate(
 		words[0] = OBJ_X(x) | y | oamFlg;
 		/* Attribute 2: the first tile of the slot's VRAM block (32 bytes a
 		   tile). */
-		words[1] = ((VRAM_CACHE_ENTRY *)Ram_VramCacheEntries)[slot].ofs >> 5;
+		words[1] = ((VRAM_CACHE_ENTRY *)RamVramCacheEntries)[slot].ofs >> 5;
 		__builtin_memcpy(&spr->spr.oam, words, sizeof(words));
 	}
 #else
@@ -47,7 +47,7 @@ WINDOW_SPR *mnWindowSprCreate(
 	/* Attribute 2: the first tile of the slot's VRAM block (32 bytes a
 	   tile). */
 	((Uint32 *)&spr->spr.oam)[1] =
-		((VRAM_CACHE_ENTRY *)Ram_VramCacheEntries)[slot].ofs >> 5;
+		((VRAM_CACHE_ENTRY *)RamVramCacheEntries)[slot].ofs >> 5;
 #endif
 	spr->depth = OAM_DEPTH_FRONT;
 	spr->next = NULL;

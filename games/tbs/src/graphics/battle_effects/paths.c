@@ -1,7 +1,7 @@
 /* The flight paths of two battle effects: Atalanta's as her shafts of light
    gather, and that of the flame Dragon Cloud sends from its user. Each is
-   resource data (ResourceId_AtalantaPath and
-   ResourceId_DragonCloudFlamePath). */
+   resource data (ResourceIdAtalantaPath and
+   ResourceIdDragonCloudFlamePath). */
 
 #include "types.h"
 
@@ -13,7 +13,7 @@
 
 /* Atalanta's path while her shafts of light gather: a move a tick for 209 */
 /* ticks, the last move never read. */
-const Sint8 BattleEffect_AtalantaPath[][2] = {
+const Sint8 BattleEffectAtalantaPath[][2] = {
 	PATH_START(160, 95),
 	{-5, -3},
 	{-4, -3},
@@ -229,7 +229,7 @@ const Sint8 BattleEffect_AtalantaPath[][2] = {
 
 /* The path of the flame Dragon Cloud sends from its user: a move a tick for */
 /* 40 ticks. */
-const Sint8 BattleEffect_DragonCloudFlamePath[][2] = {
+const Sint8 BattleEffectDragonCloudFlamePath[][2] = {
 	PATH_START(17, -39),
 	{6, 5},
 	{6, 5},

@@ -18,11 +18,11 @@
    colour 1 at the height of that ground. */
 void fdFadeOverlayDrawMarks(void)
 {
-	FADE_OVERLAY_STATE *state = Ram_HeapSlots->fadeOverlay;
+	FADE_OVERLAY_STATE *state = RamHeapSlots->fadeOverlay;
 	Sint32				cameraX =
-		(Sint16)FIXEDtoINT(syMapStateView(Ram_HeapSlots->mapGrid)[0]);
+		(Sint16)FIXEDtoINT(syMapStateView(RamHeapSlots->mapGrid)[0]);
 	Sint32 cameraZ =
-		(Sint16)FIXEDtoINT(syMapStateView(Ram_HeapSlots->mapGrid)[1]);
+		(Sint16)FIXEDtoINT(syMapStateView(RamHeapSlots->mapGrid)[1]);
 	ANIMATION_SPR_PART *mark = state->marks;
 	FADE_ACTOR		   *actor = state->actor;
 	FIXED				x;
@@ -141,8 +141,8 @@ void fdFadeOverlayResume(void)
    one up. */
 void fdBlankOverlayDrawMarks(void)
 {
-	ANIMATION_SPR_PART *mark = Ram_HeapSlots->fadeOverlay;
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	ANIMATION_SPR_PART *mark = RamHeapSlots->fadeOverlay;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	Sint16				cameraX = FIXEDtoINT(syMapStateView(map)[0]);
 	Sint16				cameraZ = FIXEDtoINT(syMapStateView(map)[1]);
 	FADE_ACTOR		   *actor = ((FADE_OVERLAY_STATE *)mark)->actor;

@@ -1,7 +1,7 @@
 /* Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
    Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
-   Cave, Kolima Forest (SceneId_KolimaForestEntrance to
-   SceneId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
+   Cave, Kolima Forest (SceneIdKolimaForestEntrance to
+   SceneIdKolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
    entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): things pushed
    a metatile at a time, such as stone pillars, and logs and other large things
    that roll until they meet something, redrawn into the map grid where they

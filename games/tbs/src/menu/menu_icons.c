@@ -19,12 +19,12 @@ void mnLoadDjinnArrows(void)
 	firstSlot = syVRAMCacheFindFreeEntry();
 	activeState->resourceSlots[0] = firstSlot;
 	if(firstSlot != -1) {
-		syVRAMCacheLoad(firstSlot, ICON_TILE_BYTES, Menu_DjinnArrowUpTiles);
+		syVRAMCacheLoad(firstSlot, ICON_TILE_BYTES, MenuDjinnArrowUpTiles);
 	}
 	secondSlot = syVRAMCacheFindFreeEntry();
 	activeState->resourceSlots[1] = secondSlot;
 	if(secondSlot != -1) {
-		syVRAMCacheLoad(secondSlot, ICON_TILE_BYTES, Menu_DjinnArrowDownTiles);
+		syVRAMCacheLoad(secondSlot, ICON_TILE_BYTES, MenuDjinnArrowDownTiles);
 	}
 }
 

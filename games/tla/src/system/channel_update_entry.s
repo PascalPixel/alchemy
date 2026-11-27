@@ -11,9 +11,9 @@
 	.balign 2
 .syntax unified
 	.thumb
-	.global SoundDriver_VSyncRefresh
+	.global SoundDriverVSyncRefresh
 	.thumb_func
-SoundDriver_VSyncRefresh:
+SoundDriverVSyncRefresh:
 	ldr	r0, [pc, #100]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #92]
@@ -57,9 +57,9 @@ SoundDriver_VSyncRefresh:
 
 .syntax unified
 	.thumb
-	.global SoundDriver_EnterVBlankUpdate
+	.global SoundDriverEnterVBlankUpdate
 	.thumb_func
-SoundDriver_EnterVBlankUpdate:
+SoundDriverEnterVBlankUpdate:
 	add	r1, pc, #20
 	ldmia	r1!, {r0, r2, r3}
 	mov	r1, sp
@@ -73,9 +73,9 @@ SoundDriver_EnterVBlankUpdate:
 	movs	r0, #1
 	bx	lr
 @ Never run: a zero halfword after bx lr that word-aligns the loaded words.
-AlchemyUncredited_08000646:
+AlchemyUncredited08000646:
 	.2byte	0x0000
-AlchemyUncreditedEnd_08000646:
+AlchemyUncreditedEnd08000646:
 	.4byte	0x03007900
 	.4byte	0x68736d53
 	.4byte	0x03007ff0
@@ -125,8 +125,8 @@ AlchemyUncreditedEnd_08000646:
 	.4byte	IwramSoundMixEntry + 1
 	.4byte	MixerPcmBuffer
 @ Unread here: 0x350 and REG_VCOUNT's address, as SoundMain's pool loads them.
-AlchemyUncredited_080006ac:
+AlchemyUncredited080006ac:
 	.4byte	0x00000350
 	.4byte	0x04000006
-AlchemyUncreditedEnd_080006ac:
+AlchemyUncreditedEnd080006ac:
 	.4byte	SoundVBlankStateWork

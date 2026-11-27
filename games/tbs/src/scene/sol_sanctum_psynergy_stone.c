@@ -1,5 +1,5 @@
-/* Sol Sanctum (SceneId_SolSanctumPsynergyStone), a room off the statue room
-   (SceneId_SolSanctumStatue) that holds a Psynergy Stone.
+/* Sol Sanctum (SceneIdSolSanctumPsynergyStone), a room off the statue room
+   (SceneIdSolSanctumStatue) that holds a Psynergy Stone.
 
    Its one exit, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back to
    the statue room, and it places nobody.

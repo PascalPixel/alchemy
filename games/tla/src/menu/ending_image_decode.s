@@ -2,9 +2,9 @@
 @ use the second: a copy of credits_background_decode.s whose decoder writes
 @ 64 rows a band and steps 4 KB, the images' map strips.
 @
-@ EndingImage_InnerProduct: mnVectorInnerProduct again. Nothing calls it.
+@ EndingImageInnerProduct: mnVectorInnerProduct again. Nothing calls it.
 @
-@ EndingImage_Decode(source, destination, offset): decodes an image's packed
+@ EndingImageDecode(source, destination, offset): decodes an image's packed
 @ map (r0) into the map buffer (r1). mnEndingImageShow (credits.c) copies it
 @ into a heap block and calls it there, so its first loop relocates the table
 @ of decoder commands (ending_image_expand.s) for wherever the copy landed.
@@ -12,8 +12,8 @@
 @ Why assembly: as credits_background_decode.s's functions.
 .syntax unified
 	.arm
-	.global EndingImage_InnerProduct
-EndingImage_InnerProduct:
+	.global EndingImageInnerProduct
+EndingImageInnerProduct:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}
@@ -22,16 +22,16 @@ EndingImage_InnerProduct:
 	orr	r0, r0, ip, lsr #16
 	bx	lr
 	.thumb
-	.global EndingImage_DecodeCode
-EndingImage_DecodeCode:
-	.global EndingImage_Decode
+	.global EndingImageDecodeCode
+EndingImageDecodeCode:
+	.global EndingImageDecode
 	.thumb_func
-EndingImage_Decode:
+EndingImageDecode:
 	bx	pc
-AlchemyUncredited_ending_image_decode:
+AlchemyUncreditedEndingImageDecode:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_ending_image_decode:
+AlchemyUncreditedEndEndingImageDecode:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]
@@ -55,23 +55,23 @@ AlchemyUncreditedEnd_ending_image_decode:
 .L_tile:
 	mov	r7, #64
 .L_row:
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	lsr	r6, r5, #25
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	orr	r6, r6, r5, lsr #17
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	orr	r6, r6, r5, lsr #9
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	lsr	r6, r5, #25
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	orr	r6, r6, r5, lsr #17
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	orr	r6, r6, r5, lsr #9
-	bl	EndingImage_DecodeRead
+	bl	EndingImageDecodeRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

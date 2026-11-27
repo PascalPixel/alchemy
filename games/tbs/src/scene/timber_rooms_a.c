@@ -1,5 +1,5 @@
 /* The insides of Suhalla's buildings, rooms of timber walls and woven floors
-   laid side by side on one map (SceneId_TimberRoomsA).
+   laid side by side on one map (SceneIdTimberRoomsA).
 
    Each room has its own camera box, so the party sees only the one it entered,
    and the area name follows it:

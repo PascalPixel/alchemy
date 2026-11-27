@@ -75,7 +75,7 @@ void syWaitForVBlankInterrupt(void)
 				SOUND_INFO_BYTE(snd, transferCountdown) - 1;
 		REG_IME = saved;
 		sySndUpdateBGMRampsStub();
-		if(SoundDriver_EnterVBlankUpdate() == 0) {
+		if(SoundDriverEnterVBlankUpdate() == 0) {
 			void (*render)(Sint32) = IwramSoundRenderVBlank;
 
 			render(8);
@@ -105,14 +105,14 @@ enum {
 	{ \
 		CartridgeResetMarker = CARTRIDGE_RESET_MARK; \
 		sySndSuspendDirectSndStub(); \
-		(entry) = Cart_Start; \
+		(entry) = CartStart; \
 		syIOWrite16(0, &REG_IME); \
 		ASM_CART_JUMP(entry); \
 	}
 
 /* Stops the CPU and the screen until an enabled interrupt wakes them (the BIOS
    Stop call): the sleep that L, R and Select end. */
-static __inline__ void Bios_Stop(void)
+static __inline__ void BiosStop(void)
 {
 	ASM_BIOS_STOP();
 }
@@ -230,9 +230,9 @@ void sySynch(Sint32 ticks)
 					syWaitForVBlankInterrupt();
 				SleepActive = 1;
 				syIOWrite16(KEYCNT_SLEEP_WAKE, &REG_KEYCNT);
-				Bios_SoundBiasOff();
-				Bios_Stop();
-				Bios_SoundBiasOn();
+				BiosSoundBiasOff();
+				BiosStop();
+				BiosSoundBiasOn();
 				syIOWrite16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
 				syIOWrite16(0, &SleepActive);
 				for(j = 0; j < SLEEP_WAKE_FRAMES; j++)
@@ -368,13 +368,13 @@ void syVBlankHandler(void)
 			(void *)&SerialTransfer, SerialPeerPayloads);
 		sySerialStepBlockTransfer();
 	}
-	SoundDriver_VSyncRefresh();
+	SoundDriverVSyncRefresh();
 	if(ScreenFadeFrames != 0)
 		syScreenFadeUpdate();
 	if(TickRenderPending != 0) {
 		TickRenderPending = 0;
 		if(OamUsageWork.used != 0)
-			syDMAXCopy(Ram_HeapSlots->frmScratch, OAM,
+			syDMAXCopy(RamHeapSlots->frmScratch, OAM,
 				DMA_COPY_WORDS(0) + OamUsageWork.used, REG_DMA3);
 		Copy16Bytes(BgScrollWork, REG_BG0HOFS);
 		syIOWriteQueueFlushPending();
@@ -421,7 +421,7 @@ void syVBlankHandler(void)
 			snd->transferCountdown =
 				SOUND_INFO_BYTE(SoundInfoPointer, transferCountdown);
 			sySndUpdateBGMRampsStub();
-			if(SoundDriver_EnterVBlankUpdate() == 0) {
+			if(SoundDriverEnterVBlankUpdate() == 0) {
 				void (*render)(Sint32) = IwramSoundRenderVBlank;
 
 				render(8);

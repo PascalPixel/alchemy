@@ -165,38 +165,38 @@ STATIC_ASSERT(sizeof(BATTLE_EFFECT_STATE) == 30764);
    blitter_fragments.s: Forward reads the picture left to right and Reverse
    right to left. None of them runs where it is. Max, four pixels (one canvas
    word), right to left; a full cell's row takes it twice. */
-extern const Uint32 BattleEffect_Max4Reverse[];
+extern const Uint32 BattleEffectMax4Reverse[];
 /* Max, four pixels (one canvas word), left to right; a full cell's row takes it
    twice. */
-extern const Uint32 BattleEffect_Max4Forward[];
+extern const Uint32 BattleEffectMax4Forward[];
 /* Max, one pixel, right to left. */
-extern const Uint32 BattleEffect_MaxReverse[];
+extern const Uint32 BattleEffectMaxReverse[];
 /* Max, one pixel, left to right. */
-extern const Uint32 BattleEffect_MaxForward[];
+extern const Uint32 BattleEffectMaxForward[];
 /* Additive, four pixels added a word at a time, right to left; a full cell's
    row takes it twice. */
-extern const Uint32 BattleEffect_ColorReverse[];
+extern const Uint32 BattleEffectColorReverse[];
 /* Additive, four pixels added a word at a time, left to right; a full cell's
    row takes it twice. */
-extern const Uint32 BattleEffect_ColorForward[];
+extern const Uint32 BattleEffectColorForward[];
 /* Additive, one pixel, right to left. */
-extern const Uint32 BattleEffect_AdditiveReverse[];
+extern const Uint32 BattleEffectAdditiveReverse[];
 /* Additive, one pixel, left to right. */
-extern const Uint32 BattleEffect_AdditiveForward[];
+extern const Uint32 BattleEffectAdditiveForward[];
 /* Builds the mask word, 64 in every byte, with which an additive word's pixels
    are capped at CANVAS_LEVEL_BRIGHTEST. */
-extern const Uint32 BattleEffect_Mask[];
+extern const Uint32 BattleEffectMask[];
 /* Transparent, a full cell's eight pixels, right to left. */
-extern const Uint32 BattleEffect_Transparent8Reverse[];
+extern const Uint32 BattleEffectTransparent8Reverse[];
 /* Transparent, a full cell's eight pixels, left to right. */
-extern const Uint32 BattleEffect_Transparent8Forward[];
+extern const Uint32 BattleEffectTransparent8Forward[];
 /* Transparent, one pixel, right to left. */
-extern const Uint32 BattleEffect_TransparentReverse[];
+extern const Uint32 BattleEffectTransparentReverse[];
 /* Transparent, one pixel, left to right. */
-extern const Uint32 BattleEffect_TransparentForward[];
+extern const Uint32 BattleEffectTransparentForward[];
 /* Copy, one pixel, right to left. */
-extern const Uint32 BattleEffect_CopyReverse[];
+extern const Uint32 BattleEffectCopyReverse[];
 /* Copy, one pixel, left to right. */
-extern const Uint32 BattleEffect_CopyForward[];
+extern const Uint32 BattleEffectCopyForward[];
 
 #endif

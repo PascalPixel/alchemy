@@ -43,9 +43,9 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 k;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sheet = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
 	PLTT_BACKDROP = 0;
@@ -67,10 +67,10 @@ void btEffectRunRamses(BATTLE_EFFECT_PARM *args)
 		}
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
 		WININ_WIN1_BG2 | WININ_WIN1_CLR;
 	REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);

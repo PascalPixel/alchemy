@@ -90,9 +90,9 @@ Sint32 fdMapGridIsHoverMetatile(Sint32 x, Sint32 z, Sint32 layer);
    under the player, flattened to three quarters of its height. */
 void fdHoverGlowUpdate(void)
 {
-	HOVER_STATE *state = Ram_HeapSlots->battleEff;
+	HOVER_STATE *state = RamHeapSlots->battleEff;
 	ACTOR		*player = fdActorLookup(fdPartyGetLeaderActor());
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	Uint16		*palette;
 	FIXED		 pos[3];
 	Sint32		 level;
@@ -166,8 +166,8 @@ void fdPsynergyHover(void)
 {
 	HOVER_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(HOVER_STATE));
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	ACTOR			   *player = scene->caster;
 	PENDING_CUE		   *pending;
 	EFFECT_SPR		   *spr;
@@ -279,7 +279,7 @@ void fdPsynergyHover(void)
    freed. */
 void fdPsynergyEndHover(void)
 {
-	HOVER_STATE *state = (HOVER_STATE *)Ram_HeapSlots->battleEff;
+	HOVER_STATE *state = (HOVER_STATE *)RamHeapSlots->battleEff;
 	ACTOR		*actor = fdActorGetById(fdPartyGetLeaderActor());
 	Sint32		 i;
 

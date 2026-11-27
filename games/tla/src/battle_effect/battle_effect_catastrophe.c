@@ -182,7 +182,7 @@ typedef struct MESH_VERTEX {
 #define CATASTROPHE_SWEEP_STRIP			 8192
 #define CATASTROPHE_BOLT_PICTURES		 16384
 #define CATASTROPHE_PARTICLES \
-	((PARTICLE *)(Ram_MapMetatileBuffer + CATASTROPHE_BOLT_PICTURES + \
+	((PARTICLE *)(RamMapMetatileBuffer + CATASTROPHE_BOLT_PICTURES + \
 		4 * LIGHTNING_BOLT_PICTURE_BYTES))
 #define CATASTROPHE_BURSTS		  64
 #define CATASTROPHE_DEBRIS		  100
@@ -248,16 +248,16 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 	PARTICLE				*burst;
 	Uint16					*backdropCol;
 	Uint8					*resource;
-	Uint8					*cellBuffer = Ram_MapMetatileBuffer;
+	Uint8					*cellBuffer = RamMapMetatileBuffer;
 	Sint32					 span = toFIXED(8);
 	Sint32					 rowStep = 8;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	savedScroll = BgScrollWork[1].x;
-	background = Ram_HeapSlots->battleBg;
-	sprs = Ram_HeapSlots->battleSheet;
-	battle = Ram_HeapSlots->battleState;
+	background = RamHeapSlots->battleBg;
+	sprs = RamHeapSlots->battleSheet;
+	battle = RamHeapSlots->battleState;
 	syVRAMCacheFreeEntry(battle->arrowTiles);
 	fdActorShadowFreeTilesStub();
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
@@ -266,7 +266,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 	BG_PLTT_COLOR(0, 1) = 0;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	state->transferMode = CANVAS_COPY;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	btEffectWipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
@@ -310,7 +310,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		syWordsCopy((void *)OBJ_PLTT, resource, CATASTROPHE_DEMON_COLORS * 2);
 		resource += CATASTROPHE_DEMON_COLORS * 2;
 		syDecompressTaggedLZ(resource, cellBuffer);
-		cells = Ram_MapMetatileBuffer;
+		cells = RamMapMetatileBuffer;
 		for(i = 0; i != CATASTROPHE_DEMON_TILED;
 			cells += OBJ_32X32_8BPP_BYTES, i++) {
 			obj = btEffectSprCreateWithTiles(
@@ -321,7 +321,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		}
 		{
 			Uint8 *cells =
-				Ram_MapMetatileBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES;
+				RamMapMetatileBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES;
 
 			for(i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
 				obj = btEffectSprAcquire(
@@ -334,7 +334,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			}
 		}
 		syWordsCopy(cellBuffer + CATASTROPHE_DEMON_KEPT_PICTURES,
-			Ram_MapMetatileBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES,
+			RamMapMetatileBuffer + CATASTROPHE_DEMON_LOWEST_PICTURES,
 			CATASTROPHE_DEMON_SWAPPED_COUNT * OBJ_32X32_8BPP_BYTES);
 	}
 	for(i = 0; i != CATASTROPHE_MIRRORED_DEMON_COUNT; i++) {
@@ -406,7 +406,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		SHEET_PALETTE_BYTES);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	btResourceLoadAndDecompress(
-		RESOURCE_SWIRL_TEXTURE, Ram_MapMetatileBuffer + CATASTROPHE_RING, 0, 0);
+		RESOURCE_SWIRL_TEXTURE, RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
 	camZ = 0;
 	swapped = 0;
 	drift = 0;
@@ -415,7 +415,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 	flash = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	/* Act one: the demon breaks out of its chains and drives down its sword. */
 	frm = 0;
 	while(frm != CATASTROPHE_ACT_ONE_TICKS) {
@@ -693,7 +693,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 			Uint8 *cells;
 
 			swapped = 0;
-			cells = Ram_MapMetatileBuffer + CATASTROPHE_DEMON_KEPT_PICTURES;
+			cells = RamMapMetatileBuffer + CATASTROPHE_DEMON_KEPT_PICTURES;
 			for(i = 0; i != CATASTROPHE_DEMON_SWAPPED_COUNT; i++) {
 				syWordsCopy((void *)OBJ_TILES(
 								state->sprs[CATASTROPHE_DEMON_SWAPPED + i]),
@@ -1029,7 +1029,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		}
 		if(frm == CATASTROPHE_SEAL_TICK) {
 			btResourceLoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
-				Ram_MapMetatileBuffer + CATASTROPHE_RING, 0, 0);
+				RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
 		}
 		if(frm == CATASTROPHE_SEAL_TICK - 1) {
 			btResourceLoadAndDecompress(
@@ -1039,7 +1039,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		}
 		if(frm == CATASTROPHE_LANDING_TICK) {
 			btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
-				Ram_MapMetatileBuffer + CATASTROPHE_RING, 0, 0);
+				RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
 		}
 		if((Uint32)(frm - CATASTROPHE_LANDING_TICK) <= 6) {
 			camZ += toFIXED(16);
@@ -1113,7 +1113,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					if(shade > MODEL_SHADE_INVISIBLE) {
 						model->shade = shade;
 						texture.pixels =
-							Ram_MapMetatileBuffer + CATASTROPHE_RING;
+							RamMapMetatileBuffer + CATASTROPHE_RING;
 						syInitMatrix();
 						if(frm > CATASTROPHE_ORB_TICK - 1) {
 							Sint32 v = (CATASTROPHE_ORB_TICK - frm) *
@@ -1152,7 +1152,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 				model->shade = shade;
 				model->mesh = BattleEffectLargeSquareMesh;
 				model->kind = MODEL_SHADED_ADDITIVE;
-				texture.pixels = Ram_MapMetatileBuffer + CATASTROPHE_RING;
+				texture.pixels = RamMapMetatileBuffer + CATASTROPHE_RING;
 				texture.logWidth = 7;
 				texture.logHeight = 7;
 				syInitMatrix();
@@ -1245,9 +1245,9 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(
 		RESOURCE_TRIANGLE_SEAL_TEXTURE, cellBuffer, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_PENTAGON_SEAL_TEXTURE,
-		Ram_MapMetatileBuffer + CATASTROPHE_PENTAGON_SEAL, 0, 0);
+		RamMapMetatileBuffer + CATASTROPHE_PENTAGON_SEAL, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
-		Ram_MapMetatileBuffer + CATASTROPHE_RING, 0, 0);
+		RamMapMetatileBuffer + CATASTROPHE_RING, 0, 0);
 	{
 		FIXED  rise;
 		Sint32 top;
@@ -1360,7 +1360,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 								CatastropheGlintFlips[flip & 3] |
 									EFFECT_CLIP_BOUNDS,
 								BLITTER_ADDITIVE);
-							(Ram_HeapSlots->ramCodePaired)(canvas,
+							(RamHeapSlots->ramCodePaired)(canvas,
 								state->sheet + CATASTROPHE_SWEEP_PICTURES +
 									BattleEffectGlintPictures[n],
 								x, y, BattleEffectGlintPictureWidths[n],
@@ -1396,7 +1396,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 					aerialModel->mesh = BattleEffectSquareMesh;
 					aerialModel->vertices = aerialVertices;
 					aerialTexture.pixels =
-						Ram_MapMetatileBuffer + CATASTROPHE_PENTAGON_SEAL;
+						RamMapMetatileBuffer + CATASTROPHE_PENTAGON_SEAL;
 					syInitMatrix();
 					syTranslate(-toFIXED(2), rise, 0);
 					syScale(toFIXED(1) / 2, toFIXED(1), toFIXED(1) / 2);
@@ -1464,7 +1464,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 						aerialModel->mesh = BattleEffectLargeSquareMesh;
 						aerialModel->kind = MODEL_SHADED_MAX;
 						aerialTexture.pixels =
-							Ram_MapMetatileBuffer + CATASTROPHE_RING;
+							RamMapMetatileBuffer + CATASTROPHE_RING;
 						aerialTexture.logWidth = 7;
 						aerialTexture.logHeight = 7;
 						syInitMatrix();
@@ -1587,14 +1587,14 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 		FIXED	  slide;
 		Sint32	  slideStep;
 		Uint8	 *bolts;
-		void	 *quads = Ram_MapMetatileBuffer + CATASTROPHE_SWEEP_VERTICES;
-		void	 *strip = Ram_MapMetatileBuffer + CATASTROPHE_SWEEP_STRIP;
+		void	 *quads = RamMapMetatileBuffer + CATASTROPHE_SWEEP_VERTICES;
+		void	 *strip = RamMapMetatileBuffer + CATASTROPHE_SWEEP_STRIP;
 		PARTICLE *bursts = CATASTROPHE_PARTICLES;
 		PARTICLE *debris = &CATASTROPHE_PARTICLES[CATASTROPHE_BURSTS];
 
 		/* Act three: back on the battlefield, lightning and smoke sweep the
 		   foes. */
-		bolts = Ram_MapMetatileBuffer + CATASTROPHE_BOLT_PICTURES;
+		bolts = RamMapMetatileBuffer + CATASTROPHE_BOLT_PICTURES;
 		slide = 0;
 		slideStep = 0;
 		syWordsFill(
@@ -1870,7 +1870,7 @@ void btEffectRunCatastrophe(BATTLE_EFFECT_PARM *args)
 							}
 						}
 						if(frm >= strikeFrm && frm < strikeFrm + 8) {
-							Uint8 *src = Ram_MapMetatileBuffer +
+							Uint8 *src = RamMapMetatileBuffer +
 								CATASTROPHE_BOLT_PICTURES;
 
 							blit[0](canvas,

@@ -59,8 +59,8 @@ typedef struct RING_STATE {
 /* Event of the Ring: its motes and colours each tick. */
 void fdPsynergyUpdateRing(void)
 {
-	RING_STATE	*state = Ram_HeapSlots->battleEff;
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	RING_STATE	*state = RamHeapSlots->battleEff;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 pos[3];
 	FIELD_PSYNERGY_PARTICLE *entry;
@@ -154,8 +154,8 @@ void fdPsynergyRing(void)
 {
 	RING_STATE *state =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof(RING_STATE));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*caster = scene->caster;
 	CANVAS_SPR_STATE		*canvas;
 	Sint32					 entry;
@@ -182,7 +182,7 @@ void fdPsynergyRing(void)
 		fdPsynergyFadeToCastCol();
 		CpuLoadDisplayEnabled = 0;
 		fdBattleEffectStartCanvasSpr();
-		canvas = Ram_HeapSlots->canvasSpr;
+		canvas = RamHeapSlots->canvasSpr;
 		canvas->mode = 0;
 		posPtr = pos;
 		posPtr[0] = scene->caster->x.fixed;
@@ -348,8 +348,8 @@ void fdPsynergyRing(void)
    fall for 40 ticks, and the window graphics come back to BG0. */
 void fdPsynergyEndRing(void)
 {
-	RING_STATE	*state = Ram_HeapSlots->battleEff;
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	RING_STATE	*state = RamHeapSlots->battleEff;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	FIELD_PSYNERGY_PARTICLE *mote;
 	EFFECT_SPR				*spr;
@@ -445,12 +445,12 @@ void fdMapGetCameraBoundsStub(Sint32 map, MAP_BOUNDS *bounds);
    its camera boxes), it shakes the screen along the asked direction instead. */
 void fdViewMoveStart(Sint32 direction)
 {
-	FIELD_STATE		*field = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*field = RamHeapSlots->fieldState;
 	ACTOR			*center = field->camera;
-	MAP_STATE		*map = Ram_HeapSlots->mapGrid;
+	MAP_STATE		*map = RamHeapSlots->mapGrid;
 	Sint32			 viewX = FIXEDtoINT(map->view[0]);
 	Sint32			 viewZ = FIXEDtoINT(map->view[1]);
-	VIEW_MOVE_STATE *state = Ram_HeapSlots->battleEff;
+	VIEW_MOVE_STATE *state = RamHeapSlots->battleEff;
 	MAP_BOUNDS		 bounds;
 	Sint32			 minX;
 	Sint32			 maxX;
@@ -528,8 +528,8 @@ void fdViewMoveStart(Sint32 direction)
    moves. */
 void fdViewMoveSwing(Sint32 direction, Sint32 phase, FIXED amplitude)
 {
-	FIELD_STATE		*field = Ram_HeapSlots->fieldState;
-	VIEW_MOVE_STATE *state = Ram_HeapSlots->battleEff;
+	FIELD_STATE		*field = RamHeapSlots->fieldState;
+	VIEW_MOVE_STATE *state = RamHeapSlots->battleEff;
 	ACTOR			*center = field->camera;
 	FIXED			 x;
 	FIXED			 z;
@@ -537,7 +537,7 @@ void fdViewMoveSwing(Sint32 direction, Sint32 phase, FIXED amplitude)
 
 	/* Japanese does not check the map's rectangle list here. */
 #if VIEW_MOVE_SHAKES_ON_CAMERA_BOX_MAPS
-	if(((MAP_STATE *)Ram_HeapSlots->mapGrid)->cameraBoxes != NULL)
+	if(((MAP_STATE *)RamHeapSlots->mapGrid)->cameraBoxes != NULL)
 		return;
 #endif
 	if(field->mode == ACTOR_SYSTEM_WORLD_MAP)
@@ -581,10 +581,10 @@ void fdViewMoveSwing(Sint32 direction, Sint32 phase, FIXED amplitude)
    instead, it only stops the shake. */
 void fdViewMoveEnd(void)
 {
-	VIEW_MOVE_STATE	   *state = Ram_HeapSlots->battleEff;
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	VIEW_MOVE_STATE	   *state = RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 
 #if VIEW_MOVE_SHAKES_ON_CAMERA_BOX_MAPS
 	if(map->cameraBoxes != NULL || field->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -606,9 +606,9 @@ void fdViewMoveEnd(void)
    to rock. */
 void fdViewMoveSaveNearbySprs(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
-	VIEW_MOVE_STATE	   *group = Ram_HeapSlots->battleEff;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
+	VIEW_MOVE_STATE	   *group = RamHeapSlots->battleEff;
 	ACTOR			  **actors;
 	ACTOR			   *actor;
 	Sint32				i;
@@ -633,7 +633,7 @@ void fdViewMoveSaveNearbySprs(void)
 /* Gives each gathered actor's sprite its saved rotation back. */
 void fdViewMoveRestoreNearbySprs(void)
 {
-	VIEW_MOVE_STATE *group = Ram_HeapSlots->battleEff;
+	VIEW_MOVE_STATE *group = RamHeapSlots->battleEff;
 	Sint32			 i;
 
 	for(i = 0; i < group->cnt; i++)

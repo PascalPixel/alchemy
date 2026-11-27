@@ -1,8 +1,8 @@
 @ Sounds, field Psynergy, actors and field effect lifecycles.
 	.include "games/tbs/include/edition.inc"
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Overworld
-Stubs_Overworld:
+	.global StubsOverworld
+StubsOverworld:
 	stub fdModeRunStub, fdModeRun
 	stub gmMainRoutineRunStub, gmMainRoutineRun
 	stub fdScriptWaitStub, fdScriptWait

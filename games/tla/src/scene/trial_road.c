@@ -496,7 +496,7 @@ typedef struct TRIAL_ROAD_SPR {
    0. */
 #define RIVAL_PATH_LENGTH 7200
 
-/* The tiles of the race map's picture (TrialRoad_RaceMapPicture): a stage of
+/* The tiles of the race map's picture (TrialRoadRaceMapPicture): a stage of
    the road in blue, 16 by 32 pixels with a 16 by 8 foot below it, and the two
    players' 16 by 16 markers, "1P" and "2P". */
 typedef enum TRIAL_ROAD_RACE_MAP_TILE {
@@ -681,7 +681,7 @@ void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 id);
 void scTrialRoadDriftDust(FIELD_OBJECT *object);
 
 /* The race map's colours. */
-extern const Uint16 TrialRoad_RaceMapPalette[];
+extern const Uint16 TrialRoadRaceMapPalette[];
 
 void scTrialRoadMoveRival(void);
 void scTrialRoadSetUpPillarStage(void);
@@ -738,7 +738,7 @@ DEFINE_TRIAL_ROAD_OPEN_DOOR(scTrialRoadOpenRivalDoor, 28, 62, 1, 4, 38, 0)
 Bool scTrialRoadOfferToGiveUp(void)
 {
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 msg;
 
 	if(fdScriptGetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
@@ -891,7 +891,7 @@ void scTrialRoadStepOffSwitch(void)
    (MAP_METATILE_JUMP). */
 void scTrialRoadSetJumpMetatileUnder(Sint32 id)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGetById(id);
 
 	if(actor != NULL) {
@@ -909,7 +909,7 @@ void scTrialRoadSetJumpMetatileUnder(Sint32 id)
 /* Stops Felix jumping onto the metatile the actor is leaving. */
 void scTrialRoadClearJumpMetatileUnder(Sint32 id)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGetById(id);
 
 	if(actor != NULL) {
@@ -987,12 +987,12 @@ void scTrialRoadSetPillarTopLift(Sint32 id, Sint32 value)
 /* As a pillar starts to slide, Felix can no longer jump onto the place it is
    leaving. */
 DEFINE_TRIAL_ROAD_ON_FOOT(
-	TrialRoad_ClearJumpUnderPushedPillar, scTrialRoadClearJumpMetatileUnder)
+	TrialRoadClearJumpUnderPushedPillar, scTrialRoadClearJumpMetatileUnder)
 
 /* Once a pushed or Moved pillar stops, Felix can jump onto its top where it
    stands. */
 DEFINE_TRIAL_ROAD_ON_FOOT(
-	TrialRoad_SetJumpUnderPushedPillar, scTrialRoadSetJumpMetatileUnder)
+	TrialRoadSetJumpUnderPushedPillar, scTrialRoadSetJumpMetatileUnder)
 
 /* Whirlwind on the weeds at the foot of the pillar stage's overgrown pillar, at
    metatile (15, 24), blows it away, and the pillar can then be pushed. */
@@ -1369,7 +1369,7 @@ void scTrialRoadCrumbleEastPillar(Sint32 phase)
    (METATILE_BEHAVIOR_WALL on the ground and the upper level). */
 void scTrialRoadBlockLogMetatiles(Sint32 id, Sint32 mode)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor = fdActorGetById(id);
 	Sint32		  idx;
 	MAP_METATILE *low;
@@ -1418,7 +1418,7 @@ void scTrialRoadBlockLogs(void)
 Sint32 scTrialRoadIsLogBlocked(Sint32 x, Sint32 z)
 {
 	ACTOR	  *actor = fdActorGetById(ACTOR_PILLAR_A);
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *metatiles;
 	Uint8	  *metatile;
 	Sint32	   value;
@@ -2081,7 +2081,7 @@ void scTrialRoadSetUpFountainStage(void)
 		fdActorSetPos(ACTOR_EAST_VENT, 0, 0);
 	else
 		scTrialRoadOpenVentMetatile(ACTOR_EAST_VENT);
-	fdMapSetUpperLevelWading(Ram_HeapSlots->mapGrid);
+	fdMapSetUpperLevelWading(RamHeapSlots->mapGrid);
 	scTrialRoadAddPillarTop(ACTOR_PILLAR_A);
 	scTrialRoadSetJumpMetatileUnder(ACTOR_PILLAR_A);
 }
@@ -2196,7 +2196,7 @@ void scTrialRoadStepPaletteCycle(void)
 	Uint16 *p;
 
 	if(TrialRoadPaletteCycleRunning != 0) {
-		FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
+		FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 		Sint16		*state = &fieldState->psynergy;
 
 		if(*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)
@@ -2311,7 +2311,7 @@ Sint32 scInit(void)
 void scTrialRoadCopyMetatilesBackward(Sint32 srcX, Sint32 srcY, Sint32 width,
 	Sint32 height, Sint32 dstX, Sint32 dstY)
 {
-	Uint32 *metatiles = (Uint32 *)Ram_MapMetatileBuffer;
+	Uint32 *metatiles = (Uint32 *)RamMapMetatileBuffer;
 	Sint32	dst = (dstY << 7) + dstX;
 	Uint8  *dstShapes = MapShapeGrid + dst;
 	Sint32	src = (srcY << 7) + srcX;
@@ -2443,7 +2443,7 @@ void scTrialRoadStartRival(Sint32 mirrored);
 	words[2] = FIELD_METATILE_ORIGIN(column); \
 	words[3] = row; \
 	x = (column); \
-	layer->metatiles = (MAP_METATILE *)Ram_MapMetatileBuffer + x; \
+	layer->metatiles = (MAP_METATILE *)RamMapMetatileBuffer + x; \
 	layer->terrainIds = MapShapeGrid + x; \
 	words[0] = syMulFX(*viewX, words[4]) + words[2]; \
 	words[1] = syMulFX(*viewZ, words[5]) + words[3]
@@ -2454,7 +2454,7 @@ Sint32 scPrepareMap(void)
 	Sint32 entrance = MainRoutineStateWork.entrance;
 
 	if(scene == SCENE_TRIAL_ROAD_STAGES) {
-		MAP_STATE		 *map = Ram_HeapSlots->mapGrid;
+		MAP_STATE		 *map = RamHeapSlots->mapGrid;
 		TRIAL_ROAD_STATE *state = TrialRoadStateWork;
 		ACTOR			 *leader;
 		Uint8			 *unit;
@@ -3269,7 +3269,7 @@ void scTrialRoadUpdateFountains(void)
 {
 	TRIAL_FOUNTAINS_WORK *state = TRIAL_ROAD_FOUNTAINS;
 	TRIAL_ROAD_FOUNTAIN	 *fountain = state->fountains;
-	MAP_STATE			 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE			 *map = RamHeapSlots->mapGrid;
 	Sint32				  shape = state->shape;
 	Uint8				 *shapes = map->layers[0].terrainIds;
 	Uint8				 *metatiles = (Uint8 *)map->layers[0].metatiles;
@@ -3281,7 +3281,7 @@ void scTrialRoadUpdateFountains(void)
 	Sint32				  i;
 
 	i = 0;
-	for(collision = (Sint32 *)Ram_MapCollision + shape; i < FOUNTAIN_COUNT;
+	for(collision = (Sint32 *)RamMapCollision + shape; i < FOUNTAIN_COUNT;
 		collision++, i++, fountain++) {
 		if(fountain->id == 0)
 			continue;
@@ -3381,7 +3381,7 @@ void scTrialRoadDrawFountains(void)
 	entry = base->sprs;
 	cnt = 0;
 	rise = -toFIXED(2);
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	viewY = map->origin[1];
@@ -3456,7 +3456,7 @@ void scTrialRoadStartFountains(Sint32 unused, Sint32 shape)
 	if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION))
 		syWordsClear(state, sizeof(*state));
 	buf = scPoolAlloc(2048);
-	syDecompressTaggedLZ(Field_GeyserTiles, buf);
+	syDecompressTaggedLZ(FieldGeyserTiles, buf);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, 2048, buf);
 	syHeapRelease(buf);
@@ -3828,7 +3828,7 @@ void scTrialRoadWaitForRival(void)
 void scTrialRoadMoveRival(void)
 {
 	TRIAL_ROAD_LINK_STATE *trialRoadLinkState =
-		(TRIAL_ROAD_LINK_STATE *)Ram_HeapSlots->trialRoadLink;
+		(TRIAL_ROAD_LINK_STATE *)RamHeapSlots->trialRoadLink;
 	TRIAL_ROAD_REPLAY *state = (TRIAL_ROAD_REPLAY *)SceneStateWork;
 	ACTOR			  *rival = fdActorGetById(state->id);
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -3982,7 +3982,7 @@ void scTrialRoadMoveRival(void)
 }
 
 /* The race map's picture, tagged LZ. */
-extern const Uint8 TrialRoad_RaceMapPicture[];
+extern const Uint8 TrialRoadRaceMapPicture[];
 
 /* The picture's buffer in EWRAM, the size syVRAMCacheLoad copies. */
 static inline void *scTrialRoadLinkAllocPicture(void)
@@ -4026,7 +4026,7 @@ static inline void *scTrialRoadLinkAllocPicture(void)
    leader's, "2P" for Moapa's. */
 void scTrialRoadDrawRaceMap(void)
 {
-	TRIAL_ROAD_LINK_STATE *state = Ram_HeapSlots->trialRoadLink;
+	TRIAL_ROAD_LINK_STATE *state = RamHeapSlots->trialRoadLink;
 	Uint32				  *cursor = (Uint32 *)state;
 	TRIAL_ROAD_SPR		  *entry = (TRIAL_ROAD_SPR *)state;
 	Sint16				  *vramEntry = &state->vramEntry;
@@ -4036,7 +4036,7 @@ void scTrialRoadDrawRaceMap(void)
 	Sint32				   x;
 	Sint32				   y;
 	Uint32				   markerSize = OBJ_SIZE_16X16;
-	FIELD_STATE			  *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE			  *event = RamHeapSlots->fieldState;
 	ACTOR				  *actor;
 
 	if(state->holdFade != 0) {
@@ -4047,11 +4047,11 @@ void scTrialRoadDrawRaceMap(void)
 	} else if(state->fade <= 1) {
 		if(++state->fade == 1) {
 			void *buf;
-			syDMAXCopy(TrialRoad_RaceMapPalette,
+			syDMAXCopy(TrialRoadRaceMapPalette,
 				(void *)&OBJ_PLTT_COLOR(RACE_MAP_PALETTE, 0),
 				DMA_COPY_HALFWORDS(16), REG_DMA3);
 			buf = scTrialRoadLinkAllocPicture();
-			syDecompressTaggedLZ(TrialRoad_RaceMapPicture, buf);
+			syDecompressTaggedLZ(TrialRoadRaceMapPicture, buf);
 			syVRAMCacheLoad(*vramEntry, RACE_MAP_PICTURE_BYTES, buf);
 			syHeapRelease(buf);
 		}
@@ -4125,7 +4125,7 @@ void scTrialRoadShowRaceMap(Sint32 leaderId, Sint32 rivalId)
 	fdActorGetById(rivalId);
 	state->fade = 0;
 	state->holdFade = 0;
-	syDecompressTaggedLZ(TrialRoad_RaceMapPicture, buf);
+	syDecompressTaggedLZ(TrialRoadRaceMapPicture, buf);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, RACE_MAP_PICTURE_BYTES, buf);
 	sySetEvent(scTrialRoadDrawRaceMap, EVENT_PASS_TICK - 10);
@@ -4136,7 +4136,7 @@ void scTrialRoadShowRaceMap(Sint32 leaderId, Sint32 rivalId)
    right. */
 void scTrialRoadStartRival(Sint32 mirrored)
 {
-	TRIAL_ROAD_LINK_STATE *trialRoadLinkState = Ram_HeapSlots->trialRoadLink;
+	TRIAL_ROAD_LINK_STATE *trialRoadLinkState = RamHeapSlots->trialRoadLink;
 	TRIAL_ROAD_REPLAY	  *state = (TRIAL_ROAD_REPLAY *)SceneStateWork;
 
 	if(fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -4153,7 +4153,7 @@ void scTrialRoadPlayRivalRecording(Sint32 resource)
 	TRIAL_ROAD_REPLAY *state = (TRIAL_ROAD_REPLAY *)SceneStateWork;
 
 	state->resource = resource;
-	((TRIAL_ROAD_LINK_STATE *)Ram_HeapSlots->trialRoadLink)->resource = 0;
+	((TRIAL_ROAD_LINK_STATE *)RamHeapSlots->trialRoadLink)->resource = 0;
 	state->point = 0;
 	state->mode = RIVAL_REPLAY;
 	scTrialRoadMoveRival();
@@ -4627,18 +4627,18 @@ LAST_DATA CUE TrialRoadPillarStageCues[] = {
 	{CUE_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, SCRIPT_REF(scTrialRoadExamineChest)},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_PILLAR_STAGE_GAP, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), SCRIPT_REF(scTrialRoadJumpAcrossGap)},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_PILLAR_STAGE_LEDGE, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), SCRIPT_REF(scTrialRoadJumpForward)},
-	{CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY), SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY), SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
+	{CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY), SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, IF_FLAG_SET(FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY), SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
 	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_A, FLAG_PILLAR_STAGE_WEEDS_BLOWN_AWAY, SCRIPT_REF(scTrialRoadBlowAwayPillarStageWeeds)},
 	{CUE_TABLE_END},
 };
@@ -4705,18 +4705,18 @@ LAST_DATA CUE TrialRoadWeedsPillarStageCues[] = {
 	{CUE_TALK, ACTOR_RIGHT_INNER_CHEST, CONDITION_ALWAYS, SCRIPT_REF(scTrialRoadExamineChest)},
 	{CUE_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, SCRIPT_REF(scTrialRoadExamineChest)},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_WEEDS_STAGE_LEDGE, CONDITION_ALWAYS, SCRIPT_REF(scTrialRoadJumpForward)},
-	{CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A), SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B), SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
-	{CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A), SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B), SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
+	{CUE_PUSH, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A), SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B), SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_C, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
+	{CUE_PUSHED, 0, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A), SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B), SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_D, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_E, CONDITION_ALWAYS, SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
 	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_A, FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_A, SCRIPT_REF(scTrialRoadBlowAwayWeeds)},
 	{PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_B, FLAG_WEEDS_BLOWN_AWAY_BASE + ACTOR_WEEDS_B, SCRIPT_REF(scTrialRoadBlowAwayWeeds)},
 	{CUE_TABLE_END},
@@ -4927,14 +4927,14 @@ LAST_DATA CUE TrialRoadLogStageCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_EAST_LOG_SOUTH_END,
 		CONDITION_ALWAYS, SCRIPT_REF(scTrialRoadPushEastLogSouth)},
 	{CUE_PUSH, 0, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_PILLAR_A, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
 	{CUE_PUSHED, 0, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
 	{CUE_TABLE_END},
 };
 
@@ -4994,14 +4994,14 @@ LAST_DATA CUE TrialRoadFountainStageCues[] = {
 	{CUE_STEP, METATILE_BLOCK_TRACK, CONDITION_ALWAYS,
 		SCRIPT_REF(scTrialRoadStandOnBlock)},
 	{CUE_PUSH, 0, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_PILLAR_A, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_ClearJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadClearJumpUnderPushedPillar)},
 	{CUE_PUSHED, 0, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
 	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS,
-		SCRIPT_REF(TrialRoad_SetJumpUnderPushedPillar)},
+		SCRIPT_REF(TrialRoadSetJumpUnderPushedPillar)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
 		METATILE_WEST_VENT, FLAG_VENT_UNCOVERED_BASE + ACTOR_WEST_VENT,
 		SCRIPT_REF(scTrialRoadUncoverWestVent)},

@@ -30,15 +30,14 @@ typedef struct WORLD_MAP_BLOCKS {
 /* The world map area's four tile sets, decoded one after another into
    BgTileBuffer and copied to the two halves of BG char blocks 2 and 3. */
 #define WORLD_MAP_TILE_SET_BYTES 8192
-#define WORLD_MAP_TILE_SET(n) \
-	(Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
+#define WORLD_MAP_TILE_SET(n)	 (RamBgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
 /* The shape a scene gives the metatiles it marks, rewriting the shape's entry
    with their height in its second byte: Apojii's metatile markers and Aqua
    Rock's spouts. */
-#define MAP_SHAPE_MARKED	   120
+#define MAP_SHAPE_MARKED		 120
 /* The shape a scene gives the one metatile under a pillar it raises alone, its
    entry rewritten as MAP_SHAPE_MARKED's: Aqua Rock's water pillar. */
-#define MAP_SHAPE_RAISED_ALONE 121
+#define MAP_SHAPE_RAISED_ALONE	 121
 /* A map shape entry as MapGridShapes holds it: the shape's kind and its three
    heights, a byte each (the rows of a map's shapes.tsv). */
 #define MAP_SHAPE(shape, height0, height1, height2) \

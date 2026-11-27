@@ -96,12 +96,12 @@ Sint32 fdSprComposePicture(SPR *spr, Uint32 dir)
 	void			   *vram;
 
 	mirrored = FALSE;
-	system = Ram_HeapSlots->actorSystem;
+	system = RamHeapSlots->actorSystem;
 	decoderWasLoaded = TRUE;
-	decodePicture = Ram_HeapSlots->frmScratch;
+	decodePicture = RamHeapSlots->frmScratch;
 	if(decodePicture == NULL) {
 		btRenderLoadDecoder();
-		decodePicture = Ram_HeapSlots->frmScratch;
+		decodePicture = RamHeapSlots->frmScratch;
 		decoderWasLoaded = FALSE;
 	}
 
@@ -271,7 +271,7 @@ Sint32 fdSprComposePicture(SPR *spr, Uint32 dir)
 				OUTLINE_FN outline;
 
 				RAM_CODE_LOAD(
-					outline, fdGridDrawOutlineCode, Grid_DrawOutlineCodeSize);
+					outline, fdGridDrawOutlineCode, GridDrawOutlineCodeSize);
 				outline(spr->width, spr->height, pixels, system->edge,
 					system->fill);
 				syHeapRelease(outline);
@@ -324,7 +324,7 @@ Sint32 fdSprComposePicture(SPR *spr, Uint32 dir)
 
 		tile = syVRAMCacheLoad(spr->slot, size, 0);
 		vram = (void *)(tile * TILE_SIZE_4BPP + OBJ_VRAM0);
-		((UPLOAD_FN)Ram_HeapSlots->pictureUploader)(
+		((UPLOAD_FN)RamHeapSlots->pictureUploader)(
 			pixels, spr->width, spr->height, vram);
 		spr->image.tile = tile;
 		spr->dirty = 0;
@@ -623,7 +623,7 @@ void fdRenderPlaceProjectedSpr(
 	Uint32 matrix;
 	Uint32 size;
 
-	if(Ram_HeapSlots->actorSystem->suspended == 0) {
+	if(RamHeapSlots->actorSystem->suspended == 0) {
 		z = syConvert3Dto2D(point, screen);
 		if(screen[2] != 0 &&
 			(Uint32)(screen[0] + PROJECTED_MARGIN) <=
@@ -712,7 +712,7 @@ void fdRenderPlaceProjectedSpr(
 			return;
 		}
 	}
-	if(Ram_HeapSlots->battleState == NULL && !spr->retainCacheEntry) {
+	if(RamHeapSlots->battleState == NULL && !spr->retainCacheEntry) {
 		syVRAMCacheReleaseVRAM(spr->slot);
 		spr->dirty = 1;
 	}

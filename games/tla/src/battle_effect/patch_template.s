@@ -7,15 +7,15 @@
 	.thumb
 	.global BlitterTemplate
 BlitterTemplate:
-	.global BattleEffect_PatchTemplate
+	.global BattleEffectPatchTemplate
 	.thumb_func
-BattleEffect_PatchTemplate:
+BattleEffectPatchTemplate:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_081972a2:
+AlchemyUncredited081972a2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081972a2:
+AlchemyUncreditedEnd081972a2:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32
 	ldm	r4, {r4, r5}

@@ -1147,7 +1147,7 @@ const Uint8 *scGetCues(void)
    ladder's exit. */
 void scGabombaStatueClimbDownLadder(Sint32 x, Sint32 z)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 
 	fdScriptStart();
@@ -1346,7 +1346,7 @@ void scGabombaStatueClimbDownArrowsLadder(void)
 		return;
 	if(x == 29 && z == 10 && !(PerWork.data & KEY_UP))
 		return;
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -1384,7 +1384,7 @@ void scGabombaStatueClimbDownArrowsLadder(void)
 /* Walking into the gap between the pinions in the south-west of the hall of
    pinions, metatile (9, 28), Felix is pulled through them to the north. */
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
-	GabombaStatue_PinionsCarryLeaderNorth, 152, 424)
+	GabombaStatuePinionsCarryLeaderNorth, 152, 424)
 
 /* Once the cogs turn the other way, the pinions in the south-west of the hall
    of pinions throw Felix back out to the south when he walks into their gap,
@@ -1412,23 +1412,23 @@ void scGabombaStatuePinionsThrowLeaderSouth(void)
 /* Walking into the gap between the pinions in the north of the room of the
    flashing cog, metatile (23, 9), Felix is pulled through them to the south. */
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
-	GabombaStatue_ElixirPinionsCarryLeaderSouth, 376, 200)
+	GabombaStatueElixirPinionsCarryLeaderSouth, 376, 200)
 
 /* Once the cogs turn the other way, the pinions in the south of the room of the
    flashing cog, metatile (24, 22), pull Felix through them to the north. */
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
-	GabombaStatue_ElixirPinionsCarryLeaderNorth, 376, 136)
+	GabombaStatueElixirPinionsCarryLeaderNorth, 376, 136)
 
 /* Walking into the gap between the pinions in the room below the small idol's
    chamber, metatile (27, 12), Felix is pulled through them to the south. */
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
-	GabombaStatue_CogsPinionsCarryLeaderSouth, 440, 248)
+	GabombaStatueCogsPinionsCarryLeaderSouth, 440, 248)
 
 /* Once the cogs turn the other way, the pinions east of the first in the room
    below the small idol's chamber, metatile (35, 13), pull Felix through them to
    the north. */
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
-	GabombaStatue_CogsPinionsCarryLeaderNorth, 440, 184)
+	GabombaStatueCogsPinionsCarryLeaderNorth, 440, 184)
 
 /* Draws the room's ladder-top blocks, or hides them. */
 void scGabombaStatueSetLadderTopBlocksDrawn(Sint32 show)
@@ -1584,7 +1584,7 @@ void scGabombaStatuePauseCogsInMenus(void)
 {
 	Sint32		 step = ANIM_STEP_NORMAL;
 	Sint32		 open = 0;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 i;
 
 	if(fdScriptGetFlag(FLAG_MENU_OPEN) || state->psynergy != 0) {
@@ -1658,7 +1658,7 @@ void scGabombaStatueDrawCogMetatiles(void)
 {
 	Uint32	  *dest = (Uint32 *)MapGridShapes + COG_SHAPE_FIRST;
 	Uint32	  *src = GabombaStatueCogShapes;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *layerA = map->layers[0].terrainIds;
 	Uint8	  *layerB = map->layers[1].terrainIds;
 	Uint32	  *shapesA = (Uint32 *)map->layers[0].metatiles;
@@ -2667,7 +2667,7 @@ void scGabombaStatueLoadBlockPictures(void)
 	void		*buf = scMemAlloc(PIECE_KINDS * BLOCK_PICTURE_BYTES);
 	Sint32		 handle;
 
-	syDecompressTaggedLZ(Field_CachedTilesA, buf);
+	syDecompressTaggedLZ(FieldCachedTilesA, buf);
 	handle = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(handle, PIECE_KINDS * BLOCK_PICTURE_BYTES, buf);
 	state->blockTileEntry = handle;
@@ -3233,7 +3233,7 @@ void scGabombaStatuePoundBlock(Sint32 landed)
 		return;
 	state = &SceneStateWork;
 	actor =
-		fdActorGet(((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->tgtId);
+		fdActorGet(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgtId);
 	x = FIELD_METATILE(actor->x.fixed) - state->originX;
 	z = FIELD_METATILE(actor->z.fixed) - state->originZ;
 	{
@@ -3388,9 +3388,9 @@ void scGabombaStatueDrawRaisedBlocks(void)
 	SCENE_STATE *state = &SceneStateWork;
 	SPR_VIEW	*oam = state->oam;
 	Sint32		 scrollX =
-		syMapStateView(Ram_HeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
+		syMapStateView(RamHeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
 	Sint32 scrollZ =
-		syMapStateView(Ram_HeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
+		syMapStateView(RamHeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
 	Uint16			 tile = VramCacheEntries[state->blockTileEntry].ofs >> 5;
 	AFFINE_TRANSFORM effect;
 	Sint32			 id;
@@ -3928,7 +3928,7 @@ void scGabombaStatueDrawClock(void)
 /* Counts the clock down while no menu is open, and draws it. */
 void scGabombaStatueCountDownShowingClock(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	CLOCK_WORK	*clock = CLOCK_STATE;
 
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
@@ -3940,7 +3940,7 @@ void scGabombaStatueCountDownShowingClock(void)
 /* Counts the clock down while no menu is open. */
 void scGabombaStatueCountDown(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	CLOCK_WORK	*clock = CLOCK_STATE;
 
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
@@ -4499,8 +4499,8 @@ LATE_DATA CUE GabombaStatueBoneArmletChestCues[] = {
 
 LATE_DATA CUE GabombaStatueElixirChestCues[] = {
 	{STEP_CUE_WALKING, METATILE_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, SCRIPT_REF(scGabombaStatueClimbDownElixirChestLadder)},
-	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatue_ElixirPinionsCarryLeaderSouth)},
-	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatue_ElixirPinionsCarryLeaderNorth)},
+	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatueElixirPinionsCarryLeaderSouth)},
+	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatueElixirPinionsCarryLeaderNorth)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_ROPE_POST_A, FLAG_GABOMBA_FIRST_ROPE_TIED, SCRIPT_REF(scGabombaStatueLashRope)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SECOND_ROPE_POST_A, FLAG_GABOMBA_SECOND_ROPE_TIED, 0},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FIRST_STAKE, FLAG_GABOMBA_FIRST_STAKE_POUNDED, SCRIPT_REF(scGabombaStatuePoundStake)},
@@ -4552,8 +4552,8 @@ LATE_DATA CUE GabombaStatueCogsCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_COG_END, CONDITION_ALWAYS, SCRIPT_REF(scGabombaStatueHopAcrossEastOrWest)},
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), METATILE_BEHAVIOR_COG_END, CONDITION_ALWAYS, SCRIPT_REF(scGabombaStatueHopAcrossNorthOrSouth)},
 	{STEP_CUE_WALKING_INTO(FACING_SOUTH), METATILE_BEHAVIOR_COG_END, CONDITION_ALWAYS, SCRIPT_REF(scGabombaStatueHopAcrossNorthOrSouth)},
-	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatue_CogsPinionsCarryLeaderSouth)},
-	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatue_CogsPinionsCarryLeaderNorth)},
+	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatueCogsPinionsCarryLeaderSouth)},
+	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatueCogsPinionsCarryLeaderNorth)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_COGS_ROPE_POST_A, CONDITION_ALWAYS, 0},
 	{CUE_TABLE_END},
 };
@@ -4578,7 +4578,7 @@ LATE_DATA CUE GabombaStatueArrowsCues[] = {
 };
 
 LATE_DATA CUE GabombaStatuePinionCues[] = {
-	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatue_PinionsCarryLeaderNorth)},
+	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, SCRIPT_REF(GabombaStatuePinionsCarryLeaderNorth)},
 	{CUE_STEP, METATILE_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, SCRIPT_REF(scGabombaStatuePinionsThrowLeaderSouth)},
 	{CUE_TABLE_END},
 };

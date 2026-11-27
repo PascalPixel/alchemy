@@ -91,8 +91,8 @@ void btEffectRunVengeance(BATTLE_EFFECT_PARM *args)
 	Sint32		   strikes;
 	Sint32		   ticks;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartTiledCanvas(0);
 	REG_BG2PA = Q_8_8(1);
 	REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 4);
@@ -152,17 +152,17 @@ void btEffectRunVengeance(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_ARCHER_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	backgroundX = toFIXED(86);
 	speed = toFIXED(16);
 	ticks = VENGEANCE_TICKS;
 
 	for(frm = 0; frm != ticks; frm++) {
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		btEffectPosProjectScaledBattler(args->tgts[0], &tgtScreen);
 		if(frm <= 31) {
 			if(args->side == EFFECT_SIDE_ENEMIES) {
@@ -420,7 +420,7 @@ typedef struct SHEARS {
 #define LIFE_SHEAR_WOMAN_WIDTH	55
 #define LIFE_SHEAR_WOMAN_HEIGHT 88
 #define LIFE_SHEAR_STRIKING \
-	(Ram_MapMetatileBuffer + PICTURE_BYTES(LIFE_SHEAR_WOMAN))
+	(RamMapMetatileBuffer + PICTURE_BYTES(LIFE_SHEAR_WOMAN))
 #define LIFE_SHEAR_STRIKING_WIDTH  59
 #define LIFE_SHEAR_STRIKING_HEIGHT 89
 #define LIFE_SHEAR_PALE_BLADE \
@@ -463,8 +463,8 @@ void btEffectRunLifeShear(BATTLE_EFFECT_PARM *args)
 	SHEARS				*shears;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
 	} else {
@@ -481,7 +481,7 @@ void btEffectRunLifeShear(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
 	}
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	womanX = 0;
 	womanY = 0;
@@ -777,9 +777,9 @@ void btEffectRunGeyser(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	MODEL_TEXTURE		 texture;
 	DRAW_RECTANGLE		 draw[2];
 	SCREEN_POINT		 midpoint;
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*canvas = Ram_HeapSlots->battleCanvas;
-	Uint8				*sparkPictures = Ram_HeapSlots->battleSheet;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
+	Uint8				*sparkPictures = RamHeapSlots->battleSheet;
 	PARTICLE			*drop;
 	RENDER_MODEL		*column;
 	void				*vertices;
@@ -1027,11 +1027,11 @@ void btEffectRunMysticCall(BATTLE_EFFECT_PARM *args)
    48 stars, a flash at the start and 55 ticks later, 72 ticks in all. */
 void btEffectRunStarSwarm(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
 	DRAW_RECTANGLE		 draw[2];
 	Sint32				 member;
-	Uint8				*sparkPictures = Ram_HeapSlots->battleSheet;
+	Uint8				*sparkPictures = RamHeapSlots->battleSheet;
 	Sint32				 ticks;
 	BATTLE_CAMERA		*camera;
 	Sint32				 frm;
@@ -1046,7 +1046,7 @@ void btEffectRunStarSwarm(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		RESOURCE_YELLOW_GLOW_SHEET, sparkPictures, 0, 0);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	if(mode == STAR_SWARM_DJINN_STUN)
 		ticks = args->tgtCnt * 8 + 38;
 	else
@@ -1056,7 +1056,7 @@ void btEffectRunStarSwarm(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	for(frm = 0; frm != ticks; frm++) {
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 
 		/* The first tick sets each target's point on it, rising, and every
 		   star at its point with a random push across the floor. */
@@ -1204,7 +1204,7 @@ void btEffectRunStarSwarm(BATTLE_EFFECT_PARM *args, Sint32 mode)
    darkens the background behind it, and plays the column of bubbles. */
 UNUSED void btEffectStartBubbleColumn(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	btEffectStartCanvasLayer(0);
 	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1218,7 +1218,7 @@ UNUSED void btEffectStartBubbleColumn(BATTLE_EFFECT_PARM *args)
 #define BUBBLE_TICKS		  60
 /* The bubbles, in the map cell buffer: each keeps its picture in z and its life
    in variant, -1 once it has left the top of the canvas. */
-#define BUBBLES				  ((PARTICLE *)(Ram_MapMetatileBuffer + 20480))
+#define BUBBLES				  ((PARTICLE *)(RamMapMetatileBuffer + 20480))
 /* A bubble's variant while it floats: any value from 0 up. */
 #define BUBBLE_FLOATING		  32
 
@@ -1230,8 +1230,8 @@ UNUSED void btEffectStartBubbleColumn(BATTLE_EFFECT_PARM *args)
    recovery sound. */
 void btEffectRunBubbleColumn(BATTLE_EFFECT_PARM *args)
 {
-	void				*canvas = Ram_HeapSlots->battleCanvas;
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
@@ -1243,7 +1243,7 @@ void btEffectRunBubbleColumn(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 
 	/* The blue beam's palette colours the bubble pictures. */
 	syWordsCopyEntry((void *)BG_PLTT,
@@ -1398,8 +1398,8 @@ void btEffectRunBubbleColumn(BATTLE_EFFECT_PARM *args)
 	(COATLICUE_BUBBLE_PICTURES + BUBBLE_SHEET_BYTES)
 /* The coils' band in the map cell buffer, past the fire ring's texture: its
    corners, two for each of its segments, and its mesh. */
-#define COATLICUE_COIL_CORNERS	   (Ram_MapMetatileBuffer + 17408)
-#define COATLICUE_COIL_MESH		   (Ram_MapMetatileBuffer + 18432)
+#define COATLICUE_COIL_CORNERS	   (RamMapMetatileBuffer + 17408)
+#define COATLICUE_COIL_MESH		   (RamMapMetatileBuffer + 18432)
 #define COATLICUE_COIL_SEGMENTS	   32
 /* Coatlicue's figure, CoatlicueTiles: twelve 32x32 sprites, three across. */
 #define COATLICUE_SPRITES		   12
@@ -1526,9 +1526,9 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 	SPR			 *spr;
 	PARTICLE	 *bubble;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sprs = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
 	btEffectFillWhiteBand();
@@ -1542,7 +1542,7 @@ void btEffectRunCoatlicue(BATTLE_EFFECT_PARM *args)
 	}
 	zero = 0;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);

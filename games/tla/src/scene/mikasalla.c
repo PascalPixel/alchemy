@@ -1,6 +1,6 @@
 /* Mikasalla, the village in the far south of Osenia, and the tunnels under it,
-   in two scenes that share this overlay (`SceneId_Mikasalla`, the village, and
-   `SceneId_MikasallaNorth`, the tunnels).
+   in two scenes that share this overlay (`SceneIdMikasalla`, the village, and
+   `SceneIdMikasallaNorth`, the tunnels).
 
    The inn is the northeast door, the general store the northwest one, and the
    Sanctum the wide door in the west cliff. Once the party has crossed the
@@ -120,7 +120,7 @@ extern MAP_GRID_METATILE_ANIMATION MikasallaDoors[];
    door is entered without the walk. */
 void scMikasallaEnterDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 id;
 	Sint16		*exit;
 	Sint32		 idx;

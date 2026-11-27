@@ -116,7 +116,7 @@ const Uint16 WorldMapKeyHeadings[16] = {
 };
 
 /* A footprint's script: wait 120 ticks, then release the actor, as The */
-/* Broken Seal's WorldMap_FootprintActions. */
+/* Broken Seal's WorldMapFootprintActions. */
 const Sint32 ActorFootprintScript[] = {
 	SC_WAIT(120),
 	SC_RELEASE,

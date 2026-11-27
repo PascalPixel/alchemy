@@ -61,7 +61,7 @@ void fdActorSystemPlaceSprs(void)
 	system = ActorSystemStateWork;
 	/* Copy the picture decoder (fdRenderDecodePicture) into its heap slot. */
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_TICK_SCRATCH, fdRenderDecodePicture,
-		Render_DecodePictureCodeSize);
+		RenderDecodePictureCodeSize);
 	system->used = 0;
 	actor = ActorsWork;
 	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, actor++) {
@@ -186,7 +186,7 @@ void fdActorSystemProjectSprs(void)
 	camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 	system = ActorSystemStateWork;
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_TICK_SCRATCH, fdRenderDecodePicture,
-		Render_DecodePictureCodeSize);
+		RenderDecodePictureCodeSize);
 	eye = &camera->eye;
 	tgt = &camera->tgt;
 	if(camera->followEye != NULL)

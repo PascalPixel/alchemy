@@ -1,4 +1,4 @@
-/* Hammet Palace (SceneId_HammetPalace), the rooms of Lord Hammet's palace in
+/* Hammet Palace (SceneIdHammetPalace), the rooms of Lord Hammet's palace in
    Kalay.
 
    The scene before its door, also Hammet Palace in the game's area names, is

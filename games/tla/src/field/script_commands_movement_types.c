@@ -263,7 +263,7 @@ ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 id)
 
 	found = NULL;
 	best = FACING_TARGET_REACH;
-	entry = Ram_HeapSlots->actors;
+	entry = RamHeapSlots->actors;
 	for(cnt = 0; cnt < ACTOR_COUNT; cnt++, entry++) {
 		if(entry->script == NULL)
 			continue;
@@ -308,8 +308,8 @@ ACTOR *fdActorFindNearestFacingTarget(ACTOR *self, Sint32 id)
    world map or with no map. */
 Bool fdMapGridBlocksJump(ACTOR *actor, Sint32 *pos)
 {
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	if(map == 0 || event->mode == ACTOR_SYSTEM_WORLD_MAP ||
 		fdMapGridGetTerrainKindStub(actor->layer, pos[0], pos[2]) <=
@@ -339,7 +339,7 @@ Sint32 fdTryJumpForward(void)
 	Sint32		 ang = leader->facing;
 	Uint8		*flg = &leader->motionFlg;
 	Uint8		 saved = *flg;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint16		 sprFlg = SPRITE_FLAG_SHADOW;
 	FIELD_COORDINATE pos[3];
 	ACTOR			*entry;
@@ -373,7 +373,7 @@ again:
 
 	/* A platform 16 pixels below the landing makes it a jump spot. */
 	if(leader->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-		entry = Ram_HeapSlots->actors;
+		entry = RamHeapSlots->actors;
 		for(i = 0; i < ACTOR_COUNT; i++, entry++) {
 			Sint32 bound = toFIXED(8) - 1;
 			FIXED  delta;
@@ -408,7 +408,7 @@ again:
 	}
 
 	/* A solid object at the landing blocks it. */
-	entry = Ram_HeapSlots->actors;
+	entry = RamHeapSlots->actors;
 	for(i = 0; i < ACTOR_COUNT; i++, entry++) {
 		if(entry->script != NULL &&
 			!(entry->priFlg & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
@@ -449,7 +449,7 @@ again:
 		fdActorSelectAnimationStub(leader, ANIM_LEADER_SPRING);
 		fdActorSetSprFlagsStub(leader, sprFlg);
 
-		map = Ram_HeapSlots->mapGrid;
+		map = RamHeapSlots->mapGrid;
 		attr = map->groundEffs;
 		if(attr & GROUND_EFFECTS_WADING_MASK) {
 			Sint32		  metatileX = FIELD_METATILE(leader->x.fixed);
@@ -510,7 +510,7 @@ again:
 Sint32 fdClimbDown(void)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	Sint32		  gridX;
 	Sint16		  spriteFlags;
 	MAP_METATILE *ground;
@@ -561,7 +561,7 @@ Sint32 fdClimbDown(void)
 		position[0] = leader->x.fixed;
 		position[1] = leader->y.fixed - toFIXED(32);
 		position[2] = leader->z.fixed + toFIXED(16);
-		entry = Ram_HeapSlots->actors;
+		entry = RamHeapSlots->actors;
 		for(i = 0; i < ACTOR_COUNT; i++, entry++) {
 			if(entry->script != NULL && (entry->collisionFlg & ACTOR_SOLID) &&
 				entry != leader &&
@@ -615,7 +615,7 @@ failure:
 Sint32 fdClimbUp(void)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	Sint16		  spriteFlags = SPRITE_FLAG_SHADOW;
 	MAP_METATILE *ground;
 	Sint32		  gridX = METATILE_MIDDLE(FIXEDtoINT(leader->x.fixed));
@@ -688,7 +688,7 @@ Sint32 fdClimbUp(void)
 		position[1] = leader->y.fixed + toFIXED(16);
 		position[2] = leader->z.fixed - toFIXED(16);
 		i = 0;
-		entry = Ram_HeapSlots->actors;
+		entry = RamHeapSlots->actors;
 		for(; i < ACTOR_COUNT; i++, entry++) {
 			if(entry->script != NULL && (entry->collisionFlg & ACTOR_SOLID) &&
 				entry != leader &&

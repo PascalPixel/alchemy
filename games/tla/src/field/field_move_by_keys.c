@@ -81,7 +81,7 @@ Sint32 fdActorMoveByKeys(ACTOR *actor)
 			actor->facing = DEGtoANG(90);
 		pos.y = actor->y.fixed - pos.z;
 		pos.z = actor->z.fixed;
-		map = Ram_HeapSlots->mapGrid;
+		map = RamHeapSlots->mapGrid;
 		srcMetatile = &map->layers[actor->layer]
 						   .metatiles[fdActorGetMetatileIndexStub(actor)];
 		dstMetatile = &map->layers[actor->layer].metatiles[pos.x / toFIXED(16) +
@@ -106,7 +106,7 @@ Sint32 fdActorMoveByKeys(ACTOR *actor)
 			}
 		}
 	}
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if(collisionFlg & PLAYER_STEP_BLOCKED)
 			state->blockedSteps++;
@@ -153,7 +153,7 @@ Sint32 fdActorCrossRope(ACTOR *actor)
 
 	spr = actor->spr;
 	/* The rope slot, read by its number. */
-	rope = HEAP_SLOT_AT(Ram_HeapSlots, HEAP_SLOT_ROPE);
+	rope = HEAP_SLOT_AT(RamHeapSlots, HEAP_SLOT_ROPE);
 	speed = toFIXED(1);
 	collisionFlg = 0;
 	actor->speedLimit = toFIXED(1) / 2;
@@ -170,13 +170,13 @@ Sint32 fdActorCrossRope(ACTOR *actor)
 		pos.x += actor->x.fixed;
 		pos.y = actor->y.fixed - pos.z;
 		pos.z = actor->z.fixed;
-		rope = HEAP_SLOT_AT(Ram_HeapSlots, HEAP_SLOT_ROPE);
+		rope = HEAP_SLOT_AT(RamHeapSlots, HEAP_SLOT_ROPE);
 		node = rope->nodes;
 		best = NULL;
 		bestDistance = ROPE_NODE_DISTANCE_NONE;
 		if(rope == NULL) {
 			collisionFlg = PLAYER_STEP_BLOCKED_BY_MAP;
-			state = Ram_HeapSlots->fieldState;
+			state = RamHeapSlots->fieldState;
 			goto report;
 		}
 		for(cnt = 0; cnt < ROPE_NODE_COUNT; cnt++, node++) {
@@ -224,7 +224,7 @@ Sint32 fdActorCrossRope(ACTOR *actor)
 			spr->rotation = best->ang + turn;
 		}
 	}
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 report:
 	if(state != NULL) {
 		if(collisionFlg & PLAYER_STEP_BLOCKED)
@@ -289,18 +289,18 @@ Sint32 fdActorCrossTightrope(ACTOR *actor)
 		collisionFlg = PLAYER_STEP_STOPPED;
 		best = (TIGHTROPE_NODE *)actor->watchedActor;
 		SET_POSITION(&pos, actor->x.fixed, best->y, actor->z.fixed);
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 	} else {
 		SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 		syVectorAddPolarOffset(toFIXED(8), ang, &pos);
 		/* The tightrope slot, read by its number. */
-		tightrope = HEAP_SLOT_AT(Ram_HeapSlots, HEAP_SLOT_TIGHTROPE);
+		tightrope = HEAP_SLOT_AT(RamHeapSlots, HEAP_SLOT_TIGHTROPE);
 		point = tightrope->nodes;
 		best = NULL;
 		bestDistance = ROPE_NODE_DISTANCE_NONE;
 		if(tightrope == NULL) {
 			collisionFlg = PLAYER_STEP_BLOCKED_BY_MAP;
-			state = Ram_HeapSlots->fieldState;
+			state = RamHeapSlots->fieldState;
 		} else {
 			for(cnt = 0; cnt < ROPE_NODE_COUNT; cnt++, point++) {
 				if(point->kind == ROPE_NODE_CROSSABLE) {
@@ -335,7 +335,7 @@ Sint32 fdActorCrossTightrope(ACTOR *actor)
 				pos.x = pos.x;
 				SET_POSITION(&pos, best->x, best->y, best->z);
 			}
-			state = Ram_HeapSlots->fieldState;
+			state = RamHeapSlots->fieldState;
 		}
 	}
 	if(state != NULL) {
@@ -394,7 +394,7 @@ void fdSandJitterGrain(ACTOR *actor)
    (ABILITY_SAND, packed) and returns 1. */
 Bool fdSandCheckEndKeys(ACTOR *actor)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Bool		 pressed = FALSE;
 
 	if(state == NULL)
@@ -639,7 +639,7 @@ Sint32 fdActorMoveAsSand(ACTOR *actor)
 			}
 		}
 	counted: {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		if(state != NULL) {
 			if(collision & PLAYER_STEP_BLOCKED)
@@ -696,7 +696,7 @@ Sint32 fdActorMoveAsSand(ACTOR *actor)
 				effect->motionFlg = 0;
 				sySndPlayStub(SE_SAND_MOVE);
 				if(spr != NULL) {
-					FIELD_STATE *state = Ram_HeapSlots->fieldState;
+					FIELD_STATE *state = RamHeapSlots->fieldState;
 
 					fdSprStartAnimation(spr, SAND_PUFF_ANIMATION_THIN);
 					spr->flg = 0;
@@ -808,7 +808,7 @@ Sint32 fdActorMoveAsSandOnWorldMap(ACTOR *actor)
 	}
 
 update_object:
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
@@ -846,7 +846,7 @@ update_object:
 			actor->wakeTmr--;
 	}
 
-	camera = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	tgtCameraYaw = WorldMapKeyYaws[DPAD_INDEX(PerWork.data)];
 	yawStep = (Sint16)(tgtCameraYaw - camera->yaw) / 8;
 	if(yawStep > WORLD_MAP_YAW_STEP_MAX)

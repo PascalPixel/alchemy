@@ -1,7 +1,7 @@
 /* The Izumo Ruins, the grey caves under the ring of giant stones in Izumo,
    reached by the ladder Reveal shows in the ring's centre. They are two scenes
-   that share this overlay (SceneId_IzumoRuinsFirstRoom,
-   SceneId_IzumoRuinsSecondRoom), each of several rooms.
+   that share this overlay (SceneIdIzumoRuinsFirstRoom,
+   SceneIdIzumoRuinsSecondRoom), each of several rooms.
 
    In the first room's south part, where the ladder comes down, two wooden
    stakes stand between two puddles across the floor, with patches of sand
@@ -232,7 +232,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    stake lands (mode 1) scIzumoRuinsShowStakeState makes its metatile floor. */
 void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frm)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	Sint16				scene;
 
@@ -250,7 +250,7 @@ void scIzumoRuinsPoundStake(Sint32 mode, Sint32 frm)
    that Felix can jump onto. */
 void scIzumoRuinsFreezePuddle(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 
 	fdScriptStart();
@@ -346,7 +346,7 @@ const CUE *scGetCues(void)
    dried it. Returns 0. */
 Sint32 scInit(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Sint32		 height;
 

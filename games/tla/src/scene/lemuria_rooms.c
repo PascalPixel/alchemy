@@ -1,4 +1,4 @@
-/* Lemuria's rooms (SceneId_LemuriaRooms), a rooms map behind the city's doors:
+/* Lemuria's rooms (SceneIdLemuriaRooms), a rooms map behind the city's doors:
 
    - Piers's uncle's house (LEMURIA_ROOMS_TO_LEMURIA_WEST_A), where Piers comes
 	 home to learn his mother has died (scLemuriaRoomsPiersVisitsUncle) and his

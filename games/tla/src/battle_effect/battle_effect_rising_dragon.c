@@ -63,10 +63,10 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 j;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		EFFECT_LOAD_BLITTER(
@@ -75,7 +75,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	}
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	{
@@ -247,7 +247,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 					start = -(width / 2);
 					for(i = 0; i != 2; i++) {
 						STRIP_VERTEX *stripB =
-							(STRIP_VERTEX *)Ram_MapMetatileBuffer +
+							(STRIP_VERTEX *)RamMapMetatileBuffer +
 							DRAGON_CORNERS;
 						STRIP_VERTEX *corner = stripB + (j * 2 + i);
 
@@ -331,7 +331,7 @@ void btEffectRunRisingDragon(BATTLE_EFFECT_PARM *args)
 #define FIGURE_SPARK_BURST_TICK 30
 #define FIGURE_HIT_TICK			80 /* the blow, which starts the result phase */
 
-/* The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
+/* The parts of the figure in BattleEffectHeartbreakSheet, unpacked into the
    map cells. */
 #define FIGURE_BODY				   0
 #define FIGURE_BODY_WIDTH		   96
@@ -374,10 +374,10 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 	Sint32				 x;
 	Sint32				 y;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
-	parts = Ram_MapMetatileBuffer;
+	parts = RamMapMetatileBuffer;
 	btEffectStartTiledCanvas(BGCNT_WRAP | BGCNT_PRIORITY(1));
 	REG_BG2PA = Q_8_8(1);
 	btResourceLoadAndDecompress(RESOURCE_HEARTBREAK_SHEET, parts, 1, 1);
@@ -432,26 +432,26 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 
 		/* The body, and the arm reaching until tick 48, then clenched. */
 		if(args->side == EFFECT_SIDE_ENEMIES) {
-			draw[args->side](canvas, Ram_MapMetatileBuffer + FIGURE_BODY, 25,
+			draw[args->side](canvas, RamMapMetatileBuffer + FIGURE_BODY, 25,
 				y + 2, FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
 			if((Uint32)frm < 48)
 				draw[args->side](canvas,
-					Ram_MapMetatileBuffer + FIGURE_ARM_REACHING, 31, y + 22,
+					RamMapMetatileBuffer + FIGURE_ARM_REACHING, 31, y + 22,
 					FIGURE_ARM_REACHING_WIDTH, FIGURE_ARM_REACHING_HEIGHT);
 			else
 				draw[args->side](canvas,
-					Ram_MapMetatileBuffer + FIGURE_ARM_CLENCHED, 64, y + 16,
+					RamMapMetatileBuffer + FIGURE_ARM_CLENCHED, 64, y + 16,
 					FIGURE_ARM_CLENCHED_WIDTH, FIGURE_ARM_CLENCHED_HEIGHT);
 		} else {
-			draw[args->side](canvas, Ram_MapMetatileBuffer + FIGURE_BODY, 7,
+			draw[args->side](canvas, RamMapMetatileBuffer + FIGURE_BODY, 7,
 				y + 2, FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
 			if((Uint32)frm < 48)
 				draw[args->side](canvas,
-					Ram_MapMetatileBuffer + FIGURE_ARM_REACHING, 49, y + 22,
+					RamMapMetatileBuffer + FIGURE_ARM_REACHING, 49, y + 22,
 					FIGURE_ARM_REACHING_WIDTH, FIGURE_ARM_REACHING_HEIGHT);
 			else
 				draw[args->side](canvas,
-					Ram_MapMetatileBuffer + FIGURE_ARM_CLENCHED, 22, y + 16,
+					RamMapMetatileBuffer + FIGURE_ARM_CLENCHED, 22, y + 16,
 					FIGURE_ARM_CLENCHED_WIDTH, FIGURE_ARM_CLENCHED_HEIGHT);
 		}
 
@@ -461,7 +461,7 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 
 			if(args->side == EFFECT_SIDE_ENEMIES) {
 				draw[args->side](canvas,
-					Ram_MapMetatileBuffer + FIGURE_SPARK_BURST +
+					RamMapMetatileBuffer + FIGURE_SPARK_BURST +
 						HeartbreakSparkBurstPictures[picture],
 					46 - HeartbreakSparkBurstWidths[picture] / 2,
 					y - HeartbreakSparkBurstHeights[picture] / 2 + 61,
@@ -469,7 +469,7 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 					HeartbreakSparkBurstHeights[picture]);
 			} else {
 				draw[args->side](canvas,
-					Ram_MapMetatileBuffer + FIGURE_SPARK_BURST +
+					RamMapMetatileBuffer + FIGURE_SPARK_BURST +
 						HeartbreakSparkBurstPictures[picture],
 					HeartbreakSparkBurstWidths[picture] / 2 -
 						HeartbreakSparkBurstWidths[picture] + 82,
@@ -485,11 +485,11 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 			if(frm <= 47) {
 				if(args->side == EFFECT_SIDE_ENEMIES)
 					draw[args->side](canvas,
-						Ram_MapMetatileBuffer + FIGURE_HEART, 30, y + 46,
+						RamMapMetatileBuffer + FIGURE_HEART, 30, y + 46,
 						FIGURE_HEART_WIDTH, FIGURE_HEART_HEIGHT);
 				else
 					draw[args->side](canvas,
-						Ram_MapMetatileBuffer + FIGURE_HEART, 66, y + 46,
+						RamMapMetatileBuffer + FIGURE_HEART, 66, y + 46,
 						FIGURE_HEART_WIDTH, FIGURE_HEART_HEIGHT);
 			} else {
 				Sint32 picture = (frm - 56) / 6;
@@ -499,14 +499,14 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 				if(picture <= 7) {
 					if(args->side == EFFECT_SIDE_ENEMIES)
 						draw[args->side](canvas,
-							Ram_MapMetatileBuffer + FIGURE_HEART +
+							RamMapMetatileBuffer + FIGURE_HEART +
 								HeartbreakHeartBurnPictures[picture],
 							63, y + HeartbreakHeartBurnY[picture] - 8,
 							FIGURE_HEART_WIDTH,
 							HeartbreakHeartBurnHeights[picture]);
 					else
 						draw[args->side](canvas,
-							Ram_MapMetatileBuffer + FIGURE_HEART +
+							RamMapMetatileBuffer + FIGURE_HEART +
 								HeartbreakHeartBurnPictures[picture],
 							33, y + HeartbreakHeartBurnY[picture] - 8,
 							FIGURE_HEART_WIDTH,
@@ -535,8 +535,8 @@ void btEffectRunHeartbreak(BATTLE_EFFECT_PARM *args)
 	}
 
 	syCloseEvent(btEffectTransferCanvas);
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-		Ram_HeapSlots->battleState->bg, BACKGROUND_DARKEN_TICKS);
+	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RamHeapSlots->battleState->bg,
+		BACKGROUND_DARKEN_TICKS);
 	EFFECT_RELEASE_BLITTERS();
 	btEffectEndCanvasLayer();
 }

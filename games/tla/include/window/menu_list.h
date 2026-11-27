@@ -136,8 +136,7 @@ enum { BATTLE_LIST_ROWS = 5 };
 	}
 
 /* The battle menus' shared state, in its heap slot. */
-#define BattleMenuStateWork \
-	((BATTLE_MENU_STATE *)Ram_HeapSlots->battleMenuState)
+#define BattleMenuStateWork ((BATTLE_MENU_STATE *)RamHeapSlots->battleMenuState)
 
 /* Restores the previous selection: page, row and return row. */
 #define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_) \

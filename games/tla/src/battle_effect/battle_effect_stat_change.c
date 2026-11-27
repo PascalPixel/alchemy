@@ -133,7 +133,7 @@ void btEffectRunCoal(BATTLE_EFFECT_PARM *args)
    Abilities: Crucible Fire. */
 void btEffectRunCrucibleFire(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	state->fadeStep = 0;
 	args->prelude = 0;
@@ -206,8 +206,8 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	SCREEN_POINT screen;
 	Sint32		 point[3];
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	start = 0;
 	btEffectStartCanvasLayer(0);
 
@@ -339,7 +339,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	for(frm = start; frm !=
 		args->tgtCnt * STAT_BOOST_TARGET_DELAY + STAT_BOOST_SPRITE_TICK + 28;
 		frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 		Sint32		   prelude;
 
 		if(frm == 0)
@@ -363,10 +363,10 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE, drawFlg ^ flipX, BLITTER_MAX);
-			draw[0] = Ram_HeapSlots->ramCode;
+			draw[0] = RamHeapSlots->ramCode;
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE_PAIRED, drawFlg ^ flipX, additive);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 
 			if(frm > 32)
 				y = y - frm * 2 + 64;
@@ -404,7 +404,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 				if(frm > member * STAT_BOOST_TARGET_DELAY) {
 					EFFECT_LOAD_BLITTER(
 						HEAP_SLOT_RAM_CODE, drawFlg, BLITTER_MAX);
-					draw[0] = Ram_HeapSlots->ramCode;
+					draw[0] = RamHeapSlots->ramCode;
 					EFFECT_LOAD_BLITTER(
 						HEAP_SLOT_RAM_CODE_PAIRED, drawFlg, additive);
 					{
@@ -412,7 +412,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						 * read. */
 						DRAW_RECTANGLE *slot = NULL;
 
-						slot = &Ram_HeapSlots->ramCodePaired;
+						slot = &RamHeapSlots->ramCodePaired;
 						draw[1] = *slot;
 					}
 					if(mode == STAT_BOOST_IMPACT) {
@@ -475,7 +475,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					4 % 6;
 
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlg, BLITTER_MAX);
-				draw[0] = Ram_HeapSlots->ramCode;
+				draw[0] = RamHeapSlots->ramCode;
 				draw[0](canvas,
 					state->sheet + picture * PICTURE_BYTES(GLOW_ORB) +
 						STAT_BOOST_BURST,
@@ -498,7 +498,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 					EFFECT_LOAD_BLITTER(
 						HEAP_SLOT_RAM_CODE, drawFlg, BLITTER_MAX);
-					draw[0] = Ram_HeapSlots->ramCode;
+					draw[0] = RamHeapSlots->ramCode;
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(DAGGER) +
 							STAT_BOOST_PICTURE,
@@ -520,7 +520,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 					EFFECT_LOAD_BLITTER(
 						HEAP_SLOT_RAM_CODE, drawFlg, BLITTER_MAX);
-					draw[0] = Ram_HeapSlots->ramCode;
+					draw[0] = RamHeapSlots->ramCode;
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(VIOLET_STREAK) +
 							STAT_BOOST_PICTURE,
@@ -546,14 +546,14 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 					EFFECT_LOAD_BLITTER(
 						HEAP_SLOT_RAM_CODE, drawFlg, BLITTER_MAX);
 					lowerFlg = drawFlg | COMPOSITE_FLIP_Y;
-					draw[0] = Ram_HeapSlots->ramCode;
+					draw[0] = RamHeapSlots->ramCode;
 					/* Built for the 128 by 128 canvas, 7 the shift of each
 					   side. */
 					btEffectBuildBlitter(
 						HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlg, BLITTER_MAX);
 					wisp = state->sheet + picture * PICTURE_BYTES(WISP) +
 						STAT_BOOST_PICTURE;
-					draw[1] = Ram_HeapSlots->ramCodePaired;
+					draw[1] = RamHeapSlots->ramCodePaired;
 					draw[0](canvas, wisp, screen.x - WISP_WIDTH / 2,
 						screen.y - 24, WISP_WIDTH, WISP_HEIGHT);
 					draw[1](canvas, wisp, screen.x - WISP_WIDTH / 2,
@@ -572,7 +572,7 @@ void btEffectRunStatBoost(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 					EFFECT_LOAD_BLITTER(
 						HEAP_SLOT_RAM_CODE, drawFlg, BLITTER_ADDITIVE);
-					draw[0] = Ram_HeapSlots->ramCode;
+					draw[0] = RamHeapSlots->ramCode;
 					draw[0](canvas,
 						state->sheet + picture * PICTURE_BYTES(SHIELD) +
 							STAT_BOOST_PICTURE,
@@ -655,8 +655,8 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 i;
 	void				*palette;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(0);
 	if(mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL)
 		btResourceLoadAndDecompress(RESOURCE_DAGGER_SHEET, state->sheet, 1, 1);
@@ -726,7 +726,7 @@ void btEffectRunStatReduction(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	for(frm = 0; frm != args->tgtCnt * STAT_REDUCTION_TARGET_DELAY + 64;
 		frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* The loop runs count * STAT_REDUCTION_TARGET_DELAY + 64 ticks, so
 		   tick 72 comes only with three or more targets. With one or two,

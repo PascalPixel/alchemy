@@ -509,7 +509,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 
 			tile = (void *)DJINN_CHANGE_ARROW_VRAM;
 			if((frm & 4) != 0) {
-				syWordsCopy(tile, Menu_ChangeArrowTile, 32);
+				syWordsCopy(tile, MenuChangeArrowTile, 32);
 			} else {
 				syWordsFill(tile, 32, fill);
 			}
@@ -692,7 +692,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 		if((frm & 3) == 0) {
 			if(frm & 4)
 				syWordsCopy(
-					(void *)DJINN_CHANGE_ARROW_VRAM, Menu_ChangeArrowTile, 32);
+					(void *)DJINN_CHANGE_ARROW_VRAM, MenuChangeArrowTile, 32);
 			else
 				syWordsFill((void *)DJINN_CHANGE_ARROW_VRAM, 32,
 					TEXT_CANVAS_BACKGROUND_WORD);

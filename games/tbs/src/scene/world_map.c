@@ -1,4 +1,4 @@
-/* The World Map (SceneId_WorldMap), the one perspective map (map/world) that
+/* The World Map (SceneIdWorldMap), the one perspective map (map/world) that
    joins the areas, and the only scene of this overlay.
 
    Its code does three kinds of work.
@@ -209,7 +209,7 @@ typedef enum WORLD_MAP_ACTOR_ID {
 	ACTOR_CORONA,
 	/* The Mercury Djinni Hail. */
 	ACTOR_HAIL,
-	/* Vale, whose exit leads to the town gate (SceneId_ValePlaza). */
+	/* Vale, whose exit leads to the town gate (SceneIdValePlaza). */
 	ACTOR_TO_VALE_PLAZA,
 	ACTOR_TO_VAULT,
 	ACTOR_TO_ALTIN,
@@ -234,13 +234,13 @@ typedef enum WORLD_MAP_ACTOR_ID {
 	ACTOR_TO_ROAD_TO_BABI_LIGHTHOUSE,
 	ACTOR_TO_GOMA_CAVE_ENTRANCE,
 	/* Goma Cave's way out, where a wooden bridge crosses the river
-	   (SceneId_GomaCaveBridge). */
+	   (SceneIdGomaCaveBridge). */
 	ACTOR_TO_GOMA_CAVE_BRIDGE,
 	ACTOR_TO_ALTMILLER_CAVE,
 	ACTOR_TO_GONDOWAN_CAVE_NORTH,
 	ACTOR_TO_GONDOWAN_CAVE_SOUTH,
 	/* The way into Mogall Forest where the Killer Ape waits
-	   (SceneId_MogallForestKillerApe). */
+	   (SceneIdMogallForestKillerApe). */
 	ACTOR_TO_MOGALL_FOREST_KILLER_APE,
 	ACTOR_TO_GATEWAY_CAVE,
 	ACTOR_TO_BILIBIN_CAVE_ENTRANCE,
@@ -250,7 +250,7 @@ typedef enum WORLD_MAP_ACTOR_ID {
 	ACTOR_TO_LAMAKAN_DESERT_CAVE,
 	ACTOR_TO_KOLIMA_FOREST,
 	/* The way into Mogall Forest by its broken sign
-	   (SceneId_MogallForestSign). */
+	   (SceneIdMogallForestSign). */
 	ACTOR_TO_MOGALL_FOREST_SIGN,
 	ACTOR_TO_KALAY_TUNNEL_ENTRANCE,
 	/* After three signposts (SPRITE_SIGNPOST). Unused: they stand at the map's

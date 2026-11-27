@@ -25,7 +25,7 @@ typedef struct LINK_SIGNATURE {
 void mnBattleMenuUpdateEachTick(void)
 {
 	BATTLE_MENU_STATE *state =
-		(BATTLE_MENU_STATE *)Ram_HeapSlots->battleMenuState;
+		(BATTLE_MENU_STATE *)RamHeapSlots->battleMenuState;
 	BATTLE_STATE   *runtime;
 	LINK_SIGNATURE *signature;
 	Sint32			tgt;
@@ -64,7 +64,7 @@ void mnBattleMenuUpdateEachTick(void)
 		if(state->linkTmr == 0)
 			return;
 
-		runtime = Ram_HeapSlots->battleState;
+		runtime = RamHeapSlots->battleState;
 		if(runtime->linkPaused == 0)
 			goto load_timer;
 		state->tmr = 0;
@@ -135,7 +135,7 @@ Sint32 mnBattleRefuseFlee(void)
 	BATTLE_STATE *battle;
 	Sint32		  mode;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	mode = MainRoutineStateWork.battleType;
 	if(MainRoutineStateWork.battleType == BATTLE_TYPE_NO_ESCAPE ||
 		mode <= BATTLE_TYPE_NO_ESCAPE ||

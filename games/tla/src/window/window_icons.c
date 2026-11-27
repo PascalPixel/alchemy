@@ -6,7 +6,7 @@
    the marks an item icon may carry (equipped, broken), and the digits of its
    count. */
 extern Uint8 *IconBasePointerTable[];
-extern Uint8 *Icon_OverlayPointerTable[];
+extern Uint8 *IconOverlayPointerTable[];
 extern Uint8 *IconMarkPointers[];
 extern Uint8 *IconDigitPointers[];
 
@@ -57,7 +57,7 @@ void mnIconBuildCommandIconTiles(Sint32 overlayIcon, Sint32 baseIcon,
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 0);
-	state->encoded = Icon_OverlayPointerTable[overlayIcon];
+	state->encoded = IconOverlayPointerTable[overlayIcon];
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 1);
@@ -128,7 +128,7 @@ Sint32 mnItemIconCompose(Uint32 code, Uint32 layers)
 	overlay = FALSE;
 	cnt = 0;
 	item = gmItemGetDirectStub(code & INVENTORY_ITEM_ID_MASK);
-	state = Ram_HeapSlots->glyphTransfer;
+	state = RamHeapSlots->glyphTransfer;
 	if(state == NULL)
 		return -1;
 	if(layers & ICON_BASE) {
@@ -221,7 +221,7 @@ Sint32 mnIconBuildMiscIconTiles(Sint32 icon, Sint32 unused, Sint32 cacheSlot)
    buffer. */
 void mnIconDrawItem(Sint32 code)
 {
-	ICON_TRANSFER	*state = Ram_HeapSlots->glyphTransfer;
+	ICON_TRANSFER	*state = RamHeapSlots->glyphTransfer;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(INVENTORY_ITEM_ID_MASK & code);
 
 	if(code != 0)
@@ -281,9 +281,9 @@ void mnIconBuildAbilityIconTiles(Uint32 glyph, Sint32 withBase,
 /* Draws one of the other icons into the glyph buffer. */
 void mnIconDrawMisc(Uint32 idx)
 {
-	ICON_TRANSFER *state = Ram_HeapSlots->glyphTransfer;
+	ICON_TRANSFER *state = RamHeapSlots->glyphTransfer;
 
-	state->encoded = Icon_MiscIconPointers[idx];
+	state->encoded = IconMiscIconPointers[idx];
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 0);
@@ -336,9 +336,9 @@ UNUSED void mnIconReservedNoOperation(void)
 extern Uint8 mnTileDecompress4bppCode[];
 extern Uint8 mnTileExpandMaskedCode[];
 extern Uint8 mnTileExpandOpaqueCode[];
-extern Uint8 Tile_Decompress4bppCodeSize[];
-extern Uint8 Tile_ExpandMaskedCodeSize[];
-extern Uint8 Tile_ExpandOpaqueCodeSize[];
+extern Uint8 TileDecompress4bppCodeSize[];
+extern Uint8 TileExpandMaskedCodeSize[];
+extern Uint8 TileExpandOpaqueCodeSize[];
 
 /* Decodes a compressed icon into the glyph buffer and expands it to tiles,
    opaque for the first layer, or over what is there, its colour 0 clear, when
@@ -347,13 +347,13 @@ void mnIconDecode(ICON_TRANSFER *glyph, Sint32 overlay)
 {
 	void *code;
 
-	RAM_CODE_LOAD(code, mnTileDecompress4bppCode, Tile_Decompress4bppCodeSize);
+	RAM_CODE_LOAD(code, mnTileDecompress4bppCode, TileDecompress4bppCodeSize);
 	((void (*)(const void *, Uint8 *))code)(glyph->encoded, glyph->input);
 	syHeapRelease(code);
 	if(overlay)
-		RAM_CODE_LOAD(code, mnTileExpandMaskedCode, Tile_ExpandMaskedCodeSize);
+		RAM_CODE_LOAD(code, mnTileExpandMaskedCode, TileExpandMaskedCodeSize);
 	else
-		RAM_CODE_LOAD(code, mnTileExpandOpaqueCode, Tile_ExpandOpaqueCodeSize);
+		RAM_CODE_LOAD(code, mnTileExpandOpaqueCode, TileExpandOpaqueCodeSize);
 	((void (*)(Uint8 *, Uint8 *, Uint32, Uint32))code)(glyph->input,
 		glyph->tiles, (Uint16)glyph->width, (Uint16)glyph->height);
 	syHeapRelease(code);

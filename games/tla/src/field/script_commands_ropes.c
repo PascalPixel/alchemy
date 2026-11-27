@@ -50,7 +50,7 @@ void fdRopeInit(void)
 
 	DMA_FILL32(0, state, sizeof(ROPE_WORK));
 	state->vramEntry = syVRAMCacheFindFreeEntry();
-	syDecompressTaggedLZ(Rope_Tiles, buf);
+	syDecompressTaggedLZ(RopeTiles, buf);
 	syVRAMCacheLoad(state->vramEntry, 256, buf);
 	sySetEvent(fdRopeDraw, EVENT_PASS_TICK);
 	sySetEvent(fdRopeUpdate, EVENT_PASS_TICK + 15);
@@ -71,7 +71,7 @@ void fdRopeDraw(void)
 	Uint32	   tile = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
 	Sint32	   prevZ = 0;
 	Sint32	   started = 0;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32	   originY = map->origin[1];
@@ -148,7 +148,7 @@ void fdRopeDraw(void)
    rope, its swing losing a twentieth a tick until under a tenth of a pixel. */
 void fdRopeUpdate(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	ROPE_WORK	*state = ROPE_STATE;
 	ROPE_SLOT	*slot;
 	Sint32		 i = 0;
@@ -795,7 +795,7 @@ void fdTightropeInit(void)
 
 	DMA_FILL32(0, state, sizeof(TIGHTROPE_WORK));
 	state->vramEntry = syVRAMCacheFindFreeEntry();
-	syDecompressTaggedLZ(Rope_Tiles, buf);
+	syDecompressTaggedLZ(RopeTiles, buf);
 	syVRAMCacheLoad(state->vramEntry, 64, buf);
 	sySetEvent(fdTightropeDraw, EVENT_PASS_TICK);
 	sySetEvent(fdTightropeUpdate, EVENT_PASS_TICK + 15);
@@ -814,7 +814,7 @@ void fdTightropeDraw(void)
 	Sint32			prevZ = 0;
 	Sint32			started = 0;
 	Uint32	   tile = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32	   originY = map->origin[1];
@@ -885,7 +885,7 @@ void fdTightropeDraw(void)
    of a wobbling tightrope bobs up and down. */
 void fdTightropeUpdate(void)
 {
-	FIELD_STATE	   *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE	   *event = RamHeapSlots->fieldState;
 	TIGHTROPE_WORK *state = TIGHTROPE_STATE;
 	TIGHTROPE_SLOT *slot;
 	Sint32			i = 0;
@@ -1342,10 +1342,10 @@ UNUSED void fdTightropeDebugSwing(ACTOR *actor)
 
 /* The four pictures of each kind of hanging link, a vine's and a chain's: top,
    upper, lower and bottom. */
-extern const Uint8 HangingVine_VineTopPicture[], HangingVine_VineUpperPicture[],
-	HangingVine_VineLowerPicture[];
-extern const Uint8 HangingVine_VineBottomPicture[],
-	HangingVine_ChainTopPicture[], HangingVine_ChainMiddlePicture[];
+extern const Uint8 HangingVineVineTopPicture[], HangingVineVineUpperPicture[],
+	HangingVineVineLowerPicture[];
+extern const Uint8 HangingVineVineBottomPicture[], HangingVineChainTopPicture[],
+	HangingVineChainMiddlePicture[];
 
 /* The bytes of a link's picture, 16 by 16 pixels of 256 colours. */
 #define VINE_LINK_PICTURE_SIZE (16 * 16)
@@ -1397,21 +1397,21 @@ HANGING_VINE_WORK *fdHangingVineInit(Sint32 sprId)
 	DMA_FILL32(0, state, sizeof(HANGING_VINE_WORK));
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	if(sprId == SPRITE_SPROUTING_LEAVES) {
-		syDecompressTaggedLZ(HangingVine_VineTopPicture, pictures);
+		syDecompressTaggedLZ(HangingVineVineTopPicture, pictures);
 		syDecompressTaggedLZ(
-			HangingVine_VineUpperPicture, pictures + VINE_LINK_PICTURE_SIZE);
-		syDecompressTaggedLZ(HangingVine_VineLowerPicture,
-			pictures + 2 * VINE_LINK_PICTURE_SIZE);
-		syDecompressTaggedLZ(HangingVine_VineBottomPicture,
+			HangingVineVineUpperPicture, pictures + VINE_LINK_PICTURE_SIZE);
+		syDecompressTaggedLZ(
+			HangingVineVineLowerPicture, pictures + 2 * VINE_LINK_PICTURE_SIZE);
+		syDecompressTaggedLZ(HangingVineVineBottomPicture,
 			pictures + 3 * VINE_LINK_PICTURE_SIZE);
 		syVRAMCacheLoad(state->vramEntry, size, pictures);
 	} else {
-		syDecompressTaggedLZ(HangingVine_ChainTopPicture, pictures);
+		syDecompressTaggedLZ(HangingVineChainTopPicture, pictures);
 		syDecompressTaggedLZ(
-			HangingVine_ChainMiddlePicture, pictures + VINE_LINK_PICTURE_SIZE);
-		syDecompressTaggedLZ(HangingVine_ChainMiddlePicture,
+			HangingVineChainMiddlePicture, pictures + VINE_LINK_PICTURE_SIZE);
+		syDecompressTaggedLZ(HangingVineChainMiddlePicture,
 			pictures + 2 * VINE_LINK_PICTURE_SIZE);
-		syDecompressTaggedLZ(HangingVine_ChainBottomPicture,
+		syDecompressTaggedLZ(HangingVineChainBottomPicture,
 			pictures + 3 * VINE_LINK_PICTURE_SIZE);
 		syVRAMCacheLoad(state->vramEntry, size, pictures);
 	}
@@ -1432,7 +1432,7 @@ void fdHangingVineDraw(void)
 	Sint32			   prevY = 0;
 	Uint32	   tiles = VramCacheEntries[state->vramEntry].ofs / TILE_SIZE_4BPP;
 	Sint32	   prevZ = 0;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32	   height = map->origin[1];
@@ -1650,9 +1650,9 @@ void fdHangingVineHang(Sint32 objectId, Sint32 grow)
 	Sint32				running;
 
 	actor = fdActorGetById(objectId);
-	running = Ram_HeapSlots->hangingVine;
+	running = RamHeapSlots->hangingVine;
 	sprId = SPRITE_SPROUTING_LEAVES;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	if(running == 0) {
 		if(actor->spr != 0 && ((SPR *)actor->spr)->entries[0] != 0)
 			sprId = ((SPR *)actor->spr)->entries[0]->anmId;

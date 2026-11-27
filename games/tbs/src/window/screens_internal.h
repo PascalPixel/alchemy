@@ -289,7 +289,7 @@ typedef struct BATTLE_COMMAND_ROW_STATE {
    tile mnBattleDjinnMenuRun copies to the two BG tiles from
    DJINN_MENU_ARROW_TILE each tick: the first blinks (four ticks shown, four
    blank), the second stays. */
-extern const Uint8 DjinnMenu_BlinkTile[32];
+extern const Uint8 DjinnMenuBlinkTile[32];
 /* The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks, the
    one after it stays. */
 #define DJINN_MENU_ARROW_TILE 808

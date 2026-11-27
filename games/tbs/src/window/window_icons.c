@@ -2,7 +2,7 @@
 
 /* The builders that load an icon into VRAM take HEAP_SLOT_ICON_TRANSFER
    (GlyphState) for the build and free it before returning; mnItemIconCompose
-   and the Icon_Draw functions draw into the slot their caller holds. */
+   and the IconDraw functions draw into the slot their caller holds. */
 
 /* Returns how many item icons the icon table holds; mnIconBuildItemIconTiles
    draws icon 0 for a number past them. */
@@ -30,7 +30,7 @@ void mnIconBuildCommandIconTiles(
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 0);
-	state->encoded = Icon_OverlayPointerTable[overlayIcon];
+	state->encoded = IconOverlayPointerTable[overlayIcon];
 	state->width = 2;
 	state->height = 2;
 	mnIconDecode(state, 1);
@@ -176,7 +176,7 @@ Sint32 mnItemIconLoadLayersIntoSlot(
 	return 1;
 }
 
-/* Builds one of the other icons (Icon_MiscIconPointers) and loads it into
+/* Builds one of the other icons (IconMiscIconPointers) and loads it into
    sprite tile slot cacheSlot. */
 Sint32 mnIconBuildMiscIconTiles(Sint32 icon, Sint32 unused, Sint32 cacheSlot)
 {
@@ -283,7 +283,7 @@ void mnIconDrawMisc(Uint32 iconIdx)
 {
 	ICON_TRANSFER *glyph = GlyphState;
 
-	glyph->encoded = Icon_MiscIconPointers[iconIdx];
+	glyph->encoded = IconMiscIconPointers[iconIdx];
 	glyph->width = 2;
 	glyph->height = 2;
 	mnIconDecode(glyph, 0);
@@ -334,16 +334,16 @@ UNUSED void mnIconReservedNoOperation(void)
 void mnIconDecode(ICON_TRANSFER *glyph, Sint32 overlay)
 {
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnTileDecompress4bpp,
-		Tile_Decompress4bppCodeSize);
+		TileDecompress4bppCodeSize);
 	((void (*)(const void *, Uint8 *))HeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
 		glyph->encoded, glyph->input);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);
 	if(overlay)
 		RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnTileExpandMasked,
-			Tile_ExpandMaskedCodeSize);
+			TileExpandMaskedCodeSize);
 	else
 		RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnTileExpandOpaque,
-			Tile_ExpandOpaqueCodeSize);
+			TileExpandOpaqueCodeSize);
 	((void (*)(Uint8 *, Uint8 *, Uint32,
 		Uint32))HeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(glyph->input, glyph->tiles,
 		(Uint16)glyph->width, (Uint16)glyph->height);

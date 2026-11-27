@@ -3,7 +3,7 @@
 void scGeyserUpdate(void)
 {
 	GEYSER_WORK	 *state = GEYSER_STATE;
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	GEYSER		 *entry = state->entries;
 	Sint32		  firstTerrain = state->firstTerrain;
 	Uint8		 *terrain = map->layers[0].terrainIds;
@@ -11,7 +11,7 @@ void scGeyserUpdate(void)
 	Sint32		  i = 0;
 	Sint32		 *collision;
 
-	for(collision = (Sint32 *)Ram_MapCollision + firstTerrain;
+	for(collision = (Sint32 *)RamMapCollision + firstTerrain;
 		i < GEYSER_ENTRIES; collision++, entry++, i++) {
 		ACTOR		 *actor;
 		ACTOR		 *rider;

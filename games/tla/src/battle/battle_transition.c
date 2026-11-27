@@ -156,8 +156,8 @@ void btBackgroundShowZoomedPage(void)
 	BATTLE_AFFINE_HDMA *records;
 	Uint16			   *record;
 
-	if((Ram_HeapSlots->battleBg)->mode == BATTLE_BACKGROUND_ZOOMED) {
-		records = Ram_HeapSlots->battleScanlines;
+	if((RamHeapSlots->battleBg)->mode == BATTLE_BACKGROUND_ZOOMED) {
+		records = RamHeapSlots->battleScanlines;
 		record = records->lines[records->page];
 		syIOWrite16(record[0], &REG_BG2CNT);
 		syDMAXCopy(record + 1, (void *)&REG_BG2CNT,
@@ -168,13 +168,13 @@ void btBackgroundShowZoomedPage(void)
 }
 
 /* Unused: steps the curtain's solid tile through its variants
-   (BattleTransition_CurtainVariants) while the transition timer runs from 1. */
+   (BattleTransitionCurtainVariants) while the transition timer runs from 1. */
 void btTransitionUploadTileVariant(void)
 {
-	Uint32 variant = *(Sint32 *)Ram_HeapSlots->battleEntryTmr - 1;
+	Uint32 variant = *(Sint32 *)RamHeapSlots->battleEntryTmr - 1;
 
 	if(variant < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_TICKS)
-		syDMAXCopy(BattleTransition_CurtainVariants +
+		syDMAXCopy(BattleTransitionCurtainVariants +
 				variant / TRANSITION_VARIANT_TICKS * TILE_SIZE_4BPP,
 			CURTAIN_TILE(0), DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
@@ -189,9 +189,9 @@ void btTransitionAdvanceOpening(void)
 	Uint32		   frm;
 	Uint32		   next;
 
-	tmr = (Uint32 *)Ram_HeapSlots->battleEntryTmr;
+	tmr = (Uint32 *)RamHeapSlots->battleEntryTmr;
 	frm = *tmr;
-	camera = (BATTLE_CAMERA *)Ram_HeapSlots->cameraState;
+	camera = (BATTLE_CAMERA *)RamHeapSlots->cameraState;
 	/* BG0's top band rolls down from tick 20 to tick 52. */
 	scroll = 52 - frm;
 	if(scroll > TRANSITION_BG0_BAND)
@@ -220,7 +220,7 @@ void btTransitionDrawRows(void)
 	Uint32	tileRow;
 	Uint16 *tilemap;
 
-	transitionFrm = *(Sint32 *)Ram_HeapSlots->battleEntryTmr;
+	transitionFrm = *(Sint32 *)RamHeapSlots->battleEntryTmr;
 	if(transitionFrm >= 0 && transitionFrm < TRANSITION_OPEN_TICKS) {
 		tileEntry = (7 & transitionFrm) + TRANSITION_CURTAIN_ENTRY(1);
 		tileRow = TRANSITION_CURTAIN_MIDDLE_ROW - transitionFrm / 8;
@@ -264,26 +264,26 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 kind)
 	Sint32					  cnt;
 	Uint32					  i;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	view = heap->battleBg;
 	tmr = syHeapSlotAlloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
 	if((Uint32)(kind - FORMATION_DOOM_DRAGON_A) >
 		FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A) {
 		Sint32 y;
 
-		syDMAXCopy(BattleTransition_CurtainTiles, CURTAIN_TILE(1),
+		syDMAXCopy(BattleTransitionCurtainTiles, CURTAIN_TILE(1),
 			DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 1 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 1 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(2), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 2 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 2 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(3), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 3 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 3 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(4), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 4 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 4 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(5), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 5 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 5 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(6), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 6 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 6 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(7), DMA_COPY_WORDS(8), REG_DMA3);
 		view->bg1ScrollMode = BATTLE_BACKGROUND_FIXED;
 		view->busy = 0;
@@ -340,7 +340,7 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 kind)
 			IRQ_VCOUNT, TRANSITION_BG0_BAND, btTransitionResetBg0Scroll);
 		BgScrollWork[0].y = y;
 		sySynch(1);
-		mnPartyStatCreateWindowStub(Ram_HeapSlots->battleState->partyStat);
+		mnPartyStatCreateWindowStub(RamHeapSlots->battleState->partyStat);
 		sySynch(20);
 		syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
 		syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
@@ -399,7 +399,7 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 kind)
 			IRQ_VCOUNT, TRANSITION_BG0_BAND, btTransitionResetBg0Scroll);
 		sySynch(1);
 		sySynch(20);
-		mnPartyStatCreateWindowStub(Ram_HeapSlots->battleState->partyStat);
+		mnPartyStatCreateWindowStub(RamHeapSlots->battleState->partyStat);
 		syIOWriteQueueClearBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(2));
 		syIOWriteQueueSetBits16((Uint32)&REG_BG0CNT, BGCNT_PRIORITY(0));
 		REG_BLDCNT = BLEND_SPRITES_OVER_ALL;

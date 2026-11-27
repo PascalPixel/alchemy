@@ -1551,7 +1551,7 @@
 /* The six-byte table of the HP and PP labels' tile numbers is left out of the
    ROM. It sits after the party status's divider column offsets, and nothing
    reads it, so only the position of the data after it changes and nothing
-   visible differs. In TLA it is Window_UnusedPartyColumnBytes; in TBS it is the
+   visible differs. In TLA it is WindowUnusedPartyColumnBytes; in TBS it is the
    bytes after WindowPartyColumnOffsets. */
 #ifndef UNUSED_HP_PP_LABEL_TILES_DROPPED
 #define UNUSED_HP_PP_LABEL_TILES_DROPPED 0

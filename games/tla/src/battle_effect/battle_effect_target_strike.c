@@ -176,7 +176,7 @@ void btEffectRunMadZephyr(BATTLE_EFFECT_PARM *args)
 }
 
 /* The blitter the effect draws with, made in the heap's RAM code slot. */
-#define BLITTER (Ram_HeapSlots->ramCode)
+#define BLITTER (RamHeapSlots->ramCode)
 
 /* Column `field` of style `mode`'s row of TargetStrikeStyles. */
 #define TARGET_STRIKE_VALUE(mode, field) TargetStrikeStyles[(mode)][(field)]
@@ -238,10 +238,10 @@ void btEffectRunTargetStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 resource;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	if(mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH)
 		btEffectStartCanvasLayer(0);
 	else
@@ -850,18 +850,18 @@ UNUSED void btEffectRunBladeRain(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
 
 	/* [0] as drawn, [1] mirrored left to right; both skip clear pixels. */
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	blit = draw;
 	btResourceLoadAndDecompress(
 		RESOURCE_CROSSED_DAGGERS_SHEET, state->sheet, 1, 1);
@@ -1003,7 +1003,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
 	canvas = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	sheet = syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, ELEMENT_PILLAR_SHEET_BYTES);
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	state->framesSinceTransfer = 1;
 	state->args = args;
 	btEffectStartCanvasLayer(0);
@@ -1041,7 +1041,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	/* The motes' size grows with the variant, from 1 to 4. */
 	args->variant++;
 	if(args->variant <= 0)
@@ -1068,7 +1068,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 			n = frm / 2 % 4; /* a pillar picture every 2 ticks */
 			flg = EFFECT_CLIP_BOUNDS;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 			draw[1](canvas,
 				state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 47,
 				ground.y - ELEMENT_PILLAR_HALF_HEIGHT,
@@ -1082,7 +1082,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 			n = frm / 2 % 4;
 			draw[1](canvas,
 				state->sheet + n * PICTURE_BYTES(ELEMENT_PILLAR_HALF), 64,
@@ -1146,8 +1146,8 @@ void btEffectRunBackgroundFadeIn(BATTLE_EFFECT_PARM *args)
 
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
 	canvas = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	battle = Ram_HeapSlots->battleState;
-	view = Ram_HeapSlots->battleBg;
+	battle = RamHeapSlots->battleState;
+	view = RamHeapSlots->battleBg;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 	btEffectRunCloudSwirl(args);
@@ -1189,10 +1189,10 @@ void btEffectRunBackgroundFadeIn(BATTLE_EFFECT_PARM *args)
 
 	/* Keep the battle background's image aside, show the battle background with
 	   its colours black, and flash the first target. */
-	syWordsCopy(Ram_MapMetatileBuffer, (void *)BG_CHAR_BLOCK(2),
+	syWordsCopy(RamMapMetatileBuffer, (void *)BG_CHAR_BLOCK(2),
 		BATTLE_BACKGROUND_BYTES);
 	syWordsFill(
-		Ram_MapMetatileBuffer, BATTLE_BACKGROUND_BYTES, CANVAS_FILL_WORD(1));
+		RamMapMetatileBuffer, BATTLE_BACKGROUND_BYTES, CANVAS_FILL_WORD(1));
 	state->savedBg1X = BgScrollWork[1].x;
 	state->savedBg1Y = BgScrollWork[1].y;
 	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, battle->bg, -1);

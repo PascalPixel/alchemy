@@ -7,6 +7,6 @@
 	.global fdWorldMapUpdateAffineLinesCode
 fdWorldMapUpdateAffineLinesCode:
 	bx	pc
-AlchemyUncredited_0802146e:
+AlchemyUncredited0802146e:
 	.2byte	0x0200
-AlchemyUncreditedEnd_0802146e:
+AlchemyUncreditedEnd0802146e:

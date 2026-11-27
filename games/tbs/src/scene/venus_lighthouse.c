@@ -8,13 +8,13 @@
    case by entrance. Inside, only the actors of the room entered are placed
    (CONDITION_IN_VIEW).
 
-   - Venus Lighthouse Entry (SceneId_VenusLighthouseEntry), outside. The
+   - Venus Lighthouse Entry (SceneIdVenusLighthouseEntry), outside. The
 	 scholars and Babi's soldiers the wanderers attacked lie hurt and say what
 	 they saw. A soldier who tells of the attack flickers and vanishes
 	 (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and his spot no longer answers a
 	 search. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
 	 door, leads in.
-   - Venus Lighthouse (SceneId_VenusLighthouseGroundFloor, named by an area
+   - Venus Lighthouse (SceneIdVenusLighthouseGroundFloor, named by an area
 	 rule of its own), the floor behind the front door, with three scholars.
    The great statue (METATILE_BEHAVIOR_VENUS_LIGHTHOUSE_GREAT_STATUE) opens
    one  of two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH). The
@@ -32,7 +32,7 @@
    band of lightning crackles across the floor south of her and throws  back
    whoever walks into it, until Move slides her onto the floor switch  in
    front of her. Standing on the switch presses it only while he stays.
-   - Venus Lighthouse (SceneId_VenusLighthouseFirstFloor), where the Tunnel
+   - Venus Lighthouse (SceneIdVenusLighthouseFirstFloor), where the Tunnel
 	 Ruins come up
 	 (VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_TUNNEL_RUINS_LADY_STATUES). A wide
 	 slide of flowing sand carries the party south down its big room, and a
@@ -40,13 +40,13 @@
 	 Three capped pillars are Moved or pushed. Two pillars by a gap are
 	 carried across it, or dropped through the floor. A chest holds the Thunder
 	 Crown, and a Psynergy Stone lies here.
-   - Venus Lighthouse (SceneId_VenusLighthouseSecondFloor). A sparkling
+   - Venus Lighthouse (SceneIdVenusLighthouseSecondFloor). A sparkling
 	 passage takes the leader through in a trail of sparks. A floor switch
 	 slides a wall aside in a cloud of dust the first time
 	 (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED). A pillar Moved or pushed into its
 	 socket sinks, and a light runs from the lady statue along the gold track
 	 over it to open the gate (FLAG_VENUS_LIGHTHOUSE_GATE_OPEN).
-   - Venus Lighthouse (SceneId_VenusLighthouseThirdFloor). Three more
+   - Venus Lighthouse (SceneIdVenusLighthouseThirdFloor). Three more
 	 sparkling passages, slides of flowing sand, and three pillars carrying
 	 pieces of track that sink into four sockets. With all three sunk two
 	 lights run from the statue, and when the track leads one to the gate it
@@ -54,7 +54,7 @@
 	 FLAG_VENUS_LIGHTHOUSE_SOUTHEAST_SOCKET_EMPTY or
 	 FLAG_VENUS_LIGHTHOUSE_NORTHWEST_SOCKET_EMPTY for where the pillars stand).
 	 A chest holds Dragon Scales.
-   - Venus Lighthouse (SceneId_VenusLighthouseFourthFloor). A maze of sand
+   - Venus Lighthouse (SceneIdVenusLighthouseFourthFloor). A maze of sand
 	 flowing north, south, west and east carries the party each way. A west and
 	 an east floor switch slide their walls aside
 	 (FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED and _EAST_WALL_MOVED, which
@@ -73,7 +73,7 @@
    The wall and gate flags (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to
    FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN) and the Psynergy Stones' flags are
    area flags. They last while the party stays in the scenes of the climb
-   (SceneId_VenusLighthouseFirstFloor to SceneId_VenusLighthouseAerie, one
+   (SceneIdVenusLighthouseFirstFloor to SceneIdVenusLighthouseAerie, one
    area), so the floors stay solved between them.
 
    The FLAG_SCENE_TEMP_ states last only until the next change of scene other

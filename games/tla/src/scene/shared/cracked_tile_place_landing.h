@@ -5,7 +5,7 @@
 void scCrackedTilePlaceLanding(Sint32 x, Sint32 z, Sint32 effect)
 {
 	ACTOR		*leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 dx = scFieldGameFlagGetByte(CrackedTiles.flgByte);
 	Sint32		 dz = scFieldGameFlagGetByte(CrackedTiles.flgByte + 8);
 

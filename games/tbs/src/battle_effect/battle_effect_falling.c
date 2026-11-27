@@ -116,11 +116,11 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 	draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED];
 
 	if(state->args->side == EFFECT_SIDE_ENEMIES) {
-		line = (Uint16 *)Ram_MapGridMetatileBuffer;
+		line = (Uint16 *)RamMapGridMetatileBuffer;
 		FALLING_BUILD_SLANTED_WINDOW(
 			line, i, 103, FALLING_BAND(112 - i), FALLING_BAND(8));
 	} else {
-		line = (Uint16 *)Ram_MapGridMetatileBuffer;
+		line = (Uint16 *)RamMapGridMetatileBuffer;
 		FALLING_BUILD_SLANTED_WINDOW(
 			line, i, 95, FALLING_BAND(i + 24), FALLING_BAND(120));
 	}
@@ -231,7 +231,7 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 	btEffectConfigureEffectDisp();
 }
 
-/* Ram_MapGridMetatileBuffer as Douse uses it: window 0's table, then the drops'
+/* RamMapGridMetatileBuffer as Douse uses it: window 0's table, then the drops'
    droplets. */
 typedef struct DROP_SPLASH_BUFFER {
 	/* WIN0H for each line, read by the HBlank DMA */
@@ -239,8 +239,8 @@ typedef struct DROP_SPLASH_BUFFER {
 	PARTICLE droplets[512]; /* free while -1 */
 } DROP_SPLASH_BUFFER;
 
-/* Ram_MapGridMetatileBuffer seen as Douse's DROP_SPLASH_BUFFER. */
-#define DOUSE_SPLASH_BUFFER ((DROP_SPLASH_BUFFER *)Ram_MapGridMetatileBuffer)
+/* RamMapGridMetatileBuffer seen as Douse's DROP_SPLASH_BUFFER. */
+#define DOUSE_SPLASH_BUFFER ((DROP_SPLASH_BUFFER *)RamMapGridMetatileBuffer)
 
 /* BlueBeamSheet, after BlueGlowSheet's ten flare pictures (as many bytes as two
    sets of motes): the falling drop, a blue bubble; the white flash it lands in,
@@ -312,11 +312,11 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 	}
 
 	if(state->args->side == EFFECT_SIDE_ENEMIES) {
-		line = (Uint16 *)Ram_MapGridMetatileBuffer;
+		line = (Uint16 *)RamMapGridMetatileBuffer;
 		FALLING_BUILD_SLANTED_WINDOW(
 			line, i, 103, FALLING_BAND(52 - i / 2), FALLING_BAND(0));
 	} else {
-		line = (Uint16 *)Ram_MapGridMetatileBuffer;
+		line = (Uint16 *)RamMapGridMetatileBuffer;
 		FALLING_BUILD_SLANTED_WINDOW(
 			line, i, 103, FALLING_BAND(i / 2 + 60), FALLING_BAND(112));
 	}

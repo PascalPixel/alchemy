@@ -118,8 +118,8 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	DRAW_RECTANGLE		 draw[2];
 	Sint32				 frm;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	/* Lunar Slash, Boost Hack and Twin Shear add the canvas to the battle; the
 	   others show it alone. */
@@ -133,19 +133,19 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btResourceLoadAndDecompress(
 			RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A, state->sheet, 1, 0);
 		btResourceLoadAndDecompress(RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B,
-			Ram_MapMetatileBuffer, 1, 1);
+			RamMapMetatileBuffer, 1, 1);
 	} else if(mode == FLASHING_STRIKE_QUICK_STRIKE) {
 		btResourceLoadAndDecompress(
 			RESOURCE_QUICK_STRIKE_IMAGE_A, state->sheet, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_QUICK_STRIKE_IMAGE_B, Ram_MapMetatileBuffer, 1, 1);
+			RESOURCE_QUICK_STRIKE_IMAGE_B, RamMapMetatileBuffer, 1, 1);
 	} else if(mode == FLASHING_STRIKE_BOOST_HACK) {
 		Sint32 i;
 
 		btResourceLoadAndDecompress(
 			RESOURCE_VORPAL_SLASH_IMAGE_A, state->sheet, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_VORPAL_SLASH_IMAGE_B, Ram_MapMetatileBuffer, 1, 1);
+			RESOURCE_VORPAL_SLASH_IMAGE_B, RamMapMetatileBuffer, 1, 1);
 		/* Turn the canvas's colours: red to blue, blue to green, green to
 		   red. */
 		for(i = 0; i != SHEET_PALETTE_COLORS; i++) {
@@ -159,15 +159,15 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btResourceLoadAndDecompress(
 			RESOURCE_QUICK_STRIKE_IMAGE_A, state->sheet, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_QUICK_STRIKE_IMAGE_B, Ram_MapMetatileBuffer, 1, 1);
+			RESOURCE_QUICK_STRIKE_IMAGE_B, RamMapMetatileBuffer, 1, 1);
 	} else if(mode == FLASHING_STRIKE_TWIN_SHEAR) {
 		btResourceLoadAndDecompress(
-			RESOURCE_ARC_FRAGMENTS_SHEET, Ram_MapMetatileBuffer, 1, 1);
+			RESOURCE_ARC_FRAGMENTS_SHEET, RamMapMetatileBuffer, 1, 1);
 	} else {
 		btResourceLoadAndDecompress(
 			RESOURCE_VORPAL_SLASH_IMAGE_A, state->sheet, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_VORPAL_SLASH_IMAGE_B, Ram_MapMetatileBuffer, 1, 1);
+			RESOURCE_VORPAL_SLASH_IMAGE_B, RamMapMetatileBuffer, 1, 1);
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
@@ -198,47 +198,46 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	else
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	if(args->side == EFFECT_SIDE_PARTY)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_ADDITIVE);
 	else
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_ADDITIVE);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	sySndPlayStub(SE_POWER_UP);
 	for(frm = 0; frm != FLASHING_STRIKE_TICKS; frm++) {
 		if(mode == FLASHING_STRIKE_TWIN_SHEAR) {
 			/* Half the picture, then its reflection below it. */
 			if(frm <= 3) {
-				draw[0](canvas, Ram_MapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
+				draw[0](canvas, RamMapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
-				draw[1](canvas, Ram_MapMetatileBuffer, 0,
-					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
-					SLASH_PICTURE_SIZE / 2);
+				draw[1](canvas, RamMapMetatileBuffer, 0, SLASH_PICTURE_SIZE / 2,
+					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
 			} else if(frm <= 7) {
 				draw[0](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0, 0,
+					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
 				draw[1](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0,
+					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
 			} else if(frm <= 11) {
 				draw[0](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
-					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0, 0,
+					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
 				draw[1](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
+					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
 			} else if(frm <= 15) {
 				draw[0](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
-					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0, 0,
+					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
 				draw[1](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
+					RamMapMetatileBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
 					SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE / 2);
 			}
@@ -250,11 +249,11 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				draw[0](canvas, state->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0,
 					0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 			else if(frm <= 11)
-				draw[0](canvas, Ram_MapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
+				draw[0](canvas, RamMapMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 					SLASH_PICTURE_SIZE);
 			else if(frm <= 15)
 				draw[0](canvas,
-					Ram_MapMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+					RamMapMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
 					SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		}
 

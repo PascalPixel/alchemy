@@ -58,8 +58,8 @@ void fdPsynergyTremorOnTarget(void)
 {
 	TREMOR_STATE *tremorState =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*tremorState));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*tgt = scene->tgt;
 	SPR						*tgtSpr = tgt->spr;
 	Sint32					 tiles;
@@ -211,8 +211,8 @@ void fdPsynergyTremor(void)
 	/* Tremor's state's size, though the sway holds only the view move. */
 	VIEW_MOVE_STATE *viewMoveState =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(TREMOR_STATE));
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	Sint32				frmCnt;
 	Sint32				phase;
 	Sint32				i;

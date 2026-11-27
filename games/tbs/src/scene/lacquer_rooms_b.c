@@ -1,4 +1,4 @@
-/* The insides of Xian (SceneId_LacquerRoomsB): its houses, its inn and its
+/* The insides of Xian (SceneIdLacquerRoomsB): its houses, its inn and its
    shop, red lacquered rooms laid side by side on one rooms map, and the small
    bedroom behind Master Feh's school.
 

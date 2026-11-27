@@ -257,10 +257,10 @@ STATIC_ASSERT(sizeof(SHOP_STATE) == 3308);
 #endif
 
 /* The shop's price label, sprite tiles beside an item's price (price.4bpp). */
-extern const Uint8 Shop_PriceTiles[];
+extern const Uint8 ShopPriceTiles[];
 /* The shop's quantity label, beside the count of an item bought
    (quantity.4bpp). */
-extern const Uint8 Shop_QuantityTiles[];
+extern const Uint8 ShopQuantityTiles[];
 
 extern const Uint16		  ShopQuantityBarSegmentOffsets[30];
 extern const Uint16		  ShopPriceDigitTileOffsets[5];

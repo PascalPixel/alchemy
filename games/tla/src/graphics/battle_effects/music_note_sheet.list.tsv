@@ -1,7 +1,7 @@
 name	file	section	align	left	pad	edition
-BattleEffect_MusicNoteSheet	music_note_sheet.bitmap.lz			3e0508		ja
-BattleEffect_MusicNoteSheet	music_note_sheet.bitmap.lz			400508		en
-BattleEffect_MusicNoteSheet	music_note_sheet.bitmap.lz			400508		de
-BattleEffect_MusicNoteSheet	music_note_sheet.bitmap.lz			400508		es
-BattleEffect_MusicNoteSheet	music_note_sheet.bitmap.lz			400508		fr
-BattleEffect_MusicNoteSheet	music_note_sheet.bitmap.lz			400508		it
+BattleEffectMusicNoteSheet	music_note_sheet.bitmap.lz			3e0508		ja
+BattleEffectMusicNoteSheet	music_note_sheet.bitmap.lz			400508		en
+BattleEffectMusicNoteSheet	music_note_sheet.bitmap.lz			400508		de
+BattleEffectMusicNoteSheet	music_note_sheet.bitmap.lz			400508		es
+BattleEffectMusicNoteSheet	music_note_sheet.bitmap.lz			400508		fr
+BattleEffectMusicNoteSheet	music_note_sheet.bitmap.lz			400508		it

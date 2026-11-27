@@ -1,8 +1,8 @@
 /* The Bilibin Cave Entrance and Bilibin Cave are two areas between Bilibin and
    Imil that share this overlay.
 
-   The Bilibin Cave Entrance is SceneId_BilibinCaveEntrance. Bilibin Cave is
-   SceneId_BilibinCaveRapier and, beyond it, SceneId_BilibinCaveIce, whose far
+   The Bilibin Cave Entrance is SceneIdBilibinCaveEntrance. Bilibin Cave is
+   SceneIdBilibinCaveRapier and, beyond it, SceneIdBilibinCaveIce, whose far
    end opens onto the World Map farther north.
 
    No one speaks here. Each scene is a run of Psynergy puzzles. The getters pick
@@ -23,7 +23,7 @@
    switch the mouth's way in off and on again (scBilibinCaveCloseLowerCaveMouth,
    scBilibinCaveOpenLowerCaveMouth).
 
-   Inside, in SceneId_BilibinCaveRapier, the high mouth leads to the chest of
+   Inside, in SceneIdBilibinCaveRapier, the high mouth leads to the chest of
    the Elven Rapier. Coming back later with Reveal, the party finds a way
    through the wall beside that chest (scBilibinCaveRevealHiddenPath), and
    scBilibinCaveHideRevealedPath closes it again when Reveal wears off. Beyond
@@ -32,7 +32,7 @@
    Douse puts it out for good (FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED), and the
    doorway leads to the cave's two last chests, a Psy Crystal and Water of Life.
 
-   SceneId_BilibinCaveIce is the cold part of the cave on the way to Imil, full
+   SceneIdBilibinCaveIce is the cold part of the cave on the way to Imil, full
    of ice pillars, with puddles, a fire and burning torches. Frost freezes a
    puddle into an ice pillar, but next to a fire or a torch the ice melts
    straight back (scBilibinCaveMeltFrostBack).
@@ -54,7 +54,7 @@
    FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR and
    FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR remember which torch stands there,
    and FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED that the pillar has melted. So
-   coming back from SceneId_BilibinCaveRapier puts the torches and the pillar
+   coming back from SceneIdBilibinCaveRapier puts the torches and the pillar
    back. Leaving Bilibin Cave resets them.
 
    Nine more pieces of ice only stand there: five pillars from
@@ -110,13 +110,13 @@ static void scBilibinCaveRestoreRapierRoom(void);
 static void scBilibinCaveRestoreIceRoom(void);
 static void scBilibinCaveEmptyActorSetupHook(Sint32 actorId);
 
-/* Actors of the Bilibin Cave Entrance (SceneId_BilibinCaveEntrance). */
+/* Actors of the Bilibin Cave Entrance (SceneIdBilibinCaveEntrance). */
 enum {
 	/* The sprout Growth grows into a vine. */
 	ACTOR_SPROUT = ACTOR_FIRST_PLACED
 };
 
-/* Actors of SceneId_BilibinCaveRapier, numbered by the rows of
+/* Actors of SceneIdBilibinCaveRapier, numbered by the rows of
    BilibinCaveRapierActorPlacements. */
 enum {
 	/* A torch west of the fire. It is cold (TORCH_ANIMATION_UNLIT) where its
@@ -129,7 +129,7 @@ enum {
 	ACTOR_RAPIER_ROOM_EAST_TORCH
 };
 
-/* Actors of SceneId_BilibinCaveIce, numbered by the rows of
+/* Actors of SceneIdBilibinCaveIce, numbered by the rows of
    BilibinCaveIceActorPlacements. */
 enum {
 	/* A little fire beside the first puddle, which Douse puts out. */
@@ -167,10 +167,10 @@ typedef enum BILIBIN_CAVE_METATILE_BEHAVIOR {
 	/* At the entrance, the path on either side of that stretch, metatiles (19,
 	   12..13) and (23, 12..13). */
 	METATILE_BEHAVIOR_BILIBIN_CAVE_BESIDE_LOW_MOUTH = 11,
-	/* The Elven Rapier's chest in SceneId_BilibinCaveRapier, metatile (35,
+	/* The Elven Rapier's chest in SceneIdBilibinCaveRapier, metatile (35,
 	   28). */
 	METATILE_BEHAVIOR_BILIBIN_CAVE_ELVEN_RAPIER_CHEST = 100,
-	/* The chests of SceneId_BilibinCaveIce, at (32, 16), (53, 36) and (52,
+	/* The chests of SceneIdBilibinCaveIce, at (32, 16), (53, 36) and (52,
 	   37). */
 	METATILE_BEHAVIOR_BILIBIN_CAVE_VIAL_CHEST = 100,
 	METATILE_BEHAVIOR_BILIBIN_CAVE_PSY_CRYSTAL_CHEST = 101,
@@ -499,7 +499,7 @@ static void scBilibinCaveRestoreEntrance(void)
 	}
 }
 
-/* Sets up Bilibin Cave's SceneId_BilibinCaveRapier. */
+/* Sets up Bilibin Cave's SceneIdBilibinCaveRapier. */
 static void scBilibinCaveRestoreRapierRoom(void)
 {
 	FieldStateWork->transition =
@@ -522,7 +522,7 @@ static inline void scBilibinCaveHideShadow(Sint32 actorId)
 	fdActorSetSprFlags(actor, 0);
 }
 
-/* Sets up Bilibin Cave's SceneId_BilibinCaveIce. */
+/* Sets up Bilibin Cave's SceneIdBilibinCaveIce. */
 static void scBilibinCaveRestoreIceRoom(void)
 {
 	Sint32 dstMetatileX;

@@ -41,8 +41,8 @@ typedef struct POUND_STATE {
    shine spreads round it with its sparks, then the fist lifts again. */
 void fdPsynergyUpdatePound(void)
 {
-	POUND_STATE				*state = Ram_HeapSlots->battleEff;
-	CANVAS_SPR_STATE		*canvas = Ram_HeapSlots->canvasSpr;
+	POUND_STATE				*state = RamHeapSlots->battleEff;
+	CANVAS_SPR_STATE		*canvas = RamHeapSlots->canvasSpr;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	EFFECT_SPR				*spr;
 	Sint32					 i;
@@ -137,7 +137,7 @@ void fdPsynergyUpdatePound(void)
    by 1/64 a tick for 8 ticks, before it shatters. */
 void fdPoundSinkFist(void)
 {
-	POUND_STATE *state = Ram_HeapSlots->battleEff;
+	POUND_STATE *state = RamHeapSlots->battleEff;
 
 	if(state->state == POUND_FALLS) {
 		ACTOR *actor = state->actor;
@@ -168,8 +168,8 @@ void fdPsynergyPound(void)
 {
 	POUND_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(POUND_STATE));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*child = scene->tgt;
 	ACTOR					*caster = scene->caster;
 	ACTOR					*actor;
@@ -247,7 +247,7 @@ void fdPsynergyPound(void)
 			fdPsynergyStartSceneSpr();
 
 		fdBattleEffectStartCanvasSpr();
-		canvas = Ram_HeapSlots->canvasSpr;
+		canvas = RamHeapSlots->canvasSpr;
 		canvas->pri = fdActorGetSprPriority(scene->caster);
 		canvas->depth = 1;
 		canvas->mode = CANVAS_SPRITE_256_COLORS;
@@ -260,7 +260,7 @@ void fdPsynergyPound(void)
 		canvas->x = (Sint16)FIXEDtoINT(pos[0]);
 		canvas->y = (Sint16)FIXEDtoINT(pos[2]);
 		syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GLOW_DISC),
-			Ram_HeapSlots->battleCanvas);
+			RamHeapSlots->battleCanvas);
 		canvas->command = CANVAS_UPLOAD;
 
 		IWRAM_FILL_WORDS(state, size, 0);

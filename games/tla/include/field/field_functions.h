@@ -333,7 +333,7 @@ Sint32 fdSprAnimationSumCommandLengths(Sint32 id, Uint32 anm, Sint32 timedCnt);
 Uint8 fdWorldMapGetBattleEnvironment(
 	struct WORLD_POS *pos, Sint32 *encounterRegion);
 /* Loads the pictures of animation id number into picture cache slot's buffer:
-   the resource listed for it in SpritePictureCache_Sources, decoded, its
+   the resource listed for it in SpritePictureCacheSources, decoded, its
    picture offsets turned into pointers, and for variant 1-5 its pixel colours
    (those up to 223, the basic sprite palettes 0 to 13) remapped through that
    variant's conversion table; a variant above 5 uses variant 1's. */

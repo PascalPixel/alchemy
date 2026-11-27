@@ -5,7 +5,7 @@
    is graphics/sprite/<name>.png, its id's name in lowercase without SPRITE_
    (isaac.png for SPRITE_ISAAC). */
 
-/* Sprite ids, one for each row of the sprite module (Sprite_AnimationMetadata,
+/* Sprite ids, one for each row of the sprite module (SpriteAnimationMetadata,
    in sprites.tsv's order) in order. A party member's field sprite shares its
    character number, so the field engine draws a character id as its sprite. The
    summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite: its
@@ -432,7 +432,7 @@ typedef enum SPR_ID {
 	SPRITE_BATTLE_MIA,
 	SPRITE_BATTLE_JENNA = 305,
 	/* The weapons drawn in a party member's hand as they attack, from here to
-	   SPRITE_WEAPON_JENNA_BLADE: each member's BattleUnit_WeaponAnimations
+	   SPRITE_WEAPON_JENNA_BLADE: each member's BattleUnitWeaponAnimations
 	   table (battle_tables.c) gives one for each BATTLE_WEAPON_KIND. Isaac's
 	   for long swords, and for staffs, ankhs and anything the list lacks. */
 	SPRITE_WEAPON_ISAAC_SWORD = 320,
@@ -456,7 +456,7 @@ typedef enum SPR_ID {
 	/* Mia's for axes and maces. */
 	SPRITE_WEAPON_MIA_MACE,
 	SPRITE_WEAPON_ISAAC_LIGHT_BLADE,
-	/* Unused: no BattleUnit_WeaponAnimations table holds it, so no attack shows
+	/* Unused: no BattleUnitWeaponAnimations table holds it, so no attack shows
 	   it; the player would have seen this sword in a party member's hand. */
 	SPRITE_WEAPON_UNUSED_SWORD,
 	/* Jenna's for swords and light blades. */
@@ -522,7 +522,7 @@ typedef enum SPR_ID {
 	SPRITE_SPRING_LUCKY_MEDAL,
 	/* The enemies' battle sprites follow, BattleSprites's by enemy id, each
 	   named for the first enemy that shows it; their pictures are
-	   graphics/monster's, by SpritePictureCache_Sources. */
+	   graphics/monster's, by SpritePictureCacheSources. */
 	SPRITE_BATTLE_TROLL,
 	SPRITE_BATTLE_ZOMBIE,
 	SPRITE_BATTLE_HARPY,

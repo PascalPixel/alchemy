@@ -1,7 +1,7 @@
 name	file	section	align	left	pad	edition	fill
-Title_PromptTiles	prompt.4bpp32x8.plz		4			ja	
-Title_PromptTiles	prompt.4bpp32x8.plz		4			en	
-Title_PromptTiles	prompt_de.4bpp32x8.plz		4			de	
-Title_PromptTiles	prompt_es.4bpp32x8.plz		4			es	
-Title_PromptTiles	prompt_fr.4bpp32x8.plz		4			fr	
-Title_PromptTiles	prompt_it.4bpp32x8.plz		4			it	
+TitlePromptTiles	prompt.4bpp32x8.plz		4			ja	
+TitlePromptTiles	prompt.4bpp32x8.plz		4			en	
+TitlePromptTiles	prompt_de.4bpp32x8.plz		4			de	
+TitlePromptTiles	prompt_es.4bpp32x8.plz		4			es	
+TitlePromptTiles	prompt_fr.4bpp32x8.plz		4			fr	
+TitlePromptTiles	prompt_it.4bpp32x8.plz		4			it	

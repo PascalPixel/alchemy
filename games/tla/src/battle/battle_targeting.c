@@ -273,7 +273,7 @@ Sint32 btAIChooseTarget(Sint32 userId, ABILITY_DEFINITION *action)
 	Sint16		 *slot;
 
 	candidateCnt = 0;
-	turnOrder = Ram_HeapSlots->battleState;
+	turnOrder = RamHeapSlots->battleState;
 	tgtCnt = 0;
 
 	/* The candidates: every unit on the side the ability may target. */
@@ -468,13 +468,13 @@ void btMessageWaitForAdvance(void)
 	/* FAKEMATCH(temporary): prompt holds &promptStorage; as promptStorage's
 	 * members at its uses. */
 	prompt = &promptStorage;
-	sheet = (Sint32)BattleMessage_AdvanceArrowTiles;
+	sheet = (Sint32)BattleMessageAdvanceArrowTiles;
 	tileSlot = syVRAMCacheAllocEntry(128);
 	for(frm = 0;; frm++) {
 		/* Cycle the eight pictures, one every four ticks. */
 		pictureTiles = ((TickCount >> 2) & 7) * 128 + sheet;
-		win = Ram_HeapSlots->battleMsg->win;
-		msg = Ram_HeapSlots->battleMsg->msg;
+		win = RamHeapSlots->battleMsg->win;
+		msg = RamHeapSlots->battleMsg->msg;
 		syIOWriteQueueClearBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_BG2);
 		syIOWriteQueueSetBits16((Uint32)&REG_WINOUT, WINOUT_WIN01_OBJ);
 		syIOWrite16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
@@ -543,7 +543,7 @@ void btMessageWaitForTyping(void)
 {
 	while(!mnMessageAllTypedStub())
 		sySynch(1);
-	Ram_HeapSlots->battleMsg->marked = 1;
+	RamHeapSlots->battleMsg->marked = 1;
 }
 
 /* Takes an enemy out of the battle at once, one that leaves rather than
@@ -580,7 +580,7 @@ Uint32 btPlaybackRunAll(void)
 	BATTLE_PLAYBACK_QUEUE *queue;
 	Sint32				   i;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	runtime = &battle->events;
 	queue = &runtime->queue;
 
@@ -613,7 +613,7 @@ Uint32 btPlaybackRunAll(void)
 					MESSAGE_ARGUMENT_ABILITY);
 				break;
 			case PLAYBACK_MARK:
-				Ram_HeapSlots->battleMsg->marked = 1;
+				RamHeapSlots->battleMsg->marked = 1;
 				break;
 			case PLAYBACK_CLEAR_ARGUMENTS:
 				mnMessageArgumentClearAllStub();
@@ -640,7 +640,7 @@ Uint32 btPlaybackRunAll(void)
 				btMotionShowDowned(queue->operands[i]);
 				break;
 			case PLAYBACK_DRAW_STATUS:
-				mnPartyStatDrawStub(Ram_HeapSlots->battleState->partyStat);
+				mnPartyStatDrawStub(RamHeapSlots->battleState->partyStat);
 				break;
 			case PLAYBACK_REFRESH_UNIT:
 				btUnitBuildStatFlags(
@@ -659,7 +659,7 @@ Uint32 btPlaybackRunAll(void)
    capacity. */
 void btPlaybackPush(Uint32 opcode, Uint32 operand)
 {
-	BATTLE_PLAYBACK_QUEUE *queue = &Ram_HeapSlots->battleState->events.queue;
+	BATTLE_PLAYBACK_QUEUE *queue = &RamHeapSlots->battleState->events.queue;
 	Uint32				   idx = queue->cnt;
 
 	queue->opcodes[idx] = opcode;
@@ -840,7 +840,7 @@ Sint32 btAbilityApplyToTarget(BATTLE_PLAN *plan, Sint32 slot)
 
 	/* 1. The target as it was, its distance and the element. */
 	elementBonus = 0;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	defenseCut = 0;
 	damageDealt = 0;
 	leaveOneHp = 0;
@@ -2312,7 +2312,7 @@ done:
 	}
 	syHeapRelease(savedTgt);
 	gmUnitCalcStub(tgtId);
-	mnPartyStatDrawStub(Ram_HeapSlots->battleState->partyStat);
+	mnPartyStatDrawStub(RamHeapSlots->battleState->partyStat);
 	if(tgt->hp != 0)
 		btPlaybackPush(PLAYBACK_REFRESH_UNIT, tgtId);
 	/* A haunted unit pays, one time in four, a quarter of what it took, at the
@@ -2341,7 +2341,7 @@ Uint32 btAbilityIsPsynergy(Sint32 abilityId)
 
 /* The battle's state, as the forms of Poseidon and the Doom Dragon read it
    before btAIChooseAction sets its own battle further on. */
-#define AI_BATTLE ((BATTLE_STATE *)Ram_HeapSlots->battleState)
+#define AI_BATTLE ((BATTLE_STATE *)RamHeapSlots->battleState)
 
 /* The Doom Dragon's poses for its later actions in a turn, beside POSE_CAST, a
    head thrust forward: one head lunging low, and one reared high
@@ -2664,7 +2664,7 @@ select_again:
 						? ENEMY_REFRESH_BALL
 						: ENEMY_SEA_FIGHTER))
 				break;
-			battle = (BATTLE_STATE *)Ram_HeapSlots->battleState;
+			battle = (BATTLE_STATE *)RamHeapSlots->battleState;
 			if(ability->eff == ABILITY_EFFECT_CALL_QUEUED) {
 				if(battle->spoils.queueCnt == 0)
 					break;

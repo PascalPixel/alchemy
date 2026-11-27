@@ -2,7 +2,7 @@
 
 /* The ring of fire's texture, 128x128, after the quarter of the circle of runes
    (64x64) that the pillar's picture then replaces. */
-#define FIRE_RING_PIXELS		(Ram_MapMetatileBuffer + 64 * 64)
+#define FIRE_RING_PIXELS		(RamMapMetatileBuffer + 64 * 64)
 /* The embers, after the ring of fire's texture. */
 #define EMBERS					((PARTICLE *)(FIRE_RING_PIXELS + 128 * 128))
 #define RAGING_HEAT_EMBER_COUNT 256
@@ -53,18 +53,18 @@ void btEffectRunRagingHeat(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*particle;
 	Sint32				 i;
 
-	buf = Ram_MapMetatileBuffer;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	buf = RamMapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = BLEND_ALPHA(16, 10);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	for(i = 0; i != args->tgtCnt; i++) {
 		btEffectPosProjectScaledBattler(args->tgts[i], &tgts[i]);
 	}
@@ -306,10 +306,10 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 	Sint32				 vector[3];
 	SCREEN_POINT		 tgt;
 	DRAW_RECTANGLE		 draw[2];
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
 	Sint32				 frm;
-	Uint8				*sparkPictures = Ram_HeapSlots->battleSheet;
+	Uint8				*sparkPictures = RamHeapSlots->battleSheet;
 	PARTICLE			*ring = state->particles;
 	DRAW_RECTANGLE		*blitters;
 	Sint32				 lift;
@@ -330,7 +330,7 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	lift = 0;
 	{
-		Sint32 *life = &((PARTICLE *)Ram_MapMetatileBuffer)->variant;
+		Sint32 *life = &((PARTICLE *)RamMapMetatileBuffer)->variant;
 
 		for(i = 0; i != JUGGLE_SPARK_COUNT; i++) {
 			*life = -1;
@@ -420,8 +420,8 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 					args->tgts[i], SPRITE_COLOR_WHITE, POSE_DAMAGE, i, 16);
 				for(j = 0; j != JuggleStyles[args->variant][JUGGLE_RING_SPARKS];
 					j++) {
-					PARTICLE *spark = &((PARTICLE *)Ram_MapMetatileBuffer)[i *
-							JUGGLE_SPARKS_PER_TARGET +
+					PARTICLE *spark = &((PARTICLE *)
+							RamMapMetatileBuffer)[i * JUGGLE_SPARKS_PER_TARGET +
 						j];
 					Sint32	  ang;
 					Sint32	  speed;
@@ -441,7 +441,7 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
 		/* The sparks fly and burn down, drawn by turns with the two
 		   blitters. */
 		for(i = 0; i != JUGGLE_SPARK_COUNT; i++) {
-			PARTICLE *spark = &((PARTICLE *)Ram_MapMetatileBuffer)[i];
+			PARTICLE *spark = &((PARTICLE *)RamMapMetatileBuffer)[i];
 
 			if(spark->variant >= 0) {
 				Sint32 size = (spark->variant >> 3) + 1;
@@ -473,7 +473,7 @@ void btEffectRunJuggle(BATTLE_EFFECT_PARM *args)
    sweep it in from the right to white the battle out. */
 void btEffectFillWhiteBand(void)
 {
-	Uint8 *canvas = Ram_HeapSlots->battleCanvas;
+	Uint8 *canvas = RamHeapSlots->battleCanvas;
 	Sint32 x;
 	Sint32 y;
 

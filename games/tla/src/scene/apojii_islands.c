@@ -335,7 +335,7 @@ extern Sint32 ApojiiIslandsFallsCycleTick;
    Psynergy or Reveal runs. */
 void scApojiiIslandsCycleFallsCols(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 phase, k, ofs;
 	Uint16		*firstCopy, *secondCopy;
 
@@ -380,7 +380,7 @@ extern Sint32 ApojiiIslandsSeaCycleTick;
    Reveal runs. */
 void scApojiiIslandsCycleSeaCols(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 busy, phase, k, j;
 
 	if(state->psynergy != 0)
@@ -596,13 +596,13 @@ void scApojiiIslandsScatterWeeds(void)
 
 /* Cyclone on the clump of weeds south of the Aqua Stone, at metatile (23, 23),
    blows it away and uncovers the Herb buried there. */
-DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverHerb, 68, 4,
-	38, 21, FLAG_APOJII_ISLANDS_HERB_TAKEN, ACTOR_HERB, 376, 376)
+DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslandsScatterWeedsOverHerb, 68, 4, 38,
+	21, FLAG_APOJII_ISLANDS_HERB_TAKEN, ACTOR_HERB, 376, 376)
 
 /* Cyclone on the clump of weeds in the village's south-east corner, at metatile
    (37, 25), blows it away and uncovers the Mint buried there. */
-DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverMint, 68, 4,
-	38, 21, FLAG_APOJII_ISLANDS_MINT_TAKEN, ACTOR_MINT, 600, 408)
+DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslandsScatterWeedsOverMint, 68, 4, 38,
+	21, FLAG_APOJII_ISLANDS_MINT_TAKEN, ACTOR_MINT, 600, 408)
 
 /* Cyclone on Haze's islet's weeds scatters them. */
 void scApojiiIslandsScatterHazeWeeds(void)
@@ -624,7 +624,7 @@ DEFINE_SCATTER_WEEDS_OVER_TREASURE(scApojiiIslandsScatterWeedsOverBrambleSeed,
    field engine keeps as `stepCue`. */
 void scApojiiIslandsEnterDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -796,7 +796,7 @@ void scScrollHBlank(void)
 void scLayerTrackScroll(void)
 {
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
 	Sint16 y = FIXEDtoINT(layer->y);
 
 	ApojiiIslandsSplitLine = 1448 - y;
@@ -815,7 +815,7 @@ Sint32 scInit(void)
 	Sint16				scene;
 	MAIN_ROUTINE_STATE *party;
 
-	fdMapSetUpperLevelWading(Ram_HeapSlots->mapGrid);
+	fdMapSetUpperLevelWading(RamHeapSlots->mapGrid);
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 	party = &MainRoutineStateWork;
@@ -889,10 +889,10 @@ void scApojiiIslandsJumpForward(void)
 #include "shared/actor_emit_ripples.h"
 
 /* Unused here: Aqua Rock's stream carries the leader south, splashing, and off
-   a ledge he drops with the water (AquaRock_FlowWithStream). */
+   a ledge he drops with the water (AquaRockFlowWithStream). */
 UNUSED void scApojiiIslandsFlowWithStream(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 owner = MainRoutineStateWork.leaderActorId;
 	ACTOR		*anchor = state->camera;
 	ACTOR		*leader = fdActorGet(owner);
@@ -986,7 +986,7 @@ enum { ACTOR_VIAL_CHEST_PUDDLE_C = ACTOR_FIRST_PLACED + 7 };
    priority while it rests. */
 void scApojiiIslandsDrawMetatileMarkers(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	/* DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
@@ -1025,9 +1025,9 @@ void scApojiiIslandsDrawMetatileMarkers(void)
 			if((Uint32)(y + 39) > 286)
 				continue;
 			left &= OBJ_X_MASK;
-			/* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after
+			/* FAKEMATCH(dead): a self-update of RamHeapSlots->mapGrid after
 			 * left's mask. */
-			Ram_HeapSlots->mapGrid += 0;
+			RamHeapSlots->mapGrid += 0;
 			top &= OBJ_Y_MASK;
 			attr = record->oam;
 			kind = record->kind;
@@ -1063,7 +1063,7 @@ void scApojiiIslandsStartMetatileMarkers(void)
 void scApojiiIslandsAddMetatileMarkers(
 	Uint32 base, Sint32 level, Sint32 restLevel)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatiles =
 		fdMapGridGetLayer(MAPGRID_LAYER_MIDDLE)->metatiles;
 	Sint32 left = fdMapGridGetLayer(MAPGRID_LAYER_GROUND)->ofsX + map->minX;
@@ -1294,8 +1294,8 @@ CUE ApojiiIslandsVillageCues[] = {
 	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsPauseSeaCols)},
 	{PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsResumeSeaCols)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS, CONDITION_ALWAYS, SCRIPT_REF(scApojiiIslandsScatterWeeds)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS_OVER_HERB, CONDITION_ALWAYS, SCRIPT_REF(ApojiiIslands_ScatterWeedsOverHerb)},
-	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS_OVER_MINT, CONDITION_ALWAYS, SCRIPT_REF(ApojiiIslands_ScatterWeedsOverMint)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS_OVER_HERB, CONDITION_ALWAYS, SCRIPT_REF(ApojiiIslandsScatterWeedsOverHerb)},
+	{PSYNERGY_PHASE_ON_METATILE(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), METATILE_BEHAVIOR_WEEDS_OVER_MINT, CONDITION_ALWAYS, SCRIPT_REF(ApojiiIslandsScatterWeedsOverMint)},
 	{CUE_TABLE_END},
 };
 

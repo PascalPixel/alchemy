@@ -30,8 +30,8 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 frm;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_STAR_DOT_SHEET, state->sheet, 1, 1);
 	btEffectBuildCanvasBlitters(args->side ^ 1, draw);
@@ -46,7 +46,7 @@ UNUSED void btEffectRunSwirlingStars(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	SET_VECTOR(center, 0, toFIXED(80), 0);
 	for(frm = 0; frm != SWIRLING_STARS_TICKS; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		syMatrixTranslateVector(center);
@@ -122,8 +122,8 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 screen;
 	FIXED				 point[3];
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
@@ -132,10 +132,10 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 	syWordsCopyEntry((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	drawBurst = Ram_HeapSlots->ramCode;
+	drawBurst = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	drawSmoke = Ram_HeapSlots->ramCodePaired;
+	drawSmoke = RamHeapSlots->ramCodePaired;
 
 	for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
 		Sint32 ang;
@@ -161,7 +161,7 @@ UNUSED void btEffectRunTargetBursts(BATTLE_EFFECT_PARM *args)
 
 	for(frm = 0; frm != TARGET_BURSTS_TICKS; frm++) {
 		Sint32		   member;
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		EFFECT_FOR_EACH_TARGET(member, args) {
 			MOTION_OBJECT *tgt;

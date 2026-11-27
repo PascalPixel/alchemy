@@ -240,8 +240,8 @@ Sint32 scYallamStopIfFacingNear(
    1 it walks on while the leader is right beside it. */
 Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 {
-	WIN_STATE	*state = (WIN_STATE *)Ram_HeapSlots->winState;
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	WIN_STATE	*state = (WIN_STATE *)RamHeapSlots->winState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	ACTOR		*leader;
 	ACTOR		*tgt;
 	Uint16		*flg;
@@ -271,8 +271,8 @@ Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 #else
 Sint32 scYallamUpdateRunningChild(ACTOR *actor)
 {
-	WIN_STATE	*state = (WIN_STATE *)Ram_HeapSlots->winState;
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	WIN_STATE	*state = (WIN_STATE *)RamHeapSlots->winState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Bool		 force = FALSE;
 	ACTOR		*tgt;
 	Uint16		*flg = (Uint16 *)&actor->tmr;
@@ -340,7 +340,7 @@ const Uint8 *scGetActorPlacements(void)
    from `YallamDoors`. */
 void scYallamEnterDoor(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Uint32		 i;
 	Sint32		 idx;
 
@@ -516,7 +516,7 @@ void scYallamOfferYeppSong(void)
    way he was going; Mind Read stops him without turning him. */
 void scYallamTalkAboutSongCircles(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_CIRCLES_CHILD);
 	Sint16		 ang = actor->facing;
 
@@ -547,7 +547,7 @@ void scYallamTalkAboutSongCircles(void)
    heard that children's songs and stories have hidden meanings. */
 void scYallamTalkAboutSongGame(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_GAME_CHILD);
 	Sint16		 angle = actor->facing;
 

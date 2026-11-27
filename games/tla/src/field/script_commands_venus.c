@@ -25,7 +25,7 @@ void fdDjinnRunVenusJoinEffect(Sint32 djinniId)
 		return;
 
 	fdEffectInitSlots();
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	/* Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
 	   script_commands_mercury.c spells out for its blue. */
 	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));

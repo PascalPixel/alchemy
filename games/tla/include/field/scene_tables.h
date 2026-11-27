@@ -111,15 +111,15 @@ typedef struct SCENE_ENTRANCE {
 /* An exit table's header word: the scene whose exits follow, named by its name
    (`SCENE_EXITS(Alhafra)`). The table is read by gmTakeExit as the scene ends,
    with the exit kind it ended on. */
-#define SCENE_EXITS(scene) ((Uint32)&SceneId_##scene)
+#define SCENE_EXITS(scene) ((Uint32)&SceneId##scene)
 /* One exit: exit kind `exit` leads to `entrance` of the scene `scene`.
    EXIT_ID_ANY matches any exit; kind 0 or the next header sends the party to
    the first exit's scene. The fields are added rather than ORed so the scene
-   can be its SceneId_ symbol, which the linker fills in; they never overlap.
+   can be its SceneId symbol, which the linker fills in; they never overlap.
    bits: 27..20 exit kind | 19..12 entrance | 11..0 scene */
 #define SCENE_EXIT(exit, scene, entrance) \
 	(((Uint32)(exit) << 20) + ((Uint32)(entrance) << 12) + \
-		(Uint32)&SceneId_##scene)
+		(Uint32)&SceneId##scene)
 /* An exit word's scene. */
 #define EXIT_SCENE_MASK		  0xfff
 /* An exit word's entrance. */

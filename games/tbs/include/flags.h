@@ -235,7 +235,7 @@
 /* Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's scenes
    then place their later actors and lines, the Sanctum takes another cue table
    and Healer line, and the Sol Sanctum approach moves its sentry, changes cell
-   behaviors and stops sending its way down to SceneId_ValeEruption. */
+   behaviors and stops sending its way down to SceneIdValeEruption. */
 #define FLAG_VALE_PARTY_LEFT					0x815
 /* The first Small Jewel is set in the empty eye of Sol Sanctum's first minotaur
    relief, which opened the passage beside it; the relief then shows both eyes
@@ -377,7 +377,7 @@
 /* A bed in the houses. */
 #define FLAG_ALTIN_SLEEP_BOMB		0xf75
 
-/* Altin Peak (SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit)
+/* Altin Peak (SceneIdAltinPeakFirstWaterBeast to SceneIdAltinPeakWestExit)
    AltinPeakFirstWaterBeast's water beast has frozen the puddle in the gap
    between the cave's two ledges and hopped across it to the west ledge. */
 #define FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP 0x904
@@ -494,11 +494,11 @@
 #define FLAG_BILIBIN_HERB					 0xf50
 /* A jar in the village. */
 #define FLAG_BILIBIN_COINS					 0xf51
-/* A barrel in the houses (SceneId_CottageRoomsC). */
+/* A barrel in the houses (SceneIdCottageRoomsC). */
 #define FLAG_BILIBIN_ANTIDOTE				 0xf52
-/* A bed in the houses (SceneId_CottageRoomsC). */
+/* A bed in the houses (SceneIdCottageRoomsC). */
 #define FLAG_BILIBIN_SLEEP_BOMB				 0xf53
-/* A barrel in the houses (SceneId_CottageRoomsC). */
+/* A barrel in the houses (SceneIdCottageRoomsC). */
 #define FLAG_BILIBIN_HARD_NUT				 0xf54
 
 /* Colosso */
@@ -576,11 +576,11 @@
 #define FLAG_IMIL_VIAL					   0xf60
 /* A grave in the village. */
 #define FLAG_IMIL_LUCKY_MEDAL			   0xf61
-/* A chest in the houses (SceneId_IceRooms). */
+/* A chest in the houses (SceneIdIceRooms). */
 #define FLAG_IMIL_EMPTY_BOTTLE			   0xf26
-/* A barrel in the houses (SceneId_IceRooms). */
+/* A barrel in the houses (SceneIdIceRooms). */
 #define FLAG_IMIL_SLEEP_BOMB			   0xf62
-/* An oven in the houses (SceneId_IceRooms). */
+/* An oven in the houses (SceneIdIceRooms). */
 #define FLAG_IMIL_LUCKY_PEPPER			   0xf63
 
 /* Fuchin Falls */
@@ -626,7 +626,7 @@
 #define FLAG_TOLBI_DOCKS_COINS_BOX			0xf95
 /* Kolima */
 /* The party has seen the curse fall on Kolima, in Kolima or in
-   SceneId_KolimaForestEntrance, whichever it reached first: the sparkles rain
+   SceneIdKolimaForestEntrance, whichever it reached first: the sparkles rain
    down, its Psynergy shields it, and Tret and Laurel speak. */
 #define FLAG_KOLIMA_CURSE_WITNESSED			0x843
 /* The villager at Kolima Bridge has let its drawbridge down across the river,
@@ -1239,7 +1239,7 @@
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS 0x862
 /* The east stone pillar has settled into the floor on its last column. */
 #define FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE  0x863
-/* The stump in Goma Cave (SceneId_GomaCaveStream) has leapt and lies flat
+/* The stump in Goma Cave (SceneIdGomaCaveStream) has leapt and lies flat
    beside the stream. */
 #define FLAG_GOMA_CAVE_STREAM_STUMP_MOVED			  0x864
 /* Ivan has blown the ivy off the stump and joined the party again. */

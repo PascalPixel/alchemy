@@ -304,7 +304,7 @@ void scEasternAlhafraShipMayorArrives(void)
 	fdScriptEndLastingPsynergy(0);
 	fdScriptSetMessageId((Sint32)MsgTheMayorOf);
 	fdCameraMoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	map->minX = 0;
 	map->maxX = toFIXED(1024);
 	map->minZ = 0;

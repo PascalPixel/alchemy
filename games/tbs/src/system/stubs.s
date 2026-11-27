@@ -1,8 +1,8 @@
 @ The system library's module: ticks and events, memory, resources and the
 @ other services every team's code calls.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_System
-Stubs_System:
+	.global StubsSystem
+StubsSystem:
 	stub sySynchStub, sySynch
 	unnamed_stub syInitEvent
 	stub sySetEventStub, sySetEvent

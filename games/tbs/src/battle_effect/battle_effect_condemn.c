@@ -58,7 +58,7 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 		syWordsCopy(BG_PLTT, sheet, SHEET_PALETTE_BYTES);
 		sheet = sheet + SHEET_PALETTE_BYTES;
 		syDecompressTaggedLZ(sheet, state->sheet);
-		cells = Ram_MapGridMetatileBuffer;
+		cells = RamMapGridMetatileBuffer;
 		sheet = syResourceGetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
 		sheet = sheet + SHEET_PALETTE_BYTES;
 		syDecompressTaggedLZ(sheet, cells);
@@ -195,25 +195,25 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 				}
 				if(frm >= 92 && frm <= 93) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
-						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_A,
+						RamMapGridMetatileBuffer, RED_CRESCENT_FADE_A,
 						CONDEMN_PICTURE_X(pictureColumn, 3),
 						CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
 				}
 				if(frm >= 94 && frm <= 95) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
-						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_B,
+						RamMapGridMetatileBuffer, RED_CRESCENT_FADE_B,
 						CONDEMN_PICTURE_X(pictureColumn, 4),
 						CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
 				}
 				if(frm >= 96 && frm <= 97) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
-						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_C,
+						RamMapGridMetatileBuffer, RED_CRESCENT_FADE_C,
 						CONDEMN_PICTURE_X(pictureColumn, 5),
 						CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
 				}
 				if(frm >= 98 && frm <= 99) {
 					EFFECT_DRAW_PICTURE(draw[state->args->side], canvas,
-						Ram_MapGridMetatileBuffer, RED_CRESCENT_FADE_D,
+						RamMapGridMetatileBuffer, RED_CRESCENT_FADE_D,
 						CONDEMN_PICTURE_X(pictureColumn, 6),
 						CONDEMN_PICTURE_Y(pictureRow, 6) + screenY);
 				}

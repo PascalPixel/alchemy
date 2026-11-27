@@ -828,7 +828,7 @@ Sint32 DehkanPlateauCrackX BSS_DATA;
    the cave below, by the exit of the crack's number. */
 void scDehkanPlateauStepOnCrack(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 metatileX = (FIELD_METATILE(leader->x.fixed) << 1) + 1;
 	Sint32		 metatileZ = (FIELD_METATILE(leader->z.fixed) << 1) + 1;
@@ -1139,11 +1139,11 @@ void scDehkanPlateauPlaceVinePillar(ACTOR *actor)
 		fdMapCopyMetatileAttributeRect(1, 32, 1, 1, x, 11);
 		fdScriptEnd();
 	} else if(x == 18) {
-		metatile = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[0].metatiles;
+		metatile = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
 		metatile += fdActorGetMetatileIndex(actor);
 		metatile->attributeB &= ~MAP_METATILE_JUMP;
 	} else if(x == 54) {
-		metatile = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[0].metatiles;
+		metatile = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
 		metatile += fdActorGetMetatileIndex(actor);
 		metatile->attributeB &= ~MAP_METATILE_JUMP;
 		metatile->collisionCode = CUE_TIGHTROPES_PILLARS_WEST;
@@ -1179,7 +1179,7 @@ void scDehkanPlateauLiftTightropesVinePillar(void)
 /* Move lets go of one of the rope bridge's stretch's vine pillars. */
 void scDehkanPlateauFinishMovingVinePillar(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*active;
 
 	active = state->movedBlock;
@@ -1369,7 +1369,7 @@ void scDehkanPlateauCannonPoundsStake(void)
    and once the Psynergy ends it is down for good. */
 void scDehkanPlateauSinkPoundedStake(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor = fdActorGetById(ACTOR_TIGHTROPES_STAKE);
 
 	if(state->frm != -1 && state->frm <= 7)
@@ -1587,7 +1587,7 @@ void scDehkanPlateauCannonPoundsLeaderThrough(void)
 /* The event of Cannon's Pound on the leader: the floor under him opens. */
 void scDehkanPlateauPoundLeaderThrough(void)
 {
-	if(((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->stage != 0) {
+	if(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->stage != 0) {
 		sySndPlay(SE_SPLASH);
 		fdMapGridCopyMetatileTilesIndicesRect(64, 64, 15, 8, 1, 1);
 		fdMapGridCopyMetatileTilesIndicesRect(64, 66, 15, 72, 1, 2);
@@ -1769,7 +1769,7 @@ void scDehkanPlateauTakePoundCube(void)
    column 64. */
 void scDehkanPlateauLeaveRoom(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1938,7 +1938,7 @@ void scDehkanPlateauInitTightropes(void)
 		pillarX = pillar->x.fixed;
 		if(FIELD_METATILE(pillarX) == 54) {
 			MAP_METATILE *metatile =
-				((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[0].metatiles;
+				((MAP_STATE *)RamHeapSlots->mapGrid)->layers[0].metatiles;
 
 			metatile += fdActorGetMetatileIndex(pillar);
 			metatile->attributeB &= ~MAP_METATILE_JUMP;

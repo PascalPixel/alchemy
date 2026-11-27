@@ -44,8 +44,8 @@ Sint32 mnMessageCopyExpanded(Sint32 msg, Uint16 *dst, Uint32 capacity)
 #define DECODE_EUROPEAN
 #endif
 
-extern const Uint8 Text_DecodeSymbolCode[];
-extern Uint8	   Text_DecodeSymbolCodeSize[];
+extern const Uint8 TextDecodeSymbolCode[];
+extern Uint8	   TextDecodeSymbolCodeSize[];
 
 /* Decodes message into text as a zero-terminated string of 16-bit codes, with
    at most capacity entries, keeping style codes with their operands. */
@@ -59,11 +59,11 @@ void mnMessageDecodeRaw(Sint32 msg, Uint16 *text, Sint32 capacity)
 	Uint16 delta;
 #endif
 
-	original = Ram_HeapSlots->msgDecoder;
+	original = RamHeapSlots->msgDecoder;
 	if(original == NULL)
-		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
-			Text_DecodeSymbolCodeSize);
-	decode = (Sint32 (*)(TEXT_READER *))Ram_HeapSlots->msgDecoder;
+		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, TextDecodeSymbolCode,
+			TextDecodeSymbolCodeSize);
+	decode = (Sint32 (*)(TEXT_READER *))RamHeapSlots->msgDecoder;
 	mnMessageFind(&reader, msg);
 #if !defined(DECODE_EUROPEAN)
 	delta = -1;
@@ -185,7 +185,7 @@ void mnWindowCloseAll(void)
 #define FLASH_FRAME_TILES (BG_CHAR_BLOCK(0) + 8 * TILE_SIZE_4BPP)
 
 /* Loads the flash border frame `ofs` bytes into its picture
-   (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's
+   (ResourceIdWindowBorderFlash) into tiles 8 to 15 and draws the window's
    rectangle with it. */
 void mnWindowShowFlashFrame(WINDOW **win, Sint32 ofs)
 {
@@ -467,20 +467,20 @@ Sint32 mnTextDrawGlyphToCanvas(Uint8 *canvas, Uint32 ch, Sint32 x, Sint32 row)
 
 	if(markCode != 0) {
 		markCode -= TEXT_SPACE;
-		mark = Font_Glyphs[markCode].rows;
+		mark = FontGlyphs[markCode].rows;
 	}
 	ch &= (1 << TEXT_MARK_SHIFT) - 1;
 	if(ch < KANJI_FIRST_CODE) {
 		Sint32 idx = ch - TEXT_SPACE;
 
 		/* The width, then the rows after it. */
-		rows = &Font_Glyphs[idx].width;
+		rows = &FontGlyphs[idx].width;
 		width = *rows++;
 	} else {
 		Sint32 idx = ch - KANJI_FIRST_CODE;
 
 		width = KANJI_WIDTH;
-		rows = (const Uint16 *)(Font_KanjiGlyphs + idx * (FONT_GLYPH_ROWS * 2));
+		rows = (const Uint16 *)(FontKanjiGlyphs + idx * (FONT_GLYPH_ROWS * 2));
 	}
 	canvas += x + row * CRAWL_CANVAS_WIDTH;
 	mnTextPlotGlyphRows((Uint16 *)rows, canvas + 3 * CRAWL_CANVAS_WIDTH + 1, 1);
@@ -500,7 +500,7 @@ Sint32 mnTextDrawGlyphToCanvas(Uint8 *canvas, Uint32 ch, Sint32 x, Sint32 row)
 Sint32 mnTextDrawGlyphToCanvas(Uint8 *canvas, Sint32 ch, Sint32 x, Sint32 row)
 {
 	/* ch's glyph: a GLYPH is 32 bytes, one a character from TEXT_SPACE. */
-	Uint16 *glyph = (Uint16 *)((Uint8 *)Font_Glyphs +
+	Uint16 *glyph = (Uint16 *)((Uint8 *)FontGlyphs +
 		(((ch & TEXT_LAST_FONT_CODE) - TEXT_SPACE) << 5));
 	Sint32	width = *glyph;
 	Uint8  *dst = canvas + (x + row * CRAWL_CANVAS_WIDTH);
@@ -609,17 +609,17 @@ void mnMessageFind(TEXT_READER *reader, Sint32 msg)
 {
 	void (*routine)(TEXT_READER *, Sint32);
 
-	RAM_CODE_LOAD(routine, Text_LookupSymbolCode, Text_LookupSymbolCodeSize);
+	RAM_CODE_LOAD(routine, TextLookupSymbolCode, TextLookupSymbolCodeSize);
 	routine(reader, msg);
 	syHeapRelease(routine);
 }
 
 /* Each decoding context's Huffman tree and its symbols, two pointers a row: a
    message's previous symbol picks the row. */
-extern const void *const Text_MessageContexts[][2];
+extern const void *const TextMessageContexts[][2];
 
 /* Unused: the symbol decoder in C, as the copy run from RAM
-   (Text_DecodeSymbolCode) decodes. Messages are Huffman coded with one tree per
+   (TextDecodeSymbolCode) decodes. Messages are Huffman coded with one tree per
    previous symbol: the previous code picks the tree, the message's bits walk it
    to a leaf, and the leaf's 12-bit symbol is returned and becomes the next
    context. reader->bytes keeps the byte the bits are read from between
@@ -649,8 +649,8 @@ UNUSED Sint32 mnTextDecodeSymbolInC(TEXT_READER *reader)
 	   - 1. */
 	contextBank = code >> 8;
 	code &= SYMBOL_TREE_MASK;
-	base = Text_MessageContexts[contextBank][0];
-	base += ((const Uint16 *)Text_MessageContexts[contextBank][1])[code];
+	base = TextMessageContexts[contextBank][0];
+	base += ((const Uint16 *)TextMessageContexts[contextBank][1])[code];
 	tree = base;
 	leaves = base - 1;
 	rank = 0;

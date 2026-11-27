@@ -1,4 +1,4 @@
-/* Tolbi-bound Ship (SceneId_TolbiShipDeck), its deck: the ship that carries the
+/* Tolbi-bound Ship (SceneIdTolbiShipDeck), its deck: the ship that carries the
    party and a tour group bound for Colosso across the Karagol Sea from Kalay to
    Tolbi.
 
@@ -67,7 +67,7 @@
 	 ship sails on to Tolbi.
    - At Tolbi (TOLBI_SHIP_DECK_FROM_WORLD_MAP): the passengers who rowed come
 	 up one by one to thank the leader, and TOLBI_SHIP_DECK_TO_TOLBI_DOCKS
-	 leads ashore to Tolbi Docks (SceneId_TolbiDocks). */
+	 leads ashore to Tolbi Docks (SceneIdTolbiDocks). */
 
 #include "ability_ids.h"
 #include "macros.h"
@@ -495,11 +495,11 @@ typedef enum TOLBI_SHIP_DECK_DIVE_STEP {
 	}
 
 /* A monster hovering on Ouranos's side, diving at him. */
-TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtOuranos,
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeckHoverAndDiveAtOuranos,
 	ACTOR_SEA_OURANOS, 268, 692, 282, 658, 254, 668, 248, 292)
 
 /* A monster hovering on Sean's side, diving at him. */
-TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
+TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeckHoverAndDiveAtSean, ACTOR_SEA_SEAN,
 	256, 640, 264, 600, 242, 604, 232, 272)
 
 /* The four strokes' phases, which the oars at the sides follow (65,536 to a
@@ -659,10 +659,10 @@ typedef enum TOLBI_SHIP_DECK_LEAP_STEP {
 	}
 
 /* A monster on deck leaping at Ouranos. */
-TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtOuranos, ACTOR_SEA_OURANOS, 264,
-	662, FACING_NORTH_NORTHWEST, FACING_SOUTH_SOUTHWEST, 252, 646, 256, 686)
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeckLeapAtOuranos, ACTOR_SEA_OURANOS, 264, 662,
+	FACING_NORTH_NORTHWEST, FACING_SOUTH_SOUTHWEST, 252, 646, 256, 686)
 /* A monster on deck leaping at Sean. */
-TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
+TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeckLeapAtSean, ACTOR_SEA_SEAN, 176, 696,
 	FACING_NORTH_NORTHEAST, FACING_EAST, 184, 672, 202, 692)
 
 /* Makes the actor hop at random, one tick in 40 on average.
@@ -3063,15 +3063,15 @@ const Sint32 TolbiShipDeckOuranosPatrolsActions[] = {
 
 /* The second attack's hovering monsters (ACTOR_SEA_FIRST_HOVERING_MONSTER).
 
-   Their scratch fields are cleared, then TolbiShipDeck_HoverAndDiveAtOuranos or
-   TolbiShipDeck_HoverAndDiveAtSean runs each tick. */
+   Their scratch fields are cleared, then TolbiShipDeckHoverAndDiveAtOuranos or
+   TolbiShipDeckHoverAndDiveAtSean runs each tick. */
 const Sint32 TolbiShipDeckHoverAndDiveAtOuranosActions[] = {
 	SC_SET(SW_MOTION, 0),
 	SC_SET(SW_TIMER, 0),
 	SC_SET(SW_USER_VALUE, 0),
 	SC_SET(SW_SCENE_COUNTER, 0),
 	SC_SET(23, 0),
-	SC_CALL(TolbiShipDeck_HoverAndDiveAtOuranos),
+	SC_CALL(TolbiShipDeckHoverAndDiveAtOuranos),
 };
 
 const Sint32 TolbiShipDeckHoverAndDiveAtSeanActions[] = {
@@ -3080,7 +3080,7 @@ const Sint32 TolbiShipDeckHoverAndDiveAtSeanActions[] = {
 	SC_SET(SW_USER_VALUE, 0),
 	SC_SET(SW_SCENE_COUNTER, 0),
 	SC_SET(23, 0),
-	SC_CALL(TolbiShipDeck_HoverAndDiveAtSean),
+	SC_CALL(TolbiShipDeckHoverAndDiveAtSean),
 };
 
 /* The second attack's boarding monsters, bobbing in the air
@@ -3123,16 +3123,16 @@ const Sint32 TolbiShipDeckMonsterGoesBelowActions[] = {
 
 /* The third attack's leaping monsters (ACTOR_SEA_FIRST_LEAPING_MONSTER).
 
-   Their timer is cleared, then TolbiShipDeck_LeapAtOuranos or
-   TolbiShipDeck_LeapAtSean runs each tick. */
+   Their timer is cleared, then TolbiShipDeckLeapAtOuranos or
+   TolbiShipDeckLeapAtSean runs each tick. */
 const Sint32 TolbiShipDeckLeapAtOuranosActions[] = {
 	SC_SET(SW_TIMER, 0),
-	SC_CALL(TolbiShipDeck_LeapAtOuranos),
+	SC_CALL(TolbiShipDeckLeapAtOuranos),
 };
 
 const Sint32 TolbiShipDeckLeapAtSeanActions[] = {
 	SC_SET(SW_TIMER, 0),
-	SC_CALL(TolbiShipDeck_LeapAtSean),
+	SC_CALL(TolbiShipDeckLeapAtSean),
 };
 
 /* The third attack's boarding monsters, hopping at random. */

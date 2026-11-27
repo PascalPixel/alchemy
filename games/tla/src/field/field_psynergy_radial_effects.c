@@ -149,7 +149,7 @@ void fdWhirlwindUpdateSpentOrb(ACTOR *actor);
    (fdHangingVineSwing). */
 void fdPsynergyWhirlwind(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	ACTOR			   *caster = scene->caster;
 	ACTOR			   *tgt = scene->tgt;
 	SPR				   *spr = tgt->spr;
@@ -299,7 +299,7 @@ void fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect)
 	Sint16				angle;
 	Sint32				state;
 
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 top:
 	state = effect->state;
 	if(state == OUT_AND_BACK_AIM_OUT) {
@@ -343,7 +343,7 @@ top:
 /* Pauses the target (effectState->child) and runs fdPsynergyHalt. */
 void fdPsynergyHaltOnTarget(Sint32 unused)
 {
-	ACTOR *tgt = ((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->tgt;
+	ACTOR *tgt = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgt;
 
 	tgt->paused = 1;
 	fdPsynergyHalt();
@@ -359,7 +359,7 @@ void fdPsynergyHaltOnTarget(Sint32 unused)
    and scatters it into HALT_PARTICLES particles. */
 void fdPsynergyHalt(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *caster = effectState->caster;
 	ACTOR			   *orb;
 	FIELD_PARTICLE	   *effect;
@@ -525,7 +525,7 @@ static __inline__ Sint32 Interpolate(Sint32 from, Sint32 to, Sint32 step)
    pixels moving the target to (-9, -9), rises 19.5 pixels and shrinks back. */
 void fdPsynergyCatch(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	ACTOR			   *mainActor = scene->caster;
 	ACTOR			   *secondary = scene->tgt;
 	ACTOR			   *actor;
@@ -622,9 +622,9 @@ typedef enum LASH_PHASE {
    rises away, scattering sparkles all the while. */
 void fdPsynergyUpdateLash(void)
 {
-	SCATTER_STATE			*state = (SCATTER_STATE *)Ram_HeapSlots->battleEff;
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	SCATTER_STATE			*state = (SCATTER_STATE *)RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*actor = state->actor;
 	VECTOR3					 pos;
 	EFFECT_SPR				*spr;
@@ -730,8 +730,8 @@ void fdPsynergyUpdateLash(void)
    rope and its ends. Then runs fdPsynergyLash. */
 void fdPsynergyLashOnTarget(Sint32 value)
 {
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	Sint32				second;
 	Sint32				first;
 
@@ -757,8 +757,8 @@ void fdPsynergyLash(void)
 {
 	SCATTER_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(SCATTER_STATE));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*caster = scene->caster;
 	ACTOR					*actor;
 	EFFECT_SPR				*spr;
@@ -888,7 +888,7 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
 	Sint32	state;
 	Uint32	spread;
 
-	main = ((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->caster;
+	main = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
 	state = effect->state;
 
 	if(state == RETREAT_PARTICLE_AIM) {
@@ -930,7 +930,7 @@ void fdRetreatUpdateSpark(FIELD_PARTICLE *effect)
    sparks fly up the screen, one a tick. */
 void fdPsynergyRetreat(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor = effectState->caster;
 	VECTOR3				pos;
 	FIELD_PARTICLE	   *effect;
@@ -999,7 +999,7 @@ void fdPsynergyRetreat(void)
 }
 
 /* The back half of one of Avoid's falling rings, a golden arc
-   (FieldEffect_ArcSparkTiles) behind the caster: it grows to full size by 3/64
+   (FieldEffectArcSparkTiles) behind the caster: it grows to full size by 3/64
    a tick as it falls 2 pixels a tick around the caster, 9 pixels south of
    them and up to 5 more while small, and is gone 10 pixels above the ground (4
    on the World Map). */
@@ -1066,7 +1066,7 @@ void fdAvoidUpdateRingFrontHalf(ACTOR *particle)
    (FIELD_EFFECT_STATE.arcTileSlot), the front half over every sprite. */
 void fdAvoidDropRing(ACTOR *src)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *leader = effectState->caster;
 	ACTOR			   *actors[2];
 	ACTOR			   *actor;
@@ -1169,7 +1169,7 @@ void fdPsynergyAvoid(void)
 	Sint32				cnt;
 	Sint32				phase;
 
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	actor = effectState->caster;
 	group = actor->spr;
 	entry = group->entries[0];
@@ -1179,7 +1179,7 @@ void fdPsynergyAvoid(void)
 	/* The arcs' tiles (256 bytes) stay loaded until the Psynergy's end, and
 	   monsters stay away for the next 2,400 pixels the leader walks. */
 	effectState->arcTileSlot = slot;
-	tiles = FieldEffect_ArcSparkTiles;
+	tiles = FieldEffectArcSparkTiles;
 	syVRAMCacheLoad((Sint16)slot, 256, tiles);
 	MainRoutineStateWork.avoidDistance = toFIXED(2400);
 	MainRoutineStateWork.avoidByItem = syGameFlagGet(FLAG_PSYNERGY_FROM_ITEM);
@@ -1238,7 +1238,7 @@ void fdPsynergyAvoid(void)
    run their 32 ticks. */
 void fdBattleEffectWaitForArcGroups(void)
 {
-	ARC_EFFECT_STATE *state = Ram_HeapSlots->arcEff;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
 	Sint32			  i = 0;
 
 	while(state->age[0] < ARC_GROUP_TICKS || state->age[1] < ARC_GROUP_TICKS) {
@@ -1291,7 +1291,7 @@ void fdBattleEffectSetObjectUpdateMode(ACTOR *actor, Sint32 mode)
    switches to the other group. */
 void fdBattleEffectSpawnScaledArcObjects(ACTOR *tgt)
 {
-	ARC_EFFECT_STATE *state = Ram_HeapSlots->arcEff;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
 	Sint32			  tiles = VramCacheEntries[state->resource].ofs >> 5;
 	Sint32			  group = state->group;
 	EFFECT_SPR		 *spr;
@@ -1315,7 +1315,7 @@ void fdBattleEffectSpawnScaledArcObjects(ACTOR *tgt)
    one behind. */
 void fdBattleEffectUpdateArcEffect(void)
 {
-	ARC_EFFECT_STATE *state = Ram_HeapSlots->arcEff;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
 	ACTOR			 *tgt = state->tgt;
 	Sint32			  group;
 	FIXED			  pos[3];
@@ -1364,7 +1364,7 @@ void fdBattleEffectStartArcEffect(void)
 		syHeapSlotAlloc(HEAP_SLOT_ARC_EFFECT, sizeof(*state));
 
 	state->resource = syVRAMCacheFindFreeEntry();
-	syVRAMCacheLoad(state->resource, 256, FieldEffect_SparkTiles);
+	syVRAMCacheLoad(state->resource, 256, FieldEffectSparkTiles);
 	state->group = 0;
 	state->age[0] = ARC_GROUP_UNSPAWNED;
 	state->age[1] = ARC_GROUP_UNSPAWNED;
@@ -1376,7 +1376,7 @@ void fdBattleEffectStartArcEffect(void)
    event. */
 void fdBattleEffectEndArcEffect(void)
 {
-	ARC_EFFECT_STATE *state = Ram_HeapSlots->arcEff;
+	ARC_EFFECT_STATE *state = RamHeapSlots->arcEff;
 
 	syVRAMCacheFreeEntry(state->resource);
 	syCloseEvent((Uint32)fdBattleEffectUpdateArcEffect);
@@ -1405,10 +1405,10 @@ typedef enum ARROW_PHASE {
    arrow. */
 void fdPsynergyUpdateArrow(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	BOW_STATE		   *state = (BOW_STATE *)Ram_HeapSlots->battleEff;
-	CANVAS_SPR_STATE   *canvas = Ram_HeapSlots->canvasSpr;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	BOW_STATE		   *state = (BOW_STATE *)RamHeapSlots->battleEff;
+	CANVAS_SPR_STATE   *canvas = RamHeapSlots->canvasSpr;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	ACTOR			   *actor;
 	BOW_MOTION		   *motion;
 	EFFECT_SPR		   *spr;
@@ -1653,7 +1653,7 @@ again:
 				Sint32 y = (Sint16)FIXEDtoINT(motion->y);
 
 				fdBattleEffectDrawCanvasBlock(
-					Arrow_GlintPixels + (motion->delay & 1) * 64, x, y, 8, 8);
+					ArrowGlintPixels + (motion->delay & 1) * 64, x, y, 8, 8);
 				fdAdvanceWithGravity2D(&motion->x, 60, 0);
 			}
 			motion->delay++;
@@ -1689,8 +1689,8 @@ void fdPsynergyArrow(void)
 {
 	BOW_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BOW_STATE));
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	CANVAS_SPR_STATE   *canvas;
 	EFFECT_SPR		   *spr;
 	BOW_MOTION		   *motion;
@@ -1753,7 +1753,7 @@ void fdPsynergyArrow(void)
 	syHeapSlotRelease(HEAP_SLOT_BATTLE_CANVAS);
 
 	fdBattleEffectStartCanvasSpr();
-	canvas = Ram_HeapSlots->canvasSpr;
+	canvas = RamHeapSlots->canvasSpr;
 	canvas->pri = fdActorGetSprPriority(scene->caster);
 	canvas->depth = fdActorGetSprDepth(scene->caster) + 3;
 	canvas->mode = CANVAS_SPRITE_256_COLORS;
@@ -1806,9 +1806,9 @@ void fdPsynergyArrow(void)
    and cycloneLiftX, Z. */
 void fdPsynergyGatherNearbyMetatiles(void)
 {
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
-	POINT_STATE		   *field = Ram_HeapSlots->fieldState;
-	CYCLONE_STATE	   *state = Ram_HeapSlots->battleEff;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	POINT_STATE		   *field = RamHeapSlots->fieldState;
+	CYCLONE_STATE	   *state = RamHeapSlots->battleEff;
 	Sint16			   *points = field->points;
 	ACTOR			   *owner = effect->caster;
 	FIXED				pos[3];
@@ -1881,7 +1881,7 @@ Sint32 fdMapGridGetMetatileBehavior(Sint32 x, Sint32 z, Sint32 layer);
    touched (FIELD_STATE.psynergyMetatiles), lowest metatile behaviour first. */
 void fdPsynergyRunTouchedScripts(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	TOUCH_METATILE	   *metatiles =
 		(TOUCH_METATILE *)FieldStateWork->psynergyMetatiles;
 	ACTOR *caster = effectState->caster;
@@ -1937,11 +1937,11 @@ MAP_METATILE *fdMapGridGetMetatileAt(Sint32 x, Sint32 z, Sint32 layer);
 void fdTileCopiesCopyTouchedMetatiles(Sint32 srcX, Sint32 srcZ, Sint32 width,
 	Sint32 height, Sint32 winX, Sint16 winZ, Sint32 layerIdx)
 {
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*owner = fdActorGetById(fdPartyGetLeaderActor());
 	Sint16		*metatile = field->psynergyMetatiles;
 	Sint32		 ownerHeight = FIELD_METATILE(owner->groundHeight);
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
 	MAP_LAYER	*layer = &map->layers[layerIdx];
 	Sint32		 i;
 

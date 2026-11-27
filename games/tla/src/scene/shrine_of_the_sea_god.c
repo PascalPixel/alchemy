@@ -1,6 +1,6 @@
 /* The Shrine of the Sea God east of Daila, in eleven rooms that share this
-   overlay (SceneId_ShrineOfTheSeaGodRope to
-   SceneId_ShrineOfTheSeaGodRightProng).
+   overlay (SceneIdShrineOfTheSeaGodRope to
+   SceneIdShrineOfTheSeaGodRightProng).
 
    On the first visit Tavi is stuck on a ledge in the entrance (the rope room)
    and Riki cannot throw him the rope; Riki goes off to the side room by the
@@ -76,7 +76,7 @@
 void scShrineOfTheSeaGodSetBlocksShown(Sint32 show);
 void scShrineOfTheSeaGodKeepWithLeader(ACTOR *actor);
 
-/* The rope room's actors (SceneId_ShrineOfTheSeaGodRope), numbering the rows of
+/* The rope room's actors (SceneIdShrineOfTheSeaGodRope), numbering the rows of
    ShrineOfTheSeaGodRopeActorPlacements. */
 typedef enum SHRINE_OF_THE_SEA_GOD_ROPE_ROOM_ACTOR_ID {
 	/* Two logs floating on the room's water. */
@@ -93,8 +93,8 @@ typedef enum SHRINE_OF_THE_SEA_GOD_ROPE_ROOM_ACTOR_ID {
 } SHRINE_OF_THE_SEA_GOD_ROPE_ROOM_ACTOR_ID;
 
 /* The torch Move pushes, the first row of the side room
-   (SceneId_ShrineOfTheSeaGodPlankBridge) and of the ledge room
-   (SceneId_ShrineOfTheSeaGodBreath): a pedestal whose flame is its own
+   (SceneIdShrineOfTheSeaGodPlankBridge) and of the ledge room
+   (SceneIdShrineOfTheSeaGodBreath): a pedestal whose flame is its own
    animation. The second row is an unseen actor kept where the flame burns
    (scShrineOfTheSeaGodKeepFlameOnTorch). */
 typedef enum SHRINE_OF_THE_SEA_GOD_TORCH_ACTOR_ID {
@@ -112,7 +112,7 @@ typedef enum SHRINE_OF_THE_SEA_GOD_SIDE_ROOM_ACTOR_ID {
 	ACTOR_SIDE_ROOM_DISABLED
 } SHRINE_OF_THE_SEA_GOD_SIDE_ROOM_ACTOR_ID;
 
-/* The crossroads' actors (SceneId_ShrineOfTheSeaGodCrossroads), numbering the
+/* The crossroads' actors (SceneIdShrineOfTheSeaGodCrossroads), numbering the
    rows of ShrineOfTheSeaGodCrossroadsActorPlacements. */
 typedef enum SHRINE_OF_THE_SEA_GOD_CROSSROADS_ACTOR_ID {
 	/* The stone pillar Move pushes aside. */
@@ -132,14 +132,14 @@ typedef enum SHRINE_OF_THE_SEA_GOD_CROSSROADS_ACTOR_ID {
 	ACTOR_CROSSROADS_BREATH
 } SHRINE_OF_THE_SEA_GOD_CROSSROADS_ACTOR_ID;
 
-/* The room below's actors (SceneId_ShrineOfTheSeaGodFootprints): Breath's
+/* The room below's actors (SceneIdShrineOfTheSeaGodFootprints): Breath's
    footprints, sixteen of them, left and right feet in turn. */
 typedef enum SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_ACTOR_ID {
 	ACTOR_FIRST_FOOTPRINT = ACTOR_FIRST_PLACED,
 	ACTOR_LAST_FOOTPRINT = ACTOR_FIRST_FOOTPRINT + 15
 } SHRINE_OF_THE_SEA_GOD_FOOTPRINTS_ACTOR_ID;
 
-/* The rest of the ledge room's actors (SceneId_ShrineOfTheSeaGodBreath). */
+/* The rest of the ledge room's actors (SceneIdShrineOfTheSeaGodBreath). */
 typedef enum SHRINE_OF_THE_SEA_GOD_LEDGE_ROOM_ACTOR_ID {
 	/* The puddles Frost freezes into pillars of ice. */
 	ACTOR_FIRST_PUDDLE = ACTOR_TORCH_FLAME_MARKER + 1,
@@ -151,7 +151,7 @@ typedef enum SHRINE_OF_THE_SEA_GOD_LEDGE_ROOM_ACTOR_ID {
 	ACTOR_BREATH
 } SHRINE_OF_THE_SEA_GOD_LEDGE_ROOM_ACTOR_ID;
 
-/* The hole room's actors (SceneId_ShrineOfTheSeaGodPillarHole). */
+/* The hole room's actors (SceneIdShrineOfTheSeaGodPillarHole). */
 typedef enum SHRINE_OF_THE_SEA_GOD_HOLE_ROOM_ACTOR_ID {
 	/* The pillar Move pushes into the hole. */
 	ACTOR_HOLE_ROOM_PILLAR = ACTOR_FIRST_PLACED,
@@ -162,7 +162,7 @@ typedef enum SHRINE_OF_THE_SEA_GOD_HOLE_ROOM_ACTOR_ID {
 	ACTOR_HOLE_ROOM_THIRD_BLOCK
 } SHRINE_OF_THE_SEA_GOD_HOLE_ROOM_ACTOR_ID;
 
-/* The pillar room's actors (SceneId_ShrineOfTheSeaGodPillars), numbering the
+/* The pillar room's actors (SceneIdShrineOfTheSeaGodPillars), numbering the
    rows of ShrineOfTheSeaGodPillarsActorPlacements. */
 typedef enum SHRINE_OF_THE_SEA_GOD_PILLAR_ROOM_ACTOR_ID {
 	/* The plank bridges between the rock pillars, and a bridge of two logs. */
@@ -197,7 +197,7 @@ typedef enum SHRINE_OF_THE_SEA_GOD_PILLAR_ROOM_ACTOR_ID {
 	ACTOR_CHEST_NORTH_MARKER
 } SHRINE_OF_THE_SEA_GOD_PILLAR_ROOM_ACTOR_ID;
 
-/* The island room's actors (SceneId_ShrineOfTheSeaGodSeaGodsTear): three logs
+/* The island room's actors (SceneIdShrineOfTheSeaGodSeaGodsTear): three logs
    floating on the water the Sea God's Tear raises. */
 typedef enum SHRINE_OF_THE_SEA_GOD_ISLAND_ACTOR_ID {
 	ACTOR_ISLAND_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -394,7 +394,7 @@ extern Uint32 ShrineOfTheSeaGodRikiLooksAround[];
    like the one in Daila's Sanctum. */
 void scShrineOfTheSeaGodExamineStatue(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -433,7 +433,7 @@ void scShrineOfTheSeaGodStartleRiki(void)
    menu, as talking to nothing does. */
 void scShrineOfTheSeaGodOpenFieldMenu(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->fieldMenu = 1;
 }
@@ -442,7 +442,7 @@ void scShrineOfTheSeaGodOpenFieldMenu(void)
    floating logs with it. */
 void scShrineOfTheSeaGodLiftWithWater(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *water = &map->layers[0];
 	MAP_LAYER *ground = &map->layers[1];
 	MAP_LAYER *groundTop = &map->layers[2];
@@ -467,7 +467,7 @@ void scShrineOfTheSeaGodLiftWithWater(void)
    ticks. */
 void scShrineOfTheSeaGodRaiseWaterLayer(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = &map->layers[0];
 
 	layer->ofsY += -toFIXED(1);
@@ -478,7 +478,7 @@ void scShrineOfTheSeaGodRaiseWaterLayer(void)
    (18, 6), then moves the water and ground layers two pixels over 16 ticks. */
 void scShrineOfTheSeaGodRaiseWaterBand(Sint32 x, Sint32 y)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *water = &map->layers[0];
 	MAP_LAYER *ground = &map->layers[1];
 	Uint8	   i;
@@ -568,7 +568,7 @@ void scShrineOfTheSeaGodUseSeaGodsTear(void)
    floating logs with it. */
 void scShrineOfTheSeaGodLowerWithWater(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *water = &map->layers[0];
 	MAP_LAYER *ground = &map->layers[1];
 	MAP_LAYER *groundTop = &map->layers[2];
@@ -593,7 +593,7 @@ void scShrineOfTheSeaGodLowerWithWater(void)
    ticks. */
 void scShrineOfTheSeaGodLowerWaterLayer(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = &map->layers[0];
 
 	layer->ofsY += toFIXED(1);
@@ -605,7 +605,7 @@ void scShrineOfTheSeaGodLowerWaterLayer(void)
    ticks. */
 void scShrineOfTheSeaGodLowerWaterBand(Sint32 x, Sint32 y)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *water = &map->layers[0];
 	MAP_LAYER *ground = &map->layers[1];
 	Uint8	   i;
@@ -622,7 +622,7 @@ void scShrineOfTheSeaGodLowerWaterBand(Sint32 x, Sint32 y)
    away round Felix until the stepping stones show again. */
 void scShrineOfTheSeaGodLowerWater(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *water = &map->layers[0];
 	MAP_LAYER *ground = &map->layers[1];
 	MAP_LAYER *groundTop = &map->layers[2];
@@ -741,7 +741,7 @@ extern Sint16 ShrineOfTheSeaGodPushedActors[];
    layer, which starts STATUE_ROOM_RISE pixels down with him. */
 void scShrineOfTheSeaGodRiseOnWater(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer;
 	ACTOR	  *leader;
 	Uint32	   i;
@@ -792,7 +792,7 @@ void scShrineOfTheSeaGodRiseOnWater(void)
    platform is the ground layer, lowered STATUE_ROOM_RISE pixels with him. */
 void scShrineOfTheSeaGodSinkWithWater(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer;
 	ACTOR	  *actor;
 	Uint32	   i;
@@ -1976,7 +1976,7 @@ void scShrineOfTheSeaGodChaseDjinni(void)
 		return;
 	if(syGameFlagGet(FLAG_DJINNI(DJINNI_BREATH)))
 		return;
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	actor = fdActorGetById(ACTOR_BREATH);
 	switch(state->stepCue) {
 	case STEP_LEDGE_SOUTHEAST_WAY_UP:
@@ -2168,7 +2168,7 @@ void scShrineOfTheSeaGodPlaceFootprints(void)
    once Riki has given up. */
 void scShrineOfTheSeaGodInitRope(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	scShrineOfTheSeaGodSetUpFloatingLog(ACTOR_ROPE_ROOM_FIRST_LOG);
 	scShrineOfTheSeaGodSetUpFloatingLog(ACTOR_ROPE_ROOM_SECOND_LOG);
@@ -2283,7 +2283,7 @@ void scShrineOfTheSeaGodInitCrossroads(void)
 /* Sets up the room below: Breath's footprints until it has run past. */
 void scShrineOfTheSeaGodInitFootprints(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	if(syGameFlagGet(FLAG_DJINNI_RAN_PAST) == 0)
 		scShrineOfTheSeaGodPlaceFootprints();
@@ -2371,7 +2371,7 @@ void scShrineOfTheSeaGodInitPillars(void)
 	ACTOR *firstSplash;
 	ACTOR *secondSplash;
 
-	fdMapSetUpperLevelWading((MAP_STATE *)Ram_HeapSlots->mapGrid);
+	fdMapSetUpperLevelWading((MAP_STATE *)RamHeapSlots->mapGrid);
 	scShrineOfTheSeaGodSetUpBridge(ACTOR_PILLAR_ROOM_FIRST_BRIDGE);
 	scShrineOfTheSeaGodSetUpBridge(ACTOR_PILLAR_ROOM_SECOND_BRIDGE);
 	scShrineOfTheSeaGodSetUpBridge(ACTOR_PILLAR_ROOM_THIRD_BRIDGE);
@@ -2450,7 +2450,7 @@ void scShrineOfTheSeaGodInitStatue(void)
 void scShrineOfTheSeaGodInitRightProng(void)
 {
 	ACTOR	  *actor = fdActorGetById(FIELD_TREASURE_ACTOR);
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = &map->layers[2];
 
 	layer->ofsX += toFIXED(128);

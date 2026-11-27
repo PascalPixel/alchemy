@@ -152,8 +152,8 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	Sint32				*row;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	cnt = TARGET_MOTES_PER_TARGET;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
@@ -214,7 +214,7 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	sySndPlayStub(SE_SWIRL);
 
 	for(frm = 0; frm != total; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* Demonfire: the user steps up to the first target and strikes it. */
 		if(mode == TARGET_MOTES_DEMON_FIRE) {
@@ -260,7 +260,7 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						TargetMotesGlintFlips[flip & 3] | COMPOSITE_CLIP_X |
 							COMPOSITE_CLIP_Y,
 						BLITTER_MAX);
-					(Ram_HeapSlots->ramCodePaired)(canvas,
+					(RamHeapSlots->ramCodePaired)(canvas,
 						state->sheet + BattleEffectGlintPictures[picture] +
 							TARGET_MOTES_GLINT_PICTURES,
 						x, y + 16, BattleEffectGlintPictureWidths[picture],
@@ -271,10 +271,10 @@ void btEffectRunTargetMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-			draw[0] = Ram_HeapSlots->ramCode;
+			draw[0] = RamHeapSlots->ramCode;
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
 			point[0] = object->x;
@@ -405,19 +405,19 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	Sint32				 scroll;
 	Sint32				 member;
 
-	flock = (PARTICLE *)Ram_MapMetatileBuffer;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	flock = (PARTICLE *)RamMapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	scroll = 0;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = scroll; /* still 0: no blending */
 	btResourceLoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	drawUpright = Ram_HeapSlots->ramCode;
+	drawUpright = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_TRANSPARENT);
-	drawFlipped = Ram_HeapSlots->ramCodePaired;
+	drawFlipped = RamHeapSlots->ramCodePaired;
 
 	/* The sheep wait above the screen with a random spin and starting
 	   picture. */
@@ -448,7 +448,7 @@ void btEffectRunSleep(BATTLE_EFFECT_PARM *args)
 	for(tick = 0; tick != SLEEP_TICKS; tick++) {
 		BATTLE_CAMERA *camera;
 
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		if(tick == 80)
 			EFFECT_SHOW_DAMAGE(0);
 
@@ -545,8 +545,8 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 	Sint32				 y;
 	SCREEN_POINT		 pos;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
 	btResourceLoadAndDecompress(
@@ -557,7 +557,7 @@ void btEffectRunCurse(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
 	state->transferMode = CANVAS_COPY_AND_CLEAR;
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	state->transferValue = 0;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
@@ -660,9 +660,9 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 view;
 	DRAW_RECTANGLE		 blitters[2];
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(
 		RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet, 1, 1);
@@ -698,7 +698,7 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	delta[2] = (tgt[2] - pos[2]) / DJINN_HEAL_TRAVEL_TICKS;
 
 	for(frm = 0; frm != DJINN_HEAL_SWIRL_TICKS; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		if(frm == 8)
 			sySndPlayStub(SE_POWER_UP);
@@ -794,7 +794,7 @@ UNUSED void btEffectRunDjinnHeal(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, sheet, 0, 0);
 
 	for(frm = 0; frm != args->tgtCnt * 8 + 72; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* The Djinni sways over the targets, then rises away for the last 32
 		   ticks. */

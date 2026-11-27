@@ -479,7 +479,7 @@ void btEffectRunElementPillar(BATTLE_EFFECT_PARM *args)
 
 /* Sets one pixel of the disc's mask to colour 2. */
 #define SHATTERING_OPENING_PLOT_PIXEL(x, y) \
-	(*(Ram_MapGridMetatileBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + \
+	(*(RamMapGridMetatileBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + \
 		 (y) / 8 * 2048) = 2)
 
 /* Plots one point of the disc's circle in four octants. */
@@ -601,9 +601,9 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 	}
 
 	syWordsCopy(
-		Ram_MapGridMetatileBuffer, BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
-	syWordsFill(Ram_MapGridMetatileBuffer, BATTLE_BACKGROUND_BYTES,
-		CANVAS_FILL_WORD(1));
+		RamMapGridMetatileBuffer, BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
+	syWordsFill(
+		RamMapGridMetatileBuffer, BATTLE_BACKGROUND_BYTES, CANVAS_FILL_WORD(1));
 	view->busy = 1;
 	state->savedBg1X = BgScrollWork[1].x;
 	state->savedBg1Y = BgScrollWork[1].y;
@@ -734,7 +734,7 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 					octantY++;
 				}
 			}
-			syWordsCopy(BG_CHAR_BLOCK(2), Ram_MapGridMetatileBuffer,
+			syWordsCopy(BG_CHAR_BLOCK(2), RamMapGridMetatileBuffer,
 				BATTLE_BACKGROUND_BYTES);
 		}
 
@@ -1002,7 +1002,7 @@ void btEffectDrawStreaks(void)
 	if(frm == 0) {
 		for(i = 0; i != STREAK_SEEDS; i++) {
 			PLUNGE_STREAK *seed =
-				&((PLUNGE_STREAK *)Ram_MapGridMetatileBuffer)[i];
+				&((PLUNGE_STREAK *)RamMapGridMetatileBuffer)[i];
 			Sint32 r = syRandom() & 15;
 
 			seed->head = r + STREAK_START_DISTANCE;
@@ -1015,7 +1015,7 @@ void btEffectDrawStreaks(void)
 	point.y = 0;
 	point.z = 0;
 	for(i = 0; i != STREAKS; i++) {
-		streak = &((PLUNGE_STREAK *)Ram_MapGridMetatileBuffer)[i];
+		streak = &((PLUNGE_STREAK *)RamMapGridMetatileBuffer)[i];
 		if(frm > i / 4 && streak->head > 0) {
 			Sint32 fade;
 

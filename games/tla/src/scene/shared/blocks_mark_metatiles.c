@@ -17,7 +17,7 @@ void scBlocksMarkMetatiles(Uint16 *ids)
 		if(fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 			   FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed)) &
 			MAP_METATILE_CLIMBABLE) {
-			map = Ram_HeapSlots->mapGrid;
+			map = RamHeapSlots->mapGrid;
 			if(map == NULL)
 				return;
 			metatiles = &map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;

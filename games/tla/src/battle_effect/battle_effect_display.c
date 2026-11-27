@@ -20,7 +20,7 @@ void btEffectAdvanceScrollOnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 
 	if(++state->scrollTmr == state->scrollInterval) {
 		BgScrollWork[1].x += state->scrollStepX;
@@ -34,7 +34,7 @@ void btEffectAdvanceBg2OnInterval(void)
 {
 	BATTLE_EFFECT_STATE *state;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 
 	if(++state->scrollTmr == state->scrollInterval) {
 		REG_BG2X = state->bg2x;
@@ -54,6 +54,6 @@ void btEffectArmWin0HBlankDMA(void)
 	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
 	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_ENABLE;
 	(void)channel[DMA_CONTROL_HALF];
-	syDMAXCopy(Ram_MapMetatileBuffer, (void *)&REG_WIN0H,
+	syDMAXCopy(RamMapMetatileBuffer, (void *)&REG_WIN0H,
 		DMA_HBLANK_HALFWORD_PER_LINE, (volatile Uint32 *)channel);
 }

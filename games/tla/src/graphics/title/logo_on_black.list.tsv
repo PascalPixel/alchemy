@@ -1,10 +1,10 @@
 name	file	section	align	left	pad	edition	fill
-Title_LogoOnBlackPicture	logo_on_black_ja.gbapal					ja	
-Title_LogoOnBlackPicture	logo_on_black.gbapal					en	
-Title_LogoOnBlackPicture	logo_on_black_de.gbapal					de	
-Title_LogoOnBlackPicture	logo_on_black_es.gbapal					es	
-Title_LogoOnBlackPicture	logo_on_black_fr.gbapal					fr	
-Title_LogoOnBlackPicture	logo_on_black_it.gbapal					it	
+TitleLogoOnBlackPicture	logo_on_black_ja.gbapal					ja	
+TitleLogoOnBlackPicture	logo_on_black.gbapal					en	
+TitleLogoOnBlackPicture	logo_on_black_de.gbapal					de	
+TitleLogoOnBlackPicture	logo_on_black_es.gbapal					es	
+TitleLogoOnBlackPicture	logo_on_black_fr.gbapal					fr	
+TitleLogoOnBlackPicture	logo_on_black_it.gbapal					it	
 	logo_on_black_ja.8bpp.lz			0e44c0		ja	
 	logo_on_black.8bpp.lz			08		en	
 	logo_on_black_de.8bpp.lz			5e8b		de	

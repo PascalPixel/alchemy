@@ -51,7 +51,7 @@ void   mnSelectionMenuSetupIcon(
 Uint32 mnConfirmSelection(SELECTION_MENU_STATE *screen);
 void   mnPartyStatOpenAndWait(void);
 
-extern const Uint8 Menu_AnimatedCursorTiles[];
+extern const Uint8 MenuAnimatedCursorTiles[];
 
 /* Allocates and resets the selection screen: the row of icons the player picks
    from, with arrows at each end and a pointing hand over the chosen target,
@@ -89,7 +89,7 @@ void mnSelectionMenuCreate(void)
 	screen->records[SELECTION_ARROW_RIGHT].kind = FALSE;
 	screen->records[SELECTION_ARROW_LEFT].y = 0;
 	screen->records[SELECTION_ARROW_RIGHT].y = 0;
-	tbl = Menu_AnimatedCursorTiles;
+	tbl = MenuAnimatedCursorTiles;
 	screen->records[SELECTION_RECORD_HAND].slot = syVRAMCacheFindFreeEntry();
 	screen->records[SELECTION_RECORD_HAND].tile = syVRAMCacheLoad(
 		screen->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, tbl);
@@ -113,7 +113,7 @@ void mnSelectionMenuClear(void)
 {
 	SELECTION_MENU_STATE *screen;
 
-	screen = Ram_HeapSlots->selectionMenu;
+	screen = RamHeapSlots->selectionMenu;
 	screen->head = NULL;
 	screen->unread = 0;
 	if(screen->cursorIdx & SELECTION_CURSOR_RESET) {
@@ -130,7 +130,7 @@ void mnSelectionMenuClear(void)
    ICON_KIND_ABILITY; base is the command's, item's or ability's number. */
 void mnSelectionMenuAddEntry(Uint32 kind, Uint32 base)
 {
-	SELECTION_MENU_STATE *state = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *state = RamHeapSlots->selectionMenu;
 	Uint16				  cnt = state->cnt;
 
 	if(cnt != SELECTION_MENU_ENTRY_LIMIT) {
@@ -145,7 +145,7 @@ void mnSelectionMenuAddEntry(Uint32 kind, Uint32 base)
    under the cursor. */
 void mnSelectionMenuBuildEntries(Uint32 unused)
 {
-	SELECTION_MENU_STATE *screen = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *screen = RamHeapSlots->selectionMenu;
 	Uint32				  cnt = screen->cnt;
 	Uint32				  idx;
 	SELECTION_NODE		 *prev = 0;
@@ -210,7 +210,7 @@ void mnSelectionMenuReservedNoOperation(void)
 Sint32 mnSelectionMenuFindFreeIcon(Sint32 kind)
 {
 	SELECTION_MENU_STATE *state =
-		(SELECTION_MENU_STATE *)Ram_HeapSlots->selectionMenu;
+		(SELECTION_MENU_STATE *)RamHeapSlots->selectionMenu;
 	Sint32 i;
 
 	if(kind != SELECTION_ICON_ROW) {
@@ -248,7 +248,7 @@ extern const Sint8 MenuCursorBobOffsets[];
    and the pointing hand. */
 void mnSelectionMenuDraw(void)
 {
-	SELECTION_MENU_STATE *state = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *state = RamHeapSlots->selectionMenu;
 	SELECTION_SPR  *cursorEntry = &state->records[SELECTION_RECORD_HAND].spr;
 	SELECTION_NODE *cursor = &state->records[SELECTION_RECORD_HAND];
 	SELECTION_NODE *largeIcon = &state->records[SELECTION_RECORD_LARGE_ICON];
@@ -390,7 +390,7 @@ void mnSelectionMenuDraw(void)
 		node = node->next;
 	}
 	if(cursor->kind != ICON_KIND_NONE) {
-		place = (Sint32)Menu_AnimatedCursorTiles;
+		place = (Sint32)MenuAnimatedCursorTiles;
 		{
 			void *src =
 				(void *)(place + ((FrameCount >> 2) & 15) * HAND_FRAME_BYTES);
@@ -431,7 +431,7 @@ void mnSelectionMenuDraw(void)
 
 /* The pictures of the selection row's right and left arrows
    (sprite_cursors.s). */
-extern Uint8 Menu_CursorActorTiles[], Menu_CursorLeftActorTiles[];
+extern Uint8 MenuCursorActorTiles[], MenuCursorLeftActorTiles[];
 
 /* Draws the selection screen's left or right arrow (SELECTION_ARROW), nudged
    outwards while it flashes after a scroll: the record's base holds the ticks
@@ -449,11 +449,11 @@ void mnSelectionMenuDrawArrow(SELECTION_MENU_STATE *state, Sint32 side)
 	arrow->x = state->records[side].x;
 	arrow->y = state->records[side].y;
 	if(side != SELECTION_ARROW_LEFT) {
-		arrowTiles = Menu_CursorActorTiles;
+		arrowTiles = MenuCursorActorTiles;
 		if(state->records[SELECTION_ARROW_RIGHT].base != 0)
 			arrow->x = arrow->x + state->records[SELECTION_ARROW_RIGHT].base;
 	} else {
-		arrowTiles = Menu_CursorLeftActorTiles;
+		arrowTiles = MenuCursorLeftActorTiles;
 		if(state->records[SELECTION_ARROW_LEFT].base != 0)
 			arrow->x = arrow->x - state->records[SELECTION_ARROW_LEFT].base;
 	}
@@ -484,7 +484,7 @@ void mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 cnt)
 	WINDOW				**slot;
 	WINDOW				 *win;
 
-	screen = Ram_HeapSlots->selectionMenu;
+	screen = RamHeapSlots->selectionMenu;
 	node = mnSelectionMenuGetCursorNode(screen);
 	slot = &screen->win;
 	win = *slot;
@@ -531,7 +531,7 @@ void mnSelectionMenuOpenNameWindow(Sint32 mode, Uint32 cnt)
    icons go too, so the choices are only in the indexes the loops returned. */
 void mnSelectionMenuClose(void)
 {
-	SELECTION_MENU_STATE *state = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *state = RamHeapSlots->selectionMenu;
 	SELECTION_NODE		 *node;
 
 	mnSelectionMenuStopDrawing();
@@ -573,7 +573,7 @@ void mnSelectionMenuSetPos(Uint32 x, Uint32 y)
 	SELECTION_MENU_STATE *state;
 	SELECTION_NODE		 *node;
 
-	state = Ram_HeapSlots->selectionMenu;
+	state = RamHeapSlots->selectionMenu;
 	state->baseX = x;
 	state->baseY = y;
 	node = state->head;
@@ -590,7 +590,7 @@ void mnSelectionMenuSetPos(Uint32 x, Uint32 y)
 /* Sets up both end arrows of the selection row. */
 void mnSetupSelectionBothSides(void)
 {
-	void *menu = Ram_HeapSlots->selectionMenu;
+	void *menu = RamHeapSlots->selectionMenu;
 
 	mnSelectionMenuSetupArrow(menu, SELECTION_ARROW_LEFT);
 	mnSelectionMenuSetupArrow(menu, SELECTION_ARROW_RIGHT);
@@ -607,7 +607,7 @@ void mnSelectionMenuSetupArrow(SELECTION_MENU_STATE *state, Sint32 side)
 
 	state->records[side].kind = 0;
 	if(side != SELECTION_ARROW_LEFT) {
-		const Uint8 *right = Menu_CursorActorTiles;
+		const Uint8 *right = MenuCursorActorTiles;
 
 		cnt = state->cnt;
 		if(state->top != 0)
@@ -621,7 +621,7 @@ void mnSelectionMenuSetupArrow(SELECTION_MENU_STATE *state, Sint32 side)
 		state->records[SELECTION_ARROW_RIGHT].x =
 			state->baseX + SELECTION_ICON_SPACING * (cnt - 1) + 17;
 	} else {
-		arrowTiles = Menu_CursorLeftActorTiles;
+		arrowTiles = MenuCursorLeftActorTiles;
 		state->records[SELECTION_ARROW_LEFT].x = state->baseX - 9;
 		if(state->top != 0)
 			state->records[SELECTION_ARROW_LEFT].kind = 1;
@@ -670,7 +670,7 @@ SELECTION_NODE *mnSelectionMenuGetCursorNode(SELECTION_MENU_STATE *screen)
    bare entry of the window stub table. */
 Sint32 mnSelectionMenuRun(Sint32 mode)
 {
-	SELECTION_MENU_STATE *screen = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *screen = RamHeapSlots->selectionMenu;
 
 	mnSelectionMenuHighlightIcon(screen, 0);
 	for(;;) {
@@ -696,7 +696,7 @@ Sint32 mnSelectionMenuRun(Sint32 mode)
 /* As mnSelectionMenuRun, with the menu sounds. */
 Uint32 mnSelectionMenuRunWithSounds(Uint32 mode)
 {
-	SELECTION_MENU_STATE *screen = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *screen = RamHeapSlots->selectionMenu;
 	Uint32				  result;
 
 	for(;;) {
@@ -1348,7 +1348,7 @@ void mnArrowNoOperation6(void)
    returned in *slot, which mnArrowRelease frees. */
 void mnArrowCreate(MENU_SPR *spr, Sint32 *slot)
 {
-	const void *data = Menu_CursorActorTiles;
+	const void *data = MenuCursorActorTiles;
 	Sint32		cacheSlot = syVRAMCacheFindFreeEntry();
 
 	*slot = cacheSlot;
@@ -1390,7 +1390,7 @@ void mnArrowRelease(Sint32 slot)
    its VRAM cache entry until mnSelectionMenuFreeLargeIcon. */
 void mnSelectionMenuLoadLargeIcon(void)
 {
-	SELECTION_MENU_STATE *state = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *state = RamHeapSlots->selectionMenu;
 	SELECTION_NODE		 *node = mnSelectionMenuGetCursorNode(state);
 	SELECTION_NODE		 *largeIcon;
 	ICON_TRANSFER		 *buf;
@@ -1429,7 +1429,7 @@ void mnSelectionMenuLoadLargeIcon(void)
 void mnSelectionMenuFreeLargeIcon(void)
 {
 	SELECTION_NODE *largeIcon =
-		&((SELECTION_MENU_STATE *)Ram_HeapSlots->selectionMenu)
+		&((SELECTION_MENU_STATE *)RamHeapSlots->selectionMenu)
 			 ->records[SELECTION_RECORD_LARGE_ICON];
 
 	if(largeIcon->kind != ICON_KIND_NONE) {
@@ -1452,7 +1452,7 @@ Sint32 mnFieldMenuRun(void)
 	Sint32		 selection;
 	FIELD_STATE *state;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	selection = 0;
 
 	for(;;) {
@@ -1532,7 +1532,7 @@ void mnSelectionMenuCreateEmpty(void)
    returns the entry chosen or -1. */
 Uint32 mnRunSelectionForValue(Uint32 initIdx)
 {
-	SELECTION_MENU_STATE *state = Ram_HeapSlots->selectionMenu;
+	SELECTION_MENU_STATE *state = RamHeapSlots->selectionMenu;
 	Uint32				  result;
 
 	state->cursorIdx = initIdx;

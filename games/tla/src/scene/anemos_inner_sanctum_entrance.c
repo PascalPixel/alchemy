@@ -1,6 +1,6 @@
 /* The Anemos Inner Sanctum's hall under Contigo, which the party reaches by
    Teleport from the circle in the middle of the town, and in the same map the
-   Sanctum's last room (SceneId_AnemosInnerSanctumEntrance).
+   Sanctum's last room (SceneIdAnemosInnerSanctumEntrance).
 
    In the last room six grey stone blocks, each with a glowing symbol on top,
    stand around a dark square. Felix pushes them or moves them with Move until
@@ -132,7 +132,7 @@ extern ACTOR_PLACE			 AnemosInnerSanctumEntrancePlacements[];
 
 const ACTOR_PLACE *scGetActorPlacements(void)
 {
-	if(MainRoutineStateWork.next == (Sint32)&SceneId_AnemosInnerSanctumEntrance)
+	if(MainRoutineStateWork.next == (Sint32)&SceneIdAnemosInnerSanctumEntrance)
 		return AnemosInnerSanctumEntrancePlacements;
 	return AnemosInnerSanctumEntranceEmptyPlacements;
 }
@@ -364,7 +364,7 @@ extern CUE AnemosInnerSanctumEntranceCues[];
 
 const CUE *scGetCues(void)
 {
-	if(MainRoutineStateWork.next == (Sint32)&SceneId_AnemosInnerSanctumEntrance)
+	if(MainRoutineStateWork.next == (Sint32)&SceneIdAnemosInnerSanctumEntrance)
 		return AnemosInnerSanctumEntranceCues;
 	return AnemosInnerSanctumEntranceEmptyCues;
 }
@@ -378,7 +378,7 @@ Sint32 scInit(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	if(MainRoutineStateWork.next ==
-		(Sint32)&SceneId_AnemosInnerSanctumEntrance) {
+		(Sint32)&SceneIdAnemosInnerSanctumEntrance) {
 		scAnemosInnerSanctumEntranceStartLightSprs();
 		scAnemosInnerSanctumEntranceSetLightPriority(2);
 		/* scLightSprsAdd, defined below, is called with no prototype in
@@ -421,7 +421,7 @@ Sint32 scPrepareMap(void)
    the large mode, a 32 by 64 one. */
 void scLightSprsDraw(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX, viewZ, picture, tile, viewY;
 	LIGHT_OAM *oam;
 	Sint32	   i;
@@ -506,7 +506,7 @@ void scAnemosInnerSanctumEntranceStartLightSprs(void)
 	Uint8 *buf = syHeapCallAlternatePool(syHeapAlloc, 6144);
 
 	syWordsClearEntry(LightSpriteActors, sizeof(LightSpriteActors));
-	syDecompressTaggedLZ(Field_CachedTilesD, buf);
+	syDecompressTaggedLZ(FieldCachedTilesD, buf);
 	LightSpriteTile = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(LightSpriteTile, 6144, buf);
 	syHeapRelease(buf);

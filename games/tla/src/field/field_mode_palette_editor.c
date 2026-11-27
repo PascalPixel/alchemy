@@ -41,7 +41,7 @@ void fdPaletteEditorRun(void)
 	Uint32	blue;
 	Uint32	i;
 
-	syDecompressHalfwords(Debug_PaletteSwatchTiles,
+	syDecompressHalfwords(DebugPaletteSwatchTiles,
 		BG_CHAR_BLOCK(0) + EDITOR_SWATCH_TILE * TILE_SIZE_4BPP);
 redraw:
 	/* Column 0 shows the palette number and R, G, B; columns 1 to 15 show each

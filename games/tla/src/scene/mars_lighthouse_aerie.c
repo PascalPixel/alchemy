@@ -2880,7 +2880,7 @@ void scMarsLighthouseAerieClearCastOffer(void)
    a pause before each character. */
 void scMarsLighthouseAerieStartTalkWhileHalted(Sint32 id)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 
 	if(MainRoutineStateWork.haltedActor == id)
 		state->haltingSpeech = 1;
@@ -2893,7 +2893,7 @@ void scMarsLighthouseAerieStartTalkWhileHalted(Sint32 id)
    ends, and with it the halting speech. */
 void scMarsLighthouseAerieEndTalkWhileHalted(Sint32 id)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32	   held = MainRoutineStateWork.haltedActor;
 
 	if(held == id) {

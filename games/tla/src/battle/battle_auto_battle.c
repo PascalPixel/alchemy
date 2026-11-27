@@ -78,8 +78,8 @@ Sint32 btAutoBattleBuildActions(BATTLE_ACTION_RECORD *entries)
    tick, and redraws the zoomed background unless a background holds it. */
 UNUSED void btCameraAdjustByShoulderKeys(void)
 {
-	BATTLE_CAMERA			*camera = Ram_HeapSlots->cameraState;
-	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
+	BATTLE_CAMERA			*camera = RamHeapSlots->cameraState;
+	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 
 	if((PerWork.data & KEY_L) != 0) {
 		camera->yaw += TRIG_TURN / 128;
@@ -107,7 +107,7 @@ Sint32 btAutoBattleRunAction(BATTLE_ACTION_RECORD *action)
 		return -1;
 
 	action->tgt = btAbilityReplaceDefeated(action);
-	background = Ram_HeapSlots->battleBg;
+	background = RamHeapSlots->battleBg;
 	/* Here any unit id above Felix's counts as an enemy, Jenna, Sheba and Piers
 	   included. */
 	if(action->unitId > FELIX)
@@ -134,7 +134,7 @@ Sint32 btAutoBattleRunAction(BATTLE_ACTION_RECORD *action)
 		break;
 	case COMMAND_ATTACK:
 	default: {
-		BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
+		BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
 		view->keepRange = 0;
 		btAutoBattleRunAttackOrItem(action);
 		view->keepRange = 0;
@@ -231,7 +231,7 @@ Sint32 btAutoBattleRunPsynergy(BATTLE_ACTION_RECORD *action)
 		return -1;
 
 	{
-		BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
+		BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 		/* An enemy caster turns the camera to YAW_BEHIND_ENEMIES, not
 		   YAW_ENEMY_ACTION. */
 		background->tgtYaw =
@@ -325,11 +325,11 @@ UNUSED Sint32 btAutoBattleRunApproachAttack(BATTLE_ACTION_RECORD *action)
 	BATTLE_PRESENTATION_STATE state;
 
 	/* A short wait when the camera already faces the party's side. */
-	if(Ram_HeapSlots->battleBg->tgtYaw == YAW_PARTY_ACTION) {
-		Ram_HeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
+	if(RamHeapSlots->battleBg->tgtYaw == YAW_PARTY_ACTION) {
+		RamHeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
 		sySynch(10);
 	} else {
-		Ram_HeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
+		RamHeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
 		sySynch(30);
 	}
 
@@ -373,7 +373,7 @@ UNUSED Sint32 btAutoBattleRunApproachAttack(BATTLE_ACTION_RECORD *action)
 Sint32 btAutoBattleRunAttackOrItem(BATTLE_ACTION_RECORD *action)
 {
 	BATTLE_PRESENTATION_STATE state;
-	BATTLE_BACKGROUND_STATE	 *background = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE	 *background = RamHeapSlots->battleBg;
 	MOTION_OBJECT			 *object;
 	Sint32					  tgtYaw;
 	Sint32					  i;
@@ -404,7 +404,7 @@ Sint32 btAutoBattleRunAttackOrItem(BATTLE_ACTION_RECORD *action)
 			btUnitListLiving(BATTLE_SIDE_MASK_PARTY, (Uint16 *)state.actors);
 	/* The status window without its PP row (see PARTY_STATUS_SUMMONS). */
 	mnPartyStatDrawStub(
-		Ram_HeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
+		RamHeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
 	/* The unit raises its hand (POSE_CAST); then only the first living unit of
 	   the target's side takes the effect. */
 	object = btObjectGet(state.actor)->obj;

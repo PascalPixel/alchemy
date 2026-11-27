@@ -17,8 +17,8 @@ typedef struct CORNER {
 #define FUME_SEGMENTS		   33
 #define FUME_CORNERS		   (FUME_SEGMENTS * 2)
 #define FUME_QUADS			   (FUME_SEGMENTS - 1)
-#define FUME_STRIP_VERTICES	   (Ram_MapMetatileBuffer + 4096)
-#define FUME_STRIP_MESH		   (Ram_MapMetatileBuffer + 8192)
+#define FUME_STRIP_VERTICES	   (RamMapMetatileBuffer + 4096)
+#define FUME_STRIP_MESH		   (RamMapMetatileBuffer + 8192)
 /* The plume arcs from the caster over to the target. Its head goes
    FUME_ARC_GROWTH further each tick, and from the level's FUME_TAIL_START its
    tail follows, each up to FUME_ARC_SPAN; a point's angle on the arc is
@@ -85,12 +85,12 @@ void btEffectRunFume(BATTLE_EFFECT_PARM *args)
 	Uint8		 *mesh;
 	CORNER		 *corners;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	/* The head's place, set at the plume's last segment. */
 	endX = 0;

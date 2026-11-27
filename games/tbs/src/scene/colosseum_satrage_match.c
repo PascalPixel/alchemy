@@ -1,4 +1,4 @@
-/* Colosseum Final 2 (SceneId_ColosseumSatrageMatch) is the site of the second
+/* Colosseum Final 2 (SceneIdColosseumSatrageMatch) is the site of the second
    finals match, where Isaac races Satrage through five stages to the arena and
    fights him there.
 
@@ -1658,7 +1658,7 @@ void scColosseumSatrageMatchStartRaceGauge(Sint32 leaderId, Sint32 opponentId,
 	state->gauge.level = 0;
 	state->gauge.hold = 0;
 
-	syFieldDecompressTaggedLZ(Colosso_GaugeGraphics, graphics);
+	syFieldDecompressTaggedLZ(ColossoGaugeGraphics, graphics);
 
 	vramSlot = syVRAMCacheFindFreeEntry();
 	state->gauge.vramBlock = vramSlot;

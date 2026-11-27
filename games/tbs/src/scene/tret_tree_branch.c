@@ -1,8 +1,8 @@
-/* Tret Tree's branches (SceneId_TretTreeBranch): the outside of Tret, the holy
+/* Tret Tree's branches (SceneIdTretTreeBranch): the outside of Tret, the holy
    tree of Kolima Forest, high up under open sky, with clouds drifting past
    above and the green of the forest far below
    (places/tret-tree-branch/map-0.png). Isaac climbs Tret from the inside
-   (SceneId_TreeRooms, tree_rooms.c), where the story is told; out here there is
+   (SceneIdTreeRooms, tree_rooms.c), where the story is told; out here there is
    no story script, and nothing tests a story flag.
 
    Arched doors in Tret's trunk lead out onto the branches, two from each of the

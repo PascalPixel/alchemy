@@ -7,7 +7,7 @@
    its west door. All three take the area name Crossbone Isle Cave. In the order
    the party meets them:
 
-   - The room of keys (SceneId_CrossboneIsleKeys), off the third floor: a
+   - The room of keys (SceneIdCrossboneIsleKeys), off the third floor: a
 	 pit full of square stone posts, with a walkway along its north wall.
 	 Four blue doors in a row along the walkway lead to four small rooms with
 	 a chest each: 333 coins, the Fairy Ring, a Cookie and a Smoke Bomb, west
@@ -21,7 +21,7 @@
 	 on it, which Catch takes too. The Red Key opens the red door the same
 	 way. The keys taken and the doors opened stay so on later visits.
 
-   - The statue room (SceneId_CrossboneIsleStatues), off the fourth floor: a
+   - The statue room (SceneIdCrossboneIsleStatues), off the fourth floor: a
 	 dark hall where five statues of a robed woman stand in circles of light
 	 round braziers.
 
@@ -34,7 +34,7 @@
 	 get by them. Halt stops a statue where it is, and while Reveal lasts the
 	 darkness lifts from the whole hall.
 
-   - Bane's room (SceneId_CrossboneIsleBane), off the sixth floor, where
+   - Bane's room (SceneIdCrossboneIsleBane), off the sixth floor, where
 	 Bane, a Venus Djinni, waits at the west end of the ledge along the back
 	 wall. Five stone pillars to push or shift with Move, the ladders and a
 	 puddle that Frost freezes into a pillar of ice make the way across the

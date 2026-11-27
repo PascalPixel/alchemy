@@ -7,7 +7,7 @@
    across (fdMapGridMarkJumpIfOpen), so the leader jumps onto a frozen one. */
 void fdFlagBlockPlaceAllMarkingEdges(ACTOR_FLAG *list)
 {
-	MAP_STATE  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE  *map = RamHeapSlots->mapGrid;
 	ACTOR_FLAG *first = list;
 	ACTOR	   *leader;
 
@@ -56,7 +56,7 @@ void fdFlagBlockPlaceAllMarkingEdges(ACTOR_FLAG *list)
    remembers the block. */
 void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 {
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	Uint8		*grid = MapShapeGrid;
 
 	field->movedBlock = NULL;
@@ -74,7 +74,7 @@ void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 				change = 1;
 		}
 		if(change) {
-			MAP_METATILE *metatiles = ((MAP_STATE *)Ram_HeapSlots->mapGrid)
+			MAP_METATILE *metatiles = ((MAP_STATE *)RamHeapSlots->mapGrid)
 										  ->layers[actor->layer]
 										  .metatiles;
 			Uint8 *shapes;
@@ -83,7 +83,7 @@ void fdFlagBlockApplyFlags(ACTOR_FLAG *list)
 			Sint32 height;
 
 			shapes =
-				&grid[((Sint32)metatiles - (Sint32)Ram_MapMetatileBuffer) >> 2];
+				&grid[((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >> 2];
 			slot = fdActorGetMetatileIndex(actor);
 			kind = fdMapGridGetTerrainKindStub(
 				actor->layer, actor->x.fixed, actor->z.fixed);

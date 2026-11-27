@@ -10,7 +10,7 @@
 @ right to left; canvas rows stay in tile order. The 8 variants do eight
 @ pixels a pass. For whole cells the additive mode uses the colour fragments
 @ (blitter_color_fragments.s), which add four pixels a word at a time:
-@ BattleEffect_Mask puts 0x40 in every byte of sl, and a byte that reaches it
+@ BattleEffectMask puts 0x40 in every byte of sl, and a byte that reaches it
 @ becomes 63. BlitterTemplate is the template the builder walks: each
 @ word it rewrites is marked, and battle_effect_blitter.c describes its blocks.
 @
@@ -21,37 +21,37 @@
 .syntax unified
 .text
 	.arm
-	.global BattleEffect_CopyReverse
-	.global BattleEffect_CopyForward
-	.global BattleEffect_TransparentForward
-	.global BattleEffect_TransparentReverse
-	.global BattleEffect_Transparent8Forward
-	.global BattleEffect_Transparent8Reverse
-	.global BattleEffect_MaxForward
-	.global BattleEffect_MaxReverse
-	.global BattleEffect_Max4Forward
-	.global BattleEffect_Max4Reverse
-	.global BattleEffect_AdditiveForward
-	.global BattleEffect_AdditiveReverse
-	.global BattleEffect_Mask
+	.global BattleEffectCopyReverse
+	.global BattleEffectCopyForward
+	.global BattleEffectTransparentForward
+	.global BattleEffectTransparentReverse
+	.global BattleEffectTransparent8Forward
+	.global BattleEffectTransparent8Reverse
+	.global BattleEffectMaxForward
+	.global BattleEffectMaxReverse
+	.global BattleEffectMax4Forward
+	.global BattleEffectMax4Reverse
+	.global BattleEffectAdditiveForward
+	.global BattleEffectAdditiveReverse
+	.global BattleEffectMask
 	.global BlitterTemplate
-BattleEffect_CopyReverse:
+BattleEffectCopyReverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
-BattleEffect_CopyForward:
+BattleEffectCopyForward:
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
-BattleEffect_TransparentForward:
+BattleEffectTransparentForward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleEffect_TransparentReverse:
+BattleEffectTransparentReverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleEffect_Transparent8Forward:
+BattleEffectTransparent8Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -77,7 +77,7 @@ BattleEffect_Transparent8Forward:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleEffect_Transparent8Reverse:
+BattleEffectTransparent8Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -103,17 +103,17 @@ BattleEffect_Transparent8Reverse:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleEffect_MaxForward:
+BattleEffectMaxForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleEffect_MaxReverse:
+BattleEffectMaxReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleEffect_Max4Forward:
+BattleEffectMax4Forward:
 	ldrb	r5, [r1], #1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -130,7 +130,7 @@ BattleEffect_Max4Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleEffect_Max4Reverse:
+BattleEffectMax4Reverse:
 	ldrb	r5, [r1], #-1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -147,21 +147,21 @@ BattleEffect_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleEffect_AdditiveForward:
+BattleEffectAdditiveForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleEffect_AdditiveReverse:
+BattleEffectAdditiveReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleEffect_Mask:
+BattleEffectMask:
 	mov	sl, #64
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16

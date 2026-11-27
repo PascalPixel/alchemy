@@ -1,9 +1,9 @@
 /* Inside Garoh's houses, in three scenes that share this overlay. The first
-   (SceneId_GarohRoomsHouses) holds four round houses side by side: the home of
+   (SceneIdGarohRoomsHouses) holds four round houses side by side: the home of
    the young werewolf's family, the old couple's home, the weapons and armor
    shop, and the inn. The second is the Item Shopkeeper's house
-   (SceneId_GarohRoomsShop) and the third the sanctum
-   (SceneId_GarohRoomsSanctum). Stairs in some of the houses lead down into the
+   (SceneIdGarohRoomsShop) and the third the sanctum
+   (SceneIdGarohRoomsSanctum). Stairs in some of the houses lead down into the
    tunnels under the village.
 
    Garoh is first seen on a night of the full moon (FLAG_GAROH_NIGHT), when its

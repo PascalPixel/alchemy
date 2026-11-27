@@ -104,7 +104,7 @@ typedef struct MAP_HEADER_LAYER {
 /* Where a layout's tileset animation script is decoded, in the map collision
    buffer after the collision, as The Broken Seal's; its blend script follows at
    MAPGRID_BLEND_SCRIPT (field/map_grid.h). */
-#define MAPGRID_ANIMATION_SCRIPT (Ram_MapCollision + 4096)
+#define MAPGRID_ANIMATION_SCRIPT (RamMapCollision + 4096)
 
 /* A layout's header: the camera's bounds, the layers' priorities, tile bases
    and setup, and the offsets, from the header's start, of its packed metatile
@@ -120,12 +120,12 @@ typedef struct MAP_HEADER {
 	MAP_HEADER_LAYER layers[3];
 	/* staged and unpacked into the metatile tiles buffer */
 	Sint32 metatileTiles;
-	Sint32 collision; /* into Ram_MapCollision */
-	Sint32 metatiles; /* into Ram_MapMetatileBuffer */
+	Sint32 collision; /* into RamMapCollision */
+	Sint32 metatiles; /* into RamMapMetatileBuffer */
 	Sint32 shapes;	  /* into MapShapeGrid */
 	Sint32 anm;		  /* the tileset animation script, or 0 for none */
 	Sint32 blend;	  /* the blend script, or 0 for none */
-	/* Into Ram_MapCollision after its MAPGRID_SHAPE_TABLE_BYTES. */
+	/* Into RamMapCollision after its MAPGRID_SHAPE_TABLE_BYTES. */
 	Sint32 script;
 } MAP_HEADER;
 
@@ -254,7 +254,7 @@ typedef enum METATILE_TILES_PACKING {
 	METATILE_TILES_PACKING_DELTA = 2
 } METATILE_TILES_PACKING;
 
-/* A row of SpritePictureCache_Sources: the packed resource that holds an
+/* A row of SpritePictureCacheSources: the packed resource that holds an
    animation number's pictures, which fdSprPictureCacheLoad decodes into a
    sprite picture cache; a number of 0 ends the table. */
 typedef struct SPR_PICTURE_CACHE_SOURCE {
@@ -275,11 +275,11 @@ extern Uint8 fdRenderConvertMapCodeSize[];
 
 /* Each animation number's packed pictures, ending at number 0
    (sprite_sources.s). */
-extern SPR_PICTURE_CACHE_SOURCE SpritePictureCache_Sources[];
+extern SPR_PICTURE_CACHE_SOURCE SpritePictureCacheSources[];
 
 /* The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
    VRAM_CACHE_ENTRY_ACTOR_SHADOW (actor_shadow.list.tsv). */
-extern const Uint8 Actor_ShadowTiles[];
+extern const Uint8 ActorShadowTiles[];
 
 /* The strided copy's Thumb entry and ARM code (copy_strided.s), copied to RAM
    to run. */
@@ -295,8 +295,8 @@ extern Uint8 fdRenderCopyStridedCodeSize[];
 #define btRenderLoadDecoder() \
 	do { \
 		syDMAXCopy(fdRenderDecodePictureCode, \
-			syHeapSlotAlloc(HEAP_SLOT_TICK_SCRATCH, \
-				(Sint32)Render_DecodePictureBlockSize), \
+			syHeapSlotAlloc( \
+				HEAP_SLOT_TICK_SCRATCH, (Sint32)RenderDecodePictureBlockSize), \
 			DMA_COPY_WORDS((Uint32)(fdRenderDecodePictureCopyEnd - \
 							   fdRenderDecodePictureCode) >> \
 				2), \

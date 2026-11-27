@@ -40,7 +40,7 @@ void scColossoStartRaceGauge(Sint32 playerActorId, Sint32 opponentActorId,
 	state->gauge.level = 0;
 	state->gauge.hold = 0;
 
-	syFieldDecompressTaggedLZ(Colosso_GaugeGraphics, graphics);
+	syFieldDecompressTaggedLZ(ColossoGaugeGraphics, graphics);
 	vramSlot = syVRAMCacheFindFreeEntry();
 	state->gauge.vramBlock = vramSlot;
 	syVRAMCacheLoad(

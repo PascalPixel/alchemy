@@ -27,7 +27,7 @@ void fdCameraMoveWithinMapBounds(
 	posZ = requestedZ;
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD, sizeof(FIELD_STATE));
 	actor = state->camera;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	/* Keep the screen inside the map: the view centre stays 120 pixels from
 	   either side, 96 from the top and 64 from the bottom, the z limits moved
 	   down the map by its height. */

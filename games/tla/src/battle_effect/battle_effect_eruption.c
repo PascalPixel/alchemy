@@ -57,8 +57,8 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32		 frm;
 	Sint32		 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 0);
@@ -107,14 +107,14 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	for(frm = 0; frm != EruptionCounts[variant][ERUPTION_COUNT_TICKS]; frm++) {
 		BATTLE_CAMERA *camera;
 
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		EFFECT_VIEW_FROM_CAMERA(camera);
 		if(frm == 2)
 			sySndPlayStub(SE_CLATTER);
@@ -213,7 +213,7 @@ void btEffectRunEruption(BATTLE_EFFECT_PARM *args, Sint32 mode)
    showing its animation n, all at the given priority. */
 void btEffectCreateSprs(Sint32 cnt, Sint32 sprId, Uint32 pri)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	Sint32				 i = 0;
 
 	if(cnt == 0)

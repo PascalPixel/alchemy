@@ -619,7 +619,7 @@ void scGabombaCatacombsGabombaBestowsPower(void)
 {
 	ACTOR		*kraden = fdActorGetById(ACTOR_KRADEN);
 	ACTOR		*treasure = fdActorGetById(FIELD_TREASURE_ACTOR);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*glow, *leader;
 	Sint32		 speed;
 
@@ -799,7 +799,7 @@ const CUE *scGetCues(void)
 	SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE)
 #endif
 
-extern char SceneId_GabombaStatuePinion, SceneId_GabombaStatueChamberIdol;
+extern char SceneIdGabombaStatuePinion, SceneIdGabombaStatueChamberIdol;
 
 /* Sets up the room the party comes into: coming down the ladder into the first
    cave, where a retreat leads back to in the statue above; landing from a

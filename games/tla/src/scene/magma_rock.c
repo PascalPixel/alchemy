@@ -3,7 +3,7 @@
    that hides the way down into it. Felix comes here for a Magma Ball to load
    Loho's cannon.
 
-   At the foot (the slide, `SceneId_MagmaRockSlide`) Lift moves a boulder off
+   At the foot (the slide, `SceneIdMagmaRockSlide`) Lift moves a boulder off
    the path, and the cave mouth above it, between two statues throwing a
    fireball back and forth, leads a little way inside. Felix then climbs the
    wall by the cave mouth. Burst on the statue on the ledge above makes it spit
@@ -11,14 +11,14 @@
    climb, and Burst on the statue further west makes its cap rise on a column of
    flame, carrying Felix up to the next ledge.
 
-   The cliff above (`SceneId_MagmaRockSalamanderTailChest`, with the Salamander
+   The cliff above (`SceneIdMagmaRockSalamanderTailChest`, with the Salamander
    Tail's chest) is four screens on one map, which the code calls levels and
    tells apart by the entrance Felix came in by: the low east and low west
    halves of the cliff, then the high west and high east halves above them.
    Growth grows vines up its walls, Lash ties a rope, two cracked pillars
    crumble under Felix's feet, more statues spit fire or lift him, and on the
    high east wall three pairs of statues throw fireballs that knock him off it.
-   At the top (`SceneId_MagmaRockStatue`) Burst on the statue east of the great
+   At the top (`SceneIdMagmaRockStatue`) Burst on the statue east of the great
    fire makes it spit a fireball into the fire, and the blast opens the way into
    Magma Rock. */
 #include "../field/actor_set_sprite_priority.c"
@@ -380,7 +380,7 @@ void scMagmaRockSettleBlocks(Uint16 *ids)
 		if(fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 			   FIELD_METATILE(actor->x.fixed), FIELD_METATILE(actor->z.fixed)) &
 			MAP_METATILE_CLIMBABLE) {
-			map = Ram_HeapSlots->mapGrid;
+			map = RamHeapSlots->mapGrid;
 			if(map == NULL)
 				return;
 			metatiles = &map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
@@ -465,8 +465,8 @@ void scMagmaRockStartPushingPillar(void)
 	   wall's face below him: standing on metatile (15, 27) Felix holds Down and
 	   stays at the ledge's edge, while from metatile (16, 27) he climbs down
 	   the pegs to the cave mouth above the four cracked pillars. */
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	if(MainRoutineStateWork.next == SCENE_MAGMA_ROCK_SLIDE) {
 		fdMapGridCopyMetatileAttributes(98, 18, 4, 3, 78, 21);
@@ -773,7 +773,7 @@ void scMagmaRockPlaceFireball(Uint16 id, Sint16 first, Sint16 side)
    528, and from 400 it burns (scMagmaRockBurnStatue). */
 void scMagmaRockWarnStatue(ACTOR *actor)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(actor->tmr > 528) {
 		if(actor->tmr & 2)
@@ -826,7 +826,7 @@ Sint32 scMagmaRockLookUpMetatileStatue(Sint32 x, Sint32 z, Uint16 *tbl)
    (scMagmaRockFireStatue) or lights (scMagmaRockIgniteStatue). */
 void scMagmaRockTargetStatue(Sint32 stage)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	Sint16			   *tbl = MagmaRockSlideStatues;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
@@ -1006,7 +1006,7 @@ hit:
    explodes on it as Burst does. */
 void scMagmaRockFireStatue(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor;
 
 	fdScriptStart();
@@ -1029,7 +1029,7 @@ void scMagmaRockFireStatue(void)
    statue's countdown (scMagmaRockWarnStatue, then scMagmaRockBurnStatue). */
 void scMagmaRockIgniteStatue(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor;
 
 	fdScriptStart();
@@ -1056,7 +1056,7 @@ void scMagmaRockIgniteStatue(void)
    is the pillar's animation from PILLAR_CRUMBLE_TICK. */
 void scMagmaRockBurstCrackedPillar(Sint32 stage, Sint32 tick)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	if(tick == 0)
 		scMagmaRockStartFallingRocks();
@@ -1167,7 +1167,7 @@ void fdActorPlaySndInView(ACTOR *actor, Sint32 a);
    (scMagmaRockRaiseFlameTop). */
 void scMagmaRockBurnStatue(ACTOR *actor)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 type = SPRITE_STEAM_VENT;
 
 	if((TickCount & 15) == 0)
@@ -1290,7 +1290,7 @@ void scMagmaRockBurnStatue(ACTOR *actor)
 	name, slidePillar, cliffPillar, flag) \
 	void name(Sint32 stage, Sint32 tick) \
 	{ \
-		FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState; \
+		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState; \
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork; \
 \
 		{ \
@@ -1311,7 +1311,7 @@ void scMagmaRockBurnStatue(ACTOR *actor)
    `FLAG_CRACKED_PILLAR_A_BURST`. The high west statue's fireball breaks that
    pillar through the statue's own rows instead (scMagmaRockBurstCrackedPillar),
    not this. */
-DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarA,
+DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRockBurstCrackedPillarA,
 	ACTOR_CRACKED_PILLAR_A, ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
 	FLAG_CRACKED_PILLAR_A_BURST)
 
@@ -1319,7 +1319,7 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarA,
    slide's cave mouth (metatile (17, 31)), or the cracked pillar on the cliff's
    low east level (metatile (42, 39)) as its statue's fireball lands on it.
    Either sets `FLAG_CRACKED_PILLAR_B_BURST`. */
-DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
+DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRockBurstCrackedPillarB,
 	ACTOR_CRACKED_PILLAR_B, ACTOR_LOW_EAST_CRACKED_PILLAR,
 	FLAG_CRACKED_PILLAR_B_BURST)
 
@@ -1328,7 +1328,7 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
 #define DEFINE_BURST_CRACKED_PILLAR(name, pillar, flag) \
 	void name(Sint32 stage, Sint32 tick) \
 	{ \
-		FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState; \
+		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState; \
 \
 		state->tgt = fdActorGet(pillar); \
 		scMagmaRockBurstCrackedPillar(stage, tick); \
@@ -1338,20 +1338,20 @@ DEFINE_BURST_SLIDE_OR_CLIFF_PILLAR(MagmaRock_BurstCrackedPillarB,
 /* Burst breaks the south-west one of the four cracked pillars in front of the
    slide's cave mouth (metatile (14, 34)). It sets
    `FLAG_CRACKED_PILLAR_C_BURST`. */
-DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarC,
+DEFINE_BURST_CRACKED_PILLAR(MagmaRockBurstCrackedPillarC,
 	ACTOR_CRACKED_PILLAR_C, FLAG_CRACKED_PILLAR_C_BURST)
 
 /* Burst breaks the south-east one of the four cracked pillars in front of the
    slide's cave mouth (metatile (18, 34)). It sets
    `FLAG_CRACKED_PILLAR_D_BURST`. */
-DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarD,
+DEFINE_BURST_CRACKED_PILLAR(MagmaRockBurstCrackedPillarD,
 	ACTOR_CRACKED_PILLAR_D, FLAG_CRACKED_PILLAR_D_BURST)
 
 /* The fireball of the statue at the east end of the slide's upper ledge lands
    on the cracked pillar west of it (metatile (20, 25)), and the blast breaks
    the pillar, opening the climb up to the ledge where it stood. It sets
    `FLAG_CRACKED_PILLAR_E_BURST`. */
-DEFINE_BURST_CRACKED_PILLAR(MagmaRock_BurstCrackedPillarE,
+DEFINE_BURST_CRACKED_PILLAR(MagmaRockBurstCrackedPillarE,
 	ACTOR_CRACKED_PILLAR_E, FLAG_CRACKED_PILLAR_E_BURST)
 
 /* Nothing visible happens when Felix, come out of the Ember Stone's room
@@ -1670,7 +1670,7 @@ void scMagmaRockFlashTarget(ACTOR *actor)
    those metatiles from spare ones below the room. */
 void scMagmaRockBlastWayIn(Sint32 stage, Sint32 tick)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	if(tick == 0) {
 		ACTOR *actor;
@@ -2141,7 +2141,7 @@ Sint32 scPrepareMap(void)
    then lifts the leader onto the ground under it. */
 void scMagmaRockRestoreCrumblingPillars(const Uint16 *tbl)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
 	Sint32		  flg;
@@ -2160,7 +2160,7 @@ void scMagmaRockRestoreCrumblingPillars(const Uint16 *tbl)
 		nextFlg = flg + 1;
 		metatiles = map->layers[actor->layer].metatiles;
 		shapes =
-			MapShapeGrid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+			MapShapeGrid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 		if(fdScriptGetFlag(nextFlg)) {
 			fdActorSetPos(id, 0, 0);
 		} else {
@@ -2457,7 +2457,7 @@ void scMagmaRockDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 	ROCK_STATE *state;
 	Sint32		i;
 
-	state = Ram_HeapSlots->menuState;
+	state = RamHeapSlots->menuState;
 	if(cnt > 0) {
 		i = cnt;
 		do {
@@ -2792,19 +2792,19 @@ CUE MagmaRockCues[] = {
 		FLAG_SLIDE_PILLAR_B_PUSHED, SCRIPT_REF(scMagmaRockFinishPushingPillar)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_A,
-		FLAG_CRACKED_PILLAR_A_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarA)},
+		FLAG_CRACKED_PILLAR_A_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarA)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_B,
-		FLAG_CRACKED_PILLAR_B_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarB)},
+		FLAG_CRACKED_PILLAR_B_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarB)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_C,
-		FLAG_CRACKED_PILLAR_C_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarC)},
+		FLAG_CRACKED_PILLAR_C_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarC)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_D,
-		FLAG_CRACKED_PILLAR_D_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarD)},
+		FLAG_CRACKED_PILLAR_D_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarD)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_E,
-		FLAG_CRACKED_PILLAR_E_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarE)},
+		FLAG_CRACKED_PILLAR_E_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarE)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
 		METATILE_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE, CONDITION_ALWAYS,
 		SCRIPT_REF(scMagmaRockResolveBeforeBurst)},
@@ -2851,7 +2851,7 @@ CUE MagmaRockSalamanderTailHighWestCues[] = {
 		SCRIPT_REF(scMagmaRockFinishPushingPillar)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_A,
-		FLAG_CRACKED_PILLAR_A_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarA)},
+		FLAG_CRACKED_PILLAR_A_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarA)},
 	{CUE_STEP, METATILE_BEHAVIOR_MAGMA_ROCK_BESIDE_HIGH_WEST_STATUE,
 		FLAG_HIGH_WEST_STATUE_READY,
 		SCRIPT_REF(scMagmaRockReadyHighWestStatue)},
@@ -3001,7 +3001,7 @@ CUE MagmaRockSalamanderTailLowEastCues[] = {
 		SCRIPT_REF(scMagmaRockFireStatue)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_B,
-		FLAG_CRACKED_PILLAR_B_BURST, SCRIPT_REF(MagmaRock_BurstCrackedPillarB)},
+		FLAG_CRACKED_PILLAR_B_BURST, SCRIPT_REF(MagmaRockBurstCrackedPillarB)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
 		METATILE_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A, CONDITION_ALWAYS,
 		SCRIPT_REF(scMagmaRockResolveBeforeBurst)},

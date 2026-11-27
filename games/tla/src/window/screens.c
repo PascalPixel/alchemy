@@ -134,13 +134,13 @@ typedef struct FILE_LIST_STATE {
 	JAPANESE_OR(mnMessageDecodeRaw, mnMessageCopyExpanded)
 
 /* The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks, the
-   one after it stays (DjinnMenu_BlinkTile). */
+   one after it stays (DjinnMenuBlinkTile). */
 #define DJINN_MENU_ARROW_TILE 808
 
 /* The arrow tile mnBattleDjinnMenuRun copies to the two BG tiles from
    DJINN_MENU_ARROW_TILE each tick: the first blinks (four ticks shown, four
    blank), the second stays. */
-extern const Uint8 DjinnMenu_BlinkTile[32];
+extern const Uint8 DjinnMenuBlinkTile[32];
 
 /* Where each element's icon and standby count sit in the party status window's
    Djinn column, in tiles, for the Djinn menu to blink them. */
@@ -167,8 +167,8 @@ extern const BAR_PATTERN_ROW MenuBarPatternRows[];
 
 /* The standby Djinn counts 10 to 18, one tile each, from BG tile
    DJINN_COUNT_TENS_TILE: the party status window loads them
-   (PartyStatus_DigitTiles) when a count passes 9. */
-extern const Uint8 PartyStatus_DigitTiles[];
+   (PartyStatusDigitTiles) when a count passes 9. */
+extern const Uint8 PartyStatusDigitTiles[];
 /* That tile, and its place in VRAM. */
 #define DJINN_COUNT_TENS_TILE 416
 #define DJINN_COUNT_TENS_VRAM \
@@ -183,7 +183,7 @@ extern const Uint8 PartyStatus_DigitTiles[];
    each. */
 extern const Uint8 WindowProgressBarRows[];
 /* The progress bar's tiles, compressed. */
-extern const Uint8 Window_ProgressBarTiles[];
+extern const Uint8 WindowProgressBarTiles[];
 
 /* The ARM function that reads the windows' edges off the UI tilemap for each
    scan line (window_spans.c), copied to RAM before it runs. */

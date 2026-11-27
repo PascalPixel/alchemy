@@ -15,7 +15,7 @@
    rows of 2 tiles); by two less, times 4, its offset in halfwords. */
 #define MAPGRID_DRAWN_PICTURE_SHIFT 21
 /* The map's 128 by 128 metatile words. */
-#define MAPGRID_METATILES			((Uint32 *)Ram_MapGridMetatileBuffer)
+#define MAPGRID_METATILES			((Uint32 *)RamMapGridMetatileBuffer)
 /* A layer's visible area in metatiles: the screen's 15 by 10, and the row and
    column partly scrolled in. */
 #define MAPGRID_VISIBLE_WIDTH		16
@@ -75,7 +75,7 @@ void fdTileMapDecodeStagedBuffer(Sint32 size)
 	Sint32	n;
 	Sint32	i;
 
-	src = (Uint16 *)(Ram_MapMetatileBuffer + 2);
+	src = (Uint16 *)(RamMapMetatileBuffer + 2);
 	dst = (Uint16 *)MetatileTiles;
 	n = (size - 1) / 2;
 	if(size & 1) {
@@ -86,7 +86,7 @@ void fdTileMapDecodeStagedBuffer(Sint32 size)
 			break;
 		case METATILE_TILES_PACKING_SPLIT_DELTA: {
 			Uint32 prev = 0;
-			Uint8 *hi = Ram_MapMetatileBuffer + 2;
+			Uint8 *hi = RamMapMetatileBuffer + 2;
 			Uint8 *lo = hi + n;
 
 			for(i = 0; i < n; i++) {
@@ -125,10 +125,10 @@ void fdTileMapConvertBuffer(void)
 
 	size = MAPGRID_BYTE_PLANES_BYTES;
 	saved = syHeapAllocEWRAM(size);
-	syWordsCopy(saved, Ram_MapMetatileBuffer, size);
+	syWordsCopy(saved, RamMapMetatileBuffer, size);
 	RAM_CODE_LOAD(routine, fdRenderConvertMapCode, fdRenderConvertMapCodeSize);
 	routine(((Uint8 *)MapGridMetatileBuffer + MAPGRID_BYTE_PLANES_BYTES),
-		Ram_MapMetatileBuffer, saved);
+		RamMapMetatileBuffer, saved);
 	syHeapRelease(routine);
 	syHeapRelease(saved);
 }
@@ -188,12 +188,12 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 	sceneHeader = (MAP_HEADER *)MAPGRID_RESOURCE(sceneResources->header);
 	encodedData = (Uint8 *)sceneHeader + sceneHeader->metatileTiles;
 	fdTileMapDecodeStagedBuffer(
-		syDecompressTaggedLZ(encodedData, Ram_MapMetatileBuffer + 1));
-	DMA_FILL32(-1, Ram_MapCollision, MAPGRID_SHAPE_TABLE_BYTES);
+		syDecompressTaggedLZ(encodedData, RamMapMetatileBuffer + 1));
+	DMA_FILL32(-1, RamMapCollision, MAPGRID_SHAPE_TABLE_BYTES);
 	encodedData = (Uint8 *)sceneHeader + sceneHeader->collision;
-	syDecompressTaggedLZ(encodedData, Ram_MapCollision);
+	syDecompressTaggedLZ(encodedData, RamMapCollision);
 	encodedData = (Uint8 *)sceneHeader + sceneHeader->metatiles;
-	syDecompressTaggedLZ(encodedData, Ram_MapMetatileBuffer);
+	syDecompressTaggedLZ(encodedData, RamMapMetatileBuffer);
 	fdTileMapConvertBuffer();
 	encodedData = (Uint8 *)sceneHeader + sceneHeader->shapes;
 	syDecompressTaggedLZ(encodedData, MapShapeGrid);
@@ -209,7 +209,7 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 	}
 	encodedData = (Uint8 *)sceneHeader + sceneHeader->script;
 	syDecompressTaggedLZ(
-		encodedData, Ram_MapCollision + MAPGRID_SHAPE_TABLE_BYTES);
+		encodedData, RamMapCollision + MAPGRID_SHAPE_TABLE_BYTES);
 	map->minX = toFIXED(sceneHeader->cameraBounds[0] * 8);
 	map->minZ = toFIXED(sceneHeader->cameraBounds[1] * 8);
 	map->maxX = toFIXED(sceneHeader->cameraBounds[2] * 8);
@@ -253,7 +253,7 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
 		scaleX = layerSrc->scrollX * (toFIXED(1) / 16);
 		metatile = y + x;
 		shapeGrid = MapShapeGrid;
-		layer->metatiles = (MAP_METATILE *)Ram_MapMetatileBuffer + metatile;
+		layer->metatiles = (MAP_METATILE *)RamMapMetatileBuffer + metatile;
 		layer->scaleX = scaleX;
 		layer->originX = x;
 		layer->terrainIds = shapeGrid + metatile;
@@ -315,7 +315,7 @@ Sint32 fdMapGridLoadMap(Sint32 idx)
    (0, 0) when there is none, and scrolls the layers there. */
 void fdMapGridCenterOnFollowedPoint(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   x = 0;
 	Sint32	   height = 0;
 	Sint32	   z = 0;
@@ -368,8 +368,8 @@ void fdMapGridCenterOnFollowedPoint(void)
    pictures. */
 void fdMapGridRenderMetatileTilesRow(Uint32 layer, Sint32 tileX, Sint32 tileY)
 {
-	Uint32	  *metatiles = (Uint32 *)Ram_MapMetatileBuffer;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	Uint32	  *metatiles = (Uint32 *)RamMapMetatileBuffer;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *win = &map->layers[layer];
 	Uint32	   originY = win->originY;
 	Uint8	  *screenMap =
@@ -449,8 +449,8 @@ static __inline__ void CopyMetatileTilesHalfColumn(Uint32 *metatile,
 void fdMapGridRenderMetatileTilesColumn(
 	Uint32 layer, Sint32 tileX, Sint32 tileY)
 {
-	Uint32	  *metatiles = (Uint32 *)Ram_MapMetatileBuffer;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	Uint32	  *metatiles = (Uint32 *)RamMapMetatileBuffer;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *win = &map->layers[layer];
 	Uint8	  *screenMap =
 		(Uint8 *)BG_SCREEN_BLOCK(5) + layer * MAPGRID_LAYER_SCREEN_BYTES;
@@ -468,7 +468,7 @@ void fdMapGridRenderMetatileTilesColumn(
 
 	if(maskY != MAPGRID_ROW_MASK) {
 		sourceRow = (sourceRow - originY) & maskY;
-		metatiles = (Uint32 *)Ram_MapMetatileBuffer + originY;
+		metatiles = (Uint32 *)RamMapMetatileBuffer + originY;
 	}
 	maskX = win->maskX;
 	originX = win->originX;
@@ -506,7 +506,7 @@ void fdMapGridUpdateLayerScroll(void)
 	Sint32	   baseX, baseY;
 	Uint32	   layerIdx;
 
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	origin = map->origin;
 	layer = map->layers;
 	if(origin == 0)
@@ -621,7 +621,7 @@ void fdMapGridSetCameraCenter(FIXED x, FIXED y)
 	Uint32	   layerIdx;
 	Uint8	  *screenMap;
 	Uint32	  *metatiles;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer = map->layers;
 	Uint32	   originX;
 
@@ -663,9 +663,9 @@ void fdMapGridSetCameraCenter(FIXED x, FIXED y)
 			maskX = layer->maskX;
 			originY = layer->originY;
 			originX = layer->originX;
-			metatiles = (Uint32 *)Ram_MapMetatileBuffer;
+			metatiles = (Uint32 *)RamMapMetatileBuffer;
 			if(maskX != MAPGRID_SIZE - 1)
-				metatiles = (Uint32 *)Ram_MapMetatileBuffer + originX;
+				metatiles = (Uint32 *)RamMapMetatileBuffer + originX;
 			if(maskY != MAPGRID_ROW_MASK)
 				metatiles += originY;
 			srcRow = ((y / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
@@ -703,11 +703,9 @@ void fdMapGridSetCameraCenter(FIXED x, FIXED y)
 void fdMapGridCopyMetatileTilesIndicesRect(Sint32 srcX, Sint32 srcY,
 	Uint32 dstX, Uint32 dstY, Uint32 width, Uint32 height)
 {
-	Uint32 *src =
-		(Uint32 *)Ram_MapMetatileBuffer + (srcY * MAPGRID_SIZE + srcX);
-	Uint32 *dst =
-		(Uint32 *)Ram_MapMetatileBuffer + (dstY * MAPGRID_SIZE + dstX);
-	MAP_LAYER		  *layer = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers;
+	Uint32 *src = (Uint32 *)RamMapMetatileBuffer + (srcY * MAPGRID_SIZE + srcX);
+	Uint32 *dst = (Uint32 *)RamMapMetatileBuffer + (dstY * MAPGRID_SIZE + dstX);
+	MAP_LAYER		  *layer = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers;
 	MAP_GRID_TILE_POS  tile[3];
 	Sint32			   i;
 	MAP_GRID_TILE_POS *pos = tile;
@@ -822,7 +820,7 @@ void fdMapCopyMetatilesRect(Sint32 srcX, Sint32 srcY, Sint32 width,
 void fdMapCopyMetatileAttributeRect(Sint32 srcX, Sint32 srcY, Sint32 width,
 	Sint32 height, Sint32 dstX, Sint32 dstY)
 {
-	Uint32 *metatiles = (Uint32 *)Ram_MapMetatileBuffer;
+	Uint32 *metatiles = (Uint32 *)RamMapMetatileBuffer;
 	Sint32	dst = dstY * MAPGRID_SIZE + dstX;
 	Uint8  *dstShapes = MapShapeGrid + dst;
 	Sint32	src = srcY * MAPGRID_SIZE + srcX;
@@ -863,7 +861,7 @@ void fdMapGridCopyMetatileTilesMetatilesRect(Sint32 srcX, Sint32 srcY,
 		(Uint32 *)MapGridMetatileBuffer + (srcY * MAPGRID_SIZE + srcX);
 	Uint32 *dst =
 		&((Uint32 *)MapGridMetatileBuffer)[dstY * MAPGRID_SIZE + dstX];
-	MAP_LAYER		  *layer = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers;
+	MAP_LAYER		  *layer = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers;
 	MAP_GRID_TILE_POS  views[3];
 	Sint32			   i;
 	MAP_GRID_TILE_POS *view = views;
@@ -944,7 +942,7 @@ void fdMapGridCopyMetatileTilesMetatilesRect(Sint32 srcX, Sint32 srcY,
 void fdMapCopyRawMetatilesRect(Sint32 srcX, Sint32 srcY, Sint32 width,
 	Sint32 height, Sint32 dstX, Sint32 dstY)
 {
-	Uint32 *metatiles = (Uint32 *)Ram_MapMetatileBuffer;
+	Uint32 *metatiles = (Uint32 *)RamMapMetatileBuffer;
 	Sint32	dst = (dstY * MAPGRID_SIZE) + dstX;
 	Uint8  *dstShapes = MapShapeGrid + dst;
 	Sint32	src = (srcY * MAPGRID_SIZE) + srcX;
@@ -971,7 +969,7 @@ void fdMapCopyRawMetatilesRect(Sint32 srcX, Sint32 srcY, Sint32 width,
    REG_DISPCNT) from layerFlg, keeping its other flags. */
 void fdMapGridSetShownLayers(Uint32 layerFlg)
 {
-	MAP_STATE *state = Ram_HeapSlots->mapGrid;
+	MAP_STATE *state = RamHeapSlots->mapGrid;
 	Uint32	   shown =
 		layerFlg & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);
 	Uint32 dispcnt = state->dispcnt;
@@ -1116,7 +1114,7 @@ void fdMapLoadMetatilesAndShapes(void)
 		((const MAP_RESOURCES *)MapsWork)[MainRoutineStateWork.mapId].header);
 
 	src = (Uint8 *)header + header->metatiles;
-	syDecompressTaggedLZ(src, Ram_MapMetatileBuffer);
+	syDecompressTaggedLZ(src, RamMapMetatileBuffer);
 	fdTileMapConvertBuffer();
 	src = (Uint8 *)header + header->shapes;
 	syDecompressTaggedLZ(src, MapShapeGrid);
@@ -1128,7 +1126,7 @@ void fdMapLoadMetatilesAndShapes(void)
 Sint32 fdWorldMapWriteLayerMetatileTile(
 	Sint32 layer, Sint32 x, Sint32 y, Sint32 tile, Sint32 update)
 {
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	Uint32		   *tileOffsets = perspective->tiles;
 	Uint16		   *shownQuarter;
 	Uint16		   *decodedTile;
@@ -1177,8 +1175,8 @@ Sint32 fdWorldMapWriteLayerMetatileTile(
 
 				metatileTilesId = *srcTiles;
 				screenTiles[0] =
-					*(Uint16 *)(Ram_MapMetatileBuffer + metatileTilesId * 4);
-				bottomTiles = (Uint16 *)(Ram_MapMetatileBuffer + 2);
+					*(Uint16 *)(RamMapMetatileBuffer + metatileTilesId * 4);
+				bottomTiles = (Uint16 *)(RamMapMetatileBuffer + 2);
 				bottomTiles =
 					(Uint16 *)((Uint8 *)bottomTiles + metatileTilesId * 4);
 				screenTiles[WORLD_MAP_TILE_MAP_WIDTH / 2] = *bottomTiles;

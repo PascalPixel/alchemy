@@ -1,6 +1,6 @@
 @ Why assembly: fdWorldMapBuildScanlineTableArm is a Thumb entry whose bx pc switches to the ARM
-@ code of WorldMap_BuildScanlineTableInArm that follows, a mode switch inside a function; its
-@ halfword after bx pc is never run. WorldMap_BuildScanlineTableInArm, an ARM copy of the
+@ code of WorldMapBuildScanlineTableInArm that follows, a mode switch inside a function; its
+@ halfword after bx pc is never run. WorldMapBuildScanlineTableInArm, an ARM copy of the
 @ perspective map's scanline table builder (fdWorldMapBuildScanlineTable is the Thumb one),
 @ calls syIWRAMSquart and syIWRAMTransformVector by bl through two 8-byte stub call
 @ stubs placed after its literal pool, and two of its smull take free
@@ -12,13 +12,13 @@
 	.thumb_func
 fdWorldMapBuildScanlineTableArm:
 	bx	pc
-AlchemyUncredited_080212da:
+AlchemyUncredited080212da:
 	.2byte	0x0200
-AlchemyUncreditedEnd_080212da:
+AlchemyUncreditedEnd080212da:
 	.arm
-	.global WorldMap_BuildScanlineTableInArm
-	.type WorldMap_BuildScanlineTableInArm, %function
-WorldMap_BuildScanlineTableInArm:
+	.global WorldMapBuildScanlineTableInArm
+	.type WorldMapBuildScanlineTableInArm, %function
+WorldMapBuildScanlineTableInArm:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r5, #0
 	sub	sp, sp, #76
@@ -103,7 +103,7 @@ WorldMap_BuildScanlineTableInArm:
 	str	r0, [r7, #4]
 	b	.L_08021448
 	.4byte ProjectionWork
-	.4byte Data_030011f0
+	.4byte Data030011f0
 	.4byte syIWRAMDivFX
 .L_08021430:
 	ldr	pc, [pc, #-4]

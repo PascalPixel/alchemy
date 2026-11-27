@@ -9,7 +9,7 @@ typedef struct MOUND_VERTEX {
 
 /* The map cell buffer past its first 16 KB: the rune's picture in the coming,
    then the charge's sparks, which are EXTRA_PARTICLES. */
-#define SCRATCH (Ram_MapMetatileBuffer + 16384)
+#define SCRATCH (RamMapMetatileBuffer + 16384)
 /* The mound strip's corners, rebuilt each tick from the morphing shapes. */
 extern MOUND_VERTEX HauresMoundCorners[];
 extern const Uint16 HauresBodyPiecePoints[][2];
@@ -189,11 +189,11 @@ void btEffectRunHaures(BATTLE_EFFECT_PARM *args)
 
 	buf = MapGridMetatileBuffer;
 	shades = HauresMoundShades;
-	battle = Ram_HeapSlots->battleState;
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sprs = Ram_HeapSlots->battleSheet;
-	background = Ram_HeapSlots->battleBg;
+	battle = RamHeapSlots->battleState;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sprs = RamHeapSlots->battleSheet;
+	background = RamHeapSlots->battleBg;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
 	PLTT_BACKDROP = 0;
@@ -622,7 +622,7 @@ void btEffectRunHaures(BATTLE_EFFECT_PARM *args)
 					if((Uint32)(frm - HAURES_CLAW_RISE_TICK) <= 116) {
 						btEffectBuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 6, 6,
 							EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-						draw[1] = Ram_HeapSlots->ramCodePaired;
+						draw[1] = RamHeapSlots->ramCodePaired;
 						for(i = 0; i != HAURES_PUFFS; i++) {
 							PARTICLE *p = &state->particles[i + HAURES_DROPS];
 							Sint32	  n =
@@ -978,7 +978,7 @@ void btEffectRunHaures(BATTLE_EFFECT_PARM *args)
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	/* The charge: three passes through the foes, sparks streaming behind. */
 	for(frm = 0; frm != HAURES_TICKS; frm++) {
 		RENDER_MODEL *model;

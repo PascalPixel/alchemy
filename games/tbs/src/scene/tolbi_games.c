@@ -2,7 +2,7 @@
    town: Lucky Dice, Lucky Wheels and Tolbi Spring. None of them is part of the
    story.
 
-   Lucky Dice and Lucky Wheels are two rooms of one map (SceneId_StuccoRoomsC,
+   Lucky Dice and Lucky Wheels are two rooms of one map (SceneIdStuccoRoomsC,
    whose area name is Tolbi), each with its own camera box.
 
    - Lucky Dice is played in the small tent with a die on its front. Two
@@ -24,7 +24,7 @@
 	 nothing was won, offers another game. Green boards by the counter give
 	 the rules and the prizes.
 
-   Tolbi Spring (SceneId_TolbiSpring) is the fountain in the middle of Tolbi's
+   Tolbi Spring (SceneIdTolbiSpring) is the fountain in the middle of Tolbi's
    square, reached through the gate in its railing. Isaac stands on the white
    step between its two signs and searches the spring. The first time each visit
    its water sinks and fades away, uncovering a target of rings on the basin's

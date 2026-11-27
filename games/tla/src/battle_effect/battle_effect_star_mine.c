@@ -52,9 +52,9 @@ void btEffectRunStarMine(BATTLE_EFFECT_PARM *args)
 	Sint32				 firstSpark;
 	Sint32				 i;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sprs = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, blitters);
@@ -92,7 +92,7 @@ void btEffectRunStarMine(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	for(frm = 0; frm != STAR_MINE_TICKS; frm++) {
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		if(frm == 0) {
 			PARTICLE *thrown;
 
@@ -353,20 +353,20 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 	Sint32	  i;
 	Sint32	  j;
 
-	vertices = Ram_MapMetatileBuffer + RISING_DRAGON_ENEMY_VERTICES;
-	strip = Ram_MapMetatileBuffer + RISING_DRAGON_ENEMY_STRIP;
-	cells = (CORNER_ROW *)Ram_MapMetatileBuffer;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	vertices = RamMapMetatileBuffer + RISING_DRAGON_ENEMY_VERTICES;
+	strip = RamMapMetatileBuffer + RISING_DRAGON_ENEMY_STRIP;
+	cells = (CORNER_ROW *)RamMapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	victim = btObjectGetStub(args->tgts[0])->obj;
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	savedYaw = camera->yaw;
 	height = 0;
 	savedMotionStrength = victim->verticalMotionStrength;
@@ -420,7 +420,7 @@ void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args)
 		}
 		if(frm == 164) {
 			btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-				Ram_HeapSlots->battleState->bg, BACKGROUND_DARKEN_TICKS);
+				RamHeapSlots->battleState->bg, BACKGROUND_DARKEN_TICKS);
 		}
 		if(frm == 165) {
 			ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;

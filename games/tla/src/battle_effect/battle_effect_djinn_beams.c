@@ -24,17 +24,17 @@ void btEffectBuildCanvasBlitters(Sint32 flip, DRAW_RECTANGLE *out)
 	if(flip == 0) {
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		out[0] = Ram_HeapSlots->ramCode;
+		out[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-		out[1] = Ram_HeapSlots->ramCodePaired;
+		out[1] = RamHeapSlots->ramCodePaired;
 	} else {
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-		out[0] = Ram_HeapSlots->ramCode;
+		out[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-		out[1] = Ram_HeapSlots->ramCodePaired;
+		out[1] = RamHeapSlots->ramCodePaired;
 	}
 }
 
@@ -108,10 +108,10 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	Sint32				 ofsX;
 	Sint32				 i;
 	Sint32				 k;
-	HEAP_SLOTS			*heap = Ram_HeapSlots;
+	HEAP_SLOTS			*heap = RamHeapSlots;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 
 	btEffectStartCanvasLayer(0);
 	if(args->prelude == 1)
@@ -154,7 +154,7 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	for(frm = 0; frm != args->tgtCnt * DJINN_BEAMS_TARGET_TICKS + 116; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		if(frm == 64)
 			sySndPlayStub(SE_POWER_UP);
@@ -182,7 +182,7 @@ void btEffectRunDjinnBeams(BATTLE_EFFECT_PARM *args, Sint32 element)
 		}
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		draw[0] = Ram_HeapSlots->ramCode;
+		draw[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 		draw[1] = heap->ramCodePaired;
@@ -437,9 +437,9 @@ void btEffectRunLobbedShells(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8				*palette;
 	FIXED				 height;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
 
 	if(mode == LOBBED_SHELLS_MUD) {
 		btEffectStartCanvasLayer(0);

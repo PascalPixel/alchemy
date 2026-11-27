@@ -166,7 +166,7 @@ void mnTextMeasureDecoded(
 				lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
 				cnt++;
 			} else {
-				glyph = Font_Glyphs[code - TEXT_SPACE].width;
+				glyph = FontGlyphs[code - TEXT_SPACE].width;
 				style = state->outline;
 				if(style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
 					glyph++;
@@ -178,7 +178,7 @@ void mnTextMeasureDecoded(
 		/* Japanese counts every character as a point the line can be stretched
 		   at. The kana marks (TEXT_MARK_VOICED and TEXT_MARK_SEMIVOICED) sit
 		   over the character before them; codes above TEXT_LAST_FONT_CODE are
-		   kanji, outside Font_Glyphs. */
+		   kanji, outside FontGlyphs. */
 		if(code >= TEXT_SPACE) {
 			if(code - TEXT_MARK_VOICED <= 1) {
 				lineWidth += 1;
@@ -189,7 +189,7 @@ void mnTextMeasureDecoded(
 			} else {
 				glyph = KANJI_WIDTH;
 				if(code <= TEXT_LAST_FONT_CODE)
-					glyph = Font_Glyphs[code - TEXT_SPACE].width;
+					glyph = FontGlyphs[code - TEXT_SPACE].width;
 				style = state->outline;
 				if(style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
 					glyph++;
@@ -375,7 +375,7 @@ void mnTextMeasureAllPages(
 				width += WINDOW_SPRITE_SPACE_WIDTH;
 				cnt++;
 			} else {
-				glyph = Font_Glyphs[code - TEXT_SPACE].width;
+				glyph = FontGlyphs[code - TEXT_SPACE].width;
 				outline = state->outline;
 				if(outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
 					glyph++;
@@ -387,7 +387,7 @@ void mnTextMeasureAllPages(
 		/* Japanese counts every character as a point the line can be stretched
 		   at. The kana marks (TEXT_MARK_VOICED and TEXT_MARK_SEMIVOICED) sit
 		   over the character before them; codes above TEXT_LAST_FONT_CODE are
-		   kanji, outside Font_Glyphs. */
+		   kanji, outside FontGlyphs. */
 		if(code >= TEXT_SPACE) {
 			if(code - TEXT_MARK_VOICED <= 1) {
 				width += 1;
@@ -398,7 +398,7 @@ void mnTextMeasureAllPages(
 			} else {
 				glyph = KANJI_WIDTH;
 				if(code <= TEXT_LAST_FONT_CODE)
-					glyph = Font_Glyphs[code - TEXT_SPACE].width;
+					glyph = FontGlyphs[code - TEXT_SPACE].width;
 				outline = state->outline;
 				if(outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
 					glyph++;

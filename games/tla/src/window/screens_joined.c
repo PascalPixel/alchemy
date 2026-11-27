@@ -23,7 +23,7 @@ MESSAGE *mnMessageStart(WINDOW *window, Sint32 entry, Sint32 x, Sint32 y,
    (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed. */
 void mnDjinnShowJoinedMessage(Sint32 member, Sint32 element, Sint32 djinn)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32	   djinniSpr;
 	WINDOW	  *win;
 	Sint32	   spr[3];
@@ -100,7 +100,7 @@ Sint32 mnPartyGetMemberPortraitSpr(Uint32 idx)
    (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed. */
 void mnPartyShowJoinedMessage(Sint32 member)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	WINDOW	  *window = NULL;
 	Sint32	   spr[3];
 	Sint32	  *entry = spr;
@@ -148,7 +148,7 @@ void mnPartyShowJoinedMessage(Sint32 member)
    (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed. */
 void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	WINDOW	  *win;
 	Sint32	   secondSpr[3];
 	Sint32	   firstSpr[3];
@@ -230,7 +230,7 @@ void mnPartyShowPairJoinedMessage(Sint32 first, Sint32 second)
    pressed. */
 void mnSummonShowLearnedMessage(Sint32 summon)
 {
-	WIN_STATE *state = Ram_HeapSlots->winState;
+	WIN_STATE *state = RamHeapSlots->winState;
 	WINDOW	  *win;
 	Sint32	   entries;
 	Uint32	   resource;

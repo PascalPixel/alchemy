@@ -104,7 +104,7 @@ Sint32 fdActorMoveOnWorldMap(ACTOR *actor)
 	}
 
 update_object:
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
@@ -144,7 +144,7 @@ update_object:
 			actor->tmr--;
 	}
 
-	camera = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	tgtCameraYaw = WorldMapKeyYaws[DPAD_INDEX(PerWork.data)];
 	yawStep = (Sint16)(tgtCameraYaw - camera->yaw) / 8;
 	if(yawStep > WORLD_MAP_YAW_STEP_MAX)
@@ -250,10 +250,10 @@ Sint32 fdActorSailOnMap(ACTOR *interpreter)
 				if(VramCacheEntries[i].ofs == VRAM_CACHE_OFFSET_FREE)
 					freeEntries++;
 			for(i = 0; i < ACTOR_COUNT; i++)
-				if(((ACTOR *)Ram_HeapSlots->actors)[i].script == NULL)
+				if(((ACTOR *)RamHeapSlots->actors)[i].script == NULL)
 					freeActors++;
 			for(i = 0; i < ANIM_OBJECT_COUNT; i++)
-				if(((SPR *)Ram_HeapSlots->sprs)[i].width == 0)
+				if(((SPR *)RamHeapSlots->sprs)[i].width == 0)
 					freeSprs++;
 		}
 	}
@@ -274,7 +274,7 @@ Sint32 fdActorSailOnMap(ACTOR *interpreter)
 	syVectorAddPolarOffset(toFIXED(19), (Uint16)ang, &pos);
 	if(actor->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
 		onPlatform = FALSE;
-		other = (ACTOR *)Ram_HeapSlots->actors;
+		other = (ACTOR *)RamHeapSlots->actors;
 		for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
 			FIXED dy;
 
@@ -336,7 +336,7 @@ Sint32 fdActorSailOnMap(ACTOR *interpreter)
 push_objects:
 	SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(15), (Uint16)heading, &contact);
-	other = (ACTOR *)Ram_HeapSlots->actors;
+	other = (ACTOR *)RamHeapSlots->actors;
 	for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
 		Sint32 radius;
 
@@ -394,7 +394,7 @@ push_objects:
 	}
 
 counted:
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if(collision & PLAYER_STEP_BLOCKED)
 			state->blockedSteps++;
@@ -482,7 +482,7 @@ Sint32 fdActorSailOnWorldMap(ACTOR *actor)
 
 	cnt = 0;
 	terrain = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
-	worldState = Ram_HeapSlots->fieldState;
+	worldState = RamHeapSlots->fieldState;
 	if(terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
 		terrain < WORLD_MAP_COLLISION_SEA_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_SEA;
@@ -531,7 +531,7 @@ Sint32 fdActorSailOnWorldMap(ACTOR *actor)
 	}
 
 update_object:
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
@@ -549,7 +549,7 @@ update_object:
 		collision |= PLAYER_STEP_STOPPED;
 	}
 	if(PerWork.push & MainRoutineStateWork.dashKeys) {
-		FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
+		FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 		if(fieldState->hoverReady != 0) {
 			syGameFlagClear(FLAG_SHIP_HOVERING);
 			((FIELD_STATE *)fieldState)->raisedCue = WORLD_MAP_RAISED_TAKE_OFF;
@@ -592,7 +592,7 @@ update_object:
 		actor->facing += difference;
 	}
 
-	camera = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	tgtCameraYaw = WorldMapKeyYaws[DPAD_INDEX(PerWork.data)];
 	yawStep = (Sint16)(tgtCameraYaw - camera->yaw) / 8;
 	if(yawStep > WORLD_MAP_YAW_STEP_MAX)
@@ -660,7 +660,7 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 
 	count = 0;
 	terrain = fdWorldMapGetCollision((WORLD_POS *)&actor->x.fixed);
-	worldState = Ram_HeapSlots->fieldState;
+	worldState = RamHeapSlots->fieldState;
 	if(terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
 		terrain < WORLD_MAP_COLLISION_SEA_LAST)
 		worldState->terrainKind = SHIP_TERRAIN_SEA;
@@ -708,7 +708,7 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 			collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 		check_actors:
-			other = Ram_HeapSlots->actors;
+			other = RamHeapSlots->actors;
 			for(angleIndex = 0; angleIndex < ACTOR_COUNT;
 				angleIndex++, other++) {
 				if(other->script != NULL &&
@@ -719,7 +719,7 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 			}
 		}
 	}
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if((collision & PLAYER_STEP_BLOCKED) != 0)
 			state->blockedSteps++;
@@ -770,7 +770,7 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 		actor->facing += difference;
 	}
 
-	camera = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	camera = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	targetCameraYaw = syMulFX(WorldMapKeyYaws[DPAD_INDEX(PerWork.data)],
 		actor->y.fixed / 4 + toFIXED(1));
 	yawStep = (Sint16)(targetCameraYaw - camera->yaw) / 8;
@@ -807,7 +807,7 @@ Sint32 fdActorFlyOnWorldMap(ACTOR *actor)
 		}
 	}
 
-	flightState = Ram_HeapSlots->fieldState;
+	flightState = RamHeapSlots->fieldState;
 	if(PerWork.data &
 		(MainRoutineStateWork.aKeys | MainRoutineStateWork.bKeys)) {
 		flightState->climbing = 1;

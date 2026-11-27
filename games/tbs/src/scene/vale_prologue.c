@@ -1,7 +1,7 @@
-/* Vale on the stormy night (SceneId_ValePrologue), the prologue, when Isaac and
+/* Vale on the stormy night (SceneIdValePrologue), the prologue, when Isaac and
    Garet are children.
 
-   It is a scene of its own that stands in for SceneId_Vale while
+   It is a scene of its own that stands in for SceneIdVale while
    FLAG_VALE_STORM is set, so that the doors that lead to Vale by day lead here.
    scInit sets the flag on every arrival, and vale_plaza.c clears it when the
    night ends.
@@ -424,7 +424,7 @@ static void scValePrologueStepOffBridge(void)
    into a house of Vale.
 
    It takes VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_SANCTUM_DOOR
-   (SceneId_CottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_WEST, the house
+   (SceneIdCottageRoomsA, at COTTAGE_ROOMS_A_FROM_VALE_WEST, the house
    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST and
    VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_WEST_BY_WEST_BANK_DOOR lead to as well). No
    cue names it, and nothing else takes that exit. */
@@ -470,7 +470,7 @@ static void scValePrologueLeaveToValeKradensCottageSouth(void)
 
 /* On the stormy night, Isaac leaves by the path off the village's south-east
    edge (metatiles (29, 86..87)) for the plaza, where the villagers have
-   gathered (SceneId_ValePlaza).
+   gathered (SceneIdValePlaza).
 
    Once the Boulder has swept Felix and the others away, Garet goes after him
    first (scValePrologueGaretFollowsIsaac). */

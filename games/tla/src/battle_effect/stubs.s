@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_BattleEffect
-Stubs_BattleEffect:
+	.global StubsBattleEffect
+StubsBattleEffect:
 	stub btEffectBuildBlitterStub, btEffectBuildBlitter
 	stub btEffectRunByIdRangeStub, btEffectRunByIdRange
 	stub btEffectRunSummonStub, btEffectRunSummon

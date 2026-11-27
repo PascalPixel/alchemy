@@ -8,7 +8,7 @@
 
 /* In Japanese, the glyphs of character codes from 256: KANJI_GLYPH_SIZE bytes
    each, drawn KANJI_WIDTH pixels wide. */
-extern const Uint8 Font_KanjiGlyphs[];
+extern const Uint8 FontKanjiGlyphs[];
 #define KANJI_GLYPH_SIZE 24 /* bytes */
 #define KANJI_WIDTH		 10 /* pixels */
 

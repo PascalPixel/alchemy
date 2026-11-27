@@ -7,7 +7,7 @@
    Two scenes hold four areas, by their area names. In each, story flags pick
    where the people stand and which script plays on entry.
 
-   - Fuchin Temple (SceneId_FuchinTempleGrounds), outside: a path from the
+   - Fuchin Temple (SceneIdFuchinTempleGrounds), outside: a path from the
 	 World Map in the south (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP) climbs
 	 beside a pool and waterfall to the temple, a blue-roofed hall at the top,
 	 with a traveling healer by its door and a Psynergy Stone to its east. A
@@ -23,7 +23,7 @@
 	 Back out with the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he
 	 sends the party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 
-   - Lacquer rooms A (SceneId_LacquerRoomsA), a rooms map drawn in red
+   - Lacquer rooms A (SceneIdLacquerRoomsA), a rooms map drawn in red
 	 lacquer. Each is a camera box of its own, chosen by the entrance the
 	 party comes in by. In story order, by the exits that lead in:
 	 - Fuchin Temple (by LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS or the

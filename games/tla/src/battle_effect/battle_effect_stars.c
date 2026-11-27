@@ -58,10 +58,10 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 	Sint32		   k;
 	PARTICLE	  *corners;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	caster = (ACTOR *)btObjectGetStub(args->user)->obj;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	syWordsCopyEntry((void *)BG_PLTT,
@@ -72,7 +72,7 @@ void btEffectRunAstralBlast(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	/* The stars leave from above the caster and reach the target in twelve
@@ -228,16 +228,16 @@ void btEffectRunShiningStar(BATTLE_EFFECT_PARM *args)
 	Sint32		   k;
 	PARTICLE	  *corners;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	syWordsCopyEntry((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_RUNE_SHEET), SHEET_PALETTE_BYTES);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	/* Each star leaves from above the caster on its own course to the target,

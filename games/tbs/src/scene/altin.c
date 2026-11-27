@@ -1,6 +1,6 @@
 /* Altin, the mining village north of the Alpine Crossing, in two scenes that
    share this overlay and the area name Altin: the village outdoors
-   (SceneId_Altin), and its inn, shops and houses (SceneId_CottageRoomsD), a
+   (SceneIdAltin), and its inn, shops and houses (SceneIdCottageRoomsD), a
    rooms map each in its own camera box. The getters pick each scene's tables by
    MainRoutineStateWork.next, and both share one exit table. A third, empty set
    of tables serves any other scene.

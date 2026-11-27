@@ -1,6 +1,6 @@
 /* The gull that flies across the lighthouse picture before the title logo comes
    in (mnTitleIntroUpdateLogo's first phase): its ticks, drawn from
-   ResourceId_IntroGullSprites's tiles, and the path it follows. */
+   ResourceIdIntroGullSprites's tiles, and the path it follows. */
 
 #include "types.h"
 

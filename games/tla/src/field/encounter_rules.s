@@ -6,14 +6,14 @@
 @ the scene, its entrance (-1 for any), the flag (-1 for none), ordinary
 @ ground's zone and the second ground's zone; scene -1 ends the table.
 	.macro encounter_rule scene:req, entrance:req, flag:req, ground_zone:req, second_zone:req
-	.2byte SceneId_\scene, \entrance, \flag
+	.2byte SceneId\scene, \entrance, \flag
 	.byte \ground_zone, \second_zone
 	.endm
 
 	.section .rodata
 	.balign 4
-	.global Scene_EncounterRules
-Scene_EncounterRules:
+	.global SceneEncounterRules
+SceneEncounterRules:
 	encounter_rule KandoreanTempleLifts, -1, -1, 17, 0
 	encounter_rule KandoreanTempleMimic, 2, -1, 18, 0
 	encounter_rule KandoreanTempleMimic, 3, -1, 18, 0

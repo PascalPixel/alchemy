@@ -59,7 +59,7 @@ typedef enum SLASH_SHEET_PICTURE {
 } SLASH_SHEET_PICTURE;
 
 /* The trail particles' random rotations, after the particles in PARTICLES. */
-#define ATALANTA_MATRICES (Ram_MapMetatileBuffer + 14336)
+#define ATALANTA_MATRICES (RamMapMetatileBuffer + 14336)
 
 /* Atalanta's sprites: four rows of three 32x32 pieces, the last row two. */
 #define ATALANTA_PIECES 11
@@ -127,11 +127,11 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	Uint8					*tiles;
 	Uint8					*picture;
 
-	view = Ram_HeapSlots->battleBg;
-	tiles = Ram_MapMetatileBuffer;
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sheet = Ram_HeapSlots->battleSheet;
+	view = RamHeapSlots->battleBg;
+	tiles = RamMapMetatileBuffer;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sheet = RamHeapSlots->battleSheet;
 	scrollX = BgScrollWork[1].x;
 	/* The screen wipes to black before Atalanta appears. */
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
@@ -144,7 +144,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	btEffectShowLivingTargets(state->args);
 
 	/* Atalanta's eleven sprites, with her palette and tiles. */
-	Ram_HeapSlots->battleState->keepBackdropPal = 1;
+	RamHeapSlots->battleState->keepBackdropPal = 1;
 	picture = syResourceGetTableEntry(RESOURCE_LEAF_WARRIOR_TILES);
 	syWordsCopy(OBJ_PLTT, picture, OBJ_PLTT_SIZE);
 	picture += OBJ_PLTT_SIZE;
@@ -168,8 +168,8 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 	sySynch(1);
 	btBackgroundLoadStub(
@@ -345,7 +345,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	REG_BG2PA = Q_8_8(0.5);
 	REG_DISPCNT = EFFECT_DISPCNT;
 	btResourceLoadAndDecompress(
-		RESOURCE_EMBER_STREAK_SHEET, Ram_MapMetatileBuffer, 1, 0);
+		RESOURCE_EMBER_STREAK_SHEET, RamMapMetatileBuffer, 1, 0);
 
 	/* The shafts start above the sky. They take the six places of a side in
 	   turn: one whose place holds a target is aimed at it, the others fall at
@@ -382,7 +382,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 						width = BattleEffectEmberStreakPictureWidths[flame];
 						draw[i & 1](canvas,
-							Ram_MapMetatileBuffer +
+							RamMapMetatileBuffer +
 								BattleEffectEmberStreakPictures[flame],
 							shaft->x - (width >> 1) - 8,
 							shaft->y +
@@ -391,7 +391,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 							BattleEffectEmberStreakPictureHeights[flame]);
 #else
 						draw[i & 1](canvas,
-							Ram_MapMetatileBuffer +
+							RamMapMetatileBuffer +
 								BattleEffectEmberStreakPictures[flame],
 							shaft->x -
 								((width = BattleEffectEmberStreakPictureWidths

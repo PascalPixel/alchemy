@@ -3,12 +3,12 @@
 	.include "enums/game/character_ids.inc"
 	.section .rodata
 	.balign 4
-	.global WindowSprite_PageArrowTiles
-WindowSprite_PageArrowTiles:
+	.global WindowSpritePageArrowTiles
+WindowSpritePageArrowTiles:
 	.incbin "games/tbs/src/window/page_arrow.8bpp8x16"
 @ The width of each main font glyph in pixels, from the space (code 32)
-	.global Font_GlyphWidths
-Font_GlyphWidths:
+	.global FontGlyphWidths
+FontGlyphWidths:
 	.include "games/tbs/src/graphics/font/glyph_widths.inc"
 	.global FontColorPens
 FontColorPens:
@@ -40,8 +40,8 @@ WindowPartyColumnOffsets:
 	.byte 0, 0, 0
 	.endif
 	.byte 0, 0, 0, 1, 2, 3, 3, 2, 1
-	.global StatusScreen_LevelLetterString
-StatusScreen_LevelLetterString:
+	.global StatusScreenLevelLetterString
+StatusScreenLevelLetterString:
 	.ifdef TBS_EDITION_DE
 	.asciz "L"
 	.balign 4, 0

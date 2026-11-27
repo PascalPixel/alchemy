@@ -410,7 +410,7 @@ void scMagmaRockInsideWaitForLanding(ACTOR *actor)
    transition is in progress. */
 void scMagmaRockInsidePausePlatform(ACTOR *actor)
 {
-	FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
+	FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 	Uint8		*state = &actor->paused;
 
 	if(fieldState->psynergy != 0 || fieldState->fieldMenu != 0 ||
@@ -512,7 +512,7 @@ void scMagmaRockInsideStartPushingPillar(void)
 	FIELD_STATE *state;
 	Sint16		 scene;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE)
 		fdActorLiftTargetBlock(MagmaRockInsideEntrancePillars);
@@ -706,7 +706,7 @@ void syStatueFlashUnderBurst(ACTOR *actor);
 void scMagmaRockInsideTargetStatue(Sint32 stage)
 {
 	Uint16			   *tbl;
-	FIELD_EFFECT_STATE *watch = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *watch = RamHeapSlots->fieldEffState;
 	Sint32				scene;
 
 	tbl = MagmaRockInsideStatues;
@@ -878,7 +878,7 @@ void scRockEndFalling(void);
    it pours lava over the floor (scMagmaRockInsideFireFromStatue). */
 void scMagmaRockInsideFireStatue(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor;
 
 	fdScriptStart();
@@ -909,7 +909,7 @@ enum {
    crumbles. */
 void scMagmaRockInsideBurstCrackedPillar(Sint32 stage, Sint32 snd)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	if(snd == 0)
 		scMagmaRockInsideStartFallingRocks();
@@ -1003,7 +1003,7 @@ void scMagmaRockInsideRaiseLava(void)
 	Sint32	   srcZ = 0;
 	FIXED	   baseX = 0;
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	EFFECT_OPTIONS options;
 	Sint32		   pos[3];
 	/* LAVA_ALREADY_UP when the room is already flooded; then the ticks the
@@ -1323,7 +1323,7 @@ void scMagmaRockInsideDrainLava(void)
 #define DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(name, pillar, flag) \
 	void name(Sint32 stage, Sint32 snd) \
 	{ \
-		FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState; \
+		FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState; \
 \
 		state->tgt = fdActorGet(pillar); \
 		scMagmaRockInsideBurstCrackedPillar(stage, snd); \
@@ -1335,14 +1335,14 @@ void scMagmaRockInsideDrainLava(void)
    crumbles and the last blast leaves only dust. The statue's own fireball
    breaks it the same way. `FLAG_INSIDE_CRACKED_PILLAR_A_BURST` keeps it
    gone. */
-DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarA,
+DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInsideBurstCrackedPillarA,
 	ACTOR_CRACKED_PILLAR_A, FLAG_INSIDE_CRACKED_PILLAR_A_BURST)
 
 /* Burst cast at the cracked pillars' room's other tall cracked pillar
    (metatiles (19, 14) and (24, 16)) breaks it: rocks fall round it as it
    crumbles and the last blast leaves only dust.
    `FLAG_INSIDE_CRACKED_PILLAR_B_BURST` keeps it gone. */
-DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarB,
+DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInsideBurstCrackedPillarB,
 	ACTOR_CRACKED_PILLAR_B, FLAG_INSIDE_CRACKED_PILLAR_B_BURST)
 
 /* The update of a rock or flame the ember stone throws: it trails smoking
@@ -1465,7 +1465,7 @@ void scMagmaRockInsideReleaseRocks(void)
    reaches it (scMagmaRockInsideGrowFlame). */
 void scMagmaRockInsideTakeFlame(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->blazeLongSpray = 1;
 	if(!fdScriptGetFlag(FLAG_EAST_TORCH_LIT)) {
@@ -1494,7 +1494,7 @@ void scMagmaRockInsideTakeFlame(void)
    stone's lava: unless the west torch beside it is lit, a small hidden flame
    waits on it, which grows if the spray reaches it
    (scMagmaRockInsideGrowFlame). */
-DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTorch,
+DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInsideLightTorch,
 	FLAG_WEST_TORCH_LIT, ACTOR_WEST_TORCH_FLAME, 600, 312)
 
 struct ACTOR;
@@ -1505,7 +1505,7 @@ struct ACTOR;
    the floor, opening the doorway behind it (metatile (38, 18)). */
 void scMagmaRockInsideGrowFlame(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*object;
 	ACTOR		*actor;
 	ACTOR		*other;
@@ -1661,7 +1661,7 @@ void scMagmaRockInsideTrackStepMetatile(void)
 		MagmaRockInsideStepMetatileZ);
 	if(MainRoutineStateWork.next != SCENE_MAGMA_ROCK_INSIDE_BLAZE_TABLET)
 		return;
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	value = fdMapMetatileGetAttributes(MAPGRID_LAYER_OVERHEAD, x, z) >> 8;
 	if(value != 0) {
 		cue = value + STEP_METATILE_CUE_BASE;
@@ -1811,7 +1811,7 @@ void scMagmaRockInsideStepOnMarker(void)
    tablet room's south-west: unless the east bowl beside it is lit, a small
    hidden flame waits on it, which grows if the spray reaches it
    (scMagmaRockInsideGrowTabletFlame). */
-DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTabletTorch,
+DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInsideLightTabletTorch,
 	FLAG_TABLET_TORCH_LIT, ACTOR_TORCH_FLAME, 136, 360)
 
 /* Blaze's spray reaches the east bowl on the Blaze tablet room's south-west
@@ -2269,13 +2269,13 @@ void scMagmaRockInsideReadBlazeTabletFromNorth(void)
    round to the front and it is read there (scMagmaRockInsideReadBlazeTablet);
    once Blaze is learned only its inscription is shown. */
 DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
-	MagmaRockInside_ReadBlazeTabletFromEast, 280)
+	MagmaRockInsideReadBlazeTabletFromEast, 280)
 
 /* Felix reads the Blaze tablet from its west side: the first time he steps
    round to the front and it is read there (scMagmaRockInsideReadBlazeTablet);
    once Blaze is learned only its inscription is shown. */
 DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
-	MagmaRockInside_ReadBlazeTabletFromWest, 248)
+	MagmaRockInsideReadBlazeTabletFromWest, 248)
 
 extern CUE MagmaRockInsideCues[];
 extern CUE MagmaRockInsideEntranceCues[];
@@ -2937,7 +2937,7 @@ void scMagmaRockInsideDropRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 	ROCK_STATE *state;
 	Sint32		i;
 
-	state = Ram_HeapSlots->menuState;
+	state = RamHeapSlots->menuState;
 	for(i = 0; i < cnt; i++) {
 		Sint32 ang = syRandom();
 		ROCK  *rock = &state->rocks[state->next];
@@ -3653,10 +3653,10 @@ CUE MagmaRockInsideCrackedPillarsCues[] = {
 		SCRIPT_REF(scMagmaRockInsideFinishPushingPillar)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_CRACKED_PILLAR_A, FLAG_INSIDE_CRACKED_PILLAR_A_BURST,
-		SCRIPT_REF(MagmaRockInside_BurstCrackedPillarA)},
+		SCRIPT_REF(MagmaRockInsideBurstCrackedPillarA)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_CRACKED_PILLAR_B, FLAG_INSIDE_CRACKED_PILLAR_B_BURST,
-		SCRIPT_REF(MagmaRockInside_BurstCrackedPillarB)},
+		SCRIPT_REF(MagmaRockInsideBurstCrackedPillarB)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
 		METATILE_STATUE, CONDITION_ALWAYS,
 		SCRIPT_REF(scMagmaRockInsideResolveBeforeBurst)},
@@ -3665,7 +3665,7 @@ CUE MagmaRockInsideCrackedPillarsCues[] = {
 		SCRIPT_REF(scMagmaRockInsideTargetStatue)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_STATUE, CONDITION_ALWAYS,
-		SCRIPT_REF(MagmaRockInside_BurstCrackedPillarA)},
+		SCRIPT_REF(MagmaRockInsideBurstCrackedPillarA)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
 		METATILE_STATUE, CONDITION_ALWAYS,
 		SCRIPT_REF(scMagmaRockInsideFireStatue)},
@@ -3850,7 +3850,7 @@ CUE MagmaRockInsideEmberStoneCues[] = {
 		ACTOR_WEST_TORCH_FLAME, CONDITION_ALWAYS, 0},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_EAST_TORCH_FLAME, CONDITION_ALWAYS,
-		SCRIPT_REF(MagmaRockInside_LightTorch)},
+		SCRIPT_REF(MagmaRockInsideLightTorch)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
 		ACTOR_EAST_TORCH_FLAME, FLAG_EAST_TORCH_LIT,
 		SCRIPT_REF(scMagmaRockInsideGrowFlame)},
@@ -3888,9 +3888,9 @@ CUE MagmaRockInsideBlazeTabletCues[] = {
 	{EXAMINE_CUE_FACING(FACING_SOUTH), METATILE_BLAZE_TABLET, CONDITION_ALWAYS,
 		SCRIPT_REF(scMagmaRockInsideReadBlazeTabletFromNorth)},
 	{EXAMINE_CUE_FACING(FACING_WEST), METATILE_BLAZE_TABLET, CONDITION_ALWAYS,
-		SCRIPT_REF(MagmaRockInside_ReadBlazeTabletFromEast)},
+		SCRIPT_REF(MagmaRockInsideReadBlazeTabletFromEast)},
 	{EXAMINE_CUE_FACING(FACING_EAST), METATILE_BLAZE_TABLET, CONDITION_ALWAYS,
-		SCRIPT_REF(MagmaRockInside_ReadBlazeTabletFromWest)},
+		SCRIPT_REF(MagmaRockInsideReadBlazeTabletFromWest)},
 	{CUE_RAISED, STEP_METATILE_CUE_BASE + 2, CONDITION_ALWAYS,
 		SCRIPT_REF(scMagmaRockInsideStepOnMarker)},
 	{CUE_RAISED, STEP_METATILE_CUE_BASE + 3, CONDITION_ALWAYS,
@@ -3903,7 +3903,7 @@ CUE MagmaRockInsideBlazeTabletCues[] = {
 		SCRIPT_REF(scMagmaRockInsideStepOnMarker)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_SOURCE_FLAME, CONDITION_ALWAYS,
-		SCRIPT_REF(MagmaRockInside_LightTabletTorch)},
+		SCRIPT_REF(MagmaRockInsideLightTabletTorch)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_TORCH_FLAME, CONDITION_ALWAYS, 0},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),

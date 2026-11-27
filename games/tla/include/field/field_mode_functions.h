@@ -1097,7 +1097,7 @@ void fdScriptCountAnswer(void);
 /* Where the party comes out on the world map after reaching scene and entrance
    (Teleport's choice calls it). With FLAG_SHIP_CAN_SAIL set (the party has the
    ship, whose mooring the map screen marks), finds the first rule of
-   Scene_ReturnRules for scene and entrance (-1 on either side matches any
+   SceneReturnRules for scene and entrance (-1 on either side matches any
    entrance) and copies its position, x and z in 16.16 and the third value as
    is, to MainRoutineStateWork.shipX, shipZ and shipFacing. */
 void fdWorldMapSetReturnForScene(Sint32 scene, Sint32 entrance);

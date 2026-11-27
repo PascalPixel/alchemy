@@ -28,8 +28,8 @@ void btEffectWipeCanvas(Sint32 direction, Sint32 fill)
 	Sint32				 y;
 	Sint32				 wipePos;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	for(x = 0; x != CANVAS_SIZE; x++)
 		delay[x] = syRandom() & WIPE_LAG_MAX;
 

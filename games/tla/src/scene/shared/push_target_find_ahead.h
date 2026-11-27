@@ -4,7 +4,7 @@
    from its side. */
 ACTOR *scPushTargetFindAhead(Sint32 *direction, Sint32 *slot, Sint32 *kind)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	ACTOR		*actor;
 	Uint32		 i, k;

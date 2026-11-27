@@ -48,7 +48,7 @@ Sint32 mnSanctumNeedsService(Sint32 unitId, Sint32 serviceKind)
 /* Counts party members who need the service in shop->action. */
 Sint32 mnSanctumCountMembersInNeed(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		eligibleCnt = 0;
 	Sint32		serviceKind = shop->action;
 	Sint32		memberIdx;
@@ -67,7 +67,7 @@ Sint32 mnSanctumGetServiceMessage(Sint32 msgId)
 	SHOP_STATE *shop;
 	Sint8		serviceKind;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	serviceKind = shop->action;
 	if(serviceKind == SANCTUM_SERVICE_CURE_POISON) {
 		msgId += (Uint32)MsgCurePoisonService - (Uint32)MsgReviveService;
@@ -87,7 +87,7 @@ void mnSanctumShowKeeperMessage(Sint32 msgId)
 	SHOP_STATE *shop;
 	Sint32		voice;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	voice = fdSpeakerGetVoiceStub(shop->keeperGraphics);
 	mnMessageCloseFinishedWindowsStub();
 	msgId = mnSanctumGetServiceMessage(msgId);
@@ -108,7 +108,7 @@ void mnSanctumShowKeeperMessageHidingCursor(Sint32 msgId)
 	Sint32		 voice;
 	Uint8		 savedCursorMode;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	cursorSlot = &shop->cursor.anchor;
 	savedCursorMode = (*cursorSlot)->motion;
 	voice = fdSpeakerGetVoiceStub(shop->keeperGraphics);
@@ -137,7 +137,7 @@ Sint32 mnSanctumRun(Sint32 actorId)
 	WINDOW_SPR *cursorAnchor;
 
 	mnShopInitState();
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	shop->action = serviceSelection;
 
 	shop->keeperGraphics =
@@ -209,7 +209,7 @@ Sint32 mnSanctumRun(Sint32 actorId)
    until B. */
 Sint32 mnSanctumRunPartyService(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	WINDOW	   *donationWin;
 	Sint32		redraw;
 	Sint32		serviceKind;
@@ -375,7 +375,7 @@ void mnSanctumApplyService(Sint32 unitId, Sint32 serviceKind)
    members who do not need the service. */
 void mnSanctumHighlightMembers(WINDOW *win, Sint32 selected)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		serviceKind = shop->action;
 	Sint32 first = selected / SHOP_PARTY_PAGE_MEMBERS * SHOP_PARTY_PAGE_MEMBERS;
 	Sint32 cnt = shop->partyMemberCnt;
@@ -424,7 +424,7 @@ void mnSanctumDrawFee(WINDOW *win, Sint32 unitId)
 	Sint32		donation;
 	SHOP_STATE *shop;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	msg = shop->action;
 	donation = mnSanctumServicePrice(unitId, msg);
 	if(win != 0) {
@@ -482,7 +482,7 @@ void fdSprSetAnimationColModesStub(void *object, Sint32 value);
    random colour mode while the burst plays on it. Runs as an event. */
 void mnSanctumUpdateBurst(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		i;
 	Sint32		burstMember;
 
@@ -507,7 +507,7 @@ void mnSanctumRunMemberIconBurst(Sint32 member)
 	FIELD_PARTICLE *effect;
 	Sint32			effectIdx;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	savedCursorMode = shop->cursor.anchor->motion;
 	shop->burstMember = -1;
 	shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;

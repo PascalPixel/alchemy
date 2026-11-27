@@ -187,7 +187,7 @@ void scAlhafraManorAskIfTheHeroes(Sint32 actor)
    Alhafra's mayor never meant to fix the mast. */
 void scAlhafraManorComplainAboutTheMayor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	syGameFlagSet(FLAG_COMPLAINED_ABOUT_THE_MAYOR);
 	fdScriptStart();
@@ -215,7 +215,7 @@ void scAlhafraManorComplainAboutTheMayor(void)
    the pirates' money for Alhafra's own repairs. */
 void scAlhafraManorDefendTheMayor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	syGameFlagSet(FLAG_DEFENDED_THE_MAYOR);
 	fdScriptStart();
@@ -265,7 +265,7 @@ void scAlhafraManorDefendTheMayor(void)
    Briggs speaks of across the eastern sea. */
 void scAlhafraManorTellOfTheEasternSea(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state->psynergy != 0) {
 		fdActorFaceActorById(

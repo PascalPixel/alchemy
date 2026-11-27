@@ -16,7 +16,7 @@ void fdGroundParticlesStart(void)
 	syDMAXCopy((const void *)&zero, state,
 		DMA_FILL_WORDS(sizeof(GROUND_PARTICLE_STATE) / 4), REG_DMA3);
 	buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(Field_GroundTiles, buf);
+	syDecompressByteLZ(FieldGroundTiles, buf);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = mnVRAMLoad(state->entry, 768, buf);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);

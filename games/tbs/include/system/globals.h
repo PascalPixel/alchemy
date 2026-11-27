@@ -33,7 +33,7 @@ extern Uint8 syIWRAMIRQMain[];
 extern const Uint32 IwramIrqModeWord;
 /* Where the IWRAM-resident code lies in ROM (ld_script.ld), 5,120 bytes copied
    to syIWRAMIRQMain at power-on. */
-extern const Uint8 IwramResident_Rom[];
+extern const Uint8 IwramResidentRom[];
 /* The BIOS's interrupt vector, pointed at syIWRAMIRQMain at power-on. */
 extern void *IrqVector;
 
@@ -95,7 +95,7 @@ extern Uint8 syDecompressTaggedLZCodeSize[];
 extern const Uint8 syDecompressMoveToFrontLZCommands[];
 /* syDecompressMoveToFrontLZCommands through its command loop, which
    syDecompressMoveToFrontLZ copies to the heap. */
-extern Uint8 Decompress_MoveToFrontLzCommandsCodeSize[];
+extern Uint8 DecompressMoveToFrontLzCommandsCodeSize[];
 /* The halfword LZ decoder that syDecompressHalfwords runs from its stack. */
 extern const Uint8 syDecompressHalfwordLZ[];
 /* syDecompressHalfwordLZ, copied onto the stack by syDecompressHalfwords. */
@@ -104,7 +104,7 @@ extern Uint8 syDecompressHalfwordsCodeSize[];
    with SPRITE_COLOR_FILL; the sprite viewer sets it to 3. */
 extern Uint8 DecodeFillByte;
 
-/* The canvas fades' ARM functions and their sizes: each Canvas_CopyAnd...
+/* The canvas fades' ARM functions and their sizes: each CanvasCopyAnd...
    function in system/system_decompress.c copies its ARM code onto its own stack
    and runs it there. syCanvasBrightenArm, for syCanvasCopyAndBrighten. */
 extern Uint8 syCanvasCopyAndBrightenCodeSize[];
@@ -148,10 +148,10 @@ extern const Uint8 syCanvasScaleThreeQuartersArm[];
 /* The stub group. The stub tables the system library's folder holds. The system
    library's stub table (system/stubs.s), through which the world map reaches
    its arctangent, sine and cosine. */
-extern const SYSTEM_STUB_TABLE Stubs_System;
+extern const SYSTEM_STUB_TABLE StubsSystem;
 /* The resource module's stub, listed in the resource directory as both
    ResourceStubs and ResourceStubsAlternate. */
-extern const Uint8 Stubs_Resource[];
+extern const Uint8 StubsResource[];
 
 /* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags. Set by sySynch() once it has built a
@@ -264,7 +264,7 @@ extern volatile Uint8 ScreenFadeTargetLevel;
 
 /* The io_write_queue group. The register write queue that VBlank carries out
    after each finished tick. The queue IO_WRITE_QUEUE_PUSH and the
-   IoWriteQueue_ writers fill, and syIOWriteQueueFlushPending empties at
+   IoWriteQueue writers fill, and syIOWriteQueueFlushPending empties at
    VBlank. */
 extern IO_WRITE_QUEUE IoWriteQueueWork;
 

@@ -183,7 +183,7 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *win, Sint32 member,
 			win++;
 			win--;
 			entry->tile.bits.idx = syVRAMCacheReload((Uint8)output->idx,
-				up ? DjinnMenu_ArrowUpTiles : DjinnMenu_ArrowDownTiles);
+				up ? DjinnMenuArrowUpTiles : DjinnMenuArrowDownTiles);
 			mnWindowSprAppendToList(&win->sprs, output);
 		}
 	}

@@ -167,13 +167,13 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT			 fadeRingScreen;
 	SCREEN_POINT			 fadeRingPoint;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	savedScroll = BgScrollWork[1].x;
-	backdrop = Ram_HeapSlots->battleBg;
+	backdrop = RamHeapSlots->battleBg;
 	petals = EffectScratch;
-	src = Ram_MapMetatileBuffer;
-	motes = Ram_HeapSlots->battleSheet;
+	src = RamMapMetatileBuffer;
+	motes = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
 	btEffectFillWhiteBand();
@@ -198,7 +198,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 				resource, PALETTE_BANK_BYTES);
 			resource += PALETTE_BANK_BYTES;
 			syDecompressTaggedLZ(resource, src);
-			cells = Ram_MapMetatileBuffer;
+			cells = RamMapMetatileBuffer;
 			for(i = 0; i != FLORA_PETAL_PICTURE_COUNT; i++) {
 				SPR *obj = btEffectSprCreateWithTiles(
 					16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(FLORA_PETAL_PALETTE));
@@ -230,7 +230,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 				syResourceGetTableEntry(RESOURCE_GREEN_HAIRED_MAIDEN_TILES);
 			resource += FLORA_COLORS * 2;
 			syDecompressTaggedLZ(resource, src);
-			cells = Ram_MapMetatileBuffer;
+			cells = RamMapMetatileBuffer;
 			for(i = 0; i != FLORA_FIGURE_PIECES; i++) {
 				SPR *obj = btEffectSprCreateWithTiles(
 					32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
@@ -292,7 +292,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 	}
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	for(frm = 0; frm != FLORA_TICKS &&
 		(!(PerWork.repeat & (KEY_A | KEY_B)) || frm <= 16);
 		frm++) {
@@ -324,12 +324,11 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			   tall. */
 			btEffectDrawShadedCircles(src, 8, toFIXED(1));
 			btEffectDrawShadedCircles(
-				Ram_MapMetatileBuffer + FLORA_GLOW_BYTES(8), 16,
-				toFIXED(3) / 4);
-			btEffectDrawShadedCircles(Ram_MapMetatileBuffer +
+				RamMapMetatileBuffer + FLORA_GLOW_BYTES(8), 16, toFIXED(3) / 4);
+			btEffectDrawShadedCircles(RamMapMetatileBuffer +
 					FLORA_GLOW_BYTES(8) + FLORA_GLOW_BYTES(16),
 				32, toFIXED(3) / 4);
-			btEffectDrawShadedCircles(Ram_MapMetatileBuffer +
+			btEffectDrawShadedCircles(RamMapMetatileBuffer +
 					FLORA_GLOW_BYTES(8) + FLORA_GLOW_BYTES(16) +
 					FLORA_GLOW_BYTES(32),
 				48, toFIXED(3) / 4);
@@ -723,7 +722,7 @@ void btEffectRunFlora(BATTLE_EFFECT_PARM *args)
 			ang += spin;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				BLITTER_ADDITIVE);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 			for(i = 0; i != FLORA_RING_MOTES; i++) {
 				Sint32 a =
 					(i / FLORA_ARM_MOTES) * (TRIG_TURN / FLORA_RING_ARMS);
@@ -1020,7 +1019,7 @@ UNUSED void btEffectStartActorMotionOutward(Sint32 id)
    Abilities: Sabre Dance. */
 void btEffectRunSabreDance(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	MODEL_TEXTURE		 texture;
 	SCREEN_POINT		 tgt;
 	PARTICLE			*blade;
@@ -1189,8 +1188,8 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 	PARTICLE	  *particle;
 	Sint32		   i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(
@@ -1198,12 +1197,12 @@ void btEffectRunBackstab(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_SMOKE_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	sySetEvent((Sint32)btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	tgtObject = btObjectGetStub(args->tgts[0])->obj;
 	casterObject = btObjectGetStub(args->user)->obj;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	battle->keepObjPriorities = 1;
 
 	for(frm = 0; frm != BACKSTAB_TICKS; frm++) {

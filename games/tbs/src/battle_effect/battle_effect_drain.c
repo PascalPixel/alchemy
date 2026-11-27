@@ -57,7 +57,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 		SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
 		btProjectionPoint(point, &screen);
 		screen.x >>= 1;
-		for(i = 0, shard = (PARTICLE *)(Ram_MapGridMetatileBuffer + ofs);
+		for(i = 0, shard = (PARTICLE *)(RamMapGridMetatileBuffer + ofs);
 			i != BREAK_SHARDS_PER_TARGET; i++) {
 			Sint32 radius;
 			Sint32 ang;
@@ -97,8 +97,7 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 			if(frm > member * DRAIN_TARGET_TICKS) {
 				PARTICLE *shard;
 
-				for(i = 0,
-				shard = (PARTICLE *)(Ram_MapGridMetatileBuffer + ofs);
+				for(i = 0, shard = (PARTICLE *)(RamMapGridMetatileBuffer + ofs);
 					i != BREAK_SHARDS_PER_TARGET; i++) {
 					if(shard->variant >= 0) {
 						Sint32 size;

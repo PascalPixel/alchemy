@@ -32,7 +32,7 @@
    Holding Select shows the item's details. Repeats until B. */
 Sint32 mnShopSelectBuy(void)
 {
-	SHOP_STATE		*shop = Ram_HeapSlots->menuState;
+	SHOP_STATE		*shop = RamHeapSlots->menuState;
 	WINDOW			*priceWin = 0;
 	WINDOW			*stockWin;
 	WINDOW			*descriptionWin;
@@ -279,7 +279,7 @@ void mnShopDrawStock(WINDOW *win, Sint32 selected)
 	ITEM_DEFINITION *item;
 	WINDOW_SPR		*icon;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	itemIds = shop->stockItemIds;
 	itemCnt = shop->stockCnt;
 	stockIdx = selected / SHOP_STOCK_PAGE_ITEMS * SHOP_STOCK_PAGE_ITEMS;
@@ -326,7 +326,7 @@ void mnShopDrawStock(WINDOW *win, Sint32 selected)
 /* Draws the party's coins in the coins window, in the edition's layout. */
 void mnShopDrawMoney(void)
 {
-	WINDOW *win = ((SHOP_STATE *)Ram_HeapSlots->menuState)->moneyWin;
+	WINDOW *win = ((SHOP_STATE *)RamHeapSlots->menuState)->moneyWin;
 #if LANGUAGE == LANGUAGE_JAPANESE
 	Sint32 msg;
 #endif
@@ -435,7 +435,7 @@ void mnShopDrawMessage(WINDOW *win, Sint32 msg)
    members who cannot equip `itemId`. */
 void mnShopDrawParty(WINDOW *win, Sint32 selected, Sint32 itemId)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		page = selected / SHOP_PARTY_PAGE_MEMBERS;
 	Sint32		first = page * SHOP_PARTY_PAGE_MEMBERS;
 	Sint32		cnt = shop->partyMemberCnt;
@@ -482,7 +482,7 @@ void mnShopDrawParty(WINDOW *win, Sint32 selected, Sint32 itemId)
    armor. */
 void mnShopDrawEquipComparison(WINDOW *win, Sint32 unitId, Sint32 itemId)
 {
-	SHOP_STATE		*shop = Ram_HeapSlots->menuState;
+	SHOP_STATE		*shop = RamHeapSlots->menuState;
 	UNIT			*unit = syUnitGet(unitId);
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);
 	Sint32			 replacedItemId = -1;
@@ -591,7 +591,7 @@ Sint32 mnShopSelectBuyCount(Sint32 unitId, Sint32 itemId)
 	Sint32			 artifactsInStock;
 	Sint32			 result;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	unit = syUnitGet(unitId);
 	item = gmItemGetDirectStub(itemId);
 	result = 1;
@@ -721,7 +721,7 @@ Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price)
 				if(changed) {
 					changed = FALSE;
 					cnt = (cnt + maximum) % maximum;
-					syDMAXCopy(Shop_QuantityTiles, tileBuf,
+					syDMAXCopy(ShopQuantityTiles, tileBuf,
 						DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
 					/* Paint capacity, available stock, selection and carried
 					   items in that order; each shorter prefix overwrites the
@@ -796,7 +796,7 @@ void mnShopBuyDone(Sint32 unitId, Sint32 itemId, Sint32 quantity)
    was equipped. */
 Bool mnShopConfirmEquip(Sint32 unitId, Sint32 slot)
 {
-	SHOP_STATE		*shop = Ram_HeapSlots->menuState;
+	SHOP_STATE		*shop = RamHeapSlots->menuState;
 	UNIT			*unit = syUnitGet(unitId);
 	Sint32			 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);

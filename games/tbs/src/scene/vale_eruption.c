@@ -1,7 +1,7 @@
-/* Vale (SceneId_ValeEruption) while Mt. Aleph erupts is the ground before the
+/* Vale (SceneIdValeEruption) while Mt. Aleph erupts is the ground before the
    sanctum's door, where the villagers wait for Isaac and Garet.
 
-   It stands on the village's own layout (SceneId_Vale's).
+   It stands on the village's own layout (SceneIdVale's).
 
    The scene falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
    where Jenna and Kraden are carried off, and the party's journey. The path
@@ -23,7 +23,7 @@
    (fdMapGridAnimateMetatiles) and  leads everyone in.
    - The scene's one exit takes the party into the Vale Sanctum
 	 (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
-	 One's quest (Sanctum_RequestQuestAcceptance).
+	 One's quest (SanctumRequestQuestAcceptance).
 
    The tremors are fdMapGridSetShake calls. Each comes with a flash
    (fdWeatherLastLightning) and SE_CRASH, over a burst of red flashes on the

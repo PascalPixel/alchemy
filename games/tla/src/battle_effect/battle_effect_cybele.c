@@ -103,11 +103,11 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 screen;
 	DRAW_RECTANGLE		 draw[2];
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectCreateSprs(CYBELE_SPRITES, SPRITE_CYBELE, 1);
 
-	order = Ram_MapMetatileBuffer;
+	order = RamMapMetatileBuffer;
 	for(i = 0; i != CYBELE_DISSOLVE_RUNS * CANVAS_SIZE; i++)
 		order[i] = i & (CANVAS_SIZE - 1);
 	for(i = 0; i != CYBELE_DISSOLVE_RUNS; i++) {
@@ -128,10 +128,10 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_THORN_VINE_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	REG_BG2X = -(CYBELE_CANVAS_X << 8);
 
@@ -169,7 +169,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 	height = -toFIXED(64);
 	speed = 0;
 	for(frm = 0; frm != CYBELE_TICKS; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* A or B skips the vines straight to the drop. */
 		if((PerWork.repeat & (KEY_A | KEY_B)) != 0 && frm > 190 && frm <= 285) {
@@ -471,12 +471,12 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 				state->sheet + CYBELE_BLAST_PICTURES, 1, 1);
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-			draw[0] = Ram_HeapSlots->ramCode;
+			draw[0] = RamHeapSlots->ramCode;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 			/* ramCodePaired, reached from the slot before it. */
 			draw[1] =
-				(DRAW_RECTANGLE) * (&Ram_HeapSlots->unusedAfterCanvasMap + 1);
+				(DRAW_RECTANGLE) * (&RamHeapSlots->unusedAfterCanvasMap + 1);
 			REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 |
 				BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
 			REG_BG2PA = Q_8_8(0.5);

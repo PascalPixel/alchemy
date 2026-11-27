@@ -45,7 +45,7 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	particleSheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
 	camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-	burstPixels = Ram_MapGridMetatileBuffer;
+	burstPixels = RamMapGridMetatileBuffer;
 	state->args = args;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 1);
@@ -123,7 +123,7 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			else
 				strip = ANNIHILATION_BURST_PICTURES * PICTURE_BYTES(FIRE_BURST);
 			blitters[0](canvas,
-				Ram_MapGridMetatileBuffer + strip +
+				RamMapGridMetatileBuffer + strip +
 					step * PICTURE_BYTES(FIRE_BURST),
 				origin.x / 2 - FIRE_BURST_WIDTH / 2, origin.y - 48,
 				FIRE_BURST_WIDTH, FIRE_BURST_HEIGHT);

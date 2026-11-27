@@ -401,7 +401,7 @@ UNUSED Sint32 mnIconCreateHandCursorUnusedArgument(
 	icon = 0;
 	block = syVRAMCacheFindFreeEntry();
 	if(block != 0) {
-		syVRAMCacheLoad(block, ICON_TILE_BYTES, Icon_ResourceTiles);
+		syVRAMCacheLoad(block, ICON_TILE_BYTES, IconResourceTiles);
 		icon = (Sint32)mnWindowSprCreateStub(
 			block, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 	}
@@ -426,7 +426,7 @@ Sint32 mnIconCreateHandCursor(WINDOW *win, Sint32 x, Sint32 y)
 #else
 	if(block != 0) {
 #endif
-		syVRAMCacheLoad(block, ICON_TILE_BYTES, Icon_ResourceTiles);
+		syVRAMCacheLoad(block, ICON_TILE_BYTES, IconResourceTiles);
 		icon = (Sint32)mnWindowSprCreateStub(
 			block, WINDOW_SPRITE_SIZE_16X16, win, x, y);
 	}

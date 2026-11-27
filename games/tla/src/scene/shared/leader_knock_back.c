@@ -81,7 +81,7 @@ Sint32 KNOCK_BACK(void)
 				}
 #if KNOCK_BACK_STOPS_AT_ACTORS
 				radius = actor->radius - 2;
-				other = Ram_HeapSlots->actors;
+				other = RamHeapSlots->actors;
 				flg = &other->collisionFlg;
 				for(i = 0; i < ACTOR_COUNT;
 					i++, flg += sizeof(ACTOR), other++) {

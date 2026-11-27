@@ -12,8 +12,8 @@ typedef struct IMPACT_CHIP {
 	Sint32 life;	   /* ticks left; 0 is free */
 } IMPACT_CHIP;
 
-/* Ram_MapGridMetatileBuffer seen as Planet Diver's chips. */
-#define PLANET_DIVER_IMPACT_CHIPS ((IMPACT_CHIP *)Ram_MapGridMetatileBuffer)
+/* RamMapGridMetatileBuffer seen as Planet Diver's chips. */
+#define PLANET_DIVER_IMPACT_CHIPS ((IMPACT_CHIP *)RamMapGridMetatileBuffer)
 
 #define PLANET_DIVER_TICKS 88
 #define PLANET_DIVER_CLEARED_CHIPS \

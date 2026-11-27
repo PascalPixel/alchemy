@@ -132,25 +132,25 @@ IwramSoundMixBlock:
 	ldm	r3!, {sl}
 .L_audio_block_four:
 	ldm	r5, {r0, r1, r7, r9}
-AlchemyUncredited_sound_mixer_interpolate_1:
+AlchemyUncreditedSoundMixerInterpolate1:
 	nop
 	nop
-AlchemyUncreditedEnd_sound_mixer_interpolate_1:
+AlchemyUncreditedEndSoundMixerInterpolate1:
 	mlane	r0, fp, r6, r0
-AlchemyUncredited_sound_mixer_interpolate_2:
+AlchemyUncreditedSoundMixerInterpolate2:
 	nop
 	nop
-AlchemyUncreditedEnd_sound_mixer_interpolate_2:
+AlchemyUncreditedEndSoundMixerInterpolate2:
 	mlane	r1, fp, r6, r1
-AlchemyUncredited_sound_mixer_interpolate_3:
+AlchemyUncreditedSoundMixerInterpolate3:
 	nop
 	nop
-AlchemyUncreditedEnd_sound_mixer_interpolate_3:
+AlchemyUncreditedEndSoundMixerInterpolate3:
 	mlane	r7, fp, r6, r7
-AlchemyUncredited_sound_mixer_interpolate_4:
+AlchemyUncreditedSoundMixerInterpolate4:
 	nop
 	nop
-AlchemyUncreditedEnd_sound_mixer_interpolate_4:
+AlchemyUncreditedEndSoundMixerInterpolate4:
 	mlane	r9, fp, r6, r9
 	stmia	r5!, {r0, r1, r7, r9}
 	subs	lr, lr, #1, 0

@@ -7,7 +7,7 @@
    for the caller to set. */
 void *btEffectSprAcquire(Sint32 width, Sint32 height, Uint32 shape, Sint32 mode)
 {
-	SPR	  *spr = Ram_HeapSlots->sprs;
+	SPR	  *spr = RamHeapSlots->sprs;
 	SPR	  *found = NULL;
 	Sint32 i = 0;
 
@@ -167,7 +167,7 @@ void btPaletteMirrorBgCols(void)
    turning through its eight pictures, seven ticks each. */
 void btUlyssesFlutterFlake(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	SPR_SCALE			 scale = UlyssesParticleScale;
 	SPR_PLACEMENT		 place;
 
@@ -321,10 +321,10 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 	BATTLE_STATE *battle;
 	Sint32		  mask = RGB_LEVEL_MAX;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	background = Ram_HeapSlots->battleBg;
-	sprs = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	background = RamHeapSlots->battleBg;
+	sprs = RamHeapSlots->battleSheet;
 	flakeAway = 0;
 	skip = 0;
 	btEffectShowLivingTargets(state->args);
@@ -934,7 +934,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 	sySynch(1);
 	/* FAKEMATCH(dead): a once-only block. */
 	{
-		void *dst = Ram_HeapSlots->battleCanvas;
+		void *dst = RamHeapSlots->battleCanvas;
 
 		IWRAM_FILL_WORDS(dst, CANVAS_BYTES, 0);
 	}
@@ -948,7 +948,7 @@ void btEffectRunUlysses(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
 	background->busy = 0;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	BgScrollWork[1].x = state->savedBg1X;
 	BgScrollWork[1].y = state->savedBg1Y;
@@ -1111,7 +1111,7 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	/* The canvas at its own width, and a transparent blitter, mirrored when the
 	   targets are the party. */
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(0);
@@ -1127,7 +1127,7 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btResourceLoadAndDecompress(
 		RESOURCE_MAGENTA_SWIRL_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(
-		RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapMetatileBuffer, 1, 0);
+		RESOURCE_MAGENTA_TAIL_SHEET, RamMapMetatileBuffer, 1, 0);
 	if(mode == SWIRL_SWIPE_POISON_BEAT) {
 		LOAD_BG_PALETTE(RESOURCE_LIME_PALETTE);
 	}
@@ -1158,7 +1158,7 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					SwirlSwipePictureHeights[picture]);
 			else
 				draw[0](canvas,
-					Ram_MapMetatileBuffer + SwirlSwipePictures[picture],
+					RamMapMetatileBuffer + SwirlSwipePictures[picture],
 					SwirlSwipePictureX[picture + args->side * 6],
 					SwirlSwipePictureBiasY[picture] + 32,
 					SwirlSwipePictureWidths[picture],
@@ -1205,7 +1205,7 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 /* Draws one quarter of the web with the blitter just built. */
 #define DRAW_QUARTER(x, y) \
-	(Ram_HeapSlots->ramCode)(canvas, state->sheet, x, y, size, size)
+	(RamHeapSlots->ramCode)(canvas, state->sheet, x, y, size, size)
 
 /* A spider web spreads over the targets in four mirrored quarters, fades, and
    Impair's effect follows.
@@ -1223,8 +1223,8 @@ void btEffectRunSpiderWeb(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 
 	/* The canvas, unseen at first, on the targets' middle. */
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(2));
 	REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
 	btEffectGetTargetsMidpoint(&middle);

@@ -8,7 +8,7 @@
 void fdMapGridFillCollisionRectangle(
 	Sint32 layer, Sint32 x, Sint32 y, Uint32 width, Uint32 height, Sint32 value)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatiles = map->layers[layer].metatiles;
 	Uint32		  row;
 	Uint32		  column;

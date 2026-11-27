@@ -11,8 +11,8 @@
    refreshes the background's zoom. */
 void btCameraUpdate(void)
 {
-	BATTLE_CAMERA			*camera = Ram_HeapSlots->cameraState;
-	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
+	BATTLE_CAMERA			*camera = RamHeapSlots->cameraState;
+	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 	POS						 eyeOfs;
 	Sint32					*focus;
 	Sint16					 delta;
@@ -20,18 +20,18 @@ void btCameraUpdate(void)
 
 	/* The link check: a missed tick counts only while the link is down, and
 	   any tick with it up resets the count. */
-	if(Ram_HeapSlots->battleState->isLink != 0) {
+	if(RamHeapSlots->battleState->isLink != 0) {
 		if((LinkStatusWork & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
-			Ram_HeapSlots->battleState->linkMisses++;
-			if(Ram_HeapSlots->battleState->linkMisses > LINK_MAX_MISSED_TICKS) {
-				Ram_HeapSlots->battleState->linkPaused = 1;
+			RamHeapSlots->battleState->linkMisses++;
+			if(RamHeapSlots->battleState->linkMisses > LINK_MAX_MISSED_TICKS) {
+				RamHeapSlots->battleState->linkPaused = 1;
 			}
 		} else {
 			linkId = SIO_ID_OF(REG_SIOCNT);
-			if(Ram_HeapSlots->battleState->linkSide != linkId) {
-				Ram_HeapSlots->battleState->linkPaused = 1;
+			if(RamHeapSlots->battleState->linkSide != linkId) {
+				RamHeapSlots->battleState->linkPaused = 1;
 			}
-			Ram_HeapSlots->battleState->linkMisses = 0;
+			RamHeapSlots->battleState->linkMisses = 0;
 		}
 	}
 
@@ -71,7 +71,7 @@ void btIntroAnnounceEncounter(Sint32 enemyCnt)
 	Sint16		 *enemy;
 	Sint32		  announced;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	mnMessageArgumentClearAllStub();
 	btEnemyList(enemies);
 
@@ -112,7 +112,7 @@ void btUnitCollect(void)
 	Sint32		  pos;
 	Sint32		  formation;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	cnt = btPartyPrepareMembers(unitIds);
 	for(i = 0; i < cnt; i++)
 		battle->partyUnits[i] = unitIds[i];

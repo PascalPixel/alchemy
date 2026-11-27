@@ -163,7 +163,7 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 	/* Offset every pixel into the selected palette half so both pictures can
 	   remain visible throughout a crossfade. */
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnCreditsDecodeBackground,
-		Credits_DecodeBackgroundCodeSize);
+		CreditsDecodeBackgroundCodeSize);
 	((PACKED_DECODER)HeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
 		resourceData + BATTLE_BACKGROUND_PALETTE_BYTES, tileDst, paletteOfs);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);
@@ -332,7 +332,7 @@ static const Uint8 BlankCreditLine[] = "";
 #endif
 
 /* Credits text, one row per line, terminated by 0. A line is 8 pixels of
-   scroll, 32 ticks; the text is drawn with Credits_Font, ASCII 32 to 127. */
+   scroll, 32 ticks; the text is drawn with CreditsFont, ASCII 32 to 127. */
 /* clang-format off */
 const void *CreditsLines[] = {
 	BlankCreditLine,
@@ -1090,7 +1090,7 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	Uint8		*linePixels = syHeapAllocEWRAM(CREDITS_BUFFER_BYTES);
 	Sint32		 startX = 0;
 	Sint32		 lineWidth = CREDITS_LINE_PIXELS;
-	const Uint8 *font = Credits_Font;
+	const Uint8 *font = CreditsFont;
 	Sint32		 tileCnt;
 	Sint32		 textAdvance;
 	const Uint8 *srcBytes;

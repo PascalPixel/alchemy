@@ -42,7 +42,7 @@
 /* Raises a mirrored wall at the first target's feet while the target glows. */
 void btEffectRunMirroredWall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	MODEL_TEXTURE		 texture;
 	SCREEN_POINT		 tgt;
 	RENDER_MODEL		*quad;
@@ -202,7 +202,7 @@ typedef void (*COPY_FUNC)(void *, const void *, Sint32);
 
 /* Where the effect's pictures are decoded before they are copied to OBJ
    VRAM. */
-#define DECODE_BUFFER			Ram_MapMetatileBuffer
+#define DECODE_BUFFER			RamMapMetatileBuffer
 /* The particles the sky scene, the fall and the second strike's sparks keep in
    EXTRA_PARTICLES. */
 #define DAEDALUS_PARTICLE_COUNT (DAEDALUS_MISSILE_COUNT * DAEDALUS_TRAIL_LENGTH)
@@ -448,17 +448,17 @@ void btEffectRunDaedalus(BATTLE_EFFECT_PARM *args)
 	/* Reused: the sky scene's ring radius, and the 0 the fall stores. */
 	Sint32 radius;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	dimMotes = Ram_HeapSlots->battleSheet;
-	view = Ram_HeapSlots->battleBg;
-	battle = Ram_HeapSlots->battleState;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	dimMotes = RamHeapSlots->battleSheet;
+	view = RamHeapSlots->battleBg;
+	battle = RamHeapSlots->battleState;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
 	btEffectFillWhiteBand();
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	state->transferMode = CANVAS_COPY;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	camera = 0;
@@ -1764,8 +1764,8 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 	FIXED				 rayX = toFIXED(66);
 	FIXED				 discY = toFIXED(80);
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	btEffectConfigureEffectDisp();
 	REG_WIN0V = WIN_RANGE(16, 128);
 	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -1776,7 +1776,7 @@ void btEffectRunDaedalusStrike(BATTLE_EFFECT_PARM *args)
 	btEffectShowLivingTargets(state->args);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	state->fadeFrm = BACKGROUND_DARKEN_TICKS;

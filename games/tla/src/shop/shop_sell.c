@@ -5,7 +5,7 @@
    until B or, at the forge, an item is taken. */
 Sint32 mnShopChooseMember(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		unitId = 0;
 	Sint32		memberIdx = 0;
 	WINDOW	   *listWin;
@@ -101,7 +101,7 @@ Sint32 mnShopSelectSell(Sint32 unitId)
 	Sint32		result;
 	Sint32		cnt;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	unit = syUnitGet(unitId);
 	slot = 0;
 	inventoryCnt = 1;
@@ -266,7 +266,7 @@ Sint32 mnShopSelectSellCount(Sint32 unitId, Sint32 slot)
 	SHOP_STATE		*shop;
 	UNIT			*unit;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	unit = syUnitGet(unitId);
 	item = gmItemGetDirectStub(unit->inventory[slot]);
 	result = 1;
@@ -297,7 +297,7 @@ void mnShopSellItem(Sint32 unitId, Sint32 slot, Sint32 cnt)
 {
 	SHOP_STATE *shop;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	{
 		UNIT  *unit = syUnitGet(unitId);
 		Sint32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;

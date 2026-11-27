@@ -30,7 +30,7 @@ typedef struct PREVIEW_SPR {
 
 /* The stat arrows a Djinni preview shows beside a stat that would rise or fall,
    16 by 16 pixels each (graphics/ui/pointing_hand.s). */
-extern Uint8 DjinnMenu_ArrowUpTiles[];
-extern Uint8 DjinnMenu_ArrowDownTiles[];
+extern Uint8 DjinnMenuArrowUpTiles[];
+extern Uint8 DjinnMenuArrowDownTiles[];
 
 #endif

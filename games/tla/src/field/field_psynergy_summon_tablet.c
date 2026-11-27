@@ -136,7 +136,7 @@ typedef struct SUMMON_TABLET_STATE {
 /* Event of fdSummonTabletPlayRunes: moves and draws the runes and pebbles. */
 void fdSummonTabletUpdateRunes(void)
 {
-	SUMMON_TABLET_STATE *state = Ram_HeapSlots->battleEff;
+	SUMMON_TABLET_STATE *state = RamHeapSlots->battleEff;
 	Sint32				 pos[3];
 	TABLET_PIECE		*piece;
 	EFFECT_SPR			*spr;
@@ -499,7 +499,7 @@ typedef struct ACTOR_FLAG {
    starts. */
 void fdFlagBlockPlaceAll(ACTOR_FLAG *actors)
 {
-	MAP_STATE  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE  *map = RamHeapSlots->mapGrid;
 	ACTOR_FLAG *list = actors;
 	ACTOR	   *leader;
 	Sint32		height;

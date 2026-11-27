@@ -28,7 +28,7 @@ typedef struct WORLD_MAP_METATILE {
 
 #define WORLD_MAP_BG_PALETTE ((Sint16 *)BG_PLTT)
 
-#define WORLD_MAP_METATILES ((WORLD_MAP_METATILE *)Ram_MetatileTiles)
+#define WORLD_MAP_METATILES ((WORLD_MAP_METATILE *)RamMetatileTiles)
 
 /* A world map tile is 16 by 16 metatiles. */
 #define WORLD_MAP_TILE_METATILES 16
@@ -100,7 +100,7 @@ Sint32 fdWorldMapWriteLayerMetatileTile(
 
 	/* A tile is 16 by 16 metatiles of 4 bytes. */
 	srcTiles = decodedTile;
-	quarterMetatiles = Ram_MetatileTiles + (((layer * 2 + y) * 32 + x) << 6);
+	quarterMetatiles = RamMetatileTiles + (((layer * 2 + y) * 32 + x) << 6);
 	for(rowIdx = 0; rowIdx < WORLD_MAP_TILE_METATILES; rowIdx++) {
 		syDMAXCopy(srcTiles, quarterMetatiles,
 			DMA_COPY_WORDS(WORLD_MAP_TILE_METATILES), REG_DMA3);
@@ -109,7 +109,7 @@ Sint32 fdWorldMapWriteLayerMetatileTile(
 	}
 
 	/* The affine BG map has one byte a tile, 64 to a row: each metatile's first
-	   halfword picks a metatile's tiles from Ram_MapGridMetatileBuffer, whose
+	   halfword picks a metatile's tiles from RamMapGridMetatileBuffer, whose
 	   two halfwords are its top two tiles and its bottom two, a row (64 bytes)
 	   below. */
 	if(update != 0) {
@@ -122,9 +122,9 @@ Sint32 fdWorldMapWriteLayerMetatileTile(
 				Uint16 *bottomTiles;
 
 				metatileTilesId = *srcTiles;
-				screenTiles[0] = *(
-					Uint16 *)(Ram_MapGridMetatileBuffer + metatileTilesId * 4);
-				bottomTiles = (Uint16 *)(Ram_MapGridMetatileBuffer + 2);
+				screenTiles[0] =
+					*(Uint16 *)(RamMapGridMetatileBuffer + metatileTilesId * 4);
+				bottomTiles = (Uint16 *)(RamMapGridMetatileBuffer + 2);
 				bottomTiles =
 					(Uint16 *)((Uint8 *)bottomTiles + metatileTilesId * 4);
 				screenTiles[WORLD_MAP_SCREEN_ROW_HALFWORDS] = *bottomTiles;
@@ -182,10 +182,10 @@ UNREAD_RESULT fdWorldMapInitPerspective(void)
 	REG_BLDY = 0;
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_DEFAULT_GRID_METATILES),
-		Ram_MapGridMetatileBuffer);
+		RamMapGridMetatileBuffer);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES),
-		Ram_MapGridShapes);
+		RamMapGridShapes);
 	/* The ground is BG3 and BG2, two 512-pixel affine layers that wrap (char
 	   blocks 2 and 3, screen blocks 8 and 10); BG1 is a plain layer on screen
 	   block 5. */
@@ -373,18 +373,17 @@ void fdWorldMapLoadGraphics(Sint32 x, Sint32 z)
 	syDMAXCopy(tiles, BG_CHAR_BLOCK(2),
 		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	syDecompressTaggedLZ(syResourceGetTableEntry(resources[2]),
-		Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES);
-	syDMAXCopy(Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES,
+		RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES);
+	syDMAXCopy(RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES,
 		BG_CHAR_BLOCK(2) + WORLD_MAP_TILE_SET_BYTES,
 		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	syDecompressTaggedLZ(syResourceGetTableEntry(resources[3]),
-		Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 2);
-	syDMAXCopy(Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 2,
-		BG_CHAR_BLOCK(3), DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4),
-		REG_DMA3);
+		RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 2);
+	syDMAXCopy(RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 2, BG_CHAR_BLOCK(3),
+		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	syDecompressTaggedLZ(syResourceGetTableEntry(resources[4]),
-		Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3);
-	syDMAXCopy(Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3,
+		RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3);
+	syDMAXCopy(RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3,
 		BG_CHAR_BLOCK(3) + WORLD_MAP_TILE_SET_BYTES,
 		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	syDecompressTaggedLZ(
@@ -489,7 +488,7 @@ static __inline__ void fdWorldMapCopyMetatileTiles(
 	Uint8 *metatileBytes, Uint8 *screenTile)
 {
 	Uint32	metatileTilesIdx = *(Uint16 *)metatileBytes;
-	Uint16 *metatileTiles = (Uint16 *)Ram_MapGridMetatileBuffer;
+	Uint16 *metatileTiles = (Uint16 *)RamMapGridMetatileBuffer;
 
 	metatileTiles += metatileTilesIdx * 2;
 	*(Uint16 *)screenTile = *metatileTiles++;
@@ -504,7 +503,7 @@ void fdWorldMapDrawMetatileRow(Uint32 tileRow)
 	Uint8 *screenTile;
 	Uint32 metatilesCopied;
 
-	srcMetatile = Ram_MetatileTiles + ((((Sint32)tileRow / 2) & 31) << 7);
+	srcMetatile = RamMetatileTiles + ((((Sint32)tileRow / 2) & 31) << 7);
 	screenTile = (Uint8 *)((Uint32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
 	metatilesCopied = 0;
 	do {
@@ -537,7 +536,7 @@ void fdWorldMapDrawMetatileColumn(Uint32 tileColumn)
 	Uint8 *screenTile;
 	Uint32 metatilesCopied;
 
-	srcMetatile = Ram_MetatileTiles + ((((Sint32)tileColumn / 2) & 31) << 2);
+	srcMetatile = RamMetatileTiles + ((((Sint32)tileColumn / 2) & 31) << 2);
 	screenTile = (Uint8 *)((Uint32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
 	metatilesCopied = 0;
 	do {
@@ -783,11 +782,11 @@ void fdWorldMapLoadAreaGraphics(void)
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(graphicsResources[1]), BgTileBuffer);
 	syDecompressTaggedLZ(syResourceGetTableEntry(graphicsResources[2]),
-		Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES);
+		RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES);
 	syDecompressTaggedLZ(syResourceGetTableEntry(graphicsResources[3]),
-		Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 2);
+		RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 2);
 	syDecompressTaggedLZ(syResourceGetTableEntry(graphicsResources[4]),
-		Ram_BgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3);
+		RamBgTileBuffer + WORLD_MAP_TILE_SET_BYTES * 3);
 	/* The VBlank copies the tiles back and the next tick shows the ground;
 	   only then is the still image's buffer refilled with the metatiles. */
 	VBlankCallback = fdWorldMapEndStillImage;

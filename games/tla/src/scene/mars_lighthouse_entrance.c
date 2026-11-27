@@ -283,7 +283,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    BLAZE_LONG_SPRAY over BLAZE_SPRAY, and each cast clears it as it starts. */
 UNUSED void scMarsLighthouseEntranceStartBlazeOnStatue(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->blazeLongSpray = 1;
 }
@@ -394,7 +394,7 @@ void scMarsLighthouseEntrancePlaceIceCones(Uint16 *tbl)
    spot. */
 void scMarsLighthouseEntrancePoundIceCone(Sint32 mode, Sint32 idx)
 {
-	FIELD_EFFECT_STATE *holder = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *holder = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor = fdActorGet(holder->tgtId);
 
 	if(idx <= 7) {
@@ -663,8 +663,8 @@ void scMarsLighthouseEntranceCrackLapisIceSheet(void)
 /* Felix casts Burst on the big sheet of ice in the east of the main hall
    (metatiles (29, 43) and (30, 43)), once the west torch's fireball has cracked
    it: it blows apart in fiery blasts and the way past it is clear. */
-DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstLapisIceSheet, 28, 92, 8,
-	100, 92, 38, 8, ACTOR_SECOND_ICE_SHEET, FLAG_LAPIS_SECOND_SHEET_BURST)
+DEFINE_BURST_ICE_SHEET(MarsLighthouseEntranceBurstLapisIceSheet, 28, 92, 8, 100,
+	92, 38, 8, ACTOR_SECOND_ICE_SHEET, FLAG_LAPIS_SECOND_SHEET_BURST)
 
 /* Each time Felix pushes or Moves the white dragon statue along the flame
    chamber, west of the room behind the burst ice wall, the game checks where it
@@ -829,7 +829,7 @@ void scMarsLighthouseEntranceHideTeleportCircle(void)
 /* Felix casts Burst on the sheet of ice the west torch's fireball cracked
    (metatiles (14, 42) and (15, 42)): it blows apart in fiery blasts and the
    lower passage is open. */
-DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstHiddenCircleIceSheet, 12, 95,
+DEFINE_BURST_ICE_SHEET(MarsLighthouseEntranceBurstHiddenCircleIceSheet, 12, 95,
 	6, 101, 76, 40, 5, ACTOR_HIDDEN_CIRCLE_ICE_SHEET,
 	FLAG_HIDDEN_CIRCLE_SHEET_BURST)
 
@@ -898,7 +898,7 @@ void scMarsLighthouseEntrancePushStatueIntoValkyrieFlames(
    metatile, so that he sinks out of sight through the hole. */
 void scMarsLighthouseEntranceDrawHoleMask(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   x = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   cameraZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32	   originY = map->origin[1];
@@ -990,7 +990,7 @@ void scMarsLighthouseEntranceFallIntoHole(Sint32 arg)
 	buf = MapGridMetatileBuffer;
 	x = FIELD_METATILE(actor->x.fixed);
 	z = FIELD_METATILE(actor->z.fixed);
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	if(map != NULL)
 		metatiles = map->layers[actor->layer & 3].metatiles;
 	else
@@ -1128,7 +1128,7 @@ void scMarsLighthouseEntranceJumpOrSlide(void)
    scMarsLighthouseEntranceFallThroughCrack shows; the others hold. */
 void scMarsLighthouseEntranceCheckCrackedFloor(void)
 {
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	ACTOR			   *actor;
 	Sint32				x;
@@ -1652,7 +1652,7 @@ void scMarsLighthouseEntranceKnockBackIfHit(void)
    metatile's centre over rounded ground. */
 int scMarsLighthouseEntranceRideFireball(void)
 {
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	FLAME_HIT_STATE *ride;
 	ACTOR			*leader;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -2602,7 +2602,7 @@ CUE MarsLighthouseEntranceLapisCues[] = {
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_BIG_ICE_SHEET,
 		IF_FLAG_SET(FLAG_LAPIS_SECOND_SHEET_SHOWN),
-		SCRIPT_REF(MarsLighthouseEntrance_BurstLapisIceSheet)},
+		SCRIPT_REF(MarsLighthouseEntranceBurstLapisIceSheet)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_LIT_TORCH, CONDITION_ALWAYS, 0},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
@@ -2699,7 +2699,7 @@ CUE MarsLighthouseEntranceHiddenCircleCues[] = {
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BEHAVIOR_CRACKED_ICE_WALL,
 		IF_FLAG_SET(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN),
-		SCRIPT_REF(MarsLighthouseEntrance_BurstHiddenCircleIceSheet)},
+		SCRIPT_REF(MarsLighthouseEntranceBurstHiddenCircleIceSheet)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
 		MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_TO_MARS_LIGHTHOUSE_ENTRANCE_BALM_NORTH_B,
 		CONDITION_ALWAYS,

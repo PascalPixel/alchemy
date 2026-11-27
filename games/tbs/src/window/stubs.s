@@ -1,7 +1,7 @@
 @ Window construction, text drawing and selection interfaces.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Window
-Stubs_Window:
+	.global StubsWindow
+StubsWindow:
 	stub mnWindowSystemInitFieldStub, mnWindowSystemInitField
 	stub mnWindowSystemInitBattleStub, mnWindowSystemInitBattle
 	stub mnWindowCreateStub, mnWindowCreate

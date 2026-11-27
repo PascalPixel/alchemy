@@ -1,4 +1,4 @@
-/* The File Screen overlay (SceneId_Clear), the first thing the player sees
+/* The File Screen overlay (SceneIdClear), the first thing the player sees
    after the title: the title logo, the file menu (new game, continue, copy,
    erase, the Battle Arena and Update) and what a new game asks. A new game may
    bring The Broken Seal's data over, by password or link cable
@@ -50,7 +50,7 @@ Sint32 scClearEnterPassword(void);
 extern Sint8 ClearCursorBob[];
 void		 scClearApplyImportedData(Sint32 mode, Uint8 *data);
 /* Decodes length symbols of an entered password (src) into dst, undoing The
-   Broken Seal's FileScreen_EncodePassword: each symbol less its place, the
+   Broken Seal's FileScreenEncodePassword: each symbol less its place, the
    checksum symbols skipped, six bits a symbol, then every byte but the last
    XORed with the last. Returns the bytes written. */
 Sint32		  scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst);
@@ -63,7 +63,7 @@ extern Uint8 ClearSecondPasswordRow[];
 extern Uint8 ClearThirdPasswordRow[];
 
 /* The password screen's grid of kana, a 24 by 13 window tilemap (tilemap.s). */
-extern Uint8 Clear_PasswordGrid[];
+extern Uint8 ClearPasswordGrid[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -112,9 +112,9 @@ void scClearLoadBackground(void)
 	syDMAXCopy(resource, (void *)BG_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
 	resource += LOGO_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ(resource, Ram_MapMetatileBuffer);
+	syFieldDecompressTaggedLZ(resource, RamMapMetatileBuffer);
 	/* A screen's worth of 8-bit tiles. */
-	syDMAXCopy((void *)Ram_MapMetatileBuffer, LOGO_TILES,
+	syDMAXCopy((void *)RamMapMetatileBuffer, LOGO_TILES,
 		DMA_COPY_WORDS(DISPLAY_WIDTH * DISPLAY_HEIGHT / 4), REG_DMA3);
 
 	tilemap = LOGO_MAP;
@@ -132,7 +132,7 @@ void scClearLoadBackground(void)
 		scroll++;
 	}
 	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->dispcnt =
+	((MAP_STATE *)RamHeapSlots->mapGrid)->dispcnt =
 		DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 	fdActorGet(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
 }
@@ -230,7 +230,7 @@ Sint32 scClearIsRetreatBlocked(void)
 /* Where the data a password or link screen brings in waits for
    gmDataTransferApply, as a save image: after the state set aside at the start
    of the map metatile buffer, free on this screen. */
-#define TRANSFERRED_SAVE (Ram_MapMetatileBuffer + BUP_IMAGE_BYTES)
+#define TRANSFERRED_SAVE (RamMapMetatileBuffer + BUP_IMAGE_BYTES)
 /* A save image from the game flags to the units' end: the flags, the main
    routine's state and the party's units. */
 #define BUP_IMAGE_STATE_BYTES \
@@ -248,11 +248,11 @@ Sint32 scClearIsRetreatBlocked(void)
 #define KEEP_SAVE_IMAGE() \
 	Uint8 *image = BupBuffer; \
 \
-	COPY_SAVE_IMAGE(Ram_MapMetatileBuffer, image)
+	COPY_SAVE_IMAGE(RamMapMetatileBuffer, image)
 #define RESTORE_SAVE_IMAGE() \
 	{ \
 		COPY_SAVE_IMAGE(TRANSFERRED_SAVE, image); \
-		COPY_SAVE_IMAGE(image, Ram_MapMetatileBuffer); \
+		COPY_SAVE_IMAGE(image, RamMapMetatileBuffer); \
 	}
 
 /* Goes back to the saved scene and entrance. */
@@ -614,7 +614,7 @@ Sint32 scPrepareMap(void)
 }
 
 /* The symbols of each level's password: The Broken Seal packs 173, 39 or 9
-   bytes (FileScreen_PackPasswordData), then two of its checksum, six bits a
+   bytes (FileScreenPackPasswordData), then two of its checksum, six bits a
    symbol and a tenth symbol after every nine. */
 #define PASSWORD_GOLD_LENGTH	  260
 #define PASSWORD_SILVER_LENGTH	  61
@@ -1273,8 +1273,7 @@ Sint32 scClearEnterPassword(void)
 					else if(row == KEY_ROW_FINISH)
 						action = PASSWORD_ACTION_FINISH;
 				} else if(cursor < length) {
-					Sint32 code =
-						Clear_PasswordGrid[column + row * SIDE_COLUMN];
+					Sint32 code = ClearPasswordGrid[column + row * SIDE_COLUMN];
 
 					if(code <= PASSWORD_SYMBOL_MASK) {
 						sySndPlay(SE_MENU_CONFIRM);
@@ -1447,7 +1446,7 @@ Sint32 scClearEnterPassword(void)
    metatile's tile the row times the window's width plus the column. */
 UNUSED void scClearFillTileGrid(WINDOW *win, const void *compressedTiles)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Uint16	  *shadow;
 	Uint16	  *vram;
 	void	  *decodedTiles;
@@ -1477,7 +1476,7 @@ UNUSED void scClearFillTileGrid(WINDOW *win, const void *compressedTiles)
    TILE_GRID_FIRST_TILE on. */
 UNUSED void scClearFillTileGridInOrder(WINDOW *win)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Uint16	  *shadow;
 	Uint16	  *vram;
 	void	  *buf;
@@ -1508,7 +1507,7 @@ extern Uint16 ClearImportedKeyItems[];
 extern Uint16 ClearImportedStackItems[];
 
 /* Applies a decoded password of level mode (PASSWORD_LEVEL) to Isaac's party:
-   the unpacking of The Broken Seal's FileScreen_PackPasswordData. */
+   the unpacking of The Broken Seal's FileScreenPackPasswordData. */
 void scClearApplyImportedData(Sint32 mode, Uint8 *in)
 {
 	Uint32 levelBits;
@@ -1680,7 +1679,7 @@ extern Uint16 ClearPasswordKeyItems[];
 
 /* Unused: packs the four heroes' data for a password of level mode (enum
    PASSWORD_LEVEL) as The Broken Seal's file screen does
-   (FileScreen_PackPasswordData), and returns the byte count. Nothing in this
+   (FileScreenPackPasswordData), and returns the byte count. Nothing in this
    game calls it. */
 UNUSED Sint32 scClearPackPasswordData(Sint32 unused, Sint32 mode, Uint8 *out)
 {
@@ -1936,7 +1935,7 @@ Sint32 scClearDecodePassword(Uint8 *src, Sint32 length, Uint8 *dst)
 }
 
 /* The password's checksum, as The Broken Seal's
-   FileScreen_CalculatePasswordCrc16 makes it: over length bytes at p, shifted a
+   FileScreenCalculatePasswordCrc16 makes it: over length bytes at p, shifted a
    bit at a time from PASSWORD_CRC_SEED, PASSWORD_CRC_POLYNOMIAL subtracted when
    the top bit falls out, and the result complemented. The password screen
    checks it against a decoded password's last PASSWORD_CRC_BYTES. */

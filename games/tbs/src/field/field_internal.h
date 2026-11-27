@@ -80,20 +80,20 @@ typedef enum METATILE_TILES_PACKING {
 /* Where a layout's tileset animation and blend scripts are decoded, in the
    space after the shapes; the world map decodes its tileset animation there
    too. */
-#define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 4096)
-#define MAPGRID_BLEND_SCRIPT	 (Ram_MapGridShapes + 7680)
+#define MAPGRID_ANIMATION_SCRIPT (RamMapGridShapes + 4096)
+#define MAPGRID_BLEND_SCRIPT	 (RamMapGridShapes + 7680)
 
 /* One of the world map area's four tile sets, half a character block; they are
    decoded one after another into BgTileBuffer. */
 #define WORLD_MAP_TILE_SET_BYTES 8192
 
-/* A row of SpritePictureCache_Sources: the packed resource that holds an
+/* A row of SpritePictureCacheSources: the packed resource that holds an
    animation number's pictures, ending at number 0. */
 typedef struct SPR_PICTURE_CACHE_SOURCE {
 	Uint16 resource;
 	Sint16 num;
 } SPR_PICTURE_CACHE_SOURCE;
 
-extern SPR_PICTURE_CACHE_SOURCE SpritePictureCache_Sources[];
+extern SPR_PICTURE_CACHE_SOURCE SpritePictureCacheSources[];
 
 #endif

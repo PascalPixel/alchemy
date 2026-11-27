@@ -4,12 +4,12 @@
 @ after it is never run.
 .syntax unified
 	.thumb
-	.global Grid_DrawOutline
+	.global GridDrawOutline
 	.thumb_func
-Grid_DrawOutline:
+GridDrawOutline:
 	.global fdGridDrawOutlineCode
 fdGridDrawOutlineCode:
 	bx	pc
-AlchemyUncredited_08021826:
+AlchemyUncredited08021826:
 	.2byte	0x0200
-AlchemyUncreditedEnd_08021826:
+AlchemyUncreditedEnd08021826:

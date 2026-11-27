@@ -30,7 +30,7 @@ typedef struct BATTLE_SPR_DEFINITION {
 STATIC_ASSERT(sizeof(BATTLE_SPR_DEFINITION) == 8);
 /* The units' battle sprite rows, by unit id 0 to 171: the eight characters',
    then the enemies' from ENEMY_ID_FIRST (battle_sprites.c), read by the
-   BattleSprite_ getters. */
+   getters in battle_sprite.c. */
 extern const BATTLE_SPR_DEFINITION BattleSprites[];
 
 /* A summon: its name's message and the Djinn of each element it needs. */

@@ -9,7 +9,7 @@
    it. */
 ACTOR *fdActorFindInMetatile(Sint32 *pos, ACTOR *self)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 i;
 	ACTOR	   **objects;
 	ACTOR		*actor;

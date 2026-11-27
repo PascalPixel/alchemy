@@ -16,7 +16,7 @@ extern MAP_METATILE MapGridMetatileBuffer[];
 Sint32 scMapMetatileSetAttributes(
 	Uint32 layer, Sint32 x, Sint32 z, Sint32 value)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatile;
 	Sint32		  old;
 

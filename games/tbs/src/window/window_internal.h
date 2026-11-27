@@ -236,6 +236,6 @@ enum {
 
 /* Each message context bank's Huffman models and their offsets, which the
    message catalog built from games/tbs/text defines. */
-extern const void *const Text_MessageContexts[][2];
+extern const void *const TextMessageContexts[][2];
 
 #endif

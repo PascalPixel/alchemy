@@ -11,6 +11,7 @@
  */
 #include "resource.h"
 #include "../shared/assembly.h"
+#include <ctype.h>
 
 typedef struct
 {
@@ -304,10 +305,33 @@ readBank(const char *input, const char *edition)
 	return b;
 }
 
+/*
+ * BATTLE_ISAAC and Animation0 -> SpriteBattleIsaacAnimation0: the sprite's
+ * name in mixed case, a word in capitals written with one, after Sprite.
+ */
 static char *
 spriteLabel(const char *name, const char *item)
 {
-	return formatString("Sprite_%s_%s", name, item);
+	char *mixed = formatString("%s", name), *to = mixed;
+	for (const char *word = name; *word;)
+	{
+		size_t n = strcspn(word, "_");
+		bool capitals = true;
+		for (size_t i = 0; i < n; i++)
+			if (islower((unsigned char) word[i]))
+				capitals = false;
+		for (size_t i = 0; i < n; i++)
+			*to++ = i == 0 ? (char) toupper((unsigned char) word[i])
+			      : capitals ? (char) tolower((unsigned char) word[i])
+			                 : word[i];
+		word += n;
+		while (*word == '_')
+			word++;
+	}
+	*to = 0;
+	char *s = formatString("Sprite%s%s", mixed, item);
+	free(mixed);
+	return s;
 }
 
 static void

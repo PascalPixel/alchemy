@@ -1,6 +1,6 @@
 /* Gondowan Passage and Gondowan Cave, south and south-east of Tolbi.
 
-   Gondowan Passage (SceneId_GondowanPassage) is the bridge from Tolbi into
+   Gondowan Passage (SceneIdGondowanPassage) is the bridge from Tolbi into
    Gondowan: a gatehouse at its north end, three soldiers in spiked helmets at
    the gate, then a drawbridge and a long stone bridge running south over the
    water. The soldiers swear nobody gets through the cave to the east to Kalay.
@@ -11,11 +11,11 @@
    makes him step out and ask why. Retreat does not work on the bridge
    (FLAG_RETREAT_BLOCKED).
 
-   Gondowan Cave (SceneId_GondowanCave) is the way the soldiers say is
+   Gondowan Cave (SceneIdGondowanCave) is the way the soldiers say is
    impossible: a cave from the world map east of the bridge through to the Kalay
    side. Its west mouth opens on a passage that forks. The right fork, the short
    way to the east cave, is blocked by a boulder that only Lift clears. The left
-   fork leads to the river room (SceneId_GondowanCaveRiver), where Isaac hops
+   fork leads to the river room (SceneIdGondowanCaveRiver), where Isaac hops
    along a line of posts in the water to the chest on its islet, and from there
    into the east cave. In the east cave Move sends a stump off its ledge into
    the water, where it floats as one more post to hop on, and the tall pillar by

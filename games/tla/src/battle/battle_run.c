@@ -24,7 +24,7 @@ void btPartySwapInReserves(void)
 	Sint32		  actorCnt;
 	Sint32		  reserveCnt;
 	Sint32		  cnt;
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  i;
 
 	if(btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
@@ -52,7 +52,7 @@ void btPartySwapInReserves(void)
 	}
 	for(i = 0; i < cnt; i++)
 		MainRoutineStateWork.party[actorCnt + i] = actors[i];
-	mnPartyStatDrawStub(Ram_HeapSlots->battleState->partyStat);
+	mnPartyStatDrawStub(RamHeapSlots->battleState->partyStat);
 	btObjectPut();
 	btHighlightSetModes(reserves, HIGHLIGHT_FADE_IN);
 	sySynch(32);
@@ -83,7 +83,7 @@ void btCameraCreate(void)
    The form change's battle effect calls it through its stub call. */
 void btChangeEnemyForm(Sint32 id)
 {
-	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE  *battle = RamHeapSlots->battleState;
 	Sint32		   unit;
 	BATTLE_OBJECT *battleObject;
 
@@ -160,7 +160,7 @@ Sint32 btRun(Sint32 enemyGroup)
 		HEAP_SLOT_BATTLE_BACKGROUND, sizeof(BATTLE_BACKGROUND_STATE));
 	syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_UNUSED, 640);
 	result = 0;
-	syWordsClearEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
+	syWordsClearEntry(RamHeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
 	syInitEvent();
 	background->tgtYaw = YAW_PARTY_ACTION;
 	background->ticks = 0;
@@ -181,7 +181,7 @@ Sint32 btRun(Sint32 enemyGroup)
 	battle->formation = enemyGroup;
 	syHeapSlotAllocEWRAM(
 		HEAP_SLOT_BATTLE_MESSAGE, sizeof(BATTLE_MESSAGE_STATE));
-	IWRAM_FILL_WORDS(Ram_HeapSlots->battleMsg, sizeof(BATTLE_MESSAGE_STATE), 0);
+	IWRAM_FILL_WORDS(RamHeapSlots->battleMsg, sizeof(BATTLE_MESSAGE_STATE), 0);
 	battle->bg = fdBattleBackgroundGetSelectedStub();
 	syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITES, 3584);
 	syHeapSlotAllocEWRAM(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
@@ -212,7 +212,7 @@ Sint32 btRun(Sint32 enemyGroup)
 			}
 		}
 		battle->linkSide = SIO_ID_OF(REG_SIOCNT);
-		enemyUnitDst = Ram_HeapSlots->enemyUnits;
+		enemyUnitDst = RamHeapSlots->enemyUnits;
 		for(copyIdx = 0; copyIdx < ENEMY_UNITS_SIZE; copyIdx++)
 			*enemyUnitDst++ = ActorSpriteSlots[copyIdx];
 		enemyCnt = syGameFlagGetByte(FLAG_AREA_TEMP_F0);
@@ -492,7 +492,7 @@ Sint32 btPartyPrepareMembers(Uint16 *owners)
 	Sint32 idx;
 
 	limit = PARTY_BATTLE_SIZE;
-	if(Ram_HeapSlots->battleState->isLink != 0)
+	if(RamHeapSlots->battleState->isLink != 0)
 		limit = LINK_PARTY_SIZE;
 
 	cnt = gmPartyCountMembersStub();
@@ -525,7 +525,7 @@ Sint32 btPartyPrepareReserveOwners(Uint16 *owners)
 		cnt -= PARTY_BATTLE_SIZE;
 	else
 		cnt = 0;
-	if(Ram_HeapSlots->battleState->isLink != 0)
+	if(RamHeapSlots->battleState->isLink != 0)
 		cnt = 0;
 
 	for(idx = 0; idx < cnt; idx++) {
@@ -712,7 +712,7 @@ Sint32 btUnitListIds(Sint32 sideMask, Uint16 *unitIds)
 	Sint32		  cnt;
 	Sint32		  i;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	cnt = 0;
 	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
 		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -744,7 +744,7 @@ Sint32 btUnitListLivingIds(Sint32 sideMask, Uint16 *unitIds)
 	Sint32		  cnt;
 	Sint32		  i;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	cnt = 0;
 	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
 		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {

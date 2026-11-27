@@ -548,7 +548,7 @@ Sint32 scInit(void)
 		ACTOR_PRIORITY_IGNORES_RISES;
 	fdEffectStartBlankOverlay(0);
 	if(MainRoutineStateWork.next == SCENE_MADRA_ROOMS_HOUSES) {
-		event = Ram_HeapSlots->fieldState;
+		event = RamHeapSlots->fieldState;
 		event->psynergyDrawFlg =
 			PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;
 		if(!fdScriptGetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {

@@ -182,7 +182,7 @@ UNREAD_RESULT fdWorldMapInitPerspective(void)
 			cameraPos, affineState->scanlines);
 		ScanlineAngle = 0;
 		ScanlinePitch = perspective->pitch;
-		((void (*)(void *, Sint32 *, void *, void *))Ram_HeapSlots->ramCode)(
+		((void (*)(void *, Sint32 *, void *, void *))RamHeapSlots->ramCode)(
 			camera, cameraPos, affineState->scanlines,
 			affinePages[TickCount & 1]);
 		/* Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an
@@ -233,7 +233,7 @@ void fdWorldMapSetWindowMetatileTile(
 	Sint32			originY;
 	Sint32			tile;
 
-	perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	originX = 0;
 	originY = 0;
 	followedPos = perspective->origin;
@@ -274,10 +274,10 @@ void fdWorldMapSetWindowMetatileTileAndDraw(
 	Sint32			originY;
 	Sint32			tile;
 
-	perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	/* LEFTOVER(template): the followed point, taken and scaled exactly as
 	 * fdWorldMapSetWindowMetatileTile above (and The Broken Seal's
-	 * WorldMap_SetGridTile) take it for their test of the view; this routine
+	 * WorldMapSetGridTile) take it for their test of the view; this routine
 	 * draws without that test, so nothing reads it; as the routine without
 	 * these lines. */
 	originX = 0;
@@ -320,7 +320,7 @@ void fdWorldMapLoadGraphics(Sint32 x, Sint32 z)
 	Sint32				column;
 
 	buf = syHeapAlloc(BG_PLTT_SIZE);
-	perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	block = &((WORLD_MAP_METATILE *)
 			syRamMapBlocks)[((x / toFIXED(WORLD_MAP_METATILE_PIXELS)) &
 								(WORLD_MAP_VIEW_METATILES - 1)) +
@@ -346,11 +346,11 @@ void fdWorldMapLoadGraphics(Sint32 x, Sint32 z)
 	fdTilesetAnimStartAll((const Uint16 *)MAPGRID_ANIMATION_SCRIPT);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(resources[WORLD_MAP_SET_METATILE_ATTRIBUTES]),
-		Ram_MapCollision);
+		RamMapCollision);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(resources[WORLD_MAP_SET_TILES_1]),
-		Ram_BgTileBuffer);
-	syDMAXCopy(Ram_BgTileBuffer, BG_CHAR_BLOCK(2),
+		RamBgTileBuffer);
+	syDMAXCopy(RamBgTileBuffer, BG_CHAR_BLOCK(2),
 		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(resources[WORLD_MAP_SET_TILES_2]),
@@ -412,10 +412,10 @@ void fdWorldMapApplyAffinePage(void)
 {
 	WORLD_MAP_AFFINE_PAIR(*affinePages)
 	[DISPLAY_HEIGHT] =
-		((WORLD_MAP_AFFINE_STATE *)Ram_HeapSlots->worldMapAffine)->pages;
+		((WORLD_MAP_AFFINE_STATE *)RamHeapSlots->worldMapAffine)->pages;
 	Sint32			displayControl = (Sint16)(REG_DISPCNT & ~DISPCNT_MODE_MASK);
 	Uint32		   *affineRegisters = (Uint32 *)&REG_BG2PA;
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	volatile Uint16 *dma0 = REG_DMA0;
 	Uint32			*affineSrc;
 	Uint32			 mode;
@@ -473,7 +473,7 @@ static __inline__ void fdWorldMapCopyMetatileTiles(
 	Uint8 *metatileBytes, Uint8 *screenTile)
 {
 	Uint32	metatileTilesIdx = *(Uint16 *)metatileBytes;
-	Uint16 *metatileTiles = (Uint16 *)Ram_MapMetatileBuffer;
+	Uint16 *metatileTiles = (Uint16 *)RamMapMetatileBuffer;
 
 	metatileTiles += metatileTilesIdx * 2;
 	*(Uint16 *)screenTile = *metatileTiles++;
@@ -544,9 +544,9 @@ void fdWorldMapDrawMetatileColumn(Uint32 tileColumn)
    shakes. */
 void fdWorldMapUpdateView(void)
 {
-	BATTLE_CAMERA		   *camera = Ram_HeapSlots->cameraState;
-	WORLD_MAP_AFFINE_STATE *affineState = Ram_HeapSlots->worldMapAffine;
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	BATTLE_CAMERA		   *camera = RamHeapSlots->cameraState;
+	WORLD_MAP_AFFINE_STATE *affineState = RamHeapSlots->worldMapAffine;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	Sint32		   *cameraPos = camera->focus;
 	Sint32		   *followedPos = perspective->origin;
 	WORLD_MAP_AFFINE_PAIR(*affinePages)[DISPLAY_HEIGHT] = affineState->pages;
@@ -637,14 +637,14 @@ void fdWorldMapUpdateView(void)
 		ScanlineAngle = 0;
 		ScanlinePitch = perspective->pitch;
 	}
-	((void (*)(void *, Sint32 *, void *, void *))Ram_HeapSlots->ramCode)(
+	((void (*)(void *, Sint32 *, void *, void *))RamHeapSlots->ramCode)(
 		camera, cameraPos, affineState->scanlines, affinePages[TickCount & 1]);
 }
 
 /* Loads and draws the 2x2 world map tiles around the player in both layers. */
 void fdWorldMapUpdateCurrentTileBlock(void)
 {
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	Sint32			firstQuarterX = 0;
 	Sint32			firstQuarterY = 0;
 	Uint32			layer;

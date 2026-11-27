@@ -2,20 +2,20 @@
 	.include "enums/game/main_routine_state.inc"
 
 @ Every scene (SCENE), in the order that numbers them: a named row gives
-@ SceneId_NAME its number, which C reads at link time (scene_ids.h). Each row is
+@ SceneIdNAME its number, which C reads at link time (scene_ids.h). Each row is
 @ the overlay the scene loads, by the name its row of the resource directory
-@ gives it (OverlayId_NAME), its area (AREA_ID), its type (SCENE_TYPE),
-@ its map, by the name its row of MapsWork gives it (MapIndex_NAME,
+@ gives it (OverlayIdNAME), its area (AREA_ID), its type (SCENE_TYPE),
+@ its map, by the name its row of MapsWork gives it (MapIndexNAME,
 @ field/map_resources.s), and its attributes, two nibbles
 @ gmFieldGetSceneAttributes reads on arrival.
 	.macro scene name, overlay:req, area:req, kind:req, map:req, attributes:req
 	.ifnb \name
-	.global SceneId_\name
-	.equiv SceneId_\name, (. - ScenesWork) / 8
+	.global SceneId\name
+	.equiv SceneId\name, (. - ScenesWork) / 8
 	.endif
-	.2byte OverlayId_\overlay
+	.2byte OverlayId\overlay
 	.byte \area, \kind
-	.2byte MapIndex_\map, \attributes
+	.2byte MapIndex\map, \attributes
 	.endm
 
 	.section .rodata

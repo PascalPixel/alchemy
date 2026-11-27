@@ -7,7 +7,7 @@ void scFlameUpdateForward(ACTOR *flame)
 {
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 	ACTOR			*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	FIXED			 dx = flame->bounce;
 	FIXED			 dz;
 	Sint32			 i;

@@ -424,7 +424,7 @@ void scContigoFreedDjinniJoinsParty(void)
    the leader is right by it. */
 Sint32 scContigoPauseWhenFaced(ACTOR *self)
 {
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
 	Uint8			   *state;
 	Uint32				mode;
 	FIELD_EFFECT_STATE *effect;
@@ -436,7 +436,7 @@ Sint32 scContigoPauseWhenFaced(ACTOR *self)
 	mode = ABILITY_ID(event->psynergy);
 	state = &self->paused;
 	if(mode == ABILITY_MIND_READ) {
-		effect = Ram_HeapSlots->fieldEffState;
+		effect = RamHeapSlots->fieldEffState;
 		if((Sint8)effect->msgShown != 0)
 			goto stand;
 	}
@@ -1052,7 +1052,7 @@ void scContigoAskAboutGeoglyph(void)
    to Felix to talk, but not for Mind Read, and turns back after. */
 void scContigoTalkToDoubtingBoy(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
 	Sint16		 ang = actor->facing;
 
@@ -1101,7 +1101,7 @@ void scContigoTalkToDoubtingBoy(void)
    to talk, but not for Mind Read, and turns back after. */
 void scContigoTalkAboutTheShip(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(ACTOR_GIRL_ON_THE_SHIP);
 	Sint16		 angle = actor->facing;
 
@@ -1314,7 +1314,7 @@ typedef enum CONTIGO_RAISED_CUE { RAISED_SALT_FOUND = 200 } CONTIGO_RAISED_CUE;
 void scContigoScoopForSalt(void)
 {
 	if(!syGameFlagGet(FLAG_DJINNI(DJINNI_SALT))) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(1);

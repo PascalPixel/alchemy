@@ -57,17 +57,17 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 
 	/* Set up: the canvas layer, the vortex sprite sheet and two blitters, the
 	   one on the right mirrored. landed is nonzero once a bubble has struck. */
-	landed = (Sint8 *)Ram_MapMetatileBuffer;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	landed = (Sint8 *)RamMapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_VORTEX_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 	REG_BLDALPHA = BLEND_ALPHA(15, 15);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	/* The bubbles start at the top of the user, at random velocities. */
 	src = btObjectGetStub(args->user)->obj;
@@ -98,7 +98,7 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 
 	for(frm = 0; frm != VorticesCounts[args->variant][FROTH_TICKS]; frm++) {
 		/* The camera turns between ticks 17 and 63. */
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		if(frm >= 17 && frm < 64)
 			state->cameraDelta = TRIG_TURN * 3 / 512;
 		else
@@ -206,16 +206,16 @@ void btEffectRunWhirlwind(BATTLE_EFFECT_PARM *args)
 
 	/* Set up: the canvas layer, the tornado sprite sheet and two max blitters,
 	   the second mirrored. */
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	/* The glints start at random places in their funnel, staggered in time. */
 	for(j = 0; j != WHIRLWIND_GLINTS; j++) {

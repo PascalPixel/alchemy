@@ -94,9 +94,9 @@ syDecompressByteLZArm:
 	beq	.Lbyte_match_long
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
-AlchemyUncredited_decode_byte_lz_1:
+AlchemyUncreditedDecodeByteLz1:
 	nop
-AlchemyUncreditedEnd_decode_byte_lz_1:
+AlchemyUncreditedEndDecodeByteLz1:
 	ldrb	r3, [r4], #1
 	strb	r3, [r1], #1
 	ldrb	r3, [r4], #1
@@ -141,10 +141,10 @@ AlchemyUncreditedEnd_decode_byte_lz_1:
 	and	ip, r3, #15
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
-AlchemyUncredited_decode_byte_lz_2:
+AlchemyUncreditedDecodeByteLz2:
 	nop
 .Lbyte_match_block:
-AlchemyUncreditedEnd_decode_byte_lz_2:
+AlchemyUncreditedEndDecodeByteLz2:
 	ldrb	r2, [r4], #1
 	strb	r2, [r1], #1
 	ldrb	r2, [r4], #1

@@ -109,11 +109,11 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /* WIN_STATE.glyphResource when no glyph resource is loaded. */
 #define NO_GLYPH_RESOURCE 99
 
-/* The last code the main font draws (Font_Glyphs, from TEXT_SPACE) and the
-   window tiles cover; a code above it is a kanji (Font_KanjiGlyphs). */
+/* The last code the main font draws (FontGlyphs, from TEXT_SPACE) and the
+   window tiles cover; a code above it is a kanji (FontKanjiGlyphs). */
 #define TEXT_LAST_FONT_CODE 255
 /* In Japanese, the first kanji's code: the codes after the font's are kanji
-   (Font_KanjiGlyphs). */
+   (FontKanjiGlyphs). */
 #define KANJI_FIRST_CODE	(TEXT_LAST_FONT_CODE + 1)
 
 /* The window system's state: the windows' tilemap, the windows, the three text
@@ -409,7 +409,7 @@ enum {
 	WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
 };
 
-/* The command icons (ResourceId_CommandIcons), each drawn with the command name
+/* The command icons (ResourceIdCommandIcons), each drawn with the command name
    of the same number (MsgCommandName + icon). */
 typedef enum COMMAND_ICON {
 	COMMAND_ICON_ATTACK = 0,
@@ -530,7 +530,7 @@ typedef enum ICON_KIND {
 #define ICON_BROKEN			 8
 /* Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED. */
 #define ICON_EQUIPPED		 16
-/* Mark 2, Icon_MarkCursed, on a cursed item that cannot be unequipped
+/* Mark 2, IconMarkCursed, on a cursed item that cannot be unequipped
    (ITEM_CURSED and ITEM_CANNOT_UNEQUIP) when its code has
    INVENTORY_EQUIPPED. */
 #define ICON_CURSED			 32

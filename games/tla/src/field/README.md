@@ -323,7 +323,7 @@ those few functions into the console's fast memory and runs them there.
   [`field_state.h`](../../include/field/field_state.h): The Broken Seal's,
   with the Psynergy state the sequel adds at its end. The field mode,
   the script commands and every scene read it through
-  `Ram_HeapSlots->fieldState` or `FieldStateWork`.
+  `RamHeapSlots->fieldState` or `FieldStateWork`.
 - [`field_psynergy.c`](field_psynergy.c) is most of the Psynergy the sequel
   adds, its parts `field_psynergy_*.c`. The parts share the field
   Psynergy's state, `FIELD_EFFECT_STATE` in

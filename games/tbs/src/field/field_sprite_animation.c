@@ -14,7 +14,7 @@ enum {
 	/* Priority 2, the field's for its sprites: in front of a map layer at 3, or
 	   at 2 since a sprite wins a tie, and behind one at 1. */
 	ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2),
-	/* Rows of SpritePictureCache_Sources searched, at most. */
+	/* Rows of SpritePictureCacheSources searched, at most. */
 	PICTURE_CACHE_SOURCES_MAX = 256,
 	/* Picture offsets at the head of a decoded set, at most. */
 	PICTURE_CACHE_PICTURES_MAX = 256,
@@ -24,7 +24,7 @@ enum {
 };
 
 /* Loads the pictures of animation `num` into picture cache `slot`, at
-   `buf`: the resource SpritePictureCache_Sources lists for it, decoded, its
+   `buf`: the resource SpritePictureCacheSources lists for it, decoded, its
    picture offsets turned into pointers, and for variant 1 to 5 its colours of
    the basic sprite palettes recoloured through that variant's table (a variant
    above 5 takes variant 1's). Returns the size of one picture in pixels, or 0
@@ -55,7 +55,7 @@ Sint32 fdSprPictureCacheLoad(
 	record->pictures = buf;
 
 	/* Resolve the animation number to its packed resource. */
-	entry = SpritePictureCache_Sources;
+	entry = SpritePictureCacheSources;
 	for(cnt = 0; cnt < PICTURE_CACHE_SOURCES_MAX; cnt++) {
 		Sint16 *numbers = &entry->num;
 
@@ -430,7 +430,7 @@ void fdActorSystemConfigure(Sint32 mode)
 	DMA_FILL32_CELL(zero, 0, sprs, ANIM_OBJECT_COUNT * sizeof(SPR));
 	DMA_FILL32_CELL(zero, 0, layers, ANIM_OBJECT_COUNT * sizeof(SPR_ANIMATION));
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_ACTOR_SHADOW, ANIM_SHADOW_TILE_BYTES,
-		Actor_ShadowTiles);
+		ActorShadowTiles);
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_PICTURE_UPLOADER, fdTileCopyStrided,
 		fdTileCopyStridedCodeSize);
 }

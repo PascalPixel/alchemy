@@ -142,7 +142,7 @@ const CUE *scGetCues(void)
    rope and shows the stake sunk flat. */
 Sint32 scInit(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->sceneAttributeHigh = 0;
@@ -164,7 +164,7 @@ Sint32 scPrepareMap(void)
    picture one of eight as it ages, and falls. */
 void dbPsynergyTest2UpdateRocks(void)
 {
-	ROCK_PARTICLE_STATE *state = Ram_HeapSlots->menuState;
+	ROCK_PARTICLE_STATE *state = RamHeapSlots->menuState;
 	PARTICLE			*particle = state->rocks;
 	EFFECT_SPR			*spr = state->sprs;
 	Sint32				 i;
@@ -227,7 +227,7 @@ CUE SceneCues[] = {
    random angle and flies up and outward. */
 void dbPsynergyTest2SpawnRocks(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 {
-	ROCK_PARTICLE_STATE *state = Ram_HeapSlots->menuState;
+	ROCK_PARTICLE_STATE *state = RamHeapSlots->menuState;
 	PARTICLE			*rock;
 	Sint32				 ang;
 	Sint32				 i;
@@ -290,7 +290,7 @@ void dbPsynergyTest2StartRocks(void)
 /* Stops the rocks and frees their tiles and state. */
 void dbPsynergyTest2EndRocks(void)
 {
-	ROCK_PARTICLE_STATE *state = Ram_HeapSlots->menuState;
+	ROCK_PARTICLE_STATE *state = RamHeapSlots->menuState;
 
 	syFieldCloseEvent(dbPsynergyTest2UpdateRocks);
 	syVRAMCacheFreeEntry(state->resource);

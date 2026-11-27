@@ -9,10 +9,10 @@ mnTileExpandOpaqueCode:
 	.thumb_func
 mnTileExpandOpaque:
 	bx	pc
-AlchemyUncredited_08038e32:
+AlchemyUncredited08038e32:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08038e32:
+AlchemyUncreditedEnd08038e32:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #100
 	ldm	sl, {r4, r6, r7}

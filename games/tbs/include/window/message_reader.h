@@ -14,7 +14,7 @@ typedef struct MESSAGE_READER {
 	   tree the next symbol is read with. */
 	Uint32 prevCode;
 	/* The message's next byte of bits, a byte pointer despite its type:
-	   Text_DecodeSymbol, the ARM function mnMessageDecode runs, reads it a byte
+	   TextDecodeSymbol, the ARM function mnMessageDecode runs, reads it a byte
 	   at a time, as does the unused C form, mnTextDecodeSymbolInC. */
 	const Uint32 *words;
 	/* The current byte's unread bits, lowest first, under a marker bit; empty

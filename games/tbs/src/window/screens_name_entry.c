@@ -144,10 +144,10 @@ void mnNameEntryLoadPointingHandTiles(Sint32 slot)
 	syVRAMCacheLoad(slot, 2 * 2 * TILE_SIZE_4BPP, PointingHandTiles);
 }
 
-/* Loads the 16x16 sprite NameEntry_CaretTiles into VRAM slot `slot`. */
+/* Loads the 16x16 sprite NameEntryCaretTiles into VRAM slot `slot`. */
 void mnNameEntryLoadCaretTiles(Sint32 slot)
 {
-	syVRAMCacheLoad(slot, 2 * 2 * TILE_SIZE_4BPP, NameEntry_CaretTiles);
+	syVRAMCacheLoad(slot, 2 * 2 * TILE_SIZE_4BPP, NameEntryCaretTiles);
 }
 
 /* The name entry screen: a keyboard window of letter keys, with a column of
@@ -271,7 +271,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	nameWin = (WINDOW *)mnWindowCreate(
 		8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);
 	mnPortraitOpenWindow(mnPortraitGetForSpeaker(member), 0, 3, 1);
-	mnWindowCopyTilemapRegion(keyboardWin, NameEntry_KeyboardTilemap);
+	mnWindowCopyTilemapRegion(keyboardWin, NameEntryKeyboardTilemap);
 #if NAME_KEY_LABELS
 	mnTextDrawStringInWindow(NameEntryDeleteKeyLabel, keyboardWin, 144, 32);
 	mnTextDrawStringInWindow(NameEntryEndKeyLabel, keyboardWin, 144, 40);
@@ -311,7 +311,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	}
 	vramSlot = syVRAMCacheFindFreeEntry();
 	if(vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-		syVRAMCacheLoad(vramSlot, 2 * 2 * TILE_SIZE_4BPP, NameEntry_CaretTiles);
+		syVRAMCacheLoad(vramSlot, 2 * 2 * TILE_SIZE_4BPP, NameEntryCaretTiles);
 		spr = mnWindowSprCreate(
 			vramSlot, WINDOW_SPRITE_SIZE_16X16, keyboardWin, 0, 0);
 		nameCaret.spr = spr;
@@ -539,7 +539,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	keyboardWin = (WINDOW *)mnWindowCreate(3, 6, 24, 13, WINDOW_FLAG_INSTANT);
 	nameWin = (WINDOW *)mnWindowCreate(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
 	mnPortraitOpenWindow(mnPortraitGetForSpeaker(member), 0, 3, 1);
-	mnWindowCopyTilemapRegion(keyboardWin, NameEntry_KeyboardTilemap);
+	mnWindowCopyTilemapRegion(keyboardWin, NameEntryKeyboardTilemap);
 	mnWindowDrawDividerLine(keyboardWin, 18, 0, 18, 12);
 	state->dirty = 1;
 	/* A zero byte before editedName: the letter before the first, which
@@ -575,7 +575,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	}
 	vramSlot = syVRAMCacheFindFreeEntry();
 	if(vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-		syVRAMCacheLoad(vramSlot, 2 * 2 * TILE_SIZE_4BPP, NameEntry_CaretTiles);
+		syVRAMCacheLoad(vramSlot, 2 * 2 * TILE_SIZE_4BPP, NameEntryCaretTiles);
 		spr = mnWindowSprCreate(
 			vramSlot, WINDOW_SPRITE_SIZE_16X16, keyboardWin, 0, 0);
 		nameCaret.spr = spr;
@@ -712,10 +712,10 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 			keyboard ^= 1;
 			if(keyboard)
 				mnWindowCopyTilemapRegion(
-					keyboardWin, NameEntry_AlternateKeyboardTilemap);
+					keyboardWin, NameEntryAlternateKeyboardTilemap);
 			else
 				mnWindowCopyTilemapRegion(
-					keyboardWin, NameEntry_KeyboardTilemap);
+					keyboardWin, NameEntryKeyboardTilemap);
 			mnWindowDrawDividerLine(keyboardWin, 18, 0, 18, 12);
 			state->dirty = 1;
 			continue;

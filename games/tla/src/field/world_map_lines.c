@@ -39,7 +39,7 @@ void fdWorldMapUpdateAffineLines(VECTOR3 *eye, VECTOR3 *tgt,
 	FIXED					 negativeSinYaw;
 	Sint32					 scanline;
 	Sint32					 depth;
-	const SYSTEM_STUB_TABLE *tbl = &Stubs_System;
+	const SYSTEM_STUB_TABLE *tbl = &StubsSystem;
 
 	{
 		Sint32 tgtDeltaX = tgt->x;

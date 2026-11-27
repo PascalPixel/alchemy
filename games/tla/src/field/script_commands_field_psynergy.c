@@ -7,7 +7,7 @@
    (fdPsynergyDrawCanvasSpr) and frees its VRAM cache entry. */
 void fdPsynergyReleaseSceneSpr(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 
 	if(effectState->sprActive != 0) {
 		effectState->sprActive = 0;
@@ -20,8 +20,8 @@ void fdPsynergyReleaseSceneSpr(void)
    world map's blocks or the metatile buffer by the script state's mode. */
 MAP_METATILE *fdMapGridGetMetatileAt(Sint32 x, Sint32 z, Sint32 layer)
 {
-	FIELD_STATE	 *event = Ram_HeapSlots->fieldState;
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	FIELD_STATE	 *event = RamHeapSlots->fieldState;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatiles;
 
 	if(event->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -35,7 +35,7 @@ MAP_METATILE *fdMapGridGetMetatileAt(Sint32 x, Sint32 z, Sint32 layer)
 		if(layer <= MAPGRID_LAYER_OVERHEAD)
 			metatiles = map->layers[layer].metatiles;
 		else
-			metatiles = (MAP_METATILE *)Ram_MapMetatileBuffer;
+			metatiles = (MAP_METATILE *)RamMapMetatileBuffer;
 		metatiles = &metatiles[x / toFIXED(MAPGRID_METATILE_PIXELS) +
 			(z / toFIXED(MAPGRID_METATILE_PIXELS)) * MAPGRID_SIZE];
 	}
@@ -48,7 +48,7 @@ MAP_METATILE *fdMapGridGetMetatileAt(Sint32 x, Sint32 z, Sint32 layer)
    is set). */
 Sint32 fdMapGridCanScoop(Sint32 x, Sint32 z, Sint32 layer)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	if(event->mode == ACTOR_SYSTEM_WORLD_MAP)
 		return fdMapGridIsSandMetatile(x, z, layer);
@@ -88,7 +88,7 @@ Sint32 fdMapGridIsHoverMetatile(Sint32 x, Sint32 z, Sint32 layer)
    FIELD_STATE.sceneAttributeHigh turns the answer round. */
 Sint32 fdMapGridIsSandMetatile(Sint32 x, Sint32 z, Sint32 layer)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Sint32		 column = x;
 	if(event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		Sint32 pos[3];
@@ -123,7 +123,7 @@ Uint8 fdMapGridIsClimbableMetatile(Sint32 x, Sint32 z, Sint32 layer)
    WORLD_MAP_COLLISION_SEA_LAST. */
 Sint32 fdMapGridIsWaterMetatile(Sint32 x, Sint32 z, Sint32 layer)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	if(event->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		Sint32 pos[3];
@@ -236,7 +236,7 @@ Sint32 fdPsynergyCheckOverlap(
    a quarter to full size. */
 void fdPsynergyGrowFromCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	ACTOR			   *mainActor = scene->caster;
 	FIXED				start[3];
 	Sint32				i = 0;
@@ -261,7 +261,7 @@ void fdPsynergyGrowFromCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 void fdPsynergyShrinkToCaster(ACTOR *actor, Sint32 x, Sint32 y, Sint32 z)
 {
 	ACTOR *mainActor =
-		((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->caster;
+		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
 	FIXED  start[3];
 	Sint32 i;
 
@@ -349,7 +349,7 @@ void *fdSprShareVRAMCacheEntry(void *srcSpr, void *sharedSpr)
    sprite priority 0 and animation 1. */
 ACTOR *fdActorSpawn(Sint32 kind, Sint32 x, Sint32 y, Sint32 z)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor;
 
 	actor = fdActorCreateStub(kind, x, y, z);
@@ -401,8 +401,8 @@ void fdActorSetOthersPaused(ACTOR *excluded, Sint32 paused, Sint32 anmSpeed)
    for fdStartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it holds. */
 void fdStartColTransition(Sint32 ticks, Sint32 col)
 {
-	FIELD_STATE	 *field = Ram_HeapSlots->fieldState;
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	FIELD_STATE	 *field = RamHeapSlots->fieldState;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 
 	/* The OBJ colours are kept always, the BG colours only while Reveal has not
 	   greyed them. */
@@ -423,7 +423,7 @@ void fdStartColTransition(Sint32 ticks, Sint32 col)
    FLAG_PSYNERGY_TINTED. */
 void fdStartPaletteTransition(Sint32 ticks)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 savedPalettes = (Sint32)state->savedFadeTgt;
 
 	fdPaletteFadeSetTarget(savedPalettes, PALETTES_OBJECTS);
@@ -441,7 +441,7 @@ void fdStartPaletteTransition(Sint32 ticks)
    palettes are copied by fdStartColTransition. */
 void fdPsynergyFadeToCastCol(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	Sint32				tint;
 	Sint32				anm;
 

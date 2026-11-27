@@ -1,5 +1,5 @@
 @ Why assembly: msr CPSR_fc selects IRQ and system modes before their stack setup.
-@ Why assembly: it zeroes r2 and r4 and branches into Sound_ResamplerRecord1
+@ Why assembly: it zeroes r2 and r4 and branches into SoundResamplerRecord1
 @ with no return; the records it enters take their samples in ip and fp and
 @ their volumes in r1 and r6, a linkage no procedure-call standard produces.
 @ Why assembly: fp is a packed sample operand in arithmetic and rotates, not a
@@ -36,11 +36,11 @@ Entry:
 	.balign 4
 .syntax unified
 	.arm
-	.global Sound_ResamplerRecords
-Sound_ResamplerRecords:
+	.global SoundResamplerRecords
+SoundResamplerRecords:
 	mov	r2, #0
 	mov	r4, #0
-	b	Sound_ResamplerRecord1
+	b	SoundResamplerRecord1
 
 .syntax unified
 	.section .padding,"a",%progbits
@@ -52,8 +52,8 @@ Sound_ResamplerRecords:
 	.balign 4
 .syntax unified
 	.arm
-	.global Sound_ResamplerRecord1
-Sound_ResamplerRecord1:
+	.global SoundResamplerRecord1
+SoundResamplerRecord1:
 	asrs	r4, ip, #24
 	mulne	r4, r6, r4
 	rors	ip, ip, #16
@@ -64,7 +64,7 @@ Sound_ResamplerRecord1:
 	rors	fp, fp, #16
 	asrs	ip, fp, #24
 	mlane	r2, r1, ip, r2
-	b	Sound_ResamplerRecord2
+	b	SoundResamplerRecord2
 
 .syntax unified
 	.section .padding.resampler_records_pad_1,"a",%progbits
@@ -75,8 +75,8 @@ Sound_ResamplerRecord1:
 	.balign 4
 .syntax unified
 	.arm
-	.global Sound_ResamplerRecord2
-Sound_ResamplerRecord2:
+	.global SoundResamplerRecord2
+SoundResamplerRecord2:
 	and	r7, r7, r8
 	add	r7, r7, r7, lsr #7
 	asrs	r4, ip, #24
@@ -92,7 +92,7 @@ Sound_ResamplerRecord2:
 	rors	fp, fp, #16
 	asrs	ip, fp, #24
 	mlane	r2, r1, ip, r2
-	b	Sound_ResamplerRecord3
+	b	SoundResamplerRecord3
 
 .syntax unified
 	.section .padding.resampler_records_pad_2,"a",%progbits
@@ -105,8 +105,8 @@ Sound_ResamplerRecord2:
 	.balign 4
 .syntax unified
 	.arm
-	.global Sound_ResamplerRecord3
-Sound_ResamplerRecord3:
+	.global SoundResamplerRecord3
+SoundResamplerRecord3:
 	and	r7, r7, r8
 	add	r7, r7, r7, lsr #7
 	asrs	r4, ip, #24

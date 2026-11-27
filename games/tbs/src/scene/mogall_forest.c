@@ -1,11 +1,11 @@
-/* Mogall Forest (SceneId_MogallForestSign to SceneId_MogallForestSidePaths),
+/* Mogall Forest (SceneIdMogallForestSign to SceneIdMogallForestSidePaths),
    the endless woods between Fuchin Temple and Xian. Master Nyunpa teaches the
    party Force to find the way through: apes hide in the great hollow purple
    stumps, and Force on a stump brings its ape out to show the way on, or to
    attack. Each area is a few screens of clearings joined by paths, and a wrong
    path leads into the side paths and back.
 
-   - The first area (SceneId_MogallForestSign) is entered from the World Map
+   - The first area (SceneIdMogallForestSign) is entered from the World Map
 	 at the north of its first clearing. The first time, an ape peeks out of
 	 the stump in the middle and dives back in
 	 (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A broken sign by the path reads
@@ -15,7 +15,7 @@
 	 pushed about until the last one rolls into the river, a stepping place up
 	 to the raised meadow north of it, where the ape in the big stump points
 	 east to the second area. A Nut hangs in a tree on the river's east bank.
-   - The second area (SceneId_MogallForestQuartz). In the clearing of two
+   - The second area (SceneIdMogallForestQuartz). In the clearing of two
 	 stumps the west one's ape leads south and the east one's east, to a pond
 	 with an Apple in a chest. South, by the river, Move puts a rock into a
 	 ring on the ground so that the log above it can be pushed on, and another
@@ -23,7 +23,7 @@
 	 stream first leaps to a stump on the west bank, then leads west to the
 	 third area. Quartz, a Venus Djinni, waits at the bottom of the clearing to
 	 be fought.
-   - The third area (SceneId_MogallForestKillerApe). Of three stumps in a row
+   - The third area (SceneIdMogallForestKillerApe). Of three stumps in a row
 	 the east one's ape attacks, the middle one's leads south and the west
 	 one's west, to an Elven Shirt in a chest that a rock moved with Move and
 	 a log pushed east let the party reach. South, two logs on an island roll
@@ -41,7 +41,7 @@
 	 MOGALL_FOREST_KILLER_APE_FROM_WORLD_MAP once Force is learned and the
 	 Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED. Back at Fuchin Temple the
 	 monks then say that Nyunpa has reached enlightenment and passed away.
-   - SceneId_MogallForestSidePaths, also named Mogall Forest: small clearings
+   - SceneIdMogallForestSidePaths, also named Mogall Forest: small clearings
 	 that the wrong paths lead into, whose far sides lead back. A Psynergy
 	 Stone lies there.
 
@@ -92,7 +92,7 @@ extern CUE			  MogallForestQuartzCues[];
 extern CUE			  MogallForestKillerApeCues[];
 extern CUE			  MogallForestSidePathsCues[];
 
-/* Actors of the first area (SceneId_MogallForestSign), numbered in the order of
+/* Actors of the first area (SceneIdMogallForestSign), numbered in the order of
    MogallForestSignActorPlacements. */
 typedef enum MOGALL_FOREST_SIGN_ACTOR_ID {
 	/* A log lying north to south at (488, 464), pushed as the river log is but
@@ -117,7 +117,7 @@ typedef enum MOGALL_FOREST_SIGN_ACTOR_ID {
 	ACTOR_NUT
 } MOGALL_FOREST_SIGN_ACTOR_ID;
 
-/* Actors of the second area (SceneId_MogallForestQuartz), numbered in the order
+/* Actors of the second area (SceneIdMogallForestQuartz), numbered in the order
    of MogallForestQuartzActorPlacements. */
 typedef enum MOGALL_FOREST_QUARTZ_ACTOR_ID {
 	/* The upper log lying west to east by the river, held by the rock below
@@ -148,7 +148,7 @@ typedef enum MOGALL_FOREST_QUARTZ_ACTOR_ID {
 	ACTOR_SECOND_AREA_QUARTZ
 } MOGALL_FOREST_QUARTZ_ACTOR_ID;
 
-/* Actors of the third area (SceneId_MogallForestKillerApe), numbered in the
+/* Actors of the third area (SceneIdMogallForestKillerApe), numbered in the
    order of MogallForestKillerApeActorPlacements. */
 typedef enum MOGALL_FOREST_KILLER_APE_ACTOR_ID {
 	/* The log lying north to south beside the Elven Shirt's chest. */

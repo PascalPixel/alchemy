@@ -103,7 +103,7 @@ retry:
 			goto end;
 #endif
 		radius = actor->radius - 2;
-		entry = Ram_HeapSlots->actors;
+		entry = RamHeapSlots->actors;
 		flg = &entry->collisionFlg;
 		for(j = 0; j < ACTOR_COUNT; j++, flg += sizeof(*entry), entry++) {
 			if(entry->script != NULL && (ACTOR_SOLID & *flg) &&

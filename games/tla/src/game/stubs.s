@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Game
-Stubs_Game:
+	.global StubsGame
+StubsGame:
 	stub gmDjinnGetRecoveryTableStub, gmDjinnGetRecoveryTable
 	stub gmUnitCalcStub, gmUnitCalc
 	stub gmItemGetDirectStub, gmItemGetDirect

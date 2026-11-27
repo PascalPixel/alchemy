@@ -50,7 +50,7 @@ void scAquaRockDrawBubbles(void);
 extern Uint32 WadingSplashScript[];
 extern Uint32 RippleScript[];
 /* The bubbles' four ticks, compressed (graphics/aqua_rock/tiles.s). */
-extern const Uint8	AquaRock_BubbleTiles[];
+extern const Uint8	AquaRockBubbleTiles[];
 extern SCENE_REGION AquaRockSlopesRegions[];
 extern SCENE_REGION AquaRockMistSabreChestRegions[];
 extern ACTOR_PLACE	AquaRockPlacements[];
@@ -722,7 +722,7 @@ void scAquaRockRideStreamUp(void)
 	Sint32		 result, i;
 
 	if(syGameFlagGet(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 		owner = MainRoutineStateWork.leaderActorId;
 		carried = state->camera;
 		leader = fdActorGetById(owner);
@@ -811,8 +811,8 @@ static inline Uint8 MetatileAttribute(
    pillar does not stop them. */
 void scAquaRockStepIntoCurrent(void)
 {
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		 col;
 	Sint32		 row;
@@ -887,15 +887,15 @@ void scAquaRockDropDownFalls(void)
 /* Frost on the Mist Sabre chest's room's first puddle: it freezes into a
    step. */
 DEFINE_AQUA_ROCK_FREEZE_PUDDLE(
-	AquaRock_FreezeFirstPuddle, 42, 32, 44, FLAG_PUDDLE_A_FROZEN)
+	AquaRockFreezeFirstPuddle, 42, 32, 44, FLAG_PUDDLE_A_FROZEN)
 
 /* Frost on the second puddle: it freezes into a step. */
 DEFINE_AQUA_ROCK_FREEZE_PUDDLE(
-	AquaRock_FreezeSecondPuddle, 48, 32, 46, FLAG_PUDDLE_B_FROZEN)
+	AquaRockFreezeSecondPuddle, 48, 32, 46, FLAG_PUDDLE_B_FROZEN)
 
 /* Frost on the third puddle: it freezes into a step. */
 DEFINE_AQUA_ROCK_FREEZE_PUDDLE(
-	AquaRock_FreezeThirdPuddle, 44, 44, 46, FLAG_PUDDLE_C_FROZEN)
+	AquaRockFreezeThirdPuddle, 44, 44, 46, FLAG_PUDDLE_C_FROZEN)
 
 /* Defines Move on a rock: pushed to the stream's column it drops in, its flag
    is set and its metatile in `row` takes the attributes of the stream's
@@ -916,11 +916,11 @@ DEFINE_AQUA_ROCK_FREEZE_PUDDLE(
 
 /* Move on the first rock to the stream: it drops in. */
 DEFINE_AQUA_ROCK_DROP_AT_COLUMN(
-	AquaRock_DropFirstRock, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, 52)
+	AquaRockDropFirstRock, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, 52)
 
 /* Move on the second rock to the stream: it drops in. */
 DEFINE_AQUA_ROCK_DROP_AT_COLUMN(
-	AquaRock_DropSecondRock, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, 58)
+	AquaRockDropSecondRock, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, 58)
 
 /* Douse on the Mist Sabre chest's room's Water Stone: the screen flashes four
    colours and turns white, the stone's bubbles start, the pool's metatiles
@@ -1194,7 +1194,7 @@ Sint32 scInit(void)
 {
 	Sint32					  scene = MainRoutineStateWork.next;
 	MAP_STATE_GROUND_EFFECTS *map =
-		(MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 	Sint32	id, x, z;
 	Sint16 *entrance;
 
@@ -1478,7 +1478,7 @@ void scAquaRockArriveFromPassage(void)
    those in view are drawn. */
 void scAquaRockDrawRisingBubbles(void)
 {
-	MAP_STATE		  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE		  *map = RamHeapSlots->mapGrid;
 	Sint32			   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32			   lift = map->origin[1];
@@ -1545,7 +1545,7 @@ void scAquaRockDrawRisingBubbles(void)
    bottom; those in view are drawn. */
 void scAquaRockDrawFallingBubbles(void)
 {
-	MAP_STATE		  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE		  *map = RamHeapSlots->mapGrid;
 	Sint32			   viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32			   viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	Sint32			   lift = map->origin[1];
@@ -1620,7 +1620,7 @@ Sint32 scAquaRockStartBubbles(void)
 
 	syWordsClearEntry(state, sizeof(AQUA_ROCK_BUBBLES));
 	buf = syHeapCallAlternatePool(syHeapAlloc, 256);
-	syDecompressTaggedLZ(AquaRock_BubbleTiles, buf);
+	syDecompressTaggedLZ(AquaRockBubbleTiles, buf);
 	state->vramEntry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->vramEntry, 256, buf);
 	syHeapRelease(buf);
@@ -1858,12 +1858,12 @@ LATE_DATA CUE AquaRockMistSabreChestCues[] = {
 	{CUE_EXIT, 5, CONDITION_ALWAYS, 5},
 	{CUE_STEP, METATILE_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, SCRIPT_REF(scLeaderFlowWithStream)},
 	{CUE_STEP, METATILE_BEHAVIOR_TURNING_STREAM, CONDITION_ALWAYS, SCRIPT_REF(scAquaRockRideStreamUp)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, SCRIPT_REF(AquaRock_FreezeFirstPuddle)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN, SCRIPT_REF(AquaRock_FreezeSecondPuddle)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, SCRIPT_REF(AquaRock_FreezeThirdPuddle)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, SCRIPT_REF(AquaRock_DropFirstRock)},
-	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROCK, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, SCRIPT_REF(AquaRock_DropSecondRock)},
-	{CUE_PUSHED, 0, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, SCRIPT_REF(AquaRock_DropSecondRock)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, SCRIPT_REF(AquaRockFreezeFirstPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN, SCRIPT_REF(AquaRockFreezeSecondPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, SCRIPT_REF(AquaRockFreezeThirdPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, SCRIPT_REF(AquaRockDropFirstRock)},
+	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROCK, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, SCRIPT_REF(AquaRockDropSecondRock)},
+	{CUE_PUSHED, 0, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, SCRIPT_REF(AquaRockDropSecondRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_MIST_SABRE_WATER_STONE, FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED, SCRIPT_REF(scAquaRockDouseMistSabreChestWaterStone)},
 	{CUE_TABLE_END},
 };

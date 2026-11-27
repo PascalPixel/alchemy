@@ -36,9 +36,9 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 midpoint;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	edgeShift = 0;
 	if(args->side == EFFECT_SIDE_ENEMIES)
 		btEffectStartTiledCanvasFilled(BGCNT_WRAP | BGCNT_PRIORITY(1));
@@ -50,10 +50,10 @@ void btEffectRunRay(BATTLE_EFFECT_PARM *args)
 	else
 		REG_BG2PA = Q_8_8(1);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	btResourceLoadAndDecompress(
 		RESOURCE_LIGHTNING_BOLT_SHEET, state->sheet + RAY_PICTURES, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);

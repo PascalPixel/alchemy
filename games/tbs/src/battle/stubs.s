@@ -1,7 +1,7 @@
 @ Battle state, unit motion and presentation services.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Battle
-Stubs_Battle:
+	.global StubsBattle
+StubsBattle:
 	stub btDebugBattleRunMenuStub, btDebugBattleRunMenu
 	unnamed_stub btTransitionRunMosaicFadeOut
 	stub btObjectSpawnObjectsForListStub, btObjectSpawnObjectsForList

@@ -91,7 +91,7 @@ Sint32 fdModeRun(Sint32 entrance)
 		state->walkingDistanceScale = 0;
 		gmFlagSetStub(FLAG_RETREAT_BLOCKED);
 	}
-	state->prevMetatile = (MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer;
+	state->prevMetatile = (MAP_GRID_METATILE *)RamMapGridMetatileBuffer;
 	/* A fresh entry (not a return from battle) resets the hazard count to its
 	   defaults (damage 1 every HAZARD_LIMIT_DEFAULT steps), the stopped actor
 	   and Cloak. */
@@ -435,7 +435,7 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void)
 		/* World Map metatile tiles are 32 pixels square, 32 to a row; map
 		   metatiles 16 pixels square, 128 to a row, four bytes each. */
 		if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-			metatile = Ram_MetatileTiles +
+			metatile = RamMetatileTiles +
 				((((probePos.vector.x / toFIXED(32)) & 31) +
 					 (((probePos.vector.z / toFIXED(32)) & 31) << 5))
 					<< 2);

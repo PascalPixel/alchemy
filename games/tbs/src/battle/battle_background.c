@@ -157,7 +157,7 @@ void btBackgroundLoad(Sint32 mode, Sint32 resourceId, Sint32 level)
 	Uint16		 *palette;
 
 	RAM_CODE_LOAD_SLOT(
-		HEAP_SLOT_RAM_CODE_TEMP, btBitDecoderDecodeImage, BitDecoder_Size);
+		HEAP_SLOT_RAM_CODE_TEMP, btBitDecoderDecodeImage, BitDecoderSize);
 	((BIT_DECODER)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
 		backgroundData + BACKGROUND_PALETTE_BYTES, BG_CHAR_BLOCK(2));
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);

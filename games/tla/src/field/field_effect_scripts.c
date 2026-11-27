@@ -70,7 +70,7 @@ const Sint32 ItemDisplaySparkleScript[] = {
 
 /* A Reveal marker: stays while fdIsRevealActive returns nonzero (SC_CALL runs
    it again each tick), and releases itself once Reveal ends; the same as The
-   Broken Seal's FieldEffect_MarkerParticleScript. */
+   Broken Seal's FieldEffectMarkerParticleScript. */
 const Sint32 RevealMarkerScript[] = {
 	SC_CALL(fdIsRevealActive),
 	SC_RELEASE,

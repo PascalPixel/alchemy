@@ -5,7 +5,7 @@
    left below the ground is lifted onto it. */
 void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *tbl)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
 	Sint32		  flg;
@@ -24,7 +24,7 @@ void scMagmaRockInsideRestoreCrumblingPillars(const Uint16 *tbl)
 		nextFlg = flg + 1;
 		metatiles = map->layers[actor->layer].metatiles;
 		shapes =
-			MapShapeGrid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+			MapShapeGrid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 		if(fdScriptGetFlag(nextFlg)) {
 			fdActorSetPos(id, 0, 0);
 		} else {

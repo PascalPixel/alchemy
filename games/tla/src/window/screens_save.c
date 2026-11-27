@@ -61,7 +61,7 @@
    draws row min(progress, 6) of WindowProgressBarRows. */
 void mnSaveProgressAdvance(Sint32 step)
 {
-	BUP_WORKSPACE *save = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *save = RamHeapSlots->bupState;
 	Uint32		   row;
 	const Uint8	  *src;
 	Uint16		  *dst;
@@ -101,7 +101,7 @@ WINDOW *mnSaveProgressOpen(Uint32 kind)
 
 	win = mnWindowCreate(0, 0, 30, 20, 0);
 	tiles = syHeapAllocEWRAM(256);
-	syDecompressTaggedLZ(Window_ProgressBarTiles, tiles);
+	syDecompressTaggedLZ(WindowProgressBarTiles, tiles);
 	syDMAXCopy(tiles, (void *)BG_SCREEN_BLOCK(2), DMA_COPY_WORDS(64), REG_DMA3);
 	switch(kind) {
 	case SAVE_PROGRESS_SAVING:
@@ -301,7 +301,7 @@ void *mnStringFormatPlayTime(Sint32 ticks, Uint8 *out)
    SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded. */
 Uint32 mnSaveFindFreeFile(void)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	BUP_SUMMARY	  *summary;
 	Uint32		   i;
 
@@ -329,7 +329,7 @@ Sint32 mnSaveCountFilesExcludingSent(Sint32 excludeSent)
 	} else {
 		cnt = syBupLoadFileSummaries();
 		if(excludeSent != 0) {
-			state = Ram_HeapSlots->bupState;
+			state = RamHeapSlots->bupState;
 			summary = state->summary;
 			for(i = 0; i < BUP_FILE_COUNT; i++) {
 				if(summary[i].sendFlg != 0)
@@ -360,7 +360,7 @@ Sint32 mnSaveScanFileSummaries(void)
 		BUP_WORKSPACE *state;
 
 		fileCnt = syBupLoadFileSummaries();
-		state = Ram_HeapSlots->bupState;
+		state = RamHeapSlots->bupState;
 		AnyFileCleared = 0;
 		TitleBattleOptionEnabled = 0;
 		TitleUpdateOptionEnabled = 0;
@@ -576,7 +576,7 @@ Sint32 mnSaveToChosenFile(void)
 		if(slot == -1) {
 			result = slot;
 		} else {
-			state = Ram_HeapSlots->bupState;
+			state = RamHeapSlots->bupState;
 			if(state->summary[slot].level != 0) {
 				mnFieldMessageShow((Sint32)&MsgOverwriteConfirm,
 					FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN |
@@ -799,7 +799,7 @@ void mnFileListStopPulse(void)
 void mnFileListFillHighlight(
 	WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32	   sum;
 
 	sum = x + win->x;
@@ -856,7 +856,7 @@ void mnFileListFillHighlight(
 void mnFileListShowPartySprs(
 	WINDOW *win, Sint32 x, Sint32 y, BUP_SUMMARY *summary)
 {
-	FILE_LIST_STATE *menu = Ram_HeapSlots->menuState;
+	FILE_LIST_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 i;
 
 	for(i = 0; i < 4 && summary->party[i] != -1; i++) {
@@ -881,7 +881,7 @@ void mnFileListShowPartySprs(
 /* Stops placing the party sprites of the file list and releases them. */
 void mnFileListHidePartySprs(void)
 {
-	FILE_LIST_STATE *menu = Ram_HeapSlots->menuState;
+	FILE_LIST_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 i;
 
 	syCloseEvent((Sint32)mnFileListPlacePartySprs);
@@ -897,7 +897,7 @@ void mnFileListHidePartySprs(void)
    this tick. */
 void mnFileListPlacePartySprs(void)
 {
-	FILE_LIST_STATE *state = (FILE_LIST_STATE *)Ram_HeapSlots->menuState;
+	FILE_LIST_STATE *state = (FILE_LIST_STATE *)RamHeapSlots->menuState;
 	Sint32			 scale[2];
 	FIXED			 pos[4];
 	Sint32			 idx = 0;
@@ -1030,7 +1030,7 @@ Sint32 mnFileListSelectFile(Sint32 selectedFile, Sint32 menuMode)
 	Sint32		   y;
 
 	sprState = syHeapSlotAlloc(HEAP_SLOT_MENU, MENU_STATE_SIZE);
-	save = Ram_HeapSlots->bupState;
+	save = RamHeapSlots->bupState;
 	summaryWin = NULL;
 	partyWin = NULL;
 	djinnWin = NULL;

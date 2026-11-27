@@ -4,7 +4,7 @@
 @ Why syDecompressMoveToFrontLZCommands is assembly:
 @ add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
 @ relative to pc, including r11/fp as ordinary decoder state.
-@ Why syDecompressMoveToFrontLZLoop to Resource_RefillMoveToFrontLzBits are assembly:
+@ Why syDecompressMoveToFrontLZLoop to ResourceRefillMoveToFrontLzBits are assembly:
 @ Computed add pc enters fixed-size decoder code slots; command execution
 @ also carries live reader register state across entry labels.
 @ Why syResourceExecuteTransfer is assembly:
@@ -240,7 +240,7 @@ syDecompressMoveToFrontLZCommands:
 	lsl	r4, r2, #3
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	b	syDecompressMoveToFrontLZLoop
 .syntax unified
 	.section .rodata,"a",%progbits
@@ -264,7 +264,7 @@ syDecompressMoveToFrontLZCommands:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #8
 	subs	r4, r4, #11
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	b	.Ltype2_literal_store
 .Ltype2_literal_3bit:
 	lsrs	r2, r2, #1
@@ -281,7 +281,7 @@ syDecompressMoveToFrontLZCommands:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #6
 	subs	r4, r4, #9
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	b	.Ltype2_literal_store
 .Ltype2_literal:
 	push	{r5, r9}
@@ -299,7 +299,7 @@ syDecompressMoveToFrontLZCommands:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #4
 	subs	r4, r4, #6
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 .Ltype2_literal_store:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
@@ -368,7 +368,7 @@ syDecompressMoveToFrontLZLoop:
 	subs	r4, r4, #6
 	lsr	r2, r2, #5
 .Ltype2_copy:
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 .Ltype2_copy_byte:
@@ -437,8 +437,8 @@ syDecompressMoveToFrontLZLoop:
 	b	.Ltype2_copy
 .Ltype2_refill_to_distance:
 	sub	lr, pc, #280
-	.global Resource_RefillMoveToFrontLzBits
-Resource_RefillMoveToFrontLzBits:
+	.global ResourceRefillMoveToFrontLzBits
+ResourceRefillMoveToFrontLzBits:
 	ldrh	r3, [r0], #2
 	add	r4, r4, #16
 	orr	r2, r2, r3, lsl r4
@@ -451,7 +451,7 @@ Resource_RefillMoveToFrontLzBits:
 .Ltake_0:
 	and	r8, ip, fp
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_1:
+AlchemyUncreditedDecodeTaggedLz1:
 	nop
 	nop
 	nop
@@ -459,162 +459,162 @@ AlchemyUncredited_decode_tagged_lz_1:
 	nop
 	nop
 .Ltake_1:
-AlchemyUncreditedEnd_decode_tagged_lz_1:
+AlchemyUncreditedEndDecodeTaggedLz1:
 	lsr	r9, fp, #8
 	orr	r9, r9, fp, lsl #28
 	and	r8, ip, fp, lsr #4
 	orr	fp, r8, r9, ror #24
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_2:
+AlchemyUncreditedDecodeTaggedLz2:
 	nop
 	nop
 	nop
 .Ltake_2:
-AlchemyUncreditedEnd_decode_tagged_lz_2:
+AlchemyUncreditedEndDecodeTaggedLz2:
 	lsr	r9, fp, #12
 	orr	r9, r9, fp, lsl #24
 	and	r8, ip, fp, lsr #8
 	orr	fp, r8, r9, ror #20
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_3:
+AlchemyUncreditedDecodeTaggedLz3:
 	nop
 	nop
 	nop
 .Ltake_3:
-AlchemyUncreditedEnd_decode_tagged_lz_3:
+AlchemyUncreditedEndDecodeTaggedLz3:
 	lsr	r9, fp, #16
 	orr	r9, r9, fp, lsl #20
 	and	r8, ip, fp, lsr #12
 	orr	fp, r8, r9, ror #16
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_4:
+AlchemyUncreditedDecodeTaggedLz4:
 	nop
 	nop
 	nop
 .Ltake_4:
-AlchemyUncreditedEnd_decode_tagged_lz_4:
+AlchemyUncreditedEndDecodeTaggedLz4:
 	lsr	r9, fp, #20
 	orr	r9, r9, fp, lsl #16
 	and	r8, ip, fp, lsr #16
 	orr	fp, r8, r9, ror #12
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_5:
+AlchemyUncreditedDecodeTaggedLz5:
 	nop
 	nop
 	nop
 .Ltake_5:
-AlchemyUncreditedEnd_decode_tagged_lz_5:
+AlchemyUncreditedEndDecodeTaggedLz5:
 	lsr	r9, fp, #24
 	orr	r9, r9, fp, lsl #12
 	and	r8, ip, fp, lsr #20
 	orr	fp, r8, r9, ror #8
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_6:
+AlchemyUncreditedDecodeTaggedLz6:
 	nop
 	nop
 	nop
 .Ltake_6:
-AlchemyUncreditedEnd_decode_tagged_lz_6:
+AlchemyUncreditedEndDecodeTaggedLz6:
 	lsr	r9, fp, #28
 	orr	r9, r9, fp, lsl #8
 	and	r8, ip, fp, lsr #24
 	orr	fp, r8, r9, ror #4
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_7:
+AlchemyUncreditedDecodeTaggedLz7:
 	nop
 	nop
 	nop
 .Ltake_7:
-AlchemyUncreditedEnd_decode_tagged_lz_7:
+AlchemyUncreditedEndDecodeTaggedLz7:
 	ror	fp, fp, #28
 	and	r8, ip, fp
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_8:
+AlchemyUncreditedDecodeTaggedLz8:
 	nop
 	nop
 	nop
 	nop
 	nop
 .Ltake_8:
-AlchemyUncreditedEnd_decode_tagged_lz_8:
+AlchemyUncreditedEndDecodeTaggedLz8:
 	and	r8, ip, sl
 	bic	r9, sl, #15
 .Lpush_front:
 	orr	sl, r9, fp, lsr #28
 	orr	fp, r8, fp, lsl #4
 	bx	lr
-AlchemyUncredited_decode_tagged_lz_9:
+AlchemyUncreditedDecodeTaggedLz9:
 	nop
 	nop
 	nop
 .Ltake_9:
-AlchemyUncreditedEnd_decode_tagged_lz_9:
+AlchemyUncreditedEndDecodeTaggedLz9:
 	and	r8, ip, sl, lsr #4
 	lsr	r9, sl, #8
 	orr	r9, r9, sl, lsl #28
 	ror	r9, r9, #24
 	b	.Lpush_front
-AlchemyUncredited_decode_tagged_lz_10:
+AlchemyUncreditedDecodeTaggedLz10:
 	nop
 	nop
 	nop
 .Ltake_10:
-AlchemyUncreditedEnd_decode_tagged_lz_10:
+AlchemyUncreditedEndDecodeTaggedLz10:
 	and	r8, ip, sl, lsr #8
 	lsr	r9, sl, #12
 	orr	r9, r9, sl, lsl #24
 	ror	r9, r9, #20
 	b	.Lpush_front
-AlchemyUncredited_decode_tagged_lz_11:
+AlchemyUncreditedDecodeTaggedLz11:
 	nop
 	nop
 	nop
 .Ltake_11:
-AlchemyUncreditedEnd_decode_tagged_lz_11:
+AlchemyUncreditedEndDecodeTaggedLz11:
 	and	r8, ip, sl, lsr #12
 	lsr	r9, sl, #16
 	orr	r9, r9, sl, lsl #20
 	ror	r9, r9, #16
 	b	.Lpush_front
-AlchemyUncredited_decode_tagged_lz_12:
+AlchemyUncreditedDecodeTaggedLz12:
 	nop
 	nop
 	nop
 .Ltake_12:
-AlchemyUncreditedEnd_decode_tagged_lz_12:
+AlchemyUncreditedEndDecodeTaggedLz12:
 	and	r8, ip, sl, lsr #16
 	lsr	r9, sl, #20
 	orr	r9, r9, sl, lsl #16
 	ror	r9, r9, #12
 	b	.Lpush_front
-AlchemyUncredited_decode_tagged_lz_13:
+AlchemyUncreditedDecodeTaggedLz13:
 	nop
 	nop
 	nop
 .Ltake_13:
-AlchemyUncreditedEnd_decode_tagged_lz_13:
+AlchemyUncreditedEndDecodeTaggedLz13:
 	and	r8, ip, sl, lsr #20
 	lsr	r9, sl, #24
 	orr	r9, r9, sl, lsl #12
 	ror	r9, r9, #8
 	b	.Lpush_front
-AlchemyUncredited_decode_tagged_lz_14:
+AlchemyUncreditedDecodeTaggedLz14:
 	nop
 	nop
 	nop
 .Ltake_14:
-AlchemyUncreditedEnd_decode_tagged_lz_14:
+AlchemyUncreditedEndDecodeTaggedLz14:
 	and	r8, ip, sl, lsr #24
 	lsr	r9, sl, #28
 	orr	r9, r9, sl, lsl #8
 	ror	r9, r9, #4
 	b	.Lpush_front
-AlchemyUncredited_decode_tagged_lz_15:
+AlchemyUncreditedDecodeTaggedLz15:
 	nop
 	nop
 	nop
 .Ltake_15:
-AlchemyUncreditedEnd_decode_tagged_lz_15:
+AlchemyUncreditedEndDecodeTaggedLz15:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.Lpush_front

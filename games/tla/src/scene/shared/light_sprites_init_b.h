@@ -1,11 +1,11 @@
-/* Loads the second set of light pictures (Field_CachedTilesB) into VRAM and
+/* Loads the second set of light pictures (FieldCachedTilesB) into VRAM and
    starts drawing the lit actors (none yet), small, each at its own priority. */
 void scLightSprsInitB(void)
 {
 	Uint8 *buf = syHeapAlloc(3072);
 
 	syWordsClearEntry(LightSpriteActors, sizeof(LightSpriteActors));
-	syDecompressTaggedLZ(Field_CachedTilesB, buf);
+	syDecompressTaggedLZ(FieldCachedTilesB, buf);
 	LightSpriteTile = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(LightSpriteTile, 2048, buf);
 	syHeapRelease(buf);

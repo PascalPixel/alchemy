@@ -2,7 +2,7 @@
    state. */
 void scRockEndFalling(void)
 {
-	ROCK_STATE *state = Ram_HeapSlots->menuState;
+	ROCK_STATE *state = RamHeapSlots->menuState;
 
 	syFieldCloseEvent(scParticleUpdateFalling);
 	syVRAMCacheFreeEntry(state->resource);

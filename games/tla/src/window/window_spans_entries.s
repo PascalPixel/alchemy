@@ -7,6 +7,6 @@
 	.global mnScanlineWindowBuildSpansCode
 mnScanlineWindowBuildSpansCode:
 	bx	pc
-AlchemyUncredited_080388fe:
+AlchemyUncredited080388fe:
 	.2byte	0x0200
-AlchemyUncreditedEnd_080388fe:
+AlchemyUncreditedEnd080388fe:

@@ -60,8 +60,8 @@ void fdPsynergyBlaze(void)
 	Sint32 mode;
 
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BLAZE_STATE));
-	scene = Ram_HeapSlots->fieldEffState;
-	event = Ram_HeapSlots->fieldState;
+	scene = RamHeapSlots->fieldEffState;
+	event = RamHeapSlots->fieldState;
 	caster = scene->caster;
 	look = BLAZE_RED;
 	actor = scene->tgt;
@@ -261,14 +261,14 @@ Sint32 fdActorCheckBlocked(ACTOR *actor)
 	ACTOR *other;
 	Sint32 i;
 
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	result = 0;
 	if(state->mode != ACTOR_SYSTEM_WORLD_MAP) {
 		if(fdMapGridCheckCollisionAtStub(
 			   actor->x.fixed, actor->z.fixed, 0, actor->groundHeight) != 0)
 			result = 1;
 	}
-	other = Ram_HeapSlots->actors;
+	other = RamHeapSlots->actors;
 	for(i = 0; i < ACTOR_COUNT; i++, other++) {
 		if(other->script != NULL && (other->collisionFlg & ACTOR_SOLID) &&
 			other != actor) {

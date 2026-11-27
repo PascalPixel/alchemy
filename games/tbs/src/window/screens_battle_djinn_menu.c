@@ -522,15 +522,15 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 			}
 		}
 		if(TickCount & 4) {
-			syWordsCopy((void *)DJINN_MENU_ARROW_VRAM, DjinnMenu_BlinkTile,
+			syWordsCopy((void *)DJINN_MENU_ARROW_VRAM, DjinnMenuBlinkTile,
 				TILE_SIZE_4BPP);
 			syWordsCopy((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-				DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
+				DjinnMenuBlinkTile, TILE_SIZE_4BPP);
 		} else {
 			syWordsFill((void *)DJINN_MENU_ARROW_VRAM, TILE_SIZE_4BPP,
 				TEXT_CANVAS_BACKGROUND_WORD);
 			syWordsCopy((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-				DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
+				DjinnMenuBlinkTile, TILE_SIZE_4BPP);
 		}
 		sySynch(1);
 	}

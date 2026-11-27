@@ -127,7 +127,7 @@ void fdWeatherStartRain(void)
 	particle = state->particles;
 	DMA_FILL32(fill, state, sizeof(WEATHER_STATE));
 	words = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(Weather_ParticleTiles, words);
+	syDecompressByteLZ(WeatherParticleTiles, words);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = syVRAMCacheLoad(state->entry, 768, words);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
@@ -251,7 +251,7 @@ void fdMotesStart(void)
 	size = 0;
 	DMA_FILL32(size, state, sizeof(*state));
 	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(FieldEffect_MoteTiles, tiles);
+	syDecompressByteLZ(FieldEffectMoteTiles, tiles);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = syVRAMCacheLoad(state->entry, 768, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
@@ -397,7 +397,7 @@ void fdEffectInitSparkles(void)
 	size = 0;
 	DMA_FILL32(size, state, sizeof(*state));
 	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(FieldEffect_SparkleTiles, tiles);
+	syDecompressByteLZ(FieldEffectSparkleTiles, tiles);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase = syVRAMCacheLoad(state->entry, 512, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);

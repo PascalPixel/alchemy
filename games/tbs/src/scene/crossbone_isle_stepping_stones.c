@@ -11,17 +11,17 @@
    Each is a puzzle with four chests, and all five take the area name Crossbone
    Isle Cave. In the order the party meets them:
 
-   - SceneId_CrossboneIsleSteppingStones, off the first floor: raised squares
+   - SceneIdCrossboneIsleSteppingStones, off the first floor: raised squares
 	 over a pit, with four stone pillars on them. Walking into a pillar jumps
 	 Isaac across it where there is a square to land on, and otherwise pushes
 	 it (scCrossboneIsleSteppingStonesJumpOrPushPillar), so the pillars are
 	 moved until a line of squares leads to each chest and to the far door.
 
-   - SceneId_CrossboneIsleIcePillars, off the second floor: columns lying
+   - SceneIdCrossboneIsleIcePillars, off the second floor: columns lying
 	 north to south and east to west, pushed by walking into them until the
 	 way to the Mystery Blade's chest is clear.
 
-   - SceneId_CrossboneIsleFloodgate, off the fifth floor: a cave with a stream
+   - SceneIdCrossboneIsleFloodgate, off the fifth floor: a cave with a stream
 	 and a floodgate across it, and logs to roll.
 
 	 Searching the switch beside the floodgate
@@ -30,13 +30,13 @@
 	 The water level lasts only while the party stays
 	 (FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED, kept through a battle).
 
-   - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
+   - SceneIdCrossboneIsleStackedPillars, off the seventh floor, a cave of
 	 cliffs, ladders and brown pits. Its square pillars are shifted with Move
 	 and lifted onto ledges with Carry, and one can stand on another; each
 	 settles after every push (scCrossboneIsleSteppingStonesMovePillar). Pushed
 	 off a cliff, a pillar drops out of play.
 
-   - SceneId_CrossboneIsleDragonStatue, off the eighth floor, below a stone
+   - SceneIdCrossboneIsleDragonStatue, off the eighth floor, below a stone
 	 dragon: two logs, a small boulder and three puddles that Frost freezes
 	 into pillars of ice.
 

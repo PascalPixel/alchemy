@@ -395,7 +395,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    `blazeLongSpray` clear. */
 void scMarsLighthouseRoomFStartBlazeOnTorch(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->blazeLongSpray = 1;
 }
@@ -1018,7 +1018,7 @@ void scMarsLighthouseRoomFLightFlameThrower(void)
    toward the urn torch by the icebergs. */
 void scMarsLighthouseRoomFWatchFlameThrower(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptSetFlag(FLAG_MENU_OPEN);
 	fdScriptStart();
@@ -1075,7 +1075,7 @@ void scMarsLighthouseRoomFPushPipeOrJump(void)
 		tbl = &SlideOnIceSteerAngles[STEER_STRAIGHT_ROW];
 		ang = *(Sint16 *)((Uint8 *)tbl + (((*keys >> 4) & 0xf) << 1));
 		if(ang != -1) {
-			MAP_STATE *map = Ram_HeapSlots->mapGrid;
+			MAP_STATE *map = RamHeapSlots->mapGrid;
 			ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 			Sint32	   pos[3];
 			Sint32	   x;
@@ -1089,7 +1089,7 @@ void scMarsLighthouseRoomFPushPipeOrJump(void)
 			syFieldVectorAddPolarOffset(16, ang, pos);
 			x = FIELD_METATILE(pos[0]);
 			z = FIELD_METATILE(pos[2]);
-			metatiles = Ram_MapMetatileBuffer;
+			metatiles = RamMapMetatileBuffer;
 			if(map != NULL)
 				metatiles = (Uint8 *)map->layers[2].metatiles;
 			metatiles += (x + (z << 7)) << 2;
@@ -1110,7 +1110,7 @@ void	   scLeaderSlideOnIceFromEdge(void);
 void scMarsLighthouseRoomFFreezePuddle(Sint32 id)
 {
 	ACTOR	  *actor = fdActorGet(id);
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   row = FIELD_METATILE(actor->z.fixed) << 7;
 	FIXED	   x = actor->x.fixed;
 	Uint8	  *metatile = (Uint8 *)map->layers[2].metatiles;
@@ -1125,7 +1125,7 @@ void scMarsLighthouseRoomFFreezePuddle(Sint32 id)
 void scMarsLighthouseRoomFMeltPuddle(Sint32 id)
 {
 	ACTOR	  *actor = fdActorGet(id);
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   row = FIELD_METATILE(actor->z.fixed) << 7;
 	FIXED	   x = actor->x.fixed;
 	Uint8	  *metatile = (Uint8 *)map->layers[2].metatiles;
@@ -1159,13 +1159,13 @@ void scMarsLighthouseRoomFMeltPuddle(Sint32 id)
    it rises into a pillar of ice, unless fire is spouting onto it, which melts
    it at once. */
 DEFINE_FROST_PUDDLE(
-	MarsLighthouseRoomF_FrostUpperPuddle, FLAG_UPPER_PUDDLE_FROZEN, 2)
+	MarsLighthouseRoomFFrostUpperPuddle, FLAG_UPPER_PUDDLE_FROZEN, 2)
 
 /* Felix casts Frost on the centre puddle of the Mercury tower's pipe room: it
    rises into a pillar of ice, unless fire is spouting onto it, which melts it
    at once. */
 DEFINE_FROST_PUDDLE(
-	MarsLighthouseRoomF_FrostCenterPuddle, FLAG_CENTER_PUDDLE_FROZEN, 0)
+	MarsLighthouseRoomFFrostCenterPuddle, FLAG_CENTER_PUDDLE_FROZEN, 0)
 
 /* The fireball from the Mercury tower's lower urn torch melts the icebergs in
    its way, opening the path over the black ice. */
@@ -1231,7 +1231,7 @@ Sint32 scInit(void)
 	MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 	Sint32				scene = state->next;
 	Sint32				entrance = state->entrance;
-	HEAP_SLOTS		   *heap = Ram_HeapSlots;
+	HEAP_SLOTS		   *heap = RamHeapSlots;
 	Sint32				value;
 
 	((FIELD_STATE *)heap->fieldState)->transition =
@@ -1584,7 +1584,7 @@ void scMarsLighthouseRoomFKnockBackIfHit(void)
    stops. */
 Sint32 scFireballCarryLeader(void)
 {
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	FLAME_HIT_STATE *ride;
 	ACTOR			*leader;
 	/* LEFTOVER(frame): an unused local that only sizes the tick; as no local,
@@ -1757,7 +1757,7 @@ extern Sint8  PushRectangles[][4];
 void fdMapGridFillCollisionRectangle(
 	Sint32 layer, Sint32 x, Sint32 z, Uint32 width, Uint32 height, Sint32 value)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *metatiles = (Uint8 *)map->layers[layer].metatiles;
 	Uint32	   row;
 	Uint32	   column;
@@ -2399,8 +2399,8 @@ LATE_DATA CUE MarsLighthouseRoomFMercuryTowerCues[] = {
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_MERCURY_TORCH, CONDITION_ALWAYS, SCRIPT_REF(scMarsLighthouseRoomFStartBlazeOnTorch)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS), ACTOR_MERCURY_FLAME_THROWER, CONDITION_ALWAYS, SCRIPT_REF(scMarsLighthouseRoomFLightFlameThrower)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END), ACTOR_MERCURY_FLAME_THROWER, CONDITION_ALWAYS, SCRIPT_REF(scMarsLighthouseRoomFWatchFlameThrower)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UPPER_PUDDLE, FLAG_UPPER_PUDDLE_FROZEN, SCRIPT_REF(MarsLighthouseRoomF_FrostUpperPuddle)},
-	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CENTER_PUDDLE, FLAG_CENTER_PUDDLE_FROZEN, SCRIPT_REF(MarsLighthouseRoomF_FrostCenterPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_UPPER_PUDDLE, FLAG_UPPER_PUDDLE_FROZEN, SCRIPT_REF(MarsLighthouseRoomFFrostUpperPuddle)},
+	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CENTER_PUDDLE, FLAG_CENTER_PUDDLE_FROZEN, SCRIPT_REF(MarsLighthouseRoomFFrostCenterPuddle)},
 	{CUE_TABLE_END},
 };
 

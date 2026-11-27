@@ -14,7 +14,7 @@ Sint32 btUnitProjectToScreen(Sint32 unit, Sint32 *screen)
 	SPR			  *info;
 	FIXED		   scale;
 
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	object = btObjectGetStub(unit)->obj;
 	info = btActorGetSprStub(object, 0);
 	EFFECT_VIEW_FROM_CAMERA(camera);
@@ -31,7 +31,7 @@ UNUSED void btEffectReadKeysForEnemyTarget(void)
 	BATTLE_EFFECT_STATE *state;
 	BATTLE_EFFECT_PARM	*args;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	args = state->args;
 
 	/* DEAD: nothing uses the held keys read here; the ROM keeps the test and
@@ -58,7 +58,7 @@ void btEffectRunByIdRange(BATTLE_EFFECT_PARM *args)
 	syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_SHEET, BATTLE_SHEET_BYTES);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 	kind = args->kind;
@@ -113,10 +113,10 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	kind = args->kind;
 	unit = syUnitGet(args->user);
 	sySynch(1);
@@ -150,8 +150,8 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 		}
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	sySynch(1);
 	if(kind == ATTACK_EFFECT_WAVE) {
 		btResourceLoadAndDecompress(RESOURCE_WAVE_SHEET, state->sheet, 1, 1);
@@ -181,7 +181,7 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 	sySynch(1);
 	btResourceLoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
 	btResourceLoadAndDecompress(
-		RESOURCE_YELLOW_ORB_SHEET, Ram_MapMetatileBuffer, 1, 0);
+		RESOURCE_YELLOW_ORB_SHEET, RamMapMetatileBuffer, 1, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
 	/* Scroll BG1 so the first target falls on the canvas. */
@@ -294,7 +294,7 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 		   each. */
 		if(frm >= 4 && frm <= 15)
 			draw[0](canvas,
-				Ram_MapMetatileBuffer +
+				RamMapMetatileBuffer +
 					(frm - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
 				anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2,
 				YELLOW_ORB_WIDTH, YELLOW_ORB_HEIGHT);
@@ -358,10 +358,10 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	/* DEAD: never true, as only kinds from EFFECT_ID_CRITICAL_OFFSET reach this
 	   runner (btEffectRunByIdRange), so big stays 1; the ROM keeps the compare
 	   and the store. */
@@ -384,7 +384,7 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	}
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	draw[0] = heap->ramCode;
 	draw[1] = heap->ramCodePaired;
 	btCameraSetViewAtPairMidpointStub(
@@ -396,7 +396,7 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 		args->user, args->firstTgt, CRITICAL_HIT_ZOOM);
 	sySynch(1);
 	btResourceLoadAndDecompress(
-		RESOURCE_GREY_CRESCENT_SHEET, Ram_MapMetatileBuffer, 1, 1);
+		RESOURCE_GREY_CRESCENT_SHEET, RamMapMetatileBuffer, 1, 1);
 	/* An enemy's sparks take the Mars Djinn's colours. */
 	if(args->user > ALLY_MAX)
 		syDMAXCopy(syResourceGetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
@@ -525,9 +525,9 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 				SLASH_PICTURE_SIZE);
 		else if(frm <= 3)
 			draw[0](
-				canvas, Ram_MapMetatileBuffer, -4, 0, CANVAS_SIZE, CANVAS_SIZE);
+				canvas, RamMapMetatileBuffer, -4, 0, CANVAS_SIZE, CANVAS_SIZE);
 		else if(frm <= 5)
-			draw[0](canvas, Ram_MapMetatileBuffer + CANVAS_BYTES, -4, 0,
+			draw[0](canvas, RamMapMetatileBuffer + CANVAS_BYTES, -4, 0,
 				CANVAS_SIZE, CANVAS_SIZE);
 		else if(frm <= 7)
 			draw[0](canvas,
@@ -562,8 +562,7 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 	syCloseEvent(btEffectTransferCanvas);
 	EFFECT_RELEASE_BLITTERS();
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-	for(frm = 0, background = &Ram_HeapSlots->battleState->bg; frm != 7;
-		frm++) {
+	for(frm = 0, background = &RamHeapSlots->battleState->bg; frm != 7; frm++) {
 		btBackgroundSetPaletteLevelStub(*background, 6 - frm);
 		sySynch(1);
 	}

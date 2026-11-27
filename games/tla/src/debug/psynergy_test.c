@@ -602,7 +602,7 @@ const CUE *scGetCues(void)
    sends the leader away or brings it in by ring at the entrances for them. */
 Sint32 scInit(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->sceneAttributeHigh = 0;

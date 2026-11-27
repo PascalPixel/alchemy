@@ -40,8 +40,8 @@ void fdPsynergyRunHandler(Sint32 kind)
    each kind runs its effect to the end. */
 void fdPsynergyRun(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
 	Sint32				anm = scene->fieldPsynergy;
 	Sint32				tgtId = scene->tgtId;
 	Sint32				objectId;
@@ -135,8 +135,8 @@ void fdPsynergyRun(void)
    chose (FIELD_EFFECT_STATE.tgtId). */
 void fdPsynergyDispatch(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
 	Sint32				anm = scene->fieldPsynergy;
 	Sint32				tgtId = scene->tgtId;
 
@@ -224,7 +224,7 @@ void fdPsynergyDispatch(void)
    its target move again, unless the target is the actor kept stopped. */
 void fdPsynergyFinishMindRead(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 
 	if(effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
 		fdPsynergyStopMindReadWave();
@@ -238,7 +238,7 @@ void fdPsynergyFinishMindRead(void)
    each does when it ends. */
 void fdPsynergyRunExtraHandler(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 
 	switch(scene->fieldPsynergy) {
 	case FIELD_PSYNERGY_REVEAL:
@@ -335,7 +335,7 @@ Sint32 fdActorGetSprDepth(ACTOR *actor)
 		if(depth <= 0)
 			depth = 1;
 	} else {
-		MAP_STATE *map = Ram_HeapSlots->mapGrid;
+		MAP_STATE *map = RamHeapSlots->mapGrid;
 		Sint32	   bias = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 		Sint32	   base = map->origin[1];
 
@@ -349,7 +349,7 @@ Sint32 fdActorGetSprDepth(ACTOR *actor)
 /* Draws the Psynergy's canvas sprite (FIELD_EFFECT_STATE.spr) each tick. */
 void fdPsynergyDrawCanvasSpr(void)
 {
-	fdEffectSprDraw(&((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->spr);
+	fdEffectSprDraw(&((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->spr);
 }
 
 /* When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
@@ -359,7 +359,7 @@ void fdPsynergyDrawCanvasSpr(void)
    fdPsynergyReleaseSceneSpr. */
 void fdPsynergyStartSceneSpr(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *mainActor;
 	EFFECT_SPR		   *spr;
 	FIXED				pos[3];

@@ -147,14 +147,14 @@ typedef enum ABILITY_EFFECT {
 	ABILITY_EFFECT_LEAVE_ONE_HP = 34,  /* Severe Blow, Thrash */
 	ABILITY_EFFECT_HALVE_DEFENSE = 35, /* Torch */
 	/* A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
-	   BattleCommand_BuildPlan. */
+	   BattleCommandBuildPlan. */
 	ABILITY_EFFECT_CRITICAL_A = 36,
 	ABILITY_EFFECT_CRITICAL_B = 37,
 	ABILITY_EFFECT_CRITICAL_C = 38,
 	ABILITY_EFFECT_CRITICAL_D = 39,
 	ABILITY_EFFECT_CRITICAL_E = 40,
 	/* A chance of a double or triple blow, rolled by
-	   BattleCommand_BuildPlan. */
+	   BattleCommandBuildPlan. */
 	ABILITY_EFFECT_DOUBLE_BLOW_RARE = 41,
 	ABILITY_EFFECT_DOUBLE_BLOW = 42, /* Double Fang, Twin Beaks */
 	ABILITY_EFFECT_TRIPLE_BLOW_RARE = 43,

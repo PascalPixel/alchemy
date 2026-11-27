@@ -23,7 +23,7 @@ const Uint16 InputDpadAnglesEightWay[16] = {
 /* Move's hand animation by the quarter turns from its side of the target to */
 /* the push (fdPsynergySteerPushedTarget): pulling the target toward its */
 /* side, it grips; pushing it away, it shows its palm; pushing it across, it */
-/* is open; The Broken Seal's FieldEffect_QuadrantModes. */
+/* is open; The Broken Seal's FieldEffectQuadrantModes. */
 const Uint8 MoveHandPushPoses[4] = {
 	MOVE_HAND_ANIMATION_GRIP,
 	MOVE_HAND_ANIMATION_OPEN,
@@ -32,7 +32,7 @@ const Uint8 MoveHandPushPoses[4] = {
 };
 
 /* Waits 60 ticks and releases the actor; The Broken Seal's */
-/* FieldEffect_BurstParticleActorScript. */
+/* FieldEffectBurstParticleActorScript. */
 const Sint32 GrowthLeafScript[] = {
 	SC_WAIT(60),
 	SC_RELEASE,

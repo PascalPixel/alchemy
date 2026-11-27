@@ -57,14 +57,14 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	Sint32		   i;
 	Uint8		  *pixels;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 
 	/* Set up the canvas, the flash sprite sheet, the rings' texture and a
 	   clipped blitter keeping the brighter; Death Leap takes violet colours. */
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 1);
-	pixels = Ram_MapMetatileBuffer;
+	pixels = RamMapMetatileBuffer;
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, pixels, 0, 0);
 	if(args->variant == EFFECT_VARIANT_STRONGER) {
 		syWordsCopyEntry((void *)BG_PLTT,
@@ -81,7 +81,7 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	}
 	state->transferMode = CANVAS_COPY_AND_FADE;
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 
 	/* The run, most of the way to the target. */
@@ -105,7 +105,7 @@ void btEffectRunDeathPlunge(BATTLE_EFFECT_PARM *args)
 	sySynch(20);
 
 	for(frm = 0; frm != DEATH_PLUNGE_TICKS; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* Both leap at 15 pixels a tick, and soon turn upside down. */
 		if(frm == 0) {

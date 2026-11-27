@@ -563,7 +563,7 @@ typedef enum BEAM_STEP {
    angel starts to flicker. */
 void scJupiterLighthouseUpdateBeam(void)
 {
-	BEAM_STATE *state = Ram_HeapSlots->menuState;
+	BEAM_STATE *state = RamHeapSlots->menuState;
 	ACTOR	   *carrier = FieldStateWork->camera;
 	Sint32		t = state->frm;
 	Sint32		position[3];
@@ -864,7 +864,7 @@ extern const Sint32 *FieldEffectDurationScripts[];
 UNUSED void scCrackedTilePlaceLanding(Sint32 dx, Sint32 dz, Sint32 transition)
 {
 	ACTOR			*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE		*field = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*field = RamHeapSlots->fieldState;
 	METATILE_TARGET *state = &CrackedTiles;
 	Sint32			 x = scFieldGameFlagGetByte(state->flgByte);
 	Sint32			 z = scFieldGameFlagGetByte(state->flgByte + 8);

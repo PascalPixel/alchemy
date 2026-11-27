@@ -42,13 +42,13 @@ Sint32 fdFlagEntriesGetValue(Sint32 flg)
    entrance. */
 void fdEncounterSelectMapZones(Sint32 useRules)
 {
-	FIELD_STATE				   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE				   *state = RamHeapSlots->fieldState;
 	Sint32						sceneId = MainRoutineStateWork.next;
 	Sint32						entrance = MainRoutineStateWork.entrance;
 	Uint8					   *groundZones = state->encounterZones;
 	Uint32						first = 0;
 	Uint32						second = 0;
-	const SCENE_ENCOUNTER_RULE *rule = Scene_EncounterRules;
+	const SCENE_ENCOUNTER_RULE *rule = SceneEncounterRules;
 	Uint32						i;
 
 	if(useRules != 0) {
@@ -132,7 +132,7 @@ Sint32 fdEncounterCountStepsAndSelectFormation(Sint32 zone, FIXED steps)
 	Sint32			formation;
 	Sint32			i;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	/* UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting
 	   entry. */
 #if FIX_UNINITIALIZED_READ
@@ -250,7 +250,7 @@ void fdChooseMusic(void)
 	Sint16				  sceneId = MainRoutineStateWork.next;
 	Sint16				  entrance = MainRoutineStateWork.entrance;
 	Sint16				  group = MainRoutineStateWork.area;
-	const MAP_MUSIC_RULE *rule = Scene_MusicRules;
+	const MAP_MUSIC_RULE *rule = SceneMusicRules;
 
 	for(; rule->id != -1; rule++) {
 		if(rule->byScene) {
@@ -281,7 +281,7 @@ void fdChooseMusic(void)
    the scene or its area; 0, the Title's name, when none does. */
 Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance)
 {
-	const AREA_NAME_RULE *rule = Area_NameRules;
+	const AREA_NAME_RULE *rule = AreaNameRules;
 	Sint32				  name = 0;
 	Sint32				  area = gmGetArea(sceneId);
 
@@ -307,7 +307,7 @@ Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance)
 
 /* Sets the scene the party returns to after a defeat
    (MainRoutineStateWork.restartScene and restartEntrance), from the first rule
-   of Scene_ReturnRules that matches the current scene and entrance: rows of
+   of SceneReturnRules that matches the current scene and entrance: rows of
    eight halfwords that open {scene, entrance (-1 for any), return scene, return
    entrance}, ended by scene -1. Without a match the restart point stays as it
    was. */
@@ -321,7 +321,7 @@ void fdSetRestartPoint(void)
 	sceneId = party->next;
 	entrance = party->entrance;
 
-	for(rule = Scene_ReturnRules; rule[0] != -1; rule += 8) {
+	for(rule = SceneReturnRules; rule[0] != -1; rule += 8) {
 		if(rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
 			party->restartScene = rule[2];
 			party->restartEntrance = rule[3];
@@ -333,12 +333,12 @@ void fdSetRestartPoint(void)
 /* Where the party comes out on the world map after reaching scene and entrance
    (Teleport's choice calls it). With FLAG_SHIP_CAN_SAIL set (the party has the
    ship, whose mooring the map screen marks), finds the first rule of
-   Scene_ReturnRules for scene and entrance (-1 on either side matches any
+   SceneReturnRules for scene and entrance (-1 on either side matches any
    entrance) and copies its position, x and z in 16.16 and the third value as
    is, to MainRoutineStateWork.shipX, shipZ and shipFacing. */
 void fdWorldMapSetReturnForScene(Sint32 scene, Sint32 entrance)
 {
-	const Sint16 *rule = Scene_ReturnRules;
+	const Sint16 *rule = SceneReturnRules;
 
 	if(syGameFlagGet(FLAG_SHIP_CAN_SAIL) == 0)
 		return;
@@ -359,7 +359,7 @@ void fdWorldMapSetReturnForScene(Sint32 scene, Sint32 entrance)
    position. */
 void fdWorldMapSetReturnLeavingScene(Sint32 scene, Sint32 entrance)
 {
-	const Sint16 *rule = Scene_ReturnRules;
+	const Sint16 *rule = SceneReturnRules;
 
 	if(syGameFlagGet(FLAG_SHIP_CAN_SAIL) == 0)
 		return;

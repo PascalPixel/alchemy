@@ -670,7 +670,7 @@ CUE IncreaseItemAndLevelNameCues[] = {
    row names it. */
 void dbIncreaseItemAndLevelRequestExit(Sint32 countdown)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 	event->transitionFrm = 24;
@@ -682,7 +682,7 @@ void dbIncreaseItemAndLevelRequestExit(Sint32 countdown)
    does. */
 Sint32 scInit(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	event->transitionFrm = 24;
@@ -714,7 +714,7 @@ void dbIncreaseItemAndLevelRunMotionTest(void)
    target where it is. */
 void dbIncreaseItemAndLevelKeepPortraitBrowserInPlace(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	state->childMode = 1;
 }

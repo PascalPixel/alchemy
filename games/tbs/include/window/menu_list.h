@@ -179,6 +179,6 @@ STATIC_ASSERT(offsetof(BATTLE_MENU_STATE, chosenDjinn) == 228);
 	(*(BATTLE_MENU_STATE **)&HeapSlots[HEAP_SLOT_BATTLE_MENU])
 /* The animated cursor's ticks, 16 by 16 at a byte a pixel
    (graphics/ui/sprite_cursors/spin). */
-extern const Uint8 Menu_AnimatedCursorTiles[];
+extern const Uint8 MenuAnimatedCursorTiles[];
 
 #endif

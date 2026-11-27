@@ -1,4 +1,4 @@
-/* Goma Cave (SceneId_GomaCavePond), the room below the room of two pillars and
+/* Goma Cave (SceneIdGomaCavePond), the room below the room of two pillars and
    a stump, in the cave in the Goma Range that the mayor of Vault tells the
    party to pass through on the way to Bilibin.
 

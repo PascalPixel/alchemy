@@ -1,402 +1,402 @@
 name	file	section	align	left	pad	edition	fill
-BattleEffect_GlowOrbSetSheet	glow_orb_set_00.gbapal						
+BattleEffectGlowOrbSetSheet	glow_orb_set_00.gbapal						
 	glow_orb_set.parts.lz						
-BattleEffect_ArcherSheet	archer_sheet_00.gbapal						
+BattleEffectArcherSheet	archer_sheet_00.gbapal						
 	archer_sheet.parts.lz			46cd			
-BattleEffect_UlyssesSilhouette	ulysses_silhouette.bitmap.lz						
-BattleEffect_UnusedSilhouette	unused_silhouette.bitmap.lz						
-BattleEffect_FlutteringFlakeSheet	fluttering_flake_sheet_00.gbapal						
+BattleEffectUlyssesSilhouette	ulysses_silhouette.bitmap.lz						
+BattleEffectUnusedSilhouette	unused_silhouette.bitmap.lz						
+BattleEffectFlutteringFlakeSheet	fluttering_flake_sheet_00.gbapal						
 	fluttering_flake_sheet.parts.lz			0371			
-BattleEffect_SwirlTexture	swirl_texture.bitmap.lz			7b3d80			
-BattleEffect_RuneSealSheet	rune_seal_sheet.gbapal						
+BattleEffectSwirlTexture	swirl_texture.bitmap.lz			7b3d80			
+BattleEffectRuneSealSheet	rune_seal_sheet.gbapal						
 	rune_seal_sheet.bitmap.lz						
-BattleEffect_CharmRingSheet	charm_ring.gbapal						
+BattleEffectCharmRingSheet	charm_ring.gbapal						
 	charm_ring.bitmap.lz			76			
-BattleEffect_WhirlBeamSheet	whirl_beam.gbapal						
+BattleEffectWhirlBeamSheet	whirl_beam.gbapal						
 	whirl_beam.bitmap.lz			54aa14			
-BattleEffect_VioletPaletteE	violet_palette_e.gbapal						
+BattleEffectVioletPaletteE	violet_palette_e.gbapal						
 	violet_palette_e.bitmap.lz						
-BattleEffect_GreyPaletteA	grey_palette_a.gbapal						
+BattleEffectGreyPaletteA	grey_palette_a.gbapal						
 	grey_palette_a.bitmap.lz						
-BattleEffect_RocketFlameSheet	rocket_flame_sheet.bitmap.lz			20			
-BattleEffect_BirdFlockSheet	bird_flock_sheet.bitmap.lz			63			
-BattleEffect_ThinBoltSheet	thin_bolt.gbapal						
+BattleEffectRocketFlameSheet	rocket_flame_sheet.bitmap.lz			20			
+BattleEffectBirdFlockSheet	bird_flock_sheet.bitmap.lz			63			
+BattleEffectThinBoltSheet	thin_bolt.gbapal						
 	thin_bolt.bitmap.lz			301925			
-BattleEffect_BoltSheet	bolt.gbapal						
+BattleEffectBoltSheet	bolt.gbapal						
 	bolt.bitmap.lz			cb3116			
-BattleEffect_CurseSealSheet	curse_seal.gbapal						
+BattleEffectCurseSealSheet	curse_seal.gbapal						
 	curse_seal.bitmap.lz			e1ef			
-BattleEffect_CrackedTextureSheet	cracked_texture.gbapal						
+BattleEffectCrackedTextureSheet	cracked_texture.gbapal						
 	cracked_texture.bitmap.lz			0e3000			
-BattleEffect_CrossTextureSheet	cross_texture.gbapal						
+BattleEffectCrossTextureSheet	cross_texture.gbapal						
 	cross_texture.bitmap.lz			961d			
-BattleEffect_FlameBandTexture	flame_band_texture.bitmap.lz			fc5205			
-BattleEffect_FireRingTexture	fire_ring_texture.bitmap.lz			b03d			
-BattleEffect_GlowRingTexture	glow_ring_texture.bitmap.lz			0881			
-BattleEffect_GlowOrbTexture	glow_orb_texture.bitmap.lz			aa32			
-BattleEffect_PetalSheet	petal.gbapal						
+BattleEffectFlameBandTexture	flame_band_texture.bitmap.lz			fc5205			
+BattleEffectFireRingTexture	fire_ring_texture.bitmap.lz			b03d			
+BattleEffectGlowRingTexture	glow_ring_texture.bitmap.lz			0881			
+BattleEffectGlowOrbTexture	glow_orb_texture.bitmap.lz			aa32			
+BattleEffectPetalSheet	petal.gbapal						
 	petal.bitmap.lz			68			
-BattleEffect_CrescentRowSheet	crescent_row.gbapal						
+BattleEffectCrescentRowSheet	crescent_row.gbapal						
 	crescent_row.bitmap.lz			26			
-BattleEffect_RuneCircleSheet	rune_circle.gbapal						
+BattleEffectRuneCircleSheet	rune_circle.gbapal						
 	rune_circle.bitmap.lz			6ba1			
-BattleEffect_FadingCrescentSheet	fading_crescent_sheet.bitmap.lz						
-BattleEffect_GlowBandTextureA	glow_band_texture_a.bitmap.lz			1e0084			
-BattleEffect_GlowBandTextureB	glow_band_texture_b.bitmap.lz				4		
-BattleEffect_FlameWallTexture	flame_wall_texture.bitmap.lz			40e709			
-BattleEffect_CloudSwirlSheet	cloud_swirl.gbapal						
+BattleEffectFadingCrescentSheet	fading_crescent_sheet.bitmap.lz						
+BattleEffectGlowBandTextureA	glow_band_texture_a.bitmap.lz			1e0084			
+BattleEffectGlowBandTextureB	glow_band_texture_b.bitmap.lz				4		
+BattleEffectFlameWallTexture	flame_wall_texture.bitmap.lz			40e709			
+BattleEffectCloudSwirlSheet	cloud_swirl.gbapal						
 	cloud_swirl.bitmap.lz			ee			
-BattleEffect_DustBlobSheet	dust_blob.gbapal						
+BattleEffectDustBlobSheet	dust_blob.gbapal						
 	dust_blob.bitmap.lz			547b1f			
-BattleEffect_CrestSheet	crest_sheet.bitmap.lz			f71c			
-BattleEffect_BlueCloudPuffSheet	blue_cloud_puff_sheet.bitmap.lz				4		
-BattleEffect_CometTexture	comet_texture.bitmap.lz						
-BattleEffect_FeatherSheet	feather.gbapal						
+BattleEffectCrestSheet	crest_sheet.bitmap.lz			f71c			
+BattleEffectBlueCloudPuffSheet	blue_cloud_puff_sheet.bitmap.lz				4		
+BattleEffectCometTexture	comet_texture.bitmap.lz						
+BattleEffectFeatherSheet	feather.gbapal						
 	feather.bitmap.lz			da2556			
-BattleEffect_EmberTexture	ember_texture.bitmap.lz						
-BattleEffect_StreakTexture	streak_texture.bitmap.lz			842a0c			
-BattleEffect_LightBurstSheet	light_burst.gbapal						
+BattleEffectEmberTexture	ember_texture.bitmap.lz						
+BattleEffectStreakTexture	streak_texture.bitmap.lz			842a0c			
+BattleEffectLightBurstSheet	light_burst.gbapal						
 	light_burst.bitmap.lz			380126			
-BattleEffect_StarCrossSheet	star_cross.gbapal						
+BattleEffectStarCrossSheet	star_cross.gbapal						
 	star_cross.bitmap.lz						
-BattleEffect_CornerGlowSheet	corner_glow.gbapal						
+BattleEffectCornerGlowSheet	corner_glow.gbapal						
 	corner_glow.bitmap.lz				4		
-BattleEffect_BurningSkullSheet	burning_skull_sheet.bitmap.lz	a		05			
-BattleEffect_ImpFaceSheet	imp_face.gbapal	a					
+BattleEffectBurningSkullSheet	burning_skull_sheet.bitmap.lz	a		05			
+BattleEffectImpFaceSheet	imp_face.gbapal	a					
 	imp_face.bitmap.lz	a		07c780			
-BattleEffect_BillowTexture	billow_texture.bitmap.lz	a					
-BattleEffect_GreatSwordSheet	great_sword.gbapal	a					
+BattleEffectBillowTexture	billow_texture.bitmap.lz	a					
+BattleEffectGreatSwordSheet	great_sword.gbapal	a					
 	great_sword.bitmap.lz	a		70a848			
-BattleEffect_HeartbreakSheet	heartbreak_sheet_00.gbapal	a					
+BattleEffectHeartbreakSheet	heartbreak_sheet_00.gbapal	a					
 	heartbreak_sheet.parts.lz	a		54			
-BattleEffect_ApocalypseSheet	apocalypse_sheet_00.gbapal	a					
+BattleEffectApocalypseSheet	apocalypse_sheet_00.gbapal	a					
 	apocalypse_sheet.parts.lz	a		bf			
-BattleEffect_SunCardSheet	sun_card.gbapal	a					
+BattleEffectSunCardSheet	sun_card.gbapal	a					
 	sun_card.bitmap.lz	a		01			
-BattleEffect_VineCardSheet	vine_card.gbapal	a					
+BattleEffectVineCardSheet	vine_card.gbapal	a					
 	vine_card.bitmap.lz	a		1d6a00			
-BattleEffect_DragonCardSheet	dragon_card.gbapal	a					
+BattleEffectDragonCardSheet	dragon_card.gbapal	a					
 	dragon_card.bitmap.lz	a		01			
-BattleEffect_BoltCardSheet	bolt_card.gbapal	a					
+BattleEffectBoltCardSheet	bolt_card.gbapal	a					
 	bolt_card.bitmap.lz	a			4		
-BattleEffect_ButterflyCardSheet	butterfly_card.gbapal	a					
+BattleEffectButterflyCardSheet	butterfly_card.gbapal	a					
 	butterfly_card.bitmap.lz	a		cc1703			
-BattleEffect_SheepCardSheet	sheep_card.gbapal	a					
+BattleEffectSheepCardSheet	sheep_card.gbapal	a					
 	sheep_card.bitmap.lz	a					
-BattleEffect_SkeletonCardSheet	skeleton_card.gbapal	a					
+BattleEffectSkeletonCardSheet	skeleton_card.gbapal	a					
 	skeleton_card.bitmap.lz	a		7c04			
-BattleEffect_SwordCardSheet	sword_card.gbapal	a					
+BattleEffectSwordCardSheet	sword_card.gbapal	a					
 	sword_card.bitmap.lz	a					
-BattleEffect_BoulderPicture	boulder_picture.gbapal	a					
+BattleEffectBoulderPicture	boulder_picture.gbapal	a					
 	boulder_picture.bitmap.lz	a		1d6f			
-BattleEffect_BladeSheet	blade.gbapal	a					
+BattleEffectBladeSheet	blade.gbapal	a					
 	blade.bitmap.lz	a					
-BattleEffect_ClawSlashSheet	claw_slash.gbapal	a					
+BattleEffectClawSlashSheet	claw_slash.gbapal	a					
 	claw_slash.bitmap.lz	a		01			
-BattleEffect_FlameGradientTexture	flame_gradient_texture.bitmap.lz	a		1f50			
-BattleEffect_CrystalBitmapSheet	crystal.gbapal	a					
+BattleEffectFlameGradientTexture	flame_gradient_texture.bitmap.lz	a		1f50			
+BattleEffectCrystalBitmapSheet	crystal.gbapal	a					
 	crystal.bitmap.lz	a			4		ff
-BattleEffect_SmallFlameSheet	small_flame.gbapal	a					
+BattleEffectSmallFlameSheet	small_flame.gbapal	a					
 	small_flame.bitmap.lz	a					
-BattleEffect_CornerRuneBSheet	corner_rune_b.gbapal	b					
+BattleEffectCornerRuneBSheet	corner_rune_b.gbapal	b					
 	corner_rune_b.bitmap.lz	b		47			
-BattleEffect_TriangleSealTexture	triangle_seal_texture.bitmap.lz	b		012e			
-BattleEffect_PentagonSealTexture	pentagon_seal_texture.bitmap.lz	b		4190			
-BattleEffect_SarcophagusSheet	sarcophagus_sheet_00.gbapal	b					
+BattleEffectTriangleSealTexture	triangle_seal_texture.bitmap.lz	b		012e			
+BattleEffectPentagonSealTexture	pentagon_seal_texture.bitmap.lz	b		4190			
+BattleEffectSarcophagusSheet	sarcophagus_sheet_00.gbapal	b					
 	sarcophagus_sheet.parts.lz	b		40830f			
-BattleEffect_RaidensWrathSheet	raidens_wrath_sheet_00.gbapal	b					
+BattleEffectRaidensWrathSheet	raidens_wrath_sheet_00.gbapal	b					
 	raidens_wrath_sheet.parts.lz	b		c23a02			
-BattleEffect_GhostSkullTexture	ghost_skull_texture.bitmap.lz	b		2e1523			
-BattleEffect_SlashFlameSheet	slash_flame_sheet.parts.lz	b		a8			
-BattleEffect_SmokeBandSheet	smoke_band.gbapal	b					
+BattleEffectGhostSkullTexture	ghost_skull_texture.bitmap.lz	b		2e1523			
+BattleEffectSlashFlameSheet	slash_flame_sheet.parts.lz	b		a8			
+BattleEffectSmokeBandSheet	smoke_band.gbapal	b					
 	smoke_band.bitmap.lz	b					
-BattleEffect_LifeShearSheet	life_shear_sheet_00.gbapal	b					
+BattleEffectLifeShearSheet	life_shear_sheet_00.gbapal	b					
 	life_shear_sheet.parts.lz	b		e48a13			
-BattleEffect_DustCloudSheet	dust_cloud.gbapal	b					
+BattleEffectDustCloudSheet	dust_cloud.gbapal	b					
 	dust_cloud.bitmap.lz	b		9acb			
-BattleEffect_ChainTexture	chain_texture.bitmap.lz	b		0038			
-BattleEffect_JaggedStreakSheet	jagged_streak_sheet.bitmap.lz	b		ad			
-BattleEffect_LightningTexture	lightning_texture.bitmap.lz	b		a3081a			
-BattleEffect_FlameZigzagTexture	flame_zigzag_texture.bitmap.lz	b		b2			
-BattleEffect_CogTexture	cog_texture.bitmap.lz	b		3ee1			
-BattleEffect_ScaleTexture	scale_texture.bitmap.lz	b		6b06			
-BattleEffect_BubbleAnimationSheet	bubble_animation_sheet.parts.lz	b					
-BattleEffect_ArcFragmentsSheet	arc_fragments.gbapal	b					
+BattleEffectChainTexture	chain_texture.bitmap.lz	b		0038			
+BattleEffectJaggedStreakSheet	jagged_streak_sheet.bitmap.lz	b		ad			
+BattleEffectLightningTexture	lightning_texture.bitmap.lz	b		a3081a			
+BattleEffectFlameZigzagTexture	flame_zigzag_texture.bitmap.lz	b		b2			
+BattleEffectCogTexture	cog_texture.bitmap.lz	b		3ee1			
+BattleEffectScaleTexture	scale_texture.bitmap.lz	b		6b06			
+BattleEffectBubbleAnimationSheet	bubble_animation_sheet.parts.lz	b					
+BattleEffectArcFragmentsSheet	arc_fragments.gbapal	b					
 	arc_fragments.bitmap.lz	b		07			
-BattleEffect_ShortStreakPicture	short_streak_picture.gbapal	b					
+BattleEffectShortStreakPicture	short_streak_picture.gbapal	b					
 	short_streak_picture.bitmap.lz	b		72			
-BattleEffect_AxeSheet	axe.gbapal	b					
+BattleEffectAxeSheet	axe.gbapal	b					
 	axe.bitmap.lz	b		1000			
-BattleEffect_GiantSwordBladeSheet	giant_sword_blade_sheet.gbapal	b					
+BattleEffectGiantSwordBladeSheet	giant_sword_blade_sheet.gbapal	b					
 	giant_sword_blade_sheet.bitmap.lz	b		a50a23			
-BattleEffect_GiantSwordSheet	giant_sword_sheet.bitmap.lz	b					
-BattleEffect_FireStripesTexture	fire_stripes_texture.gbapal	b					
+BattleEffectGiantSwordSheet	giant_sword_sheet.bitmap.lz	b					
+BattleEffectFireStripesTexture	fire_stripes_texture.gbapal	b					
 	fire_stripes_texture.8bpp.lz	b		31328d			
-BattleEffect_PinkBarSheet	pink_bar_sheet.bitmap.lz	b		892269			
-BattleEffect_ShatteringOpeningSheet	tile_mask_00.gbapal	c					
+BattleEffectPinkBarSheet	pink_bar_sheet.bitmap.lz	b		892269			
+BattleEffectShatteringOpeningSheet	tile_mask_00.gbapal	c					
 	tile_mask.parts.lz	c		38fa06			
-BattleEffect_CyanSparkSheet	cyan_spark_00.gbapal	c					
+BattleEffectCyanSparkSheet	cyan_spark_00.gbapal	c					
 	cyan_spark.parts.lz	c					
-BattleEffect_VioletPaletteA	violet_palette_a.gbapal	c					
+BattleEffectVioletPaletteA	violet_palette_a.gbapal	c					
 	violet_palette_a.bitmap.lz	c					
-BattleEffect_RedPaletteA	red_palette_a.gbapal	c					
+BattleEffectRedPaletteA	red_palette_a.gbapal	c					
 	red_palette_a.bitmap.lz	c					
-BattleEffect_YellowPaletteA	yellow_palette_a.gbapal	c					
+BattleEffectYellowPaletteA	yellow_palette_a.gbapal	c					
 	yellow_palette_a.bitmap.lz	c					
-BattleEffect_GreyCrescentSheet	grey_crescent.gbapal	c					
+BattleEffectGreyCrescentSheet	grey_crescent.gbapal	c					
 	grey_crescent.bitmap.lz	c		06			
-BattleEffect_StarCrescentSheet	star_crescent.gbapal	c					
+BattleEffectStarCrescentSheet	star_crescent.gbapal	c					
 	star_crescent.bitmap.lz	c		03			
-BattleEffect_VorpalSlashImageA	reveal_mask_a.gbapal	c					
+BattleEffectVorpalSlashImageA	reveal_mask_a.gbapal	c					
 	reveal_mask_a.bitmap.lz	c		5222			
-BattleEffect_VorpalSlashImageB	reveal_b.gbapal	c					
+BattleEffectVorpalSlashImageB	reveal_b.gbapal	c					
 	reveal_b.bitmap.lz	c		007b09			
-BattleEffect_QuickStrikeImageA	reveal_mask_c.gbapal	c					
+BattleEffectQuickStrikeImageA	reveal_mask_c.gbapal	c					
 	reveal_mask_c.bitmap.lz	c					
-BattleEffect_QuickStrikeImageB	reveal_mask_d.gbapal	c					
+BattleEffectQuickStrikeImageB	reveal_mask_d.gbapal	c					
 	reveal_mask_d.bitmap.lz	c					
-BattleEffect_UnusedFlashingStrikeImageA	reveal_mask_e.gbapal	c					
+BattleEffectUnusedFlashingStrikeImageA	reveal_mask_e.gbapal	c					
 	reveal_mask_e.bitmap.lz	c			4		
-BattleEffect_UnusedFlashingStrikeImageB	reveal_mask_f.gbapal	c					
+BattleEffectUnusedFlashingStrikeImageB	reveal_mask_f.gbapal	c					
 	reveal_mask_f.bitmap.lz	c		30e108			
-BattleEffect_LimeColumnSheet	lime_column.gbapal	c					
+BattleEffectLimeColumnSheet	lime_column.gbapal	c					
 	lime_column.bitmap.lz	c		02			
-BattleEffect_RainSheet	rain.gbapal	c					
+BattleEffectRainSheet	rain.gbapal	c					
 	rain.bitmap.lz	c		27			
-BattleEffect_FlameSheetA	flame_a.gbapal	c					
+BattleEffectFlameSheetA	flame_a.gbapal	c					
 	flame_a.bitmap.lz	c		2f18			
-BattleEffect_DemonFaceSheet	demon_face.gbapal	c					
+BattleEffectDemonFaceSheet	demon_face.gbapal	c					
 	demon_face.bitmap.lz	c					
-BattleEffect_FlameBladeSheet	flame_blade.gbapal	c					
+BattleEffectFlameBladeSheet	flame_blade.gbapal	c					
 	flame_blade.bitmap.lz	c		ff			
-BattleEffect_SwordSheet	sword.gbapal	c					
+BattleEffectSwordSheet	sword.gbapal	c					
 	sword.bitmap.lz	c					
-BattleEffect_IceTileSheet	ice_tile_00.gbapal	c					
+BattleEffectIceTileSheet	ice_tile_00.gbapal	c					
 	ice_tile.parts.lz	c		0001			
-BattleEffect_FlameArcSheet	five_mode.bitmap.lz	c		96			
-BattleEffect_SpiderWebSheet	spider_web.gbapal	c					
+BattleEffectFlameArcSheet	five_mode.bitmap.lz	c		96			
+BattleEffectSpiderWebSheet	spider_web.gbapal	c					
 	spider_web.bitmap.lz	c		1885			
-BattleEffect_VioletLightningSheetA	violet_lightning_a.gbapal	c					
+BattleEffectVioletLightningSheetA	violet_lightning_a.gbapal	c					
 	violet_lightning_a.bitmap.lz	c					
-BattleEffect_YellowSparkSheet	yellow_spark_00.gbapal	c					
+BattleEffectYellowSparkSheet	yellow_spark_00.gbapal	c					
 	yellow_spark.parts.lz	c		176ea0			
-BattleEffect_ProjectileVolleyImage	projectile_volley.bitmap.lz	c					
-BattleEffect_ShurikenSheet	shuriken.gbapal	c					
+BattleEffectProjectileVolleyImage	projectile_volley.bitmap.lz	c					
+BattleEffectShurikenSheet	shuriken.gbapal	c					
 	shuriken.bitmap.lz	c		478d13			
-BattleEffect_FlareSheet	flare_00.gbapal	c					
+BattleEffectFlareSheet	flare_00.gbapal	c					
 	flare.parts.lz	c		2620			
-BattleEffect_FlareImage	flare_cels.bitmap.lz	c		05			
-BattleEffect_VioletPaletteB	violet_palette_b.gbapal	c					
+BattleEffectFlareImage	flare_cels.bitmap.lz	c		05			
+BattleEffectVioletPaletteB	violet_palette_b.gbapal	c					
 	violet_palette_b.bitmap.lz	c					
-BattleEffect_FireSwirlSheet	fire_swirl_00.gbapal	c					
+BattleEffectFireSwirlSheet	fire_swirl_00.gbapal	c					
 	fire_swirl.parts.lz	c		1221			
-BattleEffect_VioletLightningSheetB	violet_lightning_b.gbapal	c					
+BattleEffectVioletLightningSheetB	violet_lightning_b.gbapal	c					
 	violet_lightning_b.bitmap.lz	c		e5			
-BattleEffect_FireBurstSheet	fire_burst.gbapal	c					
+BattleEffectFireBurstSheet	fire_burst.gbapal	c					
 	fire_burst.bitmap.lz	c			4		
-BattleEffect_BlueCrescentSheet	blue_crescent.gbapal	c					
+BattleEffectBlueCrescentSheet	blue_crescent.gbapal	c					
 	blue_crescent.bitmap.lz	c		e002			
-BattleEffect_JudgmentFlashSheet	overlay_a.parts.lz	c		88			
-BattleEffect_VioletMoteSheet	violet_mote.gbapal	c					
+BattleEffectJudgmentFlashSheet	overlay_a.parts.lz	c		88			
+BattleEffectVioletMoteSheet	violet_mote.gbapal	c					
 	violet_mote.bitmap.lz	c		284142			
-BattleEffect_FireballSheet	fireball.gbapal	c					
+BattleEffectFireballSheet	fireball.gbapal	c					
 	fireball.bitmap.lz	c		32			
-BattleEffect_MemberBurstImage	member_burst.bitmap.lz	c		191456			
-BattleEffect_SlashSheet	slash_00.gbapal	c					
+BattleEffectMemberBurstImage	member_burst.bitmap.lz	c		191456			
+BattleEffectSlashSheet	slash_00.gbapal	c					
 	slash.parts.lz	c		f159			
-BattleEffect_WaveSheet	wave.gbapal	c					
+BattleEffectWaveSheet	wave.gbapal	c					
 	wave.bitmap.lz	c					
-BattleEffect_TargetBurstImage	target_burst.bitmap.lz	c		2f00			
-BattleEffect_PinkStarSheet	pink_star.gbapal	c					
+BattleEffectTargetBurstImage	target_burst.bitmap.lz	c		2f00			
+BattleEffectPinkStarSheet	pink_star.gbapal	c					
 	pink_star.bitmap.lz	c		80			
-BattleEffect_WaterSpraySheet	water_spray_00.gbapal	c					
+BattleEffectWaterSpraySheet	water_spray_00.gbapal	c					
 	water_spray.parts.lz	c					
-BattleEffect_BlueFlameSheet	blue_flame_00.gbapal	c					
+BattleEffectBlueFlameSheet	blue_flame_00.gbapal	c					
 	blue_flame.parts.lz	c		b77c			
-BattleEffect_ExplosionSheet	explosion.gbapal	c					
+BattleEffectExplosionSheet	explosion.gbapal	c					
 	explosion.bitmap.lz	c		ec103c			
-BattleEffect_MagentaSwirlSheet	magenta_swirl.gbapal	c					
+BattleEffectMagentaSwirlSheet	magenta_swirl.gbapal	c					
 	magenta_swirl.bitmap.lz	c		1c4c			
-BattleEffect_MagentaTailSheet	magenta_tail.gbapal	c					
+BattleEffectMagentaTailSheet	magenta_tail.gbapal	c					
 	magenta_tail.bitmap.lz	c					
-BattleEffect_YellowGlowSheet	dot_cells_a.parts.lz	c		5945			
-BattleEffect_PaleBlueGlowSheet	dot_cells_b.parts.lz	c			4		
-BattleEffect_BlueTallGlowSheet	dot_cells_c.parts.lz	c					
-BattleEffect_BlueGlowSheet	dot_cells_d.parts.lz	c		0c			
-BattleEffect_GreenPalette	green_palette.gbapal	c					
+BattleEffectYellowGlowSheet	dot_cells_a.parts.lz	c		5945			
+BattleEffectPaleBlueGlowSheet	dot_cells_b.parts.lz	c			4		
+BattleEffectBlueTallGlowSheet	dot_cells_c.parts.lz	c					
+BattleEffectBlueGlowSheet	dot_cells_d.parts.lz	c		0c			
+BattleEffectGreenPalette	green_palette.gbapal	c					
 	green_palette.bitmap.lz	c					
-BattleEffect_CrossedDaggersSheet	crossed_daggers.gbapal	c					
+BattleEffectCrossedDaggersSheet	crossed_daggers.gbapal	c					
 	crossed_daggers.bitmap.lz	c					
-BattleEffect_RuneSheet	rune.gbapal	c					
+BattleEffectRuneSheet	rune.gbapal	c					
 	rune.bitmap.lz	c		f84414			
-BattleEffect_FlameColumnSheet	flame_column.gbapal	c					
+BattleEffectFlameColumnSheet	flame_column.gbapal	c					
 	flame_column.bitmap.lz	c		41			
-BattleEffect_EarthWallSheet	earth_wall_00.gbapal	c					
+BattleEffectEarthWallSheet	earth_wall_00.gbapal	c					
 	earth_wall.parts.lz	c					
-BattleEffect_OrangePaletteA	orange_palette_a.gbapal	c					
+BattleEffectOrangePaletteA	orange_palette_a.gbapal	c					
 	orange_palette_a.bitmap.lz	c					
-BattleEffect_FlashBurstSheet	flash_burst.gbapal	c					
+BattleEffectFlashBurstSheet	flash_burst.gbapal	c					
 	flash_burst.bitmap.lz	c		60			
-BattleEffect_ThornSheet	thorn_00.gbapal	c					
+BattleEffectThornSheet	thorn_00.gbapal	c					
 	thorn.parts.lz	c		78			
-BattleEffect_CometSheetA	comet_a.gbapal	c					
+BattleEffectCometSheetA	comet_a.gbapal	c					
 	comet_a.bitmap.lz	c		2a			
-BattleEffect_CometSheetC	comet_c.gbapal	d					
+BattleEffectCometSheetC	comet_c.gbapal	d					
 	comet_c.bitmap.lz	d					
-BattleEffect_WhirlwindSheet	whirlwind_00.gbapal	d					
+BattleEffectWhirlwindSheet	whirlwind_00.gbapal	d					
 	whirlwind.parts.lz	d					
-BattleEffect_GreenPillarSheet	green_pillar_00.gbapal	d					
+BattleEffectGreenPillarSheet	green_pillar_00.gbapal	d					
 	green_pillar.parts.lz	d		21f028			
-BattleEffect_VineSheet	vine_00.gbapal	d					
+BattleEffectVineSheet	vine_00.gbapal	d					
 	vine.parts.lz	d		be			
-BattleEffect_FirePillarSheetA	fire_pillar_a_00.gbapal	d					
+BattleEffectFirePillarSheetA	fire_pillar_a_00.gbapal	d					
 	fire_pillar_a.parts.lz	d					
-BattleEffect_RedPaletteB	red_palette_b.gbapal	d					
+BattleEffectRedPaletteB	red_palette_b.gbapal	d					
 	red_palette_b.bitmap.lz	d					
-BattleEffect_OrangePaletteB	orange_palette_b.gbapal	d					
+BattleEffectOrangePaletteB	orange_palette_b.gbapal	d					
 	orange_palette_b.bitmap.lz	d					
-BattleEffect_VioletPaletteF	violet_palette_f.gbapal	d					
+BattleEffectVioletPaletteF	violet_palette_f.gbapal	d					
 	violet_palette_f.bitmap.lz	d					
-BattleEffect_OrangePaletteC	orange_palette_c.gbapal	d					
+BattleEffectOrangePaletteC	orange_palette_c.gbapal	d					
 	orange_palette_c.bitmap.lz	d					
-BattleEffect_VioletCometSheet	violet_comet_00.gbapal	d					
+BattleEffectVioletCometSheet	violet_comet_00.gbapal	d					
 	violet_comet.parts.lz	d		5eda33			
-BattleEffect_FlameballSheet	flameball.gbapal	d					
+BattleEffectFlameballSheet	flameball.gbapal	d					
 	flameball.bitmap.lz	d		83			
-BattleEffect_BoulderSheet	boulder_00.gbapal	d					
+BattleEffectBoulderSheet	boulder_00.gbapal	d					
 	boulder.parts.lz	d					
-BattleEffect_StarDotSheet	star_dot_00.gbapal	e					
+BattleEffectStarDotSheet	star_dot_00.gbapal	e					
 	star_dot.parts.lz	e		01ba			
-BattleEffect_MarsDjinnSheet	mars_djinn.gbapal	e					
+BattleEffectMarsDjinnSheet	mars_djinn.gbapal	e					
 	mars_djinn.bitmap.lz	e		04			
-BattleEffect_MarsDjinnSmallSheet	mars_djinn_small.gbapal	e					
+BattleEffectMarsDjinnSmallSheet	mars_djinn_small.gbapal	e					
 	mars_djinn_small.bitmap.lz	e		8a1439			
-BattleEffect_JupiterDjinnSheet	jupiter_djinn.gbapal	e					
+BattleEffectJupiterDjinnSheet	jupiter_djinn.gbapal	e					
 	jupiter_djinn.bitmap.lz	e		13			
-BattleEffect_JupiterDjinnSmallSheet	jupiter_djinn_small.gbapal	e					
+BattleEffectJupiterDjinnSmallSheet	jupiter_djinn_small.gbapal	e					
 	jupiter_djinn_small.bitmap.lz	e		0b1f			
-BattleEffect_MercuryDjinnSheet	mercury_djinn.gbapal	e					
+BattleEffectMercuryDjinnSheet	mercury_djinn.gbapal	e					
 	mercury_djinn.bitmap.lz	e			4		
-BattleEffect_MercuryDjinnSmallSheet	mercury_djinn_small.gbapal	e					
+BattleEffectMercuryDjinnSmallSheet	mercury_djinn_small.gbapal	e					
 	mercury_djinn_small.bitmap.lz	e					
-BattleEffect_VenusDjinnSheet	venus_djinn.gbapal	e					
+BattleEffectVenusDjinnSheet	venus_djinn.gbapal	e					
 	venus_djinn.bitmap.lz	e					
-BattleEffect_VenusDjinnSmallSheet	venus_djinn_small.gbapal	e					
+BattleEffectVenusDjinnSmallSheet	venus_djinn_small.gbapal	e					
 	venus_djinn_small.bitmap.lz	e					
-BattleEffect_FireBlobSheet	fire_blob.gbapal	e					
+BattleEffectFireBlobSheet	fire_blob.gbapal	e					
 	fire_blob.bitmap.lz	e		1a			
-BattleEffect_FireStreakSheet	fire_streak.gbapal	e					
+BattleEffectFireStreakSheet	fire_streak.gbapal	e					
 	fire_streak.bitmap.lz	e		0048			
-BattleEffect_LavaOrbSheet	lava_orb_00.gbapal	e					
+BattleEffectLavaOrbSheet	lava_orb_00.gbapal	e					
 	lava_orb.parts.lz	e					
-BattleEffect_YellowRingSheet	yellow_ring.gbapal	e					
+BattleEffectYellowRingSheet	yellow_ring.gbapal	e					
 	yellow_ring.bitmap.lz	e					
-BattleEffect_YellowOrbSheet	yellow_orb.gbapal	e					
+BattleEffectYellowOrbSheet	yellow_orb.gbapal	e					
 	yellow_orb.bitmap.lz	e		019d			
-BattleEffect_BubbleSheet	bubble.gbapal	e					
+BattleEffectBubbleSheet	bubble.gbapal	e					
 	bubble.bitmap.lz	e		14b150			
-BattleEffect_ShieldSheet	shield.gbapal	e					
+BattleEffectShieldSheet	shield.gbapal	e					
 	shield.bitmap.lz	e		45b112			
-BattleEffect_DaggerSheet	dagger.gbapal	e					
+BattleEffectDaggerSheet	dagger.gbapal	e					
 	dagger.bitmap.lz	e		0a7719			
-BattleEffect_PaletteRampImage	spark_cells.parts.lz	e		010d			
-BattleEffect_SmokeSheet	smoke.gbapal	e					
+BattleEffectPaletteRampImage	spark_cells.parts.lz	e		010d			
+BattleEffectSmokeSheet	smoke.gbapal	e					
 	smoke.bitmap.lz	e		c1			
-BattleEffect_BluePalette	blue_palette.gbapal	e					
+BattleEffectBluePalette	blue_palette.gbapal	e					
 	blue_palette.bitmap.lz	e					
-BattleEffect_LimePalette	lime_palette.gbapal	e					
+BattleEffectLimePalette	lime_palette.gbapal	e					
 	lime_palette.bitmap.lz	e					
-BattleEffect_PinkPalette	pink_palette.gbapal	e					
+BattleEffectPinkPalette	pink_palette.gbapal	e					
 	pink_palette.bitmap.lz	e					
-BattleEffect_VioletPaletteC	violet_palette_c.gbapal	e					
+BattleEffectVioletPaletteC	violet_palette_c.gbapal	e					
 	violet_palette_c.bitmap.lz	e					
-BattleEffect_CyanPalette	cyan_palette.gbapal	e					
+BattleEffectCyanPalette	cyan_palette.gbapal	e					
 	cyan_palette.bitmap.lz	e					
-BattleEffect_TanPalette	tan_palette.gbapal	e					
+BattleEffectTanPalette	tan_palette.gbapal	e					
 	tan_palette.bitmap.lz	e					
-BattleEffect_GreyPaletteB	grey_palette_b.gbapal	e					
+BattleEffectGreyPaletteB	grey_palette_b.gbapal	e					
 	grey_palette_b.bitmap.lz	e					
-BattleEffect_VioletPaletteG	violet_palette_g.gbapal	e					
+BattleEffectVioletPaletteG	violet_palette_g.gbapal	e					
 	violet_palette_g.bitmap.lz	e					
-BattleEffect_WispSheet	wisp.gbapal	e					
+BattleEffectWispSheet	wisp.gbapal	e					
 	wisp.bitmap.lz	e		2e06			
-BattleEffect_GreenVineSheet	green_vine.gbapal	e					
+BattleEffectGreenVineSheet	green_vine.gbapal	e					
 	green_vine.bitmap.lz	e		1caf			
-BattleEffect_PortalSheet	portal_00.gbapal	e					
+BattleEffectPortalSheet	portal_00.gbapal	e					
 	portal.parts.lz	e		3f10			
-BattleEffect_SkullSheet	skull.gbapal	e					
+BattleEffectSkullSheet	skull.gbapal	e					
 	skull.bitmap.lz	e		6c0963			
-BattleEffect_HeartSheet	heart.gbapal	e					
+BattleEffectHeartSheet	heart.gbapal	e					
 	heart.bitmap.lz	e		09			
-BattleEffect_CounterRevealSheet	counter_reveal_00.gbapal	e					
+BattleEffectCounterRevealSheet	counter_reveal_00.gbapal	e					
 	counter_reveal.parts.lz	e					
-BattleEffect_RedCrescentSheetA	red_crescent_a_00.gbapal	e					
+BattleEffectRedCrescentSheetA	red_crescent_a_00.gbapal	e					
 	red_crescent_a.parts.lz	e		34			
-BattleEffect_BlueBeastSheet	blue_beast_00.gbapal	e					
+BattleEffectBlueBeastSheet	blue_beast_00.gbapal	e					
 	blue_beast.parts.lz	e					
-BattleEffect_RedCrescentSheetB	red_crescent_b.gbapal	e					
+BattleEffectRedCrescentSheetB	red_crescent_b.gbapal	e					
 	red_crescent_b.bitmap.lz	e		f079			
-BattleEffect_SpiralSheet	spiral.gbapal	e					
+BattleEffectSpiralSheet	spiral.gbapal	e					
 	spiral.bitmap.lz	e					
-BattleEffect_VioletStreakSheet	violet_streak.gbapal	e					
+BattleEffectVioletStreakSheet	violet_streak.gbapal	e					
 	violet_streak.bitmap.lz	e		5b			
-BattleEffect_CrescentMoonSheet	crescent_moon.gbapal	e					
+BattleEffectCrescentMoonSheet	crescent_moon.gbapal	e					
 	crescent_moon.bitmap.lz	e		2b			
-BattleEffect_ThornVineSheet	thorn_vine_00.gbapal	e					
+BattleEffectThornVineSheet	thorn_vine_00.gbapal	e					
 	thorn_vine.parts.lz	e		1e9903			
-BattleEffect_IceShardSheet	ice_shard_00.gbapal	e					
+BattleEffectIceShardSheet	ice_shard_00.gbapal	e					
 	ice_shard.parts.lz	e		3e			
-BattleEffect_EmberStreakSheet	ember_streak_00.gbapal	e					
+BattleEffectEmberStreakSheet	ember_streak_00.gbapal	e					
 	ember_streak.parts.lz	e					
-BattleEffect_BlueArcSheetA	blue_arc_a.gbapal	e					
+BattleEffectBlueArcSheetA	blue_arc_a.gbapal	e					
 	blue_arc_a.bitmap.lz	e		15c004			
-BattleEffect_BlueArcSheetB	blue_arc_b.gbapal	e					
+BattleEffectBlueArcSheetB	blue_arc_b.gbapal	e					
 	blue_arc_b.bitmap.lz	e		aa30			
-BattleEffect_GlowOrbSheet	glow_orb.gbapal	e					
+BattleEffectGlowOrbSheet	glow_orb.gbapal	e					
 	glow_orb.bitmap.lz	e		e0			
-BattleEffect_IceChipSheet	ice_chip_00.gbapal	e					
+BattleEffectIceChipSheet	ice_chip_00.gbapal	e					
 	ice_chip.parts.lz	e		04			
-BattleEffect_IceBlockSheet	ice_block_00.gbapal	e					
+BattleEffectIceBlockSheet	ice_block_00.gbapal	e					
 	ice_block.parts.lz	e		30ae			
-BattleEffect_SparkleDots	sparkle_dots.parts.lz	e		633477			
-BattleEffect_PinkBurstSheet	pink_burst.gbapal	e					
+BattleEffectSparkleDots	sparkle_dots.parts.lz	e		633477			
+BattleEffectPinkBurstSheet	pink_burst.gbapal	e					
 	pink_burst.bitmap.lz	e		57			
-BattleEffect_LightFanSheet	light_fan.gbapal	e					
+BattleEffectLightFanSheet	light_fan.gbapal	e					
 	light_fan.bitmap.lz	e		098276			
-BattleEffect_FlamePlumeSheet	flame_plume_sheet.bitmap.lz	e		f0			
-BattleEffect_DustPuffSheet	dust_puff.gbapal	e					
+BattleEffectFlamePlumeSheet	flame_plume_sheet.bitmap.lz	e		f0			
+BattleEffectDustPuffSheet	dust_puff.gbapal	e					
 	dust_puff.bitmap.lz	e		7ee098			
-BattleEffect_GoldShellSheet	gold_shell_00.gbapal	e					
+BattleEffectGoldShellSheet	gold_shell_00.gbapal	e					
 	gold_shell.parts.lz	e		15b2			
-BattleEffect_BlastSheet	blast_00.gbapal	e					
+BattleEffectBlastSheet	blast_00.gbapal	e					
 	blast.parts.lz	e					
-BattleEffect_FlameSheetB	flame_b.gbapal	e					
+BattleEffectFlameSheetB	flame_b.gbapal	e					
 	flame_b.bitmap.lz	e					
-BattleEffect_FirePillarSheetB	fire_pillar_b.gbapal	e					
+BattleEffectFirePillarSheetB	fire_pillar_b.gbapal	e					
 	fire_pillar_b.bitmap.lz	e		0d03			
-BattleEffect_RockSpireSheet	rock_spire.gbapal	e					
+BattleEffectRockSpireSheet	rock_spire.gbapal	e					
 	rock_spire.bitmap.lz	e		a02072			
-BattleEffect_LightningBoltSheet	lightning_bolt.gbapal	e					
+BattleEffectLightningBoltSheet	lightning_bolt.gbapal	e					
 	lightning_bolt.bitmap.lz	e					
-BattleEffect_BeamImage	beam_image.parts.lz	e		5f			
-BattleEffect_BlueDropletSheet	twelve_mode.bitmap.lz	e		a5			
-BattleEffect_WindStreakSheet	wind_streak_00.gbapal	e					
+BattleEffectBeamImage	beam_image.parts.lz	e		5f			
+BattleEffectBlueDropletSheet	twelve_mode.bitmap.lz	e		a5			
+BattleEffectWindStreakSheet	wind_streak_00.gbapal	e					
 	wind_streak.parts.lz	e					
-BattleEffect_YellowPaletteB	yellow_palette_b.gbapal	e					
+BattleEffectYellowPaletteB	yellow_palette_b.gbapal	e					
 	yellow_palette_b.bitmap.lz	e					
-BattleEffect_BlueRingSheet	blue_ring_00.gbapal	e					
+BattleEffectBlueRingSheet	blue_ring_00.gbapal	e					
 	blue_ring.parts.lz	e					
-BattleEffect_RedPaletteC	red_palette_c.gbapal	e					
+BattleEffectRedPaletteC	red_palette_c.gbapal	e					
 	red_palette_c.bitmap.lz	e					
-BattleEffect_VioletPaletteD	violet_palette_d.gbapal	e					
+BattleEffectVioletPaletteD	violet_palette_d.gbapal	e					
 	violet_palette_d.bitmap.lz	e					
-BattleEffect_BlueBeamSheet	blue_beam_00.gbapal	e					
+BattleEffectBlueBeamSheet	blue_beam_00.gbapal	e					
 	blue_beam.parts.lz	e		015333			
-BattleEffect_VortexSheet	vortex.gbapal	e					
+BattleEffectVortexSheet	vortex.gbapal	e					
 	vortex.bitmap.lz	e		dd20			
-BattleEffect_TornadoSheet	tornado_00.gbapal	e					
+BattleEffectTornadoSheet	tornado_00.gbapal	e					
 	tornado.parts.lz	e		7f02			
-BattleEffect_CrystalSheet	crystal_00.gbapal	e					
+BattleEffectCrystalSheet	crystal_00.gbapal	e					
 	crystal.parts.lz	e		134203			
-BattleEffect_LightningPillarSheet	lightning_pillar.gbapal	e					
+BattleEffectLightningPillarSheet	lightning_pillar.gbapal	e					
 	lightning_pillar.bitmap.lz	e			4		ff

@@ -14,7 +14,7 @@
 
 /* The palette editor's swatch tiles, compressed; it decompresses them to tile
    208 of character block 0, one tile a colour. */
-extern const Uint8 Debug_PaletteSwatchTiles[];
+extern const Uint8 DebugPaletteSwatchTiles[];
 
 /* The debug item browsers' item numbers, 0 to 269, wrapping. */
 #define DEBUG_ITEM_COUNT		270

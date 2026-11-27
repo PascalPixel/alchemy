@@ -148,18 +148,18 @@ extern const SCALE ProcneUnitScale; /* the comets' unit scale */
    right edge, how far each of its lines is set in from that edge, and the right
    edge it builds for every screen line. */
 #define WINDOW_EDGE_RIGHT		((Uint16 *)MapGridMetatileBuffer)
-#define WINDOW_EDGE_INSETS		(Ram_MapMetatileBuffer + 2)
+#define WINDOW_EDGE_INSETS		(RamMapMetatileBuffer + 2)
 #define WINDOW_EDGE_INSET_LINES 128
 #define WINDOW_EDGE_LINES		(WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
 /* The particles an effect keeps in the map cell buffer, from its start. */
-#define PARTICLES		((PARTICLE *)Ram_MapMetatileBuffer)
+#define PARTICLES		((PARTICLE *)RamMapMetatileBuffer)
 /* The particles an effect keeps in the map cell buffer from its second 16 KB
    on, past PARTICLES or the pictures and meshes it keeps in the first: a
    second, larger table, always reached at its fixed address, where the effects
    that throw more sparks, motes or trails than the state's 64 particles keep
    them. */
-#define EXTRA_PARTICLES ((PARTICLE *)(Ram_MapMetatileBuffer + 16384))
+#define EXTRA_PARTICLES ((PARTICLE *)(RamMapMetatileBuffer + 16384))
 
 /* The VRAM address of a sprite's tiles, from its VRAM cache entry. */
 #define OBJ_TILES(sprite) \
@@ -665,7 +665,7 @@ typedef enum TARGET_STRIKE_STYLE {
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /* The second blitter, the drawing function in the paired heap slot. */
-#define ALT_BLITTER (Ram_HeapSlots->ramCodePaired)
+#define ALT_BLITTER (RamHeapSlots->ramCodePaired)
 
 /* Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror and
    blend mode (BLITTER_ADDITIVE to BLITTER_COPY): where both are constants they
@@ -1403,7 +1403,7 @@ extern Uint8 ThornKinds[];
 #define THORN_SMALL	   2 /* 32 pixels wide, not 48 */
 /* The thorns: where each roots, how many by strength, and the dust puffs as
    each bursts out. */
-extern Sint8  Thorn_X[];
+extern Sint8  ThornX[];
 extern Uint8  ThornCounts[];
 extern Sint8  ThornPuffWidths[];
 extern Uint8  ThornPuffHeights[];
@@ -1970,45 +1970,45 @@ extern const Uint32 BlitterTemplate[];
    blitter_fragments.s: Forward reads the picture left to right and Reverse
    right to left. None of them runs where it is. Sets 0x40 in every byte of sl,
    which caps an additive word's pixels at the brightest canvas level. */
-extern const Uint32 BattleEffect_Mask[];
+extern const Uint32 BattleEffectMask[];
 /* The ARM immediate operand for 1 << n, n from 0 to 15 (blitter_operands.c). */
 extern const Uint16 BlitterImmediatePowers[];
 /* Copy, one pixel, right to left. */
-extern const Uint32 BattleEffect_CopyReverse[];
+extern const Uint32 BattleEffectCopyReverse[];
 /* Copy, one pixel, left to right. */
-extern const Uint32 BattleEffect_CopyForward[];
+extern const Uint32 BattleEffectCopyForward[];
 /* Copy, a full cell's eight pixels, right to left. */
-extern const Uint32 BattleEffect_Copy8Reverse[];
+extern const Uint32 BattleEffectCopy8Reverse[];
 /* Copy, a full cell's eight pixels, left to right. */
-extern const Uint32 BattleEffect_Copy8Forward[];
+extern const Uint32 BattleEffectCopy8Forward[];
 /* Transparent, one pixel, right to left. */
-extern const Uint32 BattleEffect_TransparentReverse[];
+extern const Uint32 BattleEffectTransparentReverse[];
 /* Transparent, one pixel, left to right. */
-extern const Uint32 BattleEffect_TransparentForward[];
+extern const Uint32 BattleEffectTransparentForward[];
 /* Transparent, a full cell's eight pixels, right to left. */
-extern const Uint32 BattleEffect_Transparent8Reverse[];
+extern const Uint32 BattleEffectTransparent8Reverse[];
 /* Transparent, a full cell's eight pixels, left to right. */
-extern const Uint32 BattleEffect_Transparent8Forward[];
+extern const Uint32 BattleEffectTransparent8Forward[];
 /* Max, one pixel, right to left. */
-extern const Uint32 BattleEffect_MaxReverse[];
+extern const Uint32 BattleEffectMaxReverse[];
 /* Max, one pixel, left to right. */
-extern const Uint32 BattleEffect_MaxForward[];
+extern const Uint32 BattleEffectMaxForward[];
 /* Max, four pixels (one canvas word), right to left; a full cell's row takes it
    twice. */
-extern const Uint32 BattleEffect_Max4Reverse[];
+extern const Uint32 BattleEffectMax4Reverse[];
 /* Max, four pixels (one canvas word), left to right; a full cell's row takes it
    twice. */
-extern const Uint32 BattleEffect_Max4Forward[];
+extern const Uint32 BattleEffectMax4Forward[];
 /* Additive, one pixel, right to left. */
-extern const Uint32 BattleEffect_AdditiveReverse[];
+extern const Uint32 BattleEffectAdditiveReverse[];
 /* Additive, one pixel, left to right. */
-extern const Uint32 BattleEffect_AdditiveForward[];
+extern const Uint32 BattleEffectAdditiveForward[];
 /* Additive, four pixels added a word at a time, right to left; a full cell's
    row takes it twice. */
-extern const Uint32 BattleEffect_ColorReverse[];
+extern const Uint32 BattleEffectColorReverse[];
 /* Additive, four pixels added a word at a time, left to right; a full cell's
    row takes it twice. */
-extern const Uint32 BattleEffect_ColorForward[];
+extern const Uint32 BattleEffectColorForward[];
 
 /* The model renderer's ARM functions, which run from IWRAM, each with its size
    in bytes and, for three of them, in DMA words. An ARM build of

@@ -1,6 +1,6 @@
 /* The Kandorean Temple of Master Poi, south-west of Daila, in nine rooms that
-   share this overlay (SceneId_KandoreanTempleLifts to
-   SceneId_KandoreanTemplePoi).
+   share this overlay (SceneIdKandoreanTempleLifts to
+   SceneIdKandoreanTemplePoi).
 
    Its gate is shut for the meditation (scKandoreanTempleStartGate): Kraden
    spots a suspicious wall, and Whirlwind on the bush in the courtyard's north
@@ -11,7 +11,7 @@
    trials: the Mimic's chest, the student who gave up, a sheet of water whose
    current pushes Felix south (scKandoreanTemplePushAlongTheCurrent), two vents
    whose round covers rise on gushing columns unless the pillar holds them down
-   (KandoreanTemple_RunWestVent, KandoreanTemple_RunEastVent), the lifts those
+   (KandoreanTempleRunWestVent, KandoreanTempleRunEastVent), the lifts those
    columns push up into the room above, and its shaft the pillar there can
    block; then a pot boiling over a hot floor, and three Chestbeaters
    (scKandoreanTempleFightChestbeaters), after which a ladder comes down to
@@ -42,7 +42,7 @@
 #define EFFECT_SET_SCRIPT fdActorStartScript
 #include "../field/field_effect_spawn.c"
 
-/* The lift room's actors (SceneId_KandoreanTempleLifts), numbering the rows of
+/* The lift room's actors (SceneIdKandoreanTempleLifts), numbering the rows of
    KandoreanTempleLiftRoomPlacements. */
 typedef enum KANDOREAN_TEMPLE_LIFT_ROOM_ACTOR_ID {
 	/* The posts of the two tightropes, a pair to each rope. */
@@ -59,7 +59,7 @@ typedef enum KANDOREAN_TEMPLE_LIFT_ROOM_ACTOR_ID {
 	ACTOR_EAST_LIFT_COLUMN
 } KANDOREAN_TEMPLE_LIFT_ROOM_ACTOR_ID;
 
-/* The Chestbeaters' room's actors (SceneId_KandoreanTempleChestbeaters),
+/* The Chestbeaters' room's actors (SceneIdKandoreanTempleChestbeaters),
    numbering the rows of KandoreanTempleChestbeaterRoomPlacements. */
 typedef enum KANDOREAN_TEMPLE_CHESTBEATER_ROOM_ACTOR_ID {
 	/* The pot of boiling water Move chucks aside
@@ -78,7 +78,7 @@ typedef enum KANDOREAN_TEMPLE_CHESTBEATER_ROOM_ACTOR_ID {
 	ACTOR_EAST_CHESTBEATER
 } KANDOREAN_TEMPLE_CHESTBEATER_ROOM_ACTOR_ID;
 
-/* The vent room's actors (SceneId_KandoreanTemplePillar), numbering the rows of
+/* The vent room's actors (SceneIdKandoreanTemplePillar), numbering the rows of
    KandoreanTempleVentRoomPlacements. */
 typedef enum KANDOREAN_TEMPLE_VENT_ROOM_ACTOR_ID {
 	/* The pillar Move sets on either vent's cover to hold it down. */
@@ -104,7 +104,7 @@ typedef enum KANDOREAN_TEMPLE_VENT_ROOM_ACTOR_ID {
 	ACTOR_EAST_COLUMN_FOOT
 } KANDOREAN_TEMPLE_VENT_ROOM_ACTOR_ID;
 
-/* Fog's room's actors (SceneId_KandoreanTempleFog), numbering the rows of
+/* Fog's room's actors (SceneIdKandoreanTempleFog), numbering the rows of
    KandoreanTempleFogRoomPlacements. */
 typedef enum KANDOREAN_TEMPLE_FOG_ROOM_ACTOR_ID {
 	/* The posts of the rope Lash ties across to Fog's ledge. */
@@ -118,7 +118,7 @@ typedef enum KANDOREAN_TEMPLE_FOG_ROOM_ACTOR_ID {
 	ACTOR_FOG
 } KANDOREAN_TEMPLE_FOG_ROOM_ACTOR_ID;
 
-/* The temple gate's actors (SceneId_KandoreanTempleGate), numbering the rows of
+/* The temple gate's actors (SceneIdKandoreanTempleGate), numbering the rows of
    KandoreanTempleGatePlacements. */
 typedef enum KANDOREAN_TEMPLE_GATE_ACTOR_ID {
 	/* The weeds over the mouth of the cave, which Whirlwind scatters. */
@@ -135,7 +135,7 @@ typedef enum KANDOREAN_TEMPLE_GATE_ACTOR_ID {
 	ACTOR_GATE_KRADEN
 } KANDOREAN_TEMPLE_GATE_ACTOR_ID;
 
-/* Poi's room's actors (SceneId_KandoreanTemplePoi), numbering the rows of
+/* Poi's room's actors (SceneIdKandoreanTemplePoi), numbering the rows of
    KandoreanTemplePoisRoomPlacements. */
 typedef enum KANDOREAN_TEMPLE_POIS_ROOM_ACTOR_ID {
 	/* The posts of the room's two ropes: Lash ties the loose end of each. */
@@ -889,11 +889,11 @@ void scKandoreanTempleCastLash(void)
 	}
 
 /* The west vent's event: while it blows, a cloud of steam every ninth tick. */
-DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTemple_BlowWestVent,
+DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTempleBlowWestVent,
 	KandoreanTempleWestVentBlowing, 9, toFIXED(296), toFIXED(176), toFIXED(2))
 
 /* The east vent's event: while it blows, a stronger cloud every fifth tick. */
-DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTemple_BlowEastVent,
+DEFINE_KANDOREAN_TEMPLE_VENT(KandoreanTempleBlowEastVent,
 	KandoreanTempleEastVentBlowing, 5, toFIXED(344), toFIXED(160), toFIXED(4))
 
 /* The lift room's event: a cloud of steam from the stream every fifth tick. */
@@ -999,14 +999,14 @@ Bool scKandoreanTempleIsEastVentBlocked(void)
 		fdScriptSetFlag(blowingFlag); \
 	}
 
-DEFINE_KANDOREAN_TEMPLE_START_VENT(KandoreanTemple_StartWestVent,
+DEFINE_KANDOREAN_TEMPLE_START_VENT(KandoreanTempleStartWestVent,
 	ACTOR_WEST_VENT_COVER, 216, 216, ACTOR_WEST_COLUMN_TOP,
 	ACTOR_WEST_COLUMN_UPPER_PIECE, ACTOR_WEST_COLUMN_MIDDLE_PIECE,
 	ACTOR_WEST_COLUMN_LOWER_PIECE, ACTOR_WEST_COLUMN_FOOT, FLAG_ON_WEST_LIFT,
 	scKandoreanTempleLowerWestColumn, FLAG_PILLAR_ON_EAST_VENT,
 	KandoreanTempleWestVentBlowing, FLAG_WEST_VENT_BLOWING)
 
-DEFINE_KANDOREAN_TEMPLE_START_VENT(KandoreanTemple_StartEastVent,
+DEFINE_KANDOREAN_TEMPLE_START_VENT(KandoreanTempleStartEastVent,
 	ACTOR_EAST_VENT_COVER, 376, 248, ACTOR_EAST_COLUMN_TOP,
 	ACTOR_EAST_COLUMN_UPPER_PIECE, ACTOR_EAST_COLUMN_MIDDLE_PIECE,
 	ACTOR_EAST_COLUMN_LOWER_PIECE, ACTOR_EAST_COLUMN_FOOT, FLAG_ON_EAST_LIFT,
@@ -1191,20 +1191,20 @@ typedef enum VENT_TICK {
 	}
 
 /* The west vent's event. */
-DEFINE_KANDOREAN_TEMPLE_RUN_VENT(KandoreanTemple_RunWestVent,
+DEFINE_KANDOREAN_TEMPLE_RUN_VENT(KandoreanTempleRunWestVent,
 	KandoreanTempleWestTimer, KandoreanTempleWestFloatPhase,
 	KandoreanTempleWestVentBlowing, FLAG_WEST_VENT_BLOWING,
-	scKandoreanTempleIsWestVentBlocked, KandoreanTemple_StartWestVent, 13, 13,
+	scKandoreanTempleIsWestVentBlocked, KandoreanTempleStartWestVent, 13, 13,
 	22, ACTOR_WEST_VENT_COVER, 216, 216, ACTOR_WEST_COLUMN_TOP,
 	ACTOR_WEST_COLUMN_UPPER_PIECE, ACTOR_WEST_COLUMN_MIDDLE_PIECE,
 	ACTOR_WEST_COLUMN_LOWER_PIECE, ACTOR_WEST_COLUMN_FOOT, FLAG_ON_WEST_LIFT,
 	FLAG_PILLAR_ON_EAST_VENT)
 
 /* The east vent's event. */
-DEFINE_KANDOREAN_TEMPLE_RUN_VENT(KandoreanTemple_RunEastVent,
+DEFINE_KANDOREAN_TEMPLE_RUN_VENT(KandoreanTempleRunEastVent,
 	KandoreanTempleEastTimer, KandoreanTempleEastFloatPhase,
 	KandoreanTempleEastVentBlowing, FLAG_EAST_VENT_BLOWING,
-	scKandoreanTempleIsEastVentBlocked, KandoreanTemple_StartEastVent, 23, 15,
+	scKandoreanTempleIsEastVentBlocked, KandoreanTempleStartEastVent, 23, 15,
 	23, ACTOR_EAST_VENT_COVER, 376, 248, ACTOR_EAST_COLUMN_TOP,
 	ACTOR_EAST_COLUMN_UPPER_PIECE, ACTOR_EAST_COLUMN_MIDDLE_PIECE,
 	ACTOR_EAST_COLUMN_LOWER_PIECE, ACTOR_EAST_COLUMN_FOOT, FLAG_ON_EAST_LIFT,
@@ -1296,12 +1296,12 @@ typedef enum LIFT_TICK {
 	}
 
 /* The lift room's west lift, the top of the west vent's column. */
-DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(KandoreanTemple_RunWestLift, ACTOR_WEST_LIFT,
+DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(KandoreanTempleRunWestLift, ACTOR_WEST_LIFT,
 	ACTOR_WEST_LIFT_COLUMN, KandoreanTempleWestTimer,
 	KandoreanTempleWestFloatPhase, 440, 204, 27, 12, 21, FLAG_ON_WEST_LIFT)
 
 /* The lift room's east lift, the top of the east vent's column. */
-DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(KandoreanTemple_RunEastLift, ACTOR_EAST_LIFT,
+DEFINE_KANDOREAN_TEMPLE_RUN_LIFT(KandoreanTempleRunEastLift, ACTOR_EAST_LIFT,
 	ACTOR_EAST_LIFT_COLUMN, KandoreanTempleEastTimer,
 	KandoreanTempleEastFloatPhase, 600, 236, 37, 14, 22, FLAG_ON_EAST_LIFT)
 
@@ -1422,7 +1422,7 @@ void scKandoreanTempleMatchStudentsToLeader(void)
 void scKandoreanTempleDropOffLowMetatiles(void)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatile =
 		&map->layers[1].metatiles[fdActorGetMetatileIndex(leader)];
 
@@ -2022,9 +2022,9 @@ void scKandoreanTempleStartLiftRoom(void)
 			scKandoreanTempleArriveOnEastLift();
 	}
 	if(syGameFlagGet(FLAG_PILLAR_ON_EAST_VENT))
-		sySetEvent(KandoreanTemple_RunWestLift, EVENT_PASS_TICK);
+		sySetEvent(KandoreanTempleRunWestLift, EVENT_PASS_TICK);
 	else if(syGameFlagGet(FLAG_PILLAR_ON_WEST_VENT))
-		sySetEvent(KandoreanTemple_RunEastLift, EVENT_PASS_TICK);
+		sySetEvent(KandoreanTempleRunEastLift, EVENT_PASS_TICK);
 	sySetEvent(scKandoreanTempleWatchLifts, EVENT_PASS_TICK);
 	fdEffectStartBlankOverlay(0);
 }
@@ -2131,8 +2131,8 @@ void scKandoreanTempleStartVentRoom(void)
 	REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 	KandoreanTempleWestVentBlowing = 0;
 	KandoreanTempleEastVentBlowing = 0;
-	sySetTickEvent(KandoreanTemple_BlowWestVent, EVENT_PASS_TICK);
-	sySetTickEvent(KandoreanTemple_BlowEastVent, EVENT_PASS_TICK);
+	sySetTickEvent(KandoreanTempleBlowWestVent, EVENT_PASS_TICK);
+	sySetTickEvent(KandoreanTempleBlowEastVent, EVENT_PASS_TICK);
 	sySetEvent(scKandoreanTempleDropOffLowMetatiles, EVENT_PASS_TICK);
 	scKandoreanTemplePrepareLift(ACTOR_WEST_VENT_COVER);
 	scKandoreanTemplePrepareLift(ACTOR_EAST_VENT_COVER);
@@ -2160,8 +2160,8 @@ void scKandoreanTempleStartVentRoom(void)
 	KandoreanTempleEastTimer = VENT_SHUT + 1000;
 	KandoreanTempleWestFloatPhase = 0;
 	KandoreanTempleEastFloatPhase = 0;
-	sySetTickEvent(KandoreanTemple_RunWestVent, EVENT_PASS_TICK);
-	sySetEvent(KandoreanTemple_RunEastVent, EVENT_PASS_TICK);
+	sySetTickEvent(KandoreanTempleRunWestVent, EVENT_PASS_TICK);
+	sySetEvent(KandoreanTempleRunEastVent, EVENT_PASS_TICK);
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION) &&
 		MainRoutineStateWork.entrance ==
 			KANDOREAN_TEMPLE_PILLAR_FROM_KANDOREAN_TEMPLE_LIFTS_SHAFT)
@@ -2337,15 +2337,15 @@ DEFINE_KANDOREAN_TEMPLE_ARRIVE_ON_VENT(scKandoreanTempleArriveOnWestVent,
 	ACTOR_WEST_VENT_COVER, 216, 216, ACTOR_WEST_COLUMN_TOP,
 	ACTOR_WEST_COLUMN_UPPER_PIECE, ACTOR_WEST_COLUMN_MIDDLE_PIECE,
 	ACTOR_WEST_COLUMN_LOWER_PIECE, ACTOR_WEST_COLUMN_FOOT, syGameFlagSet,
-	syGameFlagClear, KandoreanTemple_StartWestVent,
+	syGameFlagClear, KandoreanTempleStartWestVent,
 	KandoreanTempleWestVentBlowing, FLAG_WEST_VENT_BLOWING)
 
 DEFINE_KANDOREAN_TEMPLE_ARRIVE_ON_VENT(scKandoreanTempleArriveOnEastVent,
 	ACTOR_EAST_VENT_COVER, 376, 248, ACTOR_EAST_COLUMN_TOP,
 	ACTOR_EAST_COLUMN_UPPER_PIECE, ACTOR_EAST_COLUMN_MIDDLE_PIECE,
 	ACTOR_EAST_COLUMN_LOWER_PIECE, ACTOR_EAST_COLUMN_FOOT, syGameFlagClear,
-	syGameFlagSet, KandoreanTemple_StartEastVent,
-	KandoreanTempleEastVentBlowing, FLAG_EAST_VENT_BLOWING)
+	syGameFlagSet, KandoreanTempleStartEastVent, KandoreanTempleEastVentBlowing,
+	FLAG_EAST_VENT_BLOWING)
 
 /* Felix rises out of the vent room on a vent's column, the screen closing in on
    him. */
@@ -2546,7 +2546,7 @@ void scKandoreanTempleRideEastLiftDown(void)
 void scKandoreanTempleStartStreamRoom(void)
 {
 	MAP_STATE_GROUND_EFFECTS *map =
-		(MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 
 	KandoreanTempleSplashRingCounter = 0;
 	map->wading = 1;
@@ -2564,7 +2564,7 @@ void scKandoreanTempleStartStreamRoom(void)
 void scKandoreanTempleStartCurrentRoom(void)
 {
 	MAP_STATE_GROUND_EFFECTS *map =
-		(MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 
 	KandoreanTempleSplashRingCounter = 0;
 	fdQueueMusic(SE_AMBIENT_WATER);

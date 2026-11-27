@@ -1,5 +1,5 @@
 /* Vault Cave, the optional cave under Vault that the party can explore once it
-   comes back to the town (SceneId_VaultRevisit), with the Vambrace in a chest
+   comes back to the town (SceneIdVaultRevisit), with the Vambrace in a chest
    and Sap, the Venus Djinni, waiting outside its far end. Its three parts are
    scenes of their own, all named Vault Cave (area 31).
 
@@ -12,15 +12,15 @@
    speaks, and the only messages are "The door is tightly locked." and "Isaac
    flipped the switch."
 
-   - SceneId_VaultCavePassage holds the foot of the ladder from Vault
+   - SceneIdVaultCavePassage holds the foot of the ladder from Vault
 	 (VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT; Retreat leads there too). Its
 	 right-hand branch ends at a chest that is a Mimic (FIND_MIMIC). Its pool
 	 room has a switch on a ledge: flipping it shakes the cave and drains the
 	 pool (scVaultCaveFlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED), and the
 	 water runs down into the floor of the northern room of
-	 SceneId_VaultCaveVambrace, which scInit draws dry until then.
+	 SceneIdVaultCaveVambrace, which scInit draws dry until then.
 	 Coming down the ladder from Vault again resets the switch.
-   - SceneId_VaultCaveVambrace is up the left-hand branch. In the room of two
+   - SceneIdVaultCaveVambrace is up the left-hand branch. In the room of two
 	 burning torches, Isaac pushes or Moves the west torch east onto the tile
 	 with a fire crest (scVaultCavePushSouthernPillar,
 	 scVaultCaveMoveSouthernPillar): the puzzle chime plays and the wooden gate
@@ -31,7 +31,7 @@
 	 on one stops on its top. Up on the room's ledge, Whirlwind blows away the
 	 ivy over the way to the Vambrace's chest (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY,
 	 kept while the party stays in the cave).
-   - SceneId_VaultCaveMouth leads out to the cave mouth
+   - SceneIdVaultCaveMouth leads out to the cave mouth
 	 (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches, Isaac
 	 must get the lower burning torch north onto the fire crest below the
 	 wooden gate, past the unlit torch in the way, while drops of water fall
@@ -106,7 +106,7 @@ typedef enum VAULT_CAVE_METATILE_BEHAVIOR {
 	METATILE_BEHAVIOR_VAULT_CAVE_CHEST = 100
 } VAULT_CAVE_METATILE_BEHAVIOR;
 
-/* Scene flags, and one area flag. The six puddles of SceneId_VaultCaveVambrace
+/* Scene flags, and one area flag. The six puddles of SceneIdVaultCaveVambrace
    keep their frozen state in six flags in a row, read by index as well. */
 enum {
 	/* The upper western puddle, the first of the six. */
@@ -130,7 +130,7 @@ typedef enum FLAME_PILLAR_ANIMATION {
 	FLAME_PILLAR_ANIMATION_BURNING = 2 /* a flame flickering on top */
 } FLAME_PILLAR_ANIMATION;
 
-/* The actors of SceneId_VaultCaveVambrace, numbering the rows of
+/* The actors of SceneIdVaultCaveVambrace, numbering the rows of
    VaultCaveVambraceActorPlacements. */
 typedef enum VAULT_CAVE_VAMBRACE_ACTOR_ID {
 	/* The burning torch beside the wooden gate in the room of two torches, two
@@ -162,7 +162,7 @@ typedef enum VAULT_CAVE_VAMBRACE_ACTOR_ID {
 	ACTOR_IVY
 } VAULT_CAVE_VAMBRACE_ACTOR_ID;
 
-/* The actors of SceneId_VaultCaveMouth, numbering the rows of
+/* The actors of SceneIdVaultCaveMouth, numbering the rows of
    VaultCaveMouthActorPlacements. The fire crest in the room of three torches
    is map metatile (16, 12). */
 typedef enum VAULT_CAVE_MOUTH_ACTOR_ID {
@@ -285,8 +285,8 @@ static void scVaultCavePushPillarAhead(void)
 #endif
 		return;
 	}
-	/* SceneId_VaultCaveMouth's water drops are never pushed; in
-	   SceneId_VaultCaveVambrace these slots hold water drops too. */
+	/* SceneIdVaultCaveMouth's water drops are never pushed; in
+	   SceneIdVaultCaveVambrace these slots hold water drops too. */
 	for(fallingIdx = 0; fallingIdx <= 3; fallingIdx++) {
 		if(pillar == fdActorGet(fallingIdx + ACTOR_FIRST_TIMED_WATER_DROP)) {
 			return;
@@ -690,7 +690,7 @@ static void scVaultCaveRunRumble(void)
 /* Isaac flips the switch on the ledge in the pool room (metatile (28, 29)).
    "Isaac flipped the switch." The cave rumbles and shakes, and the pool drains
    away, and its water runs down into the northern room of
-   SceneId_VaultCaveVambrace below, whose floor scInit draws dry until then.
+   SceneIdVaultCaveVambrace below, whose floor scInit draws dry until then.
 
    The switch can be flipped once each time the party comes down the ladder from
    Vault. */
@@ -1072,7 +1072,7 @@ Sint32 scInit(void)
 			break;
 		}
 	}
-	/* Retreat always returns to the foot of SceneId_VaultCavePassage's ladder
+	/* Retreat always returns to the foot of SceneIdVaultCavePassage's ladder
 	   from Vault. */
 	MainRoutineStateWork.retreatEntrance =
 		VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;

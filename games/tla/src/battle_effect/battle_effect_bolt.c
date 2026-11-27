@@ -12,7 +12,7 @@
 #define BOLT_SPARK_SIZE_TICKS  16
 
 /* The second blitter, made anew for each glint with its random flip. */
-#define BOLT_GLINT_BLITTER (Ram_HeapSlots->ramCodePaired)
+#define BOLT_GLINT_BLITTER (RamHeapSlots->ramCodePaired)
 
 /* The columns of a BoltCounts row, one row a variant. */
 enum {
@@ -49,12 +49,12 @@ void btEffectRunBolt(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT screen;
 	Sint32		 j;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	/* The tornado sprite sheet only for its glints. */
 	btResourceLoadAndDecompress(RESOURCE_TORNADO_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(

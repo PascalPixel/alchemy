@@ -4,18 +4,18 @@
    and sets the pools' next addresses to IwramHeap and EwramHeap. */
 void syHeapInit(void)
 {
-	HEAP_SLOTS *state = Ram_HeapSlots;
+	HEAP_SLOTS *state = RamHeapSlots;
 
 	DMA_FILL32(0, state, sizeof(HEAP_SLOTS));
-	Ram_HeapSlots->nextIwram = IwramHeap;
-	Ram_HeapSlots->nextEwram = EwramHeap;
+	RamHeapSlots->nextIwram = IwramHeap;
+	RamHeapSlots->nextEwram = EwramHeap;
 }
 
 /* Returns the IWRAM bytes left to allocate, up to the sound mixer's workspace
    (IwramSoundMixWorkspace). */
 Sint32 syHeapGetRemainingIWRAM(void)
 {
-	HEAP_SLOTS *state = Ram_HeapSlots;
+	HEAP_SLOTS *state = RamHeapSlots;
 
 	return (Sint32)IwramSoundMixWorkspace - (Sint32)state->nextIwram;
 }
@@ -24,7 +24,7 @@ Sint32 syHeapGetRemainingIWRAM(void)
    calls it or its stub. */
 Sint32 syHeapGetRemainingEWRAM(void)
 {
-	HEAP_SLOTS *state = Ram_HeapSlots;
+	HEAP_SLOTS *state = RamHeapSlots;
 
 	return EWRAM_END - (Sint32)state->nextEwram;
 }
@@ -40,14 +40,14 @@ void *syHeapSlotAlloc(Sint32 slot, Sint32 size)
 	Uint32		next;
 	Uint32		block;
 
-	state = Ram_HeapSlots;
+	state = RamHeapSlots;
 	block = (Uint32)HEAP_SLOT_AT(state, slot);
 	if(block == 0) {
 		block = (Uint32)state->nextIwram;
 		alignedSize = (((Uint32)size + 3) >> 2) * 4;
 		next = block + alignedSize;
 		/* A block ending exactly at the pool's end is refused too. */
-		if(next >= (Uint32)Ram_IwramHeapEnd) {
+		if(next >= (Uint32)RamIwramHeapEnd) {
 			adr = (Uint32)state->nextEwram;
 			nextAdr = adr + alignedSize;
 			if(nextAdr >= (Uint32)EWRAM_END) {
@@ -75,7 +75,7 @@ void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
 	Uint32		nextAdr;
 	Uint32		block;
 
-	state = Ram_HeapSlots;
+	state = RamHeapSlots;
 	block = (Uint32)HEAP_SLOT_AT(state, slot);
 	if(block == 0) {
 		alignedSize = (Uint32)size + 3;
@@ -85,7 +85,7 @@ void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
 		if(next >= (Uint32)EWRAM_END) {
 			adr = (Uint32)state->nextIwram;
 			nextAdr = adr + alignedSize;
-			if(nextAdr > (Uint32)(Ram_IwramHeapEnd - 1)) {
+			if(nextAdr > (Uint32)(RamIwramHeapEnd - 1)) {
 				return NULL;
 			}
 			state->nextIwram = (void *)nextAdr;
@@ -103,11 +103,11 @@ void *syHeapSlotAllocEWRAM(Sint32 slot, Sint32 size)
    with `value`. */
 void syHeapFillFreeWords(Uint32 value)
 {
-	HEAP_SLOTS *state = Ram_HeapSlots;
+	HEAP_SLOTS *state = RamHeapSlots;
 	Uint32		adr;
 
 	adr = (Uint32)state->nextIwram;
-	syWordsFillEntry((void *)adr, (Uint32)Ram_IwramHeapEnd - adr, value);
+	syWordsFillEntry((void *)adr, (Uint32)RamIwramHeapEnd - adr, value);
 	adr = (Uint32)state->nextEwram;
 	syWordsFillEntry((void *)adr, (Uint32)EWRAM_END - adr, value);
 }
@@ -116,7 +116,7 @@ void syHeapFillFreeWords(Uint32 value)
    when they fit and EWRAM otherwise, and advances that pool's next address. */
 void *syHeapAlloc(Sint32 size)
 {
-	HEAP_SLOTS *state = Ram_HeapSlots;
+	HEAP_SLOTS *state = RamHeapSlots;
 	Uint32		nextAdr;
 	Uint32		next;
 	Uint32		adr;
@@ -126,7 +126,7 @@ void *syHeapAlloc(Sint32 size)
 	words = (Uint32)size + 3;
 	adr = (Uint32)state->nextIwram;
 	words >>= 2;
-	limit = (Uint32)(Ram_IwramHeapEnd - 1);
+	limit = (Uint32)(RamIwramHeapEnd - 1);
 	size = (Sint32)(words << 2);
 	next = adr + (Uint32)size;
 	if(next > limit) {
@@ -146,7 +146,7 @@ void *syHeapAlloc(Sint32 size)
    the credits for buffers too large to want IWRAM. */
 void *syHeapAllocEWRAM(Sint32 size)
 {
-	HEAP_SLOTS *state = Ram_HeapSlots;
+	HEAP_SLOTS *state = RamHeapSlots;
 	Uint32		nextAdr;
 	Uint32		next;
 	Uint32		adr;
@@ -159,7 +159,7 @@ void *syHeapAllocEWRAM(Sint32 size)
 	if(next >= (Uint32)EWRAM_END) {
 		adr = (Uint32)state->nextIwram;
 		nextAdr = adr + (Uint32)size;
-		if(nextAdr > (Uint32)(Ram_IwramHeapEnd - 1)) {
+		if(nextAdr > (Uint32)(RamIwramHeapEnd - 1)) {
 			return NULL;
 		}
 		state->nextIwram = (void *)nextAdr;

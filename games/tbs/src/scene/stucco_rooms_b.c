@@ -1,4 +1,4 @@
-/* Stucco rooms B (SceneId_StuccoRoomsB), a rooms map drawn in stucco, all of
+/* Stucco rooms B (SceneIdStuccoRoomsB), a rooms map drawn in stucco, all of
    them Tolbi's.
 
    They are its houses, inns and shops, which the area names call Tolbi, and

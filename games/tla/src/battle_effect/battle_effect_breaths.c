@@ -11,7 +11,7 @@ typedef enum CRESCENT_SLASH_MODE {
 
 /* FlameBandTexture, wrapped round the rings of flame, unpacked into the map
    cell buffer's second 16 KB. */
-#define FLAME_RING_TEXTURE		(Ram_MapMetatileBuffer + 16384)
+#define FLAME_RING_TEXTURE		(RamMapMetatileBuffer + 16384)
 /* The Beam's 16 fading rings of 32x32, one after another in the sprite sheet,
    and the glow every breath draws at the mouth after them. */
 #define BEAM_RING_SIZE			32
@@ -63,9 +63,9 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 i;
 	Sint32				 j;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 
 	/* Set up the canvas, the sparks, the colours (blue for the pikes, orange
 	   otherwise) and the rings of flame's texture, then each breath's own
@@ -82,7 +82,7 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 	}
 	btResourceLoadAndDecompress(
-		RESOURCE_FIRE_RING_TEXTURE, Ram_MapMetatileBuffer, 0, 0);
+		RESOURCE_FIRE_RING_TEXTURE, RamMapMetatileBuffer, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_FLAME_BAND_TEXTURE, FLAME_RING_TEXTURE, 0, 0);
 	if(mode == BREATH_BEAM) {
@@ -127,10 +127,10 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	else
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	/* The pikes lunge; Blast Breath comes from 32 pixels in front of the
@@ -314,7 +314,7 @@ void btEffectRunBreaths(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				model->texture = &texture;
 				model->mesh = BattleEffectLargeSquareMesh;
 				model->vertices = vertices;
-				texture.pixels = Ram_MapMetatileBuffer;
+				texture.pixels = RamMapMetatileBuffer;
 
 				/* The flash at the mouth grows, and fades from its sixteenth
 				   tick; Blast Breath's is two, crossed. */
@@ -550,9 +550,9 @@ typedef enum CRESCENT_SLASH_STEP {
    faintly. */
 void btEffectRunCrescentSlash(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
-	Uint8				*cells = Ram_MapMetatileBuffer;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	Uint8				*canvas = RamHeapSlots->battleCanvas;
+	Uint8				*cells = RamMapMetatileBuffer;
 	DRAW_RECTANGLE		 draw[2];
 	Sint32				 flg;
 	Sint32				 frm;
@@ -571,7 +571,7 @@ void btEffectRunCrescentSlash(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			flg = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP;
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flg, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 
 	/* Load both crescents and set the blend. */
 	btResourceLoadAndDecompress(RESOURCE_GREY_CRESCENT_SHEET, cells, 1, 1);
@@ -685,25 +685,25 @@ void btEffectRunCrescentSlash(BATTLE_EFFECT_PARM *args, Sint32 mode)
    glow or disc centred there, round at the canvas's double width. */
 void btCanvasBlitMirroredQuarters(void *src, Sint32 x, Sint32 y, Sint32 size)
 {
-	Uint8 *canvas = Ram_HeapSlots->battleCanvas;
+	Uint8 *canvas = RamHeapSlots->battleCanvas;
 	Sint32 half;
 
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	half = size / 2;
-	(Ram_HeapSlots->ramCodePaired)(canvas, src, x - half, y - size, half, size);
+	(RamHeapSlots->ramCodePaired)(canvas, src, x - half, y - size, half, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, src, x, y - size, half, size);
+	(RamHeapSlots->ramCodePaired)(canvas, src, x, y - size, half, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, src, x - half, y, half, size);
+	(RamHeapSlots->ramCodePaired)(canvas, src, x - half, y, half, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, src, x, y, half, size);
+	(RamHeapSlots->ramCodePaired)(canvas, src, x, y, half, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 

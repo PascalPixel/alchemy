@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Battle
-Stubs_Battle:
+	.global StubsBattle
+StubsBattle:
 	stub btDebugBattleRunMenuStub, btDebugBattleRunMenu
 	stub btTransitionRunMosaicFadeOutStub, btTransitionRunMosaicFadeOut
 	stub btActorSpawnObjectsForListStub, btActorSpawnObjectsForList

@@ -12,11 +12,11 @@ void scHeldActorRaiseMetatile()
 
 	if(held == NULL)
 		return;
-	metatiles = (Uint8 *)((MAP_STATE *)Ram_HeapSlots->mapGrid)
+	metatiles = (Uint8 *)((MAP_STATE *)RamHeapSlots->mapGrid)
 					->layers[held->layer]
 					.metatiles;
-	shapes = (SHAPE_METATILE *)Ram_MapShapeGrid +
-		(((MAP_METATILE *)metatiles) - (MAP_METATILE *)Ram_MapMetatileBuffer);
+	shapes = (SHAPE_METATILE *)RamMapShapeGrid +
+		(((MAP_METATILE *)metatiles) - (MAP_METATILE *)RamMapMetatileBuffer);
 	shape = fdMapGridGetTerrainKind(held->layer, held->x.fixed, held->z.fixed);
 	level = fdMapGetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
 	idx = fdActorGetMetatileIndex(held);

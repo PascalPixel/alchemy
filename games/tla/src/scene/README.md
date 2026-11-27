@@ -164,7 +164,7 @@ bottom. This one walks the leader through one of Daila's doors:
 
 ```c
 void scDailaEnterDoor(void) {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -196,7 +196,7 @@ on which of its scenes is running.
 ## The Title, the File Screen and the Battle Arena
 
 Three scenes are not places. The Title (`title.c`), the File Screen
-(`clear.c`, `SceneId_Clear`, the row after the Title's) and the Battle
+(`clear.c`, `SceneIdClear`, the row after the Title's) and the Battle
 Arena's lobby (`lobby.c`), where a link battle is arranged, are each in the
 scene table with an overlay of its own, and the game runs them exactly as
 it runs Daila.

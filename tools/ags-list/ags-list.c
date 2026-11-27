@@ -15,7 +15,8 @@
  * order. A picture named again later is pointed at again and placed once.
  *
  * "section" and a form: pictures one after another, each under the global
- * name FOLDER_NAME in mixed case (monster/blue_devil is Monster_BlueDevil).
+ * name FOLDER and NAME in mixed case, run together (monster/blue_devil is
+ * MonsterBlueDevil).
  * The columns are: section (empty, or the letter of a .rodata.X section), the
  * picture, "left" (bytes the original packer left after it, as hex digits)
  * and "pad" (an alignment to zero-fill to after it).
@@ -140,7 +141,7 @@ main(int argc, char **argv)
 				fprintf(out, "\t.section .rodata%s%s\n", section[0] ? "." : "", section);
 			}
 			label(cells[1], text);
-			fprintf(out, "\t.global %s_%s\n%s_%s:\n\t.incbin \"%s/%s.%s\"\n", prefix, text, prefix, text, folder, cells[1], form);
+			fprintf(out, "\t.global %s%s\n%s%s:\n\t.incbin \"%s/%s.%s\"\n", prefix, text, prefix, text, folder, cells[1], form);
 			for (const char *digit = cells[2]; digit[0] && digit[1]; digit += 2)
 				fprintf(out, "\t.byte 0x%c%c\n", digit[0], digit[1]);
 			if (cells[3][0])

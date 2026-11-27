@@ -82,7 +82,7 @@ typedef struct VIEWED_PLACEMENT {
 	Uint8  unusedAfterZ[4]; /* no code names it */
 } VIEWED_PLACEMENT;
 
-/* A row of the scenes' encounter rules (Scene_EncounterRules): a scene and
+/* A row of the scenes' encounter rules (SceneEncounterRules): a scene and
    entrance and, while a flag is clear, the encounter zones of its two kinds of
    ground. */
 typedef struct SCENE_ENCOUNTER_RULE {
@@ -155,17 +155,17 @@ typedef struct MAP_REGION {
 
 /* Each scene's encounters by scene, entrance and flag, ended by scene -1
    (encounter_rules.s). */
-extern const SCENE_ENCOUNTER_RULE Scene_EncounterRules[];
+extern const SCENE_ENCOUNTER_RULE SceneEncounterRules[];
 
 extern const ENCOUNTER_ZONE EncounterZones[];
 
 /* Each scene's music by scene or group, entrance and flag (music_rules.s). */
-extern const MAP_MUSIC_RULE Scene_MusicRules[];
+extern const MAP_MUSIC_RULE SceneMusicRules[];
 
 /* Each scene's area name by scene or group and entrance (area_name_rules.s). */
-extern const AREA_NAME_RULE Area_NameRules[];
+extern const AREA_NAME_RULE AreaNameRules[];
 
-extern const Sint16 Scene_ReturnRules[];
+extern const Sint16 SceneReturnRules[];
 
 extern const Sint32 SceneBattleBackgroundRules[];
 

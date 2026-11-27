@@ -125,7 +125,7 @@ void scVenusLighthouseEntrancePointToMeetingSpot(void);
 #define DUST_PUFFS		96
 #define DUST_PUFF_TICKS 16
 
-/* The dust puffs' state, kept in Ram_HeapSlots' menu runtime while they play:
+/* The dust puffs' state, kept in RamHeapSlots' menu runtime while they play:
    their pictures, the puffs each with its place and sprite, and the next to
    emit. */
 typedef struct DUST_PUFF_STATE {
@@ -1276,7 +1276,7 @@ void scVenusLighthouseEntranceWakeUp(void)
 #define BLAST_COLUMN_TICKS	4
 #define BLAST_PICTURE_TILES SPRITE_TILES_8BPP(16, 16)
 
-/* The rising column's state, kept in Ram_HeapSlots' menu runtime while it
+/* The rising column's state, kept in RamHeapSlots' menu runtime while it
    plays: its pictures, its pieces of water, the soldier it lifts and the puddle
    left under him. */
 typedef struct BLAST_COLUMN_STATE {
@@ -1298,7 +1298,7 @@ typedef struct BLAST_COLUMN_STATE {
 
 void scVenusLighthouseEntranceUpdateBlastColumn(void)
 {
-	BLAST_COLUMN_STATE *blastColumnState = Ram_HeapSlots->menuState;
+	BLAST_COLUMN_STATE *blastColumnState = RamHeapSlots->menuState;
 	ACTOR			   *actor = blastColumnState->soldier;
 	ACTOR			   *puddle = blastColumnState->puddle;
 	Sint32				i, y;
@@ -1454,7 +1454,7 @@ void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 	blastColumnState->x = actor->x.fixed;
 	blastColumnState->y = actor->y.fixed;
 	blastColumnState->z = actor->z.fixed + toFIXED(2);
-	syDecompressTaggedLZ(Field_GeyserTiles, blastColumnState);
+	syDecompressTaggedLZ(FieldGeyserTiles, blastColumnState);
 	resource = syVRAMCacheFindFreeEntry();
 	tile = mnVRAMLoad(resource, 2048, blastColumnState);
 	blastColumnState->topTile = tile;
@@ -1499,7 +1499,7 @@ void scVenusLighthouseEntranceBlastActorSkyward(Sint32 id)
 
 void scVenusLighthouseEntranceUpdateDust(void)
 {
-	DUST_PUFF_STATE *dustPuffState = Ram_HeapSlots->menuState;
+	DUST_PUFF_STATE *dustPuffState = RamHeapSlots->menuState;
 	SPARK_STATE		*state = dustPuffState->states;
 	EFFECT_SPR		*spr = dustPuffState->sprs;
 	Sint32			 frm;
@@ -1519,7 +1519,7 @@ void scVenusLighthouseEntranceUpdateDust(void)
 
 void scVenusLighthouseEntranceEmitDust(ACTOR *src, Sint32 x, Sint32 y, Sint32 z)
 {
-	DUST_PUFF_STATE *dustPuffState = Ram_HeapSlots->menuState;
+	DUST_PUFF_STATE *dustPuffState = RamHeapSlots->menuState;
 	Sint32			 ang = syRandom();
 	Sint16			*next = &dustPuffState->next;
 	EFFECT_SPR		*spr = &dustPuffState->sprs[*next];
@@ -1573,7 +1573,7 @@ void scVenusLighthouseEntranceStartDust(void)
 
 void scVenusLighthouseEntranceStopDust(void)
 {
-	DUST_PUFF_STATE *state = Ram_HeapSlots->menuState;
+	DUST_PUFF_STATE *state = RamHeapSlots->menuState;
 
 	syFieldCloseEvent(scVenusLighthouseEntranceUpdateDust);
 	syVRAMCacheFreeEntry(state->resource);

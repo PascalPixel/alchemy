@@ -4,7 +4,7 @@
    for a sprite that cannot be pushed. */
 Bool scPushTargetFillRectangle(Sint32 id)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGet(id);
 	Sint16	   shape = ((SPR *)actor->spr)->entries[0]->anmId;
 	Sint16	   i = 0;

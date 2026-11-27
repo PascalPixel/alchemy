@@ -93,7 +93,7 @@ typedef struct AI_ENEMY_REST {
 /* The bit decoder btBackgroundLoad copies to RAM to decode a battle
    background's tiles (model_decode.s). */
 extern const Uint8 btModelDecodeCode[];
-extern Uint8	   Model_DecodeCodeSize[]; /* btModelDecodeCode's bytes */
+extern Uint8	   ModelDecodeCodeSize[]; /* btModelDecodeCode's bytes */
 
 /* The field engine's sprite functions the battle's motion calls: a sprite run
    on to its animation's stop, one of its animations removed, and an animation's
@@ -114,7 +114,7 @@ Sint32 gmUnitTryLevelUpStub(Sint32 unitId, Sint16 *gains);
 
 /* The advance arrow beside a battle message: eight 128-byte pictures of a
    256-colour sprite, one every four ticks. */
-extern Uint8 BattleMessage_AdvanceArrowTiles[];
+extern Uint8 BattleMessageAdvanceArrowTiles[];
 
 /* btAIChooseAction's rolls for the first three action strategies, a row each:
    the chance in 256 of each place in the enemy's actions. */
@@ -124,9 +124,9 @@ extern Uint16 BattleAIDullahanForms[];
 
 /* The battle transition's curtain tile in eight variants, 32 bytes (one 4-bit
    tile) each, a new one every four ticks. */
-extern const Uint8 BattleTransition_CurtainVariants[];
+extern const Uint8 BattleTransitionCurtainVariants[];
 /* The battle transition's curtain tiles, 32 bytes (one 4-bit tile) each. */
-extern Uint8 BattleTransition_CurtainTiles[];
+extern Uint8 BattleTransitionCurtainTiles[];
 
 /* The Doom Dragon's opening: the screen shatters over the Serpent's stars. */
 void btEffectRunShatteringOpeningStub(struct BATTLE_PRESENTATION_STATE *state);

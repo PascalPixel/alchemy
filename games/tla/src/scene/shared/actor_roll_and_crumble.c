@@ -12,7 +12,7 @@ enum { METATILE_BEHAVIOR_BREAKABLE_ICE = 77 };
 void scActorRollAndCrumble(ACTOR *actor)
 {
 	VECTOR3		 pos;
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	Sint32		 state = actor->tmr;
 
 	if(state == 0) {
@@ -63,7 +63,7 @@ void scActorRollAndCrumble(ACTOR *actor)
 				((void (*)(ACTOR *))actor->watchedActor)(actor);
 		}
 
-		map = Ram_HeapSlots->mapGrid;
+		map = RamHeapSlots->mapGrid;
 		tileX = FIELD_METATILE(actor->x.fixed);
 		tileZ = FIELD_METATILE(actor->z.fixed);
 		middleMetatiles = &map->layers[MAPGRID_LAYER_MIDDLE]
@@ -111,7 +111,7 @@ void scActorRollAndCrumble(ACTOR *actor)
 		}
 		scFieldActorSetMoveTargetFX(actor, pos.x, pos.y, pos.z);
 
-		fieldState = Ram_HeapSlots->fieldState;
+		fieldState = RamHeapSlots->fieldState;
 		hit = FLAME_THROWERS_STATE;
 		leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 		if(ABS(actor->x.fixed - leader->x.fixed) < toFIXED(20) &&

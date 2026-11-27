@@ -16,9 +16,9 @@
 void fdCycloneCopyTouchedMetatiles(Sint32 x, Sint32 z, Sint16 layerIdx,
 	Sint16 width, Sint16 height, Sint32 toX, Sint32 toZ)
 {
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*owner = fdActorGetById(fdPartyGetLeaderActor());
-	MAP_LAYER	*layer = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers;
+	MAP_LAYER	*layer = ((MAP_STATE *)RamHeapSlots->mapGrid)->layers;
 	Sint16		*metatile = field->psynergyMetatiles;
 	Sint32		 lift;
 	Sint32		 scrollX = FIELD_METATILE(layer->ofsX);
@@ -155,9 +155,9 @@ void fdCyclonePlotArc(Sint32 radius, Sint32 ang, Uint16 *offsets, Uint8 *pixels)
 void fdParticleBurstStart(void)
 {
 	PARTICLE_BURST_STATE *state =
-		(PARTICLE_BURST_STATE *)Ram_HeapSlots->battleEff;
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+		(PARTICLE_BURST_STATE *)RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	ACTOR			   *owner = effect->caster;
 	BURST_METATILE	   *metatile = (BURST_METATILE *)field->psynergyMetatiles;
 	FIXED dx = FIELD_METATILE_ORIGIN(metatile->x) - owner->x.fixed + toFIXED(8);

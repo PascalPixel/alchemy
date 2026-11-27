@@ -39,7 +39,7 @@ void fdDjinnRunMercuryJoinEffect(Sint32 djinniId)
 		return;
 
 	fdEffectInitSlots();
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
 	sySynch(30);
 	/* Unpause the Djinni, so its script and motion run. */

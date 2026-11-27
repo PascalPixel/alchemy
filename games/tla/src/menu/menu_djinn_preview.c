@@ -66,7 +66,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 	Uint32				  otherEntry;
 	Sint32				  row;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	confirmationChoice = YES;
 	result = 0;
 	redraw = 1;
@@ -236,7 +236,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 		Uint32 pressed;
 		Uint32 repeat;
 
-		state = (WIN_STATE *)Ram_HeapSlots->winState;
+		state = (WIN_STATE *)RamHeapSlots->winState;
 		backdrop = menu->backdrop;
 		pressed = PerWork.push;
 		repeat = PerWork.repeat;
@@ -432,7 +432,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 
 			tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
 			if((frm & 4) != 0) {
-				syWordsCopy(tile, Menu_BackdropBorderTile, TILE_SIZE_4BPP);
+				syWordsCopy(tile, MenuBackdropBorderTile, TILE_SIZE_4BPP);
 			} else {
 				syWordsFill(tile, TILE_SIZE_4BPP, fill);
 			}
@@ -486,7 +486,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 	mnDjinnFiguresSetSlotPhase(0, 0);
 	mnDjinnFiguresSetSlotPhase(1, 0);
 	sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 1;
 	mnWindowCloseIfOpen(&menu->helpWin, 1);
 	sySynch(1);
 	mnWindowUpdateOrCreate(&menu->helpWin, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
@@ -495,7 +495,7 @@ Sint32 mnDjinnMenuRunPreview(Uint32 mode)
 	mnWindowSprRedrawSavedRectStub(menu->listWin);
 	mnWindowSprRedrawSavedRectStub(menu->unopenedWin);
 	mnWindowSprRedrawSavedRectStub(menu->statWin);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	sySynch(1);
 	return result;
 }
@@ -530,7 +530,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 	Sint32				  side;
 	Sint32				  hopStep;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	redraw = TRUE;
 	result = 0;
 	frm = 0;
@@ -569,7 +569,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 		(Sint32)MsgCurrentStatus + 2, menu->statWin, 0, 16);
 	side = 0;
 	while(1) {
-		render = (WIN_STATE *)Ram_HeapSlots->winState;
+		render = (WIN_STATE *)RamHeapSlots->winState;
 		pressedKeys = PerWork.push;
 		repeatedKeys = PerWork.repeat;
 		if(redraw) {
@@ -615,7 +615,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 		if((frm & 3) == 0) {
 			if(frm & 4)
 				syWordsCopyEntry((void *)DJINN_BACKDROP_BORDER_VRAM,
-					Menu_BackdropBorderTile, TILE_SIZE_4BPP);
+					MenuBackdropBorderTile, TILE_SIZE_4BPP);
 			else
 				syWordsFillEntry((void *)DJINN_BACKDROP_BORDER_VRAM,
 					TILE_SIZE_4BPP, TEXT_CANVAS_BACKGROUND_WORD);
@@ -648,7 +648,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 		sySynch(1);
 	}
 	sySetEvent(mnUpdatePartyFigures, EVENT_PASS_TICK);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 1;
 	mnWindowCloseIfOpen(helpWinSlot, 1);
 	sySynch(1);
 	mnWindowUpdateOrCreate(helpWinSlot, 13, 0, 17, 5, WINDOW_FLAG_INSTANT);
@@ -657,7 +657,7 @@ Sint32 mnDjinnMenuShowMemberStat(void)
 	mnWindowSprRedrawSavedRectStub(menu->listWin);
 	mnWindowSprRedrawSavedRectStub(menu->unopenedWin);
 	mnWindowSprRedrawSavedRectStub(menu->statWin);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	sySynch(1);
 	return result;
 }
@@ -676,7 +676,7 @@ Sint32 mnDjinnMarkTradeOnlyRecipients(
 	Sint8			 *entry;
 	DJINN_MENU_STATE *menu;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	tradeCnt = 0;
 	memberColumn = 0;
 	if(tradeCnt < menu->memberCnt) {
@@ -726,7 +726,7 @@ void mnDjinnCountOwned(Uint8 *ownedCnts)
 	Sint32			  djinnIdx;
 	Sint32			  ownedCnt;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	for(memberIdx = 0; memberIdx < menu->memberCnt; memberIdx++) {
 		unit = syUnitGet(menu->members[memberIdx]);
 		ownedCnt = 0;

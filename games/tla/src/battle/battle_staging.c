@@ -164,7 +164,7 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 	Bool					 fled;
 	Sint32					 result;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	fled = FALSE;
 	if(request->unitId == BATTLE_UNIT_LIST_END)
 		return 0;
@@ -178,10 +178,10 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 
 	/* The camera eases back over 60 ticks, the background at full brightness,
 	   the far depth well past the battlefield. */
-	view = Ram_HeapSlots->battleBg;
+	view = RamHeapSlots->battleBg;
 	view->ticks = 60;
 	view->keepRange = 0;
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	battle->brightness = toFIXED(1);
 	syInitMatrix();
 	syLookAtLoad(camera->eye, camera->focus);
@@ -331,7 +331,7 @@ Sint32 btStagingDispatchAction(BATTLE_ACTION_RECORD *request, Sint32 delay)
 	request->unitId = BATTLE_UNIT_LIST_END;
 finish:
 	btBackgroundSetMode(
-		BATTLE_BACKGROUND_ZOOMED, (Ram_HeapSlots->battleState)->bg, 0);
+		BATTLE_BACKGROUND_ZOOMED, (RamHeapSlots->battleState)->bg, 0);
 	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
 	return fled;
 }
@@ -384,9 +384,9 @@ void btStagingBuildTargetList(
 Sint32 btStagingRunFlee(BATTLE_PLAN *plan)
 {
 	Bool					 completed;
-	BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
 	Uint32					 unitId = plan->unitId;
-	BATTLE_STATE			*battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE			*battle = RamHeapSlots->battleState;
 	Sint32					 escaped = 0;
 
 	completed = FALSE;
@@ -458,7 +458,7 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	actor = plan->unitId;
 	tgt = plan->tgtIds[0];
 	if(plan->battleEff & EFFECT_SUMMON) {
-		BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
+		BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
 
 		if(actor <= ALLY_MAX)
 			view->tgtYaw = YAW_PARTY_ACTION;
@@ -466,7 +466,7 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 			view->tgtYaw = YAW_BEHIND_ENEMIES;
 		view->ticks = 60;
 	} else {
-		BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
+		BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
 		Sint32					 yaw;
 
 		yaw = YAW_ENEMY_ACTION;
@@ -479,7 +479,7 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 	/* The unit raises its hand and glows; the side not targeted fades out. */
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
 	mnPartyStatDrawStub(
-		Ram_HeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
+		RamHeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
 	object = btObjectGet(actor)->obj;
 	REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
 	i = 0;
@@ -494,7 +494,7 @@ Sint32 btStagingRunFullScreen(BATTLE_PLAN *plan, Sint32 mode)
 				btHighlightSetSprMode(unit, SPRITE_SEMI_TRANSPARENT);
 		} else {
 			fdActorSelectAnimationStub(
-				(ACTOR *)object, Ram_HeapSlots->battleState->actingAnm);
+				(ACTOR *)object, RamHeapSlots->battleState->actingAnm);
 		}
 	}
 	if(!(mode & STAGING_NO_CAST)) {

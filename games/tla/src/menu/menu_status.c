@@ -66,7 +66,7 @@ Sint32 mnPartyMemberChooserOpen(void)
 	Sint32 result;
 	Sint32 idx;
 
-	Ram_HeapSlots->actorSystem->suspended = 1;
+	RamHeapSlots->actorSystem->suspended = 1;
 	mnWindowDrawBorderStub(0, 0, 30, 20);
 	sySynch(1);
 	mnInitState(0);
@@ -82,7 +82,7 @@ Sint32 mnPartyMemberChooserOpen(void)
 
 	mnWindowSprClearListStub(state->statWin);
 	mnItemMenuClose();
-	Ram_HeapSlots->actorSystem->suspended = 0;
+	RamHeapSlots->actorSystem->suspended = 0;
 	sySynch(1);
 	syHeapSlotRelease(HEAP_SLOT_MENU);
 	return result;
@@ -94,7 +94,7 @@ Sint32 mnStatScreenSelectMember(Sint32 slot);
    -1. */
 Sint32 mnPartyMemberChooserRun(void)
 {
-	STAT_SCREEN_STATE *state = Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *state = RamHeapSlots->menuState;
 	Sint32			   result = 0;
 
 	do {
@@ -132,7 +132,7 @@ Sint32 mnStatScreenRun(void)
 	Uint32					 saved;
 	Uint16					*page;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	transition = heap->screenTransition;
 	heap->actorSystem->suspended = 1;
 	mnWindowDrawBorderStub(0, 0, 30, 20);
@@ -208,7 +208,7 @@ Sint32 mnStatScreenRunEquipmentPage(void);
    Start. */
 Sint32 mnStatScreenRunPages(void)
 {
-	STAT_SCREEN_STATE *state = (STAT_SCREEN_STATE *)Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *state = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
 	Sint32			   step = STATUS_STEP_MEMBER;
 	Sint32			   finished = step;
 	Sint32			   result = 0;
@@ -272,7 +272,7 @@ Sint32 mnStatScreenSelectMember(Sint32 slot)
 	Sint32			   result;
 	Sint32			   idx;
 
-	menu = (STAT_SCREEN_STATE *)Ram_HeapSlots->menuState;
+	menu = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
 	idx = menu->memberIdx[slot];
 	result = 0;
 	cursor = menu->memberCursors[slot];
@@ -301,7 +301,7 @@ Sint32 mnStatScreenSelectMember(Sint32 slot)
    own first and The Broken Seal's after them, until A, B or Select. */
 void mnStatScreenShowDjinnList(void)
 {
-	DJINN_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	DJINN_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			  page;
 	Sint32			  redraw;
 	Sint32			  win;
@@ -353,7 +353,7 @@ void mnStatScreenShowDjinnList(void)
 					}
 				}
 			}
-			((WIN_STATE *)Ram_HeapSlots->winState)->dirty = 1;
+			((WIN_STATE *)RamHeapSlots->winState)->dirty = 1;
 			redraw = 0;
 		}
 		mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
@@ -401,7 +401,7 @@ Sint32 mnStatScreenRunPartyRow(void)
 	Sint32			   result;
 	Sint32			   rowIdx;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	ownerIdx = menu->memberIdx[0];
 	ownerCnt = menu->memberCnt[0];
 	redraw = 2;
@@ -504,7 +504,7 @@ void mnPlaceEntryIconsInGrid(Sint32 x, Sint32 y, Sint32 columns);
    showing their status and Psynergy icons; A chooses and B backs out. */
 Sint32 mnPartyMemberChooserChooseMember(void)
 {
-	STAT_SCREEN_STATE *menu = (STAT_SCREEN_STATE *)Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *menu = (STAT_SCREEN_STATE *)RamHeapSlots->menuState;
 	Sint32			   selection = menu->memberIdx[0];
 	Sint32			   cnt = menu->memberCnt[0];
 	Sint32			   pending = 2;
@@ -562,7 +562,7 @@ Sint32 mnPartyMemberChooserChooseMember(void)
    earlier (0) in the party order. Returns 1, or 0 when it cannot move. */
 Bool mnStatScreenMovePartyMember(Sint32 selectedIdx, Sint32 direction)
 {
-	STAT_SCREEN_STATE *menu = Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
 	Uint32			   reordered[14];
 	Sint32			   idx;
 
@@ -606,7 +606,7 @@ Bool mnStatScreenMovePartyMember(Sint32 selectedIdx, Sint32 direction)
 void mnStatScreenInit(
 	Sint32 unusedA, Sint32 unusedB, Sint32 unusedC, Sint32 unusedD)
 {
-	STAT_SCREEN_STATE *state = Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *state = RamHeapSlots->menuState;
 
 	mnShowPartyFigures(mnCursorCreate(state), 2, 2);
 	state->unopenedWin = 0;
@@ -631,7 +631,7 @@ void mnStatScreenShowMemberStat(Sint32 resource, Sint32 frm)
 	void			  *object;
 	STAT_SCREEN_STATE *state;
 
-	state = Ram_HeapSlots->menuState;
+	state = RamHeapSlots->menuState;
 	created = 0;
 	handle = state->statWin;
 	if(handle == 0) {
@@ -684,7 +684,7 @@ Sint32 mnStatScreenRunStatPage(void)
 	Sint32			   i;
 	Uint8			   entries[8];
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	pane = 0;
 	selected = 0;
 	result = 0;
@@ -817,7 +817,7 @@ Sint32 mnStatScreenRunStatPage(void)
 void mnStatScreenDrawSelectionCursor(
 	Sint32 mode, Sint32 selected, Uint8 *entries, Sint32 invert)
 {
-	STAT_SCREEN_STATE *menu = Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
 	Sint32			   cnt;
 	Sint32			   idx;
 	Sint32			   x;
@@ -922,7 +922,7 @@ typedef enum STAT_HELP {
    what they are. */
 void mnStatScreenShowMemberProgressMessage(void *win, Sint32 help, Sint32 full)
 {
-	STAT_SCREEN_STATE *menu = Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
 	Uint8			  *buf;
 
 	if(full == 0 && help > STATUS_HELP_PP)
@@ -968,7 +968,7 @@ Sint32 gmUnitGetElementLevelStub(Sint32 ownerId, Sint32 element);
    cleared first. */
 void mnStatScreenDrawStatPage(Sint32 win, Sint32 ownerId, Sint32 mode)
 {
-	STAT_SCREEN_STATE *menu = Ram_HeapSlots->menuState;
+	STAT_SCREEN_STATE *menu = RamHeapSlots->menuState;
 	UNIT			  *unit;
 	Sint32			   element;
 	Sint32			   djinnRow;
@@ -1067,7 +1067,7 @@ void mnStatScreenDrawTopRows(Sint32 win, Sint32 owner, Sint32 flg)
 	ITEM_MENU_STATE *menu;
 	UNIT			*unit;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	unit = syUnitGet(owner);
 	menu->cursor->motion = ICON_SHOWN;
 	flg &= STATUS_PAGE_NO_CLEAR;
@@ -1122,7 +1122,7 @@ void mnStatScreenDrawTopRows(Sint32 win, Sint32 owner, Sint32 flg)
    1. */
 Sint32 mnPagedListBuild(PAGED_LIST *result, Sint32 idx)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	void			*owner;
 	Sint32			 cnt;
 	Sint32			 value;
@@ -1259,7 +1259,7 @@ Sint32 mnPsynergyMenuDrawRangePage(Sint32 win, Sint32 unused, PAGED_LIST *state)
 	Sint32				 row;
 	Sint32				 base;
 
-	menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
+	menu = (PSYNERGY_MENU_STATE *)RamHeapSlots->menuState;
 	state->selectedIdx = state->page * STATUS_LIST_PAGE_ROWS + state->row;
 	/* The Japanese release clears the info window; in every edition but the
 	   Japanese it redraws the window's saved rectangle. */
@@ -1383,7 +1383,7 @@ Sint32 mnPsynergyMenuDrawRangePage(Sint32 win, Sint32 unused, PAGED_LIST *state)
 Sint32 mnPsynergyMenuDrawListPage(
 	Sint32 win, Sint32 unused, const PAGED_LIST *res)
 {
-	PSYNERGY_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = RamHeapSlots->menuState;
 	UNIT				*member;
 	Uint32				 firstEntry;
 	Uint32				 rows;
@@ -1495,7 +1495,7 @@ Sint32 mnStatScreenRunPsynergyPage(void)
 	Sint32				 ownerIdx;
 	PAGED_LIST			 state;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	win = menu->statWin;
 	result = 0;
 	refresh = 2;
@@ -1602,7 +1602,7 @@ Sint32 mnItemMenuDrawEquipPage(Sint32 win, Sint32 unused, PAGED_LIST *state)
 	Uint32			 entry;
 	Uint32			 mask;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	base = state->page * STATUS_LIST_PAGE_ROWS;
 	state->selectedIdx = base + state->row;
 	/* The Japanese release clears the name's window; in every edition but the
@@ -1707,7 +1707,7 @@ Sint32 mnItemMenuDrawEquipPage(Sint32 win, Sint32 unused, PAGED_LIST *state)
    names, or "no items", then the member's name, Attack and Defense. */
 Sint32 mnItemMenuDrawItemPage(Sint32 win, Sint32 unused, PAGED_LIST *state)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	UNIT			*unit;
 	Uint16			*inventoryEntry;
 	Sint32			 firstEntry;
@@ -1779,7 +1779,7 @@ Sint32 mnStatScreenRunEquipmentPage(void)
 	PAGED_LIST		 state;
 	Uint16			 savedInventory[INVENTORY_SLOTS];
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	win = menu->statWin;
 	result = 0;
 	refresh = 2;
@@ -1874,7 +1874,7 @@ Sint32 mnStatScreenRunEquipmentPage(void)
    also shows their icons at the right. */
 void mnItemMenuDrawEquipment(Sint32 win, Sint32 ownerId, Sint32 mode)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Uint8			*items;
 
 	mnHideEntryIcons();
@@ -1928,7 +1928,7 @@ void mnPlaceEntryIconsInGrid(Sint32 originX, Sint32 originY, Sint32 columns)
 	WINDOW_SPR **icons;
 
 	for(entryIdx = 0,
-	icons = ((ITEM_MENU_STATE *)Ram_HeapSlots->menuState)->entryIcons;
+	icons = ((ITEM_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
 		entryIdx <= MENU_ENTRY_ICONS - 1; entryIdx++) {
 		icon = *icons++;
 		if(icon != NULL) {
@@ -1966,7 +1966,7 @@ void mnItemMenuArrangeCategoryItemIcons(Uint16 *items)
 	WINDOW_SPR		*icon;
 	Sint32			 slotIdx;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	mnHideEntryIcons();
 	for(slotIdx = 0; slotIdx < INVENTORY_SLOTS; slotIdx++) {
 		if(items[slotIdx] != 0 && (items[slotIdx] & INVENTORY_EQUIPPED) != 0) {
@@ -2002,7 +2002,7 @@ void mnItemMenuArrangeCategoryItemIcons(Uint16 *items)
    out again. */
 void mnHideEntryIcons(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 x = MENU_ICON_HIDDEN_X;
 	WINDOW_SPR	   **entry = menu->entryIcons;
 	Sint32			 y = MENU_ICON_HIDDEN_Y;

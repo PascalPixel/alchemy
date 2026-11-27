@@ -1,12 +1,12 @@
 /* The grey caves beneath Jupiter Lighthouse, reached by the teleporter in the
-   sandy dead end of its grounds (SceneId_JupiterLighthouseBasementTeleporters).
+   sandy dead end of its grounds (SceneIdJupiterLighthouseBasementTeleporters).
    The party arrives on the near teleporter in the west. Cyclone scatters the
    weeds round each teleporter and a patch in the lower right corner of the
    cave, where a Mad Plant hides (scJupiterLighthouseUncoverMadPlant). Hover on
    the purple tile crosses to the far teleporter in the east, whose Cyclone
    takes the party up to the ground floor inside the main gates
    (scJupiterLighthouseTeleportToGroundFloor), and the near one back up to the
-   grounds. Its side room (SceneId_JupiterLighthouseBasementPsynergyStone) holds
+   grounds. Its side room (SceneIdJupiterLighthouseBasementPsynergyStone) holds
    a Psynergy Stone, and sixteen sparks rise and sway out of the dark in its
    middle. */
 
@@ -162,7 +162,7 @@ void scJupiterLighthouseTeleportToGroundFloor(void)
 const CUE *scGetCues(void)
 {
 	if(MainRoutineStateWork.next ==
-		(Sint32)&SceneId_JupiterLighthouseBasementPsynergyStone)
+		(Sint32)&SceneIdJupiterLighthouseBasementPsynergyStone)
 		return JupiterLighthouseBasementPsynergyStoneCues;
 	return JupiterLighthouseBasementTeleportersCues;
 }
@@ -195,7 +195,7 @@ void scJupiterLighthouseRestartSpark(ACTOR *actor)
    then rises, swaying east and west, until its life starts again. */
 void scJupiterLighthouseUpdateSpark(ACTOR *actor)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0) {
@@ -258,7 +258,7 @@ Sint32 scInit(void)
 	FieldStateWork->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 	if(MainRoutineStateWork.next ==
-		(Sint32)&SceneId_JupiterLighthouseBasementTeleporters) {
+		(Sint32)&SceneIdJupiterLighthouseBasementTeleporters) {
 		scJupiterLighthouseLoadPalettes(LIGHTHOUSE_PALETTES_LIT);
 		if(!fdScriptGetFlag(FLAG_KEEP_PARTY_POSITION) &&
 			MainRoutineStateWork.entrance ==
@@ -270,7 +270,7 @@ Sint32 scInit(void)
 			fdActorDepartInRing(MainRoutineStateWork.leaderActorId);
 	}
 	if(MainRoutineStateWork.next ==
-		(Sint32)&SceneId_JupiterLighthouseBasementPsynergyStone) {
+		(Sint32)&SceneIdJupiterLighthouseBasementPsynergyStone) {
 		REG_BLDALPHA = BLEND_ALPHA(8, 16);
 		REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
 		scJupiterLighthouseSpawnSparks();

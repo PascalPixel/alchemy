@@ -98,7 +98,7 @@ typedef enum CASTING_IMPACT {
 
 /* The impact orb's pictures, packed at half width, after the streak's. */
 #define CASTING_IMPACT_ORB_PICTURES	 (6 * PICTURE_BYTES(FIRE_STREAK))
-/* The Djinni's picture, in Ram_MapGridMetatileBuffer after the impact's own:
+/* The Djinni's picture, in RamMapGridMetatileBuffer after the impact's own:
    past room for the six glints and six flash bursts, more than any impact loads
    (Squall's glints and lightning bolts are the most). */
 #define CASTING_IMPACT_DJINNI_WIDTH	 20
@@ -113,10 +113,10 @@ typedef enum CASTING_IMPACT {
    two a tick (the draw visits each spark twice); it is drawn a mote size
    smaller for every 16 of life lost. */
 #define CASTING_IMPACT_SPARK_LIFE	32
-/* The impact pictures' particles, in Ram_MapGridMetatileBuffer after the
+/* The impact pictures' particles, in RamMapGridMetatileBuffer after the
    Djinni. */
 #define CASTING_IMPACT_PARTICLES \
-	((PARTICLE *)(Ram_MapGridMetatileBuffer + 16384))
+	((PARTICLE *)(RamMapGridMetatileBuffer + 16384))
 #define CASTING_IMPACT_PARTICLE_COUNT  64
 /* The impact particles that carry the rising pictures: flash bursts, skulls or
    puffs of smoke. */
@@ -219,7 +219,7 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 	sprs = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
-	pictures = Ram_MapGridMetatileBuffer;
+	pictures = RamMapGridMetatileBuffer;
 	state->args = args;
 	if(mode == CASTING_IMPACT_MORTAL_DANGER ||
 		mode == CASTING_IMPACT_TERRA_STRIKE || mode == CASTING_IMPACT_ASURA) {

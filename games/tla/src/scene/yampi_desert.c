@@ -1,6 +1,6 @@
 /* The Yampi Desert, between southern Osenia and Alhafra: twelve rooms on one
-   overlay (SceneId_YampiDesertGuardianRingChest to
-   SceneId_YampiDesertBlowMaceChest). In the first room Pound sinks the wooden
+   overlay (SceneIdYampiDesertGuardianRingChest to
+   SceneIdYampiDesertBlowMaceChest). In the first room Pound sinks the wooden
    stake before the Guardian Ring's chest. In the second, travelers from Madra
    chasing Briggs rest by the spring, beside a sand puddle that hides a ladder.
    In Blitz's room the stakes are Pounded into the sand or walked across on
@@ -200,7 +200,7 @@ static inline void scYampiDesertDigUpTreasure(
    ACTOR_LIST_END. */
 #define STAKE_ROW(n)					   STAKE(n), 0, FLAG_YAMPI_DESERT_STAKE_POUNDED(n)
 
-/* The travelers from Madra resting by the spring (SceneId_YampiDesertSpring),
+/* The travelers from Madra resting by the spring (SceneIdYampiDesertSpring),
    by the rows of YampiDesertSpringActorPlacements and
    YampiDesertSpringActorPlacementsAfterMeeting, chasing Briggs to Alhafra. */
 typedef enum YAMPI_DESERT_TRAVELERS_ACTOR_ID {
@@ -240,7 +240,7 @@ typedef enum YAMPI_DESERT_SCORPION_ACTOR_ID {
 } YAMPI_DESERT_SCORPION_ACTOR_ID;
 
 /* The Trainer's Whip chest's room's actors
-   (SceneId_YampiDesertTrainersWhipChest). */
+   (SceneIdYampiDesertTrainersWhipChest). */
 typedef enum YAMPI_DESERT_TRAINERS_WHIP_CHEST_ACTOR_ID {
 	/* The posts of the rope Lash ties. */
 	ACTOR_ROPE_POST = ACTOR_FIRST_PLACED,
@@ -252,7 +252,7 @@ typedef enum YAMPI_DESERT_TRAINERS_WHIP_CHEST_ACTOR_ID {
 	ACTOR_WHIP_CHEST_ROOM_SECOND_BLOCK
 } YAMPI_DESERT_TRAINERS_WHIP_CHEST_ACTOR_ID;
 
-/* The scorpion pit's actors (SceneId_YampiDesertScorpionPit), where the King
+/* The scorpion pit's actors (SceneIdYampiDesertScorpionPit), where the King
    Scorpion is fought. */
 typedef enum YAMPI_DESERT_SCORPION_PIT_ACTOR_ID {
 	ACTOR_KING_SCORPION = ACTOR_FIRST_PLACED,
@@ -268,7 +268,7 @@ typedef enum YAMPI_DESERT_SCORPION_PIT_ACTOR_ID {
 enum { ACTOR_HIDDEN_TREASURE = FIELD_TREASURE_ACTOR };
 
 /* The Blow Mace chest's room's actors after its stake
-   (SceneId_YampiDesertBlowMaceChest): seven unseen blocks by the sand's flow,
+   (SceneIdYampiDesertBlowMaceChest): seven unseen blocks by the sand's flow,
    hidden as the room is set up. */
 typedef enum YAMPI_DESERT_BLOW_MACE_CHEST_ACTOR_ID {
 	ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK = STAKE(1),
@@ -586,7 +586,7 @@ void scYampiDesertPoundBlitzStake(Sint32 mode, Sint32 cnt)
    down into the sand. While the King Scorpion still roams under the sand, the
    camera then follows the ripple of sand over it until it stops. */
 DEFINE_POUND_STAKE_STOPPING_SCORPION(
-	YampiDesert_PoundPsynergyStoneStake, YampiDesertPsynergyStoneStakes)
+	YampiDesertPoundPsynergyStoneStake, YampiDesertPsynergyStoneStakes)
 
 /* Pound on the wooden stake that blocks the way to the Blow Mace's chest, in
    the cave of sand slides, hammers it down into the sand. */
@@ -599,7 +599,7 @@ void scYampiDesertPoundBlowMaceChestStake(Sint32 mode, Sint32 cnt)
    into the sand. Until the King Scorpion is cornered, the camera then follows
    the ripple of sand over it until it stops. */
 DEFINE_POUND_STAKE_STOPPING_SCORPION(
-	YampiDesert_PoundKingScorpionStake, YampiDesertKingScorpionStakes)
+	YampiDesertPoundKingScorpionStake, YampiDesertKingScorpionStakes)
 
 /* Nothing visible happens when Felix steps from the high ground onto the
    metatiles beside the stakes in Blitz's room, the Psynergy Stone's or the King
@@ -609,7 +609,7 @@ DEFINE_POUND_STAKE_STOPPING_SCORPION(
    its height rises by four steps. */
 void scYampiDesertStepOntoStakeTops(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint16	  *list = NULL;
 	Uint8	  *grid = MapShapeGrid;
 
@@ -628,12 +628,12 @@ void scYampiDesertStepOntoStakeTops(void)
 		if(!syGameFlagGet(*list)) {
 			Sint32		  layer = actor->layer;
 			MAP_METATILE *metatiles = map->layers[layer].metatiles;
-			Uint8		 *shapes = (Uint8 *)((((Sint32)metatiles -
-											  (Sint32)Ram_MapMetatileBuffer) >>
-											 2) +
-				   (Sint32)grid);
-			Sint32		  idx = fdActorGetMetatileIndex(actor);
-			Sint32		  shape =
+			Uint8		 *shapes =
+				(Uint8 *)((((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >>
+							  2) +
+					(Sint32)grid);
+			Sint32 idx = fdActorGetMetatileIndex(actor);
+			Sint32 shape =
 				fdMapGridGetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
 			Sint32 height = METATILE_HEIGHT_STEPS(
 				fdMapGetTerrainHeight(layer, actor->x.fixed, actor->z.fixed));
@@ -654,7 +654,7 @@ void scYampiDesertStepOntoStakeTops(void)
    game makes the standing stakes walls again at ground level. */
 void scYampiDesertStepOffStakeTops(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint16	  *list = NULL;
 	Uint8	  *grid = MapShapeGrid;
 
@@ -673,12 +673,12 @@ void scYampiDesertStepOffStakeTops(void)
 		if(!syGameFlagGet(*list)) {
 			Sint32		  layer = actor->layer;
 			MAP_METATILE *metatiles = map->layers[layer].metatiles;
-			Uint8		 *shapes = (Uint8 *)((((Sint32)metatiles -
-											  (Sint32)Ram_MapMetatileBuffer) >>
-											 2) +
-				   (Sint32)grid);
-			Sint32		  idx = fdActorGetMetatileIndex(actor);
-			Sint32		  shape =
+			Uint8		 *shapes =
+				(Uint8 *)((((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >>
+							  2) +
+					(Sint32)grid);
+			Sint32 idx = fdActorGetMetatileIndex(actor);
+			Sint32 shape =
 				fdMapGridGetTerrainKind(layer, actor->x.fixed, actor->z.fixed);
 			Sint32 height = METATILE_HEIGHT_STEPS(
 				fdMapGetTerrainHeight(layer, actor->x.fixed, actor->z.fixed));
@@ -698,7 +698,7 @@ void scYampiDesertStepOffStakeTops(void)
    overhead layer Sand moves on. */
 void scYampiDesertBlockPoundedStakes(Uint16 *list)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	for(; *list != ACTOR_LIST_END; list += 3) {
 		ACTOR *actor = fdActorGetById(list[0]);
@@ -717,7 +717,7 @@ void scYampiDesertBlockPoundedStakes(Uint16 *list)
    again. */
 void scYampiDesertOpenStakeMetatiles(Uint16 *list)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	for(; *list != ACTOR_LIST_END; list += 3) {
 		MAP_METATILE *metatile =
@@ -1568,7 +1568,7 @@ void scYampiDesertCarryLeader(ACTOR *actor, FIXED dx, FIXED dz)
    ground marks, holding the pad that way moves the leader a quarter as fast. */
 void scYampiDesertUpdateSandFlow(void)
 {
-	FIELD_STATE	 *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	 *state = RamHeapSlots->fieldState;
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Sint32		  speed = toFIXED(3) / 2;
 	MAP_STATE	 *map;
@@ -1581,7 +1581,7 @@ void scYampiDesertUpdateSandFlow(void)
 		fdTilesetAnimSuspendAll();
 		return;
 	}
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	idx = fdActorGetMetatileIndex(leader);
 	column = leader->x.fixed / toFIXED(16);
 	row = (leader->z.fixed + toFIXED(4)) / toFIXED(16);
@@ -1694,7 +1694,7 @@ void scYampiDesertCheckUpperLevelFromLower(void)
 UNUSED void scYampiDesertCheckUpperLevelOnRise(void)
 {
 	ACTOR		 *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	Sint32		  idx = fdActorGetMetatileIndex(leader);
 	MAP_METATILE *metatile = map->layers[MAPGRID_LAYER_GROUND].metatiles + idx;
 	MAIN_ROUTINE_STATE *party;
@@ -2052,7 +2052,7 @@ void scYampiDesertSetUpTrappedScorpion(void)
 /* While the King Scorpion's Scoop runs, opens the hole it digs. */
 void scYampiDesertOpenScoopHole(void)
 {
-	if(((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->stage != 0)
+	if(((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->stage != 0)
 		fdMapGridCopyMetatileTilesIndicesRect(73, 76, 78, 11, 1, 1);
 }
 
@@ -3104,10 +3104,10 @@ LATE_DATA CUE YampiDesertPsynergyStoneCues[] = {
 	{CUE_EXIT, EXIT_TO_NORTH_PART, CONDITION_ALWAYS, EXIT_TO_NORTH_PART},
 	{CUE_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
 	{CUE_EXIT, YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_KING_SCORPION, CONDITION_ALWAYS, YAMPI_DESERT_PSYNERGY_STONE_TO_YAMPI_DESERT_KING_SCORPION},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), SCRIPT_REF(YampiDesert_PoundPsynergyStoneStake)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), SCRIPT_REF(YampiDesert_PoundPsynergyStoneStake)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), SCRIPT_REF(YampiDesert_PoundPsynergyStoneStake)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_YAMPI_DESERT_STAKE_POUNDED(3), SCRIPT_REF(YampiDesert_PoundPsynergyStoneStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), SCRIPT_REF(YampiDesertPoundPsynergyStoneStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), SCRIPT_REF(YampiDesertPoundPsynergyStoneStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), SCRIPT_REF(YampiDesertPoundPsynergyStoneStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_YAMPI_DESERT_STAKE_POUNDED(3), SCRIPT_REF(YampiDesertPoundPsynergyStoneStake)},
 	{CUE_STEP, METATILE_ONTO_STAKE_TOPS, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, SCRIPT_REF(scYampiDesertStepOntoStakeTops)},
 	{CUE_STEP, METATILE_OFF_STAKE_TOPS, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), SCRIPT_REF(scYampiDesertStepOffStakeTops)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, SCRIPT_REF(scYampiDesertCastSand)},
@@ -3122,9 +3122,9 @@ LATE_DATA CUE YampiDesertKingScorpionCues[] = {
 	{CUE_EXIT, YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_PSYNERGY_STONE, CONDITION_ALWAYS, YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_PSYNERGY_STONE},
 	{CUE_EXIT, EXIT_TO_NORTH_PART, CONDITION_ALWAYS, EXIT_TO_NORTH_PART},
 	{CUE_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), SCRIPT_REF(YampiDesert_PoundKingScorpionStake)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), SCRIPT_REF(YampiDesert_PoundKingScorpionStake)},
-	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), SCRIPT_REF(YampiDesert_PoundKingScorpionStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), SCRIPT_REF(YampiDesertPoundKingScorpionStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), SCRIPT_REF(YampiDesertPoundKingScorpionStake)},
+	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), SCRIPT_REF(YampiDesertPoundKingScorpionStake)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, SCRIPT_REF(scYampiDesertCastSand)},
 	{PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, SCRIPT_REF(scYampiDesertEndSand)},
 	{CUE_RAISED, RAISED_WATCH_SCORPION_STOP, FLAG_YAMPI_DESERT_SCORPION_CORNERED, SCRIPT_REF(scYampiDesertWatchScorpionStop)},

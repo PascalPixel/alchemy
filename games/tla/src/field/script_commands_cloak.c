@@ -23,10 +23,9 @@
    stands, show it again at once. */
 void fdPsynergyStartCloak(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
-	ACTOR		*caster =
-		((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->caster;
-	SPR			  *spr = caster->spr;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
+	ACTOR *caster = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
+	SPR	  *spr = caster->spr;
 	SPR_ANIMATION *entry = spr->entries[0];
 	Uint32		   n;
 	void (*check)(void);
@@ -99,7 +98,7 @@ void fdPsynergyDouse(void)
 	VECTOR3				pos;
 	VECTOR3				start;
 	VECTOR3				end;
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	ACTOR			   *tgt = state->tgt;
 	ACTOR			   *caster = state->caster;
 	Sint32				cnt;
@@ -238,7 +237,7 @@ void fdEffectSpawnFallingParticles(void)
 	ACTOR  *fragment;
 	Uint32	radius;
 
-	liftedActor = ((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->tgt;
+	liftedActor = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgt;
 	pos.x = liftedActor->x.fixed;
 	pos.y = liftedActor->y.fixed - syRandom() * 16 + toFIXED(24);
 	pos.z = liftedActor->z.fixed;
@@ -280,7 +279,7 @@ void fdPsynergySteerLiftedTarget(Sint32 tgtId)
 	Sint32				ang;
 	Sint32				magnitude;
 
-	state = Ram_HeapSlots->fieldEffState;
+	state = RamHeapSlots->fieldEffState;
 	src = state->caster;
 	tgt = state->tgt;
 	if(tgt == NULL)

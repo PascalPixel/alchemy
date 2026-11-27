@@ -104,9 +104,9 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*trail;
 	SCALE				 scale;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sparkleSheet = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sparkleSheet = RamHeapSlots->battleSheet;
 	edgeSpeed = 1;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
@@ -120,10 +120,10 @@ void btEffectRunBoreas(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_ICE_BLOCK_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	drawAlt = Ram_HeapSlots->ramCodePaired;
+	drawAlt = RamHeapSlots->ramCodePaired;
 	ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
 	btEffectShowLivingTargets(state->args);
 	sySynch(1);

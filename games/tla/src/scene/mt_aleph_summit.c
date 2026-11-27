@@ -418,7 +418,7 @@ Sint32 scInit(void)
 		}
 		fdScriptSetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_TO_BEACONS);
 	} else if(mode == ENTRANCE_ALEX_TAKES_THE_POWER) {
-		heap = Ram_HeapSlots;
+		heap = RamHeapSlots;
 		fade = heap->palFade;
 		syWordsCopy(buf, (void *)&BG_PLTT_COLOR(0, 0),
 			PALETTE_FADE_BG_COLORS * sizeof(Uint16));
@@ -760,7 +760,7 @@ Sint32 scInit(void)
 		/* "If you survive, perhaps we shall meet again someday..." */
 		syFieldScriptShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
 		syFieldScriptWait(10);
-		map = Ram_HeapSlots->mapGrid;
+		map = RamHeapSlots->mapGrid;
 		fdMapGridSetShake(16, 16, 1);
 		for(j = 0, scale = -toFIXED(15) / 8; j != 128;
 			j++, scale += toFIXED(1) / 16) {

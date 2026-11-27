@@ -38,8 +38,8 @@
 	(DEGtoANG(180) / (DJINNI_CHARGE_FIREBALL_RINGS - 1))
 #define DJINNI_CHARGE_FIREBALL_RADIUS	 48
 #define DJINNI_CHARGE_FIREBALL_TILT		 20576
-#define DJINNI_CHARGE_FIREBALL_PROJECTED (Ram_MapMetatileBuffer + 8192)
-#define DJINNI_CHARGE_FIREBALL_MESH		 (Ram_MapMetatileBuffer + 16384)
+#define DJINNI_CHARGE_FIREBALL_PROJECTED (RamMapMetatileBuffer + 8192)
+#define DJINNI_CHARGE_FIREBALL_MESH		 (RamMapMetatileBuffer + 16384)
 
 /* The small Mars Djinni charges the target. In Core it pulls back over the
    caster inside a ball of fire, then drives in onto the target as the ball
@@ -73,10 +73,10 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	mesh = DJINNI_CHARGE_FIREBALL_MESH;
 	projected = DJINNI_CHARGE_FIREBALL_PROJECTED;
 	cells = MapGridMetatileBuffer;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	motes = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	motes = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectRunDjinniEntrance(args,
 		DJINNI_ENTRANCE(
@@ -96,7 +96,7 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 		}
-		blit[0] = Ram_HeapSlots->ramCode;
+		blit[0] = RamHeapSlots->ramCode;
 		REG_BLDALPHA = EFFECT_BLEND_ADD;
 		EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 		tgt = btObjectGetStub(args->tgts[0])->obj;
@@ -322,7 +322,7 @@ void btEffectRunDjinniCharge(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						x = screen.x / 2 - 46;
 					}
 					blit[0](canvas,
-						Ram_MapMetatileBuffer +
+						RamMapMetatileBuffer +
 							picture * PICTURE_BYTES(DJINNI_CHARGE_BLAST),
 						x, screen.y - DJINNI_CHARGE_BLAST_HEIGHT / 2,
 						DJINNI_CHARGE_BLAST_WIDTH, DJINNI_CHARGE_BLAST_HEIGHT);

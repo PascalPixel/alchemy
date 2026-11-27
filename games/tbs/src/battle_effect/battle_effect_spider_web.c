@@ -52,7 +52,7 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btResourceLoadAndDecompress(
 		RESOURCE_MAGENTA_SWIRL_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(
-		RESOURCE_MAGENTA_TAIL_SHEET, Ram_MapGridMetatileBuffer, 1, 0);
+		RESOURCE_MAGENTA_TAIL_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	if(mode == SWIRL_SWIPE_POISON_BEAT) {
 		void *palette = syResourceGetTableEntry(RESOURCE_LIME_PALETTE);
 		syWordsCopy(BG_PLTT, palette, SHEET_PALETTE_BYTES);
@@ -81,7 +81,7 @@ void btEffectRunSwirlSwipe(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					SwirlSwipePictureHeights[picture]);
 			else
 				draw[0](canvas,
-					Ram_MapGridMetatileBuffer + SwirlSwipePictures[picture],
+					RamMapGridMetatileBuffer + SwirlSwipePictures[picture],
 					SwirlSwipePictureX[picture + state->args->side * 6],
 					SwirlSwipePictureBiasY[picture] + 32,
 					SwirlSwipePictureWidths[picture],

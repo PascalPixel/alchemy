@@ -2,7 +2,7 @@
    Cave, the grotto behind the waterfall at Fuchin Temple where Master Nyunpa
    sends the party for its test.
 
-   Imil Falls Cave (`SceneId_ImilFallsCave`) is reached by sliding across Imil's
+   Imil Falls Cave (`SceneIdImilFallsCave`) is reached by sliding across Imil's
    frozen river to the cave mouth at the foot of the falls. Inside, Isaac walks
    up a strip of ice to Fever, a Mars Djinni, which joins the party without a
    fight. Retreat does not work in the cave, and the doorway at the bottom of
@@ -20,34 +20,34 @@
 
    In the order the player meets them:
 
-   - The first room (`SceneId_FuchinFallsCaveEntrance`), behind the falls. On
+   - The first room (`SceneIdFuchinFallsCaveEntrance`), behind the falls. On
 	 the south shore a tablet reads "The dragon's flame illuminates the path of
 	 truth in darkness." The crosswise log on the right floats north to the
 	 ledge with a chest, which is a Mimic. The one on the left floats north to
 	 the ledge below the room's north half, a pool of stumps that Isaac hops
 	 across to the doorway in its north-east corner. An upright log at the
 	 pool's west bank ferries Isaac to the east bank and back.
-   - The room of the Dragon's Eye (`SceneId_FuchinFallsCaveDragonsEye`), with
+   - The room of the Dragon's Eye (`SceneIdFuchinFallsCaveDragonsEye`), with
 	 an upright log, two crosswise logs in a long channel and a small pool in
 	 its south-west corner. Stairs down from its west ledge lead to a round
 	 chamber where the Dragon's Eye lies on a little table.
-   - The dragon statue's room (`SceneId_FuchinFallsCaveDragonStatue`), up the
+   - The dragon statue's room (`SceneIdFuchinFallsCaveDragonStatue`), up the
 	 stairs at that room's north-west. Its northern half is dark and blue, its
 	 floor a field of spikes with an eyeless stone dragon in the north-east
 	 corner, and a tablet in its southern half reads "Rays of light give birth
 	 to shadows, revealing the way." Using the Dragon's Eye on the statue makes
 	 the dragon breathe fire, lights the room and shows the shadow of a hidden
 	 path across the spikes. The path leads to two doorways in the north wall.
-   - The room of the Arctic Blade (`SceneId_FuchinFallsCaveArcticBlade`), down
+   - The room of the Arctic Blade (`SceneIdFuchinFallsCaveArcticBlade`), down
 	 the stairs at the west of the dragon statue's room. In its north half a
 	 crosswise log and an upright log cross a pool to the chest of the Arctic
 	 Blade. In its south half an upright log carries Isaac east across a pool
 	 to the way back to the first room's west bank.
-   - Zephyr's room (`SceneId_FuchinFallsCaveZephyr`), through the doorway at
+   - Zephyr's room (`SceneIdFuchinFallsCaveZephyr`), through the doorway at
 	 the first room's east bank. Zephyr, a Jupiter Djinni, waits on a ledge on
 	 its east side and fights when spoken to. Its doorway in the north leads to
 	 the south end of the Dragon's Eye room.
-   - The room of Ki (`SceneId_FuchinFallsCaveOrbOfForce`), through the
+   - The room of Ki (`SceneIdFuchinFallsCaveOrbOfForce`), through the
 	 doorways the hidden path leads to. A tablet reads "The secret of Ki shall
 	 be revealed to the disciples of truth.", and the chest beside it holds the
 	 Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), which ends the test.

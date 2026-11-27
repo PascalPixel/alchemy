@@ -284,7 +284,7 @@ extern Sint32 MarsLighthouseHallLedgeCycleTick;
 void scMarsLighthouseHallCycleLedgeInscription(void)
 {
 	Sint32		 entrance = MainRoutineStateWork.entrance;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 base;
 	Sint32		 i;
 	Sint8		 busy;
@@ -361,7 +361,7 @@ void scMarsLighthouseHallLeaveLedge(void)
    it carries past the torch up to the beacon flame. */
 void scMarsLighthouseHallStartBlazeOnTorch(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->blazeLongSpray = 1;
 }
@@ -400,7 +400,7 @@ void scMarsLighthouseHallLightFlame(void)
 		fdScriptSetFlag(FLAG_JUPITER_FLAME_LIT);
 		break;
 	}
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->psynergy = 0;
 	syFieldScriptWait(30);
 	fdPaletteFadeApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -416,7 +416,7 @@ extern Sint32 MarsLighthouseHallHallCycleTick;
    glows in its colours, turning round, and the others show unlit. */
 void scMarsLighthouseHallCycleHallInscriptions(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 base;
 	Sint32		 i;
 	Sint8		 busy;
@@ -1275,7 +1275,7 @@ void scMarsLighthouseHallKnockBackIfHit(void)
    with it until it stops. */
 Sint32 scFireballCarryLeader(void)
 {
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	FLAME_HIT_STATE *ride;
 	ACTOR			*leader;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never

@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Shop
-Stubs_Shop:
+	.global StubsShop
+StubsShop:
 	stub mnShopOpenDebugShopStub, mnShopOpenDebugShop
 	stub mnShopRunStub, mnShopRun
 	stub mnSanctumRunStub, mnSanctumRun

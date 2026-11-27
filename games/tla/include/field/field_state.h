@@ -111,10 +111,10 @@ typedef enum SHIP_TERRAIN_KIND {
 
 /* A field scene's state: fdModeRun allocates it in HEAP_SLOT_FIELD, zeroes it
    and frees it on the way out, and the field mode, the script commands and the
-   scene overlays all reach it through Ram_HeapSlots->fieldState. */
+   scene overlays all reach it through RamHeapSlots->fieldState. */
 typedef struct FIELD_STATE {
 	/* The actor placement tables placed so far, recorded by
-	   Script_SpawnActorPlacements. */
+	   ScriptSpawnActorPlacements. */
 	const ACTOR_PLACE *tbls[4];
 	const CUE_VIEW	  *cues; /* the scene's cue table */
 	/* The actors by actor id: 0 to 7 the party's characters, 8 on the placed
@@ -291,6 +291,6 @@ STATIC_ASSERT(offsetof(FIELD_STATE, psynergyDrawFlg) == 3404);
 
 /* The running field scene's state, in HEAP_SLOT_FIELD; fdModeRun takes it and
    frees it. */
-#define FieldStateWork ((FIELD_STATE *)Ram_HeapSlots->fieldState)
+#define FieldStateWork ((FIELD_STATE *)RamHeapSlots->fieldState)
 
 #endif

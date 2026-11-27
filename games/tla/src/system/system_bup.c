@@ -112,7 +112,7 @@ Uint32 syBupSelectWriteSector(Sint32 partId)
 	Uint8 *occupied;
 	Uint8  value;
 
-	occupied = ((BUP_WORKSPACE *)Ram_HeapSlots->bupState)->occupied;
+	occupied = ((BUP_WORKSPACE *)RamHeapSlots->bupState)->occupied;
 	cnt = 0;
 	for(idx = 0; idx < BUP_SECTOR_COUNT; idx += BUP_SECTORS_PER_PART) {
 		value = *occupied;
@@ -142,7 +142,7 @@ Uint32 syBupSelectWriteSector(Sint32 partId)
    1 when a sector fails, else 0. */
 Uint32 syBupWriteSector(Sint32 sector)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	void (*progress)(Sint32) = state->progress;
 
 	if(progress != 0)
@@ -170,7 +170,7 @@ Uint32 syBupWriteSector(Sint32 sector)
    buffer. Returns 0 when their checksum matches the header's. */
 Sint32 syBupReadSector(Sint32 idx)
 {
-	BUP_WORKSPACE	 *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE	 *state = RamHeapSlots->bupState;
 	BUP_SECTOR_HEADER header;
 
 	ReadFlash(idx, 0, state->slot, BUP_SECTOR_SIZE);
@@ -190,7 +190,7 @@ Sint32 syBupReadSector(Sint32 idx)
    copy. */
 Sint32 syBupWritePart(Sint32 partId, void *src)
 {
-	BUP_WORKSPACE	 *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE	 *state = RamHeapSlots->bupState;
 	BUP_SECTOR_HEADER header;
 	volatile Uint32	  zero;
 	Uint32			  cur;
@@ -243,7 +243,7 @@ Sint32 syBupWritePart(Sint32 partId, void *src)
    Returns 1 when there is none and 0 otherwise. */
 Uint32 syBupReadPart(Sint32 partId, void *dst)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	Uint32		   idx;
 
 	idx = syBupFindLatestSector(partId);
@@ -259,7 +259,7 @@ Uint32 syBupReadPart(Sint32 partId, void *dst)
 /* Invalidates the current copy of part `partId`. Nothing calls it. */
 Uint32 syBupDeletePart(Sint32 partId)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	Sint32		   idx;
 
 	idx = syBupFindLatestSector(partId);
@@ -276,7 +276,7 @@ Uint32 syBupDeletePart(Sint32 partId)
    checksum its header keeps. */
 Sint32 syBupChecksumSector(void)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	Uint32		   limit;
 	Uint32		   ofs;
 	Sint32		   sum;
@@ -301,7 +301,7 @@ Sint32 syBupChecksumSector(void)
    BUP_SECTOR_COUNT when it has none. */
 Uint32 syBupFindLatestSector(Sint32 partId)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	Uint32		   latestCounter;
 	Uint32		   latestSector;
 	Uint32		   i;
@@ -323,7 +323,7 @@ Uint32 syBupFindLatestSector(Sint32 partId)
    clears its occupied entry. Returns 0 on success and 1 on failure. */
 Bool syBupInvalidateSector(Sint32 idx)
 {
-	BUP_WORKSPACE	 *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE	 *state = RamHeapSlots->bupState;
 	BUP_SECTOR_HEADER header;
 	volatile Uint32	  zero;
 
@@ -364,7 +364,7 @@ Sint32 syBupCompareBytes(Uint8 *left, Uint8 *right, Sint32 cnt)
 /* Returns the highest counter among the copies of part `partId`. */
 Uint32 syBupGetLatestCounter(Sint32 partId)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	Uint32		   latestCounter;
 	Uint32		   i;
 
@@ -383,7 +383,7 @@ Uint32 syBupGetLatestCounter(Sint32 partId)
    how many files have one. */
 Sint32 syBupLoadFileSummaries(void)
 {
-	BUP_WORKSPACE *state = Ram_HeapSlots->bupState;
+	BUP_WORKSPACE *state = RamHeapSlots->bupState;
 	BUP_SUMMARY	  *summary;
 	Sint32		   cnt;
 	Uint32		   file;
@@ -416,7 +416,7 @@ Bool syBupLoadExtraSummary(void)
 	BUP_SUMMARY	  *summary;
 	Uint32		   idx;
 
-	state = Ram_HeapSlots->bupState;
+	state = RamHeapSlots->bupState;
 	summary = &state->extra;
 	DMA_FILL32(0, summary, sizeof(*summary));
 	idx = syBupFindLatestSector(BUP_PART_EXTRA);

@@ -62,9 +62,9 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 	Sint32					 frm;
 	Sint32					 i;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sheet = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -91,7 +91,7 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 	baseX = 0;
 	grow = 0;
 	savedX = BgScrollWork[1].x;
-	view = Ram_HeapSlots->battleBg;
+	view = RamHeapSlots->battleBg;
 	shift = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	view->busy = 1;
@@ -107,7 +107,7 @@ void btEffectRunKirin(BATTLE_EFFECT_PARM *args)
 
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit = Ram_HeapSlots->ramCode;
+	blit = RamHeapSlots->ramCode;
 	REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(7);
 

@@ -1,5 +1,5 @@
 /* The Lemurian Ship below deck, at the East Indra Shore, in two scenes
-   (SceneId_LemurianShipCabins and SceneId_LemurianShipAquaHydra) whose rooms
+   (SceneIdLemurianShipCabins and SceneIdLemurianShipAquaHydra) whose rooms
    are told apart by the entrance used.
 
    Piers leads the party down from the main deck through the captain's cabin,
@@ -402,7 +402,7 @@ ACTOR_PLACE *scGetActorPlacements(void)
    placed actor stops moving while he goes. */
 void scLemurianShipOpenDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Uint32		 found;
 	Uint32		 i;
@@ -451,7 +451,7 @@ void scLemurianShipOpenDoor(void)
    LemurianShipLowerDoors. */
 void scLemurianShipOpenLowerDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Uint32		 found;
 	Uint32		 i;
@@ -491,7 +491,7 @@ void scLemurianShipOpenLowerDoor(void)
 void scLemurianShipWalkIntoPassage(void)
 {
 	if(fdScriptGetFlag(FLAG_PILLAR_WAY_OPEN)) {
-		FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE		   *state = RamHeapSlots->fieldState;
 		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 		ACTOR			   *leader;
 		FIXED				x;
@@ -839,20 +839,20 @@ void scLemurianShipStepOnLiftWestSide(void)
 /* Felix talks to an Aqua Jelly in the first room below deck: it turns to him
    and quivers, and a battle starts that cannot be run from. Its
    `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle. */
-DEFINE_JELLY_BATTLE(LemurianShip_FightTwoJellyRoomJelly, JELLY_TWO_JELLY_ROOM_A,
+DEFINE_JELLY_BATTLE(LemurianShipFightTwoJellyRoomJelly, JELLY_TWO_JELLY_ROOM_A,
 	ACTOR_TWO_JELLY_ROOM_JELLY_A)
 
 /* Felix talks to an Aqua Jelly in the room of six jellies: it turns to him and
    quivers, and a battle starts that cannot be run from. Its
    `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle. */
-DEFINE_JELLY_BATTLE(LemurianShip_FightSixJellyRoomJelly, JELLY_SIX_JELLY_ROOM_A,
+DEFINE_JELLY_BATTLE(LemurianShipFightSixJellyRoomJelly, JELLY_SIX_JELLY_ROOM_A,
 	ACTOR_SIX_JELLY_ROOM_JELLY_A)
 
 /* Felix talks to an Aqua Jelly in the room of the pipes: it turns to him and
    quivers, and a battle starts that cannot be run from. Its
    `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle. */
 DEFINE_JELLY_BATTLE(
-	LemurianShip_FightPipeRoomJelly, JELLY_PIPE_ROOM_A, ACTOR_PIPE_ROOM_JELLY_A)
+	LemurianShipFightPipeRoomJelly, JELLY_PIPE_ROOM_A, ACTOR_PIPE_ROOM_JELLY_A)
 
 /* A jelly in the hold leaps into the middle of it, where the Aqua Hydra
    forms. */
@@ -1038,12 +1038,12 @@ void scLemurianShipSetDownPillar(void)
    pillars: rain falls into it and it fills with water, ready to sink once it
    stands on the tile marked with a drop of water. */
 DEFINE_DOUSE_PILLAR(
-	LemurianShip_DouseRightPillar, ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_FULL)
+	LemurianShipDouseRightPillar, ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_FULL)
 
 /* Felix casts Douse on the left pillar of the room of two pillars, once it has
    risen again: it fills with water, ready to sink on its tile. */
 DEFINE_DOUSE_PILLAR(
-	LemurianShip_DouseLeftPillar, ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_FULL)
+	LemurianShipDouseLeftPillar, ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_FULL)
 
 /* Felix casts Frost on the water in the right pillar after it has sunk: the
    water, unseen until now, shows as it freezes into a pillar of ice. */
@@ -1068,7 +1068,7 @@ void scLemurianShipShowLeftPillarPuddle(void)
 #define DEFINE_RAISE_PILLAR(name, pillar, loweredFlag, fullFlag, column) \
 	void name(void) \
 	{ \
-		FIELD_STATE *state = Ram_HeapSlots->fieldState; \
+		FIELD_STATE *state = RamHeapSlots->fieldState; \
 		ACTOR		*actor = ((ACTOR *)fdActorGetById(pillar)); \
 		Uint32		 tick; \
 \
@@ -1099,7 +1099,7 @@ void scLemurianShipShowLeftPillarPuddle(void)
    unfrozen puddle it finds off the map (fdPsynergyParch), and the room's watch
    (scLemurianShipWatchPillarPuddles) raises the pillar once its puddle is
    gone. */
-DEFINE_RAISE_PILLAR(LemurianShip_RaiseRightPillar, ACTOR_RIGHT_PILLAR,
+DEFINE_RAISE_PILLAR(LemurianShipRaiseRightPillar, ACTOR_RIGHT_PILLAR,
 	FLAG_RIGHT_PILLAR_SUNK, FLAG_RIGHT_PILLAR_FULL, 35)
 
 /* Felix casts Parch on the water standing in the sunk left pillar, not frozen:
@@ -1108,7 +1108,7 @@ DEFINE_RAISE_PILLAR(LemurianShip_RaiseRightPillar, ACTOR_RIGHT_PILLAR,
    unfrozen puddle it finds off the map (fdPsynergyParch), and the room's watch
    (scLemurianShipWatchPillarPuddles) raises the pillar once its puddle is
    gone. */
-DEFINE_RAISE_PILLAR(LemurianShip_RaiseLeftPillar, ACTOR_LEFT_PILLAR,
+DEFINE_RAISE_PILLAR(LemurianShipRaiseLeftPillar, ACTOR_LEFT_PILLAR,
 	FLAG_LEFT_PILLAR_SUNK, FLAG_LEFT_PILLAR_FULL, 29)
 
 /* Felix casts Parch in the flooded hold: the water dries up, and the chest the
@@ -1259,7 +1259,7 @@ void scLemurianShipRippleAroundLeader(void)
    placed), the pillar rises again. */
 void scLemurianShipWatchPillarPuddles(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 
 	if(fdScriptGetFlag(FLAG_RIGHT_PILLAR_SUNK)) {
@@ -2422,8 +2422,8 @@ CUE LemurianShipTwoJellyRoomCues[] = {
 	{CUE_EXIT, EXIT_TWO_JELLY_ROOM_TO_LOGBOOK_ROOM, CONDITION_ALWAYS, EXIT_TWO_JELLY_ROOM_TO_LOGBOOK_ROOM},
 	{CUE_EXIT, EXIT_TWO_JELLY_ROOM_TO_STAIR_ROOM, CONDITION_ALWAYS, EXIT_TWO_JELLY_ROOM_TO_STAIR_ROOM},
 	{CUE_EXIT, EXIT_TWO_JELLY_ROOM_TO_TWO_JELLY_ROOM_HALL, CONDITION_ALWAYS, EXIT_TWO_JELLY_ROOM_TO_TWO_JELLY_ROOM_HALL},
-	{CUE_TALK, ACTOR_TWO_JELLY_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightTwoJellyRoomJelly)},
-	{CUE_TALK, ACTOR_TWO_JELLY_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightTwoJellyRoomJelly)},
+	{CUE_TALK, ACTOR_TWO_JELLY_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightTwoJellyRoomJelly)},
+	{CUE_TALK, ACTOR_TWO_JELLY_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightTwoJellyRoomJelly)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TWO_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_A, SCRIPT_REF(scLemurianShipFreezeTwoJellyRoomPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TWO_JELLY_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_B, SCRIPT_REF(scLemurianShipFreezeTwoJellyRoomPuddle)},
 	{CUE_TABLE_END},
@@ -2435,12 +2435,12 @@ CUE LemurianShipSixJellyRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_SIX_JELLY_ROOM_TO_EAST_HALL, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{CUE_EXIT, EXIT_SIX_JELLY_ROOM_TO_LEDGE_ROOM_WEST, CONDITION_ALWAYS, EXIT_SIX_JELLY_ROOM_TO_LEDGE_ROOM_WEST},
 	{CUE_EXIT, EXIT_SIX_JELLY_ROOM_TO_LEDGE_ROOM_EAST, CONDITION_ALWAYS, EXIT_SIX_JELLY_ROOM_TO_LEDGE_ROOM_EAST},
-	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightSixJellyRoomJelly)},
-	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightSixJellyRoomJelly)},
-	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_C, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightSixJellyRoomJelly)},
-	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_D, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightSixJellyRoomJelly)},
-	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_E, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightSixJellyRoomJelly)},
-	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_F, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightSixJellyRoomJelly)},
+	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightSixJellyRoomJelly)},
+	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightSixJellyRoomJelly)},
+	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_C, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightSixJellyRoomJelly)},
+	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_D, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightSixJellyRoomJelly)},
+	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_E, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightSixJellyRoomJelly)},
+	{CUE_TALK, ACTOR_SIX_JELLY_ROOM_JELLY_F, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightSixJellyRoomJelly)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIX_JELLY_ROOM_LIFT_PUDDLE, (FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_A), SCRIPT_REF(scLemurianShipFreezeLiftPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIX_JELLY_ROOM_PUDDLE_A, (FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_B), SCRIPT_REF(scLemurianShipFreezeSixJellyRoomPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIX_JELLY_ROOM_PUDDLE_B, (FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_C), SCRIPT_REF(scLemurianShipFreezeSixJellyRoomPuddle)},
@@ -2475,17 +2475,17 @@ CUE LemurianShipLedgeRoomCues[] = {
 CUE LemurianShipPipeRoomCues[] = {
 	{STEP_CUE_WALKING_INTO(FACING_NORTH), EXIT_PIPE_ROOM_TO_SIX_JELLY_ROOM_EAST_HALL, CONDITION_ALWAYS, SCRIPT_REF(scLemurianShipOpenDoor)},
 	{CUE_EXIT, EXIT_PIPE_ROOM_TO_LEDGE_ROOM, CONDITION_ALWAYS, EXIT_PIPE_ROOM_TO_LEDGE_ROOM},
-	{TALK_CUE_FACING(FACING_EAST), ACTOR_PIPE_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_PIPE_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_WEST), ACTOR_PIPE_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_PIPE_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_NORTH), ACTOR_PIPE_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{CUE_TALK, ACTOR_PIPE_ROOM_JELLY_C, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{CUE_TALK, ACTOR_PIPE_ROOM_JELLY_D, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_NORTH), ACTOR_PIPE_ROOM_JELLY_E, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_EAST), ACTOR_PIPE_ROOM_JELLY_G, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_WEST), ACTOR_PIPE_ROOM_JELLY_G, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
-	{TALK_CUE_FACING(FACING_NORTH), ACTOR_PIPE_ROOM_JELLY_G, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_FightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_EAST), ACTOR_PIPE_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_PIPE_ROOM_JELLY_A, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_WEST), ACTOR_PIPE_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_SOUTH), ACTOR_PIPE_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_PIPE_ROOM_JELLY_B, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{CUE_TALK, ACTOR_PIPE_ROOM_JELLY_C, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{CUE_TALK, ACTOR_PIPE_ROOM_JELLY_D, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_PIPE_ROOM_JELLY_E, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_EAST), ACTOR_PIPE_ROOM_JELLY_G, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_WEST), ACTOR_PIPE_ROOM_JELLY_G, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
+	{TALK_CUE_FACING(FACING_NORTH), ACTOR_PIPE_ROOM_JELLY_G, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipFightPipeRoomJelly)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PIPE_ROOM_PUDDLE_A, (FLAG_PUDDLE_FROZEN + JELLY_PIPE_ROOM_A), SCRIPT_REF(scLemurianShipFreezePipeRoomPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PIPE_ROOM_PUDDLE_B, (FLAG_PUDDLE_FROZEN + JELLY_PIPE_ROOM_B), SCRIPT_REF(scLemurianShipFreezePipeRoomPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PIPE_ROOM_PUDDLE_C, (FLAG_PUDDLE_FROZEN + JELLY_PIPE_ROOM_C), SCRIPT_REF(scLemurianShipFreezePipeRoomPuddle)},
@@ -2520,14 +2520,14 @@ CUE LemurianShipPillarRoomCues[] = {
 	{PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_SUNK, SCRIPT_REF(scLemurianShipSetDownPillar)},
 	{CUE_PUSH, 0, FLAG_PILLAR_WAY_OPEN, SCRIPT_REF(scLemurianShipLiftPillar)},
 	{CUE_PUSHED, 0, FLAG_PILLAR_WAY_OPEN, SCRIPT_REF(scLemurianShipSetDownPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_FULL, SCRIPT_REF(LemurianShip_DouseRightPillar)},
-	{PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_FULL, SCRIPT_REF(LemurianShip_DouseLeftPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_FULL, SCRIPT_REF(LemurianShipDouseRightPillar)},
+	{PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_FULL, SCRIPT_REF(LemurianShipDouseLeftPillar)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_RIGHT_PILLAR_PUDDLE, FLAG_RIGHT_PILLAR_PUDDLE_FROZEN, SCRIPT_REF(scLemurianShipShowRightPillarPuddle)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_LEFT_PILLAR_PUDDLE, FLAG_LEFT_PILLAR_PUDDLE_FROZEN, SCRIPT_REF(scLemurianShipShowLeftPillarPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_RIGHT_PILLAR_PUDDLE, FLAG_RIGHT_PILLAR_PUDDLE_FROZEN, SCRIPT_REF(scLemurianShipFreezeTwoJellyRoomPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_LEFT_PILLAR_PUDDLE, FLAG_LEFT_PILLAR_PUDDLE_FROZEN, SCRIPT_REF(scLemurianShipFreezeTwoJellyRoomPuddle)},
-	{CUE_RAISED, RAISED_RIGHT_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_RaiseRightPillar)},
-	{CUE_RAISED, RAISED_LEFT_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(LemurianShip_RaiseLeftPillar)},
+	{CUE_RAISED, RAISED_RIGHT_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipRaiseRightPillar)},
+	{CUE_RAISED, RAISED_LEFT_PILLAR, CONDITION_ALWAYS, SCRIPT_REF(LemurianShipRaiseLeftPillar)},
 	{CUE_TABLE_END},
 };
 

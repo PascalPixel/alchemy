@@ -2,7 +2,7 @@
    to show (FLAG_SHOW_AREA_NAME). */
 void scFadeInAndClearFlag(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
 	syGameFlagClear(FLAG_SHOW_AREA_NAME);

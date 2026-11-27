@@ -2,6 +2,6 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_SuperLuckyDice
-Stubs_SuperLuckyDice:
+	.global StubsSuperLuckyDice
+StubsSuperLuckyDice:
 	stub fdSuperLuckyDiceStartStub, fdSuperLuckyDiceStart

@@ -88,7 +88,7 @@ typedef struct INTRO_STATE {
 #define CLOUD_ROWS		33
 #define CLOUD_ROW_BYTES (DISPLAY_TILE_WIDTH * TILE_SIZE_4BPP)
 #define PEAK_ROW_BYTES	(DISPLAY_TILE_WIDTH * TILE_SIZE_8BPP)
-#define CLOUD_ROW(row)	(Ram_MapGridMetatileBuffer + (row) * CLOUD_ROW_BYTES)
+#define CLOUD_ROW(row)	(RamMapGridMetatileBuffer + (row) * CLOUD_ROW_BYTES)
 #define PEAK_ROW(row)	(CLOUD_ROW(CLOUD_ROWS) + (row) * PEAK_ROW_BYTES)
 
 /* Each picture keeps 21 rows of tiles in VRAM, the screen's 20 and the one
@@ -285,15 +285,15 @@ void mnTitleLoadIntroBackgrounds(void)
 		REG_DMA3);
 	OBJ_PLTT[0] = 0;
 	resourceData += BG_PLTT_SIZE;
-	syDecompressByteLZ(resourceData, Ram_MapGridMetatileBuffer);
-	syDMAXCopy(Ram_MapGridMetatileBuffer, (void *)OBJ_VRAM0,
+	syDecompressByteLZ(resourceData, RamMapGridMetatileBuffer);
+	syDMAXCopy(RamMapGridMetatileBuffer, (void *)OBJ_VRAM0,
 		DMA_COPY_HALFWORDS(INTRO_SPRITE_TILES * TILE_SIZE_4BPP / 2), REG_DMA3);
 	resourceData = syResourceGetTableEntry(RESOURCE_INTRO_PEAK);
 	syDMAXCopy(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
 		REG_DMA3);
 	BG_PLTT[0] = 0;
 	resourceData += BG_PLTT_SIZE;
-	syDecompressByteLZ(resourceData, Ram_MapGridMetatileBuffer);
+	syDecompressByteLZ(resourceData, RamMapGridMetatileBuffer);
 	syDMAXCopy(CLOUD_ROW(INTRO_FIRST_MAP_ROW), CLOUD_VRAM_ROW(0),
 		DMA_COPY_HALFWORDS(INTRO_VRAM_ROWS * CLOUD_ROW_BYTES / 2), REG_DMA3);
 	syDMAXCopy(PEAK_ROW(INTRO_FIRST_MAP_ROW - PEAK_MAP_ROW), PEAK_VRAM_ROW(0),
@@ -530,8 +530,8 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 				DMA_COPY_WORDS(TITLE_PICTURE_COLORS * 2 / 4), REG_DMA3);
 			BG_PLTT[0] = 0;
 			resourceData += BG_PLTT_SIZE;
-			syDecompressByteLZ(resourceData, Ram_MapGridMetatileBuffer);
-			syDMAXCopy(Ram_MapGridMetatileBuffer, BG_CHAR_BLOCK(1),
+			syDecompressByteLZ(resourceData, RamMapGridMetatileBuffer);
+			syDMAXCopy(RamMapGridMetatileBuffer, BG_CHAR_BLOCK(1),
 				DMA_COPY_HALFWORDS(SCREEN_TILE_BYTES / 2), REG_DMA3);
 			tilemap = (Uint16 *)BG_SCREEN_BLOCK(PICTURE_SCREEN);
 			tile = TITLE_PICTURE_TILE;
@@ -555,7 +555,7 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 		Uint8	  *buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 		INTRO_SPR *spr = introState->area.prompt.sprs;
 
-		syDecompressByteLZ(Title_PromptTiles, buf);
+		syDecompressByteLZ(TitlePromptTiles, buf);
 		/* The pictures are packed one after another, each half the size of a
 		   32-by-8 picture of 256 colours. */
 		for(i = 0; i < PROMPT_TILES; i++) {
@@ -674,8 +674,8 @@ Sint32 mnTitleShowPublisherLogo(Sint32 fadeOut)
 	syDMAXCopy(resourceData, (void *)BG_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
 	syDecompressTaggedLZ(
-		resourceData + LOGO_PALETTE_BYTES, Ram_MapGridMetatileBuffer);
-	syDMAXCopy(Ram_MapGridMetatileBuffer, BG_CHAR_BLOCK(1),
+		resourceData + LOGO_PALETTE_BYTES, RamMapGridMetatileBuffer);
+	syDMAXCopy(RamMapGridMetatileBuffer, BG_CHAR_BLOCK(1),
 		DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
 	/* Pad the 30-tile picture to the hardware map's 32-tile row width. */
 	tileIdx = PUBLISHER_LOGO_TILE;
@@ -766,10 +766,10 @@ Sint32 mnTitleShowCamelotLogo(void)
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 	BgScrollWork[2].y = result;
 	resourceData = syResourceGetTableEntry(resourceId);
-	syDecompressTaggedLZ(resourceData, Ram_MapGridMetatileBuffer);
+	syDecompressTaggedLZ(resourceData, RamMapGridMetatileBuffer);
 	/* The unpacked resource: the colours, the map, the still tiles, then the
 	   flag's four pictures. */
-	resourceData = Ram_MapGridMetatileBuffer;
+	resourceData = RamMapGridMetatileBuffer;
 	syDMAXCopy(resourceData, (void *)BG_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
 	resourceData += LOGO_PALETTE_BYTES;

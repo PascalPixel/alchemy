@@ -56,9 +56,9 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 k;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	graphics = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	graphics = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, draw);
@@ -374,8 +374,8 @@ void btEffectRunMoloch(BATTLE_EFFECT_PARM *args)
    blue to red). */
 void btIrisChangeBackdrop(void)
 {
-	BATTLE_BACKGROUND_STATE *transition = Ram_HeapSlots->battleBg;
-	BATTLE_EFFECT_STATE		*state = Ram_HeapSlots->battleEff;
+	BATTLE_BACKGROUND_STATE *transition = RamHeapSlots->battleBg;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
 	Sint16					 list[UNIT_MAX];
 	Uint16					*palette;
 	Sint32					 i;
@@ -447,7 +447,7 @@ void btIrisChangeBackdrop(void)
 #define IRIS_PILLAR_CIRCLE		 1000
 
 /* The splashes' pictures, in the particle sprite sheet
-   (Ram_HeapSlots->battleSheet): IRIS_RING_FADES fades each of a large and a
+   (RamHeapSlots->battleSheet): IRIS_RING_FADES fades each of a large and a
    small ring mote, IRIS_DOT_FADES of a dot and the spray's column. */
 #define IRIS_RING_FADES		   3
 #define IRIS_DOT_FADES		   8
@@ -496,10 +496,10 @@ void btIrisDrawDrop(Uint32 frm, Sint32 x, Sint32 y, Sint32 small)
 	Sint32				 i;
 	Sint32				 trailY;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	/* The drop: one picture of its eight, large or small. */
 	if(small == 0)
@@ -541,7 +541,7 @@ extern const MODEL_VERTEX IrisPillarVertices[6];
    height pixels below row 63, so the pillar grows upward from there. */
 void btIrisDrawPillar(Sint32 halfWidth, Sint32 x, Sint32 height)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	void				*projected;
 	RENDER_MODEL		*model;
 	MODEL_VERTEX		 vertices[6];
@@ -818,11 +818,11 @@ typedef struct IRIS_WORK {
 
 /* Iris's state, laid out in the map cell buffer: the petals, the scene, and the
    streaks' points. */
-#define IRIS_PETAL_STATE (*(IRIS_PETAL_SET *)(Ram_MapMetatileBuffer + 8000))
-#define IRIS_SCENE		 (*(IRIS_WORK *)(Ram_MapMetatileBuffer + 12000))
+#define IRIS_PETAL_STATE (*(IRIS_PETAL_SET *)(RamMapMetatileBuffer + 8000))
+#define IRIS_SCENE		 (*(IRIS_WORK *)(RamMapMetatileBuffer + 12000))
 #define IRIS_STREAK_POINTS \
 	((IRIS_POINT(*)[IRIS_STREAK_LENGTH])( \
-		Ram_MapMetatileBuffer + 12000 + offsetof(IRIS_WORK, streaks)))
+		RamMapMetatileBuffer + 12000 + offsetof(IRIS_WORK, streaks)))
 
 extern const FIVE_WIDTHS  IrisRisingPillarWidths;
 extern const SEVEN_WIDTHS IrisWideningPillarWidths;
@@ -841,8 +841,8 @@ extern const FOUR_SPANS	  IrisRightStripSpans;
    screen shakes; the drop itself is drawn last. */
 static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	Uint8				*canvas = RamHeapSlots->battleCanvas;
 	DRAW_RECTANGLE		 drawAlt;
 	DRAW_RECTANGLE		 draw;
 	Uint8				*sprs;
@@ -855,9 +855,9 @@ static inline void btIrisDrawSplash(Sint32 t, Sint32 x, Sint32 y, Sint32 small)
 	Sint32				 column;
 	Sint32				 dead;
 
-	sprs = Ram_HeapSlots->battleSheet;
-	draw = Ram_HeapSlots->ramCode;
-	drawAlt = Ram_HeapSlots->ramCodePaired;
+	sprs = RamHeapSlots->battleSheet;
+	draw = RamHeapSlots->ramCode;
+	drawAlt = RamHeapSlots->ramCodePaired;
 	if(t < *(IrisSplashRadii + small) * 2) {
 		r = *(IrisSplashRadii + small) * 2 - t;
 		fade = r / 6;
@@ -1015,14 +1015,14 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 {
 	IRIS_WORK *scene = &IRIS_SCENE;
 	IRIS_POINT(*streaks)[IRIS_STREAK_LENGTH] = IRIS_STREAK_POINTS;
-	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	Uint8				*canvas = RamHeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	SPR				   **objects = (SPR **)MapGridMetatileBuffer;
-	Uint8				*sprs = Ram_HeapSlots->battleSheet;
+	Uint8				*sprs = RamHeapSlots->battleSheet;
 	IRIS_PETAL_SET		*petals = &IRIS_PETAL_STATE;
-	BATTLE_STATE		*battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE		*battle = RamHeapSlots->battleState;
 	Sint32				 savedScroll = BgScrollWork[1].x;
-	Sint16				*camera = Ram_HeapSlots->cameraState;
+	Sint16				*camera = RamHeapSlots->cameraState;
 	Sint32				 savedYaw;
 	Sint32				 frm;
 	DRAW_RECTANGLE		 draw[2];
@@ -1251,8 +1251,8 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, tileBuf, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	for(i = 0; i != MOTE_SET_BYTES; i++)
@@ -1344,7 +1344,7 @@ void btEffectRunIris(BATTLE_EFFECT_PARM *args)
 		if(frm < IRIS_APPEAR_TICK) {
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
 				BLITTER_ADDITIVE);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 			for(i = 0; i != IRIS_STREAKS; i++) {
 				if(!(frm & 1)) {
 					for(j = IRIS_STREAK_LENGTH - 1; j != 0; j--) {

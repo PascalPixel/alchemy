@@ -17,7 +17,7 @@ main(int argc, char **argv)
 	if (argc < 3)
 		fail("%s", usage);
 	bool header = false, asValue = false;
-	const char *label = "Text_Message", *mapPath = NULL;
+	const char *label = "TextMessage", *mapPath = NULL;
 	for (int i = 3; i < argc; i++)
 	{
 		if (!strcmp(argv[i], "--header"))

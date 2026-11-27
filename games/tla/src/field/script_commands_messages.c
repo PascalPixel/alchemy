@@ -35,7 +35,7 @@ Sint32 fdMessageShowAtActor(Sint32 speaker, Sint32 unused)
 	Sint32		 found;
 	Sint32		 column;
 
-	win = (WIN_STATE *)Ram_HeapSlots->winState;
+	win = (WIN_STATE *)RamHeapSlots->winState;
 	state = FieldStateWork;
 	handle = 0;
 	portrait = 0;
@@ -200,7 +200,7 @@ Sint32 fdMessageShowAtActor(Sint32 speaker, Sint32 unused)
 void fdMessageShowAtActorAndWait(Sint32 speaker, Sint32 flg)
 {
 	Sint32		 masked;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	void		*win = fdMessageShowAtActor(speaker, flg);
 	Sint32		 id;
 	Uint32		 ticks;
@@ -293,7 +293,7 @@ void fdScriptShowSpeakerMessage(Sint32 speaker)
 		Sint32 x, y;
 	} pos;
 
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	speaker &= SPEAKER_ACTOR_MASK;
 	fdActorLookup(speaker);
@@ -383,7 +383,7 @@ void fdScriptShowTwoMessagesAndWait(Sint32 first, Sint32 firstX, Sint32 firstY,
 	Sint32 secondY, Sint32 secondPortraitX, Sint32 secondPortraitY,
 	Sint32 delay)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Sint32		 firstSpr = fdActorGetSprById(first);
 	Sint32		 secondSpr = fdActorGetSprById(second);
 	Sint32		 firstWin;
@@ -429,7 +429,7 @@ extern const Uint8 MessageSpeedVoiceRates[];
    MESSAGE_VOICE_NONE clears it. */
 void fdMessageSetVoiceFromActor(Sint32 key)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Uint8	   value;
 	Sint32	   id;
 
@@ -454,9 +454,9 @@ void fdCameraFollowActor(Sint32 actorId, Sint32 keepPos)
 	MAP_STATE	*map;
 
 	actor = fdActorLookup(actorId);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	tgt = state->camera;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	if(actor != 0) {
 		map->origin = &tgt->x.fixed;
 		fdActorStartCameraStub(tgt, actor);

@@ -355,7 +355,7 @@ inPlace:
 		*tmr = -(syRandom() << 5 >> 16);
 		tmr += sizeof(LOHO_SPARK) / sizeof(Sint32);
 	}
-	syDMAXCopy((const void *)(Sint32)Field_ExplosionPalette,
+	syDMAXCopy((const void *)(Sint32)FieldExplosionPalette,
 		(void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	for(i = 0; i < LOHO_BLAST_TICKS; i++) {
@@ -826,7 +826,7 @@ static __inline__ void scLohoAnimateMetatiles(
    goes. */
 void scLohoOpenDoorAndEnter(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint16		*cue;
 	Uint32		 i;
 

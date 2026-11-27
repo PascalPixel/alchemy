@@ -41,7 +41,7 @@ extern Uint8 *ItemIcons[];
 /* The end of ItemIcons, so mnIconCountItemIcons can count them. */
 extern Uint8 *ItemIconsEnd[];
 /* The other compressed icons, among them the Status screen's status icons. */
-extern Uint8 *Icon_MiscIconPointers[];
+extern Uint8 *IconMiscIconPointers[];
 /* The compressed Psynergy icons, drawn over the shared icon base. */
 extern Uint8 *PsynergyIcons[];
 /* The end of PsynergyIcons, for mnIconCountPsynergyIcons. */

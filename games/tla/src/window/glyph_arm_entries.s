@@ -7,6 +7,6 @@
 	.global mnGlyphDrawCode
 mnGlyphDrawCode:
 	bx	pc
-AlchemyUncredited_080385e2:
+AlchemyUncredited080385e2:
 	.2byte	0x0200
-AlchemyUncreditedEnd_080385e2:
+AlchemyUncreditedEnd080385e2:

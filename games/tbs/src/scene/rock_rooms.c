@@ -1,5 +1,5 @@
 /* The rooms inside Lunpa's buildings, and the house beside Suhalla Gate
-   (SceneId_RockRooms). The game packs rooms that share a rocky tile style onto
+   (SceneIdRockRooms). The game packs rooms that share a rocky tile style onto
    one map; the door the party comes in by decides which room they are in, and
    the area name follows it.
 

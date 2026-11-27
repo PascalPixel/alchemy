@@ -1,4 +1,4 @@
-/* West Lunpa Cave (SceneId_WestLunpaCave, area name West Lunpa Cave), the cave
+/* West Lunpa Cave (SceneIdWestLunpaCave, area name West Lunpa Cave), the cave
    between the World Map and Lunpa, with a gate across it, where the party meets
    Bunza on the way out of Lunpa with Hammet.
 

@@ -3,7 +3,7 @@
 @ ARM high multiply after them. Nothing refers to any of them.
 @ Each copy's bytes are its twin's but for what a link fills in: its pool
 @ words are 0 where the twin's hold addresses (the block copy's control word
-@ is kept), and its call to Bios_CpuSet, outside the SDK's sound library, is
+@ is kept), and its call to BiosCpuSet, outside the SDK's sound library, is
 @ a call to itself. Its other calls keep the twin's offsets, so each lands
 @ 0x1a70 bytes before the twin's callee. The fifth stops short after the
 @ player slot's offset, its two loads reaching 8 bytes further than its
@@ -13,16 +13,16 @@
 @ short; the multiply switches to ARM inside its Thumb entry.
 @ Why assembly: bx pc switches to ARM for umlalne and umull, a mode switch
 @ inside a function; the nop after bx pc is never run.
-@ Why SoundChannel_Unlink is assembly:
+@ Why SoundChannelUnlink is assembly:
 @ bcc on the flags of subs r1, #20 with no compare.
-@ Why SoundDriver_CalculateStereoVolume is assembly:
+@ Why SoundDriverCalculateStereoVolume is assembly:
 @ it takes its channel and track in r4 and r5, a linkage no procedure-call
 @ standard produces, with its two clamps placed before its entry.
 @ Why ply_note is assembly:
 @ it picks its channel with adcs r2, r2 on the carry of lsrs r1, r1, #7.
 @ MusicPlayer2000's note-on, pret's ChnVolSetAsm and ply_note: the stereo
 @ volume of a channel from its track's volume and pan, and the song command
-@ that starts a note on a free or the weakest channel. Func_081c08a4 is a
+@ that starts a note on a free or the weakest channel. Func081c08a4 is a
 @ label inside it that the leftover copy in leftover_driver.s branches to.
 @ Why assembly: push {r4, r5, r6, r7} saves without lr, after pop {r0} has
 @ taken back the r0 pushed with lr; r11 is an ordinary register, the mask of
@@ -53,13 +53,13 @@ m4aSoundInitWorkCopy:
 	ands	r0, r1
 	ldr	r1, .L_081c0524
 	ldr	r2, .L_081c0528
-	bl	.	@ Bios_CpuSet in the twin
+	bl	.	@ BiosCpuSet in the twin
 	ldr	r0, .L_081c052c
-	bl	Func_081c08a4 + 0x28	@ SoundInit in the twin
+	bl	Func081c08a4 + 0x28	@ SoundInit in the twin
 	ldr	r0, .L_081c0530
-	bl	SoundDriver_CalculateStereoVolume + 0xe	@ MPlayExtender in the twin
+	bl	SoundDriverCalculateStereoVolume + 0xe	@ MPlayExtender in the twin
 	ldr	r0, .L_081c0534
-	bl	Func_081c0a68	@ m4aSoundMode in the twin
+	bl	Func081c0a68	@ m4aSoundMode in the twin
 	ldr	r0, .L_081c0538
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -72,7 +72,7 @@ m4aSoundInitWorkCopy:
 	ldr	r1, [r5, #4]
 	ldrb	r2, [r5, #8]
 	adds	r0, r4, #0
-	bl	Func_081c0c0c	@ MPlayOpen in the twin
+	bl	Func081c0c0c	@ MPlayOpen in the twin
 	ldrh	r0, [r5, #10]
 	strb	r0, [r4, #11]
 	ldr	r0, .L_081c0540
@@ -88,7 +88,7 @@ m4aSoundInitWorkCopy:
 .L_081c0520:
 	.4byte	0	@ sySndMainRAMRom
 .L_081c0524:
-	.4byte	0	@ Ram_SoundMixer
+	.4byte	0	@ RamSoundMixer
 .L_081c0528:
 	.4byte	0x04000100	@ the block copy's control word: 256 words
 .L_081c052c:
@@ -109,7 +109,7 @@ m4aSoundInitWorkCopy:
 	.thumb_func
 m4aSoundMainWorkCopy:
 	push	{lr}
-	bl	Stubs_Sound - 0x7e4	@ 0x081bf81c: SoundMain in the twin
+	bl	StubsSound - 0x7e4	@ 0x081bf81c: SoundMain in the twin
 	pop	{r0}
 	bx	r0
 	.2byte	0
@@ -221,12 +221,12 @@ umul3232H32WorkCopy:
 	movs	r2, #255
 	b.n	.L_081c05f8
 @ Never run: a zero halfword after b.n that word-aligns the next function.
-AlchemyUncredited_081c05ee:
+AlchemyUncredited081c05ee:
 	.2byte	0x0000
-AlchemyUncreditedEnd_081c05ee:
-	.global SoundDriver_MidiKeyToFrequency
+AlchemyUncreditedEnd081c05ee:
+	.global SoundDriverMidiKeyToFrequency
 	.thumb_func
-SoundDriver_MidiKeyToFrequency:
+SoundDriverMidiKeyToFrequency:
 	ldr	r0, [r0, #4]
 	mov	ip, r4
 	cmp	r1, #179
@@ -245,10 +245,10 @@ SoundDriver_MidiKeyToFrequency:
 	movs	r4, #0
 	lsls	r2, r2, #24
 	bx	pc
-AlchemyUncredited_081c0612:
+AlchemyUncredited081c0612:
 	nop
 	.arm
-AlchemyUncreditedEnd_081c0612:
+AlchemyUncreditedEnd081c0612:
 	umlalne	r4, r1, r3, r2
 	umull	r4, r0, r1, r0
 	mov	r4, ip
@@ -277,9 +277,9 @@ AlchemyUncreditedEnd_081c0612:
 	.balign 2
 .syntax unified
 	.thumb
-	.global SoundChannel_Unlink
+	.global SoundChannelUnlink
 	.thumb_func
-SoundChannel_Unlink:
+SoundChannelUnlink:
 	ldr	r1, [r0, #44]
 	subs	r1, #20
 	bcc.n	.L_081c0758
@@ -330,9 +330,9 @@ clear_modM_note:
 .L_081c0776:
 	movs	r0, #255
 	b.n	.L_081c079e
-	.global SoundDriver_CalculateStereoVolume
+	.global SoundDriverCalculateStereoVolume
 	.thumb_func
-SoundDriver_CalculateStereoVolume:
+SoundDriverCalculateStereoVolume:
 	ldrb	r1, [r4, #18]
 	movs	r0, #20
 	ldrsb	r2, [r4, r0]
@@ -500,9 +500,9 @@ ply_note:
 	bne.n	.L_081c08a6
 	subs	r0, #1
 	beq.n	.L_081c0912
-	.global Func_081c08a4
+	.global Func081c08a4
 	.thumb_func
-Func_081c08a4:
+Func081c08a4:
 	adds	r6, r4, #0
 .L_081c08a6:
 	lsrs	r1, r1, #7
@@ -568,7 +568,7 @@ Func_081c08a4:
 	beq.n	.L_081c09b8
 .L_081c0912:
 	adds	r0, r4, #0
-	bl	SoundChannel_Unlink
+	bl	SoundChannelUnlink
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -606,7 +606,7 @@ Func_081c08a4:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	SoundDriver_CalculateStereoVolume
+	bl	SoundDriverCalculateStereoVolume
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]
@@ -643,7 +643,7 @@ Func_081c08a4:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	SoundDriver_MidiKeyToFrequency
+	bl	SoundDriverMidiKeyToFrequency
 .L_081c09aa:
 	str	r0, [r4, #32]
 	movs	r0, #128
@@ -660,9 +660,9 @@ Func_081c08a4:
 	mov	sl, r2
 	mov	fp, r3
 	pop	{pc}
-AlchemyUncredited_081c09c6:
+AlchemyUncredited081c09c6:
 	.2byte	0x0000
-AlchemyUncreditedEnd_081c09c6:
+AlchemyUncreditedEnd081c09c6:
 	.4byte	0x03007ff0
 	.4byte	ClockTable
 
@@ -751,7 +751,7 @@ MPlayMain:
 	b .L_081c0a5e
 .L_081c0a58:
 	adds r0, r4, #0
-	bl SoundChannel_Unlink
+	bl SoundChannelUnlink
 .L_081c0a5e:
 	ldr r4, [r4, #52]
 	cmp r4, #0
@@ -759,9 +759,9 @@ MPlayMain:
 .L_081c0a64:
 	ldrb r3, [r5]
 	lsrs r0, r3, #7
-	.global Func_081c0a68
+	.global Func081c0a68
 	.thumb_func
-Func_081c0a68:
+Func081c0a68:
 	bcc .L_081c0ad8
 	adds r0, r5, #0
 	bl SoundMainBTM
@@ -922,7 +922,7 @@ Func_081c0a68:
 	tst r0, r1
 	bne .L_081c0b8c
 	adds r0, r4, #0
-	bl SoundChannel_Unlink
+	bl SoundChannelUnlink
 	b .L_081c0be8
 .L_081c0b8c:
 	ldrb r0, [r4, #1]
@@ -932,7 +932,7 @@ Func_081c0a68:
 	movs r0, #3
 	tst r0, r3
 	beq .L_081c0baa
-	bl SoundDriver_CalculateStereoVolume
+	bl SoundDriverCalculateStereoVolume
 	cmp r6, #0
 	beq .L_081c0baa
 	ldrb r0, [r4, #29]
@@ -970,7 +970,7 @@ Func_081c0a68:
 	adds r1, r2, #0
 	ldrb r2, [r5, #9]
 	ldr r0, [r4, #36]
-	bl SoundDriver_MidiKeyToFrequency
+	bl SoundDriverMidiKeyToFrequency
 	str r0, [r4, #32]
 .L_081c0be8:
 	ldr r4, [r4, #52]
@@ -994,9 +994,9 @@ Func_081c0a68:
 	mov r9, r1
 	mov r10, r2
 	mov r11, r3
-	.global Func_081c0c0c
+	.global Func081c0c0c
 	.thumb_func
-Func_081c0c0c:
+Func081c0c0c:
 	pop {pc}
 	bx r3
 .L_081c0c10:

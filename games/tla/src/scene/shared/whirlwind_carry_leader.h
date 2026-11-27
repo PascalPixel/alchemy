@@ -3,7 +3,7 @@
    beside where it stopped with a thud, and the camera follows him again. */
 void fdWhirlwindCarryLeader(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	ACTOR		*linked = &actor->watchedActor->actor;
 	ACTOR		*shadow;

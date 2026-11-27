@@ -98,12 +98,12 @@ STATIC_ASSERT(offsetof(SCENE_ENTRANCE, cameraLeft) == 14);
 
 /* An exit table's header word: the scene whose exits follow, named by its name
    (`SCENE_EXITS(Bilibin)`). */
-#define SCENE_EXITS(map) ((Uint32)&SceneId_##map)
+#define SCENE_EXITS(map) ((Uint32)&SceneId##map)
 /* One exit: exit kind `exit` leads to `entrance` of the scene `scene`, both
    named in scene_exits.h. */
 #define SCENE_EXIT(exit, map, entrance) \
 	(((Uint32)(exit) << 20) + ((Uint32)(entrance) << 12) + \
-		(Uint32)&SceneId_##map)
+		(Uint32)&SceneId##map)
 /* An exit word's scene. */
 #define EXIT_SCENE_MASK 0xfff
 /* An exit word's entrance. */
@@ -133,10 +133,10 @@ STATIC_ASSERT(offsetof(SCENE_ENTRANCE, cameraLeft) == 14);
 enum {
 	/* Runs nothing and returns 0; nothing in the game sends the party there. */
 	MODE_NONE = 507,
-	/* Lucky Wheels, from its room in Tolbi, SceneId_StuccoRoomsC
+	/* Lucky Wheels, from its room in Tolbi, SceneIdStuccoRoomsC
 	   (lucky_wheels.c). */
 	MODE_SLOTS = 508,
-	/* Lucky Dice, from its room in Tolbi, SceneId_StuccoRoomsC
+	/* Lucky Dice, from its room in Tolbi, SceneIdStuccoRoomsC
 	   (lucky_dice.c). */
 	MODE_DICE = 509,
 	/* A battle; the entrance is the formation, and the result -1 a defeat. */
@@ -428,7 +428,7 @@ extern const Sint32 ActorFaceWatchedScript[];
 
 /* Where the party returns after a defeat: {scene, entrance (-1 any), return
    scene, return entrance} rows, ended by scene -1 (fdSetRestartPoint). */
-extern const Sint16 Scene_RestartRules[];
+extern const Sint16 SceneRestartRules[];
 
 /* Battle backgrounds by scene: a background word (bit 31 set, resource id
    below) and then its scenes, ended by 0; a scene not listed takes the last

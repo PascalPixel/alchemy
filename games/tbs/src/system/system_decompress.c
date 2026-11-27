@@ -33,7 +33,7 @@ RESOURCE_DEFINE_DECODE(
 /* Decodes a move-to-front LZ resource (a first byte of 2) and returns its
    unpacked byte count. */
 RESOURCE_DEFINE_DECODE(syDecompressMoveToFrontLZ,
-	syDecompressMoveToFrontLZCommands, Decompress_MoveToFrontLzCommandsCodeSize)
+	syDecompressMoveToFrontLZCommands, DecompressMoveToFrontLzCommandsCodeSize)
 /* Decodes a byte-oriented LZ resource and returns its unpacked byte count. */
 RESOURCE_DEFINE_DECODE(
 	syDecompressByteLZ, syDecompressByteLZArm, syDecompressByteLZCodeSize)

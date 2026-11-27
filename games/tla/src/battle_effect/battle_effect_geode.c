@@ -76,9 +76,9 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 	Sint32					 frm;
 	Sint32					 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	backdrop = Ram_HeapSlots->battleBg;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	backdrop = RamHeapSlots->battleBg;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(2));
 	btEffectRunDjinniEntrance(args,
 		DJINNI_ENTRANCE(
@@ -97,7 +97,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 	}
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	REG_BLDCNT = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -107,7 +107,7 @@ void btEffectRunGeode(BATTLE_EFFECT_PARM *args)
 	vertices = (MODEL_VERTEX *)(state->sheet + GEODE_CLOD_CORNERS);
 	mesh = state->sheet + GEODE_CLOD_MESH;
 	pitch = 0;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	caster = btObjectGetStub(args->user)->obj;
 	BgScrollWork[1].x = -56;
 	/* The battlefield's picture, the clod's texture: BG2's 256-colour tiles

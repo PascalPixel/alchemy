@@ -1,69 +1,69 @@
 name	file	section	align	left	pad	edition	fill
-Battle_SuhallaGateBackdrop	suhalla_gate.gbapal						
+BattleSuhallaGateBackdrop	suhalla_gate.gbapal						
 	suhalla_gate.bitmap.d7			4183			
-Battle_PirateShipBackdrop	pirate_ship.gbapal						
+BattlePirateShipBackdrop	pirate_ship.gbapal						
 	pirate_ship.bitmap.d7						
-Battle_CrossboneIsleCaveBackdrop	crossbone_isle_cave.gbapal						
+BattleCrossboneIsleCaveBackdrop	crossbone_isle_cave.gbapal						
 	crossbone_isle_cave.bitmap.d7						
-Battle_ColossoBackdrop	colosso.gbapal						
+BattleColossoBackdrop	colosso.gbapal						
 	colosso.bitmap.d7						
-Battle_VenusLighthouseAerieStormBackdrop	venus_lighthouse_aerie_storm.gbapal						
+BattleVenusLighthouseAerieStormBackdrop	venus_lighthouse_aerie_storm.gbapal						
 	venus_lighthouse_aerie_storm.bitmap.d7			9211			
-Battle_VenusLighthouseAerieBackdrop	venus_lighthouse_aerie.gbapal						
+BattleVenusLighthouseAerieBackdrop	venus_lighthouse_aerie.gbapal						
 	venus_lighthouse_aerie.bitmap.d7			3454			
-Battle_VenusLighthouseBackdrop	venus_lighthouse.gbapal						
+BattleVenusLighthouseBackdrop	venus_lighthouse.gbapal						
 	venus_lighthouse.bitmap.d7						
-Battle_SuhallaDesertBackdrop	suhalla_desert.gbapal						
+BattleSuhallaDesertBackdrop	suhalla_desert.gbapal						
 	suhalla_desert.bitmap.d7						
-Battle_AltmillerCaveBackdrop	altmiller_cave.gbapal						
+BattleAltmillerCaveBackdrop	altmiller_cave.gbapal						
 	altmiller_cave.bitmap.d7			4140			
-Battle_TunnelRuinsBackdrop	tunnel_ruins.gbapal						
+BattleTunnelRuinsBackdrop	tunnel_ruins.gbapal						
 	tunnel_ruins.bitmap.d7						
-Battle_BabiLighthouseBackdrop	babi_lighthouse.gbapal						
+BattleBabiLighthouseBackdrop	babi_lighthouse.gbapal						
 	babi_lighthouse.bitmap.d7						
-Battle_LamakanDesertBackdrop	lamakan_desert.gbapal						
+BattleLamakanDesertBackdrop	lamakan_desert.gbapal						
 	lamakan_desert.bitmap.d7						
-Battle_MogallForestBackdrop	mogall_forest.gbapal						
+BattleMogallForestBackdrop	mogall_forest.gbapal						
 	mogall_forest.bitmap.d7			5000			
-Battle_MercuryLighthouseAerieBackdrop	mercury_lighthouse_aerie.gbapal						
+BattleMercuryLighthouseAerieBackdrop	mercury_lighthouse_aerie.gbapal						
 	mercury_lighthouse_aerie.bitmap.d7						
-Battle_TolbiShipRoomsBackdrop	tolbi_ship_rooms.gbapal						
+BattleTolbiShipRoomsBackdrop	tolbi_ship_rooms.gbapal						
 	tolbi_ship_rooms.bitmap.d7			3966			
-Battle_FuchinFallsCaveBackdrop	fuchin_falls_cave.gbapal						
+BattleFuchinFallsCaveBackdrop	fuchin_falls_cave.gbapal						
 	fuchin_falls_cave.bitmap.d7			4515			
-Battle_KolimaForestBackdrop	kolima_forest.gbapal						
+BattleKolimaForestBackdrop	kolima_forest.gbapal						
 	kolima_forest.bitmap.d7						
-Battle_TretTreeRoomsBackdrop	tret_tree_rooms.gbapal						
+BattleTretTreeRoomsBackdrop	tret_tree_rooms.gbapal						
 	tret_tree_rooms.bitmap.d7			58e7			
-Battle_GomaCaveBackdrop	goma_cave.gbapal						
+BattleGomaCaveBackdrop	goma_cave.gbapal						
 	goma_cave.bitmap.d7						
-Battle_RoomsBackdrop	rooms.gbapal						
+BattleRoomsBackdrop	rooms.gbapal						
 	rooms.bitmap.d7						
-Battle_AltinPeakBackdrop	altin_peak.gbapal						
+BattleAltinPeakBackdrop	altin_peak.gbapal						
 	altin_peak.bitmap.d7			5414			
-Battle_TolbiShipDeckBackdrop	tolbi_ship_deck.gbapal						
+BattleTolbiShipDeckBackdrop	tolbi_ship_deck.gbapal						
 	tolbi_ship_deck.bitmap.d7						
-Battle_MercuryLighthouseBackdrop	mercury_lighthouse.gbapal						
+BattleMercuryLighthouseBackdrop	mercury_lighthouse.gbapal						
 	mercury_lighthouse.bitmap.d7			5df5	4		
-Battle_ValeStormBackdrop	vale_storm.gbapal						
+BattleValeStormBackdrop	vale_storm.gbapal						
 	vale_storm.bitmap.d7				4		ff
-Battle_TretTreeBranchBackdrop	tret_tree_branch.gbapal						
+BattleTretTreeBranchBackdrop	tret_tree_branch.gbapal						
 	tret_tree_branch.bitmap.d7			fa8e			
-Battle_BeachBackdrop	beach.gbapal						
+BattleBeachBackdrop	beach.gbapal						
 	beach.bitmap.d7			10b5			
-Battle_SnowfieldBackdrop	snowfield.gbapal						
+BattleSnowfieldBackdrop	snowfield.gbapal						
 	snowfield.bitmap.d7						
-Battle_GrasslandBackdrop	grassland.gbapal						
+BattleGrasslandBackdrop	grassland.gbapal						
 	grassland.bitmap.d7						
-Battle_SolSanctumBackdrop	sol_sanctum.gbapal						
+BattleSolSanctumBackdrop	sol_sanctum.gbapal						
 	sol_sanctum.bitmap.d7			1015			
-Battle_ForestBackdrop	forest.gbapal						
+BattleForestBackdrop	forest.gbapal						
 	forest.bitmap.d7						
-Battle_VioletSkyBackdrop	violet_sky.gbapal						
+BattleVioletSkyBackdrop	violet_sky.gbapal						
 	violet_sky.bitmap.d7						
-Battle_DesertBackdrop	desert.gbapal						
+BattleDesertBackdrop	desert.gbapal						
 	desert.bitmap.d7						
-Battle_DuskCloudsBackdrop	dusk_clouds.gbapal						
+BattleDuskCloudsBackdrop	dusk_clouds.gbapal						
 	dusk_clouds.bitmap.d7			3300			
-Battle_AerialViewBackdrop	aerial_view.gbapal						
+BattleAerialViewBackdrop	aerial_view.gbapal						
 	aerial_view.bitmap.d7						

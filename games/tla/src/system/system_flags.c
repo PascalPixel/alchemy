@@ -16,7 +16,7 @@ UNIT *syUnitGet(Uint32 unitId)
 		return unit;
 	}
 	if(unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE &&
-		(states = Ram_HeapSlots->enemyUnits) != NULL) {
+		(states = RamHeapSlots->enemyUnits) != NULL) {
 		unit = &states[unitId - FIRST_ENEMY_UNIT];
 		return unit;
 	}

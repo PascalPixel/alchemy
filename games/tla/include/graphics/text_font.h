@@ -11,7 +11,7 @@
 #define KANJI_GLYPH_SIZE 24
 #define KANJI_WIDTH		 10
 /* The Japanese font's kanji, from KANJI_FIRST_CODE on. */
-extern const Uint8 Font_KanjiGlyphs[];
+extern const Uint8 FontKanjiGlyphs[];
 
 /* The mark each of a kana's top-bit values stands for (TEXT_MARK_SHIFT): none,
    voiced, semi-voiced, none. */

@@ -1,4 +1,4 @@
-/* The World Map (SceneId_WorldMap), the perspective map that joins the areas,
+/* The World Map (SceneIdWorldMap), the perspective map that joins the areas,
    and the only scene of this overlay.
 
    It lets the party into the areas as The Broken Seal's does. On it the party
@@ -211,7 +211,7 @@ void scWorldMapWatchVenusLighthouseCollapse(void);
 		FIELD_STATE		   *state; \
 		MAIN_ROUTINE_STATE *party; \
 \
-		state = Ram_HeapSlots->fieldState; \
+		state = RamHeapSlots->fieldState; \
 		party = &MainRoutineStateWork; \
 		if(party->encounterSteps >= state->encounterThreshold * 9 / 10) { \
 			if(syRandom() < 32768) { \
@@ -229,7 +229,7 @@ void scWorldMapWatchVenusLighthouseCollapse(void);
 		FIELD_STATE		   *state; \
 \
 		party = &MainRoutineStateWork; \
-		state = Ram_HeapSlots->fieldState; \
+		state = RamHeapSlots->fieldState; \
 		if(party->movementMode == LEADER_MOVEMENT_WORLD_MAP) { \
 			if(party->encounterSteps >= state->encounterThreshold * 9 / 10) { \
 				if(syRandom() < 32768) { \
@@ -356,7 +356,7 @@ Sint32 scWorldMapSetUpEcho(ACTOR *actor)
 /* Turns the island's sprite with the World Map's view and shows it. */
 Sint32 scWorldMapSetIslandTile(ACTOR *actor)
 {
-	Uint16	  *yaw = &((WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid)->yaw;
+	Uint16	  *yaw = &((WORLD_MAP_VIEW *)RamHeapSlots->mapGrid)->yaw;
 	FIELD_SPR *spr = actor->spr;
 
 	spr->rotation = *yaw;
@@ -435,7 +435,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    rises, and the PP gauge appears, since flying uses the party's PP. */
 void scWorldMapSetUpFlyingShip(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader;
 
 	MainRoutineStateWork.movementMode = LEADER_MOVEMENT_FLYING_SHIP;
@@ -490,7 +490,7 @@ void scWorldMapSetUpShip(void)
    16 pixels away. */
 void scWorldMapBoardShip(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader;
 	ACTOR		*ship;
 	Sint32		 ahead, dx, dz, distanceSquared;
@@ -546,7 +546,7 @@ void scWorldMapLeaveShip(void)
 {
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR		*ship = fdActorGetById(ACTOR_SHIP);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 metatile = fdWorldMapGetCollision(&ship->x.fixed);
 	FIXED		 pos[3];
 	Sint32		 shore = 0;
@@ -632,7 +632,7 @@ void scWorldMapLeaveShip(void)
    water first. */
 void scWorldMapMoorAtAttekaInlet(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*ship = fdActorGet(ACTOR_SHIP);
 
 	fdScriptStart();
@@ -751,7 +751,7 @@ void scWorldMapRefuseToRunAway(void)
 		syWait(8);
 		fdScriptEnd();
 	} else {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(0);
@@ -777,7 +777,7 @@ void scWorldMapGazeIntoPond(void)
 	/* "Felix gazed into the pond..." */
 	mnMessageShowCentered((Sint32)MsgGazedIntoThe, 1);
 	if(roll == 0) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 		Sint32		 slot = ACTOR_POND_COINS;
 		ACTOR		*actor = fdActorGet(syFieldPartyGetLeaderActor());
 		UNIT		*unit = syUnitGet(MainRoutineStateWork.leaderActorId);
@@ -849,7 +849,7 @@ void scWorldMapShowGoldenBoots(void)
 }
 
 /* Walking onto Prox from the World Map: coming from the north, the party enters
-   by its northern way in (SceneId_ProxMold), and from the south by its south
+   by its northern way in (SceneIdProxMold), and from the south by its south
    gate. Yallam and Daila choose their way in the same way. */
 void scWorldMapEnterProx(Sint32 id)
 {
@@ -899,7 +899,7 @@ Sint32 scInit(void)
 	if(MainRoutineStateWork.ownerOverride != 0)
 		syFieldWorldMapStartZoom(toFIXED(1), 1);
 	syGameFlagSet(FLAG_RETREAT_BLOCKED);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_CENTRE_LINE, CENTRE_LINE_STEADY);
 	state->transitionFrm = 16;
@@ -1933,7 +1933,7 @@ void scWorldMapShowIdejimaDrifting(void)
 void scWorldMapDriftNorthOfContinent(void)
 {
 	ACTOR		   *island = fdActorGet(ACTOR_IDEJIMA);
-	WORLD_MAP_VIEW *view = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *view = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	Sint32			i;
 
 	fdScriptStart();
@@ -2413,7 +2413,7 @@ void scWorldMapCarryPartyToAquaRock(void)
    placed actor's sprite with the World Map's view and shows it. */
 Sint32 scWorldMapSetPlacedActorTile(ACTOR *actor)
 {
-	Uint16	  *yaw = &((WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid)->yaw;
+	Uint16	  *yaw = &((WORLD_MAP_VIEW *)RamHeapSlots->mapGrid)->yaw;
 	FIELD_SPR *spr = actor->spr;
 
 	spr->rotation = *yaw;
@@ -2654,7 +2654,7 @@ void scWorldMapLoadTidalWave(Sint32 unused)
 	syWait(60);
 	fdScriptPlaySnd(SOUND_FADE_OUT_ACTION_SE);
 	syWait(120);
-	Ram_HeapSlots->actorSystem->suspended = 1;
+	RamHeapSlots->actorSystem->suspended = 1;
 	syWait(1);
 	syWindowLoadGraphics();
 	syPrintClear();
@@ -2701,7 +2701,7 @@ void scWorldMapSpawnTwinSparks(ACTOR *parent)
 	ACTOR				*pair[2];
 	ACTOR				*child;
 	FIELD_SPR			*spr;
-	LINKED_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	LINKED_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	Sint32				 i;
 
 	for(i = 0; i < 2; ++i) {

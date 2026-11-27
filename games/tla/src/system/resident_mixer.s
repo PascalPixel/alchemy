@@ -127,9 +127,9 @@ IwramSoundMixEntry:
 	add	r1, pc, #8
 	bx	r1
 	.4byte	IwramSoundMixWorkspace
-AlchemyUncredited_08000e34:
+AlchemyUncredited08000e34:
 	.4byte	0x00000000
-AlchemyUncreditedEnd_08000e34:
+AlchemyUncreditedEnd08000e34:
 
 	.section .text.resident_mixer_lanes,"ax",%progbits
 	.balign 4
@@ -216,110 +216,110 @@ AlchemyUncreditedEnd_08000e34:
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
 @ Each 0xfedcba98 run below is an instruction slot the stm lr loop above fills.
-AlchemyUncredited_08000f64:
+AlchemyUncredited08000f64:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000f64:
+AlchemyUncreditedEnd08000f64:
 	mlane	r0, fp, r9, r0
-AlchemyUncredited_08000f70:
+AlchemyUncredited08000f70:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000f70:
+AlchemyUncreditedEnd08000f70:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000f88:
+AlchemyUncredited08000f88:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000f88:
+AlchemyUncreditedEnd08000f88:
 	mlane	r1, fp, r9, r1
-AlchemyUncredited_08000f94:
+AlchemyUncredited08000f94:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000f94:
+AlchemyUncreditedEnd08000f94:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000fac:
+AlchemyUncredited08000fac:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000fac:
+AlchemyUncreditedEnd08000fac:
 	mlane	sl, fp, r9, sl
-AlchemyUncredited_08000fb8:
+AlchemyUncredited08000fb8:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000fb8:
+AlchemyUncreditedEnd08000fb8:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08000fd0:
+AlchemyUncredited08000fd0:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000fd0:
+AlchemyUncreditedEnd08000fd0:
 	mlane	lr, fp, r9, lr
-AlchemyUncredited_08000fdc:
+AlchemyUncredited08000fdc:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000fdc:
+AlchemyUncreditedEnd08000fdc:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}
 	ldm	r5, {r0, r1, sl, lr}
 	mulne	r9, r7, ip
-AlchemyUncredited_08000ffc:
+AlchemyUncredited08000ffc:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08000ffc:
+AlchemyUncreditedEnd08000ffc:
 	mlane	r0, fp, r9, r0
-AlchemyUncredited_08001008:
+AlchemyUncredited08001008:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08001008:
+AlchemyUncreditedEnd08001008:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08001020:
+AlchemyUncredited08001020:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08001020:
+AlchemyUncreditedEnd08001020:
 	mlane	r1, fp, r9, r1
-AlchemyUncredited_0800102c:
+AlchemyUncredited0800102c:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_0800102c:
+AlchemyUncreditedEnd0800102c:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08001044:
+AlchemyUncredited08001044:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08001044:
+AlchemyUncreditedEnd08001044:
 	mlane	sl, fp, r9, sl
-AlchemyUncredited_08001050:
+AlchemyUncredited08001050:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08001050:
+AlchemyUncreditedEnd08001050:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_08001068:
+AlchemyUncredited08001068:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08001068:
+AlchemyUncreditedEnd08001068:
 	mlane	lr, fp, r9, lr
-AlchemyUncredited_08001074:
+AlchemyUncredited08001074:
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
 	.4byte	0xfedcba98
-AlchemyUncreditedEnd_08001074:
+AlchemyUncreditedEnd08001074:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #8
@@ -328,9 +328,9 @@ AlchemyUncreditedEnd_08001074:
 	ldm	ip, {r2, r3, sp}
 	b	IwramSoundMixDone
 @ r2, sl and sp as stm r9, {r2, sl, sp} saved them; ldm ip reloads them.
-AlchemyUncredited_080010a0:
+AlchemyUncredited080010a0:
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
-AlchemyUncreditedEnd_080010a0:
+AlchemyUncreditedEnd080010a0:
 	.4byte	0x03007900

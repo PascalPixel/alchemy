@@ -402,7 +402,7 @@ extern Sint8 VineColumnOffsets[];
 /* Thorn: each thorn's kind and root, the thorns by variant, and the seven
    pictures of a puff of dust. */
 extern Uint8  ThornKinds[];
-extern Sint8  Thorn_X[];
+extern Sint8  ThornX[];
 extern Uint8  ThornCounts[];
 extern Sint8  ThornPuffWidths[];
 extern Uint8  ThornPuffHeights[];

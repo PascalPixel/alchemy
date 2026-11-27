@@ -78,12 +78,12 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	Sint32				 j;
 	Sint32				 ang;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	drift = 0;
 	x = 0;
 	y = 0;
-	motes = Ram_HeapSlots->battleSheet;
+	motes = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 
@@ -109,7 +109,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
 		&state->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
 	btResourceLoadAndDecompress(
-		RESOURCE_FLASH_BURST_SHEET, Ram_MapMetatileBuffer, 1, 0);
+		RESOURCE_FLASH_BURST_SHEET, RamMapMetatileBuffer, 1, 0);
 	if(args->variant == EFFECT_VARIANT_STRONGER) {
 		LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 	}
@@ -167,7 +167,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	path = syResourceGetTableEntry(RESOURCE_DRAGON_CLOUD_FLAME_PATH);
 
 	for(frm = 0; frm != DRAGON_CLOUD_TICKS; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		if(frm == DRAGON_CLOUD_STRIKE_TICK) {
 			if(args->variant == EFFECT_VARIANT_BASIC)
@@ -369,7 +369,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 							picture = particle->variant / 4;
 						if(picture < DRAGON_CLOUD_ANIMATION_PICTURES) {
 							draw[args->variant](canvas,
-								Ram_MapMetatileBuffer +
+								RamMapMetatileBuffer +
 									picture * PICTURE_BYTES(FLASH_BURST),
 								pos.x - FLASH_BURST_WIDTH / 2, pos.y - 40,
 								FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);

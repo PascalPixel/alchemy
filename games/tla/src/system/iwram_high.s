@@ -1,7 +1,7 @@
 	.section .sym_iwram_high,"aw",%nobits
 	.space 0x00000c1b
-	.global Data_03006fbf
-Data_03006fbf:
+	.global Data03006fbf
+Data03006fbf:
 	.space 0x00000001
 	.global IwramSoundMixWorkspace
 IwramSoundMixWorkspace:

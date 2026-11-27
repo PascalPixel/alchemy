@@ -1,4 +1,4 @@
-/* Cottage rooms C (SceneId_CottageRoomsC) is a rooms map drawn as cottages, all
+/* Cottage rooms C (SceneIdCottageRoomsC) is a rooms map drawn as cottages, all
    of them inside Bilibin's buildings, whose area name is Bilibin.
 
    Six of Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP,

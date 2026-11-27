@@ -50,9 +50,9 @@ void btEffectRunFrost(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*mote;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sparkleSheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sparkleSheet = RamHeapSlots->battleSheet;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);

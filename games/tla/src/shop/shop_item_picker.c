@@ -13,7 +13,7 @@ Sint32 mnForgeRun(Sint32 actorId)
 	Sint32		result;
 
 	mnShopInitState();
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	shop->shopType = SHOP_TYPE_WEAPONS;
 	shop->action = SHOP_ACTION_FORGE;
 	shop->keeperGraphics =
@@ -60,7 +60,7 @@ Sint32 mnForgeSelectItem(Sint32 unitId)
    item was taken, else -1. */
 Sint32 mnForgeOfferItem(Sint32 unitId, Sint32 slot)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	UNIT	   *unit = syUnitGet(unitId);
 	Uint32		inventoryEntry = unit->inventory[slot];
 	Sint32		itemId;
@@ -131,7 +131,7 @@ Sint32 mnItemPickerRun(
 	Sint32		result = 0;
 
 	mnShopInitState();
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	shop->itemMode = itemMode;
 	shop->itemWin = mnWindowCreateStub(16, 12, 14, 8, WINDOW_FLAG_INSTANT);
 	partyWin = mnWindowCreateStub(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
@@ -226,7 +226,7 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
 	Sint32		column;
 	Sint32		row;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	unit = syUnitGet(unitId);
 	inventoryCnt = 1;
 	redraw = TRUE;
@@ -361,7 +361,7 @@ Sint32 mnItemPickerSelectItem(Sint32 unitId)
    by mnItemPickerSelectItem each time the cursor moves. */
 void mnItemPickerDrawItem(WINDOW *win, Sint32 unitId, Sint32 slot)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	UNIT	   *unit = syUnitGet(unitId);
 	Sint32		itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	Uint32		inventoryEntry = unit->inventory[slot];
@@ -403,7 +403,7 @@ void mnItemPickerDrawItem(WINDOW *win, Sint32 unitId, Sint32 slot)
    as an event. */
 void mnItemIconGridDraw(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 
 	if(shop->iconsVisible) {
 		ICON_SPR *spr = shop->iconSprs;
@@ -421,7 +421,7 @@ void mnItemIconGridDraw(void)
 /* Empties the grid, hides it and starts its drawing event. */
 void mnItemIconGridInit(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		i;
 
 	for(i = 0; i < INVENTORY_SLOTS; i++)
@@ -436,7 +436,7 @@ void mnItemIconGridInit(void)
 /* Stops the drawing event and frees the icons' VRAM cache entries. */
 void mnItemIconGridRelease(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		i;
 
 	syCloseEvent(mnItemIconGridDraw);
@@ -449,7 +449,7 @@ void mnItemIconGridRelease(void)
 /* Places icon `idx` at (x, y) screen pixels. */
 void mnItemIconGridSetPos(Sint32 idx, Sint32 x, Sint32 y)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 
 	shop->iconSprs[idx].attr.x = x;
 	shop->iconSprs[idx].attr.y = y;
@@ -458,7 +458,7 @@ void mnItemIconGridSetPos(Sint32 idx, Sint32 x, Sint32 y)
 /* Shows the grid (1) or hides it (0). */
 void mnItemIconGridSetVisible(Sint32 visible)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 
 	shop->iconsVisible = visible;
 }
@@ -468,7 +468,7 @@ void mnItemIconGridSetVisible(Sint32 visible)
    gives each its sprite attributes and tile. */
 void mnItemIconGridLoadItems(Uint16 *items, Sint32 cnt, Sint32 mode)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	ICON_SPR   *spr;
 	Sint32		entry;
 	Sint32		i;

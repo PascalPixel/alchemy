@@ -109,11 +109,11 @@ restart:
 	   pictures; a two-part sprite (ANIM_FACING_TWO_PART) puts its second part
 	   in the actor sprite buffer, as sprite picture cache 1. */
 	fdSprPictureCacheLoad(
-		0, (Uint32 *)Ram_MapGridMetatileBuffer, layers[0].sprId, 0);
+		0, (Uint32 *)RamMapGridMetatileBuffer, layers[0].sprId, 0);
 	sprMetadata = syResourceGetMetadataRecordStub(layers[0].sprId);
 	if(sprMetadata->drawKind == ANIM_FACING_TWO_PART) {
 		fdSprPictureCacheLoad(
-			1, (Uint32 *)Ram_EnemySpriteSlots, layers[0].sprId + 1, 0);
+			1, (Uint32 *)RamEnemySpriteSlots, layers[0].sprId + 1, 0);
 	}
 
 	/* Ten copies of the sprite; for a two-part sprite every other copy shows
@@ -368,10 +368,10 @@ next:
 		if((*repeatedKeys & KEY_SELECT) != 0) {
 			syInitEvent();
 			if((*heldKeys & KEY_B) != 0) {
-				syDummyReturnZero(RESOURCE_RESOURCE_STUBS, Stubs_Resource);
+				syDummyReturnZero(RESOURCE_RESOURCE_STUBS, StubsResource);
 			} else {
 				syDummyReturnZero(
-					RESOURCE_RESOURCE_FAR_CALLS_ALTERNATE, Stubs_Resource);
+					RESOURCE_RESOURCE_FAR_CALLS_ALTERNATE, StubsResource);
 			}
 			goto restart;
 		}

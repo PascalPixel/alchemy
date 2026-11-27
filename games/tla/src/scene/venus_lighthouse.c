@@ -1,7 +1,7 @@
 /* The Venus Lighthouse, as the prologue opens on it: Felix moves a statue onto
    the floor switch with Psynergy and goes on alone, and Jenna and Kraden,
    doubting they should leave, meet Alex and set off for Idejima
-   (SceneId_VenusLighthouse). */
+   (SceneIdVenusLighthouse). */
 #include "edition.h"
 #include "field/actor_script.h"
 #include "field/script_inline.h"
@@ -633,7 +633,7 @@ void scVenusLighthouseFelixMovesStatue(void)
 {
 	fdPsynergyLoadResources(ABILITY_MOVE, 1);
 	fdPsynergySetupActorPair(ACTOR_FELIX, ACTOR_FLOOR_SWITCH_STATUE);
-	((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->finishFunc =
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->finishFunc =
 		(void (*)(void))scVenusLighthouseIdle;
 	fdPsynergyStartCast();
 	syFieldScriptWait(10);
@@ -743,7 +743,7 @@ void scVenusLighthouseFelixLeaves(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 1);
 	fdActorSetSpeed(ACTOR_ALEX, 1);
 	fdCameraMoveTo(664, CAMERA_KEEP, 824, 0);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	state->transitionFrm = 60;
 	fdScriptStartScreenTransition();
@@ -1280,7 +1280,7 @@ void scVenusLighthouseDoubtLeaving(void)
 	MainRoutineStateWork.leaderActorId = ACTOR_JENNA;
 	gmPartyRemoveMember(FELIX);
 	syFieldScriptWait(50);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transitionFrm = 60;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdScriptFinishScreenTransition();

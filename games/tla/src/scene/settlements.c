@@ -782,7 +782,7 @@ extern Sint32 SettlementsWaterColorTick;
    along by one every 8 ticks. */
 void scSettlementsCycleWaterCols(void)
 {
-	FIELD_STATE *state = (FIELD_STATE *)Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = (FIELD_STATE *)RamHeapSlots->fieldState;
 	Sint32		*frm;
 	Sint32		 phase, i;
 

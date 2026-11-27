@@ -41,7 +41,7 @@ extern const INTERRUPT_HANDLER DefaultIrqHandlers[IRQ_COUNT];
 extern Uint8 syIWRAMIRQMain[];
 /* Where the IWRAM-resident code lies in ROM (ld_script.ld): 4 KB of it is
    copied to syIWRAMIRQMain at power-on. */
-extern const Uint8 IwramResident_Rom[];
+extern const Uint8 IwramResidentRom[];
 /* The BIOS's interrupt vector, pointed at syIWRAMIRQMain at power-on. */
 extern void *IrqVector;
 
@@ -86,26 +86,26 @@ extern Uint8 syDecompressTaggedLZCodeSize[];
 extern const Uint8 syDecompressMoveToFrontLZCommandsCode[];
 /* The size of syDecompressMoveToFrontLZCommandsCode, which
    syDecompressMoveToFrontLZ copies to the heap (ld_script.ld). */
-extern Uint8 Decompress_MoveToFrontLzCommandsCodeSize[];
+extern Uint8 DecompressMoveToFrontLzCommandsCodeSize[];
 /* The byte LZ decoder, run by syDecompressByteLZ from a heap copy. */
-extern const Uint8 Resource_DecodeByteLzCode[];
-/* The size of Resource_DecodeByteLzCode, which syDecompressByteLZ copies to the
+extern const Uint8 ResourceDecodeByteLzCode[];
+/* The size of ResourceDecodeByteLzCode, which syDecompressByteLZ copies to the
    heap. */
-extern Uint8 Resource_DecodeByteLzCodeSize[];
+extern Uint8 ResourceDecodeByteLzCodeSize[];
 /* The colour index fdRenderDecodePicture paints every pixel of a layer drawn
    with SPRITE_COLOR_FILL; the sprite viewer sets it to 3. */
 extern Uint8 DecodeFillByte;
 
 /* The stub group. The system module's stub table. The stub table of the system
    library's functions, which the world map's tilt reads for its arctangent. */
-extern const SYSTEM_STUB_TABLE Stubs_System;
+extern const SYSTEM_STUB_TABLE StubsSystem;
 
 /* The flash group. The SDK's flash library keeps its state in EWRAM
    (sdk/flash.h, sdk/flash_data.h); one of its metatiles has a name here too.
    The metatiles of the SDK's flash library from WaitForFlashWriteWork on, under
    a label of their own: the credits build a backdrop's grey colours there while
    no flash operation runs (mnCreditsLoadBackground). */
-extern Uint16 Credits_GreyColors[];
+extern Uint16 CreditsGreyColors[];
 
 /* The tick group. The tick loop's globals: the frames a tick takes, the CPU
    load display and the VBlank flags, which sySynch() (system/system_frame.c)
@@ -160,14 +160,14 @@ extern volatile Uint16 VBlankDone;
 /* The heap_release group. The heap's allocators and releases
    (system/system_heap.c). The EWRAM heap's space, 32 KB from 0x02030000. */
 extern Uint8 EwramHeap[];
-/* The IWRAM heap's space, from 0x03001300 up to Ram_IwramHeapEnd. */
+/* The IWRAM heap's space, from 0x03001300 up to RamIwramHeapEnd. */
 extern Uint8 IwramHeap[];
 
 /* The input group. The keypad state the VBlank interrupt keeps. */
 extern INPUT_STATE PerWork;
 
 /* The io_write_queue group. The I/O write queue: register writes held until
-   VBlank. The queue IO_WRITE_QUEUE_PUSH and the IoWriteQueue_Store writers
+   VBlank. The queue IO_WRITE_QUEUE_PUSH and the IoWriteQueueStore writers
    fill, and syIOWriteQueueFlushPending empties at VBlank. */
 extern IO_WRITE_QUEUE IoWriteQueueWork;
 
@@ -450,16 +450,16 @@ extern volatile Uint8 ScreenFadeTargetLevel;
 extern Uint8 *SoundInfoPointer;
 /* Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
    ends. */
-extern struct MusicPlayerInfo MPlayInfo_BGM;
+extern struct MusicPlayerInfo MPlayInfoBGM;
 /* Plays the field's and the battle's action sounds (MUSIC_PLAYER_ACTION_SE);
    SOUND_FADE_OUT_ACTION_SE fades it. */
-extern struct MusicPlayerInfo MPlayInfo_ActionSE;
+extern struct MusicPlayerInfo MPlayInfoActionSE;
 /* One of the sound effects' shared players (MUSIC_PLAYER_SE5); both fades,
    SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE, fade it. */
-extern struct MusicPlayerInfo MPlayInfo_SE5;
+extern struct MusicPlayerInfo MPlayInfoSE5;
 /* Plays jingles; the music returns once it stops. */
-extern struct MusicPlayerInfo MPlayInfo_Jingle;
-/* The mixer's PCM output: SoundDriver_EnterVBlankUpdate hands it to
+extern struct MusicPlayerInfo MPlayInfoJingle;
+/* The mixer's PCM output: SoundDriverEnterVBlankUpdate hands it to
    IwramSoundMixEntry, and sySndSetFixedSampleFreq clears it and points DMA 1 at
    its start (the right speaker) and DMA 2 at its second half (the left). */
 extern Uint8 MixerPcmBuffer[];
@@ -506,7 +506,7 @@ extern Uint16 BgmTempoPitchStep;
 /* Set by sySndUpdateCommandMask; nothing reads it. */
 extern Uint8 SoundCommandMask;
 /* An EWRAM byte sySndInit clears and nothing reads. */
-extern Uint8 Sound_UnreadByte;
+extern Uint8 SoundUnreadByte;
 
 /* The vram_cache group. The VRAM cache's entries and the blocks they own. The
    cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE. */

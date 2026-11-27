@@ -4,9 +4,9 @@
 /* Resource numbers, named where their contents are known, as The Broken Seal's
    resource_ids.h.
 
-   Each ResourceId_ is an absolute symbol whose value is the resource's row in
+   Each ResourceId is an absolute symbol whose value is the resource's row in
    syResourceDirectoryTable (system/resource_directory.s); C names the number by
-   its macro, RESOURCE_RUNE_SHEET for ResourceId_RuneSheet. */
+   its macro, RESOURCE_RUNE_SHEET for ResourceIdRuneSheet. */
 
 #include "types.h"
 
@@ -15,804 +15,803 @@
 
 /* Drawn by Bind, the casting impacts, Rime, Spider Web, the stars of Astral
    Blast and Shining Star, Thunder Mine and Whorl. */
-extern char ResourceId_RuneSheet;
-#define RESOURCE_RUNE_SHEET ((Sint32)&ResourceId_RuneSheet)
+extern char ResourceIdRuneSheet;
+#define RESOURCE_RUNE_SHEET ((Sint32)&ResourceIdRuneSheet)
 /* Drawn by Bind, Charon, Cruel Ruin, the shards of Ice and Douse, Lucky Wheels,
    Neptune, the effect position helpers, Spider Web, the stat changes and the
    monster strikes. */
-extern char ResourceId_BlueGlowSheet;
-#define RESOURCE_BLUE_GLOW_SHEET ((Sint32)&ResourceId_BlueGlowSheet)
+extern char ResourceIdBlueGlowSheet;
+#define RESOURCE_BLUE_GLOW_SHEET ((Sint32)&ResourceIdBlueGlowSheet)
 /* Drawn by Bind, Gasp, the healing motes, Lucky Wheels, Rime, the stat changes,
    Thor and Vengeance. */
-extern char ResourceId_JupiterDjinnSheet;
-#define RESOURCE_JUPITER_DJINN_SHEET ((Sint32)&ResourceId_JupiterDjinnSheet)
+extern char ResourceIdJupiterDjinnSheet;
+#define RESOURCE_JUPITER_DJINN_SHEET ((Sint32)&ResourceIdJupiterDjinnSheet)
 /* Shared by the burst showers, the canvas layer, the casting impacts, the
    charge of Core and Cannon, the glowing lunge, the rushing strike and the
    monster strikes, and by Catastrophe, Charon, Cruel Ruin, Daedalus, Death
    Plunge, Dragon Cloud, Fume, Legend, Liquifier, Meteor Blow, Moloch, Ocean
    Fist, Plasma, Procne, Raging Heat, Ragnarok, Thunder Mine, Trident, Undead
    Sword and Whorl. */
-extern char ResourceId_FlashBurstSheet;
-#define RESOURCE_FLASH_BURST_SHEET ((Sint32)&ResourceId_FlashBurstSheet)
+extern char ResourceIdFlashBurstSheet;
+#define RESOURCE_FLASH_BURST_SHEET ((Sint32)&ResourceIdFlashBurstSheet)
 /* Colours shared by the breaths, the burst showers, the canvas layer, the
    casting impacts, the charge of Core and Cannon, the glowing lunge, the
    healing motes, the rushing strike, the monster strikes and the Zagan summon,
    and by Daedalus, Dragon Cloud, Gasp, Geode, Haures, Heavy Divide, Legend,
    Liquifier, Megiddo, Meteor Blow, Nirvana, Plasma, Raging Heat, Thunder Mine,
    Trident, Vengeance and Volcano. */
-extern char ResourceId_OrangePaletteB;
-#define RESOURCE_ORANGE_PALETTE_B ((Sint32)&ResourceId_OrangePaletteB)
+extern char ResourceIdOrangePaletteB;
+#define RESOURCE_ORANGE_PALETTE_B ((Sint32)&ResourceIdOrangePaletteB)
 /* Drawn by the Cards, the casting impacts and Condemn. */
-extern char ResourceId_CounterRevealSheet;
-#define RESOURCE_COUNTER_REVEAL_SHEET ((Sint32)&ResourceId_CounterRevealSheet)
-extern char ResourceId_RedCrescentSheetA;
-#define RESOURCE_RED_CRESCENT_SHEET_A ((Sint32)&ResourceId_RedCrescentSheetA)
+extern char ResourceIdCounterRevealSheet;
+#define RESOURCE_COUNTER_REVEAL_SHEET ((Sint32)&ResourceIdCounterRevealSheet)
+extern char ResourceIdRedCrescentSheetA;
+#define RESOURCE_RED_CRESCENT_SHEET_A ((Sint32)&ResourceIdRedCrescentSheetA)
 /* Drawn by Cruel Ruin. */
-extern char ResourceId_ShatteringOpeningSheet;
+extern char ResourceIdShatteringOpeningSheet;
 #define RESOURCE_SHATTERING_OPENING_SHEET \
-	((Sint32)&ResourceId_ShatteringOpeningSheet)
-extern char ResourceId_CyanSparkSheet;
-#define RESOURCE_CYAN_SPARK_SHEET ((Sint32)&ResourceId_CyanSparkSheet)
+	((Sint32)&ResourceIdShatteringOpeningSheet)
+extern char ResourceIdCyanSparkSheet;
+#define RESOURCE_CYAN_SPARK_SHEET ((Sint32)&ResourceIdCyanSparkSheet)
 /* Colours for Cruel Ruin and the monster strikes. */
-extern char ResourceId_YellowPaletteA;
-#define RESOURCE_YELLOW_PALETTE_A ((Sint32)&ResourceId_YellowPaletteA)
+extern char ResourceIdYellowPaletteA;
+#define RESOURCE_YELLOW_PALETTE_A ((Sint32)&ResourceIdYellowPaletteA)
 /* Drawn by Cruel Ruin and the monster strikes. */
-extern char ResourceId_IceTileSheet;
-#define RESOURCE_ICE_TILE_SHEET ((Sint32)&ResourceId_IceTileSheet)
+extern char ResourceIdIceTileSheet;
+#define RESOURCE_ICE_TILE_SHEET ((Sint32)&ResourceIdIceTileSheet)
 /* Colours for Cruel Ruin and the monster strikes. */
-extern char ResourceId_RedPaletteA;
-#define RESOURCE_RED_PALETTE_A ((Sint32)&ResourceId_RedPaletteA)
-extern char ResourceId_VioletPaletteA;
-#define RESOURCE_VIOLET_PALETTE_A ((Sint32)&ResourceId_VioletPaletteA)
+extern char ResourceIdRedPaletteA;
+#define RESOURCE_RED_PALETTE_A ((Sint32)&ResourceIdRedPaletteA)
+extern char ResourceIdVioletPaletteA;
+#define RESOURCE_VIOLET_PALETTE_A ((Sint32)&ResourceIdVioletPaletteA)
 /* Colours for the battle background's star field (btElementGlowInitStarField)
    and Cruel Ruin. */
-extern char ResourceId_YellowPaletteB;
-#define RESOURCE_YELLOW_PALETTE_B ((Sint32)&ResourceId_YellowPaletteB)
+extern char ResourceIdYellowPaletteB;
+#define RESOURCE_YELLOW_PALETTE_B ((Sint32)&ResourceIdYellowPaletteB)
 /* Drawn by the casting impacts, Cruel Ruin, Legend, Prism, the Djinn openings,
    Thor and Undead Sword. */
-extern char ResourceId_CrystalSheet;
-#define RESOURCE_CRYSTAL_SHEET ((Sint32)&ResourceId_CrystalSheet)
+extern char ResourceIdCrystalSheet;
+#define RESOURCE_CRYSTAL_SHEET ((Sint32)&ResourceIdCrystalSheet)
 /* Drawn by Atalanta, the casting impacts, Cruel Ruin, the one-Djinni summons,
    Dragon Cloud, Fire, Flare, the rush bursts, Haures, Lucky Wheels, Odyssey,
    Procne, Spider Web, the streak volleys, the monster strikes and Thunder
    Mine. */
-extern char ResourceId_EmberStreakSheet;
-#define RESOURCE_EMBER_STREAK_SHEET ((Sint32)&ResourceId_EmberStreakSheet)
+extern char ResourceIdEmberStreakSheet;
+#define RESOURCE_EMBER_STREAK_SHEET ((Sint32)&ResourceIdEmberStreakSheet)
 /* Colours for the battle background's star field (btElementGlowInitStarField),
    Cruel Ruin and the streak volleys. */
-extern char ResourceId_VioletPaletteD;
-#define RESOURCE_VIOLET_PALETTE_D ((Sint32)&ResourceId_VioletPaletteD)
+extern char ResourceIdVioletPaletteD;
+#define RESOURCE_VIOLET_PALETTE_D ((Sint32)&ResourceIdVioletPaletteD)
 /* Drawn by the casting impacts and Cruel Ruin. */
-extern char ResourceId_DustPuffSheet;
-#define RESOURCE_DUST_PUFF_SHEET ((Sint32)&ResourceId_DustPuffSheet)
+extern char ResourceIdDustPuffSheet;
+#define RESOURCE_DUST_PUFF_SHEET ((Sint32)&ResourceIdDustPuffSheet)
 /* Drawn by the Zagan summon, Fire Puppet, Gasp, the healing motes, Light Surge,
    Lucky Wheels, the shell shot, Nirvana, Planet Diver, Rime, the stat changes,
    Thor and Vengeance. */
-extern char ResourceId_MercuryDjinnSheet;
-#define RESOURCE_MERCURY_DJINN_SHEET ((Sint32)&ResourceId_MercuryDjinnSheet)
+extern char ResourceIdMercuryDjinnSheet;
+#define RESOURCE_MERCURY_DJINN_SHEET ((Sint32)&ResourceIdMercuryDjinnSheet)
 /* Drawn by the breaths, the canvas layer, the casting impacts, the one-Djinni
    summons, the Zagan summon, Heavy Divide, Helm Splitter, Liquifier, Neptune,
    Nirvana, Ocean Fist, Odyssey, Rising Dragon, Triple Chomp, Vengeance and
    Whorl. */
-extern char ResourceId_BlueFlameSheet;
-#define RESOURCE_BLUE_FLAME_SHEET ((Sint32)&ResourceId_BlueFlameSheet)
+extern char ResourceIdBlueFlameSheet;
+#define RESOURCE_BLUE_FLAME_SHEET ((Sint32)&ResourceIdBlueFlameSheet)
 /* Drawn by the breaths, the blessings' burst showers, the casting impacts,
    Daedalus, the Zagan summon, Flora, the rush bursts, Gasp, Haures, the healing
    motes, the shell shot, Planet Diver, Spider Web, the stat changes, the status
    motes, the monster strikes, Thor, Thunder Mine, Vengeance and Whorl. */
-extern char ResourceId_MarsDjinnSheet;
-#define RESOURCE_MARS_DJINN_SHEET ((Sint32)&ResourceId_MarsDjinnSheet)
+extern char ResourceIdMarsDjinnSheet;
+#define RESOURCE_MARS_DJINN_SHEET ((Sint32)&ResourceIdMarsDjinnSheet)
 /* Drawn by the shards of Ice and Douse and the healing motes. */
-extern char ResourceId_IceShardSheet;
-#define RESOURCE_ICE_SHARD_SHEET ((Sint32)&ResourceId_IceShardSheet)
+extern char ResourceIdIceShardSheet;
+#define RESOURCE_ICE_SHARD_SHEET ((Sint32)&ResourceIdIceShardSheet)
 /* Drawn by Boreas, the shards of Ice and Douse, Frost, the healing motes, the
    status motes and Thunder Mine. */
-extern char ResourceId_SparkleDots;
-#define RESOURCE_SPARKLE_DOTS ((Sint32)&ResourceId_SparkleDots)
+extern char ResourceIdSparkleDots;
+#define RESOURCE_SPARKLE_DOTS ((Sint32)&ResourceIdSparkleDots)
 /* Drawn by Azul, the blessings' burst showers, the shards of Ice and Douse, the
    healing motes, the Djinn openings, the monster strikes and Vengeance. */
-extern char ResourceId_BlueBeamSheet;
-#define RESOURCE_BLUE_BEAM_SHEET ((Sint32)&ResourceId_BlueBeamSheet)
+extern char ResourceIdBlueBeamSheet;
+#define RESOURCE_BLUE_BEAM_SHEET ((Sint32)&ResourceIdBlueBeamSheet)
 /* Drawn by Daedalus, Gaia, the shell shot and the streak volleys. */
-extern char ResourceId_EarthWallSheet;
-#define RESOURCE_EARTH_WALL_SHEET ((Sint32)&ResourceId_EarthWallSheet)
+extern char ResourceIdEarthWallSheet;
+#define RESOURCE_EARTH_WALL_SHEET ((Sint32)&ResourceIdEarthWallSheet)
 /* Drawn by the shell shot. */
-extern char ResourceId_CrescentMoonSheet;
-#define RESOURCE_CRESCENT_MOON_SHEET ((Sint32)&ResourceId_CrescentMoonSheet)
+extern char ResourceIdCrescentMoonSheet;
+#define RESOURCE_CRESCENT_MOON_SHEET ((Sint32)&ResourceIdCrescentMoonSheet)
 /* Drawn by Gasp, the healing motes, Lucky Wheels, the shell shot and the stat
    changes. */
-extern char ResourceId_VenusDjinnSheet;
-#define RESOURCE_VENUS_DJINN_SHEET ((Sint32)&ResourceId_VenusDjinnSheet)
+extern char ResourceIdVenusDjinnSheet;
+#define RESOURCE_VENUS_DJINN_SHEET ((Sint32)&ResourceIdVenusDjinnSheet)
 /* Drawn by the shell shot. */
-extern char ResourceId_GoldShellSheet;
-#define RESOURCE_GOLD_SHELL_SHEET ((Sint32)&ResourceId_GoldShellSheet)
+extern char ResourceIdGoldShellSheet;
+#define RESOURCE_GOLD_SHELL_SHEET ((Sint32)&ResourceIdGoldShellSheet)
 /* Drawn by the blessings' burst showers, the Cards, the casting impacts,
    Daedalus, Flora, the rush bursts, Gasp, Heavy Divide, Legend, the shell shot,
    the orbiting skulls, stars and target bursts, the Djinn openings, the status
    motes, the monster strikes and Undead Sword. */
-extern char ResourceId_SmokeSheet;
-#define RESOURCE_SMOKE_SHEET ((Sint32)&ResourceId_SmokeSheet)
+extern char ResourceIdSmokeSheet;
+#define RESOURCE_SMOKE_SHEET ((Sint32)&ResourceIdSmokeSheet)
 /* Colours for the shell shot. */
-extern char ResourceId_BluePalette;
-#define RESOURCE_BLUE_PALETTE ((Sint32)&ResourceId_BluePalette)
+extern char ResourceIdBluePalette;
+#define RESOURCE_BLUE_PALETTE ((Sint32)&ResourceIdBluePalette)
 /* Drawn by the shell shot and Spider Web. */
-extern char ResourceId_SpiderWebSheet;
-#define RESOURCE_SPIDER_WEB_SHEET ((Sint32)&ResourceId_SpiderWebSheet)
+extern char ResourceIdSpiderWebSheet;
+#define RESOURCE_SPIDER_WEB_SHEET ((Sint32)&ResourceIdSpiderWebSheet)
 /* Colours for Atalanta, the blessings' burst showers, the casting impacts, the
    rush bursts, Lucky Wheels, the shell shot, the Djinn openings, Spider Web,
    the streak volleys, the status motes and the monster strikes. */
-extern char ResourceId_LimePalette;
-#define RESOURCE_LIME_PALETTE ((Sint32)&ResourceId_LimePalette)
+extern char ResourceIdLimePalette;
+#define RESOURCE_LIME_PALETTE ((Sint32)&ResourceIdLimePalette)
 /* Colours for the shell shot and the streak volleys. */
-extern char ResourceId_GreenPalette;
-#define RESOURCE_GREEN_PALETTE ((Sint32)&ResourceId_GreenPalette)
+extern char ResourceIdGreenPalette;
+#define RESOURCE_GREEN_PALETTE ((Sint32)&ResourceIdGreenPalette)
 /* Drawn by the blessings' burst showers, Hail, Neptune, Nereid, the particle
    streams, the Djinn openings and Whorl. */
-extern char ResourceId_WaterSpraySheet;
-#define RESOURCE_WATER_SPRAY_SHEET ((Sint32)&ResourceId_WaterSpraySheet)
+extern char ResourceIdWaterSpraySheet;
+#define RESOURCE_WATER_SPRAY_SHEET ((Sint32)&ResourceIdWaterSpraySheet)
 /* Drawn by Nereid, the particle streams, Ragnarok, Undead Sword and Volcano. */
-extern char ResourceId_FirePillarSheetA;
-#define RESOURCE_FIRE_PILLAR_SHEET_A ((Sint32)&ResourceId_FirePillarSheetA)
+extern char ResourceIdFirePillarSheetA;
+#define RESOURCE_FIRE_PILLAR_SHEET_A ((Sint32)&ResourceIdFirePillarSheetA)
 /* Drawn by the casting impacts, Helm Splitter and Planet Diver. */
-extern char ResourceId_SkullSheet;
-#define RESOURCE_SKULL_SHEET ((Sint32)&ResourceId_SkullSheet)
+extern char ResourceIdSkullSheet;
+#define RESOURCE_SKULL_SHEET ((Sint32)&ResourceIdSkullSheet)
 /* Drawn by the casting impacts, the glowing lunge, Judgment, the shell shot,
    Nirvana, the orbiting skulls, stars and target bursts, Planet Diver, Raging
    Heat, the stat changes and the status motes. */
-extern char ResourceId_PinkBurstSheet;
-#define RESOURCE_PINK_BURST_SHEET ((Sint32)&ResourceId_PinkBurstSheet)
+extern char ResourceIdPinkBurstSheet;
+#define RESOURCE_PINK_BURST_SHEET ((Sint32)&ResourceIdPinkBurstSheet)
 /* Drawn by Planet Diver. */
-extern char ResourceId_SpiralSheet;
-#define RESOURCE_SPIRAL_SHEET ((Sint32)&ResourceId_SpiralSheet)
-extern char ResourceId_MemberBurstImage;
-#define RESOURCE_MEMBER_BURST_IMAGE ((Sint32)&ResourceId_MemberBurstImage)
+extern char ResourceIdSpiralSheet;
+#define RESOURCE_SPIRAL_SHEET ((Sint32)&ResourceIdSpiralSheet)
+extern char ResourceIdMemberBurstImage;
+#define RESOURCE_MEMBER_BURST_IMAGE ((Sint32)&ResourceIdMemberBurstImage)
 /* Drawn by Plasma and Thor. */
-extern char ResourceId_LightningPillarSheet;
+extern char ResourceIdLightningPillarSheet;
 #define RESOURCE_LIGHTNING_PILLAR_SHEET \
-	((Sint32)&ResourceId_LightningPillarSheet)
+	((Sint32)&ResourceIdLightningPillarSheet)
 /* Colours for Plasma. */
-extern char ResourceId_VioletPaletteB;
-#define RESOURCE_VIOLET_PALETTE_B ((Sint32)&ResourceId_VioletPaletteB)
+extern char ResourceIdVioletPaletteB;
+#define RESOURCE_VIOLET_PALETTE_B ((Sint32)&ResourceIdVioletPaletteB)
 /* Drawn by the blessings' burst showers, the casting impacts, Nirvana, Prism
    and Spire. */
-extern char ResourceId_BoulderSheet;
-#define RESOURCE_BOULDER_SHEET ((Sint32)&ResourceId_BoulderSheet)
+extern char ResourceIdBoulderSheet;
+#define RESOURCE_BOULDER_SHEET ((Sint32)&ResourceIdBoulderSheet)
 /* Drawn by Procne. */
-extern char ResourceId_WhirlwindSheet;
-#define RESOURCE_WHIRLWIND_SHEET ((Sint32)&ResourceId_WhirlwindSheet)
+extern char ResourceIdWhirlwindSheet;
+#define RESOURCE_WHIRLWIND_SHEET ((Sint32)&ResourceIdWhirlwindSheet)
 /* Drawn by Procne. */
-extern char ResourceId_VioletCometSheet;
-#define RESOURCE_VIOLET_COMET_SHEET ((Sint32)&ResourceId_VioletCometSheet)
+extern char ResourceIdVioletCometSheet;
+#define RESOURCE_VIOLET_COMET_SHEET ((Sint32)&ResourceIdVioletCometSheet)
 /* Drawn by Bolt, the casting impacts, Catastrophe, Gasp, the particle streams,
    Plasma, Procne, Ragnarok, Ray, the monster strikes and Thunder Mine. */
-extern char ResourceId_LightningBoltSheet;
-#define RESOURCE_LIGHTNING_BOLT_SHEET ((Sint32)&ResourceId_LightningBoltSheet)
+extern char ResourceIdLightningBoltSheet;
+#define RESOURCE_LIGHTNING_BOLT_SHEET ((Sint32)&ResourceIdLightningBoltSheet)
 /* Drawn by the streak volleys. */
-extern char ResourceId_FlameArcSheet;
-#define RESOURCE_FLAME_ARC_SHEET ((Sint32)&ResourceId_FlameArcSheet)
+extern char ResourceIdFlameArcSheet;
+#define RESOURCE_FLAME_ARC_SHEET ((Sint32)&ResourceIdFlameArcSheet)
 /* Colours for the casting impacts, the streak volleys and Volcano. */
-extern char ResourceId_RedPaletteB;
-#define RESOURCE_RED_PALETTE_B ((Sint32)&ResourceId_RedPaletteB)
+extern char ResourceIdRedPaletteB;
+#define RESOURCE_RED_PALETTE_B ((Sint32)&ResourceIdRedPaletteB)
 /* Colours for the blessings' burst showers, the casting impacts, Flora, the
    healing motes, Heavy Divide, the streak volleys, the status motes and Undead
    Sword. */
-extern char ResourceId_CyanPalette;
-#define RESOURCE_CYAN_PALETTE ((Sint32)&ResourceId_CyanPalette)
+extern char ResourceIdCyanPalette;
+#define RESOURCE_CYAN_PALETTE ((Sint32)&ResourceIdCyanPalette)
 /* Colours for Gaia and the streak volleys. */
-extern char ResourceId_OrangePaletteA;
-#define RESOURCE_ORANGE_PALETTE_A ((Sint32)&ResourceId_OrangePaletteA)
+extern char ResourceIdOrangePaletteA;
+#define RESOURCE_ORANGE_PALETTE_A ((Sint32)&ResourceIdOrangePaletteA)
 /* Drawn by the blessings' burst showers, the casting impacts, Crystal, Cybele,
    Drain, Eruption, Gasp, the glowing lunge, the healing motes, Heavy Divide,
    Nirvana, the particle streams, the Djinn openings, Ragnarok, Ramses, the
    status motes, Thor, Undead Sword and Vengeance. */
-extern char ResourceId_BlastSheet;
-#define RESOURCE_BLAST_SHEET ((Sint32)&ResourceId_BlastSheet)
+extern char ResourceIdBlastSheet;
+#define RESOURCE_BLAST_SHEET ((Sint32)&ResourceIdBlastSheet)
 /* Drawn by the one-Djinni summons, the charge of Core and Cannon, the stat
    changes and the status motes. */
-extern char ResourceId_GlowOrbSheet;
-#define RESOURCE_GLOW_ORB_SHEET ((Sint32)&ResourceId_GlowOrbSheet)
+extern char ResourceIdGlowOrbSheet;
+#define RESOURCE_GLOW_ORB_SHEET ((Sint32)&ResourceIdGlowOrbSheet)
 /* Drawn by the blessings' burst showers and the status motes. */
-extern char ResourceId_HeartSheet;
-#define RESOURCE_HEART_SHEET ((Sint32)&ResourceId_HeartSheet)
+extern char ResourceIdHeartSheet;
+#define RESOURCE_HEART_SHEET ((Sint32)&ResourceIdHeartSheet)
 /* Drawn by the status motes. */
-extern char ResourceId_FlameColumnSheet;
-#define RESOURCE_FLAME_COLUMN_SHEET ((Sint32)&ResourceId_FlameColumnSheet)
+extern char ResourceIdFlameColumnSheet;
+#define RESOURCE_FLAME_COLUMN_SHEET ((Sint32)&ResourceIdFlameColumnSheet)
 /* Drawn by the casting impacts, the one-Djinni summons, Gasp, Hail, the healing
    motes, the Djinn openings, the status motes and Undead Sword. */
-extern char ResourceId_MercuryDjinnSmallSheet;
+extern char ResourceIdMercuryDjinnSmallSheet;
 #define RESOURCE_MERCURY_DJINN_SMALL_SHEET \
-	((Sint32)&ResourceId_MercuryDjinnSmallSheet)
+	((Sint32)&ResourceIdMercuryDjinnSmallSheet)
 /* Drawn by Bolt, the blessings' burst showers, the canvas layer, the casting
    impacts, Catastrophe, the rush bursts, Judgment, the Djinn openings, the
    status motes, the monster strikes, Thor, Thunder Mine, Trident and Froth and
    Whirlwind. */
-extern char ResourceId_TornadoSheet;
-#define RESOURCE_TORNADO_SHEET ((Sint32)&ResourceId_TornadoSheet)
+extern char ResourceIdTornadoSheet;
+#define RESOURCE_TORNADO_SHEET ((Sint32)&ResourceIdTornadoSheet)
 /* Drawn by the effect position helpers and the monster strikes. */
-extern char ResourceId_BeamImage;
-#define RESOURCE_BEAM_IMAGE ((Sint32)&ResourceId_BeamImage)
+extern char ResourceIdBeamImage;
+#define RESOURCE_BEAM_IMAGE ((Sint32)&ResourceIdBeamImage)
 /* Drawn by the casting impacts and the monster strikes. */
-extern char ResourceId_BlueDropletSheet;
-#define RESOURCE_BLUE_DROPLET_SHEET ((Sint32)&ResourceId_BlueDropletSheet)
+extern char ResourceIdBlueDropletSheet;
+#define RESOURCE_BLUE_DROPLET_SHEET ((Sint32)&ResourceIdBlueDropletSheet)
 /* Colours for the blessings' burst showers and the monster strikes. */
-extern char ResourceId_PinkPalette;
-#define RESOURCE_PINK_PALETTE ((Sint32)&ResourceId_PinkPalette)
+extern char ResourceIdPinkPalette;
+#define RESOURCE_PINK_PALETTE ((Sint32)&ResourceIdPinkPalette)
 /* Drawn by the status motes and the vortices of Froth and Whirlwind. */
-extern char ResourceId_VortexSheet;
-#define RESOURCE_VORTEX_SHEET ((Sint32)&ResourceId_VortexSheet)
+extern char ResourceIdVortexSheet;
+#define RESOURCE_VORTEX_SHEET ((Sint32)&ResourceIdVortexSheet)
 /* Drawn by Annihilation, the casting impacts and Eruption. */
-extern char ResourceId_FireStreakSheet;
-#define RESOURCE_FIRE_STREAK_SHEET ((Sint32)&ResourceId_FireStreakSheet)
+extern char ResourceIdFireStreakSheet;
+#define RESOURCE_FIRE_STREAK_SHEET ((Sint32)&ResourceIdFireStreakSheet)
 /* Drawn by the casting impacts, the one-Djinni summons, Gasp, the healing
    motes, the Djinn openings, Undead Sword and Whorl. */
-extern char ResourceId_JupiterDjinnSmallSheet;
+extern char ResourceIdJupiterDjinnSmallSheet;
 #define RESOURCE_JUPITER_DJINN_SMALL_SHEET \
-	((Sint32)&ResourceId_JupiterDjinnSmallSheet)
+	((Sint32)&ResourceIdJupiterDjinnSmallSheet)
 /* Drawn by the blessings' burst showers, the casting impacts, Crystal, the
    one-Djinni summons, Gasp, Geode, Hail, the healing motes and the Djinn
    openings. */
-extern char ResourceId_VenusDjinnSmallSheet;
+extern char ResourceIdVenusDjinnSmallSheet;
 #define RESOURCE_VENUS_DJINN_SMALL_SHEET \
-	((Sint32)&ResourceId_VenusDjinnSmallSheet)
+	((Sint32)&ResourceIdVenusDjinnSmallSheet)
 /* Drawn by the casting impacts, Frost, Hail and the Djinn openings. */
-extern char ResourceId_IceChipSheet;
-#define RESOURCE_ICE_CHIP_SHEET ((Sint32)&ResourceId_IceChipSheet)
+extern char ResourceIdIceChipSheet;
+#define RESOURCE_ICE_CHIP_SHEET ((Sint32)&ResourceIdIceChipSheet)
 /* Drawn by Boreas, the blessings' burst showers, the casting impacts, Drain,
    the glowing lunge, the healing motes and the Djinn openings. */
-extern char ResourceId_IceBlockSheet;
-#define RESOURCE_ICE_BLOCK_SHEET ((Sint32)&ResourceId_IceBlockSheet)
+extern char ResourceIdIceBlockSheet;
+#define RESOURCE_ICE_BLOCK_SHEET ((Sint32)&ResourceIdIceBlockSheet)
 /* Drawn by the blessings' burst showers and the casting impacts. */
-extern char ResourceId_RockSpireSheet;
-#define RESOURCE_ROCK_SPIRE_SHEET ((Sint32)&ResourceId_RockSpireSheet)
+extern char ResourceIdRockSpireSheet;
+#define RESOURCE_ROCK_SPIRE_SHEET ((Sint32)&ResourceIdRockSpireSheet)
 /* Drawn by Azul and the stat changes. */
-extern char ResourceId_WispSheet;
-#define RESOURCE_WISP_SHEET ((Sint32)&ResourceId_WispSheet)
+extern char ResourceIdWispSheet;
+#define RESOURCE_WISP_SHEET ((Sint32)&ResourceIdWispSheet)
 /* Drawn by the blessings' burst showers, the casting impacts, the one-Djinni
    summons, the charge of Core and Cannon, Gasp, the healing motes, the effect
    position helpers and the Djinn openings. */
-extern char ResourceId_MarsDjinnSmallSheet;
-#define RESOURCE_MARS_DJINN_SMALL_SHEET \
-	((Sint32)&ResourceId_MarsDjinnSmallSheet)
+extern char ResourceIdMarsDjinnSmallSheet;
+#define RESOURCE_MARS_DJINN_SMALL_SHEET ((Sint32)&ResourceIdMarsDjinnSmallSheet)
 /* Drawn by the Cards and the stat changes. */
-extern char ResourceId_DaggerSheet;
-#define RESOURCE_DAGGER_SHEET ((Sint32)&ResourceId_DaggerSheet)
+extern char ResourceIdDaggerSheet;
+#define RESOURCE_DAGGER_SHEET ((Sint32)&ResourceIdDaggerSheet)
 /* Colours for the Cards and the stat changes. */
-extern char ResourceId_PaletteRampImage;
-#define RESOURCE_PALETTE_RAMP_IMAGE ((Sint32)&ResourceId_PaletteRampImage)
+extern char ResourceIdPaletteRampImage;
+#define RESOURCE_PALETTE_RAMP_IMAGE ((Sint32)&ResourceIdPaletteRampImage)
 /* Drawn by Cybele. */
-extern char ResourceId_ThornVineSheet;
-#define RESOURCE_THORN_VINE_SHEET ((Sint32)&ResourceId_ThornVineSheet)
-extern char ResourceId_YellowRingSheet;
-#define RESOURCE_YELLOW_RING_SHEET ((Sint32)&ResourceId_YellowRingSheet)
+extern char ResourceIdThornVineSheet;
+#define RESOURCE_THORN_VINE_SHEET ((Sint32)&ResourceIdThornVineSheet)
+extern char ResourceIdYellowRingSheet;
+#define RESOURCE_YELLOW_RING_SHEET ((Sint32)&ResourceIdYellowRingSheet)
 /* Drawn by the stat changes. */
-extern char ResourceId_VioletStreakSheet;
-#define RESOURCE_VIOLET_STREAK_SHEET ((Sint32)&ResourceId_VioletStreakSheet)
-extern char ResourceId_ShieldSheet;
-#define RESOURCE_SHIELD_SHEET ((Sint32)&ResourceId_ShieldSheet)
+extern char ResourceIdVioletStreakSheet;
+#define RESOURCE_VIOLET_STREAK_SHEET ((Sint32)&ResourceIdVioletStreakSheet)
+extern char ResourceIdShieldSheet;
+#define RESOURCE_SHIELD_SHEET ((Sint32)&ResourceIdShieldSheet)
 /* Drawn by Quake. */
-extern char ResourceId_RockWallSheet;
-#define RESOURCE_ROCK_WALL_SHEET ((Sint32)&ResourceId_RockWallSheet)
+extern char ResourceIdRockWallSheet;
+#define RESOURCE_ROCK_WALL_SHEET ((Sint32)&ResourceIdRockWallSheet)
 /* Drawn by the blessings' burst showers. */
-extern char ResourceId_VioletLightningSheetA;
+extern char ResourceIdVioletLightningSheetA;
 #define RESOURCE_VIOLET_LIGHTNING_SHEET_A \
-	((Sint32)&ResourceId_VioletLightningSheetA)
-extern char ResourceId_DemonFaceSheet;
-#define RESOURCE_DEMON_FACE_SHEET ((Sint32)&ResourceId_DemonFaceSheet)
+	((Sint32)&ResourceIdVioletLightningSheetA)
+extern char ResourceIdDemonFaceSheet;
+#define RESOURCE_DEMON_FACE_SHEET ((Sint32)&ResourceIdDemonFaceSheet)
 /* Drawn by the orbiting skulls, stars and target bursts. */
-extern char ResourceId_StarDotSheet;
-#define RESOURCE_STAR_DOT_SHEET ((Sint32)&ResourceId_StarDotSheet)
-extern char ResourceId_TargetBurstImage;
-#define RESOURCE_TARGET_BURST_IMAGE ((Sint32)&ResourceId_TargetBurstImage)
+extern char ResourceIdStarDotSheet;
+#define RESOURCE_STAR_DOT_SHEET ((Sint32)&ResourceIdStarDotSheet)
+extern char ResourceIdTargetBurstImage;
+#define RESOURCE_TARGET_BURST_IMAGE ((Sint32)&ResourceIdTargetBurstImage)
 /* Drawn by Atalanta. */
-extern char ResourceId_SlashSheet;
-#define RESOURCE_SLASH_SHEET ((Sint32)&ResourceId_SlashSheet)
+extern char ResourceIdSlashSheet;
+#define RESOURCE_SLASH_SHEET ((Sint32)&ResourceIdSlashSheet)
 /* The path Atalanta's particles follow. */
-extern char ResourceId_AtalantaPath;
-#define RESOURCE_ATALANTA_PATH ((Sint32)&ResourceId_AtalantaPath)
+extern char ResourceIdAtalantaPath;
+#define RESOURCE_ATALANTA_PATH ((Sint32)&ResourceIdAtalantaPath)
 /* Drawn by the growing columns. */
-extern char ResourceId_GreenPillarSheet;
-#define RESOURCE_GREEN_PILLAR_SHEET ((Sint32)&ResourceId_GreenPillarSheet)
+extern char ResourceIdGreenPillarSheet;
+#define RESOURCE_GREEN_PILLAR_SHEET ((Sint32)&ResourceIdGreenPillarSheet)
 /* Drawn by Growth. */
-extern char ResourceId_VineSheet;
-#define RESOURCE_VINE_SHEET ((Sint32)&ResourceId_VineSheet)
+extern char ResourceIdVineSheet;
+#define RESOURCE_VINE_SHEET ((Sint32)&ResourceIdVineSheet)
 /* Drawn by Vine: five 32x32 vine cels. */
-extern char ResourceId_GreenVineSheet;
-#define RESOURCE_GREEN_VINE_SHEET ((Sint32)&ResourceId_GreenVineSheet)
+extern char ResourceIdGreenVineSheet;
+#define RESOURCE_GREEN_VINE_SHEET ((Sint32)&ResourceIdGreenVineSheet)
 /* Drawn by Thorn: the large thorn, the small one and the dust cels after
    them. */
-extern char ResourceId_ThornSheet;
-#define RESOURCE_THORN_SHEET ((Sint32)&ResourceId_ThornSheet)
+extern char ResourceIdThornSheet;
+#define RESOURCE_THORN_SHEET ((Sint32)&ResourceIdThornSheet)
 /* Drawn by the casting impacts, Diamond Berg, the form changes, Geode, the
    leaping strike, Meteor Blow, Plume Edge and Trident. */
-extern char ResourceId_BillowTexture;
-#define RESOURCE_BILLOW_TEXTURE ((Sint32)&ResourceId_BillowTexture)
+extern char ResourceIdBillowTexture;
+#define RESOURCE_BILLOW_TEXTURE ((Sint32)&ResourceIdBillowTexture)
 /* The particle sprites nearly every battle effect loads first, 90 of them, from
    Annihilation to Zagan. */
-extern char ResourceId_YellowGlowSheet;
-#define RESOURCE_YELLOW_GLOW_SHEET ((Sint32)&ResourceId_YellowGlowSheet)
+extern char ResourceIdYellowGlowSheet;
+#define RESOURCE_YELLOW_GLOW_SHEET ((Sint32)&ResourceIdYellowGlowSheet)
 /* Drawn by the Djinni charge and Zagan. */
-extern char ResourceId_PetalSheet;
-#define RESOURCE_PETAL_SHEET ((Sint32)&ResourceId_PetalSheet)
+extern char ResourceIdPetalSheet;
+#define RESOURCE_PETAL_SHEET ((Sint32)&ResourceIdPetalSheet)
 /* Drawn by the breaths, the casting impacts, Diamond Berg, Eclipse, the Gasp
    family, the leaping strike, Meteor Blow, Moloch, Serac, Trident and Zagan. */
-extern char ResourceId_FlameBandTexture;
-#define RESOURCE_FLAME_BAND_TEXTURE ((Sint32)&ResourceId_FlameBandTexture)
-extern char ResourceId_SheepCardSheet; /* directory row 0xe3 */
-#define RESOURCE_SHEEP_CARD_SHEET ((Sint32)&ResourceId_SheepCardSheet)
+extern char ResourceIdFlameBandTexture;
+#define RESOURCE_FLAME_BAND_TEXTURE ((Sint32)&ResourceIdFlameBandTexture)
+extern char ResourceIdSheepCardSheet; /* directory row 0xe3 */
+#define RESOURCE_SHEEP_CARD_SHEET ((Sint32)&ResourceIdSheepCardSheet)
 /* Drawn by the Djinni sign and the target strike. */
-extern char ResourceId_StarCrossSheet;
-#define RESOURCE_STAR_CROSS_SHEET ((Sint32)&ResourceId_StarCrossSheet)
+extern char ResourceIdStarCrossSheet;
+#define RESOURCE_STAR_CROSS_SHEET ((Sint32)&ResourceIdStarCrossSheet)
 /* Drawn by the blade rain and Sabre Dance. */
-extern char ResourceId_CrossedDaggersSheet;
-#define RESOURCE_CROSSED_DAGGERS_SHEET ((Sint32)&ResourceId_CrossedDaggersSheet)
+extern char ResourceIdCrossedDaggersSheet;
+#define RESOURCE_CROSSED_DAGGERS_SHEET ((Sint32)&ResourceIdCrossedDaggersSheet)
 /* Drawn by the burst showers, the casting impacts and the stat boosts. */
-extern char ResourceId_GreyPaletteA;
-#define RESOURCE_GREY_PALETTE_A ((Sint32)&ResourceId_GreyPaletteA)
+extern char ResourceIdGreyPaletteA;
+#define RESOURCE_GREY_PALETTE_A ((Sint32)&ResourceIdGreyPaletteA)
 /* Drawn by Azul, the breaths, the casting impacts, Catastrophe, Charon,
    Coatlicue, Cruel Ruin, Daedalus, Death Plunge, Diamond Berg, Flora, the Gasp
    family, Judgment, Legend, Liquifier, Megiddo, Odyssey, Radiant Fire, Raging
    Heat, the rushing strike and Triple Chomp. */
-extern char ResourceId_FireRingTexture;
-#define RESOURCE_FIRE_RING_TEXTURE ((Sint32)&ResourceId_FireRingTexture)
+extern char ResourceIdFireRingTexture;
+#define RESOURCE_FIRE_RING_TEXTURE ((Sint32)&ResourceIdFireRingTexture)
 /* Drawn by the breaths, Cruel Ruin, Daedalus's second strike, Eclipse, the form
    changes, the Gasp family, Light Surge, Liquifier and Megiddo. */
-extern char ResourceId_GlowBandTextureA;
-#define RESOURCE_GLOW_BAND_TEXTURE_A ((Sint32)&ResourceId_GlowBandTextureA)
+extern char ResourceIdGlowBandTextureA;
+#define RESOURCE_GLOW_BAND_TEXTURE_A ((Sint32)&ResourceIdGlowBandTextureA)
 /* Drawn by the bolt trail and the drain motes. */
-extern char ResourceId_VioletPaletteC;
-#define RESOURCE_VIOLET_PALETTE_C ((Sint32)&ResourceId_VioletPaletteC)
+extern char ResourceIdVioletPaletteC;
+#define RESOURCE_VIOLET_PALETTE_C ((Sint32)&ResourceIdVioletPaletteC)
 /* Drawn by the burst showers and the Gasp family. */
-extern char ResourceId_MusicNoteSheet;
-#define RESOURCE_MUSIC_NOTE_SHEET ((Sint32)&ResourceId_MusicNoteSheet)
+extern char ResourceIdMusicNoteSheet;
+#define RESOURCE_MUSIC_NOTE_SHEET ((Sint32)&ResourceIdMusicNoteSheet)
 /* Drawn by Liquifier. */
-extern char ResourceId_FlameWallTexture;
-#define RESOURCE_FLAME_WALL_TEXTURE ((Sint32)&ResourceId_FlameWallTexture)
+extern char ResourceIdFlameWallTexture;
+#define RESOURCE_FLAME_WALL_TEXTURE ((Sint32)&ResourceIdFlameWallTexture)
 /* Drawn by Atalanta. */
-extern char ResourceId_LeafWarriorTiles;
-#define RESOURCE_LEAF_WARRIOR_TILES ((Sint32)&ResourceId_LeafWarriorTiles)
+extern char ResourceIdLeafWarriorTiles;
+#define RESOURCE_LEAF_WARRIOR_TILES ((Sint32)&ResourceIdLeafWarriorTiles)
 /* Drawn by the form changes. */
-extern char ResourceId_OrangePaletteC;
-#define RESOURCE_ORANGE_PALETTE_C ((Sint32)&ResourceId_OrangePaletteC)
-extern char ResourceId_CometTexture; /* directory row 0xd0 */
-#define RESOURCE_COMET_TEXTURE ((Sint32)&ResourceId_CometTexture)
-extern char ResourceId_FeatherSheet; /* directory row 0xd1 */
-#define RESOURCE_FEATHER_SHEET ((Sint32)&ResourceId_FeatherSheet)
+extern char ResourceIdOrangePaletteC;
+#define RESOURCE_ORANGE_PALETTE_C ((Sint32)&ResourceIdOrangePaletteC)
+extern char ResourceIdCometTexture; /* directory row 0xd0 */
+#define RESOURCE_COMET_TEXTURE ((Sint32)&ResourceIdCometTexture)
+extern char ResourceIdFeatherSheet; /* directory row 0xd1 */
+#define RESOURCE_FEATHER_SHEET ((Sint32)&ResourceIdFeatherSheet)
 /* Drawn by Zagan. */
-extern char ResourceId_CrescentRowSheet;
-#define RESOURCE_CRESCENT_ROW_SHEET ((Sint32)&ResourceId_CrescentRowSheet)
+extern char ResourceIdCrescentRowSheet;
+#define RESOURCE_CRESCENT_ROW_SHEET ((Sint32)&ResourceIdCrescentRowSheet)
 /* Drawn by Azul, the casting impacts, Catastrophe, Charon, Cruel Ruin, Eclipse,
    the Gasp family, Haures, the water column and the water sheet. */
-extern char ResourceId_SwirlTexture;
-#define RESOURCE_SWIRL_TEXTURE ((Sint32)&ResourceId_SwirlTexture)
+extern char ResourceIdSwirlTexture;
+#define RESOURCE_SWIRL_TEXTURE ((Sint32)&ResourceIdSwirlTexture)
 /* Drawn by Cruel Ruin and Eclipse. */
-extern char ResourceId_GlowBandTextureB;
-#define RESOURCE_GLOW_BAND_TEXTURE_B ((Sint32)&ResourceId_GlowBandTextureB)
+extern char ResourceIdGlowBandTextureB;
+#define RESOURCE_GLOW_BAND_TEXTURE_B ((Sint32)&ResourceIdGlowBandTextureB)
 /* Drawn by Cruel Ruin. */
-extern char ResourceId_PinkBarSheet;
-#define RESOURCE_PINK_BAR_SHEET ((Sint32)&ResourceId_PinkBarSheet)
+extern char ResourceIdPinkBarSheet;
+#define RESOURCE_PINK_BAR_SHEET ((Sint32)&ResourceIdPinkBarSheet)
 /* Drawn by Azul, Cruel Ruin and Legend. */
-extern char ResourceId_CornerRuneASheet;
-#define RESOURCE_CORNER_RUNE_A_SHEET ((Sint32)&ResourceId_CornerRuneASheet)
+extern char ResourceIdCornerRuneASheet;
+#define RESOURCE_CORNER_RUNE_A_SHEET ((Sint32)&ResourceIdCornerRuneASheet)
 /* Drawn by Cruel Ruin and Daedalus. */
-extern char ResourceId_ForestCanopyTiles;
-#define RESOURCE_FOREST_CANOPY_TILES ((Sint32)&ResourceId_ForestCanopyTiles)
+extern char ResourceIdForestCanopyTiles;
+#define RESOURCE_FOREST_CANOPY_TILES ((Sint32)&ResourceIdForestCanopyTiles)
 /* Drawn by Eclipse. */
-extern char ResourceId_GoldenDragonTiles;
-#define RESOURCE_GOLDEN_DRAGON_TILES ((Sint32)&ResourceId_GoldenDragonTiles)
-extern char ResourceId_GoldenDragonHeadTiles;
+extern char ResourceIdGoldenDragonTiles;
+#define RESOURCE_GOLDEN_DRAGON_TILES ((Sint32)&ResourceIdGoldenDragonTiles)
+extern char ResourceIdGoldenDragonHeadTiles;
 #define RESOURCE_GOLDEN_DRAGON_HEAD_TILES \
-	((Sint32)&ResourceId_GoldenDragonHeadTiles)
+	((Sint32)&ResourceIdGoldenDragonHeadTiles)
 /* Drawn by the Djinni charge, Eclipse, Megiddo, Meteor Blow, Odyssey and
    Serac. */
-extern char ResourceId_DustBlobSheet;
-#define RESOURCE_DUST_BLOB_SHEET ((Sint32)&ResourceId_DustBlobSheet)
+extern char ResourceIdDustBlobSheet;
+#define RESOURCE_DUST_BLOB_SHEET ((Sint32)&ResourceIdDustBlobSheet)
 /* Drawn by the projectile volleys. */
-extern char ResourceId_CometSheetA;
-#define RESOURCE_COMET_SHEET_A ((Sint32)&ResourceId_CometSheetA)
+extern char ResourceIdCometSheetA;
+#define RESOURCE_COMET_SHEET_A ((Sint32)&ResourceIdCometSheetA)
 /* Drawn by the projectile volleys and Void Beam. */
-extern char ResourceId_CometSheetB;
-#define RESOURCE_COMET_SHEET_B ((Sint32)&ResourceId_CometSheetB)
+extern char ResourceIdCometSheetB;
+#define RESOURCE_COMET_SHEET_B ((Sint32)&ResourceIdCometSheetB)
 /* Drawn by the projectile volleys. */
-extern char ResourceId_CometSheetC;
-#define RESOURCE_COMET_SHEET_C ((Sint32)&ResourceId_CometSheetC)
-extern char ResourceId_WindStreakSheet;
-#define RESOURCE_WIND_STREAK_SHEET ((Sint32)&ResourceId_WindStreakSheet)
-extern char ResourceId_ShortStreakPicture;
-#define RESOURCE_SHORT_STREAK_PICTURE ((Sint32)&ResourceId_ShortStreakPicture)
-extern char ResourceId_ShurikenSheet;
-#define RESOURCE_SHURIKEN_SHEET ((Sint32)&ResourceId_ShurikenSheet)
-extern char ResourceId_ProjectileVolleyImage;
+extern char ResourceIdCometSheetC;
+#define RESOURCE_COMET_SHEET_C ((Sint32)&ResourceIdCometSheetC)
+extern char ResourceIdWindStreakSheet;
+#define RESOURCE_WIND_STREAK_SHEET ((Sint32)&ResourceIdWindStreakSheet)
+extern char ResourceIdShortStreakPicture;
+#define RESOURCE_SHORT_STREAK_PICTURE ((Sint32)&ResourceIdShortStreakPicture)
+extern char ResourceIdShurikenSheet;
+#define RESOURCE_SHURIKEN_SHEET ((Sint32)&ResourceIdShurikenSheet)
+extern char ResourceIdProjectileVolleyImage;
 #define RESOURCE_PROJECTILE_VOLLEY_IMAGE \
-	((Sint32)&ResourceId_ProjectileVolleyImage)
-extern char ResourceId_YellowSparkSheet;
-#define RESOURCE_YELLOW_SPARK_SHEET ((Sint32)&ResourceId_YellowSparkSheet)
+	((Sint32)&ResourceIdProjectileVolleyImage)
+extern char ResourceIdYellowSparkSheet;
+#define RESOURCE_YELLOW_SPARK_SHEET ((Sint32)&ResourceIdYellowSparkSheet)
 /* Drawn by the casting impacts, the mirrored wall and the projectile
    volleys. */
-extern char ResourceId_FireballSheet;
-#define RESOURCE_FIREBALL_SHEET ((Sint32)&ResourceId_FireballSheet)
+extern char ResourceIdFireballSheet;
+#define RESOURCE_FIREBALL_SHEET ((Sint32)&ResourceIdFireballSheet)
 /* Drawn by Jupiter and the leaping strike. */
-extern char ResourceId_FlameballSheet;
-#define RESOURCE_FLAMEBALL_SHEET ((Sint32)&ResourceId_FlameballSheet)
+extern char ResourceIdFlameballSheet;
+#define RESOURCE_FLAMEBALL_SHEET ((Sint32)&ResourceIdFlameballSheet)
 /* Drawn by Ground. */
-extern char ResourceId_PortalSheet;
-#define RESOURCE_PORTAL_SHEET ((Sint32)&ResourceId_PortalSheet)
+extern char ResourceIdPortalSheet;
+#define RESOURCE_PORTAL_SHEET ((Sint32)&ResourceIdPortalSheet)
 /* Drawn by Thor. */
-extern char ResourceId_PaleBlueGlowSheet;
-#define RESOURCE_PALE_BLUE_GLOW_SHEET ((Sint32)&ResourceId_PaleBlueGlowSheet)
-extern char ResourceId_LightFanSheet;
-#define RESOURCE_LIGHT_FAN_SHEET ((Sint32)&ResourceId_LightFanSheet)
-extern char ResourceId_BlueTallGlowSheet;
-#define RESOURCE_BLUE_TALL_GLOW_SHEET ((Sint32)&ResourceId_BlueTallGlowSheet)
-extern char ResourceId_VioletLightningSheetB;
+extern char ResourceIdPaleBlueGlowSheet;
+#define RESOURCE_PALE_BLUE_GLOW_SHEET ((Sint32)&ResourceIdPaleBlueGlowSheet)
+extern char ResourceIdLightFanSheet;
+#define RESOURCE_LIGHT_FAN_SHEET ((Sint32)&ResourceIdLightFanSheet)
+extern char ResourceIdBlueTallGlowSheet;
+#define RESOURCE_BLUE_TALL_GLOW_SHEET ((Sint32)&ResourceIdBlueTallGlowSheet)
+extern char ResourceIdVioletLightningSheetB;
 #define RESOURCE_VIOLET_LIGHTNING_SHEET_B \
-	((Sint32)&ResourceId_VioletLightningSheetB)
-extern char ResourceId_VioletMoteSheet;
-#define RESOURCE_VIOLET_MOTE_SHEET ((Sint32)&ResourceId_VioletMoteSheet)
+	((Sint32)&ResourceIdVioletLightningSheetB)
+extern char ResourceIdVioletMoteSheet;
+#define RESOURCE_VIOLET_MOTE_SHEET ((Sint32)&ResourceIdVioletMoteSheet)
 /* Drawn by the attack slashes, the casting impacts, the flurry and Ulysses. */
-extern char ResourceId_YellowOrbSheet;
-#define RESOURCE_YELLOW_ORB_SHEET ((Sint32)&ResourceId_YellowOrbSheet)
+extern char ResourceIdYellowOrbSheet;
+#define RESOURCE_YELLOW_ORB_SHEET ((Sint32)&ResourceIdYellowOrbSheet)
 /* Drawn by the attack slashes and the flurry. */
-extern char ResourceId_BlueArcSheetA;
-#define RESOURCE_BLUE_ARC_SHEET_A ((Sint32)&ResourceId_BlueArcSheetA)
+extern char ResourceIdBlueArcSheetA;
+#define RESOURCE_BLUE_ARC_SHEET_A ((Sint32)&ResourceIdBlueArcSheetA)
 /* Drawn by the attack slashes, the flurry and Haures. */
-extern char ResourceId_BlueArcSheetB;
-#define RESOURCE_BLUE_ARC_SHEET_B ((Sint32)&ResourceId_BlueArcSheetB)
+extern char ResourceIdBlueArcSheetB;
+#define RESOURCE_BLUE_ARC_SHEET_B ((Sint32)&ResourceIdBlueArcSheetB)
 /* Drawn by the attack slashes and the flurry. */
-extern char ResourceId_WaveSheet;
-#define RESOURCE_WAVE_SHEET ((Sint32)&ResourceId_WaveSheet)
+extern char ResourceIdWaveSheet;
+#define RESOURCE_WAVE_SHEET ((Sint32)&ResourceIdWaveSheet)
 /* Drawn by Ulysses. */
-extern char ResourceId_UlyssesSilhouette;
-#define RESOURCE_ULYSSES_SILHOUETTE ((Sint32)&ResourceId_UlyssesSilhouette)
-extern char ResourceId_FlutteringFlakeSheet;
+extern char ResourceIdUlyssesSilhouette;
+#define RESOURCE_ULYSSES_SILHOUETTE ((Sint32)&ResourceIdUlyssesSilhouette)
+extern char ResourceIdFlutteringFlakeSheet;
 #define RESOURCE_FLUTTERING_FLAKE_SHEET \
-	((Sint32)&ResourceId_FlutteringFlakeSheet)
-extern char ResourceId_RuneCircleSheet;
-#define RESOURCE_RUNE_CIRCLE_SHEET ((Sint32)&ResourceId_RuneCircleSheet)
-extern char ResourceId_FadingCrescentSheet;
-#define RESOURCE_FADING_CRESCENT_SHEET ((Sint32)&ResourceId_FadingCrescentSheet)
+	((Sint32)&ResourceIdFlutteringFlakeSheet)
+extern char ResourceIdRuneCircleSheet;
+#define RESOURCE_RUNE_CIRCLE_SHEET ((Sint32)&ResourceIdRuneCircleSheet)
+extern char ResourceIdFadingCrescentSheet;
+#define RESOURCE_FADING_CRESCENT_SHEET ((Sint32)&ResourceIdFadingCrescentSheet)
 /* Drawn by the swirl swipe. */
-extern char ResourceId_MagentaSwirlSheet;
-#define RESOURCE_MAGENTA_SWIRL_SHEET ((Sint32)&ResourceId_MagentaSwirlSheet)
-extern char ResourceId_MagentaTailSheet;
-#define RESOURCE_MAGENTA_TAIL_SHEET ((Sint32)&ResourceId_MagentaTailSheet)
+extern char ResourceIdMagentaSwirlSheet;
+#define RESOURCE_MAGENTA_SWIRL_SHEET ((Sint32)&ResourceIdMagentaSwirlSheet)
+extern char ResourceIdMagentaTailSheet;
+#define RESOURCE_MAGENTA_TAIL_SHEET ((Sint32)&ResourceIdMagentaTailSheet)
 /* Drawn by the attack slashes, the crescent slash and the critical hits. */
-extern char ResourceId_StarCrescentSheet;
-#define RESOURCE_STAR_CRESCENT_SHEET ((Sint32)&ResourceId_StarCrescentSheet)
+extern char ResourceIdStarCrescentSheet;
+#define RESOURCE_STAR_CRESCENT_SHEET ((Sint32)&ResourceIdStarCrescentSheet)
 /* Drawn by the crescent slash and the critical hits. */
-extern char ResourceId_GreyCrescentSheet;
-#define RESOURCE_GREY_CRESCENT_SHEET ((Sint32)&ResourceId_GreyCrescentSheet)
+extern char ResourceIdGreyCrescentSheet;
+#define RESOURCE_GREY_CRESCENT_SHEET ((Sint32)&ResourceIdGreyCrescentSheet)
 /* Drawn by the casting impacts. */
-extern char ResourceId_ImpFaceSheet;
-#define RESOURCE_IMP_FACE_SHEET ((Sint32)&ResourceId_ImpFaceSheet)
-extern char ResourceId_ApocalypseSheet;
-#define RESOURCE_APOCALYPSE_SHEET ((Sint32)&ResourceId_ApocalypseSheet)
-extern char ResourceId_BoulderPicture;
-#define RESOURCE_BOULDER_PICTURE ((Sint32)&ResourceId_BoulderPicture)
-extern char ResourceId_SarcophagusSheet;
-#define RESOURCE_SARCOPHAGUS_SHEET ((Sint32)&ResourceId_SarcophagusSheet)
-extern char ResourceId_RaidensWrathSheet;
-#define RESOURCE_RAIDENS_WRATH_SHEET ((Sint32)&ResourceId_RaidensWrathSheet)
-extern char ResourceId_CloudPuffSheet;
-#define RESOURCE_CLOUD_PUFF_SHEET ((Sint32)&ResourceId_CloudPuffSheet)
-extern char ResourceId_FlameSheetA;
-#define RESOURCE_FLAME_SHEET_A ((Sint32)&ResourceId_FlameSheetA)
+extern char ResourceIdImpFaceSheet;
+#define RESOURCE_IMP_FACE_SHEET ((Sint32)&ResourceIdImpFaceSheet)
+extern char ResourceIdApocalypseSheet;
+#define RESOURCE_APOCALYPSE_SHEET ((Sint32)&ResourceIdApocalypseSheet)
+extern char ResourceIdBoulderPicture;
+#define RESOURCE_BOULDER_PICTURE ((Sint32)&ResourceIdBoulderPicture)
+extern char ResourceIdSarcophagusSheet;
+#define RESOURCE_SARCOPHAGUS_SHEET ((Sint32)&ResourceIdSarcophagusSheet)
+extern char ResourceIdRaidensWrathSheet;
+#define RESOURCE_RAIDENS_WRATH_SHEET ((Sint32)&ResourceIdRaidensWrathSheet)
+extern char ResourceIdCloudPuffSheet;
+#define RESOURCE_CLOUD_PUFF_SHEET ((Sint32)&ResourceIdCloudPuffSheet)
+extern char ResourceIdFlameSheetA;
+#define RESOURCE_FLAME_SHEET_A ((Sint32)&ResourceIdFlameSheetA)
 /* Drawn by the casting impacts, Flora, Megaera and the wind funnel. */
-extern char ResourceId_TanPalette;
-#define RESOURCE_TAN_PALETTE ((Sint32)&ResourceId_TanPalette)
+extern char ResourceIdTanPalette;
+#define RESOURCE_TAN_PALETTE ((Sint32)&ResourceIdTanPalette)
 /* Drawn by the casting impacts. */
-extern char ResourceId_VioletPaletteG;
-#define RESOURCE_VIOLET_PALETTE_G ((Sint32)&ResourceId_VioletPaletteG)
-extern char ResourceId_BlueBeastSheet;
-#define RESOURCE_BLUE_BEAST_SHEET ((Sint32)&ResourceId_BlueBeastSheet)
-extern char ResourceId_RedCrescentSheetB;
-#define RESOURCE_RED_CRESCENT_SHEET_B ((Sint32)&ResourceId_RedCrescentSheetB)
+extern char ResourceIdVioletPaletteG;
+#define RESOURCE_VIOLET_PALETTE_G ((Sint32)&ResourceIdVioletPaletteG)
+extern char ResourceIdBlueBeastSheet;
+#define RESOURCE_BLUE_BEAST_SHEET ((Sint32)&ResourceIdBlueBeastSheet)
+extern char ResourceIdRedCrescentSheetB;
+#define RESOURCE_RED_CRESCENT_SHEET_B ((Sint32)&ResourceIdRedCrescentSheetB)
 /* Drawn by the impact burst. */
-extern char ResourceId_FlareSheet;
-#define RESOURCE_FLARE_SHEET ((Sint32)&ResourceId_FlareSheet)
-extern char ResourceId_FlareImage;
-#define RESOURCE_FLARE_IMAGE ((Sint32)&ResourceId_FlareImage)
+extern char ResourceIdFlareSheet;
+#define RESOURCE_FLARE_SHEET ((Sint32)&ResourceIdFlareSheet)
+extern char ResourceIdFlareImage;
+#define RESOURCE_FLARE_IMAGE ((Sint32)&ResourceIdFlareImage)
 /* Drawn by the particle streams. */
-extern char ResourceId_FlameSheetB;
-#define RESOURCE_FLAME_SHEET_B ((Sint32)&ResourceId_FlameSheetB)
+extern char ResourceIdFlameSheetB;
+#define RESOURCE_FLAME_SHEET_B ((Sint32)&ResourceIdFlameSheetB)
 /* Drawn by Annihilation. */
-extern char ResourceId_FireBurstSheet;
-#define RESOURCE_FIRE_BURST_SHEET ((Sint32)&ResourceId_FireBurstSheet)
+extern char ResourceIdFireBurstSheet;
+#define RESOURCE_FIRE_BURST_SHEET ((Sint32)&ResourceIdFireBurstSheet)
 /* Drawn by Ragnarok. */
-extern char ResourceId_FlameBladeSheet;
-#define RESOURCE_FLAME_BLADE_SHEET ((Sint32)&ResourceId_FlameBladeSheet)
+extern char ResourceIdFlameBladeSheet;
+#define RESOURCE_FLAME_BLADE_SHEET ((Sint32)&ResourceIdFlameBladeSheet)
 /* Drawn by the falling sword. */
-extern char ResourceId_SwordSheet;
-#define RESOURCE_SWORD_SHEET ((Sint32)&ResourceId_SwordSheet)
+extern char ResourceIdSwordSheet;
+#define RESOURCE_SWORD_SHEET ((Sint32)&ResourceIdSwordSheet)
 /* Drawn by Judgment. */
-extern char ResourceId_WingedKnightATiles;
-#define RESOURCE_WINGED_KNIGHT_A_TILES ((Sint32)&ResourceId_WingedKnightATiles)
-extern char ResourceId_WingedKnightBTiles;
-#define RESOURCE_WINGED_KNIGHT_B_TILES ((Sint32)&ResourceId_WingedKnightBTiles)
-extern char ResourceId_WingedKnightCTiles;
-#define RESOURCE_WINGED_KNIGHT_C_TILES ((Sint32)&ResourceId_WingedKnightCTiles)
+extern char ResourceIdWingedKnightATiles;
+#define RESOURCE_WINGED_KNIGHT_A_TILES ((Sint32)&ResourceIdWingedKnightATiles)
+extern char ResourceIdWingedKnightBTiles;
+#define RESOURCE_WINGED_KNIGHT_B_TILES ((Sint32)&ResourceIdWingedKnightBTiles)
+extern char ResourceIdWingedKnightCTiles;
+#define RESOURCE_WINGED_KNIGHT_C_TILES ((Sint32)&ResourceIdWingedKnightCTiles)
 /* Drawn by Judgment and Star Mine. */
-extern char ResourceId_BlueCrescentSheet;
-#define RESOURCE_BLUE_CRESCENT_SHEET ((Sint32)&ResourceId_BlueCrescentSheet)
+extern char ResourceIdBlueCrescentSheet;
+#define RESOURCE_BLUE_CRESCENT_SHEET ((Sint32)&ResourceIdBlueCrescentSheet)
 /* Drawn by Judgment. */
-extern char ResourceId_ExplosionSheet;
-#define RESOURCE_EXPLOSION_SHEET ((Sint32)&ResourceId_ExplosionSheet)
-extern char ResourceId_JudgmentFlashSheet;
-#define RESOURCE_JUDGMENT_FLASH_SHEET ((Sint32)&ResourceId_JudgmentFlashSheet)
+extern char ResourceIdExplosionSheet;
+#define RESOURCE_EXPLOSION_SHEET ((Sint32)&ResourceIdExplosionSheet)
+extern char ResourceIdJudgmentFlashSheet;
+#define RESOURCE_JUDGMENT_FLASH_SHEET ((Sint32)&ResourceIdJudgmentFlashSheet)
 /* Drawn by Kirin. */
-extern char ResourceId_FireBlobSheet;
-#define RESOURCE_FIRE_BLOB_SHEET ((Sint32)&ResourceId_FireBlobSheet)
+extern char ResourceIdFireBlobSheet;
+#define RESOURCE_FIRE_BLOB_SHEET ((Sint32)&ResourceIdFireBlobSheet)
 /* Drawn by Neptune. */
-extern char ResourceId_SeaSerpentTiles;
-#define RESOURCE_SEA_SERPENT_TILES ((Sint32)&ResourceId_SeaSerpentTiles)
+extern char ResourceIdSeaSerpentTiles;
+#define RESOURCE_SEA_SERPENT_TILES ((Sint32)&ResourceIdSeaSerpentTiles)
 /* Drawn by the flashing strikes. */
-extern char ResourceId_ArcFragmentsSheet;
-#define RESOURCE_ARC_FRAGMENTS_SHEET ((Sint32)&ResourceId_ArcFragmentsSheet)
-extern char ResourceId_VorpalSlashImageA;
-#define RESOURCE_VORPAL_SLASH_IMAGE_A ((Sint32)&ResourceId_VorpalSlashImageA)
-extern char ResourceId_VorpalSlashImageB;
-#define RESOURCE_VORPAL_SLASH_IMAGE_B ((Sint32)&ResourceId_VorpalSlashImageB)
-extern char ResourceId_QuickStrikeImageA;
-#define RESOURCE_QUICK_STRIKE_IMAGE_A ((Sint32)&ResourceId_QuickStrikeImageA)
-extern char ResourceId_QuickStrikeImageB;
-#define RESOURCE_QUICK_STRIKE_IMAGE_B ((Sint32)&ResourceId_QuickStrikeImageB)
-extern char ResourceId_UnusedFlashingStrikeImageA;
+extern char ResourceIdArcFragmentsSheet;
+#define RESOURCE_ARC_FRAGMENTS_SHEET ((Sint32)&ResourceIdArcFragmentsSheet)
+extern char ResourceIdVorpalSlashImageA;
+#define RESOURCE_VORPAL_SLASH_IMAGE_A ((Sint32)&ResourceIdVorpalSlashImageA)
+extern char ResourceIdVorpalSlashImageB;
+#define RESOURCE_VORPAL_SLASH_IMAGE_B ((Sint32)&ResourceIdVorpalSlashImageB)
+extern char ResourceIdQuickStrikeImageA;
+#define RESOURCE_QUICK_STRIKE_IMAGE_A ((Sint32)&ResourceIdQuickStrikeImageA)
+extern char ResourceIdQuickStrikeImageB;
+#define RESOURCE_QUICK_STRIKE_IMAGE_B ((Sint32)&ResourceIdQuickStrikeImageB)
+extern char ResourceIdUnusedFlashingStrikeImageA;
 #define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A \
-	((Sint32)&ResourceId_UnusedFlashingStrikeImageA)
-extern char ResourceId_UnusedFlashingStrikeImageB;
+	((Sint32)&ResourceIdUnusedFlashingStrikeImageA)
+extern char ResourceIdUnusedFlashingStrikeImageB;
 #define RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B \
-	((Sint32)&ResourceId_UnusedFlashingStrikeImageB)
+	((Sint32)&ResourceIdUnusedFlashingStrikeImageB)
 /* Drawn by Soul Shatter and Undead Sword. */
-extern char ResourceId_LimeColumnSheet;
-#define RESOURCE_LIME_COLUMN_SHEET ((Sint32)&ResourceId_LimeColumnSheet)
+extern char ResourceIdLimeColumnSheet;
+#define RESOURCE_LIME_COLUMN_SHEET ((Sint32)&ResourceIdLimeColumnSheet)
 /* Drawn by the water sheet. */
-extern char ResourceId_CrackedTextureSheet;
-#define RESOURCE_CRACKED_TEXTURE_SHEET ((Sint32)&ResourceId_CrackedTextureSheet)
+extern char ResourceIdCrackedTextureSheet;
+#define RESOURCE_CRACKED_TEXTURE_SHEET ((Sint32)&ResourceIdCrackedTextureSheet)
 /* Drawn by Fire Puppet, the water column and the wind funnel. */
-extern char ResourceId_StreakTexture;
-#define RESOURCE_STREAK_TEXTURE ((Sint32)&ResourceId_StreakTexture)
+extern char ResourceIdStreakTexture;
+#define RESOURCE_STREAK_TEXTURE ((Sint32)&ResourceIdStreakTexture)
 /* Drawn by Diamond Berg. */
-extern char ResourceId_CrystalBitmapSheet;
-#define RESOURCE_CRYSTAL_BITMAP_SHEET ((Sint32)&ResourceId_CrystalBitmapSheet)
+extern char ResourceIdCrystalBitmapSheet;
+#define RESOURCE_CRYSTAL_BITMAP_SHEET ((Sint32)&ResourceIdCrystalBitmapSheet)
 /* Drawn by Coatlicue and Crystal. */
-extern char ResourceId_CogTexture;
-#define RESOURCE_COG_TEXTURE ((Sint32)&ResourceId_CogTexture)
+extern char ResourceIdCogTexture;
+#define RESOURCE_COG_TEXTURE ((Sint32)&ResourceIdCogTexture)
 /* Drawn by the Cards and Serac. */
-extern char ResourceId_BlueCloudPuffSheet;
-#define RESOURCE_BLUE_CLOUD_PUFF_SHEET ((Sint32)&ResourceId_BlueCloudPuffSheet)
+extern char ResourceIdBlueCloudPuffSheet;
+#define RESOURCE_BLUE_CLOUD_PUFF_SHEET ((Sint32)&ResourceIdBlueCloudPuffSheet)
 /* Drawn by the heavy blow. */
-extern char ResourceId_GreatSwordSheet;
-#define RESOURCE_GREAT_SWORD_SHEET ((Sint32)&ResourceId_GreatSwordSheet)
-extern char ResourceId_AxeSheet;
-#define RESOURCE_AXE_SHEET ((Sint32)&ResourceId_AxeSheet)
+extern char ResourceIdGreatSwordSheet;
+#define RESOURCE_GREAT_SWORD_SHEET ((Sint32)&ResourceIdGreatSwordSheet)
+extern char ResourceIdAxeSheet;
+#define RESOURCE_AXE_SHEET ((Sint32)&ResourceIdAxeSheet)
 /* Drawn by Cool. */
-extern char ResourceId_CrestSheet;
-#define RESOURCE_CREST_SHEET ((Sint32)&ResourceId_CrestSheet)
+extern char ResourceIdCrestSheet;
+#define RESOURCE_CREST_SHEET ((Sint32)&ResourceIdCrestSheet)
 /* Drawn by the Gasp family and Wyrd Curse. */
-extern char ResourceId_BurningSkullSheet;
-#define RESOURCE_BURNING_SKULL_SHEET ((Sint32)&ResourceId_BurningSkullSheet)
+extern char ResourceIdBurningSkullSheet;
+#define RESOURCE_BURNING_SKULL_SHEET ((Sint32)&ResourceIdBurningSkullSheet)
 /* Drawn by Megaera and Ocean Fist. */
-extern char ResourceId_WhirlBeamSheet;
-#define RESOURCE_WHIRL_BEAM_SHEET ((Sint32)&ResourceId_WhirlBeamSheet)
+extern char ResourceIdWhirlBeamSheet;
+#define RESOURCE_WHIRL_BEAM_SHEET ((Sint32)&ResourceIdWhirlBeamSheet)
 /* Drawn by Light Surge. */
-extern char ResourceId_GlowOrbTexture;
-#define RESOURCE_GLOW_ORB_TEXTURE ((Sint32)&ResourceId_GlowOrbTexture)
+extern char ResourceIdGlowOrbTexture;
+#define RESOURCE_GLOW_ORB_TEXTURE ((Sint32)&ResourceIdGlowOrbTexture)
 /* Drawn by Catastrophe, Death Plunge, the element cards, the Gasp family, Light
    Surge, Trident and Whiplash. */
-extern char ResourceId_VioletPaletteF;
-#define RESOURCE_VIOLET_PALETTE_F ((Sint32)&ResourceId_VioletPaletteF)
+extern char ResourceIdVioletPaletteF;
+#define RESOURCE_VIOLET_PALETTE_F ((Sint32)&ResourceIdVioletPaletteF)
 /* Drawn by the geyser and the water column. */
-extern char ResourceId_EmberTexture;
-#define RESOURCE_EMBER_TEXTURE ((Sint32)&ResourceId_EmberTexture)
+extern char ResourceIdEmberTexture;
+#define RESOURCE_EMBER_TEXTURE ((Sint32)&ResourceIdEmberTexture)
 /* Drawn by the Gasp family. */
-extern char ResourceId_LightBurstSheet;
-#define RESOURCE_LIGHT_BURST_SHEET ((Sint32)&ResourceId_LightBurstSheet)
-extern char ResourceId_CornerGlowSheet;
-#define RESOURCE_CORNER_GLOW_SHEET ((Sint32)&ResourceId_CornerGlowSheet)
+extern char ResourceIdLightBurstSheet;
+#define RESOURCE_LIGHT_BURST_SHEET ((Sint32)&ResourceIdLightBurstSheet)
+extern char ResourceIdCornerGlowSheet;
+#define RESOURCE_CORNER_GLOW_SHEET ((Sint32)&ResourceIdCornerGlowSheet)
 /* Drawn by Catastrophe, Fume, the Gasp family, Haures, Rising Dragon and the
    enemies' Rising Dragon. */
-extern char ResourceId_SmokeBandSheet;
-#define RESOURCE_SMOKE_BAND_SHEET ((Sint32)&ResourceId_SmokeBandSheet)
+extern char ResourceIdSmokeBandSheet;
+#define RESOURCE_SMOKE_BAND_SHEET ((Sint32)&ResourceIdSmokeBandSheet)
 /* Drawn by Charon. */
-extern char ResourceId_CrimsonBeastTiles;
-#define RESOURCE_CRIMSON_BEAST_TILES ((Sint32)&ResourceId_CrimsonBeastTiles)
-extern char ResourceId_RedDomeTiles;
-#define RESOURCE_RED_DOME_TILES ((Sint32)&ResourceId_RedDomeTiles)
-extern char ResourceId_RedOrbTiles;
-#define RESOURCE_RED_ORB_TILES ((Sint32)&ResourceId_RedOrbTiles)
-extern char ResourceId_TumblingShardTiles;
-#define RESOURCE_TUMBLING_SHARD_TILES ((Sint32)&ResourceId_TumblingShardTiles)
-extern char ResourceId_WhiteWispsTiles;
-#define RESOURCE_WHITE_WISPS_TILES ((Sint32)&ResourceId_WhiteWispsTiles)
-extern char ResourceId_RuneSealSheet;
-#define RESOURCE_RUNE_SEAL_SHEET ((Sint32)&ResourceId_RuneSealSheet)
-extern char ResourceId_CharmRingSheet;
-#define RESOURCE_CHARM_RING_SHEET ((Sint32)&ResourceId_CharmRingSheet)
-extern char ResourceId_VioletPaletteE;
-#define RESOURCE_VIOLET_PALETTE_E ((Sint32)&ResourceId_VioletPaletteE)
-extern char ResourceId_BoltSheet;
-#define RESOURCE_BOLT_SHEET ((Sint32)&ResourceId_BoltSheet)
-extern char ResourceId_CurseSealSheet;
-#define RESOURCE_CURSE_SEAL_SHEET ((Sint32)&ResourceId_CurseSealSheet)
-extern char ResourceId_GlowRingTexture;
-#define RESOURCE_GLOW_RING_TEXTURE ((Sint32)&ResourceId_GlowRingTexture)
+extern char ResourceIdCrimsonBeastTiles;
+#define RESOURCE_CRIMSON_BEAST_TILES ((Sint32)&ResourceIdCrimsonBeastTiles)
+extern char ResourceIdRedDomeTiles;
+#define RESOURCE_RED_DOME_TILES ((Sint32)&ResourceIdRedDomeTiles)
+extern char ResourceIdRedOrbTiles;
+#define RESOURCE_RED_ORB_TILES ((Sint32)&ResourceIdRedOrbTiles)
+extern char ResourceIdTumblingShardTiles;
+#define RESOURCE_TUMBLING_SHARD_TILES ((Sint32)&ResourceIdTumblingShardTiles)
+extern char ResourceIdWhiteWispsTiles;
+#define RESOURCE_WHITE_WISPS_TILES ((Sint32)&ResourceIdWhiteWispsTiles)
+extern char ResourceIdRuneSealSheet;
+#define RESOURCE_RUNE_SEAL_SHEET ((Sint32)&ResourceIdRuneSealSheet)
+extern char ResourceIdCharmRingSheet;
+#define RESOURCE_CHARM_RING_SHEET ((Sint32)&ResourceIdCharmRingSheet)
+extern char ResourceIdVioletPaletteE;
+#define RESOURCE_VIOLET_PALETTE_E ((Sint32)&ResourceIdVioletPaletteE)
+extern char ResourceIdBoltSheet;
+#define RESOURCE_BOLT_SHEET ((Sint32)&ResourceIdBoltSheet)
+extern char ResourceIdCurseSealSheet;
+#define RESOURCE_CURSE_SEAL_SHEET ((Sint32)&ResourceIdCurseSealSheet)
+extern char ResourceIdGlowRingTexture;
+#define RESOURCE_GLOW_RING_TEXTURE ((Sint32)&ResourceIdGlowRingTexture)
 /* Drawn by Catastrophe, Fume, the leaping strike, Rising Dragon and the
    enemies' Rising Dragon. */
-extern char ResourceId_ClawSlashSheet;
-#define RESOURCE_CLAW_SLASH_SHEET ((Sint32)&ResourceId_ClawSlashSheet)
+extern char ResourceIdClawSlashSheet;
+#define RESOURCE_CLAW_SLASH_SHEET ((Sint32)&ResourceIdClawSlashSheet)
 /* Drawn by Heartbreak. */
-extern char ResourceId_HeartbreakSheet;
-#define RESOURCE_HEARTBREAK_SHEET ((Sint32)&ResourceId_HeartbreakSheet)
+extern char ResourceIdHeartbreakSheet;
+#define RESOURCE_HEARTBREAK_SHEET ((Sint32)&ResourceIdHeartbreakSheet)
 /* Drawn by Raging Heat. */
-extern char ResourceId_CornerRuneBSheet;
-#define RESOURCE_CORNER_RUNE_B_SHEET ((Sint32)&ResourceId_CornerRuneBSheet)
+extern char ResourceIdCornerRuneBSheet;
+#define RESOURCE_CORNER_RUNE_B_SHEET ((Sint32)&ResourceIdCornerRuneBSheet)
 /* Drawn by Juggle. */
-extern char ResourceId_SmallFlameSheet;
-#define RESOURCE_SMALL_FLAME_SHEET ((Sint32)&ResourceId_SmallFlameSheet)
+extern char ResourceIdSmallFlameSheet;
+#define RESOURCE_SMALL_FLAME_SHEET ((Sint32)&ResourceIdSmallFlameSheet)
 /* Drawn by Flora. */
-extern char ResourceId_GreenHairedMaidenTiles;
+extern char ResourceIdGreenHairedMaidenTiles;
 #define RESOURCE_GREEN_HAIRED_MAIDEN_TILES \
-	((Sint32)&ResourceId_GreenHairedMaidenTiles)
+	((Sint32)&ResourceIdGreenHairedMaidenTiles)
 /* Drawn by Flora and Iris. */
-extern char ResourceId_PinkPetalsTiles;
-#define RESOURCE_PINK_PETALS_TILES ((Sint32)&ResourceId_PinkPetalsTiles)
+extern char ResourceIdPinkPetalsTiles;
+#define RESOURCE_PINK_PETALS_TILES ((Sint32)&ResourceIdPinkPetalsTiles)
 /* Drawn by Backstab and Helm Splitter. */
-extern char ResourceId_PinkStarSheet;
-#define RESOURCE_PINK_STAR_SHEET ((Sint32)&ResourceId_PinkStarSheet)
+extern char ResourceIdPinkStarSheet;
+#define RESOURCE_PINK_STAR_SHEET ((Sint32)&ResourceIdPinkStarSheet)
 /* Drawn by Fire Puppet. */
-extern char ResourceId_GhostSkullTexture;
-#define RESOURCE_GHOST_SKULL_TEXTURE ((Sint32)&ResourceId_GhostSkullTexture)
+extern char ResourceIdGhostSkullTexture;
+#define RESOURCE_GHOST_SKULL_TEXTURE ((Sint32)&ResourceIdGhostSkullTexture)
 /* Drawn by Whiplash. */
-extern char ResourceId_SlashFlameSheet;
-#define RESOURCE_SLASH_FLAME_SHEET ((Sint32)&ResourceId_SlashFlameSheet)
+extern char ResourceIdSlashFlameSheet;
+#define RESOURCE_SLASH_FLAME_SHEET ((Sint32)&ResourceIdSlashFlameSheet)
 /* Drawn by Catastrophe, Megiddo, Odyssey and the enemies' Rising Dragon. */
-extern char ResourceId_RedHazeBackdrop;
-#define RESOURCE_RED_HAZE_BACKDROP ((Sint32)&ResourceId_RedHazeBackdrop)
+extern char ResourceIdRedHazeBackdrop;
+#define RESOURCE_RED_HAZE_BACKDROP ((Sint32)&ResourceIdRedHazeBackdrop)
 /* Drawn by the rushing strike. */
-extern char ResourceId_FlamePlumeSheet;
-#define RESOURCE_FLAME_PLUME_SHEET ((Sint32)&ResourceId_FlamePlumeSheet)
+extern char ResourceIdFlamePlumeSheet;
+#define RESOURCE_FLAME_PLUME_SHEET ((Sint32)&ResourceIdFlamePlumeSheet)
 /* Drawn by Dragon Cloud and the rushing strike. */
-extern char ResourceId_FirePillarSheetB;
-#define RESOURCE_FIRE_PILLAR_SHEET_B ((Sint32)&ResourceId_FirePillarSheetB)
+extern char ResourceIdFirePillarSheetB;
+#define RESOURCE_FIRE_PILLAR_SHEET_B ((Sint32)&ResourceIdFirePillarSheetB)
 /* Drawn by Daedalus. */
-extern char ResourceId_BronzeAutomatonTiles;
+extern char ResourceIdBronzeAutomatonTiles;
 #define RESOURCE_BRONZE_AUTOMATON_TILES \
-	((Sint32)&ResourceId_BronzeAutomatonTiles)
-extern char ResourceId_MissileTiles;
-#define RESOURCE_MISSILE_TILES ((Sint32)&ResourceId_MissileTiles)
-extern char ResourceId_RocketFlameSheet;
-#define RESOURCE_ROCKET_FLAME_SHEET ((Sint32)&ResourceId_RocketFlameSheet)
-extern char ResourceId_BirdFlockSheet;
-#define RESOURCE_BIRD_FLOCK_SHEET ((Sint32)&ResourceId_BirdFlockSheet)
+	((Sint32)&ResourceIdBronzeAutomatonTiles)
+extern char ResourceIdMissileTiles;
+#define RESOURCE_MISSILE_TILES ((Sint32)&ResourceIdMissileTiles)
+extern char ResourceIdRocketFlameSheet;
+#define RESOURCE_ROCKET_FLAME_SHEET ((Sint32)&ResourceIdRocketFlameSheet)
+extern char ResourceIdBirdFlockSheet;
+#define RESOURCE_BIRD_FLOCK_SHEET ((Sint32)&ResourceIdBirdFlockSheet)
 /* Drawn by Vengeance. */
-extern char ResourceId_ArcherSheet;
-#define RESOURCE_ARCHER_SHEET ((Sint32)&ResourceId_ArcherSheet)
+extern char ResourceIdArcherSheet;
+#define RESOURCE_ARCHER_SHEET ((Sint32)&ResourceIdArcherSheet)
 /* Drawn by Life Shear. */
-extern char ResourceId_LifeShearSheet;
-#define RESOURCE_LIFE_SHEAR_SHEET ((Sint32)&ResourceId_LifeShearSheet)
+extern char ResourceIdLifeShearSheet;
+#define RESOURCE_LIFE_SHEAR_SHEET ((Sint32)&ResourceIdLifeShearSheet)
 /* Drawn by the geyser. */
-extern char ResourceId_CrossTextureSheet;
-#define RESOURCE_CROSS_TEXTURE_SHEET ((Sint32)&ResourceId_CrossTextureSheet)
+extern char ResourceIdCrossTextureSheet;
+#define RESOURCE_CROSS_TEXTURE_SHEET ((Sint32)&ResourceIdCrossTextureSheet)
 /* Drawn by the bubble column and Coatlicue. */
-extern char ResourceId_BubbleAnimationSheet;
+extern char ResourceIdBubbleAnimationSheet;
 #define RESOURCE_BUBBLE_ANIMATION_SHEET \
-	((Sint32)&ResourceId_BubbleAnimationSheet)
+	((Sint32)&ResourceIdBubbleAnimationSheet)
 /* Drawn by Coatlicue. */
-extern char ResourceId_CoatlicueTiles;
-#define RESOURCE_COATLICUE_TILES ((Sint32)&ResourceId_CoatlicueTiles)
-extern char ResourceId_ScaleTexture;
-#define RESOURCE_SCALE_TEXTURE ((Sint32)&ResourceId_ScaleTexture)
+extern char ResourceIdCoatlicueTiles;
+#define RESOURCE_COATLICUE_TILES ((Sint32)&ResourceIdCoatlicueTiles)
+extern char ResourceIdScaleTexture;
+#define RESOURCE_SCALE_TEXTURE ((Sint32)&ResourceIdScaleTexture)
 /* Drawn by Catastrophe. */
-extern char ResourceId_ChainedDemonTiles;
-#define RESOURCE_CHAINED_DEMON_TILES ((Sint32)&ResourceId_ChainedDemonTiles)
-extern char ResourceId_TriangleSealTexture;
-#define RESOURCE_TRIANGLE_SEAL_TEXTURE ((Sint32)&ResourceId_TriangleSealTexture)
-extern char ResourceId_PentagonSealTexture;
-#define RESOURCE_PENTAGON_SEAL_TEXTURE ((Sint32)&ResourceId_PentagonSealTexture)
+extern char ResourceIdChainedDemonTiles;
+#define RESOURCE_CHAINED_DEMON_TILES ((Sint32)&ResourceIdChainedDemonTiles)
+extern char ResourceIdTriangleSealTexture;
+#define RESOURCE_TRIANGLE_SEAL_TEXTURE ((Sint32)&ResourceIdTriangleSealTexture)
+extern char ResourceIdPentagonSealTexture;
+#define RESOURCE_PENTAGON_SEAL_TEXTURE ((Sint32)&ResourceIdPentagonSealTexture)
 /* Drawn by Catastrophe, the element cards and Trident. */
-extern char ResourceId_JaggedStreakSheet;
-#define RESOURCE_JAGGED_STREAK_SHEET ((Sint32)&ResourceId_JaggedStreakSheet)
+extern char ResourceIdJaggedStreakSheet;
+#define RESOURCE_JAGGED_STREAK_SHEET ((Sint32)&ResourceIdJaggedStreakSheet)
 /* Drawn by Catastrophe. */
-extern char ResourceId_LightningTexture;
-#define RESOURCE_LIGHTNING_TEXTURE ((Sint32)&ResourceId_LightningTexture)
-extern char ResourceId_GoldenScalesTiles;
-#define RESOURCE_GOLDEN_SCALES_TILES ((Sint32)&ResourceId_GoldenScalesTiles)
-extern char ResourceId_PurpleArmourTiles;
-#define RESOURCE_PURPLE_ARMOUR_TILES ((Sint32)&ResourceId_PurpleArmourTiles)
-extern char ResourceId_WhiteSpikesTiles;
-#define RESOURCE_WHITE_SPIKES_TILES ((Sint32)&ResourceId_WhiteSpikesTiles)
+extern char ResourceIdLightningTexture;
+#define RESOURCE_LIGHTNING_TEXTURE ((Sint32)&ResourceIdLightningTexture)
+extern char ResourceIdGoldenScalesTiles;
+#define RESOURCE_GOLDEN_SCALES_TILES ((Sint32)&ResourceIdGoldenScalesTiles)
+extern char ResourceIdPurpleArmourTiles;
+#define RESOURCE_PURPLE_ARMOUR_TILES ((Sint32)&ResourceIdPurpleArmourTiles)
+extern char ResourceIdWhiteSpikesTiles;
+#define RESOURCE_WHITE_SPIKES_TILES ((Sint32)&ResourceIdWhiteSpikesTiles)
 /* Drawn by Haures. */
-extern char ResourceId_ChainTexture;
-#define RESOURCE_CHAIN_TEXTURE ((Sint32)&ResourceId_ChainTexture)
+extern char ResourceIdChainTexture;
+#define RESOURCE_CHAIN_TEXTURE ((Sint32)&ResourceIdChainTexture)
 /* Drawn by Helm Splitter. */
-extern char ResourceId_FireSwirlSheet;
-#define RESOURCE_FIRE_SWIRL_SHEET ((Sint32)&ResourceId_FireSwirlSheet)
+extern char ResourceIdFireSwirlSheet;
+#define RESOURCE_FIRE_SWIRL_SHEET ((Sint32)&ResourceIdFireSwirlSheet)
 /* Drawn by Dragon Cloud. */
-extern char ResourceId_DragonCloudFlamePath;
+extern char ResourceIdDragonCloudFlamePath;
 #define RESOURCE_DRAGON_CLOUD_FLAME_PATH \
-	((Sint32)&ResourceId_DragonCloudFlamePath)
+	((Sint32)&ResourceIdDragonCloudFlamePath)
 /* Drawn by Legend. */
-extern char ResourceId_BladeSheet;
-#define RESOURCE_BLADE_SHEET ((Sint32)&ResourceId_BladeSheet)
+extern char ResourceIdBladeSheet;
+#define RESOURCE_BLADE_SHEET ((Sint32)&ResourceIdBladeSheet)
 /* Drawn by Legend, Megiddo and Odyssey. */
-extern char ResourceId_FlameGradientTexture;
+extern char ResourceIdFlameGradientTexture;
 #define RESOURCE_FLAME_GRADIENT_TEXTURE \
-	((Sint32)&ResourceId_FlameGradientTexture)
+	((Sint32)&ResourceIdFlameGradientTexture)
 /* Drawn by the element cards. */
-extern char ResourceId_VineCardSheet;
-#define RESOURCE_VINE_CARD_SHEET ((Sint32)&ResourceId_VineCardSheet)
-extern char ResourceId_DragonCardSheet;
-#define RESOURCE_DRAGON_CARD_SHEET ((Sint32)&ResourceId_DragonCardSheet)
-extern char ResourceId_SunCardSheet;
-#define RESOURCE_SUN_CARD_SHEET ((Sint32)&ResourceId_SunCardSheet)
-extern char ResourceId_BoltCardSheet;
-#define RESOURCE_BOLT_CARD_SHEET ((Sint32)&ResourceId_BoltCardSheet)
+extern char ResourceIdVineCardSheet;
+#define RESOURCE_VINE_CARD_SHEET ((Sint32)&ResourceIdVineCardSheet)
+extern char ResourceIdDragonCardSheet;
+#define RESOURCE_DRAGON_CARD_SHEET ((Sint32)&ResourceIdDragonCardSheet)
+extern char ResourceIdSunCardSheet;
+#define RESOURCE_SUN_CARD_SHEET ((Sint32)&ResourceIdSunCardSheet)
+extern char ResourceIdBoltCardSheet;
+#define RESOURCE_BOLT_CARD_SHEET ((Sint32)&ResourceIdBoltCardSheet)
 /* Drawn by the Cards. */
-extern char ResourceId_ButterflyCardSheet;
-#define RESOURCE_BUTTERFLY_CARD_SHEET ((Sint32)&ResourceId_ButterflyCardSheet)
-extern char ResourceId_SwordCardSheet;
-#define RESOURCE_SWORD_CARD_SHEET ((Sint32)&ResourceId_SwordCardSheet)
-extern char ResourceId_SkeletonCardSheet;
-#define RESOURCE_SKELETON_CARD_SHEET ((Sint32)&ResourceId_SkeletonCardSheet)
+extern char ResourceIdButterflyCardSheet;
+#define RESOURCE_BUTTERFLY_CARD_SHEET ((Sint32)&ResourceIdButterflyCardSheet)
+extern char ResourceIdSwordCardSheet;
+#define RESOURCE_SWORD_CARD_SHEET ((Sint32)&ResourceIdSwordCardSheet)
+extern char ResourceIdSkeletonCardSheet;
+#define RESOURCE_SKELETON_CARD_SHEET ((Sint32)&ResourceIdSkeletonCardSheet)
 /* Drawn by the breaths. */
-extern char ResourceId_DustCloudSheet;
-#define RESOURCE_DUST_CLOUD_SHEET ((Sint32)&ResourceId_DustCloudSheet)
+extern char ResourceIdDustCloudSheet;
+#define RESOURCE_DUST_CLOUD_SHEET ((Sint32)&ResourceIdDustCloudSheet)
 /* Drawn by Trident. */
-extern char ResourceId_FlameZigzagTexture;
-#define RESOURCE_FLAME_ZIGZAG_TEXTURE ((Sint32)&ResourceId_FlameZigzagTexture)
+extern char ResourceIdFlameZigzagTexture;
+#define RESOURCE_FLAME_ZIGZAG_TEXTURE ((Sint32)&ResourceIdFlameZigzagTexture)
 /* Drawn by Meteor Blow. */
-extern char ResourceId_GlowOrbSetSheet;
-#define RESOURCE_GLOW_ORB_SET_SHEET ((Sint32)&ResourceId_GlowOrbSetSheet)
+extern char ResourceIdGlowOrbSetSheet;
+#define RESOURCE_GLOW_ORB_SET_SHEET ((Sint32)&ResourceIdGlowOrbSetSheet)
 /* Drawn by Megiddo. */
-extern char ResourceId_FireStripesTexture;
-#define RESOURCE_FIRE_STRIPES_TEXTURE ((Sint32)&ResourceId_FireStripesTexture)
+extern char ResourceIdFireStripesTexture;
+#define RESOURCE_FIRE_STRIPES_TEXTURE ((Sint32)&ResourceIdFireStripesTexture)
 /* Drawn by Odyssey. */
-extern char ResourceId_GiantSwordSheet;
-#define RESOURCE_GIANT_SWORD_SHEET ((Sint32)&ResourceId_GiantSwordSheet)
-extern char ResourceId_GiantSwordBladeSheet;
+extern char ResourceIdGiantSwordSheet;
+#define RESOURCE_GIANT_SWORD_SHEET ((Sint32)&ResourceIdGiantSwordSheet)
+extern char ResourceIdGiantSwordBladeSheet;
 #define RESOURCE_GIANT_SWORD_BLADE_SHEET \
-	((Sint32)&ResourceId_GiantSwordBladeSheet)
+	((Sint32)&ResourceIdGiantSwordBladeSheet)
 /* Drawn by the cloud swirl. */
-extern char ResourceId_CloudSwirlSheet;
-#define RESOURCE_CLOUD_SWIRL_SHEET ((Sint32)&ResourceId_CloudSwirlSheet)
+extern char ResourceIdCloudSwirlSheet;
+#define RESOURCE_CLOUD_SWIRL_SHEET ((Sint32)&ResourceIdCloudSwirlSheet)
 /* Drawn by Iris. */
-extern char ResourceId_SunsetBackdrop;
-#define RESOURCE_SUNSET_BACKDROP ((Sint32)&ResourceId_SunsetBackdrop)
-extern char ResourceId_StarfieldFlareBackdrop;
+extern char ResourceIdSunsetBackdrop;
+#define RESOURCE_SUNSET_BACKDROP ((Sint32)&ResourceIdSunsetBackdrop)
+extern char ResourceIdStarfieldFlareBackdrop;
 #define RESOURCE_STARFIELD_FLARE_BACKDROP \
-	((Sint32)&ResourceId_StarfieldFlareBackdrop)
-extern char ResourceId_RobedGoddessTiles;
-#define RESOURCE_ROBED_GODDESS_TILES ((Sint32)&ResourceId_RobedGoddessTiles)
+	((Sint32)&ResourceIdStarfieldFlareBackdrop)
+extern char ResourceIdRobedGoddessTiles;
+#define RESOURCE_ROBED_GODDESS_TILES ((Sint32)&ResourceIdRobedGoddessTiles)
 
 /* The skies a summon or Psynergy shows behind the battle. */
 
 /* The sky of Atalanta, Boreas, Cruel Ruin, Daedalus, Flora, Judgment, Moloch
    and Procne; only the unused slideshow list names it
    (DisplayScrollUnusedSlideResources). */
-extern char ResourceId_VioletSkyBackdrop;
-#define RESOURCE_VIOLET_SKY_BACKDROP ((Sint32)&ResourceId_VioletSkyBackdrop)
+extern char ResourceIdVioletSkyBackdrop;
+#define RESOURCE_VIOLET_SKY_BACKDROP ((Sint32)&ResourceIdVioletSkyBackdrop)
 /* The sky of Neptune and Thor; the credits' slideshow shows it
    (DisplayScrollSlideResources). */
-extern char ResourceId_DuskCloudsBackdrop;
-#define RESOURCE_DUSK_CLOUDS_BACKDROP ((Sint32)&ResourceId_DuskCloudsBackdrop)
+extern char ResourceIdDuskCloudsBackdrop;
+#define RESOURCE_DUSK_CLOUDS_BACKDROP ((Sint32)&ResourceIdDuskCloudsBackdrop)
 /* The sky of Judgment; the credits' slideshow shows it
    (DisplayScrollSlideResources). */
-extern char ResourceId_BeachBackdrop;
-#define RESOURCE_BEACH_BACKDROP ((Sint32)&ResourceId_BeachBackdrop)
+extern char ResourceIdBeachBackdrop;
+#define RESOURCE_BEACH_BACKDROP ((Sint32)&ResourceIdBeachBackdrop)
 /* The sky of Judgment and Kirin; only the unused slideshow list names it
    (DisplayScrollUnusedSlideResources). */
-extern char ResourceId_ForestBackdrop;
-#define RESOURCE_FOREST_BACKDROP ((Sint32)&ResourceId_ForestBackdrop)
+extern char ResourceIdForestBackdrop;
+#define RESOURCE_FOREST_BACKDROP ((Sint32)&ResourceIdForestBackdrop)
 /* Drawn by Cruel Ruin. */
-extern char ResourceId_SunbeamCloudsBackdrop;
+extern char ResourceIdSunbeamCloudsBackdrop;
 #define RESOURCE_SUNBEAM_CLOUDS_BACKDROP \
-	((Sint32)&ResourceId_SunbeamCloudsBackdrop)
+	((Sint32)&ResourceIdSunbeamCloudsBackdrop)
 /* The sky Eclipse opens on. */
-extern char ResourceId_EarthHorizonBackdrop;
+extern char ResourceIdEarthHorizonBackdrop;
 #define RESOURCE_EARTH_HORIZON_BACKDROP \
-	((Sint32)&ResourceId_EarthHorizonBackdrop)
+	((Sint32)&ResourceIdEarthHorizonBackdrop)
 /* The land far below that Eclipse's blast lands on; Charon draws it too. */
-extern char ResourceId_AerialViewBackdrop;
-#define RESOURCE_AERIAL_VIEW_BACKDROP ((Sint32)&ResourceId_AerialViewBackdrop)
+extern char ResourceIdAerialViewBackdrop;
+#define RESOURCE_AERIAL_VIEW_BACKDROP ((Sint32)&ResourceIdAerialViewBackdrop)
 
 /* Battle backdrops: the places battles are fought in, The Broken Seal's that
    only the credits' slideshow shows, and the battle background's star field. */
@@ -820,389 +819,387 @@ extern char ResourceId_AerialViewBackdrop;
 /* The Colosso's backdrop, which the debug battle menu fights on
    (btDebugBattleRunMenu) and the credits' slideshow shows
    (DisplayScrollSlideResources). */
-extern char ResourceId_ColossoBackdrop;
-#define RESOURCE_COLOSSO_BACKDROP ((Sint32)&ResourceId_ColossoBackdrop)
+extern char ResourceIdColossoBackdrop;
+#define RESOURCE_COLOSSO_BACKDROP ((Sint32)&ResourceIdColossoBackdrop)
 /* The desert's battle backdrop (fdBattleBackgroundSelectForEnvironment), and
    the sky of the Ramses summon. */
-extern char ResourceId_DesertBackdrop;
-#define RESOURCE_DESERT_BACKDROP ((Sint32)&ResourceId_DesertBackdrop)
+extern char ResourceIdDesertBackdrop;
+#define RESOURCE_DESERT_BACKDROP ((Sint32)&ResourceIdDesertBackdrop)
 /* Battle backdrops of The Broken Seal's places, which no battle in this game is
    fought on: the credits' slideshow shows those DisplayScrollSlideResources
    lists, and only the unused list names the rest. */
-extern char ResourceId_SuhallaGateBackdrop;
-#define RESOURCE_SUHALLA_GATE_BACKDROP ((Sint32)&ResourceId_SuhallaGateBackdrop)
-extern char ResourceId_PirateShipBackdrop;
-#define RESOURCE_PIRATE_SHIP_BACKDROP ((Sint32)&ResourceId_PirateShipBackdrop)
-extern char ResourceId_CrossboneIsleCaveBackdrop;
+extern char ResourceIdSuhallaGateBackdrop;
+#define RESOURCE_SUHALLA_GATE_BACKDROP ((Sint32)&ResourceIdSuhallaGateBackdrop)
+extern char ResourceIdPirateShipBackdrop;
+#define RESOURCE_PIRATE_SHIP_BACKDROP ((Sint32)&ResourceIdPirateShipBackdrop)
+extern char ResourceIdCrossboneIsleCaveBackdrop;
 #define RESOURCE_CROSSBONE_ISLE_CAVE_BACKDROP \
-	((Sint32)&ResourceId_CrossboneIsleCaveBackdrop)
-extern char ResourceId_VenusLighthouseAerieStormBackdrop;
+	((Sint32)&ResourceIdCrossboneIsleCaveBackdrop)
+extern char ResourceIdVenusLighthouseAerieStormBackdrop;
 #define RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP \
-	((Sint32)&ResourceId_VenusLighthouseAerieStormBackdrop)
-extern char ResourceId_VenusLighthouseAerieBackdrop;
+	((Sint32)&ResourceIdVenusLighthouseAerieStormBackdrop)
+extern char ResourceIdVenusLighthouseAerieBackdrop;
 #define RESOURCE_VENUS_LIGHTHOUSE_AERIE_BACKDROP \
-	((Sint32)&ResourceId_VenusLighthouseAerieBackdrop)
-extern char ResourceId_VenusLighthouseBackdrop;
+	((Sint32)&ResourceIdVenusLighthouseAerieBackdrop)
+extern char ResourceIdVenusLighthouseBackdrop;
 #define RESOURCE_VENUS_LIGHTHOUSE_BACKDROP \
-	((Sint32)&ResourceId_VenusLighthouseBackdrop)
-extern char ResourceId_SuhallaDesertBackdrop;
+	((Sint32)&ResourceIdVenusLighthouseBackdrop)
+extern char ResourceIdSuhallaDesertBackdrop;
 #define RESOURCE_SUHALLA_DESERT_BACKDROP \
-	((Sint32)&ResourceId_SuhallaDesertBackdrop)
-extern char ResourceId_AltmillerCaveBackdrop;
+	((Sint32)&ResourceIdSuhallaDesertBackdrop)
+extern char ResourceIdAltmillerCaveBackdrop;
 #define RESOURCE_ALTMILLER_CAVE_BACKDROP \
-	((Sint32)&ResourceId_AltmillerCaveBackdrop)
-extern char ResourceId_TunnelRuinsBackdrop;
-#define RESOURCE_TUNNEL_RUINS_BACKDROP ((Sint32)&ResourceId_TunnelRuinsBackdrop)
-extern char ResourceId_BabiLighthouseBackdrop;
+	((Sint32)&ResourceIdAltmillerCaveBackdrop)
+extern char ResourceIdTunnelRuinsBackdrop;
+#define RESOURCE_TUNNEL_RUINS_BACKDROP ((Sint32)&ResourceIdTunnelRuinsBackdrop)
+extern char ResourceIdBabiLighthouseBackdrop;
 #define RESOURCE_BABI_LIGHTHOUSE_BACKDROP \
-	((Sint32)&ResourceId_BabiLighthouseBackdrop)
-extern char ResourceId_LamakanDesertBackdrop;
+	((Sint32)&ResourceIdBabiLighthouseBackdrop)
+extern char ResourceIdLamakanDesertBackdrop;
 #define RESOURCE_LAMAKAN_DESERT_BACKDROP \
-	((Sint32)&ResourceId_LamakanDesertBackdrop)
-extern char ResourceId_MogallForestBackdrop;
+	((Sint32)&ResourceIdLamakanDesertBackdrop)
+extern char ResourceIdMogallForestBackdrop;
 #define RESOURCE_MOGALL_FOREST_BACKDROP \
-	((Sint32)&ResourceId_MogallForestBackdrop)
-extern char ResourceId_MercuryLighthouseAerieBackdrop;
+	((Sint32)&ResourceIdMogallForestBackdrop)
+extern char ResourceIdMercuryLighthouseAerieBackdrop;
 #define RESOURCE_MERCURY_LIGHTHOUSE_AERIE_BACKDROP \
-	((Sint32)&ResourceId_MercuryLighthouseAerieBackdrop)
-extern char ResourceId_TolbiShipRoomsBackdrop;
+	((Sint32)&ResourceIdMercuryLighthouseAerieBackdrop)
+extern char ResourceIdTolbiShipRoomsBackdrop;
 #define RESOURCE_TOLBI_SHIP_ROOMS_BACKDROP \
-	((Sint32)&ResourceId_TolbiShipRoomsBackdrop)
-extern char ResourceId_ImilFuchinFallsBackdrop;
+	((Sint32)&ResourceIdTolbiShipRoomsBackdrop)
+extern char ResourceIdImilFuchinFallsBackdrop;
 #define RESOURCE_IMIL_FUCHIN_FALLS_BACKDROP \
-	((Sint32)&ResourceId_ImilFuchinFallsBackdrop)
-extern char ResourceId_KolimaForestBackdrop;
+	((Sint32)&ResourceIdImilFuchinFallsBackdrop)
+extern char ResourceIdKolimaForestBackdrop;
 #define RESOURCE_KOLIMA_FOREST_BACKDROP \
-	((Sint32)&ResourceId_KolimaForestBackdrop)
-extern char ResourceId_TretTreeRoomsBackdrop;
+	((Sint32)&ResourceIdKolimaForestBackdrop)
+extern char ResourceIdTretTreeRoomsBackdrop;
 #define RESOURCE_TRET_TREE_ROOMS_BACKDROP \
-	((Sint32)&ResourceId_TretTreeRoomsBackdrop)
-extern char ResourceId_RoomsBackdrop;
-#define RESOURCE_ROOMS_BACKDROP ((Sint32)&ResourceId_RoomsBackdrop)
-extern char ResourceId_AltinPeakBackdrop;
-#define RESOURCE_ALTIN_PEAK_BACKDROP ((Sint32)&ResourceId_AltinPeakBackdrop)
-extern char ResourceId_TolbiShipDeckBackdrop;
+	((Sint32)&ResourceIdTretTreeRoomsBackdrop)
+extern char ResourceIdRoomsBackdrop;
+#define RESOURCE_ROOMS_BACKDROP ((Sint32)&ResourceIdRoomsBackdrop)
+extern char ResourceIdAltinPeakBackdrop;
+#define RESOURCE_ALTIN_PEAK_BACKDROP ((Sint32)&ResourceIdAltinPeakBackdrop)
+extern char ResourceIdTolbiShipDeckBackdrop;
 #define RESOURCE_TOLBI_SHIP_DECK_BACKDROP \
-	((Sint32)&ResourceId_TolbiShipDeckBackdrop)
-extern char ResourceId_MercuryLighthouseBackdrop;
+	((Sint32)&ResourceIdTolbiShipDeckBackdrop)
+extern char ResourceIdMercuryLighthouseBackdrop;
 #define RESOURCE_MERCURY_LIGHTHOUSE_BACKDROP \
-	((Sint32)&ResourceId_MercuryLighthouseBackdrop)
-extern char ResourceId_ValeStormBackdrop;
-#define RESOURCE_VALE_STORM_BACKDROP ((Sint32)&ResourceId_ValeStormBackdrop)
-extern char ResourceId_TretTreeBranchBackdrop;
+	((Sint32)&ResourceIdMercuryLighthouseBackdrop)
+extern char ResourceIdValeStormBackdrop;
+#define RESOURCE_VALE_STORM_BACKDROP ((Sint32)&ResourceIdValeStormBackdrop)
+extern char ResourceIdTretTreeBranchBackdrop;
 #define RESOURCE_TRET_TREE_BRANCH_BACKDROP \
-	((Sint32)&ResourceId_TretTreeBranchBackdrop)
-extern char ResourceId_SnowfieldBackdrop;
-#define RESOURCE_SNOWFIELD_BACKDROP ((Sint32)&ResourceId_SnowfieldBackdrop)
-extern char ResourceId_GrasslandBackdrop;
-#define RESOURCE_GRASSLAND_BACKDROP ((Sint32)&ResourceId_GrasslandBackdrop)
-extern char ResourceId_SolSanctumBackdrop;
-#define RESOURCE_SOL_SANCTUM_BACKDROP ((Sint32)&ResourceId_SolSanctumBackdrop)
+	((Sint32)&ResourceIdTretTreeBranchBackdrop)
+extern char ResourceIdSnowfieldBackdrop;
+#define RESOURCE_SNOWFIELD_BACKDROP ((Sint32)&ResourceIdSnowfieldBackdrop)
+extern char ResourceIdGrasslandBackdrop;
+#define RESOURCE_GRASSLAND_BACKDROP ((Sint32)&ResourceIdGrasslandBackdrop)
+extern char ResourceIdSolSanctumBackdrop;
+#define RESOURCE_SOL_SANCTUM_BACKDROP ((Sint32)&ResourceIdSolSanctumBackdrop)
 /* Loaded by btTransitionRun; listed in SceneBattleBackgroundRules. */
-extern char ResourceId_SerpentStarsBackdrop;
+extern char ResourceIdSerpentStarsBackdrop;
 #define RESOURCE_SERPENT_STARS_BACKDROP \
-	((Sint32)&ResourceId_SerpentStarsBackdrop)
+	((Sint32)&ResourceIdSerpentStarsBackdrop)
 /* The battle background's star field (btElementGlowInitStarField): its sprites,
    and its colours, which Mercury's star field keeps. */
-extern char ResourceId_BlueRingSheet;
-#define RESOURCE_BLUE_RING_SHEET ((Sint32)&ResourceId_BlueRingSheet)
+extern char ResourceIdBlueRingSheet;
+#define RESOURCE_BLUE_RING_SHEET ((Sint32)&ResourceIdBlueRingSheet)
 /* The colours of Mars's star field. */
-extern char ResourceId_RedPaletteC;
-#define RESOURCE_RED_PALETTE_C ((Sint32)&ResourceId_RedPaletteC)
+extern char ResourceIdRedPaletteC;
+#define RESOURCE_RED_PALETTE_C ((Sint32)&ResourceIdRedPaletteC)
 /* Drawn by Haures; listed in SceneBattleBackgroundRules. */
-extern char ResourceId_MossCaveBackdrop;
-#define RESOURCE_MOSS_CAVE_BACKDROP ((Sint32)&ResourceId_MossCaveBackdrop)
+extern char ResourceIdMossCaveBackdrop;
+#define RESOURCE_MOSS_CAVE_BACKDROP ((Sint32)&ResourceIdMossCaveBackdrop)
 /* The lava cave backdrop of the Valukar battle in the Yampi Desert Cave. */
-extern char ResourceId_LavaCaveBackdrop;
-#define RESOURCE_LAVA_CAVE_BACKDROP ((Sint32)&ResourceId_LavaCaveBackdrop)
+extern char ResourceIdLavaCaveBackdrop;
+#define RESOURCE_LAVA_CAVE_BACKDROP ((Sint32)&ResourceIdLavaCaveBackdrop)
 /* The beast-wall backdrop of the Flame Dragons' battle in the Mars Star
    room. */
-extern char ResourceId_BeastWallBackdrop;
-#define RESOURCE_BEAST_WALL_BACKDROP ((Sint32)&ResourceId_BeastWallBackdrop)
+extern char ResourceIdBeastWallBackdrop;
+#define RESOURCE_BEAST_WALL_BACKDROP ((Sint32)&ResourceIdBeastWallBackdrop)
 /* Loaded by fdBattleBackgroundSelectForMap. */
-extern char ResourceId_DragonHallABackdrop;
-#define RESOURCE_DRAGON_HALL_A_BACKDROP \
-	((Sint32)&ResourceId_DragonHallABackdrop)
+extern char ResourceIdDragonHallABackdrop;
+#define RESOURCE_DRAGON_HALL_A_BACKDROP ((Sint32)&ResourceIdDragonHallABackdrop)
 /* Loaded by fdBattleBackgroundSelectForMap; listed in
    SceneBattleBackgroundRules. */
-extern char ResourceId_DragonHallBBackdrop;
-#define RESOURCE_DRAGON_HALL_B_BACKDROP \
-	((Sint32)&ResourceId_DragonHallBBackdrop)
+extern char ResourceIdDragonHallBBackdrop;
+#define RESOURCE_DRAGON_HALL_B_BACKDROP ((Sint32)&ResourceIdDragonHallBBackdrop)
 /* Loaded by fdBattleBackgroundSelectForEnvironment. */
-extern char ResourceId_GrasslandBBackdrop;
-#define RESOURCE_GRASSLAND_B_BACKDROP ((Sint32)&ResourceId_GrasslandBBackdrop)
-extern char ResourceId_RockyBeachBackdrop;
-#define RESOURCE_ROCKY_BEACH_BACKDROP ((Sint32)&ResourceId_RockyBeachBackdrop)
+extern char ResourceIdGrasslandBBackdrop;
+#define RESOURCE_GRASSLAND_B_BACKDROP ((Sint32)&ResourceIdGrasslandBBackdrop)
+extern char ResourceIdRockyBeachBackdrop;
+#define RESOURCE_ROCKY_BEACH_BACKDROP ((Sint32)&ResourceIdRockyBeachBackdrop)
 /* Loaded by fdBattleBackgroundSelectForEnvironment; listed in
    SceneBattleBackgroundRules. */
-extern char ResourceId_DenseForestBackdrop;
-#define RESOURCE_DENSE_FOREST_BACKDROP ((Sint32)&ResourceId_DenseForestBackdrop)
-extern char ResourceId_ShipDeckBackdrop;
-#define RESOURCE_SHIP_DECK_BACKDROP ((Sint32)&ResourceId_ShipDeckBackdrop)
+extern char ResourceIdDenseForestBackdrop;
+#define RESOURCE_DENSE_FOREST_BACKDROP ((Sint32)&ResourceIdDenseForestBackdrop)
+extern char ResourceIdShipDeckBackdrop;
+#define RESOURCE_SHIP_DECK_BACKDROP ((Sint32)&ResourceIdShipDeckBackdrop)
 /* Loaded by fdBattleBackgroundSelectForEnvironment. */
-extern char ResourceId_SnowfieldBBackdrop;
-#define RESOURCE_SNOWFIELD_B_BACKDROP ((Sint32)&ResourceId_SnowfieldBBackdrop)
-extern char ResourceId_BlizzardBackdrop;
-#define RESOURCE_BLIZZARD_BACKDROP ((Sint32)&ResourceId_BlizzardBackdrop)
+extern char ResourceIdSnowfieldBBackdrop;
+#define RESOURCE_SNOWFIELD_B_BACKDROP ((Sint32)&ResourceIdSnowfieldBBackdrop)
+extern char ResourceIdBlizzardBackdrop;
+#define RESOURCE_BLIZZARD_BACKDROP ((Sint32)&ResourceIdBlizzardBackdrop)
 
 /* The logos, the intro and the title screen. */
 
 /* Shown first by mnTitleShowPublisherLogo. */
-extern char ResourceId_PublisherLogo;
-#define RESOURCE_PUBLISHER_LOGO ((Sint32)&ResourceId_PublisherLogo)
+extern char ResourceIdPublisherLogo;
+#define RESOURCE_PUBLISHER_LOGO ((Sint32)&ResourceIdPublisherLogo)
 /* The Camelot logo mnTitleShowCamelotLogo shows after the publisher's. */
-extern char ResourceId_CamelotLogo;
-#define RESOURCE_CAMELOT_LOGO ((Sint32)&ResourceId_CamelotLogo)
+extern char ResourceIdCamelotLogo;
+#define RESOURCE_CAMELOT_LOGO ((Sint32)&ResourceIdCamelotLogo)
 /* The title's lettering sprites and their colours, which scTitleLoadSprs loads
    into sprite palette 15. */
-extern char ResourceId_IntroTilesB;
-#define RESOURCE_INTRO_TILES_B ((Sint32)&ResourceId_IntroTilesB)
+extern char ResourceIdIntroTilesB;
+#define RESOURCE_INTRO_TILES_B ((Sint32)&ResourceIdIntroTilesB)
 /* Loaded by scClearLoadBackground and scTitleLoadBackground. */
-extern char ResourceId_LogoOnBlack;
-#define RESOURCE_LOGO_ON_BLACK ((Sint32)&ResourceId_LogoOnBlack)
+extern char ResourceIdLogoOnBlack;
+#define RESOURCE_LOGO_ON_BLACK ((Sint32)&ResourceIdLogoOnBlack)
 /* Loaded by mnTitleIntroLoadPictureTiles. */
-extern char ResourceId_IntroClouds;
-#define RESOURCE_INTRO_CLOUDS ((Sint32)&ResourceId_IntroClouds)
+extern char ResourceIdIntroClouds;
+#define RESOURCE_INTRO_CLOUDS ((Sint32)&ResourceIdIntroClouds)
 /* Loaded by mnTitleIntroUpdateLogo. */
-extern char ResourceId_SubtitlePalette;
-#define RESOURCE_SUBTITLE_PALETTE ((Sint32)&ResourceId_SubtitlePalette)
+extern char ResourceIdSubtitlePalette;
+#define RESOURCE_SUBTITLE_PALETTE ((Sint32)&ResourceIdSubtitlePalette)
 /* Logo tiles mnTitleIntroUpdateLogo loads (LOAD_LOGO_TILES) as the logo
    assembles. */
-extern char ResourceId_SubtitleA;
-#define RESOURCE_SUBTITLE_A ((Sint32)&ResourceId_SubtitleA)
-extern char ResourceId_SubtitleB;
-#define RESOURCE_SUBTITLE_B ((Sint32)&ResourceId_SubtitleB)
-extern char ResourceId_SubtitleC;
-#define RESOURCE_SUBTITLE_C ((Sint32)&ResourceId_SubtitleC)
-extern char ResourceId_SubtitleD;
-#define RESOURCE_SUBTITLE_D ((Sint32)&ResourceId_SubtitleD)
+extern char ResourceIdSubtitleA;
+#define RESOURCE_SUBTITLE_A ((Sint32)&ResourceIdSubtitleA)
+extern char ResourceIdSubtitleB;
+#define RESOURCE_SUBTITLE_B ((Sint32)&ResourceIdSubtitleB)
+extern char ResourceIdSubtitleC;
+#define RESOURCE_SUBTITLE_C ((Sint32)&ResourceIdSubtitleC)
+extern char ResourceIdSubtitleD;
+#define RESOURCE_SUBTITLE_D ((Sint32)&ResourceIdSubtitleD)
 /* Loaded by mnTitleIntroShowLighthouse. */
-extern char ResourceId_IntroLighthousePicture;
+extern char ResourceIdIntroLighthousePicture;
 #define RESOURCE_INTRO_LIGHTHOUSE_PICTURE \
-	((Sint32)&ResourceId_IntroLighthousePicture)
-extern char ResourceId_IntroGullSprites;
-#define RESOURCE_INTRO_GULL_SPRITES ((Sint32)&ResourceId_IntroGullSprites)
+	((Sint32)&ResourceIdIntroLighthousePicture)
+extern char ResourceIdIntroGullSprites;
+#define RESOURCE_INTRO_GULL_SPRITES ((Sint32)&ResourceIdIntroGullSprites)
 /* Loaded by mnTitleShowTitleScreen. */
-extern char ResourceId_TitleScreenPicture;
-#define RESOURCE_TITLE_SCREEN_PICTURE ((Sint32)&ResourceId_TitleScreenPicture)
+extern char ResourceIdTitleScreenPicture;
+#define RESOURCE_TITLE_SCREEN_PICTURE ((Sint32)&ResourceIdTitleScreenPicture)
 
 /* Windows, menus and icons. */
 
 /* The window font and border tiles. syWindowLoadGraphics copies them into BG
    character block 0, and mnGlyphDraw draws its glyphs from here. */
-extern char ResourceId_WindowTiles;
-#define RESOURCE_WINDOW_TILES ((Sint32)&ResourceId_WindowTiles)
+extern char ResourceIdWindowTiles;
+#define RESOURCE_WINDOW_TILES ((Sint32)&ResourceIdWindowTiles)
 /* The command icons; an icon's number is also its name's in MsgCommandName
    (mnCommandIconLoadIntoSlot). */
-extern char ResourceId_CommandIcons;
-#define RESOURCE_COMMAND_ICONS ((Sint32)&ResourceId_CommandIcons)
+extern char ResourceIdCommandIcons;
+#define RESOURCE_COMMAND_ICONS ((Sint32)&ResourceIdCommandIcons)
 /* Loaded by fdHeadingShow. */
-extern char ResourceId_Headings;
-#define RESOURCE_HEADINGS ((Sint32)&ResourceId_Headings)
+extern char ResourceIdHeadings;
+#define RESOURCE_HEADINGS ((Sint32)&ResourceIdHeadings)
 /* Loaded by mnNameEntryEditMemberName and mnNameCaretLoadIntoSlot. */
-extern char ResourceId_NameCaretTiles;
-#define RESOURCE_NAME_CARET_TILES ((Sint32)&ResourceId_NameCaretTiles)
+extern char ResourceIdNameCaretTiles;
+#define RESOURCE_NAME_CARET_TILES ((Sint32)&ResourceIdNameCaretTiles)
 /* Loaded by mnIconCreateHandCursor, mnNameEntryEditMemberName,
    mnPointingHandLoadIntoSlot, mnPointingHandLoadIntoFreeSlot and
    mnShopInitState. */
-extern char ResourceId_UiIconTiles;
-#define RESOURCE_UI_ICON_TILES ((Sint32)&ResourceId_UiIconTiles)
+extern char ResourceIdUiIconTiles;
+#define RESOURCE_UI_ICON_TILES ((Sint32)&ResourceIdUiIconTiles)
 /* Loaded by mnOpenBackdropScreen and mnShopInitState. */
-extern char ResourceId_ShopGemTiles;
-#define RESOURCE_SHOP_GEM_TILES ((Sint32)&ResourceId_ShopGemTiles)
+extern char ResourceIdShopGemTiles;
+#define RESOURCE_SHOP_GEM_TILES ((Sint32)&ResourceIdShopGemTiles)
 /* Loaded by mnLoadDjinnArrows. */
-extern char ResourceId_ItemMenuTilesA;
-#define RESOURCE_ITEM_MENU_TILES_A ((Sint32)&ResourceId_ItemMenuTilesA)
-extern char ResourceId_ItemMenuTilesB;
-#define RESOURCE_ITEM_MENU_TILES_B ((Sint32)&ResourceId_ItemMenuTilesB)
+extern char ResourceIdItemMenuTilesA;
+#define RESOURCE_ITEM_MENU_TILES_A ((Sint32)&ResourceIdItemMenuTilesA)
+extern char ResourceIdItemMenuTilesB;
+#define RESOURCE_ITEM_MENU_TILES_B ((Sint32)&ResourceIdItemMenuTilesB)
 /* The small up arrow beside a stat that equipping raises (mnLoadStatArrows and
    mnShopInitState). */
-extern char ResourceId_MenuArrowTiles;
-#define RESOURCE_MENU_ARROW_TILES ((Sint32)&ResourceId_MenuArrowTiles)
+extern char ResourceIdMenuArrowTiles;
+#define RESOURCE_MENU_ARROW_TILES ((Sint32)&ResourceIdMenuArrowTiles)
 /* The small down arrow beside a stat that equipping lowers. */
-extern char ResourceId_MenuSmallDownArrowTiles;
+extern char ResourceIdMenuSmallDownArrowTiles;
 #define RESOURCE_MENU_SMALL_DOWN_ARROW_TILES \
-	((Sint32)&ResourceId_MenuSmallDownArrowTiles)
+	((Sint32)&ResourceIdMenuSmallDownArrowTiles)
 /* Loaded by mnCursorCreate and mnShopInitState. */
-extern char ResourceId_ShopUpArrowTiles;
-#define RESOURCE_SHOP_UP_ARROW_TILES ((Sint32)&ResourceId_ShopUpArrowTiles)
-extern char ResourceId_ShopDownArrowTiles;
-#define RESOURCE_SHOP_DOWN_ARROW_TILES ((Sint32)&ResourceId_ShopDownArrowTiles)
+extern char ResourceIdShopUpArrowTiles;
+#define RESOURCE_SHOP_UP_ARROW_TILES ((Sint32)&ResourceIdShopUpArrowTiles)
+extern char ResourceIdShopDownArrowTiles;
+#define RESOURCE_SHOP_DOWN_ARROW_TILES ((Sint32)&ResourceIdShopDownArrowTiles)
 /* Loaded by mnIconLoadWithPalette. */
-extern char ResourceId_Icons;
-#define RESOURCE_ICONS ((Sint32)&ResourceId_Icons)
+extern char ResourceIdIcons;
+#define RESOURCE_ICONS ((Sint32)&ResourceIdIcons)
 /* Loaded by mnWindowShowFlashFrame and mnWindowStepSwellEffect. */
-extern char ResourceId_WindowBorderFlash;
-#define RESOURCE_WINDOW_BORDER_FLASH ((Sint32)&ResourceId_WindowBorderFlash)
+extern char ResourceIdWindowBorderFlash;
+#define RESOURCE_WINDOW_BORDER_FLASH ((Sint32)&ResourceIdWindowBorderFlash)
 /* Loaded by mnSettingsMenuAnimateCursors. */
-extern char ResourceId_ShopCursorPictures;
-#define RESOURCE_SHOP_CURSOR_PICTURES ((Sint32)&ResourceId_ShopCursorPictures)
+extern char ResourceIdShopCursorPictures;
+#define RESOURCE_SHOP_CURSOR_PICTURES ((Sint32)&ResourceIdShopCursorPictures)
 /* Loaded by mnGlyphDraw. */
-extern char ResourceId_SmallFont;
-#define RESOURCE_SMALL_FONT ((Sint32)&ResourceId_SmallFont)
+extern char ResourceIdSmallFont;
+#define RESOURCE_SMALL_FONT ((Sint32)&ResourceIdSmallFont)
 /* Loaded by fdMapScreenUpdateMarkers. */
-extern char ResourceId_WorldMapPicture;
-#define RESOURCE_WORLD_MAP_PICTURE ((Sint32)&ResourceId_WorldMapPicture)
-extern char ResourceId_WorldMapPictureLarge;
+extern char ResourceIdWorldMapPicture;
+#define RESOURCE_WORLD_MAP_PICTURE ((Sint32)&ResourceIdWorldMapPicture)
+extern char ResourceIdWorldMapPictureLarge;
 #define RESOURCE_WORLD_MAP_PICTURE_LARGE \
-	((Sint32)&ResourceId_WorldMapPictureLarge)
+	((Sint32)&ResourceIdWorldMapPictureLarge)
 
 /* The World Map: its four graphics sets, its cells and its perspective view. */
 
 /* The colours of the world map's first graphics set
    (WorldMapGraphicsResources). */
-extern char ResourceId_WorldMapPaletteA;
-#define RESOURCE_WORLD_MAP_PALETTE_A ((Sint32)&ResourceId_WorldMapPaletteA)
+extern char ResourceIdWorldMapPaletteA;
+#define RESOURCE_WORLD_MAP_PALETTE_A ((Sint32)&ResourceIdWorldMapPaletteA)
 /* The world map's cell tiles attributes in its first graphics set
    (WorldMapGraphicsResources). */
-extern char ResourceId_DefaultMetatileTilesAttributes;
+extern char ResourceIdDefaultMetatileTilesAttributes;
 #define RESOURCE_DEFAULT_METATILE_TILES_ATTRIBUTES \
-	((Sint32)&ResourceId_DefaultMetatileTilesAttributes)
+	((Sint32)&ResourceIdDefaultMetatileTilesAttributes)
 /* The colours of the world map's third graphics set
    (WorldMapGraphicsResources). */
-extern char ResourceId_WorldMapPaletteB;
-#define RESOURCE_WORLD_MAP_PALETTE_B ((Sint32)&ResourceId_WorldMapPaletteB)
+extern char ResourceIdWorldMapPaletteB;
+#define RESOURCE_WORLD_MAP_PALETTE_B ((Sint32)&ResourceIdWorldMapPaletteB)
 /* The world map's tile offsets and packed tiles, read by
    fdWorldMapInitPerspective. */
-extern char ResourceId_PerspectiveDataA;
-#define RESOURCE_PERSPECTIVE_DATA_A ((Sint32)&ResourceId_PerspectiveDataA)
+extern char ResourceIdPerspectiveDataA;
+#define RESOURCE_PERSPECTIVE_DATA_A ((Sint32)&ResourceIdPerspectiveDataA)
 /* Loaded by fdWorldMapInitPerspective, fdWorldMapLoadAreaGraphics and
    fdWorldMapLoadDefaultMetatilesAndUpdateBlock. */
-extern char ResourceId_DefaultMapMetatiles;
-#define RESOURCE_DEFAULT_MAP_METATILES ((Sint32)&ResourceId_DefaultMapMetatiles)
+extern char ResourceIdDefaultMapMetatiles;
+#define RESOURCE_DEFAULT_MAP_METATILES ((Sint32)&ResourceIdDefaultMapMetatiles)
 /* The tile animation of world map set A: a row of
    WorldMapGraphicsResources. */
-extern char ResourceId_DefaultMapAnimation;
-#define RESOURCE_DEFAULT_MAP_ANIMATION ((Sint32)&ResourceId_DefaultMapAnimation)
+extern char ResourceIdDefaultMapAnimation;
+#define RESOURCE_DEFAULT_MAP_ANIMATION ((Sint32)&ResourceIdDefaultMapAnimation)
 /* Tiles 1 of 6 of world map set A, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesA1;
-#define RESOURCE_WORLD_MAP_TILES_A1 ((Sint32)&ResourceId_WorldMapTilesA1)
+extern char ResourceIdWorldMapTilesA1;
+#define RESOURCE_WORLD_MAP_TILES_A1 ((Sint32)&ResourceIdWorldMapTilesA1)
 /* Tiles 2 of 6 of world map set A, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesA2;
-#define RESOURCE_WORLD_MAP_TILES_A2 ((Sint32)&ResourceId_WorldMapTilesA2)
+extern char ResourceIdWorldMapTilesA2;
+#define RESOURCE_WORLD_MAP_TILES_A2 ((Sint32)&ResourceIdWorldMapTilesA2)
 /* Tiles 3 of 6 of world map set A, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesA3;
-#define RESOURCE_WORLD_MAP_TILES_A3 ((Sint32)&ResourceId_WorldMapTilesA3)
+extern char ResourceIdWorldMapTilesA3;
+#define RESOURCE_WORLD_MAP_TILES_A3 ((Sint32)&ResourceIdWorldMapTilesA3)
 /* Tiles 4 of 6 of world map set A, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesA4;
-#define RESOURCE_WORLD_MAP_TILES_A4 ((Sint32)&ResourceId_WorldMapTilesA4)
+extern char ResourceIdWorldMapTilesA4;
+#define RESOURCE_WORLD_MAP_TILES_A4 ((Sint32)&ResourceIdWorldMapTilesA4)
 /* Tiles 5 of 6 of world map set A, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesA5;
-#define RESOURCE_WORLD_MAP_TILES_A5 ((Sint32)&ResourceId_WorldMapTilesA5)
+extern char ResourceIdWorldMapTilesA5;
+#define RESOURCE_WORLD_MAP_TILES_A5 ((Sint32)&ResourceIdWorldMapTilesA5)
 /* Tiles 6 of 6 of world map set A, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesA6;
-#define RESOURCE_WORLD_MAP_TILES_A6 ((Sint32)&ResourceId_WorldMapTilesA6)
+extern char ResourceIdWorldMapTilesA6;
+#define RESOURCE_WORLD_MAP_TILES_A6 ((Sint32)&ResourceIdWorldMapTilesA6)
 /* The palette of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapPaletteC;
-#define RESOURCE_WORLD_MAP_PALETTE_C ((Sint32)&ResourceId_WorldMapPaletteC)
+extern char ResourceIdWorldMapPaletteC;
+#define RESOURCE_WORLD_MAP_PALETTE_C ((Sint32)&ResourceIdWorldMapPaletteC)
 /* The tile animation of world map set C, in DefaultMapAnimation's format: a row
    of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapAnimationC;
-#define RESOURCE_WORLD_MAP_ANIMATION_C ((Sint32)&ResourceId_WorldMapAnimationC)
+extern char ResourceIdWorldMapAnimationC;
+#define RESOURCE_WORLD_MAP_ANIMATION_C ((Sint32)&ResourceIdWorldMapAnimationC)
 /* The cell tiles attributes of world map set C, in
    DefaultMetatileTilesAttributes' format: a row of
    WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapMetatileTilesAttributesC;
+extern char ResourceIdWorldMapMetatileTilesAttributesC;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_C \
-	((Sint32)&ResourceId_WorldMapMetatileTilesAttributesC)
+	((Sint32)&ResourceIdWorldMapMetatileTilesAttributesC)
 /* Tiles 1 of 6 of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesC1;
-#define RESOURCE_WORLD_MAP_TILES_C1 ((Sint32)&ResourceId_WorldMapTilesC1)
+extern char ResourceIdWorldMapTilesC1;
+#define RESOURCE_WORLD_MAP_TILES_C1 ((Sint32)&ResourceIdWorldMapTilesC1)
 /* Tiles 2 of 6 of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesC2;
-#define RESOURCE_WORLD_MAP_TILES_C2 ((Sint32)&ResourceId_WorldMapTilesC2)
+extern char ResourceIdWorldMapTilesC2;
+#define RESOURCE_WORLD_MAP_TILES_C2 ((Sint32)&ResourceIdWorldMapTilesC2)
 /* Tiles 3 of 6 of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesC3;
-#define RESOURCE_WORLD_MAP_TILES_C3 ((Sint32)&ResourceId_WorldMapTilesC3)
+extern char ResourceIdWorldMapTilesC3;
+#define RESOURCE_WORLD_MAP_TILES_C3 ((Sint32)&ResourceIdWorldMapTilesC3)
 /* Tiles 4 of 6 of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesC4;
-#define RESOURCE_WORLD_MAP_TILES_C4 ((Sint32)&ResourceId_WorldMapTilesC4)
+extern char ResourceIdWorldMapTilesC4;
+#define RESOURCE_WORLD_MAP_TILES_C4 ((Sint32)&ResourceIdWorldMapTilesC4)
 /* Tiles 5 of 6 of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesC5;
-#define RESOURCE_WORLD_MAP_TILES_C5 ((Sint32)&ResourceId_WorldMapTilesC5)
+extern char ResourceIdWorldMapTilesC5;
+#define RESOURCE_WORLD_MAP_TILES_C5 ((Sint32)&ResourceIdWorldMapTilesC5)
 /* Tiles 6 of 6 of world map set C, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesC6;
-#define RESOURCE_WORLD_MAP_TILES_C6 ((Sint32)&ResourceId_WorldMapTilesC6)
+extern char ResourceIdWorldMapTilesC6;
+#define RESOURCE_WORLD_MAP_TILES_C6 ((Sint32)&ResourceIdWorldMapTilesC6)
 /* The tile animation of world map set B, in DefaultMapAnimation's format: a row
    of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapAnimationB;
-#define RESOURCE_WORLD_MAP_ANIMATION_B ((Sint32)&ResourceId_WorldMapAnimationB)
+extern char ResourceIdWorldMapAnimationB;
+#define RESOURCE_WORLD_MAP_ANIMATION_B ((Sint32)&ResourceIdWorldMapAnimationB)
 /* The cell tiles attributes of world map set B, in
    DefaultMetatileTilesAttributes' format: a row of
    WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapMetatileTilesAttributesB;
+extern char ResourceIdWorldMapMetatileTilesAttributesB;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_B \
-	((Sint32)&ResourceId_WorldMapMetatileTilesAttributesB)
+	((Sint32)&ResourceIdWorldMapMetatileTilesAttributesB)
 /* Tiles 1 of 6 of world map set B, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesB1;
-#define RESOURCE_WORLD_MAP_TILES_B1 ((Sint32)&ResourceId_WorldMapTilesB1)
+extern char ResourceIdWorldMapTilesB1;
+#define RESOURCE_WORLD_MAP_TILES_B1 ((Sint32)&ResourceIdWorldMapTilesB1)
 /* Tiles 2 of 6 of world map set B, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesB2;
-#define RESOURCE_WORLD_MAP_TILES_B2 ((Sint32)&ResourceId_WorldMapTilesB2)
+extern char ResourceIdWorldMapTilesB2;
+#define RESOURCE_WORLD_MAP_TILES_B2 ((Sint32)&ResourceIdWorldMapTilesB2)
 /* Tiles 3 of 6 of world map set B, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesB3;
-#define RESOURCE_WORLD_MAP_TILES_B3 ((Sint32)&ResourceId_WorldMapTilesB3)
+extern char ResourceIdWorldMapTilesB3;
+#define RESOURCE_WORLD_MAP_TILES_B3 ((Sint32)&ResourceIdWorldMapTilesB3)
 /* Tiles 4 of 6 of world map set B, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesB4;
-#define RESOURCE_WORLD_MAP_TILES_B4 ((Sint32)&ResourceId_WorldMapTilesB4)
+extern char ResourceIdWorldMapTilesB4;
+#define RESOURCE_WORLD_MAP_TILES_B4 ((Sint32)&ResourceIdWorldMapTilesB4)
 /* Tiles 5 of 6 of world map set B, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesB5;
-#define RESOURCE_WORLD_MAP_TILES_B5 ((Sint32)&ResourceId_WorldMapTilesB5)
+extern char ResourceIdWorldMapTilesB5;
+#define RESOURCE_WORLD_MAP_TILES_B5 ((Sint32)&ResourceIdWorldMapTilesB5)
 /* Tiles 6 of 6 of world map set B, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesB6;
-#define RESOURCE_WORLD_MAP_TILES_B6 ((Sint32)&ResourceId_WorldMapTilesB6)
+extern char ResourceIdWorldMapTilesB6;
+#define RESOURCE_WORLD_MAP_TILES_B6 ((Sint32)&ResourceIdWorldMapTilesB6)
 /* The palette of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapPaletteD;
-#define RESOURCE_WORLD_MAP_PALETTE_D ((Sint32)&ResourceId_WorldMapPaletteD)
+extern char ResourceIdWorldMapPaletteD;
+#define RESOURCE_WORLD_MAP_PALETTE_D ((Sint32)&ResourceIdWorldMapPaletteD)
 /* The tile animation of world map set D, in DefaultMapAnimation's format: a row
    of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapAnimationD;
-#define RESOURCE_WORLD_MAP_ANIMATION_D ((Sint32)&ResourceId_WorldMapAnimationD)
+extern char ResourceIdWorldMapAnimationD;
+#define RESOURCE_WORLD_MAP_ANIMATION_D ((Sint32)&ResourceIdWorldMapAnimationD)
 /* The cell tiles attributes of world map set D, in
    DefaultMetatileTilesAttributes' format: a row of
    WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapMetatileTilesAttributesD;
+extern char ResourceIdWorldMapMetatileTilesAttributesD;
 #define RESOURCE_WORLD_MAP_METATILE_TILES_ATTRIBUTES_D \
-	((Sint32)&ResourceId_WorldMapMetatileTilesAttributesD)
+	((Sint32)&ResourceIdWorldMapMetatileTilesAttributesD)
 /* Tiles 1 of 6 of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesD1;
-#define RESOURCE_WORLD_MAP_TILES_D1 ((Sint32)&ResourceId_WorldMapTilesD1)
+extern char ResourceIdWorldMapTilesD1;
+#define RESOURCE_WORLD_MAP_TILES_D1 ((Sint32)&ResourceIdWorldMapTilesD1)
 /* Tiles 2 of 6 of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesD2;
-#define RESOURCE_WORLD_MAP_TILES_D2 ((Sint32)&ResourceId_WorldMapTilesD2)
+extern char ResourceIdWorldMapTilesD2;
+#define RESOURCE_WORLD_MAP_TILES_D2 ((Sint32)&ResourceIdWorldMapTilesD2)
 /* Tiles 3 of 6 of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesD3;
-#define RESOURCE_WORLD_MAP_TILES_D3 ((Sint32)&ResourceId_WorldMapTilesD3)
+extern char ResourceIdWorldMapTilesD3;
+#define RESOURCE_WORLD_MAP_TILES_D3 ((Sint32)&ResourceIdWorldMapTilesD3)
 /* Tiles 4 of 6 of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesD4;
-#define RESOURCE_WORLD_MAP_TILES_D4 ((Sint32)&ResourceId_WorldMapTilesD4)
+extern char ResourceIdWorldMapTilesD4;
+#define RESOURCE_WORLD_MAP_TILES_D4 ((Sint32)&ResourceIdWorldMapTilesD4)
 /* Tiles 5 of 6 of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesD5;
-#define RESOURCE_WORLD_MAP_TILES_D5 ((Sint32)&ResourceId_WorldMapTilesD5)
+extern char ResourceIdWorldMapTilesD5;
+#define RESOURCE_WORLD_MAP_TILES_D5 ((Sint32)&ResourceIdWorldMapTilesD5)
 /* Tiles 6 of 6 of world map set D, a row of WorldMapGraphicsResources. */
-extern char ResourceId_WorldMapTilesD6;
-#define RESOURCE_WORLD_MAP_TILES_D6 ((Sint32)&ResourceId_WorldMapTilesD6)
+extern char ResourceIdWorldMapTilesD6;
+#define RESOURCE_WORLD_MAP_TILES_D6 ((Sint32)&ResourceIdWorldMapTilesD6)
 /* Loaded by fdWorldMapInitPerspective. */
-extern char ResourceId_DefaultMapEntrances;
-#define RESOURCE_DEFAULT_MAP_ENTRANCES ((Sint32)&ResourceId_DefaultMapEntrances)
+extern char ResourceIdDefaultMapEntrances;
+#define RESOURCE_DEFAULT_MAP_ENTRANCES ((Sint32)&ResourceIdDefaultMapEntrances)
 
 /* Field effects: the field Psynergy and the scenes' own effects. */
 
 /* Loaded by fdParticleBurstStart. */
-extern char ResourceId_Leaves;
-#define RESOURCE_LEAVES ((Sint32)&ResourceId_Leaves)
+extern char ResourceIdLeaves;
+#define RESOURCE_LEAVES ((Sint32)&ResourceIdLeaves)
 /* Loaded by fdActorAppearInSparks, fdPsynergyEndRing and fdPsynergyLash. */
-extern char ResourceId_SparkleFade;
-#define RESOURCE_SPARKLE_FADE ((Sint32)&ResourceId_SparkleFade)
+extern char ResourceIdSparkleFade;
+#define RESOURCE_SPARKLE_FADE ((Sint32)&ResourceIdSparkleFade)
 /* Loaded by scGabombaStatueStartClock. */
-extern char ResourceId_ClockDigits;
-#define RESOURCE_CLOCK_DIGITS ((Sint32)&ResourceId_ClockDigits)
+extern char ResourceIdClockDigits;
+#define RESOURCE_CLOCK_DIGITS ((Sint32)&ResourceIdClockDigits)
 /* Loaded by scAirsRockWhirlwindClearsFog, scAirsRockWhirlwindClearsWall and
    scShamanVillageBlowAwaySand. */
-extern char ResourceId_WhirlwindMap;
-#define RESOURCE_WHIRLWIND_MAP ((Sint32)&ResourceId_WhirlwindMap)
-extern char ResourceId_WhirlwindTiles;
-#define RESOURCE_WHIRLWIND_TILES ((Sint32)&ResourceId_WhirlwindTiles)
+extern char ResourceIdWhirlwindMap;
+#define RESOURCE_WHIRLWIND_MAP ((Sint32)&ResourceIdWhirlwindMap)
+extern char ResourceIdWhirlwindTiles;
+#define RESOURCE_WHIRLWIND_TILES ((Sint32)&ResourceIdWhirlwindTiles)
 /* Whirlwind's picture is drawn on BG0, the windows' layer: its tiles, two rows
    of WHIRLWIND_ROW_TILES (the top halves, then the bottom ones), go over BG
    tiles WHIRLWIND_TOP_TILE and WHIRLWIND_BOTTOM_TILE of character block 3, and
@@ -1226,315 +1223,312 @@ extern char ResourceId_WhirlwindTiles;
 /* Loaded by scAirsRockInsideWakeHallStatue,
    scAirsRockInsideWakeVialChestStatue, scAirsRockWhirlwindOpensTheTop and
    scJupiterLighthouseFlashSky. */
-extern char ResourceId_LightningMap;
-#define RESOURCE_LIGHTNING_MAP ((Sint32)&ResourceId_LightningMap)
-extern char ResourceId_LightningTiles;
-#define RESOURCE_LIGHTNING_TILES ((Sint32)&ResourceId_LightningTiles)
+extern char ResourceIdLightningMap;
+#define RESOURCE_LIGHTNING_MAP ((Sint32)&ResourceIdLightningMap)
+extern char ResourceIdLightningTiles;
+#define RESOURCE_LIGHTNING_TILES ((Sint32)&ResourceIdLightningTiles)
 /* Loaded by scChampaCliffCavesStartFlash, fdPsynergyBurst, scLohoFireCannon and
    scNorthernReachesShatterIceWall. */
-extern char ResourceId_FieldEffectExplosion;
+extern char ResourceIdFieldEffectExplosion;
 #define RESOURCE_FIELD_EFFECT_EXPLOSION \
-	((Sint32)&ResourceId_FieldEffectExplosion)
-/* Loaded by ChampaCliffCaves_LoadDisc, fdPsynergyBurst, fdPsynergyParch and
+	((Sint32)&ResourceIdFieldEffectExplosion)
+/* Loaded by ChampaCliffCavesLoadDisc, fdPsynergyBurst, fdPsynergyParch and
    fdPsynergyPound. */
-extern char ResourceId_GlowDisc;
-#define RESOURCE_GLOW_DISC ((Sint32)&ResourceId_GlowDisc)
+extern char ResourceIdGlowDisc;
+#define RESOURCE_GLOW_DISC ((Sint32)&ResourceIdGlowDisc)
 /* Loaded by scNorthernReachesShatterIceWall. */
-extern char ResourceId_FieldEffectIceShard;
-#define RESOURCE_FIELD_EFFECT_ICE_SHARD \
-	((Sint32)&ResourceId_FieldEffectIceShard)
+extern char ResourceIdFieldEffectIceShard;
+#define RESOURCE_FIELD_EFFECT_ICE_SHARD ((Sint32)&ResourceIdFieldEffectIceShard)
 /* Loaded by scEasternAlhafraStartFallingRocks,
    scMagmaRockInsideStartFallingRocks, scMagmaRockStartFallingRocks,
    scProxStartFallingRocks, dbPsynergyTest2StartRocks and
    scTundariaTowerStartFallingRocks. */
-extern char ResourceId_FallingRock;
-#define RESOURCE_FALLING_ROCK ((Sint32)&ResourceId_FallingRock)
+extern char ResourceIdFallingRock;
+#define RESOURCE_FALLING_ROCK ((Sint32)&ResourceIdFallingRock)
 /* Loaded by fdPsynergyBlaze, fdPsynergyEndSand, fdPsynergySand, fdPsynergyScoop
    and scVenusLighthouseEntranceStartDust. */
-extern char ResourceId_DustPuffA;
-#define RESOURCE_DUST_PUFF_A ((Sint32)&ResourceId_DustPuffA)
+extern char ResourceIdDustPuffA;
+#define RESOURCE_DUST_PUFF_A ((Sint32)&ResourceIdDustPuffA)
 /* Loaded by scJupiterLighthouseStartSparkRing, fdTeleportPlaySparks and
    fdTeleportPlayWhirl. */
-extern char ResourceId_ColouredOrbs;
-#define RESOURCE_COLOURED_ORBS ((Sint32)&ResourceId_ColouredOrbs)
+extern char ResourceIdColouredOrbs;
+#define RESOURCE_COLOURED_ORBS ((Sint32)&ResourceIdColouredOrbs)
 /* Loaded by fdPsynergyLash, fdPsynergyRing and scJupiterLighthouseStartBeam. */
-extern char ResourceId_StarSparkleFade;
-#define RESOURCE_STAR_SPARKLE_FADE ((Sint32)&ResourceId_StarSparkleFade)
+extern char ResourceIdStarSparkleFade;
+#define RESOURCE_STAR_SPARKLE_FADE ((Sint32)&ResourceIdStarSparkleFade)
 /* Loaded by fdPsynergyGrindOnTarget. */
-extern char ResourceId_WaterSplash;
-#define RESOURCE_WATER_SPLASH ((Sint32)&ResourceId_WaterSplash)
+extern char ResourceIdWaterSplash;
+#define RESOURCE_WATER_SPLASH ((Sint32)&ResourceIdWaterSplash)
 /* Loaded by fdPsynergyHover. */
-extern char ResourceId_RingOrb;
-#define RESOURCE_RING_ORB ((Sint32)&ResourceId_RingOrb)
-/* The two 8x8 tiles of the sprites Tremor shakes (FieldEffect_ShakeTiles),
+extern char ResourceIdRingOrb;
+#define RESOURCE_RING_ORB ((Sint32)&ResourceIdRingOrb)
+/* The two 8x8 tiles of the sprites Tremor shakes (FieldEffectShakeTiles),
    loaded by fdPsynergyTremorOnTarget. */
-extern char ResourceId_ShakeTiles;
-#define RESOURCE_SHAKE_TILES ((Sint32)&ResourceId_ShakeTiles)
+extern char ResourceIdShakeTiles;
+#define RESOURCE_SHAKE_TILES ((Sint32)&ResourceIdShakeTiles)
 /* Loaded by scChampaCliffCavesLoadColumn. */
-extern char ResourceId_FireColumn;
-#define RESOURCE_FIRE_COLUMN ((Sint32)&ResourceId_FireColumn)
+extern char ResourceIdFireColumn;
+#define RESOURCE_FIRE_COLUMN ((Sint32)&ResourceIdFireColumn)
 /* Loaded by scJupiterLighthouseStartBeam. */
-extern char ResourceId_GoldenTrident;
-#define RESOURCE_GOLDEN_TRIDENT ((Sint32)&ResourceId_GoldenTrident)
+extern char ResourceIdGoldenTrident;
+#define RESOURCE_GOLDEN_TRIDENT ((Sint32)&ResourceIdGoldenTrident)
 /* Loaded by scShamanVillageLoadLettering. */
-extern char ResourceId_LetteringBanner;
-#define RESOURCE_LETTERING_BANNER ((Sint32)&ResourceId_LetteringBanner)
+extern char ResourceIdLetteringBanner;
+#define RESOURCE_LETTERING_BANNER ((Sint32)&ResourceIdLetteringBanner)
 /* Loaded by fdPsynergyBlaze. */
-extern char ResourceId_RedFlameBurst;
-#define RESOURCE_RED_FLAME_BURST ((Sint32)&ResourceId_RedFlameBurst)
-extern char ResourceId_VioletFlameBurst;
-#define RESOURCE_VIOLET_FLAME_BURST ((Sint32)&ResourceId_VioletFlameBurst)
-extern char ResourceId_YellowFlameBurst;
-#define RESOURCE_YELLOW_FLAME_BURST ((Sint32)&ResourceId_YellowFlameBurst)
-extern char ResourceId_BlueFlameBurst;
-#define RESOURCE_BLUE_FLAME_BURST ((Sint32)&ResourceId_BlueFlameBurst)
+extern char ResourceIdRedFlameBurst;
+#define RESOURCE_RED_FLAME_BURST ((Sint32)&ResourceIdRedFlameBurst)
+extern char ResourceIdVioletFlameBurst;
+#define RESOURCE_VIOLET_FLAME_BURST ((Sint32)&ResourceIdVioletFlameBurst)
+extern char ResourceIdYellowFlameBurst;
+#define RESOURCE_YELLOW_FLAME_BURST ((Sint32)&ResourceIdYellowFlameBurst)
+extern char ResourceIdBlueFlameBurst;
+#define RESOURCE_BLUE_FLAME_BURST ((Sint32)&ResourceIdBlueFlameBurst)
 /* Loaded by fdPsynergyParch. */
-extern char ResourceId_WhitePuff;
-#define RESOURCE_WHITE_PUFF ((Sint32)&ResourceId_WhitePuff)
+extern char ResourceIdWhitePuff;
+#define RESOURCE_WHITE_PUFF ((Sint32)&ResourceIdWhitePuff)
 /* Loaded by fdPsynergyPound. */
-extern char ResourceId_GoldStar;
-#define RESOURCE_GOLD_STAR ((Sint32)&ResourceId_GoldStar)
+extern char ResourceIdGoldStar;
+#define RESOURCE_GOLD_STAR ((Sint32)&ResourceIdGoldStar)
 /* Loaded by fdPsynergyArrow. */
-extern char ResourceId_BowDraw;
-#define RESOURCE_BOW_DRAW ((Sint32)&ResourceId_BowDraw)
-extern char ResourceId_FlamingArrow;
-#define RESOURCE_FLAMING_ARROW ((Sint32)&ResourceId_FlamingArrow)
+extern char ResourceIdBowDraw;
+#define RESOURCE_BOW_DRAW ((Sint32)&ResourceIdBowDraw)
+extern char ResourceIdFlamingArrow;
+#define RESOURCE_FLAMING_ARROW ((Sint32)&ResourceIdFlamingArrow)
 /* Loaded by fdPsynergyScoop. */
-extern char ResourceId_DustPuffB;
-#define RESOURCE_DUST_PUFF_B ((Sint32)&ResourceId_DustPuffB)
-extern char ResourceId_WhiteSparkle;
-#define RESOURCE_WHITE_SPARKLE ((Sint32)&ResourceId_WhiteSparkle)
-extern char ResourceId_ScoopEarth;
-#define RESOURCE_SCOOP_EARTH ((Sint32)&ResourceId_ScoopEarth)
+extern char ResourceIdDustPuffB;
+#define RESOURCE_DUST_PUFF_B ((Sint32)&ResourceIdDustPuffB)
+extern char ResourceIdWhiteSparkle;
+#define RESOURCE_WHITE_SPARKLE ((Sint32)&ResourceIdWhiteSparkle)
+extern char ResourceIdScoopEarth;
+#define RESOURCE_SCOOP_EARTH ((Sint32)&ResourceIdScoopEarth)
 /* Loaded by fdSummonTabletPlayRunes. */
-extern char ResourceId_Runes;
-#define RESOURCE_RUNES ((Sint32)&ResourceId_Runes)
-extern char ResourceId_Pebbles;
-#define RESOURCE_PEBBLES ((Sint32)&ResourceId_Pebbles)
+extern char ResourceIdRunes;
+#define RESOURCE_RUNES ((Sint32)&ResourceIdRunes)
+extern char ResourceIdPebbles;
+#define RESOURCE_PEBBLES ((Sint32)&ResourceIdPebbles)
 /* Loaded by fdPsynergyRing. */
-extern char ResourceId_RingArcs;
-#define RESOURCE_RING_ARCS ((Sint32)&ResourceId_RingArcs)
-extern char ResourceId_RingWaves;
-#define RESOURCE_RING_WAVES ((Sint32)&ResourceId_RingWaves)
+extern char ResourceIdRingArcs;
+#define RESOURCE_RING_ARCS ((Sint32)&ResourceIdRingArcs)
+extern char ResourceIdRingWaves;
+#define RESOURCE_RING_WAVES ((Sint32)&ResourceIdRingWaves)
 
 /* Lucky Dice, Lucky Wheels and Super Lucky Dice. */
 
 /* The Lucky Dice board, with its colours, on the background
    (fdLuckyDiceRun). */
-extern char ResourceId_LuckyDiceBoard;
-#define RESOURCE_LUCKY_DICE_BOARD ((Sint32)&ResourceId_LuckyDiceBoard)
+extern char ResourceIdLuckyDiceBoard;
+#define RESOURCE_LUCKY_DICE_BOARD ((Sint32)&ResourceIdLuckyDiceBoard)
 /* The Lucky Dice sprites and their colours (fdLuckyDiceRun). */
-extern char ResourceId_LuckyDiceSprites;
-#define RESOURCE_LUCKY_DICE_SPRITES ((Sint32)&ResourceId_LuckyDiceSprites)
+extern char ResourceIdLuckyDiceSprites;
+#define RESOURCE_LUCKY_DICE_SPRITES ((Sint32)&ResourceIdLuckyDiceSprites)
 /* Loaded by fdLuckyWheelsRun. */
-extern char ResourceId_SlotsMachinePicture;
-#define RESOURCE_SLOTS_MACHINE_PICTURE ((Sint32)&ResourceId_SlotsMachinePicture)
-extern char ResourceId_SlotsIcons;
-#define RESOURCE_SLOTS_ICONS ((Sint32)&ResourceId_SlotsIcons)
-extern char ResourceId_SlotsJackpotBanner;
-#define RESOURCE_SLOTS_JACKPOT_BANNER ((Sint32)&ResourceId_SlotsJackpotBanner)
+extern char ResourceIdSlotsMachinePicture;
+#define RESOURCE_SLOTS_MACHINE_PICTURE ((Sint32)&ResourceIdSlotsMachinePicture)
+extern char ResourceIdSlotsIcons;
+#define RESOURCE_SLOTS_ICONS ((Sint32)&ResourceIdSlotsIcons)
+extern char ResourceIdSlotsJackpotBanner;
+#define RESOURCE_SLOTS_JACKPOT_BANNER ((Sint32)&ResourceIdSlotsJackpotBanner)
 /* Super Lucky Dice's dome, its dice and its digits and banners
    (fdSuperLuckyDiceRun). */
-extern char ResourceId_SlotsDomePicture;
-#define RESOURCE_SLOTS_DOME_PICTURE ((Sint32)&ResourceId_SlotsDomePicture)
-extern char ResourceId_DiceFaces;
-#define RESOURCE_DICE_FACES ((Sint32)&ResourceId_DiceFaces)
-extern char ResourceId_SlotsSmallDoubleUpBanner;
+extern char ResourceIdSlotsDomePicture;
+#define RESOURCE_SLOTS_DOME_PICTURE ((Sint32)&ResourceIdSlotsDomePicture)
+extern char ResourceIdDiceFaces;
+#define RESOURCE_DICE_FACES ((Sint32)&ResourceIdDiceFaces)
+extern char ResourceIdSlotsSmallDoubleUpBanner;
 #define RESOURCE_SLOTS_SMALL_DOUBLE_UP_BANNER \
-	((Sint32)&ResourceId_SlotsSmallDoubleUpBanner)
-extern char ResourceId_SlotsFinalGameBanner;
+	((Sint32)&ResourceIdSlotsSmallDoubleUpBanner)
+extern char ResourceIdSlotsFinalGameBanner;
 #define RESOURCE_SLOTS_FINAL_GAME_BANNER \
-	((Sint32)&ResourceId_SlotsFinalGameBanner)
-extern char ResourceId_SlotsOrangeDigits;
-#define RESOURCE_SLOTS_ORANGE_DIGITS ((Sint32)&ResourceId_SlotsOrangeDigits)
-extern char ResourceId_SlotsTimesSign;
-#define RESOURCE_SLOTS_TIMES_SIGN ((Sint32)&ResourceId_SlotsTimesSign)
-extern char ResourceId_SlotsPinkDigits;
-#define RESOURCE_SLOTS_PINK_DIGITS ((Sint32)&ResourceId_SlotsPinkDigits)
-extern char ResourceId_SlotsHigherBanner;
-#define RESOURCE_SLOTS_HIGHER_BANNER ((Sint32)&ResourceId_SlotsHigherBanner)
-extern char ResourceId_SlotsLowerBanner;
-#define RESOURCE_SLOTS_LOWER_BANNER ((Sint32)&ResourceId_SlotsLowerBanner)
-extern char ResourceId_SlotsYouLoseBanner;
-#define RESOURCE_SLOTS_YOU_LOSE_BANNER ((Sint32)&ResourceId_SlotsYouLoseBanner)
-extern char ResourceId_SlotsYouWinBanner;
-#define RESOURCE_SLOTS_YOU_WIN_BANNER ((Sint32)&ResourceId_SlotsYouWinBanner)
-extern char ResourceId_SlotsOnePairBanner;
-#define RESOURCE_SLOTS_ONE_PAIR_BANNER ((Sint32)&ResourceId_SlotsOnePairBanner)
-extern char ResourceId_SlotsTwoPairBanner;
-#define RESOURCE_SLOTS_TWO_PAIR_BANNER ((Sint32)&ResourceId_SlotsTwoPairBanner)
-extern char ResourceId_SlotsTripleBanner;
-#define RESOURCE_SLOTS_TRIPLE_BANNER ((Sint32)&ResourceId_SlotsTripleBanner)
-extern char ResourceId_SlotsPerfectBanner;
-#define RESOURCE_SLOTS_PERFECT_BANNER ((Sint32)&ResourceId_SlotsPerfectBanner)
-extern char ResourceId_SlotsGreenDigits;
-#define RESOURCE_SLOTS_GREEN_DIGITS ((Sint32)&ResourceId_SlotsGreenDigits)
-extern char ResourceId_SlotsDoubleUpBanner;
-#define RESOURCE_SLOTS_DOUBLE_UP_BANNER \
-	((Sint32)&ResourceId_SlotsDoubleUpBanner)
-extern char ResourceId_SlotsCashOutBanner;
-#define RESOURCE_SLOTS_CASH_OUT_BANNER ((Sint32)&ResourceId_SlotsCashOutBanner)
+	((Sint32)&ResourceIdSlotsFinalGameBanner)
+extern char ResourceIdSlotsOrangeDigits;
+#define RESOURCE_SLOTS_ORANGE_DIGITS ((Sint32)&ResourceIdSlotsOrangeDigits)
+extern char ResourceIdSlotsTimesSign;
+#define RESOURCE_SLOTS_TIMES_SIGN ((Sint32)&ResourceIdSlotsTimesSign)
+extern char ResourceIdSlotsPinkDigits;
+#define RESOURCE_SLOTS_PINK_DIGITS ((Sint32)&ResourceIdSlotsPinkDigits)
+extern char ResourceIdSlotsHigherBanner;
+#define RESOURCE_SLOTS_HIGHER_BANNER ((Sint32)&ResourceIdSlotsHigherBanner)
+extern char ResourceIdSlotsLowerBanner;
+#define RESOURCE_SLOTS_LOWER_BANNER ((Sint32)&ResourceIdSlotsLowerBanner)
+extern char ResourceIdSlotsYouLoseBanner;
+#define RESOURCE_SLOTS_YOU_LOSE_BANNER ((Sint32)&ResourceIdSlotsYouLoseBanner)
+extern char ResourceIdSlotsYouWinBanner;
+#define RESOURCE_SLOTS_YOU_WIN_BANNER ((Sint32)&ResourceIdSlotsYouWinBanner)
+extern char ResourceIdSlotsOnePairBanner;
+#define RESOURCE_SLOTS_ONE_PAIR_BANNER ((Sint32)&ResourceIdSlotsOnePairBanner)
+extern char ResourceIdSlotsTwoPairBanner;
+#define RESOURCE_SLOTS_TWO_PAIR_BANNER ((Sint32)&ResourceIdSlotsTwoPairBanner)
+extern char ResourceIdSlotsTripleBanner;
+#define RESOURCE_SLOTS_TRIPLE_BANNER ((Sint32)&ResourceIdSlotsTripleBanner)
+extern char ResourceIdSlotsPerfectBanner;
+#define RESOURCE_SLOTS_PERFECT_BANNER ((Sint32)&ResourceIdSlotsPerfectBanner)
+extern char ResourceIdSlotsGreenDigits;
+#define RESOURCE_SLOTS_GREEN_DIGITS ((Sint32)&ResourceIdSlotsGreenDigits)
+extern char ResourceIdSlotsDoubleUpBanner;
+#define RESOURCE_SLOTS_DOUBLE_UP_BANNER ((Sint32)&ResourceIdSlotsDoubleUpBanner)
+extern char ResourceIdSlotsCashOutBanner;
+#define RESOURCE_SLOTS_CASH_OUT_BANNER ((Sint32)&ResourceIdSlotsCashOutBanner)
 
 /* The ending and the credits. */
 
 /* The green panel inside the epilogue's portrait frame
-   (Epilogue_LoadNamePanel). */
-extern char ResourceId_GreenPanel;
-#define RESOURCE_GREEN_PANEL ((Sint32)&ResourceId_GreenPanel)
+   (EpilogueLoadNamePanel). */
+extern char ResourceIdGreenPanel;
+#define RESOURCE_GREEN_PANEL ((Sint32)&ResourceIdGreenPanel)
 /* The ending's pictures, each 512 pixels wide, which the epilogue pans across
    under its lines (mnEndingImageShow). The first: three men on a cliff above
    the plain by day. */
-extern char ResourceId_EndingCliffDayPicture;
+extern char ResourceIdEndingCliffDayPicture;
 #define RESOURCE_ENDING_CLIFF_DAY_PICTURE \
-	((Sint32)&ResourceId_EndingCliffDayPicture)
+	((Sint32)&ResourceIdEndingCliffDayPicture)
 /* The three on the cliff at sunset. */
-extern char ResourceId_EndingCliffSunsetPicture;
+extern char ResourceIdEndingCliffSunsetPicture;
 #define RESOURCE_ENDING_CLIFF_SUNSET_PICTURE \
-	((Sint32)&ResourceId_EndingCliffSunsetPicture)
+	((Sint32)&ResourceIdEndingCliffSunsetPicture)
 /* The villagers among autumn trees, Dora alone on the right. */
-extern char ResourceId_EndingVillagersPictureA;
+extern char ResourceIdEndingVillagersPictureA;
 #define RESOURCE_ENDING_VILLAGERS_PICTURE_A \
-	((Sint32)&ResourceId_EndingVillagersPictureA)
+	((Sint32)&ResourceIdEndingVillagersPictureA)
 /* The embrace, held until a button is pressed. */
-extern char ResourceId_EndingEmbracePicture;
+extern char ResourceIdEndingEmbracePicture;
 #define RESOURCE_ENDING_EMBRACE_PICTURE \
-	((Sint32)&ResourceId_EndingEmbracePicture)
+	((Sint32)&ResourceIdEndingEmbracePicture)
 /* The party together, panned along. */
-extern char ResourceId_EndingReunionPicture;
+extern char ResourceIdEndingReunionPicture;
 #define RESOURCE_ENDING_REUNION_PICTURE \
-	((Sint32)&ResourceId_EndingReunionPicture)
+	((Sint32)&ResourceIdEndingReunionPicture)
 /* The plain at sunset. */
-extern char ResourceId_EndingSunsetPlainPicture;
+extern char ResourceIdEndingSunsetPlainPicture;
 #define RESOURCE_ENDING_SUNSET_PLAIN_PICTURE \
-	((Sint32)&ResourceId_EndingSunsetPlainPicture)
+	((Sint32)&ResourceIdEndingSunsetPlainPicture)
 /* The plain at sunset, with "The End" in each language. */
-extern char ResourceId_EndingTheEndPicture;
-#define RESOURCE_ENDING_THE_END_PICTURE \
-	((Sint32)&ResourceId_EndingTheEndPicture)
+extern char ResourceIdEndingTheEndPicture;
+#define RESOURCE_ENDING_THE_END_PICTURE ((Sint32)&ResourceIdEndingTheEndPicture)
 
 /* Data that is no picture. */
 
 /* The build's date and time as text, different in each edition;
    syCopyBuildStamp copies it into BuildStampWork. */
-extern char ResourceId_BuildStamp;
-#define RESOURCE_BUILD_STAMP ((Sint32)&ResourceId_BuildStamp)
+extern char ResourceIdBuildStamp;
+#define RESOURCE_BUILD_STAMP ((Sint32)&ResourceIdBuildStamp)
 /* Stub tables, which the title, the credits and the dice and wheel games hand
    to syResourceReservedNoOperation, which ignores them. */
-extern char ResourceId_TitleStubs;
-#define RESOURCE_TITLE_STUBS ((Sint32)&ResourceId_TitleStubs)
-extern char ResourceId_CreditsStubs;
-#define RESOURCE_CREDITS_STUBS ((Sint32)&ResourceId_CreditsStubs)
-extern char ResourceId_BattleEffectStubs;
-#define RESOURCE_BATTLE_EFFECT_STUBS ((Sint32)&ResourceId_BattleEffectStubs)
+extern char ResourceIdTitleStubs;
+#define RESOURCE_TITLE_STUBS ((Sint32)&ResourceIdTitleStubs)
+extern char ResourceIdCreditsStubs;
+#define RESOURCE_CREDITS_STUBS ((Sint32)&ResourceIdCreditsStubs)
+extern char ResourceIdBattleEffectStubs;
+#define RESOURCE_BATTLE_EFFECT_STUBS ((Sint32)&ResourceIdBattleEffectStubs)
 /* The sprites' animation data, which the debug sprite viewer passes to a stub
    (fdSprViewerRun). */
-extern char ResourceId_SpriteMetadata;
-#define RESOURCE_SPRITE_METADATA ((Sint32)&ResourceId_SpriteMetadata)
+extern char ResourceIdSpriteMetadata;
+#define RESOURCE_SPRITE_METADATA ((Sint32)&ResourceIdSpriteMetadata)
 /* Loaded by fdTileMapConvertBuffer. */
-extern char ResourceId_EmptyMap;
-#define RESOURCE_EMPTY_MAP ((Sint32)&ResourceId_EmptyMap)
+extern char ResourceIdEmptyMap;
+#define RESOURCE_EMPTY_MAP ((Sint32)&ResourceIdEmptyMap)
 
 /* The battle backdrops that SceneBattleBackgroundRules chooses, named by their
    pictures. */
-extern char ResourceId_CanyonMeadowBackdrop;
+extern char ResourceIdCanyonMeadowBackdrop;
 #define RESOURCE_CANYON_MEADOW_BACKDROP \
-	((Sint32)&ResourceId_CanyonMeadowBackdrop)
-extern char ResourceId_FireCavePoolBackdrop;
+	((Sint32)&ResourceIdCanyonMeadowBackdrop)
+extern char ResourceIdFireCavePoolBackdrop;
 #define RESOURCE_FIRE_CAVE_POOL_BACKDROP \
-	((Sint32)&ResourceId_FireCavePoolBackdrop)
-extern char ResourceId_BlueCaveBackdrop;
-#define RESOURCE_BLUE_CAVE_BACKDROP ((Sint32)&ResourceId_BlueCaveBackdrop)
-extern char ResourceId_RedMesaBackdrop;
-#define RESOURCE_RED_MESA_BACKDROP ((Sint32)&ResourceId_RedMesaBackdrop)
-extern char ResourceId_PinkRocksBackdrop;
-#define RESOURCE_PINK_ROCKS_BACKDROP ((Sint32)&ResourceId_PinkRocksBackdrop)
-extern char ResourceId_PinkTotemBackdrop;
-#define RESOURCE_PINK_TOTEM_BACKDROP ((Sint32)&ResourceId_PinkTotemBackdrop)
-extern char ResourceId_StoneTownBackdrop;
-#define RESOURCE_STONE_TOWN_BACKDROP ((Sint32)&ResourceId_StoneTownBackdrop)
-extern char ResourceId_PalmCliffBackdrop;
-#define RESOURCE_PALM_CLIFF_BACKDROP ((Sint32)&ResourceId_PalmCliffBackdrop)
-extern char ResourceId_ToyRoomBackdrop;
-#define RESOURCE_TOY_ROOM_BACKDROP ((Sint32)&ResourceId_ToyRoomBackdrop)
-extern char ResourceId_ShipCabinBackdrop;
-#define RESOURCE_SHIP_CABIN_BACKDROP ((Sint32)&ResourceId_ShipCabinBackdrop)
-extern char ResourceId_GoldRocksBackdrop;
-#define RESOURCE_GOLD_ROCKS_BACKDROP ((Sint32)&ResourceId_GoldRocksBackdrop)
-extern char ResourceId_StoneCorridorBackdrop;
+	((Sint32)&ResourceIdFireCavePoolBackdrop)
+extern char ResourceIdBlueCaveBackdrop;
+#define RESOURCE_BLUE_CAVE_BACKDROP ((Sint32)&ResourceIdBlueCaveBackdrop)
+extern char ResourceIdRedMesaBackdrop;
+#define RESOURCE_RED_MESA_BACKDROP ((Sint32)&ResourceIdRedMesaBackdrop)
+extern char ResourceIdPinkRocksBackdrop;
+#define RESOURCE_PINK_ROCKS_BACKDROP ((Sint32)&ResourceIdPinkRocksBackdrop)
+extern char ResourceIdPinkTotemBackdrop;
+#define RESOURCE_PINK_TOTEM_BACKDROP ((Sint32)&ResourceIdPinkTotemBackdrop)
+extern char ResourceIdStoneTownBackdrop;
+#define RESOURCE_STONE_TOWN_BACKDROP ((Sint32)&ResourceIdStoneTownBackdrop)
+extern char ResourceIdPalmCliffBackdrop;
+#define RESOURCE_PALM_CLIFF_BACKDROP ((Sint32)&ResourceIdPalmCliffBackdrop)
+extern char ResourceIdToyRoomBackdrop;
+#define RESOURCE_TOY_ROOM_BACKDROP ((Sint32)&ResourceIdToyRoomBackdrop)
+extern char ResourceIdShipCabinBackdrop;
+#define RESOURCE_SHIP_CABIN_BACKDROP ((Sint32)&ResourceIdShipCabinBackdrop)
+extern char ResourceIdGoldRocksBackdrop;
+#define RESOURCE_GOLD_ROCKS_BACKDROP ((Sint32)&ResourceIdGoldRocksBackdrop)
+extern char ResourceIdStoneCorridorBackdrop;
 #define RESOURCE_STONE_CORRIDOR_BACKDROP \
-	((Sint32)&ResourceId_StoneCorridorBackdrop)
-extern char ResourceId_FaceTempleBackdrop;
-#define RESOURCE_FACE_TEMPLE_BACKDROP ((Sint32)&ResourceId_FaceTempleBackdrop)
-extern char ResourceId_MistyHillsBackdrop;
-#define RESOURCE_MISTY_HILLS_BACKDROP ((Sint32)&ResourceId_MistyHillsBackdrop)
-extern char ResourceId_WaterfallGorgeBackdrop;
+	((Sint32)&ResourceIdStoneCorridorBackdrop)
+extern char ResourceIdFaceTempleBackdrop;
+#define RESOURCE_FACE_TEMPLE_BACKDROP ((Sint32)&ResourceIdFaceTempleBackdrop)
+extern char ResourceIdMistyHillsBackdrop;
+#define RESOURCE_MISTY_HILLS_BACKDROP ((Sint32)&ResourceIdMistyHillsBackdrop)
+extern char ResourceIdWaterfallGorgeBackdrop;
 #define RESOURCE_WATERFALL_GORGE_BACKDROP \
-	((Sint32)&ResourceId_WaterfallGorgeBackdrop)
-extern char ResourceId_BlueRuinsBackdrop;
-#define RESOURCE_BLUE_RUINS_BACKDROP ((Sint32)&ResourceId_BlueRuinsBackdrop)
-extern char ResourceId_GreenRuinsBackdrop;
-#define RESOURCE_GREEN_RUINS_BACKDROP ((Sint32)&ResourceId_GreenRuinsBackdrop)
-extern char ResourceId_StatueCliffBackdrop;
-#define RESOURCE_STATUE_CLIFF_BACKDROP ((Sint32)&ResourceId_StatueCliffBackdrop)
-extern char ResourceId_LavaTempleBackdrop;
-#define RESOURCE_LAVA_TEMPLE_BACKDROP ((Sint32)&ResourceId_LavaTempleBackdrop)
-extern char ResourceId_ArrowBeachBackdrop;
-#define RESOURCE_ARROW_BEACH_BACKDROP ((Sint32)&ResourceId_ArrowBeachBackdrop)
-extern char ResourceId_StormySeaBackdrop;
-#define RESOURCE_STORMY_SEA_BACKDROP ((Sint32)&ResourceId_StormySeaBackdrop)
-extern char ResourceId_AngelHallBackdrop;
-#define RESOURCE_ANGEL_HALL_BACKDROP ((Sint32)&ResourceId_AngelHallBackdrop)
-extern char ResourceId_PurpleLighthouseBackdrop;
+	((Sint32)&ResourceIdWaterfallGorgeBackdrop)
+extern char ResourceIdBlueRuinsBackdrop;
+#define RESOURCE_BLUE_RUINS_BACKDROP ((Sint32)&ResourceIdBlueRuinsBackdrop)
+extern char ResourceIdGreenRuinsBackdrop;
+#define RESOURCE_GREEN_RUINS_BACKDROP ((Sint32)&ResourceIdGreenRuinsBackdrop)
+extern char ResourceIdStatueCliffBackdrop;
+#define RESOURCE_STATUE_CLIFF_BACKDROP ((Sint32)&ResourceIdStatueCliffBackdrop)
+extern char ResourceIdLavaTempleBackdrop;
+#define RESOURCE_LAVA_TEMPLE_BACKDROP ((Sint32)&ResourceIdLavaTempleBackdrop)
+extern char ResourceIdArrowBeachBackdrop;
+#define RESOURCE_ARROW_BEACH_BACKDROP ((Sint32)&ResourceIdArrowBeachBackdrop)
+extern char ResourceIdStormySeaBackdrop;
+#define RESOURCE_STORMY_SEA_BACKDROP ((Sint32)&ResourceIdStormySeaBackdrop)
+extern char ResourceIdAngelHallBackdrop;
+#define RESOURCE_ANGEL_HALL_BACKDROP ((Sint32)&ResourceIdAngelHallBackdrop)
+extern char ResourceIdPurpleLighthouseBackdrop;
 #define RESOURCE_PURPLE_LIGHTHOUSE_BACKDROP \
-	((Sint32)&ResourceId_PurpleLighthouseBackdrop)
-extern char ResourceId_StormyLighthouseBackdrop;
+	((Sint32)&ResourceIdPurpleLighthouseBackdrop)
+extern char ResourceIdStormyLighthouseBackdrop;
 #define RESOURCE_STORMY_LIGHTHOUSE_BACKDROP \
-	((Sint32)&ResourceId_StormyLighthouseBackdrop)
-extern char ResourceId_IceHallBackdrop;
-#define RESOURCE_ICE_HALL_BACKDROP ((Sint32)&ResourceId_IceHallBackdrop)
-extern char ResourceId_OrbAltarBackdrop;
-#define RESOURCE_ORB_ALTAR_BACKDROP ((Sint32)&ResourceId_OrbAltarBackdrop)
-extern char ResourceId_PurpleCaveBackdrop;
-#define RESOURCE_PURPLE_CAVE_BACKDROP ((Sint32)&ResourceId_PurpleCaveBackdrop)
-extern char ResourceId_GorgePoolBackdrop;
-#define RESOURCE_GORGE_POOL_BACKDROP ((Sint32)&ResourceId_GorgePoolBackdrop)
-extern char ResourceId_SpikeHallBackdrop;
-#define RESOURCE_SPIKE_HALL_BACKDROP ((Sint32)&ResourceId_SpikeHallBackdrop)
+	((Sint32)&ResourceIdStormyLighthouseBackdrop)
+extern char ResourceIdIceHallBackdrop;
+#define RESOURCE_ICE_HALL_BACKDROP ((Sint32)&ResourceIdIceHallBackdrop)
+extern char ResourceIdOrbAltarBackdrop;
+#define RESOURCE_ORB_ALTAR_BACKDROP ((Sint32)&ResourceIdOrbAltarBackdrop)
+extern char ResourceIdPurpleCaveBackdrop;
+#define RESOURCE_PURPLE_CAVE_BACKDROP ((Sint32)&ResourceIdPurpleCaveBackdrop)
+extern char ResourceIdGorgePoolBackdrop;
+#define RESOURCE_GORGE_POOL_BACKDROP ((Sint32)&ResourceIdGorgePoolBackdrop)
+extern char ResourceIdSpikeHallBackdrop;
+#define RESOURCE_SPIKE_HALL_BACKDROP ((Sint32)&ResourceIdSpikeHallBackdrop)
 
 /* Moapa's recorded runs through the Trial Road's stages, in
    TrialRoadRivalRecordings' order, which scTrialRoadPlayRivalRecording
    plays. */
-extern char ResourceId_TrialRoadPillarRecording; /* the pillar stage */
+extern char ResourceIdTrialRoadPillarRecording; /* the pillar stage */
 #define RESOURCE_TRIAL_ROAD_PILLAR_RECORDING \
-	((Sint32)&ResourceId_TrialRoadPillarRecording)
-extern char ResourceId_TrialRoadTorchRecording; /* the torch stage */
+	((Sint32)&ResourceIdTrialRoadPillarRecording)
+extern char ResourceIdTrialRoadTorchRecording; /* the torch stage */
 #define RESOURCE_TRIAL_ROAD_TORCH_RECORDING \
-	((Sint32)&ResourceId_TrialRoadTorchRecording)
-extern char ResourceId_TrialRoadWeedsRecording; /* the weeds stage */
+	((Sint32)&ResourceIdTrialRoadTorchRecording)
+extern char ResourceIdTrialRoadWeedsRecording; /* the weeds stage */
 #define RESOURCE_TRIAL_ROAD_WEEDS_RECORDING \
-	((Sint32)&ResourceId_TrialRoadWeedsRecording)
-extern char ResourceId_TrialRoadPoundRecording; /* the Pound stage */
+	((Sint32)&ResourceIdTrialRoadWeedsRecording)
+extern char ResourceIdTrialRoadPoundRecording; /* the Pound stage */
 #define RESOURCE_TRIAL_ROAD_POUND_RECORDING \
-	((Sint32)&ResourceId_TrialRoadPoundRecording)
-extern char ResourceId_TrialRoadCrumblingRecording; /* the crumbling stage */
+	((Sint32)&ResourceIdTrialRoadPoundRecording)
+extern char ResourceIdTrialRoadCrumblingRecording; /* the crumbling stage */
 #define RESOURCE_TRIAL_ROAD_CRUMBLING_RECORDING \
-	((Sint32)&ResourceId_TrialRoadCrumblingRecording)
-extern char ResourceId_TrialRoadLogRecording; /* the log stage */
+	((Sint32)&ResourceIdTrialRoadCrumblingRecording)
+extern char ResourceIdTrialRoadLogRecording; /* the log stage */
 #define RESOURCE_TRIAL_ROAD_LOG_RECORDING \
-	((Sint32)&ResourceId_TrialRoadLogRecording)
-extern char ResourceId_TrialRoadFountainRecording; /* the fountain stage */
+	((Sint32)&ResourceIdTrialRoadLogRecording)
+extern char ResourceIdTrialRoadFountainRecording; /* the fountain stage */
 #define RESOURCE_TRIAL_ROAD_FOUNTAIN_RECORDING \
-	((Sint32)&ResourceId_TrialRoadFountainRecording)
-extern char ResourceId_TrialRoadSandRecording; /* the sand stage */
+	((Sint32)&ResourceIdTrialRoadFountainRecording)
+extern char ResourceIdTrialRoadSandRecording; /* the sand stage */
 #define RESOURCE_TRIAL_ROAD_SAND_RECORDING \
-	((Sint32)&ResourceId_TrialRoadSandRecording)
+	((Sint32)&ResourceIdTrialRoadSandRecording)
 /* the chests, Moapa at the switch first */
-extern char ResourceId_TrialRoadChestsMoapaFirstRecording;
+extern char ResourceIdTrialRoadChestsMoapaFirstRecording;
 #define RESOURCE_TRIAL_ROAD_CHESTS_MOAPA_FIRST_RECORDING \
-	((Sint32)&ResourceId_TrialRoadChestsMoapaFirstRecording)
+	((Sint32)&ResourceIdTrialRoadChestsMoapaFirstRecording)
 /* the chests, Felix at the switch first */
-extern char ResourceId_TrialRoadChestsFelixFirstRecording;
+extern char ResourceIdTrialRoadChestsFelixFirstRecording;
 #define RESOURCE_TRIAL_ROAD_CHESTS_FELIX_FIRST_RECORDING \
-	((Sint32)&ResourceId_TrialRoadChestsFelixFirstRecording)
+	((Sint32)&ResourceIdTrialRoadChestsFelixFirstRecording)
 
 #endif

@@ -1,7 +1,7 @@
 /* The caves in Champa's cliff, where the sailors and their families live, in
    four scenes of this overlay climbing the cliff level by level: the lowest
    caves, entered from the village by the mouth Briggs's sailors watch
-   (SceneId_ChampaCliffCavesBriggs); the homes above them
+   (SceneIdChampaCliffCavesBriggs); the homes above them
    (ChampaCliffCavesHouses); the level with Obaba's door and Briggs's home
    (ChampaCliffCavesObaba); and at the top Obaba's forge room
    (ChampaCliffCavesAvimander). Before Briggs is home, knocking at Obaba's door
@@ -78,9 +78,9 @@ enum {
 	FORGE_PATH_METATILES = 4
 };
 
-/* Obaba's forge room (SceneId_ChampaCliffCavesAvimander), numbering
+/* Obaba's forge room (SceneIdChampaCliffCavesAvimander), numbering
    ChampaCliffCavesAvimanderPlacementsBriggsHome; Obaba is actor 8 at her door
-   as well (SceneId_ChampaCliffCavesObaba). */
+   as well (SceneIdChampaCliffCavesObaba). */
 typedef enum CHAMPA_CLIFF_CAVES_OBABAS_ROOM_ACTOR_ID {
 	ACTOR_OBABA = ACTOR_FIRST_PLACED,
 	/* The sailor across the room from the forge: "That pit is Obaba's forge."
@@ -287,7 +287,7 @@ extern Sint16 ChampaCliffCavesCloseDoorFrames[];
 
 /* Each tick the Trident, thrown up from the rising column, grows by a
    sixteenth of its size until it is full size. */
-DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrown, toFIXED(1) / 16)
+DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCavesGrowThrown, toFIXED(1) / 16)
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -910,7 +910,7 @@ void scChampaCliffCavesObabaForgesTrident(Sint32 value)
 	fdActorSetSprPriority(ACTOR_HELD_ITEM, 1);
 	thrown->motionFlg = ACTOR_FALLS;
 	thrown->y.fixed = toFIXED(24);
-	thrown->update = ChampaCliffCaves_GrowThrown;
+	thrown->update = ChampaCliffCavesGrowThrown;
 	thrown->groundHeight = 0;
 	thrown->scaleX = 0;
 	thrown->scaleY = 0;
@@ -1016,7 +1016,7 @@ chosen:
 /* Each tick Avimander, leaping out of the forge's fire, grows by three sixty-
    fourths of its size, from a quarter to full size. */
 DEFINE_CHAMPA_CLIFF_CAVES_GROW(
-	ChampaCliffCaves_GrowThrownSlowly, toFIXED(3) / 64)
+	ChampaCliffCavesGrowThrownSlowly, toFIXED(3) / 64)
 
 /* Walking east into Obaba's forge room from the passage (metatiles (36, 12) to
    (36, 18)) once Briggs has fled up here: "Hold it right there!" Briggs stops
@@ -1235,7 +1235,7 @@ void scChampaCliffCavesFightAvimander(void)
 		actor->groundHeight = 0;
 		actor->y.fixed = toFIXED(32);
 		actor->scaleX = toFIXED(1) / 4;
-		actor->update = (Sint32)ChampaCliffCaves_GrowThrownSlowly;
+		actor->update = (Sint32)ChampaCliffCavesGrowThrownSlowly;
 		actor->scaleY = toFIXED(1) / 4;
 		fdActorJump(ACTOR_AVIMANDER, 11, 0);
 		sySndPlay(SE_BEAST_CRY);
@@ -1280,7 +1280,7 @@ void scChampaCliffCavesAskIfBriggsLearned(void)
 	fdActorSetAnimationAndWait(ACTOR_OBABA, ANIM_SHAKE_HEAD);
 	/* "Ah, such a bright lad. Now then, don't you ever try to take my..." */
 	fdScriptShowMessageThenWait(ACTOR_OBABA, 0, 20);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transitionFrm = 40;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1918,8 +1918,7 @@ void scChampaCliffCavesStartFlash(Sint32 id, Sint32 mode)
 	sySynch(2);
 	actor->scaleX = 0;
 	fdActorSetSprFlags(actor, 0);
-	syDMAXCopy(Field_ExplosionPalette,
-		(void *)&OBJ_PLTT_COLOR(FLASH_PALETTE, 0),
+	syDMAXCopy(FieldExplosionPalette, (void *)&OBJ_PLTT_COLOR(FLASH_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION), state);
@@ -1980,7 +1979,7 @@ void scChampaCliffCavesStartFlash(Sint32 id, Sint32 mode)
    moved onto the colours the fire cycles, and sets its sprite at no size. */
 void scChampaCliffCavesLoadGlow(void)
 {
-	CHAMPA_CLIFF_CAVES_STATE *state = Ram_HeapSlots->menuState;
+	CHAMPA_CLIFF_CAVES_STATE *state = RamHeapSlots->menuState;
 	EFFECT_SPR				 *spr;
 	Sint32					  i;
 	Uint8					 *tile;
@@ -2013,7 +2012,7 @@ void scChampaCliffCavesLoadGlow(void)
    scChampaCliffCavesLoadGlow loads the glow. */
 void scChampaCliffCavesLoadColumn(void)
 {
-	CHAMPA_CLIFF_CAVES_STATE *state = Ram_HeapSlots->menuState;
+	CHAMPA_CLIFF_CAVES_STATE *state = RamHeapSlots->menuState;
 	EFFECT_SPR				 *spr;
 	Sint32					  i;
 	Uint8					 *tile;
@@ -2054,7 +2053,7 @@ void scChampaCliffCavesLoadColumn(void)
    (FIRE_HEIGHT_SCALE). */
 void scChampaCliffCavesDrawForgeFire(void)
 {
-	CHAMPA_CLIFF_CAVES_STATE *state = Ram_HeapSlots->menuState;
+	CHAMPA_CLIFF_CAVES_STATE *state = RamHeapSlots->menuState;
 	Sint32					  pos[3];
 	EFFECT_SPR				 *spr;
 	Sint32					  i;
@@ -2165,7 +2164,7 @@ void scChampaCliffCavesStartForgeFire(const Sint32 *pos)
    and the fire's state is released. */
 UNUSED void scChampaCliffCavesPutOutForgeFire(void)
 {
-	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState = Ram_HeapSlots->menuState;
+	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState = RamHeapSlots->menuState;
 	FIXED					  pos[3];
 	Sint32					  state;
 	Sint32					  ticks;
@@ -2271,7 +2270,7 @@ void scChampaCliffCavesRaiseColumn(void)
    glow die away and the fire's state is released. */
 void scChampaCliffCavesFlareAndDieDown(void)
 {
-	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState = Ram_HeapSlots->menuState;
+	CHAMPA_CLIFF_CAVES_STATE *champaCliffCavesState = RamHeapSlots->menuState;
 	Sint32					  state = 0;
 	Sint32					  time = 0;
 

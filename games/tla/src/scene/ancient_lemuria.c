@@ -152,14 +152,14 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    gangway; walking back south, the view comes back down with him. */
 void scAncientLemuriaKeepCameraSouth(void)
 {
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
+	((MAP_STATE *)RamHeapSlots->mapGrid)->minZ = toFIXED(750);
 }
 
 /* Nothing visible happens as Felix walks over the next row, metatiles (8, 53)
    to (12, 53); the view may scroll north over the whole shore again. */
 void scAncientLemuriaLetCameraNorth(void)
 {
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(352);
+	((MAP_STATE *)RamHeapSlots->mapGrid)->minZ = toFIXED(352);
 }
 
 /* Nothing more than the move itself happens as Felix starts casting Move on the
@@ -382,7 +382,7 @@ const CUE *scGetCues(void)
    AncientLemuriaShiningWaterColors. */
 Sint32 scAncientLemuriaCycleWaterCols(void)
 {
-	if((*Ram_TickCount & 3) == 0) {
+	if((*RamTickCount & 3) == 0) {
 		Sint16 saved;
 		Sint32 idx;
 
@@ -402,7 +402,7 @@ Sint32 scAncientLemuriaCycleWaterCols(void)
 			saved;
 	}
 	{
-		Sint16 col = AncientLemuriaShiningWaterColors[(*Ram_TickCount >> 2) %
+		Sint16 col = AncientLemuriaShiningWaterColors[(*RamTickCount >> 2) %
 			SHINING_WATER_COLORS];
 
 		BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, WATER_SHINING_COLOR) = col;

@@ -1,7 +1,7 @@
 @ Shops, inns and the cursors used by their screens.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Shop
-Stubs_Shop:
+	.global StubsShop
+StubsShop:
 	stub mnShopOpenDebugShopStub, mnShopOpenDebugShop
 	stub mnShopRunStub, mnShopRun
 	stub mnSanctumRunStub, mnSanctumRun

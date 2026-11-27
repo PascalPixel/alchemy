@@ -1,8 +1,8 @@
 name	file	section	align	left	pad	edition
-TrialRoad_RaceMapPalette	picture.gbapal					
-TrialRoad_RaceMapPicture	picture.4bpp.lz					ja
-TrialRoad_RaceMapPicture	picture.4bpp.lz					en
-TrialRoad_RaceMapPicture	picture.4bpp.lz					de
-TrialRoad_RaceMapPicture	pictr_es.4bpp.lz					es
-TrialRoad_RaceMapPicture	picture.4bpp.lz					fr
-TrialRoad_RaceMapPicture	pictr_it.4bpp.lz					it
+TrialRoadRaceMapPalette	picture.gbapal					
+TrialRoadRaceMapPicture	picture.4bpp.lz					ja
+TrialRoadRaceMapPicture	picture.4bpp.lz					en
+TrialRoadRaceMapPicture	picture.4bpp.lz					de
+TrialRoadRaceMapPicture	pictr_es.4bpp.lz					es
+TrialRoadRaceMapPicture	picture.4bpp.lz					fr
+TrialRoadRaceMapPicture	pictr_it.4bpp.lz					it

@@ -1,7 +1,7 @@
-/* Kolima Forest's pool above the floodgate (SceneId_KolimaForestFloodgate), the
+/* Kolima Forest's pool above the floodgate (SceneIdKolimaForestFloodgate), the
    fourth of the forest's five scenes. The party comes in from the cliffs to the
-   west (SceneId_KolimaForestCliff) and goes on by the path north to Tret
-   (SceneId_KolimaForestTree).
+   west (SceneIdKolimaForestCliff) and goes on by the path north to Tret
+   (SceneIdKolimaForestTree).
 
    A river pool fills most of the scene, with five logs floating on it. At the
    bottom of the scene, by the floodgate and a sign that reads "Do not touch
@@ -157,8 +157,8 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-/* The ways back west to the cliffs (SceneId_KolimaForestCliff) and north to
-   Tret (SceneId_KolimaForestTree). */
+/* The ways back west to the cliffs (SceneIdKolimaForestCliff) and north to
+   Tret (SceneIdKolimaForestTree). */
 const Uint32 *scGetExits(void)
 {
 	return KolimaForestFloodgateExits;

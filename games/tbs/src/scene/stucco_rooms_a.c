@@ -1,6 +1,6 @@
 /* Inside Kalay are the houses and the inn, and the Kalay Sanctum.
 
-   - Stucco rooms A (SceneId_StuccoRoomsA), a rooms map drawn in stucco,
+   - Stucco rooms A (SceneIdStuccoRoomsA), a rooms map drawn in stucco,
 	 all of them Kalay's, whose area name is Kalay. It holds every house and
 	 the inn, each entered from its own door in the town (kalay.c) at an
 	 entrance of its own, and left by the matching exit. The inn's entrances,
@@ -32,7 +32,7 @@
 	 their own back out, in their north walls. One holds a young man and a
 	 woman about to join the tour, the other two men who fled Lalivero; the
 	 rooms north of the passage hold Ouranos and Sean, and an empty one.
-   - Kalay Sanctum (SceneId_KalaySanctum), whose healer offers the
+   - Kalay Sanctum (SceneIdKalaySanctum), whose healer offers the
 	 Sanctum's services when spoken to across the counter. Its exit leads
 	 back into the town (KALAY_FROM_KALAY_SANCTUM). */
 

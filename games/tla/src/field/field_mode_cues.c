@@ -79,7 +79,7 @@ Sint32 fdGameFlagIsConditionActive(Sint32 condition)
    MainRoutineStateWork.movementMode is LEADER_MOVEMENT_KEYS. */
 CUE_VIEW *fdFindCue(Sint32 kind, Sint32 tgt)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	CUE_VIEW	*cue = state->cues;
 	Sint32		 flg;
 	Uint32 facing = fdActorLookup(MainRoutineStateWork.leaderActorId)->facing;
@@ -202,7 +202,7 @@ Sint32 fdTalkToActor(Sint32 id)
 	paused = 0;
 	decodeFlg = 0;
 	silent = id & FIELD_TALK_SILENT;
-	field = Ram_HeapSlots->fieldState;
+	field = RamHeapSlots->fieldState;
 	id &= FIELD_TALK_ACTOR_MASK;
 	found = 0;
 	talker = fdActorGetById(id);
@@ -304,7 +304,7 @@ Sint32 fdTalkToActor(Sint32 id)
 					syGameFlagSet(flg);
 				fdScriptEnd();
 			} else if(type == CONTAINER_MIMIC) {
-				state = Ram_HeapSlots->fieldState;
+				state = RamHeapSlots->fieldState;
 				fdTreasureSpotLaunchMimic(idx);
 				if(flg != -1)
 					MainRoutineStateWork.pendingDjinni =
@@ -576,7 +576,7 @@ Sint32 fdRunStepCueOrExit(Sint32 value)
    for it and CUE_PUSHED for the metatile. Always returns 0. */
 Sint32 fdRunPushMetatile(Sint32 attributes)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 owner = MainRoutineStateWork.leaderActorId;
 	CUE_VIEW	*event;
 	Sint32		 tgt;

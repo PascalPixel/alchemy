@@ -210,7 +210,7 @@ extern Uint16 LemuriaSpringAlphaSteps[];
    the spring, as Tolbi's does. */
 void scLemuriaSpringDrainSpring(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer;
 	Sint32	   i;
 

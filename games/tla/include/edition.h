@@ -1197,8 +1197,8 @@
 
 /* Cyclone still scatters Izumo's weeds after the Serpent is slain. Once
    FLAG_SERPENT_SLAIN is set, scGetTriggers switches to
-   Izumo_TriggersOnceTheSerpentIsSlain, and that table gets the nine Cyclone
-   rows the earlier Izumo_Triggers table already has in every edition. In
+   IzumoTriggersOnceTheSerpentIsSlain, and that table gets the nine Cyclone
+   rows the earlier IzumoTriggers table already has in every edition. In
    Japanese, Cyclone stops working on Izumo's weeds after the Serpent. The two
    Antidotes and the Lucky Medal under them can then no longer be found if they
    were missed. */

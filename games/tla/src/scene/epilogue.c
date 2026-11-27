@@ -265,7 +265,7 @@ Sint32 scInit(void)
 	state->msgSpeed = MESSAGE_SPEED_NORMAL;
 	mnEndingImageStart();
 	mnWindowSystemInitField();
-	winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	winState = (WIN_STATE *)RamHeapSlots->winState;
 	winState->holdTilemapUpload = 1;
 	winState->textMode = 1;
 	EpilogueMessage = (Sint32)MsgFinallyWeVe;
@@ -295,7 +295,7 @@ Sint32 scInit(void)
 	scroll[3].y = 16;
 	scroll[2].y = 16;
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_CLIFF_DAY_PICTURE, Ram_MapMetatileBuffer, 0);
+		RESOURCE_ENDING_CLIFF_DAY_PICTURE, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(100);
 	scEpilogueShowLine(SPRITE_JENNAS_FATHER, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_JENNAS_MOTHER, LINE_AT_FOOT, 40);
@@ -313,7 +313,7 @@ Sint32 scInit(void)
 	syFieldScriptWait(30);
 	/* The sunset over the cliff, shown already panned to them. */
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_CLIFF_SUNSET_PICTURE, Ram_MapMetatileBuffer, 120);
+		RESOURCE_ENDING_CLIFF_SUNSET_PICTURE, RamMapMetatileBuffer, 120);
 	syFieldScriptWait(120);
 	scEpilogueShowLine(SPRITE_JENNA, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_PIERS, LINE_AT_FOOT, 30);
@@ -351,7 +351,7 @@ Sint32 scInit(void)
 		EPILOGUE_NO_PORTRAIT | SPRITE_BOY_WITH_ORANGE_HAIR, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_GARET, LINE_AT_FOOT, 30);
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_VILLAGERS_PICTURE_A, Ram_MapMetatileBuffer, 0);
+		RESOURCE_ENDING_VILLAGERS_PICTURE_A, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(60);
 	fdScriptPlaySnd(MUS_EPILOGUE_VILLAGERS);
 	syFieldScriptWait(30);
@@ -378,19 +378,19 @@ Sint32 scInit(void)
 	scEpilogueShowLine(SPRITE_KYLE, LINE_AT_FOOT, 30);
 	scEpilogueShowLine(SPRITE_DORA, LINE_AT_FOOT, 40);
 	/* No image: the villagers fade to black before the embrace. */
-	scFieldEndingImageShow(0, Ram_MapMetatileBuffer, 0);
+	scFieldEndingImageShow(0, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(60);
 	scroll[3].y = 0;
 	scroll[2].y = 0;
 	mnEndingImageLowerTopStrip(0);
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapMetatileBuffer, 0);
+		RESOURCE_ENDING_EMBRACE_PICTURE, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(60);
 	/* The embrace stays until a button is pressed. */
 	while(PerWork.push == 0)
 		syWait(1);
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_REUNION_PICTURE, Ram_MapMetatileBuffer, 0);
+		RESOURCE_ENDING_REUNION_PICTURE, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(120);
 	/* The reunion pans 120 pixels right, along the party. */
 	mnEndingImageSetTargetRow(120);
@@ -398,10 +398,10 @@ Sint32 scInit(void)
 	mnEndingImageWaitForScroll();
 	syFieldScriptWait(180);
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_SUNSET_PLAIN_PICTURE, Ram_MapMetatileBuffer, 0);
+		RESOURCE_ENDING_SUNSET_PLAIN_PICTURE, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(300);
 	scFieldEndingImageShow(
-		RESOURCE_ENDING_THE_END_PICTURE, Ram_MapMetatileBuffer, 0);
+		RESOURCE_ENDING_THE_END_PICTURE, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(180);
 	fdScriptPlaySnd(SOUND_FADE_OUT_BGM);
 	MainRoutineStateWork.msgSpeed = savedSpeed;
@@ -416,7 +416,7 @@ Sint32 scInit(void)
 				break;
 		} while(PerWork.push == 0);
 	}
-	scFieldEndingImageShow(0, Ram_MapMetatileBuffer, 0);
+	scFieldEndingImageShow(0, RamMapMetatileBuffer, 0);
 	syFieldScriptWait(60);
 	syIOWrite16(0, &REG_BLDCNT);
 	syIOWrite16(DISPCNT_OBJ_1D_MAP | DISPCNT_OBJ_ON, &REG_DISPCNT);

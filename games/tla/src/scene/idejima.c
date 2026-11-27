@@ -968,7 +968,7 @@ void scIdejimaUpdateWaveLines(void)
    and clears colour 0, for the island adrift. */
 void scIdejimaUseDriftPalette(void)
 {
-	FADE_PALETTE *palette = Ram_HeapSlots->palFade;
+	FADE_PALETTE *palette = RamHeapSlots->palFade;
 	Uint16		 *to = palette->cols;
 	Uint16		 *from = palette->cols + 8 * PALETTE_COLORS;
 	Uint32		  i;

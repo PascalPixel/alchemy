@@ -5,7 +5,7 @@
 /* Puts colour 2 at (x, y) in the 256x120 8bpp tile sheet (32 tiles wide) in the
    map cell buffer. */
 #define PLOT(x, y) \
-	(*(Ram_MapMetatileBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + \
+	(*(RamMapMetatileBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 + \
 		 (y) / 8 * 2048) = 2)
 
 #define SHATTERING_OPENING_TICKS 128
@@ -50,8 +50,8 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
 	canvas = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	battle = Ram_HeapSlots->battleState;
-	view = Ram_HeapSlots->battleBg;
+	battle = RamHeapSlots->battleState;
+	view = RamHeapSlots->battleBg;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 
@@ -98,10 +98,10 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	/* The pieces fly out from (32, 60) at a quarter of their distance a
 	   tick. */
@@ -123,10 +123,10 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 
 	/* Copy the battle background's image aside, fill it with colour 1, and make
 	   its colours white. */
-	syWordsCopy(Ram_MapMetatileBuffer, (void *)BG_CHAR_BLOCK(2),
+	syWordsCopy(RamMapMetatileBuffer, (void *)BG_CHAR_BLOCK(2),
 		BATTLE_BACKGROUND_BYTES);
 	syWordsFill(
-		Ram_MapMetatileBuffer, BATTLE_BACKGROUND_BYTES, CANVAS_FILL_WORD(1));
+		RamMapMetatileBuffer, BATTLE_BACKGROUND_BYTES, CANVAS_FILL_WORD(1));
 	view->busy = 1;
 	state->savedBg1X = BgScrollWork[1].x;
 	state->savedBg1Y = BgScrollWork[1].y;
@@ -272,7 +272,7 @@ void btEffectRunShatteringOpening(BATTLE_EFFECT_PARM *args)
 					}
 				}
 			}
-			syWordsCopy((void *)BG_CHAR_BLOCK(2), Ram_MapMetatileBuffer,
+			syWordsCopy((void *)BG_CHAR_BLOCK(2), RamMapMetatileBuffer,
 				BATTLE_BACKGROUND_BYTES);
 		}
 
@@ -446,7 +446,7 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	sySndPlayStub(SE_SPIN);
 
 	for(frm = 0; frm != ELEMENT_BURST_TICKS; frm++) {
@@ -477,7 +477,7 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
 			for(i = 0, mode = BLITTER_MAX; i != 4; i++) {
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					ElementBurstGlintFlips[i] | EFFECT_CLIP_BOUNDS, mode);
-				draw[1] = Ram_HeapSlots->ramCodePaired;
+				draw[1] = RamHeapSlots->ramCodePaired;
 				draw[1](canvas,
 					state->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),
 					ElementBurstSparkX[i] + 32,
@@ -523,8 +523,8 @@ void btEffectRunElementBurst(BATTLE_EFFECT_PARM *args)
    block 1 at half brightness. */
 void btEffectTransferHalvedCanvas(void)
 {
-	ELEMENT_STREAKS_STATE *state = Ram_HeapSlots->battleEff;
-	void				  *buf = Ram_HeapSlots->battleCanvas;
+	ELEMENT_STREAKS_STATE *state = RamHeapSlots->battleEff;
+	void				  *buf = RamHeapSlots->battleCanvas;
 	Uint32				   ime;
 
 	IRQ_LOCK(ime);
@@ -553,7 +553,7 @@ void btEffectTransferHalvedCanvas(void)
    of the canvas, and has the canvas halved into VRAM. */
 void btEffectDrawStreaks(void)
 {
-	ELEMENT_STREAKS_STATE *state = Ram_HeapSlots->battleEff;
+	ELEMENT_STREAKS_STATE *state = RamHeapSlots->battleEff;
 	Sint32				   frm;
 	Sint32				   i;
 	PLUNGE_STREAK		  *streak;
@@ -564,7 +564,7 @@ void btEffectDrawStreaks(void)
 	frm = (state->frm)++;
 	if(frm == 0) {
 		for(i = 0; i != STREAK_SEEDS; i++) {
-			PLUNGE_STREAK *seed = &((PLUNGE_STREAK *)Ram_MapMetatileBuffer)[i];
+			PLUNGE_STREAK *seed = &((PLUNGE_STREAK *)RamMapMetatileBuffer)[i];
 			Sint32		   r = syRandom() & 15;
 
 			seed->head = r + STREAK_START_DISTANCE;
@@ -577,7 +577,7 @@ void btEffectDrawStreaks(void)
 	point.y = 0;
 	point.z = 0;
 	for(i = 0; i != STREAKS; i++) {
-		streak = &((PLUNGE_STREAK *)Ram_MapMetatileBuffer)[i];
+		streak = &((PLUNGE_STREAK *)RamMapMetatileBuffer)[i];
 		if(frm > i / 4 && streak->head > 0) {
 			Sint32 fade;
 
@@ -615,8 +615,8 @@ void btEffectDrawStreaks(void)
    by one more BACKGROUND_LEVEL_STEP into BG palettes 6 to 13. */
 void btEffectDimBackgroundStep(void)
 {
-	ELEMENT_STREAKS_STATE *state = Ram_HeapSlots->battleEff;
-	BATTLE_STATE		  *battle = Ram_HeapSlots->battleState;
+	ELEMENT_STREAKS_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_STATE		  *battle = RamHeapSlots->battleState;
 
 	if(state->fadeFrm > 0) {
 		state->fadeStep++;
@@ -642,8 +642,8 @@ void btEffectStartElementStreaks(Sint32 kind)
 
 	state = syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
 	canvas = syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	battle = Ram_HeapSlots->battleState;
-	view = Ram_HeapSlots->battleBg;
+	battle = RamHeapSlots->battleState;
+	view = RamHeapSlots->battleBg;
 
 	/* Turn BG2 into a 128x128 canvas, one step a tick. */
 	btEffectConfigureEffectDisp();
@@ -751,7 +751,7 @@ void btEffectEndElementStreaks(void)
    buffer. */
 #define CRUEL_RUIN_RUNE_CIRCLE			 16384
 /* The ribbons' strip mesh, in the map cell buffer. */
-#define CRUEL_RUIN_STRIP_MESH			 (Ram_MapMetatileBuffer + 8192)
+#define CRUEL_RUIN_STRIP_MESH			 (RamMapMetatileBuffer + 8192)
 /* The particles of the first act: rays of light from the orb, the motes that
    swell below it, and the ball of light that falls, once in the sky and again
    on the foes. */
@@ -882,17 +882,17 @@ void btEffectRunCruelRuin(BATTLE_EFFECT_PARM *args)
 	Sint32					 step;
 	RUIN_OBJECT				*obj;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	motePictures = Ram_HeapSlots->battleSheet;
-	backdrop = Ram_HeapSlots->battleBg;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	motePictures = RamHeapSlots->battleSheet;
+	backdrop = RamHeapSlots->battleBg;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	savedScroll = BgScrollWork[1].x;
 	scrollX = 0;
@@ -936,14 +936,14 @@ void btEffectRunCruelRuin(BATTLE_EFFECT_PARM *args)
 	REG_BG2X = 0;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_FIRE_RING_TEXTURE, MapGridMetatileBuffer, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_CORNER_RUNE_A_SHEET, state->sheet, 1, 0);
 	btPictureMirrorIntoQuadrants(
-		state->sheet, Ram_MapMetatileBuffer + CRUEL_RUIN_RUNE_CIRCLE, 64, 64);
+		state->sheet, RamMapMetatileBuffer + CRUEL_RUIN_RUNE_CIRCLE, 64, 64);
 	btResourceLoadAndDecompress(
 		RESOURCE_SWIRL_TEXTURE, state->sheet + CRUEL_RUIN_SWIRL, 0, 0);
 	btResourceLoadAndDecompress(
@@ -1188,7 +1188,7 @@ void btEffectRunCruelRuin(BATTLE_EFFECT_PARM *args)
 					}
 					model->shade = shade;
 					texture.pixels =
-						Ram_MapMetatileBuffer + CRUEL_RUIN_RUNE_CIRCLE;
+						RamMapMetatileBuffer + CRUEL_RUIN_RUNE_CIRCLE;
 					t <<= 9;
 					syInitMatrix();
 					syTranslate(-toFIXED(4), -toFIXED(44), 0);
@@ -1754,7 +1754,7 @@ void btEffectRunCruelRuin(BATTLE_EFFECT_PARM *args)
 	BgScrollWork[1].x = savedScroll;
 	backdrop->busy = 0;
 	{
-		BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+		BATTLE_STATE *battle = RamHeapSlots->battleState;
 
 		BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
 		btBackgroundLoadStub(

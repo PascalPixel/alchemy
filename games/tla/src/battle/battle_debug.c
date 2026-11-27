@@ -19,10 +19,10 @@ UNUSED void btDebugBattleRunForever(void)
 void btScriptedBattleSaveUnits(void)
 {
 	Sint32		   j;
-	SNAPSHOT	  *snapshot = Ram_ScriptedBattleSnapshot;
+	SNAPSHOT	  *snapshot = RamScriptedBattleSnapshot;
 	Sint32		   i = 0;
 	Uint8		  *ids = ScriptedBattleUnits;
-	SNAPSHOT_COPY *copies = Ram_ScriptedBattleSnapshot->statuses;
+	SNAPSHOT_COPY *copies = RamScriptedBattleSnapshot->statuses;
 
 	for(; i <= 4; i++, copies++) {
 		UNIT *unit = syUnitGet(ids[i]);
@@ -74,8 +74,8 @@ void btScriptedBattleRestoreUnits(void)
 {
 	Sint32		   i;
 	Sint32		   j;
-	SNAPSHOT	  *snapshot = Ram_ScriptedBattleSnapshot;
-	SNAPSHOT_COPY *copies = Ram_ScriptedBattleSnapshot->statuses;
+	SNAPSHOT	  *snapshot = RamScriptedBattleSnapshot;
+	SNAPSHOT_COPY *copies = RamScriptedBattleSnapshot->statuses;
 
 	for(i = 0; i <= 4; i++, copies++) {
 		UNIT *unit = syUnitGet(ScriptedBattleUnits[i]);
@@ -232,7 +232,7 @@ Sint32 btDebugParmSetLoad(Sint32 set)
 }
 
 /* Does nothing; the debug battle menu calls it when Start is pressed, as The
-   Broken Seal's calls Battle_DebugSelectNoOperation on Select. */
+   Broken Seal's calls BattleDebugSelectNoOperation on Select. */
 void btDebugStartNoOperation(void)
 {
 }

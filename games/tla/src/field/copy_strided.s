@@ -9,10 +9,10 @@ fdRenderCopyStridedCode:
 	.thumb_func
 fdRenderCopyStrided:
 	bx	pc
-AlchemyUncredited_080217a6:
+AlchemyUncredited080217a6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080217a6:
+AlchemyUncreditedEnd080217a6:
 	bics	r1, r1, #7
 	bicsne	r2, r2, #7
 	bxeq	lr

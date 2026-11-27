@@ -5,7 +5,7 @@
    table. */
 void fdRequestBattleFromEncounterTable(Sint32 row, Sint32 column)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->encounter = fdEncounterGetFormationAtSlot(row, column);
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP)
@@ -23,7 +23,7 @@ void fdRequestBattleFromEncounterTable(Sint32 row, Sint32 column)
    are the Djinni's actor, which hops first unless DJINN_NO_HOP is set. */
 void fdRequestDjinnBattle(Uint32 flg, Uint32 djinn)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 skipHop = flg & DJINN_NO_HOP;
 	Uint32		 element;
 	Sint32		 idx;
@@ -104,7 +104,7 @@ void fdScriptNoOperation(void)
 /* Plays the sound fdQueueMusic remembered, if any. */
 void fdPlayQueuedMusic(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state != NULL) {
 		Sint16 snd = state->queuedSnd;

@@ -1,7 +1,7 @@
 @ Actors, movement, map drawing and script commands.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Field
-Stubs_Field:
+	.global StubsField
+StubsField:
 	stub fdActorSystemConfigureStub, fdActorSystemConfigure
 	stub fdRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement
 	unnamed_stub fdRenderPlaceProjectedSpr

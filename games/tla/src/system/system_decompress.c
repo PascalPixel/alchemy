@@ -32,7 +32,7 @@ Sint32 syDecompressMoveToFrontLZ(const void *src, void *dst)
 	Sint32 result;
 
 	RAM_CODE_LOAD(routine, syDecompressMoveToFrontLZCommandsCode,
-		Decompress_MoveToFrontLzCommandsCodeSize);
+		DecompressMoveToFrontLzCommandsCodeSize);
 	result = routine(src, dst);
 	syHeapRelease(routine);
 	return result;
@@ -45,7 +45,7 @@ Sint32 syDecompressByteLZ(const void *src, void *dst)
 	Sint32 result;
 
 	RAM_CODE_LOAD(
-		routine, Resource_DecodeByteLzCode, Resource_DecodeByteLzCodeSize);
+		routine, ResourceDecodeByteLzCode, ResourceDecodeByteLzCodeSize);
 	result = routine(src, dst);
 	syHeapRelease(routine);
 	return result;

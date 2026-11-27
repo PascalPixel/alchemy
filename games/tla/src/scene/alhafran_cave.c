@@ -1,8 +1,8 @@
 /* The Alhafran Cave under the town, in two scenes that share this overlay: the
    cave behind the rear entrance by the mayor's home, which the hungry boy's
    father lets the party into once they give the boy Large Bread
-   (SceneId_AlhafranCave), and the town's jail with the caves beyond it
-   (SceneId_AlhafraJail).
+   (SceneIdAlhafranCave), and the town's jail with the caves beyond it
+   (SceneIdAlhafraJail).
 
    After Briggs and his crew are jailed, his wife Chaucha and their son Eoleo
    visit him as Felix walks into the jail, and the boy lifts the metatile's key
@@ -51,7 +51,7 @@ void		  scAlhafranCaveFinishMovingCrate(void);
 /* Set once Frost has frozen the cave's puddle. */
 #define FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 
-/* The cave's actors (SceneId_AlhafranCave), numbering the rows of
+/* The cave's actors (SceneIdAlhafranCave), numbering the rows of
    AlhafranCaveCaveActorPlacements. */
 typedef enum ALHAFRAN_CAVE_ACTOR_ID {
 	/* Three stone bridges, raised twelve pixels over the channel and the
@@ -74,7 +74,7 @@ typedef enum ALHAFRAN_CAVE_ACTOR_ID {
 	ACTOR_CAVE_PUDDLE
 } ALHAFRAN_CAVE_ACTOR_ID;
 
-/* The jail's actors (SceneId_AlhafraJail), numbering the rows of
+/* The jail's actors (SceneIdAlhafraJail), numbering the rows of
    AlhafranCaveJailActorPlacements. */
 typedef enum ALHAFRA_JAIL_ACTOR_ID {
 	/* The crate Move pushes. */
@@ -253,7 +253,7 @@ void scAlhafranCaveLowerBridgeMetatiles(void)
    here rather than the usual 3. */
 void scAlhafranCaveCastSand(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->sandTrailPri = 2;
 }
@@ -330,7 +330,7 @@ Sint32 scInit(void)
 void scAlhafranCaveSetUpCave(void)
 {
 	MAP_STATE_GROUND_EFFECTS *map =
-		(MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 	ACTOR *actor;
 
 	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
@@ -425,7 +425,7 @@ void scAlhafranCaveSetUpJail(void)
 	syFieldSetTickEvent(scAlhafranCaveDrawCrateSpr, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance == ALHAFRA_JAIL_FROM_ALHAFRA ||
 		MainRoutineStateWork.entrance == ENTRANCE_UNDER_CRATE) {
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 
 		state->psynergyDrawFlg =
 			PSYNERGY_DRAW_NO_SCENE_SPRITE | PSYNERGY_DRAW_FIXED_PRIORITY;

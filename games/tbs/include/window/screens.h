@@ -197,7 +197,7 @@ void mnDjinnSetFoundFlagAndAdd(Sint32 member, Sint32 element, Sint32 idx);
 
 /* The Japanese name entry screen's second keyboard, which Select switches
    to. */
-extern const Uint8 NameEntry_AlternateKeyboardTilemap[];
+extern const Uint8 NameEntryAlternateKeyboardTilemap[];
 /* Eight offsets, 0 to 3 and back, that make the name entry screen's caret
    circle: the x offset leads the y offset by five steps. */
 extern Sint8 NameEntryCaretWave[];
@@ -213,8 +213,8 @@ extern Uint8 NameEntryEndKeyLabel[];
 extern const Uint8 NameEntrySemivoicedMarkRanges[];
 /* The name entry screen keyboard's compressed tilemap, the Spanish edition's
    with its own letters. */
-extern const Uint8 NameEntry_KeyboardTilemap[];
+extern const Uint8 NameEntryKeyboardTilemap[];
 /* The 16x16 sprite the name entry screen shows as its name caret. */
-extern const Uint8 NameEntry_CaretTiles[];
+extern const Uint8 NameEntryCaretTiles[];
 
 #endif

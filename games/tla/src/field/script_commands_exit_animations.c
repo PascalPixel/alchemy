@@ -14,8 +14,8 @@ Sint32 fdActorGetScreenPos(Sint32 actorId, Sint32 *pos)
 
 	if(actor == 0)
 		return -1;
-	cameraX = syMapStateView(Ram_HeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
-	cameraZ = syMapStateView(Ram_HeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
+	cameraX = syMapStateView(RamHeapSlots->mapGrid)[0] & FIELD_PIXEL_MASK;
+	cameraZ = syMapStateView(RamHeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
 	x = actor->x.fixed - cameraX;
 	z = actor->z.fixed - cameraZ - actor->y.fixed;
 	*pos++ = x / toFIXED(1);
@@ -43,7 +43,7 @@ void fdStartEncounterTransition(Sint32 unused)
 	Sint32		 i;
 	Sint32		 level;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	sySndPlayStub(MainRoutineStateWork.battleMusic);
 	sySndPlayStub(SE_STOP_EXIT_SE);
 	sySndPlayStub(SE_BEAST_CRY);

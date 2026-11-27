@@ -1,4 +1,4 @@
-/* Kolima Forest (SceneId_KolimaForestTree), the last of the forest's five
+/* Kolima Forest (SceneIdKolimaForestTree), the last of the forest's five
    scenes, where Tret and Laurel, the spirits of the holy trees, stand. The
    party has come from Kolima to reawaken Tret's gentle side and save the
    villagers he turned into trees, and here the curse is lifted.
@@ -18,7 +18,7 @@
    Using Hermes' Water on Tret now, the wrathful side throws the leader back.
 
    The way on is into Tret himself. The region at his foot is
-   KOLIMA_FOREST_TREE_TO_TREE_ROOMS, into the Tret Tree (SceneId_TreeRooms).
+   KOLIMA_FOREST_TREE_TO_TREE_ROOMS, into the Tret Tree (SceneIdTreeRooms).
    There the party defeats the evil within him (FLAG_TRET_DEFEATED, set there)
    and finds him too weak to save Kolima.
 
@@ -47,9 +47,9 @@
    Tret speaks.
 
    Retreat from here always leads back to the forest's way in
-   (SceneId_KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP). The
+   (SceneIdKolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP). The
    way back, KOLIMA_FOREST_TREE_TO_KOLIMA_FOREST_FLOODGATE, leads to the
-   Floodgate Switch's scene (SceneId_KolimaForestFloodgate). */
+   Floodgate Switch's scene (SceneIdKolimaForestFloodgate). */
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -154,8 +154,8 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return KolimaForestTreeRegions;
 }
 
-/* The ways back (SceneId_KolimaForestFloodgate) and into the Tret Tree
-   (SceneId_TreeRooms). */
+/* The ways back (SceneIdKolimaForestFloodgate) and into the Tret Tree
+   (SceneIdTreeRooms). */
 const Uint32 *scGetExits(void)
 {
 	return KolimaForestTreeExits;
@@ -188,7 +188,7 @@ const CUE *scGetCues(void)
 	return KolimaForestTreeCues;
 }
 
-/* In Kolima Forest (SceneId_KolimaForestTree), the first time the party talks
+/* In Kolima Forest (SceneIdKolimaForestTree), the first time the party talks
    to Laurel (ACTOR_LAUREL_STAND_IN), she asks who the party is. */
 static void scKolimaForestTreeTalkToLaurel(void)
 {
@@ -233,7 +233,7 @@ static void scKolimaForestTreeTalkToLaurel(void)
 	fdScriptEnd();
 }
 
-/* In Kolima Forest (SceneId_KolimaForestTree), talking to Tret
+/* In Kolima Forest (SceneIdKolimaForestTree), talking to Tret
    (ACTOR_TRET_STAND_IN) finds him silent until the curse is lifted. */
 static void scKolimaForestTreeTalkToTret(void)
 {
@@ -285,7 +285,7 @@ static void scKolimaForestTreeTalkToTret(void)
 	fdScriptEnd();
 }
 
-/* In Kolima Forest (SceneId_KolimaForestTree), Mind Read on Laurel hears her
+/* In Kolima Forest (SceneIdKolimaForestTree), Mind Read on Laurel hears her
    thoughts. */
 static void scKolimaForestTreeReadLaurelThoughts(void)
 {
@@ -301,7 +301,7 @@ static void scKolimaForestTreeReadLaurelThoughts(void)
 	fdScriptEnd();
 }
 
-/* In Kolima Forest (SceneId_KolimaForestTree), Mind Read on Tret hears his
+/* In Kolima Forest (SceneIdKolimaForestTree), Mind Read on Tret hears his
    thoughts. */
 static void scKolimaForestTreeReadTretThoughts(void)
 {
@@ -317,7 +317,7 @@ static void scKolimaForestTreeReadTretThoughts(void)
 	fdScriptEnd();
 }
 
-/* In Kolima Forest (SceneId_KolimaForestTree), using Hermes' Water on Tret
+/* In Kolima Forest (SceneIdKolimaForestTree), using Hermes' Water on Tret
    while the curse lasts heals him only once the evil within him is defeated in
    the Tret Tree (FLAG_TRET_DEFEATED). Before that his wrathful side repels it
    (scKolimaForestTreeRejectHermesWater). Afterwards it heals him

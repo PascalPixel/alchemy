@@ -477,7 +477,7 @@ void btProcessTurnEnd(void)
 	DJINN_RECOVERY_ENTRY *timedEntry;
 	DJINN_RECOVERY_ENTRY *expiredEntry;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	sideCnt = (battle->isLink != 0) + 1;
 	for(side = 0; side < sideCnt; side++) {
 		list = &gmDjinnGetRecoveryTableStub(side)->list;
@@ -539,7 +539,7 @@ void btProcessTurnEnd(void)
 		}
 	}
 	btBackgroundSetMode(
-		BATTLE_BACKGROUND_ZOOMED, Ram_HeapSlots->battleState->bg, 0);
+		BATTLE_BACKGROUND_ZOOMED, RamHeapSlots->battleState->bg, 0);
 	{
 		Sint32			 *groupList;
 		BATTLE_SIDE_ORDER order = BattleTurnEndSideOrder;
@@ -787,7 +787,7 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 	battleContinues = 0;
 	unit = syUnitGet(unitId);
 	if(unitId <= ALLY_MAX ||
-		((BATTLE_STATE *)Ram_HeapSlots->battleState)->isLink != 0) {
+		((BATTLE_STATE *)RamHeapSlots->battleState)->isLink != 0) {
 		list = &gmDjinnGetRecoveryTableStub(unitId > ALLY_MAX)->list;
 		for(entryIdx = 0; entryIdx < list->cnt; entryIdx++) {
 			if(list->entries[entryIdx].unitId == unitId &&
@@ -807,7 +807,7 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 		DJINN_RECOVERY_LIST *pending;
 
 		pending = &gmDjinnGetRecoveryTableStub(unitId > ALLY_MAX &&
-			((BATTLE_STATE *)Ram_HeapSlots->battleState)->isLink != 0)
+			((BATTLE_STATE *)RamHeapSlots->battleState)->isLink != 0)
 					   ->list;
 		for(i = 0; i < ELEMENT_COUNT; i++) {
 			cnts[i] = 0;
@@ -912,7 +912,7 @@ void btUnitProcessActionEnd(BATTLE_PLAN *plan)
 		poison = &unit->poison;
 		if(*poison != 0) {
 			Sint32		  damage = unit->hpMax * *poison / 10;
-			BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+			BATTLE_STATE *battle = RamHeapSlots->battleState;
 
 			btPlaybackPush(PLAYBACK_HIT, unitId);
 			btPlaybackPush(PLAYBACK_UNIT_NAME, unitId);

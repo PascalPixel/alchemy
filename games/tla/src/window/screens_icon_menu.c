@@ -98,7 +98,7 @@ Sint32 mnBattleCollectPartyCommands(
 	state->swappedUnit = -1;
 	state->lastTgt = -1;
 	{
-		BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+		BATTLE_STATE *battle = RamHeapSlots->battleState;
 		Sint32		  k;
 
 		for(k = 0; k < 8; k++)
@@ -192,7 +192,7 @@ Sint32 mnBattleCollectPartyCommands(
 
 			if(swapped == -1)
 				continue;
-			battle = Ram_HeapSlots->battleState;
+			battle = RamHeapSlots->battleState;
 			old = battle->partyUnits[state->swappedPlace];
 			battle->partyUnits[state->swappedPlace] = swapped;
 			shortSwapped = (Sint16)swapped;
@@ -202,7 +202,7 @@ Sint32 mnBattleCollectPartyCommands(
 				else if(MainRoutineStateWork.party[k] == old)
 					MainRoutineStateWork.party[k] = shortSwapped;
 			}
-			mnPartyStatDraw(Ram_HeapSlots->battleState->partyStat);
+			mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
 			btObjectPutStub();
 			state->swappedUnit = -1;
 			btSummonUpdateAvailabilityStub();
@@ -759,7 +759,7 @@ Sint32 mnBattleCollectPartyCommands(
 		   window, that is while the partner is still choosing; a timer window
 		   was closed above and is only forgotten here. choice counts the ticks
 		   without the link, and past LINK_MAX_MISSED_TICKS gives up (-1). */
-		link = Ram_HeapSlots->battleState;
+		link = RamHeapSlots->battleState;
 		choice = 0;
 		if(state->tmrWin == NULL && link->linkPaused == 0) {
 			state->tmrWin = mnWindowCreate(0, 16, 30, 4,
@@ -844,10 +844,10 @@ void mnIconMenuDrawIcons(void)
 	WINDOW_BUFFER			*page;
 	Sint32					 halfWidth;
 
-	iconMenuState = Ram_HeapSlots->iconMenu;
+	iconMenuState = RamHeapSlots->iconMenu;
 	entry = iconMenuState->entries;
 	pulseScale = WindowSpriteBounceScales[(TickCount * 2) & 31];
-	state = Ram_HeapSlots->screenTransition;
+	state = RamHeapSlots->screenTransition;
 	pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(1.1875);
 	transform.scaleX = pulseScale;
 	transform.scaleY = pulseScale;
@@ -996,7 +996,7 @@ void mnIconMenuClose(void)
 	Sint32			 i;
 	ICON_MENU_STATE *state;
 
-	state = Ram_HeapSlots->iconMenu;
+	state = RamHeapSlots->iconMenu;
 	syCloseEvent(mnIconMenuDrawIcons);
 	labelWin = state->win;
 	if(labelWin != 0) {
@@ -1015,7 +1015,7 @@ void mnIconMenuClose(void)
    command name. */
 Sint32 mnIconMenuRun(Sint32 init)
 {
-	ICON_MENU_STATE *state = Ram_HeapSlots->iconMenu;
+	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
 	Sint32			 resource;
 
 	state->selection = init;
@@ -1084,7 +1084,7 @@ Sint32 mnIconMenuAnimateTo(Sint32 start, Sint32 goal)
 	const Uint8		*stepDelays;
 	ICON_MENU_STATE *state;
 
-	state = Ram_HeapSlots->iconMenu;
+	state = RamHeapSlots->iconMenu;
 	step = 1;
 	delay = 12;
 	state->selection = (Sint16)start;
@@ -1148,7 +1148,7 @@ void mnIconMenuAddIcon(Sint32 icon)
 	Sint32			 slot;
 	Sint32			 y = ICON_MENU_BOTTOM_ROW * 8;
 
-	state = Ram_HeapSlots->iconMenu;
+	state = RamHeapSlots->iconMenu;
 	idx = state->cnt;
 	if(idx < (Sint32)ARRAY_COUNT(state->entries)) {
 		state->cnt++;
@@ -1169,7 +1169,7 @@ void mnIconMenuAddIcon(Sint32 icon)
    two thirds of the window's width. */
 void mnIconMenuCenter(Sint32 row, Sint32 width, Sint32 resourceBase)
 {
-	ICON_MENU_STATE *state = Ram_HeapSlots->iconMenu;
+	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
 	Sint32			 x;
 	Sint32			 i;
 	Sint32			 cnt;
@@ -1198,7 +1198,7 @@ void mnIconMenuLayoutIcons(
 	Sint32			 i;
 	ICON_MENU_ENTRY *entry;
 
-	state = Ram_HeapSlots->iconMenu;
+	state = RamHeapSlots->iconMenu;
 	state->width = width + 2;
 	state->labelBase = resourceBase;
 	state->row = y;
@@ -1346,7 +1346,7 @@ Sint32 mnFileListSelectAction(void)
    Gold five lines, Silver three, Bronze two. */
 void mnPasswordLevelMenuDrawContents(void)
 {
-	ICON_MENU_STATE *state = Ram_HeapSlots->iconMenu;
+	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
 
 	if(state->drawnSelection != state->selection) {
 		state->drawnSelection = state->selection;
@@ -1395,7 +1395,7 @@ void mnPasswordLevelMenuDrawContents(void)
    only when the description changes. */
 void mnTransferMethodMenuDrawHelp(void)
 {
-	ICON_MENU_STATE *state = Ram_HeapSlots->iconMenu;
+	ICON_MENU_STATE *state = RamHeapSlots->iconMenu;
 	Sint16			*shown = &state->drawnSelection;
 	Sint16			*cur = &state->selection;
 
@@ -1504,7 +1504,7 @@ Sint32 mnIconMenuChooseSendOption(Sint32 mode)
 
 	mode &= 1;
 	mnIconMenuOpen();
-	state = Ram_HeapSlots->iconMenu;
+	state = RamHeapSlots->iconMenu;
 	if(mode == SEND_OPTION_TRANSFER_METHOD) {
 		mnIconMenuAddIcon(COMMAND_ICON_PASSWORD);
 		mnIconMenuAddIcon(COMMAND_ICON_LINK);

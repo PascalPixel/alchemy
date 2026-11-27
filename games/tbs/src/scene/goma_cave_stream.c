@@ -1,11 +1,11 @@
 /* The first and last rooms of Goma Cave, the cave in the Goma Range between
-   Vault and Bilibin: SceneId_GomaCaveStream and SceneId_GomaCaveBridge, both
+   Vault and Bilibin: SceneIdGomaCaveStream and SceneIdGomaCaveBridge, both
    under the area name Goma Cave.
 
-   The getters give SceneId_GomaCaveBridge its own tables and any other scene
-   SceneId_GomaCaveStream's. The two share one exit table.
+   The getters give SceneIdGomaCaveBridge its own tables and any other scene
+   SceneIdGomaCaveStream's. The two share one exit table.
 
-   - SceneId_GomaCaveStream, the room a stream runs the length of. The party
+   - SceneIdGomaCaveStream, the room a stream runs the length of. The party
 	 walks in from the Goma Cave Entrance
 	 (GOMA_CAVE_STREAM_FROM_GOMA_CAVE_ENTRANCE) at its bottom.
 
@@ -17,7 +17,7 @@
 
 	 Exits lead back to the Goma Cave Entrance, into the room of two pillars
 	 (goma_cave_pillar.c; GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and
-	 _EAST) and north into SceneId_GomaCaveBridge.
+	 _EAST) and north into SceneIdGomaCaveBridge.
 
 	 The same map holds a small cave off Vale's plaza, walled off from the
 	 rest of the room in a camera box of its own. It has a chest of Power
@@ -29,9 +29,9 @@
    in  goma_cave_stream's map.txt, two metatiles south of the arrival, which
    leads  back to the plaza (GOMA_CAVE_STREAM_CHEST_CAVE_TO_VALE_PLAZA).
 
-   - SceneId_GomaCaveBridge, the way out, where a wooden bridge crosses the
+   - SceneIdGomaCaveBridge, the way out, where a wooden bridge crosses the
 	 river. It has no actors and only its two exits. They lead back south
-	 into SceneId_GomaCaveStream and out onto the World Map toward Bilibin
+	 into SceneIdGomaCaveStream and out onto the World Map toward Bilibin
 	 (GOMA_CAVE_BRIDGE_TO_WORLD_MAP). */
 
 #include "ability_ids.h"
@@ -50,7 +50,7 @@ extern ACTOR_PLACE	  GomaCaveBridgeActorPlacements[];
 extern CUE			  GomaCaveStreamCues[];
 extern CUE			  GomaCaveBridgeCues[];
 
-/* SceneId_GomaCaveStream's actors, numbering its actor placement rows from
+/* SceneIdGomaCaveStream's actors, numbering its actor placement rows from
    ACTOR_FIRST_PLACED. */
 typedef enum GOMA_CAVE_STREAM_ACTOR_ID {
 	/* The stump Move pushes, as Garet calls the one at the Goma Cave
@@ -58,7 +58,7 @@ typedef enum GOMA_CAVE_STREAM_ACTOR_ID {
 	ACTOR_STUMP = ACTOR_FIRST_PLACED
 } GOMA_CAVE_STREAM_ACTOR_ID;
 
-/* SceneId_GomaCaveStream's entrance that no exit names, standing the leader
+/* SceneIdGomaCaveStream's entrance that no exit names, standing the leader
    just east of the stump, facing it.
 
    Only the debug scene selector, which exits to any entrance by number, reaches
@@ -118,7 +118,7 @@ const CUE *scGetCues(void)
 	return GomaCaveStreamCues;
 }
 
-/* Sets up SceneId_GomaCaveStream as the party enters (SceneId_GomaCaveBridge
+/* Sets up SceneIdGomaCaveStream as the party enters (SceneIdGomaCaveBridge
    needs nothing). */
 Sint32 scInit(void)
 {

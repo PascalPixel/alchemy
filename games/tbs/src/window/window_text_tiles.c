@@ -3,7 +3,7 @@
 
 /* A new line in tile text advances by a space's width: tile text is one
    line. */
-#define TILE_TEXT_NEWLINE_WIDTH JAPANESE_OR(8, Font_GlyphWidths[0])
+#define TILE_TEXT_NEWLINE_WIDTH JAPANESE_OR(8, FontGlyphWidths[0])
 
 /* Tile text is drawn into a canvas of one byte a pixel, a tile tall, then
    packed into 4bpp tiles in place: row `row` of its tile `tile` is then a word
@@ -244,7 +244,7 @@ Sint32 mnTextDrawStringAsTiles(
 					} else
 #endif
 						if(glyphCode >= TEXT_SPACE)
-						glyphWidth = Font_GlyphWidths[glyphCode - TEXT_SPACE];
+						glyphWidth = FontGlyphWidths[glyphCode - TEXT_SPACE];
 					else
 						glyphWidth = 1;
 					x += glyphWidth;

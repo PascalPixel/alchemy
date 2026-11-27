@@ -1,4 +1,4 @@
-/* Goma Cave (SceneId_GomaCavePillar), the middle floor of the cave in the Goma
+/* Goma Cave (SceneIdGomaCavePillar), the middle floor of the cave in the Goma
    Range that the party passes through between Vault and Bilibin. Three things
    here are moved with Move: a tall stone pillar by the north wall (the west
    pillar), a squat stump, and a second tall pillar on the floor in the east.

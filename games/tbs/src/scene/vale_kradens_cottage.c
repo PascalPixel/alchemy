@@ -1,4 +1,4 @@
-/* Vale (SceneId_ValeKradensCottage) is the part of the village around Kraden's
+/* Vale (SceneIdValeKradensCottage) is the part of the village around Kraden's
    cottage, by the fence that closes off the lands beyond.
 
    Kraden, "a trained Alchemy sage" in his own words, came to Vale to study Mt.
@@ -9,7 +9,7 @@
    story.
 
    On the stormy night of the prologue (FLAG_VALE_STORM), the storm's scene
-   (Vale, SceneId_ValePrologue) leads here by
+   (Vale, SceneIdValePrologue) leads here by
    VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_NORTH and
    VALE_PROLOGUE_TO_VALE_KRADENS_COTTAGE_SOUTH. The party arrives by
    VALE_KRADENS_COTTAGE_FROM_VALE_NORTH and
@@ -55,7 +55,7 @@
 	 brings up Saturos and Menardi. Kraden talks the three into a secret look
 	 at Sol Sanctum on the forbidden mountain, then goes in to prepare.
    - VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_MYTHRIL_BAG then takes the party
-	 into the cottage (SceneId_CottageRoomsB,
+	 into the cottage (SceneIdCottageRoomsB,
 	 COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_MYTHRIL_BAG).
    - Coming back out by VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_SOUTH, Kraden
 	 joins them for Mt. Aleph (scValeKradensCottageKradenSetsOff,
@@ -72,12 +72,12 @@
 
    - The cottage's door (scValeKradensCottageEnterCottage) leads into the
 	 cottage (VALE_KRADENS_COTTAGE_TO_COTTAGE_ROOMS_B_NORTH, to
-	 SceneId_CottageRoomsB's COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH).
+	 SceneIdCottageRoomsB's COTTAGE_ROOMS_B_FROM_VALE_KRADENS_COTTAGE_NORTH).
    - VALE_KRADENS_COTTAGE_TO_VALE_NORTH and VALE_KRADENS_COTTAGE_TO_VALE_SOUTH
-	 go down into the village (SceneId_Vale).
+	 go down into the village (SceneIdVale).
    - VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_WEST and
 	 VALE_KRADENS_COTTAGE_TO_VALE_CAVE_MOUTH_EAST go into Vale Cave's way in
-	 (SceneId_ValeCaveMouth).
+	 (SceneIdValeCaveMouth).
 
    Coming back from Vale Cave's way in by
    VALE_KRADENS_COTTAGE_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_AREA_NAME, so

@@ -59,19 +59,19 @@ OUTPUT_ARCH(arm)
 ENTRY(Entry)
 /* The ropes call syAtan as returning a halfword, under this name. */
 syTrigAtanHalfword = syAtan;
-Decompress_MoveToFrontLzCommandsCodeSize = syDecompressMoveToFrontLZCommandsEnd - syDecompressMoveToFrontLZCommandsCode;
-Tile_Decompress4bppCodeSize = mnTileDecompress4bppEnd - mnTileDecompress4bppCode;
-Tile_ExpandMaskedCodeSize = mnTileExpandMaskedEnd - mnTileExpandMaskedCode;
-Tile_ExpandOpaqueCodeSize = mnTileExpandOpaqueEnd - mnTileExpandOpaqueCode;
+DecompressMoveToFrontLzCommandsCodeSize = syDecompressMoveToFrontLZCommandsEnd - syDecompressMoveToFrontLZCommandsCode;
+TileDecompress4bppCodeSize = mnTileDecompress4bppEnd - mnTileDecompress4bppCode;
+TileExpandMaskedCodeSize = mnTileExpandMaskedEnd - mnTileExpandMaskedCode;
+TileExpandOpaqueCodeSize = mnTileExpandOpaqueEnd - mnTileExpandOpaqueCode;
 mnScanlineWindowBuildSpansCodeSize = mnTileDecompress4bppCode - mnScanlineWindowBuildSpansCode;
 mnGlyphDrawCodeSize = mnScanlineWindowBuildSpansCode - mnGlyphDrawCode;
-BattleEffect_DecodePictureBlockSize = BattleEffect_DecodePictureEnd - BattleEffect_DecodePictureCode;
-Render_DecodePictureBlockSize = fdRenderDecodePictureEnd - fdRenderDecodePictureCode;
-Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
-Credits_DecodeBackgroundCodeSize = EndingImage_InnerProduct - mnCreditsDecodeBackgroundCode;
-EndingImage_DecodeCodeSize = EndingImage_DecodeEnd - EndingImage_DecodeCode;
-Model_DecodeCodeSize = btModelDecodeEnd - btModelDecodeCode;
-Grid_DrawOutlineCodeSize = fdResourceGetMetadataRecordStub - fdGridDrawOutlineCode;
+BattleEffectDecodePictureBlockSize = BattleEffectDecodePictureEnd - BattleEffectDecodePictureCode;
+RenderDecodePictureBlockSize = fdRenderDecodePictureEnd - fdRenderDecodePictureCode;
+TextDecodeSymbolCodeSize = TextDecodeSymbolEnd - TextDecodeSymbolCode;
+CreditsDecodeBackgroundCodeSize = EndingImageInnerProduct - mnCreditsDecodeBackgroundCode;
+EndingImageDecodeCodeSize = EndingImageDecodeEnd - EndingImageDecodeCode;
+ModelDecodeCodeSize = btModelDecodeEnd - btModelDecodeCode;
+GridDrawOutlineCodeSize = fdResourceGetMetadataRecordStub - fdGridDrawOutlineCode;
 fdWorldMapUpdateAffineLinesCodeSize = fdRenderConvertMapCode - fdWorldMapUpdateAffineLinesCode;
 
 MEMORY
@@ -854,9 +854,9 @@ SECTIONS
         "*/games/tla/src/map/maps.o"(.rodata)
         "*/games/tla/src/system/overlay/overlays.list.o"(.rodata)
     } > ROM
-    IwramResident_Rom = LOADADDR(.iwram_resident);
+    IwramResidentRom = LOADADDR(.iwram_resident);
     sySndMainRAMRom = LOADADDR(.iwram_mixer) + 1;
-    Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
+    MixerCallViaR3Rom = LOADADDR(.iwram_mixer) + (MixerCallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }
 #endif

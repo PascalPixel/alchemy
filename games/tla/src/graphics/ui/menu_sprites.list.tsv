@@ -1,4 +1,4 @@
 name	file	section	align	left	pad
 	menu_sprites/digits.4bpp		4		
 	menu_sprites/price.4bpp				
-Menu_QuantityTiles	menu_sprites/quantity.4bpp				
+MenuQuantityTiles	menu_sprites/quantity.4bpp				

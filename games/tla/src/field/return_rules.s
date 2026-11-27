@@ -1,20 +1,20 @@
 	.include "games/tla/src/field/facing.inc"
 
 @ Where the party restarts after a defeat and where the ship waits
-@ (Scene_ReturnRules), eight halfwords a row as fdSetRestartPoint and
+@ (SceneReturnRules), eight halfwords a row as fdSetRestartPoint and
 @ the World Map's return read them: the scene and entrance (-1 for any) it
 @ matches, the scene and entrance the party restarts at after a defeat, the
 @ ship's position in pixels (x, z) and its facing, a word whose halves are the
 @ last two. A row of -1 ends the table.
 	.macro return_rule scene:req, entrance:req, restart_scene:req, restart_entrance:req, x:req, z:req, facing:req
-	.2byte SceneId_\scene, \entrance, SceneId_\restart_scene, \restart_entrance, \x, \z
+	.2byte SceneId\scene, \entrance, SceneId\restart_scene, \restart_entrance, \x, \z
 	.4byte \facing
 	.endm
 
 	.section .rodata
 	.balign 4
-	.global Scene_ReturnRules
-Scene_ReturnRules:
+	.global SceneReturnRules
+SceneReturnRules:
 	return_rule Idejima, -1, Idejima, 2, 0, 0, FACING_NORTH
 	return_rule DailaFlooded, -1, DailaRoomsSanctum, 1, 10085, 8126, FACING_SOUTH
 	return_rule Daila, -1, DailaRoomsSanctum, 1, 10085, 8126, FACING_SOUTH

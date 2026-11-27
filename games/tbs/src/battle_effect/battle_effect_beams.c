@@ -123,7 +123,7 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 	sySynch(1);
 	btResourceLoadAndDecompress(RESOURCE_BLUE_GLOW_SHEET, sheet, 0, 0);
 	btResourceLoadAndDecompress(
-		RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridMetatileBuffer, 1, 0);
+		RESOURCE_YELLOW_ORB_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
 		BGCNT_SCREEN_BASE(31);
@@ -218,7 +218,7 @@ void btEffectRunAttackSlash(BATTLE_EFFECT_PARM *args)
 		/* The yellow orb flashes over the target. */
 		if(frm >= 4 && frm <= 15)
 			draw[0](canvas,
-				Ram_MapGridMetatileBuffer +
+				RamMapGridMetatileBuffer +
 					(frm - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
 				anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2,
 				YELLOW_ORB_WIDTH, YELLOW_ORB_HEIGHT);
@@ -323,7 +323,7 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 		state->args->user, state->args->firstTgt, CRITICAL_HIT_ZOOM);
 	sySynch(1);
 	btResourceLoadAndDecompress(
-		RESOURCE_CRESCENT_SHEET, Ram_MapGridMetatileBuffer, 1, 1);
+		RESOURCE_CRESCENT_SHEET, RamMapGridMetatileBuffer, 1, 1);
 	/* A monster's crescent takes the Mars Djinni's colours. */
 	if(state->args->user > PIERS)
 		syWordsCopy(BG_PLTT,
@@ -448,11 +448,11 @@ void btEffectRunCriticalHit(BATTLE_EFFECT_PARM *args)
 				state->imageStorage + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
 				0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		else if(frm <= 5)
-			draw[0](canvas, Ram_MapGridMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
+			draw[0](canvas, RamMapGridMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 				SLASH_PICTURE_SIZE);
 		else if(frm <= 7)
 			draw[0](canvas,
-				Ram_MapGridMetatileBuffer +
+				RamMapGridMetatileBuffer +
 					SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
 				0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		EFFECT_VIEW_FROM_CAMERA(camera);

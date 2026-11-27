@@ -12,7 +12,7 @@
 void fdMapGridSetCameraBounds(
 	Sint32 minX, Sint32 minZ, Sint32 maxX, Sint32 maxZ)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	map->minX = minX;
 	map->minZ = minZ;
@@ -24,7 +24,7 @@ void fdMapGridSetCameraBounds(
    over zoomFrm ticks. */
 void fdWorldMapStepZoom(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint16	  *duration;
 	Sint32	  *from;
 	Sint32	   ofs;
@@ -53,7 +53,7 @@ void fdWorldMapStepZoom(void)
    fdWorldMapStepZoom takes the view's MAP_STATE.zoom to farPlane / zoom. */
 void fdWorldMapStartZoom(FIXED zoom, Sint32 ticks)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   result;
 
 	if(((FIELD_STATE *)syHeapSlotAllocEWRAM(
@@ -72,7 +72,7 @@ void fdWorldMapStartZoom(FIXED zoom, Sint32 ticks)
    ticks). */
 void fdScriptWaitForZoomTransition(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   ticks;
 
 	if(((FIELD_STATE *)syHeapSlotAllocEWRAM(

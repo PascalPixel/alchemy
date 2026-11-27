@@ -1,8 +1,8 @@
 #ifndef ALCHEMY_VAULT_H
 #define ALCHEMY_VAULT_H
 
-/* The metatile behaviors of Vault's layout, which SceneId_Vault (vault.c) and
-   SceneId_VaultRevisit (vault_revisit.c) both draw and answer. */
+/* The metatile behaviors of Vault's layout, which SceneIdVault (vault.c) and
+   SceneIdVaultRevisit (vault_revisit.c) both draw and answer. */
 
 #include "types.h"
 

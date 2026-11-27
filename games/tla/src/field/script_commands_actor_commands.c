@@ -247,7 +247,7 @@ void fdScriptSetMessageId(Sint32 msg)
    under SPEAKER_ACTOR_MASK, or -1 if there is no such animated actor. */
 Sint32 fdActorGetSprById(Sint32 key)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 result = -1;
 	ACTOR		*actor = state->actors[key & SPEAKER_ACTOR_MASK];
 
@@ -260,7 +260,7 @@ Sint32 fdActorGetSprById(Sint32 key)
    showing sprId, or -1. */
 Sint32 fdActorFindBySpr(Sint32 sprId)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 result = -1;
 	Sint32		 idx;
 	ACTOR		*actor;

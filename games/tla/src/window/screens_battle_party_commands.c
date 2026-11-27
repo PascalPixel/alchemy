@@ -37,9 +37,9 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 	Sint32			   cnt = btPartyPrepareReserveOwnersStub(owners);
 	Sint32			   sel = 0;
 	Bool			   redraw = TRUE;
-	BATTLE_STATE	  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE	  *battle = RamHeapSlots->battleState;
 	Sint32			   result = 0;
-	BATTLE_MENU_STATE *menu = Ram_HeapSlots->battleMenuState;
+	BATTLE_MENU_STATE *menu = RamHeapSlots->battleMenuState;
 	Sint32			   cur;
 	Sint32			   newId;
 	Sint32			   i;
@@ -108,7 +108,7 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 			to->anchorZ = from->anchorZ;
 			fdActorSetPosAndResetMotionStub(
 				actor, place->x.fixed, place->y.fixed, place->z.fixed);
-			mnPartyStatDraw(Ram_HeapSlots->battleState->partyStat);
+			mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
 			btObjectPutStub();
 			selected[0] = newId;
 			selected[1] = BATTLE_UNIT_LIST_END;
@@ -120,7 +120,7 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
 	selected[0] = BATTLE_UNIT_LIST_END;
 	btHighlightSetModesStub(selected, HIGHLIGHT_OFF);
 	mnPartyStatHighlightMembers(selected);
-	mnPartyStatDraw(Ram_HeapSlots->battleState->partyStat);
+	mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
 	btObjectPutStub();
 	sySynch(1);
 	return result;
@@ -130,7 +130,7 @@ Sint32 mnBattlePartyChooseReserve(Sint32 slot)
    unitIds when it is not null, and returns how many. */
 Sint32 btUnitListLivingStub(Sint32 sideMask, Uint16 *unitIds);
 
-/* The first half of The Broken Seal's Battle_BuildPartyActions: each action of
+/* The first half of The Broken Seal's BattleBuildPartyActions: each action of
    a living party member who is asleep, confused, charmed or stunned is lost
    (COMMAND_NONE) and written at *cursor, which moves past them, their count
    going to *forcedCnt; every other member's actions are listed in ready to be

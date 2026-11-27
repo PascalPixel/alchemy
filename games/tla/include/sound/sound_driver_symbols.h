@@ -42,13 +42,13 @@ enum SoundControl {
 /* The music players by their row in MPlayTable (sound/music_player_table.s), as
    a song table row names them (Song.slot). */
 enum MusicPlayerId {
-	MUSIC_PLAYER_JINGLE = 0,	/* MPlayInfo_Jingle */
-	MUSIC_PLAYER_BGM = 1,		/* MPlayInfo_BGM */
-	MUSIC_PLAYER_MENU_SE = 2,	/* MPlayInfo_MenuSE */
-	MUSIC_PLAYER_ACTION_SE = 3, /* MPlayInfo_ActionSE */
+	MUSIC_PLAYER_JINGLE = 0,	/* MPlayInfoJingle */
+	MUSIC_PLAYER_BGM = 1,		/* MPlayInfoBGM */
+	MUSIC_PLAYER_MENU_SE = 2,	/* MPlayInfoMenuSE */
+	MUSIC_PLAYER_ACTION_SE = 3, /* MPlayInfoActionSE */
 	/* The lowest music player a sound on MUSIC_PLAYER_SE_LAST may borrow. */
 	MUSIC_PLAYER_SE_FIRST = 4,
-	MUSIC_PLAYER_SE5 = 5, /* MPlayInfo_SE5 */
+	MUSIC_PLAYER_SE5 = 5, /* MPlayInfoSE5 */
 	/* A sound on it takes the first idle music player from here down to
 	   MUSIC_PLAYER_SE_FIRST, else this one (sySndPlay). */
 	MUSIC_PLAYER_SE_LAST = 7

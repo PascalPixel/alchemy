@@ -1,6 +1,6 @@
 #include "scene/orbit.h"
 
-/* Crossbone Isle, Kalay, Kolima Forest (SceneId_KolimaForestGlade), Lunpa,
+/* Crossbone Isle, Kalay, Kolima Forest (SceneIdKolimaForestGlade), Lunpa,
    McCoy's palace garden, Mogall Forest and Vale: a Nut floating where it lies,
    until it is taken. */
 

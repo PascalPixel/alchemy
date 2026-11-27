@@ -12,7 +12,7 @@ void fdActorSetMetatileOpen(Sint32 id, Uint32 kind, Sint32 flg, Sint32 layer)
 {
 	ACTOR		 *actor = fdActorGetById(id);
 	MAP_METATILE *metatile =
-		((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[layer].metatiles;
+		((MAP_STATE *)RamHeapSlots->mapGrid)->layers[layer].metatiles;
 
 	metatile += fdActorGetMetatileIndex(actor);
 	if(syGameFlagGet(flg)) {

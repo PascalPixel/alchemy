@@ -6,8 +6,8 @@
  * tracks supply their events; sequence.c owns sound-command encoding. Validate
  * all pointer targets before publishing the completed assembly.
  *
- * The song's global label is its file's name in mixed case after Song_:
- * mus_venus_lighthouse.mid is Song_MusVenusLighthouse, as the song table
+ * The song's global label is Song and its file's name in mixed case:
+ * mus_venus_lighthouse.mid is SongMusVenusLighthouse, as the song table
  * names it.
  */
 #include "sequence.h"
@@ -78,7 +78,7 @@ readConductor(const Midi *midi, TimeSignature **signatures, size_t *count)
 }
 
 /*
- * mus_venus_lighthouse.mid -> Song_MusVenusLighthouse: the label of the song
+ * mus_venus_lighthouse.mid -> SongMusVenusLighthouse: the label of the song
  * a file holds.
  */
 static void
@@ -86,7 +86,7 @@ songLabel(const char *path, char *out, size_t size)
 {
 	const char *name = strrchr(path, '/');
 	name = name ? name + 1 : path;
-	size_t n = strcspn(name, "."), at = (size_t) snprintf(out, size, "Song_");
+	size_t n = strcspn(name, "."), at = (size_t) snprintf(out, size, "Song");
 	bool upper = true;
 	if (!n || at + n >= size)
 		fail("song file name cannot be a label: %s", path);

@@ -174,7 +174,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 	Sint32			   groupPos;
 	SUMMARY_OAM		  *spr;
 
-	state = (WIN_STATE *)Ram_HeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->winState;
 	redraw = 1;
 	memberIdx = -1;
 	statCnt = 0;
@@ -1262,7 +1262,7 @@ Sint32 mnBattleStatScreenRun(Uint16 *list, Sint32 listCnt, Sint32 member)
 #endif
 	mnWindowClose(statWin, 1);
 	mnWindowClose(helpWin, 1);
-	mnPartyStatDraw(Ram_HeapSlots->battleState->partyStat);
+	mnPartyStatDraw(RamHeapSlots->battleState->partyStat);
 	BattleMenuStateWork->tmrHidden = 0;
 	btObjectDestroySprsStub(shownMember);
 	btObjectPutStub();

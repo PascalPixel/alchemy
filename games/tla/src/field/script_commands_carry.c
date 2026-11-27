@@ -14,7 +14,7 @@ void fdPsynergyCarry(void)
 	Sint32				n;
 	FIXED				distance;
 
-	state = Ram_HeapSlots->fieldEffState;
+	state = RamHeapSlots->fieldEffState;
 	fdPsynergyFadeToCastCol();
 	SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
 	pair[0] =

@@ -1757,7 +1757,7 @@ void scEasternAlhafraWorkersTellMayor(void)
 	fdActorWalkBy(ACTOR_JIYA, 0, 80);
 	fdActorWalkByAndWait(ACTOR_ALHAFRAS_MAYOR, 0, 80);
 	{
-		FIELD_STATE *event = Ram_HeapSlots->fieldState;
+		FIELD_STATE *event = RamHeapSlots->fieldState;
 
 		event->transitionFrm = 60;
 		event->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1809,10 +1809,10 @@ void scEasternAlhafraBriggsStealsShip(void)
 	fdActorSetPos(ACTOR_BRIGGS, 224, 8);
 	/* "Did you call me a thief?" */
 	syFieldScriptShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->minX = 0;
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->maxX = toFIXED(1024);
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->minZ = 0;
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->maxZ = toFIXED(1024);
+	((MAP_STATE *)RamHeapSlots->mapGrid)->minX = 0;
+	((MAP_STATE *)RamHeapSlots->mapGrid)->maxX = toFIXED(1024);
+	((MAP_STATE *)RamHeapSlots->mapGrid)->minZ = 0;
+	((MAP_STATE *)RamHeapSlots->mapGrid)->maxZ = toFIXED(1024);
 	fdCameraSetSpeed(4);
 	fdCameraMoveTo(208, CAMERA_KEEP, 168, 1);
 	syFieldScriptWait(50);
@@ -2031,7 +2031,7 @@ void scEasternAlhafraBriggsStealsShip(void)
 	syFieldScriptWait(10);
 	fdActorSetAnimation(ACTOR_BRIGGS, ANIM_BRIGGS_PULL_FACE_SLOWLY);
 	syFieldScriptWait(70);
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	fdActorGetById(ACTOR_BRIGGS)->motionFlg = 0;
 	fdActorGetById(ACTOR_CHAUCHA)->motionFlg = 0;
 	fdMapGridCopyMetatilesLayered(42, 60, 17, 4, 42, 64);

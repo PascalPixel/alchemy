@@ -1,9 +1,9 @@
 /* Garoh, the village of werewolves that guards Air's Rock, in five scenes that
-   share this overlay: the way up from the world map (SceneId_GarohWayUp), the
-   path up to the village (SceneId_GarohPath, whose chest holds the Hypnos
-   Sword), the village itself (SceneId_Garoh), the tunnels under its houses
-   (SceneId_GarohTunnels) and the cave behind the rock by the sanctum
-   (SceneId_GarohWerewolfCave).
+   share this overlay: the way up from the world map (SceneIdGarohWayUp), the
+   path up to the village (SceneIdGarohPath, whose chest holds the Hypnos
+   Sword), the village itself (SceneIdGaroh), the tunnels under its houses
+   (SceneIdGarohTunnels) and the cave behind the rock by the sanctum
+   (SceneIdGarohWerewolfCave).
 
    The party first comes on a night of the full moon. Climbing the way up, the
    light turns to evening and then to night (scGarohCrossLowerTwilightLine,
@@ -85,7 +85,7 @@ void			   scGarohLashRope(void);
    by night (scGarohWavePathLayer). */
 Uint16 GarohWaveLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
-/* The village's people by night and by day (SceneId_Garoh), numbering the rows
+/* The village's people by night and by day (SceneIdGaroh), numbering the rows
    of GarohVillageActorPlacements and GarohVillageDayActorPlacements: the five
    who go hooded by night show their faces by day. */
 typedef enum GAROH_VILLAGE_ACTOR_ID {
@@ -109,8 +109,8 @@ typedef enum GAROH_VILLAGE_ACTOR_ID {
 	ACTOR_CAVE_ENTRANCE
 } GAROH_VILLAGE_ACTOR_ID;
 
-/* The path up to the village and the werewolves' cave (SceneId_GarohPath and
-   SceneId_GarohWerewolfCave), numbering the rows of
+/* The path up to the village and the werewolves' cave (SceneIdGarohPath and
+   SceneIdGarohWerewolfCave), numbering the rows of
    GarohWerewolfCaveActorPlacements; GarohPath places the werewolf and Kraden
    on the same rows. */
 typedef enum GAROH_WEREWOLF_ACTOR_ID {
@@ -132,7 +132,7 @@ enum {
 	ACTOR_PATH_TIGHTROPE_POST_B
 };
 
-/* The stone pillars on the way up to the village (SceneId_GarohWayUp),
+/* The stone pillars on the way up to the village (SceneIdGarohWayUp),
    numbering the rows of GarohWayUpActorPlacements: Move or a push takes each
    onto the slot where it sinks. */
 typedef enum GAROH_WAY_UP_ACTOR_ID {
@@ -216,7 +216,7 @@ enum { ANIM_WEREWOLF_SIT = 5 };
    wrap. */
 void scGarohMatchSecondLayer(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *to = &map->layers[1];
 	MAP_LAYER *from = &map->layers[0];
 
@@ -293,7 +293,7 @@ extern Uint16 GarohPathNightColors[];
 #define DEFINE_GAROH_LOAD_PALETTE(name, components, first, count) \
 	void name(void) \
 	{ \
-		PALETTE_FADE *buffers = Ram_HeapSlots->palFade; \
+		PALETTE_FADE *buffers = RamHeapSlots->palFade; \
 		Uint32		  i; \
 \
 		for(i = 0; i < count; i++) { \
@@ -372,7 +372,7 @@ const void *scGetActorPlacements(void)
    opening ticks from `GarohDoors`. */
 void scGarohOpenDoorAndEnter(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 idx;
 	Sint32		 i;
 
@@ -639,7 +639,7 @@ extern Sint32 GarohHowlTicks;
    behind the round grey rock in the cave leads on. */
 void scGarohEnterOpening(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	fdScriptPlaySnd(SE_MAP_EXIT);
 	FieldStateWork->transition =
@@ -724,7 +724,7 @@ Sint32 scInit(void)
 		fdEffectStartBlankOverlay(0);
 		if(MainRoutineStateWork.entrance ==
 			GAROH_WEREWOLF_CAVE_FROM_ROOM_BEHIND_ROCK) {
-			state = Ram_HeapSlots->fieldState;
+			state = RamHeapSlots->fieldState;
 			state->transition =
 				SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 			fdScriptClearFlag(FLAG_ARRIVAL_STAIRS_UP);
@@ -774,7 +774,7 @@ void scGarohInitVillage(void)
 		fdScriptWaitTransitionTicks();
 		fdPaletteFadePackTarget();
 		{
-			PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+			PALETTE_FADE *fade = RamHeapSlots->palFade;
 
 			*(volatile Uint16 *)&BG_PLTT_COLOR(1, WINDOW_LIGHT) = RGB_WHITE;
 			fade->pal[PALETTE_COLORS + WINDOW_LIGHT] =
@@ -790,7 +790,7 @@ void scGarohInitVillage(void)
 		fdMapGridCopyMetatilesTo(75, 33, 72, 22, 1, 1);
 	}
 	if(MainRoutineStateWork.entrance == GAROH_FROM_GAROH_WEREWOLF_CAVE) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		state->transition =
 			SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -1081,7 +1081,7 @@ void scGarohCrossLowerTwilightLine(void)
 			fdScriptClearFlag(FLAG_GAROH_NIGHT);
 			fdScriptClearFlag(FLAG_EVENING);
 		}
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 		if(state->revealActive == 0)
 			fdPaletteFadeInterpolate(120);
 	}
@@ -1106,7 +1106,7 @@ void scGarohCrossUpperTwilightLine(void)
 			fdScriptSetFlag(FLAG_GAROH_NIGHT);
 			fdScriptClearFlag(FLAG_EVENING);
 		}
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 		if(state->revealActive == 0)
 			fdPaletteFadeInterpolate(120);
 	}

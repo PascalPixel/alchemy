@@ -1,13 +1,13 @@
 name	file	section	align	left	pad
-WorldMap_PaletteA	palette_a.gbapal.plz			118287	
-WorldMap_TilesA	tiles_a.8bpp.lz			91b3	
-WorldMap_TilesB	tiles_b.8bpp.lz			1008c4	
-WorldMap_TilesC	tiles_c.8bpp.lz			63d3b6	
-WorldMap_TilesD	tiles_d.8bpp.lz			129f	
-WorldMap_TilesE	tiles_e.8bpp.lz			48	
-WorldMap_PaletteB	palette_b.gbapal.plz				
-WorldMap_TilesF	tiles_f.8bpp.lz			4aa882	
-WorldMap_TilesG	tiles_g.8bpp.lz			2075	
-WorldMap_TilesH	tiles_h.8bpp.lz				
-WorldMap_TilesI	tiles_i.8bpp.lz				
-WorldMap_TilesJ	tiles_j.8bpp.lz			52	
+WorldMapPaletteA	palette_a.gbapal.plz			118287	
+WorldMapTilesA	tiles_a.8bpp.lz			91b3	
+WorldMapTilesB	tiles_b.8bpp.lz			1008c4	
+WorldMapTilesC	tiles_c.8bpp.lz			63d3b6	
+WorldMapTilesD	tiles_d.8bpp.lz			129f	
+WorldMapTilesE	tiles_e.8bpp.lz			48	
+WorldMapPaletteB	palette_b.gbapal.plz				
+WorldMapTilesF	tiles_f.8bpp.lz			4aa882	
+WorldMapTilesG	tiles_g.8bpp.lz			2075	
+WorldMapTilesH	tiles_h.8bpp.lz				
+WorldMapTilesI	tiles_i.8bpp.lz				
+WorldMapTilesJ	tiles_j.8bpp.lz			52	

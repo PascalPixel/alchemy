@@ -371,7 +371,7 @@ void mnSettingsMenuRelease(void)
 	syHeapSlotRelease(HEAP_SLOT_SETTINGS_MENU);
 }
 
-/* The sprite palettes of the sliders' ends, which SettingsMenu_SliderPalette
+/* The sprite palettes of the sliders' ends, which SettingsMenuSliderPalette
    fills. */
 #define WINDOW_COLOR_SLIDER_PALETTE		 14
 #define WINDOW_BRIGHTNESS_SLIDER_PALETTE (WINDOW_COLOR_SLIDER_PALETTE + 1)
@@ -426,10 +426,10 @@ WINDOW *mnSettingsMenuOpen(void)
 	   into the picture, each slider in its own palette. */
 	cacheSlot = syVRAMCacheFindFreeEntry();
 	if(cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
-		syDMAXCopy(SettingsMenu_SliderPalette,
+		syDMAXCopy(SettingsMenuSliderPalette,
 			(void *)&OBJ_PLTT_COLOR(WINDOW_COLOR_SLIDER_PALETTE, 0),
 			DMA_COPY_HALFWORDS(2 * PALETTE_COLORS), REG_DMA3);
-		syVRAMCacheLoad(cacheSlot, 256, SettingsMenu_SliderTiles);
+		syVRAMCacheLoad(cacheSlot, 256, SettingsMenuSliderTiles);
 		y = 0;
 		marker = mnWindowSprCreate(
 			cacheSlot, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);

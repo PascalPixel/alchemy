@@ -407,8 +407,8 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 	if(script == -1) {
 		start = state->lastMsgStart;
 	} else {
-		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
-			Text_DecodeSymbolCodeSize);
+		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, TextDecodeSymbol,
+			TextDecodeSymbolCodeSize);
 		/* The decoder runs from a copy in RAM, one symbol at a time. */
 		decode = (Sint32 (*)(MESSAGE_READER *))HEAP_SLOT_BLOCK(
 			HEAP_SLOT_MESSAGE_DECODER);
@@ -910,8 +910,8 @@ Sint32 mnMessageDecode(Sint32 script, Sint32 clear)
 	if(script == -1) {
 		start = state->lastMsgStart;
 	} else {
-		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
-			Text_DecodeSymbolCodeSize);
+		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, TextDecodeSymbol,
+			TextDecodeSymbolCodeSize);
 		/* The decoder runs from a copy in RAM, one symbol at a time. */
 		decode = (Sint32 (*)(MESSAGE_READER *))HEAP_SLOT_BLOCK(
 			HEAP_SLOT_MESSAGE_DECODER);

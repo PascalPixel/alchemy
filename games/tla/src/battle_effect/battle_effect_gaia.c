@@ -65,9 +65,9 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	Sint32				 j;
 	Sint32				 k;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 
 	/* The higher the variant, the wider the wall. */
@@ -90,7 +90,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	REG_BG2X = GaiaBg2Shifts[args->side][args->variant] << 8;
 
 	btResourceLoadAndDecompress(
-		RESOURCE_EARTH_WALL_SHEET, Ram_MapMetatileBuffer, 1, 0);
+		RESOURCE_EARTH_WALL_SHEET, RamMapMetatileBuffer, 1, 0);
 	syWordsCopyEntry(palette,
 		syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_A),
 		SHEET_PALETTE_BYTES);
@@ -115,7 +115,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		*col++ = RGB(red, green, blue);
 	}
 
-	src = Ram_MapMetatileBuffer;
+	src = RamMapMetatileBuffer;
 	sheetIdx = 0;
 	for(j = 0; j != GAIA_ROW_PICTURES; j++) {
 		for(i = 0; i != GAIA_ROW_HEIGHT; i++) {
@@ -150,10 +150,10 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		}
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
 		BLDCNT_TGT2_ALL;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -369,7 +369,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
    none free it clears the entry at address 0. */
 SPR_ANIMATION *btAnimationObjectAllocateEmpty(void)
 {
-	SPR_ANIMATION *entry = Ram_HeapSlots->sprAnms;
+	SPR_ANIMATION *entry = RamHeapSlots->sprAnms;
 	SPR_ANIMATION *found = NULL;
 	Sint32		   i = 0;
 	void		  *none = NULL;
@@ -440,7 +440,7 @@ void *btEffectSprCreateWithTiles(
 {
 	SPR_WORDS		   *found = NULL;
 	Sint32				vramEntry = syVRAMCacheFindFreeEntry();
-	SPR_WORDS		   *spr = Ram_HeapSlots->sprs;
+	SPR_WORDS		   *spr = RamHeapSlots->sprs;
 	Sint32				i = 0;
 	ACTOR_SYSTEM_STATE *actorSystem;
 	Sint32				size;
@@ -490,7 +490,7 @@ void *btEffectSprCreateWithTiles(
 	spr->flg = 0;
 	fdSprStartAnimationStub(spr, 0);
 
-	actorSystem = Ram_HeapSlots->actorSystem;
+	actorSystem = RamHeapSlots->actorSystem;
 	size = spr->width * spr->height;
 	if(!(attributes & OBJ_256_COLORS))
 		size = (Uint32)size >> 1;

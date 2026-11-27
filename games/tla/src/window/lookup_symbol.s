@@ -3,16 +3,16 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Text_LookupSymbolCode
-Text_LookupSymbolCode:
-	.global Text_LookupSymbol
+	.global TextLookupSymbolCode
+TextLookupSymbolCode:
+	.global TextLookupSymbol
 	.thumb_func
-Text_LookupSymbol:
+TextLookupSymbol:
 	bx	pc
-AlchemyUncredited_0803857e:
+AlchemyUncredited0803857e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0803857e:
+AlchemyUncreditedEnd0803857e:
 	lsr	r3, r1, #8
 	ldr	ip, [pc, #80]
 	add	ip, ip, r3, lsl #3
@@ -39,6 +39,6 @@ AlchemyUncreditedEnd_0803857e:
 	mov	r1, #0
 	stm	r0, {r1, r2, r3}
 	bx	lr
-	.4byte	Text_MessageBanks
-	.global Text_LookupSymbolCodeSize
-	.set Text_LookupSymbolCodeSize, . - Text_LookupSymbolCode
+	.4byte	TextMessageBanks
+	.global TextLookupSymbolCodeSize
+	.set TextLookupSymbolCodeSize, . - TextLookupSymbolCode

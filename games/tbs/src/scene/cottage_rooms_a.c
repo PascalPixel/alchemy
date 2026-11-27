@@ -1,4 +1,4 @@
-/* Cottage rooms A (SceneId_CottageRoomsA) is a rooms map drawn as cottages.
+/* Cottage rooms A (SceneIdCottageRoomsA) is a rooms map drawn as cottages.
 
    The game packs rooms that share a tile style onto one map, and every room on
    this one is Vale's.
@@ -8,13 +8,13 @@
 
    Here are the rooms in story order, by the exits that lead in:
 
-   - From the village (SceneId_Vale, and on the stormy night
-	 SceneId_ValePrologue): the house of Garet's family
+   - From the village (SceneIdVale, and on the stormy night
+	 SceneIdValePrologue): the house of Garet's family
 	 (COTTAGE_ROOMS_A_FROM_VALE_EAST), his grandfather the mayor, his
 	 grandmother and his parents; the house of Jenna's grandparents
 	 (COTTAGE_ROOMS_A_FROM_VALE_NORTH); and two more houses
 	 (COTTAGE_ROOMS_A_FROM_VALE_SOUTH and COTTAGE_ROOMS_A_FROM_VALE_WEST).
-   - From the part of Vale with the Psynergy Stone (SceneId_ValePlaza): the
+   - From the part of Vale with the Psynergy Stone (SceneIdValePlaza): the
 	 shops (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH), where the item, weapon and
 	 armor shops each open across a counter, and three houses
 	 (COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH,
@@ -28,7 +28,7 @@
    - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out.
 	 scInit removes every resident and flashes the
 	 lightning outside. The doors out to the village lead into the storm's
-	 scene (SceneId_ValePrologue) instead (scGetExits). The jars
+	 scene (SceneIdValePrologue) instead (scGetExits). The jars
 	 and the barrel are empty, and six more bookcases than by day can be
 	 read, a notebook called "Study of Alchemy" among them.
    - Three years later, the day the story begins. The villagers talk of
@@ -351,8 +351,8 @@ static void scCottageRoomsALeaveThroughDoor(Sint32 exitNum)
 
 /* The rooms' doors: stepping on a door's metatile, whose metatile behavior is
    its exit's number, takes that exit back out, in every table. On the stormy
-   night the exits to SceneId_Vale lead to the storm's scene
-   (SceneId_ValePrologue) instead. A room's exit has its entrance's number. */
+   night the exits to SceneIdVale lead to the storm's scene
+   (SceneIdValePrologue) instead. A room's exit has its entrance's number. */
 
 /* Leaves the house where a young man dreams of leaving. */
 static void scCottageRoomsALeaveToValeWest(void)

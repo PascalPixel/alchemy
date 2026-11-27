@@ -269,14 +269,14 @@ typedef enum BATTLE_CAST_KIND {
 
 /* The scripted battles' snapshot (btScriptedBattleSaveUnits), reached by its
    fixed address: the 168 bytes of EWRAM below the map's cell buffer. */
-#define Ram_ScriptedBattleSnapshot \
+#define RamScriptedBattleSnapshot \
 	FIXED_ADDRESS((SNAPSHOT *), 0x0200ff58, ScriptedBattleSnapshot)
 
 /* The five units Karst and Agatio's battle carries over between its parts:
    Felix, Piers and Jenna, and the first two enemies. */
 extern Uint8 ScriptedBattleUnits[];
 
-/* A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
+/* A knocked-back unit's motion by variant (BattleMotionKnockback), as The
    Broken Seal's. */
 extern const Sint32 BattleKnockbackAcceleration[]; /* acceleration */
 

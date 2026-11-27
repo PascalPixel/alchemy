@@ -1,54 +1,54 @@
 name	file	section	align	left	pad	edition	fill
-Title_IntroSun	intro_sun_glare.gbapal						
+TitleIntroSun	intro_sun_glare.gbapal						
 	intro_sun.parts.plz			43		ja	
-Title_TitleScreen	screen_ja.gbapal					ja	
+TitleTitleScreen	screen_ja.gbapal					ja	
 	screen_ja.8bpp.plz				4	ja	
 	intro_sun.parts.plz			44		en	
-Title_TitleScreen	screen.gbapal					en	
+TitleTitleScreen	screen.gbapal					en	
 	screen.8bpp.plz				4	en	
 	intro_sun.parts.plz			44		de	
-Title_TitleScreen	screen_de.gbapal					de	
+TitleTitleScreen	screen_de.gbapal					de	
 	screen_de.8bpp.plz				4	de	
 	intro_sun.parts.plz			44		es	
-Title_TitleScreen	screen_de.gbapal					es	
+TitleTitleScreen	screen_de.gbapal					es	
 	screen_de.8bpp.plz				4	es	
 	intro_sun.parts.plz			44		fr	
-Title_TitleScreen	screen_de.gbapal					fr	
+TitleTitleScreen	screen_de.gbapal					fr	
 	screen_de.8bpp.plz				4	fr	
 	intro_sun.parts.plz			44		it	
-Title_TitleScreen	screen_de.gbapal					it	
+TitleTitleScreen	screen_de.gbapal					it	
 	screen_de.8bpp.plz				4	it	
-Title_IntroPeak	intro_peak.gbapal						
+TitleIntroPeak	intro_peak.gbapal						
 	intro_peak.parts.plz				4		
-Title_PublisherLogo	publisher_splash.gbapal						
+TitlePublisherLogo	publisher_splash.gbapal						
 	publisher_splash.8bpp.lz						
-Title_CamelotLogo	camelot_logo_ja.parts.lz					ja	
-Title_GoldenSunLogo	golden_sun_ja.gbapal					ja	
+TitleCamelotLogo	camelot_logo_ja.parts.lz					ja	
+TitleGoldenSunLogo	golden_sun_ja.gbapal					ja	
 	golden_sun_ja.8bpp.lz					ja	
-Title_CamelotLogo	camelot_logo.parts.lz			041803		en	
-Title_GoldenSunLogo	golden_sun.gbapal					en	
+TitleCamelotLogo	camelot_logo.parts.lz			041803		en	
+TitleGoldenSunLogo	golden_sun.gbapal					en	
 	golden_sun.8bpp.lz			d12747		en	
-Title_CamelotLogo	camelot_logo.parts.lz			041803		de	
-Title_GoldenSunLogo	golden_sun.gbapal					de	
+TitleCamelotLogo	camelot_logo.parts.lz			041803		de	
+TitleGoldenSunLogo	golden_sun.gbapal					de	
 	golden_sun.8bpp.lz			d12747		de	
-Title_CamelotLogo	camelot_logo.parts.lz			041803		es	
-Title_GoldenSunLogo	golden_sun.gbapal					es	
+TitleCamelotLogo	camelot_logo.parts.lz			041803		es	
+TitleGoldenSunLogo	golden_sun.gbapal					es	
 	golden_sun.8bpp.lz			d12747		es	
-Title_CamelotLogo	camelot_logo.parts.lz			041803		fr	
-Title_GoldenSunLogo	golden_sun_fr.gbapal					fr	
+TitleCamelotLogo	camelot_logo.parts.lz			041803		fr	
+TitleGoldenSunLogo	golden_sun_fr.gbapal					fr	
 	golden_sun_fr.8bpp.lz			080129		fr	
-Title_CamelotLogo	camelot_logo.parts.lz			041803		it	
-Title_GoldenSunLogo	golden_sun.gbapal					it	
+TitleCamelotLogo	camelot_logo.parts.lz			041803		it	
+TitleGoldenSunLogo	golden_sun.gbapal					it	
 	golden_sun.8bpp.lz			d12747		it	
-Field_WorldMapPicture	../world_map/picture.gbapal						
+FieldWorldMapPicture	../world_map/picture.gbapal						
 	../world_map/picture.8bpp.lz			023101			
-Title_ToBeContinuedLettering	to_be_continued.parts.lz					ja	
-Title_ToBeContinuedLettering	to_be_continued.parts.lz					en	
-Title_ToBeContinuedLettering	to_be_continued_de.gbapal					de	
+TitleToBeContinuedLettering	to_be_continued.parts.lz					ja	
+TitleToBeContinuedLettering	to_be_continued.parts.lz					en	
+TitleToBeContinuedLettering	to_be_continued_de.gbapal					de	
 	to_be_continued_de.8bpp.lz			ab02		de	
-Title_ToBeContinuedLettering	to_be_continued_es.gbapal					es	
+TitleToBeContinuedLettering	to_be_continued_es.gbapal					es	
 	to_be_continued_es.8bpp.lz			e83022		es	
-Title_ToBeContinuedLettering	to_be_continued_fr.gbapal					fr	
+TitleToBeContinuedLettering	to_be_continued_fr.gbapal					fr	
 	to_be_continued_fr.8bpp.lz			85015b		fr	
-Title_ToBeContinuedLettering	to_be_continued_it.gbapal					it	
+TitleToBeContinuedLettering	to_be_continued_it.gbapal					it	
 	to_be_continued_it.8bpp.lz			8a		it	

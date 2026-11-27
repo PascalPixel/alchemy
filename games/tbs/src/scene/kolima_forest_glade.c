@@ -1,6 +1,6 @@
-/* Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's five
-   scenes, on the party's way to Tret between SceneId_KolimaForestEntrance and
-   SceneId_KolimaForestCliff.
+/* Kolima Forest (SceneIdKolimaForestGlade), the second of the forest's five
+   scenes, on the party's way to Tret between SceneIdKolimaForestEntrance and
+   SceneIdKolimaForestCliff.
 
    Three logs lie in the grass to be rolled by walking into them. A Nut floats
    out of reach until Catch pulls it in (FLAG_KOLIMA_FOREST_NUT_CAUGHT).
@@ -47,8 +47,8 @@ typedef enum KOLIMA_FOREST_GLADE_ACTOR_ID {
 
 #include "shared/pushed_actor.c"
 
-/* Where the party enters, from SceneId_KolimaForestEntrance and
-   SceneId_KolimaForestCliff. */
+/* Where the party enters, from SceneIdKolimaForestEntrance and
+   SceneIdKolimaForestCliff. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	return KolimaForestGladeEntrances;
@@ -59,8 +59,8 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-/* The ways on into the forest (SceneId_KolimaForestCliff) and back
-   (SceneId_KolimaForestEntrance). */
+/* The ways on into the forest (SceneIdKolimaForestCliff) and back
+   (SceneIdKolimaForestEntrance). */
 const Uint32 *scGetExits(void)
 {
 	return KolimaForestGladeExits;
@@ -72,7 +72,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return KolimaForestGladeActorPlacements;
 }
 
-/* In Kolima Forest (SceneId_KolimaForestGlade), walking into a log rolls it
+/* In Kolima Forest (SceneIdKolimaForestGlade), walking into a log rolls it
    ahead until something stops it. */
 static void scKolimaForestGladePushLog(void)
 {
@@ -83,7 +83,7 @@ static void scKolimaForestGladePushLog(void)
 	fdScriptEnd();
 }
 
-/* In Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut makes
+/* In Kolima Forest (SceneIdKolimaForestGlade), Catch on the floating Nut makes
    it vanish, and the party finds a Nut. */
 static void scKolimaForestGladeCatchNut(void)
 {

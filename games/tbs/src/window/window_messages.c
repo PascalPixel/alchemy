@@ -60,8 +60,8 @@ void mnMessageDecodeRaw(Sint32 msg, Uint16 *text, Sint32 capacity)
 	   borrowed, and freed only if loaded here. */
 	original = ((HEAP_STATE *)&HeapSlots)->slots[HEAP_SLOT_MESSAGE_DECODER];
 	if(original == NULL)
-		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbol,
-			Text_DecodeSymbolCodeSize);
+		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, TextDecodeSymbol,
+			TextDecodeSymbolCodeSize);
 	decode = (Sint32 (*)(MESSAGE_READER *))((HEAP_STATE *)&HeapSlots)
 				 ->slots[HEAP_SLOT_MESSAGE_DECODER];
 	mnMessageFind(&reader, msg);
@@ -396,7 +396,7 @@ void mnMessageFind(MESSAGE_READER *reader, Sint32 msg)
 	syHeapRelease(routine);
 }
 
-/* Unused: decodes the next symbol of a message, as Text_DecodeSymbol, the copy
+/* Unused: decodes the next symbol of a message, as TextDecodeSymbol, the copy
    the game runs from RAM, does. */
 UNUSED Sint32 mnTextDecodeSymbolInC(MESSAGE_READER *reader)
 {
@@ -421,8 +421,8 @@ UNUSED Sint32 mnTextDecodeSymbolInC(MESSAGE_READER *reader)
 	/* The previous code's high bits pick the bank, its low byte the tree. */
 	contextBank = code >> 8;
 	code &= SYMBOL_TREE_MASK;
-	base = Text_MessageContexts[contextBank][0];
-	base += ((const Uint16 *)Text_MessageContexts[contextBank][1])[code];
+	base = TextMessageContexts[contextBank][0];
+	base += ((const Uint16 *)TextMessageContexts[contextBank][1])[code];
 	tree = base;
 	leaves = base - 1;
 	rank = 0;

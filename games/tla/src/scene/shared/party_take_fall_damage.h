@@ -8,7 +8,7 @@
    hazard's damage does. */
 void gmPartyTakeFallDamage(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 leader = syFieldPartyGetLeaderActor();
 	Sint32		 cnt;
 	Sint32		 i;

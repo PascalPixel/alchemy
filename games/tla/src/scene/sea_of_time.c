@@ -308,7 +308,7 @@ void scSeaOfTimeCircleSwirl(void)
    32-pixel square (`SWIRL_SQUARE`) the other way. */
 void scSeaOfTimeRideCurrent(void)
 {
-	FIELD_STATE	  *state = (FIELD_STATE *)Ram_HeapSlots->fieldState;
+	FIELD_STATE	  *state = (FIELD_STATE *)RamHeapSlots->fieldState;
 	ACTOR		  *actor = fdActorGetById(ACTOR_SHIP);
 	FIXED		   center[3];
 	FIXED		   ends[4];
@@ -473,7 +473,7 @@ void scSeaOfTimeFollowChannel(void)
 	FIXED		   x0, y0, z0;
 	Sint32		   flip;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	actor = fdActorGetById(ACTOR_SHIP);
 	ang = QUARTER_TURNS(state->stepCue - METATILE_BEHAVIOR_CHANNEL_EAST);
 	fdScriptStart();
@@ -591,7 +591,7 @@ extern Uint8  SeaOfTimeLapsNeeded[];
    8) to (9, 13), by the way to the last stretch, is one of them. */
 void scSeaOfTimeCountLaps(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(ACTOR_SHIP);
 	Sint16		 idx;
 	Sint32		 now;
@@ -1066,27 +1066,27 @@ void scSeaOfTimeRemoveRock(Sint32 x, Sint32 z, Sint32 actor)
    part after Poseidon's battle, the one on metatiles (10, 11) to (11, 12), and
    it is gone for good. The other rocks, on (18, 8), (23, 13) and (29, 9), have
    scripts of their own, made the same way. */
-DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, ACTOR_ROCK_A, FLAG_ROCK_A_CLEARED)
+DEFINE_GRIND_ROCK(SeaOfTimeGrindFirstRock, ACTOR_ROCK_A, FLAG_ROCK_A_CLEARED)
 
-/* As SeaOfTime_GrindFirstRock, for the rock on metatiles (18, 8) to (19, 9). */
-DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, ACTOR_ROCK_B, FLAG_ROCK_B_CLEARED)
+/* As SeaOfTimeGrindFirstRock, for the rock on metatiles (18, 8) to (19, 9). */
+DEFINE_GRIND_ROCK(SeaOfTimeGrindSecondRock, ACTOR_ROCK_B, FLAG_ROCK_B_CLEARED)
 
 /* Unused: Grind on a third rock, ACTOR_ROCK_C, which no arrival raises or
    places, so its cue is never met. */
-DEFINE_GRIND_ROCK(SeaOfTime_GrindThirdRock, ACTOR_ROCK_C, FLAG_ROCK_C_CLEARED)
+DEFINE_GRIND_ROCK(SeaOfTimeGrindThirdRock, ACTOR_ROCK_C, FLAG_ROCK_C_CLEARED)
 
-/* As SeaOfTime_GrindFirstRock, for the rock on metatiles (23, 13) to (24,
+/* As SeaOfTimeGrindFirstRock, for the rock on metatiles (23, 13) to (24,
    14). */
-DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, ACTOR_ROCK_D, FLAG_ROCK_D_CLEARED)
+DEFINE_GRIND_ROCK(SeaOfTimeGrindFourthRock, ACTOR_ROCK_D, FLAG_ROCK_D_CLEARED)
 
-/* As SeaOfTime_GrindFirstRock, for the rock on metatiles (29, 9) to (30,
+/* As SeaOfTimeGrindFirstRock, for the rock on metatiles (29, 9) to (30,
    10). */
-DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
+DEFINE_GRIND_ROCK(SeaOfTimeGrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
 /* Felix casts Grind on the rock in the last stretch's south part, on metatiles
    (44, 42) to (45, 43), and it is gone for good. */
 DEFINE_GRIND_ROCK(
-	SeaOfTime_GrindSouthRock, ACTOR_ROCK_A, FLAG_ROCK_SOUTH_CLEARED)
+	SeaOfTimeGrindSouthRock, ACTOR_ROCK_A, FLAG_ROCK_SOUTH_CLEARED)
 
 /* Defines a step cue that leaves the scene by exit, the screen closing. */
 #define DEFINE_LEAVE_BY_EXIT(name, exit) \
@@ -1103,11 +1103,11 @@ DEFINE_GRIND_ROCK(
 /* The Lemurian ship sails off the west edge of the last stretch's south part,
    metatiles (1, 45) to (3, 50), and the screen fades to the world map. */
 DEFINE_LEAVE_BY_EXIT(
-	SeaOfTime_LeaveForWorldMap, SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTHEAST)
+	SeaOfTimeLeaveForWorldMap, SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTHEAST)
 
 /* The Lemurian ship sails off the east edge of the last stretch's south part,
    metatiles (55, 44) and (55, 45), and the screen fades to its north part. */
-DEFINE_LEAVE_BY_EXIT(SeaOfTime_ReturnNorth, EXIT_BACK_NORTH)
+DEFINE_LEAVE_BY_EXIT(SeaOfTimeReturnNorth, EXIT_BACK_NORTH)
 
 const CUE *scGetCues(void)
 {
@@ -1129,8 +1129,8 @@ void scSeaOfTimeAnimateSea(void)
 {
 	Uint16		 *line = SeaOfTimeRippleLines;
 	MAP_LAYER	 *layer = fdMapGridGetLayer(2);
-	PALETTE_FADE *fade = Ram_HeapSlots->palFade;
-	FIELD_STATE	 *event = Ram_HeapSlots->fieldState;
+	PALETTE_FADE *fade = RamHeapSlots->palFade;
+	FIELD_STATE	 *event = RamHeapSlots->fieldState;
 	Sint32		  i;
 	Sint16		  col;
 
@@ -1195,7 +1195,7 @@ void scSeaOfTimeAnimateSea(void)
 		}
 	}
 
-	syDMAXCopy((const void *)BG_PLTT, Ram_HeapSlots->palFade,
+	syDMAXCopy((const void *)BG_PLTT, RamHeapSlots->palFade,
 		DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
 	layer->speedY = 0;
@@ -1415,7 +1415,7 @@ Sint32 scInit(void)
 				if(!syGameFlagGet(FLAG_ROCK_E_CLEARED))
 					scSeaOfTimePlaceRock(59, 19, ACTOR_ROCK_E);
 				{
-					void *block = Ram_HeapSlots->palFade;
+					void *block = RamHeapSlots->palFade;
 
 					PULSE_COLOR &= ~RGB(RGB_LEVEL_MAX, 0, 0);
 					syDMAXCopy((const void *)BG_PLTT, block,
@@ -1441,7 +1441,7 @@ Sint32 scInit(void)
 
 Sint32 scPrepareMap(void)
 {
-	void *block = Ram_HeapSlots->palFade;
+	void *block = RamHeapSlots->palFade;
 
 	DMA_FILL32(-1, block, PALETTE_FADE_BG_COLORS * sizeof(Uint16));
 	fdPaletteFadeSetSource(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -1635,23 +1635,23 @@ CUE SeaOfTimeNorthPartCues[] = {
 	{CUE_STEP, METATILE_BEHAVIOR_SWIRL_CLOCKWISE, CONDITION_ALWAYS,
 		SCRIPT_REF(scSeaOfTimeCircleSwirl)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_GrindFirstRock)},
+		SCRIPT_REF(SeaOfTimeGrindFirstRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_B, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_GrindSecondRock)},
+		SCRIPT_REF(SeaOfTimeGrindSecondRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_C, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_GrindThirdRock)},
+		SCRIPT_REF(SeaOfTimeGrindThirdRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_D, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_GrindFourthRock)},
+		SCRIPT_REF(SeaOfTimeGrindFourthRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_E, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_GrindFifthRock)},
+		SCRIPT_REF(SeaOfTimeGrindFifthRock)},
 	{CUE_TABLE_END},
 };
 
 CUE SeaOfTimeSouthPartCues[] = {
 	{CUE_STEP, CUE_TO_WORLD_MAP, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_LeaveForWorldMap)},
+		SCRIPT_REF(SeaOfTimeLeaveForWorldMap)},
 	{CUE_STEP, CUE_BACK_NORTH, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_ReturnNorth)},
+		SCRIPT_REF(SeaOfTimeReturnNorth)},
 	{CUE_STEP, METATILE_BEHAVIOR_CHANNEL_EAST, CONDITION_ALWAYS,
 		SCRIPT_REF(scSeaOfTimeFollowChannel)},
 	{CUE_STEP, METATILE_BEHAVIOR_CHANNEL_SOUTH, CONDITION_ALWAYS,
@@ -1661,7 +1661,7 @@ CUE SeaOfTimeSouthPartCues[] = {
 	{CUE_STEP, METATILE_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
 		SCRIPT_REF(scSeaOfTimeFollowChannel)},
 	{PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK_A, CONDITION_ALWAYS,
-		SCRIPT_REF(SeaOfTime_GrindSouthRock)},
+		SCRIPT_REF(SeaOfTimeGrindSouthRock)},
 	{CUE_TABLE_END},
 };
 

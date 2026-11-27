@@ -18,8 +18,8 @@
 /* The turned corners of the corona and of the flames, and the corona's strip,
    in the map cell buffer; the flames' corners and their strip in the effect's
    pictures. */
-#define MEGIDDO_TRANSFORMED	  (Ram_MapMetatileBuffer + 4096)
-#define MEGIDDO_CORONA_MESH	  (Ram_MapMetatileBuffer + 8192)
+#define MEGIDDO_TRANSFORMED	  (RamMapMetatileBuffer + 4096)
+#define MEGIDDO_CORONA_MESH	  (RamMapMetatileBuffer + 8192)
 #define MEGIDDO_FLAME_CORNERS 24384
 #define MEGIDDO_FLAME_MESH	  25408
 
@@ -69,12 +69,12 @@
 #define MEGIDDO_STRIKE_FILL_LEVEL 16
 
 /* The rings of light, FireRingTexture flashing out from the caster as the
-   effect starts and from the target as the sun strikes (Megiddo_Flash*). Each
+   effect starts and from the target as the sun strikes (MegiddoFlash*). Each
    shines for MEGIDDO_FLASH_SHINE_TICKS, then fades 8 levels a tick. */
 #define MEGIDDO_FLASHES			  5
 #define MEGIDDO_FLASH_SHINE_TICKS 8
 
-/* The rays that fan out about the caster (Megiddo_Ray*), the flame of
+/* The rays that fan out about the caster (MegiddoRay*), the flame of
    FlameGradientTexture stretched long: one every two ticks from
    MEGIDDO_RAYS_START, each for MEGIDDO_RAY_TICKS, shrinking away over the last
    MEGIDDO_RAY_SHRINK_TICKS. */
@@ -128,17 +128,17 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	MODEL_TEXTURE			 scratchTexture;
 	Sint32					 twice;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
-	background = Ram_HeapSlots->battleBg;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
+	background = RamHeapSlots->battleBg;
+	camera = RamHeapSlots->cameraState;
 	savedYaw = 0;
 	zero = 0;
 	coronaCorners = (MODEL_VERTEX *)MapGridMetatileBuffer;
 	transformed = MEGIDDO_TRANSFORMED;
 	coronaMesh = MEGIDDO_CORONA_MESH;
-	fireRing = Ram_MapMetatileBuffer + MEGIDDO_FIRE_RING;
+	fireRing = RamMapMetatileBuffer + MEGIDDO_FIRE_RING;
 	/* The caster leaps on the spot. */
 	btMotionApproachTargetStub(args->user, args->user, 150, toFIXED(5));
 	btEffectStartCanvasLayer(0);
@@ -146,7 +146,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	flameCorners = (MODEL_VERTEX *)(state->sheet + MEGIDDO_FLAME_CORNERS);
 	flameMesh = state->sheet + MEGIDDO_FLAME_MESH;
 	caster = btObjectGetStub(args->user)->obj;
@@ -203,7 +203,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 			syWordsFillEntry(canvas, CANVAS_VIEW_BYTES,
 				CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 			btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
-				Ram_MapMetatileBuffer + MEGIDDO_FIRE_RING, 0, 0);
+				RamMapMetatileBuffer + MEGIDDO_FIRE_RING, 0, 0);
 			btResourceLoadAndDecompress(
 				RESOURCE_FLAME_GRADIENT_TEXTURE, state->sheet, 0, 0);
 			/* DEAD: GlowBandTextureA, which nothing draws; the ROM keeps its
@@ -660,7 +660,7 @@ void btEffectRunMegiddo(BATTLE_EFFECT_PARM *args)
 	caster->verticalMotionStrength = casterVerticalMotion;
 	btObjectPutStub();
 	background->busy = 0;
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-		Ram_HeapSlots->battleState->bg, BACKGROUND_DARKEN_TICKS);
+	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RamHeapSlots->battleState->bg,
+		BACKGROUND_DARKEN_TICKS);
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }

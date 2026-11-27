@@ -39,7 +39,7 @@ void mnQuantityBarFill(Sint32 segments, Sint32 col, Uint8 *tileBuf)
    more in the same row of the next. */
 void mnShopDrawPriceDigit(Sint32 digit, Uint8 *tileBuf, Uint32 digitPos)
 {
-	Uint8 *src = Shop_GlyphBytes + digit * TILE_SIZE_4BPP;
+	Uint8 *src = ShopGlyphBytes + digit * TILE_SIZE_4BPP;
 	Uint8 *dst = tileBuf + ShopPriceDigitTileOffsets[digitPos] + 2;
 	Sint32 cnt;
 
@@ -70,7 +70,7 @@ WINDOW_SPR *mnShopCreatePriceSpr(Sint32 value, WINDOW *win, Sint32 x, Sint32 y)
 	tileBuf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	priceSpr = 0;
 	/* the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes) */
-	syDMAXCopy(Shop_PriceTiles, tileBuf, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
+	syDMAXCopy(ShopPriceTiles, tileBuf, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
 		REG_DMA3);
 	mnShopDrawPriceDigit(value % 10, tileBuf, 0);
 	value = value / 10;
@@ -105,8 +105,8 @@ WINDOW_SPR *mnShopCreatePriceSpr(Sint32 value, WINDOW *win, Sint32 x, Sint32 y)
    element's colour as a Djinni joins the party. */
 void mnShopSaveAndTintFieldPalette(Sint32 tint)
 {
-	FIELD_STATE	 *state = Ram_HeapSlots->fieldState;
-	PALETTE_FADE *paletteBuffers = Ram_HeapSlots->palFade;
+	FIELD_STATE	 *state = RamHeapSlots->fieldState;
+	PALETTE_FADE *paletteBuffers = RamHeapSlots->palFade;
 	Uint16		 *savedPalette = paletteBuffers->tgt;
 
 	syDMAXCopy(savedPalette, state->savedFadeTgt,
@@ -245,7 +245,7 @@ void mnCursorSetPosImmediate(MENU_CURSOR *cursor, Sint32 x, Sint32 y)
    when it is NULL), over the ticks shop->cursorFrm holds. */
 void mnCursorPlace(WINDOW *win, Sint32 x, Sint32 y)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 
 	/* A window's position is in tiles, and its interior starts one tile (its
 	   tick) in. */

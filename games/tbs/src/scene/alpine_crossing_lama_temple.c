@@ -1,5 +1,5 @@
-/* The Alpine Crossing (SceneId_AlpineCrossing) and Lama Temple
-   (SceneId_LamaTemple), two places on Silk Road west of Xian that share this
+/* The Alpine Crossing (SceneIdAlpineCrossing) and Lama Temple
+   (SceneIdLamaTemple), two places on Silk Road west of Xian that share this
    overlay. The getters pick each scene's tables by MainRoutineStateWork.next,
    and the two share one exit table.
 

@@ -4,12 +4,12 @@
 
    Three scenes share this overlay and the area name Suhalla Desert:
 
-   - The north half (SceneId_SuhallaDesertNorth), entered from the World Map
+   - The north half (SceneIdSuhallaDesertNorth), entered from the World Map
 	 just south of Suhalla at the top of the map. Five sandstorms lie in wait:
 	 on the west path and on the east path toward the Virtuous Armlet's chest
 	 near the top, and three in the south, the middle one beside the chest
 	 the Mimic hides in. The way on leaves by the map's south-west edge.
-   - The south half (SceneId_SuhallaDesertSouth), entered at its east side.
+   - The south half (SceneIdSuhallaDesertSouth), entered at its east side.
 	 A long valley ends in three ways north, each with a storm: the west way
 	 to a chest with a Cookie, the east way to a chest with a Lucky Medal.
 	 Below lie two cave mouths: by the west one Flash, the Mars Djinni, is
@@ -19,7 +19,7 @@
 	 way out in the south-east Iodem asks whether to search on for Sheba
 	 (scSuhallaDesertIodemAsksWhetherToPressOn,
 	 FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
-   - The caves under the south half (SceneId_SuhallaDesertCaves), which join
+   - The caves under the south half (SceneIdSuhallaDesertCaves), which join
 	 its west cave mouth to the hollow of the red storm. They place nothing.
 
    One exit table and, for the two halves, one cue table serve the overlay. The

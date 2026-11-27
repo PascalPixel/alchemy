@@ -35,7 +35,7 @@
 @ none) whose being set passes these rows over for a later header of the same
 @ scene (fdSceneItemGetRows).
 	.macro scene_items scene:req, flag:req
-	.2byte SCENE_ITEMS_HEADER + SceneId_\scene, \flag
+	.2byte SCENE_ITEMS_HEADER + SceneId\scene, \flag
 	.endm
 
 @ A treasure spot: what it is (for something hidden in a jar, barrel, grave or

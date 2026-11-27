@@ -19,10 +19,10 @@ void fdBattleEffectStepVector3(Sint32 *vector, Sint32 damping, Sint32 gravity)
 /* Plots a pixel of colour color at (x, y) on the 64-pixel canvas. */
 void fdBattleEffectPlotHalfCanvasPixel(Sint32 x, Sint32 y, Sint32 col)
 {
-	Uint16 *map = Ram_HeapSlots->canvasMap;
+	Uint16 *map = RamHeapSlots->canvasMap;
 	Uint8  *canvas;
 
-	canvas = Ram_HeapSlots->battleCanvas;
+	canvas = RamHeapSlots->battleCanvas;
 	canvas[map[(y << 6) + x]] = col;
 }
 
@@ -30,8 +30,8 @@ void fdBattleEffectPlotHalfCanvasPixel(Sint32 x, Sint32 y, Sint32 col)
    from 64 lands on the second canvas. */
 void fdBattleEffectPlotCanvasPixel(Sint32 x, Sint32 y, Sint32 col)
 {
-	Uint16 *map = Ram_HeapSlots->canvasMap;
-	Uint8  *canvas = Ram_HeapSlots->battleCanvas;
+	Uint16 *map = RamHeapSlots->canvasMap;
+	Uint8  *canvas = RamHeapSlots->battleCanvas;
 
 	if(x > 63) {
 		canvas += CANVAS_SPRITE_BYTES;
@@ -125,8 +125,8 @@ void fdBattleEffectDrawHalfCanvasCircle(
 void fdBattleEffectDrawCanvasBlock(
 	const Uint8 *src, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
-	Uint16 *map = Ram_HeapSlots->canvasMap;
-	Uint8  *canvas = Ram_HeapSlots->battleCanvas;
+	Uint16 *map = RamHeapSlots->canvasMap;
+	Uint8  *canvas = RamHeapSlots->battleCanvas;
 	Sint32	row;
 	Sint32	n;
 
@@ -208,8 +208,8 @@ void fdColBufferDarkenFourLevels(Uint8 *buf, Sint32 cnt)
    start of BG VRAM), and clearing or fading it after the copy. */
 void fdBattleEffectUploadCanvas(void)
 {
-	CANVAS_SPR_STATE *state = Ram_HeapSlots->canvasSpr;
-	Uint8			 *canvas = Ram_HeapSlots->battleCanvas;
+	CANVAS_SPR_STATE *state = RamHeapSlots->canvasSpr;
+	Uint8			 *canvas = RamHeapSlots->battleCanvas;
 	Uint8			 *tiles = OBJ_VRAM + state->tile * TILE_SIZE;
 
 	state->frm++;
@@ -246,7 +246,7 @@ void fdBattleEffectUploadCanvas(void)
    not drawn. */
 void fdBattleEffectDrawCanvasSpr(void)
 {
-	CANVAS_SPR_STATE *state = Ram_HeapSlots->canvasSpr;
+	CANVAS_SPR_STATE *state = RamHeapSlots->canvasSpr;
 	Sint32			  x = toFIXED(state->x);
 	Sint32			  y = toFIXED(state->y);
 	Sint32			  scaleX = state->scaleX;
@@ -302,7 +302,7 @@ void fdBattleEffectDrawCanvasSpr(void)
    fdBattleEffectEndCanvasSpr ends it. */
 void fdBattleEffectStartCanvasSpr(void)
 {
-	WIN_STATE		 *winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE		 *winState = (WIN_STATE *)RamHeapSlots->winState;
 	CANVAS_SPR_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_CANVAS_SPRITE, sizeof(*state));
 	Uint8 *canvas =

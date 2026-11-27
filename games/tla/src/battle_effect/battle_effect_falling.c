@@ -69,9 +69,9 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 k;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sparkles = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sparkles = RamHeapSlots->battleSheet;
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_ICE_SHARD_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkles, 0, 0);
@@ -117,8 +117,8 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		line = (Uint16 *)MapGridMetatileBuffer;
@@ -234,9 +234,9 @@ void btEffectRunIce(BATTLE_EFFECT_PARM *args)
 	btEffectConfigureEffectDisp();
 }
 
-/* Ram_MapMetatileBuffer as Douse uses it: window 0's table, then the drops'
+/* RamMapMetatileBuffer as Douse uses it: window 0's table, then the drops'
    droplets, each free while its variant is -1. */
-#define DOUSE_DROPLET_BUFFER ((DROPLET_BUFFER *)Ram_MapMetatileBuffer)
+#define DOUSE_DROPLET_BUFFER ((DROPLET_BUFFER *)RamMapMetatileBuffer)
 
 /* Each Douse variant: the drops that fall, of the 64 set out, the droplets each
    throws up, the pixels between drops along the slant, and its ticks; the
@@ -271,8 +271,8 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 k;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(
@@ -285,10 +285,10 @@ void btEffectRunDouse(BATTLE_EFFECT_PARM *args)
 
 	/* Drops draw at their maximum; droplets add their light. */
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, COMPOSITE_CLIP_Y, BLITTER_ADDITIVE);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	EFFECT_FREE_PARTICLES(i, DOUSE_DROPLET_BUFFER->droplets,
 		ARRAY_COUNT(DOUSE_DROPLET_BUFFER->droplets));

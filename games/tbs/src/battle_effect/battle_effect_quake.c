@@ -67,14 +67,14 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 
 	/* Cut the strip of ground that caps each pillar from the battle
 	   background. */
-	syWordsCopy(Ram_MapGridMetatileBuffer, BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
+	syWordsCopy(RamMapGridMetatileBuffer, BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
 	for(row = 0; row != QUAKE_GROUND_HEIGHT; row++) {
 		y = row + QUAKE_GROUND_Y;
 		for(x = 0; x != QUAKE_PILLAR_WIDTH; x++) {
 			Sint32 pixel = BACKGROUND_PIXEL_OFFSET(x + QUAKE_GROUND_X, y);
 
 			state->sheet[row * QUAKE_PILLAR_WIDTH + x] =
-				Ram_MapGridMetatileBuffer[pixel];
+				RamMapGridMetatileBuffer[pixel];
 		}
 	}
 

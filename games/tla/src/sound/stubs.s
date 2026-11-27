@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Sound
-Stubs_Sound:
+	.global StubsSound
+StubsSound:
 	stub m4aSoundMainStub, m4aSoundMain
 	stub sySndInitStub, sySndInit
 	stub sySndPlayStub, sySndPlay

@@ -1,8 +1,8 @@
 /* Mercury Lighthouse, the lighthouse of water north of Imil that Mia and the
    Mercury Clan guard: the ground outside its door
-   (SceneId_MercuryLighthouseExterior) and three of its upper scenes
-   (SceneId_MercuryLighthouseLower, SceneId_MercuryLighthouseMiddle and
-   SceneId_MercuryLighthouseUpper). The ground floor inside the door, with the
+   (SceneIdMercuryLighthouseExterior) and three of its upper scenes
+   (SceneIdMercuryLighthouseLower, SceneIdMercuryLighthouseMiddle and
+   SceneIdMercuryLighthouseUpper). The ground floor inside the door, with the
    Lizard Man and the goddess's pool, is mercury_lighthouse_entrance.c, and the
    beacon at the top, the Lighthouse Aerie, is mercury_lighthouse_aerie.c. The
    four scenes here share one exit table, and every arrival sets
@@ -21,7 +21,7 @@
 	 aside, she asks whether Isaac did that, learns the word Psynergy from
 	 Garet and Ivan, and opens the door with Ply before going in alone
 	 (FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA).
-   - SceneId_MercuryLighthouseLower: the floor above the goddess's pool. Its
+   - SceneIdMercuryLighthouseLower: the floor above the goddess's pool. Its
 	 great pool room is set with stepping squares, some marked with a cross.
 	 Stairs from the platform in its middle lead to a ledge where Mia is stuck
 	 again, before a blue statue that was not there before; Move drops it into
@@ -38,7 +38,7 @@
 	 holds him up on the water for one hop
 	 (shared/mercury_lighthouse_pillar.c). That is the way across the great
 	 pool room, whose chest holds a Sleep Bomb.
-   - SceneId_MercuryLighthouseMiddle. In the big pipe room one pipe section,
+   - SceneIdMercuryLighthouseMiddle. In the big pipe room one pipe section,
 	 joined, sets water spouting from four pipe ends (FLAG_SPOUTS_RUNNING); a
 	 chest there holds a Psy Crystal. In the gate room a blue statue moved
 	 onto the floor switch holds the sealed arch on the dais open for good
@@ -48,7 +48,7 @@
 	 along the north wall and opens a doorway up to the room of six
 	 waterfalls (FLAG_NORTH_JET_RUNNING). Sleet, a Mercury Djinni, waits in a
 	 room of its own and fights when spoken to.
-   - SceneId_MercuryLighthouseUpper. Walking into the third waterfall from the
+   - SceneIdMercuryLighthouseUpper. Walking into the third waterfall from the
 	 west of the first room of six waterfalls leads down to Sleet. In the room
 	 of jets a pipe pushed along its pool turns the water from one pipe end to
 	 another, and each jet pushes a blue statue a step, until it slides into a

@@ -10,7 +10,7 @@
 
 /* The palette editor's swatch tiles, compressed; it decompresses them to tile
    208 of character block 0, one tile a colour. */
-extern const Uint8 Debug_PaletteSwatchTiles[];
+extern const Uint8 DebugPaletteSwatchTiles[];
 
 /* One row of the debug warp menu: its name and what choosing it does. */
 typedef struct DEBUG_WARP_PRESET {

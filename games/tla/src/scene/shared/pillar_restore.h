@@ -7,7 +7,7 @@
    pillar takes the cracked picture. */
 UNUSED void scMagmaRockInsideRestorePillars(Uint16 *list)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
 	Sint32		  flg;
@@ -40,7 +40,7 @@ UNUSED void scMagmaRockInsideRestorePillars(Uint16 *list)
 		flg = list[1];
 		nextFlg = flg + 1;
 		metatiles = map->layers[actor->layer].metatiles;
-		shapes = grid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+		shapes = grid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 		actor->retainSprCache =
 			ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
 		if(fdScriptGetFlag(nextFlg)) {

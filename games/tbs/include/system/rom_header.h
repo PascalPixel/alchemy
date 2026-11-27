@@ -7,8 +7,8 @@
 #include "types.h"
 
 /* The cartridge's first instruction, the jump past the ROM header. */
-#define Cart_Start FIXED_ADDRESS((Uint32), 0x08000000, Rom_Start)
+#define CartStart FIXED_ADDRESS((Uint32), 0x08000000, RomStart)
 /* The cartridge's first byte, as the link places it (rom_header.s). */
-extern const Uint8 Rom_Start[];
+extern const Uint8 RomStart[];
 
 #endif

@@ -12,30 +12,30 @@
 	default: \
 	case COMPOSITE_COPY: \
 		if(((flags) & COMPOSITE_FLIP_X) != 0) { \
-			COPY_FROM(BattleEffect_CopyReverse, 2); \
+			COPY_FROM(BattleEffectCopyReverse, 2); \
 		} else { \
-			COPY_FROM(BattleEffect_CopyForward, 2); \
+			COPY_FROM(BattleEffectCopyForward, 2); \
 		} \
 		break; \
 	case COMPOSITE_TRANSPARENT: \
 		if(((flags) & COMPOSITE_FLIP_X) != 0) { \
-			COPY_FROM(BattleEffect_TransparentReverse, 4); \
+			COPY_FROM(BattleEffectTransparentReverse, 4); \
 		} else { \
-			COPY_FROM(BattleEffect_TransparentForward, 4); \
+			COPY_FROM(BattleEffectTransparentForward, 4); \
 		} \
 		break; \
 	case COMPOSITE_LIGHTEN: \
 		if(((flags) & COMPOSITE_FLIP_X) != 0) { \
-			COPY_FROM(BattleEffect_MaxReverse, 4); \
+			COPY_FROM(BattleEffectMaxReverse, 4); \
 		} else { \
-			COPY_FROM(BattleEffect_MaxForward, 4); \
+			COPY_FROM(BattleEffectMaxForward, 4); \
 		} \
 		break; \
 	case COMPOSITE_ADDITIVE: \
 		if(((flags) & COMPOSITE_FLIP_X) != 0) { \
-			COPY_FROM(BattleEffect_AdditiveReverse, 6); \
+			COPY_FROM(BattleEffectAdditiveReverse, 6); \
 		} else { \
-			COPY_FROM(BattleEffect_AdditiveForward, 6); \
+			COPY_FROM(BattleEffectAdditiveForward, 6); \
 		} \
 		break; \
 	}
@@ -47,7 +47,7 @@
 	 */ \
 	COPY(3); \
 	if(mode == COMPOSITE_ADDITIVE) { \
-		COPY_FROM(BattleEffect_Mask, 3); \
+		COPY_FROM(BattleEffectMask, 3); \
 	} \
 \
 	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) { \
@@ -182,31 +182,31 @@
 \
 		for(i = 0; i < 8; i++) { \
 			if((flg & COMPOSITE_FLIP_X) != 0) { \
-				COPY_FROM(BattleEffect_CopyReverse, 2); \
+				COPY_FROM(BattleEffectCopyReverse, 2); \
 			} else { \
-				COPY_FROM(BattleEffect_CopyForward, 2); \
+				COPY_FROM(BattleEffectCopyForward, 2); \
 			} \
 		} \
 	} break; \
 	case COMPOSITE_TRANSPARENT: \
 		if((flg & COMPOSITE_FLIP_X) != 0) { \
-			COPY_FROM(BattleEffect_Transparent8Reverse, 25); \
+			COPY_FROM(BattleEffectTransparent8Reverse, 25); \
 		} else { \
-			COPY_FROM(BattleEffect_Transparent8Forward, 25); \
+			COPY_FROM(BattleEffectTransparent8Forward, 25); \
 		} \
 		break; \
 	case COMPOSITE_LIGHTEN: \
 		if((flg & COMPOSITE_FLIP_X) != 0) { \
-			COPY_TWICE(BattleEffect_Max4Reverse, 16); \
+			COPY_TWICE(BattleEffectMax4Reverse, 16); \
 		} else { \
-			COPY_TWICE(BattleEffect_Max4Forward, 16); \
+			COPY_TWICE(BattleEffectMax4Forward, 16); \
 		} \
 		break; \
 	case COMPOSITE_ADDITIVE: \
 		if((flg & COMPOSITE_FLIP_X) != 0) { \
-			COPY_TWICE(BattleEffect_ColorReverse, 14); \
+			COPY_TWICE(BattleEffectColorReverse, 14); \
 		} else { \
-			COPY_TWICE(BattleEffect_ColorForward, 14); \
+			COPY_TWICE(BattleEffectColorForward, 14); \
 		} \
 		break; \
 	} \

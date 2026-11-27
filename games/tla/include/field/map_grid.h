@@ -56,7 +56,7 @@ typedef struct MAP_ANIMATION {
 
 /* Where a layout's blend script is decoded, in the map collision buffer after
    the collision and the tileset animations; a scene may copy its own there. */
-#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
+#define MAPGRID_BLEND_SCRIPT (RamMapCollision + 7680)
 /* A blend script's commands besides its BLDCNT values: the end, which starts it
    over, and a jump, its low byte the halfword pair to go on from. */
 #define BLEND_SCRIPT_LOOP	 65535
@@ -151,7 +151,7 @@ typedef struct MAP_METATILE {
 	((priority) << 14 | ((layer) + 1) << 12)
 
 /* A row of MapsWork: a layout's resources, each counted from
-   ResourceId_EmptyMap. */
+   ResourceIdEmptyMap. */
 typedef struct MAP_RESOURCES {
 	Uint16 header;
 	Uint16 pal;
@@ -244,7 +244,7 @@ static inline FIXED *syMapStateView(MAP_STATE *map)
    of heap slot HEAP_SLOT_MAP_GRID. */
 static inline MAP_LAYER *fdMapGridGetLayer(Sint32 layer)
 {
-	return &((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[layer];
+	return &((MAP_STATE *)RamHeapSlots->mapGrid)->layers[layer];
 }
 
 /* The bytes of MAP_STATE a field map uses: up to its third layer, the last the
@@ -316,21 +316,21 @@ typedef enum WORLD_MAP_COLLISION {
    the battle background fdBattleBackgroundSelectForEnvironment gives it. */
 typedef enum BATTLE_ENVIRONMENT {
 	BATTLE_ENVIRONMENT_NONE = 0,
-	BATTLE_ENVIRONMENT_GRASSLAND = 1, /* ResourceId_GrasslandBBackdrop */
-	/* ResourceId_DenseForestBackdrop; encounters take a region's forest
+	BATTLE_ENVIRONMENT_GRASSLAND = 1, /* ResourceIdGrasslandBBackdrop */
+	/* ResourceIdDenseForestBackdrop; encounters take a region's forest
 	   zone. */
 	BATTLE_ENVIRONMENT_FOREST = 2,
-	BATTLE_ENVIRONMENT_DESERT = 3,	  /* ResourceId_DesertBackdrop */
-	BATTLE_ENVIRONMENT_BEACH = 4,	  /* ResourceId_RockyBeachBackdrop */
-	BATTLE_ENVIRONMENT_SNOWFIELD = 5, /* ResourceId_SnowfieldBBackdrop */
-	/* ResourceId_SnowfieldBBackdrop, for the snowfield's forest. */
+	BATTLE_ENVIRONMENT_DESERT = 3,	  /* ResourceIdDesertBackdrop */
+	BATTLE_ENVIRONMENT_BEACH = 4,	  /* ResourceIdRockyBeachBackdrop */
+	BATTLE_ENVIRONMENT_SNOWFIELD = 5, /* ResourceIdSnowfieldBBackdrop */
+	/* ResourceIdSnowfieldBBackdrop, for the snowfield's forest. */
 	BATTLE_ENVIRONMENT_SNOW_FOREST = 6,
-	/* ResourceId_RockyBeachBackdrop, for shallow water
+	/* ResourceIdRockyBeachBackdrop, for shallow water
 	   (WORLD_MAP_COLLISION_SHALLOW_WATER). */
 	BATTLE_ENVIRONMENT_SHALLOWS = 7,
 	/* The sea the ship sails, collisions 1 to 3 outside the snowfields, where
 	   its encounters are (WorldMapShipEncounterRules);
-	   ResourceId_ShipDeckBackdrop. */
+	   ResourceIdShipDeckBackdrop. */
 	BATTLE_ENVIRONMENT_SEA = 8,
 	/* All the sea of the snowfield regions, where no rule gives encounters. */
 	BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
@@ -341,8 +341,8 @@ typedef enum BATTLE_ENVIRONMENT {
 	   snowfield regions, read from its collision tiles
 	   (fdWorldMapGetCollision), would settle it. */
 	BATTLE_ENVIRONMENT_SEA_LAST = 10,
-	BATTLE_ENVIRONMENT_BLIZZARD = 11, /* ResourceId_BlizzardBackdrop */
-	/* ResourceId_BlizzardBackdrop, for the blizzard's forest. */
+	BATTLE_ENVIRONMENT_BLIZZARD = 11, /* ResourceIdBlizzardBackdrop */
+	/* ResourceIdBlizzardBackdrop, for the blizzard's forest. */
 	BATTLE_ENVIRONMENT_BLIZZARD_FOREST = 12
 } BATTLE_ENVIRONMENT;
 

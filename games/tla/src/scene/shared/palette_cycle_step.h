@@ -9,7 +9,7 @@ void fdPaletteCycleStep(void)
 	Sint32 i;
 
 	if(PaletteCyclePausesInScripts != 0) {
-		FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
+		FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 		Sint16		*state = &fieldState->psynergy;
 
 		if(*state != 0 && ABILITY_ID(*state) != ABILITY_HOVER)

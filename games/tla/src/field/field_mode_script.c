@@ -60,7 +60,7 @@ void fdLeaderStopMoving(void)
    speaker. */
 void fdScriptStart(void)
 {
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	mnAreaNameWindowHideStub();
 	fdLeaderStopMoving();
 	if(field->busy != 0)
@@ -246,7 +246,7 @@ Sint32 fdPartyCheckItemLimit(Sint32 item)
    room for it and says so; with no room, the player chooses what to drop. */
 Sint32 fdPartyInventoryGiveItem(Sint32 item, Sint32 unused)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint16		 saved = state->msg;
 	Sint32		 owner;
 	Sint32		 result;
@@ -391,7 +391,7 @@ void fdActorWaitForAnimationEnd(Sint32 actorId, Sint32 anm)
    message speed neither is waited for. */
 Sint32 fdScriptAskYesNoWithActorAnimation(Sint32 actor, Sint32 forceBottom)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 spr = *(Sint16 *)fdFindActorPlacement(state->speaker);
 	WINDOW		*win = state->msgWin;
 	WINDOW		*side = state->sideWin;
@@ -522,7 +522,7 @@ void fdScriptSetDestination(Sint32 sceneId, Sint32 entrance)
    point. */
 void fdScriptSetRestartPoint(Sint32 sceneId, Sint32 entrance)
 {
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	MAIN_ROUTINE_STATE *party;
 
 	field->exit = EXIT_KEEP_DESTINATION;

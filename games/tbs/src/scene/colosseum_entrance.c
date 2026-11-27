@@ -12,7 +12,7 @@
    scene here plays the finals day. FLAG_COLOSSO_OVER, set after the third
    finals match, closes the colosseum until next year.
 
-   - Colosseum Entrance (SceneId_ColosseumEntrance), before the gates,
+   - Colosseum Entrance (SceneIdColosseumEntrance), before the gates,
 	 reached from Tolbi. During the trials the crowd cannot get in. Its people
 	 talk of the heats and of the Lucky Guess, a bet on which warrior will win
 	 the finals, and Mind Read hears what they hope for. On the finals day
@@ -30,12 +30,12 @@
    before
 	 the gates, and two people linger to say the colosseum is closed until next
 	 year. COLOSSEUM_ENTRANCE_TO_TOLBI leads back to Tolbi.
-   - Colosseum Tunnel (SceneId_ColosseumTunnel), the passage from Babi's
+   - Colosseum Tunnel (SceneIdColosseumTunnel), the passage from Babi's
 	 Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum. The
 	 Colosseum's end of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
 	 COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. The tunnel has
 	 only its two exits.
-   - Colosseum (SceneId_Colosseum), one scene that holds the stands, the trial
+   - Colosseum (SceneIdColosseum), one scene that holds the stands, the trial
 	 grounds, the finals' waiting room and the passages to the finals stages,
 	 each an entrance's camera box on it. Every arrival is an entrance of its
 	 own, and scColosseumEntranceApplyArrivalState plays the script that

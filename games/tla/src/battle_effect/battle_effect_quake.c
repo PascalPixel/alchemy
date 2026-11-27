@@ -37,9 +37,9 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 	Sint32				 col;
 	Sint32				 y;
 
-	battleEffectState = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
+	battleEffectState = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
 	/* The canvas at its own width, opaque: the pillars hide what is behind
 	   them. */
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
@@ -50,14 +50,14 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 	/* Cut the strip of ground that caps each pillar from the battle
 	   background. */
 	syWordsCopy(
-		Ram_MapMetatileBuffer, (void *)BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
+		RamMapMetatileBuffer, (void *)BG_CHAR_BLOCK(2), 2 * BG_CHAR_SIZE);
 	for(row = 0; row != QUAKE_STRIP_HEIGHT; row++) {
 		y = row + QUAKE_GROUND_Y - QUAKE_STRIP_HEIGHT;
 		for(col = 0; col != QUAKE_PILLAR_WIDTH; col++) {
 			Sint32 pixel = BACKGROUND_PIXEL_OFFSET(col + 32, y);
 
 			battleEffectState->sheet[row * QUAKE_PILLAR_WIDTH + col] =
-				Ram_MapMetatileBuffer[pixel];
+				RamMapMetatileBuffer[pixel];
 		}
 	}
 
@@ -69,7 +69,7 @@ void btEffectRunQuake(BATTLE_EFFECT_PARM *args)
 	}
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	EFFECT_FOR_EACH_TARGET(member, args)
 		battleEffectState->particles[member].variant = 0;
 	EFFECT_START_TRANSFER(battleEffectState, CANVAS_COPY_AND_CLEAR, 0);

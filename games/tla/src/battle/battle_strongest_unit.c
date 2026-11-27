@@ -12,7 +12,7 @@ Sint32 btAIChooseRandomTarget(Sint32 party)
 	Sint32		  i;
 
 	cnt = 0;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 
 	if(party != 0) {
 		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -37,7 +37,7 @@ Sint32 btAIChooseRandomTarget(Sint32 party)
    no other lives. */
 Sint32 btUnitFindStrongestAlly(Uint32 unitId)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Uint32		  best = unitId;
 	Sint32		  bestAttack = syUnitGet(unitId)->attack;
 	Sint32		  i;

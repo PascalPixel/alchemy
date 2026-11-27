@@ -20,7 +20,7 @@
    in IWRAM is cleared again by syInit; nothing else reads it. */
 static __inline__ void sySoftReset(void)
 {
-	Sint32 (*reset)(void) = (Sint32 (*)(void))Cart_Start;
+	Sint32 (*reset)(void) = (Sint32 (*)(void))CartStart;
 
 	CartridgeResetMarker = CARTRIDGE_RESET_MARK;
 	IO_WRITE16(0, &REG_IME);
@@ -102,8 +102,8 @@ void sySynch(Sint32 ticks)
 
 	/* Save the caller's stack and continue at the tick-wait stack top */
 	base = sp;
-	if(base < Ram_TickWaitStackTop) {
-		Uint8 *top = Ram_TickWaitStackTop;
+	if(base < RamTickWaitStackTop) {
+		Uint8 *top = RamTickWaitStackTop;
 
 		SavedStackSize = top - base;
 		syDMAXCopy(
@@ -213,9 +213,9 @@ void sySynch(Sint32 ticks)
 				}
 				SleepActive = 1;
 				IO_WRITE16(KEYCNT_SHOULDERS_WAKE, &REG_KEYCNT);
-				Bios_SoundBiasOff();
+				BiosSoundBiasOff();
 				ASM_BIOS_STOP();
-				Bios_SoundBiasOn();
+				BiosSoundBiasOn();
 				IO_WRITE16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
 				SleepActive = 0;
 				IO_WRITE16((Uint16)savedDisplayControl, &REG_DISPCNT);
@@ -402,7 +402,7 @@ void syVBlankHandler(void)
 	FrameCount++;
 	TickFrames++;
 	VBlankDone = 1;
-	Mixer_Enter();
+	MixerEnter();
 }
 
 /* Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything

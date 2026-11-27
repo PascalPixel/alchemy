@@ -1,7 +1,7 @@
 /* Kalay, the merchants' town Lord Hammet founded, the front of his palace, and
    the tunnel beneath them: four places in six scenes.
 
-   Kalay (SceneId_Kalay), the town. Eight doors open into the houses, the weapon
+   Kalay (SceneIdKalay), the town. Eight doors open into the houses, the weapon
    and armor shops, the inn and the Kalay Sanctum (stucco_rooms_a.c), and two
    more lead in behind the shops' counters. The way north leads up to the front
    of Hammet's palace; the south and west edges lead out to the World Map. The
@@ -18,21 +18,21 @@
    it. The second guide is the first's sprite with its green and blue swapped
    (SPRITE_COLOR_RBG), here and in stucco_rooms_a.c and kalay_tolbi_docks.c.
 
-   The front of Hammet Palace (SceneId_HammetPalaceGrounds), where two soldiers
+   The front of Hammet Palace (SceneIdHammetPalaceGrounds), where two soldiers
    of Kalay guard the door. The first time the party comes, before Ivan has
    reported to Lady Layana (FLAG_IVAN_REPORTED_TO_LAYANA), they know Ivan and
    take everyone in to her; afterwards they only talk. Walking into the door
    opens it into the palace (hammet_palace.c).
 
-   The Kalay Tunnel Entrance (SceneId_KalayTunnelEntrance), out of town and
+   The Kalay Tunnel Entrance (SceneIdKalayTunnelEntrance), out of town and
    reached from the World Map, where a soldier bars `the cave up ahead` by
    Hammet and Layana's command and a Nut floats until Catch takes it. Arriving
    with Hammet in Bunza's covered wagon after Lunpa plays his homecoming: the
    guard opens the way, Hammet goes in, and the party rides off. Once the tunnel
    is open (FLAG_KALAY_TUNNEL_OPEN) the guard stands aside, turned east.
 
-   The Kalay Tunnel (SceneId_KalayTunnelCave to
-   SceneId_KalayTunnelTreasureRoom), the hidden way between Hammet's palace and
+   The Kalay Tunnel (SceneIdKalayTunnelCave to
+   SceneIdKalayTunnelTreasureRoom), the hidden way between Hammet's palace and
    his treasure, which Layana opens to the party in thanks once Hammet is home.
    A cave with a chest holding an Apple leads down from the entrance to a long
    passage, and on down into the treasure rooms under the town. There each of

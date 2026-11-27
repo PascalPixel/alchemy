@@ -14,10 +14,10 @@
 	.thumb_func
 syMathUnsignedMulHigh:
 	bx	pc
-AlchemyUncredited_08002076:
+AlchemyUncredited08002076:
 	nop
 	.arm
-AlchemyUncreditedEnd_08002076:
+AlchemyUncreditedEnd08002076:
 	umulls	r3, r0, r1, r0
 	bx	lr
 	.thumb
@@ -25,10 +25,10 @@ AlchemyUncreditedEnd_08002076:
 	.thumb_func
 syMathUnsignedMulHighAdd:
 	bx	pc
-AlchemyUncredited_08002082:
+AlchemyUncredited08002082:
 	nop
 	.arm
-AlchemyUncreditedEnd_08002082:
+AlchemyUncreditedEnd08002082:
 	umulls	ip, r3, r1, r0
 	mla	r0, r3, r2, r0
 	bx	lr

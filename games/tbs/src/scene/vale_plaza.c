@@ -1,4 +1,4 @@
-/* Vale (SceneId_ValePlaza): the part of the village with the Psynergy Stone and
+/* Vale (SceneIdValePlaza): the part of the village with the Psynergy Stone and
    the town gate, Vale's way out to the world.
 
    The scene sees the prologue end and the journey begin. scGetActorPlacements
@@ -7,7 +7,7 @@
 
    - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 	 have gathered in the plaza here. Isaac and Garet come from the river
-	 (Vale, SceneId_ValePrologue, by VALE_PROLOGUE_TO_VALE_PLAZA), where
+	 (Vale, SceneIdValePrologue, by VALE_PROLOGUE_TO_VALE_PLAZA), where
 	 Felix has fallen in. Walking east toward the villagers gathered by the
 	 Psynergy Stone's pond (metatiles (10, 47..53)) plays
 	 scValePlazaSentToAidElders. Garet's grandfather, the mayor, sends
@@ -59,19 +59,19 @@
 
    The ways out of the scene:
 
-   - Six doors lead into three houses and the shop (SceneId_CottageRoomsA),
-	 and into the forge and the inn (SceneId_CottageRoomsB). A seventh, a
+   - Six doors lead into three houses and the shop (SceneIdCottageRoomsA),
+	 and into the forge and the inn (SceneIdCottageRoomsB). A seventh, a
 	 doorway in the north-east, opens only once the party is back from Kalay.
    - The path off the west edge, at metatiles (0, 20..21), leads to the rest
-   of  the village (SceneId_Vale) or, on the stormy night, back to the
-   storm's  scene (SceneId_ValePrologue).
+   of  the village (SceneIdVale) or, on the stormy night, back to the
+   storm's  scene (SceneIdValePrologue).
    - The town gate at the south edge, metatiles (12..14, 54), leads out to
    the  World Map once the party has set out.
    - Behind the ivy that hides it, the cave's mouth at metatile (11, 28)
    leads into  a small cave with a chest at its far end, which holds a Power
    Bread.
 
-   The cave is drawn on Goma Cave's map (SceneId_GomaCaveStream,
+   The cave is drawn on Goma Cave's map (SceneIdGomaCaveStream,
    GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA), walled off from the rest of it,
    and no other way leads in or out. The party comes back out one metatile south
    of the mouth (VALE_PLAZA_FROM_CHEST_CAVE, at (186, 474)).
@@ -82,7 +82,7 @@
 	 departure.
    - VALE_PLAZA_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
 	 VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTHEAST into Isaac's house
-	 (SceneId_CottageRoomsB).
+	 (SceneIdCottageRoomsB).
    - VALE_PLAZA_DEBUG_STORY_FLAGS sets a preset of story flags and takes
 	 VALE_PLAZA_TO_BILIBIN (scValePlazaSetProgressFlagsAndExit).
 
@@ -779,11 +779,11 @@ static inline void scValePlazaOpenDoorAndWalkThrough(
 
 /* The plaza's doors: walking north into a door's metatile opens it and takes
    the exit of the metatile's number (scValeRequestBackdropExit), into the
-   houses (SceneId_CottageRoomsA) or the inn and the forge
-   (SceneId_CottageRoomsB). */
+   houses (SceneIdCottageRoomsA) or the inn and the forge
+   (SceneIdCottageRoomsB). */
 
 /* Isaac opens the door of the house at the top of the plaza (metatile (15, 18))
-   and walks in (SceneId_CottageRoomsA,
+   and walks in (SceneIdCottageRoomsA,
    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH). */
 static void scValePlazaOpenNorthwestDoor(void)
 {
@@ -793,7 +793,7 @@ static void scValePlazaOpenNorthwestDoor(void)
 
 /* Back from Kalay, Isaac opens the doorway in the north-east of the plaza
    (metatiles (21..22, 19)) with a thump and walks into a room of sacks and
-   crates with weapons on its wall (SceneId_CottageRoomsB,
+   crates with weapons on its wall (SceneIdCottageRoomsB,
    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST). */
 static void scValePlazaOpenNortheastDoor(void)
 {
@@ -809,7 +809,7 @@ static void scValePlazaOpenNortheastDoor(void)
 }
 
 /* Isaac opens the door of the western house of the middle row (metatile (14,
-   26)) and walks in (SceneId_CottageRoomsA,
+   26)) and walks in (SceneIdCottageRoomsA,
    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST). */
 static void scValePlazaOpenMiddleWestDoor(void)
 {
@@ -818,7 +818,7 @@ static void scValePlazaOpenMiddleWestDoor(void)
 }
 
 /* Isaac opens the door of the eastern house of the middle row (metatile (23,
-   27)) and walks in (SceneId_CottageRoomsA,
+   27)) and walks in (SceneIdCottageRoomsA,
    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST). */
 static void scValePlazaOpenMiddleEastDoor(void)
 {
@@ -827,7 +827,7 @@ static void scValePlazaOpenMiddleEastDoor(void)
 }
 
 /* Isaac opens the door of the shop, under its sign of a potion and a sword
-   (metatile (12, 35)), and walks in (SceneId_CottageRoomsA,
+   (metatile (12, 35)), and walks in (SceneIdCottageRoomsA,
    COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH). */
 static void scValePlazaOpenSouthwestDoor(void)
 {
@@ -836,7 +836,7 @@ static void scValePlazaOpenSouthwestDoor(void)
 }
 
 /* Isaac opens the door of the forge at the plaza's west edge (metatile (6, 39))
-   and walks in (SceneId_CottageRoomsB,
+   and walks in (SceneIdCottageRoomsB,
    COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST). */
 static void scValePlazaOpenWestEdgeDoor(void)
 {
@@ -845,7 +845,7 @@ static void scValePlazaOpenWestEdgeDoor(void)
 }
 
 /* Isaac opens the door of the inn (metatile (22, 42)) and walks in
-   (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST). */
+   (SceneIdCottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST). */
 static void scValePlazaOpenSoutheastDoor(void)
 {
 	scValePlazaOpenDoorAndWalkThrough(51, 39, 358, 670);
@@ -1375,7 +1375,7 @@ static void scValePlazaFightTravelers(void)
 	/* The confrontation continues in battle; both outcomes return here. */
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	{
-		const void *scene = &SceneId_ValePlaza;
+		const void *scene = &SceneIdValePlaza;
 
 		fdScriptSetAfterBattleDestination(
 			(Sint32)scene, VALE_PLAZA_AFTER_TRAVELERS_BATTLE);

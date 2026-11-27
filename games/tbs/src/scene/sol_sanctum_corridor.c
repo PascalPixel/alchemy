@@ -1,5 +1,5 @@
-/* Sol Sanctum (SceneId_SolSanctumCorridor), a passage that joins two rooms of
-   SceneId_SolSanctumReliefs (sol_sanctum_entrance.c).
+/* Sol Sanctum (SceneIdSolSanctumCorridor), a passage that joins two rooms of
+   SceneIdSolSanctumReliefs (sol_sanctum_entrance.c).
 
    It places nobody and has no scripts but its two exits, one at each end.
    SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST leads into the room with the
@@ -7,7 +7,7 @@
    with the stepping stones.
 
    Its setup, scInit (shared/sol_sanctum_rumble.c), is the one
-   SceneId_SolSanctumMaze shares. Once Mt. Aleph has erupted
+   SceneIdSolSanctumMaze shares. Once Mt. Aleph has erupted
    (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes. */
 
 #include "battle/battle.h"

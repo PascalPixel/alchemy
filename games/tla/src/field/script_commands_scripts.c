@@ -40,7 +40,7 @@ const Sint32 FieldEffectFragmentScript[] = {
 
 /* The colour modes Mind Read's caster cycles through, two ticks each
    (fdActorSetLayersColMode): its colour channels swapped one way after another
-   and back to its own; The Broken Seal's MindRead_CasterPaletteCycle. */
+   and back to its own; The Broken Seal's MindReadCasterPaletteCycle. */
 const Uint8 MindReadCasterColorCycle[8] = {
 	SPRITE_COLOR_GRB,
 	SPRITE_COLOR_RBG,

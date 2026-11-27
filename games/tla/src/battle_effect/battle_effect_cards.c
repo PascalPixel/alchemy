@@ -9,7 +9,7 @@
    same buffer by its fixed address. */
 #define CARD (MapGridMetatileBuffer + RED_CRESCENT_BYTES)
 #define CARD_SHEEP \
-	(Ram_MapMetatileBuffer + RED_CRESCENT_BYTES + CARD_WIDTH * CARD_HEIGHT)
+	(RamMapMetatileBuffer + RED_CRESCENT_BYTES + CARD_WIDTH * CARD_HEIGHT)
 /* After the Death and Sword cards' pictures: the step of the dissolve, 0 to 15,
    at which each pixel clears, for eight rows repeated down the card. */
 #define CARD_DISSOLVE_STEPS (CARD + CARD_WIDTH * CARD_HEIGHT)
@@ -90,9 +90,9 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 first;
 	Sint32				 slot;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 
 	/* Set up a tiled canvas, filled on the user's side, and a blitter that
 	   keeps the brighter pixel (that adds, for the Sword Card), mirrored to
@@ -118,7 +118,7 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	scale = 0;
 	scroll = 0;
 	overflow = 0;
@@ -160,7 +160,7 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btResourceLoadAndDecompress(
 			RESOURCE_COUNTER_REVEAL_SHEET, state->sheet, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_RED_CRESCENT_SHEET_A, Ram_MapMetatileBuffer, 1, 0);
+			RESOURCE_RED_CRESCENT_SHEET_A, RamMapMetatileBuffer, 1, 0);
 		totalTicks = 88;
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
@@ -504,25 +504,25 @@ void btEffectRunCards(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					if(frm >= REAPER_SWING_TICK + 4 &&
 						frm <= REAPER_SWING_TICK + 5)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
-							Ram_MapMetatileBuffer, RED_CRESCENT_FADE_A,
+							RamMapMetatileBuffer, RED_CRESCENT_FADE_A,
 							overflow + ReaperPictureX[args->side * 7 + 3],
 							ReaperPictureY[3]);
 					if(frm >= REAPER_SWING_TICK + 6 &&
 						frm <= REAPER_SWING_TICK + 7)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
-							Ram_MapMetatileBuffer, RED_CRESCENT_FADE_B,
+							RamMapMetatileBuffer, RED_CRESCENT_FADE_B,
 							overflow + ReaperPictureX[args->side * 7 + 4],
 							ReaperPictureY[4]);
 					if(frm >= REAPER_SWING_TICK + 8 &&
 						frm <= REAPER_SWING_TICK + 9)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
-							Ram_MapMetatileBuffer, RED_CRESCENT_FADE_C,
+							RamMapMetatileBuffer, RED_CRESCENT_FADE_C,
 							overflow + ReaperPictureX[args->side * 7 + 5],
 							ReaperPictureY[5]);
 					if(frm >= REAPER_SWING_TICK + 10 &&
 						frm <= REAPER_SWING_TICK + 11)
 						EFFECT_DRAW_PICTURE(draw[0], canvas,
-							Ram_MapMetatileBuffer, RED_CRESCENT_FADE_D,
+							RamMapMetatileBuffer, RED_CRESCENT_FADE_D,
 							overflow + ReaperPictureX[args->side * 7 + 6],
 							ReaperPictureY[6]);
 				}

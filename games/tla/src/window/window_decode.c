@@ -328,8 +328,8 @@ Uint32 mnMessageAppendArticleName(Sint32 mode, Uint16 *name, Uint32 writePos,
 
 /* The symbol decoder RAM_CODE_LOAD copies to RAM to run, and its size, as this
    symbol's address. */
-extern const Uint8 Text_DecodeSymbolCode[];
-extern Uint8	   Text_DecodeSymbolCodeSize[];
+extern const Uint8 TextDecodeSymbolCode[];
+extern Uint8	   TextDecodeSymbolCodeSize[];
 
 extern Uint8 MsgClassName[], MsgItemName[], MsgAbilityName[],
 	MsgDebugAreaName[];
@@ -427,9 +427,9 @@ Sint32 mnMessageDecode(Sint32 msg, Sint32 clear)
 	if(msg == -1) {
 		start = state->lastMsgStart;
 	} else {
-		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
-			Text_DecodeSymbolCodeSize);
-		heap = Ram_HeapSlots;
+		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, TextDecodeSymbolCode,
+			TextDecodeSymbolCodeSize);
+		heap = RamHeapSlots;
 		decode = (Sint32 (*)(TEXT_READER *))heap->msgDecoder;
 		mnMessageFind(&reader, msg);
 
@@ -977,9 +977,9 @@ Sint32 mnMessageDecode(Sint32 msg, Sint32 clear)
 	if(msg == -1) {
 		start = state->lastMsgStart;
 	} else {
-		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, Text_DecodeSymbolCode,
-			Text_DecodeSymbolCodeSize);
-		heap = Ram_HeapSlots;
+		RAM_CODE_LOAD_SLOT(HEAP_SLOT_MESSAGE_DECODER, TextDecodeSymbolCode,
+			TextDecodeSymbolCodeSize);
+		heap = RamHeapSlots;
 		decode = (Sint32 (*)(TEXT_READER *))heap->msgDecoder;
 		mnMessageFind(&reader, msg);
 

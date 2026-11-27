@@ -57,7 +57,7 @@ static const Uint16 PriceDigitTileOffsets[5] = {
    0. */
 void mnShopDrawPriceDigit(Sint32 digit, Uint8 *tileBuf, Uint32 digitPos)
 {
-	Uint8 *src = Shop_GlyphBytes + digit * TILE_SIZE_4BPP;
+	Uint8 *src = ShopGlyphBytes + digit * TILE_SIZE_4BPP;
 	Uint8 *dst = tileBuf + PriceDigitTileOffsets[digitPos] + 2;
 	Sint32 cnt;
 
@@ -88,7 +88,7 @@ WINDOW_SPR *mnShopCreatePriceSpr(Sint32 value, WINDOW *win, Sint32 x, Sint32 y)
 	tileBuf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	priceSpr = 0;
 	/* the blank price's eight tiles (8 * TILE_SIZE_4BPP bytes) */
-	syDMAXCopy(Shop_PriceTiles, tileBuf, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
+	syDMAXCopy(ShopPriceTiles, tileBuf, DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4),
 		REG_DMA3);
 	mnShopDrawPriceDigit(value % 10, tileBuf, 0);
 	value = value / 10;

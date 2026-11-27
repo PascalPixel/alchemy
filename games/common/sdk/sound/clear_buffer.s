@@ -67,9 +67,9 @@ SoundMainBTM:
 	stmia	r0!, {r1, r2, r3, r4}
 	mov	r4, ip
 	bx	lr
-AlchemyUncredited_clear_buffer_1:
+AlchemyUncreditedClearBuffer1:
 	.2byte	0x0000
-AlchemyUncreditedEnd_clear_buffer_1:
+AlchemyUncreditedEndClearBuffer1:
 .syntax unified
 	.thumb
 	.global RealClearChain
@@ -123,9 +123,9 @@ ply_fine:
 	pop	{r4, r5}
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_clear_buffer_2:
+AlchemyUncreditedClearBuffer2:
 	.2byte	0x0000
-AlchemyUncreditedEnd_clear_buffer_2:
+AlchemyUncreditedEndClearBuffer2:
 .syntax unified
 	.thumb
 	.global MPlayJumpTableCopy
@@ -142,13 +142,13 @@ MPlayJumpTableCopy:
 	subs	r1, #1
 	bgt.n	.Lload_entry
 	bx	ip
-AlchemyUncredited_clear_buffer_3:
+AlchemyUncreditedClearBuffer3:
 	.2byte 0
 
 	.global ldrb_r3_r2
 	.thumb_func
 ldrb_r3_r2:
-AlchemyUncreditedEnd_clear_buffer_3:
+AlchemyUncreditedEndClearBuffer3:
 	ldrb	r3, [r2, #0]
 	.global chk_adr_r2
 	.thumb_func
@@ -181,13 +181,13 @@ ld_r3_tp_adr_i_r2:
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]
 	b.n	chk_adr_r2
-AlchemyUncredited_clear_buffer_4:
+AlchemyUncreditedClearBuffer4:
 	.2byte 0
 
 .global ply_goto
 	.thumb_func
 ply_goto:
-AlchemyUncreditedEnd_clear_buffer_4:
+AlchemyUncreditedEndClearBuffer4:
 	push	{lr}
 .Lgoto_jump:
 	ldr	r2, [r1, #64]
@@ -222,13 +222,13 @@ ply_patt:
 	b.n	ply_goto
 .Lpattern_full:
 	b.n	ply_fine
-AlchemyUncredited_clear_buffer_5:
+AlchemyUncreditedClearBuffer5:
 	.2byte 0
 
 .global ply_pend
 	.thumb_func
 ply_pend:
-AlchemyUncreditedEnd_clear_buffer_5:
+AlchemyUncreditedEndClearBuffer5:
 	ldrb	r2, [r1, #2]
 	cmp	r2, #0
 	beq.n	.Lpattern_return
@@ -268,24 +268,24 @@ ply_rept:
 	str	r2, [r1, #64]
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_clear_buffer_6:
+AlchemyUncreditedClearBuffer6:
 	.2byte 0
 
 .global ply_prio
 	.thumb_func
 ply_prio:
-AlchemyUncreditedEnd_clear_buffer_6:
+AlchemyUncreditedEndClearBuffer6:
 	mov	ip, lr
 	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #29]
 	bx	ip
 
-AlchemyUncredited_clear_buffer_7:
+AlchemyUncreditedClearBuffer7:
 	.balign 4, 0
 .global ply_tempo
 	.thumb_func
 ply_tempo:
-AlchemyUncreditedEnd_clear_buffer_7:
+AlchemyUncreditedEndClearBuffer7:
 	mov	ip, lr
 	bl	ld_r3_tp_adr_i
 	lsls	r3, r3, #1
@@ -308,12 +308,12 @@ ply_keysh:
 	strb	r3, [r1, #0]
 	bx	ip
 
-AlchemyUncredited_clear_buffer_8:
+AlchemyUncreditedClearBuffer8:
 	.balign 4, 0
 .global ply_voice
 	.thumb_func
 ply_voice:
-AlchemyUncreditedEnd_clear_buffer_8:
+AlchemyUncreditedEndClearBuffer8:
 	mov	ip, lr
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -335,12 +335,12 @@ AlchemyUncreditedEnd_clear_buffer_8:
 	str	r3, [r1, #44]
 	bx	ip
 
-AlchemyUncredited_clear_buffer_9:
+AlchemyUncreditedClearBuffer9:
 	.balign 4, 0
 .global ply_vol
 	.thumb_func
 ply_vol:
-AlchemyUncreditedEnd_clear_buffer_9:
+AlchemyUncreditedEndClearBuffer9:
 	mov	ip, lr
 	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #18]
@@ -350,12 +350,12 @@ AlchemyUncreditedEnd_clear_buffer_9:
 	strb	r3, [r1, #0]
 	bx	ip
 
-AlchemyUncredited_clear_buffer_10:
+AlchemyUncreditedClearBuffer10:
 	.balign 4, 0
 .global ply_pan
 	.thumb_func
 ply_pan:
-AlchemyUncreditedEnd_clear_buffer_10:
+AlchemyUncreditedEndClearBuffer10:
 	mov	ip, lr
 	bl	ld_r3_tp_adr_i
 	subs	r3, #64
@@ -391,23 +391,23 @@ ply_bendr:
 	strb	r3, [r1, #0]
 	bx	ip
 
-AlchemyUncredited_clear_buffer_11:
+AlchemyUncreditedClearBuffer11:
 	.balign 4, 0
 .global ply_lfodl
 	.thumb_func
 ply_lfodl:
-AlchemyUncreditedEnd_clear_buffer_11:
+AlchemyUncreditedEndClearBuffer11:
 	mov	ip, lr
 	bl	ld_r3_tp_adr_i
 	strb	r3, [r1, #27]
 	bx	ip
 
-AlchemyUncredited_clear_buffer_12:
+AlchemyUncreditedClearBuffer12:
 	.balign 4, 0
 .global ply_modt
 	.thumb_func
 ply_modt:
-AlchemyUncreditedEnd_clear_buffer_12:
+AlchemyUncreditedEndClearBuffer12:
 	mov	ip, lr
 	bl	ld_r3_tp_adr_i
 	ldrb	r0, [r1, #24]
@@ -488,11 +488,11 @@ m4aSoundVSync:
 	strh r1, [r2, #22]
 .Ltimer_done:
 	bx lr
-AlchemyUncredited_clear_buffer_13:
+AlchemyUncreditedClearBuffer13:
 	.balign 4, 0
 	.global m4aSoundVSync_Pool
 m4aSoundVSync_Pool:
-AlchemyUncreditedEnd_clear_buffer_13:
+AlchemyUncreditedEndClearBuffer13:
 	.4byte 0x040000bc
 	.4byte 0x84400004
 .syntax unified
@@ -831,9 +831,9 @@ MPlayMain:
 	.global call_r3
 call_r3:
 	bx	r3
-AlchemyUncredited_clear_buffer_14:
+AlchemyUncreditedClearBuffer14:
 	.2byte	0x0000
-AlchemyUncreditedEnd_clear_buffer_14:
+AlchemyUncreditedEndClearBuffer14:
 	.4byte ClockTable
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
@@ -877,9 +877,9 @@ TrackStop:
 	pop	{r4, r5, r6}
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_clear_buffer_15:
+AlchemyUncreditedClearBuffer15:
 	.2byte	0x0000
-AlchemyUncreditedEnd_clear_buffer_15:
+AlchemyUncreditedEndClearBuffer15:
 	.4byte	0x03007ff0
 .syntax unified
 	.thumb
@@ -1190,9 +1190,9 @@ ply_note:
 	mov	fp, r3
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_clear_buffer_16:
+AlchemyUncreditedClearBuffer16:
 	.2byte	0x0000
-AlchemyUncreditedEnd_clear_buffer_16:
+AlchemyUncreditedEndClearBuffer16:
 	.4byte	0x03007ff0
 	.4byte	ClockTable
 .syntax unified
@@ -1257,9 +1257,9 @@ clear_modM:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	lr
-AlchemyUncredited_clear_buffer_17:
+AlchemyUncreditedClearBuffer17:
 	.2byte	0x0000
-AlchemyUncreditedEnd_clear_buffer_17:
+AlchemyUncreditedEndClearBuffer17:
 .syntax unified
 	.section .text.command_byte_reader,"ax",%progbits
 	.thumb
@@ -1287,10 +1287,10 @@ ply_lfos:
 	bl	clear_modM
 .Llfo_speed_done:
 	bx	ip
-AlchemyUncredited_clear_buffer_18:
+AlchemyUncreditedClearBuffer18:
 	.balign 4, 0
 
-AlchemyUncreditedEnd_clear_buffer_18:
+AlchemyUncreditedEndClearBuffer18:
 	.global ply_mod
 	.thumb_func
 ply_mod:
@@ -1302,6 +1302,6 @@ ply_mod:
 	bl	clear_modM
 .Lmodulation_done:
 	bx	ip
-AlchemyUncredited_clear_buffer_19:
+AlchemyUncreditedClearBuffer19:
 	.2byte 0
-AlchemyUncreditedEnd_clear_buffer_19:
+AlchemyUncreditedEndClearBuffer19:

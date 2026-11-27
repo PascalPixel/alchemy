@@ -62,7 +62,7 @@ typedef struct BATTLE_EFFECT_STATE {
 	Sint32 scrollStepY;	   /* added to BG1 or BG2 y at each step */
 	Sint32 savedBg1X;	   /* BG1 scroll restored when a shake ends */
 	Sint32 savedBg1Y;	   /* BG1 scroll restored when a shake ends */
-	Sint32 shakeFrm;	   /* shake ticks left; Camera_ApplyShake counts down */
+	Sint32 shakeFrm;	   /* shake ticks left; CameraApplyShake counts down */
 	Sint32 cameraDelta;	   /* camera yaw turned per effect tick */
 	/* The effect sets 1 after a tick; btCameraApplyPhasedDelta then turns the
 	   whole cameraDelta and sets 0, else turns half and toggles 0 and 2. */

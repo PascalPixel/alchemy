@@ -2,7 +2,7 @@
 #define ALCHEMY_LOG_ROOMS_A_H
 
 /* The metatile behaviors of the layout of Vault's houses, shops and inn, which
-   SceneId_LogRoomsA (log_rooms_a.c) and SceneId_LogRoomsB (log_rooms_b.c) both
+   SceneIdLogRoomsA (log_rooms_a.c) and SceneIdLogRoomsB (log_rooms_b.c) both
    answer, and the stock and inn numbers their counters open. */
 
 /* The stock and inn numbers Vault's counters open (mnShopRun, mnInnCheckIn). */

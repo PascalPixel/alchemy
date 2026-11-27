@@ -1,7 +1,7 @@
-/* Sol Sanctum (SceneId_SolSanctumMaze), the room that holds the second Small
+/* Sol Sanctum (SceneIdSolSanctumMaze), the room that holds the second Small
    Jewel.
 
-   It is reached from two rooms of SceneId_SolSanctumReliefs
+   It is reached from two rooms of SceneIdSolSanctumReliefs
    (sol_sanctum_entrance.c) and leads back to them.
    SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_SOUTH goes to the room of steps off
    the statue hall, and SOL_SANCTUM_MAZE_TO_SOL_SANCTUM_RELIEFS_NORTH to the
@@ -12,7 +12,7 @@
    minotaur relief.
 
    Its setup, scInit (shared/sol_sanctum_rumble.c), is the one
-   SceneId_SolSanctumCorridor shares. Once Mt. Aleph has erupted, the room
+   SceneIdSolSanctumCorridor shares. Once Mt. Aleph has erupted, the room
    rumbles and shakes.
 
    The south exit leaves down stairs (EXIT_STYLE_STAIRS_DOWN). Walking north

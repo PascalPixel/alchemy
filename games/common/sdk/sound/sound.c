@@ -99,7 +99,7 @@ void m4aSoundInit(void)
 	s32 playerIndex;
 
 	/* sySndMainRAMRom is a Thumb symbol: its address has bit 0 set */
-	Bios_CpuSet((void *)((u32)sySndMainRAMRom & ~1), Ram_SoundMixer,
+	BiosCpuSet((void *)((u32)sySndMainRAMRom & ~1), RamSoundMixer,
 		CPU_SET_32BIT | (SOUND_MIXER_CODE_SIZE / 4));
 	SoundInit(&SoundInfoWork);
 	MPlayExtender(CgbChans);
@@ -314,7 +314,7 @@ void MPlayExtender(struct CgbChannel *notes)
 	{
 		u32 zero = 0;
 
-		Bios_CpuSet((void *)&zero, notes,
+		BiosCpuSet((void *)&zero, notes,
 			CPU_SET_SRC_FIXED | CPU_SET_32BIT |
 				(sizeof(struct CgbChannel) * SOUND_CGB_CHANNEL_COUNT / 4));
 	}

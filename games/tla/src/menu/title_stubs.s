@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Title
-Stubs_Title:
+	.global StubsTitle
+StubsTitle:
 	stub mnTitleShowTitleScreenStub, mnTitleShowTitleScreen
 	stub mnTitleAfterIntroNoOperationStub, mnTitleAfterIntroNoOperation
 	stub mnTitleBeforeLogosNoOperationStub, mnTitleBeforeLogosNoOperation

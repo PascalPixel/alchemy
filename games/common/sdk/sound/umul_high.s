@@ -55,11 +55,11 @@ SoundMain:
 	cmp	r3, #0
 	beq.n	.L3
 	ldr	r0, [r0, #36]
-	bl	Mixer_CallViaR3Rom
+	bl	MixerCallViaR3Rom
 	ldr	r0, [sp, #24]
 .L3:
 	ldr	r3, [r0, #40]
-	bl	Mixer_CallViaR3Rom
+	bl	MixerCallViaR3Rom
 	ldr	r0, [sp, #24]
 	ldr	r3, [r0, #16]
 	mov	r8, r3
@@ -79,9 +79,9 @@ SoundMain:
 	ldr	r3, [pc, #12]
 	bx	r3
 @ Never run: a zero halfword after bx r3 that word-aligns the pool.
-AlchemyUncredited_umul_high_1:
+AlchemyUncreditedUmulHigh1:
 	.2byte	0x0000
-AlchemyUncreditedEnd_umul_high_1:
+AlchemyUncreditedEndUmulHigh1:
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
 	.4byte SoundMainRAM

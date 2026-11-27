@@ -3,13 +3,13 @@
 
    The path from the world map runs north under stone arches to the cliffs,
    where a dark cave mouth leads into the rock (gaia_rock_inside.c); the way up
-   is outside. On the first cliffs (SceneId_GaiaRockSusa) Felix pushes a stone
+   is outside. On the first cliffs (SceneIdGaiaRockSusa) Felix pushes a stone
    pillar west along a ledge until it drops into a gap and bridges it
    (scGaiaRockFinishMovingPillar), climbs walls of handholds and rides slides,
    and sees a stone statue blow whirlwinds at a hanging vine to set it swinging.
    Whirlwind on another vine, over a gap, swings him across, and a second pillar
    Moved east off the ledge beyond drops into a notch below. On the next cliffs
-   (SceneId_GaiaRockStatueSpots) more statues blow at vines, and on a great wall
+   (SceneIdGaiaRockStatueSpots) more statues blow at vines, and on a great wall
    of handholds three stone faces lie in wait: when Felix climbs onto one it
    bursts out under him and knocks him off the holds
    (scGaiaRockClimbOntoLowestStoneFace). Beyond, a pillar slides in a slot, and
@@ -36,7 +36,7 @@
 #include "text/msg_ids.h"
 
 /* The first cliffs, from the world map's path to the cave mouth
-   (SceneId_GaiaRockSusa): the eight hanging vines, the two pillars Moved into
+   (SceneIdGaiaRockSusa): the eight hanging vines, the two pillars Moved into
    the gaps, the statue that blows whirlwinds, a whirlwind's row parked off the
    map (the whirlwinds the statue blows are spawned), and Susa, who lies by the
    cave mouth after the Serpent ("Kushinada's safe... She's safe! Nothing else
@@ -51,7 +51,7 @@ enum {
 };
 
 /* The next cliffs, with the great wall of handholds
-   (SceneId_GaiaRockStatueSpots): seven hanging vines, two statues that blow
+   (SceneIdGaiaRockStatueSpots): seven hanging vines, two statues that blow
    wind, and the three stone faces that burst out of the wall under Felix. */
 enum {
 	ACTOR_FIRST_RISING_STATUE = ACTOR_FIRST_VINE + 9,
@@ -59,7 +59,7 @@ enum {
 	ACTOR_THIRD_RISING_STATUE
 };
 
-/* The top, with the altar's mesa (SceneId_GaiaRockDancingIdol): the pillar that
+/* The top, with the altar's mesa (SceneIdGaiaRockDancingIdol): the pillar that
    slides in its slot, the altar and the Dancing Idol on it. */
 enum {
 	ACTOR_PUSHED_PILLAR = ACTOR_FIRST_PLACED,
@@ -337,7 +337,7 @@ void scGaiaRockCheckAltar(void)
 	if(actor != NULL && actor->x.fixed != 0) {
 		fdTalkToActor(FIELD_TALK_SILENT | FIELD_TREASURE_ACTOR);
 	} else if(fdScriptGetFlag(FLAG_DANCING_IDOL_TAKEN) == 0) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		mnMessageShowCentered(MsgIMSensing, 1);
 		state->fieldMenu = 1;
@@ -664,7 +664,7 @@ Sint32 scInit(void)
 		if(actor != 0) {
 			fdActorSetPos(FIELD_TREASURE_ACTOR, 0, 0);
 		}
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 		actor = state->actors[ACTOR_DANCING_IDOL];
 		state->actors[FIELD_TREASURE_ACTOR] = actor;
 		actor = fdActorGetById(ACTOR_PUSHED_PILLAR);

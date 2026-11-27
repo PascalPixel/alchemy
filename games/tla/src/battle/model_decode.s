@@ -12,10 +12,10 @@ btModelDecodeCode:
 btModelDecode:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_08118162:
+AlchemyUncredited08118162:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08118162:
+AlchemyUncreditedEnd08118162:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	r2, [pc, #196]
 	add	r3, pc, #240

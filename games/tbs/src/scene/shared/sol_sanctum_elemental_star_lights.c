@@ -1,6 +1,6 @@
 /* Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
    in the room, actors in a row from the first the map passes, each pulsing and
-   drifting on its own path from the tables SolSanctum_Light*
+   drifting on its own path from the tables SolSanctumLight*
    (sol_sanctum_elemental_star_light_tables.c), by its index. */
 
 #include "system.h"

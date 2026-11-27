@@ -282,7 +282,7 @@ typedef struct TIGHTROPE_WORK {
 	TIGHTROPE_NODE nodes[ROPE_NODE_COUNT];
 } TIGHTROPE_WORK;
 
-#define TIGHTROPE_STATE ((TIGHTROPE_WORK *)Ram_HeapSlots->tightrope)
+#define TIGHTROPE_STATE ((TIGHTROPE_WORK *)RamHeapSlots->tightrope)
 
 /* One rising particle: its sprite, world position, drift and ticks left. */
 typedef struct RISING_PARTICLE {
@@ -397,7 +397,7 @@ typedef struct ROPE_WORK {
 	ROPE_NODE nodes[ROPE_NODE_COUNT];
 } ROPE_WORK;
 
-#define ROPE_STATE ((ROPE_WORK *)Ram_HeapSlots->rope)
+#define ROPE_STATE ((ROPE_WORK *)RamHeapSlots->rope)
 
 extern const Uint8 SuperLuckyDiceFaceTiles[];
 Sint32			   fdSuperLuckyDiceScaleRGB555Buffer(
@@ -433,7 +433,7 @@ Uint32 fdMapGridGetTerrainKindStub(Sint32 terrain, Sint32 x, Sint32 z);
 void fdActorUpdateBlink(ACTOR *actor);
 
 /* Every sprite animation's metadata, by number (graphics/sprite/sprites.s). */
-extern ANIMATION_METADATA Sprite_AnimationMetadata[];
+extern ANIMATION_METADATA SpriteAnimationMetadata[];
 
 /* fdRenderDecodePicture's Thumb entry and ARM code (picture_decode.s), which
    btRenderLoadDecoder copies into the tick scratch slot. */
@@ -445,7 +445,7 @@ extern Uint8 fdRenderDecodePictureCopyEnd[];
 
 /* The size of the tick scratch block for fdRenderDecodePicture and its tables,
    an address equal to the size (ld_script.ld). */
-extern Uint8 Render_DecodePictureBlockSize[];
+extern Uint8 RenderDecodePictureBlockSize[];
 
 /* The grid outliner's Thumb entry and ARM code (grid_outline_entry.s), which
    RAM_CODE_LOAD copies to RAM. */
@@ -453,7 +453,7 @@ extern const Uint8 fdGridDrawOutlineCode[];
 
 /* The size of fdGridDrawOutlineCode, an address equal to the size
    (ld_script.ld). */
-extern Uint8 Grid_DrawOutlineCodeSize[];
+extern Uint8 GridDrawOutlineCodeSize[];
 
 extern const Uint8 SpriteColorTintTables[];
 
@@ -518,17 +518,17 @@ void fdSprAnimationClearStub(void *record);
 void mnDjinnShowJoinedMessageStub(Sint32 owner, Sint32 element, Sint32 djinni);
 
 /* The rope's tiles, tagged LZ (rope_vine_pictures.s). */
-extern const Uint8 Rope_Tiles[];
+extern const Uint8 RopeTiles[];
 /* The bottom link of a hanging vine's chain, tagged LZ
    (rope_vine_pictures.s). */
-extern const Uint8 HangingVine_ChainBottomPicture[];
+extern const Uint8 HangingVineChainBottomPicture[];
 
 Sint32 fdMapGridGetTerrainKindAtStub(Sint32 layer, Sint32 x, Sint32 z);
 
 /* The ground particles' tiles, byte LZ (field_effect_particles.s). */
-extern const Uint8 Weather_ParticleTiles[];
+extern const Uint8 WeatherParticleTiles[];
 /* The motes' tiles, byte LZ (field_effect_particles.s). */
-extern const Uint8 FieldEffect_MoteTiles[];
+extern const Uint8 FieldEffectMoteTiles[];
 
 extern const Uint32 FieldEffectPulseScales[];
 
@@ -537,12 +537,12 @@ extern const Sint16 LineScrollWaveSine[];
 extern const Sint16 WeatherRainSplashFrames[];
 
 /* The streaks' tiles, byte LZ (field_effect_particles.s). */
-extern const Uint8 FieldEffect_StreakTiles[];
+extern const Uint8 FieldEffectStreakTiles[];
 
 extern const SPARKLE_PICTURE FieldEffectSparklePictures[];
 
 /* The sparkles' tiles, byte LZ (field_effect_particles.s). */
-extern const Uint8 FieldEffect_SparkleTiles[];
+extern const Uint8 FieldEffectSparkleTiles[];
 
 void fdActorSpawnWaterSplashStub(ACTOR *actor, Sint32 kind);
 

@@ -771,7 +771,7 @@ void scShamanVillageCaveBeatGladiators(void)
    Everyone on stage stops as he goes. */
 void scShamanVillageCaveEnterPassage(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Uint32		 id;
 

@@ -32,7 +32,7 @@ typedef struct HANGING_VINE_SLOT {
 	void  *root; /* the first link fdHangingVineHang hangs; NULL if free */
 } HANGING_VINE_SLOT;
 
-/* The hanging vine's state (Ram_HeapSlots->hangingVine): the links' picture,
+/* The hanging vine's state (RamHeapSlots->hangingVine): the links' picture,
    eight vine slots and up to 128 links. */
 typedef struct HANGING_VINE_WORK {
 	Sint32			  vramEntry; /* the links' picture */
@@ -40,6 +40,6 @@ typedef struct HANGING_VINE_WORK {
 	HANGING_VINE_LINK links[ROPE_NODE_COUNT];
 } HANGING_VINE_WORK;
 
-#define HANGING_VINE_STATE ((HANGING_VINE_WORK *)Ram_HeapSlots->hangingVine)
+#define HANGING_VINE_STATE ((HANGING_VINE_WORK *)RamHeapSlots->hangingVine)
 
 #endif

@@ -42,7 +42,7 @@ Sint32 btEnemyHasSprRoom(Sint32 classId)
 	Sint32		  sprSlot;
 
 	needsSingleSlot = btSprIsSmall(classId);
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	for(sprSlot = 0; sprSlot < ENEMY_SPRITE_SLOTS; sprSlot++) {
 		if(battle->sprSlots[sprSlot] != 0)
 			continue;
@@ -65,7 +65,7 @@ Sint32 btEnemyHasSprRoom(Sint32 classId)
 Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 {
 	Sint32		  sprPart;
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	UNIT		 *unit = syUnitGet(unitId);
 	Sint32		  needsSingleSlot = btSprIsSmall(unit->enemyId);
 	Sint32		  result;
@@ -129,7 +129,7 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
    those BATTLE_STATE.sprSlots. */
 void btObjectReleaseSprSlots(Sint32 unitId)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  sprSlot;
 
 	for(sprSlot = 0; sprSlot < ENEMY_SPRITE_SLOTS; sprSlot++) {

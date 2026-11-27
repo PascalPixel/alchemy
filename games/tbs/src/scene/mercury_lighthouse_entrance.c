@@ -1,4 +1,4 @@
-/* Mercury Lighthouse (SceneId_MercuryLighthouseEntrance), the lighthouse's
+/* Mercury Lighthouse (SceneIdMercuryLighthouseEntrance), the lighthouse's
    ground floor inside its door, which leads up to its floors
    (mercury_lighthouse.c).
 
@@ -42,7 +42,7 @@
    - The dry fountain's room, which fills with water once the channels
 	 upstairs run (FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN).
 
-   Four doors lead up to SceneId_MercuryLighthouseLower
+   Four doors lead up to SceneIdMercuryLighthouseLower
    (MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST,
    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST,
    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_SOUTHWEST and
@@ -52,10 +52,10 @@
    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_LOWER_PIPE).
    MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_EXTERIOR leads back out
    through the door to the ground before it, Mercury Lighthouse's
-   SceneId_MercuryLighthouseExterior (mercury_lighthouse.c).
+   SceneIdMercuryLighthouseExterior (mercury_lighthouse.c).
 
    Every entry sets FLAG_IN_MERCURY_LIGHTHOUSE, under which Mercury Adepts
-   regain PP faster. It also makes SceneId_MercuryLighthouseExterior's
+   regain PP faster. It also makes SceneIdMercuryLighthouseExterior's
    MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP the Retreat point.
 
    The shimmering colours (scMercuryLighthouseCyclePalette) run once Ply has

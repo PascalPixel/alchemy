@@ -159,7 +159,7 @@ next:
 		}
 
 		if(PerWork.push & KEY_START) {
-			SPR *sprs = Ram_HeapSlots->sprs;
+			SPR *sprs = RamHeapSlots->sprs;
 
 			shadowsEnabled ^= 1;
 			for(i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
@@ -293,7 +293,7 @@ next:
 		if(PerWork.repeat & KEY_SELECT) {
 			syInitEvent();
 			syDummyReturnZero(
-				RESOURCE_SPRITE_METADATA, Sprite_AnimationMetadata);
+				RESOURCE_SPRITE_METADATA, SpriteAnimationMetadata);
 			goto restart;
 		}
 		if(PerWork.push & KEY_B) {
@@ -376,7 +376,7 @@ void fdSprViewerLayOutRing(
 	Uint8		   kind;
 
 	ang = 0;
-	kind = ((SPR *)Ram_HeapSlots->sprs)->entries[0]->kind;
+	kind = ((SPR *)RamHeapSlots->sprs)->entries[0]->kind;
 	if((PerWork.data & KEY_B) != 0)
 		ang = (Sint16)(FrameCount << 8);
 	switch((Uint32)kind) {
@@ -473,7 +473,7 @@ void fdSprViewerLayOutRing(
    mode value. */
 void fdSprViewerSetLayerColMode(Sint32 slot, Sint32 value)
 {
-	SPR	  *sprs = Ram_HeapSlots->sprs;
+	SPR	  *sprs = RamHeapSlots->sprs;
 	Sint32 cnt;
 
 	for(cnt = 0; cnt < 10; cnt++) {
@@ -486,7 +486,7 @@ void fdSprViewerSetLayerColMode(Sint32 slot, Sint32 value)
    order value. */
 void fdSprViewerSetLayerPriority(Sint32 slot, Sint32 value)
 {
-	SPR	  *sprs = Ram_HeapSlots->sprs;
+	SPR	  *sprs = RamHeapSlots->sprs;
 	Sint32 cnt;
 
 	for(cnt = 0; cnt < 10; cnt++) {
@@ -507,7 +507,7 @@ Sint32 fdSprViewerStartStaggeredAnimations(Sint32 slot, Sint32 value)
 	SPR_ANIMATION	   *entry;
 	Uint8			   *state;
 
-	state = Ram_HeapSlots->sprs;
+	state = RamHeapSlots->sprs;
 	cnt = 0;
 	ofs = (3 & slot) * sizeof(SPR_ANIMATION *) + offsetof(SPR, entries);
 	zero = 0;
@@ -542,7 +542,7 @@ Sint32 fdSprViewerStartStaggeredAnimations(Sint32 slot, Sint32 value)
    and resets each sprite animation from its new metadata. */
 void fdSprViewerSetLayerSpr(Sint32 slot, Sint32 no)
 {
-	SPR	  *sprs = Ram_HeapSlots->sprs;
+	SPR	  *sprs = RamHeapSlots->sprs;
 	Sint32 cnt;
 
 	fdResourceGetMetadataRecordStub(no);
@@ -561,7 +561,7 @@ extern const SPR_SCALE SpriteViewerScale;
    position, facing the way that position stands for. */
 void fdSprViewerPlaceRing(void)
 {
-	SPR		 *sprs = Ram_HeapSlots->sprs;
+	SPR		 *sprs = RamHeapSlots->sprs;
 	Uint32	  kind = sprs->entries[0]->kind;
 	SPR_SCALE scale;
 	Uint8	 *tbl;
@@ -572,7 +572,7 @@ void fdSprViewerPlaceRing(void)
 	Uint32	  i;
 
 	scale = SpriteViewerScale;
-	tbl = (Uint8 *)Ram_HeapSlots->battleState;
+	tbl = (Uint8 *)RamHeapSlots->battleState;
 
 	switch(kind) {
 	case ANIM_FACING_THREE_PICTURES:

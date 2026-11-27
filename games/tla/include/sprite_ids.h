@@ -418,7 +418,7 @@ typedef enum SPR_ID {
 	SPRITE_STATUE_CAP,
 	SPRITE_MOAI,
 	/* The water a Moai pours from its mouth once Douse fills it, a pool and a
-	   stream added to its sprite (AquaRockInside_SetMoaiFace). */
+	   stream added to its sprite (AquaRockInsideSetMoaiFace). */
 	SPRITE_MOAI_WATER,
 	SPRITE_TWISTER_ROCK,
 	SPRITE_WATER_DROP_LARGE,
@@ -589,7 +589,7 @@ typedef enum SPR_ID {
 	SPRITE_WEAPON_PIERS_LIGHT_BLADE,
 	/* The enemies' battle sprites, from here to SPRITE_BATTLE_BANDIT:
 	   animations only, drawn from each class's battle pictures, named for the
-	   first class Summon_EntryTable gives each. Three belong to no class, and
+	   first class SummonEntryTable gives each. Three belong to no class, and
 	   are named for the monster pictures that stand at their place in the
 	   resource directory (graphics/monster): the red beast, the pink worm and
 	   the blue crab. */
@@ -677,7 +677,7 @@ typedef enum SPR_ID {
 	SPRITE_BATTLE_DREAD_HOUND,
 	SPRITE_BATTLE_MAULER,
 	SPRITE_BATTLE_SIREN,
-	/* The Vermin's, which the eight party rows of Summon_EntryTable also
+	/* The Vermin's, which the eight party rows of SummonEntryTable also
 	   give. */
 	SPRITE_BATTLE_VERMIN,
 	SPRITE_BATTLE_WILD_MUSHROOM,

@@ -327,7 +327,7 @@ Sint32 mnTextDrawStringAsTiles(
 void mnWindowClearTextTilesInRect(
 	Sint32 x, Sint32 y, Uint32 width, Uint32 height)
 {
-	Uint8  *base = Ram_HeapSlots->winState;
+	Uint8  *base = RamHeapSlots->winState;
 	Uint16 *cursor = &((WIN_STATE *)base)->tilemap[y][x];
 	Uint32	alternate = ((WIN_STATE *)base)->extraTextTiles;
 	Uint32	row;
@@ -355,7 +355,7 @@ void mnWindowClearTextTilesInRect(
    tile taken but not marked shown (its state exactly TEXT_TILE_TAKEN). */
 void mnWindowMarkVisibleTextTiles(void)
 {
-	Uint8  *base = Ram_HeapSlots->winState;
+	Uint8  *base = RamHeapSlots->winState;
 	Uint32	alternate = ((WIN_STATE *)base)->extraTextTiles;
 	Uint16 *cursor = ((WIN_STATE *)base)->tilemap[0];
 	Sint32	width = DISPLAY_TILE_WIDTH;

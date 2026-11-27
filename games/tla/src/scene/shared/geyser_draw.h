@@ -9,7 +9,7 @@ void btGeyserDraw(void)
 	Sint32		 frm;
 	Uint32		*oam = state->block;
 	Sint32		 cnt = 0;
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
 	Sint32		 viewX, viewZ, originY;
 	ACTOR		*actor;
 	Sint32		 pieceY, x;

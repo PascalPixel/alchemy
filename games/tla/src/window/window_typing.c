@@ -337,8 +337,8 @@ Sint32 mnMessageType(MESSAGE *msg)
 #if OUTLINED_GLYPH_PAIRS_FIT_CELL
 			if(!(msg->win->flg & WINDOW_FLAG_TEXT_CANVAS) &&
 				code > TEXT_SPACE && nextCode > TEXT_SPACE) {
-				Sint16 pairWidth = Font_Glyphs[code - TEXT_SPACE].width +
-					Font_Glyphs[nextCode - TEXT_SPACE].width;
+				Sint16 pairWidth = FontGlyphs[code - TEXT_SPACE].width +
+					FontGlyphs[nextCode - TEXT_SPACE].width;
 
 				if(state->outline == TEXT_STYLE_OUTLINED) {
 					if((Uint16)pairWidth <= 14) {
@@ -353,8 +353,8 @@ Sint32 mnMessageType(MESSAGE *msg)
 #else
 			if(!(msg->win->flg & WINDOW_FLAG_TEXT_CANVAS) &&
 				code > TEXT_SPACE && nextCode > TEXT_SPACE &&
-				(Uint16)(Font_Glyphs[code - TEXT_SPACE].width +
-					Font_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
+				(Uint16)(FontGlyphs[code - TEXT_SPACE].width +
+					FontGlyphs[nextCode - TEXT_SPACE].width) <= 15) {
 				code |= nextCode << 8;
 				msg->textIdx = (msg->textIdx + 1) & TEXT_BUFFER_MASK;
 			}

@@ -1,4 +1,4 @@
-/* Ship rooms (SceneId_ShipRooms): the rooms below the decks of the Tolbi-bound
+/* Ship rooms (SceneIdShipRooms): the rooms below the decks of the Tolbi-bound
    Ship, on its voyage across the Karagol Sea from Kalay to Tolbi. The deck and
    the mast are tolbi_ship_deck.c and the mast's own scene; the voyage moves
    between all three.
@@ -3326,8 +3326,8 @@ static void scShipRoomsAnnounceTurn(void)
 }
 
 /* Monsters are on the rowing deck in the first attack: three floating monsters
-   beside the seats and an oarsman down, before ShipRooms_
-   ReportMonstersBelowdecks. */
+   beside the seats and an oarsman down, before
+   scShipRoomsReportMonstersBelowdecks. */
 static void scShipRoomsStartFirstAttack(void)
 {
 	const Sint32 *entryScript;

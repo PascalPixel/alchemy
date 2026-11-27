@@ -14,11 +14,11 @@
 @ it reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r1, pc, #16; ldmia r1,
 @ {r1, r2, r4}).
-@ Why ColorBuffer_ScaleThreeQuartersKernelCode to ColorBuffer_HalveKernelCode are assembly:
+@ Why ColorBufferScaleThreeQuartersKernelCode to ColorBufferHalveKernelCode are assembly:
 @ each Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push {r5-sl} saves callee-saved registers without lr.
-@ Why ColorBuffer_DarkenKernelCode is assembly:
+@ Why ColorBufferDarkenKernelCode is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ fp (r11) holds the eighth colour word of each ldm and stmia, not a tick
@@ -33,21 +33,21 @@
 @ The loaders of the backup kernels above and of the brighten kernel: each
 @ copies its ARM kernel by DMA into a buffer on
 @ the stack and calls it there, through lr with a lone BL suffix.
-@ Why ColorBuffer_ScaleNonzeroThreeQuartersKernelCode to ColorBuffer_HalveNonzeroKernelCode are assembly:
+@ Why ColorBufferScaleNonzeroThreeQuartersKernelCode to ColorBufferHalveNonzeroKernelCode are assembly:
 @ each Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push {r5, r6} saves callee-saved registers without lr.
-@ Why ColorBuffer_DarkenPartialKernelCode is assembly:
+@ Why ColorBufferDarkenPartialKernelCode is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
 @ four-register list starting at r4. GCC 2.95.2's block-copy expander
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ Why ColorBuffer_BrightenPartialKernelCode is assembly:
+@ Why ColorBufferBrightenPartialKernelCode is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push {r5-r9} saves callee-saved registers without lr.
-@ Why syColBufferScaleNonzeroThreeQuarters to ColorBuffer_DarkenPartial are assembly:
+@ Why syColBufferScaleNonzeroThreeQuarters to ColorBufferDarkenPartial are assembly:
 @ each reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
 @ {r4, r5, r7}).
@@ -58,16 +58,16 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global Resource_DecodeByteLzCode
-Resource_DecodeByteLzCode:
-	.global Resource_DecodeByteLz
+	.global ResourceDecodeByteLzCode
+ResourceDecodeByteLzCode:
+	.global ResourceDecodeByteLz
 	.thumb_func
-Resource_DecodeByteLz:
+ResourceDecodeByteLz:
 	bx	pc
-AlchemyUncredited_0800165a:
+AlchemyUncredited0800165a:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0800165a:
+AlchemyUncreditedEnd0800165a:
 	push	{r1, r5, r6, r7, lr}
 .L_08001660:
 	ldrb	lr, [r0], #1
@@ -138,9 +138,9 @@ AlchemyUncreditedEnd_0800165a:
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
 @ The slot pc + 8 skips; never run.
-AlchemyUncredited_0800175c:
+AlchemyUncredited0800175c:
 	nop
-AlchemyUncreditedEnd_0800175c:
+AlchemyUncreditedEnd0800175c:
 	ldrb	r3, [r4], #1
 	strb	r3, [r1], #1
 	ldrb	r3, [r4], #1
@@ -186,10 +186,10 @@ AlchemyUncreditedEnd_0800175c:
 	rsb	ip, ip, #15
 	add	pc, pc, ip, lsl #3
 @ The slot pc + 8 skips; never run.
-AlchemyUncredited_0800180c:
+AlchemyUncredited0800180c:
 	nop
 .L_08001810:
-AlchemyUncreditedEnd_0800180c:
+AlchemyUncreditedEnd0800180c:
 	ldrb	r2, [r4], #1
 	strb	r2, [r1], #1
 	ldrb	r2, [r4], #1
@@ -232,8 +232,8 @@ AlchemyUncreditedEnd_0800180c:
 	pop	{r0, r5, r6, r7, ip}
 	sub	r0, r1, r0
 	bx	ip
-	.global Resource_DecodeByteLzCodeSize
-	.set Resource_DecodeByteLzCodeSize, . - Resource_DecodeByteLzCode
+	.global ResourceDecodeByteLzCodeSize
+	.set ResourceDecodeByteLzCodeSize, . - ResourceDecodeByteLzCode
 
 	.section .text,"ax",%progbits
 	.balign 4
@@ -245,10 +245,10 @@ syRenderBuildOAMListKernel:
 	.global syRenderBuildOAMListKernelCode
 syRenderBuildOAMListKernelCode:
 	bx	pc
-AlchemyUncredited_080018b6:
+AlchemyUncredited080018b6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080018b6:
+AlchemyUncreditedEnd080018b6:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r1, pc, #0x118
 	ldm	r1, {r2, sl, fp, ip}
@@ -363,14 +363,14 @@ syRenderBuildOAMList:
 	.balign 4
 .syntax unified
 	.thumb
-	.global ColorBuffer_ScaleThreeQuartersKernelCode
-ColorBuffer_ScaleThreeQuartersKernelCode:
+	.global ColorBufferScaleThreeQuartersKernelCode
+ColorBufferScaleThreeQuartersKernelCode:
 .L_08001a14:
 	bx	pc
-AlchemyUncredited_08001a16:
+AlchemyUncredited08001a16:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001a16:
+AlchemyUncreditedEnd08001a16:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -420,14 +420,14 @@ AlchemyUncreditedEnd_08001a16:
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
 	.thumb
-	.global ColorBuffer_HalveKernelCode
-ColorBuffer_HalveKernelCode:
+	.global ColorBufferHalveKernelCode
+ColorBufferHalveKernelCode:
 .L_08001ad4:
 	bx	pc
-AlchemyUncredited_08001ad6:
+AlchemyUncredited08001ad6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001ad6:
+AlchemyUncreditedEnd08001ad6:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -461,14 +461,14 @@ AlchemyUncreditedEnd_08001ad6:
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
 	.thumb
-	.global ColorBuffer_DarkenKernelCode
-ColorBuffer_DarkenKernelCode:
+	.global ColorBufferDarkenKernelCode
+ColorBufferDarkenKernelCode:
 .L_08001b54:
 	bx	pc
-AlchemyUncredited_08001b56:
+AlchemyUncredited08001b56:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001b56:
+AlchemyUncreditedEnd08001b56:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	ip, [pc, #160]
 	rsb	r1, r1, ip, lsl #7
@@ -519,14 +519,14 @@ AlchemyUncreditedEnd_08001b56:
 	.balign 4
 .syntax unified
 	.thumb
-	.global ColorBuffer_BrightenKernelCode
-ColorBuffer_BrightenKernelCode:
+	.global ColorBufferBrightenKernelCode
+ColorBufferBrightenKernelCode:
 .L_08001c08:
 	bx	pc
-AlchemyUncredited_08001c0a:
+AlchemyUncredited08001c0a:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001c0a:
+AlchemyUncreditedEnd08001c0a:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8
@@ -581,7 +581,7 @@ syColBufferScaleThreeQuarters:
 	add	sp, #192
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_ScaleThreeQuartersKernelCode
+	.4byte	ColorBufferScaleThreeQuartersKernelCode
 	.4byte	0x84000030
 	.global syColBufferHalve
 	.thumb_func
@@ -597,7 +597,7 @@ syColBufferHalve:
 	add	sp, #128
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_HalveKernelCode
+	.4byte	ColorBufferHalveKernelCode
 	.4byte	0x84000020
 	.global syColBufferBrighten
 	.thumb_func
@@ -613,7 +613,7 @@ syColBufferBrighten:
 	add	sp, #136
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_BrightenKernelCode
+	.4byte	ColorBufferBrightenKernelCode
 	.4byte	0x84000022
 	.global syColBufferDarken
 	.thumb_func
@@ -629,24 +629,24 @@ syColBufferDarken:
 	add	sp, #180
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_DarkenKernelCode
+	.4byte	ColorBufferDarkenKernelCode
 	.4byte	0x8400002d
 
 	.section .text,"ax",%progbits
 	.balign 4
 .syntax unified
 	.thumb
-	.global ColorBuffer_ScaleNonzeroThreeQuartersKernelCode
-ColorBuffer_ScaleNonzeroThreeQuartersKernelCode:
-	.global ColorBuffer_ScaleNonzeroThreeQuartersKernel
+	.global ColorBufferScaleNonzeroThreeQuartersKernelCode
+ColorBufferScaleNonzeroThreeQuartersKernelCode:
+	.global ColorBufferScaleNonzeroThreeQuartersKernel
 	.thumb_func
-ColorBuffer_ScaleNonzeroThreeQuartersKernel:
+ColorBufferScaleNonzeroThreeQuartersKernel:
 .L_08001d10:
 	bx	pc
-AlchemyUncredited_08001d12:
+AlchemyUncredited08001d12:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001d12:
+AlchemyUncreditedEnd08001d12:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -672,17 +672,17 @@ AlchemyUncreditedEnd_08001d12:
 	pop	{r5, r6}
 	bx	lr
 	.thumb
-	.global ColorBuffer_HalveNonzeroKernelCode
-ColorBuffer_HalveNonzeroKernelCode:
-	.global ColorBuffer_HalveNonzeroKernel
+	.global ColorBufferHalveNonzeroKernelCode
+ColorBufferHalveNonzeroKernelCode:
+	.global ColorBufferHalveNonzeroKernel
 	.thumb_func
-ColorBuffer_HalveNonzeroKernel:
+ColorBufferHalveNonzeroKernel:
 .L_08001d70:
 	bx	pc
-AlchemyUncredited_08001d72:
+AlchemyUncredited08001d72:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001d72:
+AlchemyUncreditedEnd08001d72:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -708,17 +708,17 @@ AlchemyUncreditedEnd_08001d72:
 	pop	{r5, r6}
 	bx	lr
 	.thumb
-	.global ColorBuffer_DarkenPartialKernelCode
-ColorBuffer_DarkenPartialKernelCode:
-	.global ColorBuffer_DarkenPartialKernel
+	.global ColorBufferDarkenPartialKernelCode
+ColorBufferDarkenPartialKernelCode:
+	.global ColorBufferDarkenPartialKernel
 	.thumb_func
-ColorBuffer_DarkenPartialKernel:
+ColorBufferDarkenPartialKernel:
 .L_08001dd0:
 	bx	pc
-AlchemyUncredited_08001dd2:
+AlchemyUncredited08001dd2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001dd2:
+AlchemyUncreditedEnd08001dd2:
 	rsb	ip, r1, #0x80000000
 	add	ip, ip, #0x800000
 	add	ip, ip, #0x8000
@@ -781,17 +781,17 @@ AlchemyUncreditedEnd_08001dd2:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 	.thumb
-	.global ColorBuffer_BrightenPartialKernelCode
-ColorBuffer_BrightenPartialKernelCode:
-	.global ColorBuffer_BrightenPartialKernel
+	.global ColorBufferBrightenPartialKernelCode
+ColorBufferBrightenPartialKernelCode:
+	.global ColorBufferBrightenPartialKernel
 	.thumb_func
-ColorBuffer_BrightenPartialKernel:
+ColorBufferBrightenPartialKernel:
 .L_08001ea4:
 	bx	pc
-AlchemyUncredited_08001ea6:
+AlchemyUncredited08001ea6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001ea6:
+AlchemyUncreditedEnd08001ea6:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8
@@ -872,7 +872,7 @@ syColBufferScaleNonzeroThreeQuarters:
 	add	sp, #96
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_ScaleNonzeroThreeQuartersKernelCode
+	.4byte	ColorBufferScaleNonzeroThreeQuartersKernelCode
 	.4byte	0x84000018
 	.global syColBufferHalveNonzero
 	.thumb_func
@@ -887,11 +887,11 @@ syColBufferHalveNonzero:
 	add	sp, #96
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_HalveNonzeroKernelCode
+	.4byte	ColorBufferHalveNonzeroKernelCode
 	.4byte	0x84000018
-	.global ColorBuffer_BrightenPartial
+	.global ColorBufferBrightenPartial
 	.thumb_func
-ColorBuffer_BrightenPartial:
+ColorBufferBrightenPartial:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -902,11 +902,11 @@ ColorBuffer_BrightenPartial:
 	add	sp, #216
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_BrightenPartialKernelCode
+	.4byte	ColorBufferBrightenPartialKernelCode
 	.4byte	0x84000036
-	.global ColorBuffer_DarkenPartial
+	.global ColorBufferDarkenPartial
 	.thumb_func
-ColorBuffer_DarkenPartial:
+ColorBufferDarkenPartial:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -917,7 +917,7 @@ ColorBuffer_DarkenPartial:
 	add	sp, #212
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_DarkenPartialKernelCode
+	.4byte	ColorBufferDarkenPartialKernelCode
 	.4byte	0x84000035
 
 	.section .text,"ax",%progbits
@@ -926,14 +926,14 @@ ColorBuffer_DarkenPartial:
 	.thumb
 	.global syDecompressHalfwordLZ
 syDecompressHalfwordLZ:
-	.global Resource_DecodeHalfwordLz
+	.global ResourceDecodeHalfwordLz
 	.thumb_func
-Resource_DecodeHalfwordLz:
+ResourceDecodeHalfwordLz:
 	bx	pc
-AlchemyUncredited_08001ffe:
+AlchemyUncredited08001ffe:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08001ffe:
+AlchemyUncreditedEnd08001ffe:
 	mov	r3, #0x80000000
 	b	.L_0800200c
 .L_08002008:

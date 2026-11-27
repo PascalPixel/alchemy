@@ -154,7 +154,7 @@ typedef struct DESCENDING_ARC_SPR {
 } DESCENDING_ARC_SPR;
 
 /* The arc sparks' tiles. */
-extern const Uint8 FieldEffect_ArcSparkTiles[];
+extern const Uint8 FieldEffectArcSparkTiles[];
 
 void fdActorWaitForTrackEndStub(struct ACTOR *actor);
 
@@ -163,7 +163,7 @@ extern const Sint32 ArrowWobbleFades[4];
 
 /* Three 8 by 8 glints the Arrow draws into its canvas, a byte a pixel
    (arrow_glint.s). */
-extern const Uint8 Arrow_GlintPixels[];
+extern const Uint8 ArrowGlintPixels[];
 
 /* The metatiles around the caster Cyclone looks at. */
 #define FIELD_PSYNERGY_NEARBY_METATILES 21

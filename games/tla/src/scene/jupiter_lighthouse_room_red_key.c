@@ -736,7 +736,7 @@ typedef struct SPARK_RING_STATE {
    swinging out and back on a half sine, and draws it. */
 void scJupiterLighthouseUpdateSparkRing(void)
 {
-	SPARK_RING_STATE *state = Ram_HeapSlots->menuState;
+	SPARK_RING_STATE *state = RamHeapSlots->menuState;
 	SPARK			 *spark = state->sparks;
 	EFFECT_SPR		 *spr = state->sprs;
 	Sint32			  pos[3];
@@ -773,7 +773,7 @@ void scJupiterLighthouseUpdateSparkRing(void)
    random side (never straight down) and taking 16 to 31 ticks to arrive. */
 void scJupiterLighthouseAddSparks(Sint32 cnt)
 {
-	SPARK_RING_STATE *state = Ram_HeapSlots->menuState;
+	SPARK_RING_STATE *state = RamHeapSlots->menuState;
 	SPARK			 *spark;
 	Sint32			  ang;
 	Sint32			  i;
@@ -844,7 +844,7 @@ void scJupiterLighthouseStartSparkRing(const Sint32 *from, const Sint32 *to)
 /* Stops the spark ring and frees its pictures and state. */
 void scJupiterLighthouseEndSparkRing(void)
 {
-	SPARK_RING_STATE *state = Ram_HeapSlots->menuState;
+	SPARK_RING_STATE *state = RamHeapSlots->menuState;
 
 	syFieldCloseEvent(scJupiterLighthouseUpdateSparkRing);
 	syVRAMCacheFreeEntry(state->vramEntry);

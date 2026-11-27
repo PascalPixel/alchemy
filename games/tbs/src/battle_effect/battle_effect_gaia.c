@@ -88,7 +88,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 	REG_BG2X = GaiaBg2Shifts[state->args->side][state->args->variant] << 8;
 
 	btResourceLoadAndDecompress(
-		RESOURCE_EARTH_WALL_SHEET, Ram_MapGridMetatileBuffer, 1, 0);
+		RESOURCE_EARTH_WALL_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	syWordsCopy(BG_PLTT, syResourceGetTableEntry(RESOURCE_GAIA_ORANGE_PALETTE),
 		SHEET_PALETTE_BYTES);
 	col = &BG_PLTT[1];
@@ -111,7 +111,7 @@ void btEffectRunGaia(BATTLE_EFFECT_PARM *args)
 		*col++ = RGB(red, green, blue);
 	}
 
-	src = Ram_MapGridMetatileBuffer;
+	src = RamMapGridMetatileBuffer;
 	sheetIdx = 0;
 	for(j = 0; j != 9; j++) {
 		for(i = 0; i != GAIA_ROW_HEIGHT; i++) {

@@ -1,20 +1,20 @@
 @ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
 @ a mode switch inside a function, as the colour backup kernels in system/decompress_byte_lz.s
 @ do; the halfword after bx pc is never run.
-@ ColorBuffer_ScaleKernelCode(source, destination, scale, count): the ARM
+@ ColorBufferScaleKernelCode(source, destination, scale, count): the ARM
 @ kernel btColBufferScale (color_scale_loader.s) copies to the stack and
 @ runs. It scales count BGR555 colours by scale / 256, at most 1.0, masking
 @ each channel in place.
 
 .syntax unified
 	.thumb
-	.global ColorBuffer_ScaleKernelCode
-ColorBuffer_ScaleKernelCode:
+	.global ColorBufferScaleKernelCode
+ColorBufferScaleKernelCode:
 	bx	pc
-AlchemyUncredited_08118396:
+AlchemyUncredited08118396:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08118396:
+AlchemyUncreditedEnd08118396:
 	push	{r5, r6, r7, r8, lr}
 	mov	r5, r0
 	mov	r0, r1

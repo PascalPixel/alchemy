@@ -1,12 +1,12 @@
 @ Two ARM kernels, each copied into a heap block and run there:
 @ btRenderFillMeshKernel, an ARM build of btRenderFillMesh (its size is
 @ btRenderFillMeshKernelCodeSize, which btRenderRunFillMeshKernel copies), and
-@ Data_0813847c after it.
+@ Data0813847c after it.
 @
 @ Why btRenderFillMeshKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
-@ Why the function after Data_0813847c is assembly:
+@ Why the function after Data0813847c is assembly:
 @ its Thumb entry, the word written as andeq r4, r0, #120, 14 (bytes 78 47 00
 @ 02: bx pc and the halfword after it), switches to the ARM code that follows,
 @ a mode switch inside a function.
@@ -19,10 +19,10 @@ btRenderFillMeshKernel:
 btRenderFillMeshKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_081380ae:
+AlchemyUncredited081380ae:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081380ae:
+AlchemyUncreditedEnd081380ae:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r3, #50331648
 	add	r0, r0, r0, lsl #1
@@ -285,8 +285,8 @@ AlchemyUncreditedEnd_081380ae:
 	.global btRenderFillMeshKernelCodeSize
 	.set btRenderFillMeshKernelCodeSize, . - btRenderFillMeshKernel
 	.4byte	ModelTransformState
-	.global Data_0813847c
-Data_0813847c:
+	.global Data0813847c
+Data0813847c:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	sub	sp, sp, #144
 	str	r0, [sp, #140]

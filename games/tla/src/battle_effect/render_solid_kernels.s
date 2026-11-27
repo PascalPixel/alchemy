@@ -14,10 +14,10 @@ btRenderSolidKernel:
 btRenderSolidKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_08138fca:
+AlchemyUncredited08138fca:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08138fca:
+AlchemyUncreditedEnd08138fca:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #484]
 	bic	fp, fp, #1
@@ -166,10 +166,10 @@ btRenderSolidMaxKernel:
 btRenderSolidMaxKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_081391ca:
+AlchemyUncredited081391ca:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081391ca:
+AlchemyUncreditedEnd081391ca:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #500]
 	bic	fp, fp, #1
@@ -322,10 +322,10 @@ btRenderSolidAdditiveKernel:
 btRenderSolidAdditiveKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_081393da:
+AlchemyUncredited081393da:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_081393da:
+AlchemyUncreditedEnd081393da:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #516]
 	bic	fp, fp, #1

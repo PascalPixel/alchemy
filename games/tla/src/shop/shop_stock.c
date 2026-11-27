@@ -4,7 +4,7 @@
    ticket's cost, and lets the player choose who takes it. */
 void mnShopGiveGameTicket(WINDOW *win, WINDOW *itemWin)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Uint32		savedSelectedItem;
 	Sint32		memberIdx;
 	Sint32		unitId;

@@ -86,7 +86,7 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 	if(mode == COMMAND_ROW_PARTY) {
 		kindCnt = 0;
 		selectionUi->commandKinds[kindCnt++] = COMMAND_ICON_FIGHT;
-		if(Ram_HeapSlots->battleState->isLink == 0 &&
+		if(RamHeapSlots->battleState->isLink == 0 &&
 			battleMenu->swappedUnit == -1 && gmPartyCountMembersStub() > 4)
 			selectionUi->commandKinds[kindCnt++] = COMMAND_ICON_SWITCH;
 		if(fleeAllowed > 0 &&
@@ -286,8 +286,8 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 						if(navigation->tutorialStep == 1) {
 							void *msg;
 
-							((WIN_STATE *)Ram_HeapSlots->winState)
-								->battleMode |= WINDOW_GLYPHS_BLENDED;
+							((WIN_STATE *)RamHeapSlots->winState)->battleMode |=
+								WINDOW_GLYPHS_BLENDED;
 							if(selectionUi
 									->commandKinds[selectionUi->selectedIdx] ==
 								COMMAND_ICON_DJINN)
@@ -302,8 +302,8 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 									mnDjinnGetGiveTutorialMessage() +
 										DJINN_TUTORIAL_LINE_SUMMON,
 									15, 8);
-							((WIN_STATE *)Ram_HeapSlots->winState)
-								->battleMode &= ~WINDOW_GLYPHS_BLENDED;
+							((WIN_STATE *)RamHeapSlots->winState)->battleMode &=
+								~WINDOW_GLYPHS_BLENDED;
 							btMessageWaitForAdvanceAtStub(102, 155);
 							mnWindowClose(msg, 1);
 							navigation->tutorialStep++;
@@ -401,7 +401,7 @@ Sint32 mnBattleCommandRowRun(Sint32 mode, Sint32 fleeAllowed)
 void mnWindowHighlightRect(
 	Sint32 x, Sint32 y, Sint32 width, Sint32 height, Sint32 paletteBit)
 {
-	WIN_STATE *state = Ram_HeapSlots->winState;
+	WIN_STATE *state = RamHeapSlots->winState;
 
 	paletteBit &= 1;
 	paletteBit = BG_TILE_PALETTE(paletteBit);
@@ -455,7 +455,7 @@ void mnWindowHighlightRect(
    mnBattleCollectPartyCommands calls it. */
 Sint32 mnPartyStatHighlightMembers(Uint16 *ids)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  cnt;
 	Sint32		  i;
 	Sint32		  j;

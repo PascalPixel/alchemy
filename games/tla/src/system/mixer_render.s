@@ -21,10 +21,10 @@
 	.global IwramSoundRenderVBlank
 IwramSoundRenderVBlank:
 	bx	pc
-AlchemyUncredited_080012fa:
+AlchemyUncredited080012fa:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080012fa:
+AlchemyUncreditedEnd080012fa:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	r1, [pc, #-52]
 	tst	r1, #12

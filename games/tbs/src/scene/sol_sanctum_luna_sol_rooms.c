@@ -1,9 +1,9 @@
-/* Sol Sanctum (SceneId_SolSanctumLunaSolRooms), the room of Sol and the room of
+/* Sol Sanctum (SceneIdSolSanctumLunaSolRooms), the room of Sol and the room of
    Luna at the heart of the sanctum.
 
-   The rooms lie between SceneId_SolSanctumReliefs (sol_sanctum_entrance.c), the
-   statue room (SceneId_SolSanctumStatue, sol_sanctum_statue.c) and the way up
-   to SceneId_SolSanctumElementalStarRoom.
+   The rooms lie between SceneIdSolSanctumReliefs (sol_sanctum_entrance.c), the
+   statue room (SceneIdSolSanctumStatue, sol_sanctum_statue.c) and the way up
+   to SceneIdSolSanctumElementalStarRoom.
 
    The way in from the second relief room is at the south-west (metatile (3,
    31)). Its left branch leads to a chest with a Herb (metatile (3, 15)); the
@@ -41,7 +41,7 @@
 	 (scSolSanctumLunaSolRoomsRiseToElementalStarRoom,
 	 FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN).
    - After the eruption, the Wise One sends Isaac and Garet here from the
-	 collapsing Elemental Star Room (SceneId_SolSanctumEruption,
+	 collapsing Elemental Star Room (SceneIdSolSanctumEruption,
 	 sol_sanctum_eruption.c), and they set off for the way out
 	 (scSolSanctumLunaSolRoomsArriveAfterWiseOnesRescue,
 	 FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN). From then on the rooms rumble.
@@ -94,7 +94,7 @@ extern CUE			  SolSanctumLunaSolRoomsCues[];
    their characters' ids. */
 typedef enum SOL_SANCTUM_LUNA_SOL_ROOMS_ACTOR_ID {
 	/* Eight statues, four in each room, with the sprite of
-	   SceneId_SolSanctumStatue's statues (sol_sanctum_statue.c). */
+	   SceneIdSolSanctumStatue's statues (sol_sanctum_statue.c). */
 	ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
 	ACTOR_KRADEN = ACTOR_FIRST_STATUE + 8
 } SOL_SANCTUM_LUNA_SOL_ROOMS_ACTOR_ID;
@@ -155,7 +155,7 @@ typedef enum SOL_SANCTUM_LUNA_SOL_ROOMS_METATILE_BEHAVIOR {
 	/* The room of Luna's south doorway, where Kraden calls Isaac over once the
 	   picture has changed. */
 	METATILE_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_LUNA_DOORWAY = 8,
-	/* The way back out to SceneId_SolSanctumReliefs. */
+	/* The way back out to SceneIdSolSanctumReliefs. */
 	METATILE_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_WAY_OUT = 9,
 	/* The symbol of the sun on the floor, first stepped on. */
 	METATILE_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_HEART_OF_SANCTUM = 11,
@@ -773,13 +773,13 @@ static void scSolSanctumLunaSolRoomsUpdateFirstFallingLight(void)
 	}
 
 /* The Luna room's second falling light. */
-SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateSecondFallingLight,
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRoomsUpdateSecondFallingLight,
 	SolSanctumLunaSolRoomsLight2Timer, 47, 42, 33, 90, 100)
 /* The Luna room's third falling light. */
-SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateThirdFallingLight,
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRoomsUpdateThirdFallingLight,
 	SolSanctumLunaSolRoomsLight3Timer, 48, 31, 36, 95, 105)
 /* The Luna room's fourth falling light. */
-SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRooms_UpdateFourthFallingLight,
+SOL_SANCTUM_FALLING_LIGHT(SolSanctumLunaSolRoomsUpdateFourthFallingLight,
 	SolSanctumLunaSolRoomsLight4Timer, 46, 41, 36, 85, 95)
 
 /* Opens on Kraden in the Luna room in SOL_SANCTUM_BLUE_TINT, as a flash crosses
@@ -910,11 +910,11 @@ static void scSolSanctumLunaSolRoomsSpringTrap(void)
 	sySetTickEvent(
 		scSolSanctumLunaSolRoomsUpdateFirstFallingLight, EVENT_PASS_TICK);
 	sySetTickEvent(
-		SolSanctumLunaSolRooms_UpdateSecondFallingLight, EVENT_PASS_TICK);
+		SolSanctumLunaSolRoomsUpdateSecondFallingLight, EVENT_PASS_TICK);
 	sySetTickEvent(
-		SolSanctumLunaSolRooms_UpdateThirdFallingLight, EVENT_PASS_TICK);
+		SolSanctumLunaSolRoomsUpdateThirdFallingLight, EVENT_PASS_TICK);
 	sySetTickEvent(
-		SolSanctumLunaSolRooms_UpdateFourthFallingLight, EVENT_PASS_TICK);
+		SolSanctumLunaSolRoomsUpdateFourthFallingLight, EVENT_PASS_TICK);
 	for(flash = 0; flash != 6; flash++) {
 		scSolSanctumLunaSolRoomsFlashCurrentStatueLights(5);
 	}
@@ -935,9 +935,9 @@ static void scSolSanctumLunaSolRoomsSpringTrap(void)
 	fdActorSetSpeed(ACTOR_KRADEN, 2);
 	fdActorWalkToAndWait(ACTOR_KRADEN, 576, 280);
 	syCloseEvent(scSolSanctumLunaSolRoomsUpdateFirstFallingLight);
-	syCloseEvent(SolSanctumLunaSolRooms_UpdateSecondFallingLight);
-	syCloseEvent(SolSanctumLunaSolRooms_UpdateThirdFallingLight);
-	syCloseEvent(SolSanctumLunaSolRooms_UpdateFourthFallingLight);
+	syCloseEvent(SolSanctumLunaSolRoomsUpdateSecondFallingLight);
+	syCloseEvent(SolSanctumLunaSolRoomsUpdateThirdFallingLight);
+	syCloseEvent(SolSanctumLunaSolRoomsUpdateFourthFallingLight);
 	FieldStateWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	FieldStateWork->transitionFrm = 32;
 	fdScriptFinishScreenTransition();

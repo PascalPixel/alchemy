@@ -7,7 +7,7 @@
  *
  * maps.tsv, beside the maps' folders, lists the folders in the order the Game
  * Pak holds the maps, with a name for a map when the folder's is not used
- * (snow_cave is Field_SnowCave). Each folder holds the map's own tables:
+ * (snow_cave is FieldSnowCave). Each folder holds the map's own tables:
  *
  *   header.tsv  one row: the twelve numbers of the map's header.
  *   layers.tsv  three rows: the eight numbers of each layer.
@@ -31,7 +31,7 @@
  * the Game Pak holds them: the part (palette, tiles_a), its file, the bytes
  * the original packer left after it as hex digits, an alignment to fill to
  * and the byte to fill with when it is not zero. A part's global name is
- * made of the folder's and its own: Tileset_VenusLighthouseTilesA.
+ * made of the folder's and its own: TilesetVenusLighthouseTilesA.
  *
  * The last column of each is "edition": empty, or the one language edition
  * the row is for (ja, en, de, es, fr or it).
@@ -206,7 +206,7 @@ main(int argc, char **argv)
 		if (maps.rows[map][1][0])
 			snprintf(field, sizeof field, "%s", maps.rows[map][1]);
 		else
-			camel(field + snprintf(field, sizeof field, "Field_"), name);
+			camel(field + snprintf(field, sizeof field, "Field"), name);
 		for (size_t row = 0; row < header.count; row++)
 		{
 			char **cells = header.rows[row];
@@ -276,7 +276,7 @@ main(int argc, char **argv)
 
 				if (cells[1][0] && strcmp(cells[1], one[0]))
 					continue;
-				camel(camel(global + snprintf(global, sizeof global, "Tileset_"), cells[0]), one[0]);
+				camel(camel(global + snprintf(global, sizeof global, "Tileset"), cells[0]), one[0]);
 				place(global, other ? sets : set, one[1] + (other ? 3 : 0), one + 2);
 			}
 		}

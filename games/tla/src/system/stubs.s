@@ -1,8 +1,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_System
-Stubs_System:
+	.global StubsSystem
+StubsSystem:
 	stub sySynchStub, sySynch
 	stub syInitEventStub, syInitEvent
 	stub sySetEventStub, sySetEvent

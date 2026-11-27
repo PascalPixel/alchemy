@@ -660,7 +660,7 @@ const CUE *scGetCues(void)
    ENTRANCE_WITH_ISAACS_PARTY. */
 Sint32 scInit(void)
 {
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	Sint32			   *transition = &state->transition;
 	MAIN_ROUTINE_STATE *mainState = &MainRoutineStateWork;
 

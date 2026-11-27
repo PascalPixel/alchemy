@@ -152,8 +152,8 @@ typedef enum KIBOMBO_FIRE_COL {
    placements. */
 enum { ACTOR_PUDDLE = 8 };
 
-/* The grounds before the statue (SceneId_KibomboStatueGrounds and, on the
-   ceremony night, SceneId_KibomboStatueGroundsCeremony), numbering the rows of
+/* The grounds before the statue (SceneIdKibomboStatueGrounds and, on the
+   ceremony night, SceneIdKibomboStatueGroundsCeremony), numbering the rows of
    their placements; the night's rows place the warriors and Akafubu's party
    after them, and Kraden after those. */
 typedef enum KIBOMBO_STATUE_GROUNDS_ACTOR_ID {
@@ -245,7 +245,7 @@ enum {
 	ACTOR_LIT_CANDLESTICK_F
 };
 
-/* The houses, inn and shops (SceneId_KibomboHouses). */
+/* The houses, inn and shops (SceneIdKibomboHouses). */
 enum {
 	/* Akafubu at home after the ceremony: "I'm going to be the one to get the
 	   Great Gabomba's magic! You'll see!" */
@@ -335,7 +335,7 @@ enum {
 };
 
 /* The village on the ceremony night: where the party starts again, before the
-   healer, after a defeat (Scene_ReturnRules). */
+   healer, after a defeat (SceneReturnRules). */
 enum { ENTRANCE_CEREMONY_AFTER_DEFEAT = 19 };
 
 /* The rooms' own metatile behaviours; where a metatile leads out of a room its
@@ -2076,7 +2076,7 @@ void scKibomboOverlayFollowsLeader(void)
 	/* Behind the pole on the ring's north side the masks hide Felix as he
 	   passes, and further east the hut's thatched roof hides all of him but the
 	   top of his head. */
-	FADE_OVERLAY_STATE *state = Ram_HeapSlots->fadeOverlay;
+	FADE_OVERLAY_STATE *state = RamHeapSlots->fadeOverlay;
 
 	state->actor =
 		(FADE_ACTOR *)fdActorGetById(MainRoutineStateWork.leaderActorId);
@@ -2087,7 +2087,7 @@ void scKibomboOverlayFollowsLeader(void)
    behind raised metatiles stop following him. */
 void scKibomboOverlayStopsFollowing(void)
 {
-	FADE_OVERLAY_STATE *state = Ram_HeapSlots->fadeOverlay;
+	FADE_OVERLAY_STATE *state = RamHeapSlots->fadeOverlay;
 
 	state->actor = 0;
 }
@@ -2160,7 +2160,7 @@ void scKibomboFlickerRedCol(Sint32 idx, Sint32 entry, Sint32 delta)
 	fourthBias) \
 	void name(void) \
 	{ \
-		FIELD_STATE *state = Ram_HeapSlots->fieldState; \
+		FIELD_STATE *state = RamHeapSlots->fieldState; \
 \
 		if(state->psynergy == 0 && state->fieldMenu == 0 && \
 			state->pauseMenu == 0 && (TickCount & 7) == 0) { \
@@ -2189,7 +2189,7 @@ DEFINE_KIBOMBO_FLICKER_FIRES(scKibomboFlickerCeremonyFires,
    Psynergy, the three fire colours flicker. */
 void scKibomboFlickerStatueFires(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state->psynergy == 0 && state->fieldMenu == 0 && state->pauseMenu == 0 &&
 		(TickCount & 7) == 0) {
@@ -2677,7 +2677,7 @@ void scKibomboSetStatueTongue(Sint32 open, Sint32 pose)
 /* While Scoop is cast, uncovers the mark the script is scooping. */
 void scKibomboUncoverMarkUnderLeader(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	if(state->stage != 0) {
 		if(syGameFlagGet(FLAG_SCOOPING_NORTH_MARK))
@@ -2724,7 +2724,7 @@ void scKibomboStopFireFlicker(void)
    and the screen closes. */
 void scKibomboLeaveRoom(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -2741,7 +2741,7 @@ void scKibomboLeaveRoom(void)
    still as he leaves. */
 void scKibomboLeaveRoomFading(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -2753,7 +2753,7 @@ void scKibomboLeaveRoomFading(void)
    inside the house. */
 void scKibomboEnterDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader;
 	FIXED		 x;
 	Sint32		 pixelX;
@@ -2786,7 +2786,7 @@ void scKibomboEnterDoor(void)
 void scKibomboClimbDownLadder(Sint32 x, Sint32 z)
 {
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	ACTOR			   *leader = fdActorGetById(party->leaderActorId);
 
 	fdScriptStart();
@@ -2853,13 +2853,13 @@ void scKibomboStepOntoFirstLadder(void)
    the Sanctum, metatiles (23, 38), (25, 38) and (24, 39): Felix may step onto
    it from the west, the east or the south. */
 DEFINE_KIBOMBO_STEP_WHEN_HELD(
-	Kibombo_StepOntoSecondLadder, 38, 23, 25, 24, 39, 392, 608)
+	KibomboStepOntoSecondLadder, 38, 23, 25, 24, 39, 392, 608)
 
-/* As Kibombo_StepOntoSecondLadder, for the ladder in the upper room with two
+/* As KibomboStepOntoSecondLadder, for the ladder in the upper room with two
    beds, metatiles (42, 54), (44, 54) and (43, 55), down to the room of beds
    below. */
 DEFINE_KIBOMBO_STEP_WHEN_HELD(
-	Kibombo_StepOntoThirdLadder, 54, 42, 44, 43, 55, 696, 864)
+	KibomboStepOntoThirdLadder, 54, 42, 44, 43, 55, 696, 864)
 
 /* Felix walks south into the uncovered vent on the statue's grounds, metatile
    (23, 17): he climbs down its ladder into the Gabomba Statue. */
@@ -3182,7 +3182,7 @@ void scKibomboWitchDoctorFeelsPower(void)
 	fdActorSetSprFlags(fdActorGetById(MainRoutineStateWork.leaderActorId), 0);
 	scKibomboCrowdBows();
 	sySetEvent(scKibomboFlickerCeremonyFires, EVENT_PASS_TICK);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition = effect =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptStartScreenTransition();
@@ -3233,7 +3233,7 @@ void scKibomboOpenCeremonyScene(void)
 		KibomboBlackCrystal->motionFlg = ACTOR_FLOATS;
 	}
 	sySynch(1);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptStartScreenTransition();
@@ -3648,7 +3648,7 @@ void scKibomboCeremonyEnds(void)
 			leader->x.part[0].integer, leader->z.part[0].integer);
 	fdActorWaitForMoveById(ACTOR_KRADEN_AT_HOME);
 	fdActorSetPos(ACTOR_KRADEN_AT_HOME, 0, 0);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transitionFrm = 16;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -4853,13 +4853,13 @@ CUE KibomboHousesCues[] = {
 	{CUE_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHWEST, CONDITION_ALWAYS,
 		KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHWEST},
 	{STEP_CUE_WALKING, METATILE_BEHAVIOR_AKAFUBUS_LADDER, CONDITION_ALWAYS,
-		SCRIPT_REF(Kibombo_StepOntoSecondLadder)},
+		SCRIPT_REF(KibomboStepOntoSecondLadder)},
 	{CUE_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHEAST, CONDITION_ALWAYS,
 		KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHEAST},
 	{CUE_EXIT, 11, CONDITION_ALWAYS, 11},
 	{CUE_EXIT, 12, CONDITION_ALWAYS, 12},
 	{STEP_CUE_WALKING, METATILE_BEHAVIOR_TWO_BEDS_LADDER, CONDITION_ALWAYS,
-		SCRIPT_REF(Kibombo_StepOntoThirdLadder)},
+		SCRIPT_REF(KibomboStepOntoThirdLadder)},
 	{CUE_TALK, ACTOR_AKAFUBU_AT_HOME, FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU,
 		MSGNO(MsgIMGoing)},
 	{CUE_TALK, ACTOR_AKAFUBU_AT_HOME, CONDITION_ALWAYS, MSGNO(MsgIJustCan)},

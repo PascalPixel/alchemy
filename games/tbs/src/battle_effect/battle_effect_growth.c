@@ -415,10 +415,10 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 						lean = THORN_BIG_LEAN;
 					}
 					if(ThornKinds[i] & THORN_MIRRORED) {
-						drawFlip(canvas, state->sheet, Thorn_X[i] - lean,
+						drawFlip(canvas, state->sheet, ThornX[i] - lean,
 							108 - height, THORN_BIG_WIDTH, height);
 					} else {
-						draw(canvas, state->sheet, Thorn_X[i] + lean,
+						draw(canvas, state->sheet, ThornX[i] + lean,
 							108 - height, THORN_BIG_WIDTH, height);
 					}
 				} else {
@@ -432,11 +432,11 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 					}
 					if(ThornKinds[i] & THORN_MIRRORED) {
 						drawFlip(canvas, state->sheet + THORN_SMALL_PICTURE,
-							Thorn_X[i] - lean, 108 - height,
+							ThornX[i] - lean, 108 - height,
 							THORN_SMALL_PICTURE_WIDTH, height);
 					} else {
 						draw(canvas, state->sheet + THORN_SMALL_PICTURE,
-							Thorn_X[i] + lean, 108 - height,
+							ThornX[i] + lean, 108 - height,
 							THORN_SMALL_PICTURE_WIDTH, height);
 					}
 				}
@@ -451,7 +451,7 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 					for(j = 0; j != THORN_DUST; j++) {
 						puff = &PARTICLES[j];
 						if(puff->variant == -1) {
-							puff->x = Thorn_X[i] + (syRandom() & 31) + 32;
+							puff->x = ThornX[i] + (syRandom() & 31) + 32;
 							if(puff->x > 96) {
 								puff->x = 96;
 							}

@@ -1,4 +1,4 @@
-/* Colosseum Final 3 (SceneId_ColosseumNavampaMatch) is the site of the last
+/* Colosseum Final 3 (SceneIdColosseumNavampaMatch) is the site of the last
    finals match, where Isaac races Navampa of Gondowan through six stages to the
    arena and fights him there.
 

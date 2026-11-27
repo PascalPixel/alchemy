@@ -1,6 +1,6 @@
 /* Tundaria Tower, the frozen tower that holds the Center Prong, in seven maps
-   that share this overlay (SceneId_TundariaTowerEntrance to
-   SceneId_TundariaTowerBurstBrooch).
+   that share this overlay (SceneIdTundariaTowerEntrance to
+   SceneIdTundariaTowerBurstBrooch).
 
    In the first hall the middle way leads to an ice crystal with something
    frozen inside, and Parch dries the pools left and right of it, uncovering a
@@ -35,16 +35,16 @@ void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 owner);
 void scTundariaTowerStartEffectScript(
 	struct FIELD_EFFECT *effect, const Sint32 *script);
 
-/* The Center Prong frozen in the crystal (SceneId_TundariaTowerCenterProng), an
+/* The Center Prong frozen in the crystal (SceneIdTundariaTowerCenterProng), an
    item icon (ITEM_CENTER_PRONG) until the crystal breaks. */
 #define ACTOR_FROZEN_CENTER_PRONG	ACTOR_FIRST_PLACED
 /* The Center Prong where it falls when the crystal breaks, glinting
    (scTundariaTowerSparkleCenterProng). */
 #define ACTOR_FALLEN_CENTER_PRONG	(FIELD_TREASURE_ACTOR + 4)
-/* Reflux, the Mars Djinni (SceneId_TundariaTowerReflux). */
+/* Reflux, the Mars Djinni (SceneIdTundariaTowerReflux). */
 #define ACTOR_REFLUX				ACTOR_FIRST_PLACED
 /* The two stone pillars on the ledge in the room of pillars
-   (SceneId_TundariaTowerPillarPuzzle), which Move pulls down and a push sets
+   (SceneIdTundariaTowerPillarPuzzle), which Move pulls down and a push sets
    against the ledge as steps; the second is first in the table. The two that
    slide over the ice there, and the ice columns before them. */
 #define ACTOR_SECOND_LEDGE_PILLAR	(ACTOR_FIRST_PLACED + 4)
@@ -346,7 +346,7 @@ void scTundariaTowerParchRightWater(void)
    icy wall, the right one to the black ice fields. */
 void scTundariaTowerOpenDoor(void)
 {
-	FIELD_STATE		   *fieldState = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *fieldState = RamHeapSlots->fieldState;
 	Sint16			   *choice;
 	Sint32				x = 37;
 	MAIN_ROUTINE_STATE *state;
@@ -502,7 +502,7 @@ void scTundariaTowerExamineCrystal(void)
 	fdScriptEndLastingPsynergy(0);
 	mnFieldMessageShow(MsgThereSSomething, 1);
 	if(syGameFlagGet(FLAG_TUNDARIA_TOWER_BURST_BROOCH)) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		state->fieldMenu = 1;
 	}
@@ -557,7 +557,7 @@ void scTundariaTowerRefluxAppears(void)
 void scTundariaTowerShrinkIceColumn(Sint32 phase, Sint32 step)
 {
 	EFFECT_OPTIONS		options;
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *actor = fdActorGetById(effectState->tgtId);
 	Sint32				velX;
 
@@ -638,7 +638,7 @@ void scTundariaTowerJumpDownSlide(void)
    same way. */
 void scTundariaTowerStartPillarMove(void)
 {
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
 	if(party->next == SCENE_TUNDARIA_TOWER_PILLAR_PUZZLE) {
@@ -658,7 +658,7 @@ void scTundariaTowerStartPillarMove(void)
    the camera following. */
 void scTundariaTowerSlidePillar(Sint32 unused, Sint32 actorArg)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Uint16		 actorId;
 	Sint32		 dx;
@@ -699,7 +699,7 @@ void scTundariaTowerSlidePillar(Sint32 unused, Sint32 actorArg)
    beside the other at its foot, make the steps up it. */
 void scTundariaTowerSetDownPillar(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 
 	actor = event->movedBlock;
@@ -1222,7 +1222,7 @@ UNUSED void scTundariaTowerPlaceStakes(Uint16 *tbl)
    redrawn), then the leader lifted onto the ground under him. */
 UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *tbl)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
 	Sint32		  flg;
@@ -1241,8 +1241,8 @@ UNUSED void scTundariaTowerRestoreCrumblingPillars(const Uint16 *tbl)
 			flg = tbl[1];
 			nextFlg = flg + 1;
 			metatiles = map->layers[actor->layer].metatiles;
-			shapes = Ram_MapShapeGrid +
-				(metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+			shapes = RamMapShapeGrid +
+				(metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 			if(syGameFlagGet(nextFlg)) {
 				fdActorSetPos(id, 0, 0);
 			} else {
@@ -1402,7 +1402,7 @@ void scTundariaTowerFreezePillar(Sint32 id)
    flashed trap taking the second actor's pictures. */
 UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	ACTOR		 *actor;
 	Sint32		  id;
 	Sint32		  flg;
@@ -1435,7 +1435,7 @@ UNUSED void scTundariaTowerRestorePillars(Uint16 *list)
 			flg = list[1];
 			nextFlg = flg + 1;
 			metatiles = map->layers[actor->layer].metatiles;
-			shapes = grid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+			shapes = grid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 			actor->retainSprCache =
 				ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;
 			if(syGameFlagGet(nextFlg)) {
@@ -1685,7 +1685,7 @@ void scTundariaTowerStartFallingRocks(void)
 /* Stops the falling rocks and frees their pictures and state. */
 void scTundariaTowerEndFallingRocks(void)
 {
-	ROCK_STATE *state = Ram_HeapSlots->menuState;
+	ROCK_STATE *state = RamHeapSlots->menuState;
 
 	syCloseEvent(scParticleUpdateFalling);
 	syVRAMCacheFreeEntry(state->resource);

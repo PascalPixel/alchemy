@@ -56,8 +56,8 @@ static __inline__ void mnTextSetCanvasPixel(Uint32 winHeight, Uint32 x,
 
    With font set, the character comes from that small font: the 10-row, 1bpp
    kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere, 32
-   bytes a character. With no font, it comes from the main font (Font_Glyphs,
-   and in Japanese Font_KanjiGlyphs from KANJI_FIRST_CODE), drawn in four
+   bytes a character. With no font, it comes from the main font (FontGlyphs,
+   and in Japanese FontKanjiGlyphs from KANJI_FIRST_CODE), drawn in four
    passes: the first three draw an outline in colour 5 (offset left, right and
    down when the window has WINDOW_FLAG_OUTLINED_TEXT) and the last draws the
    glyph itself in colour 1. Kana marks (TEXT_MARK_VOICED and
@@ -184,18 +184,18 @@ Sint32 mnGlyphDrawArm(
 		}
 		/* Main-font entries begin with their advance width, then rows of 16
 		   pixels, the leftmost in the top bit. */
-		glyphRows = (const Uint16 *)((const Uint8 *)Font_Glyphs +
+		glyphRows = (const Uint16 *)((const Uint8 *)FontGlyphs +
 			(character - FONT_FIRST_CODE) * MAIN_FONT_GLYPH_BYTES);
 		glyphWidth = *glyphRows++;
 	} else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 		glyphWidth = KANJI_WIDTH;
-		glyphRows = (const Uint16 *)(Font_KanjiGlyphs +
+		glyphRows = (const Uint16 *)(FontKanjiGlyphs +
 			(character - KANJI_FIRST_CODE) * KANJI_GLYPH_SIZE);
 #else
 		/* Its glyph's last MAIN_FONT_GLYPH_ROWS rows, after the width and the
 		   first three. */
-		glyphRows = (const Uint16 *)((const Uint8 *)Font_Glyphs +
+		glyphRows = (const Uint16 *)((const Uint8 *)FontGlyphs +
 			(character - FONT_FIRST_CODE) * sizeof(GLYPH));
 		glyphWidth = *glyphRows;
 		glyphRows += 4;

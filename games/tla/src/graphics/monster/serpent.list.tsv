@@ -1,7 +1,7 @@
 name	file	section	align	left	pad	edition	fill
-Monster_SerpentSprites	serpent.pictures.lz			0cb5		ja	
-Monster_SerpentSprites	serpent.pictures.lz			0508		en	
-Monster_SerpentSprites	serpent.pictures.lz			0508		de	
-Monster_SerpentSprites	serpent.pictures.lz			0508		es	
-Monster_SerpentSprites	serpent.pictures.lz			0508		fr	
-Monster_SerpentSprites	serpent.pictures.lz			0508		it	
+MonsterSerpentSprites	serpent.pictures.lz			0cb5		ja	
+MonsterSerpentSprites	serpent.pictures.lz			0508		en	
+MonsterSerpentSprites	serpent.pictures.lz			0508		de	
+MonsterSerpentSprites	serpent.pictures.lz			0508		es	
+MonsterSerpentSprites	serpent.pictures.lz			0508		fr	
+MonsterSerpentSprites	serpent.pictures.lz			0508		it	

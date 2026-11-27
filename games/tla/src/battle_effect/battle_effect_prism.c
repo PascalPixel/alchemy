@@ -41,8 +41,8 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 	Sint32				 k;
 
 	shards = PARTICLES;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	/* The boulder sprite sheet is unpacked first and the crystal sprite sheet
@@ -76,7 +76,7 @@ void btEffectRunPrism(BATTLE_EFFECT_PARM *args)
 		/* The strongest variant turns the camera. */
 		if(args->variant == EFFECT_VARIANT_STRONGEST &&
 			frm < PRISM_CAMERA_STOP) {
-			BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+			BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 			Sint32		   speed;
 
 			if(frm < PRISM_CAMERA_SLOWING)

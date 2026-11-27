@@ -220,8 +220,8 @@ static void scFileScreenLoadBackground(void)
 	syDMAXCopy(resource, (void *)BG_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
 	resource += LOGO_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ(resource, Ram_MapGridMetatileBuffer);
-	syDMAXCopy((void *)Ram_MapGridMetatileBuffer, LOGO_TILES,
+	syFieldDecompressTaggedLZ(resource, RamMapGridMetatileBuffer);
+	syDMAXCopy((void *)RamMapGridMetatileBuffer, LOGO_TILES,
 		DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
 	/* The logo's map, each row's two columns past the screen's edge, which
 	   never show. */

@@ -13,7 +13,7 @@ ANIMATION_METADATA *fdResourceGetMetadataRecordStub(Uint32 id)
 	id &= ACTOR_CREATE_SPRITE_MASK;
 	if(id >= SPRITE_COUNT)
 		id = 0;
-	return &Sprite_AnimationMetadata[id];
+	return &SpriteAnimationMetadata[id];
 }
 
 /* An LZ stream's commands: a byte of eight flags, read from its low bit, each

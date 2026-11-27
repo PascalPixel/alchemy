@@ -28,9 +28,9 @@
 mnCreditsDecodeBackgroundRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
-AlchemyUncredited_credits_background_read:
+AlchemyUncreditedCreditsBackgroundRead:
 	nop
-AlchemyUncreditedEnd_credits_background_read:
+AlchemyUncreditedEndCreditsBackgroundRead:
 	.section .data,"aw",%progbits
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000

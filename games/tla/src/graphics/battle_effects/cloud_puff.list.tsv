@@ -1,5 +1,5 @@
 name	file	section	align	left	pad	edition
-BattleEffect_CloudPuffSheet	cloud_puff.gbapal					
+BattleEffectCloudPuffSheet	cloud_puff.gbapal					
 	cloud_puff.bitmap.lz			480508		ja
 	cloud_puff.bitmap.lz			4a0508		en
 	cloud_puff.bitmap.lz			4a0508		de

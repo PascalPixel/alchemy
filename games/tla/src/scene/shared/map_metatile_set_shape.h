@@ -2,10 +2,10 @@
 Sint32 scMagmaRockInsideSetMetatileShape(
 	Sint32 layer, Sint32 x, Sint32 z, Sint32 height)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   shape = fdMapGridGetTerrainKind(layer, x, z);
-	Uint8	  *out = Ram_MapShapeGrid +
-		(map->layers[layer].metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+	Uint8	  *out = RamMapShapeGrid +
+		(map->layers[layer].metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 
 	out += x + z * MAPGRID_SIZE;
 	*out = fdMapShapeFindOrAdd(layer, shape, height);

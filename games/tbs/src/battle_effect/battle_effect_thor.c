@@ -16,7 +16,7 @@
 /* The sparks, from the first word after the glint pictures that draw the
    crackles of lightning. */
 #define THOR_PARTICLES \
-	((PARTICLE *)(Ram_MapGridMetatileBuffer + ((GLINT_SET_BYTES + 3) & ~3)))
+	((PARTICLE *)(RamMapGridMetatileBuffer + ((GLINT_SET_BYTES + 3) & ~3)))
 #define THOR_SPARK_COUNT		910
 /* The sparks the pillar of lightning throws up from its foot, each bolt throws
    out, and the glow at Thor's hammer sheds each tick; a spark's mote shrinks a
@@ -409,7 +409,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 	btEffectShowLivingTargets(state->args);
 	btEffectCreateSprs(THOR_SPRITES, SPRITE_THOR, 1);
 	btResourceLoadAndDecompress(
-		RESOURCE_TORNADO_SHEET, Ram_MapGridMetatileBuffer, 1, 0);
+		RESOURCE_TORNADO_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_VIOLET_MOTE_SHEET,
@@ -644,7 +644,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 						EFFECT_CLIP_BOUNDS | ThorCrackleFlips[syRandom() & 3],
 						COMPOSITE_LIGHTEN);
 					EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED](canvas,
-						Ram_MapGridMetatileBuffer +
+						RamMapGridMetatileBuffer +
 							BattleEffectGlintPictures[glint],
 						x, y + 56, BattleEffectGlintPictureWidths[glint],
 						BattleEffectGlintPictureHeights[glint]);

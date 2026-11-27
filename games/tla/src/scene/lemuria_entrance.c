@@ -223,7 +223,7 @@ Sint32 scPrepareMap(void)
    everyone else's portrait is at the left. */
 void scLemuriaEntranceShowLineWithPortrait(Sint32 speaker, Sint32 ticks)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 height;
 	Sint32		 width;
 	Sint32		 top;
@@ -298,7 +298,7 @@ void scLemuriaEntranceShebaAsksPiersAge(void)
 	scLemuriaEntranceShowLineWithPortrait(ACTOR_PIERS, 250);
 	scFieldActorWaitForScriptEndById(ACTOR_SHIP);
 	syFieldScriptWait(10);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transitionFrm = 30;
 	state->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 	fdScriptFinishScreenTransition();

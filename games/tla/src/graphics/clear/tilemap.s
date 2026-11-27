@@ -3,12 +3,12 @@
 @ data is word-aligned, and the table starts on a halfword after the tilemap.
 	.section .rodata
 	.balign 4
-	.global Clear_GridTilemap
-Clear_GridTilemap:
+	.global ClearGridTilemap
+ClearGridTilemap:
 	.incbin "games/tla/src/graphics/clear/tilemap.tilemap.lz"
 
-	.global Clear_PasswordGrid
-Clear_PasswordGrid:
+	.global ClearPasswordGrid
+ClearPasswordGrid:
 	.ifdef TLA_EDITION_JA
 	@ 20 cells a row; 99 is an empty cell
 	.byte  0,  1,  2,  3,  4, 20, 21, 22, 23, 24, 38, 39, 40, 41, 42, 56, 99, 99, 57, 58

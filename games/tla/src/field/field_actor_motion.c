@@ -79,7 +79,7 @@ void fdActorUpdateAllOnField(void)
 	Sint32 maximumChange;
 	Sint32 standing;
 
-	object = Ram_HeapSlots->actors;
+	object = RamHeapSlots->actors;
 	for(objectsRemaining = ACTOR_COUNT - 1; objectsRemaining >= 0;
 		objectsRemaining--, object++) {
 		const Sint32 *script;
@@ -232,7 +232,7 @@ void fdActorUpdateAllOnField(void)
 					standing = 0;
 					object->carrier = NULL;
 					if(object->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-						ACTOR *other = Ram_HeapSlots->actors;
+						ACTOR *other = RamHeapSlots->actors;
 						Sint32 i;
 
 						for(i = 0; i < ACTOR_COUNT; i++, other++) {
@@ -414,7 +414,7 @@ void fdActorUpdateAllOnField(void)
    its top, 16 pixels up. */
 void fdActorMoveWithCarriers(void)
 {
-	ACTOR *actor = Ram_HeapSlots->actors;
+	ACTOR *actor = RamHeapSlots->actors;
 	Sint32 i;
 
 	for(i = 0; i < ACTOR_COUNT; i++, actor++) {

@@ -6,7 +6,7 @@ void scRockSpawn(Sint32 x, Sint32 y, Sint32 z, Sint32 cnt)
 	ROCK_STATE *state;
 	Sint32		i;
 
-	state = Ram_HeapSlots->menuState;
+	state = RamHeapSlots->menuState;
 	for(i = 0; i < cnt; i++) {
 		Sint32 ang = syRandom();
 		ROCK  *rock = &state->rocks[state->next];

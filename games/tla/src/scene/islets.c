@@ -1420,7 +1420,7 @@ void scIsletsTalkToSailorsSon(void)
    when he talks to nothing. */
 void scIsletsOpenFieldMenu(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->fieldMenu = 1;
 }
@@ -1644,7 +1644,7 @@ void scIsletsRiseFromSand(void)
 void scIsletsSetMetatileCollision(
 	Sint32 x, Sint32 z, Sint32 layers, Sint32 value)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *lowerMetatiles = map->layers[0].metatiles;
 	MAP_METATILE *upperMetatiles = map->layers[2].metatiles;
 	Sint32		  index = x / toFIXED(16) + (z / toFIXED(16)) * MAPGRID_SIZE;
@@ -1945,7 +1945,7 @@ void scIsletsClearSixthPatch(void)
    opening from IsletsDoors. */
 void scIsletsOpenDoorAndEnter(void)
 {
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	ACTOR			   *actor;
 	Sint16			   *exit;
@@ -1985,7 +1985,7 @@ void scIsletsOpenDoorAndEnter(void)
    as the screen goes. */
 void scIsletsLeaveByStep(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -2001,7 +2001,7 @@ void scIsletsLeaveByStep(void)
    inside. */
 void scIsletsEnterDoor(void)
 {
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	ACTOR			   *actor;
 
@@ -2046,7 +2046,7 @@ void scIsletsArriveBackAtIsland(void)
 		fdActorGet(MainRoutineStateWork.leaderActorId), SPRITE_COLOR_HIDDEN);
 	fdActorSetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
 	syWait(1);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 	fdScriptStartScreenTransition();
@@ -2078,7 +2078,7 @@ void scIsletsArriveBackAtIsland(void)
 	fdScriptShowMessage(ACTOR_LONESOME_GEORGE, 0);
 	fdPsynergyStopMindReadWave();
 	fdActorFaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	fdPaletteCycleStart();
 }
@@ -2154,7 +2154,7 @@ void scIsletsArriveAtSecretSpot(void)
    Returns 0. */
 Sint32 scInit(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint16		 scene;
 
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2192,7 +2192,7 @@ void scIsletsSetSonsTargetedByHeight(void)
 void scIsletsInitWestIndra(void)
 {
 	MAP_STATE_GROUND_EFFECTS *map =
-		(MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 	ACTOR *spawned;
 
 	if(MainRoutineStateWork.entrance == WEST_INDRA_ISLET_FROM_CHAMPA_ROOMS)
@@ -2251,7 +2251,7 @@ void scIsletsMoveIceberg(Sint32 id, Sint32 column, Sint32 row)
 void scIsletsDriftIcebergs(void)
 {
 	Uint16		*frm = &SceneStateWork[0];
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint16		*owed = &SceneStateWork[1];
 	Sint32		 i;
 	Sint32		 cnt;
@@ -2265,7 +2265,7 @@ void scIsletsDriftIcebergs(void)
 		fdActorGetById(i)->paused = 0;
 	if(fdActorGetById(MainRoutineStateWork.leaderActorId)->y.fixed <
 		-toFIXED(12)) {
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 		for(i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
 			fdActorGetById(i)->paused = 1;
 		{
@@ -2404,7 +2404,7 @@ void scIsletsInitNorthOsenia(void)
    frozen). */
 void scIsletsInitSoutheastAngara(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGet(ACTOR_BIRD);
 	ACTOR	  *last;
 	Sint32	   set;
@@ -2467,7 +2467,7 @@ enum {
    the Li'l Turtle once given, and the ride's arrival or return by entrance. */
 void scIsletsInitSeaOfTime(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   done;
 
 	fdScriptStart();

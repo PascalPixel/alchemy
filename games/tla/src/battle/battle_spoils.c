@@ -44,7 +44,7 @@ Uint32 btSpoilsRankItem(Uint32 inventoryEntry)
 /* Empties the battle's spoils and the party's pending item. Called by btRun. */
 void btSpoilsClear(void)
 {
-	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE  *battle = RamHeapSlots->battleState;
 	BATTLE_SPOILS *spoils = &battle->spoils;
 	Uint16		  *items;
 	Sint32		   idx;
@@ -134,7 +134,7 @@ Sint32 btEnemyRecordDefeat(Sint32 unitId, Sint32 djinnBonus)
 	Sint32					classIdx;
 
 	unit = syUnitGet(unitId);
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	spoils = &battle->spoils;
 	if(unitId >= 0 && unitId <= ALLY_MAX)
 		return -1;
@@ -242,7 +242,7 @@ void btAwardSpoils(void)
 	Sint16		   gains[GAIN_COUNT];
 	Uint16		   units[10];
 
-	spoils = &Ram_HeapSlots->battleState->spoils;
+	spoils = &RamHeapSlots->battleState->spoils;
 	if(spoils->experience != 0) {
 		mnMessageArgumentPushStub(spoils->experience, MESSAGE_ARGUMENT_NUMBER);
 		/* "You got N experience points." */

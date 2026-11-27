@@ -50,7 +50,7 @@ void fdCrackedTileUpdate(void)
 	}
 	if(tbl->shown == 0)
 		return;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	viewY = map->origin[1];

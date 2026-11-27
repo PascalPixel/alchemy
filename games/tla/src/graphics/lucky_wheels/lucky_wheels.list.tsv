@@ -1,199 +1,199 @@
 name	file	section	align	left	pad	edition	fill
-Slots_MachinePicture	machine.gbapal						
+SlotsMachinePicture	machine.gbapal						
 	machine.4bpp.lz			000000		ja	
 	machine.4bpp.lz			933490		en	
 	machine.4bpp.lz			000000		de	
 	machine.4bpp.lz			000000		es	
 	machine.4bpp.lz			000000		fr	
 	machine.4bpp.lz			000000		it	
-Slots_Icons	icons.gbapal						
+SlotsIcons	icons.gbapal						
 	icons.8bpp.lz						
-Slots_JackpotBanner	jackpot_ja.gbapal					ja	
+SlotsJackpotBanner	jackpot_ja.gbapal					ja	
 	jackpot_ja.4bpp32x32.lz			a2		ja	
-Slots_YouWinBanner	you_win.gbapal	a				ja	
+SlotsYouWinBanner	you_win.gbapal	a				ja	
 	you_win.4bpp64x64.lz	a		7800d2		ja	
-Slots_YouLoseBanner	you_lose.gbapal	a				ja	
+SlotsYouLoseBanner	you_lose.gbapal	a				ja	
 	you_lose.4bpp64x64.lz	a				ja	
-Slots_HigherBanner	higher_ja.gbapal	a				ja	
+SlotsHigherBanner	higher_ja.gbapal	a				ja	
 	higher_ja.4bpp32x32.lz	a		adcb71		ja	
-Slots_LowerBanner	lower_ja.gbapal	a				ja	
+SlotsLowerBanner	lower_ja.gbapal	a				ja	
 	lower_ja.4bpp32x32.lz	a		13	4	ja	
-Slots_DoubleUpBanner	double_up_ja.gbapal	a				ja	
+SlotsDoubleUpBanner	double_up_ja.gbapal	a				ja	
 	double_up_ja.4bpp32x32.lz	a			4	ja	
-Slots_CashOutBanner	cash_out_ja.gbapal	a				ja	
+SlotsCashOutBanner	cash_out_ja.gbapal	a				ja	
 	cash_out_ja.4bpp32x32.lz	a		9f7ae0		ja	
-Slots_JackpotBanner	jackpot.gbapal					en	
+SlotsJackpotBanner	jackpot.gbapal					en	
 	jackpot.4bpp32x32.lz			75		en	
-Slots_YouWinBanner	you_win.gbapal	a				en	
+SlotsYouWinBanner	you_win.gbapal	a				en	
 	you_win.4bpp64x64.lz	a		7800d2		en	
-Slots_YouLoseBanner	you_lose.gbapal	a				en	
+SlotsYouLoseBanner	you_lose.gbapal	a				en	
 	you_lose.4bpp64x64.lz	a				en	
-Slots_HigherBanner	higher.gbapal	a				en	
+SlotsHigherBanner	higher.gbapal	a				en	
 	higher.4bpp32x32.lz	a				en	
-Slots_LowerBanner	lower.gbapal	a				en	
+SlotsLowerBanner	lower.gbapal	a				en	
 	lower.4bpp32x32.lz	a			4	en	
-Slots_DoubleUpBanner	double_up.gbapal	a				en	
+SlotsDoubleUpBanner	double_up.gbapal	a				en	
 	double_up.4bpp32x32.lz	a			4	en	
-Slots_CashOutBanner	cash_out.gbapal	a				en	
+SlotsCashOutBanner	cash_out.gbapal	a				en	
 	cash_out.4bpp32x32.lz	a		0f		en	
-Slots_JackpotBanner	jackpot.gbapal					de	
+SlotsJackpotBanner	jackpot.gbapal					de	
 	jackpot.4bpp32x32.lz			75		de	
-Slots_YouWinBanner	you_win_de.gbapal	a				de	
+SlotsYouWinBanner	you_win_de.gbapal	a				de	
 	you_win_de.4bpp64x64.lz	a		21		de	
-Slots_YouLoseBanner	you_lose_de.gbapal	a				de	
+SlotsYouLoseBanner	you_lose_de.gbapal	a				de	
 	you_lose_de.4bpp64x64.lz	a		10		de	
-Slots_HigherBanner	higher_de.gbapal	a				de	
+SlotsHigherBanner	higher_de.gbapal	a				de	
 	higher_de.4bpp32x32.lz	a		342f		de	
-Slots_LowerBanner	lower_de.gbapal	a				de	
+SlotsLowerBanner	lower_de.gbapal	a				de	
 	lower_de.4bpp32x32.lz	a		1240	4	de	
-Slots_DoubleUpBanner	double_up_de.gbapal	a				de	
+SlotsDoubleUpBanner	double_up_de.gbapal	a				de	
 	double_up_de.4bpp32x32.lz	a		040000		de	
-Slots_CashOutBanner	cash_out_de.gbapal	a				de	
+SlotsCashOutBanner	cash_out_de.gbapal	a				de	
 	cash_out_de.4bpp32x32.lz	a		804e		de	
-Slots_JackpotBanner	jackpot_es.gbapal					es	
+SlotsJackpotBanner	jackpot_es.gbapal					es	
 	jackpot_es.4bpp32x32.lz			39		es	
-Slots_YouWinBanner	you_win_es.gbapal	a				es	
+SlotsYouWinBanner	you_win_es.gbapal	a				es	
 	you_win_es.4bpp64x64.lz	a		a462		es	
-Slots_YouLoseBanner	you_lose_es.gbapal	a				es	
+SlotsYouLoseBanner	you_lose_es.gbapal	a				es	
 	you_lose_es.4bpp64x64.lz	a		90		es	
-Slots_HigherBanner	higher_es.gbapal	a				es	
+SlotsHigherBanner	higher_es.gbapal	a				es	
 	higher_es.4bpp32x32.lz	a				es	
-Slots_LowerBanner	lower_es.gbapal	a				es	
+SlotsLowerBanner	lower_es.gbapal	a				es	
 	lower_es.4bpp32x32.lz	a		90b894	4	es	
-Slots_DoubleUpBanner	double_up_es.gbapal	a				es	
+SlotsDoubleUpBanner	double_up_es.gbapal	a				es	
 	double_up_es.4bpp32x32.lz	a			4	es	ff
-Slots_CashOutBanner	cash_out_es.gbapal	a				es	
+SlotsCashOutBanner	cash_out_es.gbapal	a				es	
 	cash_out_es.4bpp32x32.lz	a		010000		es	
-Slots_JackpotBanner	jackpot.gbapal					fr	
+SlotsJackpotBanner	jackpot.gbapal					fr	
 	jackpot.4bpp32x32.lz			75		fr	
-Slots_YouWinBanner	you_win_fr.gbapal	a				fr	
+SlotsYouWinBanner	you_win_fr.gbapal	a				fr	
 	you_win_fr.4bpp64x64.lz	a		17		fr	
-Slots_YouLoseBanner	you_lose_fr.gbapal	a				fr	
+SlotsYouLoseBanner	you_lose_fr.gbapal	a				fr	
 	you_lose_fr.4bpp64x64.lz	a				fr	
-Slots_HigherBanner	higher_fr.gbapal	a				fr	
+SlotsHigherBanner	higher_fr.gbapal	a				fr	
 	higher_fr.4bpp32x32.lz	a		d8dd51		fr	
-Slots_LowerBanner	lower_fr.gbapal	a				fr	
+SlotsLowerBanner	lower_fr.gbapal	a				fr	
 	lower_fr.4bpp32x32.lz	a			4	fr	
-Slots_DoubleUpBanner	double_up_fr.gbapal	a				fr	
+SlotsDoubleUpBanner	double_up_fr.gbapal	a				fr	
 	double_up_fr.4bpp32x32.lz	a				fr	
-Slots_CashOutBanner	cash_out_fr.gbapal	a				fr	
+SlotsCashOutBanner	cash_out_fr.gbapal	a				fr	
 	cash_out_fr.4bpp32x32.lz	a				fr	
-Slots_JackpotBanner	jackpot.gbapal					it	
+SlotsJackpotBanner	jackpot.gbapal					it	
 	jackpot.4bpp32x32.lz			75		it	
-Slots_YouWinBanner	you_win_it.gbapal	a				it	
+SlotsYouWinBanner	you_win_it.gbapal	a				it	
 	you_win_it.4bpp64x64.lz	a		a182		it	
-Slots_YouLoseBanner	you_lose_it.gbapal	a				it	
+SlotsYouLoseBanner	you_lose_it.gbapal	a				it	
 	you_lose_it.4bpp64x64.lz	a		cde407		it	
-Slots_HigherBanner	higher_it.gbapal	a				it	
+SlotsHigherBanner	higher_it.gbapal	a				it	
 	higher_it.4bpp32x32.lz	a				it	
-Slots_LowerBanner	lower_it.gbapal	a				it	
+SlotsLowerBanner	lower_it.gbapal	a				it	
 	lower_it.4bpp32x32.lz	a		3a	4	it	
-Slots_DoubleUpBanner	double_up_it.gbapal	a				it	
+SlotsDoubleUpBanner	double_up_it.gbapal	a				it	
 	double_up_it.4bpp32x32.lz	a		be		it	
-Slots_CashOutBanner	cash_out_it.gbapal	a				it	
+SlotsCashOutBanner	cash_out_it.gbapal	a				it	
 	cash_out_it.4bpp32x32.lz	a			4	it	
-Slots_PinkDigits	pink_digits.gbapal	a					
+SlotsPinkDigits	pink_digits.gbapal	a					
 	pink_digits.4bpp16x16.lz	a		aef01c		ja	
-Slots_OrangeDigits	orange_digits.gbapal	a				ja	
+SlotsOrangeDigits	orange_digits.gbapal	a				ja	
 	orange_digits.4bpp16x32.lz	a				ja	
 	pink_digits.4bpp16x16.lz	a		d920be		en	
-Slots_OrangeDigits	orange_digits.gbapal	a				en	
+SlotsOrangeDigits	orange_digits.gbapal	a				en	
 	orange_digits.4bpp16x32.lz	a				en	
 	pink_digits.4bpp16x16.lz	a		972359		de	
-Slots_OrangeDigits	orange_digits.gbapal	a				de	
+SlotsOrangeDigits	orange_digits.gbapal	a				de	
 	orange_digits.4bpp16x32.lz	a				de	
 	pink_digits.4bpp16x16.lz	a			4	es	
-Slots_OrangeDigits	orange_digits_es.gbapal	a				es	
+SlotsOrangeDigits	orange_digits_es.gbapal	a				es	
 	orange_digits_es.4bpp16x32.lz	a			4	es	
 	pink_digits.4bpp16x16.lz	a		190738		fr	
-Slots_OrangeDigits	orange_digits.gbapal	a				fr	
+SlotsOrangeDigits	orange_digits.gbapal	a				fr	
 	orange_digits.4bpp16x32.lz	a				fr	
 	pink_digits.4bpp16x16.lz	a		000ce0		it	
-Slots_OrangeDigits	orange_digits.gbapal	a				it	
+SlotsOrangeDigits	orange_digits.gbapal	a				it	
 	orange_digits.4bpp16x32.lz	a				it	
-Slots_GreenDigits	green_digits.gbapal	a					
+SlotsGreenDigits	green_digits.gbapal	a					
 	green_digits.4bpp32x32.lz	a		e6			
-Slots_TimesSign	times_sign.gbapal	a				ja	
+SlotsTimesSign	times_sign.gbapal	a				ja	
 	times_sign.4bpp16x16.lz	a		914c7b	4	ja	
-Slots_SmallDoubleUpBanner	small_double_up_ja.gbapal	a				ja	
+SlotsSmallDoubleUpBanner	small_double_up_ja.gbapal	a				ja	
 	small_double_up_ja.4bpp16x16.lz	a				ja	
-Slots_OnePairBanner	one_pair_ja.gbapal	a				ja	
+SlotsOnePairBanner	one_pair_ja.gbapal	a				ja	
 	one_pair_ja.4bpp64x64.lz	a		345e57		ja	
-Slots_TwoPairBanner	two_pair_ja.gbapal	a				ja	
+SlotsTwoPairBanner	two_pair_ja.gbapal	a				ja	
 	two_pair_ja.4bpp64x64.lz	a			4	ja	
-Slots_TripleBanner	triple_ja.gbapal	a				ja	
+SlotsTripleBanner	triple_ja.gbapal	a				ja	
 	triple_ja.4bpp64x64.lz	a		7c2ebc		ja	
-Slots_PerfectBanner	perfect_ja.gbapal	a				ja	
+SlotsPerfectBanner	perfect_ja.gbapal	a				ja	
 	perfect_ja.4bpp64x64.lz	a			4	ja	
-Slots_FinalGameBanner	final_game_ja.gbapal	a				ja	
+SlotsFinalGameBanner	final_game_ja.gbapal	a				ja	
 	final_game_ja.4bpp16x16.lz	a		f071		ja	
-Slots_TimesSign	times_sign.gbapal	a				en	
+SlotsTimesSign	times_sign.gbapal	a				en	
 	times_sign.4bpp16x16.lz	a		914c7b	4	en	
-Slots_SmallDoubleUpBanner	small_double_up.gbapal	a				en	
+SlotsSmallDoubleUpBanner	small_double_up.gbapal	a				en	
 	small_double_up.4bpp16x16.lz	a			4	en	
-Slots_OnePairBanner	one_pair.gbapal	a				en	
+SlotsOnePairBanner	one_pair.gbapal	a				en	
 	one_pair.4bpp64x64.lz	a		b232e8		en	
-Slots_TwoPairBanner	two_pair.gbapal	a				en	
+SlotsTwoPairBanner	two_pair.gbapal	a				en	
 	two_pair.4bpp64x64.lz	a		030000		en	
-Slots_TripleBanner	triple.gbapal	a				en	
+SlotsTripleBanner	triple.gbapal	a				en	
 	triple.4bpp64x64.lz	a		1de9		en	
-Slots_PerfectBanner	perfect.gbapal	a				en	
+SlotsPerfectBanner	perfect.gbapal	a				en	
 	perfect.4bpp64x64.lz	a		c3		en	
-Slots_FinalGameBanner	final_game.gbapal	a				en	
+SlotsFinalGameBanner	final_game.gbapal	a				en	
 	final_game.4bpp16x16.lz	a				en	
-Slots_TimesSign	times_sign_de.gbapal	a				de	
+SlotsTimesSign	times_sign_de.gbapal	a				de	
 	times_sign_de.4bpp16x16.lz	a		26	4	de	
-Slots_SmallDoubleUpBanner	small_double_up_de.gbapal	a				de	
+SlotsSmallDoubleUpBanner	small_double_up_de.gbapal	a				de	
 	small_double_up_de.4bpp16x16.lz	a		5ee309		de	
-Slots_OnePairBanner	one_pair_de.gbapal	a				de	
+SlotsOnePairBanner	one_pair_de.gbapal	a				de	
 	one_pair_de.4bpp64x64.lz	a		6327		de	
-Slots_TwoPairBanner	two_pair_de.gbapal	a				de	
+SlotsTwoPairBanner	two_pair_de.gbapal	a				de	
 	two_pair_de.4bpp64x64.lz	a		04a6c6		de	
-Slots_TripleBanner	triple_de.gbapal	a				de	
+SlotsTripleBanner	triple_de.gbapal	a				de	
 	triple_de.4bpp64x64.lz	a				de	
-Slots_PerfectBanner	perfect_de.gbapal	a				de	
+SlotsPerfectBanner	perfect_de.gbapal	a				de	
 	perfect_de.4bpp64x64.lz	a			4	de	ff
-Slots_FinalGameBanner	final_game_de.gbapal	a				de	
+SlotsFinalGameBanner	final_game_de.gbapal	a				de	
 	final_game_de.4bpp16x16.lz	a		277024		de	
-Slots_TimesSign	times_sign_es.gbapal	a				es	
+SlotsTimesSign	times_sign_es.gbapal	a				es	
 	times_sign_es.4bpp16x16.lz	a		0081c2	4	es	
-Slots_SmallDoubleUpBanner	small_double_up_es.gbapal	a				es	
+SlotsSmallDoubleUpBanner	small_double_up_es.gbapal	a				es	
 	small_double_up_es.4bpp16x16.lz	a		1d98		es	
-Slots_OnePairBanner	one_pair_es.gbapal	a				es	
+SlotsOnePairBanner	one_pair_es.gbapal	a				es	
 	one_pair_es.4bpp64x64.lz	a				es	
-Slots_TwoPairBanner	two_pair_es.gbapal	a				es	
+SlotsTwoPairBanner	two_pair_es.gbapal	a				es	
 	two_pair_es.4bpp64x64.lz	a		4c018f		es	
-Slots_TripleBanner	triple_es.gbapal	a				es	
+SlotsTripleBanner	triple_es.gbapal	a				es	
 	triple_es.4bpp64x64.lz	a				es	
-Slots_PerfectBanner	perfect_es.gbapal	a				es	
+SlotsPerfectBanner	perfect_es.gbapal	a				es	
 	perfect_es.4bpp64x64.lz	a		0508		es	
-Slots_FinalGameBanner	final_game_es.gbapal	a				es	
+SlotsFinalGameBanner	final_game_es.gbapal	a				es	
 	final_game_es.4bpp16x16.lz	a		1e		es	
-Slots_TimesSign	times_sign_fr.gbapal	a				fr	
+SlotsTimesSign	times_sign_fr.gbapal	a				fr	
 	times_sign_fr.4bpp16x16.lz	a		458a	4	fr	
-Slots_SmallDoubleUpBanner	small_double_up_fr.gbapal	a				fr	
+SlotsSmallDoubleUpBanner	small_double_up_fr.gbapal	a				fr	
 	small_double_up_fr.4bpp16x16.lz	a		40		fr	
-Slots_OnePairBanner	one_pair_fr.gbapal	a				fr	
+SlotsOnePairBanner	one_pair_fr.gbapal	a				fr	
 	one_pair_fr.4bpp64x64.lz	a		67b6		fr	
-Slots_TwoPairBanner	two_pair_fr.gbapal	a				fr	
+SlotsTwoPairBanner	two_pair_fr.gbapal	a				fr	
 	two_pair_fr.4bpp64x64.lz	a				fr	
-Slots_TripleBanner	triple_fr.gbapal	a				fr	
+SlotsTripleBanner	triple_fr.gbapal	a				fr	
 	triple_fr.4bpp64x64.lz	a				fr	
-Slots_PerfectBanner	perfect_fr.gbapal	a				fr	
+SlotsPerfectBanner	perfect_fr.gbapal	a				fr	
 	perfect_fr.4bpp64x64.lz	a		02		fr	
-Slots_FinalGameBanner	final_game_fr.gbapal	a				fr	
+SlotsFinalGameBanner	final_game_fr.gbapal	a				fr	
 	final_game_fr.4bpp16x16.lz	a				fr	
-Slots_TimesSign	times_sign_it.gbapal	a				it	
+SlotsTimesSign	times_sign_it.gbapal	a				it	
 	times_sign_it.4bpp16x16.lz	a		d3	4	it	
-Slots_SmallDoubleUpBanner	small_double_up_it.gbapal	a				it	
+SlotsSmallDoubleUpBanner	small_double_up_it.gbapal	a				it	
 	small_double_up_it.4bpp16x16.lz	a				it	
-Slots_OnePairBanner	one_pair_it.gbapal	a				it	
+SlotsOnePairBanner	one_pair_it.gbapal	a				it	
 	one_pair_it.4bpp64x64.lz	a				it	
-Slots_TwoPairBanner	two_pair_it.gbapal	a				it	
+SlotsTwoPairBanner	two_pair_it.gbapal	a				it	
 	two_pair_it.4bpp64x64.lz	a		04		it	
-Slots_TripleBanner	triple_it.gbapal	a				it	
+SlotsTripleBanner	triple_it.gbapal	a				it	
 	triple_it.4bpp64x64.lz	a		44		it	
-Slots_PerfectBanner	perfect_it.gbapal	a				it	
+SlotsPerfectBanner	perfect_it.gbapal	a				it	
 	perfect_it.4bpp64x64.lz	a		e23c30		it	
-Slots_FinalGameBanner	final_game_it.gbapal	a				it	
+SlotsFinalGameBanner	final_game_it.gbapal	a				it	
 	final_game_it.4bpp16x16.lz	a		74		it	

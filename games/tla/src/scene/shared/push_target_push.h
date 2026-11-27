@@ -2,7 +2,7 @@
    are floor again and the metatiles it comes to are walls. */
 void scPushTargetPush(PUSH_TARGET tgt)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	ACTOR	  *actor = fdActorGet(tgt.id);
 	Sint32	   metatile[3];

@@ -1,4 +1,4 @@
-/* Log rooms A (SceneId_LogRoomsA), a rooms map drawn in logs, holds only
+/* Log rooms A (SceneIdLogRoomsA), a rooms map drawn in logs, holds only
    Vault's rooms while Hammet's Shaman's Rod is missing and just after it is
    found: the insides of the town's houses, shops and inn, the inn's attic and
    its loft.

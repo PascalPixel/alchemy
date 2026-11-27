@@ -447,7 +447,7 @@ void scAirsRockInsideScatterMote(ACTOR *actor)
    item is in use. */
 void scAirsRockInsideDriftMote(ACTOR *actor)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state->psynergy != 0 || state->fieldMenu != 0 || state->pauseMenu != 0 ||
 		state->item != 0) {
@@ -488,7 +488,7 @@ void scAirsRockInsideStartWhirlwind(void)
    scAirsRockInsideWakeVialChestStatue). */
 void scAirsRockInsideTakeOverWhirlwind(void)
 {
-	((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->sceneVariant = 1;
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->sceneVariant = 1;
 }
 
 #include "shared/map_metatile_set.c"
@@ -553,7 +553,7 @@ enum { STAKE_ROW_TILES = 4, STAKE_DRAWN_TILES = 3, STAKE_TOP_ROWS = 3 };
    again (scAirsRockInsideSetStakeMetatiles). */
 void scAirsRockInsidePoundStake(Sint32 mode, Sint32 step)
 {
-	Sint16 *pair = &((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->tgtId;
+	Sint16 *pair = &((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->tgtId;
 	Sint32	even = *pair - ((*(Uint16 *)pair & 1) << 1);
 	ACTOR  *first = fdActorGetById(*pair);
 	ACTOR  *second = fdActorGetById(even + 1);
@@ -807,7 +807,7 @@ enum { WHIRLWIND_REACH_ABOVE = 16 };
 void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
 {
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 near;
 	Sint32		*leaderPos;
 	Sint32		*shotPos;
@@ -875,7 +875,7 @@ void scAirsRockInsideMoveWhirlwind(ACTOR *shot)
    the leader is riding one. */
 void scAirsRockInsideStatueBreathesWhirlwind(ACTOR *actor)
 {
-	FIELD_STATE	  *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	  *state = RamHeapSlots->fieldState;
 	ACTOR		  *shot;
 	VECTOR3		   pos;
 	EFFECT_OPTIONS options;
@@ -936,7 +936,7 @@ extern Uint32 AirsRockInsidePooledWhirlwindFadesScript[];
 void scAirsRockInsideMovePooledWhirlwind(ACTOR *shot)
 {
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 near;
 	FIXED		 speed = toFIXED(3) / 2;
 
@@ -995,7 +995,7 @@ void scAirsRockInsideMovePooledWhirlwind(ACTOR *shot)
    breathing the first of its three whirlwinds that is not on its way. */
 void scAirsRockInsideStatueBreathesPooledWhirlwind(ACTOR *actor)
 {
-	FIELD_STATE	  *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	  *state = RamHeapSlots->fieldState;
 	ACTOR		  *shot;
 	VECTOR3		   pos;
 	EFFECT_OPTIONS options;
@@ -1066,13 +1066,13 @@ void scAirsRockInsideWakeMovableStatue(
    bounces off the room's pillars. */
 void scAirsRockInsideUpdateVentPuff(ACTOR *actor)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR		*other;
 	Sint32		*pos;
 	Uint8		 i;
 
-	if(((PALETTE_FADE *)Ram_HeapSlots->palFade)->duration != 0)
+	if(((PALETTE_FADE *)RamHeapSlots->palFade)->duration != 0)
 		return;
 	if(state->transitionActive == 0)
 		return;
@@ -1151,7 +1151,7 @@ void scAirsRockInsidePuffVent(Sint32 x, Sint32 y, Sint32 z)
    flags passing over a vent a pillar has blocked. */
 void scAirsRockInsidePuffVents(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 frm;
 	Sint32		 scene;
 
@@ -1261,7 +1261,7 @@ void scAirsRockInsideSpiralGust(ACTOR *actor);
 void scAirsRockInsideBlowGust(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
 	ACTOR			   *gust, *spark, *actor;
 	VECTOR3				vel;
 	EFFECT_OPTIONS		glints, dust;
@@ -1692,7 +1692,7 @@ void scAirsRockInsideRestoreMetatileBehindLeader(void)
 		AirsRockInsideStampedZ);
 	if(MainRoutineStateWork.next != SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
 		return;
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	value =
 		METATILE_CODE(fdMapMetatileGetAttributes(MAPGRID_LAYER_OVERHEAD, x, z));
 	if(value != 0) {
@@ -2139,7 +2139,7 @@ void scAirsRockInsideStartPushingPillar(void)
    decides which vents it keeps still. */
 void scAirsRockInsideFinishPushingPillar(void)
 {
-	ACTOR *pushed = ((FIELD_STATE *)Ram_HeapSlots->fieldState)->movedBlock;
+	ACTOR *pushed = ((FIELD_STATE *)RamHeapSlots->fieldState)->movedBlock;
 	Sint32 x, z;
 
 	fdScriptStart();
@@ -2477,7 +2477,7 @@ void scAirsRockInsideVanishStone(Sint32 x, Sint32 y)
    its own flag. */
 void scAirsRockInsideStepOffVanishingStone(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader;
 	Sint32		 metatile, row = 54;
 

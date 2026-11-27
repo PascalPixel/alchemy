@@ -2429,7 +2429,7 @@ Sint32 mnItemMenuSelectGiveQuantity(
 				mnTextDrawMessageAsTilesStub(
 					MsgGiveHowMany, win, ITEM_GIVE_ASK_X, ITEM_GIVE_ASK_Y);
 				syDMAXCopy(
-					Menu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
+					MenuQuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
 				mnQuantityBarFillStub(
 					INVENTORY_STACK_MAX, QUANTITY_BAR_OUT_OF_REACH, tiles);
 				mnQuantityBarFillStub(quantityRange + baseQuantity,
@@ -2675,10 +2675,10 @@ void mnLoadStatArrows(void)
 	Sint32			 block = syVRAMCacheFindFreeEntry();
 
 	menu->resourceSlots[0] = block;
-	syVRAMCacheLoad(block, 128, Menu_ArrowTiles);
+	syVRAMCacheLoad(block, 128, MenuArrowTiles);
 	block = syVRAMCacheFindFreeEntry();
 	menu->resourceSlots[1] = block;
-	syVRAMCacheLoad(block, 128, Menu_SmallDownArrowTiles);
+	syVRAMCacheLoad(block, 128, MenuSmallDownArrowTiles);
 }
 
 /* Fills result with the item list of the party member in side index: their

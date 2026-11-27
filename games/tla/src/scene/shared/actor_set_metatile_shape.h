@@ -4,9 +4,9 @@
 void fdActorSetMetatileShape(Sint32 level, Sint32 layer, Sint32 id)
 {
 	ACTOR *actor = fdActorGetById(id);
-	Uint8 *shape = Ram_MapShapeGrid +
-		(((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[layer].metatiles -
-			(MAP_METATILE *)Ram_MapMetatileBuffer);
+	Uint8 *shape = RamMapShapeGrid +
+		(((MAP_STATE *)RamHeapSlots->mapGrid)->layers[layer].metatiles -
+			(MAP_METATILE *)RamMapMetatileBuffer);
 	Sint32 kind =
 		fdMapGridGetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
 	Sint32 height = METATILE_HEIGHT_STEPS(

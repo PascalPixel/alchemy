@@ -6,14 +6,14 @@
 @ (-1 for none), whether the first zone is for ground 0 rather than 1, and the
 @ first zone; scene -1 ends the table.
 	.macro encounter_rule scene:req, entrance:req, flag:req, first_zone_on_ground:req, first_zone:req
-	.2byte SceneId_\scene, \entrance
+	.2byte SceneId\scene, \entrance
 	.2byte (\flag & 0x7fff) | (\first_zone_on_ground << 15), \first_zone
 	.endm
 
 	.section .rodata
 	.balign 4
-	.global Scene_EncounterRules
-Scene_EncounterRules:
+	.global SceneEncounterRules
+SceneEncounterRules:
 	encounter_rule SolSanctumCorridor, -1, FLAG_SOL_SANCTUM_ERUPTED, 1, 1
 	encounter_rule SolSanctumReliefs, 1, FLAG_SOL_SANCTUM_ERUPTED, 0, 2
 	encounter_rule SolSanctumReliefs, 2, FLAG_SOL_SANCTUM_ERUPTED, 0, 2

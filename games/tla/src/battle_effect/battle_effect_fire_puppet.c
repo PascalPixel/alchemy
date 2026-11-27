@@ -8,8 +8,8 @@
 #define PUPPET_SEGMENTS		  33
 #define PUPPET_CORNERS		  (PUPPET_SEGMENTS * 2)
 #define PUPPET_QUADS		  (PUPPET_SEGMENTS - 1)
-#define PUPPET_STRIP_VERTICES (Ram_MapMetatileBuffer + 4096)
-#define PUPPET_STRIP_MESH	  (Ram_MapMetatileBuffer + 8192)
+#define PUPPET_STRIP_VERTICES (RamMapMetatileBuffer + 4096)
+#define PUPPET_STRIP_MESH	  (RamMapMetatileBuffer + 8192)
 /* The last particle keeps a copy of the target's place and scale. */
 #define PUPPET_TARGET_COPY	  (state->particles[ARRAY_COUNT(state->particles) - 1])
 
@@ -69,10 +69,10 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 
 	mesh = PUPPET_STRIP_MESH;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	motes = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	motes = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		EFFECT_LOAD_BLITTER(
@@ -137,7 +137,7 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 			Sint32 curl;
 			Sint32 j;
 			MODEL_VERTEX(*corners)
-			[2] = (MODEL_VERTEX(*)[2])Ram_MapMetatileBuffer;
+			[2] = (MODEL_VERTEX(*)[2])RamMapMetatileBuffer;
 			Uint8 *projected = PUPPET_STRIP_VERTICES;
 			Sint32 shade;
 
@@ -210,7 +210,7 @@ void btEffectRunFirePuppet(BATTLE_EFFECT_PARM *args)
 						(toFIXED(1) / PUPPET_RETURN_TICKS));
 			}
 			btRenderTransformVertices(
-				Ram_MapMetatileBuffer, PUPPET_STRIP_VERTICES, PUPPET_CORNERS);
+				RamMapMetatileBuffer, PUPPET_STRIP_VERTICES, PUPPET_CORNERS);
 			btRenderDrawModelList(model);
 
 			/* The skull at the trail's end, swelling from half its size as the
@@ -283,7 +283,7 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 	Uint8		  *motes;
 	Sint32		   i;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	motes = heap->battleSheet;
@@ -368,7 +368,7 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 				Sint32 ang;
 				Sint32 speed;
 
-				mote = &((PARTICLE *)Ram_MapMetatileBuffer)[i];
+				mote = &((PARTICLE *)RamMapMetatileBuffer)[i];
 				if(args->side == EFFECT_SIDE_ENEMIES)
 					mote->x = INTtoFIXED(caster.x / 2 - 48);
 				else
@@ -386,7 +386,7 @@ void btEffectRunWhiplash(BATTLE_EFFECT_PARM *args)
 		}
 		if(frm >= WHIPLASH_HIT_TICK) {
 			for(i = 0; i != WHIPLASH_MOTES; i++) {
-				mote = &((PARTICLE *)Ram_MapMetatileBuffer)[i];
+				mote = &((PARTICLE *)RamMapMetatileBuffer)[i];
 				if(mote->variant >= 0) {
 					Sint32 size = (mote->variant >> 3) + 1;
 

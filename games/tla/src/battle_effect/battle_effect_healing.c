@@ -204,9 +204,9 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	FIXED				 point[3];
 	DRAW_RECTANGLE		 blit[2];
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	canvasShiftX = 0;
 	btEffectStartCanvasLayer(0);
 	if(mode == HEALING_MODE_REVERSE_STAR)
@@ -423,7 +423,7 @@ void btEffectRunHealingMotes(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
 	for(frm = 0; frm != frmCnt; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		if(frm == 40)
 			EFFECT_SHOW_DAMAGE(0);

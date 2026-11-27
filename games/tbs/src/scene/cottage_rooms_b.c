@@ -1,4 +1,4 @@
-/* Cottage rooms B (SceneId_CottageRoomsB) holds the insides of Vale's wooden
+/* Cottage rooms B (SceneIdCottageRoomsB) holds the insides of Vale's wooden
    houses: Isaac's home, Vale's inn, the forge and Kraden's study, and one room
    of Babi's Palace in Tolbi drawn in the same style.
 
@@ -83,7 +83,7 @@
 	 up for that visit (FLAG_VALE_DORA_OUT_OF_BED). The setup otherwise puts
 	 her back in bed, where she dreams of Kyle.
    - Babi's Palace (COTTAGE_ROOMS_B_FROM_BABI_PALACE, from Babi's Palace's
-	 BABI_PALACE_TO_COTTAGE_ROOMS_B, SceneId_BabiPalace), in Tolbi, whose lord
+	 BABI_PALACE_TO_COTTAGE_ROOMS_B, SceneIdBabiPalace), in Tolbi, whose lord
 	 is Babi: a room of his scholars. They speak of Alchemy, of Kraden, Babi's
 	 favourite scholar, and of the Venus Ruins under Babi Lighthouse with a
 	 long tunnel beneath them. They talk differently once the Colosso finals
@@ -276,7 +276,7 @@ typedef enum COTTAGE_ROOMS_B_AREA_FLAG {
 
 /* The entrance beside Isaac's bed upstairs where the party starts again after a
    defeat on the stormy night, from ValePrologue's
-   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA (Scene_RestartRules). */
+   VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA (SceneRestartRules). */
 #define COTTAGE_ROOMS_B_ISAACS_BEDSIDE_RESTART 16
 
 /* The map's paused tileset animations that redraw the beds in Isaac's house:

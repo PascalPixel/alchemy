@@ -1,6 +1,6 @@
 /* The four small caves that each keep a Summon's stone tablet, in four scenes
    that share this overlay. In Indra Cavern, west of where the Lemurian ship
-   lands on Indra (SceneId_CavernsIndra), Lash ties a rope up to a ledge and
+   lands on Indra (SceneIdCavernsIndra), Lash ties a rope up to a ledge and
    Move pushes a stone pillar across a gap, so that Felix can leap to Zagan's
    tablet (scCavernsJumpEastAcrossGap). In Osenia Cavern, far north of Mikasalla
    (CavernsOsenia), a maze of rocks walls Megaera's tablet in: Felix climbs down
@@ -230,8 +230,8 @@ void scCavernsShiftAngaraMetatileHeights(Sint32 offset)
 void scCavernsStartMovingAngaraBlock(void)
 {
 	FIXED				pos[3];
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *cur = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *cur = RamHeapSlots->fieldEffState;
 	const Uint16	   *ids = (const Uint16 *)CavernsAngaraBlocks;
 	ACTOR			   *actor = NULL;
 	ACTOR			   *leader;
@@ -329,8 +329,8 @@ void scCavernsFinishMovingAngaraBlock(void)
 	ACTOR			   *spawned;
 	Sint32				sum;
 
-	state = Ram_HeapSlots->fieldState;
-	cur = Ram_HeapSlots->fieldEffState;
+	state = RamHeapSlots->fieldState;
+	cur = RamHeapSlots->fieldEffState;
 	actor = state->movedBlock;
 	if(cur != NULL && state->psynergy != 0) {
 		if(cur->ability != ABILITY_CARRY)
@@ -591,7 +591,7 @@ void scCavernsOpenOseniaPassage(void)
    its west end, from the hole Scoop dug to its east end. */
 void scCavernsWalkIntoPassage(void)
 {
-	Sint32 value = ((FIELD_STATE *)Ram_HeapSlots->fieldState)->stepCue;
+	Sint32 value = ((FIELD_STATE *)RamHeapSlots->fieldState)->stepCue;
 
 	if(value == METATILE_BEHAVIOR_WEST_HOLE)
 		fdActorSetPos(ACTOR_PASSAGE_MARKER, 144, 224);

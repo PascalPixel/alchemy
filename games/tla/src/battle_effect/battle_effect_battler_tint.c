@@ -5,8 +5,8 @@
    cleared canvas, and fades out the action's sound effects. */
 void btEffectSetupBlendedDisp(void)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
-	Uint8		 *canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
+	Uint8		 *canvas = RamHeapSlots->battleCanvas;
 
 	REG_DISPCNT = DISPCNT_MODE_1;
 	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
@@ -39,7 +39,7 @@ void btEffectTintBattler(
 	Sint32				 groupIdx;
 
 	slot = btObjectGetStub(unitId);
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 
 	for(groupIdx = 0; (group = btActorGetSprStub(slot->obj, groupIdx)) != NULL;
 		groupIdx++) {

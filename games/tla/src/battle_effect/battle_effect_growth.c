@@ -65,8 +65,8 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 picture;
 	Sint32				 duration;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
 	if(mode == GROWING_COLUMNS_PILLARS) {
@@ -80,10 +80,10 @@ void btEffectRunGrowingColumns(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	rectangle[0] = Ram_HeapSlots->ramCode;
+	rectangle[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
-	rectangle[1] = Ram_HeapSlots->ramCodePaired;
+	rectangle[1] = RamHeapSlots->ramCodePaired;
 
 	duration = GrowthColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
@@ -268,7 +268,7 @@ void btEffectRunVine(BATTLE_EFFECT_PARM *args)
 	Sint32				 middle;
 	PARTICLE			*column;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	btEffectStartCanvasLayer(0);
@@ -366,10 +366,10 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 	Sint32				 start;
 
 	/* FAKEMATCH(dead): heap set through its own address; as heap =
-	 * Ram_HeapSlots. */
-	*&heap = Ram_HeapSlots;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	 * RamHeapSlots. */
+	*&heap = RamHeapSlots;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -417,10 +417,10 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 						lean = THORN_BIG_LEAN;
 					}
 					if(ThornKinds[i] & THORN_MIRRORED) {
-						drawFlip(canvas, state->sheet, Thorn_X[i] - lean,
+						drawFlip(canvas, state->sheet, ThornX[i] - lean,
 							108 - height, THORN_BIG_WIDTH, height);
 					} else {
-						draw(canvas, state->sheet, Thorn_X[i] + lean,
+						draw(canvas, state->sheet, ThornX[i] + lean,
 							108 - height, THORN_BIG_WIDTH, height);
 					}
 				} else {
@@ -434,11 +434,11 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 					}
 					if(ThornKinds[i] & THORN_MIRRORED) {
 						drawFlip(canvas, state->sheet + THORN_SMALL_PICTURE,
-							Thorn_X[i] - lean, 108 - height,
+							ThornX[i] - lean, 108 - height,
 							THORN_SMALL_PICTURE_WIDTH, height);
 					} else {
 						draw(canvas, state->sheet + THORN_SMALL_PICTURE,
-							Thorn_X[i] + lean, 108 - height,
+							ThornX[i] + lean, 108 - height,
 							THORN_SMALL_PICTURE_WIDTH, height);
 					}
 				}
@@ -454,7 +454,7 @@ void btEffectRunThorn(BATTLE_EFFECT_PARM *args)
 					for(j = 0; j != THORN_FLARES; j++) {
 						flare = &PARTICLES[j];
 						if(flare->variant == -1) {
-							flare->x = Thorn_X[i] + (syRandom() & 31) + 32;
+							flare->x = ThornX[i] + (syRandom() & 31) + 32;
 							if(flare->x > 96) {
 								flare->x = 96;
 							}

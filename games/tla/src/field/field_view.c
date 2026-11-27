@@ -77,7 +77,7 @@ void fdMapGridSetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay)
 
 	/* A negative argument leaves that value alone, so a script can change the
 	   decay without restarting the shake, or start one axis only. */
-	grid = Ram_HeapSlots->mapGrid;
+	grid = RamHeapSlots->mapGrid;
 	if(shakeX >= 0) {
 		grid->shakeX = shakeX;
 	}
@@ -96,7 +96,7 @@ void fdMapGridWaitForShakeToSettle(void)
 	MAP_STATE *grid;
 	Sint32	   waitedTicks;
 
-	grid = Ram_HeapSlots->mapGrid;
+	grid = RamHeapSlots->mapGrid;
 	/* 300 ticks is five seconds; 255 in 16.16 is just under 1/256 pixel. A
 	   decay of 1.0 or more never settles, so the limit ends the wait. */
 	for(waitedTicks = 0; waitedTicks < MAPGRID_SHAKE_SETTLE_TICKS &&

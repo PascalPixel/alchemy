@@ -425,7 +425,7 @@ void scJupiterLighthouseSpawnBeaconParticle(void)
 void scJupiterLighthousePulseBeacon(void)
 {
 	ACTOR	  *actor = fdActorGet(ACTOR_BEACON_ORB);
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	syRandom();
 #if BEACON_ORB_NULL_CHECK
@@ -889,9 +889,9 @@ void scJupiterLighthouseBeaconIsLit(void)
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	syFieldScriptSetAfterBattleDestination(
-		(Sint32)&SceneId_JupiterLighthouseAerieBeacon,
+		(Sint32)&SceneIdJupiterLighthouseAerieBeacon,
 		ENTRANCE_AFTER_FIRST_BATTLE);
-	fdScriptSetDefeatDestination((Sint32)&SceneId_JupiterLighthouseAerieBeacon,
+	fdScriptSetDefeatDestination((Sint32)&SceneIdJupiterLighthouseAerieBeacon,
 		ENTRANCE_AFTER_FIRST_BATTLE);
 	fdScriptSetFlag(FLAG_KEEP_MUSIC_HELD);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_MOAPA, 5);
@@ -997,9 +997,9 @@ void scJupiterLighthouseJennaJoinsTheFight(void)
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	syFieldScriptSetAfterBattleDestination(
-		(Sint32)&SceneId_JupiterLighthouseAerieBeacon,
+		(Sint32)&SceneIdJupiterLighthouseAerieBeacon,
 		ENTRANCE_AFTER_SECOND_BATTLE);
-	fdScriptSetDefeatDestination((Sint32)&SceneId_JupiterLighthouseAerieBeacon,
+	fdScriptSetDefeatDestination((Sint32)&SceneIdJupiterLighthouseAerieBeacon,
 		ENTRANCE_AFTER_SECOND_BATTLE);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_MOAPA, 6);
 }
@@ -1111,9 +1111,8 @@ void scJupiterLighthouseShebaJoinsTheFight(void)
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
 	syFieldScriptSetAfterBattleDestination(
-		(Sint32)&SceneId_JupiterLighthouseAerieBeacon,
-		ENTRANCE_LAST_BATTLE_WON);
-	fdScriptSetDefeatDestination((Sint32)&SceneId_JupiterLighthouseAerieBeacon,
+		(Sint32)&SceneIdJupiterLighthouseAerieBeacon, ENTRANCE_LAST_BATTLE_WON);
+	fdScriptSetDefeatDestination((Sint32)&SceneIdJupiterLighthouseAerieBeacon,
 		ENTRANCE_LAST_BATTLE_LOST);
 	fdScriptClearFlag(FLAG_KEEP_MUSIC_HELD);
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_MOAPA, 7);
@@ -2144,11 +2143,11 @@ const CUE *scGetCues(void)
 
 /* Unused: writes to out the ids of the actors standing on the elevator, in
    columns 4 to 8 and the three rows from 72 less the row of its scroll z, as
-   The Broken Seal's MercuryLighthouseAerie_FindLiftRiders finds its lift's. */
+   The Broken Seal's MercuryLighthouseAerieFindLiftRiders finds its lift's. */
 UNUSED void scJupiterLighthouseFindElevatorRiders(Sint32 *out, Sint32 zArg)
 {
 	Sint32		 z = zArg;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 slot;
 
 	z = 64 - FIELD_METATILE(z);
@@ -2196,7 +2195,7 @@ void scJupiterLighthouseLowerElevator(Sint32 mode)
 	MAP_LAYER *elevator;
 
 	elevator =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
 	speed = toFIXED(1) / 10;
 	cnt = 0;
 	JupiterLighthouseElevatorLevel = elevator->ofsY;
@@ -2287,7 +2286,7 @@ extern Sint32 JupiterLighthouseRisingElevatorRiders[];
 void scJupiterLighthouseRaiseElevator(Sint32 mode)
 {
 	MAP_LAYER *elevator =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_OVERHEAD];
 	Sint32	speed = toFIXED(3) / 2;
 	Uint32	cnt = 0;
 	Uint32	i;

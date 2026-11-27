@@ -145,7 +145,7 @@ typedef enum CASTING_IMPACT {
 /* The impact pictures' particles, in the map cell buffer after the Djinni and
    Stun Jip's flame band. */
 #define CASTING_IMPACT_IMPACT_PARTICLES \
-	((PARTICLE *)(Ram_MapMetatileBuffer + 24576))
+	((PARTICLE *)(RamMapMetatileBuffer + 24576))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
 /* A spark scattered over the target's life at the least, counted down two a
    tick (the draw visits each spark twice); it is drawn a mote size smaller for
@@ -289,7 +289,7 @@ typedef enum CASTING_IMPACT {
 /* Stun Bolt's bolts, each turning about the target: STUN_BOLT_COUNT are given a
    spin and a picture, and the first STUN_BOLT_STRIKES strike, one starting each
    tick. */
-#define STUN_BOLT_BOLTS				   ((PARTICLE *)(Ram_MapMetatileBuffer + 28160))
+#define STUN_BOLT_BOLTS				   ((PARTICLE *)(RamMapMetatileBuffer + 28160))
 #define STUN_BOLT_COUNT				   32
 #define STUN_BOLT_STRIKES			   20
 
@@ -337,12 +337,12 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind)
 	Sint32				 v;
 	Sint32				*vec;
 
-	pictures = Ram_MapMetatileBuffer;
+	pictures = RamMapMetatileBuffer;
 	impactParticles = CASTING_IMPACT_IMPACT_PARTICLES;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sprs = RamHeapSlots->battleSheet;
 	scrollPos = 0;
 	scrollSpeed = 0;
 
@@ -1765,7 +1765,7 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind)
 				EFFECT_RELEASE_BLITTERS();
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
 					BLITTER_TRANSPARENT);
-				blitters[0] = Ram_HeapSlots->ramCode;
+				blitters[0] = RamHeapSlots->ramCode;
 				if(frm == 0) {
 					for(i = 0; i != 16 * SARCOPHAGUS_COFFIN_WIDTH; i++)
 						state->sheet[i] = syRandom() & 31;
@@ -1859,7 +1859,7 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind)
 						flg = EFFECT_CLIP_BOUNDS;
 						EFFECT_LOAD_BLITTER(
 							HEAP_SLOT_RAM_CODE, flg, BLITTER_ADDITIVE);
-						(Ram_HeapSlots->ramCode)(canvas,
+						(RamHeapSlots->ramCode)(canvas,
 							pictures + m * PICTURE_BYTES(TARGET_STRIKE_BITE),
 							tgtPos.x / 2 - TARGET_STRIKE_BITE_WIDTH,
 							TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
@@ -1869,7 +1869,7 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind)
 						EFFECT_LOAD_BLITTER(
 							HEAP_SLOT_RAM_CODE, flg, BLITTER_ADDITIVE);
 					}
-					(Ram_HeapSlots->ramCode)(canvas,
+					(RamHeapSlots->ramCode)(canvas,
 						pictures + m * PICTURE_BYTES(TARGET_STRIKE_BITE),
 						tgtPos.x / 2, TARGET_STRIKE_BITE_Y,
 						TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
@@ -1925,7 +1925,7 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
 						BLITTER_TRANSPARENT);
-				blitters[0] = Ram_HeapSlots->ramCode;
+				blitters[0] = RamHeapSlots->ramCode;
 				scrollPos += scrollSpeed;
 				if(frm > 6)
 					scrollSpeed = scrollSpeed * 48 / DAMPING_SCALE;
@@ -1987,7 +1987,7 @@ void btEffectRunCastingImpact(BATTLE_EFFECT_PARM *action, Sint32 kind)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 						EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
 						BLITTER_TRANSPARENT);
-				blitters[0] = Ram_HeapSlots->ramCode;
+				blitters[0] = RamHeapSlots->ramCode;
 				scrollPos += scrollSpeed;
 				if(frm == 5)
 					scrollPos += toFIXED(32);

@@ -89,7 +89,7 @@ typedef struct MAIN_ROUTINE_STATE {
 	Uint8		   unused[4];
 	PARTY_HOLDINGS holdings;
 	Uint8		   unusedAfterPrizes[132];
-	/* What the main routine runs next: a scene (a SceneId_ row of ScenesWork),
+	/* What the main routine runs next: a scene (a SceneId row of ScenesWork),
 	   which means the field mode running that scene, or a MODE_ value above the
 	   table's rows for another mode. */
 	Sint16 next;

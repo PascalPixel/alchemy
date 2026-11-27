@@ -85,10 +85,10 @@
 /* The landing's buffers in the map cell buffer: the dome's vertices and its
    grid mesh, and the band's vertices and mesh; its motes are ECLIPSE_MOTE_COUNT
    of EXTRA_PARTICLES. */
-#define ECLIPSE_DOME_VERTICES	   (Ram_MapMetatileBuffer + 2048)
-#define ECLIPSE_DOME_MESH		   (Ram_MapMetatileBuffer + 4096)
-#define ECLIPSE_BAND_VERTICES	   (Ram_MapMetatileBuffer + 8192)
-#define ECLIPSE_BAND_MESH		   (Ram_MapMetatileBuffer + 10240)
+#define ECLIPSE_DOME_VERTICES	   (RamMapMetatileBuffer + 2048)
+#define ECLIPSE_DOME_MESH		   (RamMapMetatileBuffer + 4096)
+#define ECLIPSE_BAND_VERTICES	   (RamMapMetatileBuffer + 8192)
+#define ECLIPSE_BAND_MESH		   (RamMapMetatileBuffer + 10240)
 #define ECLIPSE_MOTE_COUNT		   512
 /* The landing's ticks, and the motes it throws up each tick. */
 #define ECLIPSE_LANDING_TICKS	   26
@@ -159,12 +159,12 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	PARTICLE				*p;
 	SPR						*obj;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	savedScroll = BgScrollWork[1].x;
-	background = Ram_HeapSlots->battleBg;
-	sprs = Ram_HeapSlots->battleSheet;
-	battle = Ram_HeapSlots->battleState;
+	background = RamHeapSlots->battleBg;
+	sprs = RamHeapSlots->battleSheet;
+	battle = RamHeapSlots->battleState;
 	btEffectStartCanvasLayer(0);
 	btEffectFillWhiteBand();
 	state->transferMode = CANVAS_COPY;
@@ -230,7 +230,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 	velY = 0;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	syWordsCopy((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
 		SHEET_PALETTE_BYTES);
@@ -255,7 +255,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 			}
 			if(frm == ECLIPSE_JAWS_OPEN) {
 				/* The head's other pictures, still decoded after its first. */
-				Uint8 *dst = Ram_MapMetatileBuffer + OBJ_32X32_8BPP_BYTES;
+				Uint8 *dst = RamMapMetatileBuffer + OBJ_32X32_8BPP_BYTES;
 				for(i = 0; i != ECLIPSE_OPEN_JAW_PICTURES; i++) {
 					void *tiles = (void *)OBJ_TILES(
 						(SPR *)state->sprs[EclipseTileObjects[i]]);
@@ -505,7 +505,7 @@ void btEffectRunEclipse(BATTLE_EFFECT_PARM *args)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 						EclipseGlintFlips[syRandom() & 3] | EFFECT_CLIP_BOUNDS,
 						BLITTER_MAX);
-					(Ram_HeapSlots->ramCodePaired)(canvas,
+					(RamHeapSlots->ramCodePaired)(canvas,
 						state->sheet + ECLIPSE_TORNADO_PICTURES +
 							BattleEffectGlintPictures[t],
 						x, y, BattleEffectGlintPictureWidths[t],
@@ -904,7 +904,7 @@ UNUSED void btEffectNoOperationB(void)
 #define FORM_CHANGE_GLOW_BAND	 12288
 /* Where BillowTexture, the columns' texture, is decoded in the map cell
    buffer. */
-#define FORM_CHANGE_BILLOW		 (Ram_MapMetatileBuffer + 8192)
+#define FORM_CHANGE_BILLOW		 (RamMapMetatileBuffer + 8192)
 /* The tick the change bursts: the screen shakes, flashes burst and the columns
    start to rise. At FORM_CHANGE_SWAP the battle swaps in the next form. */
 #define FORM_CHANGE_BURST		 48
@@ -953,7 +953,7 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
 		state->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
@@ -1106,10 +1106,10 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
 				if(radius <= FORM_CHANGE_GLOW_RADIUS) {
 					size = radius * 2;
 					btEffectDrawShadedCircles(
-						Ram_MapMetatileBuffer, size, toFIXED(1));
+						RamMapMetatileBuffer, size, toFIXED(1));
 				}
-				btCanvasBlitMirroredQuarters(Ram_MapMetatileBuffer,
-					FIXEDtoINT(cx), FIXEDtoINT(cy), size);
+				btCanvasBlitMirroredQuarters(
+					RamMapMetatileBuffer, FIXEDtoINT(cx), FIXEDtoINT(cy), size);
 			}
 
 			/* Each ray has an angle (x), a spin (y) and an age (variant), each
@@ -1234,8 +1234,8 @@ void btEffectRunFormChange(BATTLE_EFFECT_PARM *args, Sint32 kind)
    fades, darkens or brightens it as transferMode says. */
 void btEffectTransferCanvas(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*src = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*src = RamHeapSlots->battleCanvas;
 	Uint32				 ime;
 
 	IRQ_LOCK(ime);
@@ -1279,7 +1279,7 @@ void btEffectTransferCanvas(void)
    it, then clears the picture. */
 void btEffectProcessPendingStampTransfer(void)
 {
-	Uint8  *state = Ram_HeapSlots->battleEff;
+	Uint8  *state = RamHeapSlots->battleEff;
 	Uint32	ime;
 	Sint32 *pending;
 
@@ -1301,8 +1301,8 @@ void btEffectProcessPendingStampTransfer(void)
    says. */
 void btEffectTransferFullScreenImage(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*source = Ram_MapMetatileBuffer;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*source = RamMapMetatileBuffer;
 	Uint32				 ime;
 
 	IRQ_LOCK(ime);
@@ -1346,13 +1346,13 @@ void btEffectTransferFullScreenImage(void)
    take only its first CANVAS_VIEW_BYTES. */
 void btEffectProcessPendingBlock2Transfer(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	void				*src;
 	Uint32				 ime;
 
 	IRQ_LOCK(ime);
 	if(state->transferPending == 1) {
-		src = Ram_HeapSlots->battleCanvas;
+		src = RamHeapSlots->battleCanvas;
 		state->transferPending = 0;
 		IRQ_UNLOCK(ime);
 		switch(state->transferMode) {
@@ -1420,7 +1420,7 @@ void btEffectBuildCanvasTilemap(void)
    all at once. */
 void btEffectApplyWindowBlendRegisters(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	REG_WIN0H = state->win0h;
 	REG_WIN0V = state->win0v;
@@ -1437,7 +1437,7 @@ void btEffectApplyWindowBlendRegisters(void)
    BG2X and BG2Y. */
 void btDispApplyBg2Affine(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	REG_BG2PA = state->bg2pa;
 	REG_BG2PD = state->bg2pd;
@@ -1448,7 +1448,7 @@ void btDispApplyBg2Affine(void)
 /* Writes the effect's BG2 reference point to BG2X and BG2Y. */
 void btEffectApplyBg2Reference(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	REG_BG2X = state->bg2x;
 	REG_BG2Y = state->bg2y;
@@ -1458,12 +1458,12 @@ void btEffectApplyBg2Reference(void)
    the effect stands out, for as many ticks as fadeTicks says. */
 void btEffectDarkenBackgroundStep(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	Sint32				*ticksLeft;
 	BATTLE_STATE		*battle;
 
 	ticksLeft = &state->fadeFrm;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 
 	if(*ticksLeft > 0) {
 		Sint32 *step = &state->fadeStep;
@@ -1479,7 +1479,7 @@ void btEffectDarkenBackgroundStep(void)
 /* Clears every target's flash timer. */
 void btEffectClearTintTimers(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	syWordsClear(state->actorTmrs, sizeof state->actorTmrs);
 }
@@ -1491,7 +1491,7 @@ void btEffectCountDownBattlerTints(void)
 	BATTLE_EFFECT_STATE *state;
 	Sint32				 actorIdx;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	for(actorIdx = 0; actorIdx != 8; actorIdx += 1) {
 		if(state->actorTmrs[actorIdx] != 0) {
 			if((state->actorTmrs[actorIdx] = state->actorTmrs[actorIdx] - 1) ==
@@ -1523,10 +1523,10 @@ void btEffectSetupCanvasWindows(void)
    behind it. */
 void btEffectStartCanvasLayer(Sint32 bgControl)
 {
-	BATTLE_EFFECT_STATE		*state = Ram_HeapSlots->battleEff;
-	BATTLE_STATE			*battle = Ram_HeapSlots->battleState;
-	void					*canvas = Ram_HeapSlots->battleCanvas;
-	BATTLE_BACKGROUND_STATE *display = Ram_HeapSlots->battleBg;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
+	BATTLE_STATE			*battle = RamHeapSlots->battleState;
+	void					*canvas = RamHeapSlots->battleCanvas;
+	BATTLE_BACKGROUND_STATE *display = RamHeapSlots->battleBg;
 	Sint32					 row;
 	Sint32					 column;
 	Sint32					 ofs;
@@ -1589,10 +1589,10 @@ void btEffectStartCanvasLayer(Sint32 bgControl)
    darkens; nothing calls it. */
 UNUSED void btEffectOpenCanvasLayer(Sint32 bgControl)
 {
-	BATTLE_EFFECT_STATE		*state = Ram_HeapSlots->battleEff;
-	BATTLE_STATE			*battle = Ram_HeapSlots->battleState;
-	void					*canvas = Ram_HeapSlots->battleCanvas;
-	BATTLE_BACKGROUND_STATE *display = Ram_HeapSlots->battleBg;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
+	BATTLE_STATE			*battle = RamHeapSlots->battleState;
+	void					*canvas = RamHeapSlots->battleCanvas;
+	BATTLE_BACKGROUND_STATE *display = RamHeapSlots->battleBg;
 	Sint32					 row;
 	Sint32					 column;
 	Sint32					 ofs;
@@ -1697,8 +1697,8 @@ void btEffectStartTiledCanvasFilled(Sint32 bgControl)
 /* Closes the canvas layer and brings the battle background's colours back. */
 void btEffectEndCanvasLayer(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	BATTLE_STATE		*battle = Ram_HeapSlots->battleState;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_STATE		*battle = RamHeapSlots->battleState;
 	Sint32				 i;
 
 	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
@@ -1745,8 +1745,8 @@ void btEffectHideBg1AndRestoreBackdrop(void)
 	BATTLE_STATE *battle;
 	Sint32		 *flg;
 
-	flg = &(Ram_HeapSlots->battleBg)->bg1ScrollMode;
-	battle = Ram_HeapSlots->battleState;
+	flg = &(RamHeapSlots->battleBg)->bg1ScrollMode;
+	battle = RamHeapSlots->battleState;
 	*flg = BATTLE_BACKGROUND_FIXED;
 	syIOWriteQueueStore16((Uint32)&REG_DISPCNT,
 		DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
@@ -1773,9 +1773,9 @@ void btEffectHideBg1AndRestoreBackdrop(void)
 /* Shows the canvas on BG1 instead of BG2, at its own size. */
 void btEffectSetupCanvasTileMap(void)
 {
-	void					*canvas = Ram_HeapSlots->battleCanvas;
-	BATTLE_STATE			*screen = Ram_HeapSlots->battleState;
-	BATTLE_BACKGROUND_STATE *layer = Ram_HeapSlots->battleBg;
+	void					*canvas = RamHeapSlots->battleCanvas;
+	BATTLE_STATE			*screen = RamHeapSlots->battleState;
+	BATTLE_BACKGROUND_STATE *layer = RamHeapSlots->battleBg;
 	Sint32					 row;
 	Sint32					 column;
 	Sint32					 byteOfs;
@@ -1833,7 +1833,7 @@ void btEffectDrawClippedCanvasLine(
 	Sint32 dx = x1 - x0;
 	Sint32 dy = y1 - y0;
 	Sint32 frac = LINE_PIXEL / 2 << LINE_FRACTION_SHIFT;
-	Uint8 *canvas = Ram_HeapSlots->battleCanvas;
+	Uint8 *canvas = RamHeapSlots->battleCanvas;
 	Sint32 step;
 	Sint32 i;
 	Sint32 x;

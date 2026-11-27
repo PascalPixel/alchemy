@@ -37,7 +37,7 @@ STATIC_ASSERT(sizeof(PALETTE_CYCLE_STATE) == 180);
 STATIC_ASSERT(offsetof(PALETTE_CYCLE_STATE, cnt) == 176);
 
 /* The palette cycling queue, in its heap slot (HEAP_SLOT_PALETTE_CYCLES). */
-#define PaletteState ((PALETTE_CYCLE_STATE *)Ram_HeapSlots->palCycles)
+#define PaletteState ((PALETTE_CYCLE_STATE *)RamHeapSlots->palCycles)
 
 void   fdPaletteCycleInit(void);
 Sint32 fdPaletteCycleAdd(

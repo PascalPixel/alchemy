@@ -437,20 +437,20 @@ typedef struct YAMPI_DESERT_VISUAL {
 
 /* Compressed tiles the scenes unpack into the VRAM cache
    (graphics/field/cached_a.png to cached_d.png). */
-extern Uint8 Field_CachedTilesA[];
+extern Uint8 FieldCachedTilesA[];
 
-/* See Field_CachedTilesA (graphics/field/cached_d.png). */
-extern Uint8 Field_CachedTilesD[];
+/* See FieldCachedTilesA (graphics/field/cached_d.png). */
+extern Uint8 FieldCachedTilesD[];
 
 /* Compressed ground tiles (graphics/field/ground_tiles.png). */
-extern const Uint8 Field_GroundTiles[];
+extern const Uint8 FieldGroundTiles[];
 
 /* An explosion's 16 sprite colours (graphics/field/explosion_palette.png). */
-extern const Uint16 Field_ExplosionPalette[];
+extern const Uint16 FieldExplosionPalette[];
 /* The sparks of the explosion that Loho's cannon blast and the Northern
    Reaches' shattered ice wall throw over the screen: how many, a spark's life
    in ticks (the explosion sprite sheet's eight pictures, four ticks each),
-   the sprite palette their colours are loaded into (Field_ExplosionPalette),
+   the sprite palette their colours are loaded into (FieldExplosionPalette),
    and their depth slot among the field engine's sprites. */
 #define EXPLOSION_SPARK_COUNT	96
 #define EXPLOSION_SPARK_TICKS	32
@@ -462,7 +462,7 @@ extern const Uint16 Field_ExplosionPalette[];
 void scEasternAlhafraShipCountAnswer();
 
 /* A geyser's compressed tiles (graphics/field/geyser.png). */
-extern const Uint8 Field_GeyserTiles[];
+extern const Uint8 FieldGeyserTiles[];
 
 /* The geysers Scoop digs up in Gondowan Cliffs and in Yampi Desert's scorpion
    pit (each scene's GEYSER_WORK): the most sprites btGeyserDraw queues in a
@@ -484,11 +484,11 @@ extern const Uint8 Field_GeyserTiles[];
 #define GEYSER_STATE \
 	((struct GEYSER_WORK *)(InventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
-/* See Field_CachedTilesA (graphics/field/cached_b.png). */
-extern Uint8 Field_CachedTilesB[];
+/* See FieldCachedTilesA (graphics/field/cached_b.png). */
+extern Uint8 FieldCachedTilesB[];
 
-/* See Field_CachedTilesA (graphics/field/cached_c.png). */
-extern Uint8 Field_CachedTilesC[];
+/* See FieldCachedTilesA (graphics/field/cached_c.png). */
+extern Uint8 FieldCachedTilesC[];
 
 /* The metatile stampers of Air's Rock's and Magma Rock's insides keep the last
    metatile they stamped under the leader in one word, x in the high half and z
@@ -532,11 +532,11 @@ struct WINDOW;
    is thawed (FLAG_MARS_LIGHTHOUSE_THAWED). A frozen map's thawed copy is
    MARS_LIGHTHOUSE_THAWED_MAPS rows on, the distance the linker gives between
    the two first rows (field/map_resources.s). */
-extern char MapIndex_MarsLighthouseOutside;
-extern char MapIndex_MarsLighthouseOutsideThawed;
+extern char MapIndexMarsLighthouseOutside;
+extern char MapIndexMarsLighthouseOutsideThawed;
 #define MARS_LIGHTHOUSE_THAWED_MAPS \
-	((Sint32)&MapIndex_MarsLighthouseOutsideThawed - \
-		(Sint32)&MapIndex_MarsLighthouseOutside)
+	((Sint32)&MapIndexMarsLighthouseOutsideThawed - \
+		(Sint32)&MapIndexMarsLighthouseOutside)
 
 /* The Lemurian Ship's background palette, the blues of the band along its hull
    and the surf, in the scenes that show the ship: Atteka Inlet, Lemuria's dock
@@ -622,7 +622,7 @@ typedef struct VENT_WORK {
 #define DIFF(a, b)	  ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 /* The names field/actor_vent_bounce.c's two functions take in both rooms'
    copies: whether a thrown object rests on another, and its motion. */
-#define VENT_TOUCHING Vent_IsTouching
+#define VENT_TOUCHING VentIsTouching
 #define VENT_BOUNCE	  scVentBounce
 /* Vent index's entry: `state` moved on by index entries and read as the first,
    as the vents' accessors (scVentSetBlowing, scVentSetGust) read it. */

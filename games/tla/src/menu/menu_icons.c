@@ -11,7 +11,7 @@ void mnLoadDjinnArrows(void)
 	Sint32			 secondSlot;
 	ITEM_MENU_STATE *activeState;
 
-	activeState = Ram_HeapSlots->menuState;
+	activeState = RamHeapSlots->menuState;
 	firstSlot = syVRAMCacheFindFreeEntry();
 	activeState->resourceSlots[0] = (Sint16)firstSlot;
 	if(firstSlot != -1) {
@@ -30,7 +30,7 @@ void mnLoadDjinnArrows(void)
    (mnLoadStatArrows or mnLoadDjinnArrows). */
 void mnFreeArrows(void)
 {
-	ITEM_MENU_STATE *state = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *state = RamHeapSlots->menuState;
 
 	syVRAMCacheFreeEntry((Uint16)state->resourceSlots[0]);
 	syVRAMCacheFreeEntry((Uint16)state->resourceSlots[1]);
@@ -77,7 +77,7 @@ Sint32 mnIconCreateStatChangeArrow(
 {
 	WINDOW_SPR		*arrow;
 	Uint32			 resource;
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	if(variant == STAT_ARROW_UP)
 		resource = menu->resourceSlots[0];
@@ -104,7 +104,7 @@ Sint32 mnIconCreateDjinnArrow(WINDOW *win, Sint32 x, Sint32 y, Sint32 variant)
 {
 	WINDOW_SPR		*arrow;
 	Uint32			 resource;
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	if(variant == STAT_ARROW_UP) {
 		resource = menu->resourceSlots[0];
@@ -171,7 +171,7 @@ Sint32 mnMoveGridCursor(Sint32 *cursor, Sint32 cnt, Sint32 columns)
    above it and the down arrow when one follows, among `cnt` entries. */
 void mnSetPageArrowsUpDown(Sint32 idx, Sint32 cnt)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	WINDOW_SPR		*arrow;
 	Sint32			 top = idx / 4 * 4;
 
@@ -193,7 +193,7 @@ void mnSetPageArrowsUpDown(Sint32 idx, Sint32 cnt)
    menu's columns of party members. */
 void mnSetPageArrowsLeftRight(Sint32 idx, Sint32 cnt)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	WINDOW_SPR		*arrow;
 	Sint32			 top = idx / 4 * 4;
 
@@ -216,7 +216,7 @@ void mnSetPageArrowsLeftRight(Sint32 idx, Sint32 cnt)
    MENU_MEMBER_Y. */
 void mnMarkChosenMember(Sint32 unused, Sint32 idx, Sint32 cnt)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 top = idx / 4 * 4;
 	Sint32			 i;
 
@@ -233,7 +233,7 @@ void mnMarkChosenMember(Sint32 unused, Sint32 idx, Sint32 cnt)
    its menu position and scale through the projected placement. */
 void mnUpdatePartyFigures(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 scale[2];
 	FIXED			 transform[4];
 	Sint32			 i;
@@ -265,7 +265,7 @@ Sint32 fdPartyGetCharacterSprStub(Sint32 id);
    between. */
 void mnCreatePairFigures(Sint32 first, Sint32 second)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	SPR				*figure;
 	Sint32			 id;
 	Sint32			 i;
@@ -299,7 +299,7 @@ void mnCreatePairFigures(Sint32 first, Sint32 second)
    from party place first on, standing (ANIM_STAND), and counts the party. */
 void mnCreatePartyFigures(Sint32 first)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Uint16			 owners[14];
 	SPR				*object;
 	Sint32			 i;
@@ -330,7 +330,7 @@ void mnCreatePartyFigures(Sint32 first)
    (mnUpdatePartyFigures). */
 void mnShowPartyFigures(WINDOW *win, Sint32 originX, Sint32 originY)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 i;
 
 	for(i = 0; i < 8; i++)
@@ -350,7 +350,7 @@ void mnShowPartyFigures(WINDOW *win, Sint32 originX, Sint32 originY)
 /* Destroys the menu's party figures and stops placing them. */
 void mnReleasePartyFigures(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	void		   **objects = menu->memberSprs;
 	Sint32			 i;
 
@@ -366,7 +366,7 @@ void mnReleasePartyFigures(void)
 /* Shows the Djinn figures of the top row (nonzero) or hides them (0). */
 void mnDjinnFiguresSetShown(Sint32 shown)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	menu->figuresShown = shown;
 }
@@ -376,7 +376,7 @@ void mnDjinnFiguresSetShown(Sint32 shown)
    negative one holds at its size. */
 void mnDjinnFiguresUpdateTopRow(void)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	SPR_SCALE		 scale;
 	SPR_PLACEMENT	 pos;
 	Sint32			 i;
@@ -427,7 +427,7 @@ extern Sint32 DjinnFiguresSpriteIds[];
    each tick (mnDjinnFiguresUpdateTopRow). */
 void mnDjinnFiguresInitTopRow(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	SPR				*object;
 	Sint32			 i;
 
@@ -456,7 +456,7 @@ void mnDjinnFiguresInitTopRow(void)
 /* Destroys the four Djinn figures and stops placing them. */
 void mnDjinnFiguresReleaseTopRow(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 i;
 
 	for(i = 0; i < 4; i++) {
@@ -472,7 +472,7 @@ void mnDjinnFiguresReleaseTopRow(void)
    (DjinnFiguresSpriteIds) playing animation. */
 void mnDjinnFiguresReplaceSlot(Sint32 idx, Sint32 kind, Sint32 anm)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	SPR				*object;
 
 	if(menu->figures[idx] != NULL) {
@@ -490,7 +490,7 @@ void mnDjinnFiguresReplaceSlot(Sint32 idx, Sint32 kind, Sint32 anm)
 /* Moves Djinn figure index to screen pixel (x, y), if it exists. */
 void mnDjinnFiguresSetSlotPos(Sint32 idx, Sint32 x, Sint32 y)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	if(menu->figures[idx] != NULL) {
 		menu->figureX[idx] = x;
@@ -501,7 +501,7 @@ void mnDjinnFiguresSetSlotPos(Sint32 idx, Sint32 x, Sint32 y)
 /* Turns Djinn figure index to face facing (FACING), if it exists. */
 void mnDjinnFiguresSetSlotFacing(Sint32 idx, Sint32 facing)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	if(menu->figures[idx] != NULL)
 		menu->figureFacings[idx] = facing;
@@ -511,7 +511,7 @@ void mnDjinnFiguresSetSlotFacing(Sint32 idx, Sint32 facing)
    size, negative holds at its size. */
 void mnDjinnFiguresSetSlotPhase(Sint32 idx, Sint32 scale)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	if(menu->figures[idx] != NULL)
 		menu->figureScales[idx] = scale;
@@ -520,7 +520,7 @@ void mnDjinnFiguresSetSlotPhase(Sint32 idx, Sint32 scale)
 /* An event: queues the five status icons for drawing while they show. */
 void mnIconPushSlots(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	ICON_SPR		*slot;
 	Sint32			 i;
 
@@ -541,7 +541,7 @@ extern Uint16 StatusScreenStatusIcons[5];
    pictures for downed, poison, deadly poison, a cursed item and haunt. */
 void mnIconLoadSlots(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	ICON_SPR		*slot = menu->menuIcons;
 	Sint32			 entry;
 	Sint32			 i;
@@ -568,7 +568,7 @@ void mnIconLoadSlots(void)
 /* Stops drawing the five status icons and frees their VRAM cache slots. */
 void mnIconReleaseSlots(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Uint16			*resource;
 	Sint32			 i;
 
@@ -581,7 +581,7 @@ void mnIconReleaseSlots(void)
 /* Moves status icon index to screen position (x, y). */
 void mnIconSetSlot(Sint32 idx, Uint32 x, Sint32 y)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	menu->menuIcons[idx].attr.x = x;
 	menu->menuIcons[idx].attr.y = y;
@@ -590,7 +590,7 @@ void mnIconSetSlot(Sint32 idx, Uint32 x, Sint32 y)
 /* Shows the five status icons (1) or hides them (0). */
 void mnIconSetActive(Sint32 active)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	menu->menuIconsShown = active;
 }

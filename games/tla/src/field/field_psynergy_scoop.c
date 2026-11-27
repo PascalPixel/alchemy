@@ -55,7 +55,7 @@ void fdScoopUpdate(void)
 	Sint32					 jitter;
 	Sint32					 i;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	hand = state->actor;
 	if(state->mode == SCOOP_EARTH) {
 		switch(state->phase) {
@@ -86,7 +86,7 @@ void fdScoopUpdate(void)
 			vram = (Uint8 *)OBJ_VRAM0 + state->pictureTile * TILE_SIZE_4BPP;
 			fdPictureShiftColumnsByWave(state->tiles, picture, state->tmr + 14);
 			((const Uint8 *(*)(const Uint8 *, Sint32, Sint32,
-				void *))Ram_HeapSlots->pictureUploader)(
+				void *))RamHeapSlots->pictureUploader)(
 				picture, SCOOP_PICTURE_SIZE, SCOOP_PICTURE_SIZE, vram);
 			spr = &state->pictureSpr;
 			fdEffectSprDraw(spr);
@@ -202,8 +202,8 @@ void fdPsynergyScoop(void)
 {
 	SCOOP_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*state));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*caster = scene->caster;
 	ACTOR					*boulder = NULL;
 	ACTOR					*hand;
@@ -482,11 +482,11 @@ void fdPsynergyScoop(void)
    the ..." message (FIELD_TALK_SILENT). */
 void fdScoopDropFromHand(Sint32 id)
 {
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*hand;
 	ACTOR		*actor;
 
-	hand = ((SCOOP_STATE *)Ram_HeapSlots->battleEff)->actor;
+	hand = ((SCOOP_STATE *)RamHeapSlots->battleEff)->actor;
 	actor = fdActorGetById(id);
 	if(hand != NULL) {
 		SET_ACTOR_POSITION(actor, hand->x.fixed, hand->y.fixed, hand->z.fixed);
@@ -510,7 +510,7 @@ extern const Uint16 ScoopDugItems[16];
    leader's level; it then drops (fdScoopDropFromHand). */
 void fdScoopDigUpItem(void)
 {
-	SCOOP_STATE *state = Ram_HeapSlots->battleEff;
+	SCOOP_STATE *state = RamHeapSlots->battleEff;
 	ACTOR		*hand;
 	FIELD_STATE *field;
 	UNIT		*unit;
@@ -519,7 +519,7 @@ void fdScoopDigUpItem(void)
 	Sint32		 id = SCOOPED_ITEM_ACTOR;
 
 	hand = state->actor;
-	field = Ram_HeapSlots->fieldState;
+	field = RamHeapSlots->fieldState;
 	unit = syUnitGet(MainRoutineStateWork.leaderActorId);
 
 	actor = fdActorGetById(id);

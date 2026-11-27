@@ -22,7 +22,7 @@ void fdDjinnRunMarsJoinEffect(Sint32 djinniId)
 		return;
 
 	fdEffectInitSlots();
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	/* Tint the screen red. */
 	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
 	sySynch(30);

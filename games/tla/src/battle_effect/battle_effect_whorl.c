@@ -9,16 +9,16 @@
    join them: TWISTING_COLUMN_QUADS quads, one row more. They are built at the
    start of the map cell buffer, which the transform reads as
    MapGridMetatileBuffer. */
-#define TWISTING_COLUMN_CORNERS	 ((Sint8 (*)[2][4])Ram_MapMetatileBuffer)
+#define TWISTING_COLUMN_CORNERS	 ((Sint8 (*)[2][4])RamMapMetatileBuffer)
 #define TWISTING_COLUMN_QUADS	 32
 #define TWISTING_COLUMN_ROWS	 (TWISTING_COLUMN_QUADS + 1)
 #define TWISTING_COLUMN_VERTICES (TWISTING_COLUMN_ROWS * 2)
 
 /* The column's transformed corners, its strip's mesh and the second sprite
    sheet, in the map cell buffer. */
-#define TWISTING_COLUMN_TRANSFORMED (Ram_MapMetatileBuffer + 4096)
-#define TWISTING_COLUMN_MESH		(Ram_MapMetatileBuffer + 8192)
-#define TWISTING_COLUMN_SHEET		(Ram_MapMetatileBuffer + 16384)
+#define TWISTING_COLUMN_TRANSFORMED (RamMapMetatileBuffer + 4096)
+#define TWISTING_COLUMN_MESH		(RamMapMetatileBuffer + 8192)
+#define TWISTING_COLUMN_SHEET		(RamMapMetatileBuffer + 16384)
 
 /* Where JupiterDjinnSmallSheet is decoded in the effect's pictures. */
 #define TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES 8192
@@ -124,10 +124,10 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	SCREEN_POINT tgtScreen;
 	SCREEN_POINT casterScreen;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sprs = RamHeapSlots->battleSheet;
 	unit = syUnitGet(args->tgts[0]);
 	btEffectStartCanvasLayer(0);
 	if(mode <= TWISTING_COLUMN_GALE) {
@@ -173,7 +173,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		djinniPlace[1] = caster->y;
 		djinniPlace[2] = caster->z;
 		btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-			Ram_MapMetatileBuffer + TWISTING_COLUMN_FLASH_BURST, 1, 0);
+			RamMapMetatileBuffer + TWISTING_COLUMN_FLASH_BURST, 1, 0);
 		ticks = TWISTING_COLUMN_TICKS;
 	} else {
 		REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -187,7 +187,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	}
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	tgt = btObjectGetStub(args->tgts[0])->obj;
@@ -549,7 +549,7 @@ void btEffectRunTwistingColumn(BATTLE_EFFECT_PARM *args, Uint32 mode)
 						for(i = 0; i != 8; i++, spray++) {
 							if(spray->variant < FLASH_BURST_PICTURE_COUNT * 4) {
 								blit[0](canvas,
-									(Ram_MapMetatileBuffer +
+									(RamMapMetatileBuffer +
 										TWISTING_COLUMN_FLASH_BURST) +
 										spray->variant / 4 *
 											PICTURE_BYTES(FLASH_BURST),

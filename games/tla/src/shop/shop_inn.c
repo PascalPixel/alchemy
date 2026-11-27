@@ -19,7 +19,7 @@ Sint32 mnInnRoomPrice(Sint32 innId)
 	Sint32		pricePerGuest;
 	Sint32		memberIdx;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	guestCnt = 0;
 	pricePerGuest = InnPricesPerGuest[innId];
 	for(memberIdx = 0; memberIdx < shop->partyMemberCnt; memberIdx++) {
@@ -36,7 +36,7 @@ Sint32 mnInnQuoteRoomPrice(Sint32 innId)
 	SHOP_STATE *shop;
 
 	mnShopInitState();
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	shop->shopType = SHOP_TYPE_WEAPONS;
 	innId = mnInnRoomPrice(innId);
 	mnShopReleaseState();
@@ -55,7 +55,7 @@ Sint32 mnInnCheckIn(Sint32 innId, Sint32 actorId)
 	Sint32		msgBase;
 
 	mnShopInitState();
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	shop->shopType = SHOP_TYPE_WEAPONS;
 
 	innkeeper = fdActorGetByIdStub(actorId);
@@ -117,7 +117,7 @@ void mnInnPlaySleep(Sint32 roomPrice)
 
 	/* The night's fades take 60 ticks each, a window closing round the leader
 	   as The Broken Seal's. */
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	state->transitionFrm = 60;

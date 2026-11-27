@@ -39,14 +39,14 @@ STATIC_ASSERT(offsetof(GLYPH, rows) == 2);
 STATIC_ASSERT(sizeof(GLYPH) == (2 + FONT_GLYPH_ROWS * 2));
 
 /* The main font, from character code 32: its glyphs in code order. */
-extern const GLYPH Font_Glyphs[];
+extern const GLYPH FontGlyphs[];
 
 /* The buffers an icon or a portrait is decoded through, in
    HEAP_SLOT_ICON_TRANSFER for one build: mnIconDecode unpacks encoded into
    input, then expands input into tiles. */
 typedef struct {
 	/* The icon unpacked a byte a pixel; a 256-colour command icon
-	   (ResourceId_CommandIcons) is unpacked here by syDecompressByteLZ and used
+	   (ResourceIdCommandIcons) is unpacked here by syDecompressByteLZ and used
 	   as it is. */
 	Uint8  input[1024];
 	Uint8  tiles[512]; /* the icon as sprite tiles, ready for VRAM */

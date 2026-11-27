@@ -1,7 +1,7 @@
-/* Tret Tree's rooms (SceneId_TreeRooms): the hollow inside of Tret, the holy
+/* Tret Tree's rooms (SceneIdTreeRooms): the hollow inside of Tret, the holy
    tree of Kolima Forest, where the party come to face his wrathful side. Six
    rooms are stacked inside the trunk. Doors in the four upper floors lead out
-   onto his branches (SceneId_TretTreeBranch, tret_tree_branch.c), where vines
+   onto his branches (SceneIdTretTreeBranch, tret_tree_branch.c), where vines
    climb from one floor's door to the next.
 
    The party come in from Kolima Forest (kolima_forest_tree.c) by the door at

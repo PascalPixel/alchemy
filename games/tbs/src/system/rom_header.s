@@ -4,8 +4,8 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
 	.arm
-	.global Rom_Start
-Rom_Start:
+	.global RomStart
+RomStart:
 	b	syEntry			@ Entry point
 	.space	156				@ The cartridge logo, written by gbafix
 	.ifdef TBS_EDITION_JA
@@ -18,8 +18,8 @@ Rom_Start:
 	.endif
 	.endif
 	.ascii	"AGS"				@ Game code
-	.global Rom_LanguageCode
-Rom_LanguageCode:
+	.global RomLanguageCode
+RomLanguageCode:
 	.ifdef TBS_EDITION_JA
 	.ascii	"J"
 	.endif

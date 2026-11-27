@@ -46,9 +46,9 @@ void btEffectRunDjinniEntrance(
 	Sint32				 side;
 	Sint32				 anchor;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	element = DJINNI_ENTRANCE_ELEMENT(packed);
 	side = DJINNI_ENTRANCE_SIDE(packed);
 	anchor = DJINNI_ENTRANCE_ANCHOR_OF(packed);
@@ -116,8 +116,8 @@ void btEffectRunDjinniEntrance(
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[0] = RamHeapSlots->ramCode;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	actor = btObjectGetStub(args->user)->obj;
 	tgt = btObjectGetStub(args->tgts[0])->obj;
 
@@ -199,7 +199,7 @@ void btEffectRunDjinniEntrance(
 	step[2] = (goal[2] - center[2]) / DJINNI_ENTRANCE_TRAVEL_TICKS;
 
 	for(frm = 0; frm != frmCnt; frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		if(frm > 75)
 			REG_BLDALPHA = EFFECT_BLEND_CANVAS(168 - frm * 2);
@@ -535,7 +535,7 @@ typedef enum PROJECTILE_VOLLEY_COMET {
 } PROJECTILE_VOLLEY_COMET;
 
 /* The second blitter, loaded again for each draw that needs its own. */
-#define DRAW_ALTERNATE (Ram_HeapSlots->ramCodePaired)
+#define DRAW_ALTERNATE (RamHeapSlots->ramCodePaired)
 
 #define PROJECTILE_VOLLEY_STREAK_PICTURES 8192	/* wind streaks */
 #define PROJECTILE_VOLLEY_DJINNI_PICTURE  26048 /* the small Mercury Djinni */
@@ -596,10 +596,10 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32 trailsOrShift;
 	Sint32 x;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sheet = RamHeapSlots->battleSheet;
 	sndCooldown = 0;
 	comet = args->variant;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
@@ -629,7 +629,7 @@ void btEffectRunProjectileVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 
 	/* The shot pictures. */
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);

@@ -52,7 +52,7 @@ void fdActorUpdateAllMotion(void)
 	Sint32	facingStep;
 
 	/* Those of the first RUNNING_LIST_SLOTS actors whose script is running. */
-	actor = Ram_HeapSlots->actors;
+	actor = RamHeapSlots->actors;
 	fdActorListRunning(actor, list);
 	actor = list[0];
 	next = &list[1];
@@ -441,7 +441,7 @@ Sint32 fdActorScriptPlaySndInView(ACTOR *interpreter)
 Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
 {
 	Sint32 actorIdx;
-	ACTOR *candidate = ((ACTOR *)Ram_HeapSlots->actors);
+	ACTOR *candidate = ((ACTOR *)RamHeapSlots->actors);
 
 	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
 		if(candidate->script != NULL &&
@@ -459,7 +459,7 @@ Sint32 fdActorScriptCheckOverlap(ACTOR *actor, Sint32 *values)
 ACTOR *fdActorScriptFindOverlappingActor(ACTOR *actor, Sint32 *values)
 {
 	Sint32 actorIdx;
-	ACTOR *candidate = ((ACTOR *)Ram_HeapSlots->actors);
+	ACTOR *candidate = ((ACTOR *)RamHeapSlots->actors);
 
 	for(actorIdx = 0; actorIdx < ACTOR_COUNT; actorIdx++, candidate++) {
 		if(candidate->script != NULL &&
@@ -621,7 +621,7 @@ Sint32 fdCameraFollowLeaderInBounds(ACTOR *interpreter)
 	FIXED	   moveStep;
 	Sint16	  *region;
 
-	bounds = Ram_HeapSlots->mapGrid;
+	bounds = RamHeapSlots->mapGrid;
 	leader = (ACTOR *)camera->watchedActor;
 	/* UB: the bounds read the leader's height before the null check below. */
 #if FIX_NULL_DEREFERENCE
@@ -741,7 +741,7 @@ Sint32 fdCameraFollowWatchedInBounds(ACTOR *camera)
 	FIXED	   distance;
 	FIXED	   moveStep;
 
-	bounds = Ram_HeapSlots->mapGrid;
+	bounds = RamHeapSlots->mapGrid;
 	leader = (ACTOR *)camera->watchedActor;
 	minX = bounds->minX + FIELD_VIEW_FOCUS_X;
 	minZ = bounds->minZ + FIELD_VIEW_FOCUS_Y;
@@ -1346,7 +1346,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 			SET_POSITION(
 				&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 			syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
-			other = Ram_HeapSlots->actors;
+			other = RamHeapSlots->actors;
 			for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
 				Sint32 radius;
 
@@ -1365,8 +1365,8 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 		}
 	}
 
-	if(Ram_HeapSlots->fieldState != NULL) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	if(RamHeapSlots->fieldState != NULL) {
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		if(collision & PLAYER_STEP_BLOCKED)
 			state->blockedSteps++;
@@ -1408,7 +1408,7 @@ Bool fdActorUpdateHoverCtrl(ACTOR *actor)
 	}
 
 	pressed = FALSE;
-	if(Ram_HeapSlots->fieldState == NULL)
+	if(RamHeapSlots->fieldState == NULL)
 		return FALSE;
 	if((PerWork.push & MainRoutineStateWork.selectKeys) ||
 		(PerWork.push & MainRoutineStateWork.aKeys) ||

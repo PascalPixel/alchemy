@@ -8,7 +8,7 @@
 void mnWindowSetTextTileRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 palette)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 
 	x += win->x + 1;
 	y += win->y + 1;

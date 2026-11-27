@@ -67,7 +67,7 @@ void btEffectRunMercury(BATTLE_EFFECT_PARM *args)
 	btEffectStartCanvasLayer(0);
 	btEffectBuildCanvasBlitters(0, blit);
 
-	cells = Ram_MapGridMetatileBuffer;
+	cells = RamMapGridMetatileBuffer;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet, 1, 0);

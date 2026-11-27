@@ -31,8 +31,8 @@ void btEffectRunHail(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 rise;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btEffectRunDjinniEntrance(args,
 		DJINNI_ENTRANCE(ELEMENT_MERCURY, args->side, DJINNI_ANCHOR_OVER_USER),
@@ -176,9 +176,9 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 	SCREEN_POINT		 pos;
 	Sint32				 j;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
 	btEffectStartCanvasLayer(0);
 	btEffectRunDjinniEntrance(args,
 		DJINNI_ENTRANCE(ELEMENT_VENUS, args->side, DJINNI_ANCHOR_OVER_USER),
@@ -190,7 +190,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 	else
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_PORTAL_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
 		state->sheet + GROUND_DJINNI_PICTURE, 1, 1);
@@ -236,7 +236,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 						EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 				if(frm <= 3)
-					(Ram_HeapSlots->ramCodePaired)(canvas,
+					(RamHeapSlots->ramCodePaired)(canvas,
 						state->sheet + GROUND_DJINNI_PICTURE, x, y,
 						SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -289,7 +289,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 								crackle->velY, BLITTER_MAX);
-							draw[1] = Ram_HeapSlots->ramCodePaired;
+							draw[1] = RamHeapSlots->ramCodePaired;
 							if(crackle->velY & COMPOSITE_FLIP_X)
 								crackleX = x -
 									GroundPortalWidths[crackle->velX] -
@@ -351,7 +351,7 @@ void btEffectRunGround(BATTLE_EFFECT_PARM *args)
 				   shakes to the left. */
 void btCameraShake(Sint32 rangeX, Uint32 rangeY)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	if(state->shakeFrm > 0) {
 		Sint32 randomX = (rangeX - 1) & syRandom();
@@ -376,7 +376,7 @@ void btCameraShake(Sint32 rangeX, Uint32 rangeY)
    while the effect's shake lasts. */
 void btCameraApplyVerticalShake(Sint32 range)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 
 	if(state->shakeFrm > 0) {
 		Sint32 ofsY = ((range - 1) & syRandom()) - range / 2;

@@ -161,7 +161,7 @@ Sint32 mnBattleTargetRunSelection(
 	SELECTION_SPR	*firstSpr;
 	UNIT			*tgt;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	tgtCnt = 0;
 	redraw = TARGET_REDRAW_ALL;
 	cursorSlot = syVRAMCacheAllocEntry(256);
@@ -280,7 +280,7 @@ Sint32 mnBattleTargetRunSelection(
 		/* The cursor: 32 ticks (256 bytes each), a tick every four ticks,
 		   bobbing 2 pixels each way every 16 ticks. */
 		firstSpr->tile = syVRAMCacheReload(cursorSlot,
-			((TickCount >> 2) & 31) * 256 + Menu_AnimatedCursorTiles);
+			((TickCount >> 2) & 31) * 256 + MenuAnimatedCursorTiles);
 		TARGET_BOB(selectedPos.y);
 		y = selectedPos.y;
 		/* Ease halfway each tick; the other markers show once the cursor is

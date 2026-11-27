@@ -10,7 +10,7 @@
 void scPaletteSetColsFade(
 	Uint16 *slots, Uint16 *colours, Uint16 *cycleCols, Uint16 *cycleSlots)
 {
-	PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+	PALETTE_FADE *fade = RamHeapSlots->palFade;
 
 	PaletteSlots = slots;
 	PaletteColors = colours;
@@ -73,7 +73,7 @@ void scTeleportStartFastShimmer(void)
    circle shimmers and the whirl plays, then its colours come back. */
 void scTeleportArriveWhirling(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 saved;
 
 	saved = state->transition;

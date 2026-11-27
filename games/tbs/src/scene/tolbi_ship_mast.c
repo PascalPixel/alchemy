@@ -1,4 +1,4 @@
-/* Tolbi-bound Ship (SceneId_TolbiShipMast) is the top of the ship's mast, where
+/* Tolbi-bound Ship (SceneIdTolbiShipMast) is the top of the ship's mast, where
    the ship's lookout (ACTOR_LOOKOUT) keeps watch.
 
    It is one of the ship's three scenes on its voyage from Kalay to Tolbi, which

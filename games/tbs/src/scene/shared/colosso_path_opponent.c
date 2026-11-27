@@ -106,7 +106,7 @@ static void scColossoUpdatePathOpponent(void)
 }
 
 /* The gauge's packed tiles, decoded as it first shows. */
-extern Uint8 Colosso_GaugeGraphics[];
+extern Uint8 ColossoGaugeGraphics[];
 
 /* The gauge's sprite palette. */
 #define GAUGE_PALETTE 14
@@ -155,12 +155,12 @@ static void scColossoDrawGauge(void)
 		}
 	} else if(gauge->level <= 1) {
 		if(++gauge->level == 1) {
-			syDMAXCopy(Colosso_GaugePalette,
+			syDMAXCopy(ColossoGaugePalette,
 				(void *)&OBJ_PLTT_COLOR(GAUGE_PALETTE, 0),
 				DMA_COPY_HALFWORDS(16), REG_DMA3);
 			buf = syHeapCallAlternatePool(
 				syHeapAllocEWRAM, GAUGE_TILE_COUNT * TILE_SIZE_4BPP);
-			syFieldDecompressTaggedLZ(Colosso_GaugeGraphics, buf);
+			syFieldDecompressTaggedLZ(ColossoGaugeGraphics, buf);
 			syVRAMCacheLoad(
 				gauge->vramBlock, GAUGE_TILE_COUNT * TILE_SIZE_4BPP, buf);
 			syHeapRelease(buf);

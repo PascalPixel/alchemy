@@ -163,7 +163,7 @@ typedef enum LEMURIA_TREASURE_ACTOR_ID {
    leader close by, and walks on otherwise or once the leader is right by it. */
 Sint32 scLemuriaNoticeLeader(ACTOR *self)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Uint8		*state;
 	Uint32		 mode;
 	ACTOR		*other;
@@ -173,7 +173,7 @@ Sint32 scLemuriaNoticeLeader(ACTOR *self)
 	mode = ABILITY_ID(event->psynergy);
 	state = &self->paused;
 	if(mode != ABILITY_MIND_READ ||
-		(Sint8)((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->msgShown ==
+		(Sint8)((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->msgShown ==
 			0) {
 		if(self->tmr != 1) {
 			other = fdActorGet(MainRoutineStateWork.leaderActorId);
@@ -319,7 +319,7 @@ void scLemuriaEnterDoor(Sint32 exit)
    faces the way it was walking again. */
 void scLemuriaTalkToSpoiledChild(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_SPOILED_CHILD);
 	Sint16		 ang = actor->facing;
 
@@ -350,7 +350,7 @@ void scLemuriaTalkToSpoiledChild(void)
    "Are there other children in the lands beyond the Sea of Time?" */
 void scLemuriaTalkToLonelyChild(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_LONELY_CHILD);
 	Sint16		 angle = actor->facing;
 

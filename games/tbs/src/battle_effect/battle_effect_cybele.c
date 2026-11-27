@@ -94,7 +94,7 @@ void btEffectRunCybele(BATTLE_EFFECT_PARM *args)
 	state->args = args;
 	btEffectCreateSprs(CYBELE_SPRITES, SPRITE_CYBELE, 1);
 
-	order = Ram_MapGridMetatileBuffer;
+	order = RamMapGridMetatileBuffer;
 	for(i = 0; i != CYBELE_DISSOLVE_RUNS * CANVAS_SIZE; i++)
 		order[i] = i & (CANVAS_SIZE - 1);
 	for(i = 0; i != CYBELE_DISSOLVE_RUNS; i++) {

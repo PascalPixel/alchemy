@@ -273,9 +273,9 @@ void fdLuckyWheelsTransferCanvas(void)
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*buf;
 
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	if(state->transferPending == 1) {
-		buf = Ram_HeapSlots->battleCanvas;
+		buf = RamHeapSlots->battleCanvas;
 		switch(state->transferMode) {
 		case CANVAS_COPY_AND_CLEAR:
 			syDMAXCopy(buf, (void *)LUCKY_WHEELS_CANVAS_TILES,
@@ -391,7 +391,7 @@ void fdLuckyWheelsDrawCanvasLine(
 	Sint32 dx = x1 - x0;
 	Sint32 dy = y1 - y0;
 	Sint32 frac = LINE_STEP_ONE / 2;
-	Uint8 *canvas = Ram_HeapSlots->battleCanvas;
+	Uint8 *canvas = RamHeapSlots->battleCanvas;
 	Sint32 step;
 	Sint32 i;
 	Sint32 x;
@@ -585,8 +585,8 @@ void fdLuckyWheelsUpdate(void)
 	Sint32				i;
 	LUCKY_WHEELS_STATE *state;
 
-	state = (LUCKY_WHEELS_STATE *)Ram_HeapSlots->canvasMap;
-	fx = (REEL_EFFECT_STATE *)Ram_HeapSlots->battleEff;
+	state = (LUCKY_WHEELS_STATE *)RamHeapSlots->canvasMap;
+	fx = (REEL_EFFECT_STATE *)RamHeapSlots->battleEff;
 	objMode = OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
 	state->sprCnt = 0;
 
@@ -1206,8 +1206,8 @@ void fdLuckyWheelsFinishTick(void)
 	volatile Uint16	   *dma;
 	Sint32				i;
 
-	state = (LUCKY_WHEELS_STATE *)Ram_HeapSlots->canvasMap;
-	fx = (REEL_EFFECT_STATE *)Ram_HeapSlots->battleEff;
+	state = (LUCKY_WHEELS_STATE *)RamHeapSlots->canvasMap;
+	fx = (REEL_EFFECT_STATE *)RamHeapSlots->battleEff;
 	if(state->state == LUCKY_WHEELS_SHOWING_WIN) {
 		for(i = 0; i != LUCKY_WHEELS_BOUNCED_LETTERS; i++) {
 			PARTICLE *p = &fx->particles[i];
@@ -1244,7 +1244,7 @@ void fdLuckyWheelsFinishTick(void)
 #define LUCKY_WHEELS_TITLE_X SPANISH_OR(8, 24)
 
 /* The sparks of the jackpot, kept in the map metatile buffer. */
-#define LUCKY_WHEELS_SPARKS ((PARTICLE *)Ram_MapMetatileBuffer)
+#define LUCKY_WHEELS_SPARKS ((PARTICLE *)RamMapMetatileBuffer)
 
 /* The screen lines of the wheels' top and bottom edges, and the lines from each
    that fdLuckyWheelsSetUpBetting shades. */
@@ -1267,8 +1267,8 @@ void fdLuckyWheelsSetUpBetting(void)
 	struct WINDOW	   *win;
 	Sint32				msg;
 
-	state = (LUCKY_WHEELS_STATE *)Ram_HeapSlots->canvasMap;
-	reelEffectState = (REEL_EFFECT_STATE *)Ram_HeapSlots->battleEff;
+	state = (LUCKY_WHEELS_STATE *)RamHeapSlots->canvasMap;
+	reelEffectState = (REEL_EFFECT_STATE *)RamHeapSlots->battleEff;
 	left = 0;
 	/* Twice the sparks the win uses are cleared. */
 	for(i = 0; i != 2 * LUCKY_WHEELS_SPARK_COUNT; i++)
@@ -1357,7 +1357,7 @@ void fdLuckyWheelsRun(void)
 	reelEffectState = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, 31612);
 	state =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_CANVAS_MAP, sizeof(LUCKY_WHEELS_STATE));
-	tiles = Ram_MapMetatileBuffer;
+	tiles = RamMapMetatileBuffer;
 	save = (REEL_SAVE *)PartyDjinnRecovery;
 	syResourceReservedNoOperation(RESOURCE_BATTLE_EFFECT_STUBS);
 	save->wonPrizes[0] = WHEELS_PRIZES_END;
@@ -1519,9 +1519,9 @@ void fdLuckyWheelsRun(void)
 		}
 
 		btEffectBuildBlitterStub(HEAP_SLOT_RAM_CODE, 8, 7, 3, 1);
-		draw[0] = Ram_HeapSlots->ramCode;
+		draw[0] = RamHeapSlots->ramCode;
 		btEffectBuildBlitterStub(HEAP_SLOT_RAM_CODE_PAIRED, 8, 7, 3, 0);
-		draw[1] = Ram_HeapSlots->ramCodePaired;
+		draw[1] = RamHeapSlots->ramCodePaired;
 		syWordsFillEntry(canvas, size, 0);
 		syDMAXCopy(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
 			DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
@@ -1921,7 +1921,7 @@ UNUSED Sint32 fdLZPackPackStream(const Uint8 *input, Uint8 *dst, Sint32 size)
 	Sint16 code;
 
 	defer = 0;
-	LzPackStateWork = (LZ_PACK_STATE *)Ram_MapMetatileBuffer;
+	LzPackStateWork = (LZ_PACK_STATE *)RamMapMetatileBuffer;
 	fdLZPackResetSlotBuckets();
 	LzPackStateWork->inputLimit = size;
 	LzPackStateWork->pos = 0;

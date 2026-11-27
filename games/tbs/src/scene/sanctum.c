@@ -1,5 +1,5 @@
 /* The Sanctum, the room of the Healers that Vale, Vault, Bilibin, Xian and
-   Altin each have (SceneId_Sanctum). One room serves them all: the door the
+   Altin each have (SceneIdSanctum). One room serves them all: the door the
    party comes in by decides whose Sanctum it is, which people stand in it, and
    which town its door leads back out to. The Healer stands at the top of the
    room before the altar, behind a small stone counter. Talking to him across

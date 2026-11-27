@@ -29,10 +29,10 @@ void btEffectRunNirvana(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	view = Ram_HeapSlots->cameraState;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	view = RamHeapSlots->cameraState;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	LOAD_BG_PALETTE(RESOURCE_PINK_BURST_SHEET);
@@ -45,7 +45,7 @@ void btEffectRunNirvana(BATTLE_EFFECT_PARM *args)
 	orb->velZ = 0;
 	orb->variant = 0;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit = Ram_HeapSlots->ramCode;
+	blit = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	sySndPlayStub(SE_SWIRL);
 
@@ -150,14 +150,14 @@ void btEffectRunStoneJustice(BATTLE_EFFECT_PARM *args)
 	Sint32				 hit;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
 	btResourceLoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	blit = Ram_HeapSlots->ramCode;
+	blit = RamHeapSlots->ramCode;
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 	scroll = 0;
 	scrollSpeed = 0;
@@ -309,9 +309,9 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = BLEND_ALPHA(16, 12);
 	btResourceLoadAndDecompress(RESOURCE_LIME_COLUMN_SHEET, state->sheet, 1, 1);
@@ -417,7 +417,7 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 					else
 						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-					draw[0] = Ram_HeapSlots->ramCode;
+					draw[0] = RamHeapSlots->ramCode;
 					draw[0](canvas, state->sheet, x, 104 - height,
 						SOUL_SHATTER_COLUMN_WIDTH, height);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -463,7 +463,7 @@ void btEffectRunSoulShatter(BATTLE_EFFECT_PARM *args)
 
 			user = btObjectGetStub(args->user)->obj;
 			userHalfHeight = btUnitGetEffectHeightStub(args->user) / 2;
-			camera = Ram_HeapSlots->cameraState;
+			camera = RamHeapSlots->cameraState;
 			syInitMatrix();
 			syLookAtLoad(camera->eye, camera->focus);
 			for(i = 0; i != SOUL_SHATTER_MOTES; i++) {
@@ -528,8 +528,8 @@ typedef struct PROJECTED_POINT {
 } PROJECTED_POINT;
 
 /* The spire's corners and its mesh, in the map cell buffer. */
-#define SERAC_SPIRE_CORNERS ((MODEL_VERTEX *)Ram_MapMetatileBuffer)
-#define SERAC_SPIRE_MESH	(Ram_MapMetatileBuffer + 8192)
+#define SERAC_SPIRE_CORNERS ((MODEL_VERTEX *)RamMapMetatileBuffer)
+#define SERAC_SPIRE_MESH	(RamMapMetatileBuffer + 8192)
 
 /* Where MercuryDjinnSheet is decoded in the effect's pictures. */
 #define SERAC_MERCURY_DJINN_PICTURES 16384
@@ -591,8 +591,8 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 	Sint32				 screenA[3];
 	Uint8				*mistSheet;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	btEffectConfigureEffectDisp();
 	if(args->side == EFFECT_SIDE_ENEMIES) {
 		btEffectStartTiledCanvasFilled(BGCNT_WRAP);
@@ -609,7 +609,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 	REG_BG2PA = Q_8_8(1);
 	btEffectBuildCanvasBlitters(0, blitters);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	mistSheet = Ram_MapMetatileBuffer + SERAC_MIST;
+	mistSheet = RamMapMetatileBuffer + SERAC_MIST;
 	btResourceLoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, mistSheet, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(
@@ -635,7 +635,7 @@ void btEffectRunSerac(BATTLE_EFFECT_PARM *args)
 		Sint32			column;
 		Sint32			i;
 
-		camera = (BATTLE_CAMERA *)Ram_HeapSlots->cameraState;
+		camera = (BATTLE_CAMERA *)RamHeapSlots->cameraState;
 		savedYaw = camera->yaw;
 		tgt = btObjectGetStub(args->tgts[0])->obj;
 		REG_BG2PA = Q_8_8(1);

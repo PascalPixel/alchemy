@@ -1,7 +1,7 @@
 /* Stops the leader while an action waits. */
 void fdLeaderStopIfPending(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state->busy != 0) {
 		fdScriptSetFlag(FLAG_MENU_OPEN);

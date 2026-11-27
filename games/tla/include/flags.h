@@ -273,7 +273,7 @@
    into the catacombs and Daila skips Alex's script. */
 #define FLAG_MADRA_GATE_INSPECTED			  0x910
 /* Set at the end of the jail scene where Piers wards off his interrogator with
-   Frost (MadraRooms_InterrogatePiers); then the two witnesses of the ice stand
+   Frost (MadraRoomsInterrogatePiers); then the two witnesses of the ice stand
    outside the jail and the lady can grant passage to Osenia. */
 #define FLAG_PIERS_INTERROGATED				  0x911
 /* Set as the lady grants passage over the drawbridge ("Then I hereby grant my
@@ -1111,7 +1111,7 @@
    winged ship. */
 #define FLAG_SET_OUT_WITH_WINGS							   0x9b2
 /* Set as Susa, at Gaia Rock once the Serpent is slain, hears that Kushinada is
-   safe (GaiaRock_SusaRejoices); his talk and Mind Read change. */
+   safe (GaiaRockSusaRejoices); his talk and Mind Read change. */
 #define FLAG_SUSA_HEARS_KUSHINADA_IS_SAFE				   0x9ab
 /* Set as Jenna says "They're waiting for us. Let's go to Contigo." on the World
    Map, once the Jupiter beacon is lit. */

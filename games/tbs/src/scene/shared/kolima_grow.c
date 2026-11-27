@@ -1,5 +1,5 @@
-/* Kolima and Kolima Forest (SceneId_Kolima, SceneId_KolimaForestEntrance and
-   SceneId_KolimaForestTree): an effect that stretches as it travels. */
+/* Kolima and Kolima Forest (SceneIdKolima, SceneIdKolimaForestEntrance and
+   SceneIdKolimaForestTree): an effect that stretches as it travels. */
 
 #include "field/script_operands.h"
 

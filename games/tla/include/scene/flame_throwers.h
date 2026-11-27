@@ -31,7 +31,7 @@ typedef enum FLAME_THROWER_FLAGS {
 typedef struct FLAME_THROWER {
 	Sint16 active;
 	Sint16 tmr; /* ticks to the next puff, 8 after each */
-	/* FLAME_THROWER_FLAGS in the high nibble (the FlameThrower_Send function
+	/* FLAME_THROWER_FLAGS in the high nibble (the FlameThrowerSend function
 	   each picks), the reach in the low. */
 	Sint16 flg;
 	Sint16 offScreen; /* puffs off screen and keeps the flames' sprites */

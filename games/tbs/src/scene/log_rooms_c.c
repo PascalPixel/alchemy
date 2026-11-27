@@ -1,9 +1,9 @@
-/* Log rooms C (SceneId_LogRoomsC), a rooms map drawn in logs, holds only
+/* Log rooms C (SceneIdLogRoomsC), a rooms map drawn in logs, holds only
    Kolima's rooms: the village's houses, shops and inn.
 
    Some of its exits join its own rooms, by the stairs up the inn and the weapon
-   and armor shop. Five lead back out to the village (SceneId_Kolima) and one
-   into Kolima Tunnel (SceneId_KolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
+   and armor shop. Five lead back out to the village (SceneIdKolima) and one
+   into Kolima Tunnel (SceneIdKolimaTunnel, LOG_ROOMS_C_TO_KOLIMA_TUNNEL).
 
    Like the people outside, the fifteen residents (ACTOR_FIRST_VILLAGER to
    ACTOR_LAST_VILLAGER) were turned into trees when the curse fell. Until it is

@@ -38,7 +38,7 @@
    restores its saved colours. */
 void btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level)
 {
-	BATTLE_STATE   *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE   *battle = RamHeapSlots->battleState;
 	Uint16		   *palette = battle->pal;
 	volatile Uint32 ime;
 
@@ -61,7 +61,7 @@ void btBackgroundSetPaletteLevel(Sint32 unused, Sint32 level)
    background's id is not read. */
 void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 {
-	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 
 	if(background->mode == BATTLE_BACKGROUND_NONE)
 		sySetEvent(btBackgroundShowZoomedPage, EVENT_PASS_VBLANK + 127);
@@ -83,7 +83,7 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 		BATTLE_STATE *battle;
 		Uint16		 *palette;
 
-		battle = Ram_HeapSlots->battleState;
+		battle = RamHeapSlots->battleState;
 		palette = battle->pal;
 		syDMAXCopy(palette, (void *)BATTLE_BG_PALETTE,
 			DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
@@ -93,7 +93,7 @@ void btBackgroundSetMode(Sint32 mode, Sint32 backgroundId, Sint32 fade)
 		Uint16		 *dst;
 		Sint32		  i;
 
-		battle = Ram_HeapSlots->battleState;
+		battle = RamHeapSlots->battleState;
 		src = battle->pal;
 		dst = BATTLE_BG_PALETTE;
 
@@ -127,7 +127,7 @@ void btBackgroundInit(void)
 {
 	void *block = syHeapSlotAllocEWRAM(
 		HEAP_SLOT_BATTLE_SCANLINES, sizeof(BATTLE_AFFINE_HDMA));
-	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 
 	IWRAM_FILL_WORDS(block, sizeof(BATTLE_AFFINE_HDMA), 0);
 	background->mode = BATTLE_BACKGROUND_NONE;
@@ -144,13 +144,13 @@ void btBackgroundFree(void)
    and tilemap, and the HBlank scroll the first time. */
 void btBackgroundLoad(Sint32 mode, Sint32 resource, Sint32 level)
 {
-	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
 	Uint8					*data = syResourceGetTableEntry(resource);
-	BATTLE_STATE *battle = (BATTLE_STATE *)Ram_HeapSlots->battleState;
-	MODEL_DECODER decode;
-	Uint16		 *palette;
+	BATTLE_STATE			*battle = (BATTLE_STATE *)RamHeapSlots->battleState;
+	MODEL_DECODER			 decode;
+	Uint16					*palette;
 
-	RAM_CODE_LOAD(decode, btModelDecodeCode, Model_DecodeCodeSize);
+	RAM_CODE_LOAD(decode, btModelDecodeCode, ModelDecodeCodeSize);
 	decode(data + BACKGROUND_PALETTE_BYTES, (void *)BG_CHAR_BLOCK(2));
 	syHeapRelease(decode);
 	palette = battle->pal;
@@ -187,9 +187,9 @@ void btBackgroundLoad(Sint32 mode, Sint32 resource, Sint32 level)
 void btCameraSetRange(
 	FIXED centerX, FIXED centerY, Sint32 ofsX, Sint32 ofsY, FIXED scale)
 {
-	BATTLE_BACKGROUND_STATE *background = Ram_HeapSlots->battleBg;
-	BATTLE_AFFINE_HDMA		*scanlines = Ram_HeapSlots->battleScanlines;
-	BATTLE_CAMERA			*camera = Ram_HeapSlots->cameraState;
+	BATTLE_BACKGROUND_STATE *background = RamHeapSlots->battleBg;
+	BATTLE_AFFINE_HDMA		*scanlines = RamHeapSlots->battleScanlines;
+	BATTLE_CAMERA			*camera = RamHeapSlots->cameraState;
 	Sint32					 panX;
 	Uint16					 wrap;
 	Uint16					*line;
@@ -269,7 +269,7 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
 #if !FIX_UNINITIALIZED_READ
 	Sint32 zoom;
 #endif
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
 	Sint32		   eyeOfs[3];
@@ -320,7 +320,7 @@ UNUSED void btCameraSetViewAtDepth(Sint32 x, Sint32 depth, Sint32 y)
    far depth. */
 void btCameraSetView(Sint32 x, Sint32 depth, Sint32 y, Sint32 zoom)
 {
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	Sint32		  *focus = camera->focus;
 	FIXED		   scale = toFIXED(zoom) / 100;
 	FIXED		   eyeOfs[3];
@@ -465,7 +465,7 @@ UNUSED Sint32 btAdjustDebugValue(Sint32 value)
 {
 	if(PerWork.data & KEY_START) {
 		while(1) {
-			BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+			BATTLE_STATE *battle = RamHeapSlots->battleState;
 
 			if(PerWork.repeat & KEY_LEFT)
 				battle->debugValue--;
@@ -566,7 +566,7 @@ extern Sint8 BattleHighlightBlendRamp[];
    once, then the second sixteen over and over. */
 void btBackgroundStepHighlightBlend(void)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 
 	if(battle != NULL) {
 		if(battle->highlightMode == HIGHLIGHT_FADE_IN) {
@@ -616,7 +616,7 @@ void btBackgroundStepHighlightBlend(void)
 void btHighlightSetModes(Uint16 *actors, Sint32 mode)
 {
 	Sint16		  activeActors[UNIT_MAX];
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Uint32		  cnt;
 	Uint32		  i;
 
@@ -754,10 +754,10 @@ void btElementGlowUpdateStarField(void)
 	Sint32					 life;
 	Sint32 (*mulFX)(Sint32 a, Sint32 b);
 
-	dest = Ram_HeapSlots->battleCanvas;
-	state = (struct STAR_FIELD_STATE *)Ram_HeapSlots->battleEff;
+	dest = RamHeapSlots->battleCanvas;
+	state = (struct STAR_FIELD_STATE *)RamHeapSlots->battleEff;
 	state->ready = 0;
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	for(i = 0; i < STAR_FIELD_SPARKS; i++) {
 		spark = &state->sparks[i];
 		life = spark->life;
@@ -819,7 +819,7 @@ void btElementGlowUpdateStarField(void)
 				x - (size >> 1), y - (size >> 1), size, size);
 		}
 	}
-	draw = Ram_HeapSlots->ramCodePaired;
+	draw = RamHeapSlots->ramCodePaired;
 	for(ring = state->rings, ringsLeft = STAR_FIELD_RINGS - 1; ringsLeft >= 0;
 		ringsLeft--, ring++) {
 		ring->x += ring->velX;
@@ -847,8 +847,8 @@ void btElementGlowUpdateStarField(void)
    brightness. */
 Sint32 btElementGlowUploadStarField(void)
 {
-	void					*src = Ram_HeapSlots->battleCanvas;
-	struct STAR_FIELD_STATE *state = Ram_HeapSlots->battleEff;
+	void					*src = RamHeapSlots->battleCanvas;
+	struct STAR_FIELD_STATE *state = RamHeapSlots->battleEff;
 
 	if(src != 0) {
 		if(state->ready != 0) {
@@ -883,7 +883,7 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	Sint32					 i;
 	Uint8					*data;
 
-	Ram_HeapSlots->battleBg->mode = BATTLE_BACKGROUND_FIXED;
+	RamHeapSlots->battleBg->mode = BATTLE_BACKGROUND_FIXED;
 	state = syHeapSlotAllocEWRAM(HEAP_SLOT_BATTLE_EFFECT, sizeof *state);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 	for(i = 0; i < STAR_FIELD_SPARKS; i++) {
@@ -920,7 +920,7 @@ Sint32 btElementGlowInitStarField(Sint32 element)
 	state->ready = 0;
 	state->originPending = 0;
 	syWordsClearEntry(
-		Ram_HeapSlots->battleCanvas, STAR_FIELD_SIZE * STAR_FIELD_SIZE);
+		RamHeapSlots->battleCanvas, STAR_FIELD_SIZE * STAR_FIELD_SIZE);
 	data = syResourceGetTableEntry(RESOURCE_BLUE_RING_SHEET);
 	syWordsCopyEntry((void *)BG_PLTT, data, STAR_FIELD_COLORS * 2);
 	data += STAR_FIELD_COLORS * 2;
@@ -991,7 +991,7 @@ void btElementGlowPlay(
 	BATTLE_PRESENTATION_STATE pillarLaunch;
 	BATTLE_PRESENTATION_STATE burstLaunch;
 	Sint32					  origin[2];
-	BATTLE_STATE			 *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE			 *battle = RamHeapSlots->battleState;
 	volatile Uint16			 *ime;
 	struct STAR_FIELD_STATE	 *state;
 	Sint32					  frm;
@@ -1021,7 +1021,7 @@ void btElementGlowPlay(
 		for(frm = 0, pos = &starPos; frm < STAR_FIELD_TICKS; frm++) {
 			brightness = &battle->brightness;
 			ime = &REG_IME;
-			state = (struct STAR_FIELD_STATE *)Ram_HeapSlots->battleEff;
+			state = (struct STAR_FIELD_STATE *)RamHeapSlots->battleEff;
 			if(frm < STAR_FIELD_DARKEN_TICKS)
 				btColBufferScale(battle->pal, BATTLE_BG_PALETTE,
 					*brightness = toFIXED(1) - frm * BACKGROUND_LEVEL_STEP,

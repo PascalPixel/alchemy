@@ -1,4 +1,4 @@
-/* Vault (SceneId_Vault), "the town at the heart of Angara", as the party first
+/* Vault (SceneIdVault), "the town at the heart of Angara", as the party first
    finds it after Mt. Aleph's eruption.
 
    This scene is its streets, with the townspeople, Ivan, the bell and the dog.
@@ -8,7 +8,7 @@
    scGetActorPlacements and scGetCues choose their tables by
    FLAG_VAULT_THIEVES_JAILED. Once the party has reached Kalay
    (FLAG_KALAY_REACHED), scInit sends it straight on to the town's later scene
-   (VAULT_TO_VAULT_REVISIT, SceneId_VaultRevisit, vault_revisit.c).
+   (VAULT_TO_VAULT_REVISIT, SceneIdVaultRevisit, vault_revisit.c).
 
    The story flags change the streets in order:
    - While the rod is missing, the townspeople talk of the eruption, the
@@ -46,7 +46,7 @@
    where the dog sits.
 
    The doors open with an animation (Vault*DoorMetatiles). They lead into the
-   houses, shops and inn (SceneId_LogRoomsA), the jail (SceneId_StoneRooms) and
+   houses, shops and inn (SceneIdLogRoomsA), the jail (SceneIdStoneRooms) and
    the Vault Sanctum (VAULT_TO_SANCTUM). The metatile behaviors the scripts
    answer are VAULT_METATILE_BEHAVIOR (vault.h).
 
@@ -789,7 +789,7 @@ Sint32 scInit(void)
 	ACTOR *actor;
 
 	/* Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
-	   later scene, SceneId_VaultRevisit (vault_revisit.c). */
+	   later scene, SceneIdVaultRevisit (vault_revisit.c). */
 	if(gmFlagGet(FLAG_KALAY_REACHED) != 0) {
 		syImportScriptSetExitRequest(VAULT_TO_VAULT_REVISIT);
 	}

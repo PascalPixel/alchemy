@@ -25,14 +25,14 @@ void btEffectRunSpire(BATTLE_EFFECT_PARM *args)
 	Uint32				 width;
 	Uint32				 height;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDCNT = 0;
 	btResourceLoadAndDecompress(RESOURCE_BOULDER_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	blit = Ram_HeapSlots->ramCode;
+	blit = RamHeapSlots->ramCode;
 
 	/* The canvas is centred between the first and the last target. */
 	btEffectPosProjectScaledBattler(args->tgts[0], &first);

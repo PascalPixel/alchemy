@@ -30,9 +30,9 @@ void btEffectRunNereid(BATTLE_EFFECT_PARM *args)
 	BATTLE_EFFECT_STATE *state;
 	Uint8				*graphics;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	graphics = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	graphics = RamHeapSlots->battleSheet;
 
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;

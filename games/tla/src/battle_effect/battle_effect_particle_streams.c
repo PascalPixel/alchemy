@@ -51,9 +51,9 @@ UNUSED void btEffectRunNereidCopy(BATTLE_EFFECT_PARM *args)
 	Uint8				*cells;
 	Uint8				*palette;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	cells = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	cells = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, draw);
@@ -278,7 +278,7 @@ extern const SCALE SummonFormationLargeScale;
    origin in 16.16 pixels. */
 void btEffectPlaceFormationSprs(Sint32 formation, Sint32 x, Sint32 z)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	SCALE				 normal = SummonFormationScale;
 	SCALE				 big = SummonFormationLargeScale;
 	FIXED				 pos[4];
@@ -377,9 +377,9 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	orgX = x;
 	x += toFIXED(40);
 	x /= 2;
@@ -388,10 +388,10 @@ void btEffectRunImpactBurst(Sint32 formation, Sint32 x, FIXED y)
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
 		BLDCNT_TGT2_ALL;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	maxBlend = Ram_HeapSlots->ramCode;
+	maxBlend = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	additive = Ram_HeapSlots->ramCodePaired;
+	additive = RamHeapSlots->ramCodePaired;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_FLARE_SHEET, state->sheet, 1, 0);
 	btResourceLoadAndDecompress(
@@ -597,7 +597,7 @@ void btPaletteBrightenSavedBattleBg(
 	Sint32 redDelta, Sint32 greenDelta, Sint32 blueDelta)
 {
 	Uint16 *color = (Uint16 *)&BG_PLTT_COLOR(6, 0);
-	Uint16 *src = Ram_HeapSlots->battleState->pal;
+	Uint16 *src = RamHeapSlots->battleState->pal;
 	Sint32	i;
 
 	for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
@@ -628,7 +628,7 @@ void btPaletteBrightenSavedBattleBg(
 /* Streams the fall's backdrop colours into colour 0, one each line. */
 void btEffectArmPaletteHBlankDMA(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
 	volatile Uint16		*channel = REG_DMA0;
 
 	channel[DMA_CONTROL_HALF] &= (Uint16)~DMA_START_TIMING_DRQ_REPEAT;
@@ -774,8 +774,8 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32		 frm;
 	Sint32		 i;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 
 	/* In Outer Space the Fusion Dragon leaps out of sight. The stream then runs
@@ -826,8 +826,8 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			SHEET_PALETTE_BYTES);
 
 	/* BG1's picture all colour 1, black, for the dissolve to erase. */
-	IWRAM_FILL_WORDS(Ram_MapMetatileBuffer, 256 * 128, CANVAS_FILL_WORD(1));
-	syWordsCopy((void *)BG_CHAR_BLOCK(2), Ram_MapMetatileBuffer,
+	IWRAM_FILL_WORDS(RamMapMetatileBuffer, 256 * 128, CANVAS_FILL_WORD(1));
+	syWordsCopy((void *)BG_CHAR_BLOCK(2), RamMapMetatileBuffer,
 		BATTLE_BACKGROUND_BYTES);
 	sySynch(1);
 	REG_BLDCNT = 0;
@@ -888,8 +888,8 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 					if(y >= 0)
 						if(y <= 127)
-							Ram_MapMetatileBuffer[((y / 8 * 32 + x / 8) * 8 +
-													  (y & 7)) *
+							RamMapMetatileBuffer[((y / 8 * 32 + x / 8) * 8 +
+													 (y & 7)) *
 									8 +
 								(x & 7)] = 0;
 				}
@@ -903,14 +903,14 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	{
 		Sint32					 savedX = BgScrollWork[1].x;
 		Sint32					 savedY = BgScrollWork[1].y;
-		BATTLE_BACKGROUND_STATE *transition = Ram_HeapSlots->battleBg;
+		BATTLE_BACKGROUND_STATE *transition = RamHeapSlots->battleBg;
 		Sint32					 transferMode = CANVAS_COPY_AND_DARKEN;
 
 		BgScrollWork[1].x = 0;
 		BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
 		btEffectBuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7,
 			COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, BLITTER_MAX);
-		draw = Ram_HeapSlots->ramCode;
+		draw = RamHeapSlots->ramCode;
 		EFFECT_SET_TRANSFER(state, transferMode, CANVAS_FILL_WORD(2));
 		sySetEvent(btEffectArmPaletteHBlankDMA, EVENT_PASS_VBLANK + 126);
 		EFFECT_FREE_PARTICLES(i, state->particles, 64);
@@ -1040,7 +1040,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				btEffectPosProjectPoint(vector, &spot);
 				spot.x = FIXEDtoINT(spot.x) + 128;
 				spot.y = FIXEDtoINT(spot.y) + 60;
-				draw(Ram_MapMetatileBuffer,
+				draw(RamMapMetatileBuffer,
 					state->sheet + STARFIELD_FALL_SMALL_GLOW,
 					spot.x - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
 					spot.y - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
@@ -1059,7 +1059,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				Sint32 fireballY = StarfieldFallFireballPoints[i][1] + y;
 
 				if(fireballY <= 93)
-					draw(Ram_MapMetatileBuffer,
+					draw(RamMapMetatileBuffer,
 						state->sheet + STARFIELD_FALL_LARGE_GLOW,
 						StarfieldFallFireballPoints[i][0] + x -
 							STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
@@ -1077,7 +1077,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				/* A flame rises against the stream through its six pictures. */
 				if(flame->variant >= 0) {
-					draw(Ram_MapMetatileBuffer,
+					draw(RamMapMetatileBuffer,
 						state->sheet + STARFIELD_FALL_FLAMES +
 							flame->variant *
 								(STARFIELD_FALL_FLAME_SIZE *
@@ -1117,7 +1117,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7) |
 		BGCNT_WRAP;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_BLAST_SHEET, state->sheet, 1, 0);
 	for(i = 0; i != STARFIELD_FALL_FLAME_COUNT; i++) {
 		PARTICLE *mote = &state->particles[i];
@@ -1145,7 +1145,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 	for(frm = 0; frm != STARFIELD_FALL_BURST_TICKS; frm++) {
 		Sint32		   dragonScale = (frm + 464) << 8;
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 		Sint32		   elapsed = frm - STARFIELD_FALL_FLASH_TICK;
 		SCALE		   scale;
 		Sint32		   x;

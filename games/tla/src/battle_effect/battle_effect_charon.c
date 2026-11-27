@@ -47,13 +47,13 @@
    from the tick before CHARON_ORB_TICK the red orb's 64x64 picture
    (RedOrbTiles) over it (ORB_BUFFER, read back as REVEAL_BUFFER) and the order
    it is revealed in after it. Then the particles. */
-#define SPRITES					((SPR **)Ram_MapMetatileBuffer)
+#define SPRITES					((SPR **)RamMapMetatileBuffer)
 #define SPRITE_BUFFER			MapGridMetatileBuffer
 #define OAM_BUFFER				((Uint32 *)(MapGridMetatileBuffer + 16384))
 #define CHARON_HIDDEN_SPRITES	64
 #define ORB_BUFFER				(MapGridMetatileBuffer + 16384)
-#define REVEAL_BUFFER			(Ram_MapMetatileBuffer + 16384)
-#define CHARON_PARTICLES		((PARTICLE *)(Ram_MapMetatileBuffer + 16896))
+#define REVEAL_BUFFER			(RamMapMetatileBuffer + 16384)
+#define CHARON_PARTICLES		((PARTICLE *)(RamMapMetatileBuffer + 16896))
 /* The swarm: CHARON_SWARM particles fly up from CHARON_ARRIVAL_TICK, the
    shards ride those from CHARON_SWARM_SHARDS on, the first CHARON_LARGE_SHARDS
    a quarter larger, and each CHARON_SWARM_GROUP particles tumble a step faster
@@ -265,13 +265,13 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 	Sint32					 dimming;
 	Sint32					 width;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	backgroundView = Ram_HeapSlots->battleBg;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	backgroundView = RamHeapSlots->battleBg;
 	savedScrollX = BgScrollWork[1].x;
-	motePictures = Ram_HeapSlots->battleSheet;
+	motePictures = RamHeapSlots->battleSheet;
 	sprs = (SPR **)MapGridMetatileBuffer;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	btEffectStartCanvasLayer(0);
 	btEffectConfigureEffectDisp();
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -1148,7 +1148,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 					state->sheet + CHARON_ACT_PICTURES, centerX, 58, radius);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-				blit[1] = Ram_HeapSlots->ramCodePaired;
+				blit[1] = RamHeapSlots->ramCodePaired;
 			}
 			for(j = 0; j != 2; j++) {
 				Sint32 flashFrm = frm - (CHARON_DISC_TICK + 10) - j * 19;
@@ -1465,7 +1465,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 	IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
 	IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
 	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	shake = 0;
 	savedYaw = camera->yaw;
 	camera->yaw = shake;
@@ -1630,7 +1630,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 			}
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-			blitters[0] = (Ram_HeapSlots->ramCode);
+			blitters[0] = (RamHeapSlots->ramCode);
 			for(i = 0; i != CHARON_BURSTS_DRAWN; i++) {
 				PARTICLE *p = &CHARON_BURSTS[i];
 
@@ -1680,7 +1680,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 				}
 				if(frm >= CharonFlashTicks[i] + 1 &&
 					frm < CharonFlashTicks[i] + 16) {
-					Uint16 *tgt = Ram_HeapSlots->battleState->pal;
+					Uint16 *tgt = RamHeapSlots->battleState->pal;
 					Uint16 *col = (Uint16 *)&BG_PLTT_COLOR(6, 0);
 
 					for(j = 0; j != BATTLE_BACKGROUND_COLORS; j++) {
@@ -1820,7 +1820,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 								EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 						}
-						(Ram_HeapSlots->ramCode)(canvas, state->sheet,
+						(RamHeapSlots->ramCode)(canvas, state->sheet,
 							column->x - halfWidth, column->y, halfWidth, width);
 					}
 				}
@@ -1849,7 +1849,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 				}
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-				blitters[0] = (Ram_HeapSlots->ramCode);
+				blitters[0] = (RamHeapSlots->ramCode);
 				for(i = 0; i != CHARON_COLUMNS; i++) {
 					Sint32 width = 120 - COLUMNS[i].x;
 
@@ -1862,7 +1862,7 @@ void btEffectRunCharon(BATTLE_EFFECT_PARM *arg)
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_TRANSPARENT);
-				blitters[0] = (Ram_HeapSlots->ramCode);
+				blitters[0] = (RamHeapSlots->ramCode);
 				for(i = 0; i != CHARON_MOTE_COUNT; i++) {
 					PARTICLE *p = &CHARON_PARTICLES[i];
 

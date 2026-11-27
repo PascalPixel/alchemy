@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Window
-Stubs_Window:
+	.global StubsWindow
+StubsWindow:
 	stub mnWindowSystemInitFieldStub, mnWindowSystemInitField
 	stub mnWindowSystemInitBattleStub, mnWindowSystemInitBattle
 	stub mnWindowCreateStub, mnWindowCreate

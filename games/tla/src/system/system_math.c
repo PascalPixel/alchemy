@@ -162,8 +162,8 @@ FIXED sySquartFX(FIXED value)
 	return sySquartIWRAM(value) << 8;
 }
 
-/* Returns the basic sprite palettes (System_BasicColorPalette). */
+/* Returns the basic sprite palettes (SystemBasicColorPalette). */
 Sint32 syPaletteGetBasicSprCols(void)
 {
-	return (Sint32)System_BasicColorPalette;
+	return (Sint32)SystemBasicColorPalette;
 }

@@ -1,4 +1,4 @@
-/* Stone rooms (SceneId_StoneRooms), a rooms map drawn in stone.
+/* Stone rooms (SceneIdStoneRooms), a rooms map drawn in stone.
 
    The game packs rooms of several places that share a tile style onto one map.
    This one holds two, whose area names differ by entrance.
@@ -223,7 +223,7 @@ Sint32 scInit(void)
 
 	if(entrance == STONE_ROOMS_FROM_LUNPA) {
 		/* The room is in Vault's area, so coming from Lunpa changes the area
-		   and gmArrive asks for the area name, which Area_NameRules gives as
+		   and gmArrive asks for the area name, which AreaNameRules gives as
 		   "Lunpa" for this entrance: the town the party has just left. Clearing
 		   the flag keeps that banner from showing. */
 		gmFlagClear(FLAG_SHOW_AREA_NAME);

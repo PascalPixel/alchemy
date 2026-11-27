@@ -23,8 +23,8 @@ typedef enum FLEE_CHANCE {
    chosen, raised by verticalOfs pixels. */
 void btCameraSetCommandView(Sint32 verticalOfs)
 {
-	BATTLE_CAMERA			*camera = Ram_HeapSlots->cameraState;
-	BATTLE_BACKGROUND_STATE *view = Ram_HeapSlots->battleBg;
+	BATTLE_CAMERA			*camera = RamHeapSlots->cameraState;
+	BATTLE_BACKGROUND_STATE *view = RamHeapSlots->battleBg;
 	POINT					 eyeOfs;
 	Uint32					 result;
 
@@ -92,7 +92,7 @@ Sint32 btFleeCheckSuccess(void)
 	BATTLE_STATE *battle;
 
 	escaped = FALSE;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	if(battle->firstStrike == FIRST_STRIKE_PARTY) {
 		escaped = TRUE;
 	} else {
@@ -148,7 +148,7 @@ Sint32 btBuildEnemyActions(BATTLE_ACTION_RECORD *entries)
 {
 	Uint16		  unitIds[UNIT_MAX];
 	Sint32		  entryCnt = 0;
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  unitCnt;
 	Sint32		  i;
 
@@ -300,7 +300,7 @@ void btActionOrderSort(BATTLE_ACTION_RECORD *entries, Sint32 cnt)
    were received, or -1 when the exchange fails. */
 Sint32 btAppendLinkedActions(BATTLE_ACTION_RECORD *actions, Sint32 cnt)
 {
-	BATTLE_STATE	   *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE	   *battle = RamHeapSlots->battleState;
 	Sint32				result = 0;
 	Sint32				allocationSize = LINK_ACTIONS_BYTES(cnt);
 	BATTLE_LINK_HEADER *state = syHeapAllocEWRAM(sizeof(BATTLE_LINK_HEADER));
@@ -506,7 +506,7 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 	Sint32		  received;
 	Sint32		  i;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	{
 		BATTLE_ACTION_RECORD *records = battle->actions;
 		Uint32				  n;
@@ -539,7 +539,7 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 	}
 
 	/* Link opponent or enemy actions. */
-	if(Ram_HeapSlots->battleState->isLink != 0) {
+	if(RamHeapSlots->battleState->isLink != 0) {
 		received = btAppendLinkedActions(actions, cnt);
 		if(btLinkBattleWaitSync() < 0) {
 			cnt = -1;
@@ -576,7 +576,7 @@ Sint32 btGatherActions(BATTLE_ACTION_RECORD *actions)
 finish:
 	syGameFlagClear(FLAG_CHOOSING_COMMANDS);
 	btCameraSetDefaultView();
-	Ram_HeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
+	RamHeapSlots->battleBg->tgtYaw = YAW_PARTY_ACTION;
 	return cnt;
 }
 
@@ -584,7 +584,7 @@ finish:
    list. */
 Sint32 btGetUnitAtPlace(Sint32 taggedPlace)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 
 	if((taggedPlace & PLACE_ENEMY_SIDE) != 0)
 		return battle->enemyIds[taggedPlace & PLACE_INDEX_MASK];
@@ -595,7 +595,7 @@ Sint32 btGetUnitAtPlace(Sint32 taggedPlace)
    or -1 when it is in neither list. */
 Sint32 btFindUnitPlace(Uint32 unitId)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  placeIdx;
 	Sint16		  listedUnit;
 

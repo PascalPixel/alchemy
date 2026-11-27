@@ -1,4 +1,4 @@
-/* Lighthouse Aerie (SceneId_MercuryLighthouseAerie), the top of Mercury
+/* Lighthouse Aerie (SceneIdMercuryLighthouseAerie), the top of Mercury
    Lighthouse, where its beacon burns.
 
    Isaac and Garet, with Ivan and Mia, have climbed the lighthouse after Saturos
@@ -42,7 +42,7 @@
    - Leaving. The stairs on the west side of the beacon's tower bring the
 	 lift back up if it is down, and stepping onto it from the
 	 westmost platform rides it down to the ground before Mercury Lighthouse,
-	 by the Fountain of Healing (SceneId_MercuryLighthouseExterior,
+	 by the Fountain of Healing (SceneIdMercuryLighthouseExterior,
 	 mercury_lighthouse.c). Coming up that way
 	 (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the
 	 lift up.
@@ -56,7 +56,7 @@
    Jenna, Kraden, Felix and Menardi are placed only on the first arrival. Every
    other entrance sets FLAG_HOSTAGES_GONE before the actor placements are read.
 
-   Unused: SceneId_UnusedMercuryLighthouseAerieCopy, which the area names call
+   Unused: SceneIdUnusedMercuryLighthouseAerieCopy, which the area names call
    Mercury Lighthouse and the debug scene list labels `MTO07NG`, loads this
    overlay and the same map. The setup does nothing for it, and no exit, table
    or code leads there. Only the debug scene selector, which reaches every

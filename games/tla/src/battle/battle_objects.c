@@ -262,8 +262,8 @@ void btObjectSpawnObjectsForList(
 			/* A two-part enemy: its two sprites in the actor system's next
 			   group table. BUG: a failed create leaves record null, and its
 			   flags are still written. */
-			records = (SPR **)Ram_HeapSlots->actorSystem->sprGroups +
-				Ram_HeapSlots->actorSystem->cnt;
+			records = (SPR **)RamHeapSlots->actorSystem->sprGroups +
+				RamHeapSlots->actorSystem->cnt;
 			sprId = battleObject->resource;
 			object->recordStorageKind = ACTOR_SPRITE_GROUP;
 			object->records = records;
@@ -365,7 +365,7 @@ void btSprDetachScripts(void *recordGroup)
    or null for a unit with no place. */
 static __inline__ BATTLE_OBJECT *btObjectFindSlot(Sint32 id)
 {
-	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE  *battle = RamHeapSlots->battleState;
 	BATTLE_OBJECT *slots = battle->slots;
 
 	if(id > ALLY_MAX)
@@ -380,7 +380,7 @@ static __inline__ BATTLE_OBJECT *btObjectFindSlot(Sint32 id)
    and draws a unit under Haze (DEFEND_VANISHED) as an outline. */
 void btObjectUpdateSprPriorities(void)
 {
-	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE  *battle = RamHeapSlots->battleState;
 	Uint16		   unitIds[UNIT_MAX];
 	MOTION_OBJECT *objects[UNIT_MAX];
 	Sint32		   partyCnt;
@@ -433,7 +433,7 @@ void btObjectUpdateSprPriorities(void)
 	if(battle->keepObjPriorities != 0)
 		return;
 
-	if(((BATTLE_CAMERA *)Ram_HeapSlots->cameraState)->yaw >= 0) {
+	if(((BATTLE_CAMERA *)RamHeapSlots->cameraState)->yaw >= 0) {
 		partyPri = 1;
 		enemyPri = 2;
 	} else {
@@ -562,7 +562,7 @@ void btMotionDestroyAllSlotObjects(void)
    height 0. */
 Sint32 btObjectGetAnchor(Sint32 slot, POS *out)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  result;
 
 	out->x = battle->slots[slot].anchorX;
@@ -576,7 +576,7 @@ Sint32 btObjectGetAnchor(Sint32 slot, POS *out)
    commands are chosen. */
 UNREAD_RESULT btCameraApplyTransform(void)
 {
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 	syInitMatrix();
 	if(syGameFlagGet(FLAG_CHOOSING_COMMANDS) != 0) {
@@ -631,7 +631,7 @@ void *btActorGetSpr(MOTION_OBJECT *object, Sint32 recordIdx)
 /* Puts the battle camera at its default view of the battlefield's centre. */
 void btCameraSetDefaultView(void)
 {
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	POINT		   eyeOfs;
 
 	/* A pitch of -1/128 of a turn, 510 pixels away. */
@@ -656,7 +656,7 @@ void btCameraSetDefaultView(void)
    otherwise. */
 BATTLE_OBJECT *btObjectGet(Sint32 objectId)
 {
-	BATTLE_STATE  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE  *battle = RamHeapSlots->battleState;
 	BATTLE_OBJECT *slots = battle->slots;
 	Sint32		   idx;
 

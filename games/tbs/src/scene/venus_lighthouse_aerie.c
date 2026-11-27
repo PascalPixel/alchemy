@@ -1,4 +1,4 @@
-/* Lighthouse Aerie (SceneId_VenusLighthouseAerie), the top of Venus Lighthouse
+/* Lighthouse Aerie (SceneIdVenusLighthouseAerie), the top of Venus Lighthouse
    and the only scene of this overlay.
 
    What happens here is one chain of scripts cut by two battles and two trips to
@@ -132,7 +132,7 @@ enum {
 
 /* Area flags that choose the aerie's field music after each battle.
 
-   They work by the scene's field music rules (Scene_MusicRules,
+   They work by the scene's field music rules (SceneMusicRules,
    field/music_rules.s). The music is MUS_SILENCE before the first battle,
    MUS_BABIS_THEME once the first has begun and MUS_ELEMENTAL_STARS once the
    second has.

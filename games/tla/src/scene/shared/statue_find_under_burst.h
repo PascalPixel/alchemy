@@ -3,7 +3,7 @@
    returns its value. */
 Sint32 scStatueFindUnderBurst(Uint16 *tbl)
 {
-	FIELD_EFFECT_STATE *watch = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *watch = RamHeapSlots->fieldEffState;
 	Sint32				result = 0;
 	Sint32 metatile = fdMapMetatileGetAttributes(MAPGRID_LAYER_GROUND,
 						  FIELD_METATILE(watch->x), FIELD_METATILE(watch->z)) >>

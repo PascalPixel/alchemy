@@ -62,7 +62,7 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 	Sint32 i;
 	Sint32 j;
 
-	state = (WIN_STATE *)Ram_HeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->winState;
 	previewWin = NULL;
 	drawnRow = -1;
 	cursorSlot = syVRAMCacheAllocEntry(128);
@@ -466,7 +466,7 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 		if(djinnCnt != 0)
 			syOAMAddSprAtDepth(spr, OAM_DEPTH_WINDOW + 2);
 
-		partyStat = Ram_HeapSlots->partyStat;
+		partyStat = RamHeapSlots->partyStat;
 		blinkPhase = TickCount & 4;
 		iconWin = (WINDOW *)partyStat->win;
 		if(partyStat->flg & 2) {
@@ -483,21 +483,21 @@ Sint32 mnBattleDjinnMenuRun(Sint32 member, Sint32 unused)
 			}
 		}
 		if(TickCount & 4) {
-			syWordsCopyEntry((void *)DJINN_MENU_ARROW_VRAM, DjinnMenu_BlinkTile,
+			syWordsCopyEntry((void *)DJINN_MENU_ARROW_VRAM, DjinnMenuBlinkTile,
 				TILE_SIZE_4BPP);
 			syWordsCopyEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-				DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
+				DjinnMenuBlinkTile, TILE_SIZE_4BPP);
 		} else {
 			syWordsFillEntry((void *)DJINN_MENU_ARROW_VRAM, TILE_SIZE_4BPP,
 				TEXT_CANVAS_BACKGROUND_WORD);
 			syWordsCopyEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-				DjinnMenu_BlinkTile, TILE_SIZE_4BPP);
+				DjinnMenuBlinkTile, TILE_SIZE_4BPP);
 		}
 		sySynch(1);
 	}
 
 	{
-		PARTY_STAT_WINDOW *owner = Ram_HeapSlots->partyStat;
+		PARTY_STAT_WINDOW *owner = RamHeapSlots->partyStat;
 
 		if(owner->flg & 2)
 			mnWindowHighlightRect(

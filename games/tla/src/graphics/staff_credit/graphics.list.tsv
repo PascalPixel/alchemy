@@ -1,6 +1,6 @@
 name	file	section	align	left	pad
-StaffCredit_BeaconPalettes	pal_a.gbapal				
-StaffCredit_BeamsPalette	pal_b.gbapal				
-StaffCredit_BeamsLightPalette	pal_c.gbapal				
-StaffCredit_BeamsMaps	beams_map.tilemap.lz				
-StaffCredit_BeamsTiles	beams.parts.lz				
+StaffCreditBeaconPalettes	pal_a.gbapal				
+StaffCreditBeamsPalette	pal_b.gbapal				
+StaffCreditBeamsLightPalette	pal_c.gbapal				
+StaffCreditBeamsMaps	beams_map.tilemap.lz				
+StaffCreditBeamsTiles	beams.parts.lz				

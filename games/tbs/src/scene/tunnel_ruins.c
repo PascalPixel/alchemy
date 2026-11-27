@@ -7,7 +7,7 @@
    basement where the slides of Babi Lighthouse Entry land, which the area names
    call Babi Lighthouse.
 
-   - TunnelRuinsGreatStatue (SceneId_TunnelRuinsGreatStatue) is entered by
+   - TunnelRuinsGreatStatue (SceneIdTunnelRuinsGreatStatue) is entered by
 	 the stone door Reveal finds in Babi Lighthouse. Its first room holds a
 	 giant pink statue, with a small model of Venus Lighthouse on the floor
 	 before it: searching it tells the party to seek "the lady's leave", the
@@ -19,7 +19,7 @@
 	 pillar, then by the balance and its carved stones to the Oracle's Robe.
 	 The other goes by a room of two pillars that sink onto water crests,
 	 raising stepping stones from a pit, to the Asura's Armor.
-   - TunnelRuinsLadyStatues (SceneId_TunnelRuinsLadyStatues) holds the rest:
+   - TunnelRuinsLadyStatues (SceneIdTunnelRuinsLadyStatues) holds the rest:
 	 Babi Lighthouse's basement with its two grey pillars; the balance, two
 	 platforms Carry weighs down with three carved stones; the two white
 	 statues that Reveal makes vanish from the chests they stand on; a room

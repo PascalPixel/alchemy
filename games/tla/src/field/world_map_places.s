@@ -20,13 +20,13 @@
 	.ifc \visit, never
 	.2byte -1
 	.else
-	.2byte SceneId_\visit
+	.2byte SceneId\visit
 	.endif
 	.2byte \visit_entrance
 	.ifc \to, none
 	.2byte 0
 	.else
-	.2byte SceneId_\to
+	.2byte SceneId\to
 	.endif
 	.2byte \to_entrance
 	.endm

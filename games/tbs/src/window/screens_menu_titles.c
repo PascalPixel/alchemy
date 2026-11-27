@@ -302,7 +302,7 @@ void mnGraphicsExpandVRAMTilesByColTable(Uint16 *dst)
 	}
 }
 
-/* Builds icon `resource` (0 to 31) of Icon_MiscIconPointers, the table the
+/* Builds icon `resource` (0 to 31) of IconMiscIconPointers, the table the
    status icons come from (mnIconDrawMisc), in a transfer block taken from
    HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `idx` with it and returns
    the entry's first tile. */
@@ -394,7 +394,7 @@ Sint32 mnWindowSprGetPointerTiles(Sint32 idx)
 UNUSED void mnIconDecompress(ICON_TRANSFER *state)
 {
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_RAM_CODE_TEMP, mnTileDecompress4bpp,
-		Tile_Decompress4bppCodeSize);
+		TileDecompress4bppCodeSize);
 	((void (*)(const void *, Uint8 *))((HEAP_STATE *)HeapSlots)
 			->slots[HEAP_SLOT_RAM_CODE_TEMP])(state->encoded, state->input);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_TEMP);
@@ -420,7 +420,7 @@ WINDOW *mnLinkCreateCountdownLabelWindow(void)
 	return win;
 }
 
-/* Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
+/* Decodes command icon `icon` (ResourceIdCommandIcons, 1 KB of 256-colour
    pixels) in a block taken from HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache
    entry `slotIdx` with it and returns the entry's first tile. */
 Sint32 mnCommandIconReloadSlot(Sint32 slotIdx, Sint32 icon)

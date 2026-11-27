@@ -29,7 +29,7 @@ typedef struct ICON_MENU_STATE {
 	   heading. */
 	WINDOW *lowerWin;
 	WINDOW *upperWin; /* those menus' heading window */
-	/* Each icon's number (ResourceId_CommandIcons), which is also its command
+	/* Each icon's number (ResourceIdCommandIcons), which is also its command
 	   name's: MsgCommandName plus it. */
 	Uint8  commandIcons[8];
 	Sint16 selection; /* the icon chosen, 0 to count - 1 */

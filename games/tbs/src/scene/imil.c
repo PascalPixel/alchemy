@@ -13,14 +13,14 @@
    villagers talk of Mia leaving with the party. Some lines also change while
    she travels with them (FLAG_IN_PARTY(MIA)).
 
-   - Imil (SceneId_Imil), the village, on both banks of a frozen river that
+   - Imil (SceneIdImil), the village, on both banks of a frozen river that
 	 runs down its middle from a frozen waterfall. A young man shivers and
 	 sneezes in the snow by the north-west house, waiting for Mia, and a
 	 strongman counts out his exercises against the cold on the east ledge.
 
    Six doors, whose metatiles are their exits past
    EXIT_METATILE_BEHAVIOR_OFFSET,  open into the houses, the shops, the inn
-   and the Sanctum  (SceneId_IceRooms). IMIL_TO_WORLD_MAP_SOUTH and
+   and the Sanctum  (SceneIdIceRooms). IMIL_TO_WORLD_MAP_SOUTH and
    IMIL_TO_WORLD_MAP_NORTH  lead out to the World Map, and the dark opening
    in the frozen waterfall  (METATILE_BEHAVIOR_IMIL_PATH_TO_FALLS_CAVE) leads
    into Imil Falls Cave,  where Fever waits. Coming back out of it
@@ -42,7 +42,7 @@
 	 Vial in a chest above the first house, and a Lucky Medal in the upper
 	 left grave by the Sanctum.
 
-   - Ice rooms (SceneId_IceRooms), a rooms map drawn in ice, all of them
+   - Ice rooms (SceneIdIceRooms), a rooms map drawn in ice, all of them
 	 Imil's: inside the houses, the shops and the inn, whose area name is
 	 Imil. By ICE_ROOMS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
 	 Sanctum.

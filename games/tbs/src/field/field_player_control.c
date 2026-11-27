@@ -801,11 +801,11 @@ Sint32 fdActorMoveByKeys(ACTOR *actor)
 		/* The metatiles (16 pixels) under the actor and the step; a step into a
 		   metatile with another metatile behavior is refused. */
 		sourceMetatile =
-			&((MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer)[actor->x.fixed /
+			&((MAP_GRID_METATILE *)RamMapGridMetatileBuffer)[actor->x.fixed /
 					toFIXED(MAPGRID_METATILE_PIXELS) +
 				(position.z / toFIXED(MAPGRID_METATILE_PIXELS)) * MAPGRID_SIZE];
 		destinationMetatile =
-			&((MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer)[position.x /
+			&((MAP_GRID_METATILE *)RamMapGridMetatileBuffer)[position.x /
 					toFIXED(MAPGRID_METATILE_PIXELS) +
 				(position.z / toFIXED(MAPGRID_METATILE_PIXELS)) * MAPGRID_SIZE];
 		if(fdMapGridIsWallAt((WORLD_POS *)&position) != 0 ||

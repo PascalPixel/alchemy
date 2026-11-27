@@ -35,16 +35,16 @@ void btEffectRunBreak(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	syWordsCopyEntry((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_ICE_BLOCK_SHEET), SHEET_PALETTE_BYTES);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 
 	EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * BREAK_SHARDS_PER_TARGET);
 
@@ -177,10 +177,10 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 palette;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	if(mode == DRAIN_MOTES_TRUE_COLLIDE)
 		btEffectDrawShadedCirclesMirrored(sheet, 10, toFIXED(1));
@@ -223,7 +223,7 @@ void btEffectRunDrainMotes(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	}
 
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	if(mode == DRAIN_MOTES_TRUE_COLLIDE) {
 		/* Colours 1 to 63 run from violet down to black, so an orb is dark
 		   where its level is highest; the canvas is blended 16:6 and trails. */

@@ -1,6 +1,6 @@
-/* Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
-   SceneId_CrossboneIsleDragonStatue) and Kolima Forest
-   (SceneId_KolimaForestFloodgate): drawing a stretch of the layout, in one of
+/* Crossbone Isle Cave (SceneIdCrossboneIsleSteppingStones to
+   SceneIdCrossboneIsleDragonStatue) and Kolima Forest
+   (SceneIdKolimaForestFloodgate): drawing a stretch of the layout, in one of
    the states kept elsewhere in it (such as the water raised or not), straight
    into the background's tile map. */
 
@@ -18,7 +18,7 @@ static void scMapGridDrawMetatilePanel(Sint32 x, Sint32 y, Sint32 width,
 	Sint32 height, Sint32 plane, Sint32 dstX, Sint32 dstY)
 {
 	Uint32 *metatile =
-		(Uint32 *)Ram_MapGridMetatileBuffer + (y * MAPGRID_SIZE + x);
+		(Uint32 *)RamMapGridMetatileBuffer + (y * MAPGRID_SIZE + x);
 	Sint32 row;
 	Sint32 col;
 
@@ -38,10 +38,10 @@ static void scMapGridDrawMetatilePanel(Sint32 x, Sint32 y, Sint32 width,
 
 			to = (Uint32 *)BG_SCREEN_BLOCK(5) + idx;
 			picture = tile * 2;
-			from = (Uint32 *)Ram_MetatileTiles;
+			from = (Uint32 *)RamMetatileTiles;
 			from += picture;
 			*to = *from;
-			from = (Uint32 *)(Ram_MetatileTiles + 4);
+			from = (Uint32 *)(RamMetatileTiles + 4);
 			from += picture;
 			to += BG_SCREEN_WIDTH / 2;
 			*to = *from;

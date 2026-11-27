@@ -273,7 +273,7 @@ Sint32 scLinkLobbyPollPeerReady(void)
 	Sint32		 set;
 	FIXED		 z;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	result = TRUE;
 	z = fdActorGetById(ACTOR_FELIX)->z.fixed;
 
@@ -359,7 +359,7 @@ Sint32 scLinkLobbyPromptToParticipate(void)
 /* The attendant behind the left counter says, "The link was disconnected." */
 Sint32 scLinkLobbyReportLinkDisconnected(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	scLinkLobbyWriteSlotValue(LOBBY_SLOT_IDLE);
 	fdScriptClearFlag(FLAG_LINK_LOBBY_ATTENDANT_ASKED);
@@ -394,7 +394,7 @@ Sint32 scLinkLobbyReportLinkDisconnected(void)
 /* Ticks, about fifteen seconds, for all four records received. */
 #define LOBBY_RECEIVE_TIMEOUT_TICKS 900
 
-/* The Broken Seal's BattleArena_ReceivePartyRecords: takes the other player's
+/* The Broken Seal's BattleArenaReceivePartyRecords: takes the other player's
    party records over the link. */
 Sint32 scLinkLobbyReceivePartyRecords(void)
 {
@@ -527,7 +527,7 @@ Sint32 scLinkLobbyCopyPartyOwnerIds(Uint16 *out)
 	return cnt;
 }
 
-/* The Broken Seal's BattleArena_SendPartyRecords: sends the party's records to
+/* The Broken Seal's BattleArenaSendPartyRecords: sends the party's records to
    the other player. */
 Sint32 scLinkLobbySendPartyRecords(void)
 {
@@ -732,7 +732,7 @@ Sint32 scLinkLobbyEnterBattle(void)
 
 	failed = FALSE;
 	win = 0;
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	ticksUnanswered = 0;
 	if(fdScriptGetFlag(FLAG_MONSTER_BATTLE)) {
 		fdScriptStart();
@@ -854,7 +854,7 @@ Sint32 scLinkLobbyEnterBattle(void)
 		/* The six units go to the battle's actor sprite slots, where the battle
 		   takes them from. */
 		for(i = 0; i < 6 * BATTLE_UNIT_SIZE; i++)
-			(Ram_MapMetatileBuffer + 32 * 1024)[i] = savedUnits[i];
+			(RamMapMetatileBuffer + 32 * 1024)[i] = savedUnits[i];
 		syHeapSlotRelease(HEAP_SLOT_ENEMY_UNITS);
 	}
 	fdScriptEnd();
@@ -1422,7 +1422,7 @@ void scLinkLobbyDrawThreeDigitValue(Sint32 value)
 	fdMapGridCenterOnFollowedPoint();
 }
 
-/* Sets the lobby up as The Broken Seal's BattleArena_Initialize sets the arena
+/* Sets the lobby up as The Broken Seal's BattleArenaInitialize sets the arena
    up. */
 Sint32 scLinkLobbyInit(void)
 {
@@ -1561,7 +1561,7 @@ Sint32 scLinkLobbyInit(void)
 		/* FLAG_AREA_TEMP_E8: the linked battle broke off rather than being
 		   won. */
 		if(fdScriptGetFlag(FLAG_AREA_TEMP_E8)) {
-			FIELD_STATE *state = Ram_HeapSlots->fieldState;
+			FIELD_STATE *state = RamHeapSlots->fieldState;
 
 			fdScriptClearFlag(FLAG_AREA_TEMP_E8);
 			state->raisedCue = LOBBY_CUE_DISCONNECTED;

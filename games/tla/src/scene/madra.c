@@ -172,7 +172,7 @@ void scMadraEnterDoor(void)
 	Uint32		 id;
 	Sint32		 idx;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
 	for(id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {

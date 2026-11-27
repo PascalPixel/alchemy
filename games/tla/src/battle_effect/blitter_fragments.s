@@ -9,32 +9,28 @@
 .syntax unified
 .text
 	.arm
-	.global BattleEffect_CopyReverse
-	.global BattleEffect_CopyForward
-	.global BattleEffect_Copy8Forward
-	.global BattleEffect_Copy8Reverse
-	.global BattleEffect_TransparentForward
-	.global BattleEffect_TransparentReverse
-	.global BattleEffect_Transparent8Forward
-	.global BattleEffect_Transparent8Reverse
-	.global BattleEffect_MaxForward
-	.global BattleEffect_MaxReverse
-	.global BattleEffect_Max4Forward
-	.global BattleEffect_Max4Reverse
-	.global BattleEffect_AdditiveForward
-	.global BattleEffect_AdditiveReverse
-	.global BattleEffect_Mask
-BattleEffect_CopyReverse:
+	.global BattleEffectCopyReverse
+	.global BattleEffectCopyForward
+	.global BattleEffectCopy8Forward
+	.global BattleEffectCopy8Reverse
+	.global BattleEffectTransparentForward
+	.global BattleEffectTransparentReverse
+	.global BattleEffectTransparent8Forward
+	.global BattleEffectTransparent8Reverse
+	.global BattleEffectMaxForward
+	.global BattleEffectMaxReverse
+	.global BattleEffectMax4Forward
+	.global BattleEffectMax4Reverse
+	.global BattleEffectAdditiveForward
+	.global BattleEffectAdditiveReverse
+	.global BattleEffectMask
+BattleEffectCopyReverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
-BattleEffect_CopyForward:
+BattleEffectCopyForward:
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
-BattleEffect_Copy8Forward:
-	ldrb	r5, [r1], #1
-	strb	r5, [r9], #1
-	ldrb	r5, [r1], #1
-	strb	r5, [r9], #1
+BattleEffectCopy8Forward:
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
 	ldrb	r5, [r1], #1
@@ -47,7 +43,11 @@ BattleEffect_Copy8Forward:
 	strb	r5, [r9], #1
 	ldrb	r5, [r1], #1
 	strb	r5, [r9], #1
-BattleEffect_Copy8Reverse:
+	ldrb	r5, [r1], #1
+	strb	r5, [r9], #1
+	ldrb	r5, [r1], #1
+	strb	r5, [r9], #1
+BattleEffectCopy8Reverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
 	ldrb	r5, [r1], #-1
@@ -64,17 +64,17 @@ BattleEffect_Copy8Reverse:
 	strb	r5, [r9], #1
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
-BattleEffect_TransparentForward:
+BattleEffectTransparentForward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleEffect_TransparentReverse:
+BattleEffectTransparentReverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
 	add	r9, r9, #1
-BattleEffect_Transparent8Forward:
+BattleEffectTransparent8Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -100,7 +100,7 @@ BattleEffect_Transparent8Forward:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleEffect_Transparent8Reverse:
+BattleEffectTransparent8Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, #0
 	strbne	r5, [r9]
@@ -126,17 +126,17 @@ BattleEffect_Transparent8Reverse:
 	cmp	r5, #0
 	strbne	r5, [r9, #7]
 	add	r9, r9, #8
-BattleEffect_MaxForward:
+BattleEffectMaxForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleEffect_MaxReverse:
+BattleEffectMaxReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	cmp	r5, r8
 	strbgt	r5, [r9, #-1]
-BattleEffect_Max4Forward:
+BattleEffectMax4Forward:
 	ldrb	r5, [r1], #1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -153,7 +153,7 @@ BattleEffect_Max4Forward:
 	ldrb	r5, [r1], #1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleEffect_Max4Reverse:
+BattleEffectMax4Reverse:
 	ldrb	r5, [r1], #-1
 	ldr	r8, [r9], #4
 	and	sl, r8, #255
@@ -170,21 +170,21 @@ BattleEffect_Max4Reverse:
 	ldrb	r5, [r1], #-1
 	cmp	r5, r8, lsr #24
 	strbgt	r5, [r9, #-1]
-BattleEffect_AdditiveForward:
+BattleEffectAdditiveForward:
 	ldrb	r5, [r1], #1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleEffect_AdditiveReverse:
+BattleEffectAdditiveReverse:
 	ldrb	r5, [r1], #-1
 	ldrb	r8, [r9], #1
 	add	r5, r5, r8
 	cmp	r5, #63
 	movcs	r5, #63
 	strb	r5, [r9, #-1]
-BattleEffect_Mask:
+BattleEffectMask:
 	mov	sl, #64
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16

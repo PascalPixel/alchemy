@@ -149,7 +149,7 @@ typedef enum SPR_FLAG {
 	SPRITE_FLAG_KEEP_PICTURE = 1 << 5
 } SPR_FLAG;
 
-/* The VRAM cache entry of the actors' shared shadow (Actor_ShadowTiles), each
+/* The VRAM cache entry of the actors' shared shadow (ActorShadowTiles), each
    sprite's part 1. */
 #define VRAM_CACHE_ENTRY_ACTOR_SHADOW 93
 

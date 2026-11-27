@@ -167,8 +167,8 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *win, Sint32 member,
 			entry->attributes.bits.x = win->x * 8 + x;
 			entry->attributes.bits.y = win->y * 8 + y;
 			entry->tile.bits.idx = syVRAMCacheReload(sprite->idx,
-				(Sint32)(rising ? DjinnMenu_ArrowUpTiles
-								: DjinnMenu_ArrowDownTiles));
+				(Sint32)(rising ? DjinnMenuArrowUpTiles
+								: DjinnMenuArrowDownTiles));
 			mnWindowSprAppendToList(&win->sprs, sprite);
 		}
 	}
@@ -318,7 +318,7 @@ WINDOW *mnBattleDjinnMenuShowChangePreview(WINDOW *win, Sint32 member,
 		mnTextDrawMessageAsTiles(MsgClassName + unit->classId, win, 80, 0);
 		/* The arrow between the classes, flipped: DJINN_MENU_ARROW_TILE blinks
 		   when the class changes, the tile after it stays
-		   (DjinnMenu_BlinkTile). */
+		   (DjinnMenuBlinkTile). */
 		if(savedUnit->classId != unit->classId)
 			mnWindowSetTilemapEntry(win,
 				WINDOW_TILE(DJINN_MENU_ARROW_TILE) | TILE_HFLIP, 9, 0, page);

@@ -223,7 +223,7 @@ void scBlocksUnmarkMetatiles(ACTOR *block)
 	MAP_STATE *map;
 
 	if(block->sceneByte != 0) {
-		map = Ram_HeapSlots->mapGrid;
+		map = RamHeapSlots->mapGrid;
 		if(map != NULL) {
 			MAP_METATILE **metatiles = &map->layers[2].metatiles;
 			MAP_METATILE  *metatile = *metatiles;
@@ -448,7 +448,7 @@ void scAirsRockStartWhirlwind(void)
    (scAirsRockBlowGust and the rest). */
 void scAirsRockTakeOverWhirlwind(void)
 {
-	((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->sceneVariant = 1;
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->sceneVariant = 1;
 }
 
 /* The turn a gust's spark makes each tick: a lap every 32 ticks. */
@@ -519,7 +519,7 @@ extern Sint16 AirsRockGustTargets[][4];
 void scAirsRockBlowGust(void)
 {
 	ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
 	ACTOR			   *gust, *spark;
 	VECTOR3				velocity;
 	EFFECT_OPTIONS		glints, dust;
@@ -1080,7 +1080,7 @@ extern Uint32 AirsRockWhirlwindFadesScript[];
 void scAirsRockMoveWhirlwind(ACTOR *shot)
 {
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	FIXED		 speed = toFIXED(3) / 2;
 	Sint32		 snd = SE_SAND_EMERGE;
 	ACTOR		*other, *launcher;
@@ -1173,7 +1173,7 @@ void scAirsRockMoveWhirlwind(ACTOR *shot)
    gust's sound unless the leader is riding one. */
 void scAirsRockStatueBreathesWhirlwind(ACTOR *actor)
 {
-	FIELD_STATE	  *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	  *state = RamHeapSlots->fieldState;
 	ACTOR		  *shot;
 	VECTOR3		   pos;
 	EFFECT_OPTIONS options;
@@ -1218,7 +1218,7 @@ void scAirsRockStatueBreathesWhirlwind(ACTOR *actor)
    that it can slide. */
 void scAirsRockLiftPillar(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdActorLiftTargetBlock(AirsRockEntrancePillars);
 	scBlocksUnmarkMetatiles(state->movedBlock);
@@ -1501,7 +1501,7 @@ void scAirsRockDriftFog(void)
 	volatile Uint16 *channel;
 
 	REG_BLDALPHA = BLEND_ALPHA(AirsRockFogAlpha, BLEND_WEIGHT_MAX);
-	if((*Ram_TickCount & 15) == 0) {
+	if((*RamTickCount & 15) == 0) {
 		AirsRockFogAlpha += AirsRockFogAlphaStep;
 		if(AirsRockFogAlpha == FOG_WEIGHT || AirsRockFogAlpha == FOG_WEIGHT / 2)
 			AirsRockFogAlphaStep *= -1;
@@ -1509,7 +1509,7 @@ void scAirsRockDriftFog(void)
 	for(i = 0; i != DISPLAY_HEIGHT; i++) {
 		*line = FIXEDtoINT(layer->x) +
 			(syMathSin(
-				 (i + (Uint8)*Ram_TickCount + FIXEDtoINT(layer->y)) << 9) >>
+				 (i + (Uint8)*RamTickCount + FIXEDtoINT(layer->y)) << 9) >>
 				FOG_RIPPLE_SHIFT);
 		line++;
 	}

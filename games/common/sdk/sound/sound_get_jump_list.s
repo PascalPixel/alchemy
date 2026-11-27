@@ -1,8 +1,8 @@
 @ Why assembly: svc 42 is a BIOS software interrupt.
 .syntax unified
 	.thumb
-	.global Bios_SoundGetJumpList
+	.global BiosSoundGetJumpList
 	.thumb_func
-Bios_SoundGetJumpList:
+BiosSoundGetJumpList:
 	svc	42
 	bx	lr

@@ -1,5 +1,5 @@
 name	file	section	align	left	pad
-Field_DefaultMapMetatiles	metatiles.table.lz			86b2b7	
-Field_DefaultMapEntrances	entrances.table.lz				
-Field_DefaultMapAnimation	animation.table.lz	a		67576f	
-Field_DefaultMetatileTilesAttributes	attributes.table.lz	a		ea5766	
+FieldDefaultMapMetatiles	metatiles.table.lz			86b2b7	
+FieldDefaultMapEntrances	entrances.table.lz				
+FieldDefaultMapAnimation	animation.table.lz	a		67576f	
+FieldDefaultMetatileTilesAttributes	attributes.table.lz	a		ea5766	

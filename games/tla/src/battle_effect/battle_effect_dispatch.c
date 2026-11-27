@@ -20,7 +20,7 @@ void btEffectRunSummon(BATTLE_EFFECT_PARM *args)
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 	if(args->kind == SUMMON_EFFECT_NONE) {
@@ -130,7 +130,7 @@ void btEffectRunFromTable(BATTLE_EFFECT_PARM *args)
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, BATTLE_EFFECT_STATE_SIZE);
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-	state = Ram_HeapSlots->battleEff;
+	state = RamHeapSlots->battleEff;
 	state->args = args;
 	state->framesSinceTransfer = 1;
 	BattleEffectHandlers[args->kind - 1](args);

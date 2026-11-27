@@ -82,7 +82,7 @@ enum {
 	STAR_DUST_LAST_CHAMBER_TO_MIDDLE = 6
 };
 
-/* The swamp's actors outside (SceneId_TaopoSwampMud). */
+/* The swamp's actors outside (SceneIdTaopoSwampMud). */
 typedef enum TAOPO_SWAMP_MUD_ACTOR_ID {
 	/* The five bushes of weeds Whirlwind blows away (SPRITE_WEEDS), each kept
 	   gone by its flag, FLAG_TAOPO_SWAMP_BUSH_BLOWN plus its id. Three of them
@@ -106,17 +106,17 @@ typedef enum TAOPO_SWAMP_MUD_ACTOR_ID {
 } TAOPO_SWAMP_MUD_ACTOR_ID;
 
 /* Flower, the Venus Djinni: on its ledge in the vents room, then, blown off it,
-   in the room below (SceneId_TaopoSwampFlower). */
+   in the room below (SceneIdTaopoSwampFlower). */
 #define ACTOR_FLOWER ACTOR_FIRST_PLACED
 
 /* The vents room's pillars Move pushes over a vent
-   (SceneId_TaopoSwampVents). */
+   (SceneIdTaopoSwampVents). */
 typedef enum TAOPO_SWAMP_VENTS_ACTOR_ID {
 	ACTOR_WEST_VENT_PILLAR = ACTOR_FLOWER + 1,
 	ACTOR_EAST_VENT_PILLAR
 } TAOPO_SWAMP_VENTS_ACTOR_ID;
 
-/* The actors of the rooms past the pool (SceneId_TaopoSwampPillarGap): the
+/* The actors of the rooms past the pool (SceneIdTaopoSwampPillarGap): the
    round spot in the north room, and the pillar by the gap in the south one. */
 typedef enum TAOPO_SWAMP_PILLAR_GAP_ACTOR_ID {
 	/* The round spot in a vent's gust that Douse wets and Frost freezes
@@ -126,7 +126,7 @@ typedef enum TAOPO_SWAMP_PILLAR_GAP_ACTOR_ID {
 	ACTOR_GAP_PILLAR
 } TAOPO_SWAMP_PILLAR_GAP_ACTOR_ID;
 
-/* The drips room's actors (SceneId_TaopoSwampDrips). */
+/* The drips room's actors (SceneIdTaopoSwampDrips). */
 typedef enum TAOPO_SWAMP_DRIPS_ACTOR_ID {
 	/* The two posts Lash ties a rope between (SPRITE_TIGHTROPE_POST). */
 	ACTOR_WEST_ROPE_POST = ACTOR_FIRST_PLACED,
@@ -136,14 +136,14 @@ typedef enum TAOPO_SWAMP_DRIPS_ACTOR_ID {
 	ACTOR_DRIP_PUDDLE
 } TAOPO_SWAMP_DRIPS_ACTOR_ID;
 
-/* The lava rocks' room's two glowing rocks (SceneId_TaopoSwampLavaRocks,
+/* The lava rocks' room's two glowing rocks (SceneIdTaopoSwampLavaRocks,
    SPRITE_EMBER_STONE): on the way to the chest and by the way out. */
 typedef enum TAOPO_SWAMP_LAVA_ROCKS_ACTOR_ID {
 	ACTOR_CHEST_ROCK = ACTOR_FIRST_PLACED,
 	ACTOR_EXIT_ROCK
 } TAOPO_SWAMP_LAVA_ROCKS_ACTOR_ID;
 
-/* The Tremor room's actors (SceneId_TaopoSwampTremor). */
+/* The Tremor room's actors (SceneIdTaopoSwampTremor). */
 typedef enum TAOPO_SWAMP_TREMOR_ACTOR_ID {
 	/* The glowing rock by the lava, and the one Tremor knocks out of the pillar
 	   (SPRITE_EMBER_STONE). */
@@ -162,7 +162,7 @@ typedef enum TAOPO_SWAMP_TREMOR_ACTOR_ID {
 #define POOL_COOLING_PICTURES 11
 
 /* The glowing rocks that light the Star Dust's rooms, the first room's and the
-   last chamber's (SceneId_TaopoSwampStarDust, SPRITE_EMBER_STONE). */
+   last chamber's (SceneIdTaopoSwampStarDust, SPRITE_EMBER_STONE). */
 typedef enum TAOPO_SWAMP_STAR_DUST_ACTOR_ID {
 	ACTOR_DARK_ROCK = ACTOR_FIRST_PLACED,
 	ACTOR_LAST_ROCK
@@ -806,7 +806,7 @@ void scTaopoSwampDouseVentSpot(Sint32 unused, Sint32 id)
 	}
 
 /* Frost on the puddle on the round spot past the pool, metatile (26, 8). */
-DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeVentSpot, 28, 8, 26)
+DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwampFreezeVentSpot, 28, 8, 26)
 
 /* The next gust shatters the ice pillar on the round spot past the pool, and
    Felix, if he stands on it, hops off south and turns to face it. */
@@ -871,7 +871,7 @@ void scTaopoSwampFillDripSpot(Sint32 caster, Sint32 id)
 }
 
 /* Frost on the puddle on the drips room's round spot, metatile (25, 27). */
-DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwamp_FreezeDripSpot, 23, 27, 25)
+DEFINE_TAOPO_SWAMP_FREEZE_SPOT(TaopoSwampFreezeDripSpot, 23, 27, 25)
 
 /* The next gust from the vent shatters the ice pillar on the drips room's round
    spot: the tall pillar Frost froze from the puddle there breaks into a lump of
@@ -1546,10 +1546,10 @@ Bool scTaopoSwampIsDropFalling(ACTOR *actor)
 	}
 
 /* The drops falling in the room of the pillar gap, from (384, 400). */
-DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInPillarGap, toFIXED(384), toFIXED(400))
+DEFINE_DRIP_AT_RANDOM(TaopoSwampDripInPillarGap, toFIXED(384), toFIXED(400))
 
 /* The drops falling in the drips room, from (416, 352). */
-DEFINE_DRIP_AT_RANDOM(TaopoSwamp_DripInDripRoom, toFIXED(416), toFIXED(352))
+DEFINE_DRIP_AT_RANDOM(TaopoSwampDripInDripRoom, toFIXED(416), toFIXED(352))
 
 extern Uint16 TaopoSwampVentsVents[];
 extern Uint16 TaopoSwampVentsPillars[];
@@ -1566,7 +1566,7 @@ void		  scVentsStart(Uint16 *points, Uint16 *ids, void (*cycle)(void));
 Sint32 scInit(void)
 {
 	Sint32	   scene = MainRoutineStateWork.next;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor, *stump, *piece;
 	Sint32	   id, entrance;
 
@@ -1617,7 +1617,7 @@ Sint32 scInit(void)
 			scTaopoSwampCycleDjinniVents);
 	} else if(scene == SCENE_TAOPO_SWAMP_PILLAR_GAP) {
 		fdEffectStartBlankOverlay(0);
-		sySetEvent(TaopoSwamp_DripInPillarGap, EVENT_PASS_TICK);
+		sySetEvent(TaopoSwampDripInPillarGap, EVENT_PASS_TICK);
 		/* Only the north room has the round spot and its vents. */
 		if(MainRoutineStateWork.entrance ==
 				TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST ||
@@ -1662,7 +1662,7 @@ Sint32 scInit(void)
 				(Sint32)scTaopoSwampCycleDripVent);
 			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
 				ACTOR_PRIORITY_IGNORES_RISES;
-			syFieldSetTickEvent(TaopoSwamp_DripInDripRoom, EVENT_PASS_TICK);
+			syFieldSetTickEvent(TaopoSwampDripInDripRoom, EVENT_PASS_TICK);
 			syFieldSetTickEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_TICK);
 			actor = fdActorGetById(ACTOR_DRIP_PUDDLE);
 			actor->motionFlg = 0;
@@ -1779,7 +1779,7 @@ Sint32 scInit(void)
 Sint32 scInit(void)
 {
 	Sint32	   scene = MainRoutineStateWork.next;
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	  *effect = &FieldStateWork->transition;
 	ACTOR	  *actor, *stump, *piece;
 	Sint32	   id, entrance;
@@ -1841,7 +1841,7 @@ Sint32 scInit(void)
 		*effect = SCENE_TRANSITION(
 			TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 		fdEffectStartBlankOverlay(0);
-		sySetEvent(TaopoSwamp_DripInPillarGap, EVENT_PASS_TICK);
+		sySetEvent(TaopoSwampDripInPillarGap, EVENT_PASS_TICK);
 		/* Only the north room has the round spot and its vents. */
 		if(MainRoutineStateWork.entrance ==
 				TAOPO_SWAMP_PILLAR_GAP_FROM_TAOPO_SWAMP_DRIPS_NORTHWEST ||
@@ -1888,7 +1888,7 @@ Sint32 scInit(void)
 				(Sint32)scTaopoSwampCycleDripVent);
 			fdActorGetById(MainRoutineStateWork.leaderActorId)->priFlg |=
 				ACTOR_PRIORITY_IGNORES_RISES;
-			syFieldSetTickEvent(TaopoSwamp_DripInDripRoom, EVENT_PASS_TICK);
+			syFieldSetTickEvent(TaopoSwampDripInDripRoom, EVENT_PASS_TICK);
 			syFieldSetTickEvent(scTaopoSwampDripFromCeiling, EVENT_PASS_TICK);
 			actor = fdActorGetById(ACTOR_DRIP_PUDDLE);
 			actor->motionFlg = 0;
@@ -2051,7 +2051,7 @@ extern Uint8 MapGridMetatileBuffer[];
    (x, z) on, and the screen follows. */
 void scTaopoSwampFocusMapOn(Sint32 x, Sint32 z)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *layer;
 	Sint32	   idx, fx = FIELD_HALF_METATILE_ORIGIN(x);
 
@@ -2648,7 +2648,7 @@ CUE TaopoSwampPillarGapCues[] = {
 		SCRIPT_REF(scTaopoSwampDouseVentSpot)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GAP_PUDDLE,
 		IF_FLAG_SET(FLAG_TAOPO_SWAMP_SPOT_PUDDLE),
-		SCRIPT_REF(TaopoSwamp_FreezeVentSpot)},
+		SCRIPT_REF(TaopoSwampFreezeVentSpot)},
 	{CUE_TABLE_END},
 };
 
@@ -2670,7 +2670,7 @@ CUE TaopoSwampDripsCues[] = {
 		SCRIPT_REF(scTaopoSwampFillDripSpot)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_DRIP_PUDDLE,
 		IF_FLAG_SET(FLAG_TAOPO_SWAMP_SPOT_PUDDLE),
-		SCRIPT_REF(TaopoSwamp_FreezeDripSpot)},
+		SCRIPT_REF(TaopoSwampFreezeDripSpot)},
 	{CUE_TABLE_END},
 };
 

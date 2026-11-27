@@ -33,9 +33,9 @@ syHeapSlotRelease:
 	str	r1, [r3, r4]
 .L_08013160:
 	bx	lr
-AlchemyUncredited_08013162:
+AlchemyUncredited08013162:
 	.2byte	0x0000
-AlchemyUncreditedEnd_08013162:
+AlchemyUncreditedEnd08013162:
 
 	.section .text,"ax",%progbits
 	.balign 4
@@ -51,9 +51,9 @@ syHeapRelease:
 	ands	r2, r1
 	str	r0, [r2, r4]
 	bx	lr
-AlchemyUncredited_08013172:
+AlchemyUncredited08013172:
 	.2byte	0x0000
-AlchemyUncreditedEnd_08013172:
+AlchemyUncreditedEnd08013172:
 	.arm
 	.global syHaltOnGamePakRemoved
 syHaltOnGamePakRemoved:

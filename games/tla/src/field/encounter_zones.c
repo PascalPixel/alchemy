@@ -1,7 +1,7 @@
 /* The 110 encounter zones, by zone number: each zone's rate, level, formations
    and their weights. A field zone's comment gives its area name
-   (Area_NameRules) and the scenes and entrances that take it
-   (Scene_EncounterRules); a World Map zone's, its encounter regions and the
+   (AreaNameRules) and the scenes and entrances that take it
+   (SceneEncounterRules); a World Map zone's, its encounter regions and the
    battle environments that take it (WorldMapEncounterRules); a Djinni zone's,
    the Djinn whose battles it holds (EncounterDjinnBattles). */
 
@@ -95,63 +95,63 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {241, 242, 243, 244, 245, 246, 247, 248},
 		.weights = {1, 1, 1, 1, 3, 3, 3, 3},
 	},
-	/* Kandorean Temple: SceneId_KandoreanTempleMimic, its other entrances, SceneId_KandoreanTempleFog, its other entrances */
+	/* Kandorean Temple: SceneIdKandoreanTempleMimic, its other entrances, SceneIdKandoreanTempleFog, its other entrances */
 	{
 		.rate = 50,
 		.level = 4,
 		.formations = {251, 252, 253, 254, 255, 256, 257, 258},
 		.weights = {20, 20, 20, 10, 10, 5, 5, 5},
 	},
-	/* Kandorean Temple: SceneId_KandoreanTempleLifts, SceneId_KandoreanTemplePillar entrance 2, SceneId_KandoreanTempleCurrent */
+	/* Kandorean Temple: SceneIdKandoreanTempleLifts, SceneIdKandoreanTemplePillar entrance 2, SceneIdKandoreanTempleCurrent */
 	{
 		.rate = 50,
 		.level = 4,
 		.formations = {251, 252, 253, 254, 255, 256, 257, 258},
 		.weights = {5, 5, 10, 15, 15, 10, 5, 5},
 	},
-	/* Kandorean Temple: SceneId_KandoreanTempleMimic entrances 2 and 3, SceneId_KandoreanTempleChestbeaters, SceneId_KandoreanTempleFog entrances 3 and 4 */
+	/* Kandorean Temple: SceneIdKandoreanTempleMimic entrances 2 and 3, SceneIdKandoreanTempleChestbeaters, SceneIdKandoreanTempleFog entrances 3 and 4 */
 	{
 		.rate = 50,
 		.level = 4,
 		.formations = {251, 252, 253, 254, 255, 256, 257, 258},
 		.weights = {5, 5, 5, 10, 10, 20, 20, 20},
 	},
-	/* Shrine of the Sea God: SceneId_ShrineOfTheSeaGodCrossroads entrances 3 to 5, SceneId_ShrineOfTheSeaGodFootprints, SceneId_ShrineOfTheSeaGodBreath */
+	/* Shrine of the Sea God: SceneIdShrineOfTheSeaGodCrossroads entrances 3 to 5, SceneIdShrineOfTheSeaGodFootprints, SceneIdShrineOfTheSeaGodBreath */
 	{
 		.rate = 50,
 		.level = 5,
 		.formations = {261, 262, 263, 264, 265, 266, 267, 268},
 		.weights = {20, 20, 20, 10, 10, 10, 5, 5},
 	},
-	/* Shrine of the Sea God: SceneId_ShrineOfTheSeaGodCrossroads, its other entrances, SceneId_ShrineOfTheSeaGodPillars, SceneId_ShrineOfTheSeaGodSeaGodsTear */
+	/* Shrine of the Sea God: SceneIdShrineOfTheSeaGodCrossroads, its other entrances, SceneIdShrineOfTheSeaGodPillars, SceneIdShrineOfTheSeaGodSeaGodsTear */
 	{
 		.rate = 50,
 		.level = 5,
 		.formations = {261, 262, 263, 264, 265, 266, 267, 268},
 		.weights = {8, 8, 10, 20, 20, 5, 5, 5},
 	},
-	/* Shrine of the Sea God: SceneId_ShrineOfTheSeaGodLadders */
+	/* Shrine of the Sea God: SceneIdShrineOfTheSeaGodLadders */
 	{
 		.rate = 50,
 		.level = 5,
 		.formations = {261, 262, 263, 264, 265, 266, 267, 268},
 		.weights = {5, 5, 5, 10, 10, 20, 20, 20},
 	},
-	/* Dehkan Plateau: SceneId_DehkanPlateauFullMetalVestChest, SceneId_DehkanPlateauThemisAxeChest */
+	/* Dehkan Plateau: SceneIdDehkanPlateauFullMetalVestChest, SceneIdDehkanPlateauThemisAxeChest */
 	{
 		.rate = 45,
 		.level = 6,
 		.formations = {271, 272, 273, 274, 275, 276, 277, 274},
 		.weights = {20, 20, 20, 10, 8, 8, 5, 5},
 	},
-	/* Dehkan Plateau: SceneId_DehkanPlateauTightropes, SceneId_DehkanPlateauMintChest, its other entrances */
+	/* Dehkan Plateau: SceneIdDehkanPlateauTightropes, SceneIdDehkanPlateauMintChest, its other entrances */
 	{
 		.rate = 45,
 		.level = 6,
 		.formations = {271, 272, 273, 274, 275, 276, 277, 274},
 		.weights = {5, 5, 10, 20, 20, 10, 5, 5},
 	},
-	/* Dehkan Plateau: SceneId_DehkanPlateauMintChest entrance 3, SceneId_DehkanPlateauPoundCube, SceneId_DehkanPlateauCannon */
+	/* Dehkan Plateau: SceneIdDehkanPlateauMintChest entrance 3, SceneIdDehkanPlateauPoundCube, SceneIdDehkanPlateauCannon */
 	{
 		.rate = 45,
 		.level = 6,
@@ -172,14 +172,14 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {281, 282, 283, 284, 285, 286, 287, 288},
 		.weights = {2, 2, 2, 2, 10, 10, 10, 10},
 	},
-	/* Madra Catacombs: SceneId_MadraCatacombsEntrance, SceneId_MadraCatacombsLadders, SceneId_MadraCatacombsChampaTunnel */
+	/* Madra Catacombs: SceneIdMadraCatacombsEntrance, SceneIdMadraCatacombsLadders, SceneIdMadraCatacombsChampaTunnel */
 	{
 		.rate = 50,
 		.level = 8,
 		.formations = {291, 292, 293, 294, 295, 296},
 		.weights = {20, 20, 15, 10, 10, 10},
 	},
-	/* Madra Catacombs: SceneId_MadraCatacombsStoneDoor, SceneId_MadraCatacombsBookshelf, SceneId_MadraCatacombsTablet */
+	/* Madra Catacombs: SceneIdMadraCatacombsStoneDoor, SceneIdMadraCatacombsBookshelf, SceneIdMadraCatacombsTablet */
 	{
 		.rate = 50,
 		.level = 8,
@@ -200,77 +200,77 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {301, 302, 303, 304, 305, 306, 307, 308},
 		.weights = {2, 2, 2, 2, 4, 4, 4, 4},
 	},
-	/* Yampi Desert: SceneId_YampiDesertGuardianRingChest, SceneId_YampiDesertBlitz */
+	/* Yampi Desert: SceneIdYampiDesertGuardianRingChest, SceneIdYampiDesertBlitz */
 	{
 		.rate = 60,
 		.level = 9,
 		.formations = {311, 312, 313, 314, 315, 316, 317, 318},
 		.weights = {20, 20, 10, 10, 10, 5, 5},
 	},
-	/* Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertCoinsPuddle, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest */
+	/* Yampi Desert: SceneIdYampiDesertPsynergyStone, SceneIdYampiDesertCoinsPuddle, SceneIdYampiDesertSpringCave, SceneIdYampiDesertBlowMaceChest */
 	{
 		.rate = 60,
 		.level = 9,
 		.formations = {311, 312, 313, 314, 315, 316, 317, 318},
 		.weights = {10, 10, 20, 20, 10, 10, 5, 5},
 	},
-	/* Yampi Desert: SceneId_YampiDesertSandPass, SceneId_YampiDesertTrainersWhipChest, SceneId_YampiDesertHiddenPsynergyStone */
+	/* Yampi Desert: SceneIdYampiDesertSandPass, SceneIdYampiDesertTrainersWhipChest, SceneIdYampiDesertHiddenPsynergyStone */
 	{
 		.rate = 60,
 		.level = 9,
 		.formations = {311, 312, 313, 314, 315, 316, 317, 318},
 		.weights = {5, 5, 5, 5, 10, 10, 20, 20},
 	},
-	/* Air's Rock: SceneId_AirsRockStormBrandChest */
+	/* Air's Rock: SceneIdAirsRockStormBrandChest */
 	{
 		.rate = 55,
 		.level = 10,
 		.formations = {321, 322, 323, 324, 325, 326, 327},
 		.weights = {20, 20, 15, 12, 10, 8, 5},
 	},
-	/* Air's Rock: SceneId_AirsRockEntrance, SceneId_AirsRockFujinShieldChest entrances 8 and 9 */
+	/* Air's Rock: SceneIdAirsRockEntrance, SceneIdAirsRockFujinShieldChest entrances 8 and 9 */
 	{
 		.rate = 55,
 		.level = 10,
 		.formations = {321, 322, 323, 324, 325, 326, 327},
 		.weights = {5, 5, 8, 14, 16, 20, 20},
 	},
-	/* Air's Rock: SceneId_AirsRockInsideHall, its other entrances, SceneId_AirsRockInsideVialChest, SceneId_AirsRockInsideClarityCircletChest, SceneId_AirsRockInsidePairedStakes, SceneId_AirsRockInsideFaceVents */
+	/* Air's Rock: SceneIdAirsRockInsideHall, its other entrances, SceneIdAirsRockInsideVialChest, SceneIdAirsRockInsideClarityCircletChest, SceneIdAirsRockInsidePairedStakes, SceneIdAirsRockInsideFaceVents */
 	{
 		.rate = 65,
 		.level = 11,
 		.formations = {331, 332, 333, 334, 335, 336, 337, 338},
 		.weights = {20, 20, 10, 10, 5, 5},
 	},
-	/* Air's Rock: SceneId_AirsRockInsideHall entrances 4, 6, 7 and 10, SceneId_AirsRockInsideTightropes, SceneId_AirsRockInsideElixirChest */
+	/* Air's Rock: SceneIdAirsRockInsideHall entrances 4, 6, 7 and 10, SceneIdAirsRockInsideTightropes, SceneIdAirsRockInsideElixirChest */
 	{
 		.rate = 65,
 		.level = 12,
 		.formations = {331, 332, 333, 334, 335, 336, 337, 338},
 		.weights = {10, 10, 20, 20, 10, 10, 5, 5},
 	},
-	/* Air's Rock: SceneId_AirsRockInsideHall entrances 5, 14 and 15, SceneId_AirsRockInsideTightropes, SceneId_AirsRockInsideCoinsChest */
+	/* Air's Rock: SceneIdAirsRockInsideHall entrances 5, 14 and 15, SceneIdAirsRockInsideTightropes, SceneIdAirsRockInsideCoinsChest */
 	{
 		.rate = 65,
 		.level = 12,
 		.formations = {331, 332, 333, 334, 335, 336, 337, 338},
 		.weights = {5, 5, 5, 5, 10, 10, 20, 20},
 	},
-	/* Alhafran Cave: SceneId_AlhafranCave, SceneId_AlhafraJail, its other entrances */
+	/* Alhafran Cave: SceneIdAlhafranCave, SceneIdAlhafraJail, its other entrances */
 	{
 		.rate = 50,
 		.level = 13,
 		.formations = {511, 512, 513, 514, 515, 516, 517, 518},
 		.weights = {5, 5, 5, 5, 10, 10, 20, 20},
 	},
-	/* Gondowan Cliffs: SceneId_GondowanCliffs entrance 2 */
+	/* Gondowan Cliffs: SceneIdGondowanCliffs entrance 2 */
 	{
 		.rate = 45,
 		.level = 14,
 		.formations = {341, 342, 343, 344, 345, 346, 347, 348},
 		.weights = {20, 20, 20, 20, 10, 10, 10, 10},
 	},
-	/* Gondowan Cliffs: SceneId_GondowanCliffs, its other entrances */
+	/* Gondowan Cliffs: SceneIdGondowanCliffs, its other entrances */
 	{
 		.rate = 45,
 		.level = 14,
@@ -291,56 +291,56 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {351, 352, 353, 354, 355, 356, 357, 358},
 		.weights = {2, 2, 2, 2, 4, 4, 4, 4},
 	},
-	/* Kibombo Mountains: SceneId_KibomboMountainsDiskAxeChest */
+	/* Kibombo Mountains: SceneIdKibomboMountainsDiskAxeChest */
 	{
 		.rate = 35,
 		.level = 16,
 		.formations = {361, 362, 363, 364, 365, 366, 367, 368},
 		.weights = {20, 20, 20, 20, 10, 10, 10, 5},
 	},
-	/* Kibombo Mountains: SceneId_KibomboMountainsWaft, SceneId_KibomboMountainsDiskAxeChest, SceneId_KibomboMountainsCavern */
+	/* Kibombo Mountains: SceneIdKibomboMountainsWaft, SceneIdKibomboMountainsDiskAxeChest, SceneIdKibomboMountainsCavern */
 	{
 		.rate = 35,
 		.level = 16,
 		.formations = {361, 362, 363, 364, 365, 366, 367, 368},
 		.weights = {5, 5, 5, 5, 10, 10, 10, 20},
 	},
-	/* Gabomba Statue: SceneId_GabombaStatueBoneArmletChest, SceneId_GabombaStatuePinion */
+	/* Gabomba Statue: SceneIdGabombaStatueBoneArmletChest, SceneIdGabombaStatuePinion */
 	{
 		.rate = 50,
 		.level = 17,
 		.formations = {371, 372, 373, 374, 375, 376, 377, 378},
 		.weights = {20, 20, 10, 10, 5, 5},
 	},
-	/* Gabomba Statue: SceneId_GabombaStatueElixirChest entrances 1 and 2, SceneId_GabombaStatueSteel entrances 1 and 4, SceneId_GabombaStatueMouse */
+	/* Gabomba Statue: SceneIdGabombaStatueElixirChest entrances 1 and 2, SceneIdGabombaStatueSteel entrances 1 and 4, SceneIdGabombaStatueMouse */
 	{
 		.rate = 50,
 		.level = 17,
 		.formations = {371, 372, 373, 374, 375, 376, 377, 378},
 		.weights = {10, 10, 20, 20, 20, 10, 5, 5},
 	},
-	/* Gabomba Statue: SceneId_GabombaStatueElixirChest, its other entrances, SceneId_GabombaStatueSteel, its other entrances, SceneId_GabombaStatueCogs, SceneId_GabombaStatueChamberIdol */
+	/* Gabomba Statue: SceneIdGabombaStatueElixirChest, its other entrances, SceneIdGabombaStatueSteel, its other entrances, SceneIdGabombaStatueCogs, SceneIdGabombaStatueChamberIdol */
 	{
 		.rate = 50,
 		.level = 17,
 		.formations = {371, 372, 373, 374, 375, 376, 377, 378},
 		.weights = {5, 5, 5, 10, 10, 20, 20, 20},
 	},
-	/* Gabomba Catacombs: SceneId_GabombaCatacombsTeleporters, SceneId_GabombaCatacombsMud */
+	/* Gabomba Catacombs: SceneIdGabombaCatacombsTeleporters, SceneIdGabombaCatacombsMud */
 	{
 		.rate = 50,
 		.level = 18,
 		.formations = {521, 522, 523, 524, 525, 526, 527, 528},
 		.weights = {20, 20, 20, 15, 10, 10, 10, 10},
 	},
-	/* Gabomba Catacombs: SceneId_GabombaCatacombsHiddenWall, SceneId_GabombaCatacombsTomegathericon, SceneId_GabombaCatacombsStream */
+	/* Gabomba Catacombs: SceneIdGabombaCatacombsHiddenWall, SceneIdGabombaCatacombsTomegathericon, SceneIdGabombaCatacombsStream */
 	{
 		.rate = 50,
 		.level = 18,
 		.formations = {521, 522, 523, 524, 525, 526, 527, 528},
 		.weights = {5, 5, 5, 10, 10, 20, 20, 20},
 	},
-	/* Lemurian Ship: SceneId_LemurianShipCabins */
+	/* Lemurian Ship: SceneIdLemurianShipCabins */
 	{
 		.rate = 45,
 		.level = 18,
@@ -368,154 +368,154 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {401, 402, 403, 404, 405, 406, 407, 408},
 		.weights = {2, 2, 2, 2, 4, 4, 4, 4},
 	},
-	/* Taopo Swamp: SceneId_TaopoSwampEntrance, SceneId_TaopoSwampMud, SceneId_TaopoSwampTearStones, SceneId_TaopoSwampFlower, SceneId_TaopoSwampVents */
+	/* Taopo Swamp: SceneIdTaopoSwampEntrance, SceneIdTaopoSwampMud, SceneIdTaopoSwampTearStones, SceneIdTaopoSwampFlower, SceneIdTaopoSwampVents */
 	{
 		.rate = 50,
 		.level = 21,
 		.formations = {411, 412, 413, 414, 415, 416, 417, 418},
 		.weights = {20, 20, 20, 10, 5, 5, 5},
 	},
-	/* Taopo Swamp: SceneId_TaopoSwampPool, SceneId_TaopoSwampPillarGap, SceneId_TaopoSwampDrips */
+	/* Taopo Swamp: SceneIdTaopoSwampPool, SceneIdTaopoSwampPillarGap, SceneIdTaopoSwampDrips */
 	{
 		.rate = 50,
 		.level = 21,
 		.formations = {411, 412, 413, 414, 415, 416, 417, 418},
 		.weights = {10, 10, 10, 20, 20, 20, 5, 5},
 	},
-	/* Taopo Swamp: SceneId_TaopoSwampLavaRocks, SceneId_TaopoSwampTremor, SceneId_TaopoSwampStarDust */
+	/* Taopo Swamp: SceneIdTaopoSwampLavaRocks, SceneIdTaopoSwampTremor, SceneIdTaopoSwampStarDust */
 	{
 		.rate = 50,
 		.level = 21,
 		.formations = {411, 412, 413, 414, 415, 416, 417, 418},
 		.weights = {5, 5, 5, 10, 10, 10, 20, 20},
 	},
-	/* Apojii Islands Cave: SceneId_ApojiiIslandsCave, SceneId_AquaRockMoai */
+	/* Apojii Islands Cave: SceneIdApojiiIslandsCave, SceneIdAquaRockMoai */
 	{
 		.rate = 50,
 		.level = 22,
 		.formations = {421, 422, 423, 424, 425, 426, 427, 428},
 		.weights = {20, 20, 5, 5},
 	},
-	/* Aqua Rock: SceneId_AquaRockMistSabreChest */
+	/* Aqua Rock: SceneIdAquaRockMistSabreChest */
 	{
 		.rate = 50,
 		.level = 22,
 		.formations = {421, 422, 423, 424, 425, 426, 427, 428},
 		.weights = {10, 20, 20, 5, 5},
 	},
-	/* Aqua Rock: SceneId_AquaRockInsideCrystalPowderChest, SceneId_AquaRockInsideVialChest */
+	/* Aqua Rock: SceneIdAquaRockInsideCrystalPowderChest, SceneIdAquaRockInsideVialChest */
 	{
 		.rate = 50,
 		.level = 22,
 		.formations = {421, 422, 423, 424, 425, 426, 427, 428},
 		.weights = {10, 10, 20, 20, 5, 5},
 	},
-	/* Aqua Rock: SceneId_AquaRockInsideTightrope, SceneId_AquaRockInsideTearStone */
+	/* Aqua Rock: SceneIdAquaRockInsideTightrope, SceneIdAquaRockInsideTearStone */
 	{
 		.rate = 50,
 		.level = 22,
 		.formations = {421, 422, 423, 424, 425, 426, 427, 428},
 		.weights = {5, 5, 10, 10, 20, 20, 5, 5},
 	},
-	/* Aqua Rock: SceneId_AquaRockInsideWaterOfLifeChest, SceneId_AquaRockInsideSteam, SceneId_AquaRockInsideAquariusStone, SceneId_AquaRockInsideRustySwordChest, its other entrances, SceneId_AquaRockInsidePsynergyStone */
+	/* Aqua Rock: SceneIdAquaRockInsideWaterOfLifeChest, SceneIdAquaRockInsideSteam, SceneIdAquaRockInsideAquariusStone, SceneIdAquaRockInsideRustySwordChest, its other entrances, SceneIdAquaRockInsidePsynergyStone */
 	{
 		.rate = 50,
 		.level = 22,
 		.formations = {421, 422, 423, 424, 425, 426, 427, 428},
 		.weights = {5, 5, 5, 5, 10, 10, 20, 20},
 	},
-	/* Gaia Rock: SceneId_GaiaRockSusa, SceneId_GaiaRockStatueSpots, its other entrances, SceneId_GaiaRockDancingIdol */
+	/* Gaia Rock: SceneIdGaiaRockSusa, SceneIdGaiaRockStatueSpots, its other entrances, SceneIdGaiaRockDancingIdol */
 	{
 		.rate = 55,
 		.level = 23,
 		.formations = {431, 432, 433, 434, 435, 436, 437, 438},
 		.weights = {20, 20, 5, 5},
 	},
-	/* Gaia Rock: SceneId_GaiaRockStatueSpots entrances 3 and 4 */
+	/* Gaia Rock: SceneIdGaiaRockStatueSpots entrances 3 and 4 */
 	{
 		.rate = 55,
 		.level = 23,
 		.formations = {431, 432, 433, 434, 435, 436, 437, 438},
 		.weights = {10, 20, 20, 5, 5},
 	},
-	/* Gaia Rock: SceneId_GaiaRockInsideMaze, its other entrances, SceneId_GaiaRockInsideFirstAltar */
+	/* Gaia Rock: SceneIdGaiaRockInsideMaze, its other entrances, SceneIdGaiaRockInsideFirstAltar */
 	{
 		.rate = 55,
 		.level = 23,
 		.formations = {431, 432, 433, 434, 435, 436, 437, 438},
 		.weights = {10, 10, 20, 20, 5, 5},
 	},
-	/* Gaia Rock: SceneId_GaiaRockInsideMaze, its other entrances, SceneId_GaiaRockInsideTwinAltars, SceneId_GaiaRockInsidePlatforms */
+	/* Gaia Rock: SceneIdGaiaRockInsideMaze, its other entrances, SceneIdGaiaRockInsideTwinAltars, SceneIdGaiaRockInsidePlatforms */
 	{
 		.rate = 55,
 		.level = 23,
 		.formations = {431, 432, 433, 434, 435, 436, 437, 438},
 		.weights = {5, 5, 10, 10, 20, 20, 5, 5},
 	},
-	/* Gaia Rock: SceneId_GaiaRockInsideAltar */
+	/* Gaia Rock: SceneIdGaiaRockInsideAltar */
 	{
 		.rate = 55,
 		.level = 23,
 		.formations = {431, 432, 433, 434, 435, 436, 437, 438},
 		.weights = {0, 0, 5, 5, 10, 10, 20, 20},
 	},
-	/* Izumo Ruins: SceneId_IzumoRuinsFirstRoom */
+	/* Izumo Ruins: SceneIdIzumoRuinsFirstRoom */
 	{
 		.rate = 50,
 		.level = 24,
 		.formations = {531, 532, 533, 534, 535, 536, 537, 538},
 		.weights = {20, 20, 20, 20, 10, 10, 10, 10},
 	},
-	/* Izumo Ruins: SceneId_IzumoRuinsSecondRoom */
+	/* Izumo Ruins: SceneIdIzumoRuinsSecondRoom */
 	{
 		.rate = 50,
 		.level = 24,
 		.formations = {531, 532, 533, 534, 535, 536, 537, 538},
 		.weights = {10, 10, 10, 10, 20, 20, 30, 30},
 	},
-	/* Islet Cave: SceneId_IsletCaveHalls */
+	/* Islet Cave: SceneIdIsletCaveHalls */
 	{
 		.rate = 50,
 		.level = 25,
 		.formations = {541, 542, 543, 544, 545, 546, 547, 548},
 		.weights = {10, 10, 10, 10, 10, 10, 10, 10},
 	},
-	/* Ankohl Ruins: SceneId_AnkohlRuinsStoneFaces, SceneId_AnkohlRuinsThanatosMaceChest, SceneId_AnkohlRuinsGreatFace */
+	/* Ankohl Ruins: SceneIdAnkohlRuinsStoneFaces, SceneIdAnkohlRuinsThanatosMaceChest, SceneIdAnkohlRuinsGreatFace */
 	{
 		.rate = 60,
 		.level = 25,
 		.formations = {441, 442, 443, 444, 445, 446, 447, 448},
 		.weights = {20, 20, 20, 10, 10, 5, 5},
 	},
-	/* Ankohl Ruins: SceneId_AnkohlRuinsFaceHalves */
+	/* Ankohl Ruins: SceneIdAnkohlRuinsFaceHalves */
 	{
 		.rate = 60,
 		.level = 25,
 		.formations = {441, 442, 443, 444, 445, 446, 447, 448},
 		.weights = {5, 5, 10, 15, 15, 10, 10},
 	},
-	/* Ankohl Ruins: SceneId_AnkohlRuinsCrystalPowderChest */
+	/* Ankohl Ruins: SceneIdAnkohlRuinsCrystalPowderChest */
 	{
 		.rate = 60,
 		.level = 25,
 		.formations = {441, 442, 443, 444, 445, 446, 447, 448},
 		.weights = {5, 5, 5, 10, 10, 20, 20, 20},
 	},
-	/* Tundaria Tower: SceneId_TundariaTowerCenterProng, SceneId_TundariaTowerIceSlide */
+	/* Tundaria Tower: SceneIdTundariaTowerCenterProng, SceneIdTundariaTowerIceSlide */
 	{
 		.rate = 50,
 		.level = 26,
 		.formations = {451, 452, 453, 454, 455, 456, 457, 458},
 		.weights = {15, 15, 15, 10, 10, 5, 5, 5},
 	},
-	/* Tundaria Tower: SceneId_TundariaTowerReflux, SceneId_TundariaTowerIceColumns */
+	/* Tundaria Tower: SceneIdTundariaTowerReflux, SceneIdTundariaTowerIceColumns */
 	{
 		.rate = 50,
 		.level = 26,
 		.formations = {451, 452, 453, 454, 455, 456, 457, 458},
 		.weights = {5, 5, 10, 20, 20, 15, 10, 5},
 	},
-	/* Tundaria Tower: SceneId_TundariaTowerPillarPuzzle */
+	/* Tundaria Tower: SceneIdTundariaTowerPillarPuzzle */
 	{
 		.rate = 50,
 		.level = 26,
@@ -543,154 +543,154 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {471, 472, 473, 474, 475, 476, 477, 478},
 		.weights = {2, 2, 2, 2, 4, 4, 4, 4},
 	},
-	/* Treasure Isle: SceneId_TreasureIsleEntrance, SceneId_TreasureIsleChests, SceneId_TreasureIsleJestersArmletChest */
+	/* Treasure Isle: SceneIdTreasureIsleEntrance, SceneIdTreasureIsleChests, SceneIdTreasureIsleJestersArmletChest */
 	{
 		.rate = 50,
 		.level = 29,
 		.formations = {551, 552, 553, 554, 555, 556, 557, 558},
 		.weights = {10, 10, 10, 10, 10, 10, 10, 10},
 	},
-	/* Shaman Village Cave: SceneId_ShamanVillageCave */
+	/* Shaman Village Cave: SceneIdShamanVillageCave */
 	{
 		.rate = 50,
 		.level = 29,
 		.formations = {561, 562, 563, 564, 565, 566, 567, 568},
 		.weights = {10, 10, 10, 10, 10, 10, 10, 10},
 	},
-	/* Jupiter Lighthouse: SceneId_JupiterLighthouseBasementTeleporters, SceneId_JupiterLighthouseRoomGateButton, SceneId_JupiterLighthouseRoomBeam, SceneId_JupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneId_JupiterLighthouseRoomLockedDoors, its other entrances */
+	/* Jupiter Lighthouse: SceneIdJupiterLighthouseBasementTeleporters, SceneIdJupiterLighthouseRoomGateButton, SceneIdJupiterLighthouseRoomBeam, SceneIdJupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneIdJupiterLighthouseRoomLockedDoors, its other entrances */
 	{
 		.rate = 55,
 		.level = 30,
 		.formations = {481, 482, 483, 484, 485, 486, 487, 488},
 		.weights = {20, 20, 10, 10, 5},
 	},
-	/* Jupiter Lighthouse: SceneId_JupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneId_JupiterLighthouseRoomLockedDoors entrances 5 and 7, SceneId_JupiterLighthouseRoomRedKey, SceneId_JupiterLighthouseRoomCrackedFloor, SceneId_JupiterLighthouseRoomBlueKey, SceneId_JupiterLighthouseTerraces */
+	/* Jupiter Lighthouse: SceneIdJupiterLighthouseRoomErinyesTunicChest entrances 3, 4, 8 and 9, SceneIdJupiterLighthouseRoomLockedDoors entrances 5 and 7, SceneIdJupiterLighthouseRoomRedKey, SceneIdJupiterLighthouseRoomCrackedFloor, SceneIdJupiterLighthouseRoomBlueKey, SceneIdJupiterLighthouseTerraces */
 	{
 		.rate = 55,
 		.level = 30,
 		.formations = {481, 482, 483, 484, 485, 486, 487, 488},
 		.weights = {10, 10, 20, 20, 20, 5, 5},
 	},
-	/* Jupiter Lighthouse: SceneId_JupiterLighthouseWhorl, SceneId_JupiterLighthouseRoomPhaetonsBladeChest */
+	/* Jupiter Lighthouse: SceneIdJupiterLighthouseWhorl, SceneIdJupiterLighthouseRoomPhaetonsBladeChest */
 	{
 		.rate = 55,
 		.level = 30,
 		.formations = {481, 482, 483, 484, 485, 486, 487, 488},
 		.weights = {5, 5, 5, 5, 10, 10, 20, 20},
 	},
-	/* Trial Road: SceneId_TrialRoadCaveRock, SceneId_TrialRoadGasp */
+	/* Trial Road: SceneIdTrialRoadCaveRock, SceneIdTrialRoadGasp */
 	{
 		.rate = 50,
 		.level = 30,
 		.formations = {571, 572, 573, 574, 575, 576, 577, 578},
 		.weights = {2, 2, 2, 2, 4, 4, 4, 4},
 	},
-	/* Magma Rock: SceneId_MagmaRockSlide, SceneId_MagmaRockSalamanderTailChest entrances 13 to 17 */
+	/* Magma Rock: SceneIdMagmaRockSlide, SceneIdMagmaRockSalamanderTailChest entrances 13 to 17 */
 	{
 		.rate = 55,
 		.level = 31,
 		.formations = {491, 492, 493, 494, 495, 496, 497, 498},
 		.weights = {20, 20, 10, 5, 5},
 	},
-	/* Magma Rock: SceneId_MagmaRockSalamanderTailChest, its other entrances, SceneId_MagmaRockStatue */
+	/* Magma Rock: SceneIdMagmaRockSalamanderTailChest, its other entrances, SceneIdMagmaRockStatue */
 	{
 		.rate = 55,
 		.level = 31,
 		.formations = {491, 492, 493, 494, 495, 496, 497, 498},
 		.weights = {10, 20, 20, 5, 5, 5},
 	},
-	/* Magma Rock: SceneId_MagmaRockInsideLuckyMedalChest, SceneId_MagmaRockInsideEntrance */
+	/* Magma Rock: SceneIdMagmaRockInsideLuckyMedalChest, SceneIdMagmaRockInsideEntrance */
 	{
 		.rate = 55,
 		.level = 31,
 		.formations = {491, 492, 493, 494, 495, 496, 497, 498},
 		.weights = {10, 15, 15, 5, 5, 5, 10},
 	},
-	/* Magma Rock: SceneId_MagmaRockInsideFury, SceneId_MagmaRockInsideCrackedPillars entrances 1 to 7, SceneId_MagmaRockInsideGolemCoreChest */
+	/* Magma Rock: SceneIdMagmaRockInsideFury, SceneIdMagmaRockInsideCrackedPillars entrances 1 to 7, SceneIdMagmaRockInsideGolemCoreChest */
 	{
 		.rate = 55,
 		.level = 32,
 		.formations = {491, 492, 493, 494, 495, 496, 497, 498},
 		.weights = {5, 5, 10, 10, 5, 2, 20, 5},
 	},
-	/* Magma Rock: SceneId_MagmaRockInsideCrackedPillars, its other entrances, SceneId_MagmaRockInsideSalamanderTailChest, SceneId_MagmaRockInsideEmberStone, SceneId_MagmaRockInsideBlazeTablet */
+	/* Magma Rock: SceneIdMagmaRockInsideCrackedPillars, its other entrances, SceneIdMagmaRockInsideSalamanderTailChest, SceneIdMagmaRockInsideEmberStone, SceneIdMagmaRockInsideBlazeTablet */
 	{
 		.rate = 55,
 		.level = 32,
 		.formations = {491, 492, 493, 494, 495, 496, 497, 498},
 		.weights = {5, 5, 5, 10, 5, 5, 20, 20},
 	},
-	/* Northern Reaches: SceneId_NorthernReaches */
+	/* Northern Reaches: SceneIdNorthernReaches */
 	{
 		.rate = 40,
 		.level = 32,
 		.formations = {581, 582, 583, 584, 585, 586, 587, 588},
 		.weights = {10, 10, 10, 10, 10, 3, 3, 3},
 	},
-	/* Mars Lighthouse: SceneId_MarsLighthouseEntranceFugue, SceneId_MarsLighthouseEntranceTeleportLapis, SceneId_MarsLighthouseEntranceBalm, SceneId_MarsLighthouseEntranceHiddenCircle */
+	/* Mars Lighthouse: SceneIdMarsLighthouseEntranceFugue, SceneIdMarsLighthouseEntranceTeleportLapis, SceneIdMarsLighthouseEntranceBalm, SceneIdMarsLighthouseEntranceHiddenCircle */
 	{
 		.rate = 50,
 		.level = 33,
 		.formations = {501, 502, 503, 504, 505, 506, 507, 508},
 		.weights = {20, 5, 20, 5, 5, 5},
 	},
-	/* Mars Lighthouse: SceneId_MarsLighthouseEntranceValkyrieMailChest, SceneId_MarsLighthouseEntranceSolBladeChest, SceneId_MarsLighthouseStarRoom, SceneId_MarsLighthouseHall */
+	/* Mars Lighthouse: SceneIdMarsLighthouseEntranceValkyrieMailChest, SceneIdMarsLighthouseEntranceSolBladeChest, SceneIdMarsLighthouseStarRoom, SceneIdMarsLighthouseHall */
 	{
 		.rate = 50,
 		.level = 33,
 		.formations = {501, 502, 503, 504, 505, 506, 507, 508},
 		.weights = {10, 5, 15, 20, 5, 10, 5, 5},
 	},
-	/* Mars Lighthouse: SceneId_MarsLighthouseMercuryLedge, SceneId_MarsLighthouseJupiterLedge, SceneId_MarsLighthouseMarsLedge, SceneId_MarsLighthouseVenusLedge, SceneId_MarsLighthouseMarsTower, SceneId_MarsLighthouseMercuryTower, SceneId_MarsLighthouseJupiterTower, SceneId_MarsLighthouseVenusTower */
+	/* Mars Lighthouse: SceneIdMarsLighthouseMercuryLedge, SceneIdMarsLighthouseJupiterLedge, SceneIdMarsLighthouseMarsLedge, SceneIdMarsLighthouseVenusLedge, SceneIdMarsLighthouseMarsTower, SceneIdMarsLighthouseMercuryTower, SceneIdMarsLighthouseJupiterTower, SceneIdMarsLighthouseVenusTower */
 	{
 		.rate = 50,
 		.level = 33,
 		.formations = {501, 502, 503, 504, 505, 506, 507, 508},
 		.weights = {5, 5, 5, 10, 5, 20, 20, 20},
 	},
-	/* Treasure Isle: SceneId_TreasureIsleGale */
+	/* Treasure Isle: SceneIdTreasureIsleGale */
 	{
 		.rate = 45,
 		.level = 35,
 		.formations = {591, 592, 593, 594, 595, 596, 597, 598},
 		.weights = {10, 10, 10, 10, 10, 10, 10, 10},
 	},
-	/* Yampi Desert Cave: SceneId_YampiDesertCaveWaterOfLifeChest, SceneId_YampiDesertCaveGuardian, its other entrances */
+	/* Yampi Desert Cave: SceneIdYampiDesertCaveWaterOfLifeChest, SceneIdYampiDesertCaveGuardian, its other entrances */
 	{
 		.rate = 45,
 		.level = 37,
 		.formations = {601, 602, 603, 604, 605, 606, 607, 608},
 		.weights = {20, 20, 20, 10, 10, 5, 5, 5},
 	},
-	/* Yampi Desert Cave: SceneId_YampiDesertCaveGuardian entrances 15 to 17, SceneId_YampiDesertCaveCrystal */
+	/* Yampi Desert Cave: SceneIdYampiDesertCaveGuardian entrances 15 to 17, SceneIdYampiDesertCaveCrystal */
 	{
 		.rate = 45,
 		.level = 37,
 		.formations = {601, 602, 603, 604, 605, 606, 607, 608},
 		.weights = {5, 5, 5, 10, 10, 20, 20, 20},
 	},
-	/* Islet Cave: SceneId_IsletCaveCorridors */
+	/* Islet Cave: SceneIdIsletCaveCorridors */
 	{
 		.rate = 15,
 		.level = 38,
 		.formations = {611, 612, 613, 614, 615, 616, 617, 618},
 		.weights = {20, 20, 5, 5, 10, 10, 10, 10},
 	},
-	/* Islet Cave: SceneId_IsletCaveCorridors */
+	/* Islet Cave: SceneIdIsletCaveCorridors */
 	{
 		.rate = 15,
 		.level = 38,
 		.formations = {611, 612, 613, 614, 615, 616, 617, 618},
 		.weights = {10, 10, 10, 10, 20, 20, 20, 20},
 	},
-	/* Anemos Inner Sanctum: SceneId_AnemosInnerSanctumElevator, SceneId_AnemosInnerSanctumSwitches, SceneId_AnemosInnerSanctumOrihalconChest entrances 1 and 2 */
+	/* Anemos Inner Sanctum: SceneIdAnemosInnerSanctumElevator, SceneIdAnemosInnerSanctumSwitches, SceneIdAnemosInnerSanctumOrihalconChest entrances 1 and 2 */
 	{
 		.rate = 35,
 		.level = 42,
 		.formations = {621, 622, 623, 624, 625, 626, 627, 628},
 		.weights = {20, 20, 20, 20, 10, 10, 10, 10},
 	},
-	/* Anemos Inner Sanctum: SceneId_AnemosInnerSanctumOrihalconChest, its other entrances, SceneId_AnemosInnerSanctumGuardian */
+	/* Anemos Inner Sanctum: SceneIdAnemosInnerSanctumOrihalconChest, its other entrances, SceneIdAnemosInnerSanctumGuardian */
 	{
 		.rate = 35,
 		.level = 42,

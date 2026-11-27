@@ -131,25 +131,25 @@ IwramSoundMixBlock:
 .L_03000c78:
 	ldm	r5, {r0, r1, r7, r9}
 @ Each nop pair below is an instruction slot the stm r1 copies above fill.
-AlchemyUncredited_08001234:
+AlchemyUncredited08001234:
 	nop
 	nop
-AlchemyUncreditedEnd_08001234:
+AlchemyUncreditedEnd08001234:
 	mlane	r0, fp, r6, r0
-AlchemyUncredited_08001240:
+AlchemyUncredited08001240:
 	nop
 	nop
-AlchemyUncreditedEnd_08001240:
+AlchemyUncreditedEnd08001240:
 	mlane	r1, fp, r6, r1
-AlchemyUncredited_0800124c:
+AlchemyUncredited0800124c:
 	nop
 	nop
-AlchemyUncreditedEnd_0800124c:
+AlchemyUncreditedEnd0800124c:
 	mlane	r7, fp, r6, r7
-AlchemyUncredited_08001258:
+AlchemyUncredited08001258:
 	nop
 	nop
-AlchemyUncreditedEnd_08001258:
+AlchemyUncreditedEnd08001258:
 	mlane	r9, fp, r6, r9
 	stmia	r5!, {r0, r1, r7, r9}
 	subs	lr, lr, #1

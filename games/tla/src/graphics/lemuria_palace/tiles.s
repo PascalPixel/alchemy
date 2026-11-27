@@ -1,9 +1,9 @@
 	.section .rodata
-	.global LemuriaPalace_FirstMapTiles
-LemuriaPalace_FirstMapTiles:
+	.global LemuriaPalaceFirstMapTiles
+LemuriaPalaceFirstMapTiles:
 	.incbin "games/tla/src/graphics/lemuria_palace/tiles_a.8bpp.lz"
-	.global LemuriaPalace_SecondMapTiles
-LemuriaPalace_SecondMapTiles:
+	.global LemuriaPalaceSecondMapTiles
+LemuriaPalaceSecondMapTiles:
 	.incbin "games/tla/src/graphics/lemuria_palace/tiles_b.8bpp.lz"
 	.global LemuriaPalaceMapFadeLevels
 LemuriaPalaceMapFadeLevels:

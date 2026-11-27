@@ -188,7 +188,7 @@ void fdUpdateWalking(Sint32 layer, FIXED x, FIXED y, FIXED z)
 
 	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		tile =
-			&((MAP_GRID_METATILE *)Ram_MetatileTiles)[((x / toFIXED(32)) & 31) +
+			&((MAP_GRID_METATILE *)RamMetatileTiles)[((x / toFIXED(32)) & 31) +
 				(((z / toFIXED(32)) & 31) << 5)];
 	} else {
 		if((Uint32)layer <= MAPGRID_LAYER_OVERHEAD)

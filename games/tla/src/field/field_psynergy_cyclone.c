@@ -18,7 +18,7 @@ void fdParticleBurstUpdate(void)
 	Sint32				  pos[3];
 	Sint32				  i;
 
-	state = (PARTICLE_BURST_STATE *)Ram_HeapSlots->battleEff;
+	state = (PARTICLE_BURST_STATE *)RamHeapSlots->battleEff;
 	particle = state->particles;
 
 	for(i = 0; i < PARTICLE_BURST_COUNT; i++, particle++) {
@@ -52,7 +52,7 @@ void fdParticleBurstUpdate(void)
    tiles. */
 void fdParticleBurstEnd(void)
 {
-	PARTICLE_BURST_STATE *state = Ram_HeapSlots->battleEff;
+	PARTICLE_BURST_STATE *state = RamHeapSlots->battleEff;
 
 	syCloseEvent((Uint32)fdParticleBurstUpdate);
 	syVRAMCacheFreeEntry(state->cacheEntry);
@@ -70,8 +70,8 @@ void fdParticleBurstEnd(void)
    it. */
 void fdCycloneCarryLeader(void)
 {
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
-	CYCLONE_STATE	   *state = Ram_HeapSlots->battleEff;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	CYCLONE_STATE	   *state = RamHeapSlots->battleEff;
 	ACTOR			   *owner = effect->caster;
 	Sint32				tmr = state->tmr;
 	Sint32				pos[3];
@@ -108,8 +108,8 @@ void fdCycloneCarryLeader(void)
    carried there 32 pixels up, circling, without the arc. */
 void fdCycloneLiftLeader(void)
 {
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
-	CYCLONE_STATE	   *state = Ram_HeapSlots->battleEff;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
+	CYCLONE_STATE	   *state = RamHeapSlots->battleEff;
 	ACTOR			   *owner = effect->caster;
 	Sint32				tmr = state->tmr;
 	Sint32				pos[3];
@@ -188,8 +188,8 @@ void fdPsynergyCyclone(void)
 {
 	CYCLONE_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(CYCLONE_STATE));
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
 	ACTOR			   *owner = effect->caster;
 	Sint16			   *points = &field->psynergyMetatiles[0];
 	FIXED				spread = toFIXED(4);
@@ -221,7 +221,7 @@ void fdPsynergyCyclone(void)
 		palette++;
 	}
 	fdBattleEffectStartCanvasSpr();
-	canvas = Ram_HeapSlots->canvasSpr;
+	canvas = RamHeapSlots->canvasSpr;
 	pos[0] = effect->caster->x.fixed;
 	pos[1] = effect->caster->y.fixed;
 	pos[2] = effect->caster->z.fixed;
@@ -236,8 +236,8 @@ void fdPsynergyCyclone(void)
 	fdEffectSprInit(&canvas->spr, 32, 32, OBJ_SIZE_64X64, canvas->tile);
 	canvas->spr.oam.fullCol = 1;
 	canvas->spr.oam.pal = 0;
-	offsets = Ram_HeapSlots->canvasMap;
-	pixels = Ram_HeapSlots->battleCanvas;
+	offsets = RamHeapSlots->canvasMap;
+	pixels = RamHeapSlots->battleCanvas;
 	whirlwind = fdActorSpawn(SPRITE_WHIRLWIND, owner->x.fixed,
 		owner->y.fixed - toFIXED(6), owner->z.fixed);
 	fdActorSelectAnimationStub(whirlwind, 2);
@@ -545,9 +545,9 @@ typedef struct BLAZE_STATE {
    most 1/64 turn a tick. */
 void fdBlazeUpdateSpray(void)
 {
-	BLAZE_STATE				*state = (BLAZE_STATE *)Ram_HeapSlots->battleEff;
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	BLAZE_STATE				*state = (BLAZE_STATE *)RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	FIELD_PSYNERGY_PARTICLE *puff;

@@ -512,41 +512,41 @@ void scTreasureIsleGrindSpikyRock(Sint32 unused, Sint32 frm, Sint32 id)
 /* Lift on the east boulder of the south row in the west of Gale's room,
    metatile (20, 20), raises it into the air out of the way for good. While it
    stands, Felix can jump across it from the metatiles either side. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, 0)
+DEFINE_LIFT_ROCK(TreasureIsleLiftFirstRock, 0)
 
 /* Lift on the middle boulder of the south row in the west of Gale's room,
    metatile (13, 19), raises it into the air out of the way for good. While it
    stands, Felix can jump across it. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, 1)
+DEFINE_LIFT_ROCK(TreasureIsleLiftSecondRock, 1)
 
 /* Lift on the west boulder of the south row in the west of Gale's room,
    metatile (6, 20), raises it into the air out of the way for good. While it
    stands, Felix can jump across it. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, 2)
+DEFINE_LIFT_ROCK(TreasureIsleLiftThirdRock, 2)
 
 /* Lift on the east boulder of the north row in the west of Gale's room,
    metatile (19, 13), raises it into the air out of the way for good. While it
    stands, Felix can jump across it. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, 3)
+DEFINE_LIFT_ROCK(TreasureIsleLiftFourthRock, 3)
 
 /* Lift on the middle boulder of the north row in the west of Gale's room,
    metatile (13, 12), raises it into the air out of the way for good. While it
    stands, Felix can jump across it. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, 4)
+DEFINE_LIFT_ROCK(TreasureIsleLiftFifthRock, 4)
 
 /* Lift on the west boulder of the north row in the west of Gale's room,
    metatile (7, 13), raises it into the air out of the way for good. While it
    stands, Felix can jump across it. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, 5)
+DEFINE_LIFT_ROCK(TreasureIsleLiftSixthRock, 5)
 
 /* Lift on the boulder blocking the narrow passage north in the south-east of
    Gale's room, metatile (46, 45), raises it into the air above the passage for
    good. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 6)
+DEFINE_LIFT_ROCK(TreasureIsleLiftSeventhRock, 6)
 
 /* Lift on the boulder in the south of Gale's room, metatile (26, 42), raises it
    into the air out of the way for good. */
-DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 7)
+DEFINE_LIFT_ROCK(TreasureIsleLiftEighthRock, 7)
 
 /* Walking up the steps to the Star Magician in the last chamber, metatiles (48,
    10) to (50, 10), until it is beaten: it stirs, the screen glows warm, and it
@@ -607,7 +607,7 @@ extern Sint32 TreasureIsleColorCycleTick[];
    saving both palettes the first time. */
 void scTreasureIsleCycleWaterCols(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 phase;
 	Sint32		 i;
 	Sint32		 busy;
@@ -1038,28 +1038,28 @@ CUE TreasureIsleGaleCues[] = {
 		SCRIPT_REF(scTreasureIsleSettleMovedPillar)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(0),
-		SCRIPT_REF(TreasureIsle_LiftFirstRock)},
+		SCRIPT_REF(TreasureIsleLiftFirstRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 1,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(1),
-		SCRIPT_REF(TreasureIsle_LiftSecondRock)},
+		SCRIPT_REF(TreasureIsleLiftSecondRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 2,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(2),
-		SCRIPT_REF(TreasureIsle_LiftThirdRock)},
+		SCRIPT_REF(TreasureIsleLiftThirdRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 3,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(3),
-		SCRIPT_REF(TreasureIsle_LiftFourthRock)},
+		SCRIPT_REF(TreasureIsleLiftFourthRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 4,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(4),
-		SCRIPT_REF(TreasureIsle_LiftFifthRock)},
+		SCRIPT_REF(TreasureIsleLiftFifthRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 5,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(5),
-		SCRIPT_REF(TreasureIsle_LiftSixthRock)},
+		SCRIPT_REF(TreasureIsleLiftSixthRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_FIRST_BOULDER + 6,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(6),
-		SCRIPT_REF(TreasureIsle_LiftSeventhRock)},
+		SCRIPT_REF(TreasureIsleLiftSeventhRock)},
 	{PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_LAST_BOULDER,
 		FLAG_TREASURE_ISLE_BOULDER_LIFTED(7),
-		SCRIPT_REF(TreasureIsle_LiftEighthRock)},
+		SCRIPT_REF(TreasureIsleLiftEighthRock)},
 	{CUE_TABLE_END},
 };
 

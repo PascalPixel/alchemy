@@ -147,7 +147,7 @@ void mnTextMeasureDecoded(
 				lineWidth += WINDOW_SPRITE_SPACE_WIDTH;
 				cnt++;
 			} else {
-				glyph = Font_Glyphs[code - TEXT_SPACE].width;
+				glyph = FontGlyphs[code - TEXT_SPACE].width;
 				style = state->outline;
 				if(style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
 					glyph++;
@@ -171,7 +171,7 @@ void mnTextMeasureDecoded(
 						trailing = 0;
 					glyph = KANJI_WIDTH;
 					if(code <= TEXT_LAST_FONT_CODE)
-						glyph = Font_Glyphs[code - TEXT_SPACE].width;
+						glyph = FontGlyphs[code - TEXT_SPACE].width;
 					style = state->outline;
 					if(style == TEXT_STYLE_OUTLINED || style == TEXT_STYLE_SPIN)
 						glyph++;
@@ -338,7 +338,7 @@ void mnTextMeasureAllPages(
 				width += WINDOW_SPRITE_SPACE_WIDTH;
 				cnt++;
 			} else {
-				glyph = Font_Glyphs[code - TEXT_SPACE].width;
+				glyph = FontGlyphs[code - TEXT_SPACE].width;
 				outline = state->outline;
 				if(outline == TEXT_STYLE_OUTLINED || outline == TEXT_STYLE_SPIN)
 					glyph++;
@@ -360,7 +360,7 @@ void mnTextMeasureAllPages(
 						trailing = 0;
 					glyph = KANJI_WIDTH;
 					if(code <= TEXT_LAST_FONT_CODE)
-						glyph = Font_Glyphs[code - TEXT_SPACE].width;
+						glyph = FontGlyphs[code - TEXT_SPACE].width;
 					outline = state->outline;
 					if(outline == TEXT_STYLE_OUTLINED ||
 						outline == TEXT_STYLE_SPIN)

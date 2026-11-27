@@ -47,7 +47,7 @@ void sySndPlay(Sint32 id)
 		   Frames apart, 112 frames. */
 		if(BgmFadeRequested != 0)
 			return;
-		m4aMPlayFadeOut(&MPlayInfo_BGM, 7);
+		m4aMPlayFadeOut(&MPlayInfoBGM, 7);
 		BgmFadeRequested++;
 		CurrentBgm = MUS_SILENCE;
 	} else if(id == SOUND_FADE_OUT_ACTION_SE) {
@@ -55,7 +55,7 @@ void sySndPlay(Sint32 id)
 		   fades MUSIC_PLAYER_ACTION_SE out over 48 frames (16 steps of 3) and
 		   that row never plays. */
 		MusicPlayerLastSound[MUSIC_PLAYER_ACTION_SE] = 0;
-		m4aMPlayFadeOut(&MPlayInfo_ActionSE, 3);
+		m4aMPlayFadeOut(&MPlayInfoActionSE, 3);
 	} else if(id >= SOUND_SE_FIRST) {
 		/* A sound on MUSIC_PLAYER_SE_LAST borrows a free effect player,
 		   searching back to MUSIC_PLAYER_SE_FIRST. */
@@ -75,7 +75,7 @@ void sySndPlay(Sint32 id)
 		/* A jingle, on its own player (MUSIC_PLAYER_JINGLE): the music's tracks
 		   0 to 7 go silent at once but keep playing, and fade back in once the
 		   jingle has ended (sySndUpdateBGMRamps). */
-		m4aMPlayVolumeControl(&MPlayInfo_BGM, TRACKS_ALL, 0);
+		m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, 0);
 		BgmVolumeTarget = 0;
 		BgmVolume = 0;
 		m4aSongNumStart(id);
@@ -116,7 +116,7 @@ void sySndUpdateBGMRamps(void)
 	   jingle's player has no track left and let the music fade back in. */
 	if(BgmRestoreDelay != 0) {
 		if(BgmRestoreDelay == 1) {
-			if((Uint8)MPlayInfo_Jingle.status == 0) {
+			if((Uint8)MPlayInfoJingle.status == 0) {
 				BgmRestoreDelay = 0;
 				BgmVolumeTarget = BGM_UNITY_SCALE;
 			}
@@ -136,7 +136,7 @@ void sySndUpdateBGMRamps(void)
 		if((((Sint16)BgmVolumeTarget - (Sint16)BgmVolume) ^ delta) < 0) {
 			BgmVolume = BgmVolumeTarget;
 		}
-		m4aMPlayVolumeControl(&MPlayInfo_BGM, TRACKS_ALL, BgmVolume);
+		m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, BgmVolume);
 	}
 	if((Sint16)BgmTempoPitchTarget != (Sint16)BgmTempoPitch) {
 		delta = (Sint16)BgmTempoPitchTarget - (Sint16)BgmTempoPitch;
@@ -154,8 +154,8 @@ void sySndUpdateBGMRamps(void)
 		   BGM_UNITY_SCALE of scale (pitch is in 1/256 semitone), so twice
 		   BGM_UNITY_SCALE plays an octave up and half of it half an octave
 		   down. */
-		m4aMPlayTempoControl(&MPlayInfo_BGM, BgmTempoPitch);
-		m4aMPlayPitchControl(&MPlayInfo_BGM, TRACKS_ALL,
+		m4aMPlayTempoControl(&MPlayInfoBGM, BgmTempoPitch);
+		m4aMPlayPitchControl(&MPlayInfoBGM, TRACKS_ALL,
 			(Sint16)BgmTempoPitch * SEMITONES_PER_OCTAVE -
 				SEMITONES_PER_OCTAVE * BGM_UNITY_SCALE);
 	}
@@ -243,7 +243,7 @@ void sySndInit(void)
 	BgmTempoPitchStep = BGM_DEFAULT_RAMP_STEP;
 	BgmFadeRequested = 0;
 	SoundCommandMaskWork = 0;
-	Sound_UnreadByte = 0;
+	SoundUnreadByte = 0;
 	for(i = 0; i < MUSIC_PLAYER_COUNT; i++)
 		MusicPlayerLastSound[i] = 0;
 }
@@ -252,14 +252,14 @@ void sySndInit(void)
    stays. The Lemurian ship slows it to fifteen sixteenths. */
 void sySndSetBGMTempo(Uint16 tempoScale)
 {
-	m4aMPlayTempoControl(&MPlayInfo_BGM, tempoScale);
+	m4aMPlayTempoControl(&MPlayInfoBGM, tempoScale);
 }
 
 /* Unused: transposes the music's tracks 0 to 7 by `pitch`, in 1/256 semitone.
    Only a bare stub, which no code names, leads here. */
 void sySndSetBGMPitch(Uint16 pitch)
 {
-	m4aMPlayPitchControl(&MPlayInfo_BGM, TRACKS_ALL, pitch);
+	m4aMPlayPitchControl(&MPlayInfoBGM, TRACKS_ALL, pitch);
 }
 
 /* Unused: ramps the music's tempo and pitch together toward `tgtScale`
@@ -275,7 +275,7 @@ void sySndSetBGMTempoPitchTarget(Uint16 tgtScale, Uint16 step)
    fade toward another. Only a bare stub, which no code names, leads here. */
 void sySndSetBGMVolume(Sint16 volume)
 {
-	m4aMPlayVolumeControl(&MPlayInfo_BGM, TRACKS_ALL, volume);
+	m4aMPlayVolumeControl(&MPlayInfoBGM, TRACKS_ALL, volume);
 	BgmVolumeTarget = volume;
 	BgmVolume = volume;
 }

@@ -10,7 +10,7 @@ void scMagmaRockInsideClearBlockMetatiles(ACTOR *actor)
 
 	if(actor->sceneByte == 0)
 		return;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	if(map == NULL)
 		return;
 	metatiles = &map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;

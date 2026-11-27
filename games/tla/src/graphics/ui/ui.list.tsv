@@ -1,20 +1,20 @@
 name	file	section	align	left	pad	edition	fill
-Shop_CursorPictureA	menu_cursor/cursor_a.8bpp						
-Shop_CursorPictureB	menu_cursor/cursor_b.8bpp						
-Shop_CursorPictureC	menu_cursor/cursor_c.8bpp						
-Shop_CursorPictureD	menu_cursor/cursor_d.8bpp						
-Shop_CursorPictureE	menu_cursor/cursor_e.8bpp						
-Shop_CursorPictureF	menu_cursor/cursor_f.8bpp						
-Shop_CursorPictureG	menu_cursor/cursor_g.8bpp						
-Shop_CursorPictureH	menu_cursor/cursor_h.8bpp						
-Ui_WindowBorderFlash	window_border_flash.4bpp						
-Ui_Icons	icons/icons.icons4						
-Ui_CommandIcons	command_icons.icons			0000			
-Ui_Flags	flags.4bpp16x16						
-Ui_WindowTiles	window_tiles_tla_ja.4bpp	a				ja	
-Ui_WindowTiles	window_tiles.4bpp	a				en	
-Ui_WindowTiles	window_tiles_de.4bpp	a				de	
-Ui_WindowTiles	window_tiles_es.4bpp	a				es	
-Ui_WindowTiles	window_tiles_fr.4bpp	a				fr	
-Ui_WindowTiles	window_tiles_it.4bpp	a				it	
-Text_SmallFont	small_font.glyphs	a					
+ShopCursorPictureA	menu_cursor/cursor_a.8bpp						
+ShopCursorPictureB	menu_cursor/cursor_b.8bpp						
+ShopCursorPictureC	menu_cursor/cursor_c.8bpp						
+ShopCursorPictureD	menu_cursor/cursor_d.8bpp						
+ShopCursorPictureE	menu_cursor/cursor_e.8bpp						
+ShopCursorPictureF	menu_cursor/cursor_f.8bpp						
+ShopCursorPictureG	menu_cursor/cursor_g.8bpp						
+ShopCursorPictureH	menu_cursor/cursor_h.8bpp						
+UiWindowBorderFlash	window_border_flash.4bpp						
+UiIcons	icons/icons.icons4						
+UiCommandIcons	command_icons.icons			0000			
+UiFlags	flags.4bpp16x16						
+UiWindowTiles	window_tiles_tla_ja.4bpp	a				ja	
+UiWindowTiles	window_tiles.4bpp	a				en	
+UiWindowTiles	window_tiles_de.4bpp	a				de	
+UiWindowTiles	window_tiles_es.4bpp	a				es	
+UiWindowTiles	window_tiles_fr.4bpp	a				fr	
+UiWindowTiles	window_tiles_it.4bpp	a				it	
+TextSmallFont	small_font.glyphs	a					

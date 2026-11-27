@@ -245,6 +245,6 @@ extern const FIXED WindowSpritePulseScales[];
 extern const Sint8 NameEntryCaretWave[];
 /* The name entry screen keyboard's compressed tilemap, the Spanish edition's
    with its own letters. */
-extern const Uint8 NameEntry_KeyboardTilemap[];
+extern const Uint8 NameEntryKeyboardTilemap[];
 
 #endif

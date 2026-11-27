@@ -26,7 +26,7 @@
 
 /* FlashBurstSheet, the spray, decoded after the drops in the map cell
    buffer. */
-#define OCEAN_FIST_SPRAY_SHEET (Ram_MapMetatileBuffer + 16384)
+#define OCEAN_FIST_SPRAY_SHEET (RamMapMetatileBuffer + 16384)
 /* The sprays given a countdown, of which the first OCEAN_FIST_SPRAYS burst at
    the column's foot, one a tick; each shows the sprite sheet's six pictures
    for three ticks apiece. */
@@ -65,9 +65,9 @@ void btEffectRunOceanFist(BATTLE_EFFECT_PARM *args)
 	Uint8				*sheet;
 	Sint32				 i;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	sprs = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;

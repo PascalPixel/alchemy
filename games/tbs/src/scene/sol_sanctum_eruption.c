@@ -1,5 +1,5 @@
-/* Elemental Star Room (SceneId_SolSanctumEruption), the chamber of
-   SceneId_SolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as it
+/* Elemental Star Room (SceneIdSolSanctumEruption), the chamber of
+   SceneIdSolSanctumElementalStarRoom (sol_sanctum_elemental_star_room.c) as it
    collapses once the Mars Star is taken.
 
    The scene is one script, with no cues of its own. scInit plays it on arrival
@@ -12,7 +12,7 @@
 	 FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from then
 	 on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED. Then it takes
 	 SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS to the Luna and Sol
-	 rooms (SceneId_SolSanctumLunaSolRooms).
+	 rooms (SceneIdSolSanctumLunaSolRooms).
 
    The effects are the script's own.
 

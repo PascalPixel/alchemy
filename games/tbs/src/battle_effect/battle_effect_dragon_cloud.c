@@ -27,7 +27,7 @@
 #define DRAGON_CLOUD_PUFF_RADIUS_Y		16
 /* The particles from DRAGON_CLOUD_FIRST_EMBER drawn as embers: the embers and
    the first eight flashes; the rest play the flash pictures. The Lost Age keeps
-   the same count for Dragon Cloud (DragonCloud_SparkCounts). */
+   the same count for Dragon Cloud (DragonCloudSparkCounts). */
 #define DRAGON_CLOUD_DRAWN_EMBERS		48
 /* An ember is drawn at size DRAGON_CLOUD_EMBER_SIZE_MAX at MOTE_DEPTH_NEAR or
    nearer, one size smaller every MOTE_DEPTH_STEP farther. */
@@ -94,7 +94,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET,
 		&state->sheet[DRAGON_CLOUD_PUFF_PICTURES], 1, 1);
 	btResourceLoadAndDecompress(
-		RESOURCE_FLASH_BURST_SHEET, Ram_MapGridMetatileBuffer, 1, 0);
+		RESOURCE_FLASH_BURST_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	btEffectBuildCanvasBlitters(state->args->side, draw);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -256,7 +256,7 @@ void btEffectRunDragonCloud(BATTLE_EFFECT_PARM *args)
 						if(ember->variant <
 							2 * DRAGON_CLOUD_ANIMATION_PICTURES) {
 							draw[0](canvas,
-								Ram_MapGridMetatileBuffer +
+								RamMapGridMetatileBuffer +
 									ember->variant / 2 *
 										PICTURE_BYTES(FLASH_BURST),
 								pos.x - FLASH_BURST_WIDTH / 2,

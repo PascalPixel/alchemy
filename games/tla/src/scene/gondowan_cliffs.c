@@ -1,6 +1,6 @@
 /* The Gondowan Cliffs, the maze of ledges, vines and slides west of Madra on
-   the way to Kibombo, and the river channel below them (SceneId_GondowanCliffs
-   and SceneId_GondowanCliffsPass, which share this overlay). Coming from Madra,
+   the way to Kibombo, and the river channel below them (SceneIdGondowanCliffs
+   and SceneIdGondowanCliffsPass, which share this overlay). Coming from Madra,
    Felix finds a dog lying in the grass by the east entrance; Scoop on the
    yellow sand beside it digs up a geyser that carries him up onto the cliffs to
    the west. Whirlwind clears the weeds from a cave mouth nearby, where Kibombo
@@ -562,7 +562,7 @@ Sint32 scInit(void)
 			(void *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR),
 			sizeof(GondowanCliffsSavedWaterColors));
 		sySetTickEvent(scGondowanCliffsCycleWaterCols, EVENT_PASS_TICK);
-		((MAP_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid)->wading = 1;
+		((MAP_GROUND_EFFECTS *)RamHeapSlots->mapGrid)->wading = 1;
 	}
 	return 0;
 }
@@ -572,7 +572,7 @@ extern Sint16 GondowanCliffsCameraBoxes[];
 Sint32 scPrepareMap(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GONDOWAN_CLIFFS)
-		((MAP_STATE *)Ram_HeapSlots->mapGrid)->cameraBoxes =
+		((MAP_STATE *)RamHeapSlots->mapGrid)->cameraBoxes =
 			GondowanCliffsCameraBoxes;
 	return 0;
 }

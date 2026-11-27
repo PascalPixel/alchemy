@@ -38,7 +38,7 @@ void fdPsynergyGrindOnTarget(void)
 {
 	GRIND_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(GRIND_STATE));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
 	ACTOR					*caster = scene->caster;
 	ACTOR					*child = scene->tgt;
 	SPR						*anm = child->spr;
@@ -184,7 +184,7 @@ void fdPsynergyGrindOnTarget(void)
 				fdBattleEffectShiftRowsDown(picture, anm->width, anm->height);
 			shifts++;
 			((void (*)(
-				void *, Sint32, Sint32, void *))Ram_HeapSlots->pictureUploader)(
+				void *, Sint32, Sint32, void *))RamHeapSlots->pictureUploader)(
 				picture, anm->width, anm->height, dst);
 		}
 		fdViewMoveSwing(VIEW_MOVE_Z, counter++, amplitude);
@@ -258,7 +258,7 @@ void fdPsynergyGrind(void)
 
 	/* Grind's state's size, though the sway holds only the view move. */
 	syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(GRIND_STATE));
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	fdPsynergyFadeToCastCol();
 	fdBattleEffectSetObjectUpdateMode(scene->caster, CASTER_LOOK_NORMAL);
 	fdViewMoveStart(VIEW_MOVE_Z);

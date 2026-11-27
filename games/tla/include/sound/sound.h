@@ -113,10 +113,10 @@ void sySndSetFixedSampleFreq(Uint32 mode);
 /* SoundMain as the tick wait runs it: steps the music players and the CGB
    channels and starts the IWRAM mixer on this VBlank's PCM, returning 0; it
    returns 1 with nothing done when the stack is too deep or the driver busy. */
-Sint32 SoundDriver_EnterVBlankUpdate(void);
+Sint32 SoundDriverEnterVBlankUpdate(void);
 /* The VBlank handler's sound step, as m4aSoundVSync: counts down the PCM
    buffer's frames and, as it wraps, restarts the two sound DMAs, which then
    read from the buffer's start again. */
-void SoundDriver_VSyncRefresh(void);
+void SoundDriverVSyncRefresh(void);
 
 #endif

@@ -57,7 +57,7 @@
    of the screen gets its own window edges. */
 void fdEffectStartWindowHBlankDMA(void)
 {
-	SCREEN_TRANSITION_STATE *state = Ram_HeapSlots->screenTransition;
+	SCREEN_TRANSITION_STATE *state = RamHeapSlots->screenTransition;
 	Uint16					*scanlineData = state->pages[state->page];
 	volatile Uint16			*dma0 = REG_DMA0;
 
@@ -85,8 +85,8 @@ void fdEffectStartWindowHBlankDMA(void)
    right) pair for each of the 160 lines. */
 void fdScreenTransitionUpdateScanlineTable(void)
 {
-	MAP_STATE				*map = Ram_HeapSlots->mapGrid;
-	SCREEN_TRANSITION_STATE *state = Ram_HeapSlots->screenTransition;
+	MAP_STATE				*map = RamHeapSlots->mapGrid;
+	SCREEN_TRANSITION_STATE *state = RamHeapSlots->screenTransition;
 	TRANSITION_SPAN			*span;
 	TRANSITION_SHAPE		*shape;
 	Uint16					*scanlineData;
@@ -444,7 +444,7 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 ticks)
 	Sint32			variant;
 	Sint32			style;
 
-	display = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
+	display = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
 	style = SCENE_TRANSITION_STYLE(mode);
 	variant = SCENE_TRANSITION_VARIANT(mode);
 	switch(style) {
@@ -499,7 +499,7 @@ void fdScreenTransitionStart(Sint32 mode, Sint32 ticks)
 	case TRANSITION_CENTRE_LINE: {
 		SCREEN_TRANSITION_STATE *state;
 
-		display = Ram_HeapSlots->mapGrid;
+		display = RamHeapSlots->mapGrid;
 		state = fdScreenTransitionAllocateAndClearState();
 		display->winTop = DISPLAY_HEIGHT / 2;
 		display->winBottom = DISPLAY_HEIGHT / 2;
@@ -617,7 +617,7 @@ void fdScreenTransitionHideBackgrounds(
 {
 	MAP_STATE *state;
 
-	state = Ram_HeapSlots->mapGrid;
+	state = RamHeapSlots->mapGrid;
 	if(state != NULL) {
 		if(clearBg1 != 0) {
 			state->dispcnt &= ~DISPCNT_BG1_ON;
@@ -641,9 +641,9 @@ void fdScreenTransitionUpdate(void)
 	Sint8					*duration;
 	Uint32					 edgeDistance;
 
-	state = Ram_HeapSlots->screenTransition;
+	state = RamHeapSlots->screenTransition;
 	duration = &state->duration;
-	win = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
+	win = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
 	if(*duration != 0) {
 		Sint8 *step = &state->step;
 
@@ -682,9 +682,9 @@ void fdScreenTransitionUpdateFromCenter(void)
 	Sint8					*duration;
 	Uint16					 edgeDistance;
 
-	state = Ram_HeapSlots->screenTransition;
+	state = RamHeapSlots->screenTransition;
 	duration = &state->duration;
-	win = (MAP_VIEW_STATE *)Ram_HeapSlots->mapGrid;
+	win = (MAP_VIEW_STATE *)RamHeapSlots->mapGrid;
 	if(*duration != 0) {
 		Sint8 *step = &state->step;
 
@@ -735,7 +735,7 @@ void fdScreenTransitionUpdateScanline(void)
 {
 	Uint32			scanline = REG_VCOUNT;
 	MAP_VIEW_STATE *state;
-	state = Ram_HeapSlots->mapGrid;
+	state = RamHeapSlots->mapGrid;
 
 	/* Keep the same VCount sample across phase changes. */
 again:
@@ -784,7 +784,7 @@ again:
 void fdScreenTransitionUpdateDissolve(void)
 {
 	SCREEN_TRANSITION_DISSOLVE_STATE *state =
-		(SCREEN_TRANSITION_DISSOLVE_STATE *)Ram_HeapSlots->screenTransition;
+		(SCREEN_TRANSITION_DISSOLVE_STATE *)RamHeapSlots->screenTransition;
 	Sint32 ditherIdx;
 	Sint32 colIdx;
 	Uint32 i;
@@ -834,7 +834,7 @@ void fdScreenTransitionUpdateDissolve(void)
    color is -1, makes tile 0 solid color. */
 void fdScreenTransitionFillTilemapAndColTile(Sint32 col)
 {
-	SCREEN_TRANSITION_STATE *state = Ram_HeapSlots->screenTransition;
+	SCREEN_TRANSITION_STATE *state = RamHeapSlots->screenTransition;
 	DMA_FILL32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
 		BG_SCREEN_BLOCK(4),
 		DISPLAY_TILE_HEIGHT * BG_SCREEN_WIDTH * sizeof(Uint16));

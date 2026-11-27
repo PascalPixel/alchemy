@@ -8,7 +8,7 @@
 #include "types.h"
 #include "edition.h"
 
-/* The item menu's sort orders (Menu_ListOrder*): one byte per group, an item
+/* The item menu's sort orders (MenuListOrder*): one byte per group, an item
    type, with LIST_ORDER_EQUIPPED for only the equipped items of that type,
    ending with LIST_ORDER_END. */
 #define LIST_ORDER_TYPE_MASK 0x7f
@@ -64,7 +64,7 @@ struct DJINN_MENU_BACKDROP;
 /* The down arrow from the class now to the class an equipment would give
    (backdrop.4bpp), which mnWatchStart blinks every four ticks at
    CLASS_CHANGE_ARROW_TILE. */
-extern Uint8 Menu_ClassChangeArrowTile[];
+extern Uint8 MenuClassChangeArrowTile[];
 void   mnDjinnMenuDrawPage(struct DJINN_MENU_BACKDROP *backdrop, Sint32 first);
 void   fdScriptFinishScreenTransitionStub(void);
 void   mnItemMenuArrangeCategoryItemIcons(Uint16 *items);
@@ -215,7 +215,7 @@ void mnEndingImageStart(void);
 /* Shows a scrolling image on the hidden one of the two BG character blocks.
    With no resource it fills the map buffer with a plain tile word and clears
    the palette half; otherwise it clears the block's first 2 KB, expands
-   resource's map into the buffer with EndingImage_DecodeCode copied to the heap
+   resource's map into the buffer with EndingImageDecodeCode copied to the heap
    (the fill word marks the second block's tiles), and queues the resource's
    128-colour palette. Then it copies the map at position into the tilemap
    (CopyScrollMap), flips the block and restarts the fade-in counter. */

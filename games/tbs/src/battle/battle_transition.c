@@ -176,7 +176,7 @@ void btTransitionUploadTileVariant(void)
 {
 	Uint32 frm = *BattleEntryTimer - 1;
 	if(frm < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_TICKS)
-		syDMAXCopy(BattleTransition_CurtainVariants +
+		syDMAXCopy(BattleTransitionCurtainVariants +
 				frm / TRANSITION_VARIANT_TICKS * TILE_SIZE_4BPP,
 			CURTAIN_TILE(0), DMA_COPY_WORDS(8), REG_DMA3);
 }
@@ -271,19 +271,19 @@ void btTransitionRun(Sint32 enemyCnt, Sint32 encounterId)
 	tmr = syHeapSlotAlloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, sizeof(*tmr));
 	if(encounterId != FORMATION_FUSION_DRAGON) {
 		/* The curtain's seven edge tiles. */
-		syDMAXCopy(BattleTransition_CurtainTiles, CURTAIN_TILE(1),
+		syDMAXCopy(BattleTransitionCurtainTiles, CURTAIN_TILE(1),
 			DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 1 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 1 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(2), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 2 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 2 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(3), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 3 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 3 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(4), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 4 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 4 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(5), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 5 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 5 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(6), DMA_COPY_WORDS(8), REG_DMA3);
-		syDMAXCopy(BattleTransition_CurtainTiles + 6 * TILE_SIZE_4BPP,
+		syDMAXCopy(BattleTransitionCurtainTiles + 6 * TILE_SIZE_4BPP,
 			CURTAIN_TILE(7), DMA_COPY_WORDS(8), REG_DMA3);
 		view->secondMode = BATTLE_BACKGROUND_FIXED;
 		view->mode = BATTLE_BACKGROUND_FIXED;

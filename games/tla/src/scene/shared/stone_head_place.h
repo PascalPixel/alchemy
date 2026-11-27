@@ -3,7 +3,7 @@
 void scStoneHeadPlace(Sint32 id, Sint32 x, Sint32 y, Sint32 z)
 {
 	ACTOR		 *actor = fdActorGet(id);
-	MAP_METATILE *metatile = ((MAP_STATE *)Ram_HeapSlots->mapGrid)
+	MAP_METATILE *metatile = ((MAP_STATE *)RamHeapSlots->mapGrid)
 								 ->layers[MAPGRID_LAYER_OVERHEAD]
 								 .metatiles;
 	Sint32 metatileX = x / toFIXED(16);

@@ -32,7 +32,7 @@ UNUSED void scWorldMapSelectExitByX(
 
 	area = WorldMapPlacedActors[cue - STEP_CUE_AREA_BASE];
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(leader->x.fixed < area->x.fixed) {
 		state->exit = exitBefore;
 	} else {
@@ -50,7 +50,7 @@ void scWorldMapSelectExitByZ(Sint32 cue, Sint32 exitBefore, Sint32 exitAfter)
 
 	area = WorldMapPlacedActors[cue - STEP_CUE_AREA_BASE];
 	leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(leader->z.fixed < area->z.fixed) {
 		state->exit = exitBefore;
 	} else {
@@ -73,8 +73,8 @@ void scWorldMapUpdatePlacedActors(void)
 	Uint32				   i;
 	FIXED				   left, right, top, bottom;
 	ACTOR				 **slot;
-	FIELD_STATE			  *state = Ram_HeapSlots->fieldState;
-	MAP_STATE			  *map = Ram_HeapSlots->mapGrid;
+	FIELD_STATE			  *state = RamHeapSlots->fieldState;
+	MAP_STATE			  *map = RamHeapSlots->mapGrid;
 	ACTOR				  *actor = state->camera;
 
 	if(map->zoom <= toFIXED(1)) {
@@ -153,7 +153,7 @@ void scWorldMapUpdatePlacedActors(void)
    backgrounds lightened toward white. */
 UNUSED void scWorldMapQueueBlend(void)
 {
-	if(Ram_HeapSlots->actorSystem->suspended == 0) {
+	if(RamHeapSlots->actorSystem->suspended == 0) {
 		IO_WRITE_QUEUE_PUSH((Uint32)&REG_BLDCNT,
 			BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
 				BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
@@ -205,7 +205,7 @@ extern Sint32 WorldMapSparkScript[];
 extern Uint32 WorldMapParticleScript[];
 
 /* Spawns a pair of rising sparks at the actor, as The Broken Seal's
-   MercuryLighthouse_SpawnSparkPair does at a spawn point. */
+   MercuryLighthouseSpawnSparkPair does at a spawn point. */
 void scWorldMapSpawnSparkPair(ACTOR *actor)
 {
 	ACTOR	  *spark;

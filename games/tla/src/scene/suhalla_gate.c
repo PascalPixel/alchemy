@@ -2,14 +2,14 @@
    Idejima, while Alex holds back the soldiers behind them. Its three rooms
    share this overlay:
 
-   - The road past the gate (SceneId_SuhallaGateRoad), coming from the Venus
+   - The road past the gate (SceneIdSuhallaGateRoad), coming from the Venus
 	 Lighthouse in the east, where a Ruffian spots the two and fights them
 	 (scSuhallaGateRuffianSpotsParty), and a door in the rock at its west end
 	 leads on to the cliffs.
-   - The cliffs (SceneId_SuhallaGateAmbush), whose two vines lead down to the
+   - The cliffs (SceneIdSuhallaGateAmbush), whose two vines lead down to the
 	 crevice where three Ruffians wait in ambush
 	 (scSuhallaGateRuffiansAmbushParty).
-   - The cave beyond the crevice (SceneId_SuhallaGatePsynergyStone), where a
+   - The cave beyond the crevice (SceneIdSuhallaGatePsynergyStone), where a
 	 Punch Ant jumps out at the two on the way to the Psynergy Stone
 	 (scSuhallaGatePunchAntJumpsOut), and whose far end leads to Idejima.
 
@@ -214,7 +214,7 @@ Sint32 scInit(void)
 	FIELD_STATE *state;
 	Sint16		 scene;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 	scene = MainRoutineStateWork.next;
 	if(scene == SCENE_SUHALLA_GATE_ROAD)

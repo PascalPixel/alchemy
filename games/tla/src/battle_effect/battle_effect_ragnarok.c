@@ -57,9 +57,9 @@ void btEffectRunRagnarok(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	cells = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	cells = RamHeapSlots->battleSheet;
 
 	/* Open the canvas, pose the user and place the columns. */
 	user = btObjectGetStub(args->user)->obj;
@@ -293,7 +293,7 @@ void btEffectRunAcheronsGrief(BATTLE_EFFECT_PARM *args)
 
 /* The sword's sparks, in the map cell buffer after the dust (PARTICLES). */
 #define TITAN_BLADE_SWORD_SPARKS \
-	((PARTICLE *)(Ram_MapMetatileBuffer + TITAN_BLADE_DUST * sizeof(PARTICLE)))
+	((PARTICLE *)(RamMapMetatileBuffer + TITAN_BLADE_DUST * sizeof(PARTICLE)))
 
 #define TITAN_BLADE_TICKS 102
 #define TITAN_BLADE_SWORD_PICTURE \
@@ -343,9 +343,9 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	FIXED				 origin;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	cells = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	cells = RamHeapSlots->battleSheet;
 
 	/* Open the canvas on BG1 over the target and build the blitters. */
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
@@ -354,10 +354,10 @@ void btEffectRunFallingSword(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	centerX = tgt.x / 2;
 
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	/* No caller passes a third mode: both abilities draw the sword. */
 	if(mode != 2)

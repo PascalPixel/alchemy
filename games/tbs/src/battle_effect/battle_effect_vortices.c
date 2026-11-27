@@ -60,7 +60,7 @@ void btEffectRunFroth(BATTLE_EFFECT_PARM *args)
 	Sint8				*struck;
 
 	/* Nonzero once a bubble has struck. */
-	struck = (Sint8 *)Ram_MapGridMetatileBuffer;
+	struck = (Sint8 *)RamMapGridMetatileBuffer;
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	state->args = args;

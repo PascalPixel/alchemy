@@ -116,10 +116,10 @@ IwramSoundMixEntry:
 	lsrs	r1, r0, #4
 	add	r1, pc, #8
 	bx	r1
-AlchemyUncredited_sound_mixer_1:
+AlchemyUncreditedSoundMixer1:
 	.2byte	0x0000
 .L_audio_workspace_pointer:
-AlchemyUncreditedEnd_sound_mixer_1:
+AlchemyUncreditedEndSoundMixer1:
 	.4byte IwramSoundMixWorkspace
 
 	.global IwramSoundMixArm
@@ -198,56 +198,56 @@ IwramSoundMixArm:
 .L_audio_mix_four:
 	ldm	r5, {r0, r1, sl, lr}
 	mul	r9, r7, ip
-AlchemyUncredited_sound_mixer_2:
+AlchemyUncreditedSoundMixer2:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_2:
+AlchemyUncreditedEndSoundMixer2:
 	mlane	r0, fp, r9, r0
-AlchemyUncredited_sound_mixer_3:
+AlchemyUncreditedSoundMixer3:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_3:
+AlchemyUncreditedEndSoundMixer3:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_sound_mixer_4:
+AlchemyUncreditedSoundMixer4:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_4:
+AlchemyUncreditedEndSoundMixer4:
 	mlane	r1, fp, r9, r1
-AlchemyUncredited_sound_mixer_5:
+AlchemyUncreditedSoundMixer5:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_5:
+AlchemyUncreditedEndSoundMixer5:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_sound_mixer_6:
+AlchemyUncreditedSoundMixer6:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_6:
+AlchemyUncreditedEndSoundMixer6:
 	mlane	sl, fp, r9, sl
-AlchemyUncredited_sound_mixer_7:
+AlchemyUncreditedSoundMixer7:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_7:
+AlchemyUncreditedEndSoundMixer7:
 	bic	r7, r7, r2, asr #1
 	mulne	r9, r7, ip
-AlchemyUncredited_sound_mixer_8:
+AlchemyUncreditedSoundMixer8:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_8:
+AlchemyUncreditedEndSoundMixer8:
 	mlane	lr, fp, r9, lr
-AlchemyUncredited_sound_mixer_9:
+AlchemyUncreditedSoundMixer9:
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
 	.4byte 0xfedcba98
-AlchemyUncreditedEnd_sound_mixer_9:
+AlchemyUncreditedEndSoundMixer9:
 	bic	r7, r7, r2, asr #1
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0

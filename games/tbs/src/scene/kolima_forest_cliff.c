@@ -1,5 +1,5 @@
-/* Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five
-   scenes, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
+/* Kolima Forest (SceneIdKolimaForestCliff), the third of the forest's five
+   scenes, between SceneIdKolimaForestGlade and SceneIdKolimaForestFloodgate.
 
    It has three logs, rolled by walking into them. The one pushed west to the
    water's edge tips into the river and floats there, metatiles the party can
@@ -69,7 +69,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return KolimaForestCliffActorPlacements;
 }
 
-/* In Kolima Forest (SceneId_KolimaForestCliff), walking into a log rolls it
+/* In Kolima Forest (SceneIdKolimaForestCliff), walking into a log rolls it
    ahead until something stops it. */
 static void scKolimaForestCliffPushLog(void)
 {
@@ -146,8 +146,8 @@ SCENE_ENTRANCE KolimaForestCliffEntrances[] = {
 	{ SCENE_TABLE_END },
 };
 
-/* On into the forest (SceneId_KolimaForestFloodgate) and back */
-/* (SceneId_KolimaForestGlade). */
+/* On into the forest (SceneIdKolimaForestFloodgate) and back */
+/* (SceneIdKolimaForestGlade). */
 Uint32 KolimaForestCliffExits[] = {
 	SCENE_EXITS(KolimaForestCliff),
 	SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),

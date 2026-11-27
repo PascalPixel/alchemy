@@ -1,5 +1,5 @@
 /* Picture layouts, timing rows and handler entries for the battle effects. Each
-   table is read only by the part its prefix names, except the BattleEffect_
+   table is read only by the part its prefix names, except the BattleEffect
    tables, which many parts share. Picture offsets are byte offsets from the
    sprite sheet start, accumulated as width times height. */
 
@@ -922,7 +922,7 @@ Sint8 VineColumnOffsets[] = {
 Uint8 ThornKinds[] = {0, THORN_SMALL | THORN_MIRRORED, THORN_SMALL,
 	THORN_MIRRORED, THORN_SMALL, THORN_SMALL | THORN_MIRRORED, THORN_SMALL,
 	THORN_MIRRORED};
-Sint8 Thorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
+Sint8 ThornX[] = {24, 80, 24, 48, 88, 40, 8, 96};
 /* Thorns by variant. */
 Uint8 ThornCounts[] = {3, 5, 8};
 /* The seven pictures of a puff of dust. */

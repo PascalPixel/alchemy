@@ -7,7 +7,7 @@
    ticks apiece, shrinking as it goes. */
 void scParticleUpdateFalling(void)
 {
-	PARTICLE_STATE *state = Ram_HeapSlots->menuState;
+	PARTICLE_STATE *state = RamHeapSlots->menuState;
 	PARTICLE	   *particle = state->particles;
 	PARTICLE_SPR   *spr = state->sprs;
 	Sint32			i;

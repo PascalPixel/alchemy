@@ -76,11 +76,11 @@ extern Sint32 IzumoRoomsHeavingScript[];
 
 /* Whether the second dancer is clear of the spot the first steps to; the first
    dancer's script waits on it. */
-DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsFirstDancerClear, 10, toFIXED(148))
+DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRoomsIsFirstDancerClear, 10, toFIXED(148))
 
 /* Whether the first dancer is clear of the spot the second steps to; the second
    dancer's script waits on it. */
-DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRooms_IsSecondDancerClear, 9, toFIXED(132))
+DEFINE_IZUMO_ROOMS_IS_CLEAR(IzumoRoomsIsSecondDancerClear, 9, toFIXED(132))
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -288,7 +288,7 @@ void scIzumoRoomsReadPrayerForSusa(void)
    she says she can explore Mt. Mikage on her own with it. */
 void scIzumoRoomsTalkToUzume(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -1315,9 +1315,9 @@ void scIzumoRoomsShowMove(void)
 {
 	fdPsynergyLoadResources(ABILITY_MOVE, 1);
 	fdPsynergySetupActorPair(ACTOR_UZUME, -1);
-	((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->finishFunc =
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->finishFunc =
 		(void (*)(void))scIzumoRoomsFindNoMoveTarget;
-	((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->aimAhead = 1;
+	((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->aimAhead = 1;
 	fdPsynergyStartCast();
 	fdScriptWait(10);
 	fdPsynergyRunHandler(0);
@@ -1492,7 +1492,7 @@ Sint32 IzumoRoomsFirstDancerScript[] = {
 	SC_SET(SW_STEERING, 2),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_LABEL(1),
-	SC_CALL(IzumoRooms_IsFirstDancerClear),
+	SC_CALL(IzumoRoomsIsFirstDancerClear),
 	SC_MOVE(112, 0, 624),
 	SC_SYNC,
 	SC_MOVE(112, 0, 600),
@@ -1541,7 +1541,7 @@ Sint32 IzumoRoomsSecondDancerScript[] = {
 	SC_SET(SW_STEERING, 2),
 	SC_SET(SW_FACING, FACING_SOUTH),
 	SC_LABEL(1),
-	SC_CALL(IzumoRooms_IsSecondDancerClear),
+	SC_CALL(IzumoRoomsIsSecondDancerClear),
 	SC_MOVE(176, 0, 624),
 	SC_SYNC,
 	SC_MOVE(176, 0, 600),

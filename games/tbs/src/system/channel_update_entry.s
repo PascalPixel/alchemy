@@ -1,33 +1,33 @@
 @ Why assembly: MusicPlayer2000's shared call_r3 helper supplies the bx r3 hook entry.
 @ The mixer's VBlank setup transfers into a shared live-stack IWRAM mixer rather
 @ than returning through an ordinary call's stack frame.
-@ Mixer_Enter is Camelot's copy of SoundMain's entry
+@ MixerEnter is Camelot's copy of SoundMain's entry
 @ (games/common/sdk/sound/umul_high.s) for the VBlank handler: it neither
 @ raises the ident nor sets up the mixer's line limit, and it jumps to the
 @ game's own IWRAM mixer, IwramSoundMixEntry, instead of SoundMainRAM;
-@ Mixer_EnterCallViaR3 is its own call_r3.
+@ MixerEnterCallViaR3 is its own call_r3.
 .syntax unified
 .text
 	.thumb
-	.global Mixer_Enter
+	.global MixerEnter
 	.thumb_func
-Mixer_Enter:
+MixerEnter:
 	ldr	r0, [pc, #108]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #100]
 	ldr	r3, [r0, #0]
 	cmp	r2, r3
-	beq Mixer_Run
+	beq MixerRun
 	bx	lr
-	.global Mixer_EnterCallViaR3
+	.global MixerEnterCallViaR3
 	.thumb_func
-Mixer_EnterCallViaR3:
+MixerEnterCallViaR3:
 	bx	r3
 .syntax unified
 	.thumb
-	.global Mixer_Run
+	.global MixerRun
 	.thumb_func
-Mixer_Run:
+MixerRun:
 	push	{r5, r6, r7, lr}
 	mov	r1, r8
 	mov	r2, r9
@@ -39,11 +39,11 @@ Mixer_Run:
 	cmp	r3, #0
 	beq.n	.L0
 	ldr	r0, [r0, #36]
-	bl	Mixer_EnterCallViaR3
+	bl	MixerEnterCallViaR3
 	ldr	r0, [sp, #24]
 .L0:
 	ldr	r3, [r0, #40]
-	bl	Mixer_EnterCallViaR3
+	bl	MixerEnterCallViaR3
 	ldr	r0, [sp, #24]
 	ldr	r3, [r0, #16]
 	str	r3, [sp, #0]
@@ -70,8 +70,8 @@ Mixer_Run:
 	bx	r3
 	.4byte IwramSoundMixEntry
 	.4byte 0x00000350
-AlchemyUncredited_channel_update_entry_1:
+AlchemyUncreditedChannelUpdateEntry1:
 	.4byte 0x04000006
-AlchemyUncreditedEnd_channel_update_entry_1:
+AlchemyUncreditedEndChannelUpdateEntry1:
 	.4byte 0x68736d53
 	.4byte 0x03007ff0

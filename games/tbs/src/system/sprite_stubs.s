@@ -1,5 +1,5 @@
 @ Resource animation metadata lookup.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Resource
-Stubs_Resource:
+	.global StubsResource
+StubsResource:
 	stub syResourceGetMetadataRecordStub, syResourceGetMetadataRecord

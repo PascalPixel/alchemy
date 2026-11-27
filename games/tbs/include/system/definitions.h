@@ -402,7 +402,7 @@ typedef enum DISPLAY_CONTROL {
    system.h, so the prototypes are here with the constants they take. The BIOS
    CpuSet call (system/bios.s): copies or fills by halfwords or words, as the
    CPU_SET_ flags above the count say. */
-void Bios_CpuSet(const void *src, void *dst, Uint32 control);
+void BiosCpuSet(const void *src, void *dst, Uint32 control);
 /* The C library's signed division and remainder (system/iwram_entry.s), which
    `/` and `%` compile to; declared for the functions that call them by name. */
 Sint32 __divsi3(Sint32 numerator, Sint32 denominator);
@@ -810,7 +810,7 @@ typedef enum HEAP_SLOT {
 	/* Copied field row drawer or window tile decoder, released after each
 	   call. */
 	HEAP_SLOT_RAM_CODE_TEMP = 49,
-	/* The message decoder function (Text_DecodeSymbol), copied here to run for
+	/* The message decoder function (TextDecodeSymbol), copied here to run for
 	   the length of one message's decoding (mnMessageDecode), or of one
 	   mnMessageDecodeRaw call when the slot is empty. */
 	HEAP_SLOT_MESSAGE_DECODER = 50,
@@ -1085,20 +1085,20 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 
 /* The ram_buffer group. The buffers and IWRAM variables the code reaches at
    fixed addresses, and the state pointers of HeapSlots by name. The map and
-   decode buffers, from here to Ram_BgTileBuffer, follow the overlay area at
+   decode buffers, from here to RamBgTileBuffer, follow the overlay area at
    fixed addresses because code reaches across their boundaries by arithmetic:
-   the map grid's metatiles fill 64 KB from Ram_MapGridMetatileBuffer, through
+   the map grid's metatiles fill 64 KB from RamMapGridMetatileBuffer, through
    the sprite slots and the decode buffer. */
-#define Ram_MapGridMetatileBuffer \
+#define RamMapGridMetatileBuffer \
 	FIXED_ADDRESS((Uint8 *), 0x02010000, MapGridMetatileBuffer)
-#define Ram_DecodeBuffer  FIXED_ADDRESS((Uint8 *), 0x0201c000, DecodeBuffer)
-#define Ram_MetatileTiles FIXED_ADDRESS((Uint8 *), 0x02020000, MetatileTiles)
-#define Ram_MapGridShapes FIXED_ADDRESS((Uint8 *), 0x0202c000, MapGridShapes)
-#define Ram_BgTileBuffer  FIXED_ADDRESS((Uint8 *), 0x02038000, BgTileBuffer)
+#define RamDecodeBuffer	 FIXED_ADDRESS((Uint8 *), 0x0201c000, DecodeBuffer)
+#define RamMetatileTiles FIXED_ADDRESS((Uint8 *), 0x02020000, MetatileTiles)
+#define RamMapGridShapes FIXED_ADDRESS((Uint8 *), 0x0202c000, MapGridShapes)
+#define RamBgTileBuffer	 FIXED_ADDRESS((Uint8 *), 0x02038000, BgTileBuffer)
 
 /* The battle's enemy sprite slots, 16 KB each, inside the map grid's
    metatiles. */
-#define Ram_EnemySpriteSlots \
+#define RamEnemySpriteSlots \
 	FIXED_ADDRESS((Uint8 *), 0x02018000, ActorSpriteSlots)
 
 /* The end of the IWRAM heap, which the allocators test against, and the bottom
@@ -1108,18 +1108,18 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 
 /* The stack top sySynch() runs its ticks from: the 512 bytes below it are what
    the tick loop, its events and the VBlank work always have. */
-#define Ram_TickWaitStackTop \
+#define RamTickWaitStackTop \
 	FIXED_ADDRESS((Uint8 *), 0x03007a00, TickWaitStackTop)
 
 /* IWRAM variables the code reaches as constants; German moves them 16 bytes
    up. */
 #if IWRAM_LAYOUT_SHIFT
-#define Ram_BgScroll FIXED_ADDRESS((Uint8 *), 0x03001ae0, BgScrollWork)
-#define Ram_VramCacheEntries \
+#define RamBgScroll FIXED_ADDRESS((Uint8 *), 0x03001ae0, BgScrollWork)
+#define RamVramCacheEntries \
 	FIXED_ADDRESS((Uint8 *), 0x03001b20, VramCacheEntries)
 #else
-#define Ram_BgScroll FIXED_ADDRESS((Uint8 *), 0x03001ad0, BgScrollWork)
-#define Ram_VramCacheEntries \
+#define RamBgScroll FIXED_ADDRESS((Uint8 *), 0x03001ad0, BgScrollWork)
+#define RamVramCacheEntries \
 	FIXED_ADDRESS((Uint8 *), 0x03001b10, VramCacheEntries)
 #endif
 
@@ -1129,13 +1129,13 @@ STATIC_ASSERT(offsetof(PROJECTION, centerY) == 16);
 #define syRamFieldState		  ((void **)&HeapSlots[HEAP_SLOT_FIELD])
 #define syRamDispState		  ((void **)&HeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
 #define syRamActorEffectState ((void **)&HeapSlots[HEAP_SLOT_GROUND_MASK])
-#define Ram_BattleEntryTimer  ((void **)&HeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
+#define RamBattleEntryTimer	  ((void **)&HeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define syRamFieldEffectState ((void **)&HeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
 /* How many bytes FieldBlendStateWork's slot lies past FieldStateWork's in
    HeapSlots: the three slots from HEAP_SLOT_FIELD to HEAP_SLOT_FIELD_BLEND.
    Written as the number of bytes, three slots of four. */
-#define Ram_FieldBlendStateOffset \
+#define RamFieldBlendStateOffset \
 	FIXED_OFFSET(12, FieldBlendStateWork, FieldStateWork)
 
 /* The serial group. The link cable's runtime: serial packets, registers and
@@ -1339,7 +1339,7 @@ typedef enum VRAM_CACHE_LIMITS {
 
 /* The cache entries kept for one use each, loaded by number. */
 typedef enum VRAM_CACHE_FIXED_ENTRY {
-	/* The actors' shared shadow (Actor_ShadowTiles), each sprite animation's
+	/* The actors' shared shadow (ActorShadowTiles), each sprite animation's
 	   part 1 (fdActorSystemConfigure). */
 	VRAM_CACHE_ENTRY_ACTOR_SHADOW = 93,
 	/* The ground mask's solid tiles (fdEffectStartGroundMask). */

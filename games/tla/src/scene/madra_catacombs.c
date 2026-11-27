@@ -241,7 +241,7 @@ const CUE *scGetCues(void)
    won't budge. ...Must be locked." */
 void scMadraCatacombsTryLockedDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -492,7 +492,7 @@ void scMadraCatacombsOpenDoorAndEnter(
    visits. */
 void scMadraCatacombsFinishMovingVinePillar(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(state->movedBlock != 0)
 		scMadraCatacombsSettleVinePillar(state->movedBlock);
@@ -555,7 +555,7 @@ void scMadraCatacombsRockChestWithBookshelf(void)
    opening at (54, 18) leads into the Champa tunnel. */
 void scMadraCatacombsEnterDoor(void)
 {
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	ACTOR			   *actor;
 	Sint32				metatile;
@@ -586,7 +586,7 @@ void scMadraCatacombsEnterDoor(void)
 void scMadraCatacombsOpenDoorAndEnter(
 	Sint32 srcX, Sint32 srcZ, Sint32 x, Sint32 z, Sint32 width, Sint32 height)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Sint32		 metatile;
 

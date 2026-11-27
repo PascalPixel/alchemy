@@ -25,7 +25,7 @@ extern const Sint32 ActorDefaultScript[];
 extern const Uint8	WorldMapBattleEnvironments[];
 /* The size of fdRenderDecodePicture, copied to HEAP_SLOT_TICK_SCRATCH; an
    address equal to the size (ld_script.ld). */
-extern Uint8 Render_DecodePictureCodeSize[];
+extern Uint8 RenderDecodePictureCodeSize[];
 /* Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
    SPR_COL_MODE tables after SpriteColorTables' five, the first also remapping
    the command icons (fdSprColRemapPixels). */
@@ -66,10 +66,10 @@ extern Uint32		WorldMapGraphicsResources[][6];
    (fdEffectSetAttached, ATTACHED_EFFECT_ONCE). */
 extern const Sint32 ActorWaitScript[];
 /* The sparkles' 16 by 16 tiles, packed (fdEffectInitSparkles). */
-extern const Uint8 FieldEffect_SparkleTiles[];
+extern const Uint8 FieldEffectSparkleTiles[];
 extern const Uint8 FieldExamineCueMessageOffsets[];
 /* The motes of light's 16 by 16 tiles, packed (fdMotesStart). */
-extern const Uint8 FieldEffect_MoteTiles[];
+extern const Uint8 FieldEffectMoteTiles[];
 extern Sint32	   DjinnFiguresSpriteIds[];
 extern Sint32	   ShipRoomsShakeTimer;
 struct FLOODGATE_LOG;
@@ -94,7 +94,7 @@ typedef enum WORLD_MAP_LIGHTHOUSE {
 
 /* The race gauge's 16 colours, loaded as OBJ palette 14
    (scColossoDrawGauge). */
-extern Uint16 Colosso_GaugePalette[];
+extern Uint16 ColossoGaugePalette[];
 /* Ticks in a row the chase has found a suspect cornered; at
    LOG_ROOMS_A_CORNERED_TICKS the chase raises its script. */
 extern Uint16 LogRoomsACorneredTicks;
@@ -127,14 +127,14 @@ extern const Sint32 MovementTypeFaceLeaderScript[];
 extern const Sint32 ActorVariantScripts[];
 /* Lamakan Desert's heat gauge (scHeatGaugeStart and scHeatGaugeDraw). The
    gauge's tiles, packed (tagged LZ). */
-extern Uint8 HeatGauge_Tiles[];
+extern Uint8 HeatGaugeTiles[];
 /* The gauge's 16 colours, loaded as OBJ palette 14. */
-extern const Uint16 HeatGauge_Palette[16];
+extern const Uint16 HeatGaugePalette[16];
 /* The sprite picture decoder, ARM code run from a copy in
    HEAP_SLOT_TICK_SCRATCH. */
 extern Uint8 fdRenderDecodePicture[];
 /* The statue scene's three scrolling strips, packed (syDecompressByteLZ). */
-extern Uint8 SolSanctumStatue_SpriteRowsGraphics[];
+extern Uint8 SolSanctumStatueSpriteRowsGraphics[];
 /* The six large things' sprite animations, which pick their rectangles in
    PushedActorRectangles; each scene with them defines its own. */
 extern Uint32 PushedActorRectangleKinds[];
@@ -158,7 +158,7 @@ extern const Uint16 InputDpadAngles[];
 extern const Sint8	HaltFlickerColorModes[];
 /* The 32 by 16 spark of Avoid's falling arcs (arc_spark.png), 4 bits a pixel;
    fdPsynergyAvoid loads it. */
-extern const Uint8	FieldEffect_ArcSparkTiles[];
+extern const Uint8	FieldEffectArcSparkTiles[];
 extern const Sint32 GrowthLeafScript[];
 /* Waits to arrive, sets off fdEffectSpawnHeavyImpact and releases the actor:
    Force's fist as it lands. */
@@ -178,7 +178,7 @@ extern const Sint16 FieldEffectTargetRangeByMode[];
 extern const Sint32 FieldEffectUntargetedActorScript[];
 /* The 32 by 16 spark a field Psynergy's particles draw (spark.png), 4 bits a
    pixel; fdPsynergyLoadResources loads it. */
-extern const Uint8 FieldEffect_SparkTiles[];
+extern const Uint8 FieldEffectSparkTiles[];
 extern const Uint8 FieldEffectQuadrantModes[];
 /* The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field Psynergy
    fades the palettes toward, picked by the tick counter or by the
@@ -186,14 +186,14 @@ extern const Uint8 FieldEffectQuadrantModes[];
 extern const Sint32 FieldPsynergyCastColors[];
 extern const Sint16 WeatherRainSplashFrames[];
 /* The ground particles' 16 by 16 tiles, packed (syDecompressByteLZ). */
-extern const Uint8	Weather_ParticleTiles[];
+extern const Uint8	WeatherParticleTiles[];
 extern const Sint32 ItemDisplayPulseScript[];
 
 /* The first five 256-byte colour tables of SPR_COL_MODE, indexed by pixel. */
 extern const Uint8 SpriteColorTables[][256];
 /* The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
    93. */
-extern const Uint8 Actor_ShadowTiles[];
+extern const Uint8 ActorShadowTiles[];
 
 #include "graphics/render_placement.h"
 
@@ -311,15 +311,15 @@ typedef enum WORLD_MAP_COLLISION {
    the battle background fdBattleBackgroundSelectForEnvironment gives it. */
 typedef enum BATTLE_ENVIRONMENT {
 	BATTLE_ENVIRONMENT_NONE = 0,	  /* Sol Sanctum's background */
-	BATTLE_ENVIRONMENT_GRASSLAND = 1, /* ResourceId_GrasslandBackdrop */
-	/* ResourceId_ForestBackdrop; encounters take a region's forest zone. */
+	BATTLE_ENVIRONMENT_GRASSLAND = 1, /* ResourceIdGrasslandBackdrop */
+	/* ResourceIdForestBackdrop; encounters take a region's forest zone. */
 	BATTLE_ENVIRONMENT_FOREST = 2,
-	BATTLE_ENVIRONMENT_DESERT = 3,	  /* ResourceId_DesertBackdrop */
-	BATTLE_ENVIRONMENT_BEACH = 4,	  /* ResourceId_BeachBackdrop */
-	BATTLE_ENVIRONMENT_SNOWFIELD = 5, /* ResourceId_SnowfieldBackdrop */
-	/* ResourceId_SnowfieldBackdrop, for the snowfield's forest. */
+	BATTLE_ENVIRONMENT_DESERT = 3,	  /* ResourceIdDesertBackdrop */
+	BATTLE_ENVIRONMENT_BEACH = 4,	  /* ResourceIdBeachBackdrop */
+	BATTLE_ENVIRONMENT_SNOWFIELD = 5, /* ResourceIdSnowfieldBackdrop */
+	/* ResourceIdSnowfieldBackdrop, for the snowfield's forest. */
 	BATTLE_ENVIRONMENT_SNOW_FOREST = 6,
-	/* ResourceId_BeachBackdrop, for shallow water
+	/* ResourceIdBeachBackdrop, for shallow water
 	   (WORLD_MAP_COLLISION_SHALLOW_WATER). */
 	BATTLE_ENVIRONMENT_SHALLOWS = 7
 } BATTLE_ENVIRONMENT;

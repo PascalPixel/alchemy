@@ -21,10 +21,10 @@
    scanline at a time, but not while Reveal shows or a battle is due. */
 void fdLineScrollArmDMA(void)
 {
-	LINE_SCROLL_STATE *state = Ram_HeapSlots->lineScroll;
+	LINE_SCROLL_STATE *state = RamHeapSlots->lineScroll;
 	Uint32			  *line = (Uint32 *)state->rows[state->page];
 	volatile Uint32	  *dest = (volatile Uint32 *)&REG_BG1HOFS;
-	FIELD_STATE		  *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		  *event = RamHeapSlots->fieldState;
 	volatile Uint32	  *tgt;
 
 	if(event != NULL) {
@@ -60,7 +60,7 @@ void fdLineScrollArmDMA(void)
    phase following BG1's y, then shows that page. */
 void fdLineScrollBuildPage(void)
 {
-	LINE_SCROLL_STATE *state = Ram_HeapSlots->lineScroll;
+	LINE_SCROLL_STATE *state = RamHeapSlots->lineScroll;
 	Uint8			   mode = state->mode;
 	Sint32			   x1 = (Sint16)BgScrollWork[1].x;
 	Sint32			   y1 = (Sint16)BgScrollWork[1].y;
@@ -68,7 +68,7 @@ void fdLineScrollBuildPage(void)
 	Sint32			   y2 = (Sint16)BgScrollWork[2].y;
 	Sint32			   x3 = (Sint16)BgScrollWork[3].x;
 	Sint32			   y3 = (Sint16)BgScrollWork[3].y;
-	FIELD_STATE		  *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		  *event = RamHeapSlots->fieldState;
 	Uint16			  *row;
 	Sint32			   step;
 	Sint32			   phase;

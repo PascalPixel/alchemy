@@ -1,4 +1,4 @@
-/* Colosseum Final 1 (SceneId_ColosseumAzartMatch) is the site of the first
+/* Colosseum Final 1 (SceneIdColosseumAzartMatch) is the site of the first
    finals match, where Isaac races Azart through four stages to the arena and
    fights him there.
 

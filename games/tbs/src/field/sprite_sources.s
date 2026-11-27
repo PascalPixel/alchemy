@@ -5,13 +5,13 @@
 @ Each row: the resource and the sprite (SPR_ID, sprite_ids.h); sprite 0
 @ ends the table.
 	.macro sprite_source resource:req, sprite:req
-	.2byte ResourceId_\resource, \sprite
+	.2byte ResourceId\resource, \sprite
 	.endm
 
 	.section .rodata
 	.balign 4
-	.global SpritePictureCache_Sources
-SpritePictureCache_Sources:
+	.global SpritePictureCacheSources
+SpritePictureCacheSources:
 	sprite_source AxeGoblinSprites, SPRITE_BATTLE_TROLL
 	sprite_source GhoulSprites, SPRITE_BATTLE_ZOMBIE
 	sprite_source HarpySprites, SPRITE_BATTLE_HARPY

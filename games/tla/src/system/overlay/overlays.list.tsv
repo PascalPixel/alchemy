@@ -1,115 +1,115 @@
 file	name	ja	en	de	es	fr	it
-overlays/Title.lz	Overlay_Title	0001ff	0001ff	0001ff	0001ff	0001ff	0001ff
-overlays/Clear.lz	Overlay_Clear	0c2d	033a	41	41	3ab2	3ab2
-overlays/WorldMap.lz	Overlay_WorldMap		0b80	de0b80	dd03	0b80	0b80
-overlays/StaffCredit.lz	Overlay_StaffCredit	019d	ab3c	95e7	c3	559e	5ee5
-overlays/VenusLighthouseEntrance.lz	Overlay_VenusLighthouseEntrance	e54721	e54721	2f3f0a	2f3f0a	e54721	e54721
-overlays/VenusLighthouse.lz	Overlay_VenusLighthouse	8946	0a110a	0511fd		03
-overlays/SuhallaGate.lz	Overlay_SuhallaGate	31e0	0a314e		0a314e		314e
-overlays/Idejima.lz	Overlay_Idejima		91a489	8901
-overlays/Daila.lz	Overlay_Daila	7c02			11	11	11
-overlays/DailaRooms.lz	Overlay_DailaRooms	e39059		65	36ee8b	ee8b	36ee8b
-overlays/KandoreanTemple.lz	Overlay_KandoreanTemple		6f2142	42	7d09
-overlays/ShrineOfTheSeaGod.lz	Overlay_ShrineOfTheSeaGod	010a	5c2604		2604ab	04	2604ab
-overlays/DehkanPlateau.lz	Overlay_DehkanPlateau				68d015
-overlays/LemurianShip.lz	Overlay_LemurianShip	e7	7c52cc	7c52cc		e0	e0
-overlays/LemurianShipDeck.lz	Overlay_LemurianShipDeck	06d1	a005	15	15	1b15	1b15
-overlays/Madra.lz	Overlay_Madra	7901	06	08	510608	08	08
-overlays/MadraRooms.lz	Overlay_MadraRooms		1a	392409	1e3924	24de	24de
-overlays/MadraCatacombs.lz	Overlay_MadraCatacombs	84b1	e00528	e00528
-overlays/MadraDrawbridge.lz	Overlay_MadraDrawbridge	4be125	4be125	25	4be125	4be125	4be125
-overlays/OseniaCliffs.lz	Overlay_OseniaCliffs
-overlays/Mikasalla.lz	Overlay_Mikasalla	777b	7e777b		c445cf	b727	b727
-overlays/MikasallaRooms.lz	Overlay_MikasallaRooms	f4	7b05	c8	c903		7c3a79
-overlays/Garoh.lz	Overlay_Garoh	39	083639	2dd0	00f360	1e6c81	0fb640
-overlays/GarohRooms.lz	Overlay_GarohRooms	2c2229	2c22	13	bc11		11bc11
-overlays/YampiDesert.lz	Overlay_YampiDesert		a1e2		4a08e9	4a	e24a
-overlays/YampiDesertCave.lz	Overlay_YampiDesertCave		94abf3	2ff3		f3
-overlays/AirsRock.lz	Overlay_AirsRock			35d7a4		e69ab4
-overlays/AirsRockInside.lz	Overlay_AirsRockInside				0001a8		0001a8
-overlays/Alhafra.lz	Overlay_Alhafra	8fb0		f7cd	88003f	f6	f6
-overlays/AlhafraRooms.lz	Overlay_AlhafraRooms			e601	663133	e601
-overlays/AlhafraManor.lz	Overlay_AlhafraManor	040c	0cb6	7b040c	7b040c	040c	040c
-overlays/EasternAlhafra.lz	Overlay_EasternAlhafra	0f2d69					41
-overlays/EasternAlhafraShip.lz	Overlay_EasternAlhafraShip	e602f2	02f25b	e6
-overlays/AlhafranCave.lz	Overlay_AlhafranCave	08	234ead		4e2f4c	4e2f4c	2f4c
-overlays/GondowanCliffs.lz	Overlay_GondowanCliffs	06	06	0660		0660	60
-overlays/GondowanCliffsHideout.lz	Overlay_GondowanCliffsHideout	8c3735	8c3735	8c3735	8c3735	8c3735	8c3735
-overlays/Naribwe.lz	Overlay_Naribwe		80	bcd680	e0	e0	e0
-overlays/NaribweRooms.lz	Overlay_NaribweRooms		898d		1cda	da	1cda
-overlays/KibomboMountains.lz	Overlay_KibomboMountains	3c	96a43c	63	5892	1ee8	07
-overlays/Kibombo.lz	Overlay_Kibombo	86b42a	530461		20	66e8	e8
-overlays/GabombaStatue.lz	Overlay_GabombaStatue	9f			863cc0	0fb030	431e60
-overlays/GabombaStatueChamber.lz	Overlay_GabombaStatueChamber	76	44	c1d119	d119	d2	e88cc8
-overlays/GabombaCatacombs.lz	Overlay_GabombaCatacombs	93c1	11	e05411	11	113b	54113b
-overlays/Islets.lz	Overlay_Islets	11b404	0232ca	0464	b2b4		0232
-overlays/IsletCave.lz	Overlay_IsletCave	18aa80	43d05e	04	e543	2fce	2fce
-overlays/Yallam.lz	Overlay_Yallam	7fe3c0	ddf900	09			20baf3
-overlays/YallamRooms.lz	Overlay_YallamRooms	10
-overlays/TaopoSwamp.lz	Overlay_TaopoSwamp	21ff		43		43
-overlays/ApojiiIslands.lz	Overlay_ApojiiIslands	24a8	ce	8f07	ff73c6	c6
-overlays/ApojiiIslandsCave.lz	Overlay_ApojiiIslandsCave	02a6	02a6	02a6	02a6	02a6	02a6
-overlays/AquaRock.lz	Overlay_AquaRock	691035	114e76			92229c	92229c
-overlays/AquaRockInside.lz	Overlay_AquaRockInside	9b12	1895	89	11	44bc44	260e18
-overlays/IzumoRooms.lz	Overlay_IzumoRooms		422621	09	7464d5	7464d5	7464d5
-overlays/Izumo.lz	Overlay_Izumo	90b61e	33	a7cc33	a3d603	a7cc33	cc33
-overlays/IzumoRuins.lz	Overlay_IzumoRuins	8806	0c03	0388	060c03	0c03	0c03
-overlays/GaiaRock.lz	Overlay_GaiaRock	d15d	22		0073	73	73
-overlays/GaiaRockInside.lz	Overlay_GaiaRockInside	7d00	e63d49	31ef49	b0	a1	50
-overlays/Champa.lz	Overlay_Champa	60b0		05	80	a760	e2a760
-overlays/ChampaRooms.lz	Overlay_ChampaRooms		a8			a8	a8
-overlays/ChampaSanctum.lz	Overlay_ChampaSanctum	668c	668c	668c	668c	668c	668c
-overlays/ChampaCliffCaves.lz	Overlay_ChampaCliffCaves	073d72		dbec	2ade22	3a	3a
-overlays/AnkohlRuins.lz	Overlay_AnkohlRuins	0ab60a	30	73d5	ed
-overlays/SeaOfTime.lz	Overlay_SeaOfTime	c8	ef	a6ef	4ddf	a6ef	df
-overlays/LemuriaEntrance.lz	Overlay_LemuriaEntrance	106b	106b	106b	106b	106b	106b
-overlays/LemuriaDock.lz	Overlay_LemuriaDock		a303	3ae0	e0	3ae0	a303
-overlays/AncientLemuria.lz	Overlay_AncientLemuria			91	91	91	91
-overlays/Lemuria.lz	Overlay_Lemuria	400c	81e8	0c	811e	d5811e	d5811e
-overlays/LemuriaRooms.lz	Overlay_LemuriaRooms	c4d7	ae	7b8b7b	d7	bd	eb
-overlays/LemuriaPalace.lz	Overlay_LemuriaPalace	9ed1	db1b18	60c8	d5de30	0686	b537
-overlays/LemuriaSpring.lz	Overlay_LemuriaSpring		cb24		27b84c	27b84c	27b84c
-overlays/TundariaTower.lz	Overlay_TundariaTower	b9	f60083				0083
-overlays/Settlements.lz	Overlay_Settlements	88043f	8fc436		16	16
-overlays/MagmaRock.lz	Overlay_MagmaRock	48	4a				ae
-overlays/MagmaRockInside.lz	Overlay_MagmaRockInside	59	17	c0b9	591801	1170	38
-overlays/AttekaInlet.lz	Overlay_AttekaInlet	ad183a	5d	5d	e25d	5d	5d
-overlays/Contigo.lz	Overlay_Contigo	0881	bb80
-overlays/ShamanVillageCave.lz	Overlay_ShamanVillageCave	1d0620	20	201d	0620	062002	02
-overlays/ShamanVillage.lz	Overlay_ShamanVillage	9c	c4f2	0267	48	c0ef8c	c0
-overlays/TrialRoad.lz	Overlay_TrialRoad	cc		cc	0144cc	0144cc	cc
-overlays/JupiterLighthouseEntrance.lz	Overlay_JupiterLighthouseEntrance	50	50	80			a0
-overlays/JupiterLighthouseBasement.lz	Overlay_JupiterLighthouseBasement	68	68	fc2747	fc2747	e468	1a
-overlays/JupiterLighthouseRoomGateButton.lz	Overlay_JupiterLighthouseRoomGateButton			34	34
-overlays/JupiterLighthouseRoomBeam.lz	Overlay_JupiterLighthouseRoomBeam	ae0d63	ae0d63				da3096
-overlays/JupiterLighthouseRoomErinyesTunicChest.lz	Overlay_JupiterLighthouseRoomErinyesTunicChest	5a000c	6b0130	af05	af05	e1b500	5e0b80
-overlays/JupiterLighthouseRoomLockedDoors.lz	Overlay_JupiterLighthouseRoomLockedDoors	132b	2b	4eac08	b122	22dc	2b
-overlays/JupiterLighthouseRoomRedKey.lz	Overlay_JupiterLighthouseRoomRedKey	c6c94f	273f		f07b		c938f9
-overlays/JupiterLighthouseRoomCrackedFloor.lz	Overlay_JupiterLighthouseRoomCrackedFloor	8e02f9	85a340	b0	04fb		380ae4
-overlays/JupiterLighthouseWhorl.lz	Overlay_JupiterLighthouseWhorl			b8	652e
-overlays/JupiterLighthouseRoomBlueKey.lz	Overlay_JupiterLighthouseRoomBlueKey	5a791e	5a791e	f3e8ac	e7d159		5a791e
-overlays/JupiterLighthouseRoomPhaetonsBladeChest.lz	Overlay_JupiterLighthouseRoomPhaetonsBladeChest	1e20	1e20	78800c		3260	1e20
-overlays/JupiterLighthouseTerraces.lz	Overlay_JupiterLighthouseTerraces		d36590	7bba	7bba	604f97	7419
-overlays/JupiterLighthouseAerie.lz	Overlay_JupiterLighthouseAerie	056589	20240a	7b	d301f6		120889
-overlays/JupiterLighthouseAerieBeacon.lz	Overlay_JupiterLighthouseAerieBeacon	334362		201409	15	a642	622ad4
-overlays/Loho.lz	Overlay_Loho		eee7	e59101		c0	fd7c
-overlays/NorthernReaches.lz	Overlay_NorthernReaches	137713	b89be0	00f2		00f2	b89be0
-overlays/Prox.lz	Overlay_Prox	3464	df1c5b	7c2851	37abef	0b	0b
-overlays/Caverns.lz	Overlay_Caverns	330b01	688360	60	11	11	836011
-overlays/MarsLighthouseEntrance.lz	Overlay_MarsLighthouseEntrance	1481	e780		ac10e8	1d1e	fb39
-overlays/MarsLighthouseStarRoom.lz	Overlay_MarsLighthouseStarRoom	b830	ca90		90	920c57
-overlays/MarsLighthouseHall.lz	Overlay_MarsLighthouseHall		61	7a0e0e	38ac	7a0e	0e
-overlays/MarsLighthouseRoomF.lz	Overlay_MarsLighthouseRoomF		01ff00	ff00		01ff00	01ff00
-overlays/MarsLighthouseAerie.lz	Overlay_MarsLighthouseAerie	092330		346b	6b	6b	6b
-overlays/TreasureIsle.lz	Overlay_TreasureIsle	03		bc43ac	ac	ac
-overlays/AnemosInnerSanctum.lz	Overlay_AnemosInnerSanctum	c401	02	040102	020401	020401	01
-overlays/AnemosInnerSanctumEntrance.lz	Overlay_AnemosInnerSanctumEntrance			f421d8		f421d8	f421d8
-overlays/MercuryLighthouse.lz	Overlay_MercuryLighthouse	10		99	99	99	99
-overlays/Epilogue.lz	Overlay_Epilogue	14a6	4a4e	0c2c	45c9	45c9	45c9
-overlays/MtAlephSummit.lz	Overlay_MtAlephSummit	80	57	e204	9ce0	7de204	9ce0
-overlays/Lobby.lz	Overlay_Lobby	bfec7f	c783	07afff	e0f5bf	fd	afff
-overlays/TestScenes.lz	Overlay_TestScenes	7408	7408	7408	7408	7408	7408
-overlays/IconTest.lz	Overlay_IconTest	9b	099b	033b79	3b79	3b79
-overlays/PsynergyTest.lz	Overlay_PsynergyTest	121a28	9c0d	72	79ac		2cf3
-overlays/PsynergyTest2.lz	Overlay_PsynergyTest2	2f2c	2c82	8545	8545	4570	4570
-overlays/ShopTest.lz	Overlay_ShopTest	2c81	4203	27		1a00	002134
+overlays/Title.lz	OverlayTitle	0001ff	0001ff	0001ff	0001ff	0001ff	0001ff
+overlays/Clear.lz	OverlayClear	0c2d	033a	41	41	3ab2	3ab2
+overlays/WorldMap.lz	OverlayWorldMap		0b80	de0b80	dd03	0b80	0b80
+overlays/StaffCredit.lz	OverlayStaffCredit	019d	ab3c	95e7	c3	559e	5ee5
+overlays/VenusLighthouseEntrance.lz	OverlayVenusLighthouseEntrance	e54721	e54721	2f3f0a	2f3f0a	e54721	e54721
+overlays/VenusLighthouse.lz	OverlayVenusLighthouse	8946	0a110a	0511fd		03
+overlays/SuhallaGate.lz	OverlaySuhallaGate	31e0	0a314e		0a314e		314e
+overlays/Idejima.lz	OverlayIdejima		91a489	8901
+overlays/Daila.lz	OverlayDaila	7c02			11	11	11
+overlays/DailaRooms.lz	OverlayDailaRooms	e39059		65	36ee8b	ee8b	36ee8b
+overlays/KandoreanTemple.lz	OverlayKandoreanTemple		6f2142	42	7d09
+overlays/ShrineOfTheSeaGod.lz	OverlayShrineOfTheSeaGod	010a	5c2604		2604ab	04	2604ab
+overlays/DehkanPlateau.lz	OverlayDehkanPlateau				68d015
+overlays/LemurianShip.lz	OverlayLemurianShip	e7	7c52cc	7c52cc		e0	e0
+overlays/LemurianShipDeck.lz	OverlayLemurianShipDeck	06d1	a005	15	15	1b15	1b15
+overlays/Madra.lz	OverlayMadra	7901	06	08	510608	08	08
+overlays/MadraRooms.lz	OverlayMadraRooms		1a	392409	1e3924	24de	24de
+overlays/MadraCatacombs.lz	OverlayMadraCatacombs	84b1	e00528	e00528
+overlays/MadraDrawbridge.lz	OverlayMadraDrawbridge	4be125	4be125	25	4be125	4be125	4be125
+overlays/OseniaCliffs.lz	OverlayOseniaCliffs
+overlays/Mikasalla.lz	OverlayMikasalla	777b	7e777b		c445cf	b727	b727
+overlays/MikasallaRooms.lz	OverlayMikasallaRooms	f4	7b05	c8	c903		7c3a79
+overlays/Garoh.lz	OverlayGaroh	39	083639	2dd0	00f360	1e6c81	0fb640
+overlays/GarohRooms.lz	OverlayGarohRooms	2c2229	2c22	13	bc11		11bc11
+overlays/YampiDesert.lz	OverlayYampiDesert		a1e2		4a08e9	4a	e24a
+overlays/YampiDesertCave.lz	OverlayYampiDesertCave		94abf3	2ff3		f3
+overlays/AirsRock.lz	OverlayAirsRock			35d7a4		e69ab4
+overlays/AirsRockInside.lz	OverlayAirsRockInside				0001a8		0001a8
+overlays/Alhafra.lz	OverlayAlhafra	8fb0		f7cd	88003f	f6	f6
+overlays/AlhafraRooms.lz	OverlayAlhafraRooms			e601	663133	e601
+overlays/AlhafraManor.lz	OverlayAlhafraManor	040c	0cb6	7b040c	7b040c	040c	040c
+overlays/EasternAlhafra.lz	OverlayEasternAlhafra	0f2d69					41
+overlays/EasternAlhafraShip.lz	OverlayEasternAlhafraShip	e602f2	02f25b	e6
+overlays/AlhafranCave.lz	OverlayAlhafranCave	08	234ead		4e2f4c	4e2f4c	2f4c
+overlays/GondowanCliffs.lz	OverlayGondowanCliffs	06	06	0660		0660	60
+overlays/GondowanCliffsHideout.lz	OverlayGondowanCliffsHideout	8c3735	8c3735	8c3735	8c3735	8c3735	8c3735
+overlays/Naribwe.lz	OverlayNaribwe		80	bcd680	e0	e0	e0
+overlays/NaribweRooms.lz	OverlayNaribweRooms		898d		1cda	da	1cda
+overlays/KibomboMountains.lz	OverlayKibomboMountains	3c	96a43c	63	5892	1ee8	07
+overlays/Kibombo.lz	OverlayKibombo	86b42a	530461		20	66e8	e8
+overlays/GabombaStatue.lz	OverlayGabombaStatue	9f			863cc0	0fb030	431e60
+overlays/GabombaStatueChamber.lz	OverlayGabombaStatueChamber	76	44	c1d119	d119	d2	e88cc8
+overlays/GabombaCatacombs.lz	OverlayGabombaCatacombs	93c1	11	e05411	11	113b	54113b
+overlays/Islets.lz	OverlayIslets	11b404	0232ca	0464	b2b4		0232
+overlays/IsletCave.lz	OverlayIsletCave	18aa80	43d05e	04	e543	2fce	2fce
+overlays/Yallam.lz	OverlayYallam	7fe3c0	ddf900	09			20baf3
+overlays/YallamRooms.lz	OverlayYallamRooms	10
+overlays/TaopoSwamp.lz	OverlayTaopoSwamp	21ff		43		43
+overlays/ApojiiIslands.lz	OverlayApojiiIslands	24a8	ce	8f07	ff73c6	c6
+overlays/ApojiiIslandsCave.lz	OverlayApojiiIslandsCave	02a6	02a6	02a6	02a6	02a6	02a6
+overlays/AquaRock.lz	OverlayAquaRock	691035	114e76			92229c	92229c
+overlays/AquaRockInside.lz	OverlayAquaRockInside	9b12	1895	89	11	44bc44	260e18
+overlays/IzumoRooms.lz	OverlayIzumoRooms		422621	09	7464d5	7464d5	7464d5
+overlays/Izumo.lz	OverlayIzumo	90b61e	33	a7cc33	a3d603	a7cc33	cc33
+overlays/IzumoRuins.lz	OverlayIzumoRuins	8806	0c03	0388	060c03	0c03	0c03
+overlays/GaiaRock.lz	OverlayGaiaRock	d15d	22		0073	73	73
+overlays/GaiaRockInside.lz	OverlayGaiaRockInside	7d00	e63d49	31ef49	b0	a1	50
+overlays/Champa.lz	OverlayChampa	60b0		05	80	a760	e2a760
+overlays/ChampaRooms.lz	OverlayChampaRooms		a8			a8	a8
+overlays/ChampaSanctum.lz	OverlayChampaSanctum	668c	668c	668c	668c	668c	668c
+overlays/ChampaCliffCaves.lz	OverlayChampaCliffCaves	073d72		dbec	2ade22	3a	3a
+overlays/AnkohlRuins.lz	OverlayAnkohlRuins	0ab60a	30	73d5	ed
+overlays/SeaOfTime.lz	OverlaySeaOfTime	c8	ef	a6ef	4ddf	a6ef	df
+overlays/LemuriaEntrance.lz	OverlayLemuriaEntrance	106b	106b	106b	106b	106b	106b
+overlays/LemuriaDock.lz	OverlayLemuriaDock		a303	3ae0	e0	3ae0	a303
+overlays/AncientLemuria.lz	OverlayAncientLemuria			91	91	91	91
+overlays/Lemuria.lz	OverlayLemuria	400c	81e8	0c	811e	d5811e	d5811e
+overlays/LemuriaRooms.lz	OverlayLemuriaRooms	c4d7	ae	7b8b7b	d7	bd	eb
+overlays/LemuriaPalace.lz	OverlayLemuriaPalace	9ed1	db1b18	60c8	d5de30	0686	b537
+overlays/LemuriaSpring.lz	OverlayLemuriaSpring		cb24		27b84c	27b84c	27b84c
+overlays/TundariaTower.lz	OverlayTundariaTower	b9	f60083				0083
+overlays/Settlements.lz	OverlaySettlements	88043f	8fc436		16	16
+overlays/MagmaRock.lz	OverlayMagmaRock	48	4a				ae
+overlays/MagmaRockInside.lz	OverlayMagmaRockInside	59	17	c0b9	591801	1170	38
+overlays/AttekaInlet.lz	OverlayAttekaInlet	ad183a	5d	5d	e25d	5d	5d
+overlays/Contigo.lz	OverlayContigo	0881	bb80
+overlays/ShamanVillageCave.lz	OverlayShamanVillageCave	1d0620	20	201d	0620	062002	02
+overlays/ShamanVillage.lz	OverlayShamanVillage	9c	c4f2	0267	48	c0ef8c	c0
+overlays/TrialRoad.lz	OverlayTrialRoad	cc		cc	0144cc	0144cc	cc
+overlays/JupiterLighthouseEntrance.lz	OverlayJupiterLighthouseEntrance	50	50	80			a0
+overlays/JupiterLighthouseBasement.lz	OverlayJupiterLighthouseBasement	68	68	fc2747	fc2747	e468	1a
+overlays/JupiterLighthouseRoomGateButton.lz	OverlayJupiterLighthouseRoomGateButton			34	34
+overlays/JupiterLighthouseRoomBeam.lz	OverlayJupiterLighthouseRoomBeam	ae0d63	ae0d63				da3096
+overlays/JupiterLighthouseRoomErinyesTunicChest.lz	OverlayJupiterLighthouseRoomErinyesTunicChest	5a000c	6b0130	af05	af05	e1b500	5e0b80
+overlays/JupiterLighthouseRoomLockedDoors.lz	OverlayJupiterLighthouseRoomLockedDoors	132b	2b	4eac08	b122	22dc	2b
+overlays/JupiterLighthouseRoomRedKey.lz	OverlayJupiterLighthouseRoomRedKey	c6c94f	273f		f07b		c938f9
+overlays/JupiterLighthouseRoomCrackedFloor.lz	OverlayJupiterLighthouseRoomCrackedFloor	8e02f9	85a340	b0	04fb		380ae4
+overlays/JupiterLighthouseWhorl.lz	OverlayJupiterLighthouseWhorl			b8	652e
+overlays/JupiterLighthouseRoomBlueKey.lz	OverlayJupiterLighthouseRoomBlueKey	5a791e	5a791e	f3e8ac	e7d159		5a791e
+overlays/JupiterLighthouseRoomPhaetonsBladeChest.lz	OverlayJupiterLighthouseRoomPhaetonsBladeChest	1e20	1e20	78800c		3260	1e20
+overlays/JupiterLighthouseTerraces.lz	OverlayJupiterLighthouseTerraces		d36590	7bba	7bba	604f97	7419
+overlays/JupiterLighthouseAerie.lz	OverlayJupiterLighthouseAerie	056589	20240a	7b	d301f6		120889
+overlays/JupiterLighthouseAerieBeacon.lz	OverlayJupiterLighthouseAerieBeacon	334362		201409	15	a642	622ad4
+overlays/Loho.lz	OverlayLoho		eee7	e59101		c0	fd7c
+overlays/NorthernReaches.lz	OverlayNorthernReaches	137713	b89be0	00f2		00f2	b89be0
+overlays/Prox.lz	OverlayProx	3464	df1c5b	7c2851	37abef	0b	0b
+overlays/Caverns.lz	OverlayCaverns	330b01	688360	60	11	11	836011
+overlays/MarsLighthouseEntrance.lz	OverlayMarsLighthouseEntrance	1481	e780		ac10e8	1d1e	fb39
+overlays/MarsLighthouseStarRoom.lz	OverlayMarsLighthouseStarRoom	b830	ca90		90	920c57
+overlays/MarsLighthouseHall.lz	OverlayMarsLighthouseHall		61	7a0e0e	38ac	7a0e	0e
+overlays/MarsLighthouseRoomF.lz	OverlayMarsLighthouseRoomF		01ff00	ff00		01ff00	01ff00
+overlays/MarsLighthouseAerie.lz	OverlayMarsLighthouseAerie	092330		346b	6b	6b	6b
+overlays/TreasureIsle.lz	OverlayTreasureIsle	03		bc43ac	ac	ac
+overlays/AnemosInnerSanctum.lz	OverlayAnemosInnerSanctum	c401	02	040102	020401	020401	01
+overlays/AnemosInnerSanctumEntrance.lz	OverlayAnemosInnerSanctumEntrance			f421d8		f421d8	f421d8
+overlays/MercuryLighthouse.lz	OverlayMercuryLighthouse	10		99	99	99	99
+overlays/Epilogue.lz	OverlayEpilogue	14a6	4a4e	0c2c	45c9	45c9	45c9
+overlays/MtAlephSummit.lz	OverlayMtAlephSummit	80	57	e204	9ce0	7de204	9ce0
+overlays/Lobby.lz	OverlayLobby	bfec7f	c783	07afff	e0f5bf	fd	afff
+overlays/TestScenes.lz	OverlayTestScenes	7408	7408	7408	7408	7408	7408
+overlays/IconTest.lz	OverlayIconTest	9b	099b	033b79	3b79	3b79
+overlays/PsynergyTest.lz	OverlayPsynergyTest	121a28	9c0d	72	79ac		2cf3
+overlays/PsynergyTest2.lz	OverlayPsynergyTest2	2f2c	2c82	8545	8545	4570	4570
+overlays/ShopTest.lz	OverlayShopTest	2c81	4203	27		1a00	002134

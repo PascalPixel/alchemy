@@ -53,14 +53,14 @@ void btEffectRunHeavyBlow(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32		   i;
 	Sint32		   k;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = BLEND_ALPHA(16, 4);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	caster = btObjectGetStub(args->user)->obj;
 	if(mode == HEAVY_BLOW_HEAVY_DIVIDE) {
@@ -329,8 +329,8 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(RESOURCE_CREST_SHEET, state->sheet, 0, 0);
@@ -380,10 +380,10 @@ void btEffectRunCool(BATTLE_EFFECT_PARM *args)
 					mode = BLITTER_ADDITIVE;
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 					COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
-				draw[0] = Ram_HeapSlots->ramCode;
+				draw[0] = RamHeapSlots->ramCode;
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-				draw[1] = Ram_HeapSlots->ramCodePaired;
+				draw[1] = RamHeapSlots->ramCodePaired;
 
 				for(i = 0; i != args->variant * 3 + 4; i++) {
 					Sint32 age = frm - CoolColumnStarts[i];
@@ -533,9 +533,9 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 	Sint32				 size;
 	Sint32				 width = WYRD_CURSE_GLOW_SIZE;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	REG_BLDCNT = 0;
@@ -546,7 +546,7 @@ void btEffectRunWyrdCurse(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	/* DEAD: set again before the transfer starts; the ROM keeps the two
 	   stores. */
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -812,8 +812,8 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 	Sint32				 cells;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -824,7 +824,7 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 		SHEET_PALETTE_BYTES);
 	EFFECT_START_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	ofs = 0;
 	savedYaw = camera->yaw;
 	size = 2;
@@ -832,7 +832,7 @@ void btEffectRunRadiantFire(BATTLE_EFFECT_PARM *args)
 
 	/* The discs are drawn a little over full strength, so that the middle of
 	   each burns at the brightest level. */
-	cells = (Sint32)Ram_MapMetatileBuffer;
+	cells = (Sint32)RamMapMetatileBuffer;
 	discs = (Sint16 *)state->sheet;
 	for(i = 0; i != RADIANT_FIRE_DISCS; i++) {
 		btEffectDrawShadedCircles(
@@ -997,13 +997,13 @@ void btEffectRunHurricane(BATTLE_EFFECT_PARM *args)
 	Sint32		   frm;
 	Sint32		   i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	syWordsCopyEntry((void *)BG_PLTT,
 		syResourceGetTableEntry(RESOURCE_CYAN_PALETTE), SHEET_PALETTE_BYTES);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);

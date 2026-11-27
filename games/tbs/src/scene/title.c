@@ -1,4 +1,4 @@
-/* The Title (SceneId_Title): the screens between scenes that are not on a map,
+/* The Title (SceneIdTitle): the screens between scenes that are not on a map,
    chosen by entrance.
 
    - TITLE_AFTER_RUN, at power-on: the publisher's and Camelot's logos and the
@@ -328,8 +328,8 @@ static void scTitleLoadBackground(void)
 	syDMAXCopy(encodedGraphics, (void *)BG_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
 	encodedGraphics += LOGO_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ(encodedGraphics, Ram_MapGridMetatileBuffer);
-	syDMAXCopy((void *)Ram_MapGridMetatileBuffer, LOGO_TILES,
+	syFieldDecompressTaggedLZ(encodedGraphics, RamMapGridMetatileBuffer);
+	syDMAXCopy((void *)RamMapGridMetatileBuffer, LOGO_TILES,
 		DMA_COPY_WORDS(9600), REG_DMA3);
 	tilemap = LOGO_MAP;
 	tileIdx = LOGO_FIRST_TILE;

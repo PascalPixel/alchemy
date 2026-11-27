@@ -252,10 +252,10 @@ typedef struct {
 } BATTLE_EFFECT_INDEX_WINDOW;
 
 /* The map cell buffer (MapGridMetatileBuffer), which the effects borrow, has
-   two views here: Ram_MapGridMetatileBuffer as bytes, at its fixed address, and
+   two views here: RamMapGridMetatileBuffer as bytes, at its fixed address, and
    PARTICLES as particles. The effects use these two, not MapGridMetatileBuffer
    itself. */
-#define PARTICLES			((PARTICLE *)Ram_MapGridMetatileBuffer)
+#define PARTICLES			((PARTICLE *)RamMapGridMetatileBuffer)
 /* The particles PARTICLES holds. */
 #define PARTICLE_POOL_COUNT 1024
 

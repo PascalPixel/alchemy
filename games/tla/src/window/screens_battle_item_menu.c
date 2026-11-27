@@ -77,7 +77,7 @@ Sint32 mnBattleItemMenuRun(Sint32 member, Uint16 *entries, Sint32 cnt)
 	Sint32			   iconSlots[BATTLE_LIST_ROWS];
 	MENU_SPR		   sprs[BATTLE_LIST_ROWS];
 
-	state = Ram_HeapSlots->winState;
+	state = RamHeapSlots->winState;
 	drawnFirstEntry = -1;
 	drawnRow = -1;
 	cursorHandle = syVRAMCacheAllocEntry(128);

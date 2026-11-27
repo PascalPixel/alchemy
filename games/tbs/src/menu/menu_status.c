@@ -2226,7 +2226,7 @@ void mnStatScreenHideStatIcons(void)
 }
 
 /* Loads each enabled status's icon into its sprite's tile slot: kind is the
-   icon's number in Icon_MiscIconPointers, which the battle Status screen shows
+   icon's number in IconMiscIconPointers, which the battle Status screen shows
    for the same status. */
 Sint32 mnStatScreenLoadStatIcons(const Uint8 *enabled)
 {

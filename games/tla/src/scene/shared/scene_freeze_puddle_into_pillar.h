@@ -3,7 +3,7 @@
    longer drawn underfoot. */
 void scFreezePuddleIntoPillar(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*pillar;
 	Sint32		 flg;
 

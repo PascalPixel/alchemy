@@ -55,7 +55,7 @@ typedef enum SAND_END {
    climbable metatile or faces one that is not. */
 void fdPsynergyWatchSandGround(void)
 {
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 	ACTOR			   *actor = fdActorLookup(party->leaderActorId);
 	Sint32				reason = SAND_GOES_ON;
@@ -103,12 +103,12 @@ typedef void (*PICTURE_DECODER)(
 	const void *source, void *destination, Sint32 mode);
 
 /* The ARM picture decoder fdPsynergyDecodePicture copies into RAM. */
-extern const Uint8 BattleEffect_DecodePictureCode[];
+extern const Uint8 BattleEffectDecodePictureCode[];
 /* The end of the part of the decoder that is copied. */
-extern const Uint8 BattleEffect_DecodePictureCopyEnd[];
+extern const Uint8 BattleEffectDecodePictureCopyEnd[];
 /* The decoder with its tables and its state (ld_script.ld). The block is larger
    than the copy, which stops before the state. */
-extern Uint8 BattleEffect_DecodePictureBlockSize[];
+extern Uint8 BattleEffectDecodePictureBlockSize[];
 
 /* Draws the current picture into a cleared buffer of the given size. The ARM
    picture decoder runs from RAM: when no copy is loaded yet, this loads one for
@@ -116,17 +116,17 @@ extern Uint8 BattleEffect_DecodePictureBlockSize[];
 void fdPsynergyDecodePicture(PICTURE_SOURCE *src, void *buf, Sint32 size)
 {
 	Sint32			decoderLoaded = 1;
-	PICTURE_DECODER decode = Ram_HeapSlots->frmScratch;
+	PICTURE_DECODER decode = RamHeapSlots->frmScratch;
 
 	if(decode == NULL) {
-		syDMAXCopy(BattleEffect_DecodePictureCode,
+		syDMAXCopy(BattleEffectDecodePictureCode,
 			syHeapSlotAlloc(HEAP_SLOT_TICK_SCRATCH,
-				(Sint32)BattleEffect_DecodePictureBlockSize),
-			DMA_COPY_WORDS((Uint32)(BattleEffect_DecodePictureCopyEnd -
-							   BattleEffect_DecodePictureCode) >>
+				(Sint32)BattleEffectDecodePictureBlockSize),
+			DMA_COPY_WORDS((Uint32)(BattleEffectDecodePictureCopyEnd -
+							   BattleEffectDecodePictureCode) >>
 				2),
 			REG_DMA3);
-		decode = Ram_HeapSlots->frmScratch;
+		decode = RamHeapSlots->frmScratch;
 		decoderLoaded = 0;
 	}
 
@@ -184,8 +184,8 @@ void fdPictureSinkColumnsByWave(Uint8 *src, Uint8 *dst, Sint32 phase)
    priority, scale (three quarters on the world map) and place. */
 void fdSandInitLeaderSpr(EFFECT_SPR *spr, Sint32 tiles)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *field = RamHeapSlots->fieldState;
 	FIXED				pos[3];
 
 	fdEffectSprInit(spr, 16, 30, OBJ_SIZE_32X32, tiles);
@@ -221,7 +221,7 @@ void fdSandSpawnGrain(EFFECT_SPR *spr, FIELD_PSYNERGY_PARTICLE *particle,
 	Sint32 unused, Sint32 tiles, Sint32 high)
 {
 	ACTOR *mainActor =
-		((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->caster;
+		((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
 	FIXED pos[3];
 	FIXED y;
 
@@ -299,8 +299,8 @@ void fdPsynergyEndSand(void)
 {
 	SAND_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(SAND_STATE));
-	FIELD_EFFECT_STATE		*effect = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*effect = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	Sint32					 pictureEntry;
 	ACTOR					*owner = effect->caster;
 	Sint32					 particleEntry;
@@ -369,7 +369,7 @@ void fdPsynergyEndSand(void)
 				state->picture, state->sunken, SAND_RISE_PHASE - frm * 3 / 2);
 			pictureOfs = spr * TILE_SIZE_4BPP;
 			((void (*)(void *, Sint32, Sint32,
-				void *))Ram_HeapSlots->pictureUploader)(state->sunken,
+				void *))RamHeapSlots->pictureUploader)(state->sunken,
 				SAND_PICTURE_SIZE, SAND_PICTURE_SIZE,
 				(Uint8 *)OBJ_VRAM0 + pictureOfs);
 			fdSandDrawLeaderSpr(&state->leader);
@@ -426,8 +426,8 @@ void fdPsynergySand(void)
 {
 	SAND_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(SAND_STATE));
-	FIELD_EFFECT_STATE		*effect = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE				*field = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*effect = RamHeapSlots->fieldEffState;
+	FIELD_STATE				*field = RamHeapSlots->fieldState;
 	ACTOR					*owner;
 	Sint32					 pictureEntry;
 	Sint32					 particleEntry;
@@ -499,7 +499,7 @@ void fdPsynergySand(void)
 			fdPictureSinkColumnsByWave(
 				state->picture, state->sunken, frm * 3 / 2);
 			((void (*)(void *, Sint32, Sint32,
-				void *))Ram_HeapSlots->pictureUploader)(state->sunken,
+				void *))RamHeapSlots->pictureUploader)(state->sunken,
 				SAND_PICTURE_SIZE, SAND_PICTURE_SIZE,
 				(Uint8 *)OBJ_VRAM0 + pictureTiles * TILE_SIZE_4BPP);
 			fdSandDrawLeaderSpr(&state->leader);

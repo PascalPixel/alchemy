@@ -5,7 +5,7 @@
    ends off screen or at a wall. */
 void scWhirlwindUpdate(ACTOR *self)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	FIXED		 pos[3];
 	FIXED		 distance;

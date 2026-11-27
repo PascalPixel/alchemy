@@ -189,7 +189,7 @@ void mnItemMenuPlaceIcon(
 void mnWindowSetBounds(
 	WINDOW *win, Sint32 x, Sint32 y, Sint32 width, Sint32 height);
 
-/* The item menu's state, Ram_HeapSlots->menuState (HEAP_SLOT_MENU): its
+/* The item menu's state, RamHeapSlots->menuState (HEAP_SLOT_MENU): its
    windows, the party figures, the items listed and the two choices a command
    makes. The Broken Seal's ITEM_MENU_STATE, whose names its members take: from
    itemWindow to the entry icons it lies 4 bytes further on than The Broken
@@ -513,7 +513,7 @@ void mnFreeArrows(void);
 /* One 4-bit tile (class_change_arrow.4bpp) the Djinn menus copy into the
    backdrop's frame; the Djinn preview blinks it, drawing it and a fill of the
    window background in turn every four ticks. */
-extern Uint8 Menu_BackdropBorderTile[];
+extern Uint8 MenuBackdropBorderTile[];
 void		 mnWindowSprPrepareForRedrawStub(Sint32 win);
 Sint32		 mnMessageAllTypedStub(void);
 /* The draw slot of the party and Djinn figures the menus place, among the

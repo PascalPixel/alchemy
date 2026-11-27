@@ -4,8 +4,8 @@
 	.include "games/tla/include/edition.inc"
 	.section .rodata
 	.arm
-	.global Rom_Start
-Rom_Start:
+	.global RomStart
+RomStart:
 	b	Entry				@ Entry.
 	.space	156				@ The cartridge logo (written by gbafix).
 	.ifdef TLA_EDITION_JA
@@ -14,8 +14,8 @@ Rom_Start:
 	.ascii	"GOLDEN_SUN_B"
 	.endif
 	.ascii	"AGF"				@ Game code.
-	.global Rom_LanguageCode
-Rom_LanguageCode:
+	.global RomLanguageCode
+RomLanguageCode:
 	.ifdef TLA_EDITION_JA
 	.ascii	"J"
 	.endif

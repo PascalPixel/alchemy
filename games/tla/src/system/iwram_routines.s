@@ -53,10 +53,10 @@
 	.global syIWRAMMulFX
 syIWRAMMulFX:
 	bx	pc
-AlchemyUncredited_080007d6:
+AlchemyUncredited080007d6:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080007d6:
+AlchemyUncreditedEnd080007d6:
 	smull	r2, r0, r1, r0
 	lsl	r0, r0, #16
 	orr	r0, r0, r2, lsr #16
@@ -69,10 +69,10 @@ AlchemyUncreditedEnd_080007d6:
 	.global syIWRAMDivFX
 syIWRAMDivFX:
 	bx	pc
-AlchemyUncredited_080007ea:
+AlchemyUncredited080007ea:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080007ea:
+AlchemyUncreditedEnd080007ea:
 	push	{r1, lr}
 	mov	r1, r0
 	mov	r0, #0x40000000
@@ -91,10 +91,10 @@ AlchemyUncreditedEnd_080007ea:
 	.global syIWRAMWordsClear
 syIWRAMWordsClear:
 	bx	pc
-AlchemyUncredited_08000812:
+AlchemyUncredited08000812:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000812:
+AlchemyUncreditedEnd08000812:
 	mov	r2, #0
 	.global syIWRAMWordsFill
 syIWRAMWordsFill:
@@ -136,10 +136,10 @@ syIWRAMWordsFill:
 	.global syIWRAMSquart
 syIWRAMSquart:
 	bx	pc
-AlchemyUncredited_0800088e:
+AlchemyUncredited0800088e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0800088e:
+AlchemyUncreditedEnd0800088e:
 	movs	r1, r0
 	mov	r0, #0
 	bxmi	lr
@@ -160,10 +160,10 @@ AlchemyUncreditedEnd_0800088e:
 	.global syIWRAMExpandBitRuns
 syIWRAMExpandBitRuns:
 	bx	pc
-AlchemyUncredited_080008ce:
+AlchemyUncredited080008ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080008ce:
+AlchemyUncreditedEnd080008ce:
 	.ifeq EDITION_INTERNATIONAL
 	add	ip, r0, #24
 	.else
@@ -195,10 +195,10 @@ AlchemyUncreditedEnd_080008ce:
 	.global syIWRAMTransformVector
 syIWRAMTransformVector:
 	bx	pc
-AlchemyUncredited_0800090e:
+AlchemyUncredited0800090e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0800090e:
+AlchemyUncreditedEnd0800090e:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldm	r0, {r2, r3, r4}
 	add	r0, pc, #0x110
@@ -231,10 +231,10 @@ AlchemyUncreditedEnd_0800090e:
 	.global syIWRAMMultiMatrix
 syIWRAMMultiMatrix:
 	bx	pc
-AlchemyUncredited_08000982:
+AlchemyUncredited08000982:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000982:
+AlchemyUncreditedEnd08000982:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	sub	sp, sp, #36
 	mov	r4, sp
@@ -336,10 +336,10 @@ CurrentMatrixTranslation:
 	.global syIWRAMSignedRemainder
 syIWRAMSignedRemainder:
 	bx	pc
-AlchemyUncredited_08000ac2:
+AlchemyUncredited08000ac2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000ac2:
+AlchemyUncreditedEnd08000ac2:
 	orrs	r3, r0, r1
 	bmi	.L_030004d4
 	.global syIWRAMUnsignedRemainder
@@ -357,10 +357,10 @@ syIWRAMDivide:
 	.global syIWRAMSignedDivide
 syIWRAMSignedDivide:
 	bx	pc
-AlchemyUncredited_08000ae2:
+AlchemyUncredited08000ae2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000ae2:
+AlchemyUncreditedEnd08000ae2:
 	orrs	r3, r0, r1
 	bmi	.L_030004a8
 	.global syIWRAMUnsignedDivide
@@ -471,10 +471,10 @@ syIWRAMUnsignedDivide:
 	.global syIWRAMDecompress
 syIWRAMDecompress:
 	bx	pc
-AlchemyUncredited_08000c4e:
+AlchemyUncredited08000c4e:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000c4e:
+AlchemyUncreditedEnd08000c4e:
 	ldrb	r2, [r0], #1
 	ldrb	r3, [r0], #1
 	orrs	r2, r2, r3, lsl #8
@@ -527,10 +527,10 @@ AlchemyUncreditedEnd_08000c4e:
 	.global syIWRAMWordsCopy
 syIWRAMWordsCopy:
 	bx	pc
-AlchemyUncredited_08000cea:
+AlchemyUncredited08000cea:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08000cea:
+AlchemyUncreditedEnd08000cea:
 	push	{r5, r6, r7, r8, r9}
 	ands	ip, r2, #224
 	rsb	ip, ip, #240

@@ -1,7 +1,7 @@
 @ Audio mixing, playback commands and music-player updates.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Sound
-Stubs_Sound:
+	.global StubsSound
+StubsSound:
 	stub m4aSoundMainStub, m4aSoundMain
 	stub sySndInitStub, sySndInit
 	stub sySndPlayStub, sySndPlay

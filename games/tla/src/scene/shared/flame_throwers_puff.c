@@ -17,13 +17,13 @@ void scFlameThrowersPuff(void)
 	Sint32			 i;
 
 	state = FLAME_THROWERS_STATE;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	entry = state->entries;
 	cameraX = syMapStateView(map)[0];
 	cameraX &= FIELD_PIXEL_MASK;
 	cameraZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	height = map->origin[1];
-	field = Ram_HeapSlots->fieldState;
+	field = RamHeapSlots->fieldState;
 	if(state->blocked != 0 && state->wasBlocked == 0 && state->onBlocked != 0)
 		state->onBlocked();
 	state->wasBlocked = state->blocked;

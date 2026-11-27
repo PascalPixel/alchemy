@@ -11,7 +11,7 @@
 void ClearChain(struct SoundChannel *note)
 {
 	MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
-		Ram_MPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN])(note);
+		RamMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN])(note);
 }
 
 /* Clears a 64-byte music player or track prefix through the driver's jump table
@@ -19,7 +19,7 @@ void ClearChain(struct SoundChannel *note)
 void Clear64byte(void *block)
 {
 	MPLAY_FUNC_CAST(
-		void (*)(void *), Ram_MPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE])(block);
+		void (*)(void *), RamMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE])(block);
 }
 
 /* The VBlank rate in ten-thousandths of a hertz (SOUND_RATE_E4_UNIT): 59.7275
@@ -69,7 +69,7 @@ void SoundInit(struct SoundInfo *work)
 	REG_DMA2DAD = (u32)&REG_FIFO_B;
 	SOUND_INFO_PTR = work;
 	zero = 0;
-	Bios_CpuSet(&zero, work,
+	BiosCpuSet(&zero, work,
 		CPU_SET_SRC_FIXED | CPU_SET_32BIT | sizeof(struct SoundInfo) / 4);
 	work->pcmNoteCount = SOUND_INITIAL_PCM_NOTE_COUNT;
 	work->volume = SOUND_PCM_VOLUME_MAX;
@@ -78,8 +78,8 @@ void SoundInit(struct SoundInfo *work)
 	work->cgbMute = (void (*)(u8))DummyFunc;
 	work->cgbFrequency = (s32 (*)(u8, u8, u8))DummyFunc;
 	work->externalVolumePitch = DummyFunc;
-	MPlayJumpTableCopy(Ram_MPlayJumpTable);
-	work->commands = Ram_MPlayJumpTable;
+	MPlayJumpTableCopy(RamMPlayJumpTable);
+	work->commands = RamMPlayJumpTable;
 	/* Rate 4 (224 samples a frame, 13379 a second) until m4aSoundInit sets the
 	   game's mode. */
 	SampleFreqSet(SOUND_MODE_FREQ_INITIAL);
@@ -218,7 +218,7 @@ void m4aSoundVSyncOff(void)
 	REG_DMA1CNT_H = DMA_32BIT;
 	REG_DMA2CNT_H = DMA_32BIT;
 	zero = 0;
-	Bios_CpuSet(&zero, work->buffers,
+	BiosCpuSet(&zero, work->buffers,
 		CPU_SET_SRC_FIXED | CPU_SET_32BIT | sizeof(work->buffers) / 4);
 }
 
@@ -1128,7 +1128,7 @@ void ply_memacc(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track)
 	}
 
 jump:
-	Ram_MPlayJumpTable[MPLAY_JUMP_GOTO](player, track);
+	RamMPlayJumpTable[MPLAY_JUMP_GOTO](player, track);
 	return;
 skip:
 	track->cursor += 4;
@@ -1160,7 +1160,7 @@ union WordBytes {
    and 3: they end the track as the finish command (0xB1) does. */
 void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track)
 {
-	Ram_MPlayJumpTable[MPLAY_JUMP_FINE](player, track);
+	RamMPlayJumpTable[MPLAY_JUMP_FINE](player, track);
 }
 
 /* Reads an unaligned little-endian voice target address from the sequence

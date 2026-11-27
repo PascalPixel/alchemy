@@ -46,8 +46,8 @@ void btEffectRunCrystal(BATTLE_EFFECT_PARM *args)
 	Sint32		   ofs;
 	Uint8		  *cells;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	discOffsets = (Uint16 *)(state->sheet + CRYSTAL_DISC_OFFSETS);
 	cells = MapGridMetatileBuffer;
 	syWordsClear(cells, 32768);
@@ -60,7 +60,7 @@ void btEffectRunCrystal(BATTLE_EFFECT_PARM *args)
 	}
 	btResourceLoadAndDecompress(RESOURCE_COG_TEXTURE, state->sheet, 0, 0);
 	btPictureMirrorIntoQuadrants(
-		state->sheet, Ram_MapMetatileBuffer + CRYSTAL_COG_PICTURE, 64, 64);
+		state->sheet, RamMapMetatileBuffer + CRYSTAL_COG_PICTURE, 64, 64);
 	btEffectStartCanvasLayer(0);
 	btEffectRunDjinniEntrance(args,
 		DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
@@ -77,7 +77,7 @@ void btEffectRunCrystal(BATTLE_EFFECT_PARM *args)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	{
 		BATTLE_CAMERA *camera;
 		MOTION_OBJECT *tgt;
@@ -85,7 +85,7 @@ void btEffectRunCrystal(BATTLE_EFFECT_PARM *args)
 		EFFECT_SET_TRANSFER(
 			state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 		sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		tgt = btObjectGetStub(args->tgts[0])->obj;
 
 		for(frm = 0; frm != CRYSTAL_TICKS; frm++) {
@@ -190,7 +190,7 @@ void btEffectRunCrystal(BATTLE_EFFECT_PARM *args)
 				model->vertices = vertices;
 				texture.logWidth = 7;
 				texture.logHeight = 7;
-				texture.pixels = Ram_MapMetatileBuffer + CRYSTAL_COG_PICTURE;
+				texture.pixels = RamMapMetatileBuffer + CRYSTAL_COG_PICTURE;
 				if(frm > 15) {
 					FIXED scale = frm * (toFIXED(1) / 16) - toFIXED(1);
 

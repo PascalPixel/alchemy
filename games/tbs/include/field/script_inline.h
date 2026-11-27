@@ -7,7 +7,7 @@
 
    A script writes `fdActorFaceEachOther(ACTOR_GARET, ACTOR_PARTY_LEADER, 30);`
    and the inline makes the call. Where an inline would have its function's
-   name, the function keeps it and the inline takes the FieldActor_ prefix, as
+   name, the function keeps it and the inline takes the syFieldActor prefix, as
    syFieldActorJumpDownLedge does. */
 
 #include "fixed_math.h"

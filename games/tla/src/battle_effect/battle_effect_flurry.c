@@ -111,7 +111,7 @@ FLURRY_DEFINE_BY_VARIANT(
    FLURRY_MOTES. */
 #define FLURRY_STRIKE_MOTES		 32
 /* The wave pictures, past the motes, where the effect's own pictures begin. */
-#define FLURRY_WAVE_PICTURES	 (Ram_MapMetatileBuffer + 9216)
+#define FLURRY_WAVE_PICTURES	 (RamMapMetatileBuffer + 9216)
 /* The smoke pictures, past the waves: an offset into the effect's pictures. */
 #define FLURRY_SMOKE_PICTURES	 5000
 /* Where BlueArcSheetA or BlueArcSheetB is decoded in the effect's pictures. */
@@ -166,10 +166,10 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 i;
 	Sint32				 j;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	if(args->prelude == 1)
@@ -287,8 +287,8 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
 		}
-		draw[0] = Ram_HeapSlots->ramCode;
-		draw[1] = Ram_HeapSlots->ramCodePaired;
+		draw[0] = RamHeapSlots->ramCode;
+		draw[1] = RamHeapSlots->ramCodePaired;
 		for(i = 0; i != strikes; i++) {
 			Sint32 start = i * FlurryStyles[mode][FLURRY_INTERVAL];
 
@@ -364,8 +364,8 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		draw[0] = Ram_HeapSlots->ramCode;
-		draw[1] = Ram_HeapSlots->ramCodePaired;
+		draw[0] = RamHeapSlots->ramCode;
+		draw[1] = RamHeapSlots->ramCodePaired;
 		for(i = 0; i != FLURRY_MOTE_COUNT; i++) {
 			PARTICLE *mote = &PARTICLES[i];
 			Sint32	  size = mote->variant;
@@ -406,7 +406,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 						FlurryGlintFlips[flip & 3] | COMPOSITE_CLIP_X |
 							COMPOSITE_CLIP_Y,
 						BLITTER_ADDITIVE);
-					(Ram_HeapSlots->ramCodePaired)(canvas,
+					(RamHeapSlots->ramCodePaired)(canvas,
 						state->sheet + BattleEffectGlintPictures[picture], x, y,
 						BattleEffectGlintPictureWidths[picture],
 						BattleEffectGlintPictureHeights[picture]);
@@ -417,7 +417,7 @@ void btEffectRunFlurry(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			if(FlurryStyles[mode][FLURRY_EXTRA] == FLURRY_EXTRA_RIPPLE) {
 				EFFECT_LOAD_BLITTER(
 					HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-				draw[0] = Ram_HeapSlots->ramCode;
+				draw[0] = RamHeapSlots->ramCode;
 				for(i = 0; i != FLURRY_SMOKE_PUFFS; i++) {
 					PARTICLE *puff = &state->particles[i];
 

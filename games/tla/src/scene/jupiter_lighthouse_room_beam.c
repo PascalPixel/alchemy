@@ -343,8 +343,8 @@ void scJupiterLighthouseCycloneLiftsLeader(Sint32 kind)
    (scJupiterLighthouseCycloneLiftsLeader). */
 void scJupiterLighthouseCycloneUpOnWestPad(void)
 {
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
 
 	event->raisedCue = CUE_CYCLONE_UP_WEST;
 	effect->sceneVariant = 1;
@@ -354,8 +354,8 @@ void scJupiterLighthouseCycloneUpOnWestPad(void)
    Nothing is seen yet; the whirlwind that lifts him follows. */
 void scJupiterLighthouseCycloneUpOnEastPad(void)
 {
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *effect = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *effect = RamHeapSlots->fieldEffState;
 
 	event->raisedCue = CUE_CYCLONE_UP_EAST;
 	effect->sceneVariant = 1;
@@ -578,7 +578,7 @@ void scJupiterLighthouseSpawnBeamParticles(void)
    hovering once the lighthouse is activated. */
 Sint32 scInit(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

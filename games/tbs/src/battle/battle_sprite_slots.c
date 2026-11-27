@@ -29,7 +29,7 @@ Sint32 btObjectGetPalette(Sint32 id)
 	return btObjectGet(id)->pal;
 }
 
-/* Each enemy sprite slot owns 16 KB of Ram_EnemySpriteSlots. */
+/* Each enemy sprite slot owns 16 KB of RamEnemySpriteSlots. */
 #define ENEMY_SPRITE_SLOT_SIZE (16 * 1024)
 
 /* Returns 1 if the enemy would find room among the enemy sprite slots, two side
@@ -92,8 +92,7 @@ Sint32 btEnemySprLoadIntoSlots(Sint32 unitId)
 
 		{
 			Sint32 palette = btSprGetPalette(unit->id);
-			Uint8 *sprBuf =
-				Ram_EnemySpriteSlots + slot * ENEMY_SPRITE_SLOT_SIZE;
+			Uint8 *sprBuf = RamEnemySpriteSlots + slot * ENEMY_SPRITE_SLOT_SIZE;
 
 			if(fdSprPictureCacheLoadStub(
 				   slot, (Uint32 *)sprBuf, spr + sprPart, palette) == 0)

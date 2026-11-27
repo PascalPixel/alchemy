@@ -1,7 +1,7 @@
 @ Party members, items, Djinn and game-state operations.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Game
-Stubs_Game:
+	.global StubsGame
+StubsGame:
 	stub gmDjinnGetRecoveryTableStub, gmDjinnGetRecoveryTable
 	stub gmUnitGetStub, gmUnitGet
 	stub gmUnitCalcStub, gmUnitCalc

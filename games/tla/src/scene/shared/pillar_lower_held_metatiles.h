@@ -5,7 +5,7 @@
 void scPillarLowerHeldMetatiles(Uint16 *list)
 {
 	ACTOR		   *held = fdLeaderFindActorAhead();
-	FIELD_STATE	   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	   *state = RamHeapSlots->fieldState;
 	SHAPE_METATILE *grid;
 
 	if(held == NULL) {
@@ -15,16 +15,16 @@ void scPillarLowerHeldMetatiles(Uint16 *list)
 		if(id != -1)
 			held = fdActorGetById(id);
 	}
-	grid = (SHAPE_METATILE *)Ram_MapShapeGrid;
+	grid = (SHAPE_METATILE *)RamMapShapeGrid;
 	state->movedBlock = NULL;
 	for(; *list != ACTOR_LIST_END; list++) {
 		if(held == fdActorGetById(*list)) {
-			Uint8 *metatile = (Uint8 *)((MAP_STATE *)Ram_HeapSlots->mapGrid)
+			Uint8 *metatile = (Uint8 *)((MAP_STATE *)RamHeapSlots->mapGrid)
 								  ->layers[held->layer]
 								  .metatiles;
 			SHAPE_METATILE *slot = grid +
 				((MAP_METATILE *)metatile -
-					(MAP_METATILE *)Ram_MapMetatileBuffer);
+					(MAP_METATILE *)RamMapMetatileBuffer);
 			Sint32 kind = fdMapGridGetTerrainKind(
 				held->layer, held->x.fixed, held->z.fixed);
 			Sint32 height = fdMapGetTerrainHeight(

@@ -346,7 +346,7 @@ void mnGraphicsExpandVRAMTilesByColTable(Uint16 *dst)
 	}
 }
 
-/* Builds icon `resource` (0 to 31) of Icon_MiscIconPointers, the status
+/* Builds icon `resource` (0 to 31) of IconMiscIconPointers, the status
    patterns (mnIconDrawMisc), in a transfer block taken from
    HEAP_SLOT_ICON_TRANSFER, reloads VRAM cache entry `idx` with it and returns
    the entry's first tile. */
@@ -413,7 +413,7 @@ Sint32 mnPortraitLoad(Uint32 member, Sint32 cacheSlot)
 /* The 4bpp decoder mnIconDecompress copies into RAM. */
 extern Uint8 mnTileDecompress4bppCode[];
 /* The decoder's byte count, as this symbol's address (ld_script.ld). */
-extern Uint8 Tile_Decompress4bppCodeSize[];
+extern Uint8 TileDecompress4bppCodeSize[];
 
 /* Returns WindowFixedTileBlocks[0], whatever no is. */
 Sint32 mnWindowSprGetPointerTiles(Sint32 no)
@@ -430,7 +430,7 @@ UNUSED void mnIconDecompress(ICON_TRANSFER *state)
 	void (*routine)(void *, void *);
 
 	RAM_CODE_LOAD(
-		routine, mnTileDecompress4bppCode, Tile_Decompress4bppCodeSize);
+		routine, mnTileDecompress4bppCode, TileDecompress4bppCodeSize);
 	routine(state->encoded, state->input);
 	syHeapRelease(routine);
 }

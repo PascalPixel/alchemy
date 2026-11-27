@@ -30,7 +30,7 @@ void fdScriptEndAllLastingPsynergy(void)
    each unless skip holds its bit (PSYNERGY_END_SKIP). */
 void fdScriptEndLastingPsynergy(Sint32 skip)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->busy = 0;
 	if(state->revealActive != 0 && !(skip & END_SKIP_REVEAL))
@@ -77,7 +77,7 @@ Bool fdItemMatchesFilter(Sint32 filter, Sint32 itemId)
    to (CUE_ITEM_ON_ACTOR) or the metatile ahead. */
 const CUE *fdFindItemCue(Sint32 item)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	const CUE	*cue = state->cues;
 	Sint32		 facing = fdActorLookup(fdPartyGetLeaderActor())->facing;
 	Sint32		 actorAhead = fdFindNearbyTalkTarget(fdPartyGetLeaderActor());
@@ -207,7 +207,7 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
 		syGameFlagClear(FLAG_ITEM_USED_UP);
 		syGameFlagSet(FLAG_NOTHING_HAPPENS);
 		abilityId = gmItemGetDirectStub(itemId)->abilityId;
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 
 		if(abilityId != 0) {
 			syGameFlagSet(FLAG_PSYNERGY_FROM_ITEM);
@@ -264,7 +264,7 @@ Sint32 fdUseItem(Sint32 packedItem, Sint32 slot)
    anywhere, or -1. */
 Sint32 fdSelectPsynergyTarget(Sint32 kind)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	const CUE	*event = (const CUE *)state->cues;
 	Uint32		 facing = fdActorLookup(fdPartyGetLeaderActor())->facing;
 	Sint32		 tileAhead = fdGetCollisionAheadOfLeader();
@@ -331,7 +331,7 @@ Sint32 fdSelectPsynergyTarget(Sint32 kind)
    actor, or anything); NULL when there is none. */
 CUE *fdFindPsynergyCue(Sint32 filter, Sint32 kind, Sint32 selector)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	CUE			*event = (CUE *)state->cues;
 	Uint32		 facing = fdActorLookup(fdPartyGetLeaderActor())->facing;
 

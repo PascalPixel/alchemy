@@ -69,7 +69,7 @@ Sint32 syGetLanguage(void)
 {
 	Sint32 language;
 
-	switch(Rom_LanguageCode) {
+	switch(RomLanguageCode) {
 	case 'D':
 		language = CARTRIDGE_LANGUAGE_GERMAN;
 		break;
@@ -260,7 +260,7 @@ void syInstallIWRAMAndIRQs(void)
 	IO_WRITE16(0, &REG_IME);
 	iwram = syIWRAMIRQMain;
 	/* 5,120 bytes of resident code and data. */
-	syDMAXCopy(IwramResident_Rom, iwram, DMA_COPY_WORDS(5120 / 4), REG_DMA3);
+	syDMAXCopy(IwramResidentRom, iwram, DMA_COPY_WORDS(5120 / 4), REG_DMA3);
 	IrqVector = iwram;
 	syDMAXCopy(
 		DefaultIrqHandlers, IrqHandlers, DMA_COPY_WORDS(IRQ_COUNT), REG_DMA3);

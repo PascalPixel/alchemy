@@ -82,7 +82,7 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	/* Its colours: red rises from the first level, green from the sixth and
 	   blue from the eighth, so the rings run from dark red to pale orange at
 	   TORCH_BRIGHTEST_LEVEL. */
-	ramp = (Uint16 *)Ram_MapGridMetatileBuffer;
+	ramp = (Uint16 *)RamMapGridMetatileBuffer;
 	for(i = 1; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
 		if(i >= TORCH_BRIGHTEST_LEVEL)
 			shade = 2 * TORCH_BRIGHTEST_LEVEL - i;

@@ -18,9 +18,9 @@
 
 /* The text decoder's symbol lookup, which mnMessageFind copies to the heap to
    run (window/lookup_symbol.s). */
-extern const Uint8 Text_LookupSymbolCode[];
-/* The size of Text_LookupSymbolCode. */
-extern Uint8 Text_LookupSymbolCodeSize[];
+extern const Uint8 TextLookupSymbolCode[];
+/* The size of TextLookupSymbolCode. */
+extern Uint8 TextLookupSymbolCodeSize[];
 /* The size of mnScanlineWindowBuildSpansCode, which mnScanlineWindowFillSpans
    copies to the heap to run. */
 extern Uint8 mnScanlineWindowBuildSpansCodeSize[];

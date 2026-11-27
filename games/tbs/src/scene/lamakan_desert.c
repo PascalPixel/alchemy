@@ -2,12 +2,12 @@
    built around a heat gauge and the secrets Reveal uncovers.
 
    The party crosses it from the east. The first scene
-   (SceneId_LamakanDesertEast) is entered from the World Map in its south-east
-   corner and leads north. The second, the widest (SceneId_LamakanDesertSmog),
+   (SceneIdLamakanDesertEast) is entered from the World Map in its south-east
+   corner and leads north. The second, the widest (SceneIdLamakanDesertSmog),
    is scattered with rings of rocks, cacti and skeletons, and hides Smog, a
-   Jupiter Djinni; it leads out west. The third (SceneId_LamakanDesertManticore)
+   Jupiter Djinni; it leads out west. The third (SceneIdLamakanDesertManticore)
    has rivers of sand that carry the party south, with sandfalls at their heads.
-   Behind two of them lie passages into a cave (SceneId_LamakanDesertCave): the
+   Behind two of them lie passages into a cave (SceneIdLamakanDesertCave): the
    east and south ones into a small cavern, and the north-west one, which the
    Manticore guards, into a corridor that leads out west to the World Map. The
    cave has no heat gauge.
@@ -1126,7 +1126,7 @@ static void scHeatGaugeDraw(void)
 		}
 	} else if(HeatGaugeShown <= 1) {
 		if(++HeatGaugeShown == 1) {
-			syDMAXCopy(HeatGauge_Palette,
+			syDMAXCopy(HeatGaugePalette,
 				(void *)&OBJ_PLTT_COLOR(HEAT_GAUGE_PALETTE, 0),
 				DMA_COPY_HALFWORDS(16), REG_DMA3);
 		}
@@ -1152,7 +1152,7 @@ static void scHeatGaugeDraw(void)
 	}
 
 	buf = syHeapAlloc(sizeof(HeatGaugeTileBuffer));
-	syDMAXCopy(HeatGauge_Palette, buf, DMA_COPY_HALFWORDS(16), REG_DMA3);
+	syDMAXCopy(HeatGaugePalette, buf, DMA_COPY_HALFWORDS(16), REG_DMA3);
 	cols = (Sint16 *)buf + HEAT_GAUGE_TINTED_COLOR;
 	col = cols;
 	for(i = HEAT_GAUGE_TINTED_COLOR;
@@ -1264,7 +1264,7 @@ static void scHeatGaugeDraw(void)
 /* Loads the gauge's tiles, claims VRAM for them and starts drawing it. */
 void scHeatGaugeStart(void)
 {
-	syFieldDecompressTaggedLZ(HeatGauge_Tiles, HeatGaugeTileBuffer);
+	syFieldDecompressTaggedLZ(HeatGaugeTiles, HeatGaugeTileBuffer);
 	HeatGaugeVramSlot = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(HeatGaugeVramSlot, HEAT_GAUGE_TILE_BYTES, 0);
 	HeatGaugeShown = 0;

@@ -43,7 +43,7 @@ void syInitMatrix(void)
    save area again. */
 void syMatrixRewindStack(void)
 {
-	MatrixStackTop = Ram_HeapSlots->matrixStack;
+	MatrixStackTop = RamHeapSlots->matrixStack;
 	MatrixStackDepth = 0;
 }
 

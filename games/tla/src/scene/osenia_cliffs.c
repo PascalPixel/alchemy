@@ -91,7 +91,7 @@ const CUE *scGetCues(void)
 
 Sint32 scInit(void)
 {
-	MAP_BITS *map = (MAP_BITS *)Ram_HeapSlots->mapGrid;
+	MAP_BITS *map = (MAP_BITS *)RamHeapSlots->mapGrid;
 
 	map->wading = 1;
 	OseniaCliffsPaletteCycleStep[0] = 0;

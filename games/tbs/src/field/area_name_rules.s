@@ -6,7 +6,7 @@
 @ useMapId, the entrance's top bit; id -1 ends the table, and a row of zeros
 @ follows the end.
 	.macro scene_name scene:req, entrance:req, name:req
-	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000
+	.2byte SceneId\scene, (\entrance & 0x7fff) | 0x8000
 	.4byte \name
 	.endm
 	.macro area_name area:req, entrance:req, name:req
@@ -16,8 +16,8 @@
 
 	.section .rodata
 	.balign 4
-	.global Area_NameRules
-Area_NameRules:
+	.global AreaNameRules
+AreaNameRules:
 	area_name AREA_TITLE_SCREEN, -1, 0
 	area_name AREA_CLEAR_DATA, -1, 1
 	area_name AREA_WORLD_MAP, -1, 2

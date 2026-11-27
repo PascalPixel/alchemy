@@ -34,7 +34,7 @@
 /* A row of the picture's 32 tiles of 256 colours, as a shift: 2048 bytes. */
 #define BLUE_RAMP_TILE_ROW_SHIFT 11
 /* The copy of the battle background the ramp is drawn in. */
-#define BLUE_RAMP_PIXELS		 Ram_MapMetatileBuffer
+#define BLUE_RAMP_PIXELS		 RamMapMetatileBuffer
 
 /* Turns the screen into shades of blue, top down, with a ragged edge; nothing
    calls it. */
@@ -54,7 +54,7 @@ UNUSED void btEffectConvertBackgroundToBlueRamp(void)
 		half = i / 2;
 		*palette++ = RGB(half, half, i);
 	}
-	delays = Ram_HeapSlots->battleSheet;
+	delays = RamHeapSlots->battleSheet;
 	end = 0;
 	speed = BLUE_RAMP_START_SPEED;
 	syWordsCopy(
@@ -147,11 +147,11 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 	Sint32				 k;
 	HEAP_SLOTS			*heap;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
-	heap = Ram_HeapSlots;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
+	heap = RamHeapSlots;
 
 	/* Set up: the rune picture with its palette, the dots, the flares, the
 	   Jupiter Djinni, and a transfer that darkens the canvas a little each
@@ -206,7 +206,7 @@ void btEffectRunBind(BATTLE_EFFECT_PARM *args)
 		/* Two blitters that keep the brighter pixel, the second mirrored. */
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		draw[0] = Ram_HeapSlots->ramCode;
+		draw[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 		draw[1] = heap->ramCodePaired;
@@ -316,11 +316,11 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 	Sint32				 k;
 	HEAP_SLOTS			*heap;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
-	heap = Ram_HeapSlots;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
+	heap = RamHeapSlots;
 
 	/* Set up: the rune picture with its palette, the dots, the flares, and a
 	   transfer that darkens the canvas a little each tick. */
@@ -349,7 +349,7 @@ void btEffectRunUnusedTriangleStrike(BATTLE_EFFECT_PARM *args)
 		/* Two blitters that keep the brighter pixel, the second mirrored. */
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-		draw[0] = Ram_HeapSlots->ramCode;
+		draw[0] = RamHeapSlots->ramCode;
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 		draw[1] = heap->ramCodePaired;

@@ -31,10 +31,10 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	MOTION_OBJECT		*user;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sheet = RamHeapSlots->battleSheet;
 	if(args->side == EFFECT_SIDE_PARTY)
 		btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	else
@@ -44,10 +44,10 @@ void btEffectRunFire(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 
 	/* The embers leave the top of the user in a random direction. */

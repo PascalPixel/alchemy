@@ -33,16 +33,16 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
 	MODEL_TEXTURE		 texture;
 	DRAW_RECTANGLE		 draw[2];
-	Uint8				*ringPixels = Ram_MapMetatileBuffer;
+	Uint8				*ringPixels = RamMapMetatileBuffer;
 	Sint32				 height;
 	SCREEN_POINT		 tgt;
 	SCREEN_POINT		 caster;
 	SCREEN_POINT		 screen;
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
 	Sint32				 frm;
-	BATTLE_CAMERA		*camera = Ram_HeapSlots->cameraState;
-	Uint8				*motePictures = Ram_HeapSlots->battleSheet;
+	BATTLE_CAMERA		*camera = RamHeapSlots->cameraState;
+	Uint8				*motePictures = RamHeapSlots->battleSheet;
 	MOTION_OBJECT		*tgtObject;
 	RENDER_MODEL		*quad;
 	void				*vertices;
@@ -59,7 +59,7 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	btEffectBuildCanvasBlitters(0, draw);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motePictures, 0, 0);
 	btResourceLoadAndDecompress(
-		RESOURCE_FIRE_RING_TEXTURE, Ram_MapMetatileBuffer, 0, 0);
+		RESOURCE_FIRE_RING_TEXTURE, RamMapMetatileBuffer, 0, 0);
 
 	/* The burst: the plume, then the same plume upside down below it. */
 	btResourceLoadAndDecompress(RESOURCE_FLAME_PLUME_SHEET, state->sheet, 0, 0);

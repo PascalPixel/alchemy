@@ -1,60 +1,60 @@
 name	file	section	align	left	pad	edition	fill
-Monster_AxeGoblinSprites	axe_goblin.pictures.lz			da01			
-Monster_GhoulSprites	ghoul.pictures.lz						
-Monster_HarpySprites	harpy.pictures.lz			bb0175			
-Monster_TrollSprites	troll.pictures.lz			2b00			
-Monster_WitchSprites	witch.pictures.lz			d861			
-Monster_GriffinSprites	griffin.pictures.lz						
-Monster_ShieldKnightSprites	shield_knight.pictures.lz						
-Monster_OrcSprites	orc.pictures.lz			fe7b			
-Monster_ChimeraSprites	chimera.pictures.lz						
-Monster_LivingArmorSprites	living_armor.pictures.lz			0e40			
-Monster_ManticoreSprites	manticore.pictures.lz						
-Monster_OrcLordSprites	orc_lord.pictures.lz			0b00			
-Monster_GargoyleSprites	gargoyle.pictures.lz			b15b			
-Monster_LizardManSprites	lizard_man.pictures.lz			470b00			
-Monster_OgreSprites	ogre.pictures.lz			4f406e			
-Monster_TailedImpSprites	tailed_imp.pictures.lz						
-Monster_WispGhostSprites	wisp_ghost.pictures.lz			3eca			
-Monster_SalamanderSprites	salamander.pictures.lz			624f			
-Monster_AquaBeastSprites	aqua_beast.pictures.lz			ba77c9			
-Monster_HoundSprites	hound.pictures.lz						
-Monster_BearSprites	bear.pictures.lz						
-Monster_SirenSprites	siren.pictures.lz						
-Monster_BlueWispSprites	blue_wisp.pictures.lz			e910			
-Monster_MushroomSprites	mushroom.pictures.lz			477d5a			
-Monster_RedWormSprites	red_worm.pictures.lz						
-Monster_FairySprites	fairy.pictures.lz						
-Monster_BatSprites	bat.pictures.lz			f22ea3			
-Monster_SmallLizardSprites	small_lizard.pictures.lz			70			
-Monster_WalkingPlantSprites	walking_plant.pictures.lz			d5			
-Monster_FlySprites	fly.pictures.lz			13			
-Monster_CrabSprites	crab.pictures.lz				4		
-Monster_SmallBirdSprites	small_bird.pictures.lz				4		
-Monster_MothSprites	moth.pictures.lz			92115e			
-Monster_FrogSprites	frog.pictures.lz			b3			
-Monster_ManedLionSprites	maned_lion.pictures.lz			35			
-Monster_SerpentSprites	serpent.pictures.lz			0cb5			
-Monster_WingedDragonSprites	winged_dragon.pictures.lz			ee		ja	
-Monster_WingedDragonSprites	winged_dragon.pictures.lz			8c		en	
-Monster_WingedDragonSprites	winged_dragon.pictures.lz			8c		de	
-Monster_WingedDragonSprites	winged_dragon.pictures.lz			8c		es	
-Monster_WingedDragonSprites	winged_dragon.pictures.lz			8c		fr	
-Monster_WingedDragonSprites	winged_dragon.pictures.lz			8c		it	
-Monster_BlueMageSprites	blue_mage.pictures.lz						
-Monster_SkeletonSprites	skeleton.pictures.lz			e66043			
-Monster_FlameSkullSprites	flame_skull.pictures.lz			c1b3			
-Monster_FireDragonSprites	fire_dragon.pictures.lz			0f			
-Monster_CrawlerSprites	crawler.pictures.lz			f03317			
-Monster_MimicSprites	mimic.pictures.lz			b9			
-Monster_SeaBeastSprites	sea_beast.pictures.lz						
-Monster_SpiritHorseSprites	spirit_horse.pictures.lz			312083			
-Monster_KrakenSprites	kraken.pictures.lz			bdca95			
-Monster_SlimeSprites	slime.pictures.lz			402c			
-Monster_SaturosSprites	saturos.pictures.lz						
-Monster_MenardiSprites	menardi.pictures.lz			52			
-Monster_GhostHeadSprites	ghost_head.pictures.lz						
-Monster_FusionDragonSprites	fusion_dragon.pictures.lz			70	4		
-Monster_PurpleBeastSprites	purple_beast.pictures.lz				4		
-Monster_RedWarriorSprites	red_warrior.pictures.lz						
-Monster_SwordGirlSprites	sword_girl.pictures.lz						
+MonsterAxeGoblinSprites	axe_goblin.pictures.lz			da01			
+MonsterGhoulSprites	ghoul.pictures.lz						
+MonsterHarpySprites	harpy.pictures.lz			bb0175			
+MonsterTrollSprites	troll.pictures.lz			2b00			
+MonsterWitchSprites	witch.pictures.lz			d861			
+MonsterGriffinSprites	griffin.pictures.lz						
+MonsterShieldKnightSprites	shield_knight.pictures.lz						
+MonsterOrcSprites	orc.pictures.lz			fe7b			
+MonsterChimeraSprites	chimera.pictures.lz						
+MonsterLivingArmorSprites	living_armor.pictures.lz			0e40			
+MonsterManticoreSprites	manticore.pictures.lz						
+MonsterOrcLordSprites	orc_lord.pictures.lz			0b00			
+MonsterGargoyleSprites	gargoyle.pictures.lz			b15b			
+MonsterLizardManSprites	lizard_man.pictures.lz			470b00			
+MonsterOgreSprites	ogre.pictures.lz			4f406e			
+MonsterTailedImpSprites	tailed_imp.pictures.lz						
+MonsterWispGhostSprites	wisp_ghost.pictures.lz			3eca			
+MonsterSalamanderSprites	salamander.pictures.lz			624f			
+MonsterAquaBeastSprites	aqua_beast.pictures.lz			ba77c9			
+MonsterHoundSprites	hound.pictures.lz						
+MonsterBearSprites	bear.pictures.lz						
+MonsterSirenSprites	siren.pictures.lz						
+MonsterBlueWispSprites	blue_wisp.pictures.lz			e910			
+MonsterMushroomSprites	mushroom.pictures.lz			477d5a			
+MonsterRedWormSprites	red_worm.pictures.lz						
+MonsterFairySprites	fairy.pictures.lz						
+MonsterBatSprites	bat.pictures.lz			f22ea3			
+MonsterSmallLizardSprites	small_lizard.pictures.lz			70			
+MonsterWalkingPlantSprites	walking_plant.pictures.lz			d5			
+MonsterFlySprites	fly.pictures.lz			13			
+MonsterCrabSprites	crab.pictures.lz				4		
+MonsterSmallBirdSprites	small_bird.pictures.lz				4		
+MonsterMothSprites	moth.pictures.lz			92115e			
+MonsterFrogSprites	frog.pictures.lz			b3			
+MonsterManedLionSprites	maned_lion.pictures.lz			35			
+MonsterSerpentSprites	serpent.pictures.lz			0cb5			
+MonsterWingedDragonSprites	winged_dragon.pictures.lz			ee		ja	
+MonsterWingedDragonSprites	winged_dragon.pictures.lz			8c		en	
+MonsterWingedDragonSprites	winged_dragon.pictures.lz			8c		de	
+MonsterWingedDragonSprites	winged_dragon.pictures.lz			8c		es	
+MonsterWingedDragonSprites	winged_dragon.pictures.lz			8c		fr	
+MonsterWingedDragonSprites	winged_dragon.pictures.lz			8c		it	
+MonsterBlueMageSprites	blue_mage.pictures.lz						
+MonsterSkeletonSprites	skeleton.pictures.lz			e66043			
+MonsterFlameSkullSprites	flame_skull.pictures.lz			c1b3			
+MonsterFireDragonSprites	fire_dragon.pictures.lz			0f			
+MonsterCrawlerSprites	crawler.pictures.lz			f03317			
+MonsterMimicSprites	mimic.pictures.lz			b9			
+MonsterSeaBeastSprites	sea_beast.pictures.lz						
+MonsterSpiritHorseSprites	spirit_horse.pictures.lz			312083			
+MonsterKrakenSprites	kraken.pictures.lz			bdca95			
+MonsterSlimeSprites	slime.pictures.lz			402c			
+MonsterSaturosSprites	saturos.pictures.lz						
+MonsterMenardiSprites	menardi.pictures.lz			52			
+MonsterGhostHeadSprites	ghost_head.pictures.lz						
+MonsterFusionDragonSprites	fusion_dragon.pictures.lz			70	4		
+MonsterPurpleBeastSprites	purple_beast.pictures.lz				4		
+MonsterRedWarriorSprites	red_warrior.pictures.lz						
+MonsterSwordGirlSprites	sword_girl.pictures.lz						

@@ -5,9 +5,9 @@
 .syntax unified
 .text
 	.arm
-	.global BattleEffect_ColorForward
-	.global BattleEffect_ColorReverse
-BattleEffect_ColorForward:
+	.global BattleEffectColorForward
+	.global BattleEffectColorReverse
+BattleEffectColorForward:
 	ldr	r8, [r9]
 	ldrb	r5, [r1], #1
 	add	r8, r8, r5
@@ -22,7 +22,7 @@ BattleEffect_ColorForward:
 	sub	r5, r5, r5, lsr #6
 	orr	r8, r8, r5
 	str	r8, [r9], #4
-BattleEffect_ColorReverse:
+BattleEffectColorReverse:
 	ldr	r8, [r9]
 	ldrb	r5, [r1], #-1
 	add	r8, r8, r5

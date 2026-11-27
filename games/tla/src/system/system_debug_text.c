@@ -148,7 +148,7 @@ void syWindowLoadGraphics(void)
 	syDMAXCopy(syResourceGetTableEntry(RESOURCE_WINDOW_TILES),
 		(void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4),
 		REG_DMA3);
-	syDMAXCopy((const void *)Window_Palette,
+	syDMAXCopy((const void *)WindowPalette,
 		(void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	syIOWrite16(0, &PLTT_BACKDROP);
@@ -167,14 +167,14 @@ void syWindowLoadGraphics(void)
 		&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + 5));
 	syIOWrite16(RGB(0, 15, 22),
 		&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + 6));
-	syDMAXCopy((const void *)System_BasicColorPalette, (void *)OBJ_PLTT,
+	syDMAXCopy((const void *)SystemBasicColorPalette, (void *)OBJ_PLTT,
 		DMA_COPY_HALFWORDS(BASIC_SPRITE_PALETTES * PALETTE_COLORS), REG_DMA3);
 }
 
 /* Loads the basic sprite palettes. */
 void syPaletteLoadBasicSprCols(void)
 {
-	syDMAXCopy((const void *)System_BasicColorPalette, (void *)OBJ_PLTT,
+	syDMAXCopy((const void *)SystemBasicColorPalette, (void *)OBJ_PLTT,
 		DMA_COPY_HALFWORDS(BASIC_SPRITE_PALETTES * PALETTE_COLORS), REG_DMA3);
 }
 

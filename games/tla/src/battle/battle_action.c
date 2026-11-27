@@ -86,7 +86,7 @@ typedef enum ACTION_CHANCE {
 Sint32 btActionRunBuild(BATTLE_ACTION_RECORD *request, BATTLE_PLAN *plan)
 {
 	UNIT		 *actor = syUnitGet(request->unitId);
-	BATTLE_STATE *battle = (BATTLE_STATE *)Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = (BATTLE_STATE *)RamHeapSlots->battleState;
 	Sint32		  selectedTgtId;
 	Sint32		  abilityId;
 
@@ -562,13 +562,13 @@ Sint32 btActionRunBuild(BATTLE_ACTION_RECORD *request, BATTLE_PLAN *plan)
 		/* Enough Djinn of each element on standby? A link battle counts the
 		   summoner's side; any other counts the party's. */
 		summon = gmSummonDefinitionGetNearStub(request->prm);
-		btDjinnCountStandby(((BATTLE_STATE *)Ram_HeapSlots->battleState)->isLink
+		btDjinnCountStandby(((BATTLE_STATE *)RamHeapSlots->battleState)->isLink
 				? request->unitId
 				: 0,
 			cnts);
 		side = DJINN_RECOVERY_PARTY;
 		if((Uint16)request->unitId > ALLY_MAX &&
-			((BATTLE_STATE *)Ram_HeapSlots->battleState)->isLink)
+			((BATTLE_STATE *)RamHeapSlots->battleState)->isLink)
 			side = DJINN_RECOVERY_OPPONENT;
 		list = &gmDjinnGetRecoveryTableStub(side)->list;
 		for(idx = 0;

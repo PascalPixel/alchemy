@@ -1,4 +1,4 @@
-/* Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
+/* Kolima and Kolima Forest (SceneIdKolima and SceneIdKolimaForestEntrance):
    the sparkling dust that falls over the party when Tret's curse strikes
    ("Watch out! It's happening again!"). */
 

@@ -1,18 +1,18 @@
-@ Why Bios_CpuSet to Bios_SoundBiasOff are assembly:
+@ Why BiosCpuSet to BiosSoundBiasOff are assembly:
 @ svc 11 and svc 25 are BIOS software interrupts.
 @ Why assembly: svc 25 is a BIOS software interrupt.
 	.section .text,"ax",%progbits
 	.balign 2
 .syntax unified
 	.thumb
-	.global Bios_CpuSet
+	.global BiosCpuSet
 	.thumb_func
-Bios_CpuSet:
+BiosCpuSet:
 	svc	11
 	bx	lr
-	.global Bios_SoundBiasOff
+	.global BiosSoundBiasOff
 	.thumb_func
-Bios_SoundBiasOff:
+BiosSoundBiasOff:
 	movs	r0, #0
 	svc	25
 	bx	lr
@@ -25,9 +25,9 @@ Bios_SoundBiasOff:
 	.balign 2
 .syntax unified
 	.thumb
-	.global Bios_SoundBiasOn
+	.global BiosSoundBiasOn
 	.thumb_func
-Bios_SoundBiasOn:
+BiosSoundBiasOn:
 	movs	r0, #1
 	svc	25
 	bx	lr

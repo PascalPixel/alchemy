@@ -28,9 +28,9 @@ extern Sint8 FieldMenuCommandByPosition[];
 extern Sint8 FieldMenuPositionByCommand[];
 /* The price digits 0 to 9, 32 bytes each (digits.4bpp), copied into a price
    sprite's tiles (mnShopDrawPriceDigit). */
-extern Uint8 Shop_GlyphBytes[];
+extern Uint8 ShopGlyphBytes[];
 /* The level label of a save summary: `L`; `Nv.` in Spanish, `Niv` in French. */
-extern Uint8 StatusScreen_LevelLetterString[];
+extern Uint8 StatusScreenLevelLetterString[];
 
 struct SPR;
 struct ACTOR_SYSTEM_STATE;
@@ -44,16 +44,16 @@ typedef struct SCROLL_PAIR {
 } SCROLL_PAIR;
 
 /* The small down arrow, 16 by 16 (sdown): the item menu's stat drop. */
-extern Uint8 Menu_SmallDownArrowTiles[];
+extern Uint8 MenuSmallDownArrowTiles[];
 /* The small up arrow, then the up and down arrows, 16 by 16 each; the item
    menu's stat rise loads the first (mnLoadStatArrows). */
-extern Uint8 Menu_ArrowTiles[];
+extern Uint8 MenuArrowTiles[];
 /* The Djinn menu's up arrow, 16 by 16 (graphics/ui/djinn_arrow_up). */
-extern Uint8 Menu_DjinnArrowUpTiles[];
+extern Uint8 MenuDjinnArrowUpTiles[];
 /* The Djinn menu's down arrow, 16 by 16 (graphics/ui/djinn_arrow_down). */
-extern Uint8 Menu_DjinnArrowDownTiles[];
+extern Uint8 MenuDjinnArrowDownTiles[];
 /* The item menu's quantity picture (quantity.4bpp). */
-extern const Uint8 Menu_QuantityTiles[];
+extern const Uint8 MenuQuantityTiles[];
 /* The Djinn menu's level label: `Lv`; `Nv.` in Spanish, `Niv` in French. */
 extern const char DjinnMenuTextLevel[];
 /* `/`, between the Djinn menu's numbers. */
@@ -77,13 +77,13 @@ extern Uint8 ItemMenuEquipmentKeyString[];
    class and the next), and the Djinn preview blinks it, drawing it and a fill
    of the window background (TEXT_CANVAS_BACKGROUND_WORD) in turn every four
    ticks. */
-extern const Uint8 Menu_ChangeArrowTile[];
+extern const Uint8 MenuChangeArrowTile[];
 /* The colon the debug menus' scene and flag rows draw (window/screens_debug.c):
    `:`. */
 extern const Uint8 MenuColonString[];
 /* The selection screen's left arrow, 8 by 16 at 256 colours
    (graphics/ui/sprite_cursors/left). */
-extern Uint8 Menu_CursorLeftActorTiles[];
+extern Uint8 MenuCursorLeftActorTiles[];
 /* `0123456789ABCDEF`, drawn by a debug window. */
 extern const Uint8 MenuHexDigitsString[];
 /* The HP label: `HP`; `KP` in German, `PV` in Spanish and French, `PS` in
@@ -137,9 +137,9 @@ extern Uint8 DebugMenuRangeDash[];
 /* A debug window's title: `STATUS`. */
 extern Uint8 DebugMenuStatusTitle[];
 /* The settings menu's slider colours (graphics/ui/slider_palette). */
-extern const Uint16 SettingsMenu_SliderPalette[];
+extern const Uint16 SettingsMenuSliderPalette[];
 /* The settings menu's slider, 32 by 8 (slider.4bpp32x8). */
-extern const Uint8 SettingsMenu_SliderTiles[];
+extern const Uint8 SettingsMenuSliderTiles[];
 /* The title's imports of mnTitleShowCamelotLogoStub and mnCreditsRunStub,
    called with an argument the functions do not take. */
 void syImportTitleShowCamelotLogo(Sint32 mode);
@@ -167,7 +167,7 @@ void   mnIconShow(struct WINDOW_SPR *object);
 Sint32 mnDjinnMenuRun(void);
 void   mnItemMenuDrawItemDetails(struct WINDOW *win, Sint32 inventoryEntry);
 
-/* The item menu's sort orders (Menu_ListOrder*): one byte per group, an item
+/* The item menu's sort orders (MenuListOrder*): one byte per group, an item
    type, with LIST_ORDER_EQUIPPED for only the equipped items of that type,
    ending with LIST_ORDER_END. */
 #define LIST_ORDER_TYPE_MASK 0x7f

@@ -1,6 +1,6 @@
 /* The Lemurian ship, in two scenes: the East Indra Shore, where the ship lies
-   moored below the cliffs (SceneId_LemurianShipMainDeck), and its deck at the
-   tiller once it sails (SceneId_LemurianShipTiller).
+   moored below the cliffs (SceneIdLemurianShipMainDeck), and its deck at the
+   tiller once it sails (SceneIdLemurianShipTiller).
 
    The party first comes down the sandy path to the shore before the ceremony at
    the Gabomba Statue, and Kraden takes the ship for Menardi's, drifted there
@@ -115,7 +115,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 void scLemurianShipDeckEnterCabin(void)
 {
 	if(fdScriptGetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP)) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 		Uint32		 i;
 
 		fdScriptStart();
@@ -184,10 +184,10 @@ void scLemurianShipDeckTryHeldDoor(void)
 
 /* An event: turns the surf's colours round by one. */
 DEFINE_ROTATE_PALETTE_COLORS(
-	LemurianShipDeck_RotateSurfColors, SURF_LAST_COLOR, SURF_FIRST_COLOR)
+	LemurianShipDeckRotateSurfColors, SURF_LAST_COLOR, SURF_FIRST_COLOR)
 
 /* An event: turns the blues of the band along the hull round by one. */
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHullBandColors,
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeckRotateHullBandColors,
 	HULL_BAND_LAST_COLOR, HULL_BAND_FIRST_COLOR)
 
 /* The entrance whose arrival lights the band along the hull. */
@@ -211,7 +211,7 @@ void scLemurianShipDeckShowArrival(void)
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	fdScriptStartScreenTransition();
-	syFieldSetTickEvent(LemurianShipDeck_RotateHullBandColors, EVENT_PASS_TICK);
+	syFieldSetTickEvent(LemurianShipDeckRotateHullBandColors, EVENT_PASS_TICK);
 	fdScriptWaitTransitionTicks();
 	syFieldScriptWait(60);
 	fdTilesetAnimResume(HULL_BAND_FIRST_ANIMATION);
@@ -583,8 +583,8 @@ void scLemurianShipDeckSetUpTillerDeck(void)
 {
 	fdActorGet(MainRoutineStateWork.leaderActorId)->priFlg |=
 		ACTOR_PRIORITY_IGNORES_RISES;
-	syFieldSetTickEvent(LemurianShipDeck_RotateSurfColors, EVENT_PASS_TICK);
-	syFieldSetTickEvent(LemurianShipDeck_RotateHullBandColors, EVENT_PASS_TICK);
+	syFieldSetTickEvent(LemurianShipDeckRotateSurfColors, EVENT_PASS_TICK);
+	syFieldSetTickEvent(LemurianShipDeckRotateHullBandColors, EVENT_PASS_TICK);
 	if(MainRoutineStateWork.entrance == LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C)
 		scLemurianShipDeckTakeTheTiller();
 	if(MainRoutineStateWork.entrance ==
@@ -594,7 +594,7 @@ void scLemurianShipDeckSetUpTillerDeck(void)
 
 Sint32 scInit(void)
 {
-	MAP_BITS *map = (MAP_BITS *)Ram_HeapSlots->mapGrid;
+	MAP_BITS *map = (MAP_BITS *)RamHeapSlots->mapGrid;
 
 	map->wading = 1;
 	if(MainRoutineStateWork.next == SCENE_LEMURIAN_SHIP_TILLER) {
@@ -606,12 +606,12 @@ Sint32 scInit(void)
 			ACTOR_PRIORITY_IGNORES_RISES;
 		fdActorSetAnimation(ACTOR_PUDDLE, PUDDLE_ANIMATION_PUDDLE);
 		fdFlagBlockPlaceAll(LemurianShipDeckPuddles);
-		syFieldSetTickEvent(LemurianShipDeck_RotateSurfColors, EVENT_PASS_TICK);
+		syFieldSetTickEvent(LemurianShipDeckRotateSurfColors, EVENT_PASS_TICK);
 		if(MainRoutineStateWork.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)
 			scLemurianShipDeckShowArrival();
 		else
 			syFieldSetTickEvent(
-				LemurianShipDeck_RotateHullBandColors, EVENT_PASS_TICK);
+				LemurianShipDeckRotateHullBandColors, EVENT_PASS_TICK);
 	}
 	return 0;
 }

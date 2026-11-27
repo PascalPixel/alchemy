@@ -141,15 +141,15 @@
    tick for the mode's length. */
 void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	Uint8				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	Uint8				*canvas = RamHeapSlots->battleCanvas;
 	/* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
 	 * tick reserves and never touches; as one DRAW_RECTANGLE. */
 	DRAW_RECTANGLE draw[2];
 	Sint32		   ticks;
-	Uint8		  *sprs = Ram_HeapSlots->battleSheet;
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
-	Uint8		  *cells = Ram_MapMetatileBuffer;
+	Uint8		  *sprs = RamHeapSlots->battleSheet;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
+	Uint8		  *cells = RamMapMetatileBuffer;
 	RENDER_MODEL  *model;
 	void		  *verts;
 	MODEL_TEXTURE  texture;
@@ -361,7 +361,7 @@ void btEffectRunGaspFamily(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
 	}
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 
 	for(frm = 0; frm != ticks; frm++) {
 		Sint32 a;

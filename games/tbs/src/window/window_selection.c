@@ -75,7 +75,7 @@ void mnSelectionMenuCreate(void)
 	state->records[SELECTION_ARROW_RIGHT].kind = FALSE;
 	state->records[SELECTION_ARROW_LEFT].y = 0;
 	state->records[SELECTION_ARROW_RIGHT].y = 0;
-	tbl = Menu_AnimatedCursorTiles;
+	tbl = MenuAnimatedCursorTiles;
 	state->records[SELECTION_RECORD_HAND].slot = syVRAMCacheFindFreeEntry();
 	state->records[SELECTION_RECORD_HAND].tile = syVRAMCacheLoad(
 		state->records[SELECTION_RECORD_HAND].slot, HAND_FRAME_BYTES, tbl);
@@ -378,7 +378,7 @@ void mnSelectionMenuDraw(void)
 	/* Point at the selected battle target, smoothing each axis separately: the
 	   hand covers half the distance left each tick. */
 	if(cursor->kind != ICON_KIND_NONE) {
-		entryIdx = (Sint32)Menu_AnimatedCursorTiles;
+		entryIdx = (Sint32)MenuAnimatedCursorTiles;
 		{
 			void *src = (void *)(entryIdx + (((FrameCount >> 2) & 15) << 8));
 
@@ -432,11 +432,11 @@ void mnSelectionMenuDrawArrow(SELECTION_MENU_STATE *state, Sint32 side)
 	arrow->x = state->records[side].x;
 	arrow->y = state->records[side].y;
 	if(side != 0) {
-		arrowTiles = Menu_CursorActorTiles;
+		arrowTiles = MenuCursorActorTiles;
 		if(state->records[SELECTION_ARROW_RIGHT].base != 0)
 			arrow->x = arrow->x + state->records[SELECTION_ARROW_RIGHT].base;
 	} else {
-		arrowTiles = Menu_CursorLeftActorTiles;
+		arrowTiles = MenuCursorLeftActorTiles;
 		if(state->records[SELECTION_ARROW_LEFT].base != 0)
 			arrow->x = arrow->x - state->records[SELECTION_ARROW_LEFT].base;
 	}
@@ -583,7 +583,7 @@ void mnSelectionMenuSetupArrow(SELECTION_MENU_STATE *state, Sint32 side)
 
 	state->records[side].kind = FALSE;
 	if(side != 0) {
-		const Uint8 *right = Menu_CursorActorTiles;
+		const Uint8 *right = MenuCursorActorTiles;
 
 		cnt = state->cnt;
 		if(state->top != 0)
@@ -597,7 +597,7 @@ void mnSelectionMenuSetupArrow(SELECTION_MENU_STATE *state, Sint32 side)
 		state->records[SELECTION_ARROW_RIGHT].x =
 			state->baseX + SELECTION_ICON_SPACING * (cnt - 1) + 17;
 	} else {
-		arrowTiles = Menu_CursorLeftActorTiles;
+		arrowTiles = MenuCursorLeftActorTiles;
 		state->records[SELECTION_ARROW_LEFT].x = state->baseX - 9;
 		if(state->top != 0)
 			state->records[SELECTION_ARROW_LEFT].kind = TRUE;
@@ -1341,7 +1341,7 @@ void mnArrowNoOperationCallbackD(void)
    in *slot). */
 void mnArrowCreate(MENU_SPR *spr, Sint32 *slot)
 {
-	const void *data = Menu_CursorActorTiles;
+	const void *data = MenuCursorActorTiles;
 	Sint32		cacheSlot = syVRAMCacheFindFreeEntry();
 
 	*slot = cacheSlot;

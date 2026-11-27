@@ -16,7 +16,7 @@ typedef enum CHARACTER_ID {
 	PIERS /* Picard */
 } CHARACTER_ID;
 
-/* The portraits, one for each row of the portrait icons (Ui_Icons,
+/* The portraits, one for each row of the portrait icons (UiIcons,
    graphics/ui/icons/icons.tsv) in order; rows 8 to 15 and 65 to 79 are empty
    and have no names. A character's portrait is its character id.
    mnIconLoadWithPalette takes a portrait number below PORTRAIT_SPRITE_MAP_FIRST

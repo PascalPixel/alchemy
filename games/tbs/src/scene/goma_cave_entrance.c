@@ -1,4 +1,4 @@
-/* Goma Cave Entrance (SceneId_GomaCaveEntrance), the foot of the cliffs in the
+/* Goma Cave Entrance (SceneIdGomaCaveEntrance), the foot of the cliffs in the
    Goma Range between Vault and Bilibin, where Ivan joins the party. The cave's
    mouth is high on a column of rock beside a waterfall, hidden behind tall ivy,
    with a stump caught in ivy in front of it.
@@ -23,7 +23,7 @@
    (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY).
 
    Retreat does not work here. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into
-   Goma Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to
+   Goma Cave (SceneIdGomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to
    the World Map. */
 
 #include "ability_ids.h"

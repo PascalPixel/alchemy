@@ -107,7 +107,7 @@ The rest of each name follows these rules:
 | Global variables     | the name alone, `HeapSlots`, `TickCount`; `Work` added where the name is taken, `BattleStateWork` |
 | Tables               | the name alone, `Formations`, `BattleKnockbackAcceleration`; `Tbl` added where the name is taken   |
 | Scene tables         | the scene’s name in front, `AlpineCrossingActorPlacements`, `ShrineOfTheSeaGodFootprintsTbl`       |
-| Assets               | one kind word and an underscore, `Tileset_ValePalette`, `Field_Vale`; the ids keep `ResourceId_`   |
+| Assets               | its kind in front, `TilesetValePalette`, `FieldVale`, and an id the same, `SceneIdVale`            |
 | Statics              | the name alone, as the globals: `InnPricesPerGuest`                                                |
 | Types                | capitals, `ACTOR`, `BATTLE_EFFECT_PARM`, written `typedef struct ACTOR { ... } ACTOR;`             |
 | Struct fields        | `camelCase` with the short forms: `sprId`, `anmIdx`, `velX`                                        |

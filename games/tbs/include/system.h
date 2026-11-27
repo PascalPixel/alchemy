@@ -144,8 +144,8 @@ Sint32 sySetEventFlags(EVENT_FUNC func, Uint32 mask);
 
 /* The system library's own functions and globals: interrupts, BIOS sound bias,
    random numbers and sleep. */
-void Bios_SoundBiasOff(void);
-void Bios_SoundBiasOn(void);
+void BiosSoundBiasOff(void);
+void BiosSoundBiasOn(void);
 /* 1 while the CPU is stopped for sleep, until L and R wake it. */
 extern Uint16 SleepActive;
 
@@ -163,7 +163,7 @@ extern void *syResourceDirectoryTable[];
 extern Uint8 syResourcePatchThumbBranchCodeSize[];
 /* The window font's 16 colours, loaded as BG palette 15
    (syWindowLoadGraphics). */
-extern const Uint16 Window_Palette[];
+extern const Uint16 WindowPalette[];
 
 struct SPR_ANIMATION;
 struct SPR;
@@ -199,7 +199,7 @@ extern const Uint8 syResourceExecuteTransfer[];
 extern const Uint8 syResourcePatchThumbBranch[];
 /* The game code's last letter in the cartridge header: `J` in Japanese, `E`,
    `D`, `F`, `S` or `I` (syGetLanguage). */
-extern const Uint8 Rom_LanguageCode;
+extern const Uint8 RomLanguageCode;
 /* The basic sprite palettes 0 to 13, 224 colours
    (syPaletteLoadBasicSprCols). */
 extern const Uint8 BasicSpritePalettes[];
@@ -214,7 +214,7 @@ extern Uint8 syResourceExecuteTransferCodeSize[];
 void syHalt(void);
 /* Runs the sound for this VBlank, the music players and then the game's own
    mixer in IWRAM; the last thing syVBlankHandler does. */
-void Mixer_Enter(void);
+void MixerEnter(void);
 
 void syInit(void);
 void syIdleForever(void);
@@ -362,7 +362,7 @@ extern Uint32 RandomSeed;
 #define CPU_FILL32(value, destination, size) \
 	{ \
 		volatile Uint32 fill_ = (value); \
-		Bios_CpuSet((const void *)&fill_, (destination), \
+		BiosCpuSet((const void *)&fill_, (destination), \
 			CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4)); \
 	}
 

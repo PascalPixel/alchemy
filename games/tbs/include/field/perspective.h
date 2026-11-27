@@ -40,7 +40,7 @@ typedef struct WORLD_MAP_VIEW {
 	Uint16 shownBottom; /* winBottom as the tick update last applied it */
 	Uint16 winPending;	/* cleared by the tick update; not set by name */
 	Uint8  unusedAfterWin[6];
-	/* The world map's tile offsets (ResourceId_WorldMapPerspectiveTiles), each
+	/* The world map's tile offsets (ResourceIdWorldMapPerspectiveTiles), each
 	   tile LZ-compressed. */
 	void   *tiles;
 	Uint8	unusedAfterTiles[4];

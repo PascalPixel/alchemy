@@ -13,7 +13,7 @@
    it without paying PP. */
 Sint32 fdUsePsynergy(Uint32 code)
 {
-	FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
+	FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 	Sint32		 abilityId = ABILITY_ID(code);
 	PENDING_CUE *before;
 	Sint32		 group = gmAbilityGetDirectStub(abilityId)->fieldPsynergy;
@@ -172,17 +172,17 @@ Sint32 fdUsePsynergy(Uint32 code)
 	fdPsynergyLoadResources(abilityId, 0);
 	fieldState->psynergyActing = 1;
 	if(before != NULL && (before->flg & CUE_SUBJECT_QUIET)) {
-		effect = Ram_HeapSlots->fieldEffState;
+		effect = RamHeapSlots->fieldEffState;
 		effect->flashCaster = 0;
 		effect->announceName = 0;
 	}
 	if(after != NULL && (after->flg & CUE_SUBJECT_QUIET)) {
-		effect = Ram_HeapSlots->fieldEffState;
+		effect = RamHeapSlots->fieldEffState;
 		effect->flashCaster = 0;
 		effect->announceName = 0;
 	}
 	if(during != NULL && (during->flg & CUE_SUBJECT_QUIET)) {
-		effect = Ram_HeapSlots->fieldEffState;
+		effect = RamHeapSlots->fieldEffState;
 		effect->flashCaster = 0;
 		effect->announceName = 0;
 	}

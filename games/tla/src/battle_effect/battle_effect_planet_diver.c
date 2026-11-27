@@ -22,8 +22,8 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 	BATTLE_CAMERA		*camera;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_SKULL_SHEET, state->sheet, 1, 1);
 	syWordsCopyEntry((void *)BG_PLTT,
@@ -43,7 +43,7 @@ void btEffectRunHaunt(BATTLE_EFFECT_PARM *args)
 	for(frm = 0; frm != args->tgtCnt * 32 + 64; frm++) {
 		Sint32 *row;
 
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		if(frm == 92)
 			EFFECT_SHOW_DAMAGE(0);
 
@@ -137,15 +137,15 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 	Sint32				 ofsX;
 	Sint32				 frm;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	EFFECT_START_NARROW_CANVAS(0);
 	btResourceLoadAndDecompress(RESOURCE_SPIRAL_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	if(args->side == EFFECT_SIDE_PARTY) {
@@ -161,7 +161,7 @@ void btEffectRunUnusedOrbitingSpirals(BATTLE_EFFECT_PARM *args)
 		Sint32		  *row;
 		Sint32		   i;
 
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		row = state->bg2xLines;
 		if(args->side == EFFECT_SIDE_ENEMIES) {
 			for(i = 0; i != DISPLAY_HEIGHT; i++)
@@ -294,9 +294,9 @@ void btEffectRunGatheringLights(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 paletteId;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	btResourceLoadAndDecompress(
 		RESOURCE_MEMBER_BURST_IMAGE, state->sheet, 0, 0);

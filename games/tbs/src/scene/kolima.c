@@ -1,7 +1,7 @@
 /* Kolima's overlay, which holds three scenes. The village's houses and shops
    are another overlay (log_rooms_c.c), and so is each scene of Kolima Forest.
 
-   - Kolima (SceneId_Kolima), the village of lumberjacks, to which Lord McCoy
+   - Kolima (SceneIdKolima), the village of lumberjacks, to which Lord McCoy
 	 has barricaded the road from Bilibin since the trouble began.
 
 	 The party's first entry from the World Map (KOLIMA_FROM_WORLD_MAP) plays
@@ -27,11 +27,11 @@
 	 when spoken to.
 
 	 Five doorways (KOLIMA_TO_INN to KOLIMA_TO_HOUSE_NORTH) lead into the
-	 houses and shops (SceneId_LogRoomsC). KOLIMA_TO_WORLD_MAP and
+	 houses and shops (SceneIdLogRoomsC). KOLIMA_TO_WORLD_MAP and
 	 KOLIMA_TO_WORLD_MAP_EAST lead to the World Map and KOLIMA_TO_KOLIMA_TUNNEL
 	 into Kolima Tunnel.
 
-   - Kolima Tunnel (SceneId_KolimaTunnel), a passage with no one in it from one
+   - Kolima Tunnel (SceneIdKolimaTunnel), a passage with no one in it from one
 	 of the houses (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL) to the village
 	 (KOLIMA_FROM_KOLIMA_TUNNEL).
 
@@ -43,7 +43,7 @@
 	 101), are in the village. Only Kolima's layout (kolima's
 	 map.inc) places them, at metatiles (23, 8) and (13, 23).
 
-   - Kolima Bridge (SceneId_KolimaBridge), "the grand bridge across the
+   - Kolima Bridge (SceneIdKolimaBridge), "the grand bridge across the
 	 river" and "the pride of Kolima" to the village's armor seller, with the
 	 World Map at both ends. It is a drawbridge, standing raised between its
 	 posts.

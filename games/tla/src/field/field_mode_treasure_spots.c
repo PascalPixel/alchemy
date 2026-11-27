@@ -58,7 +58,7 @@ Sint32 fdSceneItemFindPos(Sint32 value, Sint32 *out)
 void fdPlaceTreasureSpots(void)
 {
 	Sint16		*rows = fdSceneItemGetRows();
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 i;
 	Sint16		 type;
 	Sint32		 id;
@@ -116,7 +116,7 @@ void fdPlaceTreasureSpots(void)
 						*motionFlg = ACTOR_FALLS;
 						actor->groundHeight -= toFIXED(16);
 						actor->y.fixed = actor->groundHeight;
-						map = Ram_HeapSlots->mapGrid;
+						map = RamHeapSlots->mapGrid;
 						x = FIELD_METATILE(actor->x.fixed);
 						z = FIELD_METATILE(actor->z.fixed);
 						metatiles = (MAP_METATILE *)MapGridMetatileBuffer;

@@ -456,7 +456,7 @@ void scNorthernReachesShatterIceWall(
 	syHeapRelease(sheet);
 	for(i = 0; i < EXPLOSION_SPARK_COUNT; i++)
 		sparks[i].age = -(syRandom() << 5 >> 16);
-	syDMAXCopy(Field_ExplosionPalette,
+	syDMAXCopy(FieldExplosionPalette,
 		(void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 	for(frm = 0; frm <= 149; frm++) {

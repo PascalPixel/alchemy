@@ -26,7 +26,7 @@ void fdPsynergyFadeFromCastCol(void)
    screen's x and y and y becomes 0. */
 void fdCameraWorldToScreen(VECTOR3 *pos)
 {
-	HEAP_SLOTS *heap = Ram_HeapSlots;
+	HEAP_SLOTS *heap = RamHeapSlots;
 
 	if(((FIELD_STATE *)heap->fieldState)->mode == ACTOR_SYSTEM_WORLD_MAP) {
 		Sint32 result[3];
@@ -56,7 +56,7 @@ void fdBattleEffectUpdateAllEffectSlots(void)
 	FIELD_EFFECT_STATE *scene;
 	Sint32				i;
 
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
 		fdParticleUpdate(&scene->particles[i]);
 }
@@ -67,8 +67,8 @@ void fdBattleEffectUpdateAllEffectSlots(void)
    resolving, only the ability and kind are set. */
 void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 {
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	FIELD_EFFECT_STATE *state;
 	Sint32				running;
 
@@ -76,7 +76,7 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 		state = syHeapSlotAlloc(HEAP_SLOT_FIELD_EFFECT, sizeof(*state));
 		IWRAM_FILL_WORDS(state, sizeof(*state), 0);
 	} else {
-		state = Ram_HeapSlots->fieldEffState;
+		state = RamHeapSlots->fieldEffState;
 	}
 	state->ability = abilityId;
 	state->fieldPsynergy = gmAbilityGetDirectStub(abilityId)->fieldPsynergy;
@@ -107,7 +107,7 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	if(MainRoutineStateWork.mapId == SCENE_JUPITER_LIGHTHOUSE_AERIE)
 		state->lit = 1;
 	if(MainRoutineStateWork.mapId ==
-		(Sint32)&SceneId_JupiterLighthouseAerieBeacon)
+		(Sint32)&SceneIdJupiterLighthouseAerieBeacon)
 		state->lit = 1;
 	if(MainRoutineStateWork.mapId == SCENE_LOHO)
 		state->lit = 1;
@@ -132,7 +132,7 @@ void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
 	ACTOR			   *tgt;
 	FIELD_EFFECT_STATE *scene;
 
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	scene->casterId = userId;
 	user = fdActorLookup((Sint16)userId);
 	scene->tgtId = tgtId;
@@ -172,8 +172,8 @@ void fdPsynergySetupActorPair(Sint32 userId, Sint32 tgtId)
    (ANIM_CAST_PSYNERGY_END) and keeps its glow. */
 void fdPsynergyStartCast(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
 	ACTOR			   *actor = state->caster;
 	Sint32				ability = state->ability;
 
@@ -210,7 +210,7 @@ void fdPsynergyStartCast(void)
 /* Takes the caster out of its casting update and waits a tick. */
 void fdBattleEffectStopMainActor(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	fdBattleEffectSetObjectUpdateMode(state->caster, CASTER_LOOK_NORMAL);
 	sySynch(1);
@@ -221,10 +221,10 @@ void fdBattleEffectStopMainActor(void)
    restores the map's shake and releases the state. */
 void fdPsynergyEnd(void)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	PALETTE_FADE	   *fade = Ram_HeapSlots->palFade;
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
+	PALETTE_FADE	   *fade = RamHeapSlots->palFade;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	ACTOR			   *owner = state->caster;
 	Sint32				i;
 	Sint16				first;
@@ -275,7 +275,7 @@ void fdPsynergyEnd(void)
    the BG tile buffer, so the next still image decodes it again. */
 void fdPsynergyMarkWorldMapTilesUsed(void)
 {
-	HEAP_SLOTS *heap = Ram_HeapSlots;
+	HEAP_SLOTS *heap = RamHeapSlots;
 	Sint32		mode = ((FIELD_STATE *)heap->fieldState)->mode;
 
 	if(mode == ACTOR_SYSTEM_WORLD_MAP)
@@ -311,7 +311,7 @@ void fdPsynergyStartMindReadWave(Sint32 casterId, Sint32 tgtId)
    releases the Psynergy's state. */
 void fdPsynergyStopMindReadWave(void)
 {
-	MIND_READ_STATE *state = Ram_HeapSlots->mindRead;
+	MIND_READ_STATE *state = RamHeapSlots->mindRead;
 
 	fdPsynergyRestoreMindReadPalette();
 	syCloseEvent(fdPsynergyUpdateMindReadWave);
@@ -330,7 +330,7 @@ void fdPsynergyGreyMindReadPalette(void)
 {
 	volatile Uint16 *p;
 
-	((WIN_STATE *)Ram_HeapSlots->winState)->mindRead = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->mindRead = 1;
 	p = &BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE);
 	*p = MIND_READ_GREY;
 	p += 2;
@@ -359,7 +359,7 @@ void fdPsynergyGreyMindReadPalette(void)
 /* Stops the BG0 line scroll and restores WINDOW_PALETTE. */
 void fdPsynergyRestoreMindReadPalette(void)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 
 	syCloseEvent((EVENT_FUNC)fdMindReadStartRipple);
 	BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE) = RGB_WHITE;

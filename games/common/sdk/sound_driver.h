@@ -21,7 +21,7 @@ extern struct CgbChannel CgbChans[4];
 extern u8 MPlayMemAccArea[];
 /* The song commands' handlers and the driver's helpers, which SoundInit copies
    from MPlayJumpTableTemplate (MPLAY_JUMP_); the driver's core reaches it as
-   Ram_MPlayJumpTable. */
+   RamMPlayJumpTable. */
 extern MPlayFunc MPlayJumpTable[36];
 
 /* The driver's tables: its music players, every sound by number, the functions
@@ -49,7 +49,7 @@ extern char MaxLines[];
 
 /* What the driver calls outside it, which each game's system library provides:
    the BIOS's CpuSet and the compiler's signed division. */
-void Bios_CpuSet(const void *src, void *dst, u32 control);
+void BiosCpuSet(const void *src, void *dst, u32 control);
 s32	 __divsi3(s32 numerator, s32 denominator);
 
 /* Starting the driver and running it each VBlank. */
@@ -67,7 +67,7 @@ void m4aSoundVSync(void);
    chain), then mixes the next buffer through SoundMainRAM in IWRAM. */
 void SoundMain(void);
 /* The mixer's code as the ROM holds it, which m4aSoundInit copies to IWRAM
-   (Ram_SoundMixer) to run from there. */
+   (RamSoundMixer) to run from there. */
 void sySndMainRAMRom(void);
 /* The callback that does nothing, for the driver's hooks until they are set. */
 void DummyFunc(void);

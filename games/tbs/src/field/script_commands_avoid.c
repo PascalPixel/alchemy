@@ -89,7 +89,7 @@ void fdPsynergyAvoid(void)
 	/* The arcs' tiles (256 bytes) stay loaded until the Psynergy's end; the
 	   distance is 2,400 pixels in 16.16. */
 	effectState->arcTileSlot = slot;
-	syVRAMCacheLoad((Sint16)slot, 256, FieldEffect_ArcSparkTiles);
+	syVRAMCacheLoad((Sint16)slot, 256, FieldEffectArcSparkTiles);
 	MainRoutineStateWork.avoidDistance = toFIXED(2400);
 	MainRoutineStateWork.avoidByItem = gmFlagGetStub(FLAG_PSYNERGY_FROM_ITEM);
 	fdActorSetSprColModeStub(actor, SPRITE_COLOR_NORMAL);

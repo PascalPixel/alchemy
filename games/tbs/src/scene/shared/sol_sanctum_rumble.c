@@ -1,5 +1,5 @@
 /* The initialization that two rooms of Sol Sanctum share,
-   SceneId_SolSanctumMaze and SceneId_SolSanctumCorridor. */
+   SceneIdSolSanctumMaze and SceneIdSolSanctumCorridor. */
 
 #include "flags.h"
 

@@ -951,7 +951,7 @@ Sint32 KibomboMountainsTorchScript[] = {
 };
 
 /* Unused: a flame raised 24 pixels and held there, as Naribwe's */
-/* Naribwe_FlameRises raises the flames over its braziers. */
+/* NaribweFlameRises raises the flames over its braziers. */
 UNUSED Sint32 KibomboMountainsFlameRisesScript[] = {
 	SC_ANIMATION(0),
 	SC_SET(SW_MOTION, 0),

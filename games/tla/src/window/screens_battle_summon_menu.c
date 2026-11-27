@@ -50,7 +50,7 @@ Sint32 mnBattleSummonMenuRun(
 	Sint32					 result;
 	Sint32					 idx;
 
-	state = Ram_HeapSlots->winState;
+	state = RamHeapSlots->winState;
 	drawnRow = -1;
 	drawnFirstEntry = -1;
 	cursorHandle = (Sint16)syVRAMCacheAllocEntry(128);

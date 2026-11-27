@@ -28,8 +28,8 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*arcFlame;
 	PARTICLE			*flame;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
 		BLDCNT_TGT2_ALL;
@@ -38,7 +38,7 @@ void btEffectRunFlare(BATTLE_EFFECT_PARM *args)
 		RESOURCE_EMBER_STREAK_SHEET, state->sheet, 1, 1);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 
 	/* The arc of flames, from the canvas's left edge over the enemies and back
 	   from its right half over the party, each flame starting four ticks after

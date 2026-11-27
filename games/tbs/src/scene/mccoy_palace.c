@@ -1,6 +1,6 @@
 /* McCoy's Palace in Bilibin, the home of the town's chief.
 
-   The palace is one scene, SceneId_McCoyPalace, sharing the area name McCoy's
+   The palace is one scene, SceneIdMcCoyPalace, sharing the area name McCoy's
    Palace with its grounds (mccoy_palace_grounds.c). Its rooms are side by side
    on one map, each in its own camera box: the entrance hall with its red
    carpet, McCoy's room at the carpet's top, Lady McCoy's room with a bedroom
@@ -1822,7 +1822,7 @@ Uint32 McCoyPalaceExits[] = {
 	SCENE_EXITS_END,
 };
 
-/* Unused: the getters return it for any scene but SceneId_McCoyPalace, and the
+/* Unused: the getters return it for any scene but SceneIdMcCoyPalace, and the
    overlay serves no other. */
 ACTOR_PLACE McCoyPalaceNoActorPlacements[] = {
 	{SCENE_TABLE_END},

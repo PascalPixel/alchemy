@@ -5,7 +5,7 @@
 
    In the order the party meets them:
 
-   - Crossbone Isle (SceneId_CrossboneIsle), the island. The party lands at
+   - Crossbone Isle (SceneIdCrossboneIsle), the island. The party lands at
 	 the south (WORLD_MAP_TO_CROSSBONE_ISLE) and walks west to the foot of a
 	 cliff, where Growth on three sprouts, one on each ledge, grows the vines
 	 that climb it to the top. They stay grown only until the party leaves
@@ -17,12 +17,12 @@
 	 (CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE). A second clump, on the
 	 top ledge beside the third vine, hides nothing.
 
-   - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the winding
+   - Crossbone Isle Cave (SceneIdCrossboneIsleCaveEntrance), the winding
 	 path lit by torches that leads from the cave's mouth down to the first
 	 floor.
 
-   - Crossbone Isle Cave (SceneId_CrossboneIsleFirstFloor to
-	 SceneId_CrossboneIsleNinthFloor), the nine floors, each a hall like the
+   - Crossbone Isle Cave (SceneIdCrossboneIsleFirstFloor to
+	 SceneIdCrossboneIsleNinthFloor), the nine floors, each a hall like the
 	 last. The party comes in at the east end (FLOOR_FROM_PREVIOUS_ROOM) and
 	 leaves down the stairs at the west end (FLOOR_TO_NEXT_ROOM). The middle
 	 of the hall is two raised ledges with a gap between them, each with a
@@ -43,7 +43,7 @@
 	 and the side rooms of the first eight floors are in
 	 crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
 
-   - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth
+   - Crossbone Isle Cave (SceneIdCrossboneIsleFloatingLogs), the ninth
 	 floor's side room: two pools of green water with twelve logs floating on
 	 them. Walking onto a log and on along it rolls the log across the pool
 	 with Isaac on top, until the far shore or another log stops it, and he
@@ -52,10 +52,10 @@
    alcove north of the east pool, a Water of Life on the ledge between the
    pools, and the Muramasa in the alcove north of the west pool.
 
-   - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the ninth
+   - Crossbone Isle Cave (SceneIdCrossboneIslePier), the ledge past the ninth
 	 floor where a wooden pier leads out to the Pirate Ship.
 
-   - Pirate Ship (SceneId_PirateShip), at the bottom. The first chest, at the
+   - Pirate Ship (SceneIdPirateShip), at the bottom. The first chest, at the
 	 foot of the ladder in the middle of the deck, is a Mimic. Climbing the
 	 west stairs onto the raised foredeck sets off the battle with Deadbeard
 	 (scCrossboneIsleFightDeadbeard). Once he is beaten, a chest with the Demon
@@ -136,7 +136,7 @@ enum {
 };
 
 /* The twelve floating logs of the ninth floor's side room
-   (SceneId_CrossboneIsleFloatingLogs), lettered A to L in the order of
+   (SceneIdCrossboneIsleFloatingLogs), lettered A to L in the order of
    CrossboneIsleFloatingLogsActorPlacements. Each is given by the place it
    starts in on every visit, with its middle metatile.
 

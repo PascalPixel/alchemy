@@ -117,8 +117,8 @@ Sint32 LemuriaPalaceFirstMapShown				 BSS_DATA;
 Sint32 LemuriaPalaceSecondMapVram				 BSS_DATA;
 Sint32 LemuriaPalaceMapTime						 BSS_DATA;
 extern Uint8									 LemuriaPalaceMapFadeLevels[];
-extern const Uint8								 LemuriaPalace_FirstMapTiles[];
-extern const Uint8								 LemuriaPalace_SecondMapTiles[];
+extern const Uint8								 LemuriaPalaceFirstMapTiles[];
+extern const Uint8								 LemuriaPalaceSecondMapTiles[];
 
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
@@ -306,7 +306,7 @@ void scLemuriaPalaceLoadMaps(void)
 
 	syIOWrite16(BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL, &REG_BLDCNT);
 	syIOWrite16(BLEND_ALPHA(0, BLEND_WEIGHT_MAX), &REG_BLDALPHA);
-	syDecompressTaggedLZ(LemuriaPalace_FirstMapTiles, buf);
+	syDecompressTaggedLZ(LemuriaPalaceFirstMapTiles, buf);
 	firstSlot = &LemuriaPalaceFirstMapVram;
 	*firstSlot = syVRAMCacheFindFreeEntry();
 	firstTile = &LemuriaPalaceFirstMapTile;
@@ -318,7 +318,7 @@ void scLemuriaPalaceLoadMaps(void)
 	LemuriaPalaceFirstMapSprite.oam.objMode = 1;
 	LemuriaPalaceFirstMapSprite.oam.fullCol = 1;
 	LemuriaPalaceFirstMapSprite.oam.pal = 0;
-	syDecompressTaggedLZ(LemuriaPalace_SecondMapTiles, buf);
+	syDecompressTaggedLZ(LemuriaPalaceSecondMapTiles, buf);
 	secondSlot = &LemuriaPalaceSecondMapVram;
 	*secondSlot = syVRAMCacheFindFreeEntry();
 	secondTile = &LemuriaPalaceSecondMapTile;

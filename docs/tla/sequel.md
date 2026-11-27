@@ -85,7 +85,7 @@ Both games keep each part's [state](glossary.md#state) in a
 through a table it links by name, `HeapSlotsWork`, and the field's state is
 `FieldStateWork`, one of its entries. The Lost Age keeps its slots at a fixed
 address and reads them as the fields of one struct,
-`Ram_HeapSlots->fieldState`, in 384 of its source files. So a function that
+`RamHeapSlots->fieldState`, in 384 of its source files. So a function that
 does the same thing in both games is often written, and compiled,
 differently in each.
 

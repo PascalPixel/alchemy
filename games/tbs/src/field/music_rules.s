@@ -7,7 +7,7 @@
 @ (-1 for none) is set, gives the music. A scene's row sets idIsMap, the
 @ entrance's top bit; id -1 ends the table.
 	.macro scene_music scene:req, entrance:req, flag:req, music:req
-	.2byte SceneId_\scene, (\entrance & 0x7fff) | 0x8000, \flag, \music
+	.2byte SceneId\scene, (\entrance & 0x7fff) | 0x8000, \flag, \music
 	.endm
 	.macro area_music area:req, entrance:req, flag:req, music:req
 	.2byte \area, \entrance & 0x7fff, \flag, \music
@@ -15,8 +15,8 @@
 
 	.section .rodata
 	.balign 4
-	.global Scene_MusicRules
-Scene_MusicRules:
+	.global SceneMusicRules
+SceneMusicRules:
 	area_music AREA_CLEAR_DATA, -1, -1, MUS_SETTING_OFF
 	area_music AREA_WORLD_MAP, 90, -1, MUS_SILENCE
 	area_music AREA_WORLD_MAP, 91, -1, MUS_SILENCE

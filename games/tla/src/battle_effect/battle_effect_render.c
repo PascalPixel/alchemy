@@ -51,9 +51,9 @@ typedef struct SOLID_FACE {
    slopes. */
 UNUSED void btRenderFillMesh(Sint32 vertexCnt, Sint32 faceCnt)
 {
-	Uint8	   *canvas = Ram_HeapSlots->battleCanvas;
-	Sint32	   *vertices = Ram_HeapSlots->battleSheet;
-	SOLID_FACE *faces = (SOLID_FACE *)Ram_HeapSlots->battleEff;
+	Uint8	   *canvas = RamHeapSlots->battleCanvas;
+	Sint32	   *vertices = RamHeapSlots->battleSheet;
+	SOLID_FACE *faces = (SOLID_FACE *)RamHeapSlots->battleEff;
 	Sint32		i;
 	Sint32	   *ax, *bx, *cx, *cy, *ay, *by;
 	Sint32		facing;
@@ -228,9 +228,9 @@ UNUSED void btRenderDrawTexturedMesh(
 	BATTLE_EFFECT_STATE *state;
 	Uint32				 y;
 
-	vertices = Ram_HeapSlots->battleSheet;
-	faces = (MESH_POLYGON *)Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	vertices = RamHeapSlots->battleSheet;
+	faces = (MESH_POLYGON *)RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	vertexCnt *= 3;
 	for(i = 0; i != vertexCnt; i += 3)
 		syCalcPoint(&vertices[i], &vertices[i]);
@@ -252,7 +252,7 @@ UNUSED void btRenderDrawTexturedMesh(
 
 		/* Back faces are skipped. */
 		if(syMulFX(*bx - *ax, *cy - *ay) - syMulFX(*cx - *ax, *by - *ay) >= 0) {
-			state = Ram_HeapSlots->battleEff;
+			state = RamHeapSlots->battleEff;
 			syDMAXCopy(uvs[i], uv, DMA_COPY_WORDS(6), REG_DMA3);
 			*ax += toFIXED(64);
 			*ay += toFIXED(64);
@@ -382,8 +382,8 @@ typedef struct WIRE_FACE {
    (64, 64). */
 UNUSED void btRenderDrawMeshWireframe(Sint32 vertexCnt, Sint32 faceCnt)
 {
-	Sint32	  *vertices = Ram_HeapSlots->battleSheet;
-	WIRE_FACE *faces = (WIRE_FACE *)Ram_HeapSlots->battleEff;
+	Sint32	  *vertices = RamHeapSlots->battleSheet;
+	WIRE_FACE *faces = (WIRE_FACE *)RamHeapSlots->battleEff;
 	Sint32	   i;
 	Sint32	   facing;
 	Sint32	   col;
@@ -553,7 +553,7 @@ Sint32 btEffectBuildBlitter(
 	/* Block 1, the entry code. */
 	COPY(4);
 	if(mode == BLITTER_ADDITIVE) {
-		COPY_FROM(BattleEffect_Mask, 3);
+		COPY_FROM(BattleEffectMask, 3);
 	}
 
 	if((flg & COMPOSITE_FLIP) == COMPOSITE_FLIP_X) {
@@ -666,9 +666,9 @@ Sint32 btEffectBuildBlitter(
 		const Uint32 *part;
 
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			part = BattleEffect_CopyReverse;
+			part = BattleEffectCopyReverse;
 		} else {
-			part = BattleEffect_CopyForward;
+			part = BattleEffectCopyForward;
 		}
 		COPY_FROM(part, 2);
 		break;
@@ -677,9 +677,9 @@ Sint32 btEffectBuildBlitter(
 		const Uint32 *part;
 
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			part = BattleEffect_TransparentReverse;
+			part = BattleEffectTransparentReverse;
 		} else {
-			part = BattleEffect_TransparentForward;
+			part = BattleEffectTransparentForward;
 		}
 		COPY_FROM(part, 4);
 		break;
@@ -688,18 +688,18 @@ Sint32 btEffectBuildBlitter(
 		const Uint32 *part;
 
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			part = BattleEffect_MaxReverse;
+			part = BattleEffectMaxReverse;
 		} else {
-			part = BattleEffect_MaxForward;
+			part = BattleEffectMaxForward;
 		}
 		COPY_FROM(part, 4);
 		break;
 	}
 	case BLITTER_ADDITIVE:
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			COPY_DMA(BattleEffect_AdditiveReverse, 6);
+			COPY_DMA(BattleEffectAdditiveReverse, 6);
 		} else {
-			COPY_DMA(BattleEffect_AdditiveForward, 6);
+			COPY_DMA(BattleEffectAdditiveForward, 6);
 		}
 		break;
 	}
@@ -722,30 +722,30 @@ Sint32 btEffectBuildBlitter(
 	switch(mode) {
 	default:
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			COPY_DMA(BattleEffect_Copy8Reverse, COPY8_WORDS);
+			COPY_DMA(BattleEffectCopy8Reverse, COPY8_WORDS);
 		} else {
-			COPY_DMA(BattleEffect_Copy8Forward, COPY8_WORDS);
+			COPY_DMA(BattleEffectCopy8Forward, COPY8_WORDS);
 		}
 		break;
 	case BLITTER_TRANSPARENT:
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			COPY_DMA(BattleEffect_Transparent8Reverse, TRANSPARENT8_WORDS);
+			COPY_DMA(BattleEffectTransparent8Reverse, TRANSPARENT8_WORDS);
 		} else {
-			COPY_DMA(BattleEffect_Transparent8Forward, TRANSPARENT8_WORDS);
+			COPY_DMA(BattleEffectTransparent8Forward, TRANSPARENT8_WORDS);
 		}
 		break;
 	case BLITTER_MAX:
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			COPY_TWICE(BattleEffect_Max4Reverse, MAX4_WORDS);
+			COPY_TWICE(BattleEffectMax4Reverse, MAX4_WORDS);
 		} else {
-			COPY_TWICE(BattleEffect_Max4Forward, MAX4_WORDS);
+			COPY_TWICE(BattleEffectMax4Forward, MAX4_WORDS);
 		}
 		break;
 	case BLITTER_ADDITIVE:
 		if((flg & COMPOSITE_FLIP_X) != 0) {
-			COPY_TWICE(BattleEffect_ColorReverse, COLOR_WORDS);
+			COPY_TWICE(BattleEffectColorReverse, COLOR_WORDS);
 		} else {
-			COPY_TWICE(BattleEffect_ColorForward, COLOR_WORDS);
+			COPY_TWICE(BattleEffectColorForward, COLOR_WORDS);
 		}
 		break;
 	}

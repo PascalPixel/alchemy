@@ -5,8 +5,8 @@
    spot within a screen of that actor, or at the origin when there is none. */
 void fdGroundParticlesDraw(void)
 {
-	MAP_STATE			  *view = Ram_HeapSlots->mapGrid;
-	GROUND_PARTICLE_STATE *state = Ram_HeapSlots->weather;
+	MAP_STATE			  *view = RamHeapSlots->mapGrid;
+	GROUND_PARTICLE_STATE *state = RamHeapSlots->weather;
 	WEATHER_PARTICLE	  *particle = state->particles;
 	Sint32				   cameraX = syMapStateView(view)[0];
 	Sint32				   cameraZ = syMapStateView(view)[1];

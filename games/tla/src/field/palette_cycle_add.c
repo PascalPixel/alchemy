@@ -13,7 +13,7 @@ UNUSED Sint32 fdPaletteCycleAdd(
 	Uint32				 cycleIdx;
 	Uint16				 cnt;
 
-	queue = Ram_HeapSlots->palCycles;
+	queue = RamHeapSlots->palCycles;
 	cycleIdx = queue->cnt;
 	if(cycleIdx >= ARRAY_COUNT(queue->entries))
 		return -1;

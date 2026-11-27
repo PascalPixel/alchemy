@@ -63,7 +63,7 @@ Sint32 syGetLanguage(void)
 {
 	Sint32 language;
 
-	switch(Cart_LanguageCode) {
+	switch(CartLanguageCode) {
 	case 'D':
 		language = CARTRIDGE_LANGUAGE_GERMAN;
 		break;
@@ -242,8 +242,8 @@ void syInstallIWRAMAndIRQs(void)
 	   table. */
 	syIOWrite16(0, &REG_IME);
 	syDMAXCopy(
-		IwramResident_Rom, Ram_IwramIrqMain, DMA_COPY_WORDS(1024), REG_DMA3);
-	*Ram_IrqVector = syIWRAMIRQMain;
+		IwramResidentRom, RamIwramIrqMain, DMA_COPY_WORDS(1024), REG_DMA3);
+	*RamIrqVector = syIWRAMIRQMain;
 	syDMAXCopy(
 		DefaultIrqHandlers, IrqHandlers, DMA_COPY_WORDS(IRQ_COUNT), REG_DMA3);
 	syIOWrite16(0, &REG_DISPSTAT);

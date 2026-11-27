@@ -3,16 +3,16 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Text_DecodeSymbolCode
-Text_DecodeSymbolCode:
-	.global Text_DecodeSymbol
+	.global TextDecodeSymbolCode
+TextDecodeSymbolCode:
+	.global TextDecodeSymbol
 	.thumb_func
-Text_DecodeSymbol:
+TextDecodeSymbol:
 	bx	pc
-AlchemyUncredited_0803843a:
+AlchemyUncredited0803843a:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0803843a:
+AlchemyUncreditedEnd0803843a:
 	push	{r5, r6}
 	ldm	r0, {r1, r2, r3}
 	ldr	ip, [pc, #300]
@@ -101,6 +101,6 @@ AlchemyUncreditedEnd_0803843a:
 	movs	r0, r1
 	pop	{r5, r6}
 	bx	lr
-	.4byte	Text_MessageContexts
-	.global Text_DecodeSymbolEnd
-Text_DecodeSymbolEnd:
+	.4byte	TextMessageContexts
+	.global TextDecodeSymbolEnd
+TextDecodeSymbolEnd:

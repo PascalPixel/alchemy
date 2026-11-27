@@ -24,7 +24,7 @@
    Yallam, finishes it. */
 #define FLAG_SUNSHINE_FORGING FLAG_AREA_TEMP_01
 
-/* The actors of SceneId_YallamRoomsInn, numbering the rows of
+/* The actors of SceneIdYallamRoomsInn, numbering the rows of
    YallamRoomsInnPlacements: its map holds two houses, the inn and Sunshine's
    house and smithy. */
 typedef enum YALLAM_ROOMS_INN_ACTOR_ID {
@@ -49,7 +49,7 @@ typedef enum YALLAM_ROOMS_INN_ACTOR_ID {
 	ACTOR_SUNSHINES_BED
 } YALLAM_ROOMS_INN_ACTOR_ID;
 
-/* The shops' actors (SceneId_YallamRoomsShops), numbering the rows of
+/* The shops' actors (SceneIdYallamRoomsShops), numbering the rows of
    YallamRoomsShopsPlacements. */
 typedef enum YALLAM_ROOMS_SHOPS_ACTOR_ID {
 	/* "Sunshine has started complaining that he can't work lately." */

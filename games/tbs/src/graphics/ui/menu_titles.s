@@ -11,114 +11,114 @@ MenuTitlePictures:
 MenuTitlePicturesCaseA:
 MenuTitlePicturesCaseB:
 MenuTitlePicturesCaseC:
-	.4byte MenuTitle_Save, MenuTitle_Continue, MenuTitle_Copy, MenuTitle_Erase
-	.4byte MenuTitle_Battle, MenuTitle_Link, MenuTitle_Pause, MenuTitle_Settings
+	.4byte MenuTitleSave, MenuTitleContinue, MenuTitleCopy, MenuTitleErase
+	.4byte MenuTitleBattle, MenuTitleLink, MenuTitlePause, MenuTitleSettings
 	.ifdef TBS_EDITION_JA
-MenuTitle_Save:
+MenuTitleSave:
 	.incbin "games/common/graphics/ui/menu_titles/save_ja.4bpp32x16.plz"
-MenuTitle_Continue:
+MenuTitleContinue:
 	.incbin "games/common/graphics/ui/menu_titles/cont_ja.4bpp32x16.plz"
-MenuTitle_Copy:
+MenuTitleCopy:
 	.incbin "games/common/graphics/ui/menu_titles/copy_ja.4bpp32x16.plz"
-MenuTitle_Erase:
+MenuTitleErase:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/erase_ja.4bpp32x16.plz"
-MenuTitle_Battle:
+MenuTitleBattle:
 	.incbin "games/common/graphics/ui/menu_titles/battle_ja.4bpp32x16.plz"
-MenuTitle_Link:
+MenuTitleLink:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/link_ja.4bpp32x16.plz"
-MenuTitle_Pause:
+MenuTitlePause:
 	.incbin "games/common/graphics/ui/menu_titles/pause_ja.4bpp32x16.plz"
-MenuTitle_Settings:
+MenuTitleSettings:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/setup_ja.4bpp32x16.plz"
 	.else
 	.ifdef TBS_EDITION_EN
-MenuTitle_Save:
+MenuTitleSave:
 	.incbin "games/common/graphics/ui/menu_titles/save_en.4bpp32x16.plz"
-MenuTitle_Continue:
+MenuTitleContinue:
 	.incbin "games/common/graphics/ui/menu_titles/cont_en.4bpp32x16.plz"
-MenuTitle_Copy:
+MenuTitleCopy:
 	.incbin "games/common/graphics/ui/menu_titles/copy_en.4bpp32x16.plz"
-MenuTitle_Erase:
+MenuTitleErase:
 	.incbin "games/common/graphics/ui/menu_titles/erase_en.4bpp32x16.plz"
-MenuTitle_Battle:
+MenuTitleBattle:
 	.incbin "games/common/graphics/ui/menu_titles/battle_en.4bpp32x16.plz"
-MenuTitle_Link:
+MenuTitleLink:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/link_en.4bpp32x16.plz"
-MenuTitle_Pause:
+MenuTitlePause:
 	.incbin "games/common/graphics/ui/menu_titles/pause_en.4bpp32x16.plz"
-MenuTitle_Settings:
+MenuTitleSettings:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/setup_en.4bpp32x16.plz"
 	.else
 	.ifdef TBS_EDITION_DE
-MenuTitle_Save:
+MenuTitleSave:
 	.incbin "games/common/graphics/ui/menu_titles/save_de.4bpp32x16.plz"
-MenuTitle_Continue:
+MenuTitleContinue:
 	.incbin "games/common/graphics/ui/menu_titles/cont_de.4bpp32x16.plz"
-MenuTitle_Copy:
+MenuTitleCopy:
 	.incbin "games/common/graphics/ui/menu_titles/copy_de.4bpp32x16.plz"
-MenuTitle_Erase:
+MenuTitleErase:
 	.incbin "games/common/graphics/ui/menu_titles/erase_de.4bpp32x16.plz"
-MenuTitle_Battle:
+MenuTitleBattle:
 	.incbin "games/common/graphics/ui/menu_titles/battle_de.4bpp32x16.plz"
-MenuTitle_Link:
+MenuTitleLink:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/link_de.4bpp32x16.plz"
-MenuTitle_Pause:
+MenuTitlePause:
 	.incbin "games/common/graphics/ui/menu_titles/pause_de.4bpp32x16.plz"
-MenuTitle_Settings:
+MenuTitleSettings:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/setup_de.4bpp32x16.plz"
 	.else
 	.ifdef TBS_EDITION_ES
-MenuTitle_Save:
+MenuTitleSave:
 	.incbin "games/common/graphics/ui/menu_titles/save_es.4bpp32x16.plz"
-MenuTitle_Continue:
+MenuTitleContinue:
 	.incbin "games/common/graphics/ui/menu_titles/cont_es.4bpp32x16.plz"
-MenuTitle_Copy:
+MenuTitleCopy:
 	.incbin "games/common/graphics/ui/menu_titles/copy_es.4bpp32x16.plz"
-MenuTitle_Erase:
+MenuTitleErase:
 	.incbin "games/common/graphics/ui/menu_titles/erase_es.4bpp32x16.plz"
-MenuTitle_Battle:
+MenuTitleBattle:
 	.incbin "games/common/graphics/ui/menu_titles/battle_es.4bpp32x16.plz"
-MenuTitle_Link:
+MenuTitleLink:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/link_es.4bpp32x16.plz"
-MenuTitle_Pause:
+MenuTitlePause:
 	.incbin "games/common/graphics/ui/menu_titles/pause_es.4bpp32x16.plz"
-MenuTitle_Settings:
+MenuTitleSettings:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/setup_es.4bpp32x16.plz"
 	.else
 	.ifdef TBS_EDITION_FR
-MenuTitle_Save:
+MenuTitleSave:
 	.incbin "games/common/graphics/ui/menu_titles/save_fr.4bpp32x16.plz"
-MenuTitle_Continue:
+MenuTitleContinue:
 	.incbin "games/common/graphics/ui/menu_titles/cont_fr.4bpp32x16.plz"
-MenuTitle_Copy:
+MenuTitleCopy:
 	.incbin "games/common/graphics/ui/menu_titles/copy_fr.4bpp32x16.plz"
-MenuTitle_Erase:
+MenuTitleErase:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/erase_fr.4bpp32x16.plz"
-MenuTitle_Battle:
+MenuTitleBattle:
 	.incbin "games/common/graphics/ui/menu_titles/battle_fr.4bpp32x16.plz"
-MenuTitle_Link:
+MenuTitleLink:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/link_fr.4bpp32x16.plz"
-MenuTitle_Pause:
+MenuTitlePause:
 	.incbin "games/common/graphics/ui/menu_titles/pause_de.4bpp32x16.plz"
-MenuTitle_Settings:
+MenuTitleSettings:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/setup_fr.4bpp32x16.plz"
 	.else
 	.ifdef TBS_EDITION_IT
-MenuTitle_Save:
+MenuTitleSave:
 	.incbin "games/common/graphics/ui/menu_titles/save_it.4bpp32x16.plz"
-MenuTitle_Continue:
+MenuTitleContinue:
 	.incbin "games/common/graphics/ui/menu_titles/cont_it.4bpp32x16.plz"
-MenuTitle_Copy:
+MenuTitleCopy:
 	.incbin "games/common/graphics/ui/menu_titles/copy_it.4bpp32x16.plz"
-MenuTitle_Erase:
+MenuTitleErase:
 	.incbin "games/common/graphics/ui/menu_titles/erase_it.4bpp32x16.plz"
-MenuTitle_Battle:
+MenuTitleBattle:
 	.incbin "games/common/graphics/ui/menu_titles/battle_it.4bpp32x16.plz"
-MenuTitle_Link:
+MenuTitleLink:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/link_it.4bpp32x16.plz"
-MenuTitle_Pause:
+MenuTitlePause:
 	.incbin "games/common/graphics/ui/menu_titles/pause_es.4bpp32x16.plz"
-MenuTitle_Settings:
+MenuTitleSettings:
 	.incbin "games/tbs/src/graphics/ui/menu_titles/setup_it.4bpp32x16.plz"
 	.endif
 	.endif

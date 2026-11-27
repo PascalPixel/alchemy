@@ -597,7 +597,7 @@ Sint32 scDailaRoomsGiveItem(Sint32 item, Sint32 unused)
 	Sint32		 member;
 	Sint32		 slot;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	saved = state->msg;
 	owner = gmPartyInventoryAdd(item);
 	if(owner == -1) {
@@ -715,7 +715,7 @@ Sint32 scInit(void)
 				ACTOR_NEAR_TALK;
 		}
 	} else if(MainRoutineStateWork.next == SCENE_DAILA_ROOMS_SANCTUM) {
-		map = (MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		map = (MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 		fdScriptStart();
 		fdScriptEndLastingPsynergy(0);
 		fdActorSetSprFlags(fdActorGetById(ACTOR_TEAR_SPOT), 0);

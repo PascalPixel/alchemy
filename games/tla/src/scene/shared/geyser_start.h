@@ -8,7 +8,7 @@ void scGeyserStart(Sint32 unused, Sint32 firstTerrain)
 	if(!syGameFlagGet(FLAG_KEEP_PARTY_POSITION))
 		syWordsClear((Sint32)state, sizeof(GEYSER_WORK));
 	buf = (void *)Value1((Sint32 (*)())syHeapAllocEWRAM, 2048);
-	syDecompressTaggedLZ(Field_GeyserTiles, buf);
+	syDecompressTaggedLZ(FieldGeyserTiles, buf);
 	state->entry = syVRAMCacheFindFreeEntry();
 	syVRAMCacheLoad(state->entry, 2048, buf);
 	syHeapRelease(buf);

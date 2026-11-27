@@ -32,7 +32,7 @@ Sint32 mnPsynergyMenuRun(void)
 #if PSYNERGY_MENU_EXTRA_TEXT_TILES
 	savedTiles = syHeapAllocEWRAM(MENU_SAVED_TILE_BYTES);
 #endif
-	Ram_HeapSlots->actorSystem->suspended = 1;
+	RamHeapSlots->actorSystem->suspended = 1;
 	mnWindowDrawBorderStub(0, 0, 30, 20);
 	sySynch(1);
 	mnInitState(0);
@@ -53,7 +53,7 @@ Sint32 mnPsynergyMenuRun(void)
 	result = mnPsynergyMenuRunSteps(&member, &unused, &psynergy);
 	mnStopWatchingStart();
 	if(result == 1) {
-		FIELD_STATE *tgt = Ram_HeapSlots->fieldState;
+		FIELD_STATE *tgt = RamHeapSlots->fieldState;
 		Uint16		 request;
 
 		/* DEAD: gmAbilityGetDirectStub's result is not used; the ROM keeps the
@@ -64,23 +64,23 @@ Sint32 mnPsynergyMenuRun(void)
 	}
 
 	mnWindowSprClearListStub(menu->statWin);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 1;
 	mnItemMenuClose();
 	mnWindowDrawBorderStub(0, 0, 30, 20);
 	syHeapSlotRelease(HEAP_SLOT_MENU);
-	Ram_HeapSlots->actorSystem->suspended = 0;
+	RamHeapSlots->actorSystem->suspended = 0;
 #if PSYNERGY_MENU_EXTRA_TEXT_TILES
 	mnWindowMarkVisibleTextTilesStub();
 	mnTextUseExtraTilesStub(0);
 	syWordsCopy((void *)BG_CHAR_BLOCK(1), savedTiles, MENU_SAVED_TILE_BYTES);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	syHeapRelease(savedTiles);
 	sySynch(1);
 	mnResumeFieldEvents();
 #endif
 	sySynch(1);
 	mnWindowEraseBorderRectStub(0, 0, 30, 20);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	fdPartyClearUnusableShortcutsStub();
 	return result;
 }
@@ -153,7 +153,7 @@ Sint32 mnPsynergyMenuRunSteps(
 
 	step = PSYNERGY_STEP_MEMBER;
 	done = 0;
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	useResult = 0;
 
 	while(done == 0 && syGameFlagGet(FLAG_MENU_START_PRESSED) == 0) {
@@ -327,7 +327,7 @@ Sint32 mnPsynergyMenuClassifySelectedPsynergy(void)
 	Sint32				classification;
 
 	action = gmAbilityGetDirectStub(PSYNERGY_ABILITY_MASK &
-		((PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState)->sideAction[0]);
+		((PSYNERGY_MENU_STATE *)RamHeapSlots->menuState)->sideAction[0]);
 	if(fdHasPsynergyCueStub(action->fieldPsynergy) != 0)
 		return ITEM_USE_MODE_FROM_FIELD;
 	if(action->range == ABILITY_RANGE_ALL)
@@ -347,7 +347,7 @@ Sint32 mnPsynergyMenuSelectMember(Uint16 *ownerIds, Uint16 *unused);
    Returns its result. */
 Sint32 mnPsynergyMenuSelectPartySlot(Sint32 partySlot)
 {
-	PSYNERGY_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32				 memberIdx = menu->tabIdx[partySlot];
 	WINDOW_SPR			*icon;
 	UNIT				*unit;
@@ -401,7 +401,7 @@ Sint32 mnPsynergyMenuSelectMember(Uint16 *ownerIds, Uint16 *unused)
 	Sint8				 fieldCnt;
 	Sint32				 shortcutCnt;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	selection = menu->tabIdx[0];
 	cnt = menu->tabCnts[0];
 	redraw = 2;
@@ -498,7 +498,7 @@ void mnPsynergyMenuRefreshMemberPsynergy(Sint32 ownerId)
 	PSYNERGY_MENU_STATE *menu;
 	void				*owner;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	owner = syUnitGet(ownerId);
 	psynergies = menu->psynergies;
 	menu->psynergyCnt =
@@ -525,7 +525,7 @@ Sint32 mnPsynergyMenuSelectTarget(Sint32 browseOnly)
 	WINDOW_SPR			*icon;
 	Sint32				 column;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	selection = menu->tabIdx[1];
 	cnt = menu->memberCnt;
 	result = 0;
@@ -793,7 +793,7 @@ void mnPsynergyMenuDrawPsynergyIcons(Uint16 *psynergies)
 	Uint16		*p;
 	Sint32		 psynergyId;
 
-	icons = ((PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState)->entryIcons;
+	icons = ((PSYNERGY_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
 	p = psynergies;
 	for(i = 0; i < PSYNERGY_SLOTS; i++) {
 		psynergyId = *p++;
@@ -865,7 +865,7 @@ Sint32 mnPsynergyMenuCollectActions(UNIT *unit, Uint16 *actions, Sint32 mode)
 Sint32 mnPsynergyMenuBuildPagedList(PAGED_LIST *result, Sint32 idx)
 {
 	Sint32				 ownerState;
-	PSYNERGY_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32				 entryCnt;
 	Sint32				 row;
 	Sint32				 page;
@@ -905,7 +905,7 @@ Sint32 mnPsynergyMenuShowSelectedRow(
 	Sint32				 combined;
 	Sint32				 row;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	combined = state->page * LIST_PAGE_SIZE;
 	combined += state->row;
 	state->selectedIdx = combined;
@@ -980,7 +980,7 @@ Sint32 mnPsynergyMenuDrawPage(
 	Sint32				 cursor;
 	UNIT				*owner;
 	ABILITY_DEFINITION	*ability;
-	PSYNERGY_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	(void)unused;
 
@@ -1075,7 +1075,7 @@ Sint32 mnPsynergyMenuRunList(Sint32 paneIdx)
 	Sint32				 scratch[5];
 	PAGED_LIST			 state;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	result = 0;
 	prev = 0;
 	shortcutHelp = 0;

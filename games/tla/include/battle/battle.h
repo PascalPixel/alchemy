@@ -221,7 +221,7 @@ typedef enum BATTLE_HIGHLIGHT {
 	HIGHLIGHT_FADE_IN = 6	/* the units listed fade in over 32 ticks */
 } BATTLE_HIGHLIGHT;
 
-/* The battle sprites' animations (AnimationObject_SelectAnimation numbers) that
+/* The battle sprites' animations (AnimationObjectSelectAnimation numbers) that
    the battle code picks by name. */
 typedef enum BATTLE_POSE {
 	/* The battler held still: an enemy asleep, stunned or held, or a party
@@ -260,7 +260,7 @@ extern Uint8	   EncounterDjinnBattles[];
 extern Uint16	   BattleUnitWeaponKinds[];
 /* The 32x16 spark the swelling arcs over a caster are drawn with
    (field_effects.s). */
-extern const Uint8	FieldEffect_SparkTiles[];
+extern const Uint8	FieldEffectSparkTiles[];
 extern const Uint16 InputDpadAnglesEightWay[];
 extern const Sint32 ItemDisplaySparkleScript[];
 extern const Uint8	MindReadCrescentEndScript[];

@@ -40,17 +40,17 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*spark;
 	PARTICLE			*sparks;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	btResourceLoadAndDecompress(
 		RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
@@ -66,7 +66,7 @@ void btEffectRunPlasma(BATTLE_EFFECT_PARM *args)
 
 	for(frm = 0; frm != cnt * 8 - cnt + 42; frm++) {
 		if(args->variant == EFFECT_VARIANT_STRONGEST && frm <= 63) {
-			BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+			BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 			Sint32		   speed;
 
 			/* A 256th of a turn a tick, slowing from tick 56. */
@@ -223,9 +223,9 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 start;
 	PARTICLE			*sparks;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 
 	if(mode == SPARK_GROUPS_NOVA) {
 		btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
@@ -302,7 +302,7 @@ void btEffectRunSparkGroups(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				SPARK_GROUPS_SPACING +
 			40;
 		frm++) {
-		BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+		BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 
 		/* The strongest variant turns the camera. */
 		if(args->variant == EFFECT_VARIANT_STRONGEST && frm <= 51) {

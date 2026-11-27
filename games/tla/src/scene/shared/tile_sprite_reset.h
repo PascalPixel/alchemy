@@ -5,7 +5,7 @@
    its sprite flags and goes on with the script. */
 Sint32 scTileSprReset(ACTOR *actor)
 {
-	WORLD_MAP_VIEW *view = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *view = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	FIELD_SPR	   *spr = actor->spr;
 
 	spr->rotation = view->yaw;

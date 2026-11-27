@@ -94,7 +94,7 @@ Sint32 mnItemMenuRun(void)
 	size = MENU_SAVED_TILE_BYTES;
 	backup = syHeapAllocEWRAM(size);
 #endif
-	Ram_HeapSlots->actorSystem->suspended = 1;
+	RamHeapSlots->actorSystem->suspended = 1;
 	mnWindowDrawBorderStub(0, 0, 30, 20);
 	sySynch(1);
 	mnInitState(0);
@@ -116,7 +116,7 @@ Sint32 mnItemMenuRun(void)
 	result = mnItemMenuRunCommands(&owner, &tgt, &item);
 	mnStopWatchingStart();
 	if(result == 1) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		/* The item goes to the field engine to be used, as fdUseItem reads
 		   it. */
@@ -126,24 +126,24 @@ Sint32 mnItemMenuRun(void)
 	}
 
 	mnWindowSprClearListStub(screen->statWin);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 1;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 1;
 	mnItemMenuClose();
 	mnWindowDrawBorderStub(0, 0, 30, 20);
 	mnFreeArrows();
 	syHeapSlotRelease(HEAP_SLOT_MENU);
-	Ram_HeapSlots->actorSystem->suspended = 0;
+	RamHeapSlots->actorSystem->suspended = 0;
 #if ITEM_MENU_EXTRA_TEXT_TILES
 	mnWindowMarkVisibleTextTilesStub();
 	mnTextUseExtraTilesStub(0);
 	syWordsCopy((void *)BG_CHAR_BLOCK(1), backup, size);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	syHeapRelease(backup);
 	sySynch(1);
 	mnResumeFieldEvents();
 #endif
 	sySynch(1);
 	mnWindowEraseBorderRectStub(0, 0, 30, 20);
-	((WIN_STATE *)Ram_HeapSlots->winState)->holdTilemapUpload = 0;
+	((WIN_STATE *)RamHeapSlots->winState)->holdTilemapUpload = 0;
 	fdPartyClearUnusableShortcutsStub();
 	return result;
 }
@@ -229,7 +229,7 @@ Sint32 mnItemMenuRunCommands(Sint32 *ownerOut, Sint32 *tgtOut, Sint32 *itemOut)
 	selection = 0;
 	menuResult = 0;
 	state = ITEM_STEP_MEMBER;
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 
 	while(done == 0 && syGameFlagGet(FLAG_MENU_START_PRESSED) == 0) {
 		switch(state) {
@@ -806,7 +806,7 @@ Sint32 mnItemMenuUse(void)
 	Uint32			 item;
 	Uint32			 mask;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	result = mnItemUse(
 		menu->selectedSlots[0], menu->sideMember[0], menu->sideMember[1]);
 
@@ -838,7 +838,7 @@ Sint32 mnItemMenuUse(void)
    bottom and an 8 by 2 cursor grid. The parameters are not used. */
 void mnItemMenuInit(Sint32 x, Sint32 y, Sint32 mode, Sint32 columns)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	Sint32			 ownerIdx;
 
 	mnShowPartyFigures(mnCursorCreate(menu), 2, 2);
@@ -913,7 +913,7 @@ void mnSpawnIconEntries(ITEM_MENU_STATE *menu, WINDOW *win)
 void mnItemMenuHideAllIcons(void)
 {
 	WINDOW_SPR **icons =
-		((ITEM_MENU_STATE *)Ram_HeapSlots->menuState)->entryIcons;
+		((ITEM_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
 	Sint32 slot;
 
 	for(slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
@@ -928,7 +928,7 @@ void mnItemMenuHideAllIcons(void)
 /* Hides the item icons in every fifth slot, 0 to 30, after a trade. */
 void mnItemMenuHideTradedIcons(void)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	Sint32			 slot;
 
 	for(slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
@@ -949,7 +949,7 @@ void mnItemMenuClose(void)
 	ITEM_MENU_STATE *menu;
 	WINDOW_SPR		*cursor;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	mnReleasePartyFigures();
 	mnItemMenuHideAllIcons();
 	sySynch(1);
@@ -975,7 +975,7 @@ Sint32 mnItemMenuRunMemberSelection(Uint16 *ownerIds, Uint16 *items);
    party member chosen last. */
 Sint32 mnItemMenuSelectMember(Sint32 pane)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 result = 0;
 	Sint32			 idx;
 	void			*owner;
@@ -1018,7 +1018,7 @@ Sint32 mnItemMenuCountItems(Sint32 owner);
    member's id, or -1. */
 Sint32 mnItemMenuRunMemberSelection(Uint16 *ownerIds, Uint16 *items)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 selection = menu->sideIdx[0];
 	Sint32			 cnt;
 	Sint32			 redraw;
@@ -1126,7 +1126,7 @@ Sint32 mnItemMenuRunMemberSelection(Uint16 *ownerIds, Uint16 *items)
    window. */
 void mnItemMenuShowEquipment(Sint32 ownerId)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	mnHideEntryIcons();
 	mnWindowSprRedrawSavedRectStub(menu->itemWin);
@@ -1172,7 +1172,7 @@ void mnEquipmentMenuStopCompatibilityIndicators(void);
    ITEM_TARGET_MODE) to. */
 Sint32 mnItemMenuSelectTarget(Sint32 mode)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 selection = menu->sideIdx[1];
 	void			*win = menu->itemWin;
 	Sint32			 cnt = menu->partyCnt;
@@ -1291,7 +1291,7 @@ Sint32 mnItemMenuSelectTarget(Sint32 mode)
    stand (ANIM_STAND) if not. */
 void mnEquipmentMenuUpdateCompatibilityIndicators(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint8			 i;
 
 	if((TickCount & 31) == 0) {
@@ -1313,7 +1313,7 @@ void mnEquipmentMenuUpdateCompatibilityIndicators(void)
    back to ANIM_STAND and removes the event. */
 void mnEquipmentMenuStopCompatibilityIndicators(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint8			 i;
 
 	for(i = 0; i < menu->partyCnt; i++)
@@ -1340,7 +1340,7 @@ void mnItemMenuDrawMessage(Sint32 unused, Sint32 msg)
 {
 	ITEM_MENU_STATE *menu;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	mnWindowSprRedrawSavedRectStub(menu->questionWin);
 	mnTextDrawMessageAsTilesStub(msg, (Sint32)menu->questionWin, 0, 0);
 }
@@ -1349,7 +1349,7 @@ void mnItemMenuDrawMessage(Sint32 unused, Sint32 msg)
    icon slots must hold a sprite (mnSpawnIconEntries). */
 void mnHideEmptyEntryIcons(const Uint16 *items)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 slot;
 
 	for(slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
@@ -1427,7 +1427,7 @@ void mnItemMenuDrawIcons(Uint16 *inventoryEntries, Sint32 iconStyle)
 	WINDOW_SPR **icons;
 	Sint32		 itemId;
 
-	icons = ((ITEM_MENU_STATE *)Ram_HeapSlots->menuState)->entryIcons;
+	icons = ((ITEM_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
 	entries = inventoryEntries;
 	for(i = 0; i < INVENTORY_SLOTS; i++) {
 		itemId = *entries++;
@@ -1453,7 +1453,7 @@ void mnItemMenuRefreshMember(Sint32 ownerId, Sint32 mode)
 	UNIT			*owner;
 	Uint16			*items;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	owner = syUnitGet(ownerId);
 	items = menu->items;
 	menu->itemCnt = mnItemMenuCollectItems(owner, items, 0);
@@ -1472,7 +1472,7 @@ void mnItemMenuRefreshMember(Sint32 ownerId, Sint32 mode)
 void mnItemMenuDrawEquipPreview(
 	Sint32 owner, Sint32 slot, Sint32 mode, Sint32 tgt)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 style = 0;
 	UNIT			*unit = syUnitGet(owner);
 	Sint32			 entry = unit->inventory[slot];
@@ -1652,7 +1652,7 @@ Sint32 mnItemMenuChooseCommand(void)
 	Sint32			 commandIdx;
 	Bool			 redraw;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	commandIdx = 0;
 	column = 0;
 	row = 0;
@@ -1808,7 +1808,7 @@ void mnItemMenuBuildCommands(Sint8 *commandStates)
 	ITEM_MENU_STATE *menu;
 	ITEM_DEFINITION *item;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	item = gmItemGetDirectStub(INVENTORY_ITEM_ID_MASK & menu->selectedItems[0]);
 
 	if(item->type == ITEM_TYPE_NONE) {
@@ -1975,7 +1975,7 @@ void gmInventoryBreakStub(Sint32 owner, Sint32 slot);
    window. Called only after a successful use on a chosen party member. */
 void mnItemMenuTryBreak(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Uint32			 item = menu->selectedItems[0];
 	Uint32			 mask;
 
@@ -1997,7 +1997,7 @@ void mnItemMenuTryBreak(void)
    side itemIdx there. Returns 1. */
 Sint32 mnItemMenuOpenDetail(Sint32 itemIdx)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	mnWindowUpdateOrCreate(&menu->equipWin, 0, 0, 13, 10, WINDOW_FLAG_INSTANT);
 	mnPaletteLoadIconsIntoHighlight();
@@ -2020,7 +2020,7 @@ void mnWindowCloseStub(Sint32, Sint32);
    Start, or -1 after B. */
 Sint32 mnItemMenuShowDetails(Sint32 value)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Bool			 changed = TRUE;
 #if LANGUAGE != LANGUAGE_JAPANESE
 	WINDOW_SPR *itemIcon = menu->selectedItemIcon;
@@ -2436,7 +2436,7 @@ void mnItemMenuDrawStat(
 	}
 }
 
-#define ITEM_MENU ((ITEM_MENU_STATE *)Ram_HeapSlots->menuState)
+#define ITEM_MENU ((ITEM_MENU_STATE *)RamHeapSlots->menuState)
 
 /* Moves the item window to row 5 of the right-hand side. */
 void mnItemMenuPlaceItemWindowBelowItemQuestion(void)
@@ -2499,7 +2499,7 @@ void mnItemMenuFitMessageWindowToQuestion(void)
 
 /* The item menu's quantity bar picture, which mnQuantityBarFillStub fills in
    under the "How many?" question. */
-extern const Uint8 Menu_QuantityTiles[];
+extern const Uint8 MenuQuantityTiles[];
 
 /* Colours the first count segments of the quantity bar in tiles, each two
    pixels wide: the left pixel in colour 1, the right in colour color. */
@@ -2514,7 +2514,7 @@ Sint32 mnItemMenuSelectGiveQuantity(
 	Sint32 baseQuantity, Sint32 quantityRange, Sint32 dropMode)
 {
 	Sint32			 value = baseQuantity;
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Uint8			*tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 	Sint32			 entry;
 	Sint32			 changed = 1;
@@ -2546,7 +2546,7 @@ Sint32 mnItemMenuSelectGiveQuantity(
 				mnTextDrawMessageAsTilesStub(
 					HOW_MANY_MESSAGE, win, HOW_MANY_X, HOW_MANY_Y);
 				syDMAXCopy(
-					Menu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
+					MenuQuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
 				mnQuantityBarFillStub(
 					INVENTORY_STACK_MAX, QUANTITY_BAR_OUT_OF_REACH, tiles);
 				mnQuantityBarFillStub(
@@ -2616,7 +2616,7 @@ Sint32 mnItemMenuSelectGiveQuantity(
    member's name and its name. */
 void mnItemMenuDrawItemHead(void)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	mnSelectionIconLoadIntoSlotStub(ICON_KIND_ITEM, menu->selectedItems[0],
 		(Uint8)menu->selectedItemIcon->idx, 0);
@@ -2735,7 +2735,7 @@ Sint32 mnItemMenuConfirmEquip(Sint32 unused)
 	Sint32			 rows = 2;
 	Sint32			 selection = 0;
 	Bool			 changed = TRUE;
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	void			*unit = syUnitGet(menu->sideMember[1]);
 	void			*saved;
 	Sint32			 win;
@@ -2808,7 +2808,7 @@ Sint32 mnItemMenuConfirmEquip(Sint32 unused)
    (mnIconCreateStatChangeArrow) into free VRAM cache slots. */
 void mnLoadStatArrows(void)
 {
-	ITEM_MENU_STATE *state = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *state = RamHeapSlots->menuState;
 	Sint32			 value = syVRAMCacheFindFreeEntry();
 
 	state->resourceSlots[0] = value;
@@ -2825,7 +2825,7 @@ void mnLoadStatArrows(void)
 Sint32 mnItemMenuBuildPagedList(PAGED_LIST *list, Sint32 pane)
 {
 	Sint32			 unit;
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Sint32			 cnt;
 	Sint32			 row;
 	Sint32			 page;
@@ -2865,7 +2865,7 @@ Sint32 mnItemMenuShowSelectedRow(
 	Sint32			 win;
 
 	page = state->page;
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	win = menu->infoWin;
 	combined = page * LIST_PAGE_SIZE;
 	combined += state->row;
@@ -2916,7 +2916,7 @@ Sint32 mnItemMenuShowSelectedRow(
 Sint32 mnItemMenuDrawListPage(
 	Sint32 win, Sint32 unused, const PAGED_LIST *state)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	Uint32			 page;
 	Uint32			 firstEntry;
 	Uint32			 visibleCnt;
@@ -2980,7 +2980,7 @@ Sint32 mnItemMenuRunList(Sint32 pane)
 	Sint32			 unused[5];
 	PAGED_LIST		 state;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	result = 0;
 	prev = 0;
 	menu->equipPreview = result;

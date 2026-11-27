@@ -19,7 +19,7 @@ void fdDjinnRunJupiterJoinEffect(Sint32 djinniId)
 	if(djinni == NULL)
 		return;
 	fdEffectInitSlots();
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	/* Tint the screen yellow. */
 	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
 	sySndPlayStub(SE_NOTE_LOW);

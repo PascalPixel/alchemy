@@ -125,10 +125,10 @@ extern Uint8 BgTileBuffer[];
 /* A map grid row, MAPGRID_SIZE metatiles, as a shift. */
 #define MAPGRID_ROW_SHIFT			7
 #define MAPGRID_METATILE_PIXELS		16
-/* The map grid's metatiles, row by row, in Ram_MapGridMetatileBuffer
+/* The map grid's metatiles, row by row, in RamMapGridMetatileBuffer
    (system/definitions.h): the metatile at column x, row y is
    MAPGRID_METATILES[y * MAPGRID_SIZE + x]. */
-#define MAPGRID_METATILES			((MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer)
+#define MAPGRID_METATILES			((MAP_GRID_METATILE *)RamMapGridMetatileBuffer)
 /* A whole pixel coordinate's map metatile, in pixels. */
 #define MAPGRID_METATILE_PIXEL_MASK 0xfff0
 /* The low four bits of a shape's first byte: its kind, which height function
@@ -141,7 +141,7 @@ extern Uint8 BgTileBuffer[];
 	(*(Uint8 **)&HeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
 
 /* A row of MapsWork: a layout's resources, each counted from
-   ResourceId_EmptyMap. */
+   ResourceIdEmptyMap. */
 typedef struct MAP_RESOURCES {
 	Uint16 header;
 	Uint16 pal;

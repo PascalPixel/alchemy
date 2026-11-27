@@ -218,7 +218,7 @@ Sint32 btEnemyClaimNameLetter(Sint32 classId, Sint32 unused)
 	Sint32		  classIdx;
 	Sint32		  attempt;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	classCnt = battle->enemyKindCnt;
 	for(classIdx = 0; classIdx < classCnt; classIdx++) {
 		if(battle->enemyKinds[classIdx] == classId)
@@ -258,7 +258,7 @@ Sint32 btEnemyClaimNameLetter(Sint32 classId, Sint32 unused)
 /* Frees a departing enemy's name suffix for the next of its class. */
 UNREAD_RESULT btEnemyReleaseNameLetter(Sint32 unitId)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	UNIT		 *unit;
 	Sint32		  cnt = battle->enemyKindCnt;
 	Sint32		  idx;
@@ -399,7 +399,7 @@ Sint32 btFormationBuildEnemyList(Sint32 recordId)
 	Uint32		  i;
 	Sint32		  memberIdx;
 
-	battle = (BATTLE_STATE *)Ram_HeapSlots->battleState;
+	battle = (BATTLE_STATE *)RamHeapSlots->battleState;
 	levelAdjustment = 0;
 	battle->enemyKindCnt = 0;
 	enemyClasses = listBuf;

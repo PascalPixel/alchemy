@@ -646,7 +646,7 @@ Sint32 mnShopSelectQuantity(Sint32 minimum, Sint32 maximum, Sint32 price)
 				if(redraw) {
 					redraw = FALSE;
 					quantityIdx = (quantityIdx + maximum) % maximum;
-					syDMAXCopy(Shop_QuantityTiles, tileBuf,
+					syDMAXCopy(ShopQuantityTiles, tileBuf,
 						DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
 					mnQuantityBarFill(INVENTORY_STACK_MAX,
 						QUANTITY_BAR_OUT_OF_REACH, tileBuf);

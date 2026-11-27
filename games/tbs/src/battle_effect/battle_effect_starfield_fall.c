@@ -11,7 +11,7 @@ typedef enum STARFIELD_FALL_MODE {
 	STARFIELD_FALL_OUTER_SPACE
 } STARFIELD_FALL_MODE;
 
-/* The pictures in the flame sprite sheet (ResourceId_FlameSheetB), each
+/* The pictures in the flame sprite sheet (ResourceIdFlameSheetB), each
    starting where the one before ends: six flames, then three large and three
    small glows, each glow brighter at its centre than the one before. The fall
    draws only the six and the brightest glow of each size. */
@@ -238,9 +238,9 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			syResourceGetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
 			SHEET_PALETTE_BYTES);
 	DMA_FILL32_CELL(
-		fill, CANVAS_FILL_WORD(1), Ram_MapGridMetatileBuffer, 256 * 128);
+		fill, CANVAS_FILL_WORD(1), RamMapGridMetatileBuffer, 256 * 128);
 	syWordsCopy(
-		BG_CHAR_BLOCK(2), Ram_MapGridMetatileBuffer, BATTLE_BACKGROUND_BYTES);
+		BG_CHAR_BLOCK(2), RamMapGridMetatileBuffer, BATTLE_BACKGROUND_BYTES);
 	sySynch(1);
 	REG_BLDCNT = 0;
 	REG_BG2PA = Q_8_8(1);
@@ -298,9 +298,10 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 					/* Background pixel (x, y), laid out in 8x8 tiles. */
 					if(y >= 0)
 						if(y <= 127)
-							Ram_MapGridMetatileBuffer
-								[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 +
-									(x & 7)] = 0;
+							RamMapGridMetatileBuffer[((y / 8 * 32 + x / 8) * 8 +
+														 (y & 7)) *
+									8 +
+								(x & 7)] = 0;
 				}
 			}
 			EFFECT_PRESENT_CANVAS(state);
@@ -448,7 +449,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				btProjectionPoint(vector, &spot);
 				spot.x = FIXEDtoINT(spot.x) + 128;
 				spot.y = FIXEDtoINT(spot.y) + 60;
-				draw(Ram_MapGridMetatileBuffer,
+				draw(RamMapGridMetatileBuffer,
 					state->sheet + STARFIELD_FALL_SMALL_GLOW,
 					spot.x - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
 					spot.y - STARFIELD_FALL_SMALL_GLOW_SIZE / 2,
@@ -466,7 +467,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 				Sint32 fireballY = StarfieldFallFireballPoints[i][1] + y;
 
 				if(fireballY <= 93)
-					draw(Ram_MapGridMetatileBuffer,
+					draw(RamMapGridMetatileBuffer,
 						state->sheet + STARFIELD_FALL_LARGE_GLOW,
 						StarfieldFallFireballPoints[i][0] + x -
 							STARFIELD_FALL_LARGE_GLOW_SIZE / 2,
@@ -483,7 +484,7 @@ void btEffectRunStarfieldFall(BATTLE_EFFECT_PARM *args, Sint32 mode)
 
 				/* A flame rises against the stream through its six pictures. */
 				if(flame->variant >= 0) {
-					draw(Ram_MapGridMetatileBuffer,
+					draw(RamMapGridMetatileBuffer,
 						state->sheet + STARFIELD_FALL_FLAMES +
 							flame->variant *
 								(STARFIELD_FALL_FLAME_SIZE *

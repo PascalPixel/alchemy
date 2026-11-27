@@ -1,6 +1,6 @@
 /* The 104 encounter zones, by zone number. A field zone's comment gives its
-   area name (Area_NameRules) and the scenes and entrances that take it
-   (Scene_EncounterRules); a World Map zone's, its encounter region and the
+   area name (AreaNameRules) and the scenes and entrances that take it
+   (SceneEncounterRules); a World Map zone's, its encounter region and the
    battle environments that take it (WorldMapEncounterRules); a zone that code
    names, its name (ENCOUNTER_ZONE_ID). Over each zone's formations
    (battle/formations.c) are the monsters they bring, by their English names:
@@ -12,7 +12,7 @@
 const ENCOUNTER_ZONE EncounterZones[] = {
 	/* ENCOUNTER_ZONE_NONE */
 	{0},
-	/* Sol Sanctum: SceneId_SolSanctumCorridor */
+	/* Sol Sanctum: SceneIdSolSanctumCorridor */
 	{
 		.rate = 37,
 		.level = 1,
@@ -20,7 +20,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {7, 8, 9, 10},
 		.weights = {4, 8, 8, 4},
 	},
-	/* Sol Sanctum: SceneId_SolSanctumReliefs entrances 1 and 2 */
+	/* Sol Sanctum: SceneIdSolSanctumReliefs entrances 1 and 2 */
 	{
 		.rate = 35,
 		.level = 1,
@@ -28,7 +28,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {7, 8, 9, 10},
 		.weights = {8, 4, 4, 8},
 	},
-	/* Sol Sanctum: SceneId_SolSanctumReliefs entrances 3, 6 and 7 */
+	/* Sol Sanctum: SceneIdSolSanctumReliefs entrances 3, 6 and 7 */
 	{
 		.rate = 35,
 		.level = 1,
@@ -36,7 +36,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {11, 12, 13, 14},
 		.weights = {8, 8, 4, 4},
 	},
-	/* Sol Sanctum: SceneId_SolSanctumMaze */
+	/* Sol Sanctum: SceneIdSolSanctumMaze */
 	{
 		.rate = 35,
 		.level = 1,
@@ -44,7 +44,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {11, 12, 13, 14},
 		.weights = {4, 4, 8, 8},
 	},
-	/* Sol Sanctum: SceneId_SolSanctumReliefs entrance 10 */
+	/* Sol Sanctum: SceneIdSolSanctumReliefs entrance 10 */
 	{
 		.rate = 35,
 		.level = 2,
@@ -52,7 +52,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {15, 16, 17, 18},
 		.weights = {12, 8, 4, 4},
 	},
-	/* Sol Sanctum: SceneId_SolSanctumLunaSolRooms */
+	/* Sol Sanctum: SceneIdSolSanctumLunaSolRooms */
 	{
 		.rate = 35,
 		.level = 2,
@@ -76,7 +76,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {20, 21, 22, 23, 24, 25, 26, 27},
 		.weights = {2, 2, 2, 2, 3, 7, 2, 3},
 	},
-	/* Goma Cave: SceneId_GomaCavePond */
+	/* Goma Cave: SceneIdGomaCavePond */
 	{
 		.rate = 30,
 		.level = 4,
@@ -84,7 +84,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {31, 32, 33, 34, 35},
 		.weights = {3, 3, 9, 3, 6},
 	},
-	/* Goma Cave: SceneId_GomaCavePillar */
+	/* Goma Cave: SceneIdGomaCavePillar */
 	{
 		.rate = 30,
 		.level = 5,
@@ -93,7 +93,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {31, 32, 33, 34, 35, 36, 37},
 		.weights = {2, 2, 2, 2, 8, 5, 2},
 	},
-	/* Goma Cave: SceneId_GomaCaveStream */
+	/* Goma Cave: SceneIdGomaCaveStream */
 	{
 		.rate = 30,
 		.level = 5,
@@ -125,7 +125,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {50, 51, 52, 53, 54, 55, 56, 57},
 		.weights = {1, 1, 1, 1, 1, 2, 2, 2},
 	},
-	/* Kolima Tunnel: SceneId_KolimaTunnel */
+	/* Kolima Tunnel: SceneIdKolimaTunnel */
 	{
 		.rate = 35,
 		.level = 6,
@@ -133,7 +133,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {50, 51, 52, 53, 54, 55, 56, 57},
 		.weights = {1, 2, 2, 1, 1, 5, 5, 5},
 	},
-	/* Kolima Forest: SceneId_KolimaForestEntrance */
+	/* Kolima Forest: SceneIdKolimaForestEntrance */
 	{
 		.rate = 40,
 		.level = 6,
@@ -141,7 +141,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {59, 60, 61, 62, 63, 64, 65, 66},
 		.weights = {10, 5, 1, 1, 1, 1},
 	},
-	/* Kolima Forest: SceneId_KolimaForestGlade */
+	/* Kolima Forest: SceneIdKolimaForestGlade */
 	{
 		.rate = 40,
 		.level = 7,
@@ -149,7 +149,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {59, 60, 61, 62, 63, 64, 65, 66},
 		.weights = {2, 6, 2, 2, 8, 6, 2, 2},
 	},
-	/* Kolima Forest: SceneId_KolimaForestCliff */
+	/* Kolima Forest: SceneIdKolimaForestCliff */
 	{
 		.rate = 40,
 		.level = 7,
@@ -157,7 +157,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {59, 60, 61, 62, 63, 64, 65, 66},
 		.weights = {1, 1, 2, 2, 3, 3, 8, 12},
 	},
-	/* Kolima Forest: SceneId_KolimaForestTree */
+	/* Kolima Forest: SceneIdKolimaForestTree */
 	{
 		.rate = 40,
 		.level = 7,
@@ -165,7 +165,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {59, 60, 61, 62, 63, 64, 65, 66},
 		.weights = {1, 1, 2, 2, 3, 3, 5, 12},
 	},
-	/* Tret Tree: SceneId_TretTreeBranch entrances 1 to 3 */
+	/* Tret Tree: SceneIdTretTreeBranch entrances 1 to 3 */
 	{
 		.rate = 45,
 		.level = 7,
@@ -173,7 +173,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {68, 69, 70, 71, 72, 73, 74, 75},
 		.weights = {8, 5, 6, 2, 1, 2, 1, 1},
 	},
-	/* Tret Tree: SceneId_TreeRooms entrances 1, 11, 16 and 21 to 29 */
+	/* Tret Tree: SceneIdTreeRooms entrances 1, 11, 16 and 21 to 29 */
 	{
 		.rate = 45,
 		.level = 7,
@@ -181,7 +181,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {68, 69, 70, 71, 72, 73, 74, 75},
 		.weights = {6, 6, 6, 3, 2, 1},
 	},
-	/* Tret Tree: SceneId_TreeRooms entrances 2 to 5, 12, 13, 31 and 32 */
+	/* Tret Tree: SceneIdTreeRooms entrances 2 to 5, 12, 13, 31 and 32 */
 	{
 		.rate = 45,
 		.level = 8,
@@ -189,7 +189,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {68, 69, 70, 71, 72, 73, 74, 75},
 		.weights = {3, 5, 5, 5, 3, 2, 1, 1},
 	},
-	/* Tret Tree: SceneId_TretTreeBranch, its other entrances */
+	/* Tret Tree: SceneIdTretTreeBranch, its other entrances */
 	{
 		.rate = 45,
 		.level = 8,
@@ -197,7 +197,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {68, 69, 70, 71, 72, 73, 74, 75},
 		.weights = {2, 1, 5, 8, 1, 8, 1, 5},
 	},
-	/* Tret Tree: SceneId_TreeRooms entrances 6 to 9, 14 and 51 to 59 */
+	/* Tret Tree: SceneIdTreeRooms entrances 6 to 9, 14 and 51 to 59 */
 	{
 		.rate = 45,
 		.level = 8,
@@ -205,7 +205,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {68, 69, 70, 71, 72, 73, 74, 75},
 		.weights = {1, 1, 1, 1, 2, 4, 12, 8},
 	},
-	/* Bilibin Cave: SceneId_BilibinCaveRapier, its other entrances */
+	/* Bilibin Cave: SceneIdBilibinCaveRapier, its other entrances */
 	{
 		.rate = 30,
 		.level = 8,
@@ -213,7 +213,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {77, 78, 79, 80, 81, 82, 83, 84},
 		.weights = {6, 6, 4, 4, 2, 2, 1, 1},
 	},
-	/* Bilibin Cave: SceneId_BilibinCaveIce, its other entrances */
+	/* Bilibin Cave: SceneIdBilibinCaveIce, its other entrances */
 	{
 		.rate = 30,
 		.level = 8,
@@ -221,7 +221,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {77, 78, 79, 80, 81, 82, 83, 84},
 		.weights = {2, 2, 2, 4, 4, 5, 7, 7},
 	},
-	/* Bilibin Cave: SceneId_BilibinCaveRapier entrances 5 and 6 */
+	/* Bilibin Cave: SceneIdBilibinCaveRapier entrances 5 and 6 */
 	{
 		.rate = 30,
 		.level = 9,
@@ -229,7 +229,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {77, 78, 79, 80, 81, 82, 83, 84},
 		.weights = {1, 1, 1, 1, 1, 2, 2, 2},
 	},
-	/* Bilibin Cave: SceneId_BilibinCaveIce entrance 5 */
+	/* Bilibin Cave: SceneIdBilibinCaveIce entrance 5 */
 	{
 		.rate = 30,
 		.level = 9,
@@ -253,7 +253,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {86, 87, 88, 89, 90},
 		.weights = {2, 2, 4, 4, 4},
 	},
-	/* Mercury Lighthouse: SceneId_MercuryLighthouseEntrance entrances 7 to 12 and 16 to 20, SceneId_MercuryLighthouseLower entrances 1 to 3 */
+	/* Mercury Lighthouse: SceneIdMercuryLighthouseEntrance entrances 7 to 12 and 16 to 20, SceneIdMercuryLighthouseLower entrances 1 to 3 */
 	{
 		.rate = 40,
 		.level = 9,
@@ -261,7 +261,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {92, 93, 94, 95, 96, 97, 98, 99},
 		.weights = {4, 4, 4, 2, 2, 2, 2, 2},
 	},
-	/* Mercury Lighthouse: SceneId_MercuryLighthouseLower entrances 5 to 8 and 11, SceneId_MercuryLighthouseMiddle entrances 3 and 4 */
+	/* Mercury Lighthouse: SceneIdMercuryLighthouseLower entrances 5 to 8 and 11, SceneIdMercuryLighthouseMiddle entrances 3 and 4 */
 	{
 		.rate = 40,
 		.level = 9,
@@ -269,7 +269,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {92, 93, 94, 95, 96, 97, 98, 99},
 		.weights = {2, 2, 2, 4, 4, 2, 2, 2},
 	},
-	/* Mercury Lighthouse: SceneId_MercuryLighthouseUpper entrances 1 to 3, SceneId_MercuryLighthouseMiddle entrances 5, 6 and 10 */
+	/* Mercury Lighthouse: SceneIdMercuryLighthouseUpper entrances 1 to 3, SceneIdMercuryLighthouseMiddle entrances 5, 6 and 10 */
 	{
 		.rate = 40,
 		.level = 10,
@@ -277,7 +277,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {97, 98, 99, 100, 101, 102, 103, 104},
 		.weights = {2, 2, 2, 4, 4, 4, 2, 2},
 	},
-	/* Mercury Lighthouse: SceneId_MercuryLighthouseExterior entrances 1 and 2, SceneId_MercuryLighthouseUpper entrances 12 and 13 */
+	/* Mercury Lighthouse: SceneIdMercuryLighthouseExterior entrances 1 and 2, SceneIdMercuryLighthouseUpper entrances 12 and 13 */
 	{
 		.rate = 40,
 		.level = 11,
@@ -285,7 +285,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {97, 98, 99, 100, 101, 102, 103, 104},
 		.weights = {1, 1, 1, 2, 2, 2, 4, 4},
 	},
-	/* Mercury Lighthouse: SceneId_MercuryLighthouseExterior entrances 3 and 4 */
+	/* Mercury Lighthouse: SceneIdMercuryLighthouseExterior entrances 3 and 4 */
 	{
 		.rate = 40,
 		.level = 11,
@@ -315,7 +315,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {120, 121, 122, 123},
 		.weights = {1, 1, 1, 1},
 	},
-	/* Fuchin Falls Cave: SceneId_FuchinFallsCaveEntrance, SceneId_FuchinFallsCaveZephyr */
+	/* Fuchin Falls Cave: SceneIdFuchinFallsCaveEntrance, SceneIdFuchinFallsCaveZephyr */
 	{
 		.rate = 38,
 		.level = 11,
@@ -324,7 +324,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {120, 121, 122, 123, 124, 125, 126, 127},
 		.weights = {4, 4, 4, 8, 6, 4, 2, 1},
 	},
-	/* Fuchin Falls Cave: SceneId_FuchinFallsCaveDragonsEye */
+	/* Fuchin Falls Cave: SceneIdFuchinFallsCaveDragonsEye */
 	{
 		.rate = 38,
 		.level = 11,
@@ -333,7 +333,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {120, 121, 122, 123, 124, 125, 126, 127},
 		.weights = {1, 2, 2, 3, 6, 6, 3, 2},
 	},
-	/* Fuchin Falls Cave: SceneId_FuchinFallsCaveDragonStatue */
+	/* Fuchin Falls Cave: SceneIdFuchinFallsCaveDragonStatue */
 	{
 		.rate = 38,
 		.level = 11,
@@ -342,7 +342,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {120, 121, 122, 123, 124, 125, 126, 127},
 		.weights = {1, 1, 2, 3, 4, 4, 6, 8},
 	},
-	/* Mogall Forest: SceneId_MogallForestSign */
+	/* Mogall Forest: SceneIdMogallForestSign */
 	{
 		.rate = 42,
 		.level = 11,
@@ -350,7 +350,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {129, 130, 131, 132, 133, 134, 135, 136},
 		.weights = {6, 6, 6, 3, 2, 1, 1, 1},
 	},
-	/* Mogall Forest: SceneId_MogallForestQuartz */
+	/* Mogall Forest: SceneIdMogallForestQuartz */
 	{
 		.rate = 42,
 		.level = 12,
@@ -358,7 +358,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {129, 130, 131, 132, 133, 134, 135, 136},
 		.weights = {1, 1, 3, 6, 6, 3, 1, 1},
 	},
-	/* Mogall Forest: SceneId_MogallForestKillerApe */
+	/* Mogall Forest: SceneIdMogallForestKillerApe */
 	{
 		.rate = 42,
 		.level = 12,
@@ -382,7 +382,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {141, 142, 143, 144, 145, 146},
 		.weights = {1, 1, 2, 1, 2, 2},
 	},
-	/* Altin Peak: SceneId_AltinPeakRailTunnel, SceneId_AltinPeakSecondWaterBeast, SceneId_AltinPeakSouthEntrance */
+	/* Altin Peak: SceneIdAltinPeakRailTunnel, SceneIdAltinPeakSecondWaterBeast, SceneIdAltinPeakSouthEntrance */
 	{
 		.rate = 45,
 		.level = 12,
@@ -391,7 +391,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {148, 149, 150, 151, 152, 153, 154, 155},
 		.weights = {6, 6, 4, 2, 1, 1, 1, 1},
 	},
-	/* Altin Peak: SceneId_AltinPeakThirdWaterBeast, SceneId_AltinPeakPool */
+	/* Altin Peak: SceneIdAltinPeakThirdWaterBeast, SceneIdAltinPeakPool */
 	{
 		.rate = 45,
 		.level = 13,
@@ -400,7 +400,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {148, 149, 150, 151, 152, 153, 154, 155},
 		.weights = {1, 1, 2, 4, 3, 4, 2, 2},
 	},
-	/* Altin Peak: SceneId_AltinPeakSpritz, SceneId_AltinPeakJunction, SceneId_AltinPeakFallingRocks entrances 1 and 2, SceneId_AltinPeakWestExit */
+	/* Altin Peak: SceneIdAltinPeakSpritz, SceneIdAltinPeakJunction, SceneIdAltinPeakFallingRocks entrances 1 and 2, SceneIdAltinPeakWestExit */
 	{
 		.rate = 42,
 		.level = 13,
@@ -409,7 +409,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {148, 149, 150, 151, 152, 153, 154, 155},
 		.weights = {1, 1, 2, 3, 4, 4, 8, 8},
 	},
-	/* Lamakan Desert: SceneId_LamakanDesertEast */
+	/* Lamakan Desert: SceneIdLamakanDesertEast */
 	{
 		.rate = 40,
 		.level = 13,
@@ -417,7 +417,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {160, 161, 162, 163, 164, 165, 166, 167},
 		.weights = {5, 5, 4, 3, 3, 2, 1, 1},
 	},
-	/* Lamakan Desert: SceneId_LamakanDesertSmog */
+	/* Lamakan Desert: SceneIdLamakanDesertSmog */
 	{
 		.rate = 40,
 		.level = 14,
@@ -425,7 +425,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {160, 161, 162, 163, 164, 165, 166, 167},
 		.weights = {1, 2, 3, 6, 6, 4, 2, 1},
 	},
-	/* Lamakan Desert: SceneId_LamakanDesertManticore */
+	/* Lamakan Desert: SceneIdLamakanDesertManticore */
 	{
 		.rate = 40,
 		.level = 14,
@@ -456,7 +456,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {180, 181, 182, 183, 184, 185, 186, 187},
 		.weights = {2, 2, 2, 2, 3, 4, 4, 4},
 	},
-	/* Vale Cave: SceneId_ValeCaveKite entrances 1 to 4 */
+	/* Vale Cave: SceneIdValeCaveKite entrances 1 to 4 */
 	{
 		.rate = 40,
 		.level = 15,
@@ -464,7 +464,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {189, 190, 191, 192, 193, 194, 195, 196},
 		.weights = {6, 6, 6, 4, 4, 1, 1, 1},
 	},
-	/* Vale Cave: SceneId_ValeCaveKite entrances 8 to 10 */
+	/* Vale Cave: SceneIdValeCaveKite entrances 8 to 10 */
 	{
 		.rate = 40,
 		.level = 15,
@@ -472,7 +472,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {189, 190, 191, 192, 193, 194, 195, 196},
 		.weights = {4, 4, 4, 6, 6, 2, 2, 2},
 	},
-	/* Vale Cave: SceneId_ValeCaveLogs entrances 1 to 3 */
+	/* Vale Cave: SceneIdValeCaveLogs entrances 1 to 3 */
 	{
 		.rate = 40,
 		.level = 15,
@@ -480,7 +480,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {189, 190, 191, 192, 193, 194, 195, 196},
 		.weights = {2, 2, 2, 3, 3, 5, 5, 5},
 	},
-	/* Vale Cave: SceneId_ValeCaveLogs entrances 4 and 5 */
+	/* Vale Cave: SceneIdValeCaveLogs entrances 4 and 5 */
 	{
 		.rate = 40,
 		.level = 15,
@@ -488,7 +488,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {189, 190, 191, 192, 193, 194, 195, 196},
 		.weights = {1, 1, 1, 2, 2, 5, 5, 5},
 	},
-	/* Vault Cave: SceneId_VaultCavePassage */
+	/* Vault Cave: SceneIdVaultCavePassage */
 	{
 		.rate = 40,
 		.level = 16,
@@ -497,7 +497,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {201, 202, 203, 204, 205, 206, 207, 208},
 		.weights = {8, 8, 8, 4, 4, 4, 2, 2},
 	},
-	/* Vault Cave: SceneId_VaultCaveVambrace, SceneId_VaultCaveMouth */
+	/* Vault Cave: SceneIdVaultCaveVambrace, SceneIdVaultCaveMouth */
 	{
 		.rate = 40,
 		.level = 16,
@@ -538,7 +538,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {220, 221, 222, 223, 224, 225, 226, 227},
 		.weights = {3, 3, 3, 3, 6, 6, 6, 6},
 	},
-	/* Altmiller Cave: SceneId_AltmillerCaveEntrance */
+	/* Altmiller Cave: SceneIdAltmillerCaveEntrance */
 	{
 		.rate = 40,
 		.level = 17,
@@ -547,7 +547,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {229, 230, 231, 232, 233, 234, 235, 236},
 		.weights = {6, 6, 4, 4, 4, 2, 1, 1},
 	},
-	/* Altmiller Cave: SceneId_AltmillerCaveBabi */
+	/* Altmiller Cave: SceneIdAltmillerCaveBabi */
 	{
 		.rate = 40,
 		.level = 17,
@@ -556,7 +556,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {229, 230, 231, 232, 233, 234, 235, 236},
 		.weights = {4, 4, 6, 6, 4, 4, 2, 1},
 	},
-	/* Altmiller Cave: SceneId_AltmillerCaveVialChest */
+	/* Altmiller Cave: SceneIdAltmillerCaveVialChest */
 	{
 		.rate = 40,
 		.level = 18,
@@ -565,7 +565,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {229, 230, 231, 232, 233, 234, 235, 236},
 		.weights = {3, 3, 4, 6, 6, 4, 2, 1},
 	},
-	/* Altmiller Cave: SceneId_AltmillerCaveSquall */
+	/* Altmiller Cave: SceneIdAltmillerCaveSquall */
 	{
 		.rate = 40,
 		.level = 18,
@@ -574,7 +574,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {229, 230, 231, 232, 233, 234, 235, 236},
 		.weights = {2, 2, 4, 4, 6, 5, 5, 3},
 	},
-	/* Altmiller Cave: SceneId_AltmillerCaveCookieChest */
+	/* Altmiller Cave: SceneIdAltmillerCaveCookieChest */
 	{
 		.rate = 40,
 		.level = 18,
@@ -583,7 +583,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {229, 230, 231, 232, 233, 234, 235, 236},
 		.weights = {2, 2, 3, 3, 4, 6, 6, 4},
 	},
-	/* Altmiller Cave: SceneId_AltmillerCaveDraught entrances 50 and 51 */
+	/* Altmiller Cave: SceneIdAltmillerCaveDraught entrances 50 and 51 */
 	{
 		.rate = 40,
 		.level = 18,
@@ -600,7 +600,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {238, 239, 240, 241, 242, 243},
 		.weights = {10, 10, 10, 10, 10, 10},
 	},
-	/* Gondowan Cave: SceneId_GondowanCave, its other entrances */
+	/* Gondowan Cave: SceneIdGondowanCave, its other entrances */
 	{
 		.rate = 30,
 		.level = 19,
@@ -608,7 +608,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {250, 251, 252, 253, 254, 255, 256, 257},
 		.weights = {3, 3, 4, 4, 5, 5, 6, 6},
 	},
-	/* Gondowan Cave: SceneId_GondowanCaveRiver, its other entrances */
+	/* Gondowan Cave: SceneIdGondowanCaveRiver, its other entrances */
 	{
 		.rate = 30,
 		.level = 20,
@@ -616,7 +616,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {250, 251, 252, 253, 254, 255, 256, 257},
 		.weights = {3, 3, 4, 4, 5, 5, 6, 6},
 	},
-	/* Gondowan Cave: SceneId_GondowanCaveRiver entrances 1 and 2 */
+	/* Gondowan Cave: SceneIdGondowanCaveRiver entrances 1 and 2 */
 	{
 		.rate = 30,
 		.level = 20,
@@ -624,7 +624,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {250, 251, 252, 253, 254, 255, 256, 257},
 		.weights = {3, 3, 4, 4, 5, 5, 6, 6},
 	},
-	/* Gondowan Cave: SceneId_GondowanCave entrances 1 to 3 */
+	/* Gondowan Cave: SceneIdGondowanCave entrances 1 to 3 */
 	{
 		.rate = 30,
 		.level = 20,
@@ -632,7 +632,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {250, 251, 252, 253, 254, 255, 256, 257},
 		.weights = {3, 3, 4, 4, 5, 5, 6, 6},
 	},
-	/* Lunpa Fortress: SceneId_LunpaFortressCave entrances 1 and 2 */
+	/* Lunpa Fortress: SceneIdLunpaFortressCave entrances 1 and 2 */
 	{
 		.rate = 35,
 		.level = 21,
@@ -640,7 +640,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {259, 260, 261, 262},
 		.weights = {2, 2, 2, 2},
 	},
-	/* Lunpa Fortress: SceneId_LunpaFortressCave, its other entrances */
+	/* Lunpa Fortress: SceneIdLunpaFortressCave, its other entrances */
 	{
 		.rate = 35,
 		.level = 21,
@@ -648,7 +648,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {259, 260, 261, 262},
 		.weights = {2, 2, 2, 2},
 	},
-	/* Lunpa Fortress: SceneId_LunpaFortressToadonpa entrances 1 and 2 */
+	/* Lunpa Fortress: SceneIdLunpaFortressToadonpa entrances 1 and 2 */
 	{
 		.rate = 35,
 		.level = 21,
@@ -674,7 +674,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {268, 269, 270, 271, 272, 273, 274, 275},
 		.weights = {2, 2, 3, 3, 3, 4, 4, 4},
 	},
-	/* Suhalla Desert: SceneId_SuhallaDesertNorth */
+	/* Suhalla Desert: SceneIdSuhallaDesertNorth */
 	{
 		.rate = 40,
 		.level = 22,
@@ -683,7 +683,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {277, 278, 279, 280, 281, 282, 284, 285},
 		.weights = {4, 4, 4, 5, 3, 4, 2, 2},
 	},
-	/* Suhalla Desert: SceneId_SuhallaDesertSouth */
+	/* Suhalla Desert: SceneIdSuhallaDesertSouth */
 	{
 		.rate = 40,
 		.level = 22,
@@ -701,7 +701,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {296, 297, 298, 300, 301, 302},
 		.weights = {10, 10, 10, 10, 10, 10},
 	},
-	/* Suhalla Gate: SceneId_SuhallaGateDew entrances 1 and 2 */
+	/* Suhalla Gate: SceneIdSuhallaGateDew entrances 1 and 2 */
 	{
 		.rate = 30,
 		.level = 23,
@@ -710,7 +710,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {310, 311, 312, 313, 314, 315, 316, 317},
 		.weights = {6, 6, 6, 3, 3, 2, 2, 2},
 	},
-	/* Suhalla Gate: SceneId_SuhallaGateDew, its other entrances */
+	/* Suhalla Gate: SceneIdSuhallaGateDew, its other entrances */
 	{
 		.rate = 30,
 		.level = 24,
@@ -719,7 +719,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {310, 311, 312, 313, 314, 315, 316, 317},
 		.weights = {2, 3, 3, 6, 6, 3, 3, 3},
 	},
-	/* Gateway Cave: SceneId_GatewayCave entrances 1 and 2 */
+	/* Gateway Cave: SceneIdGatewayCave entrances 1 and 2 */
 	{
 		.rate = 30,
 		.level = 24,
@@ -728,7 +728,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {310, 311, 312, 313, 314, 315, 316, 317},
 		.weights = {1, 1, 2, 2, 2, 3, 3, 3},
 	},
-	/* Gateway Cave: SceneId_GatewayCave, its other entrances */
+	/* Gateway Cave: SceneIdGatewayCave, its other entrances */
 	{
 		.rate = 30,
 		.level = 24,
@@ -737,7 +737,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {310, 311, 312, 313, 314, 315, 316, 317},
 		.weights = {2, 2, 3, 3, 3, 6, 6, 6},
 	},
-	/* Venus Lighthouse: SceneId_VenusLighthouseGroundFloor, its other entrances */
+	/* Venus Lighthouse: SceneIdVenusLighthouseGroundFloor, its other entrances */
 	{
 		.rate = 40,
 		.level = 25,
@@ -745,7 +745,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {319, 320, 321, 322, 323},
 		.weights = {4, 4, 4, 4, 4},
 	},
-	/* Venus Lighthouse: SceneId_VenusLighthouseGroundFloor entrances 20 to 26 and 30 to 32 */
+	/* Venus Lighthouse: SceneIdVenusLighthouseGroundFloor entrances 20 to 26 and 30 to 32 */
 	{
 		.rate = 40,
 		.level = 25,
@@ -753,7 +753,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {319, 320, 321, 322, 323},
 		.weights = {4, 4, 4, 4, 4},
 	},
-	/* Babi Lighthouse Entry and Babi Lighthouse: SceneId_BabiLighthouseEntry, SceneId_BabiLighthouseLuff, SceneId_BabiLighthouseStoneDoor, SceneId_TunnelRuinsLadyStatues entrances 1 to 3 */
+	/* Babi Lighthouse Entry and Babi Lighthouse: SceneIdBabiLighthouseEntry, SceneIdBabiLighthouseLuff, SceneIdBabiLighthouseStoneDoor, SceneIdTunnelRuinsLadyStatues entrances 1 to 3 */
 	{
 		.rate = 35,
 		.level = 25,
@@ -762,7 +762,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {328, 329, 330, 331, 332, 333, 334, 335},
 		.weights = {6, 6, 6, 4, 4, 4, 2, 2},
 	},
-	/* Tunnel Ruins: SceneId_TunnelRuinsGreatStatue entrances 1, 2, 5 to 7 and 14 to 18, SceneId_TunnelRuinsLadyStatues entrances 8 to 11 */
+	/* Tunnel Ruins: SceneIdTunnelRuinsGreatStatue entrances 1, 2, 5 to 7 and 14 to 18, SceneIdTunnelRuinsLadyStatues entrances 8 to 11 */
 	{
 		.rate = 35,
 		.level = 25,
@@ -771,7 +771,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {328, 329, 330, 331, 332, 333, 334, 335},
 		.weights = {3, 3, 4, 6, 6, 4, 3, 3},
 	},
-	/* Tunnel Ruins: SceneId_TunnelRuinsLadyStatues entrances 12 and 15 to 17 */
+	/* Tunnel Ruins: SceneIdTunnelRuinsLadyStatues entrances 12 and 15 to 17 */
 	{
 		.rate = 35,
 		.level = 26,
@@ -780,7 +780,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {328, 329, 330, 331, 332, 333, 334, 335},
 		.weights = {3, 3, 3, 4, 4, 4, 6, 6},
 	},
-	/* Venus Lighthouse: SceneId_VenusLighthouseFirstFloor, its other entrances */
+	/* Venus Lighthouse: SceneIdVenusLighthouseFirstFloor, its other entrances */
 	{
 		.rate = 34,
 		.level = 27,
@@ -790,7 +790,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {337, 338, 339, 340, 341, 342, 343, 344},
 		.weights = {4, 4, 3, 3, 3, 3, 2, 2},
 	},
-	/* Venus Lighthouse: SceneId_VenusLighthouseFirstFloor entrances 19 and 20, SceneId_VenusLighthouseSecondFloor */
+	/* Venus Lighthouse: SceneIdVenusLighthouseFirstFloor entrances 19 and 20, SceneIdVenusLighthouseSecondFloor */
 	{
 		.rate = 32,
 		.level = 28,
@@ -800,7 +800,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {337, 338, 339, 340, 341, 342, 343, 344},
 		.weights = {3, 3, 4, 4, 3, 3, 2, 2},
 	},
-	/* Venus Lighthouse: SceneId_VenusLighthouseThirdFloor */
+	/* Venus Lighthouse: SceneIdVenusLighthouseThirdFloor */
 	{
 		.rate = 30,
 		.level = 29,
@@ -810,7 +810,7 @@ const ENCOUNTER_ZONE EncounterZones[] = {
 		.formations = {337, 338, 339, 340, 341, 342, 343, 344},
 		.weights = {2, 2, 3, 3, 4, 4, 3, 3},
 	},
-	/* Venus Lighthouse: SceneId_VenusLighthouseFourthFloor */
+	/* Venus Lighthouse: SceneIdVenusLighthouseFourthFloor */
 	{
 		.rate = 30,
 		.level = 30,

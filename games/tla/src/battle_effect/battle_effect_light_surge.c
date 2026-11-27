@@ -110,9 +110,9 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 	Uint8			 *sprs;
 	Uint8			 *cells;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -123,7 +123,7 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprs, 0, 0);
 	LOAD_BG_PALETTE(RESOURCE_VIOLET_PALETTE_F);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-	camera = Ram_HeapSlots->cameraState;
+	camera = RamHeapSlots->cameraState;
 	savedYaw = camera->yaw;
 	tgt = btObjectGetStub(args->tgts[0])->obj;
 
@@ -232,24 +232,24 @@ void btEffectRunLightSurge(BATTLE_EFFECT_PARM *args)
 			idx <<= 1;
 			entry = (Sint16 *)(idx + (Sint32)circles);
 			half = size >> 1;
-			(Ram_HeapSlots->ramCodePaired)(canvas,
+			(RamHeapSlots->ramCodePaired)(canvas,
 				(void *)(*entry + (Sint32)cells), x - half, y - size, half,
 				size);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 				EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas,
+			(RamHeapSlots->ramCodePaired)(canvas,
 				(void *)(*entry + (Sint32)cells), x, y - size, half, size);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			if(i >= SURGE_FIRST_GLOW) {
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-				(Ram_HeapSlots->ramCodePaired)(canvas,
+				(RamHeapSlots->ramCodePaired)(canvas,
 					(void *)(*entry + (Sint32)cells), x - half, y, half, size);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-				(Ram_HeapSlots->ramCodePaired)(
+				(RamHeapSlots->ramCodePaired)(
 					canvas, (void *)(*entry + (Sint32)cells), x, y, half, size);
 				syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			}

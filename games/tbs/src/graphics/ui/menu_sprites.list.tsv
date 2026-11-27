@@ -1,13 +1,13 @@
 name	file	section	align	left	pad
-Icon_ResourceTiles	menu_sprites/hand.4bpp16x16		4		
+IconResourceTiles	menu_sprites/hand.4bpp16x16		4		
 	menu_sprites/gem.4bpp16x16				
-Menu_SmallDownArrowTiles	menu_sprites/sdown.4bpp16x16				
-Menu_ArrowTiles	menu_sprites/sup.4bpp16x16				
+MenuSmallDownArrowTiles	menu_sprites/sdown.4bpp16x16				
+MenuArrowTiles	menu_sprites/sup.4bpp16x16				
 	menu_sprites/up.4bpp16x16				
 	menu_sprites/down.4bpp16x16				
-Menu_DjinnArrowUpTiles	djinn_arrow_up.4bpp16x16				
-Menu_DjinnArrowDownTiles	djinn_arrow_down.4bpp16x16				
+MenuDjinnArrowUpTiles	djinn_arrow_up.4bpp16x16				
+MenuDjinnArrowDownTiles	djinn_arrow_down.4bpp16x16				
 	menu_sprites/digits.4bpp				
 	menu_sprites/price.4bpp				
-Menu_QuantityTiles	menu_sprites/quantity.4bpp				
+MenuQuantityTiles	menu_sprites/quantity.4bpp				
 	menu_sprites/sprite_c.4bpp16x16				

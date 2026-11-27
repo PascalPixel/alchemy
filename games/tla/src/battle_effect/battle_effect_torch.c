@@ -44,8 +44,8 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	Sint32				 ang;
 	Sint32				*line;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(BGCNT_WRAP);
 	btEffectRunDjinniEntrance(args,
 		DJINNI_ENTRANCE(ELEMENT_MARS + DJINNI_ENTRANCE_LONG, args->side,
@@ -84,7 +84,7 @@ void btEffectRunTorch(BATTLE_EFFECT_PARM *args)
 	/* Its colours: red rises from the first level, green from the sixth and
 	   blue from the eighth, so the rings run from dark red to pale orange at
 	   TORCH_BRIGHTEST_LEVEL. */
-	ramp = (Uint16 *)Ram_MapMetatileBuffer;
+	ramp = (Uint16 *)RamMapMetatileBuffer;
 	for(i = 1; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
 		if(i >= TORCH_BRIGHTEST_LEVEL)
 			shade = 2 * TORCH_BRIGHTEST_LEVEL - i;

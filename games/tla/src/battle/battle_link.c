@@ -94,7 +94,7 @@ Sint32 btLinkBattleSendParty(void)
 	{
 		Sint32 noSlot = OPPONENT_SLOT_NONE;
 
-		battle = Ram_HeapSlots->battleState;
+		battle = RamHeapSlots->battleState;
 		for(i = ARRAY_COUNT(battle->opponentSlots) - 1; i >= 0; i--)
 			battle->opponentSlots[i] = noSlot;
 
@@ -175,7 +175,7 @@ Uint8 *btTextCopyFourCharsUnderscored(
    the other console to show it too. Returns -1 when the link fails, else 0. */
 Sint32 btLinkBattleWaitSync(void)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Uint16		 *peer;
 	Uint16		 *signature;
 	Sint32		  missed = 0;
@@ -220,7 +220,7 @@ Sint32 btLinkBattleWaitSync(void)
    for more than LINK_MAX_MISSED_TICKS, else 0. */
 Sint32 btLinkBattleSyncTurn(void)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Uint16		 *peer;
 	Uint16		 *signature;
 	Sint32		  missed = 0;
@@ -333,7 +333,7 @@ Sint32 btLinkBattleSyncTurn(void)
 Sint32 btPartyAssignOpponentSlots(void)
 {
 	Uint16		  activeMembers[8];
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Sint32		  partySize = btPartyPrepareMembers(activeMembers);
 	Sint32		  memberSlot;
 	Sint32		  unitId;

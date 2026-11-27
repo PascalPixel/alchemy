@@ -50,7 +50,7 @@ void fdMapScreenStepToPlace(Sint32 *screenX, Sint32 *screenY, Sint32 step)
 	Sint32				   wraps;
 	Sint32				   flg;
 	Uint32				   marker;
-	WORLD_MAP_STATE		  *worldMapState = Ram_WorldMapState;
+	WORLD_MAP_STATE		  *worldMapState = RamWorldMapState;
 
 	/* DEAD: the leader looked up and never used; the ROM keeps the call. */
 	fdPartyGetLeaderActor();
@@ -207,7 +207,7 @@ void fdMapScreenUpdateMarkers(void)
 
 	/* DEAD: the leader looked up and never used; the ROM keeps the call. */
 	fdPartyGetLeaderActor();
-	state = Ram_WorldMapState;
+	state = RamWorldMapState;
 	marker = state->markers;
 	tileBase = VramCacheEntries[state->vramBlock].ofs >> 5;
 	nearest = -1;
@@ -263,8 +263,8 @@ void fdMapScreenUpdateMarkers(void)
 				pos[2] = toFIXED(WORLD_MAP_CURSOR_MAX_Y);
 			state->x = pos[0];
 			state->z = pos[2];
-			Ram_WorldMapCursorStart[0] = pos[0];
-			Ram_WorldMapCursorStart[1] = pos[2];
+			RamWorldMapCursorStart[0] = pos[0];
+			RamWorldMapCursorStart[1] = pos[2];
 			if(state->speed < WORLD_MAP_CURSOR_MAX_SPEED)
 				state->speed += WORLD_MAP_CURSOR_ACCELERATION;
 		}
@@ -507,7 +507,7 @@ void fdMapScreenDraw(void)
 	syDMAXCopy((Uint8 *)graphics + graphics[0], (void *)BG_PLTT,
 		DMA_COPY_WORDS(120), REG_DMA3);
 	*(Uint16 *)BG_PLTT = 0;
-	buf = Ram_MapMetatileBuffer;
+	buf = RamMapMetatileBuffer;
 	right = IMAGE_SCROLL_MAX_X;
 	bottom = IMAGE_SCROLL_MAX_Y;
 	if(x < 0)
@@ -573,7 +573,7 @@ void fdMapScreenDrawRow(Uint32 column, Sint32 row)
 	tile = (tile + MAP_SCREEN_MAP_START) % MAP_SCREEN_TILES +
 		MAP_SCREEN_FIRST_TILE;
 	syDecompressTaggedLZ((Uint8 *)graphics + graphics[unwrapped + 1],
-		Ram_MapMetatileBuffer + row * IMAGE_ROW_BYTES);
+		RamMapMetatileBuffer + row * IMAGE_ROW_BYTES);
 	/* In every edition but the Japanese the copy stops at the image's last
 	   column instead of running past it. */
 #if MAP_SCREEN_ROW_COPIES_31_TILES_WITHIN_IMAGE
@@ -582,7 +582,7 @@ void fdMapScreenDrawRow(Uint32 column, Sint32 row)
 #else
 	for(i = 0; i < BG_SCREEN_WIDTH; i++) {
 #endif
-		syDMAXCopy(Ram_MapMetatileBuffer + metatile * TILE_SIZE_8BPP,
+		syDMAXCopy(RamMapMetatileBuffer + metatile * TILE_SIZE_8BPP,
 			(void *)(VRAM + tile * TILE_SIZE_8BPP),
 			DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
 		metatile++;
@@ -612,7 +612,7 @@ void fdMapScreenDrawColumn(Sint32 column, Sint32 row)
 			MAP_SCREEN_TILES;
 		metatile *= TILE_SIZE_8BPP;
 		tile *= TILE_SIZE_8BPP;
-		syDMAXCopy(Ram_MapMetatileBuffer + metatile,
+		syDMAXCopy(RamMapMetatileBuffer + metatile,
 			(Uint8 *)(VRAM + MAP_SCREEN_FIRST_TILE * TILE_SIZE_8BPP) + tile,
 			DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
 		/* FAKEMATCH(dead): line set to 0 at the step's end, where nothing reads
@@ -622,8 +622,8 @@ void fdMapScreenDrawColumn(Sint32 column, Sint32 row)
 }
 
 /* The map screen's scroll, x then y. */
-#define SCROLL_X Ram_WorldMapScroll[0]
-#define SCROLL_Y Ram_WorldMapScroll[1]
+#define SCROLL_X RamWorldMapScroll[0]
+#define SCROLL_Y RamWorldMapScroll[1]
 
 /* The map screen's scroll follows the cursor. The target puts the cursor in the
    middle of the screen (clamped to the image); unless the whole world shows,
@@ -717,10 +717,10 @@ Sint32 fdMapScreenShow(Sint32 mode)
 	Uint8				   savedFlg[ARRAY_COUNT(((MAP_STATE *)NULL)->anim)];
 	Sint32				   screenX;
 	Sint32				   screenY;
-	MAP_STATE			  *map = Ram_HeapSlots->mapGrid;
-	WORLD_MAP_VIEW		  *view = Ram_HeapSlots->mapGrid;
-	FIELD_STATE			  *field = Ram_HeapSlots->fieldState;
-	ACTOR_SYSTEM_STATE	  *actorSystem = Ram_HeapSlots->actorSystem;
+	MAP_STATE			  *map = RamHeapSlots->mapGrid;
+	WORLD_MAP_VIEW		  *view = RamHeapSlots->mapGrid;
+	FIELD_STATE			  *field = RamHeapSlots->fieldState;
+	ACTOR_SYSTEM_STATE	  *actorSystem = RamHeapSlots->actorSystem;
 	Sint16				   blend;
 	Bool				   msgShown = FALSE;
 	Sint32				   zoomed = 0;

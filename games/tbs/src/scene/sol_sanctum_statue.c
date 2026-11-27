@@ -1,7 +1,7 @@
-/* Sol Sanctum (SceneId_SolSanctumStatue), the room of what Kraden calls the
-   statue puzzle, off the Luna and Sol rooms (SceneId_SolSanctumLunaSolRooms)
+/* Sol Sanctum (SceneIdSolSanctumStatue), the room of what Kraden calls the
+   statue puzzle, off the Luna and Sol rooms (SceneIdSolSanctumLunaSolRooms)
    and leading on to a room with a Psynergy Stone
-   (SceneId_SolSanctumPsynergyStone).
+   (SceneIdSolSanctumPsynergyStone).
 
    Eight winged statues stand around a ninth, the center statue, which bears a
    sun disc. Four can be pushed, or moved with Move, onto seals in the floor.
@@ -958,7 +958,7 @@ static void scSolSanctumStatueInitScrollingSprs(void)
 
 	sprWords = ScrollingSprites.words;
 	pixels = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(SolSanctumStatue_SpriteRowsGraphics, pixels);
+	syDecompressByteLZ(SolSanctumStatueSpriteRowsGraphics, pixels);
 	tile =
 		syVRAMCacheLoad(syVRAMCacheFindFreeEntry(), ROW_SPRITE_BYTES, pixels);
 	for(column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {

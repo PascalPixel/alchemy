@@ -37,7 +37,7 @@ Sint32 mnSuspendFieldEvents(void)
    entry in each side, and a 1x1 cursor grid. */
 void mnInitState(Sint32 unused)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 
 	DMA_FILL32(0, menu, MENU_STATE_SIZE);
 	menu->sideIdx[0] = -1;
@@ -168,7 +168,7 @@ void mnStatPanelDraw(WINDOW *unused, Sint32 owner, Sint32 slot, Sint32 mode)
 	Uint8			 ailments[8];
 
 	created = 0;
-	state = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	state = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	unit = syUnitGet(owner);
 	item = unit->inventory[slot];
 	def = gmItemGetDirectStub(item & INVENTORY_ITEM_ID_MASK);
@@ -563,7 +563,7 @@ WINDOW *mnCursorCreate(void *src)
    projected placement. */
 void mnPlacePartyFigures(void)
 {
-	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)RamHeapSlots->menuState;
 	SPR_SCALE			 scale;
 	SPR_PLACEMENT		 pos;
 	Sint32				 i;
@@ -602,7 +602,7 @@ extern Uint8 MenuCursorBobY[];
    bobbing. */
 void mnCursorPos(Sint32 xOfs, Sint32 yOfs)
 {
-	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)RamHeapSlots->menuState;
 	WINDOW_SPR			*cursor = menu->sideIcon[0];
 
 	cursor->spr.oam.x = cursor->x = MenuCursorBobX[CURSOR_BOB_STEP()] + xOfs +
@@ -615,7 +615,7 @@ void mnCursorPos(Sint32 xOfs, Sint32 yOfs)
    window over two ticks, in 1/16 pixel steps. */
 void mnCursorSlide(Sint32 x, Sint32 y)
 {
-	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState;
+	PSYNERGY_MENU_STATE *menu = (PSYNERGY_MENU_STATE *)RamHeapSlots->menuState;
 	WINDOW_SPR			*cursor;
 	Sint32				 steps;
 	Sint32				 startX;
@@ -687,7 +687,7 @@ void mnPsynergyMenuPlaceEntryIcons(
 	Sint32		 idx;
 
 	idx = 0;
-	slot = ((PSYNERGY_MENU_STATE *)Ram_HeapSlots->menuState)->entryIcons;
+	slot = ((PSYNERGY_MENU_STATE *)RamHeapSlots->menuState)->entryIcons;
 	scan = slot;
 	do {
 		if(*scan++ != NULL) {
@@ -742,7 +742,7 @@ void mnItemMenuPlaceIcons(Sint32 layout)
 	Sint32			 originY;
 	ITEM_MENU_STATE *menu;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	originY = 56;
 	if(layout != 1) {
 		originY = 40;
@@ -772,7 +772,7 @@ void mnTextGetMessageSizeStub(
    otherwise it waits for A, B or Start and clears it again. */
 void mnItemMenuShowMessage(Sint32 msg, Sint32 x, Sint32 y)
 {
-	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = (ITEM_MENU_STATE *)RamHeapSlots->menuState;
 	WINDOW			*win;
 	Sint32			 height;
 	Sint32			 width;
@@ -1083,7 +1083,7 @@ void mnPagedListDrawPageNumbers(Sint32 win, Sint32 itemCnt, Sint32 pageSize,
 void mnWindowSetHighlightRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 palette)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 
 	x += win->x + 1;
 	y += win->y + 1;
@@ -1148,7 +1148,7 @@ void mnPaletteLoadIconsIntoHighlight(void)
 void mnSetPageIcons(
 	Sint32 pageSize, Sint32 first, Sint32 win, Sint32 x, Sint32 y)
 {
-	ITEM_MENU_STATE *menu = Ram_HeapSlots->menuState;
+	ITEM_MENU_STATE *menu = RamHeapSlots->menuState;
 	WINDOW_SPR		*icon;
 	Sint32			 i;
 
@@ -1213,7 +1213,7 @@ void mnWatchStart(void)
 		if(frm & 4)
 			syWordsCopy(
 				BG_CHAR_BLOCK(0) + CLASS_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
-				Menu_ClassChangeArrowTile, TILE_SIZE_4BPP);
+				MenuClassChangeArrowTile, TILE_SIZE_4BPP);
 		else
 			syWordsFill(
 				BG_CHAR_BLOCK(0) + CLASS_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
@@ -1228,7 +1228,7 @@ void mnWatchStart(void)
 	}
 	/* DEAD: walks the free window sprites to the end of their list and keeps
 	   nothing; the ROM keeps the loop. */
-	node = (Uint32 *)&((WIN_STATE *)Ram_HeapSlots->winState)->freeSprs.head;
+	node = (Uint32 *)&((WIN_STATE *)RamHeapSlots->winState)->freeSprs.head;
 	while((node = (Uint32 *)*node) != 0)
 		;
 }

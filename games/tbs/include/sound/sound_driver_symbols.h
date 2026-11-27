@@ -30,10 +30,10 @@ enum SoundControl {
 /* The music players by their row in MPlayTable (sound/music_player_table.s), as
    a song table row names them (Song.ms). */
 enum MusicPlayerId {
-	MUSIC_PLAYER_JINGLE = 0,  /* MPlayInfo_Jingle */
-	MUSIC_PLAYER_BGM = 1,	  /* MPlayInfo_BGM */
-	MUSIC_PLAYER_MENU_SE = 2, /* MPlayInfo_MenuSE: the interface's sounds */
-	/* MPlayInfo_ActionSE: field and battle actions */
+	MUSIC_PLAYER_JINGLE = 0,  /* MPlayInfoJingle */
+	MUSIC_PLAYER_BGM = 1,	  /* MPlayInfoBGM */
+	MUSIC_PLAYER_MENU_SE = 2, /* MPlayInfoMenuSE: the interface's sounds */
+	/* MPlayInfoActionSE: field and battle actions */
 	MUSIC_PLAYER_ACTION_SE = 3,
 	/* The first music player a sound on MUSIC_PLAYER_SE_LAST may borrow. */
 	MUSIC_PLAYER_SE_FIRST = 4,
@@ -66,11 +66,11 @@ enum SoundReverbCode {
 struct MusicPlayerInfo;
 /* Plays music; SOUND_FADE_OUT_BGM fades it and a jingle silences it until it
    ends. */
-extern struct MusicPlayerInfo MPlayInfo_BGM;
+extern struct MusicPlayerInfo MPlayInfoBGM;
 /* Plays jingles; the music returns once it stops. */
-extern struct MusicPlayerInfo MPlayInfo_Jingle;
+extern struct MusicPlayerInfo MPlayInfoJingle;
 /* the music player SOUND_FADE_OUT_ACTION_SE fades */
-extern struct MusicPlayerInfo MPlayInfo_ActionSE;
+extern struct MusicPlayerInfo MPlayInfoActionSE;
 /* The sound effect each music player last started, by player: music and jingles
    are not recorded, and SOUND_FADE_OUT_ACTION_SE clears
    MUSIC_PLAYER_ACTION_SE's entry. Nothing reads it. */

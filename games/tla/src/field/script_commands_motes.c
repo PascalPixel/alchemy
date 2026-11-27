@@ -25,13 +25,13 @@ void fdMotesStart(void)
 	size = 0;
 	DMA_FILL32(size, state, sizeof(*state));
 	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(FieldEffect_MoteTiles, tiles);
+	syDecompressByteLZ(FieldEffectMoteTiles, tiles);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase =
 		syVRAMCacheLoad(state->entry, 6 * WEATHER_PICTURE_BYTES, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	i = 0;
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	for(; i < WEATHER_PARTICLE_COUNT; i++) {
 		MAP_STATE *view = heap->mapGrid;
 		Sint32	  *pos;
@@ -83,14 +83,14 @@ void fdWeatherStartRain(Sint32 withSnd)
 	size = 0;
 	DMA_FILL32(size, state, sizeof(*state));
 	tiles = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(FieldEffect_StreakTiles, tiles);
+	syDecompressByteLZ(FieldEffectStreakTiles, tiles);
 	state->entry = syVRAMCacheFindFreeEntry();
 	/* As many bytes as the motes' six pictures, though streak.png has two. */
 	state->tileBase =
 		syVRAMCacheLoad(state->entry, 6 * WEATHER_PICTURE_BYTES, tiles);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 	i = 0;
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	for(; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
 		MAP_STATE *view = heap->mapGrid;
 		Sint32	  *focus;
@@ -155,9 +155,9 @@ void fdEffectUpdateSparkles(void)
 	Uint32			  b;
 	Uint32			  ticks;
 
-	state = Ram_HeapSlots->weather;
+	state = RamHeapSlots->weather;
 	spawned = 0;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	camera = map->view;
 	spawnX = 0;
 	spawnZ = 0;
@@ -265,14 +265,14 @@ void fdEffectInitSparkles(void)
 	size = 0;
 	DMA_FILL32_CELL(zero, size, state, sizeof(WEATHER_STATE));
 	buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
-	syDecompressByteLZ(FieldEffect_SparkleTiles, buf);
+	syDecompressByteLZ(FieldEffectSparkleTiles, buf);
 	state->entry = syVRAMCacheFindFreeEntry();
 	state->tileBase =
 		syVRAMCacheLoad(state->entry, 4 * WEATHER_PICTURE_BYTES, buf);
 	syHeapSlotRelease(HEAP_SLOT_TILE_SCRATCH);
 
 	i = 0;
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	clear = 0;
 	do {
 		MAP_STATE *view = heap->mapGrid;
@@ -311,7 +311,7 @@ void fdWeatherStartLightning(void)
 
 	state =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
-	buffers = Ram_HeapSlots->palFade;
+	buffers = RamHeapSlots->palFade;
 	DMA_FILL32_CELL(zero, 0, state, sizeof(*state));
 	fdPaletteFadeBuild(
 		PALETTE_TINT_WARM, (Uint16 *)buffers, (Uint16 *)state, 1);
@@ -365,7 +365,7 @@ void fdWeatherStartLightningFlash(Sint32 from, Sint32 to)
 
 	state =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_FIELD_BLEND, sizeof(FIELD_BLEND_STATE));
-	buffers = Ram_HeapSlots->palFade;
+	buffers = RamHeapSlots->palFade;
 	DMA_FILL32_CELL(zero, 0, state, sizeof(*state));
 	fdPaletteFadeBuild(from, (Uint16 *)buffers, (Uint16 *)state, 1);
 	tgt = state->to;

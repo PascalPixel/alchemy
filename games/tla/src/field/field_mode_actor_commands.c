@@ -659,7 +659,7 @@ void fdActorTurnPairToFaceEachOther(ACTOR *first, ACTOR *second)
 void fdActorReleaseById(Sint32 actorId)
 {
 	void		*released = fdActorLookup(actorId);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(released != NULL) {
 		fdActorReleaseStub(released);

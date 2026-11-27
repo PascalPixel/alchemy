@@ -86,7 +86,7 @@ top:
 		{
 			Sint32 radius = actor->radius - 2;
 
-			other = Ram_HeapSlots->actors;
+			other = RamHeapSlots->actors;
 			flg = &other->collisionFlg;
 			for(i = 0; i < ACTOR_COUNT; i++, flg += sizeof(ACTOR), other++) {
 				if(other->script != NULL && (*flg & ACTOR_SOLID) &&

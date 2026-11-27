@@ -124,7 +124,7 @@ void btEffectTransferFullScreenImage(void)
 	Sint32				 transferMode;
 
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-	src = Ram_MapGridMetatileBuffer;
+	src = RamMapGridMetatileBuffer;
 	if(state->transferPending != 1)
 		return;
 

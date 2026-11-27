@@ -544,7 +544,7 @@ Sint32 btEnemyGetFreeUnitId(void)
    up to the last one still there. */
 void btPlacementRelayoutEnemies(void)
 {
-	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE *battle = RamHeapSlots->battleState;
 	Uint16		  unitIds[UNIT_MAX];
 	Sint32		  x[ENEMY_BATTLE_SIZE];
 	Sint32		  z[ENEMY_BATTLE_SIZE];
@@ -597,7 +597,7 @@ void btUnitRefreshPlacement(void)
 
 	place = 0;
 	stand = 0;
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	cnt = btPartyPrepareMembers(ids);
 	cnt += btPartyPrepareReserveOwners(ids + cnt);
 	/* placement[0..7] is each party unit id's place and placement[8..13] the

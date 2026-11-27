@@ -103,7 +103,7 @@ Sint32 fdActorUpdateWalkingCtrl(ACTOR *actor)
 	syVectorAddPolarOffset(toFIXED(8), ang, &pos);
 	if(actor->priFlg & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
 		onPlatform = FALSE;
-		other = (ACTOR *)Ram_HeapSlots->actors;
+		other = (ACTOR *)RamHeapSlots->actors;
 		for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
 			FIXED dy;
 
@@ -170,7 +170,7 @@ blocked:
 push_objects:
 	SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
-	other = (ACTOR *)Ram_HeapSlots->actors;
+	other = (ACTOR *)RamHeapSlots->actors;
 	for(angIdx = ACTOR_COUNT - 1; angIdx >= 0; angIdx--, other++) {
 		Sint32 radius;
 
@@ -229,7 +229,7 @@ push_objects:
 	}
 
 counted:
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	if(state != NULL) {
 		if(collision & PLAYER_STEP_BLOCKED)
 			state->blockedSteps++;
@@ -281,7 +281,7 @@ counted:
    FLAG_MENUS_RAISE_CUE is set the scene's raised cue. Returns the request. */
 Sint32 fdRequestShortcut(Uint32 assignment)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 kind = assignment >> FIELD_SHORTCUT_KIND_SHIFT;
 	Sint32		 request = assignment & FIELD_SHORTCUT_ID_MASK;
 
@@ -432,8 +432,8 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 	spr = actor->spr;
 	movementAnm = ANIM_WALK;
 	onPlatform = FALSE;
-	state = Ram_HeapSlots->fieldState;
-	map = Ram_HeapSlots->mapGrid;
+	state = RamHeapSlots->fieldState;
+	map = RamHeapSlots->mapGrid;
 	collision = 0;
 	pushed = 0;
 	if(PerWork.data & MainRoutineStateWork.dashKeys) {
@@ -466,7 +466,7 @@ Sint32 fdActorUpdatePlayerCtrl(ACTOR *actor)
 			toFIXED(2), (Uint16)ang - DEGtoANG(90), &contact);
 #endif
 		angIdx = 0;
-		other = (ACTOR *)Ram_HeapSlots->actors;
+		other = (ACTOR *)RamHeapSlots->actors;
 		for(; angIdx < ACTOR_COUNT; angIdx++, other++) {
 			FIXED dy;
 
@@ -540,7 +540,7 @@ push_objects:
 	   have room; any other solid actor there blocks the step. */
 	SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
 	syVectorAddPolarOffset(toFIXED(4), (Uint16)heading, &contact);
-	other = (ACTOR *)Ram_HeapSlots->actors;
+	other = (ACTOR *)RamHeapSlots->actors;
 	for(angIdx = 0; angIdx < ACTOR_COUNT; angIdx++, other++) {
 		Sint32 radius;
 

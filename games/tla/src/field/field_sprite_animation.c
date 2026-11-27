@@ -13,7 +13,7 @@ enum {
 	ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2),
 	/* A picture cache's tag holds its slot above the animation id's bits. */
 	PICTURE_CACHE_TAG_SLOT_SHIFT = 12,
-	/* Rows of SpritePictureCache_Sources searched, at most. */
+	/* Rows of SpritePictureCacheSources searched, at most. */
 	PICTURE_CACHE_SOURCES_MAX = 256,
 	/* Picture offsets at the head of a decoded set, at most. */
 	PICTURE_CACHE_PICTURES_MAX = 256,
@@ -25,7 +25,7 @@ enum {
 #undef fdSprAnimationAlloc
 
 /* Loads the pictures of animation id number into picture cache slot's buffer:
-   the resource listed for it in SpritePictureCache_Sources, decoded, its
+   the resource listed for it in SpritePictureCacheSources, decoded, its
    picture offsets turned into pointers, and for variant 1-5 its pixel colours
    (those up to 223, the basic sprite palettes 0 to 13) remapped through that
    variant's conversion table; a variant above 5 uses variant 1's. */
@@ -48,13 +48,13 @@ Sint32 fdSprPictureCacheLoad(
 
 	if(slot >= SPRITE_PICTURE_CACHE_COUNT)
 		return 0;
-	system = Ram_HeapSlots->actorSystem;
+	system = RamHeapSlots->actorSystem;
 	cache = &system->pictureCaches[slot];
 	metadata = fdResourceGetMetadataRecordStub(num);
 	cache->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | num;
 	cache->pictures = buf;
 
-	entry = SpritePictureCache_Sources;
+	entry = SpritePictureCacheSources;
 	for(cnt = 0; cnt < PICTURE_CACHE_SOURCES_MAX; cnt++) {
 		Sint16 *numbers = &entry->num;
 
@@ -98,7 +98,7 @@ Sint32 fdSprPictureCacheLoad(
    0. */
 Sint32 fdSprPictureCacheFindByTag(Sint32 tag)
 {
-	ACTOR_SYSTEM_STATE *system = Ram_HeapSlots->actorSystem;
+	ACTOR_SYSTEM_STATE *system = RamHeapSlots->actorSystem;
 	Uint32				i;
 	SPR_PICTURE_CACHE  *cache;
 
@@ -418,7 +418,7 @@ void fdActorSystemConfigure(Sint32 mode)
 	DMA_FILL32_CELL(
 		zero, 0, sprAnms, ANIM_OBJECT_COUNT * sizeof(SPR_ANIMATION));
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_ACTOR_SHADOW, ANIM_SHADOW_TILE_BYTES,
-		Actor_ShadowTiles);
+		ActorShadowTiles);
 	RAM_CODE_LOAD_SLOT(HEAP_SLOT_PICTURE_UPLOADER, fdRenderCopyStridedCode,
 		fdRenderCopyStridedCodeSize);
 }
@@ -432,7 +432,7 @@ void fdActorShadowFreeTiles(void)
 /* Loads the actors' shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW. */
 void fdActorShadowLoadTiles(void)
 {
-	const Uint8 *data = Actor_ShadowTiles;
+	const Uint8 *data = ActorShadowTiles;
 	Sint32		 size = ANIM_SHADOW_TILE_BYTES;
 
 	syVRAMCacheLoad(VRAM_CACHE_ENTRY_ACTOR_SHADOW, size, data);
@@ -452,7 +452,7 @@ SPR_ANIMATION *fdSprAnimationAlloc(Sint32 id)
 
 	found = NULL;
 	metadata = fdResourceGetMetadataRecordStub(id);
-	entry = Ram_HeapSlots->sprAnms;
+	entry = RamHeapSlots->sprAnms;
 	sprAnm = NULL;
 
 	if(metadata->width != 0) {
@@ -515,7 +515,7 @@ struct RESOURCE_OBJECT *fdSprCreate(Sint32 id)
 	freeSpr = NULL;
 	metadata = fdResourceGetMetadataRecordStub(id);
 	slot = syVRAMCacheFindFreeEntry();
-	spr = Ram_HeapSlots->sprs;
+	spr = RamHeapSlots->sprs;
 	if(metadata->width == 0)
 		return NULL;
 	/* A width of 0 marks a free sprite. */

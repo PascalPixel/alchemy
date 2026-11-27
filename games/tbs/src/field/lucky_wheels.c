@@ -16,7 +16,7 @@
 #include "text/msg_ids.h"
 
 /* The sparks of the jackpot, kept in the map metatile buffer. */
-#define LUCKY_WHEELS_SPARKS ((PARTICLE *)Ram_MapGridMetatileBuffer)
+#define LUCKY_WHEELS_SPARKS ((PARTICLE *)RamMapGridMetatileBuffer)
 
 /* Lucky Wheels' own state (LUCKY_WHEELS_STATE), in the heap slot Lucky */
 /* Dice keeps its sprites in, beside the battle effect slots it borrows. */
@@ -1252,7 +1252,7 @@ void fdLuckyWheelsRun(void)
 		HEAP_SLOT_BATTLE_EFFECT, sizeof(BATTLE_EFFECT_STATE));
 	wheels = syHeapSlotAllocEWRAM(
 		LUCKY_WHEELS_HEAP_SLOT, sizeof(LUCKY_WHEELS_STATE));
-	tiles = Ram_MapGridMetatileBuffer;
+	tiles = RamMapGridMetatileBuffer;
 	holdings = &MainRoutineStateWork.holdings;
 	syDummyNoOperationHook(RESOURCE_BATTLE_EFFECT_STUBS);
 	holdings->wonPrizes[0] = LUCKY_WHEELS_PRIZE_LIST_END;

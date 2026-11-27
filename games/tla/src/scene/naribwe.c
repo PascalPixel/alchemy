@@ -129,7 +129,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    long. */
 void scNaribwePrepareBlaze(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint8		*flg;
 
 	flg = &state->blazeLongSpray;
@@ -326,7 +326,7 @@ void scNaribweTalkToPilgrimOnReturn(Sint32 actor)
    three houses' doorways are plain exits. */
 void scNaribweEnterDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint16		*cue;
 	Sint32		 idx;
 	Uint32		 id;
@@ -372,7 +372,7 @@ void scNaribweScatterWeeds(void)
    it. */
 UNUSED void scNaribweSetRopeState(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	state->tgtX = 0;
 	state->tgtY = ACTOR_ROPE_POST;

@@ -407,8 +407,8 @@ Sint32 scProxChaseTarget(ACTOR *actor, ACTOR *tgt, Sint32 range, Sint32 force)
    close. */
 Sint32 scProxPlayChase(ACTOR *actor)
 {
-	WIN_STATE	*win = (WIN_STATE *)Ram_HeapSlots->winState;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	WIN_STATE	*win = (WIN_STATE *)RamHeapSlots->winState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Bool		 flg = FALSE;
 	ACTOR		*tgt;
 
@@ -617,7 +617,7 @@ void scProxTalkToHealer(void)
    have to play in the igloo any more. Then he runs on. */
 void scProxTalkToPlayingChild(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_PLAYING_CHILD);
 	Sint16		 ang = actor->facing;
 
@@ -645,7 +645,7 @@ void scProxTalkToPlayingChild(void)
    Mind Read she thinks how unreal the blizzard was. Then she runs on. */
 void scProxTalkToChildWhoMissesRunning(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_CHILD_WHO_MISSES_RUNNING);
 	Sint16		 angle = actor->facing;
 
@@ -673,7 +673,7 @@ void scProxTalkToChildWhoMissesRunning(void)
    he runs on. */
 void scProxTalkToTrainingChild(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGet(ACTOR_TRAINING_CHILD);
 	Sint16		 angle = actor->facing;
 
@@ -1265,7 +1265,7 @@ void scProxScoopUpMold(void)
 {
 	if(fdScriptGetFlag(FLAG_MARS_BEACON_LIT) == 0 &&
 		fdScriptGetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		fdScriptStart();
 		syFieldScriptEndLastingPsynergy(1);
@@ -1332,7 +1332,7 @@ void scProxSmokeFromChimneys(void)
 void scProxEnterDoor(
 	Sint32 srcX, Sint32 srcY, Sint32 x, Sint32 y, Sint32 width, Sint32 height)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Sint32		 metatile;
 
@@ -1425,7 +1425,7 @@ void scProxEnterUpperHouse(void)
 
 void scProxClimbStairs(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 stairsExit = state->stepCue;
 	ACTOR		*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 	Sint32		 metatile;

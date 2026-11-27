@@ -48,7 +48,7 @@ UNUSED void fdActorReservedNoOperation(void)
    and records the table among the scene's tables. */
 void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 actorIdx = 0;
 	Sint32		 i;
 	Uint16		 placementSpr;
@@ -188,7 +188,7 @@ void fdScriptSpawnActorTable(ACTOR_PLACE *entry, Sint32 slot)
    -1 when the map has no such point. */
 Sint32 fdScenePointGetPos(Sint32 id, FIXED *pos)
 {
-	Uint8 *cursor = Ram_MapScenePoints;
+	Uint8 *cursor = RamMapScenePoints;
 	Sint8  key;
 
 	key = *cursor++;
@@ -272,7 +272,7 @@ void fdActorResetForLeader(Sint32 tbl)
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
 	} else {
 		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_WALK;
-		metatile = ((MAP_STATE *)Ram_HeapSlots->mapGrid)
+		metatile = ((MAP_STATE *)RamHeapSlots->mapGrid)
 					   ->layers[actor->layer]
 					   .metatiles +
 			((actor->x.fixed / toFIXED(MAPGRID_METATILE_PIXELS)) +
@@ -319,7 +319,7 @@ void fdActorResetForLeader(Sint32 tbl)
 		secondLayer->colMode = SPRITE_COLOR_HIDDEN;
 		secondLayer->pri = SPRITE_LAYER_NOT_DRAWN;
 	}
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->origin = &camera->x.fixed;
+	((MAP_STATE *)RamHeapSlots->mapGrid)->origin = &camera->x.fixed;
 	state->camera = camera;
 }
 
@@ -327,7 +327,7 @@ void fdActorResetForLeader(Sint32 tbl)
    when the last slot is occupied. */
 Sint32 fdActorFindLastActiveId(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 last = ACTOR_FIRST_PLACED - 1;
 	Sint32		 i;
 
@@ -349,7 +349,7 @@ Sint32 fdActorFindLastActiveId(void)
    lies within the map's view bounds, so that only those inside appear. */
 void fdAssignViewFlags(VIEWED_PLACEMENT *entry)
 {
-	MAP_STATE *view = Ram_HeapSlots->mapGrid;
+	MAP_STATE *view = RamHeapSlots->mapGrid;
 
 	syGameFlagClear(FLAG_IN_VIEW);
 	syGameFlagSet(FLAG_OUT_OF_VIEW);
@@ -376,7 +376,7 @@ void fdAssignViewFlags(VIEWED_PLACEMENT *entry)
 /* Empties all the actor slots, without releasing the actors. */
 void fdActorTableClear(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 i;
 
 	for(i = 0; i < FIELD_ACTOR_COUNT; i++)
@@ -386,7 +386,7 @@ void fdActorTableClear(void)
 /* Returns the actor in slot actorId (below LOOKUP_ID_COUNT), or NULL. */
 ACTOR *fdActorLookup(Uint32 actorId)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(actorId > LOOKUP_ID_COUNT - 1)
 		return NULL;
@@ -479,7 +479,7 @@ void fdActorRestore(void)
 			spr->shadow.pri = pri;
 			if(idx == fdPartyGetLeaderActor()) {
 				camera = FieldStateWork->camera;
-				view = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->origin;
+				view = ((MAP_STATE *)RamHeapSlots->mapGrid)->origin;
 				y = actor->y.fixed;
 				camera->x.fixed = actor->x.fixed;
 				camera->groundHeight = y;

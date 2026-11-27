@@ -1,8 +1,8 @@
 /* Atteka Inlet, where Felix ties up the Lemurian ship on the way to Contigo, in
    two scenes that share this overlay: the harbor, a sandy beach where the ship
-   lies and the Wings of Anemos wait on their trestles (SceneId_AttekaInlet),
+   lies and the Wings of Anemos wait on their trestles (SceneIdAttekaInlet),
    and the grassy heights above it, with a house, the path north towards Contigo
-   and the way west out to the world map (SceneId_AttekaInletGeode). On the
+   and the way west out to the world map (SceneIdAttekaInletGeode). On the
    deck, walking towards the ship's wheel brings Kraden up to ask whether to set
    sail (scAttekaInletKradenAsksToSetSail). Cyclone on the bush beside the round
    boulder on the heights uncovers Geode, a Venus Djinni
@@ -655,7 +655,7 @@ void scAttekaInletShareLeadersPriorityWithBoulder(void)
    one step every eight ticks. */
 void scAttekaInletRotateHullBandAndSurfCols(void)
 {
-	if((*Ram_TickCount & 7) == 0) {
+	if((*RamTickCount & 7) == 0) {
 		Sint16 saved;
 		Sint32 idx;
 
@@ -665,7 +665,7 @@ void scAttekaInletRotateHullBandAndSurfCols(void)
 				BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, idx - 1);
 		BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
 	}
-	if((*Ram_TickCount & 7) == 0) {
+	if((*RamTickCount & 7) == 0) {
 		Sint16 saved;
 		Sint32 idx;
 
@@ -682,7 +682,7 @@ void scAttekaInletRotateHullBandAndSurfCols(void)
    below. The exit taken is the one the door's metatile names. */
 void scAttekaInletOpenDoorAndEnter(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -729,7 +729,7 @@ Sint32 scPrepareMap(void)
 void scAttekaInletSetUpTheHarbor(void)
 {
 	MAP_STATE_GROUND_EFFECTS *map =
-		(MAP_STATE_GROUND_EFFECTS *)Ram_HeapSlots->mapGrid;
+		(MAP_STATE_GROUND_EFFECTS *)RamHeapSlots->mapGrid;
 	MAIN_ROUTINE_STATE *party;
 
 	syGameFlagSet(FLAG_SHIP_AT_ATTEKA_INLET);

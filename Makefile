@@ -563,8 +563,8 @@ test: tools format-check
 # to one names it, so the linker fills the number in. The test builds
 # LINKING_EDITION again into out/linking/ with one row more in the middle of
 # each list and no other change, and reads both images. First their symbols:
-# the image links, every SceneId_, ResourceId_, MapResource_, OverlayId_ and
-# MapIndex_ name is still there, each one after a new row is one more than it
+# the image links, every SceneId, ResourceId, MapResource, OverlayId and
+# MapIndex name is still there, each one after a new row is one more than it
 # was and each one before it is what it was, and every overlay has moved.
 # Then their bytes, read back to names through those symbols (linking_rows):
 # every scene's row of the scene table still names the overlay and the map it
@@ -575,17 +575,17 @@ LINKING_EDITION ?= tla-en
 LINKING_WAS := out/$(LINKING_EDITION)/$(LINKING_EDITION)
 LINKING_NOW := out/linking/$(LINKING_EDITION)/$(LINKING_EDITION)
 # The rows of image $(1), an ELF: "scene NAME OVERLAY MAP" for each row of
-# gScenes, and "overlay NAME own" for each overlay whose row of the directory
-# holds the address of Overlay_NAME. A number no name has reads "?".
+# ScenesWork, and "overlay NAME own" for each overlay whose row of the directory
+# holds the address of Overlay and NAME run together. A number no name has reads "?".
 linking_rows = $(NM) -t d $(1).elf > $(1).names && $(OBJCOPY) -O binary $(1).elf $(1).image && \
-	{ od -An -v -t u2 -j $$(awk '$$3 == "gScenes" { at = $$1 } $$3 == "Rom_Start" { rom = $$1 } END { print at - rom }' $(1).names) \
-	     -N $$(awk '$$3 ~ /^SceneId_/ && $$1 >= rows { rows = $$1 + 1 } END { print rows * 8 }' $(1).names) $(1).image | sed 's/^/scenes /'; \
-	  od -An -v -t u4 -j $$(awk '$$3 == "Resource_DirectoryTable" { at = $$1 } $$3 == "Rom_Start" { rom = $$1 } END { print at - rom }' $(1).names) \
-	     -N $$(awk '$$3 ~ /^(Resource|Overlay)Id_/ && $$1 >= rows { rows = $$1 + 1 } END { print rows * 4 }' $(1).names) $(1).image | sed 's/^/directory /'; } | \
-	awk 'NR == FNR { if ($$3 ~ /^SceneId_/) scene[$$1 + 0] = substr($$3, 9); \
-	                 else if ($$3 ~ /^OverlayId_/) overlay[$$1 + 0] = substr($$3, 11); \
-	                 else if ($$3 ~ /^MapIndex_/) map[$$1 + 0] = substr($$3, 10); \
-	                 else if ($$3 ~ /^Overlay_/) image[substr($$3, 9)] = $$1 + 0; next } \
+	{ od -An -v -t u2 -j $$(awk '$$3 == "ScenesWork" { at = $$1 } $$3 == "RomStart" { rom = $$1 } END { print at - rom }' $(1).names) \
+	     -N $$(awk '$$3 ~ /^SceneId[A-Z0-9]/ && $$1 >= rows { rows = $$1 + 1 } END { print rows * 8 }' $(1).names) $(1).image | sed 's/^/scenes /'; \
+	  od -An -v -t u4 -j $$(awk '$$3 == "syResourceDirectoryTable" { at = $$1 } $$3 == "RomStart" { rom = $$1 } END { print at - rom }' $(1).names) \
+	     -N $$(awk '$$3 ~ /^(Resource|Overlay)Id[A-Z0-9]/ && $$1 >= rows { rows = $$1 + 1 } END { print rows * 4 }' $(1).names) $(1).image | sed 's/^/directory /'; } | \
+	awk 'NR == FNR { if ($$3 ~ /^SceneId[A-Z0-9]/) scene[$$1 + 0] = substr($$3, 8); \
+	                 else if ($$3 ~ /^OverlayId[A-Z0-9]/) overlay[$$1 + 0] = substr($$3, 10); \
+	                 else if ($$3 ~ /^MapIndex[A-Z0-9]/) map[$$1 + 0] = substr($$3, 9); \
+	                 else if ($$3 ~ /^Overlay[A-Z0-9]/) image[substr($$3, 8)] = $$1 + 0; next } \
 	     function named(names, number) { return number in names ? names[number] : "?" } \
 	     $$1 == "scenes" { for (i = 2; i <= NF; i++) cell[cells++] = $$i } \
 	     $$1 == "directory" { for (i = 2; i <= NF; i++) word[words++] = $$i } \
@@ -597,21 +597,21 @@ linking_rows = $(NM) -t d $(1).elf > $(1).names && $(OBJCOPY) -O binary $(1).elf
 test-linking: $(LINKING_EDITION)
 	@$(MAKE) $(SERIAL) -f Makefile EDITION=$(LINKING_EDITION) LINKING=1 elf
 	@{ $(NM) -t d $(LINKING_WAS).elf | sed "s/^/was /"; $(NM) -t d $(LINKING_NOW).elf | sed "s/^/now /"; } | \
-	awk '$$3 != "A" || $$4 !~ /^(SceneId|ResourceId|MapResource|OverlayId|MapIndex)_/ { next } \
+	awk '$$3 != "A" || $$4 !~ /^(SceneId|ResourceId|MapResource|OverlayId|MapIndex)[A-Z0-9]/ { next } \
 	     $$1 == "was" { was[$$4] = $$2 + 0; next } { now[$$4] = $$2 + 0 } \
-	     END { if (!("SceneId_LinkingTest" in now) || !("ResourceId_LinkingTest" in now) || !("MapIndex_LinkingTest" in now)) { \
+	     END { if (!("SceneIdLinkingTest" in now) || !("ResourceIdLinkingTest" in now) || !("MapIndexLinkingTest" in now)) { \
 	             print "test-linking: the new rows have no numbers"; exit 1 } \
-	           scene = now["SceneId_LinkingTest"]; resource = now["ResourceId_LinkingTest"]; map = now["MapIndex_LinkingTest"]; \
-	           empty = was["ResourceId_EmptyMap"]; \
+	           scene = now["SceneIdLinkingTest"]; resource = now["ResourceIdLinkingTest"]; map = now["MapIndexLinkingTest"]; \
+	           empty = was["ResourceIdEmptyMap"]; \
 	           for (name in was) { \
-	             if (name ~ /^SceneId_/) step = was[name] >= scene; \
-	             else if (name ~ /^(Resource|Overlay)Id_/) step = was[name] >= resource; \
-	             else if (name ~ /^MapIndex_/) step = was[name] >= map; \
+	             if (name ~ /^SceneId[A-Z0-9]/) step = was[name] >= scene; \
+	             else if (name ~ /^(Resource|Overlay)Id[A-Z0-9]/) step = was[name] >= resource; \
+	             else if (name ~ /^MapIndex[A-Z0-9]/) step = was[name] >= map; \
 	             else step = (was[name] + empty >= resource) - (empty >= resource); \
 	             if (!(name in now)) { print "test-linking: " name " is gone"; bad++ } \
 	             else if (now[name] != was[name] + step) { bad++; \
 	               print "test-linking: " name " was " was[name] ", is " now[name] ", should be " was[name] + step } \
-	             else if (name ~ /^OverlayId_/ && !step) { bad++; print "test-linking: the new resource is not before " name } \
+	             else if (name ~ /^OverlayId[A-Z0-9]/ && !step) { bad++; print "test-linking: the new resource is not before " name } \
 	             else if (step) moved++; else stayed++ } \
 	           if (bad || !moved) { print "test-linking: FAILED"; exit 1 } \
 	           print "test-linking: scene " scene ", resource " resource " and map " map " added, " moved " names moved by one, " stayed " stayed: OK" }'

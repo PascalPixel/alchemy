@@ -5,16 +5,16 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global BattleEffect_DecodePictureCode
-BattleEffect_DecodePictureCode:
-	.global BattleEffect_DecodePicture
+	.global BattleEffectDecodePictureCode
+BattleEffectDecodePictureCode:
+	.global BattleEffectDecodePicture
 	.thumb_func
-BattleEffect_DecodePicture:
+BattleEffectDecodePicture:
 	bx	pc
-AlchemyUncredited_080c93ce:
+AlchemyUncredited080c93ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080c93ce:
+AlchemyUncreditedEnd080c93ce:
 	cmp	r2, #0
 	bne	.L_080c94e8
 	mov	r4, #255
@@ -22,10 +22,10 @@ AlchemyUncreditedEnd_080c93ce:
 	ldm	r0!, {r3}
 	add	r2, r2, r2, lsl #2
 	add	pc, pc, r2, lsl #2
-AlchemyUncredited_080c93ec:
+AlchemyUncredited080c93ec:
 	nop
 .L_080c93f0:
-AlchemyUncreditedEnd_080c93ec:
+AlchemyUncreditedEnd080c93ec:
 	ands	r2, r4, r3
 	bxeq	lr
 	subs	ip, r2, #223

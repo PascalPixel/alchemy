@@ -84,9 +84,9 @@ btBitDecoderDecodeImage:
 btModelDispatchBitCommand:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
-AlchemyUncredited_tile_decode_1:
+AlchemyUncreditedTileDecode1:
 	nop
-AlchemyUncreditedEnd_tile_decode_1:
+AlchemyUncreditedEndTileDecode1:
 	.section .data,"aw",%progbits
 	.balign 4
 @ Branch targets filled in at runtime in the IWRAM copy

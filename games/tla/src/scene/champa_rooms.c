@@ -1,5 +1,5 @@
 /* The houses of Champa, the village of Briggs's people on the cliffs of the
-   Eastern Sea, as SceneId_ChampaRooms, with the inn and the artifact shop.
+   Eastern Sea, as SceneIdChampaRooms, with the inn and the artifact shop.
    Entered from the islets, the same scene is the tent on SoutheastAngaraIslet
    or the hut on WestIndraIslet's pier.
 

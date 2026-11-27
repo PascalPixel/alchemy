@@ -2,13 +2,13 @@
 @ row: the scene and entrance (-1 for any) it matches, then the scene and
 @ entrance the party restarts at; scene -1 ends the table.
 	.macro restart_point scene:req, entrance:req, restart_scene:req, restart_entrance:req
-	.2byte SceneId_\scene, \entrance, SceneId_\restart_scene, \restart_entrance
+	.2byte SceneId\scene, \entrance, SceneId\restart_scene, \restart_entrance
 	.endm
 
 	.section .rodata
 	.balign 2
-	.global Scene_RestartRules
-Scene_RestartRules:
+	.global SceneRestartRules
+SceneRestartRules:
 	restart_point ValePrologue, 15, CottageRoomsB, 16
 	restart_point Vale, 16, Sanctum, 2
 	restart_point Vault, 1, Sanctum, 12

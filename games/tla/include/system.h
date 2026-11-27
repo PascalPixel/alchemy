@@ -229,12 +229,12 @@ void syVBlankHandler(void);
 void syHalt(void);
 /* The BIOS's SoundBias: Off ramps the sound output's bias down before the
    console sleeps, On back up once it wakes, so the speaker does not click. */
-void Bios_SoundBiasOff(void);
-void Bios_SoundBiasOn(void);
+void BiosSoundBiasOff(void);
+void BiosSoundBiasOn(void);
 /* 1 while the CPU is stopped for sleep, until L and R wake it. */
 extern Uint16 SleepActive;
 /* The cartridge's first byte, as the link places it (rom_header.s). */
-extern const Uint8 Rom_Start[];
+extern const Uint8 RomStart[];
 
 /* The cartridge's language, from its header (syGetLanguage). */
 typedef enum CARTRIDGE_LANGUAGE {
@@ -260,13 +260,13 @@ extern Uint32 RandomSeed;
 typedef Sint32 (*EVENT_INT_FUNC)(void);
 struct IO_WRITE_QUEUE;
 /* The function that carries out `count` queued register writes
-   (Resource_ExecuteTransferCode, run from a copy on the stack). */
+   (ResourceExecuteTransferCode, run from a copy on the stack). */
 typedef void (*QUEUE_FLUSH_ROUTINE)(IO_WRITE_QUEUE *queue, Uint32 count);
 /* The function that runs the queued register writes, which
    syIOWriteQueueFlushPending copies onto its stack and runs. */
-extern Uint8 Resource_ExecuteTransferCode[];
-/* The size of Resource_ExecuteTransferCode. */
-extern Uint8 Resource_ExecuteTransferSize[];
+extern Uint8 ResourceExecuteTransferCode[];
+/* The size of ResourceExecuteTransferCode. */
+extern Uint8 ResourceExecuteTransferSize[];
 
 /* The sequences the main routine runs, how the game starts, and the overlays it
    loads. Sequence ids above the scene table's rows, as The Broken Seal's MODE_
@@ -354,7 +354,7 @@ Sint32		  syVRAMCacheReload(Sint32 id, Sint32 src);
 void syMatrixSetRotateY(ANGLE ang);
 /* The basic sprite palettes, loaded for the debug text
    (syPaletteGetBasicSprCols). */
-extern const Uint8 System_BasicColorPalette[];
+extern const Uint8 SystemBasicColorPalette[];
 
 void syTranslate(FIXED x, FIXED y, FIXED z);
 /* Sets the current matrix's translation and keeps its rotation. */
@@ -385,7 +385,7 @@ Sint32		 mnAbilityIconLoadIntoSlot(Sint32 resource, Sint32 idx);
 
 /* Windows and their text. The window font's 16 colours, loaded as BG palette 15
    (syWindowLoadGraphics). */
-extern const Uint16 Window_Palette[];
+extern const Uint16 WindowPalette[];
 /* The party status window's layout (PARTY_STAT_WINDOW), the block of heap slot
    HEAP_SLOT_PARTY_STATUS. */
 extern Uint8 PartyStatusState[];
@@ -437,7 +437,7 @@ Sint32 syAffineMatrixBuild(Sint32 ang, Sint32 xScale, Sint32 yScale);
 
 /* The dma group. DMA and the BIOS copy service: fills, and one transfer on a
    channel. The BIOS CpuSet service (bios.s). */
-void Bios_CpuSet(const void *src, void *dst, Uint32 control);
+void BiosCpuSet(const void *src, void *dst, Uint32 control);
 
 /* Stops DMA 0, which a scene may have left copying a line each HBlank: drops
    its start timing and repeat, then its enable, and reads the control back. */
@@ -481,7 +481,7 @@ void Bios_CpuSet(const void *src, void *dst, Uint32 control);
 #define CPU_FILL32(value, destination, size) \
 	{ \
 		volatile Uint32 fill_ = (value); \
-		Bios_CpuSet((const void *)&fill_, (destination), \
+		BiosCpuSet((const void *)&fill_, (destination), \
 			CPU_SET_32BIT | CPU_SET_SRC_FIXED | ((size) / 4)); \
 	}
 
@@ -502,7 +502,7 @@ static __inline__ void syDMAXCopy(
    and the VBlank handler share. Stops the sound DMA and its timer. */
 void sySndSuspendDirectSndStub(void);
 /* The resident mixer in IWRAM, which the tick wait runs after
-   SoundDriver_EnterVBlankUpdate returns 0. It never reads its argument; the
+   SoundDriverEnterVBlankUpdate returns 0. It never reads its argument; the
    callers pass 8. */
 void IwramSoundRenderVBlank(Sint32) __attribute__((long_call));
 

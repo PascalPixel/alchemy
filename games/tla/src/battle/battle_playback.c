@@ -9,7 +9,7 @@ void btPlaybackStart(Sint32 snd)
 {
 	BATTLE_PLAYBACK_STATE *playback;
 
-	playback = &Ram_HeapSlots->battleState->events;
+	playback = &RamHeapSlots->battleState->events;
 	if(playback->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
 		playback->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
 		if(snd != 0) {
@@ -26,7 +26,7 @@ Sint32 btPlaybackSchedulePhase(Sint32 ticks)
 	BATTLE_STATE		  *battle;
 	BATTLE_PLAYBACK_STATE *playback;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	playback = &battle->events;
 	playback->queue.cnt = 0;
 	playback->eventIdx = 0;
@@ -68,7 +68,7 @@ void btPlaybackRun(void)
 {
 	Uint16				   selection[2];
 	SPR					  *records[4];
-	BATTLE_STATE		  *battle = Ram_HeapSlots->battleState;
+	BATTLE_STATE		  *battle = RamHeapSlots->battleState;
 	BATTLE_PLAYBACK_STATE *events = &battle->events;
 
 	/* Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
@@ -138,7 +138,7 @@ void btPlaybackRun(void)
 							MESSAGE_ARGUMENT_ABILITY);
 						break;
 					case PLAYBACK_MARK:
-						Ram_HeapSlots->battleMsg->marked = 1;
+						RamHeapSlots->battleMsg->marked = 1;
 						break;
 					case PLAYBACK_MESSAGE:
 						if((Sint32)events->queue.operands[eventIdx] >= 0)
@@ -197,7 +197,7 @@ void btPlaybackRun(void)
 					}
 					case PLAYBACK_DRAW_STATUS:
 						mnPartyStatDrawStub(
-							Ram_HeapSlots->battleState->partyStat);
+							RamHeapSlots->battleState->partyStat);
 						break;
 					case PLAYBACK_REFRESH_UNIT: {
 						BATTLE_OBJECT *slot;
@@ -237,10 +237,10 @@ void btPlaybackRun(void)
 			/* Show the arrow and wait for the player, as
 			   btMessageWaitForAdvance does, but with an opaque arrow. */
 			MENU_SPR *prompt = &events->arrow;
-			Uint8	 *arrowTiles = BattleMessage_AdvanceArrowTiles;
+			Uint8	 *arrowTiles = BattleMessageAdvanceArrowTiles;
 			Sint32	  pictureTiles =
 				(Sint32)arrowTiles + ((TickCount >> 2) & 7) * 128;
-			BATTLE_MESSAGE_STATE *display = Ram_HeapSlots->battleMsg;
+			BATTLE_MESSAGE_STATE *display = RamHeapSlots->battleMsg;
 			WINDOW				 *win = display->win;
 			MESSAGE				 *msg = display->msg;
 			Sint32				  x = 0;
@@ -408,7 +408,7 @@ Uint32 btPlaybackReset(void)
 	BATTLE_PLAYBACK_STATE *events;
 	BATTLE_STATE		  *battle;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	events = &battle->events;
 	events->phase = BATTLE_PLAYBACK_PHASE_IDLE;
 	events->queue.cnt = 0;
@@ -427,7 +427,7 @@ Sint32 btPlaybackWaitForReady(void)
 	Sint32				   state;
 	BATTLE_PLAYBACK_STATE *events;
 
-	events = &Ram_HeapSlots->battleState->events;
+	events = &RamHeapSlots->battleState->events;
 	state = events->phase;
 	if(state == BATTLE_PLAYBACK_PHASE_IDLE) {
 		events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;

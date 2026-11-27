@@ -91,7 +91,7 @@ void fdTilesetAnimUpdate(void)
 			if(gridState->wideTiles == 0) {
 				if(srcTileOrOpcode >= TILESET_ANIM_RAM_TILE)
 					syDMAXCopy(
-						Ram_DecodeBuffer + srcTileOrOpcode * TILE_SIZE_4BPP,
+						RamDecodeBuffer + srcTileOrOpcode * TILE_SIZE_4BPP,
 						BG_CHAR_BLOCK(1) + dstTile * TILE_SIZE_4BPP,
 						DMA_COPY_WORDS(tileCnt * (TILE_SIZE_4BPP / 4)),
 						REG_DMA3);
@@ -103,7 +103,7 @@ void fdTilesetAnimUpdate(void)
 						REG_DMA3);
 			} else {
 				if(srcTileOrOpcode >= TILESET_ANIM_RAM_WIDE_TILE)
-					syDMAXCopy(Ram_MetatileTiles +
+					syDMAXCopy(RamMetatileTiles +
 							srcTileOrOpcode * TILESET_ANIM_WIDE_TILE_BYTES,
 						BG_CHAR_BLOCK(2) +
 							dstTile * TILESET_ANIM_WIDE_TILE_BYTES,

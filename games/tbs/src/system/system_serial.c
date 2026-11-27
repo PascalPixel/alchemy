@@ -656,7 +656,7 @@ void sySerialTestDelay(void)
 #define LINK_TEST_TILES			(LINK_TEST_BYTES / TILE_SIZE_4BPP)
 #define LINK_TEST_TILE			(2 * BG_SCREEN_SIZE / TILE_SIZE_4BPP)
 /* What B sends: the cartridge's bytes from 4 KB in, where A sends its first. */
-#define LINK_TEST_SECOND_SOURCE (Rom_Start + 4096)
+#define LINK_TEST_SECOND_SOURCE (RomStart + 4096)
 
 /* A link cable test left in the game: it shows a row of tiles, receives blocks
    into the map grid metatile buffer and shows them as tiles, and sends a part
@@ -688,7 +688,7 @@ restart:
 	sySerialStartReceive(MapGridMetatileBuffer);
 	for(;;) {
 		if(PerData & KEY_A)
-			sySerialStartSend((void *)Cart_Start, LINK_TEST_BYTES);
+			sySerialStartSend((void *)CartStart, LINK_TEST_BYTES);
 		if(PerData & KEY_B)
 			sySerialStartSend((void *)LINK_TEST_SECOND_SOURCE, LINK_TEST_BYTES);
 		if(PerData & KEY_START) {

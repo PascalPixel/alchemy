@@ -24,7 +24,7 @@ Sint32 scCrackedTileFind(
 	tbl->z = z;
 	tbl->cur = -1;
 	tbl->cnt = 0;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	layer = &map->layers[0];
 	metatiles = layer->metatiles;
 	x0 = FIELD_METATILE(layer->ofsX + map->minX);

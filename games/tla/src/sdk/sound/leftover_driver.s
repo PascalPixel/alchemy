@@ -13,17 +13,17 @@
 @ are those of the ply_note in clear_buffer.s, which this game keeps
 @ unreferenced, but for its last pool word, left 0, and its six bl keep that
 @ function's offsets, so from here they land elsewhere, the first on
-@ Func_081c08a4 inside ply_note.
+@ Func081c08a4 inside ply_note.
 @ Why assembly: push saves r4/r5 without lr; its bytes are ply_endtie's
 @ (games/common/sdk/sound/clear_buffer.s).
 @ Why assembly: a copy the ROM keeps of a function it also links: its 28 bytes
 @ are clear_modM's (games/common/sdk/sound/clear_buffer.s).
-@ Why assembly: MusicTrack_ReadCommandByteLeftover takes track in r1 and
+@ Why assembly: MusicTrackReadCommandByteLeftover takes track in r1 and
 @ returns the decoded byte in r3 while updating r2/r3, rather than a standard
 @ r0 return. Its bytes are ld_r3_tp_adr_i_unchecked's
 @ (games/common/sdk/sound/clear_buffer.s).
-@ Why MusicTrack_SetLfoSpeedFromCommandLeftover to
-@ MusicTrack_SetModulationFromCommandLeftover are assembly:
+@ Why MusicTrackSetLfoSpeedFromCommandLeftover to
+@ MusicTrackSetModulationFromCommandLeftover are assembly:
 @ Both nested-call entries return through ip saved from lr rather than a
 @ procedure-standard return: mov ip, lr before the bl, bx ip after it. Their
 @ bytes are ply_lfos's and ply_mod's (games/common/sdk/sound/clear_buffer.s).
@@ -91,19 +91,19 @@
 	tst	r0, r1
 	bne.n	.L_081c0112
 	adds	r0, r4, #0
-	bl	Func_081c08a4 + 0x84
+	bl	Func081c08a4 + 0x84
 	b.n	.L_081c016e
 .L_081c0112:
 	ldrb	r0, [r4, #1]
-	.global LeftoverSoundDriver_StaleCallTarget
-LeftoverSoundDriver_StaleCallTarget:
+	.global LeftoverSoundDriverStaleCallTarget
+LeftoverSoundDriverStaleCallTarget:
 	movs	r6, #7
 	ands	r6, r0
 	ldrb	r3, [r5, #0]
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L_081c0130
-	bl	MusicTrack_HandleNoteLeftover + 0x54
+	bl	MusicTrackHandleNoteLeftover + 0x54
 	cmp	r6, #0
 	beq.n	.L_081c0130
 	ldrb	r0, [r4, #29]
@@ -129,7 +129,7 @@ LeftoverSoundDriver_StaleCallTarget:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	adds	r0, r6, #0
-	bl	MusicTrack_HandleNoteLeftover
+	bl	MusicTrackHandleNoteLeftover
 	str	r0, [r4, #32]
 	ldrb	r0, [r4, #29]
 	movs	r1, #2
@@ -140,9 +140,9 @@ LeftoverSoundDriver_StaleCallTarget:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	.global Func_081c0168
+	.global Func081c0168
 	.thumb_func
-Func_081c0168:
+Func081c0168:
 	bl	MidiKeyToFreqWorkCopy + 0x84
 	str	r0, [r4, #32]
 .L_081c016e:
@@ -175,9 +175,9 @@ Func_081c0168:
 	.balign 2
 .syntax unified
 	.thumb
-	.global MusicTrack_HandleNoteLeftover
+	.global MusicTrackHandleNoteLeftover
 	.thumb_func
-MusicTrack_HandleNoteLeftover:
+MusicTrackHandleNoteLeftover:
 	push	{r4, r5, r6, r7, lr}
 	mov	r4, r8
 	mov	r5, r9
@@ -359,7 +359,7 @@ MusicTrack_HandleNoteLeftover:
 	beq.n	.L_081c037e
 .L_081c02d8:
 	adds	r0, r4, #0
-	bl	Func_081c08a4
+	bl	Func081c08a4
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -375,7 +375,7 @@ MusicTrack_HandleNoteLeftover:
 	cmp	r0, r1
 	beq.n	.L_081c02fe
 	adds	r1, r5, #0
-	bl	MusicTrack_ClearModulationStateLeftover
+	bl	MusicTrackClearModulationStateLeftover
 .L_081c02fe:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
@@ -397,7 +397,7 @@ MusicTrack_HandleNoteLeftover:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	Func_081c0168
+	bl	Func081c0168
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]
@@ -427,7 +427,7 @@ MusicTrack_HandleNoteLeftover:
 	ldr	r0, [sp, #12]
 	ldr	r3, [sp, #4]
 	ldr	r3, [r3, #48]
-	bl	LeftoverSoundDriver_StaleCallTarget
+	bl	LeftoverSoundDriverStaleCallTarget
 	b.n	.L_081c0370
 .L_081c0366:
 	ldrb	r2, [r5, #9]
@@ -451,9 +451,9 @@ MusicTrack_HandleNoteLeftover:
 	mov	fp, r3
 	pop	{r0}
 	bx	r0
-AlchemyUncredited_081c038e:
+AlchemyUncredited081c038e:
 	.2byte	0x0000
-AlchemyUncreditedEnd_081c038e:
+AlchemyUncreditedEnd081c038e:
 	.4byte	0x03007ff0
 	.4byte	0x00000000
 
@@ -461,9 +461,9 @@ AlchemyUncreditedEnd_081c038e:
 	.balign 2
 .syntax unified
 	.thumb
-	.global MusicTrack_ReleaseKeyLeftover
+	.global MusicTrackReleaseKeyLeftover
 	.thumb_func
-MusicTrack_ReleaseKeyLeftover:
+MusicTrackReleaseKeyLeftover:
 	push	{r4, r5}
 	ldr	r2, [r1, #64]
 	ldrb	r3, [r2, #0]
@@ -506,9 +506,9 @@ MusicTrack_ReleaseKeyLeftover:
 	.balign 2
 .syntax unified
 	.thumb
-	.global MusicTrack_ClearModulationStateLeftover
+	.global MusicTrackClearModulationStateLeftover
 	.thumb_func
-MusicTrack_ClearModulationStateLeftover:
+MusicTrackClearModulationStateLeftover:
 	movs	r2, #0
 	strb	r2, [r1, #22]
 	strb	r2, [r1, #26]
@@ -524,17 +524,17 @@ MusicTrack_ClearModulationStateLeftover:
 	orrs	r3, r2
 	strb	r3, [r1, #0]
 	bx	lr
-AlchemyUncredited_081c03f2:
+AlchemyUncredited081c03f2:
 	.2byte	0x0000
-AlchemyUncreditedEnd_081c03f2:
+AlchemyUncreditedEnd081c03f2:
 
 	.section .text,"ax",%progbits
 	.balign 2
 .syntax unified
 	.thumb
-	.global MusicTrack_ReadCommandByteLeftover
+	.global MusicTrackReadCommandByteLeftover
 	.thumb_func
-MusicTrack_ReadCommandByteLeftover:
+MusicTrackReadCommandByteLeftover:
 	ldr	r2, [r1, #64]
 	adds	r3, r2, #1
 	str	r3, [r1, #64]
@@ -546,34 +546,34 @@ MusicTrack_ReadCommandByteLeftover:
 	.balign 2
 .syntax unified
 	.thumb
-	.global MusicTrack_SetLfoSpeedFromCommandLeftover
+	.global MusicTrackSetLfoSpeedFromCommandLeftover
 	.thumb_func
-MusicTrack_SetLfoSpeedFromCommandLeftover:
+MusicTrackSetLfoSpeedFromCommandLeftover:
 	mov	ip, lr
-	bl	MusicTrack_ReadCommandByteLeftover
+	bl	MusicTrackReadCommandByteLeftover
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.L_081c0410
-	bl	MusicTrack_ClearModulationStateLeftover
+	bl	MusicTrackClearModulationStateLeftover
 .L_081c0410:
 	bx	ip
-AlchemyUncredited_081c0412:
+AlchemyUncredited081c0412:
 	.2byte	0x0000
-	.global MusicTrack_SetModulationFromCommandLeftover
+	.global MusicTrackSetModulationFromCommandLeftover
 	.thumb_func
-MusicTrack_SetModulationFromCommandLeftover:
-AlchemyUncreditedEnd_081c0412:
+MusicTrackSetModulationFromCommandLeftover:
+AlchemyUncreditedEnd081c0412:
 	mov	ip, lr
-	bl	MusicTrack_ReadCommandByteLeftover
+	bl	MusicTrackReadCommandByteLeftover
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.L_081c0424
-	bl	MusicTrack_ClearModulationStateLeftover
+	bl	MusicTrackClearModulationStateLeftover
 .L_081c0424:
 	bx	ip
-AlchemyUncredited_081c0426:
+AlchemyUncredited081c0426:
 	.2byte	0x0000
-AlchemyUncreditedEnd_081c0426:
+AlchemyUncreditedEnd081c0426:
 
 	.section .text,"ax",%progbits
 	.balign 2
@@ -620,11 +620,11 @@ MidiKeyToFreqWorkCopy:
 	ldr	r4, [r1, #4]
 	subs	r0, r0, r5
 	adds	r1, r7, #0
-	bl	Stubs_Sound - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
+	bl	StubsSound - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
 	adds	r1, r0, #0
 	adds	r1, r5, r1
 	adds	r0, r4, #0
-	bl	Stubs_Sound - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
+	bl	StubsSound - 0x7f4	@ 0x081bf80c: the twin's call to umul3232H32
 	pop	{r4, r5, r6, r7}
 	pop	{r1}
 	bx	r1

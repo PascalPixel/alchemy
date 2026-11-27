@@ -67,7 +67,7 @@ void fdPsynergyLoadResources(Sint32 abilityId, Sint32 mode)
 	if(effectState->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
 		fieldState->effTmrRunning = running;
 	effectState->tileSlot = syVRAMCacheFindFreeEntry();
-	syVRAMCacheLoad(effectState->tileSlot, 256, FieldEffect_SparkTiles);
+	syVRAMCacheLoad(effectState->tileSlot, 256, FieldEffectSparkTiles);
 	sySetEvent(fdEffectUpdateAllEffectSlots, EVENT_PASS_TICK);
 }
 

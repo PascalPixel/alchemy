@@ -168,7 +168,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    of the exit taken. */
 void scDailaEnterDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);
@@ -594,33 +594,33 @@ void scDailaMeetAlex(void)
 /* Parch on the puddle west of the well (metatile (11, 19)) dries it up: the
    puddle disappears, and its metatile becomes like the ground beside it for the
    rest of the visit. */
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFirstPuddle, 10, 19, 11,
-	ACTOR_FIRST_PUDDLE, FLAG_DAILA_FIRST_PUDDLE_PARCHED)
+DEFINE_DAILA_PARCH_PUDDLE(DailaParchFirstPuddle, 10, 19, 11, ACTOR_FIRST_PUDDLE,
+	FLAG_DAILA_FIRST_PUDDLE_PARCHED)
 
 /* Parch on the puddle east of the middle house (metatile (26, 20)) dries it up:
    the puddle disappears, and its metatile becomes like the ground beside it for
    the rest of the visit. */
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSecondPuddle, 25, 20, 26,
+DEFINE_DAILA_PARCH_PUDDLE(DailaParchSecondPuddle, 25, 20, 26,
 	ACTOR_SECOND_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED)
 
 /* Parch on the puddle west of the big tree in the southeast (metatile (29, 23))
    dries it up: the puddle disappears, and its metatile becomes like the ground
    beside it for the rest of the visit. */
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchThirdPuddle, 28, 23, 29,
-	ACTOR_THIRD_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED)
+DEFINE_DAILA_PARCH_PUDDLE(DailaParchThirdPuddle, 28, 23, 29, ACTOR_THIRD_PUDDLE,
+	FLAG_DAILA_THIRD_PUDDLE_PARCHED)
 
 /* Parch on the puddle below the sanctuary's steps (metatile (18, 11)) dries it
    up:
    the puddle disappears, and its metatile becomes like the ground beside it for
    the rest of the visit. */
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFourthPuddle, 17, 11, 18,
+DEFINE_DAILA_PARCH_PUDDLE(DailaParchFourthPuddle, 17, 11, 18,
 	ACTOR_FOURTH_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED)
 
 /* Parch on the puddle beside the mayor's door (metatile (31, 17)) dries it up:
    the puddle disappears, and its metatile becomes like the ground beside it for
    the rest of the visit. */
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
-	ACTOR_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED)
+DEFINE_DAILA_PARCH_PUDDLE(DailaParchFifthPuddle, 30, 17, 31, ACTOR_FIFTH_PUDDLE,
+	FLAG_DAILA_FIFTH_PUDDLE_PARCHED)
 
 /* The actor Parch on the sixth puddle hides. */
 /* BUG: hides actor 31, which the sixth puddle would be if Jenna's and Sheba's
@@ -633,7 +633,7 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
 /* Parch on the puddle north of the item stall (metatile (17, 23)) dries its
    metatile like the others, but without `BUGFIX` the puddle itself stays in
    sight. */
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17,
+DEFINE_DAILA_PARCH_PUDDLE(DailaParchSixthPuddle, 16, 23, 17,
 	SIXTH_PUDDLE_HIDDEN, FLAG_DAILA_SIXTH_PUDDLE_PARCHED)
 
 #include "shared/scene_freeze_puddle_into_pillar.h"
@@ -1070,7 +1070,7 @@ CUE DailaCues[] = {
 		CONDITION_ALWAYS, MSGNO(MsgDailaTaviRikiPunishment)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_FIRST_PUDDLE, FLAG_DAILA_FIRST_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchFirstPuddle)},
+		SCRIPT_REF(DailaParchFirstPuddle)},
 /* BUG: the rows for the fourth, second and third puddles take the flags of the
    second, third and fourth, so drying the second puddle turns off Parch on the
    fourth, the third the second's, and the fourth the third's, for the rest of
@@ -1078,30 +1078,30 @@ CUE DailaCues[] = {
 #if FIX_DAILA_PUDDLE_FLAGS_CROSSED
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_FOURTH_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchFourthPuddle)},
+		SCRIPT_REF(DailaParchFourthPuddle)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_SECOND_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchSecondPuddle)},
+		SCRIPT_REF(DailaParchSecondPuddle)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_THIRD_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchThirdPuddle)},
+		SCRIPT_REF(DailaParchThirdPuddle)},
 #else
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_FOURTH_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchFourthPuddle)},
+		SCRIPT_REF(DailaParchFourthPuddle)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_SECOND_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchSecondPuddle)},
+		SCRIPT_REF(DailaParchSecondPuddle)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_THIRD_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchThirdPuddle)},
+		SCRIPT_REF(DailaParchThirdPuddle)},
 #endif
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchFifthPuddle)},
+		SCRIPT_REF(DailaParchFifthPuddle)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
 		METATILE_SIXTH_PUDDLE, FLAG_DAILA_SIXTH_PUDDLE_PARCHED,
-		SCRIPT_REF(Daila_ParchSixthPuddle)},
+		SCRIPT_REF(DailaParchSixthPuddle)},
 	{PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
 		FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0,
 		SCRIPT_REF(scFreezePuddleIntoPillar)},

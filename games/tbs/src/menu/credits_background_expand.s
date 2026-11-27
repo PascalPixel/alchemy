@@ -32,9 +32,9 @@
 mnCreditsDecodeBackgroundRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
-AlchemyUncredited_battle_effect_expand_1:
+AlchemyUncreditedBattleEffectExpand1:
 	nop
-AlchemyUncreditedEnd_battle_effect_expand_1:
+AlchemyUncreditedEndBattleEffectExpand1:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm

@@ -1,4 +1,4 @@
-/* Lalivero (SceneId_Lalivero), the walled desert town by Babi Lighthouse, with
+/* Lalivero (SceneIdLalivero), the walled desert town by Babi Lighthouse, with
    a gate in its north and south walls and a stone obelisk in a pool at its
    middle. Its houses, shops, inn and Sanctum are timber_rooms_bc.c.
 

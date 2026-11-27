@@ -53,9 +53,9 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
 	Sint32				 picture;
 	Sint32				 size;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 
 	/* Open the canvas and load the pictures. */
 	EFFECT_START_NARROW_CANVAS(0);
@@ -116,7 +116,7 @@ void btEffectRunUndeadSword(BATTLE_EFFECT_PARM *args)
 					else
 						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-					(draw[0] = Ram_HeapSlots->ramCode)(canvas, state->sheet, x,
+					(draw[0] = RamHeapSlots->ramCode)(canvas, state->sheet, x,
 						UNDEAD_SWORD_GROUND - height, LIME_COLUMN_WIDTH,
 						height);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
@@ -204,9 +204,9 @@ void btEffectRunPlumeEdge(BATTLE_EFFECT_PARM *args)
 	PARTICLE			*particle;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, draw);
@@ -383,7 +383,7 @@ typedef struct WATER_VERTEX {
 } WATER_VERTEX;
 
 /* The water's 16 by 8 vertices, at the head of the map cell buffer. */
-#define WATER_VERTICES ((WATER_VERTEX *)Ram_MapMetatileBuffer)
+#define WATER_VERTICES ((WATER_VERTEX *)RamMapMetatileBuffer)
 
 /* One triangle of the water's mesh: three vertex indices, then a texture
    coordinate for each. */
@@ -412,7 +412,7 @@ typedef struct WATER_TRIANGLE {
 #define WATER_MESH_OFFSET		 16384
 /* The water's mesh as triangles, two to a quad. */
 #define WATER_MESH \
-	((WATER_TRIANGLE *)(Ram_MapMetatileBuffer + WATER_MESH_OFFSET))
+	((WATER_TRIANGLE *)(RamMapMetatileBuffer + WATER_MESH_OFFSET))
 
 /* Where SwirlTexture is decoded in the effect's pictures. */
 #define WATER_SHEET_SWIRL 8192
@@ -474,11 +474,11 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8		  *mesh;
 	Sint32		   i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
-	mesh = Ram_MapMetatileBuffer + WATER_MESH_OFFSET;
+	mesh = RamMapMetatileBuffer + WATER_MESH_OFFSET;
 	if(mode == WATER_SHEET_DREAMTIDE) {
 		REG_BLDALPHA = BLEND_ALPHA(16, 12);
 	} else {
@@ -487,8 +487,8 @@ void btEffectRunWaterSheet(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
-	camera = Ram_HeapSlots->cameraState;
+	blit[0] = RamHeapSlots->ramCode;
+	camera = RamHeapSlots->cameraState;
 	savedYaw = camera->yaw;
 	btResourceLoadAndDecompress(
 		RESOURCE_CRACKED_TEXTURE_SHEET, state->sheet, 1, 1);
@@ -829,7 +829,7 @@ void btEffectRunAroma(BATTLE_EFFECT_PARM *args)
 /* The funnel's head goes round a circle of this radius. */
 #define WIND_FUNNEL_RADIUS	 32
 #define WIND_FUNNEL_VERTICES \
-	(Ram_MapMetatileBuffer + WIND_FUNNEL_CORNERS * sizeof(MODEL_VERTEX))
+	(RamMapMetatileBuffer + WIND_FUNNEL_CORNERS * sizeof(MODEL_VERTEX))
 #define WIND_FUNNEL_MESH \
 	(WIND_FUNNEL_VERTICES + WIND_FUNNEL_CORNERS * sizeof(PROJECTED_VERTEX))
 /* The band's quads, each 4 texels of StreakTexture across and its 32 down. */
@@ -881,10 +881,10 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8		  *funnel;
 	void (*transfer)(void);
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sprs = RamHeapSlots->battleSheet;
 	/* The funnel's corners, two to a segment, from its head. */
 	funnel = MapGridMetatileBuffer;
 	btEffectStartCanvasLayer(0);
@@ -908,7 +908,7 @@ void btEffectRunWindFunnel(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
 	}
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 	transfer = btEffectTransferCanvas;
@@ -1178,15 +1178,15 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 	Sint32		   k;
 	Uint8		  *cells;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectPosProjectBattler(args->tgts[0], &pos);
 	centerX = pos.x / 2;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_CRYSTAL_SHEET, state->sheet, 1, 0);
 	cells = MapGridMetatileBuffer;
 	btResourceLoadAndDecompress(RESOURCE_CRYSTAL_BITMAP_SHEET,
@@ -1272,8 +1272,7 @@ void btEffectRunDiamondBerg(BATTLE_EFFECT_PARM *args)
 			}
 			if(height > 0) {
 				blit[0](canvas,
-					Ram_MapMetatileBuffer +
-						DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES,
+					RamMapMetatileBuffer + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES,
 					centerX - DIAMOND_BERG_WIDTH / 2, top, DIAMOND_BERG_WIDTH,
 					height);
 			}

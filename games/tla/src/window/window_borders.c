@@ -327,7 +327,7 @@ void mnWindowSystemStartBattleUpdate(Sint32 loadGlyphTiles)
    the next battle message (mnBattleMessageOpen) opens a new one. */
 void mnBattleMessageClose(void)
 {
-	BATTLE_MESSAGE_STATE *slot = Ram_HeapSlots->battleMsg;
+	BATTLE_MESSAGE_STATE *slot = RamHeapSlots->battleMsg;
 
 	if(slot->win != NULL) {
 		mnWindowClose(slot->win, 1);
@@ -350,7 +350,7 @@ void mnBattleMessageOpen(Sint32 msg)
 	MESSAGE				 *typing;
 
 	state = WINDOW_STATE;
-	slot = Ram_HeapSlots->battleMsg;
+	slot = RamHeapSlots->battleMsg;
 	typing = NULL;
 	/* Decoded as a battle message: in Japanese its names are set off and its
 	   spaces doubled. */
@@ -568,7 +568,7 @@ void mnWindowSystemUpdate(void)
    animation while the battle menu's state exists, otherwise messages alone. */
 void mnWindowSystemUpdateBattle(void)
 {
-	if(Ram_HeapSlots->battleMenuState != 0) {
+	if(RamHeapSlots->battleMenuState != 0) {
 		mnWindowUpdateZooms();
 		mnMessageUpdateAll();
 		mnWindowSprUpdateAll();

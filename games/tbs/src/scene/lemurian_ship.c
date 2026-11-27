@@ -1,5 +1,5 @@
 /* The gangway out over the sea behind the shack in the north-west of Lalivero,
-   where the Lemurian ship lies sunk (SceneId_LemurianShip, the area name
+   where the Lemurian ship lies sunk (SceneIdLemurianShip, the area name
    Lemurian ship), and the game's last scene.
 
    The party comes in from the shack (timber_rooms_bc.c) once Iodem has given it

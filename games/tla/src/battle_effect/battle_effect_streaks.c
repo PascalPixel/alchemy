@@ -110,8 +110,8 @@ void btEffectRunStreakVolley(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 lift = toFIXED(20);
 
 	/* FAKEMATCH(dead): heap set through its own address; as heap =
-	 * Ram_HeapSlots. */
-	*&heap = Ram_HeapSlots;
+	 * RamHeapSlots. */
+	*&heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	camera = heap->cameraState;
@@ -372,10 +372,10 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* four groups set out, 8 ticks apart */
 	Sint32 group = MOTE_VISIBLE_COUNT / 4;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	sheet = RamHeapSlots->battleSheet;
 	if(mode == MOTE_FOUNTAIN_HEALING)
 		btEffectStartCanvasLayer(0);
 	else
@@ -384,10 +384,10 @@ void btEffectRunMoteFountain(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	/* Motes keep the brighter of their level and the canvas's; the second
 	   blitter, mirrored top to bottom, is loaded but not used. */
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	if(mode == MOTE_FOUNTAIN_HEALING)
 		resource = RESOURCE_ORANGE_PALETTE_A;

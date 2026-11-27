@@ -22,7 +22,7 @@ void fdEncounterSelectMapZones(Sint32 useRules)
 	sceneId = MainRoutineStateWork.next;
 	entrance = MainRoutineStateWork.entrance;
 	groundZones = state->encounterZones;
-	rule = Scene_EncounterRules;
+	rule = SceneEncounterRules;
 	zone = 0;
 	firstZoneOnGround = 0;
 	if(useRules != 0) {
@@ -245,7 +245,7 @@ void fdChooseMusic(void)
 	Sint16				  sceneId = MainRoutineStateWork.next;
 	Sint16				  entrance = MainRoutineStateWork.entrance;
 	Sint16				  area = MainRoutineStateWork.area;
-	const MAP_MUSIC_RULE *rule = Scene_MusicRules;
+	const MAP_MUSIC_RULE *rule = SceneMusicRules;
 
 	for(; rule->id != -1; rule++) {
 		if(rule->idIsMap) {
@@ -275,7 +275,7 @@ void fdChooseMusic(void)
    the scene or its area; 0, the Title's name, when none does. */
 Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance)
 {
-	const AREA_NAME_RULE *rule = Area_NameRules;
+	const AREA_NAME_RULE *rule = AreaNameRules;
 	Sint32				  name = 0;
 	Sint32				  area = gmGetArea(sceneId);
 
@@ -301,7 +301,7 @@ Sint32 fdAreaGetNameIndex(Sint32 sceneId, Sint32 entrance)
 
 /* Sets the scene the party returns to after a defeat
    (MainRoutineStateWork.restartScene and restartEntrance), from the first rule
-   of Scene_RestartRules that matches the current scene and entrance: {scene,
+   of SceneRestartRules that matches the current scene and entrance: {scene,
    entrance (-1 for any), return scene, return entrance}, ended by scene -1. */
 void fdSetRestartPoint(void)
 {
@@ -309,7 +309,7 @@ void fdSetRestartPoint(void)
 	Sint16		  entrance = MainRoutineStateWork.entrance;
 	const Sint16 *rule;
 
-	for(rule = Scene_RestartRules; rule[0] != -1; rule += 4) {
+	for(rule = SceneRestartRules; rule[0] != -1; rule += 4) {
 		if(rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
 			MainRoutineStateWork.restartScene = rule[2];
 			MainRoutineStateWork.restartEntrance = rule[3];

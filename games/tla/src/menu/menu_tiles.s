@@ -9,6 +9,6 @@ MenuPatternRowMasks:
 	.4byte 0x05055050, 0x00000505
 	.4byte 0x05055050, 0x00050505
 	.4byte 0x05055050, 0x05050505
-	.global Menu_BackdropBorderTile
-Menu_BackdropBorderTile:
+	.global MenuBackdropBorderTile
+MenuBackdropBorderTile:
 	.incbin "games/tla/src/menu/class_change_arrow.4bpp"

@@ -1,19 +1,19 @@
 	.include "enums/area_ids.inc"
 
 @ Every scene (SCENE), in the order that numbers them: a named row gives
-@ SceneId_NAME its number, which C reads at link time (scene_ids.h). Each row is
+@ SceneIdNAME its number, which C reads at link time (scene_ids.h). Each row is
 @ the overlay the scene loads, by the name its row of the resource directory
-@ gives it (OverlayId_NAME), its area (AREA_ID), its type (SCENE_TYPE)
-@ and its map, by the name its row of MapsWork gives it (MapIndex_NAME,
+@ gives it (OverlayIdNAME), its area (AREA_ID), its type (SCENE_TYPE)
+@ and its map, by the name its row of MapsWork gives it (MapIndexNAME,
 @ map/resources.s).
 	.macro scene name, overlay:req, area:req, kind:req, map:req
 	.ifnb \name
-	.global SceneId_\name
-	.equiv SceneId_\name, (. - ScenesWork) / 8
+	.global SceneId\name
+	.equiv SceneId\name, (. - ScenesWork) / 8
 	.endif
-	.2byte OverlayId_\overlay
+	.2byte OverlayId\overlay
 	.byte \area, \kind
-	.2byte MapIndex_\map, 0
+	.2byte MapIndex\map, 0
 	.endm
 
 	.section .rodata

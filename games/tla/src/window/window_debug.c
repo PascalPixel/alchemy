@@ -22,7 +22,7 @@ typedef enum SND_TEST_ROW {
 /* The sound test's per-tick event: moves the cursor. */
 void mnDebugSndTestStepCursor(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 
 	mnCursorAdvanceStub(&state->cursor);
 }
@@ -47,7 +47,7 @@ void mnDebugSndTestRelease(void)
 /* Opens the sound test's window and places the cursor on its first row. */
 WINDOW *mnDebugSndTestOpen(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 	WINDOW				*win;
 
 	win = mnWindowCreate(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
@@ -81,7 +81,7 @@ UNUSED Sint32 mnDebugSndTestRun(void)
 
 	test = DebugSoundTestStartValues;
 	mnDebugSndTestInit();
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	win = mnDebugSndTestOpen();
 	sySynch(1);
 	do {
@@ -154,7 +154,7 @@ UNUSED Sint32 mnDebugSndTestRun(void)
 /* The debug menu's per-tick event: moves the cursor. */
 void mnDebugMenuStepCursor(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 
 	mnCursorAdvanceStub(&state->cursor);
 }
@@ -182,7 +182,7 @@ extern Uint8 MsgFullPpAndMoney[];
    (MsgFullPpAndMoney) to "Change of hero", with a divider under each. */
 WINDOW *mnDebugMenuOpen(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 	WINDOW *win = mnWindowCreate(6, 2, 18, 16, WINDOW_FLAG_INSTANT);
 	Sint32	i;
 
@@ -207,7 +207,7 @@ UNUSED Sint32 mnDebugMenuRun(Sint32 idx)
 	Sint32				 moved;
 
 	mnDebugMenuInit();
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	sySynch(1);
 	moved = -1;
 	win = mnDebugMenuOpen();
@@ -364,7 +364,7 @@ void mnDebugWarpKaoruSpecial1(void)
 /* The debug warp menu's per-tick event: moves the cursor. */
 void mnDebugWarpStepCursor(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 
 	mnCursorAdvanceStub(&state->cursor);
 }
@@ -390,7 +390,7 @@ void mnDebugWarpRelease(void)
    divider under each but the last. */
 WINDOW *mnDebugWarpOpen(void)
 {
-	SETTINGS_MENU_STATE		*state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE		*state = RamHeapSlots->settingsMenu;
 	WINDOW					*win;
 	const DEBUG_WARP_PRESET *line;
 	Sint32					 i;
@@ -428,7 +428,7 @@ UNUSED Sint32 mnDebugWarpRun(Sint32 idx)
 	Uint32				 down;
 
 	mnDebugWarpInit();
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	sySynch(1);
 	/* -1 places the cursor at once; 1 slides it to a new row. */
 	moved = -1;
@@ -480,7 +480,7 @@ UNUSED Sint32 mnDebugWarpRun(Sint32 idx)
 /* The shortcut grid's per-tick event: moves the cursor. */
 void mnDebugShortcutStepCursor(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 
 	mnCursorAdvanceStub(&state->cursor);
 }
@@ -520,7 +520,7 @@ void mnDebugShortcutDrawAbility(Sint32 ability, Sint32 win, Sint32 x, Sint32 y)
    in nine rows, a divider under each row but the last. */
 WINDOW *mnDebugShortcutOpen(void)
 {
-	SETTINGS_MENU_STATE *state = Ram_HeapSlots->settingsMenu;
+	SETTINGS_MENU_STATE *state = RamHeapSlots->settingsMenu;
 	WINDOW		 *win = mnWindowCreate(0, 0, 30, 19, WINDOW_FLAG_INSTANT);
 	const Sint16 *abilities;
 	Sint32		  i;
@@ -570,7 +570,7 @@ UNUSED Sint32 mnDebugShortcutRun(void)
 	Sint32				 columns = 4;
 
 	mnDebugShortcutInit();
-	state = Ram_HeapSlots->settingsMenu;
+	state = RamHeapSlots->settingsMenu;
 	sySynch(1);
 	result = -1;
 	column = 0;
@@ -638,7 +638,7 @@ UNUSED Sint32 mnDebugShortcutRun(void)
 	mnDebugShortcutRelease();
 	sySynch(1);
 	if(result != -1) {
-		events = Ram_HeapSlots->fieldState;
+		events = RamHeapSlots->fieldState;
 		ability = DebugShortcutAbilities[column][row];
 		owner = gmPartyFindOwnerWithActionStub(ability);
 		if(owner == -1)

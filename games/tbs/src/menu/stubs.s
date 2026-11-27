@@ -1,7 +1,7 @@
 @ Party menus and their interactive selection screens.
 	.include "games/tbs/src/system/stub_table.inc"
-	.global Stubs_Menu
-Stubs_Menu:
+	.global StubsMenu
+StubsMenu:
 	stub mnItemMenuRunStub, mnItemMenuRun
 	stub mnPsynergyMenuRunStub, mnPsynergyMenuRun
 	stub mnStatScreenRunStub, mnStatScreenRun

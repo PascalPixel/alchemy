@@ -57,7 +57,7 @@
    WORLD_MAP_RELOAD_STEPS ticks, unless a screen transition is running. */
 void fdWorldMapPreloadCurrentTileBlock(void)
 {
-	WORLD_MAP_VIEW	   *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW	   *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	Sint32				x = 0;
 	Sint32				y = 0;
 	Sint32				firstQuarterX;
@@ -199,7 +199,7 @@ void fdWorldMapPresentStillImage(void)
 		&REG_BG2CNT);
 	syIOWrite16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
 		&REG_BG1CNT);
-	syDMAXCopy(Ram_MapMetatileBuffer,
+	syDMAXCopy(RamMapMetatileBuffer,
 		BG_CHAR_BLOCK(0) + STILL_IMAGE_FIRST_TILE * TILE_SIZE_8BPP,
 		DMA_COPY_WORDS(STILL_IMAGE_TILES_ACROSS * STILL_IMAGE_TILE_ROWS *
 			TILE_SIZE_8BPP / 4),
@@ -212,8 +212,8 @@ void fdWorldMapPresentStillImage(void)
    VBlank to it. */
 void fdWorldMapStartStillImage(void)
 {
-	WORLD_MAP_AFFINE_STATE *affineState = Ram_HeapSlots->worldMapAffine;
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_AFFINE_STATE *affineState = RamHeapSlots->worldMapAffine;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	const Uint32   *resources;
 
 	perspective->anmActive = 1;
@@ -232,7 +232,7 @@ void fdWorldMapStartStillImage(void)
 		DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
 	sySynch(1);
 	fdTileMapDrawRowsFromRam(
-		affineState->pages[TickCount & 1], Ram_MapMetatileBuffer);
+		affineState->pages[TickCount & 1], RamMapMetatileBuffer);
 	perspective->winTop = STILL_IMAGE_WINDOW_TOP;
 	perspective->winBottom = STILL_IMAGE_WINDOW_BOTTOM;
 	VBlankCallback = fdWorldMapPresentStillImage;
@@ -262,8 +262,8 @@ void fdWorldMapLoadAreaGraphics(void)
 	Uint8		   *buf;
 	Sint16			backdropCol;
 
-	perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
-	buf = Ram_MapMetatileBuffer;
+	perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
+	buf = RamMapMetatileBuffer;
 	resources = perspective->resources;
 	backdropCol = *(Sint16 *)BG_PLTT;
 	syDecompressByteLZ(
@@ -310,7 +310,7 @@ void fdWorldMapLoadAreaGraphics(void)
    to the perspective view, without reloading the area's palette or tiles. */
 void fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void)
 {
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 
 	VBlankCallback = fdWorldMapEndStillImage;
 	perspective->winTop = 0;
@@ -318,7 +318,7 @@ void fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void)
 	sySynch(1);
 	syDecompressTaggedLZ(
 		syResourceGetTableEntry(RESOURCE_DEFAULT_MAP_METATILES),
-		Ram_MapMetatileBuffer);
+		RamMapMetatileBuffer);
 	fdWorldMapUpdateCurrentTileBlock();
 	syResumeEvent(fdTilesetAnimUpdate);
 	sySynch(1);
@@ -327,7 +327,7 @@ void fdWorldMapLoadDefaultMetatilesAndUpdateBlock(void)
 /* Each tick: runs the 16 tileset animations. */
 void fdTilesetAnimUpdate(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint32	   channelIdx;
 
 	for(channelIdx = 0; channelIdx < ARRAY_COUNT(map->anim); channelIdx++) {
@@ -376,7 +376,7 @@ void fdTilesetAnimUpdate(void)
 			if(map->wideTiles == 0) {
 				if(srcTileOrOpcode >= TILESET_ANIM_RAM_TILE)
 					syDMAXCopy(
-						Ram_DecodeBuffer + srcTileOrOpcode * TILE_SIZE_4BPP,
+						RamDecodeBuffer + srcTileOrOpcode * TILE_SIZE_4BPP,
 						BG_CHAR_BLOCK(1) + dstTile * TILE_SIZE_4BPP,
 						DMA_COPY_WORDS(tileCnt * (TILE_SIZE_4BPP / 4)),
 						REG_DMA3);
@@ -416,7 +416,7 @@ void fdTilesetAnimUpdate(void)
 /* Resumes tileset animation channelIdx. */
 void fdTilesetAnimResume(Uint32 channelIdx)
 {
-	MAP_STATE	  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	  *map = RamHeapSlots->mapGrid;
 	MAP_ANIMATION *channel = &map->anim[channelIdx];
 
 	channel->paused = 0;
@@ -425,7 +425,7 @@ void fdTilesetAnimResume(Uint32 channelIdx)
 /* Pauses tileset animation channelIdx. */
 void fdTilesetAnimPause(Uint32 channelIdx)
 {
-	MAP_STATE	  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	  *map = RamHeapSlots->mapGrid;
 	MAP_ANIMATION *channel = &map->anim[channelIdx];
 
 	channel->paused = 1;
@@ -436,7 +436,7 @@ void fdTilesetAnimPause(Uint32 channelIdx)
    (paused with TILESET_ANIM_MARKER_PAUSED). */
 void fdTilesetAnimStartAll(const Uint16 *script)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   channelsStarted;
 	Uint32	   marker;
 
@@ -475,7 +475,7 @@ void fdTilesetAnimStartAll(const Uint16 *script)
    shown. */
 void fdTilesetAnimSuspendAll(void)
 {
-	if(((MAP_STATE *)Ram_HeapSlots->mapGrid)->anmActive == 0)
+	if(((MAP_STATE *)RamHeapSlots->mapGrid)->anmActive == 0)
 		sySuspendEvent(fdTilesetAnimUpdate);
 }
 
@@ -483,14 +483,14 @@ void fdTilesetAnimSuspendAll(void)
    shown. */
 void fdTilesetAnimResumeAll(void)
 {
-	if(((MAP_STATE *)Ram_HeapSlots->mapGrid)->anmActive == 0)
+	if(((MAP_STATE *)RamHeapSlots->mapGrid)->anmActive == 0)
 		syResumeEvent(fdTilesetAnimUpdate);
 }
 
 /* Each tick: runs the map's blend script. */
 void fdBlendScriptRun(void)
 {
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	BLEND_SCRIPT_STATE *blend;
 	Uint16			   *commands;
 	Uint32				instruction;
@@ -560,7 +560,7 @@ void fdBlendScriptStart(Uint16 *script)
 	   paused; a script that is only its end marker leaves the blend unset. */
 	hasScript = 0;
 	zero = 0;
-	blend = &((MAP_STATE *)Ram_HeapSlots->mapGrid)->blend;
+	blend = &((MAP_STATE *)RamHeapSlots->mapGrid)->blend;
 	syDMAXCopy((const void *)&zero, blend, DMA_FILL_WORDS(sizeof(*blend) / 4),
 		REG_DMA3);
 	if(*script != BLEND_SCRIPT_LOOP) {
@@ -609,7 +609,7 @@ UNUSED void fdPaletteCycleStart(void)
    colour, writing the rotated colours back to the palette. */
 void fdPaletteCycleStep(void)
 {
-	PALETTE_CYCLE_STATE *paletteQueue = Ram_HeapSlots->palCycles;
+	PALETTE_CYCLE_STATE *paletteQueue = RamHeapSlots->palCycles;
 	Uint8				 cycleIdx;
 	/* BUG: four queued cycles become zero here, so none advance. */
 	Uint16 activeCycles = paletteQueue->cnt & 3;
@@ -658,7 +658,7 @@ void fdPaletteCycleStep(void)
    open the tint stays as it is. */
 void fdWorldMapUpdateRegionTint(Sint32 region, Sint32 gradual)
 {
-	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *perspective = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 
 	if(perspective->tintRegion != region) {
 		perspective->tintRegion = region;
@@ -984,7 +984,7 @@ extern TERRAIN_HEIGHT_FN MapGridTerrainHeightFunctions[16];
    samples. */
 FIXED fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED z)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *grid;
 	Uint8	  *code;
 
@@ -997,7 +997,7 @@ FIXED fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED z)
 	/* A row of the grid is MAPGRID_SIZE metatiles, 1 << 7; a shape is 4
 	   bytes. */
 	grid += x / MAPGRID_METATILE_PIXELS + (z / MAPGRID_METATILE_PIXELS << 7);
-	code = Ram_MapCollision + *grid * 4;
+	code = RamMapCollision + *grid * 4;
 	return fdMapGridGetShapeHeight(code, x, z);
 }
 
@@ -1005,7 +1005,7 @@ FIXED fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED z)
    The Broken Seal's. */
 Sint32 fdMapGridGetTerrainKindAt(Sint32 layer, FIXED x, FIXED z)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *grid;
 
 	x >>= 16;
@@ -1014,8 +1014,8 @@ Sint32 fdMapGridGetTerrainKindAt(Sint32 layer, FIXED x, FIXED z)
 		grid = map->layers[layer & 3].terrainIds;
 	else
 		grid = MapShapeGrid;
-	return Ram_MapCollision[grid[x / MAPGRID_METATILE_PIXELS +
-								(z / MAPGRID_METATILE_PIXELS << 7)] *
+	return RamMapCollision[grid[x / MAPGRID_METATILE_PIXELS +
+							   (z / MAPGRID_METATILE_PIXELS << 7)] *
 			   4] &
 		MAPGRID_SHAPE_KIND_MASK;
 }
@@ -1024,7 +1024,7 @@ Sint32 fdMapGridGetTerrainKindAt(Sint32 layer, FIXED x, FIXED z)
    reads as TERRAIN_BUMP. */
 Sint32 fdMapGridGetTerrainKindOrBumpAt(Sint32 layer, Sint32 x, Sint32 z)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *grid;
 	Uint8	  *code;
 	Sint32	   kind;
@@ -1035,8 +1035,8 @@ Sint32 fdMapGridGetTerrainKindOrBumpAt(Sint32 layer, Sint32 x, Sint32 z)
 		grid = map->layers[layer & 3].terrainIds;
 	else
 		grid = MapShapeGrid;
-	code = &Ram_MapCollision[grid[x / MAPGRID_METATILE_PIXELS +
-								 (z / MAPGRID_METATILE_PIXELS << 7)] *
+	code = &RamMapCollision[grid[x / MAPGRID_METATILE_PIXELS +
+								(z / MAPGRID_METATILE_PIXELS << 7)] *
 		4];
 	kind = code[0];
 	if(kind == TERRAIN_ROUNDED_SQUARE && code[1] != code[2])
@@ -1072,12 +1072,12 @@ FIXED fdMapGridGetHighestTerrainHeightAround(
    steps, by tagging its shape with terrain kind 0 at that height. */
 void fdMapGridSetMetatileHeight(Sint32 x, Sint32 z, Sint32 layer, Sint32 height)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *shape;
 
 	shape = MapShapeGrid +
 		(map->layers[layer & 3].metatiles -
-			(MAP_METATILE *)Ram_MapMetatileBuffer);
+			(MAP_METATILE *)RamMapMetatileBuffer);
 	shape += (FIELD_METATILE(x)) + FIELD_METATILE(z) * MAPGRID_SIZE;
 	*shape = fdMapShapeFindOrAddStub(layer, 0, height);
 }
@@ -1092,7 +1092,7 @@ Sint32 fdMapGridGetMetatileHeight(FIXED x, FIXED z, Sint32 layer)
    each with callers of its own (the scenes' overlays import only this one). */
 Sint32 fdMapGridGetTerrainKind(Sint32 layer, Sint32 x, Sint32 z)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *grid;
 
 	x >>= 16;
@@ -1101,8 +1101,8 @@ Sint32 fdMapGridGetTerrainKind(Sint32 layer, Sint32 x, Sint32 z)
 		grid = map->layers[layer & 3].terrainIds;
 	else
 		grid = MapShapeGrid;
-	return Ram_MapCollision[grid[x / MAPGRID_METATILE_PIXELS +
-								(z / MAPGRID_METATILE_PIXELS << 7)] *
+	return RamMapCollision[grid[x / MAPGRID_METATILE_PIXELS +
+							   (z / MAPGRID_METATILE_PIXELS << 7)] *
 			   4] &
 		MAPGRID_SHAPE_KIND_MASK;
 }
@@ -1114,7 +1114,7 @@ Uint8 fdMapGridGetMetatileBehaviorAt(Sint32 layer, FIXED x, FIXED y)
 	MAP_STATE	 *state;
 	MAP_METATILE *metatiles;
 
-	state = Ram_HeapSlots->mapGrid;
+	state = RamHeapSlots->mapGrid;
 	x = FIELD_METATILE(x);
 	y = FIELD_METATILE(y);
 	metatiles = (MAP_METATILE *)MapGridMetatileBuffer;
@@ -1131,7 +1131,7 @@ Uint8 fdMapGridGetMetatileBehaviorAt(Sint32 layer, FIXED x, FIXED y)
 void fdMapGridSetMetatileBehaviorAt(
 	Uint32 layer, FIXED x, FIXED y, Uint32 collisionCode)
 {
-	MAP_STATE *state = Ram_HeapSlots->mapGrid;
+	MAP_STATE *state = RamHeapSlots->mapGrid;
 
 	x = FIELD_METATILE(x);
 	y = FIELD_METATILE(y);
@@ -1151,8 +1151,8 @@ FIXED fdMapGridGetTerrainHeightAbove(
 {
 	Sint32		 x = FIXEDtoINT(px);
 	Sint32		 z = FIXEDtoINT(pz);
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint8		*shapes;
 	Uint8		*code;
 
@@ -1164,7 +1164,7 @@ FIXED fdMapGridGetTerrainHeightAbove(
 		shapes = map->layers[layer].terrainIds;
 	else
 		shapes = MapShapeGrid;
-	code = Ram_MapCollision +
+	code = RamMapCollision +
 		shapes[x / MAPGRID_METATILE_PIXELS +
 			(z / MAPGRID_METATILE_PIXELS << 7)] *
 			4;
@@ -1181,8 +1181,8 @@ Sint32 fdMapGridCheckCollisionAt(
 {
 	Sint32		 x = FIXEDtoINT(px);
 	Sint32		 z = FIXEDtoINT(pz);
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint8		*metatiles;
 	Uint8		*shapes;
 	Uint8		*code;
@@ -1205,7 +1205,7 @@ Sint32 fdMapGridCheckCollisionAt(
 	shapes += idx;
 	if(metatiles[2] == METATILE_BEHAVIOR_WALL)
 		return 2;
-	code = Ram_MapCollision + *shapes * 4;
+	code = RamMapCollision + *shapes * 4;
 	rise = fdMapGridGetShapeHeight(code, x, z) - height;
 	if(rise > toFIXED(8))
 		return 1;
@@ -1220,8 +1220,8 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, POS *pos)
 {
 	Sint32		 x = ((FIELD_COORDINATE *)&pos->x)->part[0].integer;
 	Sint32		 z = ((FIELD_COORDINATE *)&pos->z)->part[0].integer;
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint8		*metatiles;
 	Uint8		*shapes;
 	Uint8		*code;
@@ -1244,7 +1244,7 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, POS *pos)
 	shapes += idx;
 	if(metatiles[2] == METATILE_BEHAVIOR_WALL)
 		return 2;
-	code = Ram_MapCollision + *shapes * 4;
+	code = RamMapCollision + *shapes * 4;
 	rise = fdMapGridGetShapeHeight(code, x, z) - actor->groundHeight;
 	if(rise > toFIXED(8))
 		return 1;
@@ -1259,8 +1259,8 @@ Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *pos)
 {
 	Sint32		 x = ((FIELD_COORDINATE *)&pos->x)->part[0].integer;
 	Sint32		 z = ((FIELD_COORDINATE *)&pos->z)->part[0].integer;
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint8		*metatiles;
 	Uint8		*shapes;
 	Uint8		*code;
@@ -1282,7 +1282,7 @@ Sint32 fdMapGridCheckCollisionAbove(ACTOR *actor, POS *pos)
 	shapes += idx;
 	if(metatiles[2] == METATILE_BEHAVIOR_WALL)
 		return 2;
-	code = Ram_MapCollision + *shapes * 4;
+	code = RamMapCollision + *shapes * 4;
 	if(fdMapGridGetShapeHeight(code, x, z) - actor->y.fixed > toFIXED(8))
 		return 1;
 	return 0;
@@ -1294,7 +1294,7 @@ Sint32 fdMapGridIsWallAt(Sint32 *pos)
 {
 	Sint32 x = pos[0] / toFIXED(1);
 	Sint32 z = (Uint32)((pos[2] & FIELD_METATILE_MASK) - pos[1]) / toFIXED(1);
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *metatile;
 
 	if(map == NULL)
@@ -1346,7 +1346,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 
 	/* The upper layer's collision tiles follow the lower layer's. */
 	collisionTile = WORLD_MAP_UPPER_TILE_MAP[collisionMetatile];
-	packedCollisions = *(Ram_MapCollision +
+	packedCollisions = *(RamMapCollision +
 		WORLD_MAP_COLLISION_TILES * WORLD_MAP_COLLISION_TILE_BYTES +
 		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
@@ -1360,7 +1360,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 
 	/* The lower layer's, at the start of the buffer. */
 	collisionTile = WORLD_MAP_LOWER_TILE_MAP[collisionMetatile];
-	packedCollisions = *(Ram_MapCollision +
+	packedCollisions = *(RamMapCollision +
 		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
@@ -1394,7 +1394,7 @@ Sint32 fdWorldMapIsSailable(void *mover, WORLD_POS *pos)
 {
 	if(fdWorldMapGetBlockMetatileBehavior(pos) != METATILE_BEHAVIOR_WALL) {
 		Sint32		 collision = fdWorldMapGetCollision(pos);
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 		Sint32		 mode;
 
 		/* Whichever water the ship was last over, it sails the same water; last
@@ -1429,7 +1429,7 @@ Sint32 fdWorldMapIsFlyable(ACTOR *mover, WORLD_POS *pos)
 {
 	if(fdWorldMapGetBlockMetatileBehavior(pos) != METATILE_BEHAVIOR_WALL) {
 		Sint32		 collision = fdWorldMapGetCollision(pos);
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		Sint32 height = mover->y.fixed;
 

@@ -84,8 +84,8 @@ SavedStack:
 	.global BgmRestoreDelay
 BgmRestoreDelay:
 	.space 4
-	.global Sound_UnreadByte
-Sound_UnreadByte:
+	.global SoundUnreadByte
+SoundUnreadByte:
 	.space 4
 	.global BgmVolume
 BgmVolume:
@@ -126,56 +126,56 @@ MPlayJumpTable:
 	.global CgbChans
 CgbChans:
 	.space 256
-	.global MPlayInfo_SE5
-MPlayInfo_SE5:
+	.global MPlayInfoSE5
+MPlayInfoSE5:
 	.space 64
-	.global MPlayInfo_SE6
-MPlayInfo_SE6:
+	.global MPlayInfoSE6
+MPlayInfoSE6:
 	.space 64
-	.global MPlayInfo_Jingle
-MPlayInfo_Jingle:
+	.global MPlayInfoJingle
+MPlayInfoJingle:
 	.space 64
-	.global MPlayInfo_SE7
-MPlayInfo_SE7:
+	.global MPlayInfoSE7
+MPlayInfoSE7:
 	.space 64
-	.global MPlayInfo_BGM
-MPlayInfo_BGM:
+	.global MPlayInfoBGM
+MPlayInfoBGM:
 	.space 64
-	.global MPlayInfo_MenuSE
-MPlayInfo_MenuSE:
+	.global MPlayInfoMenuSE
+MPlayInfoMenuSE:
 	.space 64
-	.global MPlayInfo_SE4
-MPlayInfo_SE4:
+	.global MPlayInfoSE4
+MPlayInfoSE4:
 	.space 64
 	.global MPlayMemAccArea
 MPlayMemAccArea:
 	.space 16
-	.global MPlayInfo_ActionSE
-MPlayInfo_ActionSE:
+	.global MPlayInfoActionSE
+MPlayInfoActionSE:
 	.space 64
-	.global MPlayTrack_Jingle
-MPlayTrack_Jingle:
+	.global MPlayTrackJingle
+MPlayTrackJingle:
 	.space 320
-	.global MPlayTrack_BGM
-MPlayTrack_BGM:
+	.global MPlayTrackBGM
+MPlayTrackBGM:
 	.space 800
-	.global MPlayTrack_MenuSE
-MPlayTrack_MenuSE:
+	.global MPlayTrackMenuSE
+MPlayTrackMenuSE:
 	.space 160
-	.global MPlayTrack_ActionSE
-MPlayTrack_ActionSE:
+	.global MPlayTrackActionSE
+MPlayTrackActionSE:
 	.space 160
-	.global MPlayTrack_SE4
-MPlayTrack_SE4:
+	.global MPlayTrackSE4
+MPlayTrackSE4:
 	.space 160
-	.global MPlayTrack_SE5
-MPlayTrack_SE5:
+	.global MPlayTrackSE5
+MPlayTrackSE5:
 	.space 160
-	.global MPlayTrack_SE6
-MPlayTrack_SE6:
+	.global MPlayTrackSE6
+MPlayTrackSE6:
 	.space 160
-	.global MPlayTrack_SE7
-MPlayTrack_SE7:
+	.global MPlayTrackSE7
+MPlayTrackSE7:
 	.space 160
 	.space 64
 	.global WaitForFlashWriteWork

@@ -4,7 +4,7 @@
    set and its metatile opened. */
 void fdPoundSinkTarget(Uint16 *list, Sint32 mode, Sint32 cnt)
 {
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 
 	for(; *list != ACTOR_LIST_END; list += 3) {
 		Uint32 entry = *list;

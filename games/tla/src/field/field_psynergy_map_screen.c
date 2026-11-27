@@ -24,7 +24,7 @@
 void fdMapScreenInit(void)
 {
 	Uint32			*markerTiles;
-	WORLD_MAP_STATE *state = Ram_WorldMapState;
+	WORLD_MAP_STATE *state = RamWorldMapState;
 	Uint32			*oam;
 	FIXED			 screenX;
 	FIXED			 screenY;
@@ -105,8 +105,8 @@ void fdMapScreenInit(void)
 		screenY = left;
 	if(screenY > bottom)
 		screenY = bottom;
-	Ram_WorldMapCursorStart[0] = state->x;
-	Ram_WorldMapCursorStart[1] = state->z;
+	RamWorldMapCursorStart[0] = state->x;
+	RamWorldMapCursorStart[1] = state->z;
 	state->winSlot = mnPointingHandLoadIntoFreeSlotStub();
 	tile = VramCacheEntries[state->winSlot].ofs;
 	state->win = mnWindowCreateStub(0, 0, 0, 0, WINDOW_FLAG_INSTANT);
@@ -118,9 +118,9 @@ void fdMapScreenInit(void)
 	cursorAttributes = OBJ_PRIORITY(1);
 	cursorAttributes |= tile >> 5;
 	*oam = cursorAttributes;
-	*Ram_WorldMapCursor = &state->x;
-	Ram_WorldMapScroll[0] = screenX;
-	Ram_WorldMapScroll[1] = screenY;
+	*RamWorldMapCursor = &state->x;
+	RamWorldMapScroll[0] = screenX;
+	RamWorldMapScroll[1] = screenY;
 }
 
 /* Closes the map screen: returns its VRAM blocks and removes the name
@@ -138,7 +138,7 @@ void fdMapScreenRelease(void)
 void fdMapScreenPlaceLeaderAt(Sint32 x, Sint32 z)
 {
 	Sint32	owner = fdPartyGetLeaderActor();
-	Sint32 *camera = *(Sint32 **)Ram_HeapSlots->mapGrid;
+	Sint32 *camera = *(Sint32 **)RamHeapSlots->mapGrid;
 	ACTOR  *actor = fdActorLookup(owner);
 
 	if(actor != NULL) {
@@ -159,7 +159,7 @@ void fdMapScreenPlaceLeaderAt(Sint32 x, Sint32 z)
 void fdMapScreenGetLeaderPoint(Sint32 *screenX, Sint32 *screenY)
 {
 	Sint32		 leader = fdPartyGetLeaderActor();
-	FIELD_STATE *field = Ram_HeapSlots->fieldState;
+	FIELD_STATE *field = RamHeapSlots->fieldState;
 	ACTOR		*actor;
 	Sint32		 x;
 	Sint32		 z;

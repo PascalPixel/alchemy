@@ -75,8 +75,8 @@ void fdPsynergyParch(void)
 	PARCH_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(PARCH_STATE));
 	HEAP_SLOTS		   *heap;
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
-	WIN_STATE		   *winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
+	WIN_STATE		   *winState = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32				ofs; /* into the field state's actor list */
 	ACTOR			   *caster;
 	ACTOR			   *actor;
@@ -122,7 +122,7 @@ void fdPsynergyParch(void)
 
 	i = 0;
 	kind = SPRITE_PUDDLE;
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	for(ofs = offsetof(FIELD_STATE, actors); i < FIELD_ACTOR_COUNT;
 		i++, ofs += sizeof(ACTOR *)) {
 		actor = *(ACTOR **)((Uint8 *)heap->fieldState + ofs);

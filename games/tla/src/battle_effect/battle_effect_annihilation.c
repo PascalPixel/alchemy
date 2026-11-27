@@ -37,11 +37,11 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 	Sint32				 size;
 	Uint8				*burstPixels;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	particleSheet = Ram_HeapSlots->battleSheet;
-	camera = Ram_HeapSlots->cameraState;
-	burstPixels = Ram_MapMetatileBuffer;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	particleSheet = RamHeapSlots->battleSheet;
+	camera = RamHeapSlots->cameraState;
+	burstPixels = RamMapMetatileBuffer;
 	btEffectStartCanvasLayer(0);
 	btResourceLoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
@@ -83,7 +83,7 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			else
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_ADDITIVE);
-			blitters[0] = Ram_HeapSlots->ramCode;
+			blitters[0] = RamHeapSlots->ramCode;
 			if(args->side == EFFECT_SIDE_ENEMIES)
 				blitters[0](canvas,
 					state->sheet +
@@ -105,7 +105,7 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-			blitters[0] = Ram_HeapSlots->ramCode;
+			blitters[0] = RamHeapSlots->ramCode;
 			if(step > 2)
 				step = 2;
 			if(args->variant == EFFECT_VARIANT_BASIC)
@@ -113,8 +113,7 @@ void btEffectRunAnnihilation(BATTLE_EFFECT_PARM *args)
 			else
 				strip = BURST_STRIP_BYTES;
 			blitters[0](canvas,
-				Ram_MapMetatileBuffer + strip +
-					step * PICTURE_BYTES(FIRE_BURST),
+				RamMapMetatileBuffer + strip + step * PICTURE_BYTES(FIRE_BURST),
 				origin.x / 2 - FIRE_BURST_WIDTH / 2, origin.y - 48,
 				FIRE_BURST_WIDTH, FIRE_BURST_HEIGHT);
 			/* A busy delay before the blitter is freed. XXX (no evidence): why

@@ -610,7 +610,7 @@ Bool scCrackedTileStep(void)
 void scCrackedTilePlaceLanding(Sint32 dx, Sint32 dz, Sint32 transition)
 {
 	ACTOR			*actor = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	METATILE_TARGET *state = &CrackedTiles;
 	Sint32			 x = ((Sint32)scFieldGameFlagGetByte(state->flgByte));
 	Sint32			 z = ((Sint32)scFieldGameFlagGetByte(state->flgByte + 8));

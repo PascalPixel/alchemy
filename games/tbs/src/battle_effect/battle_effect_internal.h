@@ -267,17 +267,17 @@ static inline void btDMAStop(volatile Uint16 *channel)
 #define BATTLE_BACKGROUND_BYTES \
 	(BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 
-/* Ram_MapGridMetatileBuffer as btEffectBuildWindowEdgeTable reads it: window
+/* RamMapGridMetatileBuffer as btEffectBuildWindowEdgeTable reads it: window
    0's right edge, how far each of its lines is set in from that edge, and the
    right edge it builds for every screen line. */
-#define WINDOW_EDGE_RIGHT		((Uint16 *)Ram_MapGridMetatileBuffer)
-#define WINDOW_EDGE_INSETS		(Ram_MapGridMetatileBuffer + 2)
+#define WINDOW_EDGE_RIGHT		((Uint16 *)RamMapGridMetatileBuffer)
+#define WINDOW_EDGE_INSETS		(RamMapGridMetatileBuffer + 2)
 #define WINDOW_EDGE_INSET_LINES 128
 #define WINDOW_EDGE_LINES		(WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
-/* Ram_MapGridMetatileBuffer as the unused blue ramp uses it: a working copy of
+/* RamMapGridMetatileBuffer as the unused blue ramp uses it: a working copy of
    the battle background's image. */
-#define BLUE_RAMP_PIXELS Ram_MapGridMetatileBuffer
+#define BLUE_RAMP_PIXELS RamMapGridMetatileBuffer
 
 /* Caps a colour level at cap, and at 0 from below. */
 #define EFFECT_CAP_LEVEL(level, cap) \

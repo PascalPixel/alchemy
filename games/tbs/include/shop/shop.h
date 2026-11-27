@@ -102,17 +102,17 @@ STATIC_ASSERT(offsetof(SHOP_STATE, effs) == 944);
 
 /* The shop's 16-by-16 sprites (graphics/ui/menu_sprites): the hand cursor, the
    gem and the list arrows. */
-extern const Uint8 MenuCursor_HandTiles[];
-extern const Uint8 Shop_GemTiles[];
-extern const Uint8 Shop_SmallDownArrowTiles[];
-extern const Uint8 Shop_SmallUpArrowTiles[];
-extern const Uint8 Shop_UpArrowTiles[];
-extern const Uint8 Shop_DownArrowTiles[];
+extern const Uint8 MenuCursorHandTiles[];
+extern const Uint8 ShopGemTiles[];
+extern const Uint8 ShopSmallDownArrowTiles[];
+extern const Uint8 ShopSmallUpArrowTiles[];
+extern const Uint8 ShopUpArrowTiles[];
+extern const Uint8 ShopDownArrowTiles[];
 
 /* The eight blank tiles of a price, which the shop writes its digits over, and
    of the quantity bar, which it fills in colours. */
-extern const Uint8 Shop_PriceTiles[];
-extern const Uint8 Shop_QuantityTiles[];
+extern const Uint8 ShopPriceTiles[];
+extern const Uint8 ShopQuantityTiles[];
 
 struct WINDOW;
 struct FIELD_PARTICLE;

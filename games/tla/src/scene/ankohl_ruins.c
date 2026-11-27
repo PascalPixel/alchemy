@@ -785,8 +785,8 @@ extern MAP_METATILE MapGridMetatileBuffer[];
 void scAnkohlRuinsFlowWithSand(void)
 {
 	ACTOR		 *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE	 *state = (FIELD_STATE *)Ram_HeapSlots->fieldState;
-	MAP_STATE	 *map = (MAP_STATE *)Ram_HeapSlots->mapGrid;
+	FIELD_STATE	 *state = (FIELD_STATE *)RamHeapSlots->fieldState;
+	MAP_STATE	 *map = (MAP_STATE *)RamHeapSlots->mapGrid;
 	ACTOR		 *companion = state->camera;
 	MAP_METATILE *ground;
 	MAP_METATILE *upper;
@@ -885,7 +885,7 @@ void scAnkohlRuinsScatterWeeds(Sint32 a, Sint32 id)
    map layer 1, the sand, is scrolled by the level over its base. */
 void scAnkohlRuinsDrawSand(void)
 {
-	MAP_STATE			   *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE			   *map = RamHeapSlots->mapGrid;
 	Sint32					viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32					viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 	ANKOHL_RUINS_SPR_STATE *state = &AnkohlRuinsSand;
@@ -968,7 +968,7 @@ void scAnkohlRuinsInitSand(Sint32 unused)
 	Uint32				   *tiles = syHeapAlloc(SAND_MASK_BYTES);
 	Uint32				   *pixel = tiles;
 	MAP_LAYER			   *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	ANKOHL_RUINS_SPR *spr = state->sprs;
 	Sint32			  i;
 
@@ -1054,7 +1054,7 @@ void scAnkohlRuinsInitSand(Sint32 unused)
    CUE_RAISE_SECOND_SAND). */
 void scAnkohlRuinsCountSandTime(void)
 {
-	FIELD_STATE *state = (FIELD_STATE *)Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = (FIELD_STATE *)RamHeapSlots->fieldState;
 
 	if(fdScriptGetFlag(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
 		if(++AnkohlRuinsSandTimer >= AnkohlRuinsSandRiseDelay) {
@@ -1078,7 +1078,7 @@ extern ANKOHL_RUINS_SAND_ROW AnkohlRuinsFirstSandRows[];
 void scAnkohlRuinsRaiseFirstSand(void)
 {
 	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	MAP_STATE *map = (MAP_STATE *)Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = (MAP_STATE *)RamHeapSlots->mapGrid;
 	ANKOHL_RUINS_SPR_STATE *state = &AnkohlRuinsSand;
 	Sint16					i;
 	Sint16					j;
@@ -1163,7 +1163,7 @@ extern ANKOHL_RUINS_SAND_ROW AnkohlRuinsSecondSandRows[];
 void scAnkohlRuinsRaiseSecondSand(void)
 {
 	ACTOR	  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);
-	MAP_STATE *map = (MAP_STATE *)Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = (MAP_STATE *)RamHeapSlots->mapGrid;
 	ANKOHL_RUINS_SPR_STATE *state = &AnkohlRuinsSand;
 	Sint32					level;
 	Sint16					i;
@@ -1350,7 +1350,7 @@ void scAnkohlRuinsSlideGreatFace(void)
 	ACTOR		*camera = FieldStateWork->camera;
 	ACTOR		*face = fdActorGetById(ACTOR_GREAT_FACE);
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE *state = (FIELD_STATE *)Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = (FIELD_STATE *)RamHeapSlots->fieldState;
 	Sint32		 column;
 	Sint32		 row;
 

@@ -50,7 +50,7 @@ Sint32 mnBattlePsynergyMenuRun(Sint32 unitId, Uint16 *actions, Sint32 cnt)
 	MENU_SPR		   sprs[BATTLE_LIST_ROWS];
 	Sint32			   glyph;
 
-	state = (WIN_STATE *)Ram_HeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->winState;
 	drawnRow = -1;
 	drawnFirstEntry = -1;
 	cursorHandle = syVRAMCacheAllocEntry(128);

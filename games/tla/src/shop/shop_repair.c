@@ -31,7 +31,7 @@ Sint32 mnShopSelectRepair(Sint32 unitId)
    charges the price and offers to equip it. */
 void mnShopRepairItem(Sint32 unitId, Sint32 slot)
 {
-	SHOP_STATE		*shop = Ram_HeapSlots->menuState;
+	SHOP_STATE		*shop = RamHeapSlots->menuState;
 	UNIT			*unit = syUnitGet(unitId);
 	Sint32			 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
 	ITEM_DEFINITION *item = gmItemGetDirectStub(itemId);

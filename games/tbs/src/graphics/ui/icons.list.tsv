@@ -1,13 +1,13 @@
 name	file	section	align	left	pad	edition	fill
-Ui_Icons	icons/icons_ja.icons4					ja	
-Ui_Icons	icons/icons.icons4					en	
-Ui_Icons	icons/icons.icons4					de	
-Ui_Icons	icons/icons.icons4					es	
-Ui_Icons	icons/icons.icons4					fr	
-Ui_Icons	icons/icons.icons4					it	
-Ui_CommandIcons	command_icons.icons			52dc		ja	
-Ui_CommandIcons	command_icons.icons			7bbc		en	
-Ui_CommandIcons	command_icons.icons			7bbc		de	
-Ui_CommandIcons	command_icons.icons			7bbc		es	
-Ui_CommandIcons	command_icons.icons			7bbc		fr	
-Ui_CommandIcons	command_icons.icons			7bbc		it	
+UiIcons	icons/icons_ja.icons4					ja	
+UiIcons	icons/icons.icons4					en	
+UiIcons	icons/icons.icons4					de	
+UiIcons	icons/icons.icons4					es	
+UiIcons	icons/icons.icons4					fr	
+UiIcons	icons/icons.icons4					it	
+UiCommandIcons	command_icons.icons			52dc		ja	
+UiCommandIcons	command_icons.icons			7bbc		en	
+UiCommandIcons	command_icons.icons			7bbc		de	
+UiCommandIcons	command_icons.icons			7bbc		es	
+UiCommandIcons	command_icons.icons			7bbc		fr	
+UiCommandIcons	command_icons.icons			7bbc		it	

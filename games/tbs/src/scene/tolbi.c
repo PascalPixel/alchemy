@@ -51,8 +51,8 @@
 
    The doors, whose metatiles carry their exits' numbers, lead into Tolbi's
    houses, the inn, the weapon and armor shop and Tolbi Sanctum (all
-   SceneId_StuccoRoomsB), and into the Lucky Dice and Lucky Wheels halls
-   (SceneId_StuccoRoomsC, whose area name is also Tolbi). The stairs in the
+   SceneIdStuccoRoomsB), and into the Lucky Dice and Lucky Wheels halls
+   (SceneIdStuccoRoomsC, whose area name is also Tolbi). The stairs in the
    north-west lead to Babi's Palace, the road north to the Colosseum, and the
    town's south and east edges out onto the World Map. */
 

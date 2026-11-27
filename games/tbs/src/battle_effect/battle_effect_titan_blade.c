@@ -2,7 +2,7 @@
 
 /* The sparks, in PARTICLES after the dust. */
 #define TITAN_BLADE_SWORD_SPARKS \
-	((PARTICLE *)(Ram_MapGridMetatileBuffer + \
+	((PARTICLE *)(RamMapGridMetatileBuffer + \
 		TITAN_BLADE_DUST * sizeof(PARTICLE)))
 
 #define TITAN_BLADE_TICKS			   102

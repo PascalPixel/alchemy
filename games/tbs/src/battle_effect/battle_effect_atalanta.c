@@ -30,7 +30,7 @@
 
 /* The trail particles' random rotations, after the first 512 particles of
    PARTICLES, which hold the 384 trail particles. */
-#define ATALANTA_MATRICES (Ram_MapGridMetatileBuffer + 512 * sizeof(PARTICLE))
+#define ATALANTA_MATRICES (RamMapGridMetatileBuffer + 512 * sizeof(PARTICLE))
 
 /* How far below its projected point a trail mote is drawn: the Japanese release
    draws the trails 16 pixels higher than the later releases. */
@@ -312,7 +312,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 	REG_BG2PA = Q_8_8(0.5);
 	REG_DISPCNT = EFFECT_DISPCNT;
 	btResourceLoadAndDecompress(
-		RESOURCE_EMBER_STREAK_SHEET, Ram_MapGridMetatileBuffer, 1, 0);
+		RESOURCE_EMBER_STREAK_SHEET, RamMapGridMetatileBuffer, 1, 0);
 	/* The shafts are dealt round the targets as if to a full enemy group of
 	   six; a shaft dealt to a missing target falls at random across the
 	   field. */
@@ -349,7 +349,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 						width = BattleEffectPuffArcPictureWidths[picture];
 						draw[i & 1](canvas,
-							Ram_MapGridMetatileBuffer +
+							RamMapGridMetatileBuffer +
 								BattleEffectPuffArcPictures[picture],
 							shaft->x - (width >> 1) - 8,
 							shaft->y +
@@ -357,7 +357,7 @@ void btEffectRunAtalanta(BATTLE_EFFECT_PARM *args)
 							width, BattleEffectPuffArcPictureHeights[picture]);
 #else
 						draw[i & 1](canvas,
-							Ram_MapGridMetatileBuffer +
+							RamMapGridMetatileBuffer +
 								BattleEffectPuffArcPictures[picture],
 							shaft->x -
 								((width = BattleEffectPuffArcPictureWidths

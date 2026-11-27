@@ -1,5 +1,5 @@
 name	file	section	align	left	pad	edition
-Summon_GoldenDragonTiles	golden_dragon.gbapal					
+SummonGoldenDragonTiles	golden_dragon.gbapal					
 	golden_dragon.parts.lz			66		ja
 	golden_dragon.parts.lz			00		en
 	golden_dragon.parts.lz			c4		de

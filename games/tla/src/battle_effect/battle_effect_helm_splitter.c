@@ -23,8 +23,8 @@
    Abilities: Helm Splitter, Skull Splitter. */
 void btEffectRunHelmSplitter(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
 	DRAW_RECTANGLE		 draw[2];
 	SCREEN_POINT		 pos;
 	PARTICLE			*sparks;

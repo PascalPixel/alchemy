@@ -66,7 +66,7 @@ Sint32 fdCountRequests(void)
    reads it. */
 void fdUpdateHoverReady(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	if(syGameFlagGet(FLAG_SHIP_FLIES) &&
 		gmPartyFindOwnerWithActionStub(ABILITY_HOVER) != -1)
@@ -80,9 +80,9 @@ void fdUpdateHoverReady(void)
    leader. */
 Sint32 fdGetCollisionAheadOfLeader(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdGetPartyActor();
-	MAP_STATE	*map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	*map = RamHeapSlots->mapGrid;
 	FIXED		 pos[3];
 	Uint8		*metatile;
 
@@ -121,9 +121,9 @@ Sint32 fdGetCollisionAheadOfLeader(void)
    block), or 0 with no leader. Teleport's cues match it. */
 Sint32 fdGetCollisionUnderLeader(void)
 {
-	FIELD_STATE	 *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	 *state = RamHeapSlots->fieldState;
 	ACTOR		 *actor = fdGetPartyActor();
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	VECTOR3		  pos;
 	MAP_METATILE *metatile;
 
@@ -170,7 +170,7 @@ void fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ)
 	z = posZ;
 	region = (MAP_REGION *)SCENE_ENTRIES->regions();
 	if(region != 0 &&
-		(state = Ram_HeapSlots->fieldState, minX = region->minX, minX != -1)) {
+		(state = RamHeapSlots->fieldState, minX = region->minX, minX != -1)) {
 	loop:
 		minY = region->minY;
 		minZ = region->minZ;
@@ -187,7 +187,7 @@ void fdCheckExitRegions(FIXED posX, FIXED posY, FIXED posZ)
 			fdLeaderStopMoving();
 			return;
 		}
-		state = Ram_HeapSlots->fieldState;
+		state = RamHeapSlots->fieldState;
 		region++;
 		minX = region->minX;
 		if(minX != -1)
@@ -206,7 +206,7 @@ Sint32 btDjinnRecoveryCountDownStub(void);
 void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 {
 	FIELD_STATE	 *state = FieldStateWork;
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	Sint32		  leaderId = fdPartyGetLeaderActor();
 	ACTOR		 *leader = fdGetPartyActor();
 	Sint16		  prevHp[8];
@@ -244,7 +244,7 @@ void fdUpdateWalking(Uint32 layer, FIXED x, FIXED y, FIXED z)
 		if(layer <= 2)
 			tile = map->layers[layer].metatiles;
 		else
-			tile = (MAP_METATILE *)Ram_MapMetatileBuffer;
+			tile = (MAP_METATILE *)RamMapMetatileBuffer;
 		tile = &tile[x / toFIXED(MAPGRID_METATILE_PIXELS) +
 			z / toFIXED(MAPGRID_METATILE_PIXELS) * MAPGRID_SIZE];
 		event = tile->collisionCode;
@@ -511,7 +511,7 @@ void fdWorldMapReloadPendingAreaGraphics(void)
 ACTOR *fdGetPartyActor(void)
 {
 	MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
-	FIELD_STATE		   *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE		   *state = RamHeapSlots->fieldState;
 	ACTOR			   *leader;
 
 	if(party->ownerOverride == 0)

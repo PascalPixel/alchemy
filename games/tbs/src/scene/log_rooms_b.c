@@ -1,8 +1,8 @@
-/* Log rooms B (SceneId_LogRoomsB), a rooms map drawn in logs, holds only
+/* Log rooms B (SceneIdLogRoomsB), a rooms map drawn in logs, holds only
    Vault's rooms: the town's houses, shops and inn once the party has reached
    Kalay.
 
-   They replace the first visit's rooms (log_rooms_a.c), as SceneId_VaultRevisit
+   They replace the first visit's rooms (log_rooms_a.c), as SceneIdVaultRevisit
    (vault_revisit.c) replaces the town. Each of its six house doors leads to the
    entrance here named for the same door, and each room leads back out through
    it.

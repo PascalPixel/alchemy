@@ -522,11 +522,11 @@ spriteAnimations(void)
 	RUN("graphics", true, "bank.tsv", "bank.sprites");
 	Buffer bank = readFile("bank.sprites");
 	const char *scripts[] = {
-		"Sprite_Walker_Animation0:\n"
+		"SpriteWalkerAnimation0:\n"
 		"\t.byte 0x03, 0x06, 0xf5, 0x02, 0xf0, 0x11, 0xfd, 0x02\n",
-		"Sprite_Walker_Animation1:\n"
+		"SpriteWalkerAnimation1:\n"
 		"\t.byte 0xff, 0x04, 0xf2, 0x0a, 0xfe, 0x00, 0xf1, 0x01, 0xef, 0x00\n",
-		"Sprite_Walker_Animation2:\n\t.byte 0x00, 0x01, 0xfd, 0x00\n"};
+		"SpriteWalkerAnimation2:\n\t.byte 0x00, 0x01, 0xfd, 0x00\n"};
 	for (size_t i = 0; i < sizeof(scripts) / sizeof(*scripts); i++)
 		check(strstr((char *) bank.data, scripts[i]) != NULL,
 			  "animation commands pack as command and argument bytes");
@@ -634,7 +634,7 @@ music(void)
 	check(strstr((char *) first.data, "0x3c") &&
 			  strstr((char *) first.data, "Voices"),
 		  "MIDI note and tone-bank relocation");
-	check(strstr((char *) first.data, ".global Song_Song\n") != NULL,
+	check(strstr((char *) first.data, ".global SongSong\n") != NULL,
 		  "the song's label is its file's name");
 	midiFile(61);
 	RUN("music", true, "song.mid", "song.s");

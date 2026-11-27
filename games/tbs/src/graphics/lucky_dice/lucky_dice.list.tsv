@@ -1,12 +1,12 @@
 name	file	section	align	left	pad	edition	fill
-LuckyDice_Board	board.gbapal						
+LuckyDiceBoard	board.gbapal						
 	board.8bpp.lz			8161a6			
-LuckyDice_Sprites	rolling_die_ja.gbapal					ja	
-LuckyDice_Sprites	rolling_die.gbapal					en	
-LuckyDice_Sprites	rolling_die_de.gbapal					de	
-LuckyDice_Sprites	rolling_die_es.gbapal					es	
-LuckyDice_Sprites	rolling_die_fr.gbapal					fr	
-LuckyDice_Sprites	rolling_die_it.gbapal					it	
+LuckyDiceSprites	rolling_die_ja.gbapal					ja	
+LuckyDiceSprites	rolling_die.gbapal					en	
+LuckyDiceSprites	rolling_die_de.gbapal					de	
+LuckyDiceSprites	rolling_die_es.gbapal					es	
+LuckyDiceSprites	rolling_die_fr.gbapal					fr	
+LuckyDiceSprites	rolling_die_it.gbapal					it	
 	sprites_ja.parts.lz					ja	
 	sprites.parts.lz			0f72b1		en	
 	sprites_de.parts.lz					de	

@@ -1,15 +1,15 @@
 name	file	section	align	left	pad	edition	fill
-LuckyDice_Sprites	dice_tumbling_ja.gbapal					ja	
-LuckyDice_Sprites	dice_tumbling.gbapal					en	
-LuckyDice_Sprites	dice_tumbling_de.gbapal					de	
-LuckyDice_Sprites	dice_tumbling_es.gbapal					es	
-LuckyDice_Sprites	dice_tumbling_fr.gbapal					fr	
-LuckyDice_Sprites	dice_tumbling_it.gbapal					it	
+LuckyDiceSprites	dice_tumbling_ja.gbapal					ja	
+LuckyDiceSprites	dice_tumbling.gbapal					en	
+LuckyDiceSprites	dice_tumbling_de.gbapal					de	
+LuckyDiceSprites	dice_tumbling_es.gbapal					es	
+LuckyDiceSprites	dice_tumbling_fr.gbapal					fr	
+LuckyDiceSprites	dice_tumbling_it.gbapal					it	
 	sprites_ja.parts.lz					ja	
 	sprites.parts.lz			d14009		en	
 	sprites_de.parts.lz					de	
 	sprites_es.parts.lz			ef4f		es	
 	sprites_fr.parts.lz			54		fr	
 	sprites_it.parts.lz					it	
-LuckyDice_DiceFaces	dice_faces.gbapal						
+LuckyDiceDiceFaces	dice_faces.gbapal						
 	dice_faces.8bpp.lz						

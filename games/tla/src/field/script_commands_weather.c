@@ -19,8 +19,8 @@
    near the leader, held while FLAG_WEATHER_HELD is set. */
 void fdGroundParticlesUpdate(void)
 {
-	MAP_STATE		 *map = Ram_HeapSlots->mapGrid;
-	WEATHER_STATE	 *state = Ram_HeapSlots->weather;
+	MAP_STATE		 *map = RamHeapSlots->mapGrid;
+	WEATHER_STATE	 *state = RamHeapSlots->weather;
 	Sint32			  originX = syMapStateView(map)[0];
 	Sint32			  originZ = syMapStateView(map)[1];
 	WEATHER_PARTICLE *particle = state->particles;
@@ -69,8 +69,8 @@ void fdGroundParticlesUpdate(void)
    are. */
 void fdWeatherUpdateRain(void)
 {
-	MAP_STATE		 *map = Ram_HeapSlots->mapGrid;
-	WEATHER_STATE	 *state = Ram_HeapSlots->weather;
+	MAP_STATE		 *map = RamHeapSlots->mapGrid;
+	WEATHER_STATE	 *state = RamHeapSlots->weather;
 	Sint32			  originX = syMapStateView(map)[0];
 	WEATHER_PARTICLE *particle = state->particles;
 	Sint32			  originZ = syMapStateView(map)[1];
@@ -123,8 +123,8 @@ void fdWeatherUpdateRain(void)
    ticks later. While FLAG_WEATHER_HELD is set no burst comes. */
 void fdWeatherUpdateLightning(void)
 {
-	FIELD_BLEND_STATE *state = Ram_HeapSlots->fieldBlend;
-	PALETTE_FADE	  *tgt = Ram_HeapSlots->palFade;
+	FIELD_BLEND_STATE *state = RamHeapSlots->fieldBlend;
+	PALETTE_FADE	  *tgt = RamHeapSlots->palFade;
 	if(state->tmr < 0)
 		return;
 	if(syGameFlagGet(FLAG_WEATHER_HELD))

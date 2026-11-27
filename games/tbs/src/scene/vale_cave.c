@@ -1,7 +1,7 @@
 /* Vale Cave, the optional cave above Vale where Kite, a Jupiter Djinni, hides.
    Its overlay holds three scenes.
 
-   - The clearing outside (Vale, SceneId_ValeCaveMouth), a grassy hillside
+   - The clearing outside (Vale, SceneIdValeCaveMouth), a grassy hillside
 	 reached by the two paths that run north past the west side of Kraden's
    cottage. The lower path comes in at metatiles (5..7, 22) and the raised
    path  east of it at (8, 23..25); both lead back down
@@ -9,7 +9,7 @@
    metatile (8, 10),
    beside  stacked crates and two logs. The game still calls the clearing
    Vale, so  arriving here clears FLAG_SHOW_AREA_NAME.
-   - The first room of the cave (SceneId_ValeCaveKite), one map holding three
+   - The first room of the cave (SceneIdValeCaveKite), one map holding three
 	 parts that the player meets as separate rooms, joined by passages.
 	 Inside the mouth is a pool crossed by hopping from post to post. Reveal
 	 shows the post missing from the row, at metatile (15, 15)
@@ -20,7 +20,7 @@
 	 the western stack beside the log. Isaac then hops onto the log, which
 	 carries him across the pool to the passage on its east side
 	 (scValeCaveRideLogEast).
-   - The room of logs (SceneId_ValeCaveLogs). Its southern passage leads round
+   - The room of logs (SceneIdValeCaveLogs). Its southern passage leads round
 	 to a pool between two ledges, each with a log standing on it, and a third
 	 log lying across the floor south of the water. Isaac rolls the two
 	 standing logs into the water, hops down, and pushes the lying log north

@@ -6,7 +6,7 @@
 @ relative to pc, including r11/fp as ordinary decoder state. Its Thumb
 @ entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
 @ the halfword after bx pc is never run.
-@ Why syDecompressMoveToFrontLZLoop to Resource_RefillMoveToFrontLzBits are assembly:
+@ Why syDecompressMoveToFrontLZLoop to ResourceRefillMoveToFrontLzBits are assembly:
 @ computed add pc (add pc, r9, r8, lsl #5) enters fixed-size 32-byte decoder
 @ code slots; command execution also carries live reader register state
 @ across entry labels. push {r5, r9} saves without lr, and r11 (fp) is an
@@ -28,10 +28,10 @@ syDecompressTaggedLZArmCode:
 	.thumb_func
 syDecompressTaggedLZArm:
 	bx	pc
-AlchemyUncredited_080128aa:
+AlchemyUncredited080128aa:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080128aa:
+AlchemyUncreditedEnd080128aa:
 	push	{r5, r6, r7, r9, lr}
 	ldrb	r2, [r0], #1
 	cmp	r2, #0
@@ -249,10 +249,10 @@ syDecompressMoveToFrontLZCommandsCode:
 	.thumb_func
 syDecompressMoveToFrontLZCommands:
 	bx	pc
-AlchemyUncredited_08012b72:
+AlchemyUncredited08012b72:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08012b72:
+AlchemyUncreditedEnd08012b72:
 	ldrb	r2, [r0], #1
 	cmp	r2, #2
 	movne	r0, #4
@@ -267,7 +267,7 @@ AlchemyUncreditedEnd_08012b72:
 	lsl	r4, r2, #3
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	b	syDecompressMoveToFrontLZLoop
 
 .syntax unified
@@ -293,7 +293,7 @@ AlchemyUncreditedEnd_08012b72:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #8
 	subs	r4, r4, #11
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	b	.L_08012c74
 .L_08012bf4:
 	lsrs	r2, r2, #1
@@ -310,7 +310,7 @@ AlchemyUncreditedEnd_08012b72:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #6
 	subs	r4, r4, #9
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	b	.L_08012c74
 .L_08012c34:
 	push	{r5, r9}
@@ -328,7 +328,7 @@ AlchemyUncreditedEnd_08012b72:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #4
 	subs	r4, r4, #6
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 .L_08012c74:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
@@ -397,7 +397,7 @@ syDecompressMoveToFrontLZLoop:
 	subs	r4, r4, #6
 	lsr	r2, r2, #5
 .L_08012d54:
-	blmi	Resource_RefillMoveToFrontLzBits
+	blmi	ResourceRefillMoveToFrontLzBits
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 .L_08012d60:
@@ -466,8 +466,8 @@ syDecompressMoveToFrontLZLoop:
 	b	.L_08012d54
 .L_08012e50:
 	sub	lr, pc, #0x118
-	.global Resource_RefillMoveToFrontLzBits
-Resource_RefillMoveToFrontLzBits:
+	.global ResourceRefillMoveToFrontLzBits
+ResourceRefillMoveToFrontLzBits:
 	ldrh	r3, [r0], #2
 	add	r4, r4, #16
 	orr	r2, r2, r3, lsl r4
@@ -480,155 +480,155 @@ Resource_RefillMoveToFrontLzBits:
 	and	r8, ip, fp
 	bx	lr
 @ nops fill each 32-byte code slot after its bx lr or b; never run.
-AlchemyUncredited_08012e7c:
+AlchemyUncredited08012e7c:
 	nop
 	nop
 	nop
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012e7c:
+AlchemyUncreditedEnd08012e7c:
 	lsr	r9, fp, #8
 	orr	r9, r9, fp, lsl #28
 	and	r8, ip, fp, lsr #4
 	orr	fp, r8, r9, ror #24
 	bx	lr
-AlchemyUncredited_08012ea8:
+AlchemyUncredited08012ea8:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012ea8:
+AlchemyUncreditedEnd08012ea8:
 	lsr	r9, fp, #12
 	orr	r9, r9, fp, lsl #24
 	and	r8, ip, fp, lsr #8
 	orr	fp, r8, r9, ror #20
 	bx	lr
-AlchemyUncredited_08012ec8:
+AlchemyUncredited08012ec8:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012ec8:
+AlchemyUncreditedEnd08012ec8:
 	lsr	r9, fp, #16
 	orr	r9, r9, fp, lsl #20
 	and	r8, ip, fp, lsr #12
 	orr	fp, r8, r9, ror #16
 	bx	lr
-AlchemyUncredited_08012ee8:
+AlchemyUncredited08012ee8:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012ee8:
+AlchemyUncreditedEnd08012ee8:
 	lsr	r9, fp, #20
 	orr	r9, r9, fp, lsl #16
 	and	r8, ip, fp, lsr #16
 	orr	fp, r8, r9, ror #12
 	bx	lr
-AlchemyUncredited_08012f08:
+AlchemyUncredited08012f08:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012f08:
+AlchemyUncreditedEnd08012f08:
 	lsr	r9, fp, #24
 	orr	r9, r9, fp, lsl #12
 	and	r8, ip, fp, lsr #20
 	orr	fp, r8, r9, ror #8
 	bx	lr
-AlchemyUncredited_08012f28:
+AlchemyUncredited08012f28:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012f28:
+AlchemyUncreditedEnd08012f28:
 	lsr	r9, fp, #28
 	orr	r9, r9, fp, lsl #8
 	and	r8, ip, fp, lsr #24
 	orr	fp, r8, r9, ror #4
 	bx	lr
-AlchemyUncredited_08012f48:
+AlchemyUncredited08012f48:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012f48:
+AlchemyUncreditedEnd08012f48:
 	ror	fp, fp, #28
 	and	r8, ip, fp
 	bx	lr
-AlchemyUncredited_08012f60:
+AlchemyUncredited08012f60:
 	nop
 	nop
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012f60:
+AlchemyUncreditedEnd08012f60:
 	and	r8, ip, sl
 	bic	r9, sl, #15
 .L_08012f7c:
 	orr	sl, r9, fp, lsr #28
 	orr	fp, r8, fp, lsl #4
 	bx	lr
-AlchemyUncredited_08012f88:
+AlchemyUncredited08012f88:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012f88:
+AlchemyUncreditedEnd08012f88:
 	and	r8, ip, sl, lsr #4
 	lsr	r9, sl, #8
 	orr	r9, r9, sl, lsl #28
 	ror	r9, r9, #24
 	b	.L_08012f7c
-AlchemyUncredited_08012fa8:
+AlchemyUncredited08012fa8:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012fa8:
+AlchemyUncreditedEnd08012fa8:
 	and	r8, ip, sl, lsr #8
 	lsr	r9, sl, #12
 	orr	r9, r9, sl, lsl #24
 	ror	r9, r9, #20
 	b	.L_08012f7c
-AlchemyUncredited_08012fc8:
+AlchemyUncredited08012fc8:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012fc8:
+AlchemyUncreditedEnd08012fc8:
 	and	r8, ip, sl, lsr #12
 	lsr	r9, sl, #16
 	orr	r9, r9, sl, lsl #20
 	ror	r9, r9, #16
 	b	.L_08012f7c
-AlchemyUncredited_08012fe8:
+AlchemyUncredited08012fe8:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08012fe8:
+AlchemyUncreditedEnd08012fe8:
 	and	r8, ip, sl, lsr #16
 	lsr	r9, sl, #20
 	orr	r9, r9, sl, lsl #16
 	ror	r9, r9, #12
 	b	.L_08012f7c
-AlchemyUncredited_08013008:
+AlchemyUncredited08013008:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08013008:
+AlchemyUncreditedEnd08013008:
 	and	r8, ip, sl, lsr #20
 	lsr	r9, sl, #24
 	orr	r9, r9, sl, lsl #12
 	ror	r9, r9, #8
 	b	.L_08012f7c
-AlchemyUncredited_08013028:
+AlchemyUncredited08013028:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08013028:
+AlchemyUncreditedEnd08013028:
 	and	r8, ip, sl, lsr #24
 	lsr	r9, sl, #28
 	orr	r9, r9, sl, lsl #8
 	ror	r9, r9, #4
 	b	.L_08012f7c
-AlchemyUncredited_08013048:
+AlchemyUncredited08013048:
 	nop
 	nop
 	nop
-AlchemyUncreditedEnd_08013048:
+AlchemyUncreditedEnd08013048:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08012f7c
@@ -639,16 +639,16 @@ syDecompressMoveToFrontLZCommandsEnd:
 	.balign 4
 .syntax unified
 	.thumb
-	.global Resource_ExecuteTransferCode
-Resource_ExecuteTransferCode:
-	.global Resource_ExecuteTransfer
+	.global ResourceExecuteTransferCode
+ResourceExecuteTransferCode:
+	.global ResourceExecuteTransfer
 	.thumb_func
-Resource_ExecuteTransfer:
+ResourceExecuteTransfer:
 	bx	pc
-AlchemyUncredited_08013062:
+AlchemyUncredited08013062:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08013062:
+AlchemyUncreditedEnd08013062:
 	stmfd	sp!, {r5}
 	add	r0, r0, #4
 .L_0801306c:
@@ -679,8 +679,8 @@ AlchemyUncreditedEnd_08013062:
 	add	ip, ip, #212
 	stm	ip, {r2, r3, r4}
 	b	.L_080130ac
-	.global Resource_ExecuteTransferSize
-	.set Resource_ExecuteTransferSize, . - Resource_ExecuteTransferCode
+	.global ResourceExecuteTransferSize
+	.set ResourceExecuteTransferSize, . - ResourceExecuteTransferCode
 
 	.section .text.decode_2_loop,"ax",%progbits
 	.balign 4
@@ -689,10 +689,10 @@ AlchemyUncreditedEnd_08013062:
 	.global syResourcePatchThumbBranch
 syResourcePatchThumbBranch:
 	bx	pc
-AlchemyUncredited_080130ce:
+AlchemyUncredited080130ce:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_080130ce:
+AlchemyUncreditedEnd080130ce:
 	push	{r5, r6}
 	add	r1, r1, r1
 	add	r2, r0, r1

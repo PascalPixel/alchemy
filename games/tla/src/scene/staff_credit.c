@@ -46,7 +46,7 @@
 #define FLIGHT_TURN_STEP   (TRIG_TURN / 2048)
 
 /* The beams' palette when they light up. */
-extern Sint32 StaffCredit_BeamsLightPalette[];
+extern Sint32 StaffCreditBeamsLightPalette[];
 
 Uint16 StaffCreditBlendLevel  BSS_DATA;
 Uint16 StaffCreditBlendSteady BSS_DATA;
@@ -64,10 +64,10 @@ Uint8  GaugeTiles[8][32] BSS_DATA;
 Uint8  GaugeSourceTiles[12][32] BSS_DATA;
 /* The beacon scene's pictures: the beacons' palettes, the beams' palette, their
    maps and their tiles. */
-extern Uint8 StaffCredit_BeaconPalettes[];
-extern Uint8 StaffCredit_BeamsPalette[];
-extern Uint8 StaffCredit_BeamsMaps[];
-extern Uint8 StaffCredit_BeamsTiles[];
+extern Uint8 StaffCreditBeaconPalettes[];
+extern Uint8 StaffCreditBeamsPalette[];
+extern Uint8 StaffCreditBeamsMaps[];
+extern Uint8 StaffCreditBeamsTiles[];
 /* Scrolls the credits from the page CREDITS_FROM_PAGE gives (mnCreditsRun,
    through the overlay's own import row). */
 void scStaffCreditRunCredits(Sint32 mode);
@@ -222,7 +222,7 @@ enum { ACTOR_BEACON = ACTOR_FIRST_PLACED };
    back; BEACON_BEAMS_MEET is the four beams meeting over Mt. Aleph. */
 void scStaffCreditShowBeacon(Sint32 stage)
 {
-	WORLD_MAP_VIEW *map = (WORLD_MAP_VIEW *)Ram_HeapSlots->mapGrid;
+	WORLD_MAP_VIEW *map = (WORLD_MAP_VIEW *)RamHeapSlots->mapGrid;
 	Sint32			palette;
 	Uint8		   *buf;
 	Uint8		   *grid;
@@ -277,8 +277,8 @@ void scStaffCreditShowBeacon(Sint32 stage)
 	if(stage == BEACON_BEAMS_MEET) {
 		Uint8 *ticks = buf + BEACON_MAPS;
 
-		syDecompressTaggedLZ(StaffCredit_BeamsTiles, buf);
-		syDecompressTaggedLZ(StaffCredit_BeamsMaps, ticks);
+		syDecompressTaggedLZ(StaffCreditBeamsTiles, buf);
+		syDecompressTaggedLZ(StaffCreditBeamsMaps, ticks);
 		IO_WRITE_QUEUE_PUSH(
 			VRAM, (Uint32)buf, DMA_COPY_WORDS(BEAM_TILES * TILE_SIZE_4BPP / 4));
 		IO_WRITE_QUEUE_PUSH(
@@ -289,7 +289,7 @@ void scStaffCreditShowBeacon(Sint32 stage)
 		Uint16 *tiles = (Uint16 *)buf;
 
 		IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
-			(Uint32)(StaffCredit_BeaconPalettes + palette * PALETTE_COLORS * 2),
+			(Uint32)(StaffCreditBeaconPalettes + palette * PALETTE_COLORS * 2),
 			DMA_COPY_HALFWORDS(PALETTE_COLORS));
 		syWordsClear(
 			(void *)PICTURE_TILES, GLOW_CLEARED_TILES * TILE_SIZE_4BPP);
@@ -330,17 +330,17 @@ void scStaffCreditShowBeacon(Sint32 stage)
 				BgScrollWork[0].x = 8;
 				BgScrollWork[0].y = frm;
 				IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
-					(Uint32)StaffCredit_BeamsPalette,
+					(Uint32)StaffCreditBeamsPalette,
 					DMA_COPY_HALFWORDS(PALETTE_COLORS));
 				IO_WRITE_QUEUE_PUSH(
 					(Uint32)&BG_PLTT_COLOR(BEAM_LIGHT_PALETTE, 0),
-					(Uint32)StaffCredit_BeamsLightPalette,
+					(Uint32)StaffCreditBeamsLightPalette,
 					DMA_COPY_HALFWORDS(PALETTE_COLORS));
 			} else {
 				BgScrollWork[0].x = StaffCreditGlowPositions[stage][0];
 				BgScrollWork[0].y = StaffCreditGlowPositions[stage][1];
 				IO_WRITE_QUEUE_PUSH((Uint32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
-					(Uint32)(StaffCredit_BeaconPalettes +
+					(Uint32)(StaffCreditBeaconPalettes +
 						palette * PALETTE_COLORS * 2),
 					DMA_COPY_HALFWORDS(PALETTE_COLORS));
 			}
@@ -568,7 +568,7 @@ Sint32 scInit(void)
 	FIELD_STATE *state;
 
 	fdScriptSetFlag(FLAG_RETREAT_BLOCKED);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition = 0;
 	state->transitionFrm = 16;
 	syWait(1);
@@ -853,7 +853,7 @@ void scStaffCreditSpawnGrowingPair(ACTOR *parent)
 	ACTOR				*pair[2];
 	ACTOR				*child;
 	SPR					*spr;
-	LINKED_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	LINKED_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	Sint32				 i;
 
 	for(i = 0; i < 2; i++) {

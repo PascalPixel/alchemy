@@ -24,8 +24,8 @@
    Abilities: Condemn. */
 void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	void				*canvas = Ram_HeapSlots->battleCanvas;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	void				*canvas = RamHeapSlots->battleCanvas;
 	/* what the canvas is cleared to after each copy */
 	Sint32		 transferValue = 0;
 	BLITTER_PAIR draw;
@@ -48,10 +48,10 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(RESOURCE_RED_CRESCENT_SHEET_A, cells, 1, 0);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_TRANSPARENT);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_TRANSPARENT);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 	sySetEvent(btEffectArmBg2AffineHBlankDMA, EVENT_PASS_VBLANK);
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, transferValue);
 
@@ -218,8 +218,8 @@ void btEffectRunCondemn(BATTLE_EFFECT_PARM *args)
 
 	syCloseEvent(btEffectTransferCanvas);
 	syCloseEvent(btEffectArmBg2AffineHBlankDMA);
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-		Ram_HeapSlots->battleState->bg, BACKGROUND_DARKENED_LEVEL);
+	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RamHeapSlots->battleState->bg,
+		BACKGROUND_DARKENED_LEVEL);
 	EFFECT_RELEASE_BLITTERS();
 	btEffectEndCanvasLayer();
 }

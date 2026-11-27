@@ -1,4 +1,4 @@
 name	file	section	align	left	pad
-Shop_GlyphBytes	menu_sprites/digits.4bpp		4		
-Shop_PriceTiles	menu_sprites/price.4bpp				
-Shop_QuantityTiles	menu_sprites/quantity.4bpp				
+ShopGlyphBytes	menu_sprites/digits.4bpp		4		
+ShopPriceTiles	menu_sprites/price.4bpp				
+ShopQuantityTiles	menu_sprites/quantity.4bpp				

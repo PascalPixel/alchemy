@@ -790,7 +790,7 @@ void scChampaShowTwoMessages(Sint32 first, Sint32 firstX, Sint32 firstY,
 	Sint32 secondY, Sint32 secondPortraitX, Sint32 secondPortraitY,
 	Sint32 delay)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	Sint32		 firstSpr = fdActorGetSprById(first);
 	Sint32		 secondSpr = fdActorGetSprById(second);
 

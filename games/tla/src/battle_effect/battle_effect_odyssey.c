@@ -18,7 +18,7 @@
 #define ODYSSEY_FLAME_GRADIENT (128 * 128)
 
 /* The shards the hit scatters, in the map cell buffer. */
-#define ODYSSEY_SHARDS		((PARTICLE *)(Ram_MapMetatileBuffer + 24576))
+#define ODYSSEY_SHARDS		((PARTICLE *)(RamMapMetatileBuffer + 24576))
 #define ODYSSEY_SHARD_COUNT 128
 /* The shards' canvas levels, eight from this one. */
 #define ODYSSEY_SHARD_LEVEL 32
@@ -77,9 +77,9 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 	Sint32					 k;
 	Uint8					*pixels;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, graphics, 0, 0);
@@ -96,9 +96,9 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 	else
 		EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
 			EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	caster = btObjectGetStub(args->user)->obj;
-	transition = Ram_HeapSlots->battleBg;
+	transition = RamHeapSlots->battleBg;
 	savedScrollX = BgScrollWork[1].x;
 
 	for(frm = 0; frm != ODYSSEY_TICKS; frm++) {
@@ -113,7 +113,7 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 			/* DEAD: FlameGradientTexture, which Megiddo draws, is decoded and
 			   never drawn; the ROM keeps the load. */
 			btResourceLoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE,
-				Ram_MapMetatileBuffer + ODYSSEY_FLAME_GRADIENT, 0, 0);
+				RamMapMetatileBuffer + ODYSSEY_FLAME_GRADIENT, 0, 0);
 			btGraphicsLoadGreyRamp();
 			REG_BLDALPHA = EFFECT_BLEND_ADD;
 			EFFECT_FREE_PARTICLES(
@@ -231,7 +231,7 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 			else
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-			draw[1] = Ram_HeapSlots->ramCodePaired;
+			draw[1] = RamHeapSlots->ramCodePaired;
 			draw[1](canvas, state->sheet + ODYSSEY_COLOSSAL_SWORD, x, 64,
 				ODYSSEY_COLOSSAL_SWORD_WIDTH, ODYSSEY_COLOSSAL_SWORD_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -324,7 +324,7 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 					else
 						EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 							EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-					draw[1] = Ram_HeapSlots->ramCodePaired;
+					draw[1] = RamHeapSlots->ramCodePaired;
 				}
 				draw[i](canvas, state->sheet, x - ODYSSEY_SWORD_WIDTH / 2, y,
 					ODYSSEY_SWORD_WIDTH, ODYSSEY_SWORD_HEIGHT);
@@ -469,8 +469,8 @@ void btEffectRunOdyssey(BATTLE_EFFECT_PARM *args)
 	btObjectPutStub();
 	transition->busy = 0;
 	BgScrollWork[1].x = savedScrollX;
-	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
-		Ram_HeapSlots->battleState->bg, BACKGROUND_DARKEN_TICKS);
+	btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED, RamHeapSlots->battleState->bg,
+		BACKGROUND_DARKEN_TICKS);
 	EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
@@ -509,12 +509,12 @@ void btEffectRunCloudSwirl(BATTLE_EFFECT_PARM *args)
 	FIXED					 sine;
 	FIXED					 cosine;
 	Sint32					 i;
-	Uint8					*cells = Ram_MapMetatileBuffer;
+	Uint8					*cells = RamMapMetatileBuffer;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	savedScrollX = BgScrollWork[1].x;
-	transition = Ram_HeapSlots->battleBg;
+	transition = RamHeapSlots->battleBg;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(3));
 	REG_DISPCNT = EFFECT_DISPCNT;
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -528,7 +528,7 @@ void btEffectRunCloudSwirl(BATTLE_EFFECT_PARM *args)
 	/* The cloud sprite sheet, moved to the battle background's palettes (which
 	   take EmberStreakSheet's colours), drawn into the canvas. */
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	sheetDraw[0] = Ram_HeapSlots->ramCode;
+	sheetDraw[0] = RamHeapSlots->ramCode;
 	palette = syResourceGetTableEntry(RESOURCE_CLOUD_SWIRL_SHEET);
 	syWordsCopy((void *)&BG_PLTT_COLOR(6, 0), palette, SHEET_PALETTE_BYTES);
 	palette += SHEET_PALETTE_BYTES;
@@ -559,7 +559,7 @@ void btEffectRunCloudSwirl(BATTLE_EFFECT_PARM *args)
 		btEffectBuildBlitter(
 			HEAP_SLOT_RAM_CODE, 8, 7, clipAndCopy, clipAndCopy);
 	}
-	draw = Ram_HeapSlots->ramCode;
+	draw = RamHeapSlots->ramCode;
 	sySetEvent(btEffectTransferFullScreenImage, EVENT_PASS_VBLANK);
 	transition->busy = enabled;
 	draw(cells, canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -635,8 +635,8 @@ void btIrisWipeScreen(Uint8 side, Uint8 speed, void (*midpoint)(void))
 	Sint32				 i;
 
 	scrollX = (side & 1) * WIPE_DISTANCE - 64;
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	/* CANVAS_COPY does not read the share. */
@@ -802,9 +802,9 @@ void btEffectBuildSteepShadeRampWave(
    backdrop. */
 void btIrisRestoreBattle(void)
 {
-	BATTLE_EFFECT_STATE		*state = Ram_HeapSlots->battleEff;
-	BATTLE_BACKGROUND_STATE *transition = Ram_HeapSlots->battleBg;
-	BATTLE_STATE			*battle = Ram_HeapSlots->battleState;
+	BATTLE_EFFECT_STATE		*state = RamHeapSlots->battleEff;
+	BATTLE_BACKGROUND_STATE *transition = RamHeapSlots->battleBg;
+	BATTLE_STATE			*battle = RamHeapSlots->battleState;
 	Sint32					 i;
 
 	for(i = 0; i != state->args->tgtCnt; i++) {

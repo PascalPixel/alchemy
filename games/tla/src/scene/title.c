@@ -284,8 +284,8 @@ static void scTitleLoadBackground(void)
 	syDMAXCopy(encodedGraphics, (void *)BG_PLTT,
 		DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
 	encodedGraphics += LOGO_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ(encodedGraphics, Ram_MapMetatileBuffer);
-	syDMAXCopy((void *)Ram_MapMetatileBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
+	syFieldDecompressTaggedLZ(encodedGraphics, RamMapMetatileBuffer);
+	syDMAXCopy((void *)RamMapMetatileBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
 		REG_DMA3);
 	tilemap = LOGO_MAP;
 	tileIdx = LOGO_FIRST_TILE;
@@ -302,7 +302,7 @@ static void scTitleLoadBackground(void)
 		bgScroll++;
 	}
 	syDMAXCopy(BgScrollWork, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-	((MAP_STATE *)Ram_HeapSlots->mapGrid)->dispcnt =
+	((MAP_STATE *)RamHeapSlots->mapGrid)->dispcnt =
 		DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 

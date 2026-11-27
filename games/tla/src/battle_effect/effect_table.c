@@ -1061,7 +1061,7 @@ const Sint8 VineColumnOffsets[] = {
 const Uint8 ThornKinds[] = {0, 3, 2, 1, 2, 3, 2, 1};
 
 /* Each thorn's root, its x in the canvas, in pixels. */
-const Sint8 Thorn_X[] = {24, 80, 24, 48, 88, 40, 8, 96};
+const Sint8 ThornX[] = {24, 80, 24, 48, 88, 40, 8, 96};
 
 /* The thorns, by strength. */
 const Uint8 ThornCounts[] = {3, 5, 8};

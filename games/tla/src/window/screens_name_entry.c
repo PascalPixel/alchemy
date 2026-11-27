@@ -64,7 +64,7 @@ UNUSED Sint32 mnNameEntryAcceptsAnyLetter(void)
    of it. */
 void mnWindowCopyTilemapRegion(WINDOW *win, const void *resource)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Uint16	  *buf = syHeapAllocEWRAM(768);
 	Sint32	   ofs;
 	Uint16	  *map;
@@ -132,7 +132,7 @@ Sint32 mnTextMeasureString(const Uint8 *str)
 	Uint32	   width;
 	Uint32	   height;
 
-	state = (WIN_STATE *)Ram_HeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->winState;
 	cnt = 0;
 	if(*str != 0) {
 		dst = state->textBuf;
@@ -222,7 +222,7 @@ void mnNameEntryDrawName(Sint32 win, Uint8 *name)
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 /* The Japanese keyboard's second page of letters, which Select turns to. */
-extern const Uint8 NameEntry_AlternateKeyboardTilemap[];
+extern const Uint8 NameEntryAlternateKeyboardTilemap[];
 
 #endif
 #if NAME_KEY_LABELS
@@ -253,7 +253,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	Uint8		 text[NAME_MAX_BYTES + 2];
 	Uint8		*editedName = text + 1;
 	Uint8		*originalName = syUnitGet(member);
-	WIN_STATE	*render = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE	*render = (WIN_STATE *)RamHeapSlots->winState;
 	Bool		 textDirty = TRUE;
 	Bool		 cursorDirty = TRUE;
 	WINDOW		*keyboardWin;
@@ -273,7 +273,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnWindowCreate(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
 	nameWin = mnWindowCreate(8, 3, 8, 3, WINDOW_FLAG_INSTANT);
 	mnPortraitOpenWindow(member, 0, 3, 1);
-	mnWindowCopyTilemapRegion(keyboardWin, NameEntry_KeyboardTilemap);
+	mnWindowCopyTilemapRegion(keyboardWin, NameEntryKeyboardTilemap);
 	mnWindowDrawDividerLine(keyboardWin, NAME_COMMAND_COLUMN, 0,
 		NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
 	render->dirty = textDirty;
@@ -437,10 +437,10 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 			page ^= 1;
 			if(page)
 				mnWindowCopyTilemapRegion(
-					keyboardWin, NameEntry_AlternateKeyboardTilemap);
+					keyboardWin, NameEntryAlternateKeyboardTilemap);
 			else
 				mnWindowCopyTilemapRegion(
-					keyboardWin, NameEntry_KeyboardTilemap);
+					keyboardWin, NameEntryKeyboardTilemap);
 			mnWindowDrawDividerLine(keyboardWin, NAME_COMMAND_COLUMN, 0,
 				NAME_COMMAND_COLUMN, NAME_DIVIDER_BOTTOM);
 			render->dirty = 1;
@@ -548,7 +548,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 	Uint8		 text[NAME_MAX_BYTES + 2];
 	Uint8		*editedName = text + 1;
 	Uint8		*originalName = syUnitGet(member);
-	WIN_STATE	*render = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE	*render = (WIN_STATE *)RamHeapSlots->winState;
 	Bool		 textDirty = TRUE;
 	Bool		 cursorDirty = TRUE;
 	WINDOW		*keyboardWin;
@@ -567,7 +567,7 @@ Sint32 mnNameEntryEditMemberName(Sint32 member)
 		mnWindowCreate(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
 	nameWin = mnWindowCreate(8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);
 	mnPortraitOpenWindow(member, 0, 3, 1);
-	mnWindowCopyTilemapRegion(keyboardWin, NameEntry_KeyboardTilemap);
+	mnWindowCopyTilemapRegion(keyboardWin, NameEntryKeyboardTilemap);
 #if NAME_KEY_LABELS
 	mnTextDrawStringInWindow(NameEntryDeleteKeyLabel, keyboardWin, 144, 32);
 	mnTextDrawStringInWindow(NameEntryEndKeyLabel, keyboardWin, 144, 40);

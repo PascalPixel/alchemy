@@ -665,7 +665,7 @@ extern Sint32 AnemosInnerSanctumPlateOffsets[][2];
    of the element's Djinn. */
 void scAnemosInnerSanctumLightSymbol(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	Uint16		 alpha;
 	Sint32		 x, z;
@@ -1040,7 +1040,7 @@ extern Sint32 AnemosInnerSanctumSwitchGlowScript[];
    party. */
 void scAnemosInnerSanctumPressRoundSwitch(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGet(MainRoutineStateWork.leaderActorId);
 	ACTOR		*actor;
 	Sint32		 all;
@@ -1485,7 +1485,7 @@ static __inline__ void scAnemosInnerSanctumAnimateDoor(
    number. */
 UNUSED void scAnemosInnerSanctumEnterTheRoom(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 i;
 
 	fdScriptStart();
@@ -1751,7 +1751,7 @@ Sint32 scInit(void)
 				FLAG_AREA_TEMP_80, 18, 68);
 		}
 	} else if(scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
-		MAP_STATE *map = Ram_HeapSlots->mapGrid;
+		MAP_STATE *map = RamHeapSlots->mapGrid;
 
 		switch(MainRoutineStateWork.entrance) {
 		case ANEMOS_INNER_SANCTUM_GUARDIAN_FROM_ANEMOS_INNER_SANCTUM_SWITCHES_SOUTHWEST:
@@ -1933,7 +1933,7 @@ void scFieldEffectSpawnLocal(Sint32 x, Sint32 y, Sint32 z, Sint32 velX,
 #undef METATILE_PUSH_SLOT_ENTRY
 
 /* The leader lands from the cracked floor above in a ring of dust, as Mars
-   Lighthouse's lands from its cracks (MarsLighthouseEntrance_LandFromCrack). */
+   Lighthouse's lands from its cracks (MarsLighthouseEntranceLandFromCrack). */
 void scCrackedTileDropIn(void)
 {
 	ACTOR		  *leader = fdActorGet(MainRoutineStateWork.leaderActorId);

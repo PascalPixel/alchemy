@@ -18,7 +18,7 @@
 #include "scene/title.h"
 
 /* The Title's "Press Start" prompt, byte-LZ compressed, in each language. */
-extern const Uint8 Title_PromptTiles[];
+extern const Uint8 TitlePromptTiles[];
 
 /* The screen blocks of the intro's maps: the near clouds on BG2 and the far
    ones on BG1, which the lighthouse later takes; the cards' text on BG3 and the
@@ -159,7 +159,7 @@ void mnTitleIntroLoadPictureTiles(void)
 	syDMAXCopy(
 		src, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
 	BG_PLTT[0] = 0;
-	cells = Ram_MapMetatileBuffer;
+	cells = RamMapMetatileBuffer;
 	syDecompressByteLZ(src + BG_PLTT_SIZE, cells);
 	syDMAXCopy(cells, (void *)BG_CHAR_BLOCK(0),
 		DMA_COPY_WORDS(INTRO_TILE_BYTES / 4), REG_DMA3);
@@ -510,7 +510,7 @@ Bool mnTitleIntroShowBookTwoCard(void)
    countdown reaches 1. Returns 1 when a key cuts the scroll short. */
 Bool mnTitleIntroScrollLighthouse(TITLE_SCROLL *s)
 {
-	TITLE_LOGO_STATE *tmrs = Ram_HeapSlots->titleIntro;
+	TITLE_LOGO_STATE *tmrs = RamHeapSlots->titleIntro;
 	Sint32			  i;
 	Sint32			  j;
 
@@ -686,7 +686,7 @@ void mnTitleIntroUpdateLogo(void)
 	Sint32			  pieceX;
 	volatile Uint16	 *matrix;
 
-	logo = Ram_HeapSlots->titleIntro;
+	logo = RamHeapSlots->titleIntro;
 	DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
 	if(logo->phase == TITLE_LOGO_GULL) {
 		if(logo->tmr == 0) {
@@ -800,7 +800,7 @@ Sint32 mnTitleIntroShowLighthouse(void)
 	REG_DISPCNT = 0;
 	DMA_FILL32_CELL(fill, 0, (void *)OAM, OAM_SIZE);
 	src = syResourceGetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
-	buf = Ram_MapMetatileBuffer;
+	buf = RamMapMetatileBuffer;
 	src += GULL_PALETTE_BYTES;
 	syDecompressByteLZ(src, buf);
 	syDMAXCopy(buf, (void *)OBJ_VRAM0,
@@ -834,7 +834,7 @@ Sint32 mnTitleIntroShowLighthouse(void)
 		BgScrollWork[i].y = 0;
 		BgScrollWork[i].x = 0;
 	}
-	syDMAXCopy((void *)BG_PLTT, Ram_HeapSlots->palFade,
+	syDMAXCopy((void *)BG_PLTT, RamHeapSlots->palFade,
 		DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
 	sySynch(1);
 	mnTitlePaletteFadeSetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -845,7 +845,7 @@ Sint32 mnTitleIntroShowLighthouse(void)
 	scroll.pos = 0;
 	scroll.limit = 176;
 	scroll.step = 4;
-	scroll.src = Ram_MapMetatileBuffer + SCREEN_TILE_BYTES;
+	scroll.src = RamMapMetatileBuffer + SCREEN_TILE_BYTES;
 	scroll.dst = (Uint8 *)BG_CHAR_BLOCK(0) + SCREEN_TILE_BYTES;
 	scroll.cursor = map;
 	scroll.tile = tile;
@@ -886,7 +886,7 @@ Sint32 mnTitleIntroShowLighthouse(void)
 #if FIX_INTRO_LIGHTHOUSE_ROWS_COPIED_ONE_LOW
 	/* From row 16, still in place, so that each row lands in its own place and
 	   the last copy is row 0. */
-	scroll.src = Ram_MapMetatileBuffer + 16 * LIGHTHOUSE_ROW_BYTES;
+	scroll.src = RamMapMetatileBuffer + 16 * LIGHTHOUSE_ROW_BYTES;
 	scroll.dst = (Uint8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
 	scroll.cursor =
 		(Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 16 * BG_SCREEN_WIDTH;
@@ -895,7 +895,7 @@ Sint32 mnTitleIntroShowLighthouse(void)
 	/* BUG: each row lands one row low, from VRAM row 16, the map row the cursor
 	   rewrites is row 7, one entry in, and the last copy reads the row above
 	   the picture; unseen, as the rows are sky under the fade to white. */
-	scroll.src = Ram_MapMetatileBuffer + 15 * LIGHTHOUSE_ROW_BYTES;
+	scroll.src = RamMapMetatileBuffer + 15 * LIGHTHOUSE_ROW_BYTES;
 	scroll.dst = (Uint8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
 	scroll.cursor =
 		(Uint16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 7 * BG_SCREEN_WIDTH + 1;
@@ -1028,8 +1028,8 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 	data = syResourceGetTableEntry(RESOURCE_TITLE_SCREEN_PICTURE);
 	syDMAXCopy(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
 		REG_DMA3);
-	syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, Ram_MapMetatileBuffer);
-	syDMAXCopy(Ram_MapMetatileBuffer, (void *)LOGO_TILES,
+	syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, RamMapMetatileBuffer);
+	syDMAXCopy(RamMapMetatileBuffer, (void *)LOGO_TILES,
 		DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
 	tile = LOGO_FIRST_TILE;
 	tilemap = LOGO_MAP;
@@ -1048,7 +1048,7 @@ Sint32 mnTitleShowTitleScreen(Sint32 prompt)
 		Uint8	  *buf = syHeapSlotAllocEWRAM(HEAP_SLOT_TILE_SCRATCH, 1024);
 		INTRO_SPR *spr = state->sprs;
 
-		syDecompressByteLZ(Title_PromptTiles, buf);
+		syDecompressByteLZ(TitlePromptTiles, buf);
 		for(i = 0; i < PROMPT_TILES; i++) {
 			Sint32 vramBlock = syVRAMCacheLoad(
 				syVRAMCacheFindFreeEntry(), 128, buf + (i << 8) / 2);
@@ -1160,8 +1160,8 @@ Sint32 mnTitleShowPublisherLogo(Sint32 mode)
 	data = syResourceGetTableEntry(resource);
 	syDMAXCopy(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
 		REG_DMA3);
-	syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, Ram_MapMetatileBuffer);
-	syDMAXCopy(Ram_MapMetatileBuffer, (void *)BG_CHAR_BLOCK(1),
+	syDecompressTaggedLZ(data + LOGO_PALETTE_BYTES, RamMapMetatileBuffer);
+	syDMAXCopy(RamMapMetatileBuffer, (void *)BG_CHAR_BLOCK(1),
 		DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
 	/* Pad the 30-tile picture to the hardware map's 32-tile row width. */
 	tile = PUBLISHER_LOGO_TILE;
@@ -1249,10 +1249,10 @@ Sint32 mnTitleShowCamelotLogo(void)
 	REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 	BgScrollWork[2].y = result;
 	buf = syResourceGetTableEntry(resource);
-	syDecompressTaggedLZ(buf, Ram_MapMetatileBuffer);
+	syDecompressTaggedLZ(buf, RamMapMetatileBuffer);
 	/* The unpacked resource: 224 colours, the map, the still tiles, then the
 	   flag's four pictures. */
-	buf = Ram_MapMetatileBuffer;
+	buf = RamMapMetatileBuffer;
 	syDMAXCopy(
 		buf, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4), REG_DMA3);
 	buf += LOGO_PALETTE_BYTES;
@@ -1323,7 +1323,7 @@ void mnTitlePaletteFadeCalcSteps(
    palettes for VBlank. */
 void mnTitlePaletteFadeUpdate(void)
 {
-	TITLE_PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	TITLE_PALETTE_FADE *state = RamHeapSlots->palFade;
 	Uint16			   *delta = state->delta;
 	Uint16			   *cur;
 	Uint16			   *packed;
@@ -1664,7 +1664,7 @@ UNUSED void mnTitlePaletteFadeRelease(void)
    with the requested tint. */
 void mnTitlePaletteFadeSetTarget(Sint32 tint, Sint32 selectedPalettes)
 {
-	TITLE_PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+	TITLE_PALETTE_FADE *fade = RamHeapSlots->palFade;
 
 	if(fade != NULL)
 		mnTitlePaletteFadeBuildCols(
@@ -1674,7 +1674,7 @@ void mnTitlePaletteFadeSetTarget(Sint32 tint, Sint32 selectedPalettes)
 /* Sets the colours shown now by tinting the saved palettes. */
 void mnTitlePaletteFadeSetCurrent(Sint32 tint, Sint32 selectedPalettes)
 {
-	TITLE_PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+	TITLE_PALETTE_FADE *fade = RamHeapSlots->palFade;
 
 	if(fade != NULL)
 		mnTitlePaletteFadeBuildCols(
@@ -1684,7 +1684,7 @@ void mnTitlePaletteFadeSetCurrent(Sint32 tint, Sint32 selectedPalettes)
 /* Unused: replaces the first saved colour, the backdrop. */
 UNUSED void mnTitlePaletteFadeSetBackdrop(Sint32 col)
 {
-	TITLE_PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+	TITLE_PALETTE_FADE *fade = RamHeapSlots->palFade;
 
 	if(fade != NULL)
 		fade->pal[0] = col;
@@ -1696,7 +1696,7 @@ UNUSED void mnTitlePaletteFadeSetBackdrop(Sint32 col)
    colour arrives together. */
 void mnTitlePaletteFadeStart(Sint32 ticks)
 {
-	TITLE_PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+	TITLE_PALETTE_FADE *fade = RamHeapSlots->palFade;
 
 	if(fade != NULL) {
 		fade->duration = ticks;

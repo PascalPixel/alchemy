@@ -48,7 +48,7 @@ STATIC_ASSERT(sizeof(POLAR_OFFSET_POS) == 12);
 		mnMessageArgumentPushStub((act), MESSAGE_ARGUMENT_ABILITY), \
 		mnFieldMessageShowStub((m), FIELD_MESSAGE_ZOOM))
 
-/* A scene's encounter zones (Scene_EncounterRules, encounter_rules.s), ended by
+/* A scene's encounter zones (SceneEncounterRules, encounter_rules.s), ended by
    scene -1. */
 typedef struct SCENE_ENCOUNTER_RULE {
 	Sint16 sceneId;	 /* -1 ends the table */
@@ -62,9 +62,9 @@ typedef struct SCENE_ENCOUNTER_RULE {
 
 /* The scenes' encounter rules; the first that matches the scene and entrance,
    with its flag unset, gives the encounter zones. */
-extern const SCENE_ENCOUNTER_RULE Scene_EncounterRules[];
+extern const SCENE_ENCOUNTER_RULE SceneEncounterRules[];
 
-/* A rule choosing a scene's field music (Scene_MusicRules, music_rules.s),
+/* A rule choosing a scene's field music (SceneMusicRules, music_rules.s),
    ended by id -1. */
 typedef struct MAP_MUSIC_RULE {
 	Sint16 id;			  /* a scene, or an area */
@@ -76,9 +76,9 @@ typedef struct MAP_MUSIC_RULE {
 
 /* The field music rules; the first that matches the scene or its area, the
    entrance and the flag gives the music. */
-extern const MAP_MUSIC_RULE Scene_MusicRules[];
+extern const MAP_MUSIC_RULE SceneMusicRules[];
 
-/* A rule naming the area a scene is in (Area_NameRules, area_name_rules.s),
+/* A rule naming the area a scene is in (AreaNameRules, area_name_rules.s),
    ended by id -1. */
 typedef struct AREA_NAME_RULE {
 	Sint16 id;			  /* a scene, or an area */
@@ -92,7 +92,7 @@ typedef struct AREA_NAME_RULE {
 
 /* The area name rules; the first that matches the scene or its area and the
    entrance gives the name. */
-extern const AREA_NAME_RULE Area_NameRules[];
+extern const AREA_NAME_RULE AreaNameRules[];
 
 /* A run of screen lines in a transition shape: one window edge pair for every
    line, or, when that is 0, edges moving from left x0 and right y0 to left x1

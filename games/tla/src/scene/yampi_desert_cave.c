@@ -44,7 +44,7 @@
 #define FLAG_VALUKAR_BEATEN 0x9cd
 
 /* The Water of Life chest's room's actors
-   (SceneId_YampiDesertCaveWaterOfLifeChest), the rows of
+   (SceneIdYampiDesertCaveWaterOfLifeChest), the rows of
    YampiDesertCavePlacements. */
 typedef enum YAMPI_DESERT_CAVE_CHEST_ROOM_ACTOR_ID {
 	/* The three fallen columns pushed as logs (PushKinds). */
@@ -108,7 +108,7 @@ typedef enum YAMPI_DESERT_CAVE_METATILE {
 	METATILE_MYTHRIL_SILVER = 100
 } YAMPI_DESERT_CAVE_METATILE;
 
-/* Valukar's room's actors (SceneId_YampiDesertCaveGuardian). */
+/* Valukar's room's actors (SceneIdYampiDesertCaveGuardian). */
 typedef enum YAMPI_DESERT_CAVE_GUARDIAN_ACTOR_ID {
 	/* The stone pillar Move pushes (SPRITE_STONE_PILLAR). */
 	ACTOR_GUARDIAN_ROOM_PILLAR = ACTOR_FIRST_PLACED,
@@ -116,7 +116,7 @@ typedef enum YAMPI_DESERT_CAVE_GUARDIAN_ACTOR_ID {
 	ACTOR_VALUKAR
 } YAMPI_DESERT_CAVE_GUARDIAN_ACTOR_ID;
 
-/* Crystal's room's actors (SceneId_YampiDesertCaveCrystal). */
+/* Crystal's room's actors (SceneIdYampiDesertCaveCrystal). */
 typedef enum YAMPI_DESERT_CAVE_CRYSTAL_ACTOR_ID {
 	ACTOR_CRYSTAL_ROOM_FIRST_LOG = ACTOR_FIRST_PLACED,
 	ACTOR_CRYSTAL_ROOM_SECOND_LOG,
@@ -184,7 +184,7 @@ extern Sint8 PushRectangles[][4];
    that is no log. */
 Bool scYampiDesertCaveSetLogMetatiles(Sint32 id)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGetById(id);
 	Sint16	   spr = ((SPR *)actor->spr)->entries[0]->anmId;
 	Sint16	   i;
@@ -314,7 +314,7 @@ Bool scYampiDesertCaveFindLogRoll(LOG_ROLL *roll)
 ACTOR *scYampiDesertCaveFindPushedLog(
 	Sint32 *direction, Sint32 *slot, Sint32 *kind)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR	   **entry;
 	ACTOR		*actor;
@@ -380,7 +380,7 @@ void   fdTeleportPlaySparks(void);
 
 void scYampiDesertCavePushLog(LOG_ROLL roll)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   w, h;
 	ACTOR	  *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
 	ACTOR	  *actor = fdActorGetById(roll.slot);
@@ -617,13 +617,13 @@ DEFINE_TELEPORT_FROM_CIRCLE(
 
 /* Burst on the chest room's pillar breaks it for good. The pillar is taken away
    and `FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST` is set. */
-DEFINE_BURST_PILLAR(YampiDesertCave_BurstChestRoomPillar,
+DEFINE_BURST_PILLAR(YampiDesertCaveBurstChestRoomPillar,
 	FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST,
 	ACTOR_CHEST_ROOM_BURST_PILLAR)
 
 /* Burst on the pillar in Crystal's room breaks it for good. The pillar is taken
    away and `FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST` is set. */
-DEFINE_BURST_PILLAR(YampiDesertCave_BurstCrystalRoomPillar,
+DEFINE_BURST_PILLAR(YampiDesertCaveBurstCrystalRoomPillar,
 	FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST,
 	ACTOR_CRYSTAL_ROOM_BURST_PILLAR)
 
@@ -775,9 +775,9 @@ void scYampiDesertCaveScoopDjinni(Sint32 mode)
 	Sint32		 px = column * (MAPGRID_METATILE_PIXELS / 2);
 	Sint16		 row = YampiDesertCaveRipplePath[idx + 1];
 	Sint32		 pz = row * (MAPGRID_METATILE_PIXELS / 2);
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	/* The Scoop's hand, where it digs. */
-	ACTOR *scoopHand = ((SCOOP_STATE *)Ram_HeapSlots->battleEff)->actor;
+	ACTOR *scoopHand = ((SCOOP_STATE *)RamHeapSlots->battleEff)->actor;
 	Sint32 x = 0, z = 0;
 
 	if(scoopHand != NULL) {
@@ -842,7 +842,7 @@ void scYampiDesertCaveMeetGuardianOfFire(void)
 	fdScriptWait(20);
 	MainRoutineStateWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
 	SET_BATTLE_TYPE(BATTLE_TYPE_NO_ESCAPE);
-	MainRoutineStateWork.battleBg = (Sint32)&ResourceId_LavaCaveBackdrop;
+	MainRoutineStateWork.battleBg = (Sint32)&ResourceIdLavaCaveBackdrop;
 	fdRequestBattleFromEncounterTable(
 		ENCOUNTER_ZONE_HIDDEN_BOSSES, HIDDEN_BOSS_VALUKAR);
 }
@@ -1159,7 +1159,7 @@ CUE YampiDesertCaveCues[] = {
 		SCRIPT_REF(scYampiDesertCaveTryPushLog)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_BURST_PILLAR, FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST,
-		SCRIPT_REF(YampiDesertCave_BurstChestRoomPillar)},
+		SCRIPT_REF(YampiDesertCaveBurstChestRoomPillar)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
 		NORTH_CIRCLE_METATILES, CONDITION_ALWAYS,
 		SCRIPT_REF(scYampiDesertCaveTeleportFromNorthCircle)},
@@ -1259,7 +1259,7 @@ CUE YampiDesertCaveCrystalCues[] = {
 		SCRIPT_REF(scYampiDesertCaveTryPushLog)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
 		METATILE_RIPPLE_SAND, FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST,
-		SCRIPT_REF(YampiDesertCave_BurstCrystalRoomPillar)},
+		SCRIPT_REF(YampiDesertCaveBurstCrystalRoomPillar)},
 	{PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
 		ACTOR_EAST_PILLAR, FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED,
 		SCRIPT_REF(scYampiDesertCaveStartMovingPillar)},

@@ -471,7 +471,7 @@ Sint32 fdModeRun(void)
 						   while the menu runs, and a tick passes so that the
 						   field's sprites give their VRAM back before it
 						   opens. */
-						ACTOR_SYSTEM_STATE *system = Ram_HeapSlots->actorSystem;
+						ACTOR_SYSTEM_STATE *system = RamHeapSlots->actorSystem;
 						Uint8			   *owner = VramCacheBlockOwners;
 						Sint32				freeBlocks = 0;
 						Sint32				n;
@@ -547,7 +547,7 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void)
 	result = 0;
 	leader = fdGetPartyActor();
 	state = FieldStateWork;
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	if(leader != 0) {
 		probePosition.vector.x = leader->x.fixed;
 		probePosition.vector.y = leader->y.fixed;
@@ -607,7 +607,7 @@ Sint32 fdActorGetCueMetatileAheadOfCurrent(void)
    scene's first row. */
 Bool fdPlaceAtEntranceRow(Sint32 findEntrance)
 {
-	MAP_STATE			 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE			 *map = RamHeapSlots->mapGrid;
 	Sint32				  entrance = MainRoutineStateWork.entrance;
 	const SCENE_ENTRANCE *entranceEntry = SCENE_ENTRIES->entrances();
 	Bool				  foundEntrance = FALSE;
@@ -663,7 +663,7 @@ Bool fdPlaceAtEntranceRow(Sint32 findEntrance)
    camera bounds from the first box that holds it. */
 Bool fdPlaceAtEntrance(void)
 {
-	MAP_STATE		   *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE		   *map = RamHeapSlots->mapGrid;
 	MAIN_ROUTINE_STATE *state = &MainRoutineStateWork;
 	FIXED				xFixed;
 	Uint8			   *cursor = MapScene;
@@ -776,7 +776,7 @@ Sint16 fdStreamReadS16(Uint8 **cursor)
    (fdPlaceAtEntrance), else by the scene's first entrance row. */
 void fdApplyEntrance(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 done;
 
 	done = fdPlaceAtEntranceRow(TRUE);

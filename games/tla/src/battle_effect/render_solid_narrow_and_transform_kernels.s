@@ -20,10 +20,10 @@ btRenderSolidNarrowKernel:
 btRenderSolidNarrowKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_0813b7a2:
+AlchemyUncredited0813b7a2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0813b7a2:
+AlchemyUncreditedEnd0813b7a2:
 	push	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
 	ldr	fp, [pc, #484]
 	bic	fp, fp, #1
@@ -172,10 +172,10 @@ btRenderTransformKernel:
 btRenderTransformKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_0813b9a2:
+AlchemyUncredited0813b9a2:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0813b9a2:
+AlchemyUncreditedEnd0813b9a2:
 	push	{r5, r6, r7, r8, r9, sl, fp}
 	ldr	r4, [pc, #156]
 	ldm	r4, {r5, r6}

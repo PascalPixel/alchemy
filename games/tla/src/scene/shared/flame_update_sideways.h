@@ -4,7 +4,7 @@ void scFlameUpdateSideways(ACTOR *actor)
 {
 	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 	ACTOR			*other = fdActorGet(MainRoutineStateWork.leaderActorId);
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	FIXED			 dx = actor->bounce;
 	FIXED			 dz;
 	Sint32			 i;

@@ -456,7 +456,7 @@ void mnWindowSprUpdateAll(void)
 				/* VRAM_CACHE_ENTRY_COUNT means no entry was free for the
 				   arrow. */
 				if(state->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
-					const Uint8 *tiles = &WindowSprite_PageArrowTiles[phase *
+					const Uint8 *tiles = &WindowSpritePageArrowTiles[phase *
 						PAGE_ARROW_FRAME_BYTES];
 
 					spr->oam.idx = syVRAMCacheLoad(

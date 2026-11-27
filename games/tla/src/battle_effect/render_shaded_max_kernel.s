@@ -17,17 +17,17 @@ btRenderShadedMaxKernel:
 btRenderShadedMaxKernelEntry:
 	bx	pc
 @ The halfword bx pc steps over to reach the ARM code; never run.
-AlchemyUncredited_0813a446:
+AlchemyUncredited0813a446:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_0813a446:
+AlchemyUncreditedEnd0813a446:
 	b	.L_0813a83c
 @ Two words of run-time state: stm r0, {r7, r8} writes them and
 @ ldm lr, {r6, ip} reads them back.
-AlchemyUncredited_0813a44c:
+AlchemyUncredited0813a44c:
 	.4byte	0
 	.4byte	0
-AlchemyUncreditedEnd_0813a44c:
+AlchemyUncreditedEnd0813a44c:
 .L_0813a454:
 	add	sp, sp, #64
 	pop	{r0, r1, fp}
@@ -250,10 +250,10 @@ AlchemyUncreditedEnd_0813a44c:
 .L_0813a794:
 @ The code slot DMA 3 fills with a copy of the 11-instruction loop body
 @ before it.
-AlchemyUncredited_0813a794:
+AlchemyUncredited0813a794:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0
-AlchemyUncreditedEnd_0813a794:
+AlchemyUncreditedEnd0813a794:
 	subs	r0, r0, #2
 	bgt	.L_0813a768
 .L_0813a7c8:
@@ -342,12 +342,12 @@ AlchemyUncreditedEnd_0813a794:
 	.4byte	SystemReciprocalTable + 1
 @ Four words of run-time state: stm lr, {r3, r4} and the two str to pc
 @ write them, and ldm r7, {r7, r8, fp} reads three back.
-AlchemyUncredited_0813a90c:
+AlchemyUncredited0813a90c:
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
-AlchemyUncreditedEnd_0813a90c:
+AlchemyUncreditedEnd0813a90c:
 .L_0813a91c:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr

@@ -45,7 +45,7 @@ STATIC_ASSERT(offsetof(ANIMATION_METADATA, pictures) == 12);
 STATIC_ASSERT(offsetof(ANIMATION_METADATA, anm) == 16);
 
 /* Every sprite animation's metadata, by number (graphics/sprite/sprites.s). */
-extern ANIMATION_METADATA Sprite_AnimationMetadata[];
+extern ANIMATION_METADATA SpriteAnimationMetadata[];
 
 /* The sprite-metadata table's function, its stub table's one entry
    (src/system/sprite_stubs.s). */

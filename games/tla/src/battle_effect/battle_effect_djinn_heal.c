@@ -54,8 +54,8 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	FIXED		   height;
 	Sint32		   fade;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 
 	/* The mode's canvas, sprite sheets and palette. */
@@ -97,7 +97,7 @@ void btEffectRunTumblingQuads(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	else
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	draws[0] = Ram_HeapSlots->ramCode;
+	draws[0] = RamHeapSlots->ramCode;
 
 	for(frm = 0; frm != TUMBLING_QUADS_TICKS; frm++) {
 		if(frm == 8)
@@ -314,12 +314,12 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
 	Sint32					 i;
 	Sint32					 j;
 
-	ringPixels = Ram_MapMetatileBuffer + ZAGAN_FLAME_BAND;
-	battle = Ram_HeapSlots->battleState;
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	fadedMotes = Ram_HeapSlots->battleSheet;
-	backdrop = Ram_HeapSlots->battleBg;
+	ringPixels = RamMapMetatileBuffer + ZAGAN_FLAME_BAND;
+	battle = RamHeapSlots->battleState;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	fadedMotes = RamHeapSlots->battleSheet;
+	backdrop = RamHeapSlots->battleBg;
 	savedScroll = BgScrollWork[1].x;
 	btEffectConfigureEffectDisp();
 	btEffectStartCanvasLayer(0);
@@ -691,8 +691,8 @@ void btEffectRunZagan(BATTLE_EFFECT_PARM *args)
    effect. */
 void btCameraApplyPhasedDelta(void)
 {
-	BATTLE_EFFECT_STATE *state = Ram_HeapSlots->battleEff;
-	BATTLE_CAMERA		*camera = Ram_HeapSlots->cameraState;
+	BATTLE_EFFECT_STATE *state = RamHeapSlots->battleEff;
+	BATTLE_CAMERA		*camera = RamHeapSlots->cameraState;
 
 	if(state->cameraPhase == CAMERA_PHASE_TICK_DONE) {
 		camera->yaw += state->cameraDelta;

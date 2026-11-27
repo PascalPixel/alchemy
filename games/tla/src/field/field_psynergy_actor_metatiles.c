@@ -15,7 +15,7 @@
    onto it. Scenes call it as they start, for the blocks Move pushes. */
 void fdActorPlaceBlocks(Uint16 *actors)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_METATILE *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
 	Uint8		 *grid = MapShapeGrid;
 	ACTOR		 *leader;
@@ -32,7 +32,7 @@ void fdActorPlaceBlocks(Uint16 *actors)
 		/* The layer's row of the shape grid, as an integer sum with its index
 		   first. */
 		Uint8 *shapes =
-			(Uint8 *)((((Sint32)metatiles - (Sint32)Ram_MapMetatileBuffer) >>
+			(Uint8 *)((((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >>
 						  2) +
 				(Sint32)grid);
 		MAP_METATILE *metatile;
@@ -66,8 +66,8 @@ void fdActorPlaceBlocks(Uint16 *actors)
    state remembers it for fdActorPlaceMovedBlock. */
 void fdActorLiftTargetBlock(Uint16 *actors)
 {
-	FIELD_STATE		   *event = Ram_HeapSlots->fieldState;
-	FIELD_EFFECT_STATE *state = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE		   *event = RamHeapSlots->fieldState;
+	FIELD_EFFECT_STATE *state = RamHeapSlots->fieldEffState;
 	ACTOR			   *tgt;
 
 	if(state != NULL && event->psynergy != 0)
@@ -78,13 +78,13 @@ void fdActorLiftTargetBlock(Uint16 *actors)
 
 	for(; *actors != ACTOR_LIST_END; actors++) {
 		if(tgt == fdActorGetById(*actors)) {
-			MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+			MAP_STATE	 *map = RamHeapSlots->mapGrid;
 			Uint8		 *grid = MapShapeGrid;
 			MAP_METATILE *metatiles = map->layers[tgt->layer].metatiles;
 			MAP_METATILE *blocks =
 				map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
 			Uint8 *shapes =
-				&grid[((Sint32)metatiles - (Sint32)Ram_MapMetatileBuffer) >> 2];
+				&grid[((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >> 2];
 			Uint32 key = fdMapGridGetTerrainKindStub(
 				tgt->layer, tgt->x.fixed, tgt->z.fixed);
 			Sint32 level = fdMapGridGetTerrainHeightStub(
@@ -112,12 +112,12 @@ void fdActorPlaceMovedBlock(void)
 	ACTOR *tgt = FieldStateWork->movedBlock;
 
 	if(tgt != NULL) {
-		MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
-		Uint8		 *grid = Ram_MapShapeGrid;
+		MAP_STATE	 *map = RamHeapSlots->mapGrid;
+		Uint8		 *grid = RamMapShapeGrid;
 		MAP_METATILE *metatiles = map->layers[tgt->layer].metatiles;
 		MAP_METATILE *blocks = map->layers[MAPGRID_LAYER_OVERHEAD].metatiles;
 		Uint8		 *shapes =
-			&grid[((Sint32)metatiles - (Sint32)Ram_MapMetatileBuffer) >> 2];
+			&grid[((Sint32)metatiles - (Sint32)RamMapMetatileBuffer) >> 2];
 		Uint32 key =
 			fdMapGridGetTerrainKindStub(tgt->layer, tgt->x.fixed, tgt->z.fixed);
 		Sint32 level = fdMapGridGetTerrainHeightStub(
@@ -172,7 +172,7 @@ ACTOR *fdActorFindAtMetatile(Sint32 *pos, Sint32 checkY)
 	Uint32 i;
 
 	for(i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-		FIELD_STATE *event = Ram_HeapSlots->fieldState;
+		FIELD_STATE *event = RamHeapSlots->fieldState;
 		ACTOR		*actor = event->actors[i];
 
 		if(checkY) {

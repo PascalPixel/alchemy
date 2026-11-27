@@ -341,7 +341,7 @@ void fdEffectUpdateAllSlots(void)
 	FIELD_EFFECT_STATE *scene;
 	Sint32				i;
 
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	for(i = 0; i < (Sint32)ARRAY_COUNT(scene->particles); i++)
 		fdParticleUpdate(&scene->particles[i]);
 }
@@ -361,7 +361,7 @@ void fdEffectInitSlots(void)
    in use and releases their heap block, the field Psynergy's state with it. */
 void fdEffectReleaseSlots(void)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	FIELD_PARTICLE	   *slot;
 	Sint32				i;
 

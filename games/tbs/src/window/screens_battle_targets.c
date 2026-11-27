@@ -283,7 +283,7 @@ Sint32 mnBattleTargetRunSelection(
 		((Sint32 *)firstSpr)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
 		((Sint32 *)firstSpr)[2] = 0;
 		firstSpr->tile = syVRAMCacheReload(cursorSlot,
-			(((TickCount >> 2) & 31) << 8) + (Sint32)Menu_AnimatedCursorTiles);
+			(((TickCount >> 2) & 31) << 8) + (Sint32)MenuAnimatedCursorTiles);
 		selectedPos.y += CURSOR_BOB_Y();
 		y = selectedPos.y;
 		/* Ease halfway each tick; the other markers show once the cursor is

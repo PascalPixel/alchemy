@@ -17,7 +17,7 @@
    (SPRITE_CRESCENT) from the target to the caster, with SE_PSYNERGY_START. */
 void fdPsynergyUpdateMindReadWave(void)
 {
-	MIND_READ_STATE	   *state = Ram_HeapSlots->mindRead;
+	MIND_READ_STATE	   *state = RamHeapSlots->mindRead;
 	VECTOR3				from;
 	VECTOR3				to;
 	ACTOR_PLACE		   *descriptor;
@@ -110,7 +110,7 @@ void fdPsynergyUpdateMindReadWave(void)
    of line offsets last written, a line at a time. */
 void fdMindReadStartRipple(void)
 {
-	MIND_READ_STATE *state = Ram_HeapSlots->mindRead;
+	MIND_READ_STATE *state = RamHeapSlots->mindRead;
 	if(!state->delay) {
 		Uint16			*line = state->lines[state->page];
 		volatile Uint16 *dma = REG_DMA0;
@@ -144,7 +144,7 @@ Sint32 fdEffectHueChannelRamp(Sint16 hue)
    tint's colour, each channel dimmed to 4 to 11, from the hue before. */
 void fdMindReadAdvanceTint(void)
 {
-	MIND_READ_STATE *state = Ram_HeapSlots->mindRead;
+	MIND_READ_STATE *state = RamHeapSlots->mindRead;
 	Sint16			 r;
 	Sint16			 g;
 	Sint16			 b;
@@ -256,7 +256,7 @@ void fdPsynergySteerPushedTarget(Sint32 unused)
 {
 	VECTOR3				pos;
 	VECTOR3				beyond;
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	ACTOR			   *user = scene->caster;
 	ACTOR			   *tgt = scene->tgt;
 	ACTOR			   *pusher;
@@ -484,7 +484,7 @@ void fdPsynergyMove(void)
 	FIELD_EFFECT_STATE *scene;
 	void			   *object;
 
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	object = scene->caster;
 
 	fdPsynergyFadeToCastCol();
@@ -620,7 +620,7 @@ void fdEffectBurstHand(void *object)
    unused. */
 void fdActorSetRevealSprCol(Sint32 value)
 {
-	ACTOR *actors = Ram_HeapSlots->actors;
+	ACTOR *actors = RamHeapSlots->actors;
 	Sint32 i;
 
 	/* DEAD: The Broken Seal's loop over the actors with what it did to a rock's
@@ -684,7 +684,7 @@ void fdPsynergyWatchLeaderDistance(void)
    how far the leader walks. */
 void fdPsynergyReveal(void)
 {
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
 	FIELD_STATE				*event;
 	SCREEN_TRANSITION_STATE *state;
 	ACTOR					*caster;
@@ -692,9 +692,9 @@ void fdPsynergyReveal(void)
 	Sint32					 frm;
 
 	fdActorSetRevealSprCol(6);
-	event = Ram_HeapSlots->fieldState;
+	event = RamHeapSlots->fieldState;
 	fdScreenTransitionStartWindowHeld(FIELD_PSYNERGY_REVEAL);
-	state = Ram_HeapSlots->screenTransition;
+	state = RamHeapSlots->screenTransition;
 	caster = scene->caster;
 	state->centerX = caster->x.fixed;
 	state->centerY = caster->z.fixed - caster->y.fixed;
@@ -727,9 +727,9 @@ void fdPsynergyReveal(void)
    black over 30 ticks and runs the scene's PSYNERGY_PHASE_FADES script. */
 void fdPsynergyEndReveal(void)
 {
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	SCREEN_TRANSITION_STATE *state = Ram_HeapSlots->screenTransition;
-	FIELD_STATE				*event = Ram_HeapSlots->fieldState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	SCREEN_TRANSITION_STATE *state = RamHeapSlots->screenTransition;
+	FIELD_STATE				*event = RamHeapSlots->fieldState;
 	void					*pending;
 
 	if(event->revealActive != 0) {
@@ -773,7 +773,7 @@ typedef enum GROWTH_TARGET_KIND {
    (scGaiaRockInsidePlantPointsTheWay). */
 void fdPsynergyGrowthOnTarget(Sint32 unused)
 {
-	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *scene = RamHeapSlots->fieldEffState;
 	ACTOR			   *tgt = scene->tgt;
 	Sint32				kind = GROWTH_ON_PLANT;
 
@@ -828,7 +828,7 @@ void fdPsynergyGrowthOnTarget(Sint32 unused)
    position. */
 void fdPsynergyGrowth(void)
 {
-	FIELD_EFFECT_STATE	 *state = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE	 *state = RamHeapSlots->fieldEffState;
 	BURST_PARTICLE_VECTOR pos;
 	Sint32				  entryCnt;
 
@@ -867,7 +867,7 @@ void fdEffectSpawnBurstParticleField(void)
 	Sint32				n;
 	Sint32			   *p;
 
-	state = Ram_HeapSlots->fieldEffState;
+	state = RamHeapSlots->fieldEffState;
 	user = state->caster;
 	fdPsynergyFadeToCastCol();
 
@@ -944,7 +944,7 @@ void fdPsynergyLiftOnTarget(void)
 	Sint32				idx;
 	Sint32				startY;
 
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	child = effectState->tgt;
 	caster = effectState->caster;
 	if(child == 0)
@@ -1005,7 +1005,7 @@ void fdPsynergyLift(void)
 	Sint32				n;
 	FIXED				dist;
 
-	state = Ram_HeapSlots->fieldEffState;
+	state = RamHeapSlots->fieldEffState;
 	fdPsynergyFadeToCastCol();
 	SET_POSITION(&pos, state->x, state->y + toFIXED(16), state->z);
 	pair[0] =
@@ -1077,7 +1077,7 @@ ACTOR *fdEffectSpawnLiftHand(Sint32 x, Sint32 y, Sint32 z, Sint32 ang)
 void fdEffectUpdateRadialBurst(FIELD_PARTICLE *effect)
 {
 	/* OUT_AND_BACK_FLYING_OUT must enter OUT_AND_BACK_AIM_BACK immediately. */
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	VECTOR3				pos;
 	Sint32				state;
 
@@ -1198,7 +1198,7 @@ void fdPsynergyForce(void)
 	Sint32				i;
 	Uint8				marker;
 
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	tgt = scene->tgt;
 	fdPsynergyFadeToCastCol();
 	sySndPlayStub(SE_PSYNERGY_START);
@@ -1392,7 +1392,7 @@ void fdEffectUpdateOrbitingParticleRight(ACTOR *particle)
    and its flash and freezing are left to the scene. */
 void fdPsynergyFrostOnTarget(Sint32 unused)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *tgt = effectState->tgt;
 
 	if(tgt != 0) {
@@ -1419,7 +1419,7 @@ void fdPsynergyFrost(void)
 	PENDING_CUE		   *event;
 	Sint32				i;
 
-	scene = Ram_HeapSlots->fieldEffState;
+	scene = RamHeapSlots->fieldEffState;
 	tgt = scene->tgt;
 	fdPsynergyFadeToCastCol();
 	sySndPlayStub(SE_ICE);
@@ -1501,7 +1501,7 @@ void fdEffectSwayParticle(ACTOR *actor)
    pixels the ticks it has left; at 0 it runs the shared particle script. */
 void fdEffectUpdateShrinkingOrbitActor(ACTOR *particle)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	VECTOR3				pos;
 	Sint16				remainingTicks;
 	Sint32				decrementedTimer;
@@ -1535,7 +1535,7 @@ void fdEffectRunSparkEmitter(ACTOR *emitter)
 	ACTOR			   *spark;
 	FIXED				pos[3];
 
-	effectState = Ram_HeapSlots->fieldEffState;
+	effectState = RamHeapSlots->fieldEffState;
 	if(emitter->tmr != -1) {
 		FIXED amplitude = toFIXED(6);
 
@@ -1582,7 +1582,7 @@ void fdPsynergyPlyOnTarget(void)
    then one in the centre flashes for 60 ticks, sheds sparks and flies off. */
 void fdPsynergyPly(void)
 {
-	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE *effectState = RamHeapSlots->fieldEffState;
 	ACTOR			   *target = effectState->caster;
 	ACTOR			   *actor;
 	SPR				   *last;
@@ -1685,7 +1685,7 @@ void fdPsynergyPly(void)
    Cloak can hide on, requests CLOAK_END (Cloak, packed). */
 void fdEffectCheckCloakTile(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 	ACTOR		*leader = fdActorLookup(fdPartyGetLeaderActor());
 
 	if(fdMapGridIsCloakMetatile(
@@ -1698,9 +1698,8 @@ void fdEffectCheckCloakTile(void)
    (fdPsynergyRunExtraHandler). */
 void fdPsynergyEndCloak(void)
 {
-	ACTOR *caster =
-		((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->caster;
-	SPR			  *spr = caster->spr;
+	ACTOR *caster = ((FIELD_EFFECT_STATE *)RamHeapSlots->fieldEffState)->caster;
+	SPR	  *spr = caster->spr;
 	SPR_ANIMATION *entry = spr->entries[0];
 	Uint32		   i;
 

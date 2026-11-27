@@ -8,11 +8,11 @@
 
    Two areas share this overlay, each a scene of its own:
 
-   - Lunpa (SceneId_Lunpa): the town. Doors lead into three homes, the weapon
+   - Lunpa (SceneIdLunpa): the town. Doors lead into three homes, the weapon
 	 and armor shop, the item shop, the inn, the temple and the crate room
    (RockRooms, rock_rooms.c). The road out of the top of the town (metatiles
    (13, 0) to (16, 0)) climbs to the Lunpa Fortress Gates.
-   - Lunpa Fortress Gates (SceneId_LunpaFortressGates): the slope up to the
+   - Lunpa Fortress Gates (SceneIdLunpaFortressGates): the slope up to the
 	 golden fortress door in the cliff. Two log palisades cross it, each with
 	 a gap in the middle, and two guards stand in the yard between them, just
 	 below the upper gap. The party slips past them under Cloak.

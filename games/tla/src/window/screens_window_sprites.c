@@ -100,7 +100,7 @@ UNUSED WINDOW_SPR *mnWindowSprCreateCommandIcon(
 WINDOW_SPR *mnPortraitCreate(
 	Sint32 character, Sint32 pos, Sint32 side, WINDOW *win, Sint32 x, Sint32 y)
 {
-	WIN_STATE  *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE  *state = (WIN_STATE *)RamHeapSlots->winState;
 	WINDOW_SPR *portrait = 0;
 	Sint32		slot;
 	Sint32		tile;
@@ -146,7 +146,7 @@ WINDOW_SPR *mnPortraitCreate(
    the second first; when neither does, nothing is loaded. */
 void mnPortraitReload(Uint32 slot, Sint32 key, Sint32 unused)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32	   id = mnPortraitGetForSpeaker(key);
 	Sint32	   tile;
 	Sint32	   entry;
@@ -200,7 +200,7 @@ typedef Uint16 *(*WINDOW_SPAN_ROUTINE)(Uint16 *spans, Uint16 *tilemap);
    line gets an empty span. */
 void mnScanlineWindowFillSpans(void *spans)
 {
-	WIN_STATE *state = Ram_HeapSlots->winState;
+	WIN_STATE *state = RamHeapSlots->winState;
 
 	if(state == NULL) {
 		/* BUG: the fill is one halfword for each of the DISPLAY_HEIGHT lines,

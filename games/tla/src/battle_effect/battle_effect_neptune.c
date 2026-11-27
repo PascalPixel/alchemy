@@ -96,9 +96,9 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	Sint32					 ground = NEPTUNE_COLUMN_GROUND;
 	Uint8					*tiles;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	particleSheet = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	particleSheet = RamHeapSlots->battleSheet;
 	tiles = MapGridMetatileBuffer;
 
 	btEffectStartCanvasLayer(0);
@@ -116,7 +116,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	REG_WIN0H = WIN_RANGE(DISPLAY_WIDTH, DISPLAY_WIDTH);
 	btEffectShowLivingTargets(state->args);
 	/* Neptune: its colours over the sprites', its tiles, and its sprites. */
-	Ram_HeapSlots->battleState->keepBackdropPal = 1;
+	RamHeapSlots->battleState->keepBackdropPal = 1;
 	{
 		Uint8 *sheet = syResourceGetTableEntry(RESOURCE_SEA_SERPENT_TILES);
 		syWordsCopy((void *)OBJ_PLTT, sheet, OBJ_PLTT_SIZE);
@@ -149,16 +149,16 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 	neptuneVelX = -toFIXED(4);
 	neptuneVelZ = -toFIXED(8);
 	savedBg1ScrollX = BgScrollWork[1].x;
-	view = Ram_HeapSlots->battleBg;
+	view = RamHeapSlots->battleBg;
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 	view->busy = 1;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	blit[1] = Ram_HeapSlots->ramCodePaired;
+	blit[1] = RamHeapSlots->ramCodePaired;
 	REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
 	for(i = 0; i != PARTICLE_POOL_COUNT; i++)
@@ -202,7 +202,7 @@ void btEffectRunNeptune(BATTLE_EFFECT_PARM *args)
 
 		/* The window opens with a ragged edge. */
 		if(frm >= 0 && frm < 16) {
-			Uint16 *phase = (Uint16 *)Ram_MapMetatileBuffer;
+			Uint16 *phase = (Uint16 *)RamMapMetatileBuffer;
 
 			if(frm == 1) {
 				Uint8 *noise = WINDOW_EDGE_INSETS;

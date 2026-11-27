@@ -1,4 +1,4 @@
-/* Vault (SceneId_VaultRevisit), the town once the party has reached Kalay. It
+/* Vault (SceneIdVaultRevisit), the town once the party has reached Kalay. It
    has the same layout as Vault's first scene (vault.c), and replaces that scene
    for the rest of the game.
 

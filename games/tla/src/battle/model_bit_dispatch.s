@@ -13,9 +13,9 @@ btModelDispatchBitCommand:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
 @ The word ldr pc steps over (pc reads 8 bytes ahead); never run.
-AlchemyUncredited_08118240:
+AlchemyUncredited08118240:
 	nop
-AlchemyUncreditedEnd_08118240:
+AlchemyUncreditedEnd08118240:
 @ btModelDecode writes the handlers' addresses here, relocated to where it runs,
 @ from the table after them.
 	.space 32, 0

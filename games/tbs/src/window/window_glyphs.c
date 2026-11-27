@@ -61,7 +61,7 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 		colour = state->colour;
 	}
 	firstIdx = code - TEXT_SPACE;
-	glyph = firstIdx * sizeof(GLYPH) + (const Uint8 *)Font_Glyphs;
+	glyph = firstIdx * sizeof(GLYPH) + (const Uint8 *)FontGlyphs;
 	width = ((const GLYPH *)glyph)->width;
 	glyph = (const Uint8 *)((const GLYPH *)glyph)->rows;
 	/* Outlined text is the glyph drawn twice a pixel apart, over its shadow
@@ -81,10 +81,10 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *out)
 #if FIX_POINTER_OUTSIDE_OBJECT
 		/* Form only the actual glyph address: &glyphs[-TEXT_SPACE] is already
 		   outside the array before the later byte offset is added. */
-		glyph = (const Uint8 *)&Font_Glyphs[(Uint16)secondIdx - TEXT_SPACE];
+		glyph = (const Uint8 *)&FontGlyphs[(Uint16)secondIdx - TEXT_SPACE];
 #else
 		glyph =
-			(const Uint8 *)&Font_Glyphs[-TEXT_SPACE] + ((Uint16)secondIdx << 5);
+			(const Uint8 *)&FontGlyphs[-TEXT_SPACE] + ((Uint16)secondIdx << 5);
 #endif
 		secondWidth = *(const Uint16 *)glyph;
 		glyph += 2;
@@ -132,17 +132,16 @@ Sint32 mnTextDrawGlyphPair(Uint32 code, Uint32 *out)
 	markCode = FontMarkGlyphCodes[code >> TEXT_CODE_MARK_SHIFT];
 	if(markCode != 0)
 		markGlyph =
-			(const Uint8 *)((const GLYPH *)((const Uint8 *)Font_Glyphs +
+			(const Uint8 *)((const GLYPH *)((const Uint8 *)FontGlyphs +
 								(markCode - TEXT_SPACE) * sizeof(GLYPH)))
 				->rows;
 	code &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
 	if(code <= TEXT_LAST_FONT_CODE) {
-		glyph =
-			(const Uint8 *)Font_Glyphs + (code - TEXT_SPACE) * sizeof(GLYPH);
+		glyph = (const Uint8 *)FontGlyphs + (code - TEXT_SPACE) * sizeof(GLYPH);
 		width = ((const GLYPH *)glyph)->width;
 		glyph = (const Uint8 *)((const GLYPH *)glyph)->rows;
 	} else {
-		glyph = Font_KanjiGlyphs +
+		glyph = FontKanjiGlyphs +
 			(code - (TEXT_LAST_FONT_CODE + 1)) * KANJI_GLYPH_SIZE;
 		width = KANJI_WIDTH;
 	}
@@ -216,7 +215,7 @@ Sint32 mnTextDrawGlyphPair(Uint32 code, Uint32 *out)
 
 /* The main font's glyph n, counted from the space character. */
 #define FONT_GLYPH(n) \
-	((const GLYPH *)((n) * sizeof(GLYPH) + (const Uint8 *)Font_Glyphs))
+	((const GLYPH *)((n) * sizeof(GLYPH) + (const Uint8 *)FontGlyphs))
 
 /* Returns the width in pixels of a zero-terminated string of 16-bit character
    codes: 4 for a space, and for other codes up to TEXT_LAST_FONT_CODE the font
@@ -336,8 +335,8 @@ void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 				nextCode = *text;
 #if OUTLINED_GLYPH_PAIRS_FIT_CELL
 				if(code > TEXT_SPACE && nextCode > TEXT_SPACE) {
-					Sint16 width = Font_Glyphs[code - TEXT_SPACE].width +
-						Font_Glyphs[nextCode - TEXT_SPACE].width;
+					Sint16 width = FontGlyphs[code - TEXT_SPACE].width +
+						FontGlyphs[nextCode - TEXT_SPACE].width;
 
 					if(state->outline == TEXT_STYLE_OUTLINED) {
 						if((Uint16)width <= GLYPH_PAIR_OUTLINED_WIDTH_MAX) {
@@ -351,8 +350,8 @@ void mnTextDrawWideStringAtOffset(Uint16 *text, WINDOW *win, Sint32 x, Sint32 y)
 				}
 #else
 				if(code > TEXT_SPACE && nextCode > TEXT_SPACE &&
-					(Uint16)(Font_Glyphs[code - TEXT_SPACE].width +
-						Font_Glyphs[nextCode - TEXT_SPACE].width) <=
+					(Uint16)(FontGlyphs[code - TEXT_SPACE].width +
+						FontGlyphs[nextCode - TEXT_SPACE].width) <=
 						GLYPH_PAIR_WIDTH_MAX) {
 					code |= nextCode << 8;
 					text++;

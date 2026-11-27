@@ -164,7 +164,7 @@ void syWindowLoadGraphics(void)
 	/* 2048 words: 8 KB, 256 tiles of 4 bits a pixel */
 	syDMAXCopy(syResourceGetTableEntry(RESOURCE_WINDOW_TILES), BG_CHAR_BLOCK(0),
 		DMA_COPY_WORDS(2048), REG_DMA3);
-	syDMAXCopy(Window_Palette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
+	syDMAXCopy(WindowPalette, (void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
 		DMA_COPY_HALFWORDS(16), REG_DMA3);
 	IO_WRITE16(0, &PLTT_BACKDROP);
 	/* The window's background colour, three darker shades and three lighter. */

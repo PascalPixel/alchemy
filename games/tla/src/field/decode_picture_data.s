@@ -7,8 +7,8 @@
 	.4byte	0x00000000
 	.4byte	SpriteColorTablesCopy - 0xe0
 	.4byte	SpriteColorTablesCopy - 0x100
-	.global BattleEffect_DecodePictureCopyEnd
-BattleEffect_DecodePictureCopyEnd:
+	.global BattleEffectDecodePictureCopyEnd
+BattleEffectDecodePictureCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
@@ -17,5 +17,5 @@ BattleEffect_DecodePictureCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0
-	.global BattleEffect_DecodePictureEnd
-BattleEffect_DecodePictureEnd:
+	.global BattleEffectDecodePictureEnd
+BattleEffectDecodePictureEnd:

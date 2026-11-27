@@ -255,7 +255,7 @@ typedef enum SND_ID {
 	   effects. */
 	SE_CURSE,
 	/* Unused: nothing plays it here. The Lost Age plays the same sequence as
-	   something is launched, such as a rolling block (Actor_LaunchAhead), and
+	   something is launched, such as a rolling block (ActorLaunchAhead), and
 	   in several battle effects. */
 	SE_LAUNCH,
 	/* Unused: nothing plays it here. The Lost Age plays the same sequence as

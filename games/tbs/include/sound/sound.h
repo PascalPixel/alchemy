@@ -16,7 +16,7 @@ extern Uint8 BgmFadeRequested;
    (0x80008000) here. Only the unused sound test reads it. */
 extern Sint32 SoundMixerClipped;
 /* An EWRAM byte sySndInit clears and nothing else names. */
-extern Uint8 Sound_UnreadByte;
+extern Uint8 SoundUnreadByte;
 
 /* The sound module's functions in the order of its stub table
    (src/sound/stubs.s). */

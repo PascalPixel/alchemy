@@ -627,7 +627,7 @@ typedef enum MESSAGE_DECODE_FLAG {
 
 /* The last character code the window's text tiles cover. */
 #define TEXT_LAST_FONT_CODE 255
-/* In Japanese, the codes after the font's are kanji (Font_KanjiGlyphs). */
+/* In Japanese, the codes after the font's are kanji (FontKanjiGlyphs). */
 #define KANJI_FIRST_CODE	(TEXT_LAST_FONT_CODE + 1)
 /* A main-font glyph row's pixels fill its halfword from the high bit, a bit
    each: shifted up by this, the leftmost pixel is the word's sign bit. */
@@ -724,7 +724,7 @@ typedef enum TILEMAP_ENTRY_MODE {
    four elements follow it in order (ELEMENT). */
 #define ELEMENT_ICON_TILE (BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1)
 
-/* The command icons (ResourceId_CommandIcons), each drawn with the command name
+/* The command icons (ResourceIdCommandIcons), each drawn with the command name
    of the same number (MsgCommandName + icon). */
 typedef enum COMMAND_ICON {
 	COMMAND_ICON_ATTACK = 0,
@@ -909,7 +909,7 @@ enum {
 
 /* The spinning hand of the selection screen and the battle target cursor, 16 by
    16 pixels in 256 colours, 256 bytes a tick (sprite_cursors.s). */
-extern const Uint8 Menu_AnimatedCursorTiles[];
+extern const Uint8 MenuAnimatedCursorTiles[];
 
 /* The labels of the battle Status screen and target window: "HP" ("PS" in
    Italian), the slash between a value and its maximum, and "PP". */

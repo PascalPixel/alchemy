@@ -1,4 +1,4 @@
-/* SceneId_Xian, the village of Xian.
+/* SceneIdXian, the village of Xian.
 
    Its houses, shops and inn are lacquer_rooms_b.c. Master Feh's school is a
    room of the Fuchin Temple overlay, fuchin_temple.c. That overlay is
@@ -39,7 +39,7 @@
    A jar by the mulberry orchard, at metatile (10, 22), holds a Lucky Medal.
 
    The village's doors and where they lead:
-   - Five doors lead into the houses, shops and inn (SceneId_LacquerRoomsB):
+   - Five doors lead into the houses, shops and inn (SceneIdLacquerRoomsB):
 	 the house at metatile (21, 20), the north and east houses on the water
    carrier's street at metatiles (23, 13) and (26, 13), the inn at (25, 26)
    and  the weapon and armor shop at (13, 11).

@@ -26,7 +26,7 @@
  * list is a symbol the linker fills in, and a reference to one is written as
  * its name, never as its number: C names the symbol in a word, and a table
  * that holds one in a narrower field is assembly whose row macro pastes the
- * name onto the symbol (.2byte SceneId_\scene), so that a number in a
+ * name onto the symbol (.2byte SceneId\scene), so that a number in a
  * name's place links to nothing. No rule of this file can tell a number
  * written bare from any other number, so none here tries; the row macros
  * hold it, and "make test-linking" adds a row to each list and links.

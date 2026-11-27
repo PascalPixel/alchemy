@@ -48,7 +48,7 @@ Sint32 mnGlyphDraw(
 
 		/* The small font, and the kana's voicing mark drawn as a second glyph
 		   after it. */
-		if(Ram_HeapSlots->battleMsg->win == win) {
+		if(RamHeapSlots->battleMsg->win == win) {
 			font = syResourceGetTableEntry(RESOURCE_SMALL_FONT);
 			width = 3;
 			if(character == ' ')
@@ -74,7 +74,7 @@ Sint32 mnGlyphDraw(
 		GLYPH_ROUTINE draw;
 		Sint32		  result;
 
-		if(Ram_HeapSlots->battleMsg->win == win) {
+		if(RamHeapSlots->battleMsg->win == win) {
 			syResourceGetTableEntry(RESOURCE_WINDOW_TILES);
 			width = 3;
 			if(character == ' ')
@@ -185,7 +185,7 @@ Sint32 mnTextDrawGlyphPair(Sint32 code, Uint32 *tiles);
    width, or 0 when no window sprite is free. */
 Sint32 mnGlyphDrawAsSpr(WINDOW *win, Sint32 character, Sint32 x, Sint32 y)
 {
-	WIN_STATE  *state = Ram_HeapSlots->winState;
+	WIN_STATE  *state = RamHeapSlots->winState;
 	Uint32		tiles[32];
 	Uint32		spacingX = state->letterSpacing;
 	Uint32		spacingY = state->lineSpacing;
@@ -233,7 +233,7 @@ void mnGlyphDrawToTiles(const void *src, void *dst)
    fill, or NULL when no window sprite is free. */
 void *mnGlyphAddBlankSpr(WINDOW *win, Sint32 character, Sint32 x, Sint32 y)
 {
-	WIN_STATE *state = Ram_HeapSlots->winState;
+	WIN_STATE *state = RamHeapSlots->winState;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
 	 * touches. */
 	Uint32		tiles[32];
@@ -519,7 +519,7 @@ typedef struct POP_TRANSFORM {
 } POP_TRANSFORM;
 
 /* The page arrow's pictures, a tick each. */
-extern const Uint8 WindowSprite_PageArrowTiles[];
+extern const Uint8 WindowSpritePageArrowTiles[];
 
 extern const Uint8 WindowSpriteCursorBobOffsets[];
 extern const Sint8 WindowSpriteWobbleOffsets[][2];
@@ -558,7 +558,7 @@ void mnWindowSprUpdateAll(void)
 			switch(output->motion) {
 			case WINDOW_SPRITE_MOTION_PAGE_ARROW:
 				if(state->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
-					const Uint8 *tiles = &WindowSprite_PageArrowTiles[phase *
+					const Uint8 *tiles = &WindowSpritePageArrowTiles[phase *
 						PAGE_ARROW_FRAME_BYTES];
 
 					spr->tile = syVRAMCacheLoad(

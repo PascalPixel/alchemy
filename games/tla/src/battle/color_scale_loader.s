@@ -2,7 +2,7 @@
 @ kernel and the control, with one pc-relative block load (add r4, pc, #16;
 @ ldmia r4, {r4, r5, r7}).
 @ btColBufferScale(source, destination, scale, count): copies the ARM kernel
-@ ColorBuffer_ScaleKernelCode by DMA into a buffer on the stack and calls it
+@ ColorBufferScaleKernelCode by DMA into a buffer on the stack and calls it
 @ there, through lr with a lone BL suffix, as the colour backup loaders in system/decompress_byte_lz.s do.
 
 .syntax unified
@@ -21,5 +21,5 @@ btColBufferScale:
 	add	sp, #124
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_ScaleKernelCode
+	.4byte	ColorBufferScaleKernelCode
 	.4byte	0x8400001f

@@ -14,14 +14,14 @@
 	.thumb
 	.global RelocatedInnerProduct
 RelocatedInnerProduct:
-	.global Math_InnerProduct
+	.global MathInnerProduct
 	.thumb_func
-Math_InnerProduct:
+MathInnerProduct:
 	bx	pc
-AlchemyUncredited_08017cea:
+AlchemyUncredited08017cea:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_08017cea:
+AlchemyUncreditedEnd08017cea:
 	smull	ip, r0, r1, r0
 	smlal	ip, r0, r2, r3
 	ldm	sp, {r2, r3}

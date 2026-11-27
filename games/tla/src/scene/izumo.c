@@ -386,7 +386,7 @@ void scIzumoScatterStoneCircleWeeds(void)
    so the room. */
 void scIzumoEnterDoor(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	fdScriptEndLastingPsynergy(0);

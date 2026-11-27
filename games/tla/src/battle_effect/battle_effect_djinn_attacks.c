@@ -62,14 +62,14 @@ void btEffectRunMercury(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 j;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	sheet = heap->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectBuildCanvasBlitters(0, blit);
 
-	cells = Ram_MapMetatileBuffer;
+	cells = RamMapMetatileBuffer;
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_MERCURY_DJINN_SMALL_SHEET, state->sheet, 1, 0);
@@ -200,9 +200,9 @@ void btEffectRunJupiter(BATTLE_EFFECT_PARM *args)
 	Sint32				 i;
 	Sint32				 j;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, blit);
@@ -345,7 +345,7 @@ void btEffectRunVenus(BATTLE_EFFECT_PARM *args)
 	Sint32				 start;
 	Sint32				 ang;
 
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	state = (BATTLE_EFFECT_STATE *)heap->battleEff;
 	canvas = heap->battleCanvas;
 	sheet = heap->battleSheet;
@@ -469,9 +469,9 @@ void btEffectRunMars(BATTLE_EFFECT_PARM *args)
 	Sint32				 frm;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	btEffectBuildCanvasBlitters(0, blitters);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sheet, 0, 0);

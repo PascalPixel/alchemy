@@ -34,7 +34,7 @@ void fdPaletteFadeCalcSteps(
    OBJ palettes. */
 void fdPaletteFadeUpdate(void)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 	Uint16		 *channelDelta = state->delta;
 	Sint32		  i;
 
@@ -437,7 +437,7 @@ void fdPaletteFadeRelease(void)
    nothing without a palette fade. */
 void fdPaletteFadeSetTarget(Sint32 mode, Sint32 half)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 
 	if(state != NULL) {
 		fdPaletteFadeBuild(mode, state->pal, state->tgt, half);
@@ -447,7 +447,7 @@ void fdPaletteFadeSetTarget(Sint32 mode, Sint32 half)
 /* Sets the colours the palette fade shows now (see fdPaletteFadeBuild). */
 void fdPaletteFadeSetSource(Sint32 mode, Sint32 half)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 
 	if(state != NULL) {
 		fdPaletteFadeBuild(mode, state->pal, state->cur, half);
@@ -458,7 +458,7 @@ void fdPaletteFadeSetSource(Sint32 mode, Sint32 half)
    palettes, from which it builds its colours. */
 void fdPaletteFadeSetBackdrop(Uint32 col)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 
 	if(state != NULL) {
 		state->pal[0] = col;
@@ -469,7 +469,7 @@ void fdPaletteFadeSetBackdrop(Uint32 col)
    RGB555. */
 void fdPaletteFadePackTarget(void)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 	Uint16		 *packed = state->pal;
 	Sint32		  blueMask = BLUE_BITS;
 	Uint16		 *cur;
@@ -491,7 +491,7 @@ void fdPaletteFadePackTarget(void)
    ticks. */
 void fdPaletteFadeStartInterpolation(Sint32 ticks)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 
 	if(state != NULL) {
 		state->duration = ticks;
@@ -504,7 +504,7 @@ void fdPaletteFadeStartInterpolation(Sint32 ticks)
    the BG colours' target. */
 void fdPaletteFadeLoadPalette(const Uint16 *cols)
 {
-	PALETTE_FADE *state = Ram_HeapSlots->palFade;
+	PALETTE_FADE *state = RamHeapSlots->palFade;
 
 	if(state != NULL) {
 		Sint32 (*copy)(void *destination, const void *source, Sint32 size) =

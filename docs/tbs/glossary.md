@@ -55,7 +55,7 @@ before the story proper. Isaac and Garet are children. Huge rocks fall
 across Vale's paths in the storm, Garet joins Isaac, and the elders hold
 back the Boulder on Mt. Aleph with their Psynergy. When the night ends the game says `Three
 years later...` and the journey begins. The prologue is a scene of its
-own, Vale on that night (`SceneId_ValePrologue`), which stands in for Vale
+own, Vale on that night (`SceneIdValePrologue`), which stands in for Vale
 while it lasts ([Scenes](../../games/tbs/src/scene/README.md)).
 
 Sources: the game: the debug scene label PLOGV00. SGL: none. GBATEK: none.

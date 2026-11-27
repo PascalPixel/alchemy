@@ -4,7 +4,7 @@
    over him. */
 void scPillarRaise(Uint16 *list)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *leader;
 	Sint32	   height;
 
@@ -24,10 +24,10 @@ void scPillarRaise(Uint16 *list)
 		level = METATILE_HEIGHT_STEPS(level);
 		idx = fdActorGetMetatileIndex(actor);
 		metatiles = (Uint8 *)map->layers[*layer].metatiles;
-		grid = Ram_MapShapeGrid;
+		grid = RamMapShapeGrid;
 		shapes = grid +
 			(((MAP_METATILE *)metatiles) -
-				(MAP_METATILE *)Ram_MapMetatileBuffer);
+				(MAP_METATILE *)RamMapMetatileBuffer);
 		actor->motionFlg = 0;
 		actor->collisionFlg = 0;
 		fdActorSetSprFlags(actor, 0);

@@ -119,10 +119,10 @@ void btEffectRunProcne(BATTLE_EFFECT_PARM *args)
 	SPR_PLACEMENT		 place;
 	SCALE				 scale;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	state = Ram_HeapSlots->battleEff;
-	graphics = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	graphics = RamHeapSlots->battleSheet;
 
 	btEffectStartCanvasLayer(0);
 	btEffectBuildCanvasBlitters(0, draw);
@@ -720,10 +720,10 @@ void btEffectRunDragonFire(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Uint8				*sheet;
 	Sint32				 i;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	camera = Ram_HeapSlots->cameraState;
-	state = Ram_HeapSlots->battleEff;
-	sheet = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	camera = RamHeapSlots->cameraState;
+	state = RamHeapSlots->battleEff;
+	sheet = RamHeapSlots->battleSheet;
 
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;

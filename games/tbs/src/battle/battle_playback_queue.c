@@ -65,7 +65,7 @@ UNREAD_RESULT btMessageWaitForAdvance(void)
 	for(frm = 0;; frm++) {
 		/* Cycle the eight pictures, one every four ticks. */
 		pictureTiles = ((TickCount >> 2) & 7) * 128 +
-			(Sint32)BattleMessage_AdvanceArrowTiles;
+			(Sint32)BattleMessageAdvanceArrowTiles;
 		win = BattleMessageStateWork->win;
 		ofs = BattleMessageStateWork->ofs;
 		/* Outside the windows, sprites show and BG2 does not. */

@@ -17,7 +17,7 @@
    raised onto it. */
 void syCrumblingPillarPlace(Uint16 *list)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *leader;
 	Sint32	   height;
 
@@ -28,7 +28,7 @@ void syCrumblingPillarPlace(Uint16 *list)
 		Sint32		  next = flg + 1;
 		MAP_METATILE *metatiles = map->layers[actor->layer].metatiles;
 		Uint8		 *shapes =
-			MapShapeGrid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+			MapShapeGrid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 
 		if(fdScriptGetFlag(next)) {
 			fdActorSetPos(id, 0, 0);
@@ -190,7 +190,7 @@ void syCrumblingPillarPrepare(Sint32 id)
    takes the cracked picture. */
 void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Uint8	  *grid;
 
 	fdActorPlaceOnActor(
@@ -217,7 +217,7 @@ void scCrumblingPillarPlaceWithStandIn(Uint16 *list)
 		Sint32		  next = flg + 1;
 		MAP_METATILE *metatiles = map->layers[actor->layer].metatiles;
 		Uint8		 *shapes =
-			grid + (metatiles - (MAP_METATILE *)Ram_MapMetatileBuffer);
+			grid + (metatiles - (MAP_METATILE *)RamMapMetatileBuffer);
 
 		actor->retainSprCache =
 			ACTOR_KEEP_SPRITE_VRAM | ACTOR_COMPOSE_OFF_SCREEN;

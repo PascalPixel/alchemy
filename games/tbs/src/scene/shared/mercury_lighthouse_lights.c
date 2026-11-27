@@ -28,7 +28,7 @@ void scMercuryLighthouseRestoreLights(
 	}
 	actor = fdActorLookup(MainRoutineStateWork.leaderActorId);
 	z = actor->z.fixed;
-	metatile = (MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer +
+	metatile = (MAP_GRID_METATILE *)RamMapGridMetatileBuffer +
 		(z / toFIXED(16)) * MAPGRID_SIZE + actor->x.fixed / toFIXED(16);
 	if(lights->levels != 0 && lights->pillar != 0) {
 		light = syFieldActorCreate(SPRITE_GOLDEN_RINGS, actor->x.fixed,

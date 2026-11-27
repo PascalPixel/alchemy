@@ -133,7 +133,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
    the short one; every cast clears it again as it starts. */
 void scMarsLighthouseStarRoomStartBlazeOnEastTorch(void)
 {
-	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	FIELD_STATE *event = RamHeapSlots->fieldState;
 
 	event->blazeLongSpray = 1;
 }
@@ -303,7 +303,7 @@ Sint32 scInit(void)
 	fdScriptSetFlag(FLAG_IN_MARS_LIGHTHOUSE);
 	scFlameThrowersCreate();
 	scFlameThrowersStart(0, 0, 0, STEP_CUE_FLAME_HIT);
-	if(scene == (Sint32)&SceneId_MarsLighthouseStarRoom) {
+	if(scene == (Sint32)&SceneIdMarsLighthouseStarRoom) {
 		fdEffectStartBlankOverlay(0);
 		if(fdScriptGetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
 			/* The ice is gone from the hall. */
@@ -316,7 +316,7 @@ Sint32 scInit(void)
 		if(entrance ==
 			MARS_LIGHTHOUSE_STAR_ROOM_FROM_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_NORTHWEST_B) {
 			ACTOR *leader = fdActorGetById(MainRoutineStateWork.leaderActorId);
-			FIELD_STATE *state = Ram_HeapSlots->fieldState;
+			FIELD_STATE *state = RamHeapSlots->fieldState;
 			Sint32		 column = scFieldGameFlagGetByte(FLAG_BYTE_FALL_COLUMN);
 			Sint32		 row = scFieldGameFlagGetByte(FLAG_BYTE_FALL_ROW);
 			ACTOR		*other;
@@ -432,7 +432,7 @@ void scMarsLighthouseStarRoomWakeFlameDragons(void)
 	syFieldScriptWait(60);
 	MainRoutineStateWork.battleType = BATTLE_TYPE_NO_ESCAPE;
 	syFieldScriptSetAfterBattleDestination(
-		(Sint32)&SceneId_MarsLighthouseStarRoom,
+		(Sint32)&SceneIdMarsLighthouseStarRoom,
 		MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE);
 	MainRoutineStateWork.battleBg = SCENE_GONDOWAN_CLIFFS_HIDEOUT;
 	fdRequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
@@ -753,7 +753,7 @@ void scMarsLighthouseStarRoomLayDownAdept(Sint32 id)
    field menu opens, for the party to choose what to place. */
 void scMarsLighthouseStarRoomExamineStatue(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
@@ -779,7 +779,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 	ICON_TRANSFER *glyph;
 	PALETTE_FADE  *fade;
 
-	fade = Ram_HeapSlots->palFade;
+	fade = RamHeapSlots->palFade;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	/* "Felix used the Mars Star!" */
@@ -975,7 +975,7 @@ void scMarsLighthouseStarRoomUseMarsStar(void)
 		fdScriptEnd();
 		return;
 	}
-	palette = (Uint16 *)Ram_HeapSlots->palFade;
+	palette = (Uint16 *)RamHeapSlots->palFade;
 	fdScriptStart();
 	syFieldScriptEndLastingPsynergy(0);
 	/* "Felix used the Mars Star!" */
@@ -1352,7 +1352,7 @@ void scMarsLighthouseStarRoomKnockBackIfHit(void)
    stopping at the centre of a metatile where the floor ends. */
 Sint32 scFireballCarryLeader(void)
 {
-	FIELD_STATE		*event = Ram_HeapSlots->fieldState;
+	FIELD_STATE		*event = RamHeapSlots->fieldState;
 	FLAME_HIT_STATE *ride;
 	ACTOR			*leader;
 	/* LEFTOVER(frame): an unused local the ROM's frame reserves and never

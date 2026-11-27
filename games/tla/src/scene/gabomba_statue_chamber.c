@@ -78,7 +78,7 @@ extern SCENE_REGION GabombaStatueChamberIdolExitRegions[];
 /* Set once Felix has ridden the lift down to the foot of the shaft. */
 #define FLAG_LIFT_DOWN			 FLAG_SCENE_TEMP_07
 
-/* The small idol's chamber (SceneId_GabombaStatueChamberIdol): the seated idol,
+/* The small idol's chamber (SceneIdGabombaStatueChamberIdol): the seated idol,
    and Kraden ("It vanished into that hole!") and Akafubu ("Who... Who are
    you!?"); Piers's, Sheba's and Jenna's rows take their own numbers. */
 enum {
@@ -194,7 +194,7 @@ void scGabombaStatueChamberStatueSpeaks(void)
 	sySynch(20);
 	*color = RGB_WHITE;
 	sySynch(1);
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	mnFieldMessageShowCentered((Sint16)state->msg++, 0, 2);
 	fdPaletteFadeSetTarget(PALETTE_TINT_NONE, 2);
 	fdPaletteFadeStartInterpolation(20);
@@ -601,7 +601,7 @@ void scGabombaStatueChamberGabombaNamesWitchDoctor(void)
    number the hole's metatiles hold. */
 void scGabombaStatueChamberDropIntoHole(Sint32 x, Sint32 z)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	ACTOR		*actor = fdActorGetById(MainRoutineStateWork.leaderActorId);
 
 	fdScriptStart();
@@ -667,7 +667,7 @@ void scGabombaStatueChamberStepIntoSecondHole(void)
    `LIFT_TRAVEL` pixels on and come back a pixel a tick. */
 void scGabombaStatueChamberRideLiftBackUp(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *lower = &map->layers[0];
 	MAP_LAYER *upper = &map->layers[2];
 	Sint32	   i, step;
@@ -729,7 +729,7 @@ void scGabombaStatueChamberRideLiftBackUp(void)
    and Felix is put on the lower floor's layer at the end. */
 void scGabombaStatueChamberRideLiftDown(void)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *lower = &map->layers[0];
 	MAP_LAYER *upper = &map->layers[2];
 	Sint32	   i, step;
@@ -1162,7 +1162,7 @@ void scGabombaStatueChamberAkafubuOffersToHelp(void)
 		ACTOR_SHEBA, toFIXED(424), toFIXED(200), FACING_WEST);
 	fdActorSetPosAndFacing(
 		ACTOR_AKAFUBU, toFIXED(392), toFIXED(200), FACING_NORTH_NORTHWEST);
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	syWait(1);
 	((FIELD_STATE *)heap->fieldState)->transition =
 		SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1260,7 +1260,7 @@ Sint32 scInit(void)
 	FIELD_STATE *state;
 	Sint16		 scene;
 
-	state = Ram_HeapSlots->fieldState;
+	state = RamHeapSlots->fieldState;
 	state->transition =
 		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 	((ACTOR *)fdActorGetById(fdPartyGetLeaderActor()))->priFlg |=
@@ -1330,7 +1330,7 @@ void scGabombaStatueChamberInitLift(void)
 {
 	if(syGameFlagGet(FLAG_KEEP_PARTY_POSITION)) {
 		if(syGameFlagGet(FLAG_LIFT_DOWN)) {
-			MAP_STATE *map = Ram_HeapSlots->mapGrid;
+			MAP_STATE *map = RamHeapSlots->mapGrid;
 			MAP_LAYER *front = &map->layers[0];
 			MAP_LAYER *back = &map->layers[2];
 			Sint32	   step = 1;

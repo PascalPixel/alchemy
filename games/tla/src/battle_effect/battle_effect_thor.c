@@ -9,7 +9,7 @@
 /* The sparks, from the first word after the glint pictures that draw the
    crackles of lightning. */
 #define THOR_PARTICLES \
-	((PARTICLE *)(Ram_MapMetatileBuffer + ((GLINT_SET_BYTES + 3) & ~3)))
+	((PARTICLE *)(RamMapMetatileBuffer + ((GLINT_SET_BYTES + 3) & ~3)))
 #define THOR_SPARK_COUNT		910
 /* The sparks the pillar of lightning throws up from its foot, each bolt throws
    out, and the glow at Thor's hammer sheds each tick; a spark's mote shrinks a
@@ -140,10 +140,10 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 	Sint32		   spawned;
 	PARTICLE	  *spark;
 
-	view = Ram_HeapSlots->battleBg;
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sprs = Ram_HeapSlots->battleSheet;
+	view = RamHeapSlots->battleBg;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sprs = RamHeapSlots->battleSheet;
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 	btResourceLoadAndDecompress(RESOURCE_LIGHT_FAN_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_BLUE_TALL_GLOW_SHEET,
@@ -185,7 +185,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 	REG_BG2PA = Q_8_8(0.5);
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 	EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX - 1);
 	EFFECT_SET_TRANSFER(
 		state, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -325,11 +325,11 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 			if(frm <= 139) {
 				EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 					EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-				drawAlt = Ram_HeapSlots->ramCodePaired;
+				drawAlt = RamHeapSlots->ramCodePaired;
 			} else {
 				EFFECT_LOAD_BLITTER(
 					HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-				drawAlt = Ram_HeapSlots->ramCodePaired;
+				drawAlt = RamHeapSlots->ramCodePaired;
 			}
 			moteCnt = cnt;
 			if(moteCnt > THOR_RING_MOTES) {
@@ -382,15 +382,15 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 			}
 			flg = EFFECT_CLIP_BOUNDS;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
+			(RamHeapSlots->ramCodePaired)(canvas, state->sheet,
 				CANVAS_SIZE / 2 - THOR_LIGHT_FAN_WIDTH,
 				(frm - THOR_BEAM_TICK) * THOR_BEAM_SPEED - 12,
 				THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
-				CANVAS_SIZE / 2, (frm - THOR_BEAM_TICK) * THOR_BEAM_SPEED - 12,
+			(RamHeapSlots->ramCodePaired)(canvas, state->sheet, CANVAS_SIZE / 2,
+				(frm - THOR_BEAM_TICK) * THOR_BEAM_SPEED - 12,
 				THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 		}
@@ -404,7 +404,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 	btEffectShowLivingTargets(state->args);
 	btEffectCreateSprs(THOR_SPRITES, SPRITE_THOR, 1);
 	btResourceLoadAndDecompress(
-		RESOURCE_TORNADO_SHEET, Ram_MapMetatileBuffer, 1, 0);
+		RESOURCE_TORNADO_SHEET, RamMapMetatileBuffer, 1, 0);
 	btResourceLoadAndDecompress(
 		RESOURCE_LIGHTNING_PILLAR_SHEET, state->sheet, 1, 1);
 	btResourceLoadAndDecompress(RESOURCE_VIOLET_MOTE_SHEET,
@@ -500,7 +500,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 							Sint32 boltY = (syRandom() & 3) + 32;
 							EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 								EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-							(Ram_HeapSlots->ramCodePaired)(canvas,
+							(RamHeapSlots->ramCodePaired)(canvas,
 								state->sheet + i % 3 * PICTURE_BYTES(THOR_BOLT),
 								boltX, boltY, THOR_BOLT_WIDTH,
 								THOR_BOLT_HEIGHT);
@@ -554,7 +554,7 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 			{
 				/* Sparks slow and bounce off the ground, shrinking as they
 				   die. */
-				DRAW_RECTANGLE draw = Ram_HeapSlots->ramCodePaired;
+				DRAW_RECTANGLE draw = RamHeapSlots->ramCodePaired;
 				PARTICLE	  *spark;
 				for(i = 0, spark = THOR_PARTICLES; i != THOR_SPARK_COUNT;
 					i++, spark++) {
@@ -611,8 +611,8 @@ void btEffectRunThor(BATTLE_EFFECT_PARM *args)
 					EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 						EFFECT_CLIP_BOUNDS | ThorCrackleFlips[flip & 3],
 						BLITTER_MAX);
-					(Ram_HeapSlots->ramCodePaired)(canvas,
-						Ram_MapMetatileBuffer + BattleEffectGlintPictures[cell],
+					(RamHeapSlots->ramCodePaired)(canvas,
+						RamMapMetatileBuffer + BattleEffectGlintPictures[cell],
 						x, y + 56, BattleEffectGlintPictureWidths[cell],
 						BattleEffectGlintPictureHeights[cell]);
 					syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);

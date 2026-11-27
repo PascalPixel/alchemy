@@ -152,11 +152,11 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	Uint8					*cells;
 	Uint8					*pal;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	view = Ram_HeapSlots->battleBg;
-	motes = Ram_HeapSlots->battleSheet;
-	cells = Ram_MapMetatileBuffer;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	view = RamHeapSlots->battleBg;
+	motes = RamHeapSlots->battleSheet;
+	cells = RamMapMetatileBuffer;
 	EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 	btEffectConfigureEffectDisp();
 	PLTT_BACKDROP = 0;
@@ -164,7 +164,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
 	state->transferMode = CANVAS_COPY;
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	sySetEvent(btEffectTransferCanvas, EVENT_PASS_VBLANK);
 	/* Wipe the battle away, change the battle background behind it and set out
 	   Judgment's sprites in its first pose, then wipe back. */
@@ -198,7 +198,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	btResourceLoadAndDecompress(
 		RESOURCE_TORNADO_SHEET, state->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
 	btResourceLoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE,
-		Ram_MapMetatileBuffer + JUDGMENT_FIRE_RING, 0, 0);
+		RamMapMetatileBuffer + JUDGMENT_FIRE_RING, 0, 0);
 	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, motes, 0, 0);
 	pal = syResourceGetTableEntry(RESOURCE_BLUE_CRESCENT_SHEET);
 	syWordsCopyEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
@@ -223,12 +223,12 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			pal = syResourceGetTableEntry(RESOURCE_WINGED_KNIGHT_A_TILES);
 			syWordsCopyEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
 			pal += OBJ_PLTT_SIZE;
-			syDecompressTaggedLZ(pal, Ram_MapMetatileBuffer);
+			syDecompressTaggedLZ(pal, RamMapMetatileBuffer);
 			for(i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
 				SPR *obj = state->sprs[i];
 
 				syWordsCopyEntry((void *)OBJ_TILES(obj),
-					Ram_MapMetatileBuffer + i * OBJ_32X32_8BPP_BYTES,
+					RamMapMetatileBuffer + i * OBJ_32X32_8BPP_BYTES,
 					OBJ_32X32_8BPP_BYTES);
 			}
 			depth = -toFIXED(64);
@@ -316,7 +316,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			pal = syResourceGetTableEntry(RESOURCE_WINGED_KNIGHT_B_TILES);
 			syWordsCopyEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
 			pal += OBJ_PLTT_SIZE;
-			syDecompressTaggedLZ(pal, Ram_MapMetatileBuffer);
+			syDecompressTaggedLZ(pal, RamMapMetatileBuffer);
 			for(i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
 				IO_WRITE_QUEUE_PUSH(OBJ_TILES((SPR *)state->sprs[i]),
 					(Uint32)(cells + i * OBJ_32X32_8BPP_BYTES),
@@ -327,7 +327,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			pal = syResourceGetTableEntry(RESOURCE_WINGED_KNIGHT_C_TILES);
 			syWordsCopyEntry((void *)OBJ_PLTT, pal, OBJ_PLTT_SIZE);
 			pal += OBJ_PLTT_SIZE;
-			syDecompressTaggedLZ(pal, Ram_MapMetatileBuffer);
+			syDecompressTaggedLZ(pal, RamMapMetatileBuffer);
 			for(i = 0; i != JUDGMENT_SHIELD_FORWARD_OBJECTS; i++) {
 				IO_WRITE_QUEUE_PUSH(
 					OBJ_TILES((SPR *)state->sprs[JudgmentShieldSprites[i]]),
@@ -431,14 +431,14 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			flg = EFFECT_CLIP_BOUNDS;
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_ADDITIVE);
-			(Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
+			(RamHeapSlots->ramCodePaired)(canvas, state->sheet,
 				JUDGMENT_BURST_X - JUDGMENT_BEAM_WIDTH, y, JUDGMENT_BEAM_WIDTH,
 				JUDGMENT_BEAM_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 			EFFECT_LOAD_BLITTER(
 				HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_ADDITIVE);
-			(Ram_HeapSlots->ramCodePaired)(canvas, state->sheet,
+			(RamHeapSlots->ramCodePaired)(canvas, state->sheet,
 				JUDGMENT_BURST_X, y, JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 		}
@@ -456,7 +456,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			s = (frm - JUDGMENT_BEAM_TICK + 1) * (toFIXED(1) / 8);
 			texture.logWidth = 7;
 			texture.logHeight = 7;
-			texture.pixels = Ram_MapMetatileBuffer + JUDGMENT_FIRE_RING;
+			texture.pixels = RamMapMetatileBuffer + JUDGMENT_FIRE_RING;
 			model->texture = &texture;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->mesh = BattleEffectLargeSquareMesh;
@@ -505,7 +505,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 	}
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	btResourceLoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET,
 		state->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
 	/* The motes are dimmed, though the sweep draws none: a level in the
@@ -715,26 +715,26 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			}
 			flg = EFFECT_CLIP_BOUNDS;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas, sheet,
+			(RamHeapSlots->ramCodePaired)(canvas, sheet,
 				JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH,
 				top - JUDGMENT_FLARE_HEIGHT, JUDGMENT_FLARE_WIDTH,
 				JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
+			(RamHeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
 				top - JUDGMENT_FLARE_HEIGHT, JUDGMENT_FLARE_WIDTH,
 				JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas, sheet,
+			(RamHeapSlots->ramCodePaired)(canvas, sheet,
 				JUDGMENT_FLARE_X - JUDGMENT_FLARE_WIDTH, top - 1,
 				JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 			flg = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP;
 			EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flg, BLITTER_MAX);
-			(Ram_HeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
+			(RamHeapSlots->ramCodePaired)(canvas, sheet, JUDGMENT_FLARE_X - 1,
 				top - 1, JUDGMENT_FLARE_WIDTH, JUDGMENT_FLARE_HEIGHT);
 			syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 		}
@@ -793,7 +793,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 			s = (frm - 72) * (toFIXED(1) / 8) + toFIXED(1) / 32;
 			glare.logWidth = 7;
 			glare.logHeight = 7;
-			glare.pixels = Ram_MapMetatileBuffer + JUDGMENT_FIRE_RING;
+			glare.pixels = RamMapMetatileBuffer + JUDGMENT_FIRE_RING;
 			shade = 0;
 			model->kind = MODEL_SHADED_ADDITIVE;
 			model->texture = &glare;
@@ -916,7 +916,7 @@ void btEffectRunJudgment(BATTLE_EFFECT_PARM *args)
 
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-		draw[1] = Ram_HeapSlots->ramCodePaired;
+		draw[1] = RamHeapSlots->ramCodePaired;
 		if(frm > 85) {
 			draw[1](canvas, state->sheet, 0, 0, JUDGMENT_WAVE_SIZE,
 				JUDGMENT_WAVE_SIZE);

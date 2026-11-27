@@ -82,7 +82,7 @@ Sint32 fdSprComposePicture(SPR *spr, Uint16 dir)
 	decodePicture = (SPR_DRAW_FN)HEAP_SLOT_BLOCK(HEAP_SLOT_TICK_SCRATCH);
 	if(decodePicture == 0) {
 		code = syHeapSlotAlloc(
-			HEAP_SLOT_TICK_SCRATCH, (Sint32)Render_DecodePictureCodeSize);
+			HEAP_SLOT_TICK_SCRATCH, (Sint32)RenderDecodePictureCodeSize);
 		syDMAXCopy(fdRenderDecodePicture, code,
 			DMA_COPY_WORDS(((Uint32)fdRenderDecodePictureEnd -
 							   (Uint32)fdRenderDecodePicture) >>

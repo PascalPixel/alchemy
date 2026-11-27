@@ -101,7 +101,7 @@ void btEffectRunRushingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32				 paletteId;
 	Uint8				*rings;
 
-	rings = Ram_MapGridMetatileBuffer;
+	rings = RamMapGridMetatileBuffer;
 	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
 	camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);

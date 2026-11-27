@@ -1,9 +1,9 @@
 name	file	section	align	left	pad
-MenuCursor_PictureA	menu_cursor/cursor_a.8bpp				
-MenuCursor_PictureB	menu_cursor/cursor_b.8bpp				
-MenuCursor_PictureC	menu_cursor/cursor_c.8bpp				
-MenuCursor_PictureD	menu_cursor/cursor_d.8bpp				
-MenuCursor_PictureE	menu_cursor/cursor_e.8bpp				
-MenuCursor_PictureF	menu_cursor/cursor_f.8bpp				
-MenuCursor_PictureG	menu_cursor/cursor_g.8bpp				
-MenuCursor_PictureH	menu_cursor/cursor_h.8bpp				
+MenuCursorPictureA	menu_cursor/cursor_a.8bpp				
+MenuCursorPictureB	menu_cursor/cursor_b.8bpp				
+MenuCursorPictureC	menu_cursor/cursor_c.8bpp				
+MenuCursorPictureD	menu_cursor/cursor_d.8bpp				
+MenuCursorPictureE	menu_cursor/cursor_e.8bpp				
+MenuCursorPictureF	menu_cursor/cursor_f.8bpp				
+MenuCursorPictureG	menu_cursor/cursor_g.8bpp				
+MenuCursorPictureH	menu_cursor/cursor_h.8bpp				

@@ -49,10 +49,10 @@ mnCreditsDecodeBackgroundCode:
 	.thumb_func
 mnCreditsDecodeBackground:
 	bx	pc
-AlchemyUncredited_credits_background_decode:
+AlchemyUncreditedCreditsBackgroundDecode:
 	.2byte	0x0200
 	.arm
-AlchemyUncreditedEnd_credits_background_decode:
+AlchemyUncreditedEndCreditsBackgroundDecode:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]

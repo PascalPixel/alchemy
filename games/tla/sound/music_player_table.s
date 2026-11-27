@@ -9,14 +9,14 @@
 	.balign 4
 	.global MPlayTable
 MPlayTable:
-	music_player MPlayInfo_Jingle, Sound_Tracks0, 4
-	music_player MPlayInfo_BGM, Sound_Tracks1, 10
-	music_player MPlayInfo_MenuSE, Sound_Tracks2, 2
-	music_player MPlayInfo_ActionSE, Sound_Tracks3, 2
-	music_player MPlayInfo_SE4, Sound_Tracks4, 2
-	music_player MPlayInfo_SE5, Sound_Tracks5, 2
-	music_player MPlayInfo_SE6, Sound_Tracks6, 2
-	music_player MPlayInfo_SE7, Sound_Tracks7, 2
+	music_player MPlayInfoJingle, SoundTracks0, 4
+	music_player MPlayInfoBGM, SoundTracks1, 10
+	music_player MPlayInfoMenuSE, SoundTracks2, 2
+	music_player MPlayInfoActionSE, SoundTracks3, 2
+	music_player MPlayInfoSE4, SoundTracks4, 2
+	music_player MPlayInfoSE5, SoundTracks5, 2
+	music_player MPlayInfoSE6, SoundTracks6, 2
+	music_player MPlayInfoSE7, SoundTracks7, 2
 
 @ The player count is this table's row count; the mixer has no lines.
 	.global NumMusicPlayers

@@ -40,8 +40,8 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	Sint32		   frm;
 	Sint32		   i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
 	btEffectStartCanvasLayer(0);
 	if(mode == DJINNI_SIGN_RIME) {
 		Sint32 row;
@@ -92,7 +92,7 @@ void btEffectRunDjinniSign(BATTLE_EFFECT_PARM *args, Sint32 mode)
 	else
 		EFFECT_LOAD_BLITTER(
 			HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-	blit[0] = Ram_HeapSlots->ramCode;
+	blit[0] = RamHeapSlots->ramCode;
 
 	for(frm = 0; frm != DJINNI_SIGN_TICKS; frm++) {
 		/* Tick 0: Haze's stars take random places about the centre, one more

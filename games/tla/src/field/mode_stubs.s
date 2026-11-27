@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Overworld
-Stubs_Overworld:
+	.global StubsOverworld
+StubsOverworld:
 	stub fdModeRunStub, fdModeRun
 	stub gmMainRoutineRunStub, gmMainRoutineRun
 	stub fdScriptWaitStub, fdScriptWait

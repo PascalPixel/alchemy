@@ -9,6 +9,6 @@ MenuPatternRowMasks:
 	.4byte 0x05055050, 0x00000505
 	.4byte 0x05055050, 0x00050505
 	.4byte 0x05055050, 0x05050505
-	.global Menu_ChangeArrowTile
-Menu_ChangeArrowTile:
+	.global MenuChangeArrowTile
+MenuChangeArrowTile:
 	.incbin "games/tbs/src/menu/backdrop.4bpp"

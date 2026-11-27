@@ -8,12 +8,12 @@
 
 /* The cartridge's first instruction, where a reset jumps; as The Broken
    Seal's. */
-#define Cart_Start FIXED_ADDRESS((Uint32), 0x08000000, Rom_Start)
+#define CartStart FIXED_ADDRESS((Uint32), 0x08000000, RomStart)
 
 /* The last letter of the game code in the cartridge header (rom_header.s): J,
    E, D, F, I or S, which the German, French, Italian and Spanish editions read
    to tell which they are. */
-#define Cart_LanguageCode \
-	(*FIXED_ADDRESS((const Uint8 *), 0x080000af, Rom_LanguageCode))
+#define CartLanguageCode \
+	(*FIXED_ADDRESS((const Uint8 *), 0x080000af, RomLanguageCode))
 
 #endif

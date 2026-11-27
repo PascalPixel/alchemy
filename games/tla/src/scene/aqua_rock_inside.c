@@ -41,7 +41,7 @@ typedef struct PILLAR_ENTRY {
 #define PILLAR_ENTRIES 32
 
 /* The kinds of spout, each a run of collision codes from the first a room's
-   spouts take, and of pillar top: AquaRockInside_PillarTiles holds a 16x16 top
+   spouts take, and of pillar top: AquaRockInsidePillarTiles holds a 16x16 top
    for each, then the 16x8 pieces of column under them, one for each step of
    height up to PILLAR_COLUMN_PIECES. */
 #define SPOUT_KINDS			 8
@@ -123,9 +123,9 @@ extern Uint32					   AquaRockInsideSplashScript[];
 extern Uint32					   WadingSplashScript[];
 extern Uint32					   RippleScript[];
 /* The water pillars' tiles, compressed (graphics/aqua_rock_inside/tiles.s). */
-extern const Uint8 AquaRockInside_PillarTiles[];
+extern const Uint8 AquaRockInsidePillarTiles[];
 /* The splashes' tiles, compressed. */
-extern const Uint8 AquaRockInside_SplashTiles[];
+extern const Uint8 AquaRockInsideSplashTiles[];
 extern Uint32	   DustBurstScript[];
 
 #include "field/map.h"
@@ -528,7 +528,7 @@ void scAquaRockInsideJumpForward(void)
 void scAquaRockInsideDouseWaterOfLifeChestEastMoai(Sint32 unused, Sint32 id)
 {
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 	Sint32 column;
 	Sint32 moai = id;
@@ -564,7 +564,7 @@ void scAquaRockInsideDouseWaterOfLifeChestEastMoai(Sint32 unused, Sint32 id)
 void scAquaRockInsideDouseWaterOfLifeChestWestMoai(Sint32 unused, Sint32 id)
 {
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
 	scFieldActorSetSprCol(fdActorGet(id), SPRITE_COLOR_NORMAL);
@@ -868,7 +868,7 @@ void scAquaRockInsideParchPool(void)
    turns there. */
 Sint32 scAquaRockInsideBlockMetatileUnder(Sint32 id, Sint32 value)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	ACTOR	  *actor = fdActorGet(id);
 
 	if(actor != 0) {
@@ -944,7 +944,7 @@ void scAquaRockInsideDouseRustySwordChestWaterStone(void)
 void scAquaRockInsideDouseRustySwordChestMoai(Sint32 unused, Sint32 id)
 {
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
 	scFieldActorSetSprCol(
@@ -1111,8 +1111,8 @@ void scAquaRockInsideBlockMoaiWithPillar(Sint32 unused, Sint32 id)
 	ACTOR *actor = fdActorGetById(id);
 
 	if(FIELD_METATILE(actor->x.fixed) == 49) {
-		MAP_LAYER *layer = &((MAP_STATE *)Ram_HeapSlots->mapGrid)
-								->layers[MAPGRID_LAYER_MIDDLE];
+		MAP_LAYER *layer =
+			&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 		Sint32 i;
 		Sint32 fade;
 
@@ -1274,7 +1274,7 @@ void scAquaRockInsideDouseTearStoneWaterStone(void)
 void scAquaRockInsideDouseTearStoneMoai(Sint32 unused, Sint32 id)
 {
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
 	scFieldActorSetSprCol(fdActorGet(id), SPRITE_COLOR_BRG);
@@ -1304,7 +1304,7 @@ enum { POOL_FLICKERS = 15 };
 void scAquaRockInsideWaterSinks(void)
 {
 	MAP_LAYER *layer =
-		&((MAP_STATE *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
+		&((MAP_STATE *)RamHeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
 	Sint32 i;
 
 	fdScriptStart();
@@ -1634,11 +1634,11 @@ void scAquaRockInsideWalkToParchTablet(void)
 
 /* Checking the Parch tablet from its east side: Felix steps round to the front
    and reads it. */
-DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingWest, 280)
+DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInsideReadTabletFacingWest, 280)
 
 /* Checking the Parch tablet from its west side: Felix steps round to the front
    and reads it. */
-DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingEast, 248)
+DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInsideReadTabletFacingEast, 248)
 
 extern CUE AquaRockInsideCues[];
 extern CUE AquaRockInsideWaterOfLifeChestCues[];
@@ -1949,7 +1949,7 @@ Sint32 scPrepareMap(void)
 	ACTOR	  *actor;
 	MAP_STATE *map;
 
-	fdMapSetUpperLevelWading(Ram_HeapSlots->mapGrid);
+	fdMapSetUpperLevelWading(RamHeapSlots->mapGrid);
 	scAquaRockInsideStartPillars();
 	if(scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
 		/* By the room the party is in: the north-east, the south-east, the
@@ -2063,7 +2063,7 @@ Sint32 scPrepareMap(void)
 			if(!syGameFlagGet(FLAG_RUSTY_SWORD_CHEST_MOAI_FILLED) &&
 				!fdScriptGetFlag(
 					FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED)) {
-				map = Ram_HeapSlots->mapGrid;
+				map = RamHeapSlots->mapGrid;
 				fdMapGridCopyMetatilesLayered(64, 64, 16, 13, 71, 39);
 				fdMapGridCopyMetatileAttributes(71, 39, 16, 15, 7, 39);
 				scAquaRockInsideSetPillarMetatileJumpable();
@@ -2194,7 +2194,7 @@ Sint32 scPrepareMap(void)
 			scAquaRockInsideAddSpouts(COLLISION_SECOND_SPOUTS, 4, 4);
 			if(!syGameFlagGet(FLAG_TEAR_STONE_MOAI_FILLED) &&
 				!fdScriptGetFlag(FLAG_AQUA_ROCK_TEAR_STONE_STREAMS_TURNED)) {
-				map = Ram_HeapSlots->mapGrid;
+				map = RamHeapSlots->mapGrid;
 				fdMapGridCopyMetatilesLayered(64, 64, 19, 17, 100, 13);
 				fdMapGridCopyMetatilesLayered(35, 105, 23, 24, 35, 73);
 				fdMapGridCopyMetatileAttributes(100, 13, 19, 19, 36, 13);
@@ -2277,7 +2277,7 @@ Sint32 scPrepareMap(void)
 void scAquaRockInsideDrawPillars(void)
 {
 	PILLAR_STATE *state = &AquaRockInsidePillars;
-	Sint32		  viewX = syMapStateView(Ram_HeapSlots->mapGrid)[0];
+	Sint32		  viewX = syMapStateView(RamHeapSlots->mapGrid)[0];
 	PILLAR_ENTRY *entry = state->entries;
 	Sint32		  viewZ;
 	Sint32		  originY;
@@ -2286,8 +2286,8 @@ void scAquaRockInsideDrawPillars(void)
 	Uint32		  tile;
 
 	viewX &= FIELD_PIXEL_MASK;
-	viewZ = syMapStateView(Ram_HeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
-	originY = ((MAP_STATE *)Ram_HeapSlots->mapGrid)->origin[1];
+	viewZ = syMapStateView(RamHeapSlots->mapGrid)[1] & FIELD_PIXEL_MASK;
+	originY = ((MAP_STATE *)RamHeapSlots->mapGrid)->origin[1];
 	tile = VramCacheEntries[state->vramEntry].ofs >> 5;
 
 	for(i = 0; i < PILLAR_ENTRIES; i++) {
@@ -2367,7 +2367,7 @@ void scAquaRockInsideStartPillars(void)
 
 	syWordsClearEntry(&AquaRockInsidePillars, sizeof(PILLAR_STATE));
 	buf = syHeapCallAlternatePool(syHeapAlloc, 3200);
-	syDecompressTaggedLZ(AquaRockInside_PillarTiles, buf);
+	syDecompressTaggedLZ(AquaRockInsidePillarTiles, buf);
 	AquaRockInsidePillars.vramEntry = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(AquaRockInsidePillars.vramEntry, 3200, buf);
 	syHeapRelease(buf);
@@ -2380,7 +2380,7 @@ void scAquaRockInsideStartPillars(void)
    metatiles MAP_SHAPE_MARKED, its entry set to `level`. */
 void scAquaRockInsideAddSpouts(Uint32 first, Sint32 level, Sint32 baseLevel)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	MAP_LAYER	 *layer = map->layers;
 	MAP_METATILE *metatiles = layer->metatiles;
 	Sint32		  originX = layer->ofsX + map->minX;
@@ -2473,7 +2473,7 @@ void scAquaRockInsideSetPillarsHeight(Sint32 height)
 	PILLAR_ENTRY *entry;
 	Sint32		  i;
 
-	*(Sint32 *)(Ram_MapCollision + MAP_SHAPE_MARKED * 4) =
+	*(Sint32 *)(RamMapCollision + MAP_SHAPE_MARKED * 4) =
 		MAP_SHAPE(0, (height / toFIXED(8)) & 0xff, 0, 0);
 	entry = state->entries;
 	for(i = 0; i < PILLAR_ENTRIES; i++) {
@@ -2487,14 +2487,14 @@ void scAquaRockInsideSetPillarsHeight(Sint32 height)
    MAP_SHAPE_RAISED_ALONE at that height. */
 void scAquaRockInsideSetPillarHeight(Uint32 idx, Sint32 height)
 {
-	MAP_STATE	 *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE	 *map = RamHeapSlots->mapGrid;
 	PILLAR_STATE *state = &AquaRockInsidePillars;
 
 	if(idx < PILLAR_ENTRIES) {
 		PILLAR_ENTRY *entry = &state->entries[idx];
 
 		if(entry->x != 0) {
-			*(Sint32 *)(Ram_MapCollision + MAP_SHAPE_RAISED_ALONE * 4) =
+			*(Sint32 *)(RamMapCollision + MAP_SHAPE_RAISED_ALONE * 4) =
 				MAP_SHAPE(0, (height / toFIXED(8)) & 0xff, 0, 0);
 			{
 				Uint8 *ids = map->layers[MAPGRID_LAYER_GROUND].terrainIds;
@@ -2511,7 +2511,7 @@ void scAquaRockInsideSetPillarHeight(Uint32 idx, Sint32 height)
 /* Draws thirty-two sprites that each shake by a random few pixels a tick. */
 void scAquaRockInsideDrawSplashes(void)
 {
-	MAP_STATE  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE  *map = RamHeapSlots->mapGrid;
 	BEAM_STATE *splashes = &AquaRockInsideSplashes;
 	Sint32		viewX = syMapStateView(map)[0];
 	Sint32		viewZ;
@@ -2570,7 +2570,7 @@ void scAquaRockInsideStartSplashes(void)
 
 	syWordsClearEntry(&AquaRockInsideSplashes, sizeof(BEAM_STATE));
 	buf = syHeapCallAlternatePool(syHeapAlloc, 1024);
-	syDecompressTaggedLZ(AquaRockInside_SplashTiles, buf);
+	syDecompressTaggedLZ(AquaRockInsideSplashTiles, buf);
 	AquaRockInsideSplashes.vramEntry = syVRAMCacheFindFreeEntry();
 	mnVRAMLoad(AquaRockInsideSplashes.vramEntry, 1024, buf);
 	syHeapRelease(buf);
@@ -2603,7 +2603,7 @@ extern Sint8 AquaRockInsideStreamTurns[];
 Sint32 scAquaRockInsideAdvanceStreams(Sint32 first, Sint32 tgt)
 {
 	Sint32		reached = 0;
-	MAP_STATE  *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE  *map = RamHeapSlots->mapGrid;
 	BEAM_STATE *state = &AquaRockInsideSplashes;
 	Sint32		cnt = state->cnt;
 	Sint32		turn;
@@ -3214,8 +3214,8 @@ LATE_DATA CUE AquaRockInsideParchTabletCues[] = {
 	{CUE_EXIT, 1, CONDITION_ALWAYS, AQUA_ROCK_INSIDE_PARCH_TABLET_TO_AQUA_ROCK_INSIDE_AQUARIUS_STONE},
 	{EXAMINE_CUE_FACING(FACING_NORTH), CUE_PARCH_TABLET, CONDITION_ALWAYS, SCRIPT_REF(scAquaRockInsideReadParchTablet)},
 	{EXAMINE_CUE_FACING(FACING_SOUTH), CUE_PARCH_TABLET, CONDITION_ALWAYS, SCRIPT_REF(scAquaRockInsideWalkToParchTablet)},
-	{EXAMINE_CUE_FACING(FACING_WEST), CUE_PARCH_TABLET, CONDITION_ALWAYS, SCRIPT_REF(AquaRockInside_ReadTabletFacingWest)},
-	{EXAMINE_CUE_FACING(FACING_EAST), CUE_PARCH_TABLET, CONDITION_ALWAYS, SCRIPT_REF(AquaRockInside_ReadTabletFacingEast)},
+	{EXAMINE_CUE_FACING(FACING_WEST), CUE_PARCH_TABLET, CONDITION_ALWAYS, SCRIPT_REF(AquaRockInsideReadTabletFacingWest)},
+	{EXAMINE_CUE_FACING(FACING_EAST), CUE_PARCH_TABLET, CONDITION_ALWAYS, SCRIPT_REF(AquaRockInsideReadTabletFacingEast)},
 	{PSYNERGY_PHASE_ON_METATILE(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), CUE_PARCH_TABLET_POOL, IF_FLAG_SET(FLAG_PARCH_TABLET_POOL_LEFT), SCRIPT_REF(scAquaRockInsideParchLastPool)},
 	{CUE_TABLE_END},
 };

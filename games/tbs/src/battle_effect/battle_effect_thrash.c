@@ -78,17 +78,17 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 		btResourceLoadAndDecompress(
 			RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_A, state->imageStorage, 1, 0);
 		btResourceLoadAndDecompress(RESOURCE_UNUSED_FLASHING_STRIKE_IMAGE_B,
-			Ram_MapGridMetatileBuffer, 1, 1);
+			RamMapGridMetatileBuffer, 1, 1);
 	} else if(mode == FLASHING_STRIKE_QUICK_STRIKE) {
 		btResourceLoadAndDecompress(
 			RESOURCE_QUICK_STRIKE_IMAGE_A, state->imageStorage, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_QUICK_STRIKE_IMAGE_B, Ram_MapGridMetatileBuffer, 1, 1);
+			RESOURCE_QUICK_STRIKE_IMAGE_B, RamMapGridMetatileBuffer, 1, 1);
 	} else {
 		btResourceLoadAndDecompress(
 			RESOURCE_VORPAL_SLASH_IMAGE_A, state->imageStorage, 1, 0);
 		btResourceLoadAndDecompress(
-			RESOURCE_VORPAL_SLASH_IMAGE_B, Ram_MapGridMetatileBuffer, 1, 1);
+			RESOURCE_VORPAL_SLASH_IMAGE_B, RamMapGridMetatileBuffer, 1, 1);
 	}
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_CLEAR, 0);
 
@@ -115,11 +115,11 @@ void btEffectRunFlashingStrike(BATTLE_EFFECT_PARM *args, Sint32 mode)
 			draw[0](canvas, state->imageStorage + FLASHING_STRIKE_PICTURE_BYTES,
 				0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		else if(frm <= 11)
-			draw[0](canvas, Ram_MapGridMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
+			draw[0](canvas, RamMapGridMetatileBuffer, 0, 0, SLASH_PICTURE_SIZE,
 				SLASH_PICTURE_SIZE);
 		else if(frm <= 15)
 			draw[0](canvas,
-				Ram_MapGridMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+				RamMapGridMetatileBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
 				SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
 		/* The flood: four ticks of the canvas at its brightest. */
 		if(frm >= FLASHING_STRIKE_FLOOD_TICK &&

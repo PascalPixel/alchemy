@@ -12,7 +12,7 @@
    after a purchase. */
 Sint32 mnShopListAvailableArtifacts(void)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		cnt = 0;
 	Sint32		itemId;
 
@@ -38,7 +38,7 @@ Sint32 mnShopListAvailableArtifacts(void)
    counter is open. */
 void mnCursorStep(void)
 {
-	mnCursorAdvance(&((SHOP_STATE *)Ram_HeapSlots->menuState)->cursor);
+	mnCursorAdvance(&((SHOP_STATE *)RamHeapSlots->menuState)->cursor);
 }
 
 /* Allocates and clears the shop's state in the menu's heap slot, lists the
@@ -89,7 +89,7 @@ void mnShopReleaseState(void)
 {
 	SHOP_STATE *shop;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	mnItemIconGridRelease();
 	syCloseEvent(mnCursorStep);
 	mnMessageCloseFinishedWindowsStub();
@@ -119,7 +119,7 @@ Sint32 mnShopRun(Sint32 stockRow, Sint32 keeperId)
 		stockRow = SHOP_STOCK_ROW_EMPTY;
 	mnShopStockAddArtifacts(stockRow);
 	mnShopInitState();
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	shop->shopType = mnShopStockGetType(stockRow);
 	shop->keeperGraphics =
 		((SPR *)fdActorGetByIdStub(keeperId)->spr)->entries[0]->anmId;
@@ -221,7 +221,7 @@ void mnSndWaitForJingle(void)
    (SHOP_KEEPER_LINE), and waits until it is typed out. */
 void mnShopShowKeeperMessage(Sint32 msgId)
 {
-	SHOP_STATE *shop = Ram_HeapSlots->menuState;
+	SHOP_STATE *shop = RamHeapSlots->menuState;
 	Sint32		resolvedMsg;
 	Sint32		voice;
 	Sint8		shopType;
@@ -250,7 +250,7 @@ void mnShopShowKeeperMessageHidingCursor(Sint32 msgId)
 	SHOP_STATE	*shop;
 	WINDOW_SPR **cursorSlot;
 
-	shop = Ram_HeapSlots->menuState;
+	shop = RamHeapSlots->menuState;
 	cursorSlot = &shop->cursor.anchor;
 	savedCursorMode = (*cursorSlot)->motion;
 	resolvedMsg = msgId;
@@ -284,7 +284,7 @@ void mnShopShowKeeperMessageHidingCursor(Sint32 msgId)
 Sint32 mnShopAskYesNo(Sint32 choice)
 {
 	WINDOW_SPR **cursorSlot =
-		&((SHOP_STATE *)Ram_HeapSlots->menuState)->cursor.anchor;
+		&((SHOP_STATE *)RamHeapSlots->menuState)->cursor.anchor;
 	Uint8 savedCursorMode = (*cursorSlot)->motion;
 	mnIconShowStub(*cursorSlot);
 	choice = mnYesNoMenuRunAtStub(SHOP_CONFIRM_MENU_X, 5, choice);
@@ -299,7 +299,7 @@ Sint32 mnShopAskYesNo(Sint32 choice)
 Sint32 mnSanctumAskYesNo(Sint32 choice)
 {
 	WINDOW_SPR **cursorSlot =
-		&((SHOP_STATE *)Ram_HeapSlots->menuState)->cursor.anchor;
+		&((SHOP_STATE *)RamHeapSlots->menuState)->cursor.anchor;
 	Uint8 savedCursorMode = (*cursorSlot)->motion;
 	mnIconShowStub(*cursorSlot);
 	choice = mnYesNoMenuRunAtStub(7, 7, choice);

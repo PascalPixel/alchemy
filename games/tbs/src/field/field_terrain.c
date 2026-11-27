@@ -297,14 +297,14 @@ FIXED fdMapGridGetTerrainHeight(Sint32 layer, FIXED x, FIXED y)
 	x = FIXEDtoINT(x);
 	y = FIXEDtoINT(y);
 	/* Before the map state exists, the grid is read from its start. */
-	metatile = (MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer;
+	metatile = (MAP_GRID_METATILE *)RamMapGridMetatileBuffer;
 	if(grid != NULL) {
 		metatile = grid->layers[layer & 3].metatiles;
 	}
 	/* Metatiles are 16 pixels, 128 to a row. */
 	metatile += x / MAPGRID_METATILE_PIXELS +
 		(y / MAPGRID_METATILE_PIXELS) * MAPGRID_SIZE;
-	heightBytes = Ram_MapGridShapes + metatile->shape * 4;
+	heightBytes = RamMapGridShapes + metatile->shape * 4;
 	/* UB: read the kind byte before passing the remaining samples. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 	{
@@ -342,7 +342,7 @@ Sint32 fdMapGridGetTerrainKindAt(Sint32 layer, FIXED x, FIXED y)
 	metatiles += metatileX + metatileY * MAPGRID_SIZE;
 	/* The kind byte of the metatile's four-byte shape. */
 	shape = metatiles->shape;
-	return *(Ram_MapGridShapes + shape * 4) & MAPGRID_SHAPE_KIND_MASK;
+	return *(RamMapGridShapes + shape * 4) & MAPGRID_SHAPE_KIND_MASK;
 }
 
 /* Returns the metatile behavior of a layer's metatile at (x, y) in 16.16
@@ -420,13 +420,13 @@ Sint32 fdMapGridCheckCollision(ACTOR *actor, FIELD_POS *pos)
 	if(actor->layer <= MAPGRID_LAYER_OVERHEAD)
 		metatile = gridState->layers[actor->layer].metatiles;
 	else
-		metatile = (MAP_GRID_METATILE *)Ram_MapGridMetatileBuffer;
+		metatile = (MAP_GRID_METATILE *)RamMapGridMetatileBuffer;
 	metatile += pixelX / MAPGRID_METATILE_PIXELS +
 		(pixelZ / MAPGRID_METATILE_PIXELS) * MAPGRID_SIZE;
 	/* A wall blocks whatever the heights. */
 	if(metatile->behavior == METATILE_BEHAVIOR_WALL)
 		return COLLISION_IMPASSABLE;
-	heightBytes = Ram_MapGridShapes + metatile->shape * 4;
+	heightBytes = RamMapGridShapes + metatile->shape * 4;
 	/* UB: read the kind byte before passing the remaining samples. */
 #if FIX_UNSEQUENCED_SIDE_EFFECT
 	{
@@ -519,7 +519,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 
 	/* The upper layer first. */
 	collisionTile = WORLD_MAP_UPPER_COLLISION_MAP[collisionMetatile];
-	packedCollisions = *(Ram_MapGridShapes + WORLD_MAP_UPPER_COLLISION_TILES +
+	packedCollisions = *(RamMapGridShapes + WORLD_MAP_UPPER_COLLISION_TILES +
 		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)
@@ -532,7 +532,7 @@ Sint32 fdWorldMapGetCollision(WORLD_POS *pos)
 
 	/* Then the lower layer. */
 	collisionTile = WORLD_MAP_LOWER_COLLISION_MAP[collisionMetatile];
-	packedCollisions = *(Ram_MapGridShapes +
+	packedCollisions = *(RamMapGridShapes +
 		collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOfs);
 	if(packedCollisions != 0) {
 		if(halfPixelX & 2)

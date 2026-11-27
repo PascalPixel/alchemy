@@ -220,7 +220,7 @@ const CUE *scGetCues(void)
    it. */
 void scIsletCaveFinishTeleport(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Sint32		 effect = state->transition;
 
 	scTeleportStartFastShimmer();
@@ -273,7 +273,7 @@ DEFINE_ISLET_CAVE_ARRIVE_AT(scIsletCaveTeleportToIslandCircle, 240, 480)
    well as darker. */
 void scIsletCaveDarkenPalette(Sint32 scale)
 {
-	PALETTE_FADE *fade = Ram_HeapSlots->palFade;
+	PALETTE_FADE *fade = RamHeapSlots->palFade;
 	Uint16		 *src = fade->pal;
 	Uint16		 *channel = fade->tgt;
 	Uint32		  cnt = ARRAY_COUNT(fade->pal) / 2;
@@ -324,7 +324,7 @@ extern MAP_GRID_METATILE_ANIMATION IsletCaveDoors[];
    it leaves by. */
 void scIsletCaveOpenDoorAndEnter(void)
 {
-	FIELD_STATE *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE *state = RamHeapSlots->fieldState;
 	Uint32		 i;
 	Uint32		 idx;
 
@@ -650,7 +650,7 @@ DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(scIsletCaveRideFirstLogEast, ACTOR_FIRST_LOG,
 /* Walking west from the Teleport circle's island onto the first log (metatiles
    (10, 30) to (10, 32)) floats it two metatiles west with Felix aboard, across
    to the west shore and the Turtle Boots chest. */
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, ACTOR_FIRST_LOG,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCaveRideFirstLogWest, ACTOR_FIRST_LOG,
 	-32, syGameFlagSet, FLAG_ISLET_CAVE_FIRST_LOG_MOVED)
 
 /* Walking east from the little ledge of the Rusty Staff chest, at the west of
@@ -705,7 +705,7 @@ DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(scIsletCaveRideThirdLogEast, ACTOR_THIRD_LOG,
 /* Walking west from the east hall's narrow east bank onto the third log
    (metatiles (53, 8) to (53, 10)) floats it five metatiles west with Felix
    aboard, back to the ledge at the channel's north-west. */
-DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogWest, ACTOR_THIRD_LOG,
+DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCaveRideThirdLogWest, ACTOR_THIRD_LOG,
 	-80, syGameFlagClear, FLAG_ISLET_CAVE_THIRD_LOG_MOVED)
 
 /* Walking east from the ledge at the north-west of the east hall onto the
@@ -953,11 +953,11 @@ CUE IsletCaveHallsCues[] = {
 	{CUE_EXIT, 7, CONDITION_ALWAYS, 7},
 	{CUE_EXIT, 8, CONDITION_ALWAYS, 8},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_ISLET_CAVE_FIRST_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideFirstLogEast)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_ISLET_CAVE_FIRST_LOG, CONDITION_ALWAYS, SCRIPT_REF(IsletCave_RideFirstLogWest)},
+	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_ISLET_CAVE_FIRST_LOG, CONDITION_ALWAYS, SCRIPT_REF(IsletCaveRideFirstLogWest)},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_ISLET_CAVE_SECOND_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideSecondLogEast)},
 	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_ISLET_CAVE_SECOND_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideSecondLogWest)},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_ISLET_CAVE_THIRD_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideThirdLogEast)},
-	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_ISLET_CAVE_THIRD_LOG, CONDITION_ALWAYS, SCRIPT_REF(IsletCave_RideThirdLogWest)},
+	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_ISLET_CAVE_THIRD_LOG, CONDITION_ALWAYS, SCRIPT_REF(IsletCaveRideThirdLogWest)},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_ISLET_CAVE_FOURTH_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideFourthLogEast)},
 	{STEP_CUE_WALKING_INTO(FACING_WEST), METATILE_BEHAVIOR_ISLET_CAVE_FOURTH_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideFourthLogWest)},
 	{STEP_CUE_WALKING_INTO(FACING_EAST), METATILE_BEHAVIOR_ISLET_CAVE_FIFTH_LOG, CONDITION_ALWAYS, SCRIPT_REF(scIsletCaveRideFifthLogEast)},

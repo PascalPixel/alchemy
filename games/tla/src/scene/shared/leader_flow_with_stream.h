@@ -12,7 +12,7 @@ void scLeaderFlowWithStream(void)
 	Sint32 hit;
 
 	{
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		id = MainRoutineStateWork.leaderActorId;
 		camera = state->camera;

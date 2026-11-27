@@ -40,9 +40,9 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 	BATTLE_CAMERA		*camera;
 	Sint32				 i;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	sheet = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	sheet = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btResourceLoadAndDecompress(
@@ -54,10 +54,10 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 		LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
 	}
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	draw[1] = Ram_HeapSlots->ramCodePaired;
+	draw[1] = RamHeapSlots->ramCodePaired;
 
 	for(i = 0; i != VOLCANO_SPARK_POOL; i++)
 		PARTICLES[i].variant = 0;
@@ -78,7 +78,7 @@ void btEffectRunVolcano(BATTLE_EFFECT_PARM *args)
 	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
 	for(frm = 0; frm != VOLCANO_TICKS; frm++) {
-		camera = Ram_HeapSlots->cameraState;
+		camera = RamHeapSlots->cameraState;
 		if(args->variant == EFFECT_VARIANT_STRONGEST &&
 			frm < VOLCANO_PILLAR_TICKS) {
 			if(args->side == EFFECT_SIDE_ENEMIES)

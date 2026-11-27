@@ -1,33 +1,33 @@
 name	file	section	align	left	pad
-WorldMap_TilesA1	tiles_a1.8bpp.lz			23e0	
-WorldMap_TilesA2	tiles_a2.8bpp.lz			be9c39	
-WorldMap_TilesA3	tiles_a3.8bpp.lz				
-WorldMap_TilesA4	tiles_a4.8bpp.lz			23	
-WorldMap_TilesA5	tiles_a5.8bpp.lz				
-WorldMap_TilesA6	tiles_a6.8bpp.lz			4c	
-WorldMap_PaletteB	palette_b.gbapal.plz				
-WorldMap_AnimationB	anim_b.script.lz				
-WorldMap_MetatileTilesAttributesB	attr_b.table.lz			11f9dc	
-WorldMap_TilesB1	tiles_b1.8bpp.lz				
-WorldMap_TilesB2	tiles_b2.8bpp.lz			00	
-WorldMap_TilesB3	tiles_b3.8bpp.lz			1c	
-WorldMap_TilesB4	tiles_b4.8bpp.lz				
-WorldMap_TilesB5	tiles_b5.8bpp.lz				
-WorldMap_TilesB6	tiles_b6.8bpp.lz			0b4c	
-WorldMap_PaletteC	palette_c.gbapal.plz				
-WorldMap_MetatileTilesAttributesC	attr_c.table.lz	a		ef017d	
-WorldMap_TilesC1	tiles_c1.8bpp.lz	a			4
-WorldMap_TilesC2	tiles_c2.8bpp.lz	a		c874	
-WorldMap_TilesC3	tiles_c3.8bpp.lz	a		05f0	
-WorldMap_TilesC4	tiles_c4.8bpp.lz	a			4
-WorldMap_TilesC5	tiles_c5.8bpp.lz	a		ecab	
-WorldMap_TilesC6	tiles_c6.8bpp.lz	a		21	
-WorldMap_PaletteD	palette_d.gbapal.plz	a		4092	
-WorldMap_AnimationD	anim_d.script.lz	a			4
-WorldMap_MetatileTilesAttributesD	attr_d.table.lz	a			
-WorldMap_TilesD1	tiles_d1.8bpp.lz	a		c244	
-WorldMap_TilesD2	tiles_d2.8bpp.lz	a			
-WorldMap_TilesD3	tiles_d3.8bpp.lz	a		e6f480	
-WorldMap_TilesD4	tiles_d4.8bpp.lz	a		84	
-WorldMap_TilesD5	tiles_d5.8bpp.lz	a		c7	
-WorldMap_TilesD6	tiles_d6.8bpp.lz	a		2ca2	
+WorldMapTilesA1	tiles_a1.8bpp.lz			23e0	
+WorldMapTilesA2	tiles_a2.8bpp.lz			be9c39	
+WorldMapTilesA3	tiles_a3.8bpp.lz				
+WorldMapTilesA4	tiles_a4.8bpp.lz			23	
+WorldMapTilesA5	tiles_a5.8bpp.lz				
+WorldMapTilesA6	tiles_a6.8bpp.lz			4c	
+WorldMapPaletteB	palette_b.gbapal.plz				
+WorldMapAnimationB	anim_b.script.lz				
+WorldMapMetatileTilesAttributesB	attr_b.table.lz			11f9dc	
+WorldMapTilesB1	tiles_b1.8bpp.lz				
+WorldMapTilesB2	tiles_b2.8bpp.lz			00	
+WorldMapTilesB3	tiles_b3.8bpp.lz			1c	
+WorldMapTilesB4	tiles_b4.8bpp.lz				
+WorldMapTilesB5	tiles_b5.8bpp.lz				
+WorldMapTilesB6	tiles_b6.8bpp.lz			0b4c	
+WorldMapPaletteC	palette_c.gbapal.plz				
+WorldMapMetatileTilesAttributesC	attr_c.table.lz	a		ef017d	
+WorldMapTilesC1	tiles_c1.8bpp.lz	a			4
+WorldMapTilesC2	tiles_c2.8bpp.lz	a		c874	
+WorldMapTilesC3	tiles_c3.8bpp.lz	a		05f0	
+WorldMapTilesC4	tiles_c4.8bpp.lz	a			4
+WorldMapTilesC5	tiles_c5.8bpp.lz	a		ecab	
+WorldMapTilesC6	tiles_c6.8bpp.lz	a		21	
+WorldMapPaletteD	palette_d.gbapal.plz	a		4092	
+WorldMapAnimationD	anim_d.script.lz	a			4
+WorldMapMetatileTilesAttributesD	attr_d.table.lz	a			
+WorldMapTilesD1	tiles_d1.8bpp.lz	a		c244	
+WorldMapTilesD2	tiles_d2.8bpp.lz	a			
+WorldMapTilesD3	tiles_d3.8bpp.lz	a		e6f480	
+WorldMapTilesD4	tiles_d4.8bpp.lz	a		84	
+WorldMapTilesD5	tiles_d5.8bpp.lz	a		c7	
+WorldMapTilesD6	tiles_d6.8bpp.lz	a		2ca2	

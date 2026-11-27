@@ -98,17 +98,17 @@
 #else
 OUTPUT_ARCH(arm)
 ENTRY(syEntry)
-Decompress_MoveToFrontLzCommandsCodeSize = syResourceExecuteTransfer - syDecompressMoveToFrontLZCommands;
-Render_DecodePictureCodeSize = fdTileMapDrawRows - fdRenderDecodePicture;
-Tile_Decompress4bppCodeSize = mnTileExpandMasked - mnTileDecompress4bpp;
-Tile_ExpandMaskedCodeSize = mnTileExpandOpaque - mnTileExpandMasked;
-Tile_ExpandOpaqueCodeSize = mnWindowSprAcquireFree - mnTileExpandOpaque;
-Credits_DecodeBackgroundCodeSize = mnCreditsClearBuffer - mnCreditsDecodeBackground;
+DecompressMoveToFrontLzCommandsCodeSize = syResourceExecuteTransfer - syDecompressMoveToFrontLZCommands;
+RenderDecodePictureCodeSize = fdTileMapDrawRows - fdRenderDecodePicture;
+TileDecompress4bppCodeSize = mnTileExpandMasked - mnTileDecompress4bpp;
+TileExpandMaskedCodeSize = mnTileExpandOpaque - mnTileExpandMasked;
+TileExpandOpaqueCodeSize = mnWindowSprAcquireFree - mnTileExpandOpaque;
+CreditsDecodeBackgroundCodeSize = mnCreditsClearBuffer - mnCreditsDecodeBackground;
 fdActorUpdateAllCodeSize = fdDecompressLZ - fdActorUpdateAll;
 mnScanlineWindowBuildEdgesCodeSize = mnTileDecompress4bpp - mnScanlineWindowBuildEdges;
 fdWorldMapUpdateAffineLinesCodeSize = fdTileConvertMapGrid - fdWorldMapUpdateAffineLines;
 mnGlyphDrawCodeSize = mnScanlineWindowBuildEdges - mnGlyphDrawArm;
-BitDecoder_Size = btDebugParmSetLoad - btBitDecoderDecodeImage;
+BitDecoderSize = btDebugParmSetLoad - btBitDecoderDecodeImage;
 
 MEMORY
 {
@@ -725,9 +725,9 @@ SECTIONS
         "*/games/tbs/src/map/maps.o"(.data .overlays)
         "*/games/tbs/src/system/overlay/overlays.list.o"(.data .overlays)
     } > ROM
-    IwramResident_Rom = LOADADDR(.iwram_resident);
+    IwramResidentRom = LOADADDR(.iwram_resident);
     sySndMainRAMRom = LOADADDR(.iwram_mixer) + 1;
-    Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
+    MixerCallViaR3Rom = LOADADDR(.iwram_mixer) + (MixerCallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }
 #endif

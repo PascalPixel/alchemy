@@ -85,7 +85,7 @@ typedef enum FLURRY_COLUMN {
 /* The flash pictures, packed to half width after the arcs. */
 #define FLURRY_ORB_PICTURES	 20736
 /* The wave pictures, in the map grid buffer past the motes. */
-#define FLURRY_WAVE_PICTURES (Ram_MapGridMetatileBuffer + 24064)
+#define FLURRY_WAVE_PICTURES (RamMapGridMetatileBuffer + 24064)
 
 /* The user closes on the first target and strikes it again and again, each
    strike an arc or a wave with a flash and a spray of motes; the last knocks

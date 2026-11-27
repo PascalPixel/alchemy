@@ -346,7 +346,7 @@ Sint32 btStagingRunAttack(BATTLE_PLAN *plan, Sint32 mode)
 	Uint32					  actorId;
 	BATTLE_OBJECT			 *battleObject;
 
-	background = Ram_HeapSlots->battleBg;
+	background = RamHeapSlots->battleBg;
 	actorId = plan->unitId;
 	battleObject = btObjectGet(actorId);
 	/* The camera swings round to watch the run up from the side: it takes the
@@ -379,7 +379,7 @@ Sint32 btStagingRunAttack(BATTLE_PLAN *plan, Sint32 mode)
 	btStagingBuildTargetList(plan, &state);
 	if(state.kind == EFFECT_ID_SEVERE_BLOW)
 		mnPartyStatDrawStub(
-			Ram_HeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
+			RamHeapSlots->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
 	saved = btMotionCallBeast(plan, &state);
 	unit = syUnitGet(state.actor);
 	/* DEAD: syUnitGet's result is not used; the ROM keeps the call. */
@@ -514,7 +514,7 @@ Sint32 btStagingRunItem(
 	Sint32					  inventoryEntry;
 	UNIT					 *unit;
 	ITEM_DEFINITION			 *item;
-	BATTLE_BACKGROUND_STATE	 *background = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE	 *background = RamHeapSlots->battleBg;
 	Sint32					  tgtYaw;
 
 	if(plan->unitId > FELIX)
@@ -530,7 +530,7 @@ Sint32 btStagingRunItem(
 		BATTLE_STATE  *battle;
 		Uint8		  *mode;
 
-		battle = Ram_HeapSlots->battleState;
+		battle = RamHeapSlots->battleState;
 		mode = &battle->actingAnm;
 		object = slot->obj;
 		fdActorSelectAnimationStub(object, *mode);
@@ -555,7 +555,7 @@ Sint32 btStagingRunItem(
 		HEAP_SLOTS *heap;
 
 		i = 0;
-		heap = Ram_HeapSlots;
+		heap = RamHeapSlots;
 		fade = 0;
 		do {
 			BATTLE_STATE *battle = heap->battleState;
@@ -589,7 +589,7 @@ Sint32 btStagingRunItem(
 			gmInventoryRemoveStub(selection->unitId, selection->prm);
 		Sint32 idx = selection->prm;
 		if(result == INVENTORY_REMOVE_LAST) {
-			BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+			BATTLE_STATE *battle = RamHeapSlots->battleState;
 			Uint32		  row;
 
 			for(row = 0; row < BATTLE_ACTION_CAPACITY; row++) {
@@ -658,7 +658,7 @@ void btObjectSetColMode(MOTION_OBJECT *object, Sint32 value)
 Sint32 btStagingRunPsynergyCast(BATTLE_PLAN *plan, Sint32 mode)
 {
 	BATTLE_PRESENTATION_STATE state;
-	BATTLE_BACKGROUND_STATE	 *background = Ram_HeapSlots->battleBg;
+	BATTLE_BACKGROUND_STATE	 *background = RamHeapSlots->battleBg;
 	MOTION_OBJECT			 *object;
 	HEAP_SLOTS				 *heap;
 	void					 *saved;
@@ -705,7 +705,7 @@ Sint32 btStagingRunPsynergyCast(BATTLE_PLAN *plan, Sint32 mode)
 	if(isDjinni)
 		state.prelude = 1;
 	btHighlightSetModes(0, HIGHLIGHT_OFF);
-	heap = Ram_HeapSlots;
+	heap = RamHeapSlots;
 	mnPartyStatDrawStub(heap->battleState->partyStat & ~PARTY_STATUS_SHOW_PP);
 	saved = btMotionCallBeast(plan, &state);
 	object = btObjectGet(state.actor)->obj;
@@ -785,7 +785,7 @@ void btMotionFlashHit(Sint32 id, Sint32 unusedA, Sint32 unusedB)
 		sySynch(2);
 	}
 
-	mnPartyStatDrawStub(Ram_HeapSlots->battleState->partyStat);
+	mnPartyStatDrawStub(RamHeapSlots->battleState->partyStat);
 }
 
 /* Takes unit id out of the battle: off the party's or the enemies' list, its
@@ -798,7 +798,7 @@ Sint32 btObjectRemoveFromLists(Sint32 id)
 	Uint32		  j;
 	Sint32		  unit;
 
-	battle = Ram_HeapSlots->battleState;
+	battle = RamHeapSlots->battleState;
 	syUnitGet(id)->side = BATTLE_SIDE_NONE;
 	for(i = 0;; i++) {
 		unit = battle->partyUnits[i];

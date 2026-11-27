@@ -81,7 +81,7 @@ Sint32 fdLuckyDiceStart(void)
    pitched to 152/256 of a turn and 510 pixels away, following nothing. */
 void fdCameraResetViewDefaults(void)
 {
-	BATTLE_CAMERA *camera = Ram_HeapSlots->cameraState;
+	BATTLE_CAMERA *camera = RamHeapSlots->cameraState;
 	Sint32		   ofs[3];
 	Uint32		   nearPlane;
 
@@ -345,8 +345,8 @@ void fdLuckyDiceRun(void)
 	syDMAXCopy((void *)BG_PLTT, bgPalette, DMA_COPY_WORDS(sizeof bgPalette / 4),
 		REG_DMA3);
 	resourceAdr += DICE_BOARD_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ((const void *)resourceAdr, Ram_MapMetatileBuffer);
-	syDMAXCopy(Ram_MapMetatileBuffer, (void *)BG_CHAR_BLOCK(1),
+	syFieldDecompressTaggedLZ((const void *)resourceAdr, RamMapMetatileBuffer);
+	syDMAXCopy(RamMapMetatileBuffer, (void *)BG_CHAR_BLOCK(1),
 		DMA_COPY_WORDS(9600), REG_DMA3);
 	resourceAdr = (Sint32)syResourceGetTableEntry(RESOURCE_LUCKY_DICE_SPRITES);
 	syDMAXCopy((void *)resourceAdr, sprPalette,
@@ -354,8 +354,8 @@ void fdLuckyDiceRun(void)
 	syDMAXCopy((void *)resourceAdr, (void *)OBJ_PLTT,
 		DMA_COPY_WORDS(DICE_SPRITES_PALETTE_COLORS / 2), REG_DMA3);
 	resourceAdr += DICE_SPRITES_PALETTE_COLORS * 2;
-	syFieldDecompressTaggedLZ((const void *)resourceAdr, Ram_MapMetatileBuffer);
-	syDMAXCopy(Ram_MapMetatileBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
+	syFieldDecompressTaggedLZ((const void *)resourceAdr, RamMapMetatileBuffer);
+	syDMAXCopy(RamMapMetatileBuffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(7936),
 		REG_DMA3);
 	fdLuckyDiceScaleRGB555Buffer(
 		sprPalette, (Uint16 *)OBJ_PLTT, 0, OBJ_PLTT_COLORS);

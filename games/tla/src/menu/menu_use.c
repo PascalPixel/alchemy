@@ -15,7 +15,7 @@ Sint32 mnItemUse(Sint32 slot, Sint32 memberId, Sint32 tgtId)
 	ITEM_DEFINITION *item;
 
 	unit = syUnitGet(memberId);
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
 	item = gmItemGetDirectStub(itemId);
 	useResult = mnAbilityApplyToTargets(
@@ -60,7 +60,7 @@ Sint32 mnAbilityApplyToTargets(
 	Sint32				amount;
 	Sint32				result;
 
-	menu = Ram_HeapSlots->menuState;
+	menu = RamHeapSlots->menuState;
 	ability = gmAbilityGetDirectStub(abilityId);
 	changed = 0;
 	result = 0;

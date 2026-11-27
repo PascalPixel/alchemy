@@ -252,7 +252,7 @@ void btPlaybackRun(void)
 			/* Show the arrow and wait for the player, as
 			   btMessageWaitForAdvance does, but with an opaque arrow. */
 			ADVANCE_ARROW_SPR *prompt = &events->arrow;
-			Uint8			  *arrowTiles = BattleMessage_AdvanceArrowTiles;
+			Uint8			  *arrowTiles = BattleMessageAdvanceArrowTiles;
 			Sint32			   pictureTiles =
 				(Sint32)arrowTiles + ((TickCount >> 2) & 7) * 128;
 			BATTLE_MESSAGE_STATE  *display = BattleMessageStateWork;

@@ -1,6 +1,6 @@
 	.section .rodata
 	.balign 4
-	.global Song_SeStopActionSe
-Song_SeStopActionSe:
+	.global SongSeStopActionSe
+SongSeStopActionSe:
 	.byte 0, 0, 120, 0
-	.4byte Sound_SeVoices
+	.4byte SoundSeVoices

@@ -2,18 +2,18 @@
    in five scenes of one overlay.
 
    The cave mouth on the first cliffs (gaia_rock.c) opens onto the first altar's
-   room (SceneId_GaiaRockInsideFirstAltar), where two great red faces on the
+   room (SceneIdGaiaRockInsideFirstAltar), where two great red faces on the
    north wall stand in two doorways, one either side of an altar. The Dancing
    Idol, found on the altar on top of the rock, dances on this altar and the
    faces slide aside (scGaiaRockInsidePlaceDollOnFirstAltar). Three ways open:
    through the west and east doorways to the room of leafy platforms
-   (SceneId_GaiaRockInsidePlatforms), and a third, past two stumps Felix Moves
+   (SceneIdGaiaRockInsidePlatforms), and a third, past two stumps Felix Moves
    out of the way, to the maze.
 
    Cyclone on the bushes of the platforms' room sets its leafy platforms swaying
    (scGaiaRockInsideCycloneStartsPlatforms), and they carry the party on to the
-   twin altars' room (SceneId_GaiaRockInsideTwinAltars) and the altar room above
-   it (SceneId_GaiaRockInsideAltar). There Cyclone flushes a Mad Plant out of
+   twin altars' room (SceneIdGaiaRockInsideTwinAltars) and the altar room above
+   it (SceneIdGaiaRockInsideAltar). There Cyclone flushes a Mad Plant out of
    the bushes, three stone heads burst out of a wall of handholds under Felix,
    and Cyclone tears a great cobweb so that the altar it holds falls into the
    twin altars' room. Four beams of sunlight can be let down into the Serpent's
@@ -21,7 +21,7 @@
    and Cyclone clears the bushes under the fourth beam in the twin altars' room.
    While the Serpent lives, the game shows each new beam falling into the lair.
 
-   The maze (SceneId_GaiaRockInsideMaze by entrances 1 to 4) is fourteen rooms
+   The maze (SceneIdGaiaRockInsideMaze by entrances 1 to 4) is fourteen rooms
    alike, a crossroads with a little plant in the middle that Growth turns into
    an arrow pointing the way on. Beyond it is the Serpent's lair (the same scene
    by entrances 9 to 20), where Susa feeds the Serpent casks of Dragonsbane to
@@ -200,7 +200,7 @@ enum {
 	ENTRANCE_BEATEN_HOLDING_IDOL = 12
 };
 
-/* The Serpent's lair (SceneId_GaiaRockInsideMaze by entrances 9 to 20). The
+/* The Serpent's lair (SceneIdGaiaRockInsideMaze by entrances 9 to 20). The
    Serpent sits on the sand at its north end; Susa works among the casks south
    of it. */
 enum {
@@ -215,7 +215,7 @@ enum {
 	ACTOR_SAND_TABLET = 12
 };
 
-/* The room of the first altar (SceneId_GaiaRockInsideFirstAltar): the two great
+/* The room of the first altar (SceneIdGaiaRockInsideFirstAltar): the two great
    red faces that stand in the doorways either side of the altar until the
    Dancing Idol dances on it, and the two stumps Felix Moves out of the way on
    the path to the maze. */
@@ -229,7 +229,7 @@ enum {
 	ACTOR_FIRST_ALTAR_DOLL = 13
 };
 
-/* The room of the twin altars (SceneId_GaiaRockInsideTwinAltars): a face on the
+/* The room of the twin altars (SceneIdGaiaRockInsideTwinAltars): a face on the
    north wall over each altar. The east altar is the one that falls through from
    the altar room when Cyclone tears its cobweb. */
 enum {
@@ -244,7 +244,7 @@ enum {
    (scGaiaRockInsideStartPlatforms). */
 enum { ACTOR_FIRST_PLATFORM = 8, ACTOR_LAST_PLATFORM = 16 };
 
-/* The altar room (SceneId_GaiaRockInsideAltar): the altar ringed by bushes in
+/* The altar room (SceneIdGaiaRockInsideAltar): the altar ringed by bushes in
    its west part, with a face on the wall beside it, the wall of handholds along
    its south part, and the altar on the great cobweb in its east part. */
 enum {
@@ -1629,7 +1629,7 @@ void scGaiaRockInsideCheckAltar(void)
 	owner = syFieldPartyInventoryFindMember(ITEM_DANCING_IDOL);
 	next = msg + 2;
 	if(owner != -1) {
-		FIELD_STATE *state = Ram_HeapSlots->fieldState;
+		FIELD_STATE *state = RamHeapSlots->fieldState;
 
 		mnMessageShowCentered(next, 1);
 		state->fieldMenu = 1;
@@ -2173,7 +2173,7 @@ void scGaiaRockInsideSwayPlatforms(void)
 	SWAY_STATE	*state = &SceneStateWork;
 	Uint16		*pending = &state->pending;
 	Uint16		*frm = &state->frm;
-	FIELD_STATE *fieldState = Ram_HeapSlots->fieldState;
+	FIELD_STATE *fieldState = RamHeapSlots->fieldState;
 	Sint32		 stopped = fdScriptGetFlag(FLAG_MENU_OPEN);
 	Sint32		 id;
 
@@ -3065,7 +3065,7 @@ void scGaiaRockInsideKeepOverheadPart(Sint32 keep)
 Sint32 scPrepareMap(void)
 {
 	if(MainRoutineStateWork.next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
-		Uint8 *map = (Uint8 *)Ram_HeapSlots->mapGrid;
+		Uint8 *map = (Uint8 *)RamHeapSlots->mapGrid;
 
 		if(MainRoutineStateWork.entrance <= 4) {
 			UNIT   *unit;
@@ -3441,7 +3441,7 @@ void scGaiaRockInsideDrawMazeRoom(void)
 {
 	Sint32	   state = PathWork->cur;
 	Sint8	  *origin = GaiaRockInsideMazeOrigins[state];
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 
 	if(state > 1) {
 		Sint32	   originX = origin[0];
@@ -3489,7 +3489,7 @@ Sint32 scGaiaRockInsideGetMazeWayOn(void)
    metatile, but those of collision code 0 or keep. */
 void scGaiaRockInsideBlankLayer(Sint32 layer, Sint32 keep)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	MAP_LAYER *mapLayer = &map->layers[layer];
 	Uint32	  *metatiles = (Uint32 *)mapLayer->metatiles;
 	Sint32	   width = FIELD_METATILE(map->maxX - map->minX);

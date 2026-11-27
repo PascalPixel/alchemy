@@ -58,7 +58,7 @@ typedef enum BURST_PHASE {
 } BURST_PHASE;
 
 /* The palette of Burst's explosions, loaded into BURST_EXPLOSION_PALETTE. */
-extern const Uint16 Burst_ExplosionPalette[];
+extern const Uint16 BurstExplosionPalette[];
 
 /* Moves the state on to its next phase, its timer restarted. */
 #define BURST_NEXT_PHASE(state) ((state)->phase++, (state)->tmr = -1)
@@ -67,9 +67,9 @@ extern const Uint16 Burst_ExplosionPalette[];
    moves the cast on through its stages, shaking the screen at each blast. */
 void fdPsynergyUpdateBurst(void)
 {
-	BURST_STATE				*state = (BURST_STATE *)Ram_HeapSlots->battleEff;
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
-	CANVAS_SPR_STATE		*canvas = Ram_HeapSlots->canvasSpr;
+	BURST_STATE				*state = (BURST_STATE *)RamHeapSlots->battleEff;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
+	CANVAS_SPR_STATE		*canvas = RamHeapSlots->canvasSpr;
 	FIELD_PSYNERGY_PARTICLE *particle;
 	EFFECT_SPR				*spr;
 	volatile Uint16			*palette;
@@ -96,7 +96,7 @@ void fdPsynergyUpdateBurst(void)
 			syIOWrite16(green | blue | red, palette++);
 		}
 	} else if(state->palMode == BURST_PALETTE_EXPLOSIONS) {
-		syDMAXCopy(Burst_ExplosionPalette,
+		syDMAXCopy(BurstExplosionPalette,
 			(void *)&OBJ_PLTT_COLOR(BURST_EXPLOSION_PALETTE, 0),
 			DMA_COPY_HALFWORDS(16), REG_DMA3);
 		state->palMode = BURST_PALETTE_KEPT;
@@ -365,7 +365,7 @@ void fdPsynergyBurstOnTarget(void)
 
 /* The tile of the sparks that fly into Burst's glow, one 8x8 tile of 256
    colours. */
-extern const Uint8 Burst_GlowTiles[];
+extern const Uint8 BurstGlowTiles[];
 
 Sint32 fdPsynergyGetCanvasPriority(ACTOR *actor, Sint32 facing);
 
@@ -378,7 +378,7 @@ void fdPsynergyBurst(void)
 {
 	BURST_STATE *state =
 		syHeapSlotAlloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(BURST_STATE));
-	FIELD_EFFECT_STATE		*scene = Ram_HeapSlots->fieldEffState;
+	FIELD_EFFECT_STATE		*scene = RamHeapSlots->fieldEffState;
 	CANVAS_SPR_STATE		*canvas;
 	EFFECT_SPR				*spr;
 	FIELD_PSYNERGY_PARTICLE *particle;
@@ -399,7 +399,7 @@ void fdPsynergyBurst(void)
 	scene->y += toFIXED(10);
 	fdPsynergyFadeToCastCol();
 	fdBattleEffectStartCanvasSpr();
-	canvas = Ram_HeapSlots->canvasSpr;
+	canvas = RamHeapSlots->canvasSpr;
 	pos[0] = scene->x;
 	pos[1] = scene->y;
 	pos[2] = scene->z;
@@ -415,7 +415,7 @@ void fdPsynergyBurst(void)
 		canvas->depth -= 4;
 
 	sparkEntry = syVRAMCacheFindFreeEntry();
-	sparkTile = syVRAMCacheLoad(sparkEntry, TILE_SIZE_8BPP, Burst_GlowTiles);
+	sparkTile = syVRAMCacheLoad(sparkEntry, TILE_SIZE_8BPP, BurstGlowTiles);
 	for(i = 0, particle = state->sparks, mul = syMulFX, spr = state->sparkSprs;
 		i < BURST_SPARK_COUNT;) {
 		fdEffectSprInit(spr, 4, 4, OBJ_SIZE_8X8, sparkTile);
@@ -456,7 +456,7 @@ void fdPsynergyBurst(void)
 		particle++;
 	}
 	syDecompressTaggedLZ(syResourceGetTableEntry(RESOURCE_GLOW_DISC),
-		Ram_HeapSlots->battleCanvas);
+		RamHeapSlots->battleCanvas);
 	canvas->command = CANVAS_UPLOAD;
 	sySndPlayStub(SE_PSYNERGY_START);
 	sySynch(1);

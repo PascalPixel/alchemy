@@ -47,7 +47,7 @@ again:
 UNUSED void mnWindowSetTextTileBitRect(const WINDOW *win, Sint32 x, Sint32 y,
 	Sint32 width, Sint32 height, Uint32 set)
 {
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 
 	x += win->x + 1;
 	y += win->y + 1;
@@ -124,7 +124,7 @@ Sint32 mnDebugBrowserIcons(void)
 	page = 0;
 	kind = 0;
 	redraw = TRUE;
-	Ram_HeapSlots->actorSystem->suspended = redraw;
+	RamHeapSlots->actorSystem->suspended = redraw;
 	sySynch(1);
 
 	while(1) {
@@ -191,7 +191,7 @@ Sint32 mnDebugBrowserIcons(void)
 		sySynch(1);
 	}
 	mnWindowClose(win, 2);
-	Ram_HeapSlots->actorSystem->suspended = 0;
+	RamHeapSlots->actorSystem->suspended = 0;
 	return 0;
 }
 
@@ -215,7 +215,7 @@ Sint32 mnDebugBrowserPortraits(void)
 	Sint32	   portraitSlot = 1;
 	Sint32	   palette = PORTRAIT_PALETTE + portraitSlot;
 
-	state = (WIN_STATE *)Ram_HeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->winState;
 	redraw = TRUE;
 	portrait = mnPortraitOpenWindow(0, 0, 10, 5);
 	win = mnWindowCreate(10, 10, 14, 3, WINDOW_FLAG_INSTANT);

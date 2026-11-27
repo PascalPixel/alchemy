@@ -1,4 +1,4 @@
-/* Kolima Forest (SceneId_KolimaForestEntrance), the first of the forest's five
+/* Kolima Forest (SceneIdKolimaForestEntrance), the first of the forest's five
    scenes, entered from the World Map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP).
 
    If the party comes here before it has been to Kolima, the curse's script
@@ -21,7 +21,7 @@
    scKolimaForestHopEast).
 
    KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE leads on into the forest
-   (SceneId_KolimaForestGlade), and KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to
+   (SceneIdKolimaForestGlade), and KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to
    the World Map.
 
    FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER: the log is in the river. Like every
@@ -116,7 +116,7 @@ static Sint32 scKolimaForestEntranceTwinkleGroundSparkle(ACTOR *actor)
 }
 
 /* Where the party enters, from the next scene of the forest
-   (SceneId_KolimaForestGlade) and from the World Map. */
+   (SceneIdKolimaForestGlade) and from the World Map. */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	return KolimaForestEntranceEntrances;
@@ -127,7 +127,7 @@ const SCENE_EXIT_REGION *scGetExitRegions(void)
 	return 0;
 }
 
-/* The ways on into the forest (SceneId_KolimaForestGlade) and back to the World
+/* The ways on into the forest (SceneIdKolimaForestGlade) and back to the World
    Map. */
 const Uint32 *scGetExits(void)
 {
@@ -141,7 +141,7 @@ const ACTOR_PLACE *scGetActorPlacements(void)
 	return KolimaForestEntranceActorPlacements;
 }
 
-/* In Kolima Forest (SceneId_KolimaForestEntrance), walking into a log rolls it
+/* In Kolima Forest (SceneIdKolimaForestEntrance), walking into a log rolls it
    ahead until something stops it. */
 static void scKolimaForestEntrancePushLog(void)
 {
@@ -1338,8 +1338,8 @@ SCENE_ENTRANCE KolimaForestEntranceEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-/* On into the forest (SceneId_KolimaForestGlade) and out to the World Map
-   (SceneId_WorldMap), with two exits no cue uses back into this scene. */
+/* On into the forest (SceneIdKolimaForestGlade) and out to the World Map
+   (SceneIdWorldMap), with two exits no cue uses back into this scene. */
 Uint32 KolimaForestEntranceExits[] = {
 	SCENE_EXITS(KolimaForestEntrance),
 	SCENE_EXIT(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,

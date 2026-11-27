@@ -14,7 +14,7 @@
 
 /* Where FlashBurstSheet is decoded: the map cell buffer's second 16 KB, where
    FireRingTexture, decoded to EffectScratch, replaces it. */
-#define LIQUIFIER_FLASH_BURST_PICTURES (Ram_MapMetatileBuffer + 16384)
+#define LIQUIFIER_FLASH_BURST_PICTURES (RamMapMetatileBuffer + 16384)
 
 /* Where GlowBandTextureA is decoded in the effect's pictures. */
 #define LIQUIFIER_GLOW_BAND 4096
@@ -39,9 +39,9 @@ void btEffectRunLiquifier(BATTLE_EFFECT_PARM *args)
 	Uint8				*graphics;
 	Sint32				 i;
 
-	canvas = Ram_HeapSlots->battleCanvas;
-	state = Ram_HeapSlots->battleEff;
-	graphics = Ram_HeapSlots->battleSheet;
+	canvas = RamHeapSlots->battleCanvas;
+	state = RamHeapSlots->battleEff;
+	graphics = RamHeapSlots->battleSheet;
 	btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	btEffectBuildCanvasBlitters(0, draw);
@@ -387,22 +387,22 @@ static inline void DrawDisc(void *canvas, Sint16 *discs, Sint32 cells, Sint32 x,
 {
 	EFFECT_LOAD_BLITTER(
 		HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
+	(RamHeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
 		x - (size >> 1), y - size, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(
+	(RamHeapSlots->ramCodePaired)(
 		canvas, (Uint8 *)(discs[idx] + cells), x, y - size, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
+	(RamHeapSlots->ramCodePaired)(canvas, (Uint8 *)(discs[idx] + cells),
 		x - (size >> 1), y, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
 		EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-	(Ram_HeapSlots->ramCodePaired)(
+	(RamHeapSlots->ramCodePaired)(
 		canvas, (Uint8 *)(discs[idx] + cells), x, y, size >> 1, size);
 	syHeapSlotRelease(HEAP_SLOT_RAM_CODE_PAIRED);
 }
@@ -458,18 +458,18 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	Sint32		   ofs;
 	Sint32		   i;
 	Sint32		   j;
-	Sint32		   cells = (Sint32)Ram_MapMetatileBuffer;
+	Sint32		   cells = (Sint32)RamMapMetatileBuffer;
 
-	state = Ram_HeapSlots->battleEff;
-	canvas = Ram_HeapSlots->battleCanvas;
-	graphics = Ram_HeapSlots->battleSheet;
+	state = RamHeapSlots->battleEff;
+	canvas = RamHeapSlots->battleCanvas;
+	graphics = RamHeapSlots->battleSheet;
 	if(mode <= CANVAS_BURST_SMALL_BALL)
 		btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
 	else
 		btEffectStartCanvasLayer(0);
 	REG_BLDALPHA = EFFECT_BLEND_ADD;
 	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-	draw[0] = Ram_HeapSlots->ramCode;
+	draw[0] = RamHeapSlots->ramCode;
 	discs = (Sint16 *)state->sheet;
 	if(mode == CANVAS_BURST_SHRED)
 		ticks = 78;
@@ -725,7 +725,7 @@ void btEffectRunCanvasBurst(BATTLE_EFFECT_PARM *args, Uint32 mode)
 	} else {
 		/* Back to the battle display: BG1's scroll, BG2 as before, the palette
 		   fade off and the backgrounds on again. */
-		BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+		BATTLE_STATE *battle = RamHeapSlots->battleState;
 
 		sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
 		BgScrollWork[1].x = state->savedBg1X;

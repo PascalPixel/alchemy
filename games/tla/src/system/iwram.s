@@ -85,11 +85,11 @@ ScreenFadeToWhite:
 	.global ProjectionWork
 ProjectionWork:
 	.space 0x0000000c
-	.global Data_030011ec
-Data_030011ec:
+	.global Data030011ec
+Data030011ec:
 	.space 0x00000004
-	.global Data_030011f0
-Data_030011f0:
+	.global Data030011f0
+Data030011f0:
 	.space 0x00000004
 	.global ScreenFadeLayers
 ScreenFadeLayers:

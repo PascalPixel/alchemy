@@ -103,7 +103,7 @@ void fdRevealEmitSparkles(ACTOR *src);
    sparkles, and then its mark on the picture's metatile. */
 ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 {
-	FIELD_STATE	  *state = Ram_HeapSlots->fieldState;
+	FIELD_STATE	  *state = RamHeapSlots->fieldState;
 	ACTOR		  *picture = state->actors[actorId];
 	ACTOR		  *actor;
 	SPR			  *spr;
@@ -125,7 +125,7 @@ ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 	if(state->revealActive != 0) {
 		/* Stop both the marker emitters and the sparkle actors they already
 		   made. */
-		actor = Ram_HeapSlots->actors;
+		actor = RamHeapSlots->actors;
 		for(i = 0; i < ACTOR_COUNT; i++) {
 			if(actor->script != NULL) {
 				if(actor->update == fdRevealEmitSparkles)
@@ -161,7 +161,7 @@ ACTOR *fdItemDispShowItemInFront(Sint32 actorId, Sint32 item)
 	syHeapSlotRelease(HEAP_SLOT_ICON_TRANSFER);
 	picture->update = fdItemDispEmitSparkles;
 	if(state->revealActive != 0) {
-		ACTOR *marker = Ram_HeapSlots->actors;
+		ACTOR *marker = RamHeapSlots->actors;
 		Sint32 j;
 
 		for(j = 0; j < ACTOR_COUNT; j++, marker++) {
@@ -296,7 +296,7 @@ void fdRevealEmitSparkles(ACTOR *actor)
 void fdEffectSpawnRevealMarkers(void)
 {
 	Sint16	  *entry = fdSceneItemGetRows();
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   originX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	Sint32	   originZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
 

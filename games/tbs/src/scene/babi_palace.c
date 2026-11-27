@@ -26,8 +26,8 @@
    Gondowan Passage. In Babi's bedroom afterwards the Cloak Ball on show is his
    to lend.
 
-   The code: the court (SceneId_BabiPalaceEntrance) and the palace's rooms on
-   one map (SceneId_BabiPalace) share this overlay and one exit table, and each
+   The code: the court (SceneIdBabiPalaceEntrance) and the palace's rooms on
+   one map (SceneIdBabiPalace) share this overlay and one exit table, and each
    chooses one of three actor and cue tables by FLAG_BABI_SAVED and
    FLAG_COLOSSO_OVER. The exits name the rooms by what each shows: the statue
    room is the entrance hall, the carpet room the crossroads, the meeting room

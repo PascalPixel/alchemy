@@ -2,8 +2,8 @@
 	.syntax unified
 	.thumb
 	.include "games/tla/src/system/stub.s"
-	.global Stubs_Field
-Stubs_Field:
+	.global StubsField
+StubsField:
 	stub fdResourceGetMetadataRecordStubStub, fdResourceGetMetadataRecordStub
 	stub fdActorSystemConfigureStub, fdActorSystemConfigure
 	stub fdRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement

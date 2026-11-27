@@ -3,23 +3,23 @@
    story begins. Two scenes share this overlay, and every entry point chooses by
    MainRoutineStateWork.next.
 
-   Sol Entrance (SceneId_SolEntrance) is the paved terrace at the top of the
+   Sol Entrance (SceneIdSolEntrance) is the paved terrace at the top of the
    path from Vale, with the sanctum's carved door in the cliff. Walking north
    into the door (metatiles (6, 6) to (8, 6)) slides it open and takes the party
    in (scSolSanctumEntranceOpenDoorAndEnter). Retreat does not work here. Until
    the eruption the path leads down to Vale; during it, to Vale with the
-   villagers gathered (SceneId_ValeEruption) until the party has left. After the
+   villagers gathered (SceneIdValeEruption) until the party has left. After the
    eruption the ground rumbles now and then. Once Isaac and Garet are back from
    the mountain the door no longer opens: Isaac walks up to it and stops, and
    searching it finds it "tightly locked". Once the party has left Vale, a
    bearded man in a long robe stands in the path and warns everyone away.
 
-   Sol Sanctum (SceneId_SolSanctumReliefs) is the run of rooms behind the door,
+   Sol Sanctum (SceneIdSolSanctumReliefs) is the run of rooms behind the door,
    in the order the party meets them:
    - The entrance hall, where Kraden welcomes them on the first visit
 	 (scSolSanctumEntranceIntroduceSanctum).
    - Two rooms of stepping stones over water, where Isaac jumps one-metatile
-	 gaps, joined by a corridor (SceneId_SolSanctumCorridor). In the north of
+	 gaps, joined by a corridor (SceneIdSolSanctumCorridor). In the north of
 	 the second lie the chest with the first Small Jewel (metatile (17, 3)) and,
 	 at metatile (30, 2), a minotaur relief with an empty eye socket. Setting
 	 the jewel in it opens an arched doorway at the end of the west path,
@@ -30,7 +30,7 @@
 	 westmost and eastmost statues stand in front of doorways, metatiles (94, 7)
 	 and (114, 7), and can be pushed or moved aside: the west one hides a small
 	 room with a statue that will not budge, the east one the steps up to the
-	 maze (SceneId_SolSanctumMaze) and its chest with the second Small Jewel.
+	 maze (SceneIdSolSanctumMaze) and its chest with the second Small Jewel.
    - The second relief room, at the maze's far end, where six statues stand in
 	 alcoves across a channel of water. Kraden sees them out of reach
 	 (scSolSanctumEntranceKradenSeesStatuesOutOfReach); Move shifts them. The
@@ -38,7 +38,7 @@
 	 winding passage that leads nowhere. Once a statue is moved, Isaac can jump
 	 to its alcove from the stepping stone in the water before it, and push it
 	 by hand. Setting the second jewel opens a way behind the eastmost statue,
-	 on to the rooms of Sol and Luna (SceneId_SolSanctumLunaSolRooms).
+	 on to the rooms of Sol and Luna (SceneIdSolSanctumLunaSolRooms).
 
    Each relief room has actor placement and cue tables of its own.
    scGetActorPlacements and _GetCues choose them by the entrance the party came
@@ -89,11 +89,11 @@ extern CUE			  SolSanctumReliefsCues[];
 extern CUE			  SolSanctumReliefsFirstReliefRoomCues[];
 extern CUE			  SolSanctumReliefsSecondReliefRoomCues[];
 
-/* In Sol Sanctum (SceneId_SolSanctumReliefs), Kraden follows the party; Garet
+/* In Sol Sanctum (SceneIdSolSanctumReliefs), Kraden follows the party; Garet
    and Jenna, placed before him, take their own party slots. */
 enum { ACTOR_KRADEN = ACTOR_FIRST_PLACED };
 
-/* At Sol Entrance (SceneId_SolEntrance), the one placed actor is a man with
+/* At Sol Entrance (SceneIdSolEntrance), the one placed actor is a man with
    long brown hair and a beard in a long robe, who stands in the path once the
    party has left Vale and warns everyone away while Mt. Aleph is active; read
    with Mind Read, he is all alone in this dangerous place and asks how the
@@ -200,8 +200,8 @@ static void scSolSanctumEntranceUpdateEruptionRumbles(void);
 
 Sint32 SolSanctumEntranceRumbleTimer BSS_DATA;
 
-/* Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol */
-/* Sanctum's (SceneId_SolSanctumReliefs). */
+/* Returns Sol Entrance's entrances (SceneIdSolEntrance) or Sol */
+/* Sanctum's (SceneIdSolSanctumReliefs). */
 const SCENE_ENTRANCE *scGetEntrances(void)
 {
 	Sint16 sceneId = MainRoutineStateWork.next;
@@ -706,7 +706,7 @@ Sint32 scInit(void)
 	return 0;
 }
 
-/* Sets up Sol Entrance (SceneId_SolEntrance). */
+/* Sets up Sol Entrance (SceneIdSolEntrance). */
 static void scSolSanctumEntranceApplyEntryState(void)
 {
 	/* Retreat does not work here. */
@@ -731,7 +731,7 @@ static void scSolSanctumEntranceApplyEntryState(void)
 	}
 }
 
-/* Sets up Sol Sanctum (SceneId_SolSanctumReliefs). */
+/* Sets up Sol Sanctum (SceneIdSolSanctumReliefs). */
 static void scSolSanctumEntranceRestoreInteriorState(void)
 {
 	Sint32 entrance;
@@ -1347,9 +1347,9 @@ SCENE_ENTRANCE SolSanctumReliefsEntrances[] = {
 	{SCENE_TABLE_END},
 };
 
-/* Sol Entrance (SceneId_SolEntrance), then Sol Sanctum
-   (SceneId_SolSanctumReliefs). Sol Entrance's way down leads to SceneId_Vale
-   until the eruption, then to Vale during the eruption (SceneId_ValeEruption)
+/* Sol Entrance (SceneIdSolEntrance), then Sol Sanctum
+   (SceneIdSolSanctumReliefs). Sol Entrance's way down leads to SceneIdVale
+   until the eruption, then to Vale during the eruption (SceneIdValeEruption)
    until the party has left Vale. */
 Uint32 SolSanctumEntranceExits[] = {
 	SCENE_EXITS(SolEntrance),

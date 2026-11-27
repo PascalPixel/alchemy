@@ -161,7 +161,7 @@ enum {
 };
 
 /* The window system's state, as ☀️'s WINDOW_STATE. */
-#define WINDOW_STATE ((WIN_STATE *)Ram_HeapSlots->winState)
+#define WINDOW_STATE ((WIN_STATE *)RamHeapSlots->winState)
 
 /* mnWindowFitOnScreen's flags. */
 typedef enum WINDOW_FIT_FLAG {

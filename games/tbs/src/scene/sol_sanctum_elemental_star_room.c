@@ -1,6 +1,6 @@
-/* Elemental Star Room (SceneId_SolSanctumElementalStarRoom), the heart of Sol
+/* Elemental Star Room (SceneIdSolSanctumElementalStarRoom), the heart of Sol
    Sanctum, reached through the portal in the Luna and Sol rooms
-   (SceneId_SolSanctumLunaSolRooms). Stone pillars stand in a starry dark, and
+   (SceneIdSolSanctumLunaSolRooms). Stone pillars stand in a starry dark, and
    at the four corners a statue holds up a glowing Elemental Star: the Venus
    Star in the south east, the Mercury Star in the north east, the Jupiter Star
    in the south west and the Mars Star in the north west. The party arrives on
@@ -26,7 +26,7 @@
 	 round Jenna and Kraden, each with a word about the last star.
    - Taking the Mars Star, in the north west, sets the room quaking, and the
 	 story goes on in the eruption (scSolSanctumElementalStarRoomTakeMarsStar,
-	 SceneId_SolSanctumEruption, sol_sanctum_eruption.c).
+	 SceneIdSolSanctumEruption, sol_sanctum_eruption.c).
 
    A star is taken once, because each statue's examine cue row holds only until
    its flag is set. A return after a battle finds the room as it was: on every
@@ -1325,8 +1325,8 @@ static void scSolSanctumElementalStarRoomStandAroundHostages(void)
    The room flashes red, the star's glow goes out and the star rises over
    Isaac's head. Garet steps out beside him; a crash shakes the room, the two
    look about them as it shakes again, and jump in alarm as the screen fades.
-   The party goes on in the eruption, the same room breaking up (SceneId_
-   SolSanctumEruption). The statue can be searched only until then
+   The party goes on in the eruption, the same room breaking up
+   (SceneIdSolSanctumEruption). The statue can be searched only until then
    (FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED). */
 static void scSolSanctumElementalStarRoomTakeMarsStar(void)
 {

@@ -38,17 +38,17 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment);
    block to run (credits_background_decode.s). */
 extern const Uint8 mnCreditsDecodeBackgroundCode[];
 /* mnCreditsDecodeBackgroundCode's bytes, as its address. */
-extern Uint8	   Credits_DecodeBackgroundCodeSize[];
+extern Uint8	   CreditsDecodeBackgroundCodeSize[];
 extern const Uint8 CreditsGlyphWidths[];
 /* The credits' font, the glyphs mnCreditsDrawLine draws a line's tiles from. */
-extern const Uint8 DisplayScroll_Font[];
+extern const Uint8 DisplayScrollFont[];
 
 void mnEndingImageInitStrips(void);
-/* EndingImage_Decode, the ARM decoder RAM_CODE_LOAD copies into a heap block to
+/* EndingImageDecode, the ARM decoder RAM_CODE_LOAD copies into a heap block to
    run (ending_image_decode.s). */
-extern const Uint8 EndingImage_DecodeCode[];
-/* EndingImage_DecodeCode's bytes, as its address. */
-extern Uint8 EndingImage_DecodeCodeSize[];
+extern const Uint8 EndingImageDecodeCode[];
+/* EndingImageDecodeCode's bytes, as its address. */
+extern Uint8 EndingImageDecodeCodeSize[];
 
 /* Credits text uses six 32-pixel sprites across each 192-pixel line, drawn into
    a ring of 32 lines of sprite tiles. */
@@ -196,7 +196,7 @@ void mnCreditsClearBuffer(Sint32 alternate)
    Seal does, but greyed by BACKDROP_CHANNEL_WEIGHT and BACKDROP_GREY_PARTS. A
    zero resource clears that half instead. The tiles are unpacked by
    mnCreditsDecodeBackground, run from a heap block, and the grey colours are
-   built in Credits_GreyColors: the credits have no buffer of their own for
+   built in CreditsGreyColors: the credits have no buffer of their own for
    them, and borrow the cells of the SDK's flash library, which IdentifyFlash
    sets again before the flash code reads them. */
 void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
@@ -223,7 +223,7 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 		paletteDst = (Uint32)&BG_PLTT_COLOR(8, 0);
 	}
 	RAM_CODE_LOAD(decoder, mnCreditsDecodeBackgroundCode,
-		Credits_DecodeBackgroundCodeSize);
+		CreditsDecodeBackgroundCodeSize);
 	decoder(resourceData + BACKDROP_PALETTE_BYTES, tileDst, paletteOfs);
 	syHeapRelease(decoder);
 
@@ -238,9 +238,9 @@ void mnCreditsLoadBackground(Uint32 resourceId, Sint32 alternate)
 		blue = (sum + blue * BACKDROP_CHANNEL_WEIGHT) / BACKDROP_GREY_PARTS;
 		green = (sum + green * BACKDROP_CHANNEL_WEIGHT) / BACKDROP_GREY_PARTS;
 		red = (sum + red * BACKDROP_CHANNEL_WEIGHT) / BACKDROP_GREY_PARTS;
-		Credits_GreyColors[i] = RGB(red, green, blue);
+		CreditsGreyColors[i] = RGB(red, green, blue);
 	}
-	IO_WRITE_QUEUE_PUSH(paletteDst, (Uint32)Credits_GreyColors,
+	IO_WRITE_QUEUE_PUSH(paletteDst, (Uint32)CreditsGreyColors,
 		DMA_COPY_WORDS(BACKDROP_PALETTE_BYTES / 4));
 }
 
@@ -441,7 +441,7 @@ void mnCreditsDrawEnteringCrawlLine(void)
 
 /* Allocates the story crawl's sprites, builds its border and text rows, and
    adds mnCreditsUpdateCrawlSprs and mnCreditsDrawEnteringCrawlLine, as The
-   Broken Seal's Credits_InitTextSprites starts its credits. */
+   Broken Seal's CreditsInitTextSprites starts its credits. */
 void mnCreditsInitCrawlSprs(void)
 {
 	volatile Uint32 fill;
@@ -569,7 +569,7 @@ Sint32 mnDispScrollDrawMessageLine(Sint32 msg, Sint32 slot, Sint32 align)
 	return busy;
 }
 
-/* A VBlank event added by Credits_InitTextSprites: maps the visible sixteen
+/* A VBlank event added by CreditsInitTextSprites: maps the visible sixteen
    rows onto the tile ring and uploads their sprites. */
 void mnCreditsUpdateTextSprs(void)
 {
@@ -764,7 +764,7 @@ Sint32 mnCreditsDrawLine(const Uint8 *text, Sint32 firstTile, Sint32 alignment)
 	Uint8		*linePixels = (Uint8 *)syHeapAllocEWRAM(CREDITS_BUFFER_BYTES);
 	Sint32		 startX = 0;
 	Sint32		 lineWidth = CREDITS_LINE_PIXELS;
-	const Uint8 *font = DisplayScroll_Font;
+	const Uint8 *font = DisplayScrollFont;
 	Sint32		 tileCnt;
 	Sint32		 textAdvance;
 	const Uint8 *srcBytes;
@@ -1080,7 +1080,7 @@ static inline void CopyScrollMap(const Uint8 *src, Uint8 *dst, Sint32 pos)
 /* Shows a scrolling image on the hidden one of the two BG character blocks.
    With no resource it fills the map buffer with a plain tile word and clears
    the palette half; otherwise it clears the block's first 2 KB, expands
-   resource's map into the buffer with EndingImage_DecodeCode copied to the heap
+   resource's map into the buffer with EndingImageDecodeCode copied to the heap
    (the fill word marks the second block's tiles), and queues the resource's
    128-colour palette. Then it copies the map at position into the tilemap
    (CopyScrollMap), flips the block and restarts the fade-in counter. */
@@ -1117,7 +1117,7 @@ void mnEndingImageShow(Sint32 resource, Uint8 *map, Sint32 pos)
 		}
 		DMA_FILL32_CELL(cell, 0, tiles, ENDING_IMAGE_SCREEN_BYTES);
 		data = syResourceGetTableEntry(resource);
-		RAM_CODE_LOAD(code, EndingImage_DecodeCode, EndingImage_DecodeCodeSize);
+		RAM_CODE_LOAD(code, EndingImageDecodeCode, EndingImageDecodeCodeSize);
 		code(data + BACKDROP_PALETTE_BYTES, map, fill);
 		syHeapRelease(code);
 		IO_WRITE_QUEUE_PUSH((Uint32)palette, (Uint32)data,

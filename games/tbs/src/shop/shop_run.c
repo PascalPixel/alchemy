@@ -55,22 +55,22 @@ void mnShopInitState(void)
 	/* Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite */
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->cursorIcon = resourceSlot;
-	syVRAMCacheLoad(resourceSlot, 128, MenuCursor_HandTiles);
+	syVRAMCacheLoad(resourceSlot, 128, MenuCursorHandTiles);
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->prevPageIcon = resourceSlot;
-	syVRAMCacheLoad(resourceSlot, 128, Shop_UpArrowTiles);
+	syVRAMCacheLoad(resourceSlot, 128, ShopUpArrowTiles);
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->nextPageIcon = resourceSlot;
-	syVRAMCacheLoad(resourceSlot, 128, Shop_DownArrowTiles);
+	syVRAMCacheLoad(resourceSlot, 128, ShopDownArrowTiles);
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->gemIcon = resourceSlot;
-	syVRAMCacheLoad(resourceSlot, 128, Shop_GemTiles);
+	syVRAMCacheLoad(resourceSlot, 128, ShopGemTiles);
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->statDownIcon = resourceSlot;
-	syVRAMCacheLoad(resourceSlot, 128, Shop_SmallDownArrowTiles);
+	syVRAMCacheLoad(resourceSlot, 128, ShopSmallDownArrowTiles);
 	resourceSlot = syVRAMCacheFindFreeEntry();
 	shop->statUpIcon = resourceSlot;
-	syVRAMCacheLoad(resourceSlot, 128, Shop_SmallUpArrowTiles);
+	syVRAMCacheLoad(resourceSlot, 128, ShopSmallUpArrowTiles);
 	sySetEvent(mnCursorStep, EVENT_PASS_TICK);
 }
 

@@ -364,9 +364,9 @@ void fdLuckyDiceRun(void)
 		REG_DMA3);
 	resourceAdr += DICE_BOARD_PALETTE_COLORS * 2;
 	syFieldDecompressTaggedLZ(
-		(const void *)resourceAdr, Ram_MapGridMetatileBuffer);
+		(const void *)resourceAdr, RamMapGridMetatileBuffer);
 	/* One 256-colour tile for each tile of the screen. */
-	syDMAXCopy(Ram_MapGridMetatileBuffer, BG_CHAR_BLOCK(1),
+	syDMAXCopy(RamMapGridMetatileBuffer, BG_CHAR_BLOCK(1),
 		DMA_COPY_WORDS(
 			DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT * TILE_SIZE_8BPP / 4),
 		REG_DMA3);
@@ -377,8 +377,8 @@ void fdLuckyDiceRun(void)
 		DMA_COPY_WORDS(DICE_SPRITES_PALETTE_COLORS / 2), REG_DMA3);
 	resourceAdr += DICE_SPRITES_PALETTE_COLORS * 2;
 	syFieldDecompressTaggedLZ(
-		(const void *)resourceAdr, Ram_MapGridMetatileBuffer);
-	syDMAXCopy(Ram_MapGridMetatileBuffer, (void *)OBJ_VRAM0,
+		(const void *)resourceAdr, RamMapGridMetatileBuffer);
+	syDMAXCopy(RamMapGridMetatileBuffer, (void *)OBJ_VRAM0,
 		DMA_COPY_WORDS(DICE_SPRITE_TILES * TILE_SIZE_8BPP / 4), REG_DMA3);
 	fdPaletteScaleRGB555(sprPalette, (Uint16 *)OBJ_PLTT, 0, BG_PLTT_COLORS);
 	fdPaletteScaleRGB555(bgPalette, (Uint16 *)BG_PLTT, 0, BG_PLTT_COLORS);

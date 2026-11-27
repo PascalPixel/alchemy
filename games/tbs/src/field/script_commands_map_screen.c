@@ -218,12 +218,12 @@ void fdMapScreenUpdateMarkers(void)
 
 #if MAP_SCREEN_CURSOR_SNAPS
 	leader = MainRoutineStateWork.leaderActorId;
-	state = (MAP_SCREEN_STATE *)Ram_MapGridMetatileBuffer;
+	state = (MAP_SCREEN_STATE *)RamMapGridMetatileBuffer;
 	marker = state->markers;
 	place = MapScreenAreaMarkers;
 	tileBase = VramCacheEntries[state->markerVramBlock].ofs >> 5;
 #else
-	state = (MAP_SCREEN_STATE *)Ram_MapGridMetatileBuffer;
+	state = (MAP_SCREEN_STATE *)RamMapGridMetatileBuffer;
 	leader = MainRoutineStateWork.leaderActorId;
 	place = MapScreenAreaMarkers;
 	tileBase = VramCacheEntries[state->markerVramBlock].ofs >> 5;

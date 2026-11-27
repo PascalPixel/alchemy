@@ -1,4 +1,4 @@
-/* Vale by day (SceneId_Vale), Isaac's village at the foot of Mt. Aleph, outside
+/* Vale by day (SceneIdVale), Isaac's village at the foot of Mt. Aleph, outside
    the houses. A river runs down it from a waterfall in the north. In the north
    are the Sanctum, a small stone shrine, and west of it the path to the steps
    up Mt. Aleph. Isaac's house stands in the middle, east of the river, with a
@@ -62,15 +62,15 @@
    The ways out:
 
    - The steps in the north-west go up Mt. Aleph to Sol Sanctum's door
-	 (SceneId_SolEntrance).
+	 (SceneIdSolEntrance).
    - Two ways out at the west edge lead to the part of Vale around Kraden's
-	 cottage (SceneId_ValeKradensCottage), and one at the east edge in the
-	 south to the plaza with the Psynergy Stone (SceneId_ValePlaza).
+	 cottage (SceneIdValeKradensCottage), and one at the east edge in the
+	 south to the plaza with the Psynergy Stone (SceneIdValePlaza).
    - The doors of Garet's house, the house north-west of Isaac's, the house of
 	 Jenna's grandparents and the house south of theirs lead into the rooms of
-	 SceneId_CottageRoomsA (cottage_rooms_a.c), and the door of Isaac's house
-	 into SceneId_CottageRoomsB.
-   - The Sanctum's door leads into SceneId_Sanctum.
+	 SceneIdCottageRoomsA (cottage_rooms_a.c), and the door of Isaac's house
+	 into SceneIdCottageRoomsB.
+   - The Sanctum's door leads into SceneIdSanctum.
 
    Two scripts no table reaches remain. They are scValeUnusedRoofMended, a copy
    of the roof's end, and scValeUnusedWaterBurstsByTheRiver.

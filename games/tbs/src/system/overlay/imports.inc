@@ -6,7 +6,7 @@
 @ image (each module's stubs.s, by module). NAME is the name of
 @ the function TARGET reaches, so overlays call the main image's functions by
 @ their own names. The exceptions are the divide functions, which overlays
-@ call under the compiler's names and the Math_ names, and the few functions
+@ call under the compiler's names and the Math names, and the few functions
 @ whose calls in the maps differ from their prototypes
 @ (games/tbs/include/field/script.h says how).
 	.syntax unified
@@ -14,7 +14,7 @@
 	.balign 4
 	.include "games/tbs/src/system/stub.inc"
 @ divide functions in IWRAM
-	stub Math_DivideSigned, syIWRAMSignedDivide
+	stub MathDivideSigned, syIWRAMSignedDivide
 	stub __divsi3, syIWRAMSignedDivide
 	stub __modsi3, syIWRAMSignedRemainder
 	stub syMathDivideUnsigned, syIWRAMUnsignedDivide

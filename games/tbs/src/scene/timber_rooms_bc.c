@@ -11,7 +11,7 @@
    Each scene has tables for before and after Venus Lighthouse, chosen by
    FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's are (lalivero.c).
 
-   Timber rooms B (SceneId_TimberRoomsB) holds, by the exits that lead in, a
+   Timber rooms B (SceneIdTimberRoomsB) holds, by the exits that lead in, a
    house (TIMBER_ROOMS_B_FROM_LALIVERO_WEST), a house
    (TIMBER_ROOMS_B_FROM_LALIVERO_SOUTHEAST), the item shop with a room upstairs
    (TIMBER_ROOMS_B_FROM_LALIVERO_NORTH), a house with an upper floor
@@ -24,7 +24,7 @@
    they talk. Stepping into the Sanctum by TIMBER_ROOMS_B_SANCTUM makes it the
    place a defeated party wakes. Barrels hold a Lucky Medal and an Antidote.
 
-   Timber rooms C (SceneId_TimberRoomsC) holds, by the exits that lead in,
+   Timber rooms C (SceneIdTimberRoomsC) holds, by the exits that lead in,
    Faran's house (TIMBER_ROOMS_C_FROM_LALIVERO_SOUTHWEST and
    TIMBER_ROOMS_C_FROM_LALIVERO_SOUTH), the inn with its upper floor and two
    guest rooms (TIMBER_ROOMS_C_FROM_LALIVERO_NORTHEAST), and the way out to the

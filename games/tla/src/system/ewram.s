@@ -124,8 +124,8 @@ SerialReceiveDestination:
 	.global BgmRestoreDelay
 BgmRestoreDelay:
 	.space 0x00000004
-	.global Sound_UnreadByte
-Sound_UnreadByte:
+	.global SoundUnreadByte
+SoundUnreadByte:
 	.space 0x00000004
 	.global BgmVolume
 BgmVolume:
@@ -169,60 +169,60 @@ MPlayJumpTable:
 	.global CgbChans
 CgbChans:
 	.space 0x00000100
-	.global MPlayInfo_SE5
-MPlayInfo_SE5:
+	.global MPlayInfoSE5
+MPlayInfoSE5:
 	.space 0x00000040
-	.global MPlayInfo_SE6
-MPlayInfo_SE6:
+	.global MPlayInfoSE6
+MPlayInfoSE6:
 	.space 0x00000040
-	.global MPlayInfo_Jingle
-MPlayInfo_Jingle:
+	.global MPlayInfoJingle
+MPlayInfoJingle:
 	.space 0x00000040
-	.global MPlayInfo_SE7
-MPlayInfo_SE7:
+	.global MPlayInfoSE7
+MPlayInfoSE7:
 	.space 0x00000040
-	.global MPlayInfo_BGM
-MPlayInfo_BGM:
+	.global MPlayInfoBGM
+MPlayInfoBGM:
 	.space 0x00000040
-	.global MPlayInfo_MenuSE
-MPlayInfo_MenuSE:
+	.global MPlayInfoMenuSE
+MPlayInfoMenuSE:
 	.space 0x00000040
-	.global MPlayInfo_SE4
-MPlayInfo_SE4:
+	.global MPlayInfoSE4
+MPlayInfoSE4:
 	.space 0x00000040
 	.global MPlayMemAccArea
 MPlayMemAccArea:
 	.space 0x00000010
-	.global MPlayInfo_ActionSE
-MPlayInfo_ActionSE:
+	.global MPlayInfoActionSE
+MPlayInfoActionSE:
 	.space 0x00000040
-	.global Sound_Tracks0
-Sound_Tracks0:
+	.global SoundTracks0
+SoundTracks0:
 	.space 0x00000140
-	.global Sound_Tracks1
-Sound_Tracks1:
+	.global SoundTracks1
+SoundTracks1:
 	.space 0x00000320
-	.global Sound_Tracks2
-Sound_Tracks2:
+	.global SoundTracks2
+SoundTracks2:
 	.space 0x000000a0
-	.global Sound_Tracks3
-Sound_Tracks3:
+	.global SoundTracks3
+SoundTracks3:
 	.space 0x000000a0
-	.global Sound_Tracks4
-Sound_Tracks4:
+	.global SoundTracks4
+SoundTracks4:
 	.space 0x000000a0
-	.global Sound_Tracks5
-Sound_Tracks5:
+	.global SoundTracks5
+SoundTracks5:
 	.space 0x000000a0
-	.global Sound_Tracks6
-Sound_Tracks6:
+	.global SoundTracks6
+SoundTracks6:
 	.space 0x000000a0
-	.global Sound_Tracks7
-Sound_Tracks7:
+	.global SoundTracks7
+SoundTracks7:
 	.space 0x000000a0
 	.space 0x00000040
-	.global Credits_GreyColors
-Credits_GreyColors:
+	.global CreditsGreyColors
+CreditsGreyColors:
 	.global WaitForFlashWriteWork
 WaitForFlashWriteWork:
 	.space 0x00000004
@@ -388,8 +388,8 @@ SeracMeshEnd:
 	.space 0x00000014
 	.space 0x00000014
 	.space 0x0000008c
-	.global Data_02012f94
-Data_02012f94:
+	.global Data02012f94
+Data02012f94:
 	.space 0x000007f4
 	.space 0x00000078
 	.space 0x00000018
@@ -427,8 +427,8 @@ FloraSpritePalettes:
 	.space 0x00000008
 	.space 0x0000007d
 	.space 0x00000163
-	.global Data_02015000
-Data_02015000:
+	.global Data02015000
+Data02015000:
 	.space 0x00000018
 	.space 0x00000270
 	.space 0x000001d8
@@ -456,8 +456,8 @@ Data_02015000:
 	.space 0x0000012a
 	.space 0x00000018
 	.space 0x00000128
-	.global Data_02017080
-Data_02017080:
+	.global Data02017080
+Data02017080:
 	.space 0x00000380
 	.space 0x000002e8
 	.space 0x00000918
@@ -555,11 +555,11 @@ EwramHeap:
 	.global BgTileBuffer
 BgTileBuffer:
 	.space 0x00002000
-	.global Data_0203a000
-Data_0203a000:
+	.global Data0203a000
+Data0203a000:
 	.space 0x00002000
-	.global Data_0203c000
-Data_0203c000:
+	.global Data0203c000
+Data0203c000:
 	.space 0x00002000
-	.global Data_0203e000
-Data_0203e000:
+	.global Data0203e000
+Data0203e000:

@@ -141,7 +141,7 @@ void fdSprDissolveRunMany(Uint8 **sprs, Sint32 cnt)
    -1. */
 Sint32 fdMapGridGetScreenRelativePos(ACTOR *actor, Sint32 *screenPos)
 {
-	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	MAP_STATE *map = RamHeapSlots->mapGrid;
 	Sint32	   viewX;
 	Sint32	   viewZ;
 	FIXED	   x;
@@ -215,7 +215,7 @@ UNUSED void fdActorSystemReservedNoOperationB(void)
    none is free. */
 void *fdActorFindFree(void)
 {
-	ACTOR *actor = ((ACTOR *)Ram_HeapSlots->actors);
+	ACTOR *actor = ((ACTOR *)RamHeapSlots->actors);
 	void  *freeActor = 0;
 	Sint32 actorIdx = 0;
 
@@ -286,8 +286,8 @@ ACTOR *fdActorCreate(Sint32 encodedSpr, FIXED x, FIXED y, FIXED z)
 		case ACTOR_CREATE_GROUP:
 			/* Take a zeroed list of four sprites, and fill it with id and id +
 			   1. */
-			sprSlots = (void **)((Uint32 *)Ram_HeapSlots->actorSystem +
-				Ram_HeapSlots->actorSystem->cnt++ + 2);
+			sprSlots = (void **)((Uint32 *)RamHeapSlots->actorSystem +
+				RamHeapSlots->actorSystem->cnt++ + 2);
 			actor->sprStorageKind = sprStorageKind;
 			actor->spr = sprSlots;
 			zero = 0;
@@ -732,14 +732,14 @@ void fdActorSystemPlaceSprs(void)
 	Uint32				layerPlusOne;
 	Sint8			   *basePri;
 
-	map = Ram_HeapSlots->mapGrid;
+	map = RamHeapSlots->mapGrid;
 	viewX = syMapStateView(map)[0] & FIELD_PIXEL_MASK;
 	viewZ = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
-	system = Ram_HeapSlots->actorSystem;
+	system = RamHeapSlots->actorSystem;
 	originY = map->origin[1];
 	btRenderLoadDecoder();
 	system->used = 0;
-	actor = Ram_HeapSlots->actors;
+	actor = RamHeapSlots->actors;
 	for(objectIdx = 0; objectIdx < ACTOR_COUNT; objectIdx++, actor++) {
 		if(actor->script == NULL)
 			continue;
@@ -982,8 +982,8 @@ void fdActorPlaceSprs(ACTOR *actor, Sint32 ang)
    fixed view matrix and turns the objects by an eighth of a turn less. */
 void fdActorSystemProjectSprs(void)
 {
-	ACTOR_CAMERA_FIXED *camera = Ram_HeapSlots->cameraState;
-	ACTOR_SYSTEM_STATE *system = Ram_HeapSlots->actorSystem;
+	ACTOR_CAMERA_FIXED *camera = RamHeapSlots->cameraState;
+	ACTOR_SYSTEM_STATE *system = RamHeapSlots->actorSystem;
 	ACTOR_CAMERA_POINT *eye;
 	ACTOR_CAMERA_POINT *tgt;
 	ACTOR			   *actor;
@@ -1012,7 +1012,7 @@ void fdActorSystemProjectSprs(void)
 		syMatrixRewindStack();
 		syLookAtLoad((Sint32 *)eye, (Sint32 *)tgt);
 	}
-	actor = Ram_HeapSlots->actors;
+	actor = RamHeapSlots->actors;
 	actor += ACTOR_COUNT - 1;
 	for(i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
 		/* The upper half of a script's address in ROM is never zero. */

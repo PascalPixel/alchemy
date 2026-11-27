@@ -17,8 +17,8 @@
 #define ANGEL_RISE_TICKS 64
 #define LID_LIFT_TICKS	 256
 
-/* The aerie's placed actors that its two scenes (SceneId_JupiterLighthouseAerie
-   and SceneId_JupiterLighthouseAerieBeacon) number alike and
+/* The aerie's placed actors that its two scenes (SceneIdJupiterLighthouseAerie
+   and SceneIdJupiterLighthouseAerieBeacon) number alike and
    scJupiterLighthousePlaceRaisedActors moves. */
 enum {
 	/* The angels either side of the lid over the well, and the archer statues

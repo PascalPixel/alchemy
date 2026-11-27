@@ -10,8 +10,8 @@
    edge. */
 void mnPartyStatBuildLayoutBounds(Sint32 flg)
 {
-	PARTY_STAT_WINDOW *state = Ram_HeapSlots->partyStat;
-	WIN_STATE		  *winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	PARTY_STAT_WINDOW *state = RamHeapSlots->partyStat;
+	WIN_STATE		  *winState = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32			   height = 4;
 	Sint32			   members;
 	Sint32			   width;
@@ -53,7 +53,7 @@ void mnPartyStatCreateWindow(Sint32 flg)
 
 	win =
 		syHeapSlotAllocEWRAM(HEAP_SLOT_PARTY_STATUS, sizeof(PARTY_STAT_WINDOW));
-	state = (WIN_STATE *)Ram_HeapSlots->winState;
+	state = (WIN_STATE *)RamHeapSlots->winState;
 	state->holdTilemapUpload = 1;
 	mnPartyStatBuildLayoutBounds(flg);
 	win->win = (WINDOW *)mnWindowCreate(win->x, win->y, win->width, win->height,
@@ -69,7 +69,7 @@ void mnPartyStatCreateWindow(Sint32 flg)
    edge. */
 void mnWindowDrawColumnBorders(WINDOW *win, Uint32 flg)
 {
-	WIN_STATE *winState = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *winState = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32	   first = 1;
 	Sint32	   shift = 0;
 	Uint32	   lastColumn = win->width - 1;
@@ -154,7 +154,7 @@ UNREAD_RESULT mnPartyStatDrawBars(
 	WINDOW *win, Sint32 x, Sint32 y, Sint32 length)
 {
 	Sint32	   i;
-	WIN_STATE *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE *state = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32	   fullLength = length;
 	Sint32	   row;
 	Sint32	   column;
@@ -221,10 +221,10 @@ UNREAD_RESULT mnPartyStatDrawBars(
    standby Djinn of each element. */
 void mnPartyStatDraw(Sint32 flg)
 {
-	PARTY_STAT_WINDOW *layout = Ram_HeapSlots->partyStat;
-	BATTLE_STATE	  *battle = Ram_HeapSlots->battleState;
+	PARTY_STAT_WINDOW *layout = RamHeapSlots->partyStat;
+	BATTLE_STATE	  *battle = RamHeapSlots->battleState;
 	WINDOW			  *win = layout->win;
-	WIN_STATE		  *state = (WIN_STATE *)Ram_HeapSlots->winState;
+	WIN_STATE		  *state = (WIN_STATE *)RamHeapSlots->winState;
 	Sint32			   x = 0;
 	Uint32			   cnt;
 	Sint32			   y = 0;
@@ -345,7 +345,7 @@ void mnPartyStatDraw(Sint32 flg)
 			win, ELEMENT_ICON_TILE + ELEMENT_JUPITER, 2, row + 1, 0);
 		if(standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
 			standbyDjinn[3] > 9)
-			syDMAXCopy(PartyStatus_DigitTiles, DJINN_COUNT_TENS_VRAM,
+			syDMAXCopy(PartyStatusDigitTiles, DJINN_COUNT_TENS_VRAM,
 				DMA_COPY_WORDS(9 * TILE_SIZE_4BPP / 4), REG_DMA3);
 		mnWindowSetTilemapEntry(
 			win, DJINN_COUNT_TILE(standbyDjinn[0]), 1, row, 0);
@@ -362,7 +362,7 @@ void mnPartyStatDraw(Sint32 flg)
 /* Closes the party status window and frees its heap block. */
 void mnPartyStatClose(void)
 {
-	mnWindowClose(*(void **)Ram_HeapSlots->partyStat, 1);
+	mnWindowClose(*(void **)RamHeapSlots->partyStat, 1);
 	syHeapSlotRelease(HEAP_SLOT_PARTY_STATUS);
 }
 

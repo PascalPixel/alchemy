@@ -42,12 +42,12 @@ void syIOWriteQueueFlushPending(void)
 		QUEUE_FLUSH_ROUTINE routine;
 
 		{
-			Uint8 routineBytes[(Uint32)Resource_ExecuteTransferSize];
+			Uint8 routineBytes[(Uint32)ResourceExecuteTransferSize];
 
 			/* The function runs from its copy on the stack, which lasts until
 			   it ends. */
 			routine = (QUEUE_FLUSH_ROUTINE)routineBytes;
-			syDMAXCopy(Resource_ExecuteTransferCode, (void *)routine,
+			syDMAXCopy(ResourceExecuteTransferCode, (void *)routine,
 				DMA_COPY_WORDS(sizeof(routineBytes) / 4), REG_DMA3);
 			routine(queue, cnt);
 			queue->cnt = 0;

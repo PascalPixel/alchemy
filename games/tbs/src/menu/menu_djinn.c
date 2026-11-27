@@ -511,7 +511,7 @@ MENU_BACKDROP_RESULT mnOpenBackdropScreen(void)
 	mnGraphicsExpandVRAMTilesByColTableStub((Uint16 *)(BG_CHAR_BLOCK(1) +
 		DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP));
 	syWordsCopy(BG_CHAR_BLOCK(1) + DJINN_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
-		Menu_ChangeArrowTile, TILE_SIZE_4BPP);
+		MenuChangeArrowTile, TILE_SIZE_4BPP);
 	syDMAXCopy(syPaletteGetBasicSprCols(),
 		(void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
 		DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);

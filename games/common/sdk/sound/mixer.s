@@ -13,9 +13,9 @@ SoundMainRAM:
 	add	r1, pc, #4
 	bx	r1
 @ Never run: .arm pads to a word; bx r1 enters the ARM code after it.
-AlchemyUncredited_mixer_1:
+AlchemyUncreditedMixer1:
 	.arm
-AlchemyUncreditedEnd_mixer_1:
+AlchemyUncreditedEndMixer1:
 	cmp	r4, #2
 	addeq	r7, r0, #848
 	addne	r7, r5, r8
@@ -86,9 +86,9 @@ AlchemyUncreditedEnd_mixer_1:
 	bcc .Lchannel_status
 	b .Lexit
 @ Never run: a zero halfword after b that word-aligns the pool word.
-AlchemyUncredited_mixer_2:
+AlchemyUncreditedMixer2:
 	.2byte	0x0000
-AlchemyUncreditedEnd_mixer_2:
+AlchemyUncreditedEndMixer2:
 	.4byte	0x04000006
 .Lchannel_status:
 	ldrb	r6, [r4, #0]
@@ -213,9 +213,9 @@ AlchemyUncreditedEnd_mixer_2:
 	add	r0, pc, #4
 	bx	r0
 @ Never run: .arm pads to a word; bx r0 enters the ARM code after it.
-AlchemyUncredited_mixer_3:
+AlchemyUncreditedMixer3:
 	.arm
-AlchemyUncreditedEnd_mixer_3:
+AlchemyUncreditedEndMixer3:
 	str	r8, [sp]
 	ldrb	sl, [r4, #10]
 	ldrb	fp, [r4, #11]
@@ -374,9 +374,9 @@ AlchemyUncreditedEnd_mixer_3:
 	mov	sl, r2
 	mov	fp, r3
 	pop	{r3}
-	.global Mixer_CallViaR3
+	.global MixerCallViaR3
 	.thumb_func
-Mixer_CallViaR3:
+MixerCallViaR3:
 	bx	r3
 	.align 2
 .Lsignature:

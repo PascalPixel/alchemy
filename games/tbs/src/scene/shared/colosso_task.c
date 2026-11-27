@@ -1,310 +1,320 @@
-/// @file
-/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-/// the large lettering a race starts with. It reads "The 1st Match", "3", "2",
-/// "1", "GO", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
-/// (enum ColossoLetteringPicture). Each picture is
-/// COLOSSO_LETTERING_PICTURE_BYTES of tiles after the palettes.
+/* @file */
+/* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+ */
+/* the large lettering a race starts with. It reads "The 1st Match", "3", "2",
+ */
+/* "1", "GO", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv
+ */
+/* (COLOSSO_LETTERING_PICTURE). Each picture is */
+/* COLOSSO_LETTERING_PICTURE_BYTES of tiles after the palettes. */
 
-#include "system/affine.h"
-#include "system/dma.h"
+#include "system.h"
 
-/// The lettering moves by a script of 16-bit words, a command and its values:
-enum ColossoLetteringCommand {
-  /// x, speed: put the lettering at x pixels from the centre, moving speed /
-  /// COLOSSO_LETTERING_SUBPIXELS pixels a frame
-  COLOSSO_LETTERING_PLACE = 0x4000,
-  /// speed, frames: change the speed over that many frames
-  COLOSSO_LETTERING_ACCELERATE = 0x3000,
-  /// scale, frames: grow or shrink to scale (256 is its own size)
-  COLOSSO_LETTERING_SCALE = 0x1000,
-  /// weight, frames: fade to weight sixteenths over the screen
-  COLOSSO_LETTERING_FADE = 0x2000,
-  /// frames: run the moves for that many frames before the next command
-  COLOSSO_LETTERING_WAIT = 0x7fff,
-  /// remove the lettering and free its VRAM block
-  COLOSSO_LETTERING_END = -1
-};
+/* The lettering moves by a script of 16-bit words, a command and its values: */
+typedef enum COLOSSO_LETTERING_COMMAND {
+	/* x, speed: put the lettering at x pixels from the centre, moving speed /
+	 */
+	/* COLOSSO_LETTERING_SUBPIXELS pixels a frame */
+	COLOSSO_LETTERING_PLACE = 0x4000,
+	/* speed, frames: change the speed over that many frames */
+	COLOSSO_LETTERING_ACCELERATE = 0x3000,
+	/* scale, frames: grow or shrink to scale (256 is its own size) */
+	COLOSSO_LETTERING_SCALE = 0x1000,
+	/* weight, frames: fade to weight sixteenths over the screen */
+	COLOSSO_LETTERING_FADE = 0x2000,
+	/* frames: run the moves for that many frames before the next command */
+	COLOSSO_LETTERING_WAIT = 0x7fff,
+	/* remove the lettering and free its VRAM block */
+	COLOSSO_LETTERING_END = -1
+} COLOSSO_LETTERING_COMMAND;
 
-/// The lettering pictures, in lettering.tsv's order (Colosso_LoadLettering).
-enum ColossoLetteringPicture {
-  COLOSSO_PICTURE_LEND_A_HAND = 0,
-  /// "The 1st Match", then the 2nd and 3rd.
-  COLOSSO_PICTURE_MATCH_TITLE_FIRST = 1,
-  COLOSSO_PICTURE_WIN_LOSE = 4,
-  COLOSSO_PICTURE_COUNTDOWN_START = 5, ///< the countdown's 3 and 2
-  COLOSSO_PICTURE_COUNTDOWN_END = 6,   ///< the countdown's 1
-  COLOSSO_PICTURE_GO = 7,
-  /// COLOSSO_PICTURE_WIN_LOSE in the blue palette a loss shows it in.
-  COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS = 8
-};
+/* The lettering pictures, in lettering.tsv's order (scColossoLoadLettering). */
+typedef enum COLOSSO_LETTERING_PICTURE {
+	COLOSSO_PICTURE_LEND_A_HAND = 0,
+	/* "The 1st Match", then the 2nd and 3rd. */
+	COLOSSO_PICTURE_MATCH_TITLE_FIRST = 1,
+	COLOSSO_PICTURE_WIN_LOSE = 4,
+	COLOSSO_PICTURE_COUNTDOWN_START = 5, /* the countdown's 3 and 2 */
+	COLOSSO_PICTURE_COUNTDOWN_END = 6,	 /* the countdown's 1 */
+	COLOSSO_PICTURE_GO = 7,
+	/* COLOSSO_PICTURE_WIN_LOSE in the blue palette a loss shows it in. */
+	COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS = 8
+} COLOSSO_LETTERING_PICTURE;
 
-/// The bytes of one lettering picture's tiles: 2,048 pixels at 4 bits each, as
-/// four 32x16 pieces or two 32x32 ones (lettering.tsv).
+/* The bytes of one lettering picture's tiles: 2,048 pixels at 4 bits each, as
+ */
+/* four 32x16 pieces or two 32x32 ones (lettering.tsv). */
 #define COLOSSO_LETTERING_PICTURE_BYTES (4 * 32 * 16 / 2)
 
-/// The lettering's x and speed are kept in 256ths of a pixel.
+/* The lettering's x and speed are kept in 256ths of a pixel. */
 #define COLOSSO_LETTERING_SUBPIXELS 256
 
-/// The lettering's sprites are drawn just behind the windows.
+/* The lettering's sprites are drawn just behind the windows. */
 #define COLOSSO_LETTERING_DEPTH (OAM_DEPTH_WINDOW - 4)
-/// The sprite palette the lettering's colours are loaded into.
+/* The sprite palette the lettering's colours are loaded into. */
 #define COLOSSO_LETTERING_PALETTE 15
-/// The lettering's pieces are 32 pixels wide: piece i of a row of n lies this
-/// far from the row's centre.
+/* The lettering's pieces are 32 pixels wide: piece i of a row of n lies this */
+/* far from the row's centre. */
 #define COLOSSO_LETTERING_PIECE_X(i, n) ((i) * 32 - ((n) - 1) * 16)
 
-/// How Colosso_UpdateLettering lays a picture out (gColosso_LetteringMode);
-/// gColosso_LetteringParameter picks the second half of a picture.
-enum ColossoLetteringShape {
-  /// Four 32x16 pieces in a row: The 1st to 3rd Match, Lend a Hand!
-  COLOSSO_SHAPE_TITLE = 1,
-  COLOSSO_SHAPE_DIGIT = 2,  ///< one 32x32 piece: 3, 2, 1
-  COLOSSO_SHAPE_RESULT = 3, ///< two 32x16 pieces: WIN or LOSE
-  COLOSSO_SHAPE_GO = 4      ///< Go!: one 64x32 piece, or two 32x16 in French
-};
+/* How scColossoUpdateLettering lays a picture out (Colosso_LetteringMode); */
+/* Colosso_LetteringParameter picks the second half of a picture. */
+typedef enum COLOSSO_LETTERING_SHAPE {
+	/* Four 32x16 pieces in a row: The 1st to 3rd Match, Lend a Hand! */
+	COLOSSO_SHAPE_TITLE = 1,
+	COLOSSO_SHAPE_DIGIT = 2,  /* one 32x32 piece: 3, 2, 1 */
+	COLOSSO_SHAPE_RESULT = 3, /* two 32x16 pieces: WIN or LOSE */
+	COLOSSO_SHAPE_GO = 4	  /* Go!: one 64x32 piece, or two 32x16 in French */
+} COLOSSO_LETTERING_SHAPE;
 
-static inline void Dma_Wait(volatile u32 *dma) {
-  while (dma[2] & DMA_BUSY)
-    ;
+/* The lettering's script as it runs: the frames its wait has left, its glide's
+ */
+/* target and frames, its layout mode and parameter, its position (8.8 pixels)
+ */
+/* and the script itself. */
+extern s16 Colosso_LetteringTimer;
+extern s16 Colosso_LetteringMoveTarget;
+extern s16 Colosso_LetteringMoveDuration;
+extern s16 Colosso_LetteringMode;
+extern s16 Colosso_LetteringParameter;
+extern s32 Colosso_LetteringPosition;
+extern s16 *Colosso_LetteringScript;
+
+/* Loads lettering picture id into the lettering's VRAM block (taken once) and
+ */
+/* its palette into COLOSSO_LETTERING_PALETTE. */
+static void scColossoLoadLettering(s32 id) {
+	u8 *buf;
+	s32 off;
+
+	/* Room for the palettes and seven pictures: Go!, the eighth, unpacks past
+	 */
+	/* the block's end into the free EWRAM after it. */
+	buf = syHeapAllocEwram(COLOSSO_PALETTE_BYTES +
+						   7 * COLOSSO_LETTERING_PICTURE_BYTES);
+	if(Colosso_LetteringSlot == -1)
+		Colosso_LetteringSlot = syVramCacheFindFreeEntry();
+	off = Colosso_LetteringPaletteOffsets[id];
+	if(id == COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS)
+		id = COLOSSO_PICTURE_WIN_LOSE;
+	syFieldDecompressTaggedLz(syResourceGetTableEntry(RESOURCE_LETTERING), buf);
+	syDMAXCopy(buf + off, (void *)&OBJ_PLTT_COLOR(COLOSSO_LETTERING_PALETTE, 0),
+			   DMA_COPY_WORDS(8), REG_DMA3);
+	mnVramLoad(Colosso_LetteringSlot, COLOSSO_LETTERING_PICTURE_BYTES,
+			   (u8 *)((id * COLOSSO_LETTERING_PICTURE_BYTES) + (s32)buf +
+					  COLOSSO_PALETTE_BYTES));
+	syDMAWait(REG_DMA3);
+	syHeapRelease(buf);
 }
 
-/// The lettering's script as it runs: the frames its wait has left, its glide's
-/// target and frames, its layout mode and parameter, its position (8.8 pixels)
-/// and the script itself.
-extern s16 gColosso_LetteringTimer;
-extern s16 gColosso_LetteringMoveTarget;
-extern s16 gColosso_LetteringMoveDuration;
-extern s16 gColosso_LetteringMode;
-extern s16 gColosso_LetteringParameter;
-extern s32 gColosso_LetteringPosition;
-extern s16 *gColosso_LetteringScript;
-
-/// Loads lettering picture id into the lettering's VRAM block (taken once) and
-/// its palette into COLOSSO_LETTERING_PALETTE.
-static void Colosso_LoadLettering(s32 id) {
-  u8 *buf;
-  s32 off;
-
-  // Room for the palettes and seven pictures: Go!, the eighth, unpacks past
-  // the block's end into the free EWRAM after it.
-  buf = Heap_AllocEwram(COLOSSO_PALETTE_BYTES +
-                        7 * COLOSSO_LETTERING_PICTURE_BYTES);
-  if (gColosso_LetteringSlot == -1)
-    gColosso_LetteringSlot = VramCache_FindFreeEntry();
-  off = gColosso_LetteringPaletteOffsets[id];
-  if (id == COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS)
-    id = COLOSSO_PICTURE_WIN_LOSE;
-  FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LETTERING), buf);
-  Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(COLOSSO_LETTERING_PALETTE, 0),
-          DMA_COPY_WORDS(8), REG_DMA3);
-  Vram_Load(gColosso_LetteringSlot, COLOSSO_LETTERING_PICTURE_BYTES,
-            (u8 *)((id * COLOSSO_LETTERING_PICTURE_BYTES) + (s32)buf +
-                   COLOSSO_PALETTE_BYTES));
-  Dma_Wait(REG_DMA3);
-  Heap_Release(buf);
-}
-
-/// The lettering's task: run its script, move, scale and fade it, and
-/// draw it as double-size affine sprites blended over the screen, in the shape
-/// of gColosso_LetteringMode.
-static void Colosso_UpdateLettering(void) {
-  u32 *write = gColosso_LetteringSprites;
-  // Each lettering piece is queued as a sprite part written as three words:
-  // the queue link, attributes 0 and 1, and attribute 2.
-  struct AnimationSpritePart *sprite = (struct AnimationSpritePart *)write;
-  s32 tile = gVramCacheEntries[gColosso_LetteringSlot].offset / TILE_SIZE_4BPP;
-  u32 flags;
-  s32 scale, blend, speed, centerX;
-  s32 matrix, i, x, y, left;
-  struct AffineTransform work;
+/* The lettering's task: run its script, move, scale and fade it, and */
+/* draw it as double-size affine sprites blended over the screen, in the shape
+ */
+/* of Colosso_LetteringMode. */
+static void scColossoUpdateLettering(void) {
+	u32 *write = Colosso_LetteringSprites;
+	/* Each lettering piece is queued as a sprite part written as three words:
+	 */
+	/* the queue link, attributes 0 and 1, and attribute 2. */
+	ANIMATION_SPR_PART *sprite = (ANIMATION_SPR_PART *)write;
+	s32 tile = VramCacheEntries[Colosso_LetteringSlot].ofs / TILE_SIZE_4BPP;
+	u32 flags;
+	s32 scale, blend, speed, centerX;
+	s32 matrix, i, x, y, left;
+	AFFINE_TRANSFORM work;
 
 commands:
-  if (gColosso_LetteringTimer == 0) {
-    {
-      switch (*gColosso_LetteringScript++) {
-      case COLOSSO_LETTERING_PLACE:
-        gColosso_LetteringPosition = *gColosso_LetteringScript++ << 8;
-        gColosso_LetteringMoveTarget = *gColosso_LetteringScript++;
-        gColosso_LetteringMoveDuration = 0;
-        break;
-      case COLOSSO_LETTERING_ACCELERATE:
-        gColosso_LetteringMoveStart = gColosso_LetteringMoveTarget;
-        gColosso_LetteringMoveTarget = *gColosso_LetteringScript++;
-        gColosso_LetteringMoveDuration = *gColosso_LetteringScript++;
-        gColosso_LetteringMoveStep = 0;
-        break;
-      case COLOSSO_LETTERING_SCALE:
-        gColosso_LetteringScaleStart = gColosso_LetteringScaleTarget;
-        gColosso_LetteringScaleTarget = *gColosso_LetteringScript++;
-        gColosso_LetteringScaleDuration = *gColosso_LetteringScript++;
-        gColosso_LetteringScaleStep = 0;
-        break;
-      case COLOSSO_LETTERING_FADE:
-        gColosso_LetteringFadeStart = gColosso_LetteringFadeTarget;
-        gColosso_LetteringFadeTarget = *gColosso_LetteringScript++;
-        gColosso_LetteringFadeDuration = *gColosso_LetteringScript++;
-        gColosso_LetteringFadeStep = 0;
-        break;
-      case COLOSSO_LETTERING_WAIT:
-        gColosso_LetteringTimer = *gColosso_LetteringScript++;
-        break;
-      case COLOSSO_LETTERING_END:
-        Task_Remove(Colosso_UpdateLettering);
-        VramCache_FreeEntry(gColosso_LetteringSlot);
-        return;
-      }
-    }
-    goto commands;
-  }
-  gColosso_LetteringTimer--;
-  if (gColosso_LetteringScaleDuration == 0) {
-    scale = gColosso_LetteringScaleTarget;
-  } else {
-    s32 duration, start, progress, target;
-    duration = gColosso_LetteringScaleDuration;
-    start = gColosso_LetteringScaleStart;
-    target = gColosso_LetteringScaleTarget;
-    progress = ++gColosso_LetteringScaleStep;
-    scale = start + (target - start) * progress / duration;
-    if (progress >= duration)
-      gColosso_LetteringScaleDuration = 0;
-  }
-  if (gColosso_LetteringFadeDuration == 0) {
-    blend = gColosso_LetteringFadeTarget;
-  } else {
-    s32 duration, start, progress, target;
-    duration = gColosso_LetteringFadeDuration;
-    start = gColosso_LetteringFadeStart;
-    target = gColosso_LetteringFadeTarget;
-    progress = ++gColosso_LetteringFadeStep;
-    blend = start + (target - start) * progress / duration;
-    if (progress >= duration)
-      gColosso_LetteringFadeDuration = 0;
-  }
-  if (gColosso_LetteringMoveDuration == 0) {
-    speed = gColosso_LetteringMoveTarget;
-  } else {
-    s32 duration, start, progress, target;
-    duration = gColosso_LetteringMoveDuration;
-    start = gColosso_LetteringMoveStart;
-    target = gColosso_LetteringMoveTarget;
-    progress = ++gColosso_LetteringMoveStep;
-    speed = start + (target - start) * progress / duration;
-    if (progress >= duration)
-      gColosso_LetteringMoveDuration = 0;
-  }
-  work.angle = 0;
-  work.scaleX = scale;
-  work.scaleY = scale;
-  matrix = (s16)OamMatrix_AllocFromTransform(&work);
-  gColosso_LetteringPosition += speed;
-  centerX = gColosso_LetteringPosition / COLOSSO_LETTERING_SUBPIXELS;
-  switch (gColosso_LetteringMode) {
-  case COLOSSO_SHAPE_TITLE: {
-    u32 attr;
-    i = 0;
-    y = 56;
-    flags = OBJ_SIZE_32X16;
-    attr = OBJ_MATRIX(matrix);
-    for (; i < 4; i++) {
-      x = centerX + scale * COLOSSO_LETTERING_PIECE_X(i, 4) / 256;
-      left = x + 88;
-      if (x >= -152 && x < 152) {
-        x = left & OBJ_X_MASK;
-        *write++ = 0;
-        *write++ = OBJ_X(x) | y | flags | attr |
-                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
-                   OBJ_AFFINE;
-        *write++ =
-            tile | OBJ_PRIORITY(1) | OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
-        Oam_AddSpriteAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
-      }
-      tile += 8;
-    }
-    break;
-  }
-  case COLOSSO_SHAPE_RESULT: {
-    u32 attr;
-    i = 0;
-    y = 48;
-    flags = OBJ_SIZE_32X16;
-    attr = OBJ_MATRIX(matrix);
-    for (; i < 2; i++) {
-      x = centerX + scale * COLOSSO_LETTERING_PIECE_X(i, 2) / 256;
-      left = x + 88;
-      if (x >= -152 && x < 152) {
-        x = left & OBJ_X_MASK;
-        *write++ = 0;
-        *write++ = OBJ_X(x) | y | flags | attr |
-                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
-                   OBJ_AFFINE;
-        *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
-                   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
-        Oam_AddSpriteAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
-      }
-      tile += 8;
-    }
-    break;
-  }
+	if(Colosso_LetteringTimer == 0) {
+		{
+			switch(*Colosso_LetteringScript++) {
+			case COLOSSO_LETTERING_PLACE:
+				Colosso_LetteringPosition = *Colosso_LetteringScript++ << 8;
+				Colosso_LetteringMoveTarget = *Colosso_LetteringScript++;
+				Colosso_LetteringMoveDuration = 0;
+				break;
+			case COLOSSO_LETTERING_ACCELERATE:
+				Colosso_LetteringMoveStart = Colosso_LetteringMoveTarget;
+				Colosso_LetteringMoveTarget = *Colosso_LetteringScript++;
+				Colosso_LetteringMoveDuration = *Colosso_LetteringScript++;
+				Colosso_LetteringMoveStep = 0;
+				break;
+			case COLOSSO_LETTERING_SCALE:
+				Colosso_LetteringScaleStart = Colosso_LetteringScaleTarget;
+				Colosso_LetteringScaleTarget = *Colosso_LetteringScript++;
+				Colosso_LetteringScaleDuration = *Colosso_LetteringScript++;
+				Colosso_LetteringScaleStep = 0;
+				break;
+			case COLOSSO_LETTERING_FADE:
+				Colosso_LetteringFadeStart = Colosso_LetteringFadeTarget;
+				Colosso_LetteringFadeTarget = *Colosso_LetteringScript++;
+				Colosso_LetteringFadeDuration = *Colosso_LetteringScript++;
+				Colosso_LetteringFadeStep = 0;
+				break;
+			case COLOSSO_LETTERING_WAIT:
+				Colosso_LetteringTimer = *Colosso_LetteringScript++;
+				break;
+			case COLOSSO_LETTERING_END:
+				syCloseEvent(scColossoUpdateLettering);
+				syVramCacheFreeEntry(Colosso_LetteringSlot);
+				return;
+			}
+		}
+		goto commands;
+	}
+	Colosso_LetteringTimer--;
+	if(Colosso_LetteringScaleDuration == 0) {
+		scale = Colosso_LetteringScaleTarget;
+	}
+	else {
+		s32 duration, start, progress, target;
+		duration = Colosso_LetteringScaleDuration;
+		start = Colosso_LetteringScaleStart;
+		target = Colosso_LetteringScaleTarget;
+		progress = ++Colosso_LetteringScaleStep;
+		scale = start + (target - start) * progress / duration;
+		if(progress >= duration)
+			Colosso_LetteringScaleDuration = 0;
+	}
+	if(Colosso_LetteringFadeDuration == 0) {
+		blend = Colosso_LetteringFadeTarget;
+	}
+	else {
+		s32 duration, start, progress, target;
+		duration = Colosso_LetteringFadeDuration;
+		start = Colosso_LetteringFadeStart;
+		target = Colosso_LetteringFadeTarget;
+		progress = ++Colosso_LetteringFadeStep;
+		blend = start + (target - start) * progress / duration;
+		if(progress >= duration)
+			Colosso_LetteringFadeDuration = 0;
+	}
+	if(Colosso_LetteringMoveDuration == 0) {
+		speed = Colosso_LetteringMoveTarget;
+	}
+	else {
+		s32 duration, start, progress, target;
+		duration = Colosso_LetteringMoveDuration;
+		start = Colosso_LetteringMoveStart;
+		target = Colosso_LetteringMoveTarget;
+		progress = ++Colosso_LetteringMoveStep;
+		speed = start + (target - start) * progress / duration;
+		if(progress >= duration)
+			Colosso_LetteringMoveDuration = 0;
+	}
+	work.ang = 0;
+	work.scaleX = scale;
+	work.scaleY = scale;
+	matrix = (s16)syOamMatrixAllocFromTransform(&work);
+	Colosso_LetteringPosition += speed;
+	centerX = Colosso_LetteringPosition / COLOSSO_LETTERING_SUBPIXELS;
+	switch(Colosso_LetteringMode) {
+	case COLOSSO_SHAPE_TITLE: {
+		u32 attr;
+		i = 0;
+		y = 56;
+		flags = OBJ_SIZE_32X16;
+		attr = OBJ_MATRIX(matrix);
+		for(; i < 4; i++) {
+			x = centerX + scale * COLOSSO_LETTERING_PIECE_X(i, 4) / 256;
+			left = x + 88;
+			if(x >= -152 && x < 152) {
+				x = left & OBJ_X_MASK;
+				*write++ = 0;
+				*write++ = OBJ_X(x) | y | flags | attr |
+						   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |
+						   OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+				*write++ = tile | OBJ_PRIORITY(1) |
+						   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
+				syOamAddSprAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
+			}
+			tile += 8;
+		}
+		break;
+	}
+	case COLOSSO_SHAPE_RESULT: {
+		u32 attr;
+		i = 0;
+		y = 48;
+		flags = OBJ_SIZE_32X16;
+		attr = OBJ_MATRIX(matrix);
+		for(; i < 2; i++) {
+			x = centerX + scale * COLOSSO_LETTERING_PIECE_X(i, 2) / 256;
+			left = x + 88;
+			if(x >= -152 && x < 152) {
+				x = left & OBJ_X_MASK;
+				*write++ = 0;
+				*write++ = OBJ_X(x) | y | flags | attr |
+						   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |
+						   OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+				*write++ = (tile + Colosso_LetteringParameter) |
+						   OBJ_PRIORITY(1) |
+						   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
+				syOamAddSprAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
+			}
+			tile += 8;
+		}
+		break;
+	}
 #if LANGUAGE == LANGUAGE_FRENCH
-  case COLOSSO_SHAPE_GO: {
-    u32 attr;
-    i = 0;
-    y = 64;
-    flags = OBJ_SIZE_32X16;
-    attr = OBJ_MATRIX(matrix);
-    for (; i < 2; i++) {
-      x = centerX + scale * COLOSSO_LETTERING_PIECE_X(i, 2) / 256;
-      left = x + 88;
-      if (x >= -152 && x < 152) {
-        x = left & OBJ_X_MASK;
-        *write++ = 0;
-        *write++ = OBJ_X(x) | y | flags | attr |
-                   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
-                   OBJ_AFFINE;
-        *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
-                   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
-        Oam_AddSpriteAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
-      }
-      tile += 8;
-    }
-    break;
-  }
+	case COLOSSO_SHAPE_GO: {
+		u32 attr;
+		i = 0;
+		y = 64;
+		flags = OBJ_SIZE_32X16;
+		attr = OBJ_MATRIX(matrix);
+		for(; i < 2; i++) {
+			x = centerX + scale * COLOSSO_LETTERING_PIECE_X(i, 2) / 256;
+			left = x + 88;
+			if(x >= -152 && x < 152) {
+				x = left & OBJ_X_MASK;
+				*write++ = 0;
+				*write++ = OBJ_X(x) | y | flags | attr |
+						   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |
+						   OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+				*write++ = (tile + Colosso_LetteringParameter) |
+						   OBJ_PRIORITY(1) |
+						   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
+				syOamAddSprAtDepth(sprite++, COLOSSO_LETTERING_DEPTH);
+			}
+			tile += 8;
+		}
+		break;
+	}
 #else
-  case COLOSSO_SHAPE_GO:
-    y = 48;
-    flags = OBJ_SIZE_64X32;
-    left = centerX + 56;
-    if (centerX >= -120 && centerX < 184) {
-      x = left & OBJ_X_MASK;
-      *write++ = 0;
-      *write++ = OBJ_X(x) | y | flags | OBJ_MATRIX(matrix) |
-                 OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
-                 OBJ_AFFINE;
-      *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
-                 OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
-      Oam_AddSpriteAtDepth(sprite, COLOSSO_LETTERING_DEPTH);
-    }
-    break;
+	case COLOSSO_SHAPE_GO:
+		y = 48;
+		flags = OBJ_SIZE_64X32;
+		left = centerX + 56;
+		if(centerX >= -120 && centerX < 184) {
+			x = left & OBJ_X_MASK;
+			*write++ = 0;
+			*write++ = OBJ_X(x) | y | flags | OBJ_MATRIX(matrix) |
+					   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+					   OBJ_AFFINE;
+			*write++ = (tile + Colosso_LetteringParameter) | OBJ_PRIORITY(1) |
+					   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
+			syOamAddSprAtDepth(sprite, COLOSSO_LETTERING_DEPTH);
+		}
+		break;
 #endif
-  case COLOSSO_SHAPE_DIGIT:
-    y = 48;
-    flags = OBJ_SIZE_32X32;
-    left = centerX + 88;
-    if (centerX >= -152 && centerX < 152) {
-      x = left & OBJ_X_MASK;
-      *write++ = 0;
-      *write++ = OBJ_X(x) | y | flags | OBJ_MATRIX(matrix) |
-                 OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
-                 OBJ_AFFINE;
-      *write++ = (tile + gColosso_LetteringParameter) | OBJ_PRIORITY(1) |
-                 OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
-      Oam_AddSpriteAtDepth(sprite, COLOSSO_LETTERING_DEPTH);
-    }
-    break;
-  }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
-                      ((BLEND_WEIGHT_MAX - blend) << 8) | blend,
-                      IO_WRITE_HALFWORD);
+	case COLOSSO_SHAPE_DIGIT:
+		y = 48;
+		flags = OBJ_SIZE_32X32;
+		left = centerX + 88;
+		if(centerX >= -152 && centerX < 152) {
+			x = left & OBJ_X_MASK;
+			*write++ = 0;
+			*write++ = OBJ_X(x) | y | flags | OBJ_MATRIX(matrix) |
+					   OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_DOUBLE_SIZE |
+					   OBJ_AFFINE;
+			*write++ = (tile + Colosso_LetteringParameter) | OBJ_PRIORITY(1) |
+					   OBJ_PALETTE(COLOSSO_LETTERING_PALETTE);
+			syOamAddSprAtDepth(sprite, COLOSSO_LETTERING_DEPTH);
+		}
+		break;
+	}
+	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+						((BLEND_WEIGHT_MAX - blend) << 8) | blend,
+						IO_WRITE_HALFWORD);
 }

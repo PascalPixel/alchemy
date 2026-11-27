@@ -1,6 +1,6 @@
-@ Why Trig_SinOnAxis to Trig_Sin are assembly:
-@ Trig_SinOnAxis and Trig_Sin branch on lsrs carry; Trig_Cos falls
-@ through directly into Trig_Sin's entry.
+@ Why Trig_SinOnAxis to sySin are assembly:
+@ Trig_SinOnAxis and sySin branch on lsrs carry; syCos falls
+@ through directly into sySin's entry.
 .syntax unified
 	.thumb
 	.global Trig_SinOnAxis
@@ -15,15 +15,15 @@ Trig_SinOnAxis:
 	negs	r0, r0
 .L_helper_return:
 	bx	lr
-	.global Trig_Cos
+	.global syCos
 	.thumb_func
-Trig_Cos:
+syCos:
 	movs	r1, #64
 	lsls	r1, r1, #8
 	adds	r0, r0, r1
-	.global Trig_Sin
+	.global sySin
 	.thumb_func
-Trig_Sin:
+sySin:
 	adds	r0, #32
 	lsls	r1, r0, #18
 	lsrs	r1, r1, #24

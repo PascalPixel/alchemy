@@ -1,7 +1,7 @@
-@ The pieces BattleEffect_BuildBlitter (battle_effect_blitter.c) builds canvas blitters
+@ The pieces btEffectBuildBlitter (battle_effect_blitter.c) builds canvas blitters
 @ from.
 @ None of this code runs where it is: the builder copies its words into a
-@ heap block, one routine per canvas size, mirroring, clip and mode.
+@ heap block, one function per canvas size, mirroring, clip and mode.
 @
 @ Each pixel fragment combines picture pixels, read through r1, into the
 @ canvas, written through r9: Copy writes them, Transparent skips zeros, Max
@@ -11,7 +11,7 @@
 @ pixels a pass. For whole cells the additive mode uses the colour fragments
 @ (blitter_color_fragments.s), which add four pixels a word at a time:
 @ BattleEffect_Mask puts 0x40 in every byte of sl, and a byte that reaches it
-@ becomes 63. gBlitterTemplate is the template the builder walks: each
+@ becomes 63. BlitterTemplate is the template the builder walks: each
 @ word it rewrites is marked, and battle_effect_blitter.c describes its blocks.
 @
 @ Why assembly:
@@ -34,7 +34,7 @@
 	.global BattleEffect_AdditiveForward
 	.global BattleEffect_AdditiveReverse
 	.global BattleEffect_Mask
-	.global gBlitterTemplate
+	.global BlitterTemplate
 BattleEffect_CopyReverse:
 	ldrb	r5, [r1], #-1
 	strb	r5, [r9], #1
@@ -165,7 +165,7 @@ BattleEffect_Mask:
 	mov	sl, #64
 	orr	sl, sl, sl, lsl #8
 	orr	sl, sl, sl, lsl #16
-gBlitterTemplate:
+BlitterTemplate:
 	@ Block 1: entry code (see battle_effect_blitter.c)
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	add	r4, sp, #32

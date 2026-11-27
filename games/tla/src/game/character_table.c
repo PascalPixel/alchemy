@@ -1,14 +1,10 @@
-/// @file
-/// The eight characters' definitions, by character id.
-// Part of game.c.
+/* @file */
+/* The eight characters' definitions, by character id. */
+/* Part of game.c. */
 
-#include "game_internal.h"
-#include "item_ids.h"
-#include "game/character_ids.h"
-
-// clang-format off
-/// The eight characters' definitions, by character id.
-const struct CharacterDefinition gCharacter_DefinitionTable[] = {
+/* clang-format off */
+/* The eight characters' definitions, by character id. */
+const CHARACTER_DEFINITION Character_DefinitionTable[] = {
     [ISAAC] = {
         .hp = {30, 182, 334, 486, 638, 790},
         .pp = {20, 80, 130, 170, 210, 250},
@@ -98,4 +94,4 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
         .items = {ITEM_BATTLE_MACE, ITEM_CHAIN_MAIL, ITEM_IRON_SHIELD, ITEM_BRONZE_HELM, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR},
     },
 };
-// clang-format on
+/* clang-format on */

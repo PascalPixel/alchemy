@@ -1,16 +1,16 @@
-@ The map table (struct MapResources, gMaps): what each map loads, its layout,
+@ The map table (MAP_RESOURCES, MapsWork): what each map loads, its layout,
 @ palette, three tile sheets and tileset animation tiles. A row's name gives
 @ MapIndex_NAME its number, by which the scene table (field/scenes.s) names a
-@ scene's map, and MapGrid_LoadMap loads that row. A row is named for its
+@ scene's map, and fdMapGridLoadMap loads that row. A row is named for its
 @ layout, or for its scene where several rows hold one layout. Each row names
 @ six places of the resource directory
-@ (gamepak/resource_directory.s), whose map_resource rows number them from the
+@ (system/resource_directory.s), whose map_resource rows number them from the
 @ empty map's. Maps built from one tileset repeat its places; a map with a
 @ palette of its own borrows another tileset's tiles under it. Each row's
 @ comment names its layout's folder in src/map.
 	.macro map name:req, layout:req, palette:req, tiles_a:req, tiles_b:req, tiles_c:req, animation_tiles:req
 	.global MapIndex_\name
-	.equiv MapIndex_\name, (. - gMaps) / 12
+	.equiv MapIndex_\name, (. - MapsWork) / 12
 	.2byte MapResource_\layout, MapResource_\palette
 	.2byte MapResource_\tiles_a, MapResource_\tiles_b, MapResource_\tiles_c
 	.2byte MapResource_\animation_tiles
@@ -18,10 +18,10 @@
 
 	.section .rodata
 	.balign 4
-	.global gMaps
-gMaps:
+	.global MapsWork
+MapsWork:
 	map EmptyMap, Field_EmptyMap, Tileset_BlankPalette, Tileset_BlankTilesA, Tileset_BlankTilesB, Tileset_BlankTilesC, Tileset_BlankTilesD @ empty_map, the empty layout of the title and file screens
-	map World, Field_EmptyMap, Tileset_BlankPalette, Tileset_BlankTilesA, Tileset_BlankTilesB, Tileset_BlankTilesC, Tileset_BlankTilesD @ empty_map again, the World Map's row, which the field compares gMainRoutineState.mapId with (MAP_INDEX_WORLD)
+	map World, Field_EmptyMap, Tileset_BlankPalette, Tileset_BlankTilesA, Tileset_BlankTilesB, Tileset_BlankTilesC, Tileset_BlankTilesD @ empty_map again, the World Map's row, which the field compares MainRoutineStateWork.mapId with (MAP_INDEX_WORLD)
 	map ValePrologue, Field_ValePrologue, Tileset_ValeProloguePalette, Tileset_ValePrologueTilesA, Tileset_ValePrologueTilesB, Tileset_ValePrologueTilesC, Tileset_ValePrologueTilesD @ vale_prologue
 	map Vale, Field_Vale, Tileset_ValePalette, Tileset_ValeTilesA, Tileset_ValeTilesB, Tileset_ValeTilesC, Tileset_ValeTilesD @ vale
 	map ValePlaza, Field_ValePlaza, Tileset_ValePlazaPalette, Tileset_ValePlazaTilesA, Tileset_ValePlazaTilesB, Tileset_ValePlazaTilesC, Tileset_ValePlazaTilesD @ vale_plaza
@@ -209,6 +209,6 @@ gMaps:
 
 @ Unused: nothing reads these four words after the map table.
 	.balign 4
-	.global gMapsTail
-gMapsTail:
+	.global MapsTail
+MapsTail:
 	.4byte 0, 3, 7, 9

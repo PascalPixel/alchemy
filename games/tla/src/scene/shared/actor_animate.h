@@ -1,9 +1,10 @@
-/// Steps an actor's sprite through the six colour swaps, SPRITE_COLOR_NORMAL to
-/// SPRITE_COLOR_BRG, one every two frames: Actor_AnimateAndEmit without its
-/// sparks. Nothing sets it as an update.
-void Actor_CycleColorSwaps(struct Actor *actor) {
-  u32 frame = gFrameCount;
+/* Steps an actor's sprite through the six colour swaps, SPRITE_COLOR_NORMAL to
+ */
+/* SPRITE_COLOR_BRG, one every two frames: scActorAnimateAndEmit without its */
+/* sparks. Nothing sets it as an update. */
+void fdActorCycleColSwaps(ACTOR *actor) {
+	u32 frame = FrameCount;
 
-  if (frame & 1)
-    Actor_SetSpriteColorMode(actor, (frame >> 1) % 6);
+	if(frame & 1)
+		fdActorSetSprColMode(actor, (frame >> 1) % 6);
 }

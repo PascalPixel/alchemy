@@ -1,42 +1,26 @@
 #ifndef ALCHEMY_FIELD_SEQUENCE_EVENT_H
 #define ALCHEMY_FIELD_SEQUENCE_EVENT_H
 
-/// @file
-/// The field sequence's event routines (field_sequence/event.c and items.c).
+/* @file */
+/* The field sequence's event functions (field_sequence/event.c and items.c). */
 
 #include "field/field_state.h"
 
-/// struct Trigger (scene_tables.h), a row of the scene's trigger table, as
-/// the Psynergy and item triggers run it: its control word as key, its
-/// subject as flags, its condition unsigned, and its value as action (a
-/// message below 0x10000, else a routine).
-struct PendingEvent {
-  u32 key;
-  u16 flags;
-  u16 condition;
-  s32 action;
-};
+/* TRIGGER (scene_tables.h), a row of the scene's trigger table, as */
+/* the Psynergy and item triggers run it: its control word as key, its */
+/* subject as flags, its condition unsigned, and its value as action (a */
+/* message below 0x10000, else a function). */
+typedef struct PENDING_EVENT {
+	u32 key;
+	u16 flg;
+	u16 condition;
+	s32 action;
+} PENDING_EVENT;
 
-void Event_RunMessage(s32 actor, s32 message);
-void Event_EndAllLastingPsynergy(void);
-void Event_EndLastingPsynergy(s32 skip);
-s32 Field_RunPsynergyEndEvents(u32 action);
-s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 argument,
-                           s32 target);
-s32 Party_GetLeaderActor(void);
-void Event_ShowMessageAndWait(s32 actor, s32 flags);
-void Event_UpdateDebugSkip(void);
-void Event_Wait(s32 frames);
-void Leader_StopMoving(void);
-void Event_Start(void);
-void Event_End(void);
-void Event_EmptyCallback(void);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_SetDestination(s32 scene, s32 entrance);
-void Event_SetRestartPoint(s32 scene, s32 entrance);
-void Event_SetExitRequest(u16 exit);
-void Event_SetMessageId(s32 message);
+void fdEventRunMessage(s32 actor, s32 message);
+s32 fdRunPsynergyEndEvents(u32 action);
+s32 fdRunPsynergyEvent(PENDING_EVENT *event, s32 argument, s32 target);
+void fdEventUpdateDebugSkip(void);
+void fdEventEmptyCallback(void);
 
 #endif

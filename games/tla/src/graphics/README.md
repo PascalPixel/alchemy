@@ -48,9 +48,9 @@ picture 55 7, picture 30 7, picture 35 7, picture 40 7, picture 45 7, picture 50
 
 That is a walk. The numbers go up in fives because each pose is drawn
 from five directions, and the animation names only the first. The field
-picks the one that matches the way the figure faces, and mirrors it for
-the directions nobody drew. So an animation is written once and works
-facing any way.
+engine picks the one that matches the way the figure faces, and mirrors
+it for the directions nobody drew. So an animation is written once and
+works facing any way.
 
 A party member's sprite is named for the character whose number it
 shares; another takes the name The Broken Seal gives the same picture,
@@ -130,4 +130,4 @@ When the game is built, each PNG is split into its colours and its pixels,
 and the pixels are usually packed. A picture that one part of the game
 always uses, such as the font, is linked straight into that part. A picture
 chosen while the game runs, such as a backdrop or a monster, is a numbered
-resource ([The Game Pak](../gamepak/README.md#the-resource-directory-and-table-order)).
+resource ([The Game Pak](../system/README.md#the-resource-directory-and-table-order)).

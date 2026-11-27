@@ -1,15 +1,15 @@
-@ The same two ARM routines again, beside the ending's scrolling images that
+@ The same two ARM functions again, beside the ending's scrolling images that
 @ use the second: a copy of credits_background_decode.s whose decoder writes
 @ 64 rows a band and steps 4 KB, the images' map strips.
 @
 @ EndingImage_InnerProduct: Vector_InnerProduct again. Nothing calls it.
 @
 @ EndingImage_Decode(source, destination, offset): decodes an image's packed
-@ map (r0) into the map buffer (r1). EndingImage_Show (credits.c) copies it
+@ map (r0) into the map buffer (r1). mnEndingImageShow (credits.c) copies it
 @ into a heap block and calls it there, so its first loop relocates the table
 @ of decoder commands (ending_image_expand.s) for wherever the copy landed.
 @
-@ Why assembly: as credits_background_decode.s's routines.
+@ Why assembly: as credits_background_decode.s's functions.
 .syntax unified
 	.arm
 	.global EndingImage_InnerProduct

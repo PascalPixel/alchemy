@@ -1,74 +1,70 @@
-/// @file
-/// The window that shows the area's name, and removing an item from the party's
-/// inventory.
-// Part of window.c.
+/* @file */
+/* The window that shows the area's name, and removing an item from the party's
+ */
+/* inventory. */
+/* Part of window.c. */
 
-#include "window_internal.h"
-#include "field/field_state.h"
+void mnAreaNameWindowUpdate(void);
 
-#define FIELD_STATE ((struct FieldState *)Ram_HeapSlots->fieldState)
+/* Shows the area's name in a window near the top of the screen for */
+/* AREA_NAME_WINDOW_FRAMES, kept in the field state until */
+/* mnAreaNameWindowUpdate closes it. */
+void mnAreaNameWindowShow(void) {
+	FIELD_STATE *fieldState;
+	s32 height;
+	s32 width;
+	s32 y;
+	s32 x;
+	s32 areaMessage;
+	WINDOW *nameWindow;
+	MAIN_ROUTINE_STATE *state;
 
-void AreaNameWindow_Update(void);
-
-/// Shows the area's name in a window near the top of the screen for
-/// AREA_NAME_WINDOW_FRAMES, kept in the field state until AreaNameWindow_Update
-/// closes it.
-void AreaNameWindow_Show(void) {
-  struct FieldState *fieldState;
-  s32 height;
-  s32 width;
-  s32 y;
-  s32 x;
-  s32 areaMessage;
-  struct Window *nameWindow;
-  struct MainRoutineState *state;
-
-  fieldState = FIELD_STATE;
-  state = &gMainRoutineState;
-  x = 8;
-  y = 8;
-  areaMessage = Area_GetNameIndexFar(state->next, state->entrance) +
-                (s32)&MsgDebugAreaName;
-  Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
-  x = (DISPLAY_TILE_WIDTH - width) >> 1;
-  y = (10 - height) >> 1;
-  nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
-  fieldState->noticeWindow = nameWindow;
-  Text_DrawMessage(areaMessage, (s32)nameWindow, 0, 0);
-  fieldState->noticeFrames = AREA_NAME_WINDOW_FRAMES;
-  Task_Add(AreaNameWindow_Update, TASK_PASS_FRAME);
+	fieldState = FieldStateWork;
+	state = &MainRoutineStateWork;
+	x = 8;
+	y = 8;
+	areaMessage = fdAreaGetNameIndexStub(state->next, state->entrance) +
+				  (s32)&MsgDebugAreaName;
+	mnTextGetMessageSize(areaMessage, &x, &y, &width, &height);
+	x = (DISPLAY_TILE_WIDTH - width) >> 1;
+	y = (10 - height) >> 1;
+	nameWindow = mnWindowCreate(x, y, width, height, WINDOW_FLAG_INSTANT);
+	fieldState->noticeWin = nameWindow;
+	mnTextDrawMessage(areaMessage, (s32)nameWindow, 0, 0);
+	fieldState->noticeFrm = AREA_NAME_WINDOW_FRAMES;
+	sySetEvent(mnAreaNameWindowUpdate, TASK_PASS_FRAME);
 }
 
-/// Counts the area name down, and closes it at 0.
-void AreaNameWindow_Update(void) {
-  struct FieldState *state;
-  u16 framesLeft;
+/* Counts the area name down, and closes it at 0. */
+void mnAreaNameWindowUpdate(void) {
+	FIELD_STATE *state;
+	u16 framesLeft;
 
-  state = FIELD_STATE;
-  state->noticeFrames = framesLeft = state->noticeFrames - 1;
-  if (framesLeft == 0) {
-    Window_Close(state->noticeWindow, WINDOW_FLAG_INSTANT);
-    Task_Remove(AreaNameWindow_Update);
-  }
+	state = FieldStateWork;
+	state->noticeFrm = framesLeft = state->noticeFrm - 1;
+	if(framesLeft == 0) {
+		mnWindowClose(state->noticeWin, WINDOW_FLAG_INSTANT);
+		syCloseEvent(mnAreaNameWindowUpdate);
+	}
 }
 
-/// Closes the area name at once, if it is shown.
-void AreaNameWindow_Hide(void) {
-  struct Window *window;
+/* Closes the area name at once, if it is shown. */
+void mnAreaNameWindowHide(void) {
+	WINDOW *window;
 
-  window = FIELD_STATE->noticeWindow;
-  if (window != NULL && window->flags != 0) {
-    Window_Close(window, WINDOW_FLAG_INSTANT);
-    Task_Remove(AreaNameWindow_Update);
-  }
+	window = FieldStateWork->noticeWin;
+	if(window != NULL && window->flg != 0) {
+		mnWindowClose(window, WINDOW_FLAG_INSTANT);
+		syCloseEvent(mnAreaNameWindowUpdate);
+	}
 }
 
-void PartyInventory_RemoveFar(s32 item);
+void gmPartyInventoryRemoveStub(s32 item);
 
-/// Removes itemId from the party's inventory and returns 0.
-s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
-  PartyInventory_RemoveFar(itemId);
-  return 0;
+/* Removes itemId from the party's inventory and returns 0. */
+s32 mnItemRemoveFromInventory(s32 unused, s32 itemId) {
+	gmPartyInventoryRemoveStub(itemId);
+	return 0;
 }
 
-#undef FIELD_STATE
+#undef FieldStateWork

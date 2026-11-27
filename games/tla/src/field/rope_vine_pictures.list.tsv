@@ -1,9 +1,9 @@
 name	file	section	align	left	pad
-gRope_Tiles	rope.8bpp.lz				
-gHangingVine_VineTopPicture	vine_top.8bpp16x16.lz				
-gHangingVine_VineUpperPicture	vine_upper.8bpp16x16.lz				
-gHangingVine_VineLowerPicture	vine_lower.8bpp16x16.lz				
-gHangingVine_VineBottomPicture	vine_bottom.8bpp16x16.lz				
-gHangingVine_ChainTopPicture	chain_top.8bpp16x16.lz				
-gHangingVine_ChainMiddlePicture	chain_middle.8bpp16x16.lz				
-gHangingVine_ChainBottomPicture	chain_bottom.8bpp16x16.lz				
+Rope_Tiles	rope.8bpp.lz				
+HangingVine_VineTopPicture	vine_top.8bpp16x16.lz				
+HangingVine_VineUpperPicture	vine_upper.8bpp16x16.lz				
+HangingVine_VineLowerPicture	vine_lower.8bpp16x16.lz				
+HangingVine_VineBottomPicture	vine_bottom.8bpp16x16.lz				
+HangingVine_ChainTopPicture	chain_top.8bpp16x16.lz				
+HangingVine_ChainMiddlePicture	chain_middle.8bpp16x16.lz				
+HangingVine_ChainBottomPicture	chain_bottom.8bpp16x16.lz				

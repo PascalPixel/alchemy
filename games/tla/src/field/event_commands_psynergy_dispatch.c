@@ -1,397 +1,397 @@
-/// @file
-/// Running a field Psynergy by its kind, and the priority and depth its
-/// sprites take to be drawn with an actor.
-// Part of event_commands.c.
+/* @file */
+/* Running a field Psynergy by its kind, and the priority and depth its */
+/* sprites take to be drawn with an actor. */
+/* Part of event_commands.c. */
 
-#include "event_commands_internal.h"
-#include "fixed_math.h"
-#include "sounds.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "field/field_sequence.h"
-#include "field/object.h"
-#include "system/system.h"
-#include "macros.h"
+/* Field Psynergy: the dispatchers that run each animation */
 
-// Field Psynergy: the dispatchers that run each animation
+void fdPsynergyHaltOnTarget(s32 id);
+void fdPsynergyForceOnTarget(s32 unused);
+void fdPsynergyDouseOnTarget(s32 unused);
+void fdPsynergyFrostOnTarget(s32 unused);
+void fdPsynergyWhirlwindOnTarget(s32 unused);
+void fdPsynergyCatchOnTarget(s32 targetId);
+void fdPsynergySandOnTarget(s32 targetId);
+void fdPsynergyBlazeOnTarget(s32 targetId);
+void fdPsynergyCycloneOnTarget(s32 targetId);
+void fdPsynergyScoopOnTarget(s32 targetId);
+void fdPsynergyTremorOnTarget(s32 targetId);
+void fdPsynergyGrindOnTarget(s32 targetId);
+void fdPsynergyHoverOnTarget(s32 targetId);
+void fdPsynergyTeleportOnTarget(s32 targetId);
+void fdPsynergyParchOnTarget(s32 targetId);
+void fdPsynergyBurstOnTarget(s32 targetId);
+void fdPsynergyPoundOnTarget(s32 targetId);
 
-void FieldPsynergy_HaltOnTarget(s32 id);
-void FieldPsynergy_StartMindReadWave(s32 sourceId, s32 targetId);
-void FieldPsynergy_SteerPushedTarget(s32 unused);
-void FieldPsynergy_ForceOnTarget(s32 unused);
-void FieldPsynergy_DouseOnTarget(s32 unused);
-void FieldPsynergy_FrostOnTarget(s32 unused);
-void FieldPsynergy_WhirlwindOnTarget(s32 unused);
-void FieldPsynergy_CatchOnTarget(s32 targetId);
-void FieldPsynergy_SandOnTarget(s32 targetId);
-void FieldPsynergy_BlazeOnTarget(s32 targetId);
-void FieldPsynergy_CycloneOnTarget(s32 targetId);
-void FieldPsynergy_ScoopOnTarget(s32 targetId);
-void FieldPsynergy_TremorOnTarget(s32 targetId);
-void FieldPsynergy_GrindOnTarget(s32 targetId);
-void FieldPsynergy_HoverOnTarget(s32 targetId);
-void FieldPsynergy_TeleportOnTarget(s32 targetId);
-void FieldPsynergy_ParchOnTarget(s32 targetId);
-void FieldPsynergy_BurstOnTarget(s32 targetId);
-void FieldPsynergy_PoundOnTarget(s32 targetId);
-
-/// Runs one step of the scene's field Psynergy: cast with no target, cast on
-/// the chosen target (secondActorId), Mind Read's end, or what a lasting
-/// Psynergy does when it ends.
-void FieldPsynergy_RunHandler(s32 kind) {
-  if (kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
-    FieldPsynergy_Run();
-  else if (kind == FIELD_PSYNERGY_HANDLER_ON_TARGET)
-    FieldPsynergy_Dispatch();
-  else if (kind == FIELD_PSYNERGY_HANDLER_FINISH)
-    FieldPsynergy_FinishMindRead();
-  else if (kind == FIELD_PSYNERGY_HANDLER_EXTRA)
-    FieldPsynergy_RunExtraHandler();
+/* Runs one step of the scene's field Psynergy: cast with no target, cast on */
+/* the chosen target (secondActorId), Mind Read's end, or what a lasting */
+/* Psynergy does when it ends. */
+void fdPsynergyRunHandler(s32 kind) {
+	if(kind == FIELD_PSYNERGY_HANDLER_UNTARGETED)
+		fdPsynergyRun();
+	else if(kind == FIELD_PSYNERGY_HANDLER_ON_TARGET)
+		fdPsynergyDispatch();
+	else if(kind == FIELD_PSYNERGY_HANDLER_FINISH)
+		fdPsynergyFinishMindRead();
+	else if(kind == FIELD_PSYNERGY_HANDLER_EXTRA)
+		fdPsynergyRunExtraHandler();
 }
 
-/// Runs the field Psynergy animation the scene names, with no target chosen
-/// yet: each kind runs its effect to the end.
-void FieldPsynergy_Run(void) {
-  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct FieldState *event = Ram_HeapSlots->fieldState;
-  s32 animation = scene->fieldPsynergy;
-  s32 targetId = scene->targetId;
-  s32 objectId;
+/* Runs the field Psynergy animation the scene names, with no target chosen */
+/* yet: each kind runs its effect to the end. */
+void fdPsynergyRun(void) {
+	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	s32 animation = scene->fieldPsynergy;
+	s32 targetId = scene->tgtId;
+	s32 objectId;
 
-  if (animation == FIELD_PSYNERGY_MOVE)
-    FieldPsynergy_Move();
-  else if (animation == FIELD_PSYNERGY_LIFT)
-    FieldPsynergy_Lift();
-  else if (animation == FIELD_PSYNERGY_CARRY)
-    FieldPsynergy_Carry();
-  else if (animation == FIELD_PSYNERGY_FORCE)
-    FieldPsynergy_Force();
-  else if (animation == FIELD_PSYNERGY_DOUSE)
-    FieldPsynergy_Douse();
-  else if (animation == FIELD_PSYNERGY_WHIRLWIND)
-    FieldPsynergy_Whirlwind();
-  else if (animation == FIELD_PSYNERGY_FROST)
-    FieldPsynergy_Frost();
-  else if (animation == FIELD_PSYNERGY_PLY)
-    FieldPsynergy_Ply();
-  else if (animation == FIELD_PSYNERGY_GROWTH)
-    FieldPsynergy_Growth();
-  else if (animation == FIELD_PSYNERGY_CATCH)
-    FieldPsynergy_Catch();
-  else if (animation == FIELD_PSYNERGY_RETREAT)
-    FieldPsynergy_Retreat();
-  else if (animation == FIELD_PSYNERGY_AVOID)
-    FieldPsynergy_Avoid();
-  else if (animation == FIELD_PSYNERGY_CLOAK)
-    FieldPsynergy_StartCloak();
-  else if (animation == FIELD_PSYNERGY_REVEAL)
-    FieldPsynergy_Reveal();
-  else if (animation == FIELD_PSYNERGY_LASH)
-    FieldPsynergy_Lash();
-  else if (animation == FIELD_PSYNERGY_ARROW)
-    FieldPsynergy_Arrow();
-  else if (animation == FIELD_PSYNERGY_CYCLONE)
-    FieldPsynergy_Cyclone();
-  else if (animation == FIELD_PSYNERGY_BLAZE)
-    FieldPsynergy_Blaze();
-  else if (animation == FIELD_PSYNERGY_BURST)
-    FieldPsynergy_Burst();
-  else if (animation == FIELD_PSYNERGY_POUND)
-    FieldPsynergy_Pound();
-  else if (animation == FIELD_PSYNERGY_SCOOP)
-    FieldPsynergy_Scoop();
-  else if (animation == FIELD_PSYNERGY_TREMOR)
-    FieldPsynergy_Tremor();
-  else if (animation == FIELD_PSYNERGY_GRIND)
-    FieldPsynergy_Grind();
-  else if (animation == FIELD_PSYNERGY_HOVER)
-    FieldPsynergy_Hover();
-  else if (animation == FIELD_PSYNERGY_SAND)
-    FieldPsynergy_Sand();
-  else if (animation == FIELD_PSYNERGY_TELEPORT)
-    FieldPsynergy_Teleport();
-  else if (animation == FIELD_PSYNERGY_PARCH)
-    FieldPsynergy_Parch();
-  else if (animation == FIELD_PSYNERGY_RING)
-    FieldPsynergy_Ring();
-  else if (animation == FIELD_PSYNERGY_HALT) {
-    // Resume the actor stopped before, then stop the nearest one that has an
-    // event to run; with none, the stopwatch is thrown at nothing.
-    struct MainRoutineState *party = &gMainRoutineState;
-    s32 paused;
+	if(animation == FIELD_PSYNERGY_MOVE)
+		fdPsynergyMove();
+	else if(animation == FIELD_PSYNERGY_LIFT)
+		fdPsynergyLift();
+	else if(animation == FIELD_PSYNERGY_CARRY)
+		fdPsynergyCarry();
+	else if(animation == FIELD_PSYNERGY_FORCE)
+		fdPsynergyForce();
+	else if(animation == FIELD_PSYNERGY_DOUSE)
+		fdPsynergyDouse();
+	else if(animation == FIELD_PSYNERGY_WHIRLWIND)
+		fdPsynergyWhirlwind();
+	else if(animation == FIELD_PSYNERGY_FROST)
+		fdPsynergyFrost();
+	else if(animation == FIELD_PSYNERGY_PLY)
+		fdPsynergyPly();
+	else if(animation == FIELD_PSYNERGY_GROWTH)
+		fdPsynergyGrowth();
+	else if(animation == FIELD_PSYNERGY_CATCH)
+		fdPsynergyCatch();
+	else if(animation == FIELD_PSYNERGY_RETREAT)
+		fdPsynergyRetreat();
+	else if(animation == FIELD_PSYNERGY_AVOID)
+		fdPsynergyAvoid();
+	else if(animation == FIELD_PSYNERGY_CLOAK)
+		fdPsynergyStartCloak();
+	else if(animation == FIELD_PSYNERGY_REVEAL)
+		fdPsynergyReveal();
+	else if(animation == FIELD_PSYNERGY_LASH)
+		fdPsynergyLash();
+	else if(animation == FIELD_PSYNERGY_ARROW)
+		fdPsynergyArrow();
+	else if(animation == FIELD_PSYNERGY_CYCLONE)
+		fdPsynergyCyclone();
+	else if(animation == FIELD_PSYNERGY_BLAZE)
+		fdPsynergyBlaze();
+	else if(animation == FIELD_PSYNERGY_BURST)
+		fdPsynergyBurst();
+	else if(animation == FIELD_PSYNERGY_POUND)
+		fdPsynergyPound();
+	else if(animation == FIELD_PSYNERGY_SCOOP)
+		fdPsynergyScoop();
+	else if(animation == FIELD_PSYNERGY_TREMOR)
+		fdPsynergyTremor();
+	else if(animation == FIELD_PSYNERGY_GRIND)
+		fdPsynergyGrind();
+	else if(animation == FIELD_PSYNERGY_HOVER)
+		fdPsynergyHover();
+	else if(animation == FIELD_PSYNERGY_SAND)
+		fdPsynergySand();
+	else if(animation == FIELD_PSYNERGY_TELEPORT)
+		fdPsynergyTeleport();
+	else if(animation == FIELD_PSYNERGY_PARCH)
+		fdPsynergyParch();
+	else if(animation == FIELD_PSYNERGY_RING)
+		fdPsynergyRing();
+	else if(animation == FIELD_PSYNERGY_HALT) {
+		/* Resume the actor stopped before, then stop the nearest one that has
+		 * an */
+		/* event to run; with none, the stopwatch is thrown at nothing. */
+		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
+		s32 paused;
 
-    paused = party->haltedActor;
-    if (paused != -1) {
-      FieldPsynergy_ResumeHaltedActor(paused);
-      party->haltedActor = -1;
-    }
-    objectId = Field_FindNearbyPsynergyTarget(scene->casterId, animation);
-    objectId = FieldPsynergy_FilterHaltTarget(objectId);
-    if (Scene_FindActorTalkTrigger(objectId) != 0) {
-      FieldPsynergy_SetupActorPair(scene->casterId, objectId);
-      FieldPsynergy_HaltOnTarget(objectId);
-      FieldPsynergy_HaltActor(objectId);
-      party->haltedActor = objectId;
-    } else {
-      FieldPsynergy_Halt();
-    }
-  } else if (animation == FIELD_PSYNERGY_MIND_READ) {
-    // The wave and colour effect, stopping a running Reveal first.
-    if (event->revealActive != 0)
-      FieldPsynergy_EndReveal();
-    FieldPsynergy_StartMindReadWave(scene->casterId, targetId);
-  }
+		paused = party->haltedActor;
+		if(paused != -1) {
+			fdPsynergyResumeHaltedActor(paused);
+			party->haltedActor = -1;
+		}
+		objectId = fdFindNearbyPsynergyTarget(scene->casterId, animation);
+		objectId = fdPsynergyFilterHaltTarget(objectId);
+		if(scFindActorTalkTrigger(objectId) != 0) {
+			fdPsynergySetupActorPair(scene->casterId, objectId);
+			fdPsynergyHaltOnTarget(objectId);
+			fdPsynergyHaltActor(objectId);
+			party->haltedActor = objectId;
+		}
+		else {
+			fdPsynergyHalt();
+		}
+	}
+	else if(animation == FIELD_PSYNERGY_MIND_READ) {
+		/* The wave and colour effect, stopping a running Reveal first. */
+		if(event->revealActive != 0)
+			fdPsynergyEndReveal();
+		fdPsynergyStartMindReadWave(scene->casterId, targetId);
+	}
 }
 
-/// Runs the field Psynergy animation the scene names on the target the player
-/// chose (FieldEffectState.targetId).
-void FieldPsynergy_Dispatch(void) {
-  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
-  struct FieldState *event = Ram_HeapSlots->fieldState;
-  s32 animation = scene->fieldPsynergy;
-  s32 targetId = scene->targetId;
+/* Runs the field Psynergy animation the scene names on the target the player */
+/* chose (FIELD_EFFECT_STATE.tgtId). */
+void fdPsynergyDispatch(void) {
+	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
+	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	s32 animation = scene->fieldPsynergy;
+	s32 targetId = scene->tgtId;
 
-  scene->aimAhead = 0;
-  if (animation == FIELD_PSYNERGY_MOVE)
-    FieldPsynergy_SteerPushedTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_LIFT)
-    FieldPsynergy_LiftOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_CARRY)
-    FieldPsynergy_SteerLiftedTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_FORCE)
-    FieldPsynergy_ForceOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_DOUSE)
-    FieldPsynergy_DouseOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_FROST)
-    FieldPsynergy_FrostOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_GROWTH)
-    FieldPsynergy_GrowthOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_PLY)
-    FieldPsynergy_PlyOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_WHIRLWIND)
-    FieldPsynergy_WhirlwindOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_CATCH)
-    FieldPsynergy_CatchOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_AVOID)
-    FieldPsynergy_Avoid();
-  else if (animation == FIELD_PSYNERGY_LASH)
-    FieldPsynergy_LashOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_CLOAK)
-    FieldPsynergy_StartCloak();
-  else if (animation == FIELD_PSYNERGY_RETREAT)
-    FieldPsynergy_Retreat();
-  else if (animation == FIELD_PSYNERGY_REVEAL)
-    FieldPsynergy_Reveal();
-  else if (animation == FIELD_PSYNERGY_SAND)
-    FieldPsynergy_SandOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_BLAZE)
-    FieldPsynergy_BlazeOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_CYCLONE)
-    FieldPsynergy_CycloneOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_SCOOP)
-    FieldPsynergy_ScoopOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_TREMOR)
-    FieldPsynergy_TremorOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_GRIND)
-    FieldPsynergy_GrindOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_HOVER)
-    FieldPsynergy_HoverOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_TELEPORT)
-    FieldPsynergy_TeleportOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_PARCH)
-    FieldPsynergy_ParchOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_BURST)
-    FieldPsynergy_BurstOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_POUND)
-    FieldPsynergy_PoundOnTarget(targetId);
-  else if (animation == FIELD_PSYNERGY_RING)
-    FieldPsynergy_Ring();
-  else if (animation == FIELD_PSYNERGY_MIND_READ) {
-    // The wave and colour effect, stopping a running Reveal first; a target
-    // other than the halted actor stands still while the wave runs.
-    struct MainRoutineState *party;
+	scene->aimAhead = 0;
+	if(animation == FIELD_PSYNERGY_MOVE)
+		fdPsynergySteerPushedTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_LIFT)
+		fdPsynergyLiftOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_CARRY)
+		fdPsynergySteerLiftedTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_FORCE)
+		fdPsynergyForceOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_DOUSE)
+		fdPsynergyDouseOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_FROST)
+		fdPsynergyFrostOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_GROWTH)
+		fdPsynergyGrowthOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_PLY)
+		fdPsynergyPlyOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_WHIRLWIND)
+		fdPsynergyWhirlwindOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_CATCH)
+		fdPsynergyCatchOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_AVOID)
+		fdPsynergyAvoid();
+	else if(animation == FIELD_PSYNERGY_LASH)
+		fdPsynergyLashOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_CLOAK)
+		fdPsynergyStartCloak();
+	else if(animation == FIELD_PSYNERGY_RETREAT)
+		fdPsynergyRetreat();
+	else if(animation == FIELD_PSYNERGY_REVEAL)
+		fdPsynergyReveal();
+	else if(animation == FIELD_PSYNERGY_SAND)
+		fdPsynergySandOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_BLAZE)
+		fdPsynergyBlazeOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_CYCLONE)
+		fdPsynergyCycloneOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_SCOOP)
+		fdPsynergyScoopOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_TREMOR)
+		fdPsynergyTremorOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_GRIND)
+		fdPsynergyGrindOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_HOVER)
+		fdPsynergyHoverOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_TELEPORT)
+		fdPsynergyTeleportOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_PARCH)
+		fdPsynergyParchOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_BURST)
+		fdPsynergyBurstOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_POUND)
+		fdPsynergyPoundOnTarget(targetId);
+	else if(animation == FIELD_PSYNERGY_RING)
+		fdPsynergyRing();
+	else if(animation == FIELD_PSYNERGY_MIND_READ) {
+		/* The wave and colour effect, stopping a running Reveal first; a target
+		 */
+		/* other than the halted actor stands still while the wave runs. */
+		MAIN_ROUTINE_STATE *party;
 
-    if (event->revealActive != 0)
-      FieldPsynergy_EndReveal();
-    party = &gMainRoutineState;
-    if (party->haltedActor != scene->targetId)
-      ((struct Actor *)scene->target)->paused = 1;
-    FieldPsynergy_StartMindReadWave(scene->casterId, targetId);
-  } else if (animation == FIELD_PSYNERGY_HALT) {
-    // Resume the actor stopped before, then stop the target.
-    struct MainRoutineState *party = &gMainRoutineState;
+		if(event->revealActive != 0)
+			fdPsynergyEndReveal();
+		party = &MainRoutineStateWork;
+		if(party->haltedActor != scene->tgtId)
+			((ACTOR *)scene->tgt)->paused = 1;
+		fdPsynergyStartMindReadWave(scene->casterId, targetId);
+	}
+	else if(animation == FIELD_PSYNERGY_HALT) {
+		/* Resume the actor stopped before, then stop the target. */
+		MAIN_ROUTINE_STATE *party = &MainRoutineStateWork;
 
-    if (party->haltedActor != -1) {
-      FieldPsynergy_ResumeHaltedActor(party->haltedActor);
-      party->haltedActor = -1;
-    }
-    FieldPsynergy_HaltActor(targetId);
-    party->haltedActor = targetId;
-    FieldPsynergy_HaltOnTarget(targetId);
-  }
+		if(party->haltedActor != -1) {
+			fdPsynergyResumeHaltedActor(party->haltedActor);
+			party->haltedActor = -1;
+		}
+		fdPsynergyHaltActor(targetId);
+		party->haltedActor = targetId;
+		fdPsynergyHaltOnTarget(targetId);
+	}
 }
 
-/// Finishes the current field Psynergy when it is Mind Read: ends it and lets
-/// its target move again, unless the target is the actor kept stopped.
-void FieldPsynergy_FinishMindRead(void) {
-  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
+/* Finishes the current field Psynergy when it is Mind Read: ends it and lets */
+/* its target move again, unless the target is the actor kept stopped. */
+void fdPsynergyFinishMindRead(void) {
+	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
 
-  if (effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
-    FieldPsynergy_StopMindReadWave();
-    if (gMainRoutineState.haltedActor != effectState->targetId) {
-      ((struct Actor *)effectState->target)->paused = 0;
-    }
-  }
+	if(effectState->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
+		fdPsynergyStopMindReadWave();
+		if(MainRoutineStateWork.haltedActor != effectState->tgtId) {
+			((ACTOR *)effectState->tgt)->paused = 0;
+		}
+	}
 }
 
-/// The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the Ring: what
-/// each does when it ends.
-void FieldPsynergy_RunExtraHandler(void) {
-  struct FieldEffectState *scene = Ram_HeapSlots->fieldEffectState;
+/* The extra handler of Reveal, Cloak, Avoid, Sand, Hover and the Ring: what */
+/* each does when it ends. */
+void fdPsynergyRunExtraHandler(void) {
+	FIELD_EFFECT_STATE *scene = Ram_HeapSlots->fieldEffState;
 
-  switch (scene->fieldPsynergy) {
-  case FIELD_PSYNERGY_REVEAL:
-    FieldPsynergy_EndReveal();
-    break;
-  case FIELD_PSYNERGY_CLOAK:
-    FieldPsynergy_EndCloak();
-    break;
-  case FIELD_PSYNERGY_AVOID:
-    FieldPsynergy_ShowAvoidWoreOff();
-    break;
-  case FIELD_PSYNERGY_SAND:
-    FieldPsynergy_EndSand();
-    break;
-  case FIELD_PSYNERGY_HOVER:
-    FieldPsynergy_EndHover();
-    break;
-  case FIELD_PSYNERGY_RING:
-    FieldPsynergy_EndRing();
-    break;
-  }
+	switch(scene->fieldPsynergy) {
+	case FIELD_PSYNERGY_REVEAL:
+		fdPsynergyEndReveal();
+		break;
+	case FIELD_PSYNERGY_CLOAK:
+		fdPsynergyEndCloak();
+		break;
+	case FIELD_PSYNERGY_AVOID:
+		fdPsynergyShowAvoidWoreOff();
+		break;
+	case FIELD_PSYNERGY_SAND:
+		fdPsynergyEndSand();
+		break;
+	case FIELD_PSYNERGY_HOVER:
+		fdPsynergyEndHover();
+		break;
+	case FIELD_PSYNERGY_RING:
+		fdPsynergyEndRing();
+		break;
+	}
 }
 
-/// Per-frame update: sets every part of an actor's sprite to the next of the
-/// six orders of its colour channels (SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG).
-void Actor_CycleSpriteColors(struct Actor *actor) {
-  struct Sprite *sprite;
-  s32 count;
-  s32 i;
+/* Per-frame update: sets every part of an actor's sprite to the next of the */
+/* six orders of its colour channels (SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG).
+ */
+void fdActorCycleSprCols(ACTOR *actor) {
+	SPR *sprite;
+	s32 count;
+	s32 i;
 
-  if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
-    sprite = actor->sprite;
-    if (sprite != 0 && sprite->retainCacheEntry == 0) {
-      count = sprite->count;
-      for (i = 0; i < count; i++)
-        sprite->entries[i]->colorMode = gFrameCount % (SPRITE_COLOR_BRG + 1);
-      sprite->dirty = 1;
-    }
-  }
+	if(actor->sprStorageKind == ACTOR_SPRITE_ONE) {
+		sprite = actor->spr;
+		if(sprite != 0 && sprite->retainCacheEntry == 0) {
+			count = sprite->cnt;
+			for(i = 0; i < count; i++)
+				sprite->entries[i]->colMode =
+					FrameCount % (SPRITE_COLOR_BRG + 1);
+			sprite->dirty = 1;
+		}
+	}
 }
 
-/// Sends the actor toward the point magnitude away from it at angle.
-void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
-                                               s32 magnitude, s32 angle) {
-  s32 values[3];
+/* Sends the actor toward the point magnitude away from it at angle. */
+void fdActorSetTargetPosFromMagnitudeAng(ACTOR *actor, s32 magnitude,
+										 s32 angle) {
+	s32 values[3];
 
-  if (actor != 0) {
-    SET_VECTOR(values, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-    Vector_AddPolarOffset(magnitude, angle, values);
-    Actor_SetMoveTargetFar(actor, values[0], values[1], values[2]);
-  }
+	if(actor != 0) {
+		SET_VECTOR(values, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+		syVectorAddPolarOffset(magnitude, angle, values);
+		fdActorSetMoveTargetStub(actor, values[0], values[1], values[2]);
+	}
 }
 
-/// The OBJ priority a Psynergy's canvas takes: the caster's own when it
-/// casts facing away (FACING_NORTH), else 0, in front of everything.
-s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing) {
-  if (facing == FACING_NORTH)
-    return ((struct PlacedSprite *)actor->sprite)->priority;
-  return 0;
+/* The OBJ priority a Psynergy's canvas takes: the caster's own when it */
+/* casts facing away (FACING_NORTH), else 0, in front of everything. */
+s32 fdPsynergyGetCanvasPriority(ACTOR *actor, s32 facing) {
+	if(facing == FACING_NORTH)
+		return ((PLACED_SPR *)actor->spr)->pri;
+	return 0;
 }
 
-/// Returns the OBJ priority of the actor's sprite.
-s32 Actor_GetSpritePriority(struct Actor *actor) {
-  return ((struct PlacedSprite *)actor->sprite)->priority;
+/* Returns the OBJ priority of the actor's sprite. */
+s32 fdActorGetSprPriority(ACTOR *actor) {
+	return ((PLACED_SPR *)actor->spr)->pri;
 }
 
-/// On the world map a sprite's depth slot is one more for each two pixels its
-/// point is nearer the camera than 512, about the camera's distance from the
-/// ground it looks at, where the slot is 128, as Render_PlaceProjectedSprite
-/// sorts a projected sprite.
+/* On the world map a sprite's depth slot is one more for each two pixels its */
+/* point is nearer the camera than 512, about the camera's distance from the */
+/* ground it looks at, where the slot is 128, as fdRenderPlaceProjectedSpr */
+/* sorts a projected sprite. */
 #define WORLD_MAP_GROUND_DEPTH 512
-#define WORLD_MAP_GROUND_SLOT 128
+#define WORLD_MAP_GROUND_SLOT  128
 
-/// Returns the depth slot the actor's sprite takes, so that a sprite drawn
-/// with it sorts with it: from its projected depth on the world map, otherwise
-/// from its screen row.
-s32 Actor_GetSpriteDepth(struct Actor *actor) {
-  FIXED point[3];
-  s32 screen[3];
-  s32 depth;
+/* Returns the depth slot the actor's sprite takes, so that a sprite drawn */
+/* with it sorts with it: from its projected depth on the world map, otherwise
+ */
+/* from its screen row. */
+s32 fdActorGetSprDepth(ACTOR *actor) {
+	FIXED point[3];
+	s32 screen[3];
+	s32 depth;
 
-  if (gFieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    point[0] = actor->x.fixed;
-    point[1] = actor->y.fixed;
-    point[2] = actor->z.fixed;
-    Matrix_ProjectPoint(point, screen);
-    depth = (WORLD_MAP_GROUND_DEPTH - screen[2]) / 2 + WORLD_MAP_GROUND_SLOT;
-    if (depth <= 0)
-      depth = 1;
-  } else {
-    struct MapState *map = Ram_HeapSlots->mapGrid;
-    s32 bias = MapState_View(map)[1] & FIELD_PIXEL_MASK;
-    s32 base = map->origin[1];
+	if(FieldStateWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
+		point[0] = actor->x.fixed;
+		point[1] = actor->y.fixed;
+		point[2] = actor->z.fixed;
+		syConvert3Dto2D(point, screen);
+		depth =
+			(WORLD_MAP_GROUND_DEPTH - screen[2]) / 2 + WORLD_MAP_GROUND_SLOT;
+		if(depth <= 0)
+			depth = 1;
+	}
+	else {
+		MAP_STATE *map = Ram_HeapSlots->mapGrid;
+		s32 bias = syMapStateView(map)[1] & FIELD_PIXEL_MASK;
+		s32 base = map->origin[1];
 
-    depth = FIXEDtoINT(actor->y.fixed - base + actor->z.fixed - base - bias) +
-            PLACEMENT_IMAGE_DEPTH;
-  }
-  return depth;
+		depth =
+			FIXEDtoINT(actor->y.fixed - base + actor->z.fixed - base - bias) +
+			PLACEMENT_IMAGE_DEPTH;
+	}
+	return depth;
 }
 
-/// Draws the Psynergy's canvas sprite (FieldEffectState.sprite) each frame.
-void FieldPsynergy_DrawCanvasSprite(void) {
-  EffectSprite_Draw(
-      &((struct FieldEffectState *)Ram_HeapSlots->fieldEffectState)->sprite);
+/* Draws the Psynergy's canvas sprite (FIELD_EFFECT_STATE.spr) each frame. */
+void fdPsynergyDrawCanvasSpr(void) {
+	fdEffectSprDraw(&((FIELD_EFFECT_STATE *)Ram_HeapSlots->fieldEffState)->spr);
 }
 
-/// When the caster faces away (FACING_NORTH), starts the Psynergy's canvas
-/// sprite (FieldEffectState.sprite): a blank 32x32 sprite of its own VRAM cache
-/// entry, twice as tall, 28 pixels above the caster in front of everything,
-/// drawn each frame by FieldPsynergy_DrawCanvasSprite until
-/// FieldPsynergy_ReleaseSceneSprite.
-void FieldPsynergy_StartSceneSprite(void) {
-  struct FieldEffectState *effectState = Ram_HeapSlots->fieldEffectState;
-  struct Actor *mainActor;
-  struct EffectSprite *sprite;
-  FIXED position[3];
-  void *buffer;
-  s32 slot;
-  s32 tiles;
+/* When the caster faces away (FACING_NORTH), starts the Psynergy's canvas */
+/* sprite (FIELD_EFFECT_STATE.spr): a blank 32x32 sprite of its own VRAM
+ * cache
+ */
+/* entry, twice as tall, 28 pixels above the caster in front of everything, */
+/* drawn each frame by fdPsynergyDrawCanvasSpr until */
+/* fdPsynergyReleaseSceneSpr. */
+void fdPsynergyStartSceneSpr(void) {
+	FIELD_EFFECT_STATE *effectState = Ram_HeapSlots->fieldEffState;
+	ACTOR *mainActor;
+	EFFECT_SPR *sprite;
+	FIXED position[3];
+	void *buffer;
+	s32 slot;
+	s32 tiles;
 
-  mainActor = effectState->caster;
-  if (effectState->angle == FACING_NORTH) {
-    effectState->spriteActive = 1;
-    buffer = Heap_Alloc(512);
-    IWRAM_FILL_WORDS(buffer, 512, 0);
-    slot = VramCache_FindFreeEntry();
-    tiles = VramCache_Load(slot, 512, buffer);
-    effectState->spriteVramSlot = slot;
-    Heap_Release(buffer);
-    sprite = &effectState->sprite;
-    EffectSprite_Init(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
-    sprite->depth = 0;
-    sprite->oam.priority = 0;
-    sprite->oam.fullColor = 0;
-    sprite->oam.palette = 0;
-    sprite->scaleY = FIXED_ONE * 2;
-    position[0] = effectState->x;
-    position[1] = mainActor->y.fixed + toFIXED(28);
-    position[2] = mainActor->z.fixed;
-    Camera_WorldToScreen(position);
-    sprite->x = position[0];
-    sprite->y = position[2];
-    Task_Add(FieldPsynergy_DrawCanvasSprite, TASK_PASS_FRAME);
-  }
+	mainActor = effectState->caster;
+	if(effectState->ang == FACING_NORTH) {
+		effectState->sprActive = 1;
+		buffer = syHeapAlloc(512);
+		IWRAM_FILL_WORDS(buffer, 512, 0);
+		slot = syVramCacheFindFreeEntry();
+		tiles = syVramCacheLoad(slot, 512, buffer);
+		effectState->sprVramSlot = slot;
+		syHeapRelease(buffer);
+		sprite = &effectState->spr;
+		fdEffectSprInit(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
+		sprite->depth = 0;
+		sprite->oam.pri = 0;
+		sprite->oam.fullCol = 0;
+		sprite->oam.pal = 0;
+		sprite->scaleY = FIXED_ONE * 2;
+		position[0] = effectState->x;
+		position[1] = mainActor->y.fixed + toFIXED(28);
+		position[2] = mainActor->z.fixed;
+		fdCameraWorldToScr(position);
+		sprite->x = position[0];
+		sprite->y = position[2];
+		sySetEvent(fdPsynergyDrawCanvasSpr, TASK_PASS_FRAME);
+	}
 }
 #undef WORLD_MAP_GROUND_DEPTH
 #undef WORLD_MAP_GROUND_SLOT

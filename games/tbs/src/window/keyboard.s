@@ -3,17 +3,17 @@
 	.section .rodata
 	.balign 4
 @ The sprite of each element's Djinni (Venus, Mercury, Mars, Jupiter)
-	.global gFileList_DjinnSpriteIds
-gFileList_DjinnSpriteIds:
+	.global FileList_DjinnSpriteIds
+FileList_DjinnSpriteIds:
 	.4byte SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI, SPRITE_MARS_DJINNI
 	.4byte SPRITE_JUPITER_DJINNI
 @ The name entry screen's keyboard tilemaps
-	.global gNameEntry_KeyboardTilemap
-gNameEntry_KeyboardTilemap:
+	.global NameEntry_KeyboardTilemap
+NameEntry_KeyboardTilemap:
 	.ifdef TBS_EDITION_JA
 	.incbin "games/tbs/src/window/keyboard_ja.tilemap.lz"
-	.global gNameEntry_AlternateKeyboardTilemap
-gNameEntry_AlternateKeyboardTilemap:
+	.global NameEntry_AlternateKeyboardTilemap
+NameEntry_AlternateKeyboardTilemap:
 	.incbin "games/tbs/src/window/keyboard_ja_latin.tilemap.lz"
 	.global NameEntry_UnusedKeyboardTilemap
 NameEntry_UnusedKeyboardTilemap:
@@ -26,6 +26,6 @@ NameEntry_UnusedKeyboardTilemap:
 	.endif
 	.endif
 	.balign 4, 0
-	.global gWindowSprite_PointerTiles
-gWindowSprite_PointerTiles:
-	.4byte gPointingHandTiles
+	.global WindowSprite_PointerTiles
+WindowSprite_PointerTiles:
+	.4byte PointingHandTiles

@@ -91,15 +91,15 @@ Watch the end of Quake: the first target flinches while the ground is still
 shaking.
 
 Two pieces of code share each of those frames, and they are of the two
-kinds [System](system.md#waiting-and-tasks) describes. The ability's
-picture is its [battle effect](glossary.md#battle-effect). It is the code
-that waits: a loop that draws one frame of pillars and calls `wait(1)`. It
-knows nothing about damage. The battle knows the damage and draws no rock,
-and its showing is a [task](glossary.md#task), the playback, which `wait()`
-calls once in each of the effect's frames.
+kinds [the system library](system.md#waiting-and-tasks) describes. The
+ability's picture is its [battle effect](glossary.md#battle-effect). It is
+the code that waits: a loop that draws one frame of pillars and calls
+`sySynch(1)`. It knows nothing about damage. The battle knows the damage and
+draws no rock, and its showing is a [task](glossary.md#task), the playback,
+which `sySynch()` calls once in each of the effect's frames.
 
 They meet at one moment. When the blow should land the effect calls one
-function, `BattlePlayback_Start`, and from then on the task shows what
+function, `btPlaybackStart`, and from then on the task shows what
 happened, one target at a time. Quake calls it 16 frames before its last.
 
 So an effect is free to be any length and any shape, and the rules never

@@ -1,10 +1,10 @@
-/// LightSprites_Add with the count kept in a plain global.
-void LightSprites_AddCounted(s32 id, s32 frame) {
-  struct Actor *actor = Actor_Get(id);
+/* scLightSprsAdd with the count kept in a plain global. */
+void scLightSprsAddCounted(s32 id, s32 frame) {
+	ACTOR *actor = fdActorGet(id);
 
-  if (actor != NULL) {
-    actor->timer = frame;
-    gLightSpriteActors[gLightSpriteCount] = actor;
-    gLightSpriteCount++;
-  }
+	if(actor != NULL) {
+		actor->tmr = frame;
+		LightSpriteActors[LightSpriteCount] = actor;
+		LightSpriteCount++;
+	}
 }

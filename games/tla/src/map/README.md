@@ -77,7 +77,7 @@ square is unpacked, never more than one in a frame. Its squares are in
 
 ### Finding a scene's map
 
-The scene table gives each scene a row of a second table, `gMaps`, which
+The scene table gives each scene a row of a second table, `MapsWork`, which
 has 332. That row names the map and the palette and four tile sheets it
 is drawn with, each a resource of its own
 ([Graphics](../graphics/README.md#tilesets)). Many scenes share a map, and
@@ -85,7 +85,7 @@ many maps share tiles.
 
 A folder is named for the scene that uses it, as The Broken Seal's are:
 the first in the scene table, when several share it. Daila is row 9 of
-`gMaps` and folder `daila_flooded/`, for the scene `DailaFlooded`; a room keeps its
+`MapsWork` and folder `daila_flooded/`, for the scene `DailaFlooded`; a room keeps its
 scene's number until the scene has a better name. Two are named
 otherwise: `empty_map/`, the empty map the scene table gives the title,
 the World Map, the credits and the debug level room, and `map_290/`,

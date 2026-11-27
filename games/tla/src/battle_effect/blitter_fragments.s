@@ -1,8 +1,9 @@
-@ Instruction placements written into the compositing routine, not functions.
+@ Instruction placements written into the compositing function; they are not
+@ functions themselves.
 @
 @ Why assembly:
-@ BattleEffect_BuildBlitter (summon_effects/moloch.c) copies these fragments into
-@ generated ARM routines. r1 is the source, r9 the destination and r5/r8/sl
+@ btEffectBuildBlitter (summon_effects/moloch.c) copies these fragments into
+@ generated ARM functions. r1 is the source, r9 the destination and r5/r8/sl
 @ scratch, changed without callee saves, and no fragment has a return: a
 @ linkage no procedure-call standard produces.
 .syntax unified

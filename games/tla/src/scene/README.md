@@ -11,9 +11,9 @@ events.
 
 ![As above](https://alchemy.pascalpixel.com/tla/guides/front/sanctum-door.gif)
 
-The field knows nothing about any one place. When a scene is loaded it asks
-the overlay the same seven questions, through seven functions that sit at
-the very start of every overlay in the same order. That is the
+The field engine knows nothing about any one place. When a scene is loaded
+it asks the overlay the same seven questions, through seven functions that
+sit at the very start of every overlay in the same order. That is the
 [entry table](../../../../docs/tla/glossary.md#entry-table-and-import-table):
 
 - What can happen here?
@@ -30,10 +30,10 @@ its functions hand over one of two tables depending on which of the two
 is running.
 
 The map question is The Lost Age's own; The Broken Seal's overlays answer
-the other six. The field asks it once the map is in, before the camera
-finds the party, and never on the World Map. Daila uses it to change the
-cells of the puddles Parch has dried, and Alhafra to change four colours
-once Briggs is caught.
+the other six. The field engine asks it once the map is in, before the
+camera finds the party, and never on the World Map. Daila uses it to
+change the cells of the puddles Parch has dried, and Alhafra to change
+four colours once Briggs is caught.
 
 The set-up is where a scene does whatever a table cannot say: stand a
 pillar of ice where Frost left it in Daila, or lay down the villager the
@@ -84,7 +84,7 @@ SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, LemuriaDock, 
 SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, AttekaInlet, ATTEKA_INLET_FROM_WORLD_MAP_WEST, EXIT_FLAG_NONE),
 ```
 
-The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `Scene_TakeExit` takes that exit
+The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `scTakeExit` takes that exit
 whatever the flags hold, so the chain always ends somewhere.
 
 ### Who stands where
@@ -110,9 +110,9 @@ and what runs.
 
 ```c
 {TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
- EVENT(GarohRooms_TalkToWeaponsVendor)},
+ EVENT(scGarohRoomsTalkToWeaponsVendor)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
- FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_FreezePuddleIntoPillar)},
+ FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(scFreezePuddleIntoPillar)},
 ```
 
 What runs can be an event, or a bare message for a villager with one line.
@@ -123,14 +123,14 @@ whose cell takes the party out by that exit.
 
 ![Daila's healer talked to twice from across the counter: the first time she asks whether the party has time and nowhere to go, Yes, and she sends them to Master Poi; the second time she welcomes them to the sanctum](https://alchemy.pascalpixel.com/tla/guides/map/talk-twice.gif)
 
-The field reads the trigger table from the top and takes the first row
-that fits. Order is therefore meaning. The east guard on the Madra
+The field engine reads the trigger table from the top and takes the first
+row that fits. Order is therefore meaning. The east guard on the Madra
 Drawbridge has a question that counts until Madra has given the party
 passage to Osenia, then a tip that always counts:
 
 ```c
 {TRIGGER_TALK, ACTOR_EAST_GUARD, 0x913,
- EVENT(MadraDrawbridge_AskGoingToOsenia)},
+ EVENT(scMadraDrawbridgeAskGoingToOsenia)},
 {TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,
  MSGNO(MsgMadraMikasallaVillage)},
 ```
@@ -163,32 +163,32 @@ An [event](../../../../docs/tla/glossary.md#event) is a function that plays from
 bottom. This one walks the leader through one of Daila's doors:
 
 ```c
-void Daila_EnterDoor(void) {
-  struct FieldState *state = Ram_HeapSlots->fieldState;
+void scDailaEnterDoor(void) {
+	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 
-  Event_Start();
-  Event_EndLastingPsynergy(0);
-  Actor_SetSpeedParameters(gMainRoutineState.leaderActorId, 0x8000, 0x4000);
-  Actor_SetSpritePriority(gMainRoutineState.leaderActorId, 2);
-  Actor_GetById(gMainRoutineState.leaderActorId)->motionFlags = 0;
-  Sound_Play(123);
-  Actor_SetAnimationById(gMainRoutineState.leaderActorId, 2);
-  Actor_CenterAndWalk(gMainRoutineState.leaderActorId, 2, -6);
-  Event_Wait(10);
-  Import_EventSetExitRequest(state->stepTrigger);
-  Event_FinishScreenTransition();
-  Event_WaitTransitionFrames();
-  Event_End();
+	fdEventStart();
+	fdEventEndLastingPsynergy(0);
+	fdActorSetSpeed(MainRoutineStateWork.leaderActorId, 0.5);
+	fdActorSetSprPriority(MainRoutineStateWork.leaderActorId, 2);
+	fdActorGetById(MainRoutineStateWork.leaderActorId)->motionFlg = 0;
+	sySndPlay(SE_MAP_EXIT);
+	fdActorSetAnimationById(MainRoutineStateWork.leaderActorId, ANIM_WALK);
+	fdActorCenterAndWalk(MainRoutineStateWork.leaderActorId, 2, -6);
+	fdEventWait(10);
+	syImportEventSetExitRequest(state->stepTrigger);
+	fdEventFinishScrTransition();
+	fdEventWaitTransitionFrames();
+	fdEventEnd();
 }
 ```
 
 Commands come in two sorts. Some take time and hold the event until they
 are done: a wait, a line of dialogue. Others only start something and
-return at once. On the Madra Drawbridge `Actor_WalkTo` starts the west
-guard walking and `Actor_WalkToAndWait` holds the event until the east
+return at once. On the Madra Drawbridge `fdActorWalkTo` starts the west
+guard walking and `fdActorWalkToAndWait` holds the event until the east
 guard gets there, so the two close ranks together.
-`Import_EventSetExitRequest` does not leave the scene. It sets a request,
-which the field acts on once the event has returned.
+`syImportEventSetExitRequest` does not leave the scene. It sets a request,
+which the field engine acts on once the event has returned.
 
 An event is ordinary C, so a choice is an `if`: on a flag, on a Yes or No,
 on which of its scenes is running.
@@ -210,7 +210,7 @@ scenes too.
 
 Only one overlay is ever loaded, so one cannot call another. Code that
 several scenes need is written once, in `shared/`, and compiled into each
-overlay that includes it. Each routine is a header of its own, which a
+overlay that includes it. Each function is a header of its own, which a
 scene includes where its copy sits (The Broken Seal writes its shared code
 as `.c` files). Daila's pillars of ice raise their actor with one:
 
@@ -218,14 +218,14 @@ as `.c` files). Daila's pillars of ice raise their actor with one:
 #include "shared/scene_freeze_puddle_into_pillar.h"
 ```
 
-A family of routines that works on one kind of thing keeps one set of
+A group of functions that works on one kind of thing keeps one set of
 names in every scene that has it: the cracked floors of the Jupiter
 Lighthouse rooms (`cracked_tile_fall.h` and its neighbours, over each
-room's `gCrackedTiles`), the pillars that are pounded, raised and lowered
+room's `CrackedTiles`), the pillars that are pounded, raised and lowered
 (`pillar_place.h`, `pound_sink_target.h`), the dust a crumbling pillar
 throws up (`dust.h`), the slide over ice (`leader_slide_on_ice.h`) and
 the Mars Lighthouse flame throwers (`beam_*.h` and the `flame_thrower_*`, `flame_throwers_*` and `flame_update_*` files,
-over one `FlameHitState` in [`flame_throwers.h`](../../include/scene/flame_throwers.h)).
+over one `FLAME_HIT_STATE` in [`flame_throwers.h`](../../include/scene/flame_throwers.h)).
 
 Tables the cartridge keeps in many overlays are shared files too: the
 field effects' three duration scripts
@@ -234,7 +234,7 @@ the entrance table that holds only the default entrance
 ([`scene_entrances_default.c`](shared/scene_entrances_default.c)), the
 leader's push steps and the ice slides' pad headings. An overlay that
 places such a table after its pictures defines the file's `..._SECTION`
-macro as `LATE_DATA` before including it. Larger sets of routines are `.c`
+macro as `LATE_DATA` before including it. Larger sets of functions are `.c`
 files, as The Broken Seal writes all of its shared code: the Mars
 Lighthouse flame throwers' puffs, its Teleport shimmer and the World
 Map's Psynergy gauge.
@@ -267,20 +267,20 @@ same village twice, with different people about.
   [`daila.c`](daila.c). The debug rooms are scenes too, kept in
   [`../debug/`](../debug/README.md).
 - [`shared/`](shared) is the code several overlays keep a copy of: the
-  routine headers above, and the larger routines a scene includes where
+  function headers above, and the larger functions a scene includes where
   its copy sits, such as the ice slide six scenes share
   ([`slide_on_ice_from_edge.c`](shared/slide_on_ice_from_edge.c)), the
   flames' knock-back in four Mars Lighthouse rooms
   ([`leader_knock_back.c`](shared/leader_knock_back.c)) and the World
   Map's placed objects, which the staff credits keep too
   ([`world_map_objects.c`](shared/world_map_objects.c)). A few small field
-  routines are included the same way from `../field/`.
+  functions are included the same way from `../field/`.
 - [`entry.s`](entry.s) is the entry table every overlay links; a scene
-  whose entry routines are named otherwise has its own in
+  whose entry functions are named otherwise has its own in
   [`entry/`](entry).
 - A scene defines its globals in its C, `BSS_DATA` in the order the ROM
   keeps them; only the title's, which start on a halfword, are assembly,
   [`title_bss.s`](title_bss.s).
 - An overlay's import table is not here: the build writes it from
-  [`imports.inc`](../system/overlay/imports.inc), the far-call stubs the
+  [`imports.inc`](../system/overlay/imports.inc), the stub the
   overlay's code calls, in the list's order.

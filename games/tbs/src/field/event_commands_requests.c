@@ -1,99 +1,103 @@
-/// @file
-/// Battles and destinations an event requests, and the queued sound.
-// Part of event_commands.c.
+/* @file */
+/* Battles and destinations an event requests, and the queued sound. */
+/* Part of event_commands.c. */
 
 #include "event_commands_internal.h"
 
-/// Sets up a battle with the formation in slot of encounter table zone.
-void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot) {
-  struct FieldState *state = gFieldState;
+/* Sets up a battle with the formation in slot of encounter table zone. */
+void fdRequestBattleFromEncounterTable(s32 zone, s32 slot) {
+	FIELD_STATE *state = FieldStateWork;
 
-  state->encounter = Encounter_GetFormationAtSlot(zone, slot);
-  if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
-    gMainRoutineState.battleBackground =
-        RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP;
-  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    struct Actor *leader = Actor_Lookup(gMainRoutineState.leaderActorId);
+	state->encounter = fdEncounterGetFormationAtSlot(zone, slot);
+	if(zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
+		MainRoutineStateWork.battleBg =
+			RESOURCE_VENUS_LIGHTHOUSE_AERIE_STORM_BACKDROP;
+	if(state->mode == ACTOR_SYSTEM_WORLD_MAP) {
+		ACTOR *leader = fdActorLookup(MainRoutineStateWork.leaderActorId);
 
-    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
-  }
-  Encounter_SelectBattleMusic(zone, slot);
+		fdEncounterResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
+	}
+	fdEncounterSelectBattleMusic(zone, slot);
 }
 
-/// The low bits of Field_RequestDjinnBattle's actorAndHop: the Djinni's actor.
+/* The low bits of fdRequestDjinnBattle's actorAndHop: the Djinni's actor. */
 #define DJINN_ACTOR_MASK 0xff
 
-/// Sets up the battle with Djinni number `djinni`. The low 8 bits of
-/// actorAndHop are the Djinni's actor, which hops first unless DJINN_NO_HOP is
-/// set.
-void Field_RequestDjinnBattle(s32 actorAndHop, s32 djinni) {
-  struct FieldState *fieldState;
-  struct MainRoutineState *state;
-  s32 skipHop;
+/* Sets up the battle with Djinni number `djinni`. The low 8 bits of */
+/* actorAndHop are the Djinni's actor, which hops first unless DJINN_NO_HOP is
+ */
+/* set. */
+void fdRequestDjinnBattle(s32 actorAndHop, s32 djinni) {
+	FIELD_STATE *fieldState;
+	MAIN_ROUTINE_STATE *state;
+	s32 skipHop;
 
-  fieldState = gFieldState;
-  skipHop = actorAndHop & DJINN_NO_HOP;
-  actorAndHop &= DJINN_ACTOR_MASK;
+	fieldState = FieldStateWork;
+	skipHop = actorAndHop & DJINN_NO_HOP;
+	actorAndHop &= DJINN_ACTOR_MASK;
 
-  if (skipHop == 0)
-    Djinn_RunBattleStartHop(actorAndHop);
+	if(skipHop == 0)
+		fdDjinnRunBattleStartHop(actorAndHop);
 
-  state = &gMainRoutineState;
-  // DJINN_NO_HOP rides along: it tells Djinn_RestoreActorAfterBattle to put
-  // the Djinni back 32 pixels north of the leader, not at its placement's
-  // position.
-  state->pendingDjinni = (djinni + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
-  fieldState->encounter = Encounter_GetDjinnFormation(djinni);
-  if (fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    struct Actor *leader = Actor_Lookup(state->leaderActorId);
+	state = &MainRoutineStateWork;
+	/* DJINN_NO_HOP rides along: it tells fdDjinnRestoreActorAfterBattle to put
+	 */
+	/* the Djinni back 32 pixels north of the leader, not at its placement's */
+	/* position. */
+	state->pendingDjinni = (djinni + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
+	fieldState->encounter = fdEncounterGetDjinnFormation(djinni);
+	if(fieldState->mode == ACTOR_SYSTEM_WORLD_MAP) {
+		ACTOR *leader = fdActorLookup(state->leaderActorId);
 
-    Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
-  }
-  // Key 0 is no listed encounter, so every Djinni battle takes MUS_BATTLE, the
-  // last of gEncounter_BattleMusic.
-  Encounter_SelectBattleMusic(0, 0);
+		fdEncounterResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
+	}
+	/* Key 0 is no listed encounter, so every Djinni battle takes MUS_BATTLE,
+	 * the */
+	/* last of Encounter_BattleMusic. */
+	fdEncounterSelectBattleMusic(0, 0);
 }
 
 #undef DJINN_ACTOR_MASK
 
-/// Sets the after-battle destination (gMainRoutineState.afterBattleScene and
-/// afterBattleEntrance), where the party goes once the coming battle is won.
-void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
-  gMainRoutineState.afterBattleScene = sceneId;
-  gMainRoutineState.afterBattleEntrance = entrance;
+/* Sets the after-battle destination (MainRoutineStateWork.afterBattleScene and
+ */
+/* afterBattleEntrance), where the party goes once the coming battle is won. */
+void fdEventSetAfterBattleDestination(s32 sceneId, s32 entrance) {
+	MainRoutineStateWork.afterBattleScene = sceneId;
+	MainRoutineStateWork.afterBattleEntrance = entrance;
 }
 
-/// Sets where the party wakes up after losing a battle
-/// (gMainRoutineState.defeatScene and defeatEntrance).
-void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
-  gMainRoutineState.defeatScene = sceneId;
-  gMainRoutineState.defeatEntrance = entrance;
+/* Sets where the party wakes up after losing a battle */
+/* (MainRoutineStateWork.defeatScene and defeatEntrance). */
+void fdEventSetDefeatDestination(s32 sceneId, s32 entrance) {
+	MainRoutineStateWork.defeatScene = sceneId;
+	MainRoutineStateWork.defeatEntrance = entrance;
 }
 
-/// Sends the party to an entrance of another scene: the field sequence leaves
-/// on its next pass (EXIT_KEEP_DESTINATION).
-void Event_LeaveFor(u16 sceneId, u16 entrance) {
-  struct FieldState *state = gFieldState;
-  gMainRoutineState.next = sceneId;
-  gMainRoutineState.entrance = entrance;
-  state->exit = EXIT_KEEP_DESTINATION;
+/* Sends the party to an entrance of another scene: the field sequence leaves */
+/* on its next pass (EXIT_KEEP_DESTINATION). */
+void fdEventLeaveFor(u16 sceneId, u16 entrance) {
+	FIELD_STATE *state = FieldStateWork;
+	MainRoutineStateWork.next = sceneId;
+	MainRoutineStateWork.entrance = entrance;
+	state->exit = EXIT_KEEP_DESTINATION;
 }
 
-/// Changes the scene's music to soundId and remembers it for
-/// Scene_PlayQueuedMusic; -1 fades the music out and remembers none.
-void Scene_QueueMusic(s32 soundId) {
-  gFieldState->queuedSound = soundId;
-  if ((s16)soundId == -1) {
-    soundId = SOUND_FADE_OUT_ACTION_SE;
-  }
-  Sound_PlayFar(SE_STOP_EXIT_SE);
-  Sound_PlayFar(soundId);
+/* Changes the scene's music to soundId and remembers it for */
+/* scPlayQueuedMusic; -1 fades the music out and remembers none. */
+void scQueueMusic(s32 soundId) {
+	FieldStateWork->queuedSnd = soundId;
+	if((s16)soundId == -1) {
+		soundId = SOUND_FADE_OUT_ACTION_SE;
+	}
+	sySndPlayStub(SE_STOP_EXIT_SE);
+	sySndPlayStub(soundId);
 }
 
-/// Plays the sound Scene_QueueMusic remembered, if any.
-void Scene_PlayQueuedMusic(void) {
-  s16 soundId = gFieldState->queuedSound;
+/* Plays the sound scQueueMusic remembered, if any. */
+void scPlayQueuedMusic(void) {
+	s16 soundId = FieldStateWork->queuedSnd;
 
-  if (soundId != -1)
-    Sound_PlayFar(soundId);
+	if(soundId != -1)
+		sySndPlayStub(soundId);
 }

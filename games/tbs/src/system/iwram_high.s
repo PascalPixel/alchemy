@@ -1,13 +1,13 @@
 	.section .sym_iwram_high,"aw",%nobits
 	.space 1116
-	.global gCartridgeResetMarker
-gCartridgeResetMarker:
+	.global CartridgeResetMarker
+CartridgeResetMarker:
 	.space 4
-	.global gBuildStamp
-gBuildStamp:
+	.global BuildStampWork
+BuildStampWork:
 	.space 508
-	.global gFrameWaitStackTop
-gFrameWaitStackTop:
+	.global FrameWaitStackTop
+FrameWaitStackTop:
 	.space 1532
-	.global gIrqVector
-gIrqVector:
+	.global IrqVector
+IrqVector:

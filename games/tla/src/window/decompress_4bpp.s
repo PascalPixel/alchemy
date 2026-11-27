@@ -26,6 +26,6 @@ AlchemyUncreditedEnd_08038b16:
 	rrx	ip, ip
 	lsr	ip, ip, r6
 	b	Tile_Decompress4bppLoop
-@ The routine's constants, which it reads beside its code (add, pc).
+@ The function's constants, which it reads beside its code (add, pc).
 	.4byte	0xfedcba98
 	.4byte	0x76543210

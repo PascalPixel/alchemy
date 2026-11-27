@@ -1,152 +1,149 @@
-/// @file
-/// A Mercury Djinni joining the party.
-// Part of event_commands.c.
+/* @file */
+/* A Mercury Djinni joining the party. */
+/* Part of event_commands.c. */
 
-#include "event_commands_internal.h"
-#include "fixed_math.h"
-#include "sounds.h"
-#include "gamepak/far_call/shop.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "field/field_sequence.h"
-#include "field/object.h"
-#include "system/system.h"
-#include "field/event.h"
-#include "macros.h"
+#define MERCURY_AFTERIMAGE_MAX 8  /* afterimages of the rising Djinni */
+#define MERCURY_RISE_FRAMES	   15 /* frames the Djinni rises, 8 pixels each */
 
-#define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
-#define MERCURY_RISE_FRAMES 15   ///< frames the Djinni rises, 8 pixels each
+/* Moves the actor halfway to the actor it watches; a copy of */
+/* fdActorMoveHalfwayTowardTarget. */
+void fdActorMoveHalfwayTowardTargetCopy(ACTOR *actor) {
+	ACTOR *target = (ACTOR *)actor->watchedActor;
 
-/// Moves the actor halfway to the actor it watches; a copy of
-/// Actor_MoveHalfwayTowardTarget.
-void Actor_MoveHalfwayTowardTargetCopy(struct Actor *actor) {
-  struct Actor *target = (struct Actor *)actor->watchedActor;
-
-  actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
-  actor->y.fixed += (target->y.fixed - actor->y.fixed) / 2;
-  actor->z.fixed += (target->z.fixed - actor->z.fixed) / 2;
+	actor->x.fixed += (target->x.fixed - actor->x.fixed) / 2;
+	actor->y.fixed += (target->y.fixed - actor->y.fixed) / 2;
+	actor->z.fixed += (target->z.fixed - actor->z.fixed) / 2;
 }
 
-/// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
-/// bounces twice and hops three times ever higher, then rises 120 pixels out of
-/// sight trailing eight afterimages; the leader turns to the camera and raises
-/// its arms, and droplets fall about it.
-void Djinn_RunMercuryJoinEffect(s32 djinniId) {
-  struct Actor *djinni;
-  struct Actor *copy;
-  struct Actor *previous;
-  struct Sprite *sharedSprite;
-  struct FieldEffectState *effectState;
-  struct Actor **cursor;
-  struct Actor **list;
-  struct FieldParticle *effect;
-  s32 sprite;
-  s32 i;
-  s32 sharedEntry;
-  struct Actor *copies[MERCURY_AFTERIMAGE_MAX];
-  struct Vector3 position;
+/* A Mercury Djinni joins the party: the screen is tinted blue, the Djinni */
+/* bounces twice and hops three times ever higher, then rises 120 pixels out of
+ */
+/* sight trailing eight afterimages; the leader turns to the camera and raises
+ */
+/* its arms, and droplets fall about it. */
+void fdDjinnRunMercuryJoinEffect(s32 djinniId) {
+	ACTOR *djinni;
+	ACTOR *copy;
+	ACTOR *previous;
+	SPR *sharedSprite;
+	FIELD_EFFECT_STATE *effectState;
+	ACTOR **cursor;
+	ACTOR **list;
+	FIELD_PARTICLE *effect;
+	s32 sprite;
+	s32 i;
+	s32 sharedEntry;
+	ACTOR *copies[MERCURY_AFTERIMAGE_MAX];
+	VECTOR3 position;
 
-  djinni = Actor_GetById(djinniId);
-  if (djinni == NULL)
-    return;
+	djinni = fdActorGetById(djinniId);
+	if(djinni == NULL)
+		return;
 
-  FieldEffect_InitializeSlots();
-  effectState = Ram_HeapSlots->fieldEffectState;
-  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
-  wait(30);
-  // Unpause the Djinni, so its script and motion run.
-  djinni->paused = 0;
-  Sound_PlayFar(SE_NOTE_LOW);
-  Actor_RunRepeatedMotion(djinniId, 1);
-  Sound_PlayFar(SE_NOTE_HIGH);
-  Actor_RunRepeatedMotion(djinniId, 1);
-  wait(20);
+	fdEffectInitSlots();
+	effectState = Ram_HeapSlots->fieldEffState;
+	mnShopSaveAndTintFieldPaletteStub(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
+	sySynch(30);
+	/* Unpause the Djinni, so its script and motion run. */
+	djinni->paused = 0;
+	sySndPlayStub(SE_NOTE_LOW);
+	fdActorRunRepeatedMotion(djinniId, 1);
+	sySndPlayStub(SE_NOTE_HIGH);
+	fdActorRunRepeatedMotion(djinniId, 1);
+	sySynch(20);
 
-  // Three hops, at 3, 5 and 7 pixels a frame.
-  Sound_PlayFar(SE_JUMP);
-  Actor_Jump(djinniId, 3, 14);
-  Sound_PlayFar(SE_JUMP);
-  Actor_Jump(djinniId, 5, 16);
-  Sound_PlayFar(SE_JUMP);
-  Actor_Jump(djinniId, 7, 18);
-  wait(20);
+	/* Three hops, at 3, 5 and 7 pixels a frame. */
+	sySndPlayStub(SE_JUMP);
+	fdActorJump(djinniId, 3, 14);
+	sySndPlayStub(SE_JUMP);
+	fdActorJump(djinniId, 5, 16);
+	sySndPlayStub(SE_JUMP);
+	fdActorJump(djinniId, 7, 18);
+	sySynch(20);
 
-  // MERCURY_AFTERIMAGE_MAX afterimages of the same sprite at 15/16 size, each
-  // closing half the distance to the one before it every frame, sharing one
-  // VRAM cache entry, as in Djinn_RunBattleStartHop.
-  sprite = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
-  sharedSprite = NULL;
-  previous = djinni;
-  cursor = copies;
-  for (i = 0; i < MERCURY_AFTERIMAGE_MAX; i++) {
-    copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
-                           djinni->z.fixed);
-    *cursor++ = copy;
-    if (copy != NULL) {
-      copy->scaleY = AFTERIMAGE_SCALE;
-      copy->scaleX = AFTERIMAGE_SCALE;
-      copy->motionFlags = 0;
-      copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      copy->steeringFlags |= ACTOR_FACES_MOTION;
-      copy->update = (ObjectUpdate)Actor_MoveHalfwayTowardTargetCopy;
-      copy->facing = djinni->facing;
-      Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
-      Actor_SelectAnimationFar(copy, ANIM_STILL);
-      Actor_SetSpriteFlagsFar(copy, 0);
-      sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
-      copy->watchedActor = (union FieldObject *)previous;
-      previous = copy;
-    }
-  }
+	/* MERCURY_AFTERIMAGE_MAX afterimages of the same sprite at 15/16 size, each
+	 */
+	/* closing half the distance to the one before it every frame, sharing one
+	 */
+	/* VRAM cache entry, as in fdDjinnRunBattleStartHop. */
+	sprite = ((SPR *)djinni->spr)->entries[0]->anmId;
+	sharedSprite = NULL;
+	previous = djinni;
+	cursor = copies;
+	for(i = 0; i < MERCURY_AFTERIMAGE_MAX; i++) {
+		copy = fdActorCreateStub(sprite, djinni->x.fixed, djinni->y.fixed,
+								 djinni->z.fixed);
+		*cursor++ = copy;
+		if(copy != NULL) {
+			copy->scaleY = AFTERIMAGE_SCALE;
+			copy->scaleX = AFTERIMAGE_SCALE;
+			copy->motionFlg = 0;
+			copy->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			copy->steeringFlg |= ACTOR_FACES_MOTION;
+			copy->update = (OBJECT_UPDATE)fdActorMoveHalfwayTowardTargetCopy;
+			copy->facing = djinni->facing;
+			fdActorSetSprColModeStub(copy, SPRITE_COLOR_BLUE_TINT);
+			fdActorSelectAnimationStub(copy, ANIM_STILL);
+			fdActorSetSprFlagsStub(copy, 0);
+			sharedSprite = fdSprShareVramCacheEntry(copy->spr, sharedSprite);
+			copy->watchedActor = (union FIELD_OBJECT *)previous;
+			previous = copy;
+		}
+	}
 
-  sharedEntry = sharedSprite->slot;
-  Sound_PlayFar(SE_HIGH_JUMP);
-  djinni->motionFlags = 0;
-  for (i = 0; i < MERCURY_RISE_FRAMES; i++) {
-    djinni->y.fixed += toFIXED(8);
-    wait(1);
-  }
-  Actor_ReleaseFar(djinni);
-  list = copies;
-  for (i = 0; i < MERCURY_AFTERIMAGE_MAX; i++)
-    Actor_ReleaseFar((*list++));
-  if (sharedEntry != VRAM_CACHE_ENTRY_COUNT)
-    VramCache_FreeEntry(sharedEntry);
-  wait(10);
-  Actor_FaceDirectionById(gMainRoutineState.leaderActorId, FACING_SOUTH, 0);
-  wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineState.leaderActorId),
-                           ANIM_LEADER_ARMS_RAISED);
-  wait(20);
+	sharedEntry = sharedSprite->slot;
+	sySndPlayStub(SE_HIGH_JUMP);
+	djinni->motionFlg = 0;
+	for(i = 0; i < MERCURY_RISE_FRAMES; i++) {
+		djinni->y.fixed += toFIXED(8);
+		sySynch(1);
+	}
+	fdActorReleaseStub(djinni);
+	list = copies;
+	for(i = 0; i < MERCURY_AFTERIMAGE_MAX; i++)
+		fdActorReleaseStub((*list++));
+	if(sharedEntry != VRAM_CACHE_ENTRY_COUNT)
+		syVramCacheFreeEntry(sharedEntry);
+	sySynch(10);
+	fdActorFaceDirectionById(MainRoutineStateWork.leaderActorId, FACING_SOUTH,
+							 0);
+	sySynch(20);
+	fdActorSelectAnimationStub(
+		fdActorGetById(MainRoutineStateWork.leaderActorId),
+		ANIM_LEADER_ARMS_RAISED);
+	sySynch(20);
 
-  // The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
-  // screen (FieldEffect_UpdateRandomTargetParticle moves them).
-  SET_POSITION(&position, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
-  Camera_WorldToScreen(&position);
+	/* The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
+	 */
+	/* screen (fdEffectUpdateRandomTargetParticle moves them). */
+	SET_POSITION(&position, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
+	fdCameraWorldToScr(&position);
 
-  effect = effectState->particles;
-  for (i = 0; i < (s32)ARRAY_COUNT(effectState->particles); i++) {
-    FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
-    FieldParticle_SetCallback(effect,
-                              (void *)FieldEffect_UpdateRandomTargetParticle);
-    // SPRITE_DROPLET has two animations and no twinkle, so the droplet keeps
-    // its first (Sprite_StartAnimation passes over a number past the sheet's).
-    FieldParticle_SetAnimation(effect, ANIM_PARTICLE_TWINKLE);
-    Sprite_SetAnimationColorModesFar(effect->sprite, SPRITE_COLOR_BLUE_TINT);
-    wait(1);
-    effect++;
-  }
+	effect = effectState->particles;
+	for(i = 0; i < (s32)ARRAY_COUNT(effectState->particles); i++) {
+		fdParticleInit(effect, SPRITE_DROPLET, position.x, position.z);
+		fdParticleSetCallback(effect,
+							  (void *)fdEffectUpdateRandomTargetParticle);
+		/* SPRITE_DROPLET has two animations and no twinkle, so the droplet
+		 * keeps */
+		/* its first (fdSprStartAnimation passes over a number past the
+		 * sheet's). */
+		fdParticleSetAnimation(effect, ANIM_PARTICLE_TWINKLE);
+		fdSprSetAnimationColModesStub(effect->spr, SPRITE_COLOR_BLUE_TINT);
+		sySynch(1);
+		effect++;
+	}
 
-  // After 120 frames every droplet still in use takes its last fall.
-  wait(120);
-  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
-    if (effectState->particles[i].active)
-      effectState->particles[i].state = MERCURY_DROPLET_LAST_FALL;
-  }
+	/* After 120 frames every droplet still in use takes its last fall. */
+	sySynch(120);
+	for(i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+		if(effectState->particles[i].active)
+			effectState->particles[i].state = MERCURY_DROPLET_LAST_FALL;
+	}
 
-  wait(50);
-  Shop_RestoreFieldPaletteFar();
-  FieldEffect_ReleaseSlots();
+	sySynch(50);
+	mnShopRestoreFieldPaletteStub();
+	fdEffectReleaseSlots();
 }
 
 #undef MERCURY_AFTERIMAGE_MAX

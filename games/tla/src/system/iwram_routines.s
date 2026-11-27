@@ -22,7 +22,7 @@
 @ Secondary: the sign exit that follows is bxmi lr. *movsi_compare0 sets plain
 @ CC, where a signed < 0 test is lt; mi is the CC_NOOV spelling, which a
 @ copy-and-test never has.
-@ Why the unnamed routine after IwramSqrt is assembly:
+@ Why the unnamed function after IwramSqrt is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
 @ Why IwramTransformVector to IwramMultiplyMatrix are assembly:
 @ fp is a product high half rather than a frame pointer; stmia writes
@@ -285,8 +285,8 @@ AlchemyUncreditedEnd_08000982:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.global gCurrentMatrix
-gCurrentMatrix:
+	.global CurrentMatrix
+CurrentMatrix:
 	.4byte	0x00010000
 	.4byte	0x00000000
 	.4byte	0x00000000
@@ -296,8 +296,8 @@ gCurrentMatrix:
 	.4byte	0
 	.4byte	0
 	.4byte	0x00010000
-	.global gCurrentMatrixTranslation
-gCurrentMatrixTranslation:
+	.global CurrentMatrixTranslation
+CurrentMatrixTranslation:
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000
@@ -569,8 +569,8 @@ AlchemyUncreditedEnd_08000cea:
 	.balign 4
 .syntax unified
 	.arm
-	.global Iwram_Halt
-Iwram_Halt:
+	.global syHalt
+syHalt:
 .L_030007ac:
 	svc	0x00030000
 	b	.L_030007ac

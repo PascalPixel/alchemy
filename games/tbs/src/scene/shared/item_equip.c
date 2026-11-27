@@ -1,19 +1,19 @@
-/// @file
-/// Colosseum Final 1, 2 and 3, and Goma Cave Entrance: giving a character an
-/// item and putting it on.
+/* @file */
+/* Colosseum Final 1, 2 and 3, and Goma Cave Entrance: giving a character an */
+/* item and putting it on. */
 
 #include "game/inventory.h"
 
-/// Gives the character the item, then equips every inventory slot that holds
-/// it.
-UNUSED static void Scene_GiveAndEquipItem(s32 character, s32 item) {
-  struct Unit *unit = Unit_Get(character);
-  s32 i;
+/* Gives the character the item, then equips every inventory slot that holds */
+/* it. */
+UNUSED static void scGiveAndEquipItem(s32 character, s32 item) {
+	UNIT *unit = gmUnitGet(character);
+	s32 i;
 
-  Inventory_AddItem(character, item);
-  for (i = 0; i < INVENTORY_SLOTS; i++) {
-    if (unit->inventory[i] == item) {
-      Inventory_Equip(character, i);
-    }
-  }
+	gmInventoryAddItem(character, item);
+	for(i = 0; i < INVENTORY_SLOTS; i++) {
+		if(unit->inventory[i] == item) {
+			gmInventoryEquip(character, i);
+		}
+	}
 }

@@ -76,7 +76,7 @@ frees anything they read, and every handler ends with that tidying.
 
 ## Blitters
 
-A handler draws by copying small pictures onto the canvas, and the routine
+A handler draws by copying small pictures onto the canvas, and the function
 that copies one is a blitter. A blitter decides what happens where the new
 picture lands on something already there: replace it, add to it, keep the
 brighter of the two, and so on. Ray's bolts keep the brighter, so a
@@ -126,7 +126,8 @@ in this game, and the leap is Severe Blow in The Lost Age
 
 ## Where the code is
 
-- Each `battle_effect_<name>.c` holds one handler or family.
+- Each `battle_effect_<name>.c` holds one handler or a group of related
+  handlers.
 - `battle_effect_table.c` is the tables they read: which pictures, where,
   how many.
 - The `blitter_*` files are the blitters.

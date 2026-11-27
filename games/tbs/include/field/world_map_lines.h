@@ -1,23 +1,23 @@
 #ifndef ALCHEMY_WORLD_MAP_LINES_H
 #define ALCHEMY_WORLD_MAP_LINES_H
 
-/// @file
-/// The World Map's tilt, drawn line by line (world_map_lines.c).
+/* @file */
+/* The World Map's tilt, drawn line by line (world_map_lines.c). */
 
 #include "types.h"
 
-struct WorldMapAffineLine;
-struct Vector3;
-struct WorldMapScanline;
+struct WORLD_MAP_AFFINE_LINE;
+struct VECTOR3;
+struct WORLD_MAP_SCANLINE;
 
-/// The world map camera's yaw, in 1/65536 turns, the scanline parameters were
-/// built for; WorldMap_UpdateAffineLines rebuilds them when it changes.
-extern u32 gScanlineAngle;
-/// The world map camera's pitch the scanline parameters were built for.
-extern u32 gScanlinePitch;
+/* The world map camera's yaw, in 1/65536 turns, the scanline parameters were */
+/* built for; fdWorldMapUpdateAffineLines rebuilds them when it changes. */
+extern u32 ScanlineAngle;
+/* The world map camera's pitch the scanline parameters were built for. */
+extern u32 ScanlinePitch;
 
-void WorldMap_UpdateAffineLines(struct Vector3 *eye, struct Vector3 *target,
-                                struct WorldMapScanline *line,
-                                struct WorldMapAffineLine *affine);
+void fdWorldMapUpdateAffineLines(struct VECTOR3 *eye, struct VECTOR3 *target,
+								 struct WORLD_MAP_SCANLINE *line,
+								 struct WORLD_MAP_AFFINE_LINE *affine);
 
 #endif

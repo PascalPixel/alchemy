@@ -85,10 +85,10 @@ static const struct {
 static const char *const INCLUDES[] = {
     /* Sets the edition's symbols for every assembly file. */
     "include/edition.inc",
-    /* The head each bank's far-call table starts with. */
-    "src/gamepak/far_call/table.inc",
-    /* The far-call stub macro the tables and overlays share. */
-    "src/gamepak/far_call/veneer.inc",
+    /* The head each module's stub table starts with. */
+    "src/system/stub_table.inc",
+    /* The stub macro the tables and overlays share. */
+    "src/system/stub.inc",
     /* The import list the build cuts down for each overlay. */
     "src/system/overlay/imports.inc",
     /* Glyph widths, placed inside the font's own assembly. */

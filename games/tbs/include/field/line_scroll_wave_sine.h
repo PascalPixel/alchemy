@@ -1,13 +1,13 @@
 #ifndef ALCHEMY_LINE_SCROLL_WAVE_SINE_H
 #define ALCHEMY_LINE_SCROLL_WAVE_SINE_H
 
-/// @file
-/// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak): the
-/// wave of the line scroll, which bends the background line by line.
+/* @file */
+/* One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak): the */
+/* wave of the line scroll, which bends the background line by line. */
 
-/// The entries of gLineScroll_WaveSine, which the Lemurian ship's ripple keeps
-/// again in its overlay.
-// clang-format off
+/* The entries of LineScroll_WaveSine, which the Lemurian ship's ripple keeps */
+/* again in its overlay. */
+/* clang-format off */
 #define LINE_SCROLL_WAVE_SINE \
   0, 100, 200, 301, 401, 501, 601, 700, \
   799, 897, 995, 1092, 1189, 1284, 1379, 1474, \
@@ -41,6 +41,6 @@
   -2275, -2191, -2105, -2018, -1930, -1841, -1751, -1659, \
   -1567, -1474, -1379, -1284, -1189, -1092, -995, -897, \
   -799, -700, -601, -501, -401, -301, -200, -100
-// clang-format on
+/* clang-format on */
 
 #endif

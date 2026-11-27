@@ -1,27 +1,27 @@
 #ifndef ALCHEMY_SCENE_IDS_H
 #define ALCHEMY_SCENE_IDS_H
 
-/// @file
-/// Scene numbers, named after their places, in the order of gScenes
-/// (field/scenes.s).
-///
-/// Each SceneId_ is an absolute symbol whose value is the scene's row in the
-/// table; C names the number by its macro, SCENE_VALE for SceneId_Vale, and
-/// the exit tables name a scene by its place (SCENE_EXIT).
+/* @file */
+/* Scene numbers, named after their places, in the order of ScenesWork */
+/* (field/scenes.s). */
+/* */
+/* Each SceneId_ is an absolute symbol whose value is the scene's row in the */
+/* table; C names the number by its macro, SCENE_VALE for SceneId_Vale, and */
+/* the exit tables name a scene by its place (SCENE_EXIT). */
 
 extern char SceneId_Title;
 #define SCENE_TITLE ((s32)&SceneId_Title)
-/// The File Screen, where the player chooses a file; the debug scene
-/// selector calls it "(Clear data)".
+/* The File Screen, where the player chooses a file; the debug scene */
+/* selector calls it "(Clear data)". */
 extern char SceneId_FileScreen;
 #define SCENE_FILE_SCREEN ((s32)&SceneId_FileScreen)
 extern char SceneId_WorldMap;
 #define SCENE_WORLD_MAP ((s32)&SceneId_WorldMap)
-/// The World Map's map, the row of gMaps named World (map/resources.s), which
-/// the field compares gMainRoutineState.mapId with.
+/* The World Map's map, the row of MapsWork named World (map/resources.s), */
+/* which the field compares MainRoutineStateWork.mapId with. */
 extern char MapIndex_World;
 #define MAP_INDEX_WORLD ((s32)&MapIndex_World)
-/// Vale on the stormy night of the prologue, which Camelot labels PLOGV00.
+/* Vale on the stormy night of the prologue, which Camelot labels PLOGV00. */
 extern char SceneId_ValePrologue;
 #define SCENE_VALE_PROLOGUE ((s32)&SceneId_ValePrologue)
 extern char SceneId_Vale;
@@ -30,10 +30,10 @@ extern char SceneId_ValePlaza;
 #define SCENE_VALE_PLAZA ((s32)&SceneId_ValePlaza)
 extern char SceneId_ValeKradensCottage;
 #define SCENE_VALE_KRADENS_COTTAGE ((s32)&SceneId_ValeKradensCottage)
-/// A rooms map drawn as cottages, all of them Vale's.
+/* A rooms map drawn as cottages, all of them Vale's. */
 extern char SceneId_CottageRoomsA;
 #define SCENE_COTTAGE_ROOMS_A ((s32)&SceneId_CottageRoomsA)
-/// A rooms map drawn as cottages, of more than one place.
+/* A rooms map drawn as cottages, of more than one place. */
 extern char SceneId_CottageRoomsB;
 #define SCENE_COTTAGE_ROOMS_B ((s32)&SceneId_CottageRoomsB)
 extern char SceneId_Sanctum;
@@ -54,22 +54,22 @@ extern char SceneId_SolSanctumReliefs;
 #define SCENE_SOL_SANCTUM_RELIEFS ((s32)&SceneId_SolSanctumReliefs)
 extern char SceneId_SolSanctumElementalStarRoom;
 #define SCENE_SOL_SANCTUM_ELEMENTAL_STAR_ROOM                                  \
-  ((s32)&SceneId_SolSanctumElementalStarRoom)
+	((s32)&SceneId_SolSanctumElementalStarRoom)
 extern char SceneId_SolSanctumEruption;
 #define SCENE_SOL_SANCTUM_ERUPTION ((s32)&SceneId_SolSanctumEruption)
 extern char SceneId_SolEntrance;
 #define SCENE_SOL_ENTRANCE ((s32)&SceneId_SolEntrance)
 extern char SceneId_Vault;
 #define SCENE_VAULT ((s32)&SceneId_Vault)
-/// A rooms map drawn in logs, all of them Vault's.
+/* A rooms map drawn in logs, all of them Vault's. */
 extern char SceneId_LogRoomsA;
 #define SCENE_LOG_ROOMS_A ((s32)&SceneId_LogRoomsA)
-/// A rooms map of more than one place, drawn in stone.
+/* A rooms map of more than one place, drawn in stone. */
 extern char SceneId_StoneRooms;
 #define SCENE_STONE_ROOMS ((s32)&SceneId_StoneRooms)
 extern char SceneId_VaultRevisit;
 #define SCENE_VAULT_REVISIT ((s32)&SceneId_VaultRevisit)
-/// A rooms map drawn in logs, all of them Vault's.
+/* A rooms map drawn in logs, all of them Vault's. */
 extern char SceneId_LogRoomsB;
 #define SCENE_LOG_ROOMS_B ((s32)&SceneId_LogRoomsB)
 extern char SceneId_GomaCaveEntrance;
@@ -84,7 +84,7 @@ extern char SceneId_GomaCaveBridge;
 #define SCENE_GOMA_CAVE_BRIDGE ((s32)&SceneId_GomaCaveBridge)
 extern char SceneId_Bilibin;
 #define SCENE_BILIBIN ((s32)&SceneId_Bilibin)
-/// A rooms map drawn as cottages, all of them Bilibin's.
+/* A rooms map drawn as cottages, all of them Bilibin's. */
 extern char SceneId_CottageRoomsC;
 #define SCENE_COTTAGE_ROOMS_C ((s32)&SceneId_CottageRoomsC)
 extern char SceneId_BilibinTreasury;
@@ -97,7 +97,7 @@ extern char SceneId_BilibinBarricade;
 #define SCENE_BILIBIN_BARRICADE ((s32)&SceneId_BilibinBarricade)
 extern char SceneId_Kolima;
 #define SCENE_KOLIMA ((s32)&SceneId_Kolima)
-/// A rooms map drawn in logs, all of them Kolima's.
+/* A rooms map drawn in logs, all of them Kolima's. */
 extern char SceneId_LogRoomsC;
 #define SCENE_LOG_ROOMS_C ((s32)&SceneId_LogRoomsC)
 extern char SceneId_KolimaTunnel;
@@ -114,7 +114,7 @@ extern char SceneId_KolimaForestFloodgate;
 #define SCENE_KOLIMA_FOREST_FLOODGATE ((s32)&SceneId_KolimaForestFloodgate)
 extern char SceneId_KolimaForestTree;
 #define SCENE_KOLIMA_FOREST_TREE ((s32)&SceneId_KolimaForestTree)
-/// A rooms map drawn inside a tree.
+/* A rooms map drawn inside a tree. */
 extern char SceneId_TreeRooms;
 #define SCENE_TREE_ROOMS ((s32)&SceneId_TreeRooms)
 extern char SceneId_TretTreeBranch;
@@ -127,14 +127,14 @@ extern char SceneId_BilibinCaveEntrance;
 #define SCENE_BILIBIN_CAVE_ENTRANCE ((s32)&SceneId_BilibinCaveEntrance)
 extern char SceneId_Imil;
 #define SCENE_IMIL ((s32)&SceneId_Imil)
-/// A rooms map drawn in ice, all of them Imil's.
+/* A rooms map drawn in ice, all of them Imil's. */
 extern char SceneId_IceRooms;
 #define SCENE_ICE_ROOMS ((s32)&SceneId_IceRooms)
 extern char SceneId_ImilFallsCave;
 #define SCENE_IMIL_FALLS_CAVE ((s32)&SceneId_ImilFallsCave)
 extern char SceneId_MercuryLighthouseEntrance;
 #define SCENE_MERCURY_LIGHTHOUSE_ENTRANCE                                      \
-  ((s32)&SceneId_MercuryLighthouseEntrance)
+	((s32)&SceneId_MercuryLighthouseEntrance)
 extern char SceneId_MercuryLighthouseLower;
 #define SCENE_MERCURY_LIGHTHOUSE_LOWER ((s32)&SceneId_MercuryLighthouseLower)
 extern char SceneId_MercuryLighthouseMiddle;
@@ -143,15 +143,15 @@ extern char SceneId_MercuryLighthouseUpper;
 #define SCENE_MERCURY_LIGHTHOUSE_UPPER ((s32)&SceneId_MercuryLighthouseUpper)
 extern char SceneId_MercuryLighthouseExterior;
 #define SCENE_MERCURY_LIGHTHOUSE_EXTERIOR                                      \
-  ((s32)&SceneId_MercuryLighthouseExterior)
+	((s32)&SceneId_MercuryLighthouseExterior)
 extern char SceneId_MercuryLighthouseAerie;
 #define SCENE_MERCURY_LIGHTHOUSE_AERIE ((s32)&SceneId_MercuryLighthouseAerie)
 extern char SceneId_UnusedMercuryLighthouseAerieCopy;
 #define SCENE_UNUSED_MERCURY_LIGHTHOUSE_AERIE_COPY                             \
-  ((s32)&SceneId_UnusedMercuryLighthouseAerieCopy)
+	((s32)&SceneId_UnusedMercuryLighthouseAerieCopy)
 extern char SceneId_FuchinTempleGrounds;
 #define SCENE_FUCHIN_TEMPLE_GROUNDS ((s32)&SceneId_FuchinTempleGrounds)
-/// A rooms map drawn in red lacquer, of more than one place.
+/* A rooms map drawn in red lacquer, of more than one place. */
 extern char SceneId_LacquerRoomsA;
 #define SCENE_LACQUER_ROOMS_A ((s32)&SceneId_LacquerRoomsA)
 extern char SceneId_FuchinFallsCaveEntrance;
@@ -160,16 +160,16 @@ extern char SceneId_FuchinFallsCaveZephyr;
 #define SCENE_FUCHIN_FALLS_CAVE_ZEPHYR ((s32)&SceneId_FuchinFallsCaveZephyr)
 extern char SceneId_FuchinFallsCaveDragonsEye;
 #define SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE                                    \
-  ((s32)&SceneId_FuchinFallsCaveDragonsEye)
+	((s32)&SceneId_FuchinFallsCaveDragonsEye)
 extern char SceneId_FuchinFallsCaveArcticBlade;
 #define SCENE_FUCHIN_FALLS_CAVE_ARCTIC_BLADE                                   \
-  ((s32)&SceneId_FuchinFallsCaveArcticBlade)
+	((s32)&SceneId_FuchinFallsCaveArcticBlade)
 extern char SceneId_FuchinFallsCaveOrbOfForce;
 #define SCENE_FUCHIN_FALLS_CAVE_ORB_OF_FORCE                                   \
-  ((s32)&SceneId_FuchinFallsCaveOrbOfForce)
+	((s32)&SceneId_FuchinFallsCaveOrbOfForce)
 extern char SceneId_FuchinFallsCaveDragonStatue;
 #define SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE                                  \
-  ((s32)&SceneId_FuchinFallsCaveDragonStatue)
+	((s32)&SceneId_FuchinFallsCaveDragonStatue)
 extern char SceneId_MogallForestSign;
 #define SCENE_MOGALL_FOREST_SIGN ((s32)&SceneId_MogallForestSign)
 extern char SceneId_MogallForestQuartz;
@@ -180,29 +180,29 @@ extern char SceneId_MogallForestSidePaths;
 #define SCENE_MOGALL_FOREST_SIDE_PATHS ((s32)&SceneId_MogallForestSidePaths)
 extern char SceneId_Xian;
 #define SCENE_XIAN ((s32)&SceneId_Xian)
-/// A rooms map drawn in red lacquer, all of them Xian's.
+/* A rooms map drawn in red lacquer, all of them Xian's. */
 extern char SceneId_LacquerRoomsB;
 #define SCENE_LACQUER_ROOMS_B ((s32)&SceneId_LacquerRoomsB)
 extern char SceneId_AlpineCrossing;
 #define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossing)
 extern char SceneId_Altin;
 #define SCENE_ALTIN ((s32)&SceneId_Altin)
-/// A rooms map drawn as cottages, all of them Altin's.
+/* A rooms map drawn as cottages, all of them Altin's. */
 extern char SceneId_CottageRoomsD;
 #define SCENE_COTTAGE_ROOMS_D ((s32)&SceneId_CottageRoomsD)
 extern char SceneId_AltinPeakFirstWaterBeast;
 #define SCENE_ALTIN_PEAK_FIRST_WATER_BEAST                                     \
-  ((s32)&SceneId_AltinPeakFirstWaterBeast)
+	((s32)&SceneId_AltinPeakFirstWaterBeast)
 extern char SceneId_AltinPeakRailTunnel;
 #define SCENE_ALTIN_PEAK_RAIL_TUNNEL ((s32)&SceneId_AltinPeakRailTunnel)
 extern char SceneId_AltinPeakSecondWaterBeast;
 #define SCENE_ALTIN_PEAK_SECOND_WATER_BEAST                                    \
-  ((s32)&SceneId_AltinPeakSecondWaterBeast)
+	((s32)&SceneId_AltinPeakSecondWaterBeast)
 extern char SceneId_AltinPeakSouthEntrance;
 #define SCENE_ALTIN_PEAK_SOUTH_ENTRANCE ((s32)&SceneId_AltinPeakSouthEntrance)
 extern char SceneId_AltinPeakThirdWaterBeast;
 #define SCENE_ALTIN_PEAK_THIRD_WATER_BEAST                                     \
-  ((s32)&SceneId_AltinPeakThirdWaterBeast)
+	((s32)&SceneId_AltinPeakThirdWaterBeast)
 extern char SceneId_AltinPeakPool;
 #define SCENE_ALTIN_PEAK_POOL ((s32)&SceneId_AltinPeakPool)
 extern char SceneId_AltinPeakSpritz;
@@ -239,7 +239,7 @@ extern char SceneId_VaultCaveMouth;
 #define SCENE_VAULT_CAVE_MOUTH ((s32)&SceneId_VaultCaveMouth)
 extern char SceneId_Kalay;
 #define SCENE_KALAY ((s32)&SceneId_Kalay)
-/// A rooms map drawn in stucco, all of them Kalay's.
+/* A rooms map drawn in stucco, all of them Kalay's. */
 extern char SceneId_StuccoRoomsA;
 #define SCENE_STUCCO_ROOMS_A ((s32)&SceneId_StuccoRoomsA)
 extern char SceneId_KalaySanctum;
@@ -250,21 +250,21 @@ extern char SceneId_HammetPalace;
 #define SCENE_HAMMET_PALACE ((s32)&SceneId_HammetPalace)
 extern char SceneId_Lunpa;
 #define SCENE_LUNPA ((s32)&SceneId_Lunpa)
-/// A rooms map cut into rock, of more than one place.
+/* A rooms map cut into rock, of more than one place. */
 extern char SceneId_RockRooms;
 #define SCENE_ROCK_ROOMS ((s32)&SceneId_RockRooms)
 extern char SceneId_WestLunpaCave;
 #define SCENE_WEST_LUNPA_CAVE ((s32)&SceneId_WestLunpaCave)
 extern char SceneId_KalayDocks;
 #define SCENE_KALAY_DOCKS ((s32)&SceneId_KalayDocks)
-/// A rooms map drawn as cottages, of more than one place.
+/* A rooms map drawn as cottages, of more than one place. */
 extern char SceneId_CottageRoomsE;
 #define SCENE_COTTAGE_ROOMS_E ((s32)&SceneId_CottageRoomsE)
 extern char SceneId_TolbiShipDeck;
 #define SCENE_TOLBI_SHIP_DECK ((s32)&SceneId_TolbiShipDeck)
 extern char SceneId_TolbiShipMast;
 #define SCENE_TOLBI_SHIP_MAST ((s32)&SceneId_TolbiShipMast)
-/// A rooms map drawn as a ship's cabins.
+/* A rooms map drawn as a ship's cabins. */
 extern char SceneId_ShipRooms;
 #define SCENE_SHIP_ROOMS ((s32)&SceneId_ShipRooms)
 extern char SceneId_TolbiDocks;
@@ -273,10 +273,10 @@ extern char SceneId_CrossboneIsle;
 #define SCENE_CROSSBONE_ISLE ((s32)&SceneId_CrossboneIsle)
 extern char SceneId_CrossboneIsleCaveEntrance;
 #define SCENE_CROSSBONE_ISLE_CAVE_ENTRANCE                                     \
-  ((s32)&SceneId_CrossboneIsleCaveEntrance)
+	((s32)&SceneId_CrossboneIsleCaveEntrance)
 extern char SceneId_CrossboneIsleSteppingStones;
 #define SCENE_CROSSBONE_ISLE_STEPPING_STONES                                   \
-  ((s32)&SceneId_CrossboneIsleSteppingStones)
+	((s32)&SceneId_CrossboneIsleSteppingStones)
 extern char SceneId_CrossboneIsleIcePillars;
 #define SCENE_CROSSBONE_ISLE_ICE_PILLARS ((s32)&SceneId_CrossboneIsleIcePillars)
 extern char SceneId_CrossboneIsleKeys;
@@ -289,13 +289,13 @@ extern char SceneId_CrossboneIsleBane;
 #define SCENE_CROSSBONE_ISLE_BANE ((s32)&SceneId_CrossboneIsleBane)
 extern char SceneId_CrossboneIsleStackedPillars;
 #define SCENE_CROSSBONE_ISLE_STACKED_PILLARS                                   \
-  ((s32)&SceneId_CrossboneIsleStackedPillars)
+	((s32)&SceneId_CrossboneIsleStackedPillars)
 extern char SceneId_CrossboneIsleDragonStatue;
 #define SCENE_CROSSBONE_ISLE_DRAGON_STATUE                                     \
-  ((s32)&SceneId_CrossboneIsleDragonStatue)
+	((s32)&SceneId_CrossboneIsleDragonStatue)
 extern char SceneId_CrossboneIsleFloatingLogs;
 #define SCENE_CROSSBONE_ISLE_FLOATING_LOGS                                     \
-  ((s32)&SceneId_CrossboneIsleFloatingLogs)
+	((s32)&SceneId_CrossboneIsleFloatingLogs)
 extern char SceneId_CrossboneIslePier;
 #define SCENE_CROSSBONE_ISLE_PIER ((s32)&SceneId_CrossboneIslePier)
 extern char SceneId_PirateShip;
@@ -304,30 +304,30 @@ extern char SceneId_CrossboneIsleFirstFloor;
 #define SCENE_CROSSBONE_ISLE_FIRST_FLOOR ((s32)&SceneId_CrossboneIsleFirstFloor)
 extern char SceneId_CrossboneIsleSecondFloor;
 #define SCENE_CROSSBONE_ISLE_SECOND_FLOOR                                      \
-  ((s32)&SceneId_CrossboneIsleSecondFloor)
+	((s32)&SceneId_CrossboneIsleSecondFloor)
 extern char SceneId_CrossboneIsleThirdFloor;
 #define SCENE_CROSSBONE_ISLE_THIRD_FLOOR ((s32)&SceneId_CrossboneIsleThirdFloor)
 extern char SceneId_CrossboneIsleFourthFloor;
 #define SCENE_CROSSBONE_ISLE_FOURTH_FLOOR                                      \
-  ((s32)&SceneId_CrossboneIsleFourthFloor)
+	((s32)&SceneId_CrossboneIsleFourthFloor)
 extern char SceneId_CrossboneIsleFifthFloor;
 #define SCENE_CROSSBONE_ISLE_FIFTH_FLOOR ((s32)&SceneId_CrossboneIsleFifthFloor)
 extern char SceneId_CrossboneIsleSixthFloor;
 #define SCENE_CROSSBONE_ISLE_SIXTH_FLOOR ((s32)&SceneId_CrossboneIsleSixthFloor)
 extern char SceneId_CrossboneIsleSeventhFloor;
 #define SCENE_CROSSBONE_ISLE_SEVENTH_FLOOR                                     \
-  ((s32)&SceneId_CrossboneIsleSeventhFloor)
+	((s32)&SceneId_CrossboneIsleSeventhFloor)
 extern char SceneId_CrossboneIsleEighthFloor;
 #define SCENE_CROSSBONE_ISLE_EIGHTH_FLOOR                                      \
-  ((s32)&SceneId_CrossboneIsleEighthFloor)
+	((s32)&SceneId_CrossboneIsleEighthFloor)
 extern char SceneId_CrossboneIsleNinthFloor;
 #define SCENE_CROSSBONE_ISLE_NINTH_FLOOR ((s32)&SceneId_CrossboneIsleNinthFloor)
 extern char SceneId_Tolbi;
 #define SCENE_TOLBI ((s32)&SceneId_Tolbi)
-/// A rooms map drawn in stucco, all of them Tolbi's.
+/* A rooms map drawn in stucco, all of them Tolbi's. */
 extern char SceneId_StuccoRoomsB;
 #define SCENE_STUCCO_ROOMS_B ((s32)&SceneId_StuccoRoomsB)
-/// A rooms map drawn in stucco, both of them Tolbi's.
+/* A rooms map drawn in stucco, both of them Tolbi's. */
 extern char SceneId_StuccoRoomsC;
 #define SCENE_STUCCO_ROOMS_C ((s32)&SceneId_StuccoRoomsC)
 extern char SceneId_BabiPalace;
@@ -356,7 +356,7 @@ extern char SceneId_AltmillerCaveSquall;
 #define SCENE_ALTMILLER_CAVE_SQUALL ((s32)&SceneId_AltmillerCaveSquall)
 extern char SceneId_AltmillerCaveCookieChest;
 #define SCENE_ALTMILLER_CAVE_COOKIE_CHEST                                      \
-  ((s32)&SceneId_AltmillerCaveCookieChest)
+	((s32)&SceneId_AltmillerCaveCookieChest)
 extern char SceneId_AltmillerCaveDraught;
 #define SCENE_ALTMILLER_CAVE_DRAUGHT ((s32)&SceneId_AltmillerCaveDraught)
 extern char SceneId_GondowanPassage;
@@ -377,7 +377,7 @@ extern char SceneId_LunpaFortressGates;
 #define SCENE_LUNPA_FORTRESS_GATES ((s32)&SceneId_LunpaFortressGates)
 extern char SceneId_LunpaFortressGroundFloor;
 #define SCENE_LUNPA_FORTRESS_GROUND_FLOOR                                      \
-  ((s32)&SceneId_LunpaFortressGroundFloor)
+	((s32)&SceneId_LunpaFortressGroundFloor)
 extern char SceneId_LunpaFortressUpperFloor;
 #define SCENE_LUNPA_FORTRESS_UPPER_FLOOR ((s32)&SceneId_LunpaFortressUpperFloor)
 extern char SceneId_LunpaFortressCave;
@@ -392,7 +392,7 @@ extern char SceneId_SuhallaDesertCaves;
 #define SCENE_SUHALLA_DESERT_CAVES ((s32)&SceneId_SuhallaDesertCaves)
 extern char SceneId_Suhalla;
 #define SCENE_SUHALLA ((s32)&SceneId_Suhalla)
-/// A rooms map drawn in timber, all of them Suhalla's.
+/* A rooms map drawn in timber, all of them Suhalla's. */
 extern char SceneId_TimberRoomsA;
 #define SCENE_TIMBER_ROOMS_A ((s32)&SceneId_TimberRoomsA)
 extern char SceneId_SuhallaGateCheckpoint;
@@ -415,29 +415,29 @@ extern char SceneId_RoadToBabiLighthouse;
 #define SCENE_ROAD_TO_BABI_LIGHTHOUSE ((s32)&SceneId_RoadToBabiLighthouse)
 extern char SceneId_Lalivero;
 #define SCENE_LALIVERO ((s32)&SceneId_Lalivero)
-/// The first of Lalivero's two rooms maps, drawn in timber.
+/* The first of Lalivero's two rooms maps, drawn in timber. */
 extern char SceneId_TimberRoomsB;
 #define SCENE_TIMBER_ROOMS_B ((s32)&SceneId_TimberRoomsB)
-/// The second of Lalivero's two rooms maps, drawn in timber.
+/* The second of Lalivero's two rooms maps, drawn in timber. */
 extern char SceneId_TimberRoomsC;
 #define SCENE_TIMBER_ROOMS_C ((s32)&SceneId_TimberRoomsC)
 extern char SceneId_VenusLighthouseEntry;
 #define SCENE_VENUS_LIGHTHOUSE_ENTRY ((s32)&SceneId_VenusLighthouseEntry)
 extern char SceneId_VenusLighthouseGroundFloor;
 #define SCENE_VENUS_LIGHTHOUSE_GROUND_FLOOR                                    \
-  ((s32)&SceneId_VenusLighthouseGroundFloor)
+	((s32)&SceneId_VenusLighthouseGroundFloor)
 extern char SceneId_VenusLighthouseFirstFloor;
 #define SCENE_VENUS_LIGHTHOUSE_FIRST_FLOOR                                     \
-  ((s32)&SceneId_VenusLighthouseFirstFloor)
+	((s32)&SceneId_VenusLighthouseFirstFloor)
 extern char SceneId_VenusLighthouseSecondFloor;
 #define SCENE_VENUS_LIGHTHOUSE_SECOND_FLOOR                                    \
-  ((s32)&SceneId_VenusLighthouseSecondFloor)
+	((s32)&SceneId_VenusLighthouseSecondFloor)
 extern char SceneId_VenusLighthouseThirdFloor;
 #define SCENE_VENUS_LIGHTHOUSE_THIRD_FLOOR                                     \
-  ((s32)&SceneId_VenusLighthouseThirdFloor)
+	((s32)&SceneId_VenusLighthouseThirdFloor)
 extern char SceneId_VenusLighthouseFourthFloor;
 #define SCENE_VENUS_LIGHTHOUSE_FOURTH_FLOOR                                    \
-  ((s32)&SceneId_VenusLighthouseFourthFloor)
+	((s32)&SceneId_VenusLighthouseFourthFloor)
 extern char SceneId_VenusLighthouseAerie;
 #define SCENE_VENUS_LIGHTHOUSE_AERIE ((s32)&SceneId_VenusLighthouseAerie)
 extern char SceneId_LemurianShip;
@@ -446,9 +446,9 @@ extern char SceneId_TolbiSpring;
 #define SCENE_TOLBI_SPRING ((s32)&SceneId_TolbiSpring)
 extern char SceneId_BattleArena;
 #define SCENE_BATTLE_ARENA ((s32)&SceneId_BattleArena)
-/// The debug rooms, which only the debug scene selector reaches. Test 0 to
-/// Test 7 are one room (debug/test_scenes.c), where talking to Flint, Fizz,
-/// Forge or Gust gives that Djinni.
+/* The debug rooms, which only the debug scene selector reaches. Test 0 to */
+/* Test 7 are one room (debug/test_scenes.c), where talking to Flint, Fizz, */
+/* Forge or Gust gives that Djinni. */
 extern char SceneId_Test0;
 #define SCENE_TEST_0 ((s32)&SceneId_Test0)
 extern char SceneId_Test1;
@@ -465,12 +465,12 @@ extern char SceneId_Test6;
 #define SCENE_TEST_6 ((s32)&SceneId_Test6)
 extern char SceneId_Test7;
 #define SCENE_TEST_7 ((s32)&SceneId_Test7)
-/// Increase item and level, whose actors raise the party's levels and give
-/// any item (debug/level.c).
+/* Increase item and level, whose actors raise the party's levels and give */
+/* any item (debug/level.c). */
 extern char SceneId_IncreaseItemAndLevel;
 #define SCENE_INCREASE_ITEM_AND_LEVEL ((s32)&SceneId_IncreaseItemAndLevel)
-/// Menu test, whose actors each test the menus, the shops or the bags
-/// (debug/test.c).
+/* Menu test, whose actors each test the menus, the shops or the bags */
+/* (debug/test.c). */
 extern char SceneId_MenuTest;
 #define SCENE_MENU_TEST ((s32)&SceneId_MenuTest)
 

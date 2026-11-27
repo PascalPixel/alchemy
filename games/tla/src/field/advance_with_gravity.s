@@ -1,10 +1,10 @@
-@ Why Field_AdvanceWithGravity3D to Field_AdvanceWithGravity2D are assembly:
+@ Why fdAdvanceWithGravity3D to fdAdvanceWithGravity2D are assembly:
 @ each bge.n after muls branches on the multiply's flags with no compare.
 .syntax unified
 	.thumb
-	.global Field_AdvanceWithGravity3D
+	.global fdAdvanceWithGravity3D
 	.thumb_func
-Field_AdvanceWithGravity3D:
+fdAdvanceWithGravity3D:
 	push	{r5, r6, r7, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6, r7}
@@ -31,9 +31,9 @@ Field_AdvanceWithGravity3D:
 	asrs	r7, r7, #6
 	stmia	r0!, {r5, r6, r7}
 	pop	{r5, r6, r7, pc}
-	.global Field_AdvanceWithGravity2D
+	.global fdAdvanceWithGravity2D
 	.thumb_func
-Field_AdvanceWithGravity2D:
+fdAdvanceWithGravity2D:
 	push	{r5, r6, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6}

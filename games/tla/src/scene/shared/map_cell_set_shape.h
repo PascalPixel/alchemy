@@ -1,11 +1,11 @@
-/// Sets the shape of a cell to the height given.
-s32 MagmaRockInside_SetCellShape(s32 layer, s32 x, s32 z, s32 height) {
-  struct MapState *map = Ram_HeapSlots->mapGrid;
-  s32 shape = MapGrid_GetTerrainKind(layer, x, z);
-  u8 *out = Ram_MapShapeGrid +
-            (map->layers[layer].cells - (struct MapCell *)Ram_MapCellBuffer);
+/* Sets the shape of a cell to the height given. */
+s32 scMagmaRockInsideSetCellShape(s32 layer, s32 x, s32 z, s32 height) {
+	MAP_STATE *map = Ram_HeapSlots->mapGrid;
+	s32 shape = fdMapGridGetTerrainKind(layer, x, z);
+	u8 *out = Ram_MapShapeGrid +
+			  (map->layers[layer].cells - (MAP_CELL *)Ram_MapCellBuffer);
 
-  out += x + z * MAPGRID_SIZE;
-  *out = MapShape_FindOrAdd(layer, shape, height);
-  return 0;
+	out += x + z * MAPGRID_SIZE;
+	*out = fdMapShapeFindOrAdd(layer, shape, height);
+	return 0;
 }

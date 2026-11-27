@@ -1,14 +1,15 @@
-/// @file
-/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-/// where each lettering picture's palette starts, and the scripts that move
-/// the count (3, 2, 1) and `LOSE` (Colosso_StartLettering).
+/* @file */
+/* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+ */
+/* where each lettering picture's palette starts, and the scripts that move */
+/* the count (3, 2, 1) and `LOSE` (scColossoStartLettering). */
 
 #include "types.h"
 
-// clang-format off
-/// The byte offset of each lettering picture's palette (enum
-/// ColossoLetteringPicture) among the lettering palettes.
-const u8 gColosso_LetteringPaletteOffsets[] = {
+/* clang-format off */
+/* The byte offset of each lettering picture's palette (enum */
+/* COLOSSO_LETTERING_PICTURE) among the lettering palettes. */
+const u8 Colosso_LetteringPaletteOffsets[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_ENGLISH
     0, 32, 32, 32, 96, 64, 64, 64, 128, 0,
 #else
@@ -16,8 +17,8 @@ const u8 gColosso_LetteringPaletteOffsets[] = {
 #endif
 };
 
-/// A count digit's moves (3, 2, 1).
-const s16 gColosso_LetteringDigit[] = {
+/* A count digit's moves (3, 2, 1). */
+const s16 Colosso_LetteringDigit[] = {
     COLOSSO_LETTERING_SCALE, 512, 1,
     COLOSSO_LETTERING_FADE, 0, 1,
     COLOSSO_LETTERING_SCALE, 256, 6,
@@ -28,8 +29,8 @@ const s16 gColosso_LetteringDigit[] = {
     COLOSSO_LETTERING_END,
 };
 
-/// `LOSE`'s moves.
-const s16 gColosso_LetteringLose[] = {
+/* `LOSE`'s moves. */
+const s16 Colosso_LetteringLose[] = {
     COLOSSO_LETTERING_SCALE, 128, 1,
     COLOSSO_LETTERING_FADE, 0, 1,
     COLOSSO_LETTERING_SCALE, 256, 6,
@@ -56,4 +57,4 @@ const s16 gColosso_LetteringLose[] = {
     COLOSSO_LETTERING_WAIT, 6,
     COLOSSO_LETTERING_END,
 };
-// clang-format on
+/* clang-format on */

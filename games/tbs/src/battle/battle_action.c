@@ -1,737 +1,763 @@
-/// @file
-/// An action announced and built for its targets, BattleActionRun_Build.
-// Part of battle.c.
+/* @file */
+/* An action announced and built for its targets, btActionRunBuild. */
+/* Part of battle.c. */
 
 #include "battle_internal.h"
 
-/// The chances, out of 256, an action rolls against the battle's random byte.
-enum ActionChance {
-  CHANCE_DELUDED_MISS = 153, ///< a deluded attacker misses
-  CHANCE_BLOW_LIKELY = 153,  ///< a likely double or triple blow lands
-  CHANCE_BLOW_RARE = 32,     ///< a rare one
-  CHANCE_BLOW = 64           ///< any other
-};
+/* The chances, out of 256, an action rolls against the battle's random byte. */
+typedef enum ACTION_CHANCE {
+	CHANCE_DELUDED_MISS = 153, /* a deluded attacker misses */
+	CHANCE_BLOW_LIKELY = 153,  /* a likely double or triple blow lands */
+	CHANCE_BLOW_RARE = 32,	   /* a rare one */
+	CHANCE_BLOW = 64		   /* any other */
+} ACTION_CHANCE;
 
-/// A party member's plain attack, by the beam it plays (enum BeamKind,
-/// battle_effect_beams.c): one blue slash for Isaac, Garet and Jenna, three
-/// short blue arcs for Ivan and Mia.
+/* A party member's plain attack, by the beam it plays (BEAM_KIND, */
+/* battle_effect_beams.c): one blue slash for Isaac, Garet and Jenna, three */
+/* short blue arcs for Ivan and Mia. */
 #define ATTACK_BEAM_SLASH 1
-#define ATTACK_BEAM_WAVE 4
+#define ATTACK_BEAM_WAVE  4
 
-/// Battle_RollEffectSuccess's successScale at full strength, in percent.
+/* gmBattleRollEffectSuccess's successScale at full strength, in percent. */
 #define EFFECT_CHANCE_FULL 100
 
-/// Returns 1 when the unit is in its side's list of units in the battle
-/// (BattleUnit_ListIds), 0 otherwise.
-u32 BattleUnit_IsListed(u32 unitId) {
-  u16 list[8];
-  s32 side;
-  s32 unitCount;
-  s32 unitIndex;
+/* Returns 1 when the unit is in its side's list of units in the battle */
+/* (btUnitListIds), 0 otherwise. */
+u32 btUnitIsListed(u32 unitId) {
+	u16 list[8];
+	s32 side;
+	s32 unitCount;
+	s32 unitIndex;
 
-  side = BATTLE_SIDE_MASK_PARTY;
-  if (unitId > ALLY_MAX)
-    side = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleUnit_ListIds(side, list);
+	side = BATTLE_SIDE_MASK_PARTY;
+	if(unitId > ALLY_MAX)
+		side = BATTLE_SIDE_MASK_ENEMIES;
+	unitCount = btUnitListIds(side, list);
 
-  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
-    if (list[unitIndex] == unitId)
-      break;
-  }
+	for(unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+		if(list[unitIndex] == unitId)
+			break;
+	}
 
-  return unitIndex != unitCount;
+	return unitIndex != unitCount;
 }
 
-/// Counts the standby Djinn on unitId's side, and each element's count into
-/// counts when it is not null.
-s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
-  u16 unitIds[8];
-  struct DjinnRecoveryList *list;
-  s32 unitCount;
-  s32 standbyCount;
-  s32 recoveryIndex;
-  s32 i;
-  s32 sideMask;
-  s32 enemySide;
+/* Counts the standby Djinn on unitId's side, and each element's count into */
+/* counts when it is not null. */
+s32 btDjinnCountStandby(u32 unitId, u8 *counts) {
+	u16 unitIds[8];
+	DJINN_RECOVERY_LIST *list;
+	s32 unitCount;
+	s32 standbyCount;
+	s32 recoveryIndex;
+	s32 i;
+	s32 sideMask;
+	s32 enemySide;
 
-  standbyCount = 0;
-  sideMask = BATTLE_SIDE_MASK_PARTY;
-  if (unitId > ALLY_MAX)
-    sideMask = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleUnit_ListIds(sideMask, unitIds);
-  enemySide = DJINN_RECOVERY_PARTY;
-  if (unitId > ALLY_MAX)
-    enemySide = DJINN_RECOVERY_OPPONENT;
-  list = &Djinn_GetRecoveryTableFar(enemySide)->list;
-  if (counts != 0)
-    for (i = 0; i < ELEMENT_COUNT; i++)
-      counts[i] = 0;
-  for (recoveryIndex = 0; recoveryIndex != list->count; recoveryIndex++) {
-    if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-      for (i = 0; i < unitCount; i++)
-        if (unitIds[i] == list->entries[recoveryIndex].unitId)
-          break;
-      if (i != unitCount) {
-        if (counts != 0)
-          counts[list->entries[recoveryIndex].element]++;
-        standbyCount++;
-      }
-    }
-  }
-  return standbyCount;
+	standbyCount = 0;
+	sideMask = BATTLE_SIDE_MASK_PARTY;
+	if(unitId > ALLY_MAX)
+		sideMask = BATTLE_SIDE_MASK_ENEMIES;
+	unitCount = btUnitListIds(sideMask, unitIds);
+	enemySide = DJINN_RECOVERY_PARTY;
+	if(unitId > ALLY_MAX)
+		enemySide = DJINN_RECOVERY_OPPONENT;
+	list = &gmDjinnGetRecoveryTableStub(enemySide)->list;
+	if(counts != 0)
+		for(i = 0; i < ELEMENT_COUNT; i++)
+			counts[i] = 0;
+	for(recoveryIndex = 0; recoveryIndex != list->cnt; recoveryIndex++) {
+		if(list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+			for(i = 0; i < unitCount; i++)
+				if(unitIds[i] == list->entries[recoveryIndex].unitId)
+					break;
+			if(i != unitCount) {
+				if(counts != 0)
+					counts[list->entries[recoveryIndex].element]++;
+				standbyCount++;
+			}
+		}
+	}
+	return standbyCount;
 }
 
-/// Announces the action and builds it for its targets, paying its PP or Djinn.
-/// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
-/// shown, or ACTION_NOTHING_TO_SHOW.
-s32 BattleActionRun_Build(struct BattleAction *request,
-                          struct BattleActionRun *plan) {
-  struct Unit *actor = Unit_GetFar(request->unitId);
-  struct BattleState *battle = gBattleState;
-  s32 selectedTargetId;
-  s32 abilityId;
+/* Announces the action and builds it for its targets, paying its PP or Djinn.
+ */
+/* Returns 0 to stage it, ACTION_REPORTED when it failed with its message */
+/* shown, or ACTION_NOTHING_TO_SHOW. */
+s32 btActionRunBuild(BATTLE_ACTION *request, BATTLE_ACTION_RUN *plan) {
+	UNIT *actor = gmUnitGetStub(request->unitId);
+	BATTLE_STATE *battle = BattleStateWork;
+	s32 selectedTargetId;
+	s32 abilityId;
 
-  /// Fills the action's targets: the aimed unit, or the places within its
-  /// range; with none, the unit defends.
-  s32 BattleActionRun_SetTargets(s32 abilityId) {
-    struct AbilityDefinition *ability = Ability_Get(abilityId);
-    s32 mode = ability->targetMode;
-    s32 includeDowned = 0;
-    s32 targetCount;
-    s32 partyCount;
-    s32 enemyCount;
-    s32 aimedPlace;
-    s32 range;
-    s32 place;
-    s32 targetId;
+	/* Fills the action's targets: the aimed unit, or the places within its */
+	/* range; with none, the unit defends. */
+	s32 btActionRunSetTargets(s32 abilityId) {
+		ABILITY_DEFINITION *ability = mnAbilityGet(abilityId);
+		s32 mode = ability->tgtMode;
+		s32 includeDowned = 0;
+		s32 targetCount;
+		s32 partyCount;
+		s32 enemyCount;
+		s32 aimedPlace;
+		s32 range;
+		s32 place;
+		s32 targetId;
 
-    switch (ability->effect) {
-    case ABILITY_EFFECT_REVIVE:
-    case ABILITY_EFFECT_REVIVE_HALF:
-    case ABILITY_EFFECT_DEW:
-      includeDowned = 1;
-      break;
-    }
-    // No target mode, and the user alone: the aimed unit, as one target.
-    switch (mode) {
-    case ABILITY_TARGET_ONE:
-      plan->targetOffset[0] = mode;
-      plan->targetCount = 1;
-      plan->targetIds[0] = selectedTargetId;
-      plan->targetMultiplier[0] = 1;
-      break;
-    case ABILITY_TARGET_SELF:
-      plan->targetOffset[0] = 0;
-      plan->targetCount = 1;
-      plan->targetIds[0] = selectedTargetId;
-      plan->targetMultiplier[0] = 1;
-      break;
-    default:
-      // The places within range of the aimed one, on its side.
-      targetCount = 0;
-      for (place = 0; battle->partyUnits[place] != BATTLE_UNIT_LIST_END;
-           place++)
-        ;
-      partyCount = place;
-      for (place = 0; battle->enemyIds[place] != BATTLE_UNIT_LIST_END; place++)
-        ;
-      enemyCount = place;
-      aimedPlace = request->target & PLACE_INDEX_MASK;
-      range = request->range;
-      {
-        s32 first = aimedPlace - range + 1;
-        s32 last = aimedPlace + range - 1;
+		switch(ability->eff) {
+		case ABILITY_EFFECT_REVIVE:
+		case ABILITY_EFFECT_REVIVE_HALF:
+		case ABILITY_EFFECT_DEW:
+			includeDowned = 1;
+			break;
+		}
+		/* No target mode, and the user alone: the aimed unit, as one target. */
+		switch(mode) {
+		case ABILITY_TARGET_ONE:
+			plan->tgtOfs[0] = mode;
+			plan->tgtCnt = 1;
+			plan->tgtIds[0] = selectedTargetId;
+			plan->tgtMultiplier[0] = 1;
+			break;
+		case ABILITY_TARGET_SELF:
+			plan->tgtOfs[0] = 0;
+			plan->tgtCnt = 1;
+			plan->tgtIds[0] = selectedTargetId;
+			plan->tgtMultiplier[0] = 1;
+			break;
+		default:
+			/* The places within range of the aimed one, on its side. */
+			targetCount = 0;
+			for(place = 0; battle->partyUnits[place] != BATTLE_UNIT_LIST_END;
+				place++)
+				;
+			partyCount = place;
+			for(place = 0; battle->enemyIds[place] != BATTLE_UNIT_LIST_END;
+				place++)
+				;
+			enemyCount = place;
+			aimedPlace = request->tgt & PLACE_INDEX_MASK;
+			range = request->range;
+			{
+				s32 first = aimedPlace - range + 1;
+				s32 last = aimedPlace + range - 1;
 
-        for (place = first; place <= last; place++) {
-          if (place < 0)
-            continue;
-          // The enemies' side.
-          if (request->target & PLACE_ENEMY_SIDE) {
-            if (place >= enemyCount)
-              continue;
-            targetId = battle->enemyIds[place];
-            if (targetId == BATTLE_UNIT_REMOVED)
-              continue;
-            if (!includeDowned && Unit_GetFar(targetId)->hp == 0)
-              continue;
-            plan->targetMultiplier[targetCount] = 1;
-            plan->targetOffset[targetCount] = place - aimedPlace;
-            plan->targetIds[targetCount] = targetId;
-            targetCount++;
-          } else {
-            if (place >= partyCount)
-              continue;
-            targetId = battle->partyUnits[place];
-            if (targetId == BATTLE_UNIT_REMOVED)
-              continue;
-            if (!includeDowned && Unit_GetFar(targetId)->hp == 0)
-              continue;
-            plan->targetMultiplier[targetCount] = 1;
-            plan->targetOffset[targetCount] = place - aimedPlace;
-            plan->targetIds[targetCount] = targetId;
-            targetCount++;
-          }
-        }
-      }
-      plan->targetCount = targetCount;
-      if (targetCount <= 0) {
-        MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-        BattleMessage_ShowAndWaitFar(MsgActorDefends);
-        if (actor->defendLevel == 0)
-          actor->defendLevel = DEFEND_NORMAL;
-        return ACTION_REPORTED;
-      }
-    }
+				for(place = first; place <= last; place++) {
+					if(place < 0)
+						continue;
+					/* The enemies' side. */
+					if(request->tgt & PLACE_ENEMY_SIDE) {
+						if(place >= enemyCount)
+							continue;
+						targetId = battle->enemyIds[place];
+						if(targetId == BATTLE_UNIT_REMOVED)
+							continue;
+						if(!includeDowned && gmUnitGetStub(targetId)->hp == 0)
+							continue;
+						plan->tgtMultiplier[targetCount] = 1;
+						plan->tgtOfs[targetCount] = place - aimedPlace;
+						plan->tgtIds[targetCount] = targetId;
+						targetCount++;
+					}
+					else {
+						if(place >= partyCount)
+							continue;
+						targetId = battle->partyUnits[place];
+						if(targetId == BATTLE_UNIT_REMOVED)
+							continue;
+						if(!includeDowned && gmUnitGetStub(targetId)->hp == 0)
+							continue;
+						plan->tgtMultiplier[targetCount] = 1;
+						plan->tgtOfs[targetCount] = place - aimedPlace;
+						plan->tgtIds[targetCount] = targetId;
+						targetCount++;
+					}
+				}
+			}
+			plan->tgtCnt = targetCount;
+			if(targetCount <= 0) {
+				mnMessageArgumentPushStub(request->unitId,
+										  MESSAGE_ARGUMENT_ACTOR);
+				mnBattleMessageShowAndWaitStub(MsgActorDefends);
+				if(actor->defendLevel == 0)
+					actor->defendLevel = DEFEND_NORMAL;
+				return ACTION_REPORTED;
+			}
+		}
 #ifdef UBFIX
-    // Callers test only -1.
-    return plan->targetCount;
+		/* Callers test only -1. */
+		return plan->tgtCnt;
 #endif
-  }
+	}
 
-  // A fresh action run, and the debug defeat.
-  selectedTargetId = Battle_GetUnitAtPlace(request->target);
-  BattlePlayback_Reset();
-  plan->hauntDamage = 0;
-  plan->unitId = request->unitId;
-  plan->targetCount = 0;
-  plan->battleEffect = 0;
-  plan->failure = ACTION_FAILURE_NONE;
-  plan->element = ELEMENT_NONE;
-  MessageArgument_ClearAllFar();
-  if (actor->hp == 0)
-    return ACTION_NOTHING_TO_SHOW;
+	/* A fresh action run, and the debug defeat. */
+	selectedTargetId = btGetUnitAtPlace(request->tgt);
+	btPlaybackReset();
+	plan->hauntDamage = 0;
+	plan->unitId = request->unitId;
+	plan->tgtCnt = 0;
+	plan->battleEff = 0;
+	plan->failure = ACTION_FAILURE_NONE;
+	plan->element = ELEMENT_NONE;
+	mnMessageArgumentClearAllStub();
+	if(actor->hp == 0)
+		return ACTION_NOTHING_TO_SHOW;
 
-  // Debug, with FLAG_DEBUG_BATTLE_KEYS set: hold R to defeat all enemies, or
-  // R and Select the whole party.
-  if (gDebugMode && GameFlag_GetFar(FLAG_DEBUG_BATTLE_KEYS) &&
-      (gKeysHeld & KEY_R)) {
-    s32 enemy = 1;
-    s32 index;
-    s32 id;
+	/* Debug, with FLAG_DEBUG_BATTLE_KEYS set: hold R to defeat all enemies, or
+	 */
+	/* R and Select the whole party. */
+	if(DebugMode && gmFlagGetStub(FLAG_DEBUG_BATTLE_KEYS) &&
+	   (KeysHeld & KEY_R)) {
+		s32 enemy = 1;
+		s32 index;
+		s32 id;
 
-    if (gKeysHeld & KEY_SELECT)
-      enemy = 0;
-    for (index = 0;; index++) {
-      if (enemy)
-        id = battle->enemyIds[index];
-      else
-        id = battle->partyUnits[index];
-      if (id == BATTLE_UNIT_LIST_END)
-        break;
-      if (id == BATTLE_UNIT_REMOVED)
-        continue;
-      if (Unit_AddHpFar(id, DEFEAT_HP_CHANGE) == 0) {
-        BattlePlayback_Push(PLAYBACK_HIT, id);
-        BattlePlayback_Push(PLAYBACK_DEFEAT, id);
-      }
-    }
-    BattlePlayback_RunAll();
-    return ACTION_NOTHING_TO_SHOW;
-  }
+		if(KeysHeld & KEY_SELECT)
+			enemy = 0;
+		for(index = 0;; index++) {
+			if(enemy)
+				id = battle->enemyIds[index];
+			else
+				id = battle->partyUnits[index];
+			if(id == BATTLE_UNIT_LIST_END)
+				break;
+			if(id == BATTLE_UNIT_REMOVED)
+				continue;
+			if(gmUnitAddHpStub(id, DEFEAT_HP_CHANGE) == 0) {
+				btPlaybackPush(PLAYBACK_HIT, id);
+				btPlaybackPush(PLAYBACK_DEFEAT, id);
+			}
+		}
+		btPlaybackRunAll();
+		return ACTION_NOTHING_TO_SHOW;
+	}
 
-  // What stops the unit: Ground, sleep, stun, a bound unit's bad luck.
-  MessageArgument_ClearAllFar();
-  if (actor->immobile) {
-    actor->immobile = 0;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgUnableToMove);
-    return ACTION_REPORTED;
-  }
-  if (actor->sleep) {
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgIsAsleep);
-    return ACTION_REPORTED;
-  }
-  if (actor->stun) {
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgIsParalyzed);
-    return ACTION_REPORTED;
-  }
-  // A bound unit (curse bit 0) loses one action in four,
-  // except Defend.
-  if ((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
-      (Battle_RandomFar() & 3) == 0) {
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgIsBound);
-    return ACTION_REPORTED;
-  }
-  if (request->command == COMMAND_NONE)
-    return ACTION_NOTHING_TO_SHOW;
-  abilityId = ABILITY_ATTACK;
-  {
-    s32 index;
+	/* What stops the unit: Ground, sleep, stun, a bound unit's bad luck. */
+	mnMessageArgumentClearAllStub();
+	if(actor->immobile) {
+		actor->immobile = 0;
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnBattleMessageShowAndWaitStub(MsgUnableToMove);
+		return ACTION_REPORTED;
+	}
+	if(actor->sleep) {
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnBattleMessageShowAndWaitStub(MsgIsAsleep);
+		return ACTION_REPORTED;
+	}
+	if(actor->stun) {
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnBattleMessageShowAndWaitStub(MsgIsParalyzed);
+		return ACTION_REPORTED;
+	}
+	/* A bound unit (curse bit 0) loses one action in four, */
+	/* except Defend. */
+	if((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
+	   (btRandomStub() & 3) == 0) {
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnBattleMessageShowAndWaitStub(MsgIsBound);
+		return ACTION_REPORTED;
+	}
+	if(request->command == COMMAND_NONE)
+		return ACTION_NOTHING_TO_SHOW;
+	abilityId = ABILITY_ATTACK;
+	{
+		s32 index;
 
-    for (index = 0; index < BATTLE_TARGET_CAPACITY; index++)
-      plan->targetCritical[index] = 0;
-    for (index = 0; index < BATTLE_TARGET_CAPACITY; index++)
-      plan->targetHit[index] = HIT_NOT_ROLLED;
-  }
+		for(index = 0; index < BATTLE_TARGET_CAPACITY; index++)
+			plan->tgtCritical[index] = 0;
+		for(index = 0; index < BATTLE_TARGET_CAPACITY; index++)
+			plan->tgtHit[index] = HIT_NOT_ROLLED;
+	}
 
-  // The announcement, the ability id and the targets, by command.
-  switch (request->command) {
-  case COMMAND_FLEE:
-    if ((u16)request->unitId <= ALLY_MAX) {
-      BattleMessage_ShowAndWaitFar(MsgPartyFlees);
-    } else {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      BattleMessage_ShowAndWaitFar(MsgActorRuns);
-    }
-    BattleMessage_WaitForAdvance();
-    plan->staging = STAGING_FLEE;
-    return 0;
+	/* The announcement, the ability id and the targets, by command. */
+	switch(request->command) {
+	case COMMAND_FLEE:
+		if((u16)request->unitId <= ALLY_MAX) {
+			mnBattleMessageShowAndWaitStub(MsgPartyFlees);
+		}
+		else {
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnBattleMessageShowAndWaitStub(MsgActorRuns);
+		}
+		btMessageWaitForAdvance();
+		plan->staging = STAGING_FLEE;
+		return 0;
 
-  case COMMAND_ATTACK:
-    // A weapon unleash replaces the action with its ability.
-    abilityId = Equipment_RollUnleashFar(actor);
-    if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
-      return ACTION_REPORTED;
-    if (abilityId != ABILITY_ATTACK) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(Inventory_GetEquippedItemFar(actor, EQUIP_WEAPON),
-                              MESSAGE_ARGUMENT_ITEM);
-      BattleMessage_ShowAndWaitFar(MsgWeaponHowls);
-      BattlePlayback_MarkMessage();
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      BattleMessage_ShowAndWaitFar(MsgWeaponHowls + 1);
-    }
-    break;
+	case COMMAND_ATTACK:
+		/* A weapon unleash replaces the action with its ability. */
+		abilityId = gmEquipmentRollUnleashStub(actor);
+		if(btActionRunSetTargets(abilityId) == ACTION_REPORTED)
+			return ACTION_REPORTED;
+		if(abilityId != ABILITY_ATTACK) {
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnMessageArgumentPushStub(
+				gmInventoryGetEquippedItemStub(actor, EQUIP_WEAPON),
+				MESSAGE_ARGUMENT_ITEM);
+			mnBattleMessageShowAndWaitStub(MsgWeaponHowls);
+			btPlaybackMarkMessage();
+			mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+			mnBattleMessageShowAndWaitStub(MsgWeaponHowls + 1);
+		}
+		break;
 
-  case COMMAND_PSYNERGY: {
-    struct AbilityDefinition *ability;
-    s32 canCast = 1;
+	case COMMAND_PSYNERGY: {
+		ABILITY_DEFINITION *ability;
+		s32 canCast = 1;
 
-    abilityId = request->parameter;
-    ability = Ability_Get(abilityId);
-    if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
-      return ACTION_REPORTED;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-    BattleMessage_ShowAndWaitFar(MsgActorCasts);
-    // Too little PP or a seal fails the cast; only a cast that goes ahead pays.
-    if (actor->pp < ability->ppCost) {
-      plan->failure = ACTION_FAILURE_NO_PP;
-      canCast = 0;
-    }
-    if (actor->psySeal) {
-      plan->failure = ACTION_FAILURE_SEALED;
-      canCast = 0;
-    }
-    if (canCast) {
-      plan->failure = ACTION_FAILURE_NONE;
-      actor->pp -= ability->ppCost;
-      Unit_RecalculateGaugesFar(request->unitId);
-      CLAMP(actor->pp, 0, actor->ppMax);
-    }
-  } break;
+		abilityId = request->prm;
+		ability = mnAbilityGet(abilityId);
+		if(btActionRunSetTargets(abilityId) == ACTION_REPORTED)
+			return ACTION_REPORTED;
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+		mnBattleMessageShowAndWaitStub(MsgActorCasts);
+		/* Too little PP or a seal fails the cast; only a cast that goes ahead
+		 * pays. */
+		if(actor->pp < ability->ppCost) {
+			plan->failure = ACTION_FAILURE_NO_PP;
+			canCast = 0;
+		}
+		if(actor->psySeal) {
+			plan->failure = ACTION_FAILURE_SEALED;
+			canCast = 0;
+		}
+		if(canCast) {
+			plan->failure = ACTION_FAILURE_NONE;
+			actor->pp -= ability->ppCost;
+			gmUnitRecalculateGaugesStub(request->unitId);
+			CLAMP(actor->pp, 0, actor->ppMax);
+		}
+	} break;
 
-  case COMMAND_ITEM: {
-    struct ItemDefinition *item;
+	case COMMAND_ITEM: {
+		ITEM_DEFINITION *item;
 
-    // A slot of -1: an earlier command this turn used the item up
-    // (BattleStaging_RunItem).
-    if (request->parameter < 0) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      BattleMessage_ShowAndWaitFar(MsgItemAlreadyUsed);
-      return ACTION_REPORTED;
-    }
-    // An item with no ability, or a broken one, and the user defends.
-    item = Item_GetDirectFar(actor->inventory[request->parameter]);
-    abilityId = item->abilityId;
-    if (abilityId == 0 ||
-        (actor->inventory[request->parameter] & INVENTORY_BROKEN)) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      BattleMessage_ShowAndWaitFar(MsgActorDefends);
-      if (actor->defendLevel == 0)
-        actor->defendLevel = DEFEND_NORMAL;
-      return ACTION_REPORTED;
-    }
-    if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
-      return ACTION_REPORTED;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(actor->inventory[request->parameter],
-                            MESSAGE_ARGUMENT_ITEM);
-    // An item that is kept is raised ("raises"); anything else is used.
-    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
-      switch (item->type) {
-      case ITEM_TYPE_WEAPON:
-      case ITEM_TYPE_SHIELD:
-      case ITEM_TYPE_PSYNERGY:
-      case ITEM_TYPE_UNUSED:
-      case ITEM_TYPE_RING:
-        BattleMessage_ShowAndWaitFar(MsgActorRaisesItem);
-        break;
-      default:
-        BattleMessage_ShowAndWaitFar(MsgActorUsesBattleItem);
-        break;
-      }
-    } else {
-      BattleMessage_ShowAndWaitFar(MsgActorUsesBattleItem);
-    }
-  } break;
+		/* A slot of -1: an earlier command this turn used the item up */
+		/* (btStagingRunItem). */
+		if(request->prm < 0) {
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnBattleMessageShowAndWaitStub(MsgItemAlreadyUsed);
+			return ACTION_REPORTED;
+		}
+		/* An item with no ability, or a broken one, and the user defends. */
+		item = gmItemGetDirectStub(actor->inventory[request->prm]);
+		abilityId = item->abilityId;
+		if(abilityId == 0 ||
+		   (actor->inventory[request->prm] & INVENTORY_BROKEN)) {
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnBattleMessageShowAndWaitStub(MsgActorDefends);
+			if(actor->defendLevel == 0)
+				actor->defendLevel = DEFEND_NORMAL;
+			return ACTION_REPORTED;
+		}
+		if(btActionRunSetTargets(abilityId) == ACTION_REPORTED)
+			return ACTION_REPORTED;
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnMessageArgumentPushStub(actor->inventory[request->prm],
+								  MESSAGE_ARGUMENT_ITEM);
+		/* An item that is kept is raised ("raises"); anything else is used. */
+		if(item->useType == ITEM_USE_MAY_BREAK ||
+		   item->useType == ITEM_USE_FREE) {
+			switch(item->type) {
+			case ITEM_TYPE_WEAPON:
+			case ITEM_TYPE_SHIELD:
+			case ITEM_TYPE_PSYNERGY:
+			case ITEM_TYPE_UNUSED:
+			case ITEM_TYPE_RING:
+				mnBattleMessageShowAndWaitStub(MsgActorRaisesItem);
+				break;
+			default:
+				mnBattleMessageShowAndWaitStub(MsgActorUsesBattleItem);
+				break;
+			}
+		}
+		else {
+			mnBattleMessageShowAndWaitStub(MsgActorUsesBattleItem);
+		}
+	} break;
 
-  case COMMAND_DEFEND:
-  case COMMAND_TOTAL_DEFENSE:
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgActorDefends);
-    return ACTION_REPORTED;
+	case COMMAND_DEFEND:
+	case COMMAND_TOTAL_DEFENSE:
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnBattleMessageShowAndWaitStub(MsgActorDefends);
+		return ACTION_REPORTED;
 
-  case COMMAND_NONE:
-    return ACTION_NOTHING_TO_SHOW;
+	case COMMAND_NONE:
+		return ACTION_NOTHING_TO_SHOW;
 
-  case COMMAND_ENEMY_ABILITY: {
-    s32 message;
+	case COMMAND_ENEMY_ABILITY: {
+		s32 message;
 
-    abilityId = request->parameter;
-    if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
-      return ACTION_REPORTED;
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-    if ((Ability_Get(abilityId)->flags & ABILITY_FORMULA_MASK) ==
-        ABILITY_FORMULA_ENEMY_DAMAGE)
-      message = MsgActorUnleashesAbility;
-    else
-      message = MsgActorUsesAbility;
-    // Some enemy abilities have their own wording.
-    switch (abilityId) {
-    case ABILITY_SONIC_WAVE:
-    case ABILITY_SONIC_WAVE_STRONG:
-      message = MsgEmitsUltrasonicWaves;
-      break;
-    case ABILITY_HEAT_MIRAGE:
-      message = MsgActorCasts;
-      break;
-    case ABILITY_THREATEN:
-      message = MsgGlowersFerociously;
-      break;
-    case ABILITY_TREMBLE:
-      message = MsgIsIntimidated;
-      break;
-    case ABILITY_CONTAIN:
-      message = MsgBalefulGaze;
-      break;
-    case ABILITY_WORMS:
-      message = MsgEatsWorms;
-      break;
-    case ABILITY_SHRIEK:
-    case ABILITY_BANSHEE_HOWL:
-    case ABILITY_CRAZY_VOICE:
-    case ABILITY_WAR_CRY:
-    case ABILITY_WICKED_HOWL:
-      message = MsgLetsOutAbility;
-      break;
-    case ABILITY_WING_BEAT:
-    case ABILITY_WING_FLUTTER:
-    case ABILITY_WING_STROKE:
-      message = MsgActorUsesAbility;
-      break;
-    case ABILITY_ROTTEN_BLOOD:
-      message = MsgEnemyUnleashesAbility;
-      break;
-    case ABILITY_HEARTRENDER:
-      message = MsgGlowersMiserably;
-      break;
-    case ABILITY_DECOMPOSE:
-      message = MsgSmellOfDecay;
-      break;
-    case ABILITY_BERSERK:
-      message = MsgFuriousRage;
-      break;
-    case ABILITY_SPEED_SURGE:
-      message = MsgAttemptsToDivide;
-      break;
-    case ABILITY_ALLY_SEARCH:
-      message = MsgLooksForAllies;
-      break;
-    case ABILITY_SEARCH_FOR_HELP:
-      message = MsgLooksForHelp;
-      break;
-    }
-    BattleMessage_ShowAndWaitFar(message);
-  } break;
+		abilityId = request->prm;
+		if(btActionRunSetTargets(abilityId) == ACTION_REPORTED)
+			return ACTION_REPORTED;
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+		if((mnAbilityGet(abilityId)->flg & ABILITY_FORMULA_MASK) ==
+		   ABILITY_FORMULA_ENEMY_DAMAGE)
+			message = MsgActorUnleashesAbility;
+		else
+			message = MsgActorUsesAbility;
+		/* Some enemy abilities have their own wording. */
+		switch(abilityId) {
+		case ABILITY_SONIC_WAVE:
+		case ABILITY_SONIC_WAVE_STRONG:
+			message = MsgEmitsUltrasonicWaves;
+			break;
+		case ABILITY_HEAT_MIRAGE:
+			message = MsgActorCasts;
+			break;
+		case ABILITY_THREATEN:
+			message = MsgGlowersFerociously;
+			break;
+		case ABILITY_TREMBLE:
+			message = MsgIsIntimidated;
+			break;
+		case ABILITY_CONTAIN:
+			message = MsgBalefulGaze;
+			break;
+		case ABILITY_WORMS:
+			message = MsgEatsWorms;
+			break;
+		case ABILITY_SHRIEK:
+		case ABILITY_BANSHEE_HOWL:
+		case ABILITY_CRAZY_VOICE:
+		case ABILITY_WAR_CRY:
+		case ABILITY_WICKED_HOWL:
+			message = MsgLetsOutAbility;
+			break;
+		case ABILITY_WING_BEAT:
+		case ABILITY_WING_FLUTTER:
+		case ABILITY_WING_STROKE:
+			message = MsgActorUsesAbility;
+			break;
+		case ABILITY_ROTTEN_BLOOD:
+			message = MsgEnemyUnleashesAbility;
+			break;
+		case ABILITY_HEARTRENDER:
+			message = MsgGlowersMiserably;
+			break;
+		case ABILITY_DECOMPOSE:
+			message = MsgSmellOfDecay;
+			break;
+		case ABILITY_BERSERK:
+			message = MsgFuriousRage;
+			break;
+		case ABILITY_SPEED_SURGE:
+			message = MsgAttemptsToDivide;
+			break;
+		case ABILITY_ALLY_SEARCH:
+			message = MsgLooksForAllies;
+			break;
+		case ABILITY_SEARCH_FOR_HELP:
+			message = MsgLooksForHelp;
+			break;
+		}
+		mnBattleMessageShowAndWaitStub(message);
+	} break;
 
-  case COMMAND_DJINN:
-    // A Djinni on standby that has recovered is set again, and nothing else
-    // happens; one still recovering says so. A set Djinni is unleashed.
-    abilityId = Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(request->parameter),
-                                      DJINN_COMMAND_INDEX(request->parameter));
-    if (!Djinn_IsSetFar(request->unitId,
-                        DJINN_COMMAND_ELEMENT(request->parameter),
-                        DJINN_COMMAND_INDEX(request->parameter))) {
-      if (Djinn_CanSetFar(request->unitId,
-                          DJINN_COMMAND_ELEMENT(request->parameter),
-                          DJINN_COMMAND_INDEX(request->parameter))) {
-        Ability_Get(abilityId);
-        BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
-        Djinn_SetFar(request->unitId, DJINN_COMMAND_ELEMENT(request->parameter),
-                     DJINN_COMMAND_INDEX(request->parameter));
-        DjinnRecovery_RemoveFar(request->unitId,
-                                DJINN_COMMAND_ELEMENT(request->parameter),
-                                DJINN_COMMAND_INDEX(request->parameter));
-        Unit_CalculateFar(request->unitId);
-        BattlePlayback_Reset();
-        BattlePlayback_SchedulePhase(30);
-        BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
-        BattlePlayback_Push(
-            PLAYBACK_ABILITY_NAME,
-            DJINN_COMMAND_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                DJINN_COMMAND_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
-        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
-        BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
-        BattlePlayback_Push(PLAYBACK_MESSAGE, MsgDjinnSet);
-        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
-        Sound_PlayFar(SE_POWER_UP);
-        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->actor,
-                                 POSE_CAST);
-        Actor_SetAnimationSpeedFar(BattleObject_Get(request->unitId)->actor,
-                                   ANIM_STEP_NORMAL * 2);
-        ElementGlow_Play(request->unitId,
-                         DJINN_COMMAND_ELEMENT(request->parameter), GLOW_BURST,
-                         0);
-        BattlePlayback_WaitForReady();
-        return ACTION_NOTHING_TO_SHOW;
-      }
-      // Recovering.
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      Sound_PlayFar(SE_MENU_ERROR);
-      BattleMessage_ShowAndWaitFar(MsgDjinnInRecovery);
-      wait(60);
-      return ACTION_REPORTED;
-    }
-    // Unleash the set Djinni; it goes on standby.
-    {
-      struct AbilityDefinition *ability;
+	case COMMAND_DJINN:
+		/* A Djinni on standby that has recovered is set again, and nothing else
+		 */
+		/* happens; one still recovering says so. A set Djinni is unleashed. */
+		abilityId = gmDjinnGetAbilityIdStub(DJINN_COMMAND_ELEMENT(request->prm),
+											DJINN_COMMAND_INDEX(request->prm));
+		if(!gmDjinnIsSetStub(request->unitId,
+							 DJINN_COMMAND_ELEMENT(request->prm),
+							 DJINN_COMMAND_INDEX(request->prm))) {
+			if(gmDjinnCanSetStub(request->unitId,
+								 DJINN_COMMAND_ELEMENT(request->prm),
+								 DJINN_COMMAND_INDEX(request->prm))) {
+				mnAbilityGet(abilityId);
+				btHighlightSetModes(0, HIGHLIGHT_OFF);
+				gmDjinnSetStub(request->unitId,
+							   DJINN_COMMAND_ELEMENT(request->prm),
+							   DJINN_COMMAND_INDEX(request->prm));
+				btDjinnRecoveryRemoveStub(request->unitId,
+										  DJINN_COMMAND_ELEMENT(request->prm),
+										  DJINN_COMMAND_INDEX(request->prm));
+				gmUnitCalcStub(request->unitId);
+				btPlaybackReset();
+				btPlaybackSchedulePhase(30);
+				btPlaybackPush(PLAYBACK_UNIT_NAME, request->unitId);
+				btPlaybackPush(PLAYBACK_ABILITY_NAME,
+							   DJINN_COMMAND_ELEMENT(request->prm) *
+									   DJINN_PER_ELEMENT +
+								   DJINN_COMMAND_INDEX(request->prm) +
+								   ABILITY_DJINNI_FIRST);
+				btPlaybackPush(PLAYBACK_SOUND, SE_NOTE_HIGH);
+				btPlaybackPush(PLAYBACK_DRAW_STATUS, 0);
+				btPlaybackPush(PLAYBACK_MESSAGE, MsgDjinnSet);
+				btPlaybackPush(PLAYBACK_REFRESH_UNIT, request->unitId);
+				sySndPlayStub(SE_POWER_UP);
+				fdActorSelectAnimationStub(btObjectGet(request->unitId)->actor,
+										   POSE_CAST);
+				fdActorSetAnimationSpeedStub(
+					btObjectGet(request->unitId)->actor, ANIM_STEP_NORMAL * 2);
+				btElementGlowPlay(request->unitId,
+								  DJINN_COMMAND_ELEMENT(request->prm),
+								  GLOW_BURST, 0);
+				btPlaybackWaitForReady();
+				return ACTION_NOTHING_TO_SHOW;
+			}
+			/* Recovering. */
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+			sySndPlayStub(SE_MENU_ERROR);
+			mnBattleMessageShowAndWaitStub(MsgDjinnInRecovery);
+			sySynch(60);
+			return ACTION_REPORTED;
+		}
+		/* Unleash the set Djinni; it goes on standby. */
+		{
+			ABILITY_DEFINITION *ability;
 
-      if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
-        return ACTION_REPORTED;
-      DjinnRecovery_AddStandbyFar(request->unitId,
-                                  DJINN_COMMAND_ELEMENT(request->parameter),
-                                  DJINN_COMMAND_INDEX(request->parameter));
-      ability = Ability_Get(abilityId);
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      BattleMessage_ShowAndWaitFar(MsgActorUnleashesDjinn);
-      plan->element = ability->element;
-    }
-    break;
+			if(btActionRunSetTargets(abilityId) == ACTION_REPORTED)
+				return ACTION_REPORTED;
+			btDjinnRecoveryAddStandbyStub(request->unitId,
+										  DJINN_COMMAND_ELEMENT(request->prm),
+										  DJINN_COMMAND_INDEX(request->prm));
+			ability = mnAbilityGet(abilityId);
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+			mnBattleMessageShowAndWaitStub(MsgActorUnleashesDjinn);
+			plan->element = ability->element;
+		}
+		break;
 
-  case COMMAND_SUMMON: {
-    const struct SummonDefinition *summon;
-    struct DjinnRecoveryList *list;
-    s32 side;
-    u8 counts[ELEMENT_COUNT];
-    /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
-     * touches. */
-    UNUSED u8 unused[8];
-    s32 index;
+	case COMMAND_SUMMON: {
+		const SUMMON_DEFINITION *summon;
+		DJINN_RECOVERY_LIST *list;
+		s32 side;
+		u8 counts[ELEMENT_COUNT];
+		/* LEFTOVER(frame): an unused local the ROM's frame reserves and never
+		 * touches. */
+		UNUSED u8 unused[8];
+		s32 index;
 
-    // Enough Djinn of each element on standby?
-    summon = SummonDefinition_Get(request->parameter);
-    BattleDjinn_CountStandby(request->unitId, counts);
-    side = DJINN_RECOVERY_PARTY;
-    if ((u16)request->unitId > ALLY_MAX)
-      side = DJINN_RECOVERY_OPPONENT;
-    list = &Djinn_GetRecoveryTableFar(side)->list;
-    for (index = 0;
-         index < ELEMENT_COUNT && counts[index] >= summon->djinnRequired[index];
-         index++)
-      counts[index] = summon->djinnRequired[index];
-    abilityId = summon->abilityId;
-    if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
-      return ACTION_REPORTED;
-    if (index != ELEMENT_COUNT) {
-      MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-      BattleMessage_ShowAndWaitFar(MsgSummonLacksDjinn);
-      return ACTION_REPORTED;
-    }
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
-    BattleMessage_ShowAndWaitFar(MsgActorSummons);
-    // Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
-    // found of each element, from units in the formation.
-    for (index = 0; index != list->count; index++) {
-      struct DjinnRecoveryEntry *entry = &list->entries[index];
+		/* Enough Djinn of each element on standby? */
+		summon = gmSummonDefinitionGet(request->prm);
+		btDjinnCountStandby(request->unitId, counts);
+		side = DJINN_RECOVERY_PARTY;
+		if((u16)request->unitId > ALLY_MAX)
+			side = DJINN_RECOVERY_OPPONENT;
+		list = &gmDjinnGetRecoveryTableStub(side)->list;
+		for(index = 0; index < ELEMENT_COUNT &&
+					   counts[index] >= summon->djinnRequired[index];
+			index++)
+			counts[index] = summon->djinnRequired[index];
+		abilityId = summon->abilityId;
+		if(btActionRunSetTargets(abilityId) == ACTION_REPORTED)
+			return ACTION_REPORTED;
+		if(index != ELEMENT_COUNT) {
+			mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+			mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+			mnBattleMessageShowAndWaitStub(MsgSummonLacksDjinn);
+			return ACTION_REPORTED;
+		}
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnMessageArgumentPushStub(abilityId, MESSAGE_ARGUMENT_ABILITY);
+		mnBattleMessageShowAndWaitStub(MsgActorSummons);
+		/* Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
+		 */
+		/* found of each element, from units in the formation. */
+		for(index = 0; index != list->cnt; index++) {
+			DJINN_RECOVERY_ENTRY *entry = &list->entries[index];
 
-      if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
-          BattleUnit_IsListed(entry->unitId) && counts[entry->element] != 0) {
-        entry->turns = DJINN_RECOVERY_SUMMONED;
-        counts[entry->element]--;
-      }
-    }
-  } break;
-  }
+			if(entry->turns == DJINN_RECOVERY_AFTER_BATTLE &&
+			   btUnitIsListed(entry->unitId) && counts[entry->element] != 0) {
+				entry->turns = DJINN_RECOVERY_SUMMONED;
+				counts[entry->element]--;
+			}
+		}
+	} break;
+	}
 
-  // A normal attack.
-  if (abilityId == ABILITY_ATTACK) {
-    struct Unit *target = Unit_GetFar(plan->targetIds[0]);
+	/* A normal attack. */
+	if(abilityId == ABILITY_ATTACK) {
+		UNIT *target = gmUnitGetStub(plan->tgtIds[0]);
 
-    plan->abilityId = ABILITY_ATTACK;
-    plan->element = Unit_GetAttackElementFar(request->unitId);
-    plan->staging = STAGING_ATTACK;
-    // An enemy's attack effect comes from its battle sprite's row; a party
-    // member's from who it is.
-    if (actor->classId == CLASS_NONE) {
-      plan->battleEffect =
-          BattleSprite_GetAttackEffect(actor->id) | EFFECT_BY_ID_RANGE;
-    } else {
-      plan->battleEffect = 0;
-      switch (actor->id) {
-      case ISAAC:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
-        break;
-      case GARET:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
-        break;
-      case IVAN:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_WAVE;
-        break;
-      case MIA:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_WAVE;
-        break;
-      case JENNA:
-        plan->battleEffect = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
-        break;
-      }
-    }
-    MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
-    BattleMessage_ShowAndWaitFar(MsgActorAttacks);
-    // A deluded attacker misses 153 times in 256, and any attack 1 in 32; a
-    // target that cannot move is never missed, and in the Djinn tutorial the
-    // attack always misses.
-    do {
-      if (target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
-          target->immobile != 0 || target->charm != 0)
-        break;
-      if (actor->delusion != 0 &&
-          (Battle_RandomFar() & 255) < CHANCE_DELUDED_MISS)
-        plan->targetMultiplier[0] = 0;
-      if ((Battle_RandomFar() & 31) == 0)
-        plan->targetMultiplier[0] = 0;
-    } while (0);
-    if (GameFlag_GetFar(FLAG_DJINN_LESSON))
-      plan->targetMultiplier[0] = 0;
-    // Critical hit: one chance in 32, or else the equipment's unleash bonus
-    // in 200ths, against a 16-bit roll.
-    if (target->hp != 0) {
-      if ((Battle_RandomFar() & 31) == 0)
-        plan->targetCritical[0] = CRITICAL_HIT;
-      else if (toFIXED(Equipment_GetUnleashRateBonusFar(actor)) / 200 >
-               (Battle_RandomFar() & 0xffff))
-        plan->targetCritical[0] = CRITICAL_HIT;
-    }
-  }
+		plan->abilityId = ABILITY_ATTACK;
+		plan->element = gmUnitGetAttackElementStub(request->unitId);
+		plan->staging = STAGING_ATTACK;
+		/* An enemy's attack effect comes from its battle sprite's row; a party
+		 */
+		/* member's from who it is. */
+		if(actor->classId == CLASS_NONE) {
+			plan->battleEff =
+				btSprGetAttackEffect(actor->id) | EFFECT_BY_ID_RANGE;
+		}
+		else {
+			plan->battleEff = 0;
+			switch(actor->id) {
+			case ISAAC:
+				plan->battleEff = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
+				break;
+			case GARET:
+				plan->battleEff = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
+				break;
+			case IVAN:
+				plan->battleEff = EFFECT_BY_ID_RANGE | ATTACK_BEAM_WAVE;
+				break;
+			case MIA:
+				plan->battleEff = EFFECT_BY_ID_RANGE | ATTACK_BEAM_WAVE;
+				break;
+			case JENNA:
+				plan->battleEff = EFFECT_BY_ID_RANGE | ATTACK_BEAM_SLASH;
+				break;
+			}
+		}
+		mnMessageArgumentPushStub(request->unitId, MESSAGE_ARGUMENT_ACTOR);
+		mnBattleMessageShowAndWaitStub(MsgActorAttacks);
+		/* A deluded attacker misses 153 times in 256, and any attack 1 in 32; a
+		 */
+		/* target that cannot move is never missed, and in the Djinn tutorial
+		 * the */
+		/* attack always misses. */
+		do {
+			if(target->hp == 0 || target->sleep != 0 || target->stun != 0 ||
+			   target->immobile != 0 || target->charm != 0)
+				break;
+			if(actor->delusion != 0 &&
+			   (btRandomStub() & 255) < CHANCE_DELUDED_MISS)
+				plan->tgtMultiplier[0] = 0;
+			if((btRandomStub() & 31) == 0)
+				plan->tgtMultiplier[0] = 0;
+		} while(0);
+		if(gmFlagGetStub(FLAG_DJINN_LESSON))
+			plan->tgtMultiplier[0] = 0;
+		/* Critical hit: one chance in 32, or else the equipment's unleash bonus
+		 */
+		/* in 200ths, against a 16-bit roll. */
+		if(target->hp != 0) {
+			if((btRandomStub() & 31) == 0)
+				plan->tgtCritical[0] = CRITICAL_HIT;
+			else if(toFIXED(gmEquipmentGetUnleashRateBonusStub(actor)) / 200 >
+					(btRandomStub() & 0xffff))
+				plan->tgtCritical[0] = CRITICAL_HIT;
+		}
+	}
 
-  // An ability.
-  else {
-    struct AbilityDefinition *ability = Ability_Get(abilityId);
+	/* An ability. */
+	else {
+		ABILITY_DEFINITION *ability = mnAbilityGet(abilityId);
 
-    plan->element = ability->element;
-    plan->battleEffect = 0;
-    plan->abilityId = abilityId;
-    if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY) {
-      // A double or triple blow on every target at its chance, the multiplier
-      // rising by 1 or 2.
-      s32 chance;
-      s32 amount;
+		plan->element = ability->element;
+		plan->battleEff = 0;
+		plan->abilityId = abilityId;
+		if(ability->eff == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+		   ability->eff == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+		   ability->eff == ABILITY_EFFECT_DOUBLE_BLOW ||
+		   ability->eff == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
+		   ability->eff == ABILITY_EFFECT_TRIPLE_BLOW ||
+		   ability->eff == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY) {
+			/* A double or triple blow on every target at its chance, the
+			 * multiplier */
+			/* rising by 1 or 2. */
+			s32 chance;
+			s32 amount;
 
-      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
-          ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY)
-        chance = CHANCE_BLOW_LIKELY;
-      else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
-               ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
-        chance = CHANCE_BLOW_RARE;
-      else
-        chance = CHANCE_BLOW;
-      if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
-          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
-          ability->effect == ABILITY_EFFECT_DOUBLE_BLOW)
-        amount = 1;
-      else
-        amount = 2;
-      if ((Battle_RandomFar() & 255) < chance) {
-        s32 index;
+			if(ability->eff == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+			   ability->eff == ABILITY_EFFECT_TRIPLE_BLOW_LIKELY)
+				chance = CHANCE_BLOW_LIKELY;
+			else if(ability->eff == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+					ability->eff == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
+				chance = CHANCE_BLOW_RARE;
+			else
+				chance = CHANCE_BLOW;
+			if(ability->eff == ABILITY_EFFECT_DOUBLE_BLOW_LIKELY ||
+			   ability->eff == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+			   ability->eff == ABILITY_EFFECT_DOUBLE_BLOW)
+				amount = 1;
+			else
+				amount = 2;
+			if((btRandomStub() & 255) < chance) {
+				s32 index;
 
-        for (index = 0; index < plan->targetCount; index++)
-          plan->targetMultiplier[index] += amount;
-      }
-    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_A &&
-               ability->effect <= ABILITY_EFFECT_CRITICAL_E) {
-      // An ability's critical hit on every target, 1 in 64 to 1 in 4.
-      s32 mask;
+				for(index = 0; index < plan->tgtCnt; index++)
+					plan->tgtMultiplier[index] += amount;
+			}
+		}
+		else if(ability->eff >= ABILITY_EFFECT_CRITICAL_A &&
+				ability->eff <= ABILITY_EFFECT_CRITICAL_E) {
+			/* An ability's critical hit on every target, 1 in 64 to 1 in 4. */
+			s32 mask;
 
-      switch (ability->effect) {
-      case ABILITY_EFFECT_CRITICAL_A:
-        mask = 64 - 1;
-        break;
-      case ABILITY_EFFECT_CRITICAL_B:
-        mask = 32 - 1;
-        break;
-      case ABILITY_EFFECT_CRITICAL_C:
-        mask = 16 - 1;
-        break;
-      case ABILITY_EFFECT_CRITICAL_D:
-        mask = 8 - 1;
-        break;
-      case ABILITY_EFFECT_CRITICAL_E:
-      default:
-        mask = 4 - 1;
-        break;
-      }
-      if ((Battle_RandomFar() & mask) == 0) {
-        s32 index;
+			switch(ability->eff) {
+			case ABILITY_EFFECT_CRITICAL_A:
+				mask = 64 - 1;
+				break;
+			case ABILITY_EFFECT_CRITICAL_B:
+				mask = 32 - 1;
+				break;
+			case ABILITY_EFFECT_CRITICAL_C:
+				mask = 16 - 1;
+				break;
+			case ABILITY_EFFECT_CRITICAL_D:
+				mask = 8 - 1;
+				break;
+			case ABILITY_EFFECT_CRITICAL_E:
+			default:
+				mask = 4 - 1;
+				break;
+			}
+			if((btRandomStub() & mask) == 0) {
+				s32 index;
 
-        for (index = 0; index < plan->targetCount; index++)
-          plan->targetCritical[index] = CRITICAL_STRONG;
-      }
-    } else if (abilityId == ABILITY_ANNIHILATION) {
-      // Annihilation rolls its hit now, at full rate whatever the distance,
-      // so that the effect can show it (the variant below).
-      s32 index;
+				for(index = 0; index < plan->tgtCnt; index++)
+					plan->tgtCritical[index] = CRITICAL_STRONG;
+			}
+		}
+		else if(abilityId == ABILITY_ANNIHILATION) {
+			/* Annihilation rolls its hit now, at full rate whatever the
+			 * distance, */
+			/* so that the effect can show it (the variant below). */
+			s32 index;
 
-      for (index = 0; index < plan->targetCount; index++)
-        plan->targetHit[index] = Battle_RollEffectSuccessFar(
-            request->unitId, plan->targetIds[index], ability->element,
-            ability->effect, EFFECT_CHANCE_FULL);
-    }
-    // How it is staged: the ability's battle effect, stronger for a double or
-    // triple blow, and its staging.
-    if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
-      plan->battleEffect = gAbilityBattleEffects[abilityId];
-      if (plan->targetMultiplier[0] > 1)
-        plan->battleEffect =
-            gAbilityBattleEffects[abilityId] +
-            (plan->targetMultiplier[0] << EFFECT_VARIANT_SHIFT) -
-            (1 << EFFECT_VARIANT_SHIFT);
-    }
-    if ((abilityId >= 0 && abilityId <= ABILITY_SEVERE_BLOW) &&
-        gAbilityStaging[abilityId] != 0)
-      plan->staging = gAbilityStaging[abilityId];
-    else if (Ability_IsPsynergy(abilityId))
-      plan->staging = STAGING_CAST;
-    else if (plan->battleEffect != 0) {
-      if (actor->classId == CLASS_NONE)
-        plan->staging = STAGING_ENEMY_CAST;
-      else
-        plan->staging = STAGING_CAST;
-    } else
-      plan->staging = STAGING_MESSAGES;
-    if (Battle_IsReviveEffectFar(ability->effect))
-      plan->battleEffect |= EFFECT_ON_DOWNED;
-    // When Annihilation's instant death lands on its first target, the burst
-    // shows its second picture.
-    if (abilityId == ABILITY_ANNIHILATION && plan->targetHit[0] != 0)
-      plan->battleEffect |= 1 << EFFECT_VARIANT_SHIFT;
-  }
-  // An item is staged as an item, unless its ability takes the whole screen.
-  if (request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&
-      plan->staging != STAGING_FULL_SCREEN)
-    plan->staging = STAGING_ITEM;
-  plan->command = request->command;
-  return 0;
+			for(index = 0; index < plan->tgtCnt; index++)
+				plan->tgtHit[index] = btRollEffectSuccessStub(
+					request->unitId, plan->tgtIds[index], ability->element,
+					ability->eff, EFFECT_CHANCE_FULL);
+		}
+		/* How it is staged: the ability's battle effect, stronger for a double
+		 * or */
+		/* triple blow, and its staging. */
+		if(abilityId >= 0 && abilityId <= ABILITY_THRASH) {
+			plan->battleEff = AbilityBattleEffects[abilityId];
+			if(plan->tgtMultiplier[0] > 1)
+				plan->battleEff =
+					AbilityBattleEffects[abilityId] +
+					(plan->tgtMultiplier[0] << EFFECT_VARIANT_SHIFT) -
+					(1 << EFFECT_VARIANT_SHIFT);
+		}
+		if((abilityId >= 0 && abilityId <= ABILITY_SEVERE_BLOW) &&
+		   AbilityStaging[abilityId] != 0)
+			plan->staging = AbilityStaging[abilityId];
+		else if(btAbilityIsPsynergy(abilityId))
+			plan->staging = STAGING_CAST;
+		else if(plan->battleEff != 0) {
+			if(actor->classId == CLASS_NONE)
+				plan->staging = STAGING_ENEMY_CAST;
+			else
+				plan->staging = STAGING_CAST;
+		}
+		else
+			plan->staging = STAGING_MESSAGES;
+		if(btIsReviveEffectStub(ability->eff))
+			plan->battleEff |= EFFECT_ON_DOWNED;
+		/* When Annihilation's instant death lands on its first target, the
+		 * burst */
+		/* shows its second picture. */
+		if(abilityId == ABILITY_ANNIHILATION && plan->tgtHit[0] != 0)
+			plan->battleEff |= 1 << EFFECT_VARIANT_SHIFT;
+	}
+	/* An item is staged as an item, unless its ability takes the whole screen.
+	 */
+	if(request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&
+	   plan->staging != STAGING_FULL_SCREEN)
+		plan->staging = STAGING_ITEM;
+	plan->command = request->command;
+	return 0;
 }

@@ -1,13 +1,13 @@
-/// @file
-/// The script of a ripple widening on the water over an actor
-/// (Actor_EmitRipples), which the Apojii Islands' and Aqua Rock's overlays keep
-/// a copy of.
+/* @file */
+/* The script of a ripple widening on the water over an actor */
+/* (fdActorEmitRipples), which the Apojii Islands' and Aqua Rock's overlays */
+/* keep a copy of. */
 
-/// A ripple rises a quarter of a pixel a frame for 31 frames, then is
-/// released.
-u32 gRippleScript[] = {
-    SC_ADD(SW_Y, toFIXED(1) / 4),
-    SC_WAIT(1),
-    SC_LOOP(30, SC_TOP),
-    SC_RELEASE,
+/* A ripple rises a quarter of a pixel a frame for 31 frames, then is */
+/* released. */
+u32 RippleScript[] = {
+	SC_ADD(SW_Y, toFIXED(1) / 4),
+	SC_WAIT(1),
+	SC_LOOP(30, SC_TOP),
+	SC_RELEASE,
 };

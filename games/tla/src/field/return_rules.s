@@ -1,7 +1,7 @@
 	.include "games/tla/src/field/facing.inc"
 
 @ Where the party restarts after a defeat and where the ship waits
-@ (gScene_ReturnRules), eight halfwords a row as Scene_SetRestartPoint and
+@ (Scene_ReturnRules), eight halfwords a row as scSetRestartPoint and
 @ the World Map's return read them: the scene and entrance (-1 for any) it
 @ matches, the scene and entrance the party restarts at after a defeat, the
 @ ship's position in pixels (x, z) and its facing, a word whose halves are the
@@ -13,8 +13,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gScene_ReturnRules
-gScene_ReturnRules:
+	.global Scene_ReturnRules
+Scene_ReturnRules:
 	return_rule Idejima, -1, Idejima, 2, 0, 0, FACING_NORTH
 	return_rule DailaFlooded, -1, DailaRoomsSanctum, 1, 10085, 8126, FACING_SOUTH
 	return_rule Daila, -1, DailaRoomsSanctum, 1, 10085, 8126, FACING_SOUTH

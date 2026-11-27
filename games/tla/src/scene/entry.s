@@ -1,11 +1,11 @@
 .syntax unified
 	.thumb
-	.include "games/tla/src/gamepak/far_call/veneer.s"
+	.include "games/tla/src/system/stub.s"
 	.balign 4
-	overlay_veneer Scene_Initialize
-	overlay_veneer Scene_GetEntrances
-	overlay_veneer Scene_GetExits
-	overlay_veneer Scene_GetActorPlacements
-	overlay_veneer Scene_GetTriggers
-	overlay_veneer Scene_GetExitRegions
-	overlay_veneer Scene_PrepareMap
+	unnamed_stub scInit
+	unnamed_stub scGetEntrances
+	unnamed_stub scGetExits
+	unnamed_stub scGetActorPlacements
+	unnamed_stub scGetTriggers
+	unnamed_stub scGetExitRegions
+	unnamed_stub scPrepareMap

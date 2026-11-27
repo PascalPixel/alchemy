@@ -1,16 +1,16 @@
-/// Leaves a small spark where an orbiting one is, released after 6 frames
-/// (gOrbitSpark_Script): the orbit's trail.
-void OrbitSpark_Spawn(struct Orbiter *source) {
-  struct Actor *spark =
-      FieldActor_Create(SPRITE_PARTICLE, source->x, source->y, source->z);
+/* Leaves a small spark where an orbiting one is, released after 6 frames */
+/* (OrbitSpark_Script): the orbit's trail. */
+void syOrbitSparkSpawn(ORBITER *source) {
+	ACTOR *spark =
+		scFieldActorCreate(SPRITE_PARTICLE, source->x, source->y, source->z);
 
-  spark->scaleY = FIXED_ONE * 2 / 5;
-  spark->scaleX = FIXED_ONE * 2 / 5;
-  spark->motionFlags = 0;
-  FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RBG);
-  Scene_SetActorSpritePriority(spark, 1);
-  Actor_SelectAnimation(spark, 1);
-  Actor_SetSpriteFlags(spark, 0);
-  Actor_SetBlendMode(spark, 1);
-  Actor_StartScript(spark, gOrbitSpark_Script);
+	spark->scaleY = FIXED_ONE * 2 / 5;
+	spark->scaleX = FIXED_ONE * 2 / 5;
+	spark->motionFlg = 0;
+	scFieldActorSetSprCol(spark, SPRITE_COLOR_RBG);
+	scSetActorSprPriority(spark, 1);
+	fdActorSelectAnimation(spark, 1);
+	fdActorSetSprFlags(spark, 0);
+	fdActorSetBlendMode(spark, 1);
+	fdActorStartScript(spark, OrbitSpark_Script);
 }

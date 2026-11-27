@@ -1,62 +1,62 @@
-/// @file
-/// Window text tables: each edition's articles and possessives, the kana
-/// marks and the sprite motion curves.
+/* @file */
+/* Window text tables: each edition's articles and possessives, the kana */
+/* marks and the sprite motion curves. */
 
 #include "window/text_font.h"
 
-// Articles and possessives, by edition.
+/* Articles and possessives, by edition. */
 
 #if LANGUAGE == LANGUAGE_GERMAN
 
-const s8 gArticle_Empty[] = "";
+const s8 Article_Empty[] = "";
 
 static const s8 sArticleEin[] = "ein ";
 static const s8 sArticleEine[] = "eine ";
 static const s8 sArticleDie[] = "die ";
 static const s8 sArticleDas[] = "das ";
 
-/// The article of each article class.
-const s8 *const gArticle_Table[8] = {
-    gArticle_Empty, sArticleEin,    sArticleEine,   sArticleDie,
-    sArticleDas,    gArticle_Empty, gArticle_Empty, gArticle_Empty,
+/* The article of each article class. */
+const s8 *const Article_Table[8] = {
+	Article_Empty, sArticleEin,	  sArticleEine,	 sArticleDie,
+	sArticleDas,   Article_Empty, Article_Empty, Article_Empty,
 };
 
-/// Counted nouns, each plural before its singular; gLocalizedWord_CountedNouns
-/// (window/counted_nouns.c) pairs them as {singular, plural}.
-const u8 gLocalizedWord_Battles[] = "K\xe4pfe";
-const u8 gLocalizedWord_Battle[] = "Kampf";
-const u8 gLocalizedWord_Tickets[] = "Tickets";
-const u8 gLocalizedWord_Ticket[] = "Ticket";
-const u8 gLocalizedWord_Rounds[] = "Runden";
-const u8 gLocalizedWord_Round[] = "Runde";
-const u8 gLocalizedWord_Coins[] = "M\xfcnzen";
-const u8 gLocalizedWord_Coin[] = "M\xfcnze";
-const u8 gLocalizedWord_Points[] = "Punkte";
-const u8 gLocalizedWord_Point[] = "Punkt";
+/* Counted nouns, each plural before its singular; LocalizedWord_CountedNouns */
+/* (window/counted_nouns.c) pairs them as {singular, plural}. */
+const u8 LocalizedWord_Battles[] = "K\xe4pfe";
+const u8 LocalizedWord_Battle[] = "Kampf";
+const u8 LocalizedWord_Tickets[] = "Tickets";
+const u8 LocalizedWord_Ticket[] = "Ticket";
+const u8 LocalizedWord_Rounds[] = "Runden";
+const u8 LocalizedWord_Round[] = "Runde";
+const u8 LocalizedWord_Coins[] = "M\xfcnzen";
+const u8 LocalizedWord_Coin[] = "M\xfcnze";
+const u8 LocalizedWord_Points[] = "Punkte";
+const u8 LocalizedWord_Point[] = "Punkt";
 
 static const s8 sPossessiveDein[] = "dein ";
 static const s8 sPossessiveDeine[] = "deine ";
 
-/// The possessive ("your") for each item gender (gLocalizedWord_ItemGenders).
-const s8 *const gLocalizedWord_ItemPossessives[4] = {
-    sPossessiveDein,
-    sPossessiveDeine,
-    sPossessiveDein,
-    gArticle_Empty,
+/* The possessive ("your") for each item gender (LocalizedWord_ItemGenders). */
+const s8 *const LocalizedWord_ItemPossessives[4] = {
+	sPossessiveDein,
+	sPossessiveDeine,
+	sPossessiveDein,
+	Article_Empty,
 };
 
 #elif LANGUAGE == LANGUAGE_SPANISH
 
-const s8 gArticle_Empty[] = "";
+const s8 Article_Empty[] = "";
 
 static const s8 sArticleEl[] = "el ";
 static const s8 sArticleLa[] = "la ";
 static const s8 sArticleLos[] = "los ";
 static const s8 sArticleLas[] = "las ";
 
-/// The definite article of each article class.
-const s8 *const gArticle_Table[5] = {
-    gArticle_Empty, sArticleEl, sArticleLa, sArticleLos, sArticleLas,
+/* The definite article of each article class. */
+const s8 *const Article_Table[5] = {
+	Article_Empty, sArticleEl, sArticleLa, sArticleLos, sArticleLas,
 };
 
 static const s8 sArticleUn[] = "un ";
@@ -64,23 +64,23 @@ static const s8 sArticleUna[] = "una ";
 static const s8 sArticleUnos[] = "unos ";
 static const s8 sArticleUnas[] = "unas ";
 
-/// The indefinite article of each article class.
-const s8 *const gArticle_Indefinite[5] = {
-    gArticle_Empty, sArticleUn, sArticleUna, sArticleUnos, sArticleUnas,
+/* The indefinite article of each article class. */
+const s8 *const Article_Indefinite[5] = {
+	Article_Empty, sArticleUn, sArticleUna, sArticleUnos, sArticleUnas,
 };
 
 static const s8 sPossessiveTu[] = "tu ";
 static const s8 sPossessiveTus[] = "tus ";
 
-/// The possessive ("your") for {singular, plural}.
-const s8 *const gLocalizedWord_ItemPossessives[2] = {
-    sPossessiveTu,
-    sPossessiveTus,
+/* The possessive ("your") for {singular, plural}. */
+const s8 *const LocalizedWord_ItemPossessives[2] = {
+	sPossessiveTu,
+	sPossessiveTus,
 };
 
 #elif LANGUAGE == LANGUAGE_FRENCH
 
-const s8 gArticle_Empty[] = "";
+const s8 Article_Empty[] = "";
 
 static const s8 sArticleLe[] = "le ";
 static const s8 sArticleLa[] = "la ";
@@ -90,17 +90,17 @@ static const s8 sArticleUn[] = "un ";
 static const s8 sArticleUne[] = "une ";
 static const s8 sArticleDes[] = "des ";
 
-/// The article of each article class.
-const s8 *const gArticle_Table[8] = {
-    gArticle_Empty, sArticleLe, sArticleLa,  sArticleL,
-    sArticleLes,    sArticleUn, sArticleUne, sArticleDes,
+/* The article of each article class. */
+const s8 *const Article_Table[8] = {
+	Article_Empty, sArticleLe, sArticleLa,	sArticleL,
+	sArticleLes,   sArticleUn, sArticleUne, sArticleDes,
 };
 
-const s8 gLocalizedWord_ItemPronoun[] = "vous ";
+const s8 LocalizedWord_ItemPronoun[] = "vous ";
 
 #elif LANGUAGE == LANGUAGE_ITALIAN
 
-const s8 gArticle_Empty[] = "";
+const s8 Article_Empty[] = "";
 
 static const s8 sArticleIl[] = "il ";
 static const s8 sArticleL[] = "l' ";
@@ -113,46 +113,46 @@ static const s8 sArticleUnElided[] = "un' ";
 static const s8 sArticleUno[] = "uno ";
 static const s8 sArticleUna[] = "una ";
 
-/// The article of each article class.
-const s8 *const gArticle_Table[11] = {
-    gArticle_Empty,   sArticleIl,  sArticleL,   sArticleLa,
-    sArticleLo,       sArticleLe,  sArticleGli, sArticleUn,
-    sArticleUnElided, sArticleUno, sArticleUna,
+/* The article of each article class. */
+const s8 *const Article_Table[11] = {
+	Article_Empty,	  sArticleIl,  sArticleL,	sArticleLa,
+	sArticleLo,		  sArticleLe,  sArticleGli, sArticleUn,
+	sArticleUnElided, sArticleUno, sArticleUna,
 };
 
 static const s8 sPossessiveIlTuo[] = "Il tuo ";
 static const s8 sPossessiveLaTua[] = "la tua ";
 
-/// The possessive ("your") for each item gender (gLocalizedWord_ItemGenders).
-const s8 *const gLocalizedWord_ItemPossessives[4] = {
-    sPossessiveIlTuo,
-    sPossessiveLaTua,
-    sPossessiveIlTuo,
-    gArticle_Empty,
+/* The possessive ("your") for each item gender (LocalizedWord_ItemGenders). */
+const s8 *const LocalizedWord_ItemPossessives[4] = {
+	sPossessiveIlTuo,
+	sPossessiveLaTua,
+	sPossessiveIlTuo,
+	Article_Empty,
 };
 
 #elif LANGUAGE != LANGUAGE_JAPANESE
 
-const s8 gArticle_Empty[] = "";
+const s8 Article_Empty[] = "";
 
 static const s8 sArticleA[] = "a ";
 static const s8 sArticleAn[] = "an ";
 static const s8 sArticleSome[] = "some ";
 static const s8 sArticleThe[] = "the ";
 
-/// The article of each article class.
-const s8 *const gArticle_Table[8] = {
-    gArticle_Empty, sArticleA,   sArticleAn,     sArticleSome,
-    gArticle_Empty, sArticleThe, gArticle_Empty, gArticle_Empty,
+/* The article of each article class. */
+const s8 *const Article_Table[8] = {
+	Article_Empty, sArticleA,	sArticleAn,	   sArticleSome,
+	Article_Empty, sArticleThe, Article_Empty, Article_Empty,
 };
 
 #endif
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-/// The glyph drawn over a kana for the mark in its code's top two bits: none,
-/// the voiced mark (dakuten) or the semi-voiced mark (handakuten).
-// clang-format off
-u16 gFont_MarkGlyphCodes[] __attribute__((section(".rodata"))) = {
+/* The glyph drawn over a kana for the mark in its code's top two bits: none, */
+/* the voiced mark (dakuten) or the semi-voiced mark (handakuten). */
+/* clang-format off */
+u16 Font_MarkGlyphCodes[] __attribute__((section(".rodata"))) = {
     TEXT_MARK_NONE,
     TEXT_MARK_VOICED,
     TEXT_MARK_SEMIVOICED,
@@ -160,9 +160,9 @@ u16 gFont_MarkGlyphCodes[] __attribute__((section(".rodata"))) = {
 };
 #endif
 
-/// The next-page arrow's bob (WINDOW_SPRITE_MOTION_PAGE_ARROW): a smooth rise and fall
-/// of 8 pixels over 80 frames.
-const u8 gWindowSprite_CursorBobOffsets[80] = {
+/* The next-page arrow's bob (WINDOW_SPRITE_MOTION_PAGE_ARROW): a smooth rise and fall */
+/* of 8 pixels over 80 frames. */
+const u8 WindowSprite_CursorBobOffsets[80] = {
     0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
     5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
     7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7,
@@ -170,9 +170,9 @@ const u8 gWindowSprite_CursorBobOffsets[80] = {
     5, 5, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1,
 };
 
-/// A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0
-/// while y rises at each side.
-const s8 gWindowSprite_WobbleOffsets[40] = {
+/* A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0 */
+/* while y rises at each side. */
+const s8 WindowSprite_WobbleOffsets[40] = {
     0, 4, 1, 4, 2, 3, 3, 2,
     4, 1, 4, 0, 4, 1, 3, 2,
     2, 3, 1, 4, 0, 4, -1, 4,
@@ -180,14 +180,14 @@ const s8 gWindowSprite_WobbleOffsets[40] = {
     -4, 1, -3, 2, -2, 3, -1, 4,
 };
 
-/// Unused: 16 bytes after the wobble that nothing reads.
-const u8 gWindowSprite_WobbleTail[16] = {
+/* Unused: 16 bytes after the wobble that nothing reads. */
+const u8 WindowSprite_WobbleTail[16] = {
     4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// A hop of up to 8 pixels over 16 frames, up for WINDOW_SPRITE_MOTION_HOP_UP and down
-/// for the hops down.
-const u8 gWindowSprite_BounceOffsets[16] = {
+/* A hop of up to 8 pixels over 16 frames, up for WINDOW_SPRITE_MOTION_HOP_UP and down */
+/* for the hops down. */
+const u8 WindowSprite_BounceOffsets[16] = {
     0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };
-// clang-format on
+/* clang-format on */

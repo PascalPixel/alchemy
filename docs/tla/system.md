@@ -1,7 +1,7 @@
-# System
+# The system library
 
-The System is what every other part of the game stands on. It decides what
-runs, lets time pass, loads a scene's code and writes the save.
+The system library is what every other part of the game stands on. It
+decides what runs, lets time pass, loads a scene's code and writes the save.
 
 Four ideas, and you know how the whole program hangs together.
 
@@ -9,7 +9,7 @@ Four ideas, and you know how the whole program hangs together.
 
 ![Felix walks through a cave of the Kandorean Temple until a random battle starts: the battle (an Angle Worm) is fought and won, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/tla/guides/overworld/battle-return.gif)
 
-The game is one routine that starts when the console is switched on and
+The game is one function that starts when the console is switched on and
 never returns. All it does is call a [sequence](glossary.md#sequence) as
 a function and, when that returns, call the next one. There are five
 kinds.
@@ -42,7 +42,7 @@ returns there.
 
 The main routine is a loop, but a slow one. One trip round it is a whole
 visit to a town or a whole battle. The loop that goes round once a frame is
-not here: it is inside `wait()`, which
+not here: it is inside `sySynch()`, which
 [Waiting and tasks](#waiting-and-tasks) comes to.
 
 Between two sequences the main routine wipes the slate. Every task is
@@ -54,13 +54,13 @@ So a sequence can pass something on in only four ways, the four things
 the main routine leaves alone:
 
 - the [main routine's state](glossary.md#main-routines-state), one C struct
-  in a global, `gMainRoutineState`, which holds who is in the party, their
+  in a global, `MainRoutineStateWork`, which holds who is in the party, their
   coins, what runs next and how the last sequence ended;
 - the [game flags](glossary.md#game-flag), one bit for each thing the game
   remembers, such as a chest being open;
-- the characters' [units](glossary.md#unit), `gCharacterUnits`, which
+- the characters' [units](glossary.md#unit), `CharacterUnits`, which
   hold the party's stats;
-- the actor snapshot, `gSnapshotObjects`, where the field copies who stands
+- the actor snapshot, `SnapshotObjects`, where the field copies who stands
   where before it ends for a battle, so that the same scene can be set up
   again as it was.
 
@@ -80,7 +80,7 @@ destination, and starts a fresh field sequence at the top of the caverns.
 That is why any sequence can follow any other, and why Camelot's own debug
 menu can drop the party into any scene in the game.
 [The main routine](../../games/tla/src/system/README.md#the-main-routine) goes through one
-trip round it, and the routine itself is `MainRoutine_Run`.
+trip round it, and the function itself is `gmMainRoutineRun`.
 
 ## Waiting and tasks
 
@@ -88,24 +88,24 @@ trip round it, and the routine itself is `MainRoutine_Run`.
 
 The game has no loop at the top that turns once a frame and calls
 everything else. Its frame loop is inside one function,
-[`wait()`](glossary.md#wait), and this is all of its shape:
+[`sySynch()`](glossary.md#wait), and this is all of its shape:
 
 ```c
-void wait(s32 frames) {
-  for (frame = 0; frame < frames; frame++) {
-    // every task runs once
-    // this frame's sprites are put in order
-    // sleep until VBlank, when the frame is copied to the screen
-  }
+void sySynch(s32 frames) {
+	for(frame = 0; frame < frames; frame++) {
+		/* every task runs once */
+		/* this frame's sprites are put in order */
+		/* sleep until VBlank, when the frame is copied to the screen */
+	}
 }
 ```
 
-So `wait(10)` does not stand aside while something else runs the game. It
+So `sySynch(10)` does not stand aside while something else runs the game. It
 runs ten frames of the game, there and then, and returns.
 
 One piece of code calls it at a time: the code that is telling the story
-just now, a cutscene, a menu, the field's own routine. That code is plain C.
-It runs once from top to bottom, and wherever it says `wait()` it stands
+just now, a cutscene, a menu, the field's own function. That code is plain C.
+It runs once from top to bottom, and wherever it says `sySynch()` it stands
 still while the loop inside goes round.
 
 ```mermaid
@@ -122,7 +122,7 @@ flowchart TD
 ```
 
 So a frame is two stretches of work: what the story's code did since its
-last `wait()`, and then the tasks. Both have to be done before VBlank, or
+last `sySynch()`, and then the tasks. Both have to be done before VBlank, or
 the frame is shown one VBlank late.
 
 This is what lets a cutscene or a menu be written as a plain list, top to
@@ -135,16 +135,16 @@ line the code has reached is the memory.
 
 A [task](glossary.md#task) is a function on a short list, which holds 24,
 four more than The Broken Seal's. Each trip round the loop calls every task
-on it once, highest rank first (the code calls the rank a `priority`). A
+on it once, highest rank first (the code calls the rank `pri`). A
 task does one frame's worth of something and returns at once: move the
 actors a step, type the next letters into a window.
 
 Four things about tasks are easy to get wrong:
 
-- Tasks run only from inside `wait()`. If no code is waiting, nothing in the
+- Tasks run only from inside `sySynch()`. If no code is waiting, nothing in the
   game moves. A window goes on typing because the code that asked for it is
   waiting for it to close.
-- A task must never call `wait()`. It is being called from inside one, and
+- A task must never call `sySynch()`. It is being called from inside one, and
   must return for the frame to end.
 - A task is a whole piece of work, not a thing in the world. A villager is
   not a task, and neither is a puddle. They are
@@ -163,17 +163,17 @@ handler instead, once a VBlank: the ones that copy something to the screen.
 ### Two kinds of waiting
 
 An actor has to pause too: a villager stands a while between two strolls.
-It cannot call `wait()`, because the task that moves it has to return. So an
+It cannot call `sySynch()`, because the task that moves it has to return. So an
 [actor script](glossary.md#actor-script) has a wait of its own, which is
 only a number kept in the actor. This is the script of a villager who
 wanders near home:
 
 ```c
-SC_ANIMATION(2),          // walk
-SC_WANDER_HOME(4, 8, 16), // pick a spot near home and head for it
-SC_SYNC,                  // stay on this line until it arrives
-SC_ANIMATION(1),          // stand
-SC_WAIT(20),              // stand for 20 frames
+SC_ANIMATION(2),          /* walk */
+SC_WANDER_HOME(4, 8, 16), /* pick a spot near home and head for it */
+SC_SYNC,                  /* stay on this line until it arrives */
+SC_ANIMATION(1),          /* stand */
+SC_WAIT(20),              /* stand for 20 frames */
 ```
 
 These are numbers in a table, not code that runs (`SC_` is for script
@@ -182,14 +182,14 @@ is above zero it takes one off and goes on to the next actor; otherwise it
 reads his script on from where he stopped. Twenty villagers can all be
 part-way through a pause, each with a count of his own.
 
-| | `wait(20)` in C | `SC_WAIT(20)` in an actor script |
+| | `sySynch(20)` in C | `SC_WAIT(20)` in an actor script |
 | --- | --- | --- |
 | What it is | a function that runs 20 frames of the game | an order that sets a count to 20 |
 | Who uses it | the one piece of code telling the story | every actor, each for itself |
 | Does it hold anything up? | that code stands still | no: the task passes that actor by for 20 frames |
 | How many at once | one | as many as there are actors |
 
-The second happens inside the first. The story's code is in `wait()`, the
+The second happens inside the first. The story's code is in `sySynch()`, the
 loop there runs the tasks, one task steps the actors, and each actor counts
 its own pause down.
 
@@ -205,29 +205,29 @@ tells each actor where to go, which returns at once, and then waits for
 both. On the Madra Drawbridge the two guards close ranks like this:
 
 ```c
-Actor_WalkTo(ACTOR_WEST_GUARD, 148, 252);        // returns at once
-Actor_WalkToAndWait(ACTOR_EAST_GUARD, 170, 252); // waits for the east guard
-Actor_WaitForMoveById(ACTOR_WEST_GUARD);         // and then for the west
+fdActorWalkTo(ACTOR_WEST_GUARD, 148, 252);        /* returns at once */
+fdActorWalkToAndWait(ACTOR_EAST_GUARD, 170, 252); /* waits for the east guard */
+fdActorWaitForMoveById(ACTOR_WEST_GUARD);         /* and then for the west */
 ```
 
 An event command whose name ends `AndWait` does two steps together: it
-starts the walk, then calls `wait(1)` until that actor has arrived. Both
+starts the walk, then calls `sySynch(1)` until that actor has arrived. Both
 guards walk during those frames, whichever of them the code is waiting for.
 
 Because a task cannot wait, it cannot start something long, like a
 conversation. It leaves a [request](glossary.md#field-request) instead, and
-the field's routine, which is the code waiting, reads the requests each time
-its `wait(1)` returns.
+the field's function, which is the code waiting, reads the requests each time
+its `sySynch(1)` returns.
 
 If you have used coroutines: the story's code is the one coroutine, and
-`wait()` is its yield and the scheduler in one.
+`sySynch()` is its yield and the scheduler in one.
 
 ### Who may wait
 
-| Code | What calls it | May it call `wait()`? |
+| Code | What calls it | May it call `sySynch()`? |
 | --- | --- | --- |
 | The story's code: a sequence, an event, a menu, a shop, a battle effect | the main routine, and each other | yes |
-| A task | `wait()`, once a frame | no |
+| A task | `sySynch()`, once a frame | no |
 | An order of an actor script | the actors' task, once a frame for each actor | no |
 | The VBlank handler, and the few tasks it calls | the console, at every VBlank | no |
 
@@ -238,15 +238,15 @@ again, and that would upset the pass that is running.
 
 | Written as | Where | What it does |
 | --- | --- | --- |
-| `wait(n)` | the story's code | runs `n` frames of the game and returns |
-| `Event_Wait(n)` | an event | calls `wait(n)` |
-| a command that takes time, such as `Event_ShowMessage` or one ending `AndWait` | an event | starts something, then calls `wait(1)` until it is over: a window has closed, an actor has arrived |
+| `sySynch(n)` | the story's code | runs `n` frames of the game and returns |
+| `fdEventWait(n)` | an event | calls `sySynch(n)` |
+| a command that takes time, such as `fdEventShowMessage` or one ending `AndWait` | an event | starts something, then calls `sySynch(1)` until it is over: a window has closed, an actor has arrived |
 | `SC_WAIT(n)` | an actor script | sets a count in the actor, which the actors' task takes one off each frame |
 | `SC_SYNC` | an actor script | holds the script on this order until the actor has arrived |
 | a count in its owner's state | a task | the task looks at it each frame and returns: a pause in the middle of a line, the time a hit flashes in a battle |
 
-Only the first three hold any code up, and they are all `wait()`. The rest
-are numbers that a task looks at once a frame. `Actor_WalkToAndWait` gives
+Only the first three hold any code up, and they are all `sySynch()`. The rest
+are numbers that a task looks at once a frame. `fdActorWalkToAndWait` gives
 up after 600 frames, ten seconds, and goes on with the actor still walking.
 
 ### A talk, frame by frame
@@ -254,35 +254,35 @@ up after 600 frames, ten seconds, and goes on with the actor still walking.
 Felix walks up to the man by the pond in Daila and the player presses A.
 This is who runs what.
 
-1. The field's routine is in its walking loop, which calls `wait(1)` over and over, and is the only code
+1. The field's function is in its walking loop, which calls `sySynch(1)` over and over, and is the only code
    waiting.
-2. Inside one `wait(1)` the actors' task comes to Felix. His script is on
+2. Inside one `sySynch(1)` the actors' task comes to Felix. His script is on
    the order that reads the D-pad and the buttons, `SC_PLAYER`. It sees the
    A Button and sets a request in the field's state. The task goes on to the
    man and carries his script on by a frame as well.
-3. `wait(1)` returns. The field's routine finds a request and leaves its
+3. `sySynch(1)` returns. The field's function finds a request and leaves its
    walking loop. It puts Felix on the idle script, finds that the nearest
    actor in reach is the man and that the scene has a talk trigger for him,
    and turns the request into a talk. No frame has passed.
 4. It answers the talk. It marks the man paused, turns the two as his row
    in the scene's list asks, and asks for a window with his line. Asking
    returns at once.
-5. The same code now calls `wait(1)` until the window has closed. Over
+5. The same code now calls `sySynch(1)` until the window has closed. Over
    those frames the windows' task grows the window, types the line a few
    letters a frame, and then looks each frame for the A Button. The actors'
    task passes the man by, because he is paused, so his script stays where
    it was.
 6. The player presses A. The windows' task shrinks the window and closes
    it, and the loop of step 5 ends. The man's pause is lifted, Felix's
-   script is `SC_PLAYER` again, and the field's routine is back in its
+   script is `SC_PLAYER` again, and the field's function is back in its
    walking loop. The man's script goes on from where it stopped.
 
 Through all six steps one piece of code was running or waiting, the field's
-routine and what it called. Everything else was a task's visit.
+function and what it called. Everything else was a task's visit.
 
 ### When nothing waits
 
-Code that works for a long time without calling `wait()` holds the whole
+Code that works for a long time without calling `sySynch()` holds the whole
 game still. No task runs, so no actor moves and no window grows. The frame
 it is building is never marked finished, so the picture on screen is left
 as it is.
@@ -341,11 +341,11 @@ writes the file's new copy into a spare place, reads it back, and only then
 retires the old one. If the batteries die halfway, the old copy is still
 whole. [Saving](../../games/tla/src/system/README.md#saving) follows a save onto the chip.
 
-## The rest of the System
+## The rest of the system library
 
-- [System code](../../games/tla/src/system/README.md) is the detail behind this page:
+- [The system library's code](../../games/tla/src/system/README.md) is the detail behind this page:
   start-up, the frame, the task list, the heap, saving and the link cable.
-- [The Game Pak](../../games/tla/src/gamepak/README.md) is the cartridge: how its contents
+- [The Game Pak](../../games/tla/src/system/README.md) is the cartridge: how its contents
   are laid out and found, and the flash chip.
 - [Graphics](../../games/tla/src/graphics/README.md) is how a picture gets from a PNG to
   the screen.

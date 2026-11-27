@@ -9,8 +9,8 @@
 @ bcs consumes the carry of lsls r3, r3, #1; movs r3, r3 copies and tests
 @ without a shift; add r1, pc, #0x118 / ldm r1, {r2, sl, fp, ip} reads its
 @ four addresses with one pc-relative block load; and fp (r11) holds
-@ gOamUsage's address, not a frame pointer.
-@ Why Render_BuildOamList is assembly:
+@ OamUsageWork's address, not a frame pointer.
+@ Why syRenderBuildOamList is assembly:
 @ it reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r1, pc, #16; ldmia r1,
 @ {r1, r2, r4}).
@@ -26,7 +26,7 @@
 @ Why assembly: its Thumb entry's bx pc switches to the ARM code that follows,
 @ a mode switch inside a function; the halfword after bx pc is never run.
 @ push {r5-r9} saves callee-saved registers without lr.
-@ Why ColorBuffer_ScaleThreeQuarters to ColorBuffer_Darken are assembly:
+@ Why syColBufferScaleThreeQuarters to syColBufferDarken are assembly:
 @ each reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
 @ {r4, r5, r7}).
@@ -47,7 +47,7 @@
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ push {r5-r9} saves callee-saved registers without lr.
-@ Why ColorBuffer_ScaleNonzeroThreeQuarters to ColorBuffer_DarkenPartial are assembly:
+@ Why syColBufferScaleNonzeroThreeQuarters to ColorBuffer_DarkenPartial are assembly:
 @ each reads its three DMA words, the channel's address, the kernel and the
 @ control, with one pc-relative block load (add r4, pc, #16; ldmia r4,
 @ {r4, r5, r7}).
@@ -331,20 +331,20 @@ AlchemyUncreditedEnd_080018b6:
 .L_080019d4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.4byte	gOamDepthMasks + 32
-	.4byte	gOamMatrixCount
-	.4byte	gOamUsage
-	.4byte	gOamDepthLists
-	.4byte	gOamMatrices
+	.4byte	OamDepthMasks + 32
+	.4byte	OamMatrixCount
+	.4byte	OamUsageWork
+	.4byte	OamDepthLists
+	.4byte	OamMatrices
 	.4byte	IwramFillWords
 
 @ The kernel's loader: copies the ARM kernel by DMA into a buffer on the stack
 @ and calls it there, through lr with a lone BL suffix, as the palette
 @ kernels' loaders do.
 	.thumb
-	.global Render_BuildOamList
+	.global syRenderBuildOamList
 	.thumb_func
-Render_BuildOamList:
+syRenderBuildOamList:
 	push	{lr}
 	add	r1, pc, #16
 	ldmia	r1, {r1, r2, r4}
@@ -567,9 +567,9 @@ AlchemyUncreditedEnd_08001c0a:
 
 .syntax unified
 	.thumb
-	.global ColorBuffer_ScaleThreeQuarters
+	.global syColBufferScaleThreeQuarters
 	.thumb_func
-ColorBuffer_ScaleThreeQuarters:
+syColBufferScaleThreeQuarters:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -583,9 +583,9 @@ ColorBuffer_ScaleThreeQuarters:
 	.4byte	0x040000d4
 	.4byte	ColorBuffer_ScaleThreeQuartersKernelCode
 	.4byte	0x84000030
-	.global ColorBuffer_Halve
+	.global syColBufferHalve
 	.thumb_func
-ColorBuffer_Halve:
+syColBufferHalve:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -599,9 +599,9 @@ ColorBuffer_Halve:
 	.4byte	0x040000d4
 	.4byte	ColorBuffer_HalveKernelCode
 	.4byte	0x84000020
-	.global ColorBuffer_Brighten
+	.global syColBufferBrighten
 	.thumb_func
-ColorBuffer_Brighten:
+syColBufferBrighten:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -615,9 +615,9 @@ ColorBuffer_Brighten:
 	.4byte	0x040000d4
 	.4byte	ColorBuffer_BrightenKernelCode
 	.4byte	0x84000022
-	.global ColorBuffer_Darken
+	.global syColBufferDarken
 	.thumb_func
-ColorBuffer_Darken:
+syColBufferDarken:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -859,9 +859,9 @@ AlchemyUncreditedEnd_08001ea6:
 	.balign 2
 .syntax unified
 	.thumb
-	.global ColorBuffer_ScaleNonzeroThreeQuarters
+	.global syColBufferScaleNonzeroThreeQuarters
 	.thumb_func
-ColorBuffer_ScaleNonzeroThreeQuarters:
+syColBufferScaleNonzeroThreeQuarters:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -874,9 +874,9 @@ ColorBuffer_ScaleNonzeroThreeQuarters:
 	.4byte	0x040000d4
 	.4byte	ColorBuffer_ScaleNonzeroThreeQuartersKernelCode
 	.4byte	0x84000018
-	.global ColorBuffer_HalveNonzero
+	.global syColBufferHalveNonzero
 	.thumb_func
-ColorBuffer_HalveNonzero:
+syColBufferHalveNonzero:
 	push	{r5, r6, r7, lr}
 	add	r4, pc, #16
 	ldmia	r4, {r4, r5, r7}
@@ -960,5 +960,5 @@ AlchemyUncreditedEnd_08001ffe:
 	subs	r2, r2, #1
 	bne	.L_08002040
 	b	.L_0800200c
-	.global Decompress_HalfwordsCodeSize
-	.set Decompress_HalfwordsCodeSize, . - Decompress_HalfwordLz
+	.global syDecompressHalfwordsCodeSize
+	.set syDecompressHalfwordsCodeSize, . - Decompress_HalfwordLz

@@ -1,20 +1,21 @@
-/// The first golden ring of a pair (StaffCredit_SpawnGrowingPair): it rises in
-/// front of the actor it watches, swelling and shrinking over half a sine
-/// wave, and is released after 32 frames.
-void Actor_GrowUp(struct Actor *actor) {
-  struct Actor *anchor = (struct Actor *)actor->watchedActor;
-  s32 frame = ++actor->timer;
-  FIXED amplitude;
+/* The first golden ring of a pair (scStaffCreditSpawnGrowingPair): it rises in
+ */
+/* front of the actor it watches, swelling and shrinking over half a sine */
+/* wave, and is released after 32 frames. */
+void fdActorGrowUp(ACTOR *actor) {
+	ACTOR *anchor = (ACTOR *)actor->watchedActor;
+	s32 frame = ++actor->tmr;
+	FIXED amplitude;
 
-  if (frame > 31) {
-    Actor_Release(actor);
-    return;
-  }
-  amplitude = Math_Sin(frame * (DEGtoANG(180) / 32));
-  actor->scaleX = amplitude;
-  actor->scaleY = amplitude;
+	if(frame > 31) {
+		fdActorRelease(actor);
+		return;
+	}
+	amplitude = syMathSin(frame * (DEGtoANG(180) / 32));
+	actor->scaleX = amplitude;
+	actor->scaleY = amplitude;
 
-  actor->x.fixed = anchor->x.fixed;
-  actor->y.fixed += toFIXED(1);
-  actor->z.fixed = anchor->z.fixed + (FIXED_ONE - amplitude) * 5 + toFIXED(8);
+	actor->x.fixed = anchor->x.fixed;
+	actor->y.fixed += toFIXED(1);
+	actor->z.fixed = anchor->z.fixed + (FIXED_ONE - amplitude) * 5 + toFIXED(8);
 }

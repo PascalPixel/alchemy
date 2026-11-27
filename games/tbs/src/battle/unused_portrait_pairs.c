@@ -1,15 +1,15 @@
-/// @file
-/// Unused: two tables pairing a speaker with a portrait, which no code names.
-/// The window code's own, gPortrait_CharacterMap and gPortrait_SpriteMap,
-/// are the ones the game reads.
+/* @file */
+/* Unused: two tables pairing a speaker with a portrait, which no code names. */
+/* The window code's own, Portrait_CharacterMap and Portrait_SpriteMap, */
+/* are the ones the game reads. */
 
 #include "game/character_ids.h"
 #include "sprite_ids.h"
 #include "types.h"
 
-// clang-format off
-/// {character, portrait} pairs, as in gPortrait_CharacterMap.
-const s16 gBattle_UnusedCharacterPortraits[][2] = {
+/* clang-format off */
+/* {character, portrait} pairs, as in Portrait_CharacterMap. */
+const s16 Battle_UnusedCharacterPortraits[][2] = {
     {SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD},
     {GARET, PORTRAIT_GARET},
     {SPRITE_GARET_CHILD, PORTRAIT_GARET_CHILD},
@@ -21,9 +21,9 @@ const s16 gBattle_UnusedCharacterPortraits[][2] = {
     {-1, -1},
 };
 
-/// {sprite, portrait} pairs, as in gPortrait_SpriteMap: portrait n is the row
-/// PORTRAIT_JUPITER_DJINNI + n.
-const s16 gBattle_UnusedSpritePortraits[][2] = {
+/* {sprite, portrait} pairs, as in Portrait_SpriteMap: portrait n is the row */
+/* PORTRAIT_JUPITER_DJINNI + n. */
+const s16 Battle_UnusedSpritePortraits[][2] = {
     {SPRITE_JUPITER_DJINNI, 0},
     {SPRITE_VENUS_DJINNI, 1},
     {SPRITE_MARS_DJINNI, 2},
@@ -75,4 +75,4 @@ const s16 gBattle_UnusedSpritePortraits[][2] = {
     {SPRITE_FARAN, 48},
     {-1, -1},
 };
-// clang-format on
+/* clang-format on */

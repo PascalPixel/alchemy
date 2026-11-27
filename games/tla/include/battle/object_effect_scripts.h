@@ -1,13 +1,13 @@
 #ifndef ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
 #define ALCHEMY_OBJECT_EFFECT_SCRIPTS_H
 
-/// @file
-/// An object script several effects start their actors on.
+/* @file */
+/* An object script several effects start their actors on. */
 
 #include "types.h"
 
-/// Releases the actor at once; from its second word, waits for it to arrive
-/// and then releases it.
-extern const s32 gFieldEffect_ReleaseScript[];
+/* Releases the actor at once; from its second word, waits for it to arrive */
+/* and then releases it. */
+extern const s32 FieldEffect_ReleaseScript[];
 
 #endif

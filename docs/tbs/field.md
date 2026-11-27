@@ -11,13 +11,13 @@ functions that this code asks the scene for.
 
 ![In Vault, Isaac talks to a villager standing in the street: the villager turns to him, says `Welcome to Vault, the town at the heart of Angara.`, and goes back to his rounds](https://alchemy.pascalpixel.com/guides/field/talk-walk.gif)
 
-The [field sequence](glossary.md#field-sequence) is one routine. It sets a
+The [field sequence](glossary.md#field-sequence) is one function. It sets a
 scene up, then goes round one small loop until the party leaves.
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
 flowchart TD
-  setup(["Set the scene up"]) --> walk(["wait(1): one frame, every actor moves"])
+  setup(["Set the scene up"]) --> walk(["sySynch(1): one frame, every actor moves"])
   walk --> requests{"Any request?"}
   requests -- "no" --> walk
   requests -- "a talk, a step, a menu" --> answer(["Answer it"])
@@ -31,10 +31,10 @@ flowchart TD
   class requests request
 ```
 
-The first box of the loop is a single call, `wait(1)`. That call runs one
+The first box of the loop is a single call, `sySynch(1)`. That call runs one
 frame of the game: every [task](glossary.md#task) once, and one of the
-tasks moves every actor. This routine is the code that is waiting, and when
-`wait(1)` returns it looks at the requests itself
+tasks moves every actor. This function is the code that is waiting, and when
+`sySynch(1)` returns it looks at the requests itself
 ([Waiting and tasks](system.md#waiting-and-tasks)). This is not a loop that
 runs the game. It asks for one frame, then asks whether anything needs an
 answer.
@@ -42,7 +42,7 @@ answer.
 No request is answered in the middle of a frame. Pressing A only sets a
 [field request](glossary.md#field-request): the leader's actor script sees
 the button and notes it. A step onto a doorstep or a battle coming due is
-noted by the routine itself, from where the leader stands after the frame.
+noted by the function itself, from where the leader stands after the frame.
 So an answer always starts between two frames, and can take as long as it
 likes: one line from a villager, or a whole cutscene. While it lasts, the
 answer is the code that waits, and the loop above stands still inside it.
@@ -84,10 +84,10 @@ happened, and the tables say what that means here.
 
 What a row runs is usually an [event](glossary.md#event): a function in the
 scene's overlay that takes the party over and plays from top to bottom,
-calling `wait()` as it goes. A door opening is an event, and so is a whole
+calling `sySynch()` as it goes. A door opening is an event, and so is a whole
 cutscene. Each line of one is an
 [event command](glossary.md#event-command), a C call such as
-`Actor_WalkTo`.
+`fdActorWalkTo`.
 [How a trigger is chosen](../../games/tbs/src/scene/README.md#how-a-trigger-is-chosen)
 shows the mayor's rows as they are written.
 
@@ -118,7 +118,7 @@ An actor does not run itself. It is a row in a table, and one
 [task](glossary.md#task) visits every row each frame and carries that
 actor's script on from where it stopped. The footprint's two seconds are a
 count in its row that the task takes one off each frame: not the
-[`wait()`](glossary.md#wait) a cutscene calls
+[`sySynch()`](glossary.md#wait) a cutscene calls
 ([Waiting and tasks](system.md#two-kinds-of-waiting)).
 
 Isaac is an actor like any other. While the player steers, his script is
@@ -129,9 +129,9 @@ ever means.
 An event and an actor script are two kinds of thing. An event is C, and it
 is the code that waits. A script is a table, which the actors' task reads.
 So an event never moves anyone itself. It gives an actor a target or a
-script with a command that returns at once, and then calls `wait()` while
-the task does the moving. `Actor_WalkTo` only starts a walk.
-`Actor_WalkToAndWait` starts it and then calls `wait(1)` until the actor is
+script with a command that returns at once, and then calls `sySynch()` while
+the task does the moving. `fdActorWalkTo` only starts a walk.
+`fdActorWalkToAndWait` starts it and then calls `sySynch(1)` until the actor is
 there ([One waiter at a time](system.md#one-waiter-at-a-time)).
 [Everything that moves runs an actor script](../../games/tbs/src/field/README.md#everything-that-moves-runs-an-actor-script)
 lists the orders.
@@ -165,7 +165,7 @@ Cast Move and the field code draws the hand and finds what it touches. Only
 Vale knows its pillar can be pushed, and says so with one more kind of
 trigger row: Move, on the pillar.
 
-Random battles measure distance. After each frame the field's routine adds
+Random battles measure distance. After each frame the field's function adds
 to a counter by how far the leader has walked, and
 the ground he walks on says how fast it fills and which enemies come.
 Running gets you there sooner, after exactly the same distance.

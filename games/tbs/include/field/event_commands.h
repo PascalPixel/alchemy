@@ -1,430 +1,283 @@
 #ifndef ALCHEMY_EVENT_COMMANDS_H
 #define ALCHEMY_EVENT_COMMANDS_H
 
-/// @file
-/// What event_commands.c declares for the files that use it: the commands
-/// events run, moving on the field, weather and line scrolls, Djinn joining
-/// the party, each field Psynergy and its effects, and the map screen.
+/* @file */
+/* What event_commands.c declares for the files that use it: the commands */
+/* events run, moving on the field, weather and line scrolls, Djinn joining */
+/* the party, each field Psynergy and its effects, and the map screen. */
 
 #include "fixed_math.h"
 #include "types.h"
 #include "field/field_particle.h"
 #include "field/field_sequence.h"
 
-struct Sprite;
-struct Trigger;
-struct ActorPlacement;
-struct Actor;
+struct SPR;
+struct TRIGGER;
+struct ACTOR_PLACE;
+struct ACTOR;
 
-/// A step of the current field Psynergy (FieldPsynergy_RunHandler).
-enum FieldPsynergyHandler {
-  /// Casts it with no target (FieldPsynergy_Run).
-  FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
-  /// Casts it on its target, secondActorId (FieldPsynergy_Dispatch).
-  FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
-  FIELD_PSYNERGY_HANDLER_FINISH = 2,
-  FIELD_PSYNERGY_HANDLER_EXTRA = 3 ///< Runs its kind's extra handler.
-};
+/* A step of the current field Psynergy (fdPsynergyRunHandler). */
+typedef enum FIELD_PSYNERGY_HANDLER {
+	/* Casts it with no target (fdPsynergyRun). */
+	FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
+	/* Casts it on its target, secondActorId (fdPsynergyDispatch). */
+	FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
+	FIELD_PSYNERGY_HANDLER_FINISH = 2,
+	FIELD_PSYNERGY_HANDLER_EXTRA = 3 /* Runs its kind's extra handler. */
+} FIELD_PSYNERGY_HANDLER;
 
-/// A field Psynergy, as the field kind: the type column of
-/// games/tbs/src/game/ability_table.c, named for the abilities that have it.
-enum FieldPsynergy {
-  FIELD_PSYNERGY_MOVE = 1,
-  FIELD_PSYNERGY_MIND_READ = 2,
-  /// Ply, Ply Well and Pure Ply.
-  FIELD_PSYNERGY_PLY = 3,
-  FIELD_PSYNERGY_FORCE = 4,
-  FIELD_PSYNERGY_DOUSE = 5,
-  FIELD_PSYNERGY_FROST = 6,
-  FIELD_PSYNERGY_LIFT = 7,
-  FIELD_PSYNERGY_REVEAL = 8,
-  FIELD_PSYNERGY_HALT = 9,
-  FIELD_PSYNERGY_CLOAK = 10,
-  FIELD_PSYNERGY_CARRY = 11,
-  FIELD_PSYNERGY_GROWTH = 12,
-  FIELD_PSYNERGY_CATCH = 13,
-  /// Whirlwind and Gale.
-  FIELD_PSYNERGY_WHIRLWIND = 14,
-  FIELD_PSYNERGY_RETREAT = 15,
-  FIELD_PSYNERGY_AVOID = 16
-};
+/* A field Psynergy, as the field kind: the type column of */
+/* games/tbs/src/game/ability_table.c, named for the abilities that have it. */
+typedef enum FIELD_PSY {
+	FIELD_PSYNERGY_MOVE = 1,
+	FIELD_PSYNERGY_MIND_READ = 2,
+	/* Ply, Ply Well and Pure Ply. */
+	FIELD_PSYNERGY_PLY = 3,
+	FIELD_PSYNERGY_FORCE = 4,
+	FIELD_PSYNERGY_DOUSE = 5,
+	FIELD_PSYNERGY_FROST = 6,
+	FIELD_PSYNERGY_LIFT = 7,
+	FIELD_PSYNERGY_REVEAL = 8,
+	FIELD_PSYNERGY_HALT = 9,
+	FIELD_PSYNERGY_CLOAK = 10,
+	FIELD_PSYNERGY_CARRY = 11,
+	FIELD_PSYNERGY_GROWTH = 12,
+	FIELD_PSYNERGY_CATCH = 13,
+	/* Whirlwind and Gale. */
+	FIELD_PSYNERGY_WHIRLWIND = 14,
+	FIELD_PSYNERGY_RETREAT = 15,
+	FIELD_PSYNERGY_AVOID = 16
+} FIELD_PSY;
 
-/// One picture of a sparkle: its height offset and tile
-/// (field_sequence_tables.c).
-struct SparklePicture {
-  s16 dy;
-  u16 tile;
-};
+/* One picture of a sparkle: its height offset and tile */
+/* (field_sequence_tables.c). */
+typedef struct SPARKLE_PICTURE {
+	s16 dy;
+	u16 tile;
+} SPARKLE_PICTURE;
 
-extern const struct SparklePicture gFieldEffect_SparklePictures[32];
+extern const SPARKLE_PICTURE FieldEffect_SparklePictures[32];
 
-void Event_UpdateDebugSkip(void);
-void Event_Wait(s32 frames);
-void Leader_StopMoving(void);
-void Event_Start(void);
-void Event_End(void);
-void Event_NoOpUpdateA(void);
-void Event_NoOpUpdate(void);
-void Event_RunActorUpdateAndWait(struct ActorPlacement *table);
-void Event_AppendActorPlacements(struct ActorPlacement *table);
-void Event_SetTriggers(const struct Trigger *triggers);
-void Event_AddPartyMember(s32 unit, s32 announce);
-void Event_AddPartyMemberPair(s32 first, s32 second);
-s32 Party_CheckShortcut(u32 shortcut);
-void Party_ClearUnusableShortcuts(void);
-void Party_RemoveMemberRestored(s32 unit);
-s32 Party_CheckItemLimit(s32 item);
-s32 PartyInventory_GiveItem(s32 item, s32 unused);
-s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit);
-void Inventory_NoOpCallback(void);
-void Inventory_ReservedNoOp(void);
-void Actor_WaitForAnimationEnd(s32 actorId, s32 animation);
-s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom);
-s32 FieldYesNo_Ask(s32 atBottom);
-void Party_LearnAbility(s32 unit, s32 ability);
-void Event_StartScreenTransition(void);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void Event_SetDestination(s32 sceneId, s32 entrance);
-void Event_SetRestartPoint(u16 sceneId, u16 entrance);
-void Event_SetExitRequest(u16 request);
-void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
-/// Field_RequestDjinnBattle's actorAndHop: the Djinni does not hop first.
+void fdEventUpdateDebugSkip(void);
+void fdEventNoOpUpdateA(void);
+void fdEventNoOpUpdate(void);
+s32 fdPartyCheckShortcut(u32 shortcut);
+s32 fdPartyCheckItemLimit(s32 item);
+void fdInventoryNoOpCallback(void);
+void fdInventoryReservedNoOp(void);
+void fdActorWaitForAnimationEnd(s32 actorId, s32 animation);
+/* fdRequestDjinnBattle's actorAndHop: the Djinni does not hop first. */
 #define DJINN_NO_HOP 0x800
-void Field_RequestDjinnBattle(s32 actorAndHop, s32 djinni);
-void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance);
-void Event_SetDefeatDestination(s32 sceneId, s32 entrance);
-void Event_LeaveFor(u16 sceneId, u16 entrance);
-void Scene_QueueMusic(s32 soundId);
-void Scene_PlayQueuedMusic(void);
 
-struct Actor *Actor_GetById(s32 actorId);
-void Actor_SetSpeedParameters(u32 actorId, FIXED speedLimit,
-                              FIXED acceleration);
+void fdEffectUpdateDustPuff(struct ACTOR *actor);
+void fdEffectSpawnDustPuff(struct ACTOR *source, s32 color);
+void fdActorTurnPairToFaceEachOther(struct ACTOR *first, struct ACTOR *second);
+void fdActorReleaseNoOp(void);
+void fdActorUpdateBlink(struct ACTOR *actor);
+s32 fdActorStepAng(struct ACTOR *actor);
+void fdActorReservedNoOp(void);
 
-void Actor_SetMovementTypeById(u32 actorId, s32 movement);
-void Actor_Stop(u32 actorId);
-void Actor_WatchAndSetScript(u32 actorId, u32 watchedActorId);
-void Actor_WaitForScriptEndById(u32 actorId);
-void Actor_SetMovementTypeAndWaitById(u32 actorId, s32 movement);
-void Actor_SetDestinationById(u32 actorId, s32 x, s32 z);
-void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z);
-void Actor_WalkToById(u32 actorId, s32 x, s32 z);
-void Actor_WalkToAndWaitById(u32 actorId, s32 x, s32 z);
-void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset);
-void Actor_SetDestinationOffsetById(u32 actorId, s32 xOffset, s32 zOffset);
-void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset);
-void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset);
-void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 facing);
-void Actor_WaitForMoveById(u32 actorId);
-void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
-void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z);
-void Actor_SetAnimationById(u32 actorId, s32 animation);
-void Actor_SetAnimationSpeedById(u32 actorId, s32 steps);
-void Actor_WaitForAnimationChange(u32 actorId);
-void Actor_SetAnimationAndWait(u32 actorId, s32 animation);
-void Actor_NoOp(void);
-void Actor_Jump(u32 actorId, s32 speed, s32 frames);
-void Actor_StartRepeatedMotion(u32 actorId, s32 count);
-void Actor_RunRepeatedMotion(u32 actorId, s32 count);
-void FieldEffect_UpdateDustPuff(struct Actor *actor);
-void FieldEffect_SpawnDustPuff(struct Actor *source, s32 color);
-void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 dustColor);
-void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames);
-void Actor_TurnToFaceEachOther(s32 firstId, s32 secondId, s32 frames);
-void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second);
-void Actor_ReleaseById(s32 actorId);
-void Actor_ReleaseNoOp(void);
-void Actor_ConfigureSpriteColor(s32 actorId, s32 color);
-void Actor_UpdateBlink(struct Actor *actor);
-void Actor_SetSpriteColor(struct Actor *actor, s32 color);
-void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script);
-s32 Actor_StepAngle(struct Actor *actor);
-void Actor_ClearDestinationAndStand(u32 actorId);
-void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
-void Actor_SetSpritePriority(s32 actorId, s32 priority);
-void Actor_CopyGraphics(u32 targetId, u32 sourceId);
-void Actor_ReservedNoOp(void);
+struct WINDOW;
 
-struct Window;
-
-void Event_SetMessageId(s32 message);
-s32 Actor_GetSpriteById(s32 actorId);
-s32 Actor_FindBySprite(s32 sprite);
-struct Window *FieldMessage_ShowAtActor(s32 speaker, s32 unusedFlags);
-void Event_ShowMessageAndWait(s32 actorId, s32 flags);
-void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames);
-s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags);
-void Event_EmptyCallback(void);
-void Event_ShowSpeakerMessage(s32 speaker);
-void Event_ForwardShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);
-void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);
-void Actor_ClosePortrait(s32 actorId);
-void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
-                                  s32 firstPortraitX, s32 firstPortraitY,
-                                  s32 second, s32 secondX, s32 secondY,
-                                  s32 secondPortraitX, s32 secondPortraitY);
-void Message_SetVoiceFromActor(s32 actorId);
-
-void FieldCamera_FollowActor(s32 actorId, s32 keepPosition);
-void FieldCamera_SetSpeedParameters(FIXED speedLimit, FIXED acceleration);
-/// A camera move's axis that stays where the camera is.
+/* A camera move's axis that stays where the camera is. */
 #define CAMERA_KEEP (-1)
-void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
-                                     FIXED requestedZ, s32 glide);
-void FieldCamera_MoveToActorById(s32 actorId, s32 glide);
-void FieldCamera_WaitForArrival(void);
-struct Actor *FieldCamera_GetActor(void);
-void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition);
-void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
-UNREAD_RESULT WorldMap_StepZoom(void);
-void WorldMap_StartZoom(FIXED zoom, s32 frames);
-void Event_WaitForZoomTransition(void);
-UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
-void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
-/// Actor_ShowEmoteById's emote flag: the bubble takes sprite priority 1
-/// instead of its actor's. The low four bits pick the bubble (enum
-/// Emote).
+void fdCameraFollow(struct ACTOR *target, s32 keepCurrentPosition);
+UNREAD_RESULT fdWorldMapStepZoom(void);
+UNREAD_RESULT fdEffectCopyWatchedActorPos(struct ACTOR *actor);
+/* fdActorShowEmoteById's emote flag: the bubble takes sprite priority 1 */
+/* instead of its actor's. The low four bits pick the bubble (enum */
+/* Emote). */
 #define EMOTE_IN_FRONT 0x100
 
-/// The bubbles Actor_ShowEmoteById can show, by the animation they pick
-/// in the bubble's sprite sheet (EMOTE).
-enum Emote {
-  EMOTE_EXCLAMATION = 0, ///< "!"
-  EMOTE_QUESTION = 1,    ///< "?"
-  /// A wincing face in English; a sweat drop in Japanese and a frown in
-  /// Italian.
-  EMOTE_WINCE = 2,
-  EMOTE_ANGER_VEIN = 3, ///< the cross-shaped vein of anger
-  EMOTE_HEART = 4,      ///< a red heart
-  EMOTE_ELLIPSIS = 5,   ///< "..."
-  EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_CHIME
-  EMOTE_SCOWL = 7,      ///< a scowling face
-  EMOTE_SMILE = 8,      ///< a smiling face
-  /// A sweat drop; no scene shows it, and the Japanese sprite sheet has no
-  /// tenth bubble.
-  EMOTE_SWEAT_DROP = 9
-};
-/// FieldEffect_SetAttached's flags: a mode in the low two bits, and
-/// ATTACHED_EFFECT_IN_FRONT.
-enum AttachedEffectFlag {
-  ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached actor
-  ATTACHED_EFFECT_ATTACH = 1, ///< attaches one that stays until removed
-  ATTACHED_EFFECT_ONCE = 2,   ///< shows a one-off one that ends by itself
-  /// The attached actor takes sprite priority 1, not the actor's.
-  ATTACHED_EFFECT_IN_FRONT = 0x100
-};
-void FieldEffect_SetAttached(s32 actorId, s32 flags);
-s32 Actor_ClearSpriteAndCollisionFlags(struct Actor *actor);
-s32 Actor_MoveTowardTarget(struct Actor *actor);
-s32 Actor_TurnTowardWatchedActor(struct Actor *actor);
-void Actor_SetMovementType(struct Actor *actor, s32 movement);
-struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite);
-s32 Field_TryJumpForward(void);
-s32 Field_ClimbDown(void);
-s32 Field_ClimbUp(void);
-s32 Actor_GetScreenPosition(s32 actorId, s32 *position);
-void Exit_NoOp(void);
-UNREAD_RESULT Field_StartEncounterTransition(s32 unused);
-void Exit_PrepareAnimation(s32 animation);
-void Exit_StartStairsUp(void);
-void Exit_StartStairsDown(void);
-void Entrance_PlayArrivalAnimation(s32 animation);
-s32 Entrance_PlayArrival(void);
+/* The bubbles fdActorShowEmoteById can show, by the animation they pick */
+/* in the bubble's sprite sheet (EMOTE). */
+typedef enum EMOTE {
+	EMOTE_EXCLAMATION = 0, /* "!" */
+	EMOTE_QUESTION = 1,	   /* "?" */
+	/* A wincing face in English; a sweat drop in Japanese and a frown in */
+	/* Italian. */
+	EMOTE_WINCE = 2,
+	EMOTE_ANGER_VEIN = 3, /* the cross-shaped vein of anger */
+	EMOTE_HEART = 4,	  /* a red heart */
+	EMOTE_ELLIPSIS = 5,	  /* "..." */
+	EMOTE_LIGHT_BULB = 6, /* a lit bulb, with SE_CHIME */
+	EMOTE_SCOWL = 7,	  /* a scowling face */
+	EMOTE_SMILE = 8,	  /* a smiling face */
+	/* A sweat drop; no scene shows it, and the Japanese sprite sheet has no */
+	/* tenth bubble. */
+	EMOTE_SWEAT_DROP = 9
+} EMOTE;
+/* fdEffectSetAttached's flags: a mode in the low two bits, and */
+/* ATTACHED_EFFECT_IN_FRONT. */
+typedef enum ATTACHED_EFFECT_FLAG {
+	ATTACHED_EFFECT_REMOVE = 0, /* removes the attached actor */
+	ATTACHED_EFFECT_ATTACH = 1, /* attaches one that stays until removed */
+	ATTACHED_EFFECT_ONCE = 2,	/* shows a one-off one that ends by itself */
+	/* The attached actor takes sprite priority 1, not the actor's. */
+	ATTACHED_EFFECT_IN_FRONT = 0x100
+} ATTACHED_EFFECT_FLAG;
+s32 fdActorClearSprAndCollisionFlags(struct ACTOR *actor);
+s32 fdActorMoveTowardTarget(struct ACTOR *actor);
+s32 fdActorTurnTowardWatchedActor(struct ACTOR *actor);
+struct ACTOR *fdActorFindNearestFacingTarget(struct ACTOR *self, s32 sprite);
+void fdExitNoOp(void);
+UNREAD_RESULT fdStartEncounterTransition(s32 unused);
+void fdExitPrepareAnimation(s32 animation);
+void fdExitStartStairsUp(void);
+void fdExitStartStairsDown(void);
+void fdEntrancePlayArrivalAnimation(s32 animation);
+s32 fdEntrancePlayArrival(void);
 
-void LineScroll_ArmDma(void);
-void LineScroll_BuildPage(void);
-void LineScroll_Stop(void);
-void Weather_UpdateRain(void);
-void Weather_UpdateLightning(void);
-void Weather_StartRain(void);
-void FieldMotes_Update(void);
-void FieldMotes_Start(void);
-void FieldEffect_UpdateSparkles(void);
-void FieldEffect_InitializeSparkles(void);
-void Weather_StartLightning(void);
-void Weather_StopLightning(void);
-void Weather_LastLightning(void);
-void Weather_ResumeLightning(void);
-void Weather_StartLightningFlash(s32 from, s32 to);
+void fdLineScrollArmDma(void);
+void fdLineScrollBuildPage(void);
+void fdWeatherUpdateRain(void);
+void fdWeatherUpdateLightning(void);
+void fdMotesUpdate(void);
+void fdEffectUpdateSparkles(void);
 
-struct FieldParticle;
+struct FIELD_PARTICLE;
 
-void Actor_MoveHalfwayTowardTarget(struct Actor *actor);
-void Djinn_RunBattleStartHop(s32 djinniId);
-void Djinn_JoinParty(s32 actorId, s32 element, s32 djinn);
-void Djinn_RestoreActorAfterBattle(void);
-// Declared without a prototype: FieldSequence_Run calls it with one argument
-// and with two.
-void Djinn_ResolvePending();
-void FieldEffect_UpdateAllSlots(void);
-void FieldEffect_InitializeSlots(void);
-void FieldEffect_ReleaseSlots(void);
-void FieldEffect_AdvanceSpinAngle(struct Actor *actor);
-void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle);
-void Djinn_RunJupiterJoinEffect(s32 djinniId);
-void FieldEffect_PulseActorScale(struct Actor *actor);
-void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor);
-void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect);
-void Djinn_RunMarsJoinEffect(s32 djinniId);
-void FieldEffect_UpdateDescendingOrbitActor(struct Actor *actor);
-void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect);
-void Djinn_RunVenusJoinEffect(s32 djinniId);
-void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect);
-void FieldEffect_HalveDistanceToTarget(struct Actor *actor);
-void Djinn_RunMercuryJoinEffect(s32 djinniId);
+void fdActorMoveHalfwayTowardTarget(struct ACTOR *actor);
+void fdDjinnRunBattleStartHop(s32 djinniId);
+void fdDjinnRestoreActorAfterBattle(void);
+/* Declared without a prototype: fdSequenceRun calls it with one argument */
+/* and with two. */
+void fdDjinnResolvePending();
+void fdEffectUpdateAllSlots(void);
+void fdEffectAdvanceSpinAng(struct ACTOR *actor);
+void fdEffectRunAngledApproachPhases(FIELD_PARTICLE *particle);
+void fdDjinnRunJupiterJoinEffect(s32 djinniId);
+void fdEffectPulseActorScale(struct ACTOR *actor);
+void fdEffectAdvanceAngWithRamp(struct ACTOR *actor);
+void fdEffectUpdateMarsSpark(FIELD_PARTICLE *effect);
+void fdDjinnRunMarsJoinEffect(s32 djinniId);
+void fdEffectUpdateDescendingOrbitActor(struct ACTOR *actor);
+void fdEffectUpdateRadialSpread(FIELD_PARTICLE *effect);
+void fdDjinnRunVenusJoinEffect(s32 djinniId);
+void fdEffectUpdateRandomTargetParticle(FIELD_PARTICLE *effect);
+void fdEffectHalveDistanceToTarget(struct ACTOR *actor);
+void fdDjinnRunMercuryJoinEffect(s32 djinniId);
 
-struct Vector3;
+struct VECTOR3;
 
-void FieldPsynergy_RunHandler(s32 kind);
-void FieldPsynergy_Run(void);
-void FieldPsynergy_Dispatch(void);
-void FieldPsynergy_FinishMindRead(void);
-void FieldPsynergy_RunExtraHandler(void);
-s32 Field_RunPsynergyEvent(const void *event, s32 param, s32 target);
-void Actor_CycleSpriteColors(struct Actor *actor);
-s32 VramCache_CountFreeBlocks(void);
-struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
-                                          struct Sprite *sharedSprite);
-struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Actor_SetOthersPaused(struct Actor *except, s32 paused,
-                           s32 animationSpeed);
-void FieldEffect_UpdateScaledArcActorA(struct Actor *actor);
-void FieldEffect_UpdateScaledArcActorB(struct Actor *actor);
-void FieldEffect_SpawnScaledArcActors(struct Actor *watched);
-void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor);
-void FieldEffect_CycleActorAndSpawnArcs(struct Actor *actor);
-void FieldEffect_UpdateAllEffectSlots(void);
-void FieldPsynergy_LoadResources(s32 abilityId, s32 mode);
-void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId);
-void FieldPsynergy_StopCasterUpdate(void);
-void FieldPsynergy_End(void);
-void FieldPsynergy_StartCast(void);
-void FieldPsynergy_FadeToCastColor(void);
-void FieldPsynergy_FadeFromCastColor(void);
-void Camera_WorldToScreen(struct Vector3 *position);
+void fdPsynergyRun(void);
+void fdPsynergyDispatch(void);
+void fdPsynergyFinishMindRead(void);
+void fdPsynergyRunExtraHandler(void);
+s32 fdRunPsynergyEvent(const void *event, s32 param, s32 target);
+void fdActorCycleSprCols(struct ACTOR *actor);
+struct ACTOR *fdActorSpawn(s32 kind, s32 x, s32 y, s32 z);
+void fdActorSetOthersPaused(struct ACTOR *except, s32 paused,
+							s32 animationSpeed);
+void fdEffectUpdateScaledArcActorA(struct ACTOR *actor);
+void fdEffectUpdateScaledArcActorB(struct ACTOR *actor);
+void fdEffectSpawnScaledArcActors(struct ACTOR *watched);
+void fdEffectFlickerActorAndSpawnArcs(struct ACTOR *actor);
+void fdEffectCycleActorAndSpawnArcs(struct ACTOR *actor);
+void fdEffectUpdateAllEffectSlots(void);
 
-void FieldPsynergy_StartMindReadWave(s32 casterId, s32 targetId);
-void FieldPsynergy_StopMindReadWave(void);
-void FieldPsynergy_UpdateMindReadWave(void);
-void MindRead_StartRipple(void);
-void MindRead_AdvanceTint(void);
-void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
-s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, FIXED high);
-FIXED FixedPoint_Remainder(FIXED value, FIXED divisor);
-void MindRead_UpdateCrescent(struct Actor *actor);
-void FieldPsynergy_GreyMindReadPalette(void);
-void FieldPsynergy_RestoreMindReadPalette(void);
-/// What Input_GetDpadAngle returns when no direction, or a diagonal, is held:
-/// the blank entries of gInput_DpadAngles.
+void fdPsynergyUpdateMindReadWave(void);
+void fdMindReadStartRipple(void);
+void fdMindReadAdvanceTint(void);
+void fdEffectCalcHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
+s32 fdEffectHueChannelRamp(s32 angle, s32 low, FIXED high);
+FIXED fdFixedPointRemainder(FIXED value, FIXED divisor);
+void fdMindReadUpdateCrescent(struct ACTOR *actor);
+/* What fdInputGetDpadAng returns when no direction, or a diagonal, is held: */
+/* the blank entries of Input_DpadAngles. */
 #define DPAD_ANGLE_NONE 65535
-s32 Input_GetDpadAngle(u32 unused);
-void FieldEffect_UpdateMoveHand(struct Actor *actor);
-void FieldPsynergy_SteerPushedTarget(s32 targetId);
-void FieldEffect_UpdateOutAndBack(struct FieldParticle *effect);
-void FieldPsynergy_Move(void);
-struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster);
-void FieldEffect_GrowHandAndWait(struct Actor *actor);
-void FieldEffect_BurstHand(struct Actor *hand);
-void Actor_SetRevealSpriteColor(s32 value);
-void FieldPsynergy_WatchLeaderDistance(void);
-void FieldPsynergy_Reveal(void);
-void FieldPsynergy_EndReveal(void);
-void FieldPsynergy_GrowthOnTarget(s32 unused);
-void FieldPsynergy_Growth(void);
-void FieldEffect_SpawnBurstParticleField(void);
-void FieldPsynergy_LiftOnTarget(s32 unused);
-struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle);
-void FieldEffect_UpdateRadialBurst(struct FieldParticle *effect);
-s32 FieldEffect_SpawnHeavyImpact(struct Actor *interpreter);
-void FieldPsynergy_ForceOnTarget(s32 unused);
-void FieldPsynergy_Force(void);
-void FieldEffect_UpdateOrbitingParticleFade(struct Actor *actor);
-void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *actor);
-void FieldEffect_UpdateOrbitingParticleRight(struct Actor *actor);
-void FieldPsynergy_FrostOnTarget(s32 unused);
-void FieldPsynergy_Frost(void);
-void FieldEffect_SwayParticle(struct Actor *actor);
-void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *actor);
-void FieldEffect_RunSparkEmitter(struct Actor *actor);
-void FieldPsynergy_PlyOnTarget(s32 unused);
-void FieldPsynergy_Ply(void);
-void FieldPsynergy_CheckCloakTile(void);
-void FieldPsynergy_EndCloak(void);
-void FieldPsynergy_ResumeCloakCheck(void);
-void FieldPsynergy_StartCloak(void);
-void FieldEffect_UpdateDouseDrop(struct Actor *drop);
-void FieldEffect_UpdateDriftingFallActor(struct Actor *actor);
-void FieldPsynergy_DouseOnTarget(s32 unused);
-void FieldPsynergy_Douse(void);
-void FieldEffect_SpawnFallingParticles(void);
-void FieldPsynergy_SteerLiftedTarget(s32 targetId);
-struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
-void FieldEffect_SpawnRadialParticleRing(struct Actor *origin);
-void FieldEffect_WanderAroundAnchor(struct Actor *actor);
-void FieldEffect_CircleAnchor(struct Actor *actor);
-void Whirlwind_UpdateTarget(struct Actor *actor);
-void FieldPsynergy_WhirlwindOnTarget(s32 unused);
-void FieldPsynergy_Whirlwind(void);
-void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect);
-void FieldPsynergy_HaltOnTarget(s32 unused);
-void FieldPsynergy_Halt(void);
-void FieldPsynergy_UpdateHaltedActor(struct Actor *actor);
-void FieldPsynergy_HaltActor(s32 actorId);
-void FieldPsynergy_ResumeHaltedActor(s32 actorId);
-s32 FieldPsynergy_FilterHaltTarget(s32 id);
-void FieldPsynergy_CatchOnTarget(s32 unused);
-void FieldPsynergy_Catch(void);
-void FieldEffect_UpdateSpinAngle(struct Actor *actor);
-void FieldEffect_UpdateRetreatCaster(struct Actor *actor);
-void Retreat_UpdateSpark(struct FieldParticle *effect);
-void FieldPsynergy_Retreat(void);
-void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *actor);
-void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *actor);
-void FieldEffect_SpawnDescendingArcParticles(struct Actor *source);
-void FieldEffect_BlinkAvoidCaster(void);
-void FieldEffect_UpdateAvoidCaster(struct Actor *actor);
-void FieldPsynergy_ShowAvoidWoreOff(void);
-void FieldPsynergy_Avoid(void);
+s32 fdInputGetDpadAng(u32 unused);
+void fdEffectUpdateMoveHand(struct ACTOR *actor);
+void fdEffectUpdateOutAndBack(FIELD_PARTICLE *effect);
+void fdPsynergyMove(void);
+void fdActorSetRevealSprCol(s32 value);
+void fdPsynergyWatchLeaderDistance(void);
+void fdPsynergyReveal(void);
+void fdPsynergyEndReveal(void);
+void fdPsynergyGrowthOnTarget(s32 unused);
+void fdPsynergyGrowth(void);
+void fdEffectSpawnBurstParticleField(void);
+void fdPsynergyLiftOnTarget(s32 unused);
+struct ACTOR *fdEffectSpawnLiftHand(s32 x, s32 y, s32 z, s32 angle);
+void fdEffectUpdateRadialBurst(FIELD_PARTICLE *effect);
+s32 fdEffectSpawnHeavyImpact(struct ACTOR *interpreter);
+void fdPsynergyForceOnTarget(s32 unused);
+void fdPsynergyForce(void);
+void fdEffectUpdateOrbitingParticleFade(struct ACTOR *actor);
+void fdEffectUpdateOrbitingParticleLeft(struct ACTOR *actor);
+void fdEffectUpdateOrbitingParticleRight(struct ACTOR *actor);
+void fdPsynergyFrostOnTarget(s32 unused);
+void fdPsynergyFrost(void);
+void fdEffectSwayParticle(struct ACTOR *actor);
+void fdEffectUpdateShrinkingOrbitActor(struct ACTOR *actor);
+void fdEffectRunSparkEmitter(struct ACTOR *actor);
+void fdPsynergyPlyOnTarget(s32 unused);
+void fdPsynergyPly(void);
+void fdPsynergyCheckCloakTile(void);
+void fdPsynergyEndCloak(void);
+void fdPsynergyResumeCloakCheck(void);
+void fdEffectUpdateDouseDrop(struct ACTOR *drop);
+void fdEffectUpdateDriftingFallActor(struct ACTOR *actor);
+void fdPsynergyDouseOnTarget(s32 unused);
+void fdPsynergyDouse(void);
+void fdEffectSpawnFallingParticles(void);
+void fdPsynergySteerLiftedTarget(s32 targetId);
+struct ACTOR *fdEffectSpawnCarryHand(s32 x, s32 y, s32 z, s32 angle);
+void fdEffectSpawnRadialParticleRing(struct ACTOR *origin);
+void fdEffectWanderAroundAnchor(struct ACTOR *actor);
+void fdEffectCircleAnchor(struct ACTOR *actor);
+void fdWhirlwindUpdateTarget(struct ACTOR *actor);
+void fdPsynergyWhirlwindOnTarget(s32 unused);
+void fdPsynergyWhirlwind(void);
+void fdEffectUpdateHaltParticle(FIELD_PARTICLE *effect);
+void fdPsynergyHaltOnTarget(s32 unused);
+void fdPsynergyHalt(void);
+void fdPsynergyUpdateHaltedActor(struct ACTOR *actor);
+s32 fdPsynergyFilterHaltTarget(s32 id);
+void fdPsynergyCatchOnTarget(s32 unused);
+void fdPsynergyCatch(void);
+void fdEffectUpdateSpinAng(struct ACTOR *actor);
+void fdEffectUpdateRetreatCaster(struct ACTOR *actor);
+void fdRetreatUpdateSpark(FIELD_PARTICLE *effect);
+void fdPsynergyRetreat(void);
+void fdEffectUpdateDescendingParticlePositiveArc(struct ACTOR *actor);
+void fdEffectUpdateDescendingParticleNegativeArc(struct ACTOR *actor);
+void fdEffectSpawnDescendingArcParticles(struct ACTOR *source);
+void fdEffectBlinkAvoidCaster(void);
+void fdEffectUpdateAvoidCaster(struct ACTOR *actor);
+void fdPsynergyShowAvoidWoreOff(void);
+void fdPsynergyAvoid(void);
 
-void FieldParticle_Update(struct FieldParticle *effect);
-void FieldEffect_DrawScaledActor(struct FieldParticle *object);
-void FieldParticle_UpdateMotion(struct FieldParticle *effect);
-u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect);
-void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z);
-void FieldParticle_SetAnimation(struct FieldParticle *effect, s32 mode);
-void FieldParticle_SetCallback(struct FieldParticle *effect,
-                               EffectCallback callback);
-void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
-                              FIXED z);
-void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect);
+void fdEffectDrawScaledActor(FIELD_PARTICLE *object);
+void fdParticleUpdateMotion(FIELD_PARTICLE *effect);
 
-/// The map screen's marker tiles: the party's dot, the two kinds of area a
-/// MAP_SCREEN_MARKER row (AREA_MARKER or LIGHTHOUSE_MARKER) asks for (a town
-/// or a place on the way; a lighthouse or Sol Sanctum), and the larger dot that
-/// blinks over the marker nearest the cursor.
-enum MapScreenMarkerTile {
-  MAP_SCREEN_MARKER_PARTY,
-  MAP_SCREEN_MARKER_AREA,
-  MAP_SCREEN_MARKER_LIGHTHOUSE,
-  MAP_SCREEN_MARKER_NEAREST
-};
+/* The map screen's marker tiles: the party's dot, the two kinds of area a */
+/* MAP_SCREEN_MARKER row (AREA_MARKER or LIGHTHOUSE_MARKER) asks for (a town */
+/* or a place on the way; a lighthouse or Sol Sanctum), and the larger dot that
+ */
+/* blinks over the marker nearest the cursor. */
+typedef enum MAP_SCR_MARKER_TILE {
+	MAP_SCREEN_MARKER_PARTY,
+	MAP_SCREEN_MARKER_AREA,
+	MAP_SCREEN_MARKER_LIGHTHOUSE,
+	MAP_SCREEN_MARKER_NEAREST
+} MAP_SCR_MARKER_TILE;
 
-/// The World Map's area markers, {tile << 16 | flag, area} for
-/// each area's actor id from 11, ended by -1; a zero row reserves an
-/// actor id with no marker.
-extern const s32 gMapScreen_AreaMarkers[];
+/* The World Map's area markers, {tile << 16 | flag, area} for */
+/* each area's actor id from 11, ended by -1; a zero row reserves an */
+/* actor id with no marker. */
+extern const s32 MapScreen_AreaMarkers[];
 
-void MapScreen_Initialize(void);
-void MapScreen_Release(void);
-void MapScreen_UpdateMarkers(void);
-void MapScreen_Show(s32 image);
-void Field_UpdateActorVisibilityBounds(void);
-void WorldMap_ZoomOutWhileLHeld(void);
+void fdMapScrInit(void);
+void fdMapScrRelease(void);
+void fdMapScrUpdateMarkers(void);
+void fdMapScrShow(s32 image);
+void fdUpdateActorVisibilityBounds(void);
+void fdWorldMapZoomOutWhileLHeld(void);
 
-/// The message voice's rate by message speed option: 1, 3, then 10
-/// (Message_SetVoiceFromActor). The same values as
-/// gMessageSpeed_VoiceGaps, which the message reads, in a copy of its own.
-extern const u8 gMessageSpeed_VoiceRates[];
+/* The message voice's rate by message speed option: 1, 3, then 10 */
+/* (fdMessageSetVoiceFromActor). The same values as */
+/* MessageSpeed_VoiceGaps, which the message reads, in a copy of its own. */
+extern const u8 MessageSpeed_VoiceRates[];
 
 #endif

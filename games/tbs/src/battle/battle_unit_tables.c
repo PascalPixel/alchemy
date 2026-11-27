@@ -1,16 +1,15 @@
-/// @file
-/// What every battle unit starts with: its actor script, and the kind of
-/// weapon each item is.
+/* @file */
+/* What every battle unit starts with: its actor script, and the kind of */
+/* weapon each item is. */
 
-#include "battle/battle.h"
 #include "battle/weapon_kind.h"
 #include "field/actor_script.h"
 #include "item_ids.h"
 
-const s32 gBattleObject_EmptyScript[] = {SC_END};
+const s32 BattleObject_EmptyScript[] = {SC_END};
 
-// clang-format off
-const u16 gBattleUnit_WeaponKinds[] = {
+/* clang-format off */
+const u16 BattleUnit_WeaponKinds[] = {
     WEAPON(ITEM_LONG_SWORD, WEAPON_KIND_LONG_SWORD),
     WEAPON(ITEM_BROAD_SWORD, WEAPON_KIND_LONG_SWORD),
     WEAPON(ITEM_CLAYMORE, WEAPON_KIND_LONG_SWORD),
@@ -62,6 +61,6 @@ const u16 gBattleUnit_WeaponKinds[] = {
     WEAPON(ITEM_CRYSTAL_ROD, WEAPON_KIND_STAFF),
     WEAPON(ITEM_ZODIAC_WAND, WEAPON_KIND_STAFF),
     WEAPON(ITEM_SHAMANS_ROD, WEAPON_KIND_STAFF),
-    -1, // the end, read as an s16
+    -1, /* the end, read as an s16 */
 };
-// clang-format on
+/* clang-format on */

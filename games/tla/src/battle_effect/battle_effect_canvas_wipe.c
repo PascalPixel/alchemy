@@ -1,82 +1,84 @@
-/// @file
-/// The canvas wipe: the ragged sweep that blacks out or clears the canvas as
-/// the summons and the larger effects open and close.
-// Part of battle_effect.c.
+/* @file */
+/* The canvas wipe: the ragged sweep that blacks out or clears the canvas as */
+/* the summons and the larger effects open and close. */
+/* Part of battle_effect.c. */
 
-#include "battle_effect_internal.h"
-
-/// How far a row of BattleEffect_WipeCanvas's wipe lags behind its front, at
-/// most: each row lags a random 0 to WIPE_LAG_MAX pixels.
+/* How far a row of btEffectWipeCanvas's wipe lags behind its front, at */
+/* most: each row lags a random 0 to WIPE_LAG_MAX pixels. */
 #define WIPE_LAG_MAX 63
-/// Where the across wipe's front stops, three frames past
-/// CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished.
+/* Where the across wipe's front stops, three frames past */
+/* CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished. */
 #define WIPE_ACROSS_END 256
 
-/// A direction BattleEffect_WipeCanvas leaves the canvas alone for; no caller
-/// passes it.
+/* A direction btEffectWipeCanvas leaves the canvas alone for; no caller */
+/* passes it. */
 #define CANVAS_WIPE_NONE 3
 
-/// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
-/// 23 frames across, 15 down. Each frame sets state->transferPending, so the
-/// caller's transfer task must already be running.
-///
-/// direction: CANVAS_WIPE_ACROSS sweeps left to right, CANVAS_WIPE_NONE does
-///            nothing, anything else sweeps top to bottom.
-/// fill: what the wipe leaves (enum CanvasWipeFill).
-void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
-  struct BattleEffectState *state;
-  u8 *canvas;
-  u8 delay[CANVAS_SIZE];
-  s32 x;
-  s32 y;
-  s32 wipePosition;
+/* Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
+ */
+/* 23 frames across, 15 down. Each frame sets state->transferPending, so the */
+/* caller's transfer task must already be running. */
+/* */
+/* direction: CANVAS_WIPE_ACROSS sweeps left to right, CANVAS_WIPE_NONE does */
+/*            nothing, anything else sweeps top to bottom. */
+/* fill: what the wipe leaves (CANVAS_FILL). */
+void btEffectWipeCanvas(s32 direction, s32 fill) {
+	BATTLE_EFFECT_STATE *state;
+	u8 *canvas;
+	u8 delay[CANVAS_SIZE];
+	s32 x;
+	s32 y;
+	s32 wipePosition;
 
-  canvas = Ram_HeapSlots->battleCanvas;
-  state = Ram_HeapSlots->battleEffect;
-  for (x = 0; x != CANVAS_SIZE; x++)
-    delay[x] = Random16() & WIPE_LAG_MAX;
+	canvas = Ram_HeapSlots->battleCanvas;
+	state = Ram_HeapSlots->battleEff;
+	for(x = 0; x != CANVAS_SIZE; x++)
+		delay[x] = syRandom() & WIPE_LAG_MAX;
 
-  if (direction == CANVAS_WIPE_ACROSS) {
-    s32 front;
-    s32 speed;
+	if(direction == CANVAS_WIPE_ACROSS) {
+		s32 front;
+		s32 speed;
 
-    front = 0;
-    speed = 1;
-    x = 0;
-    do {
-      front += speed;
-      speed++;
-      for (; x != front; x++) {
-        for (y = 0; y != CANVAS_SIZE; y++) {
-          wipePosition = x - delay[y];
-          if (wipePosition >= 0)
-            if (wipePosition < CANVAS_SIZE)
-              canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
-        }
-      }
-      EFFECT_PRESENT_CANVAS(state);
-    } while (front <= WIPE_ACROSS_END);
-  } else if (direction != CANVAS_WIPE_NONE) {
-    s32 front;
-    s32 speed;
+		front = 0;
+		speed = 1;
+		x = 0;
+		do {
+			front += speed;
+			speed++;
+			for(; x != front; x++) {
+				for(y = 0; y != CANVAS_SIZE; y++) {
+					wipePosition = x - delay[y];
+					if(wipePosition >= 0)
+						if(wipePosition < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] =
+								1 - fill;
+				}
+			}
+			EFFECT_PRESENT_CANVAS(state);
+		} while(front <= WIPE_ACROSS_END);
+	}
+	else if(direction != CANVAS_WIPE_NONE) {
+		s32 front;
+		s32 speed;
 
-    front = 0;
-    speed = 1;
-    y = 0;
-    do {
-      front += speed / 2;
-      speed += 4;
-      for (; y != front; y++) {
-        for (x = 0; x != CANVAS_SIZE; x++) {
-          wipePosition = y - delay[x];
-          if (wipePosition >= 0)
-            if (wipePosition < CANVAS_SIZE)
-              canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
-        }
-      }
-      EFFECT_PRESENT_CANVAS(state);
-    } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
-  }
+		front = 0;
+		speed = 1;
+		y = 0;
+		do {
+			front += speed / 2;
+			speed += 4;
+			for(; y != front; y++) {
+				for(x = 0; x != CANVAS_SIZE; x++) {
+					wipePosition = y - delay[x];
+					if(wipePosition >= 0)
+						if(wipePosition < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] =
+								1 - fill;
+				}
+			}
+			EFFECT_PRESENT_CANVAS(state);
+		} while(front <= CANVAS_SIZE + WIPE_LAG_MAX);
+	}
 }
 
 #undef WIPE_LAG_MAX

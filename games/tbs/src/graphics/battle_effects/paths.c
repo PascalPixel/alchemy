@@ -1,19 +1,19 @@
-/// @file
-/// The flight paths of two battle effects: Atalanta's as her shafts of light
-/// gather, and that of the flame Dragon Cloud sends from its user.
-/// Each is resource data (ResourceId_AtalantaPath and
-/// ResourceId_DragonCloudFlamePath).
+/* @file */
+/* The flight paths of two battle effects: Atalanta's as her shafts of light */
+/* gather, and that of the flame Dragon Cloud sends from its user. */
+/* Each is resource data (ResourceId_AtalantaPath and */
+/* ResourceId_DragonCloudFlamePath). */
 
 #include "types.h"
 
-// clang-format off
-/// A path's first two rows: the starting point in pixels, x and y each split
-/// into a high and a low byte. Every row after it is one frame's move, x then
-/// y in pixels.
+/* clang-format off */
+/* A path's first two rows: the starting point in pixels, x and y each split */
+/* into a high and a low byte. Every row after it is one frame's move, x then */
+/* y in pixels. */
 #define PATH_START(x, y) {(x) >> 8, (s8)(x)}, {(y) >> 8, (s8)(y)}
 
-/// Atalanta's path while her shafts of light gather: a move a frame for 209
-/// frames, the last move never read.
+/* Atalanta's path while her shafts of light gather: a move a frame for 209 */
+/* frames, the last move never read. */
 const s8 BattleEffect_AtalantaPath[][2] = {
     PATH_START(160, 95),
     {-5, -3},
@@ -228,8 +228,8 @@ const s8 BattleEffect_AtalantaPath[][2] = {
     {8, 6},
 };
 
-/// The path of the flame Dragon Cloud sends from its user: a move a frame for
-/// 40 frames.
+/* The path of the flame Dragon Cloud sends from its user: a move a frame for */
+/* 40 frames. */
 const s8 BattleEffect_DragonCloudFlamePath[][2] = {
     PATH_START(17, -39),
     {6, 5},
@@ -273,4 +273,4 @@ const s8 BattleEffect_DragonCloudFlamePath[][2] = {
     {-18, 29},
     {0, 0},
 };
-// clang-format on
+/* clang-format on */

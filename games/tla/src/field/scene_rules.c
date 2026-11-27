@@ -1,25 +1,23 @@
-/// @file
-/// The rules the field looks a scene up in: each scene's battle background and
-/// each encounter's battle music. Where the party restarts after a defeat and
-/// where the ship waits is return_rules.s, linked before this.
+/* @file */
+/* The rules the field looks a scene up in: each scene's battle background and
+ */
+/* each encounter's battle music. Where the party restarts after a defeat and */
+/* where the ship waits is return_rules.s, linked before this. */
 
-#include "resource_ids.h"
-#include "scene_ids.h"
 #include "sounds.h"
-#include "types.h"
 #include "field/scene_tables.h"
 #include "field/event_commands.h"
 
-/// A backdrop's row in gScene_BattleBackgroundRules: its resource number with
-/// bit 31 set, before the scenes that take it.
+/* A backdrop's row in Scene_BattleBackgroundRules: its resource number with */
+/* bit 31 set, before the scenes that take it. */
 #define BATTLE_BACKGROUND(resource) (s32)(0x80000000 + (resource))
 
-// clang-format off
+/* clang-format off */
 
-/// The battle background by scene (BattleBackground_SelectForMap): a scene
-/// takes the last backdrop listed before it, and one not listed the last
-/// backdrop of all; 0 ends the table.
-const s32 gScene_BattleBackgroundRules[] = {
+/* The battle background by scene (fdBattleBackgroundSelectForMap): a scene */
+/* takes the last backdrop listed before it, and one not listed the last */
+/* backdrop of all; 0 ends the table. */
+const s32 Scene_BattleBackgroundRules[] = {
     BATTLE_BACKGROUND(RESOURCE_DENSE_FOREST_BACKDROP),
         SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
     BATTLE_BACKGROUND(RESOURCE_CANYON_MEADOW_BACKDROP),
@@ -65,7 +63,7 @@ const s32 gScene_BattleBackgroundRules[] = {
         SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST,
     BATTLE_BACKGROUND(RESOURCE_STONE_TOWN_BACKDROP),
         SCENE_AIRS_ROCK_INSIDE_HALL,
-        SCENE_AIRS_ROCK_INSIDE_HALL, // listed twice; the second changes nothing
+        SCENE_AIRS_ROCK_INSIDE_HALL, /* listed twice; the second changes nothing */
         SCENE_AIRS_ROCK_INSIDE_VIAL_CHEST,
         SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST,
         SCENE_AIRS_ROCK_INSIDE_TIGHTROPES,
@@ -252,11 +250,11 @@ const s32 gScene_BattleBackgroundRules[] = {
     0,
 };
 
-/// The battle music of the story's and the hidden bosses' battles
-/// (Encounter_SelectBattleMusic): a battle takes the music listed last before
-/// its key. The search stops at the key or at the end (0), so a battle not
-/// listed takes the last music, 0, and the function chooses its own.
-const s16 gEncounter_BattleMusic[] = {
+/* The battle music of the story's and the hidden bosses' battles */
+/* (fdEncounterSelectBattleMusic): a battle takes the music listed last before */
+/* its key. The search stops at the key or at the end (0), so a battle not */
+/* listed takes the last music, 0, and the function chooses its own. */
+const s16 Encounter_BattleMusic[] = {
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_DULLAHAN),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_HIDDEN_BOSSES, HIDDEN_BOSS_ANEMOS),
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_SENTINEL),
@@ -266,25 +264,25 @@ const s16 gEncounter_BattleMusic[] = {
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_STAR_MAGICIAN),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_HIDDEN_BOSSES, HIDDEN_BOSS_TREASURE_ISLE),
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_THE_BROKEN_SEAL),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 3), // the World Map's bandits
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 3), /* the World Map's bandits */
     ENCOUNTER_BATTLE_MUSIC(MUS_TRIAL_ROAD),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 2), // the Shaman Village Cave's gladiators
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 2), /* the Shaman Village Cave's gladiators */
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_DOOM_DRAGON),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 1), // the Doom Dragon
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 1), /* the Doom Dragon */
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_FLAME_DRAGON),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 0), // the Flame Dragons
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 0), /* the Flame Dragons */
     ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_KARST_AND_AGATIO),
-    // Karst and Agatio on Jupiter Lighthouse's aerie.
+    /* Karst and Agatio on Jupiter Lighthouse's aerie. */
     ENCOUNTER_KEY(ENCOUNTER_ZONE_MOAPA, 5),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_MOAPA, 6),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_MOAPA, 7),
     ENCOUNTER_BATTLE_MUSIC(MUS_KARST_AND_AGATIO),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 4), // Agatio and Karst against Isaac
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 4), /* Agatio and Karst against Isaac */
     ENCOUNTER_BATTLE_MUSIC(MUS_AQUA_HYDRA),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 4), // the Chestbeaters in the Kandorean Temple
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 0), // the King Scorpion
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_AQUA_JELLIES, 1), // the Aqua Hydra
-    // The Serpent (slots 0 to 4), Avimander and Poseidon.
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_EARLY_STORY, 4), /* the Chestbeaters in the Kandorean Temple */
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 0), /* the King Scorpion */
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_AQUA_JELLIES, 1), /* the Aqua Hydra */
+    /* The Serpent (slots 0 to 4), Avimander and Poseidon. */
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SERPENT, 0),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SERPENT, 1),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SERPENT, 2),
@@ -293,8 +291,8 @@ const s16 gEncounter_BattleMusic[] = {
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SERPENT, 5),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SERPENT, 6),
     ENCOUNTER_BATTLE_MUSIC(MUS_BRIGGS_BATTLE),
-    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 1), // Briggs
-    // Moapa and his Knights, by the stage door the party reached first.
+    ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 1), /* Briggs */
+    /* Moapa and his Knights, by the stage door the party reached first. */
     ENCOUNTER_KEY(ENCOUNTER_ZONE_MOAPA, 0),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_MOAPA, 1),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_MOAPA, 2),
@@ -303,4 +301,4 @@ const s16 gEncounter_BattleMusic[] = {
     ENCOUNTER_BATTLE_MUSIC(0),
     0,
 };
-// clang-format on
+/* clang-format on */

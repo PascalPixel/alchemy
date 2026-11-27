@@ -7,19 +7,19 @@
 
 	.section .rodata
 	.balign 4
-	.global gMPlayTable
-gMPlayTable:
-	music_player gMPlayInfo_Jingle, gMPlayTrack_Jingle, 4
-	music_player gMPlayInfo_BGM, gMPlayTrack_BGM, 10
-	music_player gMPlayInfo_MenuSE, gMPlayTrack_MenuSE, 2
-	music_player gMPlayInfo_ActionSE, gMPlayTrack_ActionSE, 2
-	music_player gMPlayInfo_SE4, gMPlayTrack_SE4, 2
-	music_player gMPlayInfo_SE5, gMPlayTrack_SE5, 2
-	music_player gMPlayInfo_SE6, gMPlayTrack_SE6, 2
-	music_player gMPlayInfo_SE7, gMPlayTrack_SE7, 2
+	.global MPlayTable
+MPlayTable:
+	music_player MPlayInfo_Jingle, MPlayTrack_Jingle, 4
+	music_player MPlayInfo_BGM, MPlayTrack_BGM, 10
+	music_player MPlayInfo_MenuSE, MPlayTrack_MenuSE, 2
+	music_player MPlayInfo_ActionSE, MPlayTrack_ActionSE, 2
+	music_player MPlayInfo_SE4, MPlayTrack_SE4, 2
+	music_player MPlayInfo_SE5, MPlayTrack_SE5, 2
+	music_player MPlayInfo_SE6, MPlayTrack_SE6, 2
+	music_player MPlayInfo_SE7, MPlayTrack_SE7, 2
 
 @ The player count is this table's row count; the mixer has no lines.
-	.global gNumMusicPlayers
-	.equ gNumMusicPlayers, (. - gMPlayTable) / 12
-	.global gMaxLines
-	.equ gMaxLines, 0
+	.global NumMusicPlayers
+	.equ NumMusicPlayers, (. - MPlayTable) / 12
+	.global MaxLines
+	.equ MaxLines, 0

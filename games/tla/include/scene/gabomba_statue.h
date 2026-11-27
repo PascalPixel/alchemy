@@ -1,126 +1,127 @@
 #ifndef ALCHEMY_SCENE_GABOMBA_STATUE_H
 #define ALCHEMY_SCENE_GABOMBA_STATUE_H
 
-/// @file
-/// Gabomba Statue's events, scripts and the routines of its clock, cogs,
-/// ladders and channel puzzle, and Actor_SetCellOpen and Actors_SetDrawn,
-/// which other scenes keep a copy of.
+/* @file */
+/* Gabomba Statue's events, scripts and the functions of its clock, cogs, */
+/* ladders and channel puzzle, and fdActorSetCellOpen and scActorsSetDrawn, */
+/* which other scenes keep a copy of. */
 
 #include "types.h"
 #include "resource_ids.h"
 
-struct Actor;
+struct ACTOR;
 
-/// The C library's absolute value, which the channel puzzle measures its
-/// paths with.
+/* The C library's absolute value, which the channel puzzle measures its */
+/* paths with. */
 s32 abs(s32);
 
-void GabombaStatue_TurnCogs(s32 direction);
+void scGabombaStatueTurnCogs(s32 direction);
 
-void GabombaStatue_StopClock(void);
-s32 GabombaStatue_RunCharges(s32 first, s32 check);
+void scGabombaStatueStopClock(void);
+s32 scGabombaStatueRunCharges(s32 first, s32 check);
 
-void GabombaStatue_TurnWithCog(void);
+void scGabombaStatueTurnWithCog(void);
 
-void GabombaStatue_RideSlidingCog(void);
+void scGabombaStatueRideSlidingCog(void);
 
-void GabombaStatue_RideRoller(void);
+void scGabombaStatueRideRoller(void);
 
-void GabombaStatue_HopAcrossEastOrWest(void);
+void scGabombaStatueHopAcrossEastOrWest(void);
 
-void GabombaStatue_HopAcrossNorthOrSouth(void);
+void scGabombaStatueHopAcrossNorthOrSouth(void);
 
-void GabombaStatue_HearTheOffering(void);
+void scGabombaStatueHearTheOffering(void);
 
-void GabombaStatue_ClimbDownBoneArmletChestLadder(void);
+void scGabombaStatueClimbDownBoneArmletChestLadder(void);
 
-void GabombaStatue_ClimbDownElixirChestLadder(void);
+void scGabombaStatueClimbDownElixirChestLadder(void);
 
-void GabombaStatue_ClimbDownSteelNortheastLadder(void);
+void scGabombaStatueClimbDownSteelNortheastLadder(void);
 
-void GabombaStatue_ClimbDownSteelEastLadder(void);
-void GabombaStatue_ClimbDownMouseNorthLadder(void);
+void scGabombaStatueClimbDownSteelEastLadder(void);
+void scGabombaStatueClimbDownMouseNorthLadder(void);
 
-void GabombaStatue_ClimbDownMouseWestLadder(void);
+void scGabombaStatueClimbDownMouseWestLadder(void);
 
-void GabombaStatue_ClimbDownCogsLadder(void);
+void scGabombaStatueClimbDownCogsLadder(void);
 
-void GabombaStatue_ClimbDownArrowsLadder(void);
+void scGabombaStatueClimbDownArrowsLadder(void);
 
-void GabombaStatue_PinionsThrowLeaderSouth(void);
-void GabombaStatue_CogsTurnBack(void);
+void scGabombaStatuePinionsThrowLeaderSouth(void);
+void scGabombaStatueCogsTurnBack(void);
 
-void GabombaStatue_PressLeftArrowPanel(void);
-void GabombaStatue_ReleaseLeftArrowPanel(void);
-void GabombaStatue_PressRightArrowPanel(void);
-void GabombaStatue_ReleaseRightArrowPanel(void);
+void scGabombaStatuePressLeftArrowPanel(void);
+void scGabombaStatueReleaseLeftArrowPanel(void);
+void scGabombaStatuePressRightArrowPanel(void);
+void scGabombaStatueReleaseRightArrowPanel(void);
 
-extern s32 gGabombaStatue_FlashCogScript[];
-extern s32 gGabombaStatue_TurnToothScript[];
-extern u32 gGabombaStatue_JennaFocusScript[];
-extern u32 gGabombaStatue_PiersFocusScript[];
-extern u32 gGabombaStatue_KradenFocusScript[];
-extern u32 gGabombaStatue_KradenPointsScript[];
-extern s32 gGabombaStatue_LookNorthAndEastScript[];
-extern s32 gGabombaStatue_LookNorthAndWestScript[];
+extern s32 GabombaStatue_FlashCogScript[];
+extern s32 GabombaStatue_TurnToothScript[];
+extern u32 GabombaStatue_JennaFocusScript[];
+extern u32 GabombaStatue_PiersFocusScript[];
+extern u32 GabombaStatue_KradenFocusScript[];
+extern u32 GabombaStatue_KradenPointsScript[];
+extern s32 GabombaStatue_LookNorthAndEastScript[];
+extern s32 GabombaStatue_LookNorthAndWestScript[];
 
-extern u32 gGabombaStatue_PinionReleaseScript[];
+extern u32 GabombaStatue_PinionReleaseScript[];
 
-extern u32 gGabombaStatue_JennaWatchesScript[];
-extern u32 gGabombaStatue_AkafubuComesUpScript[];
+extern u32 GabombaStatue_JennaWatchesScript[];
+extern u32 GabombaStatue_AkafubuComesUpScript[];
 
-void GabombaStatue_RestartClock(void);
+void scGabombaStatueRestartClock(void);
 
-void GabombaStatue_HideBoneArmletChestLadderTopBlock(void);
-void GabombaStatue_HideElixirChestLadderTopBlocks(void);
+void scGabombaStatueHideBoneArmletChestLadderTopBlock(void);
+void scGabombaStatueHideElixirChestLadderTopBlocks(void);
 
-s32 GabombaStatue_GetPuzzleSeed(void);
-s32 GabombaStatue_SetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
-void GabombaStatue_FindBrokenCell(u32 *x_out, u32 *z_out);
+s32 scGabombaStatueGetPuzzleSeed(void);
+s32 scGabombaStatueSetUpChannelPuzzle(s32 x, s32 z, s32 value, s32 id);
+void scGabombaStatueFindBrokenCell(u32 *x_out, u32 *z_out);
 
-extern u32 gGabombaStatue_LookAtChannelScript[];
+extern u32 GabombaStatue_LookAtChannelScript[];
 
-void GabombaStatue_DrawCogCells(void);
+void scGabombaStatueDrawCogCells(void);
 
-void GabombaStatue_InitializeBoneArmletChest(void);
-void GabombaStatue_InitializeElixirChest(void);
-void GabombaStatue_InitializeSteel(void);
-void GabombaStatue_InitializeCogs(void);
-void GabombaStatue_InitializeArrows(void);
-void GabombaStatue_InitializePinion(void);
-void GabombaStatue_StartClock(s32 mode);
-void GabombaStatue_ResetClock(void);
-s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
-                          s32 direction, s32 last, s32 bit);
-void GabombaStatue_WritePiece(s32 x, s32 z, s32 kind, s32 state);
-s32 GabombaStatue_PickPiece(s32 row, s32 column, s32 direction);
-void GabombaStatue_SetBlocksRaised(s32 id, s32 show);
+void scGabombaStatueInitBoneArmletChest(void);
+void scGabombaStatueInitElixirChest(void);
+void scGabombaStatueInitSteel(void);
+void scGabombaStatueInitCogs(void);
+void scGabombaStatueInitArrows(void);
+void scGabombaStatueInitPinion(void);
+void scGabombaStatueStartClock(s32 mode);
+void scGabombaStatueResetClock(void);
+s32 scGabombaStatueLayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
+						   s32 direction, s32 last, s32 bit);
+void scGabombaStatueWritePiece(s32 x, s32 z, s32 kind, s32 state);
+s32 scGabombaStatuePickPiece(s32 row, s32 column, s32 direction);
+void scGabombaStatueSetBlocksRaised(s32 id, s32 show);
 
-void GabombaStatue_LoadBlockPictures(void);
-void GabombaStatue_RedrawChannel(void);
-s32 GabombaStatue_LayChannel(s32 value);
+void scGabombaStatueLoadBlockPictures(void);
+void scGabombaStatueRedrawChannel(void);
+s32 scGabombaStatueLayChannel(s32 value);
 
-void GabombaStatue_CountDownShowingClock(void);
-void GabombaStatue_CountDown(void);
-void Actor_SetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
+void scGabombaStatueCountDownShowingClock(void);
+void scGabombaStatueCountDown(void);
+void fdActorSetCellOpen(s32 id, u32 mode, s32 flag, s32 layer);
 
-void GabombaStatue_FadeByDepth(void);
+void scGabombaStatueFadeByDepth(void);
 
-void Actors_SetDrawn(s32 show, s32 first, u32 count);
+void scActorsSetDrawn(s32 show, s32 first, u32 count);
 
-void GabombaStatue_LandFromFall(void);
+void scGabombaStatueLandFromFall(void);
 
-void GabombaStatue_ClimbDownLadder(s32 x, s32 z);
+void scGabombaStatueClimbDownLadder(s32 x, s32 z);
 
-s32 GabombaStatue_GetClock(void);
-extern u32 gGabombaStatue_CogShapes[];
+s32 scGabombaStatueGetClock(void);
+extern u32 GabombaStatue_CogShapes[];
 
-/// Coils a rope at its first post (Rope_Coil, through the overlay's own import
-/// row).
-void GabombaStatue_CoilRope(s32 index, s32 firstPost, s32 secondPost);
-/// Places a rope between its posts, tied when its flag is set, else coiled
-/// (Rope_Place, through the overlay's own import row).
-void GabombaStatue_PlaceRope(s32 index, s32 flag, s32 firstPost,
-                             s32 secondPost);
+/* Coils a rope at its first post (fdRopeCoil, through the overlay's own import
+ */
+/* row). */
+void scGabombaStatueCoilRope(s32 index, s32 firstPost, s32 secondPost);
+/* Places a rope between its posts, tied when its flag is set, else coiled */
+/* (fdRopePlace, through the overlay's own import row). */
+void scGabombaStatuePlaceRope(s32 index, s32 flag, s32 firstPost,
+							  s32 secondPost);
 
 #endif

@@ -1,13 +1,13 @@
-/// Adds an actor to the glow list, its glow showing `frame`.
-void LightSprites_Add(s32 id, s32 frame) {
-  struct Actor *actor = Actor_Get(id);
+/* Adds an actor to the glow list, its glow showing `frame`. */
+void scLightSprsAdd(s32 id, s32 frame) {
+	ACTOR *actor = fdActorGet(id);
 
-  if (actor != NULL) {
-    s16 *count;
+	if(actor != NULL) {
+		s16 *count;
 
-    actor->timer = frame;
-    count = &gLightSpriteCount;
-    gLightSpriteActors[*count] = actor;
-    (*count)++;
-  }
+		actor->tmr = frame;
+		count = &LightSpriteCount;
+		LightSpriteActors[*count] = actor;
+		(*count)++;
+	}
 }

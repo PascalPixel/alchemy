@@ -1,17 +1,17 @@
 	.include "games/tla/include/edition.inc"
 	.section .rodata
-	.global gFont_Glyphs
-gFont_Glyphs:
+	.global Font_Glyphs
+Font_Glyphs:
 	.ifeq EDITION_INTERNATIONAL
 	.ifdef TLA_EDITION_JA
 	.incbin "games/tla/src/graphics/font/text_tla_ja.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
-	.global gFont_KanjiGlyphs
-gFont_KanjiGlyphs:
+	.global Font_KanjiGlyphs
+Font_KanjiGlyphs:
 	.incbin "games/tla/src/graphics/font/text_tla_ja.font", (0x100 - 0x20) * (2 + 12 * 2)
 	.else
 	.incbin "games/tla/src/graphics/font/text_ja.font", 0, (0x100 - 0x20) * (2 + 12 * 2)
-	.global gFont_KanjiGlyphs
-gFont_KanjiGlyphs:
+	.global Font_KanjiGlyphs
+Font_KanjiGlyphs:
 	.incbin "games/tla/src/graphics/font/text_ja.font", (0x100 - 0x20) * (2 + 12 * 2)
 	.endif
 	.else

@@ -16,14 +16,14 @@ variant saying how strongly. Quake, Earthquake and Quake Sphere all name
 the Quake effect, at variants 0, 1 and 2. The handler reads its variant and
 looks up its own timings and counts. That is why abilities that come in
 threes look like one idea growing. In The Lost Age that table is
-`gAbilityBattleEffects`, in the battle folder's `ability_staging.c`.
+`AbilityBattleEffects`, in the battle folder's `ability_staging.c`.
 
 A summon's row carries a mark that sends it another way. The Lost Age has
 29 summons to The Broken Seal's 16, and the 13 it adds all take Djinn of
 more than one element: Zagan a Venus and a Mars Djinni, Iris four Mercury
 and nine Mars. The four named for the elements play from the table like
 any ability. Each of the other 25 has a handler of its own, Ramses the
-first and Iris the last, and `BattleEffect_RunSummon` picks it by its
+first and Iris the last, and `btEffectRunSummon` picks it by its
 number.
 
 ## The canvas
@@ -49,7 +49,7 @@ pillar hides what is behind it.
 
 A handler never draws on the screen. It draws on its own copy of the
 canvas, marks it ready, and waits a frame. A task, the transfer, copies it
-to the screen at VBlank (`BattleEffect_TransferCanvas`).
+to the screen at VBlank (`btEffectTransferCanvas`).
 
 Straight after the copy, the transfer does one thing to the handler's
 copy, and which thing is the effect's choice:
@@ -66,7 +66,7 @@ frame's fireball, a little dimmer.
 
 ## Blitters
 
-A handler draws by copying small pictures onto the canvas, and the routine
+A handler draws by copying small pictures onto the canvas, and the function
 that copies one is a blitter. A blitter decides what happens where the new
 picture lands on something already there: replace it, add to it, keep the
 brighter of the two, and so on. Ray's bolts keep the brighter, so a
@@ -91,13 +91,13 @@ live.
 The Lost Age adds what The Broken Seal's effects never draw: models. A
 model is a list of faces with their corners, turned and projected through
 the battle camera, and drawn onto the canvas by a rasterizer, a small ARM
-routine copied into fast memory for a run of models of one kind
-(`Render_DrawModelList`). The kind says how each pixel lands, as a
+function copied into fast memory for a run of models of one kind
+(`btRenderDrawModelList`). The kind says how each pixel lands, as a
 blitter's does: a solid model fills its faces with their colours, a
 textured one maps a texture across them, and a shaded one adds the
 model's shade to each texel and leaves out those it darkens to nothing.
 Each of them replaces the canvas, keeps the brighter, or adds
-(`enum ModelKind`). The rings, columns and whirlpools of the summons are
+(`MODEL_KIND`). The rings, columns and whirlpools of the summons are
 models; Coatlicue's coils and Iris's pillars are strips of them.
 
 ## A handler's frame loop
@@ -106,7 +106,7 @@ models; Coatlicue's coils and Iris's pillars are strips of them.
 
 A handler reads the way its effect plays: set up, then one frame's work
 after another with a wait of one frame between, then tidy up. Anything that
-happens once is tied to a frame number. `BattleEffect_RunBolt` is a short
+happens once is tied to a frame number. `btEffectRunBolt` is a short
 one to start with.
 
 One of those frames is the signal to the battle. From it on, the battle
@@ -126,7 +126,7 @@ of them, each adding something of its own.
 
 ## Where the code is
 
-- The bank's C is one object, as The Broken Seal's is:
+- The module's C is one object, as The Broken Seal's is:
   [`battle_effect.c`](battle_effect.c) includes its parts, the files beside
   it named `battle_effect_*.c`, in ROM order, each named for the first
   ability it draws (`battle_effect_cybele.c`, `battle_effect_bolt.c`,
@@ -142,6 +142,6 @@ of them, each adding something of its own.
   `render_textured_additive_kernel.s`, the three `render_shaded_*` files,
   `render_textured_narrow_kernel.s` and
   `render_solid_narrow_and_transform_kernels.s`, which also holds the
-  routine that turns a model's corners (`Render_TransformVertices`);
-  `render_fill_mesh_kernels.s` is an ARM build of `Render_FillMesh` that
+  function that turns a model's corners (`btRenderTransformVertices`);
+  `render_fill_mesh_kernels.s` is an ARM build of `btRenderFillMesh` that
   nothing runs.

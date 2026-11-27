@@ -1,17 +1,17 @@
-/// @file
-/// The battle object: a battle from its opening transition to its spoils.
-///
-/// A battle runs from Battle_Run (battle_run.c). Each turn the actions are
-/// gathered and put in action order (battle_turn.c, or battle_auto_battle.c
-/// under auto battle), and each action is announced, built for its targets
-/// (BattleActionRun_Build, battle_action.c), staged
-/// (BattleStaging_DispatchAction, battle_staging.c) and applied to each target
-/// (BattleAbility_ApplyToTarget, battle_ability.c), which queues the playback
-/// BattlePlayback_Run plays (battle_playback.c).
+/* @file */
+/* The battle object: a battle from its opening transition to its spoils. */
+/* */
+/* A battle runs from btRun (battle_run.c). Each turn the actions are */
+/* gathered and put in action order (battle_turn.c, or battle_auto_battle.c */
+/* under auto battle), and each action is announced, built for its targets */
+/* (btActionRunBuild, battle_action.c), staged */
+/* (btStagingDispatchAction, battle_staging.c) and applied to each target */
+/* (btAbilityApplyToTarget, battle_ability.c), which queues the playback */
+/* btPlaybackRun plays (battle_playback.c). */
 
 #include "battle_internal.h"
 
-// The parts, in ROM order (src/README.md, "Objects and parts").
+/* The parts, in ROM order (src/README.md, "Objects and parts"). */
 #include "battle_debug.c"
 #include "battle_setup.c"
 #include "battle_link.c"

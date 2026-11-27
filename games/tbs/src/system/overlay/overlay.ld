@@ -1,15 +1,15 @@
 /* One overlay of The Broken Seal, loaded at 0x2008000: ld_script.ld includes
    this file when the build defines OVERLAY and OVERLAY_NAME for the overlay
    of that name, and the block that tests the name is the overlay. Its number
-   is its row in the resource directory (gamepak/resource_directory.s), which
+   is its row in the resource directory (system/resource_directory.s), which
    names it the same. The build finds the overlays from the lines that test a
    name, and each overlay's objects from its statements.
 
    An overlay's .text opens with the entry table every scene and debug room
    links, src/scene/entry.s, which each resolves against its own code. Its
    import table, imports.o, follows its code: the build writes it for each
-   overlay from imports.inc, a stub for each main-image routine the overlay's
-   code calls. The libgcc routines its code uses come next (register calls,
+   overlay from imports.inc, a stub for each main-image function the overlay's
+   code calls. The libgcc functions its code uses come next (register calls,
    and double-precision arithmetic in two scenes), then a part kept in its
    own object, where it has one. Each statement names the sections it places,
    so the objects keep their order in each. Its globals follow in .bss, in the

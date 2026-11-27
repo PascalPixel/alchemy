@@ -1,4 +1,4 @@
-# Game rules
+# Game logic
 
 This folder is the game's numbers: who has what stats, what an item does,
 which class a character is, what the game remembers. Nearly all of it is
@@ -33,10 +33,10 @@ The mask has a bit for each character who can wield it. The other tables
 still keep each row at its place, with its name from the English release
 in a comment above it.
 
-The tables are `gItem_DefinitionTable` (516 items),
-`gAbilityDefinitions` (734 abilities), `gEnemy_Definitions` (380
-enemies), `gClass_DefinitionTable` (244 classes), `gDjinn_DefinitionTable`,
-`gSummon_DefinitionTable` and `gCharacter_DefinitionTable`. A row's fields
+The tables are `Item_DefinitionTable` (516 items),
+`AbilityDefinitions` (734 abilities), `Enemy_Definitions` (380
+enemies), `Class_DefinitionTable` (244 classes), `Djinn_DefinitionTable`,
+`Summon_DefinitionTable` and `Character_DefinitionTable`. A row's fields
 are documented where its struct is declared. With more than 255 abilities,
 a class lists the ones it teaches in halfwords.
 
@@ -64,7 +64,7 @@ the stat on the screen, with equipment, Djinn and class on top.
 
 The game never adjusts the stat on the screen. Whenever anything behind it
 changes, it throws the number away and works every stat out again from the
-base (`Unit_Calculate`). That is the one idea to hold on to in this folder.
+base (`gmUnitCalc`). That is the one idea to hold on to in this folder.
 There is no code anywhere that undoes a bonus, so a bonus can never be left
 behind or applied twice, and a new kind of bonus only has to be added in
 one place.
@@ -95,7 +95,7 @@ table, five in the character's own element and none in the others.
 
 The class is chosen from those four levels. The two strongest elements
 pick a series of classes, and the character gets the highest class in the
-series whose requirements it meets (`Class_Determine`). Jenna and Piers
+series whose requirements it meets (`gmClassDetermine`). Jenna and Piers
 have a series of their own where the others share one, and three items
 pick a series when held: the Mysterious Card, the Trainer's Whip and the
 Tomegathericon. The class then multiplies the stats and lists the Psynergy
@@ -133,8 +133,9 @@ The game remembers the story as 4,096 yes-or-no facts, the
 [game flags](../../../../docs/tla/glossary.md#game-flag). A chest opened, a Djinni found,
 a conversation had: each is one flag, with a name in
 [flags.h](../../include/flags.h) once its meaning is known. The Lost Age
-reads them through `GameFlag_Get` and its neighbours, which it links in its
-first bank, so they are in the [system](../system/README.md) and not here.
+reads them through `syGameFlagGet` and its neighbours, which it links in its
+first module, so they are in the [system library](../system/README.md) and
+not here.
 They can also read eight flags as a byte or four as a number, for the
 counts the story keeps.
 
@@ -155,15 +156,15 @@ town can be bought back in another.
 
 ![As above: the plain blow replaced by the weapon's unleash](https://alchemy.pascalpixel.com/tla/guides/battle/unleash.gif)
 
-The sums that decide a fight live here, not in the battle: whether a
-weapon unleashes, whether Sleep takes hold, how much a blow hurts. The
-battle asks and shows the answer. So does the menu, which is why Cure cast
-in Daila heals by the same sum as Cure cast in a fight.
+The sums that decide a fight live here, not in the battle engine: whether
+a weapon unleashes, whether Sleep takes hold, how much a blow hurts. The
+battle engine asks and shows the answer. So does the menu engine, which is
+why Cure cast in Daila heals by the same sum as Cure cast in a fight.
 
-Several answers are rolls of dice. The battle has dice of its own, apart
-from the field's (`Battle_Random`). In a link battle both consoles start
-those dice from the same seed and shake hands after every action, so that
-both screens roll the same.
+Several answers are rolls of dice. The battle engine has dice of its own,
+apart from the field engine's (`gmBattleRandom`). In a link battle both
+consoles start those dice from the same seed and shake hands after every
+action, so that both screens roll the same.
 
 ## Where the code is
 
@@ -172,6 +173,6 @@ both screens roll the same.
   Seal names its own); the item, ability and enemy tables are parts of one
   object with each item's rare item counter.
 - The game object is written as parts cut where The Broken Seal's are:
-  `Unit_Calculate` works a unit's stats out, `Class_Determine` its class,
+  `gmUnitCalc` works a unit's stats out, `gmClassDetermine` its class,
   and the rest go by subject, Djinn, levels, items and the party.
-- `Battle_GetElementMultiplier` and its neighbours are the sums.
+- `gmBattleGetElementMultiplier` and its neighbours are the sums.

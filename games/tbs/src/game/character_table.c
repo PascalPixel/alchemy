@@ -1,12 +1,12 @@
-/// @file
-/// The eight party members' growth curves, element bonuses, starting levels
-/// and starting equipment.
+/* @file */
+/* The eight party members' growth curves, element bonuses, starting levels */
+/* and starting equipment. */
 
 #include "item_ids.h"
 #include "game/game.h"
 
-// clang-format off
-const struct CharacterDefinition gCharacter_DefinitionTable[] = {
+/* clang-format off */
+const CHARACTER_DEFINITION Character_DefinitionTable[] = {
     [ISAAC] = {
         .hp = {30, 182, 334, 486, 638, 790},
         .pp = {20, 80, 130, 170, 210, 250},
@@ -66,4 +66,4 @@ const struct CharacterDefinition gCharacter_DefinitionTable[] = {
     [SHEBA] = {},
     [PIERS] = {},
 };
-// clang-format on
+/* clang-format on */

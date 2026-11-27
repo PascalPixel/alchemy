@@ -22,11 +22,11 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global Decompress_TaggedLzArmCode
-Decompress_TaggedLzArmCode:
-	.global Decompress_TaggedLzArm
+	.global syDecompressTaggedLzArmCode
+syDecompressTaggedLzArmCode:
+	.global syDecompressTaggedLzArm
 	.thumb_func
-Decompress_TaggedLzArm:
+syDecompressTaggedLzArm:
 	bx	pc
 AlchemyUncredited_080128aa:
 	.2byte	0x0200
@@ -236,8 +236,8 @@ AlchemyUncreditedEnd_080128aa:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.L_08012b40
-	.global Decompress_TaggedLzCodeSize
-	.set Decompress_TaggedLzCodeSize, . - Decompress_TaggedLzArmCode
+	.global syDecompressTaggedLzCodeSize
+	.set syDecompressTaggedLzCodeSize, . - syDecompressTaggedLzArmCode
 
 	.section .text,"ax",%progbits
 	.balign 4
@@ -686,8 +686,8 @@ AlchemyUncreditedEnd_08013062:
 	.balign 4
 .syntax unified
 	.thumb
-	.global Resource_PatchThumbBranch
-Resource_PatchThumbBranch:
+	.global syResourcePatchThumbBranch
+syResourcePatchThumbBranch:
 	bx	pc
 AlchemyUncredited_080130ce:
 	.2byte	0x0200
@@ -726,5 +726,5 @@ AlchemyUncreditedEnd_080130ce:
 .L_08013144:
 	pop	{r5, r6}
 	bx	lr
-	.global Resource_PatchThumbBranchCodeSize
-	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranch
+	.global syResourcePatchThumbBranchCodeSize
+	.set syResourcePatchThumbBranchCodeSize, . - syResourcePatchThumbBranch

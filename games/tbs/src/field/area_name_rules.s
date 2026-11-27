@@ -1,6 +1,6 @@
 	.include "enums/area_ids.inc"
 
-@ The area each scene is named for (struct AreaNameRule): the first rule that
+@ The area each scene is named for (AREA_NAME_RULE): the first rule that
 @ matches the scene or its area, and the entrance (-1 for any), gives the area
 @ name, an offset most readers add to MsgDebugAreaName. A scene's row sets
 @ useMapId, the entrance's top bit; id -1 ends the table, and a row of zeros
@@ -16,8 +16,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gArea_NameRules
-gArea_NameRules:
+	.global Area_NameRules
+Area_NameRules:
 	area_name AREA_TITLE_SCREEN, -1, 0
 	area_name AREA_CLEAR_DATA, -1, 1
 	area_name AREA_WORLD_MAP, -1, 2

@@ -6,7 +6,7 @@
 @ did not come from the DI patterns. smulsi3_highpart leaves its low half a
 @ dead scratch, and orr r0, r0, r12, lsr #16 reads it.
 @ This proves a hand-written multiply, not by itself a hand-written
-@ file. Nothing else here is a tell: the routine is a frameless leaf, and
+@ file. Nothing else here is a tell: the function is a frameless leaf, and
 @ ldmia sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.

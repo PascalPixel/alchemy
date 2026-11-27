@@ -1,7 +1,7 @@
-/// Whether vent index is blowing now.
-s32 Vent_IsBlowing(s32 index) {
-  struct VentState *state;
+/* Whether vent index is blowing now. */
+s32 scVentIsBlowing(s32 index) {
+	VENT_WORK *state;
 
-  state = VENT_STATE;
-  return VENT_AT(state, index)->entries[0].active;
+	state = VENT_STATE;
+	return VENT_AT(state, index)->entries[0].active;
 }

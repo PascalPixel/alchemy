@@ -51,6 +51,6 @@ Thank you to:
 - [Coaltergeist](https://github.com/Coaltergeist), [Karathan](https://github.com/SBird1337) and [Tarpman](https://github.com/tarpman), whose earlier public work identified the compiler and flags behind The Broken Seal.
 - [simonlindholm](https://github.com/simonlindholm), for [decomp-permuter](https://github.com/simonlindholm/decomp-permuter), the permuter we used to find matches.
 - [GBATEK](https://problemkaputt.de/gbatek.htm), nocash’s hardware reference, for the hardware names.
-- [SGL](https://www.infochunk.com/saturn/segahtml_en/sgl/sglr/), Sega’s Saturn library, for the fixed-point, angle and matrix names.
+- [SGL](https://www.infochunk.com/saturn/segahtml_en/sgl/sglr/), Sega’s engine for the Saturn, whose names and layout the code follows.
 - Telago, whose GameFAQs walkthroughs of [The Broken Seal](https://gamefaqs.gamespot.com/gba/468548-golden-sun/faqs/39216) and [The Lost Age](https://gamefaqs.gamespot.com/gba/561356-golden-sun-the-lost-age/faqs/44287) gave many places their names.
 - Everyone at [r/GoldenSun](https://www.reddit.com/r/GoldenSun/) who cheered Alchemy on and builds with it.

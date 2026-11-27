@@ -1,19 +1,19 @@
-/// @file
-/// Every item, by item id: its price, what it is and who can equip it, the
-/// Attack and Defense it adds, its unleash, what it does while worn, and the
-/// ability it is used for. The icon is its picture's number in gItemIcons.
+/* @file */
+/* Every item, by item id: its price, what it is and who can equip it, the */
+/* Attack and Defense it adds, its unleash, what it does while worn, and the */
+/* ability it is used for. The icon is its picture's number in ItemIcons. */
 
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "game/game.h"
 
-/// A weapon's chance to unleash, in percent, as unleashChance keeps it: in
-/// steps of 5 percent. Every weapon that unleashes does so 35 percent of the
-/// time, before what other equipment adds.
+/* A weapon's chance to unleash, in percent, as unleashChance keeps it: in */
+/* steps of 5 percent. Every weapon that unleashes does so 35 percent of the */
+/* time, before what other equipment adds. */
 #define UNLEASH_PERCENT(percent) ((percent) / 5)
 
-// clang-format off
-const struct ItemDefinition gItem_DefinitionTable[] = {
+/* clang-format off */
+const ITEM_DEFINITION Item_DefinitionTable[] = {
     [ITEM_NONE] = {
         .element = ELEMENT_NONE,
     },
@@ -52,7 +52,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SHAMSHIR] = {
         .price = 10000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 5,
         .attack = 99,
@@ -63,7 +63,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SILVER_BLADE] = {
         .price = 12000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 6,
         .attack = 108,
@@ -74,7 +74,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MASAMUNE] = {
         .price = 13400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 7,
         .attack = 115,
@@ -83,7 +83,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_ARCTIC_BLADE] = {
         .price = 2600,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 8,
         .attack = 55,
@@ -94,13 +94,13 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_GAIA_BLADE] = {
         .price = 17000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 9,
         .attack = 135,
         .unleashChance = UNLEASH_PERCENT(35),
         .unleashAbility = ABILITY_TITAN_BLADE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_VENUS_POWER, .amount = 20},
             {.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 20},
         },
@@ -108,7 +108,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SOL_BLADE] = {
         .price = 19000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 10,
         .attack = 138,
@@ -117,7 +117,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MURAMASA] = {
         .price = 13600,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
+        .flg = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 11,
         .attack = 126,
@@ -128,7 +128,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MACHETE] = {
         .price = 30,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_CANNOT_UNEQUIP,
+        .flg = ITEM_CANNOT_UNEQUIP,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET),
         .icon = 152,
         .attack = 6,
@@ -169,7 +169,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_NINJA_BLADE] = {
         .price = 8800,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 16,
         .attack = 94,
@@ -180,19 +180,19 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SWIFT_SWORD] = {
         .price = 9400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 17,
         .attack = 104,
         .unleashChance = UNLEASH_PERCENT(35),
         .unleashAbility = ABILITY_SONIC_SMASH,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_JUPITER_POWER, .amount = 10}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_JUPITER_POWER, .amount = 10}},
     },
     [ITEM_ELVEN_RAPIER] = {
         .price = 2200,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 18,
         .attack = 44,
@@ -203,7 +203,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_ASSASSIN_BLADE] = {
         .price = 7800,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 19,
         .attack = 90,
@@ -214,7 +214,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MYSTERY_BLADE] = {
         .price = 6400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 20,
         .attack = 84,
@@ -225,7 +225,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_KIKUICHIMONJI] = {
         .price = 13400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 21,
         .attack = 128,
@@ -236,7 +236,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_KUSANAGI] = {
         .price = 19000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 22,
         .attack = 135,
@@ -245,7 +245,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_BANDITS_SWORD] = {
         .price = 700,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(FELIX) | EQUIP_CHARACTER(JENNA),
         .icon = 169,
         .attack = 12,
@@ -280,7 +280,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_DRAGON_AXE] = {
         .price = 10300,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 26,
         .attack = 100,
@@ -291,7 +291,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_GIANT_AXE] = {
         .price = 14000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 27,
         .attack = 114,
@@ -302,7 +302,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_VULCAN_AXE] = {
         .price = 4600,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 28,
         .attack = 76,
@@ -313,7 +313,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_BURNING_AXE] = {
         .price = 7500,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 29,
         .attack = 84,
@@ -324,7 +324,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_DEMON_AXE] = {
         .price = 16000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
+        .flg = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 30,
         .attack = 132,
@@ -367,19 +367,19 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_RIGHTEOUS_MACE] = {
         .price = 8400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(FELIX),
         .icon = 35,
         .attack = 112,
         .unleashChance = UNLEASH_PERCENT(35),
         .unleashAbility = ABILITY_BLINDING_SMOG,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 3}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 3}},
     },
     [ITEM_GRIEVOUS_MACE] = {
         .price = 7000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(FELIX),
         .icon = 36,
         .attack = 88,
@@ -390,19 +390,19 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_BLESSED_MACE] = {
         .price = 14500,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(FELIX),
         .icon = 37,
         .attack = 126,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 2}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 2}},
         .abilityId = ABILITY_PLY_WELL,
     },
     [ITEM_WICKED_MACE] = {
         .price = 13800,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
+        .flg = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(FELIX),
         .icon = 38,
         .attack = 130,
@@ -421,7 +421,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MAGIC_ROD] = {
         .price = 380,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 40,
         .attack = 16,
@@ -432,7 +432,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_WITCHS_WAND] = {
         .price = 860,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 41,
         .attack = 32,
@@ -443,7 +443,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_BLESSED_ANKH] = {
         .price = 1600,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 42,
         .attack = 46,
@@ -454,7 +454,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_PSYNERGY_ROD] = {
         .price = 3800,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 43,
         .attack = 64,
@@ -465,7 +465,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_FROST_WAND] = {
         .price = 5400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 44,
         .attack = 76,
@@ -476,7 +476,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_ANGELIC_ANKH] = {
         .price = 6400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 45,
         .attack = 83,
@@ -487,7 +487,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_DEMONIC_STAFF] = {
         .price = 10000,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
+        .flg = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 46,
         .attack = 92,
@@ -498,7 +498,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_CRYSTAL_ROD] = {
         .price = 13400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 47,
         .attack = 106,
@@ -509,7 +509,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_ZODIAC_WAND] = {
         .price = 11400,
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 185,
         .attack = 102,
@@ -519,7 +519,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_SHAMANS_ROD] = {
         .type = ITEM_TYPE_WEAPON,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 153,
         .attack = 10,
@@ -540,7 +540,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 49,
         .defense = 21,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_PP, .amount = 20}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_PP, .amount = 20}},
     },
     [ITEM_CHAIN_MAIL] = {
         .price = 2000,
@@ -577,12 +577,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SPIRIT_ARMOR] = {
         .price = 4000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 54,
         .defense = 32,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 15},
             {.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 15},
             {.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 15},
@@ -592,12 +592,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_DRAGON_SCALES] = {
         .price = 17000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 55,
         .defense = 44,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 30},
             {.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 30},
         },
@@ -605,34 +605,34 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_DEMON_MAIL] = {
         .price = 17000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
+        .flg = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 56,
         .defense = 50,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = -10}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = -10}},
     },
     [ITEM_ASURAS_ARMOR] = {
         .price = 15000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 57,
         .attack = 5,
         .defense = 42,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 8}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 8}},
     },
     [ITEM_SPIKED_ARMOR] = {
         .price = 14000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 180,
         .attack = 10,
         .defense = 34,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 6}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 6}},
     },
     [ITEM_COTTON_SHIRT] = {
         .price = 20,
@@ -657,7 +657,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 60,
         .defense = 16,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 20}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 20}},
     },
     [ITEM_ADEPTS_CLOTHES] = {
         .price = 850,
@@ -666,17 +666,17 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .icon = 61,
         .defense = 18,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_PP, .amount = 8}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_PP, .amount = 8}},
     },
     [ITEM_ELVEN_SHIRT] = {
         .price = 1700,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 62,
         .defense = 22,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_SCALE_AGILITY, .amount = 15}},
+        .effs = {{.kind = EQUIP_EFFECT_SCALE_AGILITY, .amount = 15}},
     },
     [ITEM_SILVER_VEST] = {
         .price = 3200,
@@ -689,12 +689,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_WATER_JACKET] = {
         .price = 3000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 64,
         .defense = 30,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 30},
             {.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 20},
         },
@@ -702,12 +702,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_STORM_GEAR] = {
         .price = 9800,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 65,
         .defense = 42,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 30},
             {.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 30},
             {.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = 30},
@@ -716,12 +716,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_KIMONO] = {
         .price = 2800,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 66,
         .defense = 25,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 10},
             {.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 10},
         },
@@ -729,12 +729,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_NINJA_GARB] = {
         .price = 6900,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 67,
         .defense = 36,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 30},
             {.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = 10},
         },
@@ -766,7 +766,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_CHINA_DRESS] = {
         .price = 1600,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 71,
         .defense = 19,
@@ -785,37 +785,37 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_COCKTAIL_DRESS] = {
         .price = 4000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 73,
         .defense = 29,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_PP, .amount = 15}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_PP, .amount = 15}},
     },
     [ITEM_BLESSED_ROBE] = {
         .price = 7000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 74,
         .defense = 36,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 5}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 5}},
     },
     [ITEM_MAGICAL_CASSOCK] = {
         .price = 9000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 75,
         .defense = 39,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 2}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 2}},
     },
     [ITEM_MYSTERIOUS_ROBE] = {
         .price = 11000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 76,
         .defense = 40,
@@ -824,12 +824,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_FEATHERED_ROBE] = {
         .price = 14000,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 77,
         .defense = 45,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_JUPITER_POWER, .amount = 20},
             {.kind = EQUIP_EFFECT_ADD_JUPITER_RESIST, .amount = 30},
             {.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 30},
@@ -838,12 +838,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_ORACLES_ROBE] = {
         .price = 13500,
         .type = ITEM_TYPE_ARMOR,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 78,
         .defense = 43,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 40},
             {.kind = EQUIP_EFFECT_ADD_HP_REGEN, .amount = 10},
         },
@@ -883,7 +883,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MIRRORED_SHIELD] = {
         .price = 5200,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 83,
         .defense = 39,
@@ -894,23 +894,23 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_DRAGON_SHIELD] = {
         .price = 2400,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 84,
         .defense = 26,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 30}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_MARS_RESIST, .amount = 30}},
     },
     [ITEM_EARTH_SHIELD] = {
         .price = 4100,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 166,
         .defense = 31,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 20}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_VENUS_RESIST, .amount = 20}},
         .abilityId = ABILITY_CURE_WELL,
     },
     [ITEM_PADDED_GLOVES] = {
@@ -940,7 +940,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_VAMBRACE] = {
         .price = 1800,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 88,
         .attack = 5,
@@ -950,7 +950,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_WAR_GLOVES] = {
         .price = 4000,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 89,
         .attack = 10,
@@ -960,12 +960,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SPIRIT_GLOVES] = {
         .price = 5200,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 90,
         .defense = 34,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_VENUS_POWER, .amount = 5},
             {.kind = EQUIP_EFFECT_ADD_MERCURY_POWER, .amount = 5},
             {.kind = EQUIP_EFFECT_ADD_MARS_POWER, .amount = 5},
@@ -975,7 +975,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_BATTLE_GLOVES] = {
         .price = 2100,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 168,
         .attack = 8,
@@ -985,7 +985,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_AURA_GLOVES] = {
         .price = 6500,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 178,
         .defense = 36,
@@ -1028,13 +1028,13 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SPIRIT_ARMLET] = {
         .price = 9000,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 95,
         .defense = 38,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_VENUS_POWER, .amount = 10},
             {.kind = EQUIP_EFFECT_ADD_MERCURY_POWER, .amount = 10},
         },
@@ -1043,13 +1043,13 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_VIRTUOUS_ARMLET] = {
         .price = 7000,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 96,
         .defense = 35,
         .useType = ITEM_USE_MAY_BREAK,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_MARS_POWER, .amount = 10},
             {.kind = EQUIP_EFFECT_ADD_JUPITER_POWER, .amount = 10},
         },
@@ -1058,7 +1058,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_GUARDIAN_ARMLET] = {
         .price = 2600,
         .type = ITEM_TYPE_SHIELD,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 167,
         .defense = 27,
@@ -1117,12 +1117,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_WARRIORS_HELM] = {
         .price = 10000,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 103,
         .defense = 35,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_VENUS_POWER, .amount = 10},
             {.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 10},
         },
@@ -1130,12 +1130,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_ADEPTS_HELM] = {
         .price = 3700,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(ISAAC) | EQUIP_CHARACTER(GARET) | EQUIP_CHARACTER(FELIX),
         .icon = 104,
         .defense = 29,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_SCALE_PP, .amount = 12}},
+        .effs = {{.kind = EQUIP_EFFECT_SCALE_PP, .amount = 12}},
     },
     [ITEM_LEATHER_CAP] = {
         .price = 30,
@@ -1164,32 +1164,32 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_JEWELED_CROWN] = {
         .price = 4000,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 108,
         .defense = 35,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_LUCK, .amount = 5}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_LUCK, .amount = 5}},
     },
     [ITEM_NINJA_HOOD] = {
         .price = 2800,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 109,
         .defense = 28,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 20}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 20}},
     },
     [ITEM_LUCKY_CAP] = {
         .price = 5200,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 110,
         .defense = 33,
         .element = ELEMENT_NONE,
-        .effects = {
+        .effs = {
             {.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 8},
             {.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 2},
         },
@@ -1197,17 +1197,17 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_THUNDER_CROWN] = {
         .price = 7500,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
+        .flg = ITEM_CURSED | ITEM_CANNOT_UNEQUIP | ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 111,
         .defense = 40,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 4}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 4}},
     },
     [ITEM_PROPHETS_HAT] = {
         .price = 4600,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 179,
         .defense = 30,
@@ -1218,12 +1218,12 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_LURE_CAP] = {
         .price = 3000,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 189,
         .defense = 20,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_LURE}},
+        .effs = {{.kind = EQUIP_EFFECT_LURE}},
     },
     [ITEM_CIRCLET] = {
         .price = 120,
@@ -1260,17 +1260,17 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_MYTHRIL_CIRCLET] = {
         .price = 7000,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(IVAN) | EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 116,
         .defense = 34,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 3}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_PP_REGEN, .amount = 3}},
     },
     [ITEM_GLITTERING_TIARA] = {
         .price = 3600,
         .type = ITEM_TYPE_HELM,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 165,
         .defense = 27,
@@ -1280,7 +1280,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_HERB] = {
         .price = 10,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 117,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1288,7 +1288,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_NUT] = {
         .price = 200,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 132,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1296,7 +1296,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_VIAL] = {
         .price = 500,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 133,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1304,7 +1304,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_POTION] = {
         .price = 1000,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 134,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1312,7 +1312,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_HERMES_WATER] = {
         .price = 2000,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .icon = 135,
         .useType = ITEM_USE_EMPTIES,
         .element = ELEMENT_NONE,
@@ -1320,13 +1320,13 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_EMPTY_BOTTLE] = {
         .price = 1000,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .icon = 136,
         .element = ELEMENT_NONE,
     },
     [ITEM_PSY_CRYSTAL] = {
         .price = 1500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 137,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1334,7 +1334,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_ANTIDOTE] = {
         .price = 20,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 118,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1342,7 +1342,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_ELIXIR] = {
         .price = 30,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 138,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1350,7 +1350,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_WATER_OF_LIFE] = {
         .price = 3000,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 139,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1358,7 +1358,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_POWER_BREAD] = {
         .price = 500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 140,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1366,7 +1366,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_COOKIE] = {
         .price = 500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 141,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1374,7 +1374,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_APPLE] = {
         .price = 500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 142,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1382,7 +1382,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_HARD_NUT] = {
         .price = 500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 143,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1390,7 +1390,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_MINT] = {
         .price = 500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 144,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1398,7 +1398,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_LUCKY_PEPPER] = {
         .price = 500,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 145,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1406,7 +1406,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_ORB_OF_FORCE] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 124,
         .useType = ITEM_USE_TEACHES,
@@ -1415,7 +1415,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_DOUSE_DROP] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 125,
         .useType = ITEM_USE_TEACHES,
@@ -1424,7 +1424,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_FROST_JEWEL] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 126,
         .useType = ITEM_USE_TEACHES,
@@ -1433,7 +1433,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_LIFTING_GEM] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 127,
         .useType = ITEM_USE_TEACHES,
@@ -1442,7 +1442,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_HALT_GEM] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 128,
         .useType = ITEM_USE_TEACHES,
@@ -1451,7 +1451,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_CLOAK_BALL] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 129,
         .useType = ITEM_USE_TEACHES,
@@ -1460,7 +1460,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_CARRY_STONE] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 130,
         .useType = ITEM_USE_TEACHES,
@@ -1469,7 +1469,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_CATCH_BEADS] = {
         .type = ITEM_TYPE_PSYNERGY,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 131,
         .useType = ITEM_USE_TEACHES,
@@ -1477,38 +1477,38 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .abilityId = ABILITY_CATCH,
     },
     [ITEM_VENUS_STAR] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 119,
         .element = ELEMENT_NONE,
     },
     [ITEM_MERCURY_STAR] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 120,
         .element = ELEMENT_NONE,
     },
     [ITEM_MARS_STAR] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 121,
         .element = ELEMENT_NONE,
     },
     [ITEM_JUPITER_STAR] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 122,
         .element = ELEMENT_NONE,
     },
     [ITEM_MYTHRIL_BAG] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 148,
         .element = ELEMENT_NONE,
     },
     [ITEM_SMALL_JEWEL] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 123,
         .element = ELEMENT_NONE,
     },
     [ITEM_SMOKE_BOMB] = {
         .price = 30,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 146,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1516,7 +1516,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_SLEEP_BOMB] = {
         .price = 60,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 147,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1524,18 +1524,18 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_GAME_TICKET] = {
         .price = 50,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 149,
         .element = ELEMENT_NONE,
     },
     [ITEM_LUCKY_MEDAL] = {
         .price = 100,
-        .flags = ITEM_RARE | ITEM_STACKABLE,
+        .flg = ITEM_RARE | ITEM_STACKABLE,
         .icon = 150,
         .element = ELEMENT_NONE,
     },
     [ITEM_DRAGONS_EYE] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 151,
         .element = ELEMENT_NONE,
     },
@@ -1544,7 +1544,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .element = ELEMENT_NONE,
     },
     [ITEM_ANCHOR_CHARM] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 155,
         .element = ELEMENT_NONE,
     },
@@ -1557,32 +1557,32 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_CELL_KEY] = {
         .price = 30,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .icon = 174,
         .element = ELEMENT_NONE,
     },
     [ITEM_BOAT_TICKET] = {
         .price = 1500,
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 175,
         .element = ELEMENT_NONE,
     },
     [ITEM_SACRED_FEATHER] = {
         .price = 70,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 176,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_AVOID,
     },
     [ITEM_MYSTIC_DRAUGHT] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 177,
         .element = ELEMENT_NONE,
     },
     [ITEM_OIL_DROP] = {
         .price = 30,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 181,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1590,7 +1590,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_WEASELS_CLAW] = {
         .price = 40,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 182,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1598,7 +1598,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_BRAMBLE_SEED] = {
         .price = 50,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 183,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
@@ -1606,101 +1606,101 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     },
     [ITEM_CRYSTAL_POWDER] = {
         .price = 60,
-        .flags = ITEM_STACKABLE,
+        .flg = ITEM_STACKABLE,
         .icon = 184,
         .useType = ITEM_USE_CONSUMED,
         .element = ELEMENT_NONE,
         .abilityId = ABILITY_HAIL_PRISM,
     },
     [ITEM_BLACK_ORB] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 187,
         .element = ELEMENT_NONE,
     },
     [ITEM_RED_KEY] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 190,
         .element = ELEMENT_NONE,
     },
     [ITEM_BLUE_KEY] = {
-        .flags = ITEM_INDISPENSABLE,
+        .flg = ITEM_INDISPENSABLE,
         .icon = 191,
         .element = ELEMENT_NONE,
     },
     [ITEM_MYTHRIL_SHIRT] = {
         .price = 2900,
         .type = ITEM_TYPE_SHIRT,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 156,
         .defense = 10,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 5}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 5}},
     },
     [ITEM_SILK_SHIRT] = {
         .price = 1800,
         .type = ITEM_TYPE_SHIRT,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_CHARACTER(MIA) | EQUIP_CHARACTER(JENNA),
         .icon = 157,
         .defense = 6,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_LUCK, .amount = 1}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_LUCK, .amount = 1}},
     },
     [ITEM_RUNNING_SHIRT] = {
         .price = 400,
         .type = ITEM_TYPE_SHIRT,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 158,
         .defense = 1,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 15}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 15}},
     },
     [ITEM_HYPER_BOOTS] = {
         .price = 2400,
         .type = ITEM_TYPE_BOOTS,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 159,
         .defense = 4,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 12}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_UNLEASH_CHANCE, .amount = 12}},
     },
     [ITEM_QUICK_BOOTS] = {
         .price = 2100,
         .type = ITEM_TYPE_BOOTS,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 160,
         .defense = 3,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 20}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_AGILITY, .amount = 20}},
     },
     [ITEM_FUR_BOOTS] = {
         .price = 1200,
         .type = ITEM_TYPE_BOOTS,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 161,
         .defense = 2,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 15}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_MERCURY_RESIST, .amount = 15}},
     },
     [ITEM_TURTLE_BOOTS] = {
         .price = 600,
         .type = ITEM_TYPE_BOOTS,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 188,
         .defense = 3,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_SCALE_AGILITY, .amount = 5}},
+        .effs = {{.kind = EQUIP_EFFECT_SCALE_AGILITY, .amount = 5}},
     },
     [ITEM_ADEPT_RING] = {
         .price = 3100,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 162,
         .useType = ITEM_USE_MAY_BREAK,
@@ -1710,7 +1710,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_WAR_RING] = {
         .price = 2600,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 163,
         .useType = ITEM_USE_MAY_BREAK,
@@ -1720,7 +1720,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_SLEEP_RING] = {
         .price = 1400,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 164,
         .useType = ITEM_USE_MAY_BREAK,
@@ -1730,7 +1730,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_HEALING_RING] = {
         .price = 800,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 170,
         .useType = ITEM_USE_MAY_BREAK,
@@ -1740,7 +1740,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_UNICORN_RING] = {
         .price = 1100,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 171,
         .useType = ITEM_USE_MAY_BREAK,
@@ -1750,7 +1750,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_FAIRY_RING] = {
         .price = 2900,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 172,
         .useType = ITEM_USE_MAY_BREAK,
@@ -1760,15 +1760,15 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
     [ITEM_CLERICS_RING] = {
         .price = 6400,
         .type = ITEM_TYPE_RING,
-        .flags = ITEM_RARE,
+        .flg = ITEM_RARE,
         .equipMask = EQUIP_ALL_CHARACTERS,
         .icon = 186,
         .element = ELEMENT_NONE,
-        .effects = {{.kind = EQUIP_EFFECT_CURSE_REMOVABLE}},
+        .effs = {{.kind = EQUIP_EFFECT_CURSE_REMOVABLE}},
     },
-    // Spares: one placeholder weapon for Isaac copied to every row, which would
-    // unleash Move on every attack. Nothing gives them and the text has no
-    // names for them.
+    /* Spares: one placeholder weapon for Isaac copied to every row, which would */
+    /* unleash Move on every attack. Nothing gives them and the text has no */
+    /* names for them. */
     [ITEM_SPARE_FIRST ... ITEM_SPARE_LAST] = {
         .price = 100,
         .type = ITEM_TYPE_WEAPON,
@@ -1778,7 +1778,7 @@ const struct ItemDefinition gItem_DefinitionTable[] = {
         .unleashChance = UNLEASH_PERCENT(320),
         .unleashAbility = ABILITY_MOVE,
         .element = ELEMENT_VENUS,
-        .effects = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
+        .effs = {{.kind = EQUIP_EFFECT_ADD_HP, .amount = 10}},
     },
 };
-// clang-format on
+/* clang-format on */

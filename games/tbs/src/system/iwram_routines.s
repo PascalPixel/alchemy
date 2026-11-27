@@ -9,7 +9,7 @@
 @ same smull, but its low half is a dead scratch, and orr r0, r0, r2, lsr #16
 @ reads it.
 @ This proves a hand-written multiply, not by itself a hand-written
-@ file. The routine has no other tell: its four instructions are a frameless
+@ file. The function has no other tell: its four instructions are a frameless
 @ leaf that reuses the argument registers, as compiled code also may.
 @ Why IwramDivFX is assembly:
 @ Both smull halves are consumed from nonconsecutive r3/r0; compiler DI
@@ -236,8 +236,8 @@ IwramMultiplyMatrix:
 	.section .data,"aw",%progbits
 	.arm
 
-	.global gCurrentMatrix
-gCurrentMatrix:
+	.global CurrentMatrix
+CurrentMatrix:
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0

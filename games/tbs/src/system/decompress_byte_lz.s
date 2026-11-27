@@ -1,17 +1,17 @@
-@ Why Decompress_ByteLzArm is assembly:
+@ Why fdDecompressByteLzArm is assembly:
 @ bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
 @ Its return pops the r1 saved at entry into r0.
-@ Why Oam_BuildBufferKernel is assembly:
+@ Why syOamBuildBufferKernel is assembly:
 @ unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
 @ a four-register list outside the block-copy patterns.
 @ Why Canvas_ScaleThreeQuartersArm to Canvas_HalveArm are assembly:
-@ both routines save callee-saved r5/r6 without lr, and write modified
+@ both functions save callee-saved r5/r6 without lr, and write modified
 @ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
 @ Why Canvas_DarkenArm to Canvas_DarkenArmEnd are assembly:
 @ stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
 @ Why Canvas_BrightenArm to Canvas_HalveNonzeroArm are assembly:
-@ all three routines save callee-saved r5/r6 (and further registers in
+@ all three functions save callee-saved r5/r6 (and further registers in
 @ Canvas_BrightenArm) without saving lr.
 @ Why Canvas_DarkenPartialArm is assembly:
 @ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
@@ -23,8 +23,8 @@
 @ bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
 .syntax unified
 	.arm
-	.global Decompress_ByteLzArm
-Decompress_ByteLzArm:
+	.global fdDecompressByteLzArm
+fdDecompressByteLzArm:
 	push	{r1, r5, r6, r7, lr}
 .Lbyte_flags:
 	ldrb	lr, [r0], #1
@@ -187,12 +187,12 @@ AlchemyUncreditedEnd_decode_byte_lz_2:
 	pop	{r0, r5, r6, r7, ip}
 	sub	r0, r1, r0
 	bx	ip
-	.global Decompress_ByteLzCodeSize
-	.set Decompress_ByteLzCodeSize, . - Decompress_ByteLzArm
+	.global fdDecompressByteLzCodeSize
+	.set fdDecompressByteLzCodeSize, . - fdDecompressByteLzArm
 .syntax unified
 	.arm
-	.global Oam_BuildBufferKernel
-Oam_BuildBufferKernel:
+	.global syOamBuildBufferKernel
+syOamBuildBufferKernel:
 	push	{r5, r6, r7, r8, r9, lr}
 	ldr	r2, [pc, #196]
 	mov	ip, #64
@@ -250,12 +250,12 @@ Oam_BuildBufferKernel:
 .Loam_done:
 	pop	{r5, r6, r7, r8, r9, lr}
 	bx	lr
-	.4byte	gVBlankCount
+	.4byte	VBlankCount
 	.4byte	IwramFillWords
-	.4byte	gOamMatrixCount
-	.4byte	gOamMatrices
-	.global Oam_BuildBufferKernelCodeSize
-	.set Oam_BuildBufferKernelCodeSize, . - Oam_BuildBufferKernel
+	.4byte	OamMatrixCount
+	.4byte	OamMatrices
+	.global syOamBuildBufferKernelCodeSize
+	.set syOamBuildBufferKernelCodeSize, . - syOamBuildBufferKernel
 .syntax unified
 	.arm
 	.global Canvas_ScaleThreeQuartersArm
@@ -301,10 +301,10 @@ Canvas_HalveArm:
 	pop	{r5, r6}
 	bx	lr
 .L_halve_end:
-	.global Canvas_CopyAndScaleThreeQuartersCodeSize
-	.set Canvas_CopyAndScaleThreeQuartersCodeSize, Canvas_HalveArm - Canvas_ScaleThreeQuartersArm
-	.global Canvas_CopyAndHalveCodeSize
-	.set Canvas_CopyAndHalveCodeSize, .L_halve_end - Canvas_HalveArm
+	.global syCanvasCopyAndScaleThreeQuartersCodeSize
+	.set syCanvasCopyAndScaleThreeQuartersCodeSize, Canvas_HalveArm - Canvas_ScaleThreeQuartersArm
+	.global syCanvasCopyAndHalveCodeSize
+	.set syCanvasCopyAndHalveCodeSize, .L_halve_end - Canvas_HalveArm
 .syntax unified
 	.arm
 	.global Canvas_DarkenArm
@@ -343,8 +343,8 @@ Canvas_DarkenArm:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 Canvas_DarkenArmEnd:
-	.global Canvas_CopyAndDarkenCodeSize
-	.set Canvas_CopyAndDarkenCodeSize, Canvas_DarkenArmEnd - Canvas_DarkenArm
+	.global syCanvasCopyAndDarkenCodeSize
+	.set syCanvasCopyAndDarkenCodeSize, Canvas_DarkenArmEnd - Canvas_DarkenArm
 .syntax unified
 	.arm
 	.global Canvas_BrightenArm
@@ -436,12 +436,12 @@ Canvas_HalveNonzeroArm:
 	pop	{r5, r6}
 	bx	lr
 .L_halve_nonzero_end:
-	.global Canvas_CopyAndBrightenCodeSize
-	.set Canvas_CopyAndBrightenCodeSize, Canvas_ScaleNonzeroThreeQuartersArm - Canvas_BrightenArm
-	.global Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize
-	.set Canvas_CopyAndScaleNonzeroThreeQuartersCodeSize, Canvas_HalveNonzeroArm - Canvas_ScaleNonzeroThreeQuartersArm
-	.global Canvas_CopyAndHalveNonzeroCodeSize
-	.set Canvas_CopyAndHalveNonzeroCodeSize, .L_halve_nonzero_end - Canvas_HalveNonzeroArm
+	.global syCanvasCopyAndBrightenCodeSize
+	.set syCanvasCopyAndBrightenCodeSize, Canvas_ScaleNonzeroThreeQuartersArm - Canvas_BrightenArm
+	.global syCanvasCopyAndScaleNonzeroThreeQuartersCodeSize
+	.set syCanvasCopyAndScaleNonzeroThreeQuartersCodeSize, Canvas_HalveNonzeroArm - Canvas_ScaleNonzeroThreeQuartersArm
+	.global syCanvasCopyAndHalveNonzeroCodeSize
+	.set syCanvasCopyAndHalveNonzeroCodeSize, .L_halve_nonzero_end - Canvas_HalveNonzeroArm
 .syntax unified
 	.arm
 	.global Canvas_DarkenPartialArm
@@ -508,8 +508,8 @@ Canvas_DarkenPartialArm:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 .L_darken_partial_end:
-	.global Canvas_CopyAndDarkenPartialCodeSize
-	.set Canvas_CopyAndDarkenPartialCodeSize, .L_darken_partial_end - Canvas_DarkenPartialArm
+	.global syCanvasCopyAndDarkenPartialCodeSize
+	.set syCanvasCopyAndDarkenPartialCodeSize, .L_darken_partial_end - Canvas_DarkenPartialArm
 .syntax unified
 	.arm
 	.global Canvas_BrightenPartialArm
@@ -577,8 +577,8 @@ Canvas_BrightenPartialArm:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
 Canvas_BrightenPartialArmEnd:
-	.global Canvas_CopyAndBrightenPartialCodeSize
-	.set Canvas_CopyAndBrightenPartialCodeSize, Canvas_BrightenPartialArmEnd - Canvas_BrightenPartialArm
+	.global syCanvasCopyAndBrightenPartialCodeSize
+	.set syCanvasCopyAndBrightenPartialCodeSize, Canvas_BrightenPartialArmEnd - Canvas_BrightenPartialArm
 .syntax unified
 	.arm
 	.global Decompress_HalfwordLz
@@ -609,5 +609,5 @@ Decompress_HalfwordLz:
 	subs	r2, r2, #1
 	bne	.Lhalfword_copy
 	b	.Lhalfword_next_flag
-	.global Decompress_HalfwordsCodeSize
-	.set Decompress_HalfwordsCodeSize, . - Decompress_HalfwordLz
+	.global syDecompressHalfwordsCodeSize
+	.set syDecompressHalfwordsCodeSize, . - Decompress_HalfwordLz

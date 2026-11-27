@@ -1,16 +1,16 @@
-@ Why assembly: WorldMap_BuildScanlineTableArm is a Thumb entry whose bx pc switches to the ARM
+@ Why assembly: fdWorldMapBuildScanlineTableArm is a Thumb entry whose bx pc switches to the ARM
 @ code of WorldMap_BuildScanlineTableInArm that follows, a mode switch inside a function; its
 @ halfword after bx pc is never run. WorldMap_BuildScanlineTableInArm, an ARM copy of the
-@ perspective map's scanline table builder (WorldMap_BuildScanlineTable is the Thumb one),
-@ calls IwramSqrt and IwramTransformVector by bl through two 8-byte far-call
-@ veneers placed after its literal pool, and two of its smull take free
+@ perspective map's scanline table builder (fdWorldMapBuildScanlineTable is the Thumb one),
+@ calls IwramSqrt and IwramTransformVector by bl through two 8-byte stub call
+@ stubs placed after its literal pool, and two of its smull take free
 @ registers for their high halves (r2/r1 and r2/r0) and shift them back, which
 @ GCC's register-pair multiply cannot emit.
 .syntax unified
 	.thumb
-	.global WorldMap_BuildScanlineTableArm
+	.global fdWorldMapBuildScanlineTableArm
 	.thumb_func
-WorldMap_BuildScanlineTableArm:
+fdWorldMapBuildScanlineTableArm:
 	bx	pc
 AlchemyUncredited_080212da:
 	.2byte	0x0200
@@ -102,7 +102,7 @@ WorldMap_BuildScanlineTableInArm:
 	orr	r0, r0, r3, lsr #16
 	str	r0, [r7, #4]
 	b	.L_08021448
-	.4byte gProjection
+	.4byte ProjectionWork
 	.4byte Data_030011f0
 	.4byte IwramDivFX
 .L_08021430:
@@ -110,7 +110,7 @@ WorldMap_BuildScanlineTableInArm:
 	.4byte IwramSqrt
 .L_08021438:
 	ldr	pc, [pc, #-4]
-	@ The Japanese edition's second veneer reaches IwramSqrt, as its first
+	@ The Japanese edition's second stub reaches IwramSqrt, as its first
 	@ does, so the transform's call takes a square root there; the later
 	@ editions reach IwramTransformVector.
 	.ifdef TLA_EDITION_JA

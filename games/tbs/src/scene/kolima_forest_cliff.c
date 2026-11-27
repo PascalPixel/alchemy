@@ -1,163 +1,153 @@
-/// @file
-/// Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five
-/// scenes, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
-///
-/// It has three logs, rolled by walking into them. The one pushed west to the
-/// water's edge tips into the river and floats there, cells the party can cross
-/// to the far side. From the bank the leader can hop east (step trigger 11,
-/// KolimaForest_HopEast).
-///
-/// The forest keeps its cursed colours until Tret lifts the curse
-/// (FLAG_KOLIMA_CURSE_LIFTED).
-///
-/// FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER: the log is in the river, until the
-/// party next comes in.
-///
-/// The scene's name, Cliff, is ours, for what sets the scene apart. A rock
-/// cliff runs across its north side above the river and the logs
-/// (places/kolima-forest-cliff_cursed/map-0.png).
+/* @file */
+/* Kolima Forest (SceneId_KolimaForestCliff), the third of the forest's five */
+/* scenes, between SceneId_KolimaForestGlade and SceneId_KolimaForestFloodgate.
+ */
+/* */
+/* It has three logs, rolled by walking into them. The one pushed west to the */
+/* water's edge tips into the river and floats there, cells the party can cross
+ */
+/* to the far side. From the bank the leader can hop east (step trigger 11, */
+/* scKolimaForestHopEast). */
+/* */
+/* The forest keeps its cursed colours until Tret lifts the curse */
+/* (FLAG_KOLIMA_CURSE_LIFTED). */
+/* */
+/* FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER: the log is in the river, until the */
+/* party next comes in. */
+/* */
+/* The scene's name, Cliff, is ours, for what sets the scene apart. A rock */
+/* cliff runs across its north side above the river and the logs */
+/* (places/kolima-forest-cliff_cursed/map-0.png). */
 
 #include "flags.h"
-#include "macros.h"
-#include "types.h"
-#include "battle/battle.h"
 #include "debug/debug.h"
 #include "field/event.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "field/pushed_actor.h"
-#include "field/scene_tables.h"
 #include "field/speaker.h"
-#include "game/game.h"
 #include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "scene/import.h"
 #include "scene/kolima_palette.h"
-#include "sound/sound.h"
-#include "system/heap_slots.h"
-#include "system/main_routine_state.h"
-#include "system/system.h"
 
-extern struct SceneEntrance gKolimaForestCliffEntrances[];
-extern u32 gKolimaForestCliffExits[];
-extern struct ActorPlacement gKolimaForestCliffActorPlacements[];
-extern struct Trigger gKolimaForestCliffTriggers[];
+extern SCENE_ENTRANCE KolimaForestCliffEntrances[];
+extern u32 KolimaForestCliffExits[];
+extern ACTOR_PLACE KolimaForestCliffActorPlacements[];
+extern TRIGGER KolimaForestCliffTriggers[];
 
-/// The scene's actors, numbering the rows of
-/// gKolimaForestCliffActorPlacements.
+/* The scene's actors, numbering the rows of */
+/* KolimaForestCliffActorPlacements. */
 enum {
-  /// The three logs. The third is the one that can reach the river.
-  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
+	/* The three logs. The third is the one that can reach the river. */
+	ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+	ACTOR_RIVER_LOG = ACTOR_FIRST_LOG + 2
 };
 
 #include "shared/pushed_actor.c"
 
-/// The river log has tipped into the river and floats there as ground the party
-/// can cross.
+/* The river log has tipped into the river and floats there as ground the party
+ */
+/* can cross. */
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
-/// The column at the water's edge, where the river log pushed west tips in.
+/* The column at the water's edge, where the river log pushed west tips in. */
 #define CLIFF_RIVER_EDGE_COLUMN 12
-/// How far the curse tints the cliff until it is lifted: green and blue lose
-/// 1 / CLIFF_CURSE_DIVISOR of themselves (KolimaPalette_Curse).
+/* How far the curse tints the cliff until it is lifted: green and blue lose */
+/* 1 / CLIFF_CURSE_DIVISOR of themselves (scKolimaPaletteCurse). */
 #define CLIFF_CURSE_DIVISOR 6
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gKolimaForestCliffEntrances;
+const SCENE_ENTRANCE *scGetEntrances(void) {
+	return KolimaForestCliffEntrances;
 }
 
-const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
+const SCENE_EXIT_REGION *scGetExitRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gKolimaForestCliffExits; }
+const u32 *scGetExits(void) { return KolimaForestCliffExits; }
 
-/// The three logs.
-const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  return gKolimaForestCliffActorPlacements;
+/* The three logs. */
+const ACTOR_PLACE *scGetActorPlacements(void) {
+	return KolimaForestCliffActorPlacements;
 }
 
-/// In Kolima Forest (SceneId_KolimaForestCliff), walking into a log rolls it
-/// ahead until something stops it.
-static void KolimaForestCliff_PushLog(void) {
-  struct PushedActorProbe result;
+/* In Kolima Forest (SceneId_KolimaForestCliff), walking into a log rolls it */
+/* ahead until something stops it. */
+static void scKolimaForestCliffPushLog(void) {
+	PUSHED_ACTOR_PROBE result;
 
-  Event_Start();
-  if (PushedActor_FindClearPosition(&result)) {
-    PushedActor_Roll(result);
-    if (result.actorSlot == ACTOR_RIVER_LOG &&
-        (FIELD_CELL(result.position.x)) == CLIFF_RIVER_EDGE_COLUMN) {
-      Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
-      Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
-      Event_Wait(30);
-      Sound_Play(SE_LOG_FALL);
-      Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
-      // It floats under the party's feet, and the river's cells under it
-      // become ground to cross on.
-      Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-      MapGrid_FillCollisionRectangle(2, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
-      GameFlag_Set(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
-      Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
-    }
-  }
-  Event_End();
+	fdEventStart();
+	if(scPushedActorFindClearPos(&result)) {
+		scPushedActorRoll(result);
+		if(result.actorSlot == ACTOR_RIVER_LOG &&
+		   (FIELD_CELL(result.pos.x)) == CLIFF_RIVER_EDGE_COLUMN) {
+			fdActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
+			fdActorSetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
+			fdEventWait(30);
+			sySndPlay(SE_LOG_FALL);
+			fdActorSetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_DROP_IN);
+			/* It floats under the party's feet, and the river's cells under it
+			 */
+			/* become ground to cross on. */
+			fdActorGet(ACTOR_RIVER_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+			fdMapGridCopyCellAttributes(32, 20, 2, 4, 11, 16);
+			scMapGridFillCollisionRectangle(2, 12, 16, 1, 4,
+											CELL_BEHAVIOR_NORMAL);
+			gmFlagSet(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER);
+			fdActorSetSprFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
+		}
+	}
+	fdEventEnd();
 }
 
 #include "shared/kolima_jump.c"
 
-/// The logs, the two ways out and the hop east from the bank.
-const struct Trigger *Scene_GetTriggers(void) {
-  return gKolimaForestCliffTriggers;
-}
+/* The logs, the two ways out and the hop east from the bank. */
+const TRIGGER *scGetTriggers(void) { return KolimaForestCliffTriggers; }
 
-/// Sets up the logs and the forest's colours on entry.
-s32 Scene_Initialize(void) {
-  struct FieldState *state = gFieldState;
+/* Sets up the logs and the forest's colours on entry. */
+s32 scInit(void) {
+	FIELD_STATE *state = FieldStateWork;
 
-  state->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  PushedActor_BlockFootprint(ACTOR_RIVER_LOG);
+	state->transition =
+		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+	scPushedActorBlockFootprint(ACTOR_RIVER_LOG);
 
-  // The log the party tipped in still floats in the river, as ground to cross
-  // on.
-  if (GameFlag_Get(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
-    Actor_Get(ACTOR_RIVER_LOG)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
-    MapGrid_FillCollisionRectangle(2, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_RIVER_LOG), 0);
-  }
+	/* The log the party tipped in still floats in the river, as ground to cross
+	 */
+	/* on. */
+	if(gmFlagGet(FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER) != 0) {
+		fdActorGet(ACTOR_RIVER_LOG)->priFlg = ACTOR_PRIORITY_UNDERFOOT;
+		fdMapGridCopyCellAttributes(32, 20, 2, 4, 11, 16);
+		scMapGridFillCollisionRectangle(2, 12, 16, 1, 4, CELL_BEHAVIOR_NORMAL);
+		fdActorSetSprFlags(fdActorGet(ACTOR_RIVER_LOG), 0);
+	}
 
-  PushedActor_BlockFootprint(ACTOR_FIRST_LOG);
-  PushedActor_BlockFootprint(ACTOR_FIRST_LOG + 1);
+	scPushedActorBlockFootprint(ACTOR_FIRST_LOG);
+	scPushedActorBlockFootprint(ACTOR_FIRST_LOG + 1);
 
-  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    KolimaPalette_Curse(CLIFF_CURSE_DIVISOR);
-  }
-  return 0;
+	if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+		scKolimaPaletteCurse(CLIFF_CURSE_DIVISOR);
+	}
+	return 0;
 }
 
 #include "shared/kolima_palette.c"
 
 #include "shared/pushed_actor_tables.c"
-// clang-format off
+/* clang-format off */
 
-struct SceneEntrance gKolimaForestCliffEntrances[] = {
+SCENE_ENTRANCE KolimaForestCliffEntrances[] = {
     { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_FLOODGATE, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-/// On into the forest (SceneId_KolimaForestFloodgate) and back
-/// (SceneId_KolimaForestGlade).
-u32 gKolimaForestCliffExits[] = {
+/* On into the forest (SceneId_KolimaForestFloodgate) and back */
+/* (SceneId_KolimaForestGlade). */
+u32 KolimaForestCliffExits[] = {
     SCENE_EXITS(KolimaForestCliff),
     SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE, KolimaForestFloodgate, KOLIMA_FOREST_FLOODGATE_FROM_KOLIMA_FOREST_CLIFF),
     SCENE_EXIT(KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade, KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF),
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gKolimaForestCliffActorPlacements[] = {
+ACTOR_PLACE KolimaForestCliffActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         256, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
@@ -166,22 +156,23 @@ struct ActorPlacement gKolimaForestCliffActorPlacements[] = {
         312, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },
 };
-// clang-format on
+/* clang-format on */
 
-struct Trigger gKolimaForestCliffTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
-     KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
-     EVENT(KolimaForestCliff_PushLog)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
-     EVENT(KolimaForest_HopEast)},
-    {TRIGGER_TABLE_END},
+TRIGGER KolimaForestCliffTriggers[] = {
+	{TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+	 KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_FLOODGATE},
+	{TRIGGER_EXIT, 2, CONDITION_ALWAYS,
+	 KOLIMA_FOREST_CLIFF_TO_KOLIMA_FOREST_GLADE},
+	{TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS,
+	 EVENT(scKolimaForestCliffPushLog)},
+	{STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS,
+	 EVENT(scKolimaForestHopEast)},
+	{TRIGGER_TABLE_END},
 };
 
-/// The healthy colours, kept by KolimaPalette_SaveHealthy: the palette fade's
-/// 448 background and sprite colours, in the array's first half.
-u8 gKolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
-/// The cursed colours, kept by KolimaPalette_SaveCursed.
-u8 gKolimaPalette_Cursed[896] BSS_DATA;
+/* The healthy colours, kept by scKolimaPaletteSaveHealthy: the palette fade's
+ */
+/* 448 background and sprite colours, in the array's first half. */
+u8 KolimaPalette_Healthy[1792] BSS_DATA ALIGNED(16);
+/* The cursed colours, kept by scKolimaPaletteSaveCursed. */
+u8 KolimaPalette_Cursed[896] BSS_DATA;

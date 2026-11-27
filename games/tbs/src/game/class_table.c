@@ -1,14 +1,14 @@
-/// @file
-/// The 203 classes, by class id. Each name is the English release's
-/// (MsgClassName plus the class id). Each series starts at a multiple of ten;
-/// the blank rows after its last class are spare ids, named "?" in the text.
+/* @file */
+/* The 203 classes, by class id. Each name is the English release's */
+/* (MsgClassName plus the class id). Each series starts at a multiple of ten; */
+/* the blank rows after its last class are spare ids, named "?" in the text. */
 
 #include "ability_ids.h"
 #include "game/game.h"
 
-// clang-format off
-const struct ClassDefinition gClass_DefinitionTable[] = {
-    // NPC
+/* clang-format off */
+const CLASS_DEFINITION Class_DefinitionTable[] = {
+    /* NPC */
     {
         .series = CLASS_SERIES_NPC,
         .hp = 10,
@@ -18,7 +18,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .agility = 10,
         .luck = 10,
     },
-    // Squire
+    /* Squire */
     {
         .series = CLASS_SERIES_SQUIRE,
         .required = {5},
@@ -44,9 +44,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURE_WELL, .level = 10},
             {.ability = ABILITY_POTENT_CURE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
     },
-    // Knight
+    /* Knight */
     {
         .series = CLASS_SERIES_SQUIRE,
         .required = {7},
@@ -72,9 +72,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURE_WELL, .level = 10},
             {.ability = ABILITY_POTENT_CURE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
     },
-    // Gallant
+    /* Gallant */
     {
         .series = CLASS_SERIES_SQUIRE,
         .required = {9},
@@ -101,9 +101,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_POTENT_CURE, .level = 26},
             {.ability = ABILITY_REVIVE, .level = 19},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
     },
-    // Lord
+    /* Lord */
     {
         .series = CLASS_SERIES_SQUIRE,
         .required = {11},
@@ -130,9 +130,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_POTENT_CURE, .level = 26},
             {.ability = ABILITY_REVIVE, .level = 19},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
     },
-    // Slayer
+    /* Slayer */
     {
         .series = CLASS_SERIES_SQUIRE,
         .required = {13},
@@ -159,13 +159,13 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_POTENT_CURE, .level = 26},
             {.ability = ABILITY_REVIVE, .level = 19},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_HP, ABILITY_EFFECT_DRAIN_HALF_HP},
     },
     {0},
     {0},
     {0},
     {0},
-    // Guard
+    /* Guard */
     {
         .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 5},
@@ -188,9 +188,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_ERUPTION, .level = 22},
             {.ability = ABILITY_PYROCLASM, .level = 48},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
-    // Soldier
+    /* Soldier */
     {
         .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 7},
@@ -213,9 +213,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_ERUPTION, .level = 22},
             {.ability = ABILITY_PYROCLASM, .level = 48},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
-    // Warrior
+    /* Warrior */
     {
         .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 9},
@@ -242,9 +242,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
-    // Champion
+    /* Champion */
     {
         .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 11},
@@ -271,9 +271,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
-    // Hero
+    /* Hero */
     {
         .series = CLASS_SERIES_GUARD,
         .required = {0, 0, 13},
@@ -300,14 +300,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffs = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Wind Seer
+    /* Wind Seer */
     {
         .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 5},
@@ -334,9 +334,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_SLEEP, .level = 12},
             {.ability = ABILITY_BIND, .level = 17},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Magician
+    /* Magician */
     {
         .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 7},
@@ -363,9 +363,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_SLEEP, .level = 12},
             {.ability = ABILITY_BIND, .level = 17},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Mage
+    /* Mage */
     {
         .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 9},
@@ -392,9 +392,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_SLEEP, .level = 12},
             {.ability = ABILITY_BIND, .level = 17},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Magister
+    /* Magister */
     {
         .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 11},
@@ -421,9 +421,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_SLEEP, .level = 12},
             {.ability = ABILITY_BIND, .level = 17},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Sorcerer
+    /* Sorcerer */
     {
         .series = CLASS_SERIES_WIND_SEER,
         .required = {0, 0, 0, 13},
@@ -450,14 +450,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_SLEEP, .level = 12},
             {.ability = ABILITY_BIND, .level = 17},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Water Seer
+    /* Water Seer */
     {
         .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 5},
@@ -485,7 +485,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // Scribe
+    /* Scribe */
     {
         .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 7},
@@ -513,7 +513,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // Cleric
+    /* Cleric */
     {
         .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 9},
@@ -541,7 +541,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // Paragon
+    /* Paragon */
     {
         .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 11},
@@ -569,7 +569,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // Angel
+    /* Angel */
     {
         .series = CLASS_SERIES_WATER_SEER,
         .required = {0, 13},
@@ -602,7 +602,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Swordsman
+    /* Swordsman */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {5},
@@ -629,7 +629,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // Defender
+    /* Defender */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {5, 2},
@@ -657,7 +657,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // Cavalier
+    /* Cavalier */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {5, 4},
@@ -685,7 +685,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // Guardian
+    /* Guardian */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {6, 6},
@@ -713,7 +713,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // Protector
+    /* Protector */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {7, 7},
@@ -746,7 +746,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Swordsman
+    /* Swordsman */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 0, 5},
@@ -774,7 +774,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_BREAK, .level = 30},
         },
     },
-    // Defender
+    /* Defender */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 2, 5},
@@ -803,7 +803,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // Cavalier
+    /* Cavalier */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 4, 5},
@@ -832,7 +832,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // Luminier
+    /* Luminier */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 6, 6},
@@ -861,7 +861,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_AVOID, .level = 6},
         },
     },
-    // Radiant
+    /* Radiant */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {0, 7, 7},
@@ -895,7 +895,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Dragoon
+    /* Dragoon */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {3, 3, 3},
@@ -923,9 +923,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_AVOID, .level = 6},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Templar
+    /* Templar */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {4, 4, 4},
@@ -953,9 +953,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_AVOID, .level = 6},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Paladin
+    /* Paladin */
     {
         .series = CLASS_SERIES_SWORDSMAN,
         .required = {4, 5, 4},
@@ -983,7 +983,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_AVOID, .level = 6},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
     {0},
     {0},
@@ -992,7 +992,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Apprentice
+    /* Apprentice */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {5},
@@ -1020,9 +1020,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Illusionist
+    /* Illusionist */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {5, 0, 0, 2},
@@ -1050,9 +1050,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Enchanter
+    /* Enchanter */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {5, 0, 0, 4},
@@ -1080,9 +1080,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Conjurer
+    /* Conjurer */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {6, 0, 0, 6},
@@ -1110,9 +1110,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // War Adept
+    /* War Adept */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {7, 0, 0, 7},
@@ -1140,14 +1140,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Page
+    /* Page */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 5},
@@ -1175,9 +1175,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Illusionist
+    /* Illusionist */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 5, 2},
@@ -1205,9 +1205,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Enchanter
+    /* Enchanter */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 5, 4},
@@ -1235,9 +1235,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Conjurer
+    /* Conjurer */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 6, 6},
@@ -1265,9 +1265,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // War Adept
+    /* War Adept */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {0, 0, 7, 7},
@@ -1295,14 +1295,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Ninja
+    /* Ninja */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {3, 0, 3, 3},
@@ -1330,9 +1330,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_THUNDERSTORM, .level = 50},
             {.ability = ABILITY_MIST, .level = 7},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Disciple
+    /* Disciple */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {4, 0, 4, 4},
@@ -1360,9 +1360,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_THUNDERSTORM, .level = 50},
             {.ability = ABILITY_MIST, .level = 7},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
-    // Master
+    /* Master */
     {
         .series = CLASS_SERIES_APPRENTICE,
         .required = {4, 0, 4, 5},
@@ -1390,7 +1390,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_THUNDERSTORM, .level = 50},
             {.ability = ABILITY_MIST, .level = 7},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
     {0},
     {0},
@@ -1399,7 +1399,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Seer
+    /* Seer */
     {
         .series = CLASS_SERIES_SEER,
         .required = {0, 5},
@@ -1427,9 +1427,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Diviner
+    /* Diviner */
     {
         .series = CLASS_SERIES_SEER,
         .required = {2, 5},
@@ -1457,9 +1457,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Shaman
+    /* Shaman */
     {
         .series = CLASS_SERIES_SEER,
         .required = {4, 5},
@@ -1487,9 +1487,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Druid
+    /* Druid */
     {
         .series = CLASS_SERIES_SEER,
         .required = {6, 6},
@@ -1517,9 +1517,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Oracle
+    /* Oracle */
     {
         .series = CLASS_SERIES_SEER,
         .required = {7, 7},
@@ -1547,14 +1547,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Seer
+    /* Seer */
     {
         .series = CLASS_SERIES_SEER,
         .required = {0, 0, 0, 5},
@@ -1581,9 +1581,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Diviner
+    /* Diviner */
     {
         .series = CLASS_SERIES_SEER,
         .required = {2, 0, 0, 5},
@@ -1610,9 +1610,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Shaman
+    /* Shaman */
     {
         .series = CLASS_SERIES_SEER,
         .required = {4, 0, 0, 5},
@@ -1639,9 +1639,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Druid
+    /* Druid */
     {
         .series = CLASS_SERIES_SEER,
         .required = {6, 0, 0, 6},
@@ -1668,9 +1668,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
-    // Oracle
+    /* Oracle */
     {
         .series = CLASS_SERIES_SEER,
         .required = {7, 0, 0, 7},
@@ -1697,14 +1697,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
         },
-        .weakEffects = {ABILITY_EFFECT_SLEEP},
+        .weakEffs = {ABILITY_EFFECT_SLEEP},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Medium
+    /* Medium */
     {
         .series = CLASS_SERIES_SEER,
         .required = {3, 3, 0, 3},
@@ -1731,9 +1731,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 36},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN},
+        .weakEffs = {ABILITY_EFFECT_STUN},
     },
-    // Dark Mage
+    /* Dark Mage */
     {
         .series = CLASS_SERIES_SEER,
         .required = {4, 4, 0, 4},
@@ -1760,9 +1760,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 36},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN},
+        .weakEffs = {ABILITY_EFFECT_STUN},
     },
-    // Death Mage
+    /* Death Mage */
     {
         .series = CLASS_SERIES_SEER,
         .required = {5, 4, 0, 4},
@@ -1789,7 +1789,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 31},
             {.ability = ABILITY_PSY_DRAIN, .level = 36},
         },
-        .weakEffects = {ABILITY_EFFECT_STUN},
+        .weakEffs = {ABILITY_EFFECT_STUN},
     },
     {0},
     {0},
@@ -1798,7 +1798,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Pilgrim
+    /* Pilgrim */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 5},
@@ -1825,9 +1825,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Wanderer
+    /* Wanderer */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 5, 2},
@@ -1854,9 +1854,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Ascetic
+    /* Ascetic */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 5, 4},
@@ -1883,9 +1883,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Water Monk
+    /* Water Monk */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 6, 6},
@@ -1912,9 +1912,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Guru
+    /* Guru */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 7, 7},
@@ -1941,14 +1941,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESTORE, .level = 13},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Pilgrim
+    /* Pilgrim */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 0, 5},
@@ -1974,9 +1974,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Wanderer
+    /* Wanderer */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 2, 5},
@@ -2002,9 +2002,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Ascetic
+    /* Ascetic */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 4, 5},
@@ -2030,9 +2030,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Fire Monk
+    /* Fire Monk */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 6, 6},
@@ -2058,9 +2058,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Guru
+    /* Guru */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 0, 7, 7},
@@ -2086,14 +2086,14 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_DRAIN, .level = 33},
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
     {0},
     {0},
     {0},
     {0},
     {0},
-    // Ranger
+    /* Ranger */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 3, 3, 3},
@@ -2120,9 +2120,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Bard
+    /* Bard */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 4, 4, 4},
@@ -2149,9 +2149,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
-    // Warlock
+    /* Warlock */
     {
         .series = CLASS_SERIES_PILGRIM,
         .required = {0, 4, 5, 4},
@@ -2178,7 +2178,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 41},
             {.ability = ABILITY_BREAK, .level = 34},
         },
-        .weakEffects = {ABILITY_EFFECT_DELUSION},
+        .weakEffs = {ABILITY_EFFECT_DELUSION},
     },
     {0},
     {0},
@@ -2187,7 +2187,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Brute
+    /* Brute */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {1, 0, 1},
@@ -2215,9 +2215,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // Ruffian
+    /* Ruffian */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {2, 0, 2},
@@ -2245,9 +2245,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // Savage
+    /* Savage */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {4, 0, 4},
@@ -2275,9 +2275,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // Barbarian
+    /* Barbarian */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {5, 0, 5},
@@ -2305,9 +2305,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // Berserker
+    /* Berserker */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {6, 0, 6},
@@ -2335,9 +2335,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // Chaos Lord
+    /* Chaos Lord */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {7, 0, 7},
@@ -2365,13 +2365,13 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     {0},
     {0},
     {0},
     {0},
-    // Samurai
+    /* Samurai */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {4, 0, 4, 3},
@@ -2399,9 +2399,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_MAGIC_SHELL, .level = 10},
             {.ability = ABILITY_MAGIC_SHIELD, .level = 27},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
-    // Ronin
+    /* Ronin */
     {
         .series = CLASS_SERIES_BRUTE,
         .required = {5, 0, 5, 4},
@@ -2429,7 +2429,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_MAGIC_SHELL, .level = 10},
             {.ability = ABILITY_MAGIC_SHIELD, .level = 27},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffs = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     {0},
     {0},
@@ -2439,7 +2439,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // Hermit
+    /* Hermit */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {0, 1, 0, 1},
@@ -2466,9 +2466,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Elder
+    /* Elder */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {0, 2, 0, 2},
@@ -2495,9 +2495,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Scholar
+    /* Scholar */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {0, 4, 0, 4},
@@ -2524,9 +2524,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Savant
+    /* Savant */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {0, 5, 0, 5},
@@ -2553,9 +2553,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Sage
+    /* Sage */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {0, 6, 0, 6},
@@ -2582,9 +2582,9 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
-    // Wizard
+    /* Wizard */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {0, 7, 0, 7},
@@ -2611,13 +2611,13 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_PSY_DRAIN, .level = 39},
             {.ability = ABILITY_BREAK, .level = 30},
         },
-        .weakEffects = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
+        .weakEffs = {ABILITY_EFFECT_DRAIN_PP, ABILITY_EFFECT_PSY_LEECH},
     },
     {0},
     {0},
     {0},
     {0},
-    // White Mage
+    /* White Mage */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {3, 4, 0, 4},
@@ -2646,7 +2646,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_RESIST, .level = 31},
         },
     },
-    // Pure Mage
+    /* Pure Mage */
     {
         .series = CLASS_SERIES_HERMIT,
         .required = {4, 5, 0, 5},
@@ -2683,7 +2683,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {0},
-    // ?, Isaac's in the prologue
+    /* ?, Isaac's in the prologue */
     [CLASS_ISAAC_CHILD] = {
         .series = CLASS_SERIES_FIXED,
         .required = {5},
@@ -2694,7 +2694,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .agility = 11,
         .luck = 10,
     },
-    // ?, Garet's in the prologue
+    /* ?, Garet's in the prologue */
     [CLASS_GARET_CHILD] = {
         .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
@@ -2705,7 +2705,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .agility = 7,
         .luck = 10,
     },
-    // Flame User
+    /* Flame User */
     [CLASS_FLAME_USER] = {
         .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
@@ -2720,7 +2720,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_FLARE_WALL, .level = 6},
             {.ability = ABILITY_FLARE_STORM, .level = 18},
         },
-        .weakEffects = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
+        .weakEffs = {ABILITY_EFFECT_SEAL, ABILITY_EFFECT_SEAL_2_TURNS},
     },
 };
-// clang-format on
+/* clang-format on */

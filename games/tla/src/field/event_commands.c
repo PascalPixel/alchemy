@@ -1,12 +1,12 @@
-/// @file
-/// The event_commands object, its parts in event_commands/ in ROM order,
-/// ending with the event commands that follow it: the effect scene, Mind Read
-/// to Cloak, the rest of Cloak and Carry. event_commands_internal.h holds
-/// the includes every part shares.
+/* @file */
+/* The event_commands object, its parts in event_commands/ in ROM order, */
+/* ending with the event commands that follow it: the effect scene, Mind Read */
+/* to Cloak, the rest of Cloak and Carry. event_commands_internal.h holds */
+/* the includes every part shares. */
 
 #include "event_commands_internal.h"
 
-// The parts, in ROM order.
+/* The parts, in ROM order. */
 #include "event_commands_actor_commands.c"
 #include "event_commands_messages.c"
 #include "event_commands_camera.c"

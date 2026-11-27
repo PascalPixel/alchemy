@@ -44,13 +44,13 @@ tally passes the next threshold. It looks like luck and is not.
 A priest offers four services, Revive, Cure Poison, Repel Evil and Remove
 Curse, to one party member at a time. All four share one light show, and
 differ only in what they check, what they clear and what they cost
-(`Sanctum_Run`).
+(`mnSanctumRun`).
 
 ## Inns
 
 An inn charges by the guest, and a guest is a party member still standing.
 Each town's inn has its own price for one. A member who is down is not
-charged and not healed (`Inn_CheckIn`).
+charged and not healed (`mnInnCheckIn`).
 
 ## The forge
 
@@ -58,7 +58,7 @@ charged and not healed (`Inn_CheckIn`).
 
 Sunshine, Yallam's blacksmith, turns materials into equipment. Talk to him
 with a material in the pack and he offers to make something; his counter
-is the selling screen, aimed at your materials (`Forge_Run`).
+is the selling screen, aimed at your materials (`mnForgeRun`).
 
 The recipes are a table in [`shop_tables.c`](shop_tables.c): an item, then
 up to eight results with a weight each. The nine materials, such as a Tear
@@ -75,13 +75,13 @@ enough, stay or not. Then his wife hands it over, for the item's price.
 
 When the party finds an item and every pack is full, the game asks what to
 drop. The screen it shows is the selling screen with the shopkeeper taken
-away, which is why it lives here (`ItemPicker_Run`). Naribwe's fortune
+away, which is why it lives here (`mnItemPickerRun`). Naribwe's fortune
 teller uses it too, to be shown one of the party's items; it refuses only
 what cannot be taken off.
 
 ## Where the code is
 
-`Shop_Run` is the visit's loop, with buying, selling and repairing as its
+`mnShopRun` is the visit's loop, with buying, selling and repairing as its
 three trades in `shop_*.c`, beside the sanctum, the inn, the forge and the
 item picker. [`shop_tables.c`](shop_tables.c) holds the stock table and
 the forge's recipes.

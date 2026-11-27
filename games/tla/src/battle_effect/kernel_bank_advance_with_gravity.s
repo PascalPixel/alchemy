@@ -1,12 +1,12 @@
-@ Why Particle_AdvanceWithGravity3D to
-@ Particle_AdvanceWithGravity2D are assembly:
+@ Why btParticleAdvanceWithGravity3D to
+@ btParticleAdvanceWithGravity2D are assembly:
 @ each bge.n branches on the flags of the muls before it (muls r5, r1;
 @ bge.n), a conditional branch on flags with no compare.
 .syntax unified
 	.thumb
-	.global Particle_AdvanceWithGravity3D
+	.global btParticleAdvanceWithGravity3D
 	.thumb_func
-Particle_AdvanceWithGravity3D:
+btParticleAdvanceWithGravity3D:
 	push	{r5, r6, r7, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6, r7}
@@ -33,9 +33,9 @@ Particle_AdvanceWithGravity3D:
 	asrs	r7, r7, #6
 	stmia	r0!, {r5, r6, r7}
 	pop	{r5, r6, r7, pc}
-	.global Particle_AdvanceWithGravity2D
+	.global btParticleAdvanceWithGravity2D
 	.thumb_func
-Particle_AdvanceWithGravity2D:
+btParticleAdvanceWithGravity2D:
 	push	{r5, r6, lr}
 	mov	lr, r2
 	ldmia	r0!, {r2, r3, r4, r5, r6}

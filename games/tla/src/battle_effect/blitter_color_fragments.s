@@ -1,6 +1,6 @@
 @ Why assembly:
-@ BattleEffect_BuildBlitter (summon_effects/moloch.c) copies these 14-word fragments into
-@ generated ARM routines. r1/r5/r8/r9 are shared state and sl is the mask;
+@ btEffectBuildBlitter (summon_effects/moloch.c) copies these 14-word fragments into
+@ generated ARM functions. r1/r5/r8/r9 are shared state and sl is the mask;
 @ r5/r8/r9 change without callee saves, and neither fragment has a return.
 .syntax unified
 .text

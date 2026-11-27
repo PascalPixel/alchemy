@@ -1,679 +1,714 @@
-/// @file
-/// The link cable: payload exchange, block transfers and the link test.
-// Part of system.c.
-
-#include "system_internal.h"
+/* @file */
+/* The link cable: payload exchange, block transfers and the link test. */
+/* Part of system.c. */
 
 enum {
-  /// A packet: its number, missing mask, checksum and the 24-byte payload.
-  SERIAL_PACKET_HALFWORDS = 14,
-  SERIAL_PAYLOAD_BYTES = 24, ///< one console's payload each frame
-  SERIAL_BLOCK_BYTES = 20,   ///< bulk data carried in each payload
-  /// About 10,000 seconds, nearly three hours.
-  SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
-  SERIAL_IDLE_HALFWORD = 0xfefe, ///< sent and seen between packets
-  /// Timer 3's reload: it overflows 13981 cycles on, from one halfword
-  /// transfer to the next, about 20 a frame.
-  SERIAL_TIMER_RELOAD = 65536 - 13981
+	/* A packet: its number, missing mask, checksum and the 24-byte payload. */
+	SERIAL_PACKET_HALFWORDS = 14,
+	SERIAL_PAYLOAD_BYTES = 24, /* one console's payload each frame */
+	SERIAL_BLOCK_BYTES = 20,   /* bulk data carried in each payload */
+	/* About 10,000 seconds, nearly three hours. */
+	SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
+	SERIAL_IDLE_HALFWORD = 0xfefe, /* sent and seen between packets */
+	/* Timer 3's reload: it overflows 13981 cycles on, from one halfword */
+	/* transfer to the next, about 20 a frame. */
+	SERIAL_TIMER_RELOAD = 65536 - 13981
 };
 
-/// Makes this console, the parent, clock the transfers: timer 3's interrupt
-/// starts each one from now on, and the serial interrupt is switched off in IE
-/// and SIOCNT.
-static inline void Serial_StartClocking(volatile u32 *siocnt, u8 mode) {
-  Io_Write16(0, &REG_IME);
-  {
-    u32 ie = REG_IE;
+/* Makes this console, the parent, clock the transfers: timer 3's interrupt */
+/* starts each one from now on, and the serial interrupt is switched off in IE
+ */
+/* and SIOCNT. */
+static inline void sySerialStartClocking(volatile u32 *siocnt, u8 mode) {
+	scIoWrite16(0, &REG_IME);
+	{
+		u32 ie = REG_IE;
 
-    Io_Write16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
-    Io_Write16(1, &REG_IME);
-    *((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
-    REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-    REG_TM3CNT = SERIAL_TIMER_RELOAD;
-    gSerialState.mode = mode;
-  }
+		scIoWrite16((ie & ~INTR_FLAG_SERIAL) | INTR_FLAG_TIMER3, &REG_IE);
+		scIoWrite16(1, &REG_IME);
+		*((volatile s8 *)siocnt + 1) &= ~(SIO_INTR_ENABLE >> 8);
+		REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
+		REG_TM3CNT = SERIAL_TIMER_RELOAD;
+		SerialStateWork.mode = mode;
+	}
 }
 
-/// The link status (enum LinkStatus) from the consoles heard and SIOCNT's
-/// `control`: bits 0 and 1 the consoles heard from this frame, bits 8 and 9
-/// those heard from since the link began, and the clocking, error and extra
-/// console bits.
-static inline s32 Serial_GetLinkStatus(u32 control) {
-  s32 status;
-  s32 result;
+/* The link status (LINK_STAT) from the consoles heard and SIOCNT's */
+/* `control`: bits 0 and 1 the consoles heard from this frame, bits 8 and 9 */
+/* those heard from since the link began, and the clocking, error and extra */
+/* console bits. */
+static inline s32 sySerialGetLinkStat(u32 control) {
+	s32 status;
+	s32 result;
 
-  status = gSerialState.currentMask | (gSerialState.receivedMask << 8);
-  if (gSerialState.mode == SERIAL_MODE_CLOCKING)
-    status |= LINK_STATUS_CLOCKING;
-  result = Serial_AddErrorFlag(status);
-  if (SIO_ID_OF(control) > 1)
-    result |= LINK_STATUS_EXTRA_CONSOLE;
-  return result;
+	status = SerialStateWork.curMask | (SerialStateWork.receivedMask << 8);
+	if(SerialStateWork.mode == SERIAL_MODE_CLOCKING)
+		status |= LINK_STATUS_CLOCKING;
+	result = sySerialAddErrorFlag(status);
+	if(SIO_ID_OF(control) > 1)
+		result |= LINK_STATUS_EXTRA_CONSOLE;
+	return result;
 }
 
-/// Resets the serial port into multiplayer mode, installs the serial and timer
-/// 3 interrupt handlers, clears gSerialState and points its packet buffers into
-/// its storage, clears the bulk transfer state and sets gSerialExchangeActive,
-/// which starts the per-frame exchange.
-void Serial_Initialize(void) {
-  u32 interruptEnable;
-  s32 index;
-  struct SerialState *state;
+/* Resets the serial port into multiplayer mode, installs the serial and timer
+ */
+/* 3 interrupt handlers, clears SerialStateWork and points its packet buffers */
+/* into its storage, clears the bulk transfer state and sets */
+/* SerialExchangeActive, which starts the per-frame exchange. */
+void sySerialInit(void) {
+	u32 interruptEnable;
+	s32 index;
+	SERIAL_STATE *state;
 
-  IRQ_LOCK(interruptEnable);
-  // Replace both interrupt handlers before configuring multiplayer transfers.
-  Irq_SetHandler(IRQ_SERIAL, 0, Serial_HandleTransferInterrupt);
-  Irq_SetHandler(IRQ_TIMER3, 0, Serial_HandleTransferInterrupt);
-  REG_IME = 0;
-  REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
-  if ((REG_IF & INTR_FLAG_SERIAL) != 0)
-    REG_IF = INTR_FLAG_SERIAL;
-  if ((REG_IF & INTR_FLAG_TIMER3) != 0)
-    REG_IF = INTR_FLAG_TIMER3;
-  REG_RCNT = RCNT_GPIO_MODE;
-  REG_RCNT = RCNT_SIO_MODE;
-  REG_SIOCNT = SIO_32BIT_MODE;
-  REG_RCNT = RCNT_SIO_MODE;
-  REG_SIOCNT = SIO_MULTI_MODE;
-  REG_SIOCNT16 = REG_SIOCNT16 | SIO_INTR_ENABLE | SIO_115200_BPS;
-  state = &gSerialState;
-  REG_IME = 1;
-  Dma_Fill32(0, state, sizeof(*state));
-  state->sendIndex = -1;
-  state->sendBuffer[0] = (u16 *)(state->storage + 0);
-  state->sendBuffer[1] = (u16 *)(state->storage + SERIAL_PACKET_BYTES);
-  // Each console has separate incoming, completed and pending packet buffers.
-  for (index = 0; index <= 1; index++) {
-    state->incomingBuffer[index] =
-        (u16 *)(state->storage + SERIAL_PACKET_BYTES * 2 +
-                index * SERIAL_PACKET_BYTES * 3);
-    state->readyBuffer[index] =
-        (u16 *)(state->storage + SERIAL_PACKET_BYTES * 3 +
-                index * SERIAL_PACKET_BYTES * 3);
-    state->pendingBuffer[index] =
-        (u16 *)(state->storage + SERIAL_PACKET_BYTES * 4 +
-                index * SERIAL_PACKET_BYTES * 3);
-  }
-  REG_IME = 0;
-  REG_IE |= INTR_FLAG_SERIAL;
-  REG_IME = 1;
-  gSerialExchangeActive = 1;
-  gLinkExchangeState = 0;
-  gSerialSendSource = 0;
-  gSerialSendSize = 0;
-  gSerialReceiveDestination = 0;
-  gSerialReceivedSize = 0;
-  LinkBattle_ResetTransferState();
-  IRQ_UNLOCK(interruptEnable);
+	IRQ_LOCK(interruptEnable);
+	/* Replace both interrupt handlers before configuring multiplayer transfers.
+	 */
+	syIntFunction(IRQ_SERIAL, 0, sySerialHandleTransferInterrupt);
+	syIntFunction(IRQ_TIMER3, 0, sySerialHandleTransferInterrupt);
+	REG_IME = 0;
+	REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
+	if((REG_IF & INTR_FLAG_SERIAL) != 0)
+		REG_IF = INTR_FLAG_SERIAL;
+	if((REG_IF & INTR_FLAG_TIMER3) != 0)
+		REG_IF = INTR_FLAG_TIMER3;
+	REG_RCNT = RCNT_GPIO_MODE;
+	REG_RCNT = RCNT_SIO_MODE;
+	REG_SIOCNT = SIO_32BIT_MODE;
+	REG_RCNT = RCNT_SIO_MODE;
+	REG_SIOCNT = SIO_MULTI_MODE;
+	REG_SIOCNT16 = REG_SIOCNT16 | SIO_INTR_ENABLE | SIO_115200_BPS;
+	state = &SerialStateWork;
+	REG_IME = 1;
+	btDmaFill32(0, state, sizeof(*state));
+	state->sendIdx = -1;
+	state->sendBuf[0] = (u16 *)(state->storage + 0);
+	state->sendBuf[1] = (u16 *)(state->storage + SERIAL_PACKET_BYTES);
+	/* Each console has separate incoming, completed and pending packet buffers.
+	 */
+	for(index = 0; index <= 1; index++) {
+		state->incomingBuf[index] =
+			(u16 *)(state->storage + SERIAL_PACKET_BYTES * 2 +
+					index * SERIAL_PACKET_BYTES * 3);
+		state->readyBuf[index] =
+			(u16 *)(state->storage + SERIAL_PACKET_BYTES * 3 +
+					index * SERIAL_PACKET_BYTES * 3);
+		state->pendingBuf[index] =
+			(u16 *)(state->storage + SERIAL_PACKET_BYTES * 4 +
+					index * SERIAL_PACKET_BYTES * 3);
+	}
+	REG_IME = 0;
+	REG_IE |= INTR_FLAG_SERIAL;
+	REG_IME = 1;
+	SerialExchangeActive = 1;
+	LinkExchangeState = 0;
+	SerialSendSource = 0;
+	SerialSendSize = 0;
+	SerialReceiveDestination = 0;
+	SerialReceivedSize = 0;
+	syLinkBattleResetTransferState();
+	IRQ_UNLOCK(interruptEnable);
 }
 
-/// Lets the timer start transfers again once a link mode is set, by setting
-/// gSerialState.transferEnabled.
-void Serial_EnableTransferTimer(void) {
-  struct SerialState *state = &gSerialState;
+/* Lets the timer start transfers again once a link mode is set, by setting */
+/* SerialStateWork.transferEnabled. */
+void sySerialEnableTransferTimer(void) {
+	SERIAL_STATE *state = &SerialStateWork;
 
-  if (state->mode != 0)
-    state->transferEnabled = 1;
+	if(state->mode != 0)
+		state->transferEnabled = 1;
 }
 
-/// Unused: disables the serial and timer 3 interrupts, stops the transfer
-/// timer and clears gSerialState.transferEnabled.
-void Serial_DisableTransfer(void) {
-  struct SerialState *state;
+/* Unused: disables the serial and timer 3 interrupts, stops the transfer */
+/* timer and clears SerialStateWork.transferEnabled. */
+void sySerialDisableTransfer(void) {
+	SERIAL_STATE *state;
 
-  REG_IME = 0;
-  REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
-  REG_IME = 1;
-  REG_SIOCNT16 = SIO_MULTI_MODE | SIO_115200_BPS;
-  // Timer 3 stopped, with its reload set
-  REG_TM3CNT = SERIAL_TIMER_RELOAD;
-  REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
-  state = &gSerialState;
-  state->transferEnabled = 0;
+	REG_IME = 0;
+	REG_IE &= (u16)~(INTR_FLAG_SERIAL | INTR_FLAG_TIMER3);
+	REG_IME = 1;
+	REG_SIOCNT16 = SIO_MULTI_MODE | SIO_115200_BPS;
+	/* Timer 3 stopped, with its reload set */
+	REG_TM3CNT = SERIAL_TIMER_RELOAD;
+	REG_IF = INTR_FLAG_SERIAL | INTR_FLAG_TIMER3;
+	state = &SerialStateWork;
+	state->transferEnabled = 0;
 }
 
-/// Looks for the link partner and, once connected, does one exchange (as
-/// Serial_ExchangePayloads).
-s32 Serial_PollAndTransfer(void *send, void *receive) {
-  volatile u32 *siocnt;
-  u32 control;
+/* Looks for the link partner and, once connected, does one exchange (as */
+/* sySerialExchangePayloads). */
+s32 sySerialPollAndTransfer(void *send, void *receive) {
+	volatile u32 *siocnt;
+	u32 control;
 
-  siocnt = &REG_SIOCNT;
-  control = *siocnt;
-  switch (gSerialState.phase) {
-  case SERIAL_PHASE_SEARCHING: {
-    u8 multiplayerId = control & SIO_ID;
-    u8 mode;
+	siocnt = &REG_SIOCNT;
+	control = *siocnt;
+	switch(SerialStateWork.phase) {
+	case SERIAL_PHASE_SEARCHING: {
+		u8 multiplayerId = control & SIO_ID;
+		u8 mode;
 
-    // The parent waits here until SIO_MULTI_SD is set with SIO_START clear;
-    // a child connects at once.
-    if (multiplayerId == 0 &&
-        (mode = control & (SIO_START | SIO_MULTI_SD)) == SERIAL_MODE_CLOCKING) {
-      u8 siPin = control & SIO_MULTI_SI;
+		/* The parent waits here until SIO_MULTI_SD is set with SIO_START clear;
+		 */
+		/* a child connects at once. */
+		if(multiplayerId == 0 &&
+		   (mode = control & (SIO_START | SIO_MULTI_SD)) ==
+			   SERIAL_MODE_CLOCKING) {
+			u8 siPin = control & SIO_MULTI_SI;
 
-      // SI low: this console is the parent.
-      if (siPin == 0 && gSerialState.sendIndex == -1) {
-        Serial_StartClocking(siocnt, mode);
-      }
-    } else if (multiplayerId == 0) {
-      break;
-    }
-    gSerialState.phase = SERIAL_PHASE_CONNECTED;
-  }
-    // Fall through.
-  case SERIAL_PHASE_CONNECTED:
-    Serial_CollectReceivedPayloads(receive);
-    Serial_PrepareSendPacket(send);
-    break;
-  }
+			/* SI low: this console is the parent. */
+			if(siPin == 0 && SerialStateWork.sendIdx == -1) {
+				sySerialStartClocking(siocnt, mode);
+			}
+		}
+		else if(multiplayerId == 0) {
+			break;
+		}
+		SerialStateWork.phase = SERIAL_PHASE_CONNECTED;
+	}
+		/* Fall through. */
+	case SERIAL_PHASE_CONNECTED:
+		sySerialCollectReceivedPayloads(receive);
+		sySerialPrepareSendPacket(send);
+		break;
+	}
 
-  gSerialState.packetNumber++;
-  return Serial_GetLinkStatus(control);
+	SerialStateWork.packetNum++;
+	return sySerialGetLinkStat(control);
 }
 
-/// As Serial_PollAndTransfer, without exchanging data: wait() calls
-/// it once a frame while gSerialExchangeActive is set, and the VBlank handler
-/// does the exchange.
-s32 Serial_PollStatus(void) {
-  volatile u32 *siocnt;
-  u32 control;
+/* As sySerialPollAndTransfer, without exchanging data: sySynch() calls */
+/* it once a frame while SerialExchangeActive is set, and the VBlank handler */
+/* does the exchange. */
+s32 sySerialPollStat(void) {
+	volatile u32 *siocnt;
+	u32 control;
 
-  siocnt = &REG_SIOCNT;
-  control = *siocnt;
-  if (gSerialState.phase == SERIAL_PHASE_SEARCHING) {
-    u8 mode = control & (SIO_START | SIO_MULTI_SD);
+	siocnt = &REG_SIOCNT;
+	control = *siocnt;
+	if(SerialStateWork.phase == SERIAL_PHASE_SEARCHING) {
+		u8 mode = control & (SIO_START | SIO_MULTI_SD);
 
-    if (mode == SERIAL_MODE_CLOCKING) {
-      u8 siPin = control & SIO_MULTI_SI;
+		if(mode == SERIAL_MODE_CLOCKING) {
+			u8 siPin = control & SIO_MULTI_SI;
 
-      // SI low: this console is the parent.
-      if (siPin == 0 && gSerialState.sendIndex == -1) {
-        Serial_StartClocking(siocnt, mode);
-      }
-      gSerialState.phase = SERIAL_PHASE_CONNECTED;
-    }
-    gSerialState.packetNumber++;
-  }
+			/* SI low: this console is the parent. */
+			if(siPin == 0 && SerialStateWork.sendIdx == -1) {
+				sySerialStartClocking(siocnt, mode);
+			}
+			SerialStateWork.phase = SERIAL_PHASE_CONNECTED;
+		}
+		SerialStateWork.packetNum++;
+	}
 
-  return Serial_GetLinkStatus(control);
+	return sySerialGetLinkStat(control);
 }
 
-/// Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
-/// `receive` and builds the next packet from `send`. Called by the VBlank
-/// handler while gSerialExchangeActive is set, which stores the result in
-/// gLinkStatus. Returns the link status:
-///   bits 0 and 1 : consoles 0 and 1 heard from this frame
-///   0x80         : this console clocks the transfers (LINK_STATUS_CLOCKING)
-///   bits 8 and 9 : consoles 0 and 1 heard from since the link began
-///   0x1000       : the last transfer interrupt found SIOCNT's error bit
-///                  set (LINK_STATUS_ERROR)
-///   0x2000       : SIOCNT's multiplayer id is 2 or more
-/// So LINK_STATUS_HEARD_BOTH is what the block transfer and
-/// Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH) wait for.
-s32 Serial_ExchangePayloads(void *send, void *receive) {
-  volatile u32 *siocnt;
-  u32 control;
+/* Once connected (SERIAL_PHASE_CONNECTED), gathers the received payloads into
+ */
+/* `receive` and builds the next packet from `send`. Called by the VBlank */
+/* handler while SerialExchangeActive is set, which stores the result in */
+/* LinkStatusWork. Returns the link status: */
+/*   bits 0 and 1 : consoles 0 and 1 heard from this frame */
+/*   0x80         : this console clocks the transfers (LINK_STATUS_CLOCKING) */
+/*   bits 8 and 9 : consoles 0 and 1 heard from since the link began */
+/*   0x1000       : the last transfer interrupt found SIOCNT's error bit */
+/*                  set (LINK_STATUS_ERROR) */
+/*   0x2000       : SIOCNT's multiplayer id is 2 or more */
+/* So LINK_STATUS_HEARD_BOTH is what the block transfer and */
+/* sySerialWaitForStatMask(LINK_STATUS_HEARD_BOTH) wait for. */
+s32 sySerialExchangePayloads(void *send, void *receive) {
+	volatile u32 *siocnt;
+	u32 control;
 
-  siocnt = &REG_SIOCNT;
-  control = *siocnt;
-  if (gSerialState.phase == SERIAL_PHASE_CONNECTED) {
-    Serial_CollectReceivedPayloads(receive);
-    Serial_PrepareSendPacket(send);
-    gSerialState.packetNumber++;
-  }
-  return Serial_GetLinkStatus(control);
+	siocnt = &REG_SIOCNT;
+	control = *siocnt;
+	if(SerialStateWork.phase == SERIAL_PHASE_CONNECTED) {
+		sySerialCollectReceivedPayloads(receive);
+		sySerialPrepareSendPacket(send);
+		SerialStateWork.packetNum++;
+	}
+	return sySerialGetLinkStat(control);
 }
 
-/// Builds the packet to send in sendBuffer[0]: [0] the packet number, [1] the
-/// consoles not yet heard from, [2] the checksum and [4] the 24-byte payload.
-void Serial_PrepareSendPacket(void *payload) {
-  struct SerialState *serial;
-  u32 i;
-  u32 sum;
+/* Builds the packet to send in sendBuf[0]: [0] the packet number, [1] the */
+/* consoles not yet heard from, [2] the checksum and [4] the 24-byte payload. */
+void sySerialPrepareSendPacket(void *payload) {
+	SERIAL_STATE *serial;
+	u32 i;
+	u32 sum;
 
-  serial = &gSerialState;
-  {
-    u8 *packet;
-    u8 currentMask;
-    u8 receivedMask;
+	serial = &SerialStateWork;
+	{
+		u8 *packet;
+		u8 currentMask;
+		u8 receivedMask;
 
-    packet = (u8 *)serial->sendBuffer[0];
-    packet[0] = serial->packetNumber;
-    currentMask = serial->currentMask;
-    receivedMask = serial->receivedMask;
-    sum = 0;
-    packet[1] = receivedMask ^ currentMask;
-    *(u16 *)(packet + 2) = sum;
-    Dma_Set(payload, packet + 4, DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4),
-            REG_DMA3);
-  }
-  {
-    u16 *packet;
-    u32 halfword;
+		packet = (u8 *)serial->sendBuf[0];
+		packet[0] = serial->packetNum;
+		currentMask = serial->curMask;
+		receivedMask = serial->receivedMask;
+		sum = 0;
+		packet[1] = receivedMask ^ currentMask;
+		*(u16 *)(packet + 2) = sum;
+		syDMAXCopy(payload, packet + 4,
+				   DMA_COPY_WORDS(SERIAL_PAYLOAD_BYTES / 4), REG_DMA3);
+	}
+	{
+		u16 *packet;
+		u32 halfword;
 
-    packet = serial->sendBuffer[0];
-    for (i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
-      halfword = *packet;
-      packet++;
-      sum += halfword;
-    }
-  }
-  {
-    u16 **sendBuffers = serial->sendBuffer;
+		packet = serial->sendBuf[0];
+		for(i = 0; i < SERIAL_PACKET_HALFWORDS; i++) {
+			halfword = *packet;
+			packet++;
+			sum += halfword;
+		}
+	}
+	{
+		u16 **sendBuffers = serial->sendBuf;
 
-    ((struct SerialPacket *)sendBuffers[0])->checksum = ~sum;
-  }
+		((SERIAL_PACKET *)sendBuffers[0])->checksum = ~sum;
+	}
 
-  // Stop timer 3, rewind the send position and start the timer again
-  if (serial->mode != 0)
-    REG_TM3CNT_H = 0;
-  serial->sendIndex = -1;
-  if (serial->mode != 0 && serial->transferEnabled != 0)
-    REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
+	/* Stop timer 3, rewind the send position and start the timer again */
+	if(serial->mode != 0)
+		REG_TM3CNT_H = 0;
+	serial->sendIdx = -1;
+	if(serial->mode != 0 && serial->transferEnabled != 0)
+		REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
 }
 
-/// Swaps in the packets the interrupt handler finished, then copies the payload
-/// of each one whose checksum is good to `payload` (24 bytes per console), and
-/// records the consoles heard from in currentMask and receivedMask.
-u8 Serial_CollectReceivedPayloads(void *payload) {
-  u8 flags[8];
-  s32 i;
-  u32 k;
-  u16 *packet;
-  u16 *swap;
-  s32 sum;
+/* Swaps in the packets the interrupt handler finished, then copies the payload
+ */
+/* of each one whose checksum is good to `payload` (24 bytes per console), and
+ */
+/* records the consoles heard from in currentMask and receivedMask. */
+u8 sySerialCollectReceivedPayloads(void *payload) {
+	u8 flags[8];
+	s32 i;
+	u32 k;
+	u16 *packet;
+	u16 *swap;
+	s32 sum;
 
-  *(u32 *)&flags[4] = 0;
-  // Swap completed buffers with interrupts masked, then validate outside it.
-  Io_Write16(0, &REG_IME);
-  for (i = 0; i <= 3; i++) {
-    swap = gSerialState.pendingBuffer[i];
-    gSerialState.pendingBuffer[i] = gSerialState.readyBuffer[i];
-    gSerialState.readyBuffer[i] = swap;
-  }
-  *(u32 *)flags = *(u32 *)gSerialState.channelFlags;
-  *(u32 *)gSerialState.channelFlags = 0;
-  Io_Write16(1, &REG_IME);
-  gSerialState.currentMask = 0;
-  for (i = 0; i <= 1; i++) {
-    packet = gSerialState.pendingBuffer[i];
-    sum = 0;
-    for (k = 0; k < SERIAL_PACKET_HALFWORDS; k++)
-      sum += packet[k];
-    // A good packet's halfwords, its complemented checksum included, sum to
-    // 0xffff.
-    if (flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (s16)sum == -1) {
-      Dma_Set(gSerialState.pendingBuffer[i] + 2,
-              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
-              REG_DMA3);
-      gSerialState.currentMask |= 1 << i;
-    }
-    // Complementing a halfword spoils the sum, so a buffer that comes round
-    // again unchanged is never taken twice
-    if ((s16)sum == -1)
-      gSerialState.pendingBuffer[i][1] = ~gSerialState.pendingBuffer[i][1];
-  }
-  gSerialState.receivedMask |= gSerialState.currentMask;
-  return gSerialState.currentMask;
+	*(u32 *)&flags[4] = 0;
+	/* Swap completed buffers with interrupts masked, then validate outside it.
+	 */
+	scIoWrite16(0, &REG_IME);
+	for(i = 0; i <= 3; i++) {
+		swap = SerialStateWork.pendingBuf[i];
+		SerialStateWork.pendingBuf[i] = SerialStateWork.readyBuf[i];
+		SerialStateWork.readyBuf[i] = swap;
+	}
+	*(u32 *)flags = *(u32 *)SerialStateWork.channelFlg;
+	*(u32 *)SerialStateWork.channelFlg = 0;
+	scIoWrite16(1, &REG_IME);
+	SerialStateWork.curMask = 0;
+	for(i = 0; i <= 1; i++) {
+		packet = SerialStateWork.pendingBuf[i];
+		sum = 0;
+		for(k = 0; k < SERIAL_PACKET_HALFWORDS; k++)
+			sum += packet[k];
+		/* A good packet's halfwords, its complemented checksum included, sum to
+		 */
+		/* 0xffff. */
+		if(flags[i] == SERIAL_CHANNEL_PACKET_COMPLETE && (s16)sum == -1) {
+			syDMAXCopy(SerialStateWork.pendingBuf[i] + 2,
+					   (u8 *)payload + i * SERIAL_PAYLOAD_BYTES,
+					   DMA_COPY_WORDS(6), REG_DMA3);
+			SerialStateWork.curMask |= 1 << i;
+		}
+		/* Complementing a halfword spoils the sum, so a buffer that comes round
+		 */
+		/* again unchanged is never taken twice */
+		if((s16)sum == -1)
+			SerialStateWork.pendingBuf[i][1] =
+				~SerialStateWork.pendingBuf[i][1];
+	}
+	SerialStateWork.receivedMask |= SerialStateWork.curMask;
+	return SerialStateWork.curMask;
 }
 
-/// The serial and timer 3 interrupt, installed by Serial_Initialize: each one
-/// moves a halfword.
-void Serial_HandleTransferInterrupt(void) {
-  u16 received[4];
-  volatile u32 *sioControl;
-  s32 channel;
+/* The serial and timer 3 interrupt, installed by sySerialInit: each one */
+/* moves a halfword. */
+void sySerialHandleTransferInterrupt(void) {
+	u16 received[4];
+	volatile u32 *sioControl;
+	s32 channel;
 
-  // The four consoles' halfwords, SIOMULTI0 to 3.
-  // UB: the u16 array is written through one doubleword store
+	/* The four consoles' halfwords, SIOMULTI0 to 3. */
+	/* UB: the u16 array is written through one doubleword store */
 #ifdef UBFIX
-  {
-    volatile u16 *multi = (volatile u16 *)REG_SIODATA32;
+	{
+		volatile u16 *multi = (volatile u16 *)REG_SIODATA32;
 
-    received[0] = multi[0];
-    received[1] = multi[1];
-    received[2] = multi[2];
-    received[3] = multi[3];
-  }
+		received[0] = multi[0];
+		received[1] = multi[1];
+		received[2] = multi[2];
+		received[3] = multi[3];
+	}
 #else
-  *(u64 *)received = *(volatile u64 *)REG_SIODATA32;
+	*(u64 *)received = *(volatile u64 *)REG_SIODATA32;
 #endif
-  sioControl = &REG_SIOCNT;
-  // A packet heard while SIO_ERROR is set is refused (SERIAL_CHANNEL_ERROR,
-  // below).
-  gSerialState.transferError = SIO_ERROR_OF(*sioControl);
+	sioControl = &REG_SIOCNT;
+	/* A packet heard while SIO_ERROR is set is refused (SERIAL_CHANNEL_ERROR,
+	 */
+	/* below). */
+	SerialStateWork.transferError = SIO_ERROR_OF(*sioControl);
 
-  if (gSerialState.sendIndex == -1) {
-    u32 idleWord = SERIAL_IDLE_HALFWORD;
-    u16 *swap;
+	if(SerialStateWork.sendIdx == -1) {
+		u32 idleWord = SERIAL_IDLE_HALFWORD;
+		u16 *swap;
 
-    ((volatile u16 *)sioControl)[1] = idleWord;
-    swap = gSerialState.sendBuffer[1];
-    gSerialState.sendBuffer[1] = gSerialState.sendBuffer[0];
-    gSerialState.sendBuffer[0] = swap;
-  } else if (gSerialState.sendIndex >= 0) {
-    ((volatile u16 *)sioControl)[1] =
-        gSerialState.sendBuffer[1][gSerialState.sendIndex];
-  }
-  if (gSerialState.sendIndex <= SERIAL_PACKET_HALFWORDS)
-    gSerialState.sendIndex++;
+		((volatile u16 *)sioControl)[1] = idleWord;
+		swap = SerialStateWork.sendBuf[1];
+		SerialStateWork.sendBuf[1] = SerialStateWork.sendBuf[0];
+		SerialStateWork.sendBuf[0] = swap;
+	}
+	else if(SerialStateWork.sendIdx >= 0) {
+		((volatile u16 *)sioControl)[1] =
+			SerialStateWork.sendBuf[1][SerialStateWork.sendIdx];
+	}
+	if(SerialStateWork.sendIdx <= SERIAL_PACKET_HALFWORDS)
+		SerialStateWork.sendIdx++;
 
-  // Hand complete packets to the frame code without overwriting its buffers.
-  for (channel = 0; channel <= 1; channel++) {
-    s32 receiveIndex;
-    u16 *incoming;
+	/* Hand complete packets to the frame code without overwriting its buffers.
+	 */
+	for(channel = 0; channel <= 1; channel++) {
+		s32 receiveIndex;
+		u16 *incoming;
 
-    if (received[channel] == SERIAL_IDLE_HALFWORD &&
-        gSerialState.receiveIndex[channel] >= SERIAL_PACKET_HALFWORDS) {
-      gSerialState.receiveIndex[channel] = -1;
-    } else {
-      receiveIndex = gSerialState.receiveIndex[channel];
-      incoming = gSerialState.incomingBuffer[channel];
-      incoming[receiveIndex] = received[channel];
-      if (receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
-        u16 *swap = gSerialState.readyBuffer[channel];
+		if(received[channel] == SERIAL_IDLE_HALFWORD &&
+		   SerialStateWork.receiveIdx[channel] >= SERIAL_PACKET_HALFWORDS) {
+			SerialStateWork.receiveIdx[channel] = -1;
+		}
+		else {
+			receiveIndex = SerialStateWork.receiveIdx[channel];
+			incoming = SerialStateWork.incomingBuf[channel];
+			incoming[receiveIndex] = received[channel];
+			if(receiveIndex == SERIAL_PACKET_HALFWORDS - 1) {
+				u16 *swap = SerialStateWork.readyBuf[channel];
 
-        gSerialState.readyBuffer[channel] = incoming;
-        gSerialState.incomingBuffer[channel] = swap;
-        gSerialState.channelFlags[channel] |= SERIAL_CHANNEL_PACKET_COMPLETE;
-      }
-    }
-    if (gSerialState.transferError != 0)
-      gSerialState.channelFlags[channel] |= SERIAL_CHANNEL_ERROR;
-    if (gSerialState.receiveIndex[channel] <= SERIAL_PACKET_HALFWORDS)
-      gSerialState.receiveIndex[channel]++;
-  }
+				SerialStateWork.readyBuf[channel] = incoming;
+				SerialStateWork.incomingBuf[channel] = swap;
+				SerialStateWork.channelFlg[channel] |=
+					SERIAL_CHANNEL_PACKET_COMPLETE;
+			}
+		}
+		if(SerialStateWork.transferError != 0)
+			SerialStateWork.channelFlg[channel] |= SERIAL_CHANNEL_ERROR;
+		if(SerialStateWork.receiveIdx[channel] <= SERIAL_PACKET_HALFWORDS)
+			SerialStateWork.receiveIdx[channel]++;
+	}
 
-  // The console that clocks the transfers starts the next one, and restarts
-  // timer 3 so its count reloads
-  if (gSerialState.mode == SERIAL_MODE_CLOCKING) {
-    REG_TM3CNT_H = 0;
-    REG_SIOCNT16 |= SIO_START;
-    REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
-  }
+	/* The console that clocks the transfers starts the next one, and restarts
+	 */
+	/* timer 3 so its count reloads */
+	if(SerialStateWork.mode == SERIAL_MODE_CLOCKING) {
+		REG_TM3CNT_H = 0;
+		REG_SIOCNT16 |= SIO_START;
+		REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
+	}
 }
 
-/// Clears gSerialExchangeActive, which stops the per-frame exchange, and
-/// removes the link interrupt handlers.
-void Serial_RemoveIrqHandlers(void) {
-  gSerialExchangeActive = 0;
-  Irq_SetHandler(IRQ_SERIAL, 0, 0);
-  Irq_SetHandler(IRQ_TIMER3, 0, 0);
+/* Clears SerialExchangeActive, which stops the per-frame exchange, and */
+/* removes the link interrupt handlers. */
+void sySerialRemoveIrqHandlers(void) {
+	SerialExchangeActive = 0;
+	syIntFunction(IRQ_SERIAL, 0, 0);
+	syIntFunction(IRQ_TIMER3, 0, 0);
 }
 
-/// Waits a frame at a time until every status bit in `mask` is set in
-/// gLinkStatus, then returns this console's multiplayer id.
-u32 Serial_WaitForStatusMask(s32 mask) {
-  while ((mask & gLinkStatus) != mask) {
-    wait(1);
-  }
-  return SIO_ID_OF(REG_SIOCNT);
+/* Waits a frame at a time until every status bit in `mask` is set in */
+/* LinkStatusWork, then returns this console's multiplayer id. */
+u32 sySerialWaitForStatMask(s32 mask) {
+	while((mask & LinkStatusWork) != mask) {
+		sySynch(1);
+	}
+	return SIO_ID_OF(REG_SIOCNT);
 }
 
-/// Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
-/// sets the send source, size and block number that Serial_StepBlockTransfer
-/// works from.
-s32 Serial_StartSend(void *source, s32 size) {
-  struct SerialTransferState *state = &gSerialTransfer;
-  u32 savedInterruptMaster;
+/* Starts sending `size` bytes from `source` to the partner in 20-byte blocks:
+ */
+/* sets the send source, size and block number that sySerialStepBlockTransfer */
+/* works from. */
+s32 sySerialStartSend(void *source, s32 size) {
+	SERIAL_TRANSFER_STATE *state = &SerialTransfer;
+	u32 savedInterruptMaster;
 
-  if (gSerialSendSource != 0)
-    return -1;
-  IRQ_LOCK(savedInterruptMaster);
-  state->status = SERIAL_STATUS_RUNNING;
-  gSerialSendSource = (s32)source;
-  gSerialSendSize = size;
-  gSerialBlockNumber = 0;
-  state->active = 1;
-  IRQ_UNLOCK(savedInterruptMaster);
-  return 0;
+	if(SerialSendSource != 0)
+		return -1;
+	IRQ_LOCK(savedInterruptMaster);
+	state->stat = SERIAL_STATUS_RUNNING;
+	SerialSendSource = (s32)source;
+	SerialSendSize = size;
+	SerialBlockNumber = 0;
+	state->active = 1;
+	IRQ_UNLOCK(savedInterruptMaster);
+	return 0;
 }
 
-/// Starts receiving the partner's blocks into `destination`: sets the receive
-/// destination and clears the received size.
-s32 Serial_StartReceive(void *destination) {
-  struct SerialTransferState *state = &gSerialTransfer;
-  u32 savedInterruptMaster;
+/* Starts receiving the partner's blocks into `destination`: sets the receive */
+/* destination and clears the received size. */
+s32 sySerialStartReceive(void *destination) {
+	SERIAL_TRANSFER_STATE *state = &SerialTransfer;
+	u32 savedInterruptMaster;
 
-  if (gSerialReceiveDestination != 0)
-    return -1;
-  IRQ_LOCK(savedInterruptMaster);
-  state->status = SERIAL_STATUS_RUNNING | 1;
-  gSerialReceiveDestination = (s32)destination;
-  gSerialReceivedSize = 0;
-  state->active = 1;
-  gSerialBlockNumber = 0;
-  IRQ_UNLOCK(savedInterruptMaster);
-  return 0;
+	if(SerialReceiveDestination != 0)
+		return -1;
+	IRQ_LOCK(savedInterruptMaster);
+	state->stat = SERIAL_STATUS_RUNNING | 1;
+	SerialReceiveDestination = (s32)destination;
+	SerialReceivedSize = 0;
+	state->active = 1;
+	SerialBlockNumber = 0;
+	IRQ_UNLOCK(savedInterruptMaster);
+	return 0;
 }
 
-/// Each waits a frame at a time until `pending` is 0, giving up after
-/// SERIAL_TRANSFER_TIMEOUT_FRAMES: the send, then the receive.
+/* Each waits a frame at a time until `pending` is 0, giving up after */
+/* SERIAL_TRANSFER_TIMEOUT_FRAMES: the send, then the receive. */
 #define SERIAL_DEFINE_WAIT(name, pending)                                      \
-  void name(void) {                                                            \
-    u32 count = 0;                                                             \
+	void name(void) {                                                          \
+		u32 count = 0;                                                         \
                                                                                \
-    if (pending != 0) {                                                        \
-      do {                                                                     \
-        wait(1);                                                               \
-        count++;                                                               \
-      } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES && pending != 0);        \
-    }                                                                          \
-  }
+		if(pending != 0) {                                                     \
+			do {                                                               \
+				sySynch(1);                                                    \
+				count++;                                                       \
+			} while(count < SERIAL_TRANSFER_TIMEOUT_FRAMES && pending != 0);   \
+		}                                                                      \
+	}
 
-/// Waits for the send in progress to finish.
-SERIAL_DEFINE_WAIT(Serial_WaitForSend, gSerialSendSource)
-/// Waits for the receive in progress to finish.
-SERIAL_DEFINE_WAIT(Serial_WaitForReceive, gSerialReceiveDestination)
+/* Waits for the send in progress to finish. */
+SERIAL_DEFINE_WAIT(sySerialWaitForSend, SerialSendSource)
+/* Waits for the receive in progress to finish. */
+SERIAL_DEFINE_WAIT(sySerialWaitForReceive, SerialReceiveDestination)
 
-/// Waits until both the send and the receive have finished, giving up after
-/// SERIAL_TRANSFER_TIMEOUT_FRAMES. Reached through the far-call table.
-void Serial_WaitForTransfers(void) {
-  u32 count;
+/* Waits until both the send and the receive have finished, giving up after */
+/* SERIAL_TRANSFER_TIMEOUT_FRAMES. Reached through the stub table. */
+void sySerialWaitForTransfers(void) {
+	u32 count;
 
-  count = 0;
-  while (gSerialSendSource != 0 || gSerialReceiveDestination != 0) {
-    wait(1);
-    count++;
-    if (count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
-      return;
-  }
+	count = 0;
+	while(SerialSendSource != 0 || SerialReceiveDestination != 0) {
+		sySynch(1);
+		count++;
+		if(count >= SERIAL_TRANSFER_TIMEOUT_FRAMES)
+			return;
+	}
 }
 
-/// Returns bit 0 while a send runs and bit 1 while a receive runs. The link
-/// battle and the Battle Arena poll it between frames.
-s32 Serial_GetActiveTransfers(void) {
-  s32 flags;
+/* Returns bit 0 while a send runs and bit 1 while a receive runs. The link */
+/* battle and the Battle Arena poll it between frames. */
+s32 sySerialGetActiveTransfers(void) {
+	s32 flags;
 
-  flags = 0;
-  if (gSerialSendSource != 0) {
-    flags = 1;
-  }
-  if (gSerialReceiveDestination != 0) {
-    flags |= 2;
-  }
-  return flags;
+	flags = 0;
+	if(SerialSendSource != 0) {
+		flags = 1;
+	}
+	if(SerialReceiveDestination != 0) {
+		flags |= 2;
+	}
+	return flags;
 }
 
-/// Serial_ResetTransferState as a routine, for the link set-up and a link
-/// battle that fails.
-void LinkBattle_ResetTransferState(void) { Serial_ResetTransferState(); }
+/* sySerialResetTransferState as a function, for the link set-up and a link */
+/* battle that fails. */
+void syLinkBattleResetTransferState(void) { sySerialResetTransferState(); }
 
-/// A halfword in a record of its own, only to hold Serial_StepBlockTransfer's
-/// 1 (its FAKEMATCH).
-struct SerialHalfword {
-  u16 v;
-};
+/* A halfword in a record of its own, only to hold sySerialStepBlockTransfer's
+ */
+/* 1 (its FAKEMATCH). */
+typedef struct SERIAL_HALFWORD {
+	u16 v;
+} SERIAL_HALFWORD;
 
-/// Runs each VBlank after the exchange, called by System_VBlankHandler: moves
-/// the bulk transfer on by one 20-byte block each way.
-void Serial_StepBlockTransfer(void) {
-  struct SerialTransferState *peer;
-  u32 id;
-  struct SerialTransferState *own;
-  u32 gap;
-  /* FAKEMATCH(temporary): the 1 kept in a halfword record. */
-  struct SerialHalfword one;
+/* Runs each VBlank after the exchange, called by syVBlankHandler: moves */
+/* the bulk transfer on by one 20-byte block each way. */
+void sySerialStepBlockTransfer(void) {
+	SERIAL_TRANSFER_STATE *peer;
+	u32 id;
+	SERIAL_TRANSFER_STATE *own;
+	u32 gap;
+	/* FAKEMATCH(temporary): the 1 kept in a halfword record. */
+	SERIAL_HALFWORD one;
 
-  // The partner's payload: of multiplayer ids 0 and 1, the one not ours
-  id = ~(SIO_ID_OF(REG_SIOCNT)) & 1;
-  one.v = 1;
-  own = &gSerialTransfer;
-  peer = &gSerialPeerPayloads[id];
-  // Both consoles must have been heard from this frame
-  if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
-    return;
-  // Receiving advances only when the peer presents the expected block number.
-  // peerFlags is the sender's block kind, an enum SerialSendState.
-  if (gSerialReceiveDestination != 0) {
-    if (own->flags == SERIAL_RECEIVE_ACTIVE &&
-        (u8)(peer->peerFlags - SERIAL_SEND_MORE) <=
-            SERIAL_SEND_LAST - SERIAL_SEND_MORE) {
-      if (peer->active == (gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK)) {
-        own->active = 0;
-        switch (peer->peerFlags) {
-        case SERIAL_SEND_MORE:
-          // A block with more to come: store it and move on
-          Dma_Set(peer->payload, (void *)gSerialReceiveDestination,
-                  DMA_COPY_WORDS(5), REG_DMA3);
-          gSerialReceiveDestination += SERIAL_BLOCK_BYTES;
-          gSerialReceivedSize += SERIAL_BLOCK_BYTES;
-          own->status = (own->status + 1) | SERIAL_STATUS_RUNNING;
-          break;
-        case SERIAL_SEND_LAST:
-          // The last block: store it and report the receive finished
-          Dma_Set(peer->payload, (void *)gSerialReceiveDestination,
-                  DMA_COPY_WORDS(5), REG_DMA3);
-          gSerialReceivedSize += SERIAL_BLOCK_BYTES;
-          own->flags = SERIAL_RECEIVE_DONE;
-          own->status = 0;
-          own->active = one.v;
-          break;
-        }
-        gSerialBlockNumber =
-            (gSerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;
-      } else if (gSerialBlockNumber & SERIAL_BLOCK_REWIND) {
-        // Out of step and already asked: bit 7 of active is the request to
-        // rewind to the block number in its low bits
-        if (own->active & SERIAL_BLOCK_REWIND) {
-          own->active = one.v;
-        } else if (own->active == 1) {
-          own->active = 0;
-          gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
-        }
-      } else {
-        own->active = gSerialBlockNumber | SERIAL_BLOCK_REWIND;
-        gSerialBlockNumber |= SERIAL_BLOCK_REWIND;
-      }
-    } else {
-      own->active = 0;
-    }
-  }
-  // A peer behind our block number requests a rewind before the next block.
-  if (gSerialSendSource != 0) {
-    if (peer->flags == SERIAL_RECEIVE_ACTIVE) {
-      if (peer->active & SERIAL_BLOCK_REWIND) {
-        gap = (gSerialBlockNumber - peer->active) & SERIAL_BLOCK_NUMBER_MASK;
-        gSerialSendSource -= gap * SERIAL_BLOCK_BYTES;
-        gSerialSendSize += gap * SERIAL_BLOCK_BYTES;
-        gSerialBlockNumber -= gap;
-        gSerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
-      }
-      // Send the next block, marked as the last when it empties the size
-      if (gSerialSendSize != 0) {
-        Dma_Set((void *)gSerialSendSource, own->payload, DMA_COPY_WORDS(5),
-                REG_DMA3);
-        gSerialSendSize -= SERIAL_BLOCK_BYTES;
-        if (gSerialSendSize != 0) {
-          own->peerFlags = SERIAL_SEND_MORE;
-          own->active = gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
-          gSerialSendSource += SERIAL_BLOCK_BYTES;
-        } else {
-          own->peerFlags = SERIAL_SEND_LAST;
-          own->active = gSerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
-          gSerialSendSource += SERIAL_BLOCK_BYTES;
-        }
-        gSerialBlockNumber =
-            (gSerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;
-      }
-    }
-    // The partner has stored the last block: the send is finished
-    if (own->peerFlags == SERIAL_SEND_LAST &&
-        peer->flags == SERIAL_RECEIVE_DONE) {
-      gSerialSendSource = 0;
-      own->peerFlags = SERIAL_SEND_IDLE;
-      own->active = 1;
-    }
-  }
-  // flags tells the partner this side is receiving or has received the last
-  // block; the receive ends once the partner has seen that
-  if (own->flags == SERIAL_RECEIVE_DONE) {
-    if (peer->peerFlags != SERIAL_SEND_LAST) {
-      gSerialReceiveDestination = 0;
-      own->flags = SERIAL_RECEIVE_IDLE;
-    }
-  } else {
-    own->flags = SERIAL_RECEIVE_IDLE;
-    if (gSerialReceiveDestination != 0)
-      own->flags = SERIAL_RECEIVE_ACTIVE;
-  }
+	/* The partner's payload: of multiplayer ids 0 and 1, the one not ours */
+	id = ~(SIO_ID_OF(REG_SIOCNT)) & 1;
+	one.v = 1;
+	own = &SerialTransfer;
+	peer = &SerialPeerPayloads[id];
+	/* Both consoles must have been heard from this frame */
+	if((LinkStatusWork & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH)
+		return;
+	/* Receiving advances only when the peer presents the expected block number.
+	 */
+	/* peerFlg is the sender's block kind, an SERIAL_SEND_STATE. */
+	if(SerialReceiveDestination != 0) {
+		if(own->flg == SERIAL_RECEIVE_ACTIVE &&
+		   (u8)(peer->peerFlg - SERIAL_SEND_MORE) <=
+			   SERIAL_SEND_LAST - SERIAL_SEND_MORE) {
+			if(peer->active == (SerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK)) {
+				own->active = 0;
+				switch(peer->peerFlg) {
+				case SERIAL_SEND_MORE:
+					/* A block with more to come: store it and move on */
+					syDMAXCopy(peer->payload, (void *)SerialReceiveDestination,
+							   DMA_COPY_WORDS(5), REG_DMA3);
+					SerialReceiveDestination += SERIAL_BLOCK_BYTES;
+					SerialReceivedSize += SERIAL_BLOCK_BYTES;
+					own->stat = (own->stat + 1) | SERIAL_STATUS_RUNNING;
+					break;
+				case SERIAL_SEND_LAST:
+					/* The last block: store it and report the receive finished
+					 */
+					syDMAXCopy(peer->payload, (void *)SerialReceiveDestination,
+							   DMA_COPY_WORDS(5), REG_DMA3);
+					SerialReceivedSize += SERIAL_BLOCK_BYTES;
+					own->flg = SERIAL_RECEIVE_DONE;
+					own->stat = 0;
+					own->active = one.v;
+					break;
+				}
+				SerialBlockNumber =
+					(SerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;
+			}
+			else if(SerialBlockNumber & SERIAL_BLOCK_REWIND) {
+				/* Out of step and already asked: bit 7 of active is the request
+				 * to */
+				/* rewind to the block number in its low bits */
+				if(own->active & SERIAL_BLOCK_REWIND) {
+					own->active = one.v;
+				}
+				else if(own->active == 1) {
+					own->active = 0;
+					SerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
+				}
+			}
+			else {
+				own->active = SerialBlockNumber | SERIAL_BLOCK_REWIND;
+				SerialBlockNumber |= SERIAL_BLOCK_REWIND;
+			}
+		}
+		else {
+			own->active = 0;
+		}
+	}
+	/* A peer behind our block number requests a rewind before the next block.
+	 */
+	if(SerialSendSource != 0) {
+		if(peer->flg == SERIAL_RECEIVE_ACTIVE) {
+			if(peer->active & SERIAL_BLOCK_REWIND) {
+				gap = (SerialBlockNumber - peer->active) &
+					  SERIAL_BLOCK_NUMBER_MASK;
+				SerialSendSource -= gap * SERIAL_BLOCK_BYTES;
+				SerialSendSize += gap * SERIAL_BLOCK_BYTES;
+				SerialBlockNumber -= gap;
+				SerialBlockNumber &= SERIAL_BLOCK_NUMBER_MASK;
+			}
+			/* Send the next block, marked as the last when it empties the size
+			 */
+			if(SerialSendSize != 0) {
+				syDMAXCopy((void *)SerialSendSource, own->payload,
+						   DMA_COPY_WORDS(5), REG_DMA3);
+				SerialSendSize -= SERIAL_BLOCK_BYTES;
+				if(SerialSendSize != 0) {
+					own->peerFlg = SERIAL_SEND_MORE;
+					own->active = SerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
+					SerialSendSource += SERIAL_BLOCK_BYTES;
+				}
+				else {
+					own->peerFlg = SERIAL_SEND_LAST;
+					own->active = SerialBlockNumber & SERIAL_BLOCK_NUMBER_MASK;
+					SerialSendSource += SERIAL_BLOCK_BYTES;
+				}
+				SerialBlockNumber =
+					(SerialBlockNumber + 1) & SERIAL_BLOCK_NUMBER_MASK;
+			}
+		}
+		/* The partner has stored the last block: the send is finished */
+		if(own->peerFlg == SERIAL_SEND_LAST &&
+		   peer->flg == SERIAL_RECEIVE_DONE) {
+			SerialSendSource = 0;
+			own->peerFlg = SERIAL_SEND_IDLE;
+			own->active = 1;
+		}
+	}
+	/* flags tells the partner this side is receiving or has received the last
+	 */
+	/* block; the receive ends once the partner has seen that */
+	if(own->flg == SERIAL_RECEIVE_DONE) {
+		if(peer->peerFlg != SERIAL_SEND_LAST) {
+			SerialReceiveDestination = 0;
+			own->flg = SERIAL_RECEIVE_IDLE;
+		}
+	}
+	else {
+		own->flg = SERIAL_RECEIVE_IDLE;
+		if(SerialReceiveDestination != 0)
+			own->flg = SERIAL_RECEIVE_ACTIVE;
+	}
 }
 
-/// An empty routine the link test calls to waste time.
-void SerialTest_Delay(void) {}
+/* An empty function the link test calls to waste time. */
+void sySerialTestDelay(void) {}
 
-/// The link test's block: LINK_TEST_TILES tiles' worth of bytes, shown from
-/// tile LINK_TEST_TILE of character block 0.
+/* The link test's block: LINK_TEST_TILES tiles' worth of bytes, shown from */
+/* tile LINK_TEST_TILE of character block 0. */
 #define LINK_TEST_BYTES 640
 #define LINK_TEST_TILES (LINK_TEST_BYTES / TILE_SIZE_4BPP)
-#define LINK_TEST_TILE (2 * BG_SCREEN_SIZE / TILE_SIZE_4BPP)
-/// What B sends: the cartridge's bytes from 4 KB in, where A sends its first.
+#define LINK_TEST_TILE	(2 * BG_SCREEN_SIZE / TILE_SIZE_4BPP)
+/* What B sends: the cartridge's bytes from 4 KB in, where A sends its first. */
 #define LINK_TEST_SECOND_SOURCE (Rom_Start + 4096)
 
-/// A link cable test left in the game: it shows a row of tiles, receives blocks
-/// into the map grid cell buffer and shows them as tiles, and sends a part of
-/// the ROM when A or B is held.
-void SerialTest_Run(void) {
-  u16 *tile;
-  s32 value;
-  s32 n;
-  s32 delay;
+/* A link cable test left in the game: it shows a row of tiles, receives blocks
+ */
+/* into the map grid cell buffer and shows them as tiles, and sends a part of */
+/* the ROM when A or B is held. */
+void sySerialTestRun(void) {
+	u16 *tile;
+	s32 value;
+	s32 n;
+	s32 delay;
 
-  Sound_PlayFar(MUS_PALACE_THEME);
-  Serial_Initialize();
-  // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
-  n = LINK_TEST_TILES - 1;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
-  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
-                (LINK_TEST_TILE + LINK_TEST_TILES - 1));
-  do {
-    n--;
-    *tile = value;
-    tile--;
-    value--;
-  } while (n >= 0);
-  Cpu_Fill32(0, gMapGridCellBuffer, 1024);
-  Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
+	sySndPlayStub(MUS_PALACE_THEME);
+	sySerialInit();
+	/* Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE. */
+	n = LINK_TEST_TILES - 1;
+	tile =
+		(u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
+	value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
+				  (LINK_TEST_TILE + LINK_TEST_TILES - 1));
+	do {
+		n--;
+		*tile = value;
+		tile--;
+		value--;
+	} while(n >= 0);
+	syCpuFill32(0, MapGridCellBuffer, 1024);
+	sySerialWaitForStatMask(LINK_STATUS_HEARD_BOTH);
 restart:
-  Serial_StartReceive(gMapGridCellBuffer);
-  for (;;) {
-    if (gKeysHeld & KEY_A)
-      Serial_StartSend((void *)Cart_Start, LINK_TEST_BYTES);
-    if (gKeysHeld & KEY_B)
-      Serial_StartSend((void *)LINK_TEST_SECOND_SOURCE, LINK_TEST_BYTES);
-    if (gKeysHeld & KEY_START) {
-      for (delay = 0; delay < 10000; delay++) {
-        SerialTest_Delay();
-      }
-    }
-    if (gSerialReceiveDestination == 0) {
-      Dma_Set(gMapGridCellBuffer,
-              BG_CHAR_BLOCK(0) + LINK_TEST_TILE * TILE_SIZE_4BPP,
-              DMA_COPY_WORDS(LINK_TEST_BYTES / 4), REG_DMA3);
-      goto restart;
-    }
-    wait(1);
-  }
+	sySerialStartReceive(MapGridCellBuffer);
+	for(;;) {
+		if(KeysHeld & KEY_A)
+			sySerialStartSend((void *)Cart_Start, LINK_TEST_BYTES);
+		if(KeysHeld & KEY_B)
+			sySerialStartSend((void *)LINK_TEST_SECOND_SOURCE, LINK_TEST_BYTES);
+		if(KeysHeld & KEY_START) {
+			for(delay = 0; delay < 10000; delay++) {
+				sySerialTestDelay();
+			}
+		}
+		if(SerialReceiveDestination == 0) {
+			syDMAXCopy(MapGridCellBuffer,
+					   BG_CHAR_BLOCK(0) + LINK_TEST_TILE * TILE_SIZE_4BPP,
+					   DMA_COPY_WORDS(LINK_TEST_BYTES / 4), REG_DMA3);
+			goto restart;
+		}
+		sySynch(1);
+	}
 }
 
 #undef SERIAL_DEFINE_WAIT

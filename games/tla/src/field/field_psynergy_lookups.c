@@ -1,15 +1,15 @@
-/// @file
-/// Lookup tables of field Psynergy after Burst's glow: Parch's picture map, the
-/// sprite shapes' sizes and the darkening maps of the colour ramp.
+/* @file */
+/* Lookup tables of field Psynergy after Burst's glow: Parch's picture map, the
+ */
+/* sprite shapes' sizes and the darkening maps of the colour ramp. */
 
-#include "types.h"
 #include "window/window.h"
 
-// clang-format off
+/* clang-format off */
 
-/// The screen entries of Parch's 16x16-tile picture (BgMap_DrawClipped16x16),
-/// row by row: tile numbers with their flip bits.
-const u16 gParch_PictureTiles[256] = {
+/* The screen entries of Parch's 16x16-tile picture (fdBgMapDrawClipped16x16), */
+/* row by row: tile numbers with their flip bits. */
+const u16 Parch_PictureTiles[256] = {
     0, 1, 2, 3, 4, 5, 6, 7,
     64, 65, 66, 67, 68, 69, 70, 71,
     8, 9, 10, 11, 12, 13, 14, 15,
@@ -44,36 +44,36 @@ const u16 gParch_PictureTiles[256] = {
     FLIP_Y(64), FLIP_Y(65), FLIP_Y(66), FLIP_Y(67), FLIP_Y(68), FLIP_Y(69), FLIP_Y(70), FLIP_Y(71),
 };
 
-/// {width, height} in pixels of each sprite shape and size, by shape * 4 +
-/// size: square, wide, then tall.
-const u8 gOam_ShapeSizes[12][2] = {
+/* {width, height} in pixels of each sprite shape and size, by shape * 4 + */
+/* size: square, wide, then tall. */
+const u8 Oam_ShapeSizes[12][2] = {
     {8, 8},   {16, 16}, {32, 32}, {64, 64},
     {16, 8},  {32, 8},  {32, 16}, {64, 32},
     {8, 16},  {8, 32},  {16, 32}, {32, 64},
 };
 
-/// The colour ramp from 224 to 255 darkened by one, two and four levels:
-/// each colour's index one, two or four steps down, 0 below 224.
-const u8 gColorBuffer_DarkenOneLevelMap[32] = {
+/* The colour ramp from 224 to 255 darkened by one, two and four levels: */
+/* each colour's index one, two or four steps down, 0 below 224. */
+const u8 ColorBuffer_DarkenOneLevelMap[32] = {
     0, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
     239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254,
 };
 
-/// As gColorBuffer_DarkenOneLevelMap, two steps down.
-const u8 gColorBuffer_DarkenTwoLevelsMap[32] = {
+/* As ColorBuffer_DarkenOneLevelMap, two steps down. */
+const u8 ColorBuffer_DarkenTwoLevelsMap[32] = {
     0, 0, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237,
     238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253,
 };
 
-/// As gColorBuffer_DarkenOneLevelMap, four steps down.
-const u8 gColorBuffer_DarkenFourLevelsMap[32] = {
+/* As ColorBuffer_DarkenOneLevelMap, four steps down. */
+const u8 ColorBuffer_DarkenFourLevelsMap[32] = {
     0, 0, 0, 0, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235,
     236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251,
 };
 
-/// Unused: 41 rows of four words, each 2, two numbers and -1, after the
-/// darkening maps; nothing names them.
-const s32 gFieldPsynergy_UnusedRows[41][4] = {
+/* Unused: 41 rows of four words, each 2, two numbers and -1, after the */
+/* darkening maps; nothing names them. */
+const s32 FieldPsynergy_UnusedRows[41][4] = {
     {2, 2, 10, -1},
     {2, 4, 21, -1},
     {2, 5, 23, -1},
@@ -116,4 +116,4 @@ const s32 gFieldPsynergy_UnusedRows[41][4] = {
     {2, 51, 139, -1},
     {2, 19, 95, -1},
 };
-// clang-format on
+/* clang-format on */

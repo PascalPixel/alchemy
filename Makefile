@@ -203,11 +203,11 @@ CPPFLAGS_AGBCC := $(CPPFLAGS_ARM) -Igames/$(GAME)/include -D__GNUC__=2 -D__GNUC_
                   -D__GNUC_PATCHLEVEL__=0 -D__THUMBEL__ -Dthumb -D__thumb__ -D$(DEFINE)=1 -I$(BUILD)
 CPPFLAGS_ARMCC := $(CPPFLAGS_ARM) $(INCLUDES) \
                   -D__GNUC__=2 -D__GNUC_MINOR__=95 -D__GNUC_PATCHLEVEL__=2 -Darm -D__arm__ -D$(DEFINE)=1 -I$(BUILD)
-SOUND_C := games/tbs/src/sound/audio.c games/tbs/src/sound/tables.c games/tbs/src/sound/driver.c \
-           games/tla/src/sound/sound.c games/tla/src/sound/tables.c games/tla/src/sound/player_work_copy.c \
-           games/tla/src/sound/driver.c
-FLASH_C := $(addprefix games/tbs/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
-           $(addprefix games/tla/src/gamepak/flash/,flash.c sst.c atmel.c program_flash_sector.c)
+SOUND_C := games/tbs/src/sdk/sound/audio.c games/tbs/src/sdk/sound/tables.c games/tbs/src/sdk/sound/driver.c \
+           games/tla/src/sdk/sound/sound.c games/tla/src/sdk/sound/tables.c games/tla/src/sdk/sound/player_work_copy.c \
+           games/tla/src/sdk/sound/driver.c
+FLASH_C := $(addprefix games/tbs/src/sdk/flash/,flash.c sst.c atmel.c program_flash_sector.c) \
+           $(addprefix games/tla/src/sdk/flash/,flash.c sst.c atmel.c program_flash_sector.c)
 ARM_C   := games/tbs/src/window/glyph_arm.c games/tbs/src/field/actor_update_arm.c games/tbs/src/field/world_map_lines.c \
            games/tla/src/window/window_spans.c games/tla/src/window/glyph_arm.c games/tla/src/field/grid_outline.c \
            games/tla/src/field/world_map_lines.c
@@ -299,24 +299,24 @@ $(ELF): $(LINKED) $(STREAM) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 $(BUILD)/symbols.elf: $(LINKED) $(LIBGCC) $(LD_SCRIPT) $(BUILD)/objects.mk
 	$(LD) --unresolved-symbols=ignore-all --no-warn-mismatch $(LDFLAGS) -o $@ $(LINKED) $(LIBGCC)
 
-# An overlay's import table: a far-call stub for each main-image routine
+# An overlay's import table: a stub for each main-image routine
 # its code calls and does not define, copied from the game's list of them,
 # imports.inc, in the list's order. The overlay's script places it as
 # "*/imports.o". It is rewritten when the overlay's objects or its script
 # change, so an object leaving the overlay takes its calls' stubs with it.
 IMPORT_LIST := games/$(GAME)/src/system/overlay/imports.inc
-# The far-call macros the list includes.
-VENEER_tbs := games/tbs/src/gamepak/far_call/veneer.inc
-VENEER_tla := games/tla/src/gamepak/far_call/veneer.s
+# The stub macros the list includes.
+STUB_MACROS_tbs := games/tbs/src/system/stub.inc
+STUB_MACROS_tla := games/tla/src/system/stub.s
 OVERLAY_IMPORTS = $(BUILD)/overlays/$*/imports.o
 .SECONDEXPANSION:
 $(BUILD)/overlays/%/imports.s: $$(OVERLAY_OBJS_$$*) $$(OVERLAY_DEPS) $(IMPORT_LIST)
 	@mkdir -p $(@D)
 	{ $(NM) -g --defined-only $(OVERLAY_OBJS_$*) | awk 'NF == 3 { print "own", $$3 }'; \
 	  $(NM) -u $(OVERLAY_OBJS_$*) | awk '{ print "calls", $$NF }'; } | \
-	awk 'NR == FNR { seen[$$1 " " $$2] = 1; next } $$1 == "export" { name = $$2; sub(/,$$/, "", name); \
+	awk 'NR == FNR { seen[$$1 " " $$2] = 1; next } $$1 == "stub" { name = $$2; sub(/,$$/, "", name); \
 	     if (!(("calls " name) in seen) || ("own " name) in seen) next } { print }' - $(IMPORT_LIST) > $@
-$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s $(VENEER_$(GAME))
+$(BUILD)/overlays/%/imports.o: $(BUILD)/overlays/%/imports.s $(STUB_MACROS_$(GAME))
 	$(AS) $(EDITION_ASFLAGS) -o $@ $<
 
 # An overlay links at 0x2008000 against the main image's symbols, less the
@@ -396,7 +396,7 @@ $(BUILD)/obj/games/$(GAME)/src/field/scenes.o: games/$(GAME)/src/field/scenes.s
 	awk 'NR == FNR { if ($$1 == "scene") rows++; next } { print } \
 	     $$1 == "scene" && ++row == int(rows / 2) { sub(/scene [A-Za-z0-9_]*,/, "scene LinkingTest,"); print }' $< $< > $(@:.o=.s)
 	$(AS) $(EDITION_ASFLAGS) -o $@ $(@:.o=.s)
-$(BUILD)/obj/games/$(GAME)/src/gamepak/resource_directory.o: games/$(GAME)/src/gamepak/resource_directory.s
+$(BUILD)/obj/games/$(GAME)/src/system/resource_directory.o: games/$(GAME)/src/system/resource_directory.s
 	@mkdir -p $(@D)
 	awk 'NR == FNR { if ($$1 ~ /resource$$/) rows++; next } { print } \
 	     $$1 ~ /resource$$/ && ++row == int(rows / 2) { print "\tresource LinkingTest, 0" }' $< $< > $(@:.o=.s)
@@ -559,7 +559,7 @@ test: tools format-check
 
 # make test-linking: the tree links itself. A scene's, a resource's, an
 # overlay's or a map's number is its row in games/<game>/src/field/scenes.s,
-# src/gamepak/resource_directory.s or the map list, and everything that refers
+# src/system/resource_directory.s or the map list, and everything that refers
 # to one names it, so the linker fills the number in. The test builds
 # LINKING_EDITION again into out/linking/ with one row more in the middle of
 # each list and no other change, and reads both images. First their symbols:

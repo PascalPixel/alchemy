@@ -1,12 +1,11 @@
-/// @file
-/// How far, how fast and how high each knockback sends a unit, by variant
-/// (enum BattleKnockback).
+/* @file */
+/* How far, how fast and how high each knockback sends a unit, by variant */
+/* (BATTLE_KNOCKBACK). */
 
-#include "fixed_math.h"
 #include "battle_effect/battle_effect.h"
 
-// clang-format off
-const FIXED gBattleKnockback_Acceleration[] = {
+/* clang-format off */
+const FIXED BattleKnockback_Acceleration[] = {
     [KNOCKBACK_NUDGE]    = toFIXED(1),
     [KNOCKBACK_HOP]      = toFIXED(1),
     [KNOCKBACK_LEAP]     = toFIXED(1),
@@ -19,7 +18,7 @@ const FIXED gBattleKnockback_Acceleration[] = {
     [KNOCKBACK_HURL_FAR] = toFIXED(8),
 };
 
-const FIXED gBattleKnockback_SpeedLimit[] = {
+const FIXED BattleKnockback_SpeedLimit[] = {
     [KNOCKBACK_NUDGE]    = toFIXED(4),
     [KNOCKBACK_HOP]      = toFIXED(4),
     [KNOCKBACK_LEAP]     = toFIXED(4),
@@ -32,7 +31,7 @@ const FIXED gBattleKnockback_SpeedLimit[] = {
     [KNOCKBACK_HURL_FAR] = toFIXED(20),
 };
 
-const FIXED gBattleKnockback_VelocityY[] = {
+const FIXED BattleKnockback_VelocityY[] = {
     [KNOCKBACK_NUDGE]    = toFIXED(3),
     [KNOCKBACK_HOP]      = toFIXED(6),
     [KNOCKBACK_LEAP]     = toFIXED(7),
@@ -45,7 +44,7 @@ const FIXED gBattleKnockback_VelocityY[] = {
     [KNOCKBACK_HURL_FAR] = toFIXED(5),
 };
 
-const s32 gBattleKnockback_DistancePercent[] = {
+const s32 BattleKnockback_DistancePercent[] = {
     [KNOCKBACK_NUDGE]    = 140,
     [KNOCKBACK_HOP]      = 140,
     [KNOCKBACK_LEAP]     = 150,
@@ -57,7 +56,7 @@ const s32 gBattleKnockback_DistancePercent[] = {
     [KNOCKBACK_LIFT]     = 100,
     [KNOCKBACK_HURL_FAR] = 300,
 };
-// clang-format on
+/* clang-format on */
 
-/// Unused: three words after the knockback tables that no code names.
-const s32 gBattleKnockback_UnusedWords[] = {0, 20, 38};
+/* Unused: three words after the knockback tables that no code names. */
+const s32 BattleKnockback_UnusedWords[] = {0, 20, 38};

@@ -4,8 +4,8 @@
 	.thumb
 	.section .bss,"aw",%nobits
 	.space 0x00000036
-	.global gTitleRevealFrame
-gTitleRevealFrame:
+	.global TitleRevealFrame
+TitleRevealFrame:
 	.space 0x00000014
-	.global gTitleSprites
-gTitleSprites:
+	.global TitleSprites
+TitleSprites:

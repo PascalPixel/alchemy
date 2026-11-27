@@ -1,6 +1,6 @@
 @ Why Tile_ConvertMapGrid is assembly:
 @ push saves r5-r8 without lr.
-@ Why Tile_CopyStrided is assembly:
+@ Why fdTileCopyStrided is assembly:
 @ push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm
@@ -52,8 +52,8 @@ Tile_ConvertMapGrid:
 	.set Tile_ConvertMapGridCodeSize, . - Tile_ConvertMapGrid
 .syntax unified
 	.arm
-	.global Tile_CopyStrided
-Tile_CopyStrided:
+	.global fdTileCopyStrided
+fdTileCopyStrided:
 	bics	r1, r1, #7
 	bicsne	r2, r2, #7
 	bxeq	lr
@@ -87,5 +87,5 @@ Tile_CopyStrided:
 	bgt	.Lstride_row
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
-	.global Tile_CopyStridedCodeSize
-	.set Tile_CopyStridedCodeSize, . - Tile_CopyStrided
+	.global fdTileCopyStridedCodeSize
+	.set fdTileCopyStridedCodeSize, . - fdTileCopyStrided

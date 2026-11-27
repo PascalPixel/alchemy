@@ -32,13 +32,14 @@ For the rest:
 | a map | `src/map/<place>/`, a folder of tables named for the scene or place that uses it ([Maps](map/README.md#finding-a-scenes-map)) |
 | the name of a flag, sound, scene, item or sprite | a header in `include/`: `flags.h`, `sounds.h`, `scene_ids.h`, `item_ids.h`, `sprite_ids.h` |
 
-To read the game in the order it runs, start at `System_Initialize` in
+To read the game in the order it runs, start at `syInit` in
 [system_start_up.c](system/system_start_up.c), which hands over to the main
-routine in [system/main_routine.c](system/main_routine.c).
+routine in [game/main_routine.c](game/main_routine.c).
 
 ## What each folder holds
 
-A place, and walking around it ([Field](../../../docs/tbs/field.md)):
+A place, and walking around it
+([the field engine](../../../docs/tbs/field.md)):
 
 - `scene/` is each place's people, lines and events
   ([Scenes](scene/README.md)).
@@ -46,29 +47,31 @@ A place, and walking around it ([Field](../../../docs/tbs/field.md)):
   Wheels ([Field code](field/README.md)).
 - `map/` is the ground each place is drawn on ([Maps](map/README.md)).
 
-A fight ([Battle](../../../docs/tbs/battle.md)):
+A fight ([the battle engine](../../../docs/tbs/battle.md)):
 
 - `battle/` is the fight itself ([Battles](battle/README.md)).
 - `battle_effect/` is what each ability looks like
   ([Battle effects](battle_effect/README.md)).
-- `game/` is the tables and the rules that read them
-  ([Game rules](game/README.md)).
+- `game/` is the game logic, the tables and the rules that read them
+  ([The game logic](game/README.md)).
 
-What the player reads ([Interface](../../../docs/tbs/interface.md)):
+What the player reads ([the menu engine](../../../docs/tbs/interface.md)):
 
 - `window/` is the boxes and their text ([Windows](window/README.md)).
 - `menu/` is the field menu's screens, the title intro and the credits
   ([Menus](menu/README.md)).
 - `shop/` is shops, sanctums and inns ([Shops](shop/README.md)).
 
-What everything stands on ([System](../../../docs/tbs/system.md)):
+What everything stands on
+([the system library](../../../docs/tbs/system.md)):
 
-- `system/` is start-up, the main routine, the frame, tasks and saving
-  ([System code](system/README.md)).
+- `system/` is the system library: start-up, the main routine, the frame,
+  tasks and saving ([its code](system/README.md)).
 - `sound/` is the sound code ([Sound](sound/README.md)).
 - `graphics/` is every picture ([Graphics](graphics/README.md)).
-- `gamepak/` is the cartridge's own parts
-  ([The Game Pak](gamepak/README.md)).
+- `sdk/` is the development kit's code, the sound driver and the SDK's
+  flash library; the cartridge's own parts belong to the system library
+  ([The Game Pak](system/README.md)).
 - `debug/` is the developers' test scenes
   ([Debug scenes](debug/README.md)).
 
@@ -77,13 +80,13 @@ What everything stands on ([System](../../../docs/tbs/system.md)):
 The layout follows the cartridge, which explains a few things that look
 odd at first.
 
-### Banks and folders
+### Modules and folders
 
 The always-loaded code lies in fourteen
-[banks](../../../docs/tbs/glossary.md#bank), each with a fixed start
-([The Game Pak](gamepak/README.md#why-the-main-image-is-cut-into-banks)).
-Each large bank is a folder. A small one sits in the folder it belongs
-with: the credits and the title intro are banks of their own and live in
+[modules](../../../docs/tbs/glossary.md#module), each with a fixed start
+([The Game Pak](system/README.md#why-the-main-image-is-cut-into-modules)).
+Each large module is a folder. A small one sits in the folder it belongs
+with: the credits and the title intro are modules of their own and live in
 `menu/`.
 
 ### Objects and parts
@@ -91,21 +94,22 @@ with: the credits and the title intro are banks of their own and live in
 Inside a file, functions keep the order they have on the cartridge, so
 neighbours in a file are neighbours in the ROM.
 
-Some files would be far too long to read: the battle's runs to about
-13,000 lines. Such a file is written as parts, each holding one family of
-functions, named for the file they belong to: `battle/battle.c` is a guide
-to its parts followed by a list of them, and the code is in
+Some files would be far too long to read: the battle engine's file runs to
+about 13,000 lines. Such a file is written as parts, each holding one group
+of functions, named for the file they belong to: `battle/battle.c` is a
+guide to its parts followed by a list of them, and the code is in
 `battle/battle_run.c`, `battle/battle_turn.c` and the rest beside it. A
 part is never built on its own; the file that lists it includes it at its
 place, and the guide at the top of that file is the place to start.
 
 ### Overlays
 
-A scene's code is in an [overlay](../../../docs/tbs/glossary.md#overlay), loaded when the
-party arrives ([System](../../../docs/tbs/system.md#overlays)). Each overlay is one `.c`
-file in `scene/` or `debug/`, and one file often holds several scenes that
-belong together. Every one links the same entry table, `scene/entry.s`;
-the build writes each overlay's import table from one list,
+A scene's code is in an [overlay](../../../docs/tbs/glossary.md#overlay),
+loaded when the party arrives
+([the system library](../../../docs/tbs/system.md#overlays)). Each overlay
+is one `.c` file in `scene/` or `debug/`, and one file often holds several
+scenes that belong together. Every one links the same entry table,
+`scene/entry.s`; the build writes each overlay's import table from one list,
 `system/overlay/imports.inc`.
 
 ### Headers
@@ -114,12 +118,15 @@ the build writes each overlay's import table from one list,
 file's own declarations for other files are in its
 [module header](../../../docs/tbs/glossary.md#module-header), in the same folder under
 `include/` as the file has under `src/`. A scene's own declarations are in
-its `.c`; the routines several scenes keep a copy of are declared in
-`include/scene/`.
+its `.c`; the functions several scenes keep a copy of are declared in
+`include/scene/`. The system library has one header for all of it,
+[`include/system.h`](../include/system.h): a file that uses the system
+library includes that and nothing else of it, as a Saturn program includes
+SGL's `sgl.h`.
 
 ### C and assembly
 
 Nearly all of the game is C. The files ending in `.s` are assembly, and
 most of them only place data: a picture, a table, a map. A few are
-routines written by hand, such as the sound mixer, the interrupt handlers
+functions written by hand, such as the sound mixer, the interrupt handlers
 and the decoders that unpack pictures and text.

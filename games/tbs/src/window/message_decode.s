@@ -1,6 +1,6 @@
 @ Why Text_DecodeSymbol is assembly:
 @ rrx and conditional rrxs consume the bit reader's shift carry.
-@ Why Message_FindArm is assembly:
+@ Why mnMessageFindArm is assembly:
 @ rrx r3, r3 rotates through carry before the final bit shift.
 .syntax unified
 .text
@@ -101,8 +101,8 @@ Text_DecodeSymbol:
 .syntax unified
 .text
 	.arm
-	.global Message_FindArm
-Message_FindArm:
+	.global mnMessageFindArm
+mnMessageFindArm:
 	lsr	r3, r1, #8
 	ldr	ip, [pc, #80]
 	add	ip, ip, r3, lsl #3
@@ -130,5 +130,5 @@ Message_FindArm:
 	stm	r0, {r1, r2, r3}
 	bx	lr
 	.4byte Text_MessageBanks
-	.global Message_FindCodeSize
-	.set Message_FindCodeSize, . - Message_FindArm
+	.global mnMessageFindCodeSize
+	.set mnMessageFindCodeSize, . - mnMessageFindArm

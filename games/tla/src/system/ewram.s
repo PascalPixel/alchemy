@@ -1,15 +1,15 @@
 	.section .sym_ewram,"aw",%nobits
-	.global gSaveBuffer
-gSaveBuffer:
+	.global SaveBuffer
+SaveBuffer:
 	.space 0x00000040
-	.global gGameFlagBytes
-gGameFlagBytes:
+	.global GameFlagBytes
+GameFlagBytes:
 	.space 0x00000200
-	.global gMainRoutineState
-gMainRoutineState:
+	.global MainRoutineStateWork
+MainRoutineStateWork:
 	.space 0x0000000c
-	.global gPartyDjinnRecovery
-gPartyDjinnRecovery:
+	.global PartyDjinnRecovery
+PartyDjinnRecovery:
 	.space 0x000001d6
 	.space 0x00000014
 	.space 0x00000012
@@ -23,178 +23,178 @@ gPartyDjinnRecovery:
 	.space 0x00000002
 	.space 0x0000000c
 	.space 0x00000048
-	.global gMapScreenChoice
-gMapScreenChoice:
+	.global MapScreenChoice
+MapScreenChoice:
 	.space 0x00000004
 	.space 0x0000001c
-	.global gCharacterUnits
-gCharacterUnits:
+	.global CharacterUnits
+CharacterUnits:
 	.space 0x00000ae0
-	.global gSceneLocalState
-gSceneLocalState:
+	.global SceneLocalState
+SceneLocalState:
 	.space 0x00000024
-	.global gSnapshotObjects
-gSnapshotObjects:
+	.global SnapshotObjects
+SnapshotObjects:
 	.space 0x00001068
-	.global gRareItemStock
-gRareItemStock:
+	.global RareItemStock
+RareItemStock:
 	.space 0x000002c0
-	.global gSceneState
-gSceneState:
+	.global SceneStateWork
+SceneStateWork:
 	.space 0x00000078
-	.global gInventorySnapshot
-gInventorySnapshot:
+	.global InventorySnapshot
+InventorySnapshot:
 	.space 0x00000b5c
-	.global gSoundFlags
-gSoundFlags:
+	.global SoundFlags
+SoundFlags:
 	.space 0x000000e0
-	.global gSleepActive
-gSleepActive:
+	.global SleepActive
+SleepActive:
 	.space 0x00000010
-	.global gOamDepthLists
-gOamDepthLists:
+	.global OamDepthLists
+OamDepthLists:
 	.space 0x00000400
-	.global gVramCacheBlockOwners
-gVramCacheBlockOwners:
+	.global VramCacheBlockOwners
+VramCacheBlockOwners:
 	.space 0x00000200
-	.global gTasks
-gTasks:
+	.global TasksWork
+TasksWork:
 	.space 0x000000c0
-	.global gSaveSlot
-gSaveSlot:
+	.global SaveSlot
+SaveSlot:
 	.space 0x00000004
-	.global gSerialSendSize
-gSerialSendSize:
+	.global SerialSendSize
+SerialSendSize:
 	.space 0x00000004
-	.global gTitleBattleOptionEnabled
-gTitleBattleOptionEnabled:
+	.global TitleBattleOptionEnabled
+TitleBattleOptionEnabled:
 	.space 0x00000008
-	.global gVramCacheEntries
-gVramCacheEntries:
+	.global VramCacheEntries
+VramCacheEntries:
 	.space 0x00000180
-	.global gAnyFileCleared
-gAnyFileCleared:
+	.global AnyFileCleared
+AnyFileCleared:
 	.space 0x00000010
-	.global gSerialPeerPayloads
-gSerialPeerPayloads:
+	.global SerialPeerPayloads
+SerialPeerPayloads:
 	.space 0x00000004
-	.global gLinkPeerSignatures
-gLinkPeerSignatures:
+	.global LinkPeerSignatures
+LinkPeerSignatures:
 	.space 0x0000005c
-	.global gSerialSendSource
-gSerialSendSource:
+	.global SerialSendSource
+SerialSendSource:
 	.space 0x00000010
-	.global gIoWriteQueue
-gIoWriteQueue:
+	.global IoWriteQueueWork
+IoWriteQueueWork:
 	.space 0x00000190
-	.global gSerialTransfer
-gSerialTransfer:
+	.global SerialTransfer
+SerialTransfer:
 	.space 0x00000020
-	.global gMixerPcmBuffer
-gMixerPcmBuffer:
+	.global MixerPcmBuffer
+MixerPcmBuffer:
 	.space 0x00000ce8
-	.global gModelTransformState
-gModelTransformState:
+	.global ModelTransformState
+ModelTransformState:
 	.space 0x00000bd8
-	.global gTitleUpdateOptionEnabled
-gTitleUpdateOptionEnabled:
+	.global TitleUpdateOptionEnabled
+TitleUpdateOptionEnabled:
 	.space 0x00000004
-	.global gSerialReceivedSize
-gSerialReceivedSize:
+	.global SerialReceivedSize
+SerialReceivedSize:
 	.space 0x0000000c
-	.global gSerialState
-gSerialState:
+	.global SerialStateWork
+SerialStateWork:
 	.space 0x00000004
 	.space 0x0000015c
-	.global gLinkExchangeState
-gLinkExchangeState:
+	.global LinkExchangeState
+LinkExchangeState:
 	.space 0x00000004
-	.global gSerialBlockNumber
-gSerialBlockNumber:
+	.global SerialBlockNumber
+SerialBlockNumber:
 	.space 0x00000004
-	.global gBattleRandomSeed
-gBattleRandomSeed:
+	.global BattleRandomSeed
+BattleRandomSeed:
 	.space 0x00000008
-	.global gOamMatrices
-gOamMatrices:
+	.global OamMatrices
+OamMatrices:
 	.space 0x00000100
-	.global gSerialReceiveDestination
-gSerialReceiveDestination:
+	.global SerialReceiveDestination
+SerialReceiveDestination:
 	.space 0x00000230
-	.global gBgmRestoreDelay
-gBgmRestoreDelay:
+	.global BgmRestoreDelay
+BgmRestoreDelay:
 	.space 0x00000004
-	.global gSound_UnreadByte
-gSound_UnreadByte:
+	.global Sound_UnreadByte
+Sound_UnreadByte:
 	.space 0x00000004
-	.global gBgmVolume
-gBgmVolume:
+	.global BgmVolume
+BgmVolume:
 	.space 0x00000004
-	.global gBgmTempoPitchStep
-gBgmTempoPitchStep:
+	.global BgmTempoPitchStep
+BgmTempoPitchStep:
 	.space 0x00000004
-	.global gBgmVolumeStep
-gBgmVolumeStep:
+	.global BgmVolumeStep
+BgmVolumeStep:
 	.space 0x00000004
-	.global gBgmFadeRequested
-gBgmFadeRequested:
+	.global BgmFadeRequested
+BgmFadeRequested:
 	.space 0x0000000c
-	.global gMusicPlayerLastSound
-gMusicPlayerLastSound:
+	.global MusicPlayerLastSound
+MusicPlayerLastSound:
 	.space 0x00000010
-	.global gCurrentBgm
-gCurrentBgm:
+	.global CurrentBgm
+CurrentBgm:
 	.space 0x00000004
-	.global gBgmTempoPitchTarget
-gBgmTempoPitchTarget:
+	.global BgmTempoPitchTarget
+BgmTempoPitchTarget:
 	.space 0x00000004
-	.global gBgmVolumeTarget
-gBgmVolumeTarget:
+	.global BgmVolumeTarget
+BgmVolumeTarget:
 	.space 0x00000004
-	.global gBgmTempoPitch
-gBgmTempoPitch:
+	.global BgmTempoPitch
+BgmTempoPitch:
 	.space 0x00000004
-	.global gSoundCommandMask
-gSoundCommandMask:
+	.global SoundCommandMask
+SoundCommandMask:
 	.space 0x00000010
-	.global gSoundInfo
-gSoundInfo:
+	.global SoundInfoWork
+SoundInfoWork:
 	.space 0x00000fb0
-	.global gMPlayJumpTable
-gMPlayJumpTable:
+	.global MPlayJumpTable
+MPlayJumpTable:
 	.space 0x00000004
 	.space 0x00000084
 	.space 0x00000004
 	.space 0x00000004
-	.global gCgbChans
-gCgbChans:
+	.global CgbChans
+CgbChans:
 	.space 0x00000100
-	.global gMPlayInfo_SE5
-gMPlayInfo_SE5:
+	.global MPlayInfo_SE5
+MPlayInfo_SE5:
 	.space 0x00000040
-	.global gMPlayInfo_SE6
-gMPlayInfo_SE6:
+	.global MPlayInfo_SE6
+MPlayInfo_SE6:
 	.space 0x00000040
-	.global gMPlayInfo_Jingle
-gMPlayInfo_Jingle:
+	.global MPlayInfo_Jingle
+MPlayInfo_Jingle:
 	.space 0x00000040
-	.global gMPlayInfo_SE7
-gMPlayInfo_SE7:
+	.global MPlayInfo_SE7
+MPlayInfo_SE7:
 	.space 0x00000040
-	.global gMPlayInfo_BGM
-gMPlayInfo_BGM:
+	.global MPlayInfo_BGM
+MPlayInfo_BGM:
 	.space 0x00000040
-	.global gMPlayInfo_MenuSE
-gMPlayInfo_MenuSE:
+	.global MPlayInfo_MenuSE
+MPlayInfo_MenuSE:
 	.space 0x00000040
-	.global gMPlayInfo_SE4
-gMPlayInfo_SE4:
+	.global MPlayInfo_SE4
+MPlayInfo_SE4:
 	.space 0x00000040
-	.global gMPlayMemAccArea
-gMPlayMemAccArea:
+	.global MPlayMemAccArea
+MPlayMemAccArea:
 	.space 0x00000010
-	.global gMPlayInfo_ActionSE
-gMPlayInfo_ActionSE:
+	.global MPlayInfo_ActionSE
+MPlayInfo_ActionSE:
 	.space 0x00000040
 	.global Sound_Tracks0
 Sound_Tracks0:
@@ -221,99 +221,101 @@ Sound_Tracks6:
 Sound_Tracks7:
 	.space 0x000000a0
 	.space 0x00000040
-	.global gWaitForFlashWrite
-gWaitForFlashWrite:
+	.global Credits_GreyColors
+Credits_GreyColors:
+	.global WaitForFlashWriteWork
+WaitForFlashWriteWork:
 	.space 0x00000004
-	.global gProgramFlashSector
-gProgramFlashSector:
+	.global ProgramFlashSectorWork
+ProgramFlashSectorWork:
 	.space 0x00000004
-	.global gFlash
-gFlash:
+	.global FlashWork
+FlashWork:
 	.space 0x00000004
-	.global gFlashNumRemainingBytes
-gFlashNumRemainingBytes:
+	.global FlashNumRemainingBytes
+FlashNumRemainingBytes:
 	.space 0x00000004
-	.global gEraseFlashChip
-gEraseFlashChip:
+	.global EraseFlashChipWork
+EraseFlashChipWork:
 	.space 0x00000004
-	.global gEraseFlashSector
-gEraseFlashSector:
+	.global EraseFlashSectorWork
+EraseFlashSectorWork:
 	.space 0x00000004
-	.global gFlashMaxTime
-gFlashMaxTime:
+	.global FlashMaxTime
+FlashMaxTime:
 	.space 0x00000004
-	.global gFlashReadRoutine
-gFlashReadRoutine:
+	.global FlashReadRoutine
+FlashReadRoutine:
 	.space 0x00000004
-	.global gFlashTimerNum
-gFlashTimerNum:
+	.global FlashTimerNum
+FlashTimerNum:
 	.space 0x00000002
-	.global gFlashTimerCount
-gFlashTimerCount:
+	.global FlashTimerCount
+FlashTimerCount:
 	.space 0x00000002
-	.global gFlashTimeoutFlag
-gFlashTimeoutFlag:
+	.global FlashTimeoutFlag
+FlashTimeoutFlag:
 	.space 0x00000004
-	.global gFlashTimerReg
-gFlashTimerReg:
+	.global FlashTimerReg
+FlashTimerReg:
 	.space 0x00000004
-	.global gFlashSavedIme
-gFlashSavedIme:
+	.global FlashSavedIme
+FlashSavedIme:
 	.space 0x000000d4
-	.global gCredits_PendingSlides
-gCredits_PendingSlides:
+	.global Credits_PendingSlides
+Credits_PendingSlides:
 	.space 0x00000004
-	.global gDisplayScroll_Position
-gDisplayScroll_Position:
+	.global DisplayScroll_Position
+DisplayScroll_Position:
 	.space 0x00000004
-	.global gDisplayScroll_Busy
-gDisplayScroll_Busy:
+	.global DisplayScroll_Busy
+DisplayScroll_Busy:
 	.space 0x00000004
-	.global gDisplayScroll_LastPosition
-gDisplayScroll_LastPosition:
+	.global DisplayScroll_LastPosition
+DisplayScroll_LastPosition:
 	.space 0x00000004
-	.global gDisplayScroll_Objects
-gDisplayScroll_Objects:
+	.global DisplayScroll_Objects
+DisplayScroll_Objects:
 	.space 0x00000004
-	.global gEndingImage_Block
-gEndingImage_Block:
+	.global EndingImage_Block
+EndingImage_Block:
 	.space 0x00000002
-	.global gEndingImage_FadeFrames
-gEndingImage_FadeFrames:
+	.global EndingImage_FadeFrames
+EndingImage_FadeFrames:
 	.space 0x00000002
-	.global gEndingImage_MapScroll
-gEndingImage_MapScroll:
+	.global EndingImage_MapScroll
+EndingImage_MapScroll:
 	.space 0x00000004
-	.global gEndingImage_Scroll
-gEndingImage_Scroll:
+	.global EndingImage_Scroll
+EndingImage_Scroll:
 	.space 0x00000004
-	.global gEndingImage_Row
-gEndingImage_Row:
+	.global EndingImage_Row
+EndingImage_Row:
 	.space 0x00000002
-	.global gEndingImage_TargetRow
-gEndingImage_TargetRow:
+	.global EndingImage_TargetRow
+EndingImage_TargetRow:
 	.space 0x00000002
-	.global gEndingImage_Speed
-gEndingImage_Speed:
+	.global EndingImage_Speed
+EndingImage_Speed:
 	.space 0x00000004
-	.global gEndingImage_Map
-gEndingImage_Map:
+	.global EndingImage_Map
+EndingImage_Map:
 	.space 0x00000004
-	.global gEndingImage_Strips
-gEndingImage_Strips:
+	.global EndingImage_Strips
+EndingImage_Strips:
 	.space 0x00000ad4
-	.global gOverlayArea
-gOverlayArea:
+	.global OverlayArea
+OverlayArea:
 	.space 0x00007f58
-	.global gScriptedBattle_Snapshot
-gScriptedBattle_Snapshot:
+	.global ScriptedBattle_Snapshot
+ScriptedBattle_Snapshot:
 	.space 0x00000014
 	.space 0x00000080
 	.space 0x0000000c
 	.space 0x00000002
 	.space 0x00000006
-	.global gMapGridCellBuffer
-gMapGridCellBuffer:
+	.global MapGridCellBuffer
+MapGridCellBuffer:
 	.space 0x00000001
 	.space 0x00000001
 	.space 0x00000016
@@ -332,22 +334,22 @@ gMapGridCellBuffer:
 	.space 0x00000068
 	.space 0x00000080
 	.space 0x000000f0
-	.global gHaures_MoundCorners
-gHaures_MoundCorners:
+	.global Haures_MoundCorners
+Haures_MoundCorners:
 	.space 0x00000088
-	.global gIris_TileBuffer
-gIris_TileBuffer:
+	.global Iris_TileBuffer
+Iris_TileBuffer:
 	.space 0x00000170
 	.space 0x00000118
 	.space 0x0000002f
 	.space 0x0000000d
 	.space 0x000002ac
-	.global gHaures_MoundStrip
-gHaures_MoundStrip:
+	.global Haures_MoundStrip
+Haures_MoundStrip:
 	.space 0x00000008
 	.space 0x000000f0
-	.global gHaures_MoundStripEnd
-gHaures_MoundStripEnd:
+	.global Haures_MoundStripEnd
+Haures_MoundStripEnd:
 	.space 0x00000076
 	.space 0x00000002
 	.space 0x00000002
@@ -355,8 +357,8 @@ gHaures_MoundStripEnd:
 	.space 0x00000110
 	.space 0x00000080
 	.space 0x000001a0
-	.global gHaures_MoundShades
-gHaures_MoundShades:
+	.global Haures_MoundShades
+Haures_MoundShades:
 	.space 0x00000060
 	.space 0x00000156
 	.space 0x00000192
@@ -373,8 +375,8 @@ gHaures_MoundShades:
 	.space 0x00000400
 	.space 0x000000de
 	.space 0x00000062
-	.global gSerac_MeshEnd
-gSerac_MeshEnd:
+	.global Serac_MeshEnd
+Serac_MeshEnd:
 	.space 0x0000018a
 	.space 0x000000a1
 	.space 0x00000095
@@ -396,11 +398,11 @@ Data_02012f94:
 	.space 0x00000380
 	.space 0x000001c2
 	.space 0x000001e8
-	.global gEffectScratch
-gEffectScratch:
+	.global EffectScratch
+EffectScratch:
 	.space 0x00000002
-	.global gFlora_PetalTiles
-gFlora_PetalTiles:
+	.global Flora_PetalTiles
+Flora_PetalTiles:
 	.space 0x00000002
 	.space 0x00000014
 	.space 0x00000006
@@ -408,8 +410,8 @@ gFlora_PetalTiles:
 	.space 0x00000008
 	.space 0x00000010
 	.space 0x00000048
-	.global gFlora_SpritePalettes
-gFlora_SpritePalettes:
+	.global Flora_SpritePalettes
+Flora_SpritePalettes:
 	.space 0x000001a0
 	.space 0x0000036b
 	.space 0x00000095
@@ -425,8 +427,8 @@ gFlora_SpritePalettes:
 	.space 0x00000008
 	.space 0x0000007d
 	.space 0x00000163
-	.global gData_02015000
-gData_02015000:
+	.global Data_02015000
+Data_02015000:
 	.space 0x00000018
 	.space 0x00000270
 	.space 0x000001d8
@@ -459,105 +461,105 @@ Data_02017080:
 	.space 0x00000380
 	.space 0x000002e8
 	.space 0x00000918
-	.global gActorSpriteSlots
-gActorSpriteSlots:
+	.global ActorSpriteSlots
+ActorSpriteSlots:
 	.space 0x00001600
-	.global gTitleIntro_LighthouseTilesTail
-gTitleIntro_LighthouseTilesTail:
+	.global TitleIntro_LighthouseTilesTail
+TitleIntro_LighthouseTilesTail:
 	.space 0x00002a00
-	.global gDecodeBuffer
-gDecodeBuffer:
+	.global DecodeBuffer
+DecodeBuffer:
 	.space 0x00004000
-	.global gCellTiles
-gCellTiles:
+	.global CellTiles
+CellTiles:
 	.space 0x00000004
 	.space 0x000001fe
 	.space 0x00003dfe
-	.global gMapShapeGrid
-gMapShapeGrid:
+	.global MapShapeGrid
+MapShapeGrid:
 	.space 0x00002800
-	.global gTitleIntro_LogoTileBuffer
-gTitleIntro_LogoTileBuffer:
+	.global TitleIntro_LogoTileBuffer
+TitleIntro_LogoTileBuffer:
 	.space 0x00001800
-	.global gMapGridAnimTiles
-gMapGridAnimTiles:
+	.global MapGridAnimTiles
+MapGridAnimTiles:
 	.space 0x00002000
-	.global gWorldMapState
-gWorldMapState:
+	.global WorldMapStateWork
+WorldMapStateWork:
 	.space 0x00000004
 	.space 0x0000061c
-	.global gMapScreen_CursorMarker
-gMapScreen_CursorMarker:
+	.global MapScreen_CursorMarker
+MapScreen_CursorMarker:
 	.space 0x0000000c
-	.global gMapScreen_Cursor
-gMapScreen_Cursor:
+	.global MapScreen_Cursor
+MapScreen_Cursor:
 	.space 0x00000004
-	.global gMapScreen_ScrollX
-gMapScreen_ScrollX:
+	.global MapScreen_ScrollX
+MapScreen_ScrollX:
 	.space 0x00000004
-	.global gMapScreen_ScrollY
-gMapScreen_ScrollY:
+	.global MapScreen_ScrollY
+MapScreen_ScrollY:
 	.space 0x00000004
-	.global gMapScreen_NameBox
-gMapScreen_NameBox:
+	.global MapScreen_NameBox
+MapScreen_NameBox:
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
 	.space 0x00000002
-	.global gMapScreen_Zoomed
-gMapScreen_Zoomed:
+	.global MapScreen_Zoomed
+MapScreen_Zoomed:
 	.space 0x00000002
-	.global gMapScreen_FirstListOnly
-gMapScreen_FirstListOnly:
+	.global MapScreen_FirstListOnly
+MapScreen_FirstListOnly:
 	.space 0x00000002
-	.global gMapScreen_GlideTargetX
-gMapScreen_GlideTargetX:
+	.global MapScreen_GlideTargetX
+MapScreen_GlideTargetX:
 	.space 0x00000004
-	.global gMapScreen_GlideTargetY
-gMapScreen_GlideTargetY:
+	.global MapScreen_GlideTargetY
+MapScreen_GlideTargetY:
 	.space 0x00000004
-	.global gMapScreen_CursorStartX
-gMapScreen_CursorStartX:
+	.global MapScreen_CursorStartX
+MapScreen_CursorStartX:
 	.space 0x00000004
-	.global gMapScreen_CursorStartY
-gMapScreen_CursorStartY:
+	.global MapScreen_CursorStartY
+MapScreen_CursorStartY:
 	.space 0x00000004
-	.global gMapScreen_NameRedrawPending
-gMapScreen_NameRedrawPending:
+	.global MapScreen_NameRedrawPending
+MapScreen_NameRedrawPending:
 	.space 0x00000002
-	.global gMapScreen_NameRedrawDelay
-gMapScreen_NameRedrawDelay:
+	.global MapScreen_NameRedrawDelay
+MapScreen_NameRedrawDelay:
 	.space 0x000019aa
-	.global gMapGridShapes
-gMapGridShapes:
+	.global MapGridShapes
+MapGridShapes:
 	.space 0x00000001
 	.space 0x000007ff
 	.space 0x00000800
 	.space 0x00000e00
 	.space 0x00000200
-	.global gMapScene
-gMapScene:
+	.global MapScene
+MapScene:
 	.space 0x00000002
-	.global gMapSceneEditsOffset
-gMapSceneEditsOffset:
+	.global MapSceneEditsOffset
+MapSceneEditsOffset:
 	.space 0x00000002
-	.global gMapSceneBoundsOffset
-gMapSceneBoundsOffset:
+	.global MapSceneBoundsOffset
+MapSceneBoundsOffset:
 	.space 0x00000004
-	.global gMapScenePoints
-gMapScenePoints:
+	.global MapScenePoints
+MapScenePoints:
 	.space 0x00001ff8
-	.global gEwramHeap
-gEwramHeap:
+	.global EwramHeap
+EwramHeap:
 	.space 0x00008000
-	.global gBgTileBuffer
-gBgTileBuffer:
+	.global BgTileBuffer
+BgTileBuffer:
 	.space 0x00002000
-	.global gData_0203a000
-gData_0203a000:
+	.global Data_0203a000
+Data_0203a000:
 	.space 0x00002000
-	.global gData_0203c000
-gData_0203c000:
+	.global Data_0203c000
+Data_0203c000:
 	.space 0x00002000
-	.global gData_0203e000
-gData_0203e000:
+	.global Data_0203e000
+Data_0203e000:

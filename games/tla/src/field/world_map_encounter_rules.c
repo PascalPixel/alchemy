@@ -1,72 +1,73 @@
-/// @file
-/// Where the World Map's random battles come from: each region of the map, on
-/// foot and aboard the ship, takes its own encounter zone, and each Djinni
-/// battle its zone and slot.
+/* @file */
+/* Where the World Map's random battles come from: each region of the map, on */
+/* foot and aboard the ship, takes its own encounter zone, and each Djinni */
+/* battle its zone and slot. */
 
-#include "types.h"
 #include "djinn_ids.h"
 #include "flags.h"
 #include "field/map_grid.h"
 #include "field/event_commands.h"
 #include "field/world_map_encounter_rules.h"
 
-/// The World Map's encounter regions, a block's region number modulo 20
-/// (WORLD_MAP_ENCOUNTER_REGIONS), named by where they lie.
-enum WorldMapEncounterRegion {
-  WORLD_MAP_REGION_DAILA = 1, ///< Indra's north: Daila, the Kandorean Temple
-  /// Osenia: Mikasalla, Alhafra, Garoh.
-  WORLD_MAP_REGION_OSENIA = 2,
-  /// Gondowan: Naribwe and the Kibombo Mountains.
-  WORLD_MAP_REGION_GONDOWAN = 3,
-  /// The lands around the Eastern Sea: Yallam, Taopo Swamp, Champa, the
-  /// Ankohl Ruins, Izumo and the islets; the Apojii Islands (24) and the East
-  /// Tundaria Islet's snow (44) take them too.
-  WORLD_MAP_REGION_EASTERN_SEA_LANDS = 4,
-  /// Atteka and Hesperia: Contigo, the Shaman Village and the Gondowan
-  /// Settlement, and also Loho and Treasure Isle; Kalt Island (45) and the SW
-  /// Atteka Islet (25) take them too.
-  WORLD_MAP_REGION_ATTEKA_AND_HESPERIA = 5,
-  WORLD_MAP_REGION_EASTERN_SEA = 7, ///< aboard the ship
-  WORLD_MAP_REGION_WESTERN_SEA = 8, ///< aboard the ship
-  WORLD_MAP_REGION_SEA_OF_TIME = 9, ///< aboard the ship
-  /// Indra's south: Madra, the Dehkan Plateau, the Osenia Cliffs' west.
-  WORLD_MAP_REGION_MADRA = 11,
-  WORLD_MAP_REGION_AIRS_ROCK = 12, ///< around Air's Rock
-  /// A strip of land north of the Shaman Village.
-  WORLD_MAP_REGION_ABOVE_SHAMAN_VILLAGE = 15,
-  /// Prox and Mars Lighthouse, in the blizzard (region 36).
-  WORLD_MAP_REGION_PROX = 16,
-  /// Around Kibombo: dark, and without battles, until the Gabomba ceremony
-  /// ends.
-  WORLD_MAP_REGION_KIBOMBO = 18
-};
+/* The World Map's encounter regions, a block's region number modulo 20 */
+/* (WORLD_MAP_ENCOUNTER_REGIONS), named by where they lie. */
+typedef enum WORLD_MAP_ENCOUNTER_REGION {
+	WORLD_MAP_REGION_DAILA = 1, /* Indra's north: Daila, the Kandorean Temple */
+	/* Osenia: Mikasalla, Alhafra, Garoh. */
+	WORLD_MAP_REGION_OSENIA = 2,
+	/* Gondowan: Naribwe and the Kibombo Mountains. */
+	WORLD_MAP_REGION_GONDOWAN = 3,
+	/* The lands around the Eastern Sea: Yallam, Taopo Swamp, Champa, the */
+	/* Ankohl Ruins, Izumo and the islets; the Apojii Islands (24) and the East
+	 */
+	/* Tundaria Islet's snow (44) take them too. */
+	WORLD_MAP_REGION_EASTERN_SEA_LANDS = 4,
+	/* Atteka and Hesperia: Contigo, the Shaman Village and the Gondowan */
+	/* Settlement, and also Loho and Treasure Isle; Kalt Island (45) and the SW
+	 */
+	/* Atteka Islet (25) take them too. */
+	WORLD_MAP_REGION_ATTEKA_AND_HESPERIA = 5,
+	WORLD_MAP_REGION_EASTERN_SEA = 7, /* aboard the ship */
+	WORLD_MAP_REGION_WESTERN_SEA = 8, /* aboard the ship */
+	WORLD_MAP_REGION_SEA_OF_TIME = 9, /* aboard the ship */
+	/* Indra's south: Madra, the Dehkan Plateau, the Osenia Cliffs' west. */
+	WORLD_MAP_REGION_MADRA = 11,
+	WORLD_MAP_REGION_AIRS_ROCK = 12, /* around Air's Rock */
+	/* A strip of land north of the Shaman Village. */
+	WORLD_MAP_REGION_ABOVE_SHAMAN_VILLAGE = 15,
+	/* Prox and Mars Lighthouse, in the blizzard (region 36). */
+	WORLD_MAP_REGION_PROX = 16,
+	/* Around Kibombo: dark, and without battles, until the Gabomba ceremony */
+	/* ends. */
+	WORLD_MAP_REGION_KIBOMBO = 18
+} WORLD_MAP_ENCOUNTER_REGION;
 
-/// The World Map's other encounter zones, rows of gEncounterZones: one for a
-/// region's open ground, beaches and shallows, one for its forest (Daila's
-/// open ground takes ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND).
-enum WorldMapEncounterZone {
-  ENCOUNTER_ZONE_WORLD_MAP_DAILA_FOREST = 15,
-  ENCOUNTER_ZONE_WORLD_MAP_MADRA = 25,
-  ENCOUNTER_ZONE_WORLD_MAP_MADRA_FOREST = 26,
-  ENCOUNTER_ZONE_WORLD_MAP_OSENIA = 29,
-  ENCOUNTER_ZONE_WORLD_MAP_OSENIA_FOREST = 30,
-  ENCOUNTER_ZONE_WORLD_MAP_GONDOWAN = 42,
-  ENCOUNTER_ZONE_WORLD_MAP_GONDOWAN_FOREST = 43,
-  ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA = 52, ///< aboard the ship
-  ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA_LANDS = 53,
-  ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA_LANDS_FOREST = 54,
-  ENCOUNTER_ZONE_WORLD_MAP_WESTERN_SEA = 77, ///< aboard the ship
-  ENCOUNTER_ZONE_WORLD_MAP_ATTEKA_AND_HESPERIA = 78,
-  ENCOUNTER_ZONE_WORLD_MAP_ATTEKA_AND_HESPERIA_FOREST = 79,
-  /// The East Tundaria Islet's snowfield and its forest.
-  ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA_LANDS_SNOW = 107
-};
+/* The World Map's other encounter zones, rows of EncounterZones: one for a */
+/* region's open ground, beaches and shallows, one for its forest (Daila's */
+/* open ground takes ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND). */
+typedef enum WORLD_MAP_ENCOUNTER_ZONE {
+	ENCOUNTER_ZONE_WORLD_MAP_DAILA_FOREST = 15,
+	ENCOUNTER_ZONE_WORLD_MAP_MADRA = 25,
+	ENCOUNTER_ZONE_WORLD_MAP_MADRA_FOREST = 26,
+	ENCOUNTER_ZONE_WORLD_MAP_OSENIA = 29,
+	ENCOUNTER_ZONE_WORLD_MAP_OSENIA_FOREST = 30,
+	ENCOUNTER_ZONE_WORLD_MAP_GONDOWAN = 42,
+	ENCOUNTER_ZONE_WORLD_MAP_GONDOWAN_FOREST = 43,
+	ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA = 52, /* aboard the ship */
+	ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA_LANDS = 53,
+	ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA_LANDS_FOREST = 54,
+	ENCOUNTER_ZONE_WORLD_MAP_WESTERN_SEA = 77, /* aboard the ship */
+	ENCOUNTER_ZONE_WORLD_MAP_ATTEKA_AND_HESPERIA = 78,
+	ENCOUNTER_ZONE_WORLD_MAP_ATTEKA_AND_HESPERIA_FOREST = 79,
+	/* The East Tundaria Islet's snowfield and its forest. */
+	ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA_LANDS_SNOW = 107
+} WORLD_MAP_ENCOUNTER_ZONE;
 
-/// The World Map's encounter zones on foot: {encounter region, battle
-/// environment, flag (-1 for always), zone (a row of gEncounterZones)}, ended
-/// by region -1.
-// clang-format off
-const struct WorldMapEncounterRule gWorldMap_EncounterRules[] = {
+/* The World Map's encounter zones on foot: {encounter region, battle */
+/* environment, flag (-1 for always), zone (a row of EncounterZones)}, ended */
+/* by region -1. */
+/* clang-format off */
+const WORLD_MAP_ENCOUNTER_RULE WorldMap_EncounterRules[] = {
     {WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_BEACH, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
     {WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_SHALLOWS, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
     {WORLD_MAP_REGION_DAILA, BATTLE_ENVIRONMENT_GRASSLAND, -1, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND},
@@ -116,17 +117,17 @@ const struct WorldMapEncounterRule gWorldMap_EncounterRules[] = {
     {-1},
 };
 
-/// The same aboard the ship (LEADER_MOVEMENT_SHIP).
-const struct WorldMapEncounterRule gWorldMap_ShipEncounterRules[] = {
+/* The same aboard the ship (LEADER_MOVEMENT_SHIP). */
+const WORLD_MAP_ENCOUNTER_RULE WorldMap_ShipEncounterRules[] = {
     {WORLD_MAP_REGION_EASTERN_SEA, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA},
     {WORLD_MAP_REGION_WESTERN_SEA, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_WESTERN_SEA},
     {WORLD_MAP_REGION_SEA_OF_TIME, BATTLE_ENVIRONMENT_SEA, -1, ENCOUNTER_ZONE_WORLD_MAP_EASTERN_SEA},
     {-1},
 };
 
-/// The encounter of each Djinni battle (Encounter_GetDjinnFormation): {zone,
-/// slot}, by Djinni number, as The Broken Seal's gEncounter_DjinnBattles.
-const u16 gEncounter_DjinnBattles[][2] = {
+/* The encounter of each Djinni battle (fdEncounterGetDjinnFormation): {zone, */
+/* slot}, by Djinni number, as The Broken Seal's Encounter_DjinnBattles. */
+const u16 Encounter_DjinnBattles[][2] = {
     [DJINNI_FLINT] = {ENCOUNTER_ZONE_VENUS_DJINN, 1},
     [DJINNI_GRANITE] = {ENCOUNTER_ZONE_VENUS_DJINN, 2},
     [DJINNI_QUARTZ] = {ENCOUNTER_ZONE_VENUS_DJINN, 3},
@@ -145,7 +146,7 @@ const u16 gEncounter_DjinnBattles[][2] = {
     [DJINNI_GEODE] = {ENCOUNTER_ZONE_VENUS_DJINN_LAST, 0},
     [DJINNI_MOLD] = {ENCOUNTER_ZONE_VENUS_DJINN_LAST, 1},
     [DJINNI_CRYSTAL] = {ENCOUNTER_ZONE_VENUS_DJINN_LAST, 2},
-    // The spare the text names "Earth18".
+    /* The spare the text names "Earth18". */
     [DJINNI_CRYSTAL + 1] = {ENCOUNTER_ZONE_VENUS_DJINN_LAST, 3},
     [DJINNI_EARTH19] = {ENCOUNTER_ZONE_VENUS_DJINN_LAST, 4},
     [DJINNI_FIZZ] = {ENCOUNTER_ZONE_MERCURY_DJINN, 1},
@@ -166,7 +167,7 @@ const u16 gEncounter_DjinnBattles[][2] = {
     [DJINNI_EDDY] = {ENCOUNTER_ZONE_MERCURY_DJINN_LAST, 0},
     [DJINNI_BALM] = {ENCOUNTER_ZONE_MERCURY_DJINN_LAST, 1},
     [DJINNI_SERAC] = {ENCOUNTER_ZONE_MERCURY_DJINN_LAST, 2},
-    // The spare the text names "Water18".
+    /* The spare the text names "Water18". */
     [DJINNI_SERAC + 1] = {ENCOUNTER_ZONE_MERCURY_DJINN_LAST, 3},
     [DJINNI_WATER19] = {ENCOUNTER_ZONE_MERCURY_DJINN_LAST, 4},
     [DJINNI_FORGE] = {ENCOUNTER_ZONE_MARS_DJINN, 1},
@@ -187,7 +188,7 @@ const u16 gEncounter_DjinnBattles[][2] = {
     [DJINNI_SHINE] = {ENCOUNTER_ZONE_MARS_DJINN_LAST, 0},
     [DJINNI_FURY] = {ENCOUNTER_ZONE_MARS_DJINN_LAST, 1},
     [DJINNI_FUGUE] = {ENCOUNTER_ZONE_MARS_DJINN_LAST, 2},
-    // The spare the text names "Fire18".
+    /* The spare the text names "Fire18". */
     [DJINNI_FUGUE + 1] = {ENCOUNTER_ZONE_MARS_DJINN_LAST, 3},
     [DJINNI_FIRE19] = {ENCOUNTER_ZONE_MARS_DJINN_LAST, 4},
     [DJINNI_GUST] = {ENCOUNTER_ZONE_JUPITER_DJINN, 1},
@@ -208,8 +209,8 @@ const u16 gEncounter_DjinnBattles[][2] = {
     [DJINNI_GASP] = {ENCOUNTER_ZONE_JUPITER_DJINN_LAST, 0},
     [DJINNI_LULL] = {ENCOUNTER_ZONE_JUPITER_DJINN_LAST, 1},
     [DJINNI_GALE] = {ENCOUNTER_ZONE_JUPITER_DJINN_LAST, 2},
-    // The spare the text names "Wind18".
+    /* The spare the text names "Wind18". */
     [DJINNI_GALE + 1] = {ENCOUNTER_ZONE_JUPITER_DJINN_LAST, 3},
     [DJINNI_WIND19] = {ENCOUNTER_ZONE_JUPITER_DJINN_LAST, 4},
 };
-// clang-format on
+/* clang-format on */

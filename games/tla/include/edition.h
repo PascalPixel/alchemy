@@ -1,24 +1,24 @@
 #ifndef ALCHEMY_EDITION_H
 #define ALCHEMY_EDITION_H
 
-/// @file
-/// Which of the six editions is being built, and its language.
+/* @file */
+/* Which of the six editions is being built, and its language. */
 
 #if (defined(TLA_EDITION_JA) + defined(TLA_EDITION_EN) +                       \
-     defined(TLA_EDITION_DE) + defined(TLA_EDITION_ES) +                       \
-     defined(TLA_EDITION_FR) + defined(TLA_EDITION_IT)) > 1
+	 defined(TLA_EDITION_DE) + defined(TLA_EDITION_ES) +                       \
+	 defined(TLA_EDITION_FR) + defined(TLA_EDITION_IT)) > 1
 #error multiple game editions selected
 #endif
 
-/// Compile-time language selectors.
+/* Compile-time language selectors. */
 #define LANGUAGE_JAPANESE 0
-#define LANGUAGE_ENGLISH 1
-#define LANGUAGE_GERMAN 2
-#define LANGUAGE_SPANISH 3
-#define LANGUAGE_FRENCH 4
-#define LANGUAGE_ITALIAN 5
+#define LANGUAGE_ENGLISH  1
+#define LANGUAGE_GERMAN	  2
+#define LANGUAGE_SPANISH  3
+#define LANGUAGE_FRENCH	  4
+#define LANGUAGE_ITALIAN  5
 
-/// The edition's language, from the edition the build defines.
+/* The edition's language, from the edition the build defines. */
 #if defined(TLA_EDITION_EN)
 #define LANGUAGE LANGUAGE_ENGLISH
 #elif defined(TLA_EDITION_DE)

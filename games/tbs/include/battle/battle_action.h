@@ -1,103 +1,105 @@
 #ifndef ALCHEMY_BATTLE_ACTION_H
 #define ALCHEMY_BATTLE_ACTION_H
 
-/// @file
-/// A battle's battle objects and sprites, each unit's command and action, and
-/// the spoils.
+/* @file */
+/* A battle's battle objects and sprites, each unit's command and action, and */
+/* the spoils. */
 
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
-struct Actor;
-struct SpriteAnimation;
+struct ACTOR;
+struct SPR_ANIMATION;
 
-/// A unit's place on the battlefield: its actor, resources and
-/// animations, its anchor spot and scale, and the statuses it shows.
-/// BattleState.objects holds the 14, reached by unit id through
-/// BattleObject_Get; BattleObject_Make fills one in when the unit is placed.
-struct BattleObject {
-  struct Actor *actor; ///< NULL once released
-  u16 resource;        ///< the unit's sprite
-  u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
-  u16 animation; ///< the status icon's animation shown; 0 for none
-  u16 shadow;    ///< the shadow sprite under the unit (SPRITE_BATTLE_SHADOW)
-  FIXED anchorX; ///< 16.16 fixed-point pixels
-  FIXED anchorZ; ///< 16.16 fixed-point pixels
-  /// The unit sprite's SpriteColorMode: an enemy's own, 1 for a
-  /// character on the enemy side (a link opponent), else 0.
-  s32 palette;
-  FIXED scale;        ///< 16.16 fixed point, FIXED_ONE full size
-  s16 activeStatuses; ///< a bit per status with an icon (ICON_)
-  u8 shownStatus;     ///< the status whose icon is shown
-  s8 cycleTimer;      ///< frames until the next status icon
-  struct SpriteAnimation *animationEntry; ///< the status icon's sprite, or NULL
-  struct SpriteAnimation *shadowEntry;    ///< the shadow's sprite, or NULL
-  /// Set by BattleObject_MarkForRelease: its actor is released with the
-  /// others by BattleObject_DestroyAll.
-  s16 active;
-  s16 fading; ///< set while a fallen enemy's picture is being removed
-};
+/* A unit's place on the battlefield: its actor, resources and */
+/* animations, its anchor spot and scale, and the statuses it shows. */
+/* BATTLE_STATE.objs holds the 14, reached by unit id through */
+/* btObjectGet; btObjectMake fills one in when the unit is placed. */
+typedef struct BATTLE_OBJECT {
+	struct ACTOR *actor; /* NULL once released */
+	u16 resource;		 /* the unit's sprite */
+	u16 overlay;   /* a second sprite drawn over it, the weapon; 0 for none */
+	u16 anm;	   /* the status icon's animation shown; 0 for none */
+	u16 shadow;	   /* the shadow sprite under the unit (SPRITE_BATTLE_SHADOW) */
+	FIXED anchorX; /* 16.16 fixed-point pixels */
+	FIXED anchorZ; /* 16.16 fixed-point pixels */
+	/* The unit sprite's SPR_COL_MODE: an enemy's own, 1 for a */
+	/* character on the enemy side (a link opponent), else 0. */
+	s32 pal;
+	FIXED scale;					/* 16.16 fixed point, FIXED_ONE full size */
+	s16 activeStatuses;				/* a bit per status with an icon (ICON_) */
+	u8 shownStat;					/* the status whose icon is shown */
+	s8 cycleTmr;					/* frames until the next status icon */
+	struct SPR_ANIMATION *anmEntry; /* the status icon's sprite, or NULL */
+	struct SPR_ANIMATION *shadowEntry; /* the shadow's sprite, or NULL */
+	/* Set by btObjectMarkForRelease: its actor is released with the */
+	/* others by btObjectDestroyAll. */
+	s16 active;
+	s16 fading; /* set while a fallen enemy's picture is being removed */
+} BATTLE_OBJECT;
 
-/// BattleAction.command and BattleActionRun's copy of it: what a unit does
-/// when it acts.
-enum BattleCommand {
-  COMMAND_ATTACK = 0,
-  COMMAND_PSYNERGY = 1,
-  COMMAND_ITEM = 2,
-  COMMAND_DEFEND = 3,
-  COMMAND_ENEMY_ABILITY = 4,
-  COMMAND_DJINN = 5,
-  COMMAND_SUMMON = 6,
-  /// An enemy's Total Defense (ABILITY_EFFECT_TOTAL_DEFENSE).
-  COMMAND_TOTAL_DEFENSE = 7,
-  COMMAND_NONE = 8, ///< nothing this turn
-  COMMAND_FLEE = 99
-};
+/* BATTLE_ACTION.command and BATTLE_ACTION_RUN's copy of it: what a unit does */
+/* when it acts. */
+typedef enum BATTLE_COMMAND {
+	COMMAND_ATTACK = 0,
+	COMMAND_PSYNERGY = 1,
+	COMMAND_ITEM = 2,
+	COMMAND_DEFEND = 3,
+	COMMAND_ENEMY_ABILITY = 4,
+	COMMAND_DJINN = 5,
+	COMMAND_SUMMON = 6,
+	/* An enemy's Total Defense (ABILITY_EFFECT_TOTAL_DEFENSE). */
+	COMMAND_TOTAL_DEFENSE = 7,
+	COMMAND_NONE = 8, /* nothing this turn */
+	COMMAND_FLEE = 99
+} BATTLE_COMMAND;
 
-/// COMMAND_DJINN's parameter: the Djinni's element in bits 11 to 8, its
-/// number within the element below.
-#define DJINN_COMMAND(element, index) (((element) << 8) | (index))
+/* COMMAND_DJINN's parameter: the Djinni's element in bits 11 to 8, its */
+/* number within the element below. */
+#define DJINN_COMMAND(element, index)	 (((element) << 8) | (index))
 #define DJINN_COMMAND_ELEMENT(parameter) (((parameter) >> 8) & 15)
-#define DJINN_COMMAND_INDEX(parameter) ((parameter) & 255)
+#define DJINN_COMMAND_INDEX(parameter)	 ((parameter) & 255)
 
-/// A unit's chosen action for the turn: its command, the command's parameter,
-/// its target and range, and its priority in the action order.
-/// BattleState.actions holds the turn's actions.
-struct BattleAction {
-  s16 unitId;
-  u16 slot;      ///< in a link battle, unitId as the opponent knows it
-  s16 priority;  ///< from the unit's Agility; higher acts first
-  s16 command;   ///< enum BattleCommand
-  s16 parameter; ///< an ability id, or COMMAND_ITEM's inventory index (-1 gone)
-  s16 target;    ///< the aimed unit's id
-  s16 range;     ///< the action's range
-  s16 unused;    ///< no code names it
-};
+/* A unit's chosen action for the turn: its command, the command's parameter, */
+/* its target and range, and its priority in the action order. */
+/* BATTLE_STATE.actions holds the turn's actions. */
+typedef struct BATTLE_ACTION {
+	s16 unitId;
+	u16 slot;	 /* in a link battle, unitId as the opponent knows it */
+	s16 pri;	 /* from the unit's Agility; higher acts first */
+	s16 command; /* BATTLE_COMMAND */
+	s16 prm;	 /* an ability id, or COMMAND_ITEM's inventory index (-1 gone)
+				  */
+	s16 tgt;	 /* the aimed unit's id */
+	s16 range;	 /* the action's range */
+	s16 unused;	 /* no code names it */
+} BATTLE_ACTION;
 
-/// A battle's spoils so far: coins, experience, enemies defeated and up to
-/// four items. BattleState.spoils, cleared as the battle starts and added to as
-/// each enemy falls.
-struct BattleSpoils {
-  s32 coins;
-  s32 experience;
-  s32 defeated; ///< enemies defeated
-  /// Item ids dropped, 0 for an empty place; each id once, and a fifth drop
-  /// replaces the lowest ranked (BattleSpoils_RankItem) if it ranks higher.
-  u16 items[4];
-};
+/* A battle's spoils so far: coins, experience, enemies defeated and up to */
+/* four items. BATTLE_STATE.spoils, cleared as the battle starts and added to as
+ */
+/* each enemy falls. */
+typedef struct BATTLE_SPOILS {
+	s32 coins;
+	s32 experience;
+	s32 defeated; /* enemies defeated */
+	/* Item ids dropped, 0 for an empty place; each id once, and a fifth drop */
+	/* replaces the lowest ranked (btSpoilsRankItem) if it ranks higher. */
+	u16 items[4];
+} BATTLE_SPOILS;
 
-STATIC_ASSERT(sizeof(struct BattleObject) == 44);
-STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 12);
-STATIC_ASSERT(offsetof(struct BattleObject, activeStatuses) == 28);
-STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 31);
-STATIC_ASSERT(offsetof(struct BattleObject, active) == 40);
+STATIC_ASSERT(sizeof(BATTLE_OBJECT) == 44);
+STATIC_ASSERT(offsetof(BATTLE_OBJECT, anchorX) == 12);
+STATIC_ASSERT(offsetof(BATTLE_OBJECT, activeStatuses) == 28);
+STATIC_ASSERT(offsetof(BATTLE_OBJECT, cycleTmr) == 31);
+STATIC_ASSERT(offsetof(BATTLE_OBJECT, active) == 40);
 
-STATIC_ASSERT(sizeof(struct BattleAction) == 16);
-STATIC_ASSERT(offsetof(struct BattleAction, priority) == 4);
-STATIC_ASSERT(offsetof(struct BattleAction, command) == 6);
-STATIC_ASSERT(offsetof(struct BattleAction, parameter) == 8);
-STATIC_ASSERT(offsetof(struct BattleAction, target) == 10);
-STATIC_ASSERT(sizeof(struct BattleSpoils) == 20);
+STATIC_ASSERT(sizeof(BATTLE_ACTION) == 16);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, pri) == 4);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, command) == 6);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, prm) == 8);
+STATIC_ASSERT(offsetof(BATTLE_ACTION, tgt) == 10);
+STATIC_ASSERT(sizeof(BATTLE_SPOILS) == 20);
 
 #endif

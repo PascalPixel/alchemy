@@ -39,51 +39,111 @@ If a build acts strangely after you switch branches or rename a file, delete `ou
 
 ## Code
 
-The source is C89 with the old compilers’ GNU extensions, written the way [pret](https://github.com/pret) writes its games.
+The source is C89 with the old compilers’ GNU extensions. It is written in the manner of [SGL](https://www.infochunk.com/saturn/segahtml/sgl/sglr/), Sega’s library for the Saturn. Camelot made Shining Force III for the Saturn before these games, and the system library is modelled on SGL, so the whole source takes SGL’s names and layout.
 
 - Read data through structs and enums, wherever the build still matches, and keep offsets and casts out.
 - A number gets a name once you know what it means. After that, neither code nor comments use the bare number.
 - Numbers are decimal. Hex stays where a programmer of the time wrote hex: flag numbers, hardware addresses, register bits and masks.
-- Positions and speeds are plain pixels: `Actor_SetPosition(ACTOR_MIA, 880, 502)`. Fixed-point values are written `toFIXED(0.3)` and angles `DEGtoANG(45)`, after Sega’s SGL.
+- Positions and speeds are plain pixels: `fdActorSetPos(ACTOR_MIA, 880, 502)`. Fixed-point values are written `toFIXED(0.3)` and angles `DEGtoANG(45)`, as in SGL.
 - What differs by language is chosen with `LANGUAGE`: text, fonts and layout that fits the text. Every other difference between editions is a patch level, `TBS_PATCH_2` or `TLA_PATCH_1`.
-- A macro that makes more than one call is a comma expression. Wrapped in `do { } while (0)` it compiled differently in every edition.
-- Formatting is clang-format 20 with the repository’s `.clang-format`. `make test` checks it with `clang-format-20` (earlier versions format some casts differently).
+- A macro that makes more than one call is a comma expression. Wrapped in `do { } while(0)` it compiled differently in every edition.
 
 ## Names
 
-| What                     | How it’s written                         |
-| ------------------------ | ---------------------------------------- |
-| Functions                | `Module_PascalCase`                      |
-| Globals and statics      | `gName`, `sName`                         |
-| Constants and macros     | `UPPER_SNAKE_CASE`                       |
-| Locals and struct fields | `camelCase`                              |
-| Files and folders        | lowercase, short, the same in both games |
+A function’s name is two small letters for the part that owns it, then its words run together with a capital for each: `fdActorGetById`, `btEffectRunCastingImpact`. The owner is the folder the function is defined in.
 
-Spell words out, apart from abbreviations a programmer reads without stopping.
+| Prefix | Owner                                          |
+| ------ | ---------------------------------------------- |
+| `sy`   | the system library: `system/`, `sound/`        |
+| `bt`   | the battle engine: `battle/`, `battle_effect/` |
+| `fd`   | the field engine: `field/`                     |
+| `mn`   | the menu engine: `window/`, `menu/`, `shop/`   |
+| `gm`   | the game logic: `game/`                        |
+| `sc`   | a scene: `scene/`                              |
+| `db`   | the debug scenes: `debug/`                     |
 
-Pick a word in this order: the game’s own English text, for anything the player sees; then the term a Game Boy Advance programmer already uses (for hardware, [GBATEK](https://problemkaputt.de/gbatek.htm)’s name); then plain English. Use one word for one thing everywhere. The glossaries in [`docs/tbs/glossary.md`](docs/tbs/glossary.md) and [`docs/tla/glossary.md`](docs/tla/glossary.md) hold the words already settled, each with its sources.
+The SDK’s functions, the BIOS calls and the ids the assembler builds keep their own names.
 
-Camelot made Shining Force III for the Saturn before these games, and the System does its maths the way [SGL](https://www.infochunk.com/saturn/segahtml/sgl/sglr/), Sega’s library for that console, does. Where the design matches, the names follow SGL’s reference, as `toFIXED`, `DEGtoANG`, `Matrix_RotateX` and the `FX` suffix do.
+Where SGL has the same call, the function takes SGL’s name with `sy` for SGL’s `sl`: `sySetEvent`, `sySynch`, `syPushMatrix`, `syRotX`, `syMulFX`, `sySin`, `syDMAXCopy`, `syIntFunction`, `syPrint`. [The system library’s page](games/tbs/src/system/README.md#the-calls) lists each one beside SGL’s.
+
+Words are spelled out, apart from SGL’s short forms:
+
+| Word                         | Function | Type   | Field                      |
+| ---------------------------- | -------- | ------ | -------------------------- |
+| initialize, initial          | `Init`   |        | `init`                     |
+| display                      | `Disp`   |        |                            |
+| screen                       | `Scr`    | `SCR`  | `scr`                      |
+| color                        | `Col`    | `COL`  | `col`                      |
+| sprite                       | `Spr`    | `SPR`  | `spr`                      |
+| sound                        | `Snd`    | `SND`  | `snd`                      |
+| position                     | `Pos`    | `POS`  | `pos`                      |
+| number                       | `Num`    | `NUM`  | `num`                      |
+| calculate                    | `Calc`   |        |                            |
+| attribute                    |          | `ATTR` |                            |
+| parameters                   |          | `PARM` | `prm`                      |
+| status                       |          | `STAT` | `stat`                     |
+| animation, index, count      |          |        | `anm`, `idx`, `cnt`        |
+| flags, frame, timer, pointer |          |        | `flg`, `frm`, `tmr`, `ptr` |
+| address, offset, buffer      |          |        | `adr`, `ofs`, `buf`        |
+| table, message, window       |          |        | `tbl`, `msg`, `win`        |
+| target, source, destination  |          |        | `tgt`, `src`, `dst`        |
+| previous, current, velocity  |          |        | `prev`, `cur`, `vel`       |
+| angle, priority, callback    |          |        | `ang`, `pri`, `func`       |
+
+The rest of each name follows these rules:
+
+| What                 | How it’s written                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| Global variables     | the name alone, `HeapSlots`, `FrameCount`; `Work` added where the name is taken, `BattleStateWork` |
+| Statics              | `sName`                                                                                            |
+| Types                | capitals, `ACTOR`, `BATTLE_EFFECT_PARM`, written `typedef struct ACTOR { ... } ACTOR;`             |
+| Struct fields        | `camelCase` with the short forms: `sprId`, `anmIdx`, `velX`                                        |
+| Locals               | `camelCase`                                                                                        |
+| Constants and macros | `UPPER_SNAKE_CASE`                                                                                 |
+| Files and folders    | lowercase, short, the same in both games                                                           |
+
+A type keeps its tag beside its capital name. A forward declaration is `struct ACTOR;`, and a use is written `struct ACTOR *` where the typedef is not in sight. The old compilers refuse a typedef repeated in two headers. Two globals keep an old `g`, `gWorldMapIodem` and `gWorldMapBlend`, because the linker orders them by a hash of their names.
+
+Pick a word in this order: the game’s own English text, for anything the player sees; then the term a Game Boy Advance programmer already uses (for hardware, [GBATEK](https://problemkaputt.de/gbatek.htm)’s name); then plain English. Use one word for one thing everywhere. The glossaries in [`docs/tbs/glossary.md`](docs/tbs/glossary.md) and [`docs/tla/glossary.md`](docs/tla/glossary.md) hold the words already settled, each with its sources, and [say where the style comes from](docs/tbs/glossary.md#the-style-and-where-it-comes-from).
 
 Music takes the title of its track on the official soundtrack where we could match the two (`MUS_TO_THE_OPEN_SEA`), and otherwise the place or moment it plays for (`MUS_PROX`). A sound effect is named for what it sounds like and a picture for what it shows, with a number at the end only for a real series, like `digit_0` to `digit_9`.
+
+## Layout
+
+The layout is that of SGL’s sample code:
+
+- One tab for each level, four columns wide.
+- `else` on a line of its own.
+- No space between `if`, `for`, `while` or `switch` and its parenthesis: `if(count > 0)`.
+- Lines up to 80 columns.
+
+Formatting is clang-format 20 with the repository’s [`.clang-format`](.clang-format), which says all of this. `make test` checks it with `clang-format-20` (earlier versions format some casts differently).
 
 ## Comments
 
 A comment says what the code does for the game. How the compiler came to emit it, registers and instruction counts included, stays out.
 
+Every comment is a block comment, `/* ... */`, never `//`. A comment after code on the same line is lined up with the ones around it.
+
 These marks are used in the source. Keep them true when you change the code around them.
 
 | Mark                                    | Meaning                                                                         |
 | --------------------------------------- | ------------------------------------------------------------------------------- |
-| `// BUG:` and `BUGFIX`                  | The original’s bug, kept, with its fix behind the `BUGFIX` option               |
-| `// UB:` and `UBFIX`                    | The same for undefined behaviour                                                |
-| `// DEAD:`                              | Code the ROM keeps that can’t change the result, with what the ROM keeps        |
+| `/* BUG: */` and `BUGFIX`               | The original’s bug, kept, with its fix behind the `BUGFIX` option               |
+| `/* UB: */` and `UBFIX`                 | The same for undefined behaviour                                                |
+| `/* DEAD: */`                           | Code the ROM keeps that can’t change the result, with what the ROM keeps        |
 | `Unused:` and `UNUSED`                  | Something nothing reaches, and a function nothing refers to                     |
 | `LEFTOVER(frame)`, `LEFTOVER(template)` | Camelot’s own code that does nothing in this edition but still shapes its bytes |
 | `VIEW(part)`                            | One part of a file sees a name differently from the rest; unfinished            |
 | `XXX:`                                  | An open question, with what would settle it                                     |
 
 Answering an `XXX:` is a good first contribution: `grep -rn "XXX:" games`.
+
+## Headers
+
+The system library has one header, `include/system.h`. A file that uses the system library includes it and nothing else of the system library’s, as a Saturn program includes SGL’s `sgl.h`. It takes its types and constants from `system/definitions.h` and its variables from `system/globals.h`.
+
+Each module’s main header declares each function of the module’s stub table once, in the table’s order, with the definition’s signature. No other file declares them again. Three of The Lost Age’s modules keep that block in a header beside the main one: `field_functions.h`, `field_sequence_functions.h` and `game_functions.h`. A C file includes only the headers its code needs.
 
 ## Solving a fake match
 
@@ -113,13 +173,13 @@ Don’t replace a fake match with a worse kind.
 
 Camelot wrote a little of these games in assembly, and the source keeps it in three places and nowhere else.
 
-- A routine written in assembly is a `.s` file.
+- A function written in assembly is a `.s` file.
 - A sequence of instructions that C can’t say is one `ASM_` macro in the game’s `include/system/asm.h`, used by name. No other file has an `asm` with anything in it. Each macro is still marked as a fake match.
 - A second name for a symbol is a label where the symbol is defined, or a line of the link script.
 
-A local the ROM keeps in one named register is declared with `ASM_REGISTER`, and only where the routine then matches with nothing else. A bare `register int x asm("r4")` is not accepted.
+A local the ROM keeps in one named register is declared with `ASM_REGISTER`, and only where the function then matches with nothing else. A bare `register int x asm("r4")` is not accepted.
 
-The reason for all this is on [the System’s page](games/tbs/src/system/README.md#where-this-library-comes-from): the System is one library with its own rule for sharing registers, and the macros are its smallest pieces. If you meet assembly that fits none of it, say so in the pull request.
+The reason for all this is on [the system library’s page](games/tbs/src/system/README.md#where-the-system-library-comes-from): the system library has its own rule for sharing registers, and the macros are its smallest pieces. If you meet assembly that fits none of it, say so in the pull request.
 
 ## The guide
 

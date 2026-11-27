@@ -1,33 +1,33 @@
 #ifndef ALCHEMY_FIELD_FIELD_EFFECT_H
 #define ALCHEMY_FIELD_FIELD_EFFECT_H
 
-/// @file
-/// The tints a field Psynergy washes the screen in, and the motion updates of
-/// its effect actors.
+/* @file */
+/* The tints a field Psynergy washes the screen in, and the motion updates of */
+/* its effect actors. */
 
 #include "types.h"
 
-union FieldObject;
+union FIELD_OBJECT;
 
-/// The eight tints a field Psynergy washes the screen in, by their index in
-/// gFieldPsynergy_CastColors and FLAG_PSYNERGY_TINT.
-enum PsynergyTint {
-  PSYNERGY_TINT_BLUE = 0,
-  PSYNERGY_TINT_GREEN = 1,
-  PSYNERGY_TINT_RED = 2,
-  PSYNERGY_TINT_CYAN = 3,
-  PSYNERGY_TINT_MAGENTA = 4,
-  PSYNERGY_TINT_YELLOW = 5,
-  PSYNERGY_TINT_DARK_GREY = 6,
-  PSYNERGY_TINT_GREY = 7,
-  PSYNERGY_TINT_COUNT = 8
-};
+/* The eight tints a field Psynergy washes the screen in, by their index in */
+/* FieldPsynergy_CastColors and FLAG_PSYNERGY_TINT. */
+typedef enum PSYNERGY_TINT {
+	PSYNERGY_TINT_BLUE = 0,
+	PSYNERGY_TINT_GREEN = 1,
+	PSYNERGY_TINT_RED = 2,
+	PSYNERGY_TINT_CYAN = 3,
+	PSYNERGY_TINT_MAGENTA = 4,
+	PSYNERGY_TINT_YELLOW = 5,
+	PSYNERGY_TINT_DARK_GREY = 6,
+	PSYNERGY_TINT_GREY = 7,
+	PSYNERGY_TINT_COUNT = 8
+} PSYNERGY_TINT;
 
-/// Each tint's colour (field_effect_data.c).
-extern const u32 gFieldPsynergy_CastColors[PSYNERGY_TINT_COUNT];
+/* Each tint's colour (field_effect_data.c). */
+extern const u32 FieldPsynergy_CastColors[PSYNERGY_TINT_COUNT];
 
-void FieldEffect_AdvanceMotion(union FieldObject *object);
+void fdEffectAdvanceMotion(union FIELD_OBJECT *object);
 
-void FieldEffect_AdvanceMotionAtLeaderPriority(union FieldObject *object);
+void fdEffectAdvanceMotionAtLeaderPriority(union FIELD_OBJECT *object);
 
 #endif

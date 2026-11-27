@@ -1,8 +1,8 @@
-# Interface
+# The menu engine
 
 Everything the player reads or chooses comes in a bordered box: a
 villager's line, the field menu, the Pause menu, a shop's counter, a
-battle's commands. The Interface is the code that draws those boxes and
+battle's commands. The menu engine is the code that draws those boxes and
 runs the screens built from them.
 
 It rests on two ideas: one task draws every box, and every screen is plain
@@ -62,7 +62,7 @@ flowchart LR
 
 A menu is not a state the game switches into. It is a function the field
 calls, which returns when the menu closes. Inside, it is code that waits:
-draw the choices, call `wait(1)`, look at the buttons, go round again. A
+draw the choices, call `sySynch(1)`, look at the buttons, go round again. A
 question inside a screen is another call, one level deeper, and B returns
 from it.
 
@@ -97,7 +97,7 @@ Start opens the Pause menu, where saving and the settings are. Each save
 file carries a short summary beside its data: the leader, the area, the
 play time. The list of files is drawn from the summaries alone, so the game
 never reads a whole file just to show the list.
-[System](system.md#saving) says what a save holds.
+[The system library](system.md#saving) says what a save holds.
 
 ## Where the code is
 

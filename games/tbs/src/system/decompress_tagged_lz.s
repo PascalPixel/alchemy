@@ -1,4 +1,4 @@
-@ Why Decompress_TaggedLzArm is assembly:
+@ Why fdDecompressTaggedLzArm is assembly:
 @ The bit reader branches on carry immediately after shifting its live
 @ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
 @ Why Decompress_MoveToFrontLzCommands is assembly:
@@ -7,15 +7,15 @@
 @ Why Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits are assembly:
 @ Computed add pc enters fixed-size decoder code slots; command execution
 @ also carries live reader register state across entry labels.
-@ Why Resource_ExecuteTransfer is assembly:
+@ Why syResourceExecuteTransfer is assembly:
 @ stmfd sp! saves callee-saved r5 without lr.
-@ Why Resource_PatchThumbBranch is assembly:
+@ Why syResourcePatchThumbBranch is assembly:
 @ push saves callee-saved r5/r6 without lr; body also edits branch
 @ instructions.
 .syntax unified
 	.arm
-	.global Decompress_TaggedLzArm
-Decompress_TaggedLzArm:
+	.global fdDecompressTaggedLzArm
+fdDecompressTaggedLzArm:
 	push	{r5, r6, r7, r9, lr}
 	ldrb	r2, [r0], #1
 	cmp	r2, #0
@@ -220,8 +220,8 @@ Decompress_TaggedLzArm:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.Ltype1_copy
-	.global Decompress_TaggedLzCodeSize
-	.set Decompress_TaggedLzCodeSize, . - Decompress_TaggedLzArm
+	.global fdDecompressTaggedLzCodeSize
+	.set fdDecompressTaggedLzCodeSize, . - fdDecompressTaggedLzArm
 .syntax unified
 	.arm
 	.global Decompress_MoveToFrontLzCommands
@@ -620,8 +620,8 @@ AlchemyUncreditedEnd_decode_tagged_lz_15:
 	b	.Lpush_front
 .syntax unified
 	.arm
-	.global Resource_ExecuteTransfer
-Resource_ExecuteTransfer:
+	.global syResourceExecuteTransfer
+syResourceExecuteTransfer:
 	stmfd	sp!, {r5}
 	add	r0, r0, #4
 .Ltransfer_next:
@@ -652,12 +652,12 @@ Resource_ExecuteTransfer:
 	add	ip, ip, #212
 	stm	ip, {r2, r3, r4}
 	b	.Ltransfer_count
-	.global Resource_ExecuteTransferCodeSize
-	.set Resource_ExecuteTransferCodeSize, . - Resource_ExecuteTransfer
+	.global syResourceExecuteTransferCodeSize
+	.set syResourceExecuteTransferCodeSize, . - syResourceExecuteTransfer
 .syntax unified
 	.arm
-	.global Resource_PatchThumbBranch
-Resource_PatchThumbBranch:
+	.global syResourcePatchThumbBranch
+syResourcePatchThumbBranch:
 	push	{r5, r6}
 	add	r1, r1, r1
 	add	r2, r0, r1
@@ -691,5 +691,5 @@ Resource_PatchThumbBranch:
 .Lpatch_done:
 	pop	{r5, r6}
 	bx	lr
-	.global Resource_PatchThumbBranchCodeSize
-	.set Resource_PatchThumbBranchCodeSize, . - Resource_PatchThumbBranch
+	.global syResourcePatchThumbBranchCodeSize
+	.set syResourcePatchThumbBranchCodeSize, . - syResourcePatchThumbBranch

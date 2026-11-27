@@ -1,773 +1,806 @@
-/// @file
-/// Star Mine, the enemies' Rising Dragon and the backdrop it scrolls, then the
-/// entry points of the rushing strikes.
-// Part of battle_effect.c.
-
-#include "battle_effect_internal.h"
-#include "sounds.h"
+/* @file */
+/* Star Mine, the enemies' Rising Dragon and the backdrop it scrolls, then the
+ */
+/* entry points of the rushing strikes. */
+/* Part of battle_effect.c. */
 
 #define STAR_MINE_FRAMES 144
-#define STAR_MINE_STARS 6
-/// The flash bursts' slots in state->particles after the stars, eight for each
-/// star, and the sparks', in PARTICLES.
+#define STAR_MINE_STARS	 6
+/* The flash bursts' slots in state->particles after the stars, eight for each
+ */
+/* star, and the sparks', in PARTICLES. */
 #define STAR_MINE_FLASH_BURSTS 48
-#define STAR_MINE_SPARKS 192
-/// What a star's speed gains toward its target each frame: 1/1024 of the
-/// distance between them.
+#define STAR_MINE_SPARKS	   192
+/* What a star's speed gains toward its target each frame: 1/1024 of the */
+/* distance between them. */
 #define STAR_MINE_PULL(distance) ((distance) >> 10)
 
-/// Where the two stars are built in the effect's pictures, each a 24 by 48
-/// picture mirrored from one half of BlueCrescentSheet's.
+/* Where the two stars are built in the effect's pictures, each a 24 by 48 */
+/* picture mirrored from one half of BlueCrescentSheet's. */
 #define STAR_MINE_STAR_PICTURES 4608
-#define STAR_WIDTH 24
-#define STAR_HEIGHT 48
-/// The bytes of a star's source in BlueCrescentSheet, 24 by 24: each row's
-/// even pixels are the right half of the star's row, its odd ones the left.
+#define STAR_WIDTH				24
+#define STAR_HEIGHT				48
+/* The bytes of a star's source in BlueCrescentSheet, 24 by 24: each row's */
+/* even pixels are the right half of the star's row, its odd ones the left. */
 #define STAR_HALF (PICTURE_BYTES(STAR) / 2)
-/// The flash bursts and the sparks each star bursts into.
+/* The flash bursts and the sparks each star bursts into. */
 #define STAR_BURST_FLASH_BURSTS 4
-#define STAR_BURST_SPARKS (STAR_MINE_SPARKS / STAR_MINE_STARS)
-/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define STAR_BURST_SPARKS		(STAR_MINE_SPARKS / STAR_MINE_STARS)
+/* Where FlashBurstSheet is decoded in the effect's pictures. */
 #define STAR_MINE_FLASH_BURST_PICTURES 16384
-/// A flash burst plays FlashBurstSheet's pictures, a flash turning to a
-/// fireball that burns out, FLASH_BURST_PICTURE_FRAMES frames apiece; its
-/// first two frames are not drawn.
+/* A flash burst plays FlashBurstSheet's pictures, a flash turning to a */
+/* fireball that burns out, FLASH_BURST_PICTURE_FRAMES frames apiece; its */
+/* first two frames are not drawn. */
 #define FLASH_BURST_PICTURE_FRAMES 4
 
-/// Six twinkling stars (a 24 by 48 picture mirrored both ways from the
-/// sprite sheet's two halves) are thrown up from the caster, each at a target
-/// in turn; from frame 8 * i + 11 each is pulled toward its target and bursts
-/// once it has passed it, into four flash bursts and 32 sparks, knocking the
-/// target back.
-///
-/// Abilities: Star Mine.
-void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
-  void *canvas;
-  struct BattleEffectState *state;
-  s32 frame;
-  u8 *sprites;
-  DrawRectangle blitters[2];
-  struct ScreenPoint screenPosition;
-  struct Particle *star;
-  struct Particle *particle;
-  struct Particle *spark;
-  struct BattleCamera *camera;
-  s32 delay;
-  s32 member;
-  s32 firstSpark;
-  s32 i;
+/* Six twinkling stars (a 24 by 48 picture mirrored both ways from the */
+/* sprite sheet's two halves) are thrown up from the caster, each at a target */
+/* in turn; from frame 8 * i + 11 each is pulled toward its target and bursts */
+/* once it has passed it, into four flash bursts and 32 sparks, knocking the */
+/* target back. */
+/* */
+/* Abilities: Star Mine. */
+void btEffectRunStarMine(BATTLE_EFFECT_PARM *args) {
+	void *canvas;
+	BATTLE_EFFECT_STATE *state;
+	s32 frame;
+	u8 *sprites;
+	DRAW_RECTANGLE blitters[2];
+	SCR_POINT screenPosition;
+	PARTICLE *star;
+	PARTICLE *particle;
+	PARTICLE *spark;
+	BATTLE_CAMERA *camera;
+	s32 delay;
+	s32 member;
+	s32 firstSpark;
+	s32 i;
 
-  canvas = Ram_HeapSlots->battleCanvas;
-  state = Ram_HeapSlots->battleEffect;
-  sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = EFFECT_BLEND_ADD;
-  BattleEffect_BuildCanvasBlitters(0, blitters);
-  Resource_LoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET, state->sheet, 1, 1);
+	canvas = Ram_HeapSlots->battleCanvas;
+	state = Ram_HeapSlots->battleEff;
+	sprites = Ram_HeapSlots->battleSheet;
+	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
+	REG_BLDALPHA = EFFECT_BLEND_ADD;
+	btEffectBuildCanvasBlitters(0, blitters);
+	btResourceLoadAndDecompress(RESOURCE_BLUE_CRESCENT_SHEET, state->sheet, 1,
+								1);
 
-  // The star: each half of the sprite sheet's 24-wide picture mirrored left to
-  // right and top to bottom.
-  for (i = 0; i != 2; i++) {
-    u8 *picture =
-        state->sheet + STAR_MINE_STAR_PICTURES + i * PICTURE_BYTES(STAR);
-    s32 y;
+	/* The star: each half of the sprite sheet's 24-wide picture mirrored left
+	 * to */
+	/* right and top to bottom. */
+	for(i = 0; i != 2; i++) {
+		u8 *picture =
+			state->sheet + STAR_MINE_STAR_PICTURES + i * PICTURE_BYTES(STAR);
+		s32 y;
 
-    for (y = 0; y != STAR_HEIGHT / 2; y++) {
-      s32 x;
+		for(y = 0; y != STAR_HEIGHT / 2; y++) {
+			s32 x;
 
-      for (x = 0; x != STAR_WIDTH / 2; x++) {
-        picture[y * STAR_WIDTH + x] =
-            state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2 + 1];
-        picture[y * STAR_WIDTH + STAR_WIDTH - 1 - x] =
-            state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2];
-        picture[(STAR_HEIGHT - 1 - y) * STAR_WIDTH + x] =
-            state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2 + 1];
-        picture[(STAR_HEIGHT - 1 - y) * STAR_WIDTH + STAR_WIDTH - 1 - x] =
-            state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2];
-      }
-    }
-  }
-  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             state->sheet + STAR_MINE_FLASH_BURST_PICTURES, 1,
-                             0);
-  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
-  Iwram_CopyWordsEntry((void *)BG_PLTT,
-                       Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
-                       SHEET_PALETTE_BYTES);
-  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+			for(x = 0; x != STAR_WIDTH / 2; x++) {
+				picture[y * STAR_WIDTH + x] =
+					state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2 + 1];
+				picture[y * STAR_WIDTH + STAR_WIDTH - 1 - x] =
+					state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2];
+				picture[(STAR_HEIGHT - 1 - y) * STAR_WIDTH + x] =
+					state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2 + 1];
+				picture[(STAR_HEIGHT - 1 - y) * STAR_WIDTH + STAR_WIDTH - 1 -
+						x] =
+					state->sheet[i * STAR_HALF + y * STAR_WIDTH + x * 2];
+			}
+		}
+	}
+	btResourceLoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
+								state->sheet + STAR_MINE_FLASH_BURST_PICTURES,
+								1, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	syWordsCopyEntry((void *)BG_PLTT,
+					 syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+					 SHEET_PALETTE_BYTES);
+	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != STAR_MINE_FRAMES; frame++) {
-    camera = Ram_HeapSlots->cameraState;
-    if (frame == 0) {
-      struct Particle *thrown;
+	for(frame = 0; frame != STAR_MINE_FRAMES; frame++) {
+		camera = Ram_HeapSlots->cameraState;
+		if(frame == 0) {
+			PARTICLE *thrown;
 
-      for (i = 0, thrown = state->particles; i != STAR_MINE_STARS;
-           i++, thrown++) {
-        struct Actor *caster = BattleObject_GetFar(args->user)->object;
-        s32 height = BattleUnit_GetEffectHeightFar(args->user) / 2;
-        s32 velocity;
+			for(i = 0, thrown = state->particles; i != STAR_MINE_STARS;
+				i++, thrown++) {
+				ACTOR *caster = btObjectGetStub(args->user)->obj;
+				s32 height = btUnitGetEffectHeightStub(args->user) / 2;
+				s32 velocity;
 
-        SET_POSITION(thrown, caster->x.fixed, caster->y.fixed + height,
-                     caster->z.fixed);
-        velocity = ((Random16() & 255) - 128) << 8;
-        // DEAD: both stores are overwritten by the 0 below; the ROM keeps them.
-        thrown->velocityX = velocity;
-        if (thrown->x > 0) {
-          thrown->velocityX = -velocity;
-        }
-        thrown->velocityX = 0;
-        thrown->velocityY = ((Random16() % 400) - 128) << 9;
-        thrown->velocityZ = ((Random16() & 255) - 128) << 10;
-        thrown->variant = 0;
-      }
-      for (i = 0; i != STAR_MINE_FLASH_BURSTS; i++) {
-        state->particles[STAR_MINE_STARS + i].variant = -1;
-      }
-      EFFECT_FREE_PARTICLES(i, PARTICLES, STAR_MINE_SPARKS);
-    }
-    EFFECT_VIEW_FROM_CAMERA(camera);
+				SET_POSITION(thrown, caster->x.fixed, caster->y.fixed + height,
+							 caster->z.fixed);
+				velocity = ((syRandom() & 255) - 128) << 8;
+				/* DEAD: both stores are overwritten by the 0 below; the ROM
+				 * keeps them. */
+				thrown->velX = velocity;
+				if(thrown->x > 0) {
+					thrown->velX = -velocity;
+				}
+				thrown->velX = 0;
+				thrown->velY = ((syRandom() % 400) - 128) << 9;
+				thrown->velZ = ((syRandom() & 255) - 128) << 10;
+				thrown->variant = 0;
+			}
+			for(i = 0; i != STAR_MINE_FLASH_BURSTS; i++) {
+				state->particles[STAR_MINE_STARS + i].variant = -1;
+			}
+			EFFECT_FREE_PARTICLES(i, PARTICLES, STAR_MINE_SPARKS);
+		}
+		EFFECT_VIEW_FROM_CAMERA(camera);
 
-    for (i = 0, star = state->particles, delay = 0, firstSpark = 0;
-         i != STAR_MINE_STARS;
-         star++, delay += 8, firstSpark += STAR_BURST_SPARKS, i++) {
-      s32 k;
-      struct Actor *target;
-      s32 height;
-      s32 picture;
-      s32 dx;
-      s32 dy;
-      s32 dz;
-      s32 starX;
-      FIXED targetX;
+		for(i = 0, star = state->particles, delay = 0, firstSpark = 0;
+			i != STAR_MINE_STARS;
+			star++, delay += 8, firstSpark += STAR_BURST_SPARKS, i++) {
+			s32 k;
+			ACTOR *target;
+			s32 height;
+			s32 picture;
+			s32 dx;
+			s32 dy;
+			s32 dz;
+			s32 starX;
+			FIXED targetX;
 
-      member = i % args->targetCount;
-      target = BattleObject_GetFar(args->targets[member])->object;
-      height = BattleUnit_GetEffectHeightFar(args->targets[member]) / 2;
-      if (star->variant < 0) {
-        continue;
-      }
-      picture = ((frame + i) / 2) & 1;
-      EffectPosition_ProjectPoint(star, &screenPosition);
-      screenPosition.x >>= 1;
-      blitters[0](canvas,
-                  state->sheet + STAR_MINE_STAR_PICTURES +
-                      picture * PICTURE_BYTES(STAR),
-                  screenPosition.x - STAR_WIDTH / 2,
-                  screenPosition.y - STAR_HEIGHT / 2, STAR_WIDTH, STAR_HEIGHT);
-      Particle_AdvanceWithGravity3D(star, 63, 0);
-      if (frame <= delay + 10) {
-        continue;
-      }
-      dx = STAR_MINE_PULL(target->x.fixed - star->x);
-      dy = STAR_MINE_PULL(target->y.fixed + height - star->y);
-      dz = STAR_MINE_PULL(target->z.fixed - star->z);
-      star->velocityX += dx;
-      star->velocityY += dy;
-      star->velocityZ += dz;
-      // Until it has passed its target, farther from the field's middle.
-      starX = star->x;
-      if (starX < 0) {
-        starX = -starX;
-      }
-      targetX = target->x.fixed;
-      if (targetX < 0) {
-        targetX = -targetX;
-      }
-      if (starX <= targetX) {
-        continue;
-      }
+			member = i % args->tgtCnt;
+			target = btObjectGetStub(args->tgts[member])->obj;
+			height = btUnitGetEffectHeightStub(args->tgts[member]) / 2;
+			if(star->variant < 0) {
+				continue;
+			}
+			picture = ((frame + i) / 2) & 1;
+			btEffectPosProjectPoint(star, &screenPosition);
+			screenPosition.x >>= 1;
+			blitters[0](canvas,
+						state->sheet + STAR_MINE_STAR_PICTURES +
+							picture * PICTURE_BYTES(STAR),
+						screenPosition.x - STAR_WIDTH / 2,
+						screenPosition.y - STAR_HEIGHT / 2, STAR_WIDTH,
+						STAR_HEIGHT);
+			btParticleAdvanceWithGravity3D(star, 63, 0);
+			if(frame <= delay + 10) {
+				continue;
+			}
+			dx = STAR_MINE_PULL(target->x.fixed - star->x);
+			dy = STAR_MINE_PULL(target->y.fixed + height - star->y);
+			dz = STAR_MINE_PULL(target->z.fixed - star->z);
+			star->velX += dx;
+			star->velY += dy;
+			star->velZ += dz;
+			/* Until it has passed its target, farther from the field's middle.
+			 */
+			starX = star->x;
+			if(starX < 0) {
+				starX = -starX;
+			}
+			targetX = target->x.fixed;
+			if(targetX < 0) {
+				targetX = -targetX;
+			}
+			if(starX <= targetX) {
+				continue;
+			}
 
-      // Passed its target: the burst.
-      for (k = 0; k != STAR_BURST_FLASH_BURSTS; k++) {
-        particle = &state->particles[STAR_MINE_STARS + delay + k];
-        particle->x = INTtoFIXED(screenPosition.x);
-        particle->y = INTtoFIXED(screenPosition.y);
-        particle->velocityX = ((Random16() & 127) - 64) << 12;
-        particle->velocityY = (192 - (Random16() & 255)) << 10;
-        particle->variant = 0;
-      }
-      for (k = 0; k != STAR_BURST_SPARKS; k++) {
-        s32 angle;
-        s32 speed;
+			/* Passed its target: the burst. */
+			for(k = 0; k != STAR_BURST_FLASH_BURSTS; k++) {
+				particle = &state->particles[STAR_MINE_STARS + delay + k];
+				particle->x = INTtoFIXED(screenPosition.x);
+				particle->y = INTtoFIXED(screenPosition.y);
+				particle->velX = ((syRandom() & 127) - 64) << 12;
+				particle->velY = (192 - (syRandom() & 255)) << 10;
+				particle->variant = 0;
+			}
+			for(k = 0; k != STAR_BURST_SPARKS; k++) {
+				s32 angle;
+				s32 speed;
 
-        spark = &PARTICLES[firstSpark + k];
-        spark->x = INTtoFIXED(screenPosition.x);
-        spark->y = INTtoFIXED(screenPosition.y);
-        angle = (Random16() & 0x7fff) + DEGtoANG(90);
-        speed = (Random16() & 255) + 127;
-        spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
-        spark->velocityY = (Trig_Cos(angle) * speed) >> 5;
-        spark->variant = (Random16() & 15) + 16;
-      }
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      Sound_PlayFar(SE_CRASH);
-      BattleEffect_StartActorMotion(args->targets[member], 1, toFIXED(2),
-                                    toFIXED(8), toFIXED(2), i * 5 + 110);
-      BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, member, 16);
-      state->shakeFrames = 4;
-      star->variant = -1;
-    }
+				spark = &PARTICLES[firstSpark + k];
+				spark->x = INTtoFIXED(screenPosition.x);
+				spark->y = INTtoFIXED(screenPosition.y);
+				angle = (syRandom() & 0x7fff) + DEGtoANG(90);
+				speed = (syRandom() & 255) + 127;
+				spark->velX = (sySin(angle) * speed) >> 5;
+				spark->velY = (syCos(angle) * speed) >> 5;
+				spark->variant = (syRandom() & 15) + 16;
+			}
+			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+			sySndPlayStub(SE_CRASH);
+			btEffectStartActorMotion(args->tgts[member], 1, toFIXED(2),
+									 toFIXED(8), toFIXED(2), i * 5 + 110);
+			btEffectTintBattler(args->tgts[member], SPRITE_COLOR_WHITE,
+								POSE_DAMAGE, member, 16);
+			state->shakeFrm = 4;
+			star->variant = -1;
+		}
 
-    for (i = 0; i != STAR_MINE_FLASH_BURSTS; i++) {
-      particle = &state->particles[STAR_MINE_STARS + i];
-      if ((u32)particle->variant <
-          FLASH_BURST_PICTURE_COUNT * FLASH_BURST_PICTURE_FRAMES) {
-        if (particle->variant > 1) {
-          blitters[0](canvas,
-                      state->sheet + STAR_MINE_FLASH_BURST_PICTURES +
-                          (particle->variant / FLASH_BURST_PICTURE_FRAMES) *
-                              PICTURE_BYTES(FLASH_BURST),
-                      FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
-                      FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
-                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-        }
-        Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 16);
-        particle->variant++;
-      }
-    }
-    for (i = 0; i != STAR_MINE_SPARKS; i++) {
-      particle = &PARTICLES[i];
-      if (particle->variant >= 0) {
-        s32 size = (particle->variant >> 3) + 1;
+		for(i = 0; i != STAR_MINE_FLASH_BURSTS; i++) {
+			particle = &state->particles[STAR_MINE_STARS + i];
+			if((u32)particle->variant <
+			   FLASH_BURST_PICTURE_COUNT * FLASH_BURST_PICTURE_FRAMES) {
+				if(particle->variant > 1) {
+					blitters[0](
+						canvas,
+						state->sheet + STAR_MINE_FLASH_BURST_PICTURES +
+							(particle->variant / FLASH_BURST_PICTURE_FRAMES) *
+								PICTURE_BYTES(FLASH_BURST),
+						FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+						FIXED_INTEGER_PART(particle->y) -
+							FLASH_BURST_HEIGHT / 2,
+						FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+				}
+				btParticleAdvanceWithGravity2D(particle, 60, -toFIXED(1) / 16);
+				particle->variant++;
+			}
+		}
+		for(i = 0; i != STAR_MINE_SPARKS; i++) {
+			particle = &PARTICLES[i];
+			if(particle->variant >= 0) {
+				s32 size = (particle->variant >> 3) + 1;
 
-        blitters[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    FIXED_INTEGER_PART(particle->x) - size / 2,
-                    FIXED_INTEGER_PART(particle->y) - size, size, size * 2);
-        Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
-        particle->variant--;
-      }
-    }
-    BattleCamera_Shake(8, 8);
-    EFFECT_END_FRAME(state);
-  }
-  EFFECT_FINISH_CANVAS();
+				blitters[0](
+					canvas, sprites + BattleEffect_MotePictures[size - 1],
+					FIXED_INTEGER_PART(particle->x) - size / 2,
+					FIXED_INTEGER_PART(particle->y) - size, size, size * 2);
+				btParticleAdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
+				particle->variant--;
+			}
+		}
+		btCameraShake(8, 8);
+		EFFECT_END_FRAME(state);
+	}
+	EFFECT_FINISH_CANVAS();
 }
 
-/// The battle background's image in BG1's flat map: BACKDROP_ROWS rows of
-/// BG_SCREEN_WIDTH tiles from BACKDROP_FIRST_TILE.
+/* The battle background's image in BG1's flat map: BACKDROP_ROWS rows of */
+/* BG_SCREEN_WIDTH tiles from BACKDROP_FIRST_TILE. */
 #define BACKDROP_FIRST_TILE 512
-#define BACKDROP_ROWS 15
-/// The first tile of the picture's right half.
+#define BACKDROP_ROWS		15
+/* The first tile of the picture's right half. */
 #define BACKDROP_RIGHT_HALF (BACKDROP_FIRST_TILE + BG_SCREEN_WIDTH / 2)
 
-/// Lays BG1's map with the right half of the battle background's image, 16
-/// tiles by BACKDROP_ROWS, twice across and twice down, so that the backdrop
-/// scrolls on without end.
-void BattleEffect_BuildRepeatingTilemap(void) {
-  u16 *dst = (u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
-  s32 y;
-  s32 x;
+/* Lays BG1's map with the right half of the battle background's image, 16 */
+/* tiles by BACKDROP_ROWS, twice across and twice down, so that the backdrop */
+/* scrolls on without end. */
+void btEffectBuildRepeatingTilemap(void) {
+	u16 *dst = (u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
+	s32 y;
+	s32 x;
 
-  for (y = 0; y != 2 * BACKDROP_ROWS; y++) {
-    if (y >= BACKDROP_ROWS) {
-      for (x = 0; x != BG_SCREEN_WIDTH; x++)
-        *dst++ = (y - BACKDROP_ROWS) * BG_SCREEN_WIDTH + (x & 15) +
-                 BACKDROP_RIGHT_HALF;
-    } else {
-      for (x = 0; x != BG_SCREEN_WIDTH; x++)
-        *dst++ = y * BG_SCREEN_WIDTH + (x & 15) + BACKDROP_RIGHT_HALF;
-    }
-  }
+	for(y = 0; y != 2 * BACKDROP_ROWS; y++) {
+		if(y >= BACKDROP_ROWS) {
+			for(x = 0; x != BG_SCREEN_WIDTH; x++)
+				*dst++ = (y - BACKDROP_ROWS) * BG_SCREEN_WIDTH + (x & 15) +
+						 BACKDROP_RIGHT_HALF;
+		}
+		else {
+			for(x = 0; x != BG_SCREEN_WIDTH; x++)
+				*dst++ = y * BG_SCREEN_WIDTH + (x & 15) + BACKDROP_RIGHT_HALF;
+		}
+	}
 }
 
-/// Two corners of a row of the strip.
-struct CornerRow {
-  struct Corner corners[2];
-};
-/// The dragon's buffers in the map cell buffer: its strip's corners, their
-/// transformed vertices, the strip mesh, and the sparks, in EXTRA_PARTICLES:
-/// the first half thrown up at the start, the second the trail behind the
-/// dragon, and all of them scattered from its top at frame 134.
-#define RISING_DRAGON_ENEMY_VERTICES 4096
-#define RISING_DRAGON_ENEMY_STRIP 8192
+/* Two corners of a row of the strip. */
+typedef struct CORNER_ROW {
+	CORNER corners[2];
+} CORNER_ROW;
+/* The dragon's buffers in the map cell buffer: its strip's corners, their */
+/* transformed vertices, the strip mesh, and the sparks, in EXTRA_PARTICLES: */
+/* the first half thrown up at the start, the second the trail behind the */
+/* dragon, and all of them scattered from its top at frame 134. */
+#define RISING_DRAGON_ENEMY_VERTICES	4096
+#define RISING_DRAGON_ENEMY_STRIP		8192
 #define RISING_DRAGON_ENEMY_SPARK_COUNT 256
-#define TRAIL_SPARKS (RISING_DRAGON_ENEMY_SPARK_COUNT / 2)
+#define TRAIL_SPARKS					(RISING_DRAGON_ENEMY_SPARK_COUNT / 2)
 
-/// The dragon's body: a strip of RISING_DRAGON_ENEMY_SEGMENTS rows,
-/// RISING_DRAGON_ENEMY_BODY_WIDTH across, each row swaying
-/// RISING_DRAGON_ENEMY_ROW_PHASE further along than the one before, the sway
-/// turning a 64th of a turn a frame; the strip is drawn at
-/// RISING_DRAGON_ENEMY_BODY_SCALE.
-#define RISING_DRAGON_ENEMY_SEGMENTS 33
+/* The dragon's body: a strip of RISING_DRAGON_ENEMY_SEGMENTS rows, */
+/* RISING_DRAGON_ENEMY_BODY_WIDTH across, each row swaying */
+/* RISING_DRAGON_ENEMY_ROW_PHASE further along than the one before, the sway */
+/* turning a 64th of a turn a frame; the strip is drawn at */
+/* RISING_DRAGON_ENEMY_BODY_SCALE. */
+#define RISING_DRAGON_ENEMY_SEGMENTS   33
 #define RISING_DRAGON_ENEMY_BODY_WIDTH 20
-#define RISING_DRAGON_ENEMY_ROW_PHASE 2018
+#define RISING_DRAGON_ENEMY_ROW_PHASE  2018
 #define RISING_DRAGON_ENEMY_BODY_SCALE toFIXED(2.09156)
-#define RISING_DRAGON_ENEMY_SWAY_STEP (TRIG_TURN / 64)
+#define RISING_DRAGON_ENEMY_SWAY_STEP  (TRIG_TURN / 64)
 
-/// Where FlashBurstSheet is decoded in the effect's pictures.
+/* Where FlashBurstSheet is decoded in the effect's pictures. */
 #define RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES 2048
-/// Where ClawSlashSheet, a dragon's head of flame, is decoded in the effect's
-/// pictures.
+/* Where ClawSlashSheet, a dragon's head of flame, is decoded in the effect's */
+/* pictures. */
 #define RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES 16384
-/// The flash bursts at the top of the dragon from frame 134:
-/// RISING_DRAGON_ENEMY_BURSTS_A_FRAME a frame for
-/// RISING_DRAGON_ENEMY_BURST_FRAMES.
-#define RISING_DRAGON_ENEMY_BURST_FRAMES 8
+/* The flash bursts at the top of the dragon from frame 134: */
+/* RISING_DRAGON_ENEMY_BURSTS_A_FRAME a frame for */
+/* RISING_DRAGON_ENEMY_BURST_FRAMES. */
+#define RISING_DRAGON_ENEMY_BURST_FRAMES   8
 #define RISING_DRAGON_ENEMY_BURSTS_A_FRAME 4
 #define RISING_DRAGON_ENEMY_FLASH_BURSTS                                       \
-  (RISING_DRAGON_ENEMY_BURST_FRAMES * RISING_DRAGON_ENEMY_BURSTS_A_FRAME)
-/// How many lines a frame the sky scrolls past as the dragon climbs.
+	(RISING_DRAGON_ENEMY_BURST_FRAMES * RISING_DRAGON_ENEMY_BURSTS_A_FRAME)
+/* How many lines a frame the sky scrolls past as the dragon climbs. */
 #define RISING_DRAGON_ENEMY_HAZE_SPEED 8
-/// The level the canvas is cleared to each frame of the whitening from frame
-/// 152, until its last five frames turn it CANVAS_LEVEL_BRIGHTEST.
+/* The level the canvas is cleared to each frame of the whitening from frame */
+/* 152, until its last five frames turn it CANVAS_LEVEL_BRIGHTEST. */
 #define RISING_DRAGON_ENEMY_FLASH_LEVEL 32
 
 #define RISING_DRAGON_ENEMY_FRAMES 186
 
-/// A dragon of flame bursts up under the target in a shower of sparks and
-/// carries it off in its jaws, into a teal sky (the red haze, its colours
-/// turned) that scrolls past as it climbs, swaying. At frame 134 the dragon's
-/// top bursts into flashes and sparks, and from frame 152 the screen whitens;
-/// at frame 166 the battle's own background is back and the target drops to
-/// the field, landing at 179.
-///
-/// Abilities: Rising Dragon (the enemies').
-void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
-  struct BattleEffectState *state;
-  void *canvas;
-  u8 *vertices;
-  u8 *strip;
-  struct CornerRow *cells;
-  DrawRectangle blit[2];
-  u8 *sprites;
-  struct MotionObject *victim;
-  struct BattleCamera *camera;
-  s16 savedYaw;
-  s32 height;
-  s32 savedMotionStrength;
-  s32 savedX;
-  s32 savedZ;
-  struct ScreenPoint source;
-  struct ScreenPoint target;
-  struct ModelTexture texture;
-  struct RenderModel *model;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
-  s32 burstFrame;
-  struct Particle *spawned;
-  struct Particle *particle;
-  struct Particle *scatter;
-  s32 frame;
-  s32 i;
-  s32 j;
+/* A dragon of flame bursts up under the target in a shower of sparks and */
+/* carries it off in its jaws, into a teal sky (the red haze, its colours */
+/* turned) that scrolls past as it climbs, swaying. At frame 134 the dragon's */
+/* top bursts into flashes and sparks, and from frame 152 the screen whitens; */
+/* at frame 166 the battle's own background is back and the target drops to */
+/* the field, landing at 179. */
+/* */
+/* Abilities: Rising Dragon (the enemies'). */
+void btEffectRunRisingDragonEnemy(BATTLE_EFFECT_PARM *args) {
+	BATTLE_EFFECT_STATE *state;
+	void *canvas;
+	u8 *vertices;
+	u8 *strip;
+	CORNER_ROW *cells;
+	DRAW_RECTANGLE blit[2];
+	u8 *sprites;
+	MOTION_OBJECT *victim;
+	BATTLE_CAMERA *camera;
+	s16 savedYaw;
+	s32 height;
+	s32 savedMotionStrength;
+	s32 savedX;
+	s32 savedZ;
+	SCR_POINT source;
+	SCR_POINT target;
+	MODEL_TEXTURE texture;
+	RENDER_MODEL *model;
+	/* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
+	s32 zero;
+	s32 burstFrame;
+	PARTICLE *spawned;
+	PARTICLE *particle;
+	PARTICLE *scatter;
+	s32 frame;
+	s32 i;
+	s32 j;
 
-  vertices = Ram_MapCellBuffer + RISING_DRAGON_ENEMY_VERTICES;
-  strip = Ram_MapCellBuffer + RISING_DRAGON_ENEMY_STRIP;
-  cells = (struct CornerRow *)Ram_MapCellBuffer;
-  state = Ram_HeapSlots->battleEffect;
-  canvas = Ram_HeapSlots->battleCanvas;
-  sprites = Ram_HeapSlots->battleSheet;
-  BattleEffect_ConfigureEffectDisplay();
-  BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  blit[0] = Ram_HeapSlots->ramCode;
-  REG_BLDALPHA = EFFECT_BLEND_ADD;
-  EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  victim = BattleObject_GetFar(args->targets[0])->object;
-  camera = Ram_HeapSlots->cameraState;
-  savedYaw = camera->yaw;
-  height = 0;
-  savedMotionStrength = victim->verticalMotionStrength;
-  savedX = victim->x;
-  savedZ = victim->z;
-  EffectPosition_ProjectBattler(args->targets[0], &source);
-  EffectPosition_ProjectBattler(args->targets[0], &target);
-  Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
-  Resource_LoadAndDecompress(
-      RESOURCE_FLASH_BURST_SHEET,
-      state->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(
-      RESOURCE_CLAW_SLASH_SHEET,
-      state->sheet + RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
-  REG_BG2PA = Q_8_8(0.5);
-  Render_BuildQuadStrip(strip, 4, 32, RISING_DRAGON_ENEMY_SEGMENTS - 1);
+	vertices = Ram_MapCellBuffer + RISING_DRAGON_ENEMY_VERTICES;
+	strip = Ram_MapCellBuffer + RISING_DRAGON_ENEMY_STRIP;
+	cells = (CORNER_ROW *)Ram_MapCellBuffer;
+	state = Ram_HeapSlots->battleEff;
+	canvas = Ram_HeapSlots->battleCanvas;
+	sprites = Ram_HeapSlots->battleSheet;
+	btEffectConfigureEffectDisp();
+	btEffectStartCanvasLayer(BGCNT_PRIORITY(1));
+	EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
+	blit[0] = Ram_HeapSlots->ramCode;
+	REG_BLDALPHA = EFFECT_BLEND_ADD;
+	EFFECT_START_TRANSFER(state, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+	victim = btObjectGetStub(args->tgts[0])->obj;
+	camera = Ram_HeapSlots->cameraState;
+	savedYaw = camera->yaw;
+	height = 0;
+	savedMotionStrength = victim->verticalMotionStrength;
+	savedX = victim->x;
+	savedZ = victim->z;
+	btEffectPosProjectBattler(args->tgts[0], &source);
+	btEffectPosProjectBattler(args->tgts[0], &target);
+	btResourceLoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, state->sheet, 1, 1);
+	btResourceLoadAndDecompress(
+		RESOURCE_FLASH_BURST_SHEET,
+		state->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES, 1, 0);
+	btResourceLoadAndDecompress(
+		RESOURCE_CLAW_SLASH_SHEET,
+		state->sheet + RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES, 1, 0);
+	btResourceLoadAndDecompress(RESOURCE_YELLOW_GLOW_SHEET, sprites, 0, 0);
+	REG_BG2PA = Q_8_8(0.5);
+	btRenderBuildQuadStrip(strip, 4, 32, RISING_DRAGON_ENEMY_SEGMENTS - 1);
 
-  for (frame = 0; frame != RISING_DRAGON_ENEMY_FRAMES; frame++) {
-    if (frame == 0) {
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
-                           SHEET_PALETTE_BYTES);
-      for (i = 0; i != ARRAY_COUNT(state->particles); i++) {
-        state->particles[i].variant = -1;
-      }
-      for (i = 0; i != TRAIL_SPARKS; i++) {
-        EXTRA_PARTICLES[TRAIL_SPARKS + i].variant = -1;
-      }
-      for (i = 0, spawned = EXTRA_PARTICLES; i != TRAIL_SPARKS;
-           i++, spawned++) {
-        s32 angle;
-        s32 speed;
+	for(frame = 0; frame != RISING_DRAGON_ENEMY_FRAMES; frame++) {
+		if(frame == 0) {
+			syWordsCopyEntry((void *)BG_PLTT,
+							 syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+							 SHEET_PALETTE_BYTES);
+			for(i = 0; i != ARRAY_COUNT(state->particles); i++) {
+				state->particles[i].variant = -1;
+			}
+			for(i = 0; i != TRAIL_SPARKS; i++) {
+				EXTRA_PARTICLES[TRAIL_SPARKS + i].variant = -1;
+			}
+			for(i = 0, spawned = EXTRA_PARTICLES; i != TRAIL_SPARKS;
+				i++, spawned++) {
+				s32 angle;
+				s32 speed;
 
-        spawned->x = INTtoFIXED(source.x / 2);
-        spawned->y = toFIXED(120);
-        angle = (Random16() & 0x7fff) + DEGtoANG(90);
-        speed = (Random16() & 1023) + 32;
-        spawned->velocityX = (Trig_Sin(angle) * speed) >> 6;
-        spawned->velocityY = (Trig_Cos(angle) * speed) >> 6;
-        spawned->variant = (Random16() & 7) + 32;
-      }
-    }
-    if (frame == 4) {
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 2);
-      state->shakeFrames = 8;
-      Sound_PlayFar(SE_CRASH);
-    }
-    if (frame == 163) {
-      REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-    }
-    if (frame == 164) {
-      BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                               Ram_HeapSlots->battleState->background,
-                               BACKGROUND_DARKEN_FRAMES);
-    }
-    if (frame == 165) {
-      gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-      Iwram_CopyWordsEntry((void *)BG_PLTT,
-                           Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
-                           SHEET_PALETTE_BYTES);
-    }
-    if (frame == 166) {
-      camera->yaw = savedYaw;
-      victim->verticalMotionStrength = savedMotionStrength;
-      victim->x = savedX;
-      victim->y = toFIXED(100);
-      victim->z = savedZ;
-      gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 16);
-    }
-    if (frame == 179) {
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      state->shakeFrames = 8;
-    }
-    if (frame > 165) {
-      EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
-    } else {
+				spawned->x = INTtoFIXED(source.x / 2);
+				spawned->y = toFIXED(120);
+				angle = (syRandom() & 0x7fff) + DEGtoANG(90);
+				speed = (syRandom() & 1023) + 32;
+				spawned->velX = (sySin(angle) * speed) >> 6;
+				spawned->velY = (syCos(angle) * speed) >> 6;
+				spawned->variant = (syRandom() & 7) + 32;
+			}
+		}
+		if(frame == 4) {
+			btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+								0, 2);
+			state->shakeFrm = 8;
+			sySndPlayStub(SE_CRASH);
+		}
+		if(frame == 163) {
+			REG_BG2CNT =
+				BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
+		}
+		if(frame == 164) {
+			btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
+								 Ram_HeapSlots->battleState->bg,
+								 BACKGROUND_DARKEN_FRAMES);
+		}
+		if(frame == 165) {
+			ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
+			syWordsCopyEntry((void *)BG_PLTT,
+							 syResourceGetTableEntry(RESOURCE_ORANGE_PALETTE_B),
+							 SHEET_PALETTE_BYTES);
+		}
+		if(frame == 166) {
+			camera->yaw = savedYaw;
+			victim->verticalMotionStrength = savedMotionStrength;
+			victim->x = savedX;
+			victim->y = toFIXED(100);
+			victim->z = savedZ;
+			BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+			btEffectTintBattler(args->tgts[0], SPRITE_COLOR_WHITE, POSE_DAMAGE,
+								0, 16);
+		}
+		if(frame == 179) {
+			EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+			state->shakeFrm = 8;
+		}
+		if(frame > 165) {
+			EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_DARKEN,
+								CANVAS_FILL_WORD(4));
+		}
+		else {
 
-      if (frame == 59) {
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      }
-      if (frame == 60) {
-        u16 *color;
-        u16 channelMax = RGB_LEVEL_MAX;
+			if(frame == 59) {
+				syWordsFillEntry(canvas, CANVAS_BYTES,
+								 CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+			}
+			if(frame == 60) {
+				u16 *color;
+				u16 channelMax = RGB_LEVEL_MAX;
 
-        // Into the sky: the red haze, each colour's blue made its red and its
-        // red its green and blue, which turns it teal.
-        BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                                 RESOURCE_RED_HAZE_BACKDROP, 0);
-        color = (u16 *)&BG_PLTT_COLOR(6, 0);
-        for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, color++) {
-          s32 entry = *color;
-          s32 red;
-          s32 green;
-          s32 blue;
+				/* Into the sky: the red haze, each colour's blue made its red
+				 * and its */
+				/* red its green and blue, which turns it teal. */
+				btBackgroundLoadStub(BATTLE_BACKGROUND_FIXED,
+									 RESOURCE_RED_HAZE_BACKDROP, 0);
+				color = (u16 *)&BG_PLTT_COLOR(6, 0);
+				for(i = 0; i != BATTLE_BACKGROUND_COLORS; i++, color++) {
+					s32 entry = *color;
+					s32 red;
+					s32 green;
+					s32 blue;
 
-          red = channelMax & entry;
-          /* LEFTOVER(template): green, taken and clamped as
-           * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
-           * three channels in their palette loops, and left out of the colour
-           * here; as no green at all. */
-          green = RGB_GREEN((u16)entry);
-          blue = RGB_BLUE((u16)entry);
-          // DEAD: red and blue are already at most 31; the ROM keeps both
-          // compares.
-          if (red > RGB_LEVEL_MAX) {
-            red = RGB_LEVEL_MAX;
-          }
-          if (green > RGB_LEVEL_MAX) {
-            green = RGB_LEVEL_MAX;
-          }
-          if (blue > RGB_LEVEL_MAX) {
-            blue = RGB_LEVEL_MAX;
-          }
-          *color = RGB(blue, red, red);
-        }
-        BattleEffect_BuildRepeatingTilemap();
-        gBgScroll[1].y = BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP;
-        gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-        if (args->side == EFFECT_SIDE_ENEMIES) {
-          camera->yaw = DEGtoANG(90);
-        } else {
-          camera->yaw = TRIG_TURN * 3 / 4;
-        }
-        for (i = 0; i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++) {
-          EXTRA_PARTICLES[i].variant = -1;
-        }
-        height = 220;
-      }
-      if (frame == 134) {
-        Sound_PlayFar(SE_CRASH);
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      }
-      if (frame > 59) {
-        s32 scroll = gBgScroll[1].y;
-        s32 climb;
+					red = channelMax & entry;
+					/* LEFTOVER(template): green, taken and clamped as
+					 * btEffectRunCoatlicue and btEffectRunJudgment take all
+					 * three channels in their palette loops, and left out of
+					 * the colour here; as no green at all. */
+					green = RGB_GREEN((u16)entry);
+					blue = RGB_BLUE((u16)entry);
+					/* DEAD: red and blue are already at most 31; the ROM keeps
+					 * both */
+					/* compares. */
+					if(red > RGB_LEVEL_MAX) {
+						red = RGB_LEVEL_MAX;
+					}
+					if(green > RGB_LEVEL_MAX) {
+						green = RGB_LEVEL_MAX;
+					}
+					if(blue > RGB_LEVEL_MAX) {
+						blue = RGB_LEVEL_MAX;
+					}
+					*color = RGB(blue, red, red);
+				}
+				btEffectBuildRepeatingTilemap();
+				BgScrollWork[1].y = BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP;
+				ProjectionWork.centerY = SUMMON_PROJECTION_CENTER_Y;
+				if(args->side == EFFECT_SIDE_ENEMIES) {
+					camera->yaw = DEGtoANG(90);
+				}
+				else {
+					camera->yaw = TRIG_TURN * 3 / 4;
+				}
+				for(i = 0; i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++) {
+					EXTRA_PARTICLES[i].variant = -1;
+				}
+				height = 220;
+			}
+			if(frame == 134) {
+				sySndPlayStub(SE_CRASH);
+				syWordsFillEntry(canvas, CANVAS_BYTES,
+								 CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+			}
+			if(frame > 59) {
+				s32 scroll = BgScrollWork[1].y;
+				s32 climb;
 
-        // A scroll above the haze's range is a negative one, read back from
-        // its halfword.
-        if (scroll > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
-          scroll -= BG_SCROLL_WRAP;
-        }
-        scroll -= RISING_DRAGON_ENEMY_HAZE_SPEED;
-        if (scroll < -BATTLE_VIEW_TOP) {
-          scroll += BATTLE_BACKGROUND_HEIGHT;
-        }
-        gBgScroll[1].y = scroll;
-        climb = 4 - (frame - 60) / 8;
-        if (climb < 0) {
-          climb = 0;
-        }
-        if (frame > 119) {
-          climb = frame - 120;
-        }
-        height -= climb;
-      } else {
-        height = 200 - frame * 8;
-      }
-      if (height <= 55) {
-        height = 56;
-      }
-      victim->verticalMotionStrength = 0;
-      if ((u32)(frame - 4) <= 55) {
-        victim->y = INTtoFIXED(frame * 9) - toFIXED(18);
-      } else if (frame > 59) {
-        victim->x = 0;
-        victim->y = INTtoFIXED(294 - height);
-        victim->z = -(Trig_Sin(frame * RISING_DRAGON_ENEMY_SWAY_STEP) * 8);
-        if (frame == 60) {
-          EffectPosition_ProjectBattler(args->targets[0], &source);
-        }
-        EffectPosition_ProjectBattler(args->targets[0], &target);
-      }
-      if ((u32)(frame - 152) <= 15) {
-        EFFECT_SET_TRANSFER(state, CANVAS_COPY_AND_CLEAR,
-                            CANVAS_FILL_WORD(RISING_DRAGON_ENEMY_FLASH_LEVEL));
-        if (frame > 162) {
-          state->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
-        }
-        Palette_BrightenBgEntries(2, 2, 2);
-      }
-      // DEAD: frame is never negative; the ROM keeps the compare and branch.
-      if (frame >= 0) {
+				/* A scroll above the haze's range is a negative one, read back
+				 * from */
+				/* its halfword. */
+				if(scroll > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
+					scroll -= BG_SCROLL_WRAP;
+				}
+				scroll -= RISING_DRAGON_ENEMY_HAZE_SPEED;
+				if(scroll < -BATTLE_VIEW_TOP) {
+					scroll += BATTLE_BACKGROUND_HEIGHT;
+				}
+				BgScrollWork[1].y = scroll;
+				climb = 4 - (frame - 60) / 8;
+				if(climb < 0) {
+					climb = 0;
+				}
+				if(frame > 119) {
+					climb = frame - 120;
+				}
+				height -= climb;
+			}
+			else {
+				height = 200 - frame * 8;
+			}
+			if(height <= 55) {
+				height = 56;
+			}
+			victim->verticalMotionStrength = 0;
+			if((u32)(frame - 4) <= 55) {
+				victim->y = INTtoFIXED(frame * 9) - toFIXED(18);
+			}
+			else if(frame > 59) {
+				victim->x = 0;
+				victim->y = INTtoFIXED(294 - height);
+				victim->z = -(sySin(frame * RISING_DRAGON_ENEMY_SWAY_STEP) * 8);
+				if(frame == 60) {
+					btEffectPosProjectBattler(args->tgts[0], &source);
+				}
+				btEffectPosProjectBattler(args->tgts[0], &target);
+			}
+			if((u32)(frame - 152) <= 15) {
+				EFFECT_SET_TRANSFER(
+					state, CANVAS_COPY_AND_CLEAR,
+					CANVAS_FILL_WORD(RISING_DRAGON_ENEMY_FLASH_LEVEL));
+				if(frame > 162) {
+					state->transferValue =
+						CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
+				}
+				btPaletteBrightenBgEntries(2, 2, 2);
+			}
+			/* DEAD: frame is never negative; the ROM keeps the compare and
+			 * branch. */
+			if(frame >= 0) {
 
-        // The dragon's body, swaying.
-        for (j = 0; j != RISING_DRAGON_ENEMY_SEGMENTS; j++) {
-          for (i = 0; i != 2; i++) {
-            (cells[j].corners + i)->x =
-                i * RISING_DRAGON_ENEMY_BODY_WIDTH +
-                (FIXEDtoINT(Trig_Sin(j * RISING_DRAGON_ENEMY_ROW_PHASE +
-                                     frame * RISING_DRAGON_ENEMY_SWAY_STEP) *
-                            2)) -
-                RISING_DRAGON_ENEMY_BODY_WIDTH / 2;
-            (cells[j].corners + i)->z = 0;
-            (cells[j].corners + i)->y = j * 2 - 64;
-          }
-        }
-        zero = 0;
-        model = Render_AllocateModelList(1);
-        model->kind = MODEL_SHADED_MAX;
-        model->shade = zero;
-        model->scrollV = zero;
-        model->vertices = vertices;
-        model->texture = &texture;
-        texture.logWidth = 6;
-        texture.logHeight = 5;
-        texture.pixels = state->sheet;
-        model->mesh = strip;
-        model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 2);
-        Matrix_Initialize();
-        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-        Matrix_Push();
-        Matrix_Translate(INTtoFIXED(source.x - 128), INTtoFIXED(height), 0);
-        if (args->side == EFFECT_SIDE_PARTY) {
-          Matrix_RotateY(DEGtoANG(180));
-        }
-        Matrix_ScaleUniform(RISING_DRAGON_ENEMY_BODY_SCALE);
-        Render_TransformVertices(cells, vertices,
-                                 RISING_DRAGON_ENEMY_SEGMENTS * 2);
-        Render_DrawModelList(model);
-        Matrix_Pop();
-        // The dragon's head, its jaws about the target, until frame 16 and
-        // again from frame 60 until the burst.
-        if (frame <= 133 && (u32)(frame - 17) > 42) {
-          texture.logWidth = 6;
-          texture.logHeight = 6;
-          model->mesh = gBattleEffect_SquareMesh;
-          model->scrollU = zero;
-          texture.pixels =
-              state->sheet + RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES;
-          Matrix_Translate(INTtoFIXED(target.x - 124), INTtoFIXED(height - 144),
-                           0);
-          Matrix_RotateZ(DEGtoANG(90));
-          // Drawn one and a third to one and a half times its size.
-          Matrix_Scale(FIXED_ONE + 40000, FIXED_ONE + 20000, FIXED_ONE);
-          Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
-          Render_DrawModelList(model);
-        }
-        Heap_Release(model);
+				/* The dragon's body, swaying. */
+				for(j = 0; j != RISING_DRAGON_ENEMY_SEGMENTS; j++) {
+					for(i = 0; i != 2; i++) {
+						(cells[j].corners + i)->x =
+							i * RISING_DRAGON_ENEMY_BODY_WIDTH +
+							(FIXEDtoINT(
+								sySin(j * RISING_DRAGON_ENEMY_ROW_PHASE +
+									  frame * RISING_DRAGON_ENEMY_SWAY_STEP) *
+								2)) -
+							RISING_DRAGON_ENEMY_BODY_WIDTH / 2;
+						(cells[j].corners + i)->z = 0;
+						(cells[j].corners + i)->y = j * 2 - 64;
+					}
+				}
+				zero = 0;
+				model = btRenderAllocateModelList(1);
+				model->kind = MODEL_SHADED_MAX;
+				model->shade = zero;
+				model->scrollV = zero;
+				model->vertices = vertices;
+				model->texture = &texture;
+				texture.logWidth = 6;
+				texture.logHeight = 5;
+				texture.pixels = state->sheet;
+				model->mesh = strip;
+				model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 2);
+				syInitMatrix();
+				syScale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+				syPushMatrix();
+				syTranslate(INTtoFIXED(source.x - 128), INTtoFIXED(height), 0);
+				if(args->side == EFFECT_SIDE_PARTY) {
+					syRotY(DEGtoANG(180));
+				}
+				syMatrixScaleUniform(RISING_DRAGON_ENEMY_BODY_SCALE);
+				btRenderTransformVertices(cells, vertices,
+										  RISING_DRAGON_ENEMY_SEGMENTS * 2);
+				btRenderDrawModelList(model);
+				syPopMatrix();
+				/* The dragon's head, its jaws about the target, until frame 16
+				 * and */
+				/* again from frame 60 until the burst. */
+				if(frame <= 133 && (u32)(frame - 17) > 42) {
+					texture.logWidth = 6;
+					texture.logHeight = 6;
+					model->mesh = BattleEffect_SquareMesh;
+					model->scrollU = zero;
+					texture.pixels =
+						state->sheet +
+						RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES;
+					syTranslate(INTtoFIXED(target.x - 124),
+								INTtoFIXED(height - 144), 0);
+					syRotZ(DEGtoANG(90));
+					/* Drawn one and a third to one and a half times its size.
+					 */
+					syScale(FIXED_ONE + 40000, FIXED_ONE + 20000, FIXED_ONE);
+					btRenderTransformVertices(BattleEffect_SquareCorners,
+											  vertices, 4);
+					btRenderDrawModelList(model);
+				}
+				syHeapRelease(model);
 
-        if (frame == 134) {
-          for (i = 0, scatter = EXTRA_PARTICLES;
-               i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, scatter++) {
-            s32 angle;
-            s32 speed;
+				if(frame == 134) {
+					for(i = 0, scatter = EXTRA_PARTICLES;
+						i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, scatter++) {
+						s32 angle;
+						s32 speed;
 
-            scatter->x = INTtoFIXED(source.x / 2);
-            scatter->y = 0;
-            angle = (Random16() & 0x7fff) - DEGtoANG(90);
-            speed = (Random16() & 255) + 32;
-            scatter->velocityX = (Trig_Sin(angle) * speed) >> 5;
-            scatter->velocityY = (Trig_Cos(angle) * speed) >> 5;
-            scatter->variant = (Random16() & 7) + 32;
-          }
-        }
-        burstFrame = frame - 134;
-        if ((u32)burstFrame < RISING_DRAGON_ENEMY_BURST_FRAMES) {
-          s32 first = burstFrame * RISING_DRAGON_ENEMY_BURSTS_A_FRAME;
-          for (i = 0; i != RISING_DRAGON_ENEMY_BURSTS_A_FRAME; i++) {
-            struct Particle *burst = &state->particles[first + i];
-            s32 angle;
-            s32 speed;
+						scatter->x = INTtoFIXED(source.x / 2);
+						scatter->y = 0;
+						angle = (syRandom() & 0x7fff) - DEGtoANG(90);
+						speed = (syRandom() & 255) + 32;
+						scatter->velX = (sySin(angle) * speed) >> 5;
+						scatter->velY = (syCos(angle) * speed) >> 5;
+						scatter->variant = (syRandom() & 7) + 32;
+					}
+				}
+				burstFrame = frame - 134;
+				if((u32)burstFrame < RISING_DRAGON_ENEMY_BURST_FRAMES) {
+					s32 first = burstFrame * RISING_DRAGON_ENEMY_BURSTS_A_FRAME;
+					for(i = 0; i != RISING_DRAGON_ENEMY_BURSTS_A_FRAME; i++) {
+						PARTICLE *burst = &state->particles[first + i];
+						s32 angle;
+						s32 speed;
 
-            burst->x = INTtoFIXED(source.x / 2);
-            burst->y = 0;
-            angle = (Random16() & 0x7fff) - DEGtoANG(90);
-            speed = (Random16() & 255) + 32;
-            burst->velocityX = (Trig_Sin(angle) * speed) >> 5;
-            burst->velocityY = (Trig_Cos(angle) * speed) >> 5;
-            burst->variant = 0;
-          }
-        }
-        for (i = 0, particle = state->particles;
-             i != RISING_DRAGON_ENEMY_FLASH_BURSTS; i++, particle++) {
-          s32 age = particle->variant;
+						burst->x = INTtoFIXED(source.x / 2);
+						burst->y = 0;
+						angle = (syRandom() & 0x7fff) - DEGtoANG(90);
+						speed = (syRandom() & 255) + 32;
+						burst->velX = (sySin(angle) * speed) >> 5;
+						burst->velY = (syCos(angle) * speed) >> 5;
+						burst->variant = 0;
+					}
+				}
+				for(i = 0, particle = state->particles;
+					i != RISING_DRAGON_ENEMY_FLASH_BURSTS; i++, particle++) {
+					s32 age = particle->variant;
 
-          if ((u32)age <
-              FLASH_BURST_PICTURE_COUNT * FLASH_BURST_PICTURE_FRAMES) {
-            if (age > 1) {
-              blit[0](canvas,
-                      state->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES +
-                          (age / FLASH_BURST_PICTURE_FRAMES) *
-                              PICTURE_BYTES(FLASH_BURST),
-                      FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
-                      FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
-                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-            }
-            Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 16);
-            particle->variant++;
-          }
-        }
-        if ((u32)frame <= 133) {
-          struct Particle *trail;
-          FIXED startY;
-          s32 slot;
-          s32 first;
-          s32 y;
+					if((u32)age <
+					   FLASH_BURST_PICTURE_COUNT * FLASH_BURST_PICTURE_FRAMES) {
+						if(age > 1) {
+							blit[0](
+								canvas,
+								state->sheet +
+									RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES +
+									(age / FLASH_BURST_PICTURE_FRAMES) *
+										PICTURE_BYTES(FLASH_BURST),
+								FIXED_INTEGER_PART(particle->x) -
+									FLASH_BURST_WIDTH / 2,
+								FIXED_INTEGER_PART(particle->y) -
+									FLASH_BURST_HEIGHT / 2,
+								FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+						}
+						btParticleAdvanceWithGravity2D(particle, 60,
+													   -toFIXED(1) / 16);
+						particle->variant++;
+					}
+				}
+				if((u32)frame <= 133) {
+					PARTICLE *trail;
+					FIXED startY;
+					s32 slot;
+					s32 first;
+					s32 y;
 
-          slot = (frame - 16) & 63;
-          y = 120;
-          if (frame > 59) {
-            y = height - 80;
-          }
-          first = slot * 2;
-          for (i = 0, startY = INTtoFIXED(y),
-              trail = &EXTRA_PARTICLES[TRAIL_SPARKS + first];
-               i != 2; i++, trail++) {
-            s32 random;
-            s32 angle;
-            s32 speed;
-            s32 x = source.x / 2;
+					slot = (frame - 16) & 63;
+					y = 120;
+					if(frame > 59) {
+						y = height - 80;
+					}
+					first = slot * 2;
+					for(i = 0, startY = INTtoFIXED(y),
+					trail = &EXTRA_PARTICLES[TRAIL_SPARKS + first];
+						i != 2; i++, trail++) {
+						s32 random;
+						s32 angle;
+						s32 speed;
+						s32 x = source.x / 2;
 
-            trail->y = startY;
-            trail->x = INTtoFIXED(x);
-            random = Random16() & 0x7fff;
-            angle = random + DEGtoANG(90);
-            if (frame > 59) {
-              angle = random + TRIG_TURN * 3 / 4;
-            }
-            speed = (Random16() & 255) + 32;
-            trail->velocityX = (Trig_Sin(angle) * speed) >> 6;
-            trail->velocityY = (Trig_Cos(angle) * speed) >> 6;
-            if (frame > 59) {
-              trail->velocityX /= 2;
-            }
-            trail->variant = (Random16() & 7) + 32;
-          }
-        }
-        {
-          struct Particle *spark;
-          FIXED gravity = -toFIXED(1) / 16;
+						trail->y = startY;
+						trail->x = INTtoFIXED(x);
+						random = syRandom() & 0x7fff;
+						angle = random + DEGtoANG(90);
+						if(frame > 59) {
+							angle = random + TRIG_TURN * 3 / 4;
+						}
+						speed = (syRandom() & 255) + 32;
+						trail->velX = (sySin(angle) * speed) >> 6;
+						trail->velY = (syCos(angle) * speed) >> 6;
+						if(frame > 59) {
+							trail->velX /= 2;
+						}
+						trail->variant = (syRandom() & 7) + 32;
+					}
+				}
+				{
+					PARTICLE *spark;
+					FIXED gravity = -toFIXED(1) / 16;
 
-          if (frame > 59) {
-            gravity = toFIXED(1) / 4;
-          }
-          for (i = 0, spark = EXTRA_PARTICLES;
-               i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, spark++) {
-            s32 size;
+					if(frame > 59) {
+						gravity = toFIXED(1) / 4;
+					}
+					for(i = 0, spark = EXTRA_PARTICLES;
+						i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, spark++) {
+						s32 size;
 
-            if (spark->variant < 0) {
-              continue;
-            }
-            size = (spark->variant - 8) / 8;
-            if (frame > 59) {
-              size += 2;
-            }
-            if (size <= 0) {
-              size = 1;
-            }
-            blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    FIXED_INTEGER_PART(spark->x) - size / 2,
-                    FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
-            Particle_AdvanceWithGravity2D(spark, 60, gravity);
-            spark->variant--;
-          }
-        }
-      }
-    }
-    BattleEffect_CountDownBattlerTints();
-    if ((u32)(frame - 32) > 133) {
-      BattleCamera_Shake(8, 8);
-    }
-    EFFECT_PRESENT_CANVAS(state);
-  }
-  HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  Task_Remove(BattleEffect_TransferCanvas);
-  BattleEffect_EndCanvasLayer();
+						if(spark->variant < 0) {
+							continue;
+						}
+						size = (spark->variant - 8) / 8;
+						if(frame > 59) {
+							size += 2;
+						}
+						if(size <= 0) {
+							size = 1;
+						}
+						blit[0](canvas,
+								sprites + BattleEffect_MotePictures[size - 1],
+								FIXED_INTEGER_PART(spark->x) - size / 2,
+								FIXED_INTEGER_PART(spark->y) - size, size,
+								size * 2);
+						btParticleAdvanceWithGravity2D(spark, 60, gravity);
+						spark->variant--;
+					}
+				}
+			}
+		}
+		btEffectCountDownBattlerTints();
+		if((u32)(frame - 32) > 133) {
+			btCameraShake(8, 8);
+		}
+		EFFECT_PRESENT_CANVAS(state);
+	}
+	syHeapSlotRelease(HEAP_SLOT_RAM_CODE);
+	syCloseEvent(btEffectTransferCanvas);
+	btEffectEndCanvasLayer();
 }
 
-/// Abilities: Bone Charge.
-void BattleEffect_RunBoneCharge(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
+/* Abilities: Bone Charge. */
+void btEffectRunBoneCharge(BATTLE_EFFECT_PARM *args) {
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
 }
 
-/// Abilities: Brute Force, Troll.
-void BattleEffect_RunBruteForce(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
+/* Abilities: Brute Force, Troll. */
+void btEffectRunBruteForce(BATTLE_EFFECT_PARM *args) {
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_BRUTE_FORCE);
 }
 
-/// Abilities: Onslaught.
-void BattleEffect_RunOnslaught(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
+/* Abilities: Onslaught. */
+void btEffectRunOnslaught(BATTLE_EFFECT_PARM *args) {
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_ONSLAUGHT);
 }
 
-/// Abilities: Headbutt.
-void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
+/* Abilities: Headbutt. */
+void btEffectRunHeadbutt(BATTLE_EFFECT_PARM *args) {
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
 }
 
-/// Abilities: Stun Muscle.
-void BattleEffect_RunStunMuscle(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
+/* Abilities: Stun Muscle. */
+void btEffectRunStunMuscle(BATTLE_EFFECT_PARM *args) {
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_STUN_MUSCLE);
 }
 
-/// Abilities: Living Armor, Minotaur, Power Crush.
-void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
-  BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_LIVING_ARMOR);
+/* Abilities: Living Armor, Minotaur, Power Crush. */
+void btEffectRunLivingArmor(BATTLE_EFFECT_PARM *args) {
+	btEffectRunRushingStrike(args, RUSHING_STRIKE_LIVING_ARMOR);
 }
 #undef STAR_MINE_FRAMES
 #undef STAR_MINE_STARS

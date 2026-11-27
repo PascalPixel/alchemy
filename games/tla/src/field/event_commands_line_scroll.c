@@ -1,223 +1,225 @@
-/// @file
-/// The line scroll: per-line scroll offsets fed by HBlank DMA.
-// Part of event_commands.c.
+/* @file */
+/* The line scroll: per-line scroll offsets fed by HBlank DMA. */
+/* Part of event_commands.c. */
 
-#include "event_commands_internal.h"
-#include "fixed_math.h"
-#include "flags.h"
-#include "sounds.h"
-#include "field/field.h"
-
-/// LineScrollState.mode: 0 waves BG1, BG2 and BG3 alike; any other mode waves
-/// BG3 alone (Mars Lighthouse's rain ledges).
+/* LINE_SCROLL_STATE.mode: 0 waves BG1, BG2 and BG3 alike; any other mode waves
+ */
+/* BG3 alone (Mars Lighthouse's rain ledges). */
 #define LINE_SCROLL_ALL_LAYERS 0
-/// gLineScroll_WaveSine's entries, a whole cycle: a phase is 16.16 entries.
+/* LineScroll_WaveSine's entries, a whole cycle: a phase is 16.16 entries. */
 #define LINE_SCROLL_WAVE_ENTRIES 256
-/// The sine's units in a pixel: its peak, 4096, is 16 pixels at an amplitude
-/// of FIXED_ONE.
+/* The sine's units in a pixel: its peak, 4096, is 16 pixels at an amplitude */
+/* of FIXED_ONE. */
 #define LINE_SCROLL_WAVE_UNITS 256
-/// The wave's offset in pixels at phase, for a 16.16 amplitude.
+/* The wave's offset in pixels at phase, for a 16.16 amplitude. */
 #define LINE_SCROLL_WAVE(phase, amplitude)                                     \
-  (Iwram_MulFX(gLineScroll_WaveSine[FIXEDtoINT(phase) &                        \
-                                    (LINE_SCROLL_WAVE_ENTRIES - 1)],           \
-               (amplitude)) /                                                  \
-   LINE_SCROLL_WAVE_UNITS)
+	(syMulFX(LineScroll_WaveSine[FIXEDtoINT(phase) &                           \
+								 (LINE_SCROLL_WAVE_ENTRIES - 1)],              \
+			 (amplitude)) /                                                    \
+	 LINE_SCROLL_WAVE_UNITS)
 
-/// VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to copy the
-/// current page's BG1 to BG3 scroll offsets into the scroll registers one
-/// scanline at a time, but not while Reveal shows or a battle is due.
-void LineScroll_ArmDma(void) {
-  struct LineScrollState *state = Ram_HeapSlots->lineScroll;
-  u32 *line = (u32 *)state->rows[state->page];
-  volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
-  struct FieldState *event = Ram_HeapSlots->fieldState;
-  volatile u32 *target;
+/* VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to copy the
+ */
+/* current page's BG1 to BG3 scroll offsets into the scroll registers one */
+/* scanline at a time, but not while Reveal shows or a battle is due. */
+void fdLineScrollArmDma(void) {
+	LINE_SCROLL_STATE *state = Ram_HeapSlots->lineScroll;
+	u32 *line = (u32 *)state->rows[state->page];
+	volatile u32 *dest = (volatile u32 *)&REG_BG1HOFS;
+	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	volatile u32 *target;
 
-  if (event != NULL) {
-    if (event->revealActive != 0)
-      return;
-    if (event->encounter != 0)
-      return;
-  }
-  {
-    volatile u16 *dma = REG_DMA0;
-    u16 control;
+	if(event != NULL) {
+		if(event->revealActive != 0)
+			return;
+		if(event->encounter != 0)
+			return;
+	}
+	{
+		volatile u16 *dma = REG_DMA0;
+		u16 control;
 
-    control = dma[DMA0_CONTROL];
-    dma[DMA0_CONTROL] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
-    dma[DMA0_CONTROL] &= ~DMA_ENABLE;
-    target = dest;
-    (void)dma[DMA0_CONTROL];
-  }
-  *dest = *line++;
-  *dest = *line++;
-  *dest = *line++;
-  Dma_Set(
-      line, (void *)target,
-      (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)
-              << DMA_CONTROL_SHIFT |
-          sizeof(state->rows[0][0]) / 4,
-      REG_DMA0);
+		control = dma[DMA0_CONTROL];
+		dma[DMA0_CONTROL] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+		dma[DMA0_CONTROL] &= ~DMA_ENABLE;
+		target = dest;
+		(void)dma[DMA0_CONTROL];
+	}
+	*dest = *line++;
+	*dest = *line++;
+	*dest = *line++;
+	syDMAXCopy(line, (void *)target,
+			   (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD |
+				DMA_32BIT)
+					   << DMA_CONTROL_SHIFT |
+				   sizeof(state->rows[0][0]) / 4,
+			   REG_DMA0);
 }
 
-/// Task for the line scroll: fills the hidden page with each scanline's BG1,
-/// BG2 and BG3 offsets, the scroll plus a sine wave for x and for y (an axis
-/// with no step stays flat; outside LINE_SCROLL_ALL_LAYERS only BG3 waves),
-/// its phase following BG1's y, then shows that page.
-void LineScroll_BuildPage(void) {
-  struct LineScrollState *state = Ram_HeapSlots->lineScroll;
-  u8 mode = state->mode;
-  s32 x1 = (s16)gBgScroll[1].x;
-  s32 y1 = (s16)gBgScroll[1].y;
-  s32 x2 = (s16)gBgScroll[2].x;
-  s32 y2 = (s16)gBgScroll[2].y;
-  s32 x3 = (s16)gBgScroll[3].x;
-  s32 y3 = (s16)gBgScroll[3].y;
-  struct FieldState *event = Ram_HeapSlots->fieldState;
-  u16 *row;
-  s32 step;
-  s32 phase;
-  FIXED amplitude;
-  s32 scanline;
-  u16 wave;
-  u16 waveX3;
-  u16 waveY3;
+/* Task for the line scroll: fills the hidden page with each scanline's BG1, */
+/* BG2 and BG3 offsets, the scroll plus a sine wave for x and for y (an axis */
+/* with no step stays flat; outside LINE_SCROLL_ALL_LAYERS only BG3 waves), */
+/* its phase following BG1's y, then shows that page. */
+void fdLineScrollBuildPage(void) {
+	LINE_SCROLL_STATE *state = Ram_HeapSlots->lineScroll;
+	u8 mode = state->mode;
+	s32 x1 = (s16)BgScrollWork[1].x;
+	s32 y1 = (s16)BgScrollWork[1].y;
+	s32 x2 = (s16)BgScrollWork[2].x;
+	s32 y2 = (s16)BgScrollWork[2].y;
+	s32 x3 = (s16)BgScrollWork[3].x;
+	s32 y3 = (s16)BgScrollWork[3].y;
+	FIELD_STATE *event = Ram_HeapSlots->fieldState;
+	u16 *row;
+	s32 step;
+	s32 phase;
+	FIXED amplitude;
+	s32 scanline;
+	u16 wave;
+	u16 waveX3;
+	u16 waveY3;
 
-  if (event != NULL && event->revealActive != 0)
-    return;
-  if (mode == LINE_SCROLL_ALL_LAYERS) {
-    row = &state->rows[state->page ^ 1][0][0].x;
-    step = state->stepX;
-    phase = (state->frame + (u16)y1) * state->freqX;
-    if (step == 0) {
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        row[scanline * 6] = x1;
-        row[scanline * 6 + 2] = x2;
-        row[scanline * 6 + 4] = x3;
-      }
-    } else {
-      u16 bg1 = x1;
-      u16 bg2 = x2;
+	if(event != NULL && event->revealActive != 0)
+		return;
+	if(mode == LINE_SCROLL_ALL_LAYERS) {
+		row = &state->rows[state->page ^ 1][0][0].x;
+		step = state->stepX;
+		phase = (state->frm + (u16)y1) * state->freqX;
+		if(step == 0) {
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				row[scanline * 6] = x1;
+				row[scanline * 6 + 2] = x2;
+				row[scanline * 6 + 4] = x3;
+			}
+		}
+		else {
+			u16 bg1 = x1;
+			u16 bg2 = x2;
 
-      waveX3 = x3;
-      amplitude = state->ampX;
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave = LINE_SCROLL_WAVE(phase, amplitude);
-        row[0] = bg1 + wave;
-        row[2] = bg2 + wave;
-        row[4] = waveX3 + wave;
-        row += 6;
-        phase += step;
-      }
-    }
-    row = &state->rows[state->page ^ 1][0][0].y;
-    step = state->stepY;
-    phase = (state->frame + (u16)y1) * state->freqY;
-    if (step == 0) {
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        row[scanline * 6] = y1;
-        row[scanline * 6 + 2] = y2;
-        row[scanline * 6 + 4] = y3;
-      }
-    } else {
-      u16 bg1 = y1;
-      u16 bg2 = y2;
-      waveY3 = y3;
-      amplitude = state->ampY;
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave = LINE_SCROLL_WAVE(phase, amplitude);
-        *row = bg1 + wave;
-        row += 2;
-        *row = bg2 + wave;
-        row += 2;
-        *row = waveY3 + wave;
-        row += 2;
-        phase += step;
-      }
-    }
-  } else {
-    row = &state->rows[state->page ^ 1][0][0].x;
-    step = state->stepX;
-    phase = (state->frame + (u16)y1) * state->freqX;
-    if (step == 0) {
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        row[scanline * 6] = x1;
-        row[scanline * 6 + 2] = x2;
-        row[scanline * 6 + 4] = x3;
-      }
-    } else {
-      waveX3 = x3;
-      amplitude = state->ampX;
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave = LINE_SCROLL_WAVE(phase, amplitude);
-        row[0] = x1;
-        row[2] = x2;
-        row[4] = waveX3 + wave;
-        row += 6;
-        phase += step;
-      }
-    }
-    row = &state->rows[state->page ^ 1][0][0].y;
-    step = state->stepY;
-    phase = (state->frame + (u16)y1) * state->freqY;
-    if (step == 0) {
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        row[scanline * 6] = y1;
-        row[scanline * 6 + 2] = y2;
-        row[scanline * 6 + 4] = y3;
-      }
-    } else {
-      waveY3 = y3;
-      amplitude = state->ampY;
-      for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-        wave = LINE_SCROLL_WAVE(phase, amplitude);
-        row[0] = y1;
-        row[2] = y2;
-        row[4] = waveY3 + wave;
-        row += 6;
-        phase += step;
-      }
-    }
-  }
-  state->frame++;
-  state->page ^= 1;
+			waveX3 = x3;
+			amplitude = state->ampX;
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				wave = LINE_SCROLL_WAVE(phase, amplitude);
+				row[0] = bg1 + wave;
+				row[2] = bg2 + wave;
+				row[4] = waveX3 + wave;
+				row += 6;
+				phase += step;
+			}
+		}
+		row = &state->rows[state->page ^ 1][0][0].y;
+		step = state->stepY;
+		phase = (state->frm + (u16)y1) * state->freqY;
+		if(step == 0) {
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				row[scanline * 6] = y1;
+				row[scanline * 6 + 2] = y2;
+				row[scanline * 6 + 4] = y3;
+			}
+		}
+		else {
+			u16 bg1 = y1;
+			u16 bg2 = y2;
+			waveY3 = y3;
+			amplitude = state->ampY;
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				wave = LINE_SCROLL_WAVE(phase, amplitude);
+				*row = bg1 + wave;
+				row += 2;
+				*row = bg2 + wave;
+				row += 2;
+				*row = waveY3 + wave;
+				row += 2;
+				phase += step;
+			}
+		}
+	}
+	else {
+		row = &state->rows[state->page ^ 1][0][0].x;
+		step = state->stepX;
+		phase = (state->frm + (u16)y1) * state->freqX;
+		if(step == 0) {
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				row[scanline * 6] = x1;
+				row[scanline * 6 + 2] = x2;
+				row[scanline * 6 + 4] = x3;
+			}
+		}
+		else {
+			waveX3 = x3;
+			amplitude = state->ampX;
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				wave = LINE_SCROLL_WAVE(phase, amplitude);
+				row[0] = x1;
+				row[2] = x2;
+				row[4] = waveX3 + wave;
+				row += 6;
+				phase += step;
+			}
+		}
+		row = &state->rows[state->page ^ 1][0][0].y;
+		step = state->stepY;
+		phase = (state->frm + (u16)y1) * state->freqY;
+		if(step == 0) {
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				row[scanline * 6] = y1;
+				row[scanline * 6 + 2] = y2;
+				row[scanline * 6 + 4] = y3;
+			}
+		}
+		else {
+			waveY3 = y3;
+			amplitude = state->ampY;
+			for(scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+				wave = LINE_SCROLL_WAVE(phase, amplitude);
+				row[0] = y1;
+				row[2] = y2;
+				row[4] = waveY3 + wave;
+				row += 6;
+				phase += step;
+			}
+		}
+	}
+	state->frm++;
+	state->page ^= 1;
 }
 
-/// Waits for a DMA channel to finish.
-static inline void WaitDma(volatile struct DmaRegisters *channel) {
-  while (channel->control & DMA_ENABLE << DMA_CONTROL_SHIFT) {
-  }
+/* Waits for a DMA channel to finish. */
+static inline void WaitDma(volatile DMA_REGISTERS *channel) {
+	while(channel->ctrl & DMA_ENABLE << DMA_CONTROL_SHIFT) {
+	}
 }
 
-/// Starts the line scroll: its state (heap slot HEAP_SLOT_LINE_SCROLL) holds
-/// the mode and, for x and y, how fast the wave runs from frame to frame, its
-/// step from one scanline to the next and its amplitude; two tasks, one in the
-/// vertical blank pass and one in the frame pass, build and send each frame's
-/// line offsets.
-void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
-                         s32 stepY, s32 ampY) {
-  struct LineScrollState *state;
+/* Starts the line scroll: its state (heap slot HEAP_SLOT_LINE_SCROLL) holds */
+/* the mode and, for x and y, how fast the wave runs from frame to frame, its */
+/* step from one scanline to the next and its amplitude; two tasks, one in the
+ */
+/* vertical blank pass and one in the frame pass, build and send each frame's */
+/* line offsets. */
+void fdLineScrollInitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
+						  s32 stepY, s32 ampY) {
+	LINE_SCROLL_STATE *state;
 
-  state = HeapSlot_AllocEwram(HEAP_SLOT_LINE_SCROLL,
-                              sizeof(struct LineScrollState));
-  Dma_Fill32(0, state, sizeof(struct LineScrollState));
-  WaitDma((volatile struct DmaRegisters *)&REG_DMA3SAD);
-  state->mode = mode;
-  state->freqX = freqX;
-  state->freqY = freqY;
-  state->ampX = ampX;
-  state->ampY = ampY;
-  state->stepX = stepX;
-  state->stepY = stepY;
-  Task_Add(LineScroll_BuildPage, TASK_PASS_FRAME);
-  Task_Add(LineScroll_ArmDma, TASK_PASS_VBLANK);
+	state =
+		syHeapSlotAllocEwram(HEAP_SLOT_LINE_SCROLL, sizeof(LINE_SCROLL_STATE));
+	btDmaFill32(0, state, sizeof(LINE_SCROLL_STATE));
+	WaitDma((volatile DMA_REGISTERS *)&REG_DMA3SAD);
+	state->mode = mode;
+	state->freqX = freqX;
+	state->freqY = freqY;
+	state->ampX = ampX;
+	state->ampY = ampY;
+	state->stepX = stepX;
+	state->stepY = stepY;
+	sySetEvent(fdLineScrollBuildPage, TASK_PASS_FRAME);
+	sySetEvent(fdLineScrollArmDma, TASK_PASS_VBLANK);
 }
 
-/// Stops the line scroll: removes its two tasks and stops DMA 0.
-void LineScroll_Stop(void) {
-  Task_Remove(LineScroll_ArmDma);
-  Task_Remove(LineScroll_BuildPage);
-  DMA0_STOP();
+/* Stops the line scroll: removes its two tasks and stops DMA 0. */
+void fdLineScrollStop(void) {
+	syCloseEvent(fdLineScrollArmDma);
+	syCloseEvent(fdLineScrollBuildPage);
+	DMA0_STOP();
 }
 
 #undef LINE_SCROLL_ALL_LAYERS

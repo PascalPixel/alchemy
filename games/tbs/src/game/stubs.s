@@ -1,0 +1,104 @@
+@ Party members, items, Djinn and game-state operations.
+	.include "games/tbs/src/system/stub_table.inc"
+	.global Stubs_Game
+Stubs_Game:
+	stub gmDjinnGetRecoveryTableStub, gmDjinnGetRecoveryTable
+	stub gmUnitGetStub, gmUnitGet
+	stub gmUnitCalcStub, gmUnitCalc
+	stub gmItemGetDirectStub, gmItemGetDirect
+	stub gmInventoryGetQuantityStub, gmInventoryGetQuantity
+	stub gmInventoryAddItemStub, gmInventoryAddItem
+	stub gmPartyInventoryAddStub, gmPartyInventoryAdd
+	stub gmInventoryFindStub, gmInventoryFind
+	stub gmPartyInventoryFindMemberStub, gmPartyInventoryFindMember
+	stub gmPartyInventoryRemoveStub, gmPartyInventoryRemove
+	stub gmInventoryEquipStub, gmInventoryEquip
+	stub gmInventoryRemoveStub, gmInventoryRemove
+	stub gmInventoryBreakStub, gmInventoryBreak
+	stub gmInventoryRepairStub, gmInventoryRepair
+	unnamed_stub gmItemGetTargetMode
+	stub gmInventoryGetEquippedItemStub, gmInventoryGetEquippedItem
+	stub mnAbilityGet, gmAbilityGetDirect
+	stub gmUnitLearnPsynergyStub, gmUnitLearnPsynergy
+	stub gmUnitKnowsPsynergyStub, gmUnitKnowsPsynergy
+	stub gmMainRoutineStateInitDefaultsStub, gmMainRoutineStateInitDefaults
+	unnamed_stub gmUnitCheckLevelUp
+	unnamed_stub gmPartyInitCharacters
+	unnamed_stub gmUnitLevelNoOp
+	stub gmUnitTryLevelUpStub, gmUnitTryLevelUp
+	stub gmFlagGetStub, gmFlagGet
+	stub gmFlagSetStub, gmFlagSet
+	stub gmFlagClearStub, gmFlagClear
+	unnamed_stub gmFlagToggle
+	stub gmFlagGetByteStub, gmFlagGetByte
+	stub gmFlagSetByteStub, gmFlagSetByte
+	unnamed_stub gmFlagIncrementByte
+	unnamed_stub gmFlagDecrementByte
+	unnamed_stub gmFlagGetNibble
+	unnamed_stub gmFlagSetNibble
+	unnamed_stub gmRestartQuest
+	stub gmUnitAddHpStub, gmUnitAddHp
+	stub gmUnitAddPpStub, gmUnitAddPp
+	stub gmUnitRecalculateGaugesStub, gmUnitRecalculateGauges
+	stub gmUnitSetHpStub, gmUnitSetHp
+	unnamed_stub gmUnitSetPp
+	stub btUnitSetStub, gmBattleUnitSet
+	stub gmPartyCountMembersStub, gmPartyCountMembers
+	stub gmPartyAddMemberStub, gmPartyAddMember
+	stub gmPartyListMembersStub, gmPartyListMembers
+	stub gmEquipmentRollUnleashStub, gmEquipmentRollUnleash
+	stub gmPartyRemoveMemberStub, gmPartyRemoveMember
+	stub gmUnitGetAttackElementStub, gmUnitGetAttackElement
+	stub btRollEffectSuccessStub, gmBattleRollEffectSuccess
+	stub btCalcAttackDamageStub, gmBattleCalcAttackDamage
+	stub btCalcPsynergyPowerStub, gmBattleCalcPsynergyPower
+	stub btCalcRecoveryStub, gmBattleCalcRecovery
+	stub btEnemyGetDefinitionStub, gmEnemyGetDefinition
+	stub btRandomStub, gmBattleRandom
+	stub gmDjinnGiveStub, gmDjinnGive
+	stub gmDjinnSetStub, gmDjinnSet
+	stub gmDjinnPutOnStandbyStub, gmDjinnPutOnStandby
+	stub btDjinnRecoveryRemoveStub, gmDjinnRecoveryRemove
+	stub btDjinnRecoveryAddStandbyStub, gmDjinnRecoveryAddStandby
+	stub gmDjinnTransferStub, gmDjinnTransfer
+	stub gmSummonListLearnedStub, gmSummonListLearned
+	stub gmSummonDefinitionGet, gmSummonDefinitionGetNear
+	stub gmDjinnGetAbilityIdStub, gmDjinnGetAbilityId
+	stub gmUnitLevelUpToStub, gmUnitLevelUpTo
+	stub gmUnitGetElementLevelStub, gmUnitGetElementLevel
+	unnamed_stub gmDjinnRecoveryCountStandby
+	stub gmDjinnIsSetStub, gmDjinnIsSet
+	stub gmDjinnCanSetStub, gmDjinnCanSet
+	stub gmItemCanUnitEquip, gmItemCanUnitEquipDirect
+	stub gmItemIsCompatibleWithUnitStub, gmItemIsCompatibleWithUnit
+	stub gmInventoryFindEquippedStub, gmInventoryFindEquipped
+	stub gmPartyAdjustCoinsStub, gmPartyAdjustCoins
+	stub gmItemGetEquipmentGroupStub, gmItemGetEquipmentGroup
+	stub gmItemAdjustRareItemStockStub, gmItemAdjustRareItemStock
+	stub gmInventoryCountStub, gmInventoryCount
+	stub gmPartyInventoryHasSpaceStub, gmPartyInventoryHasSpace
+	stub gmUnitGetExperienceForLevelStub, gmUnitGetExperienceForLevel
+	stub gmPartyRestoreHpPpStub, gmPartyRestoreHpPp
+	stub gmPartyRestorePpInLighthouseStub, gmPartyRestorePpInLighthouse
+	stub gmPartyStartChildhoodStub, gmPartyStartChildhood
+	stub gmPartyEndChildhoodStub, gmPartyEndChildhood
+	unnamed_stub gmUnitGaugeNoOp
+	stub gmDjinnGiveToPartyStub, gmDjinnGiveToParty
+	stub gmPartySumDjinnCountsStub, gmPartySumDjinnCounts
+	stub gmPartyAdjustShopCreditStub, gmPartyAdjustShopCredit
+	stub gmPartyAdjustShopGiftsStub, gmPartyAdjustShopGifts
+	stub gmInventoryCheckDiscardStub, gmInventoryCheckDiscard
+	stub gmInventoryDiscardStub, gmInventoryDiscard
+	stub btIsReviveEffectStub, gmBattleIsReviveEffect
+	stub gmUnitRefreshPsynergyStub, gmUnitRefreshPsynergy
+	stub gmPartyGetAverageLevelStub, gmPartyGetAverageLevel
+	unnamed_stub gmUnitUpdateClass
+	stub gmInventoryCountItemStub, gmInventoryCountItem
+	stub gmPartyInventoryCountItemStub, gmPartyInventoryCountItem
+	stub gmPartyInventoryDiscardStub, gmPartyInventoryDiscard
+	stub gmFlagRefreshLureCapStub, gmFlagRefreshLureCap
+	stub gmEquipmentGetUnleashRateBonusStub, gmEquipmentGetUnleashRateBonus
+	stub gmBuildStampGetTimeStub, gmBuildStampGetTime
+	stub gmPartyInventoryCountFreeSlotsStub, gmPartyInventoryCountFreeSlots
+	stub gmInventorySnapshotSaveStub, gmInventorySnapshotSave
+	stub gmInventorySnapshotRestoreStub, gmInventorySnapshotRestore

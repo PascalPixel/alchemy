@@ -5,8 +5,8 @@
 	.section .data,"aw",%progbits
 	.arm
 
-	.global gIrqHandlers
-gIrqHandlers:
+	.global IrqHandlers
+IrqHandlers:
 	.4byte 0	@ VBlank
 	.4byte 0	@ HBlank
 	.4byte 0	@ VCount
@@ -19,8 +19,8 @@ gIrqHandlers:
 	.4byte 0	@ Dma1
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
-	.global Iwram_Halt
-Iwram_Halt:
+	.global syHalt
+syHalt:
 	.endif
 	.endif
 	.4byte 0	@ Dma2
@@ -30,10 +30,10 @@ Iwram_Halt:
 
 	.section .rodata.irq_head,"a",%progbits
 	.balign 4
-	.global gDefaultIrqHandlers
-gDefaultIrqHandlers:
+	.global DefaultIrqHandlers
+DefaultIrqHandlers:
 	.rept 10
-	.4byte Irq_Ignore
+	.4byte syIrqIgnore
 	.endr
 	.ifndef TBS_EDITION_EN
 	.if EDITION_INTERNATIONAL
@@ -44,11 +44,11 @@ gDefaultIrqHandlers:
 	b	.L_irq_halt
 	.else
 	.section .rodata.irq_middle,"a",%progbits
-	.4byte Irq_Ignore, Irq_Ignore
+	.4byte syIrqIgnore, syIrqIgnore
 	.endif
 	.else
 	.section .rodata.irq_middle,"a",%progbits
-	.4byte Irq_Ignore, Irq_Ignore
+	.4byte syIrqIgnore, syIrqIgnore
 	.endif
 	.section .rodata.irq_tail,"a",%progbits
-	.4byte Input_HandleKeyInterrupt, Irq_Ignore
+	.4byte syInputHandleKeyInterrupt, syIrqIgnore

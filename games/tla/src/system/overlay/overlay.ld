@@ -1,16 +1,16 @@
 /* One overlay of The Lost Age, loaded at 0x2008000: ld_script.ld includes
    this file when the build defines OVERLAY and OVERLAY_NAME for the overlay
    of that name, and the block that tests the name is the overlay. Its number
-   is its row in the resource directory (gamepak/resource_directory.s), which
+   is its row in the resource directory (system/resource_directory.s), which
    names it the same. The build finds the overlays from the lines that test a
    name, and each overlay's objects from its statements.
 
    A scene's .text opens with its entry table, src/scene/entry.s, which every
    scene links (each resolves its names against its own code), or
-   DIR/entry/NAME.s for the few whose routines are named otherwise, where DIR
+   DIR/entry/NAME.s for the few whose functions are named otherwise, where DIR
    is src/scene (or src/debug). Its import table, imports.o, follows its
    code: the build writes it for each overlay from imports.inc, a stub for
-   each main-image routine the overlay's code calls. Each statement names the
+   each main-image function the overlay's code calls. Each statement names the
    section it places, so the objects keep their order. Its globals follow in
    .bss, in the order its C first declares them (BSS_DATA keeps a global out
    of the commons). */

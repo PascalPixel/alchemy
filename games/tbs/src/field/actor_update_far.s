@@ -4,20 +4,20 @@
 @ (24 instruction bytes and 12 literal bytes).
 .syntax unified
 	.arm
-	.global Trig_AtanFarArm
-Trig_AtanFarArm:
+	.global fdTrigAtanStubArm
+fdTrigAtanStubArm:
 	ldr	r4, .L_Trig_Atan
 	bx	r4
-	.global Iwram_SqrtFarArm
-Iwram_SqrtFarArm:
+	.global fdMathSqrtStubArm
+fdMathSqrtStubArm:
 	ldr	r4, .L_IwramSqrt
 	bx	r4
-	.global Iwram_DivFXFarArm
-Iwram_DivFXFarArm:
+	.global fdFixedDivStubArm
+fdFixedDivStubArm:
 	ldr	r4, .L_IwramDivFX
 	bx	r4
 .L_Trig_Atan:
-	.4byte	Trig_Atan
+	.4byte	syAtan
 .L_IwramSqrt:
 	.4byte	IwramSqrt
 .L_IwramDivFX:

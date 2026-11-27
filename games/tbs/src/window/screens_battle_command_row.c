@@ -1,425 +1,463 @@
-/// @file
-/// The row of command icons the player picks a command from.
-// Part of screens.c.
+/* @file */
+/* The row of command icons the player picks a command from. */
+/* Part of screens.c. */
 
-#include "screens_internal.h"
+/* Opens a message at (x, y), waits for its text to finish, and returns its */
+/* window so the caller can hold it open for a separate prompt. */
+WINDOW *mnMessageShowAndWait(s32 message, s32 x, s32 y) {
+	WINDOW *result;
 
-/// Opens a message at (x, y), waits for its text to finish, and returns its
-/// window so the caller can hold it open for a separate prompt.
-struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
-  struct Window *result;
-
-  result = Message_OpenWindow(message, x, y, 1);
-  while (Message_AllTyped() == 0)
-    wait(1);
-  return result;
+	result = mnMessageOpenWindow(message, x, y, 1);
+	while(mnMessageAllTyped() == 0)
+		sySynch(1);
+	return result;
 }
 
-/// The tile column where a party member's command row ends and its name window
-/// begins.
+/* The tile column where a party member's command row ends and its name window
+ */
+/* begins. */
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define WINDOW_X 22
 #else
 #define WINDOW_X 23
 #endif
 
-/// The command icons stand 24 pixels apart on the row.
+/* The command icons stand 24 pixels apart on the row. */
 #define COMMAND_ICON_SPACING 24
 
-/// Runs a battle command row: the commands as icons along the bottom of the
-/// screen, the selected one pulsing as a sprite and named in a window, until a
-/// command is chosen: returns its icon (enum CommandIcon),
-/// COMMAND_ROW_CANCELLED or COMMAND_ROW_STATUS.
-s32 BattleCommandRow_Run(s32 mode) {
-  u8 standbyDjinn[ELEMENT_COUNT];
-  struct WindowState *state;
-  struct BattleCommandRowState *selectionUi;
-  struct BattleMenuState *navigation;
-  s32 stripDirty, standbyCount, pulseScale, command;
-  s32 entryIndex;
-  s32 keys, repeat;
-  s32 iconSlot;
-  s32 i, kindCount;
+/* Runs a battle command row: the commands as icons along the bottom of the */
+/* screen, the selected one pulsing as a sprite and named in a window, until a
+ */
+/* command is chosen: returns its icon (COMMAND_ICON), */
+/* COMMAND_ROW_CANCELLED or COMMAND_ROW_STATUS. */
+s32 mnBattleCommandRowRun(s32 mode) {
+	u8 standbyDjinn[ELEMENT_COUNT];
+	WIN_STATE *state;
+	BATTLE_COMMAND_ROW_STATE *selectionUi;
+	BATTLE_MENU_STATE *navigation;
+	s32 stripDirty, standbyCount, pulseScale, command;
+	s32 entryIndex;
+	s32 keys, repeat;
+	s32 iconSlot;
+	s32 i, kindCount;
 
-  state = WINDOW_STATE;
-  // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
-  iconSlot = VramCache_AllocEntry(COMMAND_ICON_BYTES);
-  stripDirty = 1;
-  standbyCount = 0;
-  selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
-  // No icon colour placed yet; the shared palette starts at BG entry 1.
-  for (i = 0; i < ICON_PALETTE_COLORS; i++)
-    selectionUi->palette.slot[i] = ICON_PALETTE_SLOT_UNSET;
-  selectionUi->palette.count = 1;
-  if (mode == COMMAND_ROW_PARTY)
-    selectionUi->window = Window_Create(20, 17, 10, 3, MENU_WINDOW_FLAGS);
-  else
-    selectionUi->window =
-        Window_Create(WINDOW_X, COMMAND_ROW_TOP, DISPLAY_TILE_WIDTH - WINDOW_X,
-                      3, MENU_WINDOW_FLAGS);
-  selectionUi->drawnIndex = -1;
-  // The commands: Fight, Flee and Status for the party; for a party member
-  // Attack, Psynergy, Djinn and Summon while the party can call a summon (the
-  // recovery table's first word, DjinnRecoveryTable.summonMask), Summon only
-  // with a Djinni on standby, Item and Defend.
-  if (mode == COMMAND_ROW_PARTY) {
-    kindCount = 0;
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FIGHT;
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
-    selectionUi->commandKinds[kindCount] = -1;
-    selectionUi->selectedIndex = gBattleMenuState->commandSelection[0];
-  } else {
-    selectionUi->selectedIndex = gBattleMenuState->commandSelection[1];
-    kindCount = 0;
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
-    if (*((s32 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)) != 0) {
-      BattleDjinn_CountStandbyFar(0, standbyDjinn);
-      for (i = 0; i < ELEMENT_COUNT; i++)
-        standbyCount += standbyDjinn[i];
-      selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DJINN;
-      if (standbyCount != 0)
-        selectionUi->commandKinds[kindCount++] = COMMAND_ICON_SUMMON;
-    }
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ITEM;
-    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DEFEND;
-    // UB: with all six commands this -1 lands in commandKinds[6], one word
-    // past the end of the block; the loops below stop at six and never read
-    // it.
-    selectionUi->commandKinds[kindCount] = -1;
-  }
-  // Decode each visible command through one shared remapped palette.
-  for (entryIndex = 0; entryIndex <= 5; entryIndex++) {
-    selectionUi->entries[entryIndex].resource = iconSlot;
-    if (selectionUi->commandKinds[entryIndex] == -1)
-      break;
-    BattleCommandRow_LoadIcon(selectionUi, entryIndex,
-                              selectionUi->commandKinds[entryIndex]);
-  }
-  selectionUi->iconCount = entryIndex;
-  selectionUi->affine.scaleX = Q_8_8(1.25);
-  selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
-  selectionUi->affine.angle = 0;
-  // The icons on the command row's top line, the last ending by the name
-  // window.
-  entryIndex = 0;
-  if (entryIndex < selectionUi->iconCount) {
-    do {
-      s32 x = (entryIndex - selectionUi->iconCount) * COMMAND_ICON_SPACING;
+	state = WINDOW_STATE;
+	/* One 1 KB entry for the selected icon's 32x32, 256-colour sprite. */
+	iconSlot = syVramCacheAllocEntry(COMMAND_ICON_BYTES);
+	stripDirty = 1;
+	standbyCount = 0;
+	selectionUi = syHeapAllocEwram(sizeof(*selectionUi));
+	/* No icon colour placed yet; the shared palette starts at BG entry 1. */
+	for(i = 0; i < ICON_PALETTE_COLORS; i++)
+		selectionUi->pal.slot[i] = ICON_PALETTE_SLOT_UNSET;
+	selectionUi->pal.cnt = 1;
+	if(mode == COMMAND_ROW_PARTY)
+		selectionUi->win = mnWindowCreate(20, 17, 10, 3, MENU_WINDOW_FLAGS);
+	else
+		selectionUi->win =
+			mnWindowCreate(WINDOW_X, COMMAND_ROW_TOP,
+						   DISPLAY_TILE_WIDTH - WINDOW_X, 3, MENU_WINDOW_FLAGS);
+	selectionUi->drawnIdx = -1;
+	/* The commands: Fight, Flee and Status for the party; for a party member */
+	/* Attack, Psynergy, Djinn and Summon while the party can call a summon (the
+	 */
+	/* recovery table's first word, DJINN_RECOVERY_TABLE.summonMask), Summon
+	 * only
+	 */
+	/* with a Djinni on standby, Item and Defend. */
+	if(mode == COMMAND_ROW_PARTY) {
+		kindCount = 0;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FIGHT;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
+		selectionUi->commandKinds[kindCount] = -1;
+		selectionUi->selectedIdx = BattleMenuStateWork->commandSelection[0];
+	}
+	else {
+		selectionUi->selectedIdx = BattleMenuStateWork->commandSelection[1];
+		kindCount = 0;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
+		if(*((s32 *)gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)) != 0) {
+			btDjinnCountStandbyStub(0, standbyDjinn);
+			for(i = 0; i < ELEMENT_COUNT; i++)
+				standbyCount += standbyDjinn[i];
+			selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DJINN;
+			if(standbyCount != 0)
+				selectionUi->commandKinds[kindCount++] = COMMAND_ICON_SUMMON;
+		}
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ITEM;
+		selectionUi->commandKinds[kindCount++] = COMMAND_ICON_DEFEND;
+		/* UB: with all six commands this -1 lands in commandKinds[6], one word
+		 */
+		/* past the end of the block; the loops below stop at six and never read
+		 */
+		/* it. */
+		selectionUi->commandKinds[kindCount] = -1;
+	}
+	/* Decode each visible command through one shared remapped palette. */
+	for(entryIndex = 0; entryIndex <= 5; entryIndex++) {
+		selectionUi->entries[entryIndex].resource = iconSlot;
+		if(selectionUi->commandKinds[entryIndex] == -1)
+			break;
+		mnBattleCommandRowLoadIcon(selectionUi, entryIndex,
+								   selectionUi->commandKinds[entryIndex]);
+	}
+	selectionUi->iconCnt = entryIndex;
+	selectionUi->affine.scaleX = Q_8_8(1.25);
+	selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
+	selectionUi->affine.ang = 0;
+	/* The icons on the command row's top line, the last ending by the name */
+	/* window. */
+	entryIndex = 0;
+	if(entryIndex < selectionUi->iconCnt) {
+		do {
+			s32 x = (entryIndex - selectionUi->iconCnt) * COMMAND_ICON_SPACING;
 
-      selectionUi->entries[entryIndex].positionX = x + 155;
-      if (mode != COMMAND_ROW_PARTY)
-        selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
-      selectionUi->entries[entryIndex].positionY = COMMAND_ROW_TOP * 8;
-      entryIndex++;
-    } while (entryIndex < selectionUi->iconCount);
-  }
-  // BG1 shows the icons: behind the other layers above line 136, in front
-  // from there down (CommandRow_PutBg1Behind).
-  Task_Add(CommandRow_PutBg1Behind, TASK_PASS_VBLANK);
-  Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
+			selectionUi->entries[entryIndex].posX = x + 155;
+			if(mode != COMMAND_ROW_PARTY)
+				selectionUi->entries[entryIndex].posX = x + WINDOW_X * 8 - 5;
+			selectionUi->entries[entryIndex].posY = COMMAND_ROW_TOP * 8;
+			entryIndex++;
+		} while(entryIndex < selectionUi->iconCnt);
+	}
+	/* BG1 shows the icons: behind the other layers above line 136, in front */
+	/* from there down (mnCommandRowPutBg1Behind). */
+	sySetEvent(mnCommandRowPutBg1Behind, TASK_PASS_VBLANK);
+	syIntFunction(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, mnCommandRowPutBg1InFront);
 
-  for (;;) {
-    // 1.19 to 1.31 times, over 16 frames.
-    pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
-    pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(19.0 / 16);
-    selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
-    // Scrolled up 32 pixels, BG1's map rows 21 to 23 show on rows 17 to 19.
-    gBgScroll[1].x = 0;
-    gBgScroll[1].y = 32;
-    // Draw the strip once, six panels of 3x3 tiles ending at the name
-    // window: the panels left empty as WINDOW_TILE_COMMAND_PANEL in the UI
-    // tilemap, then each icon's top-left 3x3 tiles in BG1's map (screen block
-    // 31), the UI tilemap cleared to 0 over them.
-    if (stripDirty != 0) {
-      stripDirty = 0;
-      state->holdTilemapUpload = 1;
-      if (mode != COMMAND_ROW_PARTY) {
-        s32 panel;
-        for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
-          for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
-            s32 col;
-            for (col = 0; col <= 2; col++)
-              *(state->tilemap +
-                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                WINDOW_X - 18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
-          }
-        }
-        for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
-            s32 col;
-            for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
-                  21 * BG_SCREEN_WIDTH + WINDOW_X;
+	for(;;) {
+		/* 1.19 to 1.31 times, over 16 frames. */
+		pulseScale = WindowSprite_BounceScales[(FrameCount * 2) & 31];
+		pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(19.0 / 16);
+		selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
+		/* Scrolled up 32 pixels, BG1's map rows 21 to 23 show on rows 17 to 19.
+		 */
+		BgScrollWork[1].x = 0;
+		BgScrollWork[1].y = 32;
+		/* Draw the strip once, six panels of 3x3 tiles ending at the name */
+		/* window: the panels left empty as WINDOW_TILE_COMMAND_PANEL in the UI
+		 */
+		/* tilemap, then each icon's top-left 3x3 tiles in BG1's map (screen
+		 * block */
+		/* 31), the UI tilemap cleared to 0 over them. */
+		if(stripDirty != 0) {
+			stripDirty = 0;
+			state->holdTilemapUpload = 1;
+			if(mode != COMMAND_ROW_PARTY) {
+				s32 panel;
+				for(panel = 0; panel < 6 - selectionUi->iconCnt; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						s32 col;
+						for(col = 0; col <= 2; col++)
+							*(state->tilemap +
+							  (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+							  panel * 3 + WINDOW_X - 18 + (col & 3)) =
+								WINDOW_TILE_COMMAND_PANEL;
+					}
+				}
+				for(panel = 0; panel < selectionUi->iconCnt; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						s32 col;
+						for(col = 0; col <= 2; col++) {
+							volatile u16 *vram =
+								(volatile u16 *)BG_SCREEN_BLOCK(
+									BATTLE_BG1_SCREEN_BLOCK) +
+								21 * BG_SCREEN_WIDTH + WINDOW_X;
 
-              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
-                   selectionUi->iconCount * 3] =
-                  panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(state->tilemap +
-                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) = 0;
-            }
-          }
-        }
-      } else {
-        s32 panel;
-        for (panel = 0; panel < 6 - selectionUi->iconCount; panel++) {
-          for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
-            s32 col;
-            for (col = 0; col <= 2; col++)
-              *(state->tilemap +
-                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                2 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
-          }
-        }
-        for (panel = 0; panel < selectionUi->iconCount; panel++) {
-          for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
-            s32 col;
-            for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
-                  21 * BG_SCREEN_WIDTH + 20;
+							vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH +
+								 (col & 3) - selectionUi->iconCnt * 3] =
+								panel * 16 + entryIndex * 4 + col +
+								COMMAND_ROW_ICON_TILE;
+							*(state->tilemap +
+							  (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+							  panel * 3 + (col & 3) - selectionUi->iconCnt * 3 +
+							  WINDOW_X) = 0;
+						}
+					}
+				}
+			}
+			else {
+				s32 panel;
+				for(panel = 0; panel < 6 - selectionUi->iconCnt; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						s32 col;
+						for(col = 0; col <= 2; col++)
+							*(state->tilemap +
+							  (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+							  panel * 3 + 2 + (col & 3)) =
+								WINDOW_TILE_COMMAND_PANEL;
+					}
+				}
+				for(panel = 0; panel < selectionUi->iconCnt; panel++) {
+					for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+						s32 col;
+						for(col = 0; col <= 2; col++) {
+							volatile u16 *vram =
+								(volatile u16 *)BG_SCREEN_BLOCK(
+									BATTLE_BG1_SCREEN_BLOCK) +
+								21 * BG_SCREEN_WIDTH + 20;
 
-              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
-                   selectionUi->iconCount * 3] =
-                  panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(state->tilemap +
-                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
-                (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
-            }
-          }
-        }
-      }
-    }
-    // The selection moved: name the new command and load its icon into the
-    // sprite's entry.
-    if (selectionUi->drawnIndex != selectionUi->selectedIndex) {
-      WindowSprite_PrepareForRedraw(selectionUi->window);
-      Text_DrawMessageAsTiles(
-          selectionUi->entries[selectionUi->selectedIndex].kind +
-              MsgCommandName,
-          selectionUi->window, 0, 0);
-      selectionUi->drawnIndex = selectionUi->selectedIndex;
-      BattleCommandRow_LoadIcon(
-          selectionUi, selectionUi->selectedIndex,
-          selectionUi->commandKinds[selectionUi->selectedIndex]);
-    }
-    selectionUi->affineIndex =
-        OamMatrix_AllocFromTransform(&selectionUi->affine);
-    // Only the selected icon is drawn as a sprite: double-size affine (mode
-    // 3), on layer 241, moved with the pulse. The others are BG1 tiles.
-    for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
-      struct BattleCommandRowIcon *entry = &selectionUi->entries[entryIndex];
-      if (entryIndex == selectionUi->selectedIndex) {
-        entry->sprite.oam.f.affineIndex = selectionUi->affineIndex;
-        entry->sprite.oam.f.affine = 3;
-        entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
-        entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW + 1);
-      } else {
-        entry->sprite.oam.f.x = entry->positionX;
-        entry->sprite.oam.f.y = entry->positionY;
-        entry->sprite.oam.f.affineIndex = 0;
-        entry->sprite.oam.f.affine = 0;
-      }
-    }
-    // The Djinn tutorial presses keys for the player, one each delay. In the
-    // party's row it takes Fight.
-    keys = gKeysPressed;
-    repeat = gKeysRepeat;
-    navigation = gBattleMenuState;
-    if (navigation->tutorialStep != 0) {
-      keys = repeat = 0;
-      if (navigation->tutorialDelay == 0) {
-        if (navigation->commandActor == 1) {
-          if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
-              COMMAND_ICON_DEFEND)
-            keys = repeat = KEY_A;
-          else
-            keys = repeat = KEY_LEFT;
-          navigation->tutorialDelay = 30;
-        } else if (navigation->commandActor == 0) {
-          s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
-          if (kind == COMMAND_ICON_SUMMON ||
-              (standbyCount == 0 && kind == COMMAND_ICON_DJINN)) {
-            if (navigation->tutorialStep == 1) {
-              struct Window *message;
-              if (kind == COMMAND_ICON_DJINN)
-                message =
-                    Message_ShowAndWait(MsgDjinnTutorialUnleashCommand, 15, 8);
-              else if (kind == COMMAND_ICON_SUMMON)
-                message = Message_ShowAndWait(MsgDjinnTutorialSummon, 15, 8);
-              BattleMessage_WaitForAdvanceAtFar(102, 155);
-              Window_Close(message, 1);
-              navigation->tutorialStep++;
-              navigation->tutorialDelay = 45;
-            } else {
-              keys = repeat = KEY_A;
-              navigation->tutorialDelay = 200;
-            }
-          } else {
-            keys = repeat = KEY_RIGHT;
-            navigation->tutorialDelay = 40;
-          }
-        } else {
-          navigation->tutorialDelay = 60;
-          keys = repeat = KEY_A;
-        }
-      } else {
-        navigation->tutorialDelay--;
-      }
-    }
-    if ((keys & KEYS_SHOULDERS) && mode != COMMAND_ROW_PARTY) {
-      command = COMMAND_ROW_STATUS;
-      break;
-    }
-    if (keys & KEY_A) {
-      command = selectionUi->commandKinds[selectionUi->selectedIndex];
-      break;
-    }
-    if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
-      Sound_PlayFar(SE_MENU_CANCEL);
-      command = COMMAND_ROW_CANCELLED;
-      break;
-    }
-    if (repeat & (KEY_DOWN | KEY_RIGHT)) {
-      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      selectionUi->selectedIndex =
-          (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
-    } else if (repeat & (KEY_UP | KEY_LEFT)) {
-      Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-      selectionUi->selectedIndex =
-          (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
-          selectionUi->iconCount;
-    } else if (gBattleMenuState->timer == 0) {
-      // The link battle's time is up.
-      command = selectionUi->commandKinds[0];
-      break;
-    }
-    // BG1 on while the row is open; the exit below turns it off again.
-    IoWriteQueue_Store16((u32)&REG_DISPCNT,
-                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                             DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
-    state->holdTilemapUpload = 0;
-    wait(1);
-  }
-  if (mode != COMMAND_ROW_PARTY)
-    gBattleMenuState->commandSelection[1] = selectionUi->selectedIndex;
-  else
-    gBattleMenuState->commandSelection[0] = selectionUi->selectedIndex;
-  // Every icon names the same entry, so it is released once per icon.
-  for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
-    VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
-  state->holdTilemapUpload = 1;
-  Window_Close(selectionUi->window, 1);
-  // Cover the strip again: seven panels of WINDOW_TILE_COMMAND_PANEL from
-  // column 5.
-  {
-    s32 panel;
-    for (panel = 0; panel <= 6; panel++) {
-      for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
-        s32 col;
-        // The VBlank handler uploads this tilemap (WindowSystem_UploadTilemap).
-        for (col = 0; col <= 2; col++)
-          *(volatile u16 *)(state->tilemap +
-                            (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
-                            panel * 3 + 5 + (col & 3)) =
-              WINDOW_TILE_COMMAND_PANEL;
-      }
-    }
-  }
-  // Restore the normal BG1 handler after clearing the command strip.
-  state->dirty = 1;
-  wait(1);
-  Task_Remove(CommandRow_PutBg1Behind);
-  Irq_SetHandler(IRQ_VCOUNT, 0, 0);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_HALFWORD);
-  Heap_Release(selectionUi);
-  state->holdTilemapUpload = 0;
-  wait(1);
-  return command;
+							vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH +
+								 (col & 3) - selectionUi->iconCnt * 3] =
+								panel * 16 + entryIndex * 4 + col +
+								COMMAND_ROW_ICON_TILE;
+							*(state->tilemap +
+							  (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+							  panel * 3 + (col & 3) - selectionUi->iconCnt * 3 +
+							  20) = 0;
+						}
+					}
+				}
+			}
+		}
+		/* The selection moved: name the new command and load its icon into the
+		 */
+		/* sprite's entry. */
+		if(selectionUi->drawnIdx != selectionUi->selectedIdx) {
+			mnWindowSprPrepareForRedraw(selectionUi->win);
+			mnTextDrawMessageAsTiles(
+				selectionUi->entries[selectionUi->selectedIdx].kind +
+					MsgCommandName,
+				selectionUi->win, 0, 0);
+			selectionUi->drawnIdx = selectionUi->selectedIdx;
+			mnBattleCommandRowLoadIcon(
+				selectionUi, selectionUi->selectedIdx,
+				selectionUi->commandKinds[selectionUi->selectedIdx]);
+		}
+		selectionUi->affineIdx =
+			syOamMatrixAllocFromTransform(&selectionUi->affine);
+		/* Only the selected icon is drawn as a sprite: double-size affine (mode
+		 */
+		/* 3), on layer 241, moved with the pulse. The others are BG1 tiles. */
+		for(entryIndex = 0; entryIndex < selectionUi->iconCnt; entryIndex++) {
+			BATTLE_COMMAND_ROW_ICON *entry = &selectionUi->entries[entryIndex];
+			if(entryIndex == selectionUi->selectedIdx) {
+				entry->spr.oam.f.affineIdx = selectionUi->affineIdx;
+				entry->spr.oam.f.affine = 3;
+				entry->spr.oam.f.x = entry->posX + pulseScale * 7 / 512 - 14;
+				entry->spr.oam.f.y = entry->posY + pulseScale * 3 / 256 - 20;
+				syOamAddSprAtDepth(entry, OAM_DEPTH_WINDOW + 1);
+			}
+			else {
+				entry->spr.oam.f.x = entry->posX;
+				entry->spr.oam.f.y = entry->posY;
+				entry->spr.oam.f.affineIdx = 0;
+				entry->spr.oam.f.affine = 0;
+			}
+		}
+		/* The Djinn tutorial presses keys for the player, one each delay. In
+		 * the */
+		/* party's row it takes Fight. */
+		keys = KeysPressed;
+		repeat = KeysRepeat;
+		navigation = BattleMenuStateWork;
+		if(navigation->tutorialStep != 0) {
+			keys = repeat = 0;
+			if(navigation->tutorialDelay == 0) {
+				if(navigation->commandActor == 1) {
+					if(selectionUi->commandKinds[selectionUi->selectedIdx] ==
+					   COMMAND_ICON_DEFEND)
+						keys = repeat = KEY_A;
+					else
+						keys = repeat = KEY_LEFT;
+					navigation->tutorialDelay = 30;
+				}
+				else if(navigation->commandActor == 0) {
+					s32 kind =
+						selectionUi->commandKinds[selectionUi->selectedIdx];
+					if(kind == COMMAND_ICON_SUMMON ||
+					   (standbyCount == 0 && kind == COMMAND_ICON_DJINN)) {
+						if(navigation->tutorialStep == 1) {
+							WINDOW *message;
+							if(kind == COMMAND_ICON_DJINN)
+								message = mnMessageShowAndWait(
+									MsgDjinnTutorialUnleashCommand, 15, 8);
+							else if(kind == COMMAND_ICON_SUMMON)
+								message = mnMessageShowAndWait(
+									MsgDjinnTutorialSummon, 15, 8);
+							mnBattleMessageWaitForAdvanceAtStub(102, 155);
+							mnWindowClose(message, 1);
+							navigation->tutorialStep++;
+							navigation->tutorialDelay = 45;
+						}
+						else {
+							keys = repeat = KEY_A;
+							navigation->tutorialDelay = 200;
+						}
+					}
+					else {
+						keys = repeat = KEY_RIGHT;
+						navigation->tutorialDelay = 40;
+					}
+				}
+				else {
+					navigation->tutorialDelay = 60;
+					keys = repeat = KEY_A;
+				}
+			}
+			else {
+				navigation->tutorialDelay--;
+			}
+		}
+		if((keys & KEYS_SHOULDERS) && mode != COMMAND_ROW_PARTY) {
+			command = COMMAND_ROW_STATUS;
+			break;
+		}
+		if(keys & KEY_A) {
+			command = selectionUi->commandKinds[selectionUi->selectedIdx];
+			break;
+		}
+		if(mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
+			sySndPlayStub(SE_MENU_CANCEL);
+			command = COMMAND_ROW_CANCELLED;
+			break;
+		}
+		if(repeat & (KEY_DOWN | KEY_RIGHT)) {
+			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			selectionUi->selectedIdx =
+				(selectionUi->selectedIdx + 1) % selectionUi->iconCnt;
+		}
+		else if(repeat & (KEY_UP | KEY_LEFT)) {
+			sySndPlayStub(SE_MENU_CURSOR_MOVE);
+			selectionUi->selectedIdx =
+				(selectionUi->selectedIdx + selectionUi->iconCnt - 1) %
+				selectionUi->iconCnt;
+		}
+		else if(BattleMenuStateWork->tmr == 0) {
+			/* The link battle's time is up. */
+			command = selectionUi->commandKinds[0];
+			break;
+		}
+		/* BG1 on while the row is open; the exit below turns it off again. */
+		syIoWriteQueueStore16((u32)&REG_DISPCNT,
+							  DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+								  DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+								  DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
+		state->holdTilemapUpload = 0;
+		sySynch(1);
+	}
+	if(mode != COMMAND_ROW_PARTY)
+		BattleMenuStateWork->commandSelection[1] = selectionUi->selectedIdx;
+	else
+		BattleMenuStateWork->commandSelection[0] = selectionUi->selectedIdx;
+	/* Every icon names the same entry, so it is released once per icon. */
+	for(entryIndex = 0; entryIndex < selectionUi->iconCnt; entryIndex++)
+		syVramCacheFreeEntry(selectionUi->entries[entryIndex].resource);
+	state->holdTilemapUpload = 1;
+	mnWindowClose(selectionUi->win, 1);
+	/* Cover the strip again: seven panels of WINDOW_TILE_COMMAND_PANEL from */
+	/* column 5. */
+	{
+		s32 panel;
+		for(panel = 0; panel <= 6; panel++) {
+			for(entryIndex = 0; entryIndex <= 2; entryIndex++) {
+				s32 col;
+				/* The VBlank handler uploads this tilemap */
+				/* (mnWindowSystemUploadTilemap). */
+				for(col = 0; col <= 2; col++)
+					*(volatile u16 *)(state->tilemap +
+									  (entryIndex + COMMAND_ROW_TOP) *
+										  BG_SCREEN_WIDTH +
+									  panel * 3 + 5 + (col & 3)) =
+						WINDOW_TILE_COMMAND_PANEL;
+			}
+		}
+	}
+	/* Restore the normal BG1 handler after clearing the command strip. */
+	state->dirty = 1;
+	sySynch(1);
+	syCloseEvent(mnCommandRowPutBg1Behind);
+	syIntFunction(IRQ_VCOUNT, 0, 0);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
+						IO_WRITE_HALFWORD);
+	syHeapRelease(selectionUi);
+	state->holdTilemapUpload = 0;
+	sySynch(1);
+	return command;
 }
 
-/// Switches the UI tilemap entries of the `width` x `height` tile rectangle at
-/// screen tile (x, y) to WINDOW_PALETTE or HIGHLIGHT_PALETTE by bit 12, keeping
-/// the rest of each entry: the menus' row highlight. `paletteBit` is the
-/// palette, of which only the low bit counts.
-void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
-  struct WindowState *state = WINDOW_STATE;
+/* Switches the UI tilemap entries of the `width` x `height` tile rectangle at
+ */
+/* screen tile (x, y) to WINDOW_PALETTE or HIGHLIGHT_PALETTE by bit 12, keeping
+ */
+/* the rest of each entry: the menus' row highlight. `paletteBit` is the */
+/* palette, of which only the low bit counts. */
+void mnWindowHighlightRect(s32 x, s32 y, s32 width, s32 height,
+						   s32 paletteBit) {
+	WIN_STATE *state = WINDOW_STATE;
 
-  paletteBit &= 1;
-  paletteBit = BG_TILE_PALETTE(paletteBit);
+	paletteBit &= 1;
+	paletteBit = BG_TILE_PALETTE(paletteBit);
 
-  if (x < 0) {
-    width += x;
-    x = 0;
-  }
-  if (x + width > DISPLAY_TILE_WIDTH - 1) {
-    width = DISPLAY_TILE_WIDTH - x;
-  }
-  if (y < 0) {
-    height += y;
-    y = 0;
-  }
-  // BUG: tests the bottom against the screen's width, so a window reaching
-  // below the screen draws into the map's unseen rows.
+	if(x < 0) {
+		width += x;
+		x = 0;
+	}
+	if(x + width > DISPLAY_TILE_WIDTH - 1) {
+		width = DISPLAY_TILE_WIDTH - x;
+	}
+	if(y < 0) {
+		height += y;
+		y = 0;
+	}
+	/* BUG: tests the bottom against the screen's width, so a window reaching */
+	/* below the screen draws into the map's unseen rows. */
 #ifdef BUGFIX
-  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+	if(y + height > DISPLAY_TILE_HEIGHT - 1) {
 #else
-  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+	if(y + height > DISPLAY_TILE_WIDTH - 1) {
 #endif
-    height = DISPLAY_TILE_HEIGHT - y;
-  }
+		height = DISPLAY_TILE_HEIGHT - y;
+	}
 
-  if (width > 0 && height > 0) {
-    do {
-      u16 *cell = &((u16 (*)[BG_SCREEN_WIDTH])state->tilemap)[y][x];
-      s32 remaining = width;
+	if(width > 0 && height > 0) {
+		do {
+			u16 *cell = &((u16 (*)[BG_SCREEN_WIDTH])state->tilemap)[y][x];
+			s32 remaining = width;
 
-      while (remaining != 0) {
-        u32 tile = *cell;
-        tile = (tile & ~BG_TILE_PALETTE(1)) | paletteBit;
-        remaining--;
-        *cell = tile;
-        cell++;
-      }
+			while(remaining != 0) {
+				u32 tile = *cell;
+				tile = (tile & ~BG_TILE_PALETTE(1)) | paletteBit;
+				remaining--;
+				*cell = tile;
+				cell++;
+			}
 
-      Window_MarkTilemapRow(state, y);
-      height--;
-      y++;
-    } while (height != 0);
-  }
+			mnWindowMarkTilemapRow(state, y);
+			height--;
+			y++;
+		} while(height != 0);
+	}
 }
 
-/// Clears the highlight from the party status window's party member columns,
-/// then highlights the columns of the units in `ids` (up to four, ended by
-/// BATTLE_UNIT_LIST_END): the party member whose commands are being chosen.
-s32 PartyStatus_HighlightMembers(u16 *ids) {
-  struct BattleState *battle = gBattleState;
-  s32 count;
-  s32 i;
-  s32 j;
+/* Clears the highlight from the party status window's party member columns, */
+/* then highlights the columns of the units in `ids` (up to four, ended by */
+/* BATTLE_UNIT_LIST_END): the party member whose commands are being chosen. */
+s32 mnPartyStatHighlightMembers(u16 *ids) {
+	BATTLE_STATE *battle = BattleStateWork;
+	s32 count;
+	s32 i;
+	s32 j;
 
-  count = BattleUnit_ListIdsFar(BATTLE_SIDE_MASK_PARTY, 0);
-  Window_HighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
-  i = 0;
-  if (ids[0] != BATTLE_UNIT_LIST_END) {
-  next_id:
-    for (j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
-      if (battle->partyUnits[j] == BATTLE_UNIT_LIST_END) {
-        j = 4;
-        break;
-      }
-    }
-    if (j != 4)
-      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, HIGHLIGHT_PALETTE);
-    if (++i < 4 && ids[i] != BATTLE_UNIT_LIST_END)
-      goto next_id;
-  }
-  return 0;
+	count = btUnitListIdsStub(BATTLE_SIDE_MASK_PARTY, 0);
+	mnWindowHighlightRect(29 - count * 6, 0, 25, 5, WINDOW_PALETTE);
+	i = 0;
+	if(ids[0] != BATTLE_UNIT_LIST_END) {
+	next_id:
+		for(j = 0; j < 4 && battle->partyUnits[j] != ids[i]; j++) {
+			if(battle->partyUnits[j] == BATTLE_UNIT_LIST_END) {
+				j = 4;
+				break;
+			}
+		}
+		if(j != 4)
+			mnWindowHighlightRect(29 - (count - j) * 6, 0, 7, 5,
+								  HIGHLIGHT_PALETTE);
+		if(++i < 4 && ids[i] != BATTLE_UNIT_LIST_END)
+			goto next_id;
+	}
+	return 0;
 }

@@ -1,0 +1,91 @@
+@ Actors, movement, map drawing and event commands.
+	.include "games/tbs/src/system/stub_table.inc"
+	.global Stubs_Field
+Stubs_Field:
+	stub fdActorSystemConfigureStub, fdActorSystemConfigure
+	stub fdRenderApplyProjectedPlacementStub, fdRenderApplyProjectedPlacement
+	unnamed_stub fdRenderPlaceProjectedSpr
+	unnamed_stub fdSprResetAnimations
+	stub fdSprStartAnimationStub, fdSprStartAnimation
+	unnamed_stub fdSprSetAnimationTimers
+	stub fdSprCreateStub, fdSprCreate
+	stub fdSprDestroyStub, fdSprDestroy
+	unnamed_stub fdRenderPlaceSprPartPair
+	stub fdSprAddAnimationStub, fdSprAddAnimation
+	stub fdSprRemoveAnimationStub, fdSprRemoveAnimation
+	unnamed_stub fdSprRemoveAnimationAt
+	stub fdSprAnimationClearStub, fdSprAnimationClear
+	unnamed_stub fdSprAnimationReset
+	stub fdSprAnimationStartStub, fdSprAnimationStart
+	stub fdActorSystemInitStub, fdActorSystemInit
+	stub fdActorSelectAnimationStub, fdActorSelectAnimation
+	stub fdActorSetAnimationSpeedStub, fdActorSetAnimationSpeed
+	unnamed_stub fdActorSetAnimationAndSpeed
+	stub fdActorStartScriptStub, fdActorStartScript
+	stub fdActorStartPlayerCtrlStub, fdActorStartPlayerCtrl
+	stub fdActorStartWorldMapCtrlStub, fdActorStartWorldMapCtrl
+	stub fdActorStartMoveByKeysStub, fdActorStartMoveByKeys
+	stub fdActorStartKeyCheckStub, fdActorStartKeyCheck
+	unnamed_stub fdActorFindFree
+	stub fdActorCreateStub, fdActorCreate
+	stub fdActorReleaseStub, fdActorRelease
+	unnamed_stub fdActorSetSprRotation
+	stub fdActorStartCameraStub, fdActorStartCamera
+	unnamed_stub fdActorStartApproachWatched
+	stub fdActorSetPosAndResetMotionStub, fdActorSetPosAndResetMotion
+	stub fdSprDissolveStepStub, fdSprDissolveStep
+	stub fdSprDissolveRunStub, fdSprDissolveRun
+	stub fdSprDissolveRunManyStub, fdSprDissolveRunMany
+	stub fdMapGridLoadMapStub, fdMapGridLoadMap
+	stub scWorldMapInitPerspectiveStub, fdWorldMapInitPerspective
+	unnamed_stub fdMapGridSetCameraCenter
+	stub fdMapGridCenterOnFollowedPointStub, fdMapGridCenterOnFollowedPoint
+	stub scWorldMapUpdateCurrentTileBlockStub, fdWorldMapUpdateCurrentTileBlock
+	stub scWorldMapLoadGraphicsStub, fdWorldMapLoadGraphics
+	stub fdActorStartIdleStub, fdActorStartIdle
+	stub fdActorWaitForScriptEndStub, fdActorWaitForScriptEnd
+	stub fdActorSetMoveTargetStub, fdActorSetMoveTarget
+	stub fdActorWaitForMoveStub, fdActorWaitForMove
+	unnamed_stub fdMapGridGetScrRelativePos
+	unnamed_stub fdWorldMapUpdateView
+	stub scWorldMapLoadDefaultCellsAndUpdateBlockStub, fdWorldMapLoadDefaultCellsAndUpdateBlock
+	stub fdMapGridPlayMapEditStub, fdMapGridPlayMapEdit
+	stub fdMapGridCopyCellTilesIndicesRectStub, fdMapGridCopyCellTilesIndicesRect
+	stub fdTilesetAnimResumeStub, fdTilesetAnimResume
+	stub fdTilesetAnimPauseStub, fdTilesetAnimPause
+	stub fdBlendScriptResumeStub, fdBlendScriptResume
+	stub fdBlendScriptSuspendStub, fdBlendScriptSuspend
+	stub fdMapGridGetTerrainHeightStub, fdMapGridGetTerrainHeight
+	stub fdMapGridGetCellBehaviorAtStub, fdMapGridGetCellBehaviorAt
+	stub fdMapGridCopyCellTilesCellsRectStub, fdMapGridCopyCellTilesCellsRect
+	stub fdMapGridCopyCellAttributeRectStub, fdMapGridCopyCellAttributeRect
+	stub fdMapGridCopyCellIndexRectStub, fdMapGridCopyCellIndexRect
+	stub scWorldMapSetGridTileStub, fdWorldMapSetGridTile
+	stub fdMapGridCheckCollisionStub, fdMapGridCheckCollision
+	stub fdActorSetSprFlagsStub, fdActorSetSprFlags
+	stub fdActorSetBlendModeStub, fdActorSetBlendMode
+	stub fdMapGridSetScrShakeStub, fdMapGridSetScrShake
+	stub fdMapGridWaitForShakeToSettleStub, fdMapGridWaitForShakeToSettle
+	unnamed_stub fdActorSetFirstSprAnimation
+	stub fdActorSystemSuspendProjectionAndShowSprsStub, fdActorSystemSuspendProjectionAndShowSprs
+	stub fdActorSystemResumeProjectionAndHideLayersStub, fdActorSystemResumeProjectionAndHideLayers
+	unnamed_stub fdActorSetSprScale
+	stub fdMapGridIsWallAtStub, fdMapGridIsWallAt
+	stub fdActorRegisterSprMetadataStub, fdActorRegisterSprMetadata
+	stub scWorldMapStartStillImageStub, fdWorldMapStartStillImage
+	stub scWorldMapLoadAreaGraphicsStub, fdWorldMapLoadAreaGraphics
+	stub fdActorSetSprColModeStub, fdActorSetSprColMode
+	stub fdSprSetAnimationColModesStub, fdSprSetAnimationColModes
+	stub fdActorScriptCheckOverlapStub, fdActorScriptCheckOverlap
+	stub fdMapGridSetShownLayersStub, fdMapGridSetShownLayers
+	stub fdSprAnimationSumCommandLengthsStub, fdSprAnimationSumCommandLengths
+	stub scWorldMapGetBattleEnvironmentStub, fdWorldMapGetBattleEnvironment
+	stub fdSprPictureCacheLoadStub, fdSprPictureCacheLoad
+	stub fdMapGridSetCellBehaviorAtStub, fdMapGridSetCellBehaviorAt
+	stub fdSprSetAnimationSpeedStub, fdSprSetAnimationSpeed
+	stub fdSprColRemapPixelsStub, fdSprColRemapPixels
+	stub fdTilesetAnimSuspendAllStub, fdTilesetAnimSuspendAll
+	stub fdTilesetAnimResumeAllStub, fdTilesetAnimResumeAll
+	stub fdActorScriptFindOverlappingActorStub, fdActorScriptFindOverlappingActor
+	stub fdMapGridGetTerrainKindAtStub, fdMapGridGetTerrainKindAt
+	unnamed_stub fdSprViewerRun

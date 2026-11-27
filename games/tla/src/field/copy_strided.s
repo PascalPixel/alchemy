@@ -3,8 +3,8 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Render_CopyStridedCode
-Render_CopyStridedCode:
+	.global fdRenderCopyStridedCode
+fdRenderCopyStridedCode:
 	.global Render_CopyStrided
 	.thumb_func
 Render_CopyStrided:
@@ -47,4 +47,4 @@ AlchemyUncreditedEnd_080217a6:
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
 	.global Render_CopyStridedCodeSize
-	.set Render_CopyStridedCodeSize, . - Render_CopyStridedCode
+	.set Render_CopyStridedCodeSize, . - fdRenderCopyStridedCode

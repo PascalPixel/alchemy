@@ -1,654 +1,675 @@
-/// @file
-/// The window sprite pool, opening and closing windows, starting messages.
-// Part of window.c.
+/* @file */
+/* The window sprite pool, opening and closing windows, starting messages. */
+/* Part of window.c. */
 
-#include "window_internal.h"
-
-/// A text tile battle keeps for the bottom border's lower rows: neither taken
-/// nor shown, it is never free (WindowState.textTileState).
+/* A text tile battle keeps for the bottom border's lower rows: neither taken */
+/* nor shown, it is never free (WIN_STATE.textTileState). */
 #define TEXT_TILE_RESERVED 4
 
-/// The tilemap uploads in five bands of four tile rows, each a bit of
-/// WindowState.dirty above bit 0, which asks for them all.
-#define TILEMAP_BANDS 5
+/* The tilemap uploads in five bands of four tile rows, each a bit of */
+/* WIN_STATE.dirty above bit 0, which asks for them all. */
+#define TILEMAP_BANDS	  5
 #define TILEMAP_BAND_SIZE (4 * BG_SCREEN_WIDTH * sizeof(u16))
 #define TILEMAP_DIRTY_ALL ((1 << (TILEMAP_BANDS + 1)) - 1)
 
-/// Takes the first window sprite from the free list, or returns NULL when every
-/// sprite is in use.
-struct WindowSprite *WindowSprite_AcquireFree(void) {
-  struct WindowState *state = WINDOW_STATE;
-  struct WindowSprite *out = state->freeSprites.head;
+/* Takes the first window sprite from the free list, or returns NULL when every
+ */
+/* sprite is in use. */
+WINDOW_SPR *mnWindowSprAcquireFree(void) {
+	WIN_STATE *state = WINDOW_STATE;
+	WINDOW_SPR *out = state->freeSprs.head;
 
-  if (out != NULL) {
-    // Taking the last sprite leaves the list empty.
-    if (out->next == NULL)
-      state->freeSprites.tailLink = &state->freeSprites.head;
-    state->freeSprites.head = out->next;
-    out->next = NULL;
-  }
-  return out;
+	if(out != NULL) {
+		/* Taking the last sprite leaves the list empty. */
+		if(out->next == NULL)
+			state->freeSprs.tailLink = &state->freeSprs.head;
+		state->freeSprs.head = out->next;
+		out->next = NULL;
+	}
+	return out;
 }
 
-/// Returns a window sprite to the end of the free list. A sprite from outside
-/// the state block's pool is ignored.
-void WindowSprite_ReleaseFree(struct WindowSprite *out) {
-  struct WindowState *state = WINDOW_STATE;
+/* Returns a window sprite to the end of the free list. A sprite from outside */
+/* the state block's pool is ignored. */
+void mnWindowSprReleaseFree(WINDOW_SPR *out) {
+	WIN_STATE *state = WINDOW_STATE;
 
-  // freeSprites follows the pool directly, so its address is the pool's end.
-  if ((u32)out >= (u32)state->sprites &&
-      (u32)out < (u32)&state->freeSprites.head) {
-    struct WindowSprite **tail = state->freeSprites.tailLink;
+	/* freeSprs follows the pool directly, so its address is the pool's end.
+	 */
+	if((u32)out >= (u32)state->sprs && (u32)out < (u32)&state->freeSprs.head) {
+		WINDOW_SPR **tail = state->freeSprs.tailLink;
 
-    state->freeSprites.tailLink = &out->next;
-    *tail = out;
-    out->next = NULL;
-  }
+		state->freeSprs.tailLink = &out->next;
+		*tail = out;
+		out->next = NULL;
+	}
 }
 
-/// Links all 64 window sprites of the pool into the free list.
-void WindowSprite_InitializeFreeList(void) {
-  s32 i;
-  struct WindowState *state;
-  struct WindowSprite *out;
-  struct WindowSprite *next;
+/* Links all 64 window sprites of the pool into the free list. */
+void mnWindowSprInitFreeList(void) {
+	s32 i;
+	WIN_STATE *state;
+	WINDOW_SPR *out;
+	WINDOW_SPR *next;
 
-  state = WINDOW_STATE;
-  out = state->sprites;
-  state->freeSprites.head = out;
-  // Links sprites 0 to 62 to the next; the last, 63, ends the list.
-  for (i = 0; i < WINDOW_SPRITE_COUNT - 1; i++) {
-    next = out + 1;
-    out->next = next;
-    out = next;
-  }
-  next->next = NULL;
-  state->freeSprites.tailLink = &next->next;
+	state = WINDOW_STATE;
+	out = state->sprs;
+	state->freeSprs.head = out;
+	/* Links sprites 0 to 62 to the next; the last, 63, ends the list. */
+	for(i = 0; i < WINDOW_SPRITE_COUNT - 1; i++) {
+		next = out + 1;
+		out->next = next;
+		out = next;
+	}
+	next->next = NULL;
+	state->freeSprs.tailLink = &next->next;
 }
 
-/// Sets up the window system for the field (and the other screens outside
-/// battle): allocates and clears the state block, blanks the tilemap, frees
-/// every window sprite and starts the two per-frame tasks, the tilemap upload
-/// and the window update.
-void WindowSystem_InitField(void) {
-  struct WindowState *state;
+/* Sets up the window system for the field (and the other screens outside */
+/* battle): allocates and clears the state block, blanks the tilemap, frees */
+/* every window sprite and starts the two per-frame tasks, the tilemap upload */
+/* and the window update. */
+void mnWindowSystemInitField(void) {
+	WIN_STATE *state;
 #if TBS_PATCH_1
-  volatile u32 fill;
+	volatile u32 fill;
 #endif
 
-  // Clear the state block before linking any of its embedded lists.
-  state = HeapSlot_AllocEwram(HEAP_SLOT_WINDOW, sizeof(struct WindowState));
+	/* Clear the state block before linking any of its embedded lists. */
+	state = syHeapSlotAllocEwram(HEAP_SLOT_WINDOW, sizeof(WIN_STATE));
 #if TBS_PATCH_1
-  fill = 0;
-  Dma_Set((const void *)&fill, state,
-          DMA_FILL_WORDS(sizeof(struct WindowState) / 4), REG_DMA3);
+	fill = 0;
+	syDMAXCopy((const void *)&fill, state,
+			   DMA_FILL_WORDS(sizeof(WIN_STATE) / 4), REG_DMA3);
 #else
-  Iwram_ClearWords(state, sizeof(struct WindowState));
+	syWordsClear(state, sizeof(WIN_STATE));
 #endif
-  state->dirty = 1;
-  state->glyphResource = NO_GLYPH_RESOURCE;
-  state->textPalette = WINDOW_PALETTE;
+	state->dirty = 1;
+	state->glyphResource = NO_GLYPH_RESOURCE;
+	state->textPal = WINDOW_PALETTE;
 #if TBS_PATCH_1
-  fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);
-  Dma_Set((const void *)&fill, state,
-          DMA_FILL_WORDS(sizeof(state->tilemap) / 4), REG_DMA3);
+	fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);
+	syDMAXCopy((const void *)&fill, state,
+			   DMA_FILL_WORDS(sizeof(state->tilemap) / 4), REG_DMA3);
 #else
-  Iwram_FillWords(state, sizeof(state->tilemap),
-                  WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
+	syWordsFill(state, sizeof(state->tilemap),
+				WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
-  // Make the sprite and palette pools available, then start the updates.
-  WindowSprite_InitializeFreeList();
-  Portrait_ClearSlots();
-  Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
-  WindowSystem_StartFieldUpdate();
+	/* Make the sprite and palette pools available, then start the updates. */
+	mnWindowSprInitFreeList();
+	mnPortraitClearSlots();
+	sySetEvent(mnWindowSystemUploadTilemap, TASK_PASS_VBLANK);
+	mnWindowSystemStartFieldUpdate();
 }
 
-/// Sets up the window system for battle, as WindowSystem_InitField does for the
-/// field, and marks the state block as in battle (WINDOW_BATTLE).
-void WindowSystem_InitBattle(s32 loadGlyphTiles) {
-  struct WindowState *state;
+/* Sets up the window system for battle, as mnWindowSystemInitField does for */
+/* the field, and marks the state block as in battle (WINDOW_BATTLE). */
+void mnWindowSystemInitBattle(s32 loadGlyphTiles) {
+	WIN_STATE *state;
 #if TBS_PATCH_1
-  volatile u32 fill;
+	volatile u32 fill;
 #endif
-  s32 tileIndex;
+	s32 tileIndex;
 
-  // Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of
-  // destinationTile and clears the rest of it. A GNU nested function, as in
-  // The Lost Age: each call sets up the static chain (r9) it never reads.
-  s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
-    sourceTile &= TILE_NUMBER_MASK;
-    destinationTile &= TILE_NUMBER_MASK;
-    Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP +
-                4 * TILE_ROW_SIZE_4BPP,
-            BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
-            DMA_COPY_HALFWORDS(4 * TILE_ROW_SIZE_4BPP / 2), REG_DMA3);
-    return Iwram_ClearWords(BG_CHAR_BLOCK(0) +
-                                destinationTile * TILE_SIZE_4BPP +
-                                3 * TILE_ROW_SIZE_4BPP,
-                            5 * TILE_ROW_SIZE_4BPP);
-  }
+	/* Copies pixel rows 4 to 6 of tile sourceTile to rows 0 to 2 of */
+	/* destinationTile and clears the rest of it. A GNU nested function, as in
+	 */
+	/* The Lost Age: each call sets up the static chain (r9) it never reads. */
+	s32 mnWindowSystemCopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
+		sourceTile &= TILE_NUMBER_MASK;
+		destinationTile &= TILE_NUMBER_MASK;
+		syDMAXCopy(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP +
+					   4 * TILE_ROW_SIZE_4BPP,
+				   BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP,
+				   DMA_COPY_HALFWORDS(4 * TILE_ROW_SIZE_4BPP / 2), REG_DMA3);
+		return syWordsClear(BG_CHAR_BLOCK(0) +
+								destinationTile * TILE_SIZE_4BPP +
+								3 * TILE_ROW_SIZE_4BPP,
+							5 * TILE_ROW_SIZE_4BPP);
+	}
 
-  state = (struct WindowState *)HeapSlot_AllocEwram(HEAP_SLOT_WINDOW,
-                                                    sizeof(struct WindowState));
+	state =
+		(WIN_STATE *)syHeapSlotAllocEwram(HEAP_SLOT_WINDOW, sizeof(WIN_STATE));
 #if TBS_PATCH_1
-  fill = 0;
-  Dma_Set((const void *)&fill, state,
-          DMA_FILL_WORDS(sizeof(struct WindowState) / 4), REG_DMA3);
+	fill = 0;
+	syDMAXCopy((const void *)&fill, state,
+			   DMA_FILL_WORDS(sizeof(WIN_STATE) / 4), REG_DMA3);
 #else
-  Iwram_ClearWords(state, sizeof(struct WindowState));
+	syWordsClear(state, sizeof(WIN_STATE));
 #endif
-  state->dirty = 1;
-  state->glyphResource = NO_GLYPH_RESOURCE;
-  state->battleMode = WINDOW_BATTLE;
-  state->textPalette = WINDOW_PALETTE;
+	state->dirty = 1;
+	state->glyphResource = NO_GLYPH_RESOURCE;
+	state->battleMode = WINDOW_BATTLE;
+	state->textPal = WINDOW_PALETTE;
 #if TBS_PATCH_1
-  fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);
-  Dma_Set((const void *)&fill, state,
-          DMA_FILL_WORDS(sizeof(state->tilemap) / 4), REG_DMA3);
+	fill = WINDOW_TILE_PAIR(WINDOW_TILE_BLANK);
+	syDMAXCopy((const void *)&fill, state,
+			   DMA_FILL_WORDS(sizeof(state->tilemap) / 4), REG_DMA3);
 #else
-  Iwram_FillWords(state, sizeof(state->tilemap),
-                  WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
+	syWordsFill(state, sizeof(state->tilemap),
+				WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
-  WindowSprite_InitializeFreeList();
-  Task_Add(WindowSystem_UploadTilemap, TASK_PASS_VBLANK);
-  WindowSystem_StartBattleUpdate(loadGlyphTiles);
-  // The first three text tiles take the lower rows of the bottom border
-  // tiles, and are kept from text.
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT,
-                                 TEXT_TILE_FIRST);
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM,
-                                 TEXT_TILE_FIRST + 1);
-  WindowSystem_CopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT,
-                                 TEXT_TILE_FIRST + 2);
-  {
-    u8 mode = TEXT_TILE_RESERVED;
+	mnWindowSprInitFreeList();
+	sySetEvent(mnWindowSystemUploadTilemap, TASK_PASS_VBLANK);
+	mnWindowSystemStartBattleUpdate(loadGlyphTiles);
+	/* The first three text tiles take the lower rows of the bottom border */
+	/* tiles, and are kept from text. */
+	mnWindowSystemCopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_LEFT,
+									TEXT_TILE_FIRST);
+	mnWindowSystemCopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM,
+									TEXT_TILE_FIRST + 1);
+	mnWindowSystemCopyTileLowerRows(WINDOW_TILE_BORDER_BOTTOM_RIGHT,
+									TEXT_TILE_FIRST + 2);
+	{
+		u8 mode = TEXT_TILE_RESERVED;
 
-    for (tileIndex = 0; tileIndex < 3; tileIndex++)
-      state->textTileState[tileIndex] = mode;
-  }
+		for(tileIndex = 0; tileIndex < 3; tileIndex++)
+			state->textTileState[tileIndex] = mode;
+	}
 }
 
-/// The tilemap upload, a VBlank-pass task: copies each band of the tilemap
-/// marked in the dirty bits to VRAM.
-void WindowSystem_UploadTilemap(void) {
-  struct WindowState *state = WINDOW_STATE;
-  u32 bands;
-  u8 *src;
-  u8 *dst;
-  if (!state->holdTilemapUpload) {
-    bands = state->dirty;
-    if (bands) {
-      dst = WINDOW_TILEMAP_VRAM;
-      src = (u8 *)state->tilemap;
-      // Bit 0 asks for all five bands; after the shift bit n is band n.
-      if (bands & 1)
-        bands = TILEMAP_DIRTY_ALL;
-      bands &= TILEMAP_DIRTY_ALL;
-      bands >>= 1;
-      do {
-        if (bands & 1)
-          Dma_Set(src, dst, DMA_COPY_WORDS(TILEMAP_BAND_SIZE / 4), REG_DMA3);
-        bands >>= 1;
-        src += TILEMAP_BAND_SIZE;
-        dst += TILEMAP_BAND_SIZE;
-      } while (bands);
-      state->dirty = bands;
-    }
-  }
+/* The tilemap upload, a VBlank-pass task: copies each band of the tilemap */
+/* marked in the dirty bits to VRAM. */
+void mnWindowSystemUploadTilemap(void) {
+	WIN_STATE *state = WINDOW_STATE;
+	u32 bands;
+	u8 *src;
+	u8 *dst;
+	if(!state->holdTilemapUpload) {
+		bands = state->dirty;
+		if(bands) {
+			dst = WINDOW_TILEMAP_VRAM;
+			src = (u8 *)state->tilemap;
+			/* Bit 0 asks for all five bands; after the shift bit n is band n.
+			 */
+			if(bands & 1)
+				bands = TILEMAP_DIRTY_ALL;
+			bands &= TILEMAP_DIRTY_ALL;
+			bands >>= 1;
+			do {
+				if(bands & 1)
+					syDMAXCopy(src, dst, DMA_COPY_WORDS(TILEMAP_BAND_SIZE / 4),
+							   REG_DMA3);
+				bands >>= 1;
+				src += TILEMAP_BAND_SIZE;
+				dst += TILEMAP_BAND_SIZE;
+			} while(bands);
+			state->dirty = bands;
+		}
+	}
 }
 
-/// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
-/// and frees the text tiles it showed.
-void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
-  struct WindowState *state = WINDOW_STATE;
-  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)state->tilemap);
-  s32 tile;
-  u32 bottom;
-  u32 row;
+/* Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
+ */
+/* and frees the text tiles it showed. */
+void mnWindowEraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
+	WIN_STATE *state = WINDOW_STATE;
+	u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)state->tilemap);
+	s32 tile;
+	u32 bottom;
+	u32 row;
 
-  tile = WINDOW_TILE_BLANK;
-  bottom = y + height;
-  if (bottom > DISPLAY_TILE_HEIGHT)
-    height = DISPLAY_TILE_HEIGHT - y;
-  if (width <= 1)
-    width = 2;
-  if (width > DISPLAY_TILE_WIDTH)
-    width = DISPLAY_TILE_WIDTH;
-  if (height <= 1)
-    height = 2;
-  // The height is held to the screen's width, not its height.
-  if (height > DISPLAY_TILE_WIDTH)
-    height = DISPLAY_TILE_WIDTH;
+	tile = WINDOW_TILE_BLANK;
+	bottom = y + height;
+	if(bottom > DISPLAY_TILE_HEIGHT)
+		height = DISPLAY_TILE_HEIGHT - y;
+	if(width <= 1)
+		width = 2;
+	if(width > DISPLAY_TILE_WIDTH)
+		width = DISPLAY_TILE_WIDTH;
+	if(height <= 1)
+		height = 2;
+	/* The height is held to the screen's width, not its height. */
+	if(height > DISPLAY_TILE_WIDTH)
+		height = DISPLAY_TILE_WIDTH;
 
-  // Free the text tiles while the tilemap still names them.
-  Window_ClearTextTilesInRect(x, y, width, height);
+	/* Free the text tiles while the tilemap still names them. */
+	mnWindowClearTextTilesInRect(x, y, width, height);
 
-  for (row = 0; row < height; row++) {
-    u32 column;
+	for(row = 0; row < height; row++) {
+		u32 column;
 
-    // In battle the screen's bottom three rows erase to the command panel.
-    if (state->battleMode != 0) {
-      if ((y + row) > 16)
-        tile = WINDOW_TILE_COMMAND_PANEL;
-      else
-        tile = WINDOW_TILE_BLANK;
-    }
-    for (column = 0; column < width; column++) {
-      *cursor++ = tile;
-    }
-    cursor += BG_SCREEN_WIDTH - width;
-  }
-  state->dirty = 1;
+		/* In battle the screen's bottom three rows erase to the command panel.
+		 */
+		if(state->battleMode != 0) {
+			if((y + row) > 16)
+				tile = WINDOW_TILE_COMMAND_PANEL;
+			else
+				tile = WINDOW_TILE_BLANK;
+		}
+		for(column = 0; column < width; column++) {
+			*cursor++ = tile;
+		}
+		cursor += BG_SCREEN_WIDTH - width;
+	}
+	state->dirty = 1;
 }
 
-/// Draws a window at its full size: its border, and for a text canvas window
-/// the canvas, filled with the window background under a border when the
-/// window is bordered and transparent otherwise.
-void Window_DrawOpened(struct Window *window) {
-  u32 flags;
-  u32 value;
-  u32 x;
-  u32 y;
-  u32 width;
-  u32 height;
-  struct WindowState *state;
+/* Draws a window at its full size: its border, and for a text canvas window */
+/* the canvas, filled with the window background under a border when the */
+/* window is bordered and transparent otherwise. */
+void mnWindowDrawOpened(WINDOW *window) {
+	u32 flags;
+	u32 value;
+	u32 x;
+	u32 y;
+	u32 width;
+	u32 height;
+	WIN_STATE *state;
 
-  state = WINDOW_STATE;
-  value = window->height;
-  flags = window->flags;
-  height = value;
-  value = 0;
-  window->duration = value;
-  x = window->x;
-  y = window->y;
-  width = window->width;
-  if (WINDOW_FLAG_TEXT_CANVAS & flags) {
-    if (WINDOW_FLAG_BORDERED_CANVAS & flags) {
-      Window_DrawBorder(x, y, width, height);
-      Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
-                      TEXT_CANVAS_BACKGROUND_WORD);
-    } else {
-      Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
-    }
-    Window_MapTextCanvasTiles(x, y, width, height, 0);
-  } else {
-    Window_DrawBorder(x, y, width, height);
-  }
-  state->dirty = 1;
+	state = WINDOW_STATE;
+	value = window->height;
+	flags = window->flg;
+	height = value;
+	value = 0;
+	window->duration = value;
+	x = window->x;
+	y = window->y;
+	width = window->width;
+	if(WINDOW_FLAG_TEXT_CANVAS & flags) {
+		if(WINDOW_FLAG_BORDERED_CANVAS & flags) {
+			mnWindowDrawBorder(x, y, width, height);
+			syWordsFill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
+						TEXT_CANVAS_BACKGROUND_WORD);
+		}
+		else {
+			syWordsFill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
+		}
+		mnWindowMapTextCanvasTiles(x, y, width, height, 0);
+	}
+	else {
+		mnWindowDrawBorder(x, y, width, height);
+	}
+	state->dirty = 1;
 }
 
-/// Opens a window at tile (x, y) of width by height tiles in the first free
-/// window slot, and returns it, or NULL when all slots are in use. attrs takes
-/// the WINDOW_FLAG_ flags.
-struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
-  struct Window *slot;
-  struct Window *found;
-  s32 i;
+/* Opens a window at tile (x, y) of width by height tiles in the first free */
+/* window slot, and returns it, or NULL when all slots are in use. attrs takes
+ */
+/* the WINDOW_FLAG_ flags. */
+WINDOW *mnWindowCreate(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
+	WINDOW *slot;
+	WINDOW *found;
+	s32 i;
 
-  slot = WINDOW_STATE->windows;
-  found = 0;
-  // A closing slot remains occupied until its animation has finished.
-  for (i = 0; i != WINDOW_COUNT; i++, slot++) {
-    if ((slot->flags & WINDOW_FLAG_OPEN) == 0 && slot->duration == 0) {
-      found = slot;
-      break;
-    }
-  }
-  if (found != 0) {
-    found->x = x;
-    found->y = y;
-    found->width = width;
-    found->height = height;
-    found->sprites.head = NULL;
-    found->state = WINDOW_TYPING;
-    found->sprites.tailLink = &slot->sprites.head;
-    found->opened = 1;
-    found->flags = WINDOW_FLAG_OPEN;
-    Text_ResetStyle();
-    if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
-      found->flags |= WINDOW_FLAG_TEXT_CANVAS;
-    }
-    if (attrs & WINDOW_FLAG_BORDERED_CANVAS) {
-      found->flags |= WINDOW_FLAG_BORDERED_CANVAS;
-    }
-    if (attrs & WINDOW_FLAG_OUTLINED_TEXT) {
-      found->flags |= WINDOW_FLAG_OUTLINED_TEXT;
-    }
-    if (attrs & WINDOW_FLAG_ANCHOR_BOTTOM) {
-      found->flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
-    }
-    if (attrs & WINDOW_FLAG_FIXED_X) {
-      found->flags |= WINDOW_FLAG_FIXED_X;
-    }
-    if (attrs & WINDOW_FLAG_INSTANT) {
-      found->flags |= WINDOW_FLAG_INSTANT;
-      found->zoomStage = 0;
-      found->duration = 1;
-      Window_DrawOpened(found);
-    } else {
-      // Zoom open over eight frames, and wait until it is open.
-      found->duration = WINDOW_OPEN_FRAMES;
-      found->zoomStage = WINDOW_OPEN_FRAMES - 1;
-      Window_WaitZoom(found);
-      wait(1);
-    }
-  }
-  return found;
+	slot = WINDOW_STATE->wins;
+	found = 0;
+	/* A closing slot remains occupied until its animation has finished. */
+	for(i = 0; i != WINDOW_COUNT; i++, slot++) {
+		if((slot->flg & WINDOW_FLAG_OPEN) == 0 && slot->duration == 0) {
+			found = slot;
+			break;
+		}
+	}
+	if(found != 0) {
+		found->x = x;
+		found->y = y;
+		found->width = width;
+		found->height = height;
+		found->sprs.head = NULL;
+		found->state = WINDOW_TYPING;
+		found->sprs.tailLink = &slot->sprs.head;
+		found->opened = 1;
+		found->flg = WINDOW_FLAG_OPEN;
+		mnTextResetStyle();
+		if(attrs & WINDOW_FLAG_TEXT_CANVAS) {
+			found->flg |= WINDOW_FLAG_TEXT_CANVAS;
+		}
+		if(attrs & WINDOW_FLAG_BORDERED_CANVAS) {
+			found->flg |= WINDOW_FLAG_BORDERED_CANVAS;
+		}
+		if(attrs & WINDOW_FLAG_OUTLINED_TEXT) {
+			found->flg |= WINDOW_FLAG_OUTLINED_TEXT;
+		}
+		if(attrs & WINDOW_FLAG_ANCHOR_BOTTOM) {
+			found->flg |= WINDOW_FLAG_ANCHOR_BOTTOM;
+		}
+		if(attrs & WINDOW_FLAG_FIXED_X) {
+			found->flg |= WINDOW_FLAG_FIXED_X;
+		}
+		if(attrs & WINDOW_FLAG_INSTANT) {
+			found->flg |= WINDOW_FLAG_INSTANT;
+			found->zoomStage = 0;
+			found->duration = 1;
+			mnWindowDrawOpened(found);
+		}
+		else {
+			/* Zoom open over eight frames, and wait until it is open. */
+			found->duration = WINDOW_OPEN_FRAMES;
+			found->zoomStage = WINDOW_OPEN_FRAMES - 1;
+			mnWindowWaitZoom(found);
+			sySynch(1);
+		}
+	}
+	return found;
 }
 
-/// Waits until a zooming window has finished opening or closing.
-void Window_WaitZoom(struct Window *window) {
-  if (!(WINDOW_FLAG_INSTANT & window->flags)) {
-    while (window->duration != 0)
-      wait(1);
-  }
+/* Waits until a zooming window has finished opening or closing. */
+void mnWindowWaitZoom(WINDOW *window) {
+	if(!(WINDOW_FLAG_INSTANT & window->flg)) {
+		while(window->duration != 0)
+			sySynch(1);
+	}
 }
 
-/// Closes a window: clears its contents and remembers its last rectangle.
-void Window_Close(struct Window *window, s32 instant) {
-  if (window == 0)
-    return;
+/* Closes a window: clears its contents and remembers its last rectangle. */
+void mnWindowClose(WINDOW *window, s32 instant) {
+	if(window == 0)
+		return;
 
-  WindowSprite_PrepareForRedraw(window);
-  // Keep the old rectangle available while the closing animation shrinks it.
-  window->previousX = window->x;
-  window->previousY = window->y;
-  window->previousWidth = window->width;
-  window->flags = 0;
-  window->previousHeight = window->height;
+	mnWindowSprPrepareForRedraw(window);
+	/* Keep the old rectangle available while the closing animation shrinks it.
+	 */
+	window->prevX = window->x;
+	window->prevY = window->y;
+	window->prevWidth = window->width;
+	window->flg = 0;
+	window->prevHeight = window->height;
 
-  if (instant != 0) {
-    Window_EraseBorderRect(window->x, window->y, window->width, window->height);
-    window->sprites.head = NULL;
-    window->sprites.tailLink = NULL;
-    window->width = 0;
-    window->height = 0;
-    window->x = 0;
-    window->y = 0;
-    window->opened = 0;
-    window->animation = 0;
-    window->state = 0;
-    window->flags = 0;
-    window->zoomStage = 0;
-    window->duration = 0;
-    window->previousX = 0;
-    window->previousY = 0;
-    window->previousWidth = 0;
-    window->previousHeight = 0;
-  } else {
-    // Zoom closed over four frames (Window_UpdateZooms), from frame 0:
-    // instant is 0 here.
-    window->zoomStage = instant;
-    window->duration = WINDOW_CLOSE_FRAMES;
-  }
+	if(instant != 0) {
+		mnWindowEraseBorderRect(window->x, window->y, window->width,
+								window->height);
+		window->sprs.head = NULL;
+		window->sprs.tailLink = NULL;
+		window->width = 0;
+		window->height = 0;
+		window->x = 0;
+		window->y = 0;
+		window->opened = 0;
+		window->anm = 0;
+		window->state = 0;
+		window->flg = 0;
+		window->zoomStage = 0;
+		window->duration = 0;
+		window->prevX = 0;
+		window->prevY = 0;
+		window->prevWidth = 0;
+		window->prevHeight = 0;
+	}
+	else {
+		/* Zoom closed over four frames (mnWindowUpdateZooms), from frame 0: */
+		/* instant is 0 here. */
+		window->zoomStage = instant;
+		window->duration = WINDOW_CLOSE_FRAMES;
+	}
 }
 
-/// Clears a window's contents: redraws it empty and releases the render
-/// window sprites it carries. A text canvas window is left alone.
-void WindowSprite_PrepareForRedraw(struct Window *window) {
-  if (!(WINDOW_FLAG_TEXT_CANVAS & window->flags)) {
-    WindowSprite_RedrawSavedRect(window);
-    WindowSprite_ClearList(window);
-  }
+/* Clears a window's contents: redraws it empty and releases the render */
+/* window sprites it carries. A text canvas window is left alone. */
+void mnWindowSprPrepareForRedraw(WINDOW *window) {
+	if(!(WINDOW_FLAG_TEXT_CANVAS & window->flg)) {
+		mnWindowSprRedrawSavedRect(window);
+		mnWindowSprClearList(window);
+	}
 }
 
-/// Redraws a window empty, its border and fill, at its current rectangle.
-void WindowSprite_RedrawSavedRect(struct Window *window) {
-  Window_DrawBorder(window->x, window->y, window->width, window->height);
+/* Redraws a window empty, its border and fill, at its current rectangle. */
+void mnWindowSprRedrawSavedRect(WINDOW *window) {
+	mnWindowDrawBorder(window->x, window->y, window->width, window->height);
 }
 
-/// Releases every window sprite in a list and empties it. sprites is the list,
-/// or a window (whose sprite list comes first); NULL is ignored.
-void WindowSprite_ClearList(void *sprites) {
-  struct WindowSpriteList *list = sprites;
-  struct WindowSprite *node;
-  struct WindowSprite *next;
+/* Releases every window sprite in a list and empties it. sprites is the list,
+ */
+/* or a window (whose sprite list comes first); NULL is ignored. */
+void mnWindowSprClearList(void *sprites) {
+	WINDOW_SPR_LIST *list = sprites;
+	WINDOW_SPR *node;
+	WINDOW_SPR *next;
 
-  next = NULL;
-  if (list != NULL) {
-    node = list->head;
-    // Detach the chain before returning its nodes to the shared free pool.
-    list->tailLink = &list->head;
-    list->head = next;
-    while (node != NULL) {
-      next = node->next;
-      WindowSprite_Release(node);
-      node = next;
-    }
-  }
+	next = NULL;
+	if(list != NULL) {
+		node = list->head;
+		/* Detach the chain before returning its nodes to the shared free pool.
+		 */
+		list->tailLink = &list->head;
+		list->head = next;
+		while(node != NULL) {
+			next = node->next;
+			mnWindowSprRelease(node);
+			node = next;
+		}
+	}
 }
 
-/// Clears an area of a window's interior to the window fill. left, top, right
-/// and bottom are pixels inside the window, and the area covers every tile
-/// they touch.
-void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
-                               u32 right, u32 bottom) {
-  struct WindowState *state;
-  u32 x;
-  u32 y;
-  u32 width;
-  u32 height;
-  u16 *tiles;
-  u32 row;
+/* Clears an area of a window's interior to the window fill. left, top, right */
+/* and bottom are pixels inside the window, and the area covers every tile */
+/* they touch. */
+void mnWindowClearInteriorTiles(const WINDOW *window, u32 left, u32 top,
+								u32 right, u32 bottom) {
+	WIN_STATE *state;
+	u32 x;
+	u32 y;
+	u32 width;
+	u32 height;
+	u16 *tiles;
+	u32 row;
 
-  right += 7;
-  bottom += 7;
-  right >>= 3;
-  bottom >>= 3;
-  x = left >> 3;
-  state = WINDOW_STATE;
-  y = top >> 3;
-  x += window->x;
-  y += window->y;
-  right += window->x;
-  bottom += window->y;
-  left = x + 1;
-  top = y + 1;
-  width = right - x;
-  height = bottom - y;
-  Window_ClearTextTilesInRect(left, top, width, height);
-  tiles = state->tilemap + top * BG_SCREEN_WIDTH + left;
-  for (row = 0; row < height; row++) {
-    for (left = 0; left < width; left++)
-      *tiles++ = WINDOW_TILE_WINDOW_FILL;
-    tiles += BG_SCREEN_WIDTH - width;
-  }
-  state->dirty = 1;
+	right += 7;
+	bottom += 7;
+	right >>= 3;
+	bottom >>= 3;
+	x = left >> 3;
+	state = WINDOW_STATE;
+	y = top >> 3;
+	x += window->x;
+	y += window->y;
+	right += window->x;
+	bottom += window->y;
+	left = x + 1;
+	top = y + 1;
+	width = right - x;
+	height = bottom - y;
+	mnWindowClearTextTilesInRect(left, top, width, height);
+	tiles = state->tilemap + top * BG_SCREEN_WIDTH + left;
+	for(row = 0; row < height; row++) {
+		for(left = 0; left < width; left++)
+			*tiles++ = WINDOW_TILE_WINDOW_FILL;
+		tiles += BG_SCREEN_WIDTH - width;
+	}
+	state->dirty = 1;
 }
 
-/// Points a list's tail link back at its last sprite, after the list has been
-/// edited by hand.
-UNUSED void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
-  struct WindowSprite *node = list->head;
-  struct WindowSprite **tail = &list->head;
+/* Points a list's tail link back at its last sprite, after the list has been */
+/* edited by hand. */
+UNUSED void mnWindowSprUpdateListTail(WINDOW_SPR_LIST *list) {
+	WINDOW_SPR *node = list->head;
+	WINDOW_SPR **tail = &list->head;
 
-  while (node != NULL) {
-    tail = &node->next;
-    node = node->next;
-  }
-  list->tailLink = tail;
+	while(node != NULL) {
+		tail = &node->next;
+		node = node->next;
+	}
+	list->tailLink = tail;
 }
 
-/// Adds a window sprite to the end of a list; NULL lists are ignored.
-void WindowSprite_AppendToList(struct WindowSpriteList *list,
-                               struct WindowSprite *node) {
-  if (list != NULL) {
-    *list->tailLink = node;
-    // UB: the new tail is stored as node (next is its first member) through
-    // a WindowSprite * view of tailLink, which keeps both stores in one alias
-    // set and in this order.
+/* Adds a window sprite to the end of a list; NULL lists are ignored. */
+void mnWindowSprAppendToList(WINDOW_SPR_LIST *list, WINDOW_SPR *node) {
+	if(list != NULL) {
+		*list->tailLink = node;
+		/* UB: the new tail is stored as node (next is its first member) through
+		 */
+		/* a WINDOW_SPR * view of tailLink, which keeps both stores in one
+		 * alias */
+		/* set and in this order. */
 #ifdef UBFIX
-    // Store the address of next through the tail link's actual pointer type.
-    list->tailLink = &node->next;
+		/* Store the address of next through the tail link's actual pointer
+		 * type. */
+		list->tailLink = &node->next;
 #else
-    *(struct WindowSprite **)&list->tailLink = node;
+		*(WINDOW_SPR **)&list->tailLink = node;
 #endif
-  }
+	}
 }
 
-/// Frees a window sprite: returns it to the free list, releases its VRAM cache
-/// entry unless it is a glyph, and for a portrait frees its palette slot too.
-void WindowSprite_Release(struct WindowSprite *entry) {
-  WindowSprite_ReleaseFree(entry);
-  if (entry->kind != WINDOW_SPRITE_PLAIN) {
-    VramCache_FreeEntry(entry->index);
-    if (entry->kind == WINDOW_SPRITE_PORTRAIT) {
-      WINDOW_STATE
-          ->portraitPictures[entry->sprite.oam.palette - PORTRAIT_PALETTE] =
-          PORTRAIT_SLOT_EMPTY;
-    }
-  }
-  entry->motion = 0;
+/* Frees a window sprite: returns it to the free list, releases its VRAM cache
+ */
+/* entry unless it is a glyph, and for a portrait frees its palette slot too. */
+void mnWindowSprRelease(WINDOW_SPR *entry) {
+	mnWindowSprReleaseFree(entry);
+	if(entry->kind != WINDOW_SPRITE_PLAIN) {
+		syVramCacheFreeEntry(entry->idx);
+		if(entry->kind == WINDOW_SPRITE_PORTRAIT) {
+			WINDOW_STATE
+				->portraitPictures[entry->spr.oam.pal - PORTRAIT_PALETTE] =
+				PORTRAIT_SLOT_EMPTY;
+		}
+	}
+	entry->motion = 0;
 }
 
-/// Starts a free message typing the decoded text that begins at entry into
-/// window, with the pen at pixel (x, y). spacing gives each of four lines an
-/// extra gap between characters, in 1/256 pixels (or none for NULL), and is
-/// copied, so the caller's array need not outlive the call; flags is kept with
-/// the message (nonzero keeps the window's size from page to page).
-struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
-                              u16 *spacing, s32 flags) {
-  struct Message *message = WINDOW_STATE->messages;
-  struct Message *found = NULL;
-  u32 i;
+/* Starts a free message typing the decoded text that begins at entry into */
+/* window, with the pen at pixel (x, y). spacing gives each of four lines an */
+/* extra gap between characters, in 1/256 pixels (or none for NULL), and is */
+/* copied, so the caller's array need not outlive the call; flags is kept with
+ */
+/* the message (nonzero keeps the window's size from page to page). */
+MESSAGE *mnMessageStart(WINDOW *window, s32 entry, s32 x, s32 y, u16 *spacing,
+						s32 flags) {
+	MESSAGE *message = WINDOW_STATE->msgs;
+	MESSAGE *found = NULL;
+	u32 i;
 
-  for (i = 0; i != MESSAGE_COUNT; i++, message++) {
-    if (message->window == NULL) {
-      found = message;
-      break;
-    }
-  }
-  if (found != NULL) {
-    // The message stores pen coordinates in 1/256 pixels.
-    found->window = window;
-    found->startX = x << 8;
-    found->x = x << 8;
-    found->y = y << 8;
-    found->textIndex = entry;
-    found->colour = TEXT_DEFAULT_COLOR;
-    found->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-    found->countdown = 0;
-    found->outline = TEXT_STYLE_PLAIN;
-    found->ended = 0;
-    found->flags = flags;
-    if (spacing != NULL) {
-      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
-        found->spacing[i] = *spacing++;
-    } else {
-      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
-        found->spacing[i] = 0;
-    }
-    found->line = 0;
-  }
-  return found;
+	for(i = 0; i != MESSAGE_COUNT; i++, message++) {
+		if(message->win == NULL) {
+			found = message;
+			break;
+		}
+	}
+	if(found != NULL) {
+		/* The message stores pen coordinates in 1/256 pixels. */
+		found->win = window;
+		found->startX = x << 8;
+		found->x = x << 8;
+		found->y = y << 8;
+		found->textIdx = entry;
+		found->colour = TEXT_DEFAULT_COLOR;
+		found->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+		found->countdown = 0;
+		found->outline = TEXT_STYLE_PLAIN;
+		found->ended = 0;
+		found->flg = flags;
+		if(spacing != NULL) {
+			for(i = 0; i < MESSAGE_LINE_COUNT; i++)
+				found->spacing[i] = *spacing++;
+		}
+		else {
+			for(i = 0; i < MESSAGE_LINE_COUNT; i++)
+				found->spacing[i] = 0;
+		}
+		found->line = 0;
+	}
+	return found;
 }
 
-/// Starts a message typing the decoded text at entry into the battle message
-/// window, on its next line unless keepPosition is set, and returns it, or
-/// NULL when no message is free.
-struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
-                                       s32 keepPosition) {
-  struct Message *message;
-  struct Message *selected;
-  u16 *spacing;
-  u32 index;
+/* Starts a message typing the decoded text at entry into the battle message */
+/* window, on its next line unless keepPosition is set, and returns it, or */
+/* NULL when no message is free. */
+MESSAGE *mnBattleMessageCont(WINDOW *window, s32 entry, s32 keepPosition) {
+	MESSAGE *message;
+	MESSAGE *selected;
+	u16 *spacing;
+	u32 index;
 
-  message = WINDOW_STATE->messages;
-  selected = 0;
-  for (index = 0; index != MESSAGE_COUNT; message++, index++) {
-    if (message->window == 0 || message->window->state != WINDOW_TYPING) {
-      selected = message;
-      break;
-    }
-  }
+	message = WINDOW_STATE->msgs;
+	selected = 0;
+	for(index = 0; index != MESSAGE_COUNT; message++, index++) {
+		if(message->win == 0 || message->win->state != WINDOW_TYPING) {
+			selected = message;
+			break;
+		}
+	}
 
-  if (selected != 0) {
-    // Positions are in 1/256 pixel: the first line is 10 pixels down and 3 in,
-    // the second a line below it, and after the second the text scrolls up.
-    if (selected->window == 0) {
-      selected->y = 10 << 8;
-      selected->window = window;
-      selected->x = 3 << 8;
-    } else if (keepPosition == 0) {
-      if (selected->y == 0) {
-        selected->y = 10 << 8;
-      } else if (selected->y < BATTLE_MESSAGE_LINE_HEIGHT << 8) {
-        selected->y += BATTLE_MESSAGE_LINE_HEIGHT << 8;
-      } else {
-        Text_StartCanvasScroll(selected);
-      }
-      selected->x = 3 << 8;
-    }
+	if(selected != 0) {
+		/* Positions are in 1/256 pixel: the first line is 10 pixels down and 3
+		 * in, */
+		/* the second a line below it, and after the second the text scrolls up.
+		 */
+		if(selected->win == 0) {
+			selected->y = 10 << 8;
+			selected->win = window;
+			selected->x = 3 << 8;
+		}
+		else if(keepPosition == 0) {
+			if(selected->y == 0) {
+				selected->y = 10 << 8;
+			}
+			else if(selected->y < BATTLE_MESSAGE_LINE_HEIGHT << 8) {
+				selected->y += BATTLE_MESSAGE_LINE_HEIGHT << 8;
+			}
+			else {
+				mnTextStartCanvasScroll(selected);
+			}
+			selected->x = 3 << 8;
+		}
 
-    selected->startX = 3 << 8;
-    selected->window->state = WINDOW_TYPING;
-    // The new text starts in the default style.
-    selected->colour = TEXT_DEFAULT_COLOR;
-    selected->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-    selected->textIndex = entry;
-    selected->countdown = 0;
-    selected->outline = 0;
-    selected->line = 0;
-    selected->ended = 0;
-    index = 0;
-    spacing = selected->spacing;
-    for (; index < MESSAGE_LINE_COUNT; index++) {
-      *spacing++ = 0;
-    }
-  }
-  return selected;
+		selected->startX = 3 << 8;
+		selected->win->state = WINDOW_TYPING;
+		/* The new text starts in the default style. */
+		selected->colour = TEXT_DEFAULT_COLOR;
+		selected->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+		selected->textIdx = entry;
+		selected->countdown = 0;
+		selected->outline = 0;
+		selected->line = 0;
+		selected->ended = 0;
+		index = 0;
+		spacing = selected->spacing;
+		for(; index < MESSAGE_LINE_COUNT; index++) {
+			*spacing++ = 0;
+		}
+	}
+	return selected;
 }
 
-/// Clears the text canvas to transparent.
-s32 Text_ClearCanvas(void) {
-  return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
+/* Clears the text canvas to transparent. */
+s32 mnTextClearCanvas(void) {
+	return syWordsFill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
-/// Fills the text canvas with the window background colour.
-s32 Text_FillCanvasBackground(void) {
-  return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
-                         TEXT_CANVAS_BACKGROUND_WORD);
+/* Fills the text canvas with the window background colour. */
+s32 mnTextFillCanvasBackground(void) {
+	return syWordsFill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
+					   TEXT_CANVAS_BACKGROUND_WORD);
 }
 
-/// Resets the pen and text style of the first idle message, clearing the canvas
-/// when the message still has a window.
-void Message_ResetIdle(void) {
-  struct Message *message = WINDOW_STATE->messages;
-  struct Message *selection = 0;
-  s32 i;
+/* Resets the pen and text style of the first idle message, clearing the canvas
+ */
+/* when the message still has a window. */
+void mnMessageResetIdle(void) {
+	MESSAGE *message = WINDOW_STATE->msgs;
+	MESSAGE *selection = 0;
+	s32 i;
 
-  for (i = 0; i != MESSAGE_COUNT; message++, i++) {
-    if (message->window == 0 || message->window->state != WINDOW_TYPING) {
-      selection = message;
-      break;
-    }
-  }
-  if (selection != 0) {
-    if (selection->window != 0) {
-      Text_ClearCanvas();
-      selection->y = 0;
-    }
-    selection->x = 0;
-    selection->countdown = 0;
-    selection->colour = TEXT_DEFAULT_COLOR;
-    selection->outline = TEXT_STYLE_PLAIN;
-    selection->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-  }
+	for(i = 0; i != MESSAGE_COUNT; message++, i++) {
+		if(message->win == 0 || message->win->state != WINDOW_TYPING) {
+			selection = message;
+			break;
+		}
+	}
+	if(selection != 0) {
+		if(selection->win != 0) {
+			mnTextClearCanvas();
+			selection->y = 0;
+		}
+		selection->x = 0;
+		selection->countdown = 0;
+		selection->colour = TEXT_DEFAULT_COLOR;
+		selection->outline = TEXT_STYLE_PLAIN;
+		selection->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+	}
 }
 
-/// Sets the colour, style and line spacing glyphs are drawn in to the
-/// message's.
-void Message_ApplyStyle(struct Message *message) {
-  struct WindowState *state = WINDOW_STATE;
+/* Sets the colour, style and line spacing glyphs are drawn in to the */
+/* message's. */
+void mnMessageApplyStyle(MESSAGE *message) {
+	WIN_STATE *state = WINDOW_STATE;
 
-  state->colour = message->colour;
-  state->outline = message->outline;
-  state->lineSpacing = message->lineSpacing;
+	state->colour = message->colour;
+	state->outline = message->outline;
+	state->lineSpacing = message->lineSpacing;
 }
 
-/// Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a
-/// frame over two frames (Message_Type, Text_ScrollCanvasUp), during which
-/// the message types nothing.
-void Text_StartCanvasScroll(struct Message *message) {
-  message->transition = 2;
-}
+/* Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a */
+/* frame over two frames (mnMessageType, mnTextScrollCanvasUp), during which */
+/* the message types nothing. */
+void mnTextStartCanvasScroll(MESSAGE *message) { message->transition = 2; }

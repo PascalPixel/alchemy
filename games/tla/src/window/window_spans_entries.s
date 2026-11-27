@@ -1,11 +1,11 @@
 @ Why assembly: the Thumb entry of the cell tiles builder: callers enter in
-@ Thumb and bx pc switches to the ARM code of ScanlineWindow_BuildSpans
+@ Thumb and bx pc switches to the ARM code of mnScanlineWindowBuildSpans
 @ (window_spans.c) that follows, a mode switch inside a function.
 @ The halfword after it is never run.
 .syntax unified
 	.thumb
-	.global ScanlineWindow_BuildSpansCode
-ScanlineWindow_BuildSpansCode:
+	.global mnScanlineWindowBuildSpansCode
+mnScanlineWindowBuildSpansCode:
 	bx	pc
 AlchemyUncredited_080388fe:
 	.2byte	0x0200

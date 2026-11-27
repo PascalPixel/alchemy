@@ -1,18 +1,18 @@
-@ Why Math_UnsignedMulHigh to Math_UnsignedMulHighAdd are assembly:
+@ Why syMathUnsignedMulHigh to syMathUnsignedMulHighAdd are assembly:
 @ each Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the nop after bx pc is never run.
 @ Secondary: umulls sets flags nothing reads; GCC 2.95.2's ARM patterns
 @ emit umull without the s bit.
-@ Why Trig_Cos is assembly:
-@ Trig_Cos falls through directly into Trig_Sin's entry, a linkage no
+@ Why syCos is assembly:
+@ syCos falls through directly into sySin's entry, a linkage no
 @ procedure-call standard produces.
 	.section .text,"ax",%progbits
 	.balign 4
 .syntax unified
 	.thumb
-	.global Math_UnsignedMulHigh
+	.global syMathUnsignedMulHigh
 	.thumb_func
-Math_UnsignedMulHigh:
+syMathUnsignedMulHigh:
 	bx	pc
 AlchemyUncredited_08002076:
 	nop
@@ -21,9 +21,9 @@ AlchemyUncreditedEnd_08002076:
 	umulls	r3, r0, r1, r0
 	bx	lr
 	.thumb
-	.global Math_UnsignedMulHighAdd
+	.global syMathUnsignedMulHighAdd
 	.thumb_func
-Math_UnsignedMulHighAdd:
+syMathUnsignedMulHighAdd:
 	bx	pc
 AlchemyUncredited_08002082:
 	nop
@@ -37,15 +37,15 @@ AlchemyUncreditedEnd_08002082:
 	.balign 2
 .syntax unified
 	.thumb
-	.global Trig_Cos
+	.global syCos
 	.thumb_func
-Trig_Cos:
+syCos:
 	movs	r1, #64
 	lsls	r1, r1, #8
 	adds	r0, r0, r1
-	.global Trig_Sin
+	.global sySin
 	.thumb_func
-Trig_Sin:
+sySin:
 	adds	r0, #32
 	lsls	r1, r0, #16
 	lsrs	r1, r1, #22

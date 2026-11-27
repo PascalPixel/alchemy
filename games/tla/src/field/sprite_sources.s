@@ -1,8 +1,8 @@
 	.include "enums/sprite_ids.inc"
 
 @ The packed resource that holds each battle sprite's pictures
-@ (struct SpritePictureCacheSource), which the sprite picture cache decodes.
-@ Each row: the resource and the sprite (enum SpriteId, sprite_ids.h); sprite 0
+@ (SPR_PICTURE_CACHE_SOURCE), which the sprite picture cache decodes.
+@ Each row: the resource and the sprite (SPR_ID, sprite_ids.h); sprite 0
 @ ends the table.
 	.macro sprite_source resource:req, sprite:req
 	.2byte ResourceId_\resource, \sprite
@@ -10,8 +10,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gSpritePictureCache_Sources
-gSpritePictureCache_Sources:
+	.global SpritePictureCache_Sources
+SpritePictureCache_Sources:
 	sprite_source BlueDevilSprites, SPRITE_BATTLE_BLUE_DRAGON
 	sprite_source PinkBruteSprites, SPRITE_BATTLE_RED_DEMON
 	sprite_source ClubTrollSprites, SPRITE_BATTLE_AKA_MANAH

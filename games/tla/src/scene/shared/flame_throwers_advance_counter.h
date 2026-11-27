@@ -1,11 +1,11 @@
-/// Unused: steps the flame throwers' counter while the party walks, wrapping
-/// at `limit`, as the vents' Vent_AdvanceCounter does.
-UNUSED s32 FlameThrowers_AdvanceCounter(s32 limit) {
-  struct FlameHitState *state = FLAME_THROWERS_STATE;
+/* Unused: steps the flame throwers' counter while the party walks, wrapping */
+/* at `limit`, as the vents' scVentAdvanceCounter does. */
+UNUSED s32 scFlameThrowersAdvanceCounter(s32 limit) {
+	FLAME_HIT_STATE *state = FLAME_THROWERS_STATE;
 
-  if (!Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-    if (++state->counter >= limit)
-      state->counter = 0;
-  }
-  return state->counter;
+	if(!fdEventGetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
+		if(++state->cnt >= limit)
+			state->cnt = 0;
+	}
+	return state->cnt;
 }

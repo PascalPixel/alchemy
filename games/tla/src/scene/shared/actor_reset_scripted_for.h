@@ -1,10 +1,10 @@
-/// Actor_ResetScripted as a two-argument callback.
-void Actor_ResetScriptedFor(struct Actor *actor, s32 unused) {
-  actor->motionFlags = 0;
-  actor->collisionFlags = 0;
-  Actor_SetSpriteFlags(actor, 0);
-  Actor_StartScript(actor, gScriptedPart_Script);
-  actor->timer = 0;
-  actor->speedLimit = 0;
-  actor->acceleration = 0;
+/* fdActorResetScripted as a two-argument callback. */
+void fdActorResetScriptedFor(ACTOR *actor, s32 unused) {
+	actor->motionFlg = 0;
+	actor->collisionFlg = 0;
+	fdActorSetSprFlags(actor, 0);
+	fdActorStartScript(actor, ScriptedPart_Script);
+	actor->tmr = 0;
+	actor->speedLimit = 0;
+	actor->acceleration = 0;
 }

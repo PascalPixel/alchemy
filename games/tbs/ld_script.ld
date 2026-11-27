@@ -9,13 +9,13 @@
    that order.
 
    The main image lists its objects in the order the Game Pak holds them. In
-   a bank of ordinary code every object's .text comes first, then every
+   a module of ordinary code every object's .text comes first, then every
    object's .rodata, then its .data, as pret writes its scripts; an object
    that needs other sections names them. */
 #include "version.h"
 
 /* The shift test (make SHIFT=n) moves everything after the header n bytes,
-   so every bank starts n bytes later; 0 in every other build. */
+   so every module starts n bytes later; 0 in every other build. */
 #ifndef ROM_SHIFT
 #define ROM_SHIFT 0
 #endif
@@ -23,7 +23,7 @@
 #error "SHIFT must be a multiple of 4: words and Thumb literal pools in byte-aligned sections would misalign"
 #endif
 
-/* Where each far-call bank starts, and the resource directory after them,
+/* Where each stub call module starts, and the resource directory after them,
    in each edition. English and Italian share every address, and Spanish
    and French; Japanese shares English's first two. Most of German's fall
    on 256-byte steps, the other editions' on 2 or 4 KB ones. */
@@ -98,17 +98,17 @@
 #else
 OUTPUT_ARCH(arm)
 ENTRY(System_Entry)
-Decompress_MoveToFrontLzCommandsCodeSize = Resource_ExecuteTransfer - Decompress_MoveToFrontLzCommands;
-Render_DecodePictureCodeSize = TileMap_DrawRows - Render_DecodePicture;
+Decompress_MoveToFrontLzCommandsCodeSize = syResourceExecuteTransfer - Decompress_MoveToFrontLzCommands;
+Render_DecodePictureCodeSize = fdTileMapDrawRows - Render_DecodePicture;
 Tile_Decompress4bppCodeSize = Tile_ExpandMasked - Tile_Decompress4bpp;
 Tile_ExpandMaskedCodeSize = Tile_ExpandOpaque - Tile_ExpandMasked;
-Tile_ExpandOpaqueCodeSize = WindowSprite_AcquireFree - Tile_ExpandOpaque;
-Credits_DecodeBackgroundCodeSize = Credits_ClearBuffer - Credits_DecodeBackground;
-Actor_UpdateAllCodeSize = Decompress_Lz - Actor_UpdateAll;
-ScanlineWindow_BuildEdgesCodeSize = Tile_Decompress4bpp - ScanlineWindow_BuildEdges;
-WorldMap_UpdateAffineLinesCodeSize = Tile_ConvertMapGrid - WorldMap_UpdateAffineLines;
-Glyph_DrawCodeSize = ScanlineWindow_BuildEdges - Glyph_DrawArm;
-BitDecoder_Size = DebugParameterSet_Load - BitDecoder_DecodeImage;
+Tile_ExpandOpaqueCodeSize = mnWindowSprAcquireFree - Tile_ExpandOpaque;
+Credits_DecodeBackgroundCodeSize = mnCreditsClearBuffer - Credits_DecodeBackground;
+fdActorUpdateAllCodeSize = fdDecompressLz - fdActorUpdateAll;
+mnScanlineWindowBuildEdgesCodeSize = Tile_Decompress4bpp - mnScanlineWindowBuildEdges;
+fdWorldMapUpdateAffineLinesCodeSize = Tile_ConvertMapGrid - fdWorldMapUpdateAffineLines;
+mnGlyphDrawCodeSize = mnScanlineWindowBuildEdges - mnGlyphDrawArm;
+BitDecoder_Size = btDebugParmSetLoad - btBitDecoderDecodeImage;
 
 MEMORY
 {
@@ -125,19 +125,19 @@ SECTIONS
     } > EWRAM
     .rom_start :
     {
-        "*/games/tbs/src/gamepak/rom_header.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/gamepak/far_call/system.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/system/rom_header.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/system/stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/entry.o"(.text .padding .text.resampler_kernels_1 .padding.resampler_kernels_pad_1 .text.resampler_kernels_2)
-        "*/games/tbs/src/sound/channel_update_entry.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/sdk/sound/channel_update_entry.o"(.text .rodata .data .padding)
     } > ROM
     .iwram_resident :
     {
         "*/games/tbs/src/system/irq.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/irq_table.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/iwram_routines.o"(.text .data .text.iwram_divide)
-        "*/games/tbs/src/sound/resident_mixer.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/sound/resident_mixer_interpolate.o"(.text .data .text.sound_mixer_channel)
-        "*/games/tbs/src/sound/resident_mixer_render.o"(.text .data .text.iwram_copy_words)
+        "*/games/tbs/src/sdk/sound/resident_mixer.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/sdk/sound/resident_mixer_interpolate.o"(.text .data .text.sound_mixer_channel)
+        "*/games/tbs/src/system/mixer_render.o"(.text .data .text.iwram_copy_words)
     } > IWRAM AT>ROM
     iwram (NOLOAD) :
     {
@@ -152,10 +152,10 @@ SECTIONS
         "*/games/tbs/src/system/heap_release.o"(.text .text.* .rodata .data .padding)
         "*/games/tbs/src/system/system.o"(.text)
         "*/games/tbs/src/system/bios.o"(.text .padding .text.sound_vsync_on)
-        "*/games/tbs/src/gamepak/flash/flash.o"(.text)
-        "*/games/tbs/src/gamepak/flash/sst.o"(.text)
-        "*/games/tbs/src/gamepak/flash/program_flash_sector.o"(.text)
-        "*/games/tbs/src/gamepak/flash/atmel.o"(.text)
+        "*/games/tbs/src/sdk/flash/flash.o"(.text)
+        "*/games/tbs/src/sdk/flash/sst.o"(.text)
+        "*/games/tbs/src/sdk/flash/program_flash_sector.o"(.text)
+        "*/games/tbs/src/sdk/flash/atmel.o"(.text)
         "*libgcc.a:_call_via_rX.o"(.text)
         "*/games/tbs/src/system/irq_table.o"(.rodata.irq_head .rodata.irq_middle .text.irq_halt .rodata.irq_tail)
         "*/games/tbs/src/system/math_table.o"(.rodata)
@@ -163,16 +163,16 @@ SECTIONS
         "*/games/tbs/src/system/number_text.o"(.rodata)
         "*/games/tbs/src/system/inner_product.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/savedata.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/flashtab.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/flash.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/flashsst.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/sst.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/flashmx.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/program_flash_sector.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/flashat.o"(.rodata)
-        "*/games/tbs/src/gamepak/flash/atmel.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/flashtab.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/flash.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/flashsst.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/sst.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/flashmx.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/program_flash_sector.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/flashat.o"(.rodata)
+        "*/games/tbs/src/sdk/flash/atmel.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + FIELD_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/field.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/field/stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/sprite_color_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/sprite_color_remap.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/picture_decode.o"(.text .data .text.draw_map)
@@ -192,7 +192,7 @@ SECTIONS
         "*/games/tbs/src/field/actor_script_operands.o"(.text .rodata .data .padding)
         "*/games/tbs/src/map/resources.o"(.text .rodata .data .padding)
         . = ABSOLUTE(ROM_SHIFT + WINDOW_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/window.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/window/stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/window/message_decode.o"(.text .rodata .data .padding)
         "*/games/tbs/src/window/glyph_arm.o"(.text)
         "*/games/tbs/src/window/decompress_4bpp.o"(.text .rodata .text.decompress_4bpp_loop)
@@ -232,7 +232,7 @@ SECTIONS
         "*/games/tbs/src/graphics/ui/slider_palette.list.o"(.rodata)
         "*/games/tbs/src/window/keyboard.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + GAME_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/game.o"(.text .padding)
+        "*/games/tbs/src/game/stubs.o"(.text .padding)
         "*/games/tbs/src/game/game.o"(.text .padding)
         "*/games/tbs/src/game/experience_table.o"(.text .padding)
         "*/games/tbs/src/game/rare_item_stock.o"(.text .padding)
@@ -245,7 +245,7 @@ SECTIONS
         "*/games/tbs/src/game/class_table.o"(.text .padding)
         "*/games/tbs/src/game/element_table.o"(.text .padding)
         "*/games/tbs/src/game/djinn_table.o"(.text .padding)
-        "*/games/tbs/src/gamepak/far_call/game.o"(.rodata)
+        "*/games/tbs/src/game/stubs.o"(.rodata)
         "*/games/tbs/src/game/game.o"(.rodata)
         "*/games/tbs/src/game/experience_table.o"(.rodata)
         "*/games/tbs/src/game/rare_item_stock.o"(.rodata)
@@ -258,7 +258,7 @@ SECTIONS
         "*/games/tbs/src/game/class_table.o"(.rodata)
         "*/games/tbs/src/game/element_table.o"(.rodata)
         "*/games/tbs/src/game/djinn_table.o"(.rodata)
-        "*/games/tbs/src/gamepak/far_call/game.o"(.data .overlays)
+        "*/games/tbs/src/game/stubs.o"(.data .overlays)
         "*/games/tbs/src/game/game.o"(.data .overlays)
         "*/games/tbs/src/game/experience_table.o"(.data .overlays)
         "*/games/tbs/src/game/rare_item_stock.o"(.data .overlays)
@@ -272,8 +272,8 @@ SECTIONS
         "*/games/tbs/src/game/element_table.o"(.data .overlays)
         "*/games/tbs/src/game/djinn_table.o"(.data .overlays)
         . = ABSOLUTE(ROM_SHIFT + FIELD_SEQUENCE_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/field_sequence.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/system/main_routine.o"(.text)
+        "*/games/tbs/src/field/sequence_stubs.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/game/main_routine.o"(.text)
         "*/games/tbs/src/field/field_sequence.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/event_commands.o"(.text .rodata .data .padding)
         "*/games/tbs/src/graphics/field_effects/spark_tiles.list.o"(.text .rodata .data .padding)
@@ -295,33 +295,33 @@ SECTIONS
         "*/games/tbs/src/field/field_effect_tables.o"(.text .rodata .data .padding)
         "*/games/tbs/src/field/map_screen_markers.o"(.text .rodata .data .padding)
         . = ABSOLUTE(ROM_SHIFT + MENU_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/menu.o"(.text .padding)
+        "*/games/tbs/src/menu/stubs.o"(.text .padding)
         "*/games/tbs/src/menu/menu.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/menu_sprites.list.o"(.text .padding)
         "*/games/tbs/src/menu/menu_tables.o"(.text .padding)
-        "*/games/tbs/src/gamepak/far_call/menu.o"(.rodata)
+        "*/games/tbs/src/menu/stubs.o"(.rodata)
         "*/games/tbs/src/menu/menu.o"(.rodata)
         "*/games/tbs/src/graphics/ui/menu_sprites.list.o"(.rodata)
         "*/games/tbs/src/menu/menu_strings.o"(.rodata)
         "*/games/tbs/src/menu/menu_tiles.o"(.rodata)
         "*/games/tbs/src/menu/djinn_menu_strings.o"(.rodata)
         "*/games/tbs/src/menu/menu_tables.o"(.rodata)
-        "*/games/tbs/src/gamepak/far_call/menu.o"(.data .overlays)
+        "*/games/tbs/src/menu/stubs.o"(.data .overlays)
         "*/games/tbs/src/menu/menu.o"(.data .overlays)
         "*/games/tbs/src/graphics/ui/menu_sprites.list.o"(.data .overlays)
         "*/games/tbs/src/menu/menu_tables.o"(.data .overlays)
         . = ABSOLUTE(ROM_SHIFT + SHOP_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/shop.o"(.text .padding)
+        "*/games/tbs/src/shop/stubs.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/shop_sprites.list.o"(.text .padding)
         "*/games/tbs/src/shop/shop.o"(.text .padding)
-        "*/games/tbs/src/gamepak/far_call/shop.o"(.rodata)
+        "*/games/tbs/src/shop/stubs.o"(.rodata)
         "*/games/tbs/src/graphics/ui/shop_sprites.list.o"(.rodata)
         "*/games/tbs/src/shop/shop.o"(.rodata)
-        "*/games/tbs/src/gamepak/far_call/shop.o"(.data .overlays)
+        "*/games/tbs/src/shop/stubs.o"(.data .overlays)
         "*/games/tbs/src/graphics/ui/shop_sprites.list.o"(.data .overlays)
         "*/games/tbs/src/shop/shop.o"(.data .overlays)
         . = ABSOLUTE(ROM_SHIFT + BATTLE_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/battle.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/battle/stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/background_decode.o"(.text .rodata .text.bit_dispatch)
         "*/games/tbs/src/battle/background_decode.o"(.data .text.bit_commands)
         "*/games/tbs/src/battle/battle.o"(.text .rodata .data .padding)
@@ -339,14 +339,14 @@ SECTIONS
         "*/games/tbs/src/battle/formations.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle/battle_sprites.o"(.text .rodata .data .padding)
         . = ABSOLUTE(ROM_SHIFT + BATTLE_EFFECT_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/battle_effect.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/battle_effect/stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/battle_effect.o"(.text .data)
         "*/games/tbs/src/battle_effect/blitter_fragments.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/battle_effect_table.o"(.data)
         "*/games/tbs/src/battle_effect/blitter_color_fragments.o"(.text .rodata .data .padding)
         "*/games/tbs/src/battle_effect/blitter_operands.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + CREDITS_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/credits.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/menu/credits_stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
         "*/games/tbs/src/menu/credits_background_expand.o"(.rodata)
         "*/games/tbs/src/menu/credits_background_expand.o"(.text .data .text.credits_background_expand_commands)
@@ -355,37 +355,37 @@ SECTIONS
         "*/games/tbs/src/menu/credits.o"(.data)
         "*/games/tbs/src/graphics/credits/font.list.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + TITLE_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/title.o"(.text .padding)
+        "*/games/tbs/src/menu/title_stubs.o"(.text .padding)
         "*/games/tbs/src/graphics/title/prompt.list.o"(.text .padding)
         "*/games/tbs/src/menu/title_intro.o"(.text .padding)
-        "*/games/tbs/src/gamepak/far_call/title.o"(.rodata)
+        "*/games/tbs/src/menu/title_stubs.o"(.rodata)
         "*/games/tbs/src/graphics/title/prompt.list.o"(.rodata)
         "*/games/tbs/src/menu/title_intro.o"(.rodata)
-        "*/games/tbs/src/gamepak/far_call/title.o"(.data .overlays)
+        "*/games/tbs/src/menu/title_stubs.o"(.data .overlays)
         "*/games/tbs/src/graphics/title/prompt.list.o"(.data .overlays)
         "*/games/tbs/src/menu/title_intro.o"(.data .overlays)
         . = ABSOLUTE(ROM_SHIFT + LUCKY_DICE_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/lucky_dice.o"(.text .padding)
+        "*/games/tbs/src/field/lucky_dice_stubs.o"(.text .padding)
         "*/games/tbs/src/field/lucky_dice.o"(.text .padding)
-        "*/games/tbs/src/gamepak/far_call/lucky_dice.o"(.rodata)
+        "*/games/tbs/src/field/lucky_dice_stubs.o"(.rodata)
         "*/games/tbs/src/field/lucky_dice.o"(.rodata)
-        "*/games/tbs/src/gamepak/far_call/lucky_dice.o"(.data .overlays)
+        "*/games/tbs/src/field/lucky_dice_stubs.o"(.data .overlays)
         "*/games/tbs/src/field/lucky_dice.o"(.data .overlays)
         . = ABSOLUTE(ROM_SHIFT + LUCKY_WHEELS_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/lucky_wheels.o"(.text .padding)
+        "*/games/tbs/src/field/lucky_wheels_stubs.o"(.text .padding)
         "*/games/tbs/src/field/lucky_wheels.o"(.text .padding)
-        "*/games/tbs/src/gamepak/far_call/lucky_wheels.o"(.rodata)
+        "*/games/tbs/src/field/lucky_wheels_stubs.o"(.rodata)
         "*/games/tbs/src/field/lucky_wheels.o"(.rodata)
-        "*/games/tbs/src/gamepak/far_call/lucky_wheels.o"(.data .overlays)
+        "*/games/tbs/src/field/lucky_wheels_stubs.o"(.data .overlays)
         "*/games/tbs/src/field/lucky_wheels.o"(.data .overlays)
         . = ABSOLUTE(ROM_SHIFT + SOUND_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/sound.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/sound/stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/sound/sound.o"(.text)
-        "*/games/tbs/src/sound/umul_high.o"(.text .padding)
+        "*/games/tbs/src/sdk/sound/umul_high.o"(.text .padding)
     } > ROM
     .iwram_mixer 0x3007000 :
     {
-        "*/games/tbs/src/sound/mixer.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/sdk/sound/mixer.o"(.text .rodata .data .padding)
     } > IWRAM AT>ROM
     iwram_high (NOLOAD) :
     {
@@ -393,13 +393,13 @@ SECTIONS
     } > IWRAM
     .rom_tail :
     {
-        "*/games/tbs/src/sound/clear_buffer.o"(.text .text.command_byte_reader .text.command_byte_setters)
-        "*/games/tbs/src/sound/audio.o"(.text)
-        "*/games/tbs/src/sound/sound_get_jump_list.o"(.text .rodata .data .padding)
-        "*/games/tbs/src/sound/driver.o"(.text)
-        "*/games/tbs/src/sound/empty_callback.o"(.text)
+        "*/games/tbs/src/sdk/sound/clear_buffer.o"(.text .text.command_byte_reader .text.command_byte_setters)
+        "*/games/tbs/src/sdk/sound/audio.o"(.text)
+        "*/games/tbs/src/sdk/sound/sound_get_jump_list.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/sdk/sound/driver.o"(.text)
+        "*/games/tbs/src/sdk/sound/empty_callback.o"(.text)
         "*/games/tbs/src/sound/sound.o"(.rodata)
-        "*/games/tbs/src/sound/tables.o"(.rodata)
+        "*/games/tbs/src/sdk/sound/tables.o"(.rodata)
         "*/games/tbs/sound/voice_groups.o"(.rodata)
         "*/games/tbs/sound/programmable_wave_samples.o"(.rodata)
         "*/games/tbs/sound/music_player_table.o"(.rodata)
@@ -670,7 +670,7 @@ SECTIONS
         "*/games/tbs/sound/songs/se_fall.o"(.rodata)
         "*/games/tbs/sound/songs/se_unused_sparkling_lettering.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + SPRITE_BANK_START);
-        "*/games/tbs/src/gamepak/far_call/sprite.o"(.text .rodata .data .padding)
+        "*/games/tbs/src/system/sprite_stubs.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/sprite_metadata.o"(.text)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/self_pointers_after_first_block.o"(.rodata)
@@ -678,7 +678,7 @@ SECTIONS
         "*/games/tbs/src/graphics/sprite/self_pointers_after_second_block.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata.b)
         . = ABSOLUTE(ROM_SHIFT + RESOURCE_DIRECTORY_START);
-        "*/games/tbs/src/gamepak/resource_directory.o"(.text .padding)
+        "*/games/tbs/src/system/resource_directory.o"(.text .padding)
         "*/games/tbs/src/graphics/ui/ui.list.o"(.text .padding)
         "*/games/tbs/src/graphics/title/title.list.o"(.text .padding)
         "*/games/tbs/src/graphics/battle_backgrounds/battle_backgrounds.list.o"(.text .padding)
@@ -694,7 +694,7 @@ SECTIONS
         "*/games/tbs/src/graphics/monster/monster.list.o"(.text .padding)
         "*/games/tbs/src/map/maps.o"(.text .padding)
         "*/games/tbs/src/system/overlay/overlays.list.o"(.text .padding)
-        "*/games/tbs/src/gamepak/resource_directory.o"(.rodata)
+        "*/games/tbs/src/system/resource_directory.o"(.rodata)
         "*/games/tbs/src/graphics/ui/ui.list.o"(.rodata)
         "*/games/tbs/src/graphics/title/title.list.o"(.rodata)
         "*/games/tbs/src/graphics/battle_backgrounds/battle_backgrounds.list.o"(.rodata)
@@ -710,7 +710,7 @@ SECTIONS
         "*/games/tbs/src/graphics/monster/monster.list.o"(.rodata)
         "*/games/tbs/src/map/maps.o"(.rodata)
         "*/games/tbs/src/system/overlay/overlays.list.o"(.rodata)
-        "*/games/tbs/src/gamepak/resource_directory.o"(.data .overlays)
+        "*/games/tbs/src/system/resource_directory.o"(.data .overlays)
         "*/games/tbs/src/graphics/ui/ui.list.o"(.data .overlays)
         "*/games/tbs/src/graphics/title/title.list.o"(.data .overlays)
         "*/games/tbs/src/graphics/battle_backgrounds/battle_backgrounds.list.o"(.data .overlays)
@@ -728,7 +728,7 @@ SECTIONS
         "*/games/tbs/src/system/overlay/overlays.list.o"(.data .overlays)
     } > ROM
     IwramResident_Rom = LOADADDR(.iwram_resident);
-    SoundMainRAM_Rom = LOADADDR(.iwram_mixer) + 1;
+    sySndMainRAMRom = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

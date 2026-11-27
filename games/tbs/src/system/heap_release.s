@@ -1,15 +1,15 @@
-@ Why assembly: HeapSlot_Release branches on lsrs flags without cmp/cmn;
+@ Why assembly: syHeapSlotRelease branches on lsrs flags without cmp/cmn;
 @ alchemy-gcc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
-@ Why assembly: HeapSlot_Release and Heap_Release share the one trailing literal
+@ Why assembly: syHeapSlotRelease and syHeapRelease share the one trailing literal
 @ pool; GCC's per-function arm_reorg emits and clears each function's pool.
-@ Heap_Release's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
+@ syHeapRelease's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
 @ ordinary Thumb with no tell of their own. Its proof is that pool alone: the
-@ single word .L_heap_heads after Heap_Release's bx lr is loaded by Heap_Release's
-@ ldr r4, [pc, #8] and also by HeapSlot_Release's ldr r4, [pc, #32],
-@ which reaches forward over its own bx lr and the whole of Heap_Release; and
-@ HeapSlot_Release is the routine with the lsrs r3, r1, #22 / beq
+@ single word .L_heap_heads after syHeapRelease's bx lr is loaded by syHeapRelease's
+@ ldr r4, [pc, #8] and also by syHeapSlotRelease's ldr r4, [pc, #32],
+@ which reaches forward over its own bx lr and the whole of syHeapRelease; and
+@ syHeapSlotRelease is the function with the lsrs r3, r1, #22 / beq
 @ above.
-@ The two-byte alignment before Heap_Release is linker fill, outside the credited
+@ The two-byte alignment before syHeapRelease is linker fill, outside the credited
 @ code.
 @ Thumb LDR cannot relocate across these sections in the stock assembler;
 @ retain the native PC-relative operands for their one shared word.
@@ -17,9 +17,9 @@
 	.section .text.release, "ax", %progbits
 	.balign 2
 	.thumb
-	.global HeapSlot_Release
+	.global syHeapSlotRelease
 	.thumb_func
-HeapSlot_Release:
+syHeapSlotRelease:
 	ldr	r4, [pc, #32]
 	lsls	r0, r0, #2
 	ldr	r1, [r0, r4]
@@ -34,9 +34,9 @@ HeapSlot_Release:
 	bx	lr
 	.section .text.free, "ax", %progbits
 	.balign 4
-	.global Heap_Release
+	.global syHeapRelease
 	.thumb_func
-Heap_Release:
+syHeapRelease:
 	ldr	r4, [pc, #8]
 	movs	r1, #4
 	lsrs	r2, r0, #22
@@ -44,11 +44,11 @@ Heap_Release:
 	str	r0, [r2, r4]
 	bx	lr
 .L_heap_heads:
-	.4byte	gHeapSlots
+	.4byte	HeapSlots
 
 @ Why assembly: Irq_StopOnGamePakRemoved has a reachable exit with no return or
 @ interworking branch: when (IE & IF & 0x2000) is zero, its final bne falls
-@ straight into Thumb System_Initialize while the CPU is still in ARM mode.
+@ straight into Thumb syInit while the CPU is still in ARM mode.
 @ Neither a procedure return nor a tail call can have this linkage.
 @ Both DE and ES contain exactly these eight ARM instructions, no pool.
 @ agbcc's gcc_arm/config/arm/arm.c output_func_epilogue emits bx lr for

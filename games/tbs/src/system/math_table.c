@@ -1,14 +1,14 @@
-/// @file
-/// Trigonometry tables: a quarter-wave sine, tangents and the quadrants' sines.
+/* @file */
+/* Trigonometry tables: a quarter-wave sine, tangents and the quadrants' sines.
+ */
 
-#include "system/math_table.h"
-#include "types.h"
-#include "system/system.h"
+#include "system.h"
 
-/// A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024 of
-/// a turn.
-// clang-format off
-const u16 gMath_SinQuarter[256] = {
+/* A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024 of
+ */
+/* a turn. */
+/* clang-format off */
+const u16 Math_SinQuarter[256] = {
     0, 402, 804, 1206, 1608, 2010, 2412, 2814,
     3216, 3617, 4019, 4420, 4821, 5222, 5623, 6023,
     6424, 6824, 7224, 7623, 8022, 8421, 8820, 9218,
@@ -43,20 +43,20 @@ const u16 gMath_SinQuarter[256] = {
     65457, 65476, 65492, 65505, 65516, 65525, 65531, 65535,
 };
 
-/// Unused: floor(i * 2π) for i from 0 to 7; nothing reads it.
-const u16 gMath_TwoPiSteps[8] = {
+/* Unused: floor(i * 2π) for i from 0 to 7; nothing reads it. */
+const u16 Math_TwoPiSteps[8] = {
     0, 6, 12, 18, 25, 31, 37, 43,
 };
 
-/// Unused: the sine at 0, 90, 180 and 270 degrees, in 16.16; nothing reads it.
-const s32 gMath_QuadrantSin[4] = {
+/* Unused: the sine at 0, 90, 180 and 270 degrees, in 16.16; nothing reads it. */
+const s32 Math_QuadrantSin[4] = {
     0, toFIXED(1), 0, toFIXED(-1),
 };
 
-/// Tangents scaled by 256: index i is about tan(i * 45 / 128 degrees), so
-/// index 128 is tan(45 degrees); the last entries before 90 degrees run high.
-/// Trig_Atan starts its binary search at index 127.
-const u16 gMath_TanTable[258] = {
+/* Tangents scaled by 256: index i is about tan(i * 45 / 128 degrees), so */
+/* index 128 is tan(45 degrees); the last entries before 90 degrees run high. */
+/* syAtan starts its binary search at index 127. */
+const u16 Math_TanTable[258] = {
     0, 1, 3, 4, 6, 7, 9, 11,
     12, 14, 15, 17, 18, 20, 22, 23,
     25, 26, 28, 30, 31, 33, 34, 36,
@@ -91,4 +91,4 @@ const u16 gMath_TanTable[258] = {
     5444, 6264, 7374, 8962, 11421, 15736, 25290, 64362,
     65535, 0,
 };
-// clang-format on
+/* clang-format on */

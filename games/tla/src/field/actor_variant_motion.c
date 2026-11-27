@@ -1,23 +1,21 @@
-/// @file
-/// Data the field keeps here in ROM order: the speakers' voices, the actors'
-/// bounce, the dust puffs' scripts and a blinking actor's colours.
+/* @file */
+/* Data the field keeps here in ROM order: the speakers' voices, the actors' */
+/* bounce, the dust puffs' scripts and a blinking actor's colours. */
 
-#include "types.h"
 #include "macros.h"
-#include "fixed_math.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
 
-/// Each sprite's voice as it speaks and the lines it says while Halted, as
-/// halfword pairs of a sprite id and a struct SpeakerDefinition's two bytes
-/// (field/speaker.h): Speaker_FindDefinition searches the first 243 rows
-/// by sprite id and gives the last, the default, for any other sprite.
+/* Each sprite's voice as it speaks and the lines it says while Halted, as */
+/* halfword pairs of a sprite id and a SPEAKER_DEFINITION's two bytes */
+/* (field/speaker.h): fdSpeakerFindDefinition searches the first 243 rows */
+/* by sprite id and gives the last, the default, for any other sprite. */
 #define SPEAKER(sprite, voice) {sprite, voice}
-/// A sprite with no voice that Halt never stops (SPEAKER_VOICE_NONE and
-/// SPEAKER_HALTED_LINES_NONE).
+/* A sprite with no voice that Halt never stops (SPEAKER_VOICE_NONE and */
+/* SPEAKER_HALTED_LINES_NONE). */
 #define SPEAKER_SILENT(sprite) {sprite, -1}
-// clang-format off
-const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
+/* clang-format off */
+const s16 SpeakerDefinitions[][2] ALIGNED(4) = {
     SPEAKER(0, 16), SPEAKER(1, 16), SPEAKER(2, 16), SPEAKER(3, 12),
     SPEAKER(4, 28), SPEAKER(5, 12), SPEAKER(6, 12), SPEAKER(16, 28),
     SPEAKER(17, 8), SPEAKER(18, 8), SPEAKER(19, 24), SPEAKER(20, 16),
@@ -83,8 +81,8 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
 #undef SPEAKER
 #undef SPEAKER_SILENT
 
-/// One bounce of the squash: wider and shorter, then back in three steps,
-/// 10 frames in all.
+/* One bounce of the squash: wider and shorter, then back in three steps, */
+/* 10 frames in all. */
 #define VARIANT_BOUNCE                                                         \
   SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \
@@ -92,10 +90,10 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
       SC_ADD(SW_SCALE_X, FIXED_ONE / 16), SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), \
       SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                          \
       SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), SC_WAIT(4)
-/// Three bounces for Actor_StartRepeatedMotion, each squashing the actor
-/// (wider, then shorter) and stretching it back over 10 frames; it starts
-/// count bounces from the end.
-const s32 gActor_VariantScripts[] = {
+/* Three bounces for fdActorStartRepeatedMotion, each squashing the actor */
+/* (wider, then shorter) and stretching it back over 10 frames; it starts */
+/* count bounces from the end. */
+const s32 Actor_VariantScripts[] = {
     VARIANT_BOUNCE,
     VARIANT_BOUNCE,
     VARIANT_BOUNCE,
@@ -103,27 +101,27 @@ const s32 gActor_VariantScripts[] = {
 };
 #undef VARIANT_BOUNCE
 
-/// A dust puff's script (FieldEffect_SpawnDustPuff): it lasts 38 frames and
-/// is released.
-const u32 gDustPuff_LongScript[] = {
+/* A dust puff's script (fdEffectSpawnDustPuff): it lasts 38 frames and */
+/* is released. */
+const u32 DustPuff_LongScript[] = {
     SC_WAIT(1),
     SC_LOOP(38, SC_TOP),
     SC_RELEASE,
 };
 
-/// A short dust puff's script: it lasts 18 frames and is released.
-const u32 gDustPuff_ShortScript[] = {
+/* A short dust puff's script: it lasts 18 frames and is released. */
+const u32 DustPuff_ShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(18, SC_TOP),
     SC_RELEASE,
 };
 
-/// The colour of a blinking actor in each of four two-frame steps
-/// (Actor_UpdateBlink): white, then its own colours.
-const u8 gActor_BlinkSpriteColors[] = {
+/* The colour of a blinking actor in each of four two-frame steps */
+/* (fdActorUpdateBlink): white, then its own colours. */
+const u8 Actor_BlinkSpriteColors[] = {
     SPRITE_COLOR_WHITE,
     SPRITE_COLOR_NORMAL,
     SPRITE_COLOR_NORMAL,
     SPRITE_COLOR_NORMAL,
 };
-// clang-format on
+/* clang-format on */

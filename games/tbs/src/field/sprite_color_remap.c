@@ -1,14 +1,14 @@
-/// @file
-/// The colour tables of four more SpriteColorModes, 256 bytes each, a pixel's
-/// colour number to the one it is drawn in; they follow gSpriteColorTables'
-/// five, and Render_DecodePicture reads them as its tables 6 to 9. The grey
-/// one also recolours the top of a command icon (SpriteColor_RemapPixels).
+/* @file */
+/* The colour tables of four more SpriteColorModes, 256 bytes each, a pixel's */
+/* colour number to the one it is drawn in; they follow SpriteColorTables' */
+/* five, and Render_DecodePicture reads them as its tables 6 to 9. The grey */
+/* one also recolours the top of a command icon (fdSprColRemapPixels). */
 
 #include "field/field.h"
 
-// clang-format off
-const u8 gSpriteColorGreyTable[] = {
-    // SPRITE_COLOR_GREY
+/* clang-format off */
+const u8 SpriteColorGreyTable[] = {
+    /* SPRITE_COLOR_GREY */
     0, 1, 219, 87, 14, 219, 219, 14, 219, 130, 130, 220, 217, 13, 14, 15,
     220, 87, 217, 13, 219, 220, 87, 222, 222, 219, 219, 87, 222, 222, 14, 13,
     220, 87, 222, 14, 217, 217, 217, 13, 219, 219, 220, 217, 219, 219, 220, 87,
@@ -25,7 +25,7 @@ const u8 gSpriteColorGreyTable[] = {
     173, 173, 15, 13, 130, 223, 173, 15, 219, 217, 218, 219, 220, 13, 222, 223,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    // SPRITE_COLOR_BLUE_TINT
+    /* SPRITE_COLOR_BLUE_TINT */
     0, 8, 186, 198, 15, 7, 194, 7, 8, 197, 204, 196, 183, 188, 166, 15,
     192, 197, 182, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 184,
     212, 213, 214, 215, 188, 8, 182, 183, 184, 185, 186, 187, 185, 189, 190, 191,
@@ -42,7 +42,7 @@ const u8 gSpriteColorGreyTable[] = {
     208, 209, 210, 189, 212, 213, 214, 215, 195, 8, 188, 152, 195, 194, 195, 166,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    // SPRITE_COLOR_RED_TINT
+    /* SPRITE_COLOR_RED_TINT */
     0, 2, 2, 3, 4, 4, 54, 15, 186, 126, 10, 3, 2, 48, 131, 15,
     16, 3, 2, 24, 24, 24, 24, 24, 24, 30, 30, 30, 30, 30, 30, 2,
     4, 4, 4, 4, 16, 42, 42, 42, 42, 42, 42, 48, 2, 48, 48, 48,
@@ -59,7 +59,7 @@ const u8 gSpriteColorGreyTable[] = {
     210, 210, 210, 16, 15, 15, 15, 15, 3, 2, 48, 47, 90, 3, 90, 131,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    // SPRITE_COLOR_GREEN_TINT
+    /* SPRITE_COLOR_GREEN_TINT */
     0, 5, 4, 4, 4, 5, 68, 7, 7, 143, 108, 34, 33, 68, 136, 15,
     4, 35, 32, 5, 32, 33, 34, 35, 4, 5, 32, 33, 34, 35, 4, 34,
     32, 33, 34, 35, 32, 67, 68, 69, 70, 71, 72, 67, 35, 69, 70, 71,
@@ -77,4 +77,4 @@ const u8 gSpriteColorGreyTable[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
-// clang-format on
+/* clang-format on */

@@ -13,7 +13,7 @@
 #include "version.h"
 
 /* The shift test (make SHIFT=n) moves everything after the header n bytes,
-   so every bank starts n bytes later; 0 in every other build. */
+   so every module starts n bytes later; 0 in every other build. */
 #ifndef ROM_SHIFT
 #define ROM_SHIFT 0
 #endif
@@ -21,9 +21,10 @@
 #error "SHIFT must be a multiple of 4: words and Thumb literal pools in byte-aligned sections would misalign"
 #endif
 
-/* Where the far-call banks that move start, in each edition. English and
+/* Where the modules that move start, in each edition. English and
    Italian share every address; Japanese and French share the last ones
-   with them. The other banks start at the same address in every edition. */
+   with them. The other modules start at the same address in every
+   edition. */
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define GAME_BANK_START           0x080a8000
 #define FIELD_SEQUENCE_BANK_START 0x080c8000
@@ -56,22 +57,22 @@
 #else
 OUTPUT_ARCH(arm)
 ENTRY(Entry)
-/* The ropes call Trig_Atan as returning a halfword, under this name. */
-Trig_AtanHalfword = Trig_Atan;
+/* The ropes call syAtan as returning a halfword, under this name. */
+syTrigAtanHalfword = syAtan;
 Decompress_MoveToFrontLzCommandsCodeSize = Decompress_MoveToFrontLzCommandsEnd - Decompress_MoveToFrontLzCommandsCode;
 Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bppCode;
 Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMaskedCode;
 Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaqueCode;
-ScanlineWindow_BuildSpansCodeSize = Tile_Decompress4bppCode - ScanlineWindow_BuildSpansCode;
-Glyph_DrawCodeSize = ScanlineWindow_BuildSpansCode - Glyph_DrawCode;
+mnScanlineWindowBuildSpansCodeSize = Tile_Decompress4bppCode - mnScanlineWindowBuildSpansCode;
+mnGlyphDrawCodeSize = mnScanlineWindowBuildSpansCode - mnGlyphDrawCode;
 BattleEffect_DecodePictureBlockSize = BattleEffect_DecodePictureEnd - BattleEffect_DecodePictureCode;
 Render_DecodePictureBlockSize = Render_DecodePictureEnd - Render_DecodePictureCode;
 Text_DecodeSymbolCodeSize = Text_DecodeSymbolEnd - Text_DecodeSymbolCode;
 Credits_DecodeBackgroundCodeSize = EndingImage_InnerProduct - Credits_DecodeBackgroundCode;
 EndingImage_DecodeCodeSize = EndingImage_DecodeEnd - EndingImage_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
-Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
-WorldMap_UpdateAffineLinesCodeSize = Render_ConvertMapCode - WorldMap_UpdateAffineLinesCode;
+Grid_DrawOutlineCodeSize = fdResourceGetMetadataRecordStub - fdGridDrawOutlineCode;
+fdWorldMapUpdateAffineLinesCodeSize = fdRenderConvertMapCode - fdWorldMapUpdateAffineLinesCode;
 
 MEMORY
 {
@@ -87,10 +88,10 @@ SECTIONS
     } > EWRAM
     .rom_start :
     {
-        "*/games/tla/src/gamepak/rom_header.o"(.text .rodata .data .padding)
-        "*/games/tla/src/gamepak/far_call/system.o"(.text .rodata .data .padding)
+        "*/games/tla/src/system/rom_header.o"(.text .rodata .data .padding)
+        "*/games/tla/src/system/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/entry.o"(.text .padding .text.resampler_records_2 .padding.resampler_records_pad_1 .text.resampler_records_3 .padding.resampler_records_pad_2 .text.resampler_records_4)
-        "*/games/tla/src/sound/channel_update_entry.o"(.text)
+        "*/games/tla/src/sdk/sound/channel_update_entry.o"(.text)
     } > ROM
     iwram_slots 0x3000000 (NOLOAD) :
     {
@@ -101,9 +102,9 @@ SECTIONS
         "*/games/tla/src/system/irq.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/irq_table.o"(.data)
         "*/games/tla/src/system/iwram_routines.o"(.text .data .text.iwram_divide)
-        "*/games/tla/src/sound/resident_mixer.o"(.text .text.resident_mixer_lanes)
-        "*/games/tla/src/sound/resident_mixer_interpolate.o"(.data .text.resident_mixer_channel)
-        "*/games/tla/src/sound/resident_mixer_render.o"(.data .text.resident_mixer_render)
+        "*/games/tla/src/sdk/sound/resident_mixer.o"(.text .text.resident_mixer_lanes)
+        "*/games/tla/src/sdk/sound/resident_mixer_interpolate.o"(.data .text.resident_mixer_channel)
+        "*/games/tla/src/system/mixer_render.o"(.data .text.resident_mixer_render)
     } > IWRAM AT>ROM
     iwram (NOLOAD) :
     {
@@ -118,10 +119,10 @@ SECTIONS
         "*/games/tla/src/system/heap_release.o"(.text)
         "*/games/tla/src/system/system.o"(.text)
         "*/games/tla/src/system/bios.o"(.text .padding .text.bios_sound_bias_on)
-        "*/games/tla/src/gamepak/flash/flash.o"(.text)
-        "*/games/tla/src/gamepak/flash/sst.o"(.text)
-        "*/games/tla/src/gamepak/flash/program_flash_sector.o"(.text)
-        "*/games/tla/src/gamepak/flash/atmel.o"(.text)
+        "*/games/tla/src/sdk/flash/flash.o"(.text)
+        "*/games/tla/src/sdk/flash/sst.o"(.text)
+        "*/games/tla/src/sdk/flash/program_flash_sector.o"(.text)
+        "*/games/tla/src/sdk/flash/atmel.o"(.text)
         "*libgcc.a:_call_via_rX.o"(.text)
         "*/games/tla/src/system/irq_table.o"(.rodata)
         "*/games/tla/src/system/math_table.o"(.rodata)
@@ -129,16 +130,16 @@ SECTIONS
         "*/games/tla/src/system/number_text.o"(.rodata)
         "*/games/tla/src/system/inner_product.o"(.text .rodata .data .padding)
         "*/games/tla/src/system/savedata.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/flashtab.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/flash.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/flashsst.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/sst.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/flashmx.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/program_flash_sector.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/flashat.o"(.rodata)
-        "*/games/tla/src/gamepak/flash/atmel.o"(.rodata)
+        "*/games/tla/src/sdk/flash/flashtab.o"(.rodata)
+        "*/games/tla/src/sdk/flash/flash.o"(.rodata)
+        "*/games/tla/src/sdk/flash/flashsst.o"(.rodata)
+        "*/games/tla/src/sdk/flash/sst.o"(.rodata)
+        "*/games/tla/src/sdk/flash/flashmx.o"(.rodata)
+        "*/games/tla/src/sdk/flash/program_flash_sector.o"(.rodata)
+        "*/games/tla/src/sdk/flash/flashat.o"(.rodata)
+        "*/games/tla/src/sdk/flash/atmel.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08020000);
-        "*/games/tla/src/gamepak/far_call/field.o"(.text .rodata .data .padding)
+        "*/games/tla/src/field/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/sprite_color_tables.o"(.rodata)
         "*/games/tla/src/field/picture_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/picture_decode_data.o"(.text .rodata .data .padding)
@@ -159,7 +160,7 @@ SECTIONS
         "*/games/tla/src/field/map_grid_data.o"(.rodata)
         "*/games/tla/src/field/map_resources.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08038000);
-        "*/games/tla/src/gamepak/far_call/window.o"(.text .rodata .data .padding)
+        "*/games/tla/src/window/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/message_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/lookup_symbol.o"(.text .rodata .data .padding)
         "*/games/tla/src/window/glyph_arm_entries.o"(.text)
@@ -209,16 +210,16 @@ SECTIONS
         "*/games/tla/src/window/keyboard.list.o"(.rodata)
         "*/games/tla/src/window/fixed_tile_blocks.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + GAME_BANK_START);
-        "*/games/tla/src/gamepak/far_call/game.o"(.text .rodata .data .padding)
+        "*/games/tla/src/game/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/game/game.o"(.text)
         "*/games/tla/src/game/game.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + FIELD_SEQUENCE_BANK_START);
-        "*/games/tla/src/gamepak/far_call/field_sequence.o"(.text .rodata .data .padding)
+        "*/games/tla/src/field/sequence_stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/advance_with_gravity.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/field_sequence_sprite_color_tables.o"(.rodata)
         "*/games/tla/src/field/decode_picture.o"(.text .rodata .data .padding)
         "*/games/tla/src/field/decode_picture_data.o"(.text .rodata .data .padding)
-        "*/games/tla/src/system/main_routine.o"(.text)
+        "*/games/tla/src/game/main_routine.o"(.text)
         "*/games/tla/src/field/field_sequence.o"(.text)
         "*/games/tla/src/field/actor_step_angle.o"(.text)
         "*/games/tla/src/field/event_commands.o"(.text)
@@ -259,7 +260,7 @@ SECTIONS
         "*/games/tla/src/field/burst_glow.list.o"(.rodata)
         "*/games/tla/src/field/field_psynergy_lookups.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + MENU_BANK_START);
-        "*/games/tla/src/gamepak/far_call/menu.o"(.text .rodata .data .padding)
+        "*/games/tla/src/menu/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/menu.o"(.text)
         "*/games/tla/src/graphics/ui/menu_sprites.list.o"(.rodata)
         "*/games/tla/src/menu/status_panel_strings.o"(.rodata)
@@ -269,12 +270,12 @@ SECTIONS
         "*/games/tla/src/menu/djinn_menu_strings.o"(.rodata)
         "*/games/tla/src/menu/menu_tables.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + SHOP_BANK_START);
-        "*/games/tla/src/gamepak/far_call/shop.o"(.text .rodata .data .padding)
+        "*/games/tla/src/shop/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/shop/shop.o"(.text)
         "*/games/tla/src/graphics/ui/shop_sprites.list.o"(.rodata)
         "*/games/tla/src/shop/shop_tables.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08118000);
-        "*/games/tla/src/gamepak/far_call/battle.o"(.text .rodata .data .padding)
+        "*/games/tla/src/battle/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/model_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/model_bit_dispatch.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle/model_bit_commands.o"(.text .rodata .data .padding)
@@ -299,7 +300,7 @@ SECTIONS
         "*/games/tla/src/battle/formations.o"(.data)
         "*/games/tla/src/battle/battle_sprites.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + 0x08138000);
-        "*/games/tla/src/gamepak/far_call/battle_effect.o"(.text .rodata .data .padding)
+        "*/games/tla/src/battle_effect/stubs.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/kernel_bank_advance_with_gravity.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_fill_mesh_kernels.o"(.text .rodata .data .padding)
         "*/games/tla/src/battle_effect/render_solid_kernels.o"(.text .rodata .data .padding)
@@ -319,7 +320,7 @@ SECTIONS
         "*/games/tla/src/battle_effect/blitter_operands.o"(.rodata)
         "*/games/tla/src/battle_effect/effect_table.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081a0000);
-        "*/games/tla/src/gamepak/far_call/credits.o"(.text)
+        "*/games/tla/src/menu/credits_stubs.o"(.text)
         "*/games/tla/src/menu/credits_background_decode.o"(.text .rodata .data .padding)
         "*/games/tla/src/menu/credits_background_expand.o"(.rodata)
         "*/games/tla/src/menu/credits_background_expand.o"(.text .data .text.credits_background_expand_commands)
@@ -331,38 +332,38 @@ SECTIONS
         "*/games/tla/src/menu/credits.o"(.data)
         "*/games/tla/src/graphics/credits/font.list.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081a6000);
-        "*/games/tla/src/gamepak/far_call/title.o"(.text)
+        "*/games/tla/src/menu/title_stubs.o"(.text)
         "*/games/tla/src/menu/title_intro.o"(.text)
         "*/games/tla/src/graphics/title/prompt.list.o"(.rodata)
         "*/games/tla/src/menu/logo.o"(.rodata)
         "*/games/tla/src/menu/title_intro_tables.o"(.rodata)
         "*/games/tla/src/menu/title_intro_tables.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + 0x081ac000);
-        "*/games/tla/src/gamepak/far_call/lucky_dice.o"(.text)
+        "*/games/tla/src/field/lucky_dice_stubs.o"(.text)
         "*/games/tla/src/field/lucky_dice.o"(.text)
         "*/games/tla/src/field/lucky_dice.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081b2000);
-        "*/games/tla/src/gamepak/far_call/lucky_wheels.o"(.text)
+        "*/games/tla/src/field/lucky_wheels_stubs.o"(.text)
         "*/games/tla/src/field/lucky_wheels.o"(.text)
         "*/games/tla/src/field/lucky_wheels.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081b8000);
-        "*/games/tla/src/gamepak/far_call/super_lucky_dice.o"(.text)
+        "*/games/tla/src/field/super_lucky_dice_stubs.o"(.text)
         "*/games/tla/src/field/dice_game.o"(.text)
         "*/games/tla/src/field/dice_game.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x081c0000);
-        "*/games/tla/src/gamepak/far_call/sound.o"(.text .rodata .data .padding)
-        "*/games/tla/src/sound/leftover_driver.o"(.text)
-        "*/games/tla/src/sound/dummy_func_work_copy.o"(.text)
-        "*/games/tla/src/sound/player_work_copy.o"(.text)
-        "*/games/tla/src/sound/mplay_main.o"(.text .rodata .text.channel_unlink)
+        "*/games/tla/src/sound/stubs.o"(.text .rodata .data .padding)
+        "*/games/tla/src/sdk/sound/leftover_driver.o"(.text)
+        "*/games/tla/src/sdk/sound/dummy_func_work_copy.o"(.text)
+        "*/games/tla/src/sdk/sound/player_work_copy.o"(.text)
+        "*/games/tla/src/sdk/sound/mplay_main.o"(.text .rodata .text.channel_unlink)
         "*/games/tla/src/sound/sound_play.o"(.text)
-        "*/games/tla/src/sound/bios_sound_driver_mode.o"(.text .rodata .data .padding)
+        "*/games/tla/src/sdk/sound/bios_sound_driver_mode.o"(.text .rodata .data .padding)
         "*/games/tla/src/sound/sound_test.o"(.text)
-        "*/games/tla/src/sound/umul_high.o"(.text .text.mixer_entry)
+        "*/games/tla/src/sdk/sound/umul_high.o"(.text .text.mixer_entry)
     } > ROM
     .iwram_mixer 0x3006000 :
     {
-        "*/games/tla/src/sound/mixer.o"(.text .rodata .data .padding)
+        "*/games/tla/src/sdk/sound/mixer.o"(.text .rodata .data .padding)
     } > IWRAM AT>ROM
     iwram_high (NOLOAD) :
     {
@@ -370,13 +371,13 @@ SECTIONS
     } > IWRAM
     .rom_tail :
     {
-        "*/games/tla/src/sound/clear_buffer.o"(.text)
-        "*/games/tla/src/sound/sound.o"(.text)
-        "*/games/tla/src/sound/sound_get_jump_list.o"(.text .rodata .data .padding)
-        "*/games/tla/src/sound/driver.o"(.text)
-        "*/games/tla/src/sound/empty_callback.o"(.text)
+        "*/games/tla/src/sdk/sound/clear_buffer.o"(.text)
+        "*/games/tla/src/sdk/sound/sound.o"(.text)
+        "*/games/tla/src/sdk/sound/sound_get_jump_list.o"(.text .rodata .data .padding)
+        "*/games/tla/src/sdk/sound/driver.o"(.text)
+        "*/games/tla/src/sdk/sound/empty_callback.o"(.text)
         "*/games/tla/src/sound/sound_test.o"(.rodata)
-        "*/games/tla/src/sound/tables.o"(.rodata)
+        "*/games/tla/src/sdk/sound/tables.o"(.rodata)
         "*/games/tla/sound/voice_groups.o"(.rodata)
         "*/games/tla/sound/programmable_wave_samples.o"(.rodata)
         "*/games/tla/sound/music_player_table.o"(.rodata)
@@ -792,7 +793,7 @@ SECTIONS
         . = ABSOLUTE(ROM_SHIFT + 0x08300000);
         "*/games/tla/src/graphics/sprite/sprites.o"(.rodata)
         . = ABSOLUTE(ROM_SHIFT + 0x08680000);
-        "*/games/tla/src/gamepak/resource_directory.o"(.rodata)
+        "*/games/tla/src/system/resource_directory.o"(.rodata)
         "*/games/tla/src/graphics/ui/ui.list.o"(.rodata.a)
         "*/games/tla/src/graphics/field/clock_digits.list.o"(.rodata)
         "*/games/tla/src/graphics/title/title.list.o"(.rodata.c)
@@ -854,7 +855,7 @@ SECTIONS
         "*/games/tla/src/system/overlay/overlays.list.o"(.rodata)
     } > ROM
     IwramResident_Rom = LOADADDR(.iwram_resident);
-    SoundMainRAM_Rom = LOADADDR(.iwram_mixer) + 1;
+    sySndMainRAMRom = LOADADDR(.iwram_mixer) + 1;
     Mixer_CallViaR3Rom = LOADADDR(.iwram_mixer) + (Mixer_CallViaR3 - ADDR(.iwram_mixer));
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

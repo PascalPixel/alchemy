@@ -1,598 +1,610 @@
-/// @file
-/// The canvas layer: opening and closing it, its transfers, the battle
-/// background's darkening behind it, the targets' flash timers, and lines.
-// Part of battle_effect.c.
+/* @file */
+/* The canvas layer: opening and closing it, its transfers, the battle */
+/* background's darkening behind it, the targets' flash timers, and lines. */
+/* Part of battle_effect.c. */
 
-#include "battle_effect_internal.h"
-
-/// How far a row of BattleEffect_WipeCanvas's wipe lags behind its front, at
-/// most: each row lags a random 0 to WIPE_LAG_MAX pixels.
+/* How far a row of btEffectWipeCanvas's wipe lags behind its front, at */
+/* most: each row lags a random 0 to WIPE_LAG_MAX pixels. */
 #define WIPE_LAG_MAX 63
-/// Where the across wipe's front stops, three frames past
-/// CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished.
+/* Where the across wipe's front stops, three frames past */
+/* CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished. */
 #define WIPE_ACROSS_END 256
 
-/// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
-/// 23 frames across, 15 down.
-void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
-  struct BattleEffectState *state;
-  u8 *canvas;
-  u8 delay[CANVAS_SIZE];
-  s32 x;
-  s32 y;
-  s32 wipePosition;
+/* Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
+ */
+/* 23 frames across, 15 down. */
+void btEffectWipeCanvas(s32 direction, s32 fill) {
+	BATTLE_EFFECT_STATE *state;
+	u8 *canvas;
+	u8 delay[CANVAS_SIZE];
+	s32 x;
+	s32 y;
+	s32 wipePosition;
 
-  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  for (x = 0; x != CANVAS_SIZE; x++)
-    delay[x] = Random16() & WIPE_LAG_MAX;
+	canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	for(x = 0; x != CANVAS_SIZE; x++)
+		delay[x] = syRandom() & WIPE_LAG_MAX;
 
-  if (direction == CANVAS_WIPE_ACROSS) {
-    s32 front;
-    s32 speed;
+	if(direction == CANVAS_WIPE_ACROSS) {
+		s32 front;
+		s32 speed;
 
-    front = 0;
-    speed = 1;
-    x = 0;
-    do {
-      front += speed;
-      speed++;
-      for (; x != front; x++) {
-        for (y = 0; y != CANVAS_SIZE; y++) {
-          wipePosition = x - delay[y];
-          if (wipePosition >= 0)
-            if (wipePosition < CANVAS_SIZE)
-              canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
-        }
-      }
-      EFFECT_PRESENT_CANVAS(state);
-    } while (front <= WIPE_ACROSS_END);
-  } else {
-    s32 front;
-    s32 speed;
+		front = 0;
+		speed = 1;
+		x = 0;
+		do {
+			front += speed;
+			speed++;
+			for(; x != front; x++) {
+				for(y = 0; y != CANVAS_SIZE; y++) {
+					wipePosition = x - delay[y];
+					if(wipePosition >= 0)
+						if(wipePosition < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] =
+								1 - fill;
+				}
+			}
+			EFFECT_PRESENT_CANVAS(state);
+		} while(front <= WIPE_ACROSS_END);
+	}
+	else {
+		s32 front;
+		s32 speed;
 
-    front = 0;
-    speed = 1;
-    y = 0;
-    do {
-      front += speed / 2;
-      speed += 4;
-      for (; y != front; y++) {
-        for (x = 0; x != CANVAS_SIZE; x++) {
-          wipePosition = y - delay[x];
-          if (wipePosition >= 0)
-            if (wipePosition < CANVAS_SIZE)
-              canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
-        }
-      }
-      EFFECT_PRESENT_CANVAS(state);
-    } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
-  }
+		front = 0;
+		speed = 1;
+		y = 0;
+		do {
+			front += speed / 2;
+			speed += 4;
+			for(; y != front; y++) {
+				for(x = 0; x != CANVAS_SIZE; x++) {
+					wipePosition = y - delay[x];
+					if(wipePosition >= 0)
+						if(wipePosition < CANVAS_SIZE)
+							canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] =
+								1 - fill;
+				}
+			}
+			EFFECT_PRESENT_CANVAS(state);
+		} while(front <= CANVAS_SIZE + WIPE_LAG_MAX);
+	}
 }
 
-/// Copies the canvas to VRAM once the effect has finished a frame, then clears,
-/// fades, darkens or brightens it as transferMode says.
-void BattleEffect_TransferCanvas(void) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  void *source;
-  s32 *counter;
-  s32 nextCounter;
+/* Copies the canvas to VRAM once the effect has finished a frame, then clears,
+ */
+/* fades, darkens or brightens it as transferMode says. */
+void btEffectTransferCanvas(void) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	void *source;
+	s32 *counter;
+	s32 nextCounter;
 
-  if (state->transferPending == 1) {
-    source = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-    switch (state->transferMode) {
-    case CANVAS_COPY:
-      Iwram_CopyWords(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
-      break;
-    case CANVAS_COPY_AND_CLEAR:
-      Iwram_CopyWords(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
-      Iwram_FillWords(source, CANVAS_BYTES, state->transferValue);
-      break;
-    case CANVAS_COPY_AND_FADE:
-      if (state->transferValue == CANVAS_FADE_HALF) {
-        Canvas_CopyAndHalve(source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-      } else {
-        Canvas_CopyAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
-                                         CANVAS_BYTES);
-      }
-      break;
-    case CANVAS_COPY_AND_DARKEN:
-      Canvas_CopyAndDarken(source, state->transferValue,
-                           (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-      break;
-    case CANVAS_COPY_AND_BRIGHTEN:
-      Canvas_CopyAndBrighten(source, state->transferValue,
-                             (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
-      break;
-    }
-    state->transferPending = 0;
-    counter = &state->vblanksSinceTransfer;
-    nextCounter = 1;
-  } else {
-    counter = &state->vblanksSinceTransfer;
-    nextCounter = *counter + 1;
-  }
-  *counter = nextCounter;
+	if(state->transferPending == 1) {
+		source = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+		switch(state->transferMode) {
+		case CANVAS_COPY:
+			syWordsCopy(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
+			break;
+		case CANVAS_COPY_AND_CLEAR:
+			syWordsCopy(BG_CHAR_BLOCK(1), source, CANVAS_BYTES);
+			syWordsFill(source, CANVAS_BYTES, state->transferValue);
+			break;
+		case CANVAS_COPY_AND_FADE:
+			if(state->transferValue == CANVAS_FADE_HALF) {
+				syCanvasCopyAndHalve(source, (void *)BG_CHAR_BLOCK(1),
+									 CANVAS_BYTES);
+			}
+			else {
+				syCanvasCopyAndScaleThreeQuarters(
+					source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+			}
+			break;
+		case CANVAS_COPY_AND_DARKEN:
+			syCanvasCopyAndDarken(source, state->transferValue,
+								  (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+			break;
+		case CANVAS_COPY_AND_BRIGHTEN:
+			syCanvasCopyAndBrighten(source, state->transferValue,
+									(void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
+			break;
+		}
+		state->transferPending = 0;
+		counter = &state->vblanksSinceTransfer;
+		nextCounter = 1;
+	}
+	else {
+		counter = &state->vblanksSinceTransfer;
+		nextCounter = *counter + 1;
+	}
+	*counter = nextCounter;
 }
 
-/// Copies a full-screen image to VRAM once the effect has finished a frame,
-/// as transferMode says.
-void BattleEffect_TransferFullScreenImage(void) {
-  struct BattleEffectState *state;
-  void *source;
-  s32 transferMode;
+/* Copies a full-screen image to VRAM once the effect has finished a frame, */
+/* as transferMode says. */
+void btEffectTransferFullScrImage(void) {
+	BATTLE_EFFECT_STATE *state;
+	void *source;
+	s32 transferMode;
 
-  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  source = Ram_MapGridCellBuffer;
-  if (state->transferPending != 1)
-    return;
+	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	source = Ram_MapGridCellBuffer;
+	if(state->transferPending != 1)
+		return;
 
-  transferMode = state->transferMode;
-  switch (transferMode) {
-  case CANVAS_COPY:
-    Iwram_CopyWords(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
-    break;
-  case CANVAS_COPY_AND_CLEAR:
-    Iwram_CopyWords(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
-    Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, state->transferValue);
-    break;
-  case CANVAS_COPY_AND_FADE:
-    if (state->transferValue == CANVAS_FADE_HALF) {
-      Canvas_CopyAndHalve(source, (void *)BG_CHAR_BLOCK(2),
-                          BATTLE_BACKGROUND_BYTES);
-    } else {
-      Canvas_CopyAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                       BATTLE_BACKGROUND_BYTES);
-    }
-    break;
-  case CANVAS_COPY_AND_DARKEN:
-    Canvas_CopyAndDarken(source, state->transferValue, (void *)BG_CHAR_BLOCK(2),
-                         BATTLE_BACKGROUND_BYTES);
-    break;
-  }
+	transferMode = state->transferMode;
+	switch(transferMode) {
+	case CANVAS_COPY:
+		syWordsCopy(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+		break;
+	case CANVAS_COPY_AND_CLEAR:
+		syWordsCopy(BG_CHAR_BLOCK(2), source, BATTLE_BACKGROUND_BYTES);
+		syWordsFill(source, BATTLE_BACKGROUND_BYTES, state->transferValue);
+		break;
+	case CANVAS_COPY_AND_FADE:
+		if(state->transferValue == CANVAS_FADE_HALF) {
+			syCanvasCopyAndHalve(source, (void *)BG_CHAR_BLOCK(2),
+								 BATTLE_BACKGROUND_BYTES);
+		}
+		else {
+			syCanvasCopyAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
+											  BATTLE_BACKGROUND_BYTES);
+		}
+		break;
+	case CANVAS_COPY_AND_DARKEN:
+		syCanvasCopyAndDarken(source, state->transferValue,
+							  (void *)BG_CHAR_BLOCK(2),
+							  BATTLE_BACKGROUND_BYTES);
+		break;
+	}
 
-  state->transferPending = 0;
+	state->transferPending = 0;
 }
 
-/// The battle background's first BG palette, of the eight its colours take.
+/* The battle background's first BG palette, of the eight its colours take. */
 #define BATTLE_BACKGROUND_PALETTE 6
 
-/// Writes the window, display and blend registers the effect keeps in its
-/// state, all at once.
-void BattleEffect_ApplyWindowBlendRegisters(void) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+/* Writes the window, display and blend registers the effect keeps in its */
+/* state, all at once. */
+void btEffectApplyWindowBlendRegisters(void) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  REG_WIN0H = state->win0h;
-  REG_WIN0V = state->win0v;
-  REG_WIN1H = state->win1h;
-  REG_WIN1V = state->win1v;
-  REG_WININ = state->winin;
-  REG_WINOUT = state->winout;
-  REG_DISPCNT = state->dispcnt;
-  REG_BLDCNT = state->bldcnt;
-  REG_BLDALPHA = state->bldalpha;
+	REG_WIN0H = state->win0h;
+	REG_WIN0V = state->win0v;
+	REG_WIN1H = state->win1h;
+	REG_WIN1V = state->win1v;
+	REG_WININ = state->winin;
+	REG_WINOUT = state->winout;
+	REG_DISPCNT = state->dispcnt;
+	REG_BLDCNT = state->bldcnt;
+	REG_BLDALPHA = state->bldalpha;
 }
 
-/// Writes the effect's BG2 reference point to BG2X and BG2Y.
-void BattleEffect_ApplyBg2Reference(void) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+/* Writes the effect's BG2 reference point to BG2X and BG2Y. */
+void btEffectApplyBg2Reference(void) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  REG_BG2X = state->bg2x;
-  REG_BG2Y = state->bg2y;
+	REG_BG2X = state->bg2x;
+	REG_BG2Y = state->bg2y;
 }
 
-/// Darkens the battle background a step each frame while the canvas is open, so
-/// the effect stands out.
-void BattleEffect_DarkenBackgroundStep(void) {
-  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+/* Darkens the battle background a step each frame while the canvas is open, so
+ */
+/* the effect stands out. */
+void btEffectDarkenBackgroundStep(void) {
+	BATTLE_STATE *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  if (state->fadeFrames > 0) {
-    s32 step = ++state->fadeStep;
+	if(state->fadeFrm > 0) {
+		s32 step = ++state->fadeStep;
 
-    Graphics_ScaleRgb555ClampedFar(
-        battle->palette, (void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0),
-        FIXED_ONE - step * BACKGROUND_LEVEL_STEP, BATTLE_BACKGROUND_COLORS);
-    state->fadeFrames--;
-  }
+		mnGraphicsScaleRgb555ClampedStub(
+			battle->pal, (void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0),
+			FIXED_ONE - step * BACKGROUND_LEVEL_STEP, BATTLE_BACKGROUND_COLORS);
+		state->fadeFrm--;
+	}
 }
 
-/// Clears every target's flash timer.
-void BattleEffect_ClearTintTimers(void) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+/* Clears every target's flash timer. */
+void btEffectClearTintTimers(void) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
 
-  Iwram_ClearWords(state->actorTimers, sizeof state->actorTimers);
+	syWordsClear(state->actorTmrs, sizeof state->actorTmrs);
 }
 
-/// Counts down each target's flash timer and gives it its own palette back when
-/// one runs out.
-void BattleEffect_CountDownBattlerTints(void) {
-  struct BattleEffectState *state;
-  s32 actorIndex;
+/* Counts down each target's flash timer and gives it its own palette back when
+ */
+/* one runs out. */
+void btEffectCountDownBattlerTints(void) {
+	BATTLE_EFFECT_STATE *state;
+	s32 actorIndex;
 
-  state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  for (actorIndex = 0; actorIndex != ARRAY_COUNT(state->actorTimers);
-       actorIndex++) {
-    if (state->actorTimers[actorIndex] != 0) {
-      if ((state->actorTimers[actorIndex] =
-               state->actorTimers[actorIndex] - 1) == 0) {
-        BattleEffect_TintBattler(state->args->targets[actorIndex],
-                                 SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
-      }
-    }
-  }
+	state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	for(actorIndex = 0; actorIndex != ARRAY_COUNT(state->actorTmrs);
+		actorIndex++) {
+		if(state->actorTmrs[actorIndex] != 0) {
+			if((state->actorTmrs[actorIndex] =
+					state->actorTmrs[actorIndex] - 1) == 0) {
+				btEffectTintBattler(state->args->tgts[actorIndex],
+									SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP,
+									0);
+			}
+		}
+	}
 }
 
-/// Opens the canvas layer over the battle, darkening the battle background
-/// behind it.
-void BattleEffect_StartCanvasLayer(s32 bgControl) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundState *display =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  s32 row;
-  s32 column;
+/* Opens the canvas layer over the battle, darkening the battle background */
+/* behind it. */
+void btEffectStartCanvasLayer(s32 bgControl) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	BATTLE_STATE *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+	void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+	BATTLE_BACKGROUND_STATE *display =
+		HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+	s32 row;
+	s32 column;
 
-  BattleEffect_ClearTintTimers();
-  display->secondMode = BATTLE_BACKGROUND_FIXED;
-  wait(1);
-  REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
-  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  wait(1);
+	btEffectClearTintTimers();
+	display->secondMode = BATTLE_BACKGROUND_FIXED;
+	sySynch(1);
+	REG_BLDCNT = 0;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
+	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+	sySynch(1);
 
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  state->fadeFrames = 0;
-  state->fadeStep = 0;
-  Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
+	btBackgroundSetModeStub(BATTLE_BACKGROUND_FIXED, battle->bg, 0);
+	state->fadeFrm = 0;
+	state->fadeStep = 0;
+	sySetEvent(btEffectDarkenBackgroundStep, TASK_PASS_FRAME);
 
-  // Change BG2's settings while it is hidden.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-                          DISPCNT_WIN1_ON,
-                      IO_WRITE_HALFWORD);
-  wait(1);
-  REG_BG2CNT =
-      bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-                          DISPCNT_WIN1_ON,
-                      IO_WRITE_HALFWORD);
-  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  display->secondMode = BATTLE_BACKGROUND_NONE;
-  wait(1);
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
-  EFFECT_SET_CANVAS_AFFINE();
-  EFFECT_SET_BATTLE_WINDOWS();
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
-              WININ_WIN1_OBJ | WININ_WIN1_CLR;
-  REG_WINOUT = EFFECT_WINOUT;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
+	/* Change BG2's settings while it is hidden. */
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+							DISPCNT_WIN1_ON,
+						IO_WRITE_HALFWORD);
+	sySynch(1);
+	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+				 BGCNT_SCREEN_BASE(7);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+							DISPCNT_WIN1_ON,
+						IO_WRITE_HALFWORD);
+	btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
+	display->secondMode = BATTLE_BACKGROUND_NONE;
+	sySynch(1);
+	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
+	EFFECT_SET_CANVAS_AFFINE();
+	EFFECT_SET_BATTLE_WINDOWS();
+	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+				WININ_WIN1_OBJ | WININ_WIN1_CLR;
+	REG_WINOUT = EFFECT_WINOUT;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
 
-  {
-    s32 offset = 0;
+	{
+		s32 offset = 0;
 
-    for (row = 0; row != CANVAS_TILES; row++) {
-      EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
-    }
+		for(row = 0; row != CANVAS_TILES; row++) {
+			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+		}
 
-    Iwram_ClearWords(canvas, CANVAS_BYTES);
-    Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-    state->shakeFrames = 0;
-    state->savedBg1X = gBgScroll[1].x;
-    state->savedBg1Y = gBgScroll[1].y;
-    wait(1);
-  }
+		syWordsClear(canvas, CANVAS_BYTES);
+		syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+		state->shakeFrm = 0;
+		state->savedBg1X = BgScrollWork[1].x;
+		state->savedBg1Y = BgScrollWork[1].y;
+		sySynch(1);
+	}
 }
 
-/// Opens the canvas layer as BattleEffect_StartCanvasLayer does, with the
-/// windows off and a half-faded background.
-void BattleEffect_OpenCanvasLayer(s32 bgControl) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundState *display =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  s32 row;
-  s32 column;
+/* Opens the canvas layer as btEffectStartCanvasLayer does, with the */
+/* windows off and a half-faded background. */
+void btEffectOpenCanvasLayer(s32 bgControl) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	BATTLE_STATE *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+	void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+	BATTLE_BACKGROUND_STATE *display =
+		HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+	s32 row;
+	s32 column;
 
-  BattleEffect_ClearTintTimers();
-  display->secondMode = BATTLE_BACKGROUND_FIXED;
-  wait(1);
-  REG_BLDCNT = 0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_HALFWORD);
-  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  wait(1);
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
-                              BATTLE_BACKGROUND_FADE_RESTORE);
-  state->fadeFrames = BACKGROUND_DARKEN_FRAMES;
-  state->fadeStep = 0;
-  Task_Add(BattleEffect_DarkenBackgroundStep, TASK_PASS_FRAME);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_HALFWORD);
-  wait(1);
-  REG_BG2CNT =
-      bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_HALFWORD);
-  BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  display->secondMode = BATTLE_BACKGROUND_NONE;
-  wait(1);
+	btEffectClearTintTimers();
+	display->secondMode = BATTLE_BACKGROUND_FIXED;
+	sySynch(1);
+	REG_BLDCNT = 0;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
+						IO_WRITE_HALFWORD);
+	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+	sySynch(1);
+	btBackgroundSetModeStub(BATTLE_BACKGROUND_FIXED, battle->bg,
+							BATTLE_BACKGROUND_FADE_RESTORE);
+	state->fadeFrm = BACKGROUND_DARKEN_FRAMES;
+	state->fadeStep = 0;
+	sySetEvent(btEffectDarkenBackgroundStep, TASK_PASS_FRAME);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
+						IO_WRITE_HALFWORD);
+	sySynch(1);
+	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+				 BGCNT_SCREEN_BASE(7);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
+						IO_WRITE_HALFWORD);
+	btCameraSetViewStub(0, 0, 0, BATTLE_ZOOM_NORMAL);
+	display->secondMode = BATTLE_BACKGROUND_NONE;
+	sySynch(1);
 
-  REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
-  EFFECT_SET_CANVAS_AFFINE();
-  EFFECT_SET_BATTLE_WINDOWS();
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
-              WININ_WIN1_OBJ | WININ_WIN1_CLR;
-  REG_WINOUT = EFFECT_WINOUT;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
-  wait(1);
+	REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
+	EFFECT_SET_CANVAS_AFFINE();
+	EFFECT_SET_BATTLE_WINDOWS();
+	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+				WININ_WIN1_OBJ | WININ_WIN1_CLR;
+	REG_WINOUT = EFFECT_WINOUT;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
+	sySynch(1);
 
-  {
-    s32 offset = 0;
+	{
+		s32 offset = 0;
 
-    for (row = 0; row != CANVAS_TILES; row++) {
-      EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
-    }
+		for(row = 0; row != CANVAS_TILES; row++) {
+			EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+		}
 
-    Iwram_ClearWords(canvas, CANVAS_BYTES);
-    Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-    wait(1);
-  }
+		syWordsClear(canvas, CANVAS_BYTES);
+		syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+		sySynch(1);
+	}
 }
 
-/// Opens the canvas layer on a 256-pixel map that wraps: the canvas fills the
-/// left half of the map's top rows, and the right half repeats the canvas's
-/// first tile.
-void BattleEffect_StartTiledCanvas(s32 bgControl) {
-  s32 row;
-  s32 column;
-  s32 offset;
+/* Opens the canvas layer on a 256-pixel map that wraps: the canvas fills the */
+/* left half of the map's top rows, and the right half repeats the canvas's */
+/* first tile. */
+void btEffectStartTiledCanvas(s32 bgControl) {
+	s32 row;
+	s32 column;
+	s32 offset;
 
-  BattleEffect_StartCanvasLayer(bgControl);
-  REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-               BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
-  offset = 0;
-  for (row = 0; row != CANVAS_TILES; row++) {
-    EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
-    for (column = 0; column != 8; column++, offset += 2) {
-      *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
-    }
-  }
+	btEffectStartCanvasLayer(bgControl);
+	REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+				 BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
+	offset = 0;
+	for(row = 0; row != CANVAS_TILES; row++) {
+		EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
+		for(column = 0; column != 8; column++, offset += 2) {
+			*(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
+		}
+	}
 }
 
-/// The levels the battle background brightens by each frame as the canvas
-/// closes, back to its own colours.
+/* The levels the battle background brightens by each frame as the canvas */
+/* closes, back to its own colours. */
 #define BACKGROUND_RESTORE_STEP 3
 
-/// Closes the canvas layer and brings the battle background's colours back.
-void BattleEffect_EndCanvasLayer(void) {
-  struct BattleEffectState *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleState *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  s32 i;
+/* Closes the canvas layer and brings the battle background's colours back. */
+void btEffectEndCanvasLayer(void) {
+	BATTLE_EFFECT_STATE *state = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+	BATTLE_STATE *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+	s32 i;
 
-  Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
-  gBgScroll[1].x = state->savedBg1X;
-  gBgScroll[1].y = state->savedBg1Y;
-  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
-  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-               BGCNT_SCREEN_BASE(7);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  Task_Remove(BattleEffect_DarkenBackgroundStep);
-  // This overwrites the saved y restored above, so BG1 is always left at
-  // BATTLE_BACKGROUND_SCROLL_Y.
-  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-                          DISPCNT_WIN1_ON,
-                      IO_WRITE_HALFWORD);
-  REG_BLDCNT = 0;
-  wait(1);
+	sySndPlayStub(SOUND_FADE_OUT_ACTION_SE);
+	BgScrollWork[1].x = state->savedBg1X;
+	BgScrollWork[1].y = state->savedBg1Y;
+	ProjectionWork.centerX = BATTLE_PROJECTION_CENTER_X;
+	ProjectionWork.centerY = BATTLE_PROJECTION_CENTER_Y;
+	REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+				 BGCNT_SCREEN_BASE(7);
+	syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+	syCloseEvent(btEffectDarkenBackgroundStep);
+	/* This overwrites the saved y restored above, so BG1 is always left at */
+	/* BATTLE_BACKGROUND_SCROLL_Y. */
+	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+							DISPCNT_WIN1_ON,
+						IO_WRITE_HALFWORD);
+	REG_BLDCNT = 0;
+	sySynch(1);
 
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 7);
-  wait(1);
-  // The background brightens from the darkened level back to its own colours
-  // over eight frames.
-  for (i = 0; i != BACKGROUND_DARKENED_LEVEL / BACKGROUND_RESTORE_STEP; i++) {
-    BattleBackground_SetPaletteLevelFar(battle->background,
-                                        BACKGROUND_DARKENED_LEVEL -
-                                            BACKGROUND_RESTORE_STEP -
-                                            i * BACKGROUND_RESTORE_STEP);
-    wait(1);
-  }
+	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, battle->bg, 7);
+	sySynch(1);
+	/* The background brightens from the darkened level back to its own colours
+	 */
+	/* over eight frames. */
+	for(i = 0; i != BACKGROUND_DARKENED_LEVEL / BACKGROUND_RESTORE_STEP; i++) {
+		btBackgroundSetPaletteLevelStub(
+			battle->bg, BACKGROUND_DARKENED_LEVEL - BACKGROUND_RESTORE_STEP -
+							i * BACKGROUND_RESTORE_STEP);
+		sySynch(1);
+	}
 
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
-                          DISPCNT_WIN1_ON,
-                      IO_WRITE_HALFWORD);
-  wait(1);
+	IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+						DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+							DISPCNT_WIN1_ON,
+						IO_WRITE_HALFWORD);
+	sySynch(1);
 }
 
-/// Hides BG1 and the windows and starts bringing the battle background's
-/// colours back.
-void BattleEffect_HideBg1AndRestoreBackdrop(void) {
-  struct BattleState *battle;
-  s32 *secondMode;
+/* Hides BG1 and the windows and starts bringing the battle background's */
+/* colours back. */
+void btEffectHideBg1AndRestoreBackdrop(void) {
+	BATTLE_STATE *battle;
+	s32 *secondMode;
 
-  secondMode = &((struct BattleBackgroundState *)HEAP_SLOT_BLOCK(
-                     HEAP_SLOT_BATTLE_BACKGROUND))
-                    ->secondMode;
-  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
-  *secondMode = BATTLE_BACKGROUND_FIXED;
-  IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
-                                              DISPCNT_BG0_ON | DISPCNT_BG2_ON |
-                                              DISPCNT_OBJ_ON);
-  wait(1);
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
-  wait(1);
+	secondMode = &((BATTLE_BACKGROUND_STATE *)HEAP_SLOT_BLOCK(
+					   HEAP_SLOT_BATTLE_BACKGROUND))
+					  ->secondMode;
+	battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+	*secondMode = BATTLE_BACKGROUND_FIXED;
+	syIoWriteQueueStore16((u32)&REG_DISPCNT,
+						  DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+							  DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
+	sySynch(1);
+	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, battle->bg, 0);
+	sySynch(1);
 }
 
-/// BG1's map while it shows the canvas at its own size: the battle's own BG1
-/// map, in screen block 31.
+/* BG1's map while it shows the canvas at its own size: the battle's own BG1 */
+/* map, in screen block 31. */
 #define CANVAS_BG1_SCREEN 31
-/// Row `row` of BG1's map.
+/* Row `row` of BG1's map. */
 #define BG1_MAP_ROW(row)                                                       \
-  (BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
-/// The tile, cleared, that BG1 shows around the canvas.
+	(BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
+/* The tile, cleared, that BG1 shows around the canvas. */
 #define CANVAS_BG1_BLANK_TILE 255
-/// The canvas's first tile counted from BG1's character base: the canvas is
-/// character block 1.
+/* The canvas's first tile counted from BG1's character base: the canvas is */
+/* character block 1. */
 #define CANVAS_BG1_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
-/// The map row where the canvas starts on BG1, 96 pixels down: the beams
-/// scroll BG1 to y 80 to show it from the battle view's top line.
+/* The map row where the canvas starts on BG1, 96 pixels down: the beams */
+/* scroll BG1 to y 80 to show it from the battle view's top line. */
 #define CANVAS_BG1_TOP_ROW 12
 
-/// Shows the canvas on BG1 instead of BG2, at its own size.
-void BattleEffect_SetupCanvasTileMap(void) {
-  // UB: indexing past gBattleState reaches the heap slots after it.
+/* Shows the canvas on BG1 instead of BG2, at its own size. */
+void btEffectSetupCanvasTileMap(void) {
+	/* UB: indexing past BattleStateWork reaches the heap slots after it. */
 #ifdef UBFIX
-  void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleState *screen = gBattleState;
-  struct BattleBackgroundState *layer =
-      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+	void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+	BATTLE_STATE *screen = BattleStateWork;
+	BATTLE_BACKGROUND_STATE *layer =
+		HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
-  u8 **cells = (u8 **)&gBattleState;
-  void *canvas = cells[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
-  struct BattleState *screen = (struct BattleState *)cells[0];
-  struct BattleBackgroundState *layer = (struct BattleBackgroundState *)
-      cells[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
+	u8 **cells = (u8 **)&BattleStateWork;
+	void *canvas = cells[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
+	BATTLE_STATE *screen = (BATTLE_STATE *)cells[0];
+	BATTLE_BACKGROUND_STATE *layer = (BATTLE_BACKGROUND_STATE *)
+		cells[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
-  s32 row;
-  s32 column;
-  s32 byteOffset;
+	s32 row;
+	s32 column;
+	s32 byteOffset;
 
-  BattleEffect_ClearTintTimers();
-  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
-  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  layer->secondMode = BATTLE_BACKGROUND_NONE;
-  // A blank tile, then the rows above the canvas, from the first one BG1
-  // shows, which show nothing.
-  Iwram_ClearWords(BG_CHAR_BLOCK(0) + CANVAS_BG1_BLANK_TILE * TILE_SIZE_8BPP,
-                   TILE_SIZE_8BPP);
-  Iwram_FillWords(BG1_MAP_ROW(BATTLE_BACKGROUND_SCROLL_Y / 8),
-                  (CANVAS_BG1_TOP_ROW - BATTLE_BACKGROUND_SCROLL_Y / 8) *
-                      MAP_ROW_BYTES,
-                  -1);
-  // The canvas's tiles, then the blank tile across the rest of each row.
-  byteOffset = 0;
-  for (row = 0; row != CANVAS_TILES; row++) {
-    for (column = 0; column != BG_SCREEN_WIDTH; column++, byteOffset += 2) {
-      if (column >= CANVAS_TILES)
-        *(volatile u16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) + byteOffset) =
-            CANVAS_BG1_BLANK_TILE;
-      else
-        *(volatile u16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) + byteOffset) =
-            row * CANVAS_TILES + CANVAS_BG1_FIRST_TILE + column;
-    }
-  }
-  REG_DISPCNT = EFFECT_DISPCNT;
-  REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
-               BGCNT_SCREEN_BASE(CANVAS_BG1_SCREEN);
-  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  EFFECT_SET_BATTLE_WINDOWS();
-  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
-              WININ_WIN1_OBJ | WININ_WIN1_CLR;
-  REG_WINOUT = EFFECT_WINOUT;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
-  Iwram_ClearWords(canvas, CANVAS_BYTES);
-  Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  wait(1);
+	btEffectClearTintTimers();
+	btBackgroundSetModeStub(BATTLE_BACKGROUND_ZOOMED, screen->bg, 0);
+	BgScrollWork[1].y = BATTLE_BACKGROUND_SCROLL_Y;
+	layer->secondMode = BATTLE_BACKGROUND_NONE;
+	/* A blank tile, then the rows above the canvas, from the first one BG1 */
+	/* shows, which show nothing. */
+	syWordsClear(BG_CHAR_BLOCK(0) + CANVAS_BG1_BLANK_TILE * TILE_SIZE_8BPP,
+				 TILE_SIZE_8BPP);
+	syWordsFill(BG1_MAP_ROW(BATTLE_BACKGROUND_SCROLL_Y / 8),
+				(CANVAS_BG1_TOP_ROW - BATTLE_BACKGROUND_SCROLL_Y / 8) *
+					MAP_ROW_BYTES,
+				-1);
+	/* The canvas's tiles, then the blank tile across the rest of each row. */
+	byteOffset = 0;
+	for(row = 0; row != CANVAS_TILES; row++) {
+		for(column = 0; column != BG_SCREEN_WIDTH; column++, byteOffset += 2) {
+			if(column >= CANVAS_TILES)
+				*(volatile u16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
+								  byteOffset) = CANVAS_BG1_BLANK_TILE;
+			else
+				*(volatile u16 *)(BG1_MAP_ROW(CANVAS_BG1_TOP_ROW) +
+								  byteOffset) =
+					row * CANVAS_TILES + CANVAS_BG1_FIRST_TILE + column;
+		}
+	}
+	REG_DISPCNT = EFFECT_DISPCNT;
+	REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
+				 BGCNT_SCREEN_BASE(CANVAS_BG1_SCREEN);
+	REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+	EFFECT_SET_BATTLE_WINDOWS();
+	REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+				WININ_WIN1_OBJ | WININ_WIN1_CLR;
+	REG_WINOUT = EFFECT_WINOUT;
+	REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
+	syWordsClear(canvas, CANVAS_BYTES);
+	syWordsClear(BG_CHAR_BLOCK(1), CANVAS_BYTES);
+	sySynch(1);
 }
 
-/// Draws a line on the canvas, keeping the brighter colour where it crosses
-/// what is drawn; the line's ends are clipped to the canvas's rows only.
-void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
-                                        s32 color) {
-  s32 dx = x1 - x0;
-  s32 dy = y1 - y0;
-  // The slower axis is followed in 8.8 fixed point, a pixel each time the
-  // fraction carries into the whole part.
-  s32 frac = Q_8_8(0.5);
-  u8 *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  s32 step;
-  s32 i;
-  s32 x;
-  s32 y;
-  s32 tmp;
-  u32 offset;
+/* Draws a line on the canvas, keeping the brighter colour where it crosses */
+/* what is drawn; the line's ends are clipped to the canvas's rows only. */
+void btEffectDrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
+	s32 dx = x1 - x0;
+	s32 dy = y1 - y0;
+	/* The slower axis is followed in 8.8 fixed point, a pixel each time the */
+	/* fraction carries into the whole part. */
+	s32 frac = Q_8_8(0.5);
+	u8 *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+	s32 step;
+	s32 i;
+	s32 x;
+	s32 y;
+	s32 tmp;
+	u32 offset;
 
-  CLAMP(y0, 0, CANVAS_SIZE - 1);
-  CLAMP(y1, 0, CANVAS_SIZE - 1);
+	CLAMP(y0, 0, CANVAS_SIZE - 1);
+	CLAMP(y1, 0, CANVAS_SIZE - 1);
 
-  if (ABS(dx) < ABS(dy)) {
-    if (dy < 0) {
-      tmp = x0;
-      x0 = x1;
-      x1 = tmp;
-      tmp = y0;
-      y0 = y1;
-      y1 = tmp;
-      dx = x1 - x0;
-      /* LEFTOVER(template): dy recomputed after the swap and never read again,
-       * as the shallow arm's swap below recomputes both deltas and reads dy for
-       * its y step; as the line removed. */
-      dy = y1 - y0;
-    }
-    step = ABS(x1 - x0) * Q_8_8(1) / ABS(y1 - y0);
-    x = x0;
-    for (i = y0; i != y1; i++) {
-      offset = CANVAS_PIXEL_OFFSET((u32)x, (u32)i);
-      if (canvas[offset] < color)
-        canvas[offset] = color;
-      frac += step;
-      if (frac & Q_8_8(1)) {
-        if (dx > 0)
-          x++;
-        else
-          x--;
-        frac &= ~Q_8_8(1);
-      }
-    }
-  } else {
-    if (dx < 0) {
-      tmp = x0;
-      x0 = x1;
-      x1 = tmp;
-      tmp = y0;
-      y0 = y1;
-      y1 = tmp;
-      /* LEFTOVER(template): dx recomputed after the swap and never read again,
-       * as the steep arm's swap above recomputes both deltas and reads dx for
-       * its x step; as the line removed. */
-      dx = x1 - x0;
-      dy = y1 - y0;
-    }
-    step = ABS(y1 - y0) * Q_8_8(1) / ABS(x1 - x0);
-    y = y0;
-    for (i = x0; i != x1; i++) {
-      offset = CANVAS_PIXEL_OFFSET((u32)i, (u32)y);
-      if (canvas[offset] < color)
-        canvas[offset] = color;
-      frac += step;
-      if (frac & Q_8_8(1)) {
-        if (dy > 0)
-          y++;
-        else
-          y--;
-        frac &= ~Q_8_8(1);
-      }
-    }
-  }
+	if(ABS(dx) < ABS(dy)) {
+		if(dy < 0) {
+			tmp = x0;
+			x0 = x1;
+			x1 = tmp;
+			tmp = y0;
+			y0 = y1;
+			y1 = tmp;
+			dx = x1 - x0;
+			/* LEFTOVER(template): dy recomputed after the swap and never read
+			 * again, as the shallow arm's swap below recomputes both deltas and
+			 * reads dy for its y step; as the line removed. */
+			dy = y1 - y0;
+		}
+		step = ABS(x1 - x0) * Q_8_8(1) / ABS(y1 - y0);
+		x = x0;
+		for(i = y0; i != y1; i++) {
+			offset = CANVAS_PIXEL_OFFSET((u32)x, (u32)i);
+			if(canvas[offset] < color)
+				canvas[offset] = color;
+			frac += step;
+			if(frac & Q_8_8(1)) {
+				if(dx > 0)
+					x++;
+				else
+					x--;
+				frac &= ~Q_8_8(1);
+			}
+		}
+	}
+	else {
+		if(dx < 0) {
+			tmp = x0;
+			x0 = x1;
+			x1 = tmp;
+			tmp = y0;
+			y0 = y1;
+			y1 = tmp;
+			/* LEFTOVER(template): dx recomputed after the swap and never read
+			 * again, as the steep arm's swap above recomputes both deltas and
+			 * reads dx for its x step; as the line removed. */
+			dx = x1 - x0;
+			dy = y1 - y0;
+		}
+		step = ABS(y1 - y0) * Q_8_8(1) / ABS(x1 - x0);
+		y = y0;
+		for(i = x0; i != x1; i++) {
+			offset = CANVAS_PIXEL_OFFSET((u32)i, (u32)y);
+			if(canvas[offset] < color)
+				canvas[offset] = color;
+			frac += step;
+			if(frac & Q_8_8(1)) {
+				if(dy > 0)
+					y++;
+				else
+					y--;
+				frac &= ~Q_8_8(1);
+			}
+		}
+	}
 }
 
 #undef WIPE_LAG_MAX

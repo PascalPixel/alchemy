@@ -20,8 +20,8 @@ range says which one it is:
 A few numbers are not sounds but controls: fade the music out, or keep
 whatever is playing. Every number has a name in
 [sounds.h](../../include/sounds.h), `MUS_` for music and jingles and
-`SE_` for effects, and the one routine that takes them all is
-`Sound_Play` in `sound.c`.
+`SE_` for effects, and the one function that takes them all is
+`sySndPlay` in `sound.c`.
 
 Two sounds are heard together only if something plays each of them. There
 are eight players, each playing one sound at a time. Music has one, jingles
@@ -38,10 +38,11 @@ even loaded. A rule names a scene or a whole area, optionally a
 [game flag](../../../../docs/tbs/glossary.md#game-flag), and a sound. The first rule that
 fits wins.
 
-It is the same pattern the field uses for triggers and exits. Vale has five
-rules, latest first, and between them they tell its whole story: silence on
-the stormy night, then one tune after another as flags are set. Because the
-rules name the area, every house in Vale gets the town's answer.
+It is the same pattern the field engine uses for triggers and exits. Vale
+has five rules, latest first, and between them they tell its whole story:
+silence on the stormy night, then one tune after another as flags are set.
+Because the rules name the area, every house in Vale gets the town's
+answer.
 
 Battles have a short table of their own for the fights with a special tune.
 Every other battle gets the usual one.
@@ -77,8 +78,12 @@ The songs and samples are ordinary files you can open, in
 
 ## Where the code is
 
-- `sound.c` is the game's own layer: `Sound_Play`, the volume ramps and
+- `sound.c` here is the game's own layer: `sySndPlay`, the volume ramps and
   the music's return.
-- `audio.c`, `driver.c`, `tables.c` and the mixer files are the driver.
+- [`sdk/sound`](../sdk/sound) is the driver: its C, its handwritten functions
+  and the mixer the game copies into IWRAM.
+- [`system/mixer_render.s`](../system/mixer_render.s) is the one part of that
+  mixer that uses r4 as the system library's functions do, and so is counted
+  as the system library's own.
 - [`games/tbs/sound`](../../sound) holds the songs, the samples and the
   table that gives each sound its player.

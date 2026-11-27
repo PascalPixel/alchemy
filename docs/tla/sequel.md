@@ -49,7 +49,7 @@ gives her: she would start at level 1, not 5
 
 One battle effect is in The Broken Seal's table with no ability to play
 it: the user leaps at the target and sparks burst beneath it
-(`BattleEffect_RunUnusedSevereBlowLeap`, in
+(`btEffectRunUnusedSevereBlowLeap`, in
 [battle_effect_thrash.c](../../games/tbs/src/battle_effect/battle_effect_thrash.c)).
 The Broken Seal's Severe Blow plays a
 [casting impact](../../games/tla/src/battle_effect/README.md#effect-families) instead. In
@@ -63,16 +63,16 @@ in that game ever asks them for, and The Lost Age's do get asked for it
 
 Some of what the games carry unused is the same in both. No ability in
 either game plays the triangle strike, Bind's effect without its Djinni,
-ending in a run at the first target (`BattleEffect_RunUnusedTriangleStrike`,
+ending in a run at the first target (`btEffectRunUnusedTriangleStrike`,
 in [battle_effect_bind.c](../../games/tla/src/battle_effect/battle_effect_bind.c) and
 [The Broken Seal's](../../games/tbs/src/battle_effect/battle_effect_bind.c)).
 
-Three routines set aside room on the stack that they never touch, the same
+Three functions set aside room on the stack that they never touch, the same
 amount in both games: the link battle's handshake after each turn, 20 bytes
-(`LinkBattle_SyncTurn`), Lucky Dice, 32 (`LuckyDice_Run`), and Move cast
-with no target, 12 (`FieldPsynergy_Move`).
+(`btLinkBattleSyncTurn`), Lucky Dice, 32 (`fdLuckyDiceRun`), and Move cast
+with no target, 12 (`fdPsynergyMove`).
 
-Once it runs the other way. The Broken Seal's `Unit_Get`, which finds a
+Once it runs the other way. The Broken Seal's `syUnitGet`, which finds a
 fighter's [unit](glossary.md#unit), reads the address it was called from
 and never uses it
 ([game_units.c](../../games/tbs/src/game/game_units.c)). The Lost Age's does not
@@ -82,33 +82,34 @@ read it ([system_flags.c](../../games/tla/src/system/system_flags.c)).
 
 Both games keep each part's [state](glossary.md#state) in a
 [heap slot](glossary.md#heap-slot). The Broken Seal's code finds the slots
-through a table it links by name, `gHeapSlots`, and the field's state is
-`gFieldState`, one of its entries. The Lost Age keeps its slots at a fixed
+through a table it links by name, `HeapSlotsWork`, and the field's state is
+`FieldStateWork`, one of its entries. The Lost Age keeps its slots at a fixed
 address and reads them as the fields of one struct,
-`Ram_HeapSlots->fieldState`, in 384 of its source files. So a routine that
+`Ram_HeapSlots->fieldState`, in 384 of its source files. So a function that
 does the same thing in both games is often written, and compiled,
 differently in each.
 
 ## Time passes the same way
 
-Both games keep their frame loop inside `wait()` and run a short list of
-[tasks](glossary.md#task) from it ([System](system.md#waiting-and-tasks)).
+Both games keep their frame loop inside `sySynch()` and run a short list of
+[tasks](glossary.md#task) from it
+([the system library](system.md#waiting-and-tasks)).
 The differences are small, and each can be read in
 [system_frame.c](../../games/tla/src/system/system_frame.c) beside
 [The Broken Seal's](../../games/tbs/src/system/system_frame.c).
 
 - The list holds 24 tasks, where The Broken Seal's holds 20.
-- The Broken Seal's `wait()` moves the stack to a fixed spot before it runs
+- The Broken Seal's `sySynch()` moves the stack to a fixed spot before it runs
   the tasks and puts it back after. The Lost Age's runs them on the
   caller's stack.
 - The two passes have changed numbers. A task's pass is the high byte of
-  its priority. The Broken Seal's `wait()` runs the tasks whose high byte
-  is 12 and its VBlank handler those with 4. The Lost Age's `wait()` runs
+  its priority. The Broken Seal's `sySynch()` runs the tasks whose high byte
+  is 12 and its VBlank handler those with 4. The Lost Age's `sySynch()` runs
   the 4s and its handler the 12s. The list is sorted highest first, so here
   the handler's tasks come first, and the handler stops at the first task
   of the other pass.
 - The field keeps one task more. Actors that ride other actors are moved by
-  `Actor_MoveWithCarriers`, at rank 10, and the actors' own task ranks 11
+  `fdActorMoveWithCarriers`, at rank 10, and the actors' own task ranks 11
   to run before it ([Field code](../../games/tla/src/field/README.md#the-fields-tasks)).
 - The field answers a battle request after a step and a push, where The
   Broken Seal answers it before them

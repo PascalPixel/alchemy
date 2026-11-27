@@ -1,177 +1,177 @@
-/// @file
-/// An ability classified for target selection, and a reserve member chosen for
-/// a party slot.
-// Part of screens.c.
+/* @file */
+/* An ability classified for target selection, and a reserve member chosen for
+ */
+/* a party slot. */
+/* Part of screens.c. */
 
-#include "window_internal.h"
-#include "sounds.h"
-#include "gamepak/far_call/battle.h"
-#include "battle/motobj.h"
+/* Classifies ability `act`'s effect for target selection: the hint */
+/* mnBattleTargetRunSelection shows on a party member and starts on (enum */
+/* BATTLE_TARGET_HINT). */
+s32 mnBattleClassifyEntryKind(const ABILITY_DEFINITION *act) {
+	s32 abilityKind;
+	s32 targetKind;
 
-/// Classifies ability `act`'s effect for target selection: the hint
-/// BattleTarget_RunSelection shows on a party member and starts on (enum
-/// BattleTargetHint).
-s32 Battle_ClassifyEntryKind(const struct AbilityDefinition *act) {
-  s32 abilityKind;
-  s32 targetKind;
-
-  targetKind = TARGET_HINT_NONE;
-  abilityKind = act->flags & ABILITY_FORMULA_MASK;
-  if (abilityKind == ABILITY_FORMULA_HEAL_HP)
-    targetKind = TARGET_HINT_HP;
-  if (abilityKind == ABILITY_FORMULA_HEAL_PP)
-    targetKind = TARGET_HINT_PP;
-  if (act->effect == ABILITY_EFFECT_CURE_POISON)
-    targetKind = TARGET_HINT_CURE_POISON;
-  if (act->effect == ABILITY_EFFECT_RESTORE)
-    targetKind = TARGET_HINT_RESTORE;
-  if (act->effect == ABILITY_EFFECT_CURE_ALL)
-    targetKind = TARGET_HINT_CURE_ALL;
-  if (Battle_IsReviveEffectFar(act->effect) != 0)
-    targetKind = TARGET_HINT_REVIVE;
-  return targetKind;
+	targetKind = TARGET_HINT_NONE;
+	abilityKind = act->flg & ABILITY_FORMULA_MASK;
+	if(abilityKind == ABILITY_FORMULA_HEAL_HP)
+		targetKind = TARGET_HINT_HP;
+	if(abilityKind == ABILITY_FORMULA_HEAL_PP)
+		targetKind = TARGET_HINT_PP;
+	if(act->eff == ABILITY_EFFECT_CURE_POISON)
+		targetKind = TARGET_HINT_CURE_POISON;
+	if(act->eff == ABILITY_EFFECT_RESTORE)
+		targetKind = TARGET_HINT_RESTORE;
+	if(act->eff == ABILITY_EFFECT_CURE_ALL)
+		targetKind = TARGET_HINT_CURE_ALL;
+	if(btIsReviveEffectStub(act->eff) != 0)
+		targetKind = TARGET_HINT_REVIVE;
+	return targetKind;
 }
 
-/// Lets the player choose which reserve member takes a party slot in battle,
-/// previewing each choice in place: left and right cycle through the reserve,
-/// A confirms and swaps the two in gMainRoutineState.party, and B puts
-/// the slot's member back.
-s32 BattleParty_ChooseReserve(s32 slot) {
-  u16 owners[6];
-  u16 selected[2];
-  s32 count = BattleParty_PrepareReserveOwnersFar(owners);
-  s32 sel = 0;
-  s32 redraw = 1;
-  struct BattleState *battle = Ram_HeapSlots->battleState;
-  s32 result = 0;
-  struct BattleMenuState *menu = Ram_HeapSlots->battleMenuState;
-  s32 current;
-  s32 newId;
-  s32 i;
+/* Lets the player choose which reserve member takes a party slot in battle, */
+/* previewing each choice in place: left and right cycle through the reserve, */
+/* A confirms and swaps the two in MainRoutineStateWork.party, and B puts */
+/* the slot's member back. */
+s32 mnBattlePartyChooseReserve(s32 slot) {
+	u16 owners[6];
+	u16 selected[2];
+	s32 count = btPartyPrepareReserveOwnersStub(owners);
+	s32 sel = 0;
+	s32 redraw = 1;
+	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	s32 result = 0;
+	BATTLE_MENU_STATE *menu = Ram_HeapSlots->battleMenuState;
+	s32 current;
+	s32 newId;
+	s32 i;
 
-  if (count <= 0)
-    return -1;
-  // BattleTarget_RunSelection's PLACE_PARTY | place: the place is its low
-  // byte.
-  slot &= 0xff;
-  current = battle->partyUnits[slot];
-  Sound_PlayFar(SE_MENU_CONFIRM);
-  for (;;) {
-    newId = battle->partyUnits[slot] = owners[sel];
-    if (gInput.pressed & KEY_B) {
-      battle->partyUnits[slot] = current;
-      result = -1;
-      Sound_PlayFar(SE_MENU_CANCEL);
-      break;
-    }
-    // Japanese also takes A on the first frame, before the first preview
-    // has been drawn.
+	if(count <= 0)
+		return -1;
+	/* mnBattleTargetRunSelection's PLACE_PARTY | place: the place is its low */
+	/* byte. */
+	slot &= 0xff;
+	current = battle->partyUnits[slot];
+	sySndPlayStub(SE_MENU_CONFIRM);
+	for(;;) {
+		newId = battle->partyUnits[slot] = owners[sel];
+		if(InputWork.pressed & KEY_B) {
+			battle->partyUnits[slot] = current;
+			result = -1;
+			sySndPlayStub(SE_MENU_CANCEL);
+			break;
+		}
+		/* Japanese also takes A on the first frame, before the first preview */
+		/* has been drawn. */
 #if TLA_PATCH_1
-    if ((gInput.pressed & KEY_A) && !redraw) {
+		if((InputWork.pressed & KEY_A) && !redraw) {
 #else
-    if (gInput.pressed & KEY_A) {
+		if(InputWork.pressed & KEY_A) {
 #endif
-      // The preview already stands in the slot: a swap that would leave
-      // no one standing is refused.
-      if (BattleUnit_ListLivingIdsFar(BATTLE_SIDE_MASK_PARTY, 0) == 0) {
-        Sound_PlayFar(SE_MENU_ERROR);
-        continue;
-      }
-      Sound_PlayFar(SE_CHIME);
-      menu->swappedUnit = current;
-      menu->swappedPlace = slot;
-      for (i = 0; i < 8; i++) {
-        if (gMainRoutineState.party[i] == current)
-          gMainRoutineState.party[i] = newId;
-        else if (gMainRoutineState.party[i] == newId)
-          gMainRoutineState.party[i] = current;
-      }
-      break;
-    }
-    if (gInput.repeat & KEY_LEFT) {
-      sel = (sel + count - 1) % count;
-      Sound_PlayFar(SE_MENU_CONFIRM);
-      redraw = 1;
-    } else if (gInput.repeat & KEY_RIGHT) {
-      sel = (sel + 1) % count;
-      Sound_PlayFar(SE_MENU_CONFIRM);
-      redraw = 1;
-    }
-    if (redraw) {
-      struct BattleObject *from;
-      struct BattleObject *to;
-      struct Actor *actor;
-      struct Actor *place;
+			/* The preview already stands in the slot: a swap that would leave
+			 */
+			/* no one standing is refused. */
+			if(btUnitListLivingIdsStub(BATTLE_SIDE_MASK_PARTY, 0) == 0) {
+				sySndPlayStub(SE_MENU_ERROR);
+				continue;
+			}
+			sySndPlayStub(SE_CHIME);
+			menu->swappedUnit = current;
+			menu->swappedPlace = slot;
+			for(i = 0; i < 8; i++) {
+				if(MainRoutineStateWork.party[i] == current)
+					MainRoutineStateWork.party[i] = newId;
+				else if(MainRoutineStateWork.party[i] == newId)
+					MainRoutineStateWork.party[i] = current;
+			}
+			break;
+		}
+		if(InputWork.repeat & KEY_LEFT) {
+			sel = (sel + count - 1) % count;
+			sySndPlayStub(SE_MENU_CONFIRM);
+			redraw = 1;
+		}
+		else if(InputWork.repeat & KEY_RIGHT) {
+			sel = (sel + 1) % count;
+			sySndPlayStub(SE_MENU_CONFIRM);
+			redraw = 1;
+		}
+		if(redraw) {
+			BATTLE_OBJECT *from;
+			BATTLE_OBJECT *to;
+			ACTOR *actor;
+			ACTOR *place;
 
-      redraw = 0;
-      newId = battle->partyUnits[slot] = owners[sel];
-      from = BattleObject_GetFar(current);
-      to = BattleObject_GetFar(newId);
-      to->anchorX = from->anchorX;
-      place = (struct Actor *)from->object;
-      actor = (struct Actor *)to->object;
-      to->anchorZ = from->anchorZ;
-      Actor_SetPositionAndResetMotionFar(actor, place->x.fixed, place->y.fixed,
-                                         place->z.fixed);
-      PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
-      BattleObject_PutFar();
-      selected[0] = newId;
-      selected[1] = BATTLE_UNIT_LIST_END;
-      BattleHighlight_SetModesFar(selected, HIGHLIGHT_PULSE);
-      PartyStatus_HighlightMembers(selected);
-    }
-    wait(1);
-  }
-  selected[0] = BATTLE_UNIT_LIST_END;
-  BattleHighlight_SetModesFar(selected, HIGHLIGHT_OFF);
-  PartyStatus_HighlightMembers(selected);
-  PartyStatus_Draw(Ram_HeapSlots->battleState->partyStatus);
-  BattleObject_PutFar();
-  wait(1);
-  return result;
+			redraw = 0;
+			newId = battle->partyUnits[slot] = owners[sel];
+			from = btObjectGetStub(current);
+			to = btObjectGetStub(newId);
+			to->anchorX = from->anchorX;
+			place = (ACTOR *)from->obj;
+			actor = (ACTOR *)to->obj;
+			to->anchorZ = from->anchorZ;
+			fdActorSetPosAndResetMotionStub(actor, place->x.fixed,
+											place->y.fixed, place->z.fixed);
+			mnPartyStatDraw(Ram_HeapSlots->battleState->partyStat);
+			btObjectPutStub();
+			selected[0] = newId;
+			selected[1] = BATTLE_UNIT_LIST_END;
+			btHighlightSetModesStub(selected, HIGHLIGHT_PULSE);
+			mnPartyStatHighlightMembers(selected);
+		}
+		sySynch(1);
+	}
+	selected[0] = BATTLE_UNIT_LIST_END;
+	btHighlightSetModesStub(selected, HIGHLIGHT_OFF);
+	mnPartyStatHighlightMembers(selected);
+	mnPartyStatDraw(Ram_HeapSlots->battleState->partyStat);
+	btObjectPutStub();
+	sySynch(1);
+	return result;
 }
 
-/// Lists the units still standing on the sides in sideMask, party first, into
-/// unitIds when it is not null, and returns how many.
-s32 BattleUnit_ListLivingFar(s32 sideMask, u16 *unitIds);
+/* Lists the units still standing on the sides in sideMask, party first, into */
+/* unitIds when it is not null, and returns how many. */
+s32 btUnitListLivingStub(s32 sideMask, u16 *unitIds);
 
-/// The first half of The Broken Seal's Battle_BuildPartyActions: each action
-/// of a living party member who is asleep, confused, charmed or stunned is lost
-/// (COMMAND_NONE) and written at *cursor, which moves past them, their count
-/// going to *forcedCount; every other member's actions are listed in ready to
-/// be chosen. Returns how many are listed.
-s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
-                              s32 *forcedCount) {
-  u16 *unitIds = Heap_AllocEwram(9);
-  struct BattleActionRecord *entries = *cursor;
-  s32 count = BattleUnit_ListLivingFar(BATTLE_SIDE_MASK_PARTY, unitIds);
-  s32 readyCount = 0;
-  s32 forced = 0;
-  s32 i;
-  s32 action;
+/* The first half of The Broken Seal's Battle_BuildPartyActions: each action */
+/* of a living party member who is asleep, confused, charmed or stunned is lost
+ */
+/* (COMMAND_NONE) and written at *cursor, which moves past them, their count */
+/* going to *forcedCount; every other member's actions are listed in ready to */
+/* be chosen. Returns how many are listed. */
+s32 mnBattlePartySplitChoosers(u16 *ready, BATTLE_ACTION_RECORD **cursor,
+							   s32 *forcedCount) {
+	u16 *unitIds = syHeapAllocEwram(9);
+	BATTLE_ACTION_RECORD *entries = *cursor;
+	s32 count = btUnitListLivingStub(BATTLE_SIDE_MASK_PARTY, unitIds);
+	s32 readyCount = 0;
+	s32 forced = 0;
+	s32 i;
+	s32 action;
 
-  for (i = 0; i < count; i++) {
-    struct Unit *unit = Unit_Get(unitIds[i]);
+	for(i = 0; i < count; i++) {
+		UNIT *unit = syUnitGet(unitIds[i]);
 
-    for (action = 0; action < unit->actionsPerTurn; action++) {
-      if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
-          unit->stun != 0) {
-        struct BattleActionRecord *entry = &entries[forced];
+		for(action = 0; action < unit->actionsPerTurn; action++) {
+			if(unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
+			   unit->stun != 0) {
+				BATTLE_ACTION_RECORD *entry = &entries[forced];
 
-        entry->unitId = unitIds[i];
-        entry->priority = unit->agility;
-        entry->command = COMMAND_NONE;
-        entry->parameter = 0;
-        // The other side's place 0, as a lost action's target.
-        entry->target = PLACE_ENEMY;
-        forced++;
-      } else {
-        ready[readyCount++] = unitIds[i];
-      }
-    }
-  }
-  *forcedCount = forced;
-  entries += forced;
-  *cursor = entries;
-  return readyCount;
+				entry->unitId = unitIds[i];
+				entry->pri = unit->agility;
+				entry->command = COMMAND_NONE;
+				entry->prm = 0;
+				/* The other side's place 0, as a lost action's target. */
+				entry->tgt = PLACE_ENEMY;
+				forced++;
+			}
+			else {
+				ready[readyCount++] = unitIds[i];
+			}
+		}
+	}
+	*forcedCount = forced;
+	entries += forced;
+	*cursor = entries;
+	return readyCount;
 }

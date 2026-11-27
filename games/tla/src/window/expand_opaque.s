@@ -44,7 +44,7 @@ AlchemyUncreditedEnd_08038e32:
 	bne	.L_08038e40
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
-@ The routine's constants, which it reads beside its code (add, pc).
+@ The function's constants, which it reads beside its code (add, pc).
 	.4byte	0x00ff00ff
 	.4byte	0x0000ffff
 	.4byte	0x11111111

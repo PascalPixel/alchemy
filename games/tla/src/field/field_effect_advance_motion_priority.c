@@ -1,39 +1,37 @@
-/// @file
-/// A field effect's motion each frame, drawn at the leader's priority.
+/* @file */
+/* A field effect's motion each frame, drawn at the leader's priority. */
 
-#include "types.h"
 #include "system/field_effect.h"
-#include "system/main_routine_state.h"
 #include "field/event.h"
 #include "field/sprite.h"
 
-/// FieldEffect_AdvanceMotion, then gives the effect's sprite the leader's
-/// sprite priority, so the effect is drawn at the leader's depth.
-void FieldEffect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
-  struct FieldEffect *effect = &object->effect;
-  s32 velocityX = effect->velocity.x;
-  s32 velocityZ;
-  struct MainRoutineState *party;
-  struct FieldSprite *sprite;
-  struct Actor *leader;
-  struct PlacedSprite *to;
-  struct PlacedSprite *from;
+/* fdEffectAdvanceMotion, then gives the effect's sprite the leader's */
+/* sprite priority, so the effect is drawn at the leader's depth. */
+void fdEffectAdvanceMotionAtLeaderPriority(FIELD_OBJECT *object) {
+	FIELD_EFFECT *effect = &object->eff;
+	s32 velocityX = effect->vel.x;
+	s32 velocityZ;
+	MAIN_ROUTINE_STATE *party;
+	FIELD_SPR *sprite;
+	ACTOR *leader;
+	PLACED_SPR *to;
+	PLACED_SPR *from;
 
-  effect->x += velocityX;
-  effect->y += effect->velocity.y;
-  velocityZ = effect->velocity.z;
-  effect->z += velocityZ;
-  effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
-  effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
-  effect->scaleX += effect->scaleRateX;
-  sprite = effect->sprite;
-  effect->scaleY += effect->scaleRateY;
-  sprite->rotation += effect->spin;
+	effect->x += velocityX;
+	effect->y += effect->vel.y;
+	velocityZ = effect->vel.z;
+	effect->z += velocityZ;
+	effect->vel.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+	effect->vel.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
+	effect->scaleX += effect->scaleRateX;
+	sprite = effect->spr;
+	effect->scaleY += effect->scaleRateY;
+	sprite->rotation += effect->spin;
 
-  party = &gMainRoutineState;
+	party = &MainRoutineStateWork;
 
-  leader = Actor_GetById(party->leaderActorId);
-  to = (struct PlacedSprite *)effect->sprite;
-  from = (struct PlacedSprite *)leader->sprite;
-  to->priority = from->priority;
+	leader = fdActorGetById(party->leaderActorId);
+	to = (PLACED_SPR *)effect->spr;
+	from = (PLACED_SPR *)leader->spr;
+	to->pri = from->pri;
 }

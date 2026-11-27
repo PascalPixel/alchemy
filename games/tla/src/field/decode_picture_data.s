@@ -5,8 +5,8 @@
 	@ 224 bytes (unused) and less 256 bytes: table n is the 256 bytes at
 	@ that base + n * 256.
 	.4byte	0x00000000
-	.4byte	gSpriteColorTablesCopy - 0xe0
-	.4byte	gSpriteColorTablesCopy - 0x100
+	.4byte	SpriteColorTablesCopy - 0xe0
+	.4byte	SpriteColorTablesCopy - 0x100
 	.global BattleEffect_DecodePictureCopyEnd
 BattleEffect_DecodePictureCopyEnd:
 	.4byte	0, 0, 0, 0, 0, 0, 0

@@ -154,26 +154,54 @@ than their text: the Japanese edition can have twelve
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
-### pret
+### The style and where it comes from
 
-For readers of the code: pret is the group of fans behind the
-decompilations of other Game Boy Advance games. This source borrows its
-habits so that anyone who has read one of pret's games can read this one. A
-named piece of code is spelled like `Battle_Run`, a value the whole game
-shares starts with `g`, like `gTasks`, and bugs are marked `BUG` and
-`BUGFIX`.
+For readers of the code: the code follows the naming and layout of SGL,
+Sega's library for the Saturn, which the [system library](#system-library)
+is modelled on. A function's name is two small letters for the part that
+owns it and then its words, as `sySynch` or `fdActorGetById`. A type is in
+capitals, as `ACTOR`, and a global variable is its name alone, as
+`HeapSlots`. Each level is one tab, and every comment is a block comment
+([Contributing](../../CONTRIBUTING.md#names)).
 
-Sources: the game: none. SGL: none. GBATEK: none.
+This is the usual manner of Japanese studio code around 2000. Names are
+short English words, and the common ones are cut down: tbl for a table, wk
+for work, chr for a character, pat for a pattern, anm for an animation, flg
+for flags. Comments were written in Japanese after the code, in block
+comments.
+
+No original name of any function in these games is known. The names here
+are ours, written in that manner. Only the game's own words are confirmed
+against the game: the Japanese text's enajii (エナジー, Psynergy), jin (ジン,
+Djinn), setto (セット, Set), sutanbai (スタンバイ, Standby) and rikabarii
+(リカバリー, Recovery). These words of the period help in reading such code:
+
+| Word | What it means |
+| --- | --- |
+| sequence | the game's flow of modes, one after another ([sequence](#sequence)) |
+| work | a function's memory |
+| transfer | copying to video memory |
+| dummy | a placeholder |
+| pattern | one drawing of a sprite |
+| character | an 8 by 8 tile |
+| cell | a sprite built of several pieces, not a map's [cell](#cell) |
+| backup | the save memory |
+| encount | an encounter |
+| wait | frames to hold ([wait](#wait)) |
+
+Sources: the game: エナジー, ジン, セット, スタンバイ and リカバリー. SGL: the
+names and layout of its reference and its sample code. GBATEK: none.
 
 ### BUG, BUGFIX and UBFIX
 
-`// BUG:` marks one of the original game's bugs, kept as it is. Cast Sleep
-and twelve sheep drop onto the targets. They were meant to bounce off the
-ground, but a slip in the check means they almost always fall on through.
-The source keeps the slip, with the working check beside it behind `BUGFIX`.
+A `/* BUG: */` comment marks one of the original game's bugs, kept as it
+is. Cast Sleep and twelve sheep drop onto the targets. They were meant to
+bounce off the ground, but a slip in the check means they almost always
+fall on through. The source keeps the slip, with the working check beside
+it behind `BUGFIX`.
 
-`// UB:` is for readers of the code. The game is written in a language
-called C, and C leaves a few things open. In several battle effects one
+A `/* UB: */` comment is for readers of the code. The game is written in a
+language called C, and C leaves a few things open. In several battle effects one
 line both changes a number and reads it, and C does not say which happens
 first. On the cartridge it came out one particular way, and the source
 keeps that. The comment marks the spot, and a version that leaves nothing
@@ -200,9 +228,10 @@ Sources: the game: none. SGL: none. GBATEK: none.
 For readers of the code: the source is many files, and a file can only use
 what another file has announced. A module header is the short file where
 one file of code makes its announcements. The main routine's header is
-where the rest of the game learns that `MainRoutine_Run` exists. A header
+where the rest of the game learns that `gmMainRoutineRun` exists. A header
 sits in `include/` under its code's folder, named for its code:
-`src/system/main_routine.c` has `include/system/main_routine.h`
+`src/game/main_routine.c` has `include/game/main_routine.h`. The system
+library is announced in one header for all of it, `include/system.h`
 ([Source](../../games/tbs/src/README.md#headers)).
 
 Sources: the game: none. SGL: ヘッダファイル, its `sgl.h`. GBATEK: none.
@@ -225,29 +254,30 @@ gathers the inn, buying and selling from `shop_inn.c`, `shop_buy.c` and
 Sources: the game: none. SGL: オブジェクト (`OBJECT`), a placed model. GBATEK:
 "OBJ", a sprite.
 
-## The system
+## The system library
 
-### System
+### System library
 
-The System is the code everything else stands on: starting up, deciding what
-runs next, keeping time, handing out memory, saving and sound. The field,
-the battles and the menus all use it and none of them could run without it.
-It is one of the code's four divisions, with Field, Battle and Interface
-([System](system.md)).
+The system library is the code everything else stands on: starting up,
+deciding what runs next, keeping time, handing out memory, saving and
+sound. The field engine, the battle engine and the menu engine all use it,
+and none of them could run without it. It is one of the code's four parts,
+each the work of its own team
+([The system library](system.md)).
 
 Sources: the game: the credits' "Programming", then "System". SGL: none.
 GBATEK: none.
 
 ### Main routine
 
-The main routine, `MainRoutine_Run`, starts when the console is switched on
+The main routine, `gmMainRoutineRun`, starts when the console is switched on
 and never finishes. All it does is call one [sequence](#sequence) as a
 function, clear away what that one set up when it returns, and call the
 next. Walk into a battle, win it and walk on, and the main routine has run
 three: the cave, the battle, the cave again. It is a loop, but one trip
 round it is a whole sequence: the loop that goes round once a
-[frame](#frame) is inside [`wait()`](#wait)
-([System](system.md#the-main-routine)).
+[frame](#frame) is inside [`sySynch()`](#wait)
+([The system library](system.md#the-main-routine)).
 
 Sources: the game: none. SGL: メインループ, the loop run once a frame. GBATEK: none.
 
@@ -262,8 +292,8 @@ it is asked for by naming the scene to walk around. The Title and the File
 Screen are scenes, so the field sequence runs them too, and a menu or a
 shop is a function called from inside a sequence. Only one sequence runs
 at a time
-([System](system.md#the-main-routine)). The sound driver's sequence is
-another thing, a piece of music.
+([The system library](system.md#the-main-routine)). The sound driver's
+sequence is another thing, a piece of music.
 
 Sources: the game: none. SGL: シーケンス, a piece of music. GBATEK: none.
 
@@ -285,14 +315,14 @@ that is ending writes down what should run next, a scene or another
 sequence, in the [main routine's state](#main-routines-state), and the
 [main routine](#main-routine) starts it. The word is kept for this
 handover. The wipe or fade the player sees while it happens is a screen
-transition, `ScreenTransition_` in the code, which is only the drawing
-([System code](../../games/tbs/src/system/README.md#the-main-routine)).
+transition, `fdScrTransition` in the code, which is only the drawing
+([System library code](../../games/tbs/src/system/README.md#the-main-routine)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Main routine's state
 
-`gMainRoutineState` is the block of memory that outlives every
+`MainRoutineStateWork` is the block of memory that outlives every
 [sequence](#sequence): one C struct in a global. What a battle or a scene
 set up for itself is cleared away when it ends, but this block is left
 alone, so the next sequence can read it. It holds what runs next, who is in
@@ -301,7 +331,7 @@ are still there back on the field. It is emptied when the console is
 switched on and when a new game begins. Two other things are left alone
 with it, the [game flags](#game-flag) and the snapshot of where a scene's
 [actors](#actor) stand, and a save file keeps all three
-([System](system.md#saving)).
+([The system library](system.md#saving)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -310,9 +340,9 @@ Sources: the game: none. SGL: none. GBATEK: none.
 A frame is one image on the screen and the game's work to prepare it,
 about a sixtieth of a second. Everything that takes time is counted in
 frames. When Dora, at her door in Vale, says `Isaac... That's a lie!`, the
-event at her door then calls [`wait()`](#wait) for 60 frames before going
+event at her door then calls [`sySynch()`](#wait) for 60 frames before going
 on: one second, when nothing slows the game down
-([System code](../../games/tbs/src/system/README.md#the-frame-loop)).
+([System library code](../../games/tbs/src/system/README.md#the-frame-loop)).
 
 Sources: the game: none. SGL: フレーム, one picture shown. GBATEK: "Frame 0-1", a
 bitmap buffer.
@@ -320,30 +350,30 @@ bitmap buffer.
 ### Wait
 
 To wait is to let [frames](#frame) go by in the middle of a piece of code.
-`wait(10)` runs ten frames of the game, there inside the call, and then
+`sySynch(10)` runs ten frames of the game, there inside the call, and then
 carries on with the next line: the game's frame loop is this function, and
 there is no other. One piece of code waits at a time. An
 [actor script](#actor-script)'s `SC_WAIT` is another thing, a count kept in
 the actor. When a woman in Vale feels a tremor, her code starts the screen
 shaking, waits ten frames, and only then goes on to her line. So a scene can
 be written top to bottom, in the order things happen
-([System](system.md#waiting-and-tasks)).
+([The system library](system.md#waiting-and-tasks)).
 
-Sources: the game: none. SGL: `slSynch`, which waits for the next picture
+Sources: the game: none. SGL: `wait`, which waits for the next picture
 (次のビデオ表示を待つ). GBATEK: none.
 
 ### Task
 
-A task is a routine on a list that [`wait()`](#wait) calls once in every
+A task is a function on a list that [`sySynch()`](#wait) calls once in every
 [frame](#frame), until it is taken off the list. Tasks run only while some
 code is waiting, and a task never waits itself. A task is a whole piece
 of work, such as moving every [actor](#actor) a step, not one thing in the
 world. The task that types a villager's line into its window letter by
-letter is one. Each task has a rank, which the code calls its `priority`,
+letter is one. Each task has a rank, which the code calls its `pri`,
 and a higher rank runs earlier in the frame. A few tasks are called by the
-[VBlank](#vblank) handler instead, once a VBlank. The list, `gTasks`, has
+[VBlank](#vblank) handler instead, once a VBlank. The list, `TasksWork`, has
 room for 20
-([System code](../../games/tbs/src/system/README.md#the-task-runner)).
+([System library code](../../games/tbs/src/system/README.md#the-task-runner)).
 
 Sources: the game: none. SGL: イベント (`EVENT`) with its 実行関数 is this thing; its
 タスク is the second processor's. GBATEK: none.
@@ -354,7 +384,8 @@ VBlank is the short gap after the console has drawn the screen and before
 it starts drawing it again, about 60 times a second. At each one the console
 breaks off whatever the game is doing and runs one small piece of its code.
 That piece puts the finished [frame](#frame) on screen, prepares the sound
-and reads the buttons ([System code](../../games/tbs/src/system/README.md#what-vblank-does)).
+and reads the buttons
+([System library code](../../games/tbs/src/system/README.md#what-vblank-does)).
 
 Sources: the game: none. SGL: ブランキング. GBATEK: "V-Blank", "VBlank".
 
@@ -367,7 +398,8 @@ while the console draws the screen twice or more. Everything counted in
 frames, every walk, pause and animation, drags together. The music does
 not, because the sound is prepared at every [VBlank](#vblank) whether the
 frame is ready or not. So the tune keeps its speed while the image on
-screen falls behind it ([System code](../../games/tbs/src/system/README.md#what-vblank-does)).
+screen falls behind it
+([System library code](../../games/tbs/src/system/README.md#what-vblank-does)).
 
 Sources: the game: none. SGL: 処理落ち. GBATEK: none.
 
@@ -377,14 +409,14 @@ The console has no decimals, so a position, a speed or a scale is a whole
 number counted in 65,536ths: its upper 16 bits are the integer part and its
 lower 16 bits the decimal part. `toFIXED(0.8)` writes one, `FIXED_ONE` is
 1.0, and `FIXEDtoINT()` gives back the integer part, the pixel a position is
-on. In the code its type is `FIXED`. A routine that takes such numbers
+on. In the code its type is `FIXED`. A function that takes such numbers
 where its plain form takes whole pixels ends in `FX`
-(`Actor_SetPositionFX`), and angles are counted the same way, 65,536 to the
+(`fdActorSetPosFX`), and angles are counted the same way, 65,536 to the
 turn, written `DEGtoANG(90)`. `FIXED`, `toFIXED`, `DEGtoANG` and the `FX`
-suffix are the words of the reference for SGL, Sega’s library for the Saturn,
+suffix are the words of the reference for SGL, Sega’s engine for the Saturn,
 whose fixed-point, angle and matrix design this code matches; the current
-matrix's `Matrix_Push`, `Matrix_RotateX` and `Matrix_Translate` are modelled
-on its `slPushMatrix`, `slRotX` and `slTranslate`.
+matrix's `syPushMatrix`, `syRotX` and `syTranslate` take the names of its
+`slPushMatrix`, `slRotX` and `slTranslate`.
 
 Sources: the game: none. SGL: 固定小数点 (`FIXED`), with `toFIXED`, `DEGtoANG` and
 the FX suffix. GBATEK: "Integer portion" and "Fractional portion".
@@ -394,12 +426,12 @@ the FX suffix. GBATEK: "Integer portion" and "Fractional portion".
 A system's state is the block of memory it keeps its running values in. It
 is set up when the system starts and kept for as long as the system runs:
 one C struct, `struct <Owner>State`, in a global named `g<Owner>State`. The
-field's is `gFieldState`, and among what it holds are who the people in the
+field's is `FieldStateWork`, and among what it holds are who the people in the
 scene are and what the leader has just run into. The menus' is
-`gMenuState`. Each is found again through a [heap slot](#heap-slot). The
+`MenuState`. Each is found again through a [heap slot](#heap-slot). The
 [main routine's](#main-routines-state) is the one that is kept apart and
 outlives the rest
-([System](system.md#saving)).
+([The system library](system.md#saving)).
 
 Sources: the game: none. SGL: ワーク (`WORK`), a pooled 64-byte block attached to
 an event. GBATEK: "Work RAM".
@@ -417,7 +449,7 @@ top: handing one back also hands back everything that was put on after it.
 That is simple and quick. The whole heap is emptied before each
 [sequence](#sequence), so a battle starts with nothing left over from the
 cave it began in
-([System code](../../games/tbs/src/system/README.md#the-heap)).
+([System library code](../../games/tbs/src/system/README.md#the-heap)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -426,7 +458,8 @@ Sources: the game: none. SGL: none. GBATEK: none.
 A heap slot is one of 62 numbered places, each remembering where one block
 from the [heap](#heap-and-pools) is, so that other code can find the block
 again. The field's [state](#state) is found through one, and the menus'
-state through another ([System code](../../games/tbs/src/system/README.md#the-heap)).
+state through another
+([System library code](../../games/tbs/src/system/README.md#the-heap)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -439,7 +472,7 @@ the processor, the chip that follows the game's instructions, and it is the
 fastest memory there is. EWRAM is 256 KB beside the processor, and slower.
 So the code that must be quickest is copied into IWRAM, and the big things
 go in EWRAM: the map the party is walking on takes 64 KB of it
-([System code](../../games/tbs/src/system/README.md#memory-map)).
+([System library code](../../games/tbs/src/system/README.md#memory-map)).
 
 Sources: the game: none. SGL: none. GBATEK: "On-chip Work RAM" and "On-board
 Work RAM".
@@ -448,20 +481,20 @@ Work RAM".
 
 The main image is the code the processor runs straight from the cartridge,
 without copying it into memory first. It is about 1 MB, in fourteen
-[banks](#bank), and holds what is needed all the time: walking, battles,
+[modules](#module), and holds what is needed all the time: walking, battles,
 windows, menus, shops, sound. What only one scene needs is kept apart, in
-[overlays](#overlay) ([System](system.md#overlays)).
+[overlays](#overlay) ([The system library](system.md#overlays)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
 ### Game Pak
 
 The Game Pak is the cartridge as a piece of hardware. It holds the game
-itself, which cannot be changed: the code in its [banks](#bank), and every
+itself, which cannot be changed: the code in its [modules](#module), and every
 image, map and tune, listed in the
 [resource directory](#resource-directory). It also holds the
 [flash chip](#flash-chip) the saves are written to
-([The Game Pak](../../games/tbs/src/gamepak/README.md)).
+([The Game Pak](../../games/tbs/src/system/README.md)).
 
 Sources: the game: none. SGL: none. GBATEK: "Game Pak", "GamePak ROM".
 
@@ -472,60 +505,60 @@ The flash chip is the small chip on the cartridge the three save
 power off. It is 64 KB, divided into 16 sectors of 4 KB; an Atmel chip's
 own sectors are 128 bytes, and the game erases thirty-two of them as one
 sector of 4 KB. A sector is the smallest piece the game saves at a time
-([The Game Pak](../../games/tbs/src/gamepak/README.md#the-flash-chip)).
+([The Game Pak](../../games/tbs/src/system/README.md#the-flash-chip)).
 
 Sources: the game: none. SGL: none. GBATEK: "GBA Cart Backup Flash ROM".
 
-### Bank
+### Module
 
-A bank is one of the fourteen stretches the [main image](#main-image) is cut
-into, roughly one for each part: one for the field, one for the windows, one
-for the battles, one for sound. Each starts at a fixed place with room to
-spare after its code, so one bank can grow without moving anything another
-depends on
-([The Game Pak](../../games/tbs/src/gamepak/README.md#why-the-main-image-is-cut-into-banks)).
-For readers who know older consoles: every bank is always in place, and none
-is switched in or out.
+A module is one of the fourteen stretches the [main image](#main-image) is
+cut into, roughly one for each part: one for the field, one for the windows,
+one for the battles, one for sound. Each starts at a fixed place with room
+to spare after its code, so one module can grow without moving anything
+another depends on
+([The Game Pak](../../games/tbs/src/system/README.md#why-the-main-image-is-cut-into-modules)).
+For readers who know older consoles: every module is always in place, and
+none is switched in or out as a bank would be.
 
-Sources: the game: none. SGL: カラーバンク, a bank of colours. GBATEK: "Wave RAM
-Bank", a bank of the wave memory.
+Sources: the game: none. SGL: none. GBATEK: none.
 
-### Bank folder
+### Engine folder
 
-A bank folder is a folder of `src/` that holds one or more
-[banks](#bank)' code. The folders are grouped by the four divisions. The
-System has `system/`, `gamepak/` and `sound/`. The Field has `field/`. The
-Battle has `battle/`, `game/` and `battle_effect/`. The Interface has
-`window/`, `menu/` and `shop/` ([Source](../../games/tbs/src/README.md#banks-and-folders)).
+An engine folder is a folder of `src/` that holds one or more
+[modules](#module)' code. The folders are grouped by the four teams. The
+system library has `system/` and `sound/`. The field engine has `field/`.
+The battle engine has `battle/` and `battle_effect/`, and the game logic in
+`game/` is grouped with them. The menu engine has `window/`, `menu/` and
+`shop/` ([Source](../../games/tbs/src/README.md#modules-and-folders)).
 
 Sources: the game: the credits' "System", "Battle", "Field", "User Interface"
 and "Support". SGL: none. GBATEK: none.
 
-### Far call
+### Stub call
 
-The code is cut into [banks](#bank), and the code in one often needs
-something in another. A far call is how it asks. The trouble is that things
-move about inside a bank whenever its code changes, so the asker cannot
+The code is cut into [modules](#module), and the code in one often needs
+something in another. A stub call is how it asks. The trouble is that things
+move about inside a module whenever its code changes, so the asker cannot
 know exactly where to go.
 
-So each bank opens with a list, at a place that never moves, with one entry
-for each thing other banks may ask of it. The asker goes to the entry, and
-the entry, a [veneer](#veneer), sends it on. An entry is named after what it
+So each module opens with a list, at a place that never moves, with one entry
+for each thing other modules may ask of it. The asker goes to the entry, and
+the entry, a [stub](#stub), sends it on. An entry is named after what it
 leads to with `Far` added: the main routine starts a battle through
-`Battle_RunFar`, which leads to `Battle_Run`
-([The Game Pak](../../games/tbs/src/gamepak/README.md#why-the-main-image-is-cut-into-banks)).
+`btRunStub`, which leads to `btRun`
+([The Game Pak](../../games/tbs/src/system/README.md#why-the-main-image-is-cut-into-modules)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
-### Veneer
+### Stub
 
-A veneer is a tiny piece of code, 8 bytes long, that does one thing: it
+A stub is a tiny piece of code, 8 bytes long, that does one thing: it
 jumps on to a piece of code somewhere else. It stands at a place that never
 changes and points at something that may move, so everyone who needs that
-thing can go to the veneer and be sent the right way. `Battle_RunFar` is
-one, and all it does is jump to `Battle_Run`. The lists a [bank](#bank)
+thing can go to the stub and be sent the right way. `btRunStub` is
+one, and all it does is jump to `btRun`. The lists a [module](#module)
 and an [overlay](#overlay) open with are made of them
-([The Game Pak](../../games/tbs/src/gamepak/README.md#a-veneer)).
+([The Game Pak](../../games/tbs/src/system/README.md#a-stub)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -538,7 +571,8 @@ Vale's overlay, and are of no use in Vault. There are 96 overlays for the
 201 [scenes](#scene), because neighbours share: Crossbone Isle and the
 floors of its cave have one between them, and its code looks at which of
 those scenes the party is in. They all unpack into the same 32 KB of
-memory, so only one is loaded at a time ([System](system.md#overlays)).
+memory, so only one is loaded at a time
+([The system library](system.md#overlays)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -547,15 +581,15 @@ Sources: the game: none. SGL: none. GBATEK: none.
 An [overlay](#overlay) is a scene's own code, loaded only while the party
 is there. The rest of the game, the [main image](#main-image), cannot know
 where things are inside it, so the two reach each other through two lists
-of [veneers](#veneer).
+of [stubs](#stub).
 
-The entry table is the first thing in the overlay. It has six veneers, one
+The entry table is the first thing in the overlay. It has six stubs, one
 for each thing the field asks of any scene, such as who stands where and
 which exits it has. The import table is the last thing in it, and works the
-other way: one veneer for each piece of the main image the overlay uses.
+other way: one stub for each piece of the main image the overlay uses.
 When Isaac goes in at the Sanctum's door in Vale, Vale's overlay asks the
 field for that exit through its import table
-([System code](../../games/tbs/src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
+([System library code](../../games/tbs/src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -564,7 +598,7 @@ Sources: the game: none. SGL: none. GBATEK: none.
 The resource directory is the cartridge's one list of every packed thing on
 it: each overlay, map and image is a numbered row. The game finds a thing
 by its row, so Vale's [overlay](#overlay) is row 883
-([The Game Pak](../../games/tbs/src/gamepak/README.md#the-resource-directory-and-table-order)).
+([The Game Pak](../../games/tbs/src/system/README.md#the-resource-directory-and-table-order)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -574,7 +608,8 @@ A file is one of the three saves the File Screen offers. Each is kept on
 the [flash chip](#flash-chip) as two parts, and each part fills one of the
 chip's 4 KB sectors. A new copy of a part is written to a free sector
 first, and only then is the old copy given up, so there is no moment at which
-neither copy is on the chip ([System code](../../games/tbs/src/system/README.md#saving)).
+neither copy is on the chip
+([System library code](../../games/tbs/src/system/README.md#saving)).
 
 Sources: the game: "Please choose a file." (きろくばしょ, a place of record). SGL:
 none. GBATEK: none.
@@ -601,7 +636,7 @@ of a spoken line. GBATEK calls a sprite an OBJ, and the code's names for
 the console's sprite fields start `OBJ_`. OAM, the object attribute memory,
 is the console's list of where each one sits, and the game writes it afresh
 every [frame](#frame)
-([System code](../../games/tbs/src/system/README.md#the-frames-sprites)).
+([System library code](../../games/tbs/src/system/README.md#the-frames-sprites)).
 
 Sources: the game: none. SGL: スプライト, the small figure moved freely over the
 scrolls, which `SPRITE` records as a command. GBATEK: "OBJ", "OAM - Object
@@ -711,7 +746,7 @@ Sources: the game: the credits' "Field"; せんとう&フィールド, in Englis
 A scene is one place the game loads as a whole: a town's streets, a floor
 of a dungeon, a set of rooms, or the World Map. A few are screens instead,
 such as the Title and the File Screen. There are 201, each a row of the
-list `gScenes`: Vale is one, and the Sanctum's hall another, which is why
+list `ScenesWork`: Vale is one, and the Sanctum's hall another, which is why
 the screen fades between them. Each has a short label Camelot gave it
 (`TITLE`, `WORLD`, `PLOGV00` for Vale on the stormy night of the [prologue](#prologue))
 ([Field](field.md#scenes-and-areas)).
@@ -826,7 +861,7 @@ Sources: the game: none. SGL: none. GBATEK: none.
 An actor is anything on the field that moves or is drawn on its own. The
 party and the townspeople are actors, and so are the footprints left in
 snow and the point the camera follows. A scene has room for 64, the places
-of the list `gActors`
+of the list `ActorsWork`
 ([Field code](../../games/tbs/src/field/README.md#everything-that-moves-runs-an-actor-script)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
@@ -859,7 +894,7 @@ These pages call its items orders, and keep "command" for an
 [event command](#event-command). The orders' names start `SC_`, for script
 command, the code's own word. A script does not run by itself: one
 [task](#task) steps every actor's script each frame, and a script's wait,
-`SC_WAIT`, is a count in the actor, not [`wait()`](#wait). A villager who
+`SC_WAIT`, is a count in the actor, not [`sySynch()`](#wait). A villager who
 wanders near home is running one. An order can also hand the actor to a
 piece of the field's own code that steers it each frame, and the player's
 control of the leader is one of those, `SC_PLAYER`
@@ -950,11 +985,11 @@ needs an answer. There are twelve kinds: an exit taken, a battle due, a
 person to talk to, a cell to search, a menu to open, and others. Three
 kinds of code set one. The leader's [actor script](#actor-script) sets the
 ones for buttons: press Start and its order `SC_PLAYER` sets the request
-for the Pause menu. The field sequence's own routine sets the ones for
+for the Pause menu. The field sequence's own function sets the ones for
 where the leader has stepped. And an [event](#event) or a menu sets one for
 something the field must do after it has returned. The
 [field sequence](#field-sequence) reads the requests each time its
-`wait(1)` returns, never in the middle of a frame, and answers the most
+`sySynch(1)` returns, never in the middle of a frame, and answers the most
 urgent first ([Field code](../../games/tbs/src/field/README.md#the-twelve-requests)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
@@ -963,10 +998,10 @@ Sources: the game: none. SGL: none. GBATEK: none.
 
 An event is the piece of code a [trigger](#trigger) runs when something
 happens in a scene: a cutscene, or a conversation that does more than show
-one line. It is named for its scene. `Vale_EnterIsaacsHouse` is what happens
+one line. It is named for its scene. `scValeEnterIsaacsHouse` is what happens
 at the door of Isaac's house, where Dora will not open to a party that has
 left Vale and not yet reached Kalay. In the code it sits between
-`Event_Start` and `Event_End`, one [event command](#event-command) to a
+`fdEventStart` and `fdEventEnd`, one [event command](#event-command) to a
 line ([Scenes](../../games/tbs/src/scene/README.md#events)).
 
 Sources: the game: none. SGL: イベント (`EVENT`), which names our task. GBATEK:
@@ -974,17 +1009,18 @@ none.
 
 ### Event command
 
-An event command is one step of an [event](#event). The ones named `Event_`
-are for speech, pauses and where the party goes next, the ones named
-`Actor_` move the people, and the ones named `FieldCamera_` move the camera.
-At Dora's door, `Event_ShowMessage(ACTOR_DORA, 0)` shows the event's next
+An event command is one step of an [event](#event). The ones whose
+names start `fdEvent` are for speech, pauses and where the party goes next,
+the ones that start `fdActor` move the people, and the ones that start
+`fdCamera` move the camera.
+At Dora's door, `fdEventShowMessage(ACTOR_DORA, 0)` shows the event's next
 line as Dora's. The 0 asks for nothing special. A command is a C call. It
 is not an order of an [actor script](#actor-script), although both can be
-about an actor: `Actor_WalkTo` is a command an event calls, and `SC_MOVE`
+about an actor: `fdActorWalkTo` is a command an event calls, and `SC_MOVE`
 is an order in a script's table. A command that takes time, such as
-showing a line or one whose name ends `AndWait`, calls [`wait()`](#wait)
+showing a line or one whose name ends `AndWait`, calls [`sySynch()`](#wait)
 until what it started is over. One that only starts something, such as
-`Actor_WalkTo`, returns at once
+`fdActorWalkTo`, returns at once
 ([Scenes](../../games/tbs/src/scene/README.md#events)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
@@ -998,7 +1034,7 @@ itself.
 After a battle the party goes back where it was fighting, unless an event
 chose somewhere else. After a defeat it goes to the restart point, usually
 the last Sanctum it visited, again unless an event chose somewhere else
-([System code](../../games/tbs/src/system/README.md#running-another-sequence)).
+([System library code](../../games/tbs/src/system/README.md#running-another-sequence)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
 
@@ -1050,7 +1086,7 @@ GBATEK: none.
 A unit is one fighter in a battle, on either side: Isaac is a unit, and so
 is each enemy. The game keeps the same set of facts for every one of
 them, its stats, Psynergy, items, Djinn and ailments, which the code calls
-`struct Unit`. A unit in the party is a party member
+`UNIT`. A unit in the party is a party member
 ([Game rules](../../games/tbs/src/game/README.md#the-unit)).
 
 Sources: the game: none. SGL: none. GBATEK: none.
@@ -1089,7 +1125,7 @@ The game works out what an [action](#turns-and-actions) does before it
 shows any of it. The playback queue is the list of what is left to show for
 each target: the flinch, the line such as `Isaac takes 27 damage!`, the HP
 going down. A [task](#task) plays it, a little each frame, once the
-[battle effect](#battle-effect) has called `BattlePlayback_Start` to say
+[battle effect](#battle-effect) has called `btPlaybackStart` to say
 the blow has landed
 ([Battles](../../games/tbs/src/battle/README.md#how-outcomes-reach-the-screen)).
 
@@ -1100,7 +1136,7 @@ Sources: the game: none. SGL: none. GBATEK: none.
 A battle effect is the show an ability puts on over a battle, such as
 Quake's shaking ground or a summon's arrival. Each is a piece of code that
 moves and draws its parts [frame](#frame) by frame: a loop that draws one
-frame and calls [`wait(1)`](#wait). It decides when a hit is shown, never
+frame and calls [`sySynch(1)`](#wait). It decides when a hit is shown, never
 what the hit does
 ([Battle effects](../../games/tbs/src/battle_effect/README.md)).
 
@@ -1149,7 +1185,8 @@ Monster Battles"; the debug label ROUNGE. SGL: none. GBATEK: none.
 
 The interface is everything the player reads and chooses from: the
 [windows](#window), the [messages](#message) typed into them, the menus, and
-the counters of the shops, sanctums and inns ([Interface](interface.md)).
+the counters of the shops, sanctums and inns
+([The menu engine](interface.md)).
 
 Sources: the game: the credits' "User Interface". SGL: none. GBATEK: none.
 
@@ -1187,7 +1224,7 @@ The screens are the Title, the File Screen, the Pause menu, the field menu
 with its Psynergy, Djinn, Item and Status screens, the settings menu, name
 entry and the [map screen](#map-screen). The File Screen is where a
 [file](#file-and-part) is chosen, copied or erased, and the Pause menu is
-what Start opens on the field ([Interface](interface.md)).
+what Start opens on the field ([The menu engine](interface.md)).
 
 Sources: the game: "Title screen" (タイトルがめん), "To the File Screen" (データロードがめん,
 the data load screen), "The Pause menu is not available now." (ポーズメニュー); the
@@ -1227,14 +1264,15 @@ by its trade). SGL: none. GBATEK: none.
 
 ## The folders
 
-The folders of `src/` that are not named for a bank of code.
+The folders of `src/` that are not named for a module of code.
 
 ### Game rules
 
 The game rules are what a [unit](#unit), an item or a Djinni is and does:
-how much PP Cure costs, what Flint adds to a character. They are kept in
-one place because the field, the battles and the menus all need the same
-answers ([Game rules](../../games/tbs/src/game/README.md)).
+how much PP Cure costs, what Flint adds to a character. The game logic,
+the code under `game/`, keeps them in one place because the field engine,
+the battle engine and the menu engine all need the same answers
+([Game rules](../../games/tbs/src/game/README.md)).
 
 Sources: the game: the credits' "Game Design" and "Game Planning". SGL: none.
 GBATEK: none.
@@ -1267,7 +1305,7 @@ and what is in each.
   animations, as [sprites](#sprite-and-oam).
 - `tileset`: the tiles and colours a map's
   [cell tiles](#cell-tiles) come from.
-- `ui`: every [Interface](#interface) image, such as the menus' icons.
+- `ui`: every [interface](#interface) image, such as the menus' icons.
 
 Sources: the game: the credits' "Battle Backgrounds", "Battle Effects",
 "Monster Design", "Map Characters", "Battle Characters", "Maps" and "User

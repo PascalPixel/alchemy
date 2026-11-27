@@ -1,7 +1,7 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
-	.global gSprite_AnimationMetadata
-gSprite_AnimationMetadata:
+	.global Sprite_AnimationMetadata
+Sprite_AnimationMetadata:
 	.ifeq EDITION_INTERNATIONAL
 	.include "games/tbs/src/graphics/sprite/sprites_ja.spriteblocks"
 	.else

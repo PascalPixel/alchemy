@@ -1,463 +1,477 @@
-/// @file
-/// Cottage rooms C (SceneId_CottageRoomsC) is a rooms map drawn as
-/// cottages, all of them inside Bilibin's buildings, whose area name is
-/// Bilibin.
-///
-/// Six of Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP,
-/// in bilibin.c) lead into its rooms, and each room's door leads back out to
-/// the door it was entered by.
-///
-/// One room holds the weapon and armor shops, and another the item shop. A
-/// third holds the inn with the restaurant beside it, and its stairs
-/// (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and
-/// COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms. Three
-/// other buildings hold villagers. Scene_GetActorPlacements leaves out
-/// the actors of the rooms not in view.
-///
-/// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
-/// clear) and one for after.
-///
-/// Before, the townsfolk explain the tree at the village entrance, McCoy's
-/// palace and the Water of Hermes. In the restaurant the head chef, born in
-/// Kolima, is too worried to cook.
-///
-/// After, the head chef cooks so hard his kitchen cannot keep up. The first
-/// time the party talks to him he shouts a string of orders and the kitchen
-/// worker answers (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
-/// leaves Bilibin). From then on he sends the party to the waitress
-/// (CottageRoomsC_TalkToBusyChef).
-///
-/// Every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
-/// for afterwards, so the first row that matches picks the time.
-///
-/// The merchants and the innkeeper open the shop or the inn only when the
-/// leader faces them across the counter (facing north), and otherwise talk of
-/// the time. Mind Read on the villager who admires Mia depends on whether she
-/// is in the party.
-///
-/// Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg soup and
-/// omelettes in the ovens, and a book called "All About Items".
-///
-/// Scene_Initialize opens the rooms with a window around the leader
-/// and draws one diner, ACTOR_BILIBIN_DINER_WITH_PICKAXE, at a fixed sprite
-/// priority.
-///
-/// He stands at the north edge of the restaurant's table, on cell (7, 49).
-/// That cell alone of the diners' cells gives an actor standing on it priority
-/// 3 (cottage_rooms_c's map.txt). Taken from that cell, his priority would put
-/// him behind the middle layer (`BG2`, priority 2 in this map). The fixed
-/// priority 2 draws him in front of it, as the other diners are.
+/* @file */
+/* Cottage rooms C (SceneId_CottageRoomsC) is a rooms map drawn as */
+/* cottages, all of them inside Bilibin's buildings, whose area name is */
+/* Bilibin. */
+/* */
+/* Six of Bilibin's doors (BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP,
+ */
+/* in bilibin.c) lead into its rooms, and each room's door leads back out to */
+/* the door it was entered by. */
+/* */
+/* One room holds the weapon and armor shops, and another the item shop. A */
+/* third holds the inn with the restaurant beside it, and its stairs */
+/* (COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS and */
+/* COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN) join it to its upstairs rooms. Three */
+/* other buildings hold villagers. scGetActorPlacements leaves out */
+/* the actors of the rooms not in view. */
+/* */
+/* Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
+ */
+/* clear) and one for after. */
+/* */
+/* Before, the townsfolk explain the tree at the village entrance, McCoy's */
+/* palace and the Water of Hermes. In the restaurant the head chef, born in */
+/* Kolima, is too worried to cook. */
+/* */
+/* After, the head chef cooks so hard his kitchen cannot keep up. The first */
+/* time the party talks to him he shouts a string of orders and the kitchen */
+/* worker answers (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party */
+/* leaves Bilibin). From then on he sends the party to the waitress */
+/* (scCottageRoomsCTalkToBusyChef). */
+/* */
+/* Every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows */
+/* for afterwards, so the first row that matches picks the time. */
+/* */
+/* The merchants and the innkeeper open the shop or the inn only when the */
+/* leader faces them across the counter (facing north), and otherwise talk of */
+/* the time. Mind Read on the villager who admires Mia depends on whether she */
+/* is in the party. */
+/* */
+/* Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg soup and */
+/* omelettes in the ovens, and a book called "All About Items". */
+/* */
+/* scInit opens the rooms with a window around the leader */
+/* and draws one diner, ACTOR_BILIBIN_DINER_WITH_PICKAXE, at a fixed sprite */
+/* priority. */
+/* */
+/* He stands at the north edge of the restaurant's table, on cell (7, 49). */
+/* That cell alone of the diners' cells gives an actor standing on it priority
+ */
+/* 3 (cottage_rooms_c's map.txt). Taken from that cell, his priority would put
+ */
+/* him behind the middle layer (`BG2`, priority 2 in this map). The fixed */
+/* priority 2 draws him in front of it, as the other diners are. */
 
 #include "ability_ids.h"
 #include "flags.h"
 #include "item_ids.h"
-#include "types.h"
-#include "battle/battle.h"
 #include "debug/debug.h"
 #include "field/event.h"
-#include "field/event_commands.h"
-#include "field/field.h"
-#include "field/scene_tables.h"
-#include "game/game.h"
 #include "graphics/graphics.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
 #include "text/msg_ids.h"
 
-extern struct SceneEntrance gCottageRoomsCEntrances[];
-extern u32 gCottageRoomsCExits[];
-extern struct ActorPlacement gCottageRoomsCActorPlacements[];
-extern struct Trigger gCottageRoomsCTriggers[];
+extern SCENE_ENTRANCE CottageRoomsCEntrances[];
+extern u32 CottageRoomsCExits[];
+extern ACTOR_PLACE CottageRoomsCActorPlacements[];
+extern TRIGGER CottageRoomsCTriggers[];
 
-/// The head chef has shouted his string of orders once, so from then on he
-/// sends the party to the waitress.
+/* The head chef has shouted his string of orders once, so from then on he */
+/* sends the party to the waitress. */
 #define FLAG_BILIBIN_CHEF_CALLED_ORDERS FLAG_AREA_TEMP_00
 
-/// Bilibin's shops, as Shop_Run numbers the shops.
+/* Bilibin's shops, as mnShopRun numbers the shops. */
 enum {
-  SHOP_BILIBIN_WEAPONS = 7,
-  SHOP_BILIBIN_ARMOR = 8,
-  SHOP_BILIBIN_ITEMS = 9
+	SHOP_BILIBIN_WEAPONS = 7,
+	SHOP_BILIBIN_ARMOR = 8,
+	SHOP_BILIBIN_ITEMS = 9
 };
 
-/// Bilibin's inn, as Inn_CheckIn numbers the inns.
+/* Bilibin's inn, as mnInnCheckIn numbers the inns. */
 enum { BILIBIN_INN = 2 };
 
-/// The placed actors, numbered in the order of
-/// gCottageRoomsCActorPlacements from ACTOR_FIRST_PLACED.
-///
-/// Each room's actors are together: two in each house, then the shops'
-/// customers and keepers, the inn and its restaurant, and the inn's upstairs.
-enum CottageRoomsCActorId {
-  /// A young man with brown hair, in the house east.
-  ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN = ACTOR_FIRST_PLACED,
-  /// A woman with fair hair. "McCoy had the trees cut down so he could build"
-  /// his wife a palace.
-  ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE,
-  /// A burly grey-haired man in the house west, who wants to see Mia again.
-  ACTOR_BILIBIN_MIA_ADMIRER,
-  /// A small boy with fair hair. "We rarely see any snow around Bilibin."
-  ACTOR_BILIBIN_BOY_SNOW,
-  /// A woman in a green dress, in the house north.
-  ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA,
-  /// A little girl with pigtails, who later asks whether the party knows what
-  /// silk is.
-  ACTOR_BILIBIN_GIRL_SILK,
-  /// An old man with a cane, in the item shop.
-  ACTOR_BILIBIN_OLD_MAN_WATER_OF_HERMES,
-  /// An old woman. "But even the legendary Water of Hermes cannot turn back
-  /// time."
-  ACTOR_BILIBIN_OLD_WOMAN_LOST_YOUTH,
-  ACTOR_BILIBIN_WEAPON_MERCHANT,
-  ACTOR_BILIBIN_ARMOR_MERCHANT,
-  ACTOR_BILIBIN_ITEM_MERCHANT,
-  ACTOR_BILIBIN_INNKEEPER,
-  /// Beside the innkeeper.
-  ACTOR_BILIBIN_INN_WORKER,
-  /// The restaurant's head chef, born in Kolima.
-  ACTOR_BILIBIN_CHEF,
-  /// A second cook in a tall chef's hat.
-  ACTOR_BILIBIN_KITCHEN_WORKER,
-  /// A young woman with long brown hair.
-  ACTOR_BILIBIN_WAITRESS,
-  /// A man with a pack, waiting for his dinner.
-  ACTOR_BILIBIN_HUNGRY_DINER,
-  /// A diner with a pack, who "came to Bilibin hoping to sell furniture".
-  ACTOR_BILIBIN_FURNITURE_SELLER,
-  /// A strongman at the table. "I think that big tree deep in the forest looks
-  /// suspicious!"
-  ACTOR_BILIBIN_DINER_BIG_TREE,
-  /// A diner with a pickaxe, drawn at a fixed sprite priority.
-  ACTOR_BILIBIN_DINER_WITH_PICKAXE,
-  /// An old man at the table.
-  ACTOR_BILIBIN_DINER_TODAYS_SPECIAL,
-  /// A man in a red bandana, upstairs at the inn. "I went to Lord McCoy
-  /// looking for work..."
-  ACTOR_BILIBIN_JOB_SEEKER,
-  /// A man with a lute, upstairs at the inn. "I've heard songs that tell of
-  /// ancient trees developing strange powers."
-  ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES
+/* The placed actors, numbered in the order of */
+/* CottageRoomsCActorPlacements from ACTOR_FIRST_PLACED. */
+/* */
+/* Each room's actors are together: two in each house, then the shops' */
+/* customers and keepers, the inn and its restaurant, and the inn's upstairs. */
+typedef enum COTTAGE_ROOMS_C_ACTOR_ID {
+	/* A young man with brown hair, in the house east. */
+	ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN = ACTOR_FIRST_PLACED,
+	/* A woman with fair hair. "McCoy had the trees cut down so he could build"
+	 */
+	/* his wife a palace. */
+	ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE,
+	/* A burly grey-haired man in the house west, who wants to see Mia again. */
+	ACTOR_BILIBIN_MIA_ADMIRER,
+	/* A small boy with fair hair. "We rarely see any snow around Bilibin." */
+	ACTOR_BILIBIN_BOY_SNOW,
+	/* A woman in a green dress, in the house north. */
+	ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA,
+	/* A little girl with pigtails, who later asks whether the party knows what
+	 */
+	/* silk is. */
+	ACTOR_BILIBIN_GIRL_SILK,
+	/* An old man with a cane, in the item shop. */
+	ACTOR_BILIBIN_OLD_MAN_WATER_OF_HERMES,
+	/* An old woman. "But even the legendary Water of Hermes cannot turn back */
+	/* time." */
+	ACTOR_BILIBIN_OLD_WOMAN_LOST_YOUTH,
+	ACTOR_BILIBIN_WEAPON_MERCHANT,
+	ACTOR_BILIBIN_ARMOR_MERCHANT,
+	ACTOR_BILIBIN_ITEM_MERCHANT,
+	ACTOR_BILIBIN_INNKEEPER,
+	/* Beside the innkeeper. */
+	ACTOR_BILIBIN_INN_WORKER,
+	/* The restaurant's head chef, born in Kolima. */
+	ACTOR_BILIBIN_CHEF,
+	/* A second cook in a tall chef's hat. */
+	ACTOR_BILIBIN_KITCHEN_WORKER,
+	/* A young woman with long brown hair. */
+	ACTOR_BILIBIN_WAITRESS,
+	/* A man with a pack, waiting for his dinner. */
+	ACTOR_BILIBIN_HUNGRY_DINER,
+	/* A diner with a pack, who "came to Bilibin hoping to sell furniture". */
+	ACTOR_BILIBIN_FURNITURE_SELLER,
+	/* A strongman at the table. "I think that big tree deep in the forest looks
+	 */
+	/* suspicious!" */
+	ACTOR_BILIBIN_DINER_BIG_TREE,
+	/* A diner with a pickaxe, drawn at a fixed sprite priority. */
+	ACTOR_BILIBIN_DINER_WITH_PICKAXE,
+	/* An old man at the table. */
+	ACTOR_BILIBIN_DINER_TODAYS_SPECIAL,
+	/* A man in a red bandana, upstairs at the inn. "I went to Lord McCoy */
+	/* looking for work..." */
+	ACTOR_BILIBIN_JOB_SEEKER,
+	/* A man with a lute, upstairs at the inn. "I've heard songs that tell of */
+	/* ancient trees developing strange powers." */
+	ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES
+} COTTAGE_ROOMS_C_ACTOR_ID;
+
+const SCENE_ENTRANCE *scGetEntrances(void) { return CottageRoomsCEntrances; }
+
+const SCENE_EXIT_REGION *scGetExitRegions(void) { return 0; }
+
+const u32 *scGetExits(void) { return CottageRoomsCExits; }
+
+/* Places Bilibin's townsfolk, leaving out those of the rooms not in view. */
+const ACTOR_PLACE *scGetActorPlacements(void) {
+	scAssignViewFlags(CottageRoomsCActorPlacements);
+	return CottageRoomsCActorPlacements;
+}
+
+/* Bilibin's weapon merchant opens the shop across the counter, or talks. */
+static void scCottageRoomsCTalkToWeaponMerchant(void) {
+	u32 leaderFacing;
+
+	leaderFacing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
+	fdEventStart();
+
+	if(FACING_IS_NORTH(leaderFacing)) {
+		mnShopRun(SHOP_BILIBIN_WEAPONS, ACTOR_BILIBIN_WEAPON_MERCHANT);
+	}
+	else {
+		if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+			fdEventSetMessageId(MsgBilibinThereWasAbleHealerIn);
+		}
+		else {
+			fdEventSetMessageId(MsgBilibinOurWeaponsBestCanFind);
+		}
+		fdEventShowMessage(ACTOR_BILIBIN_WEAPON_MERCHANT, 0);
+	}
+
+	fdEventEnd();
+}
+
+/* Bilibin's item merchant opens the shop across the counter, or talks. */
+static void scCottageRoomsCTalkToItemMerchant(void) {
+	u32 leaderFacing;
+
+	leaderFacing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
+	fdEventStart();
+
+	if(FACING_IS_NORTH(leaderFacing)) {
+		mnShopRun(SHOP_BILIBIN_ITEMS, ACTOR_BILIBIN_ITEM_MERCHANT);
+	}
+	else {
+		if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+			fdEventSetMessageId(MsgBilibinMustUsedTypesDangerBeing);
+		}
+		else {
+			fdEventSetMessageId(MsgBilibinTurnedOutWarriorsHiredBy);
+		}
+		fdEventShowMessage(ACTOR_BILIBIN_ITEM_MERCHANT, 0);
+	}
+
+	fdEventEnd();
+}
+
+/* Returns the triggers, whose rows for while the curse holds come first. */
+const TRIGGER *scGetTriggers(void) { return CottageRoomsCTriggers; }
+
+/* Bilibin's armor merchant opens the shop across the counter, or talks. */
+static void scCottageRoomsCTalkToArmorMerchant(void) {
+	u32 leaderFacing;
+
+	leaderFacing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
+	fdEventStart();
+	if(FACING_IS_NORTH(leaderFacing)) {
+		mnShopRun(SHOP_BILIBIN_ARMOR, ACTOR_BILIBIN_ARMOR_MERCHANT);
+	}
+	else {
+		if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+			fdEventSetMessageId(MsgBilibinHaveEverHeardOcean);
+			fdActorFaceActor(ACTOR_BILIBIN_ARMOR_MERCHANT, ACTOR_PARTY_LEADER,
+							 0);
+			fdEventWait(10);
+			/* "Have you ever heard of the 'ocean'?" */
+			/* Yes: "If you travel over the ocean to far, far away, you'll
+			 * find..." */
+			/* No: "The ocean is immense... You would want to sing if you
+			 * ever..." */
+			fdEventAskYesNo(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
+			fdActorFaceDirection(ACTOR_BILIBIN_ARMOR_MERCHANT,
+								 FACING_SOUTH_SOUTHEAST, 10);
+		}
+		else {
+			fdEventSetMessageId(MsgBilibinForSomeReasonOceanFills);
+			/* "For some reason, the ocean fills me with hope and desire......"
+			 */
+			fdEventShowMessage(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
+		}
+	}
+	fdEventEnd();
+}
+
+/* The head chef in Bilibin's restaurant, before the curse is lifted, is too */
+/* worried to focus on his cooking. */
+static void scCottageRoomsCTalkToWorriedChef(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinImReallyWorriedAboutKolima);
+	fdActorFaceActor(ACTOR_BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
+	/* "I'm really worried about Kolima. I was born there, you know?..." */
+	fdEventShowMessage(ACTOR_BILIBIN_CHEF, 0);
+	fdActorFaceDirection(ACTOR_BILIBIN_CHEF, FACING_NORTH, 10);
+	fdEventEnd();
+}
+
+/* A diner in Bilibin's restaurant, before the curse is lifted, is still */
+/* waiting for his dinner. */
+static void scCottageRoomsCTalkToHungryDiner(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinGrrr);
+	/* "Grrr..." */
+	fdEventShowMessageThenWait(ACTOR_BILIBIN_HUNGRY_DINER, 0, 20);
+	fdActorFaceActor(ACTOR_BILIBIN_HUNGRY_DINER, ACTOR_PARTY_LEADER, 0);
+	fdEventWait(10);
+	/* "Did you hear a sound? You heard it, right?" */
+	fdEventOpenMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
+	if(fdEventAskYesNoWithActorAnimation(0, 0) != 0) {
+		FieldStateWork->msg++;
+	}
+	fdEventShowMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
+	fdActorFaceDirection(ACTOR_BILIBIN_HUNGRY_DINER, FACING_SOUTH, 10);
+	fdEventEnd();
+}
+
+/* A diner asks whether a tree spirit can curse a man. */
+static void scCottageRoomsCAskAboutTreeSpirit(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
+	fdActorFaceActor(ACTOR_BILIBIN_DINER_WITH_PICKAXE, ACTOR_PARTY_LEADER, 0);
+	fdEventWait(10);
+	/* "Do you believe a tree spirit can curse a man?" */
+	fdEventOpenMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
+	if(fdEventAskYesNoWithActorAnimation(0, 0) != 0) {
+		FieldStateWork->msg++;
+	}
+	fdEventShowMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
+	fdActorFaceDirection(ACTOR_BILIBIN_DINER_WITH_PICKAXE, FACING_SOUTH, 10);
+	fdEventEnd();
+}
+
+/* A young man asks whether Kolima Forest's holy tree survived. */
+static void scCottageRoomsCAskAboutHolyTree(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinDoKnowIfHolyTree);
+	/* "Do you know if the holy tree survived?" */
+	/* Yes: "That makes sense. Those who were turned into trees are back..." */
+	/* No: "Then how did the people who became trees get returned to..." */
+	fdEventAskYesNo(ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
+	fdEventEnd();
+}
+
+/* A little girl in Bilibin, once the curse is lifted, asks whether the party */
+/* knows what silk is. */
+static void scCottageRoomsCAskAboutSilk(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinDoKnowSilk);
+	/* "Do you know what silk is?" */
+	/* Yes: "That's what they make in Xian village on the other side of..." */
+	/* No: "Caterpillars are raised on mulberry leaves. When the..." */
+	fdEventAskYesNo(ACTOR_BILIBIN_GIRL_SILK, 0);
+	fdEventEnd();
+}
+
+/* Bilibin's innkeeper opens the inn across the counter, or talks. */
+static void scCottageRoomsCTalkToInnkeeper(void) {
+	u32 leaderFacing;
+
+	leaderFacing = fdActorGet(ACTOR_PARTY_LEADER)->facing;
+	fdEventStart();
+
+	if(FACING_IS_NORTH(leaderFacing)) {
+		mnInnCheckIn(BILIBIN_INN, ACTOR_BILIBIN_INNKEEPER);
+	}
+	else if(gmFlagGet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+		fdEventSetMessageId(MsgBilibinWasntCurseInKolimaHorrifying);
+		/* "Wasn't that curse in Kolima horrifying?" */
+		/* Yes: "Even heroes like you can feel fear. Just imagine how scary..."
+		 */
+		/* No: "You can say that now, because it's all over. At the time, we..."
+		 */
+		fdEventAskYesNo(ACTOR_BILIBIN_INNKEEPER, 0);
+	}
+	else {
+		fdEventSetMessageId(MsgBilibinCurseOnKolimaScaryDevelopment);
+		/* "A curse on Kolima? What a scary development!" */
+		fdEventShowMessage(ACTOR_BILIBIN_INNKEEPER, 0);
+	}
+
+	fdEventEnd();
+}
+
+/* The head chef in Bilibin's restaurant, once the curse is lifted, calls out */
+/* orders once, then sends the party to the waitress. */
+static void scCottageRoomsCTalkToBusyChef(void) {
+	fdEventStart();
+	if(fdEventGetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {
+		/* The first time (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
+		 */
+		/* leaves Bilibin), the chef shouts orders and the kitchen worker
+		 * answers. */
+		fdEventSetMessageId(MsgBilibinTwoSpecialsOneDinnerOne);
+		/* "Two specials! One dinner! One sandwich! One dessert! Hurry up!" */
+		fdEventShowMessage(ACTOR_BILIBIN_CHEF, 0);
+		fdActorFaceDirection(ACTOR_BILIBIN_CHEF, FACING_WEST, 20);
+		/* "Hey, you! Are you done yet?" */
+		fdEventShowMessage(ACTOR_BILIBIN_CHEF, 0);
+		fdActorStartRepeatedMotion(ACTOR_BILIBIN_KITCHEN_WORKER, 2);
+		fdActorSetAttachedEffect(ACTOR_BILIBIN_KITCHEN_WORKER,
+								 ATTACHED_EFFECT_IN_FRONT |
+									 ATTACHED_EFFECT_ONCE);
+		fdEventWait(60);
+		/* "Almost..." */
+		fdEventShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
+		fdEventWait(10);
+		gmFlagSet(FLAG_BILIBIN_CHEF_CALLED_ORDERS);
+	}
+	/* Then, as every later time, he sends the party to the waitress. */
+	fdActorFaceActor(ACTOR_BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
+	fdEventSetMessageId(MsgBilibinIfWantMealSpeakWaitress);
+	/* "If you want a meal, speak to the waitress." */
+	fdEventShowMessage(ACTOR_BILIBIN_CHEF, 0);
+	fdActorFaceDirection(ACTOR_BILIBIN_CHEF, FACING_NORTH, 10);
+	fdEventEnd();
+}
+
+/* The kitchen worker can't keep up with the head chef's energy. */
+static void scCottageRoomsCTalkToKitchenWorker(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinReallyThinkHeadChefHas);
+	/* "I really think the head chef has changed. It's too much!" */
+	fdEventShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
+	fdActorFaceActor(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
+	/* "I can't keep up with his energy!" */
+	fdEventShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
+	fdActorFaceDirection(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
+	fdEventEnd();
+}
+
+/* The waitress hurries through her work before the head chef yells. */
+static void scCottageRoomsCTalkToWaitress(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinLetsSeeServeThemWater);
+	/* "Let's see, serve them water...then get the silverware." */
+	fdEventShowMessage(ACTOR_BILIBIN_WAITRESS, 0);
+	fdActorFaceActor(ACTOR_BILIBIN_WAITRESS, ACTOR_PARTY_LEADER, 0);
+	/* "The head chef will yell if you slow down..." */
+	fdEventShowMessage(ACTOR_BILIBIN_WAITRESS, 0);
+	fdActorFaceDirection(ACTOR_BILIBIN_WAITRESS, FACING_NORTH, 10);
+	fdEventEnd();
+}
+
+/* A diner loves the meal and asks whether the party does too. */
+static void scCottageRoomsCTalkAboutMeal(void) {
+	fdEventStart();
+	fdEventSetMessageId(MsgBilibinWasSomeMealDontJust);
+	/* "That was some meal! Don't you just love the food here?" */
+	/* Yes: "I know how you feel. Go find a table and pig out!" */
+	/* No: "What!? Why am I even talking to you, when I could be eating!?" */
+	fdEventAskYesNo(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
+	fdEventEnd();
+}
+
+/* Mind Read on the burly man in Bilibin who admires Mia, before the curse is */
+/* lifted, hears his thoughts of her. */
+static void scCottageRoomsCReadMiaAdmirersMind(void) {
+	fdEventStart();
+	if(gmFlagGet(FLAG_IN_PARTY(MIA)) != 0) {
+		fdEventSetMessageId(MsgBilibinEvenFrozenImilMustFeel);
+	}
+	else {
+		fdEventSetMessageId(MsgBilibinWhenSpringComesWantGo);
+	}
+	fdEventShowMessage(ACTOR_BILIBIN_MIA_ADMIRER, 0);
+	fdEventEnd();
+}
+
+/* Sets up Bilibin's buildings. */
+s32 scInit(void) {
+	ACTOR *actor;
+
+	FieldStateWork->transition =
+		SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+	actor = fdActorGet(ACTOR_BILIBIN_DINER_WITH_PICKAXE);
+	actor->priFlg = 0;
+	actor->spr->image.pri = 2;
+	return 0;
+}
+
+SCENE_ENTRANCE CottageRoomsCEntrances[] = {
+	{ENTRANCE_DEFAULT, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, -1, -1,
+	 -1, -1, 0},
+	{COTTAGE_ROOMS_C_HOUSE_EAST, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0,
+	 24, 32, 264, 240, 0},
+	{COTTAGE_ROOMS_C_HOUSE_WEST, CONDITION_ALWAYS, 400, 0, 264, FACING_NORTH, 0,
+	 256, 0, 496, 288, 0},
+	{COTTAGE_ROOMS_C_HOUSE_NORTH, CONDITION_ALWAYS, 688, 0, 264, FACING_NORTH,
+	 0, 544, 0, 784, 288, 0},
+	{COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 240, 0, 504,
+	 FACING_NORTH, 0, 72, 336, 312, 528, 0},
+	{COTTAGE_ROOMS_C_ITEM_SHOP, CONDITION_ALWAYS, 576, 0, 536, FACING_NORTH, 0,
+	 400, 304, 640, 552, 0},
+	{COTTAGE_ROOMS_C_INN, CONDITION_ALWAYS, 352, 0, 872, FACING_NORTH, 0, 0,
+	 640, 400, 896, 0},
+	{COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 656, 0, 696,
+	 FACING_WEST, 0, 432, 640, 848, 896, 0},
+	{COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 344, 0, 696,
+	 FACING_EAST, 0, 0, 640, 400, 896, 0},
+	{SCENE_TABLE_END},
 };
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gCottageRoomsCEntrances;
-}
-
-const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
-
-const u32 *Scene_GetExits(void) { return gCottageRoomsCExits; }
-
-/// Places Bilibin's townsfolk, leaving out those of the rooms not in view.
-const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  Scene_AssignViewFlags(gCottageRoomsCActorPlacements);
-  return gCottageRoomsCActorPlacements;
-}
-
-/// Bilibin's weapon merchant opens the shop across the counter, or talks.
-static void CottageRoomsC_TalkToWeaponMerchant(void) {
-  u32 leaderFacing;
-
-  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  Event_Start();
-
-  if (FACING_IS_NORTH(leaderFacing)) {
-    Shop_Run(SHOP_BILIBIN_WEAPONS, ACTOR_BILIBIN_WEAPON_MERCHANT);
-  } else {
-    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Event_SetMessageId(MsgBilibinThereWasAbleHealerIn);
-    } else {
-      Event_SetMessageId(MsgBilibinOurWeaponsBestCanFind);
-    }
-    Event_ShowMessage(ACTOR_BILIBIN_WEAPON_MERCHANT, 0);
-  }
-
-  Event_End();
-}
-
-/// Bilibin's item merchant opens the shop across the counter, or talks.
-static void CottageRoomsC_TalkToItemMerchant(void) {
-  u32 leaderFacing;
-
-  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  Event_Start();
-
-  if (FACING_IS_NORTH(leaderFacing)) {
-    Shop_Run(SHOP_BILIBIN_ITEMS, ACTOR_BILIBIN_ITEM_MERCHANT);
-  } else {
-    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Event_SetMessageId(MsgBilibinMustUsedTypesDangerBeing);
-    } else {
-      Event_SetMessageId(MsgBilibinTurnedOutWarriorsHiredBy);
-    }
-    Event_ShowMessage(ACTOR_BILIBIN_ITEM_MERCHANT, 0);
-  }
-
-  Event_End();
-}
-
-/// Returns the triggers, whose rows for while the curse holds come first.
-const struct Trigger *Scene_GetTriggers(void) { return gCottageRoomsCTriggers; }
-
-/// Bilibin's armor merchant opens the shop across the counter, or talks.
-static void CottageRoomsC_TalkToArmorMerchant(void) {
-  u32 leaderFacing;
-
-  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  Event_Start();
-  if (FACING_IS_NORTH(leaderFacing)) {
-    Shop_Run(SHOP_BILIBIN_ARMOR, ACTOR_BILIBIN_ARMOR_MERCHANT);
-  } else {
-    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Event_SetMessageId(MsgBilibinHaveEverHeardOcean);
-      Actor_FaceActor(ACTOR_BILIBIN_ARMOR_MERCHANT, ACTOR_PARTY_LEADER, 0);
-      Event_Wait(10);
-      // "Have you ever heard of the 'ocean'?"
-      // Yes: "If you travel over the ocean to far, far away, you'll find..."
-      // No: "The ocean is immense... You would want to sing if you ever..."
-      Event_AskYesNo(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
-      Actor_FaceDirection(ACTOR_BILIBIN_ARMOR_MERCHANT, FACING_SOUTH_SOUTHEAST,
-                          10);
-    } else {
-      Event_SetMessageId(MsgBilibinForSomeReasonOceanFills);
-      // "For some reason, the ocean fills me with hope and desire......"
-      Event_ShowMessage(ACTOR_BILIBIN_ARMOR_MERCHANT, 0);
-    }
-  }
-  Event_End();
-}
-
-/// The head chef in Bilibin's restaurant, before the curse is lifted, is too
-/// worried to focus on his cooking.
-static void CottageRoomsC_TalkToWorriedChef(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinImReallyWorriedAboutKolima);
-  Actor_FaceActor(ACTOR_BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
-  // "I'm really worried about Kolima. I was born there, you know?..."
-  Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_NORTH, 10);
-  Event_End();
-}
-
-/// A diner in Bilibin's restaurant, before the curse is lifted, is still
-/// waiting for his dinner.
-static void CottageRoomsC_TalkToHungryDiner(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinGrrr);
-  // "Grrr..."
-  Event_ShowMessageThenWait(ACTOR_BILIBIN_HUNGRY_DINER, 0, 20);
-  Actor_FaceActor(ACTOR_BILIBIN_HUNGRY_DINER, ACTOR_PARTY_LEADER, 0);
-  Event_Wait(10);
-  // "Did you hear a sound? You heard it, right?"
-  Event_OpenMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    gFieldState->message++;
-  }
-  Event_ShowMessage(ACTOR_BILIBIN_HUNGRY_DINER, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_HUNGRY_DINER, FACING_SOUTH, 10);
-  Event_End();
-}
-
-/// A diner asks whether a tree spirit can curse a man.
-static void CottageRoomsC_AskAboutTreeSpirit(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
-  Actor_FaceActor(ACTOR_BILIBIN_DINER_WITH_PICKAXE, ACTOR_PARTY_LEADER, 0);
-  Event_Wait(10);
-  // "Do you believe a tree spirit can curse a man?"
-  Event_OpenMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
-  if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
-    gFieldState->message++;
-  }
-  Event_ShowMessage(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_DINER_WITH_PICKAXE, FACING_SOUTH, 10);
-  Event_End();
-}
-
-/// A young man asks whether Kolima Forest's holy tree survived.
-static void CottageRoomsC_AskAboutHolyTree(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinDoKnowIfHolyTree);
-  // "Do you know if the holy tree survived?"
-  // Yes: "That makes sense. Those who were turned into trees are back..."
-  // No: "Then how did the people who became trees get returned to..."
-  Event_AskYesNo(ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
-  Event_End();
-}
-
-/// A little girl in Bilibin, once the curse is lifted, asks whether the party
-/// knows what silk is.
-static void CottageRoomsC_AskAboutSilk(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinDoKnowSilk);
-  // "Do you know what silk is?"
-  // Yes: "That's what they make in Xian village on the other side of..."
-  // No: "Caterpillars are raised on mulberry leaves. When the..."
-  Event_AskYesNo(ACTOR_BILIBIN_GIRL_SILK, 0);
-  Event_End();
-}
-
-/// Bilibin's innkeeper opens the inn across the counter, or talks.
-static void CottageRoomsC_TalkToInnkeeper(void) {
-  u32 leaderFacing;
-
-  leaderFacing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
-  Event_Start();
-
-  if (FACING_IS_NORTH(leaderFacing)) {
-    Inn_CheckIn(BILIBIN_INN, ACTOR_BILIBIN_INNKEEPER);
-  } else if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Event_SetMessageId(MsgBilibinWasntCurseInKolimaHorrifying);
-    // "Wasn't that curse in Kolima horrifying?"
-    // Yes: "Even heroes like you can feel fear. Just imagine how scary..."
-    // No: "You can say that now, because it's all over. At the time, we..."
-    Event_AskYesNo(ACTOR_BILIBIN_INNKEEPER, 0);
-  } else {
-    Event_SetMessageId(MsgBilibinCurseOnKolimaScaryDevelopment);
-    // "A curse on Kolima? What a scary development!"
-    Event_ShowMessage(ACTOR_BILIBIN_INNKEEPER, 0);
-  }
-
-  Event_End();
-}
-
-/// The head chef in Bilibin's restaurant, once the curse is lifted, calls out
-/// orders once, then sends the party to the waitress.
-static void CottageRoomsC_TalkToBusyChef(void) {
-  Event_Start();
-  if (Event_GetFlag(FLAG_BILIBIN_CHEF_CALLED_ORDERS) == 0) {
-    // The first time (FLAG_BILIBIN_CHEF_CALLED_ORDERS, kept until the party
-    // leaves Bilibin), the chef shouts orders and the kitchen worker answers.
-    Event_SetMessageId(MsgBilibinTwoSpecialsOneDinnerOne);
-    // "Two specials! One dinner! One sandwich! One dessert! Hurry up!"
-    Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
-    Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_WEST, 20);
-    // "Hey, you! Are you done yet?"
-    Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
-    Actor_StartRepeatedMotion(ACTOR_BILIBIN_KITCHEN_WORKER, 2);
-    Actor_SetAttachedEffect(ACTOR_BILIBIN_KITCHEN_WORKER,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Event_Wait(60);
-    // "Almost..."
-    Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-    Event_Wait(10);
-    GameFlag_Set(FLAG_BILIBIN_CHEF_CALLED_ORDERS);
-  }
-  // Then, as every later time, he sends the party to the waitress.
-  Actor_FaceActor(ACTOR_BILIBIN_CHEF, ACTOR_PARTY_LEADER, 0);
-  Event_SetMessageId(MsgBilibinIfWantMealSpeakWaitress);
-  // "If you want a meal, speak to the waitress."
-  Event_ShowMessage(ACTOR_BILIBIN_CHEF, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_CHEF, FACING_NORTH, 10);
-  Event_End();
-}
-
-/// The kitchen worker can't keep up with the head chef's energy.
-static void CottageRoomsC_TalkToKitchenWorker(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinReallyThinkHeadChefHas);
-  // "I really think the head chef has changed. It's too much!"
-  Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-  Actor_FaceActor(ACTOR_BILIBIN_KITCHEN_WORKER, ACTOR_PARTY_LEADER, 0);
-  // "I can't keep up with his energy!"
-  Event_ShowMessage(ACTOR_BILIBIN_KITCHEN_WORKER, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
-  Event_End();
-}
-
-/// The waitress hurries through her work before the head chef yells.
-static void CottageRoomsC_TalkToWaitress(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinLetsSeeServeThemWater);
-  // "Let's see, serve them water...then get the silverware."
-  Event_ShowMessage(ACTOR_BILIBIN_WAITRESS, 0);
-  Actor_FaceActor(ACTOR_BILIBIN_WAITRESS, ACTOR_PARTY_LEADER, 0);
-  // "The head chef will yell if you slow down..."
-  Event_ShowMessage(ACTOR_BILIBIN_WAITRESS, 0);
-  Actor_FaceDirection(ACTOR_BILIBIN_WAITRESS, FACING_NORTH, 10);
-  Event_End();
-}
-
-/// A diner loves the meal and asks whether the party does too.
-static void CottageRoomsC_TalkAboutMeal(void) {
-  Event_Start();
-  Event_SetMessageId(MsgBilibinWasSomeMealDontJust);
-  // "That was some meal! Don't you just love the food here?"
-  // Yes: "I know how you feel. Go find a table and pig out!"
-  // No: "What!? Why am I even talking to you, when I could be eating!?"
-  Event_AskYesNo(ACTOR_BILIBIN_DINER_WITH_PICKAXE, 0);
-  Event_End();
-}
-
-/// Mind Read on the burly man in Bilibin who admires Mia, before the curse is
-/// lifted, hears his thoughts of her.
-static void CottageRoomsC_ReadMiaAdmirersMind(void) {
-  Event_Start();
-  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
-    Event_SetMessageId(MsgBilibinEvenFrozenImilMustFeel);
-  } else {
-    Event_SetMessageId(MsgBilibinWhenSpringComesWantGo);
-  }
-  Event_ShowMessage(ACTOR_BILIBIN_MIA_ADMIRER, 0);
-  Event_End();
-}
-
-/// Sets up Bilibin's buildings.
-s32 Scene_Initialize(void) {
-  struct Actor *actor;
-
-  gFieldState->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  actor = Actor_Get(ACTOR_BILIBIN_DINER_WITH_PICKAXE);
-  actor->priorityFlags = 0;
-  actor->sprite->image.priority = 2;
-  return 0;
-}
-
-struct SceneEntrance gCottageRoomsCEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0, -1, -1,
-     -1, -1, 0},
-    {COTTAGE_ROOMS_C_HOUSE_EAST, CONDITION_ALWAYS, 176, 0, 216, FACING_NORTH, 0,
-     24, 32, 264, 240, 0},
-    {COTTAGE_ROOMS_C_HOUSE_WEST, CONDITION_ALWAYS, 400, 0, 264, FACING_NORTH, 0,
-     256, 0, 496, 288, 0},
-    {COTTAGE_ROOMS_C_HOUSE_NORTH, CONDITION_ALWAYS, 688, 0, 264, FACING_NORTH,
-     0, 544, 0, 784, 288, 0},
-    {COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, 240, 0, 504,
-     FACING_NORTH, 0, 72, 336, 312, 528, 0},
-    {COTTAGE_ROOMS_C_ITEM_SHOP, CONDITION_ALWAYS, 576, 0, 536, FACING_NORTH, 0,
-     400, 304, 640, 552, 0},
-    {COTTAGE_ROOMS_C_INN, CONDITION_ALWAYS, 352, 0, 872, FACING_NORTH, 0, 0,
-     640, 400, 896, 0},
-    {COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 656, 0, 696,
-     FACING_WEST, 0, 432, 640, 848, 896, 0},
-    {COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 344, 0, 696,
-     FACING_EAST, 0, 0, 640, 400, 896, 0},
-    {SCENE_TABLE_END},
+u32 CottageRoomsCExits[] = {
+	SCENE_EXITS(CottageRoomsC),
+	SCENE_EXIT(COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN, Bilibin,
+			   BILIBIN_FROM_HOUSE_EAST),
+	SCENE_EXIT(COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN, Bilibin,
+			   BILIBIN_FROM_HOUSE_WEST),
+	SCENE_EXIT(COTTAGE_ROOMS_C_HOUSE_NORTH_TO_BILIBIN, Bilibin,
+			   BILIBIN_FROM_HOUSE_NORTH),
+	SCENE_EXIT(COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN, Bilibin,
+			   BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP),
+	SCENE_EXIT(COTTAGE_ROOMS_C_ITEM_SHOP_TO_BILIBIN, Bilibin,
+			   BILIBIN_FROM_ITEM_SHOP),
+	SCENE_EXIT(COTTAGE_ROOMS_C_INN_TO_BILIBIN, Bilibin, BILIBIN_FROM_INN),
+	SCENE_EXIT(COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN, CottageRoomsC,
+			   COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS),
+	SCENE_EXIT(COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS, CottageRoomsC,
+			   COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN),
+	SCENE_EXITS_END,
 };
 
-u32 gCottageRoomsCExits[] = {
-    SCENE_EXITS(CottageRoomsC),
-    SCENE_EXIT(COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN, Bilibin,
-               BILIBIN_FROM_HOUSE_EAST),
-    SCENE_EXIT(COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN, Bilibin,
-               BILIBIN_FROM_HOUSE_WEST),
-    SCENE_EXIT(COTTAGE_ROOMS_C_HOUSE_NORTH_TO_BILIBIN, Bilibin,
-               BILIBIN_FROM_HOUSE_NORTH),
-    SCENE_EXIT(COTTAGE_ROOMS_C_WEAPON_AND_ARMOR_SHOP_TO_BILIBIN, Bilibin,
-               BILIBIN_FROM_WEAPON_AND_ARMOR_SHOP),
-    SCENE_EXIT(COTTAGE_ROOMS_C_ITEM_SHOP_TO_BILIBIN, Bilibin,
-               BILIBIN_FROM_ITEM_SHOP),
-    SCENE_EXIT(COTTAGE_ROOMS_C_INN_TO_BILIBIN, Bilibin, BILIBIN_FROM_INN),
-    SCENE_EXIT(COTTAGE_ROOMS_C_INN_UPSTAIRS_TO_INN, CottageRoomsC,
-               COTTAGE_ROOMS_C_INN_FROM_INN_UPSTAIRS),
-    SCENE_EXIT(COTTAGE_ROOMS_C_INN_TO_INN_UPSTAIRS, CottageRoomsC,
-               COTTAGE_ROOMS_C_INN_UPSTAIRS_FROM_INN),
-    SCENE_EXITS_END,
-};
-
-// clang-format off
-struct ActorPlacement gCottageRoomsCActorPlacements[] = {
+/* clang-format off */
+ACTOR_PLACE CottageRoomsCActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         104, 0, 168, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
@@ -507,7 +521,7 @@ struct ActorPlacement gCottageRoomsCActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct Trigger gCottageRoomsCTriggers[] = {
+TRIGGER CottageRoomsCTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_C_HOUSE_EAST_TO_BILIBIN },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_C_HOUSE_WEST_TO_BILIBIN },
     { TRIGGER_EXIT, 3, CONDITION_ALWAYS, COTTAGE_ROOMS_C_HOUSE_NORTH_TO_BILIBIN },
@@ -524,47 +538,47 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { TRIGGER_TALK, ACTOR_BILIBIN_GIRL_SILK, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIKnowThatGuyWhoTurned) },
     { TRIGGER_TALK, ACTOR_BILIBIN_OLD_MAN_WATER_OF_HERMES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinLongAgoTheLighthouseNearImil) },
     { TRIGGER_TALK, ACTOR_BILIBIN_OLD_WOMAN_LOST_YOUTH, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinButEvenTheLegendaryWaterOf) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_WEAPON_MERCHANT, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_ARMOR_MERCHANT, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_ITEM_MERCHANT, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_INNKEEPER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_WEAPON_MERCHANT, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCTalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_ARMOR_MERCHANT, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCTalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_ITEM_MERCHANT, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCTalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_INNKEEPER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCTalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_BILIBIN_INN_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinYouCantReachKolimaNoMatter) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_CHEF, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToWorriedChef) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_CHEF, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCTalkToWorriedChef) },
     { TRIGGER_TALK, ACTOR_BILIBIN_KITCHEN_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeyMisterHeadChefAreYou) },
     { TRIGGER_TALK, ACTOR_BILIBIN_WAITRESS, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinStartCookingAlready) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_HUNGRY_DINER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_TalkToHungryDiner) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_HUNGRY_DINER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCTalkToHungryDiner) },
     { TRIGGER_TALK, ACTOR_BILIBIN_FURNITURE_SELLER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinWeCameHereBecauseLordMccoy) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_BIG_TREE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIThinkThatBigTreeDeep) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_DINER_WITH_PICKAXE, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_AskAboutTreeSpirit) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_DINER_WITH_PICKAXE, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCAskAboutTreeSpirit) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_TODAYS_SPECIAL, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantWaitToSeeTodays) },
     { TRIGGER_TALK, ACTOR_BILIBIN_JOB_SEEKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIWentToLordMccoyLooking) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIveHeardSongsThatTellOf) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, CONDITION_ALWAYS, EVENT(CottageRoomsC_AskAboutHolyTree) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, CONDITION_ALWAYS, EVENT(scCottageRoomsCAskAboutHolyTree) },
     { TRIGGER_TALK, ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE, CONDITION_ALWAYS, MSGNO(MsgBilibinThankGoodnessTheyStoppedConstructionOf) },
     { TRIGGER_TALK, ACTOR_BILIBIN_MIA_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgBilibinIAlwaysMissAltinInThe) },
     { TRIGGER_TALK, ACTOR_BILIBIN_BOY_SNOW, CONDITION_ALWAYS, MSGNO(MsgBilibinMyFatherSaysThatItsWarm) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, CONDITION_ALWAYS, MSGNO(MsgBilibinTheRoadToKolimaIsOpen) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_GIRL_SILK, CONDITION_ALWAYS, EVENT(CottageRoomsC_AskAboutSilk) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_GIRL_SILK, CONDITION_ALWAYS, EVENT(scCottageRoomsCAskAboutSilk) },
     { TRIGGER_TALK, ACTOR_BILIBIN_OLD_MAN_WATER_OF_HERMES, CONDITION_ALWAYS, MSGNO(MsgBilibinIThoughtISawLightsIn) },
     { TRIGGER_TALK, ACTOR_BILIBIN_OLD_WOMAN_LOST_YOUTH, CONDITION_ALWAYS, MSGNO(MsgBilibinHisEyesAreRedBecauseHe) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToWeaponMerchant) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToArmorMerchant) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToItemMerchant) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_INNKEEPER, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToInnkeeper) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToWeaponMerchant) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToArmorMerchant) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToItemMerchant) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_INNKEEPER, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToInnkeeper) },
     { TRIGGER_TALK, ACTOR_BILIBIN_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinThereWillBeFewerGuestsNow) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_CHEF, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToBusyChef) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_KITCHEN_WORKER, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToKitchenWorker) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_WAITRESS, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkToWaitress) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_CHEF, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToBusyChef) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_KITCHEN_WORKER, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToKitchenWorker) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_WAITRESS, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkToWaitress) },
     { TRIGGER_TALK, ACTOR_BILIBIN_HUNGRY_DINER, CONDITION_ALWAYS, MSGNO(MsgBilibinImALittleSurprisedThatThe) },
     { TRIGGER_TALK, ACTOR_BILIBIN_FURNITURE_SELLER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheresNoBusinessHereSoIm) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_BIG_TREE, CONDITION_ALWAYS, MSGNO(MsgBilibinTheyServedSoMuchFoodToday) },
-    { TRIGGER_TALK, ACTOR_BILIBIN_DINER_WITH_PICKAXE, CONDITION_ALWAYS, EVENT(CottageRoomsC_TalkAboutMeal) },
+    { TRIGGER_TALK, ACTOR_BILIBIN_DINER_WITH_PICKAXE, CONDITION_ALWAYS, EVENT(scCottageRoomsCTalkAboutMeal) },
     { TRIGGER_TALK, ACTOR_BILIBIN_DINER_TODAYS_SPECIAL, CONDITION_ALWAYS, MSGNO(MsgBilibinOooohThatsItITriedMy) },
     { TRIGGER_TALK, ACTOR_BILIBIN_JOB_SEEKER, CONDITION_ALWAYS, MSGNO(MsgBilibinTheIncidentWasResolvedBeforeI) },
     { TRIGGER_TALK, ACTOR_BILIBIN_VILLAGER_ANCIENT_TREES, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatThatEerieHowling) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinThisIsAllLordMccoysFault) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_WOMAN_ON_MCCOYS_PALACE, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinAhLadyMccoyIWouldJust) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(CottageRoomsC_ReadMiaAdmirersMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_MIA_ADMIRER, FLAG_KOLIMA_CURSE_LIFTED, EVENT(scCottageRoomsCReadMiaAdmirersMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_BOY_SNOW, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinItMustBeDifficultToLive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_VILLAGER_WORRIED_FOR_KOLIMA, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinICantImagineThatEveryoneIn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BILIBIN_GIRL_SILK, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinHeSeemedSoHappyAndThen) },
@@ -616,4 +630,4 @@ struct Trigger gCottageRoomsCTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresABookEntitledAllAbout)) },
     { TRIGGER_TABLE_END },
 };
-// clang-format on
+/* clang-format on */

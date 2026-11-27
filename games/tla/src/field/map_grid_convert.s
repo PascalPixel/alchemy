@@ -3,8 +3,8 @@
 @ switch inside a function; the halfword after bx pc is never run.
 .syntax unified
 	.thumb
-	.global Render_ConvertMapCode
-Render_ConvertMapCode:
+	.global fdRenderConvertMapCode
+fdRenderConvertMapCode:
 	.global Render_ConvertMap
 	.thumb_func
 Render_ConvertMap:
@@ -56,4 +56,4 @@ AlchemyUncreditedEnd_08021706:
 	pop	{r5, r6, r7, r8}
 	bx	lr
 	.global Render_ConvertMapCodeSize
-	.set Render_ConvertMapCodeSize, . - Render_ConvertMapCode
+	.set Render_ConvertMapCodeSize, . - fdRenderConvertMapCode

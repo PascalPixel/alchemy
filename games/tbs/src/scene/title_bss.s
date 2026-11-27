@@ -11,11 +11,11 @@
 	.space 54
 	.endif
 	.endif
-	.global gTitleRevealFrame
-gTitleRevealFrame:
+	.global TitleRevealFrame
+TitleRevealFrame:
 	.space 20
-	.global gTitleSprites
-gTitleSprites:
+	.global TitleSprites
+TitleSprites:
 	.ifdef TBS_EDITION_EN
 	.space 216
 	.else

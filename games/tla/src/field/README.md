@@ -9,15 +9,15 @@ know where each lives before you open the code.
 
 ![In Daila Felix walks up to the man by the pond and talks to him (`That tidal wave left a lot of standing water...`), then walks on](https://alchemy.pascalpixel.com/tla/guides/field/talk-walk.gif)
 
-The field sequence is one routine, `FieldSequence_Run` in
+The field sequence is one function, `fdSequenceRun` in
 `field_sequence_run.c`. Setting a scene up always goes in the same order,
 because each step needs the one before: load the map, choose its random
 battles, clear room for 64 actors, take the scene's tables, place the party
 and the people, put out the chests, run the scene's own set-up, fade in.
 
-Then it walks. The walking loop is three lines: call `wait(1)`, which is
+Then it walks. The walking loop is three lines: call `sySynch(1)`, which is
 one frame; look at the ground the leader now stands on; go round again
-unless a request is set. The routine is the code that waits, and everything
+unless a request is set. The function is the code that waits, and everything
 that moves during that frame is a task's doing
 ([Waiting and tasks](../../../../docs/tla/system.md#waiting-and-tasks)).
 
@@ -29,23 +29,23 @@ the frame.
 
 | Rank | Task | Each frame it |
 | --- | --- | --- |
-| 15 | `PaletteFade_Update` | moves the colours a step toward their target |
-| 11 | `Actor_UpdateAllOnField` | carries every actor's script on and moves the actor |
-| 10 | `Actor_MoveWithCarriers` | moves each actor that rides another along with it |
-| 5 | `MapGrid_UpdateLayerScroll` | centres the map on the point it follows and scrolls the three layers |
-| 0 | `ActorSystem_PlaceSprites` | places every actor's sprite on the screen |
-| 0 | `WindowSystem_Update` | grows, shrinks and types into the windows |
+| 15 | `fdPaletteFadeUpdate` | moves the colours a step toward their target |
+| 11 | `fdActorUpdateAllOnField` | carries every actor's script on and moves the actor |
+| 10 | `fdActorMoveWithCarriers` | moves each actor that rides another along with it |
+| 5 | `fdMapGridUpdateLayerScroll` | centres the map on the point it follows and scrolls the three layers |
+| 0 | `fdActorSystemPlaceSprs` | places every actor's sprite on the screen |
+| 0 | `mnWindowSystemUpdate` | grows, shrinks and types into the windows |
 
-On the World Map the tasks at ranks 5 and 0 are `WorldMap_UpdateView` and
-`ActorSystem_ProjectSprites`. A map with animated tiles adds
-`TilesetAnim_Update` at rank 0, and a scene adds tasks of its own for
+On the World Map the tasks at ranks 5 and 0 are `fdWorldMapUpdateView` and
+`fdActorSystemProjectSprs`. A map with animated tiles adds
+`fdTilesetAnimUpdate` at rank 0, and a scene adds tasks of its own for
 whatever only it has. One more runs from the VBlank handler,
-`WindowSystem_UploadTilemap`, which copies the windows to the screen.
+`mnWindowSystemUploadTilemap`, which copies the windows to the screen.
 
-The Broken Seal has no task for riders: `Actor_MoveWithCarriers` is The
+The Broken Seal has no task for riders: `fdActorMoveWithCarriers` is The
 Lost Age's own, and its actors' task ranks one higher to run before it.
 
-None of these is a villager or a door, because `Actor_UpdateAllOnField` is
+None of these is a villager or a door, because `fdActorUpdateAllOnField` is
 the one task for all 64 actors.
 
 ### The twelve requests
@@ -56,7 +56,7 @@ field's state, 0 while nothing is asked. Three kinds of code set one.
 - The leader's script. Its control order, `SC_PLAYER` on foot, which the
   actors' task runs, looks at the buttons and sets the request for A, the
   field menu, the Pause menu, or the Psynergy or item on a shortcut button.
-- The field's routine. After each frame it looks at where the leader
+- The field sequence's function. After each frame it looks at where the leader
   stands and sets a step, a push or a battle.
 - An event or a menu, when the field has to carry something out after it
   has returned: an event sets an exit, and the field menu sets a field
@@ -92,7 +92,7 @@ Afterwards the scene is set up again from nothing and the snapshot is put
 back. So there is only one way to set a scene up, whether the party walked
 in or came back from a fight, and a save writes the same snapshot. When
 the fight was with a Djinni met on the field, the set-up also puts that
-Djinni back and finishes its event (`Djinn_RestoreActorAfterBattle`).
+Djinni back and finishes its event (`fdDjinnRestoreActorAfterBattle`).
 
 ## Everything that moves runs an actor script
 
@@ -116,16 +116,16 @@ treasure spots, each pointing at the row that actor has.
 An [actor script](../../../../docs/tla/glossary.md#actor-script) is a list of orders
 written with `SC_` macros (script command): set an animation, set a speed,
 move to a spot, wait, loop. It is a table of numbers, not code, and the
-routines that carry the orders out are the `Script_` and `ActorScript_`
-ones. One [task](../../../../docs/tla/glossary.md#task), `Actor_UpdateAllOnField`, visits
+functions that carry the orders out are the ones whose names start
+`fdActorScript`. One [task](../../../../docs/tla/glossary.md#task), `fdActorUpdateAllOnField`, visits
 every actor each frame and reads its script on from where it stopped. In a
-battle the task is `Actor_UpdateAllMotion`. An order that takes no time
+battle the task is `fdActorUpdateAllMotion`. An order that takes no time
 runs at once, and one that takes time holds the script there until it is
 done: `SC_WAIT(20)` sets a count in the actor that the task takes one off
-each frame, which is not the `wait()` an event calls
+each frame, which is not the `sySynch()` an event calls
 ([Two kinds of waiting](../../../../docs/tla/system.md#two-kinds-of-waiting)). Kraden
 stepping aside on Idejima is a few lines,
-`gIdejima_KradenStepsAsideScript`, in [the scenes](../scene/README.md).
+`Idejima_KradenStepsAsideScript`, in [the scenes](../scene/README.md).
 
 Moving is eased. An actor has a top speed and an acceleration, and gains
 speed toward its target each frame up to the top. Once it has no target it
@@ -139,7 +139,7 @@ from.
 Most townspeople never get one written for them. The scene lists each
 person once, with a spot and one of eleven stock behaviours: stand, wander
 near home, and so on. A behaviour is a script the field keeps ready, such
-as `gMovementType_WanderScript`.
+as `MovementType_WanderScript`.
 
 The leader's script, while the player steers, is one control order on
 repeat: on foot it is `SC_PLAYER`. Each frame that order reads the D-pad
@@ -151,7 +151,7 @@ The Lost Age has many of those control orders, one for each way the party
 gets about: walking, crossing a rope or a tightrope, moving as Sand,
 hovering, walking the World Map, and the ship sailing or flying. The field
 picks the script by how the party is moving just then
-(`Actor_StartMovementModeScript`).
+(`fdActorStartMovementModeScript`).
 
 An order to face someone or to walk up to someone does not say whom. It
 means the actor's [watched actor](../../../../docs/tla/glossary.md#watched-actor), which
@@ -241,7 +241,7 @@ is that spot, scaled down.
 ## Random battles
 
 A counter fills as the leader walks, at a rate the ground's zone sets, and
-a battle starts when it is full. The field's routine does the counting,
+a battle starts when it is full. The field sequence's function counts,
 after each frame of its walking loop, and sets the battle request. So
 battles come after a distance, not a time, with some luck mixed in after
 each one. The zone also names the groups of enemies that can appear there
@@ -287,16 +287,16 @@ Scenes fade in the same way.
 
 Contigo has three games, and each is a sequence of its own, started the way
 a battle is: the room asks the main routine to run one next, and ends.
-Lucky Dice and Lucky Wheels are The Broken Seal's, `LuckyDice_Run` and
-`LuckyWheels_Run`. Super Lucky Dice is new: four dice, then a Hi-Lo game to
-double the winnings, in `SuperLuckyDice_Run`.
+Lucky Dice and Lucky Wheels are The Broken Seal's, `fdLuckyDiceRun` and
+`fdLuckyWheelsRun`. Super Lucky Dice is new: four dice, then a Hi-Lo game to
+double the winnings, in `fdSuperLuckyDiceRun`.
 
-## Routines run from RAM
+## Functions run from RAM
 
-A few routines run for every line of the screen or every cell of a map,
+A few functions run for every line of the screen or every cell of a map,
 such as the World Map's 160 stretches and the conversion of a town's grid
 as it loads. Code on the cartridge is slow to read, so the game copies
-those few routines into the console's fast memory and runs them there.
+those few functions into the console's fast memory and runs them there.
 
 ## Where the code is
 
@@ -319,23 +319,23 @@ those few routines into the console's fast memory and runs them there.
   plays (`event_commands_psynergy_dispatch.c`). The `actor_*.c` files hold
   the placement, its scripts and tables, and [`facing.c`](facing.c) the
   pictures a sprite shows for each facing.
-- A scene's state is one struct, `FieldState`, in
+- A scene's state is one struct, `FIELD_STATE`, in
   [`field_state.h`](../../include/field/field_state.h): The Broken Seal's,
   with the Psynergy state the sequel adds at its end. The field sequence,
   the event commands and every scene read it through
-  `Ram_HeapSlots->fieldState` or `gFieldState`.
+  `Ram_HeapSlots->fieldState` or `FieldStateWork`.
 - [`field_psynergy.c`](field_psynergy.c) is most of the Psynergy the sequel
   adds, its parts `field_psynergy_*.c`. The parts share the field
-  Psynergy's state, `FieldEffectState` in
+  Psynergy's state, `FIELD_EFFECT_STATE` in
   [`field_psynergy_state.h`](../../include/field/field_psynergy_state.h): the
   caster, the target and where the Psynergy takes place. Each part is one
-  Psynergy or one family of its helpers, named for it.
+  Psynergy or one group of its helpers, named for it.
 - The `field_effect_*.c` files are the field's small effects: particles,
   sparkles and the like.
-- Some small field routines are compiled again into each scene that uses
+- Some small field functions are compiled again into each scene that uses
   them, as the ROM keeps a copy in each overlay: the scenes include them
   from `field_effect_*.c`, `actor_*.c` and `map_*.c`
   (`map_cell_get.c`, `actor_set_sprite_priority.c`), and the `map_*.c`
   files are only that.
-- The three games of chance, the map table `gMaps` (`map_grid_data.c`) and
-  the scene table `gScenes` (`scenes.s`) sit in this folder itself.
+- The three games of chance, the map table `MapsWork` (`map_grid_data.c`) and
+  the scene table `ScenesWork` (`scenes.s`) sit in this folder itself.

@@ -2,315 +2,315 @@
 	.ifdef TBS_EDITION_DE
 	.space 16
 	.endif
-	.global gOamDepthLists
-gOamDepthLists:
+	.global OamDepthLists
+OamDepthLists:
 	.space 1024
-	.global gVBlankCount
-gVBlankCount:
+	.global VBlankCount
+VBlankCount:
 	.space 4
-	.global gSavedStackSize
-gSavedStackSize:
+	.global SavedStackSize
+SavedStackSize:
 	.space 12
-	.global gVramCacheBlockOwners
-gVramCacheBlockOwners:
+	.global VramCacheBlockOwners
+VramCacheBlockOwners:
 	.space 512
-	.global gTasksRunning
-gTasksRunning:
+	.global TasksRunning
+TasksRunning:
 	.space 16
-	.global gTasks
-gTasks:
+	.global TasksWork
+TasksWork:
 	.space 160
-	.global gScreenFadeVBlanksLeft
-gScreenFadeVBlanksLeft:
+	.global ScreenFadeVBlanksLeft
+ScreenFadeVBlanksLeft:
 	.space 4
-	.global gDebugTextEnabled
-gDebugTextEnabled:
+	.global DebugTextEnabled
+DebugTextEnabled:
 	.space 12
-	.global gBgScroll
-gBgScroll:
+	.global BgScrollWork
+BgScrollWork:
 	.space 24
-	.global gKeysHeld
-gKeysHeld:
+	.global KeysHeld
+KeysHeld:
 	.space 4
-	.global gScreenFadeStartLevel
-gScreenFadeStartLevel:
+	.global ScreenFadeStartLevel
+ScreenFadeStartLevel:
 	.space 4
-	.global gCpuLoadTimer
-gCpuLoadTimer:
+	.global CpuLoadTimer
+CpuLoadTimer:
 	.space 4
-	.global gScanlinePitch
-gScanlinePitch:
+	.global ScanlinePitch
+ScanlinePitch:
 	.space 4
-	.global gKeysPressedLatch
-gKeysPressedLatch:
+	.global KeysPressedLatch
+KeysPressedLatch:
 	.space 4
-	.global gKeysRepeatDirected
-gKeysRepeatDirected:
+	.global KeysRepeatDirected
+KeysRepeatDirected:
 	.space 4
-	.global gKeyRepeatTimer
-gKeyRepeatTimer:
+	.global KeyRepeatTimer
+KeyRepeatTimer:
 	.space 4
-	.global gKeysRepeat
-gKeysRepeat:
+	.global KeysRepeat
+KeysRepeat:
 	.space 12
-	.global gVramCacheEntries
-gVramCacheEntries:
+	.global VramCacheEntries
+VramCacheEntries:
 	.space 384
-	.global gDecodeFillByte
-gDecodeFillByte:
+	.global DecodeFillByte
+DecodeFillByte:
 	.space 4
-	.global gKeysPressed
-gKeysPressed:
+	.global KeysPressed
+KeysPressed:
 	.space 4
-	.global gScreenFadeVBlanks
-gScreenFadeVBlanks:
+	.global ScreenFadeVBlanks
+ScreenFadeVBlanks:
 	.space 4
-	.global gPlayTimeFrames
-gPlayTimeFrames:
+	.global PlayTimeFrames
+PlayTimeFrames:
 	.space 4
-	.global gSleepDisabled
-gSleepDisabled:
+	.global SleepDisabled
+SleepDisabled:
 	.space 4
-	.global gCpuLoadPeak
-gCpuLoadPeak:
+	.global CpuLoadPeak
+CpuLoadPeak:
 	.space 4
-	.global gScreenFadeTargetLevel
-gScreenFadeTargetLevel:
+	.global ScreenFadeTargetLevel
+ScreenFadeTargetLevel:
 	.space 8
-	.global gSerialExchangeActive
-gSerialExchangeActive:
+	.global SerialExchangeActive
+SerialExchangeActive:
 	.space 4
-	.global gRandomSeed
-gRandomSeed:
+	.global RandomSeed
+RandomSeed:
 	.space 4
-	.global gResetRequested
-gResetRequested:
+	.global ResetRequested
+ResetRequested:
 	.space 4
-	.global gDebugTextCursor
-gDebugTextCursor:
+	.global DebugTextCursor
+DebugTextCursor:
 	.space 4
-	.global gCamera_UnreadWordA
-gCamera_UnreadWordA:
+	.global Camera_UnreadWordA
+Camera_UnreadWordA:
 	.space 4
-	.global gMatrixStackDepth
-gMatrixStackDepth:
+	.global MatrixStackDepth
+MatrixStackDepth:
 	.space 4
-	.global gSleepRequested
-gSleepRequested:
+	.global SleepRequested
+SleepRequested:
 	.space 4
-	.global gFrameVBlanks
-gFrameVBlanks:
+	.global FrameVBlanks
+FrameVBlanks:
 	.space 4
-	.global gLastFrameVBlanks
-gLastFrameVBlanks:
+	.global LastFrameVBlanks
+LastFrameVBlanks:
 	.space 4
-	.global gScreenFadeToWhite
-gScreenFadeToWhite:
+	.global ScreenFadeToWhite
+ScreenFadeToWhite:
 	.space 12
-	.global gProjection
-gProjection:
+	.global ProjectionWork
+ProjectionWork:
 	.space 20
-	.global gKeysHeldLast
-gKeysHeldLast:
+	.global KeysHeldLast
+KeysHeldLast:
 	.space 4
-	.global gScreenFadeLayers
-gScreenFadeLayers:
+	.global ScreenFadeLayers
+ScreenFadeLayers:
 	.space 4
-	.global gVBlankCallback
-gVBlankCallback:
+	.global VBlankCallback
+VBlankCallback:
 	.space 4
-	.global gOamMatrixCount
-gOamMatrixCount:
+	.global OamMatrixCount
+OamMatrixCount:
 	.space 4
-	.global gKeysDirection
-gKeysDirection:
+	.global KeysDirection
+KeysDirection:
 	.ifdef TBS_EDITION_DE
 	.space 12
 	.else
 	.space 4
 	.endif
-	.global gIdleSleepEnabled
-gIdleSleepEnabled:
+	.global IdleSleepEnabled
+IdleSleepEnabled:
 	.space 4
-	.global gKeysHeldAtVBlank
-gKeysHeldAtVBlank:
+	.global KeysHeldAtVBlank
+KeysHeldAtVBlank:
 	.space 12
-	.global gOamCopyEnabled
-gOamCopyEnabled:
+	.global OamCopyEnabled
+OamCopyEnabled:
 	.space 4
-	.global gCamera_UnreadWordB
-gCamera_UnreadWordB:
+	.global Camera_UnreadWordB
+Camera_UnreadWordB:
 	.space 4
-	.global gDebugPaused
-gDebugPaused:
+	.global DebugPaused
+DebugPaused:
 	.space 4
-	.global gIdleFrames
-gIdleFrames:
+	.global IdleFrames
+IdleFrames:
 	.space 4
-	.global gVBlankDone
-gVBlankDone:
+	.global VBlankDone
+VBlankDone:
 	.space 4
-	.global gMatrixStackTop
-gMatrixStackTop:
+	.global MatrixStackTop
+MatrixStackTop:
 	.space 8
-	.global gTasksInitialized
-gTasksInitialized:
+	.global TasksInitialized
+TasksInitialized:
 	.ifdef TBS_EDITION_DE
 	.space 4
 	.else
 	.space 12
 	.endif
-	.global gOamMatrices
-gOamMatrices:
+	.global OamMatrices
+OamMatrices:
 	.space 256
-	.global gFrameCount
-gFrameCount:
-	.global gFrameCount
-gFrameCount:
+	.global FrameCount
+FrameCount:
+	.global FrameCount
+FrameCount:
 	.space 4
-	.global gFrameRenderPending
-gFrameRenderPending:
+	.global FrameRenderPending
+FrameRenderPending:
 	.space 12
-	.global gHeapSlots
-gHeapSlots:
-	.global gHeapSlots
-	.type gHeapSlots, %object
-	.size gHeapSlots, 256
-gHeapSlots:
+	.global HeapSlots
+HeapSlots:
+	.global HeapSlots
+	.type HeapSlots, %object
+	.size HeapSlots, 256
+HeapSlots:
 	.space 12
-	.global gSpriteAnimations
-gSpriteAnimations:
+	.global SpriteAnimations
+SpriteAnimations:
 	.space 4
-	.global gSprites
-gSprites:
+	.global SpritesWork
+SpritesWork:
 	.space 4
-	.global gActors
-gActors:
+	.global ActorsWork
+ActorsWork:
 	.space 4
-	.global gActorSystemState
-gActorSystemState:
+	.global ActorSystemStateWork
+ActorSystemStateWork:
 	.space 4
-	.global gWorldMapAffineState
-gWorldMapAffineState:
+	.global WorldMapAffineStateWork
+WorldMapAffineStateWork:
 	.space 4
-	.global gMapGridState
-gMapGridState:
+	.global MapGridState
+MapGridState:
 	.space 4
-	.global gBattleState
-gBattleState:
+	.global BattleStateWork
+BattleStateWork:
 	.space 12
-	.global gBattleCamera
-gBattleCamera:
+	.global BattleCameraWork
+BattleCameraWork:
 	.space 12
-	.global gWindowState
-gWindowState:
-	.global gWindowState
-gWindowState:
+	.global WindowStateWork
+WindowStateWork:
+	.global WindowStateWork
+WindowStateWork:
 	.space 4
-	.global gPartyStatusState
-gPartyStatusState:
+	.global PartyStatusState
+PartyStatusState:
 	.space 4
-	.global gGlyphState
-gGlyphState:
+	.global GlyphState
+GlyphState:
 	.space 4
-	.global gSelectionMenuState
-gSelectionMenuState:
+	.global SelectionMenuStateWork
+SelectionMenuStateWork:
 	.space 4
-	.global gSelectionState
-gSelectionState:
+	.global SelectionStateWork
+SelectionStateWork:
 	.space 4
-	.global gOptionMenuState
-gOptionMenuState:
+	.global OptionMenuState
+OptionMenuState:
 	.space 8
-	.global gMindReadState
-gMindReadState:
+	.global MindReadStateWork
+MindReadStateWork:
 	.space 20
-	.global gFieldState
-gFieldState:
+	.global FieldStateWork
+FieldStateWork:
 	.space 4
-	.global gPaletteCycleState
-gPaletteCycleState:
+	.global PaletteCycleStateWork
+PaletteCycleStateWork:
 	.space 4
-	.global gWeatherState
-gWeatherState:
+	.global WeatherStateWork
+WeatherStateWork:
 	.space 4
-	.global gFieldBlendState
-gFieldBlendState:
+	.global FieldBlendStateWork
+FieldBlendStateWork:
 	.space 4
-	.global gScreenTransitionState
-gScreenTransitionState:
+	.global ScreenTransitionStateWork
+ScreenTransitionStateWork:
 	.space 4
-	.global gPaletteFadeState
-gPaletteFadeState:
+	.global PaletteFadeState
+PaletteFadeState:
 	.space 8
-	.global gLineScroll
-gLineScroll:
+	.global LineScroll
+LineScroll:
 	.space 8
-	.global gGroundMaskState
-gGroundMaskState:
+	.global GroundMaskStateWork
+GroundMaskStateWork:
 	.space 4
-	.global gBattleMessageState
-gBattleMessageState:
+	.global BattleMessageStateWork
+BattleMessageStateWork:
 	.space 8
-	.global gBattleEffectState
-gBattleEffectState:
+	.global BattleEffectStateWork
+BattleEffectStateWork:
 	.space 12
-	.global gBattleEntryTimer
-gBattleEntryTimer:
+	.global BattleEntryTimer
+BattleEntryTimer:
 	.space 8
-	.global gBattleBackgroundState
-gBattleBackgroundState:
+	.global BattleBackgroundStateWork
+BattleBackgroundStateWork:
 	.space 28
-	.global gSaveState
-gSaveState:
+	.global SaveStateWork
+SaveStateWork:
 	.space 12
-	.global gEnemyUnits
-gEnemyUnits:
+	.global EnemyUnits
+EnemyUnits:
 	.space 4
-	.global gMenuState
-gMenuState:
+	.global MenuState
+MenuState:
 	.space 4
-	.global gFieldEffectState
-gFieldEffectState:
-	.global gFieldEffectState
-gFieldEffectState:
+	.global FieldEffectStateWork
+FieldEffectStateWork:
+	.global FieldEffectStateWork
+FieldEffectStateWork:
 	.space 4
-	.global gBattleMenuState
-gBattleMenuState:
+	.global BattleMenuStateWork
+BattleMenuStateWork:
 	.space 4
-	.global gIconMenuState
-gIconMenuState:
+	.global IconMenuStateWork
+IconMenuStateWork:
 	.space 4
-	.global gColossoState
-gColossoState:
+	.global ColossoState
+ColossoState:
 	.space 24
-	.global gDebugMode
-gDebugMode:
+	.global DebugMode
+DebugMode:
 	.space 4
-	.global gCpuLoadDisplayEnabled
-gCpuLoadDisplayEnabled:
+	.global CpuLoadDisplayEnabled
+CpuLoadDisplayEnabled:
 	.space 4
-	.global gSleepComboFrames
-gSleepComboFrames:
+	.global SleepComboFrames
+SleepComboFrames:
 	.space 4
-	.global gScanlineAngle
-gScanlineAngle:
+	.global ScanlineAngle
+ScanlineAngle:
 	.space 4
-	.global gLinkStatus
-gLinkStatus:
+	.global LinkStatusWork
+LinkStatusWork:
 	.space 12
-	.global gNumberBuffer
-gNumberBuffer:
+	.global NumberBuffer
+NumberBuffer:
 	.space 8
-	.global gNumberBufferHexEnd
-gNumberBufferHexEnd:
+	.global NumberBufferHexEnd
+NumberBufferHexEnd:
 	.space 2
-	.global gNumberBufferDecimalEnd
-gNumberBufferDecimalEnd:
+	.global NumberBufferDecimalEnd
+NumberBufferDecimalEnd:
 	.ifdef TBS_EDITION_DE
 	.space 118
 	.else
 	.space 134
 	.endif
-	.global gIwramHeap
-gIwramHeap:
+	.global IwramHeap
+IwramHeap:

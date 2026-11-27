@@ -19,35 +19,37 @@ you how to think about each part of it before you open the code.
 Two of Camelot's ideas are worth meeting first. Once they click, the rest
 of the code opens up.
 
-1. [The main routine](../../docs/tla/system.md#the-main-routine). One routine runs the
+1. [The main routine](../../docs/tla/system.md#the-main-routine). One function runs the
    game from switch-on to switch-off, one sequence at a time: the field, a
    battle, Lucky Dice, Lucky Wheels or Super Lucky Dice.
 2. [Waiting and tasks](../../docs/tla/system.md#waiting-and-tasks). No loop at the top
-   turns once a frame. The frame loop is inside one function, `wait()`:
+   turns once a frame. The frame loop is inside one function, `sySynch()`:
    code that needs time to pass calls it, and it runs that many frames of
    the game and returns. What it runs each frame is a short list of
    functions, the tasks. This is the part that will surprise you.
 
 ## What runs
 
-- [Field](../../docs/tla/field.md) is a town, a dungeon or the World Map: who stands
-  where, what a talk or a step sets off, and how you leave.
-- [Battle](../../docs/tla/battle.md) is one fight, turn by turn, from its opening to the
-  experience and coins.
+- [The field engine](../../docs/tla/field.md) runs a town, a dungeon or the
+  World Map: who stands where, what a talk or a step sets off, and how you
+  leave.
+- [The battle engine](../../docs/tla/battle.md) runs one fight, turn by turn,
+  from its opening to the experience and coins.
 - [Lucky Dice, Lucky Wheels and Super Lucky Dice](src/field/README.md#lucky-dice-lucky-wheels-and-super-lucky-dice)
   are the three games in Contigo, each a sequence of its own.
 
 ## What they all share
 
-- [System](../../docs/tla/system.md) is start-up, the main routine, tasks, overlays and
-  [saving](../../docs/tla/system.md#saving).
-- [Interface](../../docs/tla/interface.md) is the windows, the menus and the shops.
+- [The system library](../../docs/tla/system.md) is start-up, the main routine,
+  tasks, overlays and [saving](../../docs/tla/system.md#saving).
+- [The menu engine](../../docs/tla/interface.md) is the windows, the menus and
+  the shops.
 - [Sound](src/sound/README.md) is the music and how it comes back after a
   jingle.
-- [Game rules](src/game/README.md) are the units, items, Djinn and classes.
+- [The game logic](src/game/README.md) is the units, items, Djinn and classes.
 - [Graphics](src/graphics/README.md) is how a picture is stored: formats,
   colours and sizes.
-- [The Game Pak](src/gamepak/README.md) is how the cartridge is laid out.
+- [The Game Pak](src/system/README.md) is how the cartridge is laid out.
 - [Debug scenes](src/debug/README.md) are the test rooms Camelot left
   inside.
 

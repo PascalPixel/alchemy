@@ -1,770 +1,776 @@
-/// @file
-/// A whole battle, Battle_Run, its tutorial helpers, and the lists of
-/// the units in it.
-// Part of battle.c.
+/* @file */
+/* A whole battle, btRun, its tutorial helpers, and the lists of */
+/* the units in it. */
+/* Part of battle.c. */
 
-#include "battle_internal.h"
-#include "flags.h"
-#include "fixed_math.h"
-#include "sounds.h"
-#include "system/frame.h"
-#include "gamepak/far_call/window.h"
-#include "battle/battle.h"
-#include "gamepak/far_call/battle_effect.h"
-#include "gamepak/far_call/field_sequence.h"
-#include "battle/presentation.h"
-#include "system/system.h"
-#include "battle/range_falloff.h"
+#include "window/stubs.h"
+#include "battle_effect/stubs.h"
 #include "menu/djinn_menu.h"
-#include "sound/sound_driver_symbols.h"
+#include "sdk/sound_driver_symbols.h"
 
-/// The six enemy units, which Unit_Get reads for unit ids 128 to 133 while the
-/// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
+/* The six enemy units, which syUnitGet reads for unit ids 128 to 133 while the
+ */
+/* battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS). */
 #define ENEMY_UNITS_SIZE (ENEMY_BATTLE_SIZE * BATTLE_UNIT_SIZE)
 
-/// The camera's zoom, in percent, from the battle's setup until the opening
-/// sets its own: the curtain's a frame later, or the Doom Dragon's shattering
-/// opening's, so no frame shows it.
+/* The camera's zoom, in percent, from the battle's setup until the opening */
+/* sets its own: the curtain's a frame later, or the Doom Dragon's shattering */
+/* opening's, so no frame shows it. */
 #define BATTLE_ZOOM_BEFORE_OPENING 190
 
-/// With the front line down and someone living, sends the reserve members in
-/// to take the fallen ones' places, as many as there are of both.
-void BattleParty_SwapInReserves(void) {
-  u16 actors[6];
-  u16 reserves[6];
-  s32 actorCount;
-  s32 reserveCount;
-  s32 count;
-  struct BattleState *battle = Ram_HeapSlots->battleState;
-  s32 i;
+/* With the front line down and someone living, sends the reserve members in */
+/* to take the fallen ones' places, as many as there are of both. */
+void btPartySwapInReserves(void) {
+	u16 actors[6];
+	u16 reserves[6];
+	s32 actorCount;
+	s32 reserveCount;
+	s32 count;
+	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	s32 i;
 
-  if (BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
-    return;
-  count = actorCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_PARTY, actors);
-  reserveCount = BattleParty_PrepareReserveOwners(reserves);
-  if (count > reserveCount)
-    count = reserveCount;
-  BattleHighlight_SetModes(actors, HIGHLIGHT_FADE_OUT);
-  wait(32);
-  for (i = 0; i < count; i++) {
-    s32 unit = battle->partyUnits[i];
-    s32 id = reserves[i];
-    struct BattleObject *from = BattleObject_Get(unit);
-    struct BattleObject *to = BattleObject_Get(id);
-    struct MotionObject *object = to->object;
-    struct MotionObject *place = from->object;
+	if(btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
+		return;
+	count = actorCount = btUnitListIds(BATTLE_SIDE_MASK_PARTY, actors);
+	reserveCount = btPartyPrepareReserveOwners(reserves);
+	if(count > reserveCount)
+		count = reserveCount;
+	btHighlightSetModes(actors, HIGHLIGHT_FADE_OUT);
+	sySynch(32);
+	for(i = 0; i < count; i++) {
+		s32 unit = battle->partyUnits[i];
+		s32 id = reserves[i];
+		BATTLE_OBJECT *from = btObjectGet(unit);
+		BATTLE_OBJECT *to = btObjectGet(id);
+		MOTION_OBJECT *object = to->obj;
+		MOTION_OBJECT *place = from->obj;
 
-    to->anchorX = from->anchorX;
-    to->anchorZ = from->anchorZ;
-    Actor_SetPositionAndResetMotionFar((void *)object, place->x, place->y,
-                                       place->z);
-    gMainRoutineState.party[i] = id;
-    battle->partyUnits[i] = id;
-  }
-  for (i = 0; i < count; i++)
-    gMainRoutineState.party[actorCount + i] = actors[i];
-  PartyStatus_DrawFar(Ram_HeapSlots->battleState->partyStatus);
-  BattleObject_Put();
-  BattleHighlight_SetModes(reserves, HIGHLIGHT_FADE_IN);
-  wait(32);
+		to->anchorX = from->anchorX;
+		to->anchorZ = from->anchorZ;
+		fdActorSetPosAndResetMotionStub((void *)object, place->x, place->y,
+										place->z);
+		MainRoutineStateWork.party[i] = id;
+		battle->partyUnits[i] = id;
+	}
+	for(i = 0; i < count; i++)
+		MainRoutineStateWork.party[actorCount + i] = actors[i];
+	mnPartyStatDrawStub(Ram_HeapSlots->battleState->partyStat);
+	btObjectPut();
+	btHighlightSetModes(reserves, HIGHLIGHT_FADE_IN);
+	sySynch(32);
 }
 
-/// Allocates the battle camera and sets its starting view.
-void BattleCamera_Create(void) {
-  struct BattleCamera *camera =
-      HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  s32 *focus = camera->focus;
+/* Allocates the battle camera and sets its starting view. */
+void btCameraCreate(void) {
+	BATTLE_CAMERA *camera =
+		syHeapSlotAllocEwram(HEAP_SLOT_CAMERA, sizeof(BATTLE_CAMERA));
+	s32 *focus = camera->focus;
 
-  SET_VECTOR(focus, 0, toFIXED(64), 0);
-  SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
-  camera->yaw = TRIG_TURN * 5 / 32;
-  camera->pitch = TRIG_TURN * 5 / 16;
-  camera->distance = toFIXED(256);
+	SET_VECTOR(focus, 0, toFIXED(64), 0);
+	SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
+	camera->yaw = TRIG_TURN * 5 / 32;
+	camera->pitch = TRIG_TURN * 5 / 16;
+	camera->distance = toFIXED(256);
 }
 
-/// Name letters past every edition's last, which leave an enemy's name bare:
-/// 255, and NAME_LETTER_ALPHABET, past Z, the last letter the Japanese edition
-/// gives.
-#define NAME_LETTER_NONE 255
+/* Name letters past every edition's last, which leave an enemy's name bare: */
+/* 255, and NAME_LETTER_ALPHABET, past Z, the last letter the Japanese edition
+ */
+/* gives. */
+#define NAME_LETTER_NONE	 255
 #define NAME_LETTER_PAST_ALL NAME_LETTER_ALPHABET
 
-/// Replaces the first enemy with the Doom Dragon's next form:
-/// ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
-/// The form change's battle effect calls it through its far call.
-void Battle_ChangeEnemyForm(s32 id) {
-  struct BattleState *battle = Ram_HeapSlots->battleState;
-  s32 unit;
-  struct BattleObject *battleObject;
+/* Replaces the first enemy with the Doom Dragon's next form: */
+/* ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
+ */
+/* The form change's battle effect calls it through its stub call. */
+void btChangeEnemyForm(s32 id) {
+	BATTLE_STATE *battle = Ram_HeapSlots->battleState;
+	s32 unit;
+	BATTLE_OBJECT *battleObject;
 
-  if (id == FORMATION_DOOM_DRAGON_A)
-    unit = ENEMY_DOOM_DRAGON_E;
-  else
-    unit = ENEMY_DOOM_DRAGON_H;
-  BattleObject_MarkForRelease(FIRST_ENEMY_UNIT);
-  BattleMotion_DestroyAllSlotObjects();
-  BattleEnemy_ClaimNameLetter(unit, 1);
-  BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, NAME_LETTER_NONE);
-  battle->enemyIds[0] = FIRST_ENEMY_UNIT;
-  battle->enemyIds[1] = BATTLE_UNIT_LIST_END;
-  BattlePlacement_RelayoutEnemies();
-  battleObject = BattleObject_Get(FIRST_ENEMY_UNIT);
-  BattleObject_Make(battleObject, FIRST_ENEMY_UNIT,
-                    battleObject->anchorX / FIXED_ONE,
-                    battleObject->anchorZ / FIXED_ONE);
-  BattleObject_Put();
+	if(id == FORMATION_DOOM_DRAGON_A)
+		unit = ENEMY_DOOM_DRAGON_E;
+	else
+		unit = ENEMY_DOOM_DRAGON_H;
+	btObjectMarkForRelease(FIRST_ENEMY_UNIT);
+	btMotionDestroyAllSlotObjects();
+	btEnemyClaimNameLetter(unit, 1);
+	btUnitSetStub(FIRST_ENEMY_UNIT, unit, NAME_LETTER_NONE);
+	battle->enemyIds[0] = FIRST_ENEMY_UNIT;
+	battle->enemyIds[1] = BATTLE_UNIT_LIST_END;
+	btPlacementRelayoutEnemies();
+	battleObject = btObjectGet(FIRST_ENEMY_UNIT);
+	btObjectMake(battleObject, FIRST_ENEMY_UNIT,
+				 battleObject->anchorX / FIXED_ONE,
+				 battleObject->anchorZ / FIXED_ONE);
+	btObjectPut();
 }
 
-/// Plays the Doom Dragon's form change effect for its formation value
-/// (FORMATION_DOOM_DRAGON_A to _C) on the first enemy.
-void Battle_PlayFormChange(s32 value) {
-  struct BattlePresentationState request;
+/* Plays the Doom Dragon's form change effect for its formation value */
+/* (FORMATION_DOOM_DRAGON_A to _C) on the first enemy. */
+void btPlayFormChange(s32 value) {
+	BATTLE_PRESENTATION_STATE request;
 
-  request.range = 0;
-  request.actor = FIRST_ENEMY_UNIT;
-  request.firstTarget = 0;
-  request.count = 1;
-  request.actors[0] = FIRST_ENEMY_UNIT;
-  request.side = 0;
-  request.kind = 0;
-  request.variant = 0;
-  BattleEffect_RunFormChangeFar((struct BattlePresentationState *)&request,
-                                value);
+	request.range = 0;
+	request.actor = FIRST_ENEMY_UNIT;
+	request.firstTgt = 0;
+	request.cnt = 1;
+	request.actors[0] = FIRST_ENEMY_UNIT;
+	request.side = 0;
+	request.kind = 0;
+	request.variant = 0;
+	btEffectRunFormChangeStub((BATTLE_PRESENTATION_STATE *)&request, value);
 }
 
-/// Returns the first of the Djinn tutorial's messages: the second set's
-/// (MsgDjinnGiveTutorialB) while FLAG_ALREADY_KNOWS_DJINN is set, as Up held
-/// when Echo's tutorial begins sets it.
-s32 Tutorial_GetDjinnGiveMessage(void) {
-  if (GameFlag_Get(FLAG_ALREADY_KNOWS_DJINN))
-    return (s32)MsgDjinnGiveTutorialB;
-  return (s32)MsgDjinnGiveTutorialA;
+/* Returns the first of the Djinn tutorial's messages: the second set's */
+/* (MsgDjinnGiveTutorialB) while FLAG_ALREADY_KNOWS_DJINN is set, as Up held */
+/* when Echo's tutorial begins sets it. */
+s32 btTutorialGetDjinnGiveMessage(void) {
+	if(syGameFlagGet(FLAG_ALREADY_KNOWS_DJINN))
+		return (s32)MsgDjinnGiveTutorialB;
+	return (s32)MsgDjinnGiveTutorialA;
 }
 
-void ActorSystem_InitializeFar(s32 mode);
-void Sound_LoadReverbCode(s32 preset);
+void fdActorSystemInitStub(s32 mode);
 
-/// Fights the battle against the enemy formation enemyGroup, from the opening
-/// to the end. Returns the number of enemies defeated when the party won or the
-/// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
-s32 Battle_Run(s32 enemyGroup) {
-  struct BattleCamera *camera;
-  struct BattleState *battle;
-  struct BattleBackgroundState *background;
-  s32 enemyCount;
-  u8 *enemyUnitDestination;
-  s32 turn;
-  s32 actionCount;
-  s32 i;
-  s32 result;
-  s32 window;
-  s32 linkWaitFrames;
-  u32 copyIndex;
-  u32 actingUnit;
-  s16 cue;
+/* Fights the battle against the enemy formation enemyGroup, from the opening */
+/* to the end. Returns the number of enemies defeated when the party won or the
+ */
+/* link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST. */
+s32 btRun(s32 enemyGroup) {
+	BATTLE_CAMERA *camera;
+	BATTLE_STATE *battle;
+	BATTLE_BACKGROUND_STATE *background;
+	s32 enemyCount;
+	u8 *enemyUnitDestination;
+	s32 turn;
+	s32 actionCount;
+	s32 i;
+	s32 result;
+	s32 window;
+	s32 linkWaitFrames;
+	u32 copyIndex;
+	u32 actingUnit;
+	s16 cue;
 
-  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  battle = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleState));
-  HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
-  background = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
-                                   sizeof(struct BattleBackgroundState));
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
-  result = 0;
-  Iwram_ClearWordsEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
-  Task_ResetAll();
-  background->targetYaw = YAW_PARTY_ACTION;
-  background->frames = 0;
-  background->keepRange = 1;
-  background->unusedAfterKeepRange[0] = 0;
-  background->unusedAfterKeepRange[1] = 0;
-  REG_DISPCNT = DISPCNT_MODE_1;
-  GameFlag_Set(FLAG_IN_BATTLE);
-  // XXX (no evidence): what flag 0x169 marks; it is set as every battle
-  // starts, as The Broken Seal's, and no code of either game reads it, so
-  // nothing the game does shows what it means.
-  GameFlag_Set(0x169);
-  Matrix_Initialize();
+	camera = syHeapSlotAllocEwram(HEAP_SLOT_CAMERA, sizeof(BATTLE_CAMERA));
+	battle = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE, sizeof(BATTLE_STATE));
+	syHeapSlotAllocEwram(HEAP_SLOT_ENEMY_UNITS, ENEMY_UNITS_SIZE);
+	background = syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_BACKGROUND,
+									  sizeof(BATTLE_BACKGROUND_STATE));
+	syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_UNUSED, 640);
+	result = 0;
+	syWordsClearEntry(Ram_HeapSlots->enemyUnits, ENEMY_UNITS_SIZE);
+	syInitEvent();
+	background->tgtYaw = YAW_PARTY_ACTION;
+	background->frames = 0;
+	background->keepRange = 1;
+	background->unusedAfterKeepRange[0] = 0;
+	background->unusedAfterKeepRange[1] = 0;
+	REG_DISPCNT = DISPCNT_MODE_1;
+	syGameFlagSet(FLAG_IN_BATTLE);
+	/* XXX (no evidence): what flag 0x169 marks; it is set as every battle */
+	/* starts, as The Broken Seal's, and no code of either game reads it, so */
+	/* nothing the game does shows what it means. */
+	syGameFlagSet(0x169);
+	syInitMatrix();
 
-  IWRAM_FILL_WORDS(camera, sizeof(struct BattleCamera), 0);
-  Iwram_FillWordsEntry(battle, sizeof(struct BattleState), 0);
-  battle->arrowTiles = -1;
-  battle->formation = enemyGroup;
-  HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
-                      sizeof(struct BattleMessageState));
-  IWRAM_FILL_WORDS(Ram_HeapSlots->battleMessage,
-                   sizeof(struct BattleMessageState), 0);
-  battle->background = BattleBackground_GetSelectedFar();
-  HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, 3584);
-  HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
-  ActorSystem_InitializeFar(ACTOR_SYSTEM_BATTLE);
-  // The Djinn lesson's battle loads the glyph tiles too.
-  if (GameFlag_Get(FLAG_DJINN_LESSON) != 0)
-    WindowSystem_InitBattleFar(TRUE);
-  else
-    WindowSystem_InitBattleFar(FALSE);
+	IWRAM_FILL_WORDS(camera, sizeof(BATTLE_CAMERA), 0);
+	syWordsFillEntry(battle, sizeof(BATTLE_STATE), 0);
+	battle->arrowTiles = -1;
+	battle->formation = enemyGroup;
+	syHeapSlotAllocEwram(HEAP_SLOT_BATTLE_MESSAGE,
+						 sizeof(BATTLE_MESSAGE_STATE));
+	IWRAM_FILL_WORDS(Ram_HeapSlots->battleMsg, sizeof(BATTLE_MESSAGE_STATE), 0);
+	battle->bg = btBackgroundGetSelectedStub();
+	syHeapSlotAllocEwram(HEAP_SLOT_SPRITES, 3584);
+	syHeapSlotAllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS, 1536);
+	fdActorSystemInitStub(ACTOR_SYSTEM_BATTLE);
+	/* The Djinn lesson's battle loads the glyph tiles too. */
+	if(syGameFlagGet(FLAG_DJINN_LESSON) != 0)
+		mnWindowSystemInitBattleStub(TRUE);
+	else
+		mnWindowSystemInitBattleStub(FALSE);
 
-  BattleCamera_Create();
-  enemyCount = BattleFormation_BuildEnemyList(battle->formation);
+	btCameraCreate();
+	enemyCount = btFormationBuildEnemyList(battle->formation);
 
-  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    battle->isLink = 1;
-    Battle_SetType(BATTLE_TYPE_LINK);
-  }
-  if (battle->isLink != 0) {
-    Battle_SetRandomSeed(0);
-    for (linkWaitFrames = 0;;) {
-      if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
-        break;
-      wait(1);
-      linkWaitFrames++;
-      if (linkWaitFrames > LINK_MAX_MISSED_FRAMES) {
-        battle->linkPaused = 1;
-        break;
-      }
-    }
-    battle->linkSide = SIO_ID_OF(REG_SIOCNT);
-    enemyUnitDestination = Ram_HeapSlots->enemyUnits;
-    for (copyIndex = 0; copyIndex < ENEMY_UNITS_SIZE; copyIndex++)
-      *enemyUnitDestination++ = gActorSpriteSlots[copyIndex];
-    enemyCount = GameFlag_GetByte(FLAG_AREA_TEMP_F0);
-    BattleParty_AssignOpponentSlots();
-    battle->layout = FORMATION_LAYOUT_SHUFFLED;
-  }
-  Task_Add(BattleCamera_Update, TASK_PASS_FRAME - 1);
+	if(syGameFlagGet(FLAG_LINK_BATTLE) != 0) {
+		battle->isLink = 1;
+		btSetType(BATTLE_TYPE_LINK);
+	}
+	if(battle->isLink != 0) {
+		btSetRandomSeed(0);
+		for(linkWaitFrames = 0;;) {
+			if((LinkStatusWork & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
+				break;
+			sySynch(1);
+			linkWaitFrames++;
+			if(linkWaitFrames > LINK_MAX_MISSED_FRAMES) {
+				battle->linkPaused = 1;
+				break;
+			}
+		}
+		battle->linkSide = SIO_ID_OF(REG_SIOCNT);
+		enemyUnitDestination = Ram_HeapSlots->enemyUnits;
+		for(copyIndex = 0; copyIndex < ENEMY_UNITS_SIZE; copyIndex++)
+			*enemyUnitDestination++ = ActorSpriteSlots[copyIndex];
+		enemyCount = syGameFlagGetByte(FLAG_AREA_TEMP_F0);
+		btPartyAssignOpponentSlots();
+		battle->layout = FORMATION_LAYOUT_SHUFFLED;
+	}
+	sySetEvent(btCameraUpdate, TASK_PASS_FRAME - 1);
 
-  cue = gMainRoutineState.battleMusic;
-  if (cue != 0) {
-    Sound_PlayFar(cue);
-    if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-      Sound_PlayFar(MUS_TEST_YOUR_SKILLS);
-      Sound_LoadReverbCode(SOUND_REVERB_NONE);
-    }
-  } else {
-    Sound_PlayFar(MUS_BATTLE_THE_LOST_AGE);
-  }
+	cue = MainRoutineStateWork.battleMusic;
+	if(cue != 0) {
+		sySndPlayStub(cue);
+		if(syGameFlagGet(FLAG_LINK_BATTLE) != 0) {
+			sySndPlayStub(MUS_TEST_YOUR_SKILLS);
+			sySndLoadReverbCode(SOUND_REVERB_NONE);
+		}
+	}
+	else {
+		sySndPlayStub(MUS_BATTLE_THE_LOST_AGE);
+	}
 
-  BattleUnit_Collect();
-  BattleUnit_RefreshPlacement();
-  DjinnRecovery_Reconcile();
-  BattleSummon_UpdateAvailability();
-  if ((u16)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
-    battle->partyStatus = PARTY_STATUS_SUMMONS;
-  else
-    battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
-  if (enemyGroup == FORMATION_KARST_AND_AGATIO_B ||
-      enemyGroup == FORMATION_KARST_AND_AGATIO_C)
-    ScriptedBattle_RestoreUnits();
-  PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
-  BattleCamera_SetDefaultView();
-  BattleObject_Put();
-  BattleBackground_Init();
-  BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
-  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_BEFORE_OPENING);
-  Party_BattleSetupNoOp(1);
-  REG_BLDCNT = 0;
-  BattleSpoils_Clear();
-  battle->arrowTiles = VramCache_AllocEntry(128);
+	btUnitCollect();
+	btUnitRefreshPlacement();
+	btDjinnRecoveryReconcile();
+	btSummonUpdateAvailability();
+	if((u16)gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->summonMask != 0)
+		battle->partyStat = PARTY_STATUS_SUMMONS;
+	else
+		battle->partyStat = PARTY_STATUS_NO_SUMMONS;
+	if(enemyGroup == FORMATION_KARST_AND_AGATIO_B ||
+	   enemyGroup == FORMATION_KARST_AND_AGATIO_C)
+		btScriptedBattleRestoreUnits();
+	mnPartyStatCreateWindowStub(PARTY_STATUS_CLOSED);
+	btCameraSetDefaultView();
+	btObjectPut();
+	btBackgroundInit();
+	btBackgroundLoad(BATTLE_BACKGROUND_FIXED, battle->bg, 0);
+	btCameraSetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
+	btCameraSetView(0, 0, 0, BATTLE_ZOOM_BEFORE_OPENING);
+	btPartyBattleSetupNoOp(1);
+	REG_BLDCNT = 0;
+	btSpoilsClear();
+	battle->arrowTiles = syVramCacheAllocEntry(128);
 
-  battle->firstStrike = FIRST_STRIKE_NONE;
-  if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
-    battle->firstStrike = FIRST_STRIKE_PARTY;
-  } else if (gMainRoutineState.battleType == BATTLE_TYPE_NORMAL) {
-    if ((Battle_RandomFar() & 15) == 0)
-      battle->firstStrike = FIRST_STRIKE_PARTY;
-    else if ((Battle_RandomFar() & 31) == 0)
-      battle->firstStrike = FIRST_STRIKE_ENEMIES;
-  } else if (gMainRoutineState.battleType == BATTLE_TYPE_LOST) {
-    battle->firstStrike = FIRST_STRIKE_ENEMIES;
-  }
-  BattleTransition_Run(enemyCount, enemyGroup);
-  background->keepRange = 0;
-  gCpuLoadDisplayEnabled = 0;
-  Task_Add(BattleObject_UpdateSpritePriorities, TASK_PASS_FRAME);
+	battle->firstStrike = FIRST_STRIKE_NONE;
+	if(syGameFlagGet(FLAG_DJINN_LESSON) != 0) {
+		battle->firstStrike = FIRST_STRIKE_PARTY;
+	}
+	else if(MainRoutineStateWork.battleType == BATTLE_TYPE_NORMAL) {
+		if((btRandomStub() & 15) == 0)
+			battle->firstStrike = FIRST_STRIKE_PARTY;
+		else if((btRandomStub() & 31) == 0)
+			battle->firstStrike = FIRST_STRIKE_ENEMIES;
+	}
+	else if(MainRoutineStateWork.battleType == BATTLE_TYPE_LOST) {
+		battle->firstStrike = FIRST_STRIKE_ENEMIES;
+	}
+	btTransitionRun(enemyCount, enemyGroup);
+	background->keepRange = 0;
+	CpuLoadDisplayEnabled = 0;
+	sySetEvent(btObjectUpdateSprPriorities, TASK_PASS_FRAME);
 
-  for (turn = 1;; turn++) {
-    if (BattleUnit_ListLivingIds(BATTLE_SIDE_MASK_PARTY, 0) == 0)
-      BattleParty_SwapInReserves();
-    Battle_TurnStartNoOp();
-    BattleSummon_UpdateAvailability();
-    if ((u16)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask != 0)
-      battle->partyStatus = PARTY_STATUS_SUMMONS;
-    else
-      battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
-    background->targetYaw = TRIG_TURN * 5 / 32;
-    background->frames = 60;
-    PartyStatus_DrawFar(battle->partyStatus);
+	for(turn = 1;; turn++) {
+		if(btUnitListLivingIds(BATTLE_SIDE_MASK_PARTY, 0) == 0)
+			btPartySwapInReserves();
+		btTurnStartNoOp();
+		btSummonUpdateAvailability();
+		if((u16)gmDjinnGetRecoveryTableStub(DJINN_RECOVERY_PARTY)->summonMask !=
+		   0)
+			battle->partyStat = PARTY_STATUS_SUMMONS;
+		else
+			battle->partyStat = PARTY_STATUS_NO_SUMMONS;
+		background->tgtYaw = TRIG_TURN * 5 / 32;
+		background->frames = 60;
+		mnPartyStatDrawStub(battle->partyStat);
 
-    Iwram_ClearWordsEntry(battle->actions, sizeof(battle->actions));
-    VramCache_FreeEntry(battle->arrowTiles);
-    if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0)
-      actionCount = Battle_GatherActions(battle->actions);
-    else
-      actionCount = AutoBattle_BuildActions(battle->actions);
-    battle->arrowTiles = VramCache_AllocEntry(128);
-    PartyStatus_DrawFar(battle->partyStatus);
-    if (actionCount < 0)
-      goto aborted;
+		syWordsClearEntry(battle->actions, sizeof(battle->actions));
+		syVramCacheFreeEntry(battle->arrowTiles);
+		if(syGameFlagGet(FLAG_AUTO_BATTLE) == 0)
+			actionCount = btGatherActions(battle->actions);
+		else
+			actionCount = btAutoBattleBuildActions(battle->actions);
+		battle->arrowTiles = syVramCacheAllocEntry(128);
+		mnPartyStatDrawStub(battle->partyStat);
+		if(actionCount < 0)
+			goto aborted;
 
-    for (i = 0; i < actionCount; i++) {
-      actingUnit = battle->actions[i].unitId;
-      battle->counterUnitId = -1;
-      battle->ceaseFire = 0;
-      if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0) {
-        if (BattleStaging_DispatchAction(&battle->actions[i],
-                                         i == 0 ? 10 : 0) == 1)
-          goto fled;
-      } else {
-        if (AutoBattle_RunAction(&battle->actions[i]) == 1)
-          goto fled;
-      }
-      if (enemyGroup == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
-        goto party_lost;
-      if (BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
-        goto party_lost;
-      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
-        break;
-      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
-        if (enemyGroup == FORMATION_DOOM_DRAGON_A ||
-            enemyGroup == FORMATION_DOOM_DRAGON_B) {
-          Battle_PlayFormChange(enemyGroup++);
-          break;
-        }
-        if (enemyGroup == FORMATION_DOOM_DRAGON_C)
-          Battle_PlayFormChange(FORMATION_DOOM_DRAGON_C);
-        if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1) {
-          battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
-        }
-        goto won;
-      }
-      if (battle->counterUnitId != -1 &&
-          Battle_FindUnitPlace(battle->counterTargetId) != -1) {
-        battle->actions[i].unitId = battle->counterUnitId;
-        battle->actions[i].command = COMMAND_DJINN_COUNTER;
-        battle->actions[i].parameter = 0;
-        battle->actions[i].target =
-            Battle_FindUnitPlace(battle->counterTargetId);
-        battle->actions[i].range = 1;
-        i--;
-      }
-      if (LinkBattle_SyncTurn() < 0)
-        goto aborted;
-      if (i == actionCount - 1 && battle->daedalusStrikes != 0) {
-        u32 queue = battle->daedalusFromEnemies;
+		for(i = 0; i < actionCount; i++) {
+			actingUnit = battle->actions[i].unitId;
+			battle->counterUnitId = -1;
+			battle->ceaseFire = 0;
+			if(syGameFlagGet(FLAG_AUTO_BATTLE) == 0) {
+				if(btStagingDispatchAction(&battle->actions[i],
+										   i == 0 ? 10 : 0) == 1)
+					goto fled;
+			}
+			else {
+				if(btAutoBattleRunAction(&battle->actions[i]) == 1)
+					goto fled;
+			}
+			if(enemyGroup == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
+				goto party_lost;
+			if(btUnitListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, 0) == 0)
+				goto party_lost;
+			if(btUnitListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
+				break;
+			if(btUnitListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
+				if(enemyGroup == FORMATION_DOOM_DRAGON_A ||
+				   enemyGroup == FORMATION_DOOM_DRAGON_B) {
+					btPlayFormChange(enemyGroup++);
+					break;
+				}
+				if(enemyGroup == FORMATION_DOOM_DRAGON_C)
+					btPlayFormChange(FORMATION_DOOM_DRAGON_C);
+				if(actingUnit <= ALLY_MAX && battle->spoils.defeated == 1) {
+					battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
+				}
+				goto won;
+			}
+			if(battle->counterUnitId != -1 &&
+			   btFindUnitPlace(battle->counterTgtId) != -1) {
+				battle->actions[i].unitId = battle->counterUnitId;
+				battle->actions[i].command = COMMAND_DJINN_COUNTER;
+				battle->actions[i].prm = 0;
+				battle->actions[i].tgt = btFindUnitPlace(battle->counterTgtId);
+				battle->actions[i].range = 1;
+				i--;
+			}
+			if(btLinkBattleSyncTurn() < 0)
+				goto aborted;
+			if(i == actionCount - 1 && battle->daedalusStrikes != 0) {
+				u32 queue = battle->daedalusFromEnemies;
 
-        battle->daedalusFromEnemies = queue >> 1;
-        queue &= 1;
-        battle->daedalusStrikes--;
-        // The strike is the summoner's side's: unit 0's or the first enemy's.
-        battle->actions[i].unitId = queue << 7;
-        battle->actions[i].command = COMMAND_DAEDALUS;
-        battle->actions[i].parameter = 0;
-        battle->actions[i].target = queue != 0 ? 0 : FIRST_ENEMY_UNIT;
-        battle->actions[i].range = ABILITY_RANGE_ALL;
-        i--;
-      }
-      if (battle->ceaseFire != 0)
-        break;
-    }
+				battle->daedalusFromEnemies = queue >> 1;
+				queue &= 1;
+				battle->daedalusStrikes--;
+				/* The strike is the summoner's side's: unit 0's or the first
+				 * enemy's. */
+				battle->actions[i].unitId = queue << 7;
+				battle->actions[i].command = COMMAND_DAEDALUS;
+				battle->actions[i].prm = 0;
+				battle->actions[i].tgt = queue != 0 ? 0 : FIRST_ENEMY_UNIT;
+				battle->actions[i].range = ABILITY_RANGE_ALL;
+				i--;
+			}
+			if(battle->ceaseFire != 0)
+				break;
+		}
 
-    BattleParty_ClearGuards();
-    battle->daedalusFromEnemies = battle->nextDaedalusFromEnemies;
+		btPartyClearGuards();
+		battle->daedalusFromEnemies = battle->nextDaedalusFromEnemies;
 #if TLA_PATCH_1
-    // Japanese leaves the next turn's queue in place.
-    battle->nextDaedalusFromEnemies = 0;
+		/* Japanese leaves the next turn's queue in place. */
+		battle->nextDaedalusFromEnemies = 0;
 #endif
-    battle->daedalusStrikes = battle->nextDaedalusStrikes;
-    battle->nextDaedalusStrikes = 0;
-    battle->firstStrike = FIRST_STRIKE_NONE;
-    Battle_TurnEndNoOp();
-    Battle_ProcessTurnEnd();
-    BattleMotion_DestroyAllSlotObjects();
-    if ((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
-         enemyGroup == FORMATION_KARST_AND_AGATIO_B) &&
-        turn == 2)
-      goto won;
-    if (battle->isLink != 0) {
-      if (LinkBattle_SyncTurn() < 0)
-        goto aborted;
-    } else {
-      wait(20);
-    }
-    if (GameFlag_Get(FLAG_DJINN_LESSON) == 0)
-      continue;
+		battle->daedalusStrikes = battle->nextDaedalusStrikes;
+		battle->nextDaedalusStrikes = 0;
+		battle->firstStrike = FIRST_STRIKE_NONE;
+		btTurnEndNoOp();
+		btProcessTurnEnd();
+		btMotionDestroyAllSlotObjects();
+		if((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
+			enemyGroup == FORMATION_KARST_AND_AGATIO_B) &&
+		   turn == 2)
+			goto won;
+		if(battle->isLink != 0) {
+			if(btLinkBattleSyncTurn() < 0)
+				goto aborted;
+		}
+		else {
+			sySynch(20);
+		}
+		if(syGameFlagGet(FLAG_DJINN_LESSON) == 0)
+			continue;
 
-    // "See! What did I tell you? When you unleashed me, I used my special
-    // attack ability!"
-    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
-                                       DJINN_TUTORIAL_LINE_UNLEASHED,
-                                   0, 4, MESSAGE_WINDOW_ZOOM);
-    while (Message_AllTypedFar() == 0)
-      wait(1);
-    Window_CloseFar(window, 1);
-    wait(1);
-    // "After being unleashed, we Djinn will then stand by, ready to be
-    // summoned back again..."
-    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
-                                       DJINN_TUTORIAL_LINE_STANDBY,
-                                   10, 4, MESSAGE_WINDOW_ZOOM);
-    BattleMessage_WaitForAdvanceAt(44, 24);
-    Window_CloseFar(window, 1);
-    wait(1);
-  }
+		/* "See! What did I tell you? When you unleashed me, I used my special
+		 */
+		/* attack ability!" */
+		window = mnMessageOpenWindowStub(btTutorialGetDjinnGiveMessage() +
+											 DJINN_TUTORIAL_LINE_UNLEASHED,
+										 0, 4, MESSAGE_WINDOW_ZOOM);
+		while(mnMessageAllTypedStub() == 0)
+			sySynch(1);
+		mnWindowCloseStub(window, 1);
+		sySynch(1);
+		/* "After being unleashed, we Djinn will then stand by, ready to be */
+		/* summoned back again..." */
+		window = mnMessageOpenWindowStub(btTutorialGetDjinnGiveMessage() +
+											 DJINN_TUTORIAL_LINE_STANDBY,
+										 10, 4, MESSAGE_WINDOW_ZOOM);
+		btMessageWaitForAdvanceAt(44, 24);
+		mnWindowCloseStub(window, 1);
+		sySynch(1);
+	}
 
 won:
-  Battle_ClearSerialTransferPayload();
-  if ((enemyGroup != FORMATION_KARST_AND_AGATIO_A &&
-       enemyGroup != FORMATION_KARST_AND_AGATIO_B)) {
-    if (enemyGroup != FORMATION_DOOM_DRAGON_C &&
-        GameFlag_Get(FLAG_DJINN_LESSON) == 0) {
-      if (battle->isLink != 0)
-        Sound_PlayFar(MUS_VICTORY);
-      if (battle->spoils.defeated != 0) {
-        Sound_PlayFar(MUS_VICTORY);
-        if (battle->defeatState <= DEFEAT_SEVERAL) {
-          // The first defeated enemy's name for the message, with no letter.
-          BattleUnit_SetFar(FIRST_ENEMY_UNIT,
-                            battle->enemyKinds[battle->firstDefeated],
-                            NAME_LETTER_PAST_ALL);
-          MessageArgument_ClearAllFar();
-          MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
-          BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
-          BattleMessage_WaitForAdvance();
-        }
-      }
-      Battle_AwardSpoils();
-    }
-    Sound_PlayFar(SOUND_FADE_OUT_BGM);
-  }
-  ScreenFade_ToBlack(30);
-  ScreenFade_Wait();
-  result = battle->spoils.defeated;
-  goto finished;
+	btClearSerialTransferPayload();
+	if((enemyGroup != FORMATION_KARST_AND_AGATIO_A &&
+		enemyGroup != FORMATION_KARST_AND_AGATIO_B)) {
+		if(enemyGroup != FORMATION_DOOM_DRAGON_C &&
+		   syGameFlagGet(FLAG_DJINN_LESSON) == 0) {
+			if(battle->isLink != 0)
+				sySndPlayStub(MUS_VICTORY);
+			if(battle->spoils.defeated != 0) {
+				sySndPlayStub(MUS_VICTORY);
+				if(battle->defeatState <= DEFEAT_SEVERAL) {
+					/* The first defeated enemy's name for the message, with no
+					 * letter. */
+					btUnitSetStub(FIRST_ENEMY_UNIT,
+								  battle->enemyKinds[battle->firstDefeated],
+								  NAME_LETTER_PAST_ALL);
+					mnMessageArgumentClearAllStub();
+					mnMessageArgumentPushStub(FIRST_ENEMY_UNIT,
+											  MESSAGE_ARGUMENT_ACTOR);
+					mnBattleMessageShowAndWaitStub(battle->defeatState +
+												   (s32)MsgDowned);
+					btMessageWaitForAdvance();
+				}
+			}
+			btAwardSpoils();
+		}
+		sySndPlayStub(SOUND_FADE_OUT_BGM);
+	}
+	syScrFadeToBlack(30);
+	syScrFadeWait();
+	result = battle->spoils.defeated;
+	goto finished;
 
 aborted:
-  Battle_ClearSerialTransferPayload();
-  Task_Suspend(0);
-  REG_DISPCNT = DISPCNT_MODE_1;
-  result = battle->spoils.defeated;
-  GameFlag_Set(FLAG_AREA_TEMP_E8);
-  goto finished;
+	btClearSerialTransferPayload();
+	syTaskSuspend(0);
+	REG_DISPCNT = DISPCNT_MODE_1;
+	result = battle->spoils.defeated;
+	syGameFlagSet(FLAG_AREA_TEMP_E8);
+	goto finished;
 
 party_lost:
-  Battle_ClearSerialTransferPayload();
-  if ((enemyGroup != FORMATION_KARST_AND_AGATIO_A &&
-       enemyGroup != FORMATION_KARST_AND_AGATIO_B) &&
-      enemyGroup != FORMATION_KARST_AND_AGATIO_VS_ISAAC) {
-    if (enemyGroup != FORMATION_KARST_AND_AGATIO_C) {
-      Sound_PlayFar(MUS_DEFEATED);
-      MessageArgument_ClearAllFar();
-      if (BattleParty_PrepareMembers(0) == 1)
-        BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);
-      else
-        BattleMessage_ShowAndWaitFar((s32)MsgPartyDefeated);
-      BattleMessage_WaitForAdvance();
-    }
-    Sound_PlayFar(SOUND_FADE_OUT_BGM);
-  }
-  ScreenFade_ToBlack(30);
-  result = BATTLE_OUTCOME_LOST;
-  ScreenFade_Wait();
-  goto finished;
+	btClearSerialTransferPayload();
+	if((enemyGroup != FORMATION_KARST_AND_AGATIO_A &&
+		enemyGroup != FORMATION_KARST_AND_AGATIO_B) &&
+	   enemyGroup != FORMATION_KARST_AND_AGATIO_VS_ISAAC) {
+		if(enemyGroup != FORMATION_KARST_AND_AGATIO_C) {
+			sySndPlayStub(MUS_DEFEATED);
+			mnMessageArgumentClearAllStub();
+			if(btPartyPrepareMembers(0) == 1)
+				mnBattleMessageShowAndWaitStub((s32)MsgGoesDownInDefeat);
+			else
+				mnBattleMessageShowAndWaitStub((s32)MsgPartyDefeated);
+			btMessageWaitForAdvance();
+		}
+		sySndPlayStub(SOUND_FADE_OUT_BGM);
+	}
+	syScrFadeToBlack(30);
+	result = BATTLE_OUTCOME_LOST;
+	syScrFadeWait();
+	goto finished;
 
 fled:
-  Sound_PlayFar(SOUND_FADE_OUT_BGM);
-  ScreenFade_ToBlack(30);
-  ScreenFade_Wait();
-  result = BATTLE_OUTCOME_FLED;
+	sySndPlayStub(SOUND_FADE_OUT_BGM);
+	syScrFadeToBlack(30);
+	syScrFadeWait();
+	result = BATTLE_OUTCOME_FLED;
 
 finished:
-  if ((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
-       enemyGroup == FORMATION_KARST_AND_AGATIO_B))
-    ScriptedBattle_SaveUnits();
-  BattleParty_ClearBattleStatuses();
-  Battle_TurnEndNoOp();
-  DjinnRecovery_CountDown();
-  Battle_SetType(BATTLE_TYPE_NORMAL);
-  Task_Remove(BattleObject_UpdateSpritePriorities);
-  BattleBackground_Free();
-  return result;
+	if((enemyGroup == FORMATION_KARST_AND_AGATIO_A ||
+		enemyGroup == FORMATION_KARST_AND_AGATIO_B))
+		btScriptedBattleSaveUnits();
+	btPartyClearBattleStatuses();
+	btTurnEndNoOp();
+	btDjinnRecoveryCountDown();
+	btSetType(BATTLE_TYPE_NORMAL);
+	syCloseEvent(btObjectUpdateSprPriorities);
+	btBackgroundFree();
+	return result;
 }
 
-/// Lists the party members who fight, three in a link battle, into owners when
-/// it is not null, and returns how many.
-s32 BattleParty_PrepareMembers(u16 *owners) {
-  s32 limit;
-  s32 count;
-  s32 index;
+/* Lists the party members who fight, three in a link battle, into owners when
+ */
+/* it is not null, and returns how many. */
+s32 btPartyPrepareMembers(u16 *owners) {
+	s32 limit;
+	s32 count;
+	s32 index;
 
-  limit = PARTY_BATTLE_SIZE;
-  if (Ram_HeapSlots->battleState->isLink != 0)
-    limit = LINK_PARTY_SIZE;
+	limit = PARTY_BATTLE_SIZE;
+	if(Ram_HeapSlots->battleState->isLink != 0)
+		limit = LINK_PARTY_SIZE;
 
-  count = Party_CountMembersFar();
-  if (count > limit)
-    count = limit;
+	count = gmPartyCountMembersStub();
+	if(count > limit)
+		count = limit;
 
-  for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineState.party[index];
+	for(index = 0; index < count; index++) {
+		s32 owner = MainRoutineStateWork.party[index];
 
-    if (owners != 0)
-      *owners++ = owner;
-    Unit_Get(owner)->side = BATTLE_SIDE_PARTY;
-  }
+		if(owners != 0)
+			*owners++ = owner;
+		syUnitGet(owner)->side = BATTLE_SIDE_PARTY;
+	}
 
-  if (owners != 0)
-    *owners = BATTLE_UNIT_LIST_END;
-  return count;
+	if(owners != 0)
+		*owners = BATTLE_UNIT_LIST_END;
+	return count;
 }
 
-/// Lists the party's reserve members, those past the fourth (none in a link
-/// battle), into owners when it is not null, puts each on the party's side and
-/// returns how many there are.
-s32 BattleParty_PrepareReserveOwners(u16 *owners) {
-  s32 count;
-  s32 index;
+/* Lists the party's reserve members, those past the fourth (none in a link */
+/* battle), into owners when it is not null, puts each on the party's side and
+ */
+/* returns how many there are. */
+s32 btPartyPrepareReserveOwners(u16 *owners) {
+	s32 count;
+	s32 index;
 
-  count = Party_CountMembersFar();
-  if (count > PARTY_BATTLE_SIZE)
-    count -= PARTY_BATTLE_SIZE;
-  else
-    count = 0;
-  if (Ram_HeapSlots->battleState->isLink != 0)
-    count = 0;
+	count = gmPartyCountMembersStub();
+	if(count > PARTY_BATTLE_SIZE)
+		count -= PARTY_BATTLE_SIZE;
+	else
+		count = 0;
+	if(Ram_HeapSlots->battleState->isLink != 0)
+		count = 0;
 
-  for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineState.party[index + PARTY_BATTLE_SIZE];
+	for(index = 0; index < count; index++) {
+		s32 owner = MainRoutineStateWork.party[index + PARTY_BATTLE_SIZE];
 
-    if (owners != 0)
-      *owners++ = owner;
-    Unit_Get(owner)->side = BATTLE_SIDE_PARTY;
-  }
+		if(owners != 0)
+			*owners++ = owner;
+		syUnitGet(owner)->side = BATTLE_SIDE_PARTY;
+	}
 
-  if (owners != 0)
-    *owners = BATTLE_UNIT_LIST_END;
-  return count;
+	if(owners != 0)
+		*owners = BATTLE_UNIT_LIST_END;
+	return count;
 }
 
-/// Lists the enemy units present and returns how many, 0 when unitIds is null.
-s32 BattleEnemy_List(s16 *unitIds) {
-  s16 *output;
-  s32 count;
-  s32 id;
-  s32 limit;
-  s32 listed;
+/* Lists the enemy units present and returns how many, 0 when unitIds is null.
+ */
+s32 btEnemyList(s16 *unitIds) {
+	s16 *output;
+	s32 count;
+	s32 id;
+	s32 limit;
+	s32 listed;
 
-  output = unitIds;
-  listed = 0;
-  limit = ENEMY_BATTLE_SIZE;
-  count = 0;
-  if (output != NULL) {
-    if (GameFlag_Get(FLAG_LINK_BATTLE) != 0)
-      limit = LINK_PARTY_SIZE;
-    id = FIRST_ENEMY_UNIT;
-    limit += FIRST_ENEMY_UNIT;
-    for (; id < limit; id++) {
-      if (Unit_Get(id)->side != BATTLE_SIDE_NONE) {
-        *output = id;
-        listed++;
-        output++;
-      }
-    }
-    count = listed;
-    *output = BATTLE_UNIT_LIST_END;
-  }
-  return count;
+	output = unitIds;
+	listed = 0;
+	limit = ENEMY_BATTLE_SIZE;
+	count = 0;
+	if(output != NULL) {
+		if(syGameFlagGet(FLAG_LINK_BATTLE) != 0)
+			limit = LINK_PARTY_SIZE;
+		id = FIRST_ENEMY_UNIT;
+		limit += FIRST_ENEMY_UNIT;
+		for(; id < limit; id++) {
+			if(syUnitGet(id)->side != BATTLE_SIDE_NONE) {
+				*output = id;
+				listed++;
+				output++;
+			}
+		}
+		count = listed;
+		*output = BATTLE_UNIT_LIST_END;
+	}
+	return count;
 }
 
-/// Lists the units still standing on the sides in sideMask, party first, into
-/// unitIds when it is not null, and returns how many.
-s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
-  u16 activeMembers[8];
-  s32 remaining;
-  s32 enemyLimit;
-  u16 *output;
-  s32 livingCount;
-  s32 enemyCapacity;
-  u16 *member;
-  s32 unitId;
-  s16 hp;
-  s32 activeCount;
-  struct Unit *unit;
+/* Lists the units still standing on the sides in sideMask, party first, into */
+/* unitIds when it is not null, and returns how many. */
+s32 btUnitListLiving(s32 sideMask, u16 *unitIds) {
+	u16 activeMembers[8];
+	s32 remaining;
+	s32 enemyLimit;
+	u16 *output;
+	s32 livingCount;
+	s32 enemyCapacity;
+	u16 *member;
+	s32 unitId;
+	s16 hp;
+	s32 activeCount;
+	UNIT *unit;
 
-  output = unitIds;
-  livingCount = 0;
-  enemyCapacity = ENEMY_BATTLE_SIZE;
-  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    enemyCapacity = LINK_PARTY_SIZE;
-  }
-  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    activeCount = BattleParty_PrepareMembers(activeMembers);
-    if (livingCount < activeCount) {
-      member = activeMembers;
-      remaining = activeCount;
-      do {
-        unitId = *member;
-        member += 1;
-        hp = Unit_Get(unitId)->hp;
-        if (hp > 0) {
-          if (output != NULL) {
-            *output = unitId;
-            output += 1;
-          }
-          livingCount += 1;
-        }
-        remaining -= 1;
-      } while (remaining != 0);
-    }
-  }
-  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    // remaining, spent on the members, now walks the enemy units' ids.
-    remaining = FIRST_ENEMY_UNIT;
-    enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
-    if (remaining < enemyLimit) {
-      for (; remaining < enemyLimit; remaining += 1) {
-        unit = Unit_Get(remaining);
-        if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
-          if (output != NULL) {
-            *output = remaining;
-            output += 1;
-          }
-          livingCount += 1;
-        }
-      }
-    }
-  }
-  if (output != NULL) {
-    *output = BATTLE_UNIT_LIST_END;
-  }
-  return livingCount;
+	output = unitIds;
+	livingCount = 0;
+	enemyCapacity = ENEMY_BATTLE_SIZE;
+	if(syGameFlagGet(FLAG_LINK_BATTLE) != 0) {
+		enemyCapacity = LINK_PARTY_SIZE;
+	}
+	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
+		activeCount = btPartyPrepareMembers(activeMembers);
+		if(livingCount < activeCount) {
+			member = activeMembers;
+			remaining = activeCount;
+			do {
+				unitId = *member;
+				member += 1;
+				hp = syUnitGet(unitId)->hp;
+				if(hp > 0) {
+					if(output != NULL) {
+						*output = unitId;
+						output += 1;
+					}
+					livingCount += 1;
+				}
+				remaining -= 1;
+			} while(remaining != 0);
+		}
+	}
+	if(sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+		/* remaining, spent on the members, now walks the enemy units' ids. */
+		remaining = FIRST_ENEMY_UNIT;
+		enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
+		if(remaining < enemyLimit) {
+			for(; remaining < enemyLimit; remaining += 1) {
+				unit = syUnitGet(remaining);
+				if(unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
+					if(output != NULL) {
+						*output = remaining;
+						output += 1;
+					}
+					livingCount += 1;
+				}
+			}
+		}
+	}
+	if(output != NULL) {
+		*output = BATTLE_UNIT_LIST_END;
+	}
+	return livingCount;
 }
 
-/// As BattleUnit_ListLiving, with the reserve owners listed after the
-/// active ones.
-// A copy rather than a flag to BattleUnit_ListLiving: its list of members has
-// room for ten where that one's has eight, and one routine would not keep both.
-s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
-  u16 members[10];
-  s32 remaining;
-  s32 enemyLimit;
-  u16 *output;
-  s32 livingCount;
-  s32 enemyCapacity;
-  u16 *member;
-  s32 unitId;
-  s16 hp;
-  s32 count;
-  struct Unit *unit;
+/* As btUnitListLiving, with the reserve owners listed after the */
+/* active ones. */
+/* A copy rather than a flag to btUnitListLiving: its list of members has */
+/* room for ten where that one's has eight, and one function would not keep */
+/* both. */
+s32 btUnitListLivingWithReserve(s32 sideMask, u16 *unitIds) {
+	u16 members[10];
+	s32 remaining;
+	s32 enemyLimit;
+	u16 *output;
+	s32 livingCount;
+	s32 enemyCapacity;
+	u16 *member;
+	s32 unitId;
+	s16 hp;
+	s32 count;
+	UNIT *unit;
 
-  output = unitIds;
-  livingCount = 0;
-  enemyCapacity = ENEMY_BATTLE_SIZE;
-  if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    enemyCapacity = LINK_PARTY_SIZE;
-  }
-  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    count = BattleParty_PrepareMembers(members);
-    count += BattleParty_PrepareReserveOwners(members + count);
-    if (livingCount < count) {
-      member = members;
-      remaining = count;
-      do {
-        unitId = *member;
-        member += 1;
-        hp = Unit_Get(unitId)->hp;
-        if (hp > 0) {
-          if (output != NULL) {
-            *output = unitId;
-            output += 1;
-          }
-          livingCount += 1;
-        }
-        remaining -= 1;
-      } while (remaining != 0);
-    }
-  }
-  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    remaining = FIRST_ENEMY_UNIT;
-    enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
-    if (remaining < enemyLimit) {
-      for (; remaining < enemyLimit; remaining += 1) {
-        unit = Unit_Get(remaining);
-        if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
-          if (output != NULL) {
-            *output = remaining;
-            output += 1;
-          }
-          livingCount += 1;
-        }
-      }
-    }
-  }
-  if (output != NULL) {
-    *output = BATTLE_UNIT_LIST_END;
-  }
-  return livingCount;
+	output = unitIds;
+	livingCount = 0;
+	enemyCapacity = ENEMY_BATTLE_SIZE;
+	if(syGameFlagGet(FLAG_LINK_BATTLE) != 0) {
+		enemyCapacity = LINK_PARTY_SIZE;
+	}
+	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
+		count = btPartyPrepareMembers(members);
+		count += btPartyPrepareReserveOwners(members + count);
+		if(livingCount < count) {
+			member = members;
+			remaining = count;
+			do {
+				unitId = *member;
+				member += 1;
+				hp = syUnitGet(unitId)->hp;
+				if(hp > 0) {
+					if(output != NULL) {
+						*output = unitId;
+						output += 1;
+					}
+					livingCount += 1;
+				}
+				remaining -= 1;
+			} while(remaining != 0);
+		}
+	}
+	if(sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+		remaining = FIRST_ENEMY_UNIT;
+		enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
+		if(remaining < enemyLimit) {
+			for(; remaining < enemyLimit; remaining += 1) {
+				unit = syUnitGet(remaining);
+				if(unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
+					if(output != NULL) {
+						*output = remaining;
+						output += 1;
+					}
+					livingCount += 1;
+				}
+			}
+		}
+	}
+	if(output != NULL) {
+		*output = BATTLE_UNIT_LIST_END;
+	}
+	return livingCount;
 }
 
-/// Lists the units in the battle on the sides in sideMask, standing or not, and
-/// returns how many.
-s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
-  struct BattleState *battle;
-  s32 count;
-  s32 i;
+/* Lists the units in the battle on the sides in sideMask, standing or not, and
+ */
+/* returns how many. */
+s32 btUnitListIds(s32 sideMask, u16 *unitIds) {
+	BATTLE_STATE *battle;
+	s32 count;
+	s32 i;
 
-  battle = Ram_HeapSlots->battleState;
-  count = 0;
-  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
-        if (unitIds != NULL)
-          *unitIds++ = battle->partyUnits[i];
-        count++;
-      }
-    }
-  }
-  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
-        if (unitIds != NULL)
-          *unitIds++ = battle->enemyIds[i];
-        count++;
-      }
-    }
-  }
-  if (unitIds != NULL)
-    *unitIds = BATTLE_UNIT_LIST_END;
-  return count;
+	battle = Ram_HeapSlots->battleState;
+	count = 0;
+	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
+		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+			if(battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
+				if(unitIds != NULL)
+					*unitIds++ = battle->partyUnits[i];
+				count++;
+			}
+		}
+	}
+	if(sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+		for(i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+			if(battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
+				if(unitIds != NULL)
+					*unitIds++ = battle->enemyIds[i];
+				count++;
+			}
+		}
+	}
+	if(unitIds != NULL)
+		*unitIds = BATTLE_UNIT_LIST_END;
+	return count;
 }
 
-/// As BattleUnit_ListIds, listing only the units whose HP is not 0.
-s32 BattleUnit_ListLivingIds(s32 sideMask, u16 *unitIds) {
-  struct BattleState *battle;
-  s32 count;
-  s32 i;
+/* As btUnitListIds, listing only the units whose HP is not 0. */
+s32 btUnitListLivingIds(s32 sideMask, u16 *unitIds) {
+	BATTLE_STATE *battle;
+	s32 count;
+	s32 i;
 
-  battle = Ram_HeapSlots->battleState;
-  count = 0;
-  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
-    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED &&
-          Unit_Get(battle->partyUnits[i])->hp != 0) {
-        if (unitIds != NULL)
-          *unitIds++ = battle->partyUnits[i];
-        count++;
-      }
-    }
-  }
-  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED &&
-          Unit_Get(battle->enemyIds[i])->hp != 0) {
-        if (unitIds != NULL)
-          *unitIds++ = battle->enemyIds[i];
-        count++;
-      }
-    }
-  }
-  if (unitIds != NULL)
-    *unitIds = BATTLE_UNIT_LIST_END;
-  return count;
+	battle = Ram_HeapSlots->battleState;
+	count = 0;
+	if(sideMask & BATTLE_SIDE_MASK_PARTY) {
+		for(i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+			if(battle->partyUnits[i] != BATTLE_UNIT_REMOVED &&
+			   syUnitGet(battle->partyUnits[i])->hp != 0) {
+				if(unitIds != NULL)
+					*unitIds++ = battle->partyUnits[i];
+				count++;
+			}
+		}
+	}
+	if(sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+		for(i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+			if(battle->enemyIds[i] != BATTLE_UNIT_REMOVED &&
+			   syUnitGet(battle->enemyIds[i])->hp != 0) {
+				if(unitIds != NULL)
+					*unitIds++ = battle->enemyIds[i];
+				count++;
+			}
+		}
+	}
+	if(unitIds != NULL)
+		*unitIds = BATTLE_UNIT_LIST_END;
+	return count;
 }

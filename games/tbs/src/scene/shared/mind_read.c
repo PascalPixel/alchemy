@@ -1,18 +1,18 @@
-/// @file
-/// Kolima and Log Rooms A: Mind Read cast in an event.
+/* @file */
+/* Kolima and Log Rooms A: Mind Read cast in an event. */
 
-/// The caster begins Mind Read on the target.
-static void Scene_StartMindRead(s32 casterId, s32 targetId) {
-  FieldPsynergy_LoadResources(ABILITY_MIND_READ, 1);
-  FieldPsynergy_SetupActorPair(casterId, targetId);
-  FieldPsynergy_StartCast();
-  FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
-  wait(1);
+/* The caster begins Mind Read on the target. */
+static void scStartMindRead(s32 casterId, s32 targetId) {
+	fdPsynergyLoadResources(ABILITY_MIND_READ, 1);
+	fdPsynergySetupActorPair(casterId, targetId);
+	fdPsynergyStartCast();
+	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_ON_TARGET);
+	sySynch(1);
 }
 
-/// Finishes Mind Read and releases its effect actors.
-static void Scene_EndMindRead(void) {
-  FieldPsynergy_RunHandler(FIELD_PSYNERGY_HANDLER_FINISH);
-  FieldPsynergy_StopCasterUpdate();
-  FieldPsynergy_End();
+/* Finishes Mind Read and releases its effect actors. */
+static void scEndMindRead(void) {
+	fdPsynergyRunHandler(FIELD_PSYNERGY_HANDLER_FINISH);
+	fdPsynergyStopCasterUpdate();
+	fdPsynergyEnd();
 }

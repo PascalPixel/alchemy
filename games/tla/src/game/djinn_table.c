@@ -1,15 +1,11 @@
-/// @file
-/// The 80 Djinn, 20 of each element in element order. Each name is the
-/// English release's (MsgDjinnName plus the Djinni's place).
-// Part of game.c.
+/* @file */
+/* The 80 Djinn, 20 of each element in element order. Each name is the */
+/* English release's (MsgDjinnName plus the Djinni's place). */
+/* Part of game.c. */
 
-#include "game_internal.h"
-#include "ability_ids.h"
-#include "djinn_ids.h"
-
-// clang-format off
-/// The 80 Djinn, 20 of each element in element order.
-const struct DjinnDefinition gDjinn_DefinitionTable[] = {
+/* clang-format off */
+/* The 80 Djinn, 20 of each element in element order. */
+const DJINN_DEFINITION Djinn_DefinitionTable[] = {
     [DJINNI_FLINT] = {
         .abilityId = ABILITY_DJINNI_FIRST,
         .hp = 8,
@@ -118,8 +114,8 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .pp = 5,
         .defense = 2,
     },
-    // The spares after each element's eighteenth Djinni, which hold only their
-    // abilities; the text names both after the element ("Earth18").
+    /* The spares after each element's eighteenth Djinni, which hold only their */
+    /* abilities; the text names both after the element ("Earth18"). */
     [DJINNI_CRYSTAL + 1] = {.abilityId = ABILITY_CRYSTAL + 1},
     [DJINNI_CRYSTAL + 2] = {.abilityId = ABILITY_CRYSTAL + 2},
     [DJINNI_FIZZ] = {
@@ -226,7 +222,7 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .hp = 12,
         .attack = 3,
     },
-    // The spares "Water18" and "Water19".
+    /* The spares "Water18" and "Water19". */
     [DJINNI_SERAC + 1] = {.abilityId = ABILITY_SERAC + 1},
     [DJINNI_SERAC + 2] = {.abilityId = ABILITY_SERAC + 2},
     [DJINNI_FORGE] = {
@@ -337,7 +333,7 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .pp = 4,
         .defense = 2,
     },
-    // The spares "Fire18" and "Fire19".
+    /* The spares "Fire18" and "Fire19". */
     [DJINNI_FUGUE + 1] = {.abilityId = ABILITY_FUGUE + 1},
     [DJINNI_FUGUE + 2] = {.abilityId = ABILITY_FUGUE + 2},
     [DJINNI_GUST] = {
@@ -448,8 +444,8 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .agility = 5,
         .luck = 3,
     },
-    // The spares "Wind18" and "Wind19".
+    /* The spares "Wind18" and "Wind19". */
     [DJINNI_GALE + 1] = {.abilityId = ABILITY_GALE_DJINNI + 1},
     [DJINNI_GALE + 2] = {.abilityId = ABILITY_GALE_DJINNI + 2},
 };
-// clang-format on
+/* clang-format on */

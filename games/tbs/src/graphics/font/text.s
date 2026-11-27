@@ -1,11 +1,11 @@
 	.include "games/tbs/include/edition.inc"
 	.section .rodata
-	.global gFont_Glyphs
-gFont_Glyphs:
+	.global Font_Glyphs
+Font_Glyphs:
 	.ifeq EDITION_INTERNATIONAL
 	.incbin "games/tbs/src/graphics/font/text_ja.font", 0, (256 - 32) * (2 + 12 * 2)
-	.global gFont_KanjiGlyphs
-gFont_KanjiGlyphs:
+	.global Font_KanjiGlyphs
+Font_KanjiGlyphs:
 	.incbin "games/tbs/src/graphics/font/text_ja.font", (256 - 32) * (2 + 12 * 2)
 	.else
 	.ifdef TBS_EDITION_DE

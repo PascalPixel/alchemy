@@ -1,4 +1,4 @@
-@ Why BitDecoder_DecodeImage is assembly:
+@ Why btBitDecoderDecodeImage is assembly:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 @ Why Model_DispatchBitCommand is assembly:
@@ -16,8 +16,8 @@
 .syntax unified
 .text
 	.arm
-	.global BitDecoder_DecodeImage
-BitDecoder_DecodeImage:
+	.global btBitDecoderDecodeImage
+btBitDecoderDecodeImage:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	ldr	r2, [pc, #196]
 	add	r3, pc, #240
@@ -75,7 +75,7 @@ BitDecoder_DecodeImage:
 	bx	lr
 	.section .rodata
 	.balign 4
-@ Constants for BitDecoder_DecodeImage
+@ Constants for btBitDecoderDecodeImage
 	.4byte 0x60606060, Model_DispatchHandlers
 .syntax unified
 	.section .text.bit_dispatch,"ax",%progbits

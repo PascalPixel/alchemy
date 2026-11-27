@@ -1,15 +1,14 @@
-/// @file
-/// The Status screen's tables: its cursor stops and its labels.
+/* @file */
+/* The Status screen's tables: its cursor stops and its labels. */
 
-#include "types.h"
 #include "edition.h"
 #include "window/screens.h"
 
-// clang-format off
-/// The Status screen's stops among its stats, each {help entry, column, row,
-/// highlight column, highlight row, highlight width}: nine for a member with
-/// Djinn, then seven for one without.
-const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[] = {
+/* clang-format off */
+/* The Status screen's stops among its stats, each {help entry, column, row, */
+/* highlight column, highlight row, highlight width}: nine for a member with */
+/* Djinn, then seven for one without. */
+const BATTLE_SUMMARY_STAT_CURSOR OwnerStatus_StatCursors[] = {
     {.entry = 0, .column = 2, .row = 0, .highlightColumn = 0, .highlightRow = 0, .highlightWidth = 12},
     {.entry = 2, .column = 8, .row = 1, .highlightColumn = 0, .highlightRow = 1, .highlightWidth = 13},
     {.entry = 3, .column = 12, .row = 3, .highlightColumn = 5, .highlightRow = 3, .highlightWidth = 11},
@@ -28,16 +27,16 @@ const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[] = {
     {.entry = 9, .column = 13, .row = 12, .highlightColumn = 0, .highlightRow = 12, .highlightWidth = 20},
 };
 
-/// The stops on Attack, Defense, Agility and Luck.
-const struct BattleSummaryCursor gOwnerStatus_EquipmentCursors[] = {
+/* The stops on Attack, Defense, Agility and Luck. */
+const BATTLE_SUMMARY_CURSOR OwnerStatus_EquipmentCursors[] = {
     {.entry = 10, .column = 19, .row = 1},
     {.entry = 11, .column = 19, .row = 2},
     {.entry = 12, .column = 19, .row = 3},
     {.entry = 13, .column = 19, .row = 4},
 };
 
-/// The stops on the status icons.
-const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[] = {
+/* The stops on the status icons. */
+const BATTLE_SUMMARY_CURSOR OwnerStatus_ConditionCursors[] = {
     {.entry = 14, .column = 13, .row = 0},
     {.entry = 15, .column = 15, .row = 0},
     {.entry = 16, .column = 17, .row = 0},
@@ -47,26 +46,26 @@ const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[] = {
     {.entry = 20, .column = 25, .row = 0},
     {.entry = 21, .column = 27, .row = 0},
 };
-// clang-format on
+/* clang-format on */
 
-// The Status screen's labels: the German, Spanish, French and Italian
-// editions carry every language's level and HP abbreviations.
+/* The Status screen's labels: the German, Spanish, French and Italian */
+/* editions carry every language's level and HP abbreviations. */
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-const u8 gOwnerStatus_NivString[] = "Niv"; ///< level, in French
-const u8 gOwnerStatus_NvString[] = "Nv.";  ///< level, in Spanish
+const u8 OwnerStatus_NivString[] = "Niv"; /* level, in French */
+const u8 OwnerStatus_NvString[] = "Nv.";  /* level, in Spanish */
 #endif
-const u8 gOwnerStatus_LevelString[] = "Lv"; ///< level, in the other languages
+const u8 OwnerStatus_LevelString[] = "Lv"; /* level, in the other languages */
 #if LANGUAGE != LANGUAGE_JAPANESE && LANGUAGE != LANGUAGE_ENGLISH
-const u8 gOwnerStatus_KpString[] = "KP"; ///< HP, in German
-const u8 gOwnerStatus_PvString[] = "PV"; ///< HP, in French and Spanish
-const u8 gOwnerStatus_HpString[] = "PS"; ///< HP, in Italian
+const u8 OwnerStatus_KpString[] = "KP"; /* HP, in German */
+const u8 OwnerStatus_PvString[] = "PV"; /* HP, in French and Spanish */
+const u8 OwnerStatus_HpString[] = "PS"; /* HP, in Italian */
 #else
-const u8 gOwnerStatus_HpString[] = "HP"; ///< HP
+const u8 OwnerStatus_HpString[] = "HP"; /* HP */
 #endif
-const u8 gOwnerStatus_SlashString[] = "/"; ///< between a value and its maximum
+const u8 OwnerStatus_SlashString[] = "/"; /* between a value and its maximum */
 #if LANGUAGE != LANGUAGE_JAPANESE
-const u8 gOwnerStatus_PpString[] = "PP"; ///< PP
+const u8 OwnerStatus_PpString[] = "PP"; /* PP */
 #else
-/// PP, as the Japanese edition writes it.
-const u8 gOwnerStatus_PpString[] = "EP";
+/* PP, as the Japanese edition writes it. */
+const u8 OwnerStatus_PpString[] = "EP";
 #endif

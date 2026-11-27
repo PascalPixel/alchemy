@@ -8,7 +8,7 @@ the title intro and the credits.
 
 ![Isaac opens the field menu in Vale: the party's HP and PP window comes up with a row of command icons, the selection steps along them, the Status screen opens on Isaac, A turns through its pages, and B closes it back to the icons.](https://alchemy.pascalpixel.com/guides/menu/menus.gif)
 
-The field does not switch into a menu state. It calls the menu, as one
+The field engine does not switch into a menu state. It calls the menu, as one
 function calls another, and stands on that line until the menu returns.
 The menu calls a screen the same way, and a screen calls each of its
 questions. Nothing has to remember where anything was, because every
@@ -16,13 +16,13 @@ caller is still in the middle of its line.
 
 Inside, a screen is a loop over a few questions: `Whose Psynergy?`,
 `Which Psynergy?`, `Use it on whom?`. A question draws its windows, then
-goes round `wait(1)` looking at the buttons. A moves on to the next
+goes round `sySynch(1)` looking at the buttons. A moves on to the next
 question and B goes back one. B on the first question ends the loop.
 
 A screen returns one of two answers. Either the player backed out, and the
-icons come back. Or they chose something for the field to do, such as Move
-on a pillar: then the screen leaves a request, the whole menu closes, and
-the field finds the request when it gets its line back.
+icons come back. Or they chose something for the field engine to do, such as
+Move on a pillar: then the screen leaves a request, the whole menu closes,
+and the field engine finds the request when it gets its line back.
 
 ### Closing a screen with Start
 
@@ -38,7 +38,7 @@ the one before it.
 
 - **Psynergy** lists only what does something outside a battle. A cast on
   a party member, such as Cure, is done on the spot. A cast on the world is
-  handed to the field. The same screen sets the L and R shortcuts.
+  handed to the field engine. The same screen sets the L and R shortcuts.
 - **Item** shows six commands for the item under the hand, Use, Equip,
   Details, Give, Remove and Drop, and greys the ones that do not apply. It
   works out which apply before it draws them.

@@ -27,9 +27,9 @@ three windows open in place of the usual menus when extra buttons are held:
 Debug mode also changes the game itself: walk through walls, skip through a
 cutscene, freeze the game and step it a frame at a time, win a battle with
 one button. Each is a small test of the switch at the place it applies, and
-searching the source for `gDebugMode` is a quick tour of where things
+searching the source for `DebugMode` is a quick tour of where things
 happen. The main routine has four debug starts of its own, described in
-[System code](../system/README.md#the-main-routine).
+[the system library](../system/README.md#the-main-routine).
 
 A player cannot turn it on. Only two places ever set the switch: start-up,
 which turns it off, and a sprite viewer that turns it on, which nothing in
@@ -72,8 +72,8 @@ battle.
 
 - `test_scenes.c`, `level.c`, `psynergy_test.c`, `psynergy_test_2.c` and
   `shop_test.c` are the five overlays. Each opens with the entry table every
-  scene links, `../scene/entry.s`, its routines named `Scene_Initialize` to
-  `Scene_PrepareMap`.
+  scene links, `../scene/entry.s`, its functions named `scInit` to
+  `scPrepareMap`.
 - The scene selector and the flag editor are in `window/window_*.c`
-  (`DebugSceneSelect_Run`, `DebugFlagEditor_Run`), and the palette editor
-  is `PaletteEditor_Run` in `field/field_sequence_*.c`.
+  (`mnDebugSceneSelectRun`, `mnDebugFlagEditorRun`), and the palette editor
+  is `fdPaletteEditorRun` in `field/field_sequence_*.c`.

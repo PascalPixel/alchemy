@@ -1,4 +1,4 @@
 name	file	section	align	left	pad
-gWeather_ParticleTiles	ground.4bpp16x16.plz				
-gFieldEffect_MoteTiles	mote.4bpp16x16.plz				
-gFieldEffect_SparkleTiles	sparkle.4bpp16x16.plz				4
+Weather_ParticleTiles	ground.4bpp16x16.plz				
+FieldEffect_MoteTiles	mote.4bpp16x16.plz				
+FieldEffect_SparkleTiles	sparkle.4bpp16x16.plz				4

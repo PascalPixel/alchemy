@@ -1,26 +1,19 @@
 #ifndef ALCHEMY_GAME_FLAGS_H
 #define ALCHEMY_GAME_FLAGS_H
 
-/// @file
-/// The byte and bit of gGameFlagBytes that hold a flag.
+/* @file */
+/* The byte and bit of GameFlagBytes that hold a flag. */
 
 #include "edition.h"
 #include "types.h"
 
-/// The byte of gGameFlagBytes that holds `flag`: bits 3 to 11 of its number,
-/// isolated by shifting up and back down, which is how the game computes it.
+/* The byte of GameFlagBytes that holds `flag`: bits 3 to 11 of its number, */
+/* isolated by shifting up and back down, which is how the game computes it. */
 #define GAME_FLAG_BYTE(flag) (((u32)(flag) << 20) >> 23)
 
-/// The bit of its byte that holds `flag`: the low three bits of its number.
+/* The bit of its byte that holds `flag`: the low three bits of its number. */
 #define GAME_FLAG_BIT(flag) (1 << ((flag) & 7))
 
-s32 GameFlag_Get(s32 flag);
-u32 GameFlag_Toggle(s32 flag);
-s32 GameFlag_GetByte(s32 flag);
-u32 GameFlag_SetByte(u32 flag, u8 value);
-u8 GameFlag_IncrementByte(s32 flag);
-u8 GameFlag_DecrementByte(s32 flag);
-s32 GameFlag_GetNibble(u32 flag);
-void GameFlag_SetNibble(s32 flag, s32 value);
+u32 syGameFlagSetByte(u32 flag, u8 value);
 
 #endif

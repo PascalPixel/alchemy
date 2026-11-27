@@ -1,16 +1,16 @@
 #ifndef ALCHEMY_SELECTION_CURSOR_H
 #define ALCHEMY_SELECTION_CURSOR_H
 
-/// @file
-/// The selection screen's icon under the hand.
+/* @file */
+/* The selection screen's icon under the hand. */
 
 #include "types.h"
 
-struct SelectionMenuState;
-struct SelectionNode;
+struct SELECTION_MENU_STATE;
+struct SELECTION_NODE;
 
-/// Returns the icon of the row the hand points at (cursorIndex).
-struct SelectionNode *
-SelectionMenu_GetCursorNode(struct SelectionMenuState *screen);
+/* Returns the icon of the row the hand points at (cursorIdx). */
+struct SELECTION_NODE *
+mnSelectionMenuGetCursorNode(struct SELECTION_MENU_STATE *screen);
 
 #endif

@@ -1,20 +1,20 @@
-/// A splash at the actor's feet as it wades, on its sprite's priority.
-void Actor_SpawnWadingSplash(struct Actor *actor) {
-  struct Actor *child = FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
-                                          actor->y.fixed + toFIXED(4),
-                                          actor->z.fixed + toFIXED(4));
-  struct FieldSprite *source = actor->sprite;
+/* A splash at the actor's feet as it wades, on its sprite's priority. */
+void fdActorSpawnWadingSplash(ACTOR *actor) {
+	ACTOR *child = scFieldActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
+									  actor->y.fixed + toFIXED(4),
+									  actor->z.fixed + toFIXED(4));
+	FIELD_SPR *source = actor->spr;
 
-  if (child != 0) {
-    struct FieldSprite *sprite = child->sprite;
+	if(child != 0) {
+		FIELD_SPR *sprite = child->spr;
 
-    child->groundHeight = actor->groundHeight;
-    Actor_StartScript(child, gWadingSplash_Script);
-    child->motionFlags = 0;
-    if (sprite != 0) {
-      Sprite_StartAnimation(sprite, 1);
-      sprite->flags = 0;
-      sprite->priority = source->priority;
-    }
-  }
+		child->groundHeight = actor->groundHeight;
+		fdActorStartScript(child, WadingSplash_Script);
+		child->motionFlg = 0;
+		if(sprite != 0) {
+			fdSprStartAnimation(sprite, 1);
+			sprite->flg = 0;
+			sprite->pri = source->pri;
+		}
+	}
 }

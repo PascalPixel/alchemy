@@ -1,89 +1,89 @@
 	.section .sym_iwram_slots,"aw",%nobits
-	.global gHeapSlots
-gHeapSlots:
+	.global HeapSlotsWork
+HeapSlotsWork:
 	.space 0x00000070
 	.section .sym_iwram,"aw",%nobits
 	.space 0x00000060
-	.global gVBlankCount
-gVBlankCount:
+	.global VBlankCount
+VBlankCount:
 	.space 0x00000008
-	.global gTasksRunning
-gTasksRunning:
+	.global TasksRunning
+TasksRunning:
 	.space 0x00000004
-	.global gScreenFadeVBlanksLeft
-gScreenFadeVBlanksLeft:
+	.global ScreenFadeVBlanksLeft
+ScreenFadeVBlanksLeft:
 	.space 0x00000004
-	.global gDebugTextEnabled
-gDebugTextEnabled:
+	.global DebugTextEnabled
+DebugTextEnabled:
 	.space 0x00000010
-	.global gBgScroll
-gBgScroll:
+	.global BgScrollWork
+BgScrollWork:
 	.space 0x00000018
-	.global gSoundVBlankState
-gSoundVBlankState:
+	.global SoundVBlankStateWork
+SoundVBlankStateWork:
 	.space 0x00000004
-	.global gScreenFadeStartLevel
-gScreenFadeStartLevel:
+	.global ScreenFadeStartLevel
+ScreenFadeStartLevel:
 	.space 0x00000004
-	.global gCpuLoadTimer
-gCpuLoadTimer:
+	.global CpuLoadTimer
+CpuLoadTimer:
 	.space 0x00000004
-	.global gScanlinePitch
-gScanlinePitch:
+	.global ScanlinePitch
+ScanlinePitch:
 	.space 0x0000000c
-	.global gInput
-gInput:
+	.global InputWork
+InputWork:
 	.space 0x00000024
-	.global gDecodeFillByte
-gDecodeFillByte:
+	.global DecodeFillByte
+DecodeFillByte:
 	.space 0x00000004
-	.global gScreenFadeVBlanks
-gScreenFadeVBlanks:
+	.global ScreenFadeVBlanks
+ScreenFadeVBlanks:
 	.space 0x00000004
-	.global gPlayTimeFrames
-gPlayTimeFrames:
+	.global PlayTimeFrames
+PlayTimeFrames:
 	.space 0x00000004
-	.global gSleepDisabled
-gSleepDisabled:
+	.global SleepDisabled
+SleepDisabled:
 	.space 0x00000004
-	.global gCpuLoadPeak
-gCpuLoadPeak:
+	.global CpuLoadPeak
+CpuLoadPeak:
 	.space 0x0000000c
-	.global gOamDepthMasks
-gOamDepthMasks:
+	.global OamDepthMasks
+OamDepthMasks:
 	.space 0x00000020
-	.global gScreenFadeTargetLevel
-gScreenFadeTargetLevel:
+	.global ScreenFadeTargetLevel
+ScreenFadeTargetLevel:
 	.space 0x00000008
-	.global gSerialExchangeActive
-gSerialExchangeActive:
+	.global SerialExchangeActive
+SerialExchangeActive:
 	.space 0x00000004
-	.global gRandomSeed
-gRandomSeed:
+	.global RandomSeed
+RandomSeed:
 	.space 0x00000004
-	.global gResetRequested
-gResetRequested:
+	.global ResetRequested
+ResetRequested:
 	.space 0x00000004
-	.global gDebugTextCursor
-gDebugTextCursor:
+	.global DebugTextCursor
+DebugTextCursor:
 	.space 0x00000008
-	.global gMatrixStackDepth
-gMatrixStackDepth:
+	.global MatrixStackDepth
+MatrixStackDepth:
 	.space 0x00000004
-	.global gSleepRequested
-gSleepRequested:
+	.global SleepRequested
+SleepRequested:
 	.space 0x00000004
-	.global gFrameVBlanks
-gFrameVBlanks:
+	.global FrameVBlanks
+FrameVBlanks:
 	.space 0x00000004
-	.global gLastFrameVBlanks
-gLastFrameVBlanks:
+	.global LastFrameVBlanks
+LastFrameVBlanks:
 	.space 0x00000004
-	.global gScreenFadeToWhite
-gScreenFadeToWhite:
+	.global ScreenFadeToWhite
+ScreenFadeToWhite:
 	.space 0x00000004
-	.global gProjection
-gProjection:
+	.global ProjectionWork
+ProjectionWork:
 	.space 0x0000000c
 	.global Data_030011ec
 Data_030011ec:
@@ -91,65 +91,65 @@ Data_030011ec:
 	.global Data_030011f0
 Data_030011f0:
 	.space 0x00000004
-	.global gScreenFadeLayers
-gScreenFadeLayers:
+	.global ScreenFadeLayers
+ScreenFadeLayers:
 	.space 0x00000004
-	.global gVBlankCallback
-gVBlankCallback:
+	.global VBlankCallback
+VBlankCallback:
 	.space 0x00000004
-	.global gOamMatrixCount
-gOamMatrixCount:
+	.global OamMatrixCount
+OamMatrixCount:
 	.space 0x00000004
-	.global gIdleSleepEnabled
-gIdleSleepEnabled:
+	.global IdleSleepEnabled
+IdleSleepEnabled:
 	.space 0x0000000c
-	.global gOamCopyEnabled
-gOamCopyEnabled:
+	.global OamCopyEnabled
+OamCopyEnabled:
 	.space 0x00000008
-	.global gDebugPaused
-gDebugPaused:
+	.global DebugPaused
+DebugPaused:
 	.space 0x00000004
-	.global gIdleFrames
-gIdleFrames:
+	.global IdleFrames
+IdleFrames:
 	.space 0x00000004
-	.global gVBlankDone
-gVBlankDone:
+	.global VBlankDone
+VBlankDone:
 	.space 0x00000004
-	.global gMatrixStackTop
-gMatrixStackTop:
+	.global MatrixStackTop
+MatrixStackTop:
 	.space 0x00000008
-	.global gTasksInitialized
-gTasksInitialized:
+	.global TasksInitialized
+TasksInitialized:
 	.space 0x00000004
-	.global gFrameCount
-gFrameCount:
+	.global FrameCount
+FrameCount:
 	.space 0x00000004
-	.global gFrameRenderPending
-gFrameRenderPending:
+	.global FrameRenderPending
+FrameRenderPending:
 	.space 0x00000008
-	.global gDebugMode
-gDebugMode:
+	.global DebugMode
+DebugMode:
 	.space 0x00000004
-	.global gCpuLoadDisplayEnabled
-gCpuLoadDisplayEnabled:
+	.global CpuLoadDisplayEnabled
+CpuLoadDisplayEnabled:
 	.space 0x00000008
-	.global gScanlineAngle
-gScanlineAngle:
+	.global ScanlineAngle
+ScanlineAngle:
 	.space 0x00000004
-	.global gOamUsage
-gOamUsage:
+	.global OamUsageWork
+OamUsageWork:
 	.space 0x00000004
-	.global gLinkStatus
-gLinkStatus:
+	.global LinkStatusWork
+LinkStatusWork:
 	.space 0x00000004
-	.global gNumberTextBuffer
-gNumberTextBuffer:
+	.global NumberTextBuffer
+NumberTextBuffer:
 	.space 0x00000008
-	.global gNumberTextHexEnd
-gNumberTextHexEnd:
+	.global NumberTextHexEnd
+NumberTextHexEnd:
 	.space 0x00000002
-	.global gNumberTextDecimalEnd
-gNumberTextDecimalEnd:
+	.global NumberTextDecimalEnd
+NumberTextDecimalEnd:
 	.space 0x000000a6
-	.global gIwramHeap
-gIwramHeap:
+	.global IwramHeap
+IwramHeap:

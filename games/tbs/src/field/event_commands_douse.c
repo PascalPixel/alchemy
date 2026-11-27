@@ -1,191 +1,198 @@
-/// @file
-/// Douse: a rain cloud floats out over the target and rains on it, then
-/// shrinks back into the caster.
-// Part of event_commands.c.
+/* @file */
+/* Douse: a rain cloud floats out over the target and rains on it, then */
+/* shrinks back into the caster. */
+/* Part of event_commands.c. */
 
 #include "event_commands_internal.h"
 
-/// The drops Douse rains: cast at nothing, cast on a target, and cast on a
-/// target in Mercury Lighthouse's entrance or middle floors
-/// (FieldEffectState.lit), where larger blue drops sway down in their place
-/// and none splashes; elsewhere, as in Imil, the drops are small and white.
-// XXX (no evidence): why those two floors take other drops; the code only
-// tests the map, and a recording shows the difference, not its reason.
-#define DOUSE_DROPS 10
-#define DOUSE_DROPS_ON_TARGET 24
+/* The drops Douse rains: cast at nothing, cast on a target, and cast on a */
+/* target in Mercury Lighthouse's entrance or middle floors */
+/* (FIELD_EFFECT_STATE.lit), where larger blue drops sway down in their place */
+/* and none splashes; elsewhere, as in Imil, the drops are small and white. */
+/* XXX (no evidence): why those two floors take other drops; the code only */
+/* tests the map, and a recording shows the difference, not its reason. */
+#define DOUSE_DROPS					  10
+#define DOUSE_DROPS_ON_TARGET		  24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
 
-/// Per-frame update of a falling drop: on reaching its ground height it is
-/// released 2 frames later and scatters three half-size splashes, which hop
-/// toward points 32 pixels away and are released after 6 frames.
-void FieldEffect_UpdateDouseDrop(struct Actor *drop) {
-  s32 i;
-  struct Actor *splash;
+/* Per-frame update of a falling drop: on reaching its ground height it is */
+/* released 2 frames later and scatters three half-size splashes, which hop */
+/* toward points 32 pixels away and are released after 6 frames. */
+void fdEffectUpdateDouseDrop(ACTOR *drop) {
+	s32 i;
+	ACTOR *splash;
 
-  if (drop->y.fixed <= drop->groundHeight) {
-    drop->wait = 2;
-    Actor_StartScriptFar(drop, gFieldEffect_SharedParticleScript);
-    splash = NULL;
-    drop->update = NULL;
+	if(drop->y.fixed <= drop->groundHeight) {
+		drop->wait = 2;
+		fdActorStartScriptStub(drop, FieldEffect_SharedParticleScript);
+		splash = NULL;
+		drop->update = NULL;
 
-    // Half size, hopping up at a pixel a frame, toward a random point 32 pixels
-    // away.
-    for (i = 0; i <= 2; i++) {
-      splash = Actor_Spawn(SPRITE_DROPLET, drop->x.fixed, drop->y.fixed,
-                           drop->z.fixed);
-      if (splash == NULL) {
-        break;
-      }
-      splash->scaleY = FIXED_ONE / 2;
-      splash->scaleX = FIXED_ONE / 2;
-      splash->motionFlags = ACTOR_FALLS;
-      splash->velocityY = toFIXED(1);
-      splash->speedLimit = Random16() + toFIXED(6) / 5;
-      Actor_SetTargetPositionFromMagnitudeAngle(splash, toFIXED(32),
-                                                Random16());
-      splash->wait = 6;
-      Actor_StartScriptFar(splash, gFieldEffect_SharedParticleScript);
-    }
-  }
+		/* Half size, hopping up at a pixel a frame, toward a random point 32
+		 * pixels */
+		/* away. */
+		for(i = 0; i <= 2; i++) {
+			splash = fdActorSpawn(SPRITE_DROPLET, drop->x.fixed, drop->y.fixed,
+								  drop->z.fixed);
+			if(splash == NULL) {
+				break;
+			}
+			splash->scaleY = FIXED_ONE / 2;
+			splash->scaleX = FIXED_ONE / 2;
+			splash->motionFlg = ACTOR_FALLS;
+			splash->velY = toFIXED(1);
+			splash->speedLimit = syRandom() + toFIXED(6) / 5;
+			fdActorSetTargetPosFromMagnitudeAng(splash, toFIXED(32),
+												syRandom());
+			splash->wait = 6;
+			fdActorStartScriptStub(splash, FieldEffect_SharedParticleScript);
+		}
+	}
 }
 
-/// Per-frame update: drifts from side to side, up to a pixel a frame, as it
-/// falls 0.3 pixels a frame, and is released on reaching its ground height.
-void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
-  s32 drift;
+/* Per-frame update: drifts from side to side, up to a pixel a frame, as it */
+/* falls 0.3 pixels a frame, and is released on reaching its ground height. */
+void fdEffectUpdateDriftingFallActor(ACTOR *particle) {
+	s32 drift;
 
-  particle->y.fixed -= toFIXED(3) / 10;
-  drift = Random16();
-  particle->x.fixed += drift - Random16();
-  if (particle->y.fixed <= particle->groundHeight) {
-    Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
-  }
+	particle->y.fixed -= toFIXED(3) / 10;
+	drift = syRandom();
+	particle->x.fixed += drift - syRandom();
+	if(particle->y.fixed <= particle->groundHeight) {
+		fdActorStartScriptStub(particle, FieldEffect_SharedParticleScript);
+	}
 }
 
-/// Runs Douse cast on a target, through FieldPsynergy_Douse.
-void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
+/* Runs Douse cast on a target, through fdPsynergyDouse. */
+void fdPsynergyDouseOnTarget(s32 unused) { fdPsynergyDouse(); }
 
-/// A rain cloud rises from 16 pixels above the caster to 32 pixels above the
-/// destination (80 with sceneVariant) over GROW_STEPS frames, growing as it
-/// goes, rains drops, and returns.
-void FieldPsynergy_Douse(void) {
-  struct Vector3 pos;
-  struct Vector3 start;
-  struct Vector3 end;
-  struct FieldEffectState *effectState = gFieldEffectState;
-  struct Actor *caster = effectState->caster;
-  struct Actor *cloud;
-  s32 step;
-  s32 steps = GROW_STEPS + 1;
-  s32 count;
-  s32 y;
-  struct Actor *particle;
+/* A rain cloud rises from 16 pixels above the caster to 32 pixels above the */
+/* destination (80 with sceneVariant) over GROW_STEPS frames, growing as it */
+/* goes, rains drops, and returns. */
+void fdPsynergyDouse(void) {
+	VECTOR3 pos;
+	VECTOR3 start;
+	VECTOR3 end;
+	FIELD_EFFECT_STATE *effectState = FieldEffectStateWork;
+	ACTOR *caster = effectState->caster;
+	ACTOR *cloud;
+	s32 step;
+	s32 steps = GROW_STEPS + 1;
+	s32 count;
+	s32 y;
+	ACTOR *particle;
 
-  cloud = Actor_Spawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
-  if (cloud == 0)
-    return;
-  FieldPsynergy_FadeToCastColor();
-  Sound_PlayFar(SE_ITEM_BREAK);
-  // No target: 16 pixels in front of the caster, at the ground's height.
-  if (effectState->target == 0) {
-    effectState->x = caster->x.fixed;
-    effectState->z = caster->z.fixed;
-    Vector_AddPolarOffset(toFIXED(16), effectState->angle,
-                          (struct Vector3 *)&effectState->x);
-    effectState->y = MapGrid_GetTerrainHeightFar(
-        MAPGRID_LAYER_GROUND, effectState->x, effectState->z);
-  }
-  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
-               caster->z.fixed);
-  end.x = effectState->x;
-  y = effectState->y;
-  end.y = y + toFIXED(32);
-  end.z = effectState->z;
-  if (effectState->sceneVariant != 0)
-    end.y = y + toFIXED(80);
+	cloud = fdActorSpawn(SPRITE_RAIN_CLOUD, step = 0, 0, 0);
+	if(cloud == 0)
+		return;
+	fdPsynergyFadeToCastCol();
+	sySndPlayStub(SE_ITEM_BREAK);
+	/* No target: 16 pixels in front of the caster, at the ground's height. */
+	if(effectState->tgt == 0) {
+		effectState->x = caster->x.fixed;
+		effectState->z = caster->z.fixed;
+		syVectorAddPolarOffset(toFIXED(16), effectState->ang,
+							   (FIXED *)&effectState->x);
+		effectState->y = fdMapGridGetTerrainHeightStub(
+			MAPGRID_LAYER_GROUND, effectState->x, effectState->z);
+	}
+	SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
+				 caster->z.fixed);
+	end.x = effectState->x;
+	y = effectState->y;
+	end.y = y + toFIXED(32);
+	end.z = effectState->z;
+	if(effectState->sceneVariant != 0)
+		end.y = y + toFIXED(80);
 
-  // Grow from a quarter to full size on the way.
-  for (; step < steps; step++) {
-    s32 scale;
+	/* Grow from a quarter to full size on the way. */
+	for(; step < steps; step++) {
+		s32 scale;
 
-    SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * step / GROW_STEPS,
-                       start.y + (end.y - start.y) * step / GROW_STEPS,
-                       start.z + (end.z - start.z) * step / GROW_STEPS);
-    scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
-    cloud->scaleX = scale;
-    cloud->scaleY = scale;
-    wait(1);
-  }
-  wait(10);
+		SET_ACTOR_POSITION(cloud,
+						   start.x + (end.x - start.x) * step / GROW_STEPS,
+						   start.y + (end.y - start.y) * step / GROW_STEPS,
+						   start.z + (end.z - start.z) * step / GROW_STEPS);
+		scale = fdEffectInterpolate(FIXED_ONE, FIXED_ONE / 4, step);
+		cloud->scaleX = scale;
+		cloud->scaleY = scale;
+		sySynch(1);
+	}
+	sySynch(10);
 
-  if ((s8)effectState->lit == 0) {
-    // A drop every 6 frames from 3 to 8 pixels round the cloud (the last right
-    // under it); aimAhead is cleared once a target is dispatched.
-    count = DOUSE_DROPS;
-    if (effectState->aimAhead == 0)
-      count = DOUSE_DROPS_ON_TARGET;
-    for (step = 0; step < count; step++) {
-      pos.x = cloud->x.fixed;
-      pos.y = cloud->y.fixed;
-      pos.z = cloud->z.fixed;
-      Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
-      if (step == count - 1) {
-        wait(25);
-        pos.x = cloud->x.fixed;
-        pos.y = cloud->y.fixed;
-        pos.z = cloud->z.fixed;
-      }
-      particle = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
-      if (particle != 0) {
-        particle->groundHeight = pos.y - toFIXED(32);
-        particle->update = FieldEffect_UpdateDouseDrop;
-        particle->motionFlags = ACTOR_FALLS;
-      }
-      Sound_PlayFar(SE_WATER);
-      wait(6);
-    }
-    wait(10);
-  } else {
-    // Every 6 frames, a blue drop sways down from 3 to 8 pixels round the
-    // cloud.
-    if (effectState->aimAhead != 0)
-      count = DOUSE_DROPS;
-    else
-      count = DOUSE_SWAYING_DROPS_ON_TARGET;
-    for (step = 0; step < count; step++) {
-      pos.x = cloud->x.fixed;
-      pos.y = cloud->y.fixed;
-      pos.z = cloud->z.fixed;
-      Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
-      particle = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
-      if (particle != 0) {
-        particle->update = FieldEffect_UpdateDriftingFallActor;
-        particle->motionFlags = 0;
-        particle->sprite->image.priority = 2;
-        Actor_SelectAnimationFar(particle, 8);
-        Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_WHITE);
-      }
-      wait(6);
-    }
-    wait(70);
-  }
+	if((s8)effectState->lit == 0) {
+		/* A drop every 6 frames from 3 to 8 pixels round the cloud (the last
+		 * right */
+		/* under it); aimAhead is cleared once a target is dispatched. */
+		count = DOUSE_DROPS;
+		if(effectState->aimAhead == 0)
+			count = DOUSE_DROPS_ON_TARGET;
+		for(step = 0; step < count; step++) {
+			pos.x = cloud->x.fixed;
+			pos.y = cloud->y.fixed;
+			pos.z = cloud->z.fixed;
+			syVectorAddPolarOffset(syRandom() * 5 + toFIXED(3), syRandom(),
+								   (FIXED *)&pos);
+			if(step == count - 1) {
+				sySynch(25);
+				pos.x = cloud->x.fixed;
+				pos.y = cloud->y.fixed;
+				pos.z = cloud->z.fixed;
+			}
+			particle = fdActorSpawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
+			if(particle != 0) {
+				particle->groundHeight = pos.y - toFIXED(32);
+				particle->update = fdEffectUpdateDouseDrop;
+				particle->motionFlg = ACTOR_FALLS;
+			}
+			sySndPlayStub(SE_WATER);
+			sySynch(6);
+		}
+		sySynch(10);
+	}
+	else {
+		/* Every 6 frames, a blue drop sways down from 3 to 8 pixels round the
+		 */
+		/* cloud. */
+		if(effectState->aimAhead != 0)
+			count = DOUSE_DROPS;
+		else
+			count = DOUSE_SWAYING_DROPS_ON_TARGET;
+		for(step = 0; step < count; step++) {
+			pos.x = cloud->x.fixed;
+			pos.y = cloud->y.fixed;
+			pos.z = cloud->z.fixed;
+			syVectorAddPolarOffset(syRandom() * 5 + toFIXED(3), syRandom(),
+								   (FIXED *)&pos);
+			particle = fdActorSpawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
+			if(particle != 0) {
+				particle->update = fdEffectUpdateDriftingFallActor;
+				particle->motionFlg = 0;
+				particle->spr->image.pri = 2;
+				fdActorSelectAnimationStub(particle, 8);
+				fdActorSetSprColModeStub(particle, SPRITE_COLOR_WHITE);
+			}
+			sySynch(6);
+		}
+		sySynch(70);
+	}
 
-  // Shrink back to a quarter on the way back to the caster.
-  step = 0;
-  do {
-    s32 scale;
+	/* Shrink back to a quarter on the way back to the caster. */
+	step = 0;
+	do {
+		s32 scale;
 
-    SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / GROW_STEPS,
-                       end.y + (start.y - end.y) * step / GROW_STEPS,
-                       end.z + (start.z - end.z) * step / GROW_STEPS);
-    scale = FieldEffect_Interpolate(FIXED_ONE / 4, FIXED_ONE, step);
-    cloud->scaleX = scale;
-    cloud->scaleY = scale;
-    wait(1);
-    step++;
-  } while (step < steps);
-  Actor_ReleaseFar(cloud);
-  FieldPsynergy_FadeFromCastColor();
+		SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / GROW_STEPS,
+						   end.y + (start.y - end.y) * step / GROW_STEPS,
+						   end.z + (start.z - end.z) * step / GROW_STEPS);
+		scale = fdEffectInterpolate(FIXED_ONE / 4, FIXED_ONE, step);
+		cloud->scaleX = scale;
+		cloud->scaleY = scale;
+		sySynch(1);
+		step++;
+	} while(step < steps);
+	fdActorReleaseStub(cloud);
+	fdPsynergyFadeFromCastCol();
 }
 
 #undef DOUSE_DROPS

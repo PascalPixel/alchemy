@@ -1,12 +1,12 @@
 @ Two ARM kernels, each copied into a heap block and run there:
-@ Render_FillMeshKernel, an ARM build of Render_FillMesh (its size is
-@ Render_FillMeshKernelCodeSize, which Render_RunFillMeshKernel copies), and
+@ Render_FillMeshKernel, an ARM build of btRenderFillMesh (its size is
+@ Render_FillMeshKernelCodeSize, which btRenderRunFillMeshKernel copies), and
 @ Data_0813847c after it.
 @
 @ Why Render_FillMeshKernelEntry is assembly:
 @ its Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
-@ Why the routine after Data_0813847c is assembly:
+@ Why the function after Data_0813847c is assembly:
 @ its Thumb entry, the word written as andeq r4, r0, #120, 14 (bytes 78 47 00
 @ 02: bx pc and the halfword after it), switches to the ARM code that follows,
 @ a mode switch inside a function.
@@ -284,7 +284,7 @@ AlchemyUncreditedEnd_081380ae:
 	bx	lr
 	.global Render_FillMeshKernelCodeSize
 	.set Render_FillMeshKernelCodeSize, . - Render_FillMeshKernel
-	.4byte	gModelTransformState
+	.4byte	ModelTransformState
 	.global Data_0813847c
 Data_0813847c:
 	push	{r5, r6, r7, r8, r9, sl, lr}
@@ -662,7 +662,7 @@ Data_0813847c:
 	add	sp, sp, #144
 	pop	{r5, r6, r7, r8, r9, sl, lr}
 	bx	lr
-@ Thumb bx pc and the halfword after it, as one word: the next routine's entry.
+@ Thumb bx pc and the halfword after it, as one word: the next function's entry.
 	andeq	r4, r0, #120, 14
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	sub	sp, sp, #156

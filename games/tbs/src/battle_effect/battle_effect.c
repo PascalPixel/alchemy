@@ -1,11 +1,12 @@
-/// @file
-/// Everything drawn over the battle while an ability plays: the effects are the
-/// parts under battle_effect/, and battle_effect_internal.h holds what they
-/// share.
+/* @file */
+/* Everything drawn over the battle while an ability plays: the effects are the
+ */
+/* parts under battle_effect/, and battle_effect_internal.h holds what they */
+/* share. */
 
 #include "battle_effect_internal.h"
 
-// The parts, in ROM order (src/README.md, "Objects and parts").
+/* The parts, in ROM order (src/README.md, "Objects and parts"). */
 #include "battle_effect_display.c"
 #include "battle_effect_falling.c"
 #include "battle_effect_streaks.c"

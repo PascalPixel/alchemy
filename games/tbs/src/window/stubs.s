@@ -1,0 +1,138 @@
+@ Window construction, text drawing and selection interfaces.
+	.include "games/tbs/src/system/stub_table.inc"
+	.global Stubs_Window
+Stubs_Window:
+	stub mnWindowSystemInitFieldStub, mnWindowSystemInitField
+	stub mnWindowSystemInitBattleStub, mnWindowSystemInitBattle
+	stub mnWindowCreateStub, mnWindowCreate
+	stub mnWindowCloseStub, mnWindowClose
+	stub mnMessageDecodeRawUnboundedStub, mnMessageDecodeRawUnbounded
+	stub mnMessageDecodeRawStub, mnMessageDecodeRaw
+	stub mnMessageCopyExpandedStub, mnMessageCopyExpanded
+	stub mnMessageOpenWindowStub, mnMessageOpenWindow
+	stub mnFieldMessageShowStub, mnFieldMessageShow
+	stub mnMessageAllTypedStub, mnMessageAllTyped
+	stub mnWindowIsClosedStub, mnWindowIsClosed
+	stub mnMessageSetDecodeFlagsStub, mnMessageSetDecodeFlags
+	stub mnWindowSprPrepareForRedrawStub, mnWindowSprPrepareForRedraw
+	stub mnWindowClearInteriorTilesStub, mnWindowClearInteriorTiles
+	stub mnWindowDrawDividerLineStub, mnWindowDrawDividerLine
+	stub mnTextDrawMessageStub, mnTextDrawMessage
+	stub mnTextDrawMessageAsTilesStub, mnTextDrawMessageAsTiles
+	stub mnTextDrawStringStub, mnTextDrawString
+	stub mnTextDrawStringAtOffsetStub, mnTextDrawStringAtOffset
+	stub mnTextDrawStringInWindowStub, mnTextDrawStringInWindow
+	stub mnTextDrawNumStub, mnTextDrawNum
+	stub mnTextDrawNumAtOffsetStub, mnTextDrawNumAtOffset
+	stub mnTextDrawNumInWindowStub, mnTextDrawNumInWindow
+	stub mnTextSetColStub, mnTextSetCol
+	unnamed_stub mnTextSetStyle
+	stub mnWindowSprCreateStub, mnWindowSprCreate
+	stub mnWindowSprCreateFromResourceStub, mnWindowSprCreateFromResource
+	stub mnPortraitCreateStub, mnPortraitCreate
+	stub mnPortraitReloadStub, mnPortraitReload
+	unnamed_stub mnWindowSprSetMotion
+	unnamed_stub mnWindowSprSetPriority
+	stub mnPortraitOpenWindowStub, mnPortraitOpenWindow
+	stub mnPortraitCloseWindowStub, mnPortraitCloseWindow
+	stub mnTextGetMessageSizeStub, mnTextGetMessageSize
+	stub mnTextGetMessageSizeAllPagesStub, mnTextGetMessageSizeAllPages
+	stub mnMessageArgumentClearAllStub, mnMessageArgumentClearAll
+	stub mnMessageArgumentPushStub, mnMessageArgumentPush
+	stub mnPartyStatCreateWindowStub, mnPartyStatCreateWindow
+	stub mnPartyStatDrawStub, mnPartyStatDraw
+	stub mnPartyStatCloseStub, mnPartyStatClose
+	stub mnMessageCloseFinishedWindowsStub, mnMessageCloseFinishedWindows
+	stub mnWindowCloseAllStub, mnWindowCloseAll
+	unnamed_stub mnSelectionMenuCreate
+	unnamed_stub mnSelectionMenuClear
+	unnamed_stub mnSelectionMenuAddEntry
+	unnamed_stub mnSelectionMenuStartDrawing
+	unnamed_stub mnSelectionMenuStopDrawing
+	unnamed_stub mnSelectionMenuOpenNameWindow
+	unnamed_stub mnSelectionMenuClose
+	unnamed_stub mnSetupSelectionBothSides
+	unnamed_stub mnSelectionMenuRun
+	unnamed_stub mnSelectionMenuRunWithSounds
+	unnamed_stub mnArrowNoOpCallbackBank
+	unnamed_stub mnArrowNoOpCallbackA
+	unnamed_stub mnSelectionMenuBuildEntries
+	unnamed_stub mnSelectionMenuReservedNoOp
+	stub btCollectPartyCommandsStub, mnBattleCollectPartyCommands
+	stub mnBattleMessageShowAndWaitStub, mnBattleMessageShowAndWait
+	stub mnBattleMessageOpenStub, mnBattleMessageOpen
+	unnamed_stub mnArrowNoOpCallbackD
+	stub mnPortraitGetForSpeakerStub, mnPortraitGetForSpeaker
+	stub mnFieldMenuRunStub, mnFieldMenuRun
+	stub mnFileListSelectActionStub, mnFileListSelectAction
+	stub mnIconMenuChooseSendOptionStub, mnIconMenuChooseSendOption
+	stub mnAreaNameWindowShowStub, mnAreaNameWindowShow
+	stub mnAreaNameWindowHideStub, mnAreaNameWindowHide
+	stub mnFieldMessageShowCenteredStub, mnFieldMessageShowCentered
+	stub mnBattleMessageCloseStub, mnBattleMessageClose
+	stub mnMessageResetIdleStub, mnMessageResetIdle
+	stub mnArrowCreateStub, mnArrowCreate
+	stub mnArrowSetPosStub, mnArrowSetPos
+	stub mnArrowReleaseStub, mnArrowRelease
+	unnamed_stub mnRunSelectionHook
+	unnamed_stub mnItemRemoveFromInventory
+	stub mnIconDrawItemStub, mnIconDrawItem
+	stub mnTextDrawWideStringAtOffsetStub, mnTextDrawWideStringAtOffset
+	unnamed_stub mnSettingsMenuSelectionNoOp
+	stub mnScanlineWindowFillSpansStub, mnScanlineWindowFillSpans
+	stub mnWindowSprRedrawSavedRectStub, mnWindowSprRedrawSavedRect
+	stub mnWindowSprClearListStub, mnWindowSprClearList
+	stub mnWindowSetTilemapEntryStub, mnWindowSetTilemapEntry
+	stub mnDebugSceneSelectRunStub, mnDebugSceneSelectRun
+	stub mnDebugFlagEditorRunStub, mnDebugFlagEditorRun
+	stub mnSelectionIconLoadIntoSlotStub, mnSelectionIconLoadIntoSlot
+	unnamed_stub mnDebugSelectShortcuts
+	stub mnWindowMarkVisibleTextTilesStub, mnWindowMarkVisibleTextTiles
+	unnamed_stub mnItemIconCompose
+	stub mnPartyStatHighlightMembersStub, mnPartyStatHighlightMembers
+	unnamed_stub mnIconBuildItemIconTiles
+	unnamed_stub mnIconBuildAbilityIconTiles
+	stub mnWindowSprCreateLoadedStub, mnWindowSprCreateLoaded
+	unnamed_stub mnWindowSprCreateFromTable
+	unnamed_stub mnSaveWriteCurrentFile
+	stub sySaveToChosenFileStub, mnSaveToChosenFile
+	stub sySaveChooseAndLoadFileStub, mnSaveChooseAndLoadFile
+	stub sySaveCopyFileStub, mnSaveCopyFile
+	stub sySaveEraseSelectedFileStub, mnSaveEraseSelectedFile
+	stub sySaveWriteLinkTalliesStub, mnSaveWriteLinkTallies
+	unnamed_stub mnSaveWriteFile
+	stub sySaveScanFileSummariesStub, mnSaveScanFileSummaries
+	stub mnNameEntryEditMemberNameStub, mnNameEntryEditMemberName
+	unnamed_stub mnNameEntryLoadPointingHandTiles
+	unnamed_stub mnNameEntryLoadCaretTiles
+	unnamed_stub mnSelectionMenuSetPos
+	stub mnDebugBrowserIconsStub, mnDebugBrowserIcons
+	stub mnDebugBrowserPortraitsStub, mnDebugBrowserPortraits
+	unnamed_stub mnItemReturnTrue
+	stub gmDjinnShowJoinedMessageStub, mnDjinnShowJoinedMessage
+	stub mnWindowColApplyStub, mnWindowColApply
+	unnamed_stub mnSettingsMenuRun
+	stub mnPauseMenuRunStub, mnPauseMenuRun
+	unnamed_stub mnBgScrFillRect
+	stub mnSelectShopCommandStub, mnSelectShopCommand
+	stub mnSelectSanctumServiceStub, mnSelectSanctumService
+	stub mnYesNoMenuRunStub, mnYesNoMenuRun
+	stub mnSelectCoinsOrMedalsStub, mnSelectCoinsOrMedals
+	stub mnColossoMenuChooseStub, mnColossoMenuChoose
+	unnamed_stub mnTitleLoadFirstTile
+	stub mnYesNoMenuRunAtStub, mnYesNoMenuRunAt
+	stub mnPointingHandLoadIntoFreeSlotStub, mnPointingHandLoadIntoFreeSlot
+	stub mnTextMeasureMessageStub, mnTextMeasureMessage
+	stub mnWindowHighlightRectStub, mnWindowHighlightRect
+	stub mnAbilityBuildIconTilesStub, mnAbilityBuildIconTiles
+	stub mnGraphicsExpandVramTilesByColTableStub, mnGraphicsExpandVramTilesByColTable
+	stub mnTextUseExtraTilesStub, mnTextUseExtraTiles
+	stub mnAnimateSelectionToEntryStub, mnAnimateSelectionToEntry
+	stub mnWindowSprGetPointerTilesStub, mnWindowSprGetPointerTiles
+	stub mnMessageOpenDecodedStub, mnMessageOpenDecoded
+	stub sySaveCountFilesExcludingSentStub, mnSaveCountFilesExcludingSent
+	stub mnWindowDrawBorderStub, mnWindowDrawBorder
+	stub mnWindowEraseBorderRectStub, mnWindowEraseBorderRect
+	stub mnPageArrowsDrawStub, mnPageArrowsDraw
+	stub gmPartyShowJoinedMessageStub, mnPartyShowJoinedMessage
+	stub gmPartyShowPairJoinedMessageStub, mnPartyShowPairJoinedMessage

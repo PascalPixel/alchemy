@@ -1,1203 +1,1257 @@
-/// @file
-/// The pieces the menu screens share: windows, the status panel, numbers,
-/// icons, the party figures, the hand cursor, paged lists, palettes and the
-/// Start watch.
-// Part of menu.c.
+/* @file */
+/* The pieces the menu screens share: windows, the status panel, numbers, */
+/* icons, the party figures, the hand cursor, paged lists, palettes and the */
+/* Start watch. */
+/* Part of menu.c. */
 
 #include "menu_internal.h"
 
-/// The status panel's name and status column starts further left in the
-/// international editions, whose status labels are longer, and so does
-/// "Can't equip" (MsgCannotEquip).
+/* The status panel's name and status column starts further left in the */
+/* international editions, whose status labels are longer, and so does */
+/* "Can't equip" (MsgCannotEquip). */
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define STATUS_PANEL_TEXT_X 32
+#define STATUS_PANEL_TEXT_X			32
 #define STATUS_PANEL_CANNOT_EQUIP_X 0
 #else
-#define STATUS_PANEL_TEXT_X 40
+#define STATUS_PANEL_TEXT_X			40
 #define STATUS_PANEL_CANNOT_EQUIP_X 16
 #endif
 
-/// A Psynergy item's panel: Spanish puts "Learned" or "Will learn" above the
-/// Psynergy's name, the other editions below it.
+/* A Psynergy item's panel: Spanish puts "Learned" or "Will learn" above the */
+/* Psynergy's name, the other editions below it. */
 #if LANGUAGE == LANGUAGE_SPANISH
-#define STATUS_PANEL_LEARN_NAME_Y 56
+#define STATUS_PANEL_LEARN_NAME_Y	56
 #define STATUS_PANEL_LEARN_STATUS_Y 48
 #else
-#define STATUS_PANEL_LEARN_NAME_Y 48
+#define STATUS_PANEL_LEARN_NAME_Y	48
 #define STATUS_PANEL_LEARN_STATUS_Y 56
 #endif
 
-/// Window_UpdateOrCreate's flags: its own bit, which keeps an existing window
-/// as it is without redrawing its saved rectangle, over the low byte of
-/// WINDOW_FLAG_ flags a new window opens with.
+/* mnWindowUpdateOrCreate's flags: its own bit, which keeps an existing window
+ */
+/* as it is without redrawing its saved rectangle, over the low byte of */
+/* WINDOW_FLAG_ flags a new window opens with. */
 #define WINDOW_KEEP_EXISTING 0x100
-#define WINDOW_ATTRS_MASK 0xff
+#define WINDOW_ATTRS_MASK	 0xff
 
-/// Resumes the overlay tasks and tileset animations when a menu closes, and
-/// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
-/// Menu_SuspendFieldTasks.
-s32 Menu_ResumeFieldTasks(void) {
-  Task_ResumeOverlayTasks();
-  TilesetAnim_ResumeAllFar();
-  // FLAG_WEATHER_HELD freezes the field weather: its particles hold
-  // their frame and the storm's lightning waits (event_commands_weather.c).
-  GameFlag_ClearFar(FLAG_WEATHER_HELD);
-  // FLAG_PALETTE_BLEND_HELD stops PaletteFade_Update.
-  GameFlag_ClearFar(FLAG_PALETTE_BLEND_HELD);
+/* Resumes the overlay tasks and tileset animations when a menu closes, and */
+/* clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes */
+/* mnSuspendFieldTasks. */
+s32 mnResumeFieldTasks(void) {
+	syTaskResumeOverlayTasks();
+	fdTilesetAnimResumeAllStub();
+	/* FLAG_WEATHER_HELD freezes the field weather: its particles hold */
+	/* their frame and the storm's lightning waits (event_commands_weather.c).
+	 */
+	gmFlagClearStub(FLAG_WEATHER_HELD);
+	/* FLAG_PALETTE_BLEND_HELD stops fdPaletteFadeUpdate. */
+	gmFlagClearStub(FLAG_PALETTE_BLEND_HELD);
 #ifdef UBFIX
-  return 0;
+	return 0;
 #endif
 }
 
-/// Suspends the overlay tasks and tileset animations while a menu is open, and
-/// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
-/// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
-/// which undoes it).
-s32 Menu_SuspendFieldTasks(void) {
-  GameFlag_SetFar(FLAG_PALETTE_BLEND_HELD);
-  GameFlag_SetFar(FLAG_WEATHER_HELD);
-  TilesetAnim_SuspendAllFar();
-  return Task_SuspendOverlayTasks();
+/* Suspends the overlay tasks and tileset animations while a menu is open, and
+ */
+/* sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's */
+/* palette blend and weather stand still behind it (see mnResumeFieldTasks, */
+/* which undoes it). */
+s32 mnSuspendFieldTasks(void) {
+	gmFlagSetStub(FLAG_PALETTE_BLEND_HELD);
+	gmFlagSetStub(FLAG_WEATHER_HELD);
+	fdTilesetAnimSuspendAllStub();
+	return syTaskSuspendOverlayTasks();
 }
 
-/// Clears the whole menu state and sets its defaults: no side selected, one
-/// entry in each side, and a 1x1 cursor grid.
-void Menu_InitializeState(s32 unused) {
-  struct ItemMenuState *menu = gMenuState;
+/* Clears the whole menu state and sets its defaults: no side selected, one */
+/* entry in each side, and a 1x1 cursor grid. */
+void mnInitState(s32 unused) {
+	ITEM_MENU_STATE *menu = MenuState;
 
-  Dma_Fill32(0, menu, MENU_STATE_SIZE);
-  menu->sideIndex[0] = -1;
-  menu->sideCount[0] = 1;
-  menu->sideCount[1] = 1;
-  menu->columnCount = 1;
-  menu->rowCount = 1;
+	btDmaFill32(0, menu, MENU_STATE_SIZE);
+	menu->sideIdx[0] = -1;
+	menu->sideCnt[0] = 1;
+	menu->sideCnt[1] = 1;
+	menu->columnCnt = 1;
+	menu->rowCnt = 1;
 }
 
-/// Opens the window kept in *handle at tile (x, y), w by h tiles, or, if it is
-/// already open, clears it to its saved rectangle (unless flags has
-/// WINDOW_KEEP_EXISTING). Returns 1 when it opened a new window.
-s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
-                          s32 flags) {
-  struct Window *window;
-  s32 attrs;
+/* Opens the window kept in *handle at tile (x, y), w by h tiles, or, if it is
+ */
+/* already open, clears it to its saved rectangle (unless flags has */
+/* WINDOW_KEEP_EXISTING). Returns 1 when it opened a new window. */
+s32 mnWindowUpdateOrCreate(WINDOW **handle, s32 x, s32 y, s32 w, s32 h,
+						   s32 flags) {
+	WINDOW *window;
+	s32 attrs;
 
-  window = *handle;
-  if (window != 0) {
-    if (WINDOW_KEEP_EXISTING & flags) {
-      return 0;
-    }
-    WindowSprite_RedrawSavedRectFar(window);
-    return 0;
-  }
-  attrs = flags & WINDOW_ATTRS_MASK;
-  *handle = Window_CreateFar(x, y, w, h, attrs);
-  return 1;
+	window = *handle;
+	if(window != 0) {
+		if(WINDOW_KEEP_EXISTING & flags) {
+			return 0;
+		}
+		mnWindowSprRedrawSavedRectStub(window);
+		return 0;
+	}
+	attrs = flags & WINDOW_ATTRS_MASK;
+	*handle = mnWindowCreateStub(x, y, w, h, attrs);
+	return 1;
 }
 
-/// Closes the window kept in *handle, if any, and clears the handle; nonzero
-/// instant closes it at once rather than shrinking it.
-void Window_CloseIfOpen(struct Window **handle, s32 instant) {
-  if (*handle != NULL) {
-    Window_CloseFar(*handle, instant);
-    *handle = NULL;
-  }
+/* Closes the window kept in *handle, if any, and clears the handle; nonzero */
+/* instant closes it at once rather than shrinking it. */
+void mnWindowCloseIfOpen(WINDOW **handle, s32 instant) {
+	if(*handle != NULL) {
+		mnWindowCloseStub(*handle, instant);
+		*handle = NULL;
+	}
 }
 
-/// Draws the status panel of the Item and Psynergy screens for party member
-/// `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
-/// or the level, the party member's portrait, and below them what mode's panel
-/// kind asks for. slot is the inventory slot of the item the panel is about,
-/// for the equipment and Psynergy item panels.
-void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
-  s32 created;
-  struct ItemDefinition *def;
-  u32 item;
-  struct ItemMenuState *menu;
-  struct Unit *unit;
-  struct Window *window;
-  s32 ailmentRows;
-  s32 value;
-  u8 ailments[8];
+/* Draws the status panel of the Item and Psynergy screens for party member */
+/* `member` (window at tile 0,5, 13 by 12): the name, up to two statuses */
+/* or the level, the party member's portrait, and below them what mode's panel
+ */
+/* kind asks for. slot is the inventory slot of the item the panel is about, */
+/* for the equipment and Psynergy item panels. */
+void mnStatPanelDraw(WINDOW *unused, s32 member, s32 slot, s32 mode) {
+	s32 created;
+	ITEM_DEFINITION *def;
+	u32 item;
+	ITEM_MENU_STATE *menu;
+	UNIT *unit;
+	WINDOW *window;
+	s32 ailmentRows;
+	s32 value;
+	u8 ailments[8];
 
-  created = 0;
-  menu = gMenuState;
-  unit = Unit_GetFar(member);
-  item = unit->inventory[slot];
-  def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
-  if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created = Window_UpdateOrCreate(&menu->statusWindow, 0, 5, 13, 12,
-                                    WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT);
-  window = menu->statusWindow;
+	created = 0;
+	menu = MenuState;
+	unit = gmUnitGetStub(member);
+	item = unit->inventory[slot];
+	def = gmItemGetDirectStub(item & INVENTORY_ITEM_ID_MASK);
+	if(!(mode & STATUS_PANEL_LOWER_ONLY))
+		created =
+			mnWindowUpdateOrCreate(&menu->statWin, 0, 5, 13, 12,
+								   WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT);
+	window = menu->statWin;
 
-  // The name, then each status the party member has, one row each; the level
-  // takes the third row when no more than one status is shown.
-  if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
-    // A window that already existed still shows the last party member: clear
-    // its top 88 by 32 pixels a frame later. A new window is blank.
-    if (!created) {
-      wait(1);
-      Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
-    }
-    Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
-    StatusScreen_ListStatuses(ailments, 1, member);
-    ailmentRows = 0;
-    if (ailments[CHARACTER_POISON]) {
-      Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, STATUS_PANEL_TEXT_X,
-                                 ailmentRows * 8 + 8);
-      ailmentRows++;
-    }
-    if (ailments[CHARACTER_VENOM]) {
-      Text_DrawMessageAsTilesFar(MsgVenomLabel, window, STATUS_PANEL_TEXT_X,
-                                 ailmentRows * 8 + 8);
-      ailmentRows++;
-    }
-    if (ailments[CHARACTER_CURSE]) {
-      Text_DrawMessageAsTilesFar(MsgCurseLabel, window, STATUS_PANEL_TEXT_X,
-                                 ailmentRows * 8 + 8);
-      ailmentRows++;
-    }
-    if (ailments[CHARACTER_HAUNT]) {
-      Text_DrawMessageAsTilesFar(MsgHauntLabel, window, STATUS_PANEL_TEXT_X,
-                                 ailmentRows * 8 + 8);
-      ailmentRows++;
-    }
-    if (ailmentRows < 2) {
-      value = unit->level;
-      MENU_DRAW_STATUS_LABEL(gStatusPanel_LevelString, window, 40, 16);
-      Text_DrawNumberInWindowFar(value, 4, window, 56, 16);
-    }
-  }
+	/* The name, then each status the party member has, one row each; the level
+	 */
+	/* takes the third row when no more than one status is shown. */
+	if(!(mode & STATUS_PANEL_LOWER_ONLY)) {
+		/* A window that already existed still shows the last party member:
+		 * clear */
+		/* its top 88 by 32 pixels a frame later. A new window is blank. */
+		if(!created) {
+			sySynch(1);
+			mnWindowClearInteriorTilesStub(menu->statWin, 0, 0, 88, 32);
+		}
+		mnTextDrawStringAtOffsetStub(unit->name, window, STATUS_PANEL_TEXT_X,
+									 0);
+		mnStatScrListStatuses(ailments, 1, member);
+		ailmentRows = 0;
+		if(ailments[CHARACTER_POISON]) {
+			mnTextDrawMessageAsTilesStub(MsgPoisonLabel, window,
+										 STATUS_PANEL_TEXT_X,
+										 ailmentRows * 8 + 8);
+			ailmentRows++;
+		}
+		if(ailments[CHARACTER_VENOM]) {
+			mnTextDrawMessageAsTilesStub(MsgVenomLabel, window,
+										 STATUS_PANEL_TEXT_X,
+										 ailmentRows * 8 + 8);
+			ailmentRows++;
+		}
+		if(ailments[CHARACTER_CURSE]) {
+			mnTextDrawMessageAsTilesStub(MsgCurseLabel, window,
+										 STATUS_PANEL_TEXT_X,
+										 ailmentRows * 8 + 8);
+			ailmentRows++;
+		}
+		if(ailments[CHARACTER_HAUNT]) {
+			mnTextDrawMessageAsTilesStub(MsgHauntLabel, window,
+										 STATUS_PANEL_TEXT_X,
+										 ailmentRows * 8 + 8);
+			ailmentRows++;
+		}
+		if(ailmentRows < 2) {
+			value = unit->level;
+			MENU_DRAW_STATUS_LABEL(StatusPanel_LevelString, window, 40, 16);
+			mnTextDrawNumInWindowStub(value, 4, window, 56, 16);
+		}
+	}
 
-  // Clear the lower part and redraw the party member's portrait.
-  if (!created) {
-    wait(1);
-    Window_ClearInteriorTilesFar(menu->statusWindow, 0, 32, 88, 80);
-  }
-  WindowSprite_ClearListFar(window);
-  if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    menu->cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
+	/* Clear the lower part and redraw the party member's portrait. */
+	if(!created) {
+		sySynch(1);
+		mnWindowClearInteriorTilesStub(menu->statWin, 0, 32, 88, 80);
+	}
+	mnWindowSprClearListStub(window);
+	if(!(mode & STATUS_PANEL_LOWER_ONLY))
+		menu->cursor = mnPortraitCreateStub(member, 0, 0, window, 0, 0);
 
-  switch (mode & STATUS_PANEL_KIND_MASK) {
-  case STATUS_PANEL_EXPERIENCE:
-    value = unit->classId + MsgClassName;
-    Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    StatusPanel_DrawHpPp(unit, window);
-    value = unit->experience;
-    Text_DrawMessageAsTilesFar(MsgExpLabel, window, 0, 64);
-    Text_DrawNumberInWindowFar(value, 8, window, 24, 72);
-    break;
-  case STATUS_PANEL_CLASS:
-    value = unit->classId + MsgClassName;
-    Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    StatusPanel_DrawHpPp(unit, window);
-    break;
-  case STATUS_PANEL_EQUIP:
-  case STATUS_PANEL_EQUIP + 1: { // draws the same panel
-    struct Unit *backup;
+	switch(mode & STATUS_PANEL_KIND_MASK) {
+	case STATUS_PANEL_EXPERIENCE:
+		value = unit->classId + MsgClassName;
+		mnTextDrawMessageAsTilesStub(value, window, 0, 32);
+		mnStatPanelDrawHpPp(unit, window);
+		value = unit->experience;
+		mnTextDrawMessageAsTilesStub(MsgExpLabel, window, 0, 64);
+		mnTextDrawNumInWindowStub(value, 8, window, 24, 72);
+		break;
+	case STATUS_PANEL_CLASS:
+		value = unit->classId + MsgClassName;
+		mnTextDrawMessageAsTilesStub(value, window, 0, 32);
+		mnStatPanelDrawHpPp(unit, window);
+		break;
+	case STATUS_PANEL_EQUIP:
+	case STATUS_PANEL_EQUIP + 1: { /* draws the same panel */
+		UNIT *backup;
 
-    if (!Item_CanUnitEquip(member, item)) {
-      Text_DrawMessageAsTilesFar(MsgCannotEquip, window,
-                                 STATUS_PANEL_CANNOT_EQUIP_X, 48);
-      break;
-    }
-    // Equip (or, previewing a removal, unequip) the item on the real unit,
-    // recalculate its stats, show them against the saved copy, then put the
-    // unit back as it was.
-    backup = Heap_Alloc(sizeof(struct Unit));
-    Iwram_CopyWords(backup, unit, sizeof(struct Unit));
-    if (menu->equipPreview)
-      unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
-    else
-      Inventory_EquipFar(member, slot);
-    Unit_CalculateFar(member);
-    Text_DrawStatComparison(unit, backup, window);
-    Iwram_CopyWords(unit, backup, sizeof(struct Unit));
-    Heap_Release(backup);
-    break;
-  }
-  case STATUS_PANEL_LEARN: {
-    s32 psynergy = def->abilityId;
-    s32 known = 0;
-    s32 i;
+		if(!gmItemCanUnitEquip(member, item)) {
+			mnTextDrawMessageAsTilesStub(MsgCannotEquip, window,
+										 STATUS_PANEL_CANNOT_EQUIP_X, 48);
+			break;
+		}
+		/* Equip (or, previewing a removal, unequip) the item on the real unit,
+		 */
+		/* recalculate its stats, show them against the saved copy, then put the
+		 */
+		/* unit back as it was. */
+		backup = syHeapAlloc(sizeof(UNIT));
+		syWordsCopy(backup, unit, sizeof(UNIT));
+		if(menu->equipPreview)
+			unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
+		else
+			gmInventoryEquipStub(member, slot);
+		gmUnitCalcStub(member);
+		mnTextDrawStatComparison(unit, backup, window);
+		syWordsCopy(unit, backup, sizeof(UNIT));
+		syHeapRelease(backup);
+		break;
+	}
+	case STATUS_PANEL_LEARN: {
+		s32 psynergy = def->abilityId;
+		s32 known = 0;
+		s32 i;
 
-    // Whether the party member already knows it, from any of the 32 action
-    // slots.
-    for (i = 0; i < PSYNERGY_SLOTS; i++) {
-      if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
-          psynergy) {
-        known = 1;
-        break;
-      }
-    }
-    // The Psynergy's name and "Learned" or "Will learn"; Spanish puts the
-    // label above the name.
-    if (known) {
-      Text_DrawMessageAsTilesFar(psynergy + MsgAbilityName, window, 0,
-                                 STATUS_PANEL_LEARN_NAME_Y);
-      Text_DrawMessageAsTilesFar(MsgLearned, window, 0,
-                                 STATUS_PANEL_LEARN_STATUS_Y);
-    } else {
-      Text_DrawMessageAsTilesFar(psynergy + MsgAbilityName, window, 0,
-                                 STATUS_PANEL_LEARN_NAME_Y);
-      Text_DrawMessageAsTilesFar(MsgWillLearn, window, 0,
-                                 STATUS_PANEL_LEARN_STATUS_Y);
-    }
-    break;
-  }
-  case STATUS_PANEL_STATS: {
-    // The labels are consecutive messages: Attack, Defense, Status, Luck and
-    // Agility.
-    s32 labels = MsgPanelAttackLabel;
+		/* Whether the party member already knows it, from any of the 32 action
+		 */
+		/* slots. */
+		for(i = 0; i < PSYNERGY_SLOTS; i++) {
+			if((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
+			   psynergy) {
+				known = 1;
+				break;
+			}
+		}
+		/* The Psynergy's name and "Learned" or "Will learn"; Spanish puts the
+		 */
+		/* label above the name. */
+		if(known) {
+			mnTextDrawMessageAsTilesStub(psynergy + MsgAbilityName, window, 0,
+										 STATUS_PANEL_LEARN_NAME_Y);
+			mnTextDrawMessageAsTilesStub(MsgLearned, window, 0,
+										 STATUS_PANEL_LEARN_STATUS_Y);
+		}
+		else {
+			mnTextDrawMessageAsTilesStub(psynergy + MsgAbilityName, window, 0,
+										 STATUS_PANEL_LEARN_NAME_Y);
+			mnTextDrawMessageAsTilesStub(MsgWillLearn, window, 0,
+										 STATUS_PANEL_LEARN_STATUS_Y);
+		}
+		break;
+	}
+	case STATUS_PANEL_STATS: {
+		/* The labels are consecutive messages: Attack, Defense, Status, Luck
+		 * and */
+		/* Agility. */
+		s32 labels = MsgPanelAttackLabel;
 
-    Text_DrawMessageAsTilesFar(labels, window, 0, 40); // "Attack"
-    value = unit->attack;
-    Text_DrawNumberInWindowFar(value, 3, window, 64, 40);
-    Text_DrawMessageAsTilesFar(labels + 1, window, 0, 48); // "Defense"
-    value = unit->defense;
-    Text_DrawNumberInWindowFar(value, 3, window, 64, 48);
-    Text_DrawMessageAsTilesFar(labels + 4, window, 0, 56); // "Agility"
-    value = unit->agility;
-    Text_DrawNumberInWindowFar(value, 3, window, 64, 56);
-    Text_DrawMessageAsTilesFar(labels + 3, window, 0, 64); // "Luck"
-    value = unit->luck;
-    Text_DrawNumberInWindowFar(value, 3, window, 64, 64);
-    break;
-  }
-  }
+		mnTextDrawMessageAsTilesStub(labels, window, 0, 40); /* "Attack" */
+		value = unit->attack;
+		mnTextDrawNumInWindowStub(value, 3, window, 64, 40);
+		mnTextDrawMessageAsTilesStub(labels + 1, window, 0, 48); /* "Defense" */
+		value = unit->defense;
+		mnTextDrawNumInWindowStub(value, 3, window, 64, 48);
+		mnTextDrawMessageAsTilesStub(labels + 4, window, 0, 56); /* "Agility" */
+		value = unit->agility;
+		mnTextDrawNumInWindowStub(value, 3, window, 64, 56);
+		mnTextDrawMessageAsTilesStub(labels + 3, window, 0, 64); /* "Luck" */
+		value = unit->luck;
+		mnTextDrawNumInWindowStub(value, 3, window, 64, 64);
+		break;
+	}
+	}
 }
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-/// The pixels the field allows each digit. The Latin font's digits are 7
-/// pixels wide, so the digits themselves take a pixel less each.
+/* The pixels the field allows each digit. The Latin font's digits are 7 */
+/* pixels wide, so the digits themselves take a pixel less each. */
 #define NUMBER_PIXELS_PER_DIGIT 8
 
-/// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
-/// 100-999 give 3, 1000-9999 give 4.
+/* Returns how many decimal digits number has, but at least 2: 0-99 give 2, */
+/* 100-999 give 3, 1000-9999 give 4. */
 static inline s32 CountDigitsAtLeastTwo(s32 number) {
-  s32 count;
+	s32 count;
 
-  // 16 only bounds the loop: an s32 has at most 10 digits, so the count
-  // always stops first.
-  for (count = 1; count < 16; count++) {
-    number /= 10;
-    if (number < 10) {
-      break;
-    }
-  }
-  // The leading digit.
-  count++;
-  return count;
+	/* 16 only bounds the loop: an s32 has at most 10 digits, so the count */
+	/* always stops first. */
+	for(count = 1; count < 16; count++) {
+		number /= 10;
+		if(number < 10) {
+			break;
+		}
+	}
+	/* The leading digit. */
+	count++;
+	return count;
 }
 
-/// Draws number right-aligned in a field that ends at pixel column x and allows
-/// 8 pixels for each digit, at least two digits wide.
-void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
-                                 s32 y) {
-  s32 width = CountDigitsAtLeastTwo(number);
+/* Draws number right-aligned in a field that ends at pixel column x and allows
+ */
+/* 8 pixels for each digit, at least two digits wide. */
+void mnTextDrawNumRightAligned(s32 number, WINDOW *window, s32 x, s32 y) {
+	s32 width = CountDigitsAtLeastTwo(number);
 
-  // Step x back to the field's left edge; the number writer right-aligns the
-  // number in a field of width characters.
-  x -= width * NUMBER_PIXELS_PER_DIGIT;
-  Text_DrawNumberAtOffsetFar(number, width, window, x, y);
+	/* Step x back to the field's left edge; the number writer right-aligns the
+	 */
+	/* number in a field of width characters. */
+	x -= width * NUMBER_PIXELS_PER_DIGIT;
+	mnTextDrawNumAtOffsetStub(number, width, window, x, y);
 }
 
 #endif
 
-/// Draws a character's HP and PP into window as two rows, "HP current/maximum"
-/// at pixel row 40 and "PP current/maximum" at row 48.
-void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
-  // Each figure in turn, as an s16.
-  s16 value;
+/* Draws a character's HP and PP into window as two rows, "HP current/maximum"
+ */
+/* at pixel row 40 and "PP current/maximum" at row 48. */
+void mnStatPanelDrawHpPp(UNIT *unit, WINDOW *window) {
+	/* Each figure in turn, as an s16. */
+	s16 value;
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-  // The label at the left and a slash at 48.
-  Text_DrawStringAtOffsetFar(gStatusPanel_HpString, window, 0, 40);
-  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 40);
-  value = unit->hpMax;
-  Text_DrawNumberRightAligned(value, window, 88, 40);
-  value = unit->hp;
-  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
-    Text_SetColorFar(TEXT_COLOR_LOW_HP);
-  }
-  if (value == 0) {
-    Text_SetColorFar(TEXT_COLOR_NO_HP);
-  }
-  Text_DrawNumberRightAligned(value, window, 48, 40);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
-  Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
-  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
-  value = unit->pp;
-  Text_DrawNumberRightAligned(value, window, 48, 48);
-  value = unit->ppMax;
-  Text_DrawNumberRightAligned(value, window, 88, 48);
+	/* The label at the left and a slash at 48. */
+	mnTextDrawStringAtOffsetStub(StatusPanel_HpString, window, 0, 40);
+	mnTextDrawStringInWindowStub((u8 *)StatusPanel_SlashString, window, 48, 40);
+	value = unit->hpMax;
+	mnTextDrawNumRightAligned(value, window, 88, 40);
+	value = unit->hp;
+	if(value < unit->hpMax >> 2) { /* below a quarter of maximum HP */
+		mnTextSetColStub(TEXT_COLOR_LOW_HP);
+	}
+	if(value == 0) {
+		mnTextSetColStub(TEXT_COLOR_NO_HP);
+	}
+	mnTextDrawNumRightAligned(value, window, 48, 40);
+	mnTextSetColStub(TEXT_COLOR_NORMAL);
+	mnTextDrawStringAtOffsetStub(StatusPanel_PpString, window, 0, 48);
+	mnTextDrawStringInWindowStub((u8 *)StatusPanel_SlashString, window, 48, 48);
+	value = unit->pp;
+	mnTextDrawNumRightAligned(value, window, 48, 48);
+	value = unit->ppMax;
+	mnTextDrawNumRightAligned(value, window, 88, 48);
 #else
-  // Each row string ("HP    /" and "EP    /") holds the label and the slash,
-  // one character to an 8-pixel cell, the slash in the cell at 48.
-  Text_DrawStringInWindowFar((u8 *)gStatusPanel_HpRowString, window, 0, 40);
-  value = unit->hpMax;
-  Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
-  value = unit->hp;
-  if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
-    Text_SetColorFar(TEXT_COLOR_LOW_HP);
-  }
-  if (value == 0) {
-    Text_SetColorFar(TEXT_COLOR_NO_HP);
-  }
-  Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
-  Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
-  value = unit->pp;
-  Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
-  value = unit->ppMax;
-  Text_DrawNumberInWindowFar(value, 4, window, 56, 48);
+	/* Each row string ("HP    /" and "EP    /") holds the label and the slash,
+	 */
+	/* one character to an 8-pixel cell, the slash in the cell at 48. */
+	mnTextDrawStringInWindowStub((u8 *)StatusPanel_HpRowString, window, 0, 40);
+	value = unit->hpMax;
+	mnTextDrawNumInWindowStub(value, 4, window, 56, 40);
+	value = unit->hp;
+	if(value < unit->hpMax >> 2) { /* below a quarter of maximum HP */
+		mnTextSetColStub(TEXT_COLOR_LOW_HP);
+	}
+	if(value == 0) {
+		mnTextSetColStub(TEXT_COLOR_NO_HP);
+	}
+	mnTextDrawNumAtOffsetStub(value, 4, window, 16, 40);
+	mnTextSetColStub(TEXT_COLOR_NORMAL);
+	mnTextDrawStringInWindowStub((u8 *)StatusPanel_PpRowString, window, 0, 48);
+	value = unit->pp;
+	mnTextDrawNumAtOffsetStub(value, 4, window, 16, 48);
+	value = unit->ppMax;
+	mnTextDrawNumInWindowStub(value, 4, window, 56, 48);
 #endif
 }
 
-/// The stat arrows: the up and down arrow sprites the menu loads into its two
-/// sprite picture cache slots (Menu_LoadStatArrows).
-enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
+/* The stat arrows: the up and down arrow sprites the menu loads into its two */
+/* sprite picture cache slots (mnLoadStatArrows). */
+typedef enum STAT_ARROW { STAT_ARROW_UP, STAT_ARROW_DOWN } STAT_ARROW;
 
-/// Writes Attack, Defense and Agility into a status window as they are now
-/// (before), and beside each one that changes its new value (after) with an up
-/// or down arrow: the equipment preview.
-void Text_DrawStatComparison(const struct Unit *after,
-                             const struct Unit *before, struct Window *window) {
-  Text_DrawMessageAsTilesFar(MsgPanelAttackLabel, window, 0, 32);
-  Text_DrawNumberAtOffsetFar(before->attack, 3, window, 16, 40);
-  if (after->attack != before->attack) {
-    Text_DrawNumberAtOffsetFar(after->attack, 3, window, 64, 40);
-    if (after->attack > before->attack) {
-      Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
-    } else {
-      Icon_CreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
-    }
-  }
-  Text_DrawMessageAsTilesFar(MsgPanelDefenseLabel, window, 0, 48);
-  Text_DrawNumberAtOffsetFar(before->defense, 3, window, 16, 56);
-  if (after->defense != before->defense) {
-    Text_DrawNumberAtOffsetFar(after->defense, 3, window, 64, 56);
-    if (after->defense > before->defense) {
-      Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
-    } else {
-      Icon_CreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
-    }
-  }
-  Text_DrawMessageAsTilesFar(MsgAgilityLabel, window, 0, 64);
-  Text_DrawNumberAtOffsetFar(before->agility, 3, window, 16, 72);
-  if (after->agility != before->agility) {
-    Text_DrawNumberAtOffsetFar(after->agility, 3, window, 64, 72);
-    if (after->agility > before->agility) {
-      Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
-    } else {
-      Icon_CreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);
-    }
-  }
+/* Writes Attack, Defense and Agility into a status window as they are now */
+/* (before), and beside each one that changes its new value (after) with an up
+ */
+/* or down arrow: the equipment preview. */
+void mnTextDrawStatComparison(const UNIT *after, const UNIT *before,
+							  WINDOW *window) {
+	mnTextDrawMessageAsTilesStub(MsgPanelAttackLabel, window, 0, 32);
+	mnTextDrawNumAtOffsetStub(before->attack, 3, window, 16, 40);
+	if(after->attack != before->attack) {
+		mnTextDrawNumAtOffsetStub(after->attack, 3, window, 64, 40);
+		if(after->attack > before->attack) {
+			mnIconCreateStatChangeArrow(window, 44, 36, STAT_ARROW_UP);
+		}
+		else {
+			mnIconCreateStatChangeArrow(window, 44, 36, STAT_ARROW_DOWN);
+		}
+	}
+	mnTextDrawMessageAsTilesStub(MsgPanelDefenseLabel, window, 0, 48);
+	mnTextDrawNumAtOffsetStub(before->defense, 3, window, 16, 56);
+	if(after->defense != before->defense) {
+		mnTextDrawNumAtOffsetStub(after->defense, 3, window, 64, 56);
+		if(after->defense > before->defense) {
+			mnIconCreateStatChangeArrow(window, 44, 52, STAT_ARROW_UP);
+		}
+		else {
+			mnIconCreateStatChangeArrow(window, 44, 52, STAT_ARROW_DOWN);
+		}
+	}
+	mnTextDrawMessageAsTilesStub(MsgAgilityLabel, window, 0, 64);
+	mnTextDrawNumAtOffsetStub(before->agility, 3, window, 16, 72);
+	if(after->agility != before->agility) {
+		mnTextDrawNumAtOffsetStub(after->agility, 3, window, 64, 72);
+		if(after->agility > before->agility) {
+			mnIconCreateStatChangeArrow(window, 44, 68, STAT_ARROW_UP);
+		}
+		else {
+			mnIconCreateStatChangeArrow(window, 44, 68, STAT_ARROW_DOWN);
+		}
+	}
 }
 
-/// Unused: Icon_CreateHandCursor with a second argument it ignores.
-UNUSED s32 Icon_CreateHandCursorUnusedArgument(struct Window *window,
-                                               s32 unused, s32 x, s32 y) {
-  s32 block;
-  s32 icon;
-  icon = 0;
-  block = VramCache_FindFreeEntry();
-  if (block != 0) {
-    VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, WINDOW_SPRITE_SIZE_16X16, window,
-                                       x, y);
-  }
-  return icon;
+/* Unused: mnIconCreateHandCursor with a second argument it ignores. */
+UNUSED s32 mnIconCreateHandCursorUnusedArgument(WINDOW *window, s32 unused,
+												s32 x, s32 y) {
+	s32 block;
+	s32 icon;
+	icon = 0;
+	block = syVramCacheFindFreeEntry();
+	if(block != 0) {
+		syVramCacheLoad(block, ICON_TILE_BYTES, Icon_ResourceTiles);
+		icon = (s32)mnWindowSprCreateStub(block, WINDOW_SPRITE_SIZE_16X16,
+										  window, x, y);
+	}
+	return icon;
 }
 
-/// Creates the menu's hand cursor sprite in window at (x, y), loading the
-/// hand's tiles into a free VRAM block.
-s32 Icon_CreateHandCursor(struct Window *window, s32 x, s32 y) {
-  s32 block;
-  s32 icon;
+/* Creates the menu's hand cursor sprite in window at (x, y), loading the */
+/* hand's tiles into a free VRAM block. */
+s32 mnIconCreateHandCursor(WINDOW *window, s32 x, s32 y) {
+	s32 block;
+	s32 icon;
 
-  icon = 0;
-  block = VramCache_FindFreeEntry();
-  // BUG: block 0 is a valid block, and VramCache_FindFreeEntry says none is
-  // free with VRAM_CACHE_ENTRY_COUNT (96), which ItemMenu_SelectGiveQuantity
-  // tests. With none free, the sprite is created on block 96, which
-  // VramCache_Load refuses; with block 0 free, no hand is made.
+	icon = 0;
+	block = syVramCacheFindFreeEntry();
+	/* BUG: block 0 is a valid block, and syVramCacheFindFreeEntry says none is
+	 */
+	/* free with VRAM_CACHE_ENTRY_COUNT (96), which mnItemMenuSelectGiveQuantity
+	 */
+	/* tests. With none free, the sprite is created on block 96, which */
+	/* syVramCacheLoad refuses; with block 0 free, no hand is made. */
 #ifdef BUGFIX
-  if (block != VRAM_CACHE_ENTRY_COUNT) {
+	if(block != VRAM_CACHE_ENTRY_COUNT) {
 #else
-  if (block != 0) {
+	if(block != 0) {
 #endif
-    VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
-    icon = (s32)WindowSprite_CreateFar(block, WINDOW_SPRITE_SIZE_16X16, window,
-                                       x, y);
-  }
-  return icon;
+		syVramCacheLoad(block, ICON_TILE_BYTES, Icon_ResourceTiles);
+		icon = (s32)mnWindowSprCreateStub(block, WINDOW_SPRITE_SIZE_16X16,
+										  window, x, y);
+	}
+	return icon;
 }
 
-/// Shows a menu icon at its stored position, without rotation or scaling.
-void Icon_Show(struct WindowSprite *object) {
-  if (object != NULL) {
-    object->motion = ICON_SHOWN;
-    object->sprite.oam.x = object->x;
-    object->sprite.oam.y = object->y;
-    object->sprite.oam.matrix = 0;
-    object->sprite.oam.affineMode = 0;
-  }
+/* Shows a menu icon at its stored position, without rotation or scaling. */
+void mnIconShow(WINDOW_SPR *object) {
+	if(object != NULL) {
+		object->motion = ICON_SHOWN;
+		object->spr.oam.x = object->x;
+		object->spr.oam.y = object->y;
+		object->spr.oam.matrix = 0;
+		object->spr.oam.affineMode = 0;
+	}
 }
 
-/// Loads the graphics of character unit into menu entry slot 0. The calling
-/// menu argument is not used.
-void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
-  Portrait_ReloadFar(0, unit, 0);
+/* Loads the graphics of character unit into menu entry slot 0. The calling */
+/* menu argument is not used. */
+void mnReloadMemberPortrait(const void *unused, s32 unit) {
+	mnPortraitReloadStub(0, unit, 0);
 }
 
-/// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor in
-/// it, hidden for now, as sideIcon[0].
-struct Window *MenuCursor_Create(void *source) {
-  struct PsynergyMenuState *menu = source;
-  struct Window *window;
-  s32 depth;
-  struct WindowSprite *cursor;
+/* Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor in
+ */
+/* it, hidden for now, as sideIcon[0]. */
+WINDOW *mnCursorCreate(void *source) {
+	PSYNERGY_MENU_STATE *menu = source;
+	WINDOW *window;
+	s32 depth;
+	WINDOW_SPR *cursor;
 
-  menu->auxiliaryWindow = NULL;
-  Window_UpdateOrCreate(&menu->auxiliaryWindow, 0, 0, 13, 5,
-                        WINDOW_FLAG_INSTANT);
-  window = menu->auxiliaryWindow;
-  cursor = (struct WindowSprite *)Icon_CreateHandCursor(window, -8, 11);
-  cursor->motion = ICON_HIDDEN;
-  menu->tabIndex[0] = -1;
-  menu->tabIndex[1] = 0;
-  menu->sideIcon[0] = cursor;
-  cursor->depth = OAM_DEPTH_FRONT - 1;
-  // No screen ever makes a second marker: sideIcon[1] stays NULL, as the
-  // menu state was cleared, and this store and the screens' others through it
-  // land in the BIOS, which ignores them.
-  menu->sideIcon[1]->depth = OAM_DEPTH_FRONT;
-  return window;
+	menu->auxiliaryWin = NULL;
+	mnWindowUpdateOrCreate(&menu->auxiliaryWin, 0, 0, 13, 5,
+						   WINDOW_FLAG_INSTANT);
+	window = menu->auxiliaryWin;
+	cursor = (WINDOW_SPR *)mnIconCreateHandCursor(window, -8, 11);
+	cursor->motion = ICON_HIDDEN;
+	menu->tabIdx[0] = -1;
+	menu->tabIdx[1] = 0;
+	menu->sideIcon[0] = cursor;
+	cursor->depth = OAM_DEPTH_FRONT - 1;
+	/* No screen ever makes a second marker: sideIcon[1] stays NULL, as the */
+	/* menu state was cleared, and this store and the screens' others through it
+	 */
+	/* land in the BIOS, which ignores them. */
+	menu->sideIcon[1]->depth = OAM_DEPTH_FRONT;
+	return window;
 }
 
-/// Creates a standing figure for each active party member, side by side under
-/// the window source: origin (originX, originY) in tiles from the window's
-/// corner, each figure 16 + spacing pixels after the last, at full scale.
-void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
-                             s32 spacing, s32 unused) {
-  u16 memberIds[14];
-  struct PsynergyMenuState *menu = gMenuState;
-  struct Window *window = source;
-  s32 memberCount = (u16)Party_ListMembersFar(memberIds);
-  s32 i;
+/* Creates a standing figure for each active party member, side by side under */
+/* the window source: origin (originX, originY) in tiles from the window's */
+/* corner, each figure 16 + spacing pixels after the last, at full scale. */
+void mnCreatePartyFigures(void *source, s32 originX, s32 originY, s32 spacing,
+						  s32 unused) {
+	u16 memberIds[14];
+	PSYNERGY_MENU_STATE *menu = MenuState;
+	WINDOW *window = source;
+	s32 memberCount = (u16)gmPartyListMembersStub(memberIds);
+	s32 i;
 
-  menu->tabCounts[0] = memberCount;
-  // Create and position the figures before scheduling their updates.
-  for (i = 0; i < memberCount; i++) {
-    struct Sprite *figure =
-        Sprite_CreateFar(Party_GetCharacterSpriteFar(memberIds[i]));
-    if (figure != 0) {
-      s32 offsetX;
-      s32 windowX;
-      s32 tileX;
+	menu->tabCnts[0] = memberCount;
+	/* Create and position the figures before scheduling their updates. */
+	for(i = 0; i < memberCount; i++) {
+		SPR *figure = fdSprCreateStub(gmPartyGetCharacterSprStub(memberIds[i]));
+		if(figure != 0) {
+			s32 offsetX;
+			s32 windowX;
+			s32 tileX;
 
-      menu->tabSprites[i] = figure;
-      windowX = window->x;
-      offsetX = spacing + 16;
-      offsetX *= i;
-      tileX = originX + windowX;
-      menu->tabX[i] = tileX * 8 + offsetX;
-      menu->rowPositions[i] = (originY + window->y) * 8 + 16;
-      menu->memberScale[i] = FIXED_ONE;
-      figure->image.priority = 0;
-      figure->flags = 0;
-      Sprite_StartAnimationFar(figure, ANIM_STAND);
-    }
-  }
-  // Clear the unused party slots so the task can skip them.
-  for (; i < 8; i++) {
-    menu->tabSprites[i] = 0;
-  }
-  Task_Add(Menu_PlacePartyFigures, TASK_PASS_FRAME);
+			menu->tabSprs[i] = figure;
+			windowX = window->x;
+			offsetX = spacing + 16;
+			offsetX *= i;
+			tileX = originX + windowX;
+			menu->tabX[i] = tileX * 8 + offsetX;
+			menu->rowPositions[i] = (originY + window->y) * 8 + 16;
+			menu->memberScale[i] = FIXED_ONE;
+			figure->image.pri = 0;
+			figure->flg = 0;
+			fdSprStartAnimationStub(figure, ANIM_STAND);
+		}
+	}
+	/* Clear the unused party slots so the task can skip them. */
+	for(; i < 8; i++) {
+		menu->tabSprs[i] = 0;
+	}
+	sySetEvent(mnPlacePartyFigures, TASK_PASS_FRAME);
 }
 
-/// Releases the party figures Menu_CreatePartyFigures created and
-/// stops their placement task.
-void Menu_ReleasePartyFigures(void) {
-  u16 memberIds[14];
-  struct PsynergyMenuState *menu = gMenuState;
-  s32 count;
-  struct Sprite **figures;
-  s32 i;
+/* Releases the party figures mnCreatePartyFigures created and */
+/* stops their placement task. */
+void mnReleasePartyFigures(void) {
+	u16 memberIds[14];
+	PSYNERGY_MENU_STATE *menu = MenuState;
+	s32 count;
+	SPR **figures;
+	s32 i;
 
-  count = (u16)Party_ListMembersFar(memberIds);
-  if (count != 0) {
-    figures = menu->tabSprites;
-    i = count;
-    do {
-      struct Sprite *figure = *figures++;
+	count = (u16)gmPartyListMembersStub(memberIds);
+	if(count != 0) {
+		figures = menu->tabSprs;
+		i = count;
+		do {
+			SPR *figure = *figures++;
 
-      if (figure != 0) {
-        Sprite_DestroyFar(figure);
-      }
-    } while (--i != 0);
-  }
-  Task_Remove(Menu_PlacePartyFigures);
+			if(figure != 0) {
+				fdSprDestroyStub(figure);
+			}
+		} while(--i != 0);
+	}
+	syCloseEvent(mnPlacePartyFigures);
 }
 
-/// Task: each frame, places every party member sprite created by
-/// Menu_CreatePartyFigures at its menu position and scale, through
-/// the field's projected placement.
-void Menu_PlacePartyFigures(void) {
-  struct PsynergyMenuState *menu = gMenuState;
-  struct SpriteScale scale;
-  struct SpritePlacement position;
-  s32 i;
-  s32 count;
+/* Task: each frame, places every party member sprite created by */
+/* mnCreatePartyFigures at its menu position and scale, through */
+/* the field's projected placement. */
+void mnPlacePartyFigures(void) {
+	PSYNERGY_MENU_STATE *menu = MenuState;
+	SPR_SCALE scale;
+	SPR_PLACEMENT position;
+	s32 i;
+	s32 count;
 
-  count = (u16)Party_CountMembersFar();
-  for (i = 0; i < count; i++) {
-    struct Sprite *figure = menu->tabSprites[i];
-    // 482 less the row's screen y, in 16.16.
-    FIXED placeY = toFIXED(482) - toFIXED(menu->rowPositions[i]);
+	count = (u16)gmPartyCountMembersStub();
+	for(i = 0; i < count; i++) {
+		SPR *figure = menu->tabSprs[i];
+		/* 482 less the row's screen y, in 16.16. */
+		FIXED placeY = toFIXED(482) - toFIXED(menu->rowPositions[i]);
 
-    if (figure != 0) {
-      figure->image.priority = 0;
-      scale.x = menu->memberScale[i];
-      scale.y = menu->memberScale[i];
-      position.x = toFIXED(menu->tabX[i]);
-      position.height = placeY;
-      position.y = toFIXED(menu->rowPositions[i]) + placeY; // always 482
-      position.groundHeight = 0;
-      Render_ApplyProjectedPlacementFar(figure, &position, &scale,
-                                        FACING_SOUTH);
-    }
-  }
+		if(figure != 0) {
+			figure->image.pri = 0;
+			scale.x = menu->memberScale[i];
+			scale.y = menu->memberScale[i];
+			position.x = toFIXED(menu->tabX[i]);
+			position.height = placeY;
+			position.y =
+				toFIXED(menu->rowPositions[i]) + placeY; /* always 482 */
+			position.groundHeight = 0;
+			fdRenderApplyProjectedPlacementStub(figure, &position, &scale,
+												FACING_SOUTH);
+		}
+	}
 }
 
-/// The cursor bobs through an 8-step table, one step every two frames.
-#define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
+/* The cursor bobs through an 8-step table, one step every two frames. */
+#define CURSOR_BOB_STEP() ((FrameCount >> 1) & 7)
 
-/// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
-/// window, bobbing.
-void MenuCursor_Position(s32 xOffset, s32 yOffset) {
-  struct PsynergyMenuState *menu = gMenuState;
-  struct WindowSprite *cursor = menu->sideIcon[0];
+/* Places the hand cursor at (xOffset, yOffset) inside the menu's top-left */
+/* window, bobbing. */
+void mnCursorPos(s32 xOffset, s32 yOffset) {
+	PSYNERGY_MENU_STATE *menu = MenuState;
+	WINDOW_SPR *cursor = menu->sideIcon[0];
 
-  cursor->sprite.oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] +
-                                     xOffset + (menu->auxiliaryWindow)->x * 8 +
-                                     8;
-  cursor->sprite.oam.y = cursor->y = gMenuCursor_BobY[CURSOR_BOB_STEP()] +
-                                     yOffset + (menu->auxiliaryWindow)->y * 8 +
-                                     8;
+	cursor->spr.oam.x = cursor->x = MenuCursor_BobX[CURSOR_BOB_STEP()] +
+									xOffset + (menu->auxiliaryWin)->x * 8 + 8;
+	cursor->spr.oam.y = cursor->y = MenuCursor_BobY[CURSOR_BOB_STEP()] +
+									yOffset + (menu->auxiliaryWin)->y * 8 + 8;
 }
 
-/// Slides the hand cursor from where it is to (x, y) inside the menu's top-left
-/// window over two frames, in 1/16 pixel steps.
-void MenuCursor_Slide(s32 x, s32 y) {
+/* Slides the hand cursor from where it is to (x, y) inside the menu's top-left
+ */
+/* window over two frames, in 1/16 pixel steps. */
+void mnCursorSlide(s32 x, s32 y) {
 
-  struct PsynergyMenuState *menu = gMenuState;
-  struct WindowSprite *cursor;
-  s32 steps;
-  s32 startX;
-  s32 startY;
-  s32 fineX;
-  s32 fineY;
-  s32 stepX;
-  s32 stepY;
+	PSYNERGY_MENU_STATE *menu = MenuState;
+	WINDOW_SPR *cursor;
+	s32 steps;
+	s32 startX;
+	s32 startY;
+	s32 fineX;
+	s32 fineY;
+	s32 stepX;
+	s32 stepY;
 
-  steps = 2;
-  if (menu->skipSlide != 0) {
-    menu->skipSlide = 0;
-    return;
-  }
-  cursor = menu->sideIcon[0];
-  {
-    s32 biasedX = cursor->sprite.oam.x + 64;
-    s32 biasedY = cursor->sprite.oam.y + 64;
+	steps = 2;
+	if(menu->skipSlide != 0) {
+		menu->skipSlide = 0;
+		return;
+	}
+	cursor = menu->sideIcon[0];
+	{
+		s32 biasedX = cursor->spr.oam.x + 64;
+		s32 biasedY = cursor->spr.oam.y + 64;
 
-    cursor->x = biasedX;
-    cursor->y = biasedY;
-  }
-  x += 64;
-  y += 64;
-  // Take the 8-pixel window border off the start, which is in screen pixels, so
-  // that it compares with the target inside the window.
-  if (cursor->x - 8 > 0)
-    cursor->x -= 8;
-  fineY = cursor->y;
-  if (fineY - 8 > 0) {
-    cursor->y -= 8;
-    fineY = cursor->y;
-  }
-  startX = cursor->x << 4;
-  stepX = ((x << 4) - startX + 1) / steps;
-  startY = fineY << 4;
-  stepY = ((y << 4) - startY + 1) / steps;
-  fineX = startX;
-  fineY = startY;
-  do {
-    // 64 - 8 = 56: the bias less the window border.
-    fineX += stepX;
-    cursor->sprite.oam.x = cursor->x =
-        (fineX >> 4) + ((menu->auxiliaryWindow)->x << 3) - 56;
-    fineY += stepY;
-    cursor->sprite.oam.y = cursor->y =
-        (fineY >> 4) + ((menu->auxiliaryWindow)->y << 3) - 56;
-    steps--;
-    if (steps != 0)
-      wait(1);
-  } while (steps != 0);
+		cursor->x = biasedX;
+		cursor->y = biasedY;
+	}
+	x += 64;
+	y += 64;
+	/* Take the 8-pixel window border off the start, which is in screen pixels,
+	 * so */
+	/* that it compares with the target inside the window. */
+	if(cursor->x - 8 > 0)
+		cursor->x -= 8;
+	fineY = cursor->y;
+	if(fineY - 8 > 0) {
+		cursor->y -= 8;
+		fineY = cursor->y;
+	}
+	startX = cursor->x << 4;
+	stepX = ((x << 4) - startX + 1) / steps;
+	startY = fineY << 4;
+	stepY = ((y << 4) - startY + 1) / steps;
+	fineX = startX;
+	fineY = startY;
+	do {
+		/* 64 - 8 = 56: the bias less the window border. */
+		fineX += stepX;
+		cursor->spr.oam.x = cursor->x =
+			(fineX >> 4) + ((menu->auxiliaryWin)->x << 3) - 56;
+		fineY += stepY;
+		cursor->spr.oam.y = cursor->y =
+			(fineY >> 4) + ((menu->auxiliaryWin)->y << 3) - 56;
+		steps--;
+		if(steps != 0)
+			sySynch(1);
+	} while(steps != 0);
 }
 
-/// Unused: does nothing.
-UNUSED void MenuCursor_NoOp(void) {}
+/* Unused: does nothing. */
+UNUSED void mnCursorNoOp(void) {}
 
-/// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
-UNUSED void PsynergyMenu_PlaceEntryIconsDefault(void) {
-  PsynergyMenu_PlaceEntryIcons(108, 40, 8);
+/* Lays the entry icons out eight to a row from (108, 40). Nothing calls it. */
+UNUSED void mnPsynergyMenuPlaceEntryIconsDefault(void) {
+	mnPsynergyMenuPlaceEntryIcons(108, 40, 8);
 }
 
-/// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
-/// columns wide, from (originX, originY); empty slots keep their place.
-void PsynergyMenu_PlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
-  struct WindowSprite **slot;
-  struct WindowSprite **scan;
-  s32 index;
+/* Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells, */
+/* columns wide, from (originX, originY); empty slots keep their place. */
+void mnPsynergyMenuPlaceEntryIcons(s32 originX, s32 originY, s32 columns) {
+	WINDOW_SPR **slot;
+	WINDOW_SPR **scan;
+	s32 index;
 
-  index = 0;
-  slot = ((struct PsynergyMenuState *)gMenuState)->entryIcons;
-  scan = slot;
-  do {
-    if (*scan++ != NULL) {
-      PsynergyMenu_PlaceEntryIcon(slot, index, originX, originY, columns);
-    }
-    index++;
-    slot++;
-  } while (index < MENU_ENTRY_ICONS);
+	index = 0;
+	slot = ((PSYNERGY_MENU_STATE *)MenuState)->entryIcons;
+	scan = slot;
+	do {
+		if(*scan++ != NULL) {
+			mnPsynergyMenuPlaceEntryIcon(slot, index, originX, originY,
+										 columns);
+		}
+		index++;
+		slot++;
+	} while(index < MENU_ENTRY_ICONS);
 }
 
-/// Places the icon in *slot at grid cell index (0 above 31) of a grid of
-/// 16x16 cells, columns wide, from (originX, originY), and shows it.
-void PsynergyMenu_PlaceEntryIcon(struct WindowSprite **slot, s32 index,
-                                 s32 originX, s32 originY, s32 columns) {
-  struct WindowSprite *icon;
+/* Places the icon in *slot at grid cell index (0 above 31) of a grid of */
+/* 16x16 cells, columns wide, from (originX, originY), and shows it. */
+void mnPsynergyMenuPlaceEntryIcon(WINDOW_SPR **slot, s32 index, s32 originX,
+								  s32 originY, s32 columns) {
+	WINDOW_SPR *icon;
 
-  if (index > MENU_ENTRY_ICONS - 1) {
-    index = 0;
-  }
-  icon = *slot;
-  icon->y = (index / columns) * 16 + originY;
-  icon->x = (index % columns) * 16 + originX;
-  Icon_Show(icon);
+	if(index > MENU_ENTRY_ICONS - 1) {
+		index = 0;
+	}
+	icon = *slot;
+	icon->y = (index / columns) * 16 + originY;
+	icon->x = (index % columns) * 16 + originX;
+	mnIconShow(icon);
 }
 
-/// Places the icon at slotIndex in a columns-wide grid of 24x16 cells starting
-/// at (originX, originY), and shows it. A slotIndex above INVENTORY_SLOTS,
-/// which the item menu never passes, is taken as 0.
-void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
-                        s32 originY, s32 columns) {
-  struct WindowSprite *icon;
+/* Places the icon at slotIndex in a columns-wide grid of 24x16 cells starting
+ */
+/* at (originX, originY), and shows it. A slotIndex above INVENTORY_SLOTS, */
+/* which the item menu never passes, is taken as 0. */
+void mnItemMenuPlaceIcon(WINDOW_SPR **slot, s32 slotIndex, s32 originX,
+						 s32 originY, s32 columns) {
+	WINDOW_SPR *icon;
 
-  if (slotIndex > INVENTORY_SLOTS)
-    slotIndex = 0;
-  icon = *slot;
-  icon->y = slotIndex / columns * 16 + originY;
-  icon->x = slotIndex % columns * 24 + originX;
-  Icon_Show(icon);
+	if(slotIndex > INVENTORY_SLOTS)
+		slotIndex = 0;
+	icon = *slot;
+	icon->y = slotIndex / columns * 16 + originY;
+	icon->x = slotIndex % columns * 24 + originX;
+	mnIconShow(icon);
 }
 
-/// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
-/// y): y is 56 for layout 1 and 40 otherwise.
-void ItemMenu_PlaceIcons(s32 layout) {
-  struct WindowSprite **slot;
-  struct WindowSprite **scan;
-  struct WindowSprite *icon;
-  s32 index;
-  s32 originY;
-  struct ItemMenuState *menu;
+/* Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
+ */
+/* y): y is 56 for layout 1 and 40 otherwise. */
+void mnItemMenuPlaceIcons(s32 layout) {
+	WINDOW_SPR **slot;
+	WINDOW_SPR **scan;
+	WINDOW_SPR *icon;
+	s32 index;
+	s32 originY;
+	ITEM_MENU_STATE *menu;
 
-  menu = gMenuState;
-  originY = 56;
-  if (layout != 1) {
-    originY = 40;
-  }
-  slot = menu->entryIcons;
-  index = 0;
-  scan = slot;
-  do {
-    icon = *scan++;
-    if (icon != NULL) {
-      ItemMenu_PlaceIcon(slot, index, 116, originY, MENU_ITEM_GRID_COLUMNS);
-    }
-    index++;
-    slot++;
-  } while (index < INVENTORY_SLOTS);
+	menu = MenuState;
+	originY = 56;
+	if(layout != 1) {
+		originY = 40;
+	}
+	slot = menu->entryIcons;
+	index = 0;
+	scan = slot;
+	do {
+		icon = *scan++;
+		if(icon != NULL) {
+			mnItemMenuPlaceIcon(slot, index, 116, originY,
+								MENU_ITEM_GRID_COLUMNS);
+		}
+		index++;
+		slot++;
+	} while(index < INVENTORY_SLOTS);
 }
 
-/// Shows message in the item menu, with the hand cursor hidden meanwhile: in a
-/// small window at tile (x, y) fitted to it, or with y -1 in the description
-/// window along the bottom. With x -1 it stays there for the next screen
-/// (FLAG_MENU_INFO_KEPT); otherwise it waits for A, B or Start.
-void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
-  struct ItemMenuState *menu = gMenuState;
-  struct Window *window;
-  s32 height;
-  s32 width;
-  s32 top;
-  s32 left;
+/* Shows message in the item menu, with the hand cursor hidden meanwhile: in a
+ */
+/* small window at tile (x, y) fitted to it, or with y -1 in the description */
+/* window along the bottom. With x -1 it stays there for the next screen */
+/* (FLAG_MENU_INFO_KEPT); otherwise it waits for A, B or Start. */
+void mnItemMenuShowMessage(s32 message, s32 x, s32 y) {
+	ITEM_MENU_STATE *menu = MenuState;
+	WINDOW *window;
+	s32 height;
+	s32 width;
+	s32 top;
+	s32 left;
 
-  menu->sideIcons[0]->motion = ICON_HIDDEN;
-  if (y != -1) {
-    Text_GetMessageSizeFar(message, &left, &top, &width, &height);
-    if (Window_UpdateOrCreate(&menu->modalWindow, x, y, width, height,
-                              WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT) == 0)
-      Window_SetBounds(menu->modalWindow, x, y, width, height);
-    window = menu->modalWindow;
-  } else {
-    window = menu->descriptionWindow;
-  }
-  WindowSprite_RedrawSavedRectFar(window);
-  WindowSprite_ClearListFar((void *)window);
+	menu->sideIcons[0]->motion = ICON_HIDDEN;
+	if(y != -1) {
+		mnTextGetMessageSizeStub(message, &left, &top, &width, &height);
+		if(mnWindowUpdateOrCreate(&menu->modalWin, x, y, width, height,
+								  WINDOW_KEEP_EXISTING | WINDOW_FLAG_INSTANT) ==
+		   0)
+			mnWindowSetBounds(menu->modalWin, x, y, width, height);
+		window = menu->modalWin;
+	}
+	else {
+		window = menu->descriptionWin;
+	}
+	mnWindowSprRedrawSavedRectStub(window);
+	mnWindowSprClearListStub((void *)window);
 #if LANGUAGE != LANGUAGE_JAPANESE
-  if (y == -1)
-    Text_DrawMessageAsTilesFar(message, window, 0, 0);
-  else
-    Text_DrawMessageFar(message, window, 0, 0);
+	if(y == -1)
+		mnTextDrawMessageAsTilesStub(message, window, 0, 0);
+	else
+		mnTextDrawMessageStub(message, window, 0, 0);
 #else
-  Text_DrawMessageFar(message, window, 0, 0);
+	mnTextDrawMessageStub(message, window, 0, 0);
 #endif
-  if (x != -1) {
-    wait(1);
-    do {
-      wait(1);
-    } while (!(gKeysPressed & KEY_A) && !(gKeysPressed & KEY_B) &&
-             !(gKeysPressed & KEY_START));
+	if(x != -1) {
+		sySynch(1);
+		do {
+			sySynch(1);
+		} while(!(KeysPressed & KEY_A) && !(KeysPressed & KEY_B) &&
+				!(KeysPressed & KEY_START));
 #if TBS_PATCH_1
-    if (y == -1)
-      WindowSprite_RedrawSavedRectFar(window);
+		if(y == -1)
+			mnWindowSprRedrawSavedRectStub(window);
 #endif
-    WindowSprite_ClearListFar((void *)window);
-  } else {
-    GameFlag_SetFar(FLAG_MENU_INFO_KEPT);
-  }
-  menu->completionFlag = 1;
-  menu->sideIcons[0]->motion = ICON_SHOWN;
+		mnWindowSprClearListStub((void *)window);
+	}
+	else {
+		gmFlagSetStub(FLAG_MENU_INFO_KEPT);
+	}
+	menu->completionFlg = 1;
+	menu->sideIcons[0]->motion = ICON_SHOWN;
 #if TBS_PATCH_1
-  if (y != -1)
-    Window_CloseIfOpen(&menu->modalWindow, 1);
+	if(y != -1)
+		mnWindowCloseIfOpen(&menu->modalWin, 1);
 #endif
 }
 
-/// The most bytes a list order copies, its LIST_ORDER_END included.
+/* The most bytes a list order copies, its LIST_ORDER_END included. */
 #define LIST_ORDER_MAX_LENGTH 32
 
-/// Sorts a party member's INVENTORY_SLOTS inventory slots by the list order of
-/// mode (enum ListSort): items are grouped by the order's item types and,
-/// within a type, run from the highest item id down.
-s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
-  u16 sorted[16];
-  u16 items[16];
-  u8 order[LIST_ORDER_MAX_LENGTH];
-  struct ItemDefinition *item;
-  s32 pass;
-  s32 i;
-  s32 count;
-  s32 best;
-  s32 bestSlot;
-  s32 sortedCount;
-  s32 value;
+/* Sorts a party member's INVENTORY_SLOTS inventory slots by the list order of
+ */
+/* mode (LIST_SORT): items are grouped by the order's item types and, */
+/* within a type, run from the highest item id down. */
+s32 mnItemMenuSort(u16 *inventory, s32 mode) {
+	u16 sorted[16];
+	u16 items[16];
+	u8 order[LIST_ORDER_MAX_LENGTH];
+	ITEM_DEFINITION *item;
+	s32 pass;
+	s32 i;
+	s32 count;
+	s32 best;
+	s32 bestSlot;
+	s32 sortedCount;
+	s32 value;
 
-  bestSlot = 0;
-  sortedCount = 0;
-  Menu_CopyListOrder(mode, order);
+	bestSlot = 0;
+	sortedCount = 0;
+	mnCopyListOrder(mode, order);
 
-  for (i = 0; i < INVENTORY_SLOTS; i++)
-    items[i] = inventory[i];
+	for(i = 0; i < INVENTORY_SLOTS; i++)
+		items[i] = inventory[i];
 
-  count = 0;
-  for (i = 0; i < INVENTORY_SLOTS; i++) {
-    if (items[i] != 0)
-      count++;
-  }
+	count = 0;
+	for(i = 0; i < INVENTORY_SLOTS; i++) {
+		if(items[i] != 0)
+			count++;
+	}
 
-  for (i = count; i < INVENTORY_SLOTS; i++)
-    sorted[i] = 0;
+	for(i = count; i < INVENTORY_SLOTS; i++)
+		sorted[i] = 0;
 
-  // One pass for each entry of the order: move its items across, the highest
-  // id first, until none is left.
-  for (pass = 0; order[pass] != LIST_ORDER_END; pass++) {
-    for (;;) {
-      best = 0;
-      for (i = 0; i < count; i++) {
-        if (items[i] == 0)
-          continue;
-        item = Item_GetDirectFar(items[i]);
-        if ((order[pass] & LIST_ORDER_TYPE_MASK) != item->type)
-          continue;
-        if ((order[pass] & LIST_ORDER_EQUIPPED) &&
-            (items[i] & INVENTORY_EQUIPPED) == 0)
-          continue;
-        value = items[i] & INVENTORY_ITEM_ID_MASK;
-        if (best < value) {
-          bestSlot = i;
-          best = value;
-        }
-      }
-      if (best == 0)
-        break;
-      sorted[sortedCount] = items[bestSlot];
-      items[bestSlot] = 0;
-      sortedCount++;
-    }
-  }
+	/* One pass for each entry of the order: move its items across, the highest
+	 */
+	/* id first, until none is left. */
+	for(pass = 0; order[pass] != LIST_ORDER_END; pass++) {
+		for(;;) {
+			best = 0;
+			for(i = 0; i < count; i++) {
+				if(items[i] == 0)
+					continue;
+				item = gmItemGetDirectStub(items[i]);
+				if((order[pass] & LIST_ORDER_TYPE_MASK) != item->type)
+					continue;
+				if((order[pass] & LIST_ORDER_EQUIPPED) &&
+				   (items[i] & INVENTORY_EQUIPPED) == 0)
+					continue;
+				value = items[i] & INVENTORY_ITEM_ID_MASK;
+				if(best < value) {
+					bestSlot = i;
+					best = value;
+				}
+			}
+			if(best == 0)
+				break;
+			sorted[sortedCount] = items[bestSlot];
+			items[bestSlot] = 0;
+			sortedCount++;
+		}
+	}
 
-  for (i = 0; i < count; i++)
-    inventory[i] = sorted[i];
-  return 1;
+	for(i = 0; i < count; i++)
+		inventory[i] = sorted[i];
+	return 1;
 }
 
-/// Copies the list order of mode (enum ListSort; any other mode takes
-/// LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
-/// and at most LIST_ORDER_MAX_LENGTH bytes.
-void Menu_CopyListOrder(s32 mode, u8 *order) {
-  u8 *src;
-  s32 n;
+/* Copies the list order of mode (LIST_SORT; any other mode takes */
+/* LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
+ */
+/* and at most LIST_ORDER_MAX_LENGTH bytes. */
+void mnCopyListOrder(s32 mode, u8 *order) {
+	u8 *src;
+	s32 n;
 
-  src = gMenu_ListOrderItemsFirst;
-  switch (mode) {
-  case LIST_SORT_EQUIPPED_THEN_ITEMS:
-    src = gMenu_ListOrderEquippedThenItems;
-    break;
-  case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
-    src = gMenu_ListOrderEquippedThenEquipment;
-    break;
-  case LIST_SORT_EQUIPMENT_FIRST:
-    src = gMenu_ListOrderEquipmentFirst;
-    break;
-  }
-  for (n = 0; n < LIST_ORDER_MAX_LENGTH; n++) {
-    if ((order[n] = src[n]) == LIST_ORDER_END)
-      break;
-  }
+	src = Menu_ListOrderItemsFirst;
+	switch(mode) {
+	case LIST_SORT_EQUIPPED_THEN_ITEMS:
+		src = Menu_ListOrderEquippedThenItems;
+		break;
+	case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
+		src = Menu_ListOrderEquippedThenEquipment;
+		break;
+	case LIST_SORT_EQUIPMENT_FIRST:
+		src = Menu_ListOrderEquipmentFirst;
+		break;
+	}
+	for(n = 0; n < LIST_ORDER_MAX_LENGTH; n++) {
+		if((order[n] = src[n]) == LIST_ORDER_END)
+			break;
+	}
 }
 
-/// The page indicator: the window font's digit tiles for pages 1, 2, ...,
-/// between the two page arrows.
+/* The page indicator: the window font's digit tiles for pages 1, 2, ..., */
+/* between the two page arrows. */
 #define PAGE_LABEL_FIRST 49
 
-/// Moves a paged list's cursor and page with the d-pad's repeating keys: Up and
-/// Down move the row and Left and Right turn the page, or, when horizontal is
-/// set, the other way round. Returns 1 when the page turned, 0 when the row
-/// moved and -1 when nothing did.
-s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
-                          s32 *page) {
-  s32 pages;
-  s32 next;
-  s32 previous;
-  s32 pageBack;
-  s32 pageForward;
-  s32 result;
+/* Moves a paged list's cursor and page with the d-pad's repeating keys: Up and
+ */
+/* Down move the row and Left and Right turn the page, or, when horizontal is */
+/* set, the other way round. Returns 1 when the page turned, 0 when the row */
+/* moved and -1 when nothing did. */
+s32 mnPagedListHandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
+						   s32 *page) {
+	s32 pages;
+	s32 next;
+	s32 previous;
+	s32 pageBack;
+	s32 pageForward;
+	s32 result;
 
-  result = -1;
-  if (count == 0)
-    return result;
-  // Animate the page arrows.
-  PageArrows_DrawFar(PAGE_ARROW_VRAM);
-  pages = count / pageSize;
-  if (count % pageSize != 0)
-    pages++;
-  if (horizontal) {
-    next = gKeysRepeat & KEY_RIGHT;
-    previous = gKeysRepeat & KEY_LEFT;
-    pageBack = gKeysRepeat & KEY_UP;
-    pageForward = gKeysRepeat & KEY_DOWN;
-  } else {
-    next = gKeysRepeat & KEY_DOWN;
-    previous = gKeysRepeat & KEY_UP;
-    pageBack = gKeysRepeat & KEY_LEFT;
-    pageForward = gKeysRepeat & KEY_RIGHT;
-  }
-  if (pageBack) {
-    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    if (--*page < 0)
-      *page = pages - 1;
-    // Past the end of a shorter last page: onto its last entry.
-    if (*cursor + *page * pageSize > count - 1) {
-      *cursor = count - *page * pageSize - 1;
-      if (*cursor > pageSize - 1)
-        *cursor = pageSize - 1;
-    }
-    Input_ResetKeyRepeat();
-    result = 1;
-    return result;
-  }
-  if (pageForward) {
-    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    if (++*page > pages - 1)
-      *page = 0;
-    if (*cursor + *page * pageSize > count - 1) {
-      *cursor = count - *page * pageSize - 1;
-      if (*cursor > pageSize - 1)
-        *cursor = pageSize - 1;
-    }
-    Input_ResetKeyRepeat();
-    result = 1;
-    return result;
-  }
-  if (previous) {
-    Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-    // Back past the first row wraps to the page's last entry: its last row, or
-    // the list's last entry on a shorter last page.
-    if (--*cursor < 0) {
-      *cursor = pageSize - 1;
-      *cursor = count - *page * pageSize - 1;
-      if (*cursor > pageSize - 1)
-        *cursor = pageSize - 1;
-    }
-    return 0;
-  }
-  result = -1;
-  if (next == 0)
-    return result;
-  // Forward past the list's last entry or the page's last row wraps to the
-  // first row.
-  Sound_PlayFar(SE_MENU_CURSOR_MOVE);
-  result = 0;
-  if (++*cursor == count - *page * pageSize)
-    *cursor = result;
-  if (*cursor > pageSize - 1)
-    *cursor = result;
-  return 0;
+	result = -1;
+	if(count == 0)
+		return result;
+	/* Animate the page arrows. */
+	mnPageArrowsDrawStub(PAGE_ARROW_VRAM);
+	pages = count / pageSize;
+	if(count % pageSize != 0)
+		pages++;
+	if(horizontal) {
+		next = KeysRepeat & KEY_RIGHT;
+		previous = KeysRepeat & KEY_LEFT;
+		pageBack = KeysRepeat & KEY_UP;
+		pageForward = KeysRepeat & KEY_DOWN;
+	}
+	else {
+		next = KeysRepeat & KEY_DOWN;
+		previous = KeysRepeat & KEY_UP;
+		pageBack = KeysRepeat & KEY_LEFT;
+		pageForward = KeysRepeat & KEY_RIGHT;
+	}
+	if(pageBack) {
+		sySndPlayStub(SE_MENU_CURSOR_MOVE);
+		if(--*page < 0)
+			*page = pages - 1;
+		/* Past the end of a shorter last page: onto its last entry. */
+		if(*cursor + *page * pageSize > count - 1) {
+			*cursor = count - *page * pageSize - 1;
+			if(*cursor > pageSize - 1)
+				*cursor = pageSize - 1;
+		}
+		syInputResetKeyRepeat();
+		result = 1;
+		return result;
+	}
+	if(pageForward) {
+		sySndPlayStub(SE_MENU_CURSOR_MOVE);
+		if(++*page > pages - 1)
+			*page = 0;
+		if(*cursor + *page * pageSize > count - 1) {
+			*cursor = count - *page * pageSize - 1;
+			if(*cursor > pageSize - 1)
+				*cursor = pageSize - 1;
+		}
+		syInputResetKeyRepeat();
+		result = 1;
+		return result;
+	}
+	if(previous) {
+		sySndPlayStub(SE_MENU_CURSOR_MOVE);
+		/* Back past the first row wraps to the page's last entry: its last row,
+		 * or */
+		/* the list's last entry on a shorter last page. */
+		if(--*cursor < 0) {
+			*cursor = pageSize - 1;
+			*cursor = count - *page * pageSize - 1;
+			if(*cursor > pageSize - 1)
+				*cursor = pageSize - 1;
+		}
+		return 0;
+	}
+	result = -1;
+	if(next == 0)
+		return result;
+	/* Forward past the list's last entry or the page's last row wraps to the */
+	/* first row. */
+	sySndPlayStub(SE_MENU_CURSOR_MOVE);
+	result = 0;
+	if(++*cursor == count - *page * pageSize)
+		*cursor = result;
+	if(*cursor > pageSize - 1)
+		*cursor = result;
+	return 0;
 }
 
-/// Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
-/// WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the
-/// highlight colour of the menu's selected rows.
-void Palette_LightenHighlight(s32 paletteNumber) {
-  u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
-  u32 red;
-  u32 green;
-  u32 blue;
+/* Copies WINDOW_PALETTE into background palette paletteNumber and lightens its
+ */
+/* WINDOW_BACKGROUND_COLOR by HIGHLIGHT_LIGHTEN_STEPS in each channel: the */
+/* highlight colour of the menu's selected rows. */
+void mnPaletteLightenHighlight(s32 paletteNumber) {
+	u16 *palette = (u16 *)&BG_PLTT_COLOR(paletteNumber, 0);
+	u32 red;
+	u32 green;
+	u32 blue;
 
-  // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
-  // 8 words.
-  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_COPY_WORDS(8), REG_DMA3);
-  // BGR555: five bits a channel, 0 to 31, red lowest.
-  blue = palette[WINDOW_BACKGROUND_COLOR] >> BLUE_SHIFT;
-  green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
-  red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
-  blue += HIGHLIGHT_LIGHTEN_STEPS;
-  if (blue > RGB_LEVEL_MAX)
-    blue = RGB_LEVEL_MAX;
-  green += HIGHLIGHT_LIGHTEN_STEPS;
-  if (green > RGB_LEVEL_MAX)
-    green = RGB_LEVEL_MAX;
-  red += HIGHLIGHT_LIGHTEN_STEPS;
-  if (red > RGB_LEVEL_MAX)
-    red = RGB_LEVEL_MAX;
-  palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);
+	/* Both transfers copy the same 32 bytes, first as 16 halfwords and then as
+	 */
+	/* 8 words. */
+	syDMAXCopy((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+			   DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+	syDMAXCopy((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+			   DMA_COPY_WORDS(8), REG_DMA3);
+	/* BGR555: five bits a channel, 0 to 31, red lowest. */
+	blue = palette[WINDOW_BACKGROUND_COLOR] >> BLUE_SHIFT;
+	green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
+	red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
+	blue += HIGHLIGHT_LIGHTEN_STEPS;
+	if(blue > RGB_LEVEL_MAX)
+		blue = RGB_LEVEL_MAX;
+	green += HIGHLIGHT_LIGHTEN_STEPS;
+	if(green > RGB_LEVEL_MAX)
+		green = RGB_LEVEL_MAX;
+	red += HIGHLIGHT_LIGHTEN_STEPS;
+	if(red > RGB_LEVEL_MAX)
+		red = RGB_LEVEL_MAX;
+	palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);
 }
 
-/// Draws a paged list's page numbers on the top border of window, ending at
-/// tile rightEdge: one digit per page between the page arrows, selectedPage in
-/// HIGHLIGHT_PALETTE and the others in WINDOW_PALETTE.
-void PagedList_DrawPageNumbers(struct Window *window, s32 itemCount,
-                               s32 pageSize, s32 selectedPage, s32 rightEdge) {
-  s32 pageCount;
-  s32 page;
-  s32 x;
-  s32 tile;
+/* Draws a paged list's page numbers on the top border of window, ending at */
+/* tile rightEdge: one digit per page between the page arrows, selectedPage in
+ */
+/* HIGHLIGHT_PALETTE and the others in WINDOW_PALETTE. */
+void mnPagedListDrawPageNumbers(WINDOW *window, s32 itemCount, s32 pageSize,
+								s32 selectedPage, s32 rightEdge) {
+	s32 pageCount;
+	s32 page;
+	s32 x;
+	s32 tile;
 
-  x = rightEdge;
-  tile = PAGE_LABEL_FIRST;
-  pageCount = itemCount / pageSize;
-  if (itemCount % pageSize != 0)
-    pageCount++;
+	x = rightEdge;
+	tile = PAGE_LABEL_FIRST;
+	pageCount = itemCount / pageSize;
+	if(itemCount % pageSize != 0)
+		pageCount++;
 
-  x -= pageCount;
-  if (pageCount > 1) {
-    Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT, x - 1, -1,
-                              TILEMAP_ENTRY_PLAIN);
+	x -= pageCount;
+	if(pageCount > 1) {
+		mnWindowSetTilemapEntryStub(window, PAGE_ARROW_LEFT, x - 1, -1,
+									TILEMAP_ENTRY_PLAIN);
 
-    for (page = 0; page < pageCount; page++) {
-      if (page == selectedPage)
-        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_HIGHLIGHT);
-      else
-        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_WINDOW);
-      tile++;
-      x++;
-    }
+		for(page = 0; page < pageCount; page++) {
+			if(page == selectedPage)
+				mnWindowSetTilemapEntryStub(window, tile, x, -1,
+											TILEMAP_ENTRY_HIGHLIGHT);
+			else
+				mnWindowSetTilemapEntryStub(window, tile, x, -1,
+											TILEMAP_ENTRY_WINDOW);
+			tile++;
+			x++;
+		}
 
-    Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, x, -1,
-                              TILEMAP_ENTRY_PLAIN);
-  }
+		mnWindowSetTilemapEntryStub(window, PAGE_ARROW_RIGHT, x, -1,
+									TILEMAP_ENTRY_PLAIN);
+	}
 }
 
-/// Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
-/// HIGHLIGHT_PALETTE (the highlight made by Palette_LightenHighlight): palette
-/// is the new palette number.
-void Window_SetHighlightRect(const struct Window *window, s32 x, s32 y,
-                             s32 width, s32 height, u32 palette) {
-  struct WindowState *state = WINDOW_STATE;
-  u8 *tilemap = (u8 *)state->tilemap;
+/* Switches a rectangle of a window's text between WINDOW_PALETTE (normal) and
+ */
+/* HIGHLIGHT_PALETTE (the highlight made by mnPaletteLightenHighlight): palette
+ */
+/* is the new palette number. */
+void mnWindowSetHighlightRect(const WINDOW *window, s32 x, s32 y, s32 width,
+							  s32 height, u32 palette) {
+	WIN_STATE *state = WINDOW_STATE;
+	u8 *tilemap = (u8 *)state->tilemap;
 
-  x += window->x + 1;
-  y += window->y + 1;
-  palette = BG_TILE_PALETTE(palette);
-  if (x < 0) {
-    width += x;
-    x = 0;
-  }
-  if (x + width > DISPLAY_TILE_WIDTH - 1) {
-    width = DISPLAY_TILE_WIDTH - x;
-  }
-  if (y < 0) {
-    height += y;
-    y = 0;
-  }
-  // BUG: tests the bottom against the screen's width but clips to its rows, so
-  // a rectangle ending in rows 20 to 28 is kept whole and writes past the 32
-  // by 20 tilemap into the windows after it.
+	x += window->x + 1;
+	y += window->y + 1;
+	palette = BG_TILE_PALETTE(palette);
+	if(x < 0) {
+		width += x;
+		x = 0;
+	}
+	if(x + width > DISPLAY_TILE_WIDTH - 1) {
+		width = DISPLAY_TILE_WIDTH - x;
+	}
+	if(y < 0) {
+		height += y;
+		y = 0;
+	}
+	/* BUG: tests the bottom against the screen's width but clips to its rows,
+	 * so */
+	/* a rectangle ending in rows 20 to 28 is kept whole and writes past the 32
+	 */
+	/* by 20 tilemap into the windows after it. */
 #ifdef BUGFIX
-  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+	if(y + height > DISPLAY_TILE_HEIGHT - 1) {
 #else
-  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+	if(y + height > DISPLAY_TILE_WIDTH - 1) {
 #endif
-    height = DISPLAY_TILE_HEIGHT - y;
-  }
-  if (width > 0 && height > 0) {
-    // Byte offset of the first entry: 32 two-byte entries a row.
-    y <<= 6;
-    x = y + (x << 1);
-    do {
-      u16 *entry = (u16 *)(x + (u32)tilemap);
-      s32 remaining = width;
-      while (remaining != 0) {
-        u32 value = *entry;
-        value &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
-        value |= palette;
-        remaining--;
-        *entry = value;
-        entry++;
-      }
-      height--;
-      x += 64;
-    } while (height != 0);
-    state->dirty = 1;
-  }
+		height = DISPLAY_TILE_HEIGHT - y;
+	}
+	if(width > 0 && height > 0) {
+		/* Byte offset of the first entry: 32 two-byte entries a row. */
+		y <<= 6;
+		x = y + (x << 1);
+		do {
+			u16 *entry = (u16 *)(x + (u32)tilemap);
+			s32 remaining = width;
+			while(remaining != 0) {
+				u32 value = *entry;
+				value &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
+				value |= palette;
+				remaining--;
+				*entry = value;
+				entry++;
+			}
+			height--;
+			x += 64;
+		} while(height != 0);
+		state->dirty = 1;
+	}
 }
 
-/// Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite
-/// palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
-/// TEXT_BACKGROUND_COLOR (as StatusScreen_Run does for palettes 0 and 1).
-void Palette_LoadIconsIntoHighlight(void) {
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
-          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
-          DMA_COPY_HALFWORDS(1), REG_DMA3);
+/* Lends HIGHLIGHT_PALETTE to the element icons: copies the first sprite */
+/* palette, the icons' colours, into it, then WINDOW_BACKGROUND_COLOR over its
+ */
+/* TEXT_BACKGROUND_COLOR (as mnStatScrRun does for palettes 0 and 1). */
+void mnPaletteLoadIconsIntoHighlight(void) {
+	syDMAXCopy((const void *)OBJ_PLTT,
+			   (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
+			   DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+	syDMAXCopy(
+		(const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+		(void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
+		DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
-/// Shows the icons of one page of a list, one row of 16 pixels each from (x,
-/// y): entries first to first + pageSize - 1, stopping early at an empty icon
-/// slot or the state's itemCount. Hides all the others.
-void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
-                       s32 y) {
-  struct ItemMenuState *menu = gMenuState;
-  struct WindowSprite *icon;
-  s32 i;
+/* Shows the icons of one page of a list, one row of 16 pixels each from (x, */
+/* y): entries first to first + pageSize - 1, stopping early at an empty icon */
+/* slot or the state's itemCount. Hides all the others. */
+void mnSetPageIcons(s32 pageSize, s32 first, WINDOW *window, s32 x, s32 y) {
+	ITEM_MENU_STATE *menu = MenuState;
+	WINDOW_SPR *icon;
+	s32 i;
 
-  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
-    icon = menu->entryIcons[i];
-    if (icon != NULL)
-      icon->motion = ICON_HIDDEN;
-  }
-  for (i = first;
-       i < pageSize + first && (icon = menu->entryIcons[i]) != NULL &&
-       i <= menu->itemCount - 1;
-       i++) {
-    icon->x = x;
-    icon->y = y + (i - first) * 16;
-    Icon_Show(icon);
-    icon->motion = ICON_SHOWN;
-  }
+	for(i = 0; i < MENU_ENTRY_ICONS; i++) {
+		icon = menu->entryIcons[i];
+		if(icon != NULL)
+			icon->motion = ICON_HIDDEN;
+	}
+	for(i = first;
+		i < pageSize + first && (icon = menu->entryIcons[i]) != NULL &&
+		i <= menu->itemCnt - 1;
+		i++) {
+		icon->x = x;
+		icon->y = y + (i - first) * 16;
+		mnIconShow(icon);
+		icon->motion = ICON_SHOWN;
+	}
 }
 
-/// Writes the party's coins and the "Coins" label into window: the info
-/// window of the Item and Psynergy screens' party member choice.
-void Menu_DrawCoins(struct Window *window) {
-  Text_DrawNumberAtOffsetFar(gMainRoutineState.holdings.coins, 7, window, 8, 0);
-  Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);
-  // Only the Japanese editions draw a vertical divider at tile column 12.
+/* Writes the party's coins and the "Coins" label into window: the info */
+/* window of the Item and Psynergy screens' party member choice. */
+void mnDrawCoins(WINDOW *window) {
+	mnTextDrawNumAtOffsetStub(MainRoutineStateWork.holdings.coins, 7, window, 8,
+							  0);
+	mnTextDrawMessageAsTilesStub(MsgCoinsLabel, window, 64, 0);
+	/* Only the Japanese editions draw a vertical divider at tile column 12. */
 #if LANGUAGE == LANGUAGE_JAPANESE
-  Window_DrawDividerLineFar(window, 12, 0, 12, 2);
+	mnWindowDrawDividerLineStub(window, 12, 0, 12, 2);
 #endif
 }
 
-/// Moves and resizes a window, in tiles.
-void Window_SetBounds(struct Window *window, s32 x, s32 y, s32 width,
-                      s32 height) {
-  if (window != NULL) {
-    window->width = width;
-    window->x = x;
-    window->height = height;
-    window->y = y;
-  }
+/* Moves and resizes a window, in tiles. */
+void mnWindowSetBounds(WINDOW *window, s32 x, s32 y, s32 width, s32 height) {
+	if(window != NULL) {
+		window->width = width;
+		window->x = x;
+		window->height = height;
+		window->y = y;
+	}
 }
 
-/// Holds back the window tilemap's upload (holdTilemapUpload), so that what a
-/// menu draws meanwhile appears at once when Window_ReleaseTilemapUpload lets
-/// it go. Nothing calls it: the screens set holdTilemapUpload themselves.
-void Window_HoldTilemapUpload(void) { WINDOW_STATE->holdTilemapUpload = 1; }
+/* Holds back the window tilemap's upload (holdTilemapUpload), so that what a */
+/* menu draws meanwhile appears at once when mnWindowReleaseTilemapUpload lets
+ */
+/* it go. Nothing calls it: the screens set holdTilemapUpload themselves. */
+void mnWindowHoldTilemapUpload(void) { WINDOW_STATE->holdTilemapUpload = 1; }
 
-/// Lets the window tilemap be uploaded again after Window_HoldTilemapUpload.
-/// Nothing calls it.
-void Window_ReleaseTilemapUpload(void) { WINDOW_STATE->holdTilemapUpload = 0; }
+/* Lets the window tilemap be uploaded again after mnWindowHoldTilemapUpload. */
+/* Nothing calls it. */
+void mnWindowReleaseTilemapUpload(void) { WINDOW_STATE->holdTilemapUpload = 0; }
 
-/// Plays a sound and returns 1.
-s32 Sound_PlayReturnOne(s32 sound) {
-  Sound_PlayFar(sound);
-  return 1;
+/* Plays a sound and returns 1. */
+s32 mnSndPlayReturnOne(s32 sound) {
+	sySndPlayStub(sound);
+	return 1;
 }
 
-/// Task while a menu runs: on Start, plays the cancel sound,
-/// sets FLAG_MENU_START_PRESSED and removes itself.
-void Menu_WatchStart(void) {
-  if (gKeysPressed & KEY_START) {
-    Sound_PlayFar(SE_MENU_CANCEL);
-    GameFlag_SetFar(FLAG_MENU_START_PRESSED);
-    Task_Remove(Menu_WatchStart);
-  }
+/* Task while a menu runs: on Start, plays the cancel sound, */
+/* sets FLAG_MENU_START_PRESSED and removes itself. */
+void mnWatchStart(void) {
+	if(KeysPressed & KEY_START) {
+		sySndPlayStub(SE_MENU_CANCEL);
+		gmFlagSetStub(FLAG_MENU_START_PRESSED);
+		syCloseEvent(mnWatchStart);
+	}
 }
 
-/// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_WatchStart.
-void Menu_StartWatchingStart(void) {
-  GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
-  Task_Add(Menu_WatchStart, TASK_PASS_FRAME);
+/* Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds */
+/* mnWatchStart. */
+void mnStartWatchingStart(void) {
+	gmFlagClearStub(FLAG_MENU_START_PRESSED);
+	sySetEvent(mnWatchStart, TASK_PASS_FRAME);
 }
 
-/// Stops watching for Start, if Start has not removed the watch already.
-void Menu_StopWatchingStart(void) {
-  if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
-    Task_Remove(Menu_WatchStart);
-  }
+/* Stops watching for Start, if Start has not removed the watch already. */
+void mnStopWatchingStart(void) {
+	if(gmFlagGetStub(FLAG_MENU_START_PRESSED) == 0) {
+		syCloseEvent(mnWatchStart);
+	}
 }
 
-/// Makes the text drawn after it TEXT_COLOR_NORMAL. Nothing calls
-/// it or the two after it; the status panel sets its colours with
-/// Text_SetColorFar.
-void WindowPalette_SetNormalTextColor(void) {
-  Text_SetColorFar(TEXT_COLOR_NORMAL);
+/* Makes the text drawn after it TEXT_COLOR_NORMAL. Nothing calls */
+/* it or the two after it; the status panel sets its colours with */
+/* mnTextSetColStub. */
+void mnWindowPaletteSetNormalTextCol(void) {
+	mnTextSetColStub(TEXT_COLOR_NORMAL);
 }
 
-/// Makes the text drawn after it TEXT_COLOR_NO_HP.
-void WindowPalette_SetNoHpTextColor(void) {
-  Text_SetColorFar(TEXT_COLOR_NO_HP);
-}
+/* Makes the text drawn after it TEXT_COLOR_NO_HP. */
+void mnWindowPaletteSetNoHpTextCol(void) { mnTextSetColStub(TEXT_COLOR_NO_HP); }
 
-/// Makes the text drawn after it TEXT_COLOR_LOW_HP.
-void WindowPalette_SetLowHpTextColor(void) {
-  Text_SetColorFar(TEXT_COLOR_LOW_HP);
+/* Makes the text drawn after it TEXT_COLOR_LOW_HP. */
+void mnWindowPaletteSetLowHpTextCol(void) {
+	mnTextSetColStub(TEXT_COLOR_LOW_HP);
 }
 
 #undef STATUS_PANEL_TEXT_X

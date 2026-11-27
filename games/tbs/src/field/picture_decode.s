@@ -1,6 +1,6 @@
 @ Why Render_DecodePicture is assembly:
 @ Computed add pc dispatch into code; a later block saves r5-r9 without lr.
-@ Why TileMap_DrawRows is assembly:
+@ Why fdTileMapDrawRows is assembly:
 @ r4 (0xffa00038) is at once two packed loop counters and an AND mask.
 @ subs r4, r4, #0x01000000 / bpl counts the inner loop in its top byte, reset
 @ by add r4, r4, #0x1e000000; sub r4, r4, #0x10000 with tst r4, #0x70000 and
@@ -70,7 +70,7 @@ AlchemyUncreditedEnd_render_decode_1:
 	ands	r2, r2, r2, lsr #8
 	bne	.Lcopy_unchecked
 	b	.Lcopy_checked
-	.4byte gDecodeFillByte
+	.4byte DecodeFillByte
 	ldr	r2, [pc, #-12]
 	ldrb	r2, [r2]
 	b	.Lfill_next
@@ -144,16 +144,16 @@ AlchemyUncreditedEnd_render_decode_1:
 	@ 224 bytes (unused) and less 256 bytes: table n is the 256 bytes at
 	@ that base + n * 256.
 	.4byte 0
-	.4byte gSpriteColorTables - 224
-	.4byte gSpriteColorTables - 256
-	.global gRender_DecodePictureEnd
-gRender_DecodePictureEnd:
+	.4byte SpriteColorTables - 224
+	.4byte SpriteColorTables - 256
+	.global Render_DecodePictureEnd
+Render_DecodePictureEnd:
 	.space 224, 0
 .syntax unified
 	.section .text.draw_map,"ax",%progbits
 	.arm
-	.global TileMap_DrawRows
-TileMap_DrawRows:
+	.global fdTileMapDrawRows
+fdTileMapDrawRows:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r4, #10485760
 	orr	r4, r4, #56
@@ -315,5 +315,5 @@ TileMap_DrawRows:
 	bne	.Ldraw_row
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.global TileMap_DrawRowsCodeSize
-	.set TileMap_DrawRowsCodeSize, . - TileMap_DrawRows
+	.global fdTileMapDrawRowsCodeSize
+	.set fdTileMapDrawRowsCodeSize, . - fdTileMapDrawRows

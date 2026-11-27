@@ -8,8 +8,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gSongTable
-gSongTable:
+	.global SongTable
+SongTable:
 	song Song_MusVillageTheme, 1
 	song Song_MusTownTheme, 1
 	song Song_MusAnUnsettlingFeeling, 1

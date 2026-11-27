@@ -1,18 +1,19 @@
-/// Lifts the leader by `height` and has the camera hold still, unless the party
-/// keeps its place.
-void Leader_Lift(FIXED height) {
-  struct Actor *actor = Actor_Get(gMainRoutineState.leaderActorId);
+/* Lifts the leader by `height` and has the camera hold still, unless the party
+ */
+/* keeps its place. */
+void fdLeaderLift(FIXED height) {
+	ACTOR *actor = fdActorGet(MainRoutineStateWork.leaderActorId);
 
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    actor->motionFlags = 0;
-    Actor_SetSpriteFlags(actor, 0);
-    actor->y.fixed += height;
-    actor->speedLimit = toFIXED(1);
-    actor->velocityY = 0;
-    gMainRoutineState.movementMode = LEADER_MOVEMENT_KEYS;
-    actor->steeringFlags = ACTOR_FACES_MOTION;
-    EventCamera_FollowActor(gMainRoutineState.leaderActorId, 0);
-    MapGrid_CenterOnFollowedPoint();
-    System_Wait(1);
-  }
+	if(!fdEventGetFlag(FLAG_KEEP_PARTY_POSITION)) {
+		actor->motionFlg = 0;
+		fdActorSetSprFlags(actor, 0);
+		actor->y.fixed += height;
+		actor->speedLimit = toFIXED(1);
+		actor->velY = 0;
+		MainRoutineStateWork.movementMode = LEADER_MOVEMENT_KEYS;
+		actor->steeringFlg = ACTOR_FACES_MOTION;
+		syEventCameraFollowActor(MainRoutineStateWork.leaderActorId, 0);
+		fdMapGridCenterOnFollowedPoint();
+		syWait(1);
+	}
 }

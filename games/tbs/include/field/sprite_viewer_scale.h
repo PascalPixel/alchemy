@@ -1,12 +1,12 @@
 #ifndef ALCHEMY_SPRITE_VIEWER_SCALE_H
 #define ALCHEMY_SPRITE_VIEWER_SCALE_H
 
-/// @file
-/// The debug sprite viewer's ring scale (sprite_viewer_scale.c).
+/* @file */
+/* The debug sprite viewer's ring scale (sprite_viewer_scale.c). */
 
 #include "types.h"
 #include "graphics/render_placement.h"
 
-extern const struct SpriteScale gSpriteViewer_Scale;
+extern const SPR_SCALE SpriteViewer_Scale;
 
 #endif

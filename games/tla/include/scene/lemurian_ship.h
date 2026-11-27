@@ -1,50 +1,50 @@
 #ifndef ALCHEMY_SCENE_LEMURIAN_SHIP_H
 #define ALCHEMY_SCENE_LEMURIAN_SHIP_H
 
-/// @file
-/// The Lemurian Ship's rooms: their tables, doors and set-ups, and the pillar
-/// Lift raises.
+/* @file */
+/* The Lemurian Ship's rooms: their tables, doors and set-ups, and the pillar */
+/* Lift raises. */
 
 #include "types.h"
 #include "scene/scene.h"
 #include "field/scene_tables.h"
 
-extern s32 gLemurianShip_Entrances[];
-extern u32 gLemurianShip_CabinsEntrances[];
-extern u32 gLemurianShip_CabinsRegions[];
-extern u32 gLemurianShip_AquaHydraRegions[];
-extern struct ActorPlacement gLemurianShip_Placements[];
-extern struct ActorPlacement gLemurianShip_TwoJellyRoomPlacements[];
+extern s32 LemurianShip_Entrances[];
+extern u32 LemurianShip_CabinsEntrances[];
+extern u32 LemurianShip_CabinsRegions[];
+extern u32 LemurianShip_AquaHydraRegions[];
+extern ACTOR_PLACE LemurianShip_Placements[];
+extern ACTOR_PLACE LemurianShip_TwoJellyRoomPlacements[];
 
-extern struct ActorPlacement gLemurianShip_SixJellyRoomPlacements[];
+extern ACTOR_PLACE LemurianShip_SixJellyRoomPlacements[];
 
-extern struct ActorPlacement gLemurianShip_HoldPlacements[];
-extern struct ActorPlacement gLemurianShip_PillarRoomPlacements[];
-extern struct ActorPlacement gLemurianShip_EngineRoomPlacements[];
-extern struct LemurianShipWarp gLemurianShip_Doors[];
-extern struct LemurianShipWarp gLemurianShip_LowerDoors[];
-extern s32 gLeader_WalkThroughDoorScript[];
-extern struct Trigger gLemurianShip_Triggers[];
-extern struct Trigger gLemurianShip_CabinTriggers[];
-extern struct Trigger gLemurianShip_TwoJellyRoomTriggers[];
-extern struct Trigger gLemurianShip_SixJellyRoomTriggers[];
-extern struct Trigger gLemurianShip_PipeRoomTriggers[];
-extern struct Trigger gLemurianShip_LowerDeckTriggers[];
-extern u32 gLemurianShip_PiersToPedestal[];
-extern u32 gLemurianShip_ShebaStepsUp[];
-extern u32 gLemurianShip_JennaStepsUp[];
-extern u32 gLemurianShip_KradenStepsUp[];
-void LemurianShip_SetUpStairRoom(void);
+extern ACTOR_PLACE LemurianShip_HoldPlacements[];
+extern ACTOR_PLACE LemurianShip_PillarRoomPlacements[];
+extern ACTOR_PLACE LemurianShip_EngineRoomPlacements[];
+extern LEMURIAN_SHIP_WARP LemurianShip_Doors[];
+extern LEMURIAN_SHIP_WARP LemurianShip_LowerDoors[];
+extern s32 Leader_WalkThroughDoorScript[];
+extern TRIGGER LemurianShip_Triggers[];
+extern TRIGGER LemurianShip_CabinTriggers[];
+extern TRIGGER LemurianShip_TwoJellyRoomTriggers[];
+extern TRIGGER LemurianShip_SixJellyRoomTriggers[];
+extern TRIGGER LemurianShip_PipeRoomTriggers[];
+extern TRIGGER LemurianShip_LowerDeckTriggers[];
+extern u32 LemurianShip_PiersToPedestal[];
+extern u32 LemurianShip_ShebaStepsUp[];
+extern u32 LemurianShip_JennaStepsUp[];
+extern u32 LemurianShip_KradenStepsUp[];
+void scLemurianShipSetUpStairRoom(void);
 
-void LemurianShip_SetUpSixJellyRoom(void);
+void scLemurianShipSetUpSixJellyRoom(void);
 
-void LemurianShip_SetUpLedgeRoom(void);
-void LemurianShip_SetUpPipeRoom(void);
-void LemurianShip_SetUpHold(void);
-void LemurianShip_SetUpPillarRoom(void);
-void LemurianShip_SetUpEngineRoom(void);
-extern s16 gLemurianShip_DoorOpening[];
-extern s16 gLemurianShip_FirstDoorOpening[];
-void LemurianShip_LiftPillar(void);
+void scLemurianShipSetUpLedgeRoom(void);
+void scLemurianShipSetUpPipeRoom(void);
+void scLemurianShipSetUpHold(void);
+void scLemurianShipSetUpPillarRoom(void);
+void scLemurianShipSetUpEngineRoom(void);
+extern s16 LemurianShip_DoorOpening[];
+extern s16 LemurianShip_FirstDoorOpening[];
+void scLemurianShipLiftPillar(void);
 
 #endif

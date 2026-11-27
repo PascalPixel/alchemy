@@ -1,6 +1,6 @@
 	.include "enums/flags.inc"
 
-@ The encounter zones of the field's scenes (struct SceneEncounterRule): the
+@ The encounter zones of the field's scenes (SCENE_ENCOUNTER_RULE): the
 @ first rule that matches the scene and entrance, its flag not yet set, gives
 @ the scene's zones. Each row: the scene, its entrance (-1 for any), the flag
 @ (-1 for none), whether the first zone is for ground 0 rather than 1, and the
@@ -12,8 +12,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gScene_EncounterRules
-gScene_EncounterRules:
+	.global Scene_EncounterRules
+Scene_EncounterRules:
 	encounter_rule SolSanctumCorridor, -1, FLAG_SOL_SANCTUM_ERUPTED, 1, 1
 	encounter_rule SolSanctumReliefs, 1, FLAG_SOL_SANCTUM_ERUPTED, 0, 2
 	encounter_rule SolSanctumReliefs, 2, FLAG_SOL_SANCTUM_ERUPTED, 0, 2

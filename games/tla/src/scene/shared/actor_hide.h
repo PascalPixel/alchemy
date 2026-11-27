@@ -1,8 +1,8 @@
-/// Takes an actor out of play and out of sight: disabled, painted transparent
-/// and drawn underfoot.
-void Actor_Hide(s32 id) {
-  Actor_DisableById(id);
-  Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_HIDDEN);
-  Actor_SetSpritePriority(id, 1);
-  Actor_GetById(id)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+/* Takes an actor out of play and out of sight: disabled, painted transparent */
+/* and drawn underfoot. */
+void fdActorHide(s32 id) {
+	fdActorDisableById(id);
+	fdActorSetSprCol(fdActorGetById(id), SPRITE_COLOR_HIDDEN);
+	fdActorSetSprPriority(id, 1);
+	fdActorGetById(id)->priFlg |= ACTOR_PRIORITY_UNDERFOOT;
 }

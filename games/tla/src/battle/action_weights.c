@@ -1,12 +1,12 @@
-/// @file
-/// The enemies' action weights.
+/* @file */
+/* The enemies' action weights. */
 
 #include "types.h"
 
-/// BattleAI_ChooseAction's rolls for the first three action strategies, a row
-/// each: the chance in 256 of each place in the enemy's actions.
-u8 gBattleAI_ActionWeights[3][8] = {
-    {32, 32, 32, 32, 32, 32, 32, 32},
-    {53, 47, 41, 35, 29, 23, 17, 11},
-    {113, 56, 31, 20, 14, 10, 7, 5},
+/* btAIChooseAction's rolls for the first three action strategies, a row */
+/* each: the chance in 256 of each place in the enemy's actions. */
+u8 BattleAI_ActionWeights[3][8] = {
+	{32, 32, 32, 32, 32, 32, 32, 32},
+	{53, 47, 41, 35, 29, 23, 17, 11},
+	{113, 56, 31, 20, 14, 10, 7, 5},
 };

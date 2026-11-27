@@ -1,10 +1,10 @@
 name	file	section	align	left	pad	edition	fill
-gPartyStatus_DigitTiles	digits.4bpp						
-gNameEntry_KeyboardTilemap	keyboard_ja.tilemap.lz					ja	
-gNameEntry_AlternateKeyboardTilemap	keyboard_ja_latin.tilemap.lz					ja	
+PartyStatus_DigitTiles	digits.4bpp						
+NameEntry_KeyboardTilemap	keyboard_ja.tilemap.lz					ja	
+NameEntry_AlternateKeyboardTilemap	keyboard_ja_latin.tilemap.lz					ja	
 NameEntry_UnusedKeyboardTilemap	keyboard_ja_latin_unused.tilemap.lz					ja	
-gNameEntry_KeyboardTilemap	keyboard.tilemap.lz					en	
-gNameEntry_KeyboardTilemap	keyboard.tilemap.lz					de	
-gNameEntry_KeyboardTilemap	keyboard_es.tilemap.lz					es	
-gNameEntry_KeyboardTilemap	keyboard.tilemap.lz					fr	
-gNameEntry_KeyboardTilemap	keyboard.tilemap.lz					it	
+NameEntry_KeyboardTilemap	keyboard.tilemap.lz					en	
+NameEntry_KeyboardTilemap	keyboard.tilemap.lz					de	
+NameEntry_KeyboardTilemap	keyboard_es.tilemap.lz					es	
+NameEntry_KeyboardTilemap	keyboard.tilemap.lz					fr	
+NameEntry_KeyboardTilemap	keyboard.tilemap.lz					it	

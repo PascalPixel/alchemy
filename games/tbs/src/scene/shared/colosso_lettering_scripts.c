@@ -1,14 +1,15 @@
-/// @file
-/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-/// the scripts that move the lettering's title, `GO` and `WIN`
-/// (Colosso_StartLettering). The code rewrites one wait in the title's and
-/// `WIN`'s each time.
+/* @file */
+/* The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+ */
+/* the scripts that move the lettering's title, `GO` and `WIN` */
+/* (scColossoStartLettering). The code rewrites one wait in the title's and */
+/* `WIN`'s each time. */
 
 #include "types.h"
 
-// clang-format off
-/// The title lettering's moves, in COLOSSO_LETTERING_ commands.
-s16 gColosso_LetteringTitle[] = {
+/* clang-format off */
+/* The title lettering's moves, in COLOSSO_LETTERING_ commands. */
+s16 Colosso_LetteringTitle[] = {
 #if LANGUAGE == LANGUAGE_JAPANESE
     COLOSSO_LETTERING_PLACE, -188, 2048,
     COLOSSO_LETTERING_SCALE, 256, 1,
@@ -26,8 +27,8 @@ s16 gColosso_LetteringTitle[] = {
     COLOSSO_LETTERING_END,
 };
 
-/// `GO`'s moves.
-s16 gColosso_LetteringGo[] = {
+/* `GO`'s moves. */
+s16 Colosso_LetteringGo[] = {
 #if LANGUAGE == LANGUAGE_FRENCH
     COLOSSO_LETTERING_SCALE, 512, 1,
     COLOSSO_LETTERING_FADE, 0, 1,
@@ -109,8 +110,8 @@ s16 gColosso_LetteringGo[] = {
 #endif
 };
 
-/// `WIN`'s moves.
-s16 gColosso_LetteringWin[] = {
+/* `WIN`'s moves. */
+s16 Colosso_LetteringWin[] = {
     COLOSSO_LETTERING_SCALE, 128, 1,
     COLOSSO_LETTERING_FADE, 0, 1,
     COLOSSO_LETTERING_SCALE, 256, 6,
@@ -137,4 +138,4 @@ s16 gColosso_LetteringWin[] = {
     COLOSSO_LETTERING_WAIT, 6,
     COLOSSO_LETTERING_END,
 };
-// clang-format on
+/* clang-format on */

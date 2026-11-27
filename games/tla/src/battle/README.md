@@ -2,14 +2,14 @@
 
 This folder is the battle sequence: one fight from its opening curtain to
 its spoils. [Battle](../../../../docs/tla/battle.md) gives the shape. This page follows a
-fight in order and says which routine does each part.
+fight in order and says which function does each part.
 
 ## Starting a battle
 
 ![A battle opens in the Kandorean Temple: the camera swings in as a Punch Ant, a Giant Bat and a Wild Wolf are each announced, and the command menu comes up on Fight](https://alchemy.pascalpixel.com/tla/guides/battle/opening.gif)
 
 A battle is handed one number, a [formation](../../../../docs/tla/glossary.md#formation),
-and `Battle_Run` plays the whole fight from it.
+and `btRun` plays the whole fight from it.
 
 ### The enemies of a formation
 
@@ -18,9 +18,9 @@ Every kind comes its fewest number of times, then each gains a random
 number more while there is room: six places on the screen, a large enemy
 taking two. So one formation is a family of line-ups, not one. Each enemy
 becomes a unit filled in from its row of the enemy table. It is
-`BattleFormation_BuildEnemyList`.
+`btFormationBuildEnemyList`.
 
-The Lost Age has 660 formations, the C array `gFormations` in
+The Lost Age has 660 formations, the C array `Formations` in
 [`formations.c`](formations.c), as The Broken Seal's are. With one game flag set, the
 battle passes over the number it was given: it picks among the formations
 whose enemies are near the party's average level, and moves the enemies'
@@ -32,7 +32,7 @@ levels by the difference.
 
 A turn is written down before it is played. Each action is brief: who
 acts, the command, where it is aimed, and a priority to sort by. Then the
-list is sorted and played from the top (`Battle_GatherActions`).
+list is sorted and played from the top (`btGatherActions`).
 
 ### The party's commands
 
@@ -44,29 +44,29 @@ from behind who takes it, and B on the party's row puts the last switch
 back. Status shows the ones behind as well.
 
 Then the menu asks each party member in front and still standing for an
-action (`Battle_CollectPartyCommands`). One who is asleep or stunned is not
+action (`mnBattleCollectPartyCommands`). One who is asleep or stunned is not
 asked, but an action is still written for them with no command in it, and
 their place in the order is when the player reads why they did nothing.
 
 When everyone in front is down and someone behind still stands, the ones
 behind step into the fallen places at the start of the next turn
-(`BattleParty_SwapInReserves`). The battle is lost only when all of them
+(`btPartySwapInReserves`). The battle is lost only when all of them
 are down. A link battle is three against three, with nobody behind.
 
 Enemies choose at random from a list of eight moves in their row of the
 enemy table, weighted by a habit, such as favouring the start of the list
-(`BattleAI_ChooseAction`). An enemy may act more than once a turn, each
+(`btAIChooseAction`). An enemy may act more than once a turn, each
 later action a little slower than the one before.
 
 Priority is Agility, with a little luck added for party members. A few
 things jump the queue by having their priority raised past any Agility,
-which is how a guarding Djinni always goes first (`BattleActionOrder_Sort`).
+which is how a guarding Djinni always goes first (`btActionOrderSort`).
 
 ## Building an action
 
 Just before a unit acts, its brief action is turned into a full
 description, the action run: the ability, everyone it reaches, and every
-roll that affects how it will look (`BattleActionRun_Build`).
+roll that affects how it will look (`btActionRunBuild`).
 
 ### Commands and ability ids
 
@@ -92,7 +92,7 @@ ability's battle effect. Both are in
 
 ![Felix attacks a copy of Sheba and his Gaia Blade lets out a howl: Titan Blade, a burst of light and a blade from the sky](https://alchemy.pascalpixel.com/tla/guides/battle/unleash.gif)
 
-Staging is the part the player watches, in `BattleStaging_DispatchAction`:
+Staging is the part the player watches, in `btStagingDispatchAction`:
 the attacker's run and leap, the caster's raised hand and glow, a summon
 taking the whole screen while the rest of its side fades out. It starts the
 ability's battle effect at the right moment, so that a leap and its blow
@@ -107,15 +107,15 @@ in a single frame. What takes time is the showing: the flinch, the number,
 the line of text waiting for a button.
 
 So the two are split. Resolving changes the numbers at once and leaves
-behind a list of things to show (`BattlePlayback_Push`). A task plays that
+behind a list of things to show (`btPlaybackPush`). A task plays that
 list a little each frame, while the battle effect goes on drawing
-(`BattlePlayback_Run`). That is how lightning and text share the screen.
+(`btPlaybackRun`). That is how lightning and text share the screen.
 
 ## How an ability resolves
 
 For each target in turn, the rules decide the damage or healing and
 whether the ability's added effect, such as sleep or poison, takes hold
-(`BattleAbility_ApplyToTarget`).
+(`btAbilityApplyToTarget`).
 
 ### The ability kind
 
@@ -139,8 +139,8 @@ the one aimed at, by tables the two games share.
 ## The end of an action and of a turn
 
 After each action the things it leaves behind are settled and everyone
-returns to their spot (`BattleUnit_ProcessActionEnd`). After each turn the
-lasting effects are counted down (`Battle_ProcessTurnEnd`).
+returns to their spot (`btUnitProcessActionEnd`). After each turn the
+lasting effects are counted down (`btProcessTurnEnd`).
 
 ## The end of the battle
 
@@ -148,7 +148,7 @@ lasting effects are counted down (`Battle_ProcessTurnEnd`).
 
 A win gives experience to every party member still standing, in full to
 the ones in front and half to the ones behind, then coins, then items,
-each level gained shown as it happens (`Battle_AwardSpoils`). Then the
+each level gained shown as it happens (`btAwardSpoils`). Then the
 battle writes its result, and the main routine decides where the party
 goes.
 
@@ -160,18 +160,18 @@ The battlefield is one flat picture on the layer the console can zoom, and
 the camera is that layer's zoom and slide. The picture is larger than the
 layer can hold, so it is kept as an upper and a lower half, and the layer
 is switched from one to the other partway down the screen as it is drawn.
-`BattleCamera_SetRange` writes where the switch falls on each line, and
-`BattleBackground_ShowZoomedPage` starts it every frame.
+`btCameraSetRange` writes where the switch falls on each line, and
+`btBackgroundShowZoomedPage` starts it every frame.
 
 ## The other files
 
-- `BattleTransition_Run` is the opening: the curtain of tiles closing in,
+- `btTransitionRun` is the opening: the curtain of tiles closing in,
   or the mosaic fade to black.
-- `AutoBattle_BuildActions` and `AutoBattle_RunAction` build and play
+- `btAutoBattleBuildActions` and `btAutoBattleRunAction` build and play
   actions without the command menu.
-- `LinkBattle_SyncTurn` and its neighbours are a battle against another
+- `btLinkBattleSyncTurn` and its neighbours are a battle against another
   console: the parties exchanged and the handshake after every action.
-- The bank's C is one object, as The Broken Seal's is:
+- The module's C is one object, as The Broken Seal's is:
   [`battle.c`](battle.c) includes its parts, files beside it named
   `battle_*.c`, in ROM order, cut where The Broken Seal's are
   (`battle_setup.c`, `battle_turn.c`, `battle_staging.c`,

@@ -1,18 +1,18 @@
-/// @file
-/// The shop's tables: the quantity bar's and the price digits' tile offsets,
-/// the Game Ticket costs, the gift items, every shop's stock, the forge's
-/// recipes, the sanctum's tunes and the inns' prices. The linker places them
-/// after the shop's pictures, apart from its code.
+/* @file */
+/* The shop's tables: the quantity bar's and the price digits' tile offsets, */
+/* the Game Ticket costs, the gift items, every shop's stock, the forge's */
+/* recipes, the sanctum's tunes and the inns' prices. The linker places them */
+/* after the shop's pictures, apart from its code. */
 
 #include "shop_internal.h"
 #include "item_ids.h"
 #include "sounds.h"
 
-// clang-format off
-/// Where each of the quantity bar's 30 segments starts in its tile buffer: a
-/// byte column of a 4-bit tile, so four segments to a tile and the next tile
-/// 32 bytes on, eight tiles in all.
-const u16 gShop_QuantityBarSegmentOffsets[30] = {
+/* clang-format off */
+/* Where each of the quantity bar's 30 segments starts in its tile buffer: a */
+/* byte column of a 4-bit tile, so four segments to a tile and the next tile */
+/* 32 bytes on, eight tiles in all. */
+const u16 Shop_QuantityBarSegmentOffsets[30] = {
     0, 1, 2, 3,
     32, 33, 34, 35,
     64, 65, 66, 67,
@@ -23,14 +23,14 @@ const u16 gShop_QuantityBarSegmentOffsets[30] = {
     224, 225,
 };
 
-/// Where each of a price's five digits starts in its tile buffer, ones first.
-const u16 gShop_PriceDigitTileOffsets[5] = {
+/* Where each of a price's five digits starts in its tile buffer, ones first. */
+const u16 Shop_PriceDigitTileOffsets[5] = {
     192, 144, 128, 80, 64,
 };
 
-/// The shop credit each Game Ticket costs, by how many have been given: five
-/// at each price: 300, then 500 doubling to 8000.
-const s16 gShop_GameTicketCreditCosts[30] = {
+/* The shop credit each Game Ticket costs, by how many have been given: five */
+/* at each price: 300, then 500 doubling to 8000. */
+const s16 Shop_GameTicketCreditCosts[30] = {
     300, 300, 300, 300, 300,
     500, 500, 500, 500, 500,
     1000, 1000, 1000, 1000, 1000,
@@ -39,9 +39,9 @@ const s16 gShop_GameTicketCreditCosts[30] = {
     8000, 8000, 8000, 8000, 8000,
 };
 
-/// Unused: a list of gift items, ended by 0, that nothing reads: The Broken
-/// Seal's, with the Fire Brand where it has the Masamune.
-const s16 gShop_UnusedItemIds[21] = {
+/* Unused: a list of gift items, ended by 0, that nothing reads: The Broken */
+/* Seal's, with the Fire Brand where it has the Masamune. */
+const s16 Shop_UnusedItemIds[21] = {
     ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_CLAYMORE, ITEM_GREAT_SWORD, ITEM_SHAMSHIR,
     ITEM_SILVER_BLADE, ITEM_FIRE_BRAND, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
     ITEM_SOL_BLADE, ITEM_MURAMASA, ITEM_SHORT_SWORD, ITEM_MINT, ITEM_DEMON_AXE,
@@ -49,172 +49,172 @@ const s16 gShop_UnusedItemIds[21] = {
     ITEM_MIST_POTION, 0,
 };
 
-/// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
-/// (each list ending with 0 when shorter), then the shop's type, which an item
-/// shop, SHOP_TYPE_ITEMS, leaves at 0. Each row is named by the town whose
-/// event opens it.
-const s16 gShop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
-    // 0: sells nothing, and stands in for a row out of range
+/* The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts */
+/* (each list ending with 0 when shorter), then the shop's type, which an item */
+/* shop, SHOP_TYPE_ITEMS, leaves at 0. Each row is named by the town whose */
+/* event opens it. */
+const s16 Shop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
+    /* 0: sells nothing, and stands in for a row out of range */
     {0},
-    // 1: Daila's weapon shop
+    /* 1: Daila's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_LONG_SWORD, ITEM_SHORT_SWORD, ITEM_MACE, ITEM_WOODEN_STICK,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 2: Daila's armor shop
+    /* 2: Daila's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_COTTON_SHIRT, ITEM_TRAVEL_VEST, ITEM_ONE_PIECE_DRESS, ITEM_WOODEN_SHIELD, ITEM_PADDED_GLOVES, ITEM_LEATHER_CAP,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 3: Daila's item shop
+    /* 3: Daila's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE,
     },
-    // 4: Madra's weapon shop
+    /* 4: Madra's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_LONG_SWORD, ITEM_SHORT_SWORD, ITEM_BATTLE_AXE, ITEM_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_MAGIC_ROD,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 5: Madra's armor shop
+    /* 5: Madra's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_TRAVEL_VEST, ITEM_WOODEN_SHIELD, ITEM_PADDED_GLOVES, ITEM_LEATHER_ARMLET, ITEM_LEATHER_CAP, ITEM_CIRCLET, ITEM_LEATHER_BOOTS,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 6: Madra's item shop
+    /* 6: Madra's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE,
     },
-    // 7: Alhafra's weapon shop
+    /* 7: Alhafra's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_LONG_SWORD, ITEM_BROAD_SWORD, ITEM_HUNTERS_SWORD, ITEM_BATTLE_AXE, ITEM_HEAVY_MACE,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 8: Alhafra's armor shop
+    /* 8: Alhafra's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_LEATHER_ARMOR, ITEM_TRAVEL_VEST, ITEM_TRAVEL_ROBE, ITEM_WOODEN_SHIELD, ITEM_LEATHER_GLOVES, ITEM_LEATHER_ARMLET, ITEM_OPEN_HELM, ITEM_LEATHER_CAP, ITEM_CIRCLET, ITEM_LEATHER_BOOTS,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 9: Alhafra's item shop
+    /* 9: Alhafra's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
     },
-    // 10: Garoh's weapon shop
+    /* 10: Garoh's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_BROAD_SWORD, ITEM_HUNTERS_SWORD, ITEM_BATTLE_AXE, ITEM_HEAVY_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_WITCHS_WAND,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 11: Garoh's armor shop
+    /* 11: Garoh's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_LEATHER_ARMOR, ITEM_ADEPTS_CLOTHES, ITEM_TRAVEL_ROBE, ITEM_BRONZE_SHIELD, ITEM_LEATHER_GLOVES, ITEM_LEATHER_ARMLET, ITEM_OPEN_HELM, ITEM_WOODEN_CAP, ITEM_CIRCLET,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SAFETY_BOOTS,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 12: Garoh's item shop
+    /* 12: Garoh's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
     },
-    // 13: Mikasalla's general store
+    /* 13: Mikasalla's general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_BROAD_AXE, ITEM_PSYNERGY_ARMOR, ITEM_ARMLET, ITEM_BRONZE_HELM, ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_BLESSED_ANKH, ITEM_VIAL,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_GENERAL_STORE,
     },
-    // 14: Naribwe's weapon shop
+    /* 14: Naribwe's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_BROAD_SWORD, ITEM_BATTLE_RAPIER, ITEM_BROAD_AXE, ITEM_BATTLE_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_PSYNERGY_ROD,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 15: Naribwe's armor shop
+    /* 15: Naribwe's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_ADEPTS_CLOTHES, ITEM_SILK_ROBE, ITEM_IRON_SHIELD, ITEM_ARMLET, ITEM_BRONZE_HELM, ITEM_WOODEN_CAP, ITEM_SILVER_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 16: Naribwe's item shop
+    /* 16: Naribwe's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
     },
-    // 17: Kibombo's weapon shop
+    /* 17: Kibombo's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_CLAYMORE, ITEM_BATTLE_RAPIER, ITEM_BROAD_AXE, ITEM_BATTLE_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_FROST_WAND,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 18: Kibombo's armor shop
+    /* 18: Kibombo's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_CHAIN_MAIL, ITEM_ADEPTS_CLOTHES, ITEM_SILK_ROBE, ITEM_IRON_SHIELD, ITEM_GAUNTLETS, ITEM_ARMLET, ITEM_IRON_HELM, ITEM_SILVER_CIRCLET,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 19: Kibombo's item shop
+    /* 19: Kibombo's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
     },
-    // 20: Yallam's weapon shop
+    /* 20: Yallam's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_CLAYMORE, ITEM_BATTLE_RAPIER, ITEM_BROAD_AXE, ITEM_BATTLE_MACE,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 21: Yallam's armor shop
+    /* 21: Yallam's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_JERKIN, ITEM_HEAVY_ARMLET, ITEM_MAIL_CAP,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 22: Yallam's item shop
+    /* 22: Yallam's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
     },
-    // 23: the Apojii Islands' general store
+    /* 23: the Apojii Islands' general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_GREAT_SWORD, ITEM_ARMORED_SHELL, ITEM_KNIGHTS_SHIELD, ITEM_STEEL_HELM, ITEM_GUARDIAN_CIRCLET, ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_DRAGON_AXE, ITEM_ANGELIC_ANKH, ITEM_WATER_OF_LIFE,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_GENERAL_STORE,
     },
-    // 24: Izumo's general store
+    /* 24: Izumo's general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_WAR_MACE, ITEM_SILVER_VEST, ITEM_PLATINUM_CIRCLET, ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SHAMSHIR, ITEM_NINJA_BLADE, ITEM_WAR_GLOVES, ITEM_VIAL, ITEM_PSY_CRYSTAL,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_GENERAL_STORE,
     },
-    // 25: Champa's general store
+    /* 25: Champa's general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_MASTER_RAPIER, ITEM_GREAT_AXE, ITEM_PLATE_MAIL, ITEM_SILVER_ARMLET, ITEM_SILVER_HELM, ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_DEMONIC_STAFF, ITEM_BLESSED_ROBE, ITEM_POTION,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_GENERAL_STORE,
     },
-    // 26: Contigo's weapon shop
+    /* 26: Contigo's weapon shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_GREAT_SWORD, ITEM_MASTER_RAPIER, ITEM_GREAT_AXE, ITEM_WAR_MACE,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SWIFT_SWORD, ITEM_RIGHTEOUS_MACE,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_WEAPONS,
     },
-    // 27: Contigo's armor shop
+    /* 27: Contigo's armor shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_STEEL_ARMOR, ITEM_SILVER_VEST, ITEM_SILVER_ARMLET, ITEM_KNIGHTS_HELM, ITEM_PLATINUM_CIRCLET,
         [SHOP_STOCK_ARTIFACTS] = ITEM_MIRRORED_SHIELD, ITEM_JEWELED_CROWN,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_ARMOR,
     },
-    // 28: Contigo's item shop
+    /* 28: Contigo's item shop */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_VIAL, ITEM_WATER_OF_LIFE, ITEM_MIST_POTION,
     },
-    // 29: the Shaman Village's general store
+    /* 29: the Shaman Village's general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SILVER_BLADE, ITEM_CRYSTAL_ROD, ITEM_MAGICAL_CASSOCK,
         [SHOP_STOCK_ARTIFACTS + 4] = ITEM_VIAL, ITEM_POTION, ITEM_PSY_CRYSTAL,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_GENERAL_STORE,
     },
-    // 30: Loho's general store
+    /* 30: Loho's general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_SPIRIT_ARMLET,
         [SHOP_STOCK_ARTIFACTS + 4] = ITEM_POTION, ITEM_MIST_POTION, ITEM_PSY_CRYSTAL,
         [SHOP_STOCK_TYPE] = SHOP_TYPE_GENERAL_STORE,
     },
-    // 31: Prox's general store
+    /* 31: Prox's general store */
     {
         [SHOP_STOCK_ITEMS] = ITEM_HERB, ITEM_NUT, ITEM_VIAL, ITEM_MIST_POTION, ITEM_ANTIDOTE, ITEM_ELIXIR, ITEM_SACRED_FEATHER,
         [SHOP_STOCK_ARTIFACTS] = ITEM_MYSTERIOUS_ROBE,
@@ -223,10 +223,10 @@ const s16 gShop_StockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
     },
 };
 
-/// What the forge makes of each material, ended by an item of -1: a rare
-/// material may become any of its results, by weight out of 100, and a rusted
-/// weapon always becomes its one result.
-const struct ForgeRecipe gForge_Recipes[] = {
+/* What the forge makes of each material, ended by an item of -1: a rare */
+/* material may become any of its results, by weight out of 100, and a rusted */
+/* weapon always becomes its one result. */
+const FORGE_RECIPE Forge_Recipes[] = {
     {
         .item = ITEM_TEAR_STONE,
         .condition = FORGE_CONDITION_PROCESSED,
@@ -350,19 +350,19 @@ const struct ForgeRecipe gForge_Recipes[] = {
     {.item = -1},
 };
 
-/// The tune each service's burst plays.
-const s8 gSanctum_ServiceTunes[4] = {
+/* The tune each service's burst plays. */
+const s8 Sanctum_ServiceTunes[4] = {
     [SANCTUM_SERVICE_REVIVE] = MUS_RECOVERING_AFTER_COMBAT,
     [SANCTUM_SERVICE_CURE_POISON] = MUS_POISON_CURED,
     [SANCTUM_SERVICE_REPEL_EVIL] = MUS_EXORCISED,
     [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_CURSE_LIFTED,
 };
 
-/// The coins a night costs each living guest, by inn: Daila, Madra, Alhafra,
-/// Garoh, Mikasalla, Naribwe, Kibombo, Yallam, the Apojii Islands, Izumo,
-/// Champa, the Shaman Village, Contigo, Loho and Prox, as their events open
-/// them. Unused: inn 15 costs nothing and no event opens it.
-const s8 gInn_PricesPerGuest[16] = {
+/* The coins a night costs each living guest, by inn: Daila, Madra, Alhafra, */
+/* Garoh, Mikasalla, Naribwe, Kibombo, Yallam, the Apojii Islands, Izumo, */
+/* Champa, the Shaman Village, Contigo, Loho and Prox, as their events open */
+/* them. Unused: inn 15 costs nothing and no event opens it. */
+const s8 Inn_PricesPerGuest[16] = {
     2, 4, 7, 8, 8, 10, 12, 16, 14, 15, 18, 20, 20, 22, 25, 0,
 };
-// clang-format on
+/* clang-format on */

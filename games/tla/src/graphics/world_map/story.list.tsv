@@ -1,4 +1,4 @@
 name	file	section	align	left	pad
-gWorldMapPalettes	storypal.gbapal				
-gWorldMapPackedPictures	storymap.tilemap.lz				
-gWorldMapPackedTiles	story.4bpp.lz				
+WorldMapPalettes	storypal.gbapal				
+WorldMapPackedPictures	storymap.tilemap.lz				
+WorldMapPackedTiles	story.4bpp.lz				

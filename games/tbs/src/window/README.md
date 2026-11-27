@@ -1,7 +1,7 @@
 # Windows
 
 This folder is every bordered box in the game and the text typed into it.
-[Interface](../../../../docs/tbs/interface.md) gives the idea: one task draws them all.
+[The menu engine](../../../../docs/tbs/interface.md) gives the idea: one task draws them all.
 This page follows a line of text from the cartridge to the screen.
 
 ## Windows
@@ -74,7 +74,7 @@ Each frame the task reads the next few places for each open message. A
 letter is drawn at the pen, which then moves on by that letter's width. A
 control code is obeyed: new line, pause, hold for a button, turn the page,
 change colour, stop. A pause or a hold is a state the task finds again on
-its next visit. The task returns every frame and never calls `wait()`.
+its next visit. The task returns every frame and never calls `sySynch()`.
 
 The message speed in the settings decides how many letters come in a
 frame. Lines are also set level at the right edge, by measuring a line
@@ -110,7 +110,8 @@ is drawn from one set of colours, so changing it changes them all at once.
 The Save command and the File Screen's list are here
 (`screens_save.c`). Each file carries a short summary, so the list is
 drawn without reading any file whole. What a save holds, and how it is
-written safely, is in [System code](../system/README.md#saving).
+written safely, is in
+[the system library's notes](../system/README.md#saving).
 
 ## Windows the rest of the game borrows
 

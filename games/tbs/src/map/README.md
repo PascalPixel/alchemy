@@ -45,7 +45,7 @@ a haze of sand hangs in the air in front of a desert.
 A chest is not painted into the map, or every scene sharing the map would
 have it. The map only lists the cells where treasure could stand, in
 `spots.tsv`. When a
-scene starts, the field looks in the scene's triggers for each spot's
+scene starts, the field engine looks in the scene's triggers for each spot's
 behavior number and puts a chest there only if it finds a row.
 
 ## Tileset animation and blend scripts
@@ -70,7 +70,7 @@ party walks, the next square is unpacked, never more than one in a frame.
 
 ### Finding a scene's map
 
-The scene table gives each scene a row of a second table, `gMaps`. That
+The scene table gives each scene a row of a second table, `MapsWork`. That
 row names the map's grid and the palette and tile sheets it is drawn
 with, each a resource of its own
 ([Graphics](../graphics/README.md#tilesets)). Many scenes share a map, and
@@ -78,15 +78,16 @@ many maps share tiles.
 
 A folder is named for the scene that uses it, or for the place when
 several scenes of one place share it. The empty layout of
-the title, the File Screen and the World Map, the first row `gMaps` counts
+the title, the File Screen and the World Map, the first row `MapsWork` counts
 from, is `empty_map/`; the two that no place or scene names keep their
 resource number.
 
 When the party arrives, the grid, the cell tiles, the shapes and the
-tiles are unpacked into memory, where the field reads them directly.
+tiles are unpacked into memory, where the field engine reads them
+directly.
 
 The grid comes packed as three planes: the cell tiles, the behaviors
-and the shapes. As it is unpacked, a small routine copied into fast RAM
+and the shapes. As it is unpacked, a small function copied into fast RAM
 weaves them into one word a cell, the cell tiles in the low half and the
 behavior and shape in the high.
 

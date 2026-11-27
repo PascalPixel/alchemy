@@ -6,14 +6,14 @@ Data_03006fbf:
 	.global IwramSoundMixWorkspace
 IwramSoundMixWorkspace:
 	.space 0x00000840
-	.global gCartridgeResetMarker
-gCartridgeResetMarker:
+	.global CartridgeResetMarker
+CartridgeResetMarker:
 	.space 0x00000004
-	.global gBuildStamp
-gBuildStamp:
+	.global BuildStampWork
+BuildStampWork:
 	.space 0x000007ec
-	.global gSoundInfoPointer
-gSoundInfoPointer:
+	.global SoundInfoPointer
+SoundInfoPointer:
 	.space 0x0000000c
-	.global gIrqVector
-gIrqVector:
+	.global IrqVector
+IrqVector:

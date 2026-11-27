@@ -1,6 +1,6 @@
 name	file	section	align	left	pad	edition
-gFieldEffect_SparkTiles	spark.4bpp32x16					
-gFieldEffect_ArcSparkTiles	arc_spark.4bpp32x16					
+FieldEffect_SparkTiles	spark.4bpp32x16					
+FieldEffect_ArcSparkTiles	arc_spark.4bpp32x16					
 FieldEffect_GlowDisc	glow_disc.8bpp.lz	a				
 FieldEffect_RingOrb	ring_orb.8bpp.lz	a				
 FieldEffect_RingArcs	ring_arcs.8bpp.lz	a				

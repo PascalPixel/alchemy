@@ -1,9 +1,9 @@
-# Game rules
+# The game logic
 
-This folder is the game's numbers: who has what stats, what an item does,
-which class a character is, what the game remembers. Nearly all of it is
-tables, written as C you can read, and a small amount of code that works
-things out from them.
+This folder is the game logic: the game's numbers, who has what stats,
+what an item does, which class a character is, what the game remembers.
+Nearly all of it is tables, written as C you can read, and a small amount
+of code that works things out from them.
 
 If you want to know what an item, an enemy or a class is made of, the
 answer is a row in one of these files.
@@ -109,8 +109,8 @@ joins were decided at the very start of the game.
 
 The party is kept two ways at once: a flag for each character saying
 whether it is in, and a list of the members in order, which is the order
-the menus and the battle show them in. The coins are one number for
-everyone.
+the menu engine and the battle engine show them in. The coins are one
+number for everyone.
 
 ## The game flags
 
@@ -141,14 +141,14 @@ town can be bought back in another.
 
 ![Isaac attacks Ivan with the Swift Sword. Watch for the message that the sword lets out a howl: the plain blow is replaced by Sonic Smash, a burst of light and a blue slash.](https://alchemy.pascalpixel.com/guides/battle/unleash.gif)
 
-The sums that decide a fight live here, not in the battle: whether a
-weapon unleashes, whether Sleep takes hold, how much a blow hurts. The
-battle asks and shows the answer. So does the menu, which is why Cure cast
-in Vale heals by the same sum as Cure cast in a fight.
+The sums that decide a fight live here, not in the battle engine: whether
+a weapon unleashes, whether Sleep takes hold, how much a blow hurts. The
+battle engine asks and shows the answer. So does the menu engine, which is
+why Cure cast in Vale heals by the same sum as Cure cast in a fight.
 
-Several answers are rolls of dice. The battle has dice of its own, apart
-from the field's, and in a link battle the two consoles pass their state
-across each turn so that both screens roll the same.
+Several answers are rolls of dice. The battle engine has dice of its own,
+apart from the field engine's, and in a link battle the two consoles pass
+their state across each turn so that both screens roll the same.
 
 ## Where the code is
 

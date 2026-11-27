@@ -1,27 +1,25 @@
-/// @file
-/// The summons: the order the Summon command lists them in, and each one's
-/// ability and the Djinn it needs.
-// Part of game.c.
+/* @file */
+/* The summons: the order the Summon command lists them in, and each one's */
+/* ability and the Djinn it needs. */
+/* Part of game.c. */
 
-#include "game_internal.h"
-
-/// The order the Summon command lists the summons in: by the number of Djinn
-/// they need, fewest first.
-const u8 gSummon_OrderList[SUMMON_COUNT] = {
-    SUMMON_VENUS,    SUMMON_MERCURY, SUMMON_MARS,        SUMMON_JUPITER,
-    SUMMON_RAMSES,   SUMMON_NEREID,  SUMMON_KIRIN,       SUMMON_ATALANTA,
-    SUMMON_ZAGAN,    SUMMON_MEGAERA, SUMMON_CYBELE,      SUMMON_NEPTUNE,
-    SUMMON_TIAMAT,   SUMMON_PROCNE,  SUMMON_FLORA,       SUMMON_MOLOCH,
-    SUMMON_JUDGMENT, SUMMON_BOREAS,  SUMMON_METEOR,      SUMMON_THOR,
-    SUMMON_ULYSSES,  SUMMON_HAURES,  SUMMON_ECLIPSE,     SUMMON_COATLICUE,
-    SUMMON_DAEDALUS, SUMMON_AZUL,    SUMMON_CATASTROPHE, SUMMON_CHARON,
-    SUMMON_IRIS,
+/* The order the Summon command lists the summons in: by the number of Djinn */
+/* they need, fewest first. */
+const u8 Summon_OrderList[SUMMON_COUNT] = {
+	SUMMON_VENUS,	 SUMMON_MERCURY, SUMMON_MARS,		 SUMMON_JUPITER,
+	SUMMON_RAMSES,	 SUMMON_NEREID,	 SUMMON_KIRIN,		 SUMMON_ATALANTA,
+	SUMMON_ZAGAN,	 SUMMON_MEGAERA, SUMMON_CYBELE,		 SUMMON_NEPTUNE,
+	SUMMON_TIAMAT,	 SUMMON_PROCNE,	 SUMMON_FLORA,		 SUMMON_MOLOCH,
+	SUMMON_JUDGMENT, SUMMON_BOREAS,	 SUMMON_METEOR,		 SUMMON_THOR,
+	SUMMON_ULYSSES,	 SUMMON_HAURES,	 SUMMON_ECLIPSE,	 SUMMON_COATLICUE,
+	SUMMON_DAEDALUS, SUMMON_AZUL,	 SUMMON_CATASTROPHE, SUMMON_CHARON,
+	SUMMON_IRIS,
 };
 
-// clang-format off
-/// The 29 summons, by summon id, read through SummonDefinition_Get. Each
-/// needs this many standby Djinn of each element.
-const struct SummonDefinition gSummon_DefinitionTable[] = {
+/* clang-format off */
+/* The 29 summons, by summon id, read through gmSummonDefinitionGet. Each */
+/* needs this many standby Djinn of each element. */
+const SUMMON_DEFINITION Summon_DefinitionTable[] = {
     [SUMMON_VENUS] = {
         .abilityId = ABILITY_VENUS,
         .djinnRequired = {[ELEMENT_VENUS] = 1},
@@ -139,4 +137,4 @@ const struct SummonDefinition gSummon_DefinitionTable[] = {
         .djinnRequired = {[ELEMENT_MERCURY] = 4, [ELEMENT_MARS] = 9},
     },
 };
-// clang-format on
+/* clang-format on */

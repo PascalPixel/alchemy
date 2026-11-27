@@ -13,7 +13,7 @@ border and filling are tiles on the background layer kept for windows. Its
 letters, portrait and pointing hand are sprites that belong to it, and are
 given back when it closes.
 
-Whoever wants a window only asks for it (`Window_Create`). Opening and
+Whoever wants a window only asks for it (`mnWindowCreate`). Opening and
 closing are animations, a border redrawn a little bigger or smaller each
 frame, and the caller does not run them.
 
@@ -23,9 +23,9 @@ One [task](../../../../docs/tla/glossary.md#task) runs every frame and does thre
 order: step every window that is opening or closing, type the next letters
 of every message whose window is open, and draw. Everything on this page
 happens inside it, which is why a window keeps typing while the code that
-opened it stands still (`WindowSystem_Update`).
+opened it stands still (`mnWindowSystemUpdate`).
 
-A battle can start a second form of it, `WindowSystem_UpdateBattle`, which
+A battle can start a second form of it, `mnWindowSystemUpdateBattle`, which
 does all three only while a switch in the battle's state is on, and
 otherwise only types.
 
@@ -38,7 +38,7 @@ name. The text itself is in
 [`text/en.po`](../../text/en.po), one file for each language. On the
 cartridge a message is packed, and has blanks in it. Before the first
 letter is typed the whole message is decoded: unpacked and filled in
-(`Message_Decode`).
+(`mnMessageDecode`).
 
 A blank is written in braces in the text file:
 
@@ -73,12 +73,12 @@ Each frame the task reads the next few entries for each open message. A
 letter is drawn at the pen, which then moves on by that letter's width. A
 control code is obeyed: new line, pause, hold for a button, turn the page,
 change colour, stop. A pause or a hold is a state the task finds again on
-its next visit. The task returns every frame and never calls `wait()`.
+its next visit. The task returns every frame and never calls `sySynch()`.
 
 On the field the message speed in the settings decides how many letters
 come in a frame; in a battle it is eight. Lines are also set level at the
 right edge, by measuring a line before it is typed and spreading its
-letters a little (`Text_MeasureDecoded`).
+letters a little (`mnTextMeasureDecoded`).
 
 ## Drawing text
 
@@ -112,8 +112,8 @@ choices.
 
 The Save command and the File Screen's list are in `screens_save.c`. Each
 file carries a short summary, so the list is drawn without reading any file
-whole. What a save holds, and how it is written safely, is in [System
-code](../system/README.md#saving).
+whole. What a save holds, and how it is written safely, is in the [system
+library's code](../system/README.md#saving).
 
 ## Windows the rest of the game borrows
 

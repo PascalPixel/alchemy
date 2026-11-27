@@ -31,8 +31,8 @@ for what it plays with (`SE_DOLL_PLACED`) or what it sounds like
 (`SE_LANDING_THUD`). A sound that repeats another's
 notes higher, lower or on another voice is named for it
 (`SE_RISE_WITH_SPARKS_HIGH`), and one nothing plays says so
-(`SE_UNUSED_WHIRLWIND_LOW_A`). The one routine that takes them all is
-`Sound_Play`.
+(`SE_UNUSED_WHIRLWIND_LOW_A`). The one function that takes them all is
+`sySndPlay`.
 
 Every sound played is also marked as heard, one bit for each number. In
 the link lobby the player can ask for a tune by number, and only the ones
@@ -51,14 +51,14 @@ four are busy.
 
 Music is not started by a scene's code. When the party arrives somewhere,
 the main routine picks the music from a table of rules before the scene is
-even loaded (`Scene_ChooseMusic`). A rule names a scene or a whole area,
+even loaded (`scChooseMusic`). A rule names a scene or a whole area,
 optionally an entrance and a [game flag](../../../../docs/tla/glossary.md#game-flag), and
 a sound. The first rule that fits wins.
 
-It is the same pattern the field uses for triggers and exits. Daila has
-two rules: one way into its houses gets a tune of its own, and the area's
-rule gives every other part of Daila the town's. The World Map has six,
-and two of them change its tune as game flags are set.
+It is the same pattern the field engine uses for triggers and exits. Daila
+has two rules: one way into its houses gets a tune of its own, and the
+area's rule gives every other part of Daila the town's. The World Map has
+six, and two of them change its tune as game flags are set.
 
 Battles have a short table of their own for the fights with a special tune.
 Most other battles take their tune from who is fighting: one when Felix is
@@ -94,16 +94,20 @@ The songs and samples are ordinary files you can open, in
 [`games/tla/sound`](../../sound): each song is a MIDI file in `songs/`,
 such as `mus_madra.mid`, and each sample a WAV in `direct_sound_samples/`. A
 sequence takes its sound's name, such as `se_jump.mid`; those nothing
-names keep their row in `gSongTable`. A music sample is named for the
+names keep their row in `SongTable`. A music sample is named for the
 instrument General MIDI gives its voice slot (slot 47, `timpani.pcm8.wav`),
 an effect's sample for the sounds that play it (`rumble.pcm8.wav`), and a
 drum for the key General MIDI gives its row of the drum kit (`side_stick.pcm8.wav`).
 
 ## Where the code is
 
-- The game's own layer is `Sound_Play`, `Sound_UpdateBgmRamps` and their
-  neighbours: the volume ramps and the music's return.
-- The rest of this folder is the driver: its C, its handwritten routines
-  (the `.s` files beside it), and the mixer the game copies into IWRAM.
+- `sound_play.c` and `sound_test.c` here are the game's own layer:
+  `sySndPlay`, `sySndUpdateBgmRamps` and their neighbours, the volume ramps
+  and the music's return.
+- [`sdk/sound`](../sdk/sound) is the driver: its C, its handwritten functions
+  and the mixer the game copies into IWRAM.
+- [`system/mixer_render.s`](../system/mixer_render.s) is the one part of that
+  mixer that uses r4 as the system library's functions do, and so is
+  counted the system library's own.
 - [`games/tla/sound`](../../sound) holds the songs, the samples and the
   table that gives each sound its player.

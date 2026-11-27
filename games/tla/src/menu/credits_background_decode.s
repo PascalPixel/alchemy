@@ -1,4 +1,4 @@
-@ Two ARM routines in bank 09, beside the credits that use the second, as The
+@ Two ARM functions in module 09, beside the credits that use the second, as The
 @ Broken Seal's credits_background_decode.s.
 @
 @ Vector_InnerProduct(ax, bx, ay, by, az, bz): the 16.16 dot product
@@ -7,7 +7,7 @@
 @
 @ Credits_DecodeBackground(source, destination, offset): decodes a backdrop's
 @ packed picture (r0) into 8bpp tiles (r1), adding offset (r2, the same
-@ palette offset in every byte) to each pixel. Credits_LoadBackground
+@ palette offset in every byte) to each pixel. mnCreditsLoadBackground
 @ (credits.c) copies it into a heap block and calls it there, so its first
 @ loop relocates the table of decoder commands (credits_background_expand.s)
 @ for wherever the copy landed.
@@ -22,7 +22,7 @@
 @ these multiplies did not come from the DI patterns. smulsi3_highpart
 @ leaves its low half a dead scratch, and orr r0, r0, ip, lsr #16 reads it.
 @ This proves a hand-written multiply, not by itself a hand-written
-@ file. Nothing else here is a tell: the routine is a frameless leaf, and
+@ file. Nothing else here is a tell: the function is a frameless leaf, and
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.

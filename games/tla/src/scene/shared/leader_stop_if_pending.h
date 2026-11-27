@@ -1,11 +1,11 @@
-/// Stops the leader while an action waits.
-void Leader_StopIfPending(void) {
-  struct FieldState *state = Ram_HeapSlots->fieldState;
+/* Stops the leader while an action waits. */
+void fdLeaderStopIfPending(void) {
+	FIELD_STATE *state = Ram_HeapSlots->fieldState;
 
-  if (state->busy != 0) {
-    Event_SetFlag(FLAG_MENU_OPEN);
-    Leader_StopMoving();
-    Event_EndAllLastingPsynergy();
-    Event_ClearFlag(FLAG_MENU_OPEN);
-  }
+	if(state->busy != 0) {
+		fdEventSetFlag(FLAG_MENU_OPEN);
+		fdLeaderStopMoving();
+		fdEventEndAllLastingPsynergy();
+		fdEventClearFlag(FLAG_MENU_OPEN);
+	}
 }

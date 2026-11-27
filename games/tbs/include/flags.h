@@ -1,1554 +1,1644 @@
 #ifndef ALCHEMY_FLAGS_H
 #define ALCHEMY_FLAGS_H
 
-/// @file
-/// Game flags, named where their meaning is shown.
+/* @file */
+/* Game flags, named where their meaning is shown. */
 
-/// Set while `character` (character_ids.h) is in the party (Party_AddMember).
+/* Set while `character` (character_ids.h) is in the party (gmPartyAddMember).
+ */
 #define FLAG_IN_PARTY(character) (character)
-/// The prologue: Isaac and Garet are children. It ends with the caption
-/// "Three years later..." over Vale's repairs.
+/* The prologue: Isaac and Garet are children. It ends with the caption */
+/* "Three years later..." over Vale's repairs. */
 #define FLAG_CHILDHOOD 0x20
-/// The young Isaac wears the tunic Dora made him take on the stormy night:
-/// placed child sprites get its child part (226), and Isaac's grown sprite is
-/// SPRITE_ISAAC_TUNIC. Party_EndChildhood clears it.
+/* The young Isaac wears the tunic Dora made him take on the stormy night: */
+/* placed child sprites get its child part (226), and Isaac's grown sprite is */
+/* SPRITE_ISAAC_TUNIC. gmPartyEndChildhood clears it. */
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
-/// The first of the 80 Djinn flags, DJINNI_FLINT's.
+/* The first of the 80 Djinn flags, DJINNI_FLINT's. */
 #define FLAG_DJINN_FIRST 0x30
-/// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
-/// FLAG_DJINN_FIRST.
+/* Set once the party has `djinni` (djinn_ids.h), whose DJINNI_ID counts from */
+/* FLAG_DJINN_FIRST. */
 #define FLAG_DJINNI(djinni) (FLAG_DJINN_FIRST + (djinni))
-/// The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's.
+/* The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's. */
 #define FLAG_DJINN_HIDING_FIRST 0x80
-/// Set while `djinni` is hiding, its DjinniId counting from
-/// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePending sets it after a lost or
-/// fled Djinni battle, and the Djinni's actor stays away until the scene
-/// is entered normally again, which clears it.
+/* Set while `djinni` is hiding, its DJINNI_ID counting from */
+/* FLAG_DJINN_HIDING_FIRST: fdDjinnResolvePending sets it after a lost or */
+/* fled Djinni battle, and the Djinni's actor stays away until the scene */
+/* is entered normally again, which clears it. */
 #define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
-/// The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that Scene_Arrive
-/// clears on every arrival: the 80 hiding flags and the 16 after them.
+/* The last of the 96 flags from FLAG_DJINN_HIDING_FIRST that scArrive */
+/* clears on every arrival: the 80 hiding flags and the 16 after them. */
 #define FLAG_ARRIVAL_CLEARED_LAST 0xdf
-/// The system flags, after the party's and the Djinn's: what the field,
-/// battles and menus keep about their own working, shared with the scenes
-/// that set or test them, rather than the story's progress.
+/* The system flags, after the party's and the Djinn's: what the field, */
+/* battles and menus keep about their own working, shared with the scenes */
+/* that set or test them, rather than the story's progress. */
 #define FLAG_SYSTEM_FIRST 0x100
-#define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
-/// The next scene change is silent: the scene loader clears it in place of
-/// playing SE_STOP_ACTION_SE, once. The world map sets it after its lighthouse
-/// transition.
+#define FLAG_SYSTEM_LAST  0x1ff /* the last of the 256 system flags */
+/* The next scene change is silent: the scene loader clears it in place of */
+/* playing SE_STOP_ACTION_SE, once. The world map sets it after its lighthouse
+ */
+/* transition. */
 #define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
-/// Set as a battle starts, cleared as a field scene starts.
+/* Set as a battle starts, cleared as a field scene starts. */
 #define FLAG_IN_BATTLE 0x103
-/// Set while the field sequence handles its requests, and cleared while the
-/// party walks (FieldSequence_Run); the deserts' heat gauges and the Colosso's
-/// wall test it.
+/* Set while the field sequence handles its requests, and cleared while the */
+/* party walks (fdSequenceRun); the deserts' heat gauges and the Colosso's */
+/* wall test it. */
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
-/// Set while the field menu is open; scenes hold their moving actors
-/// still.
+/* Set while the field menu is open; scenes hold their moving actors */
+/* still. */
 #define FLAG_MENU_OPEN 0x106
-/// While set, opening the field menu or the Pause menu, or pressing a shortcut,
-/// raises FIELD_RAISED_TRIGGER_MENUS instead (FieldSequence_Run,
-/// Field_RequestShortcut); Vault's inn sets it while the party corners the
-/// suspects.
+/* While set, opening the field menu or the Pause menu, or pressing a shortcut,
+ */
+/* raises FIELD_RAISED_TRIGGER_MENUS instead (fdSequenceRun, */
+/* fdRequestShortcut); Vault's inn sets it while the party corners the */
+/* suspects. */
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
-/// The next field scene starts where the party was, as after a battle: the
-/// scene's flags are not reset, the actors come back from their snapshot,
-/// and the music saved in gMainRoutineState.returnMusic resumes if there is
-/// one (a random battle clears it, so the scene's own music plays).
-/// FieldSequence_Run clears it once the scene starts.
+/* The next field scene starts where the party was, as after a battle: the */
+/* scene's flags are not reset, the actors come back from their snapshot, */
+/* and the music saved in MainRoutineStateWork.returnMusic resumes if there is
+ */
+/* one (a random battle clears it, so the scene's own music plays). */
+/* fdSequenceRun clears it once the scene starts. */
 #define FLAG_KEEP_PARTY_POSITION 0x109
-// The party is inside a lighthouse, where the Adepts of its element regain PP
-// faster (game_units.c). Each lighthouse's scenes set its flag on every
-// arrival, and Scene_Arrive clears all four when the party enters another area,
-// so a flag is set only while the party is inside.
-/// The party is inside Venus Lighthouse.
+/* The party is inside a lighthouse, where the Adepts of its element regain PP
+ */
+/* faster (game_units.c). Each lighthouse's scenes set its flag on every */
+/* arrival, and scArrive clears all four when the party enters another area, */
+/* so a flag is set only while the party is inside. */
+/* The party is inside Venus Lighthouse. */
 #define FLAG_IN_VENUS_LIGHTHOUSE 0x110
-/// The party is inside Mercury Lighthouse.
+/* The party is inside Mercury Lighthouse. */
 #define FLAG_IN_MERCURY_LIGHTHOUSE 0x111
-/// The party is inside Mars Lighthouse; no scene in The Broken Seal sets it.
+/* The party is inside Mars Lighthouse; no scene in The Broken Seal sets it. */
 #define FLAG_IN_MARS_LIGHTHOUSE 0x112
-/// The party is inside Jupiter Lighthouse; no scene in The Broken Seal sets it.
+/* The party is inside Jupiter Lighthouse; no scene in The Broken Seal sets it.
+ */
 #define FLAG_IN_JUPITER_LIGHTHOUSE 0x113
-/// The next scene keeps the music that is playing; main_routine.c clears
-/// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
+/* The next scene keeps the music that is playing; main_routine.c clears */
+/* FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set. */
 #define FLAG_KEEP_MUSIC_ONCE 0x11a
-/// As FLAG_KEEP_MUSIC_ONCE, for as long as it is set.
+/* As FLAG_KEEP_MUSIC_ONCE, for as long as it is set. */
 #define FLAG_KEEP_MUSIC_HELD 0x11b
-#define FLAG_WORLD_MAP_LEFT 0x11c ///< the current scene is not the World Map
-/// The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays
-/// the leader's arrival (Entrance_PlayArrival), unless its setup
-/// clears this first.
+#define FLAG_WORLD_MAP_LEFT	 0x11c /* the current scene is not the World Map */
+/* The leader left through an EXIT_STYLE_STAIRS_UP exit; the next scene plays */
+/* the leader's arrival (fdEntrancePlayArrival), unless its setup */
+/* clears this first. */
 #define FLAG_ARRIVAL_STAIRS_UP 0x120
-/// As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit.
+/* As FLAG_ARRIVAL_STAIRS_UP, for an EXIT_STYLE_STAIRS_DOWN exit. */
 #define FLAG_ARRIVAL_STAIRS_DOWN 0x121
-/// The leader falls into the next scene from 160 pixels above
-/// (Entrance_PlayArrival), as when the world map's airborne travel ends.
+/* The leader falls into the next scene from 160 pixels above */
+/* (fdEntrancePlayArrival), as when the world map's airborne travel ends. */
 #define FLAG_ARRIVE_FALLING 0x122
-/// The party is in a town (SCENE_TYPE_TOWN); the scene loader sets and
-/// clears it, and the Colosso's log sets it as it ends.
+/* The party is in a town (SCENE_TYPE_TOWN); the scene loader sets and */
+/* clears it, and the Colosso's log sets it as it ends. */
 #define FLAG_IN_TOWN 0x123
-/// The scene shows its area's name once it is on screen; entering a new
-/// area sets it.
+/* The scene shows its area's name once it is on screen; entering a new */
+/* area sets it. */
 #define FLAG_SHOW_AREA_NAME 0x12f
-// Set as a file continues from its last Sanctum by the player's choice
-// (the file screen's Scene_Initialize); nothing in the game reads either, by
-// name, by number or as part of a byte.
-/// The file was loaded with L and Start held, which restarts it at its last
-/// Sanctum.
+/* Set as a file continues from its last Sanctum by the player's choice */
+/* (the file screen's scInit); nothing in the game reads either, by */
+/* name, by number or as part of a byte. */
+/* The file was loaded with L and Start held, which restarts it at its last */
+/* Sanctum. */
 #define FLAG_SAVE_RESTARTED_AT_SANCTUM 0x13e
-/// The file's two play times differed and the player answered Yes to "Do you
-/// wish to try to recover from a Sanctum?".
+/* The file's two play times differed and the player answered Yes to "Do you */
+/* wish to try to recover from a Sanctum?". */
 #define FLAG_SAVE_RECOVERED_AT_SANCTUM 0x13f
-/// Play the kind's usual cast. Field_UsePsynergy sets it for each use and
-/// clears it when the after trigger has PSYNERGY_EVENT_PLAYS_CAST and plays its
-/// own; the before event may clear it too.
+/* Play the kind's usual cast. fdUsePsynergy sets it for each use and */
+/* clears it when the after trigger has PSYNERGY_EVENT_PLAYS_CAST and plays its
+ */
+/* own; the before event may clear it too. */
 #define FLAG_PLAY_PSYNERGY_CAST 0x140
-/// Aim the field Psynergy at the actor ahead (FieldPsynergy_Dispatch)
-/// rather than run the kind's untargeted body (FieldPsynergy_Run, where Halt
-/// still stops the nearest actor when it has a talk trigger, and Force and
-/// Reveal run their PSYNERGY_PHASE_ACTS event). Field_UsePsynergy keeps
-/// it set only when a trigger applies to what the leader faces.
+/* Aim the field Psynergy at the actor ahead (fdPsynergyDispatch) */
+/* rather than run the kind's untargeted body (fdPsynergyRun, where Halt */
+/* still stops the nearest actor when it has a talk trigger, and Force and */
+/* Reveal run their PSYNERGY_PHASE_ACTS event). fdUsePsynergy keeps */
+/* it set only when a trigger applies to what the leader faces. */
 #define FLAG_PSYNERGY_TARGET 0x141
-/// Set before the party acts on the field; still set afterwards, nothing came
-/// of it and the game says so. An event that acts clears it.
+/* Set before the party acts on the field; still set afterwards, nothing came */
+/* of it and the game says so. An event that acts clears it. */
 #define FLAG_NOTHING_HAPPENS 0x142
-#define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
-/// Retreat is blocked, whether cast or used from an item, and the game says
-/// "It doesn't work here." Cleared on every normal scene entry (not a return
-/// keeping the party's position); the scenes that forbid Retreat set it.
-#define FLAG_RETREAT_BLOCKED 0x144
-#define FLAG_PSYNERGY_FROM_ITEM 0x145 ///< the Psynergy comes from an item
-/// No random encounters while set (Encounter_CountStepsAndSelectFormation),
-/// unless FLAG_IGNORE_ENCOUNTER_CHECKS is set; debug entrances set it.
+#define FLAG_ITEM_USED_UP	 0x143 /* the item just used is removed afterwards */
+/* Retreat is blocked, whether cast or used from an item, and the game says */
+/* "It doesn't work here." Cleared on every normal scene entry (not a return */
+/* keeping the party's position); the scenes that forbid Retreat set it. */
+#define FLAG_RETREAT_BLOCKED	0x144
+#define FLAG_PSYNERGY_FROM_ITEM 0x145 /* the Psynergy comes from an item */
+/* No random encounters while set (fdEncounterCountStepsAndSelectFormation), */
+/* unless FLAG_IGNORE_ENCOUNTER_CHECKS is set; debug entrances set it. */
 #define FLAG_NO_ENCOUNTERS 0x160
-/// No random battles until the party enters another area: Venus Lighthouse sets
-/// it on its Reveal path, the world map's debug entrance too, and Scene_Arrive
-/// clears it with a new area.
+/* No random battles until the party enters another area: Venus Lighthouse sets
+ */
+/* it on its Reveal path, the world map's debug entrance too, and scArrive */
+/* clears it with a new area. */
 #define FLAG_NO_ENCOUNTERS_IN_AREA 0x161
-#define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
-/// In debug mode, steps on the field are not processed (FieldSequence_Run) and
-/// the world map's places do not react to the leader; debug entrances
-/// set it.
+#define FLAG_DEBUG_BATTLE		   0x162 /* set before every debug battle */
+/* In debug mode, steps on the field are not processed (fdSequenceRun) and */
+/* the world map's places do not react to the leader; debug entrances */
+/* set it. */
 #define FLAG_DEBUG_STEPS_OFF 0x163
-/// Set while the Lure Cap is worn: random encounters come twice as fast.
+/* Set while the Lure Cap is worn: random encounters come twice as fast. */
 #define FLAG_LURE_CAP 0x167
-/// Auto battle: every living unit, party and enemies, makes a plain attack each
-/// turn with no command menu (AutoBattle_BuildActions). The debug battle menu
-/// sets it, and clears it again for its chooser.
-#define FLAG_AUTO_BATTLE 0x16a
-#define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
-/// The next battle is a link battle (Battle_Run); the Battle Arena
-/// sets it, and every normal scene entry (not a return keeping the party's
-/// position) clears it.
+/* Auto battle: every living unit, party and enemies, makes a plain attack each
+ */
+/* turn with no command menu (btAutoBattleBuildActions). The debug battle menu
+ */
+/* sets it, and clears it again for its chooser. */
+#define FLAG_AUTO_BATTLE	   0x16a
+#define FLAG_CHOOSING_COMMANDS 0x16b /* set while the commands are chosen */
+/* The next battle is a link battle (btRun); the Battle Arena */
+/* sets it, and every normal scene entry (not a return keeping the party's */
+/* position) clears it. */
 #define FLAG_LINK_BATTLE 0x16c
-// XXX: likely a debug switch at the colosseum too, because Jenna is never in
-// the party there in normal play; a reader outside the debug keys would say
-// otherwise.
-/// In debug mode, with it set, holding R as an action is planned defeats every
-/// enemy, and R with Select the party (BattleActionRun_Build); that is its only
-/// reader. The debug story preset for Vale's plaza sets it, and so do the
-/// colosseum's escorts as they swap Mia in for Jenna.
+/* XXX: likely a debug switch at the colosseum too, because Jenna is never in */
+/* the party there in normal play; a reader outside the debug keys would say */
+/* otherwise. */
+/* In debug mode, with it set, holding R as an action is planned defeats every
+ */
+/* enemy, and R with Select the party (btActionRunBuild); that is its only */
+/* reader. The debug story preset for Vale's plaza sets it, and so do the */
+/* colosseum's escorts as they swap Mia in for Jenna. */
 #define FLAG_DEBUG_BATTLE_KEYS 0x16d
-/// The highest of these that is set picks the tint a field Psynergy fades
-/// toward, gFieldPsynergy_CastColors[n], in place of the frame counter's pick
-/// (FieldPsynergy_FadeToCastColor).
+/* The highest of these that is set picks the tint a field Psynergy fades */
+/* toward, FieldPsynergy_CastColors[n], in place of the frame counter's pick */
+/* (fdPsynergyFadeToCastCol). */
 #define FLAG_PSYNERGY_TINT(n) (0x148 + (n))
-/// Holds the field's palette blend still (PaletteFade_Update), while a
-/// menu is open (Menu_SuspendFieldTasks).
+/* Holds the field's palette blend still (fdPaletteFadeUpdate), while a */
+/* menu is open (mnSuspendFieldTasks). */
 #define FLAG_PALETTE_BLEND_HELD 0x152
-/// Holds the field's weather still, its particles and its next burst, while a
-/// menu is open (Menu_SuspendFieldTasks).
+/* Holds the field's weather still, its particles and its next burst, while a */
+/* menu is open (mnSuspendFieldTasks). */
 #define FLAG_WEATHER_HELD 0x166
-/// In debug mode, each step beeps (SE_CLICK) while fewer than 136 of the 512
-/// resource blocks are free.
+/* In debug mode, each step beeps (SE_CLICK) while fewer than 136 of the 512 */
+/* resource blocks are free. */
 #define FLAG_DEBUG_RESOURCE_BEEP 0x15e
-/// Encounters are rolled even where FLAG_NO_ENCOUNTERS,
-/// FLAG_NO_ENCOUNTERS_IN_AREA, a zone of 0 or Cloak would stop them
-/// (Encounter_CountStepsAndSelectFormation).
+/* Encounters are rolled even where FLAG_NO_ENCOUNTERS, */
+/* FLAG_NO_ENCOUNTERS_IN_AREA, a zone of 0 or Cloak would stop them */
+/* (fdEncounterCountStepsAndSelectFormation). */
 #define FLAG_IGNORE_ENCOUNTER_CHECKS 0x15f
-/// Flint's lesson on Djinn, after he joins on the world map: in its battle the
-/// party strikes first, two of Flint's messages follow each turn, and no
-/// spoils are handed out. The world map sets it.
+/* Flint's lesson on Djinn, after he joins on the world map: in its battle the
+ */
+/* party strikes first, two of Flint's messages follow each turn, and no */
+/* spoils are handed out. The world map sets it. */
 #define FLAG_DJINN_LESSON 0x16e
-/// With FLAG_DJINN_LESSON set, these two choose the part of the lesson the
-/// Djinn menu plays: neither, DJINN_TUTORIAL_GIVE; only the second,
-/// DJINN_TUTORIAL_POWERS; only the first, DJINN_TUTORIAL_RECOVERY; both,
-/// DJINN_TUTORIAL_CLOSE (DjinnMenu_Run). With only the first, Flint says
-/// "After a Djinni has been used to summon, it must spend time in recovery."
+/* With FLAG_DJINN_LESSON set, these two choose the part of the lesson the */
+/* Djinn menu plays: neither, DJINN_TUTORIAL_GIVE; only the second, */
+/* DJINN_TUTORIAL_POWERS; only the first, DJINN_TUTORIAL_RECOVERY; both, */
+/* DJINN_TUTORIAL_CLOSE (mnDjinnMenuRun). With only the first, Flint says */
+/* "After a Djinni has been used to summon, it must spend time in recovery." */
 #define FLAG_DJINN_LESSON_PART_A 0x16f
-/// The next layout keeps the palette and tiles already loaded, once.
+/* The next layout keeps the palette and tiles already loaded, once. */
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170
-/// The second part flag; with only this one set, Flint begins with "Each
-/// Djinni has different powers."
+/* The second part flag; with only this one set, Flint begins with "Each */
+/* Djinni has different powers." */
 #define FLAG_DJINN_LESSON_PART_B 0x171
-/// A linked battle has been arranged in the Battle Arena, with
-/// FLAG_LINK_BATTLE: only the first three party members take part.
+/* A linked battle has been arranged in the Battle Arena, with */
+/* FLAG_LINK_BATTLE: only the first three party members take part. */
 #define FLAG_LINK_BATTLE_ARRANGED 0x172
-/// The Battle Arena's battle against a monster when no opponent is linked:
-/// formations matched to the party's level, and no spoils.
+/* The Battle Arena's battle against a monster when no opponent is linked: */
+/* formations matched to the party's level, and no spoils. */
 #define FLAG_MONSTER_BATTLE 0x173
-/// Lets the monster battles choose enemies above level 3 the party has never
-/// defeated (BattleFormation_AverageLevel). Nothing in this game sets it.
+/* Lets the monster battles choose enemies above level 3 the party has never */
+/* defeated (btFormationAverageLevel). Nothing in this game sets it. */
 #define FLAG_MONSTER_BATTLE_ANY_ENEMY 0x174
-/// Set when the cleared game's menu goes to the Battle Arena: there Psynergy
-/// has no effect and the Pause menu offers only Change settings.
+/* Set when the cleared game's menu goes to the Battle Arena: there Psynergy */
+/* has no effect and the Pause menu offers only Change settings. */
 #define FLAG_IN_BATTLE_ARENA 0x17e
-/// With it set, holding B on the field walks the leader at 4 pixels a frame
-/// (Actor_UpdatePlayerControl). Nothing in the game sets it.
+/* With it set, holding B on the field walks the leader at 4 pixels a frame */
+/* (fdActorUpdatePlayerCtrl). Nothing in the game sets it. */
 #define FLAG_FAST_WALK 0x17f
-/// The areas the party has visited, one flag for each, set by Scene_Arrive as
-/// the party enters the area; the map screen shows a marker for each.
+/* The areas the party has visited, one flag for each, set by scArrive as */
+/* the party enters the area; the map screen shows a marker for each. */
 #define FLAG_AREA_VISITED(group) (0x180 + (group))
-/// A scene's own flags, cleared on every ordinary entry (Scene_Arrive): puzzles
-/// reset when the party walks back in.
+/* A scene's own flags, cleared on every ordinary entry (scArrive): puzzles */
+/* reset when the party walks back in. */
 #define FLAG_SCENE_TEMP_FIRST 0x200
-#define FLAG_SCENE_TEMP_LAST 0x2ff ///< the last of the scene's 256 flags
-/// An area's flags, kept while the party moves between the scenes of one
-/// area and cleared when it enters another. Each area uses the numbers
-/// for its own, so the scenes name them; the next two are the Battle Arena's.
+#define FLAG_SCENE_TEMP_LAST  0x2ff /* the last of the scene's 256 flags */
+/* An area's flags, kept while the party moves between the scenes of one */
+/* area and cleared when it enters another. Each area uses the numbers */
+/* for its own, so the scenes name them; the next two are the Battle Arena's. */
 #define FLAG_AREA_TEMP_FIRST 0x300
-#define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
-// Byte flags, read and written eight at a time.
-/// The party members the linked opponent sent.
+#define FLAG_AREA_TEMP_LAST	 0x3ff /* the last of the area's 256 flags */
+/* Byte flags, read and written eight at a time. */
+/* The party members the linked opponent sent. */
 #define FLAG_LINK_PARTY_COUNT 0x3f0
-/// Monster Battles won in a row, added to the monsters' level; -1 after the
-/// series ends.
+/* Monster Battles won in a row, added to the monsters' level; -1 after the */
+/* series ends. */
 #define FLAG_MONSTER_BATTLE_WINS 0x3f8
-/// Plus a row of the shop stock table: that place's artifacts are in stock,
-/// for the shop counter's Artifacts list.
+/* Plus a row of the shop stock table: that place's artifacts are in stock, */
+/* for the shop counter's Artifacts list. */
 #define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
 
-// The story's flags, from 0x800, and the treasures', from 0xec0.
-/// Kraden has talked Isaac, Garet and Jenna into a secret look at Sol Sanctum
-/// and come out of his cottage ready to go (ValeKradensCottage_KradenSetsOff).
-/// Until then Jenna stops Isaac on the path to Mt. Aleph; afterwards Kraden,
-/// Saturos and Menardi are gone from outside the cottage.
+/* The story's flags, from 0x800, and the treasures', from 0xec0. */
+/* Kraden has talked Isaac, Garet and Jenna into a secret look at Sol Sanctum */
+/* and come out of his cottage ready to go (scValeKradensCottageKradenSetsOff).
+ */
+/* Until then Jenna stops Isaac on the path to Mt. Aleph; afterwards Kraden, */
+/* Saturos and Menardi are gone from outside the cottage. */
 #define FLAG_SANCTUM_VISIT_PLANNED 0x801
-/// The party has come in through Sol Sanctum's door the first time, and
-/// Kraden has welcomed everyone to it; until then that welcome plays at
-/// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
+/* The party has come in through Sol Sanctum's door the first time, and */
+/* Kraden has welcomed everyone to it; until then that welcome plays at */
+/* SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE. */
 #define FLAG_SOL_SANCTUM_ENTERED 0x802
-/// In Sol Sanctum's statue hall, Kraden has recalled the hidden
-/// passage Saturos and Menardi spoke of and the four have agreed to look for
-/// it together; until then his talk plays each time the party enters the hall.
+/* In Sol Sanctum's statue hall, Kraden has recalled the hidden */
+/* passage Saturos and Menardi spoke of and the four have agreed to look for */
+/* it together; until then his talk plays each time the party enters the hall.
+ */
 #define FLAG_SEARCHING_FOR_HIDDEN_PASSAGE 0x804
-/// Isaac, Garet and Jenna have overheard the two strangers outside Kraden's
-/// cottage and been let go (ValeKradensCottage_MeetSaturosAndMenardi).
-/// Afterwards the two stand watching the leader, and Vale's barking puppies are
-/// gone.
+/* Isaac, Garet and Jenna have overheard the two strangers outside Kraden's */
+/* cottage and been let go (scValeKradensCottageMeetSaturosAndMenardi). */
+/* Afterwards the two stand watching the leader, and Vale's barking puppies are
+ */
+/* gone. */
 #define FLAG_MET_SATUROS_AND_MENARDI 0x808
-/// Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's
-/// scenes then place their later actors and lines, the Sanctum takes
-/// another trigger table and Healer line, and the Sol Sanctum approach moves
-/// its sentry, changes cell behaviors and stops sending its way down to
-/// SceneId_ValeEruption.
+/* Set once the party has left Vale (WORLD_MAP_FROM_VALE_PLAZA): Vale's */
+/* scenes then place their later actors and lines, the Sanctum takes */
+/* another trigger table and Healer line, and the Sol Sanctum approach moves */
+/* its sentry, changes cell behaviors and stops sending its way down to */
+/* SceneId_ValeEruption. */
 #define FLAG_VALE_PARTY_LEFT 0x815
-/// The first Small Jewel is set in the empty eye of Sol Sanctum's first
-/// minotaur relief, which opened the passage beside it; the relief then shows
-/// both eyes sparkling, and the passage stays open on later visits.
+/* The first Small Jewel is set in the empty eye of Sol Sanctum's first */
+/* minotaur relief, which opened the passage beside it; the relief then shows */
+/* both eyes sparkling, and the passage stays open on later visits. */
 #define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET 0x81a
-/// As FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET, for the second Small Jewel and
-/// the second minotaur relief, whose doorway it opened.
+/* As FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET, for the second Small Jewel and */
+/* the second minotaur relief, whose doorway it opened. */
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET 0x821
-/// The party has beaten the evil within Tret in Tret Tree and he has spoken
-/// with it since, too weak to free Kolima. Set only once that talk ends; from
-/// then on his room's passage stays open, and in Kolima Forest Hermes' Water
-/// heals him instead of being thrown back.
+/* The party has beaten the evil within Tret in Tret Tree and he has spoken */
+/* with it since, too weak to free Kolima. Set only once that talk ends; from */
+/* then on his room's passage stays open, and in Kolima Forest Hermes' Water */
+/* heals him instead of being thrown back. */
 #define FLAG_TRET_DEFEATED 0x844
-/// Hermes' Water has healed Tret in Kolima Forest, and he has freed Kolima's
-/// people from being trees. The forest loses its cursed colors, and the
-/// people of Kolima and Bilibin switch to their lines for after the curse.
+/* Hermes' Water has healed Tret in Kolima Forest, and he has freed Kolima's */
+/* people from being trees. The forest loses its cursed colors, and the */
+/* people of Kolima and Bilibin switch to their lines for after the curse. */
 #define FLAG_KOLIMA_CURSE_LIFTED 0x845
-/// Laurel has spoken with the party the first time in Kolima Forest, knowing
-/// them as the ones who resisted Tret's glamour and warning them to leave;
-/// afterwards she only repeats the warning until the curse is lifted.
+/* Laurel has spoken with the party the first time in Kolima Forest, knowing */
+/* them as the ones who resisted Tret's glamour and warning them to leave; */
+/* afterwards she only repeats the warning until the curse is lifted. */
 #define FLAG_MET_LAUREL 0x84c
-/// Unused: the soldier who keeps McCoy's treasure would offer the party a pick
-/// of the four treasures; nothing in the game sets it.
+/* Unused: the soldier who keeps McCoy's treasure would offer the party a pick
+ */
+/* of the four treasures; nothing in the game sets it. */
 #define FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED 0x84d
-/// The party has taken its reward from McCoy's treasure chests.
+/* The party has taken its reward from McCoy's treasure chests. */
 #define FLAG_MCCOY_PALACE_REWARD_TAKEN 0x84e
-/// The party has beaten the three thieves in the loft of Vault's inn and the
-/// mayor has had them locked up; the stolen goods are returned and Ivan leaves
-/// the party. Vault's people, its jail and its Sanctum read it, and in Goma
-/// Cave Ivan comes back to rejoin the party.
+/* The party has beaten the three thieves in the loft of Vault's inn and the */
+/* mayor has had them locked up; the stolen goods are returned and Ivan leaves
+ */
+/* the party. Vault's people, its jail and its Sanctum read it, and in Goma */
+/* Cave Ivan comes back to rejoin the party. */
 #define FLAG_VAULT_THIEVES_JAILED 0x855
-/// Vault's dog, given a Bone, has jumped where the passage underground is, and
-/// its thoughts now say so.
+/* Vault's dog, given a Bone, has jumped where the passage underground is, and
+ */
+/* its thoughts now say so. */
 #define FLAG_VAULT_DOG_SHOWN_PASSAGE 0x858
-/// The girl at Vault's inn has given the party a Bone.
+/* The girl at Vault's inn has given the party a Bone. */
 #define FLAG_VAULT_BONE_RECEIVED 0x85b
-/// Ringing Vault's bell has called Sap out of hiding.
+/* Ringing Vault's bell has called Sap out of hiding. */
 #define FLAG_VAULT_SAP_CALLED_BY_BELL 0x867
-/// Douse has put out the fire between two torches in BilibinCaveRapier.
+/* Douse has put out the fire between two torches in BilibinCaveRapier. */
 #define FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED 0x882
-/// Douse has put out the fire beside the first puddle in BilibinCaveIce.
+/* Douse has put out the fire beside the first puddle in BilibinCaveIce. */
 #define FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED 0x883
-/// BilibinCaveRapier's chest.
+/* BilibinCaveRapier's chest. */
 #define FLAG_BILIBIN_CAVE_ELVEN_RAPIER 0xf5d
-/// One of BilibinCaveIce's chests.
+/* One of BilibinCaveIce's chests. */
 #define FLAG_BILIBIN_CAVE_VIAL 0xf5e
-/// One of BilibinCaveIce's chests.
+/* One of BilibinCaveIce's chests. */
 #define FLAG_BILIBIN_CAVE_PSY_CRYSTAL 0xfc6
-/// One of BilibinCaveIce's chests.
+/* One of BilibinCaveIce's chests. */
 #define FLAG_BILIBIN_CAVE_WATER_OF_LIFE 0xfc7
-/// Feizhi has burst in on Master Hama's lesson at Lama Temple to say that Hsu
-/// is trapped among the boulders, and Hama has gone to his aid. Set as the
-/// lesson ends; every villager in Xian then talks of the rockslide, and Hama
-/// and Feizhi wait by Hsu at the Alpine Crossing.
+/* Feizhi has burst in on Master Hama's lesson at Lama Temple to say that Hsu */
+/* is trapped among the boulders, and Hama has gone to his aid. Set as the */
+/* lesson ends; every villager in Xian then talks of the rockslide, and Hama */
+/* and Feizhi wait by Hsu at the Alpine Crossing. */
 #define FLAG_XIAN_HEARD_HSU_TRAPPED 0x895
-/// Feizhi has stormed out of Master Feh's school, sure that Hsu is in danger,
-/// to find him alone. It unlocks the school's door she came out of, and
-/// places her by Xian's south exit until she reaches the Alpine Crossing.
+/* Feizhi has stormed out of Master Feh's school, sure that Hsu is in danger, */
+/* to find him alone. It unlocks the school's door she came out of, and */
+/* places her by Xian's south exit until she reaches the Alpine Crossing. */
 #define FLAG_FEIZHI_WENT_TO_HSU 0x89a
-/// Hsu is free of the boulders at the Alpine Crossing: Lift has raised the
-/// boulder while Hama and Feizhi pulled him out, or he was freed while the
-/// party was away (FLAG_HSU_RESCUED_WITHOUT_PARTY, set with it). The road is
-/// cleared, and Lama Temple's monks give their advice for the desert.
+/* Hsu is free of the boulders at the Alpine Crossing: Lift has raised the */
+/* boulder while Hama and Feizhi pulled him out, or he was freed while the */
+/* party was away (FLAG_HSU_RESCUED_WITHOUT_PARTY, set with it). The road is */
+/* cleared, and Lama Temple's monks give their advice for the desert. */
 #define FLAG_HSU_RESCUED 0x8b2
-/// The water in Altin Mine has drained after the first, second and third
-/// water beasts' battles (AltinPeak_DrainFirstWater and the two after it).
-#define FLAG_ALTIN_MINE_FIRST_DRAIN 0x8fd
+/* The water in Altin Mine has drained after the first, second and third */
+/* water beasts' battles (scAltinPeakDrainFirstWater and the two after it). */
+#define FLAG_ALTIN_MINE_FIRST_DRAIN	 0x8fd
 #define FLAG_ALTIN_MINE_SECOND_DRAIN 0x8fe
-#define FLAG_ALTIN_MINE_THIRD_DRAIN 0x907
-/// The party has beaten the Hydros statues at the bottom of Altin Peak; the
-/// statue there sinks into the floor. Every villager in Altin, and the Sanctum
-/// healer's thoughts, switch to their lines for after the battle.
+#define FLAG_ALTIN_MINE_THIRD_DRAIN	 0x907
+/* The party has beaten the Hydros statues at the bottom of Altin Peak; the */
+/* statue there sinks into the floor. Every villager in Altin, and the Sanctum
+ */
+/* healer's thoughts, switch to their lines for after the battle. */
 #define FLAG_HYDROS_STATUES_DEFEATED 0x909
-/// In the ship's hold at Kalay, Sean and Ouranos have lost patience with the
-/// delay and gone to make the captain sail. It moves the voyage on: the
-/// passengers' talk changes, and the Anchor Charm can be found on the mast.
+/* In the ship's hold at Kalay, Sean and Ouranos have lost patience with the */
+/* delay and gone to make the captain sail. It moves the voyage on: the */
+/* passengers' talk changes, and the Anchor Charm can be found on the mast. */
 #define FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN 0x922
-/// The crewman behind the deck's second door has been caught, and denies
-/// everything.
+/* The crewman behind the deck's second door has been caught, and denies */
+/* everything. */
 #define FLAG_TOLBI_SHIP_CREWMAN_CAUGHT 0x923
-/// The party has found the captain's Anchor Charm at the top of the mast,
-/// which it can only do once the crewman on deck is caught or Sean and Ouranos
-/// have gone to the captain.
+/* The party has found the captain's Anchor Charm at the top of the mast, */
+/* which it can only do once the crewman on deck is caught or Sean and Ouranos
+ */
+/* have gone to the captain. */
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND 0x924
-/// Lunpa's chef has told of the prisoner in the fortress, in words or in his
-/// thoughts.
+/* Lunpa's chef has told of the prisoner in the fortress, in words or in his */
+/* thoughts. */
 #define FLAG_LUNPA_HEARD_OF_PRISONER 0x940
-/// Donpa has judged Dodonpa in Lunpa Fortress and locked him up; Lunpa opens
-/// again, and the party may leave with Hammet.
+/* Donpa has judged Dodonpa in Lunpa Fortress and locked him up; Lunpa opens */
+/* again, and the party may leave with Hammet. */
 #define FLAG_DODONPA_LOCKED_UP 0x941
-/// In West Lunpa Cave, Hammet has found Bunza, the Kalay merchant hiding
-/// behind a rock, and Bunza has offered his wagon. It plays once; until then
-/// Garet keeps the leader from going back up to Lunpa Fortress.
+/* In West Lunpa Cave, Hammet has found Bunza, the Kalay merchant hiding */
+/* behind a rock, and Bunza has offered his wagon. It plays once; until then */
+/* Garet keeps the leader from going back up to Lunpa Fortress. */
 #define FLAG_LUNPA_CAVE_REUNION_SEEN 0x94d
-/// Bunza's wagon has left West Lunpa Cave, with the party aboard or without.
+/* Bunza's wagon has left West Lunpa Cave, with the party aboard or without. */
 #define FLAG_BUNZAS_WAGON_LEFT 0x94f
-/// Iodem, waiting in Gondowan Passage, travels with the party toward Babi
-/// Lighthouse. Turning back there clears it if he stays to wait; in the
-/// Suhalla Desert he warns of the storms and asks whether to press on.
+/* Iodem, waiting in Gondowan Passage, travels with the party toward Babi */
+/* Lighthouse. Turning back there clears it if he stays to wait; in the */
+/* Suhalla Desert he warns of the storms and asks whether to press on. */
 #define FLAG_IODEM_FOLLOWING_PARTY 0x9a0
-/// Move has sent GondowanCave's tree stump spinning across, freeing its cell.
+/* Move has sent GondowanCave's tree stump spinning across, freeing its cell. */
 #define FLAG_GONDOWAN_CAVE_STUMP_MOVED 0x9a2
-/// GondowanCave's stone pillar has dropped into its place for good.
+/* GondowanCave's stone pillar has dropped into its place for good. */
 #define FLAG_GONDOWAN_CAVE_PILLAR_DROPPED 0x9a5
-/// GondowanCaveRiver's two chests, whose examine triggers every scene of the
-/// overlay carries.
-#define FLAG_GONDOWAN_CAVE_APPLE 0xfa0
+/* GondowanCaveRiver's two chests, whose examine triggers every scene of the */
+/* overlay carries. */
+#define FLAG_GONDOWAN_CAVE_APPLE	   0xfa0
 #define FLAG_GONDOWAN_CAVE_LUCKY_MEDAL 0xfa1
 
-// Alpine Crossing and Lama Temple
-/// At the Alpine Crossing, Feizhi has caught up with the party, found the road
-/// blocked as her vision foretold and run ahead calling for Hsu. She is gone
-/// from Xian from then on.
+/* Alpine Crossing and Lama Temple */
+/* At the Alpine Crossing, Feizhi has caught up with the party, found the road
+ */
+/* blocked as her vision foretold and run ahead calling for Hsu. She is gone */
+/* from Xian from then on. */
 #define FLAG_FEIZHI_SAW_ROCKSLIDE 0x8b0
-/// Hama has reached Hsu and spoken with him and Feizhi.
+/* Hama has reached Hsu and spoken with him and Feizhi. */
 #define FLAG_HAMA_REACHED_HSU 0x8b1
-/// Hsu was freed without the party: set with FLAG_HSU_RESCUED when the party
-/// comes back from Lama Temple after Xian has heard of the accident. While it
-/// is set, Xian's people do not thank the party for the rescue.
+/* Hsu was freed without the party: set with FLAG_HSU_RESCUED when the party */
+/* comes back from Lama Temple after Xian has heard of the accident. While it */
+/* is set, Xian's people do not thank the party for the rescue. */
 #define FLAG_HSU_RESCUED_WITHOUT_PARTY 0x8b3
-/// The crossing's chest.
+/* The crossing's chest. */
 #define FLAG_ALPINE_CROSSING_POWER_BREAD 0xf71
-/// The temple's chest.
+/* The temple's chest. */
 #define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a
 
-// Altin
-/// The water beast spewing at Altin's houses has stopped as the party came
-/// near and hopped away into the flood for good; Altin's setup then removes
-/// it.
+/* Altin */
+/* The water beast spewing at Altin's houses has stopped as the party came */
+/* near and hopped away into the flood for good; Altin's setup then removes */
+/* it. */
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
-/// Altin's stone statue stands where Move pushes it (altin.c's
-/// STONE_STATUE_MOVED_COLUMN). Checked after every Move
-/// (Altin_CheckStatueMoved), which clears it if the statue is anywhere else;
-/// the setup puts the statue back there while it is set.
+/* Altin's stone statue stands where Move pushes it (altin.c's */
+/* STONE_STATUE_MOVED_COLUMN). Checked after every Move */
+/* (scAltinCheckStatueMoved), which clears it if the statue is anywhere else; */
+/* the setup puts the statue back there while it is set. */
 #define FLAG_ALTIN_STATUE_MOVED 0x906
-/// A barrel in the houses.
+/* A barrel in the houses. */
 #define FLAG_ALTIN_NUT 0xf73
-/// A barrel in the houses.
+/* A barrel in the houses. */
 #define FLAG_ALTIN_COINS 0xf74
-/// A bed in the houses.
+/* A bed in the houses. */
 #define FLAG_ALTIN_SLEEP_BOMB 0xf75
 
-// Altin Peak (SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit)
-/// AltinPeakFirstWaterBeast's water beast has frozen the puddle in the gap
-/// between the cave's two ledges and hopped across it to the west ledge.
+/* Altin Peak (SceneId_AltinPeakFirstWaterBeast to SceneId_AltinPeakWestExit) */
+/* AltinPeakFirstWaterBeast's water beast has frozen the puddle in the gap */
+/* between the cave's two ledges and hopped across it to the west ledge. */
 #define FLAG_ALTIN_PEAK_FIRST_BEAST_CROSSED_GAP 0x904
-/// The same beast, once Isaac reached the east ledge by the gap, has hopped
-/// away to the west end of its ledge, where it spits water until its battle.
+/* The same beast, once Isaac reached the east ledge by the gap, has hopped */
+/* away to the west end of its ledge, where it spits water until its battle. */
 #define FLAG_ALTIN_PEAK_FIRST_BEAST_HOPPED_AWAY 0x905
-/// AltinPeakFallingRocks's boulder has fallen and rolled after the party leader
-/// into the wall at the bottom, leaving rubble; the scene redraws the rubble
-/// and the toppled log on later visits, and Force no longer topples the log.
+/* AltinPeakFallingRocks's boulder has fallen and rolled after the party leader
+ */
+/* into the wall at the bottom, leaving rubble; the scene redraws the rubble */
+/* and the toppled log on later visits, and Force no longer topples the log. */
 #define FLAG_ALTIN_PEAK_BOULDER_FALLEN 0x908
-/// AltinPeakSecondWaterBeast's chest.
+/* AltinPeakSecondWaterBeast's chest. */
 #define FLAG_ALTIN_PEAK_COOKIE 0xf76
-/// AltinPeakThirdWaterBeast's chest.
+/* AltinPeakThirdWaterBeast's chest. */
 #define FLAG_ALTIN_PEAK_DRAGON_SHIELD 0xf77
-/// AltinPeakJunction's chest.
+/* AltinPeakJunction's chest. */
 #define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78
-/// AltinPeakWestExit's chest.
+/* AltinPeakWestExit's chest. */
 #define FLAG_ALTIN_PEAK_VIAL 0xf79
-/// AltinPeakSpritz's chest.
+/* AltinPeakSpritz's chest. */
 #define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07
-/// AltinPeakHydrosStatue's chest.
+/* AltinPeakHydrosStatue's chest. */
 #define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08
-/// AltinPeakPool's chest, a Mimic (FIND_MIMIC).
+/* AltinPeakPool's chest, a Mimic (FIND_MIMIC). */
 #define FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN 0xef2
-/// Unused: the Herb chest in AltinPeakSecondWaterBeast's trigger table, past
-/// its end marker, where no lookup reaches.
+/* Unused: the Herb chest in AltinPeakSecondWaterBeast's trigger table, past */
+/* its end marker, where no lookup reaches. */
 #define FLAG_ALTIN_PEAK_UNUSED_HERB 0xf05
 
-// Altmiller Cave
-/// The party has spoken with the unseen voice in Altmiller Cave, who cannot
-/// move and has asked for his draught from deep in the cave, telling the order
-/// of the five rocks.
+/* Altmiller Cave */
+/* The party has spoken with the unseen voice in Altmiller Cave, who cannot */
+/* move and has asked for his draught from deep in the cave, telling the order
+ */
+/* of the five rocks. */
 #define FLAG_MET_INVISIBLE_BABI 0x960
-/// Babi has called the party back once as it made to leave without him.
+/* Babi has called the party back once as it made to leave without him. */
 #define FLAG_BABI_CALLED_PARTY_BACK 0x961
-/// The party has saved Babi in Altmiller Cave with his Mystic Draught; Tolbi
-/// then holds the Colosso finals, and its scenes read this as the finals day.
+/* The party has saved Babi in Altmiller Cave with his Mystic Draught; Tolbi */
+/* then holds the Colosso finals, and its scenes read this as the finals day. */
 #define FLAG_BABI_SAVED 0x962
-/// The chest behind the rocks' wall.
+/* The chest behind the rocks' wall. */
 #define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30
-/// AltmillerCaveVialChest's chest.
+/* AltmillerCaveVialChest's chest. */
 #define FLAG_ALTMILLER_CAVE_VIAL 0xf9c
-/// AltmillerCaveCookieChest's chest.
+/* AltmillerCaveCookieChest's chest. */
 #define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d
-/// AltmillerCaveBabi's chest, a Mimic (FIND_MIMIC).
+/* AltmillerCaveBabi's chest, a Mimic (FIND_MIMIC). */
 #define FLAG_ALTMILLER_CAVE_MIMIC_BEATEN 0xef5
 
-// Babi Lighthouse
-/// Arrival through room 2's entrance 10 changes its cell tiles and
-/// behaviors; entrances 10 and 11 restore those changes on later
-/// visits.
+/* Babi Lighthouse */
+/* Arrival through room 2's entrance 10 changes its cell tiles and */
+/* behaviors; entrances 10 and 11 restore those changes on later */
+/* visits. */
 #define FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR 0x980
-/// The stone door that Reveal's switch opens stands open. Walking through
-/// clears it as the door shuts behind the party.
+/* The stone door that Reveal's switch opens stands open. Walking through */
+/* clears it as the door shuts behind the party. */
 #define FLAG_BABI_LIGHTHOUSE_DOOR_OPEN 0x985
-/// Iodem and Faran have asked the party to follow Sheba's kidnappers.
+/* Iodem and Faran have asked the party to follow Sheba's kidnappers. */
 #define FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW 0x988
-/// Set with FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW: Iodem has come to Babi
-/// Lighthouse, and from then on he no longer steps out of the party to
-/// question the wounded soldiers in Suhalla, or to ask in Gondowan Passage why
-/// the party is turning back.
+/* Set with FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW: Iodem has come to Babi */
+/* Lighthouse, and from then on he no longer steps out of the party to */
+/* question the wounded soldiers in Suhalla, or to ask in Gondowan Passage why
+ */
+/* the party is turning back. */
 #define FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED 0x98a
-/// The party has opened the stone door before Iodem and Faran, who saw it shut
-/// again and stay behind, leaving Sheba's rescue to the party.
+/* The party has opened the stone door before Iodem and Faran, who saw it shut
+ */
+/* again and stay behind, leaving Sheba's rescue to the party. */
 #define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
-/// The building site's chest.
+/* The building site's chest. */
 #define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc
 
-// Babi Palace
-/// The Colosso finals have been fought, won or lost; Babi's Palace, the
-/// colosseum, the docks and Gondowan Passage take their after-Colosso people
-/// and talk.
+/* Babi Palace */
+/* The Colosso finals have been fought, won or lost; Babi's Palace, the */
+/* colosseum, the docks and Gondowan Passage take their after-Colosso people */
+/* and talk. */
 #define FLAG_COLOSSO_OVER 0x950
-/// The party won the finals.
+/* The party won the finals. */
 #define FLAG_WON_COLOSSO 0x951
-/// The attendant has offered the beds for the night before the finals.
+/* The attendant has offered the beds for the night before the finals. */
 #define FLAG_BABI_PALACE_FINALS_REST_OFFERED 0x966
-/// While set, the beds can be used during the finals.
+/* While set, the beds can be used during the finals. */
 #define FLAG_BABI_PALACE_FINALS_BEDS_OPEN 0x967
-/// Sheba has felt the party read her mind in Babi's Palace, the first time
-/// Mind Read is used on her.
+/* Sheba has felt the party read her mind in Babi's Palace, the first time */
+/* Mind Read is used on her. */
 #define FLAG_SHEBA_NOTICED_MIND_READ 0x968
-/// While set, the beds can be used before the finals.
+/* While set, the beds can be used before the finals. */
 #define FLAG_BABI_PALACE_BEDS_OPEN 0x969
-/// The party has slept in Babi's Palace once, talking it over the first night;
-/// later nights in its beds go straight to sleep.
+/* The party has slept in Babi's Palace once, talking it over the first night;
+ */
+/* later nights in its beds go straight to sleep. */
 #define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a
-/// The soldiers have come back from Altmiller Cave to Iodem without Babi, and
-/// Iodem has left for the colosseum in Babi's stead; he and the soldiers are
-/// gone from the palace from then on.
+/* The soldiers have come back from Altmiller Cave to Iodem without Babi, and */
+/* Iodem has left for the colosseum in Babi's stead; he and the soldiers are */
+/* gone from the palace from then on. */
 #define FLAG_IODEM_HEARD_SOLDIERS 0x96b
-/// A courtyard guard has passed on Babi's word to go to the colosseum.
+/* A courtyard guard has passed on Babi's word to go to the colosseum. */
 #define FLAG_BABI_PALACE_GUARD_GAVE_WORD 0x96c
-/// The other courtyard guard has thanked the party for saving Babi.
+/* The other courtyard guard has thanked the party for saving Babi. */
 #define FLAG_BABI_PALACE_GUARD_THANKED_PARTY 0x96d
-/// Babi and Iodem have spoken with the party in the throne room after Colosso
-/// and sent Iodem with it toward Venus Lighthouse. Gondowan Passage, Suhalla
-/// and Suhalla Gate take their later people and events from then on.
+/* Babi and Iodem have spoken with the party in the throne room after Colosso */
+/* and sent Iodem with it toward Venus Lighthouse. Gondowan Passage, Suhalla */
+/* and Suhalla Gate take their later people and events from then on. */
 #define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
-/// Lent by Babi after Colosso.
+/* Lent by Babi after Colosso. */
 #define FLAG_BABI_PALACE_CLOAK_BALL 0xf31
-/// In a barrel.
+/* In a barrel. */
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f
-/// A jar in the scholars' room, which is drawn on Vale's layout
-/// (cottage_rooms_b.c).
+/* A jar in the scholars' room, which is drawn on Vale's layout */
+/* (cottage_rooms_b.c). */
 #define FLAG_BABI_PALACE_HARD_NUT 0xf9e
-// Bilibin
-/// Move has pulled Jill, a tree in the river by Bilibin, ashore; she stays on
-/// the bank, and once the curse is lifted she is a child again with the rest
-/// of her gang.
+/* Bilibin */
+/* Move has pulled Jill, a tree in the river by Bilibin, ashore; she stays on */
+/* the bank, and once the curse is lifted she is a child again with the rest */
+/* of her gang. */
 #define FLAG_BILIBIN_JILL_RESCUED 0x848
-/// Her thanks, a Hard Nut.
+/* Her thanks, a Hard Nut. */
 #define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849
-/// A jar in the village.
+/* A jar in the village. */
 #define FLAG_BILIBIN_HERB 0xf50
-/// A jar in the village.
+/* A jar in the village. */
 #define FLAG_BILIBIN_COINS 0xf51
-/// A barrel in the houses (SceneId_CottageRoomsC).
+/* A barrel in the houses (SceneId_CottageRoomsC). */
 #define FLAG_BILIBIN_ANTIDOTE 0xf52
-/// A bed in the houses (SceneId_CottageRoomsC).
+/* A bed in the houses (SceneId_CottageRoomsC). */
 #define FLAG_BILIBIN_SLEEP_BOMB 0xf53
-/// A barrel in the houses (SceneId_CottageRoomsC).
+/* A barrel in the houses (SceneId_CottageRoomsC). */
 #define FLAG_BILIBIN_HARD_NUT 0xf54
 
-// Colosso
-/// The trial attendant in the colosseum's stands has shown the party a warrior
-/// failing his trial and explained it; the next time, he shows one clearing
-/// his.
+/* Colosso */
+/* The trial attendant in the colosseum's stands has shown the party a warrior
+ */
+/* failing his trial and explained it; the next time, he shows one clearing */
+/* his. */
 #define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3
-/// The trial attendant has shown the party a warrior clearing his trial; from
-/// then on he only talks of the techniques.
+/* The trial attendant has shown the party a warrior clearing his trial; from */
+/* then on he only talks of the techniques. */
 #define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4
-/// Isaac has won his first match of the Colosso finals, in Colosseum Final 1;
-/// the soldiers congratulate him and lead him to Colosseum Final 2.
+/* Isaac has won his first match of the Colosso finals, in Colosseum Final 1; */
+/* the soldiers congratulate him and lead him to Colosseum Final 2. */
 #define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
-/// Isaac has won his second match, in Colosseum Final 2; from then on the
-/// passages east of the waiting room lead to Colosseum Final 3.
+/* Isaac has won his second match, in Colosseum Final 2; from then on the */
+/* passages east of the waiting room lead to Colosseum Final 3. */
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
-/// Set while the Colosso holds the party's equipment (the inventory snapshot).
+/* Set while the Colosso holds the party's equipment (the inventory snapshot).
+ */
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
-// XXX: no code of this game reads it; a reader would say what it changes.
-/// The soldiers have taken the party into the colosseum on the finals day.
+/* XXX: no code of this game reads it; a reader would say what it changes. */
+/* The soldiers have taken the party into the colosseum on the finals day. */
 #define FLAG_COLOSSEUM_FINALS_ENTERED 0x93f
-// Also FLAG_COLOSSO_OVER: the colosseum is closed until next year.
-// Also FLAG_BABI_SAVED: the trials are over, the finals day.
+/* Also FLAG_COLOSSO_OVER: the colosseum is closed until next year. */
+/* Also FLAG_BABI_SAVED: the trials are over, the finals day. */
 
-// Kalay
-/// The innkeeper or the tour's guide at Kalay's inn has told the party about
-/// the Colosso tour to Tolbi; leaving the town then plays the tour group's
-/// departure.
+/* Kalay */
+/* The innkeeper or the tour's guide at Kalay's inn has told the party about */
+/* the Colosso tour to Tolbi; leaving the town then plays the tour group's */
+/* departure. */
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
-/// The Colosso tour's group has left Kalay without its missing man. Its guests
-/// are gone from the inn, the ticket taker at Kalay Docks starts asking for
-/// tickets, and Sean and Ouranos lose patience in the ship's hold.
+/* The Colosso tour's group has left Kalay without its missing man. Its guests
+ */
+/* are gone from the inn, the ticket taker at Kalay Docks starts asking for */
+/* tickets, and Sean and Ouranos lose patience in the ship's hold. */
 #define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911
-/// Catch has taken the Nut circling in the town.
+/* Catch has taken the Nut circling in the town. */
 #define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916
-/// Catch has taken the Nut floating at the Kalay Tunnel Entrance.
+/* Catch has taken the Nut floating at the Kalay Tunnel Entrance. */
 #define FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT 0xfd6
-/// A jar in the town.
+/* A jar in the town. */
 #define FLAG_KALAY_SLEEP_BOMB_JAR 0xf81
-/// A jar in the town.
+/* A jar in the town. */
 #define FLAG_KALAY_VIAL_JAR 0xf82
-/// The chest in KalayTunnelCave.
+/* The chest in KalayTunnelCave. */
 #define FLAG_KALAY_TUNNEL_APPLE_CHEST 0xf22
-/// The chests of KalayTunnelTreasureRoom.
+/* The chests of KalayTunnelTreasureRoom. */
 #define FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST 0xf1c
-#define FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST 0xf1e
-#define FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST 0xf1f
-#define FLAG_KALAY_TUNNEL_COINS_CHEST 0xf20
-#define FLAG_KALAY_TUNNEL_POTION_CHEST 0xf21
-/// The containers of Kalay's houses.
-#define FLAG_STUCCO_ROOMS_A_COINS_BARREL 0xf83
+#define FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST	  0xf1e
+#define FLAG_KALAY_TUNNEL_LUCKY_MEDAL_CHEST	  0xf1f
+#define FLAG_KALAY_TUNNEL_COINS_CHEST		  0xf20
+#define FLAG_KALAY_TUNNEL_POTION_CHEST		  0xf21
+/* The containers of Kalay's houses. */
+#define FLAG_STUCCO_ROOMS_A_COINS_BARREL	0xf83
 #define FLAG_STUCCO_ROOMS_A_SMOKE_BOMB_OVEN 0xf84
-#define FLAG_STUCCO_ROOMS_A_ELIXIR_BARREL 0xf85
+#define FLAG_STUCCO_ROOMS_A_ELIXIR_BARREL	0xf85
 
-// Imil
-/// Megan, Mia's apprentice, told the party Mia went to the old couple's house.
+/* Imil */
+/* Megan, Mia's apprentice, told the party Mia went to the old couple's house.
+ */
 #define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
-/// Mia has healed the old man of Imil with Ply before the party, seen Mercury
-/// Lighthouse flash and run off to it, the party following. Imil's old couple
-/// and Mercury Lighthouse's door statue read it.
+/* Mia has healed the old man of Imil with Ply before the party, seen Mercury */
+/* Lighthouse flash and run off to it, the party following. Imil's old couple */
+/* and Mercury Lighthouse's door statue read it. */
 #define FLAG_IMIL_MET_MIA 0x82b
-/// The old couple have sent for Mia: the old man moaned for help and his wife
-/// hurried off to fetch her, or her apprentice told the party where she went.
+/* The old couple have sent for Mia: the old man moaned for help and his wife */
+/* hurried off to fetch her, or her apprentice told the party where she went. */
 #define FLAG_IMIL_MIA_SENT_FOR 0x82c
-/// Justin, Mia's apprentice, told the party he can act as its healer in the
-/// sanctum.
+/* Justin, Mia's apprentice, told the party he can act as its healer in the */
+/* sanctum. */
 #define FLAG_IMIL_JUSTIN_OFFERED_HEALING 0x82d
-/// Mia has said farewell to her two apprentices.
+/* Mia has said farewell to her two apprentices. */
 #define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e
-/// A jar in the village.
+/* A jar in the village. */
 #define FLAG_IMIL_COINS 0xf5f
-/// A chest in the village.
+/* A chest in the village. */
 #define FLAG_IMIL_VIAL 0xf60
-/// A grave in the village.
+/* A grave in the village. */
 #define FLAG_IMIL_LUCKY_MEDAL 0xf61
-/// A chest in the houses (SceneId_IceRooms).
+/* A chest in the houses (SceneId_IceRooms). */
 #define FLAG_IMIL_EMPTY_BOTTLE 0xf26
-/// A barrel in the houses (SceneId_IceRooms).
+/* A barrel in the houses (SceneId_IceRooms). */
 #define FLAG_IMIL_SLEEP_BOMB 0xf62
-/// An oven in the houses (SceneId_IceRooms).
+/* An oven in the houses (SceneId_IceRooms). */
 #define FLAG_IMIL_LUCKY_PEPPER 0xf63
 
-// Fuchin Falls
-/// The Dragon's Eye is taken from where it lies in Fuchin Falls Cave's third
-/// room.
+/* Fuchin Falls */
+/* The Dragon's Eye is taken from where it lies in Fuchin Falls Cave's third */
+/* room. */
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND 0xf13
-/// The Dragon's Eye is set in the eyeless dragon statue in Fuchin Falls Cave,
-/// which lights the room and shows its hidden path; the eye is used up.
+/* The Dragon's Eye is set in the eyeless dragon statue in Fuchin Falls Cave, */
+/* which lights the room and shows its hidden path; the eye is used up. */
 #define FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET 0x820
-/// FuchinFallsCaveEntrance's chest, a Mimic (FIND_MIMIC).
+/* FuchinFallsCaveEntrance's chest, a Mimic (FIND_MIMIC). */
 #define FLAG_FUCHIN_FALLS_MIMIC_BEATEN 0xef1
-/// FuchinFallsCaveArcticBlade's chest.
+/* FuchinFallsCaveArcticBlade's chest. */
 #define FLAG_FUCHIN_FALLS_ARCTIC_BLADE 0xf6b
 
-// Kalay and Tolbi docks
-/// The party has bought its tickets for the ship to Tolbi.
+/* Kalay and Tolbi docks */
+/* The party has bought its tickets for the ship to Tolbi. */
 #define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5
-/// The woman waiting on Kalay Docks has asked the party to tell her daughter
-/// in Tolbi that the tickets are too dear, and the party agreed; the daughter
-/// on Tolbi Docks then asks for the message.
+/* The woman waiting on Kalay Docks has asked the party to tell her daughter */
+/* in Tolbi that the tickets are too dear, and the party agreed; the daughter */
+/* on Tolbi Docks then asks for the message. */
 #define FLAG_KALAY_DOCKS_CARRYING_MESSAGE 0x8a6
-/// The party has given its Boat Ticket to the ticket taker at the ship's plank
-/// on Kalay Docks, and may board.
+/* The party has given its Boat Ticket to the ticket taker at the ship's plank
+ */
+/* on Kalay Docks, and may board. */
 #define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7
-/// The daughter on Tolbi Docks has heard from the party why her parents could
-/// not come, and thanks it from then on.
+/* The daughter on Tolbi Docks has heard from the party why her parents could */
+/* not come, and thanks it from then on. */
 #define FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED 0x8a8
-/// With its ticket handed over, the party has asked the ticket taker to go
-/// ashore and he has stepped aside; he then asks it to board when it is done.
-/// Coming back off the ship clears it, and he takes his place at the plank.
+/* With its ticket handed over, the party has asked the ticket taker to go */
+/* ashore and he has stepped aside; he then asks it to board when it is done. */
+/* Coming back off the ship clears it, and he takes his place at the plank. */
 #define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9
-/// A man on Tolbi Docks has walked up to the party as it came off the ship, and
-/// stays beside it. Coming off the ship again clears it, so he meets the party
-/// each time.
+/* A man on Tolbi Docks has walked up to the party as it came off the ship, and
+ */
+/* stays beside it. Coming off the ship again clears it, so he meets the party
+ */
+/* each time. */
 #define FLAG_TOLBI_DOCKS_ARRIVALS_GREETED 0x8aa
-/// The passengers confronted the tour guides and their bodyguard.
+/* The passengers confronted the tour guides and their bodyguard. */
 #define FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED 0x8ab
-/// The first time the party walked onto Kalay Docks from the world map, Garet
-/// ran to the water and was told the Karagol is no real ocean.
+/* The first time the party walked onto Kalay Docks from the world map, Garet */
+/* ran to the water and was told the Karagol is no real ocean. */
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
-#define FLAG_TOLBI_DOCKS_POTION_CHEST 0xf96
-/// The wooden box on Tolbi Docks.
+#define FLAG_TOLBI_DOCKS_POTION_CHEST	   0xf96
+/* The wooden box on Tolbi Docks. */
 #define FLAG_TOLBI_DOCKS_COINS_BOX 0xf95
-// Kolima
-/// The party has seen the curse fall on Kolima, in Kolima or in
-/// SceneId_KolimaForestEntrance, whichever it reached first: the sparkles rain
-/// down, its Psynergy shields it, and Tret and Laurel speak.
+/* Kolima */
+/* The party has seen the curse fall on Kolima, in Kolima or in */
+/* SceneId_KolimaForestEntrance, whichever it reached first: the sparkles rain
+ */
+/* down, its Psynergy shields it, and Tret and Laurel speak. */
 #define FLAG_KOLIMA_CURSE_WITNESSED 0x843
-/// The villager at Kolima Bridge has let its drawbridge down across the river,
-/// the first time the party stepped onto it after the curse was lifted. The
-/// bridge is drawn down from then on, and its piece of the world map with it.
+/* The villager at Kolima Bridge has let its drawbridge down across the river,
+ */
+/* the first time the party stepped onto it after the curse was lifted. The */
+/* bridge is drawn down from then on, and its piece of the world map with it. */
 #define FLAG_KOLIMA_BRIDGE_LOWERED 0x847
-/// A jar in the village.
+/* A jar in the village. */
 #define FLAG_KOLIMA_APPLE 0xf57
-/// A jar in the village.
+/* A jar in the village. */
 #define FLAG_KOLIMA_HERB 0xf58
-/// A jar in one of the village's houses (LogRoomsC).
+/* A jar in one of the village's houses (LogRoomsC). */
 #define FLAG_KOLIMA_LUCKY_MEDAL 0xf59
-/// A barrel in one of the village's houses (LogRoomsC): 7 coins.
+/* A barrel in one of the village's houses (LogRoomsC): 7 coins. */
 #define FLAG_KOLIMA_COINS 0xf5a
 
-// Kolima Forest
-/// Catch took the clearing's Nut.
+/* Kolima Forest */
+/* Catch took the clearing's Nut. */
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3
-/// KolimaForestFloodgate's chest.
+/* KolimaForestFloodgate's chest. */
 #define FLAG_KOLIMA_FOREST_FUR_COAT 0xf00
-/// Tret Tree's chest on the third floor, between its webs (TreeRooms).
+/* Tret Tree's chest on the third floor, between its webs (TreeRooms). */
 #define FLAG_TRET_TREE_HEALING_RING 0xf5b
-/// Tret Tree's chest on the fifth floor, east of its web (TreeRooms).
+/* Tret Tree's chest on the fifth floor, east of its web (TreeRooms). */
 #define FLAG_TRET_TREE_NUT 0xf5c
 
-// Lamakan Desert
-/// The Manticore, on the third scene, is beaten.
+/* Lamakan Desert */
+/* The Manticore, on the third scene, is beaten. */
 #define FLAG_LAMAKAN_MANTICORE_BEATEN 0x90a
-/// The desert's chests, set once each is opened.
-#define FLAG_LAMAKAN_DESERT_VULCAN_AXE 0xf7b
+/* The desert's chests, set once each is opened. */
+#define FLAG_LAMAKAN_DESERT_VULCAN_AXE	 0xf7b
 #define FLAG_LAMAKAN_DESERT_LUCKY_PEPPER 0xf7c
-#define FLAG_LAMAKAN_DESERT_777_COINS 0xf7d
-#define FLAG_LAMAKAN_DESERT_POTION 0xf7e
-#define FLAG_LAMAKAN_DESERT_MINT 0xf7f
+#define FLAG_LAMAKAN_DESERT_777_COINS	 0xf7d
+#define FLAG_LAMAKAN_DESERT_POTION		 0xf7e
+#define FLAG_LAMAKAN_DESERT_MINT		 0xf7f
 
-// Lalivero
-/// The party is back from Venus Lighthouse: set at the Lighthouse Aerie after
-/// Sheba's fall, as the party is taken to Lalivero. Lalivero and its buildings
-/// then read their tables for after the lighthouse.
+/* Lalivero */
+/* The party is back from Venus Lighthouse: set at the Lighthouse Aerie after */
+/* Sheba's fall, as the party is taken to Lalivero. Lalivero and its buildings
+ */
+/* then read their tables for after the lighthouse. */
 #define FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED 0x9a7
-/// Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for
-/// Babi's and handed over the Black Orb (WorldMap_RunBlackOrbEvent). Back from
-/// Venus Lighthouse, it picks the version of the report to Faran that knows
-/// the ship was swept away, and Garet's guess that it was Saturos's.
+/* Out of Gateway Cave, Iodem saw a ship off the coast at Idejima, took it for
+ */
+/* Babi's and handed over the Black Orb (scWorldMapRunBlackOrbEvent). Back from
+ */
+/* Venus Lighthouse, it picks the version of the report to Faran that knows */
+/* the ship was swept away, and Garet's guess that it was Saturos's. */
 #define FLAG_SAW_SHIP_AT_IDEJIMA 0x9bf
-/// The party has first come into Lalivero with Iodem and found more of Tolbi's
-/// soldiers beaten in the street, who say Sheba's captors went to the ruins
-/// beneath Babi Lighthouse. After it, Gateway Cave's Black Orb event no longer
-/// plays.
+/* The party has first come into Lalivero with Iodem and found more of Tolbi's
+ */
+/* soldiers beaten in the street, who say Sheba's captors went to the ruins */
+/* beneath Babi Lighthouse. After it, Gateway Cave's Black Orb event no longer
+ */
+/* plays. */
 #define FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN 0x9b8
-/// Outside Faran's house, Iodem has told the party the misty island may be
-/// Lemuria, given it the Black Orb that sails Babi's ship and said farewell.
+/* Outside Faran's house, Iodem has told the party the misty island may be */
+/* Lemuria, given it the Black Orb that sails Babi's ship and said farewell. */
 #define FLAG_IODEM_FAREWELL_SEEN 0x9ba
-/// The guard at Lalivero's wharf has let the party through to Babi's ship
-/// and stepped aside, where he stays.
+/* The guard at Lalivero's wharf has let the party through to Babi's ship */
+/* and stepped aside, where he stays. */
 #define FLAG_LALIVERO_WHARF_OPEN 0x9bb
-/// After the report to Faran, Iodem has asked the party to wait for him outside
-/// Faran's house, where he gives it the Black Orb.
+/* After the report to Faran, Iodem has asked the party to wait for him outside
+ */
+/* Faran's house, where he gives it the Black Orb. */
 #define FLAG_IODEM_ASKED_TO_MEET 0x9bc
-/// The jar in the street.
+/* The jar in the street. */
 #define FLAG_LALIVERO_WATER_OF_LIFE 0xfb6
-/// The stone pillar in the street.
+/* The stone pillar in the street. */
 #define FLAG_LALIVERO_PSY_CRYSTAL 0xfb7
-/// The chest in the street.
+/* The chest in the street. */
 #define FLAG_LALIVERO_WARRIORS_HELM 0xfb8
-/// A barrel in TimberRoomsB.
+/* A barrel in TimberRoomsB. */
 #define FLAG_TIMBER_ROOMS_B_LUCKY_MEDAL 0xfb9
-/// A barrel in TimberRoomsB.
+/* A barrel in TimberRoomsB. */
 #define FLAG_TIMBER_ROOMS_B_ANTIDOTE 0xfba
-/// A barrel in TimberRoomsC.
+/* A barrel in TimberRoomsC. */
 #define FLAG_TIMBER_ROOMS_C_LUCKY_MEDAL 0xfbb
-// Lunpa
-/// Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then
-/// on Lunpa's east guard asks whether the party came from Kalay, and touching
-/// Vault on the world map leads straight in.
+/* Lunpa */
+/* Set on the world map as Hammet's caravan leaves Vault for Lunpa; from then */
+/* on Lunpa's east guard asks whether the party came from Kalay, and touching */
+/* Vault on the world map leads straight in. */
 #define FLAG_LUNPA_GUARDS_SUSPECT_KALAY 0x85a
-/// After Donpa's judgment, the left guard at the Lunpa Fortress Gates has
-/// half recognized Hammet with the party, then dismissed it; his thoughts
-/// afterwards say the man looks like that merchant.
+/* After Donpa's judgment, the left guard at the Lunpa Fortress Gates has */
+/* half recognized Hammet with the party, then dismissed it; his thoughts */
+/* afterwards say the man looks like that merchant. */
 #define FLAG_LUNPA_GATE_GUARD_SAW_HAMMET 0x9af
-/// The Psynergy Stone in the town.
+/* The Psynergy Stone in the town. */
 #define FLAG_LUNPA_PSYNERGY_STONE 0xf27
-/// A grave in the town.
+/* A grave in the town. */
 #define FLAG_LUNPA_GRAVE_SLEEP_BOMB 0xf88
-/// A barrel in the town.
+/* A barrel in the town. */
 #define FLAG_LUNPA_BARREL_NUT 0xf89
-/// A wooden box in the town's buildings.
+/* A wooden box in the town's buildings. */
 #define FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL 0xf8a
-/// A barrel in the town's buildings.
+/* A barrel in the town's buildings. */
 #define FLAG_LUNPA_BARREL_VIAL 0xf8b
-/// Catch has taken the Nut floating over the town.
+/* Catch has taken the Nut floating over the town. */
 #define FLAG_LUNPA_NUT_CAUGHT 0xfd1
 
-// Lunpa Fortress. From FLAG_LUNPA_FORTRESS_CRATES_MOVED to
-// FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN, the fortress's state is
-// cleared whenever the party comes back to the gate below it.
-/// The party has seen Hammet's rescue up to Dodonpa's trap; a retry after
-/// losing the battle skips to the trap.
+/* Lunpa Fortress. From FLAG_LUNPA_FORTRESS_CRATES_MOVED to */
+/* FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN, the fortress's state is */
+/* cleared whenever the party comes back to the gate below it. */
+/* The party has seen Hammet's rescue up to Dodonpa's trap; a retry after */
+/* losing the battle skips to the trap. */
 #define FLAG_LUNPA_FORTRESS_TRAP_SEEN 0x942
-/// Move has pushed the stack of crates in LunpaFortressCave onto its hole,
-/// where it sinks.
+/* Move has pushed the stack of crates in LunpaFortressCave onto its hole, */
+/* where it sinks. */
 #define FLAG_LUNPA_FORTRESS_CRATES_MOVED 0x943
-/// Whirlwind has blown away the ivy that hid the first switch.
+/* Whirlwind has blown away the ivy that hid the first switch. */
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY 0x944
-/// Whirlwind has blown away the ivy that hid the passage.
+/* Whirlwind has blown away the ivy that hid the passage. */
 #define FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY 0x945
-/// Whirlwind has blown away the ivy that hid the second switch.
+/* Whirlwind has blown away the ivy that hid the second switch. */
 #define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY 0x946
-/// The first switch Reveal shows in the cave wall has been searched.
+/* The first switch Reveal shows in the cave wall has been searched. */
 #define FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED 0x947
-/// As FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED, for the second switch.
+/* As FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED, for the second switch. */
 #define FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED 0x948
-/// The guard in the narrow way north out of LunpaFortressUpperFloor's middle
-/// hall has been beaten, as a Brigand.
+/* The guard in the narrow way north out of LunpaFortressUpperFloor's middle */
+/* hall has been beaten, as a Brigand. */
 #define FLAG_LUNPA_FORTRESS_MIDDLE_HALL_GUARD_BEATEN 0x949
-/// The three guards who fight together have been beaten.
+/* The three guards who fight together have been beaten. */
 #define FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN 0x94a
-/// The guard in the doorway up to Donpa's room has been beaten, as a Brigand.
+/* The guard in the doorway up to Donpa's room has been beaten, as a Brigand. */
 #define FLAG_LUNPA_FORTRESS_DONPAS_DOOR_GUARD_BEATEN 0x94b
-/// The guard beside the Cell Key in the Cell Key room has been beaten, as a
-/// Brigand.
+/* The guard beside the Cell Key in the Cell Key room has been beaten, as a */
+/* Brigand. */
 #define FLAG_LUNPA_FORTRESS_CELL_KEY_ROOM_GUARD_BEATEN 0x94c
-/// Donpa's reward, the Djinni in his room, has joined the party.
-#define FLAG_LUNPA_FORTRESS_REWARD_TAKEN 0x94e
-#define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR 0xfa2
-#define FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL 0xfa3
+/* Donpa's reward, the Djinni in his room, has joined the party. */
+#define FLAG_LUNPA_FORTRESS_REWARD_TAKEN		  0x94e
+#define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR		  0xfa2
+#define FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL	  0xfa3
 #define FLAG_LUNPA_FORTRESS_CHEST_MYTHRIL_CIRCLET 0xfa4
-#define FLAG_LUNPA_FORTRESS_CHEST_COINS 0xfa5
-#define FLAG_LUNPA_FORTRESS_BARREL_VIAL 0xfa6
-#define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
-/// Caught or taken from its hook.
+#define FLAG_LUNPA_FORTRESS_CHEST_COINS			  0xfa5
+#define FLAG_LUNPA_FORTRESS_BARREL_VIAL			  0xfa6
+#define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD	  0xfa7
+/* Caught or taken from its hook. */
 #define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e
-/// Unused: the four swords LunpaFortress's unused pickups give; each sets its
-/// flag and nothing tests it.
+/* Unused: the four swords LunpaFortress's unused pickups give; each sets its */
+/* flag and nothing tests it. */
 #define FLAG_LUNPA_FORTRESS_ARCTIC_BLADE 0xf2a
-#define FLAG_LUNPA_FORTRESS_MASAMUNE 0xf2b
+#define FLAG_LUNPA_FORTRESS_MASAMUNE	 0xf2b
 #define FLAG_LUNPA_FORTRESS_SILVER_BLADE 0xf2c
-#define FLAG_LUNPA_FORTRESS_SHAMSHIR 0xf2d
+#define FLAG_LUNPA_FORTRESS_SHAMSHIR	 0xf2d
 
-// McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGrounds)
-/// McCoy's gate guards have agreed to let the party in to see their lord, and
-/// the gate stands open; from then on the east guard only warns that McCoy is
-/// a difficult man. The palace also sets it when the captain lets slip that
-/// the barricade may not need a key.
+/* McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGrounds) */
+/* McCoy's gate guards have agreed to let the party in to see their lord, and */
+/* the gate stands open; from then on the east guard only warns that McCoy is */
+/* a difficult man. The palace also sets it when the captain lets slip that */
+/* the barricade may not need a key. */
 #define FLAG_MCCOY_PALACE_ADMITTED 0x84a
-/// The party has been inside McCoy's Palace: its setup sets this on every
-/// entry. Bilibin tests it with FLAG_MCCOY_PALACE_ADMITTED, so that a party
-/// let in that never went in is scolded at the gate for keeping McCoy waiting.
+/* The party has been inside McCoy's Palace: its setup sets this on every */
+/* entry. Bilibin tests it with FLAG_MCCOY_PALACE_ADMITTED, so that a party */
+/* let in that never went in is scolded at the gate for keeping McCoy waiting.
+ */
 #define FLAG_MCCOY_PALACE_VISITED 0x84b
-/// After McCoy turned the party away, his captain let slip that the
-/// barricade may not need a key.
+/* After McCoy turned the party away, his captain let slip that the */
+/* barricade may not need a key. */
 #define FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY 0x84f
-/// McCoy's captain has seen the party off after McCoy's reward.
+/* McCoy's captain has seen the party off after McCoy's reward. */
 #define FLAG_MCCOY_PALACE_PARTY_REWARDED 0x85e
-/// The party refused McCoy's job at the first audience.
-#define FLAG_MCCOY_PALACE_JOB_REFUSED 0x85f
-#define FLAG_MCCOY_PALACE_BARREL_ELIXIR 0xf55
+/* The party refused McCoy's job at the first audience. */
+#define FLAG_MCCOY_PALACE_JOB_REFUSED		0x85f
+#define FLAG_MCCOY_PALACE_BARREL_ELIXIR		0xf55
 #define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB 0xf56
-/// Catch has taken the Nut floating outside.
+/* Catch has taken the Nut floating outside. */
 #define FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT 0xfd2
-// Mercury Lighthouse
-/// Mia, waiting at the statue that blocks Mercury Lighthouse's door, has told
-/// the party she senses someone inside, where only she and Alex can enter.
-/// From then on she stands facing the door, and talking to her only gets her
-/// remark that the statue blocks the entrance.
+/* Mercury Lighthouse */
+/* Mia, waiting at the statue that blocks Mercury Lighthouse's door, has told */
+/* the party she senses someone inside, where only she and Alex can enter. */
+/* From then on she stands facing the door, and talking to her only gets her */
+/* remark that the statue blocks the entrance. */
 #define FLAG_MIA_SENSED_SOMEONE_INSIDE 0x870
-/// Move has pushed aside the statue before Mercury Lighthouse's door, Mia has
-/// learned the word Psynergy, and her Ply has opened the door for her to go in.
-/// Afterwards she is gone from outside and the statue stays moved.
+/* Move has pushed aside the statue before Mercury Lighthouse's door, Mia has */
+/* learned the word Psynergy, and her Ply has opened the door for her to go in.
+ */
+/* Afterwards she is gone from outside and the statue stays moved. */
 #define FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA 0x871
-/// Back from the battle with the Lizard Man on the lighthouse's ground floor,
-/// Mia has nodded to the leader and gone on deeper into the lighthouse. Until
-/// then, coming in by the door replays the Lizard Man blocking her way.
+/* Back from the battle with the Lizard Man on the lighthouse's ground floor, */
+/* Mia has nodded to the leader and gone on deeper into the lighthouse. Until */
+/* then, coming in by the door replays the Lizard Man blocking her way. */
 #define FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA 0x872
-/// Move has pushed aside the second statue that blocked Mia, and she has
-/// joined the party with Fizz, a Mercury Djinni. Afterwards she is gone from
-/// that spot and the statue stays where it was pushed.
+/* Move has pushed aside the second statue that blocked Mia, and she has */
+/* joined the party with Fizz, a Mercury Djinni. Afterwards she is gone from */
+/* that spot and the statue stays where it was pushed. */
 #define FLAG_MIA_JOINED_PARTY 0x873
-/// The statue on the lighthouse's middle floor has been pushed or moved onto
-/// its floor switch, and the gate it works stays open for good. Until then the
-/// gate opens only while the leader stands on the switch.
+/* The statue on the lighthouse's middle floor has been pushed or moved onto */
+/* its floor switch, and the gate it works stays open for good. Until then the
+ */
+/* gate opens only while the leader stands on the switch. */
 #define FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN 0x874
-/// Ply cast on the heart of the pool, as its inscription bids: the lights
-/// cycle and the pillar routes open.
+/* Ply cast on the heart of the pool, as its inscription bids: the lights */
+/* cycle and the pillar routes open. */
 #define FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED 0x875
-/// All three small stone pillars on the lighthouse's lower floor are in place,
-/// the water runs, and it carries the party down to the ground floor. Moving
-/// one out again clears it. The ground floor's entrances from the lower
-/// floor place the party by whether it is set.
+/* All three small stone pillars on the lighthouse's lower floor are in place,
+ */
+/* the water runs, and it carries the party down to the ground floor. Moving */
+/* one out again clears it. The ground floor's entrances from the lower */
+/* floor place the party by whether it is set. */
 #define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
-/// A pillar pushed along the upper floor's row has sent the blue statue on its
-/// ledge sliding off to the floor below, where Move can set it on the stair
-/// gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). The scene
-/// places the statue below from then on.
+/* A pillar pushed along the upper floor's row has sent the blue statue on its
+ */
+/* ledge sliding off to the floor below, where Move can set it on the stair */
+/* gate's switch (FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN). The scene */
+/* places the statue below from then on. */
 #define FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL 0x877
-/// The fallen statue rests on the floor switch of MercuryLighthouseUpper and
-/// holds its gate open.
+/* The fallen statue rests on the floor switch of MercuryLighthouseUpper and */
+/* holds its gate open. */
 #define FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN 0x878
-/// Saturos is beaten in the Lighthouse Aerie and Alex has come for him; set
-/// with FLAG_SATUROS_BEATEN_AT_MERCURY.
+/* Saturos is beaten in the Lighthouse Aerie and Alex has come for him; set */
+/* with FLAG_SATUROS_BEATEN_AT_MERCURY. */
 #define FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED 0x880
-/// The party has beaten Saturos in the Lighthouse Aerie, and Alex has come for
-/// him; set with FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED. The Fountain of
-/// Healing at the lighthouse's foot flows again and people come to drink from
-/// it, and Imil and Bilibin talk of what has changed.
+/* The party has beaten Saturos in the Lighthouse Aerie, and Alex has come for
+ */
+/* him; set with FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED. The Fountain of */
+/* Healing at the lighthouse's foot flows again and people come to drink from */
+/* it, and Imil and Bilibin talk of what has changed. */
 #define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
-/// The Psynergy Armor in the entrance's chest is taken.
+/* The Psynergy Armor in the entrance's chest is taken. */
 #define FLAG_MERCURY_LIGHTHOUSE_PSYNERGY_ARMOR 0xf65
-/// The mimic in the entrance's other chest is beaten.
+/* The mimic in the entrance's other chest is beaten. */
 #define FLAG_MERCURY_LIGHTHOUSE_MIMIC_BEATEN 0xef0
 
-// Mogall Forest
-/// On the party's first arrival in Mogall Forest's first area, an ape has
-/// peeked out at the leader and hidden in its stump.
+/* Mogall Forest */
+/* On the party's first arrival in Mogall Forest's first area, an ape has */
+/* peeked out at the leader and hidden in its stump. */
 #define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c
-/// In Mogall Forest's third area, the east ape has come out again and led the
-/// party south to the Killer Ape's hiding place, where the Killer Ape then
-/// bursts out to fight.
+/* In Mogall Forest's third area, the east ape has come out again and led the */
+/* party south to the Killer Ape's hiding place, where the Killer Ape then */
+/* bursts out to fight. */
 #define FLAG_MOGALL_FOREST_LED_TO_KILLER_APE 0x89d
-/// The party has come back from the Killer Ape's battle in Mogall Forest's
-/// third area, so the Killer Ape no longer bursts out. With Force learned
-/// (FLAG_NYUNPA_TAUGHT_FORCE), entering that area then sets
-/// FLAG_NYUNPA_ENLIGHTENED.
+/* The party has come back from the Killer Ape's battle in Mogall Forest's */
+/* third area, so the Killer Ape no longer bursts out. With Force learned */
+/* (FLAG_NYUNPA_TAUGHT_FORCE), entering that area then sets */
+/* FLAG_NYUNPA_ENLIGHTENED. */
 #define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
-/// Catch has taken the Nut floating over the river in Mogall Forest's first
-/// area.
+/* Catch has taken the Nut floating over the river in Mogall Forest's first */
+/* area. */
 #define FLAG_MOGALL_FOREST_NUT_CAUGHT 0xfd4
-/// The chest in Mogall Forest's second area.
+/* The chest in Mogall Forest's second area. */
 #define FLAG_MOGALL_FOREST_APPLE_CHEST 0xf1b
-/// The chest in Mogall Forest's third area.
+/* The chest in Mogall Forest's third area. */
 #define FLAG_MOGALL_FOREST_ELVEN_SHIRT_CHEST 0xf1a
-// Suhalla
-/// Iodem has questioned the two wounded soldiers in a house in Suhalla, who
-/// lost Sheba in a sandstorm and warn that monsters cause the storms. Stepping
-/// into the house sets it even once Iodem has reached Babi Lighthouse, when
-/// the event no longer plays; Suhalla Desert and Suhalla Gate read it.
+/* Suhalla */
+/* Iodem has questioned the two wounded soldiers in a house in Suhalla, who */
+/* lost Sheba in a sandstorm and warn that monsters cause the storms. Stepping
+ */
+/* into the house sets it even once Iodem has reached Babi Lighthouse, when */
+/* the event no longer plays; Suhalla Desert and Suhalla Gate read it. */
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
-/// The village's chest and jars.
-#define FLAG_SUHALLA_CHEST_HARD_NUT 0xfad
+/* The village's chest and jars. */
+#define FLAG_SUHALLA_CHEST_HARD_NUT	 0xfad
 #define FLAG_SUHALLA_JAR_LUCKY_MEDAL 0xfae
-#define FLAG_SUHALLA_JAR_COINS 0xfaf
-/// The Smoke Bomb in one of the houses' ovens is found.
+#define FLAG_SUHALLA_JAR_COINS		 0xfaf
+/* The Smoke Bomb in one of the houses' ovens is found. */
 #define FLAG_TIMBER_ROOMS_A_OVEN_SMOKE_BOMB 0xfb0
 
-// Suhalla Gate
-/// The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse
-/// was attacked by strange wanderers, then flickered and vanished for good.
+/* Suhalla Gate */
+/* The soldier east of Suhalla Gate's passage has gasped that Venus Lighthouse
+ */
+/* was attacked by strange wanderers, then flickered and vanished for good. */
 #define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897
-/// Iodem has questioned the wounded guards at Suhalla Gate about the strange
-/// group that beat them, and the party is sent on after the attackers. The
-/// guards then speak as the wounded, and a defeat returns the party to the
-/// house beside the gate.
+/* Iodem has questioned the wounded guards at Suhalla Gate about the strange */
+/* group that beat them, and the party is sent on after the attackers. The */
+/* guards then speak as the wounded, and a defeat returns the party to the */
+/* house beside the gate. */
 #define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f
-/// The side the party last came through, which Retreat returns them to.
+/* The side the party last came through, which Retreat returns them to. */
 #define FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH 0x8fb
-#define FLAG_SUHALLA_GATE_ENTERED_FROM_EAST 0x8fc
-/// The chest beyond the gate, in SuhallaGateDew.
+#define FLAG_SUHALLA_GATE_ENTERED_FROM_EAST	 0x8fc
+/* The chest beyond the gate, in SuhallaGateDew. */
 #define FLAG_SUHALLA_GATE_MINT 0xfb4
 
-// Suhalla Desert
-/// Iodem has told the party that Sheba is nowhere to be found and asked
-/// whether to search the desert again or press on to Lalivero.
+/* Suhalla Desert */
+/* Iodem has told the party that Sheba is nowhere to be found and asked */
+/* whether to search the desert again or press on to Lalivero. */
 #define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5
-/// The first storm to rise in Suhalla Desert while Iodem travels with the
-/// party has brought him out to warn that they must get past the storms to
-/// reach Babi Lighthouse.
+/* The first storm to rise in Suhalla Desert while Iodem travels with the */
+/* party has brought him out to warn that they must get past the storms to */
+/* reach Babi Lighthouse. */
 #define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6
-/// Douse has stopped the sandstorm that chases the party in the second scene,
-/// for good.
+/* Douse has stopped the sandstorm that chases the party in the second scene, */
+/* for good. */
 #define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED 0x9b7
-/// The desert's chests, set once each is opened or its mimic beaten.
+/* The desert's chests, set once each is opened or its mimic beaten. */
 #define FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET 0xfb1
-#define FLAG_SUHALLA_DESERT_LUCKY_MEDAL 0xfb2
-#define FLAG_SUHALLA_DESERT_COOKIE 0xfb3
-#define FLAG_SUHALLA_DESERT_MIMIC_BEATEN 0xef6
-// Tolbi
-/// The snack vendor has given away her leftover corn.
+#define FLAG_SUHALLA_DESERT_LUCKY_MEDAL		0xfb2
+#define FLAG_SUHALLA_DESERT_COOKIE			0xfb3
+#define FLAG_SUHALLA_DESERT_MIMIC_BEATEN	0xef6
+/* Tolbi */
+/* The snack vendor has given away her leftover corn. */
 #define FLAG_TOLBI_CORN_GIVEN 0x8bf
-/// Babi's soldiers have shown the party his picture.
+/* Babi's soldiers have shown the party his picture. */
 #define FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI 0x8c0
-/// The visitor at the gate of Tolbi Spring has let the party go first.
+/* The visitor at the gate of Tolbi Spring has let the party go first. */
 #define FLAG_TOLBI_SPRING_OPENED 0x8c1
-/// The town's containers, set once each is searched: a barrel's coins, a
-/// jar's Lucky Medal and the Power Bread in the chest Reveal uncovers.
-#define FLAG_TOLBI_BARREL_COINS 0xf97
-#define FLAG_TOLBI_JAR_LUCKY_MEDAL 0xf98
+/* The town's containers, set once each is searched: a barrel's coins, a */
+/* jar's Lucky Medal and the Power Bread in the chest Reveal uncovers. */
+#define FLAG_TOLBI_BARREL_COINS		 0xf97
+#define FLAG_TOLBI_JAR_LUCKY_MEDAL	 0xf98
 #define FLAG_TOLBI_CHEST_POWER_BREAD 0xf99
 
-// Tolbi rooms: the woman who finds a Lucky Medal after Colosso
-/// After Colosso, on the party's first entry into the inn's northeast guest
-/// room, a woman has found a Lucky Medal on the floor and hidden it behind the
-/// trash pile. She then stands beside that barrel.
+/* Tolbi rooms: the woman who finds a Lucky Medal after Colosso */
+/* After Colosso, on the party's first entry into the inn's northeast guest */
+/* room, a woman has found a Lucky Medal on the floor and hidden it behind the
+ */
+/* trash pile. She then stands beside that barrel. */
 #define FLAG_STUCCO_ROOMS_B_MEDAL_HIDDEN 0x8bc
-/// The party has taken the Lucky Medal from the barrel where the woman hid it;
-/// she then stops teasing and greets the party, startled.
+/* The party has taken the Lucky Medal from the barrel where the woman hid it;
+ */
+/* she then stops teasing and greets the party, startled. */
 #define FLAG_STUCCO_ROOMS_B_MEDAL_TAKEN 0x8bd
-/// The medal woman has greeted the party, startled, since it took the medal.
+/* The medal woman has greeted the party, startled, since it took the medal. */
 #define FLAG_STUCCO_ROOMS_B_MEDAL_WOMAN_SAID_HELLO 0x8be
-/// The rooms' barrels, set once each is searched.
-#define FLAG_STUCCO_ROOMS_B_BARREL_VIAL 0xf9a
+/* The rooms' barrels, set once each is searched. */
+#define FLAG_STUCCO_ROOMS_B_BARREL_VIAL		   0xf9a
 #define FLAG_STUCCO_ROOMS_B_BARREL_LUCKY_MEDAL 0xf9b
 
-// Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
-/// The ship is at anchor off Crossbone Isle, the rowers resting, until Kaja
-/// switches the two teams and the ship sails on. The deck, the hold, the
-/// lookout and the world map, where the ship waits by the island, all follow
-/// it.
+/* Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi */
+/* The ship is at anchor off Crossbone Isle, the rowers resting, until Kaja */
+/* switches the two teams and the ship sails on. The deck, the hold, the */
+/* lookout and the world map, where the ship waits by the island, all follow */
+/* it. */
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
-/// The lookout has sighted the monsters of one of the ship's attacks, and the
-/// ship's area plays MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE, the monsters'
-/// theme, instead of MUS_SET_SAIL_ON_THE_KARAGOL_SEA. It is cleared when the
-/// party fights them on the rowing deck.
+/* The lookout has sighted the monsters of one of the ship's attacks, and the */
+/* ship's area plays MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE, the monsters'
+ */
+/* theme, instead of MUS_SET_SAIL_ON_THE_KARAGOL_SEA. It is cleared when the */
+/* party fights them on the rowing deck. */
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
-/// At anchor off the island, the party has agreed to Sean and Ouranos' request
-/// to scout it for monsters, so the tour group can know whether it is safe to
-/// go ashore.
+/* At anchor off the island, the party has agreed to Sean and Ouranos' request
+ */
+/* to scout it for monsters, so the tour group can know whether it is safe to */
+/* go ashore. */
 #define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903
-/// At Kalay, the captain, Kaja and a crewman have wondered what became of the
-/// replacement ship from Tolbi, on deck or below. On deck the captain then
-/// resolves to sail anyway, trusting his anchor charm, and the crewman slips
-/// away.
+/* At Kalay, the captain, Kaja and a crewman have wondered what became of the */
+/* replacement ship from Tolbi, on deck or below. On deck the captain then */
+/* resolves to sail anyway, trusting his anchor charm, and the crewman slips */
+/* away. */
 #define FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY 0x920
-/// In the captain's cabin at Kalay, the passengers have pressed the captain
-/// and heard he decided to sail, Ouranos and Sean have offered to guard the
-/// deck, and the captain has found his anchor charm gone and will not sail
-/// without it.
+/* In the captain's cabin at Kalay, the passengers have pressed the captain */
+/* and heard he decided to sail, Ouranos and Sean have offered to guard the */
+/* deck, and the captain has found his anchor charm gone and will not sail */
+/* without it. */
 #define FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL 0x921
-/// The party has given the captain back his Anchor Charm, found on the mast,
-/// and agreed to guard the oarsmen. The passengers who promised to row then
-/// stand on deck, and the lookout takes his place on the mast.
+/* The party has given the captain back his Anchor Charm, found on the mast, */
+/* and agreed to guard the oarsmen. The passengers who promised to row then */
+/* stand on deck, and the lookout takes his place on the mast. */
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED 0x925
-/// Kaja has told the oarsmen the ship sails without its replacement, and asked
-/// the party to bring a passenger to row whenever an oarsman falls. A defeat
-/// at sea clears it with the rest of the voyage's flags.
+/* Kaja has told the oarsmen the ship sails without its replacement, and asked
+ */
+/* the party to bring a passenger to row whenever an oarsman falls. A defeat */
+/* at sea clears it with the rest of the voyage's flags. */
 #define FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT 0x926
-/// The ship is under way and the oars are moving.
+/* The ship is under way and the oars are moving. */
 #define FLAG_TOLBI_SHIP_ROWING 0x927
-/// The monster attacks fought off. After the first an oarsman is hurt, and
-/// from then on passengers the party chooses take the empty seats.
-#define FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF 0x928
+/* The monster attacks fought off. After the first an oarsman is hurt, and */
+/* from then on passengers the party chooses take the empty seats. */
+#define FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF	 0x928
 #define FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF 0x929
-#define FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF 0x92a
-/// The party has jumped down to the deck and beaten the Kraken, and Kaja has
-/// thanked Isaac. Another oarsman is lost, so the passenger chosen next takes
-/// the fourth seat (FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS).
+#define FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF	 0x92a
+/* The party has jumped down to the deck and beaten the Kraken, and Kaja has */
+/* thanked Isaac. Another oarsman is lost, so the passenger chosen next takes */
+/* the fourth seat (FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS). */
 #define FLAG_TOLBI_SHIP_KRAKEN_DEFEATED 0x92b
-/// The passenger chosen to row in the first empty seat: nine flags, one for
-/// each passenger, in the order of TolbiShipPassenger (ship_rooms.c).
-/// Each later seat has nine of its own, from
-/// FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS.
-#define FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS 0x92c
+/* The passenger chosen to row in the first empty seat: nine flags, one for */
+/* each passenger, in the order of TOLBI_SHIP_PASSENGER (ship_rooms.c). */
+/* Each later seat has nine of its own, from */
+/* FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS. */
+#define FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS  0x92c
 #define FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS 0x935
-#define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
+#define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS  0x917
 #define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
-/// The ship has reached Tolbi.
+/* The ship has reached Tolbi. */
 #define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e
-// XXX: no code of this game reads it; a reader would say what it changes.
-/// The party lost a battle at sea and is back in the passenger hold, where the
-/// voyage starts over.
+/* XXX: no code of this game reads it; a reader would say what it changes. */
+/* The party lost a battle at sea and is back in the passenger hold, where the
+ */
+/* voyage starts over. */
 #define FLAG_TOLBI_SHIP_DEFEATED_AT_SEA 0x902
-/// The ship's containers below decks, set once each is searched: a barrel in
-/// the cargo hold, one in the passenger hold and a jar in the captain's
-/// quarters.
+/* The ship's containers below decks, set once each is searched: a barrel in */
+/* the cargo hold, one in the passenger hold and a jar in the captain's */
+/* quarters. */
 #define FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL 0xf92
-#define FLAG_TOLBI_SHIP_HOLD_COINS 0xf93
-#define FLAG_TOLBI_SHIP_QUARTERS_NUT 0xf94
-// Tunnel Ruins
-/// Whirlwind has blown away the third patch of ivy in TunnelRuinsGreatStatue,
-/// for good.
+#define FLAG_TOLBI_SHIP_HOLD_COINS			   0xf93
+#define FLAG_TOLBI_SHIP_QUARTERS_NUT		   0xf94
+/* Tunnel Ruins */
+/* Whirlwind has blown away the third patch of ivy in TunnelRuinsGreatStatue, */
+/* for good. */
 #define FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY 0x970
-/// The north-west of TunnelRuinsGreatStatue's two sinking pillars has gone
-/// down into the floor on its column, leaving a puddle in its place.
+/* The north-west of TunnelRuinsGreatStatue's two sinking pillars has gone */
+/* down into the floor on its column, leaving a puddle in its place. */
 #define FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR 0x971
-/// As FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, for the south-east pillar,
-/// which sinks only after Douse has soaked it.
+/* As FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, for the south-east pillar, */
+/* which sinks only after Douse has soaked it. */
 #define FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR 0x972
-/// The first of the two stone pillars in TunnelRuinsLadyStatues' east room is
-/// pushed to the west of its row; the scene puts it back there on the next
-/// visit.
+/* The first of the two stone pillars in TunnelRuinsLadyStatues' east room is */
+/* pushed to the west of its row; the scene puts it back there on the next */
+/* visit. */
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
-/// The second of the two stone pillars in TunnelRuinsLadyStatues' east room
-/// is pushed to the west of its row.
+/* The second of the two stone pillars in TunnelRuinsLadyStatues' east room */
+/* is pushed to the west of its row. */
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST 0x975
-/// All five colored statues of a woman in TunnelRuinsLadyStatues stand on
-/// their marks, and the door before them is open; moving one off closes it
-/// again. Coming back into the room puts the statues back on their marks.
+/* All five colored statues of a woman in TunnelRuinsLadyStatues stand on */
+/* their marks, and the door before them is open; moving one off closes it */
+/* again. Coming back into the room puts the statues back on their marks. */
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
-// XXX: no code of this game reads it; a reader would say what it records.
-/// The party has entered TunnelRuinsLadyStatues' room of four paths over a pit.
+/* XXX: no code of this game reads it; a reader would say what it records. */
+/* The party has entered TunnelRuinsLadyStatues' room of four paths over a pit.
+ */
 #define FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED 0x973
-/// A chest in the second scene.
+/* A chest in the second scene. */
 #define FLAG_TUNNEL_RUINS_ORACLES_ROBE 0xf32
-/// A chest in the second scene.
+/* A chest in the second scene. */
 #define FLAG_TUNNEL_RUINS_ASURAS_ARMOR 0xf33
-// Vale
-/// The prologue's stormy night: lightning over Vale, the rockslide and the
-/// monsters loose in the village. It is set when Dora wakes Isaac and on every
-/// arrival in the storm's scene, and cleared when the strangers leave the boys
-/// lying in the storm; Vale's houses empty and their doors lead into the storm.
+/* Vale */
+/* The prologue's stormy night: lightning over Vale, the rockslide and the */
+/* monsters loose in the village. It is set when Dora wakes Isaac and on every
+ */
+/* arrival in the storm's scene, and cleared when the strangers leave the boys
+ */
+/* lying in the storm; Vale's houses empty and their doors lead into the storm.
+ */
 #define FLAG_VALE_STORM 0x834
-// XXX: the patched editions also set it on beating Lamakan Desert's Manticore;
-// why is not known.
-/// The party has reached Kalay: every Kalay scene sets it on entry. Vale's
-/// villagers then talk of the journey, Garet's homecoming plays, Vault leads to
-/// its later scene and the Sanctum's talk changes.
+/* XXX: the patched editions also set it on beating Lamakan Desert's Manticore;
+ */
+/* why is not known. */
+/* The party has reached Kalay: every Kalay scene sets it on entry. Vale's */
+/* villagers then talk of the journey, Garet's homecoming plays, Vault leads to
+ */
+/* its later scene and the Sanctum's talk changes. */
 #define FLAG_KALAY_REACHED 0x87a
-/// Catch has taken the Nut floating in Vale.
+/* Catch has taken the Nut floating in Vale. */
 #define FLAG_VALE_NUT_CAUGHT 0xfd0
 
-// Vale, Kraden's cottage
-/// Kraden has wondered aloud, as the party walks up to his cottage, who the
-/// strangers were.
+/* Vale, Kraden's cottage */
+/* Kraden has wondered aloud, as the party walks up to his cottage, who the */
+/* strangers were. */
 #define FLAG_KRADEN_WONDERED_ABOUT_STRANGERS 0x800
-/// The man hurt in the rockslide believes he will die.
+/* The man hurt in the rockslide believes he will die. */
 #define FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP 0x82f
-/// He found he was unhurt and ran to the plaza.
+/* He found he was unhurt and ran to the plaza. */
 #define FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED 0x839
-/// The monsters by the broken fence on the stormy night, each fought once.
-#define FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT 0x87d
+/* The monsters by the broken fence on the stormy night, each fought once. */
+#define FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT  0x87d
 #define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
-/// A monster was fought on the stormy night: Vale's music changes to
-/// MUS_DUNGEON_THEME.
+/* A monster was fought on the stormy night: Vale's music changes to */
+/* MUS_DUNGEON_THEME. */
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
-/// Set as the prologue ends, three years after the stormy night
-/// (Party_EndChildhood); nothing clears it. While it is set Vale's field music
-/// is MUS_VILLAGE_THEME, ahead of the MUS_DUNGEON_THEME that
-/// FLAG_VALE_STORM_MONSTER_FOUGHT chose (the music rules in
-/// field/music_rules.s).
+/* Set as the prologue ends, three years after the stormy night */
+/* (gmPartyEndChildhood); nothing clears it. While it is set Vale's field music
+ */
+/* is MUS_VILLAGE_THEME, ahead of the MUS_DUNGEON_THEME that */
+/* FLAG_VALE_STORM_MONSTER_FOUGHT chose (the music rules in */
+/* field/music_rules.s). */
 #define FLAG_VALE_THREE_YEARS_LATER 0x901
-/// The jar's Elixir by the cottage; after Kalay it is searchable only from the
-/// third patch.
+/* The jar's Elixir by the cottage; after Kalay it is searchable only from the
+ */
+/* third patch. */
 #define FLAG_VALE_KRADENS_COTTAGE_JAR_ELIXIR 0xf41
 
-// Vale, the plaza
-/// A villager asked whether Isaac is going to Kraden's cottage.
-/// "Do you need to go past here? You must be going to Kraden's cottage..."
+/* Vale, the plaza */
+/* A villager asked whether Isaac is going to Kraden's cottage. */
+/* "Do you need to go past here? You must be going to Kraden's cottage..." */
 #define FLAG_VALE_ASKED_IF_GOING_TO_KRADEN 0x806
-/// A villager has told Garet off once for crushing her flowers.
-/// "Garet, you make me so mad sometimes!"
+/* A villager has told Garet off once for crushing her flowers. */
+/* "Garet, you make me so mad sometimes!" */
 #define FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS 0x807
-/// Back from Kalay, a young man in Vale has asked Isaac whether Jenna is back
-/// yet and made him promise to bring her next time; after that he only repeats
-/// the promise.
+/* Back from Kalay, a young man in Vale has asked Isaac whether Jenna is back */
+/* yet and made him promise to bring her next time; after that he only repeats
+ */
+/* the promise. */
 #define FLAG_VALE_ASKED_IF_JENNA_IS_BACK 0x81f
-/// A bearded man in a long robe has jumped out in front of Isaac on the path
-/// to the sacred peak and warned him off; from then on he watches Isaac and
-/// asks again whenever he comes near.
+/* A bearded man in a long robe has jumped out in front of Isaac on the path */
+/* to the sacred peak and warned him off; from then on he watches Isaac and */
+/* asks again whenever he comes near. */
 #define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
 
-// Vale on the stormy night, the paths outside
-/// The first of the four rocks that fall across the paths (actor ids 11 to 14).
+/* Vale on the stormy night, the paths outside */
+/* The first of the four rocks that fall across the paths (actor ids 11 to 14).
+ */
 #define FLAG_VALE_STORM_FIRST_ROCK_FELL 0x830
-/// The second rock to fall across the paths.
+/* The second rock to fall across the paths. */
 #define FLAG_VALE_STORM_SECOND_ROCK_FELL 0x831
-/// The third rock to fall across the paths.
+/* The third rock to fall across the paths. */
 #define FLAG_VALE_STORM_THIRD_ROCK_FELL 0x832
-/// The fourth rock to fall across the paths.
+/* The fourth rock to fall across the paths. */
 #define FLAG_VALE_STORM_FOURTH_ROCK_FELL 0x833
-/// A villager running out of his house shoved Isaac.
-/// "Huh? Isaac?"
+/* A villager running out of his house shoved Isaac. */
+/* "Huh? Isaac?" */
 #define FLAG_VALE_STORM_BUMPED_INTO_VILLAGER 0x835
-/// On the stormy night, Isaac has heard Garet struggling to save his chest of
-/// valuables. Walking away from him afterwards has Garet call after Isaac.
+/* On the stormy night, Isaac has heard Garet struggling to save his chest of */
+/* valuables. Walking away from him afterwards has Garet call after Isaac. */
 #define FLAG_VALE_STORM_HEARD_GARET 0x836
-/// Garet left his things behind and joined Isaac.
+/* Garet left his things behind and joined Isaac. */
 #define FLAG_VALE_STORM_GARET_JOINED 0x837
-/// The Boulder slipped toward the village while the elders held it with their
-/// Psynergy.
+/* The Boulder slipped toward the village while the elders held it with their */
+/* Psynergy. */
 #define FLAG_VALE_BOULDER_FELL 0x838
-/// Isaac has seen Felix in the river, clinging on while Kyle and Felix's
-/// parents try to save him and the rope will not reach; the attempt fails
-/// later, when the Boulder comes down
-/// (FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY).
+/* Isaac has seen Felix in the river, clinging on while Kyle and Felix's */
+/* parents try to save him and the rope will not reach; the attempt fails */
+/* later, when the Boulder comes down */
+/* (FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY). */
 #define FLAG_VALE_STORM_SAW_FELIX_HANGING_ON 0x83a
-/// The Boulder has come down the river and swept away Felix, his parents and
-/// Kyle, as Jenna came back with help
-/// (ValePrologue_ShowBoulderSweepingDownriver); Dora, Jenna, Garet and the
-/// villager are left at the bank. Afterwards Dora says "No... It can't be.
-/// Kyle..." and Jenna "Don't leave me all alone...".
+/* The Boulder has come down the river and swept away Felix, his parents and */
+/* Kyle, as Jenna came back with help */
+/* (scValePrologueShowBoulderSweepingDownriver); Dora, Jenna, Garet and the */
+/* villager are left at the bank. Afterwards Dora says "No... It can't be. */
+/* Kyle..." and Jenna "Don't leave me all alone...". */
 #define FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY 0x841
-/// After the Boulder swept Kyle, Jenna's parents and Felix away, Isaac has
-/// gone for help and Garet has set off after him. Arriving among the villagers
-/// then plays the meeting with the two strangers.
+/* After the Boulder swept Kyle, Jenna's parents and Felix away, Isaac has */
+/* gone for help and Garet has set off after him. Arriving among the villagers
+ */
+/* then plays the meeting with the two strangers. */
 #define FLAG_VALE_STORM_GARET_LEFT 0x842
-/// Dora and Kyle sent Isaac to the plaza.
+/* Dora and Kyle sent Isaac to the plaza. */
 #define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
-/// The first of the two monsters that attack on the stormy night's paths has
-/// been fought, once; it also sets FLAG_VALE_STORM_MONSTER_FOUGHT.
+/* The first of the two monsters that attack on the stormy night's paths has */
+/* been fought, once; it also sets FLAG_VALE_STORM_MONSTER_FOUGHT. */
 #define FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT 0x87c
-/// As FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT, for the second monster on the
-/// paths.
+/* As FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT, for the second monster on the */
+/* paths. */
 #define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT 0x87f
 
-// Vale, the village
-/// On the stormy night, in the plaza, Garet's grandfather sent two villagers
-/// to aid the elders holding back the Boulder, and the boys back to the river
-/// with Jenna to show the way.
+/* Vale, the village */
+/* On the stormy night, in the plaza, Garet's grandfather sent two villagers */
+/* to aid the elders holding back the Boulder, and the boys back to the river */
+/* with Jenna to show the way. */
 #define FLAG_VALE_STORM_SENT_TO_AID_ELDERS 0x840
-/// Whirlwind blew away the first of the three clumps of ivy (actor ids 8 to 10)
-/// in the village.
+/* Whirlwind blew away the first of the three clumps of ivy (actor ids 8 to 10)
+ */
+/* in the village. */
 #define FLAG_VALE_FIRST_IVY_BLOWN_AWAY 0x90b
-/// Whirlwind blew away the second clump of ivy.
+/* Whirlwind blew away the second clump of ivy. */
 #define FLAG_VALE_SECOND_IVY_BLOWN_AWAY 0x90c
-/// Whirlwind blew away the third clump of ivy.
+/* Whirlwind blew away the third clump of ivy. */
 #define FLAG_VALE_THIRD_IVY_BLOWN_AWAY 0x90d
 
-// Vale, around Isaac's house
-/// Back from Kalay, Mind Read showed that Dora is ill.
+/* Vale, around Isaac's house */
+/* Back from Kalay, Mind Read showed that Dora is ill. */
 #define FLAG_READ_THOUGHTS_ABOUT_DORA 0x81c
-/// Isaac visited Dora in her sickbed and she got up.
+/* Isaac visited Dora in her sickbed and she got up. */
 #define FLAG_VISITED_SICK_DORA 0x81e
-/// The containers, set once each is searched; the last three hold their finds
-/// only once the party is back from Kalay.
+/* The containers, set once each is searched; the last three hold their finds */
+/* only once the party is back from Kalay. */
 #define FLAG_VALE_WOODEN_BOX_HERB 0xf47
-/// A jar's 5 coins.
+/* A jar's 5 coins. */
 #define FLAG_VALE_JAR_COINS 0xf48
-/// A barrel's 1 coin.
+/* A barrel's 1 coin. */
 #define FLAG_VALE_BARREL_COIN 0xf49
-#define FLAG_VALE_JAR_VIAL 0x8ad
-/// A barrel's 123 coins.
-#define FLAG_VALE_BARREL_COINS 0x8ae
+#define FLAG_VALE_JAR_VIAL	  0x8ad
+/* A barrel's 123 coins. */
+#define FLAG_VALE_BARREL_COINS	 0x8ae
 #define FLAG_VALE_PSYNERGY_STONE 0x8af
 
-// Vale, houses and shops
-/// After the party has left Vale, the item merchant has given Isaac a Herb as
-/// a farewell gift; afterwards he urges Isaac to save Jenna.
+/* Vale, houses and shops */
+/* After the party has left Vale, the item merchant has given Isaac a Herb as */
+/* a farewell gift; afterwards he urges Isaac to save Jenna. */
 #define FLAG_VALE_FAREWELL_HERB_RECEIVED 0x81b
-/// Back from Kalay, Garet has surprised his family at home on the party's
-/// first visit to his house, and Ivan and Mia have introduced themselves.
+/* Back from Kalay, Garet has surprised his family at home on the party's */
+/* first visit to his house, and Ivan and Mia have introduced themselves. */
 #define FLAG_GARET_CAME_HOME 0x81d
-/// The houses' containers, set once each is searched (not on the stormy night)
+/* The houses' containers, set once each is searched (not on the stormy night)
+ */
 #define FLAG_COTTAGE_ROOMS_A_BARREL_ANTIDOTE 0xf42
-#define FLAG_COTTAGE_ROOMS_A_JAR_6_COINS 0xf43
-#define FLAG_COTTAGE_ROOMS_A_JAR_2_COINS 0xf44
-#define FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB 0xf45
-#define FLAG_COTTAGE_ROOMS_A_JAR_3_COINS 0xf46
+#define FLAG_COTTAGE_ROOMS_A_JAR_6_COINS	 0xf43
+#define FLAG_COTTAGE_ROOMS_A_JAR_2_COINS	 0xf44
+#define FLAG_COTTAGE_ROOMS_A_JAR_SMOKE_BOMB	 0xf45
+#define FLAG_COTTAGE_ROOMS_A_JAR_3_COINS	 0xf46
 
-// Vale during the eruption
-/// Isaac and Garet have come back down the mountain to the villagers waiting
-/// before the sanctum during the eruption, and followed the Great Healer in.
-/// Sol Sanctum's entrance then changes the cells before its door.
+/* Vale during the eruption */
+/* Isaac and Garet have come back down the mountain to the villagers waiting */
+/* before the sanctum during the eruption, and followed the Great Healer in. */
+/* Sol Sanctum's entrance then changes the cells before its door. */
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
 
-// Vale Cave, where Kite hides
-/// The second room's chest.
+/* Vale Cave, where Kite hides */
+/* The second room's chest. */
 #define FLAG_VALE_CAVE_HALT_GEM 0xfc2
-/// The second room's other chest.
+/* The second room's other chest. */
 #define FLAG_VALE_CAVE_NUT 0xfc3
-// Vault: the stolen Shaman's Rod, and its containers, set once each is
-// searched
-/// Set when Ivan first shows the party his strange powers at the mayor's.
+/* Vault: the stolen Shaman's Rod, and its containers, set once each is */
+/* searched */
+/* Set when Ivan first shows the party his strange powers at the mayor's. */
 #define FLAG_VAULT_MET_IVAN 0x850
-/// Set once the mayor has thanked the party for helping Ivan.
+/* Set once the mayor has thanked the party for helping Ivan. */
 #define FLAG_VAULT_MAYOR_THANKED_PARTY 0x851
-/// Set when the party first approaches the two suspects at the inn.
+/* Set when the party first approaches the two suspects at the inn. */
 #define FLAG_VAULT_SUSPECTS_APPROACHED 0x852
-/// Set once the mayor has given the party the Water of Life.
+/* Set once the mayor has given the party the Water of Life. */
 #define FLAG_VAULT_WATER_OF_LIFE_RECEIVED 0x857
-/// Set once the crate is pushed aside, opening the passage behind it.
+/* Set once the crate is pushed aside, opening the passage behind it. */
 #define FLAG_VAULT_CRATE_MOVED 0x859
-/// Set when the party agrees to help Ivan find the rod; while it is set and
-/// the thieves are free, Ivan waits in Vault whenever the party leaves town.
+/* Set when the party agrees to help Ivan find the rod; while it is set and */
+/* the thieves are free, Ivan waits in Vault whenever the party leaves town. */
 #define FLAG_VAULT_IVAN_JOINED_ROD_SEARCH 0x856
-/// Set once Ivan has read the minds of the two cornered suspects.
+/* Set once Ivan has read the minds of the two cornered suspects. */
 #define FLAG_VAULT_SUSPECTS_MIND_READ 0x853
-/// Set as the three thieves attack the party in the loft, before the battle.
+/* Set as the three thieves attack the party in the loft, before the battle. */
 #define FLAG_VAULT_THIEVES_ATTACKED 0x854
-/// Set when, back in Vault, the party hears that the thieves it caught have
-/// broken out: from the mayor's welcome in his house, or from the old man who
-/// was talking about the party with him. The clear password carries it.
+/* Set when, back in Vault, the party hears that the thieves it caught have */
+/* broken out: from the mayor's welcome in his house, or from the old man who */
+/* was talking about the party with him. The clear password carries it. */
 #define FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
-/// A wooden box's Nut.
+/* A wooden box's Nut. */
 #define FLAG_VAULT_BOX_NUT 0xf4a
 
-/// Vault rooms: their containers, set once each is searched
-#define FLAG_LOG_ROOMS_A_JAR_COINS 0xf4b
-#define FLAG_LOG_ROOMS_A_BARREL_COINS 0xf4c
+/* Vault rooms: their containers, set once each is searched */
+#define FLAG_LOG_ROOMS_A_JAR_COINS		   0xf4b
+#define FLAG_LOG_ROOMS_A_BARREL_COINS	   0xf4c
 #define FLAG_LOG_ROOMS_A_BARREL_SLEEP_BOMB 0xf4d
-#define FLAG_LOG_ROOMS_A_BOX_MINT 0xf4e
+#define FLAG_LOG_ROOMS_A_BOX_MINT		   0xf4e
 
-/// Vault cave: its switches, and its chests, set once each is opened
+/* Vault cave: its switches, and its chests, set once each is opened */
 #define FLAG_VAULT_CAVE_SWITCH_FLIPPED 0x9a8
-/// The southern pillar rests on its switch in VaultCaveVambrace, and the way
-/// is open.
+/* The southern pillar rests on its switch in VaultCaveVambrace, and the way */
+/* is open. */
 #define FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH 0x9a9
-/// The northern pillar rests on its switch in VaultCaveMouth, unstruck by the
-/// water drops, and the way is open.
+/* The northern pillar rests on its switch in VaultCaveMouth, unstruck by the */
+/* water drops, and the way is open. */
 #define FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH 0x9aa
-/// The chest in VaultCavePassage's pool room, a Mimic (FIND_MIMIC).
+/* The chest in VaultCavePassage's pool room, a Mimic (FIND_MIMIC). */
 #define FLAG_VAULT_CAVE_PASSAGE_MIMIC_BEATEN 0xef3
-#define FLAG_VAULT_CAVE_VAMBRACE_CHEST 0xfc4
+#define FLAG_VAULT_CAVE_VAMBRACE_CHEST		 0xfc4
 
-/// Lunpa's hidden room (StoneRooms): its chests, set once each is opened
+/* Lunpa's hidden room (StoneRooms): its chests, set once each is opened */
 #define FLAG_LUNPA_HIDDEN_ROOM_CHEST_WATER_OF_LIFE 0xf8c
-#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB 0xf8d
-#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL 0xf8e
-#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE 0xf8f
-#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS 0xf90
-#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR 0xf91
-/// Xian: set once the jar's Lucky Medal is taken.
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_SMOKE_BOMB	   0xf8d
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_LUCKY_MEDAL   0xf8e
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_ANTIDOTE	   0xf8f
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_COINS		   0xf90
+#define FLAG_LUNPA_HIDDEN_ROOM_CHEST_ELIXIR		   0xf91
+/* Xian: set once the jar's Lucky Medal is taken. */
 #define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e
 
-/// Xian rooms: set once each find is taken.
-#define FLAG_LACQUER_ROOMS_B_ELIXIR_BARREL 0xf6f
+/* Xian rooms: set once each find is taken. */
+#define FLAG_LACQUER_ROOMS_B_ELIXIR_BARREL	0xf6f
 #define FLAG_LACQUER_ROOMS_B_SLEEP_BOMB_JAR 0xf70
 
-// Goma Cave
-/// The stump at Goma Cave Entrance has leapt out of the way and lies flat.
+/* Goma Cave */
+/* The stump at Goma Cave Entrance has leapt out of the way and lies flat. */
 #define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED 0x860
-/// The west stone pillar at Goma Cave Entrance stands one or two columns on
-/// from where it starts.
+/* The west stone pillar at Goma Cave Entrance stands one or two columns on */
+/* from where it starts. */
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP 0x861
-/// As FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP, two columns on.
+/* As FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP, two columns on. */
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS 0x862
-/// The east stone pillar has settled into the floor on its last column.
+/* The east stone pillar has settled into the floor on its last column. */
 #define FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE 0x863
-/// The stump in Goma Cave (SceneId_GomaCaveStream) has leapt and lies flat
-/// beside the stream.
+/* The stump in Goma Cave (SceneId_GomaCaveStream) has leapt and lies flat */
+/* beside the stream. */
 #define FLAG_GOMA_CAVE_STREAM_STUMP_MOVED 0x864
-/// Ivan has blown the ivy off the stump and joined the party again.
+/* Ivan has blown the ivy off the stump and joined the party again. */
 #define FLAG_GOMA_CAVE_IVAN_JOINED 0x865
-/// Whirlwind has blown the second ivy at Goma Cave Entrance away.
+/* Whirlwind has blown the second ivy at Goma Cave Entrance away. */
 #define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
-/// Set once the man in Goma Cave who fought Forge has seen it join the party,
-/// cheered and walked off for good; until then he stands by the Djinni.
+/* Set once the man in Goma Cave who fought Forge has seen it join the party, */
+/* cheered and walked off for good; until then he stands by the Djinni. */
 #define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869
-/// GomaCaveStream's chest.
+/* GomaCaveStream's chest. */
 #define FLAG_GOMA_CAVE_POWER_BREAD 0xf28
-/// GomaCavePillar's chest.
+/* GomaCavePillar's chest. */
 #define FLAG_GOMA_CAVE_LUCKY_MEDAL 0xf4f
 
-// Hammet's palace
-/// Set once the guards have brought Ivan and the party to Lady Layana and she
-/// has sent everyone back to their posts. Until then Hammet Palace's guards
-/// turn the party away at the door; Kalay's scenes set it whenever
-/// FLAG_DODONPA_LOCKED_UP is set.
+/* Hammet's palace */
+/* Set once the guards have brought Ivan and the party to Lady Layana and she */
+/* has sent everyone back to their posts. Until then Hammet Palace's guards */
+/* turn the party away at the door; Kalay's scenes set it whenever */
+/* FLAG_DODONPA_LOCKED_UP is set. */
 #define FLAG_IVAN_REPORTED_TO_LAYANA 0x912
-/// Layana has told the party that going into Lunpa is too dangerous.
+/* Layana has told the party that going into Lunpa is too dangerous. */
 #define FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS 0x913
-/// Hammet, back home, has met the party in Layana's room.
+/* Hammet, back home, has met the party in Layana's room. */
 #define FLAG_HAMMET_BACK_HOME_SEEN 0x914
-/// The Kalay Tunnel, the passage under the palace to Hammet's treasure, is open
-/// to the party: Layana opens it in thanks once Hammet is home, and Kalay's
-/// scenes set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage
-/// door and the tunnel's way through are drawn open, and its guard turns away.
-#define FLAG_KALAY_TUNNEL_OPEN 0x915
+/* The Kalay Tunnel, the passage under the palace to Hammet's treasure, is open
+ */
+/* to the party: Layana opens it in thanks once Hammet is home, and Kalay's */
+/* scenes set it whenever FLAG_DODONPA_LOCKED_UP is set. The palace's passage */
+/* door and the tunnel's way through are drawn open, and its guard turns away.
+ */
+#define FLAG_KALAY_TUNNEL_OPEN				  0x915
 #define FLAG_HAMMET_PALACE_WATER_JACKET_CHEST 0xf86
-#define FLAG_HAMMET_PALACE_NUT_BARREL 0xf87
+#define FLAG_HAMMET_PALACE_NUT_BARREL		  0xf87
 
-// Fuchin Temple and Master Feh's school
-/// Nyunpa has died, enlightened, at Fuchin Temple. Mogall Forest sets it once
-/// he has taught the party Force and the Killer Ape is beaten; from then on he
-/// no longer answers, and the monks grieve.
+/* Fuchin Temple and Master Feh's school */
+/* Nyunpa has died, enlightened, at Fuchin Temple. Mogall Forest sets it once */
+/* he has taught the party Force and the Killer Ape is beaten; from then on he
+ */
+/* no longer answers, and the monks grieve. */
 #define FLAG_NYUNPA_ENLIGHTENED 0x88f
-/// The young man from Kolima at Fuchin Temple asked whether the bridge is open
-/// again and the party said yes; from then on he skips the question.
+/* The young man from Kolima at Fuchin Temple asked whether the bridge is open
+ */
+/* again and the party said yes; from then on he skips the question. */
 #define FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN 0x890
-/// Isaac has taken Nyunpa's test of the waterfall grotto, and Nyunpa sends him
-/// to the monk beneath the falls, who will let the party in.
+/* Isaac has taken Nyunpa's test of the waterfall grotto, and Nyunpa sends him
+ */
+/* to the monk beneath the falls, who will let the party in. */
 #define FLAG_NYUNPA_TEST_ACCEPTED 0x891
-/// The monk beneath the falls at Fuchin Temple has heard of the test, leapt
-/// aside and let the party into the waterfall grotto, Fuchin Falls Cave; he
-/// stands aside on every visit after.
+/* The monk beneath the falls at Fuchin Temple has heard of the test, leapt */
+/* aside and let the party into the waterfall grotto, Fuchin Falls Cave; he */
+/* stands aside on every visit after. */
 #define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892
-/// Back from the grotto with the Orb of Force, Isaac has heard Nyunpa name the
-/// power Ki, "force" in the western world, which makes the monsters hiding in
-/// Mogall Forest show themselves. Nyunpa can die enlightened only after this.
+/* Back from the grotto with the Orb of Force, Isaac has heard Nyunpa name the
+ */
+/* power Ki, "force" in the western world, which makes the monsters hiding in */
+/* Mogall Forest show themselves. Nyunpa can die enlightened only after this. */
 #define FLAG_NYUNPA_TAUGHT_FORCE 0x893
-/// Coming out of the grotto with the Orb of Force, Isaac has been asked by the
-/// monk beneath the falls whether he passed, and sent on to Nyunpa; until then
-/// the way back from the grotto stays closed.
+/* Coming out of the grotto with the Orb of Force, Isaac has been asked by the
+ */
+/* monk beneath the falls whether he passed, and sent on to Nyunpa; until then
+ */
+/* the way back from the grotto stays closed. */
 #define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
-/// The Orb of Force's chest in Fuchin Falls Cave has been opened, the end of
-/// Nyunpa's test. It brings on the monk's question and Nyunpa's lesson, and
-/// ends Garet's warning about falling rocks at Altin Peak.
+/* The Orb of Force's chest in Fuchin Falls Cave has been opened, the end of */
+/* Nyunpa's test. It brings on the monk's question and Nyunpa's lesson, and */
+/* ends Garet's warning about falling rocks at Altin Peak. */
 #define FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND 0xf14
-/// Master Feh, in his school in Xian, has asked to see Isaac's Chi and Isaac
-/// agreed; Feh and his students wait for it. Cleared once Feh sees the tree
-/// fall from the line (FLAG_FEH_SAW_KI).
+/* Master Feh, in his school in Xian, has asked to see Isaac's Chi and Isaac */
+/* agreed; Feh and his students wait for it. Cleared once Feh sees the tree */
+/* fall from the line (FLAG_FEH_SAW_KI). */
 #define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
-/// Isaac has twice refused to show Master Feh his Chi. Feh then asks again
-/// whenever he is spoken to, and a yes sets FLAG_FEH_WAITS_TO_SEE_CHI.
+/* Isaac has twice refused to show Master Feh his Chi. Feh then asks again */
+/* whenever he is spoken to, and a yes sets FLAG_FEH_WAITS_TO_SEE_CHI. */
 #define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
-/// Master Feh has watched the tree in his school fall to Force from the line
-/// and seen that it is not Chi but Fuchin's Ki, which releases the mind's
-/// energy as Chi releases the body's. His students' lines and his place in the
-/// school follow it.
+/* Master Feh has watched the tree in his school fall to Force from the line */
+/* and seen that it is not Chi but Fuchin's Ki, which releases the mind's */
+/* energy as Chi releases the body's. His students' lines and his place in the
+ */
+/* school follow it. */
 #define FLAG_FEH_SAW_KI 0x89b
-/// A jar in LacquerRoomsA.
+/* A jar in LacquerRoomsA. */
 #define FLAG_FUCHIN_TEMPLE_UNICORN_RING_JAR 0xf68
-/// A barrel in LacquerRoomsA.
+/* A barrel in LacquerRoomsA. */
 #define FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL 0xf69
-/// The jar in Master Hama's room in Lama Temple.
+/* The jar in Master Hama's room in Lama Temple. */
 #define FLAG_HAMAS_ROOM_COINS_JAR 0xf6a
 
-// Crossbone Isle
-/// The four blue doors in a row, then the red door: each is set once a Blue
-/// Key has opened it, four flags from this one.
+/* Crossbone Isle */
+/* The four blue doors in a row, then the red door: each is set once a Blue */
+/* Key has opened it, four flags from this one. */
 #define FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN 0x9c0
-/// The red door beyond them, once the Red Key has opened it.
+/* The red door beyond them, once the Red Key has opened it. */
 #define FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN 0x9c4
-/// Bane's three escapes in CrossboneIsleBane: Bane has hopped away the first
-/// time the party came near.
+/* Bane's three escapes in CrossboneIsleBane: Bane has hopped away the first */
+/* time the party came near. */
 #define FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE 0x9c8
-/// Bane has dashed across the platforms and crashed into the far wall.
+/* Bane has dashed across the platforms and crashed into the far wall. */
 #define FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE 0x9c9
-/// Bane has hopped down to the room's last corner.
+/* Bane has hopped down to the room's last corner. */
 #define FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE 0x9ca
-/// The ivy on Crossbone Isle itself (CrossboneIsle): four flags from this
-/// one.
+/* The ivy on Crossbone Isle itself (CrossboneIsle): four flags from this */
+/* one. */
 #define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
-/// The nine floors of Crossbone Isle Cave (CrossboneIsleFirstFloor to
-/// CrossboneIsleNinthFloor): one flag each from these, in room order, for the
-/// monsters at the east door beaten and for the pillar dropped into the gap.
+/* The nine floors of Crossbone Isle Cave (CrossboneIsleFirstFloor to */
+/* CrossboneIsleNinthFloor): one flag each from these, in room order, for the */
+/* monsters at the east door beaten and for the pillar dropped into the gap. */
 #define FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED 0x8c8
-/// The first floor's stone pillar has dropped into the gap between the
-/// ledges, its top a step across; one flag a floor from this one.
+/* The first floor's stone pillar has dropped into the gap between the */
+/* ledges, its top a step across; one flag a floor from this one. */
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
-/// Deadbeard has been beaten on the Pirate Ship.
+/* Deadbeard has been beaten on the Pirate Ship. */
 #define FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1
-/// The Nut circling over the island has been caught.
+/* The Nut circling over the island has been caught. */
 #define FLAG_CROSSBONE_ISLE_NUT_CAUGHT 0xfd7
-/// The island's first chest; like the second, it opens from the east, south
-/// or southeast.
+/* The island's first chest; like the second, it opens from the east, south */
+/* or southeast. */
 #define FLAG_CROSSBONE_ISLE_COIN 0xec0
-/// The island's second chest.
+/* The island's second chest. */
 #define FLAG_CROSSBONE_ISLE_MINT 0xec1
-/// The chests of CrossboneIsleSteppingStones.
-#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_ANTIDOTE 0xec2
-#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_NUT 0xec3
+/* The chests of CrossboneIsleSteppingStones. */
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_ANTIDOTE  0xec2
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_NUT		  0xec3
 #define FLAG_CROSSBONE_ISLE_STEPPING_STONES_111_COINS 0xec4
-#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_HARD_NUT 0xec5
-/// The chests of CrossboneIsleIcePillars.
-#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_LUCKY_PEPPER 0xec6
+#define FLAG_CROSSBONE_ISLE_STEPPING_STONES_HARD_NUT  0xec5
+/* The chests of CrossboneIsleIcePillars. */
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_LUCKY_PEPPER  0xec6
 #define FLAG_CROSSBONE_ISLE_ICE_PILLARS_MYSTERY_BLADE 0xec7
-#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS 0xec8
-#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR 0xec9
-/// The chests of CrossboneIsleKeys.
-#define FLAG_CROSSBONE_ISLE_KEYS_333_COINS 0xeca
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_222_COINS	  0xec8
+#define FLAG_CROSSBONE_ISLE_ICE_PILLARS_ELIXIR		  0xec9
+/* The chests of CrossboneIsleKeys. */
+#define FLAG_CROSSBONE_ISLE_KEYS_333_COINS	0xeca
 #define FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING 0xecb
-#define FLAG_CROSSBONE_ISLE_KEYS_COOKIE 0xecc
+#define FLAG_CROSSBONE_ISLE_KEYS_COOKIE		0xecc
 #define FLAG_CROSSBONE_ISLE_KEYS_SMOKE_BOMB 0xecd
-/// The chests of CrossboneIsleStatues.
-#define FLAG_CROSSBONE_ISLE_STATUES_444_COINS 0xece
-#define FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB 0xecf
-#define FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR 0xed0
+/* The chests of CrossboneIsleStatues. */
+#define FLAG_CROSSBONE_ISLE_STATUES_444_COINS	0xece
+#define FLAG_CROSSBONE_ISLE_STATUES_SLEEP_BOMB	0xecf
+#define FLAG_CROSSBONE_ISLE_STATUES_STORM_GEAR	0xed0
 #define FLAG_CROSSBONE_ISLE_STATUES_PSY_CRYSTAL 0xed1
-/// The chests of CrossboneIsleFloodgate.
-#define FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS 0xed2
+/* The chests of CrossboneIsleFloodgate. */
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_555_COINS	  0xed2
 #define FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL 0xed3
-#define FLAG_CROSSBONE_ISLE_FLOODGATE_POTION 0xed4
-#define FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB 0xed5
-/// The chests of CrossboneIsleBane besides the Demon Axe's.
-#define FLAG_CROSSBONE_ISLE_BANE_666_COINS 0xed6
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_POTION	  0xed4
+#define FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB  0xed5
+/* The chests of CrossboneIsleBane besides the Demon Axe's. */
+#define FLAG_CROSSBONE_ISLE_BANE_666_COINS	   0xed6
 #define FLAG_CROSSBONE_ISLE_BANE_WATER_OF_LIFE 0xed7
-#define FLAG_CROSSBONE_ISLE_BANE_ELIXIR 0xed8
-/// The chests of CrossboneIsleStackedPillars.
-#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS 0xeda
+#define FLAG_CROSSBONE_ISLE_BANE_ELIXIR		   0xed8
+/* The chests of CrossboneIsleStackedPillars. */
+#define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS	0xeda
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL 0xedb
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL 0xedc
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_WICKED_MACE 0xedd
-/// The chests of CrossboneIsleDragonStatue.
-#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_888_COINS 0xede
-#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_POTION 0xedf
+/* The chests of CrossboneIsleDragonStatue. */
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_888_COINS	   0xede
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_POTION	   0xedf
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_CLERICS_RING 0xee0
-#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB 0xee1
-/// The chests of CrossboneIsleFloatingLogs.
-#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_999_COINS 0xee2
+#define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_SMOKE_BOMB   0xee1
+/* The chests of CrossboneIsleFloatingLogs. */
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_999_COINS		0xee2
 #define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_WATER_OF_LIFE 0xee3
-#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_MURAMASA 0xee4
-#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_SLEEP_BOMB 0xee5
-/// The four Blue Keys of CrossboneIsleKeys have been picked up, one flag each
-/// from this one.
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_MURAMASA		0xee4
+#define FLAG_CROSSBONE_ISLE_FLOATING_LOGS_SLEEP_BOMB	0xee5
+/* The four Blue Keys of CrossboneIsleKeys have been picked up, one flag each */
+/* from this one. */
 #define FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY 0xee7
-/// The Red Key of CrossboneIsleKeys has been picked up.
+/* The Red Key of CrossboneIsleKeys has been picked up. */
 #define FLAG_CROSSBONE_ISLE_RED_KEY 0xeeb
-/// CrossboneIsleBane's chest, carried on its second pillar: a Demon Axe.
+/* CrossboneIsleBane's chest, carried on its second pillar: a Demon Axe. */
 #define FLAG_CROSSBONE_ISLE_DEMON_AXE 0xed9
-/// The mimic in CrossboneIsleFirstFloor's chest is beaten.
+/* The mimic in CrossboneIsleFirstFloor's chest is beaten. */
 #define FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN 0xef4
-/// The chest that appears after Deadbeard is beaten.
+/* The chest that appears after Deadbeard is beaten. */
 #define FLAG_PIRATE_SHIP_DEMON_MAIL 0xee6
-/// The other chest's mimic is beaten.
+/* The other chest's mimic is beaten. */
 #define FLAG_PIRATE_SHIP_MIMIC_BEATEN 0xef7
-// CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 set while one of its
-// pursuers is after the leader.
+/* CrossboneIsleStatues keeps FLAG_SCENE_TEMP_20 set while one of its */
+/* pursuers is after the leader. */
 
-// Sol Sanctum
-/// Kraden has found the heart of Sol Sanctum, the mark of the sun on the floor
-/// of the Luna and Sol rooms, and talked the others into going a little
-/// farther; Retreat is blocked from then on.
+/* Sol Sanctum */
+/* Kraden has found the heart of Sol Sanctum, the mark of the sun on the floor
+ */
+/* of the Luna and Sol rooms, and talked the others into going a little */
+/* farther; Retreat is blocked from then on. */
 #define FLAG_SOL_SANCTUM_FOUND 0x809
-/// Kraden has found the picture of Luna, wondered how the rooms of Luna and Sol
-/// are connected and asked Isaac to look farther up the passage; he waits by
-/// the picture from then on.
+/* Kraden has found the picture of Luna, wondered how the rooms of Luna and Sol
+ */
+/* are connected and asked Isaac to look farther up the passage; he waits by */
+/* the picture from then on. */
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN 0x80a
-/// The northwest statue in the statue room stands on its seal, and its quarter
-/// of the pictures in the Luna and Sol rooms is lit; the first of four flags.
-/// Springing the trap clears all four.
+/* The northwest statue in the statue room stands on its seal, and its quarter
+ */
+/* of the pictures in the Luna and Sol rooms is lit; the first of four flags. */
+/* Springing the trap clears all four. */
 #define FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN 0x80b
-/// As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the northeast statue.
+/* As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the northeast statue. */
 #define FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN 0x80c
-/// As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the southwest statue.
+/* As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the southwest statue. */
 #define FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN 0x80d
-/// As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the southeast statue.
+/* As FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, for the southeast statue. */
 #define FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN 0x80e
-/// All four statues stand on their seals.
+/* All four statues stand on their seals. */
 #define FLAG_SOL_SANCTUM_ALL_SEALS_OPEN 0x80f
-/// With all four seals open, Kraden has seen the picture of Luna change to Sol
-/// and guessed that something else must have changed too.
+/* With all four seals open, Kraden has seen the picture of Luna change to Sol
+ */
+/* and guessed that something else must have changed too. */
 #define FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED 0x810
-/// Kraden has seen the symbol on the floor change from Sol to Luna; searching
-/// it then opens the way up to the Elemental Star Room.
+/* Kraden has seen the symbol on the floor change from Sol to Luna; searching */
+/* it then opens the way up to the Elemental Star Room. */
 #define FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN 0x811
-/// The trap has sprung: the first statue set before the trap was disarmed
-/// flashed its light, lights fell through the Luna room, Kraden cried out, and
-/// every seal closed again. After that a seal opened too soon closes at once.
+/* The trap has sprung: the first statue set before the trap was disarmed */
+/* flashed its light, lights fell through the Luna room, Kraden cried out, and
+ */
+/* every seal closed again. After that a seal opened too soon closes at once. */
 #define FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN 0x812
-/// The statues' lights have flashed as Kraden stood among them, after the
-/// trap was disarmed, and he has run off to see.
+/* The statues' lights have flashed as Kraden stood among them, after the */
+/* trap was disarmed, and he has run off to see. */
 #define FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING 0x813
-/// The volcano has erupted, as the Wise One sends Isaac and Garet out of the
-/// collapsing Elemental Star Room. Mt. Aleph is the volcano: from then on
-/// every room of Sol Sanctum rumbles and shakes, and the field music changes.
+/* The volcano has erupted, as the Wise One sends Isaac and Garet out of the */
+/* collapsing Elemental Star Room. Mt. Aleph is the volcano: from then on */
+/* every room of Sol Sanctum rumbles and shakes, and the field music changes. */
 #define FLAG_SOL_SANCTUM_ERUPTED 0x814
-/// The statues beside the hall's centre shine their beams.
+/* The statues beside the hall's centre shine their beams. */
 #define FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING 0x816
-/// As FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING, for the right statue.
+/* As FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING, for the right statue. */
 #define FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING 0x817
-/// With both beams shining, the center statue has slid into the hole that
-/// opened before it, disarming the trap; from then on the seals stay open.
+/* With both beams shining, the center statue has slid into the hole that */
+/* opened before it, disarming the trap; from then on the seals stay open. */
 #define FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED 0x818
-/// The floor at the symbol in the Luna and Sol rooms has opened, and Isaac,
-/// then Kraden, have risen through it to the Elemental Star Room.
+/* The floor at the symbol in the Luna and Sol rooms has opened, and Isaac, */
+/* then Kraden, have risen through it to the Elemental Star Room. */
 #define FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN 0x819
-/// Kraden has praised Isaac after the seals' lights flashed.
+/* Kraden has praised Isaac after the seals' lights flashed. */
 #define FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT 0x822
-/// Kraden has seen the statues out of his reach behind the blocks.
+/* Kraden has seen the statues out of his reach behind the blocks. */
 #define FLAG_SOL_SANCTUM_MORE_STATUES_SEEN 0x825
-/// The light each seal shows in the Luna and Sol rooms, lit or dark.
+/* The light each seal shows in the Luna and Sol rooms, lit or dark. */
 #define FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN 0x826
-/// As FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, for the northeast statue.
+/* As FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, for the northeast statue. */
 #define FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN 0x827
-/// As FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, for the southwest statue.
+/* As FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, for the southwest statue. */
 #define FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN 0x828
-/// As FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, for the southeast statue.
+/* As FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, for the southeast statue. */
 #define FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN 0x829
-/// On the first arrival in the Elemental Star Room, Kraden has explained the
-/// four elements and their stars and given out the Mythril Bags.
+/* On the first arrival in the Elemental Star Room, Kraden has explained the */
+/* four elements and their stars and given out the Mythril Bags. */
 #define FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED 0x83b
-/// Isaac has put the Venus Star in a Mythril Bag, opening new crossings between
-/// the pedestals.
+/* Isaac has put the Venus Star in a Mythril Bag, opening new crossings between
+ */
+/* the pedestals. */
 #define FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED 0x83c
-/// As FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, for the Mercury Star.
+/* As FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, for the Mercury Star. */
 #define FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED 0x83d
-/// The Jupiter Star is bagged, Saturos and Menardi hold Jenna and Kraden, and
-/// Garet has handed Alex three Elemental Stars; Alex demands the Mars Star too.
-/// The captors stand round their hostages on every visit after.
+/* The Jupiter Star is bagged, Saturos and Menardi hold Jenna and Kraden, and */
+/* Garet has handed Alex three Elemental Stars; Alex demands the Mars Star too.
+ */
+/* The captors stand round their hostages on every visit after. */
 #define FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX 0x83e
-/// With the Mars Star taken, the Elemental Star Room has collapsed and the Wise
-/// One has sent Isaac and Garet out; set with FLAG_SOL_SANCTUM_ERUPTED, it ends
-/// the search of the Mars Star's pedestal.
+/* With the Mars Star taken, the Elemental Star Room has collapsed and the Wise
+ */
+/* One has sent Isaac and Garet out; set with FLAG_SOL_SANCTUM_ERUPTED, it ends
+ */
+/* the search of the Mars Star's pedestal. */
 #define FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED 0x83f
-/// Isaac agreed to look farther up the passage while Kraden studies the rooms;
-/// spoken to, Kraden then asks to hear what he finds.
+/* Isaac agreed to look farther up the passage while Kraden studies the rooms;
+ */
+/* spoken to, Kraden then asks to hear what he finds. */
 #define FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN 0x896
-/// The chests: the Small Jewel for each minotaur relief, and a Herb.
+/* The chests: the Small Jewel for each minotaur relief, and a Herb. */
 #define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND 0xf01
-/// The chest in Sol Sanctum's maze room holds the second Small Jewel, which
-/// fills the second minotaur relief's empty eye.
+/* The chest in Sol Sanctum's maze room holds the second Small Jewel, which */
+/* fills the second minotaur relief's empty eye. */
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND 0xf02
-/// The Luna and Sol rooms' chest.
+/* The Luna and Sol rooms' chest. */
 #define FLAG_SOL_SANCTUM_HERB_FOUND 0xf40
 
-// Sanctum
-/// After the eruption, Isaac has accepted the Great Healer's request in Vale's
-/// Sanctum to recover the Elemental Stars, and the Wise One's guidance sends
-/// him and Garet off the next day. Vale's field music changes with it.
+/* Sanctum */
+/* After the eruption, Isaac has accepted the Great Healer's request in Vale's
+ */
+/* Sanctum to recover the Elemental Stars, and the Wise One's guidance sends */
+/* him and Garet off the next day. Vale's field music changes with it. */
 #define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
 
-// Venus Lighthouse
-/// The wounded soldier at Venus Lighthouse Entry has told of the attack,
-/// flickered and vanished; he is gone on every visit after.
+/* Venus Lighthouse */
+/* The wounded soldier at Venus Lighthouse Entry has told of the attack, */
+/* flickered and vanished; he is gone on every visit after. */
 #define FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD 0x981
-/// The statue on Venus Lighthouse's ground floor has opened the first of its
-/// two paths. One of this and FLAG_VENUS_LIGHTHOUSE_SECOND_PATH is set once the
-/// statue has spoken, and each search switches them; the Tunnel Ruins under
-/// Babi Lighthouse redraw their rooms to match.
+/* The statue on Venus Lighthouse's ground floor has opened the first of its */
+/* two paths. One of this and FLAG_VENUS_LIGHTHOUSE_SECOND_PATH is set once the
+ */
+/* statue has spoken, and each search switches them; the Tunnel Ruins under */
+/* Babi Lighthouse redraw their rooms to match. */
 #define FLAG_VENUS_LIGHTHOUSE_FIRST_PATH 0x982
-/// As FLAG_VENUS_LIGHTHOUSE_FIRST_PATH, the statue's other path.
+/* As FLAG_VENUS_LIGHTHOUSE_FIRST_PATH, the statue's other path. */
 #define FLAG_VENUS_LIGHTHOUSE_SECOND_PATH 0x983
-/// Move has pushed the pillar on Venus Lighthouse's ground floor up to the
-/// wall, and Garet has said they can push it no farther but might carry it.
+/* Move has pushed the pillar on Venus Lighthouse's ground floor up to the */
+/* wall, and Garet has said they can push it no farther but might carry it. */
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_AT_WALL 0x986
-/// Carry has set that pillar down beyond the wall, where it stays.
+/* Carry has set that pillar down beyond the wall, where it stays. */
 #define FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED 0x987
-/// A chest on the first floor.
+/* A chest on the first floor. */
 #define FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN 0xf34
-/// A chest on the third floor.
+/* A chest on the third floor. */
 #define FLAG_VENUS_LIGHTHOUSE_DRAGON_SCALES 0xf35
-/// A chest on the fourth floor.
+/* A chest on the fourth floor. */
 #define FLAG_VENUS_LIGHTHOUSE_GAIA_BLADE 0xf36
-/// A chest on the ground floor.
+/* A chest on the ground floor. */
 #define FLAG_VENUS_LIGHTHOUSE_LUCKY_CAP 0xf37
-/// A chest on the ground floor.
+/* A chest on the ground floor. */
 #define FLAG_VENUS_LIGHTHOUSE_CARRY_STONE 0xf38
 
-// World map
-/// The Black Orb did nothing on Babi's ship and was handed back.
+/* World map */
+/* The Black Orb did nothing on Babi's ship and was handed back. */
 #define FLAG_BLACK_ORB_RETURNED 0x85d
-/// Buried, found by searching.
+/* Buried, found by searching. */
 #define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf
 
-/// Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: Scene_Arrive clears
-/// them on every ordinary entry, and each scene keeps its own puzzle and event
-/// states in them. A scene says beside its uses what each one holds there.
+/* Scene flags, FLAG_SCENE_TEMP_00 to FLAG_SCENE_TEMP_FF: scArrive clears */
+/* them on every ordinary entry, and each scene keeps its own puzzle and event
+ */
+/* states in them. A scene says beside its uses what each one holds there. */
 #define FLAG_SCENE_TEMP_00 0x200
 #define FLAG_SCENE_TEMP_01 0x201
 #define FLAG_SCENE_TEMP_02 0x202
@@ -1806,10 +1896,10 @@
 #define FLAG_SCENE_TEMP_FE 0x2fe
 #define FLAG_SCENE_TEMP_FF 0x2ff
 
-/// Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF: Scene_Arrive clears them
-/// whenever the party enters a different area, so they keep what should last
-/// while the party is anywhere inside one area, such as where Fuchin Falls
-/// Cave's logs float. A scene says beside its uses what each one holds there.
+/* Area flags, FLAG_AREA_TEMP_00 to FLAG_AREA_TEMP_FF: scArrive clears them */
+/* whenever the party enters a different area, so they keep what should last */
+/* while the party is anywhere inside one area, such as where Fuchin Falls */
+/* Cave's logs float. A scene says beside its uses what each one holds there. */
 #define FLAG_AREA_TEMP_00 0x300
 #define FLAG_AREA_TEMP_01 0x301
 #define FLAG_AREA_TEMP_02 0x302

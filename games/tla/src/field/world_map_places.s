@@ -6,7 +6,7 @@
 @ computes its enums, so the build cannot hand them to assembly.
 	.equiv CONDITION_FLAG_SET, 0x1000
 
-@ The World Map's places (struct WorldMapPlace), which WorldMapPlaces_GetTable
+@ The World Map's places (WORLD_MAP_PLACE), which fdWorldMapPlacesGetTable
 @ returns. Each row: the place, the marker the World Map draws and the one
 @ the map screen draws, the sprite the World Map shows there, its x and z in
 @ pixels, its facing, the flag it is shown by (-1 always; with
@@ -33,8 +33,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gWorldMapPlaces
-gWorldMapPlaces:
+	.global WorldMapPlaces
+WorldMapPlaces:
 	place 2, 1, 1, SPRITE_WORLD_MAP_DAILA, 10144, 8288, FACING_SOUTH, -1, DailaFlooded, -1, DailaFlooded, -1
 	place 4, 1, 0, SPRITE_WORLD_MAP_KANDOREAN_TEMPLE, 10136, 8570, FACING_SOUTH, -1, KandoreanTempleGate, -1, none, -1
 	place 5, 0, 0, SPRITE_WORLD_MAP_CAVE, 10424, 8336, FACING_SOUTH, -1, never, -2, none, -1

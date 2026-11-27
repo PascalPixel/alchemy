@@ -1,33 +1,35 @@
-/// @file
-/// Sprite scales, motion curves and lookup tables of the window and menu code.
+/* @file */
+/* Sprite scales, motion curves and lookup tables of the window and menu code.
+ */
 
 #include "sprite_ids.h"
 #include "game/character_ids.h"
 #include "window/window.h"
 
-/// A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5
-/// times and back over 32 steps.
-// clang-format off
-const u16 gWindowSprite_BounceScales[32] = {
+/* A sprite's pulse, as a scale where 256 is its normal size: it swells to 1.5
+ */
+/* times and back over 32 steps. */
+/* clang-format off */
+const u16 WindowSprite_BounceScales[32] = {
     256, 256, 260, 266, 274, 284, 294, 306,
     320, 332, 344, 354, 364, 372, 378, 382,
     384, 382, 378, 372, 364, 354, 344, 332,
     320, 306, 294, 284, 274, 266, 260, 256,
 };
 
-/// Unused: eight offsets after the pulse that nothing reads.
-const s8 gWindowSprite_BounceScalesTail[8] = {
+/* Unused: eight offsets after the pulse that nothing reads. */
+const s8 WindowSprite_BounceScalesTail[8] = {
     -15, -28, -36, -40, -36, -28, -15, 0,
 };
 
-/// The selection cursor's bob: a 16-step wave of up to 3 pixels each way.
-const s8 gMenuCursor_BobOffsets[16] = {
+/* The selection cursor's bob: a 16-step wave of up to 3 pixels each way. */
+const s8 MenuCursor_BobOffsets[16] = {
     0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
-/// The window colour wheel: one colour channel's level (0 to 31) over 96 hue
-/// steps.
-const u8 gWindowColor_WaveTable[121] = {
+/* The window colour wheel: one colour channel's level (0 to 31) over 96 hue */
+/* steps. */
+const u8 WindowColor_WaveTable[121] = {
     31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
     15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -38,44 +40,44 @@ const u8 gWindowColor_WaveTable[121] = {
     41, 44, 47, 49, 52, 54, 57, 60, 62,
 };
 
-/// The settings menu's command icons for each setting's choices: message speed
-/// Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
-const s8 gSettingsMenu_SpeedIcons[3] = {
+/* The settings menu's command icons for each setting's choices: message speed */
+/* Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On. */
+const s8 SettingsMenu_SpeedIcons[3] = {
     COMMAND_ICON_SPEED_SLOW,
     COMMAND_ICON_SPEED_NORMAL,
     COMMAND_ICON_SPEED_FAST,
 };
 
-const s8 gSettingsMenu_SpeechIcons[2] = {
+const s8 SettingsMenu_SpeechIcons[2] = {
     COMMAND_ICON_SPEECH_OFF,
     COMMAND_ICON_SPEECH_ON,
 };
 
-const s8 gSettingsMenu_SleepIcons[2] = {
+const s8 SettingsMenu_SleepIcons[2] = {
     COMMAND_ICON_AUTO_SLEEP_OFF,
     COMMAND_ICON_AUTO_SLEEP_ON,
 };
 
-/// The window colour presets SELECT cycles through on the settings menu: the
-/// colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each.
-const u8 gSettingsMenu_HuePresets[6] = {
+/* The window colour presets SELECT cycles through on the settings menu: the */
+/* colour (hue, 0 to 23) and the brightness (0 to 14, 7 neutral) of each. */
+const u8 SettingsMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
-const u8 gSettingsMenu_BrightnessPresets[6] = {
+const u8 SettingsMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 
-/// The command icon of each entry in the Pause menu (Save your quest, Sleep,
-/// Change settings, and the debug entries after them).
-const s8 gPauseMenu_Icons[8] = {
+/* The command icon of each entry in the Pause menu (Save your quest, Sleep, */
+/* Change settings, and the debug entries after them). */
+const s8 PauseMenu_Icons[8] = {
     COMMAND_ICON_SAVE_QUEST, COMMAND_ICON_SLEEP, COMMAND_ICON_CHANGE_SETTINGS,
     COMMAND_ICON_DROP,       COMMAND_ICON_DROP,  COMMAND_ICON_DROP,
     0,                       0,
 };
 
-/// {character, portrait} pairs of the playable characters, ending in -1, which
-/// Portrait_GetForSpeaker searches for speakers below 20.
-const s16 gPortrait_CharacterMap[20] = {
+/* {character, portrait} pairs of the playable characters, ending in -1, which */
+/* mnPortraitGetForSpeaker searches for speakers below 20. */
+const s16 Portrait_CharacterMap[20] = {
     ISAAC, PORTRAIT_ISAAC,
     SPRITE_ISAAC_CHILD, PORTRAIT_ISAAC_CHILD,
     GARET, PORTRAIT_GARET,
@@ -88,15 +90,15 @@ const s16 gPortrait_CharacterMap[20] = {
     -1, -1,
 };
 
-/// A speaker's portrait as gPortrait_SpriteMap numbers it, from
-/// PORTRAIT_JUPITER_DJINNI's.
+/* A speaker's portrait as Portrait_SpriteMap numbers it, from */
+/* PORTRAIT_JUPITER_DJINNI's. */
 #define SPRITE_MAP_PORTRAIT(portrait) ((portrait) - PORTRAIT_JUPITER_DJINNI)
 
-/// {sprite, portrait} pairs of the other speakers, ending in -1:
-/// Portrait_GetForSpeaker numbers portrait n of this list
-/// PORTRAIT_SPRITE_MAP_FIRST + n, which Icon_LoadWithPalette draws as the row
-/// PORTRAIT_JUPITER_DJINNI + n.
-const s16 gPortrait_SpriteMap[100] = {
+/* {sprite, portrait} pairs of the other speakers, ending in -1: */
+/* mnPortraitGetForSpeaker numbers portrait n of this list */
+/* PORTRAIT_SPRITE_MAP_FIRST + n, which mnIconLoadWithPalette draws as the row */
+/* PORTRAIT_JUPITER_DJINNI + n. */
+const s16 Portrait_SpriteMap[100] = {
     SPRITE_JUPITER_DJINNI, SPRITE_MAP_PORTRAIT(PORTRAIT_JUPITER_DJINNI),
     SPRITE_VENUS_DJINNI, SPRITE_MAP_PORTRAIT(PORTRAIT_VENUS_DJINNI),
     SPRITE_MARS_DJINNI, SPRITE_MAP_PORTRAIT(PORTRAIT_MARS_DJINNI),
@@ -148,4 +150,4 @@ const s16 gPortrait_SpriteMap[100] = {
     SPRITE_FARAN, SPRITE_MAP_PORTRAIT(PORTRAIT_FARAN),
     -1, -1,
 };
-// clang-format on
+/* clang-format on */

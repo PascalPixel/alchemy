@@ -2,7 +2,7 @@
 	.include "enums/flags.inc"
 	.include "enums/sounds.inc"
 
-@ The field music of each scene (struct MapMusicRule): the first rule that
+@ The field music of each scene (MAP_MUSIC_RULE): the first rule that
 @ matches the scene or its area, and the entrance (-1 for any), and whose flag
 @ (-1 for none) is set, gives the music. A scene's row sets idIsMap, the
 @ entrance's top bit; id -1 ends the table.
@@ -15,8 +15,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gScene_MusicRules
-gScene_MusicRules:
+	.global Scene_MusicRules
+Scene_MusicRules:
 	area_music AREA_CLEAR_DATA, -1, -1, MUS_SETTING_OFF
 	area_music AREA_WORLD_MAP, 90, -1, MUS_SILENCE
 	area_music AREA_WORLD_MAP, 91, -1, MUS_SILENCE

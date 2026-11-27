@@ -1,4 +1,4 @@
-@ Where the party returns to after a defeat (Scene_SetRestartPoint). Each
+@ Where the party returns to after a defeat (scSetRestartPoint). Each
 @ row: the scene and entrance (-1 for any) it matches, then the scene and
 @ entrance the party restarts at; scene -1 ends the table.
 	.macro restart_point scene:req, entrance:req, restart_scene:req, restart_entrance:req
@@ -7,8 +7,8 @@
 
 	.section .rodata
 	.balign 2
-	.global gScene_RestartRules
-gScene_RestartRules:
+	.global Scene_RestartRules
+Scene_RestartRules:
 	restart_point ValePrologue, 15, CottageRoomsB, 16
 	restart_point Vale, 16, Sanctum, 2
 	restart_point Vault, 1, Sanctum, 12

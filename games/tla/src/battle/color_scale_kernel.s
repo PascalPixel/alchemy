@@ -2,7 +2,7 @@
 @ a mode switch inside a function, as the colour backup kernels in system/decompress_byte_lz.s
 @ do; the halfword after bx pc is never run.
 @ ColorBuffer_ScaleKernelCode(source, destination, scale, count): the ARM
-@ kernel ColorBuffer_Scale (color_scale_loader.s) copies to the stack and
+@ kernel btColBufferScale (color_scale_loader.s) copies to the stack and
 @ runs. It scales count BGR555 colours by scale / 256, at most 1.0, masking
 @ each channel in place.
 

@@ -1,44 +1,28 @@
 #ifndef ALCHEMY_VECTOR3_H
 #define ALCHEMY_VECTOR3_H
 
-/// @file
-/// Three coordinates as one value, and their array view.
+/* @file */
+/* Three coordinates as one value, and their array view. */
+/* */
+/* A file of its own, which system.h includes in place, because the units */
+/* built as ARM code include it without the rest of system.h: another inline */
+/* seen before their functions would renumber their labels. Its types and */
+/* work areas are in system/definitions.h and system/globals.h. */
 
-#include "types.h"
-#include "static_assert.h"
+#include "system/definitions.h"
+#include "system/globals.h"
 
-/// Three coordinates, x, y and z: a position, a velocity or a direction.
-struct Vector3 {
+/* Returns the vector's three coordinates as an array. */
+/* UB: transform functions index three coordinates from separate scalar members.
+ */
+/* UBFIX gives those functions a real array while preserving named components.
+ */
+static inline const s32 *syVector3Coordinates(const VECTOR3 *vector) {
 #ifdef UBFIX
-  union {
-    struct {
-      s32 x;
-      s32 y;
-      s32 z;
-    };
-    s32 coordinates[3]; ///< x, y and z, as Vector3_Coordinates returns them
-  };
+	return vector->coordinates;
 #else
-  s32 x;
-  s32 y;
-  s32 z;
-#endif
-};
-
-/// Returns the vector's three coordinates as an array.
-// UB: transform routines index three coordinates from separate scalar members.
-// UBFIX gives those routines a real array while preserving named components.
-static inline const s32 *Vector3_Coordinates(const struct Vector3 *vector) {
-#ifdef UBFIX
-  return vector->coordinates;
-#else
-  return &vector->x;
+	return &vector->x;
 #endif
 }
-
-STATIC_ASSERT(sizeof(struct Vector3) == 12);
-STATIC_ASSERT(offsetof(struct Vector3, x) == 0);
-STATIC_ASSERT(offsetof(struct Vector3, y) == 4);
-STATIC_ASSERT(offsetof(struct Vector3, z) == 8);
 
 #endif

@@ -1,15 +1,13 @@
-/// @file
-/// How far each field Psynergy reaches.
+/* @file */
+/* How far each field Psynergy reaches. */
 
-#include "fixed_math.h"
-#include "types.h"
 #include "field/field.h"
 #include "game/game.h"
 
-// clang-format off
-/// One row a field Psynergy, with one more for the things Tremor's shaking
-/// reaches; the last row, ended by -1, is the reach of a kind not listed.
-const struct FieldPsynergyReach gFieldPsynergy_Reach[] = {
+/* clang-format off */
+/* One row a field Psynergy, with one more for the things Tremor's shaking */
+/* reaches; the last row, ended by -1, is the reach of a kind not listed. */
+const FIELD_PSYNERGY_REACH FieldPsynergy_Reach[] = {
     {FIELD_PSYNERGY_PLY,                           16, 8,  DEGtoANG(33.75)},
     {FIELD_PSYNERGY_FROST,                         16, 8,  DEGtoANG(33.75)},
     {FIELD_PSYNERGY_LIFT,                          16, 8,  DEGtoANG(33.75)},
@@ -33,4 +31,4 @@ const struct FieldPsynergyReach gFieldPsynergy_Reach[] = {
     {FIELD_PSYNERGY_CYCLONE,                       0,  0,  0},
     {-1,                                           16, 8,  DEGtoANG(33.75)},
 };
-// clang-format on
+/* clang-format on */

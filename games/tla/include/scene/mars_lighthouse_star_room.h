@@ -1,50 +1,51 @@
 #ifndef ALCHEMY_SCENE_MARS_LIGHTHOUSE_STAR_ROOM_H
 #define ALCHEMY_SCENE_MARS_LIGHTHOUSE_STAR_ROOM_H
 
-/// @file
-/// Mars Lighthouse's star room: its torches, fireballs and the Mars Star, and
-/// the knock-back, flame and crack routines it shares with the rooms that keep
-/// copies of them.
+/* @file */
+/* Mars Lighthouse's star room: its torches, fireballs and the Mars Star, and */
+/* the knock-back, flame and crack functions it shares with the rooms that keep
+ */
+/* copies of them. */
 
 #include "types.h"
 #include "field/cell_target.h"
 
-struct Actor;
-struct CellTarget;
-struct CellTargetEntry;
+struct ACTOR;
+struct CELL_TARGET;
+struct CELL_TARGET_ENTRY;
 
-s32 Leader_KnockBack(void);
-void Actor_LaunchAhead(struct Actor *actor);
+s32 fdLeaderKnockBack(void);
+void fdActorLaunchAhead(struct ACTOR *actor);
 
-void MarsLighthouseStarRoom_ShootFireballs(void);
+void scMarsLighthouseStarRoomShootFireballs(void);
 
-void FlameThrowers_Puff(void);
+void scFlameThrowersPuff(void);
 
-void Party_TakeFallDamage(void);
+void gmPartyTakeFallDamage(void);
 
-void Actor_RollAndCrumble(struct Actor *actor);
+void scActorRollAndCrumble(struct ACTOR *actor);
 
-void Leader_StopIfPending(void);
-void Actor_SteerByPad(struct Actor *actor);
+void fdLeaderStopIfPending(void);
+void fdActorSteerByPad(struct ACTOR *actor);
 
-void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
+void scCrackedTileCrack(CELL_TARGET *table, CELL_TARGET_ENTRY *entry);
 
-void MarsLighthouseStarRoom_StartBlazeOnEastTorch(void);
+void scMarsLighthouseStarRoomStartBlazeOnEastTorch(void);
 
-void MarsLighthouseStarRoom_BlazeWestTorch(void);
+void scMarsLighthouseStarRoomBlazeWestTorch(void);
 
-void MarsLighthouseStarRoom_WestFireballCracksIce(void);
+void scMarsLighthouseStarRoomWestFireballCracksIce(void);
 
-void MarsLighthouseStarRoom_EastFireballCracksIce(void);
+void scMarsLighthouseStarRoomEastFireballCracksIce(void);
 
-void MarsLighthouseStarRoom_WakeFlameDragons(void);
+void scMarsLighthouseStarRoomWakeFlameDragons(void);
 
-void MarsLighthouseStarRoom_HoldWarmHand(void);
+void scMarsLighthouseStarRoomHoldWarmHand(void);
 
-void MarsLighthouseStarRoom_TakeMarsStar(void);
+void scMarsLighthouseStarRoomTakeMarsStar(void);
 
-void MarsLighthouseStarRoom_UseMarsStar(void);
+void scMarsLighthouseStarRoomUseMarsStar(void);
 
-void MarsLighthouseStarRoom_EndBlazeOnWestTorch(void);
+void scMarsLighthouseStarRoomEndBlazeOnWestTorch(void);
 
 #endif

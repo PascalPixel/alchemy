@@ -118,4 +118,4 @@ When the game is built, each PNG is split into its colours and its pixels,
 and the pixels are usually packed. A picture that one part of the game
 always uses, such as the font, is linked straight into that part. A picture
 chosen while the game runs, such as a backdrop or a monster, is a numbered
-resource ([The Game Pak](../gamepak/README.md#the-resource-directory-and-table-order)).
+resource ([The Game Pak](../system/README.md#the-resource-directory-and-table-order)).

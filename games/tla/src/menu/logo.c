@@ -1,15 +1,15 @@
-/// @file
-/// The gull that flies across the lighthouse picture before the title logo
-/// comes in (TitleIntro_UpdateLogo's first phase): its frames, drawn from
-/// ResourceId_IntroGullSprites's tiles, and the path it follows.
+/* @file */
+/* The gull that flies across the lighthouse picture before the title logo */
+/* comes in (mnTitleIntroUpdateLogo's first phase): its frames, drawn from */
+/* ResourceId_IntroGullSprites's tiles, and the path it follows. */
 
 #include "types.h"
 
-// clang-format off
-/// The gull's frames, rows of five: a first tile, a count of columns, a
-/// duration in frames and an x and y offset. The animation steps a row at a
-/// time and stops at the row whose first value is -1.
-const s16 gTitleIntro_GullFrames[] = {
+/* clang-format off */
+/* The gull's frames, rows of five: a first tile, a count of columns, a */
+/* duration in frames and an x and y offset. The animation steps a row at a */
+/* time and stops at the row whose first value is -1. */
+const s16 TitleIntro_GullFrames[] = {
        0, 3, 3,  0,  0,
       24, 4, 3,  0, -4,
       56, 4, 3,  0,  1,
@@ -49,9 +49,9 @@ const s16 gTitleIntro_GullFrames[] = {
     -1, -1, -1,
 };
 
-/// The gull's path, rows of three: an x and y position and a duration in frames, ending in a
-/// row of -1.
-const s16 gTitleIntro_GullPath[] = {
+/* The gull's path, rows of three: an x and y position and a duration in frames, ending in a */
+/* row of -1. */
+const s16 TitleIntro_GullPath[] = {
     101, 150, 1,
     103, 150, 1,
     105, 149, 1,
@@ -153,4 +153,4 @@ const s16 gTitleIntro_GullPath[] = {
     124,  75, 2,
      -1,  -1, -1,
 };
-// clang-format on
+/* clang-format on */

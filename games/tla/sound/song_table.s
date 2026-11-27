@@ -8,8 +8,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gSongTable
-gSongTable:
+	.global SongTable
+SongTable:
 	song Song_MusSilence, 1
 	song Song_MusSuperLuckyDice, 1
 	song Song_MusAlhafra, 1

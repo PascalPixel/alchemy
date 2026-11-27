@@ -3,9 +3,9 @@
 	.include "enums/game/game.inc"
 	.include "enums/src/field/field_sequence_internal.inc"
 
-@ What a treasure spot is comes from enum ContainerKind
+@ What a treasure spot is comes from CONTAINER_KIND
 @ (field_sequence_internal.h). The rest the build cannot hand to assembly,
-@ since their headers compute values: four of enum ExamineTarget
+@ since their headers compute values: four of EXAMINE
 @ (field/scene_tables.h), the mark on a scene's header and on coins
 @ (field_sequence_internal.h), and the nine Mimics counted from the Kandorean
 @ Temple's (enemy_ids.h).
@@ -25,15 +25,15 @@
 	.equiv MIMIC_MAGMA_ROCK, 7
 	.equiv MIMIC_MARS_LIGHTHOUSE, 8
 
-@ The treasure of each scene (gSceneItems): its chests and Mimics, Psynergy
+@ The treasure of each scene (SceneItems): its chests and Mimics, Psynergy
 @ Stones, summon tablets, the items lying about or in the shallows, and what
-@ is hidden in jars, barrels, graves and wooden boxes. Field_PlaceTreasureSpots
+@ is hidden in jars, barrels, graves and wooden boxes. fdPlaceTreasureSpots
 @ makes a scene's rows its actors from FIELD_TREASURE_ACTOR on, sixteen at
-@ most, and Scene_TalkToActor opens them.
+@ most, and scTalkToActor opens them.
 @
 @ A scene's header: its scene marked SCENE_ITEMS_HEADER, and a flag (-1 for
 @ none) whose being set passes these rows over for a later header of the same
-@ scene (SceneItem_GetRows).
+@ scene (fdSceneItemGetRows).
 	.macro scene_items scene:req, flag:req
 	.2byte SCENE_ITEMS_HEADER + SceneId_\scene, \flag
 	.endm
@@ -52,8 +52,8 @@
 @ the table.
 	.data
 	.balign 2
-	.global gSceneItems
-gSceneItems:
+	.global SceneItems
+SceneItems:
 	scene_items VenusLighthouse, -1
 	@ "The chest was already open." before it gives the Herb.
 	item CONTAINER_CHEST, 0, 0xf00, ITEM_HERB

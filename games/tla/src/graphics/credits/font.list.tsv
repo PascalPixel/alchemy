@@ -1,7 +1,7 @@
 name	file	section	align	left	pad	edition
-gDisplayScroll_Font	font.1bpp					ja
-gDisplayScroll_Font	font.1bpp					en
-gDisplayScroll_Font	font.1bpp					de
-gDisplayScroll_Font	font_es.1bpp					es
-gDisplayScroll_Font	font_fr.1bpp					fr
-gDisplayScroll_Font	font_it.1bpp					it
+DisplayScroll_Font	font.1bpp					ja
+DisplayScroll_Font	font.1bpp					en
+DisplayScroll_Font	font.1bpp					de
+DisplayScroll_Font	font_es.1bpp					es
+DisplayScroll_Font	font_fr.1bpp					fr
+DisplayScroll_Font	font_it.1bpp					it

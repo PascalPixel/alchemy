@@ -1,272 +1,272 @@
 	.section .sym_ewram,"aw",%nobits
-	.global gSaveBuffer
-gSaveBuffer:
+	.global SaveBuffer
+SaveBuffer:
 	.space 64
-	.global gGameFlagBytes
-gGameFlagBytes:
+	.global GameFlagBytes
+GameFlagBytes:
 	.space 512
-	.global gMainRoutineState
-gMainRoutineState:
+	.global MainRoutineStateWork
+MainRoutineStateWork:
 	.space 320
-	.global gRareItemStock
-gRareItemStock:
+	.global RareItemStock
+RareItemStock:
 	.space 252
-	.global gOverflowItem
-gOverflowItem:
+	.global OverflowItem
+OverflowItem:
 	.space 14
-	.global gPlayerActorId
-gPlayerActorId:
+	.global PlayerActorId
+PlayerActorId:
 	.space 90
-	.global gBattleArenaSaveStamp
-gBattleArenaSaveStamp:
+	.global BattleArenaSaveStamp
+BattleArenaSaveStamp:
 	.space 28
-	.global gCharacterUnits
-gCharacterUnits:
+	.global CharacterUnits
+CharacterUnits:
 	.space 2816
-	.global gSceneLocalState
-gSceneLocalState:
+	.global SceneLocalState
+SceneLocalState:
 	.space 120
-	.global gInventorySnapshot
-gInventorySnapshot:
+	.global InventorySnapshotWork
+InventorySnapshotWork:
 	.space 140
-	@ Slot ids, actor copies and their sprite state: ActorSnapshot.
-	.global gActorSnapshot
-gActorSnapshot:
+	@ Slot ids, actor copies and their sprite state: ACTOR_SNAPSHOT.
+	.global ActorSnapshotWork
+ActorSnapshotWork:
 	.space 3836
-	.global gSleepActive
-gSleepActive:
+	.global SleepActive
+SleepActive:
 	.space 4
-	.global gSaveSlot
-gSaveSlot:
+	.global SaveSlot
+SaveSlot:
 	.space 4
-	.global gSerialSendSize
-gSerialSendSize:
+	.global SerialSendSize
+SerialSendSize:
 	.space 4
-	.global gTitleBattleOptionEnabled
-gTitleBattleOptionEnabled:
+	.global TitleBattleOptionEnabled
+TitleBattleOptionEnabled:
 	.space 4
-	.global gTitleSendOptionEnabled
-gTitleSendOptionEnabled:
+	.global TitleSendOptionEnabled
+TitleSendOptionEnabled:
 	.space 16
-	.global gSerialPeerPayloads
-gSerialPeerPayloads:
+	.global SerialPeerPayloads
+SerialPeerPayloads:
 	.space 96
-	.global gSerialSendSource
-gSerialSendSource:
+	.global SerialSendSource
+SerialSendSource:
 	.space 16
-	.global gIoWriteQueue
-gIoWriteQueue:
+	.global IoWriteQueueWork
+IoWriteQueueWork:
 	.space 400
-	.global gSerialTransfer
-gSerialTransfer:
+	.global SerialTransfer
+SerialTransfer:
 	.space 24
-	.global gSerialReceivedSize
-gSerialReceivedSize:
+	.global SerialReceivedSize
+SerialReceivedSize:
 	.space 8
-	.global gSerialState
-gSerialState:
+	.global SerialStateWork
+SerialStateWork:
 	.space 352
-	.global gLinkExchangeState
-gLinkExchangeState:
+	.global LinkExchangeState
+LinkExchangeState:
 	.space 4
-	.global gSerialBlockNumber
-gSerialBlockNumber:
+	.global SerialBlockNumber
+SerialBlockNumber:
 	.space 4
-	.global gBattleRandomSeed
-gBattleRandomSeed:
+	.global BattleRandomSeed
+BattleRandomSeed:
 	.space 4
-	.global gSerialReceiveDestination
-gSerialReceiveDestination:
+	.global SerialReceiveDestination
+SerialReceiveDestination:
 	.space 4
-	.global gSavedStack
-gSavedStack:
+	.global SavedStack
+SavedStack:
 	.space 3152
-	.global gBgmRestoreDelay
-gBgmRestoreDelay:
+	.global BgmRestoreDelay
+BgmRestoreDelay:
 	.space 4
-	.global gSound_UnreadByte
-gSound_UnreadByte:
+	.global Sound_UnreadByte
+Sound_UnreadByte:
 	.space 4
-	.global gBgmVolume
-gBgmVolume:
+	.global BgmVolume
+BgmVolume:
 	.space 4
-	.global gBgmTempoPitchStep
-gBgmTempoPitchStep:
+	.global BgmTempoPitchStep
+BgmTempoPitchStep:
 	.space 4
-	.global gBgmVolumeStep
-gBgmVolumeStep:
+	.global BgmVolumeStep
+BgmVolumeStep:
 	.space 4
-	.global gBgmFadeRequested
-gBgmFadeRequested:
+	.global BgmFadeRequested
+BgmFadeRequested:
 	.space 12
-	.global gMusicPlayerLastSound
-gMusicPlayerLastSound:
+	.global MusicPlayerLastSound
+MusicPlayerLastSound:
 	.space 16
-	.global gBgmTempoPitchTarget
-gBgmTempoPitchTarget:
+	.global BgmTempoPitchTarget
+BgmTempoPitchTarget:
 	.space 4
-	.global gBgmVolumeTarget
-gBgmVolumeTarget:
+	.global BgmVolumeTarget
+BgmVolumeTarget:
 	.space 4
-	.global gBgmTempoPitch
-gBgmTempoPitch:
+	.global BgmTempoPitch
+BgmTempoPitch:
 	.space 4
-	.global gCurrentBgm
-gCurrentBgm:
+	.global CurrentBgm
+CurrentBgm:
 	.space 4
-	.global gSoundCommandMask
-gSoundCommandMask:
+	.global SoundCommandMaskWork
+SoundCommandMaskWork:
 	.space 16
-	.global gSoundInfo
-gSoundInfo:
+	.global SoundInfoWork
+SoundInfoWork:
 	.space 4016
-	.global gMPlayJumpTable
-gMPlayJumpTable:
+	.global MPlayJumpTable
+MPlayJumpTable:
 	.space 144
-	.global gCgbChans
-gCgbChans:
+	.global CgbChans
+CgbChans:
 	.space 256
-	.global gMPlayInfo_SE5
-gMPlayInfo_SE5:
+	.global MPlayInfo_SE5
+MPlayInfo_SE5:
 	.space 64
-	.global gMPlayInfo_SE6
-gMPlayInfo_SE6:
+	.global MPlayInfo_SE6
+MPlayInfo_SE6:
 	.space 64
-	.global gMPlayInfo_Jingle
-gMPlayInfo_Jingle:
+	.global MPlayInfo_Jingle
+MPlayInfo_Jingle:
 	.space 64
-	.global gMPlayInfo_SE7
-gMPlayInfo_SE7:
+	.global MPlayInfo_SE7
+MPlayInfo_SE7:
 	.space 64
-	.global gMPlayInfo_BGM
-gMPlayInfo_BGM:
+	.global MPlayInfo_BGM
+MPlayInfo_BGM:
 	.space 64
-	.global gMPlayInfo_MenuSE
-gMPlayInfo_MenuSE:
+	.global MPlayInfo_MenuSE
+MPlayInfo_MenuSE:
 	.space 64
-	.global gMPlayInfo_SE4
-gMPlayInfo_SE4:
+	.global MPlayInfo_SE4
+MPlayInfo_SE4:
 	.space 64
-	.global gMPlayMemAccArea
-gMPlayMemAccArea:
+	.global MPlayMemAccArea
+MPlayMemAccArea:
 	.space 16
-	.global gMPlayInfo_ActionSE
-gMPlayInfo_ActionSE:
+	.global MPlayInfo_ActionSE
+MPlayInfo_ActionSE:
 	.space 64
-	.global gMPlayTrack_Jingle
-gMPlayTrack_Jingle:
+	.global MPlayTrack_Jingle
+MPlayTrack_Jingle:
 	.space 320
-	.global gMPlayTrack_BGM
-gMPlayTrack_BGM:
+	.global MPlayTrack_BGM
+MPlayTrack_BGM:
 	.space 800
-	.global gMPlayTrack_MenuSE
-gMPlayTrack_MenuSE:
+	.global MPlayTrack_MenuSE
+MPlayTrack_MenuSE:
 	.space 160
-	.global gMPlayTrack_ActionSE
-gMPlayTrack_ActionSE:
+	.global MPlayTrack_ActionSE
+MPlayTrack_ActionSE:
 	.space 160
-	.global gMPlayTrack_SE4
-gMPlayTrack_SE4:
+	.global MPlayTrack_SE4
+MPlayTrack_SE4:
 	.space 160
-	.global gMPlayTrack_SE5
-gMPlayTrack_SE5:
+	.global MPlayTrack_SE5
+MPlayTrack_SE5:
 	.space 160
-	.global gMPlayTrack_SE6
-gMPlayTrack_SE6:
+	.global MPlayTrack_SE6
+MPlayTrack_SE6:
 	.space 160
-	.global gMPlayTrack_SE7
-gMPlayTrack_SE7:
+	.global MPlayTrack_SE7
+MPlayTrack_SE7:
 	.space 160
 	.space 64
-	.global gWaitForFlashWrite
-	.global gCreditsScrollPosition
+	.global WaitForFlashWriteWork
+	.global CreditsScrollPosition
 @ The credits borrow the four flash cells while flash is idle, each under a
 @ name and type of their own.
-gWaitForFlashWrite:
-gCreditsScrollPosition:
+WaitForFlashWriteWork:
+CreditsScrollPosition:
 	.space 4
-	.global gProgramFlashSector
-	.global gCreditsEndOfText
-gProgramFlashSector:
-gCreditsEndOfText:
+	.global ProgramFlashSectorWork
+	.global CreditsEndOfText
+ProgramFlashSectorWork:
+CreditsEndOfText:
 	.space 4
-	.global gFlash
-	.global gCreditsLastLinePosition
-gFlash:
-gCreditsLastLinePosition:
+	.global FlashWork
+	.global CreditsLastLinePosition
+FlashWork:
+CreditsLastLinePosition:
 	.space 4
-	.global gFlashNumRemainingBytes
-	.global gCreditsScrollObjects
-gFlashNumRemainingBytes:
-gCreditsScrollObjects:
+	.global FlashNumRemainingBytes
+	.global CreditsScrollObjects
+FlashNumRemainingBytes:
+CreditsScrollObjects:
 	.space 4
-	.global gEraseFlashChip
-gEraseFlashChip:
+	.global EraseFlashChipWork
+EraseFlashChipWork:
 	.space 4
-	.global gEraseFlashSector
-gEraseFlashSector:
+	.global EraseFlashSectorWork
+EraseFlashSectorWork:
 	.space 4
-	.global gFlashMaxTime
-gFlashMaxTime:
+	.global FlashMaxTime
+FlashMaxTime:
 	.space 4
-	.global gFlashReadRoutine
-gFlashReadRoutine:
+	.global FlashReadRoutine
+FlashReadRoutine:
 	.space 4
-	.global gFlashTimerNum
-gFlashTimerNum:
+	.global FlashTimerNum
+FlashTimerNum:
 	.space 2
-	.global gFlashTimerCount
-gFlashTimerCount:
+	.global FlashTimerCount
+FlashTimerCount:
 	.space 2
-	.global gFlashTimeoutFlag
-gFlashTimeoutFlag:
+	.global FlashTimeoutFlag
+FlashTimeoutFlag:
 	.space 4
-	.global gFlashTimerReg
-gFlashTimerReg:
+	.global FlashTimerReg
+FlashTimerReg:
 	.space 4
-	.global gFlashSavedIme
-gFlashSavedIme:
+	.global FlashSavedIme
+FlashSavedIme:
 	.space 13268
-	.global gOverlayArea
-gOverlayArea:
+	.global OverlayArea
+OverlayArea:
 	.space 32768
 @ A layout's 64 KB of cells (Tile_ConvertMapGrid) start here and run on
-@ through gActorSpriteSlots and gDecodeBuffer, so neither holds anything else
+@ through ActorSpriteSlots and DecodeBuffer, so neither holds anything else
 @ while a layout is loaded. Only code that loads the cells again afterwards
 @ writes there: a battle; the Battle Arena, which leaves the partner's party in
-@ gActorSpriteSlots for the link battle; the world map's still image, which
-@ saves BG1's tiles to gDecodeBuffer; and the debug sprite viewer. The tileset
-@ animation reads only past gDecodeBuffer, from gMapGridAnimTiles.
-	.global gMapGridCellBuffer
-	.type gMapGridCellBuffer, %object
-	.size gMapGridCellBuffer, 49152
-gMapGridCellBuffer:
+@ ActorSpriteSlots for the link battle; the world map's still image, which
+@ saves BG1's tiles to DecodeBuffer; and the debug sprite viewer. The tileset
+@ animation reads only past DecodeBuffer, from MapGridAnimTiles.
+	.global MapGridCellBuffer
+	.type MapGridCellBuffer, %object
+	.size MapGridCellBuffer, 49152
+MapGridCellBuffer:
 	.space 32768
-	.global gActorSpriteSlots
-gActorSpriteSlots:
+	.global ActorSpriteSlots
+ActorSpriteSlots:
 	.space 16384
-	.global gDecodeBuffer
-	.type gDecodeBuffer, %object
-	.size gDecodeBuffer, 16384
-gDecodeBuffer:
+	.global DecodeBuffer
+	.type DecodeBuffer, %object
+	.size DecodeBuffer, 16384
+DecodeBuffer:
 	.space 16384
-	.global gCellTiles
-	.type gCellTiles, %object
-	.size gCellTiles, 32768
-gCellTiles:
+	.global CellTiles
+	.type CellTiles, %object
+	.size CellTiles, 32768
+CellTiles:
 	.space 32768
-	.global gMapGridAnimTiles
-	.type gMapGridAnimTiles, %object
-	.size gMapGridAnimTiles, 16384
-gMapGridAnimTiles:
+	.global MapGridAnimTiles
+	.type MapGridAnimTiles, %object
+	.size MapGridAnimTiles, 16384
+MapGridAnimTiles:
 	.space 16384
-	.global gMapGridShapes
-	.type gMapGridShapes, %object
-	.size gMapGridShapes, 16384
-gMapGridShapes:
+	.global MapGridShapes
+	.type MapGridShapes, %object
+	.size MapGridShapes, 16384
+MapGridShapes:
 	.space 16384
-	.global gEwramHeap
-gEwramHeap:
+	.global EwramHeap
+EwramHeap:
 	.space 32768
-	.global gBgTileBuffer
-gBgTileBuffer:
+	.global BgTileBuffer
+BgTileBuffer:

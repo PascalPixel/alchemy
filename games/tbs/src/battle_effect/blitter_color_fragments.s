@@ -1,11 +1,11 @@
-@ The colour fragments BattleEffect_BuildBlitter (battle_effect_blitter.c) builds canvas
+@ The colour fragments btEffectBuildBlitter (battle_effect_blitter.c) builds canvas
 @ blitters from, as it does the others in blitter_fragments.s: each
 @ adds picture pixels (r1) to the canvas (r9) with sl as the cap mask, forward
 @ or reverse.
 @
 @ Why assembly:
-@ BattleEffect_BuildBlitter copies these 14-word fragments into generated
-@ ARM routines. r1/r5/r8/r9 are shared state and sl is the mask; r5/r8/r9
+@ btEffectBuildBlitter copies these 14-word fragments into generated
+@ ARM functions. r1/r5/r8/r9 are shared state and sl is the mask; r5/r8/r9
 @ change without callee saves, and neither fragment has a return.
 .syntax unified
 .text

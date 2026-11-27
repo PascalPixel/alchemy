@@ -1,7 +1,7 @@
 	.include "enums/flags.inc"
 
-@ The encounter zones of the field's scenes (struct SceneEncounterRule,
-@ Encounter_SelectMapZones): the first rule that matches the scene and
+@ The encounter zones of the field's scenes (SCENE_ENCOUNTER_RULE,
+@ fdEncounterSelectMapZones): the first rule that matches the scene and
 @ entrance, its flag clear, gives the zone of each kind of ground. Each row:
 @ the scene, its entrance (-1 for any), the flag (-1 for none), ordinary
 @ ground's zone and the second ground's zone; scene -1 ends the table.
@@ -12,8 +12,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gScene_EncounterRules
-gScene_EncounterRules:
+	.global Scene_EncounterRules
+Scene_EncounterRules:
 	encounter_rule KandoreanTempleLifts, -1, -1, 17, 0
 	encounter_rule KandoreanTempleMimic, 2, -1, 18, 0
 	encounter_rule KandoreanTempleMimic, 3, -1, 18, 0

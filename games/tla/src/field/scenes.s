@@ -1,17 +1,17 @@
 	.include "enums/area_ids.inc"
-	.include "enums/system/main_routine_state.inc"
+	.include "enums/game/main_routine_state.inc"
 
-@ Every scene (struct Scene), in the order that numbers them: a named row gives
+@ Every scene (SCENE), in the order that numbers them: a named row gives
 @ SceneId_NAME its number, which C reads at link time (scene_ids.h). Each row is
 @ the overlay the scene loads, by the name its row of the resource directory
-@ gives it (OverlayId_NAME), its area (enum AreaId), its type (enum SceneType),
-@ its map, by the name its row of gMaps gives it (MapIndex_NAME,
+@ gives it (OverlayId_NAME), its area (AREA_ID), its type (SCENE_TYPE),
+@ its map, by the name its row of MapsWork gives it (MapIndex_NAME,
 @ field/map_resources.s), and its attributes, two nibbles
-@ Field_GetSceneAttributes reads on arrival.
+@ gmFieldGetSceneAttributes reads on arrival.
 	.macro scene name, overlay:req, area:req, kind:req, map:req, attributes:req
 	.ifnb \name
 	.global SceneId_\name
-	.equiv SceneId_\name, (. - gScenes) / 8
+	.equiv SceneId_\name, (. - ScenesWork) / 8
 	.endif
 	.2byte OverlayId_\overlay
 	.byte \area, \kind
@@ -20,8 +20,8 @@
 
 	.section .rodata
 	.balign 4
-	.global gScenes
-gScenes:
+	.global ScenesWork
+ScenesWork:
 	scene Title, Title, AREA_TITLE_SCREEN, SCENE_TYPE_OTHER, EmptyMap, 0
 	scene Clear, Clear, AREA_CLEAR_DATA, SCENE_TYPE_OTHER, EmptyMap, 0
 	scene WorldMap, WorldMap, AREA_WORLD_MAP, SCENE_TYPE_OTHER, World, 0

@@ -14,7 +14,7 @@ CompileFlags:
     - -Igames/tla/include/battle
     - -Igames/tla/include/field
     - -Igames/tla/include/game
-    - -Igames/tla/include/gamepak
+    - -Igames/tla/include/sdk
     - -Igames/tla/include/graphics
     - -Igames/tla/include/menu
     - -Igames/tla/include/shop

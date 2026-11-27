@@ -82,8 +82,8 @@ here: what kind of action, on which actor or cell, under what condition,
 and what runs.
 
 ```c
-{ TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(Vale_DoraFretsAboutTheRoof) },
-{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT(Vale_CatchNut) },
+{ TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(scValeDoraTalksAboutTheHole) },
+{ PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT(scValeCatchNut) },
 ```
 
 What runs can be an event, a bare message for a villager with one line, or
@@ -98,8 +98,8 @@ that fits. Order is therefore meaning. Vault's mayor has a welcome that
 counts until he has given it, then a warning that always counts:
 
 ```c
-{ TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(LogRoomsB_WelcomeIsaacBack) },
-{ TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(LogRoomsB_WarnOfThievesRevenge) },
+{ TRIGGER_TALK, ACTOR_MAYOR, FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK, EVENT(scLogRoomsBWelcomeIsaacBack) },
+{ TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(scLogRoomsBWarnOfThievesRevenge) },
 ```
 
 One exception is worth knowing. A search row is found whatever its
@@ -130,11 +130,11 @@ An [event](../../../../docs/tbs/glossary.md#event) is a function that plays from
 bottom. This one opens a door and walks the leader through it:
 
 ```c
-static void Vale_EnterJennasGrandparentsHouse(void) {
-  Sound_Play(SE_DOOR_OPEN);
-  MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
-  Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
+static void scValeEnterJennasGrandparentsHouse(void) {
+	sySndPlay(SE_DOOR_OPEN);
+	fdMapGridAnimateCells(Vale_GrandparentsDoorOpens, 49, 69);
+	fdActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
+	syImportEventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 ```
 

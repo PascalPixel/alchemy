@@ -220,6 +220,6 @@ AlchemyUncreditedEnd_0813b9a2:
 	stm	r4, {r5, r6}
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
-	.4byte	gCurrentMatrixTranslation
+	.4byte	CurrentMatrixTranslation
 	.global Render_TransformKernelCodeSize
 	.set Render_TransformKernelCodeSize, . - Render_TransformKernel

@@ -1,5 +1,5 @@
 @ Why assembly: IwramEntry emits 8-byte Thumb ldr r3/bx r3/target-word
-@ far-call veneers into IWRAM.
+@ stubs into IWRAM.
 .syntax unified
 	.thumb
 
